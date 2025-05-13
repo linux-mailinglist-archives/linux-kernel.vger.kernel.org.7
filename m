@@ -1,274 +1,249 @@
-Return-Path: <linux-kernel+bounces-645062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-645064-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 984E0AB4877
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 02:32:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 366C9AB487C
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 02:36:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F36F03BCB39
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 00:31:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 106061894BA8
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 00:37:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DB1570807;
-	Tue, 13 May 2025 00:32:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D305554763;
+	Tue, 13 May 2025 00:36:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="LPU3H+XH";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="neibz5P8";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="LPU3H+XH";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="neibz5P8"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="hfDkTmhz"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFF5C3597A
-	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 00:32:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E2BD3FB0E
+	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 00:36:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747096325; cv=none; b=Bvqb4zxFvr1lSNEfrjKRpN2jbWMhPdJshlpq34GlXaLv1zkMjV5lCbW+cA0hzGE3UKXhd88P/teCvV2yhDYALGXBB4p3lFCHFu6txnAomolVymZRnopQMYWzNbCgCi+OLMeN6o6uYYh0YqXKXLKzPnvPOwQNff5KnpkvdTeMjMQ=
+	t=1747096605; cv=none; b=XwpaDvDCaELiuR5iEkAL/lH7RebWZZM9vOph7Eis7kjM4Itsy9eKl9/LKURjigRIuC0zGOMaJ5E9657RHyXTPuh5jhV6qvOb85Xwx49pbuJCWs+AqEf20oP3Eph2x0q+EkAUDsjaLvwqX+qAAUQ0BiW2yXnMinHxv7f/++JqYvU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747096325; c=relaxed/simple;
-	bh=u/uZu3C4+NyyEXfW9P+uhf063yFrKN4Fw2RaqHmeoOE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=khF87A6VuwSG88PbOGqR+f6vxGa9nxzNzUO+cqeTkHagyq4EDGrtocgM2sqWIC+pUT6szJhuYnuGrbMRGakLYtzaZcu4GNLcul9Q2VAGyp7375ldePPDDR6ju6J8bPOQD5r+8siDcz3wK1rhcSz/PxrPwfGAH2LUIKY1W5fH2Lo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=LPU3H+XH; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=neibz5P8; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=LPU3H+XH; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=neibz5P8; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id A8B121F388;
-	Tue, 13 May 2025 00:32:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1747096321;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6cYvGIo/SGidr6VuJk7mvsrXECdnDKcAY8/+dzZH3Q0=;
-	b=LPU3H+XH4ALkmg5shnASRepdDwZnBoqnD6XkBVUwlmhaZiUhZVfDlZAZgy7YWzvVPK9MUG
-	nDp+iqFVP9UOJlszRSAY9gbMxQNJqfnTlFvkKidgPaf7CUHRQ4iFb4ApB5RFbAxkn/2o4B
-	rPGVHYrFiMYzW6dzmv+vM3RasCcJOXs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1747096321;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6cYvGIo/SGidr6VuJk7mvsrXECdnDKcAY8/+dzZH3Q0=;
-	b=neibz5P88AMN4LCnzZDMl1piUaBMBHk+Kb6PNmHwvEpE80w8240RD/WLofjTmtL1A654GX
-	o1uiIq37aN75DEAw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=LPU3H+XH;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=neibz5P8
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1747096321;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6cYvGIo/SGidr6VuJk7mvsrXECdnDKcAY8/+dzZH3Q0=;
-	b=LPU3H+XH4ALkmg5shnASRepdDwZnBoqnD6XkBVUwlmhaZiUhZVfDlZAZgy7YWzvVPK9MUG
-	nDp+iqFVP9UOJlszRSAY9gbMxQNJqfnTlFvkKidgPaf7CUHRQ4iFb4ApB5RFbAxkn/2o4B
-	rPGVHYrFiMYzW6dzmv+vM3RasCcJOXs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1747096321;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6cYvGIo/SGidr6VuJk7mvsrXECdnDKcAY8/+dzZH3Q0=;
-	b=neibz5P88AMN4LCnzZDMl1piUaBMBHk+Kb6PNmHwvEpE80w8240RD/WLofjTmtL1A654GX
-	o1uiIq37aN75DEAw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7DA79137E8;
-	Tue, 13 May 2025 00:32:01 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id kkgWHgGTImj6ZwAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Tue, 13 May 2025 00:32:01 +0000
-Date: Tue, 13 May 2025 02:32:00 +0200
-From: David Sterba <dsterba@suse.cz>
-To: Daniel Vacek <neelx@suse.com>
-Cc: dsterba@suse.cz, Chris Mason <clm@fb.com>,
-	Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
-	Boris Burkov <boris@bur.io>, linux-btrfs@vger.kernel.org,
+	s=arc-20240116; t=1747096605; c=relaxed/simple;
+	bh=yb8jSVRsF30mHGOhOVdM3imAWsNOsAUSfNyxlcnfirk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BsqnVcaFDUk9fW5rPYNpctX5MhJIxsizdI06zbzMtvryjSl9Rz1MqNGlhZ0VP6sKTgrLHgntniv26H8MPnWa5M7L3ri9TS6ZPLHwur3LC2QcIpN7jy21jig0KpO7vCJACG7WK7kpcRtmC0NlFnH423DvjS6rA+C+d29WvlEirBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=hfDkTmhz; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-74019695377so3711158b3a.3
+        for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 17:36:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1747096602; x=1747701402; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=HA199g5QXmHqVIsbfWXsAzYBHgqNJazclMs1z1NJXJM=;
+        b=hfDkTmhzeA9rIAWsn0azZww56h74mks+koiDvV09oG+FlK/3aUQ0QrSHmg/g0DtFX9
+         ItWUhym2n/HSAOOYkT6PA2NnccFsOU3NuyqGsv9K69f//x2irwUn2I4MxwmCqGMmdehj
+         4XncuyU7L/hrRo5opYHJOFe7AS3Yw2jhe1uDM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747096602; x=1747701402;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HA199g5QXmHqVIsbfWXsAzYBHgqNJazclMs1z1NJXJM=;
+        b=G/sg6D5dyS2MjWTiTgK5L5uwlLeQhtd9gmrtCV6FlCRbW7bB8Uq6+P7pyZSrXvKEFX
+         F/Z7BcVTEb3AbK6jdwk+nRkRr3DK9DdSy9lOSkOqxtlgkdfYbaynP70tXB1Te4Yic2LH
+         dcX7dY7GlmZTlpC65mtBckETcljYmg+BrnXzR7jcjYJHwvfWwMQyZ1g24Q/NfiReAuVL
+         kPrKOgier7KIPObLuSJNOkX/e4WRnutl0Zuz2W/i/rHzZ0hxPB49JX8EVwH8yZMfwGyf
+         /b1Hac4iyjIDNtQOo058uS9CDvyDbTmzK7UjXbdUlKyvUj1kCcoATssSZWIpZRSQXGLN
+         PXhA==
+X-Forwarded-Encrypted: i=1; AJvYcCWH0D9Yvk8FLQSA4prFC8d9YMMoLg/wnzndPCRCi8nTIGNdhLoslC8W/KR49uVZvRwi1oS2XU4iIsqo27Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1FHe8cuvKqC5+nF1GD86nJDEVPeJZLQH08cDOoIxUcT69XxrU
+	UTpGDfS7FRbT2fXug0/p+kfJ7O+PcTehG6yu5q2nM5cH+tMmhKwRClyDEh2tgw==
+X-Gm-Gg: ASbGncs+fpC+oWDHm4aNh8M1dLY+tvY4yXH68c369MtqfsaKsIYdpbzOyZaAF0HIJIH
+	lXgqhwPY/LFEF5tHyWwczo8fzL30IJgQXw6cEsGvHLaTadB+y4aOtoMpGch/x8VhJb99s79AekD
+	fFDb/9BW00u87o1MmXN+hsPkiYaUKJCathX3NlXs1yWFjFrtTMIsigssfCgTMnhORyDYEJtRELi
+	Vxzub9utEmeRrr7vJp9AtNtOnB4gSCVkHeNn50VMg9RcAnp4u6Kb4U3dW0lf5o1VH3hbKNHnlYz
+	4GRabjDo8ZankkMWlWUp+WAt9dfF//n0K52KjbP5LGbSHN11ID+MbCHxR8bx7A/zuIsB44efw8O
+	So3Ny9EZ9KmnXSIxDWLWUm59Z62eVuOpM+II=
+X-Google-Smtp-Source: AGHT+IGTlWjnHg+bWaHK446oE4g5aGMBwlecdmK/2JewCCDAhph9OjKEstpKEUumR8JMf8iUdJ2OJA==
+X-Received: by 2002:a05:6a20:7288:b0:215:edf7:c8f2 with SMTP id adf61e73a8af0-215edf7cae1mr835745637.16.1747096602544;
+        Mon, 12 May 2025 17:36:42 -0700 (PDT)
+Received: from dianders.sjc.corp.google.com ([2a00:79e0:2e14:7:ed5d:332e:f26c:a223])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b2350ddb7f8sm5197691a12.50.2025.05.12.17.36.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 12 May 2025 17:36:41 -0700 (PDT)
+From: Douglas Anderson <dianders@chromium.org>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: chintanpandya@google.com,
+	Douglas Anderson <dianders@chromium.org>,
+	Marc Zyngier <maz@kernel.org>,
+	Maulik Shah <quic_mkshah@quicinc.com>,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] btrfs: remove extent buffer's redundant `len`
- member field
-Message-ID: <20250513003200.GZ9140@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-References: <20250505115056.1803847-1-neelx@suse.com>
- <20250505115056.1803847-2-neelx@suse.com>
- <20250505151817.GX9140@twin.jikos.cz>
- <CAPjX3FfbeGmPkXY1NDnecrtcLe5dqX7+vLOLGe3sdggUfS-WSg@mail.gmail.com>
+Subject: [PATCH] genirq/PM: Fix IRQCHIP_ENABLE_WAKEUP_ON_SUSPEND if depth > 1
+Date: Mon, 12 May 2025 17:32:52 -0700
+Message-ID: <20250512173250.1.If5c00cf9f08732f4af5f104ae59b8785c7f69536@changeid>
+X-Mailer: git-send-email 2.49.0.1045.g170613ef41-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPjX3FfbeGmPkXY1NDnecrtcLe5dqX7+vLOLGe3sdggUfS-WSg@mail.gmail.com>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: A8B121F388
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.21 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_TLS_ALL(0.00)[];
-	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Spam-Score: -4.21
+Content-Transfer-Encoding: 8bit
 
-On Mon, May 05, 2025 at 07:53:16PM +0200, Daniel Vacek wrote:
-> On Mon, 5 May 2025 at 17:18, David Sterba <dsterba@suse.cz> wrote:
-> >
-> > On Mon, May 05, 2025 at 01:50:54PM +0200, Daniel Vacek wrote:
-> > > Even super block nowadays uses nodesize for eb->len. This is since commits
-> > >
-> > > 551561c34663 ("btrfs: don't pass nodesize to __alloc_extent_buffer()")
-> > > da17066c4047 ("btrfs: pull node/sector/stripe sizes out of root and into fs_info")
-> > > ce3e69847e3e ("btrfs: sink parameter len to alloc_extent_buffer")
-> > > a83fffb75d09 ("btrfs: sink blocksize parameter to btrfs_find_create_tree_block")
-> > >
-> > > With these the eb->len is not really useful anymore. Let's use the nodesize
-> > > directly where applicable.
-> >
-> > You haven't updated the changelog despite we had a discussion about the
-> > potential drawbacks, so this should be here. But I'm not convinced this
-> 
-> Right. That's because I was not sure we came to any conclusion yet. I
-> thought this discussion was still ongoing. I understand that so far
-> this is still all just a theory and any premature conclusions may be
-> misleading.
-> 
-> But yeah, I may write some kind of a warning or a disclaimer
-> mentioning the suspicion. Just so that it gets documented and it is
-> clear it was considered, even though maybe without a clear conclusion.
-> 
-> > is a good change. The eb size does not change so no better packing in
-> > the slab and the caching of length in the same cacheline is lost.
-> 
-> So to be perfectly clear, what sharing do you mean? Is it the
-> eb->start and eb->len you talking about? In other words, when getting
-> `start` you also get `len` for free?
+The IRQCHIP_ENABLE_WAKEUP_ON_SUSPEND flag doesn't work properly if the
+IRQ disable depth is not 0 or 1 at suspend time. In this case, the
+IRQ's depth will be decremented but the IRQ won't be enabled to wake
+the system up. Add a special case for when we're suspending and always
+enable the IRQ in that case.
 
-Yes, basically.
+A few notes:
+* As part of this, irq_startup() can no longer force the depth to 0.
+  Change irq_startup() to decrement by 1 and make all other callers of
+  irq_startup() initialize the depth to 1 to keep them working the
+  same.
+* In order to avoid turning __enable_irq() into spaghetti code for the
+  special case, swap from a "switch" statement to a handful of
+  "if/else". Nicely, this eliminates an old "goto".
 
-> Since the structure is 8 bytes aligned, they may eventually still end
-> up in two cachelines. Luckily the size of the structure is 0 mod 16 so
-> just out of the luck this never happens and they are always in the
-> same cache line. But this may break with future changes, so it is not
-> rock solid the way it is now.
+Fixes: 90428a8eb494 ("genirq/PM: Introduce IRQCHIP_ENABLE_WAKEUP_ON_SUSPEND flag")
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+---
+I fully realize there are rough edges to this patch. Specifically,
+it's a bit ugly to init the depth to 1 in all the callers. Things
+could also get dicey of any code tries to enable/disable the IRQ
+_after_ we've set the "IRQD_IRQ_ENABLED_ON_SUSPEND", though I hope
+that doesn't happen.
 
-Yes, with structures not perfectly aligned to a cacheline (64B) there
-will be times when the access needs fetching two cachelines. With locks
-it can result in various cacheline bouncing patterns when various
-allocated structures are aligned to 8 bytes, giving 8 possible groups of
-"misaligned" structure instances.
+If you hate this patch, feel free to simply treat it as a bug report.
+I'm happy if someone wants to write an alternative patch or I can make
+whatever cleanups are needed and send a v2/v3/etc. Let me know!
 
-There's also a big assumption that the CPU cache prefetcher is clever
-enough to average out many bad patterns. What I try to do on the source
-code level is to be able to reason about the high level access patterns,
-like "used at the same time -> close together in the structure".
+This patch has only been lightly tested.
 
-> > In the assebly it's clear where the pointer dereference is added, using
-> > an example from btrfs_get_token_8():
-> >
-> >   mov    0x8(%rbp),%r9d
-> >
-> > vs
-> >
-> >   mov    0x18(%rbp),%r10
-> >   mov    0xd38(%r10),%r9d
-> 
-> I understand that. Again, this is what I originally considered. Not
-> all the functions end up like this but there are definitely some. And
-> by a rule of a thumb it's roughly half of them, give or take. That
-> sounds like a good reason to be concerned.
-> 
-> My reasoning was that the fs_info->nodesize is accessed by many so the
-> chances are it will be hot in cache. But you're right that this may
-> not always be the case. It depends. The question remains if that makes
-> a difference?
-> 
-> Another (IMO valid) point is that I believe the code will dereference
-> many other pointers before getting here so this may seem like a drop
-> in the sea. It's not like this was a tight loop scattering over
-> hundreds random memory addresses.
-> For example when this code is reached from a syscall, the syscall
-> itself will have significantly higher overhead then one additional
-> dereference. And I think the same applies when reached from an
-> interrupt.
-> Otherwise this would be visible on perf profile (which none of us
-> performed yet).
+ kernel/irq/chip.c       |  3 ++-
+ kernel/irq/cpuhotplug.c |  4 +++-
+ kernel/irq/manage.c     | 29 ++++++++++++++++-------------
+ kernel/irq/pm.c         |  2 +-
+ 4 files changed, 22 insertions(+), 16 deletions(-)
 
-Yeah and I don't intend to do so other than to verify your measurements
-and calims that this patch does not make things worse at least. The
-burden is on the patch submitter.
+diff --git a/kernel/irq/chip.c b/kernel/irq/chip.c
+index 36cf1b09cc84..24a5958c09e4 100644
+--- a/kernel/irq/chip.c
++++ b/kernel/irq/chip.c
+@@ -272,7 +272,7 @@ int irq_startup(struct irq_desc *desc, bool resend, bool force)
+ 	const struct cpumask *aff = irq_data_get_affinity_mask(d);
+ 	int ret = 0;
+ 
+-	desc->depth = 0;
++	desc->depth--;
+ 
+ 	if (irqd_is_started(d)) {
+ 		irq_enable(desc);
+@@ -313,6 +313,7 @@ int irq_activate_and_startup(struct irq_desc *desc, bool resend)
+ {
+ 	if (WARN_ON(irq_activate(desc)))
+ 		return 0;
++	desc->depth = 1;
+ 	return irq_startup(desc, resend, IRQ_START_FORCE);
+ }
+ 
+diff --git a/kernel/irq/cpuhotplug.c b/kernel/irq/cpuhotplug.c
+index 15a7654eff68..8d98a2961e91 100644
+--- a/kernel/irq/cpuhotplug.c
++++ b/kernel/irq/cpuhotplug.c
+@@ -218,8 +218,10 @@ static void irq_restore_affinity_of_irq(struct irq_desc *desc, unsigned int cpu)
+ 	if (desc->istate & IRQS_SUSPENDED)
+ 		return;
+ 
+-	if (irqd_is_managed_and_shutdown(data))
++	if (irqd_is_managed_and_shutdown(data)) {
++		desc->depth = 1;
+ 		irq_startup(desc, IRQ_RESEND, IRQ_START_COND);
++	}
+ 
+ 	/*
+ 	 * If the interrupt can only be directed to a single target
+diff --git a/kernel/irq/manage.c b/kernel/irq/manage.c
+index 753eef8e041c..a8c9b645fe49 100644
+--- a/kernel/irq/manage.c
++++ b/kernel/irq/manage.c
+@@ -688,7 +688,14 @@ EXPORT_SYMBOL_GPL(irq_set_vcpu_affinity);
+ 
+ void __disable_irq(struct irq_desc *desc)
+ {
+-	if (!desc->depth++)
++	struct irq_data *irqd = &desc->irq_data;
++
++	/*
++	 * Always increase the disable depth; actually do the disable if
++	 * the depth was 0 _or_ we temporarily enabled during the suspend
++	 * path.
++	 */
++	if (!desc->depth++ || irqd_is_enabled_on_suspend(irqd))
+ 		irq_disable(desc);
+ }
+ 
+@@ -786,15 +793,12 @@ void disable_nmi_nosync(unsigned int irq)
+ 
+ void __enable_irq(struct irq_desc *desc)
+ {
+-	switch (desc->depth) {
+-	case 0:
+- err_out:
++	struct irq_data *irqd = &desc->irq_data;
++
++	if (desc->depth == 0 || desc->istate & IRQS_SUSPENDED) {
+ 		WARN(1, KERN_WARNING "Unbalanced enable for IRQ %d\n",
+ 		     irq_desc_get_irq(desc));
+-		break;
+-	case 1: {
+-		if (desc->istate & IRQS_SUSPENDED)
+-			goto err_out;
++	} else if (desc->depth == 1 || irqd_is_enabled_on_suspend(irqd)) {
+ 		/* Prevent probing on this irq: */
+ 		irq_settings_set_noprobe(desc);
+ 		/*
+@@ -809,9 +813,7 @@ void __enable_irq(struct irq_desc *desc)
+ 		 * invoke irq_enable() under the hood.
+ 		 */
+ 		irq_startup(desc, IRQ_RESEND, IRQ_START_FORCE);
+-		break;
+-	}
+-	default:
++	} else {
+ 		desc->depth--;
+ 	}
+ }
+@@ -1774,6 +1776,9 @@ __setup_irq(unsigned int irq, struct irq_desc *desc, struct irqaction *new)
+ 			irqd_set(&desc->irq_data, IRQD_NO_BALANCING);
+ 		}
+ 
++		/* Undo nested disables: */
++		desc->depth = 1;
++
+ 		if (!(new->flags & IRQF_NO_AUTOEN) &&
+ 		    irq_settings_can_autoenable(desc)) {
+ 			irq_startup(desc, IRQ_RESEND, IRQ_START_COND);
+@@ -1785,8 +1790,6 @@ __setup_irq(unsigned int irq, struct irq_desc *desc, struct irqaction *new)
+ 			 * interrupts forever.
+ 			 */
+ 			WARN_ON_ONCE(new->flags & IRQF_SHARED);
+-			/* Undo nested disables: */
+-			desc->depth = 1;
+ 		}
+ 
+ 	} else if (new->flags & IRQF_TRIGGER_MASK) {
+diff --git a/kernel/irq/pm.c b/kernel/irq/pm.c
+index c556bc49d213..b151a94f6233 100644
+--- a/kernel/irq/pm.c
++++ b/kernel/irq/pm.c
+@@ -86,8 +86,8 @@ static bool suspend_device_irq(struct irq_desc *desc)
+ 			 * Enable interrupt here to unmask/enable in irqchip
+ 			 * to be able to resume with such interrupts.
+ 			 */
+-			__enable_irq(desc);
+ 			irqd_set(irqd, IRQD_IRQ_ENABLED_ON_SUSPEND);
++			__enable_irq(desc);
+ 		}
+ 		/*
+ 		 * We return true here to force the caller to issue
+-- 
+2.49.0.1045.g170613ef41-goog
 
-> Still, I'd say reading the assembly is a good indication of possible
-> issues to be concerned with. But it's not always the best one. An
-> observed performance regression would be.
-> I'll be happy to conduct any suggested benchmarks. Though as you
-> mentioned this may be also picky on the used HW.
-
-I'd say any contemporary hardware is good, I don't think the internal
-CPU algorithms of prefetching or branch predictions change that often. A
-difference that I would consider significant is 5% in either direction.
-
-> So even though we
-> don't see any regressions with our testing, one day someone may find
-> some if we merged this change. In which case we can always revert.
-> 
-> I have to say I'm pretty happy with the positive feedback from the
-> other reviewers. So far you're the only one raising this concern.
-
-I don't dispute the feedback from others, the patch is not wrong on
-itself, it removes a redundant member. However I don't see it as a
-simple change because I also spent some time looking into that
-particular structure, shrinking size, member ordering and access
-patterns that I am questioning the runtime performance implications.
-
-My local eb->len removal patch is from 2020 and I decided not to send it
-because I was not able to prove to myself it'd be for the better. This
-is what I base my feedback on.
-
-> So how do we conclude this?
-
-I don't agree to add this patch due to the following main points:
-
-- no struct size change, ie. same number of objects in the slab
-- disputed cacheline behaviour, numbers showing improvement or not
-  making it worse needed
-
-> If you don't want this cleanup I'd opt at least for rename eb->len
-> ==>> eb->nodesize.
-
-This sounds like an unnecessary churn. 'length' related to a structure
-is natural, nodesize is a property of the whole filesystem, we're used
-to eb->len, I don't any benefit to increase the cognitive load.
 
