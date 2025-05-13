@@ -1,158 +1,112 @@
-Return-Path: <linux-kernel+bounces-646652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-646654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80A81AB5EB5
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 23:55:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E71CDAB5EB8
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 23:55:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 98DCA1B46189
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 21:55:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 95F1A1B47174
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 21:55:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3ABE21ABB1;
-	Tue, 13 May 2025 21:54:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="dz3b6fUT"
-Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 031B7215066
-	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 21:53:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC2CF202990;
+	Tue, 13 May 2025 21:55:25 +0000 (UTC)
+Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ED5922338
+	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 21:55:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747173241; cv=none; b=SEmC0o/RjGHU7R4IGSGXkVqU86OHq/WQI4w1SN+Bhs6pvqfYI7x2BcEEjyqP/Z4d+Dg1+hfEVeZ0jBToneTWBGgXHWbf++Mc3WWkKuKFoenwPVTkLz+T5ykYmqZ2Qx/dBanFgiTCBPlUsxaS4eq8TfmKFNB9qzb5My2kihpOT/g=
+	t=1747173325; cv=none; b=F35LJii6+5bxlZJDU0hqwFHKkr2jsOImH9uwNwg2FVQropaU3dO3nCPYYJigKfP324yvV5eDHw6j1QwGOOB38x1ETR853ukgmT4uCbBTUAlfT2vPF8PoBIPBKjHxpNsq8IlAUlp6FTH7Ky+xhWm2m4bp6uJrikbwKLXZ9R77uGU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747173241; c=relaxed/simple;
-	bh=ofhrWzbkHpmkRBFTa000gjfyL5s3fJzmMKuP+Rinp2c=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=EwLCJmi+NIdxEMt7XVVyffEV1pFAZOlTRSA7iKQ55jYNz1MfJmclxMENUnGHnkGjSge5abQfEbXFxvtmbC4xLV1h2RRIlg8Ipgscl2d8G75koksTMaGEhiQO0Xg0wsZuwZhHIXW37XRskCfoIqGjV3ykf57IbMIEy/krv030qZ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=dz3b6fUT; arc=none smtp.client-ip=209.85.166.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
-Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-85e751cffbeso527936339f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 14:53:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1747173238; x=1747778038; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hXQ0rLrEsZDkkO0xDOFrK28pA119DtQt4oQHk7dYEkk=;
-        b=dz3b6fUT5Bo77jLbkE+xfWniAuHBX8z0tWvW7owyxF+9dDsJMVQE0OgcHl2Kxetltx
-         FDi7Z85hcahSYDWUKD1MoBFsQtEGV7yHxqhbL3CpsBVtu4cg3qVSaPLLlbEpP8DI57LG
-         FF/d8+0Zt0hVA1u73zeZCVqO3+kma+Yov7ygBJytTddSEXNZ4coQnDZrgYgE66pMIYPR
-         hu/5l1hGODg32/9wqudcrjRMJR1xX5JlXVPa1diWkU811Xj69heFefY389AWvKPQc3Ui
-         PXK0M0iwrRzd0bOISi+HNO6e3CM7VC7aHT/MT56ruOAhZ+6MRq54c9dJWSCNm5A1SSF5
-         NAnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747173238; x=1747778038;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hXQ0rLrEsZDkkO0xDOFrK28pA119DtQt4oQHk7dYEkk=;
-        b=aXDew3GF3MF76uZvZaNJ8ZkGIAK6TDw1uwY7ad8q7xoaE5AYUEX1niwaHyjtn28tEa
-         wTghcb2AkzRxeghpCE6oV7mu+Du2DG/pFc2ly91pJI+8K6H4+171HelSsFd/I0uvaO9u
-         2Nvp8SwrR5RZFj7pwKm1GqufL1sbBlzRxb9idqPzr31ykozPhTmjTJU4A8CD54W0v/Cz
-         8px53tdLoY7KSkA8xT7E/hFSc/e3Hd1c2fVj4JDsxu2LTXQPUqaENlGbpvJVH6pq7g0b
-         FvOrnzd46UPi1s82PLxGT/AUafvm68ep8Qlv+0A9NgP7D7KulAg384tsf+Cct4qvJBLZ
-         +zUw==
-X-Forwarded-Encrypted: i=1; AJvYcCXk6uKOrPi83ycEqwD7OMk3ugghsqcw33mMxC2g+XDR4LJsp2LnIphOloOaDz17QUNfk730/a06BBecJdA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxX1DY3fSr8Fj5lkl2WzpvzFMVfnHMy/tUM6ZihyU6AZi4uhTZA
-	rKO66coTV+pSPK3edccrBZTUpEufv6z+X671ZLz9FavLectAnopq7pyiVF0MlDE=
-X-Gm-Gg: ASbGnctZR5pGvVr0LnTDTVDYCI2iFTlWqHjgaJ1eDvxZJRFuzB0Z3WxSz/VZPUOFdYg
-	kJHibN48JpvmkqDaPV/YrxDB52MCcTFhT1LjHpi5KY2rnsbtk1bQZ9QM8tjuBwLvIOJie8HJQfs
-	cVCw1j8raQJ/cOuxzi48T35xOq/6fCkMmlgWI8XvB+4FBXLpopADE2pLWDLyYZtLtQtNXtTDL/3
-	YGp4MT5mE+6tJSDFn3VbAOM3vikRe88nIYadURyVT5V5GTYqfovZNwqBL6cSoYsqCds4op9yjzs
-	Mnwmzhxil9BzmYWvO4doU8QSoRmQ3L0XfeUPlgALPJTneQoETwix89xihXzmLj5Xacdd6jewsxW
-	OYZU/+Mh9MDqiGMQ3+60v4VOc
-X-Google-Smtp-Source: AGHT+IHAidM+Hnbk1eCF9zik0cgy840UdEyeKKKxABRP4OWyRlKVuC+CHVe97np7fF3lS1j5FvMYHQ==
-X-Received: by 2002:a05:6602:36c8:b0:85b:3885:1592 with SMTP id ca18e2360f4ac-86a08e40afemr117157839f.10.1747173238154;
-        Tue, 13 May 2025 14:53:58 -0700 (PDT)
-Received: from localhost.localdomain (c-73-228-159-35.hsd1.mn.comcast.net. [73.228.159.35])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-867636e0dedsm239622539f.32.2025.05.13.14.53.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 May 2025 14:53:57 -0700 (PDT)
-From: Alex Elder <elder@riscstar.com>
-To: robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	p.zabel@pengutronix.de,
-	paul.walmsley@sifive.com,
-	palmer@dabbelt.com,
-	aou@eecs.berkeley.edu,
-	alex@ghiti.fr,
-	dlan@gentoo.org
-Cc: heylenay@4d2.org,
-	inochiama@outlook.com,
-	guodong@riscstar.com,
-	devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	spacemit@lists.linux.dev,
-	linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v10 6/6] riscv: dts: spacemit: add reset support for the K1 SoC
-Date: Tue, 13 May 2025 16:53:44 -0500
-Message-ID: <20250513215345.3631593-7-elder@riscstar.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250513215345.3631593-1-elder@riscstar.com>
-References: <20250513215345.3631593-1-elder@riscstar.com>
+	s=arc-20240116; t=1747173325; c=relaxed/simple;
+	bh=wW8skg3zevd8ly6jlW+M7QoC/KYFAp67zo06skwUxNE=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=pZJLN74uTBQTPstT46Trh6uhaNdsYDgjl/fPY/lyiIa5CkvUGrMaej2xYoscpjrV4KYJg3cTVYTTJi2gvUCysPL4qAfOBcfB80hqf3/WU9/9y/mpFOsfAISa6BVky79cbJEhJ94m037mqEvBD0HUwGpAE+3tZbiDxHCK3JPv1HE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
+Received: by angie.orcam.me.uk (Postfix, from userid 500)
+	id 02C799200B3; Tue, 13 May 2025 23:55:14 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by angie.orcam.me.uk (Postfix) with ESMTP id EFC0A92009C;
+	Tue, 13 May 2025 22:55:14 +0100 (BST)
+Date: Tue, 13 May 2025 22:55:14 +0100 (BST)
+From: "Maciej W. Rozycki" <macro@orcam.me.uk>
+To: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+cc: Linus Torvalds <torvalds@linux-foundation.org>, 
+    Konstantin Ryabitsev <konstantin@linuxfoundation.org>, 
+    Borislav Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>, 
+    Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org, 
+    "Ahmed S . Darwish" <darwi@linutronix.de>, 
+    Andrew Cooper <andrew.cooper3@citrix.com>, 
+    Ard Biesheuvel <ardb@kernel.org>, Arnd Bergmann <arnd@kernel.org>, 
+    Dave Hansen <dave.hansen@linux.intel.com>, 
+    John Ogness <john.ogness@linutronix.de>, 
+    Peter Zijlstra <peterz@infradead.org>, 
+    Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [RFC PATCH 0/15] x86: Remove support for TSC-less and CX8-less
+ CPUs
+In-Reply-To: <a719b6ec1ccba2ecad7421a2cdf1660d1be16888.camel@physik.fu-berlin.de>
+Message-ID: <alpine.DEB.2.21.2505131735170.46553@angie.orcam.me.uk>
+References: <alpine.DEB.2.21.2505050944230.31828@angie.orcam.me.uk>  <98C88CE8-C3D5-4B75-8545-71DD47C67614@zytor.com>  <alpine.DEB.2.21.2505051356340.31828@angie.orcam.me.uk>  <1E50C160-EB89-4C5C-B9F0-6441026EE380@zytor.com>  <20250505205405.GNaBklbdKLbadRATbr@fat_crate.local>
+  <alpine.DEB.2.21.2505060059010.31828@angie.orcam.me.uk>  <20250506141631.GEaBoZvzPCWh88xDzu@fat_crate.local>  <alpine.DEB.2.21.2505062228200.21337@angie.orcam.me.uk>  <8C172B63-38E1-427B-8511-25ECE5B9E780@alien8.de>  <alpine.DEB.2.21.2505121225000.46553@angie.orcam.me.uk>
+  <20250512134853.GGaCH8RUjJwgHq25qx@fat_crate.local>  <alpine.DEB.2.21.2505121810040.46553@angie.orcam.me.uk>  <CAADWXX8+-=pcOUeu_cwX_vkkkGp6jn0GQLUhZX8MxGGRjKz=Lg@mail.gmail.com> <a719b6ec1ccba2ecad7421a2cdf1660d1be16888.camel@physik.fu-berlin.de>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 
-Define syscon nodes for the RCPU, RCPU2, and APBC2 SpacemiT CCUS, which
-currently support resets but not clocks in the SpacemiT K1.
+On Tue, 13 May 2025, John Paul Adrian Glaubitz wrote:
 
-Signed-off-by: Alex Elder <elder@riscstar.com>
-Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
-Reviewed-by: Yixun Lan <dlan@gentoo.org>
----
- arch/riscv/boot/dts/spacemit/k1.dtsi | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+> > >  Thank you.  It seems it'll be tough for me though to fulfil the GPG key
+> > > trustability requirement.  While I've used PGP/GPG since 1995, I haven't
+> > > been active collecting signatures with my more recent keys/IDs and neither
+> > > I have appeared in public among Linux kernel developers often enough for
+> > > me to be identified by face over a video call.  Oh well...
+> > 
+> > I don't think this has been insurmountable before, particularly for
+> > anybody who has been around for as long as you have.  Even your
+> > current email goes back to at least the beginnings of git.
 
-diff --git a/arch/riscv/boot/dts/spacemit/k1.dtsi b/arch/riscv/boot/dts/spacemit/k1.dtsi
-index c0f8c5fca975d..de403bda2b878 100644
---- a/arch/riscv/boot/dts/spacemit/k1.dtsi
-+++ b/arch/riscv/boot/dts/spacemit/k1.dtsi
-@@ -346,6 +346,18 @@ soc {
- 		dma-noncoherent;
- 		ranges;
- 
-+		syscon_rcpu: system-controller@c0880000 {
-+			compatible = "spacemit,k1-syscon-rcpu";
-+			reg = <0x0 0xc0880000 0x0 0x2048>;
-+			#reset-cells = <1>;
-+		};
-+
-+		syscon_rcpu2: system-controller@c0888000 {
-+			compatible = "spacemit,k1-syscon-rcpu2";
-+			reg = <0x0 0xc0888000 0x0 0x28>;
-+			#reset-cells = <1>;
-+		};
-+
- 		syscon_apbc: system-controller@d4015000 {
- 			compatible = "spacemit,k1-syscon-apbc";
- 			reg = <0x0 0xd4015000 0x0 0x1000>;
-@@ -553,6 +565,12 @@ clint: timer@e4000000 {
- 					      <&cpu7_intc 3>, <&cpu7_intc 7>;
- 		};
- 
-+		syscon_apbc2: system-controller@f0610000 {
-+			compatible = "spacemit,k1-syscon-apbc2";
-+			reg = <0x0 0xf0610000 0x0 0x20>;
-+			#reset-cells = <1>;
-+		};
-+
- 		sec_uart1: serial@f0612000 {
- 			compatible = "spacemit,k1-uart", "intel,xscale-uart";
- 			reg = <0x0 0xf0612000 0x0 0x100>;
--- 
-2.45.2
+ Hmm, a .mailmap artifact perhaps; I actually only switched to my current 
+e-mail address back in 2021 once linux-mips.org has lost all the remaining 
+credibility in my eyes.  There's exactly one "Patch-dusted-off-by:" commit 
+using my yet earlier personal address, plus a bunch using my various old 
+work addresses too.
 
+ All the earlier work has been buried either in the linux-mips.org git 
+repo, going back via conversion from CVS to:
+
+commit 1513ff9b7899ab588401c89db0e99903dbf5f886
+Author: Ralf Baechle <ralf@linux-mips.org>
+Date:   Mon Nov 28 11:59:19 1994 +0000
+
+    Import of Linus's Linux 1.1.68
+
+(which I still do hope to fully recover and for which kernel.org seems to 
+be the right ultimate haven), or in LKML and other mailing list archives.
+
+ None of this however proves any GPG key offered is actually mine.
+
+> > If "two decades+ of active kernel development involvement using the
+> > same email address" doesn't make you eligible for a kernel.org
+> > account, we're doing something wrong.
+> 
+> I agree. Maciej does a fantastic job saving old junk^W^Wretro hardware ;-).
+
+ Thank you.  That makes two of us; the rest has switched to NetBSD.
+
+> I'm sure there should be anyone in Maciej's area that could sign his keys.
+
+ Undoubtedly, but finding someone local who has a kernel.org account and 
+can actually tell I am who I claim I am will be rather tough, and trusting 
+a government-issued ID alone may be questionable nowadays, as correctly 
+observed in <https://korg.docs.kernel.org/accounts.html#pgp-web-of-trust>.
+
+  Maciej
 
