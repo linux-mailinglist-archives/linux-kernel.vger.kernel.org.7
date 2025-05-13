@@ -1,136 +1,93 @@
-Return-Path: <linux-kernel+bounces-646419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-646500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB63DAB5BF7
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 19:57:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2FC8AB5D06
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 21:19:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 425663A5546
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 17:56:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD7BC1B612CA
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 19:19:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDC052BEC5B;
-	Tue, 13 May 2025 17:56:28 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 857F028FA80;
-	Tue, 13 May 2025 17:56:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2BCF2BF3DF;
+	Tue, 13 May 2025 19:19:26 +0000 (UTC)
+Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FDEF1CD0C;
+	Tue, 13 May 2025 19:19:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747158988; cv=none; b=hvaEL+G14YVaPX/IOhF4/bGttrLE5WITScGoFyHL/2cjoQbccGZ2TtfJmzBUtOCS1S+9008NBTSVS0upQrnpO1ap4wf8bZw1QY8wFtYvq0ZKGZ13KgNmhKq8cDnisjQg+9hrc3mawnK9Z1C8+Aj2A2YvguLjmHetYawORaUHVnM=
+	t=1747163966; cv=none; b=ZaChw4lJUPnl7abn74jCFvXzMrn1owm0os7lgjOoXOnT/KKWxGqQAtGV+ztfU/gPPbuvkPAk8g3kIERNE5uUgmpc3pQcVCsGg5jKjHNRotgQ2f17HFFEOmgHhqUh99DHhIMfnrfZvhktKYP7UOIXRq5hgMD4S15BZm7M96Q62Hs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747158988; c=relaxed/simple;
-	bh=bFeWglMtZyemmFzY0JIixKNIr3nFEUUNL00dLPgu/J8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Xbxgf1XEWxksMY9fDn1bVmWamHPztyPpexS27O1tCc19/VMtVPdpuy1RCiDNUsEON+1N5eqOTj6wifkV7ZnmjJa6rxd86ICwNC0PMoAp41jjK/AgtSiNv6yO+W5QxVg6bqdzvizJqzlO87nhoevEoedwL+5nma6ed7GB9zu9aIg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5DC89C4CEEB;
-	Tue, 13 May 2025 17:56:27 +0000 (UTC)
-Date: Tue, 13 May 2025 13:56:51 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] tracing: Record trace_clock and recover when reboot
-Message-ID: <20250513135652.7cb970cf@gandalf.local.home>
-In-Reply-To: <174709628747.1945884.11884057542151507891.stgit@mhiramat.tok.corp.google.com>
-References: <174709628747.1945884.11884057542151507891.stgit@mhiramat.tok.corp.google.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1747163966; c=relaxed/simple;
+	bh=q9uhQ69sMkdZ4u7RzMocjUphcOGlyx+dW/ynSSI77hQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=U9mid27OYQ8oaAl3qPcU46XYHYtXU1kJKXPhc1vziw8E3jCzOyGBCuDmZ/IiHWPNJKOTOahC1hoaDvLy+B9PacvVNq+CUttDcBcYFtocvqlHBhvkj3mny2ABEF7GCcavgqw6n3a/tYp96naHdaFIYN3kFBvX8edNtjAxF8TXyhs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
+Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
+	id 1uEv9i-0002eV-00; Tue, 13 May 2025 21:19:10 +0200
+Received: by alpha.franken.de (Postfix, from userid 1000)
+	id 45646C0895; Tue, 13 May 2025 17:12:23 +0200 (CEST)
+Date: Tue, 13 May 2025 17:12:23 +0200
+From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Caleb James DeLisle <cjd@cjdns.fr>, linux-mips@vger.kernel.org,
+	tglx@linutronix.de, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, benjamin.larsson@genexis.eu,
+	linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH v5 0/7] Add EcoNet EN751221 MIPS platform support
+Message-ID: <aCNhVw7oMRhHQNq_@alpha.franken.de>
+References: <20250507134500.390547-1-cjd@cjdns.fr>
+ <aCNWM5Xq7wnHVCrc@mai.linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aCNWM5Xq7wnHVCrc@mai.linaro.org>
 
-On Tue, 13 May 2025 09:31:27 +0900
-"Masami Hiramatsu (Google)" <mhiramat@kernel.org> wrote:
-
-> From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+On Tue, May 13, 2025 at 04:24:51PM +0200, Daniel Lezcano wrote:
+> On Wed, May 07, 2025 at 01:44:53PM +0000, Caleb James DeLisle wrote:
+> > EcoNet MIPS SoCs are big endian machines based on 34Kc and 1004Kc
+> > processors. They are found in xDSL and xPON modems, and contain PCM
+> > (VoIP), Ethernet, USB, GPIO, I2C, SPI (Flash), UART, and PCIe.
+> > 
+> > The EcoNet MIPS SoCs are divided broadly into two families, the
+> > EN751221 family based on the 34Kc, and the EN751627 family based on
+> > the 1004Kc. Individual SoCs within a family are very similar, only
+> > with different peripherals.
+> > 
+> > This patchset adds basic "boots to a console" support for the EN751221
+> > family and adds SmartFiber XP8421-B, a low cost commercially available
+> > board that is useful for testing and development.
+> > 
+> > Note that Airoha (AN7523, AN7581) is similar to EcoNet in terms of
+> > peripherals, and for historical reasons Airoha chips are sometimes
+> > referred to with the EN75xx prefix. However this is a different
+> > platform because Airoha chips are ARM based.
+> > 
+> > This patchset is against mips-next.
+> > 
+> > v4 -> v5
+> > * 2/7 clocksource/drivers: Add EcoNet Timer HPT driver:
+> >   * Improve explanation of HPT timer in changelog
+> >   * Move pr_info to pr_debug per recommendation
+> >   * Remove pointless debug on spurious interrupt
+> >   * Small code-style change
 > 
-> Record trace_clock information in the trace_scratch area and recover
-> the trace_clock when boot, so that reader can docode the timestamp
-> correctly.
-> Note that since most trace_clocks records the timestamp in nano-
-> seconds, this is not a bug. But some trace_clock, like counter and
-> tsc will record the counter value. Only for those trace_clock user
-> needs this information.
-> 
-> Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> ---
->  Changes in v3:
->    - Save clock_id instead of its name.
->  Changes in v2:
->    - instead of exposing it via last_boot_info, set the current
->      trace_clock as the same clock we used in the last boot.
-> ---
->  kernel/trace/trace.c |   16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
-> 
-> diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-> index cf51c30b137f..2a060c62d686 100644
-> --- a/kernel/trace/trace.c
-> +++ b/kernel/trace/trace.c
-> @@ -6066,6 +6066,7 @@ struct trace_mod_entry {
->  };
->  
->  struct trace_scratch {
-> +	int			clock_id;
+> Shall I pick the clocksource + bindings changes through my tree ?
 
-Should be "unsigned int"
+please do, I'll take the remaining patches.
 
->  	unsigned long		text_addr;
->  	unsigned long		nr_entries;
->  	struct trace_mod_entry	entries[];
-> @@ -6181,6 +6182,7 @@ static void update_last_data(struct trace_array *tr)
->  	if (tr->scratch) {
->  		struct trace_scratch *tscratch = tr->scratch;
->  
-> +		tscratch->clock_id = tr->clock_id;
->  		memset(tscratch->entries, 0,
->  		       flex_array_size(tscratch, entries, tscratch->nr_entries));
->  		tscratch->nr_entries = 0;
-> @@ -7403,6 +7405,12 @@ int tracing_set_clock(struct trace_array *tr, const char *clockstr)
->  	tracing_reset_online_cpus(&tr->max_buffer);
->  #endif
->  
-> +	if (tr->scratch && !(tr->flags & TRACE_ARRAY_FL_LAST_BOOT)) {
-> +		struct trace_scratch *tscratch = tr->scratch;
-> +
-> +		tscratch->clock_id = i;
-> +	}
-> +
->  	mutex_unlock(&trace_types_lock);
->  
->  	return 0;
-> @@ -9628,6 +9636,14 @@ static void setup_trace_scratch(struct trace_array *tr,
->  
->  	/* Scan modules to make text delta for modules. */
->  	module_for_each_mod(make_mod_delta, tr);
-> +
-> +	/* Set trace_clock as the same of the previous boot. */
-> +	if (tscratch->clock_id != tr->clock_id) {
-> +		if (tracing_set_clock(tr, trace_clocks[tscratch->clock_id].name) < 0) {
+Thomas.
 
-In case the tscratch->clock_id gets corrupted, we better make sure it
-doesn't overflow:
-
-		if (tscratch->clock_id >= ARRAY_SIZE(trace_clocks) ||
-		    tracing_set_clock(tr, trace_clocks[tscratch->clock_id].name) < 0) {
-
--- Steve
-
-
-> +			pr_info("the previous trace_clock info is not valid.");
-> +			goto reset;
-> +		}
-> +	}
->  	return;
->   reset:
->  	/* Invalid trace modules */
-
+-- 
+Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
+good idea.                                                [ RFC1925, 2.3 ]
 
