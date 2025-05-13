@@ -1,180 +1,186 @@
-Return-Path: <linux-kernel+bounces-645209-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-645211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B513DAB4A4A
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 05:57:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF23AAB4A4F
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 06:00:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 169827ACB98
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 03:56:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F1918C1B3C
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 03:59:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 598BF1DF970;
-	Tue, 13 May 2025 03:57:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 341BD1DFD8B;
+	Tue, 13 May 2025 04:00:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="J3gWvTkj"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="lIzzXDsB"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B48ED1E376C
-	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 03:57:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B65971DFD96
+	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 04:00:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747108634; cv=none; b=Wu1ZYn7yCiEeJJicaBUKGtj/xpAZF3TjnwkFBeml+gO7KQEm0irAt2o9/cFMLGX5H8aRw6PwZ8fbWsLC1OitHU2Ap5CxYynQMRnoLR2pe6zOf5ybxMfUDrCUMOD1avq8nLbLr7fG337zCEw6kJqnmszbrXzg8MQ+5n1sRNMQ2Uo=
+	t=1747108805; cv=none; b=oQNzBBc3kNFqQc3Y+3/nC8OKiQHFmk7vDo6AAz2C+0kZAwizBS71uQLaMhpYj+Slf9h4GgDtli1/hgoUA2KXk/j1MktBo1A/K62QFs3LOnTn48FJeRb8gpzgl4CScAKbDj5c1cJE8TAG3mbW8Q0DfUP4XUOdYTW5O+oakzHzwaE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747108634; c=relaxed/simple;
-	bh=2aCYsID7h6PKzoWsDWjEbsYtZRpxTQpf8z0Sn6LvenY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=jxx9bs5Mmi4STyF3TBoquXZgjnM1fwyl8KADR/u9ZUNcM9Sxdv7rcdgO+LQM1P8gE3D4c9AVBAXfESdrQRi0BuFEQEqwYoX6jytW76rdeu4dPF1df7bhCQGv78W3OnvB12cyZvQ06rUc5BqaJBup90DLR1yl0h+EGSavA54G2Ag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=J3gWvTkj; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54D0Sxa2028432
-	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 03:57:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	5DlwmdNmedCKJPdbWIvXijFc/3cbsfXTmrrSp5SO3l0=; b=J3gWvTkjeC41C3g3
-	vXGl5y6f2QrIORcM4lazgkzTALowgwk+7+DZs1SjUk/ezjZcEt85ZXgDGbJdGTGl
-	rT/SDCXKEy+tpljW6ErsUvy0L0dSKayIDCHqtKgwnllvBq9L34LSKtsBY4OaTmmz
-	CUhT2GOyBNoeZtfO/B7yrt1Me/talScAM7WvyzQayw8S78bB3SWVC0/9Joe5lbC2
-	LrCa8B4pzlJyQAgBjxX4+tjlJC35WkAD2cbux72KYmrt2feTW655Q+OBrhYUjw1c
-	GSOgE1GBnLqiGNSZf+cY5HHTMnWzX/saNmD5fP1EBr6fM/aJbd/58fiTWNLfdzVQ
-	sV+0Cg==
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46hxvxeah8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 03:57:10 +0000 (GMT)
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-22e3b03cd64so44260055ad.3
-        for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 20:57:10 -0700 (PDT)
+	s=arc-20240116; t=1747108805; c=relaxed/simple;
+	bh=rzks3wkUnLf+6qfz2WP3nqrT3TFPFhieC+o6l4ZsTVQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WuG2ENVdllFHuWcwXq9BhroH9qrbvIwVZLlj1hj2+sQuylTx731U5x7Dfm7WghspAy84RobxVoLCoCpKHjc+EJD2AevpeMPrCxtKZWsgHrI0pWRqQwfXdgXOgBpsp9LCj1hNDdnvGq4WouFpIKTiwcY3Mkk3D9vw/9qvSGcewmg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=lIzzXDsB; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-22e16234307so54795255ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 21:00:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1747108803; x=1747713603; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/gdTvcfAWXkwUQEOSCNN9+8zrnQzItlUJAzqD2wmz+E=;
+        b=lIzzXDsBx+XqdpRMautAB61bob0Vt2yD4lA7bpxi8IhDk6Q2wO3vAbvc9rh85vJQKA
+         zDQ32ZU7TCiycDMulGZKO/2+XiWgnTYFRxAegFsEP+LaxM6bA7w86KdiBL3D/E89AwR1
+         bZg+VXdaKVerKqFAKUFvCS3Wduk3wvUnWpPbrQAnHPtvLAnvaXLBG4IJ7DXxwMJcA8+I
+         1tz6zbVUhyLN27N+q2SLe7oD2wNhaGCSzLTzQNI9kJOY06OdQNiGt1nNwQ5P6N8ll4n2
+         WxW1+568GmSnH8fAtzO3YVgzIGIflG4lCUSpSMKVtZkmb8sNKmL4/Us2Mk9yCNDg7sa7
+         Ml9Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747108629; x=1747713429;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5DlwmdNmedCKJPdbWIvXijFc/3cbsfXTmrrSp5SO3l0=;
-        b=TleuRJWHX7vsv0+XTInB8l8/m3TiPvLgsig3Zhc9yQE7CeW6Sukww7/A/xRiNDAq6q
-         qk8pykPGS0BWbisTaYvO2XeQ6dlWXeeA36R9JqxiFXd6b24U9cDm6LtzvjTkCyvqJp/B
-         oVlI+6DxkYfejuzoYNcZWBcUgqIz5Q2WZ1dbDgvCx41mz/vOnmZk0de+qxjSyyfUO0n/
-         rJBxHgKwV81pFp04bxKQwsdvx+DkgmzGSkbKUGSvd+16MoE8XLVbHs5rKYKR3WIqfdi4
-         0YQ/jVtMRXaN+Qz8AMw1Xk/YHaBogIBRX8uwfmlUN/a5GFPry92b6zQriMxgjgSUVwNV
-         QJUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU5n/H7q/axFy5F41/+7LS7Y7zMwG/14jCoUWea3OKyoLbl3nxAnOK+BiGjnK5yCzKjDSHkZB6FUfssfPA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyBJRtIYHQLUAqgQsx2fyEOkWqWETQtEWXFOQgFx9l6v+IAanDh
-	3ISKPaAGe/pcJSEFEonuFzEo7QxXMrXItjnzqT/YRGxzPB/58d0m8yFVhgG0caSp73rr/rf0DOn
-	NbmTGT+Mc0GvFWxQFg3AuwOitcyhK33PWdvy4NdMUfs27VshqGAM2PCGBOMGt5Ik=
-X-Gm-Gg: ASbGncs0dgaeVHCqOY4eNmUF/jYSa4VXx1LPCv5JhNl0axdfavuiFa88BJA5aP5+F0h
-	LTGaGihRgUQqfeu/Xs5lOmV9+QYqmHRLpV01+l/GZXsD6m8RVHVnFpMIMaJmE0PQh2K7+oyu+9O
-	M0pc1I6qk9QwuvsI6HIyEBR87kxDct/o+73+nHGXE36wabI0QCeyvOqxiS1LmnkUKXWboVFIVsj
-	cBsqHQX2rHOKLXWqYtKZux0JY0EemvlPb4IZo4Ezy264XpKCF9zzIVfDp3gjPBiUFp+9PmQBjtY
-	mbchLkUiUtt5RBQZrWBEs1qguAHYt8lh2aGIXi6/bkSMSH6wOx6o0fkijEX1f8Uv3OMYw9a3lOr
-	LAvirOnTv9SA5zb6z+PKvYms4mobUZqOqSmeS
-X-Received: by 2002:a17:903:2f8e:b0:22f:b69f:e7fc with SMTP id d9443c01a7336-22fc91aed27mr231332155ad.49.1747108629165;
-        Mon, 12 May 2025 20:57:09 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGYx9rPWYpCahLURbksqyMGB16+552UoK0wJFPuqnnX9kUYEP1Xof27IXrnXei37iJfIHAIuA==
-X-Received: by 2002:a17:903:2f8e:b0:22f:b69f:e7fc with SMTP id d9443c01a7336-22fc91aed27mr231331955ad.49.1747108628790;
-        Mon, 12 May 2025 20:57:08 -0700 (PDT)
-Received: from hu-adisi-blr.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com. [103.229.18.19])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22fc8271d98sm70236515ad.154.2025.05.12.20.57.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 May 2025 20:57:08 -0700 (PDT)
-From: Aditya Kumar Singh <aditya.kumar.singh@oss.qualcomm.com>
-Date: Tue, 13 May 2025 09:26:52 +0530
-Subject: [PATCH wireless-next 2/2] wifi: mac80211: accept probe response on
- link address as well
+        d=1e100.net; s=20230601; t=1747108803; x=1747713603;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/gdTvcfAWXkwUQEOSCNN9+8zrnQzItlUJAzqD2wmz+E=;
+        b=fUqSAh3tldmw8u3F5WA7w8Tn+JcEeRdMpYTL9k3gZ2mTqbbBZ/viWgW6BkkCP13eSt
+         ZcjjcMlk1hIMXbBtRoDBdUATT+GDmS9WmJ8xw1MNRcChg677YfXhHrW6pOfBxGxGNpSx
+         IQPu7TO7C5Jg/E7p2fxmgO8RFdTS/s3n6uFDVe73n/g0Xu4DO4OfpqivJYWPQVrqiZDf
+         azGgchCWami2QLGjpKb0EMdHz6VIsp9av7Zh+XB9ZZTlNNyh8gcn01afXCfLly/g1+My
+         ui6+rU/qh1qMy8l/a43kegCapGBJ385ZACIQu8xsy0iNiXPlJ0Z7vT1VBqbtXuHVjXSw
+         STHA==
+X-Forwarded-Encrypted: i=1; AJvYcCWGCizbLqKlvT1f9D+0O56+0PHguIph9eEpZaDnirrkSBmle+iLwgc5EOjzYadf8r95R5X8f/MPHKDlKN0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzIB1ObmbwfaxT5WFraL0XNjK3yqXc3AgqgSu+sGQcgiSmE3ZOb
+	PJ/A6Za4Khio2CLuGcjiy4RhmHMK05cNWP7Ubi5IxKYVtS3f8SoKHFgDZDQ6KfI=
+X-Gm-Gg: ASbGncvXYiDlSKfM6xuQMIbitcRhpBfvZk2f4NIxRa2zTCrbEqnJD6FGZ6llTgq/Rku
+	1bAyAxD5SEPsniBz48Y9rdy40/XM6mKAxQVs7uIhzWllQjrttn0HJV2/Iic6JNHBTaYDJdBNn/+
+	FyoWW5hDFB8LB/j7F/N9jbZCKq5pSK+M/eQ4oJNr9kVhoFdMiKpUrPG3aL73OkKkLVOsh5PEw/6
+	eCamuo28bq0pFOUQWMXlyrl/9TtM2VTaUH0YxpbE5PRvjSQJUIoq5YyX8LVZOTyFJJq/vXYaMhv
+	cZasShmtKBtO49BJkbRdu5POFwo+muZbn+Q=
+X-Google-Smtp-Source: AGHT+IFqyunXW2Qn+DGBfVnG0/oobrE4llwuiyed02E6Cy0NHv/lsNmYSzpnwlSbbP0qxQ7qQXjisA==
+X-Received: by 2002:a17:903:32d1:b0:223:807f:7f92 with SMTP id d9443c01a7336-2317cb4f087mr24910615ad.20.1747108800729;
+        Mon, 12 May 2025 21:00:00 -0700 (PDT)
+Received: from localhost.localdomain ([203.208.189.9])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22fc829eb27sm70292695ad.208.2025.05.12.20.59.58
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Mon, 12 May 2025 21:00:00 -0700 (PDT)
+From: lizhe.67@bytedance.com
+To: alex.williamson@redhat.com
+Cc: lizhe.67@bytedance.com,
+	kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	muchun.song@linux.dev
+Subject: [PATCH] vfio/type1: optimize vfio_pin_pages_remote() for hugetlbfs folio
+Date: Tue, 13 May 2025 11:57:30 +0800
+Message-ID: <20250513035730.96387-1-lizhe.67@bytedance.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250513-bug_fix_mlo_scan-v1-2-94235bb42fbe@oss.qualcomm.com>
-References: <20250513-bug_fix_mlo_scan-v1-0-94235bb42fbe@oss.qualcomm.com>
-In-Reply-To: <20250513-bug_fix_mlo_scan-v1-0-94235bb42fbe@oss.qualcomm.com>
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Aditya Kumar Singh <aditya.kumar.singh@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTEzMDAzNCBTYWx0ZWRfX+aOwew3FNxED
- k5WCNSyK7BdF8EfU7WmTdsLYiITFAVeh4K9rBCsfsa3Q71Dy1adhc0hcC/ahTW/jHb1PJKYdDEB
- unuj9cxKw/CQtYrS3UJ2J/CQWDV1/xbXVXVN9wj9aYKSvYKQqNCIM1OUfCoCW/lrgtd1WrV9vOJ
- QQNvaUHVKsR2WHEf8Otvwbt5IxpvnbqursN68ZI6TtwtljDcKRmgbf2cl5s/6a68hoWL1MrH6Ed
- DxSKjvBeJCICglP4T3cdaCPN6aBQVSixSmlDVleC5qKYzZLZy8JuF79le/g+ewT/aTrqtUR38J+
- 8AymkJdZcjkPuPSXelL9XITC//OMq6b/5AYBeTgbpZSudwPN+FBEx+wmzMQWQmooyTtESlMYcn8
- V+8VXg7GzEaMPI+bL8glCDIDn3R+TcizkPy2BhwvbbGulsFrsiQuSjySS/dQM/OSaIGfyJeG
-X-Proofpoint-GUID: c1vomaov3Co9fB1FYt1RkJYtTN3Bf57k
-X-Authority-Analysis: v=2.4 cv=WMV/XmsR c=1 sm=1 tr=0 ts=6822c316 cx=c_pps
- a=IZJwPbhc+fLeJZngyXXI0A==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
- a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=EUspDBNiAAAA:8 a=kffUEhMhicqf5g7Do04A:9
- a=QEXdDO2ut3YA:10 a=uG9DUKGECoFWVXl0Dc02:22
-X-Proofpoint-ORIG-GUID: c1vomaov3Co9fB1FYt1RkJYtTN3Bf57k
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-12_07,2025-05-09_01,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 adultscore=0 lowpriorityscore=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 impostorscore=0 bulkscore=0
- spamscore=0 mlxscore=0 mlxlogscore=999 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2504070000 definitions=main-2505130034
+Content-Transfer-Encoding: 8bit
 
-If a random MAC address is not requested during scan request, unicast probe
-response frames are only accepted if the destination address matches the
-interface address. This works fine for non-ML interfaces. However, with
-MLO, the same interface can have multiple links, and a scan on a link would
-be requested with the link address. In such cases, the probe response frame
-gets dropped which is incorrect.
+From: Li Zhe <lizhe.67@bytedance.com>
 
-Therefore, add logic to check if any of the link addresses match the
-destination address if the interface address does not match.
+When vfio_pin_pages_remote() is called with a range of addresses that
+includes hugetlbfs folios, the function currently performs individual
+statistics counting operations for each page. This can lead to significant
+performance overheads, especially when dealing with large ranges of pages.
 
-Signed-off-by: Aditya Kumar Singh <aditya.kumar.singh@oss.qualcomm.com>
+This patch optimize this process by batching the statistics counting
+operations.
+
+The performance test results for completing the 8G VFIO IOMMU DMA mapping,
+obtained through trace-cmd, are as follows. In this case, the 8G virtual
+address space has been mapped to physical memory using hugetlbfs with
+pagesize=2M.
+
+Before this patch:
+funcgraph_entry:      # 33813.703 us |  vfio_pin_map_dma();
+
+After this patch:
+funcgraph_entry:      # 15635.055 us |  vfio_pin_map_dma();
+
+Signed-off-by: Li Zhe <lizhe.67@bytedance.com>
 ---
- net/mac80211/scan.c | 18 +++++++++++++++++-
- 1 file changed, 17 insertions(+), 1 deletion(-)
+ drivers/vfio/vfio_iommu_type1.c | 49 +++++++++++++++++++++++++++++++++
+ 1 file changed, 49 insertions(+)
 
-diff --git a/net/mac80211/scan.c b/net/mac80211/scan.c
-index cb707907188585d6874bf290874bdb0ca33bb399..7b8da40a912d020f229a74c67bd5a57fb513a72d 100644
---- a/net/mac80211/scan.c
-+++ b/net/mac80211/scan.c
-@@ -240,6 +240,9 @@ static bool ieee80211_scan_accept_presp(struct ieee80211_sub_if_data *sdata,
- 					struct ieee80211_channel *channel,
- 					u32 scan_flags, const u8 *da)
- {
-+	struct ieee80211_link_data *link_sdata;
-+	u8 link_id;
-+
- 	if (!sdata)
- 		return false;
- 
-@@ -251,7 +254,20 @@ static bool ieee80211_scan_accept_presp(struct ieee80211_sub_if_data *sdata,
- 
- 	if (scan_flags & NL80211_SCAN_FLAG_RANDOM_ADDR)
- 		return true;
--	return ether_addr_equal(da, sdata->vif.addr);
-+
-+	if (ether_addr_equal(da, sdata->vif.addr))
-+		return true;
-+
-+	for (link_id = 0; link_id < IEEE80211_MLD_MAX_NUM_LINKS; link_id++) {
-+		link_sdata = rcu_dereference(sdata->link[link_id]);
-+		if (!link_sdata)
-+			continue;
-+
-+		if (ether_addr_equal(da, link_sdata->conf->addr))
-+			return true;
-+	}
-+
-+	return false;
+diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
+index 0ac56072af9f..bafa7f8c4cc6 100644
+--- a/drivers/vfio/vfio_iommu_type1.c
++++ b/drivers/vfio/vfio_iommu_type1.c
+@@ -337,6 +337,30 @@ static struct vfio_pfn *vfio_find_vpfn(struct vfio_dma *dma, dma_addr_t iova)
+ 	return NULL;
  }
  
- void ieee80211_scan_rx(struct ieee80211_local *local, struct sk_buff *skb)
-
++/*
++ * Find a random vfio_pfn that belongs to the range
++ * [iova, iova + PAGE_SIZE * npage)
++ */
++static struct vfio_pfn *vfio_find_vpfn_range(struct vfio_dma *dma,
++		dma_addr_t iova, unsigned long npage)
++{
++	struct vfio_pfn *vpfn;
++	struct rb_node *node = dma->pfn_list.rb_node;
++	dma_addr_t end_iova = iova + PAGE_SIZE * npage;
++
++	while (node) {
++		vpfn = rb_entry(node, struct vfio_pfn, node);
++
++		if (end_iova <= vpfn->iova)
++			node = node->rb_left;
++		else if (iova > vpfn->iova)
++			node = node->rb_right;
++		else
++			return vpfn;
++	}
++	return NULL;
++}
++
+ static void vfio_link_pfn(struct vfio_dma *dma,
+ 			  struct vfio_pfn *new)
+ {
+@@ -670,6 +694,31 @@ static long vfio_pin_pages_remote(struct vfio_dma *dma, unsigned long vaddr,
+ 				iova += (PAGE_SIZE * ret);
+ 				continue;
+ 			}
++
++		}
++		/* Handle hugetlbfs page */
++		if (likely(!disable_hugepages) &&
++				folio_test_hugetlb(page_folio(batch->pages[batch->offset]))) {
++			if (pfn != *pfn_base + pinned)
++				goto out;
++
++			if (!rsvd && !vfio_find_vpfn_range(dma, iova, batch->size)) {
++				if (!dma->lock_cap &&
++				    mm->locked_vm + lock_acct + batch->size > limit) {
++					pr_warn("%s: RLIMIT_MEMLOCK (%ld) exceeded\n",
++						__func__, limit << PAGE_SHIFT);
++					ret = -ENOMEM;
++					goto unpin_out;
++				}
++				pinned += batch->size;
++				npage -= batch->size;
++				vaddr += PAGE_SIZE * batch->size;
++				iova += PAGE_SIZE * batch->size;
++				lock_acct += batch->size;
++				batch->offset += batch->size;
++				batch->size = 0;
++				continue;
++			}
+ 		}
+ 
+ 		/*
 -- 
-2.34.1
+2.20.1
 
 
