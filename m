@@ -1,39 +1,79 @@
-Return-Path: <linux-kernel+bounces-646272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-646274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CF8CAB5A71
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 18:45:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2DE9AB5A6E
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 18:45:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 970291891F58
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 16:43:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9902F162FD0
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 16:44:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEB542BE106;
-	Tue, 13 May 2025 16:42:54 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D7301DF982
-	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 16:42:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F36E2BEC3B;
+	Tue, 13 May 2025 16:44:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XIQaGR8U"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3EAC1C9B9B;
+	Tue, 13 May 2025 16:44:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747154574; cv=none; b=gq84cpY21l1IQhgBKm0IOIMjP6+sp0MUJg/iwabM//E5O/V5IGk3swmzrKlD6MWwZZAyP+Mp74T6ubv+4o4UMV5kKhoFtGb3dUHKlQSpvH3WDyVUs3o+estmCH9T4Y1CB8EBi85onu66fAskrZt/wgbPY46NpyPFQGbL9RTuUx8=
+	t=1747154644; cv=none; b=l1/yfySzWZnwzrB9DVmHZgE45jW8Zvn/qkdQ+GiwF2IKmgN0UgHu4tONpqH8YWLMsGKlLgTZoKNqInRRumI0K9mty2ShwcQjH4JBwju48pNWur/mtorc8542SjPKtXnrN4hFWatth+eXuSeJIJgrKDeGBUe68LXDhu2c7KKI5xM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747154574; c=relaxed/simple;
-	bh=ow4LxM+JNdxbsH3nI5NTgOpMe7c7FIASGfgSs2Gn0V0=;
+	s=arc-20240116; t=1747154644; c=relaxed/simple;
+	bh=XL8qu73G3NGvUHj6ADq7BcnT6u+oxB7gWtMQeQF5ayQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WL4PM8Q7iDmSv4GcCmco+BxqyKbgtmTlGcKiUGWgsViP0jf7uygJ1AJg2ajk7D/+idaNXC45Jh3WzDeqJCSckCqq+NxTuOBUoTO0iBOuDpFo6H8zzsFeLFEopLs5XQQJ3JJFI2Y/Rc6x4ScWmi0SJJs9+ebiYwtLdCQR/xwMKHw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C70901688;
-	Tue, 13 May 2025 09:42:39 -0700 (PDT)
-Received: from [10.1.197.43] (eglon.cambridge.arm.com [10.1.197.43])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6744C3F673;
-	Tue, 13 May 2025 09:42:47 -0700 (PDT)
-Message-ID: <25dcc566-08db-466a-853c-4c5f3ddad531@arm.com>
-Date: Tue, 13 May 2025 17:42:45 +0100
+	 In-Reply-To:Content-Type; b=obL1z9FvsEdvA6KgGAF2YE15NXir90Sb3jvtYk1TWqDqYjfaMANIaDx1b5Na7pTgcKhlWpYVZhFgEDCl54Jgjf2IdCU6vh4uCxi6YO33vdKrGgMHGiyCq6pBN/10XppeSm3QKVVoVSREb5JfnOELMQhVM1PxBfJqTy4/GV6vLCk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XIQaGR8U; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43cf89f81c5so5141355e9.2;
+        Tue, 13 May 2025 09:44:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747154641; x=1747759441; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=A/kRqYaGohmL+rCJZtloL3u0VjOq+d/hFBIY4Q6MI5o=;
+        b=XIQaGR8URWtpBDw2e4X667RKfLfpoFjO6lT+4LH1F+7HuUNSHuTbYP7uq7HPqktj3o
+         m8/iTVpnJgDwpUfgWUT0m5r7485qnfVakif6XA3Yru43GUMLiMj4x6AgcEq+yRXqBHxi
+         /TCiRJmwx7jle4UDM8h3W+R5KoHKtXd+v3Q75yHmPul2nvFb9oj07ZGjAazkEokOVEcn
+         qD0+7cDr8l0x52jnPsN4nuOUMzVFUA8wuqWyAaiFIgeTQ9heoA+Ry5V5Idz2VWKqp/Jb
+         tiWhTTs9bplM51iP1wK+iVUf3G+kNwaZL50sRHXsC9kZb1e3MECshVm1NxhhDONRlfWt
+         /Uqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747154641; x=1747759441;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=A/kRqYaGohmL+rCJZtloL3u0VjOq+d/hFBIY4Q6MI5o=;
+        b=JtHPLIFQbPw2hnCix6kCMixPyHSZSvOyY3HOtWmNHVVqb40UBZLYOTyhj31zA3yLyx
+         NebzrAlOo+l0e4htEZ3fhj+eZXPePC8PVfm+SsXI0/zfkcX+LQ/q/EMr0NdQD9bXxejL
+         fvqaUsPok/y7XLintd+hBvflZqHoZWGMwaAxPB/HoSr8D/EvvmvT+QTekipTXZv28XxW
+         Q/AsbspLtgF1h/QMdO1HMWurEuQk1duhXq1zK9Jln4rFPsM48NYw+qS0NW4VPBmCON6a
+         8yfKbbJqmy2cFHIo1gkceXHbs4VHl2urB02QmMk+w/zcmpHJ2FYI1l5j09jIQpBpxFXF
+         JwDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWYNPMT2MjdEjGuWJy1lJpriIJ7E1vVGb8tWC3ycrXKsabUV1fU0U2RD2yGh0BM99ktvttEbRwU+9qW@vger.kernel.org, AJvYcCXEX9iQcgZN9Rymjm9xJ/7XnvacG4gTU40JxWkUILM+Oz3WxEXpqhpwjXK5/W5bvvFLIly98GiC@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywz2DqAoIFkP/+IWMg7kwlftEGLsmFsWUoU8fzT7f8kTEnl+W3j
+	tvK4wAWJb0+cbxMLYmidGIFyoDITOQrK26XsJo/rVOh/7+RKxUvQ
+X-Gm-Gg: ASbGnctn6bml7l503qTi/oHVW37PqzoSr8seAjFzWjUIdt/5yP8v3fwv24HmEt+z6+R
+	RxuiMGbW1iJpMPSk4/IdY67yJrUOJUqlXK9xQv6ulNT0VZnLvCVaPni+vl5PL4tpsjMGJcqSxBi
+	CB0fylXoP9j2olNgKxYZPZzompugGrgW4NRJCKJdplt0ZBDC+wAmlX/2ogEefJwW3u9rNM1McUN
+	782e4sqlCbKmf5ykmpT01W6m8ynTUsRIpu0nSKpMlqM/6aLrq+xKXM035kRp9HXItdbpndu1mwm
+	g91PQQMkpwm6hJhgj0wC7T/byy4swi/OZ3yG87wSAIIVb6UxqjZVG56Gl7FrFmpBJnjDwygMeey
+	PSVmhMqYno3q5nfUwqaI=
+X-Google-Smtp-Source: AGHT+IFMWq4dGQNjFikqi9SiU5l4zVjghlCpgyAzg2C2XLU1zbw34nP91iiVFBwACRU/PcSac4Jp8w==
+X-Received: by 2002:a05:600c:358f:b0:439:9a5a:d3bb with SMTP id 5b1f17b1804b1-442f20bae5amr175275e9.2.1747154640856;
+        Tue, 13 May 2025 09:44:00 -0700 (PDT)
+Received: from [192.168.0.18] (cable-94-189-140-39.dynamic.sbb.rs. [94.189.140.39])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-442d67d5c7bsm176462675e9.4.2025.05.13.09.43.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 13 May 2025 09:43:59 -0700 (PDT)
+Message-ID: <53a86990-0aa5-4816-a252-43287f3451b8@gmail.com>
+Date: Tue, 13 May 2025 18:43:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,105 +81,64 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 07/30] x86/resctrl: Check all domains are offline in
- resctrl_exit()
-To: Reinette Chatre <reinette.chatre@intel.com>,
- Catalin Marinas <catalin.marinas@arm.com>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, H Peter Anvin <hpa@zytor.com>,
- Babu Moger <Babu.Moger@amd.com>, shameerali.kolothum.thodi@huawei.com,
- D Scott Phillips OS <scott@os.amperecomputing.com>,
- carl@os.amperecomputing.com, lcherian@marvell.com,
- bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
- baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
- Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
- dfustini@baylibre.com, amitsinght@marvell.com,
- David Hildenbrand <david@redhat.com>, Rex Nie <rex.nie@jaguarmicro.com>,
- Dave Martin <dave.martin@arm.com>, Koba Ko <kobak@nvidia.com>,
- Shanker Donthineni <sdonthineni@nvidia.com>, fenghuay@nvidia.com,
- Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
-References: <20250508171858.9197-1-james.morse@arm.com>
- <20250508171858.9197-8-james.morse@arm.com>
- <dafc0ab3-aaf7-4055-bf56-ffd5414f8895@intel.com> <aB3lS8K7I0wEkGw_@arm.com>
- <524a79fa-5066-44fb-b9ad-7182dd28fb39@intel.com>
- <abdd65a7-1f8e-4c3f-8e08-94787a054430@intel.com>
-Content-Language: en-GB
-From: James Morse <james.morse@arm.com>
-In-Reply-To: <abdd65a7-1f8e-4c3f-8e08-94787a054430@intel.com>
+Subject: Re: [PATCH v8 0/1] kasan: Avoid sleepable page allocation from atomic
+ context
+To: Alexander Gordeev <agordeev@linux.ibm.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Daniel Axtens <dja@axtens.net>,
+ Harry Yoo <harry.yoo@oracle.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ kasan-dev@googlegroups.com, linux-s390@vger.kernel.org,
+ stable@vger.kernel.org
+References: <cover.1747149155.git.agordeev@linux.ibm.com>
+Content-Language: en-US
+From: Andrey Ryabinin <ryabinin.a.a@gmail.com>
+In-Reply-To: <cover.1747149155.git.agordeev@linux.ibm.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Hi Reinette,
-
-On 09/05/2025 17:28, Reinette Chatre wrote:
-> On 5/9/25 9:17 AM, Reinette Chatre wrote:
->> On 5/9/25 4:21 AM, Catalin Marinas wrote:
->>> On Thu, May 08, 2025 at 10:51:23AM -0700, Reinette Chatre wrote:
->>>> On 5/8/25 10:18 AM, James Morse wrote:
->>>>> diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
->>>>> index 88197afbbb8a..f617ac97758b 100644
->>>>> --- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
->>>>> +++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
->>>>> @@ -4420,8 +4420,32 @@ int __init resctrl_init(void)
->>>>>  	return ret;
->>>>>  }
->>>>>  
->>>>> +static bool __exit resctrl_online_domains_exist(void)
->>>>> +{
->>>>> +	struct rdt_resource *r;
->>>>> +
->>>>> +	for_each_rdt_resource(r) {
->>>>> +		if (!list_empty(&r->ctrl_domains) || !list_empty(&r->mon_domains))
->>>>> +			return true;
->>>>> +	}
->>>>> +
->>>>> +	return false;
->>>>> +}
->>>>
->>>> This looks the same as before. Did you notice my comment in [1] about this list_empty() usage?
->>>
->>> James may have missed that comment (and he's off today). Copying your
->>> comment here:
->>>
->>>> A list needs to be initialized for list_empty() to behave as intended. A list within
->>>> an uninitialized or "kzalloc()'ed" struct will not be considered empty.
->>>> resctrl_arch_get_resource() as used by for_each_rdt_resource() already establishes
->>>> that if an architecture does not support a particular resource then it can (should?)
->>>> return a "dummy/not-capable" resource. I do not think resctrl should require
->>>> anything additionally like initializing the lists of a dummy/not-capable resource
->>>> to support things like this loop.
->>>
->>> I agree the description of the resctrl_arch_get_resource() semantics
->>> doesn't specifically mention that the list_heads should be initialised
->>> in dummy resources. IIUC, x86 should be safe for now since the
->>> rdt_resources_all[] array elements have the ctrl_domains and mon_domains
->>> list_heads initialised.
-
-I had missed this. The logic makes sense - I'll spin this as a v11.
 
 
->> Not all x86 resources support both control and monitoring. For these resources x86
->> only initializes the arrays it uses. For example, the L2 resource only supports control
->> and thus only the ctrl_domains list is initialized. When the above loop runs on a resource
->> like this it will return "true" because it believes there are monitoring domains
->> online.
->>
->> Your conclusion that x86 is safe for now may (reason for use of "may" follows) still
->> be valid since resctrl_online_domains_exist() is only called by x86 from its
->> resctrl_arch_exit() that is within the "exit.text" section. Here is where I am not
->> entirely certain of the impact (hence the earlier use of "may") since from what I can
->> tell the linker does not actually discard "exit.text" on x86 because it defines
->> RUNTIME_DISCARD_EXIT.
-
-Aha - I'd not spotted that one before.
+On 5/13/25 5:21 PM, Alexander Gordeev wrote:
+> Hi All,
+> 
+> Chages since v7:
+> - drop "unnecessary free pages" optimization
+> - fix error path page leak
+> 
+> Chages since v6:
+> - do not unnecessary free pages across iterations
+> 
 
 
-> If you are not familiar with the details then I should add for completeness that resctrl
-> is not currently capable of being compiled as a module.
+Have you looked at boot failure report from kernel test robot ?
+https://lkml.kernel.org/r/202505121313.806a632c-lkp@intel.com
+
+I think the report is for v6 version, but I don't see evidence that it was
+addressed, so the v8 is probably affected as well?
 
 
-Thanks,
+> Chages since v5:
+> - full error message included into commit description
+> 
+> Chages since v4:
+> - unused pages leak is avoided
+> 
+> Chages since v3:
+> - pfn_to_virt() changed to page_to_virt() due to compile error
+> 
+> Chages since v2:
+> - page allocation moved out of the atomic context
+> 
+> Chages since v1:
+> - Fixes: and -stable tags added to the patch description
+> 
+> Thanks!
+> 
+> Alexander Gordeev (1):
+>   kasan: Avoid sleepable page allocation from atomic context
+> 
+>  mm/kasan/shadow.c | 77 ++++++++++++++++++++++++++++++++++++++---------
+>  1 file changed, 63 insertions(+), 14 deletions(-)
+> 
 
-James
 
