@@ -1,86 +1,103 @@
-Return-Path: <linux-kernel+bounces-646263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-646265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49527AB5A58
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 18:42:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3593DAB5A64
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 18:43:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 509338664E5
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 16:40:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7D4F188B848
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 16:41:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4962A2BE7D6;
-	Tue, 13 May 2025 16:38:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 434CC2BFC64;
+	Tue, 13 May 2025 16:39:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pGxiI6Qk"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E476424EF7B
-	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 16:38:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97A822BF3EA;
+	Tue, 13 May 2025 16:39:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747154310; cv=none; b=udR5R6vuAcN5X1OCP2WxXUMIm/uWDaqEQ5Z9iuaSHx0lA8WwiIhUyrk3A7gl2GR2qyOA3zF6bhZFFfuqeQLrkuZCXUss773V8k0b6nnHO1Fjej6sGYpXk2qyKARCrcVKrMM+l2pqc3cR7W7Ca9javM8Yx3gUj9k+l0BehWjogDo=
+	t=1747154355; cv=none; b=dSz1nGrs+rc9mJpgQH2DfVlgJO5/crXZy1IYKqQu2Pg3O05T/9iO+ClZnuZP+NactQ6+CnGS2zXpyXAJW+GL1+1ZDQ8e/hHioA+XRa2knuTTShsIIMOiT/6PNScotc8qr12BHbcFH6h9VZLXvXFhM2EzhdL9x9NyeOW8YTEykYo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747154310; c=relaxed/simple;
-	bh=M4mG347dfmKDyfjHR0cxgNcIQhUgz0u5DDsbeFAqdi4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Z05ugaPWkvt00U+ZiPyL51FxyWqIU3yt6W8WR2At2fOyrDbqYpllyHt2GXHbCMQXm/CUShTFZj+woSVX71Uhb7XtkOTb19wkS7RWfTVCh8GYheiFlShSkcp02hdRcqhvoJjvD6yGKaIDDit/DVJuFewqAEOpty1eE+xU89YTqe0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7845C4CEE4;
-	Tue, 13 May 2025 16:38:29 +0000 (UTC)
-Date: Tue, 13 May 2025 12:38:54 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: "contact@linuxplumbersconf.org" <contact@linuxplumbersconf.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-Subject: Linux Plumbers 2025 Call for Microconferences
-Message-ID: <20250513123854.653b9684@gandalf.local.home>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1747154355; c=relaxed/simple;
+	bh=dxlqenimSNUo0laSheTrdDLOzROGW5tThbT22cuOvvc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=t7ae1YI99a0nLp3TuK2t4RtPab3Z8Wqa/J769YTSkTT0SNBrDMTPQiCNrSvwUpG28bRNcysyw+etdYaKaSLE/NDj0R2tTOM/H/7FQnBSav6+Dql5mDEH64Y0jSAw7AtzHQjxhQ/V1BNwtTefDKxDeiZ5JV/WYUDUltXeAqblLBo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pGxiI6Qk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11CE8C4CEE4;
+	Tue, 13 May 2025 16:39:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747154354;
+	bh=dxlqenimSNUo0laSheTrdDLOzROGW5tThbT22cuOvvc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pGxiI6QkrQBW4nzxb6vLUpKdfqDscqoY1mk1yXfBl6+pUfp+wInZISRSJdpu6MjtQ
+	 XF6JGgxBAeH2juhUQ5mUFhnkUkkM0sZO+2e5mKWsNdv6aPG5a0ZQlOJ9Ws8Cye/kbN
+	 t2p0jDWBkFNHex8ruFcg1r2E92DrsG9k8LGEjACuAhVGKiFqKTZsLg3zEbPCZjSZQr
+	 YrHLVuN1N0mLD3GniBocix3cXT+SssC54xP9RsAFT4Ns300SK8OmfE86y8rfAqcU9n
+	 ye70EaO6TDcrI+wYMYkdkJEja9neev6rZ6bxDJT9AW1x8vcHVNWA9mOyVALb3ROm0T
+	 9FlxDQ/Yd3VkA==
+Date: Tue, 13 May 2025 18:39:10 +0200
+From: Benjamin Tissoires <bentiss@kernel.org>
+To: Jiri Kosina <jikos@kernel.org>
+Cc: Werner Sembach <wse@tuxedocomputers.com>, linux-input@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] Disable touchpad on firmware level while not in use
+Message-ID: <4tjbyzn22sctrv7sdn7aetl7vse4epvqqctqgtx73kkh46njbv@lisa3ejipu62>
+References: <20250211133950.422232-1-wse@tuxedocomputers.com>
+ <20250211133950.422232-2-wse@tuxedocomputers.com>
+ <df09a3f9-6131-435a-ad68-4cea71237e42@tuxedocomputers.com>
+ <9q411092-1170-qr2r-27or-96594p19qrqo@xreary.bet>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9q411092-1170-qr2r-27or-96594p19qrqo@xreary.bet>
 
-It's that time of year again, where the summer birds start arriving
-back up north and the streets are filled with construction cones. But
-the biggest sign of Spring is that feeling to submit a Microconference
-proposal for Linux Plumbers!
+On Apr 24 2025, Jiri Kosina wrote:
+> On Tue, 4 Mar 2025, Werner Sembach wrote:
+> 
+> > > Using the new on_hid_hw_open and on_hid_hw_close functions to disable the
+> > > touchpad on firmware level while not being in use.
+> > >
+> > > This safes some battery and triggers touchpad-disabled-leds hardwired to
+> > > the touchpads firmware, that exist for example on some TongFang barebones.
+> > >
+> > > For a lengthy discussion with all the details see
+> > > https://gitlab.freedesktop.org/libinput/libinput/-/issues/558
+> > 
+> > Any comments if this is a good idea or not?
+> 
+> Sorry for the delay.
+> 
+> To me this looks like generally a good idea; Benjamin, any comments on the 
+> hid-mt part?
 
-A Microconference at Linux Plumbers is 3 and a half hours of technical
-discussions. It is not for presentations unless the presentation is needed
-to help the audience understand the context of what the discussion will be
-about. Any presentations should be short and to the point to allow more
-time for the discussions. The Microconference is broken up into a series of
-topics that last between 15 minutes to a half hour. The goal of these
-topics is to brain storm solutions for the issues to be discussed. It is
-not necessary to solve the issues during this short period, but to be used
-to get everyone on the same page to facilitate collaboration by the normal
-means (like mailing lists).
+Looks good to me, though my CI is now taking way more time because it's
+not expecting to receive data from the device once the initial setup is
+done.
 
-In past years, Microconferences were organized around topics such as
-security, scalability, energy efficiency, toolchains, containers,
-printing, system boot, Android, scheduling, filesystems, tracing, or
-real-time. The LPC Microconference track is open to a wide variety of
-topics as long as it is focused, concerned with interesting problems, and
-is related to open source and the wider Linux ecosystem. Check out the list
-of Microconferences[1] that was presented last year.
+> 
+> BTW you'd need to adjust the Subject line of the patches to conform to the 
+> subsystem style (i.e. HID: core: ....)
 
-The Microconference submission should outline the overall topic and list
-of key people who need to attend and problems which may be discussed.
+Amended locally and pushed (see the notification email).
 
-Microconferences that have been at previous LPCs should list results
-and accomplishments from those previous sessions in the submission as well
-as cover follow-up work and new topics.
+Cheers,
+Benjamin
 
-Microconference submission can by submitted starting May 10, 2025 here[2].
-
-[1] https://lpc.events/event/18/page/227-microconferences
-[2] https://lpc.events/event/19/abstracts/
-
-Looking forward to what is submitted!
-
-Steven Rostedt
-Linux Plumbers 2025 Microconference Chair
+> 
+> Thanks,
+> 
+> -- 
+> Jiri Kosina
+> SUSE Labs
+> 
 
