@@ -1,330 +1,166 @@
-Return-Path: <linux-kernel+bounces-645862-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-645892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 491AFAB54AD
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 14:26:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A6A1AB551E
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 14:44:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 96C48466625
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 12:26:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C9BA19E7283
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 12:44:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7924628DB72;
-	Tue, 13 May 2025 12:26:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mp3Yx//u"
-Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74F1928E59B;
+	Tue, 13 May 2025 12:43:37 +0000 (UTC)
+Received: from mta22.hihonor.com (mta22.honor.com [81.70.192.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C53ED28C5A5;
-	Tue, 13 May 2025 12:26:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E017F347C7;
+	Tue, 13 May 2025 12:43:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.192.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747139164; cv=none; b=fexyKxC6qwID/KR0LZjwC6cqyxI1c4Rd02tKVkiJsgWu6Ywdfgz/ctFjnaEJEvVC+NPM2BlYXHLfoeH4j8yIKiaTfimlaJp6kNhOQYMkRNkyqo9IwiSQlBJ/tot3LY0vXYwnVuz4afMWxGHg03qcIe5QyVd85qkdCUxJckLk9tQ=
+	t=1747140217; cv=none; b=QlGzpq71VhVCS5BhSyslIiYuSLkN4kqDuAq7n2N/xT5GMeGcUZ7itm84eS0dMfp5UQTcTolRJ7rV3sB2sutvQascfZvgA4KzzTkwYFPlEkAjRX2azo4Zqka0AwQW/DzyuhbuNP1l3SPl0StPbzROQeE84Uj9Z5XfadWvXAnkd4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747139164; c=relaxed/simple;
-	bh=tW480eH49xcBfzCNo26Sq6iZqDQU86rDdnAkFHAXhKQ=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=Jc+v56bqWYGEhmyE+t/8twS7OKLKwfqCLXynKieTztUpjw2E5UDC03UhkyPoM7WFxTn3QKbU2LSP2c73iQ4S2RMFZGtPWPzGK/Q8M94CEMb3DBmM6aHA2GCPHt6SfYpmiz2nO5D6dcpUv0CBlTEArKGlS3htECWksPTmBCdRRVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mp3Yx//u; arc=none smtp.client-ip=209.85.219.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-e78e3200bb2so5147305276.3;
-        Tue, 13 May 2025 05:26:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747139162; x=1747743962; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Y/nxMbje4NAmV1+2vn75NwptcTJZZoHKa3/FOzJ2AC8=;
-        b=mp3Yx//uDERUyNGy+/sxndJJEmwzwebI+0PZqOXuQaATPDYGkc03u0472eEvy7nGpg
-         oQXWG4mWSSkkGCmU4X6szxyN8XOq7w+ib9Infnzs5zDqKwRWay44P89K13wQR6rdF2HR
-         Otf2+W1Lht+zc9jd2+ZcabrBchsEM1FtHTG7ywcmCm7WIRNthVQRc6j7JEfHMIzuKaxL
-         zkRa3fC3KZRTpLMY1YuF6LJQ5J9jD7l01qx4ezp6Y+NSlqOjyfd+iDq1D/I1OX86JJIb
-         kwiHX8rVD5872acW5zMHtawR3nyph3RECn8vE9/pMuMT8N+PwSLilisLBAQn7n5qz8dm
-         Qotg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747139162; x=1747743962;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Y/nxMbje4NAmV1+2vn75NwptcTJZZoHKa3/FOzJ2AC8=;
-        b=T+iVG08bmg41ewhok79THjkXpFtGuoMeNfGoUrUZIz2En49obN5KzJ5y8dc8+HV0zJ
-         HvDUBmv0iWzmaxNhDU7UvdqjncHFMjI3cCyvOMYE43ql9D/phYHOC32dD1viIsLOSY62
-         Ao+f6ZxXtWz4nPPVdtY4qt1hZenXjqPkZKBLjbmKroknLRwH8HfUB0LbIZoRYVEc3YRb
-         kCg8Of6uw1d0ig56aw6FDjiqOb7R8mOOKKY97ee5LfoELnOL0F8dcg/pltgz9I/qXovS
-         fQq6Q3V+yVuK9laKyZQafVJQboOAP2Cq49LeAWa1P9l/Ufxklrrn0j9topxk3lKc3/aM
-         ogyA==
-X-Forwarded-Encrypted: i=1; AJvYcCWfQ6u4ZAPcDzC6kIEdyf/9OnGnDl8a87+ZH8mKfuDAE1NTvcqFxEhuAFiW39p0VBM1Iiny67v/SzHj2CU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZ8BGHTWiriEtqr4z5IYmQ+lPy2pEhGbzzUDYZR5OJei2kQAJS
-	uQsS7mswMK+u01kxTqsFRRZjHdKRSVObgWU/pbpcQyxjbeb/LOOt8zHiIoi9+9YwNa0E8o77RfY
-	xqAz2+yYc2DtNKz9NBZgUqigs1RE=
-X-Gm-Gg: ASbGncuoP23re2/TGE+w9ZyZCGbRw6hdUlWRP0Oam9m4Xh+rTy2k8QQInxH7xBxMDlu
-	qN+HCJLkbbhxQDJ4MrEOZJ7VN9YviWvmh3SJo8VHTFEAqdboutCR2areRU39fC2rWgf768NDzOC
-	tA+uATaW9WJr/+EazprzERy/XY0/lQGUUjZGoClk3cQA==
-X-Google-Smtp-Source: AGHT+IHb8AHRQyh8S0p+x17GYcEkXuAVdrjcYofLjZw0v85+sDroOK5vgZPqITYwzFq3mkrAdI4sboxWWavDl5rA1Ak=
-X-Received: by 2002:a05:6902:114a:b0:e78:f1e2:8f3f with SMTP id
- 3f1490d57ef6-e78fdb890c8mr22062302276.3.1747139161628; Tue, 13 May 2025
- 05:26:01 -0700 (PDT)
+	s=arc-20240116; t=1747140217; c=relaxed/simple;
+	bh=lc978VcXO7EICFcV9M7P//PtycWoCG7Wn0XEgdeThuk=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=LOQQe8auopmmV7AwjMHaOUNX7Q+z5Vf6KZ21xM27NSSMOYdI7FXPGdbzQB4ilt5o9gfIY/pFRtt/I+mhsEVyA556CsNjcTvYgvjXqKkeRESKAx+KOrB5/brR86yhsjSY36XofQFxsH3UMAVfKRZRVYwZfq/NjW115dp+z/Jtx2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; arc=none smtp.client-ip=81.70.192.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=honor.com
+Received: from w001.hihonor.com (unknown [10.68.25.235])
+	by mta22.hihonor.com (SkyGuard) with ESMTPS id 4ZxbKg450kzYlqTV;
+	Tue, 13 May 2025 20:25:43 +0800 (CST)
+Received: from a003.hihonor.com (10.68.18.8) by w001.hihonor.com
+ (10.68.25.235) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 13 May
+ 2025 20:27:31 +0800
+Received: from a010.hihonor.com (10.68.16.52) by a003.hihonor.com (10.68.18.8)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 13 May
+ 2025 20:27:31 +0800
+Received: from a010.hihonor.com ([fe80::7127:3946:32c7:6e]) by
+ a010.hihonor.com ([fe80::7127:3946:32c7:6e%14]) with mapi id 15.02.1544.011;
+ Tue, 13 May 2025 20:27:31 +0800
+From: wangtao <tao.wangtao@honor.com>
+To: =?utf-8?B?Q2hyaXN0aWFuIEvDtm5pZw==?= <christian.koenig@amd.com>,
+	"sumit.semwal@linaro.org" <sumit.semwal@linaro.org>,
+	"benjamin.gaignard@collabora.com" <benjamin.gaignard@collabora.com>,
+	"Brian.Starkey@arm.com" <Brian.Starkey@arm.com>, "jstultz@google.com"
+	<jstultz@google.com>, "tjmercier@google.com" <tjmercier@google.com>
+CC: "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	"linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"wangbintian(BintianWang)" <bintian.wang@honor.com>, yipengxiang
+	<yipengxiang@honor.com>, liulu 00013167 <liulu.liu@honor.com>, "hanfeng
+ 00012985" <feng.han@honor.com>
+Subject: RE: [PATCH 1/2] dmabuf: add DMA_BUF_IOCTL_RW_FILE
+Thread-Topic: [PATCH 1/2] dmabuf: add DMA_BUF_IOCTL_RW_FILE
+Thread-Index: AQHbw+qAM8Fnhu6qq06hsP+5NR7CSrPP5xYAgACTT/A=
+Date: Tue, 13 May 2025 12:27:31 +0000
+Message-ID: <5ca2b6f4912946e7a7415dd35679704c@honor.com>
+References: <20250513092735.1931-1-tao.wangtao@honor.com>
+ <d77ed1c0-3f66-447a-956f-37e1dd543ca3@amd.com>
+In-Reply-To: <d77ed1c0-3f66-447a-956f-37e1dd543ca3@amd.com>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: cen zhang <zzzccc427@gmail.com>
-Date: Tue, 13 May 2025 20:25:49 +0800
-X-Gm-Features: AX0GCFsMBJ0wf2Vr9JB5mM0DO2Nsfy-vjkYJ9E521TGotvBluJ_P9yttMB7KxgQ
-Message-ID: <CAFRLqsVtQ0CY-6gGCafMBJ1ORyrZtRiPUzsfwA2uNjOdfLHPLw@mail.gmail.com>
-Subject: Subject: [BUG] Five data races in in XFS Filesystem,one potentially harmful
-To: cem@kernel.org
-Cc: linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	baijiaju1990@gmail.com, zhenghaoran154@gmail.com
-Content-Type: text/plain; charset="UTF-8"
 
-Hello maintainers,
-
-I would like to report five data race bugs we discovered in the XFS
-filesystem on Linux kernel v6.14-rc4. These issues were identified
-using our in-kernel data race detector.
-
-Among the five races, we believe that four may be benign and could be
-annotated using `data_race()` to suppress false positives from
-analysis tools. However, one races involve shared global state or
-critical memory, and their effects are unclear.
-We would appreciate your evaluation on whether those should be fixed
-or annotated.
-
-Below is a summary of the findings:
-
----
-
-Benign Races
-============
-
-1. Race in `xfs_bmapi_reserve_delalloc()` and  `xfs_vn_getattr()`
-----------------------------------------------------------------
-
-A data race on `ip->i_delayed_blks`.
-
-============ DATARACE ============
-Function: xfs_bmapi_reserve_delalloc+0x292c/0x2fd0 fs/xfs/xfs_bmap.c:4138
-Function: xfs_buffered_write_iomap_begin+0x27bb/0x3bc0 fs/xfs/xfs_iomap.c:1197
-Function: iomap_iter+0x572/0xad0
-Function: iomap_file_buffered_write+0x23a/0xd10
-Function: xfs_file_buffered_write+0x66b/0x2000 fs/xfs/xfs_file.c:792
-Function: xfs_file_write_iter+0x129e/0x19f0 fs/xfs/xfs_file.c:881
-Function: do_iter_readv_writev+0x4d6/0x720
-Function: vfs_writev+0x348/0xc20
-Function: do_writev+0x129/0x280
-Function: do_syscall_64+0xc9/0x1a0
-Function: entry_SYSCALL_64_after_hwframe+0x77/0x7f
-Function: 0x0
-========================
-Function: xfs_vn_getattr+0x13c4/0x4c40 fs/xfs/xfs_iops.c:645
-Function: vfs_fstat+0x239/0x2d0
-Function: __se_sys_newfstat+0x47/0x6b0
-Function: do_syscall_64+0xc9/0x1a0
-Function: entry_SYSCALL_64_after_hwframe+0x77/0x7f
-=================END==============
-
-2. Race on `xfs_trans_ail_update_bulk` in `xfs_inode_item_format`
--------------------------------------.
-
-We observed unsynchronized access to `lip->li_lsn`, which may exhibit
-store/load tearing. However, we did not observe any symptoms
-indicating harmful behavior.
-
-Kernel panic: ============ DATARACE ============
-Function: xfs_trans_ail_update_bulk+0xac0/0x25d0 fs/xfs/xfs_trans_ail.c:832
-Function: xlog_cil_ail_insert_batch fs/xfs/xfs_log_cil.c:703 [inline]
-Function: xlog_cil_ail_insert fs/xfs/xfs_log_cil.c:857 [inline]
-Function: xlog_cil_committed+0x1e23/0x3220 fs/xfs/xfs_log_cil.c:904
-Function: xlog_cil_process_committed+0x4d8/0x6a0 fs/xfs/xfs_log_cil.c:934
-Function: xlog_state_do_callback+0xe52/0x1d70 fs/xfs/xfs_log.c:2525
-Function: xlog_state_done_syncing+0x264/0x540 fs/xfs/xfs_log.c:2603
-Function: xlog_ioend_work+0x24e/0x320 fs/xfs/xfs_log.c:1247
-Function: process_scheduled_works+0x6c7/0xea0
-Function: worker_thread+0xaac/0x1010
-Function: kthread+0x341/0x760
-Function: ret_from_fork+0x4d/0x80
-Function: ret_from_fork_asm+0x1a/0x30
-============OTHER_INFO============
-Function: xfs_inode_item_format+0xe6e/0x6c00 fs/xfs/xfs_inode_item.c:637
-Function: xlog_cil_commit+0x39ce/0xa1e0 fs/xfs/xfs_log_cil.c:513
-Function: __xfs_trans_commit+0xa3b/0x23f0 fs/xfs/xfs_trans.c:896
-Function: xfs_trans_commit+0x494/0x690 fs/xfs/xfs_trans.c:954
-Function: xfs_setattr_nonsize+0x1c24/0x2e60 fs/xfs/xfs_iops.c:802
-Function: xfs_setattr_size+0x628/0x2610 fs/xfs/xfs_iops.c:877
-Function: xfs_vn_setattr_size+0x3ac/0x6a0 fs/xfs/xfs_iops.c:1054
-Function: xfs_vn_setattr+0x43b/0xaf0 fs/xfs/xfs_iops.c:1079
-Function: notify_change+0x9f9/0xca0
-Function: do_truncate+0x18d/0x220
-Function: path_openat+0x2741/0x2db0
-Function: do_filp_open+0x230/0x440
-Function: do_sys_openat2+0xab/0x110
-Function: __x64_sys_creat+0xd7/0x100
-Function: do_syscall_64+0xc9/0x1a0
-Function: entry_SYSCALL_64_after_hwframe+0x77/0x7f
-=================END==============
-
-3. Race on `pag->pagf_freeblks`
--------------------------------
-
-Although concurrent, this race is unlikely to affect correctness.
-
-Kernel panic: ============ DATARACE ============
-Function: xfs_alloc_longest_free_extent+0x164/0x580
-fs/xfs/libxfs/xfs_alloc.c:2427
-Function: xfs_bmapi_allocate+0x4349/0xb410 fs/xfs/libxfs/xfs_bmap.c:3314
-Function: xfs_bmapi_write+0x2594/0x54b0 fs/xfs/libxfs/xfs_bmap.c:4551
-Function: xfs_attr_rmtval_set_blk+0x496/0x9c0
-fs/xfs/libxfs/xfs_attr_remote.c:633
-Function: xfs_attr_set_iter+0x60e/0xf730 fs/xfs/libxfs/xfs_attr.c:637
-Function: xfs_attr_finish_item+0x329/0xa00 fs/xfs/xfs_attr_item.c:505
-Function: xfs_defer_finish_one+0x109d/0x28b0 fs/xfs/libxfs/xfs_defer.c:595
-Function: xfs_defer_finish_noroll+0x1d91/0x4130 fs/xfs/libxfs/xfs_defer.c:707
-Function: xfs_trans_commit+0x392/0x690 fs/xfs/xfs_trans.c:947
-Function: xfs_attr_set+0x2a70/0x3e80 fs/xfs/libxfs/xfs_attr.c:1150
-Function: xfs_attr_change+0xc03/0x10a0 fs/xfs/xfs_xattr.c:128
-Function: xfs_xattr_set+0x535/0x870 fs/xfs/xfs_xattr.c:186
-Function: __vfs_setxattr+0x3b6/0x3f0
-Function: __vfs_setxattr_noperm+0x115/0x5c0
-Function: vfs_setxattr+0x165/0x300
-Function: file_setxattr+0x1a9/0x280
-Function: path_setxattrat+0x2f4/0x370
-Function: __x64_sys_fsetxattr+0xbc/0xe0
-Function: do_syscall_64+0xc9/0x1a0
-Function: entry_SYSCALL_64_after_hwframe+0x77/0x7f
-Function: 0x0
-============OTHER_INFO============
-Function: xfs_alloc_update_counters+0x238/0x720 fs/xfs/libxfs/xfs_alloc.c:908
-Function: xfs_free_ag_extent+0x22e7/0x4f10 fs/xfs/libxfs/xfs_alloc.c:2363
-Function: __xfs_free_extent+0x747/0xba0 fs/xfs/libxfs/xfs_alloc.c:4025
-Function: xfs_extent_free_finish_item+0x8be/0x18f0 fs/xfs/xfs_extfree_item.c:541
-Function: xfs_defer_finish_one+0x109d/0x28b0 fs/xfs/libxfs/xfs_defer.c:595
-Function: xfs_defer_finish_noroll+0x1d91/0x4130 fs/xfs/libxfs/xfs_defer.c:707
-Function: xfs_defer_finish+0x3e/0x590 fs/xfs/libxfs/xfs_defer.c:741
-Function: xfs_bunmapi_range+0x1fe/0x380 fs/xfs/libxfs/xfs_bmap.c:6443
-Function: xfs_itruncate_extents_flags+0x660/0x1420 fs/xfs/xfs_inode.c:1066
-Function: xfs_itruncate_extents fs/xfs/xfs_inode.h:603 [inline]
-Function: xfs_setattr_size+0x12f1/0x2610 fs/xfs/xfs_iops.c:1003
-Function: xfs_vn_setattr_size+0x3ac/0x6a0 fs/xfs/xfs_iops.c:1054
-Function: xfs_vn_setattr+0x43b/0xaf0 fs/xfs/xfs_iops.c:1079
-Function: notify_change+0x9f9/0xca0
-Function: do_truncate+0x18d/0x220
-Function: path_openat+0x2741/0x2db0
-Function: do_filp_open+0x230/0x440
-Function: do_sys_openat2+0xab/0x110
-Function: __x64_sys_open+0x18d/0x1c0
-Function: do_syscall_64+0xc9/0x1a0
-Function: entry_SYSCALL_64_after_hwframe+0x77/0x7f
-=================END==============
-
-4. Race on `pag->pagf_longest`
-------------------------------
-
-Similar to the previous race, this field appears to be safely used
-under current access patterns.
-
-Kernel panic: ============ DATARACE ============
-Function: xfs_alloc_fixup_longest+0x3d0/0x760 fs/xfs/libxfs/xfs_alloc.c:555
-Function: xfs_alloc_fixup_trees+0x1331/0x2190 fs/xfs/libxfs/xfs_alloc.c:757
-Function: xfs_alloc_cur_finish+0x3d1/0xd40 fs/xfs/libxfs/xfs_alloc.c:1119
-Function: xfs_alloc_ag_vextent_near+0x38b2/0x46a0 fs/xfs/libxfs/xfs_alloc.c:1778
-Function: xfs_alloc_vextent_iterate_ags+0xcef/0x1400
-fs/xfs/libxfs/xfs_alloc.c:3741
-Function: xfs_alloc_vextent_start_ag+0x830/0x14d0 fs/xfs/libxfs/xfs_alloc.c:3816
-Function: xfs_bmapi_allocate+0x5016/0xb410 fs/xfs/libxfs/xfs_bmap.c:3764
-Function: xfs_bmapi_write+0x2594/0x54b0 fs/xfs/libxfs/xfs_bmap.c:4551
-Function: xfs_iomap_write_direct+0x7fc/0x1310 fs/xfs/xfs_iomap.c:322
-Function: xfs_direct_write_iomap_begin+0x3278/0x42a0 fs/xfs/xfs_iomap.c:933
-Function: iomap_iter+0x572/0xad0
-Function: __iomap_dio_rw+0xbc1/0x1e50
-Function: iomap_dio_rw+0x46/0xa0
-Function: xfs_file_dio_write_unaligned+0x6cc/0x1030 fs/xfs/xfs_file.c:692
-Function: xfs_file_write_iter+0x1403/0x19f0 fs/xfs/xfs_file.c:725
-Function: do_iter_readv_writev+0x4d6/0x720
-Function: vfs_writev+0x348/0xc20
-Function: do_writev+0x129/0x280
-Function: do_syscall_64+0xc9/0x1a0
-Function: entry_SYSCALL_64_after_hwframe+0x77/0x7f
-Function: 0x0
-============OTHER_INFO============
-Function: xfs_alloc_longest_free_extent+0x1f9/0x580
-fs/xfs/libxfs/xfs_alloc.c:2427
-Function: xfs_bmapi_allocate+0x4349/0xb410 fs/xfs/libxfs/xfs_bmap.c:3314
-Function: xfs_bmapi_write+0x2594/0x54b0 fs/xfs/libxfs/xfs_bmap.c:4551
-Function: xfs_attr_rmtval_set_blk+0x496/0x9c0
-fs/xfs/libxfs/xfs_attr_remote.c:633
-Function: xfs_attr_set_iter+0x60e/0xf730 fs/xfs/libxfs/xfs_attr.c:637
-Function: xfs_attr_finish_item+0x329/0xa00 fs/xfs/xfs_attr_item.c:505
-Function: xfs_defer_finish_one+0x109d/0x28b0 fs/xfs/libxfs/xfs_defer.c:595
-Function: xfs_defer_finish_noroll+0x1d91/0x4130 fs/xfs/libxfs/xfs_defer.c:707
-Function: xfs_trans_commit+0x392/0x690 fs/xfs/xfs_trans.c:947
-Function: xfs_attr_set+0x2a70/0x3e80 fs/xfs/libxfs/xfs_attr.c:1150
-Function: xfs_attr_change+0xc03/0x10a0 fs/xfs/xfs_xattr.c:128
-Function: xfs_xattr_set+0x535/0x870 fs/xfs/xfs_xattr.c:186
-Function: __vfs_setxattr+0x3b6/0x3f0
-Function: __vfs_setxattr_noperm+0x115/0x5c0
-Function: vfs_setxattr+0x165/0x300
-Function: file_setxattr+0x1a9/0x280
-Function: path_setxattrat+0x2f4/0x370
-Function: __x64_sys_fsetxattr+0xbc/0xe0
-Function: do_syscall_64+0xc9/0x1a0
-Function: entry_SYSCALL_64_after_hwframe+0x77/0x7f
-=================END==============
----
-
-Possibly Harmful Race
-======================
-
-1. Race on `bp->b_addr` between `xfs_buf_map_pages()` and `xfs_buf_offset()`
-----------------------------------------------------------------------------
-
-Concurrent access to bp->b_addr happens during buffer preparation and
-usage. Since this is pointer manipulation of page mappings, store/load
-tearing or unexpected reuse might lead to memory corruption or invalid
-log item formats. We are not confident in classifying this race as
-benign or harmful and would appreciate your guidance on whether it
-should be fixed or annotated.
-
-Kernel panic: ============ DATARACE ============
-Function: _xfs_buf_map_pages+0x881/0xd20 fs/xfs/xfs_buf.c:450
-Function: xfs_buf_get_map+0x1cf3/0x38d0 fs/xfs/xfs_buf.c:767
-Function: xfs_buf_read_map+0x1f2/0x1d80 fs/xfs/xfs_buf.c:863
-Function: xfs_trans_read_buf_map+0x3c4/0x1dd0 fs/xfs/xfs_trans_buf.c:304
-Function: xfs_imap_to_bp+0x415/0x8c0 fs/xfs/xfs_trans.h:212
-Function: xfs_inode_item_precommit+0x1555/0x2780 fs/xfs/xfs_inode_item.c:188
-Function: __xfs_trans_commit+0x7d7/0x23f0 fs/xfs/xfs_trans.c:826
-Function: xfs_trans_commit+0x494/0x690 fs/xfs/xfs_trans.c:954
-Function: xfs_create+0x21d8/0x2fe0 fs/xfs/xfs_inode.c:753
-Function: xfs_generic_create+0x188b/0x2d90 fs/xfs/xfs_iops.c:215
-Function: xfs_vn_create+0x50/0x70 fs/xfs/xfs_iops.c:298
-Function: path_openat+0x1190/0x2db0
-Function: do_filp_open+0x230/0x440
-Function: do_sys_openat2+0xab/0x110
-Function: __x64_sys_open+0x18d/0x1c0
-Function: do_syscall_64+0xc9/0x1a0
-Function: entry_SYSCALL_64_after_hwframe+0x77/0x7f
-Function: 0x0
-============OTHER_INFO============
-Function: xfs_buf_offset+0xbd/0x450 fs/xfs/xfs_buf.c:1676
-Function: xfs_inode_item_format+0x2854/0x6c00 fs/xfs/xfs_inode_item.c:533
-Function: xlog_cil_commit+0x39ce/0xa1e0 fs/xfs/xfs_log_cil.c:513
-Function: __xfs_trans_commit+0xa3b/0x23f0 fs/xfs/xfs_trans.c:896
-Function: xfs_trans_commit+0x494/0x690 fs/xfs/xfs_trans.c:954
-Function: xfs_setattr_nonsize+0x1c24/0x2e60 fs/xfs/xfs_iops.c:802
-Function: xfs_vn_setattr+0x678/0xaf0 fs/xfs/xfs_iops.c:1086
-Function: notify_change+0x9f9/0xca0
-Function: chmod_common+0x1fe/0x410
-Function: __x64_sys_fchmod+0xd4/0x130
-Function: do_syscall_64+0xc9/0x1a0
-Function: entry_SYSCALL_64_after_hwframe+0x77/0x7f
-=================END==============
-
----
-
-Thank you for your attention to these matters.
-
-Best regards,
-Cen Zhang
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogQ2hyaXN0aWFuIEvDtm5p
+ZyA8Y2hyaXN0aWFuLmtvZW5pZ0BhbWQuY29tPg0KPiBTZW50OiBUdWVzZGF5LCBNYXkgMTMsIDIw
+MjUgNzozMSBQTQ0KPiBUbzogd2FuZ3RhbyA8dGFvLndhbmd0YW9AaG9ub3IuY29tPjsgc3VtaXQu
+c2Vtd2FsQGxpbmFyby5vcmc7DQo+IGJlbmphbWluLmdhaWduYXJkQGNvbGxhYm9yYS5jb207IEJy
+aWFuLlN0YXJrZXlAYXJtLmNvbTsNCj4ganN0dWx0ekBnb29nbGUuY29tOyB0am1lcmNpZXJAZ29v
+Z2xlLmNvbQ0KPiBDYzogbGludXgtbWVkaWFAdmdlci5rZXJuZWwub3JnOyBkcmktZGV2ZWxAbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnOyBsaW5hcm8tDQo+IG1tLXNpZ0BsaXN0cy5saW5hcm8ub3JnOyBs
+aW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOw0KPiB3YW5nYmludGlhbihCaW50aWFuV2FuZykg
+PGJpbnRpYW4ud2FuZ0Bob25vci5jb20+OyB5aXBlbmd4aWFuZw0KPiA8eWlwZW5neGlhbmdAaG9u
+b3IuY29tPjsgbGl1bHUgMDAwMTMxNjcgPGxpdWx1LmxpdUBob25vci5jb20+OyBoYW5mZW5nDQo+
+IDAwMDEyOTg1IDxmZW5nLmhhbkBob25vci5jb20+DQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggMS8y
+XSBkbWFidWY6IGFkZCBETUFfQlVGX0lPQ1RMX1JXX0ZJTEUNCj4gDQo+IE9uIDUvMTMvMjUgMTE6
+MjcsIHdhbmd0YW8gd3JvdGU6DQo+ID4gQWRkIERNQV9CVUZfSU9DVExfUldfRklMRSB0byBzYXZl
+L3Jlc3RvcmUgZGF0YSBmcm9tL3RvIGEgZG1hLWJ1Zi4NCj4gDQo+IFNpbWlsYXIgYXBwcm9hY2gg
+d2hlcmUgcmVqZWN0ZWQgYmVmb3JlIGluIGZhdm9yIG9mIHVzaW5nIHVkbWFidWYuDQo+IA0KPiBJ
+cyB0aGVyZSBhbnkgcmVhc29uIHlvdSBjYW4ndCB1c2UgdGhhdCBhcHByb2FjaCBhcyB3ZWxsPw0K
+W3dhbmd0YW9dIEZvciBwZXJmb3JtYW5jZSBvcHRpbWl6YXRpb24sIHdlIGNhbiBhY2hpZXZlcyAz
+Nzc2IE1CL3MgKFVGUyA0LjAgZGV2aWNlIEAgNEdCL3MpLg0KQXBvbG9naWVzLCBteSB0aHJlZSBw
+cmV2aW91cyBlbWFpbHMgd2VyZSBub3QgY29uc29saWRhdGVkIGludG8gdGhlIHNhbWUgdGhyZWFk
+Lg0KPiANCj4gUmVnYXJkcywNCj4gQ2hyaXN0aWFuLg0KPiANCj4gPg0KPiA+IFNpZ25lZC1vZmYt
+Ynk6IHdhbmd0YW8gPHRhby53YW5ndGFvQGhvbm9yLmNvbT4NCj4gPiAtLS0NCj4gPiAgZHJpdmVy
+cy9kbWEtYnVmL2RtYS1idWYuYyAgICB8ICA4ICsrKysrKysrDQo+ID4gIGluY2x1ZGUvbGludXgv
+ZG1hLWJ1Zi5oICAgICAgfCAgMyArKysNCj4gPiAgaW5jbHVkZS91YXBpL2xpbnV4L2RtYS1idWYu
+aCB8IDI5ICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrDQo+ID4gIDMgZmlsZXMgY2hhbmdl
+ZCwgNDAgaW5zZXJ0aW9ucygrKQ0KPiA+DQo+ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZG1hLWJ1
+Zi9kbWEtYnVmLmMgYi9kcml2ZXJzL2RtYS1idWYvZG1hLWJ1Zi5jDQo+ID4gaW5kZXggNWJhYTgz
+Yjg1NTE1Li45NWQ4YjAxNThmZmQgMTAwNjQ0DQo+ID4gLS0tIGEvZHJpdmVycy9kbWEtYnVmL2Rt
+YS1idWYuYw0KPiA+ICsrKyBiL2RyaXZlcnMvZG1hLWJ1Zi9kbWEtYnVmLmMNCj4gPiBAQCAtNDYw
+LDYgKzQ2MCw3IEBAIHN0YXRpYyBsb25nIGRtYV9idWZfaW9jdGwoc3RydWN0IGZpbGUgKmZpbGUs
+DQo+ID4gIAlzdHJ1Y3QgZG1hX2J1ZiAqZG1hYnVmOw0KPiA+ICAJc3RydWN0IGRtYV9idWZfc3lu
+YyBzeW5jOw0KPiA+ICAJZW51bSBkbWFfZGF0YV9kaXJlY3Rpb24gZGlyZWN0aW9uOw0KPiA+ICsJ
+c3RydWN0IGRtYV9idWZfcndfZmlsZSBrZmlsZTsNCj4gPiAgCWludCByZXQ7DQo+ID4NCj4gPiAg
+CWRtYWJ1ZiA9IGZpbGUtPnByaXZhdGVfZGF0YTsNCj4gPiBAQCAtNTA0LDYgKzUwNSwxMyBAQCBz
+dGF0aWMgbG9uZyBkbWFfYnVmX2lvY3RsKHN0cnVjdCBmaWxlICpmaWxlLA0KPiA+ICAJCXJldHVy
+biBkbWFfYnVmX2ltcG9ydF9zeW5jX2ZpbGUoZG1hYnVmLCAoY29uc3Qgdm9pZA0KPiBfX3VzZXIg
+KilhcmcpOw0KPiA+ICNlbmRpZg0KPiA+DQo+ID4gKwljYXNlIERNQV9CVUZfSU9DVExfUldfRklM
+RToNCj4gPiArCQlpZiAoY29weV9mcm9tX3VzZXIoJmtmaWxlLCAodm9pZCBfX3VzZXIgKikgYXJn
+LCBzaXplb2Yoa2ZpbGUpKSkNCj4gPiArCQkJcmV0dXJuIC1FRkFVTFQ7DQo+ID4gKwkJaWYgKCFk
+bWFidWYtPm9wcy0+cndfZmlsZSkNCj4gPiArCQkJcmV0dXJuIC1FSU5WQUw7DQo+ID4gKwkJcmV0
+dXJuIGRtYWJ1Zi0+b3BzLT5yd19maWxlKGRtYWJ1ZiwgJmtmaWxlKTsNCj4gPiArDQo+ID4gIAlk
+ZWZhdWx0Og0KPiA+ICAJCXJldHVybiAtRU5PVFRZOw0KPiA+ICAJfQ0KPiA+IGRpZmYgLS1naXQg
+YS9pbmNsdWRlL2xpbnV4L2RtYS1idWYuaCBiL2luY2x1ZGUvbGludXgvZG1hLWJ1Zi5oIGluZGV4
+DQo+ID4gMzYyMTZkMjhkOGJkLi5kZTIzNmJhMjA5NGIgMTAwNjQ0DQo+ID4gLS0tIGEvaW5jbHVk
+ZS9saW51eC9kbWEtYnVmLmgNCj4gPiArKysgYi9pbmNsdWRlL2xpbnV4L2RtYS1idWYuaA0KPiA+
+IEBAIC0yMiw2ICsyMiw3IEBADQo+ID4gICNpbmNsdWRlIDxsaW51eC9mcy5oPg0KPiA+ICAjaW5j
+bHVkZSA8bGludXgvZG1hLWZlbmNlLmg+DQo+ID4gICNpbmNsdWRlIDxsaW51eC93YWl0Lmg+DQo+
+ID4gKyNpbmNsdWRlIDx1YXBpL2xpbnV4L2RtYS1idWYuaD4NCj4gPg0KPiA+ICBzdHJ1Y3QgZGV2
+aWNlOw0KPiA+ICBzdHJ1Y3QgZG1hX2J1ZjsNCj4gPiBAQCAtMjg1LDYgKzI4Niw4IEBAIHN0cnVj
+dCBkbWFfYnVmX29wcyB7DQo+ID4NCj4gPiAgCWludCAoKnZtYXApKHN0cnVjdCBkbWFfYnVmICpk
+bWFidWYsIHN0cnVjdCBpb3N5c19tYXAgKm1hcCk7DQo+ID4gIAl2b2lkICgqdnVubWFwKShzdHJ1
+Y3QgZG1hX2J1ZiAqZG1hYnVmLCBzdHJ1Y3QgaW9zeXNfbWFwICptYXApOw0KPiA+ICsNCj4gPiAr
+CWludCAoKnJ3X2ZpbGUpKHN0cnVjdCBkbWFfYnVmICpkbWFidWYsIHN0cnVjdCBkbWFfYnVmX3J3
+X2ZpbGUNCj4gPiArKmZpbGUpOw0KPiA+ICB9Ow0KPiA+DQo+ID4gIC8qKg0KPiA+IGRpZmYgLS1n
+aXQgYS9pbmNsdWRlL3VhcGkvbGludXgvZG1hLWJ1Zi5oDQo+ID4gYi9pbmNsdWRlL3VhcGkvbGlu
+dXgvZG1hLWJ1Zi5oIGluZGV4IDVhNmZkYTY2ZDlhZC4uZWM5MTY0YjdiNzUzDQo+IDEwMDY0NA0K
+PiA+IC0tLSBhL2luY2x1ZGUvdWFwaS9saW51eC9kbWEtYnVmLmgNCj4gPiArKysgYi9pbmNsdWRl
+L3VhcGkvbGludXgvZG1hLWJ1Zi5oDQo+ID4gQEAgLTE2Nyw2ICsxNjcsMjkgQEAgc3RydWN0IGRt
+YV9idWZfaW1wb3J0X3N5bmNfZmlsZSB7DQo+ID4gIAlfX3MzMiBmZDsNCj4gPiAgfTsNCj4gPg0K
+PiA+ICsvKioNCj4gPiArICogc3RydWN0IGRtYV9idWZfcndfZmlsZSAtIHJlYWQvd3JpdGUgZmls
+ZSBhc3NvY2lhdGVkIHdpdGggYSBkbWEtYnVmDQo+ID4gKyAqDQo+ID4gKyAqIFVzZXJzcGFjZSBj
+YW4gcGVyZm9ybXMgYSBETUFfQlVGX0lPQ1RMX0JBQ0sgdG8gc2F2ZSBkYXRhIGZyb20gYQ0KPiA+
+ICtkbWEtYnVmIG9yDQo+ID4gKyAqIHJlc3RvcmUgZGF0YSB0byBhIGRtYS1idWYuDQo+ID4gKyAq
+Lw0KPiA+ICtzdHJ1Y3QgZG1hX2J1Zl9yd19maWxlIHsNCj4gPiArDQo+ID4gKwkvKiogQGZsYWdz
+OiBGbGFncyBpbmRpY2F0aW5nIHJlYWQvd3JpdGUgZm9yIHRoaXMgZG1hLWJ1Zi4gKi8NCj4gPiAr
+CV9fdTMyIGZsYWdzOw0KPiA+ICsJLyoqIEBmZDogRmlsZSBkZXNjcmlwdG9yIG9mIHRoZSBmaWxl
+IGFzc29jaWF0ZWQgd2l0aCB0aGlzIGRtYS1idWYuICovDQo+ID4gKwlfX3MzMiBmZDsNCj4gPiAr
+CS8qKiBAZmlsZV9vZmZzZXQ6IE9mZnNldCB3aXRoaW4gdGhlIGZpbGUgd2hlcmUgdGhpcyBkbWEt
+YnVmIHN0YXJ0cy4NCj4gPiArCSAqDQo+ID4gKwkgKiAgT2Zmc2V0IGFuZCBMZW5ndGggbXVzdCBi
+ZSBwYWdlLWFsaWduZWQgZm9yIGRpcmVjdCBJL08uDQo+ID4gKwkgKi8NCj4gPiArCV9fdTY0IGZp
+bGVfb2Zmc2V0Ow0KPiA+ICsJLyoqIEBidWZfb2Zmc2V0OiBPZmZzZXQgd2l0aGluIHRoaXMgZG1h
+LWJ1ZiB3aGVyZSB0aGUgcmVhZC93cml0ZQ0KPiBzdGFydHMuICovDQo+ID4gKwlfX3U2NCBidWZf
+b2Zmc2V0Ow0KPiA+ICsJLyoqIEBidWZfbGVuOiBMZW5ndGggb2YgdGhpcyBkbWEtYnVmIHJlYWQv
+d3JpdGUuICovDQo+ID4gKwlfX3U2NCBidWZfbGVuOw0KPiA+ICt9Ow0KPiA+ICsNCj4gPiAgI2Rl
+ZmluZSBETUFfQlVGX0JBU0UJCSdiJw0KPiA+ICAjZGVmaW5lIERNQV9CVUZfSU9DVExfU1lOQwlf
+SU9XKERNQV9CVUZfQkFTRSwgMCwgc3RydWN0DQo+IGRtYV9idWZfc3luYykNCj4gPg0KPiA+IEBA
+IC0xNzksNCArMjAyLDEwIEBAIHN0cnVjdCBkbWFfYnVmX2ltcG9ydF9zeW5jX2ZpbGUgew0KPiA+
+ICAjZGVmaW5lIERNQV9CVUZfSU9DVExfRVhQT1JUX1NZTkNfRklMRQ0KPiAJX0lPV1IoRE1BX0JV
+Rl9CQVNFLCAyLCBzdHJ1Y3QgZG1hX2J1Zl9leHBvcnRfc3luY19maWxlKQ0KPiA+ICAjZGVmaW5l
+IERNQV9CVUZfSU9DVExfSU1QT1JUX1NZTkNfRklMRQ0KPiAJX0lPVyhETUFfQlVGX0JBU0UsIDMs
+IHN0cnVjdCBkbWFfYnVmX2ltcG9ydF9zeW5jX2ZpbGUpDQo+ID4NCj4gPiArI2RlZmluZSBETUFf
+QlVGX1JXX0ZMQUdTX09QX01BU0sgKDB4RkYgPDwgMCkgI2RlZmluZQ0KPiA+ICtETUFfQlVGX1JX
+X0ZMQUdTX1JFQUQgKDEgPDwgMCkgLyogUmVzdG9yZSBkbWEtYnVmIGRhdGEgKi8NCj4gI2RlZmlu
+ZQ0KPiA+ICtETUFfQlVGX1JXX0ZMQUdTX1dSSVRFICgyIDw8IDApIC8qIFNhdmUgZG1hLWJ1ZiBk
+YXRhICovICNkZWZpbmUNCj4gPiArRE1BX0JVRl9SV19GTEFHU19ESVJFQ1QgKDF1IDw8IDMxKSAv
+KiBEaXJlY3QgcmVhZC93cml0ZSBmaWxlICovDQo+ID4gKyNkZWZpbmUgRE1BX0JVRl9JT0NUTF9S
+V19GSUxFCV9JT1coRE1BX0JVRl9CQVNFLCA0LCBzdHJ1Y3QNCj4gZG1hX2J1Zl9yd19maWxlKQ0K
+PiA+ICsNCj4gPiAgI2VuZGlmDQoNCg==
 
