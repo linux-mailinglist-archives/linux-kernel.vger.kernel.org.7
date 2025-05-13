@@ -1,44 +1,78 @@
-Return-Path: <linux-kernel+bounces-645094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-645096-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2396AB48EB
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 03:48:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CE7B9AB48EF
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 03:49:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F015D7A3995
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 01:47:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 418DB7A92BD
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 01:48:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DF3718FC86;
-	Tue, 13 May 2025 01:48:40 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A202A192B8C;
+	Tue, 13 May 2025 01:49:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="MJmnkG1b"
+Received: from mail-io1-f49.google.com (mail-io1-f49.google.com [209.85.166.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08115E56A
-	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 01:48:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2484A191F89
+	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 01:49:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747100919; cv=none; b=sSlmPyoqdI/Bk8IMkNjAWoowF29dJ+f33jCnhPixbc518Tbrh7aFUspfgyC1A1lKInujihvPslhNEF+7glM6rSUT9RZVag/NwNJoDMWZ2t/EYuP+dsXqI9/XzwUu09uXGJXWi/Ssv8VFb/rX9lVoCn4nU9Fw/YjV3oi9q9RabhM=
+	t=1747100948; cv=none; b=fwPkstFTB2vTka+QLKlBQ+E9JhD/vBlPCWYBL8DqKSFo/baXpm9ZULys1SE9bTEDk8tgtAftdqQ6XzUWa9ARB1zAxaMnfTU3gANmMU+rgxNziyo2zktj3Vu3sBwk/V+4A4s2nm1J22QArZ3kgUPyMYRKJ9qD+hS5hCyGDaFTH4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747100919; c=relaxed/simple;
-	bh=xDK93dk0SiVRT64vlt0meQ6sSmQAfsmPy68IEnF0/Lc=;
+	s=arc-20240116; t=1747100948; c=relaxed/simple;
+	bh=XR0DZnEvtPXz6GqL8llvpmZDHyr5Hnot0r48twYOqzw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KssGvsvaedi2gT749f7bQYRI4kFBmx7o8lFkMBSv2/QZE78lgGcUDoWFAYNJGt1ACfFcosnbWNgy04gEDlrT3YFd4lgdwT5i6DnmveXD9Rw2v6YHW+RHnDfDbCG+NeaHM9p5i0V84CF7j2fdEJ7/wlVwjOISSgISxW08W9DXZkA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4ZxK9z2BZHz4f3kvh
-	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 09:48:07 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id 795FD1A19CB
-	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 09:48:33 +0800 (CST)
-Received: from [10.67.109.79] (unknown [10.67.109.79])
-	by APP2 (Coremail) with SMTP id Syh0CgBXYGPvpCJowpSbMA--.9792S2;
-	Tue, 13 May 2025 09:48:33 +0800 (CST)
-Message-ID: <d3f27222-7262-4f04-8c80-329852bc251e@huaweicloud.com>
-Date: Tue, 13 May 2025 09:48:31 +0800
+	 In-Reply-To:Content-Type; b=YhYjM637VEi19ShZ3tJWtq51r2HmhkDmwErL/wyw2lkal47BWKfNkaWpV0Zt4nzLZiPU27g4ZtNCgVPQwwmr3Rhdckx1P76x3Hn57914tKHFITp6Wkyf2iyCi2qGyxWjRPh58Jjd7GvJ7ahyjzoub3QQO5P73DpJciI7wH06HVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=MJmnkG1b; arc=none smtp.client-ip=209.85.166.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f49.google.com with SMTP id ca18e2360f4ac-864a22fcdf2so163985639f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 18:49:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1747100945; x=1747705745; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=bBPDHnkKeDmDpBDa2SgAxE58ZEppnAX8xq/UI8zGOpA=;
+        b=MJmnkG1bjWYnKscNum7DMOuLTltmbikXVcEDXrccbKO5O19EtSaBeFBGQWcLL0c/TB
+         26aXuKuuA4Ub/m5edStTpvWFUBIhNlZgdRGF/s5JW79bztsFn92+beKrHIutjTNMZSor
+         TAeWDLal94IQ13AJS6i7mtxc8V21bu1WKjziBqx5cqjNK6SXlhgk0amB6w3xwVsnHO5a
+         kE2a2ms6WApg+97jMVadVD0r9pWSNSgqOsWkIXc8STWqCRSxW94rISRy0zvtPwg6KhFz
+         10ueUis//KdHtpmOZAV9FRKd8+0KwzVzZ8/cxwvHEYDROk5j60hDgXerC2Ux9qWvf6CN
+         vvMA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747100945; x=1747705745;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=bBPDHnkKeDmDpBDa2SgAxE58ZEppnAX8xq/UI8zGOpA=;
+        b=mvH923+i7sZig2nIzt1sj/F06OnjqNJaiQDAnD7wkde6GEZ3b4GCXo/0j7cq0Jm2HS
+         rgkmEqiLOflKPMM1B4XmxKVL0YAcSE1fYAN3d+vOr7KWeq62evLThHOev+/fCdWaWl+U
+         3/SjrCp4tKtUneeOK6BpyZ6BD9zs4eGyAxkJZVAkvxQcv8snaoCWhNKBjf/q9G2VYQ+v
+         AMGsVPQmDvLg0XH/flIpQ34IdXeWgyCJM8wFQfxXfEtbr+TjOJ6cVS9yodNPrKYESoze
+         0yU3zwDRCL4okJF0bYX0gQaXUlZ1DinjiFqAzOEWyZZZqA0f9v2+PD0Efe6ZQAUdkZ+6
+         HEeA==
+X-Forwarded-Encrypted: i=1; AJvYcCViuwMu9eZqqJ1aSabWBOSV5U5wEV6bgxYKaffXFZiclGKG7cKsdoivCQaAZaf+sURSA+5oGXFb3qFfREk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2KTYBaCskjtTeJN70uq5mitTkwJxiL/cJedwLP8Py3FYh7MU3
+	wg/FOZ3aB/XEO3yYHYI6Bo6NjYDiOSCLC9FfaufrVRkdtrBpwduzTkoYRlYVU+8=
+X-Gm-Gg: ASbGncuBd5iBhS8cX5wCFdbvt5yzW0i/0JP7vFsRK4srEflOmFFXarkOs9FYqDt/Usr
+	W50911i9+6TODZVgdMmV20vN7L7GM2FFoP1j/gLv74BcxPXSBUBnKKSMl1VlNnP+M0vnOvGoZ4K
+	t/Oiihi8aUov2OqfDWdv35rx7JaZ3CGo8EntRnfU8lAohl5Edd3ZMjAgQO/KUcgn5RrpySzPXgK
+	j0ZBI1hKznvjEnzawRmnyFo+dqpF+DpeF83/Q9NVyqpy9dcuwzzRYeCjaQNL0edyoHSlikuwMDp
+	U4Yphf2Y/wHNhO5oFilyhSf501ifNqVJmodDqzoh3sLBtf42
+X-Google-Smtp-Source: AGHT+IFTJHT5B9YdkW5HUOi235WCqkDs50fBKdItsfkTyG4tYu856BxjsQUtfq0QRa/xjFTzFY+eAA==
+X-Received: by 2002:a05:6e02:3b09:b0:3d3:fa69:6755 with SMTP id e9e14a558f8ab-3db663b8eb2mr18525795ab.5.1747100945004;
+        Mon, 12 May 2025 18:49:05 -0700 (PDT)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3da7e158975sm26102295ab.49.2025.05.12.18.49.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 12 May 2025 18:49:04 -0700 (PDT)
+Message-ID: <70293376-71b0-4b9d-b3c1-224b640f470b@kernel.dk>
+Date: Mon, 12 May 2025 19:49:03 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -46,205 +80,60 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC next v2 0/5] ucount: add rlimit cache for ucount
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: paulmck@kernel.org, legion@kernel.org, roman.gushchin@linux.dev,
- brauner@kernel.org, tglx@linutronix.de, frederic@kernel.org,
- peterz@infradead.org, oleg@redhat.com, joel.granados@kernel.org,
- viro@zeniv.linux.org.uk, lorenzo.stoakes@oracle.com, avagin@google.com,
- mengensun@tencent.com, linux@weissschuh.net, jlayton@kernel.org,
- ruanjinjie@huawei.com, kees@kernel.org, linux-kernel@vger.kernel.org,
- lujialin4@huawei.com, Chen Ridong <chenridong@huawei.com>
-References: <20250509072054.148257-1-chenridong@huaweicloud.com>
- <20250509131849.112545d60dd7bb2d28c3b966@linux-foundation.org>
- <20250512104828.hjVjvmT3@linutronix.de>
+Subject: Re: [PATCH] relay: Remove unused relay_late_setup_files
+To: Jason Xing <kerneljasonxing@gmail.com>,
+ Christoph Hellwig <hch@infradead.org>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Andrew Morton <akpm@linux-foundation.org>, corbet@lwn.net,
+ linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ linux@treblig.org, viro@zeniv.linux.org.uk
+References: <CAL+tcoCVjihJc=exL4hJDaLFr=CrMx=2JgYO_F_m12-LP9Lc-A@mail.gmail.com>
+ <aCGR4EOcWRK6Rgfv@smile.fi.intel.com> <aCIL0zZvf1fvTahk@infradead.org>
+ <CAL+tcoCJxoiGi=Ea1KCG4_ri2=GbNhhVhEV5anMLyai6qg2zeA@mail.gmail.com>
 Content-Language: en-US
-From: Chen Ridong <chenridong@huaweicloud.com>
-In-Reply-To: <20250512104828.hjVjvmT3@linutronix.de>
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <CAL+tcoCJxoiGi=Ea1KCG4_ri2=GbNhhVhEV5anMLyai6qg2zeA@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:Syh0CgBXYGPvpCJowpSbMA--.9792S2
-X-Coremail-Antispam: 1UD129KBjvJXoW3Jry8AFWrGw4kuw4kGF4UJwb_yoWxJr4rpF
-	W8ta45Ary8JF93t34kJ3y8t34Fk347CrZ8Ga15Gw1fCwnIyFnYgw17KrWYvF9Ikrn3Gw1a
-	q3yq9ayqkF1qqaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
-	14v26r4a6rW5MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
-	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWr
-	XwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
-	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
-	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU0
-	s2-5UUUUU==
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
+Content-Transfer-Encoding: 7bit
 
-
-
-On 2025/5/12 18:48, Sebastian Andrzej Siewior wrote:
-> On 2025-05-09 13:18:49 [-0700], Andrew Morton wrote:
->> On Fri,  9 May 2025 07:20:49 +0000 Chen Ridong <chenridong@huaweicloud.com> wrote:
+On 5/12/25 6:49 PM, Jason Xing wrote:
+> On Mon, May 12, 2025 at 10:55?PM Christoph Hellwig <hch@infradead.org> wrote:
 >>
->>> The will-it-scale test case signal1 [1] has been observed. and the test
->>> results reveal that the signal sending system call lacks linearity.
->>> To further investigate this issue, we initiated a series of tests by
->>> launching varying numbers of dockers and closely monitored the throughput
->>> of each individual docker. The detailed test outcomes are presented as
->>> follows:
->>>
->>> 	| Dockers     |1      |4      |8      |16     |32     |64     |
->>> 	| Throughput  |380068 |353204 |308948 |306453 |180659 |129152 |
->>>
->>> The data clearly demonstrates a discernible trend: as the quantity of
->>> dockers increases, the throughput per container progressively declines.
->>> In-depth analysis has identified the root cause of this performance
->>> degradation. The ucouts module conducts statistics on rlimit, which
->>> involves a significant number of atomic operations. These atomic
->>> operations, when acting on the same variable, trigger a substantial number
->>> of cache misses or remote accesses, ultimately resulting in a drop in
->>> performance.
+>> On Mon, May 12, 2025 at 09:14:56AM +0300, Andy Shevchenko wrote:
+>>> Also note, we usually do not care about the out-of-tree users. The main Q here
+>>> why are they out-of-tree for so long time?
 >>
->> Did you consider simply turning that atomic_t counter into a
->> percpu_counter?
+>> We do not care.  If some of this ever gets submitted it can add the
+>> needed helpers back.
+>>
+>> This entire discussion is silly.
+>>
 > 
-> That sounds like a smaller change. Also, do these 1…64 docker container
-> play signal ping-pong or is there a real workload behind it?
+> I'm surprised how you described it....
 > 
-> Sebastian
+> Now relay works like a filesystem which helps out-of-tree users
+> transfer a large amount of data efficiently. it's totally not like
+> other pure dead code. I meant what the trouble of just leaving it
+> untouched in the kernel could be?
+> 
+> Let me put in a simpler way, two options, 1) just clean up, 2) keep it
+> and help so-called 'out-of-tree' users even if you don't care. I don't
+> figure out what the difficulty of keeping it is :S
 
-Hi Andrew and Sebastian,
+I think Christoph's email was quite clear, and I also said _exactly_ the
+same thing in an email two days ago: we never EVER keep code in
+kernel that isn't used by in-kernel code. Period. It's not a debate,
+this is the law, if you will. It's a core principle because it allows
+the kernel to be maintainable, rather than need to care about out of
+tree code when changes are made. Similarly, we don't have a kernel API,
+not even at the source level.
 
-Thanks for your prompt reply. I'm currently conducting a "will-it-scale"
-test on a 384-core machine configured to run up to 64 Docker
-containers(max num). Even with just 32 containers, the throughput drops
-by 53%, which indicates significant scaling challenges.
+This is one of the core tenets of the Linux kernel, and all in-tree code
+must follow those. If you have aspirations of maintaining the relay code
+going forward, you need to fully understand that. Either the dead code
+goes, or the out-of-tree code that uses it must be merged. There's no
+in-between.
 
-Your suggestion about using percpu_counter was spot on. I've since
-implemented a demo to benchmark its performance. Here's the code I wrote
-for testing:
-
-static void do_dec_rlimit_put_ucounts(struct ucounts *ucounts,
-@@ -281,10 +289,10 @@ static void do_dec_rlimit_put_ucounts(struct
-ucounts *ucounts,
- {
-        struct ucounts *iter, *next;
-        for (iter = ucounts; iter != last; iter = next) {
--               long dec = atomic_long_sub_return(1, &iter->rlimit[type]);
--               WARN_ON_ONCE(dec < 0);
-+               percpu_counter_sub(&iter->rlimit[type], 1);
-+
-                next = iter->ns->ucounts;
--               if (dec == 0)
-+               if (percpu_counter_compare(&iter->rlimit[type], 0) == 0)
-                        put_ucounts(iter);
-        }
- }
-@@ -295,36 +303,40 @@ void dec_rlimit_put_ucounts(struct ucounts
-*ucounts, enum rlimit_type type)
- }
-
- long inc_rlimit_get_ucounts(struct ucounts *ucounts, enum rlimit_type type,
--                           bool override_rlimit)
-+                           bool override_rlimit, long limit)
- {
-        /* Caller must hold a reference to ucounts */
-        struct ucounts *iter;
-        long max = LONG_MAX;
--       long dec, ret = 0;
-+       long ret = 0;
-+
-+       if (override_rlimit)
-+               limit = LONG_MAX;
-
-        for (iter = ucounts; iter; iter = iter->ns->ucounts) {
--               long new = atomic_long_add_return(1, &iter->rlimit[type]);
--               if (new < 0 || new > max)
-+               max = min(limit, max);
-+
-+               if (!percpu_counter_limited_add(&iter->rlimit[type],
-max, 1)) {
-+                       ret = -1;
-                        goto dec_unwind;
--               if (iter == ucounts)
--                       ret = new;
-+               }
-                if (!override_rlimit)
-                        max = get_userns_rlimit_max(iter->ns, type);
-                /*
-                 * Grab an extra ucount reference for the caller when
-                 * the rlimit count was previously 0.
-                 */
--               if (new != 1)
-+               if (percpu_counter_compare(&iter->rlimit[type], 1) != 0)
-                        continue;
--               if (!get_ucounts(iter))
-+               if (!get_ucounts(iter)) {
-+                       ret = 0;
-                        goto dec_unwind;
-+               }
-        }
--       return ret;
-+       return 1;
- dec_unwind:
--       dec = atomic_long_sub_return(1, &iter->rlimit[type]);
--       WARN_ON_ONCE(dec < 0);
-        do_dec_rlimit_put_ucounts(ucounts, iter, type);
--       return 0;
-+       return ret;
- }
-
-As shown in demo code, the current implementation retrieves ucounts
-during the initial rlimit increment and releases them when the rlimit
-hits zero. This mechanism was introduced with the commits:
-
-  fda31c50292a5062332fa0343c084bd9f46604d9 signal: avoid double atomic
- counter increments for user accounting
-
-  d64696905554e919321e31afc210606653b8f6a4   Reimplement
-RLIMIT_SIGPENDING on top of ucounts
-
-  15bc01effefe97757ef02ca09e9d1b927ab22725 ucounts: Fix signal ucount
-refcounting
-
-It means that we have to requires summing all percpu rlimit counters
-very time we increment or decrement the rlimit and this is expensive.
-
-Running the demo code in a single Docker container yielded a throughput
-of 73,970 —significantly lower than expected. Performance profiling via
-perf revealed:__percpu_counter_sum is the primary performance bottleneck.
-
-+   97.44%     0.27%  signal1_process    [k] entry_SYSCALL_64_after_hwframe
-+   97.13%     1.96%  signal1_process    [k] do_syscall_64
-+   91.54%     0.00%  signal1_process    [.] 0x00007fb905c8d13f
-+   78.66%     0.03%  signal1_process    [k] __percpu_counter_compare
-+   78.63%    68.18%  signal1_process    [k] __percpu_counter_sum
-+   45.17%     0.37%  signal1_process    [k] syscall_exit_to_user_mode
-+   44.95%     0.20%  signal1_process    [k] __x64_sys_tgkill
-+   44.51%     0.40%  signal1_process    [k] do_send_specific
-+   44.16%     0.07%  signal1_process    [k] arch_do_signal_or_restart
-+   43.03%     0.37%  signal1_process    [k] do_send_sig_info
-+   42.08%     0.34%  signal1_process    [k] __send_signal_locked
-+   40.87%     0.03%  signal1_process    [k] sig_get_ucounts
-+   40.74%     0.44%  signal1_process    [k] inc_rlimit_get_ucounts
-+   40.55%     0.54%  signal1_process    [k] get_signal
-+   39.81%     0.07%  signal1_process    [k] dequeue_signal
-+   39.00%     0.07%  signal1_process    [k] __sigqueue_free
-+   38.94%     0.27%  signal1_process    [k] do_dec_rlimit_put_ucounts
-+    8.60%     8.60%  signal1_process    [k] _find_next_or_bit
-
-However, If we can implement a mechanism to unpin ucounts for signal
-pending operations (eliminating the need for get/put refcount
-operations), the percpu_counter approach should effectively resolve this
-scalability issue. I am trying to figure this out, and if you have any
-ideas, please let know, I will do test.
-
-Thank you for your guidance on this matter.
-
-Best regards,
-Ridong
-
+-- 
+Jens Axboe
 
