@@ -1,138 +1,93 @@
-Return-Path: <linux-kernel+bounces-645106-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-645103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1D43AB4910
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 04:01:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 655D0AB4906
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 04:00:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF5C7467E38
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 02:01:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EFAD319E4C0B
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 02:00:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 233B1145B27;
-	Tue, 13 May 2025 02:00:21 +0000 (UTC)
-Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCEC919E7D1;
-	Tue, 13 May 2025 02:00:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF36B19CC2E;
+	Tue, 13 May 2025 01:59:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jxrP//VN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14AB7199FA4;
+	Tue, 13 May 2025 01:59:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747101620; cv=none; b=bZPczUEe6IwDHeqY0lONVcON+Z+Szo+DMEJh/862gP9E62lrlOLDTqCzXyH/94qRzwqo5F0x+7evlJ+qOWWGnKpb29MhRlr2xLC/MQ+drA8ub3GwPHZDm2hgFc3RBgvNyBAcpeswJJYeflMDqeRfx4khz/FAvX8sxgFDovv1tCk=
+	t=1747101593; cv=none; b=sUNsJq80ecpnMyvKDceZmcn4f8tsPu7n5vQxbwYh0jglP/0qdYjPWoPJGdNe2Q2fvGDmD0r1xbgn9cTI5i1/SiOigZo1jaYl6C398oU9gtvyXby7A6p79IbV5CH7178eI3eC/izgM/XmyYqdiHYfv+a5oWeMUMveqFyvE1aaPQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747101620; c=relaxed/simple;
-	bh=ORcdYmpndfQmytzq1kttDWPRZSVuKUaoO6dr6mwuHVU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sFvqEk32kahJVdvHYiNa6aE1vKFqy75OVrXlz2WlUFJUlaon7jmoecHawWrwVZJhK4FTxp0xZUegYLL/rVcwnY+zbX+VcV1BMTTwaZpDxCn4m0ns+0xJ9XqgHEWmw1139AirzOaZMkvwHjEwbQBFGz7cYEfvVL2HZIOQYymcM5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-669ff7000002311f-02-6822a7accd37
-Date: Tue, 13 May 2025 11:00:07 +0900
-From: Byungchul Park <byungchul@sk.com>
-To: Mina Almasry <almasrymina@google.com>
-Cc: Pavel Begunkov <asml.silence@gmail.com>, willy@infradead.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, kernel_team@skhynix.com, kuba@kernel.org,
-	ilias.apalodimas@linaro.org, harry.yoo@oracle.com, hawk@kernel.org,
-	akpm@linux-foundation.org, ast@kernel.org, daniel@iogearbox.net,
-	davem@davemloft.net, john.fastabend@gmail.com,
-	andrew+netdev@lunn.ch, edumazet@google.com, pabeni@redhat.com,
-	vishal.moola@gmail.com
-Subject: Re: [RFC 01/19] netmem: rename struct net_iov to struct netmem_desc
-Message-ID: <20250513020007.GB577@system.software.com>
-References: <20250509115126.63190-1-byungchul@sk.com>
- <20250509115126.63190-2-byungchul@sk.com>
- <ea4f2f83-e9e4-4512-b4be-af91b3d6b050@gmail.com>
- <20250512132939.GF45370@system.software.com>
- <CAHS8izPoNw9qbtAZgsNxAAPYqu7czdRYSZAXVZbJo9pP-htfDg@mail.gmail.com>
+	s=arc-20240116; t=1747101593; c=relaxed/simple;
+	bh=IKLpfsU3SJDDrR5HzQvIF9znc20nnNryMt0h6KUIJPs=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=gM4QFjSupnmPZJJKd2iQku9Cxpulxab6UwGA538Tjvz1BQ0YZkB2O+U2X3oDmkcNjkuOuVd0PLLXoRkf/llM1PWOm9UT8gWM9IkjlV8+MXLuvyyXZPH4AdxH0mm+CXJkp+2RUnhjFBfk5pQEgP4Vnhvrc9XsULGhWWmaZZqI1AQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jxrP//VN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80F22C4CEEE;
+	Tue, 13 May 2025 01:59:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747101592;
+	bh=IKLpfsU3SJDDrR5HzQvIF9znc20nnNryMt0h6KUIJPs=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=jxrP//VNpHmJrmH0XMTU3V7CXEqoAGhga/FaxxvdsFba2FP/C2NM3qg/JL6L+vaeE
+	 ddvm8c/GC0YMOdsECV4cuqYDpF8+fcTw1YZKFPotZq9uo8Nif7qAPo4stH+MyPQEeL
+	 xWWE94dsFKg6oYWi2YP74EedvPseSBT5Z5NTbBVvw105xtM6c+vUyyKuBesH4bo3qY
+	 xAfY0bDX4+mk+hd1PUJywuB1VoyFMjd7Dxw151sf7SDiwfMtQEd9FrT/j7EU1rVD6I
+	 XR9MQ2UYgJ6zlu9sOCsc9fQ4EmMD6GLhWVCDh8y1qtu7ESdlUvIH4YWSr/N7P1rX2e
+	 u8DZWcnZBW27Q==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70C5239D60BB;
+	Tue, 13 May 2025 02:00:31 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHS8izPoNw9qbtAZgsNxAAPYqu7czdRYSZAXVZbJo9pP-htfDg@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrPIsWRmVeSWpSXmKPExsXC9ZZnoe6a5UoZBlc3y1nMWb+GzWL1jwqL
-	5Q92sFrMWbWN0eLLz9vsFosXfmO2mHO+hcXi6bFH7Bb3lz1jsdjTvp3ZorflN7NF044VTBYX
-	tvWxWlzeNYfN4t6a/6wWxxaIWXw7/YbRYv2+G6wWv3/MYXMQ9tiy8iaTx85Zd9k9Fmwq9di8
-	Qsuj68YlZo9NqzrZPDZ9msTucefaHjaPEzN+s3js3PGZyePj01ssHu/3XWXz+LxJLoA3issm
-	JTUnsyy1SN8ugSujZ/cFtoLVAhV/flc3MC7i6WLk5JAQMJG4N6uHEcbe+PY5E4jNIqAq8XT7
-	CWYQm01AXeLGjZ9gtoiApsSSfRNZuxi5OJgFzjJLfP10jhUkISzgI3Hh5X12EJtXwExiy7lZ
-	jCBFQgJdTBKfdx1nhkgISpyc+YQFxGYGmvpn3iWgOAeQLS2x/B8HRFheonnrbLByToFAieWL
-	GsDmiwooSxzYdpwJZKaEwCl2iZk3n7FDXC0pcXDFDZYJjIKzkKyYhWTFLIQVs5CsWMDIsopR
-	KDOvLDcxM8dEL6MyL7NCLzk/dxMjMJqX1f6J3sH46ULwIUYBDkYlHt4TLxUzhFgTy4orcw8x
-	SnAwK4nwNm4HCvGmJFZWpRblxxeV5qQWH2KU5mBREuc1+laeIiSQnliSmp2aWpBaBJNl4uCU
-	amCUm+bHtl6vXiaVg8F24uubk0sSdb57R7zSDbk3MV0mcFM2y6HnHrtk8zcYScxKvj2x5lxU
-	07UloTciVhwOrvvG2Dgxb2U0mwuXsNOftAttF9S7wwT5ZjskisvKCRydxbJzY5zMikS9Oxvn
-	sZ38IbNsTsMNX1F3Lrm385sbE27fu/TwwJ0oXk0lluKMREMt5qLiRADQefqS4gIAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrGIsWRmVeSWpSXmKPExsXC5WfdrLtmuVKGwdPrfBZz1q9hs1j9o8Ji
-	+YMdrBZzVm1jtPjy8za7xeKF35gt5pxvYbF4euwRu8X9Zc9YLPa0b2e26G35zWzRtGMFk8Xh
-	uSdZLS5s62O1uLxrDpvFvTX/WS2OLRCz+Hb6DaPF+n03WC1+/5jD5iDisWXlTSaPnbPusnss
-	2FTqsXmFlkfXjUvMHptWdbJ5bPo0id3jzrU9bB4nZvxm8di54zOTx8ent1g83u+7yuax+MUH
-	Jo/Pm+QC+KK4bFJSczLLUov07RK4Mnp2X2ArWC1Q8ed3dQPjIp4uRk4OCQETiY1vnzOB2CwC
-	qhJPt59gBrHZBNQlbtz4CWaLCGhKLNk3kbWLkYuDWeAss8TXT+dYQRLCAj4SF17eZwexeQXM
-	JLacm8UIUiQk0MUk8XnXcWaIhKDEyZlPWEBsZqCpf+ZdAopzANnSEsv/cUCE5SWat84GK+cU
-	CJRYvqgBbL6ogLLEgW3HmSYw8s1CMmkWkkmzECbNQjJpASPLKkaRzLyy3MTMHFO94uyMyrzM
-	Cr3k/NxNjMDYXFb7Z+IOxi+X3Q8xCnAwKvHwnnipmCHEmlhWXJl7iFGCg1lJhLdxO1CINyWx
-	siq1KD++qDQntfgQozQHi5I4r1d4aoKQQHpiSWp2ampBahFMlomDU6qB8XQF3zUL98knDu9b
-	MmnnjQd2HGn9eaJvD3lL5LNWGdy6dTdgd4SA0WMmmy/1f5k/nG+bN4dh5dRfr4V3/r3uxj/5
-	z+X/69f0xjFPCYrRkD0VpK0558iigJCMlYfvZXRH6lzOv3YnXZ3PtVn6nG3YJlWZXZWp0RP2
-	tP8J77Wyz4s56SCXU/ygVYmlOCPRUIu5qDgRAClqDYrJAgAA
-X-CFilter-Loop: Reflected
+Subject: Re: [PATCH net] net: dsa: sja1105: discard incoming frames in
+ BR_STATE_LISTENING
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <174710162999.1142511.7206720882789706953.git-patchwork-notify@kernel.org>
+Date: Tue, 13 May 2025 02:00:29 +0000
+References: <20250509113816.2221992-1-vladimir.oltean@nxp.com>
+In-Reply-To: <20250509113816.2221992-1-vladimir.oltean@nxp.com>
+To: Vladimir Oltean <vladimir.oltean@nxp.com>
+Cc: netdev@vger.kernel.org, andrew@lunn.ch, f.fainelli@gmail.com,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ horms@kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, May 12, 2025 at 12:14:13PM -0700, Mina Almasry wrote:
-> On Mon, May 12, 2025 at 6:29 AM Byungchul Park <byungchul@sk.com> wrote:
-> >
-> > On Mon, May 12, 2025 at 02:11:13PM +0100, Pavel Begunkov wrote:
-> > > On 5/9/25 12:51, Byungchul Park wrote:
-> > > > To simplify struct page, the page pool members of struct page should be
-> > > > moved to other, allowing these members to be removed from struct page.
-> > > >
-> > > > Reuse struct net_iov for also system memory, that already mirrored the
-> > > > page pool members.
-> > > >
-> > > > Signed-off-by: Byungchul Park <byungchul@sk.com>
-> > > > ---
-> > > >   include/linux/skbuff.h                  |  4 +--
-> > > >   include/net/netmem.h                    | 20 ++++++------
-> > > >   include/net/page_pool/memory_provider.h |  6 ++--
-> > > >   io_uring/zcrx.c                         | 42 ++++++++++++-------------
-> > >
-> > > You're unnecessarily complicating it for yourself. It'll certainly
-> > > conflict with changes in the io_uring tree, and hence it can't
-> > > be taken normally through the net tree.
-> > >
-> > > Why are you renaming it in the first place? If there are good
-> >
-> > It's because the struct should be used for not only io vetor things but
-> > also system memory.  Current network code uses struct page as system
-> > memory descriptor but struct page fields for page pool will be gone.
-> >
-> > So I had to reuse struct net_iov and I thought renaming it made more
-> > sense.  It'd be welcome if you have better idea.
-> >
+Hello:
+
+This patch was applied to netdev/net.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Fri,  9 May 2025 14:38:16 +0300 you wrote:
+> It has been reported that when under a bridge with stp_state=1, the logs
+> get spammed with this message:
 > 
-> As I said in another thread, struct page should not embed struct
-
-I don't understand here.  Can you explain more?  Do you mean do not use
-place holder?
-
-> net_iov as-is. struct net_iov already has fields that are unrelated to
-> page (like net_iov_owner) and more will be added in the future.
+> [  251.734607] fsl_dpaa2_eth dpni.5 eth0: Couldn't decode source port
 > 
-> I think what Matthew seems to agree with AFAIU in the other thread is
-> creating a new struct, struct netmem_desc, and having struct net_iov
-> embed netmem_desc.
+> Further debugging shows the following info associated with packets:
+> source_port=-1, switch_id=-1, vid=-1, vbid=1
+> 
+> [...]
 
-This would look better.  I will try.
+Here is the summary with links:
+  - [net] net: dsa: sja1105: discard incoming frames in BR_STATE_LISTENING
+    https://git.kernel.org/netdev/net/c/498625a8ab2c
 
-	Byungchul
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-> -- 
-> Thanks,
-> Mina
+
 
