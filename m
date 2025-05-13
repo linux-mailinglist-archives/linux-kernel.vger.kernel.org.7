@@ -1,161 +1,122 @@
-Return-Path: <linux-kernel+bounces-645904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-645906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A221FAB5553
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 14:55:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4DC7AB5558
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 14:55:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 898C78645BE
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 12:54:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 960C81B467D7
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 12:55:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5E2428DF0C;
-	Tue, 13 May 2025 12:55:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E7F928DF30;
+	Tue, 13 May 2025 12:55:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jsuVQst+"
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HHAwoDJj"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC900171CD;
-	Tue, 13 May 2025 12:55:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EFE51A0714;
+	Tue, 13 May 2025 12:55:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747140907; cv=none; b=JebkVM449pXo4/jO6eUo9Hcsf4KyGajF7ijXF7eNkeL/cbEOPGkGbohSYAUgMp6IEoapyijMNxr9sIWF6bvzehnFQUlwrMrhHXKqH2yJ4OJ/dMswm3MmBrZ+5hxtYAd1suA5Gok4H84mgweEKdmz21AHyenvsHEVNLYvRAT2HSs=
+	t=1747140923; cv=none; b=N7eBPvACcPBgZdadCllKLVV4we4Mre2GKMbKdeT7Z8FY6Oq24iJ48R9Zb+hdDMzS7xK22e0NWf0Z6W5wCCG3fbh8JRZnduYXjcWYCq8ynkG621yzqGqkaLbBtegDrRWt2eAT4Pd5oZcPzju5c4CjqLQ3uMD0AUjI2je+tmacz0s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747140907; c=relaxed/simple;
-	bh=aVB2C3FDKUw+f78CChzpnXoxjn+33ek/tLNE7/EMYZo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MED/L+wjxnzcWsKE81FtBjfcbLnWNF5ZsRpPfKJcMjRG06tAbw26ieJDo80iEIrNsUmko13bkTc1UqF/VsBa0jMPL6yPAsBtIbUrcTIZWlJFVeNYiFditWGsu7EVW5jbT4+fQkQNZdvDQCM7WRta9ds5vhe1bJcGwVMLxw5va0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jsuVQst+; arc=none smtp.client-ip=209.85.216.48
+	s=arc-20240116; t=1747140923; c=relaxed/simple;
+	bh=3hdGj8uHpxr62p324p1GcSBszWvHSvDyDYlv0GZW5N8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TELidYqmi/kqXTUqYkTjCs5ycHKiel8ezNOs/eXT5s0tt7KSuBlwBwqZkEFFiCGGZbOTqSzpuz+0aDbrDinRzm3uEY6oSxgcaJpjaxRdJxfr+GXLn44aLPkbzZxFQk21JR+4a+l8np7cYGMWSLL9of/4ab5+xOZM4TA9Lg1wmp8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HHAwoDJj; arc=none smtp.client-ip=209.85.208.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-30c7306890dso3843505a91.1;
-        Tue, 13 May 2025 05:55:05 -0700 (PDT)
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5fcb523ebf3so832908a12.2;
+        Tue, 13 May 2025 05:55:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747140905; x=1747745705; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=EN9fI41SwUNEvRIBPpCmbmrqn5bUWQsOT/anNGrdqFk=;
-        b=jsuVQst+SCln/NO2Yan+CPH3h9/O7eqJWvr+vLpisJPpRCYcpNmWrWU9u6uy7OIuQ+
-         F84n/6M/45oBYOJK+H3w3shkiBCBVrOG+9fRWavMFCbX3hSqSpkuaxXQd0e5JDEJEzAU
-         rQp4950u8xe+d9s824nDGqGgyUyW3whmQiZ6NvcY3mOtEDNDHkg58rj9lNpONH0L8Xde
-         p1LuDhIRH8fEldWfA/iTvr+FhnY3BlxgFdnbwbf7gGQekpKRCGyby3Na21HclNCW+NC2
-         CfMpFtiBDkqA5Pfl3IxUtbBxwGUG03flcNtGN5O8WB0GTYsOsad5FnhISRExvoHJAxek
-         9L+g==
+        d=gmail.com; s=20230601; t=1747140919; x=1747745719; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=OeUPbqYzV5ggCCFVQv+5+GayiTBavegaQ+ohsIql/XI=;
+        b=HHAwoDJjMJVnIGRbhX1dWXZT78siYjUil2otLwTjAtgkoeC6iHYZuNDEr+vCMd+849
+         Ysh4ywH9WEqAJrZRgKPhX/AtkR5+z+FNpz3MQXRPkid34xNEmfzoy/VQZMIDMLJNpxaJ
+         gCTVDMRgW9FtTeZwWpgF9QYjA+X8p0RCdZFCGjur+o9F0njeD80KT8fY6fCdaT6eAQMJ
+         UlV0YqVBOc8oA21mhEl5CC2UKhwhiSl4xnmDLWz2rwFB5X0GlPaBr2qBL/mLJfy/qSmu
+         ZDjauBDfYTYSSVmoY2nUmq2l04omqFWCBpqEX897xAwt7uAQJ0TIKRtXVVGKu+3ykUWi
+         AiJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747140905; x=1747745705;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1747140919; x=1747745719;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=EN9fI41SwUNEvRIBPpCmbmrqn5bUWQsOT/anNGrdqFk=;
-        b=JkrgcsGqZD2XimOeC2qgLpitmD4dMjF5XoLmo3a9dNdtKnLpPWyiB0X2otFrOyCYTs
-         BO1VwcblnK8p+h5F8WcFFc4wSmvPjeEauAlgBQOOkw282N0iyzq573SU1MtDMp0FZgVT
-         r3d5/1z1+3o+eAT0d+ZoviehJNWUdB1n1Mv1w+h8VxAzumHkXuCohKW/kjMgJEt0+mMP
-         SKGNmvj62hztl8zBQtK0eQw+JyvS63DZsE9DvV2oumAzYT2164F5DBFh1lQl2pWXXxJx
-         ZpbyfBOulMglCo71LKRsIU2endEjKmGTNLQrP3hPhFKiDiLJWpG6AgOY1XXfrcD3RptT
-         5u6g==
-X-Forwarded-Encrypted: i=1; AJvYcCVUnu3gaL8nOhSrnd+WGGSH+oQADF+y4AN1lwCizLzZqf/IFs80x5nfmTCuPRjNyFCHuuypr8BCFlBEv58=@vger.kernel.org, AJvYcCXBG4yB5WkI6Jsq7yD3rJjSClmxRK62cM30eQWdtinSzJ+wBQn9IJpgPkadYV41vJipnPPQcWgE@vger.kernel.org
-X-Gm-Message-State: AOJu0YyR/y6rU4xk7aFVXL6arHV4VCpOXeGJvoMHfHlXj3KCjhiBAQxO
-	kE3etA/fcYBd7hw2VCNBxXsRHgWzF7wzsQfyZIEOpA9HClnjD5rh
-X-Gm-Gg: ASbGncuekuFdPP9WvjjqOpl57eV7dOrp5WBS4YXeLn3K1b88NywniwVSGsjXE96OoRG
-	BBGpkCNK/jQhkpfr19PPYUw0qjyNqasX03FbGcqgE7fWx/ntvftllKTkgDeJ/qDYgoHbu+nXjcT
-	pOvhzbzpoYRbPJ7wXru/QebtSriDxDdVxngpQwIdfBuGXyEtlvnhJRb0T6nedu+tJ5oMnDcnSrX
-	i/R1GSIg+KF5C1VxqCGq9iC+8oSYFePZqYPqUbSXt/NeyKp7+klxUA1FVuDInLkN8GgoGH7LYw3
-	952AwTf5UVM4u1i7zj9avhPHbtszsFBxzCqF4LltP/8/zKspX1tOFOMVhRPkAThBBqlUdqfBHa9
-	hlX4z0bFA569o2h10O7EmleSoFWHp6Itp3ho2kg==
-X-Google-Smtp-Source: AGHT+IEwvl+MJeoRrUjahOBnEcQiVj2a8Jmt/6h75M6MpzvP3HWVLL2ES27iCHaasx3CiubgowebNA==
-X-Received: by 2002:a17:90b:3908:b0:2f8:49ad:4079 with SMTP id 98e67ed59e1d1-30c3cc1106dmr24791390a91.6.1747140904825;
-        Tue, 13 May 2025 05:55:04 -0700 (PDT)
-Received: from [192.168.1.24] (90-47-60-187.ftth.fr.orangecustomers.net. [90.47.60.187])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-30e11e81788sm602945a91.1.2025.05.13.05.55.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 13 May 2025 05:55:04 -0700 (PDT)
-Message-ID: <b5cfa725-d3ed-4c77-beb7-3eec065580e7@gmail.com>
-Date: Tue, 13 May 2025 14:54:59 +0200
+        bh=OeUPbqYzV5ggCCFVQv+5+GayiTBavegaQ+ohsIql/XI=;
+        b=HrTAi4EMRPRuT4dtC9idxpFYNNYWZj8fHqMRcAACYCG/spn1+MPvi473XOgneS/KVY
+         0Z8eTSmrWLcs9BI8W3AdAnfcNVtp8t1PU5SLPqdXGQXUlaozCZveGkdn4QrWVpjtNk10
+         59RxbFeD/xyHgwmwE6ldeFpzvUqbKD7DdqraZrZMrA5TEmwsf7ZDsRF0vFnvkFrGuYdE
+         eiF7KamG9UFa70o4y5r3I0kLf/zVlEYSBmb1DuJM+NLXEsccSrulcxvSeO+/Vo5GduH+
+         aewNI8ss4khTtBKE7Fvi6U236+hoJkIAeXuEJITDYIlSXH8GvcbnRr/gYjOQNhxd3goB
+         RTiA==
+X-Forwarded-Encrypted: i=1; AJvYcCU2DwJrGiJzHVuZ98aOriztIflAxOY+OIsURIXOKuFmxRaXoKFD0iILnsIi4cF6Pm4BRriEJ8jB@vger.kernel.org, AJvYcCXqklc395Zl6mIQwV6lzEO3C7IEtpT4ch+ggC53gNuZD1aOqXoanbYNCehrTaU2c/mFBQwlbyqnZytqqNc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywie5zKJ2KfGBO1M2n6UJ7H7tMyBzYaaVnqYtvsbiwMMBIZcAgu
+	1GIPYqkyOvXVbZcUY/YUynV+PF0tzDCKrTXC4yzKpiHDYR/i5c1A
+X-Gm-Gg: ASbGncunQQyQP3o0Y1zyMtaYusGqrq+l9p8mVzz7yFHExUuoyb8IZHcYGeuciseKIs2
+	df15PCfxkfj61H1iHvjmCJXbJ6elgDrUYqfJ/693Kd/GYR2pEYX0pgbSSbH5IWNpHRylg5khAG2
+	DDn8E0GzIVzoenUGClDzS/0tmwj41lnoVkisJN8J19mi7AspheWktot8ESs6Yf9Px2cq1YAbSkQ
+	ZW0ComFdc5k3Jr9rFwqFOWW9dZrCifu8j9mvQ9RZgqFqZ+nuNXV+WMLN7fR7Z9hEcxz75zFKcWW
+	pRx/YGEKTvw9UhNuHSq19jZBzAluzZzTAc4+7sY=
+X-Google-Smtp-Source: AGHT+IGz/4T1J8uUlgyA3H6eGcJhOWFsPNLTAtoSYj7A1hgVNdo7lJee1rllsfiKwrtF73nWdWfY+A==
+X-Received: by 2002:a05:6402:518f:b0:5e0:a4ae:d486 with SMTP id 4fb4d7f45d1cf-5fca07ed6c1mr5400535a12.7.1747140919203;
+        Tue, 13 May 2025 05:55:19 -0700 (PDT)
+Received: from skbuf ([188.25.50.178])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad2197be6d7sm771671966b.157.2025.05.13.05.55.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 May 2025 05:55:18 -0700 (PDT)
+Date: Tue, 13 May 2025 15:55:16 +0300
+From: Vladimir Oltean <olteanv@gmail.com>
+To: Jonas Gorski <jonas.gorski@gmail.com>
+Cc: Florian Fainelli <florian.fainelli@broadcom.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net] net: dsa: b53: prevent standalone from trying to
+ forward to other ports
+Message-ID: <20250513125516.bsgf7b3jsrcfq4oq@skbuf>
+References: <20250508091424.26870-1-jonas.gorski@gmail.com>
+ <20250508091424.26870-1-jonas.gorski@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.14 000/197] 6.14.7-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
- conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
-References: <20250512172044.326436266@linuxfoundation.org>
-Content-Language: en-US
-From: Florian Fainelli <f.fainelli@gmail.com>
-Autocrypt: addr=f.fainelli@gmail.com; keydata=
- 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
- WlfRzlpjIPmdjgoicA==
-In-Reply-To: <20250512172044.326436266@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250508091424.26870-1-jonas.gorski@gmail.com>
+ <20250508091424.26870-1-jonas.gorski@gmail.com>
 
-
-
-On 5/12/2025 7:37 PM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.14.7 release.
-> There are 197 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Thu, May 08, 2025 at 11:14:24AM +0200, Jonas Gorski wrote:
+> When bridged ports and standalone ports share a VLAN, e.g. via VLAN
+> uppers, or untagged traffic with a vlan unaware bridge, the ASIC will
+> still try to forward traffic to known FDB entries on standalone ports.
+> But since the port VLAN masks prevent forwarding to bridged ports, this
+> traffic will be dropped.
 > 
-> Responses should be made by Wed, 14 May 2025 17:19:58 +0000.
-> Anything received after that time might be too late.
+> This e.g. can be observed in the bridge_vlan_unaware ping tests, where
+> this breaks pinging with learning on.
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.14.7-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.14.y
-> and the diffstat can be found below.
+> Work around this by enabling the simplified EAP mode on switches
+> supporting it for standalone ports, which causes the ASIC to redirect
+> traffic of unknown source MAC addresses to the CPU port.
 > 
-> thanks,
+> Since standalone ports do not learn, there are no known source MAC
+> addresses, so effectively this redirects all incoming traffic to the CPU
+> port.
 > 
-> greg k-h
+> Fixes: ff39c2d68679 ("net: dsa: b53: Add bridge support")
+> Signed-off-by: Jonas Gorski <jonas.gorski@gmail.com>
+> ---
 
-On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
-BMIPS_GENERIC:
-
-Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
--- 
-Florian
-
+Reviewed-by: Vladimir Oltean <olteanv@gmail.com>
 
