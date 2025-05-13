@@ -1,596 +1,533 @@
-Return-Path: <linux-kernel+bounces-645721-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-645725-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E7A3AB52DD
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 12:40:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E5AD6AB5308
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 12:43:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6828A986918
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 10:31:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F5BE9A47A6
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 10:33:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95A7D242D69;
-	Tue, 13 May 2025 10:15:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E25F259CB1;
+	Tue, 13 May 2025 10:17:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="G4XpTTKz"
-Received: from PNYPR01CU001.outbound.protection.outlook.com (mail-centralindiaazolkn19010010.outbound.protection.outlook.com [52.103.68.10])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="TtiYfdp5";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="XVdleQyX"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB20615666D;
-	Tue, 13 May 2025 10:15:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.68.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C154C259CAB;
+	Tue, 13 May 2025 10:17:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747131330; cv=fail; b=Gd1q/O1QWFaNv6qppwDVuGhEr2/X/j+iiNurb8hjZKC2QJTEJ1Ue6mJdnABDq+Ul5LtczBHR6M1UvB7NTUxcLKGTJ2q/WvHPejSPC5R8OVrBoQV2L+Rxg9emNrdIt5ycidvnHA22+OYytHkRQXmdfBEwa5QwDlomZo2EL8BoYV8=
+	t=1747131454; cv=fail; b=Pwv7aWBwFR70nXb5wQZuPr2YoLrU3aWHKLoHr87uTCyrPIwwSyvPFdH3wL+GFPSDMxsNWsoEHKcVrSrLO39jn0I8tby2Kprqv7bC9MsHZwNtPZchxmRL6I3hPI3AplhBNc5P/kJeu7CnicRwoG7uLgTeDWYlYCQKeMjsqSG+ih0=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747131330; c=relaxed/simple;
-	bh=oD7xePy1oGD7SfwjzHPPncZayXRbbiNZr8Tw816dtf8=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=nyUA5mtGmh1RvrtbPlBVEU/AEwPSA67gqr+RgDMvgOvnfkQMjNKQlBmrQHTFQRkUeu60h9UTs22lRwzFSgQABXCYr22e3qqlkEtU2RgGtoPTxtSvAUEbDMPMXAxKERdcOkCnj/od+CxF3xwAEgH81ZazIpKq5+bPrPbS6ArixrU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=G4XpTTKz; arc=fail smtp.client-ip=52.103.68.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+	s=arc-20240116; t=1747131454; c=relaxed/simple;
+	bh=Xid+JrGHALg1W5GUW6ze1xajMc0itl6wfdLqNBbobo4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=O//HmCis7Mf3WtP+Lo+yjjwu9qBycsYg1lqO+7cWswwmPD+xH8W2vjhxOOp7lyp+SEq0bL91BCaNXdyagjTY+IUt0CCVSeTKqzkubEWTdYr6I5PvEztU+K5vMswwRpjzjfJAcS4BFOSd3kDzChv9KwLI9Yh3bCsp4iOZu9cZGlg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=TtiYfdp5; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=XVdleQyX; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54D1C8tn003041;
+	Tue, 13 May 2025 10:16:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2025-04-25; bh=Tdue4lsGTxkmQqQ89f
+	b9PkQhOtHaOjMHjZzHlJn+7Zk=; b=TtiYfdp5NBrW0Ym175mCJjgDPj6wy8WRdV
+	n1kxNd3EoeyjMdKTNVowS/C8kBDN/SNR/u/j6ZDXYXsllU/2wyFrNUdNSlgxq9BP
+	0h000PZEeYECSieNyiN+FHIDXKsi5AR9e1FTun+IQhgbk9qi47v+SpznFqc3WI9W
+	1aNkBOTEs3JlwgSwQJuq8LZDIEMndD7z5ywRMPKnrIfnFFKJyYlz9slfAngAi0Bn
+	bbLXDENaY3E+3rNWoGdEdf6Kjjp16zt/r5/XE+i0Nz/Njprv5BFHF/O7AKpS5NPl
+	iDlGV07lunJEgczFWvBF5o6ext+SJKC1Imn1QyFIsB+MW5D+PIVw==
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 46j059vfye-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 13 May 2025 10:16:33 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 54D97WOC002837;
+	Tue, 13 May 2025 10:16:21 GMT
+Received: from cy3pr05cu001.outbound.protection.outlook.com (mail-westcentralusazlp17013077.outbound.protection.outlook.com [40.93.6.77])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 46jwx444gf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 13 May 2025 10:16:21 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=DUJqJQ1kq+6rXReEy/PbCPlM5FS2K6aBAALIyenGcDO4Ddu1K6Z0pBSJQyM17itO2iP9fSYMDRArQsGtm2oXL49DnXYa8IrpGeF6JWu31iZUsKvkGULlYM5yUHRG5QAldSPAKlUP1rtoH76ScBr02Y7OgW54hHtHF8BvB8Ru0jdGfYjIcIhizwVOxNZ585scEdUYTjG+XXIlwkjxyFg9VbDbb7icQpDuRmXcgpztaEkHvGXzG3N35BOmwS4cQV0yjx5mIL/J/8L6lIRrrisNwda0Ip8OPC5//Az++X/AgpaV8srUt+oA34yT96eqZZhPvUd31q4ooRp2qvVCvhoOSA==
+ b=bn8XJHfLezrBW7CTgzxJVs1Df0pxHjx0lnlzhDkMB5Dndt4K9yK9ju8UKPuA9ia2W0v6fM7A/pbwuuvuXsXmxZC97ndcpVQWqe4QJgJc7E7VCgQSULyDz66Cr7qq/IjZPShloT+SM/d+5T1BmWDCk2Q/JJDtAERjUQlW3TvfTrH16t/ENKFHs0lq+mCz0ruA7kdZJ2o+tf4tckXY7HL0/xal77rXscPxTEPiguYXfDxu94Y+fhiRXSJBhKdFbmd3EhTVLLhGhuqBf0BZ37MJl4p5RJ+h92tD/Xu2MCpseTQU1SPFlSbtiF4f0kwbTPLtt85SuTnVyzRTIn0BNAtkuA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=e5PkTNT37G/8v4lYDKY0IH657fgBTomVoPWC5t7FOm4=;
- b=ljGzvY9fXj5wLhAL1zcTA2aac+tk742gISUPWB7E/FfV1INMp5KQZSs9EFaJyZEgixPxnyouTGRIzuEXxcAXVceBAtJaxlmLD9w/UCQJDTliGarb/HeATISn3kV2WMJRoQsxKrr0cECzau8uskWsFMcJYWL3+NYDimvGKE/R2pybetUSOmo3SGc4sE/U2KCS5SWT4j7OFi3x6ah3EJWITZUBMFywgoNs10LO2DrPN7XT/+a3W0SGIx8l03qF1y6fRPqZarLf9TbPb1cFw0zL9p0h3KUdho2iI8mMjpwxyTlONF64idV1+hkxR9TgaUnLmRadFwJiaQWPQ9Vt6KGhZg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
+ bh=Tdue4lsGTxkmQqQ89fb9PkQhOtHaOjMHjZzHlJn+7Zk=;
+ b=O8JHPTDgE9GhQjZbn6gb+Lk1xVi3keKCCZrObOwLEtgxvIsRa8/QYlxKiLOjXRfQ0namB8ZtTg4jRiq24+uh2OKKGsJ4ULfwvWKYYsyWcF4PQfatxSQCwgza0EGmiJ2OxyADodeNaeynKuexuY8syj+kMPOyM+Qf4GyHHiV1+qEfzeFgtHTBkp0gVGnh89GjPWirPX8BcyMu+e3iAjTD0nRm9q8PFMneLVmNjHkwlrkLswDhYFjpoozYXTRJiE0TeYUkcEbfaLAJUFFtmH4YA4L1G+4ylLO3v+woeTHtUKlEBike+7VsQ9S1h0BCj3r1ltHNblZNXM3id61+YophDQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=e5PkTNT37G/8v4lYDKY0IH657fgBTomVoPWC5t7FOm4=;
- b=G4XpTTKzOSDl4VPSE/j720IlQOF430IYbmynOciA1OaG3PthQucWDAKu7ssELhOdD6qT2oh4mjq0/blgJ9IeI/B2IkVg7BQu3pUiiKEJ0LnmRFjiXmQl9Y7ZmEV957OKDbdv3FXMthKjLaBsPST01C5paf0ECciAmUE2wjDxHH4WjkvxcVfjPUCZU4Nq0LQlUNu9uvy/ZtxbOcFz7JI78QIwjHN/eDkyrSOwgn1l8cyglxe1fEdbMfGRM81vtM2v1M7xji2muyN76NGCR0O0I9842pZ02aSCb4JXLXepgRmMRYBIJYkm49+5IqpACatfsDxBQUgy9U2W9DOJnFZ3rg==
-Received: from MA0P287MB2262.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:100::6)
- by PN0P287MB1377.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:187::14) with
+ bh=Tdue4lsGTxkmQqQ89fb9PkQhOtHaOjMHjZzHlJn+7Zk=;
+ b=XVdleQyXeqvVVGupgvqZ+XmyQo22wVk4et921Z9oxq8LSYlbrtTYAiRrwf+/QA+DjYOHCVDhrjTgepoTQeGv6oaO81cBSidBxheYpxHcyaTtwpoZdqw94t00sibD8l0Ry1caJJUtLzcZrs8F5BPOfWGHOEdIQ22h3FX2zA69Rfg=
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
+ by IA3PR10MB8706.namprd10.prod.outlook.com (2603:10b6:208:580::9) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8722.30; Tue, 13 May
- 2025 10:15:21 +0000
-Received: from MA0P287MB2262.INDP287.PROD.OUTLOOK.COM
- ([fe80::ca81:3600:b1e4:fcf4]) by MA0P287MB2262.INDP287.PROD.OUTLOOK.COM
- ([fe80::ca81:3600:b1e4:fcf4%5]) with mapi id 15.20.8722.027; Tue, 13 May 2025
- 10:15:21 +0000
-Message-ID:
- <MA0P287MB2262686358C68D015661BACDFE96A@MA0P287MB2262.INDP287.PROD.OUTLOOK.COM>
-Date: Tue, 13 May 2025 18:15:18 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/2] reset: canaan: add reset driver for Kendryte K230
-To: Junhui Liu <junhui.liu@pigmoral.tech>,
- Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-riscv@lists.infradead.org
-References: <20250507-k230-reset-v3-0-c85240782ea5@pigmoral.tech>
- <20250507-k230-reset-v3-2-c85240782ea5@pigmoral.tech>
-From: Chen Wang <unicorn_wang@outlook.com>
-In-Reply-To: <20250507-k230-reset-v3-2-c85240782ea5@pigmoral.tech>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SI2PR02CA0008.apcprd02.prod.outlook.com
- (2603:1096:4:194::12) To MA0P287MB2262.INDP287.PROD.OUTLOOK.COM
- (2603:1096:a01:100::6)
-X-Microsoft-Original-Message-ID:
- <521c5b1d-a5d7-4070-a1b9-0e34b4e5a76d@outlook.com>
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8722.28; Tue, 13 May
+ 2025 10:16:18 +0000
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2%6]) with mapi id 15.20.8699.022; Tue, 13 May 2025
+ 10:16:18 +0000
+Date: Tue, 13 May 2025 11:16:16 +0100
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-trace-kernel@vger.kernel.org,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        Borislav Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Tvrtko Ursulin <tursulin@ursulin.net>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+        Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
+        Pedro Falcato <pfalcato@suse.de>, Peter Xu <peterx@redhat.com>,
+        Ingo Molnar <mingo@kernel.org>
+Subject: Re: [PATCH v2 04/11] mm: convert VM_PFNMAP tracking to
+ pfnmap_track() + pfnmap_untrack()
+Message-ID: <8d96176d-f36b-4714-9780-6131c8470f50@lucifer.local>
+References: <20250512123424.637989-1-david@redhat.com>
+ <20250512123424.637989-5-david@redhat.com>
+ <d180a8d2-87e2-4878-bca1-e6986b7fc110@lucifer.local>
+ <c7a4d470-16a7-423f-b9a4-a73210596d8b@redhat.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c7a4d470-16a7-423f-b9a4-a73210596d8b@redhat.com>
+X-ClientProxiedBy: LO0P265CA0007.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:355::18) To DM4PR10MB8218.namprd10.prod.outlook.com
+ (2603:10b6:8:1cc::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MA0P287MB2262:EE_|PN0P287MB1377:EE_
-X-MS-Office365-Filtering-Correlation-Id: ef7a669b-963d-4bf7-47a2-08dd92071185
-X-MS-Exchange-SLBlob-MailProps:
-	obhAqMD0nT+76ZruCrigLPUIQMEMZUn+eeQh1jFeLeCiunAWhUAgPHBsqmTgRVoHHF/NSnfpsbUH7oCqso7CdbLIABPVgzse+110V86VXjfy6SaSXFIJilljojMn995JvqLP0DSMbdkgoXY05H47LzSF7RWzAU/FmmidJZf88Wbsta63pcxq6ylRaZGzYFhdU5UW+Ti1oCAqVnbM33wqBlT7UKNblT3snMS4M7Ty96TnwA8o+u8FihGJVJdpjeoIGG9yAu6DVObmn+XvM5MFuhCZvFGHwqYKCRBWxQyf55wCMhD8Cm8JRN4Si5jYXMA+tHPTwXUzYVUasUFt1xbzynGH0A4zqdE9T3VphN/Pve25x/7A9jtDR8RGIwDJ0a6VnuNqjLHfn4KH9KV1Q8utpTA9Naol1JtAq7RQAYUKJbx5SY/TVsaIbgyEas4tyPFMvSF2woNP6dz7Js3xvObshTMvx17n8zrbEzgdw4rUJwRp1cDQ8N4fdTUu2hHgWM7PETKUvTJwwvPW+ApsmFj/Gpf0bDTiPTeHzrPhpt1qOK3zVxG+7Gj2au6n399yTKXQHNRa6N/BEP/yYOqGlFDdlMfeOkn81VuF9txq8wJU/qzF5wiRV5RoyWxEdEFXOGS1XKapFN+PJShSmiU46p9pm/zLX2JDdhN2XR8CFWwrfC/07glKxjVAI+B57xP6uxqs9RRkvM49Uxf4PRQMAWHsbW/8lK9tzcGIpRlo1mx+zouc5qhVLM/3FTY6JSTbHOyooxg9/dQycUQb/+Mwz9RAj2KMoGobB19V7tbtcxMW1BBqqUT5XioE/5pXcnjcFR82
+X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|IA3PR10MB8706:EE_
+X-MS-Office365-Filtering-Correlation-Id: c9a44450-faf7-499e-aa81-08dd9207337c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|7092599006|21061999006|19110799006|8060799009|15080799009|5072599009|41001999006|461199028|6090799003|440099028|4302099013|3412199025|10035399007|1602099012;
+	BCL:0;ARA:13230040|366016|1800799024|376014|7416014|7053199007;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?S0puR3FUL3dmN3F1UXFzVHYycEh4TnhCSGdtTFpjVm1sN2FyQkF4dks1U2sw?=
- =?utf-8?B?dTB5OW82aUVOTmlYVXkrVHdjNklpL29GLzZhQUFtRlg5R2VFSzZKUi85UVdI?=
- =?utf-8?B?ZmFkMlg0UENMcFNYTk5MYXlVOXQ2eEFUSytUcGt4c2VaOU85aHQ3c3NMMCtw?=
- =?utf-8?B?bjRrWkdDNUxzVGhna3FnMEVmeHJZMnFjV2xVSWN1a1FZaCtETExJYXVjTFlo?=
- =?utf-8?B?elFGUmV4S2lqK2tIU1FsVStmN2ZDcG5hVkJ2eFBEdDQ5eVZrZ0pKV0lKdXhV?=
- =?utf-8?B?aDZhNS9FWWQ1Y05VZ2lQUTYvU3dBWlVBWWhSem1BN1JTMHFTM0NuVjlmY3h1?=
- =?utf-8?B?ZytRaG9MR3VYVlFsbm9mNkhaTU55QWlPbWErUndsYk1XV1NmZUdtcWs2ZUI2?=
- =?utf-8?B?OWtNdkt2c29VVkRiT1Y0OStEVFZQVE92c3pvbWJkQ2NrcCtVRDRlQkp4RFFW?=
- =?utf-8?B?YlpJTEpIMXEyMk5BUSsvcEdXRm1hYzZDZEJnb1dNa24vZkxOdUhDTlN1NUlx?=
- =?utf-8?B?REdkODRoU0JaRWw4UG5NRUNxa05nTE5GaEFHTWM0a25iTEdzRUhPWUxteUhr?=
- =?utf-8?B?emtrZkhub2crZlNDRzRwUldqVDNMOHkzN1FDWXN0VXNSZzVsc1FaUjZKUTJT?=
- =?utf-8?B?U1FKTHZHQ05jK3o3bC9xVEhhakF3S1dTR214N29lS0Ywc0JIbTQ2UllDb250?=
- =?utf-8?B?T0hFVTFwTjBpNERWRzdaL0REUFRZcnIzdUVobHpHanE1aGdlNm5hRk1pK2d6?=
- =?utf-8?B?RThvNnNMejhKN2lUOUtvblVhMWRsaGNxZ21VYThvMzJXTW8xNWNlQ2tpQ2dt?=
- =?utf-8?B?WGdlNmpPTTRjaGEwQVpqSGJZMjlLdllwSkdCREZQa3N1QmNvQmJLNHdHcjVD?=
- =?utf-8?B?V0N3TSszVmpna1owSk5yUGlUMWtKaGpOMEJxQXNYV1pZazVJVXNJY3pIM3J2?=
- =?utf-8?B?NjlpTWRkQlhLN3JCVU1RSC9HaEYvSGJ6RUtabHlUQytBTWZ6OFU1Nkt3djYr?=
- =?utf-8?B?S2w0S2ZBUGs0ZXFsKzkrY0ZTVEM2K1Bka3I3SDBvcEFqaVNkMDJ0dVBVUDY5?=
- =?utf-8?B?WVkyVEdGR1gwcDB4QURUS0dmc2RQUERORDBvMmtKRTNhc2NKcU5ZOEd5MkV2?=
- =?utf-8?B?UUQxbVhqUG8ycnkwRXdjOFVhTmJ4cVpwL1J4dUY2enhYdmlvazJDNW9vRjdq?=
- =?utf-8?B?dHlDclBvci9uQWhhK1JwSmhBUTZZR3hncEFubU9YbWV1SkRWY3ZNeXBIcm1y?=
- =?utf-8?B?T3dBY2VrVTcxVDAyWndzNm0rY1hqb0lQQXFpNXNibGJwVUhHNDJLRW8zNk95?=
- =?utf-8?B?WmZONE9lbVM5Tk4rMmthNmV3RVI4RFc0MTlpR0dkZkFWeXlpdysyM2ZsTzhS?=
- =?utf-8?B?KzE3ZjJRYXNvWDlhOFlnbnRQMFZKOGhCQkxSODl1S1lDbmdHb1YvcDRKZHN3?=
- =?utf-8?B?NERBSm9IRlBzZHcvbWEvV3d5N3NRWDh2VEJkaFBPM2U4M1RYTnVsblZzaUhi?=
- =?utf-8?B?WUZzZDZTcC8wcTZIMWRIam4zdGNCZ1VVNithVkZhV0paa3FPZEZVTU4rMVNB?=
- =?utf-8?B?aGdsb1ZaOGVFVGlZZ2xYUmQybmJpM01pOFZQM0ZTK1lUaVJ5eVZHbTVTTVNz?=
- =?utf-8?B?bkNNZUkwLzJ6RDE2cGIwZnMxbUpVZHBrK3d0aUE2VWdWY2RaTUdEcnpaKzVj?=
- =?utf-8?B?UUdLczhDVm9JMkZyWjh6VzdWVHpTaThlVnhKYUdzeEN3Q011YnUzc1ZtdU4v?=
- =?utf-8?Q?PhDewgGFyT6I0cZsN0xsOB2D3TTcyY9/CJKBVR9?=
+	=?us-ascii?Q?QYCWJXqI/Smk/bY7wWzWVLr9J+R4g7xs5aZbPLnOCMAHQI8R4Eut05hHuufE?=
+ =?us-ascii?Q?oVC6Nw4D9Wxkux2RrAMmtJ/cpyKSHVXOmOORqsA+8Sf5e47rbgEAslSnNuC1?=
+ =?us-ascii?Q?Lcj7V0SX9FF6sVtS1KoJ+wPMqmZHj28CuGe9Z4jZuJBdkBPeYHHXhGoHshoO?=
+ =?us-ascii?Q?8HePjl6XodnFE+n/sOKcXwRWlIW8Rd8nmPuUHBB472qRAl9Ko5dGi4YU57o+?=
+ =?us-ascii?Q?E2j5KIeTTMAb4H0kLKd91T1KNpvXYYi6XAMwnTusKEk7v8xfrCJdRbGdz8Vv?=
+ =?us-ascii?Q?t22P34IKYbjkkKhJfy2TvbZlrikj9yRru3IxSb/saLwD9dRhQS2Zg6gPqzWa?=
+ =?us-ascii?Q?po1aKQTYZNMhO1ARMD77xDa54xt0qjK3kMNBxCvQc2SUn5IgdsvXO94zscyI?=
+ =?us-ascii?Q?vVvJ12VhFIcBrm6vhQYRCJU8tax89dd4fnTNjqlF+ARfx+SxlExBj0ww85MZ?=
+ =?us-ascii?Q?3v0O2vK+rVTuiXKLztF/quIvEI7lzbXrnlAZizNICsuY92AcUwrz49IAP8D3?=
+ =?us-ascii?Q?iKBQzAbbzqILfeqy80I3NL5pN9euJ0vWxe4nPpG9cYXqVdI6ecg1f8XIFlzL?=
+ =?us-ascii?Q?R4DSEiHiRHOnAMlNFhvVHB7XHvM0fp+3rspX9igMVcgwuOV6ogpWvwTl9a02?=
+ =?us-ascii?Q?/TlyJTM1FM/wapPw1eMsMfJYkvG8w055QXuyyEoTyYEBZWLc2mD5QDb8/z1a?=
+ =?us-ascii?Q?Rr8NnzonE0wbl7VzD/bSVMQ8SGXNIRG7zlSONj2fRsNzWGJEAK6Yj1Jl8F4R?=
+ =?us-ascii?Q?ptnVdTTajB96dTRdL3MCEWjCmKJxCQAMoBX1mh8HVrJsNcd8M72cB9x5uV00?=
+ =?us-ascii?Q?IHkavjoXTVp4MZc1LzqUbLh1wEUwJx/Z5eeZj9Z+Tp/ESGG5whlqgI+8ttlE?=
+ =?us-ascii?Q?Sq4OKBKP6mACeI+eLamoiwORt/qu+ImV/xmO6XoRNIaqq3QdNleBUl0DudBi?=
+ =?us-ascii?Q?NDrloeVqPDpB38ZNZ5F/T95aEiuq5OLP4exWrDCIrOgPTTTW/m6uNo+IRDIJ?=
+ =?us-ascii?Q?cmsmh8NqPFtOaRrMlgln/B6Hlnmjo026HN4YEHlw1PxZTd64wJ96Gvu92X9c?=
+ =?us-ascii?Q?A4pzUWJEXPriqPSakHRK0IwkM3tqj97z8Eg0t2xqQYhAwpt4w8s7wPzWxvIV?=
+ =?us-ascii?Q?RogW8zHutRC2cRCzB6bqWW/O5i3/gBiy6/OCnbh+WhxuZHzFTw8EdNnVf0k7?=
+ =?us-ascii?Q?1M1lfBJfhJiE8jivt0Lc6SZraMb/Z3mSbv2w58enA3zwx/6NYuuLqnKQLo+a?=
+ =?us-ascii?Q?5I+7nUYlOA8vzfeeSCCiLNK+Aal5Fp9yUzpsarMd1+CENB6LcJ/L0Kwn4mro?=
+ =?us-ascii?Q?3uu76m0hURY2W2pzvoYnu//C9zQmjx8STjGI755KRuBRW9iI6i+6Rsr3EaJu?=
+ =?us-ascii?Q?ZMVeTGPP2mOfi5/5FQeZAAFvpHP/XdjUH8vJP+yIdwtyqPSzogU9Dn5lxZXl?=
+ =?us-ascii?Q?VIuLDMN25jM=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(7053199007);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?VE4yaWNoZjV0OGZ5bHJGaW55OEJ3Q2hNVGx2SjFSTFMzbG8vWjBiNGN4L1d4?=
- =?utf-8?B?SzRxWHEwTVJLWmNzYmNnaXk1ck53MVB1L2RFbURoWHJrVFd4R3RtQ28vSmk1?=
- =?utf-8?B?SkVsYTdXQjNtV09uYkV0S0pSUzN2bkJ0VzY1TlUyWVhpWFhxbjFPcEVRWXVK?=
- =?utf-8?B?VzExQzh0ODRHV2V4R1hWN05QSHJpbGUzUTJudXVkdzBURVBHOG5PUkcvT1dQ?=
- =?utf-8?B?dUlid09xRU5DaldaVi90Y0QyUkVKVEFIR0g4OGpCY245UjBYajN4b0ZZd25j?=
- =?utf-8?B?OFF2N3pqd1piQ1B4TU1BcWhFODRiOFE4YnRMVmdnYTUydy80M0hwQkNUdFk2?=
- =?utf-8?B?YjRvSDFteFFMWGx3ckF2UnFkNERYRXF1R1R1K2tTTlZWcXBPeGYva3g5OVFD?=
- =?utf-8?B?RmRId3RTRHpaTXlEK1pMVmZvWGNycjhZNlh1aUtnWEhFUTJWUGdLNFVTZ09z?=
- =?utf-8?B?cHoxbEQrN1NqVnRkQjdNMkNhNjl4aEU3NzJ1ODQrT3hrK2pXSThnNElQNkJ3?=
- =?utf-8?B?ZUhpcUE5a2ZoOUM3VHJGRlMzTmtQZzFDS1c5S2tNK0lQRStXSVlPeUxOYVpD?=
- =?utf-8?B?SDlkVmJoV3RQalo2YXEzK2VjeXRnclF0SmxZOGhzWkRXaXV4UER6Mmtnc3JE?=
- =?utf-8?B?Z1N1WDNLWUl4VzZZTjdoYjdtN3I1bWgxR1hzRE5UcDNHREhlSFNzWENPKzRE?=
- =?utf-8?B?cG1NcnRRRzA5NklJR3RvUld1QTJXNy9vTW4rLzhwR00rVVArSlIxTXJ3YjV1?=
- =?utf-8?B?NVdjTHA5NmVieGVTR0k5QUZPaEdpSVEvUzNzbENCMTBOQ2hmQzNmV1FuVkZa?=
- =?utf-8?B?RDBaZFVlSzlueGhYa251MVR0MUhOaENlK2hqQkpxUU9VNDgyZEU4NzhHd01H?=
- =?utf-8?B?VmxQYjAxdlR1a3RvZlVQU3BYRUxsZUZsYi82dlcyRXVHN2xNU0RxdHd0WFYv?=
- =?utf-8?B?R2ZiZXprRTBQL1poWk1iMTVhNUlPcTVucUlHTC92Y2k1aDRJbE10VFM0UWlt?=
- =?utf-8?B?bGlZNEw2VUVrVGhvMEJsYzZ5S0UyaHc4NnpULzMzTytjR2JSS245SEtud2hn?=
- =?utf-8?B?QmY0ejdoV3Rmd3lFM2gxL2VxcFliRHMzdWc2VW1Hd3VvcGdwS3FYUk13emVo?=
- =?utf-8?B?VlhxYzlRcnF3Q2FaTmg2R2w2OUZkdExqcWd4cjZPZG52dEpBZmdaWUhtQ09I?=
- =?utf-8?B?MFphM1krQXFoNGhHeS9SaWZGdTNwZG1LVHppT0FBSkgvb043WHprVTlMQWpT?=
- =?utf-8?B?eUovN3Q5eklXUHd5Y1Q1N3E0ZzNJK09nZXhrQk54eWZmUEhDamlCbkVpS2pz?=
- =?utf-8?B?eGJsaWNBKzVqZGRVSjJkMitLd1crWTRTenRmbFFSdWpzT3BDNjdPTVpEanJ6?=
- =?utf-8?B?cFRicXJUSjJYZXJEb0pKSWZMckZTcC9ZY2Z4c1crQU9IRVhXMnlxSEoyV2Z0?=
- =?utf-8?B?NURTZDlEdWdlN0Uya0JWQTVYRHdJNHl2bG1rcHU5VUFpM2o0VW8waGw1V21Z?=
- =?utf-8?B?dmpFbWdCYVZUR3ZxTzgyUWw1VGVxVXJNUXFuK2d2VGk1Z3EycENadlAxZVVp?=
- =?utf-8?B?aTUyZGVHZTY5U2gxZU1lV1VvZFJyd1dobGpnMFhSb1NOR2VrMWhNcjFLTG5z?=
- =?utf-8?B?dlJsTElGZUdGKzBhV2hsR3lxMzhDTWt3RTJqaGM3bmJYekE2RDZCRzlwaTEw?=
- =?utf-8?B?SEJLZFRtdC9kSFE5OVRwd2l5TlVmazBlTHozay8zZHhzeDVMZFZyUGJQbVpa?=
- =?utf-8?Q?BScmEWjrMv8E9KL+qYzR2tMm7UHESJfJns+ZzDb?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ef7a669b-963d-4bf7-47a2-08dd92071185
-X-MS-Exchange-CrossTenant-AuthSource: MA0P287MB2262.INDP287.PROD.OUTLOOK.COM
+	=?us-ascii?Q?5QHHqn+YinFXyr0J2uyjB27RKOSKhmF9onxyIKhdq8Fv3CMZyNFLsSfogR0y?=
+ =?us-ascii?Q?r0EeuqfqJI7/Vk6n+TgVOx+xYsDsSleVdijcObO9cdnRPBP13GxfQg/3L55w?=
+ =?us-ascii?Q?8ygoLuOApNN35Bm1I2rF0AqK/bhksUNqSmQCGLI+W3C1EVGmkqBjT/8PfWaP?=
+ =?us-ascii?Q?Or1fYgZRdbGpBD3arS2lmMEzkIqzvS41zhUJWKG4gc2LX+2XfUCZibkLSQOr?=
+ =?us-ascii?Q?WApR93FnwbhgaH3vqapIsBviDpjJ2+4fq+5NwqtWM3tIIP6+VJ2NGogUi52w?=
+ =?us-ascii?Q?IYeN7Rtt3uSFXNQGmtvU3ejbrXVWRDw4TbmQd/5nzUtqk5aN6TRMPDwOQzlc?=
+ =?us-ascii?Q?9V4xmrGO2iPf4IBUXIS7zD45vrx+uuh2pAeRk4i7WsEm+5C4071P9cBN4Qyp?=
+ =?us-ascii?Q?5BzznOCmGuIcO+tAKjLD3KKg7UETZk41TyrXsER9b6QrNlSg0lbcelMI8I3x?=
+ =?us-ascii?Q?D07CaJiupRqdpCAI8K+b19TMVkb3EGq1DcjDXIhY4jpgdDy3/T3vs1YqavlM?=
+ =?us-ascii?Q?fmm0k3GcUIoHrqtr+k5awRaii5LkRbECCycNRi/KCnI4RMRd1gl/jAXljR5Z?=
+ =?us-ascii?Q?kQ/zEIMZcCU4qG6ip7fhyB8gMrtcMTB1zokYRNCGJXHg1kz1NkRvG1LVf32K?=
+ =?us-ascii?Q?N+enGVBa2fBFILFwFqJ+DlvVJrC10ptgfeezslF1WPQQ0TwgrprSCIVBRSgM?=
+ =?us-ascii?Q?aWVyuJW4OiKdqw9ce8VC4ohKJxuc/QLZbcTUd0DUD9I9lVajjuL4TQSG1Gff?=
+ =?us-ascii?Q?ZYtubt9neR0VMmNfwUUpuqKOIqco0qfyEOeyzqSRFtKPo09znppeYEOgZTRg?=
+ =?us-ascii?Q?l8y8Uta0hhGzaTpfx7XgulYiYhgg75nio3jh5CYk0qj7AhqOFqPYDFqD2HUO?=
+ =?us-ascii?Q?EJtRNvkneYC0VKCY7lEd0BvzjpqBDZ3X1B7heV74JI3JQ1lo20X1RQ2NPra/?=
+ =?us-ascii?Q?Vwd0PHvDNLeScmkxI3cywHVqmVSd+rAJA97RP35vJpxhJQEPxW989G3dAvgf?=
+ =?us-ascii?Q?zjJUO+2dnxIITeMME4W1TJBlBm2tf5cDa6ec0iX2fYoPP5zBthrai2JbtcxU?=
+ =?us-ascii?Q?v132Y3WXv2GwAYH1e1/CHw15WnaW9tVCle4V7msJkW36jxX/oXu6Hf6xXU2z?=
+ =?us-ascii?Q?uxuEn37RxQ8x2PO2wNXJDEltg+vRQVWZsRPZLqJwiTEhDkkgEp73P5e7b9n4?=
+ =?us-ascii?Q?AkIrCGDnoy3D0jU2FxAg3zckaiKX9CmAJvr78GOUAXPOY99NWW4d0shS/Q9y?=
+ =?us-ascii?Q?+Yf/uiySDLq0J/x3FURQEVBdFsQo9I8D3so6j3AtiV17Qc65whl67wytB8H4?=
+ =?us-ascii?Q?gdsxWN+DPeOiatvGb9ISy3ChtwACpERhgcnU/8UNn7pJ8oCQp4D6UBXat3mw?=
+ =?us-ascii?Q?tFSF3gmkbi+xgIdNqYVO8Nq4NrwFND6beAQ1Lr2cpIaRpEUhjaC6pHWWAJLI?=
+ =?us-ascii?Q?7R31n5zeP7G/aNszMZKtMBhV9bBu/CZdSUiXFxBn16tN4wvzLsArpqwW39Du?=
+ =?us-ascii?Q?Nj/M9/qCfLl/MaMrAWgqYEMqdhmLCVY9gs6xMzRctjAF9uKjBPvPx1lA8D5D?=
+ =?us-ascii?Q?xHmzROf1AQx7fxu/kqWzEFY8or9B5OxFGljNR+g+C+KxenzybHG8Dc1Q/LqY?=
+ =?us-ascii?Q?fw=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	KuAV+mGZT+kEK008MqlhNPm8DUTUSfU1gsH5UGt12+pJLyw5WdAKeQdJTD+wCWI5ZfuHQ4v/7g2kUAyd23Q7Pl4BAeIHRdzVnR29KT4WsvBWjs9LURUTqQskPvZx9xk7qMTESSZjrOEMngkYh0SrQzWCeRkou0NfN8+DgekEj/kRInkKO0ecIZiWIiw+6DE+n9lPvHH91DBHnydqo1iTTUYYhtaLk05jf/EWT2qq/XuH6Rdi5l4oZWlt/y51rbVE/sBJeUqC4Y4NTCaxd1+v1llrMfDx+SUH/JYZuu5PIFxCahyTFIshxCUQa2pQYxfiyQ8IQCWDIkY3XN8rFP3AGajlTatwiKypPJ0VDxJWxiwqQolYatY6yHLORiNrCerVXuabbDjQ5KkL7PRFNg5MqKHLlGGixDbG6+Jh1Na82XtC4D1OKAizUYs62Qfqi/NGtHbiMA/uceoJ8ZcQCTFAasleD88nnyS+CA+hE0JXTT46SgHrlGoXFL6lQ4SQnz649h3U5Se3nSIO7VCRIP6K8HSwf/r9Z0Fm9gLOEGS55kTBZqEv2wuQwzo/+Edq+XeOP0SJH77x1LwROuZEzFYYRCwciWCwV9+vaKsAvXHMv8o=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c9a44450-faf7-499e-aa81-08dd9207337c
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 May 2025 10:15:21.6030
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 May 2025 10:16:18.4695
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN0P287MB1377
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: fXrGCLtWQCfxRKEsCwCf9YiNqWcxEEsGc+Yq6z7wFv8uu0spB5e8zKCMev99pkL947fqzckuz2a+Hb1gvcaRVIdEFtwdnw2HSTRuBlJy79A=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA3PR10MB8706
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-12_07,2025-05-09_01,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 mlxscore=0 spamscore=0
+ bulkscore=0 suspectscore=0 phishscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2504070000
+ definitions=main-2505130097
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTEzMDA5OCBTYWx0ZWRfX9d/bKIDu1y5J 8VAZlrZMiCMUZbtp7bnxZYycHHwntykeJ6Sqo0Wp+M/ZDfON/J8qCcgx9jjl3S/7CWOKgyFLWtu 1VZKovuktlhVnBRVVAn2/tjoYGxydkVtXtm7QQOOhWDZ7uwjVnD1VIv6UUPOfThO0ILoTLCipwS
+ iGvvvW7e3Ac3P0vmSBnb8ZgaAppks6RTmPFk1fHDaTzzBoLiTS3VDEfpSdCf2OYloC9fKG9azx4 4oMNmyKHm/hrku+HN5R6Z/519Ue2WFic+xT0hS/iPqWz8kHbzEruEOv6FavFf9C193dN3qSNYFp RJnSECSpEQF0ktinuKyQSG/M5ZyIk7zF7TewxqzHe2Pnd0bG/VsO2gXHu0zRB5vXnp4wQc26qo5
+ 63XP4+WhIPgQjOOCwzag7rhP7Ej/wLibf1qDcBtoekfrLmcUtZ0BhUaMYWEKT2lsYhXn5kGd
+X-Authority-Analysis: v=2.4 cv=RPmzH5i+ c=1 sm=1 tr=0 ts=68231c01 b=1 cx=c_pps a=WeWmnZmh0fydH62SvGsd2A==:117 a=WeWmnZmh0fydH62SvGsd2A==:17 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19
+ a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=dt9VzEwgFbYA:10 a=GoEa3M9JfhUA:10 a=VwQbUJbxAAAA:8 a=20KFwNOVAAAA:8 a=yPCof4ZbAAAA:8 a=zMLic4A7THCksA07HIcA:9 a=CjuIK1q_8ugA:10
+X-Proofpoint-ORIG-GUID: 3Mi0-y0Yshj1BAHEBtNVUgCg93T_uYzQ
+X-Proofpoint-GUID: 3Mi0-y0Yshj1BAHEBtNVUgCg93T_uYzQ
 
-
-On 2025/5/7 21:25, Junhui Liu wrote:
-> Add support for the resets on Canaan Kendryte K230 SoC. The driver
-> support CPU0, CPU1, L2 cache flush, hardware auto clear and software
-> clear resets.
+On Tue, May 13, 2025 at 11:10:45AM +0200, David Hildenbrand wrote:
+> On 12.05.25 18:42, Lorenzo Stoakes wrote:
+> > On Mon, May 12, 2025 at 02:34:17PM +0200, David Hildenbrand wrote:
+> > > Let's use our new interface. In remap_pfn_range(), we'll now decide
+> > > whether we have to track (full VMA covered) or only lookup the
+> > > cachemode (partial VMA covered).
+> > >
+> > > Remember what we have to untrack by linking it from the VMA. When
+> > > duplicating VMAs (e.g., splitting, mremap, fork), we'll handle it similar
+> > > to anon VMA names, and use a kref to share the tracking.
+> > >
+> > > Once the last VMA un-refs our tracking data, we'll do the untracking,
+> > > which simplifies things a lot and should sort our various issues we saw
+> > > recently, for example, when partially unmapping/zapping a tracked VMA.
+> > >
+> > > This change implies that we'll keep tracking the original PFN range even
+> > > after splitting + partially unmapping it: not too bad, because it was
+> > > not working reliably before. The only thing that kind-of worked before
+> > > was shrinking such a mapping using mremap(): we managed to adjust the
+> > > reservation in a hacky way, now we won't adjust the reservation but
+> > > leave it around until all involved VMAs are gone.
+> > >
+> > > If that ever turns out to be an issue, we could hook into VM splitting
+> > > code and split the tracking; however, that adds complexity that might
+> > > not be required, so we'll keep it simple for now.
+> > >
+> > > Acked-by: Ingo Molnar <mingo@kernel.org> # x86 bits
+> > > Signed-off-by: David Hildenbrand <david@redhat.com>
+> >
+> > Other than small nit below,
+> >
+> > Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> >
+> > > ---
+> > >   include/linux/mm_inline.h |  2 +
+> > >   include/linux/mm_types.h  | 11 ++++++
+> > >   mm/memory.c               | 82 +++++++++++++++++++++++++++++++--------
+> > >   mm/mmap.c                 |  5 ---
+> > >   mm/mremap.c               |  4 --
+> > >   mm/vma_init.c             | 50 ++++++++++++++++++++++++
+> > >   6 files changed, 129 insertions(+), 25 deletions(-)
+> > >
+> > > diff --git a/include/linux/mm_inline.h b/include/linux/mm_inline.h
+> > > index f9157a0c42a5c..89b518ff097e6 100644
+> > > --- a/include/linux/mm_inline.h
+> > > +++ b/include/linux/mm_inline.h
+> > > @@ -447,6 +447,8 @@ static inline bool anon_vma_name_eq(struct anon_vma_name *anon_name1,
+> > >
+> > >   #endif  /* CONFIG_ANON_VMA_NAME */
+> > >
+> > > +void pfnmap_track_ctx_release(struct kref *ref);
+> > > +
+> > >   static inline void init_tlb_flush_pending(struct mm_struct *mm)
+> > >   {
+> > >   	atomic_set(&mm->tlb_flush_pending, 0);
+> > > diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+> > > index 15808cad2bc1a..3e934dc6057c4 100644
+> > > --- a/include/linux/mm_types.h
+> > > +++ b/include/linux/mm_types.h
+> > > @@ -763,6 +763,14 @@ struct vma_numab_state {
+> > >   	int prev_scan_seq;
+> > >   };
+> > >
+> > > +#ifdef __HAVE_PFNMAP_TRACKING
+> > > +struct pfnmap_track_ctx {
+> > > +	struct kref kref;
+> > > +	unsigned long pfn;
+> > > +	unsigned long size;	/* in bytes */
+> > > +};
+> > > +#endif
+> > > +
+> > >   /*
+> > >    * Describes a VMA that is about to be mmap()'ed. Drivers may choose to
+> > >    * manipulate mutable fields which will cause those fields to be updated in the
+> > > @@ -900,6 +908,9 @@ struct vm_area_struct {
+> > >   	struct anon_vma_name *anon_name;
+> > >   #endif
+> > >   	struct vm_userfaultfd_ctx vm_userfaultfd_ctx;
+> > > +#ifdef __HAVE_PFNMAP_TRACKING
+> > > +	struct pfnmap_track_ctx *pfnmap_track_ctx;
+> > > +#endif
+> > >   } __randomize_layout;
+> > >
+> > >   #ifdef CONFIG_NUMA
+> > > diff --git a/mm/memory.c b/mm/memory.c
+> > > index 064fc55d8eab9..4cf4adb0de266 100644
+> > > --- a/mm/memory.c
+> > > +++ b/mm/memory.c
+> > > @@ -1371,7 +1371,7 @@ copy_page_range(struct vm_area_struct *dst_vma, struct vm_area_struct *src_vma)
+> > >   	struct mm_struct *dst_mm = dst_vma->vm_mm;
+> > >   	struct mm_struct *src_mm = src_vma->vm_mm;
+> > >   	struct mmu_notifier_range range;
+> > > -	unsigned long next, pfn = 0;
+> > > +	unsigned long next;
+> > >   	bool is_cow;
+> > >   	int ret;
+> > >
+> > > @@ -1381,12 +1381,6 @@ copy_page_range(struct vm_area_struct *dst_vma, struct vm_area_struct *src_vma)
+> > >   	if (is_vm_hugetlb_page(src_vma))
+> > >   		return copy_hugetlb_page_range(dst_mm, src_mm, dst_vma, src_vma);
+> > >
+> > > -	if (unlikely(src_vma->vm_flags & VM_PFNMAP)) {
+> > > -		ret = track_pfn_copy(dst_vma, src_vma, &pfn);
+> > > -		if (ret)
+> > > -			return ret;
+> > > -	}
+> > > -
+> > >   	/*
+> > >   	 * We need to invalidate the secondary MMU mappings only when
+> > >   	 * there could be a permission downgrade on the ptes of the
+> > > @@ -1428,8 +1422,6 @@ copy_page_range(struct vm_area_struct *dst_vma, struct vm_area_struct *src_vma)
+> > >   		raw_write_seqcount_end(&src_mm->write_protect_seq);
+> > >   		mmu_notifier_invalidate_range_end(&range);
+> > >   	}
+> > > -	if (ret && unlikely(src_vma->vm_flags & VM_PFNMAP))
+> > > -		untrack_pfn_copy(dst_vma, pfn);
+> > >   	return ret;
+> > >   }
+> > >
+> > > @@ -1924,9 +1916,6 @@ static void unmap_single_vma(struct mmu_gather *tlb,
+> > >   	if (vma->vm_file)
+> > >   		uprobe_munmap(vma, start, end);
+> > >
+> > > -	if (unlikely(vma->vm_flags & VM_PFNMAP))
+> > > -		untrack_pfn(vma, 0, 0, mm_wr_locked);
+> > > -
+> > >   	if (start != end) {
+> > >   		if (unlikely(is_vm_hugetlb_page(vma))) {
+> > >   			/*
+> > > @@ -2872,6 +2861,36 @@ int remap_pfn_range_notrack(struct vm_area_struct *vma, unsigned long addr,
+> > >   	return error;
+> > >   }
+> > >
+> > > +#ifdef __HAVE_PFNMAP_TRACKING
+> > > +static inline struct pfnmap_track_ctx *pfnmap_track_ctx_alloc(unsigned long pfn,
+> > > +		unsigned long size, pgprot_t *prot)
+> > > +{
+> > > +	struct pfnmap_track_ctx *ctx;
+> > > +
+> > > +	if (pfnmap_track(pfn, size, prot))
+> > > +		return ERR_PTR(-EINVAL);
+> > > +
+> > > +	ctx = kmalloc(sizeof(*ctx), GFP_KERNEL);
+> > > +	if (unlikely(!ctx)) {
+> > > +		pfnmap_untrack(pfn, size);
+> > > +		return ERR_PTR(-ENOMEM);
+> > > +	}
+> > > +
+> > > +	ctx->pfn = pfn;
+> > > +	ctx->size = size;
+> > > +	kref_init(&ctx->kref);
+> > > +	return ctx;
+> > > +}
+> > > +
+> > > +void pfnmap_track_ctx_release(struct kref *ref)
+> > > +{
+> > > +	struct pfnmap_track_ctx *ctx = container_of(ref, struct pfnmap_track_ctx, kref);
+> > > +
+> > > +	pfnmap_untrack(ctx->pfn, ctx->size);
+> > > +	kfree(ctx);
+> > > +}
+> > > +#endif /* __HAVE_PFNMAP_TRACKING */
+> > > +
+> > >   /**
+> > >    * remap_pfn_range - remap kernel memory to userspace
+> > >    * @vma: user vma to map to
+> > > @@ -2884,20 +2903,51 @@ int remap_pfn_range_notrack(struct vm_area_struct *vma, unsigned long addr,
+> > >    *
+> > >    * Return: %0 on success, negative error code otherwise.
+> > >    */
+> > > +#ifdef __HAVE_PFNMAP_TRACKING
+> > >   int remap_pfn_range(struct vm_area_struct *vma, unsigned long addr,
+> > >   		    unsigned long pfn, unsigned long size, pgprot_t prot)
+> > >   {
+> > > +	struct pfnmap_track_ctx *ctx = NULL;
+> > >   	int err;
+> > >
+> > > -	err = track_pfn_remap(vma, &prot, pfn, addr, PAGE_ALIGN(size));
+> > > -	if (err)
+> > > +	size = PAGE_ALIGN(size);
+> > > +
+> > > +	/*
+> > > +	 * If we cover the full VMA, we'll perform actual tracking, and
+> > > +	 * remember to untrack when the last reference to our tracking
+> > > +	 * context from a VMA goes away. We'll keep tracking the whole pfn
+> > > +	 * range even during VMA splits and partial unmapping.
+> > > +	 *
+> > > +	 * If we only cover parts of the VMA, we'll only setup the cachemode
+> > > +	 * in the pgprot for the pfn range.
+> > > +	 */
+> > > +	if (addr == vma->vm_start && addr + size == vma->vm_end) {
+> > > +		if (vma->pfnmap_track_ctx)
+> > > +			return -EINVAL;
+> > > +		ctx = pfnmap_track_ctx_alloc(pfn, size, &prot);
+> > > +		if (IS_ERR(ctx))
+> > > +			return PTR_ERR(ctx);
+> > > +	} else if (pfnmap_setup_cachemode(pfn, size, &prot)) {
+> > >   		return -EINVAL;
+> > > +	}
+> > >
+> > >   	err = remap_pfn_range_notrack(vma, addr, pfn, size, prot);
+> > > -	if (err)
+> > > -		untrack_pfn(vma, pfn, PAGE_ALIGN(size), true);
+> > > +	if (ctx) {
+> > > +		if (err)
+> > > +			kref_put(&ctx->kref, pfnmap_track_ctx_release);
+> > > +		else
+> > > +			vma->pfnmap_track_ctx = ctx;
+> > > +	}
+> > >   	return err;
+> > >   }
+> > > +
+> > > +#else
+> > > +int remap_pfn_range(struct vm_area_struct *vma, unsigned long addr,
+> > > +		    unsigned long pfn, unsigned long size, pgprot_t prot)
+> > > +{
+> > > +	return remap_pfn_range_notrack(vma, addr, pfn, size, prot);
+> > > +}
+> > > +#endif
+> > >   EXPORT_SYMBOL(remap_pfn_range);
+> > >
+> > >   /**
+> > > diff --git a/mm/mmap.c b/mm/mmap.c
+> > > index 50f902c08341a..09c563c951123 100644
+> > > --- a/mm/mmap.c
+> > > +++ b/mm/mmap.c
+> > > @@ -1784,11 +1784,6 @@ __latent_entropy int dup_mmap(struct mm_struct *mm, struct mm_struct *oldmm)
+> > >   		tmp = vm_area_dup(mpnt);
+> > >   		if (!tmp)
+> > >   			goto fail_nomem;
+> > > -
+> > > -		/* track_pfn_copy() will later take care of copying internal state. */
+> > > -		if (unlikely(tmp->vm_flags & VM_PFNMAP))
+> > > -			untrack_pfn_clear(tmp);
+> > > -
+> > >   		retval = vma_dup_policy(mpnt, tmp);
+> > >   		if (retval)
+> > >   			goto fail_nomem_policy;
+> > > diff --git a/mm/mremap.c b/mm/mremap.c
+> > > index 7db9da609c84f..6e78e02f74bd3 100644
+> > > --- a/mm/mremap.c
+> > > +++ b/mm/mremap.c
+> > > @@ -1191,10 +1191,6 @@ static int copy_vma_and_data(struct vma_remap_struct *vrm,
+> > >   	if (is_vm_hugetlb_page(vma))
+> > >   		clear_vma_resv_huge_pages(vma);
+> > >
+> > > -	/* Tell pfnmap has moved from this vma */
+> > > -	if (unlikely(vma->vm_flags & VM_PFNMAP))
+> > > -		untrack_pfn_clear(vma);
+> > > -
+> > >   	*new_vma_ptr = new_vma;
+> > >   	return err;
+> > >   }
+> > > diff --git a/mm/vma_init.c b/mm/vma_init.c
+> > > index 967ca85179864..8e53c7943561e 100644
+> > > --- a/mm/vma_init.c
+> > > +++ b/mm/vma_init.c
+> > > @@ -71,7 +71,51 @@ static void vm_area_init_from(const struct vm_area_struct *src,
+> > >   #ifdef CONFIG_NUMA
+> > >   	dest->vm_policy = src->vm_policy;
+> > >   #endif
+> > > +#ifdef __HAVE_PFNMAP_TRACKING
+> > > +	dest->pfnmap_track_ctx = NULL;
+> > > +#endif
+> > > +}
+> > > +
+> > > +#ifdef __HAVE_PFNMAP_TRACKING
+> > > +static inline int vma_pfnmap_track_ctx_dup(struct vm_area_struct *orig,
+> > > +		struct vm_area_struct *new)
+> > > +{
+> > > +	struct pfnmap_track_ctx *ctx = orig->pfnmap_track_ctx;
+> > > +
+> > > +	if (likely(!ctx))
+> > > +		return 0;
+> > > +
+> > > +	/*
+> > > +	 * We don't expect to ever hit this. If ever required, we would have
+> > > +	 * to duplicate the tracking.
+> > > +	 */
+> > > +	if (unlikely(kref_read(&ctx->kref) >= REFCOUNT_MAX))
+> >
+> > How not expected is this? :) maybe use WARN_ON_ONCE() if it really should
+> > never happen?
+> I guess if we mmap a large PFNMAP and then split it into individual
+> PTE-sized chunks, we could get many VMAs per-process referencing that
+> tracing.
 >
-> Signed-off-by: Junhui Liu <junhui.liu@pigmoral.tech>
+> Combine that with fork() and I assume one could hit this -- when really
+> trying hard to achieve it. (probably as privileged user to get a big
+> VM_PFNMAP, though, but not sure)
 
-Tested-by: Chen Wang <unicorn_wang@outlook.com>
+Right ok, yeah I guess so. It'd be good to see if we could trigger it somehow :)
 
-Thanks,
-
-Chen
-
-> ---
->   drivers/reset/Kconfig      |   9 ++
->   drivers/reset/Makefile     |   1 +
->   drivers/reset/reset-k230.c | 371 +++++++++++++++++++++++++++++++++++++++++++++
->   3 files changed, 381 insertions(+)
 >
-> diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
-> index 99f6f9784e6865faddf8621ccfca095778c4dc47..248138ffba3bfbf859c74ba1aed7ba2f72819f7a 100644
-> --- a/drivers/reset/Kconfig
-> +++ b/drivers/reset/Kconfig
-> @@ -140,6 +140,15 @@ config RESET_K210
->   	  Say Y if you want to control reset signals provided by this
->   	  controller.
->   
-> +config RESET_K230
-> +	tristate "Reset controller driver for Canaan Kendryte K230 SoC"
-> +	depends on ARCH_CANAAN || COMPILE_TEST
-> +	depends on OF
-> +	help
-> +	  Support for the Canaan Kendryte K230 RISC-V SoC reset controller.
-> +	  Say Y if you want to control reset signals provided by this
-> +	  controller.
-> +
->   config RESET_LANTIQ
->   	bool "Lantiq XWAY Reset Driver" if COMPILE_TEST
->   	default SOC_TYPE_XWAY
-> diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
-> index 31f9904d13f9c3a107fc1ee1ec9f9baba016d101..13fe94531bea1eb91268b1804e1321b167815a4b 100644
-> --- a/drivers/reset/Makefile
-> +++ b/drivers/reset/Makefile
-> @@ -20,6 +20,7 @@ obj-$(CONFIG_RESET_IMX7) += reset-imx7.o
->   obj-$(CONFIG_RESET_IMX8MP_AUDIOMIX) += reset-imx8mp-audiomix.o
->   obj-$(CONFIG_RESET_INTEL_GW) += reset-intel-gw.o
->   obj-$(CONFIG_RESET_K210) += reset-k210.o
-> +obj-$(CONFIG_RESET_K230) += reset-k230.o
->   obj-$(CONFIG_RESET_LANTIQ) += reset-lantiq.o
->   obj-$(CONFIG_RESET_LPC18XX) += reset-lpc18xx.o
->   obj-$(CONFIG_RESET_MCHP_SPARX5) += reset-microchip-sparx5.o
-> diff --git a/drivers/reset/reset-k230.c b/drivers/reset/reset-k230.c
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..c81045bb4a142af7eb5ab648f04d04cc95919255
-> --- /dev/null
-> +++ b/drivers/reset/reset-k230.c
-> @@ -0,0 +1,371 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +/*
-> + * Copyright (C) 2022-2024 Canaan Bright Sight Co., Ltd
-> + * Copyright (C) 2024-2025 Junhui Liu <junhui.liu@pigmoral.tech>
-> + *
-> + * The reset management module in the K230 SoC provides reset time control
-> + * registers. For RST_TYPE_CPU0, RST_TYPE_CPU1 and RST_TYPE_SW_DONE, the period
-> + * during which reset is applied or removed while the clock is stopped can be
-> + * set up to 15 * 0.25 = 3.75 µs. For RST_TYPE_HW_DONE, that period can be set
-> + * up to 255 * 0.25 = 63.75 µs. For RST_TYPE_FLUSH, the reset bit is
-> + * automatically cleared by hardware when flush completes.
-> + *
-> + * Although this driver does not configure the reset time registers, delays have
-> + * been added to the assert, deassert, and reset operations to cover the maximum
-> + * reset time. Some reset types include done bits whose toggle does not
-> + * unambiguously signal whether hardware reset removal or clock-stop period
-> + * expiration occurred first. Delays are therefore retained for types with done
-> + * bits to ensure safe timing.
-> + *
-> + * Reference: K230 Technical Reference Manual V0.3.1
-> + * https://kendryte-download.canaan-creative.com/developer/k230/HDK/K230%E7%A1%AC%E4%BB%B6%E6%96%87%E6%A1%A3/K230_Technical_Reference_Manual_V0.3.1_20241118.pdf
-> + */
-> +
-> +#include <linux/cleanup.h>
-> +#include <linux/delay.h>
-> +#include <linux/io.h>
-> +#include <linux/iopoll.h>
-> +#include <linux/of.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/reset-controller.h>
-> +#include <linux/spinlock.h>
-> +
-> +#include <dt-bindings/reset/canaan,k230-rst.h>
-> +
-> +/**
-> + * enum k230_rst_type - K230 reset types
-> + * @RST_TYPE_CPU0: Reset type for CPU0
-> + *	Automatically clears, has write enable and done bit, active high
-> + * @RST_TYPE_CPU1: Reset type for CPU1
-> + *	Manually clears, has write enable and done bit, active high
-> + * @RST_TYPE_FLUSH: Reset type for CPU L2 cache flush
-> + *	Automatically clears, has write enable, no done bit, active high
-> + * @RST_TYPE_HW_DONE: Reset type for hardware auto clear
-> + *	Automatically clears, no write enable, has done bit, active high
-> + * @RST_TYPE_SW_DONE: Reset type for software manual clear
-> + *	Manually clears, no write enable and done bit,
-> + *	active high if ID is RST_SPI2AXI, otherwise active low
-> + */
-> +enum k230_rst_type {
-> +	RST_TYPE_CPU0,
-> +	RST_TYPE_CPU1,
-> +	RST_TYPE_FLUSH,
-> +	RST_TYPE_HW_DONE,
-> +	RST_TYPE_SW_DONE,
-> +};
-> +
-> +struct k230_rst_map {
-> +	u32			offset;
-> +	enum k230_rst_type	type;
-> +	u32			done;
-> +	u32			reset;
-> +};
-> +
-> +struct k230_rst {
-> +	struct reset_controller_dev	rcdev;
-> +	void __iomem			*base;
-> +	/* protect register read-modify-write */
-> +	spinlock_t			lock;
-> +};
-> +
-> +static const struct k230_rst_map k230_resets[] = {
-> +	[RST_CPU0]		= { 0x4,  RST_TYPE_CPU0,    BIT(12), BIT(0) },
-> +	[RST_CPU1]		= { 0xc,  RST_TYPE_CPU1,    BIT(12), BIT(0) },
-> +	[RST_CPU0_FLUSH]	= { 0x4,  RST_TYPE_FLUSH,   0,       BIT(4) },
-> +	[RST_CPU1_FLUSH]	= { 0xc,  RST_TYPE_FLUSH,   0,       BIT(4) },
-> +	[RST_AI]		= { 0x14, RST_TYPE_HW_DONE, BIT(31), BIT(0) },
-> +	[RST_VPU]		= { 0x1c, RST_TYPE_HW_DONE, BIT(31), BIT(0) },
-> +	[RST_HISYS]		= { 0x2c, RST_TYPE_HW_DONE, BIT(4),  BIT(0) },
-> +	[RST_HISYS_AHB]		= { 0x2c, RST_TYPE_HW_DONE, BIT(5),  BIT(1) },
-> +	[RST_SDIO0]		= { 0x34, RST_TYPE_HW_DONE, BIT(28), BIT(0) },
-> +	[RST_SDIO1]		= { 0x34, RST_TYPE_HW_DONE, BIT(29), BIT(1) },
-> +	[RST_SDIO_AXI]		= { 0x34, RST_TYPE_HW_DONE, BIT(30), BIT(2) },
-> +	[RST_USB0]		= { 0x3c, RST_TYPE_HW_DONE, BIT(28), BIT(0) },
-> +	[RST_USB1]		= { 0x3c, RST_TYPE_HW_DONE, BIT(29), BIT(1) },
-> +	[RST_USB0_AHB]		= { 0x3c, RST_TYPE_HW_DONE, BIT(30), BIT(0) },
-> +	[RST_USB1_AHB]		= { 0x3c, RST_TYPE_HW_DONE, BIT(31), BIT(1) },
-> +	[RST_SPI0]		= { 0x44, RST_TYPE_HW_DONE, BIT(28), BIT(0) },
-> +	[RST_SPI1]		= { 0x44, RST_TYPE_HW_DONE, BIT(29), BIT(1) },
-> +	[RST_SPI2]		= { 0x44, RST_TYPE_HW_DONE, BIT(30), BIT(2) },
-> +	[RST_SEC]		= { 0x4c, RST_TYPE_HW_DONE, BIT(31), BIT(0) },
-> +	[RST_PDMA]		= { 0x54, RST_TYPE_HW_DONE, BIT(28), BIT(0) },
-> +	[RST_SDMA]		= { 0x54, RST_TYPE_HW_DONE, BIT(29), BIT(1) },
-> +	[RST_DECOMPRESS]	= { 0x5c, RST_TYPE_HW_DONE, BIT(31), BIT(0) },
-> +	[RST_SRAM]		= { 0x64, RST_TYPE_HW_DONE, BIT(28), BIT(0) },
-> +	[RST_SHRM_AXIM]		= { 0x64, RST_TYPE_HW_DONE, BIT(30), BIT(2) },
-> +	[RST_SHRM_AXIS]		= { 0x64, RST_TYPE_HW_DONE, BIT(31), BIT(3) },
-> +	[RST_NONAI2D]		= { 0x6c, RST_TYPE_HW_DONE, BIT(31), BIT(0) },
-> +	[RST_MCTL]		= { 0x74, RST_TYPE_HW_DONE, BIT(31), BIT(0) },
-> +	[RST_ISP]		= { 0x80, RST_TYPE_HW_DONE, BIT(29), BIT(6) },
-> +	[RST_ISP_DW]		= { 0x80, RST_TYPE_HW_DONE, BIT(28), BIT(5) },
-> +	[RST_DPU]		= { 0x88, RST_TYPE_HW_DONE, BIT(31), BIT(0) },
-> +	[RST_DISP]		= { 0x90, RST_TYPE_HW_DONE, BIT(31), BIT(0) },
-> +	[RST_GPU]		= { 0x98, RST_TYPE_HW_DONE, BIT(31), BIT(0) },
-> +	[RST_AUDIO]		= { 0xa4, RST_TYPE_HW_DONE, BIT(31), BIT(0) },
-> +	[RST_TIMER0]		= { 0x20, RST_TYPE_SW_DONE, 0,       BIT(0) },
-> +	[RST_TIMER1]		= { 0x20, RST_TYPE_SW_DONE, 0,       BIT(1) },
-> +	[RST_TIMER2]		= { 0x20, RST_TYPE_SW_DONE, 0,       BIT(2) },
-> +	[RST_TIMER3]		= { 0x20, RST_TYPE_SW_DONE, 0,       BIT(3) },
-> +	[RST_TIMER4]		= { 0x20, RST_TYPE_SW_DONE, 0,       BIT(4) },
-> +	[RST_TIMER5]		= { 0x20, RST_TYPE_SW_DONE, 0,       BIT(5) },
-> +	[RST_TIMER_APB]		= { 0x20, RST_TYPE_SW_DONE, 0,       BIT(6) },
-> +	[RST_HDI]		= { 0x20, RST_TYPE_SW_DONE, 0,       BIT(7) },
-> +	[RST_WDT0]		= { 0x20, RST_TYPE_SW_DONE, 0,       BIT(12) },
-> +	[RST_WDT1]		= { 0x20, RST_TYPE_SW_DONE, 0,       BIT(13) },
-> +	[RST_WDT0_APB]		= { 0x20, RST_TYPE_SW_DONE, 0,       BIT(14) },
-> +	[RST_WDT1_APB]		= { 0x20, RST_TYPE_SW_DONE, 0,       BIT(15) },
-> +	[RST_TS_APB]		= { 0x20, RST_TYPE_SW_DONE, 0,       BIT(16) },
-> +	[RST_MAILBOX]		= { 0x20, RST_TYPE_SW_DONE, 0,       BIT(17) },
-> +	[RST_STC]		= { 0x20, RST_TYPE_SW_DONE, 0,       BIT(18) },
-> +	[RST_PMU]		= { 0x20, RST_TYPE_SW_DONE, 0,       BIT(19) },
-> +	[RST_LOSYS_APB]		= { 0x24, RST_TYPE_SW_DONE, 0,       BIT(0) },
-> +	[RST_UART0]		= { 0x24, RST_TYPE_SW_DONE, 0,       BIT(1) },
-> +	[RST_UART1]		= { 0x24, RST_TYPE_SW_DONE, 0,       BIT(2) },
-> +	[RST_UART2]		= { 0x24, RST_TYPE_SW_DONE, 0,       BIT(3) },
-> +	[RST_UART3]		= { 0x24, RST_TYPE_SW_DONE, 0,       BIT(4) },
-> +	[RST_UART4]		= { 0x24, RST_TYPE_SW_DONE, 0,       BIT(5) },
-> +	[RST_I2C0]		= { 0x24, RST_TYPE_SW_DONE, 0,       BIT(6) },
-> +	[RST_I2C1]		= { 0x24, RST_TYPE_SW_DONE, 0,       BIT(7) },
-> +	[RST_I2C2]		= { 0x24, RST_TYPE_SW_DONE, 0,       BIT(8) },
-> +	[RST_I2C3]		= { 0x24, RST_TYPE_SW_DONE, 0,       BIT(9) },
-> +	[RST_I2C4]		= { 0x24, RST_TYPE_SW_DONE, 0,       BIT(10) },
-> +	[RST_JAMLINK0_APB]	= { 0x24, RST_TYPE_SW_DONE, 0,       BIT(11) },
-> +	[RST_JAMLINK1_APB]	= { 0x24, RST_TYPE_SW_DONE, 0,       BIT(12) },
-> +	[RST_JAMLINK2_APB]	= { 0x24, RST_TYPE_SW_DONE, 0,       BIT(13) },
-> +	[RST_JAMLINK3_APB]	= { 0x24, RST_TYPE_SW_DONE, 0,       BIT(14) },
-> +	[RST_CODEC_APB]		= { 0x24, RST_TYPE_SW_DONE, 0,       BIT(17) },
-> +	[RST_GPIO_DB]		= { 0x24, RST_TYPE_SW_DONE, 0,       BIT(18) },
-> +	[RST_GPIO_APB]		= { 0x24, RST_TYPE_SW_DONE, 0,       BIT(19) },
-> +	[RST_ADC]		= { 0x24, RST_TYPE_SW_DONE, 0,       BIT(20) },
-> +	[RST_ADC_APB]		= { 0x24, RST_TYPE_SW_DONE, 0,       BIT(21) },
-> +	[RST_PWM_APB]		= { 0x24, RST_TYPE_SW_DONE, 0,       BIT(22) },
-> +	[RST_SHRM_APB]		= { 0x64, RST_TYPE_SW_DONE, 0,       BIT(1) },
-> +	[RST_CSI0]		= { 0x80, RST_TYPE_SW_DONE, 0,       BIT(0) },
-> +	[RST_CSI1]		= { 0x80, RST_TYPE_SW_DONE, 0,       BIT(1) },
-> +	[RST_CSI2]		= { 0x80, RST_TYPE_SW_DONE, 0,       BIT(2) },
-> +	[RST_CSI_DPHY]		= { 0x80, RST_TYPE_SW_DONE, 0,       BIT(3) },
-> +	[RST_ISP_AHB]		= { 0x80, RST_TYPE_SW_DONE, 0,       BIT(4) },
-> +	[RST_M0]		= { 0x80, RST_TYPE_SW_DONE, 0,       BIT(7) },
-> +	[RST_M1]		= { 0x80, RST_TYPE_SW_DONE, 0,       BIT(8) },
-> +	[RST_M2]		= { 0x80, RST_TYPE_SW_DONE, 0,       BIT(9) },
-> +	[RST_SPI2AXI]		= { 0xa8, RST_TYPE_SW_DONE, 0,       BIT(0) }
-> +};
-> +
-> +static inline struct k230_rst *to_k230_rst(struct reset_controller_dev *rcdev)
-> +{
-> +	return container_of(rcdev, struct k230_rst, rcdev);
-> +}
-> +
-> +static void k230_rst_clear_done(struct k230_rst *rstc, unsigned long id,
-> +				bool write_en)
-> +{
-> +	const struct k230_rst_map *rmap = &k230_resets[id];
-> +	u32 reg;
-> +
-> +	guard(spinlock_irqsave)(&rstc->lock);
-> +
-> +	reg = readl(rstc->base + rmap->offset);
-> +	reg |= rmap->done; /* write 1 to clear */
-> +	if (write_en)
-> +		reg |= rmap->done << 16;
-> +	writel(reg, rstc->base + rmap->offset);
-> +}
-> +
-> +static int k230_rst_wait_and_clear_done(struct k230_rst *rstc, unsigned long id,
-> +					bool write_en)
-> +{
-> +	const struct k230_rst_map *rmap = &k230_resets[id];
-> +	u32 reg;
-> +	int ret;
-> +
-> +	ret = readl_poll_timeout(rstc->base + rmap->offset, reg,
-> +				 reg & rmap->done, 10, 1000);
-> +	if (ret) {
-> +		dev_err(rstc->rcdev.dev, "Wait for reset done timeout\n");
-> +		return ret;
-> +	}
-> +
-> +	k230_rst_clear_done(rstc, id, write_en);
-> +
-> +	return 0;
-> +}
-> +
-> +static void k230_rst_update(struct k230_rst *rstc, unsigned long id,
-> +			    bool assert, bool write_en, bool active_low)
-> +{
-> +	const struct k230_rst_map *rmap = &k230_resets[id];
-> +	u32 reg;
-> +
-> +	guard(spinlock_irqsave)(&rstc->lock);
-> +
-> +	reg = readl(rstc->base + rmap->offset);
-> +	if (assert ^ active_low)
-> +		reg |= rmap->reset;
-> +	else
-> +		reg &= ~rmap->reset;
-> +	if (write_en)
-> +		reg |= rmap->reset << 16;
-> +	writel(reg, rstc->base + rmap->offset);
-> +}
-> +
-> +static int k230_rst_assert(struct reset_controller_dev *rcdev, unsigned long id)
-> +{
-> +	struct k230_rst *rstc = to_k230_rst(rcdev);
-> +
-> +	switch (k230_resets[id].type) {
-> +	case RST_TYPE_CPU1:
-> +		k230_rst_update(rstc, id, true, true, false);
-> +		break;
-> +	case RST_TYPE_SW_DONE:
-> +		k230_rst_update(rstc, id, true, false,
-> +				id == RST_SPI2AXI ? false : true);
-> +		break;
-> +	case RST_TYPE_CPU0:
-> +	case RST_TYPE_FLUSH:
-> +	case RST_TYPE_HW_DONE:
-> +		return -EOPNOTSUPP;
-> +	}
-> +
-> +	/*
-> +	 * The time period when reset is applied but the clock is stopped for
-> +	 * RST_TYPE_CPU1 and RST_TYPE_SW_DONE can be set up to 3.75us. Delay
-> +	 * 10us to ensure proper reset timing.
-> +	 */
-> +	udelay(10);
-> +
-> +	return 0;
-> +}
-> +
-> +static int k230_rst_deassert(struct reset_controller_dev *rcdev,
-> +			     unsigned long id)
-> +{
-> +	struct k230_rst *rstc = to_k230_rst(rcdev);
-> +	int ret = 0;
-> +
-> +	switch (k230_resets[id].type) {
-> +	case RST_TYPE_CPU1:
-> +		k230_rst_update(rstc, id, false, true, false);
-> +		ret = k230_rst_wait_and_clear_done(rstc, id, true);
-> +		break;
-> +	case RST_TYPE_SW_DONE:
-> +		k230_rst_update(rstc, id, false, false,
-> +				id == RST_SPI2AXI ? false : true);
-> +		break;
-> +	case RST_TYPE_CPU0:
-> +	case RST_TYPE_FLUSH:
-> +	case RST_TYPE_HW_DONE:
-> +		return -EOPNOTSUPP;
-> +	}
-> +
-> +	/*
-> +	 * The time period when reset is removed but the clock is stopped for
-> +	 * RST_TYPE_CPU1 and RST_TYPE_SW_DONE can be set up to 3.75us. Delay
-> +	 * 10us to ensure proper reset timing.
-> +	 */
-> +	udelay(10);
-> +
-> +	return ret;
-> +}
-> +
-> +static int k230_rst_reset(struct reset_controller_dev *rcdev, unsigned long id)
-> +{
-> +	struct k230_rst *rstc = to_k230_rst(rcdev);
-> +	const struct k230_rst_map *rmap = &k230_resets[id];
-> +	u32 reg;
-> +	int ret = 0;
-> +
-> +	switch (rmap->type) {
-> +	case RST_TYPE_CPU0:
-> +		k230_rst_clear_done(rstc, id, true);
-> +		k230_rst_update(rstc, id, true, true, false);
-> +		ret = k230_rst_wait_and_clear_done(rstc, id, true);
-> +
-> +		/*
-> +		 * The time period when reset is applied and removed but the
-> +		 * clock is stopped for RST_TYPE_CPU0 can be set up to 7.5us.
-> +		 * Delay 10us to ensure proper reset timing.
-> +		 */
-> +		udelay(10);
-> +
-> +		break;
-> +	case RST_TYPE_FLUSH:
-> +		k230_rst_update(rstc, id, true, true, false);
-> +
-> +		/* Wait flush request bit auto cleared by hardware */
-> +		ret = readl_poll_timeout(rstc->base + rmap->offset, reg,
-> +					!(reg & rmap->reset), 10, 1000);
-> +		if (ret)
-> +			dev_err(rcdev->dev, "Wait for flush done timeout\n");
-> +
-> +		break;
-> +	case RST_TYPE_HW_DONE:
-> +		k230_rst_clear_done(rstc, id, false);
-> +		k230_rst_update(rstc, id, true, false, false);
-> +		ret = k230_rst_wait_and_clear_done(rstc, id, false);
-> +
-> +		/*
-> +		 * The time period when reset is applied and removed but the
-> +		 * clock is stopped for RST_TYPE_HW_DONE can be set up to
-> +		 * 127.5us. Delay 200us to ensure proper reset timing.
-> +		 */
-> +		fsleep(200);
-> +
-> +		break;
-> +	case RST_TYPE_CPU1:
-> +	case RST_TYPE_SW_DONE:
-> +		k230_rst_assert(rcdev, id);
-> +		ret = k230_rst_deassert(rcdev, id);
-> +		break;
-> +	}
-> +
-> +	return ret;
-> +}
-> +
-> +static const struct reset_control_ops k230_rst_ops = {
-> +	.reset		= k230_rst_reset,
-> +	.assert		= k230_rst_assert,
-> +	.deassert	= k230_rst_deassert,
-> +};
-> +
-> +static int k230_rst_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct k230_rst *rstc;
-> +
-> +	rstc = devm_kzalloc(dev, sizeof(*rstc), GFP_KERNEL);
-> +	if (!rstc)
-> +		return -ENOMEM;
-> +
-> +	rstc->base = devm_platform_ioremap_resource(pdev, 0);
-> +	if (IS_ERR(rstc->base))
-> +		return PTR_ERR(rstc->base);
-> +
-> +	spin_lock_init(&rstc->lock);
-> +
-> +	rstc->rcdev.dev		= dev;
-> +	rstc->rcdev.owner	= THIS_MODULE;
-> +	rstc->rcdev.ops		= &k230_rst_ops;
-> +	rstc->rcdev.nr_resets	= ARRAY_SIZE(k230_resets);
-> +	rstc->rcdev.of_node	= dev->of_node;
-> +
-> +	return devm_reset_controller_register(dev, &rstc->rcdev);
-> +}
-> +
-> +static const struct of_device_id k230_rst_match[] = {
-> +	{ .compatible = "canaan,k230-rst", },
-> +	{ /* sentinel */ }
-> +};
-> +MODULE_DEVICE_TABLE(of, k230_rst_match);
-> +
-> +static struct platform_driver k230_rst_driver = {
-> +	.probe = k230_rst_probe,
-> +	.driver = {
-> +		.name = "k230-rst",
-> +		.of_match_table = k230_rst_match,
-> +	}
-> +};
-> +module_platform_driver(k230_rst_driver);
-> +
-> +MODULE_AUTHOR("Junhui Liu <junhui.liu@pigmoral.tech>");
-> +MODULE_DESCRIPTION("Canaan K230 reset driver");
-> +MODULE_LICENSE("GPL");
+> In that case, a WARN_ON_ONCE() would be bad -- because it could be triggered
+> by the user.
+
+Ack
+
+>
+> We could do a pr_warn_once() instead, stating that this is not supported
+> right now?
+
+Hmm, if we truly think it might happen let's avoid printing anything for now.
+
+Maybe just ++todo for experimenting with triggering?
+
+It's not hugely important!
+
+>
+> --
+> Cheers,
+>
+> David / dhildenb
 >
 
