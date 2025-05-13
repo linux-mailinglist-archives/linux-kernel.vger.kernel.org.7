@@ -1,112 +1,111 @@
-Return-Path: <linux-kernel+bounces-646720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-646722-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06D47AB5FA7
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 00:50:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BCE4AB5FAE
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 00:55:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24D373B6D75
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 22:50:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E8424639CF
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 22:55:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AF0D213E71;
-	Tue, 13 May 2025 22:50:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EFB8212FA2;
+	Tue, 13 May 2025 22:55:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CGz1q4wu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="zV+k1Euo";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="s7H/2Xx6"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD8CC202C50;
-	Tue, 13 May 2025 22:50:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 043F01CACF3;
+	Tue, 13 May 2025 22:55:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747176616; cv=none; b=n3GQVaWfYkE3OVFgacfMB7G4cpJDe1UwIMU1ezkrz1iTnZfpGL4BbLCIn7l8akWbcZ6ySPWAJ5C1S4i1ubfVuvZI2yXFAxQSYJQGKpOrbl7fTx1n+XafohoMRG34Yj+/bnDYD15oajyY6uLJVv9ka9wtyL8k1bOUJwzWjODNzGY=
+	t=1747176913; cv=none; b=KY2E1yf8vNS2NHRsXK612PYvexs+odcma179eu9L7I8y24uESeMITE+qO0AWePJizTB9QuhsOfmwPChQLv9n63myMmOkgeVYeClAxaYm0lCSmUwdo7so6fMmhgcywdwx15lsTDQF5NYjp0fRWGuxB+A29n4hIDedKEQie8kCgiY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747176616; c=relaxed/simple;
-	bh=vHXWoX9AokPCtWu36aJY5K4HLLm9rD1D0nvR1hRVJ+E=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=HC24GSI8f5Hq8oSWvdgG9LAqbIRmIEzaVC1n4HfKRI1O8LtVqHwbZFJ9gpjTeMCQ0t0qoX0/34YP7/PJQeV0T4gB+hzS59LcsThk1UkCE3KDfq3l0EcmGkzRe7SuZbAqsxq7HWzmEfIBptg8T/Q1yOKnXTJ4LjMqIAV+SJ3HIhs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CGz1q4wu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D8EAC4CEE4;
-	Tue, 13 May 2025 22:50:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747176616;
-	bh=vHXWoX9AokPCtWu36aJY5K4HLLm9rD1D0nvR1hRVJ+E=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=CGz1q4wuZlsX7Ci63/5Oc93u0fnRApFYVSGcP4FvxYf7v0O4nprg7Tm2jTCsXXQtT
-	 Hlg+OVhm2HjbrsRpXB6za2QZYLPR3XG5QBSJFeIUK7DljZxoUK+MVNousH+uUNi/hu
-	 XoR9Q46xdnO2emfdqdxajMN5ywylj43VPLyZEO9T3rXyefLDLrGWLlImvb6XRDT0ky
-	 05GMZDXbtxO4gi175bx3SVNf/Sx3KkPaTL7wPR7djsbIPmrHOsaYDKDbrIPfMSzb3b
-	 mG+/yC7m3PQ1hPTcpzRqTA/UzENJ2R/wP+XgQpg3I3lBFajRTrNX0+RkjgTeCB9LsS
-	 uWZeqUhqbBClw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAF7E380DBE8;
-	Tue, 13 May 2025 22:50:54 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1747176913; c=relaxed/simple;
+	bh=grB2+CAgoGTwFeCdki92fBSghVYqghIeBU/TCirqWCw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=k5J6uEi5PW1uY6dDA1Y7ceXjUCA/zj/CbFtkKr4MV6xkoI/PVQUTvpgn4UYK5YA4bp0HBfqRtot+SmC7g2y0t8MqATNftoznWgbu2sONKNHEy1mfAF1w1nUKz1NRCO+EHJvdHE9IpUIKqjW6CZPgptfhxHgjXL5W+kZSHbf1vEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=zV+k1Euo; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=s7H/2Xx6; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1747176909;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ypElEeQjCKHS4G3vu8w5NzqhAnVnK/eTiCY+VgQb8Lw=;
+	b=zV+k1EuoeJ3cAV1hgZ6+j1hGpAJRTBKtXkWBsVrC0glUTMYQ4gvznl55PwjhSBg8tdzjU5
+	zYSc4+RIsnaxJ1LzkX34wc3AByGcFyZYEBPnOzKuEG9naDbnz0POXzvXgLBBkYtVWWgjY/
+	FYUchd78jgRT0q+Dciimn3vJ6zqyp0cbY/4vx1kWKfIBNUHumzIP3kj6rKfDYjlFPPB6qe
+	AelbhkvBJMJLORGRnVwVSA/sPV7YGdKwyRO9rUgEQQ3PzL+t/sNSVVu+7WNZPbdz2BKStf
+	1n5w93OPMkgm1QLrRZkbb0bciXU9SNNZZhW0bd535Qs7bKbJoGV65f20Da7KSg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1747176909;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ypElEeQjCKHS4G3vu8w5NzqhAnVnK/eTiCY+VgQb8Lw=;
+	b=s7H/2Xx6VZUKiACjxY+l5FPOVgHvDhXIWlsE/OXEXS24vutUttjlHs5DBEqdsDJOTe2R75
+	ySzCRh+Kro+pDhBA==
+To: Jon Hunter <jonathanh@nvidia.com>, Jiri Slaby <jirislaby@kernel.org>,
+ LKML <linux-kernel@vger.kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, "linux-tegra@vger.kernel.org"
+ <linux-tegra@vger.kernel.org>
+Subject: Re: [patch V2a 35/45] genirq/manage: Rework irq_set_irq_wake()
+In-Reply-To: <35f464cf-c264-4f2b-9e0b-fd8a71526aa1@nvidia.com>
+References: <20250429065337.117370076@linutronix.de>
+ <20250429065422.128859754@linutronix.de>
+ <e9a0abc5-7ee0-4ee1-9e19-37d43a5d41de@kernel.org> <87plgtq0qb.ffs@tglx>
+ <87ldrhq0hc.ffs@tglx> <35f464cf-c264-4f2b-9e0b-fd8a71526aa1@nvidia.com>
+Date: Wed, 14 May 2025 00:55:08 +0200
+Message-ID: <87ecwsjf3n.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next 00/10] net/mlx5: HWS,
- Complex Matchers and rehash mechanism fixes
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <174717665349.1815639.5590161791994015034.git-patchwork-notify@kernel.org>
-Date: Tue, 13 May 2025 22:50:53 +0000
-References: <1746992290-568936-1-git-send-email-tariqt@nvidia.com>
-In-Reply-To: <1746992290-568936-1-git-send-email-tariqt@nvidia.com>
-To: Tariq Toukan <tariqt@nvidia.com>
-Cc: davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com,
- edumazet@google.com, andrew+netdev@lunn.ch, saeedm@nvidia.com,
- leon@kernel.org, netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
- linux-kernel@vger.kernel.org, moshe@nvidia.com, mbloch@nvidia.com,
- vdogaru@nvidia.com, kliteyn@nvidia.com, gal@nvidia.com
+Content-Type: text/plain
 
-Hello:
+On Tue, May 13 2025 at 18:32, Jon Hunter wrote:
+> On 30/04/2025 13:48, Thomas Gleixner wrote:
+>> @@ -846,45 +846,40 @@ static int set_irq_wake_real(unsigned in
+>>    */
+>>   int irq_set_irq_wake(unsigned int irq, unsigned int on)
+>>   {
+>> -	unsigned long flags;
+>> -	struct irq_desc *desc = irq_get_desc_buslock(irq, &flags, IRQ_GET_DESC_CHECK_GLOBAL);
+>> -	int ret = 0;
+>> +	scoped_irqdesc_get_and_lock(irq, IRQ_GET_DESC_CHECK_GLOBAL) {
+>
+>
+> I noticed a suspend regression on some of our Tegra boards and bisect 
+> pointed to this commit. I made the following change and this does appear 
+> to fix it ...
+>
+> diff --git a/kernel/irq/manage.c b/kernel/irq/manage.c
+> index 2861e11acf3a..c94837382037 100644
+> --- a/kernel/irq/manage.c
+> +++ b/kernel/irq/manage.c
+> @@ -846,7 +846,7 @@ static int set_irq_wake_real(unsigned int irq, 
+> unsigned int on)
+>    */
+>   int irq_set_irq_wake(unsigned int irq, unsigned int on)
+>   {
+> -       scoped_irqdesc_get_and_lock(irq, IRQ_GET_DESC_CHECK_GLOBAL) {
+> +       scoped_irqdesc_get_and_buslock(irq, IRQ_GET_DESC_CHECK_GLOBAL) {
+>                  struct irq_desc *desc = scoped_irqdesc;
+>                  int ret = 0;
+>
+> Hence, I wanted to ask if this should still be using the buslock scope here?
 
-This series was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+Of course. My bad. Care to send a patch with a proper change log?
 
-On Sun, 11 May 2025 22:38:00 +0300 you wrote:
-> Hi,
-> 
-> This series by Yevgeny adds Hardware Steering support for Complex
-> Matchers/Rules (patches 1-5), and rehash mechanism fixes (patches 6-10).
-> 
-> See detailed descriptions by Yevgeny below [1][2].
-> 
-> [...]
+Thanks
 
-Here is the summary with links:
-  - [net-next,01/10] net/mlx5: HWS, expose function mlx5hws_table_ft_set_next_ft in header
-    https://git.kernel.org/netdev/net-next/c/d2338a27fcee
-  - [net-next,02/10] net/mlx5: HWS, add definer function to get field name str
-    https://git.kernel.org/netdev/net-next/c/fed5f4831281
-  - [net-next,03/10] net/mlx5: HWS, expose polling function in header file
-    https://git.kernel.org/netdev/net-next/c/3c739d1624e3
-  - [net-next,04/10] net/mlx5: HWS, introduce isolated matchers
-    https://git.kernel.org/netdev/net-next/c/b816743a182f
-  - [net-next,05/10] net/mlx5: HWS, support complex matchers
-    https://git.kernel.org/netdev/net-next/c/17e0accac577
-  - [net-next,06/10] net/mlx5: HWS, force rehash when rule insertion failed
-    https://git.kernel.org/netdev/net-next/c/9d4024edce10
-  - [net-next,07/10] net/mlx5: HWS, fix counting of rules in the matcher
-    https://git.kernel.org/netdev/net-next/c/4c56b5cbc323
-  - [net-next,08/10] net/mlx5: HWS, fix redundant extension of action templates
-    https://git.kernel.org/netdev/net-next/c/041861b40f59
-  - [net-next,09/10] net/mlx5: HWS, rework rehash loop
-    https://git.kernel.org/netdev/net-next/c/ef94799a8741
-  - [net-next,10/10] net/mlx5: HWS, dump bad completion details
-    https://git.kernel.org/netdev/net-next/c/578b856b5e72
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+        tglx
 
