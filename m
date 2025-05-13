@@ -1,177 +1,122 @@
-Return-Path: <linux-kernel+bounces-645782-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-645785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3563BAB5377
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 13:08:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8F41AB5382
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 13:10:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 697F83BEF4A
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 11:08:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6242A8634AE
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 11:10:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D11E228CF41;
-	Tue, 13 May 2025 11:08:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1941428CF41;
+	Tue, 13 May 2025 11:10:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Ll0RsFi3"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=hammernet-be.20230601.gappssmtp.com header.i=@hammernet-be.20230601.gappssmtp.com header.b="feOfwgzT"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA37F28C87C
-	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 11:08:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 485AE28C863
+	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 11:10:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747134533; cv=none; b=t8U0i/chZcXtUg58m0+6G6uY7YT8dZH3pFHVxT3wNLHhXiiqWuw9I4oE/eG5Tjp4tXH+q1UU46D++WmRwoxV0tJ+uBJc2Z5aZWRxy4KbnhVmWC5IkoRmDNi/NqLJ8D1Znwe0n3pVtX9nNq0n/KU+WQg92JxdgZ3cwoV+d+ckKk0=
+	t=1747134622; cv=none; b=Ow8G2/k3r2jkPaXCHxmcM/JSYhxua3guUgshxH1AxdbV2ujOWcEVFoebtxEEtF3wK3/WUQ1+jztuQRvMuMO3i0u2/I9vw0Ie5ka0fB1sC53DVcc86VDMvDxDezLq9YCxHanatezkknzu/cDf818nxaQdnmVnxi9quLTg47te0zI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747134533; c=relaxed/simple;
-	bh=rdpI6SyCzEcz0rHhDFC3KBNtrPw+BnurZ+tDNY7GaGg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=spdSDXakJqyW3FrgOBReFUnlsgALFJH+cgCXiEXXZbirMPsK/05e3VV4lmSTRuqSy8qRq9DStwJGGYVFKR5b6maDKyCRxliux+lC49+S+IIlXhrT+uRnwiYwBSnoaJiZw685a/7C++D9EHu+4/QcyGf+HaVnB40/nDNQXuk2MdU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Ll0RsFi3; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54D72aok027758
-	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 11:08:50 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=TdcskCO2K/Wyi90DbkJBCc
-	6FCyelyPLh1fYHTqrysmg=; b=Ll0RsFi3Z1nYvX2B6WtHFLRhJFf/frMjBJf0QM
-	egtXLOPCcB/nrv0CEZF3N91IiA/pdiY8hHv52Up+7Kepqa66gBBBOthKH0YMN+zy
-	y0lEJSi2tvX6XvzrKrsUJwzQVHyUgax+Rew4qreFo/aSoLNt2aEvGd6CTo1HADQA
-	Dquth35rwQxKa4+boK/7vOpCaSnNqJWXc1qD3rfcR5c12mhExYTOr7aGu+I71Cqz
-	NrSQGEQzkjlxYLmzjnlZd1H80Y3mfzSYhjx+LMBQRyAoBgUyuaYf8cg3Dygh3V5J
-	6aOoBIBzXZT6uRIZwGzBfsaF4kmSZdklZT/EnZv+uf762LKg==
-Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com [209.85.215.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46hwt97gr6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 11:08:50 +0000 (GMT)
-Received: by mail-pg1-f199.google.com with SMTP id 41be03b00d2f7-b20027d9ac0so3130995a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 04:08:50 -0700 (PDT)
+	s=arc-20240116; t=1747134622; c=relaxed/simple;
+	bh=vJ+aZs4J3I4B+KmzowPhOdBXKYIgIVVzFxRxaKSvLzU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZQvRQoINbgDWfUkERQu9ye2SSb/4tNVycOxXo+Mf+68QKoeakBHcnNkwC+XH5QHcCW+NVs0sekO1rUs02mbkLN+pUHC/Jg/iZMMV4nfkxXvfUiTjW4md5EXAVCC1z/J6s15S9F+cxiCl++QbSPkJIH42v1TI8H33Gz1i/rx5i/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hammernet.be; spf=fail smtp.mailfrom=hammernet.be; dkim=pass (2048-bit key) header.d=hammernet-be.20230601.gappssmtp.com header.i=@hammernet-be.20230601.gappssmtp.com header.b=feOfwgzT; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hammernet.be
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=hammernet.be
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-442ea341570so6994215e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 04:10:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=hammernet-be.20230601.gappssmtp.com; s=20230601; t=1747134616; x=1747739416; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=xW5d22AyfE5WGuuD+WsgObkxfatUVH6GU6OG+OuxcAI=;
+        b=feOfwgzTJUIcVXscQynE6z5Jm9pi+Lsjg1PsO/MN+5UlVz/XG5zdnQGjTYMqx8VKbz
+         KK4Z0nmyUDYADLCC8fnbz8Qpqhavmeexhx6Qw2if+JgxVMMbUCBd00CEKSbBs5SfXSt1
+         qD9T8I7wRw7DRXHYreEVlATugJzc/OHEnj+ssWuwWxtQn+LC2w32pGydxrZVXU2PWJjO
+         U3KSl0MMiB6Uvvre4V30L5xEXG48BkoefApdmz0tVKWLPiws8xOLZYnGh1K2JqN4lRj8
+         /bfCwQ8QsxpYG1sxStxAt6/fGS+YxOVirWNXGHyHK4MW9YdMTY9zT3ZpAipciaAkk+mC
+         OfPA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747134526; x=1747739326;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1747134616; x=1747739416;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=TdcskCO2K/Wyi90DbkJBCc6FCyelyPLh1fYHTqrysmg=;
-        b=at9PfM2+6TDAUFG3nZQzT7SxaVhrP3gA8sy2u0risU1E2Kti0bXx6TNX/O2GFwYwdA
-         jIVth68UlCD9haFxwGIkPQZcF8VON1T1UIp6sWDbyBoJ7EB6vPxIs07EzDE5LIdByzga
-         ry1RQKKwgj+juqqQ0XBxvQUha1LgCtyNYxhgdPcY9kVf6RAHe/jiiqdtvWBn3UNdMKwQ
-         WrBWF8SGSGu4d7+xTo8Dk1FXR8nmje5cadQVmnyVMbLKxzWCfjhwOhImtQKezekWy/NF
-         yu5vDD4anR8YGIJuQxj/yJaG4GNQvBNsjxjo4nWSKjBjRlhGLqdafaO1HebeOz+hK/DK
-         4gOg==
-X-Forwarded-Encrypted: i=1; AJvYcCXvbUBlf6nqz4u4/RRxbABtmu9JZxSl3HlUh8bwfjJNJKxW6L6H2FlyuVjALau1bHsJFH3EMslA4pGioGc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwfzPhMnGbTXNIxOCf/lAlm83RcxVCOu2OsVTSXOrIRD+HTbhe1
-	t/s2hHopX75kl6tlDepcaa1qhepl1b99oP2ga/O6RTxKwzv+Rmuoys803mkFy3Z4/U1ZjLWXWby
-	YADwkjvB5tswqhyI1QwjL/s5KjHK6TirvMSnxG+4bGSg+MOs3En+WyAcWagT7z9c=
-X-Gm-Gg: ASbGncshkWpWW+jjdaWVrBWUscW6MD7cPuHUW3PTrNHFnFYKYAawLcMuOKFDavAl2lL
-	8zi7xUdWQ71ZxqKofX819VtHXvZ1m+6fIts0C78llFg+IUq/YDKQxP3rXyWINk5P6IBLdNPoR7v
-	IksanYmStYCEsm4WolaedlX4NrHCNA7TEubY7RY0rxIMm+R4e1bJpC9o8v91lrVwbq1uOFi312j
-	fg5BhmON3CABB63yeK2YhhowjNKqsN4y4h6VLVCDo9+WBZTZzb1E5OccReP14LBahSylHcOJnlb
-	f6N6GjUczpgRbKTek9tIHgFbYS8FdAHvTSXX36PWiYCITx22cteZGkrS+4oKOLi7SM95NUc6WIF
-	lhtO9SNbetUae8nU+OAKCDkJ0S9wgzBwyO1ntl0fIkVuylQg=
-X-Received: by 2002:a05:6a21:9982:b0:1f3:2e85:c052 with SMTP id adf61e73a8af0-215abc613a1mr29416462637.35.1747134526287;
-        Tue, 13 May 2025 04:08:46 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHwN2TRFlFW2UrWDD2VPfw/5b4OcIVv3/BEHBl6G3cH26syPZhvz9HpnkVuSopGz++v8+1RpQ==
-X-Received: by 2002:a05:6a21:9982:b0:1f3:2e85:c052 with SMTP id adf61e73a8af0-215abc613a1mr29416412637.35.1747134525847;
-        Tue, 13 May 2025 04:08:45 -0700 (PDT)
-Received: from hu-kathirav-blr.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com. [103.229.18.19])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b251957fef4sm6051656a12.75.2025.05.13.04.08.42
+        bh=xW5d22AyfE5WGuuD+WsgObkxfatUVH6GU6OG+OuxcAI=;
+        b=euUIjNlBDDFsuig879+uFcvNWUm0fr+k5sgZwBVzyNiVvF7A228k7EwQ+qon9Y+NuC
+         PuLjx9WhWRYHk37qLfTH5/DzB655nkfWc/yvCrmp2JZeSfro1TNqSKReVs5lLGhht+Wq
+         7oKWXoSgYn9TMUMrd7RM/pGABlXKeo/vxnjb4SM/b6qRZSRz0idVWLrQHdsyMefRZRHx
+         3E1Tj3lyU5DGUedbGjsjlXL1OVe/wEZyL3VAdrPU3UQpHAIIC21hhmwByCEojksbhTu0
+         4xCUAgFkRAhbGWJaDYFXKfMdyNSi4H3P+97VKLamQMWLxN8LAoZ5ERy6Pvfb7jjvMjuP
+         QUZg==
+X-Forwarded-Encrypted: i=1; AJvYcCVcYoCaZh4ouwxZoiuo9tF9uSR+c8QjEoPuZMDPH3VsbDFt8w0c28JJHEMvFSfJ0L7zSI9DWFVyuO36jWg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzg/2Zd7Voma+MbKum5lR+pT6tQY1TQb+IN4BEZw5h4wBZfBaR8
+	LLUPrY+wAvX5ie7HNPmRjTCSZWgn3qpU4cY4a9F7l4hgRFvV1SOkrpBg9fGBzNY=
+X-Gm-Gg: ASbGnctfBmsL7Oug4ykYtPIFhya/VoUegHzAxahgj2UYiWewCSUsRZfe7UJk15WgDwC
+	JkK6q1vyNGQvuVPUe1JDTgMOeYbv8gC8EVBnkC1l6K+T1lpWZDKu/RP4xfq2qm1p97He6d6K7Pl
+	prRTRysWTDDejSUpMWwRNApm5IoGUx57eNin89Wsipc7lco3BBrfJKQXFX3Qsnj6WWZ1XqRl6xw
+	vslrAkh79KWttu4U9WOZLySvkVZBL0EEDR42SCny2cno/U2MWoSxtykcUSMV2rw015J6SYaRLAM
+	PwNm96pdsLQZncVVGbJ2fAVPep8r03j9nYeisqo15Avge4eJ7QItX9PC1Wv5QPvsEz/t1RYjMAr
+	vG5f250ZiWl4=
+X-Google-Smtp-Source: AGHT+IFuIhHmYNLqyH+zu54PArNHeQDifEpT6IgxsW2fAt6qVuFPJEi1RiNOKS9sGvGl0NdPBZRNRQ==
+X-Received: by 2002:a05:6000:200d:b0:3a0:6f92:ef7c with SMTP id ffacd0b85a97d-3a1f64314c7mr13612076f8f.17.1747134616347;
+        Tue, 13 May 2025 04:10:16 -0700 (PDT)
+Received: from pop-os.telenet.be ([2a02:1807:2a00:3400:849e:fc74:c88b:cc])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a1f5a2d2d3sm16077941f8f.63.2025.05.13.04.10.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 May 2025 04:08:45 -0700 (PDT)
-From: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
-Date: Tue, 13 May 2025 16:38:33 +0530
-Subject: [PATCH] i2c: qcom-geni: fix I2C frequency table to achieve
- accurate bus rates
+        Tue, 13 May 2025 04:10:15 -0700 (PDT)
+From: Hendrik Hamerlinck <hendrik.hamerlinck@hammernet.be>
+To: corbet@lwn.net,
+	suzuki.poulose@arm.com,
+	mike.leach@linaro.org,
+	james.clark@linaro.org,
+	skhan@linuxfoundation.org
+Cc: coresight@lists.linaro.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Hendrik Hamerlinck <hendrik.hamerlinck@hammernet.be>
+Subject: [PATCH] docs: fix "incase" typo in coresight/panic.rst
+Date: Tue, 13 May 2025 13:09:31 +0200
+Message-ID: <20250513110931.15072-1-hendrik.hamerlinck@hammernet.be>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250513-i2c-bus-freq-v1-1-9a333ad5757f@oss.qualcomm.com>
-X-B4-Tracking: v=1; b=H4sIADAoI2gC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1MDU0Nj3UyjZN2k0mLdtKLUQt3EZBMzYxNjCzPLRBMloJaCotS0zAqwcdG
- xtbUATUlz714AAAA=
-X-Change-ID: 20250513-i2c-bus-freq-ac46343869a4
-To: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>,
-        Viken Dadhaniya <quic_vdadhani@quicinc.com>,
-        Andi Shyti <andi.shyti@kernel.org>,
-        Manikanta Mylavarapu <quic_mmanikan@quicinc.com>,
-        Bjorn Andersson <andersson@kernel.org>
-Cc: linux-i2c@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, stable@kernel.org,
-        Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1747134522; l=1564;
- i=kathiravan.thirumoorthy@oss.qualcomm.com; s=20230906;
- h=from:subject:message-id; bh=rdpI6SyCzEcz0rHhDFC3KBNtrPw+BnurZ+tDNY7GaGg=;
- b=LCHz9YCCEIlr+bjBQdea52XKoMJwQDH+j2d3dmop+sliEw7Fqh/3EA9PeKXG5vTE6dxR5fRNo
- jw2wBTtLHrBChGI68l+LbQvNJi5gGwM3e1IJJpS8ktEabI6RyF7Srtq
-X-Developer-Key: i=kathiravan.thirumoorthy@oss.qualcomm.com; a=ed25519;
- pk=xWsR7pL6ch+vdZ9MoFGEaP61JUaRf0XaZYWztbQsIiM=
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTEzMDEwNiBTYWx0ZWRfX/eeVBlp9O2n/
- g9bJMqsvLNiCfO+JFJKCbt6GQwTKvpd86oxR0KWkq9eLTeWGLlsY+2ZdqyqkbM8/78gUlsR1V7N
- oqoFv6cW/1TVExIxzf7nDntHLRVQBi0tPd1eAwyd1X2d3/dJRXjfV4XQDtUqnVobHSdC54q/dli
- 4CPYJXlwvVmhYB+xZk3zl8+owohJs/ecB/6HNYRnsQnmCBBqAmHY3TcIr/9M2ULF45zBY4vPWr+
- iY9KSIRIxJzwDhIJe79IoyC9P3MktDBtae5nIp67vHQbHpp/WodTKvIs6+CohUl/JewyD0WY3B/
- tt9XsWLcIRpDGSteK2M/A4au3scfgGMPIyL60cRHarz0an6a4PQ849I7PDP3MyLCR1BQYEwqPtF
- HJvEoPQVEuWSWmlw1u0ckK3pW/Tdrt5G1HCMnZkXmuqluE6qebrefV0x/KK/dMZrSOQXpK5w
-X-Proofpoint-ORIG-GUID: n5_TA4d_M-y3zOUM6I1mNVKEyWykkRbK
-X-Proofpoint-GUID: n5_TA4d_M-y3zOUM6I1mNVKEyWykkRbK
-X-Authority-Analysis: v=2.4 cv=a58w9VSF c=1 sm=1 tr=0 ts=68232842 cx=c_pps
- a=Oh5Dbbf/trHjhBongsHeRQ==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
- a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
- a=c3nHYIS01CY_1xjDKk0A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=_Vgx9l1VpLgwpw_dHYaR:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-12_07,2025-05-09_01,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 phishscore=0 lowpriorityscore=0 mlxlogscore=999 malwarescore=0
- clxscore=1015 impostorscore=0 mlxscore=0 spamscore=0 bulkscore=0 adultscore=0
- priorityscore=1501 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
- definitions=main-2505130106
 
-Update the I2C frequency table to match the recommended values
-specified in the I2C hardware programming guide. In the current IPQ5424
-configuration where 32MHz is the source clock, the I2C bus frequencies do
-not meet expectations—for instance, 363KHz is achieved instead of the
-expected 400KHz.
+Corrects a spelling mistake in Documentation/trace/coresight/panic.rst
+where "incase" was used instead of "in case".
 
-Cc: stable@kernel.org
-Fixes: 506bb2ab0075 ("i2c: qcom-geni: Support systems with 32MHz serial engine clock")
-Signed-off-by: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
+Signed-off-by: Hendrik Hamerlinck <hendrik.hamerlinck@hammernet.be>
 ---
- drivers/i2c/busses/i2c-qcom-geni.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ Documentation/trace/coresight/panic.rst | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/i2c/busses/i2c-qcom-geni.c b/drivers/i2c/busses/i2c-qcom-geni.c
-index ccea575fb7838db864ca4a2b21ebb3835b2567b2..2fec7b44bfc1baec68e321a9f57de4156120919b 100644
---- a/drivers/i2c/busses/i2c-qcom-geni.c
-+++ b/drivers/i2c/busses/i2c-qcom-geni.c
-@@ -155,9 +155,9 @@ static const struct geni_i2c_clk_fld geni_i2c_clk_map_19p2mhz[] = {
+diff --git a/Documentation/trace/coresight/panic.rst b/Documentation/trace/coresight/panic.rst
+index a58aa914c241..6e4bde953cae 100644
+--- a/Documentation/trace/coresight/panic.rst
++++ b/Documentation/trace/coresight/panic.rst
+@@ -67,8 +67,8 @@ Trace data captured at the time of panic, can be read from rebooted kernel
+ or from crashdump kernel using a special device file /dev/crash_tmc_xxx.
+ This device file is created only when there is a valid crashdata available.
  
- /* source_clock = 32 MHz */
- static const struct geni_i2c_clk_fld geni_i2c_clk_map_32mhz[] = {
--	{ I2C_MAX_STANDARD_MODE_FREQ, 8, 14, 18, 40 },
--	{ I2C_MAX_FAST_MODE_FREQ, 4,  3, 11, 20 },
--	{ I2C_MAX_FAST_MODE_PLUS_FREQ, 2, 3,  6, 15 },
-+	{ I2C_MAX_STANDARD_MODE_FREQ, 8, 14, 18, 38 },
-+	{ I2C_MAX_FAST_MODE_FREQ, 4,  3, 9, 19 },
-+	{ I2C_MAX_FAST_MODE_PLUS_FREQ, 2, 3, 5, 15 },
- 	{}
- };
- 
-
----
-base-commit: edef457004774e598fc4c1b7d1d4f0bcd9d0bb30
-change-id: 20250513-i2c-bus-freq-ac46343869a4
-
-Best regards,
+-General flow of trace capture and decode incase of kernel panic
+-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++General flow of trace capture and decode in case of kernel panic
++~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 1. Enable source and sink on all the cores using the sysfs interface.
+    ETR sinks should have trace buffers allocated from reserved memory,
+    by selecting "resrv" buffer mode from sysfs.
 -- 
-Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
+2.43.0
 
 
