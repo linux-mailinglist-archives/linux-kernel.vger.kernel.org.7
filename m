@@ -1,99 +1,117 @@
-Return-Path: <linux-kernel+bounces-645503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-645505-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93C48AB4E80
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 10:50:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 065A7AB4E8B
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 10:51:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 628933B1E2F
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 08:49:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23CDF3B189A
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 08:50:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37C1620E6ED;
-	Tue, 13 May 2025 08:49:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EB1F20E6ED;
+	Tue, 13 May 2025 08:51:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YqijE3hd"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DT15juaJ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D4651F09AC;
-	Tue, 13 May 2025 08:49:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9640B1DC9BB;
+	Tue, 13 May 2025 08:51:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747126196; cv=none; b=uK8fKGEUk6kaOMduG0KhTyz2zgYZBg5bgUV7KNPHyKH0gvKzHWHAaInp4dBzWtpwrHYeX7AYkx5I0dW8E0XNthunuy+F5VaAo/+DCYDFDKU9XLl98jca9aG4YXFj4xpxZgvrBtLjIArb7fB9JZjcNUsqrwyJrrz7hscCA3UfHJo=
+	t=1747126264; cv=none; b=SEDazCOCxcCokjBmxmMemQIuuXZMSPhIz2UQmlL2cTiU2Yn4R11HrTgc1jhZQt97Ke3d6mFuAiwRT3wmVaccFdFh58H+bBbFOmfdNf3pAGQ7nuyUtc+KyxI7oBl9GYthyNkRsdonxmlnff9lkgfivtaE+iqH/JZPXTLPHz/pb/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747126196; c=relaxed/simple;
-	bh=MaH/3rHQVFeq82s47yVwfb8amcgYaRP6dl9IPVKdCoM=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=hGxBCYT7zcK7OzdTY/fomyWAtizgQK2LUBP24rS6pFmoYmX1Tv1DaBZQcyD99U1G8zVPEnCAB8LChQUG8iV+NTLqMsZeHD2ihIzNlaNHziairj9+tuHNe/BIVIp1Et8AJAT7B9MdqCurLLhN7OQMheVNCWhYUTsNOSLT5KkoTBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YqijE3hd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6EB8C4CEE4;
-	Tue, 13 May 2025 08:49:55 +0000 (UTC)
+	s=arc-20240116; t=1747126264; c=relaxed/simple;
+	bh=JuynMA1lFeLJ74JpIm5SB8vTf5FUAnMBpNKD71wdRG8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kfdo4L6cUTJ7WHBvw+kJjjJQ4IYSVAl7Mpz9RdpMdg47FaPjsW9XpIiAnGYKI2WkBT2+e6shox3ER07Bm7ulDT/cf1KalWL93VA1oqQCpYM8idbRJy2Wirl2RfMuDLsocXWQy8ZeJx6xAlsbuQzb1wEPp/VD/vF4mZPDRzN5364=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DT15juaJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3546C4CEE4;
+	Tue, 13 May 2025 08:51:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747126196;
-	bh=MaH/3rHQVFeq82s47yVwfb8amcgYaRP6dl9IPVKdCoM=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=YqijE3hd1sczb4GR7qY8e3KcvDJkso/wd5EDv4Nb0N4MlhNxMGTVYOVuNgZYpkyRs
-	 YeOb4UJLiMsVRiuVOHm8ZMVdCMGFk+AdV9x7U7YxRI8HUZ/9+r84cLGds/z4Oxu77p
-	 idS301QWUq+zh2kC2Y3RD9mATXJgalkF2XgHt9yBjD5mBBa26gxF/GqCUcPvjynom9
-	 3NDIEAyTowCBS60mQIiz1IMapcKfoedGGCZ5EuQ/0+eXszGTcyYacuEwt8/mAjlki3
-	 tSyil0CHC9sXaMuu3L5uwvKLZyq7kjfaodlFsfkqNCi4uXgQGX/VqGTE1n5utD0Ub+
-	 9d031bMpCWUQA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADD4539D6553;
-	Tue, 13 May 2025 08:50:34 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1747126264;
+	bh=JuynMA1lFeLJ74JpIm5SB8vTf5FUAnMBpNKD71wdRG8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DT15juaJQaVe76NCzznf+i5OE8q642AWY0Bo46tPhsaMgeMNuN9vTJlQdnBbHvxNp
+	 pFAaB6Q3SQAEB73ksaZsHmcnU2FXcNy+5kM7Kc/aXZQylqqK30abrcjihfdpMCVkEb
+	 fbrpj/A5YfXJbMBQPYOqo17tFSO9RyVGIbngMCSbno52H+izNHxlDrEQT7xTmlPFU4
+	 gX5m5LLcXLBU1nlH83EMbNwDzOElzGKYUipdDtBZOvW5muVXpIg4Sheb6gBCUfrSq3
+	 HDqmfrk/a6DrXZ84BGFTQQwxBznP3uXMsMZa91JtMbGWNv9Tjzj48HFudUrxR/gFXf
+	 oVG3HnaA173TQ==
+Date: Tue, 13 May 2025 09:50:57 +0100
+From: Lee Jones <lee@kernel.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Nam Tran <trannamatk@gmail.com>, andy@kernel.org, pavel@ucw.cz,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	christophe.jaillet@wanadoo.fr, corbet@lwn.net,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, florian.fainelli@broadcom.com,
+	bcm-kernel-feedback-list@broadcom.com,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v8 0/5] auxdisplay: add support for TI LP5812 4x3 Matrix
+ LED driver
+Message-ID: <20250513085057.GB2936510@google.com>
+References: <aCGPuKtfprIvwADa@smile.fi.intel.com>
+ <20250512173800.6767-1-trannamatk@gmail.com>
+ <CAMuHMdWiTLbazxfe0joujONfLTQXT73WE=sq5F-4dwOq463b4g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net v3 0/2] address EEE regressions on KSZ switches since v6.9
- (v6.14+)
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <174712623355.1237041.4249732681101911068.git-patchwork-notify@kernel.org>
-Date: Tue, 13 May 2025 08:50:33 +0000
-References: <20250504081434.424489-1-o.rempel@pengutronix.de>
-In-Reply-To: <20250504081434.424489-1-o.rempel@pengutronix.de>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: davem@davemloft.net, andrew@lunn.ch, edumazet@google.com,
- f.fainelli@gmail.com, kuba@kernel.org, pabeni@redhat.com, olteanv@gmail.com,
- woojung.huh@microchip.com, linux@armlinux.org.uk, hkallweit1@gmail.com,
- kernel@pengutronix.de, linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
- UNGLinuxDriver@microchip.com, stable@vger.kernel.org
+In-Reply-To: <CAMuHMdWiTLbazxfe0joujONfLTQXT73WE=sq5F-4dwOq463b4g@mail.gmail.com>
 
-Hello:
+On Tue, 13 May 2025, Geert Uytterhoeven wrote:
 
-This series was applied to netdev/net.git (main)
-by Paolo Abeni <pabeni@redhat.com>:
-
-On Sun,  4 May 2025 10:14:32 +0200 you wrote:
-> This patch series addresses a regression in Energy Efficient Ethernet
-> (EEE) handling for KSZ switches with integrated PHYs, introduced in
-> kernel v6.9 by commit fe0d4fd9285e ("net: phy: Keep track of EEE
-> configuration").
+> Hi Nam,
 > 
-> The first patch updates the DSA driver to allow phylink to properly
-> manage PHY EEE configuration. Since integrated PHYs handle LPI
-> internally and ports without integrated PHYs do not document MAC-level
-> LPI support, dummy MAC LPI callbacks are provided.
+> On Mon, 12 May 2025 at 19:38, Nam Tran <trannamatk@gmail.com> wrote:
+> > On Mon, 12 May 2025 Andy Shevchenko wrote:
+> > > On Sat, May 10, 2025 at 02:48:02PM +0700, Nam Tran wrote:
+> > > > On Thu, 8 May 2025 Lee Jones wrote:
+> > > > > On Thu, 08 May 2025, Andy Shevchenko wrote:
+> > > > > > On Thu, May 8, 2025 at 5:27 PM Nam Tran <trannamatk@gmail.com> wrote:
+> > > > > > > On Thu, 8 May 2025 Lee Jones wrote:
+> > > > > > > > On Thu, 08 May 2025, Andy Shevchenko wrote:
+> >
+> > ...
+> >
+> > > > I think setting PWM also same as brightness_set API. However, there are
+> > > > many PWM config for a LED and it is one of other config to make autonomous mode work.
+> > > > Therefore, standard led API can use in some use cases only.
+> > > >
+> > > > Please see the link below for a better visualization of how to configure the LP5812.
+> > > > https://dev.ti.com/gallery/view/LED/LP581x/ver/0.10.0/
+> > >
+> > > To me it sounds like you should start from the small steps, i.e. do not
+> > > implement everything at once. And starting point of the 4 RGB LEDs sounds
+> > > the best approach to me. Then, if needed, you can always move on with
+> > > fancy features of this hardware on top of the existing code.
+> >
+> > Thanks for the suggestion.
+> > I understand your point and agree that starting with standard LED APIs is the preferred approach.
 > 
-> [...]
+> i.e. a drivers/leds/ driver.
+> 
+> > However, the LP5812 hardware offers more advanced features, and I’d like to support end users all
+> > features as shown in the link: https://dev.ti.com/gallery/view/LED/LP581x/ver/0.10.0/.
+> > It is easy for end user to investigate and use driver.
+> >
+> > If I want to keep the current driver interface to meet this expectation, would it be acceptable
+> > to move it to the misc subsystem to better support the hardware?
+> 
+> I guess you can add custom sysfs controls for the advanced features
+> on top of the drivers/leds/ driver?
 
-Here is the summary with links:
-  - [net,v4,1/2] net: dsa: microchip: let phylink manage PHY EEE configuration on KSZ switches
-    https://git.kernel.org/netdev/net/c/76ca05e0abe3
-  - [net,v4,2/2] net: phy: micrel: remove KSZ9477 EEE quirks now handled by phylink
-    https://git.kernel.org/netdev/net/c/8c619eb21b8e
+Yes, exactly that.
 
-You are awesome, thank you!
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Lee Jones [李琼斯]
 
