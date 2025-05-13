@@ -1,91 +1,77 @@
-Return-Path: <linux-kernel+bounces-645555-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-645552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 143CAAB4FAB
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 11:25:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A800AB4F99
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 11:23:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74C7D8C3FCD
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 09:23:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 098B84A1E61
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 09:23:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53562214A81;
-	Tue, 13 May 2025 09:21:42 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BE0F221F27
-	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 09:21:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C16A6217675;
+	Tue, 13 May 2025 09:21:34 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B07C214A97
+	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 09:21:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747128101; cv=none; b=Qja4YW0Jor8y/kbYUYFydg5UashtfFfREleS6q4x7yWGyqz1MYamDRj6dzBKCI41pF4wcIFzhg7J9sWvsj9/Dll3M0KCAJ7EqeOK0K6pM+1HGXKB1+qlFgjBtJe85tDIeBjdxRs/ZMWufukYKJHkOiMiXSnUfvF/UfNCB2N0xQ0=
+	t=1747128094; cv=none; b=bDzkehY9Nc5ynB4jhut+og802zZlSqoIPbBBTMtPhUhQ4p9FGOyHJf/l7rbGxTrYunEDc/tS7yA8H9/D7KCER+XFCr5ME7XIBQ5OTUtLfmo2k0Cm51YyHA4/bmFqf7CFLZIrzSYQZsnMnDsLyLuqxAAW5493OTi2ChjLDVMSsiY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747128101; c=relaxed/simple;
-	bh=L7l7fK4yzt+8ARLihCJvli/AWMvTKu+OyqzgTNEXlgY=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=bRtiKWsXUNnWd0tcPdBP9bQcBoDd6vJ4ap5C1uiIXY8G6WsR0N8qdcpreoogFdPKHuD0xaatC31Rh9KkFuhWFvdVjFcbR1GnurBRqxONzVd/KgHs43uzHn8CckUSy/6AfTJlmKz8+obRPaVSLF8yTuccCBuBsOxVd9YaLcBrjEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1uElox-0008Gs-Cv; Tue, 13 May 2025 11:21:07 +0200
-Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1uElow-002W0l-2L;
-	Tue, 13 May 2025 11:21:07 +0200
-Received: from pza by lupine with local (Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1uElox-0004YW-0K;
-	Tue, 13 May 2025 11:21:07 +0200
-Message-ID: <ecf46fa3116690b85f51539edf7f6a47c612fca5.camel@pengutronix.de>
-Subject: Re: [PATCH v9 5/6] reset: spacemit: define three more CCUs
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Alex Elder <elder@riscstar.com>, robh@kernel.org, krzk+dt@kernel.org, 
- conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, 
- paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
- alex@ghiti.fr,  dlan@gentoo.org
-Cc: heylenay@4d2.org, inochiama@outlook.com, guodong@riscstar.com, 
- devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
- spacemit@lists.linux.dev,  linux-riscv@lists.infradead.org,
- linux-kernel@vger.kernel.org
-Date: Tue, 13 May 2025 11:21:07 +0200
-In-Reply-To: <20250512183212.3465963-6-elder@riscstar.com>
-References: <20250512183212.3465963-1-elder@riscstar.com>
-	 <20250512183212.3465963-6-elder@riscstar.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1747128094; c=relaxed/simple;
+	bh=1KxW3RO7ljZrlpRGdn2V6TCZXMJ/jgxj/WL9gEc1itQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IwZ/nxNGgyPuJyt+ONo3Fc16aOsEEejhM264nYJoT6g2e8+JOMQqJ2eu2BwlfJEUhHJZp3RJZ6jb9IqQUZsfrOi3uaqG861A7vP6O74tFDqReOtArzwL2mly7uk5fR8Lacx5zCjtS13Alg2VrQfKbgaP4FfNxigTSu27TXOZ4H8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [113.200.148.30])
+	by gateway (Coremail) with SMTP id _____8Bx364WDyNoMMXjAA--.25705S3;
+	Tue, 13 May 2025 17:21:26 +0800 (CST)
+Received: from linux.localdomain (unknown [113.200.148.30])
+	by front1 (Coremail) with SMTP id qMiowMBxb8cNDyNoLKzNAA--.63602S2;
+	Tue, 13 May 2025 17:21:17 +0800 (CST)
+From: Tiezhu Yang <yangtiezhu@loongson.cn>
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: loongarch@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/2] Refine the logic of uprobe on LoongArch
+Date: Tue, 13 May 2025 17:21:14 +0800
+Message-ID: <20250513092116.25979-1-yangtiezhu@loongson.cn>
+X-Mailer: git-send-email 2.42.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowMBxb8cNDyNoLKzNAA--.63602S2
+X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
+X-Coremail-Antispam: 1Uk129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7
+	ZEXasCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29K
+	BjDU0xBIdaVrnRJUUUyEb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26c
+	xKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r106r15M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vE
+	j48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxV
+	AFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAF
+	wI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27w
+	Aqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE
+	14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwCF04k20xvY0x
+	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
+	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jrv_JF1lIxkGc2Ij64vIr41lIxAIcV
+	C0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF
+	04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7
+	CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU8czVUUUUUU==
 
-On Mo, 2025-05-12 at 13:32 -0500, Alex Elder wrote:
-> Three more CCUs on the SpacemiT K1 SoC implement only resets, not clocks.
-> Define these resets so they can be used.
->=20
-> Signed-off-by: Alex Elder <elder@riscstar.com>
-> ---
->  drivers/clk/spacemit/ccu-k1.c    | 24 +++++++++++++++
->  drivers/reset/reset-spacemit.c   | 51 ++++++++++++++++++++++++++++++++
->  include/soc/spacemit/k1-syscon.h | 30 +++++++++++++++++++
+Tiezhu Yang (2):
+  LoongArch: uprobe: Remove user_{en,dis}able_single_step()
+  LoongArch: uprobe: Remove redundant code about resume_era
 
-Could you split this into clk: and reset: parts? The reset changes are
+ arch/loongarch/include/asm/uprobes.h |  1 -
+ arch/loongarch/kernel/uprobes.c      | 11 +----------
+ 2 files changed, 1 insertion(+), 11 deletions(-)
 
-Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+-- 
+2.42.0
 
-regards
-Philipp
 
