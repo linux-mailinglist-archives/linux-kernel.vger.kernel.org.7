@@ -1,136 +1,162 @@
-Return-Path: <linux-kernel+bounces-645311-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-645314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E440BAB4B7A
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 07:55:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26D99AB4B81
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 07:56:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B83AC8C5603
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 05:53:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 738277A3926
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 05:55:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D7C41E835C;
-	Tue, 13 May 2025 05:53:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A63631E9915;
+	Tue, 13 May 2025 05:56:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XnNLc/hc"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D28F1E5B9C
-	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 05:53:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="IBqJWnrS"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BD4BA93D;
+	Tue, 13 May 2025 05:56:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747115615; cv=none; b=nMRntJcX7w97OvqhJug2/SH7m6Luj7NN6vtQEN+XTlcyoHu22gxmMLCWMBvpAG2Evca0ocxnyCVBgxwtHI1Wd4nVer/6YRD6Z7grvCWsTFRPGAArmU7+GBbgjDzBMzdtRscKtugX/7Upe3g0vxvVmxyKToyKbrmcYwUxDr7RDTA=
+	t=1747115786; cv=none; b=Wa3tTyyhiNwxDnZi5hUhCJWjSMLhJgd5mwBPLvWqlBJfMIz47vQf/FdHOv9TlBnKkIYr/d0oOjlRcHhxTjxPxFZA9aOEePM+c6X/qA7yOmy22lZunGAJNoVAwty/dRf2k6qutMzvRDCgPctJEb7yA/JZsRc2QTu3Waof3KI2Wcc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747115615; c=relaxed/simple;
-	bh=jB+1NSGMzo+MjMb56ZSc0FpCP8SLNObWRnq7yTjSBIg=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=r8SMF5LQof3n30mn3GBAv6xZvuNm9kgmJyQUBYwg/zORHpQBm86cwaD55N1BWUiX7Q38znSZaf3noM5GYSqbBFk2OxkkhaPDR5QibNaK9spe2oOdwXSWaZR8knybGTGryhgi8+qwz9wgJXOytvlovDSlrag9lYNuyEkjg15c30M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XnNLc/hc; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2317d94c9cdso4220145ad.2
-        for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 22:53:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747115613; x=1747720413; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=WNsyZBlrjZRlpcE1bXaf2I5YyPz0u8vhXL29PFihhZE=;
-        b=XnNLc/hcT9dbeG/bkJGmRuXl9pN7gZCWY0Gtvn8UaqKk4B8zY7LD1S7UXv8/FsnVUg
-         uwAg/+W4cWZLgfjyRvzvUblw76P1D6bsYtGQMhYZpvyPWtwo4QUV3VNfveUy1AXTjjas
-         NVXqkkve/nmfdnafou9oDzPrzKINWviu9WpnR6BrCwFEIsDvehp31rv5g7h1AQbsVkEn
-         hi/9uMqjN1KbKA0EplQLEqEEu6IWnC6cNYJmoUceoKrYFsXHMU36mc5RPtQou8odOB/7
-         4gFEVJ7fYQ8u2bnYSwpbXMRoqTGCC8YWBL/l/d+83TRMedbgJHIhfxN06wG/UoLN3MYX
-         JS4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747115613; x=1747720413;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=WNsyZBlrjZRlpcE1bXaf2I5YyPz0u8vhXL29PFihhZE=;
-        b=UIUhF/c3VqqhLxMqak8eCu7AIuM5BpY9N+M0lzTaAD2GUt5cKTIZbDfiBvdmLb66qU
-         TzpEnO4CUa5Cljehlltt8nlRe9dlzTx1CL1Byw+BaYDcLpft6zDEHjZp0MJewKCn0Wo8
-         VVUQ/jmdNpKsm+3ZuzGSptq3ywMVGBd93VVpaLnC5IqwigvksAmutrsZbz4q79Iv59FK
-         JCGdjC8EQGKg0Y1w95JunIZwGaeX8VyXatP0jawOyqg9JubY/TPl4SIRRjjCrN2UtiZq
-         6z09Ue6QABSl6KUP7Wr4ZTKD1eBmWOgWaeuwEmOWeFCpvLe2iS/bna1ChC3grFB4W0DS
-         aYYg==
-X-Forwarded-Encrypted: i=1; AJvYcCUau0byIDrSWx6h+X4iDNzF7yEqPR0ck6Z22/UFaf3LLLLF2OuBg+N/qO7y42wF2VZJS1NxFUaDHtNRkxg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUf8OUmBiSiW0IwRarHQWG6TGhovyAJQJ8vq0yD39VbycQKmxQ
-	08uSikVhBd13DC22+aECbBp8XJi+K/Pq6kU0zBJNNzVad0u9vSIjP05dDwA3YZrXFOTJRN9Pv2Q
-	j0GsNkCI8p1kAAh+6XS4m7HUgDCZet5MyVQ0=
-X-Gm-Gg: ASbGnct4OAX7+RXP6DRv0MUoNjGQ+UOgGqkY1Gm22H/OjvNQynGAnyIzvYKyXjYTSqN
-	oBsadopd0ubHu1W9NXeCPbAbB0OD326AmSmB7BkOkG+IXPjW5Iqx4pxvjdXtaqicTAUOOGepP/+
-	YDFdfPD67fm1PxNKO4Yrx38dvSIPj42dX7
-X-Google-Smtp-Source: AGHT+IHOc8SXBuOLE9/iyqL8gXXnTqSTPtRR21+XgLdQcc71oLOwLLZ8JwQ7FB8OxioyLwjXMjTZMux/mq3GQJqBjCY=
-X-Received: by 2002:a17:903:988:b0:220:c63b:d93c with SMTP id
- d9443c01a7336-22fc91aca1emr263133585ad.44.1747115613093; Mon, 12 May 2025
- 22:53:33 -0700 (PDT)
+	s=arc-20240116; t=1747115786; c=relaxed/simple;
+	bh=Kbe+ZVs81pmLEKZAZ64Ljiw+NCwxqvnzZd2vosGCqsw=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=YdrOgvrzOGYwMaoy4j4eNwIEUEtjiJX2TrpCFNGBKypWxikdLqi78etTWssbmMD58Z1cfK3PZUkURmUTll0EpNgsX2QR/64WDKayhW2ZViP5O4ciF2AwWU+ABXy8lVMndr413Cn+rhAZ4Hd57jyM+93HhPbkNU1Oy+zGeIeWYgk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=IBqJWnrS; arc=none smtp.client-ip=220.197.31.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=k3
+	KdO32Xef/ole/MDnIXs/cHJ+2Fkq7D4+Ef6rLcfQU=; b=IBqJWnrS9v9I8uEoM+
+	P6guSn9UiAJF3cgBx4Oz3kifYMHwAYWTCbSiu6k+yFjFfhfxluSIdMxFd+7BQWU5
+	6NJ5Po0kogERkqyGphdvwC2qRSD1fmRKS6ameOTYcWysZthpKOpGepgPahBBBypc
+	wkMlFOMmTAooNfERXTUMofH/g=
+Received: from localhost.localdomain (unknown [])
+	by gzga-smtp-mtada-g0-3 (Coremail) with SMTP id _____wD31eyp3iJofw8rBA--.8313S4;
+	Tue, 13 May 2025 13:55:05 +0800 (CST)
+From: David Wang <00107082@163.com>
+To: mathias.nyman@intel.com,
+	gregkh@linuxfoundation.org
+Cc: stern@rowland.harvard.edu,
+	surenb@google.com,
+	kent.overstreet@linux.dev,
+	linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	David Wang <00107082@163.com>
+Subject: [PATCH 1/2] USB: core: add a memory pool to urb for host-controller private data
+Date: Tue, 13 May 2025 13:54:47 +0800
+Message-Id: <20250513055447.5696-1-00107082@163.com>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20250512150724.4560-1-00107082@163.com>
+References: <20250512150724.4560-1-00107082@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Tanav Chinthapatla <tanavc01@gmail.com>
-Date: Tue, 13 May 2025 01:53:20 -0400
-X-Gm-Features: AX0GCFsHdIaazRy_QlZVSW3DrhT5qlEYmvBox6N8Eyt0rzr0kqKxYEMV0FvKf-0
-Message-ID: <CAPGyJDMv-N3HkdV4znQg=_i2owE2sbnRhzFem_Uv_15GjADBFQ@mail.gmail.com>
-Subject: [PATCH] staging: rtl8723bs: fix spacing around '+' in rtw_cmd.c
-To: gregkh@linuxfoundation.org
-Cc: linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-Content-Type: multipart/mixed; boundary="000000000000808d9f0634fe0dbf"
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wD31eyp3iJofw8rBA--.8313S4
+X-Coremail-Antispam: 1Uf129KBjvJXoWxXry5Ar1xGw47ur1rWFWxWFg_yoW5KF4fpF
+	4xJ3s3tF1rXrW3ZrZ5Gan7Za1rJ3Wkuryjkryfu345Zr17tw18Z3Z7tFyrGr9xtr4Sq3ya
+	qFsFg3Z8Ww1UAaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pEpVbDUUUUU=
+X-CM-SenderInfo: qqqrilqqysqiywtou0bp/xtbBkBBMqmgi3P4zxwAAs6
 
---000000000000808d9f0634fe0dbf
-Content-Type: multipart/alternative; boundary="000000000000808d9d0634fe0dbd"
+URB objects have long lifecycle, an urb can be reused between
+enqueue-dequeue loops; The private data needed by some host controller
+has very short lifecycle, the memory is alloced when enqueue, and
+released when dequeue. For example, on a system with xhci, several
+minutes of usage of webcam/keyboard/mouse have memory alloc counts:
+  drivers/usb/core/urb.c:75 [usbcore] func:usb_alloc_urb 661
+  drivers/usb/host/xhci.c:1555 [xhci_hcd] func:xhci_urb_enqueue 424863
+Memory allocation frequency for host-controller private data can reach
+~1k/s.
 
---000000000000808d9d0634fe0dbd
-Content-Type: text/plain; charset="UTF-8"
+High frequent allocations for host-controller private data can be
+avoided if urb take over the ownership of memory, the memory then shares
+the longer lifecycle with urb objects.
 
-Hi,
+Add a mempool to urb for hcpriv usage, the memory inherits the memory
+flags from urb object itself, and will grow if larger size is requested.
 
-This patch fixes a checkpatch style issue in the rtl8723bs driver by
-correcting spacing around a '+' operator.
+Signed-off-by: David Wang <00107082@163.com>
+---
+ drivers/usb/core/urb.c | 23 +++++++++++++++++++++++
+ include/linux/usb.h    |  4 ++++
+ 2 files changed, 27 insertions(+)
 
-The patch is attached to this email.
+diff --git a/drivers/usb/core/urb.c b/drivers/usb/core/urb.c
+index 5e52a35486af..7c13b971b435 100644
+--- a/drivers/usb/core/urb.c
++++ b/drivers/usb/core/urb.c
+@@ -23,6 +23,7 @@ static void urb_destroy(struct kref *kref)
+ 
+ 	if (urb->transfer_flags & URB_FREE_BUFFER)
+ 		kfree(urb->transfer_buffer);
++	kfree(urb->hcpriv_mempool);
+ 
+ 	kfree(urb);
+ }
+@@ -77,6 +78,7 @@ struct urb *usb_alloc_urb(int iso_packets, gfp_t mem_flags)
+ 	if (!urb)
+ 		return NULL;
+ 	usb_init_urb(urb);
++	urb->hcpriv_mempool_flags = mem_flags;
+ 	return urb;
+ }
+ EXPORT_SYMBOL_GPL(usb_alloc_urb);
+@@ -1037,3 +1039,24 @@ int usb_anchor_empty(struct usb_anchor *anchor)
+ 
+ EXPORT_SYMBOL_GPL(usb_anchor_empty);
+ 
++/**
++ * urb_hcpriv_mempool_zalloc - alloc memory from mempool for hcpriv
++ * @urb: pointer to URB being used
++ * @size: memory size requested by current host controller
++ *
++ * Return: NULL if out of memory, otherwise memory are zeroed
++ */
++void *urb_hcpriv_mempool_zalloc(struct urb *urb, size_t size)
++{
++	if (urb->hcpriv_mempool_size < size) {
++		kfree(urb->hcpriv_mempool);
++		urb->hcpriv_mempool_size = size;
++		urb->hcpriv_mempool = kmalloc(size, urb->hcpriv_mempool_flags);
++	}
++	if (urb->hcpriv_mempool)
++		memset(urb->hcpriv_mempool, 0, size);
++	else
++		urb->hcpriv_mempool_size = 0;
++	return urb->hcpriv_mempool;
++}
++EXPORT_SYMBOL_GPL(urb_hcpriv_mempool_zalloc);
+diff --git a/include/linux/usb.h b/include/linux/usb.h
+index b46738701f8d..a31535f3b2bc 100644
+--- a/include/linux/usb.h
++++ b/include/linux/usb.h
+@@ -1602,6 +1602,9 @@ struct urb {
+ 	struct kref kref;		/* reference count of the URB */
+ 	int unlinked;			/* unlink error code */
+ 	void *hcpriv;			/* private data for host controller */
++	void *hcpriv_mempool;           /* cache for host controller's private data */
++	size_t hcpriv_mempool_size;     /* current size of the memory pool */
++	gfp_t hcpriv_mempool_flags;     /* mem flags for memory pool */
+ 	atomic_t use_count;		/* concurrent submissions counter */
+ 	atomic_t reject;		/* submissions will fail */
+ 
+@@ -1790,6 +1793,7 @@ extern int usb_wait_anchor_empty_timeout(struct usb_anchor *anchor,
+ extern struct urb *usb_get_from_anchor(struct usb_anchor *anchor);
+ extern void usb_scuttle_anchored_urbs(struct usb_anchor *anchor);
+ extern int usb_anchor_empty(struct usb_anchor *anchor);
++extern void *urb_hcpriv_mempool_zalloc(struct urb *urb, size_t size);
+ 
+ #define usb_unblock_urb	usb_unpoison_urb
+ 
+-- 
+2.39.2
 
-Thanks,
-Tanav Chinthapatla
-
---000000000000808d9d0634fe0dbd
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-<div dir=3D"ltr">Hi,<div><br></div><div>This patch fixes a checkpatch style=
- issue in the rtl8723bs driver by correcting spacing around a &#39;+&#39; o=
-perator.=C2=A0</div><div><br></div><div>The patch is attached to this email=
-.</div><div><br>Thanks,<br>Tanav Chinthapatla<br></div></div>
-
---000000000000808d9d0634fe0dbd--
---000000000000808d9f0634fe0dbf
-Content-Type: application/octet-stream; 
-	name="0001-staging-rtl8723bs-fix-spacing-around-in-rtw_cmd.c.patch"
-Content-Disposition: attachment; 
-	filename="0001-staging-rtl8723bs-fix-spacing-around-in-rtw_cmd.c.patch"
-Content-Transfer-Encoding: base64
-Content-ID: <f_mam39x3s0>
-X-Attachment-Id: f_mam39x3s0
-
-RnJvbSAyNWFhMjRjN2NkZTdkZjU5MDE2NzRlYzA4MDkwOTkyYjE3YWZkNWI0IE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiBUYW5hdiBDaGludGhhcGF0bGEgPHRhbmF2YzAxQGdtYWlsLmNv
-bT4KRGF0ZTogVHVlLCAxMyBNYXkgMjAyNSAwMDoxNjoyOSAtMDUwMApTdWJqZWN0OiBbUEFUQ0hd
-IHN0YWdpbmc6IHJ0bDg3MjNiczogZml4IHNwYWNpbmcgYXJvdW5kICcrJyBpbiBydHdfY21kLmMK
-ClNpZ25lZC1vZmYtYnk6IFRhbmF2IENoaW50aGFwYXRsYSA8dGFuYXZjMDFAZ21haWwuY29tPgot
-LS0KIGRyaXZlcnMvc3RhZ2luZy9ydGw4NzIzYnMvY29yZS9ydHdfY21kLmMgfCAyICstCiAxIGZp
-bGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyksIDEgZGVsZXRpb24oLSkKCmRpZmYgLS1naXQgYS9k
-cml2ZXJzL3N0YWdpbmcvcnRsODcyM2JzL2NvcmUvcnR3X2NtZC5jIGIvZHJpdmVycy9zdGFnaW5n
-L3J0bDg3MjNicy9jb3JlL3J0d19jbWQuYwppbmRleCAxYzllOGIwMWQuLjk4ZDg5ZTgzNiAxMDA2
-NDQKLS0tIGEvZHJpdmVycy9zdGFnaW5nL3J0bDg3MjNicy9jb3JlL3J0d19jbWQuYworKysgYi9k
-cml2ZXJzL3N0YWdpbmcvcnRsODcyM2JzL2NvcmUvcnR3X2NtZC5jCkBAIC0xNjE5LDcgKzE2MTks
-NyBAQCBzdGF0aWMgdm9pZCBydHdfYnRpbmZvX2hkbChzdHJ1Y3QgYWRhcHRlciAqYWRhcHRlciwg
-dTggKmJ1ZiwgdTE2IGJ1Zl9sZW4pCiAJCWJ1ZlsxXSA9IDA7CiAJZWxzZSBpZiAoY21kX2lkeCA9
-PSBCVElORk9fQlRfQVVUT19SUFQpCiAJCWJ1ZlsxXSA9IDI7Ci0JaGFsX2J0Y29leF9CdEluZm9O
-b3RpZnkoYWRhcHRlciwgbGVuKzEsICZidWZbMV0pOworCWhhbF9idGNvZXhfQnRJbmZvTm90aWZ5
-KGFkYXB0ZXIsIGxlbiArIDEsICZidWZbMV0pOwogfQogCiB1OCBydHdfYzJoX3BhY2tldF93a19j
-bWQoc3RydWN0IGFkYXB0ZXIgKnBhZGFwdGVyLCB1OCAqcGJ1ZiwgdTE2IGxlbmd0aCkKLS0gCjIu
-MzQuMQoK
---000000000000808d9f0634fe0dbf--
 
