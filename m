@@ -1,47 +1,84 @@
-Return-Path: <linux-kernel+bounces-645745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-645747-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3395AAB5312
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 12:44:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F0CDAB5300
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 12:43:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A62AB7B35AF
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 10:38:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 16A3619E1FE8
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 10:39:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18D8C248F77;
-	Tue, 13 May 2025 10:36:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96B4323D29F;
+	Tue, 13 May 2025 10:37:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XTjzYX11"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZM+ag/Nm"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C76C20DD7D;
-	Tue, 13 May 2025 10:36:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F66A21FF43
+	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 10:37:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747132563; cv=none; b=rf3CE91/F4Kx9BaFVfBYQnakrVFBC1RpZrKHRRAAAuWdEbW63Y2x3twG/kSrSM4ZAgAdlMdyvpOW0k6ceEiQ9WQT6EfavSmRb1UZU3AOUEjok/KgaF5BOhZ7kRhvMmJlaJJ0WmtQOJj1fxYJOuj5lcz0//8fi8iudKj1NQmzLkQ=
+	t=1747132664; cv=none; b=VeJ4Ks5PMfc2GPyz+p3Pu2jO/xUnptdKbiRQs7NF7/Yvm6SAEm8eO98nMlCpnEVY/ylzYqEYyQX0oh3XRb8+5wbLCcT3X+vMZNBv2cb+xSSaphd0JWyO2EWqm8tzvIymkQytubVQoiVfUnlRZjNdnJdABGID3u+iGDoTqFl0ewg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747132563; c=relaxed/simple;
-	bh=k3cgEGFvfI+UR2OHsoaQoAD1vBhtb9YfwTLJV34Qngc=;
+	s=arc-20240116; t=1747132664; c=relaxed/simple;
+	bh=0+JAfIVe5TbD+BsWH6Y1qq0GakoctBjfNN1l+27aN4o=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sTbEreo7ukxDNnTSgFZrR21lM6r4WqR26Gs/CfjSzxNvkNwSYvtji4ugfgFxtBmuyJ0h/r4S6y8oUEV5M19uZIdDTmwv3V+tkeJtpOQEofbMVFtwk/pbi+GLQF/F1doU+Wma3VGR8jv9ME+kzp17FQ4JzTiuLtyBWi9dcvnAUZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XTjzYX11; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD03CC4CEED;
-	Tue, 13 May 2025 10:36:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747132562;
-	bh=k3cgEGFvfI+UR2OHsoaQoAD1vBhtb9YfwTLJV34Qngc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=XTjzYX11lSDlj43OY//wkzH5rBC//EQ4PT6KNoCIKW/3tKqK2xqbZZctfDTNMUBh+
-	 A7IWAJHG22LNjhGjFj5joYur0n7XibKwRQX6yGk+ynXSyEb0X+JdrxilkT4cs4KmFR
-	 r6JtEfsZkzhvsMjGowFzV9XesXA+Q9ldJ8X9mrvF4bn/39/HNOjINukXMZYPArEP0L
-	 y7cD398u6U7pWV8KFq5XjH2lHWCSqMg7FxlXN6/4kdP81HA4K448OPAzdDlzWMP5zn
-	 uL7M+Ot3mkOwlVhUNYTdHBc69Ygq4WUFgBpiE2nc3+x6DngrYvtn/3iW+1Y2Ebv0Ho
-	 /bJdaru0FPqOg==
-Message-ID: <a1123fe1-b242-4b01-9883-82b2c4e0a0df@kernel.org>
-Date: Tue, 13 May 2025 12:35:59 +0200
+	 In-Reply-To:Content-Type; b=pJiSNmdXCR38HK3OUN4Dp2hEJWxOBx+5ln08aHFzVNygKKFMNCGkEtGcyVIPHdz7BpKi1byQ4UaTFPSlL/YSGHbWny5kafk6ZzSNszz9ug+QBdNU4aBTVX9lEK6J3PtJZlkhHrZN1KXS26SohgrE3BFyrfUbXkZrZ4v+X64HtZg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZM+ag/Nm; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1747132661;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/1ycin1YMkPuCF1ATge++M1JYdrKUEG5Nak7RYdhw00=;
+	b=ZM+ag/NmtuXmRX+dPL+lGfXOYow2SQaJT8dfMUKmGqfOhVDUH6oKIA9DVSwiUFAf3r5rTc
+	njE/N4Z8ZzcTdiOhmQJXhH7AOy5/IihK4ew92K17/WT/HKdIMX8BAWHoY6hSPeZFthePeF
+	oLLjkq8FI3has6IKfbD/bHSH5neIWq0=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-478-KJcZUgh2Na-RFTjLrFMcMQ-1; Tue, 13 May 2025 06:37:40 -0400
+X-MC-Unique: KJcZUgh2Na-RFTjLrFMcMQ-1
+X-Mimecast-MFC-AGG-ID: KJcZUgh2Na-RFTjLrFMcMQ_1747132659
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-43cf3168b87so24017105e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 03:37:39 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747132659; x=1747737459;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/1ycin1YMkPuCF1ATge++M1JYdrKUEG5Nak7RYdhw00=;
+        b=lpyZEk7gQxigMMaUPX/k/xlSpYJurT1CCo9OFzTSzO7nUKVLkGPSXdBKUkkSHg4Xyb
+         8itkul106NtI6/Fog+WbHLE0RQtA0RRO42hqQRW8nSm3pgDW5pkd3TCvKFSaojD93dxN
+         pTkePImjX9nq8YIKvjTTbY4bUXCL0B6i7EkFti4bkOvgKgjFertRay8FEKg3B8eOCCYp
+         CJMIXio/oZMUKccCygRuMtgYfbWldz9iW/bQheQ0zy1b0DzZ95XkyZM8SUTjVO394D9r
+         3MDMdSZ0k4skpqYR+VHtcD9DtiFQWUTp1pgt8fT+45DXBGYAp8q6D6GCni+aM6HA6GT1
+         yfQA==
+X-Gm-Message-State: AOJu0YzYw8206StSYn/aEr9xybLv1L6AGwWprZEpBhhyavRILW9/uy4E
+	rWJX9NK3Wj7vDwncBlXAyH5CNnF+F2MivF7oNcHOAPYhSW+iL2Vjsv+xn8BPwi3lhhh5HrEv5mG
+	wpQva/N+Il5Ju5NwydHyq4GpFsC//dwratAz6LghTrCk4rqPrjGNS4EEbOdiWug==
+X-Gm-Gg: ASbGncs3hCc4w1Vc/dKkyLbu7jhzcvBTXd6scu7EzrTP6eUp2Fu5GM/J8TvQTOchpHw
+	GszY0YDO1tusuTATH90x24pUJp7DvM/10wyVCV+MjhFtSsYWA+kPAdGDaGoXDNaISmPRW4yJlbc
+	WmtV+5cdoGWyDU1R19ve+L5MDhlfZES36mIxRF/U9y8D4+nC7VCOn8dVrnJoA+gXDTRby53T+nP
+	D5H2z/6t7siijzZKwkXnTuEAc9uhW9VHPNPQ99FavxfVu0ZiyYjJ/R9ZUCQdhihFoM7knc1oPQo
+	xeBDi5ahog/ovPVsvms=
+X-Received: by 2002:a05:600c:3587:b0:43c:f050:fee8 with SMTP id 5b1f17b1804b1-442d6dd1bf8mr109922415e9.20.1747132658790;
+        Tue, 13 May 2025 03:37:38 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFpVnwLwL3h3SPRt/DvwKMVIkUz/KDgEEw1efsbBAEpQpKw5oFdKDXUjHqlKxtD7LGNGPpLOw==
+X-Received: by 2002:a05:600c:3587:b0:43c:f050:fee8 with SMTP id 5b1f17b1804b1-442d6dd1bf8mr109922275e9.20.1747132658404;
+        Tue, 13 May 2025 03:37:38 -0700 (PDT)
+Received: from ?IPV6:2a0d:3341:cc59:6510::f39? ([2a0d:3341:cc59:6510::f39])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-442ea45c209sm37449475e9.17.2025.05.13.03.37.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 13 May 2025 03:37:38 -0700 (PDT)
+Message-ID: <2c5581b9-c0a4-4620-ac82-0a98abfd4d0d@redhat.com>
+Date: Tue, 13 May 2025 12:37:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,78 +86,68 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/8] vt: introduce gen_ucs_fallback_table.py to create
- ucs_fallback_table.h
-To: Nicolas Pitre <nico@fluxnic.net>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Nicolas Pitre <npitre@baylibre.com>, linux-serial@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250507141535.40655-1-nico@fluxnic.net>
- <20250507141535.40655-5-nico@fluxnic.net>
+Subject: Re: [PATCH net-next 1/2] vsock/test: retry send() to avoid occasional
+ failure in sigpipe test
+To: Stefano Garzarella <sgarzare@redhat.com>, netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, virtualization@lists.linux.dev
+References: <20250508142005.135857-1-sgarzare@redhat.com>
+ <20250508142005.135857-2-sgarzare@redhat.com>
 Content-Language: en-US
-From: Jiri Slaby <jirislaby@kernel.org>
-Autocrypt: addr=jirislaby@kernel.org; keydata=
- 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
-In-Reply-To: <20250507141535.40655-5-nico@fluxnic.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <20250508142005.135857-2-sgarzare@redhat.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 07. 05. 25, 16:13, Nicolas Pitre wrote:
-> From: Nicolas Pitre <npitre@baylibre.com>
+On 5/8/25 4:20 PM, Stefano Garzarella wrote:
+> From: Stefano Garzarella <sgarzare@redhat.com>
 > 
-> The generated table maps complex characters to their simpler fallback
-> forms for a terminal display when corresponding glyphs are unavailable.
-> This includes diacritics, symbols as well as many drawing characters.
-> Fallback characters aren't perfect replacements, obviously. But they are
-> still far more useful than a bunch of squared question marks.
+> When the other peer calls shutdown(SHUT_RD), there is a chance that
+> the send() call could occur before the message carrying the close
+> information arrives over the transport. In such cases, the send()
+> might still succeed. To avoid this race, let's retry the send() call
+> a few times, ensuring the test is more reliable.
 > 
-> Signed-off-by: Nicolas Pitre <npitre@baylibre.com>
+> Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
+> ---
+>  tools/testing/vsock/vsock_test.c | 28 ++++++++++++++++++----------
+>  1 file changed, 18 insertions(+), 10 deletions(-)
+> 
+> diff --git a/tools/testing/vsock/vsock_test.c b/tools/testing/vsock/vsock_test.c
+> index d0f6d253ac72..7de870dee1cf 100644
+> --- a/tools/testing/vsock/vsock_test.c
+> +++ b/tools/testing/vsock/vsock_test.c
+> @@ -1064,11 +1064,18 @@ static void test_stream_check_sigpipe(int fd)
+>  
+>  	have_sigpipe = 0;
+>  
+> -	res = send(fd, "A", 1, 0);
+> -	if (res != -1) {
+> -		fprintf(stderr, "expected send(2) failure, got %zi\n", res);
+> -		exit(EXIT_FAILURE);
+> -	}
+> +	/* When the other peer calls shutdown(SHUT_RD), there is a chance that
+> +	 * the send() call could occur before the message carrying the close
+> +	 * information arrives over the transport. In such cases, the send()
+> +	 * might still succeed. To avoid this race, let's retry the send() call
+> +	 * a few times, ensuring the test is more reliable.
+> +	 */
+> +	timeout_begin(TIMEOUT);
+> +	do {
+> +		res = send(fd, "A", 1, 0);
+> +		timeout_check("send");
+> +	} while (res != -1);
 
-Much better!
+AFAICS the above could spin on send() for up to 10s, I would say
+considerably more than 'a few times' ;)
 
-Reviewed-by: Jiri Slaby <jirislaby@kernel.org>
+In practice that could cause side effect on the timing of other
+concurrent tests (due to one CPU being 100% used for a while).
 
--- 
-js
-suse labs
+What if the peer rcvbuf fills-up: will the send fail? That could cause
+false-negative.
+
+I *think* it should be better to insert a short sleep in the loop.
+
+/P
+
 
