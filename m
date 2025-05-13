@@ -1,172 +1,133 @@
-Return-Path: <linux-kernel+bounces-645976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-645978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D25CAB5626
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 15:35:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C906AB5634
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 15:35:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 045BC3B432E
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 13:34:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B9321897798
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 13:35:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 036A428ECFA;
-	Tue, 13 May 2025 13:34:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC5DC28F93E;
+	Tue, 13 May 2025 13:35:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="rZQXxGbO";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="5OLeFq/q";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="jtOQQdTX";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="PqcjWPEQ"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e582jhuB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2DEF1531E8
-	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 13:34:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2350420D4F2;
+	Tue, 13 May 2025 13:35:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747143294; cv=none; b=FOgAzH2gug1Gk1d4SFpxRsEQ1slLo+GrUfMT6EBBhiNu1WmceCh2FjiHlaLg4LoxvwgYqbGSMgVCXHOyDN8K4jhSdfsdM16M0OiNimVF+0mxMAQFWBpxbT+SHny3/mp1agfOIVXWlfvvWGzRifShF9xCa+bWiOcNPPk1zXJdGkg=
+	t=1747143323; cv=none; b=izXfdn1afXxOvPFLx34Lowdb2QzcxpapENLeJesMDaaT2cHyKowmt/d7OoRUtsFm3EIs5CeIOTsVqd+faNN/wKlP1TjcvUhAtn3r+K8zMRSy2AiInbGVguFAywBr4P/0XsYnjbUPtkUTw+S7n3Qbk9k2AcacbqlaoGP8FI2LGK0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747143294; c=relaxed/simple;
-	bh=HiQAI9qA2+tr2vuBq7mJuDVHFurHRbktX1OJdzD37Xk=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=R8pd261j2dZGRljzC8RIerClqNttj0N6EGK+qxkqMfgyoBYenASXONio9Owm2hv8R/8aB+flJ5ay5y3OIK7oErG7k/uuYaneakWw0pSs5YmQ2DCGdijW0pT3BQBleh9tWoGYndKv8HwzI4N84ZeeSuxjaVzczpCr00h7z3nhfP0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=rZQXxGbO; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=5OLeFq/q; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=jtOQQdTX; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=PqcjWPEQ; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from pobox.suse.cz (unknown [10.100.2.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id E263621187;
-	Tue, 13 May 2025 13:34:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1747143291; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6J2+rvITsi5fqZ9/xhX64s08wLNi9ATpSHwWOtdqUQ4=;
-	b=rZQXxGbOFvjtZfdW9nvJtW9GmYh8X7j/lQahq1p//LqOED5LZvRkREbwg8hbQB+82Q2lTM
-	aFXeEBbkiHzSCHJ9S/4/hfOEXNBNyQMJ0TOifDhkDT46EAP5zLi1BjbtuWJF/D8W2qnNE5
-	rPBLuY4BO7KlL/16W3Ox83D0DswVeDQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1747143291;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6J2+rvITsi5fqZ9/xhX64s08wLNi9ATpSHwWOtdqUQ4=;
-	b=5OLeFq/qA22HJMWrxHkzMaD+dwxXl8aYRQoHxHpi/AWVLAqqFZc/GqKbQffhW3aoT+rWmV
-	EbEg8wLbJV3PRCDw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1747143290; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6J2+rvITsi5fqZ9/xhX64s08wLNi9ATpSHwWOtdqUQ4=;
-	b=jtOQQdTXYc5Rr3gZ0dOZN9kzqfD462iiRXPE3g86DRBz0WV4gGggXKZV51jJ5wImAq1qYf
-	3Gdq39scbecU+kmirjMJB2gzvviVPYUv9N0dLJWJN3b+LgGCvJ/tr37vKbrhbyfO1HpciK
-	DSqln5oULOJ3qXj47wLkunhCyvjyfKk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1747143290;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6J2+rvITsi5fqZ9/xhX64s08wLNi9ATpSHwWOtdqUQ4=;
-	b=PqcjWPEQKLB4lsqAPlR8exdc5o38xr5q0jQyhxQJgGYaDH6AOakr2JWnQX2DJnSzC+n75p
-	rFcxESK0Iae23aBA==
-Date: Tue, 13 May 2025 15:34:50 +0200 (CEST)
-From: Miroslav Benes <mbenes@suse.cz>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-cc: linux-kernel@vger.kernel.org, live-patching@vger.kernel.org, 
-    Peter Zijlstra <peterz@infradead.org>, 
-    Josh Poimboeuf <jpoimboe@redhat.com>, mingo@kernel.com, 
-    juri.lelli@redhat.com, vincent.guittot@linaro.org, 
-    dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com, 
-    mgorman@suse.de, vschneid@redhat.com, jpoimboe@kernel.org, 
-    jikos@kernel.org, pmladek@suse.com, joe.lawrence@redhat.com, 
-    Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH v2] sched,livepatch: Untangle cond_resched() and
- live-patching
-In-Reply-To: <20250509113659.wkP_HJ5z@linutronix.de>
-Message-ID: <alpine.LSU.2.21.2505131529080.19621@pobox.suse.cz>
-References: <20250509113659.wkP_HJ5z@linutronix.de>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+	s=arc-20240116; t=1747143323; c=relaxed/simple;
+	bh=NR5vZNUsuI15bl5xfksQlcz2kKOlzAQLwpEtKX4quLQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ka+dDjgvGw7aMr3MYKv9eJLgTiX5Ko+KnLExHSmjrpByzVYk+0tWZpwYkozAgkSGOeizL2v/ZmvCVEdVAMQbjfmB5VK7U3qO6WUSlk0LqBJ5kO+OiHDlUUJvWhXTnzQYhhmXWd4H5MdadLEFH+00ja0Zk+tPqbwo3nisB7tfe7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e582jhuB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BFB2C4CEE4;
+	Tue, 13 May 2025 13:35:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747143322;
+	bh=NR5vZNUsuI15bl5xfksQlcz2kKOlzAQLwpEtKX4quLQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=e582jhuBkwm53yc/TvQ04B+vgV3RfyQ58MLJJh5FudDMuU9KygQRT2g9k8OTzFHxT
+	 07kBNaQfm0U6pfygPtz/LbQq4e6nReL8nNspZa3r3Zki3eVyFKm36x1vc8eOFlDV5J
+	 X/43K5UxNejj1+N0VfMWAR+lURYnbxQFrskxd6UBqBgt2hUbyWXxHWaNMSRPAa3tVx
+	 DJ1HTOeIWv/GT+zk+t//TtWmc++8kiQhHayHed4eY4TlfbY9ktMF8dM0GJnpH0/5q0
+	 CCC1r145SmgGkVrIBV3bUKvQO4DcMLkTZTe7jOWkhyV1LaqewHX35UUOcyBbtdorr4
+	 OMTN4u1sVt18Q==
+Message-ID: <1ec11b90-ed6d-4b41-9146-a91f0dcb8756@kernel.org>
+Date: Tue, 13 May 2025 15:35:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Flag: NO
-X-Spam-Score: -4.30
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_TWELVE(0.00)[18];
-	RCVD_COUNT_ZERO(0.00)[0];
-	MID_RHS_MATCH_FROMTLD(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,infradead.org:email]
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v12 16/19] dt-bindings: clock: imx8m-clock: add PLLs
+To: Dario Binacchi <dario.binacchi@amarulasolutions.com>,
+ linux-kernel@vger.kernel.org
+Cc: Peng Fan <peng.fan@nxp.com>, Stephen Boyd <sboyd@kernel.org>,
+ Shawn Guo <shawnguo@kernel.org>, linux-amarula@amarulasolutions.com,
+ Abel Vesa <abelvesa@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, Fabio Estevam <festevam@gmail.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Rob Herring <robh@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+ devicetree@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+References: <20250424062154.2999219-1-dario.binacchi@amarulasolutions.com>
+ <20250424062154.2999219-17-dario.binacchi@amarulasolutions.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
+ QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
+ +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
+ ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
+ 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
+ hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
+ tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
+ 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
+ naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
+ hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
+ whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
+ qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
+ RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
+ Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
+ H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
+ dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
+ AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
+ jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
+ zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
+ XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
+In-Reply-To: <20250424062154.2999219-17-dario.binacchi@amarulasolutions.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi,
-
-thanks for the updated version.
-
-On Fri, 9 May 2025, Sebastian Andrzej Siewior wrote:
-
-> From: Peter Zijlstra <peterz@infradead.org>
+On 24/04/2025 08:21, Dario Binacchi wrote:
+> Though adding the PLLs to clocks and clock-names properties will break
+> the ABI, it is required to accurately describe the hardware. Indeed,
+> the Clock Control Module (CCM) receives clocks from the PLLs and
+> oscillators and generates clocks for on-chip peripherals.
 > 
-> With the goal of deprecating / removing VOLUNTARY preempt, live-patch
-> needs to stop relying on cond_resched() to make forward progress.
-> 
-> Instead, rely on schedule() with TASK_FREEZABLE set. Just like
-> live-patching, the freezer needs to be able to stop tasks in a safe /
-> known state.
-> 
-> Compile tested only.
+> Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-livepatch selftests pass and I also ran some more.
- 
-> [bigeasy: use likely() in __klp_sched_try_switch() and update comments]
-> 
-> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+For future version if it happens:
 
-Acked-by: Miroslav Benes <mbenes@suse.cz>
+Un-reviewed.
 
-A nit below if there is an another version, otherwise Petr might fix it 
-when merging.
 
-> @@ -365,27 +356,20 @@ static bool klp_try_switch_task(struct task_struct *task)
->  
->  void __klp_sched_try_switch(void)
->  {
-> +	/*
-> +	 * This function is called from __schedule() while a context switch is
-> +	 * about to happen. Preemption is already disabled and klp_mutex
-> +	 * can't be acquired.
-> +	 * Disabled preemption is used to prevent racing with other callers of
-> +	 * klp_try_switch_task(). Thanks to task_call_func() they won't be
-> +	 * able to switch to this task while it's running.
-> +	 */
-> +	lockdep_assert_preemption_disabled();
-> +
-> +	/* Make sure current didn't get patched */
->       if (likely(!klp_patch_pending(current)))
->                return;
-
-This last comment is not precise. If !klp_patch_pending(), there is 
-nothing to do. Fast way out. So if it was up to me, I would remove the 
-line all together.
-
-Miroslav
+Best regards,
+Krzysztof
 
