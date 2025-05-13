@@ -1,297 +1,255 @@
-Return-Path: <linux-kernel+bounces-645349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-645351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 704CDAB4BEC
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 08:29:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE6F9AB4BF4
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 08:31:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D18C53B8058
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 06:28:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4890419E4A15
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 06:31:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B37D1EB187;
-	Tue, 13 May 2025 06:29:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D19CA35976;
+	Tue, 13 May 2025 06:31:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qjngvyWw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="lQQxuheK";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ZC6wYFni";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="lQQxuheK";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ZC6wYFni"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CCB01E9B1D;
-	Tue, 13 May 2025 06:29:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6500B286A1
+	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 06:30:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747117741; cv=none; b=SSz6UO65i/iarJ+5OAQnG7oB7gLw12WMeCRv1xRX5jEU2nS5GqjeZjGIFh+Ksfes705EJStawW+0WkB9J65JDLwEH8A3LjpvU7I17vYJyetsOCxxE7l29NDFDufDpBJN3TEjpEajKY63+6+SJHpRdYwpMacSCyVWxSp29ByqGS4=
+	t=1747117860; cv=none; b=gyrwy214vMx/BRPdoL8r09uhsS9itHuqpznYqFjran43PfKkvSb/+PVqU3MngOFcbLd4jH10+PQNalnUHd/XB5GPuTnIQj+rCtVGPI4e8PBTmTjO9PMtdEzEuRP28hb/UbZtdL7O1BQ8Ge1NICZ/WkitNO4FsAoxXO6uqDs43t0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747117741; c=relaxed/simple;
-	bh=zIqZ8mY23RQJhAj77wYw9Px2AB5GSsIUWCZP9gcmjRM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=cfOUL5OidmVLxN1X+VcNDIFVFF3LEc7147DMaiRBMrNAwz/OslYlsC99EM5KRwf6atBTR1x4aBAhLuvvFVhQkKPEhdrOmw367zSfmBwDwp4ocxKtT0UnVZu8NuakcsJaE0Z4DqK11Ut+EVibjNBI0WQF6sDeJD3GdbHpiAomja0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qjngvyWw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id A18ADC4CEF3;
-	Tue, 13 May 2025 06:29:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747117740;
-	bh=zIqZ8mY23RQJhAj77wYw9Px2AB5GSsIUWCZP9gcmjRM=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=qjngvyWwMnQ9hhr4MMAChh20WvIP15xyh017u/hE9n2lZ4Oknp2x4GP3pvl6Tpzi7
-	 2K9gQT+9vgfD8pvbnbw9vaJT6YCNUj0GnZO16gjppi9t8ko+mfgRMR0flwASQNnPEE
-	 4vQvphrgkEV5Lou/QvHj+7HW3Tl+Bp9bRWC6G2QBITv2WY0ejI6rNmmGP4p1yuP9g+
-	 eQnpEhDLUiIdckx8YVf1V8xeCHFWg/7tRUjGjuPUGXtmuTW7M5HiYJh/r6sv1XfEpQ
-	 uJbkgKx6CZn1oxC2fOBwy+SZpzKwKglbHmZm4ffCJN4ONPWgGWPzHV7U1+JjitQ5pe
-	 PMXE0kR4fcnUA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9508FC3ABD8;
-	Tue, 13 May 2025 06:29:00 +0000 (UTC)
-From: Per Larsen via B4 Relay <devnull+perlarsen.google.com@kernel.org>
-Date: Tue, 13 May 2025 06:28:32 +0000
-Subject: [PATCH v3 3/3] KVM: arm64: Support FFA_MSG_SEND_DIRECT_REQ2 in
- host handler
+	s=arc-20240116; t=1747117860; c=relaxed/simple;
+	bh=aZBL4GBTXVH/XcCa0nhyLI3hav2EGhWlligqqBckACI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Z0kf5M6t9Gc4V1qACFEdK9i2D4t3XXCUDRXBwax7EmwCFD4dIKUKeyXholXSd6EBSYLSktHNiAnGDJw408UlVmP0AryQVfR+OfJNN4XKhkpkHVXI2d00VZoar82z2ZB18ot82JP3v9L19UikyPl/vy3LJ4C4M/DKZCtly0qgAuA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=lQQxuheK; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ZC6wYFni; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=lQQxuheK; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ZC6wYFni; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 78B9D211A2;
+	Tue, 13 May 2025 06:30:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1747117856; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=j2cbLjWTSbGNj0XNwnqUpsQPLn+Rd8LAjJ9qDnJPUSs=;
+	b=lQQxuheKUsh61PzojAfA/oIL3zgzDtf9NU2OKg1r+UM6VhaRNvSr3FJ6EfGwQFvIWpJ42n
+	GWmQOliYUb1t92w42FHjXguq/x0NyOO82Zj/FEAdIldoR+OSxw5yZldLlO3VlaClAC3lOI
+	dVfNUD5v/ue+KZqbqBZZo/ZdtTf3ico=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1747117856;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=j2cbLjWTSbGNj0XNwnqUpsQPLn+Rd8LAjJ9qDnJPUSs=;
+	b=ZC6wYFniyoAzOK84hHfcGLeWQai9U4b5O8PdmByr5eNNuDR2og2II1wmBzBq8MEG0bvDSk
+	nv5ZtibE6C3+sFAg==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=lQQxuheK;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=ZC6wYFni
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1747117856; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=j2cbLjWTSbGNj0XNwnqUpsQPLn+Rd8LAjJ9qDnJPUSs=;
+	b=lQQxuheKUsh61PzojAfA/oIL3zgzDtf9NU2OKg1r+UM6VhaRNvSr3FJ6EfGwQFvIWpJ42n
+	GWmQOliYUb1t92w42FHjXguq/x0NyOO82Zj/FEAdIldoR+OSxw5yZldLlO3VlaClAC3lOI
+	dVfNUD5v/ue+KZqbqBZZo/ZdtTf3ico=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1747117856;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=j2cbLjWTSbGNj0XNwnqUpsQPLn+Rd8LAjJ9qDnJPUSs=;
+	b=ZC6wYFniyoAzOK84hHfcGLeWQai9U4b5O8PdmByr5eNNuDR2og2II1wmBzBq8MEG0bvDSk
+	nv5ZtibE6C3+sFAg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 12360137E8;
+	Tue, 13 May 2025 06:30:56 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id jpDpASDnImgSRwAAD6G6ig
+	(envelope-from <hare@suse.de>); Tue, 13 May 2025 06:30:56 +0000
+Message-ID: <ecff74ca-f3a5-4848-8836-54f1d7810aca@suse.de>
+Date: Tue, 13 May 2025 08:30:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250513-virtio-msg-ffa-v3-3-d66c76ff1b2c@google.com>
-References: <20250513-virtio-msg-ffa-v3-0-d66c76ff1b2c@google.com>
-In-Reply-To: <20250513-virtio-msg-ffa-v3-0-d66c76ff1b2c@google.com>
-To: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
- Joey Gouly <joey.gouly@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
- Zenghui Yu <yuzenghui@huawei.com>, 
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
- Sudeep Holla <sudeep.holla@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
- linux-kernel@vger.kernel.org, sebastianene@google.com, 
- lpieralisi@kernel.org, arve@android.com, qwandor@google.com, 
- kernel-team@android.com, armellel@google.com, perl@immunant.com, 
- jean-philippe@linaro.org, ahomescu@google.com, tabba@google.com, 
- qperret@google.com, james.morse@arm.com, Per Larsen <perlarsen@google.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1747117739; l=6690;
- i=perlarsen@google.com; s=20250508; h=from:subject:message-id;
- bh=QsNngW/tP9HNcpTRVnWjcXkhCLoKBIw7/dGeqhEUdHg=;
- b=0WQm8kABvwfwLy151PBVPZ1WrJc8Pz3DUZzdiEGOqlDJ6Gr70Hjrq6NCK7+fPV/RzIJk75xlm
- Rw0FkIhZ4YXAZ1hon95c7wk2Ecz1BlG2fATi98du40ha5RDbH5DZ54T
-X-Developer-Key: i=perlarsen@google.com; a=ed25519;
- pk=jjc/Ta4VmrLRmMoahP6d1mBcKzvWU+nsmdtYe2oS2kQ=
-X-Endpoint-Received: by B4 Relay for perlarsen@google.com/20250508 with
- auth_id=402
-X-Original-From: Per Larsen <perlarsen@google.com>
-Reply-To: perlarsen@google.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] dm mpath: Interface for explicit probing of active
+ paths
+To: Kevin Wolf <kwolf@redhat.com>, Martin Wilck <mwilck@suse.com>
+Cc: dm-devel@lists.linux.dev, hreitz@redhat.com, mpatocka@redhat.com,
+ snitzer@kernel.org, bmarzins@redhat.com, linux-kernel@vger.kernel.org
+References: <20250429165018.112999-1-kwolf@redhat.com>
+ <47dd225b433b0df585a25084a2e793344eeda239.camel@suse.com>
+ <aCIRUwt5BueQmlMZ@redhat.com>
+Content-Language: en-US
+From: Hannes Reinecke <hare@suse.de>
+In-Reply-To: <aCIRUwt5BueQmlMZ@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Rspamd-Queue-Id: 78B9D211A2
+X-Spam-Flag: NO
+X-Spam-Score: -4.51
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	MIME_TRACE(0.00)[0:+];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:dkim,suse.de:mid];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Rspamd-Action: no action
 
-From: Per Larsen <perlarsen@google.com>
+On 5/12/25 17:18, Kevin Wolf wrote:
+> Am 08.05.2025 um 15:51 hat Martin Wilck geschrieben:
+>> Hello Kevin,
+>>
+>> [I'm sorry for the previous email. It seems that I clicked "send" in
+>> the wrong window].
+>>
+>> On Tue, 2025-04-29 at 18:50 +0200, Kevin Wolf wrote:
+>>> Multipath cannot directly provide failover for ioctls in the kernel
+>>> because it doesn't know what each ioctl means and which result could
+>>> indicate a path error. Userspace generally knows what the ioctl it
+>>> issued means and if it might be a path error, but neither does it
+>>> know
+>>> which path the ioctl took nor does it necessarily have the privileges
+>>> to
+>>> fail a path using the control device.
+>>
+>> Thanks for this effort.
+>>
+>> I have some remarks about your approach. The most important one is that
+>> the DM_MPATH_PROBE_PATHS_CMD ioctl appears to be a dangerous command.
+>> It sends IO to possibly broken paths and waits for it to complete. In
+>> the common error case of a device not responding, this might cause the
+>> code to hang for a long time in the kernel ioctl code path, in
+>> uninterruptible sleep (note that these probing commands will be queued
+>> after other possibly hanging IO). In the past we have put a lot of
+>> effort into other code paths in multipath-tools and elsewhere to avoid
+>> this kind of hang to the extent possible. It seems to me that your set
+>> re-introduces this risk.
+> 
+> That's a fair point. I don't expect this code to be fully final, another
+> thing that isn't really optimal (as mentioned in the comment message) is
+> that we're not probing paths in parallel, potentially adding up timeouts
+> from multiple paths.
+> 
+> I don't think this is a problem of the interface, though, but we can
+> improve the implementation keeping the same interface.
+> 
+> Maybe I'm missing something, but I think the reason why it has to be
+> uninterruptible is just that submit_bio_wait() has the completion on the
+> stack? So I suppose we could just kmalloc() some state, submit all the
+> bios, let the completion callback free it, and then we can just stop
+> waiting early (i.e. wait_for_completion_interruptible/killable) and let
+> the requests complete on their own in the background.
+> 
+> Would this address your concerns or is there another part to it?
+> 
+Not really. There are two issues which ultimately made us move away
+from read I/O as path checkers:
 
-FF-A 1.2 adds the DIRECT_REQ2 messaging interface which is similar to
-the existing FFA_MSG_SEND_DIRECT_{REQ,RESP} functions except that it
-uses the SMC calling convention v1.2 which allows calls to use x4-x17 as
-argument and return registers. Add support for FFA_MSG_SEND_DIRECT_REQ2
-in the host ffa handler.
+- Spurious timeouts due to blocked or congested submission
+- Error handling delays and stalls
 
-Signed-off-by: Per Larsen <perlarsen@google.com>
-Signed-off-by: Per Larsen <perl@immunant.com>
----
- arch/arm64/kvm/hyp/nvhe/ffa.c | 111 +++++++++++++++++++++++++++++++++++++++++-
- include/linux/arm_ffa.h       |   2 +
- 2 files changed, 111 insertions(+), 2 deletions(-)
+When using normal read/write functions for path checking you are
+subjected to normal I/O processing rules, ie I/O is inserted
+at the end of the submission queue. If the system is busy the
+path checker will time out prematurely without ever having reached
+the target. One could avoid that by extending the timeout, but that
+would make the path checker unreliable.
 
-diff --git a/arch/arm64/kvm/hyp/nvhe/ffa.c b/arch/arm64/kvm/hyp/nvhe/ffa.c
-index 403fde6ca4d6ec49566ef60709cedbaef9f04592..437289aa5d902b0d2a4a8760403f0190f2320813 100644
---- a/arch/arm64/kvm/hyp/nvhe/ffa.c
-+++ b/arch/arm64/kvm/hyp/nvhe/ffa.c
-@@ -79,6 +79,14 @@ static void ffa_to_smccc_error(struct arm_smccc_res *res, u64 ffa_errno)
- 	};
- }
- 
-+static void ffa_to_smccc_1_2_error(struct arm_smccc_1_2_regs *regs, u64 ffa_errno)
-+{
-+	*regs = (struct arm_smccc_1_2_regs) {
-+		.a0	= FFA_ERROR,
-+		.a2	= ffa_errno,
-+	};
-+}
-+
- static void ffa_to_smccc_res_prop(struct arm_smccc_res *res, int ret, u64 prop)
- {
- 	if (ret == FFA_RET_SUCCESS) {
-@@ -89,11 +97,25 @@ static void ffa_to_smccc_res_prop(struct arm_smccc_res *res, int ret, u64 prop)
- 	}
- }
- 
-+static void ffa_to_smccc_1_2_regs_prop(struct arm_smccc_1_2_regs *regs, int ret, u64 prop)
-+{
-+	if (ret == FFA_RET_SUCCESS)
-+		*regs = (struct arm_smccc_1_2_regs) { .a0 = FFA_SUCCESS,
-+						      .a2 = prop };
-+	else
-+		ffa_to_smccc_1_2_error(regs, ret);
-+}
-+
- static void ffa_to_smccc_res(struct arm_smccc_res *res, int ret)
- {
- 	ffa_to_smccc_res_prop(res, ret, 0);
- }
- 
-+static void ffa_to_smccc_1_2_regs(struct arm_smccc_1_2_regs *regs, int ret)
-+{
-+	ffa_to_smccc_1_2_regs_prop(regs, ret, 0);
-+}
-+
- static void ffa_set_retval(struct kvm_cpu_context *ctxt,
- 			   struct arm_smccc_res *res)
- {
-@@ -131,6 +153,29 @@ static void ffa_set_retval(struct kvm_cpu_context *ctxt,
- 	}
- }
- 
-+static void ffa_set_retval_smccc_1_2(struct kvm_cpu_context *ctxt,
-+			   struct arm_smccc_1_2_regs *regs)
-+{
-+	cpu_reg(ctxt, 0) = regs->a0;
-+	cpu_reg(ctxt, 1) = regs->a1;
-+	cpu_reg(ctxt, 2) = regs->a2;
-+	cpu_reg(ctxt, 3) = regs->a3;
-+	cpu_reg(ctxt, 4) = regs->a4;
-+	cpu_reg(ctxt, 5) = regs->a5;
-+	cpu_reg(ctxt, 6) = regs->a6;
-+	cpu_reg(ctxt, 7) = regs->a7;
-+	cpu_reg(ctxt, 8) = regs->a8;
-+	cpu_reg(ctxt, 9) = regs->a9;
-+	cpu_reg(ctxt, 10) = regs->a10;
-+	cpu_reg(ctxt, 11) = regs->a11;
-+	cpu_reg(ctxt, 12) = regs->a12;
-+	cpu_reg(ctxt, 13) = regs->a13;
-+	cpu_reg(ctxt, 14) = regs->a14;
-+	cpu_reg(ctxt, 15) = regs->a15;
-+	cpu_reg(ctxt, 16) = regs->a16;
-+	cpu_reg(ctxt, 17) = regs->a17;
-+}
-+
- /* Call SMC64 using SMCCC 1.2 if hyp negotiated FF-A 1.2 falling back to 1.1 */
- static void arm_smccc_1_x_smc(u64 func_id, u64 a1, u64 a2, u64 a3,
- 			      u64 a4, u64 a5, u64 a6, u64 a7,
-@@ -686,7 +731,6 @@ static bool ffa_call_supported(u64 func_id)
- 	case FFA_NOTIFICATION_GET:
- 	case FFA_NOTIFICATION_INFO_GET:
- 	/* Unimplemented interfaces added in FF-A 1.2 */
--	case FFA_MSG_SEND_DIRECT_REQ2:
- 	case FFA_MSG_SEND_DIRECT_RESP2:
- 	case FFA_CONSOLE_LOG:
- 	case FFA_PARTITION_INFO_GET_REGS:
-@@ -697,6 +741,21 @@ static bool ffa_call_supported(u64 func_id)
- 	return true;
- }
- 
-+/*
-+ * Must a given FFA function use the SMC calling convention v1.2?
-+ */
-+static bool ffa_call_needs_smccc_1_2(u64 func_id)
-+{
-+	switch (func_id) {
-+	case FFA_MSG_SEND_DIRECT_REQ2:
-+	case FFA_MSG_SEND_DIRECT_RESP2:
-+	case FFA_PARTITION_INFO_GET_REGS:
-+		return true;
-+	}
-+
-+	return false;
-+}
-+
- static bool do_ffa_features(struct arm_smccc_res *res,
- 			    struct kvm_cpu_context *ctxt)
- {
-@@ -855,9 +914,47 @@ static void do_ffa_part_get(struct arm_smccc_res *res,
- 	hyp_spin_unlock(&host_buffers.lock);
- }
- 
-+static void do_ffa_direct_msg2(struct arm_smccc_1_2_regs *regs,
-+			       struct kvm_cpu_context *ctxt,
-+			       u64 vm_handle)
-+{
-+	DECLARE_REG(u32, func_id, ctxt, 0);
-+	DECLARE_REG(u32, endp, ctxt, 1);
-+	DECLARE_REG(u64, uuid_lo, ctxt, 2);
-+	DECLARE_REG(u64, uuid_hi, ctxt, 3);
-+	DECLARE_REG(u64, x4, ctxt, 4);
-+	DECLARE_REG(u64, x5, ctxt, 5);
-+	DECLARE_REG(u64, x6, ctxt, 6);
-+	DECLARE_REG(u64, x7, ctxt, 7);
-+	DECLARE_REG(u64, x8, ctxt, 8);
-+	DECLARE_REG(u64, x9, ctxt, 9);
-+	DECLARE_REG(u64, x10, ctxt, 10);
-+	DECLARE_REG(u64, x11, ctxt, 11);
-+	DECLARE_REG(u64, x12, ctxt, 12);
-+	DECLARE_REG(u64, x13, ctxt, 13);
-+	DECLARE_REG(u64, x14, ctxt, 14);
-+	DECLARE_REG(u64, x15, ctxt, 15);
-+	DECLARE_REG(u64, x16, ctxt, 16);
-+	DECLARE_REG(u64, x17, ctxt, 17);
-+
-+	if (FIELD_GET(FFA_SRC_ENDPOINT_MASK, endp) != vm_handle) {
-+		ffa_to_smccc_1_2_regs(regs, FFA_RET_INVALID_PARAMETERS);
-+		return;
-+	}
-+
-+	struct arm_smccc_1_2_regs args = {
-+		func_id, endp, uuid_lo, uuid_hi,
-+		 x4,  x5,  x6,  x7,  x8,  x9, x10,
-+		x11, x12, x13, x14, x15, x16, x17
-+	};
-+
-+	arm_smccc_1_2_smc(&args, regs);
-+}
-+
- bool kvm_host_ffa_handler(struct kvm_cpu_context *host_ctxt, u32 func_id)
- {
- 	struct arm_smccc_res res;
-+	struct arm_smccc_1_2_regs regs;
- 
- 	/*
- 	 * There's no way we can tell what a non-standard SMC call might
-@@ -913,14 +1010,24 @@ bool kvm_host_ffa_handler(struct kvm_cpu_context *host_ctxt, u32 func_id)
- 	case FFA_PARTITION_INFO_GET:
- 		do_ffa_part_get(&res, host_ctxt);
- 		goto out_handled;
-+	case FFA_MSG_SEND_DIRECT_REQ2:
-+		if (ffa_get_hypervisor_version() >= FFA_VERSION_1_2) {
-+			do_ffa_direct_msg2(&regs, host_ctxt, HOST_FFA_ID);
-+			goto out_handled;
-+		}
-+		goto out_not_supported;
- 	}
- 
- 	if (ffa_call_supported(func_id))
- 		return false; /* Pass through */
- 
-+out_not_supported:
- 	ffa_to_smccc_error(&res, FFA_RET_NOT_SUPPORTED);
- out_handled:
--	ffa_set_retval(host_ctxt, &res);
-+	if (ffa_call_needs_smccc_1_2(func_id))
-+		ffa_set_retval_smccc_1_2(host_ctxt, &regs);
-+	else
-+		ffa_set_retval(host_ctxt, &res);
- 	return true;
- }
- 
-diff --git a/include/linux/arm_ffa.h b/include/linux/arm_ffa.h
-index c0dd6183d956043192114a522b7eef465e7078ac..82a35a3b22de426f7e9a8894e76fdf1e933b3d6b 100644
---- a/include/linux/arm_ffa.h
-+++ b/include/linux/arm_ffa.h
-@@ -269,6 +269,8 @@ bool ffa_partition_check_property(struct ffa_device *dev, u32 property)
- 	(ffa_partition_check_property(dev, FFA_PARTITION_DIRECT_REQ2_RECV) && \
- 	 !dev->mode_32bit)
- 
-+#define FFA_SRC_ENDPOINT_MASK	GENMASK(31, 16)
-+
- /* For use with FFA_MSG_SEND_DIRECT_{REQ,RESP} which pass data via registers */
- struct ffa_send_direct_data {
- 	unsigned long data0; /* w3/x3 */
+But the real issue is error handling. Path checker are precisely there
+to check if the path is healthy, and as such _will_ be subjected
+to error handling (or might even trigger error handling itself).
+The thing about error handling is that you can only return affected
+commands once error handling is complete, as only then you can be
+sure that no DMA is pending on the buffers and one can free/re-use
+the associated pages.
+On SCSI error handling can be an _extremely_ lengthy affair
+(we had reports for over one hour), and the last thing you want is
+to delay your path checker for that time.
 
+(And besides, I didn't even mention the third problem with I/O-based
+path checkers, namely that the check entirely the wrong thing; we
+are not interested whether we can do I/O, we are interested in whether
+we can send commands. In the light of eg ALUA these are two very
+different things.)
+
+>> Apart from that, minor observations are that in patch 2/2 you don't
+>> check whether the map is in queueing state, and I don't quite
+>> understand why you only check paths in the map's active path group
+>> without attempting a PG failover in the case where all paths in the
+>> current PG fail.
+> 
+> Ben already fixed up the missing check.
+> 
+> Not attempting PG failover was also his suggestion, on the basis that it
+> would be additional work for no real benefit when you can only submit
+> requests for the current PG anyway. If userspace retries the SG_IO, it
+> will already pick a different PG, so having the kernel do the same
+> doesn't really improve anything.
+> 
+Precisely.
+
+I think the best way forward here is to have a 'post_ioctl' handler
+(much like we have a pre_ioctl handler nowadays).
+This would check the return code from the ioctl, and invalidate the
+current path if there was an I/O error.
+That way the user can resubmit the ioctl, until all paths are exhausted.
+For that to work we need to agree on two error codes, one for
+'path failed, retry' and one for 'path failed, no retry possible'.
+Resetting path status will be delegated to multipathd, but then that's
+its main task anyway.
+
+Cheers,
+
+Hannes
 -- 
-2.49.0.1045.g170613ef41-goog
-
-
+Dr. Hannes Reinecke                  Kernel Storage Architect
+hare@suse.de                                +49 911 74053 688
+SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
+HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
 
