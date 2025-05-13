@@ -1,40 +1,41 @@
-Return-Path: <linux-kernel+bounces-645604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-645607-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06B84AB504B
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 11:50:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26F7FAB504C
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 11:51:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B9728C3B30
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 09:49:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89BFD1B4257E
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 09:51:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 903C023C4EF;
-	Tue, 13 May 2025 09:49:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C80824169E;
+	Tue, 13 May 2025 09:49:59 +0000 (UTC)
 Received: from Atcsqr.andestech.com (60-248-80-70.hinet-ip.hinet.net [60.248.80.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 197641E51D
-	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 09:49:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE59A23E342
+	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 09:49:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.248.80.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747129794; cv=none; b=uym89dXkQ9hVr1Ni4wU0Q0xJq1TRalFAW9TECNeT9Qkk6k2wGQrNJzjHdXjw2f4Rc3XfkcVk5EnM6BHQjo5eIXNPiBe+/ngZVhHUN9b8YPEBzNO7AVgymJuvIx89cz4PQABKUHA48SMflfb+C5NyElKcmpoe5pP1CBQNx2jTkRQ=
+	t=1747129799; cv=none; b=HLDnzXPmYnwBXEZBEjsGePxvsDYecZBvqIFu8K0aQ5q4mu8SwQWQ0IwsczcGnqDp9o93lX0VUkPuJgwqK4QQLD23jV6sWF5/xoaYyNMiOVby1bAP85zUzzIpAWRhBTpQv2Ggaq9RGb7v5OECD1AgsaY4/DC3a3TaBp2OOvhJtAg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747129794; c=relaxed/simple;
-	bh=duFvUMtyhYPtD9MLOwrTpIsSZp60K3X9+r+EsGHiN58=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=q1keS8sFkeyr6sEGgttDTXqY4u11EuHKbnz3CaIvTB/ZzfEvY7zFwmiAAOqlJWFFjaJ6kdLLMshorl1uA3dVWeobSQd8fZIKpV7ian9+Nbni7ZZpjX4/OLmYvpEzXmAHPKZyx+eIIuKkUPxlMi991/t8wZJyR9h9opWH7wWCpQg=
+	s=arc-20240116; t=1747129799; c=relaxed/simple;
+	bh=VbnAmLxBB+9ni3Y9B/gXoAlfLtNObeur1VJCWbvyhdM=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DPtOOGs0PzVNc7gTMPXYNQRPdYiHo+Zs+YGU5CniPYMz2rT3hGz4p6pd1zCD0qSvSLLqW80EVLM1W0JC4pFfw3DirrtcAGaGeFFcOZ8o5tJnfQbvySasbR6+q+0IJwU0aTQSenZqogvcrTJr6hsiQFyblPawGNBLfFDeIXhv8rM=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=andestech.com; spf=pass smtp.mailfrom=andestech.com; arc=none smtp.client-ip=60.248.80.70
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=andestech.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=andestech.com
 Received: from mail.andestech.com (ATCPCS31.andestech.com [10.0.1.89])
-	by Atcsqr.andestech.com with ESMTPS id 54D9nZei044744
+	by Atcsqr.andestech.com with ESMTPS id 54D9njYE044800
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 13 May 2025 17:49:35 +0800 (+08)
+	Tue, 13 May 2025 17:49:45 +0800 (+08)
 	(envelope-from ben717@andestech.com)
 Received: from swlinux02.andestech.com (10.0.15.183) by ATCPCS31.andestech.com
  (10.0.1.89) with Microsoft SMTP Server id 14.3.498.0; Tue, 13 May 2025
- 17:49:35 +0800
+ 17:49:44 +0800
 From: Ben Zong-You Xie <ben717@andestech.com>
 To:
 CC: <paul.walmsley@sifive.com>, <palmer@dabbelt.com>, <aou@eecs.berkeley.edu>,
@@ -44,90 +45,71 @@ CC: <paul.walmsley@sifive.com>, <palmer@dabbelt.com>, <aou@eecs.berkeley.edu>,
         <devicetree@vger.kernel.org>, <linux-riscv@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>, <tim609@andestech.com>,
         Ben Zong-You Xie <ben717@andestech.com>
-Subject: [PATCH v3 0/9] add Voyager board support
-Date: Tue, 13 May 2025 17:49:24 +0800
-Message-ID: <20250513094933.1631493-1-ben717@andestech.com>
+Subject: [PATCH v3 1/9] riscv: add Andes SoC family Kconfig support
+Date: Tue, 13 May 2025 17:49:25 +0800
+Message-ID: <20250513094933.1631493-2-ben717@andestech.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250513094933.1631493-1-ben717@andestech.com>
+References: <20250513094933.1631493-1-ben717@andestech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 X-DKIM-Results: atcpcs31.andestech.com; dkim=none;
 X-DNSRBL: 
 X-SPAM-SOURCE-CHECK: pass
-X-MAIL:Atcsqr.andestech.com 54D9nZei044744
+X-MAIL:Atcsqr.andestech.com 54D9njYE044800
 
-The Voyager is a 9.6” x 9.6” Micro ATX form factor development board
-including Andes QiLai SoC. This patch series adds minimal device tree
-files for the QiLai SoC and the Voyager board [1].
+The first SoC in the Andes series is QiLai. It includes a high-performance
+quad-core RISC-V AX45MP cluster and one NX27V vector processor.
 
-Now only support basic uart drivers to boot up into a basic console. Other
-features will be added later.
+For further information, refer to [1].
 
 [1] https://www.andestech.com/en/products-solutions/andeshape-platforms/qilai-chip/
+
+Signed-off-by: Ben Zong-You Xie <ben717@andestech.com>
 ---
+ arch/riscv/Kconfig.errata | 2 +-
+ arch/riscv/Kconfig.socs   | 9 +++++++++
+ 2 files changed, 10 insertions(+), 1 deletion(-)
 
-Changelog from v2 to v3:
-  - Rebase the series on Conor/riscv-soc-for-next
-  - Reform patch 6 as suggested by Conor
-  - Modify l2_cache's compatible in qilai.dtsi due to patch 6
-  - Add Conor's Acked-by tag to patch 4
-  - Add Conor's Acked-by tag to patch 5
-  - Add Conor's Acked-by tag to patch 9
-
-v2: https://lore.kernel.org/all/20250503151829.605006-5-ben717@andestech.com/
-
-Changelog from v1 to v2:
-  - Add detailed descriptions to PLIC_SW and PLMT0
-  - Move the aliases node and memory node from qilai.dtsi to qilai-voyager.dts
-  - Drop "status = okay" in each CPU node since the status property is by
-    default "okay"
-  - Reorder the nodes in qilai.dtsi by unit address in ascending order
-  - Add myself as the maintainer of Andes's SoC tree
-  - Add Rob's Reviewed-by tag to patch 2
-  - Add Rob's Acked-by tag to patch 3
-  - Add Rob's Acked-by tag to patch 6.
-
-v1: https://lore.kernel.org/all/20250407104937.315783-1-ben717@andestech.com/
-
----
-Ben Zong-You Xie (9):
-  riscv: add Andes SoC family Kconfig support
-  dt-bindings: riscv: add Andes QiLai SoC and the Voyager board bindings
-  dt-bindings: interrupt-controller: add Andes QiLai PLIC
-  dt-bindings: interrupt-controller: add Andes machine-level software
-    interrupt controller
-  dt-bindings: timer: add Andes machine timer
-  dt-bindings: cache: add QiLai compatible to ax45mp
-  riscv: dts: andes: add QiLai SoC device tree
-  riscv: dts: andes: add Voyager board device tree
-  riscv: defconfig: enable Andes SoC
-
- .../cache/andestech,ax45mp-cache.yaml         |  52 ++++-
- .../andestech,plicsw.yaml                     |  54 +++++
- .../sifive,plic-1.0.0.yaml                    |   1 +
- .../devicetree/bindings/riscv/andes.yaml      |  25 +++
- .../bindings/timer/andestech,plmt0.yaml       |  53 +++++
- MAINTAINERS                                   |   9 +
- arch/riscv/Kconfig.errata                     |   2 +-
- arch/riscv/Kconfig.socs                       |   9 +
- arch/riscv/boot/dts/Makefile                  |   1 +
- arch/riscv/boot/dts/andes/Makefile            |   2 +
- arch/riscv/boot/dts/andes/qilai-voyager.dts   |  28 +++
- arch/riscv/boot/dts/andes/qilai.dtsi          | 186 ++++++++++++++++++
- arch/riscv/configs/defconfig                  |   1 +
- 13 files changed, 417 insertions(+), 6 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/interrupt-controller/andestech,plicsw.yaml
- create mode 100644 Documentation/devicetree/bindings/riscv/andes.yaml
- create mode 100644 Documentation/devicetree/bindings/timer/andestech,plmt0.yaml
- create mode 100644 arch/riscv/boot/dts/andes/Makefile
- create mode 100644 arch/riscv/boot/dts/andes/qilai-voyager.dts
- create mode 100644 arch/riscv/boot/dts/andes/qilai.dtsi
-
---
+diff --git a/arch/riscv/Kconfig.errata b/arch/riscv/Kconfig.errata
+index e318119d570d..be76883704a6 100644
+--- a/arch/riscv/Kconfig.errata
++++ b/arch/riscv/Kconfig.errata
+@@ -12,7 +12,7 @@ config ERRATA_ANDES
+ 
+ config ERRATA_ANDES_CMO
+ 	bool "Apply Andes cache management errata"
+-	depends on ERRATA_ANDES && ARCH_R9A07G043
++	depends on ERRATA_ANDES && (ARCH_R9A07G043 || ARCH_ANDES)
+ 	select RISCV_DMA_NONCOHERENT
+ 	default y
+ 	help
+diff --git a/arch/riscv/Kconfig.socs b/arch/riscv/Kconfig.socs
+index a9c3d2f6debc..1bf5637f2601 100644
+--- a/arch/riscv/Kconfig.socs
++++ b/arch/riscv/Kconfig.socs
+@@ -1,5 +1,14 @@
+ menu "SoC selection"
+ 
++config ARCH_ANDES
++	bool "Andes SoCs"
++	depends on MMU && !XIP_KERNEL
++	select ERRATA_ANDES
++	select ERRATA_ANDES_CMO
++	select AX45MP_L2_CACHE
++	help
++	  This enables support for Andes SoC platform hardware.
++
+ config ARCH_MICROCHIP_POLARFIRE
+ 	def_bool ARCH_MICROCHIP
+ 
+-- 
 2.34.1
+
 
