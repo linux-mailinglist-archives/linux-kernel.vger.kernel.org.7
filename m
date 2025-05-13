@@ -1,132 +1,192 @@
-Return-Path: <linux-kernel+bounces-646266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-646269-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F8EDAB5A62
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 18:43:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D361AB5A6B
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 18:44:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 27D8217C377
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 16:41:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8797188A4DD
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 16:42:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70C082BFC95;
-	Tue, 13 May 2025 16:39:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 920492BEC3A;
+	Tue, 13 May 2025 16:41:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oh5y1hra"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TFL0S+hY"
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C54C32BEC5B;
-	Tue, 13 May 2025 16:39:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B7BE1F12F4
+	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 16:41:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747154394; cv=none; b=cH948CP+btDtkCXEdmkIyt/Xd+427aWWh/Hthg90L0KQnq0ewMfn9SIh9qkqgMbrPPNvPzkzQ0Hush1vteDtAGhddXzlaYgSorz1W904fN4gxFhmJsUYcB+/mOwgrvKAZdPd1NaNEDZmoNipT3U4AG8EHU5nhVBd7ZUGR6nch2I=
+	t=1747154499; cv=none; b=kUj7gBeflUlxE/JqFzTv+Ml3GRLV22PB9c4Pg68yqYczn24L+6rYnpRLfIPLnv4gDt3s+47M+Bdrx2uXz2KOYbu106O34zIXCXOUmgWOm6Nx8h8uYT93mT85JYx3hilqb5Dwc7ll9ZwVPmmM+Y0/+drH8gWUIwpVeudhG7m4N0A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747154394; c=relaxed/simple;
-	bh=AjkYXTBFr9l5F1Xafn2ef91f99gfytyrNwf96vVqTQc=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=UIxnJRRzPLfsdqhJSZYuQimbmpI16JWHzKEE+rkZNp55sRMDI/scXEJmITnAKw4gs8RflsJy8I+wvksnPqaG7Pctw1LBmA0HrsycJPOUQAwqeyCp0tvwzFV3ulBbR3WP01d3WsrrrVbH5kRSp21Gsmlmx4lP8RdIMbYBctHeiMA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oh5y1hra; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 329B2C4CEE4;
-	Tue, 13 May 2025 16:39:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747154394;
-	bh=AjkYXTBFr9l5F1Xafn2ef91f99gfytyrNwf96vVqTQc=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=oh5y1hraJdvH7VfQ2mkFRg1zcYXXFAmPppkhrTTMWCHtVUhY/+ZuxhpyFoZS1DtOa
-	 3hfUGlywaZsTOur9mcy4sgttTytV2JjW/+zV1A4AdyHuWp+L3R4c+s16+iTyZBk55I
-	 kZ8KaViMQOOX/B9k933Fkrd+s7MTaBLIS6YWzkezptPAVXfoyfW2wapKgoNcFlXrou
-	 OU6xmwhC6aZsFm38BUss1sxBoNs59PlbsAMG/yfwlZXSPcMP4rj//d58iZgiUrtjAq
-	 aECWWfmThxcSxPg+VXb/+UMhZ8/g3xWcL9M08C5x2eshwuMpW6hTVqj0NKKz+1Xtua
-	 Hg5KQKlZ8t9zg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAF0D39D61FF;
-	Tue, 13 May 2025 16:40:32 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1747154499; c=relaxed/simple;
+	bh=qh5G/eEmWG16XzGmayNka2kXrS3FjLV815oMffc4Klg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nE8dSC9N3aQQjfBbr7pw0cs+B6hmNf/TqMSUvWASbhSVi6kBV9OxAmu5cCE/84dfmzPTeysKsti62IYGG67/bD2ueSawqJkSSmvTo0m0tovNoMOQAJRt7EhldBu8Vtb/ui4uR1RZ6l9KlmAMmjrA4ghS16PLE8nAdjgnEkFbyJU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TFL0S+hY; arc=none smtp.client-ip=209.85.160.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-47666573242so7181cf.0
+        for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 09:41:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1747154497; x=1747759297; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6BnDDfyJoznq74Fy9bepDWSIw4wPa6h1sLOGzU/61vk=;
+        b=TFL0S+hYoonCCqnL/rFEfeOaAgAsYCgTK5rL1C7RCRPtDTbvtmCoV/YAy9UXHs9FK1
+         xTCvU2T6Z1DBT50coN9xa2xLO8u3awRQ4n7lH1eU4M3HqG6+luEblnDK71Fj9RGV7IoB
+         CyccTDOZhuRStbS87InWpnWwDSTrgdfqwBewntuC+UmV4jfmNqdUxk1HDcEu8YD7BAgD
+         bLXwcAACQyhUGSQ0RR4z1SMQ4agxfgaB/hdLzC/j99zPjWFtCiuF21k3TuGjzfuF+KUP
+         LchC2Xcf3yYIl6fvyMnZErMmGwY93reReMomerswthppgltaHRVQdW+/Ic+Qt34kcQnJ
+         GmDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747154497; x=1747759297;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6BnDDfyJoznq74Fy9bepDWSIw4wPa6h1sLOGzU/61vk=;
+        b=bAfoS+Ny/6hSwxToJdKpEzTmbDLHZ34ttcb7shQkGH6VNza/AnzpvZv5yrckRVWcCH
+         mzX/uRllxHGMbh1QsqF8I63CE9UKOnlv1kXleEff1xJ5WmHJkOehKsdsZcBuYuFc+sMt
+         5VjfequDzEGfwL7Mv6blH7r+e2U5m7g5ifpR9GnrG2JNexmgPekU+/5iXvnCLh68jFXD
+         v4gBtELik7V0JGp30sVSQk3hyhpmXapqH2PBA6ayTbIgMauVJuPvdPmH7rSjjjvmVU80
+         LekimMbT7q0wxlD+GmOexpgDQSep3vtlv2mfsd2KBqU/lJKTG2ZvEQSK0x5wKGO4ELO4
+         /9wg==
+X-Forwarded-Encrypted: i=1; AJvYcCXrKiyDPv95FZ2ZDQw95Mm00sx40CR2dksd1bqIIcp7ftsVW64rXmJa8kRH7VCgO3c9khbWUUuc6Blu7NM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwrazSHb9GtBjRjXYfw0IfeXh0uDIMJrjTZaN/OaGqBhkAZAej2
+	kGWTod1NTbM/NwJd8EuyzGvMMgT1wKtJrhd09yFDTo0TBrji0y+6V2Fmi0Rl9RRHBHHiVgXEm9m
+	FGbv7WK7pnX0MNHcHqGQgqyn5yfczvZ20ETop1TOU
+X-Gm-Gg: ASbGncvjO8lEEVS+6V8UfwI0NrsLIydoH08jPhY7U5yJFx89UyyCOQqdoqkTJPgkKYn
+	QPB93q/9T8mVvmJubnTI4wok1w7ecunNB100K+32qyVb4hz1VB5ktnIqJUDhaPU1NQqM8npVTWA
+	i5q8i8VzKp2dMybDfcBD1w8MhUsJdVe2toYQ==
+X-Google-Smtp-Source: AGHT+IEJHAdBReTtQOM+Du77qJGTcBmfyorO99vnOGQflRem28oWY3TBlhFPfh4hozV7waawUleyczMmoCPeFGe6apM=
+X-Received: by 2002:a05:622a:1b9f:b0:47d:4e8a:97f0 with SMTP id
+ d75a77b69052e-4948990f38dmr3883821cf.29.1747154496402; Tue, 13 May 2025
+ 09:41:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH bpf-next] bpf: Fix WARN() in get_bpf_raw_tp_regs
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <174715443176.1726492.3970535040989082587.git-patchwork-notify@kernel.org>
-Date: Tue, 13 May 2025 16:40:31 +0000
-References: <20250513042747.757042-1-chen.dylane@linux.dev>
-In-Reply-To: <20250513042747.757042-1-chen.dylane@linux.dev>
-To: Tao Chen <chen.dylane@linux.dev>
-Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
- martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
- yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
- sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, rostedt@goodmis.org,
- mhiramat@kernel.org, mathieu.desnoyers@efficios.com, mmullins@fb.com,
- bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org,
- syzbot+45b0c89a0fc7ae8dbadc@syzkaller.appspotmail.com
+References: <20250510010338.3978696-1-jyescas@google.com> <202505110035.wtOWnL8o-lkp@intel.com>
+ <A3E9017A-7282-4BF9-AC60-E2C74EB68980@nvidia.com>
+In-Reply-To: <A3E9017A-7282-4BF9-AC60-E2C74EB68980@nvidia.com>
+From: Juan Yescas <jyescas@google.com>
+Date: Tue, 13 May 2025 09:41:24 -0700
+X-Gm-Features: AX0GCFuQ__xLeJQ79EFOWN0yV7Y9yxsqU-iVJS9r_l0AKVbr7f7W4t90YzZtWWI
+Message-ID: <CAJDx_rj2QpiQkLoJM0x-WOD5nJQVLDbsFNm4-xZ9SfAq_f1SBw@mail.gmail.com>
+Subject: Re: [PATCH v4] mm: Add CONFIG_PAGE_BLOCK_ORDER to select page block order
+To: Zi Yan <ziy@nvidia.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, kernel test robot <lkp@intel.com>, 
+	linux-kernel@vger.kernel.org, oe-kbuild-all@lists.linux.dev, 
+	Linux Memory Management List <linux-mm@kvack.org>, tjmercier@google.com, isaacmanjarres@google.com, 
+	surenb@google.com, kaleshsingh@google.com, Vlastimil Babka <vbabka@suse.cz>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	David Hildenbrand <david@redhat.com>, Mike Rapoport <rppt@kernel.org>, Minchan Kim <minchan@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello:
+On Tue, May 13, 2025 at 8:08=E2=80=AFAM Zi Yan <ziy@nvidia.com> wrote:
+>
+> On 10 May 2025, at 13:16, kernel test robot wrote:
+>
+> > Hi Juan,
+> >
+> > kernel test robot noticed the following build errors:
+> >
+> > [auto build test ERROR on linus/master]
+> > [also build test ERROR on v6.15-rc5]
+> > [cannot apply to akpm-mm/mm-everything next-20250509]
+> > [If your patch is applied to the wrong git tree, kindly drop us a note.
+> > And when submitting patch, we suggest to use '--base' as documented in
+> > https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> >
+> > url:    https://github.com/intel-lab-lkp/linux/commits/Juan-Yescas/mm-A=
+dd-CONFIG_PAGE_BLOCK_ORDER-to-select-page-block-order/20250510-090501
+> > base:   linus/master
+> > patch link:    https://lore.kernel.org/r/20250510010338.3978696-1-jyesc=
+as%40google.com
+> > patch subject: [PATCH v4] mm: Add CONFIG_PAGE_BLOCK_ORDER to select pag=
+e block order
+> > config: powerpc-allmodconfig (https://download.01.org/0day-ci/archive/2=
+0250511/202505110035.wtOWnL8o-lkp@intel.com/config)
+> > compiler: powerpc64-linux-gcc (GCC) 14.2.0
+> > reproduce (this is a W=3D1 build): (https://download.01.org/0day-ci/arc=
+hive/20250511/202505110035.wtOWnL8o-lkp@intel.com/reproduce)
+> >
+> > If you fix the issue in a separate patch/commit (i.e. not just a new ve=
+rsion of
+> > the same patch/commit), kindly add following tags
+> > | Reported-by: kernel test robot <lkp@intel.com>
+> > | Closes: https://lore.kernel.org/oe-kbuild-all/202505110035.wtOWnL8o-l=
+kp@intel.com/
+> >
+> > All errors (new ones prefixed by >>):
+> >
+> >    In file included from include/linux/gfp.h:7,
+> >                     from include/linux/xarray.h:16,
+> >                     from include/linux/list_lru.h:14,
+> >                     from include/linux/fs.h:14,
+> >                     from include/linux/compat.h:17,
+> >                     from arch/powerpc/kernel/asm-offsets.c:12:
+> >>> include/linux/mmzone.h:53:2: error: #error MAX_PAGE_ORDER must be >=
+=3D PAGE_BLOCK_ORDER
+> >       53 | #error MAX_PAGE_ORDER must be >=3D PAGE_BLOCK_ORDER
+> >          |  ^~~~~
+> >    make[3]: *** [scripts/Makefile.build:98: arch/powerpc/kernel/asm-off=
+sets.s] Error 1
+>
+> In this config, CONFIG_ARCH_FORCE_MAX_ORDER is set to 8, lower than
+> the default PAGE_BLOCK_ORDER value, 10. I wonder if the error should
+> be changed to ignore CONFIG_PAGE_BLOCK_ORDER when MAX_PAGE_ORDER is
+> set by CONFIG_ARCH_FORCE_MAX_ORDER and give a warning instead.
 
-This patch was applied to bpf/bpf-next.git (master)
-by Andrii Nakryiko <andrii@kernel.org>:
+In ARMv8, MAX_PAGE_ORDER is set up by CONFIG_ARCH_FORCE_MAX_ORDER
+and CONFIG_PAGE_BLOCK_ORDER is also set up, so we need to take into account
+CONFIG_PAGE_BLOCK_ORDER. For other architectures, the default will be:
+CONFIG_ARCH_FORCE_MAX_ORDER =3D CONFIG_PAGE_BLOCK_ORDER.
 
-On Tue, 13 May 2025 12:27:47 +0800 you wrote:
-> syzkaller reported an issue:
-> 
-> WARNING: CPU: 3 PID: 5971 at kernel/trace/bpf_trace.c:1861 get_bpf_raw_tp_regs+0xa4/0x100 kernel/trace/bpf_trace.c:1861
-> Modules linked in:
-> CPU: 3 UID: 0 PID: 5971 Comm: syz-executor205 Not tainted 6.15.0-rc5-syzkaller-00038-g707df3375124 #0 PREEMPT(full)
-> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-> RIP: 0010:get_bpf_raw_tp_regs+0xa4/0x100 kernel/trace/bpf_trace.c:1861
-> RSP: 0018:ffffc90003636fa8 EFLAGS: 00010293
-> RAX: 0000000000000000 RBX: 0000000000000003 RCX: ffffffff81c6bc4c
-> RDX: ffff888032efc880 RSI: ffffffff81c6bc83 RDI: 0000000000000005
-> RBP: ffff88806a730860 R08: 0000000000000005 R09: 0000000000000003
-> R10: 0000000000000004 R11: 0000000000000000 R12: 0000000000000004
-> R13: 0000000000000001 R14: ffffc90003637008 R15: 0000000000000900
-> FS:  0000000000000000(0000) GS:ffff8880d6cdf000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00007f7baee09130 CR3: 0000000029f5a000 CR4: 0000000000352ef0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->  <TASK>
->  ____bpf_get_stack_raw_tp kernel/trace/bpf_trace.c:1934 [inline]
->  bpf_get_stack_raw_tp+0x24/0x160 kernel/trace/bpf_trace.c:1931
->  bpf_prog_ec3b2eefa702d8d3+0x43/0x47
->  bpf_dispatcher_nop_func include/linux/bpf.h:1316 [inline]
->  __bpf_prog_run include/linux/filter.h:718 [inline]
->  bpf_prog_run include/linux/filter.h:725 [inline]
->  __bpf_trace_run kernel/trace/bpf_trace.c:2363 [inline]
->  bpf_trace_run3+0x23f/0x5a0 kernel/trace/bpf_trace.c:2405
->  __bpf_trace_mmap_lock_acquire_returned+0xfc/0x140 include/trace/events/mmap_lock.h:47
->  __traceiter_mmap_lock_acquire_returned+0x79/0xc0 include/trace/events/mmap_lock.h:47
->  __do_trace_mmap_lock_acquire_returned include/trace/events/mmap_lock.h:47 [inline]
->  trace_mmap_lock_acquire_returned include/trace/events/mmap_lock.h:47 [inline]
->  __mmap_lock_do_trace_acquire_returned+0x138/0x1f0 mm/mmap_lock.c:35
->  __mmap_lock_trace_acquire_returned include/linux/mmap_lock.h:36 [inline]
->  mmap_read_trylock include/linux/mmap_lock.h:204 [inline]
->  stack_map_get_build_id_offset+0x535/0x6f0 kernel/bpf/stackmap.c:157
->  __bpf_get_stack+0x307/0xa10 kernel/bpf/stackmap.c:483
->  ____bpf_get_stack kernel/bpf/stackmap.c:499 [inline]
->  bpf_get_stack+0x32/0x40 kernel/bpf/stackmap.c:496
->  ____bpf_get_stack_raw_tp kernel/trace/bpf_trace.c:1941 [inline]
->  bpf_get_stack_raw_tp+0x124/0x160 kernel/trace/bpf_trace.c:1931
->  bpf_prog_ec3b2eefa702d8d3+0x43/0x47
-> 
-> [...]
+Is there any valid case where the MAX_PAGE_ORDER needs to be smaller than
+the page block order?
 
-Here is the summary with links:
-  - [bpf-next] bpf: Fix WARN() in get_bpf_raw_tp_regs
-    https://git.kernel.org/bpf/bpf-next/c/3880cdbed1c4
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Thanks
+Juan
+>
+> >    make[3]: Target 'prepare' not remade because of errors.
+> >    make[2]: *** [Makefile:1275: prepare0] Error 2
+> >    make[2]: Target 'prepare' not remade because of errors.
+> >    make[1]: *** [Makefile:248: __sub-make] Error 2
+> >    make[1]: Target 'prepare' not remade because of errors.
+> >    make: *** [Makefile:248: __sub-make] Error 2
+> >    make: Target 'prepare' not remade because of errors.
+> >
+> >
+> > vim +53 include/linux/mmzone.h
+> >
+> >     46
+> >     47        /*
+> >     48         * The MAX_PAGE_ORDER, which defines the max order of pag=
+es to be allocated
+> >     49         * by the buddy allocator, has to be larger or equal to t=
+he PAGE_BLOCK_ORDER,
+> >     50         * which defines the order for the number of pages that c=
+an have a migrate type
+> >     51         */
+> >     52        #if (PAGE_BLOCK_ORDER > MAX_PAGE_ORDER)
+> >   > 53        #error MAX_PAGE_ORDER must be >=3D PAGE_BLOCK_ORDER
+> >     54        #endif
+> >     55
+> >
+> > --
+> > 0-DAY CI Kernel Test Service
+> > https://github.com/intel/lkp-tests/wiki
+>
+>
+> Best Regards,
+> Yan, Zi
 
