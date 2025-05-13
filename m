@@ -1,93 +1,100 @@
-Return-Path: <linux-kernel+bounces-646500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-646438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2FC8AB5D06
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 21:19:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 05E5FAB5C2F
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 20:20:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD7BC1B612CA
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 19:19:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B28641B479C8
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 18:21:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2BCF2BF3DF;
-	Tue, 13 May 2025 19:19:26 +0000 (UTC)
-Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FDEF1CD0C;
-	Tue, 13 May 2025 19:19:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FB6E2BF962;
+	Tue, 13 May 2025 18:20:43 +0000 (UTC)
+Received: from pegase1.c-s.fr (pegase1.c-s.fr [93.17.236.30])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0D9A8BE5
+	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 18:20:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.236.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747163966; cv=none; b=ZaChw4lJUPnl7abn74jCFvXzMrn1owm0os7lgjOoXOnT/KKWxGqQAtGV+ztfU/gPPbuvkPAk8g3kIERNE5uUgmpc3pQcVCsGg5jKjHNRotgQ2f17HFFEOmgHhqUh99DHhIMfnrfZvhktKYP7UOIXRq5hgMD4S15BZm7M96Q62Hs=
+	t=1747160442; cv=none; b=hQWK/aPlk/l97N0l7lchYYL8w2rfttlX+cdDXqSKLRkCSeBGwgTS2RcEi0aW2508K/ABJHzGP9JFiDQXPetJnlBHessOIz5HkiLIG8fdXBDlskN8GkbqA+7PO3/4gdKEK/pJ2ywcdXxfJemKJepCFFSFU4vq7XQQSjJgaRwBkoA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747163966; c=relaxed/simple;
-	bh=q9uhQ69sMkdZ4u7RzMocjUphcOGlyx+dW/ynSSI77hQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U9mid27OYQ8oaAl3qPcU46XYHYtXU1kJKXPhc1vziw8E3jCzOyGBCuDmZ/IiHWPNJKOTOahC1hoaDvLy+B9PacvVNq+CUttDcBcYFtocvqlHBhvkj3mny2ABEF7GCcavgqw6n3a/tYp96naHdaFIYN3kFBvX8edNtjAxF8TXyhs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
-Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
-	id 1uEv9i-0002eV-00; Tue, 13 May 2025 21:19:10 +0200
-Received: by alpha.franken.de (Postfix, from userid 1000)
-	id 45646C0895; Tue, 13 May 2025 17:12:23 +0200 (CEST)
-Date: Tue, 13 May 2025 17:12:23 +0200
-From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Caleb James DeLisle <cjd@cjdns.fr>, linux-mips@vger.kernel.org,
-	tglx@linutronix.de, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, benjamin.larsson@genexis.eu,
-	linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH v5 0/7] Add EcoNet EN751221 MIPS platform support
-Message-ID: <aCNhVw7oMRhHQNq_@alpha.franken.de>
-References: <20250507134500.390547-1-cjd@cjdns.fr>
- <aCNWM5Xq7wnHVCrc@mai.linaro.org>
+	s=arc-20240116; t=1747160442; c=relaxed/simple;
+	bh=lbU7PsDeFHTHzzKcBJFxEoAyrcA5ffcrvJX4aCbNe9w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=i1un39XMSGfMTih+2t8gM4JbcDThfnDa7dryslUafrmgsxlZAcaIugCggHEmz0axHGEV7pXFYQfvNQGq9rVF6PbFT8761AmPu/vtaUeakh1m6ihIQcbdqjZlzEcpMz/ZUlScumPL7/ZjrdzszBQ1aLz5QoOiM7/iyuOsf9sPIFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.236.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [192.168.12.233])
+	by localhost (Postfix) with ESMTP id 4ZxkVJ4CxBz9sB6;
+	Tue, 13 May 2025 19:48:40 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+	by localhost (pegase1.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id G_pXDJnk3gqN; Tue, 13 May 2025 19:48:40 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase1.c-s.fr (Postfix) with ESMTP id 4ZxkVJ39wtz9s9J;
+	Tue, 13 May 2025 19:48:40 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 61B228B765;
+	Tue, 13 May 2025 19:48:40 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id mu0GiejjUCCv; Tue, 13 May 2025 19:48:40 +0200 (CEST)
+Received: from [192.168.235.99] (unknown [192.168.235.99])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 9A6598B763;
+	Tue, 13 May 2025 19:48:39 +0200 (CEST)
+Message-ID: <922be2ed-aed2-4c55-b7b0-37abfc745500@csgroup.eu>
+Date: Tue, 13 May 2025 19:48:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aCNWM5Xq7wnHVCrc@mai.linaro.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] powerpc: Transliterate author name and remove FIXME
+To: Thorsten Blum <thorsten.blum@linux.dev>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>
+Cc: Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin
+ <npiggin@gmail.com>, Naveen N Rao <naveen@kernel.org>,
+ linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+References: <20241110162139.5179-2-thorsten.blum@linux.dev>
+ <87v7wuy3p5.fsf@mpe.ellerman.id.au>
+ <55B1EE24-BEC9-4A8D-84B0-ED32FCC070A5@linux.dev>
+ <87v7weodqn.fsf@mpe.ellerman.id.au>
+ <d9e232bb-5069-4526-b781-f4e316bda95d@csgroup.eu>
+ <774CD605-AE6F-4D37-AB50-B9676858CDFA@linux.dev>
+ <504A9138-865E-4CB3-8E1C-E19C4B86F1D3@linux.dev>
+Content-Language: fr-FR
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+In-Reply-To: <504A9138-865E-4CB3-8E1C-E19C4B86F1D3@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, May 13, 2025 at 04:24:51PM +0200, Daniel Lezcano wrote:
-> On Wed, May 07, 2025 at 01:44:53PM +0000, Caleb James DeLisle wrote:
-> > EcoNet MIPS SoCs are big endian machines based on 34Kc and 1004Kc
-> > processors. They are found in xDSL and xPON modems, and contain PCM
-> > (VoIP), Ethernet, USB, GPIO, I2C, SPI (Flash), UART, and PCIe.
-> > 
-> > The EcoNet MIPS SoCs are divided broadly into two families, the
-> > EN751221 family based on the 34Kc, and the EN751627 family based on
-> > the 1004Kc. Individual SoCs within a family are very similar, only
-> > with different peripherals.
-> > 
-> > This patchset adds basic "boots to a console" support for the EN751221
-> > family and adds SmartFiber XP8421-B, a low cost commercially available
-> > board that is useful for testing and development.
-> > 
-> > Note that Airoha (AN7523, AN7581) is similar to EcoNet in terms of
-> > peripherals, and for historical reasons Airoha chips are sometimes
-> > referred to with the EN75xx prefix. However this is a different
-> > platform because Airoha chips are ARM based.
-> > 
-> > This patchset is against mips-next.
-> > 
-> > v4 -> v5
-> > * 2/7 clocksource/drivers: Add EcoNet Timer HPT driver:
-> >   * Improve explanation of HPT timer in changelog
-> >   * Move pr_info to pr_debug per recommendation
-> >   * Remove pointless debug on spurious interrupt
-> >   * Small code-style change
+
+
+Le 13/05/2025 à 16:10, Thorsten Blum a écrit :
+> On 7. Jan 2025, at 13:16, Thorsten Blum wrote:
+>> On 23. Nov 2024, at 11:19, Christophe Leroy wrote:
+>>> Isn't our file just a copy of the one from binutils ? Shouldn't we adjust it based on commit https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fgithub.com%2Fbminor%2Fbinutils-gdb%2Fcommit%2F2ce18a16268a&data=05%7C02%7Cchristophe.leroy%40csgroup.eu%7Cab93fab4ad1e43fbaaee08dd9227edf0%7C8b87af7d86474dc78df45f69a2011bb5%7C0%7C0%7C638827422381661999%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=pYe0b3WZhhmX3IHNh58Ogf%2BFMLYsdA7zn93%2B74D%2F%2FsA%3D&reserved=0 ?
+>>
+>> It looks like it's a copy and the name is spelled the same as in my patch:
+>>
+>>   "Mimi Phuong-Thao Vo"
+>>
+>> What's missing to get this merged?
 > 
-> Shall I pick the clocksource + bindings changes through my tree ?
+> Does it make sense to resubmit this or do we leave the name and the
+> FIXME as is?
 
-please do, I'll take the remaining patches.
+Thanks for the ping, your patch is not lost, it is still here: 
+https://patchwork.ozlabs.org/project/linuxppc-dev/patch/20241110162139.5179-2-thorsten.blum@linux.dev/
 
-Thomas.
+Maddy, what do you think about the way forward ?
 
--- 
-Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
-good idea.                                                [ RFC1925, 2.3 ]
+Thanks
+Christophe
 
