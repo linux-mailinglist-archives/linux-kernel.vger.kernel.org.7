@@ -1,102 +1,93 @@
-Return-Path: <linux-kernel+bounces-645187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-645191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14C32AB4A06
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 05:15:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77031AB4A10
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 05:19:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B27A462D2E
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 03:14:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A2B98660EE
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 03:19:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D411C1E1E04;
-	Tue, 13 May 2025 03:14:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA91D1B4145;
+	Tue, 13 May 2025 03:19:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="MLSvsplG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="MjX1FF5L"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00AD51DE4C3
-	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 03:14:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E132B1548C;
+	Tue, 13 May 2025 03:19:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747106052; cv=none; b=pvsXptiCAXcSU04dKD4iukfqEovrsDL31yyagZEfRvvQAHY700THvH7+aLUt7Qc2yS7l3iDSvbBT2SBQiwsyffGgfE/02zK92J66GwAro3PZmQQvoO8/QpiRqMvahcF/hz9gH+4z3pbSSg08YImCkJGD2stSKYapcCMXB+DGDaU=
+	t=1747106355; cv=none; b=atpcbCuRkhaPPaWEUnfHZTUDsUMMGWeqJPfu6qOnOSFbBU1yjIHwk2EdtR5L71+Mgm2dGM/KpWipb65Nl7QjzHe1UlcZn3x6vfJ9z51+DUOFKFpClaIhYnSm3rqSW+BGBuWIKVxIUmGfVIaZXbIdShXLCFM0oR6vvY1AxoWDprc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747106052; c=relaxed/simple;
-	bh=jeFqy7zKESSjHISNy8tS/rhzHwYLUa6cEV201i7Nzks=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=p4xHRXPE3GqcS8zgrkWpZWPhsccKQ4JHziCDy+LzQ8CNDg17qmSUXbLPJWUQ61kc295i0ayUHmqNMfazCDIt6/Kn8Abok3T2VjVrPa8Kg7JDvehbAHwui+R+ryyrlGdy0vKzJbeSnRaycEjQHdT39sVgjYt0dpF8lP1P9JHC5L0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=MLSvsplG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3342BC4CEE7;
-	Tue, 13 May 2025 03:14:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1747106049;
-	bh=jeFqy7zKESSjHISNy8tS/rhzHwYLUa6cEV201i7Nzks=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=MLSvsplGVO8OHx8goaLdPzja4JBmyQk/Mq62gXJ+ixRyRJFDZ+XPANipvuuoULo5h
-	 gN7v7dzD4DvcO5WrwxdFAU+T5NJI2bqfSGXD81I0ml294lc9HM570dpp1uW4VWEf/z
-	 FePhgHLFdOHtgAudqq+5FWAtUhYXlTM12YMLgYbA=
-Date: Mon, 12 May 2025 20:14:08 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: Alexander Graf <graf@amazon.com>, kexec@lists.infradead.org,
- linux-kernel@vger.kernel.org, Baoquan He <bhe@redhat.com>, Pasha Tatashin
- <pasha.tatashin@soleen.com>, nh-open-source@amazon.com
-Subject: Re: [PATCH] kexec: Enable CMA based contiguous allocation
-Message-Id: <20250512201408.81acaf861581f6fb98e8a3b0@linux-foundation.org>
-In-Reply-To: <35f818e2cf3f15b7dc7028f543e0eea94c799efd.camel@infradead.org>
-References: <20250512225752.11687-1-graf@amazon.com>
-	<20250512165933.ad1dc7ec5872284b4b59f544@linux-foundation.org>
-	<35f818e2cf3f15b7dc7028f543e0eea94c799efd.camel@infradead.org>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1747106355; c=relaxed/simple;
+	bh=cewvoZrkJRWzz9sOFmqGO8qc4hsNBY8nqx/F6G+sYAk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZVMMU1yVhnYYFrp5gqFBvTXpYk1Q2RBxXaxqfYIzuTM+eLgmBqSYFE3Mkud3X6R3S3QZEL/Jv93vSmBG81Iy3fsfJENKv1T0zK5HGDFpKUMW3JgXwPLX5G6Ko/mfd4jFVgobg+kZqgcNolJHjXa573gcXOA3zUQzyh1tHnx2mAw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=MjX1FF5L; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=0M9epOa8EtgjN2hW41pzy7m/2PgNBY8TSfcb2WsZvPU=; b=MjX1FF5LbtkTgftofXkp6yM9P+
+	xouhn+xC60S5db9RZdilVzmmsNVs+qNMVOp3Tbwoko5X4EVP4Gge1OMUb/kgC2iemlSUJo3cQVUyq
+	wcg0y8K4WPElB9b9uX/+6Xe/PcaXCZf9j3jMtu45Hb8JRsOA7PKnYVoO/RQtY84xG4X5dJMLS+eA6
+	9XgyWUZIP+Zg+7gcv8REaSMgAqRvgqrNxPaCI+4O4NPSMRPNTaL1AeaCoIt4qw1IuDk3LVm6COX+g
+	ucxrpxpf/CrHaMuGsIMKiP1nA60nCFq800uEFgltjtyLlsH+9XTVv7mVSX5xiNbvAJLIv8F/1rBKs
+	PWLtIbzg==;
+Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uEgAZ-0000000AU2i-4AqK;
+	Tue, 13 May 2025 03:19:04 +0000
+Date: Tue, 13 May 2025 04:19:03 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Byungchul Park <byungchul@sk.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, kernel_team@skhynix.com, kuba@kernel.org,
+	almasrymina@google.com, ilias.apalodimas@linaro.org,
+	harry.yoo@oracle.com, hawk@kernel.org, akpm@linux-foundation.org,
+	ast@kernel.org, daniel@iogearbox.net, davem@davemloft.net,
+	john.fastabend@gmail.com, andrew+netdev@lunn.ch,
+	edumazet@google.com, pabeni@redhat.com, vishal.moola@gmail.com
+Subject: Re: [RFC 19/19] mm, netmem: remove the page pool members in struct
+ page
+Message-ID: <aCK6J2YtA7vi1Kjz@casper.infradead.org>
+References: <20250509115126.63190-1-byungchul@sk.com>
+ <20250509115126.63190-20-byungchul@sk.com>
+ <aB5DNqwP_LFV_ULL@casper.infradead.org>
+ <20250512125103.GC45370@system.software.com>
+ <aCII7vd3C2gB0oi_@casper.infradead.org>
+ <20250513014200.GA577@system.software.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250513014200.GA577@system.software.com>
 
-On Mon, 12 May 2025 19:02:20 -0700 David Woodhouse <dwmw2@infradead.org> wr=
-ote:
+On Tue, May 13, 2025 at 10:42:00AM +0900, Byungchul Park wrote:
+> Just in case, lemme explain what I meant, for *example*:
 
-> > > =A0 2) More robust. Even if by accident some page is still in use for=
- DMA,
-> > > =A0=A0=A0=A0 the new kernel image will be safe from that access becau=
-se it resides
-> > > =A0=A0=A0=A0 in a memory region that is considered allocated in the o=
-ld kernel and
-> > > =A0=A0=A0=A0 has a chance to reinitialize that component.
-> >=20
-> >=20
->  > https://lore.kernel.org/all/20250512140909.3464-1-dssauerw@amazon.de/>
->
-> >Is this known to be a problem in current code?
->=20
-> Oh $DEITY yes. The Arm Generic Interrupt Controller is, to quote a dear
-> friend, "a cautionary tale of how not to approach a hardware design".
->=20
-> It does a whole bunch of arbitrary DMA all over the place, and doesn't
-> even live behind an IOMMU. And doesn't *stop* doing DMA unless you ask
-> it *really* nicely; merely shutting down the offending high-level
-> components isn't always enough, because they might still to write back
-> some caches.
->=20
-> Here's one of the latest examples (not actually the one which has been
-> breaking kexec for us, as far as we know, but an example of the genre):
-> https://lore.kernel.org/all/20250512140909.3464-1-dssauerw@amazon.de/
->=20
-> So putting the new kernel into a physical memory region which was
-> considered 'free' by the previous kernel, as Alex explains, is actually
-> a very good defence-in-depth mechanism to protect against such issues.
+I understood what you meant.
 
-Lol, it sounds like you're having fun over there.
+> In here, operating on struct netmem_desc can smash _mapcount and
+> _refcount in struct page unexpectedly, even though sizeof(struct
+> netmem_desc) <= sizeof(struct page).  That's why I think the place holder
+> is necessary until it completely gets separated so as to have its own
+> instance.
 
-Alexander, can you please repackage David's info to your taste and
-include it in the changelog?  Escalating the value of the patch from
-"might speed it up, don't know how much" to "addresses grievous
-real-world issues" is helpful to the patch's case!
+We could tighten up the assert a bit.  eg
 
+static_assert(sizeof(struct netmem_desc) <= offsetof(struct page, _refcount));
+
+We _can't_ shrink struct page until struct folio is dynamically
+allocated.  The same patch series that dynamically allocates folio will
+do the same for netmem and slab and ptdesc and ...
 
