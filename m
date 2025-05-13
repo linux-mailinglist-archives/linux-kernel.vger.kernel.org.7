@@ -1,179 +1,134 @@
-Return-Path: <linux-kernel+bounces-645821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-645824-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1876AB5408
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 13:41:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1477AB5410
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 13:43:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0799C4A3D76
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 11:41:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A294A1B45A74
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 11:43:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE87D28DB5C;
-	Tue, 13 May 2025 11:41:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 528F828D8DB;
+	Tue, 13 May 2025 11:43:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="u+zoIWHe"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="PRDZ1dTH"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A139C28851A;
-	Tue, 13 May 2025 11:41:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33D94171CD;
+	Tue, 13 May 2025 11:42:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747136499; cv=none; b=S5MNcsDX7iufJyQ6LbGw6KuZ/0l0pIgXcW1c4a2PIvzSthT+910LOkSR3u8r440QXmRLyOCpP5gFW78TpkgHyV9LqoEWiw9t3B+FLofz2LD9Yg/F4fys+GoJGfAMRZPogxu0U06fHSzEZWXPrxNQ9yIIwfy9eUwBtOMcZC0VlOw=
+	t=1747136579; cv=none; b=bSjm92OsxTB7qn1VRnKCajxg8C80DDz4m4d4V7sk+oweZU2xl9/jgjh6cWnEHV23DhVhMR3JI+vgiJMQLak9MgqxTS4HkLHsbXc+X6sMxY0BGuy1JZQNfP4T1Gn+lG9Bzr3UT47eM0IQ5lEpy6Nn3xZNy4F2iQdkycgcuvKkgFg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747136499; c=relaxed/simple;
-	bh=uFX2rO3cWJmwi6vvHQkw3PfdS9uLgLh/X0Ve8XYCvpE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lmRroCf4CMqNZ9Y9NrkGSAslFobnmcY2Wwpu9gQ3FL9zcJA8nE171mdzUfQxCCmB35OLGvUSLPS7ECYij/HRxZ8CRzf/1JQ8gz+3WQa5zwzYJkPOYw3JnN/rRiwWHM4HVtSjkAeYOK6x2rJiWZbNeqJmcnALKsJMB9z0pA9Mhv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=u+zoIWHe; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=BLCbEb2NTTzv4/ODVyjqYAPhHDxBZDeZKEtBF7viCvw=; b=u+zoIWHef6JFSMGtTvvxGch/iJ
-	awCg/a3tBJSi76YIT0JHmabu6gBZHE7JjSzk5Qvmnfm59gMkRP7Lo0ZTpQEPeDijYGq10YWfM7onf
-	IFSBjnUnhDQbdr+dld3GHJB3G/OiA5UQD8uUwLjwfB1E8gXVDaVFZUc/iIo4bkYI/f4ezMiYW4BXh
-	aGzQ3SocmH5QgN5qnFGoZdjDtZnbbs82Gi845Bghn0Fiwa/BVdoCA9RfXBparJWErWzNgmq5NCmFr
-	PVzj+37HcJq3ak06M7Qyn35+jMadKBfgIr6GGvPg9DJV6b9pYRAZdpCjxsFLmmT9sSpcz8YDSgRuu
-	NfKBM76g==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uEo0k-0000000ArbM-31WB;
-	Tue, 13 May 2025 11:41:26 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 2ABD930066A; Tue, 13 May 2025 13:41:26 +0200 (CEST)
-Date: Tue, 13 May 2025 13:41:25 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Shakeel Butt <shakeel.butt@linux.dev>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
-	Michal Hocko <mhocko@kernel.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Muchun Song <muchun.song@linux.dev>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	bpf@vger.kernel.org, linux-mm@kvack.org, cgroups@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Meta kernel team <kernel-team@meta.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Subject: Re: [PATCH 0/4] memcg: nmi-safe kmem charging
-Message-ID: <20250513114125.GE25763@noisy.programming.kicks-ass.net>
-References: <20250509232859.657525-1-shakeel.butt@linux.dev>
- <2e2f0568-3687-4574-836d-c23d09614bce@suse.cz>
- <mzrsx4x5xluljyxy5h5ha6kijcno3ormac3sobc3k7bkj5wepr@cuz2fluc5m5d>
- <07e4e8d9-2588-41bf-89d4-328ca6afd263@suse.cz>
+	s=arc-20240116; t=1747136579; c=relaxed/simple;
+	bh=BXZoTSb4aQ9Wtu3tuWW0AsAZj/p2yFulUCCm1/NKIK4=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=FphS+CwhQEfSVrYyAEOqhTE6KWhwuf/IvNoDTUHzAHERiYgrzx481rLbDJlp/pA/FIeRx1gF0dnSSuGThktWTHteuhc2rk7tqRM31e2qixwzZp6hclaIiGUUiAsdmj3rfLeP4T8j2oQveAa2str2s4k9JMmP505BkBep8VH4/pA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=PRDZ1dTH; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54D9F3c3029908;
+	Tue, 13 May 2025 11:41:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=BXZoTS
+	b4aQ9Wtu3tuWW0AsAZj/p2yFulUCCm1/NKIK4=; b=PRDZ1dTHxB+wW2IKskFaxF
+	9/KI6Bcgo61Y730i4lx2NzKw2qlWv3aSEFkpm9tI9z9Nu8d/2AhbmheqILG8fXmZ
+	asUSCcajOoU4Lh5mMAc5yq+35Lk9ndTj4o79bTPyizG52bUuWfKodnsJ9bqzZZWH
+	xiWkUwbrfwjc7YR/a1vONRV8C86OIPQl8DBYOTOnSOZGUXSigrQbT7hqf8eDNrdb
+	U7x7MbT67jo0opM81yuwc2rl0QJvZxNQHADWutzBL1DoDzoptUTImzdP0sDxMED5
+	JFuvA0NSoqIBfwmu/BO7nqMxj/5BmqO90BxlQbYwoBVGb0m14X5QRC2PlgCoajsA
+	==
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46m39j8pba-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 13 May 2025 11:41:30 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 54DB5Tv8024478;
+	Tue, 13 May 2025 11:41:29 GMT
+Received: from smtprelay06.wdc07v.mail.ibm.com ([172.16.1.73])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 46jjmm2sdq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 13 May 2025 11:41:29 +0000
+Received: from smtpav05.dal12v.mail.ibm.com (smtpav05.dal12v.mail.ibm.com [10.241.53.104])
+	by smtprelay06.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 54DBfTMp29033212
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 13 May 2025 11:41:29 GMT
+Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 45F2858056;
+	Tue, 13 May 2025 11:41:29 +0000 (GMT)
+Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 454AF58052;
+	Tue, 13 May 2025 11:41:28 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.130.167])
+	by smtpav05.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 13 May 2025 11:41:28 +0000 (GMT)
+Message-ID: <71973027bb0fbc436a95e8bb7fbd2b7d2eab95b4.camel@linux.ibm.com>
+Subject: Re: [PATCH] ima: Kdump kernel doesn't need IMA to do integrity
+ measurement
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: steven chen <chenste@linux.microsoft.com>, stefanb@linux.ibm.com,
+        roberto.sassu@huaweicloud.com, roberto.sassu@huawei.com,
+        eric.snowberg@oracle.com, ebiederm@xmission.com, paul@paul-moore.com,
+        code@tyhicks.com, bauermann@kolabnow.com,
+        linux-integrity@vger.kernel.org, kexec@lists.infradead.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: madvenka@linux.microsoft.com, nramas@linux.microsoft.com,
+        James.Bottomley@HansenPartnership.com, bhe@redhat.com
+Date: Tue, 13 May 2025 07:41:27 -0400
+In-Reply-To: <20250502200337.6293-1-chenste@linux.microsoft.com>
+References: <20250502200337.6293-1-chenste@linux.microsoft.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <07e4e8d9-2588-41bf-89d4-328ca6afd263@suse.cz>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: iOEulkBYl26x9Ilz2fprraGsqD1yO4zT
+X-Proofpoint-ORIG-GUID: iOEulkBYl26x9Ilz2fprraGsqD1yO4zT
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTEzMDExMCBTYWx0ZWRfXx4Can8PSvMlx vUnHo5sK6RKQqOBsktYUfIOrlvFLhTo0GVAWEmx49wj6RQzhzdH27Nhp61/bXy1XXjWUG1KRDxb HtzJag6Q6I2wdLeL/qKd1sKBSvtY/Z5TUyPwI03klxn8Ofs7rVQblrSRLizGrCGE0rXmCg/LFSB
+ A+1JZeQ/9u0uQD7xzHUphUeoM0Q3zidn21ttZTszqsd7qJ5mJL898Ipw2vUgGLjEjpJaElmwlFr mjAyeiKlH82/ixFANG4qGOpW3BhP7XaS2dEfDW6FwSz1fgV5BfmdTRAnlUMar1h1gPJO+YyeRny 35a1VF+qvOXRY60pgVF6rNpAE8sC3lcSf6oBH2rWl4+2tSTqzvIRMqTI4mQqJfg2RHUxd17pv+/
+ oviUApI6smnWpZ9l4I2WM2gT5F4s6bhSGEpe8p9uTHfSy14+ivwSRqwLhxJtiVLkogVSQoNP
+X-Authority-Analysis: v=2.4 cv=Sfb3duRu c=1 sm=1 tr=0 ts=68232fea cx=c_pps a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=yMhMjlubAAAA:8 a=1v2mA-L8tnUgDz3cNWsA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-13_01,2025-05-09_01,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 spamscore=0
+ impostorscore=0 phishscore=0 malwarescore=0 mlxscore=0 adultscore=0
+ bulkscore=0 clxscore=1015 suspectscore=0 lowpriorityscore=0
+ priorityscore=1501 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
+ definitions=main-2505130110
 
-On Tue, May 13, 2025 at 09:15:23AM +0200, Vlastimil Babka wrote:
+Hi Steven,
 
-> >> > The initial prototype tried to make memcg charging infra for kernel
-> >> > memory re-entrant against irq and nmi. However upon realizing that
-> >> > this_cpu_* operations are not safe on all architectures (Tejun), this
-> >> 
-> >> I assume it was an off-list discussion?
-> >> Could we avoid this for the architectures where these are safe, which should
-> >> be the major ones I hope?
+On Fri, 2025-05-02 at 13:03 -0700, steven chen wrote:
+> From: Steven Chen <chenste@linux.microsoft.com>
+>=20
+> Kdump kernel doesn't need IMA to do integrity measurement.
+> Hence the measurement list in 1st kernel doesn't need to be copied to
+> kdump kenrel.
 
-IIRC Power64 has issues here, 'funnily' their local_t is NMI safe.
-Perhaps we could do the same for their this_cpu_*(), but ideally someone
-with actual power hardware should do this ;-)
+^kernel
 
-> > Yes it was an off-list discussion. The discussion was more about the
-> > this_cpu_* ops vs atomic_* ops as on x86 this_cpu_* does not have lock
-> > prefix and how I should prefer this_cpu_* over atomic_* for my series on
-> > objcg charging without disabling irqs. Tejun pointed out this_cpu_* are
-> > not nmi safe for some archs and it would be better to handle nmi context
-> > separately. So, I am not that worried about optimizing for NMI context
-> 
-> Well, we're introducing in_nmi() check and different execution paths to all
-> charging. This could be e.g. compiled out for architectures where this_cpu*
-> is NMI safe or they don't have NMIs in the first place.
+Please use "scripts/checkpatch.pl --codespell" to check for typos.
 
-Very few architectures one would care about do not have NMIs. Risc-V
-seems to be the exception here ?!?
+Mimi
 
-> > but your next comment on generic_atomic64_* ops is giving me headache.
-> > 
-> >> 
-> >> > series took a different approach targeting only nmi context. Since the
-> >> > number of stats that are updated in kernel memory charging path are 3,
-> >> > this series added special handling of those stats in nmi context rather
-> >> > than making all >100 memcg stats nmi safe.
-> >> 
-> >> Hmm so from patches 2 and 3 I see this relies on atomic64_add().
-> >> But AFAIU lib/atomic64.c has the generic fallback implementation for
-> >> architectures that don't know better, and that would be using the "void
-> >> generic_atomic64_##op" macro, which AFAICS is doing:
-> >> 
-> >>         local_irq_save(flags);                                          \
-> >>         arch_spin_lock(lock);                                           \
-> >>         v->counter c_op a;                                              \
-> >>         arch_spin_unlock(lock);                                         \
-> >>         local_irq_restore(flags);                                       \
-> >> 
-> >> so in case of a nmi hitting after the spin_lock this can still deadlock?
-> >> 
-> >> Hm or is there some assumption that we only use these paths when already
-> >> in_nmi() and then another nmi can't come in that context?
-> >> 
-> >> But even then, flush_nmi_stats() in patch 1 isn't done in_nmi() and uses
-> >> atomic64_xchg() which in generic_atomic64_xchg() implementation also has the
-> >> irq_save+spin_lock. So can't we deadlock there?
-> > 
-> > I was actually assuming that atomic_* ops are safe against nmis for all
-> > archs.
+>=20
+> Here skip allocating buffer for measurement list copying if loading
+> kdump kernel. Then there won't be the later handling related to
+> ima_kexec_buffer.
+>=20
+> Signed-off-by: Steven Chen <chenste@linux.microsoft.com>
 
-We have HAVE_NMI_SAFE_CMPXCHG for this -- there are architectures where
-this is not the case -- but again, those are typically oddball archs you
-don't much care about.
 
-But yes, *64 on 32bit archs is generally not NMI safe.
-
-> I looked at atomic_* ops in include/asm-generic/atomic.h and it
-> > is using arch_cmpxchg() for CONFIG_SMP and it seems like for archs with
-> > cmpxchg should be fine against nmi. I am not sure why atomic64_* are not
-> > using arch_cmpxchg() instead. I will dig more.
-
-Not many 32bit architectures have 64bit cmpxchg. We're only now dropping
-support for x86 chips without CMPXCHG8b.
-
-> Yeah I've found https://docs.kernel.org/core-api/local_ops.html and since it
-> listed Mathieu we discussed on IRC and he mentioned the same thing that
-> atomic_ ops are fine, but the later added 64bit variant isn't, which PeterZ
-> (who added it) acknowledged.
-> 
-> But there could be way out if we could somehow compile-time assert that
-> either is true:
-> - CONFIG_HAVE_NMI=n - we can compile out all the nmi code
-
-Note that in_nmi() is not depending on HAVE_NMI -- nor can it be. Many
-architectures treat various traps as NMI-like, even though they might
-not have real NMIs.
-
-> - this_cpu is safe on that arch - we can also compile out the nmi code
-
-There is no config symbol for this presently.
-
-> - (if the above leaves any 64bit arch) its 64bit atomics implementation is safe
-
-True, only because HPPA does not in fact have NMIs.
-
-> - (if there are any 32bit applicable arch left) 32bit atomics should be
-> enough for the nmi counters even with >4GB memory as we flush them? and we
-> know the 32bit ops are safe
-
-Older ARM might qualify here.
 
