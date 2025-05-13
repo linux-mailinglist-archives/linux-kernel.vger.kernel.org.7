@@ -1,176 +1,181 @@
-Return-Path: <linux-kernel+bounces-645468-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-645461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85B46AB4E05
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 10:25:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E47DAAB4DE4
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 10:17:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB7B41B40BFF
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 08:25:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9F421B40901
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 08:17:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BF012036ED;
-	Tue, 13 May 2025 08:25:07 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AE1B20103A;
+	Tue, 13 May 2025 08:17:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="afi0zDL4"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 494AC1F2C58
-	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 08:25:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E246F1F5846
+	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 08:17:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747124707; cv=none; b=m9x4V3tXS8+sfSmnfDDge37SuxOMWI/njApcf5TOUIhl/mnlQ3lnCNt94CADs/zwIlYszrVTa+xWjR/X5DLV+nNSrfj3+kXwfPjWgVG9ZJyy70OvLqsk23KYO1CZjkvbwH4usQIfB0HP+91xAKXHIqampCRr3TnOOmXk3cAKzsQ=
+	t=1747124254; cv=none; b=mb1Sj4/o5/DqtVXZlNt4pFG2TQSFkcoeWilWVEXUYnwSI4TdFUqqI6JKJnJeV1kyJIJn2B7rLwCZkuoMpry6UdDxD3WCLfWm7yM6O6u8cCvP8vJs0nSkpYYmbWVA7NUhQeaQSlVONtaDcG7yfh0llESQJdIusE8RxKnp/xnN518=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747124707; c=relaxed/simple;
-	bh=01gdu2/D3CAIxFGAJYGAvo8jk4ASgCy9Nqsv/pOrLog=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=I7V5WlOnfS7w6kRKkkMj9zU4BoSVV4ZQS3dyRoF1nq8NY3QmXdtY90lTisPqvjIP9G4ADOo7hZ0YRnwSB9ZjfliSRIq7FfrIaL7g5mRxCtBzbNAaSphZUMRvgk3hr6agnTG9oaHiw6FHrgUMc6aoHNRIA3jSwcaI0w+69kNWiQM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4ZxTvJ1pjhzQkwZ;
-	Tue, 13 May 2025 16:21:00 +0800 (CST)
-Received: from kwepemk200016.china.huawei.com (unknown [7.202.194.82])
-	by mail.maildlp.com (Postfix) with ESMTPS id 76CDA140123;
-	Tue, 13 May 2025 16:25:00 +0800 (CST)
-Received: from huawei.com (10.67.174.78) by kwepemk200016.china.huawei.com
- (7.202.194.82) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 13 May
- 2025 16:25:00 +0800
-From: Yi Yang <yiyang13@huawei.com>
-To: <corey@minyard.net>
-CC: <openipmi-developer@lists.sourceforge.net>,
-	<linux-kernel@vger.kernel.org>, <lujialin4@huawei.com>
-Subject: [PATCH] ipmi: fix underflow in ipmi_create_user()
-Date: Tue, 13 May 2025 08:16:22 +0000
-Message-ID: <20250513081622.125071-1-yiyang13@huawei.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1747124254; c=relaxed/simple;
+	bh=imtAOFZMBRvPjAgJXNDOSRzTq4ZuJVm6bCoHiyVH9wo=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=g9J8Iil/YyOzpvZnR83wNt0jn7ZzryfSHX27XF1xhtI0+U0ckr8k8Uuc7sQbRFxAc6U4JScaR+NRG1stIrA4d47R+TwzRFGDB+zQdC7XGzS93ZlcaUDLgrEAzLxujej81E4sd3Fdz2FOW2c2Urnm0C13lPO0d7o7sy121jV2UvY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=afi0zDL4; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1747124253; x=1778660253;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=imtAOFZMBRvPjAgJXNDOSRzTq4ZuJVm6bCoHiyVH9wo=;
+  b=afi0zDL4diDRkatB6Lt5ALjG0opT72T/e06IxqUqadDU/wIlzFDEYUMb
+   PI3FFUQdKA7cNb1vU+OwMLB3MamvHA6jrGmSDyKCIG7CjstV6FLLcgs4Q
+   2fl5ku+fQ4IfMVAIw8IT9iesYASS0ZBVC1vOcMpwhHJ04vXk9JvDQwFzn
+   G6ClLuBiH9G5iF7JkX++6q19LZmDrruu+jTnDT1ad8TLwLoLW2pbR0916
+   fnJMribCVdSvW6LfLHp8R+8espDIzxT8KCcJtYPuvMpnWVcaW8Y+I51PO
+   HeMgc23weXRSPpAzCYfrASAMD0TVHSyva0avL/N2yTObXMb0Ctb8Qm79H
+   A==;
+X-CSE-ConnectionGUID: 9Zj48KoGScKESUhXDnx1EQ==
+X-CSE-MsgGUID: vUrvm5r6TImv1l9olYBuig==
+X-IronPort-AV: E=McAfee;i="6700,10204,11431"; a="66363902"
+X-IronPort-AV: E=Sophos;i="6.15,284,1739865600"; 
+   d="scan'208";a="66363902"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 May 2025 01:17:32 -0700
+X-CSE-ConnectionGUID: vXc74lFkRdmwNh6MCJ0KDA==
+X-CSE-MsgGUID: ETTnXM+uQSiDbZERlP22sQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,284,1739865600"; 
+   d="scan'208";a="138116109"
+Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
+  by fmviesa010.fm.intel.com with ESMTP; 13 May 2025 01:17:30 -0700
+Received: from kbuild by 1992f890471c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uEkpL-000Frf-0Y;
+	Tue, 13 May 2025 08:17:27 +0000
+Date: Tue, 13 May 2025 16:16:34 +0800
+From: kernel test robot <lkp@intel.com>
+To: Roman Gushchin <roman.gushchin@linux.dev>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Linux Memory Management List <linux-mm@kvack.org>
+Subject: mm/memcontrol-v1.c:1105:23: sparse: sparse: incompatible types in
+ comparison expression (different address spaces):
+Message-ID: <202505131641.826RQ1yc-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemk200016.china.huawei.com (7.202.194.82)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Syzkaller reported this bug:
-==================================================================
-BUG: KASAN: global-out-of-bounds in instrument_atomic_read_write include/linux/instrumented.h:96 [inline]
-BUG: KASAN: global-out-of-bounds in atomic_dec include/linux/atomic/atomic-instrumented.h:592 [inline]
-BUG: KASAN: global-out-of-bounds in ipmi_create_user.part.0+0x5e5/0x790 drivers/char/ipmi/ipmi_msghandler.c:1291
-Write of size 4 at addr ffffffff8fc6a438 by task syz.5.1074/5888
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   e9565e23cd89d4d5cd4388f8742130be1d6f182d
+commit: e548ad4a7cbf765f3ab74f6aa1aecc2df390a0b2 mm: memcg: move charge migration code to memcontrol-v1.c
+date:   10 months ago
+config: m68k-randconfig-r121-20250513 (https://download.01.org/0day-ci/archive/20250513/202505131641.826RQ1yc-lkp@intel.com/config)
+compiler: m68k-linux-gcc (GCC) 14.2.0
+reproduce: (https://download.01.org/0day-ci/archive/20250513/202505131641.826RQ1yc-lkp@intel.com/reproduce)
 
-CPU: 0 PID: 5888 Comm: syz.5.1074 Not tainted 6.6.0+ #60
-......
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x72/0xa0 lib/dump_stack.c:106
- print_address_description.constprop.0+0x6b/0x3d0 mm/kasan/report.c:364
- print_report+0xba/0x280 mm/kasan/report.c:475
- kasan_report+0xa9/0xe0 mm/kasan/report.c:588
- check_region_inline mm/kasan/generic.c:181 [inline]
- kasan_check_range+0x100/0x1c0 mm/kasan/generic.c:187
- instrument_atomic_read_write include/linux/instrumented.h:96 [inline]
- atomic_dec include/linux/atomic/atomic-instrumented.h:592 [inline]
- ipmi_create_user.part.0+0x5e5/0x790 drivers/char/ipmi/ipmi_msghandler.c:1291
- ipmi_create_user+0x56/0x80 drivers/char/ipmi/ipmi_msghandler.c:1236
- ipmi_open+0xac/0x2b0 drivers/char/ipmi/ipmi_devintf.c:97
- chrdev_open+0x276/0x700 fs/char_dev.c:414
- do_dentry_open+0x6a7/0x1410 fs/open.c:929
- vfs_open+0xd1/0x440 fs/open.c:1060
- do_open+0x957/0x10d0 fs/namei.c:3671
- path_openat+0x258/0x770 fs/namei.c:3830
- do_filp_open+0x1c7/0x410 fs/namei.c:3857
- do_sys_openat2+0x5bd/0x6a0 fs/open.c:1428
- do_sys_open fs/open.c:1443 [inline]
- __do_sys_openat fs/open.c:1459 [inline]
- __se_sys_openat fs/open.c:1454 [inline]
- __x64_sys_openat+0x17a/0x210 fs/open.c:1454
- do_syscall_x64 arch/x86/entry/common.c:51 [inline]
- do_syscall_64+0x59/0x110 arch/x86/entry/common.c:81
- entry_SYSCALL_64_after_hwframe+0x78/0xe2
-RIP: 0033:0x54d2cd
-Code: ff c3 66 2e 0f 1f 84 00 00 00 00 00 90 f3 0f 1e fa 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f4751920048 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
-RAX: ffffffffffffffda RBX: 0000000000796080 RCX: 000000000054d2cd
-RDX: 0000000000000000 RSI: 0000000020004280 RDI: ffffffffffffff9c
-RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
-R10: 000000000000001e R11: 0000000000000246 R12: 000000000079608c
-R13: 0000000000000000 R14: 0000000000796080 R15: 00007f4751900000
- </TASK>
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202505131641.826RQ1yc-lkp@intel.com/
 
-The buggy address belongs to the variable:
- ipmi_interfaces+0x38/0x40
+sparse warnings: (new ones prefixed by >>)
+>> mm/memcontrol-v1.c:1105:23: sparse: sparse: incompatible types in comparison expression (different address spaces):
+   mm/memcontrol-v1.c:1105:23: sparse:    struct task_struct [noderef] __rcu *
+   mm/memcontrol-v1.c:1105:23: sparse:    struct task_struct *
+   mm/memcontrol-v1.c:413:6: sparse: sparse: context imbalance in 'folio_memcg_lock' - wrong count at exit
+   mm/memcontrol-v1.c: note: in included file (through include/linux/sched.h, include/linux/cgroup.h, include/linux/memcontrol.h):
+   include/linux/spinlock.h:406:9: sparse: sparse: context imbalance in '__folio_memcg_unlock' - unexpected unlock
+   include/linux/spinlock.h:391:9: sparse: sparse: context imbalance in 'mem_cgroup_count_precharge_pte_range' - unexpected unlock
+   include/linux/spinlock.h:391:9: sparse: sparse: context imbalance in 'mem_cgroup_move_charge_pte_range' - unexpected unlock
 
-The buggy address belongs to the physical page:
-page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x45a6a
-flags: 0x3fffff00004000(reserved|node=0|zone=1|lastcpupid=0x1fffff)
-raw: 003fffff00004000 ffffea0001169a88 ffffea0001169a88 0000000000000000
-raw: 0000000000000000 0000000000000000 00000001ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
+vim +1105 mm/memcontrol-v1.c
 
-Memory state around the buggy address:
- ffffffff8fc6a300: 00 00 00 00 f9 f9 f9 f9 00 00 00 00 f9 f9 f9 f9
- ffffffff8fc6a380: 00 00 f9 f9 f9 f9 f9 f9 00 00 00 00 f9 f9 f9 f9
->ffffffff8fc6a400: 00 00 f9 f9 f9 f9 f9 f9 00 00 00 00 f9 f9 f9 f9
-                                        ^
- ffffffff8fc6a480: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
- ffffffff8fc6a500: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 f9 f9
-==================================================================
+  1058	
+  1059	int mem_cgroup_can_attach(struct cgroup_taskset *tset)
+  1060	{
+  1061		struct cgroup_subsys_state *css;
+  1062		struct mem_cgroup *memcg = NULL; /* unneeded init to make gcc happy */
+  1063		struct mem_cgroup *from;
+  1064		struct task_struct *leader, *p;
+  1065		struct mm_struct *mm;
+  1066		unsigned long move_flags;
+  1067		int ret = 0;
+  1068	
+  1069		/* charge immigration isn't supported on the default hierarchy */
+  1070		if (cgroup_subsys_on_dfl(memory_cgrp_subsys))
+  1071			return 0;
+  1072	
+  1073		/*
+  1074		 * Multi-process migrations only happen on the default hierarchy
+  1075		 * where charge immigration is not used.  Perform charge
+  1076		 * immigration if @tset contains a leader and whine if there are
+  1077		 * multiple.
+  1078		 */
+  1079		p = NULL;
+  1080		cgroup_taskset_for_each_leader(leader, css, tset) {
+  1081			WARN_ON_ONCE(p);
+  1082			p = leader;
+  1083			memcg = mem_cgroup_from_css(css);
+  1084		}
+  1085		if (!p)
+  1086			return 0;
+  1087	
+  1088		/*
+  1089		 * We are now committed to this value whatever it is. Changes in this
+  1090		 * tunable will only affect upcoming migrations, not the current one.
+  1091		 * So we need to save it, and keep it going.
+  1092		 */
+  1093		move_flags = READ_ONCE(memcg->move_charge_at_immigrate);
+  1094		if (!move_flags)
+  1095			return 0;
+  1096	
+  1097		from = mem_cgroup_from_task(p);
+  1098	
+  1099		VM_BUG_ON(from == memcg);
+  1100	
+  1101		mm = get_task_mm(p);
+  1102		if (!mm)
+  1103			return 0;
+  1104		/* We move charges only when we move a owner of the mm */
+> 1105		if (mm->owner == p) {
+  1106			VM_BUG_ON(mc.from);
+  1107			VM_BUG_ON(mc.to);
+  1108			VM_BUG_ON(mc.precharge);
+  1109			VM_BUG_ON(mc.moved_charge);
+  1110			VM_BUG_ON(mc.moved_swap);
+  1111	
+  1112			spin_lock(&mc.lock);
+  1113			mc.mm = mm;
+  1114			mc.from = from;
+  1115			mc.to = memcg;
+  1116			mc.flags = move_flags;
+  1117			spin_unlock(&mc.lock);
+  1118			/* We set mc.moving_task later */
+  1119	
+  1120			ret = mem_cgroup_precharge_mc(mm);
+  1121			if (ret)
+  1122				mem_cgroup_clear_mc();
+  1123		} else {
+  1124			mmput(mm);
+  1125		}
+  1126		return ret;
+  1127	}
+  1128	
 
-In the ipmi_create_user() function, the intf->nr_users variable has an
-underflow issue. Specifically, on the exception path (goto out_kfree;)
-before atomic_add_return(), calling atomic_dec() when intf->nr_users has
-not been incremented will result in an underflow.
-
-Fixes: 8e76741c3d8b ("ipmi: Add a limit on the number of users that may use IPMI")
-Signed-off-by: Yi Yang <yiyang13@huawei.com>
----
- drivers/char/ipmi/ipmi_msghandler.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/char/ipmi/ipmi_msghandler.c b/drivers/char/ipmi/ipmi_msghandler.c
-index 3ba9d7e9a6c7..27a12b31cfb6 100644
---- a/drivers/char/ipmi/ipmi_msghandler.c
-+++ b/drivers/char/ipmi/ipmi_msghandler.c
-@@ -1246,18 +1246,18 @@ int ipmi_create_user(unsigned int          if_num,
-  found:
- 	if (atomic_add_return(1, &intf->nr_users) > max_users) {
- 		rv = -EBUSY;
--		goto out_kfree;
-+		goto out_dec;
- 	}
- 
- 	INIT_WORK(&new_user->remove_work, free_user_work);
- 
- 	rv = init_srcu_struct(&new_user->release_barrier);
- 	if (rv)
--		goto out_kfree;
-+		goto out_dec;
- 
- 	if (!try_module_get(intf->owner)) {
- 		rv = -ENODEV;
--		goto out_kfree;
-+		goto out_dec;
- 	}
- 
- 	/* Note that each existing user holds a refcount to the interface. */
-@@ -1281,8 +1281,9 @@ int ipmi_create_user(unsigned int          if_num,
- 	*user = new_user;
- 	return 0;
- 
--out_kfree:
-+out_dec:
- 	atomic_dec(&intf->nr_users);
-+out_kfree:
- 	srcu_read_unlock(&ipmi_interfaces_srcu, index);
- 	vfree(new_user);
- 	return rv;
 -- 
-2.25.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
