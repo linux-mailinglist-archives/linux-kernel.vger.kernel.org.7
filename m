@@ -1,102 +1,122 @@
-Return-Path: <linux-kernel+bounces-646358-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-646361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DA3AAB5B54
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 19:31:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE184AB5B55
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 19:32:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7485C1698D9
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 17:30:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB6EA3A3B4C
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 17:31:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F9AB2BF3DF;
-	Tue, 13 May 2025 17:29:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AFA42BEC21;
+	Tue, 13 May 2025 17:30:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jQ1OAIti"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="VsGe6OfE"
+Received: from mail-il1-f179.google.com (mail-il1-f179.google.com [209.85.166.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFDCE645;
-	Tue, 13 May 2025 17:29:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 645652BFC72
+	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 17:30:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747157395; cv=none; b=UjXAS+vAGnfAj+7Ue3xTqhVhTbjwqM3FA46kWM+JEQC4/Fm4Wriwp++rmWBc/KRAQiz0I6Ia+NknGO3qNfkX5ePYRkd4WeXwuS1JaAJCNOmuxBeGRgIwjuXCc0G6zf8ZnS7emQk1HWeQHpTYo84bsWjACcPmhD/Ngg9fWey/dFg=
+	t=1747157439; cv=none; b=K72WtnVEYMK+1SQNrm9PvFdZwBW+NdRFNraMfqjVrkfVHlX8rrB2vdzVnc34T3US4oJtzLUsaGVpTMZNlZ5is68zwMkujSPPbf92ipBhZMokoiiF9RZSdWLNamGX6MqnLXLTxmCQLD6xZvN5KHI+X6686H+kusVGRYv4FZleHnw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747157395; c=relaxed/simple;
-	bh=rDjH67j5NwZSbVGkBa9rq3itDu9hCffVypBXkgjOTgE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Ya3RMy47wbRDhQ6bAELAuwTuan9EUbSjloGm8Z6X+sVQT5XmiMgzQhEzATcTUl4p/djJRsd/YyAIdn2bPrTjL3S2yljtDeb6q75dOyIHzc2U1WXyvi3WIcCEiHOA4JwlN4xIV++fQJt2IZTgMy7HI4rrt5qxdK23vjOWbWFhfig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jQ1OAIti; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD6BAC4CEE4;
-	Tue, 13 May 2025 17:29:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747157395;
-	bh=rDjH67j5NwZSbVGkBa9rq3itDu9hCffVypBXkgjOTgE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=jQ1OAItitifdmF8CDpkU6/7uu6waXKfKVLpQziSUL8VOfKyYvhjlyN0U82tRw3ZTP
-	 8eLBJrWxlIjLTDthgmPsDB+L+b47XdNU6puOevtQJ7J80fgF0iXEkKnYy6irVdv1nQ
-	 eUAP4Zqu253rx7Hx/iDgAA1SFBA/Rpz5GpNq5Hm59DW2WMp2M6/y4Ijh5TnbrMLhoj
-	 tuzq9bjt/sgrWPh4mvRSUngriq2ZNhRztGnoWQGbwuXyI6ZsQAPPizZlYUTdBPCwFd
-	 fAOBZnpNuPvGisqrKvR4I09j5K4rN06EV4XVP7ope2xDm57pl2jkehJ+sQiUcrWLIt
-	 WtSEnCuY6Jdjw==
-Date: Tue, 13 May 2025 10:29:54 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Roger Quadros <rogerq@kernel.org>
-Cc: Siddharth Vadapalli <s-vadapalli@ti.com>, Andrew Lunn
- <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Russell
- King <linux@armlinux.org.uk>, danishanwar@ti.com, srk@ti.com,
- linux-omap@vger.kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v3 8/9] net: ethernet: ti: am65-cpsw: add
- network flow classification support
-Message-ID: <20250513102954.2e537e99@kernel.org>
-In-Reply-To: <20250513-am65-cpsw-rx-class-v3-8-492d9a2586b6@kernel.org>
-References: <20250513-am65-cpsw-rx-class-v3-0-492d9a2586b6@kernel.org>
-	<20250513-am65-cpsw-rx-class-v3-8-492d9a2586b6@kernel.org>
+	s=arc-20240116; t=1747157439; c=relaxed/simple;
+	bh=1iKDHQ7jXvke4sxSCXjYm0GynBjrTYyOGP275PTOFfM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=b5YA8KP1zXm0x2q0EEidrXHisLFdtXz2dtkKg5rEP/CiL80NL6g7bT0qOGY0gExkLqOr96BlUgN8C7loKT6C5Q/skssoPiBLVEnnH1Ux7sOokhYkj42/m5zTkEhET3F5Uy0StfBqg99lSUliD4r+AjrSR6shEXYUfYQFyQTAjmc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=VsGe6OfE; arc=none smtp.client-ip=209.85.166.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-il1-f179.google.com with SMTP id e9e14a558f8ab-3d96d16b375so28146555ab.1
+        for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 10:30:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1747157436; x=1747762236; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=3tW6PygMdjeagRmJ6icjOyCgBVvMDYmBZ2dFiMgydeM=;
+        b=VsGe6OfEoYw/3FDhDqPWJa4jARAC7F2gNSTfsiuvDBTqFcwAeJuNYo+Sb6dLsF6mOP
+         7e+SSyw7v+r+EkxlxGbbjvc/zk93FSHGWATuSwfRIr02132oX+1cNdQB3L75RhCxxaW1
+         4w8rsYXSmlicwpJG7Q6vmAOaYxJmMMEipt9RI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747157436; x=1747762236;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3tW6PygMdjeagRmJ6icjOyCgBVvMDYmBZ2dFiMgydeM=;
+        b=U2ZuZZMAxF4bvMjPdvT81pYWsxqxjqnKRu+khmk6MMrIOOn4QF1CBsAVHlMRAhQYs6
+         qq1t+qKnwCfE+dk6oH6KfOfO750/XVk7jn+iZrzmKdGQ/DiBUUQJxnRVJkDCKSM0DM8N
+         r0Wg8rgMk20n9kJdPKGNyzA2UickmMe871yxmYdx8NJnjZmEuA9AWw2uMTY0xEBOPGv3
+         BSA+Jd6dHrhVQKQZkrGqa69UvqU4wfNzsPDzVjN/TkUkH54k9KyXssKeN6dBzPM2fGAV
+         ChRNiP9TMkHngN0CH4QUddw8grAeOKWBQVSszMhw2z+oC2iLTqvF7Sdrrm3/yOOGN4DR
+         3/4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUPP2GyWtCIfS4AaNe7biHV7fSJ2z3yfYWyYlTtZ4puqShdHMlLbzTlwWavWmZ7m/6hKV4Gklvppa8g5ZI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxfO8B1QmPiGWR0udXeoFiCLXDQ1g6O3Vuatdk13SOIzuH7axqG
+	3jMQuXORrafJAqpHPFNYU1GtLOumbq26gL+GMIunzWbC+wni9TjiGoE+a4hO7NM=
+X-Gm-Gg: ASbGncsHz+UfgLMHjbFrmTc9ctFi+SezTBO9IP0EuOC4RGunpzFWxsboTT88blst5rS
+	7gBG1nNVnZSxXdtWKFGyexn0ONu5mtmvBoo7+TPjaKMiJtynDTT4MJ9H26zDrcgTD2ORlkdyiif
+	dBabIlyMG68cPiJ5P4IVta6/Mt1mVcyDwtJqfUAzj7gogQbUuFZPI0FlRWJZgcrU5krf8xMvuZB
+	kCXe4iTE3uufDcEZXm/L40woMGD1Fh94Y1RCV3ziyrnqq+6/HYbGSrXUvnFGt3TiL9dZ/3xp3HY
+	PUE9PNhKnDzh8jOTV97YuR0y0QZDPs7MYyOeffYxGZw/FHHP9SFh6UDwfEbRFQ==
+X-Google-Smtp-Source: AGHT+IF33HkKIK0AZPxW0+9c8b+moPUF3LhmDZ8Yvqpj+8WXLkf1qZtasqM1OUW5b7g99xgQbCY/hA==
+X-Received: by 2002:a05:6e02:178d:b0:3d3:fdcc:8fb8 with SMTP id e9e14a558f8ab-3db6f7a04c9mr3577145ab.10.1747157436272;
+        Tue, 13 May 2025 10:30:36 -0700 (PDT)
+Received: from [192.168.1.14] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4fa224a1415sm2209822173.14.2025.05.13.10.30.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 13 May 2025 10:30:35 -0700 (PDT)
+Message-ID: <79f86562-af5d-474d-a971-7ae20c5cf011@linuxfoundation.org>
+Date: Tue, 13 May 2025 11:30:35 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.14 000/197] 6.14.7-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20250512172044.326436266@linuxfoundation.org>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20250512172044.326436266@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On Tue, 13 May 2025 15:13:12 +0300 Roger Quadros wrote:
-> +	mutex_lock(&port->rxnfc_lock);
-> +	loc = am65_cpsw_policer_find_match(port, &cfg);
-> +	if (loc >= 0 && loc != fs->location) {
-> +		netdev_info(port->ndev,
-> +			    "rule already exists in location %d. not adding\n",
-> +			    loc);
-> +		mutex_unlock(&port->rxnfc_lock);
-> +		return -EINVAL;
-> +	}
-> +
-> +	/* delete exisiting rule */
-> +	if (loc >= 0) {
-> +		rule = am65_cpsw_get_rule(port, loc);
-> +		if (rule)
-> +			am65_cpsw_del_rule(port, rule);
-> +	}
-> +
-> +	rule = devm_kzalloc(port->common->dev, sizeof(*rule), GFP_KERNEL);
+On 5/12/25 11:37, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.14.7 release.
+> There are 197 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Wed, 14 May 2025 17:19:58 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.14.7-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.14.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
 
-please don't use devm_ for objects you must support explicitly freeing
+Compiled and booted on my test system. No dmesg regressions.
 
-> +	if (!rule)
-> +		return -ENOMEM;
+Tested-by: Shuah Khan <skhan@linuxfoundation.org>
 
-missing unlock
-
-> +
-> +	INIT_LIST_HEAD(&rule->list);
-> +	memcpy(&rule->cfg, &cfg, sizeof(cfg));
-> +	rule->location = fs->location;
-> +	ret = am65_cpsw_add_rule(port, rule);
-> +	mutex_unlock(&port->rxnfc_lock);
--- 
-pw-bot: cr
+thanks,
+-- Shuah
 
