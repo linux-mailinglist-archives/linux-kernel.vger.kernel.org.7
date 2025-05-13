@@ -1,172 +1,191 @@
-Return-Path: <linux-kernel+bounces-645093-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-645095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FB83AB48E3
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 03:42:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79D32AB48ED
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 03:48:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD9F23BB1FD
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 01:42:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E97A31B41549
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 01:49:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FE5D18FDAF;
-	Tue, 13 May 2025 01:42:14 +0000 (UTC)
-Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACE53A923;
-	Tue, 13 May 2025 01:42:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A4DE192B96;
+	Tue, 13 May 2025 01:48:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Grat5Sfy"
+Received: from mail-il1-f179.google.com (mail-il1-f179.google.com [209.85.166.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 386EF18DB20;
+	Tue, 13 May 2025 01:48:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747100534; cv=none; b=S68MUuuKhruhs3w/DFO58vulbKV/ZJoY9Fofrx4EH2opalJYDyiDYb7Obhuq4AqbHBqwQ48CYIyd2Qn8NIJd7CJCz7/T9uHRTy6yKTrGPlm0d06YkOklPPaDDHqAkGst8BSXIzryKzN2OdYFHmRUDA91lMsI3GiZgtQqIZ9gCAw=
+	t=1747100933; cv=none; b=aeRZRNF/JED0HHzPZZZ66bEU2+QSF6+HgY5N42fRloTas7xUZ4UqybujxTwpN4TKzJF59uu14ccLBZU63/3ZaSI+2iNMIbLfXvnwuFP/pTqcUgAel3TmPTa46M7VHGPNRF2NG1FfIY1gNiXOW9dBpAkbi3w7DBpadZTdRDfgR3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747100534; c=relaxed/simple;
-	bh=rYDxXy9y3PLlV7ocDiHDrUaSVSn/oVTrMP9BcBY02Ak=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WHptrz3u4ApSws6qazwbExDHlIAoFzY8co3/mIrp20ZXM1IVY5dnhGr+ZAtjxkEXAjliwVhS9DDK/HIrvTNwuMQ64oa4gEnrupwlGavWqv1wHwf6CtBUg0udCMsFb1RdPqT0NkW/L7TSwv+pN1wCknj3Xg781eycAy7f7Iidd+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-681ff7000002311f-f3-6822a36d9452
-Date: Tue, 13 May 2025 10:42:00 +0900
-From: Byungchul Park <byungchul@sk.com>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, kernel_team@skhynix.com, kuba@kernel.org,
-	almasrymina@google.com, ilias.apalodimas@linaro.org,
-	harry.yoo@oracle.com, hawk@kernel.org, akpm@linux-foundation.org,
-	ast@kernel.org, daniel@iogearbox.net, davem@davemloft.net,
-	john.fastabend@gmail.com, andrew+netdev@lunn.ch,
-	edumazet@google.com, pabeni@redhat.com, vishal.moola@gmail.com
-Subject: Re: [RFC 19/19] mm, netmem: remove the page pool members in struct
- page
-Message-ID: <20250513014200.GA577@system.software.com>
-References: <20250509115126.63190-1-byungchul@sk.com>
- <20250509115126.63190-20-byungchul@sk.com>
- <aB5DNqwP_LFV_ULL@casper.infradead.org>
- <20250512125103.GC45370@system.software.com>
- <aCII7vd3C2gB0oi_@casper.infradead.org>
+	s=arc-20240116; t=1747100933; c=relaxed/simple;
+	bh=x3TOf3D2FWDM+vKIdsFexUN5txpyfGA8qZQSZAZ1u7E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fXcNvWW4gnU7ETHrY+TC36386cIfXD4TAD650Nb88PSU1pttHmOLrJqwM2+GFjbY7VJQ59PmSjwk7kLl5dimIhiwKalmQ7IyAAlUHyavrEJBVC+t9lhJSsMWlg6tVYCP3ixTsnlwt2ku98TNzijrvnbkUkx8sep6PcC68E6KoQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Grat5Sfy; arc=none smtp.client-ip=209.85.166.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-il1-f179.google.com with SMTP id e9e14a558f8ab-3d817bc6eb0so26565515ab.1;
+        Mon, 12 May 2025 18:48:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747100931; x=1747705731; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SW1vH0Jzp28bsUcst3vDejenUL61vJR3lM75Rj7bO1E=;
+        b=Grat5SfyhmbSMZ/eU15gvjdR6iW2yLIqCNo9KGoNK4xDCIzDhZKqSu9VjUtP7b/maE
+         0Trua0qAVJ6tLHIeio2/sMJkXiQmUNNe8OGBmOZEppwR77+Vwr9zIHSTxnXicAp3p6yc
+         +g29MxL7SMejQPgJctaM5HrupRagJhVY3d/zuw3h/nvRgFBx92GNmHCFZOFO/GBWBTEy
+         XMD6jGaeZHw5RKOD0atkwRl74zrkIOZSI59e2hKu59VAs9tPiXiHGcKGL6o178/HojfE
+         L2ZqD4ybgh2eeKtsh2QCXXb24bgEIbadyLuR5QPd6Ct56mWbJ1yR/LSVMO+RaoS70SDA
+         S2sA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747100931; x=1747705731;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SW1vH0Jzp28bsUcst3vDejenUL61vJR3lM75Rj7bO1E=;
+        b=evb1kwXAiMn27Yt6fCZn0HwzpcSlThKHws39i6NQDNLz8otFQztsbR6QMVsGExhkxw
+         a2c+TgjDvodKKrBflDAVXwtIXBmXbV+av5E7khK757CkzNzApWm8H7h4qEIT0YSC1/w0
+         A3BbtUV9G9YlG86dzW4MuefWwdvbwlmfp7LicEbbHrxErfzmxjARSY4udpQzgUNyG02W
+         SgHOoQzoYru5+XAuNulAlbGaDAahjBzjclaA6fC0dkZ+MksBrWvA6WMyJWhcJvTznvWg
+         4OjPIu831po0j08LOCnkwqjeg5AIaTKUwge3id1o+yzOEN3ZQ/qSWaFCmw7+w/tPj75n
+         FcKw==
+X-Forwarded-Encrypted: i=1; AJvYcCVKysogt+pWFX+qhOWWMmSLxEtOg9sBmA7EakYufGs7cNITRDfSoyrsriF1QsrHTpGlCEYMQjKf1EnPv1nL@vger.kernel.org, AJvYcCXgGqNAcdMNMXZYHkuuNOwdzG+gIyy76I2tiLNt654Rsk7R7/4lPOoWZfNSP2Di+ebtiplu7Ub1g6NQ7YFbpDH5exfS@vger.kernel.org, AJvYcCXmFKlTUNgL7C2U8n1wcuK9yaElKCHObtV+oIPPXYaIKIJmvYp/i/WeIOZpgDUAzoXEHK566Hx/3IBAfg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzdNVZj+0CNji3n9QipCKUOl+l779LYF6+iRB3DKNqK2EFVrij2
+	7PtDpM7OLez+BAdAW4wxs4a0AUriZyroRhD5wvrUTmV00yrq3Lhe8KjiUyt4l+RKWus2JmB44w9
+	bdIIwyqvFEs+P/H5Jh5ZfD5MVINc=
+X-Gm-Gg: ASbGncth5lg2zWdIsh6phxKmJDP2GTJ1rVW72QD6H+3fW+3oY+Owl16QV55nzI4DGn4
+	lfXWCo4+wCynbhegyS+qbg/ilXa0s1qb86l8Y9IivdK2NnWRFGsORUfFmlSdSbhjGZHefyu3Ala
+	VIpzwk0ItGQx8WXW834LxcXYnKdAW7gARV
+X-Google-Smtp-Source: AGHT+IHtCZvGHP0FlostcRVpw3BIL1zFyR5i25Fiv+uh+LoyA8D4ZkHvT9+lvD5OKFqShdni0Nm68GpXZBc1Y2DkqSE=
+X-Received: by 2002:a05:6e02:152e:b0:3d0:47cf:869c with SMTP id
+ e9e14a558f8ab-3da7e21350fmr163199335ab.19.1747100931046; Mon, 12 May 2025
+ 18:48:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aCII7vd3C2gB0oi_@casper.infradead.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrIIsWRmVeSWpSXmKPExsXC9ZZnoW7uYqUMg6lP9C3mrF/DZrH6R4XF
-	8gc7WC2+/LzNbrF44TdmiznnW1gsnh57xG5xf9kzFos97duZLXpbfjNbNO1YwWRxYVsfq8Xl
-	XXPYLO6t+c9qcWyBmMW3028YLdbvu8Fq8fvHHDYHIY8tK28yeeycdZfdY8GmUo/NK7Q8um5c
-	YvbYtKqTzWPTp0nsHneu7WHzODHjN4vHzh2fmTw+Pr3F4vF+31U2j8+b5AJ4o7hsUlJzMstS
-	i/TtErgyHny6yV5wRqTi1cITrA2MB/m7GDk5JARMJPrX7GSBsRfcf88MYrMIqEq0z2tmArHZ
-	BNQlbtz4CRTn4BAR0JB4s8UIJMwssJRZYvpUYRBbWCBIYvLjh+wgNq+AmcSJY9eARnJxCAk8
-	ZZT42P6NCSIhKHFy5hMWiGYtiRv/XjKBzGQWkJZY/o8DJMwJdMKOaSfAThAVUJY4sO04E8gc
-	CYFt7BKde3cyQtwpKXFwxQ2WCYwCs5CMnYVk7CyEsQsYmVcxCmXmleUmZuaY6GVU5mVW6CXn
-	525iBEbksto/0TsYP10IPsQowMGoxMN74qVihhBrYllxZe4hRgkOZiUR3sbtQCHelMTKqtSi
-	/Pii0pzU4kOM0hwsSuK8Rt/KU4QE0hNLUrNTUwtSi2CyTBycUg2M2QcWRbIJv3lW+Yhjylvm
-	rG86i6auFZVzP/HJxS+vXbpP5usbWVO/a7mtPjEChhrap0QytBZ7rmFcxnQjOyfrx2SGpb+P
-	O3u8Eo5+tkDk7/tXrlNe8acEGkyxP10mOt/EombpjfTzKXvrk47+TPzAH373+q5MJUl5nhny
-	F8z9JIyEJJTSz1gpsRRnJBpqMRcVJwIAULd02MQCAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprBIsWRmVeSWpSXmKPExsXC5WfdrJu7WCnDYEGbssWc9WvYLFb/qLBY
-	/mAHq8WXn7fZLRYv/MZsMed8C4vF02OP2C3uL3vGYrGnfTuzRW/Lb2aLph0rmCwOzz3JanFh
-	Wx+rxeVdc9gs7q35z2pxbIGYxbfTbxgt1u+7wWrx+8ccNgdhjy0rbzJ57Jx1l91jwaZSj80r
-	tDy6blxi9ti0qpPNY9OnSewed67tYfM4MeM3i8fOHZ+ZPD4+vcXi8X7fVTaPxS8+MHl83iQX
-	wBfFZZOSmpNZllqkb5fAlfHg0032gjMiFa8WnmBtYDzI38XIySEhYCKx4P57ZhCbRUBVon1e
-	MxOIzSagLnHjxk+gOAeHiICGxJstRiBhZoGlzBLTpwqD2MICQRKTHz9kB7F5BcwkThy7xtLF
-	yMUhJPCUUeJj+zcmiISgxMmZT1ggmrUkbvx7yQQyk1lAWmL5Pw6QMCfQCTumnQA7QVRAWeLA
-	tuNMExh5ZyHpnoWkexZC9wJG5lWMIpl5ZbmJmTmmesXZGZV5mRV6yfm5mxiB8bWs9s/EHYxf
-	LrsfYhTgYFTi4T3xUjFDiDWxrLgy9xCjBAezkghv43agEG9KYmVValF+fFFpTmrxIUZpDhYl
-	cV6v8NQEIYH0xJLU7NTUgtQimCwTB6dUA6NGzgHf3cJMzN8q9k98M2dWn2mmKK9jdUdXuuL6
-	+PYH67KmFxd+WXFVoCHz9hNBzV75upZTvH676/dPO7hl6l5z6cApgqHTnCfXLFrhe/xf991G
-	1ppJtyY+KX22q0nsYFOiQrvzO86+f0tKp+3UvjBbuuzsUbFf/i/MmY2urLTcflNa9VDwwo1K
-	LMUZiYZazEXFiQBGBXztqwIAAA==
-X-CFilter-Loop: Reflected
+References: <20250512024935.64704-1-kerneljasonxing@gmail.com>
+ <20250512024935.64704-3-kerneljasonxing@gmail.com> <20250512175156.7d3d4db53d40c7a34c1f68d6@linux-foundation.org>
+In-Reply-To: <20250512175156.7d3d4db53d40c7a34c1f68d6@linux-foundation.org>
+From: Jason Xing <kerneljasonxing@gmail.com>
+Date: Tue, 13 May 2025 09:48:15 +0800
+X-Gm-Features: AX0GCFu3dnfm7WHKsdIPBdU5to--emIww-Hx9wLCflP5g0dm6SEaFE2ROEHeUQM
+Message-ID: <CAL+tcoDk2TFwAWPwBN+dQQ+guxe71F_R1rFX_f9wozjPpujBAQ@mail.gmail.com>
+Subject: Re: [PATCH v1 2/5] relayfs: introduce dump of relayfs statistics function
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: axboe@kernel.dk, rostedt@goodmis.org, mhiramat@kernel.org, 
+	mathieu.desnoyers@efficios.com, linux-kernel@vger.kernel.org, 
+	linux-block@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	Jason Xing <kernelxing@tencent.com>, Yushan Zhou <katrinzhou@tencent.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, May 12, 2025 at 03:42:54PM +0100, Matthew Wilcox wrote:
-> On Mon, May 12, 2025 at 09:51:03PM +0900, Byungchul Park wrote:
-> > On Fri, May 09, 2025 at 07:02:30PM +0100, Matthew Wilcox wrote:
-> > > > +		struct __netmem_desc place_holder_1; /* for page pool */
-> > > >  		struct {	/* Tail pages of compound page */
-> > > >  			unsigned long compound_head;	/* Bit zero is set */
-> > > >  		};
-> > > 
-> > > The include and the place holder aren't needed.
-> > 
-> > Or netmem_desc overlaying struct page might be conflict with other
-> > fields of sturct page e.g. _mapcount, _refcount and the like, once the
-> > layout of struct page *extremly changes* in the future before
-> > netmem_desc has its own instance.
-> 
-> That's not how it'll happen.  When the layout of struct page changes,
-> it'll shrink substantially (cut in half).  That means that dynamically
-> allocating netmem_desc must happen first (along with slab, folio, etc,
-> etc).
+On Tue, May 13, 2025 at 8:51=E2=80=AFAM Andrew Morton <akpm@linux-foundatio=
+n.org> wrote:
+>
+> On Mon, 12 May 2025 10:49:32 +0800 Jason Xing <kerneljasonxing@gmail.com>=
+ wrote:
+>
+> > From: Jason Xing <kernelxing@tencent.com>
+> >
+> > In this version, only support dumping the counter for buffer full and
+> > implement the framework of how it works. Users MUST pass a valid @buf
+> > with a valid @len that is required to be larger than RELAY_DUMP_BUF_MAX=
+_LEN
+> > to acquire which information indicated by @flags to dump.
+> >
+> > RELAY_DUMP_BUF_MAX_LEN shows the maximum len of the buffer if users
+> > choose to dump all the values.
+> >
+> > Users can use this buffer to do whatever they expect in their own kerne=
+l
+> > module, say, print to console/dmesg or write them into the relay buffer=
+.
+> >
+> > ...
+> >
+> > +/**
+> > + *   relay_dump - dump statistics of the specified channel buffer
+> > + *   @chan: the channel
+> > + *   @buf: buf to store statistics
+> > + *   @len: len of buf to check
+> > + *   @flags: select particular information to dump
+> > + */
+> > +void relay_dump(struct rchan *chan, char *buf, int len, int flags)
+>
+> `size_t' is probably a more appropriate type for `len'.
+>
+> > +{
+> > +     unsigned int i, full_counter =3D 0;
+> > +     struct rchan_buf *rbuf;
+> > +     int offset =3D 0;
+> > +
+> > +     if (!chan || !buf || flags & ~RELAY_DUMP_MASK)
+> > +             return;
+> > +
+> > +     if (len < RELAY_DUMP_BUF_MAX_LEN)
+> > +             return;
+>
+> So we left the memory at *buf uninitialized but failed to tell the
+> caller this.  The caller will then proceed to use uninitialized memory.
+>
+> It's a programming error, so simply going BUG seems OK.
 
-Just in case, lemme explain what I meant, for *example*:
+Are you suggesting that I should remove the above check because
+developers should take care of the length of the buffer to write
+outside of the relay_dump function? or use this instead:
+WARN_ON_ONCE(len < RELAY_DUMP_BUF_MAX_LEN);
+?
 
-	struct page {
-		unsigned long flags;
-		union {
-			struct A { /* 24 bytes */ };
-			struct B { /* 40 bytes */ };
-			struct page_pool { /* 40 bytes */ };
-		};
-		atomic_t _mapcount;
-		atomic_t _refcount;
-		unsigend long memcf_data;
-		...
-	};
+>
+> > +     if (chan->is_global) {
+> > +             rbuf =3D *per_cpu_ptr(chan->buf, 0);
+> > +             full_counter =3D rbuf->stats.full;
+> > +     } else {
+> > +             for_each_possible_cpu(i) {
+>
+> I'm thinking that at this stage in the patch series, this should be
+> for_each_online_cpu(), then adjust that in patch [5/5].
 
-	/* overlayed on struct page */
-	struct netmem_desc { /* 8 + 40 bytes */ };
+Point taken. Will change it.
 
-After removing page_pool fields:
+>
+> > +                     if ((rbuf =3D *per_cpu_ptr(chan->buf, i)))
+> > +                             full_counter +=3D rbuf->stats.full;
+> > +     }
+> > +
+> > +     if (flags & RELAY_DUMP_BUF_FULL)
+> > +             offset +=3D snprintf(buf, sizeof(unsigned int), "%u", ful=
+l_counter);
+>
+> This seems strange.  sizeof(unsigned int) has nothing to do with the
+> number of characters which are consumed by expansion of "%u"?
 
-	struct page {
-		unsigned long flags;
-		union {
-			struct A { /* 24 bytes */ };
-			struct B { /* 40 bytes */ };
-		};
-		atomic_t _mapcount;
-		atomic_t _refcount;
-		unsigend long memcf_data;
-		...
-	};
+Sorry, my bad. It should be:
+offset +=3D snprintf(buf, len, "%u", full_counter);
 
-	/* overlayed on struct page */
-	struct netmem_desc { /* 8 + 40 bytes */ };
+Passing 'len' as the second parameter.
 
-The above still looks okay cuz operating on struct netmem_desc is not
-touching _mapcount or _refcount in struct page.
+Thanks,
+Jason
 
-However, either the size of struct B gets reduced to 32 bytes or struct B
-gets away out of struct page for some reason, it will look like:
-
-	struct page {
-		unsigned long flags;
-		union {
-			struct A { /* 24 bytes */ };
-			struct B { /* 32 bytes */ };
-		};
-		atomic_t _mapcount;
-		atomic_t _refcount;
-		unsigend long memcf_data;
-		...
-	};
-
-	/* overlayed on struct page */
-	struct netmem_desc { /* 8 + 40 bytes */ };
-
-In here, operating on struct netmem_desc can smash _mapcount and
-_refcount in struct page unexpectedly, even though sizeof(struct
-netmem_desc) <= sizeof(struct page).  That's why I think the place holder
-is necessary until it completely gets separated so as to have its own
-instance.
-
-If you believe it's still okay, I will remove the place holder, I still
-concern it tho.
-
-	Byungchul
+>
+> > +
+> > +     snprintf(buf + offset, 1, "\n");
+> > +}
+> > +EXPORT_SYMBOL_GPL(relay_dump);
+> > +
+> >  /**
+> >   *   relay_file_open - open file op for relay files
+> >   *   @inode: the inode
+>
 
