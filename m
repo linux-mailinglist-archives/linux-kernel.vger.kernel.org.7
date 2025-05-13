@@ -1,107 +1,144 @@
-Return-Path: <linux-kernel+bounces-645838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-645836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C847AB5451
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 14:09:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8029DAB544A
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 14:08:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D974919E306E
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 12:09:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CDF017AB46C
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 12:07:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFFD928DB61;
-	Tue, 13 May 2025 12:08:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4556928DB55;
+	Tue, 13 May 2025 12:08:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KUt3oRlj"
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vE54ruPn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DAF328D8E1;
-	Tue, 13 May 2025 12:08:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F08A28CF7C;
+	Tue, 13 May 2025 12:08:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747138128; cv=none; b=UszLGA7RJ3A+LeVSKoJ06uUXtzifdhaIN0PaNIaaU/KDskvbstR96p87q36r8TgwWuz45wl5CtFihUEsaIs9qT4SJdbAg3tVEDdM1PqqC7GFaIs7PRrIED4TKSZIRhXw1Keg4+y9LudMyvSd5tKz+Vjf+e9yrhW68MJSo4R7h44=
+	t=1747138094; cv=none; b=pDVa51dRzzEUkfv1oVdh53imtQRC9qh4/bfN+S0sYTXKE8gjzUt9yeY4lUIa+0bbJD0HWeV2qBW1sIxzB+oRCx6BPoaAjUGvNQNUfuuMNicGQJ42uGvqBc1yP5uA9IKgwcXk2aIYC9js2VXpIqD4vSon8IByC11XOF2tooUowb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747138128; c=relaxed/simple;
-	bh=dMHzz5tzd1ICKFVkktLHxlzaG7qeymN47rI8cBJtqyo=;
+	s=arc-20240116; t=1747138094; c=relaxed/simple;
+	bh=nqVdR12YYsEgA9wg1QecAZn4HrTlrPXWWZSXA3wGALI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ushZwCyc6GYFO75W8IuYrFXI0RebYBU4OM3ekUXwawfx9aA2VdwJPD/2RBR5XYOkSeYY/sWDT0GEgIz/kCEM0823tOZ5d5dXffNEZrA4RLJ85qvIvZFZc/AoO8IbGUaqx+TTfMshSQxqSVKb8UnX5nqZmvHY+0p9lDkwsXK+4zw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KUt3oRlj; arc=none smtp.client-ip=209.85.160.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-47ae894e9b7so106041141cf.3;
-        Tue, 13 May 2025 05:08:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747138125; x=1747742925; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=rXpq8NdQs0fa1HgD02snCKsscsp0ZvSqlbbvw6xLy7s=;
-        b=KUt3oRljeVGLRCQLXHf573N9LEKOm2lKqeiILFAMMb1bIN4Zgx4dWkiA12+3FmL3xK
-         CE0QPRqgaBYNhvvmXkHGUzbAy3qUMBCHtriUYuf301Leus+TBwWfGNVykaEYHkhs6+wp
-         jHQMdoYc29WMazhbhpO6PYJ70ZCHpR6pAQQNtg2F7nQCOmGrQSuYHfxiw0awFzhAMTWj
-         5bh5BjIvAzkD/Eo6l/gyP/afz0X3FLgPeimBsXC+2Ft8jfUfSZ8y9EW5XBwclb5pQByP
-         KG5BOSd2Nf1mbMuN2aqeUGc21lUMrl3/t7fEefHYtgX9ia6q5eC64VVilzTJOxJ0Mrwu
-         0OEA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747138125; x=1747742925;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rXpq8NdQs0fa1HgD02snCKsscsp0ZvSqlbbvw6xLy7s=;
-        b=K8fW1kSTcGqhfSYCQdNYrls4GMVxGfWKRpqL3O0xVbK7lIlJc9A279+ZI/NMlerMlD
-         ACPubgYZ6j1gATMAax1ytogH0MiH1OypDH3weUqaCgrD1IpJEDsmWnJQualyrq5L1oF+
-         ksk/StrVlmfjbbI0fk2KNKDA1Min6rG+pXHrznSZsrrhit0tcvk7KUN9RKGKtdrcDuaa
-         lWc2Jjp1CLzmN5lnlKT9jWYO8P+rD1clUVzQ849uLIiHzyCNhPhKOeGpHEtmt6yja319
-         zWtRLMTUnADLtgIVJlSqmHCdMlJxl4jA2rSMJfHKVS5FKmm6j8SnJUzHdfSDaeNCTrQy
-         /z4g==
-X-Forwarded-Encrypted: i=1; AJvYcCUdbD0XZ5TlHolc2QmLVdAR+yYqhpeUkNs7Y5deG9RdgMmTbv81j4Iedap0Bw2GnQfRL8I8eDCxvujUtUs=@vger.kernel.org, AJvYcCVI2BKOGivufTWbMY3AH4getE3AzAqrEndHd//bRHHW436hljlX+0PUMFVKAFFVSfEC+hLkK6+oEoXeXQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3wsx0HmWnfhsjo/DbAM7bWiX0/tUc09/KJAKBux8opk732boH
-	FkkT7fXRWnlKPKkVdBYjwnvQtdlp4QzVHUMthbcbvHGmOQTKChiPdyVFYQ==
-X-Gm-Gg: ASbGncufCPRWBu9ESxLPFs+bbMu+n+TOq/XLjLoGUj8XQ/6kRIrSmy7WV+C+YV+0fm0
-	HPjVajPUd3qgekAeyqenFfaR6pcRITU+s9KICrNFIgChzIP9c9ffAT/dLofGxpC28RqMD21D93O
-	nQV/mSuKDecf79XnDObQ5neZEUoyDYO1T6DLung8ErLGxnrCMyJxC+GR4ab8tsj2A6a+dCR5lcy
-	7PXi+bkcDz/l8M12Rj3jvd4eY4sPfTwENvMcCcZ0MJg7ixPuq0ybvZMhwusVG+QytgLzkGmqdQg
-	35czR2d6rYl5aJ2H6GnYMCb011U=
-X-Google-Smtp-Source: AGHT+IE7hg05ziOfHCSRT9s+Ycugp84ZesRfC+meOugVTB5nYfHf5EMqHWHiud9XEC1hvSCf8x9v4g==
-X-Received: by 2002:a05:622a:4895:b0:494:7aac:58f0 with SMTP id d75a77b69052e-4947aac59d7mr89347131cf.36.1747138114655;
-        Tue, 13 May 2025 05:08:34 -0700 (PDT)
-Received: from localhost ([2001:da8:7001:11::cb])
-        by smtp.gmail.com with UTF8SMTPSA id d75a77b69052e-494524bb96dsm65917991cf.44.2025.05.13.05.08.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 May 2025 05:08:34 -0700 (PDT)
-Date: Tue, 13 May 2025 20:08:03 +0800
-From: Inochi Amaoto <inochiama@gmail.com>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, 
-	Inochi Amaoto <inochiama@gmail.com>
-Cc: Chen Wang <unicorn_wang@outlook.com>, 
-	Inochi Amaoto <inochiama@outlook.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: warning when fetching the sophgo tree
-Message-ID: <7qxtfj4hn6aqkwzy4phm5jargj2cwkceisverwwlpgw7bdega7@h3dlnnnw6ja7>
-References: <20250513212242.2f951e70@canb.auug.org.au>
- <5muhaygt7rpuyvtx4ppmuuebsqqh7z4bp43c7akmuimxhrnqva@hobausqvilur>
- <20250513215822.3c026a3b@canb.auug.org.au>
+	 Content-Type:Content-Disposition:In-Reply-To; b=uRyQ/OpTZikoNEGeq8WILWDMT5BAmRqmGd5c5w7gYSRsVVGeF7GDSWxswEsm/fpvE9b0Es3tHiM78vfhXp6fD9yvB4BhNbrM0JmXSlOevzRXruyGCASawUsXqQlX6UFcVkvj2tkdtCPjnDIkCLwmJWSn5J+7pVh3ykVx9DP+EPs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vE54ruPn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA81DC4CEE9;
+	Tue, 13 May 2025 12:08:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747138094;
+	bh=nqVdR12YYsEgA9wg1QecAZn4HrTlrPXWWZSXA3wGALI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=vE54ruPnrf7doS5E2jmmYBdkmsTxo5FaflAHRDTNm3+f96CbeOAw5Y8y7vhbVyWJD
+	 Uz9mycdK2xwg7Pbhrg/UzEg42hQUhqMd7nE38Cv13JKcmwVMkxE4sPl/ygRcNAB/6L
+	 umR60O7gs/mGFegfMKRcOARPtLnnjMNrcOkGNzi1EfbI/FczzhegjEYUv3ePST8nW8
+	 lJUprhs8t2C8t219Ad/gJz8a/HYzR3hT8sls4ATQw8nmaPsmWoToSlVYEYlNH4k4hV
+	 8xGl0aUXxUBUOooxVvrpEOUXj69d4DwHpfoAgivvOu8+WOSJh79OnazbMK7vFofxnM
+	 FKAiqs9orucwA==
+Date: Tue, 13 May 2025 14:08:07 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Lennart Poettering <mzxreary@0pointer.de>
+Cc: Kuniyuki Iwashima <kuniyu@amazon.com>, bluca@debian.org, 
+	alexander@mihalicyn.com, daan.j.demeyer@gmail.com, daniel@iogearbox.net, 
+	davem@davemloft.net, david@readahead.eu, edumazet@google.com, horms@kernel.org, 
+	jack@suse.cz, jannh@google.com, kuba@kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, me@yhndnzj.com, 
+	netdev@vger.kernel.org, oleg@redhat.com, pabeni@redhat.com, viro@zeniv.linux.org.uk, 
+	zbyszek@in.waw.pl
+Subject: Re: [PATCH v6 4/9] coredump: add coredump socket
+Message-ID: <20250513-agitation-tastatur-327692d0caf0@brauner>
+References: <CAMw=ZnRC7Okmew=rrEocFuFn8hhrcergHciPjxFPuG4c6qH_Bw@mail.gmail.com>
+ <20250513021626.86287-1-kuniyu@amazon.com>
+ <aCMJI-2goig2VBDX@gardel-login>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250513215822.3c026a3b@canb.auug.org.au>
+In-Reply-To: <aCMJI-2goig2VBDX@gardel-login>
 
-On Tue, May 13, 2025 at 09:58:22PM +1000, Stephen Rothwell wrote:
-> Hi Inochi,
+On Tue, May 13, 2025 at 10:56:03AM +0200, Lennart Poettering wrote:
+> On Mo, 12.05.25 19:14, Kuniyuki Iwashima (kuniyu@amazon.com) wrote:
 > 
-> On Tue, 13 May 2025 19:29:05 +0800 Inochi Amaoto <inochiama@gmail.com> wrote:
+> > > > Note this version does not use prefix.  Now it requires users to
+> > > > just pass the socket cookie via core_pattern so that the kernel
+> > > > can verify the peer.
+> > >
+> > > Exactly - this means the pattern cannot be static in a sysctl.d early
+> > > on boot anymore, and has to be set dynamically by <something>.
 > >
-> > Sorry for the mistake, I add this file by mistake when doing merge.
-> > I have updated the repo and remove this file. Can you re-fetch it?
+> > You missed the socket has to be created dynamically by <something>.
 > 
-> No worries, I will refetch your tree in the morning.
+> systemd implements socket activation: the generic code in PID 1 can
+> bind a socket, and then generically forks off a process (or instances
+> of processes for connection-based sockets) once traffic is seen on
+> that socket. On a typical, current systemd system, PID 1 does this for
+> ~40 sockets by default. The code to bind AF_UNIX or AF_INET/AF_INET6
+> sockets is entirely generic.
 > 
+> Currently, in the existing systemd codebase coredumping is implemented
+> via socket activation: the core_pattern handler binary quickly hands
+> off the coredump fds to an AF_UNIX socket bound that way, and the
+> service behind that does the heavy lifting. Our hope is that with
+> Christian's work we can make the kernel deliver the coredumps directly
+> to the socket PID1 generically binds, getting rid of one middle man.
+> 
+> By requiring userspace to echo the SO_COOKIE value into the
+> core_pattern sysctl in a special formatting, you define a bespoke
+> protocol: it's not just enough to bind a socket (for which the generic
+> code in PID1 is good enough), and to write a fixed
+> string into a sysctl (for which the generic code in the current
+> /etc/sysctl.d/ manager, i.e. systemd-sysctl, works fine). But you
+> suddenly are asking from userspace, that some specific tool runs at
+> early boot, extracts the socket cookie from PID1 somehow, and writes
+> that into sysctl. We'd have to come up with a new tool for that, we
+> can no longer use generic tools. And that's the part that Luca doesn't
+> like.
+> 
+> To a large degree I agree with Luca about this. I would much prefer
+> Christian's earlier proposal (i.e. to simply define some prefix of
+> AF_UNIX abstract namespace addresses as requiring privs to bind),
+> because that would enable us to do generic handling in userspace: the
+> existing socket binding logic in PID 1, and the existing sysctl.d
+> handling in the systemd suite would be good enough to set up
+> everything for the coredump handling.
+> 
+> That said, I'd take what we can get. If enforcing privs on some
+> abstract namespace socket address prefix is not acceptable, then we
+> can probably make the SO_COOKIE proposal work (Luca: we'd just hook
+> some small tool into ExecStartPost= of the .socket unit, and make PID1
+> pass the cookie in some env var or so to it; the tool would then just
+> echo that env var into the sysctl with the fixed prefix). In my eyes,
+> it's not ideal though: it would mean the sysctl data on every instance
+> of the system system image would necessarily deviate (because the
+> socket cookie is going to be different), which mgmt tools won't like
+> (as you cannot compare sysctl state anymore), and we'd have a weak
+> conflict of ownership: right now most sysctl settings are managed by
+> /etc/sysctl.d/, but the core_pattern suddenly wouldn't be
+> anymore. This will create conflicts because suddenly two components
+> write to the thing, and will start fighting.
+> 
+> Hence: I'd *much* prefer Christian's original approach as it does not
+> have these issues. But I'll take what I can get, we can make the
+> cookie thing work, but it's much uglier.
+> 
+> I am not sure I understand why enforcing privs on some abstract
+> namespace socke address prefix is such an unacceptable idea though.
 
-Thanks.
+I prefer the prefix approach as well. It's clean, simple and is safe by
+itself and elegant. And it fits into the generic socket activation and
+system administration models. I mainly show-cased the cookie model as an
+elaborate workaround. It can be done but it's ugly and more difficult to
+use.
+
+I do have one more idea how to solve this problem cleanly using regular
+socket paths that hopefully pleases everyone.
 
