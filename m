@@ -1,119 +1,147 @@
-Return-Path: <linux-kernel+bounces-646146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-646170-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EE20AB587A
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 17:25:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37A13AB58E4
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 17:40:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B54C4A808C
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 15:21:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BA7A3A6E90
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 15:40:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BB632BF3EE;
-	Tue, 13 May 2025 15:17:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49D1D2BE110;
+	Tue, 13 May 2025 15:40:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="c8vB7xWh"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="hxvAFFFb"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1AF72BE110;
-	Tue, 13 May 2025 15:17:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 249852BE0F9;
+	Tue, 13 May 2025 15:40:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747149456; cv=none; b=Tdlqcx1vD4W0qaRuTCYdW8ssewqJ6CE17eU9M0ngUj1AEHPNic9m/v3l23pzEixizXMtrDqidhWly7P+RDIh9k4x7fNupLeXr9XKbWkQEjk6euBCyNhdHgwKEL2+OcW+bOLAQLbzVM05pWn8QHViRNxzQ0PGAo9yCRC8weey+FU=
+	t=1747150840; cv=none; b=Aql6TjgsEScNtPCK70s1OpRMUCCibwoGI78XKhI1k6JkCHHh06ylVeZnuItXoMwLYQ9Jx9bcWjxQmGTrP1Olum6AAp8aYNNDeyWuL9MG3PY9Ku+8E5B9Q2rVZyn7fBKuBODv1QFN2vvNaylK+nxsPHzqV+ppLBPZZnN2i/2vMcc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747149456; c=relaxed/simple;
-	bh=5dEZPjeFOHBN2WQfltNsxASob8VuvLED4acGGlIaNh0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GOYAJaXAvlLjx5vstvzLBhev5dBvhvSwgXT5juKFAnsH94cbcAfyL0Kq83X/3kjB1PzeI11ABnuWEwtJBxbyp9zvVas+aflwb5je8whP+C0pwrHUR4vTfLWLLhC7C7D+ZZ0bHrJ9KoIC42N0Y9uy5MsS7Oue7QtKR8U3LFMEJNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=c8vB7xWh; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1747149455; x=1778685455;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=5dEZPjeFOHBN2WQfltNsxASob8VuvLED4acGGlIaNh0=;
-  b=c8vB7xWhNy3AAkObCukBLzAcYc6ffHhETYkSUmlRIVWsCV7jS9aA3hlS
-   Y1yt1fFKcH2g8sqKy8hhlo9vOxgzhNa6ukIqV9os6EG40kw3NTLTHnzh7
-   yLW6TkEh8yckXqgqf2yEQhZnx+MjR32XTSH2Bov23LA6YYiEYp2GtkGeB
-   tJDPePNBFRmRerRbNSL3yM4ipO8Vho3f24SgFEawqt4eZA9+1KUhn25ll
-   j2AUTjFM6pwK+Lfdx5lekRXwLcl/cUyRGTwlRuGgsIAT+uu6OTauen8bV
-   ZmVMJlEkF/GB9HHjzI40d2ToBOnLclA/sYFkFrQEc4YFIsYfoVz/gCj5/
-   A==;
-X-CSE-ConnectionGUID: AkqlcayKTuCAq1n+bYP3qw==
-X-CSE-MsgGUID: nH29lKd+TS2sThpk+nHcsw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11432"; a="48692875"
-X-IronPort-AV: E=Sophos;i="6.15,285,1739865600"; 
-   d="scan'208";a="48692875"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 May 2025 08:17:33 -0700
-X-CSE-ConnectionGUID: foIf9rVzS2qb614Fx8hxgg==
-X-CSE-MsgGUID: yOkzsa18SK+HOugVHjqNcg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,285,1739865600"; 
-   d="scan'208";a="138155411"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 May 2025 08:17:31 -0700
-Date: Tue, 13 May 2025 18:17:28 +0300
-From: Raag Jadav <raag.jadav@intel.com>
-To: Lukas Wunner <lukas@wunner.de>
-Cc: rafael@kernel.org, mahesh@linux.ibm.com, oohall@gmail.com,
-	bhelgaas@google.com, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, ilpo.jarvinen@linux.intel.com,
-	aravind.iddamsetty@linux.intel.com
-Subject: Re: [PATCH v3] PCI: Prevent power state transition of erroneous
- device
-Message-ID: <aCNiiHzOksQFrPe1@black.fi.intel.com>
-References: <20250504090444.3347952-1-raag.jadav@intel.com>
- <aCLNe2wHTiKdE5ZO@wunner.de>
+	s=arc-20240116; t=1747150840; c=relaxed/simple;
+	bh=CA9HKh4zrFSNCYLEtZ0JCP1cKMnxrY99Mpg4RTowzeE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TkYyJk/PuFKetPWsw8DJHz/nHHEOmjbiiIbduYnAzOokPdLu3XPR45JpMFvkfjvtpxnZsaFXSnWtAa4WW4aaL33enxcGFHRZplqg0ZFSF53vHpoVzSWPlpfLh8yQzlGdjfOnRZNXPwn7hzi0D/l31Rf1xSdnri9fI/sTBpH0LgI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=hxvAFFFb; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54DDni6C032140;
+	Tue, 13 May 2025 15:40:31 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=CQfh1MzvC6iT6mM7lVHwgZXBAw8DRUvB7ncdS0TY2
+	e0=; b=hxvAFFFbkhqdWNx95+5jOo17Y6uIjiDUF7i8oTaX/TkUPk3FjUkX1Wjl+
+	y9t5ShYsSoAYgxO2faRcbywCasa2mSvTKs9Ylkx1mjVQPEoyeir2fAwlhnT77uKl
+	MrS4AxM58esi9zO8wNKw1uFULgqn7L71vIo2IGkNXx+EW78lrBUTzD5F3Bz51ctA
+	10wfAh6abnhyXwFvfr3yDVVB9plJNW+w4pDuxaOvU/1KGmIUtUTWRRpDEzMzoJ01
+	ZgN043TjpKI/NVgfuHQYqnxedrP/G8qZdZf6qJo20gkuqFJzvItSZOPWyBwODPOb
+	vpq/7kK7y6EXr5qPUSbOB3PokCSHg==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46m7a70jc6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 13 May 2025 15:40:31 +0000 (GMT)
+Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 54DFNlGl022147;
+	Tue, 13 May 2025 15:40:30 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46m7a70jc1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 13 May 2025 15:40:30 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 54DBt8I0011552;
+	Tue, 13 May 2025 15:40:29 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 46jku2be14-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 13 May 2025 15:40:29 +0000
+Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 54DFeSHS52822340
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 13 May 2025 15:40:28 GMT
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4E17F20102;
+	Tue, 13 May 2025 15:21:03 +0000 (GMT)
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 3AAFE20101;
+	Tue, 13 May 2025 15:21:03 +0000 (GMT)
+Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
+	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Tue, 13 May 2025 15:21:03 +0000 (GMT)
+Received: by tuxmaker.boeblingen.de.ibm.com (Postfix, from userid 55669)
+	id CCFCBE0609; Tue, 13 May 2025 17:21:02 +0200 (CEST)
+From: Alexander Gordeev <agordeev@linux.ibm.com>
+To: Andrew Morton <akpm@linux-foundation.org>,
+        Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+        Daniel Axtens <dja@axtens.net>, Harry Yoo <harry.yoo@oracle.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        kasan-dev@googlegroups.com, linux-s390@vger.kernel.org,
+        stable@vger.kernel.org
+Subject: [PATCH v8 0/1] kasan: Avoid sleepable page allocation from atomic context
+Date: Tue, 13 May 2025 17:21:01 +0200
+Message-ID: <cover.1747149155.git.agordeev@linux.ibm.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aCLNe2wHTiKdE5ZO@wunner.de>
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=K8ciHzWI c=1 sm=1 tr=0 ts=682367ef cx=c_pps a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17 a=dt9VzEwgFbYA:10 a=M4n5Zv9w_bjhLjlc4U8A:9 a=zZCYzV9kfG8A:10
+X-Proofpoint-GUID: DBBehTTBvX9qsC78fS4B-Pq9qcDH0x5W
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTEzMDE0OCBTYWx0ZWRfX3Ro2qgunbtst YpiEJWshZEpwgFgNh6DUgLqham72fs4BvvKMKutOoHPSH07AlpYe7pQ5YCi2HdZ5nILC75uCiju IWYImiPzfWf3podYFZOjSls1rcOdgk72yDa3rolzKL4vg7MxTtRRzOD7Zs54dCpcFIWuxuu+EK0
+ QkIJ/BRGoGmhUCBjzaDyz1IMReBDty2ghHIQLCL1vaAhGz9JkAgbrDVty+dUOHB1jXN44t7HVJK cMtIYLYwLwmus3mL71kB6cl1K28JDvLF2O3KG8dkNu9dJXSM3ofh9geWQ4w/j6r7+O4igy6meEp 0nXf51BmQu16OcHzaLETtDpfMQ+PxaAqgY6hNFo+C5dr11+LBz1O0Gz/NEb1ZL+oousbZmNyN0g
+ kS3cSLrkhmXIK/w+vptnwdeTNCkhyZ72QS3kKi57VyvofCfZSG4SaN1iUvPpz4AIUvoDujXn
+X-Proofpoint-ORIG-GUID: eeJyLkhC8F1qa6Wbqxc-xE5X7ub4YSI3
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-13_03,2025-05-09_01,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
+ impostorscore=0 bulkscore=0 suspectscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 priorityscore=1501 mlxlogscore=721
+ phishscore=0 adultscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
+ definitions=main-2505130148
 
-On Tue, May 13, 2025 at 06:41:31AM +0200, Lukas Wunner wrote:
-> On Sun, May 04, 2025 at 02:34:44PM +0530, Raag Jadav wrote:
-> > If error flags are set on an AER capable device, most likely either the
-> > device recovery is in progress or has already failed. Neither of the
-> > cases are well suited for power state transition of the device, since
-> > this can lead to unpredictable consequences like resume failure, or in
-> > worst case the device is lost because of it. Leave the device in its
-> > existing power state to avoid such issues.
-> 
-> Have you witnessed this on a particular platform / hardware combination?
-> If so, it would be good to mention it.  If I'd happen to find this
-> commit in the future through "git blame", that's the first question
-> that would come to mind:  How and on what hardware was this actually
-> triggered, how can I reproduce it.
+Hi All,
 
-We have a few issues[1] reported which are similar in nature. But since
-they are not easily reproducible and still under investigation, I'm
-a bit hesitant to explicitly reference it.
+Chages since v7:
+- drop "unnecessary free pages" optimization
+- fix error path page leak
 
-[1] https://gitlab.freedesktop.org/drm/xe/kernel/-/issues/4395
+Chages since v6:
+- do not unnecessary free pages across iterations
 
-> > +	/*
-> > +	 * If error flags are set on an AER capable device, most likely either
-> > +	 * the device recovery is in progress or has already failed. Neither of
-> > +	 * the cases are well suited for power state transition of the device,
-> > +	 * since this can lead to unpredictable consequences like resume
-> > +	 * failure, or in worst case the device is lost because of it. Leave the
-> > +	 * device in its existing power state to avoid such issues.
-> > +	 */
-> 
-> That's quite verbose and merely a 1:1 repetition of the commit message.
-> I'd recommend a more condensed code comment and anyone interested in
-> further details may look them up in the commit message.
+Chages since v5:
+- full error message included into commit description
 
-Sure, will update.
+Chages since v4:
+- unused pages leak is avoided
 
-Raag
+Chages since v3:
+- pfn_to_virt() changed to page_to_virt() due to compile error
+
+Chages since v2:
+- page allocation moved out of the atomic context
+
+Chages since v1:
+- Fixes: and -stable tags added to the patch description
+
+Thanks!
+
+Alexander Gordeev (1):
+  kasan: Avoid sleepable page allocation from atomic context
+
+ mm/kasan/shadow.c | 77 ++++++++++++++++++++++++++++++++++++++---------
+ 1 file changed, 63 insertions(+), 14 deletions(-)
+
+-- 
+2.45.2
+
 
