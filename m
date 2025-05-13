@@ -1,120 +1,185 @@
-Return-Path: <linux-kernel+bounces-646464-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-646465-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92096AB5C83
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 20:42:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5906DAB5C90
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 20:43:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C96FD4A68F5
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 18:42:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F05DA867C27
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 18:42:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BABF02C0869;
-	Tue, 13 May 2025 18:41:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 479FA2C1095;
+	Tue, 13 May 2025 18:41:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NGol99JP"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UNBFJm5n"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7248C2BFC89;
-	Tue, 13 May 2025 18:41:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E1B92BF976;
+	Tue, 13 May 2025 18:41:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747161678; cv=none; b=LPcDAg87UfhpZV/5AF9b96YSTL39ZlShl/LMxS9NynHeev85mxaun58RkRl+8D617y8yjGDaoDfz+tTi5qPiBsAaS4fVChCTnEn7K6pIx/CvwfmPAC6o5I1gGRibEWFDhzizjBhG5D2O9Uuyx9dFu7HzsAYvblWrvdzrkkz5Lj4=
+	t=1747161683; cv=none; b=EpPJuAnXSTAUKzrm4hdQZkPGUVVGEl5bB40ZnMtdKVAytG2xtpUoAgDTZXFywbe64Owon8SJf/wfYb5naZ8Vmi3etryBj1IDzxBeeJzAD0ej/rnFBnlUCQOLIFWjPQnjXrok+GrkbrOPX2PSSqUwxC6hfLNpRLarzfpdcdaYuNo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747161678; c=relaxed/simple;
-	bh=0Vx0RGr5U2h01qOU8kmTQ32BV8c1gQpHnYULlCyFrKQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tnvprfLQzyNrYAb4qJ6o5Nn4iVzHGV2ysOQDvZ9wQkAW+WRrkvgTA1eyHYUAqO4ctak1wRUkJWwBKmszgLhIGduSTBPLtdOp8/UkRzWc5RR1HieBr2lAJJM4pWBuyfOdzqGyrinDV4Jx2xCwLhwcUgRHaBSS95y1Buk7ktoMy/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NGol99JP; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-ad243cdbe98so555789666b.0;
-        Tue, 13 May 2025 11:41:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747161675; x=1747766475; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=FS499Fn7cHcQwCrrxOMu/9J8ZlAq0sxjeTj28CB5LpQ=;
-        b=NGol99JP8UV/vbAsQg3dPzbbPlOsyqK7NkHC7THA7bd8hnFw08heTIR1jEv+7Q7TSn
-         XvXiWpWOyfnL6vsp/2zFFrJATBAsW/OXPyLbGEfSXPYMls7EnycxP0dKBMToIUoGfFH9
-         sMmKsZsdl/DIPNNOdM3zfSrG6EcfgFqQZaFiw532jtboPHW0oGo3oM6VasS37+K5+/bv
-         xSWevKteSs5wcblYF5pMn/OBl65fDFR3X+I/WI/5y3nVxb1Tl2r1BJ/WvPvboKGLYPdV
-         fAfmmLZVbi+VurFUmmA+REAIq5WNZjLv7rN6SfIDGDMEwFd8oHw4n0T5zWkwutG0D97w
-         unfw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747161675; x=1747766475;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FS499Fn7cHcQwCrrxOMu/9J8ZlAq0sxjeTj28CB5LpQ=;
-        b=O/1Dm3DK+gJ4D5CPVWlQsZky5wHJ1GY7uzXUt93Z7kRsTAz7AnI0x2SwbgXMKtUM4h
-         tKwMjr9orzM1lKRqOUVJOU0oWSi1IRN4zKELOs/7OceMCciVrGvLIvCoHq2HIfktfJDu
-         +8liqccOtb3sPMeYSeBxOd/6F0F6Pq8ELhEgOr1MtDcXX8yLfkPwRnCJfzsXgG8ArEy/
-         9mkoMoDeCd/l/K9nf0/b55veTOkysZnIdzie4ycnH/PJ509+TfGnlRVpCULOlkXPzF68
-         dBh5JCorSX5weL/yPvspYWWAcX8ILom/zhb6xELsYaAoEagYtYTf+8x6PPfkk9H9DSp0
-         Mfwg==
-X-Forwarded-Encrypted: i=1; AJvYcCW/kePY65PjSwMT0G/C1w+wraN61HvHAPy6u65N5JLN8t2FpyLNQy38mBVw6U2/NUB+DZJi6i8Zos88@vger.kernel.org, AJvYcCW/xzEp8bY/RoF3Ff2YGqvbUAuRz1Tx1a6iSQk1kp+LrY0tem/M1VAVcD1ZfhtBTLQ/L1LnBWsEEorj5VI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHYrUlPDYMP/FX9QE5bzqnCHNSiPnfrETk9tvgMaagxsouXmZ8
-	0JoWMJzeYezNRHddad12E+e+/A44WdVoWzshSvj6jJiBBjb9fIEO8QuX
-X-Gm-Gg: ASbGnctvht8Vm2EDLlr6WPI0hKc0x9PIyTr7653w5dZG9peIalaqYhivKwCspgtmjQU
-	oTDPyPM0JjUjA5eJHcWXq4ra5L9RwAe/Z0lVxeVJMDeizdfA0nD5yG6R/azzzEVQxds15j6uGgo
-	cHGY1+CAYeHW9D4q8shotDsw9OHzSqirj56vswZ3mesKgtUix2YxSJts9lNKEe6M6oLohMKBx+b
-	3ILZz4n0rGR/YubAllPJT/wQa8rX3kcMVfYc4G0PjVpSYeNUAS6NFqBDLl1XosJafDs09UD0YZH
-	aME53bWoJQDTyyeqRVQlOumfZtxywrgpudJXeA==
-X-Google-Smtp-Source: AGHT+IH3PPd9ftO39AWMLttPZb75S1WDHXts0rqYRxjlvJH1YaH7n0nG5Om9DTphFy6TaK663YRLfg==
-X-Received: by 2002:a17:907:1819:b0:ad2:2146:3b64 with SMTP id a640c23a62f3a-ad4f7517c86mr62823666b.39.1747161674514;
-        Tue, 13 May 2025 11:41:14 -0700 (PDT)
-Received: from p183 ([46.53.251.33])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad253036b37sm383736466b.7.2025.05.13.11.41.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 May 2025 11:41:14 -0700 (PDT)
-Date: Tue, 13 May 2025 21:41:12 +0300
-From: Alexey Dobriyan <adobriyan@gmail.com>
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: corbet@lwn.net, workflows@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 6/9] CodingStyle: recommend static_assert/_Static_assert
-Message-ID: <109fc6a3-0a7f-4439-8f66-48987809d333@p183>
-References: <20250509203430.3448-1-adobriyan@gmail.com>
- <20250509203430.3448-6-adobriyan@gmail.com>
- <2025051046-epidemic-broadways-d3cf@gregkh>
+	s=arc-20240116; t=1747161683; c=relaxed/simple;
+	bh=ZxjeGbjASaZfwtnXHdzTOFRIZEfBHZ1cfd7hEC2kbJ0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WMYT6BhxIW0Qr0+RmKz7eQmGqFP7mlTUPlhca0bV5MD3fv4nxnD6tuEGmhHmTpSSeFKDKUIgiOBWnEZeOLHuQ68SrU4ntOvuYx0d4QXwogEFwezSC/8jDydcLjY/GQfvGocPoYS1Xj/aKKzKtfpYBpnLWiURt8GivvdxnqBW1B0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UNBFJm5n; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFBFFC4CEE4;
+	Tue, 13 May 2025 18:41:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747161682;
+	bh=ZxjeGbjASaZfwtnXHdzTOFRIZEfBHZ1cfd7hEC2kbJ0=;
+	h=From:To:Cc:Subject:Date:From;
+	b=UNBFJm5nqmt05xCjSV/rOPZTe+s80ja5SgI3SpUiF26rUdfFsK7YInWc9meQp9mau
+	 toNTcyq+loIyz9nGUuiYq4npGQ3zmr/hiPSKqrt1OwJ5LikI8DER+isXmFcZbA+JCi
+	 lySuSJcxbgZClw3yzQ1PDiOQYqRzZhmzOAlmxJECgAHEkwFyPk6A0k0Hz45iB6d4ox
+	 Td1G8OcRSSSsAttCamCCAbynXShYiz+l7Sy8ESybPJEZQfyNRgZOQlD6HiCxN0Cbq6
+	 3rHj1N4i1XhtqlDXU/4vkpUNk3I9IBLPV7xuWmIu5Jf/hPQdMCRMi6COoV86sWTfnt
+	 LiUltenw/NcyQ==
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	James Hartley <james.hartley@imgtec.com>
+Cc: linux-crypto@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] dt-bindings: crypto: Convert img,hash-accelerator to DT schema
+Date: Tue, 13 May 2025 13:41:16 -0500
+Message-ID: <20250513184118.3052496-1-robh@kernel.org>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <2025051046-epidemic-broadways-d3cf@gregkh>
+Content-Transfer-Encoding: 8bit
 
-On Sat, May 10, 2025 at 08:21:01AM +0200, Greg KH wrote:
-> On Fri, May 09, 2025 at 11:34:27PM +0300, Alexey Dobriyan wrote:
-> > Linux's BUG_ON is done backwards (condition is inverted).
-> > But it is a long story.
-> > 
-> > However C11/C23 allow to partially transition to what all normal
-> > programmers are used to, namely assert().
-> > 
-> > Deprecate BUILD_BUG_ON, recommend static_assert/_Static_assert.
-> > And then some day BUG_ON will be flipped as well.
-> 
-> Odd, why are you attempting to make all of these mandates without
-> actually changing the code itself first?
+Convert the Imagination Technologies hardware hash accelerator binding
+to DT schema format. It's a straight forward conversion.
 
-If I do source code first, some people or checkpatch.pl will say code is
-not conformant!
+Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+---
+ .../bindings/crypto/img,hash-accelerator.yaml | 69 +++++++++++++++++++
+ .../devicetree/bindings/crypto/img-hash.txt   | 27 --------
+ 2 files changed, 69 insertions(+), 27 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/crypto/img,hash-accelerator.yaml
+ delete mode 100644 Documentation/devicetree/bindings/crypto/img-hash.txt
 
-I want to codify rules so my patches don't rejected due to silly
-reasons, due to the rules which don't make sense.
+diff --git a/Documentation/devicetree/bindings/crypto/img,hash-accelerator.yaml b/Documentation/devicetree/bindings/crypto/img,hash-accelerator.yaml
+new file mode 100644
+index 000000000000..46617561ef94
+--- /dev/null
++++ b/Documentation/devicetree/bindings/crypto/img,hash-accelerator.yaml
+@@ -0,0 +1,69 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/img,hash-accelerator.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Imagination Technologies hardware hash accelerator
++
++maintainers:
++  - James Hartley <james.hartley@imgtec.com>
++
++description:
++  The hash accelerator provides hardware hashing acceleration for
++  SHA1, SHA224, SHA256 and MD5 hashes.
++
++properties:
++  compatible:
++    const: img,hash-accelerator
++
++  reg:
++    items:
++      - description: Register base address and size
++      - description: DMA port specifier
++
++  interrupts:
++    maxItems: 1
++
++  dmas:
++    maxItems: 1
++
++  dma-names:
++    items:
++      - const: tx
++
++  clocks:
++    items:
++      - description: System clock for hash block registers
++      - description: Hash clock for data path
++
++  clock-names:
++    items:
++      - const: sys
++      - const: hash
++
++additionalProperties: false
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - dmas
++  - dma-names
++  - clocks
++  - clock-names
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/mips-gic.h>
++    #include <dt-bindings/clock/pistachio-clk.h>
++
++    hash@18149600 {
++        compatible = "img,hash-accelerator";
++        reg = <0x18149600 0x100>, <0x18101100 0x4>;
++        interrupts = <GIC_SHARED 59 IRQ_TYPE_LEVEL_HIGH>;
++        dmas = <&dma 8 0xffffffff 0>;
++        dma-names = "tx";
++        clocks = <&cr_periph SYS_CLK_HASH>, <&clk_periph PERIPH_CLK_ROM>;
++        clock-names = "sys", "hash";
++    };
+diff --git a/Documentation/devicetree/bindings/crypto/img-hash.txt b/Documentation/devicetree/bindings/crypto/img-hash.txt
+deleted file mode 100644
+index 91a3d757d641..000000000000
+--- a/Documentation/devicetree/bindings/crypto/img-hash.txt
++++ /dev/null
+@@ -1,27 +0,0 @@
+-Imagination Technologies hardware hash accelerator
+-
+-The hash accelerator provides hardware hashing acceleration for
+-SHA1, SHA224, SHA256 and MD5 hashes
+-
+-Required properties:
+-
+-- compatible : "img,hash-accelerator"
+-- reg : Offset and length of the register set for the module, and the DMA port
+-- interrupts : The designated IRQ line for the hashing module.
+-- dmas : DMA specifier as per Documentation/devicetree/bindings/dma/dma.txt
+-- dma-names : Should be "tx"
+-- clocks : Clock specifiers
+-- clock-names : "sys" Used to clock the hash block registers
+-		"hash" Used to clock data through the accelerator
+-
+-Example:
+-
+-	hash: hash@18149600 {
+-	compatible = "img,hash-accelerator";
+-		reg = <0x18149600 0x100>, <0x18101100 0x4>;
+-		interrupts = <GIC_SHARED 59 IRQ_TYPE_LEVEL_HIGH>;
+-		dmas = <&dma 8 0xffffffff 0>;
+-		dma-names = "tx";
+-		clocks = <&cr_periph SYS_CLK_HASH>, <&clk_periph PERIPH_CLK_ROM>;
+-		clock-names = "sys", "hash";
+-	};
+-- 
+2.47.2
 
-> That's just asking for major churn for no good reason...
-
-Reason is there.
-
-static_assert() is better because it is in the standard, and
-Linux convention of inverting condition never made any sense.
-
-> Sorry, but this series makes no sense to me.
 
