@@ -1,153 +1,157 @@
-Return-Path: <linux-kernel+bounces-646291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-646288-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6410AB5AAC
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 19:01:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3BB2AB5AA3
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 19:00:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FB203A1EC5
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 17:01:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E3634628EE
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 17:00:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD32A1E00B4;
-	Tue, 13 May 2025 17:01:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31A632BF3EC;
+	Tue, 13 May 2025 16:59:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="Otc68QU8"
-Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VtnKMIj9"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8212729CE8
-	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 17:01:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BED552BE7A8;
+	Tue, 13 May 2025 16:59:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747155682; cv=none; b=svsxDwYzc0sFxl+43o2CJGAcPThXkQp4Fmk0QR4sfNTbyszhiD3hK0uP3weMumaIkB9cDCosyNyD18NjnpoENlInvvyL9r8yPclv1Gc1FVSakRoBV34pYtUvVPeAWTRXLjRlseaEu8Gx8sRrkCTaZZRGogYngfcQOVM31low5ak=
+	t=1747155584; cv=none; b=Pzo9MjxVaOujBWXfo7c1HZ7jxlzZeha5f+I87Q2Op/CjhyoYqYCt0QrOHhAtmEFtePVUR1ojktqnsIfa9zN9lqE67vljeH3HVwhJ805F3SEHoCra7IcNeXvZo+9JQN3YcG/1GeCTp89XjpqwID27R6et8HZdtGWUOf45zhgHv5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747155682; c=relaxed/simple;
-	bh=szT5c7yJzLi5b7IM3Uiz+loSlGaMIvgDJwNDOS4+2D8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ImFv2DGZu76Ohqa9QNv8L+Vg9k2EZHWL2DETfI/9FLP7lNFqsySMSUqSyVI2q8CEe9/o7OKypELLCcDZ61c5QH54KINOrA40KOihSAktxB7DfabkBTA+dIxGJCBLCnZrqn1wLfccutIqMAQxtAC5Bn8TXuoVQctF4MoKASfM0MY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=Otc68QU8; arc=none smtp.client-ip=91.218.175.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
-	t=1747155674;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=zxp5saJ00M0V4HD55ygHhJp7ySrhrAQhBKVNcX+nZcA=;
-	b=Otc68QU84N5ZqYJGbMPb31Z9ICWeBRz9p/HX0/+qKkt37fDhjWsr9FQCOwbDW/cyICpCMU
-	vYdzQ7SzmLwNmd5/MSwXmAZmaS9J0AZ6q435rWS7Zq6lLuX3XL+0tx3GRj850YH8QxG3Sv
-	+ZnjrzgbEprC5Hf+82AMa4JaAZkHkaECyd4adpcMrLJnzRl0qXN3eeNB1cfQSxXmaeZvBV
-	15xh8kPFVeq36oS+lOsPgT9DrD4a3Wt+/aCPiFQ7sprgNrJeSlQaGIurXD38flngsr4LEs
-	UdgT0fSwAfKanyXq9LA47m56u42KjID6Ag8p/QV0sNkWnK/5neWrwBdxiQoiqg==
-From: Diederik de Haas <didi.debian@cknow.org>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>
-Cc: devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Dragan Simic <dsimic@manjaro.org>,
-	Vasily Khoruzhick <anarsoul@gmail.com>,
-	Tianling Shen <cnsztl@gmail.com>,
-	Diederik de Haas <didi.debian@cknow.org>
-Subject: [PATCH] arm64: dts: rockchip: Improve LED config for NanoPi R5S
-Date: Tue, 13 May 2025 18:57:27 +0200
-Message-ID: <20250513170056.96259-1-didi.debian@cknow.org>
+	s=arc-20240116; t=1747155584; c=relaxed/simple;
+	bh=wT1jIMhAfxAIuR2cDTICkJPnwZnAngY5iWaiZPeA23k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=umrbV1eZjQvfagYQPRIm6tBDEhil0jG60cx6EJU8mw7yPOoX+rTp6Y8NyqT+PxNWhEr++5ZheQFJRWwdyBRz2tabaTgdqO6zofB1L7ryJdcNr9so/cYhFZfZbWNZQwqulq/PbenXWi8x90HpytLvlRajN/7APsiuh4B/7qU54IU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VtnKMIj9; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1747155582; x=1778691582;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=wT1jIMhAfxAIuR2cDTICkJPnwZnAngY5iWaiZPeA23k=;
+  b=VtnKMIj9ruIXcnLCmnC7zVl8HjwKIa0Bs59xyKcmxR0UpWFrJxmITueU
+   g/82ooNp0kSJ9ztHhLQoHE4GUHnBn3Liqj9YXyJg+ftDnjKzDyYTF2sgV
+   2+WN0nTN5Xw8VhvihbBu4cdc090z64phSKFBuuHgoMoWwKNb9PBouW0Hw
+   9hykegJBYEhDtZeWVzH5ECAwZAObs+MVNJ3dTnJ4Vg0sRO7eL3+ZxKK8w
+   xj+QjsDJx31Me/YcFYGbmmxTRbO7aj7Ur21phdLd22Q4yUymAs6Wj3RZ/
+   R0WM339jOFv3gUYFYb7nfRQv7p7b0N2GpGjU6YojCXoQFbgzI7JDHvaNh
+   A==;
+X-CSE-ConnectionGUID: 3adJXAPSTN+BakvQbuaAbA==
+X-CSE-MsgGUID: FfuvJmcjRIGYxXFZ7KL1DQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11432"; a="49004968"
+X-IronPort-AV: E=Sophos;i="6.15,285,1739865600"; 
+   d="scan'208";a="49004968"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 May 2025 09:59:42 -0700
+X-CSE-ConnectionGUID: LqCGDER2TQKzQBomicmxjA==
+X-CSE-MsgGUID: tIAkwncLTMKMayszpT6oWA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,285,1739865600"; 
+   d="scan'208";a="138739643"
+Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
+  by fmviesa009.fm.intel.com with ESMTP; 13 May 2025 09:59:39 -0700
+Received: from kbuild by 1992f890471c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uEsye-000GFT-2d;
+	Tue, 13 May 2025 16:59:36 +0000
+Date: Wed, 14 May 2025 00:59:16 +0800
+From: kernel test robot <lkp@intel.com>
+To: Christian Marangi <ansuelsmth@gmail.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-pm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev
+Subject: Re: [PATCH v6 2/2] thermal: Add support for Airoha EN7581 thermal
+ sensor
+Message-ID: <202505132238.CSoMFWV9-lkp@intel.com>
+References: <20250510172509.2547273-2-ansuelsmth@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250510172509.2547273-2-ansuelsmth@gmail.com>
 
-The NanoPi R5S has 4 GPIO LEDs, a RED one for SYStem power and 3 green
-LEDs meant to indicate that a cable is connected to either of the
-2.5GbE LAN ports or the 1GbE WAN port.
+Hi Christian,
 
-In the NanoPi R5S schematic (2204; page 19) as well as on the PCB and on
-the case, SYS is used and not POWER. So replace 'power' with 'sys'.
-But keep the 'power_led' label/phandle even though the kernel doesn't
-use it, but it may be used outside of it.
+kernel test robot noticed the following build errors:
 
-The SYStem LED already had "heartbeat" as its default-trigger.
-Set the default-trigger to "netdev" for the NICs so they will show when
-LAN1/LAN2/WAN is connected and set their default-state to "off".
+[auto build test ERROR on rafael-pm/thermal]
+[also build test ERROR on linus/master v6.15-rc6 next-20250513]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Also assign labels as close as possible to the labels on the case, while
-still being descriptive enough in their own right.
+url:    https://github.com/intel-lab-lkp/linux/commits/Christian-Marangi/thermal-Add-support-for-Airoha-EN7581-thermal-sensor/20250511-012647
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git thermal
+patch link:    https://lore.kernel.org/r/20250510172509.2547273-2-ansuelsmth%40gmail.com
+patch subject: [PATCH v6 2/2] thermal: Add support for Airoha EN7581 thermal sensor
+config: microblaze-randconfig-r073-20250513 (https://download.01.org/0day-ci/archive/20250513/202505132238.CSoMFWV9-lkp@intel.com/config)
+compiler: microblaze-linux-gcc (GCC) 10.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250513/202505132238.CSoMFWV9-lkp@intel.com/reproduce)
 
-Signed-off-by: Diederik de Haas <didi.debian@cknow.org>
----
- .../boot/dts/rockchip/rk3568-nanopi-r5s.dts    | 18 ++++++++++++++----
- 1 file changed, 14 insertions(+), 4 deletions(-)
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202505132238.CSoMFWV9-lkp@intel.com/
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3568-nanopi-r5s.dts b/arch/arm64/boot/dts/rockchip/rk3568-nanopi-r5s.dts
-index 4cb8df1129c0..3b31f0dd8f3b 100644
---- a/arch/arm64/boot/dts/rockchip/rk3568-nanopi-r5s.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3568-nanopi-r5s.dts
-@@ -20,33 +20,43 @@ aliases {
- 	gpio-leds {
- 		compatible = "gpio-leds";
- 		pinctrl-names = "default";
--		pinctrl-0 = <&lan1_led_pin>, <&lan2_led_pin>, <&power_led_pin>, <&wan_led_pin>;
-+		pinctrl-0 = <&lan1_led_pin>, <&lan2_led_pin>, <&sys_led_pin>, <&wan_led_pin>;
- 
- 		led-lan1 {
- 			color = <LED_COLOR_ID_GREEN>;
-+			default-state = "off";
- 			function = LED_FUNCTION_LAN;
- 			function-enumerator = <1>;
- 			gpios = <&gpio3 RK_PD6 GPIO_ACTIVE_HIGH>;
-+			label = "LAN-1";
-+			linux,default-trigger = "netdev";
- 		};
- 
- 		led-lan2 {
- 			color = <LED_COLOR_ID_GREEN>;
-+			default-state = "off";
- 			function = LED_FUNCTION_LAN;
- 			function-enumerator = <2>;
- 			gpios = <&gpio3 RK_PD7 GPIO_ACTIVE_HIGH>;
-+			label = "LAN-2";
-+			linux,default-trigger = "netdev";
- 		};
- 
--		power_led: led-power {
-+		power_led: led-sys {
- 			color = <LED_COLOR_ID_RED>;
- 			function = LED_FUNCTION_POWER;
--			linux,default-trigger = "heartbeat";
- 			gpios = <&gpio4 RK_PD2 GPIO_ACTIVE_HIGH>;
-+			label = "SYS";
-+			linux,default-trigger = "heartbeat";
- 		};
- 
- 		led-wan {
- 			color = <LED_COLOR_ID_GREEN>;
-+			default-state = "off";
- 			function = LED_FUNCTION_WAN;
- 			gpios = <&gpio2 RK_PC1 GPIO_ACTIVE_HIGH>;
-+			label = "WAN";
-+			linux,default-trigger = "netdev";
- 		};
- 	};
- };
-@@ -126,7 +136,7 @@ lan2_led_pin: lan2-led-pin {
- 			rockchip,pins = <3 RK_PD7 RK_FUNC_GPIO &pcfg_pull_none>;
- 		};
- 
--		power_led_pin: power-led-pin {
-+		sys_led_pin: sys-led-pin {
- 			rockchip,pins = <4 RK_PD2 RK_FUNC_GPIO &pcfg_pull_none>;
- 		};
- 
+All errors (new ones prefixed by >>):
+
+   drivers/thermal/airoha_thermal.c: In function 'airoha_thermal_irq':
+>> drivers/thermal/airoha_thermal.c:316:2: error: label at end of compound statement
+     316 |  default:
+         |  ^~~~~~~
+
+
+vim +316 drivers/thermal/airoha_thermal.c
+
+   297	
+   298	static irqreturn_t airoha_thermal_irq(int irq, void *data)
+   299	{
+   300		struct airoha_thermal_priv *priv = data;
+   301		enum thermal_notify_event event;
+   302		bool update = false;
+   303		u32 status;
+   304	
+   305		status = readl(priv->base + EN7581_TEMPMONINTSTS);
+   306		switch (status & (EN7581_HOFSINTSTS0 | EN7581_LOFSINTSTS0)) {
+   307		case EN7581_HOFSINTSTS0:
+   308			event = THERMAL_TRIP_VIOLATED;
+   309			update = true;
+   310			break;
+   311		case EN7581_LOFSINTSTS0:
+   312			event = THERMAL_EVENT_UNSPECIFIED;
+   313			update = true;
+   314			break;
+   315		/* Should be impossible as we enable only these interrupt */
+ > 316		default:
+   317		}
+   318	
+   319		/* reset interrupt */
+   320		writel(status, priv->base + EN7581_TEMPMONINTSTS);
+   321	
+   322		if (update)
+   323			thermal_zone_device_update(priv->tz, event);
+   324	
+   325		return IRQ_HANDLED;
+   326	}
+   327	
+
 -- 
-2.49.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
