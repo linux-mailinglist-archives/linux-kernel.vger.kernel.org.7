@@ -1,121 +1,135 @@
-Return-Path: <linux-kernel+bounces-645545-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-645549-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A735AB4F8E
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 11:22:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D51DFAB4F94
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 11:23:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED2F74A170B
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 09:21:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7392C175582
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 09:22:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6750921B9C5;
-	Tue, 13 May 2025 09:19:46 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62D6A21ADB5;
-	Tue, 13 May 2025 09:19:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C81A3219A7E;
+	Tue, 13 May 2025 09:20:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="cet+Wo79"
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E1E417FAC2;
+	Tue, 13 May 2025 09:20:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747127986; cv=none; b=n9MMp8dPKWI4f5sqG4NRdUEtnv/niyA0qUDWdFxW22A4cTvh7sbfdKgeInmLfyrBwAvvJPLETe4ZA6JP54sL9krFHdA/cYVAECtfQJPkB32lF7G6m6VqGCDPO52czkvKR4zlMsHIT35qwTAS99bOY/nkUa8WAkbZKYctSumV2ow=
+	t=1747128017; cv=none; b=e5cxmGgDcS++i2qnyb/OXGLsnTRj9vm4kNUVN7Cag8a+oti+aXqb9SBMA2JAUulQndZGbasA47L6XMrbXm3mrsj5xRrkUxfaR3XgjZlfLOY1JppW9YdV5RWESkrYJA06pFf0PUJ9YgmFK+tii//VPy2165sirNT/6TNdR7QkJGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747127986; c=relaxed/simple;
-	bh=5YrABFzbKb8Src/u5OGMIShsQQLYX37Y/4zalAnMTa8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UI9czNUJWj6BG7JbSM7BgDwrpGUwfg2Rn4LAZgVT5nCWjvYgnuw1MTq1XW4loreCqfGZSsA2J8J8BCv2q5FeHC8GfQrrIG8CJ2etUMNTg+IDfHJ0qk3Scc8WvbeGJGxK7IHMlZk2y5ggGlGbtoA98HcjVuu8wtPPMQzQSqmGCqY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A0522168F;
-	Tue, 13 May 2025 02:19:32 -0700 (PDT)
-Received: from [10.57.90.222] (unknown [10.57.90.222])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 09E603F673;
-	Tue, 13 May 2025 02:19:41 -0700 (PDT)
-Message-ID: <56655ac1-a650-43d8-8080-a03c250474d3@arm.com>
-Date: Tue, 13 May 2025 10:19:40 +0100
+	s=arc-20240116; t=1747128017; c=relaxed/simple;
+	bh=a3HdxlXncWI1w776qXRRfyOysZby/NwAboYU6kKpoBk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Sxq7CFVZi7NajK3i/0ywV0QkG27MZM6iAfw+D5fr/s20XBq6m5f6BJ1xp/BhadVLQ22Kr6JSa5bJmd57tNRP6JiutAtSy+Rk6OLeHo1O/JZub0i/6+ElRPzW/x7DLag0cQ3eB014/rWd7MreKVTEb7V9vBatDYAYLvFjFvgsBHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=cet+Wo79; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=ujdQa38ajbtim3vKv/37DL30QUuxBtRR1SWz+JPonBo=; b=cet+Wo79Mk2Rq5JOvCFUb5ZOOL
+	zLLcQDodIaxvX6NkNygY8RH9MlgLkHEVHQsd//TeHk8Xf17+NYpUCDnzGCrWYdKfH04++Xjq2APG9
+	BSppjY+zMe0ibNULuipjvVjefzWcBRoKjRE/G7SxvNnHCmJnT9iAXcO79UP2yanexiK6N1Z9+sdod
+	gd7ffo8/xFGrVRT8Zg8iHp3vUdNsGD3gdbCrJSSjG28AKS+LxSKR68SAjuByULWkAwb3+0VHxx4bc
+	UvZR3KhTRmnozNdyFpKMEH+eOZrpyiyTEuA+HfReEdLuuv4IiF/6R6aZj96FRanoeMXnLZEuqL/NQ
+	zKq+Vw8w==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1uElo1-005iPI-03;
+	Tue, 13 May 2025 17:20:10 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Tue, 13 May 2025 17:20:09 +0800
+Date: Tue, 13 May 2025 17:20:09 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Klaus Kudielka <klaus.kudielka@gmail.com>
+Cc: Corentin Labbe <clabbe.montjoie@gmail.com>, regressions@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+	Boris Brezillon <bbrezillon@kernel.org>,
+	EBALARD Arnaud <Arnaud.Ebalard@ssi.gouv.fr>,
+	Romain Perier <romain.perier@gmail.com>
+Subject: Re: [PATCH] crypto: marvell/cesa - Avoid empty transfer descriptor
+Message-ID: <aCMOyWVte4tw85_F@gondor.apana.org.au>
+References: <aBt5Mxq1MeefwXGJ@Red>
+ <aBw-C_krkNsIoPlT@gondor.apana.org.au>
+ <aBw_iC_4okpiKglQ@gondor.apana.org.au>
+ <dd55ba91a5aebce0e643cab5d57e4c87a006600f.camel@gmail.com>
+ <aB8W4iuvjvAZSJoc@gondor.apana.org.au>
+ <41680c5d41ed568e8c65451843e3ff212fd340c4.camel@gmail.com>
+ <aB8t1ZTVBexqGlcm@gondor.apana.org.au>
+ <dcb0b04e479d6f3cfed87795d100ea09e4fbcf53.camel@gmail.com>
+ <aCAX8rj2ie4QMnTo@gondor.apana.org.au>
+ <28184fb96e2de8a0af32816f5ff1b3d776b57217.camel@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] binfmt_elf: Move brk for static PIE even if ASLR
- disabled
-Content-Language: en-GB
-To: Kees Cook <kees@kernel.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner
- <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- Ali Saidi <alisaidi@amazon.com>, Andrew Morton <akpm@linux-foundation.org>,
- linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org, linux-hardening@vger.kernel.org
-References: <20250502001820.it.026-kees@kernel.org>
- <87f80506-eeb3-4848-adc9-8a030b5f4136@arm.com>
- <a786b348-7622-4c62-bfdc-f04e05066184@arm.com>
- <202505121340.7CA14D4C@keescook>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <202505121340.7CA14D4C@keescook>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <28184fb96e2de8a0af32816f5ff1b3d776b57217.camel@gmail.com>
 
-On 12/05/2025 21:40, Kees Cook wrote:
-> On Mon, May 12, 2025 at 04:17:12PM +0100, Ryan Roberts wrote:
->> Hi Andrew,
->>
->>
->> On 02/05/2025 11:01, Ryan Roberts wrote:
->>> On 02/05/2025 01:18, Kees Cook wrote:
->>>> In commit bbdc6076d2e5 ("binfmt_elf: move brk out of mmap when doing
->>>> direct loader exec"), the brk was moved out of the mmap region when
->>>> loading static PIE binaries (ET_DYN without INTERP). The common case
->>>> for these binaries was testing new ELF loaders, so the brk needed to
->>>> be away from mmap to avoid colliding with stack, future mmaps (of the
->>>> loader-loaded binary), etc. But this was only done when ASLR was enabled,
->>>> in an attempt to minimize changes to memory layouts.
->>>>
->>>> After adding support to respect alignment requirements for static PIE
->>>> binaries in commit 3545deff0ec7 ("binfmt_elf: Honor PT_LOAD alignment
->>>> for static PIE"), it became possible to have a large gap after the
->>>> final PT_LOAD segment and the top of the mmap region. This means that
->>>> future mmap allocations might go after the last PT_LOAD segment (where
->>>> brk might be if ASLR was disabled) instead of before them (where they
->>>> traditionally ended up).
->>>>
->>>> On arm64, running with ASLR disabled, Ubuntu 22.04's "ldconfig" binary,
->>>> a static PIE, has alignment requirements that leaves a gap large enough
->>>> after the last PT_LOAD segment to fit the vdso and vvar, but still leave
->>>> enough space for the brk (which immediately follows the last PT_LOAD
->>>> segment) to be allocated by the binary.
->>>>
->>>> fffff7f20000-fffff7fde000 r-xp 00000000 fe:02 8110426 /sbin/ldconfig.real
->>>> fffff7fee000-fffff7ff5000 rw-p 000be000 fe:02 8110426 /sbin/ldconfig.real
->>>> fffff7ff5000-fffff7ffa000 rw-p 00000000 00:00 0
->>>> ***[brk will go here at fffff7ffa000]***
->>>> fffff7ffc000-fffff7ffe000 r--p 00000000 00:00 0       [vvar]
->>>> fffff7ffe000-fffff8000000 r-xp 00000000 00:00 0       [vdso]
->>>> fffffffdf000-1000000000000 rw-p 00000000 00:00 0      [stack]
->>>>
->>>> After commit 0b3bc3354eb9 ("arm64: vdso: Switch to generic storage
->>>> implementation"), the arm64 vvar grew slightly, and suddenly the brk
->>>> collided with the allocation.
->>>>
->>>> fffff7f20000-fffff7fde000 r-xp 00000000 fe:02 8110426 /sbin/ldconfig.real
->>>> fffff7fee000-fffff7ff5000 rw-p 000be000 fe:02 8110426 /sbin/ldconfig.real
->>>> fffff7ff5000-fffff7ffa000 rw-p 00000000 00:00 0
->>>> ***[oops, no room any more, vvar is at fffff7ffa000!]***
->>>> fffff7ffa000-fffff7ffe000 r--p 00000000 00:00 0       [vvar]
->>>> fffff7ffe000-fffff8000000 r-xp 00000000 00:00 0       [vdso]
->>>> fffffffdf000-1000000000000 rw-p 00000000 00:00 0      [stack]
->>
->> This change is fixing a pretty serious bug that appeared in v6.15-rc1 so I was
->> hoping it would make it into the v6.15 final release. I'm guessing mm is the
->> correct route in? But I don't currently see this in linus's tree or in any of
->> your mm- staging branches. Is there still time to get this in?
-> 
-> I'll be sending it to Linus this week. I've been letting it bake in
-> -next for a while just to see if anything shakes out.
+On Sun, May 11, 2025 at 06:39:43PM +0200, Klaus Kudielka wrote:
+>
+> Here the log after modprobe, with the new printk patch:
 
-Sorry, Kees - my bad! For some reason, I thought this would go via the mm tree.
-Thanks again for jumping on this.
+Thanks.  I'm starting to get the feeling that the partial hash
+is corrupted.
+
+Please apply this patch on top of the printk patch to confirm this.
+
+Cheers,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+--
+diff --git a/drivers/crypto/marvell/cesa/hash.c b/drivers/crypto/marvell/cesa/hash.c
+index 6815eddc9068..230501fe843b 100644
+--- a/drivers/crypto/marvell/cesa/hash.c
++++ b/drivers/crypto/marvell/cesa/hash.c
+@@ -374,6 +374,12 @@ static void mv_cesa_ahash_complete(struct crypto_async_request *req)
+ 
+ 		memcpy(ahashreq->result, data, digsize);
+ 	} else {
++		struct {
++			u32 digest[8];
++			u64 len;
++		} state;
++
++		memcpy(state.digest, creq->state, digsize);
+ 		for (i = 0; i < digsize / 4; i++)
+ 			creq->state[i] = readl_relaxed(engine->regs +
+ 						       CESA_IVDIG(i));
+@@ -393,6 +399,21 @@ static void mv_cesa_ahash_complete(struct crypto_async_request *req)
+ 				for (i = 0; i < digsize / 4; i++)
+ 					result[i] = cpu_to_be32(creq->state[i]);
+ 			}
++		} else {
++			HASH_FBREQ_ON_STACK(fbreq, ahashreq);
++
++			crypto_ahash_import_core(fbreq, &state);
++			crypto_ahash_update(fbreq);
++			crypto_ahash_export_core(fbreq, &state);
++			if (memcmp(state.digest, creq->state, digsize)) {
++				pr_err("mv_cesa_ahash_complete partial hash mismatch\n");
++				print_hex_dump(KERN_ERR, "", DUMP_PREFIX_OFFSET,
++						16, 1,
++						state.digest, digsize, false);
++				print_hex_dump(KERN_ERR, "", DUMP_PREFIX_OFFSET,
++						16, 1,
++						creq->state, digsize, false);
++			}
+ 		}
+ 	}
+ 
 
