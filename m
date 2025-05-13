@@ -1,158 +1,121 @@
-Return-Path: <linux-kernel+bounces-645891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-645876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 353BDAB551C
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 14:43:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F118AB54FA
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 14:38:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6CA544A5098
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 12:43:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 03EAE7B5890
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 12:35:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 955DB28DEEF;
-	Tue, 13 May 2025 12:43:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9D7A2918F4;
+	Tue, 13 May 2025 12:35:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=phenome.org header.i=@phenome.org header.b="b4CK2ayA"
-Received: from oak.phenome.org (unknown [193.110.157.52])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="C+rU7Uyx"
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FFB428CF68;
-	Tue, 13 May 2025 12:43:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.110.157.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6A8C292080;
+	Tue, 13 May 2025 12:35:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747140215; cv=none; b=RGv99m5jUfv8UfmFobkOYmAvTd51dLISQTw9EkgsUHoydR5K8j+Xu6VAhvlHHuPq8IYmANJx08UmW8GYMRbBdrBIW1Ed8fPXawRwkRy+3xJ99zOPr/xl3lKCd+mrBRiLb/2+LilX/5CAx0a0C5+kijQ200OMGJuF0yN2wrxNk1E=
+	t=1747139706; cv=none; b=YIPjQ5o606Oa0tdjQmbzu5PDlWItsaq4M8m9LyI6EGzMtx17KfFHpjwuFcslJ6pfJKEDsN+1NCADFkz9BSc2oFBa632C/lkox+spka/rI1XJ/wFIbKu69413dZx4AsZOkfmrhVf1Bzqm5MZsXu2LvWz0J+SWdZEIbRHsH/WIA/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747140215; c=relaxed/simple;
-	bh=6iHfKiz4WKe+cAHmUEXMyds2YmUzVKy+KnkYoWTKDQc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NdwH4A6UZ6jAOSlAwO8C4xf4fGjiyX0dxXdoLki5fx/MA30mb+LCN3wov+q26DpB3nvK04R/S4PIJE3SWcwMaVy/c/Ng8fzVIcE6YIVayBnsvgGTNNe+9UQXv2Jowh6VMSp+oF3rdCbKdSWRhUagQT4juz5yZgfwP/MvpM9Nn+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=phenome.org; spf=pass smtp.mailfrom=phenome.org; dkim=pass (2048-bit key) header.d=phenome.org header.i=@phenome.org header.b=b4CK2ayA; arc=none smtp.client-ip=193.110.157.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=phenome.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=phenome.org
-Authentication-Results: oak.phenome.org (amavisd); dkim=pass (2048-bit key)
- reason="pass (just generated, assumed good)" header.d=phenome.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=phenome.org; h=
-	in-reply-to:content-disposition:content-type:content-type
-	:mime-version:references:message-id:subject:subject:from:from
-	:date:date:received; s=oak1; t=1747139687; x=1748003688; bh=6iHf
-	Kiz4WKe+cAHmUEXMyds2YmUzVKy+KnkYoWTKDQc=; b=b4CK2ayA9+skC79kqW/v
-	hLkKn7UoVL1UlpjpXU6ADilmafCK6x4/ShcRO9IghEPaTunVxAbWlNYuxTal37dX
-	7Ou4lptWY7f0DTiyXzV3ibrZ3tYyqY4JIdGJI+HLURhPQE4gz3X2Jo+zkmY7uH7z
-	Iy0lre3EqPHkfdU4igrrEIy1cujoguSBF+zB70H7Ce3nGt6+X8Xv+WbOSlnhgJ7b
-	lxaemBA9XA3qiISOvSiG+YpEiDgCMUw93LtwteknAt4DoT7RSB4HqJ/jxMAco4T4
-	9R+B2B8D1VTeOF7iKTMWLEzkDaVxMAxxgDKnxkDcnmHchEVnwYg6HvP0Lu0jCUJs
-	tg==
-X-Virus-Scanned: amavisd at oak.phenome.org
-Received: from Antony2201.local (hal.connected.by.freedominter.net [91.132.42.103])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature ECDSA (secp384r1) server-digest SHA384)
-	(No client certificate requested)
-	by oak.phenome.org (Postfix) with ESMTPSA;
-	Tue, 13 May 2025 14:34:45 +0200 (CEST)
-Date: Tue, 13 May 2025 14:34:43 +0200
-From: Antony Antony <antony@phenome.org>
-To: Zilin Guan <zilin@seu.edu.cn>
-Cc: steffen.klassert@secunet.com, herbert@gondor.apana.org.au,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, horms@kernel.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, jianhao.xu@seu.edu.cn
-Subject: Re: [RFC PATCH] xfrm: use kfree_sensitive() for SA secret zeroization
-Message-ID: <aCM8Y9iNXmbuPD5G@Antony2201.local>
-References: <20250512092808.3741865-1-zilin@seu.edu.cn>
+	s=arc-20240116; t=1747139706; c=relaxed/simple;
+	bh=ALZ1Y7eqeIWSLtwlNHJDTVrJdqlFq8VngIWKMheXNFw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=GIrolWYNIAQS0SAg4BiX4QgVHea2d79CapBSRg/ZoXkx4AM9nLWFoqdBig8UNKrYp6JnzlQFBEIsajScvDQukzbkT+HH6PIPb+JBKr0jwWb5VehgTxAY5Ji76XPwZIrl06zXu0SUyid9qKKDiv3jJmTL4bS720lLLqpRXbYcAqI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=C+rU7Uyx; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
+	Date:References:In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=AChJjkRKBoBFtHqem4qBYNs6qVLL45ojY4c6NPKMb9o=; b=C+rU7Uyxy0fy+XvPUi/b9wBSH6
+	f1Oaq+JFoZ2kEvKBzeOGCfjDNTnBW5a59B3zdZrOthZUeT429bWEjQBlzWvj0+T9PhglztIC8ap6s
+	6zxt9HA2gkZ4MeMpCMr5dEkhu7vizKzZzcvj9iGpcnwrSryfSNoCkOTRa1mJs32s8l4c+sK0YZsuX
+	YydMsc6m0WdsWBnRMAMO6gECsuEjQpKetgBXN0S8A+eGe+crRgvQdNY43fTK/qnvGQXaWhUz+PsgE
+	igQS5oXPY9XRNbM6Abn69gvsFfQLvjinPX/Ocntl49AdxGiemwVb6GAMQ7unbobB2LqI3ULflJ4da
+	puEG9+IQ==;
+Received: from bl23-10-177.dsl.telepac.pt ([144.64.10.177] helo=localhost)
+	by fanzine2.igalia.com with utf8esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1uEol6-007b70-8h; Tue, 13 May 2025 14:34:53 +0200
+From: Luis Henriques <luis@igalia.com>
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Bernd Schubert <bernd@bsbernd.com>,  Laura Promberger
+ <laura.promberger@cern.ch>,  Dave Chinner <david@fromorbit.com>,  Matt
+ Harvey <mharvey@jumptrading.com>,  linux-fsdevel@vger.kernel.org,
+  linux-kernel@vger.kernel.org,  kernel-dev@igalia.com
+Subject: Re: [RFC PATCH v2] fuse: add optional workqueue to periodically
+ invalidate expired dentries
+In-Reply-To: <CAJfpeguD6jR7AQ=BWs-nKyT4ZV4d35KLM9UPZNzMd-SkcngmzQ@mail.gmail.com>
+	(Miklos Szeredi's message of "Tue, 13 May 2025 11:56:02 +0200")
+References: <20250415133801.28923-1-luis@igalia.com>
+	<CAJfpeguD6jR7AQ=BWs-nKyT4ZV4d35KLM9UPZNzMd-SkcngmzQ@mail.gmail.com>
+Date: Tue, 13 May 2025 13:34:47 +0100
+Message-ID: <87tt5o7kpk.fsf@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250512092808.3741865-1-zilin@seu.edu.cn>
-X-Mutt-References: <20250512092808.3741865-1-zilin@seu.edu.cn>
-X-Mutt-Fcc: ~/sent
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, May 12, 2025 at 09:28:08AM +0000, Zilin Guan wrote:
-> The XFRM subsystem supports redaction of Security Association (SA)
-> secret material when CONFIG_SECURITY lockdown for XFRM secrets is active.
-> High-level copy_to_user_* APIs already omit secret fields, but the
-> state destruction path still invokes plain kfree(), which does not zero
-> the underlying memory before freeing. This can leave SA keys and
-> other confidential data in memory, risking exposure via post-free
-> vulnerabilities.
-> 
-> This patch modifies __xfrm_state_destroy() so that, if SA secret
-> redaction is enabled, it calls kfree_sensitive() on the aead, aalg and
-> ealg structs, ensuring secure zeroization prior to deallocation. When
-> redaction is disabled, the existing kfree() behavior is preserved.
-> 
-> Note that xfrm_redact() is the identical helper function as implemented
-> in net/xfrm/xfrm_user.c. And this patch is an RFC to seek feedback on
-> whether this change is appropriate and if there is a better patch method.
+Hi Miklos,
 
-I would prefer to use the existing one than an additional copy. If it is 
-necessary. See the comment bellow.
+On Tue, May 13 2025, Miklos Szeredi wrote:
 
-> 
-> Signed-off-by: Zilin Guan <zilin@seu.edu.cn>
-> ---
->  net/xfrm/xfrm_state.c | 19 ++++++++++++++++---
->  1 file changed, 16 insertions(+), 3 deletions(-)
-> 
-> diff --git a/net/xfrm/xfrm_state.c b/net/xfrm/xfrm_state.c
-> index 341d79ecb5c2..b6f2c329ea9d 100644
-> --- a/net/xfrm/xfrm_state.c
-> +++ b/net/xfrm/xfrm_state.c
-> @@ -593,15 +593,28 @@ void xfrm_state_free(struct xfrm_state *x)
->  }
->  EXPORT_SYMBOL(xfrm_state_free);
->  
-> +static bool xfrm_redact(void)
-> +{
-> +	return IS_ENABLED(CONFIG_SECURITY) &&
-> +		security_locked_down(LOCKDOWN_XFRM_SECRET);
-> +}
-> +
->  static void ___xfrm_state_destroy(struct xfrm_state *x)
->  {
-> +	bool redact_secret = xfrm_redact();
->  	if (x->mode_cbs && x->mode_cbs->destroy_state)
->  		x->mode_cbs->destroy_state(x);
->  	hrtimer_cancel(&x->mtimer);
->  	timer_delete_sync(&x->rtimer);
-> -	kfree(x->aead);
-> -	kfree(x->aalg);
-> -	kfree(x->ealg);
-> +	if (redact_secret) {
+> On Tue, 15 Apr 2025 at 15:38, Luis Henriques <luis@igalia.com> wrote:
+>
+>> +inval_wq=3DN
+>> +  Enable a workqueue that will periodically invalidate dentries that
+>> +  have expired.  'N' is a value in seconds and has to be bigger than
+>> +  5 seconds.
+>> +
+>
+> I don't think a mount option is needed.  Perhaps a module option knob
+> instead is sufficient?
 
-I recommend using kfree_sensitive() unconditionally.
-This code is not in the fast path, so the overhead compared to kfree() would 
-be acceptable?
+Sure, that should do the trick.  It'll still be set to zero by default
+(i.e. no periodic invalidation), and it won't be possible to tune it per
+mount.  Which is probably the right thing to do.
 
-It's generally better to always wipe key material explicitly.
-When I originally  submitted the redact patch [1], I assumed that in 
-environments with a good LSM(like AppArmor or SELinux) enabled, 
-kfree_sensitive() would be the default kfree().
+>> +static void fuse_dentry_tree_add_node(struct dentry *dentry)
+>> +{
+>> +       struct fuse_conn *fc =3D get_fuse_conn_super(dentry->d_sb);
+>> +       struct dentry_node *dn, *cur;
+>> +       struct rb_node **p, *parent =3D NULL;
+>> +       bool start_work =3D false;
+>> +
+>> +       if (!fc->inval_wq)
+>> +               return;
+>> +
+>> +       dn =3D kmalloc(sizeof(*dn), GFP_KERNEL);
+>> +       if (!dn)
+>> +               return;
+>> +       dn->dentry =3D dget(dentry);
+>
+> A dentry ref without a vfsmount ref is generally bad idea.
+>
+> Instead of acquiring a ref, the lifetime of dn should be tied to that
+> of the dentry (hook into ->d_prune).
+>
+> So just put the rb_node in fuse_dentry and get rid of the "#if
+> BITS_PER_LONG >=3D 64" optimization.
 
-If kfree_sensitive() is called unconditionally, the call to xfrm_redact() in 
-this file won not be necessary.
+OK, this probably makes more sense.  I'll have a closer look at the
+details, but it seems to be a better option.  Thanks a lot for the
+suggestion.  I'll work on that for v3.
 
-
-> +		kfree_sensitive(x->aead);
-> +		kfree_sensitive(x->aalg);
-> +		kfree_sensitive(x->ealg);
-> +	} else {
-> +		kfree(x->aead);
-> +		kfree(x->aalg);
-> +		kfree(x->ealg);
-> +	}
->  	kfree(x->calg);
->  	kfree(x->encap);
->  	kfree(x->coaddr);
-> -- 
-> 2.34.1
-
--antony
-
-[1] Fixes: c7a5899eb26e ("xfrm: redact SA secret with lockdown confidentiality")
+Cheers,
+--=20
+Lu=C3=ADs
 
