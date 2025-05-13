@@ -1,99 +1,125 @@
-Return-Path: <linux-kernel+bounces-645596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-645621-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25F3EAB5033
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 11:47:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E54BAB5080
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 11:57:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCC721B40B6E
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 09:47:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62E3C1896CBA
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 09:57:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2EA7225A5B;
-	Tue, 13 May 2025 09:47:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D540E23C514;
+	Tue, 13 May 2025 09:56:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kJvUol5d"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="a8dZUktS"
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D6111E9B03
-	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 09:47:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 499261E9B20
+	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 09:56:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747129627; cv=none; b=Lub7WfBXb3EPJqaPz+5EhMIFd/usvEQcyhzIWkFs5/KKz4hyQ9XQjr3C5MLg6hqe78zkyx5b7hSEoKD6FZcSNsEwyD8znu711KerHt5JJLaiq0ICHJ1nZL/UXqaPYPjnP1F5D08nZGt+TQ8U4NpW0KKdOzg8PaLP+qfSZ0Sv91k=
+	t=1747130214; cv=none; b=pNGjT9+2E7dFF1cojOJzLwDdGr2V8eic3fHdZebTQvgbuYh9LRu8gWfAQ3hzR3Jjne1J590Ct8rCF8URvZ4oLnxXZDF6dRtF3vUpq16MldDLtOVlyrTQQ2gRkh1ZLkfs7gT5dgO69D/yhNYTw4tEjlaySfuY58Bmze2z1VIqEVs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747129627; c=relaxed/simple;
-	bh=b7siKQi24yevBo11SRzBrrvRK89vCTeLTpr1jo1HuBs=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=KoSq+VuiP7JJKfGj8JLZZzqERnR2p16M6jplgoF1SmL+3nWa0yFcea3AMotcD9YQylQTsPbnvijy8Fy5bvj8oKW8nhDoNUQTjKJOmAAuLyzklUl0X+sSIjxTW/8ruhMZGjZP5DH4GErDuW3GiuUhRF02eEY7CclYdTqik8W+KJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kJvUol5d; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5626C4CEE4;
-	Tue, 13 May 2025 09:47:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747129626;
-	bh=b7siKQi24yevBo11SRzBrrvRK89vCTeLTpr1jo1HuBs=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=kJvUol5df8hj1/dTrJlGoIDLbE7H2VgKjjKv0wKxLp9n9IxF2eIVxGFzC1PyH3Kpq
-	 nZ/AjmIi8OSAny/Y4xXMsbjSSogyjmSsxENhmKEgrRNgB99t4ITDkhxmKo+Jdy6yv1
-	 cEGr5EsGUM1i2LZLfmeXqGjWlP9GrAp8vIDCJJsCBoi3tinR6kpmvlGwWHOQks5h/T
-	 ClfFT1c0ZErz/8tkDffde9EjrjhA37RvfyXKRhMQgy6Xr5HiFAsDFnU5kiWyPcqtWb
-	 sfK7qkGMR6tXG5nz9AE/OZoS9xnmYccjJWIxjR+I1NGvqJaSDJ4eT+KzyEIGMR0/Al
-	 3K8BHg44+4RyA==
-From: Mark Brown <broonie@kernel.org>
-To: Liam Girdwood <lgirdwood@gmail.com>, Nishanth Menon <nm@ti.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-In-Reply-To: <20250512185727.2907411-1-nm@ti.com>
-References: <20250512185727.2907411-1-nm@ti.com>
-Subject: Re: [PATCH] regulator: gpio: Use dev_err_probe
-Message-Id: <174712962358.91325.1280177002395058293.b4-ty@kernel.org>
-Date: Tue, 13 May 2025 11:47:03 +0200
+	s=arc-20240116; t=1747130214; c=relaxed/simple;
+	bh=Sr1G6fLU6BFMDFoLZiB3jJuOclK9d7Syp1mQy5PAwpY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=RLhvZxBYqSY17dC9LkGBtTCgbFHchNg3poKZGWOhBjcBNtvSxHscM67eHyD7w7kK8/Q78AV+eX4x4mU6JEPPcAr9dfoJGuWpNYHv/ew1aNBydLzB/JuzmnnyD8UmDt9giaik1c3lcut7X3eDbs2NkPjqfh2k/7SQ8QGUt5DuSDI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=a8dZUktS; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas2p2.samsung.com (unknown [182.195.41.54])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250513095648epoutp04608845e1b3c2eba71d7599ac965a1150~-Darl9b7l0998509985epoutp04M
+	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 09:56:48 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250513095648epoutp04608845e1b3c2eba71d7599ac965a1150~-Darl9b7l0998509985epoutp04M
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1747130208;
+	bh=vL0cr7fBrUc/KWtU42iEj3Tt+KU0GKzlaCQEW9YfGIQ=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=a8dZUktSSnJm22q/vzFl17YWK5rjaO/OOZkmKCaRaIbLdSyLazAO/DfI97ShxvhDF
+	 BIl47+knvAljmZDGGaQDjeG2qJzQxDJ+j6k7qyz9iVEFrOEJHPGsA9V8VofaVI9e+s
+	 2LEGX/qvcslkXTnJPxu8bFYJJeH742r8qUoRwv3o=
+Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
+	epcas2p1.samsung.com (KnoxPortal) with ESMTPS id
+	20250513095647epcas2p1281a6e30d6ea62b48b23b2638f9f0061~-DarI2ian1927019270epcas2p10;
+	Tue, 13 May 2025 09:56:47 +0000 (GMT)
+Received: from epcas2p2.samsung.com (unknown [182.195.36.99]) by
+	epsnrtp04.localdomain (Postfix) with ESMTP id 4ZxX1q22yNz6B9m7; Tue, 13 May
+	2025 09:56:47 +0000 (GMT)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas2p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250513095646epcas2p189a3681a52ba1ecda3452fd0ae84bffb~-DaqASh-U1927019270epcas2p1z;
+	Tue, 13 May 2025 09:56:46 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20250513095646epsmtrp11d4de783d27dcb344adb08f35f42ee01~-Dap-PMHc1976619766epsmtrp1F;
+	Tue, 13 May 2025 09:56:46 +0000 (GMT)
+X-AuditID: b6c32a29-55afd7000000223e-1d-6823175e555e
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	17.DD.08766.E5713286; Tue, 13 May 2025 18:56:46 +0900 (KST)
+Received: from localhost.localdomain (unknown [10.229.9.126]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250513095646epsmtip24254bfc5695cd06dc6df339e29d9d31e~-Daps4WzU2427724277epsmtip2W;
+	Tue, 13 May 2025 09:56:46 +0000 (GMT)
+From: Sangwook Shin <sw617.shin@samsung.com>
+To: krzk@kernel.org, alim.akhtar@samsung.com, wim@linux-watchdog.org,
+	linux@roeck-us.net
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+	linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org, Sangwook Shin
+	<sw617.shin@samsung.com>
+Subject: [PATCH 0/3] Increase max timeout value of s3c2410 watchdog
+Date: Tue, 13 May 2025 18:47:08 +0900
+Message-Id: <20250513094711.2691059-1-sw617.shin@samsung.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrDLMWRmVeSWpSXmKPExsWy7bCSvG6cuHKGQdN8XosH87axWZw/v4Hd
+	YtPja6wWl3fNYbOYcX4fk8WNdfvYLZ4sPMNkMWPxSTaLxy//MTtwemxa1cnmsXLNGlaPzUvq
+	PXZ+b2D36NuyitHj8ya5ALYoLpuU1JzMstQifbsErox5s88xFixhrdj6ciFLA+Mmli5GTg4J
+	AROJd83XgWwuDiGB3YwSJ349ZO1i5ABKSEm8e2YJUSMscb/lCCtEzQdGidbHp9hAEmwCOhLT
+	/90GGyQiECdxrH0zM0gRs8BORomW6b+ZQRLCAs4SzQc3sYLYLAKqEhOuPmQEWcArYCvxd5oP
+	xAJ5iZmXvrOD2LwCghInZz4Bm8kMFG/eOpt5AiPfLCSpWUhSCxiZVjFKphYU56bnFhsWGOal
+	lusVJ+YWl+al6yXn525iBAewluYOxu2rPugdYmTiYDzEKMHBrCTC27hdMUOINyWxsiq1KD++
+	qDQntfgQozQHi5I4r/iL3hQhgfTEktTs1NSC1CKYLBMHp1QD0wZ5Tqevm/ZMX+55Y8MPxven
+	Dt7z1ApWXxmd+4RtoQWL1n2/jImTZflOiPZP0UkuzI1ltTHnFdTuuc97fXLVoVk99X7bGE7Y
+	RiUbhOSsCH1fk7FCYqnTilqPc3drs5nSHl8NE2413fHD3ZZn6cxf5xzOr7CVChUxl+EwCl3r
+	by7z0PWKoeXMKs+3sTt3dy4pedFVwLsrZsVrYeZd37mNahfcLVd42/Jew0440FZsQVLnidRn
+	PxZ79bFNZ98k0yw7qZ8tVea34uINr7T7udlNVGQEj33eF+tUzCQmMC001q9AtuZav/e7VYzf
+	++UNOd/cmLiOeynz7pBStg1uVfrn5p/44NQrN0mwxOekzT0lluKMREMt5qLiRACvEETczwIA
+	AA==
+X-CMS-MailID: 20250513095646epcas2p189a3681a52ba1ecda3452fd0ae84bffb
+X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-c25d1
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+cpgsPolicy: CPGSC10-234,N
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250513095646epcas2p189a3681a52ba1ecda3452fd0ae84bffb
+References: <CGME20250513095646epcas2p189a3681a52ba1ecda3452fd0ae84bffb@epcas2p1.samsung.com>
 
-On Mon, 12 May 2025 13:57:27 -0500, Nishanth Menon wrote:
-> During probe the gpio driver may not yet be available. Use
-> dev_err_probe to provide just the pertinent log.
-> 
-> Since dev_err_probe takes care of reporting the error value,
-> drop the redundant ret variable while at it.
-> 
-> 
-> [...]
+The ExynosAutoV9 and ExynosAutoV920 SoCs have a 32-bit counter register,
+but due to code constraints, only 16-bit values could be used.
+This series enables these SoCs to use the 32-bit counter.
+Additionally, it addresses the issue where the ExynosAutoV9 SoC supports
+the DBGACK bit but it was not set.
 
-Applied to
+Sangwook Shin (3):
+  watchdog: s3c2410_wdt: Increase max timeout value of watchdog
+  watchdog: s3c2410_wdt: exynosautov920: Enable QUIRK_HAS_32BIT_MAXCNT
+  watchdog: s3c2410_wdt: exynosautov9: Enable supported features
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
+ drivers/watchdog/s3c2410_wdt.c | 40 ++++++++++++++++++++++++----------
+ 1 file changed, 28 insertions(+), 12 deletions(-)
 
-Thanks!
-
-[1/1] regulator: gpio: Use dev_err_probe
-      commit: cad915e4515790d2e66525a86a166e7ce81e3055
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+-- 
+2.40.1
 
 
