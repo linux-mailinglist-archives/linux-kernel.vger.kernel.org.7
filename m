@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-646325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-646327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0BB3AB5AFF
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 19:19:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 28ACCAB5B03
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 19:20:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 204CF7AE860
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 17:18:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 77EF17AFA61
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 17:18:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB9CB2BFC6C;
-	Tue, 13 May 2025 17:17:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB9B42C1797;
+	Tue, 13 May 2025 17:17:49 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42C482C10B7
-	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 17:17:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BFC62BFC72
+	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 17:17:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747156659; cv=none; b=BrvEcTov2ff0gC5fCLxgV4qL+jqA8HQnvsyRLrn1f278uwQpGvo4v9eAt4JQqddtzNk4xBbENXMvrnu2+JxGwgOoZ1Lgw4cl1JSsIdKIHzJYzqXlShduEbp4QAYJ8iz4VBRxN1TnykP4UfSLfjePuAjITiBCO/UhKSy3yn9G5qQ=
+	t=1747156669; cv=none; b=jDR+OAR4oQP8KVvCJXnALsQLU3kR2zlOXIs+IDq5YExjUCraxneD51hbRVeoRLWmct28JNjYfL/AQxBWJHdGGeDhhlxEzFYJuckpLVIjW3VcEdKY8yBpzg2KjrsSkdDavK6LsCEV2zSnwRIPLVxCbbgU0FiiFJDn9HEa7KiPBck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747156659; c=relaxed/simple;
-	bh=AgwzCD8iSnrWepDGv+7t9ARZZphB9VkgUTgKq74uFY0=;
+	s=arc-20240116; t=1747156669; c=relaxed/simple;
+	bh=fMFfrblu2hSb2As2208WzkfCWAgVpdvGkmqqXmgwsi4=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=nJuG0MF1w+eBlVPFBuN/8vMLpwgginQ367tlFeh6Z5C6x4l5vG/LTvQGa7W/1gpZzc3FS8ngP0zW/mxXeRHZI+7aV3DQAndux5LtCICyy20tvt2EFWV5xNF8oEdX5dsNyQKouXCK0t4p6lYBDv8QuCBLSz36Q61M8laG4BTe6Fk=
+	 MIME-Version; b=lI2Sc4WOb2p1RhyUkCqelnyBazfE7N91z3TTirFl7Lc4XM4IDPYFoPZ0SzX9RKOrXB/Uo46IxEuRkH78gvYoVoX9ZOThcevEDsvk/UxNuL0VByOOfyIDwDno8/vZstbbw1xCNIKE62+VaUF4pLRxz+o5DhOHELXt1/7M8QmEn8Q=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D20132BC4;
-	Tue, 13 May 2025 10:17:25 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9CA0E2BCA;
+	Tue, 13 May 2025 10:17:29 -0700 (PDT)
 Received: from merodach.members.linode.com (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6A3563F63F;
-	Tue, 13 May 2025 10:17:33 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1FEE23F63F;
+	Tue, 13 May 2025 10:17:37 -0700 (PDT)
 From: James Morse <james.morse@arm.com>
 To: x86@kernel.org,
 	linux-kernel@vger.kernel.org
@@ -60,11 +60,12 @@ Cc: Reinette Chatre <reinette.chatre@intel.com>,
 	Koba Ko <kobak@nvidia.com>,
 	Shanker Donthineni <sdonthineni@nvidia.com>,
 	fenghuay@nvidia.com,
-	Babu Moger <babu.moger@amd.com>,
-	Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
-Subject: [PATCH v11 19/30] x86/resctrl: Move pseudo lock prototypes to include/linux/resctrl.h
-Date: Tue, 13 May 2025 17:15:36 +0000
-Message-Id: <20250513171547.15194-20-james.morse@arm.com>
+	Dave Martin <Dave.Martin@arm.com>,
+	Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>,
+	Babu Moger <babu.moger@amd.com>
+Subject: [PATCH v11 20/30] x86/resctrl: Squelch whitespace anomalies in resctrl core code
+Date: Tue, 13 May 2025 17:15:37 +0000
+Message-Id: <20250513171547.15194-21-james.morse@arm.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20250513171547.15194-1-james.morse@arm.com>
 References: <20250513171547.15194-1-james.morse@arm.com>
@@ -76,76 +77,97 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The resctrl pseudo-lock feature allows an architecture to allocate data
-into particular cache portions, which are then treated as reserved to
-avoid that data ever being evicted. Setting this up is deeply architecture
-specific as it involves disabling prefetchers etc. It is not possible
-to support this kind of feature on arm64. Risc-V is assumed to be the
-same.
+From: Dave Martin <Dave.Martin@arm.com>
 
-The prototypes for the architecture code were added to x86's asm/resctrl.h,
-with other architectures able to provide stubs for their architecture. This
-forces other architectures to provide identical stubs.
+checkpatch.pl complains about some whitespace anomalies in the
+resctrl core code.
 
-Move the prototypes and stubs to linux/resctrl.h, and switch between them
-using the existing Kconfig symbol.
+This doesn't matter, but since this code is about to be factored
+out and made generic, this is a good opportunity to fix these
+issues and so reduce future checkpatch fuzz.
 
+Fix them.
+
+No functional change.
+
+Signed-off-by: Dave Martin <Dave.Martin@arm.com>
 Signed-off-by: James Morse <james.morse@arm.com>
-Tested-by: Babu Moger <babu.moger@amd.com>
+Tested-by: Peter Newman <peternewman@google.com>
 Tested-by: Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
+Tested-by: Amit Singh Tomar <amitsinght@marvell.com> # arm64
+Tested-by: Shanker Donthineni <sdonthineni@nvidia.com> # arm64
+Tested-by: Babu Moger <babu.moger@amd.com>
+Reviewed-by: Fenghua Yu <fenghuay@nvidia.com>
 Reviewed-by: Reinette Chatre <reinette.chatre@intel.com>
 ---
-I'm assuming risc-v's hardware prefetcher controls are restricted to the
-higehst privilege level, and that this isn't where linux runs.
+ arch/x86/kernel/cpu/resctrl/rdtgroup.c | 12 +++++-------
+ 1 file changed, 5 insertions(+), 7 deletions(-)
 
-Changes since v9:
- * Typo fix in commit message.
-
-Changse since v8:
- * This patch is new.
----
- arch/x86/include/asm/resctrl.h |  5 -----
- include/linux/resctrl.h        | 13 +++++++++++++
- 2 files changed, 13 insertions(+), 5 deletions(-)
-
-diff --git a/arch/x86/include/asm/resctrl.h b/arch/x86/include/asm/resctrl.h
-index a2e20fe90a2c..ad497ab196d1 100644
---- a/arch/x86/include/asm/resctrl.h
-+++ b/arch/x86/include/asm/resctrl.h
-@@ -205,11 +205,6 @@ static inline void resctrl_arch_mon_ctx_free(struct rdt_resource *r,
- 					     enum resctrl_event_id evtid,
- 					     void *ctx) { }
+diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+index ac4baf172269..02c5f626bce1 100644
+--- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
++++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+@@ -1024,7 +1024,7 @@ static int rdt_num_closids_show(struct kernfs_open_file *of,
+ }
  
--u64 resctrl_arch_get_prefetch_disable_bits(void);
--int resctrl_arch_pseudo_lock_fn(void *_plr);
--int resctrl_arch_measure_cycles_lat_fn(void *_plr);
--int resctrl_arch_measure_l2_residency(void *_plr);
--int resctrl_arch_measure_l3_residency(void *_plr);
- void resctrl_cpu_detect(struct cpuinfo_x86 *c);
+ static int rdt_default_ctrl_show(struct kernfs_open_file *of,
+-			     struct seq_file *seq, void *v)
++				 struct seq_file *seq, void *v)
+ {
+ 	struct resctrl_schema *s = rdt_kn_parent_priv(of->kn);
+ 	struct rdt_resource *r = s->res;
+@@ -1034,7 +1034,7 @@ static int rdt_default_ctrl_show(struct kernfs_open_file *of,
+ }
  
- #else
-diff --git a/include/linux/resctrl.h b/include/linux/resctrl.h
-index 5ef972cbf56b..9ba771f2ddea 100644
---- a/include/linux/resctrl.h
-+++ b/include/linux/resctrl.h
-@@ -534,4 +534,17 @@ extern unsigned int resctrl_rmid_realloc_limit;
- int resctrl_init(void);
- void resctrl_exit(void);
+ static int rdt_min_cbm_bits_show(struct kernfs_open_file *of,
+-			     struct seq_file *seq, void *v)
++				 struct seq_file *seq, void *v)
+ {
+ 	struct resctrl_schema *s = rdt_kn_parent_priv(of->kn);
+ 	struct rdt_resource *r = s->res;
+@@ -1150,7 +1150,7 @@ static int rdt_bit_usage_show(struct kernfs_open_file *of,
+ }
  
-+#ifdef CONFIG_RESCTRL_FS_PSEUDO_LOCK
-+u64 resctrl_arch_get_prefetch_disable_bits(void);
-+int resctrl_arch_pseudo_lock_fn(void *_plr);
-+int resctrl_arch_measure_cycles_lat_fn(void *_plr);
-+int resctrl_arch_measure_l2_residency(void *_plr);
-+int resctrl_arch_measure_l3_residency(void *_plr);
-+#else
-+static inline u64 resctrl_arch_get_prefetch_disable_bits(void) { return 0; }
-+static inline int resctrl_arch_pseudo_lock_fn(void *_plr) { return 0; }
-+static inline int resctrl_arch_measure_cycles_lat_fn(void *_plr) { return 0; }
-+static inline int resctrl_arch_measure_l2_residency(void *_plr) { return 0; }
-+static inline int resctrl_arch_measure_l3_residency(void *_plr) { return 0; }
-+#endif /* CONFIG_RESCTRL_FS_PSEUDO_LOCK */
- #endif /* _RESCTRL_H */
+ static int rdt_min_bw_show(struct kernfs_open_file *of,
+-			     struct seq_file *seq, void *v)
++			   struct seq_file *seq, void *v)
+ {
+ 	struct resctrl_schema *s = rdt_kn_parent_priv(of->kn);
+ 	struct rdt_resource *r = s->res;
+@@ -1185,7 +1185,7 @@ static int rdt_mon_features_show(struct kernfs_open_file *of,
+ }
+ 
+ static int rdt_bw_gran_show(struct kernfs_open_file *of,
+-			     struct seq_file *seq, void *v)
++			    struct seq_file *seq, void *v)
+ {
+ 	struct resctrl_schema *s = rdt_kn_parent_priv(of->kn);
+ 	struct rdt_resource *r = s->res;
+@@ -1195,7 +1195,7 @@ static int rdt_bw_gran_show(struct kernfs_open_file *of,
+ }
+ 
+ static int rdt_delay_linear_show(struct kernfs_open_file *of,
+-			     struct seq_file *seq, void *v)
++				 struct seq_file *seq, void *v)
+ {
+ 	struct resctrl_schema *s = rdt_kn_parent_priv(of->kn);
+ 	struct rdt_resource *r = s->res;
+@@ -2068,7 +2068,6 @@ static struct rftype res_common_files[] = {
+ 		.seq_show	= rdtgroup_closid_show,
+ 		.fflags		= RFTYPE_CTRL_BASE | RFTYPE_DEBUG,
+ 	},
+-
+ };
+ 
+ static int rdtgroup_add_files(struct kernfs_node *kn, unsigned long fflags)
+@@ -3628,7 +3627,6 @@ static int rdtgroup_init_alloc(struct rdtgroup *rdtgrp)
+ 			rdt_last_cmd_puts("Failed to initialize allocations\n");
+ 			goto out;
+ 		}
+-
+ 	}
+ 
+ 	rdtgrp->mode = RDT_MODE_SHAREABLE;
 -- 
 2.39.5
 
