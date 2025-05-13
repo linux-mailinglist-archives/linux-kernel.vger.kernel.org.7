@@ -1,155 +1,168 @@
-Return-Path: <linux-kernel+bounces-646718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-646721-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3040AB5FA2
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 00:48:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 541D8AB5FAB
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 00:50:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67B40464A22
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 22:48:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91FD73B9C83
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 22:50:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE4B8216386;
-	Tue, 13 May 2025 22:48:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 808DD21A433;
+	Tue, 13 May 2025 22:50:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="J/3hxZiC"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ejae8Xw/"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB9C6212FA2
-	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 22:48:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFAD420B7F9;
+	Tue, 13 May 2025 22:50:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747176509; cv=none; b=Vz2+nZJI/KECRaWEaLmafQ2MRfGn/vQetciL1fnwJFUogS3GCRw5V0lmmsUu9zjvp2nbWyYf6TdWk7dbYNeJU2AKuLrSgHQiLwkOsw+TAQM3sv2y6uQ6bk2PPLwTnEBBsWkJpwdEqQPQ1uzRsD2x5qLh6d0aaAt+27zG9F7ni5w=
+	t=1747176622; cv=none; b=gnIIzPOgjqXVjonial2DZ7OdZp2M94pohrORX4Aw/AZB0Hb7dRpL1lNZYxv+6CULoA5zeTTI5F+aj6dJ9BOxD6IGHfEtXXQwOffs6+VYukUlG0xb1OO/hD5GJpYNTdp4ZEIsvFvu4ZllT+fp57rFWxgnb0lu1KqqjxCWLw+5GZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747176509; c=relaxed/simple;
-	bh=U601SMudynNSsZjIuOIkDQ3ktITnRD+m5nt3VRuNJf0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=WoEG+FNY1Gr/MsgXptmf5zSAYkQEAxec64qis1HuUrcHNeuHiv7Wtij1Vc7Jl4ljBBcPhVMNlDkSVZaCX7JcULCvsLZuiDaGsF+LHTBOd/RlSGAYw671Q+J+/UamIGTIE/0U+1FKFDa11gmY7GYvEvqP4XbTk1UZPZ7pKZSPBIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=J/3hxZiC; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-740b3a18e26so5431856b3a.2
-        for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 15:48:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1747176507; x=1747781307; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FkLyMTbGlJXb7d4nD6pFtOPSL5QHuutzi+7fasvDY2o=;
-        b=J/3hxZiCz7gpBArqzrYVWC0eiAo24Q4XsK21X5/lrnjx39N4SbbcQRyY4PMnxkMlZs
-         940SRggrJdgjreN+t1J0qVv4ZAptwvTc9eNVFS20qJe868TxrnBJPSeioCQYX0HiNxd8
-         tcBqTXR1ZBjbidQt0rWkwmLLbWb0e6ynv/GUM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747176507; x=1747781307;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FkLyMTbGlJXb7d4nD6pFtOPSL5QHuutzi+7fasvDY2o=;
-        b=bbwV+HXX9sEwgemj3UlYoKH/3K/zWBngOVgs3rQvZRWGW4I5bCzAnbbqMWxBrHCNAK
-         0tLf/jdT94dZ2FBwFxaiV2gdba7X3dmUIlUbsZSlVncqeLVxxW/Sbj9otGLVmuvh4+xt
-         biEIJurun4vezd33i8mAeKKN4oW9scXpoRycYb9KuDsYzyYC1/4IShuS1kZH0U0vxT8v
-         gNs5dEBpC3AxFUBtzrM1sjdUiMklcvwJYvGYjUk4n37htRR8X4f3tT/FR74whAGI1QWs
-         3ka6xRjF9C0rwZnYUHszOut4xhMs2VD4UtySfU8sMybaoYAUFAstsbOaY4SUY+pfu++N
-         r0lA==
-X-Forwarded-Encrypted: i=1; AJvYcCXvGwHnrf8Xc1GB7Ip+tnBu2C9Hp5MCbvNOSB6OjhSZ2ztDv+mVcSXOxp2JWe5BBeMmiS3s0k6h9dQ/ck4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTjpOzNrHem8C+2ybLRzGeFLNUAv/t+WhMMag5sgzcwpwfcPsr
-	qk2/9NLV3CSv3puf5WWYcMMA2gTipcJZqq2EBugX9zavFhNe8+jdjM5qJBEMkkDIlBFji+w+iGk
-	=
-X-Gm-Gg: ASbGncv+A7jX1RDYE29zcQDFV8zlOLL8bnnR+IUTC4ba0n7/ptLt35HFwf+aTSnZpq3
-	2ij/Uy2TfSZRG4qZBGNOi3qcEHfh39X4qaXmvc/h9uqJpAM2hf0hQinY/ZeHnvAuXC7mqjB3LET
-	3siFPoncFHd2HQZnvZgzgPCQJn54b8/oFxLIw5xz+21OLJK8Qs9YcY2x5qdWwzzbtgyk+44rvGf
-	UsTvUA4xVzP3Ahs8FFtX/R9Rv+FZC+9XLEd8RewUX920SP0XHwEE+FUQBMT8iXoOsHk3CcmMMoi
-	GZaOrVQQ8BXJOgWQm75iGv3UdA0/isf57Kzu1hTwqRW4gxV93C8EwulOks7aAEWz+dOLw5MyoXi
-	N+iw/wbuq4t0qpg==
-X-Google-Smtp-Source: AGHT+IHblR3/2uQG5jNf6U7wWEdXn5/JlkesMPjg6q8xTPdedpMsJPq8+hDnn83rmw7qGoVjmmbNmg==
-X-Received: by 2002:a05:6a00:b85:b0:739:3f55:b23f with SMTP id d2e1a72fcca58-742892cd549mr1629461b3a.14.1747176507038;
-        Tue, 13 May 2025 15:48:27 -0700 (PDT)
-Received: from localhost ([2a00:79e0:2e14:7:b0a6:1dea:5306:7727])
-        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-74237a1149asm8212317b3a.118.2025.05.13.15.48.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 13 May 2025 15:48:26 -0700 (PDT)
-From: Brian Norris <briannorris@chromium.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Douglas Anderson <dianders@chromium.org>,
-	Tsai Sung-Fu <danielsftsai@google.com>,
-	linux-kernel@vger.kernel.org,
-	Brian Norris <briannorris@chromium.org>
-Subject: [PATCH 2/2] genirq: Retain disable depth across irq shutdown/startup
-Date: Tue, 13 May 2025 15:42:38 -0700
-Message-ID: <20250513224402.864767-3-briannorris@chromium.org>
-X-Mailer: git-send-email 2.49.0.1045.g170613ef41-goog
-In-Reply-To: <20250513224402.864767-1-briannorris@chromium.org>
-References: <20250513224402.864767-1-briannorris@chromium.org>
+	s=arc-20240116; t=1747176622; c=relaxed/simple;
+	bh=YOm9j2GGESAbT4Kw5OSrV1pC85uJg3KLTfhUK9HOpsc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GlOg8CW5U2MlrACpGNuRsDORRMZixVhG3f5Rk+4aILNIWVrL5jQ90UpsMm+DGyKf9FH6W4EIZc5J9jCdJCtkkczNI7Yqjb/Zl8vP5SVTsj0u8QCeJJW3Pfx8JKcvhSTL+4ubVv23KWfsAh33aiCoWdN9NIln/3uHSkCvQ42sERQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ejae8Xw/; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1747176621; x=1778712621;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=YOm9j2GGESAbT4Kw5OSrV1pC85uJg3KLTfhUK9HOpsc=;
+  b=ejae8Xw/fku34DEr3ClrGnI0i2aZKfoBCLhasf3zIsLHsEYYzBwPNKsW
+   paKn9gMkZQdVyFgEGoy6BlK3XUFEg2kMZ8V1M34XVQBTaW8qcDB+zSwFM
+   D2ycYKaLl/n7s+nkFnZnu3nHwjJAFZG7ppBkuDT5Vh63kGuLlcKiXAGZp
+   dD8luUaf5swSq8g6P6cKPCCGN+2GqLsD9HCGTaNdHTP7mX1P1n/n532AG
+   ciMj1VV9wAMHIyrYNG0OJA4Fg8LNApPRX1KQEHIhYI68zpDxlORqngCQI
+   XjsKyvz2N92o6vHVnhb2jzWZosboKP9pfylyh474An7oqnN+JAm43wWNt
+   Q==;
+X-CSE-ConnectionGUID: nmU8DWVTRVePDit7x2y/VQ==
+X-CSE-MsgGUID: K0t2Fb/zTbyqAKZEX1qfVw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11432"; a="48303093"
+X-IronPort-AV: E=Sophos;i="6.15,286,1739865600"; 
+   d="scan'208";a="48303093"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 May 2025 15:50:20 -0700
+X-CSE-ConnectionGUID: wHziW06rRHShu89ZmiEO1Q==
+X-CSE-MsgGUID: LxdgacP5Ql+b1a9n6NGwPw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,286,1739865600"; 
+   d="scan'208";a="138832650"
+Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
+  by fmviesa009.fm.intel.com with ESMTP; 13 May 2025 15:50:13 -0700
+Received: from kbuild by 1992f890471c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uEyRu-000GTD-38;
+	Tue, 13 May 2025 22:50:10 +0000
+Date: Wed, 14 May 2025 06:49:42 +0800
+From: kernel test robot <lkp@intel.com>
+To: Byungchul Park <byungchul@sk.com>, linux-kernel@vger.kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	kernel_team@skhynix.com, torvalds@linux-foundation.org,
+	damien.lemoal@opensource.wdc.com, linux-ide@vger.kernel.org,
+	adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
+	mingo@redhat.com, peterz@infradead.org, will@kernel.org,
+	tglx@linutronix.de, rostedt@goodmis.org, joel@joelfernandes.org,
+	sashal@kernel.org, daniel.vetter@ffwll.ch, duyuyang@gmail.com,
+	johannes.berg@intel.com, tj@kernel.org, tytso@mit.edu,
+	willy@infradead.org, david@fromorbit.com, amir73il@gmail.com,
+	gregkh@linuxfoundation.org, kernel-team@lge.com, linux-mm@kvack.org,
+	akpm@linux-foundation.org, mhocko@kernel.org, minchan@kernel.org,
+	hannes@cmpxchg.org, vdavydov.dev@gmail.com
+Subject: Re: [PATCH v15 33/43] dept: assign unique dept_key to each distinct
+ dma fence caller
+Message-ID: <202505140631.FOWO8B5L-lkp@intel.com>
+References: <20250513100730.12664-34-byungchul@sk.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250513100730.12664-34-byungchul@sk.com>
 
-If an IRQ is shut down and restarted while it was already disabled, its
-depth is clobbered and reset to 0. This can produce unexpected results,
-as:
-1) the consuming driver probably expected it to stay disabled and
-2) the kernel starts complaining about "Unbalanced enable for IRQ N" the
-   next time the consumer calls enable_irq()
+Hi Byungchul,
 
-This problem can occur especially for affinity-managed IRQs that are
-already disabled before CPU hotplug. I captured these failures in kunit
-tests irq_shutdown_depth_test and irq_cpuhotplug_test.
+kernel test robot noticed the following build warnings:
 
-Perform a naive increment/decrement instead of clobbering the count to
-0/1.
+[auto build test WARNING on 82f2b0b97b36ee3fcddf0f0780a9a0825d52fec3]
 
-Tested via kunit:
+url:    https://github.com/intel-lab-lkp/linux/commits/Byungchul-Park/llist-move-llist_-head-node-definition-to-types-h/20250513-181346
+base:   82f2b0b97b36ee3fcddf0f0780a9a0825d52fec3
+patch link:    https://lore.kernel.org/r/20250513100730.12664-34-byungchul%40sk.com
+patch subject: [PATCH v15 33/43] dept: assign unique dept_key to each distinct dma fence caller
+config: arm-randconfig-002-20250514 (https://download.01.org/0day-ci/archive/20250514/202505140631.FOWO8B5L-lkp@intel.com/config)
+compiler: clang version 21.0.0git (https://github.com/llvm/llvm-project f819f46284f2a79790038e1f6649172789734ae8)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250514/202505140631.FOWO8B5L-lkp@intel.com/reproduce)
 
-  tools/testing/kunit/kunit.py run 'irq_test_cases*' --arch x86_64 --qemu_args '-smp 2'
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202505140631.FOWO8B5L-lkp@intel.com/
 
-Signed-off-by: Brian Norris <briannorris@chromium.org>
----
-I'm not very confident this is a fully correct fix, as I'm not sure I've
-grokked all the startup/shutdown logic in the IRQ core. This probably
-serves better as an example method to pass the tests in patch 1.
+All warnings (new ones prefixed by >>):
 
- kernel/irq/chip.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+>> drivers/dma-buf/dma-fence.c:503: warning: expecting prototype for dma_fence_wait_timeout(). Prototype was for __dma_fence_wait_timeout() instead
+>> drivers/dma-buf/dma-fence.c:763: warning: expecting prototype for dma_fence_default_wait(). Prototype was for __dma_fence_default_wait() instead
+>> drivers/dma-buf/dma-fence.c:853: warning: expecting prototype for dma_fence_wait_any_timeout(). Prototype was for __dma_fence_wait_any_timeout() instead
 
-diff --git a/kernel/irq/chip.c b/kernel/irq/chip.c
-index 36cf1b09cc84..cc6d2220ceae 100644
---- a/kernel/irq/chip.c
-+++ b/kernel/irq/chip.c
-@@ -272,7 +272,9 @@ int irq_startup(struct irq_desc *desc, bool resend, bool force)
- 	const struct cpumask *aff = irq_data_get_affinity_mask(d);
- 	int ret = 0;
- 
--	desc->depth = 0;
-+	desc->depth--;
-+	if (desc->depth)
-+		return 0;
- 
- 	if (irqd_is_started(d)) {
- 		irq_enable(desc);
-@@ -290,6 +292,7 @@ int irq_startup(struct irq_desc *desc, bool resend, bool force)
- 			ret = __irq_startup(desc);
- 			break;
- 		case IRQ_STARTUP_ABORT:
-+			desc->depth++;
- 			irqd_set_managed_shutdown(d);
- 			return 0;
- 		}
-@@ -322,7 +325,7 @@ void irq_shutdown(struct irq_desc *desc)
- {
- 	if (irqd_is_started(&desc->irq_data)) {
- 		clear_irq_resend(desc);
--		desc->depth = 1;
-+		desc->depth++;
- 		if (desc->irq_data.chip->irq_shutdown) {
- 			desc->irq_data.chip->irq_shutdown(&desc->irq_data);
- 			irq_state_set_disabled(desc);
+
+vim +503 drivers/dma-buf/dma-fence.c
+
+e941759c74a44d drivers/dma-buf/fence.c     Maarten Lankhorst 2014-07-01  482  
+e941759c74a44d drivers/dma-buf/fence.c     Maarten Lankhorst 2014-07-01  483  /**
+f54d1867005c33 drivers/dma-buf/dma-fence.c Chris Wilson      2016-10-25  484   * dma_fence_wait_timeout - sleep until the fence gets signaled
+e941759c74a44d drivers/dma-buf/fence.c     Maarten Lankhorst 2014-07-01  485   * or until timeout elapses
+4dd3cdb281f7a3 drivers/dma-buf/dma-fence.c Simona Vetter     2018-07-04  486   * @fence: the fence to wait on
+4dd3cdb281f7a3 drivers/dma-buf/dma-fence.c Simona Vetter     2018-07-04  487   * @intr: if true, do an interruptible wait
+4dd3cdb281f7a3 drivers/dma-buf/dma-fence.c Simona Vetter     2018-07-04  488   * @timeout: timeout value in jiffies, or MAX_SCHEDULE_TIMEOUT
+e941759c74a44d drivers/dma-buf/fence.c     Maarten Lankhorst 2014-07-01  489   *
+e941759c74a44d drivers/dma-buf/fence.c     Maarten Lankhorst 2014-07-01  490   * Returns -ERESTARTSYS if interrupted, 0 if the wait timed out, or the
+e941759c74a44d drivers/dma-buf/fence.c     Maarten Lankhorst 2014-07-01  491   * remaining timeout in jiffies on success. Other error values may be
+e941759c74a44d drivers/dma-buf/fence.c     Maarten Lankhorst 2014-07-01  492   * returned on custom implementations.
+e941759c74a44d drivers/dma-buf/fence.c     Maarten Lankhorst 2014-07-01  493   *
+e941759c74a44d drivers/dma-buf/fence.c     Maarten Lankhorst 2014-07-01  494   * Performs a synchronous wait on this fence. It is assumed the caller
+e941759c74a44d drivers/dma-buf/fence.c     Maarten Lankhorst 2014-07-01  495   * directly or indirectly (buf-mgr between reservation and committing)
+e941759c74a44d drivers/dma-buf/fence.c     Maarten Lankhorst 2014-07-01  496   * holds a reference to the fence, otherwise the fence might be
+e941759c74a44d drivers/dma-buf/fence.c     Maarten Lankhorst 2014-07-01  497   * freed before return, resulting in undefined behavior.
+4dd3cdb281f7a3 drivers/dma-buf/dma-fence.c Simona Vetter     2018-07-04  498   *
+4dd3cdb281f7a3 drivers/dma-buf/dma-fence.c Simona Vetter     2018-07-04  499   * See also dma_fence_wait() and dma_fence_wait_any_timeout().
+e941759c74a44d drivers/dma-buf/fence.c     Maarten Lankhorst 2014-07-01  500   */
+e941759c74a44d drivers/dma-buf/fence.c     Maarten Lankhorst 2014-07-01  501  signed long
+15fe92c1e1cf69 drivers/dma-buf/dma-fence.c Byungchul Park    2025-05-13  502  __dma_fence_wait_timeout(struct dma_fence *fence, bool intr, signed long timeout)
+e941759c74a44d drivers/dma-buf/fence.c     Maarten Lankhorst 2014-07-01 @503  {
+e941759c74a44d drivers/dma-buf/fence.c     Maarten Lankhorst 2014-07-01  504  	signed long ret;
+e941759c74a44d drivers/dma-buf/fence.c     Maarten Lankhorst 2014-07-01  505  
+e941759c74a44d drivers/dma-buf/fence.c     Maarten Lankhorst 2014-07-01  506  	if (WARN_ON(timeout < 0))
+e941759c74a44d drivers/dma-buf/fence.c     Maarten Lankhorst 2014-07-01  507  		return -EINVAL;
+e941759c74a44d drivers/dma-buf/fence.c     Maarten Lankhorst 2014-07-01  508  
+ef8255506f6682 drivers/dma-buf/dma-fence.c Simona Vetter     2020-05-19  509  	might_sleep();
+ef8255506f6682 drivers/dma-buf/dma-fence.c Simona Vetter     2020-05-19  510  
+5fbff813a4a328 drivers/dma-buf/dma-fence.c Simona Vetter     2020-07-07  511  	__dma_fence_might_wait();
+5fbff813a4a328 drivers/dma-buf/dma-fence.c Simona Vetter     2020-07-07  512  
+b96fb1e724ae68 drivers/dma-buf/dma-fence.c Arvind Yadav      2022-09-14  513  	dma_fence_enable_sw_signaling(fence);
+b96fb1e724ae68 drivers/dma-buf/dma-fence.c Arvind Yadav      2022-09-14  514  
+f54d1867005c33 drivers/dma-buf/dma-fence.c Chris Wilson      2016-10-25  515  	trace_dma_fence_wait_start(fence);
+418cc6ca06071e drivers/dma-buf/dma-fence.c Simona Vetter     2018-05-03  516  	if (fence->ops->wait)
+e941759c74a44d drivers/dma-buf/fence.c     Maarten Lankhorst 2014-07-01  517  		ret = fence->ops->wait(fence, intr, timeout);
+418cc6ca06071e drivers/dma-buf/dma-fence.c Simona Vetter     2018-05-03  518  	else
+418cc6ca06071e drivers/dma-buf/dma-fence.c Simona Vetter     2018-05-03  519  		ret = dma_fence_default_wait(fence, intr, timeout);
+f54d1867005c33 drivers/dma-buf/dma-fence.c Chris Wilson      2016-10-25  520  	trace_dma_fence_wait_end(fence);
+e941759c74a44d drivers/dma-buf/fence.c     Maarten Lankhorst 2014-07-01  521  	return ret;
+e941759c74a44d drivers/dma-buf/fence.c     Maarten Lankhorst 2014-07-01  522  }
+15fe92c1e1cf69 drivers/dma-buf/dma-fence.c Byungchul Park    2025-05-13  523  EXPORT_SYMBOL(__dma_fence_wait_timeout);
+e941759c74a44d drivers/dma-buf/fence.c     Maarten Lankhorst 2014-07-01  524  
+
 -- 
-2.49.0.1045.g170613ef41-goog
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
