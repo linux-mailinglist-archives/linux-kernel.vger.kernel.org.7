@@ -1,150 +1,108 @@
-Return-Path: <linux-kernel+bounces-645722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-645724-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5693DAB52B3
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 12:35:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C986FAB529E
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 12:33:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D3AE1892557
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 10:32:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 179BF4C0332
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 10:33:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56D712550BB;
-	Tue, 13 May 2025 10:17:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64D8D2586EB;
+	Tue, 13 May 2025 10:17:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="MlZKfHp5"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WGeVCKf5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF8CF244691
-	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 10:17:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE90B2571A8;
+	Tue, 13 May 2025 10:17:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747131439; cv=none; b=nqX+wc9f+6cB3mx5/FwpRzT6VJNUa5Ir1CpDH827U0hUveb63r7hmKMVDZkSFX0pAGrVz1PEom4QPO5HATuM1utl7GZ0XPLdw7fFOIDEHrkjaZkuaZPjeOUk9RNtrlTfh1u7P1rGxeyPVoVPyRUZeB5OWzcPli3j2RabG+VHoew=
+	t=1747131446; cv=none; b=iuTUYzCTDgu49wUH0tlBKyVAmxfF1ku0IWeyIbSNAJMOCLdJW7QBwr5HzU85vc3uiygygsuw2mCIIz+jG4BaXc30dfqoxWakleLKN167B0hruQ1TDepf2wouuz02jfgWYK7DTffBUg+1KIsTOEWffR/B9KYfgA5P+3QS1UcgQA8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747131439; c=relaxed/simple;
-	bh=YPtYVXRxNchYVtoNxYECCpShOcMZmmbhDoSB+1Yqhr0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NE61SLsTXUwPFi1v8XVoJu2ULROfNQewLNe9Zz1+GdPJKtJv8FTCAEzqS+/vhkPu4gt5qnrPx8JSgffnLMZugisIdUxICfiw/+tgk9ibVHgo/2g3TRW6zy6Qbsz8V3FsOsqifIcvwhYUAsVw7rT5CKUz2kBeDHiB/IXB0R5PlY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=MlZKfHp5; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54D6B8Fr027584
-	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 10:17:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	NpvCrOWgU5cpFOIl3kofLU9KI6eGSBahid+fNqQr2k8=; b=MlZKfHp50nLFcOr5
-	ByhiEq1wu2BEnQk0TX+GXaj2syvGESu4faiOq+99mztJk58Z/oPltKBTzCAbmgxW
-	kvKu67aLMUVR0iGzqaQq7F/R9bS8eXy4pfm8EasKEHGVlPZaPcWncVFvu3VE9QaF
-	g6utatSvMwg9AhO/5PcdukuEDJZZSPBXhJj0Tmdx+LjvgxAkUe8eJJ8sJBuPSyNt
-	EJKEJQTVK6hDN8KpkKe3vNCPaaoM6AwRruPuLdiRA5ii5vqmfBdSpF6XLLwph/Ti
-	wN5EdOUfUYEaG2tZS283PP4gYE5pPv2TW1CzxyIoRS7EyGQqHZDLh6FQqejbwh24
-	7YdB1g==
-Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com [209.85.216.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46hy15ycm4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 10:17:16 +0000 (GMT)
-Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-30abb33d1d2so8698170a91.0
-        for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 03:17:16 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747131436; x=1747736236;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NpvCrOWgU5cpFOIl3kofLU9KI6eGSBahid+fNqQr2k8=;
-        b=fReGs6GmkNr7rB4+Okoss8nPHhkBlojiqpmxoYZgt5gevbs5NZ0VfBrR5iDbSz0+sZ
-         m/fzFefqg75wIvOq0mVCHMn19GG3D6RlU+JkQD0FLChiAHbVvfXdkeQx3ZJiyQDlafOJ
-         GPxawLH5HPxAeWycIpoymyFwJoInwrhUCqBaSRn8yQvslZSg3yAAiZxiDoe7MBLZjQY4
-         RSHnnpg3q2rvVHAwNIayG+jCEYksD2TGtK+dhazEqHIvJ3a6EClyBpbLh+ZDE2R5Tz17
-         NjjUVZToEOxxi+QuIg0vDzSWNr2DAxmNoRYc3UOIlHwhq0LhvX9fp4g02dsA0o2YbNI5
-         +wYw==
-X-Forwarded-Encrypted: i=1; AJvYcCVD9KLIBhTBBDwKf01NPvSu2g9zYwMEv040Y6Xcs/R+tdHXnRfXoOQ5LWpfMC8NiDBcSGvu0/B276cAjOo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyV4Hw7yMlWy293tvvxilE3zhhUjhEwxG0dnbWNeydNO0699MYG
-	/dmFLr5yE/8FkKAGcqWjUe2XjICkeEuaVQVFpyU7M5vInwVhGh5fHURou0wEMiv1wP+QbkBbCAF
-	vya/THUZ0Ke8kD7ICAniUlvGfEJVYzsBaSkaggeGGZiXTt6WrSPK3lMwXyfTY5D0=
-X-Gm-Gg: ASbGncvdBjPNfWijG2JHXMmZRK8PjU3G+lXy3xRUR4EbF6vbHdICEyp7O5Z2QQgKbvF
-	se/rDPi64uQph5ygubBCOS4qg+oZjjiy5fcvDfviVYfKOFQADStWB5h68BoR/mYobmsLTTDVBZf
-	cNsDfjBdo18oDr9vnpP6JLEJ4fbZL4233SHDmkKdYYpC0I7Hb+6MID+9cCYSJZlRe7do5vnVcO0
-	pmuPMW/esBdpTbTUxuIuqa3/jCzld1OZTWYytvSPe7kbK+ABaXdh292dJ6tzsh95HU+AnbwO2fD
-	OgfMCXivkzEp//16JWJrgdwAp0NcHTihZ+dpqS1UNk1UB0jTYg4=
-X-Received: by 2002:a17:90b:3d8c:b0:2ee:b2e6:4276 with SMTP id 98e67ed59e1d1-30c3d62e5d6mr25261869a91.27.1747131436099;
-        Tue, 13 May 2025 03:17:16 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHIQSglw62YPtOpiT2/xmAHW933FddDkbyK+ln1dlw68QmpU+bhwWTsjnzGBvaYIN3j8T0eJw==
-X-Received: by 2002:a17:90b:3d8c:b0:2ee:b2e6:4276 with SMTP id 98e67ed59e1d1-30c3d62e5d6mr25261822a91.27.1747131435590;
-        Tue, 13 May 2025 03:17:15 -0700 (PDT)
-Received: from [10.152.194.206] ([202.46.23.19])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-30ad4ffbc88sm10327508a91.49.2025.05.13.03.17.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 13 May 2025 03:17:15 -0700 (PDT)
-Message-ID: <26a9e68d-bce6-4bba-871d-13e2aeee3fed@oss.qualcomm.com>
-Date: Tue, 13 May 2025 15:47:12 +0530
+	s=arc-20240116; t=1747131446; c=relaxed/simple;
+	bh=1gM1XLcPgvrG+ys+qc6lxYqS0BilUpTT/Xx1KYUfe40=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YIH3dfXLijufruJU6VWaQd9vnhhOMYzSbs54Zx0+fDzihT0H31aSMXHm/3M2uru757tbKhUYcRZZHB96/gbiVLbDwBrkpGqw+6dtHWMPXYyyBT+8/BzatB3/F9p8wHKfye74ojG360Bf2mdKvUC7tL2DcmTwQx3cBbA9kW2EBLY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WGeVCKf5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A91CC4CEED;
+	Tue, 13 May 2025 10:17:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747131446;
+	bh=1gM1XLcPgvrG+ys+qc6lxYqS0BilUpTT/Xx1KYUfe40=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WGeVCKf5BhAzUcwQrQNKICGlkgCNdN3dH/UoO/2nAPKY9brPthNPn8gUGIf70g9YL
+	 TMf8n+iVRsClxw1Va7+bTGdReYr/vKD3+z2XaEWycSj0tjnfF6K4StAwWXmIEGGM2t
+	 CVdPEf7vLcUe9uiUFWZc0RtAZw6TRwAtwYOoPByVro1hqMizQnD0Ffzm5/oIR7K3EF
+	 iAtCQrA0g6iL9FD+8KfsGzSIzrcuK6tU2Q4LczOxUzE7GFd2fCdi51Xx+JUlRDQIB/
+	 yfgUiX7a4O2nR/rDMwFZ5vVlaRR8NV/dAjfW9/SNuHaOJiVEaxK9i6DkmBFFSnQfWq
+	 EoKuvHVSEYLkw==
+Date: Tue, 13 May 2025 11:17:20 +0100
+From: Lee Jones <lee@kernel.org>
+To: daniel.lezcano@linaro.org, alexandre.torgue@foss.st.com,
+	tglx@linutronix.de, Fabrice Gasnier <fabrice.gasnier@foss.st.com>
+Cc: ukleinek@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	jic23@kernel.org, robh@kernel.org, catalin.marinas@arm.com,
+	will@kernel.org, devicetree@vger.kernel.org, wbg@kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-iio@vger.kernel.org, linux-pwm@vger.kernel.org,
+	olivier.moysan@foss.st.com
+Subject: Re: (subset) [PATCH v6 0/7] Add STM32MP25 LPTIM support: MFD, PWM,
+ IIO, counter, clocksource
+Message-ID: <20250513101720.GH2936510@google.com>
+References: <20250429125133.1574167-1-fabrice.gasnier@foss.st.com>
+ <174713127684.4157861.15977616973399970511.b4-ty@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH wireless-next 1/2] wifi: mac80211: validate SCAN_FLAG_AP
- in scan request during MLO
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250513-bug_fix_mlo_scan-v1-0-94235bb42fbe@oss.qualcomm.com>
- <20250513-bug_fix_mlo_scan-v1-1-94235bb42fbe@oss.qualcomm.com>
- <16499ad8e4b060ee04c8a8b3615fe8952aa7b07b.camel@sipsolutions.net>
-Content-Language: en-US
-From: Aditya Kumar Singh <aditya.kumar.singh@oss.qualcomm.com>
-In-Reply-To: <16499ad8e4b060ee04c8a8b3615fe8952aa7b07b.camel@sipsolutions.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: -psTVn_ZFehFOQVW782V9pYUOqDMYQQQ
-X-Proofpoint-ORIG-GUID: -psTVn_ZFehFOQVW782V9pYUOqDMYQQQ
-X-Authority-Analysis: v=2.4 cv=P9U6hjAu c=1 sm=1 tr=0 ts=68231c2c cx=c_pps
- a=RP+M6JBNLl+fLTcSJhASfg==:117 a=j4ogTh8yFefVWWEFDRgCtg==:17
- a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=C9-73DTKG-V4ExX9xGAA:9
- a=QEXdDO2ut3YA:10 a=iS9zxrgQBfv6-_F4QbHw:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTEzMDA5OCBTYWx0ZWRfX0MjiP1CJLjx0
- PjTrVUyuxZE8i2QUMgf2udnWr/MlwtHP4qBAL5jjWjhNED/1V2c0o5+L1TdkS2hVVLLcKXBq5Tx
- lXqBEtAsX4V3Xjh+WyOuqRKNBHcmWH6LPw6+ZTNw0pU7GPhlYJA0LREv5tzvL36elPOf96zZTXC
- S7ze7R0q/yE81jsXsSH+wgiXI3pzF/gox/NcbZQ57m0dEx6z3k3jFhnww6PrL21lxGGjyCxSQOB
- iY0pGfQEBtx++LonlexzAyCNLhZ7UEBIBUuOVpxCLkhZQz2c1BIm4cTj1ngKvFt3ia6Y09RsOAX
- SmBYKLgi7Fx/5C/YuZ1mugJhQBCUnow4csDUhObbI9Em7vbpig42+9egKz0R5+IluaeZ4pootCd
- UbPtN9Lt9kQK6GzaEN7oOW8YbeR7HdzSTD07ImeliNWHhaTWWPzGpLvq2zxz8Qdqxc5xvI55
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-12_07,2025-05-09_01,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 suspectscore=0 impostorscore=0 bulkscore=0 priorityscore=1501
- mlxscore=0 adultscore=0 mlxlogscore=885 malwarescore=0 lowpriorityscore=0
- phishscore=0 clxscore=1015 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
- definitions=main-2505130098
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <174713127684.4157861.15977616973399970511.b4-ty@kernel.org>
 
-On 5/13/2025 12:47 PM, Johannes Berg wrote:
-> On Tue, 2025-05-13 at 09:26 +0530, Aditya Kumar Singh wrote:
->>
->> -		if (sdata->deflink.u.ap.beacon &&
->> +		if ((sdata->deflink.u.ap.beacon ||
->> +		     ieee80211_num_beaconing_links(sdata)) &&
->>
+On Tue, 13 May 2025, Lee Jones wrote:
+
+> On Tue, 29 Apr 2025 14:51:26 +0200, Fabrice Gasnier wrote:
+> > This series adds support for STM32MP25 to MFD PWM, IIO, counter and
+> > clocksource low-power timer (LPTIM) drivers.
+> > This new variant is managed by using a new DT compatible string, hardware
+> > configuration and version registers.
+> > It comes with a slightly updated register set, some new features and new
+> > interconnect signals inside the SoC.
+> > Same feature list as on STM32MP1x is supported currently.
+> > The device tree files add all instances in stm32mp251 dtsi file.
+> > 
+> > [...]
 > 
-> Do we even still need the deflink check? Seems like
-> num_beaconing_links() _should_ return 1 anyway even though it currently
-> doesn't, and we need to fix that?
-
-If the ieee80211_num_beaconing_links() is modified then deflink check is 
-not required. Do you want to me to send a clean up for that function 
-first or would take this and later the clean up part?
-
+> Applied, thanks!
 > 
-> Also seems the VLAN carrier handling is broken.
-With this patch? Or in general you are saying? HWSIM test cases seems to 
-be working fine for me with this series applied. May be there is no test 
-case to make it evident?
+> [1/7] dt-bindings: mfd: stm32-lptimer: add support for stm32mp25
+>       commit: 3f9ce9d0760ad68a9c20167664d026d91da66879
+> [2/7] mfd: stm32-lptimer: add support for stm32mp25
+>       commit: 4f8ceb0302b36c5f78bcc8d0e7cfa2372fba134c
+> [3/7] clocksource: stm32-lptimer: add support for stm32mp25
+>       commit: 5414bc8c57c41038b1994cd21a2cc0b8415c1544
+> [4/7] pwm: stm32-lp: add support for stm32mp25
+>       commit: 3f51b232c1da8e59eb562f1d81533334827a4799
+
+In future, please match the subject format with that expected by the
+subsystem.  For this, `git log --oneline -- <subsystem>` is your friend.
+
+I changed them all for you this time.
+
+The above patches have been applied and submitted for build testing.
+Once complete, I'll follow-up with an PR for the other maintainers to
+pull from.
+
+Note to self: ib-mfd-clocksource-pwm-6.16
 
 -- 
-Aditya
+Lee Jones [李琼斯]
 
