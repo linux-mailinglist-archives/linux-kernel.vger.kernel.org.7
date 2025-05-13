@@ -1,153 +1,150 @@
-Return-Path: <linux-kernel+bounces-645511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-645513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7D6BAB4EB1
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 10:59:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FCCDAB4EB9
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 11:00:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4DAD51B43211
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 08:59:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 38E707ACEA7
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 08:59:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 602AA21146A;
-	Tue, 13 May 2025 08:59:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD2E01F2C34;
+	Tue, 13 May 2025 09:00:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="0/tJdYJy";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Vn1SCTmb";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="0/tJdYJy";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Vn1SCTmb"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="isIsk3Zx"
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27F50210F45
-	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 08:59:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC2EC3FE7
+	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 09:00:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747126749; cv=none; b=TBEJBTihscudyC40h0x3/lEPCmRcJSk2vPKYZBk0PvoWJ2xewZXJpfldymmYA/IqTt2Amd37+t79sPtusi3iab9kHSh1PnaShXdn7D+HNabgw8EsYVdtWr1gRefewaEJAN3JqJdwRfCS4dIyOSrlSBCLg68TzzJeP2H5PkXyFaw=
+	t=1747126822; cv=none; b=bQqDW/DNaeuzqGKQqkZsv8xdyF5+YbHcBcae9aSn+HkC/8vzNzpAsAqOLlC7Ae+JJQ4688Huim0tceoOuHgdF3b7BKHCbdOJXTOARisCZ/5+GCZA7eGt4nMYjgTpDcRcREQBI1U6XL3WR7ZaiFq0VjsDS0pLH+i3GzQKNT7UFjE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747126749; c=relaxed/simple;
-	bh=qa4kqiTpeGYxQUkjn4Vg46+3YyeGMeZ8BvAbLPgq0Kk=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bd9GHoM1u+JKO1PK2oiKc+snn4n+8CCbeQUWpXyPOOGrBhQYatWCoODGTc+qecCKYY0MHTcT700u/C0hiyUSjjIMNZzbWXMrH4lTMLpnvIf+DJlJhKszIfyB7y8nzkU5UyrqaGIe5fVOZVmdJ/tfOOLYPOd1xngNsnUZjIPcwMk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=0/tJdYJy; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Vn1SCTmb; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=0/tJdYJy; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Vn1SCTmb; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 294C51F6E6;
-	Tue, 13 May 2025 08:59:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1747126746; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+7ge7H23NNrp0HwGiU2YsFV0gkeI6XlM3YTCbOsRiCo=;
-	b=0/tJdYJyr0V7aMfS3jSx5OEJaA7duHtDSkEN8IMbkqubQZ+vfbPlrDf9QLHUbZ89PLiuAd
-	+oijCgsrY1ptlnwlpapQ/99MLswmdicwvYneTHj1qyj396rxhvL53zwoDrliSBENGCzBSI
-	HFsaqyuN0gGtDCIQywMmaOMRX/6ORDo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1747126746;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+7ge7H23NNrp0HwGiU2YsFV0gkeI6XlM3YTCbOsRiCo=;
-	b=Vn1SCTmbNAkDv5UT7JRLTXHCUOgABGvVulXvcK0zicra/Lo0BmIUgOexO6rcd9H380WoOt
-	Yu1zvFrqNmQXNWBQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1747126746; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+7ge7H23NNrp0HwGiU2YsFV0gkeI6XlM3YTCbOsRiCo=;
-	b=0/tJdYJyr0V7aMfS3jSx5OEJaA7duHtDSkEN8IMbkqubQZ+vfbPlrDf9QLHUbZ89PLiuAd
-	+oijCgsrY1ptlnwlpapQ/99MLswmdicwvYneTHj1qyj396rxhvL53zwoDrliSBENGCzBSI
-	HFsaqyuN0gGtDCIQywMmaOMRX/6ORDo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1747126746;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+7ge7H23NNrp0HwGiU2YsFV0gkeI6XlM3YTCbOsRiCo=;
-	b=Vn1SCTmbNAkDv5UT7JRLTXHCUOgABGvVulXvcK0zicra/Lo0BmIUgOexO6rcd9H380WoOt
-	Yu1zvFrqNmQXNWBQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 11B57137E8;
-	Tue, 13 May 2025 08:59:06 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id ka/BA9oJI2gKfQAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Tue, 13 May 2025 08:59:06 +0000
-Date: Tue, 13 May 2025 10:59:01 +0200
-Message-ID: <874ixoubsa.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Christian Heusel <christian@heusel.eu>
-Cc: Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] ALSA: usb-audio: Add sample rate quirk for Audioengine D1
-In-Reply-To: <20250512-audioengine-quirk-addition-v1-1-4c370af6eff7@heusel.eu>
-References: <20250512-audioengine-quirk-addition-v1-1-4c370af6eff7@heusel.eu>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1747126822; c=relaxed/simple;
+	bh=qixPsvx68QpQdJN2+HaEShxgh1Pq8m7eQVfo4KQLOJ8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=pxeHijFrOEDpaKf2ua6qAp6/b6kUrL0JjxGY8RCmLYagtVpUKBUrq3eaIPyXPaKvCHCE/FPRgzvHAT3X4L9ySnAoq6pvJMq3DqS6pvSrbDawjch7CPrTIIbrGSNMIGpaRfQDvhXhczrZ3DbQFNIKtVohM7Mw+d+NA6dwzJ91c0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=isIsk3Zx; arc=none smtp.client-ip=198.47.23.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 54D8xurX3035121;
+	Tue, 13 May 2025 03:59:56 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1747126796;
+	bh=GoAfN8SkH9CD8o22DgIP7HQF9KZ68PufaMe/60HCH6I=;
+	h=From:To:CC:Subject:Date;
+	b=isIsk3ZxqUrYnjqtwR5aPGMjnVzxs8MXTNopUfNl+nrlyGY6t4DcuxzY6dNd/eZdG
+	 t2I4YA4B7/kuWAvFzK7NJjTxOElfJ4A6PFk3uYTdi+RyFrReP1Kzv58m7YfA34wQBv
+	 AtGavxXvAMfQFTbzPUd+/qP9LBPDISC8wEYyfdzE=
+Received: from DLEE101.ent.ti.com (dlee101.ent.ti.com [157.170.170.31])
+	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 54D8xuig1614569
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Tue, 13 May 2025 03:59:56 -0500
+Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE101.ent.ti.com
+ (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 13
+ May 2025 03:59:55 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 13 May 2025 03:59:55 -0500
+Received: from LT5CG31242FY.dhcp.ti.com ([10.250.161.59])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 54D8xpZS121462;
+	Tue, 13 May 2025 03:59:52 -0500
+From: Shenghao Ding <shenghao-ding@ti.com>
+To: <tiwai@suse.de>
+CC: <broonie@kernel.org>, <andriy.shevchenko@linux.intel.com>,
+        <13564923607@139.com>, <13916275206@139.com>,
+        <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>,
+        <baojun.xu@ti.com>, <Baojun.Xu@fpt.com>, <jesse-ji@ti.com>,
+        Shenghao Ding <shenghao-ding@ti.com>,
+        kernel test robot
+	<lkp@intel.com>
+Subject: [PATCH v4] ALSA: hda/tas2781: Fix the ld issue reported by kernel test robot
+Date: Tue, 13 May 2025 16:59:47 +0800
+Message-ID: <20250513085947.1121-1-shenghao-ding@ti.com>
+X-Mailer: git-send-email 2.33.0.windows.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Flag: NO
-X-Spam-Score: -3.30
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TO_DN_SOME(0.00)[];
-	ARC_NA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCPT_COUNT_FIVE(0.00)[6];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:mid]
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Mon, 12 May 2025 22:23:37 +0200,
-Christian Heusel wrote:
-> 
-> A user reported on the Arch Linux Forums that their device is emitting
-> the following message in the kernel journal, which is fixed by adding
-> the quirk as submitted in this patch:
-> 
->     > kernel: usb 1-2: current rate 8436480 is different from the runtime rate 48000
-> 
-> There also is an entry for this product line added long time ago.
-> Their specific device has the following ID:
-> 
->     $ lsusb | grep Audio
->     Bus 001 Device 002: ID 1101:0003 EasyPass Industrial Co., Ltd Audioengine D1
-> 
-> Link: https://bbs.archlinux.org/viewtopic.php?id=305494
-> Fixes: 93f9d1a4ac593 ("ALSA: usb-audio: Apply sample rate quirk for Audioengine D1")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Christian Heusel <christian@heusel.eu>
+After commit 9fa6a693ad8d ("ALSA: hda/tas2781: Remove tas2781_spi_fwlib.c
+and leverage SND_SOC_TAS2781_FMWLIB")created a separated lib for i2c,
+However, tasdevice_remove() used for not only for I2C but for SPI being
+still in that lib caused ld issue.
+All errors (new ones prefixed by >>):
+>> ld.lld: error: undefined symbol: tasdevice_remove
+   >>> referenced by tas2781_hda.c:33 (sound/pci/hda/tas2781_hda.c:33)
+   >>>               vmlinux.o:(tas2781_hda_remove)
+To fix this issue, the implementation of tasdevice_remove was moved from
+tas2781-comlib-i2c.c to tas2781-comlib.c.
 
-Thanks, applied now.
+Fixes: 9fa6a693ad8d ("ALSA: hda/tas2781: Remove tas2781_spi_fwlib.c and leverage SND_SOC_TAS2781_FMWLIB")
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://urldefense.com/v3/__https://lore.kernel.org/oe-kbuild-all/202505111855.FP2fScKA-lkp@intel.com/__;!!G3vK!U-wdsvrOG1iezggZ55RYi8ikBxMaJD
+Signed-off-by: Shenghao Ding <shenghao-ding@ti.com>
 
+---
+v4:
+ - Put report tag around Signed-off-by without quotes.
+v3:
+ - Drop the report tag in the patch description.
+v2:
+ - put the Fixes tag to point out the commit that introduced the regression
+ - Add compiling error information reported by kernel test robot into patch
+   description.
+v1:
+ - | Reported-by: kernel test robot <lkp@intel.com>
+   | Closes: https://urldefense.com/v3/__https://lore.kernel.org/oe-kbuild-all/202505111855.FP2fScKA-lkp@intel.com/__;!!G3vK!U-wdsvrOG1iezggZ55RYi8ikBxMaJD
+---
+ sound/soc/codecs/tas2781-comlib-i2c.c | 6 ------
+ sound/soc/codecs/tas2781-comlib.c     | 6 ++++++
+ 2 files changed, 6 insertions(+), 6 deletions(-)
 
-Takashi
+diff --git a/sound/soc/codecs/tas2781-comlib-i2c.c b/sound/soc/codecs/tas2781-comlib-i2c.c
+index a75b812618ee..c078bb0a8437 100644
+--- a/sound/soc/codecs/tas2781-comlib-i2c.c
++++ b/sound/soc/codecs/tas2781-comlib-i2c.c
+@@ -364,12 +364,6 @@ int tascodec_init(struct tasdevice_priv *tas_priv, void *codec,
+ }
+ EXPORT_SYMBOL_GPL(tascodec_init);
+ 
+-void tasdevice_remove(struct tasdevice_priv *tas_priv)
+-{
+-	mutex_destroy(&tas_priv->codec_lock);
+-}
+-EXPORT_SYMBOL_GPL(tasdevice_remove);
+-
+ MODULE_DESCRIPTION("TAS2781 common library for I2C");
+ MODULE_AUTHOR("Shenghao Ding, TI, <shenghao-ding@ti.com>");
+ MODULE_LICENSE("GPL");
+diff --git a/sound/soc/codecs/tas2781-comlib.c b/sound/soc/codecs/tas2781-comlib.c
+index ad2f65359b15..076c1d955972 100644
+--- a/sound/soc/codecs/tas2781-comlib.c
++++ b/sound/soc/codecs/tas2781-comlib.c
+@@ -225,6 +225,12 @@ void tasdevice_dsp_remove(void *context)
+ }
+ EXPORT_SYMBOL_GPL(tasdevice_dsp_remove);
+ 
++void tasdevice_remove(struct tasdevice_priv *tas_priv)
++{
++	mutex_destroy(&tas_priv->codec_lock);
++}
++EXPORT_SYMBOL_GPL(tasdevice_remove);
++
+ MODULE_DESCRIPTION("TAS2781 common library");
+ MODULE_AUTHOR("Shenghao Ding, TI, <shenghao-ding@ti.com>");
+ MODULE_LICENSE("GPL");
+-- 
+2.43.0
+
 
