@@ -1,150 +1,206 @@
-Return-Path: <linux-kernel+bounces-646221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-646224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 337C9AB59A4
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 18:20:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44F6DAB59AC
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 18:21:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA13A4A477E
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 16:20:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 874651B627CD
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 16:21:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 619602BF970;
-	Tue, 13 May 2025 16:20:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B49322BF3E6;
+	Tue, 13 May 2025 16:20:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lessconfused.com header.i=@lessconfused.com header.b="PFI7ywq9"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BQr27ZOk"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D5C62BF3FF
-	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 16:20:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 355562BF3DE
+	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 16:20:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747153209; cv=none; b=C+THr04+XwZwJst+ak/SDLJPhyd82cD1g1PfuGhQPsPWJpLj0td3xEUzrlOfIV8NOChORNKQqnxrCBae0bqyB5I8D6IO+TqJYpZ+VZr+6ChhJxfvR2ov9LrqL/uizpEVi+uFIbUOl2JUnVFUkyZV8cOUVEhHxpu3rhHAEsScz4g=
+	t=1747153232; cv=none; b=tCEV8raDhTici8+aUFLhfj7z2YYbG+qs+5nC8nW3/PyPlv35E4mhyhKVmKfFJDgCkHOkGJoyw7DsAC54gGnyn6rgOzqxvWYmMQej+3jd3ptkZ3D8k3Hk5sM8qZQPzIkgmWUWLymHpcvdMkVYwRxV8fnPn/1DEyB5TadTvFeKeAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747153209; c=relaxed/simple;
-	bh=cWhfEEAw+tV/nQS2PrbAq7o6mdRDmYJ67CQa4j3Vk2c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fxPgCBSZkUGBeFUU4Q6YPkexnxYwdo3Pjxq6TP7JUYBeeAlFG/Z/vFOeByhMXnpD8vlE/p2XI+icGGfo7PXzAEOxPgDFFZnJh0sEKfIeGDFTVnvIhsWAz1N4TW9qcbi8306Hd9oTpJSS/cE5jiM2gGv5zc0Sl4s7YjKpJBYcq6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lessconfused.com; spf=pass smtp.mailfrom=lessconfused.com; dkim=pass (1024-bit key) header.d=lessconfused.com header.i=@lessconfused.com header.b=PFI7ywq9; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lessconfused.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lessconfused.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-22e8461d872so56454175ad.3
-        for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 09:20:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lessconfused.com; s=lessconfused; t=1747153207; x=1747758007; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Okg4wdYw4WB8DO+V7q9yh5s+wPKhLzpza5jWmCmNzLM=;
-        b=PFI7ywq9Nxu7618sDhq/hrQh7AHQ/+myKdLHbqzke1KJi5dH3LKQhujwt64wR5Qb63
-         PpSPoLYxtskCwVB02+GPWh3zkMnhKfDv9XPAQASlWO9zzhr6GyXJXLZA4ZaVQpYG5sQs
-         6UetmO7zcnd2Sd2ZUsZj/mtd2112cOEM35PiE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747153207; x=1747758007;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Okg4wdYw4WB8DO+V7q9yh5s+wPKhLzpza5jWmCmNzLM=;
-        b=Q8A5U/0Au8uVWmoP5Wm17i87UVYA1Bsa+7jO8uEYk2tPfD0O1w4JYopeeE3yfz3dmf
-         IZE4nAEajFepxvdAFs9F4H+87JSsD0zNOEVcB6IoUpmmng1Zt646koMI81+PySR7s1fd
-         tKFyrtqZwh7sORVhOQrlNNuUn+JU8t0eODBGHe5LrQFS2GJ5ghwU9M6HCWQsaJbG+h53
-         T4BEQUr8HmN2Yl5IkHEnuvgonKhVnSEvWVqVcRGIbuAsNx6Ug/VRg133d1xh1WNhPJg5
-         a/YYzS0dljuj+bsLprsJzGR6If94MoxGcrO/BwUTpkg0s+5d375he5eKxo5vqpSpPO4L
-         6TGg==
-X-Forwarded-Encrypted: i=1; AJvYcCXgQ/wc1w/zqnevArf6nXojnOyhkvHLVWD14pj/WmqunxNnxy/wgckwC4Uy6o924lbKwjU4vimmfJMGiEw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyufgwkrFgakzQ1I/sVsH9joxjRB4wA28zr8tEiOJw9+IZ2Ysyo
-	qXB7rSP2gOIP5GlpeNP/vPAATEchLWvrcA825jAJq90TPtq8DVGyEw0Tj3hL+/e7qvIqjGZvuV2
-	zoyCjpm/1qTKT7hkQJYfAFhT4Q2f7rXfoikyKNQ==
-X-Gm-Gg: ASbGncv4CyG56e6bUwLJciSeO35ItWTzZEToNMccVFDCng8mzrTrWEZQNo3JFRmFUt7
-	o5+7YmlexjlftT85Elm7I99s6Pzg+DopbY8PBzy11r0fMbv4CfQmm9zYxR3QM+c1fsoyKoB3ZhG
-	mpCUWGSatAjnrPFG6IU9HfOkEaqb1BxF2Db0Zc33FOKAQ2oXYOJCa0uRJL+lzaPe7r8lo=
-X-Google-Smtp-Source: AGHT+IEFiZZLEVm8p4exZqTgRnoEBDvu1NNpn5CecmgOUa1lbzow7S7xDOQ9y/PS6u/6mPTPI55hbsmTlWowpXVMs6Q=
-X-Received: by 2002:a17:902:d492:b0:224:2a6d:55ae with SMTP id
- d9443c01a7336-231981d284emr53485ad.48.1747153207290; Tue, 13 May 2025
- 09:20:07 -0700 (PDT)
+	s=arc-20240116; t=1747153232; c=relaxed/simple;
+	bh=p6PCSkSdSaZ/NJpmcH4VjI/9YpSMDFDuXD6Vn7ggxi4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Jrb3APCehcLG6fHQJzN3xnrgRyZmDMLhEVr1TaZsa2RAlw0WdUqtQewcPCyUBpUKY+qGgnivHTjgl8naQVW+uOqESJBZDmjNSpvhcvSf8QOogfoMsG5qjREWHPS8iNPdGIdSGDqfTWdT72CkniJEDNGxQKinE1tMtr1+SWGAtYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BQr27ZOk; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1747153231; x=1778689231;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=p6PCSkSdSaZ/NJpmcH4VjI/9YpSMDFDuXD6Vn7ggxi4=;
+  b=BQr27ZOkoK4raFM7M3toAS4kvy17SaX2pQdpzXL7T4KPzlteqE43ltKX
+   4omoc4/cJH1t+CBHdV92ctUx89cqdNLHiYlUVzQuHJ8YUn6L2rrgkefhS
+   ApgWINyiZs5eBRQzIlN61xk4LGEzRtlTC3PMPLlKCeEgORmhqrYa3yGI3
+   k2ZCsSdI97W/D0BEDm0thEEW0RZ/FmUJapEZCSRhYK9gtmsZi20FKCqh8
+   BdXFXv8kg6jZWAzjHLErKWmNQuxvVGodcvD98wRDHsDWfGC5fo5VK3QYB
+   VmL+/rz3H0XdD5XLfEm06QgujZCO44B/TWl2tdydZOy53CHaJVC0QhsvN
+   w==;
+X-CSE-ConnectionGUID: EPE9V0t/Rx6X5TIxQpH9EA==
+X-CSE-MsgGUID: lTunyx8CSWmllolkcvk6RQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11432"; a="48887654"
+X-IronPort-AV: E=Sophos;i="6.15,285,1739865600"; 
+   d="scan'208";a="48887654"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 May 2025 09:20:29 -0700
+X-CSE-ConnectionGUID: tVCcoLQWSXuG6JUNJY1H9Q==
+X-CSE-MsgGUID: 2H6nEzQwRmqkphMJf6o3/g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,285,1739865600"; 
+   d="scan'208";a="142712431"
+Received: from agluck-desk3.sc.intel.com (HELO agluck-desk3) ([172.25.103.51])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 May 2025 09:20:28 -0700
+Date: Tue, 13 May 2025 09:20:26 -0700
+From: "Luck, Tony" <tony.luck@intel.com>
+To: "Chen, Yu C" <yu.c.chen@intel.com>
+Cc: Reinette Chatre <reinette.chatre@intel.com>, x86@kernel.org,
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev,
+	Fenghua Yu <fenghuay@nvidia.com>,
+	Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>,
+	Peter Newman <peternewman@google.com>,
+	Babu Moger <babu.moger@amd.com>,
+	Anil Keshavamurthy <anil.s.keshavamurthy@intel.com>,
+	Dave Martin <Dave.Martin@arm.com>,
+	James Morse <james.morse@arm.com>,
+	Drew Fustini <dfustini@baylibre.com>
+Subject: Re: [PATCH v4 12/31] fs/resctrl: Improve handling for events that
+ can be read from any CPU
+Message-ID: <aCNxSjUEFREUS8zG@agluck-desk3>
+References: <20250429003359.375508-1-tony.luck@intel.com>
+ <20250429003359.375508-13-tony.luck@intel.com>
+ <e818906f-b03a-474b-8a6b-d291cf1a74fe@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250512142617.2175291-1-da@libre.computer> <1jecwtymsj.fsf@starbuckisacylon.baylibre.com>
-In-Reply-To: <1jecwtymsj.fsf@starbuckisacylon.baylibre.com>
-From: Da Xue <da@lessconfused.com>
-Date: Tue, 13 May 2025 12:19:55 -0400
-X-Gm-Features: AX0GCFvX20FlZeuRo40HJUU0H1dNyPENU2uA3HGGuO4tfwuq5uvg2W8hOH9cVak
-Message-ID: <CACdvmAgNVf8jtRj-jONwunGXhheaizUEEyB4rz5tpqzXb6hKqg@mail.gmail.com>
-Subject: Re: [PATCH v3] clk: meson-g12a: add missing fclk_div2 to spicc
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Da Xue <da@libre.computer>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Kevin Hilman <khilman@baylibre.com>, 
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, stable@vger.kernel.org, 
-	linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e818906f-b03a-474b-8a6b-d291cf1a74fe@intel.com>
 
-On Tue, May 13, 2025 at 3:52=E2=80=AFAM Jerome Brunet <jbrunet@baylibre.com=
-> wrote:
->
-> On Mon 12 May 2025 at 10:26, Da Xue <da@libre.computer> wrote:
->
-> > SPICC is missing fclk_div2 which causes the spicc module to output sclk=
- at
-> > 2.5x the expected rate. Adding the missing fclk_div2 resolves this.
->
-> I had to re-read that a few times to get the what the actual problem is.
-> If you don't mind, I'll amend the commit message with
->
-> '''
-> SPICC is missing fclk_div2, which means fclk_div5 and fclk_div7 indexes
-> are wrong on this clock. This causes the spicc module to output sclk at
-> 2.5x the expected rate when clock index 3 is picked.
->
-> Adding the missing fclk_div2 resolves this.
-> '''
->
-> Is that OK with you Da ?
+On Tue, May 13, 2025 at 11:19:23AM +0800, Chen, Yu C wrote:
 
-Feel free. Your description is better.
+Thanks for the bug report.
 
->
-> >
-> > Fixes: a18c8e0b7697 ("clk: meson: g12a: add support for the SPICC SCLK =
-Source clocks")
-> > Cc: <stable@vger.kernel.org> # 6.1
-> > Signed-off-by: Da Xue <da@libre.computer>
-> > ---
-> > Changelog:
-> >
-> > v2 -> v3: remove gp0
-> > v1 -> v2: add Fixes as an older version of the patch was sent as v1
-> > ---
-> >  drivers/clk/meson/g12a.c | 1 +
-> >  1 file changed, 1 insertion(+)
-> >
-> > diff --git a/drivers/clk/meson/g12a.c b/drivers/clk/meson/g12a.c
-> > index 4f92b83965d5a..b72eebd0fa474 100644
-> > --- a/drivers/clk/meson/g12a.c
-> > +++ b/drivers/clk/meson/g12a.c
-> > @@ -4099,6 +4099,7 @@ static const struct clk_parent_data spicc_sclk_pa=
-rent_data[] =3D {
-> >       { .hw =3D &g12a_clk81.hw },
-> >       { .hw =3D &g12a_fclk_div4.hw },
-> >       { .hw =3D &g12a_fclk_div3.hw },
-> > +     { .hw =3D &g12a_fclk_div2.hw },
-> >       { .hw =3D &g12a_fclk_div5.hw },
-> >       { .hw =3D &g12a_fclk_div7.hw },
-> >  };
->
-> --
-> Jerome
->
-> _______________________________________________
-> linux-amlogic mailing list
-> linux-amlogic@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-amlogic
+> get warning like below:
+> BUG: using smp_processor_id() in preemptible [00000000] code: mount/1595
+> caller is __mon_event_count+0x2e/0x1e0
+> 2483 [ 2095.332850] Call Trace:
+> 2484 [ 2095.332861]  <TASK>
+> 2485 [ 2095.332872]  dump_stack_lvl+0x55/0x70
+> 2486 [ 2095.332887]  check_preemption_disabled+0xbf/0xe0
+> 2487 [ 2095.332902]  __mon_event_count+0x2e/0x1e0
+> 2488 [ 2095.332918]  mon_event_count+0x2a/0xa0
+> 2489 [ 2095.332934]  mon_add_all_files+0x202/0x270
+> 2490 [ 2095.332953]  mkdir_mondata_subdir+0x1bf/0x1e0
+> 2491 [ 2095.332970]  ? kcore_update_ram.isra.0+0x270/0x270
+> 2492 [ 2095.332985]  mkdir_mondata_all+0x9d/0x100
+> 2493 [ 2095.333000]  rdt_get_tree+0x336/0x5d0
+> 2494 [ 2095.333014]  vfs_get_tree+0x26/0xf0
+> 2495 [ 2095.333028]  do_new_mount+0x186/0x350
+> 2496 [ 2095.333044]  __x64_sys_mount+0x101/0x130
+> 2497 [ 2095.333061]  do_syscall_64+0x54/0xd70
+> 2498 [ 2095.333075]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+
+Hmmm. You are right, but I didn't see this. Perhaps it only shows
+if CONFIG_DEBUG_PREEMPT is set?
+
+> Maybe avoid getting the CPU at all in __mon_event_count() if
+> evt->any_cpu is true?
+> 
+> thanks,
+> Chenyu
+> diff --git a/fs/resctrl/monitor.c b/fs/resctrl/monitor.c
+> index d9364bee486e..32385c811a92 100644
+> --- a/fs/resctrl/monitor.c
+> +++ b/fs/resctrl/monitor.c
+> @@ -358,12 +358,15 @@ static struct mbm_state *get_mbm_state(struct
+> rdt_l3_mon_domain *d, u32 closid,
+> 
+>  static int __mon_event_count(u32 closid, u32 rmid, struct rmid_read *rr)
+>  {
+> -       int cpu = smp_processor_id();
+>         struct rdt_l3_mon_domain *d;
+>         struct mbm_state *m;
+> -       int err, ret;
+> +       int err, ret, cpu;
+>         u64 tval = 0;
+> 
+> +       /*only CPU sensitive event read cares about which CPU to read from
+> */
+> +       if (!rr->evt->any_cpu)
+> +               cpu = smp_processor_id();
+> 
+> tele
+
+I might fix with a helper just in case some compiler doesn't keep track
+and issues a "may be used before set" warning.
+
+-Tony
+
+
+diff --git a/fs/resctrl/monitor.c b/fs/resctrl/monitor.c
+index ddfc1c5f60d6..6041cb304624 100644
+--- a/fs/resctrl/monitor.c
++++ b/fs/resctrl/monitor.c
+@@ -356,9 +356,24 @@ static struct mbm_state *get_mbm_state(struct rdt_l3_mon_domain *d, u32 closid,
+ 	return states ? &states[idx] : NULL;
+ }
+ 
++static bool cpu_on_wrong_domain(struct rmid_read *rr)
++{
++	cpumask_t *mask;
++
++	if (rr->evt->any_cpu)
++		return false;
++
++	/*
++	 * When reading from a specific domain the CPU must be in that
++	 * domain. Otherwise the CPU must be one that shares the cache.
++	 */
++	mask = rr->d ? &rr->d->hdr.cpu_mask : &rr->ci->shared_cpu_map;
++
++	return !cpumask_test_cpu(smp_processor_id(), mask);
++}
++
+ static int __mon_event_count(u32 closid, u32 rmid, struct rmid_read *rr)
+ {
+-	int cpu = smp_processor_id();
+ 	struct rdt_l3_mon_domain *d;
+ 	struct mbm_state *m;
+ 	int err, ret;
+@@ -373,11 +388,7 @@ static int __mon_event_count(u32 closid, u32 rmid, struct rmid_read *rr)
+ 	}
+ 
+ 	if (rr->d) {
+-		/*
+-		 * Unless this event can be read from any CPU, check
+-		 * that execution is on a CPU in the domain.
+-		 */
+-		if (!rr->evt->any_cpu && !cpumask_test_cpu(cpu, &rr->d->hdr.cpu_mask))
++		if (cpu_on_wrong_domain(rr))
+ 			return -EINVAL;
+ 		rr->err = resctrl_arch_rmid_read(rr->r, rr->d, closid, rmid,
+ 						 rr->evt->evtid, &tval, rr->arch_mon_ctx);
+@@ -389,11 +400,7 @@ static int __mon_event_count(u32 closid, u32 rmid, struct rmid_read *rr)
+ 		return 0;
+ 	}
+ 
+-	/*
+-	 * Unless this event can be read from any CPU, check that
+-	 * execution is on a CPU that shares the cache.
+-	 */
+-	if (!rr->evt->any_cpu && !cpumask_test_cpu(cpu, &rr->ci->shared_cpu_map))
++	if (cpu_on_wrong_domain(rr))
+ 		return -EINVAL;
+ 
+ 	/*
 
