@@ -1,93 +1,130 @@
-Return-Path: <linux-kernel+bounces-646093-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-646095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90447AB57E3
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 17:03:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79F85AB57EC
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 17:03:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B53CC1B40CED
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 15:02:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F106C4A6DFF
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 15:03:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BC532BE10A;
-	Tue, 13 May 2025 15:02:05 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FFD128F514;
+	Tue, 13 May 2025 15:03:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="grbKuMFL"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3695419E82A
-	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 15:02:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DE6A1AB528;
+	Tue, 13 May 2025 15:02:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747148524; cv=none; b=eoT8osau5e7njtLWisruwsd5SfJBV5wgddML+jsiSQdaU7Of0wXI49DnU0MhBNehuys96wieqG/xsYy7esUYGAfMOS/yx0n8eeP6YcxwqlG8plF5VpaXKlS9+e5tqU3wnKbMBh3ChYMnpvdLUTAjO5oMsl5M4JZORW3KqxaUSH0=
+	t=1747148581; cv=none; b=M4p9cdQbqdINWnS6QJ/2XXNqAfTVYHTyGVBMpc1HP0e/fLcP9TSxbWWrVdc/IQFA51Sw5ogbjMuXUklpJYXAUFFCwOYapvHullznM1eaU2y9gic2wffWwMtvuk6KMxT2zx5XYuxRuR6vGoVi4kC1ZfmbvuJGxXV1Df0isOOhLIs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747148524; c=relaxed/simple;
-	bh=hP4PegqdC13RnAQ85+yUWVwc7+/McCk2lZDiw5UO/Bg=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=S2bd37ahBObGOBfg8dstoGrttxB2mrZC5bK1Bf7bvMI9jYvA11DThsBwA4drklO1z1+x9sKeeFNUkB7hdQzNmiK9KNd+QrtesQURMEq5otPpRl4liCN86UWriu7UHcQYVJXDIhBUVIIexyoPKWEsKvaOEjP3R/6Uj3VgZ85GilM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-85db3356bafso1139272739f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 08:02:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747148522; x=1747753322;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QRCw3Vnmu98ynSRU7dOHd3K3QYDecyR1q9zxGNfhk6k=;
-        b=P9+npjdRv7omrFgjaSyvpnfZfvtcxrr7n89/cjqrysXiJW2XYw/2GS/T9wszB/UZW7
-         7zSydDhJqlgeqmelEgE0OPCpDHIQjvPN4YOWR0JPt3+K082at7Rymw8zwY0+xZloQEYK
-         O7IAfMNm0ku3cUSYkuMOVEw/4EvPQdXNVIKcAq6StXTr5bIKDHT7EH6sSbNiJvEw5QS1
-         3JhAiTIEBNFWcJCFIlnbb6CrtvfXmS6KaZpcNb0ltl2Pg5fyxWo6Sc7K7QCo97DcC0nX
-         iAALD2wRUoLNb7U2aVi9WQmjDHgU6Ofji+ZPwxw3t4Ov8eKKR5VkbmkGdqkZpmUIXddZ
-         USTA==
-X-Forwarded-Encrypted: i=1; AJvYcCUosODFCyAUnbNAYJ4Q68no7bqLBibpyFetu9sWLZbCvk68zfvMUqdXOVseJ7xb+uIMvbUcDAsb7Zjx2SM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyiK8Do4b8+f07A8sOCM+bz2vb1m7RCOwg5y2cVXLf1zPs69+Bd
-	iznvBgMHA/mT05akcgaXaerHHmfz5alqEBENa6goo3iL2Pyxt4z1XY42CyZHMDyQgHR5sFQBeh4
-	MIowP41w7d/peNaZwtvtSIdu2ehlMY9rxAHzLvJDtXRCp7rB/tuyVR2A=
-X-Google-Smtp-Source: AGHT+IGMtQ161tXmf2KXLsHZBWzf4It6/o3Ywvnbm9ZKDK/irJkDeLwoCqMl97LC/tlvDAtSX5MOkOfGHaXSl5yf56Ur/aYT6NLX
+	s=arc-20240116; t=1747148581; c=relaxed/simple;
+	bh=6iHuzZLkkcNWcLNYYCE1bbJcer3hmMdrtLNoz+r6pjk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PUgucwFYTZdimvqJvCCmrSz211+cQoceMltb19gA0uQSnsLfngFi30PfnjUTl80AXCCpI+3P6v/ShcKBobuENT/Dw1RB2IGEy0qJpW4Mao7Gvl4BhHlZn8LCsGVsvIUZCbpPYNuSx7Ykh4KGKUOSQEGAyynl0miKUGCipUip3DI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=grbKuMFL; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:
+	Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References;
+	bh=6px+nXDzusrLIi4mnpw8PNp1AiBEN07yTsIQi4XgWr8=; b=grbKuMFLj6dP9cN18V/wm3cars
+	jtosbqKbNclRRw1uX/Zk8st3eHqMarBhTaQOsz6tk8/97e0/7LleOfyy0gOQS8asG1MrmG29R6EZY
+	p2OKYn8wQlbUEsWuZC4vjb7ldFU5SCkxjQN5jFoniVNnLfi+QXopHAb2UccdYVcCUj9UEdp7d8mXW
+	S3HkRXryc7aG4uf/V2GunE2I1ZCIfyJXD6WDaKuYze+uIHRo1BjWubsN+du06/Jg2anigQr8IDjvg
+	aOgf2Z3dWWcFFrCmyLLd2MxplN6ex1HKgj3kIGYBo9vGtOsMcujjhrqfRmGC9B1fs3BevEZJ9lsQb
+	FLYu8YBg==;
+Received: from i53875a50.versanet.de ([83.135.90.80] helo=localhost.localdomain)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1uEr9a-0008L7-Gx; Tue, 13 May 2025 17:02:46 +0200
+From: Heiko Stuebner <heiko@sntech.de>
+To: heiko@sntech.de
+Cc: quentin.schulz@cherry.de,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/6] Add two board-families from Theobroma-Systems
+Date: Tue, 13 May 2025 17:02:28 +0200
+Message-ID: <20250513150234.2331221-1-heiko@sntech.de>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a6b:da19:0:b0:867:63db:8e4e with SMTP id
- ca18e2360f4ac-86763db8f38mr1628657039f.1.1747148521963; Tue, 13 May 2025
- 08:02:01 -0700 (PDT)
-Date: Tue, 13 May 2025 08:02:01 -0700
-In-Reply-To: <000000000000453f3d05db72fc7e@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68235ee9.050a0220.f2294.09fc.GAE@google.com>
-Subject: Re: [syzbot] [usb?] [media?] KASAN: use-after-free Read in
- em28xx_init_extension (2)
-From: syzbot <syzbot+99d6c66dbbc484f50e1c@syzkaller.appspotmail.com>
-To: gregkh@linuxfoundation.org, hdanton@sina.com, linux-kernel@vger.kernel.org, 
-	linux-media@vger.kernel.org, linux-usb@vger.kernel.org, mchehab@kernel.org, 
-	paskripkin@gmail.com, stern@rowland.harvard.edu, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-syzbot has bisected this issue to:
+Both the Cobra and PP1516 boards are based around the PX30 SoC and can be
+found with a variety of display options.
 
-commit a368ecde8a5055b627749b09c6218ef793043e47
-Author: Alan Stern <stern@rowland.harvard.edu>
-Date:   Thu Jun 27 19:56:18 2024 +0000
+As new boards should not use the deprecated snps,reset-* properties
+in the gmac node, I also added a core mdio-node for the gmac and
+converted the Theobroma Ringneck board over.
 
-    USB: core: Fix duplicate endpoint bug by clearing reserved bits in the descriptor
+Testing with the new node both before and after converting Ringneck
+showed the board finding its network both when booting locally and
+from the tftp/nfs.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=12cf6cd4580000
-start commit:   cd802e7e5f1e Merge tag 'for-linus' of git://git.kernel.org..
-git tree:       upstream
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=11cf6cd4580000
-console output: https://syzkaller.appspot.com/x/log.txt?x=16cf6cd4580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=91c351a0f6229e67
-dashboard link: https://syzkaller.appspot.com/bug?extid=99d6c66dbbc484f50e1c
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=143a7768580000
+changes in v2:
+- add received Acks/Reviews
+- drop "rockchip" prefix from system-power-controller (Diederik)
+- split out prototype-pins to prototype variant
+- address Quentin's review comments
+  - ethernet0 alias for Cobra
+  - a number more pinctrl entries for gpios
+  - drop unused slp pinctrl entries
+  - additional comments
+  - use gpio-constants for pmic int
+  - ordering (nodes + properties)
+  - clarify vccio_sd more
+  - interrupt line for pp1516 accelerometer
 
-Reported-by: syzbot+99d6c66dbbc484f50e1c@syzkaller.appspotmail.com
-Fixes: a368ecde8a50 ("USB: core: Fix duplicate endpoint bug by clearing reserved bits in the descriptor")
+Heiko Stuebner (6):
+  arm64: dts: rockchip: add basic mdio node to px30
+  arm64: dts: rockchip: move reset to dedicated eth-phy node on ringneck
+  dt-bindings: arm: rockchip: add PX30-Cobra boards from Theobroma
+    Systems
+  arm64: dts: rockchip: add px30-cobra base dtsi and board variants
+  dt-bindings: arm: rockchip: add PX30-PP1516 boards from Theobroma
+    Systems
+  arm64: dts: rockchip: add px30-pp1516 base dtsi and board variants
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+ .../devicetree/bindings/arm/rockchip.yaml     |  18 +
+ arch/arm64/boot/dts/rockchip/Makefile         |   6 +
+ .../rockchip/px30-cobra-ltk050h3146w-a2.dts   |  39 ++
+ .../dts/rockchip/px30-cobra-ltk050h3146w.dts  |  39 ++
+ .../dts/rockchip/px30-cobra-ltk050h3148w.dts  |  39 ++
+ .../dts/rockchip/px30-cobra-ltk500hd1829.dts  |  73 +++
+ arch/arm64/boot/dts/rockchip/px30-cobra.dtsi  | 566 +++++++++++++++++
+ .../rockchip/px30-pp1516-ltk050h3146w-a2.dts  |  39 ++
+ .../dts/rockchip/px30-pp1516-ltk050h3148w.dts |  39 ++
+ arch/arm64/boot/dts/rockchip/px30-pp1516.dtsi | 599 ++++++++++++++++++
+ .../boot/dts/rockchip/px30-ringneck.dtsi      |  22 +-
+ arch/arm64/boot/dts/rockchip/px30.dtsi        |   6 +
+ 12 files changed, 1482 insertions(+), 3 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/rockchip/px30-cobra-ltk050h3146w-a2.dts
+ create mode 100644 arch/arm64/boot/dts/rockchip/px30-cobra-ltk050h3146w.dts
+ create mode 100644 arch/arm64/boot/dts/rockchip/px30-cobra-ltk050h3148w.dts
+ create mode 100644 arch/arm64/boot/dts/rockchip/px30-cobra-ltk500hd1829.dts
+ create mode 100644 arch/arm64/boot/dts/rockchip/px30-cobra.dtsi
+ create mode 100644 arch/arm64/boot/dts/rockchip/px30-pp1516-ltk050h3146w-a2.dts
+ create mode 100644 arch/arm64/boot/dts/rockchip/px30-pp1516-ltk050h3148w.dts
+ create mode 100644 arch/arm64/boot/dts/rockchip/px30-pp1516.dtsi
+
+-- 
+2.47.2
+
 
