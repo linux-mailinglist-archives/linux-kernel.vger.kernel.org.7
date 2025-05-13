@@ -1,405 +1,132 @@
-Return-Path: <linux-kernel+bounces-645737-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-645739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36408AB52BC
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 12:37:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FDCFAB52EA
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 12:40:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 12B0E7B443C
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 10:35:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35740189F77F
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 10:37:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C647272E5E;
-	Tue, 13 May 2025 10:26:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 847D123C8A3;
+	Tue, 13 May 2025 10:28:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="f/m88U2X"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="G+O7PFL9"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 687C1253F2B;
-	Tue, 13 May 2025 10:26:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48BBA1E9B20
+	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 10:28:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747132003; cv=none; b=a1wbUBXf2WlpzXQgePkOEziG7nVO3fU04RBg72vFh3aNf4Un7uN8JIeSoQrENBDQA2IWEusThL5TviWFzQ1Mybk3hodoPVFGu/ukJxI35PSjKFSMJ6bJKaXDGLt3+a0bmfBVae5fgXF9n91kbXRA9QCaVMJdxD2g9202mfLqKWw=
+	t=1747132089; cv=none; b=dK8OdECO3BdROMFq6XqqUwnX9Im/pO8TQic6457Jg9mtLLAdQSrzMsZHzA0cGeUrPOB3GSVhwKWE+fjcpBsudUwXPjmCifq8t62O6tXWXr3aoIePJdZ0YRqGW6OlYGDfxyd2pkZcVpj7CZjM46lphx01r+LhAlmhbyCrSb8XGQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747132003; c=relaxed/simple;
-	bh=zdfs/X2SmwTXKyp4GuS+Vne9P1acg4oBMDirl6h0LgM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=RebN2ElG7C4RSjZ5tvMMRMLeKAi12QkJHcuA2wfhoBYI7OLgy2Hvqjga/ecphRhjYzKcAnGBfJZqcXlJmqfcN+bFuC6VR85estY9XZ9UAe1gJDqHzVmUF+D7mIfpBc3F7ohh3hiLYnBZ2S0xU0zhCVSjcM9mCPLpZx4/HPxRcKI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=qti.qualcomm.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=f/m88U2X; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=qti.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54D99Fvp028970;
-	Tue, 13 May 2025 10:26:23 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=TeXFYgxAPUE
-	msdgU0AAzQD+Cw0Jmak4JVhj17XHe7PE=; b=f/m88U2XaghAaT0hrOpSTo2EOiP
-	oiXknGOuVKdsv+PKW+KENLS13yA6cQHdea8P+lVSK5pUdiAb0SCwjNKSvfrBAFuZ
-	cAk1aByYiYqhz2b70z3+Tijan60rQZhqScLxcdSAcIklJFQ4ekYScrM2Xu6SFViv
-	GxjGzEotNqj4GUQOpf2g0W7dO3s160T/193y77AE2BmNshpxUfD9sjho1eMkUs0m
-	67UfNwkAZNEPhEvOMUCiGqqkfCYmZWsgUFUGd3WeOJwYrFe8H4HZ2kUuvikobWXQ
-	FPdaTxcDnnWejkI5buvLL63I9MoH3zViJpGGEa3x5FaGxmAF230KsMg9CAA==
-Received: from apblrppmta02.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46hxvxfbx6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 13 May 2025 10:26:22 +0000 (GMT)
-Received: from pps.filterd (APBLRPPMTA02.qualcomm.com [127.0.0.1])
-	by APBLRPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 54DAQJGk032058;
-	Tue, 13 May 2025 10:26:19 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTPS id 46hyvm6vx5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 13 May 2025 10:26:19 +0000
-Received: from APBLRPPMTA02.qualcomm.com (APBLRPPMTA02.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 54DAQJud032037;
-	Tue, 13 May 2025 10:26:19 GMT
-Received: from hu-devc-hyd-u22-c.qualcomm.com (hu-amakhija-hyd.qualcomm.com [10.213.99.91])
-	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTPS id 54DAQIAB032034
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 13 May 2025 10:26:18 +0000
-Received: by hu-devc-hyd-u22-c.qualcomm.com (Postfix, from userid 4090850)
-	id CEC62590; Tue, 13 May 2025 15:56:17 +0530 (+0530)
-From: Ayushi Makhija <amakhija@qti.qualcomm.com>
-To: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: Ayushi Makhija <quic_amakhija@quicinc.com>, robdclark@gmail.com,
-        dmitry.baryshkov@oss.qualcomm.com, sean@poorly.run,
-        marijn.suijten@somainline.org, andersson@kernel.org, robh@kernel.org,
-        robh+dt@kernel.org, krzk+dt@kernel.org, konradybcio@kernel.org,
-        conor+dt@kernel.org, andrzej.hajda@intel.com,
-        neil.armstrong@linaro.org, rfoss@kernel.org,
-        Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
-        jernej.skrabec@gmail.com, quic_abhinavk@quicinc.com,
-        quic_rajeevny@quicinc.com, quic_vproddut@quicinc.com,
-        quic_jesszhan@quicinc.com,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: [PATCH v7 2/2] arm64: dts: qcom: sa8775p-ride: add anx7625 DSI to DP bridge nodes
-Date: Tue, 13 May 2025 15:56:11 +0530
-Message-Id: <20250513102611.1456868-3-amakhija@qti.qualcomm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250513102611.1456868-1-amakhija@qti.qualcomm.com>
-References: <20250513102611.1456868-1-amakhija@qti.qualcomm.com>
+	s=arc-20240116; t=1747132089; c=relaxed/simple;
+	bh=JsjZMJfYqcTmeLGG65HJW+MIA3UYXoh1TeVbs7C4rVY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Wr+B2aTSS5GTUfOXK07U7QoWysXCmumrH/xR2RWKNcIEMJXLBYuuhzvQQRJyuN8frRJ7TqQGkpKKwmbqrpQbdKXMNaWiIqY0esue7sRH2pCVKDx2FJU33g9+3bI9RyLFDaAuOnJazSg4Sh9oEgEOa8hesCjG6NW8jFKQD9sMLbc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=G+O7PFL9; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1747132087;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7eU874MO87ek4WqCyxGFc1W1sDCzA0tMdC6MVvmyNWs=;
+	b=G+O7PFL968ZhXPPlgxsde0VO7Q0ILTCHfwMmP160OV8h4pZwxsK7US+68XQZYOqFQfapvK
+	1l1F+sKxgOIlcPDGrwpicHqliFuwuEWm6t6JR3ikmwyCvMIpbO4mnIdmlwLYwjTWJAItlX
+	PmmRWQpMXMT0dB42H/cxxB3H++riBN8=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-590-cGMmCflWPlqLkSy0HaIy8Q-1; Tue, 13 May 2025 06:28:04 -0400
+X-MC-Unique: cGMmCflWPlqLkSy0HaIy8Q-1
+X-Mimecast-MFC-AGG-ID: cGMmCflWPlqLkSy0HaIy8Q_1747132083
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-43d007b2c79so32895235e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 03:28:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747132083; x=1747736883;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7eU874MO87ek4WqCyxGFc1W1sDCzA0tMdC6MVvmyNWs=;
+        b=YQ0eAsFQRZj1WKvut0a4mQ6+/UWArT/m6dd77hPSv0k0BbDQFcEHjxbe2gvBUBBYze
+         GdujSWMoJ5vEDMy6bKfoOgCw4lpuXzzDzHK9ket5h2onpQjH15AU7Gv2gVEBWnbaLoy0
+         mQDvjkZrlLZtODEkF3mkC4RLksMmcq2L0Zl3qxL0eiT+gVZriKPwON01p+s7xliNwRc+
+         SkDYaPbtdJZNSiqpWX10p5NQtOA1tvsgqsdzyGjBQ0McLFJ1YzEY7jYAM7iS47uAcQXN
+         4n6M7y78VvVJ5EH/51esVUw1oh/uYXvKUYORzJLJu6mYbpeUq2A5YMGAuTHYHQ8LKJA5
+         z50Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXfJqdTl5ydWyHDo9CfhAracqcWaNvSYSBl/gJmHTx2uwCL4fudIPetdywaxPUq4GPfCwdFDB7B9QGslZo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxS0+VeHqUnwN5GgyhgUP3wpKWuVbl96kDoXw/C98EXHWcCbS54
+	+q8p6Sxnyrm1vUWa5cb2/t6EBT1uY0tVDpgTGQIXB1QGd5Ry7hyfdgh+6ZQEYzxjClxVxK864xq
+	EUeoQCHCIVAbdDlT+OddgI8DfuOHe6TiJ5kDkqpPtnlMqgxs4OeAlL/qW1znWgw==
+X-Gm-Gg: ASbGncsz+ukwSqucX2jWo5E6OFR49GDbdZUMO46bmdWVvQpw/wauJXs6EH0fGkpJDaM
+	51xIq1S6pvOw3JkUMiJIfWP6OgZULoT9h7iQVW4r3ALRMC/apG8aJjvjxEsGGoVVWe+CHIgUA69
+	gdQmCdv2QvfZQCw/yJ0PsEDVWc+qJ23PfL1Pu3UKQld0RAkGXq9sM/i/Kr2PZ1DKDDfn6Ll/h57
+	mJuw0LONsJ7dXJ470piUKMdJXci5KAguqbr0B42Q8BJ9LC0MyZJrasw9UNBShr2c058HFkJE7M8
+	WOS2u/BubVl+HazbL6A=
+X-Received: by 2002:a05:600c:8589:b0:43d:412e:8a81 with SMTP id 5b1f17b1804b1-442de4c6fd5mr72297985e9.28.1747132082803;
+        Tue, 13 May 2025 03:28:02 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHhHQ2cPgBoVj48TAENCfdPzKusy4rZ/hGFeFFzSKN+dmp8zg+z0ztV8NE6hckRltPdEYYtyw==
+X-Received: by 2002:a05:600c:8589:b0:43d:412e:8a81 with SMTP id 5b1f17b1804b1-442de4c6fd5mr72297745e9.28.1747132082470;
+        Tue, 13 May 2025 03:28:02 -0700 (PDT)
+Received: from ?IPV6:2a0d:3341:cc59:6510::f39? ([2a0d:3341:cc59:6510::f39])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-442d67d5c09sm164248635e9.7.2025.05.13.03.28.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 13 May 2025 03:28:02 -0700 (PDT)
+Message-ID: <aea8db43-e8d7-4cbf-b445-aa9b8be64708@redhat.com>
+Date: Tue, 13 May 2025 12:28:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTEzMDA5OCBTYWx0ZWRfX9hsTYARWUlc4
- 1FcCTyfMnmFunmfrX/FGhZ0HKzk0uu3k1C7osHesBBemsY+ayD4UpYdRZm1jJw85h4zi5ESqrmo
- Utr8qUcmatEKxqfW1IAnpwndi0zcisC8/NuEXpNwsF1eZcFbrNhBMTlMqFB+HbP1e0NoGMT5C3T
- 2ATBQX/Px++phf81GtWO8YP/pMPmGh6Egr4YBx3G62bYa8qTd09biJnpajqOiSbaZ4+sY26+ERk
- MXhRP+m7e+jSajcj0Xb3qCzpPo8hZySm8sLR2Mtp26sf+44CF/ZLHa67dbxK9tHwkI/jhfG/T0P
- Yb9Gwq2ZcAmGIcdocHRLk8m3oQ79lKIj82ciZsXGlj2Le1W+Q/XbS34M07I9/SMJvVkhNPFPx4A
- eH50f7aqE/3E5IQoLl0xhevvX0WMSQlRaHIDdw9xuUQ6X1f5aIHcH3Mfa0ZkYiPlZvaK/gDq
-X-Proofpoint-GUID: Byozc5x4EjvD1epoPSJEVQ1SKPLUq1hJ
-X-Authority-Analysis: v=2.4 cv=WMV/XmsR c=1 sm=1 tr=0 ts=68231e4e cx=c_pps
- a=Ou0eQOY4+eZoSc0qltEV5Q==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
- a=dt9VzEwgFbYA:10 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8 a=LchG5PTgKyYevX63dD8A:9
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: Byozc5x4EjvD1epoPSJEVQ1SKPLUq1hJ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-12_07,2025-05-09_01,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 adultscore=0 lowpriorityscore=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 impostorscore=0 bulkscore=0
- spamscore=0 mlxscore=0 mlxlogscore=999 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2504070000 definitions=main-2505130098
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net] net: dsa: b53: prevent standalone from trying to
+ forward to other ports
+To: Jonas Gorski <jonas.gorski@gmail.com>,
+ Florian Fainelli <florian.fainelli@broadcom.com>
+Cc: Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Jakub Kicinski <kuba@kernel.org>,
+ Andrew Lunn <andrew@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Vladimir Oltean <olteanv@gmail.com>
+References: <20250508091424.26870-1-jonas.gorski@gmail.com>
+Content-Language: en-US
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <20250508091424.26870-1-jonas.gorski@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Ayushi Makhija <quic_amakhija@quicinc.com>
+On 5/8/25 11:14 AM, Jonas Gorski wrote:
+> When bridged ports and standalone ports share a VLAN, e.g. via VLAN
+> uppers, or untagged traffic with a vlan unaware bridge, the ASIC will
+> still try to forward traffic to known FDB entries on standalone ports.
+> But since the port VLAN masks prevent forwarding to bridged ports, this
+> traffic will be dropped.
+> 
+> This e.g. can be observed in the bridge_vlan_unaware ping tests, where
+> this breaks pinging with learning on.
+> 
+> Work around this by enabling the simplified EAP mode on switches
+> supporting it for standalone ports, which causes the ASIC to redirect
+> traffic of unknown source MAC addresses to the CPU port.
+> 
+> Since standalone ports do not learn, there are no known source MAC
+> addresses, so effectively this redirects all incoming traffic to the CPU
+> port.
+> 
+> Fixes: ff39c2d68679 ("net: dsa: b53: Add bridge support")
+> Signed-off-by: Jonas Gorski <jonas.gorski@gmail.com>
 
-Add anx7625 DSI to DP bridge device nodes.
+@Florian, could you please have a look at this one, too?
 
-Signed-off-by: Ayushi Makhija <quic_amakhija@quicinc.com>
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
----
- arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi | 232 +++++++++++++++++++++
- 1 file changed, 232 insertions(+)
+Thanks,
 
-diff --git a/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi b/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
-index 967913169539..4c942b734897 100644
---- a/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
-@@ -28,6 +28,64 @@ chosen {
- 		stdout-path = "serial0:115200n8";
- 	};
- 
-+	vreg_12p0: vreg-12p0-regulator {
-+		compatible = "regulator-fixed";
-+		regulator-name = "VREG_12P0";
-+
-+		regulator-always-on;
-+		regulator-boot-on;
-+		regulator-min-microvolt = <12000000>;
-+		regulator-max-microvolt = <12000000>;
-+	};
-+
-+	vreg_5p0: vreg-5p0-regulator {
-+		compatible = "regulator-fixed";
-+		regulator-name = "VREG_5P0";
-+
-+		regulator-always-on;
-+		regulator-boot-on;
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+
-+		vin-supply = <&vreg_12p0>;
-+	};
-+
-+	vreg_1p8: vreg-1p8-regulator {
-+		compatible = "regulator-fixed";
-+		regulator-name = "VREG_1P8";
-+
-+		regulator-always-on;
-+		regulator-boot-on;
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+
-+		vin-supply = <&vreg_5p0>;
-+	};
-+
-+	vreg_1p0: vreg-1p0-regulator {
-+		compatible = "regulator-fixed";
-+		regulator-name = "VREG_1P0";
-+
-+		regulator-always-on;
-+		regulator-boot-on;
-+		regulator-min-microvolt = <1000000>;
-+		regulator-max-microvolt = <1000000>;
-+
-+		vin-supply = <&vreg_1p8>;
-+	};
-+
-+	vreg_3p0: vreg-3p0-regulator {
-+		compatible = "regulator-fixed";
-+		regulator-name = "VREG_3P0";
-+
-+		regulator-always-on;
-+		regulator-boot-on;
-+		regulator-min-microvolt = <3000000>;
-+		regulator-max-microvolt = <3000000>;
-+
-+		vin-supply = <&vreg_12p0>;
-+	};
-+
- 	vreg_conn_1p8: vreg_conn_1p8 {
- 		compatible = "regulator-fixed";
- 		regulator-name = "vreg_conn_1p8";
-@@ -128,6 +186,30 @@ dp1_connector_in: endpoint {
- 			};
- 		};
- 	};
-+
-+	dp-dsi0-connector {
-+		compatible = "dp-connector";
-+		label = "DSI0";
-+		type = "full-size";
-+
-+		port {
-+			dp_dsi0_connector_in: endpoint {
-+				remote-endpoint = <&dsi2dp_bridge0_out>;
-+			};
-+		};
-+	};
-+
-+	dp-dsi1-connector {
-+		compatible = "dp-connector";
-+		label = "DSI1";
-+		type = "full-size";
-+
-+		port {
-+			dp_dsi1_connector_in: endpoint {
-+				remote-endpoint = <&dsi2dp_bridge1_out>;
-+			};
-+		};
-+	};
- };
- 
- &apps_rsc {
-@@ -517,7 +599,108 @@ &i2c18 {
- 	clock-frequency = <400000>;
- 	pinctrl-0 = <&qup_i2c18_default>;
- 	pinctrl-names = "default";
-+
- 	status = "okay";
-+
-+	io_expander: gpio@74 {
-+		compatible = "ti,tca9539";
-+		reg = <0x74>;
-+		interrupts-extended = <&tlmm 98 IRQ_TYPE_EDGE_BOTH>;
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+		reset-gpios = <&tlmm 97 GPIO_ACTIVE_LOW>;
-+
-+		pinctrl-0 = <&io_expander_intr_active>,
-+			    <&io_expander_reset_active>;
-+		pinctrl-names = "default";
-+	};
-+
-+	i2c-mux@70 {
-+		compatible = "nxp,pca9543";
-+		#address-cells = <1>;
-+
-+		#size-cells = <0>;
-+		reg = <0x70>;
-+
-+		i2c@0 {
-+			reg = <0>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			bridge@58 {
-+				compatible = "analogix,anx7625";
-+				reg = <0x58>;
-+				interrupts-extended = <&io_expander 2 IRQ_TYPE_EDGE_FALLING>;
-+				enable-gpios = <&io_expander 1 GPIO_ACTIVE_HIGH>;
-+				reset-gpios = <&io_expander 0 GPIO_ACTIVE_HIGH>;
-+				vdd10-supply = <&vreg_1p0>;
-+				vdd18-supply = <&vreg_1p8>;
-+				vdd33-supply = <&vreg_3p0>;
-+
-+				ports {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+
-+					port@0 {
-+						reg = <0>;
-+
-+						dsi2dp_bridge0_in: endpoint {
-+							remote-endpoint = <&mdss0_dsi0_out>;
-+						};
-+					};
-+
-+					port@1 {
-+						reg = <1>;
-+
-+						dsi2dp_bridge0_out: endpoint {
-+							remote-endpoint = <&dp_dsi0_connector_in>;
-+						};
-+					};
-+				};
-+			};
-+		};
-+
-+		i2c@1 {
-+			reg = <1>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			bridge@58 {
-+				compatible = "analogix,anx7625";
-+				reg = <0x58>;
-+				interrupts-extended = <&io_expander 10 IRQ_TYPE_EDGE_FALLING>;
-+				enable-gpios = <&io_expander 9 GPIO_ACTIVE_HIGH>;
-+				reset-gpios = <&io_expander 8 GPIO_ACTIVE_HIGH>;
-+				vdd10-supply = <&vreg_1p0>;
-+				vdd18-supply = <&vreg_1p8>;
-+				vdd33-supply = <&vreg_3p0>;
-+
-+				ports {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+
-+					port@0 {
-+						reg = <0>;
-+
-+						dsi2dp_bridge1_in: endpoint {
-+							remote-endpoint = <&mdss0_dsi1_out>;
-+						};
-+					};
-+
-+					port@1 {
-+						reg = <1>;
-+
-+						dsi2dp_bridge1_out: endpoint {
-+							remote-endpoint = <&dp_dsi1_connector_in>;
-+						};
-+					};
-+				};
-+			};
-+		};
-+	};
-+
- };
- 
- &mdss0 {
-@@ -564,6 +747,40 @@ &mdss0_dp1_phy {
- 	status = "okay";
- };
- 
-+&mdss0_dsi0 {
-+	vdda-supply = <&vreg_l1c>;
-+
-+	status = "okay";
-+};
-+
-+&mdss0_dsi0_out {
-+	data-lanes = <0 1 2 3>;
-+	remote-endpoint = <&dsi2dp_bridge0_in>;
-+};
-+
-+&mdss0_dsi0_phy {
-+	vdds-supply = <&vreg_l4a>;
-+
-+	status = "okay";
-+};
-+
-+&mdss0_dsi1 {
-+	vdda-supply = <&vreg_l1c>;
-+
-+	status = "okay";
-+};
-+
-+&mdss0_dsi1_out {
-+	data-lanes = <0 1 2 3>;
-+	remote-endpoint = <&dsi2dp_bridge1_in>;
-+};
-+
-+&mdss0_dsi1_phy {
-+	vdds-supply = <&vreg_l4a>;
-+
-+	status = "okay";
-+};
-+
- &pmm8654au_0_gpios {
- 	gpio-line-names = "DS_EN",
- 			  "POFF_COMPLETE",
-@@ -712,6 +929,21 @@ ethernet0_mdio: ethernet0-mdio-pins {
- 		};
- 	};
- 
-+	io_expander_intr_active: io-expander-intr-active-state {
-+		pins = "gpio98";
-+		function = "gpio";
-+		drive-strength = <2>;
-+		bias-disable;
-+	};
-+
-+	io_expander_reset_active: io-expander-reset-active-state {
-+		pins = "gpio97";
-+		function = "gpio";
-+		drive-strength = <2>;
-+		bias-disable;
-+		output-high;
-+	};
-+
- 	qup_uart10_default: qup-uart10-state {
- 		pins = "gpio46", "gpio47";
- 		function = "qup1_se3";
--- 
-2.34.1
+Paolo
 
 
