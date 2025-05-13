@@ -1,277 +1,118 @@
-Return-Path: <linux-kernel+bounces-645707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-645709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9523EAB527C
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 12:30:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E938AB526B
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 12:28:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1754119E0139
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 10:28:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 966FD7A4287
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 10:27:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE2DB241662;
-	Tue, 13 May 2025 10:08:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mBc6dcyH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA962242D97;
+	Tue, 13 May 2025 10:10:17 +0000 (UTC)
+Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com [209.85.222.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08BA718DB20;
-	Tue, 13 May 2025 10:08:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DD3D242936;
+	Tue, 13 May 2025 10:10:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747130933; cv=none; b=PnDopRtqGzoevLdpKBKvJJxFFsqdCBDZjD801RcxM4ro2aipuypt8SwtuZIxokxKoNMmHaG7MWR8O0T3lv8z0YjBRs1x/cEUlYUj7/ijtkmyZwhRl1Z18TrtSh8um/oBifvC0VfwVIFq9PdFrmHhLn7kHoKC2qOZls0G/GgbYj8=
+	t=1747131017; cv=none; b=rnTHR9GKnpMIByo7olYIBQgpOgMurtCcR2oZ47hEqkzZRk9GTMm1LFZ5OW4O0H9tfYTBtRmyRV8Pa3orEP5H6WoPnvYTW7GWar45QDAd+QPnJRN3C9Y2f8TPaDardphQddbaPM3fF+FbVyRe7KxVIBSsafqvmtue80Eku1GFNCM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747130933; c=relaxed/simple;
-	bh=zaeAUYaQaFHz8DDo3EJfThuIgsaCi3wiYrz7Dcx2zMg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dVq3ZDUJh8F3GjwniaCu/F3kK3nbW776p3UFM5ksNiVgC8LbazHmmC309YknJE5lgAAMkKGbYn/QOBUj9oXpKLqJPZ5oQNGHGPdu57o3/GgcZwK48qh95fa/V5NxrJdnM4ebOMDS3rEHQ2H4LsoQcYazzEqFx8M2A5Rp3qtAUT0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mBc6dcyH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C08DCC4CEEF;
-	Tue, 13 May 2025 10:08:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747130932;
-	bh=zaeAUYaQaFHz8DDo3EJfThuIgsaCi3wiYrz7Dcx2zMg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mBc6dcyHfRmLVPnEJ7WqN6jAAGEAy1SxD+69ZeQkyenu2zi1lBZ1UAoWBRdVUsG3e
-	 5REm+NHtSlykhwg38l+cCizPJlE7VbxCPTAzDti3CU+vt25zRRMMjvTEbB7grlw9/S
-	 Melmd91vg176MxOgnp2edXmzJuRrRt8rvB1lXNU5165SZF1Tny3uf34Ag83GKKQ4z3
-	 Q2De000VrTC/39GfW5XHj7N9zaqt4xtZQb+3r5bD0EO2oAOKjOPNwvv3gj0jKeQgTI
-	 rLpxk3KKYh8Bh1hHT1NsCl/UBXX3uBBDCVx2JUHnW8gzQbkWHgqfmLI130FigyC0Y+
-	 ncbjFVXqPyAig==
-Date: Tue, 13 May 2025 12:08:49 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-To: mathieu.dubois-briand@bootlin.com
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Kamel Bouhara <kamel.bouhara@bootlin.com>, Linus Walleij <linus.walleij@linaro.org>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
-	Michael Walle <mwalle@kernel.org>, Mark Brown <broonie@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Danilo Krummrich <dakr@kernel.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-input@vger.kernel.org, linux-pwm@vger.kernel.org, 
-	andriy.shevchenko@intel.com, =?utf-8?Q?Gr=C3=A9gory?= Clement <gregory.clement@bootlin.com>, 
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v8 04/11] pwm: max7360: Add MAX7360 PWM support
-Message-ID: <5eb7xqo7bfzath3xy7i6v5fep7qwfeg4z3rtzifmgnyvlc3o5b@yi6hzur52hl3>
-References: <20250509-mdb-max7360-support-v8-0-bbe486f6bcb7@bootlin.com>
- <20250509-mdb-max7360-support-v8-4-bbe486f6bcb7@bootlin.com>
+	s=arc-20240116; t=1747131017; c=relaxed/simple;
+	bh=odXP4jacTJrgnDY+LG3HYYqyaDF6mb6R1oBRuN2esec=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dqFA5NroknW2EWLa1dhX6J79e+xpM/ctH7RkWW0LsPHI1JBj5bgvz9uhsgswQHjjcZOptOMqtZRw5hwGAfb8z89x0B/9VB+jyglgfuT6axAs5+gmqTxeg62AHsYFgvll+uLQ/JVh9XM16SsngPRjKVfrAdQOf1bSqrS4DLgCGB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f51.google.com with SMTP id a1e0cc1a2514c-8783b2cbce3so1365225241.3;
+        Tue, 13 May 2025 03:10:14 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747131013; x=1747735813;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tEHsGcgeFxHmqxM+gq4Bvi2pObgGCXu9Z6FvaGC39Dk=;
+        b=jTygksAEPrzQx/YCJ/H9qIlRrRtnR6m1LoKQ+AGheeRfDI7SaUUVihEjuTT+5aeTps
+         ModP8JToBfD1U29wZeDxgDB/pwNC3ecLcrk0HyIn1W+DW3cE2+rKhUo33iSZ0lFOI0+I
+         9YUm0lc8/0PJkDgXYx1DIsh/0N+B7mGX2r2FMPZMLRmuTeJ3gw/cqfqWdA/W4YV4pxwk
+         6rDteTbx3t7qBopdPWshU07FXk2DkiD1Ty673eyfZNBn3XQ8Cb/jA7/w9Fz4muVtm60E
+         4cMnhOSVw9AS9glddmTWURT0DzqzME0ckDOaFH3P1ubsGmygd+V9t//aVZ93VJRZmU31
+         2ZZg==
+X-Forwarded-Encrypted: i=1; AJvYcCVOxVom+EY3YqfLeQlv6VxIYiff/5J5PwAYyQI6pVSc0DQGEFnVF1P7QHj1lbuG0GMTCpwKmqceyc+8nWnZ@vger.kernel.org, AJvYcCWcsLZFC8VFHiABWs5qOZ+/QvXHbn+m0NNUiWUfXQ0nSu0NNUcfB0LeO/kCfo67YVm99aUDpnTJDe8=@vger.kernel.org, AJvYcCXlLt+xGkvuZYxR7wkGY83+v17gXr0McplqhWi6+b2k7LN5ScIPzK69IQ2ywe/9rCOS1levC3rNru46RVk4lkCO5Yg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxhytHkLfu5yJx6HMF2OGs8d74JGy5z0qaDXagDRV3ZWZtp5yBq
+	UnzFR0GOXIcBciayXrurTPJKmbGVS18Vw3VnOC58o1c9ulD+ex742esTPIWt
+X-Gm-Gg: ASbGncu5H2vmjkrWRWjF0in9P0Dr9tq9cKrXRr24GDmam8f2NE7rO7fZpm/Bz3r8OFK
+	FN0uFAQOFpZQFQOzBgV9icpJwpcrBugx2SlYAoALtnMopokydUSvfQ8bld3/mTIzU8LNlBQgHQH
+	rz2eSVggOYxEFSWdKRsZlD3FQ0almKpS0kkJ6mFlkzb+DgNOW5U7q56jD19fhse9s0jxVc5sJzh
+	lyPj0rR7XdTIC8tpvsHB7dNN/ecYxoO+AUvsVpKW9T08iLF2oYOS5nXi5KU0TJDvgdC4Lb3cwtQ
+	/GEM3g93GCmkDEomYQQRvSomZAK6Renwjhtm0F9hvctVrcYYUaJAJ52/XMAAW8tjcKic8sqd55g
+	3ezUKAu7Zfq3EVV8cART7Cae9
+X-Google-Smtp-Source: AGHT+IHJv1mh4oudJFanXJU1gxkDANo2RFbl2+zEVadvk4HeoSMT37LVvSWOChbr2HwzIDWnEv8o6Q==
+X-Received: by 2002:a05:6102:4bc4:b0:4bb:eb4a:f9ef with SMTP id ada2fe7eead31-4deed30e605mr12767743137.4.1747131013548;
+        Tue, 13 May 2025 03:10:13 -0700 (PDT)
+Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com. [209.85.222.47])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-879f61701d1sm6470534241.11.2025.05.13.03.10.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 13 May 2025 03:10:13 -0700 (PDT)
+Received: by mail-ua1-f47.google.com with SMTP id a1e0cc1a2514c-86d5e3ddb66so1632716241.2;
+        Tue, 13 May 2025 03:10:13 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUgVaUBg1in+BVwitz6I37cxu5QoBNz31vN8miwtcniWZF3KWGo1ILPiTKWEydoxnDW9YU4qmzPDgT0f5oJET9Nhnk=@vger.kernel.org, AJvYcCWGW9VP6GDts0JVeOMl0xWAau70wze5VIE7b0AA90bb1xjSUyU+BrOOcMFMNL/lhe1+rKhygCACYWJ2UW7B@vger.kernel.org, AJvYcCXt4t04U+v84COjeWR8wsEqoWa5mduPm8698z+SVdcxXsYQ9wopra6MJelh2c3BVXRtx0vmbTX6+Ds=@vger.kernel.org
+X-Received: by 2002:a05:6102:150e:b0:4c3:6546:5456 with SMTP id
+ ada2fe7eead31-4deed30cdb5mr14839665137.3.1747131013029; Tue, 13 May 2025
+ 03:10:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="2yxh7t5v6ayknmhz"
-Content-Disposition: inline
-In-Reply-To: <20250509-mdb-max7360-support-v8-4-bbe486f6bcb7@bootlin.com>
+References: <20250429081956.3804621-1-thierry.bultel.yh@bp.renesas.com> <20250429081956.3804621-6-thierry.bultel.yh@bp.renesas.com>
+In-Reply-To: <20250429081956.3804621-6-thierry.bultel.yh@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 13 May 2025 12:10:00 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVY7dphF7DkC28of=5TQpRt5_vynkL1GssRopj9Yzh_hQ@mail.gmail.com>
+X-Gm-Features: AX0GCFsyCgBliMzI4nUjy751X_YHJrFNp-gw04bxtnT-KEGMKnJWXLDv1kgjZbg
+Message-ID: <CAMuHMdVY7dphF7DkC28of=5TQpRt5_vynkL1GssRopj9Yzh_hQ@mail.gmail.com>
+Subject: Re: [PATCH v8 05/11] clk: renesas: Pass sub struct of cpg_mssr_priv
+ to cpg_clk_register
+To: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
+Cc: thierry.bultel@linatsea.fr, linux-renesas-soc@vger.kernel.org, 
+	paul.barker.ct@bp.renesas.com, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-
---2yxh7t5v6ayknmhz
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v8 04/11] pwm: max7360: Add MAX7360 PWM support
-MIME-Version: 1.0
-
-Hello,
-
-On Fri, May 09, 2025 at 11:14:38AM +0200, mathieu.dubois-briand@bootlin.com=
- wrote:
-> From: Kamel Bouhara <kamel.bouhara@bootlin.com>
->=20
-> Add driver for Maxim Integrated MAX7360 PWM controller, supporting up to
-> 8 independent PWM outputs.
->=20
-> Signed-off-by: Kamel Bouhara <kamel.bouhara@bootlin.com>
-> Co-developed-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-> Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+On Tue, 29 Apr 2025 at 10:20, Thierry Bultel
+<thierry.bultel.yh@bp.renesas.com> wrote:
+> In a subsequent patch, the registration callback will need more parameters
+> from cpg_mssr_priv (like another base address with clock controllers
+> with double register block, and also, notifiers and rmw_lock).
+> Instead of adding more parameters, move the needed parameters to a public
+> sub-struct.
+> Instead moving clks to this structure, which would have implied to add
+> an allocation (and cleanup) for it, keep the way the allocation is done
+> and just have a copy of the pointer in the public structure.
+>
+> Signed-off-by: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
 > ---
->  drivers/pwm/Kconfig       |  10 +++
->  drivers/pwm/Makefile      |   1 +
->  drivers/pwm/pwm-max7360.c | 186 ++++++++++++++++++++++++++++++++++++++++=
-++++++
->  3 files changed, 197 insertions(+)
->=20
-> diff --git a/drivers/pwm/Kconfig b/drivers/pwm/Kconfig
-> index 4731d5b90d7e..0b22141cbf85 100644
-> --- a/drivers/pwm/Kconfig
-> +++ b/drivers/pwm/Kconfig
-> @@ -755,4 +755,14 @@ config PWM_XILINX
->  	  To compile this driver as a module, choose M here: the module
->  	  will be called pwm-xilinx.
-> =20
-> +config PWM_MAX7360
-> +	tristate "MAX7360 PWMs"
-> +	depends on MFD_MAX7360
-> +	help
-> +	  PWM driver for Maxim Integrated MAX7360 multifunction device, with
-> +	  support for up to 8 PWM outputs.
-> +
-> +	  To compile this driver as a module, choose M here: the module
-> +	  will be called pwm-max7360.
-> +
->  endif
-> diff --git a/drivers/pwm/Makefile b/drivers/pwm/Makefile
-> index 539e0def3f82..9c7701d8070b 100644
-> --- a/drivers/pwm/Makefile
-> +++ b/drivers/pwm/Makefile
-> @@ -36,6 +36,7 @@ obj-$(CONFIG_PWM_LPC32XX)	+=3D pwm-lpc32xx.o
->  obj-$(CONFIG_PWM_LPSS)		+=3D pwm-lpss.o
->  obj-$(CONFIG_PWM_LPSS_PCI)	+=3D pwm-lpss-pci.o
->  obj-$(CONFIG_PWM_LPSS_PLATFORM)	+=3D pwm-lpss-platform.o
-> +obj-$(CONFIG_PWM_MAX7360)	+=3D pwm-max7360.o
->  obj-$(CONFIG_PWM_MESON)		+=3D pwm-meson.o
->  obj-$(CONFIG_PWM_MEDIATEK)	+=3D pwm-mediatek.o
->  obj-$(CONFIG_PWM_MICROCHIP_CORE)	+=3D pwm-microchip-core.o
-> diff --git a/drivers/pwm/pwm-max7360.c b/drivers/pwm/pwm-max7360.c
-> new file mode 100644
-> index 000000000000..af2006ec7a96
-> --- /dev/null
-> +++ b/drivers/pwm/pwm-max7360.c
-> @@ -0,0 +1,186 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Copyright 2025 Bootlin
-> + *
-> + * Author: Kamel BOUHARA <kamel.bouhara@bootlin.com>
-> + * Author: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-> + *
-> + * Limitations:
-> + * - Only supports normal polarity.
-> + * - The period is fixed to 2 ms.
-> + * - Only the duty cycle can be changed, new values are applied at the b=
-eginning
-> + *   of the next cycle.
-> + * - When disabled, the output is put in Hi-Z.
-> + */
-> +#include <linux/bits.h>
-> +#include <linux/dev_printk.h>
-> +#include <linux/err.h>
-> +#include <linux/math64.h>
-> +#include <linux/mfd/max7360.h>
-> +#include <linux/minmax.h>
-> +#include <linux/mod_devicetable.h>
-> +#include <linux/module.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/pwm.h>
-> +#include <linux/regmap.h>
-> +#include <linux/time.h>
-> +#include <linux/types.h>
-> +
-> +#define MAX7360_NUM_PWMS			8
-> +#define MAX7360_PWM_MAX_RES			255
-> +#define MAX7360_PWM_PERIOD_NS			(2 * NSEC_PER_MSEC)
-> +
-> +struct max7360_pwm_waveform {
-> +	u8 duty_steps;
-> +	bool enabled;
-> +};
-> +
-> +static int max7360_pwm_request(struct pwm_chip *chip, struct pwm_device =
-*pwm)
-> +{
-> +	struct regmap *regmap =3D pwmchip_get_drvdata(chip);
-> +	int ret;
-> +
-> +	ret =3D regmap_write_bits(regmap, MAX7360_REG_PWMCFG(pwm->hwpwm),
-> +				MAX7360_PORT_CFG_COMMON_PWM, 0);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return regmap_write_bits(regmap, MAX7360_REG_PORTS, BIT(pwm->hwpwm), BI=
-T(pwm->hwpwm));
+> Changes v7->v8:
+>  - moved struct cpg_mssr_pub pub to the beginning of struct cpg_mssr_priv
+>  - make *core & *info fit on the same line
+>  - order of doc tags
 
-What is the effect of these writes? It doesn't need to be undone in a
-matching .free()?
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-> +}
-> +
-> +static int max7360_pwm_round_waveform_tohw(struct pwm_chip *chip,
-> +					   struct pwm_device *pwm,
-> +					   const struct pwm_waveform *wf,
-> +					   void *_wfhw)
-> +{
-> +	struct max7360_pwm_waveform *wfhw =3D _wfhw;
-> +	u64 duty_steps;
-> +
-> +	/*
-> +	 * Ignore user provided values for period_length_ns and duty_offset_ns:
-> +	 * we only support fixed period of MAX7360_PWM_PERIOD_NS and offset of =
-0.
-> +	 */
-> +	duty_steps =3D mul_u64_u64_div_u64(wf->duty_length_ns, MAX7360_PWM_MAX_=
-RES,
-> +					 MAX7360_PWM_PERIOD_NS);
-> +
-> +	wfhw->duty_steps =3D min(MAX7360_PWM_MAX_RES, duty_steps);
-> +	wfhw->enabled =3D !!wf->duty_length_ns;
-> +
-> +	return 0;
-> +}
-> +
-> +static int max7360_pwm_round_waveform_fromhw(struct pwm_chip *chip, stru=
-ct pwm_device *pwm,
-> +					     const void *_wfhw, struct pwm_waveform *wf)
-> +{
-> +	const struct max7360_pwm_waveform *wfhw =3D _wfhw;
-> +
-> +	wf->period_length_ns =3D wfhw->enabled ? MAX7360_PWM_PERIOD_NS : 0;
-> +	wf->duty_offset_ns =3D 0;
-> +	wf->duty_length_ns =3D DIV_ROUND_UP(wfhw->duty_steps * MAX7360_PWM_PERI=
-OD_NS,
-> +					  MAX7360_PWM_MAX_RES);
-> +
-> +	return 0;
-> +}
-> +
-> +static int max7360_pwm_write_waveform(struct pwm_chip *chip,
-> +				      struct pwm_device *pwm,
-> +				      const void *_wfhw)
-> +{
-> +	struct regmap *regmap =3D pwmchip_get_drvdata(chip);
-> +	const struct max7360_pwm_waveform *wfhw =3D _wfhw;
-> +	unsigned int val;
-> +	int ret;
-> +
-> +	val =3D wfhw->enabled ? BIT(pwm->hwpwm) : 0;
-> +	ret =3D regmap_write_bits(regmap, MAX7360_REG_GPIOCTRL, BIT(pwm->hwpwm)=
-, val);
-> +	if (ret)
-> +		return ret;
-> +
-> +	if (wfhw->duty_steps)
-> +		return regmap_write(regmap, MAX7360_REG_PWM(pwm->hwpwm), wfhw->duty_st=
-eps);
+Gr{oetje,eeting}s,
 
-Would it make sense to first write duty_steps and only then enable?
-Otherwise it might happen that you enable and still have a wrong duty
-configuration in the MAX7360_REG_PWM register and emit a wrong period?
+                        Geert
 
-Do you need to write duty_steps =3D 0 if enabled is false?
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-> +	return 0;
-> +}
-
-Best regards
-Uwe
-
---2yxh7t5v6ayknmhz
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmgjGi4ACgkQj4D7WH0S
-/k7HQgf+Odk90m1utgkmYbrz0FZcNC2Skz6UXgO3C4M5SobWtBPbpcaW/JcIB4Gk
-fVwmhMBKl2od85hqkXxZLOuVzA3oBPOCDzQAZTg9gb4bisIWrT3hHpDvL5UZEoKI
-ma06cuOTdO38aJByqPveRD54zUJugND1BcQcNT9+ZOxNmj1pg1QUe+4yxrFN8Zbp
-ZrIUqujG7ME+OV1MxFw5g3WVvGonjnVJFfi9BVdzNAUpjlqaOEQIj5en96e3titd
-JlpLFklRScDWH8stcquc87bhxm4NDdK0BP01NK5r/9NbJmVLDfCBgeM0ATUGGkLS
-G20Lg42CoxYWzsO+yiLcAyR7uCky3g==
-=gP0G
------END PGP SIGNATURE-----
-
---2yxh7t5v6ayknmhz--
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
