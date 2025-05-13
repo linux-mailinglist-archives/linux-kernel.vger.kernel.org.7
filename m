@@ -1,104 +1,145 @@
-Return-Path: <linux-kernel+bounces-645122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-645124-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA3C3AB4934
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 04:06:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 724D3AB4936
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 04:07:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F9A9177544
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 02:06:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51C833AFC36
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 02:06:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C8101A072C;
-	Tue, 13 May 2025 02:04:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9537319F130;
+	Tue, 13 May 2025 02:06:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="p/mIrb42"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="JLLObg9L"
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F63419924D;
-	Tue, 13 May 2025 02:04:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC94319924D
+	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 02:06:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747101869; cv=none; b=UHaES/RUaMxwshhmT1++bQAhXIdIcOK8cJqWxWJxbbxDdIqwqIBx+NUB/oqpugvnId4z5T8YlD/xBxCFxfU1/igK368QfiWKt0u9Gxt6tGX5vmaSuezhLGXYzuSCAUfdxACJC2tOKuBtWXz+jzf7DNkiDqw2Fi2BJ/G1IRoO1Vo=
+	t=1747102012; cv=none; b=MXAEIquQ5xiiqVaxZtJ3n3qNbdixEsIKe8s6b+jVHJwFA75U4aJyw38AllAmdy+P5restGb+cVw8m7Irix/Q+WeoFTqNM267+v44WfJmw9gOSg0ndwYVX0W8hybw27XMA8GywWK3WyKyZqZq3eouBedK5VkBTI99xWOSSbOofvM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747101869; c=relaxed/simple;
-	bh=j7lJShPXDvLRqpViinwmB8b87z+E5ER6/vsnTG72xwo=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=HUkMa1nmGl5Kr//HZJ8NLcKPEa/gdI15wCZUWxuGWfbuC8UaA38jayOrU0FWQiZ/cov8xoROe0dr1HCjmEppl2wvIouR9sK+H7vnAzmZ4w025SuIvIgDhftwN5wq7gv7RDvlZL1CVhIB96Y/KjvRCmGi0yaVH8slv/2fzzpGcQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=p/mIrb42; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85A03C4CEE7;
-	Tue, 13 May 2025 02:04:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1747101868;
-	bh=j7lJShPXDvLRqpViinwmB8b87z+E5ER6/vsnTG72xwo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=p/mIrb42A4bCdFbqWXAXHXoaxl6ZHd+zxG6jCyS4khDKCOy/ly4qvKlqHSyFWMJop
-	 qx3wjilWIvJTX1Xg6SYkVqL4p81CNErg98rRMrqWaPMgil55/S96ArjcOqZnTFAD9Y
-	 f8xU04fa2mWCo2iQb0ghFCELUoX0+rCob3a2kY98=
-Date: Mon, 12 May 2025 19:04:27 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Jason Xing <kerneljasonxing@gmail.com>
-Cc: axboe@kernel.dk, rostedt@goodmis.org, mhiramat@kernel.org,
- mathieu.desnoyers@efficios.com, linux-kernel@vger.kernel.org,
- linux-block@vger.kernel.org, linux-trace-kernel@vger.kernel.org, Jason Xing
- <kernelxing@tencent.com>, Yushan Zhou <katrinzhou@tencent.com>
-Subject: Re: [PATCH v1 2/5] relayfs: introduce dump of relayfs statistics
- function
-Message-Id: <20250512190427.b7fb67f6b78fd8699ea2811d@linux-foundation.org>
-In-Reply-To: <CAL+tcoDk2TFwAWPwBN+dQQ+guxe71F_R1rFX_f9wozjPpujBAQ@mail.gmail.com>
-References: <20250512024935.64704-1-kerneljasonxing@gmail.com>
-	<20250512024935.64704-3-kerneljasonxing@gmail.com>
-	<20250512175156.7d3d4db53d40c7a34c1f68d6@linux-foundation.org>
-	<CAL+tcoDk2TFwAWPwBN+dQQ+guxe71F_R1rFX_f9wozjPpujBAQ@mail.gmail.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1747102012; c=relaxed/simple;
+	bh=COaGT2JW8DlPtmWpufP9IsQ1cvq3XywOwkvOt7FqD94=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 References; b=kIiJRftNazid+/IXUD+0Gf/4j0YV4hxfW76naDvZkenhgSLLmtFLImyX1+VoyaffviK+HpLKIlzMrVqeCl1kAArQNdf7rWVCDYLZaItiyURc2bFMNjmp4godoiyEuX5eBDr3rrJA8engVOKB983qglrh3a3uFij5Vn4sDJHskAk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=JLLObg9L; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas2p4.samsung.com (unknown [182.195.41.56])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250513020647epoutp04f88777c8ffc4ac331f849bee813b2d6d~_9AT15cTf2535225352epoutp04F
+	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 02:06:47 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250513020647epoutp04f88777c8ffc4ac331f849bee813b2d6d~_9AT15cTf2535225352epoutp04F
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1747102007;
+	bh=kvmgVEKPuoH4lsNXw8T8Zxc8qcsTU4lXcf5uvCsEiLE=;
+	h=Date:From:To:Cc:Subject:References:From;
+	b=JLLObg9LvDUWOb9h8cgIcaLo9i0/g4RaX55lF4eHdwhJsxyYB+xbw63mIeR57N1Yn
+	 pFhMNg8Z2qqDgDLyI9XJisl0TdPcER01A8xARCzk+iS43cVwrnusqttY70zN851VgP
+	 EmdzZHfKINroce7FjzcEkLnAe9FRZcAGDFKh8754=
+Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
+	epcas2p2.samsung.com (KnoxPortal) with ESMTPS id
+	20250513020647epcas2p223ba67175952e88d475e7c9bfb77fe36~_9ATZhi8U0045700457epcas2p2S;
+	Tue, 13 May 2025 02:06:47 +0000 (GMT)
+Received: from epcas2p2.samsung.com (unknown [182.195.36.88]) by
+	epsnrtp03.localdomain (Postfix) with ESMTP id 4ZxKbV2Rhvz3hhTZ; Tue, 13 May
+	2025 02:06:46 +0000 (GMT)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas2p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250513020645epcas2p12a62716c7e311d0a95a550b712ff517c~_9AR7RyP51150911509epcas2p1B;
+	Tue, 13 May 2025 02:06:45 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20250513020645epsmtrp1be71d5fb323beb72ad00df561448b47f~_9AR6nRKI0202202022epsmtrp1x;
+	Tue, 13 May 2025 02:06:45 +0000 (GMT)
+X-AuditID: b6c32a2a-d63ff70000002265-0e-6822a93550e8
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	76.10.08805.539A2286; Tue, 13 May 2025 11:06:45 +0900 (KST)
+Received: from au1-maretx-p37.eng.sarc.samsung.com (unknown
+	[105.148.41.227]) by epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250513020643epsmtip237f1d392cb69a5e0ba8c42642fe09e2c~_9AQD5Awv2522725227epsmtip29;
+	Tue, 13 May 2025 02:06:43 +0000 (GMT)
+Date: Mon, 12 May 2025 21:06:38 -0500
+From: Hyejeong Choi <hjeong.choi@samsung.com>
+To: sumit.semwal@linaro.org, christian.koenig@amd.com
+Cc: linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linaro-mm-sig@lists.linaro.org, linux-kernel@vger.kernel.org,
+	hjeong.choi@samsung.com
+Subject: [PATCH] dma-buf: insert memory barrier before updating num_fences
+Message-ID: <20250513020638.GA2329653@au1-maretx-p37.eng.sarc.samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrBLMWRmVeSWpSXmKPExsWy7bCSvK7pSqUMg3NzpS3e3t/NanHl63s2
+	i4s9X9ksvlx5yGRxedccNoueDVtZLU7d/czuwO7Reukvm8eda3vYPO53H2fyuP3vMbNH35ZV
+	jB6fN8kFsEVx2aSk5mSWpRbp2yVwZfy9cp+14DR7xculJ1kbGDewdTFyckgImEjsOvSCsYuR
+	i0NIYDejxM95b4ESHEAJaYmOY+kQNcIS91uOsELUNDBJ3Nx7ixkkwSKgKtG6oQFsEJuArsS2
+	TzfAbBEBU4mj6/rZQBqYBWYzSvS/bWYFSQgLeEksXLKJHWQBL5C9rLEUJMwrIChxcuYTFhCb
+	WUBL4sa/l0wgJcxANyz/xwFiigqoSHxeIDCBkX8WkoZZSBpmITQsYGRexSiZWlCcm55bbFhg
+	lJdarlecmFtcmpeul5yfu4kRHNhaWjsY96z6oHeIkYmD8RCjBAezkghv43bFDCHelMTKqtSi
+	/Pii0pzU4kOM0hwsSuK83173pggJpCeWpGanphakFsFkmTg4pRqYEgQ3r01MkfUSv8j/+XG5
+	jmZTZPexDQ8+OOxcynImJ0thmuULtVLu04LfA35bx6c6/t7IOf3UZ5vn4Qycs1cH//Na2vR/
+	i8yDi90mE49EZWprHdko6t+sO0P2xzqResWSm9HNDeyur0xEb0U2zlerXPPuXU3njvNHrmem
+	evi8Lg78P10kpcj828dfNTEiBtJ/DNQz5R7cny77W1LbZf5lU+HVVroSfc2LVLfdmrghO++a
+	wkMm5uo1Qe1y+yINX+7+/nJaUNM0hYaPmYW33B+17JOL47q/tPHc9rirvsrWjOy6utIRKvcO
+	VtyQDnQ5fk/CWuSG7tLtC5ObM2eynth51uPRFLVXXB2SXTOdjBYosRRnJBpqMRcVJwIAAPwn
+	39sCAAA=
+X-CMS-MailID: 20250513020645epcas2p12a62716c7e311d0a95a550b712ff517c
+X-Msg-Generator: CA
+Content-Type: multipart/mixed;
+	boundary="----vXMtb.xJEBdKRg-x-G_2.bLfm7.PUyBosmRElnm._zJRPIlO=_2cd20_"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+cpgsPolicy: CPGSC10-234,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250513020645epcas2p12a62716c7e311d0a95a550b712ff517c
+References: <CGME20250513020645epcas2p12a62716c7e311d0a95a550b712ff517c@epcas2p1.samsung.com>
 
-On Tue, 13 May 2025 09:48:15 +0800 Jason Xing <kerneljasonxing@gmail.com> wrote:
+------vXMtb.xJEBdKRg-x-G_2.bLfm7.PUyBosmRElnm._zJRPIlO=_2cd20_
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
 
-> > > +{
-> > > +     unsigned int i, full_counter = 0;
-> > > +     struct rchan_buf *rbuf;
-> > > +     int offset = 0;
-> > > +
-> > > +     if (!chan || !buf || flags & ~RELAY_DUMP_MASK)
-> > > +             return;
-> > > +
-> > > +     if (len < RELAY_DUMP_BUF_MAX_LEN)
-> > > +             return;
-> >
-> > So we left the memory at *buf uninitialized but failed to tell the
-> > caller this.  The caller will then proceed to use uninitialized memory.
-> >
-> > It's a programming error, so simply going BUG seems OK.
-> 
-> Are you suggesting that I should remove the above check because
-> developers should take care of the length of the buffer to write
-> outside of the relay_dump function? or use this instead:
-> WARN_ON_ONCE(len < RELAY_DUMP_BUF_MAX_LEN);
-> ?
+smp_store_mb() inserts memory barrier after storing operation.
+It is different with what the comment is originally aiming so Null
+pointer dereference can be happened if memory update is reordered.
 
-It's a poor interface - it returns uninitialized data while not
-alerting the caller to this.  You'll figure something out ;)
+Signed-off-by: Hyejeong Choi <hjeong.choi@samsung.com>
+---
+ drivers/dma-buf/dma-resv.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-Perhaps
-
-	BUG_ON(len < RELAY_DUMP_BUF_MAX_LEN);
-	*buf = '\0';
-	if (!chan || (flags & ~RELAY_DUMP_MASK))
-		return;
-
-We don't need to check for !buf - the oops message contains the same info.
-
-Maybe we don't need to check !chan either.  Can it be NULL here?
+diff --git a/drivers/dma-buf/dma-resv.c b/drivers/dma-buf/dma-resv.c
+index 5f8d010516f0..b1ef4546346d 100644
+--- a/drivers/dma-buf/dma-resv.c
++++ b/drivers/dma-buf/dma-resv.c
+@@ -320,8 +320,9 @@ void dma_resv_add_fence(struct dma_resv *obj, struct dma_fence *fence,
+ 	count++;
+ 
+ 	dma_resv_list_set(fobj, i, fence, usage);
+-	/* pointer update must be visible before we extend the num_fences */
+-	smp_store_mb(fobj->num_fences, count);
++	/* fence update must be visible before we extend the num_fences */
++	smp_wmb();
++	fobj->num_fences = count;
+ }
+ EXPORT_SYMBOL(dma_resv_add_fence);
+ 
+-- 
+2.31.1
 
 
+------vXMtb.xJEBdKRg-x-G_2.bLfm7.PUyBosmRElnm._zJRPIlO=_2cd20_
+Content-Type: text/plain; charset="utf-8"
+
+
+------vXMtb.xJEBdKRg-x-G_2.bLfm7.PUyBosmRElnm._zJRPIlO=_2cd20_--
 
