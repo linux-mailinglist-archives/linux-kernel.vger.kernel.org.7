@@ -1,259 +1,93 @@
-Return-Path: <linux-kernel+bounces-646092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-646093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F380AAB57DB
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 17:02:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90447AB57E3
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 17:03:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F0374A64A9
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 15:02:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B53CC1B40CED
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 15:02:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7D3214B07A;
-	Tue, 13 May 2025 15:01:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zg/L+jzK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BC532BE10A;
+	Tue, 13 May 2025 15:02:05 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22E5E2BE0E4
-	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 15:01:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3695419E82A
+	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 15:02:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747148510; cv=none; b=YIFEpnocIXkvwycpdJRv3+5KuJYyn5B4S2ipUWA5PCLmznkoEVpUeywfY+K8L4m+xExHVtwpJdUPGNWykLs2QCy1vlfI7j4ryHaYaGJxwk3rzi/+flj4jSOrRPnJZy4CHPvPEAuQEHwMXB7tYU4eYfg4go4VTXnhEfnrPxOUTTE=
+	t=1747148524; cv=none; b=eoT8osau5e7njtLWisruwsd5SfJBV5wgddML+jsiSQdaU7Of0wXI49DnU0MhBNehuys96wieqG/xsYy7esUYGAfMOS/yx0n8eeP6YcxwqlG8plF5VpaXKlS9+e5tqU3wnKbMBh3ChYMnpvdLUTAjO5oMsl5M4JZORW3KqxaUSH0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747148510; c=relaxed/simple;
-	bh=kONZAvhGEi6uOdZ2/TxfDSiBOipY2gXAae9qyRRqPTM=;
-	h=Date:From:To:Cc:Subject:Message-Id:Mime-Version:Content-Type; b=O/9/k57FZgVIQQ5oOlh+H+0/0vF8A/rm/h8Opr7+v4tRN8UugFcjXQdcs5z/E9luONP/tO8D6P/KhXEzDdLDA+IbaodR3PTbq9nH9WlnVYgEOVY0/D/YDetvk2ZL+UJmrMUsKnhjRpa+xjlPeo0lkgvOskfBkVcnIDgLGeLzZaI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zg/L+jzK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 244F2C4AF0B;
-	Tue, 13 May 2025 15:01:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747148509;
-	bh=kONZAvhGEi6uOdZ2/TxfDSiBOipY2gXAae9qyRRqPTM=;
-	h=Date:From:To:Cc:Subject:From;
-	b=Zg/L+jzKgUM/oOT/RZa3Cgwj/3zvagKOOtWHER+efb8V7bPPBK8ZWfQJ5eSy1JNnZ
-	 zQqnJ895qHvdzhAzQnT4Opo572hglDGNorbWKSMlL3Z179QEwa40ZMzsJjlet2E8G2
-	 8MgJfPqx2DCX4IXL+EwFu5l5A6zWpZDGyivwvnoOwjWCfTw35xVJz2Br5qR7Ip2M46
-	 q5JZXVeHSAcW1xaNK79zbsf/glye+iVYRwCHQaSjknyDHbG44aYyN8w1tyWxQ8BHQL
-	 803WyegJkKyOGNYt0Qm6t3glyVweoF2zwCBooghz0lYGniXUw6d+xQl6UxkO8s4AVw
-	 gmMF8IhTYhKxg==
-Date: Wed, 14 May 2025 00:01:44 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Breno Leitao <leitao@debian.org>, Masami Hiramatsu (Google)
- <mhiramat@kernel.org>, Paul Cacheux <paulcacheux@gmail.com>, Steven Rostedt
- <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>,
- linux-kernel@vger.kernel.org
-Subject: [GIT PULL] probes: Fixes for v6.15-rc6
-Message-Id: <20250514000144.f10ca2b6b996e10c6ff177d6@kernel.org>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1747148524; c=relaxed/simple;
+	bh=hP4PegqdC13RnAQ85+yUWVwc7+/McCk2lZDiw5UO/Bg=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=S2bd37ahBObGOBfg8dstoGrttxB2mrZC5bK1Bf7bvMI9jYvA11DThsBwA4drklO1z1+x9sKeeFNUkB7hdQzNmiK9KNd+QrtesQURMEq5otPpRl4liCN86UWriu7UHcQYVJXDIhBUVIIexyoPKWEsKvaOEjP3R/6Uj3VgZ85GilM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-85db3356bafso1139272739f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 08:02:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747148522; x=1747753322;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=QRCw3Vnmu98ynSRU7dOHd3K3QYDecyR1q9zxGNfhk6k=;
+        b=P9+npjdRv7omrFgjaSyvpnfZfvtcxrr7n89/cjqrysXiJW2XYw/2GS/T9wszB/UZW7
+         7zSydDhJqlgeqmelEgE0OPCpDHIQjvPN4YOWR0JPt3+K082at7Rymw8zwY0+xZloQEYK
+         O7IAfMNm0ku3cUSYkuMOVEw/4EvPQdXNVIKcAq6StXTr5bIKDHT7EH6sSbNiJvEw5QS1
+         3JhAiTIEBNFWcJCFIlnbb6CrtvfXmS6KaZpcNb0ltl2Pg5fyxWo6Sc7K7QCo97DcC0nX
+         iAALD2wRUoLNb7U2aVi9WQmjDHgU6Ofji+ZPwxw3t4Ov8eKKR5VkbmkGdqkZpmUIXddZ
+         USTA==
+X-Forwarded-Encrypted: i=1; AJvYcCUosODFCyAUnbNAYJ4Q68no7bqLBibpyFetu9sWLZbCvk68zfvMUqdXOVseJ7xb+uIMvbUcDAsb7Zjx2SM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyiK8Do4b8+f07A8sOCM+bz2vb1m7RCOwg5y2cVXLf1zPs69+Bd
+	iznvBgMHA/mT05akcgaXaerHHmfz5alqEBENa6goo3iL2Pyxt4z1XY42CyZHMDyQgHR5sFQBeh4
+	MIowP41w7d/peNaZwtvtSIdu2ehlMY9rxAHzLvJDtXRCp7rB/tuyVR2A=
+X-Google-Smtp-Source: AGHT+IGMtQ161tXmf2KXLsHZBWzf4It6/o3Ywvnbm9ZKDK/irJkDeLwoCqMl97LC/tlvDAtSX5MOkOfGHaXSl5yf56Ur/aYT6NLX
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-Received: by 2002:a6b:da19:0:b0:867:63db:8e4e with SMTP id
+ ca18e2360f4ac-86763db8f38mr1628657039f.1.1747148521963; Tue, 13 May 2025
+ 08:02:01 -0700 (PDT)
+Date: Tue, 13 May 2025 08:02:01 -0700
+In-Reply-To: <000000000000453f3d05db72fc7e@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68235ee9.050a0220.f2294.09fc.GAE@google.com>
+Subject: Re: [syzbot] [usb?] [media?] KASAN: use-after-free Read in
+ em28xx_init_extension (2)
+From: syzbot <syzbot+99d6c66dbbc484f50e1c@syzkaller.appspotmail.com>
+To: gregkh@linuxfoundation.org, hdanton@sina.com, linux-kernel@vger.kernel.org, 
+	linux-media@vger.kernel.org, linux-usb@vger.kernel.org, mchehab@kernel.org, 
+	paskripkin@gmail.com, stern@rowland.harvard.edu, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Linus,
+syzbot has bisected this issue to:
 
-Probes fixes for v6.15-rc6:
+commit a368ecde8a5055b627749b09c6218ef793043e47
+Author: Alan Stern <stern@rowland.harvard.edu>
+Date:   Thu Jun 27 19:56:18 2024 +0000
 
-- fprobe: Fix RCU warning message in list traversal
-  fprobe_module_callback() using hlist_for_each_entry_rcu() traverse
-  the fprobe list but it locks fprobe_mutex() instead of rcu lock
-  because it is enough. So add lockdep_is_held() to avoid warning.
+    USB: core: Fix duplicate endpoint bug by clearing reserved bits in the descriptor
 
-- tracing: eprobe: Add missing trace_probe_log_clear for eprobe
-  __trace_eprobe_create() uses trace_probe_log but forgot to clear
-  it at exit. Add trace_probe_log_clear() calls.
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=12cf6cd4580000
+start commit:   cd802e7e5f1e Merge tag 'for-linus' of git://git.kernel.org..
+git tree:       upstream
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=11cf6cd4580000
+console output: https://syzkaller.appspot.com/x/log.txt?x=16cf6cd4580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=91c351a0f6229e67
+dashboard link: https://syzkaller.appspot.com/bug?extid=99d6c66dbbc484f50e1c
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=143a7768580000
 
-- tracing: probes: Fix possible race in trace_probe_log APIs
-  trace_probe_log APIs are used in probe event (dynamic_events,
-  kprobe_events and uprobe_events) creation. Only dynamic_events uses
-  the dyn_event_ops_mutex mutex to serialize it. This makes kprobe and
-  uprobe events to lock the same mutex to serialize its creation to
-  avoid race in trace_probe_log APIs.
+Reported-by: syzbot+99d6c66dbbc484f50e1c@syzkaller.appspotmail.com
+Fixes: a368ecde8a50 ("USB: core: Fix duplicate endpoint bug by clearing reserved bits in the descriptor")
 
-
-Please pull the latest probes-fixes-v6.15-rc6 tree, which can be found at:
-
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
-probes-fixes-v6.15-rc6
-
-Tag SHA1: f89fdfff7ff5f4b38c783b466e4f78032ce9cea5
-Head SHA1: fd837de3c9cb1a162c69bc1fb1f438467fe7f2f5
-
-
-Breno Leitao (1):
-      tracing: fprobe: Fix RCU warning message in list traversal
-
-Masami Hiramatsu (Google) (1):
-      tracing: probes: Fix a possible race in trace_probe_log APIs
-
-Paul Cacheux (1):
-      tracing: add missing trace_probe_log_clear for eprobes
-
-----
- kernel/trace/fprobe.c         |  3 ++-
- kernel/trace/trace_dynevent.c | 16 +++++++++++++++-
- kernel/trace/trace_dynevent.h |  1 +
- kernel/trace/trace_eprobe.c   |  3 +++
- kernel/trace/trace_kprobe.c   |  2 +-
- kernel/trace/trace_probe.c    |  9 +++++++++
- kernel/trace/trace_uprobe.c   |  2 +-
- 7 files changed, 32 insertions(+), 4 deletions(-)
----------------------------
-diff --git a/kernel/trace/fprobe.c b/kernel/trace/fprobe.c
-index 95c6e3473a76..ba7ff14f5339 100644
---- a/kernel/trace/fprobe.c
-+++ b/kernel/trace/fprobe.c
-@@ -454,7 +454,8 @@ static void fprobe_remove_node_in_module(struct module *mod, struct hlist_head *
- 	struct fprobe_hlist_node *node;
- 	int ret = 0;
- 
--	hlist_for_each_entry_rcu(node, head, hlist) {
-+	hlist_for_each_entry_rcu(node, head, hlist,
-+				 lockdep_is_held(&fprobe_mutex)) {
- 		if (!within_module(node->addr, mod))
- 			continue;
- 		if (delete_fprobe_node(node))
-diff --git a/kernel/trace/trace_dynevent.c b/kernel/trace/trace_dynevent.c
-index a322e4f249a5..5d64a18cacac 100644
---- a/kernel/trace/trace_dynevent.c
-+++ b/kernel/trace/trace_dynevent.c
-@@ -16,7 +16,7 @@
- #include "trace_output.h"	/* for trace_event_sem */
- #include "trace_dynevent.h"
- 
--static DEFINE_MUTEX(dyn_event_ops_mutex);
-+DEFINE_MUTEX(dyn_event_ops_mutex);
- static LIST_HEAD(dyn_event_ops_list);
- 
- bool trace_event_dyn_try_get_ref(struct trace_event_call *dyn_call)
-@@ -116,6 +116,20 @@ int dyn_event_release(const char *raw_command, struct dyn_event_operations *type
- 	return ret;
- }
- 
-+/*
-+ * Locked version of event creation. The event creation must be protected by
-+ * dyn_event_ops_mutex because of protecting trace_probe_log.
-+ */
-+int dyn_event_create(const char *raw_command, struct dyn_event_operations *type)
-+{
-+	int ret;
-+
-+	mutex_lock(&dyn_event_ops_mutex);
-+	ret = type->create(raw_command);
-+	mutex_unlock(&dyn_event_ops_mutex);
-+	return ret;
-+}
-+
- static int create_dyn_event(const char *raw_command)
- {
- 	struct dyn_event_operations *ops;
-diff --git a/kernel/trace/trace_dynevent.h b/kernel/trace/trace_dynevent.h
-index 936477a111d3..beee3f8d7544 100644
---- a/kernel/trace/trace_dynevent.h
-+++ b/kernel/trace/trace_dynevent.h
-@@ -100,6 +100,7 @@ void *dyn_event_seq_next(struct seq_file *m, void *v, loff_t *pos);
- void dyn_event_seq_stop(struct seq_file *m, void *v);
- int dyn_events_release_all(struct dyn_event_operations *type);
- int dyn_event_release(const char *raw_command, struct dyn_event_operations *type);
-+int dyn_event_create(const char *raw_command, struct dyn_event_operations *type);
- 
- /*
-  * for_each_dyn_event	-	iterate over the dyn_event list
-diff --git a/kernel/trace/trace_eprobe.c b/kernel/trace/trace_eprobe.c
-index c08355c3ef32..916555f0de81 100644
---- a/kernel/trace/trace_eprobe.c
-+++ b/kernel/trace/trace_eprobe.c
-@@ -969,10 +969,13 @@ static int __trace_eprobe_create(int argc, const char *argv[])
- 			goto error;
- 		}
- 	}
-+	trace_probe_log_clear();
- 	return ret;
-+
- parse_error:
- 	ret = -EINVAL;
- error:
-+	trace_probe_log_clear();
- 	trace_event_probe_cleanup(ep);
- 	return ret;
- }
-diff --git a/kernel/trace/trace_kprobe.c b/kernel/trace/trace_kprobe.c
-index 2703b96d8990..3e5c47b6d7b2 100644
---- a/kernel/trace/trace_kprobe.c
-+++ b/kernel/trace/trace_kprobe.c
-@@ -1089,7 +1089,7 @@ static int create_or_delete_trace_kprobe(const char *raw_command)
- 	if (raw_command[0] == '-')
- 		return dyn_event_release(raw_command, &trace_kprobe_ops);
- 
--	ret = trace_kprobe_create(raw_command);
-+	ret = dyn_event_create(raw_command, &trace_kprobe_ops);
- 	return ret == -ECANCELED ? -EINVAL : ret;
- }
- 
-diff --git a/kernel/trace/trace_probe.c b/kernel/trace/trace_probe.c
-index 2eeecb6c95ee..424751cdf31f 100644
---- a/kernel/trace/trace_probe.c
-+++ b/kernel/trace/trace_probe.c
-@@ -154,9 +154,12 @@ static const struct fetch_type *find_fetch_type(const char *type, unsigned long
- }
- 
- static struct trace_probe_log trace_probe_log;
-+extern struct mutex dyn_event_ops_mutex;
- 
- void trace_probe_log_init(const char *subsystem, int argc, const char **argv)
- {
-+	lockdep_assert_held(&dyn_event_ops_mutex);
-+
- 	trace_probe_log.subsystem = subsystem;
- 	trace_probe_log.argc = argc;
- 	trace_probe_log.argv = argv;
-@@ -165,11 +168,15 @@ void trace_probe_log_init(const char *subsystem, int argc, const char **argv)
- 
- void trace_probe_log_clear(void)
- {
-+	lockdep_assert_held(&dyn_event_ops_mutex);
-+
- 	memset(&trace_probe_log, 0, sizeof(trace_probe_log));
- }
- 
- void trace_probe_log_set_index(int index)
- {
-+	lockdep_assert_held(&dyn_event_ops_mutex);
-+
- 	trace_probe_log.index = index;
- }
- 
-@@ -178,6 +185,8 @@ void __trace_probe_log_err(int offset, int err_type)
- 	char *command, *p;
- 	int i, len = 0, pos = 0;
- 
-+	lockdep_assert_held(&dyn_event_ops_mutex);
-+
- 	if (!trace_probe_log.argv)
- 		return;
- 
-diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.c
-index 3386439ec9f6..35cf76c75dd7 100644
---- a/kernel/trace/trace_uprobe.c
-+++ b/kernel/trace/trace_uprobe.c
-@@ -741,7 +741,7 @@ static int create_or_delete_trace_uprobe(const char *raw_command)
- 	if (raw_command[0] == '-')
- 		return dyn_event_release(raw_command, &trace_uprobe_ops);
- 
--	ret = trace_uprobe_create(raw_command);
-+	ret = dyn_event_create(raw_command, &trace_uprobe_ops);
- 	return ret == -ECANCELED ? -EINVAL : ret;
- }
- 
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
