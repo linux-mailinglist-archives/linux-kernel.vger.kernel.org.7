@@ -1,132 +1,164 @@
-Return-Path: <linux-kernel+bounces-646149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-646151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04CA6AB5884
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 17:26:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DC877AB5890
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 17:27:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7FF116987D
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 15:22:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B0DF164C7F
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 15:25:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91DD618BC2F;
-	Tue, 13 May 2025 15:22:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A65C6299928;
+	Tue, 13 May 2025 15:24:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HwiIT/Gp"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="6WjYTtlF"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3208F1DDC37;
-	Tue, 13 May 2025 15:22:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 418371DDC37;
+	Tue, 13 May 2025 15:24:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747149736; cv=none; b=OUhEFxUSOPWaCSPEYflfMLIVTldnLOIvbESNEUN1GY9LcogPdLdg0+4i1fUMpbnholFq0Lbvke2//708oowXEJjGuAXQUbz9LI3z0qUlBXeBp1tMC8/w0HKF7H+bj96iYflH0JN1QdFP2wPKGPotkvxI4hFmVWYgORapMj32RLg=
+	t=1747149896; cv=none; b=RLoZu9yJhZxVRgoIeX9u8uvZBz4+HYiZdvsH4JDJn3R7tqX7QWVGaMA/LYYAI+LFANfS9M6OaHIA3iDQiq2ONGgtqrx5/OjRqt0i6dReBCJ0tJXaCpfuk1qUnwU5gjdWASUXQAXXBHH3TDmX7RtbRYsUGLpk5QZpJJpa/1D8hwM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747149736; c=relaxed/simple;
-	bh=XkVFIrVzXVaXc65hfYDgo0j/VX5OMcZI52m72KWvTtY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qUsRNTytrlly8uqLhj1X9OfEpbSFSc/4ZwMoq5CLinekY69LEiy1wgnS0kQ03Str6G4FpBCJqCrJ7rLfeLwkAc1PP8y3G15IPDRi5txrCzK2aIoZb6c+KTKqyu1M4OSMFNocwL9LHgUUJwGpkhGHpBd7iD12NMbYNh5kS47bdmg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HwiIT/Gp; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-442ccf0e1b3so66217795e9.3;
-        Tue, 13 May 2025 08:22:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747149732; x=1747754532; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=7HOlMAg4ITw5NVtu1FU2SCoRgaRsj5LUWrw5KUtfOSU=;
-        b=HwiIT/GpQcRV2iVctu4ejrBAT6ysX8VBE3Kyy+nRodbbhaV03/q2+6WGi+xaxgY4DJ
-         E+aH1OxFgfVoA2k5l5Wocy57i9Pbdbgye3YyqN8dttu84gkMX/D2fj65ML+x1xRM4c75
-         z2R7UvSNDHbrTYC+R2pAFjYTG+rVYdDgnm76LDPX0BHzNMSmgKChItnGSd+N9MxXS4NB
-         HriHYocsHimX6Fzyv3oh2ukHKSx+bPuX/FU4/rN3pN5BM3La/4TKcrzKY8Dvx1m6fHU/
-         HDQRSahKUCEni1CbDBKxEiC+KnyHly5jM8mBe38EuHWVS3zh9r4GGPNVPPWD9vIyzx7u
-         oEaw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747149732; x=1747754532;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7HOlMAg4ITw5NVtu1FU2SCoRgaRsj5LUWrw5KUtfOSU=;
-        b=hu4kDno4LIjTmUwuASV4eKd5Tmmp1a74ZzfJh5fSzKaOYCuFQvhf+eJQ2Uyb8dAUs6
-         ZA9pg7A5KH4mM5gwBfLAzWIe7PP+6b6iHOn5PK6hnkmRTNOY4HzxVwnVDBEkyy5K+XaY
-         ubeCK1atxt6kYQpyHmaO09M8w7CxJG2UK+plrMubc/056JCT/Ljxd+hzlBgAVn1I9p8o
-         rbN9HtdEq0+GF/HzmFN5Vu6P8mPjc5KJC6KuOv1KJV/xaINxdC+o9bY4ReWMFBG5llWZ
-         jtJccPdj3aN+FZki9/BYiXnRxTqlWtP8Uxjs/HDTtn/VVCfcBp8XtekhdH/mypDJo1ii
-         dRgA==
-X-Forwarded-Encrypted: i=1; AJvYcCUBULh5h6Sh/TOGdFOig5QN6jZKCpPG8Qvmq2uUIvTJSj73ZYzO3QWOtggkO12qTxLzckHNLjc/NLij@vger.kernel.org, AJvYcCXxgT0n0/PVxZH8RtjOCrGh36aTb9L8nZugpMnoKCSTAXl5hQqHjR2w9A9unGqAYj1Drme/FNSR8am/Wywt@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2MtfLizhTfwZ03DHXTKgGolASUn007neNDGibTJtBQjJpa21m
-	BSXWAe8yGBPoBkkhzYeyvOzv294WNz4S10pyKJzg6LwsW6lhvzFH
-X-Gm-Gg: ASbGncuLyMbLe4MYjlNu3tRm46uHcD15607LTX/Th0p0TGGDcJa6Wir3ZdQhj632ex0
-	8Yqqjdmoy/Kci5uJDS3QUQDt8NKV+G1QBJ9YWQrdWsmIL0ZYJiiQsSaeJ9nh4CS28tAZ35MP90P
-	5Mn1sSHnp0LA7s54szj3y/hPZogVSLUdLu9EsvBjXUTArL6Fdj1ENkl1RYO4Bp/8kweB38H55AP
-	Yf/mXKPmY6SdNGh8CNyxo92gNal+yLI4EfTodrPXCyWd1kIj9dgx5CM9sQAq9a+HDNHdVM4GV4e
-	+tYOTh0dSNnlAc9DO+wcpabCwzKmFx0OMr3V9aowMZRHS8KMoViNhzdwdR26l4PLUJcFUffX9G4
-	E/Rh4neUauR24V6z82NLTznpjjGjE763kP4lzRDCmMiK5FRwb9r25BjP8Vg==
-X-Google-Smtp-Source: AGHT+IEg6PWgzF4jLLpPihZcPfaWsfwoK2cBnNIZhlc1AU9QDfK1ahFTXtyBWf5ovWIPZUOzXx90cQ==
-X-Received: by 2002:a05:6000:1889:b0:3a2:377:500c with SMTP id ffacd0b85a97d-3a203775382mr9139211f8f.16.1747149732220;
-        Tue, 13 May 2025 08:22:12 -0700 (PDT)
-Received: from partp-nb.corp.toradex.com (248.201.173.83.static.wline.lns.sme.cust.swisscom.ch. [83.173.201.248])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a1f58ec0e4sm16384170f8f.40.2025.05.13.08.22.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 May 2025 08:22:11 -0700 (PDT)
-From: Parth Pancholi <parth105105@gmail.com>
-To: Nishanth Menon <nm@ti.com>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Tero Kristo <kristo@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Siddharth Vadapalli <s-vadapalli@ti.com>
-Cc: Parth Pancholi <parth.pancholi@toradex.com>,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3] arm64: dts: ti: k3-j784s4-j742s2-main-common: Add ACSPCIE1 node
-Date: Tue, 13 May 2025 17:21:55 +0200
-Message-Id: <20250513152155.1590689-1-parth105105@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1747149896; c=relaxed/simple;
+	bh=ldabwZbfmu/cUWRNTF5lR3eSKA1zCVBJ3Ef5/yPAGkU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=rOu7CaRyTWnkaOEkYYFMVewr4y2DN3qSFfGSoNf31Yb2DsjeTa2Zm7NDkczsy5duSDaLQDk0SJQErB6KH6Umr7Tp/JypC9Fifc4zBJjum7PzD6/dzp351RZy3guEUO1ajq4o/V1LTzOY/t/ljJA4yDsNTTrsOPiULeXbpNb4i4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=6WjYTtlF; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54DDxVGf019621;
+	Tue, 13 May 2025 17:24:28 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	e4Aq7HPeyHmZNMONnd/Qv8JQOHr8stkcWD0o0/Qj+zY=; b=6WjYTtlFh2jVpF6c
+	sAiuYst1VrwSG4Uu1J3k6lhmhRQFOjgBZAjZsSpgkJauvx9f1zwfbvNspQ7atVbd
+	iKp5tMvKZ6JFMQLPXPzQALgN9KBKwa/8OCI/Xwv6xwUYVFig7OsacuQ9vCBMgJKX
+	wGpe/oJTOWyIvZnUs83Fx9VAdQt4gETCdSELW9yHlAHIbRLFnucKgKj1VcGcxMC9
+	uMFD7keTcqOFIceCsICL89TuHQHFjgXzT0iitYSh9R3XX71dhpJ8+3LQj5Hc4fQ6
+	esm1fowNraTMATZLvrA94zjT9UakGtQJhX5aBsYUHY5rC3sEYOLwBs977cDbhAME
+	tN5OfA==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 46hx51cvaf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 13 May 2025 17:24:28 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 2EEF74004A;
+	Tue, 13 May 2025 17:22:54 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id B4592B1D1AF;
+	Tue, 13 May 2025 17:22:02 +0200 (CEST)
+Received: from [10.48.87.62] (10.48.87.62) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 13 May
+ 2025 17:22:01 +0200
+Message-ID: <33c35580-e6d6-4c66-80b4-2f5769ce4e67@foss.st.com>
+Date: Tue, 13 May 2025 17:22:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v11 2/3] memory: Add STM32 Octo Memory Manager driver
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+        Dan Carpenter
+	<dan.carpenter@linaro.org>
+CC: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+        Maxime
+ Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue
+	<alexandre.torgue@foss.st.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Catalin Marinas
+	<catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, <christophe.kerello@foss.st.com>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <20250428-upstream_ospi_v6-v11-0-1548736fd9d2@foss.st.com>
+ <20250428-upstream_ospi_v6-v11-2-1548736fd9d2@foss.st.com>
+ <aB29hOrv0nU73RCn@stanley.mountain>
+ <cff1ddb5-b438-4287-80cf-3969f7b7b767@kernel.org>
+Content-Language: en-US
+From: Patrice CHOTARD <patrice.chotard@foss.st.com>
+In-Reply-To: <cff1ddb5-b438-4287-80cf-3969f7b7b767@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-13_03,2025-05-09_01,2025-02-21_01
 
-From: Parth Pancholi <parth.pancholi@toradex.com>
 
-The ACSPCIE1 module on TI's J784S4 SoC is capable of driving the reference
-clock required by the PCIe Endpoint device. It is an alternative to on-
-board and external reference clock generators.
-Add the device-tree node for the same.
 
-Signed-off-by: Parth Pancholi <parth.pancholi@toradex.com>
----
-v3: Split SoC support; board-specific changes to follow with Toradex Aquila AM69 upstream addition.
-v2: https://lore.kernel.org/all/20250404101234.2671147-1-parth105105@gmail.com/
-v1: https://lore.kernel.org/all/20250320122259.525613-1-parth105105@gmail.com/
----
- arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi | 5 +++++
- 1 file changed, 5 insertions(+)
+On 5/13/25 09:54, Krzysztof Kozlowski wrote:
+> On 09/05/2025 10:32, Dan Carpenter wrote:
+>> On Mon, Apr 28, 2025 at 10:58:31AM +0200, Patrice Chotard wrote:
+>>> +static int stm32_omm_toggle_child_clock(struct device *dev, bool enable)
+>>> +{
+>>> +	struct stm32_omm *omm = dev_get_drvdata(dev);
+>>> +	int i, ret;
+>>> +
+>>> +	for (i = 0; i < omm->nb_child; i++) {
+>>> +		if (enable) {
+>>> +			ret = clk_prepare_enable(omm->clk_bulk[i + 1].clk);
+>>> +			if (ret) {
+>>> +				dev_err(dev, "Can not enable clock\n");
+>>> +				goto clk_error;
+>>> +			}
+>>> +		} else {
+>>> +			clk_disable_unprepare(omm->clk_bulk[i + 1].clk);
+>>> +		}
+>>> +	}
+>>> +
+>>> +	return 0;
+>>> +
+>>> +clk_error:
+>>> +	while (i--)
+>>> +		clk_disable_unprepare(omm->clk_bulk[i + 1].clk);
+>>> +
+>>> +	return ret;
+>>> +}
+>>> +
+>>> +static int stm32_omm_disable_child(struct device *dev)
+>>> +{
+>>> +	struct stm32_omm *omm = dev_get_drvdata(dev);
+>>> +	struct reset_control *reset;
+>>> +	int ret;
+>>> +	u8 i;
+>>> +
+>>> +	ret = stm32_omm_toggle_child_clock(dev, true);
+>>> +	if (!ret)
+>>             ^^^^
+>> I'm pretty sure this was intended to be if (ret) and the ! is a typo.
 
-diff --git a/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi b/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi
-index 363d68fec387..d17f365947ed 100644
---- a/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi
-@@ -131,6 +131,11 @@ acspcie0_proxy_ctrl: clock-controller@1a090 {
- 			compatible = "ti,j784s4-acspcie-proxy-ctrl", "syscon";
- 			reg = <0x1a090 0x4>;
- 		};
-+
-+		acspcie1_proxy_ctrl: clock-controller@1a094 {
-+			compatible = "ti,j784s4-acspcie-proxy-ctrl", "syscon";
-+			reg = <0x1a094 0x4>;
-+		};
- 	};
- 
- 	main_ehrpwm0: pwm@3000000 {
--- 
-2.34.1
+Hi Dan
 
+You are right, it's a typo. 
+
+Thanks
+Patrice
+
+>>
+>>> +		return ret;
+>>
+>> If it's not a typo please write this as:
+>>
+>> 	if (!ret)
+>> 		return 0;
+> 
+> For the record I consider this a bug report which still needs addressing
+> by the authors.
+> 
+> Best regards,
+> Krzysztof
 
