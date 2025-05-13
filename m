@@ -1,71 +1,55 @@
-Return-Path: <linux-kernel+bounces-645315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-645313-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39651AB4B83
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 07:57:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69CACAB4B7F
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 07:56:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E1D9819E0DB2
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 05:57:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED233167E7B
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 05:56:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D1B21E5B8B;
-	Tue, 13 May 2025 05:56:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C7F31E520F;
+	Tue, 13 May 2025 05:56:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="gilTBwJB"
-Received: from smtpbgeu1.qq.com (smtpbgeu1.qq.com [52.59.177.22])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41780A93D
-	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 05:56:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.59.177.22
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="NyhffNw2"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F1321DEFE7;
+	Tue, 13 May 2025 05:56:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747115796; cv=none; b=HwVNYeilz4g+gncG4Q/V5ACkfWBfEczqrdmAV4d18MxEHBirsq6+/Ezl/dYILF5V1SMzzt3WIkSiwjczST0G80DaTKuzKxGc6HI2Bz9jBXwYuz1OasAWPHYhidUCkaxzUeNYvKuttXfZgo8kpzb8IA4oW0gkalvsKt1QFVQNJgM=
+	t=1747115785; cv=none; b=fuZhb5XW/9Odug3CZg5yC5H4HlD0C4jPQYz1/gCHdU8FYfxN0+n4clDC8BSnzzhwwRb3Bw2sTdWco42CYNJcaVNzY52uKhqTb+n8p97tEz3ioNZss/gub0w78TeRdsq8OmjjBdfgxlXPsk5lWnR7okaAmdy2X1Isu+EjDBkxi7g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747115796; c=relaxed/simple;
-	bh=bfgBCFcmciuJwkPC05xHjkwqwt5P6DCFva6GaSBqJUs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bJOVLQCAdiiHae/RhrL6mi5VuFTFKhQVV2pHeFGueXWgtGagcBZx3/Mahni4JNtiMsQmuI84NhXysBsAHM0nwJxZPcHTZWFQw23OYQVUIBIsZKhBcncEw/BG9zshzUn0zJG1lCunQVSA1Y3jFpms8Fs7zEWtWM4g4XIBVOaaab4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=gilTBwJB; arc=none smtp.client-ip=52.59.177.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1747115786;
-	bh=Cdfa9q+LfPj/LtxoZ3TN4HjZOAHkdcdlZlPL8sLbxmM=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=gilTBwJB4csrnd9SAquchlc97mKa2zIeKhIT/wgREUGYH5WMwqWN87Lnxg9lw2bPQ
-	 7GoDdfDHdOSIY2sWuHYbql2yHlE4ahnmEC3JWjbyob2Upysk1ynjqUHKhgXjsFSWSt
-	 SW4g+fwWji+KAPBw0I+IOWaSoumJl5lpuLjXhg94=
-X-QQ-mid: zesmtpip3t1747115745t002de209
-X-QQ-Originating-IP: 74dfBN0ozjFYrRhJVFtCAeE4JnKwu0jg1GRcfTwQ+f0=
-Received: from localhost.localdomain ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Tue, 13 May 2025 13:55:43 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 13709064314909415111
-EX-QQ-RecipientCnt: 16
-From: WangYuli <wangyuli@uniontech.com>
-To: maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	akpm@linux-foundation.org
-Cc: dri-devel@lists.freedesktop.org,
+	s=arc-20240116; t=1747115785; c=relaxed/simple;
+	bh=p6w275A94nytvklausbAYSIp4RX8gBNakpOf+CKSRjw=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=FBqBE8Prj1RGyBcpQjX3YXoxP6nblZf92cIESrBk5ZLLjJ+wd/IKWZlTHweEoO6Od8ZyfcjCDzHC//ECoBUWG8iQdyi2vixIb4d5vCdtUonRU/6LaGFIBK+PUu5CPZRe9HV8b4+qtAiTBrsu/WZktGmrk4yLbWy8gwh7TcmoQ9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=NyhffNw2; arc=none smtp.client-ip=117.135.210.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=+k
+	/VGJTQ7VpQV+dYkPSM1DAaHCORay8ZMGNM7qiLKr4=; b=NyhffNw2hT0vC/Y7OC
+	1M8Tpnlzg6PAJ10KD+S3ymC4yHvG+8MXN3oiKLAhNZu2jsfD2c8PuviVxVL2NZLD
+	/YTaijHubh7jFX5YHSHPXknZg88hpI4LCO+7qpRSiP1VsAeaAx4ID89nBmIdpaM0
+	rMJvDRow9tzmWhWQQ7b2CSHNg=
+Received: from localhost.localdomain (unknown [])
+	by gzga-smtp-mtada-g0-2 (Coremail) with SMTP id _____wBHPnXi3iJoD9BIBA--.18930S4;
+	Tue, 13 May 2025 13:55:54 +0800 (CST)
+From: David Wang <00107082@163.com>
+To: mathias.nyman@intel.com,
+	gregkh@linuxfoundation.org
+Cc: stern@rowland.harvard.edu,
+	linux-usb@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	wangyuli@uniontech.com,
-	yujiaoliang@vivo.com,
-	cvam0000@gmail.com,
-	colin.i.king@gmail.com,
-	jesse.brandeburg@intel.com,
-	zhanjun@uniontech.com,
-	niecheng1@uniontech.com,
-	guanwentao@uniontech.com
-Subject: [PATCH] drm/uapi: Fix typo "restictions"
-Date: Tue, 13 May 2025 13:55:21 +0800
-Message-ID: <DC0C6B72CF24C41B+20250513055521.40969-1-wangyuli@uniontech.com>
-X-Mailer: git-send-email 2.49.0
+	David Wang <00107082@163.com>
+Subject: [PATCH 2/2] USB: xhci: use urb hcpriv mempool for private data
+Date: Tue, 13 May 2025 13:55:45 +0800
+Message-Id: <20250513055545.5738-1-00107082@163.com>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20250512150724.4560-1-00107082@163.com>
+References: <20250512150724.4560-1-00107082@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,70 +57,69 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: M7wLkObIDn00ubp87rm0DBH68w/DsjFOc4XQNlbGFO7Mheo3WucdO6Si
-	wkY20DMpQgspH0FTtK8FHEaj92Nb14siDeOyVpsm3xpITSyT0XAJNgadeCie7u0qFeVHZBp
-	ipkEVt2Z/jdY+98lsBKZYV9XkF32KaFH1DaOQpuGbnRVFt0Yn6DS0MdTlaYg9UUSskGh8KT
-	1VQ2xurMLos/3sZamERzGrTW7R/K2a4s+B+O+aOHppoMZuYhT35eCdZ3ly5HKWRavH1kSrC
-	OFrFO8EFdvx+Y5Q4vUTdCTzTBhlcHYmxAuoJwCwCFvhSS2bbfQxlmFwB8eBTHXgaF30OIml
-	Gi9EZqWHVZ2IY2SEHFlNw0AXGVUND3lAwkf3QQijeU64sHF5/ld36MRCNg7B4YBTpMtFWkm
-	DXs2ZnXoTZEMjArRwCbCDAK36OPfw2iPXQFa2NrWMjvL2eqFs0EZaCV6/6sjiUzejFrRXZ+
-	C0/1cjgzlEq08mXimdBm3YM0iYP6jJQ/oLIYCb/DVCYpk6W4owo1XapiiDmo4lDCKPicFGB
-	3cRI5zyzJErBx3lvnGDoH85+zlzfBLyu3jfMHeZe9JNFRCVpPd1T0Diayl0Ld682TS51lWV
-	Zoa/LmrMKJuLWZ5lkkIRbDod1jfOvROhhhOhLPbG2v0uwRS6pdXrSGHBsWb5p0DJ4CxcazE
-	nQaWiy9L96q/RjnX9eCCxIUp4NH2chJCxRr4e0f6BqHDfcf4MZJqa5c7zclg7bQ6vOzfzAN
-	+f+sjhNGWwKD4B2Os7xu5pOXNS5vq1SB+HHKzlxE3dk9KUvqoUpl8Io8XZXRKukVWIRSUVX
-	IFSkMCyzARnUuLRYVNicppLL8h3zEIU8U4rJCpqLzwXy2tnoXanhG4W+QQQ9Z4WmWjsRb7f
-	PShg/IwEmXibyUxUnZfTgwGUe3MdCxUuHUhCpqYB+UqhbDN4Ceh5+812JZRDIZdCy3g8dxQ
-	4n3pyxV/DPJpObzIanBEdg/NUJ7GTPwPHzRpG0FvDo6kC+dbX6fB8lCvSghaBXWVHPaZpS5
-	ys4pajejhM0FAATTyr1EU+gHJcrWmo1EVxeG3r6A==
-X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
-X-QQ-RECHKSPAM: 0
+X-CM-TRANSID:_____wBHPnXi3iJoD9BIBA--.18930S4
+X-Coremail-Antispam: 1Uf129KBjvJXoW7KFWUGF4rtw13uryxCry7Awb_yoW8Zw4UpF
+	WrWa40kr1Fyr42qFW5Jw1DA3WfJw4kWFyDWFWxG3yUur42k3srG34IyFWF9FnaqrykCrsI
+	q3W8X3y8GF1DKFUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0p__-BDUUUUU=
+X-CM-SenderInfo: qqqrilqqysqiywtou0bp/1tbiqBlMqmgi2uV4+gAAsg
 
-There is a spelling mistake of 'restictions' in comments which
-should be 'restrictions'.
+xhci keeps alloc/free private data for each enqueue/dequeue cycles,
+when using a USB webcam, the memory allocation frequency could reach
+about 1k/s.
 
-This typo was not listed in scripts/spelling.txt, thus it was more
-difficult to detect. Add it for convenience.
+URB objects have longer lifecycle than private data, hand over ownership
+of private data to urb can save lots of memory allocations over time.
 
-This typo is reported by GitHub Copilot code review. [1]
-
-[1]. https://github.com/deepin-community/kernel/pull/796
-
-Signed-off-by: WangYuli <wangyuli@uniontech.com>
+Signed-off-by: David Wang <00107082@163.com>
 ---
- include/uapi/drm/drm.h | 2 +-
- scripts/spelling.txt   | 2 ++
- 2 files changed, 3 insertions(+), 1 deletion(-)
+ drivers/usb/host/xhci-ring.c | 1 -
+ drivers/usb/host/xhci.c      | 5 +----
+ 2 files changed, 1 insertion(+), 5 deletions(-)
 
-diff --git a/include/uapi/drm/drm.h b/include/uapi/drm/drm.h
-index 7fba37b94401..16f772dd7069 100644
---- a/include/uapi/drm/drm.h
-+++ b/include/uapi/drm/drm.h
-@@ -860,7 +860,7 @@ struct drm_get_cap {
-  * cursor and have correctly set hotspot properties.
-  * If this client cap is not set the DRM core will hide cursor plane on
-  * those virtualized drivers because not setting it implies that the
-- * client is not capable of dealing with those extra restictions.
-+ * client is not capable of dealing with those extra restrictions.
-  * Clients which do set cursor hotspot and treat the cursor plane
-  * like a mouse cursor should set this property.
-  * The client must enable &DRM_CLIENT_CAP_ATOMIC first.
-diff --git a/scripts/spelling.txt b/scripts/spelling.txt
-index ac94fa1c2415..c33128db7163 100644
---- a/scripts/spelling.txt
-+++ b/scripts/spelling.txt
-@@ -1406,6 +1406,8 @@ ressizes||resizes
- ressource||resource
- ressources||resources
- restesting||retesting
-+restiction||restriction
-+restictions||restrictions
- resumbmitting||resubmitting
- retransmited||retransmitted
- retreived||retrieved
+diff --git a/drivers/usb/host/xhci-ring.c b/drivers/usb/host/xhci-ring.c
+index 423bf3649570..b98e5211693d 100644
+--- a/drivers/usb/host/xhci-ring.c
++++ b/drivers/usb/host/xhci-ring.c
+@@ -831,7 +831,6 @@ static void xhci_giveback_urb_in_irq(struct xhci_hcd *xhci,
+ 				usb_amd_quirk_pll_enable();
+ 		}
+ 	}
+-	xhci_urb_free_priv(urb_priv);
+ 	usb_hcd_unlink_urb_from_ep(hcd, urb);
+ 	trace_xhci_urb_giveback(urb);
+ 	usb_hcd_giveback_urb(hcd, urb, status);
+diff --git a/drivers/usb/host/xhci.c b/drivers/usb/host/xhci.c
+index 90eb491267b5..94ff5fa9dcf2 100644
+--- a/drivers/usb/host/xhci.c
++++ b/drivers/usb/host/xhci.c
+@@ -1552,7 +1552,7 @@ static int xhci_urb_enqueue(struct usb_hcd *hcd, struct urb *urb, gfp_t mem_flag
+ 	else
+ 		num_tds = 1;
+ 
+-	urb_priv = kzalloc(struct_size(urb_priv, td, num_tds), mem_flags);
++	urb_priv = urb_hcpriv_mempool_zalloc(urb, struct_size(urb_priv, td, num_tds));
+ 	if (!urb_priv)
+ 		return -ENOMEM;
+ 
+@@ -1626,7 +1626,6 @@ static int xhci_urb_enqueue(struct usb_hcd *hcd, struct urb *urb, gfp_t mem_flag
+ 
+ 	if (ret) {
+ free_priv:
+-		xhci_urb_free_priv(urb_priv);
+ 		urb->hcpriv = NULL;
+ 	}
+ 	spin_unlock_irqrestore(&xhci->lock, flags);
+@@ -1789,8 +1788,6 @@ static int xhci_urb_dequeue(struct usb_hcd *hcd, struct urb *urb, int status)
+ 	return ret;
+ 
+ err_giveback:
+-	if (urb_priv)
+-		xhci_urb_free_priv(urb_priv);
+ 	usb_hcd_unlink_urb_from_ep(hcd, urb);
+ 	spin_unlock_irqrestore(&xhci->lock, flags);
+ 	usb_hcd_giveback_urb(hcd, urb, -ESHUTDOWN);
 -- 
-2.49.0
+2.39.2
 
 
