@@ -1,229 +1,113 @@
-Return-Path: <linux-kernel+bounces-645577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-645563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D845DAB4FF6
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 11:37:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0531AB4FBE
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 11:28:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E362B7B0709
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 09:35:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8EB4C19E0C32
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 09:29:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4598D238C35;
-	Tue, 13 May 2025 09:36:53 +0000 (UTC)
-Received: from mta20.hihonor.com (mta20.hihonor.com [81.70.206.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27AEB22687C;
+	Tue, 13 May 2025 09:28:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xtXHVIrE"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E577621C9F6;
-	Tue, 13 May 2025 09:36:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.206.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C7F71E570D
+	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 09:28:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747129012; cv=none; b=lr5OX+c5/itGPWGbwLChLnoAYJ8O8/gDSn7cckJgLssVvTBMHV+6RB8F4awJI+U9TBiGkS//17/AWjNgefD5a5rF7Qq6jqlKD717HxRdUFyaqpx5jIk8IdodgDy+mRn5UZEHyPWZgGRpVSohQjSt5SpYYWNLJVsAqfR/GCaTdNE=
+	t=1747128524; cv=none; b=pjmNsORQd3cR4wQvR6x5t28042eK4QRYP7QSVe5DGhkH8PhfaonpofSl3ZgDa2h1KqPLiHY9moq1Q7Ip8dBMmK0GAsdL9UJEBDwVbSqHYOLlaAK/9T8kLPanR9bdVzEKxT557MijdGaEpRhurscoF/h2WnAyWh8jGq6/QYSDLuw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747129012; c=relaxed/simple;
-	bh=LOBhl8QEVQrZtIAiGldoprIIb6km4cKsbkKG9r82Hsk=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ElU3MyYS4OYO7Fegl4D4Kn1GDxXBchog1iMJBg3ThR0tooiUwXzGoXnyY+M2aFayTnQSV+FtdbUs/1FCxtVL/KbYwpTqicxyPUyqwMG/q+bRDGkRoKVZGpIaej0ow/Fyj6m8qgCFrRvAhW/ECq93Y+iXKYCyrZLB9Cu0SRa+mIc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; arc=none smtp.client-ip=81.70.206.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=honor.com
-Received: from w003.hihonor.com (unknown [10.68.17.88])
-	by mta20.hihonor.com (SkyGuard) with ESMTPS id 4ZxWXP2FgrzYlgbZ;
-	Tue, 13 May 2025 17:34:45 +0800 (CST)
-Received: from a010.hihonor.com (10.68.16.52) by w003.hihonor.com
- (10.68.17.88) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 13 May
- 2025 17:36:47 +0800
-Received: from localhost.localdomain (10.144.18.117) by a010.hihonor.com
- (10.68.16.52) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 13 May
- 2025 17:36:47 +0800
-From: wangtao <tao.wangtao@honor.com>
-To: <sumit.semwal@linaro.org>, <christian.koenig@amd.com>,
-	<benjamin.gaignard@collabora.com>, <Brian.Starkey@arm.com>,
-	<jstultz@google.com>, <tjmercier@google.com>
-CC: <linux-media@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-	<linaro-mm-sig@lists.linaro.org>, <linux-kernel@vger.kernel.org>,
-	<bintian.wang@honor.com>, <yipengxiang@honor.com>, <liulu.liu@honor.com>,
-	<feng.han@honor.com>, wangtao <tao.wangtao@honor.com>
-Subject: [PATCH 2/2] dmabuf/heaps: implement DMA_BUF_IOCTL_RW_FILE for system_heap
-Date: Tue, 13 May 2025 17:28:03 +0800
-Message-ID: <20250513092803.2096-1-tao.wangtao@honor.com>
-X-Mailer: git-send-email 2.17.1
+	s=arc-20240116; t=1747128524; c=relaxed/simple;
+	bh=sdWO6ko67mqTWcGMEtMgDVXtVTLim084V1a605JGgT8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BkDqC9v9I/AZSiXWRSxIF7/y0Jn0820YiMok4dO2cbdv2S2WLQgy135+uMvxVVI8GoeZJ3ueCVpajLdNpkSXWqSj6t13Ta4IWdJM2YEjA8QXB/oiQXxsU8y3B5GmEP3W8ogbogp9E0X2kBm1Pt/4hxBxjXgApqyxNSsusxRHaIY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xtXHVIrE; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-54b10956398so4905405e87.0
+        for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 02:28:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1747128519; x=1747733319; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JBWoBdG3lbXFBJdWTyceAqfFC9xtnHUxGj7C5Wu4R/Y=;
+        b=xtXHVIrEJxQpK/jITVVUxFeYQH6C6fVt+60KftrSUEpcV+ZgECys7tjl33Recxr7ZX
+         L7cAZzCkuXLXDSq+UBPQxzDwe3EAx6RXkgsGPDSMgJFAPpWug//zhfP9EQ1mMmr089lk
+         ON7zUSjCE1WIPfjfoRXGxeJ3Tw4BeKLG9ig0T4ZLxNikNCJ4OQYaGQUXooFKybdpY/T7
+         AMm8SHkM9O2FjGJUt8Ci3XHtWKPFztGf1DCdGpPN0gnxkn7sbr5Fz7WtbZo851wbXmpS
+         MPDbRY7FwNXBVIJp6/xsgRe24iiSqb0qly7RXgUHdobJjCtrq3hpnrZV91xj2d8Cghkv
+         FdsQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747128519; x=1747733319;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JBWoBdG3lbXFBJdWTyceAqfFC9xtnHUxGj7C5Wu4R/Y=;
+        b=H0j4l2CxoeGAnMi41DiH9s+jY5JE8t1FXM77jp50QW1TC/oC45xTBGoTBT54pbRTxp
+         MhWDpADWNShOlP+JziXzvuR2WnQTTWYkLgPwEhiScRgEj6yIJacUlQAbtJfZj1Ok7uVg
+         LjGDK/6VdHSEe/RZ0LFXY8FqTYhQHukcxWQt7WiUgc/QgC6t6BpRodva8qlGiLQmVUmi
+         LqIGG0b1PU0BfHiJs3wNskk6A69hSwIRXj0JJcKud4X/jMHJzrcVyo6lHgjWDF4kP/0J
+         qOLLhcCr97P3vUUPzMpDw8iId957uxL+00vAhG01qhqNUzOBsTnrFc+Y1YiVwZ4eHic9
+         n/BA==
+X-Forwarded-Encrypted: i=1; AJvYcCWBuw0o2zBGPya0YF94hVBGTocgtmyojNwTX+uJNrY/YDRPVFxx+iCKPuxIboJ8j0YLKxIyCLiH+lNGAnc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxSgns5L3LG0+eY13c3Dg8shzrePe02Vc3tm014EpxMT3yMIT2T
+	jLE4S4IATgvGD2RY0kGoC4zKUdT7AcYILGOPVmfE0giaEc9oTa4w5+/4/Z7nS0CJTGECj6/5L7L
+	Yu+BWkBQJ7unnAUvt3XJslR8yCveobWOYMrFp7Q==
+X-Gm-Gg: ASbGncvZ154gxfZauM2AKx/rm50vSMS/lvxtJqDUm4VwRlZ07u8HzUKoVpxeiUjqUKE
+	LqhEAjJy+mQ45jUAqf8AvVaK6FFdTIZR0VzSDHIQdXtyi7WbG4XM5cafE3PKYP9s98AAr1YSG8L
+	XAp0R9ihvjHHDrSvu/TvPNjNm6k8k7TtK7
+X-Google-Smtp-Source: AGHT+IGPsCaQsVwlbGypFhudSFOc2s4QHLHTEndYHt5ArHEoc7abTls+1/mAIN2RUHgXYU7cdExwVaSdPdvNIIu+maw=
+X-Received: by 2002:a05:6512:1385:b0:549:6030:a720 with SMTP id
+ 2adb3069b0e04-550d0c09efbmr969887e87.23.1747128519475; Tue, 13 May 2025
+ 02:28:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: w011.hihonor.com (10.68.20.122) To a010.hihonor.com
- (10.68.16.52)
+References: <20250503-pinctrl-msm-fix-v1-0-da9b7f6408f4@oss.qualcomm.com>
+In-Reply-To: <20250503-pinctrl-msm-fix-v1-0-da9b7f6408f4@oss.qualcomm.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 13 May 2025 11:28:28 +0200
+X-Gm-Features: AX0GCFu5WhS-D41dmYNwbrb5PKy-0pktNjYekORF361g_nOjHNY4p6UTBXBPCbc
+Message-ID: <CACRpkdbcm3AkcT9SxWfEYz1tsZQSLMUgY5nmTD9_iEq3Xs+shw@mail.gmail.com>
+Subject: Re: [PATCH 0/4] pinctrl: qcom: several fixes for the pinctrl-msm code
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Guenter Roeck <linux@roeck-us.net>, 
+	Josh Cartwright <joshc@codeaurora.org>, Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
+	Matti Vaittinen <mazziesaccount@gmail.com>, Doug Anderson <dianders@chromium.org>, 
+	linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Support direct file I/O operations for system_heap dma-buf objects.
-Implementation includes:
-1. Convert sg_table to bio_vec
-2. Set IOCB_DIRECT when O_DIRECT is supported
-3. Invoke vfs_iocb_iter_read()/vfs_iocb_iter_write() for actual I/O
+Hi Dmitry,
 
-Performance metrics (UFS 4.0 device @4GB/s, Arm64 CPU @1GHz):
+On Sat, May 3, 2025 at 7:32=E2=80=AFAM Dmitry Baryshkov
+<dmitry.baryshkov@oss.qualcomm.com> wrote:
 
-| Metric             |    1MB |    8MB |    64MB |   1024MB |   3072MB |
-|--------------------|-------:|-------:|--------:|---------:|---------:|
-| Buffer Read (us)   |   1658 |   9028 |   69295 |  1019783 |  2978179 |
-| Direct Read (us)   |    707 |   2647 |   18689 |   299627 |   937758 |
-| Buffer Rate (MB/s) |    603 |    886 |     924 |     1004 |     1032 |
-| Direct Rate (MB/s) |   1414 |   3022 |    3425 |     3418 |     3276 |
+> Fix/rework several issues in the pinctrl-msm common code. The most
+> important fix is the one for the gpio-hog handling.
+>
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+> ---
+> Dmitry Baryshkov (4):
+>       pinctrl: qcom: don't crash on enabling GPIO HOG pins
+>       pinctrl: qcom: switch to devm_register_sys_off_handler()
+>       pinctrl: qcom: switch to devm_gpiochip_add_data()
+>       pinctrl: qcom: drop msm_pinctrl_remove()
 
-Signed-off-by: wangtao <tao.wangtao@honor.com>
----
- drivers/dma-buf/heaps/system_heap.c | 118 ++++++++++++++++++++++++++++
- 1 file changed, 118 insertions(+)
+Nice work, since it is core stuff it'd be great if Bjorn could take a look
+at the next iteration too. (I'd suggest to ping him on IRC.)
 
-diff --git a/drivers/dma-buf/heaps/system_heap.c b/drivers/dma-buf/heaps/system_heap.c
-index 26d5dc89ea16..f7b71b9843aa 100644
---- a/drivers/dma-buf/heaps/system_heap.c
-+++ b/drivers/dma-buf/heaps/system_heap.c
-@@ -20,6 +20,8 @@
- #include <linux/scatterlist.h>
- #include <linux/slab.h>
- #include <linux/vmalloc.h>
-+#include <linux/bvec.h>
-+#include <linux/uio.h>
- 
- static struct dma_heap *sys_heap;
- 
-@@ -281,6 +283,121 @@ static void system_heap_vunmap(struct dma_buf *dmabuf, struct iosys_map *map)
- 	iosys_map_clear(map);
- }
- 
-+static struct bio_vec *system_heap_init_bvec(struct system_heap_buffer *buffer,
-+			size_t offset, size_t len, int *nr_segs)
-+{
-+	struct sg_table *sgt = &buffer->sg_table;
-+	struct scatterlist *sg;
-+	size_t length = 0;
-+	unsigned int i, k = 0;
-+	struct bio_vec *bvec;
-+	size_t sg_left;
-+	size_t sg_offset;
-+	size_t sg_len;
-+
-+	bvec = kvcalloc(sgt->nents, sizeof(*bvec), GFP_KERNEL);
-+	if (!bvec)
-+		return NULL;
-+
-+	for_each_sg(sgt->sgl, sg, sgt->nents, i) {
-+		length += sg->length;
-+		if (length <= offset)
-+			continue;
-+
-+		sg_left = length - offset;
-+		sg_offset = sg->offset + sg->length - sg_left;
-+		sg_len = min(sg_left, len);
-+
-+		bvec[k].bv_page = sg_page(sg);
-+		bvec[k].bv_len = sg_len;
-+		bvec[k].bv_offset = sg_offset;
-+		k++;
-+
-+		offset += sg_len;
-+		len -= sg_len;
-+		if (len <= 0)
-+			break;
-+	}
-+
-+	*nr_segs = k;
-+	return bvec;
-+}
-+
-+static int system_heap_rw_file(struct system_heap_buffer *buffer, bool is_read,
-+		bool direct_io, struct file *filp, loff_t file_offset,
-+		size_t buf_offset, size_t len)
-+{
-+	struct bio_vec *bvec;
-+	int nr_segs = 0;
-+	struct iov_iter iter;
-+	struct kiocb kiocb;
-+	ssize_t ret = 0;
-+
-+	if (direct_io) {
-+		if (!(filp->f_mode & FMODE_CAN_ODIRECT))
-+			return -EINVAL;
-+	}
-+
-+	bvec = system_heap_init_bvec(buffer, buf_offset, len, &nr_segs);
-+	if (!bvec)
-+		return -ENOMEM;
-+
-+	iov_iter_bvec(&iter, is_read ? ITER_DEST : ITER_SOURCE, bvec, nr_segs, len);
-+	init_sync_kiocb(&kiocb, filp);
-+	kiocb.ki_pos = file_offset;
-+	if (direct_io)
-+		kiocb.ki_flags |= IOCB_DIRECT;
-+
-+	while (kiocb.ki_pos < file_offset + len) {
-+		if (is_read)
-+			ret = vfs_iocb_iter_read(filp, &kiocb, &iter);
-+		else
-+			ret = vfs_iocb_iter_write(filp, &kiocb, &iter);
-+		if (ret <= 0)
-+			break;
-+	}
-+
-+	kvfree(bvec);
-+	return ret < 0 ? ret : 0;
-+}
-+
-+static int system_heap_dma_buf_rw_file(struct dma_buf *dmabuf,
-+			struct dma_buf_rw_file *back)
-+{
-+	struct system_heap_buffer *buffer = dmabuf->priv;
-+	int ret = 0;
-+	__u32 op = back->flags & DMA_BUF_RW_FLAGS_OP_MASK;
-+	bool direct_io = back->flags & DMA_BUF_RW_FLAGS_DIRECT;
-+	struct file *filp;
-+
-+	if (op != DMA_BUF_RW_FLAGS_READ && op != DMA_BUF_RW_FLAGS_WRITE)
-+		return -EINVAL;
-+	if (direct_io) {
-+		if (!PAGE_ALIGNED(back->file_offset) ||
-+			!PAGE_ALIGNED(back->buf_offset) ||
-+			!PAGE_ALIGNED(back->buf_len))
-+		return -EINVAL;
-+	}
-+	if (!back->buf_len || back->buf_len > dmabuf->size ||
-+		back->buf_offset >= dmabuf->size ||
-+		back->buf_offset + back->buf_len > dmabuf->size)
-+		return -EINVAL;
-+	if (back->file_offset + back->buf_len < back->file_offset)
-+		return -EINVAL;
-+
-+	filp = fget(back->fd);
-+	if (!filp)
-+		return -EBADF;
-+
-+	mutex_lock(&buffer->lock);
-+	ret = system_heap_rw_file(buffer, op == DMA_BUF_RW_FLAGS_READ, direct_io,
-+			filp, back->file_offset, back->buf_offset, back->buf_len);
-+	mutex_unlock(&buffer->lock);
-+
-+	fput(filp);
-+	return ret;
-+}
-+
- static void system_heap_dma_buf_release(struct dma_buf *dmabuf)
- {
- 	struct system_heap_buffer *buffer = dmabuf->priv;
-@@ -308,6 +425,7 @@ static const struct dma_buf_ops system_heap_buf_ops = {
- 	.mmap = system_heap_mmap,
- 	.vmap = system_heap_vmap,
- 	.vunmap = system_heap_vunmap,
-+	.rw_file = system_heap_dma_buf_rw_file,
- 	.release = system_heap_dma_buf_release,
- };
- 
--- 
-2.17.1
-
+Yours,
+Linus Walleij
 
