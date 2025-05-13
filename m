@@ -1,134 +1,168 @@
-Return-Path: <linux-kernel+bounces-645966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-645968-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BB72AB5608
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 15:28:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2454AAB560E
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 15:29:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 332604A5AB9
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 13:28:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 97B9C17A3D8
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 13:29:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F57028F538;
-	Tue, 13 May 2025 13:28:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE13728F527;
+	Tue, 13 May 2025 13:29:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KMVO8gol"
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kR3p5wQ9"
+Received: from mail-vs1-f45.google.com (mail-vs1-f45.google.com [209.85.217.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73B111EB5F0
-	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 13:28:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD4692857EB
+	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 13:29:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747142899; cv=none; b=cBtzTBnvYNoNEVApxyq5e1GfaazJir93s1YtOmf/s+zVcXT4lfpTQVlr+iPm3g+VijpvhSnHYqF2oZxRI36X6ErdrMpOnYuqlk13RoYjISIKzXqZVhk0MamyYZhGFswOHzqF4QrkxklzWe0lEnYHHE6ohXBMR7Dg/yRyb1+UehU=
+	t=1747142975; cv=none; b=SudL6mMSH+2z0tKlbUXwMtb8ugG0U1N84ZM5vlCa3tg6Ke282r+7bT6Pkvk8ZEE2v03aV/PRcl0RlndyWm/CeKrtMHQP3Fzk3YrLakATPecr4Ff1PyWptIScVf+234gpmIiBQkfCaMH0vbyhQUe5QcyqzzAWKlOa9E7Q2Efv6Po=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747142899; c=relaxed/simple;
-	bh=c+q34kbRvUZ1A5FxHPWqxBi7hEvp/OdKmOyxM3Seyas=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=LTFMtHrIb4tfWBo1Ply4hDfCvKR4aO4uce8aHGZOr37t16RK79wJR4gVFcmZio8D/Q+BCLg8WXkPZHjxWITV/GhVKOACsg6E8rjFudaMJjIVW62jRHkrJUVpWGXuy482bEu7hROVfy8tnq3/ZO7kcMH6Q8ZaJmDy69VBUKvOd3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=KMVO8gol; arc=none smtp.client-ip=209.85.210.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-742575c4fa6so2080850b3a.2
-        for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 06:28:18 -0700 (PDT)
+	s=arc-20240116; t=1747142975; c=relaxed/simple;
+	bh=pIZnqAbvKi6g6bM9xBkbfMYNKRFSU6d2NCIENbAWFOs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dvwjcNQwopQ2EeI4u4ZDo23CQ3m6nwajJbOtfTBcmD85Wl8hRlDcXbZR2FJnsBW6IoiiRZ+PKIF2zFKX00/e5lFGOSob0Jz47eOhhc2gJ0Xwu89IBSdSCkvSZUjWIt2SWmYoYs0Q+SgoPuQ4Iu+mWZypI9xvY1hffBQBPm8qF/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kR3p5wQ9; arc=none smtp.client-ip=209.85.217.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-vs1-f45.google.com with SMTP id ada2fe7eead31-4ddba761dc4so3703365137.3
+        for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 06:29:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1747142897; x=1747747697; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8X0jVFckAPxaCnI7pAGE+i1A3ZXX7wi7lJ+jewe5bQU=;
-        b=KMVO8goltqQ3T4YNiUyVpOXUEM38+PSbVJHXa9DM39xVtlw6AYSoBu8w/ywsK8L3+/
-         1qUgqdF7itvWlbukNBjunHkoN/YWuwJFooy7qGMwGRBXzFK4wSY3OZXru9KOqmvAm7W6
-         x2ZU7SyVd4ThKNhMcM5Dl+T0VBaCJwHgobJQkTdkgxouvd4tLkzVJo27vKUcaP9Bp3lN
-         zSTBdxjdgu/9HckkTnTUsJZcQ0Lp3dZYoAALOsZYb75TQkSnE8nwU7Q5vb6YMMTfkDV+
-         WtGwTQXj9h1nT6iO1NRA9t2EvFfFTsOIYRrs/Kf9RqF2VDjWkcKZ1ZWhKpHYGprM9OKG
-         SLlg==
+        d=linaro.org; s=google; t=1747142971; x=1747747771; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=LZEie1OhAZfjtagVfLYxTcaBKPW2X7YkdVD9WseQzgE=;
+        b=kR3p5wQ9nxxZ0EVG5HcRztu35MW/ZMH0Z4Ap5aqYoCDbROItNisvMevG528ocbPQkd
+         Ja4KRQ/9tSVsSnPXW68q4x+7rTwCd3sGTkEZB4P2dYtgjk9yVWelrQqqHVkkQ81UBC0y
+         Gk8ZHpjj0r8KNzSrudIc/bB47aaFhpTkJRqCUCnLxkL+qZPfUxIqcov/xmgnPMtaeB0X
+         H/GHyI78InR86RlUJ0jXHgJTs+zTMZe20A5CgDi9luYA/WHykBLdTPcE53s/WmVGZ+LG
+         IeXmObmPFBorJOwPeeJkjzdZzes/uWXoCSZgBycuzBR0OtGftgifPQ0T8HU2jCurYrU1
+         DE0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747142897; x=1747747697;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=8X0jVFckAPxaCnI7pAGE+i1A3ZXX7wi7lJ+jewe5bQU=;
-        b=XdqqHjOtst2X9IwpIEEL2wszK636Z/ybOOKiz87vgqi77iTciwqO+/bsVOPW6p0Aci
-         I7ulDecurNQccQyB4u/KAwnZDxlA2hqBskJe29Dx6KoPD+JWRFdyMdgXQFILEEzSz8r3
-         jGKHH/oZp7IovY1tretW/PJZFkQDuRpqBxNJXMZkoIwrwxOEmVIHp9sOOkGNqaC2ebNY
-         XM300oDHiHejy2xzolwMCZhhGQSDpXnH+QCK5vh1+bBncogJCaaJMwM6Cv/0rPUeb62g
-         9Y1CFmfIEiXPksVxhFfne4V8TtIlpv3Kl0YO3B/eDE5ceXtxQ9RW/KvwS6SumNZZUnxj
-         Vn4w==
-X-Forwarded-Encrypted: i=1; AJvYcCV3SJPoq0dIhgXebCA1Mh3EbtG3R4M0gpMCkJ8GgtUqtR+e7q1awmR+Y+rXj0v7z2LT435qAcpyRwIjGCg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxtGM+Uai87uIOHIionByTVxVD+QLcvJ6inLEbB89DyyKUlESeI
-	4hilWxBOWC4lzLm+lsAj3J9xccmF3Hv4xpHmp6O1kFAotvLTwAzsrXkOd/7U2swC5zZWYyRy48V
-	jUw==
-X-Google-Smtp-Source: AGHT+IFrYTRYyI6vdzRG5DapDxsNyp8wuBVHd1nEnVFl2gCK7K8ZWOgP9cYwwdpOAgoiNdeaXO7CokwCWCk=
-X-Received: from pgbem9.prod.google.com ([2002:a05:6a02:4689:b0:b1b:54f8:d2ee])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:438f:b0:1f5:619a:8f75
- with SMTP id adf61e73a8af0-215ababd87amr27581506637.2.1747142897657; Tue, 13
- May 2025 06:28:17 -0700 (PDT)
-Date: Tue, 13 May 2025 06:28:15 -0700
-In-Reply-To: <49556BAF-9244-4FE5-9BA9-846F2959ABD1@nutanix.com>
+        d=1e100.net; s=20230601; t=1747142971; x=1747747771;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=LZEie1OhAZfjtagVfLYxTcaBKPW2X7YkdVD9WseQzgE=;
+        b=pmBS7iXdzV9vreSWid22IsxrBj1o3g/x6VmAe4IqrcX53LvCdpzXlZlcInoua1Qbwx
+         ZbiipBOqRKFWjefGCbjLxXdkfj6d3k0n4nrFlKPvQA3qfQebEv2+tjIPke5HCe7aFrcp
+         P8RTtDHIuptToGHQTTLWVcmAe7CSVC9WennMPu7npYBKgehoiahceN03KkhQAM+QeKiz
+         XfLvWjkcosypjyqw3xbq+RSZd6f1z99AQpgDYA9e8lKqGZ3owwvIR+FZOO/otQNHCrrX
+         2i+dWZ3tHuCuIqth9I5rOz7NeD3UbW1iGGJzf7OYyKzPP8CQ+RAIKTyftrdLp52yI8py
+         AObA==
+X-Forwarded-Encrypted: i=1; AJvYcCUz50Ljp53kntSNKhmZo28dTyg1coUquI+aV70NBVjVRE/4AgTMcNv6I50LqCTqruSYamrBmQ+y/pbXGsY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwqpShYun/qqxCFBvSxYs2wlk2b8zeNq/VwbCJKpuSXS6RXoNEB
+	EDunl4exuoA33zSZH0ptZ72hkz0xXIzLpl5B2Lww2tfg2MkwxmMAG0H+ks9IpZxZiTPtp5S6gRi
+	Q2toMuLs/4fBc34dY0WYjjMEAIXrId7HBR9uUMg==
+X-Gm-Gg: ASbGncsFZBJqlzyN0g7zAN91/iNEBSpW3byvNzrjWPz6bAy/FLnv7SohBIfHowBlURe
+	HSOQpL+hUUZV1GvzfalhratNKnpA8I4NGn6XOrVcRldY0XnVb8oQbAuq7xVuzWynu2iGBv8brNq
+	9PD8c9TJbYmgh7vmKhDeDvilKGJyI1DzY=
+X-Google-Smtp-Source: AGHT+IHlbMMFq5nAfSA83CCKmxe6r5lw+vXbf9voMmrMRSDCezf0HsCPwNDvoXL3icNnJqJh9L6Y0Q0gPm4WwUngrEA=
+X-Received: by 2002:a05:6102:2c08:b0:4c1:9b88:5c30 with SMTP id
+ ada2fe7eead31-4deed3d3870mr14789892137.19.1747142971375; Tue, 13 May 2025
+ 06:29:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250313203702.575156-1-jon@nutanix.com> <20250313203702.575156-7-jon@nutanix.com>
- <aCI8pGJbn3l99kq8@google.com> <49556BAF-9244-4FE5-9BA9-846F2959ABD1@nutanix.com>
-Message-ID: <aCNI72KuMLfWb9F2@google.com>
-Subject: Re: [RFC PATCH 06/18] KVM: VMX: Wire up Intel MBEC enable/disable logic
-From: Sean Christopherson <seanjc@google.com>
-To: Jon Kohler <jon@nutanix.com>
-Cc: "pbonzini@redhat.com" <pbonzini@redhat.com>, "tglx@linutronix.de" <tglx@linutronix.de>, 
-	"mingo@redhat.com" <mingo@redhat.com>, "bp@alien8.de" <bp@alien8.de>, 
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, "x86@kernel.org" <x86@kernel.org>, 
-	"hpa@zytor.com" <hpa@zytor.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+References: <20250512172044.326436266@linuxfoundation.org> <CA+G9fYuO5m0EgOAbytJv2Ytp9uj-0jHVUGddaXHLckHk+ZLEHA@mail.gmail.com>
+In-Reply-To: <CA+G9fYuO5m0EgOAbytJv2Ytp9uj-0jHVUGddaXHLckHk+ZLEHA@mail.gmail.com>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Tue, 13 May 2025 14:29:20 +0100
+X-Gm-Features: AX0GCFvoub22XkeGUwB2DkAUVguhCcizeWQN8lgksWkCPZabNB8ZW-3lo3CS3bQ
+Message-ID: <CA+G9fYsGTqCxiXQOY3HEu4Z3CEwmyQoOb8DnpzVToWMW-Y8R5A@mail.gmail.com>
+Subject: Re: [PATCH 6.14 000/197] 6.14.7-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
+	broonie@kernel.org, clang-built-linux <llvm@lists.linux.dev>, 
+	Anders Roxell <anders.roxell@linaro.org>, Dan Carpenter <dan.carpenter@linaro.org>, 
+	Arnd Bergmann <arnd@arndb.de>, Nathan Chancellor <nathan@kernel.org>, 
+	Marco Crivellari <marco.crivellari@suse.com>, Thorsten Blum <thorsten.blum@linux.dev>, 
+	linux-mips@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, May 13, 2025, Jon Kohler wrote:
-> > On May 12, 2025, at 2:23=E2=80=AFPM, Sean Christopherson <seanjc@google=
-.com> wrote:
-> > > On Thu, Mar 13, 2025, Jon Kohler wrote:
-> >> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-> >> index 7a98f03ef146..116910159a3f 100644
-> >> --- a/arch/x86/kvm/vmx/vmx.c
-> >> +++ b/arch/x86/kvm/vmx/vmx.c
-> >> @@ -2694,6 +2694,7 @@ static int setup_vmcs_config(struct vmcs_config =
-*vmcs_conf,
-> >> return -EIO;
-> >>=20
-> >> vmx_cap->ept =3D 0;
-> >> + _cpu_based_2nd_exec_control &=3D ~SECONDARY_EXEC_MODE_BASED_EPT_EXEC=
-;
-> >> _cpu_based_2nd_exec_control &=3D ~SECONDARY_EXEC_EPT_VIOLATION_VE;
-> >> }
-> >> if (!(_cpu_based_2nd_exec_control & SECONDARY_EXEC_ENABLE_VPID) &&
-> >> @@ -4641,11 +4642,15 @@ static u32 vmx_secondary_exec_control(struct v=
-cpu_vmx *vmx)
-> >> exec_control &=3D ~SECONDARY_EXEC_ENABLE_VPID;
-> >> if (!enable_ept) {
-> >> exec_control &=3D ~SECONDARY_EXEC_ENABLE_EPT;
-> >> + exec_control &=3D ~SECONDARY_EXEC_MODE_BASED_EPT_EXEC;
-> >> exec_control &=3D ~SECONDARY_EXEC_EPT_VIOLATION_VE;
-> >> enable_unrestricted_guest =3D 0;
-> >> }
-> >> if (!enable_unrestricted_guest)
-> >> exec_control &=3D ~SECONDARY_EXEC_UNRESTRICTED_GUEST;
-> >> + if (!enable_pt_guest_exec_control)
-> >> + exec_control &=3D ~SECONDARY_EXEC_MODE_BASED_EPT_EXEC;
-> >=20
-> > This is wrong and unnecessary.  As mentioned early, the input that matt=
-ers is
-> > vmcs12.  This flag should *never* be set for vmcs01.
->=20
-> I=E2=80=99ll page this back in, but I=E2=80=99m like 75% sure it didn=E2=
-=80=99t work when I did it that way.
+On Tue, 13 May 2025 at 11:40, Naresh Kamboju <naresh.kamboju@linaro.org> wrote:
+>
+> On Mon, 12 May 2025 at 18:43, Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org> wrote:
+> >
+> > This is the start of the stable review cycle for the 6.14.7 release.
+> > There are 197 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> >
+> > Responses should be made by Wed, 14 May 2025 17:19:58 +0000.
+> > Anything received after that time might be too late.
+> >
+> > The whole patch series can be found in one patch at:
+> >         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.14.7-rc1.gz
+> > or in the git tree and branch at:
+> >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.14.y
+> > and the diffstat can be found below.
+> >
+> > thanks,
+> >
+> > greg k-h
+>
+> Regressions on mips defconfig tinyconfig and allnoconfig builds failed with
+> clang-20 toolchain on stable-rc  6.14.7-rc1, 6.12.29-rc1 and 6.6.91-rc1.
+> But, builds pass with gcc-13.
+>
+> * mips, build
+>   - clang-20-allnoconfig
+>   - clang-20-defconfig
+>   - clang-20-tinyconfig
+>   - korg-clang-20-lkftconfig-hardening
+>   - korg-clang-20-lkftconfig-lto-full
+>   - korg-clang-20-lkftconfig-lto-thing
+>
+> Regression Analysis:
+>  - New regression? Yes
+>  - Reproducibility? Yes
+>
+> Build regression: mips defconfig clang-20 instantiation error expected
+> an immediate
+>
+> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+>
+> ## Build error mips
+> <instantiation>:7:11: error: expected an immediate
+>  ori $26, r4k_wait_idle_size - 2
+>           ^
+> <instantiation>:10:13: error: expected an immediate
+>  addiu $26, r4k_wait_exit - r4k_wait_insn + 2
+>             ^
+> <instantiation>:10:29: error: expected an immediate
+>  addiu $26, r4k_wait_exit - r4k_wait_insn + 2
+>                             ^
+> <instantiation>:7:11: error: expected an immediate
+>  ori $26, r4k_wait_idle_size - 2
+>           ^
+> <instantiation>:10:13: error: expected an immediate
+>  addiu $26, r4k_wait_exit - r4k_wait_insn + 2
+>             ^
+> <instantiation>:10:29: error: expected an immediate
+>  addiu $26, r4k_wait_exit - r4k_wait_insn + 2
+>                             ^
 
-Then you had other bugs.  The control is per-VMCS and thus needs to be emul=
-ated
-as such.  Definitely holler if you get stuck, there's no need to develop th=
-is in
-complete isolation.
+
+The bisection found this as first bad commit,
+
+    MIPS: Fix idle VS timer enqueue
+
+    [ Upstream commit 56651128e2fbad80f632f388d6bf1f39c928267a ]
+
+- Naresh Kamboju
 
