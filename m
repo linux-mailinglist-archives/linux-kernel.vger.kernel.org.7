@@ -1,131 +1,167 @@
-Return-Path: <linux-kernel+bounces-645562-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-645576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6742BAB4FB9
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 11:27:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4538AAB4FF2
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 11:36:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ECE7E16762E
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 09:27:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CDF3916A030
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 09:36:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CEED226863;
-	Tue, 13 May 2025 09:27:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gYC5USjh"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64054238C33;
+	Tue, 13 May 2025 09:36:32 +0000 (UTC)
+Received: from mta20.hihonor.com (mta20.hihonor.com [81.70.206.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A28E21FF22;
-	Tue, 13 May 2025 09:27:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E6192376FC;
+	Tue, 13 May 2025 09:36:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.206.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747128460; cv=none; b=kMY/6LM8kGKOO93OgzAlCGI0xmZ8agOrFiJh3kmz58iMFHqNeH2BcVwLpsuBiHelMw6bguXiCGcAapz0GO3R3VO3ogtMjXH8478cXBnn5EBSIgofR/cMDif0ncnC4HswDO7faRxWDtLN16IEMuMa4O/pEXTL9EnEhIw+kiQT/gk=
+	t=1747128992; cv=none; b=UyfNTFFSiqzNF/XYqoGq0vxCsyLpyZJUr477TPzUnPPzfOp+lgcZPy2hqCfFMpbaaDu4BYDFDNXjzRpfLudQfe6e4aLuXWiNOhBGuumHyEme29/fmufIYeL8UckW0zFrS1hm/cAjmHA7k7fW+3CdPcEcerpz/ghp7z0HOGgRc2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747128460; c=relaxed/simple;
-	bh=qQ1Xl9OeIC7tmpYfxlEHSJMzlkn339EhffkvrA20+Z8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ekSR9/9AAGrCseYcgeaDHYjplH7SZnGeOKInrRmJ6fu7bVkjRDYrqxCIqG+FlTIooZmKBYuu5I24yK24cWW5U7C/qQwZNUkajCg/fEv7ZQSsV6c6Uy8QOaFu4CCtxBp+nWTEeBFJJ3ZuAyTFK0t8t9w20LnJmvm1cIAQMXtCxm0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gYC5USjh; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1747128459; x=1778664459;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=qQ1Xl9OeIC7tmpYfxlEHSJMzlkn339EhffkvrA20+Z8=;
-  b=gYC5USjh+SV1ArN2STnQ2OgtCRP/4iPLqOVJMbRvBbLmh7d2yzAHUKi4
-   /uYe743hvQAgbhvHCubMlCecNWwybICXJjCwXabtGPlIfukIMjjhqUCZ8
-   Zu6y8vP2JvCLhrh+UjsJoW8EfIaO8dLkiTGpoG0rlNkUmsJOBb8zRp0rc
-   1pVaqB8ykgDC36ZL4yRyvoMC405bkjTw/PKy4bVMeFcv2vJ5PlAy2ILwR
-   YIXOjzdiKMjFcItFkwDSnmmDH7wzrFCidKwnvJqAm3kK1N/wWyfAfTO3Y
-   PQC/d7GqRBVa+cjqAkRJAqKgakClB57I9C7JoXgNLZzdMZIHPndRwiNR4
-   A==;
-X-CSE-ConnectionGUID: n8C3EoRjQL6y8qJPMBHiRw==
-X-CSE-MsgGUID: TfLiL8SkQMSIp0/v95QP1A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11431"; a="49128820"
-X-IronPort-AV: E=Sophos;i="6.15,284,1739865600"; 
-   d="scan'208";a="49128820"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 May 2025 02:27:38 -0700
-X-CSE-ConnectionGUID: iDqGChQvRi+ArYgcLuNRUA==
-X-CSE-MsgGUID: EzMIU7fsTLGGO3x7pPVdxg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,284,1739865600"; 
-   d="scan'208";a="142411317"
-Received: from dalessan-mobl3.ger.corp.intel.com (HELO [10.245.244.214]) ([10.245.244.214])
-  by orviesa003.jf.intel.com with ESMTP; 13 May 2025 02:27:36 -0700
-Message-ID: <76b2a5ae-31b1-4627-aa59-8ff023654c3d@intel.com>
-Date: Tue, 13 May 2025 12:27:34 +0300
+	s=arc-20240116; t=1747128992; c=relaxed/simple;
+	bh=YOtutEWcyJmygIVcdnm0efMry6GliOKppxE5uSEETQA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=JY0d6UP7RWjrfZJ+YqE6ZaHxJmcwTWLKyI9Sxe/RQgResQbAbRLkqjduVqKo71tthWXf7QC/3HBls/IwAvgo2AbbdIZHORlhYsuOXParL7oslG4jZL6nPYLQ7hpn0kLM5ga5oTgTaTQWzEBq6vEJ5tnwHSQeJ0TljDTgnVQtAno=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; arc=none smtp.client-ip=81.70.206.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=honor.com
+Received: from w013.hihonor.com (unknown [10.68.26.19])
+	by mta20.hihonor.com (SkyGuard) with ESMTPS id 4ZxWX109L3zYlNKs;
+	Tue, 13 May 2025 17:34:25 +0800 (CST)
+Received: from a010.hihonor.com (10.68.16.52) by w013.hihonor.com
+ (10.68.26.19) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 13 May
+ 2025 17:36:27 +0800
+Received: from localhost.localdomain (10.144.18.117) by a010.hihonor.com
+ (10.68.16.52) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 13 May
+ 2025 17:36:27 +0800
+From: wangtao <tao.wangtao@honor.com>
+To: <sumit.semwal@linaro.org>, <christian.koenig@amd.com>,
+	<benjamin.gaignard@collabora.com>, <Brian.Starkey@arm.com>,
+	<jstultz@google.com>, <tjmercier@google.com>
+CC: <linux-media@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+	<linaro-mm-sig@lists.linaro.org>, <linux-kernel@vger.kernel.org>,
+	<bintian.wang@honor.com>, <yipengxiang@honor.com>, <liulu.liu@honor.com>,
+	<feng.han@honor.com>, wangtao <tao.wangtao@honor.com>
+Subject: [PATCH 1/2] dmabuf: add DMA_BUF_IOCTL_RW_FILE
+Date: Tue, 13 May 2025 17:27:35 +0800
+Message-ID: <20250513092735.1931-1-tao.wangtao@honor.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC] USB: core/xhci: add a buffer in urb for host controller
- private data
-To: David Wang <00107082@163.com>, gregkh@linuxfoundation.org
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
- surenb@google.com, kent.overstreet@linux.dev
-References: <20250512150724.4560-1-00107082@163.com>
-Content-Language: en-US
-From: Mathias Nyman <mathias.nyman@intel.com>
-In-Reply-To: <20250512150724.4560-1-00107082@163.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-ClientProxiedBy: w012.hihonor.com (10.68.27.189) To a010.hihonor.com
+ (10.68.16.52)
 
-Hi David
+Add DMA_BUF_IOCTL_RW_FILE to save/restore data from/to a dma-buf.
 
-On 12.5.2025 18.07, David Wang wrote:
-> ---
-> I was checking memory allocation behaviors (via memory profiling[1]),
-> when I notice a high frequent memory allocation in xhci_urb_enqueue, about
-> 250/s when using a USB webcam. If those alloced buffer could be kept and
-> reused, lots of memory allocations could be avoid over time.
-> 
-> This patch is just a POC, about 0/s memory allocation in xhci with this
-> patch, when I use my USB devices, webcam/keyboard/mouse.
+Signed-off-by: wangtao <tao.wangtao@honor.com>
+---
+ drivers/dma-buf/dma-buf.c    |  8 ++++++++
+ include/linux/dma-buf.h      |  3 +++
+ include/uapi/linux/dma-buf.h | 29 +++++++++++++++++++++++++++++
+ 3 files changed, 40 insertions(+)
 
-Thanks for looking at this, this is something that obviously needs more
-attention
-
-> 
-> A dynamic cached memory would be better: URB keep host controller's
-> private data, if larger size buffer needed for private data, old buffer
-> released and a larger buffer alloced.
-> 
-> I did not observe any nagative impact with xhci's 250/s allocations
-> when using my system, hence no measurement of how useful this changes
-> can make to user. Just want to collect feedbacks before putting more
-> effort.
-> 
-
-I think we can make a xhci internal solution that doesn't affect other hosts
-or usb core.
-
-How about adding a list of struct urb_priv nodes for every usb device, or maybe
-even per endpoint? i.e. to struct xhci_virt_device or  struct xhci_virt_ep.
-
-Add size and list_head entries to struct urb_priv.
-
-In xhci_urb_enqueue() pick the first urb_priv node from list if it exists and is
-large enough, otherwise just allocate a new one and set the size.
-
-When giving back the URB zero everything in the struct urb_priv except the size,
-and add it to the list.
-
-When the device is freed there shouldn't be any nodes left in the list, but if
-there are then warn and free them.
-
-Isoc transfers are the ones with odd urb_priv sizes. If we have a per device or
-per endpoint urb_priv list then sizes will match better.
-
-Thanks
-Mathias
-
+diff --git a/drivers/dma-buf/dma-buf.c b/drivers/dma-buf/dma-buf.c
+index 5baa83b85515..95d8b0158ffd 100644
+--- a/drivers/dma-buf/dma-buf.c
++++ b/drivers/dma-buf/dma-buf.c
+@@ -460,6 +460,7 @@ static long dma_buf_ioctl(struct file *file,
+ 	struct dma_buf *dmabuf;
+ 	struct dma_buf_sync sync;
+ 	enum dma_data_direction direction;
++	struct dma_buf_rw_file kfile;
+ 	int ret;
+ 
+ 	dmabuf = file->private_data;
+@@ -504,6 +505,13 @@ static long dma_buf_ioctl(struct file *file,
+ 		return dma_buf_import_sync_file(dmabuf, (const void __user *)arg);
+ #endif
+ 
++	case DMA_BUF_IOCTL_RW_FILE:
++		if (copy_from_user(&kfile, (void __user *) arg, sizeof(kfile)))
++			return -EFAULT;
++		if (!dmabuf->ops->rw_file)
++			return -EINVAL;
++		return dmabuf->ops->rw_file(dmabuf, &kfile);
++
+ 	default:
+ 		return -ENOTTY;
+ 	}
+diff --git a/include/linux/dma-buf.h b/include/linux/dma-buf.h
+index 36216d28d8bd..de236ba2094b 100644
+--- a/include/linux/dma-buf.h
++++ b/include/linux/dma-buf.h
+@@ -22,6 +22,7 @@
+ #include <linux/fs.h>
+ #include <linux/dma-fence.h>
+ #include <linux/wait.h>
++#include <uapi/linux/dma-buf.h>
+ 
+ struct device;
+ struct dma_buf;
+@@ -285,6 +286,8 @@ struct dma_buf_ops {
+ 
+ 	int (*vmap)(struct dma_buf *dmabuf, struct iosys_map *map);
+ 	void (*vunmap)(struct dma_buf *dmabuf, struct iosys_map *map);
++
++	int (*rw_file)(struct dma_buf *dmabuf, struct dma_buf_rw_file *file);
+ };
+ 
+ /**
+diff --git a/include/uapi/linux/dma-buf.h b/include/uapi/linux/dma-buf.h
+index 5a6fda66d9ad..ec9164b7b753 100644
+--- a/include/uapi/linux/dma-buf.h
++++ b/include/uapi/linux/dma-buf.h
+@@ -167,6 +167,29 @@ struct dma_buf_import_sync_file {
+ 	__s32 fd;
+ };
+ 
++/**
++ * struct dma_buf_rw_file - read/write file associated with a dma-buf
++ *
++ * Userspace can performs a DMA_BUF_IOCTL_BACK to save data from a dma-buf or
++ * restore data to a dma-buf.
++ */
++struct dma_buf_rw_file {
++
++	/** @flags: Flags indicating read/write for this dma-buf. */
++	__u32 flags;
++	/** @fd: File descriptor of the file associated with this dma-buf. */
++	__s32 fd;
++	/** @file_offset: Offset within the file where this dma-buf starts.
++	 *
++	 *  Offset and Length must be page-aligned for direct I/O.
++	 */
++	__u64 file_offset;
++	/** @buf_offset: Offset within this dma-buf where the read/write starts. */
++	__u64 buf_offset;
++	/** @buf_len: Length of this dma-buf read/write. */
++	__u64 buf_len;
++};
++
+ #define DMA_BUF_BASE		'b'
+ #define DMA_BUF_IOCTL_SYNC	_IOW(DMA_BUF_BASE, 0, struct dma_buf_sync)
+ 
+@@ -179,4 +202,10 @@ struct dma_buf_import_sync_file {
+ #define DMA_BUF_IOCTL_EXPORT_SYNC_FILE	_IOWR(DMA_BUF_BASE, 2, struct dma_buf_export_sync_file)
+ #define DMA_BUF_IOCTL_IMPORT_SYNC_FILE	_IOW(DMA_BUF_BASE, 3, struct dma_buf_import_sync_file)
+ 
++#define DMA_BUF_RW_FLAGS_OP_MASK (0xFF << 0)
++#define DMA_BUF_RW_FLAGS_READ (1 << 0) /* Restore dma-buf data */
++#define DMA_BUF_RW_FLAGS_WRITE (2 << 0) /* Save dma-buf data */
++#define DMA_BUF_RW_FLAGS_DIRECT (1u << 31) /* Direct read/write file */
++#define DMA_BUF_IOCTL_RW_FILE	_IOW(DMA_BUF_BASE, 4, struct dma_buf_rw_file)
++
+ #endif
+-- 
+2.17.1
 
 
