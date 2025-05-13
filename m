@@ -1,578 +1,384 @@
-Return-Path: <linux-kernel+bounces-646344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-646346-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6275AB5B30
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 19:26:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3A4AAB5B33
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 19:27:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0106D3B2986
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 17:26:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 355D24670A3
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 17:27:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BEA72BEC26;
-	Tue, 13 May 2025 17:26:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08DCA1D5CDE;
+	Tue, 13 May 2025 17:27:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hG94Lgo8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wedbrfON"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E760645;
-	Tue, 13 May 2025 17:26:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47E64645
+	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 17:27:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747157195; cv=none; b=hj06+kBKK0UCO6AqMg8QRY26MGN/tesEzdoC8jdGgV2dUrGK+pb5pNFE3+SqQP9XTUpGpNrXeMJL3TQ58/Du78yeDcspJ0b4MOYtR0WbTY7CVnId90PD/2azKVfWVybyE5nSWFVP0kBI9eGOLsJ8glSAgQPW4SKvEq7weY8/bdk=
+	t=1747157269; cv=none; b=ZV5IXvyRdpY4FAh8ugGPWRkTBjy33/5jvxe0deactkRvSXw/imZJf7WXaQB8gL2hRhx1tSSCdkOckshe6lDQCStXEUmp2XgjSTEB7LIIeZp/Fyg+w0VPKCxyYkq8BVnQDVMA415ovIadLmRUm8+N0dUbsGlNX4/qhtXTSd7RqYM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747157195; c=relaxed/simple;
-	bh=XZgV1QhYSzMi+mWphJqQXwlDvh4uyqmyqWtHN4e9RH4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kiZqI/v9Rs2MSXa3kobUgf1RnchfJpoSDg8EF6wNhwDHSIj6GeaktoWujjJnpe/G99slaB2/b1HuAaB/bimyi5x01bvHrmfVVmTIJX44cx7ibWNsWRyMJLKu0NPM+pelr6F1nCpFS7qXgWYTWOdmM8qHKC0B7UNFVlrxubStTJM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hG94Lgo8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5D66C4CEE4;
-	Tue, 13 May 2025 17:26:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747157194;
-	bh=XZgV1QhYSzMi+mWphJqQXwlDvh4uyqmyqWtHN4e9RH4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hG94Lgo80sRFtjwwMGBmTwEXXng+JnM53gX3BWiYYC3Gzm/ECanYocLNIWj8k1rGA
-	 rWLThq9KpGk7mRcYwxDTWEuG1psrUaos0d+WGZx5VFbenjoXA+JvMbFBqIp3IJDFHa
-	 mc0cyQkiLmoagHYGJ8Lt6jg8i5l9zZ3m5O++34j1N3tIH9ILHtebDSdPmjwhMBmzoJ
-	 1HegOkvcWgbix37heFeUwvOef3P9SqQMOwrM/h+VMNKSBx6Pk12pzPpv9FnYfDiJHN
-	 1ZFkvV1cZ5AUPo4Yv2vrhW1Zwwvd0tqkwdrZXLGwHMBU+Z3LssQXxOkLDk2crfM2/8
-	 feF/bizRpq0EA==
-Date: Tue, 13 May 2025 19:26:31 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
-	William Breathitt Gray <wbg@kernel.org>, Sebastian Reichel <sebastian.reichel@collabora.com>, 
-	Kever Yang <kever.yang@rock-chips.com>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-pwm@vger.kernel.org, linux-iio@vger.kernel.org, kernel@collabora.com, 
-	Jonas Karlman <jonas@kwiboo.se>, Detlev Casanova <detlev.casanova@collabora.com>
-Subject: Re: [PATCH 5/7] pwm: Add rockchip PWMv4 driver
-Message-ID: <zg47we7oopvuayi7wyosq6j7uuzz4numystbmluezsim2pxg4g@zvtm3pwzkice>
-References: <20250408-rk3576-pwm-v1-0-a49286c2ca8e@collabora.com>
- <20250408-rk3576-pwm-v1-5-a49286c2ca8e@collabora.com>
+	s=arc-20240116; t=1747157269; c=relaxed/simple;
+	bh=Exu5LPRDrF9GPsvFUHg86uGON/SziE1Wv94sTJI6drE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oVJSZjflOI21HFeMnDkNea1eYJWoXvSo7ZtJLVkAwuZAV03o5uXs5wAZ57Xv2esY8dn0g84JzpB4tWOE0gIEgKzgrTtuzxqLYHS18jjXIhBLAkgSSqOJlNZPwSjsFIJIsk06mNolI86o1cDc4Em+8UAkw9jKSw8Rv+RJTQzwXTM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wedbrfON; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-22e1eafa891so13935ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 10:27:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1747157266; x=1747762066; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xIBSjAwDF5t1nNXPsQyXyqyW/fbAdYhx5iacZFg6vR0=;
+        b=wedbrfONJh5ujexa0Mlo7SGzlX25k4KXDRYQYglZhDrnpdg4MBX2krkb3z4cZAKcXE
+         TQSmTxy+wIEzfIjfykPTVrff7i/qrIRFwJ1Rdg/yEyussZSZxA49XaZFNBK5UYq3JcT0
+         uC88iHVpHtJOt/9Y2p7ZLFFqGnlUqNwLJrVNuCtVwjHQw1+wZ/k6nbyykDFmaYd0m4XP
+         ls7ebyIYyjv5/q51Q3RvyR225uE6MNEQ5PgBym+j7/7khFbqny9TnbSAIbdLTKhMTmkd
+         A+AYokQuS1jKr5RtQSBrEjjjgS/jKSuhhKsRAixuUWkPhNa/z5KNw1nZwqazQY4bGJrw
+         FY9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747157266; x=1747762066;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xIBSjAwDF5t1nNXPsQyXyqyW/fbAdYhx5iacZFg6vR0=;
+        b=YwbryzZhmAvGfmAkABY62cJMZihNiAHczRRUVtgD14CB0kHbgQkNJkyglQBdTk3WxL
+         yis0BQn85L+5GcHt3WS7ySgpbX0BYuvUgyBXYyIDP0XTF4Vx2R9muzLV+Xz7xB5Sf5CS
+         bC9f3mtNCi6D/XUtooKp0gxx5ZdH21PBrjLBoi7uItqwCfSBc6R/3MtsSrXhsCvjZ/nE
+         nJjsEQIfLYBmvhecB+xSh6hw1B+iUQVBDEGlvhR+O6QQ3Smjnacg5fYQsJOx3FtwF3Df
+         ViepgDZk9NvX7HOhSUylGucebX7jd50oPRWlOsOCY93Lvzw5icVaisAmt+aSD5JFOju7
+         2y/g==
+X-Forwarded-Encrypted: i=1; AJvYcCUUL6UwlUoKRw+DPUi//k2AEp21lipN/Hrr0M1SkclS3XIq1EcaNAeP1VNXk5wei5EykWZOwCviIclcNG4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzp6AS6aNw6fiXraxPsgK7KTwiPEkPDy9Hg93DhHdXKpEVm+kJG
+	wO18iqa7EiuJgNhIPTvuBu/Dqj2ERdxtKj/j8cNVpanBSEjRMo9zRI4X8wgqPs3SnZNgTfCwaVN
+	eFcjXQDQrzwOIiKiMIo7bLKqs0VjwCOaAnAhBZi1Z
+X-Gm-Gg: ASbGncsJhLNiZB0sO10xJZNDT8fC1c6oLHQjTjfrjTJMh0XW/5HglgaL1vGI6weml8V
+	aZNQa1mBN12n1XSeNSf39c/B3R+LWUXIVt60bYUH8lfdjg93kE6iL9CXrUJi6ebkQisjmK1KVLc
+	AJnTPOTqYZgAQaykhmRtw3s9ZfD+CKCFGl/y/JzV71UEE500MButhZqWQhpFZ0eA==
+X-Google-Smtp-Source: AGHT+IGVUzw2P0BwYqRkKzacyTgyWkVtZx3xr2gBNrhQGTALIijCMhmH1LGQ+5rJ7M6GeM4wwGj/qVRIjqVKD5G7oTQ=
+X-Received: by 2002:a17:903:2445:b0:223:7f8f:439b with SMTP id
+ d9443c01a7336-231804055e9mr2789555ad.29.1747157266226; Tue, 13 May 2025
+ 10:27:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="bywnufiblausx7ms"
-Content-Disposition: inline
-In-Reply-To: <20250408-rk3576-pwm-v1-5-a49286c2ca8e@collabora.com>
-
-
---bywnufiblausx7ms
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
+References: <20250508163127.726660-1-thomas.falcon@intel.com>
+ <CAP-5=fVJWSyymbbk30Cx6Dhk-nTQJUUM-oOTrBCJuS6Q5az9Ag@mail.gmail.com> <6ffd38b54e57709ca980087abe2582f1ae89250c.camel@intel.com>
+In-Reply-To: <6ffd38b54e57709ca980087abe2582f1ae89250c.camel@intel.com>
+From: Ian Rogers <irogers@google.com>
+Date: Tue, 13 May 2025 10:27:33 -0700
+X-Gm-Features: AX0GCFuXGojRR0m70VSVeriQ0Pz4e5YufP-2wgrTpOE3IlAmB-NP_aujBkOqsvM
+Message-ID: <CAP-5=fVYLHY8Stz557sWHmFv7nMs+uHGHGPLiCOE7H5===XWSA@mail.gmail.com>
+Subject: Re: [PATCH v2] perf top: populate PMU capabilities data in perf_env
+To: "Falcon, Thomas" <thomas.falcon@intel.com>
+Cc: "alexander.shishkin@linux.intel.com" <alexander.shishkin@linux.intel.com>, 
+	"linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>, 
+	"peterz@infradead.org" <peterz@infradead.org>, "acme@kernel.org" <acme@kernel.org>, 
+	"mingo@redhat.com" <mingo@redhat.com>, "Hunter, Adrian" <adrian.hunter@intel.com>, 
+	"namhyung@kernel.org" <namhyung@kernel.org>, "jolsa@kernel.org" <jolsa@kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"kan.liang@linux.intel.com" <kan.liang@linux.intel.com>, "mark.rutland@arm.com" <mark.rutland@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 5/7] pwm: Add rockchip PWMv4 driver
-MIME-Version: 1.0
 
-Hello Nicolas,
+On Tue, May 13, 2025 at 10:17=E2=80=AFAM Falcon, Thomas <thomas.falcon@inte=
+l.com> wrote:
+>
+> On Tue, 2025-05-13 at 08:40 -0700, Ian Rogers wrote:
+> > On Thu, May 8, 2025 at 9:31=E2=80=AFAM Thomas Falcon <thomas.falcon@int=
+el.com> wrote:
+> > >
+> > > Calling perf top with branch filters enabled on Intel CPU's
+> > > with branch counters logging (A.K.A LBR event logging [1]) support
+> > > results in a segfault.
+> >
+>
+> Hi Ian, thanks for reviewing!
+>
+> > At some point we should add a `perf top` shell test and include
+> > regression tests for cases like this.
+>
+> Good point, I will look into creating a test for this.
+>
+> >
+> > > Thread 27 "perf" received signal SIGSEGV, Segmentation fault.
+> > > [Switching to Thread 0x7fffafff76c0 (LWP 949003)]
+> > > perf_env__find_br_cntr_info (env=3D0xf66dc0 <perf_env>, nr=3D0x0, wid=
+th=3D0x7fffafff62c0) at util/env.c:653
+> > > 653                     *width =3D env->cpu_pmu_caps ? env->br_cntr_w=
+idth :
+> > > (gdb) bt
+> > >  #0  perf_env__find_br_cntr_info (env=3D0xf66dc0 <perf_env>, nr=3D0x0=
+, width=3D0x7fffafff62c0) at util/env.c:653
+> > >  #1  0x00000000005b1599 in symbol__account_br_cntr (branch=3D0x7fffcc=
+3db580, evsel=3D0xfea2d0, offset=3D12, br_cntr=3D8) at util/annotate.c:345
+> > >  #2  0x00000000005b17fb in symbol__account_cycles (addr=3D5658172, st=
+art=3D5658160, sym=3D0x7fffcc0ee420, cycles=3D539, evsel=3D0xfea2d0, br_cnt=
+r=3D8) at util/annotate.c:389
+> > >  #3  0x00000000005b1976 in addr_map_symbol__account_cycles (ams=3D0x7=
+fffcd7b01d0, start=3D0x7fffcd7b02b0, cycles=3D539, evsel=3D0xfea2d0, br_cnt=
+r=3D8) at util/annotate.c:422
+> > >  #4  0x000000000068d57f in hist__account_cycles (bs=3D0x110d288, al=
+=3D0x7fffafff6540, sample=3D0x7fffafff6760, nonany_branch_mode=3Dfalse, tot=
+al_cycles=3D0x0, evsel=3D0xfea2d0) at util/hist.c:2850
+> > >  #5  0x0000000000446216 in hist_iter__top_callback (iter=3D0x7fffafff=
+6590, al=3D0x7fffafff6540, single=3Dtrue, arg=3D0x7fffffff9e00) at builtin-=
+top.c:737
+> > >  #6  0x0000000000689787 in hist_entry_iter__add (iter=3D0x7fffafff659=
+0, al=3D0x7fffafff6540, max_stack_depth=3D127, arg=3D0x7fffffff9e00) at uti=
+l/hist.c:1359
+> > >  #7  0x0000000000446710 in perf_event__process_sample (tool=3D0x7ffff=
+fff9e00, event=3D0x110d250, evsel=3D0xfea2d0, sample=3D0x7fffafff6760, mach=
+ine=3D0x108c968) at builtin-top.c:845
+> > >  #8  0x0000000000447735 in deliver_event (qe=3D0x7fffffffa120, qevent=
+=3D0x10fc200) at builtin-top.c:1211
+> > >  #9  0x000000000064ccae in do_flush (oe=3D0x7fffffffa120, show_progre=
+ss=3Dfalse) at util/ordered-events.c:245
+> > >  #10 0x000000000064d005 in __ordered_events__flush (oe=3D0x7fffffffa1=
+20, how=3DOE_FLUSH__TOP, timestamp=3D0) at util/ordered-events.c:324
+> > >  #11 0x000000000064d0ef in ordered_events__flush (oe=3D0x7fffffffa120=
+, how=3DOE_FLUSH__TOP) at util/ordered-events.c:342
+> > >  #12 0x00000000004472a9 in process_thread (arg=3D0x7fffffff9e00) at b=
+uiltin-top.c:1120
+> > >  #13 0x00007ffff6e7dba8 in start_thread (arg=3D<optimized out>) at pt=
+hread_create.c:448
+> > >  #14 0x00007ffff6f01b8c in __GI___clone3 () at ../sysdeps/unix/sysv/l=
+inux/x86_64/clone3.S:78
+> > >
+> > > The cause is that perf_env__find_br_cntr_info tries to access a
+> > > null pointer pmu_caps in the perf_env struct. A similar issue exists
+> > > for homogeneous core systems which use the cpu_pmu_caps structure.
+> > >
+> > > Fix this by populating cpu_pmu_caps and pmu_caps structures with
+> > > values from sysfs when calling perf top with branch stack sampling
+> > > enabled.
+> > >
+> > > [1], LBR event logging introduced here:
+> > > https://lore.kernel.org/all/20231025201626.3000228-5-kan.liang@linux.=
+intel.com/
+> > >
+> > > Signed-off-by: Thomas Falcon <thomas.falcon@intel.com>
+> > > ---
+> > > v2: update commit message with more meaningful stack trace from
+> > >     gdb and indicate that affected systems are limited to CPU's
+> > >     with LBR event logging support and that both hybrid and
+> > >     non-hybrid core systems are affected.
+> > > ---
+> > >  tools/perf/builtin-top.c |   8 +++
+> > >  tools/perf/util/env.c    | 114 +++++++++++++++++++++++++++++++++++++=
+++
+> > >  tools/perf/util/env.h    |   1 +
+> > >  3 files changed, 123 insertions(+)
+> > >
+> > > diff --git a/tools/perf/builtin-top.c b/tools/perf/builtin-top.c
+> > > index 1061f4eebc3f..c2688e4ef3c4 100644
+> > > --- a/tools/perf/builtin-top.c
+> > > +++ b/tools/perf/builtin-top.c
+> > > @@ -1729,6 +1729,14 @@ int cmd_top(int argc, const char **argv)
+> > >         if (opts->branch_stack && callchain_param.enabled)
+> > >                 symbol_conf.show_branchflag_count =3D true;
+> > >
+> > > +       if (opts->branch_stack) {
+> > > +               status =3D perf_env__read_core_pmu_caps(&perf_env);
+> > > +               if (status) {
+> > > +                       pr_err("PMU capability data is not available\=
+n");
+> > > +                       goto out_delete_evlist;
+> > > +               }
+> > > +       }
+> > > +
+> > >         sort__mode =3D SORT_MODE__TOP;
+> > >         /* display thread wants entries to be collapsed in a differen=
+t tree */
+> > >         perf_hpp_list.need_collapse =3D 1;
+> > > diff --git a/tools/perf/util/env.c b/tools/perf/util/env.c
+> > > index 36411749e007..37ed6dc52cf3 100644
+> > > --- a/tools/perf/util/env.c
+> > > +++ b/tools/perf/util/env.c
+> > > @@ -416,6 +416,120 @@ static int perf_env__read_nr_cpus_avail(struct =
+perf_env *env)
+> > >         return env->nr_cpus_avail ? 0 : -ENOENT;
+> > >  }
+> > >
+> > > +static int __perf_env__read_core_pmu_caps(struct perf_pmu *pmu,
+> >
+> > Prefer "const struct perf_pmu *pmu" to show that it doesn't change with=
+in.
+>
+> Ok, I will change that in a new version.
+>
+> >
+> > > +                                         int *nr_caps, char ***caps,
+> > > +                                         unsigned int *max_branches,
+> > > +                                         unsigned int *br_cntr_nr,
+> > > +                                         unsigned int *br_cntr_width=
+)
+> > > +{
+> > > +       struct perf_pmu_caps *pcaps =3D NULL;
+> > > +       char *ptr, **tmp;
+> > > +       int ret =3D 0;
+> > > +
+> > > +       *nr_caps =3D 0;
+> > > +       *caps =3D NULL;
+> > > +
+> > > +       if (!pmu->nr_caps)
+> > > +               return 0;
+> > > +
+> > > +       *caps =3D zalloc(sizeof(char *) * pmu->nr_caps);
+> > > +       if (!*caps)
+> > > +               return -ENOMEM;
+> > > +
+> > > +       tmp =3D *caps;
+> > > +       list_for_each_entry(pcaps, &pmu->caps, list) {
+> > > +
+> > > +               if (asprintf(&ptr, "%s=3D%s", pcaps->name, pcaps->val=
+ue) < 0) {
+> > > +                       ret =3D -ENOMEM;
+> > > +                       goto error;
+> > > +               }
+> > > +
+> > > +               *tmp++ =3D ptr;
+> > > +
+> > > +               if (!strcmp(pcaps->name, "branches"))
+> > > +                       *max_branches =3D atoi(pcaps->value);
+> > > +
+> > > +               if (!strcmp(pcaps->name, "branch_counter_nr"))
+> > > +                       *br_cntr_nr =3D atoi(pcaps->value);
+> > > +
+> > > +               if (!strcmp(pcaps->name, "branch_counter_width"))
+> > > +                       *br_cntr_width =3D atoi(pcaps->value);
+> > > +       }
+> > > +       *nr_caps =3D pmu->nr_caps;
+> > > +       return 0;
+> > > +error:
+> > > +       while (tmp-- !=3D *caps)
+> > > +               free(*tmp);
+> > > +       free(*caps);
+> > > +       *caps =3D NULL;
+> > > +       *nr_caps =3D 0;
+> > > +       return ret;
+> > > +}
+> > > +
+> > > +int perf_env__read_core_pmu_caps(struct perf_env *env)
+> > > +{
+> > > +       struct perf_pmu *pmu =3D NULL;
+> > > +       struct pmu_caps *pmu_caps;
+> > > +       int nr_pmu =3D 0, i =3D 0, j;
+> > > +       int ret;
+> > > +
+> > > +       nr_pmu =3D perf_pmus__num_core_pmus();
+> > > +
+> > > +       if (!nr_pmu)
+> > > +               return -ENODEV;
+> > > +
+> > > +       if (nr_pmu =3D=3D 1) {
+> > > +               pmu =3D perf_pmus__scan_core(NULL);
+> >
+> > There is perf_pmus__find_core_pmu for this, not sure why this is in
+> > pmu.h rather than pmus.h though.
+>
+> Thanks, I will use perf_pmus__find_core_pmu() for this then. Should I inc=
+lude another patch moving
+> the prototype to pmus.h?
 
-On Tue, Apr 08, 2025 at 02:32:17PM +0200, Nicolas Frattaroli wrote:
-> The Rockchip RK3576 brings with it a new PWM IP, in downstream code
-> referred to as "v4". This new IP is different enough from the previous
-> Rockchip IP that I felt it necessary to add a new driver for it, instead
-> of shoehorning it in the old one.
->=20
-> Add this new driver, based on the PWM core's waveform APIs. Its platform
-> device is registered by the parent mfpwm driver, from which it also
-> receives a little platform data struct, so that mfpwm can guarantee that
-> all the platform device drivers spread across different subsystems for
-> this specific hardware IP do not interfere with each other.
->=20
-> Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-> ---
->  MAINTAINERS                   |   1 +
->  drivers/pwm/Kconfig           |  13 ++
->  drivers/pwm/Makefile          |   1 +
->  drivers/pwm/pwm-rockchip-v4.c | 336 ++++++++++++++++++++++++++++++++++++=
-++++++
->  4 files changed, 351 insertions(+)
->=20
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index e6a9347be1e7889089e1d9e655cb23c2d8399b40..3ddd245fd4ad8d9ed2e762910=
-a7a1f6436f93e34 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -20891,6 +20891,7 @@ L:	linux-rockchip@lists.infradead.org
->  L:	linux-pwm@vger.kernel.org
->  S:	Maintained
->  F:	Documentation/devicetree/bindings/pwm/rockchip,rk3576-pwm.yaml
-> +F:	drivers/pwm/pwm-rockchip-v4.c
->  F:	drivers/soc/rockchip/mfpwm.c
->  F:	include/soc/rockchip/mfpwm.h
-> =20
-> diff --git a/drivers/pwm/Kconfig b/drivers/pwm/Kconfig
-> index 4731d5b90d7edcc61138e4a5bf7e98906953ece4..242039f62ab091cea337bf27e=
-f310bcf696b6ed0 100644
-> --- a/drivers/pwm/Kconfig
-> +++ b/drivers/pwm/Kconfig
-> @@ -540,6 +540,19 @@ config PWM_ROCKCHIP
->  	  Generic PWM framework driver for the PWM controller found on
->  	  Rockchip SoCs.
-> =20
-> +config PWM_ROCKCHIP_V4
-> +	tristate "Rockchip PWM v4 support"
-> +	depends on ARCH_ROCKCHIP || COMPILE_TEST
-> +	depends on ROCKCHIP_MFPWM
-> +	depends on HAS_IOMEM
-> +	help
-> +	  Generic PWM framework driver for the PWM controller found on
-> +	  later Rockchip SoCs such as the RK3576.
-> +
-> +	  Uses the Rockchip Multi-function PWM controller driver infrastructure
-> +	  to guarantee fearlessly concurrent operation with other functions of
-> +	  the same device implemented by drivers in other subsystems.
-> +
->  config PWM_RZ_MTU3
->  	tristate "Renesas RZ/G2L MTU3a PWM Timer support"
->  	depends on RZ_MTU3
-> diff --git a/drivers/pwm/Makefile b/drivers/pwm/Makefile
-> index 539e0def3f82fcb866ab83a0346a15f7efdd7127..b5aca7ff58ac83f844581df52=
-6624617025291de 100644
-> --- a/drivers/pwm/Makefile
-> +++ b/drivers/pwm/Makefile
-> @@ -49,6 +49,7 @@ obj-$(CONFIG_PWM_RASPBERRYPI_POE)	+=3D pwm-raspberrypi-=
-poe.o
->  obj-$(CONFIG_PWM_RCAR)		+=3D pwm-rcar.o
->  obj-$(CONFIG_PWM_RENESAS_TPU)	+=3D pwm-renesas-tpu.o
->  obj-$(CONFIG_PWM_ROCKCHIP)	+=3D pwm-rockchip.o
-> +obj-$(CONFIG_PWM_ROCKCHIP_V4)	+=3D pwm-rockchip-v4.o
->  obj-$(CONFIG_PWM_RZ_MTU3)	+=3D pwm-rz-mtu3.o
->  obj-$(CONFIG_PWM_SAMSUNG)	+=3D pwm-samsung.o
->  obj-$(CONFIG_PWM_SIFIVE)	+=3D pwm-sifive.o
-> diff --git a/drivers/pwm/pwm-rockchip-v4.c b/drivers/pwm/pwm-rockchip-v4.c
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..980b27454ef9b930bef0496ca=
-528533cf419fa0e
-> --- /dev/null
-> +++ b/drivers/pwm/pwm-rockchip-v4.c
-> @@ -0,0 +1,336 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +/*
-> + * Copyright (c) 2025 Collabora Ltd.
-> + *
-> + * A Pulse-Width-Modulation (PWM) generator driver for the generators fo=
-und in
-> + * Rockchip SoCs such as the RK3576, internally referred to as "PWM v4".=
- Uses
-> + * the MFPWM infrastructure to guarantee exclusive use over the device w=
-ithout
-> + * other functions of the device from different drivers interfering with=
- its
-> + * operation while it's active.
+That would be good, thanks!
+Ian
 
-Can you please add a "Limitations" paragraph here similar to the other
-newer drivers that explains how the hardware behave on disable
-(inactive? High-Z? freeze?), if there are glitches possible when
-settings are changed or if the currently running period is completed on
-reconfiguration.
-
-> + *
-> + * Authors:
-> + *     Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-> + */
-> +
-> +#include <linux/platform_device.h>
-> +#include <linux/pwm.h>
-> +#include <soc/rockchip/mfpwm.h>
-> +
-> +struct rockchip_pwm_v4 {
-> +	struct rockchip_mfpwm_func *pwmf;
-> +	struct pwm_chip chip;
-> +};
-> +
-> +struct rockchip_pwm_v4_wf {
-> +	u32 period;
-> +	u32 duty;
-> +	u32 offset;
-> +	u8 enable;
-> +};
-> +
-> +static inline struct rockchip_pwm_v4 *to_rockchip_pwm_v4(struct pwm_chip=
- *chip)
-> +{
-> +	return pwmchip_get_drvdata(chip);
-> +}
-> +
-> +/**
-> + * rockchip_pwm_v4_round_single - convert a PWM parameter to hardware
-> + * @rate: clock rate of the PWM clock, as per clk_get_rate
-> + * @in_val: parameter in nanoseconds to convert
-> + * @out_val: pointer to location where converted result should be stored.
-> + *
-> + * If @out_val is %NULL, no calculation is performed.
-> + *
-> + * Return:
-> + * * %0          - Success
-> + * * %-EOVERFLOW - Result too large for target type
-> + */
-> +static int rockchip_pwm_v4_round_single(unsigned long rate, u64 in_val,
-> +					u32 *out_val)
-> +{
-> +	u64 tmp;
-> +
-> +	if (!out_val)
-> +		return 0;
-
-This is never hit, so better drop it.
-
-> +	tmp =3D mult_frac(rate, in_val, NSEC_PER_SEC);
-> +	if (tmp > U32_MAX)
-> +		return -EOVERFLOW;
-
-Is it clear that this cannot overflow the u64?
-
-> +	*out_val =3D tmp;
-> +
-> +	return 0;
-> +}
-> +
-> +/**
-> + * rockchip_pwm_v4_round_params - convert PWM parameters to hardware
-> + * @rate: PWM clock rate to do the calculations at
-> + * @duty: PWM duty cycle in nanoseconds
-> + * @period: PWM period in nanoseconds
-> + * @offset: PWM offset in nanoseconds
-> + * @out_duty: pointer to where the rounded duty value should be stored
-> + *            if NULL, don't calculate or store it
-> + * @out_period: pointer to where the rounded period value should be stor=
-ed
-> + *              if NULL, don't calculate or store it
-> + * @out_offset: pointer to where the rounded offset value should be stor=
-ed
-> + *              if NULL, don't calculate or store it
-> + *
-> + * Convert nanosecond-based duty/period/offset parameters to the PWM har=
-dware's
-> + * native rounded representation in number of cycles at clock rate @rate=
-=2E If an
-> + * out_ parameter is a NULL pointer, the corresponding parameter will no=
-t be
-> + * calculated or stored. Should an overflow error occur for any of the
-> + * parameters, assume the data at all the out_ locations is invalid and =
-may not
-> + * even have been touched at all.
-> + *
-> + * Return:
-> + * * %0          - Success
-> + * * %-EOVERFLOW - One of the results is too large for the PWM hardware
-> + */
-> +static int rockchip_pwm_v4_round_params(unsigned long rate, u64 duty,
-> +					u64 period, u64 offset, u32 *out_duty,
-> +					u32 *out_period, u32 *out_offset)
-> +{
-> +	int ret;
-> +
-> +	ret =3D rockchip_pwm_v4_round_single(rate, duty, out_duty);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret =3D rockchip_pwm_v4_round_single(rate, period, out_period);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret =3D rockchip_pwm_v4_round_single(rate, offset, out_offset);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return 0;
-> +}
-> +
-> +static int rockchip_pwm_v4_round_wf_tohw(struct pwm_chip *chip,
-> +					 struct pwm_device *pwm,
-> +					 const struct pwm_waveform *wf,
-> +					 void *_wfhw)
-> +{
-> +	struct rockchip_pwm_v4 *pc =3D to_rockchip_pwm_v4(chip);
-> +	struct rockchip_pwm_v4_wf *wfhw =3D _wfhw;
-> +	unsigned long rate;
-> +	int ret =3D 0;
-> +
-> +	/* We do not want chosen_clk to change out from under us here */
-> +	ret =3D mfpwm_acquire(pc->pwmf);
-> +	if (ret)
-> +		return ret;
-> +
-> +	rate =3D mfpwm_clk_get_rate(pc->pwmf->parent);
-> +
-> +	ret =3D rockchip_pwm_v4_round_params(rate, wf->duty_length_ns,
-> +					   wf->period_length_ns,
-> +					   wf->duty_offset_ns, &wfhw->duty,
-> +					   &wfhw->period, &wfhw->offset);
-> +
-> +	if (wf->period_length_ns > 0)
-> +		wfhw->enable =3D PWMV4_EN_BOTH_MASK;
-> +	else
-> +		wfhw->enable =3D 0;
-> +
-> +	dev_dbg(&chip->dev, "tohw: duty =3D %u, period =3D %u, offset =3D %u, r=
-ate %lu\n",
-> +		wfhw->duty, wfhw->period, wfhw->offset, rate);
-> +
-> +	mfpwm_release(pc->pwmf);
-> +	return ret;
-
-This is wrong. If a too high value for (say) period_length_ns is
-requested, you're supposed to configure the maximal possible
-period_length and not return a failure.
-
-> +}
-> +
-> +static int rockchip_pwm_v4_round_wf_fromhw(struct pwm_chip *chip,
-> +					   struct pwm_device *pwm,
-> +					   const void *_wfhw,
-> +					   struct pwm_waveform *wf)
-> +{
-> +	struct rockchip_pwm_v4 *pc =3D to_rockchip_pwm_v4(chip);
-> +	const struct rockchip_pwm_v4_wf *wfhw =3D _wfhw;
-> +	unsigned long rate;
-> +	int ret =3D 0;
-> +
-> +	/* We do not want chosen_clk to change out from under us here */
-
-This is also true while the PWM is enabled.=20
-
-> +	ret =3D mfpwm_acquire(pc->pwmf);
-> +	if (ret)
-> +		return ret;
-> +
-> +	rate =3D mfpwm_clk_get_rate(pc->pwmf->parent);
-
-Why isn't that a proper clock that you can call clk_get_rate() (and
-clk_rate_exclusive_get()) for?
-
-> +	/* Let's avoid a cool division-by-zero if the clock's busted. */
-> +	if (!rate) {
-> +		ret =3D -EINVAL;
-> +		goto out_mfpwm_release;
-> +	}
-> +
-> +	wf->duty_length_ns =3D mult_frac(wfhw->duty, NSEC_PER_SEC, rate);
-> +
-> +	if (pwmv4_is_enabled(wfhw->enable))
-> +		wf->period_length_ns =3D mult_frac(wfhw->period, NSEC_PER_SEC,
-> +						 rate);
-> +	else
-> +		wf->period_length_ns =3D 0;
-> +
-> +	wf->duty_offset_ns =3D mult_frac(wfhw->offset, NSEC_PER_SEC, rate);
-> +
-> +	dev_dbg(&chip->dev, "fromhw: duty =3D %llu, period =3D %llu, offset =3D=
- %llu\n",
-> +		wf->duty_length_ns, wf->period_length_ns, wf->duty_offset_ns);
-
-In my experience it't helpful to include rate in the output here.
-
-> +out_mfpwm_release:
-> +	mfpwm_release(pc->pwmf);
-> +	return ret;
-> +}
-> +
-> +static int rockchip_pwm_v4_read_wf(struct pwm_chip *chip, struct pwm_dev=
-ice *pwm,
-> +				   void *_wfhw)
-> +{
-> +	struct rockchip_pwm_v4 *pc =3D to_rockchip_pwm_v4(chip);
-> +	struct rockchip_pwm_v4_wf *wfhw =3D _wfhw;
-> +	int ret =3D 0;
-> +
-> +
-> +	ret =3D mfpwm_acquire(pc->pwmf);
-> +	if (ret)
-> +		return ret;
-> +
-> +	wfhw->period =3D mfpwm_reg_read(pc->pwmf->base, PWMV4_REG_PERIOD);
-> +	wfhw->duty =3D mfpwm_reg_read(pc->pwmf->base, PWMV4_REG_DUTY);
-> +	wfhw->offset =3D mfpwm_reg_read(pc->pwmf->base, PWMV4_REG_OFFSET);
-> +	wfhw->enable =3D mfpwm_reg_read(pc->pwmf->base, PWMV4_REG_ENABLE) & PWM=
-V4_EN_BOTH_MASK;
-> +
-> +	mfpwm_release(pc->pwmf);
-> +
-> +	return 0;
-> +}
-> +
-> +static int rockchip_pwm_v4_write_wf(struct pwm_chip *chip, struct pwm_de=
-vice *pwm,
-> +				    const void *_wfhw)
-> +{
-> +	struct rockchip_pwm_v4 *pc =3D to_rockchip_pwm_v4(chip);
-> +	const struct rockchip_pwm_v4_wf *wfhw =3D _wfhw;
-> +	bool was_enabled =3D false;
-> +	int ret =3D 0;
-> +
-> +	ret =3D mfpwm_acquire(pc->pwmf);
-> +	if (ret)
-> +		return ret;
-> +
-> +	was_enabled =3D pwmv4_is_enabled(mfpwm_reg_read(pc->pwmf->base,
-> +						      PWMV4_REG_ENABLE));
-> +
-> +	/*
-> +	 * "But Nicolas", you ask with valid concerns, "why would you enable the
-> +	 * PWM before setting all the parameter registers?"
-
-Funny, I had this thought alread for mfpwm_acquire() above. Do you also
-need that if wfhw->enable =3D=3D 0?
-
-> +	 * Excellent question, Mr. Reader M. Strawman! The RK3576 TRM Part 1
-> +	 * Section 34.6.3 specifies that this is the intended order of writes.
-> +	 * Doing the PWM_EN and PWM_CLK_EN writes after the params but before
-> +	 * the CTRL_UPDATE_EN, or even after the CTRL_UPDATE_EN, results in
-> +	 * erratic behaviour where repeated turning on and off of the PWM may
-> +	 * not turn it off under all circumstances. This is also why we don't
-> +	 * use relaxed writes; it's not worth the footgun.
-> +	 */
-> +	mfpwm_reg_write(pc->pwmf->base, PWMV4_REG_ENABLE,
-> +			REG_UPDATE_WE(wfhw->enable, 0, 1));
-> +
-> +	mfpwm_reg_write(pc->pwmf->base, PWMV4_REG_PERIOD, wfhw->period);
-> +	mfpwm_reg_write(pc->pwmf->base, PWMV4_REG_DUTY, wfhw->duty);
-> +	mfpwm_reg_write(pc->pwmf->base, PWMV4_REG_OFFSET, wfhw->offset);
-> +
-> +	mfpwm_reg_write(pc->pwmf->base, PWMV4_REG_CTRL, PWMV4_CTRL_CONT_FLAGS);
-> +
-> +	/* Commit new configuration to hardware output. */
-> +	mfpwm_reg_write(pc->pwmf->base, PWMV4_REG_ENABLE,
-> +			PWMV4_CTRL_UPDATE_EN(1));
-
-PWMV4_CTRL_UPDATE_EN is always only used with 1 as parameter, so maybe
-simplify the definition to BIT(2)?
-
-> +	if (pwmv4_is_enabled(wfhw->enable)) {
-> +		if (!was_enabled) {
-> +			dev_dbg(&chip->dev, "enabling PWM output\n");
-> +			ret =3D mfpwm_pwmclk_enable(pc->pwmf);
-> +			if (ret)
-> +				goto err_mfpwm_release;
-> +
-> +			/*
-> +			 * Output should be on now, acquire device to guarantee
-> +			 * exclusion with other device functions while it's on.
-> +			 */
-> +			ret =3D mfpwm_acquire(pc->pwmf);
-> +			if (ret)
-> +				goto err_mfpwm_release;
-
-Alternatively to calling mfpwm_acquire once more, you could also skip
-the mfpwm_release() below. That makes the code a bit more complicated,
-but also reduces the number of possible failing points.
-
-> +		}
-> +	} else if (was_enabled) {
-> +		dev_dbg(&chip->dev, "disabling PWM output\n");
-> +		mfpwm_pwmclk_disable(pc->pwmf);
-> +		/* Output is off now, extra release to balance extra acquire */
-> +		mfpwm_release(pc->pwmf);
-> +	}
-> +
-> +err_mfpwm_release:
-> +	mfpwm_release(pc->pwmf);
-> +
-> +	return ret;
-> +}
-> +
-> +/* We state the PWM chip is atomic, so none of these functions should sl=
-eep. */
-> +static const struct pwm_ops rockchip_pwm_v4_ops =3D {
-> +	.sizeof_wfhw =3D sizeof(struct rockchip_pwm_v4_wf),
-> +	.round_waveform_tohw =3D rockchip_pwm_v4_round_wf_tohw,
-> +	.round_waveform_fromhw =3D rockchip_pwm_v4_round_wf_fromhw,
-> +	.read_waveform =3D rockchip_pwm_v4_read_wf,
-> +	.write_waveform =3D rockchip_pwm_v4_write_wf,
-> +};
-> +
-> +static int rockchip_pwm_v4_probe(struct platform_device *pdev)
-> +{
-> +	struct rockchip_mfpwm_func *pwmf =3D dev_get_platdata(&pdev->dev);
-> +	struct rockchip_pwm_v4 *pc;
-> +	struct pwm_chip *chip;
-> +	int ret;
-> +
-> +	chip =3D devm_pwmchip_alloc(&pdev->dev, 1, sizeof(*pc));
-> +	if (IS_ERR(chip))
-> +		return PTR_ERR(chip);
-> +
-> +	pc =3D to_rockchip_pwm_v4(chip);
-> +	pc->pwmf =3D pwmf;
-> +
-> +	platform_set_drvdata(pdev, pc);
-> +
-> +	chip->ops =3D &rockchip_pwm_v4_ops;
-> +	chip->atomic =3D true;
-> +
-
-If the PWM is already enabled you better call mfpwm_acquire() here?
-
-> +	ret =3D pwmchip_add(chip);
-> +	if (ret)
-> +		return dev_err_probe(&pdev->dev, ret, "failed to add PWM chip\n");
-> +
-> +	return 0;
-> +}
-> +
-> +static void rockchip_pwm_v4_remove(struct platform_device *pdev)
-> +{
-> +	struct rockchip_pwm_v4 *pc =3D platform_get_drvdata(pdev);
-
-	pwmchip_remove()?
-
-> +	mfpwm_remove_func(pc->pwmf);
-
-Maybe make this a devm function?
-
-> +}
-> +
-> +static const struct platform_device_id rockchip_pwm_v4_ids[] =3D {
-> +	{ .name =3D "pwm-rockchip-v4", },
-> +	{ /* sentinel */ }
-> +};
-> +MODULE_DEVICE_TABLE(platform, rockchip_pwm_v4_ids);
-> +
-> +static struct platform_driver rockchip_pwm_v4_driver =3D {
-> +	.probe =3D rockchip_pwm_v4_probe,
-> +	.remove =3D rockchip_pwm_v4_remove,
-> +	.driver =3D {
-> +		.name =3D "pwm-rockchip-v4",
-> +	},
-> +	.id_table =3D rockchip_pwm_v4_ids,
-> +};
-> +module_platform_driver(rockchip_pwm_v4_driver);
-> +
-> +MODULE_AUTHOR("Nicolas Frattaroli <nicolas.frattaroli@collabora.com>");
-> +MODULE_DESCRIPTION("Rockchip PWMv4 Driver");
-> +MODULE_LICENSE("GPL");
-> +MODULE_IMPORT_NS("ROCKCHIP_MFPWM");
-
-There are different tastes, but if you ask me that MODULE_IMPORT_NS can
-go into the header declaring the functions from that namespace.
-
-Best regards
-Uwe
-
---bywnufiblausx7ms
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmgjgMQACgkQj4D7WH0S
-/k7Qlgf+O/l7HDymMM5t36I+KPbPhBTm3xQiphlueFh5o/aHfTcHa7UVk4s9hfXn
-CvXm/O5Qb3axq4iXTrCfcycMC8OKtK7DrtUyDxE49Vs3tRt4iGLerK2mOw4t2AEw
-Gm54pelJMAZPgyj1fwkklLA5C5aIWTYStQBOPErOUBAzF6OWNyOqkc3DjBkrO0Sd
-M2gbxSC2zHScBZVXGDimSQILTHxImSrUtISjqt/BTPMxL+SjlB3k1e4yHdGaRcJA
-Gh7TIwGSKlQ8I7URIcVqFL6bGU8XRwdoqlhzg4Qu1CP9Az3a6kkNGCA4+yMbvBSf
-7dVgTLnngGri45ELhcCJWdYw/znhHQ==
-=ibLa
------END PGP SIGNATURE-----
-
---bywnufiblausx7ms--
+> Tom
+> >
+> > Thanks,
+> > Ian
+> >
+> > > +               if (!pmu)
+> > > +                       return -ENODEV;
+> > > +               ret =3D perf_pmu__caps_parse(pmu);
+> > > +               if (ret < 0)
+> > > +                       return ret;
+> > > +               return __perf_env__read_core_pmu_caps(pmu, &env->nr_c=
+pu_pmu_caps,
+> > > +                                                     &env->cpu_pmu_c=
+aps,
+> > > +                                                     &env->max_branc=
+hes,
+> > > +                                                     &env->br_cntr_n=
+r,
+> > > +                                                     &env->br_cntr_w=
+idth);
+> > > +       }
+> > > +
+> > > +       pmu_caps =3D zalloc(sizeof(*pmu_caps) * nr_pmu);
+> > > +       if (!pmu_caps)
+> > > +               return -ENOMEM;
+> > > +
+> > > +       while ((pmu =3D perf_pmus__scan_core(pmu)) !=3D NULL) {
+> > > +               if (perf_pmu__caps_parse(pmu) <=3D 0)
+> > > +                       continue;
+> > > +               ret =3D __perf_env__read_core_pmu_caps(pmu, &pmu_caps=
+[i].nr_caps,
+> > > +                                                    &pmu_caps[i].cap=
+s,
+> > > +                                                    &pmu_caps[i].max=
+_branches,
+> > > +                                                    &pmu_caps[i].br_=
+cntr_nr,
+> > > +                                                    &pmu_caps[i].br_=
+cntr_width);
+> > > +               if (ret)
+> > > +                       goto error;
+> > > +
+> > > +               pmu_caps[i].pmu_name =3D strdup(pmu->name);
+> > > +               if (!pmu_caps[i].pmu_name) {
+> > > +                       ret =3D -ENOMEM;
+> > > +                       goto error;
+> > > +               }
+> > > +               i++;
+> > > +       }
+> > > +
+> > > +       env->nr_pmus_with_caps =3D nr_pmu;
+> > > +       env->pmu_caps =3D pmu_caps;
+> > > +
+> > > +       return 0;
+> > > +error:
+> > > +       for (i =3D 0; i < nr_pmu; i++) {
+> > > +               for (j =3D 0; j < pmu_caps[i].nr_caps; j++)
+> > > +                       free(pmu_caps[i].caps[j]);
+> > > +               free(pmu_caps[i].caps);
+> > > +               free(pmu_caps[i].pmu_name);
+> > > +       }
+> > > +       free(pmu_caps);
+> > > +       return ret;
+> > > +}
+> > > +
+> > >  const char *perf_env__raw_arch(struct perf_env *env)
+> > >  {
+> > >         return env && !perf_env__read_arch(env) ? env->arch : "unknow=
+n";
+> > > diff --git a/tools/perf/util/env.h b/tools/perf/util/env.h
+> > > index d90e343cf1fa..135a1f714905 100644
+> > > --- a/tools/perf/util/env.h
+> > > +++ b/tools/perf/util/env.h
+> > > @@ -152,6 +152,7 @@ struct btf_node;
+> > >
+> > >  extern struct perf_env perf_env;
+> > >
+> > > +int perf_env__read_core_pmu_caps(struct perf_env *env);
+> > >  void perf_env__exit(struct perf_env *env);
+> > >
+> > >  int perf_env__kernel_is_64_bit(struct perf_env *env);
+> > > --
+> > > 2.49.0
+> > >
+> >
+>
 
