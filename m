@@ -1,97 +1,132 @@
-Return-Path: <linux-kernel+bounces-646268-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-646266-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D25BAB5A69
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 18:44:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F8EDAB5A62
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 18:43:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 830A7864CCC
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 16:41:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 27D8217C377
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 16:41:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4769F2C031D;
-	Tue, 13 May 2025 16:40:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70C082BFC95;
+	Tue, 13 May 2025 16:39:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="v5dm0lD1"
-Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oh5y1hra"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D551012CD96
-	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 16:40:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C54C32BEC5B;
+	Tue, 13 May 2025 16:39:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747154422; cv=none; b=M6weQC/+VZ/oN35gIxsLEwEFMcpEMahpiHXL9Ls3f6Au7wffj9/BXghhfmtk34xk5vdxPH5rf87iZFsNZNLxH/fxYG6GDMh7xMgd5o707Htcpkeng3rwU353hxsD0NiBd/uL2tEqCoAjRqQsRl6+MNJ54IWUqZipspER+jukL8c=
+	t=1747154394; cv=none; b=cH948CP+btDtkCXEdmkIyt/Xd+427aWWh/Hthg90L0KQnq0ewMfn9SIh9qkqgMbrPPNvPzkzQ0Hush1vteDtAGhddXzlaYgSorz1W904fN4gxFhmJsUYcB+/mOwgrvKAZdPd1NaNEDZmoNipT3U4AG8EHU5nhVBd7ZUGR6nch2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747154422; c=relaxed/simple;
-	bh=ZTvOfyt27ngXKsIHWQ1g0X5LM2B8iC/5VO98mqpFpBU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=i0R5uzlXmT1enADqdYTYm2eZPhksZ8lzvxYDhKQED6E5dBqVMHt/1c88wIdI06gVKD2qtwAM4LX9H3z7m+6pxV0VhsEOing2ZvNK8FiAhIr/Hllz3NyJ6ldumWFLLObfgqqGMGwAzws538SLhqjEN682ziYAISNPSHrhCN/dAdE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=v5dm0lD1; arc=none smtp.client-ip=95.215.58.186
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <964d667a-c17e-47ff-b7d8-fb5b5a2f1eef@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1747154415;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1pd8a86ouCHKkC4nVa+pxW5IeRMYr8wsSfrdSRatPCY=;
-	b=v5dm0lD1mmwG9XVDa+coeBFMQiCdVvbRDgihk9r4mx4Xi132k7MmF8jV5Yx3H79h6jAyPM
-	PFclKaNv4y/EYlD0fe02SvWUj0QquI4WwSMmdTGkkBeYo9qB6cc9t0KCoutqdL9oTi9DBD
-	tZu8+JQ0KoAmsBPlqbVYVeT3IBvKlD4=
-Date: Tue, 13 May 2025 12:40:09 -0400
+	s=arc-20240116; t=1747154394; c=relaxed/simple;
+	bh=AjkYXTBFr9l5F1Xafn2ef91f99gfytyrNwf96vVqTQc=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=UIxnJRRzPLfsdqhJSZYuQimbmpI16JWHzKEE+rkZNp55sRMDI/scXEJmITnAKw4gs8RflsJy8I+wvksnPqaG7Pctw1LBmA0HrsycJPOUQAwqeyCp0tvwzFV3ulBbR3WP01d3WsrrrVbH5kRSp21Gsmlmx4lP8RdIMbYBctHeiMA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oh5y1hra; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 329B2C4CEE4;
+	Tue, 13 May 2025 16:39:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747154394;
+	bh=AjkYXTBFr9l5F1Xafn2ef91f99gfytyrNwf96vVqTQc=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=oh5y1hraJdvH7VfQ2mkFRg1zcYXXFAmPppkhrTTMWCHtVUhY/+ZuxhpyFoZS1DtOa
+	 3hfUGlywaZsTOur9mcy4sgttTytV2JjW/+zV1A4AdyHuWp+L3R4c+s16+iTyZBk55I
+	 kZ8KaViMQOOX/B9k933Fkrd+s7MTaBLIS6YWzkezptPAVXfoyfW2wapKgoNcFlXrou
+	 OU6xmwhC6aZsFm38BUss1sxBoNs59PlbsAMG/yfwlZXSPcMP4rj//d58iZgiUrtjAq
+	 aECWWfmThxcSxPg+VXb/+UMhZ8/g3xWcL9M08C5x2eshwuMpW6hTVqj0NKKz+1Xtua
+	 Hg5KQKlZ8t9zg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAF0D39D61FF;
+	Tue, 13 May 2025 16:40:32 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [net-next PATCH v4 09/11] net: macb: Move most of mac_config to
- mac_prepare
-To: "Karumanchi, Vineeth" <vineeth.karumanchi@amd.com>,
- netdev@vger.kernel.org, Andrew Lunn <andrew+netdev@lunn.ch>,
- "David S . Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Russell King <linux@armlinux.org.uk>
-Cc: upstream@airoha.com, Simon Horman <horms@kernel.org>,
- Heiner Kallweit <hkallweit1@gmail.com>,
- Kory Maincent <kory.maincent@bootlin.com>, linux-kernel@vger.kernel.org,
- Christian Marangi <ansuelsmth@gmail.com>,
- Claudiu Beznea <claudiu.beznea@microchip.com>,
- Nicolas Ferre <nicolas.ferre@microchip.com>
-References: <20250512161013.731955-1-sean.anderson@linux.dev>
- <20250512161416.732239-1-sean.anderson@linux.dev>
- <6a8f1a28-29c0-4a8b-b3c2-d746a3b57950@amd.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Sean Anderson <sean.anderson@linux.dev>
-In-Reply-To: <6a8f1a28-29c0-4a8b-b3c2-d746a3b57950@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH bpf-next] bpf: Fix WARN() in get_bpf_raw_tp_regs
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <174715443176.1726492.3970535040989082587.git-patchwork-notify@kernel.org>
+Date: Tue, 13 May 2025 16:40:31 +0000
+References: <20250513042747.757042-1-chen.dylane@linux.dev>
+In-Reply-To: <20250513042747.757042-1-chen.dylane@linux.dev>
+To: Tao Chen <chen.dylane@linux.dev>
+Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+ martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
+ yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
+ sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, rostedt@goodmis.org,
+ mhiramat@kernel.org, mathieu.desnoyers@efficios.com, mmullins@fb.com,
+ bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org,
+ syzbot+45b0c89a0fc7ae8dbadc@syzkaller.appspotmail.com
 
-On 5/13/25 11:29, Karumanchi, Vineeth wrote:
-> Hi Sean,
-> 
-> Sorry for the delayed response.
-> 
-> We are working on MACB with two internal PCS's (10G-BASER, 1000-BASEX) supporting 1G, 2.5G, 5G, and 10G with AN disabled.
-> 
-> I have sent an initial RFC : https://lore.kernel.org/netdev/20241009053946.3198805-1-vineeth.karumanchi@amd.com/
-> 
-> Currently, we are working on integrating the MAC in fixed-link and phy-mode.
+Hello:
 
-I had a look your series and based on the feedback you got I think this
-patch will help you ensure the PCS changes stay separate from the MAC
-stuff. I found it confusing on first read that you were configuring the
-"1G" PCS from the USX PCS callback. I think you are using 1G/2G speeds
-with the "1G" PCS and 5G/10G speeds with the USX PCS?
+This patch was applied to bpf/bpf-next.git (master)
+by Andrii Nakryiko <andrii@kernel.org>:
 
-Do you know if there is any public documentation for 10G support
-(even on non-versal SoCs)? That will make it easier to review your
-patch.
+On Tue, 13 May 2025 12:27:47 +0800 you wrote:
+> syzkaller reported an issue:
+> 
+> WARNING: CPU: 3 PID: 5971 at kernel/trace/bpf_trace.c:1861 get_bpf_raw_tp_regs+0xa4/0x100 kernel/trace/bpf_trace.c:1861
+> Modules linked in:
+> CPU: 3 UID: 0 PID: 5971 Comm: syz-executor205 Not tainted 6.15.0-rc5-syzkaller-00038-g707df3375124 #0 PREEMPT(full)
+> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+> RIP: 0010:get_bpf_raw_tp_regs+0xa4/0x100 kernel/trace/bpf_trace.c:1861
+> RSP: 0018:ffffc90003636fa8 EFLAGS: 00010293
+> RAX: 0000000000000000 RBX: 0000000000000003 RCX: ffffffff81c6bc4c
+> RDX: ffff888032efc880 RSI: ffffffff81c6bc83 RDI: 0000000000000005
+> RBP: ffff88806a730860 R08: 0000000000000005 R09: 0000000000000003
+> R10: 0000000000000004 R11: 0000000000000000 R12: 0000000000000004
+> R13: 0000000000000001 R14: ffffc90003637008 R15: 0000000000000900
+> FS:  0000000000000000(0000) GS:ffff8880d6cdf000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007f7baee09130 CR3: 0000000029f5a000 CR4: 0000000000352ef0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>  <TASK>
+>  ____bpf_get_stack_raw_tp kernel/trace/bpf_trace.c:1934 [inline]
+>  bpf_get_stack_raw_tp+0x24/0x160 kernel/trace/bpf_trace.c:1931
+>  bpf_prog_ec3b2eefa702d8d3+0x43/0x47
+>  bpf_dispatcher_nop_func include/linux/bpf.h:1316 [inline]
+>  __bpf_prog_run include/linux/filter.h:718 [inline]
+>  bpf_prog_run include/linux/filter.h:725 [inline]
+>  __bpf_trace_run kernel/trace/bpf_trace.c:2363 [inline]
+>  bpf_trace_run3+0x23f/0x5a0 kernel/trace/bpf_trace.c:2405
+>  __bpf_trace_mmap_lock_acquire_returned+0xfc/0x140 include/trace/events/mmap_lock.h:47
+>  __traceiter_mmap_lock_acquire_returned+0x79/0xc0 include/trace/events/mmap_lock.h:47
+>  __do_trace_mmap_lock_acquire_returned include/trace/events/mmap_lock.h:47 [inline]
+>  trace_mmap_lock_acquire_returned include/trace/events/mmap_lock.h:47 [inline]
+>  __mmap_lock_do_trace_acquire_returned+0x138/0x1f0 mm/mmap_lock.c:35
+>  __mmap_lock_trace_acquire_returned include/linux/mmap_lock.h:36 [inline]
+>  mmap_read_trylock include/linux/mmap_lock.h:204 [inline]
+>  stack_map_get_build_id_offset+0x535/0x6f0 kernel/bpf/stackmap.c:157
+>  __bpf_get_stack+0x307/0xa10 kernel/bpf/stackmap.c:483
+>  ____bpf_get_stack kernel/bpf/stackmap.c:499 [inline]
+>  bpf_get_stack+0x32/0x40 kernel/bpf/stackmap.c:496
+>  ____bpf_get_stack_raw_tp kernel/trace/bpf_trace.c:1941 [inline]
+>  bpf_get_stack_raw_tp+0x124/0x160 kernel/trace/bpf_trace.c:1931
+>  bpf_prog_ec3b2eefa702d8d3+0x43/0x47
+> 
+> [...]
 
---Sean
+Here is the summary with links:
+  - [bpf-next] bpf: Fix WARN() in get_bpf_raw_tp_regs
+    https://git.kernel.org/bpf/bpf-next/c/3880cdbed1c4
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
