@@ -1,177 +1,179 @@
-Return-Path: <linux-kernel+bounces-646661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-646638-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 380DAAB5EC6
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 23:59:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6426AB5E92
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 23:46:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7568B3BCCC8
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 21:59:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 309A5463F02
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 21:46:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C55BC202F65;
-	Tue, 13 May 2025 21:59:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9E5C1F8F04;
+	Tue, 13 May 2025 21:46:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4qV0C8/t"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="MmTXZFQK"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 373C920EB
-	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 21:59:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 636D31B0409
+	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 21:46:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747173580; cv=none; b=pDk6FCZhaYiuWrCp8ZHU6+k9KrQA//qV8t2Rds2VJFgkTxSsMVTCfkW1fKXZ/zjAPqMsGZoiq0qTdBRr2NZt84LU6YcsTZHwFKY8BURsNaH9ljOaQewwklLCm4s97Q4Ga/jvs0cYJxyWiBcPNsDlaenmDrPeRvgTmrGCxtDX72w=
+	t=1747172794; cv=none; b=SpwpxIvpqJbuRN9++ED2K9La4ak16WFdvWNDrMVEAOzMcJIuOJrHI0MS7GrCaZNpgbEhLr6hUSdPZrDdg+pQGNz5G0jroiHgLTFilKTcNFn2R8INOJC3YkvID4DHeGnoseK5lffSoo0uC2wjCjWQQurm1heBw+lD1hZVeD4U6nI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747173580; c=relaxed/simple;
-	bh=59VlnNQcrQbF9VoPWx9rTK6gSiYi9D6flZRl8TqbiJY=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=r7QJN8qOR/6guATNMJlJ2amwdYrNTGm8v7+t6/44cd5gerKEV/XNay5dCHB+rpiLtfHB97mNtb/Mwk+QcTHzWHCA7jHD7Fy6PfQuHpVFVZKNoAr0DMKdix1gIJE4xIjBQgxGulrsZ4Wf8qNPh7RCnW+r558Q3DuboKNZuOQOEck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ctshao.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4qV0C8/t; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ctshao.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-30e0e8ba948so1506573a91.2
-        for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 14:59:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1747173576; x=1747778376; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=wxh9BxVjJTo5yVA2IRbpjDRptGFFtiq3WHv5MWVzf+Y=;
-        b=4qV0C8/tT6O+knwEpeIO6kRsCio/5PHP4L/R5DgB9wHl/ooJit4qxP323el0Yt4d5s
-         S1qcGuz/Wmu6bZNQmd5AOXA58CO4waXL2GK2b0uEnpuhhwL4vSSvfBGsDWQDDd9VnfGI
-         Ez8Qitq7tHQJKXEzsvMdWLusOxA8reRxMqCZ8NDK6qJv5S+24PTiVDONjY0NPDgDxd4+
-         USUprfFbVXKuwQPoXULHFBUkfkimiHZo2JBjBKbyJzbajlZQhJ6kxYmPaJpx2UQaatlB
-         UsjY2PmZO1A1iUewHZQb+kuTXKRjPjYJJXrn0O9bDwQSJ0fuQO0MZu6YFO2qijxe4qjn
-         UWcQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747173576; x=1747778376;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wxh9BxVjJTo5yVA2IRbpjDRptGFFtiq3WHv5MWVzf+Y=;
-        b=i52ejUrXJwsVrgTGDORxLXfsRohTuV2HunW7U5Ud+AZjprBAH/FGdb01aQU2K4SUzV
-         j0tMLM3leUXw9HSw/hiHfBQ6+3EbVzcgQylJSzJNWPyCl3ba87T3TVrGtts4BWdiTVeC
-         cFFuClZlwftR2+84KoRojnCoWbcuxvVtGYlil5Za+1ZWl946ZqqwWcgf3EWp9wZtQP+F
-         Xb5HfX8WVKj3KlthfVmU66UfzflSIV4S8mkfUrRgGQKcLFTu5HWoTX5CGC+UMUn5U+Pv
-         1D1AXHPXWQmvpWyN9R9mrgP+YLgHJubqrxwyD9txGCxNbo0Q3+mX0BnkbAewx4gHV0HC
-         mtWg==
-X-Gm-Message-State: AOJu0YxYQ2af2Z36PlqiDNX6q+UbMqEXOwkEZbx88yYY6SZdlAqRjsFI
-	GH0m1ckLLjXbWIQezqg6I1nYOkxPBl3XCv62fVTdF3QTlhu12/drVSEjwjetZKNHeQ3ck0ZcUKa
-	rLZS3RPHzaUIHhk76QLI7WHKqv25RB9oo9q1VN9Dt+ie7+9Eo4tQ74y1TIwzUooj0RYvmk52aS+
-	8BXqipVY2NIzr7fJgaJGdiYnoBmsu21o9EjhobttVS
-X-Google-Smtp-Source: AGHT+IGjzCvvWC24UQLYpGjqozDFlayOjAbZNXIhc9Bx7yZY6KP50LdqPlIhi5YtpGxNXqNDP6O+tXNP1C4=
-X-Received: from pjk3.prod.google.com ([2002:a17:90b:5583:b0:308:65f7:9f24])
- (user=ctshao job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3bce:b0:305:2d68:8d39
- with SMTP id 98e67ed59e1d1-30e2e5e6ca8mr1988712a91.12.1747173576315; Tue, 13
- May 2025 14:59:36 -0700 (PDT)
-Date: Tue, 13 May 2025 14:45:03 -0700
-In-Reply-To: <20250513215401.2315949-1-ctshao@google.com>
+	s=arc-20240116; t=1747172794; c=relaxed/simple;
+	bh=K5q1xiyyJFaUIIB22v7MZcnXSC5lI0HSlx05DM4jBIw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qzDBBTzVSULfPcAEjudqg6ixg8onbSC9uil6GPZj32+fFxavIOu8OiauJr/shCOD6MfrTehygi3SjoRHTB6OzkZFcvtgfbmyDq8Xe0ZkVGwbrQsu4XuJghIq4PzUht0Vu2BudZ24YFNUTU5L7lWd4x77zOmUSr0B/FZv8lh6R7w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=MmTXZFQK; arc=none smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54DL0msY016339;
+	Tue, 13 May 2025 21:45:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=corp-2025-04-25; bh=yGTd8P+6zeWiDGO4DPhFVhjhH5GWs
+	rCfAIPoHe++chc=; b=MmTXZFQKvSsypOcxBOBzItzLWOlwZze6Np0lKGUT8vpB1
+	OgxYTl1QLVVTMgeVdRyiG386hjHbS10+rT+aBohGGaveXjBZ7ijrb5jqqAnt28ng
+	2438Rxm02jmPW2hN+Gr0LBFWfeXKxh7HbPsB6Dsc71Cp3BTc+AcaLpFOgSJ21rgM
+	Hr03esVSl/cATZwgzorW0oUm3Ua+73oUuex67PIAcPAU8amVGqjbvpGnCLuaHvF0
+	V37nS03IkWweyJl3DcPzCe6IBpX6eH4K0TID6VXtgCuvzcMQEOErRnZhNJCDYLqm
+	oSid8C9HYqlTiru0xrhtvC2xkpeKLEp08is7gRs9w==
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 46mbcgrb7e-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 13 May 2025 21:45:58 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 54DLQjeL001890;
+	Tue, 13 May 2025 21:45:57 GMT
+Received: from psang-work.osdevelopmeniad.oraclevcn.com (psang-work.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.253.35])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 46mc4yv943-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+	Tue, 13 May 2025 21:45:57 +0000
+From: Prakash Sangappa <prakash.sangappa@oracle.com>
+To: linux-kernel@vger.kernel.org
+Cc: peterz@infradead.org, rostedt@goodmis.org, mathieu.desnoyers@efficios.com,
+        tglx@linutronix.de, bigeasy@linutronix.de, kprateek.nayak@amd.com
+Subject: [PATCH V4 0/6] Scheduler time slice extension
+Date: Tue, 13 May 2025 21:45:48 +0000
+Message-ID: <20250513214554.4160454-1-prakash.sangappa@oracle.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250513215401.2315949-1-ctshao@google.com>
-X-Mailer: git-send-email 2.49.0.1045.g170613ef41-goog
-Message-ID: <20250513215401.2315949-4-ctshao@google.com>
-Subject: [PATCH v4 3/3] perf test: Add stat uniquifying test
-From: Chun-Tse Shao <ctshao@google.com>
-To: linux-kernel@vger.kernel.org
-Cc: Chun-Tse Shao <ctshao@google.com>, peterz@infradead.org, mingo@redhat.com, 
-	acme@kernel.org, namhyung@kernel.org, mark.rutland@arm.com, 
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org, irogers@google.com, 
-	adrian.hunter@intel.com, kan.liang@linux.intel.com, howardchu95@gmail.com, 
-	linux@treblig.org, yeoreum.yun@arm.com, ak@linux.intel.com, 
-	james.clark@linaro.org, weilin.wang@intel.com, 
-	linux-perf-users@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-13_03,2025-05-09_01,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 mlxscore=0 bulkscore=0
+ suspectscore=0 malwarescore=0 spamscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505070000
+ definitions=main-2505130206
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTEzMDIwNSBTYWx0ZWRfXzA6SGylAdFV5 No1zyeF+0b6/5i+f0e6h1MvIkQ+prh3rSbHFOGYv/klbyDFv1tNzyFBZhegkEoHW45hT5kZ391/ hHGzvqaBbpxvsAHPOzw7sO4TaaEBgenYHLb8S4vbwyxQiNELVvEVP3Z7YCjaqBpnroLpyIb1EQw
+ ArYUYAYjtovCnetz0uvTPqqlGWkSWJZHxgeNRUEXBcC0AmYhFanQjQODP2xr/d65n70o3pfIe0r 5GCoNmcCfl+H1TMsU3W62bJtgOeiFREypFxl4bgq9L0JeS3CZaF7UZTKxDkYkd6loOx1AD/LBdV mLWkv4Y+a91KoUh/GI0xopwDYOV8EmVvyCEAuV0KdU5ysfAJJiLS60lSMMaZVZe0M7RgxEhZ0qr
+ vHqULsW//0BN95qE1y9IAQ35tP28NgX5o9Gz4lJwVpTJdpIaK15kzElB4vuyT+UOtxH4wpjF
+X-Proofpoint-GUID: ZNJLTshkXCPIku9nekxBjnE1VfxnCxB_
+X-Authority-Analysis: v=2.4 cv=fvDcZE4f c=1 sm=1 tr=0 ts=6823bd96 b=1 cx=c_pps a=WeWmnZmh0fydH62SvGsd2A==:117 a=WeWmnZmh0fydH62SvGsd2A==:17 a=dt9VzEwgFbYA:10 a=VwQbUJbxAAAA:8 a=yPCof4ZbAAAA:8 a=YaUg6xj48qkMv4yems8A:9
+X-Proofpoint-ORIG-GUID: ZNJLTshkXCPIku9nekxBjnE1VfxnCxB_
 
-The `stat+uniquify.sh` test retrieves all uniquified `clockticks` events
-from `perf list -v clockticks` and check if `perf stat -e clockticks -A`
-contains all of them.
+A user thread can get preempted in the middle of executing a critical
+section in user space while holding locks, which can have undesirable affect
+on performance. Having a way for the thread to request additional execution
+time on cpu, so that it can complete the critical section will be useful in
+such scenario. The request can be made by setting a bit in mapped memory,
+such that the kernel can also access to check and grant extra execution time
+on the cpu. 
 
-Signed-off-by: Chun-Tse Shao <ctshao@google.com>
----
- .../tests/shell/stat+event_uniquifying.sh     | 69 +++++++++++++++++++
- 1 file changed, 69 insertions(+)
- create mode 100755 tools/perf/tests/shell/stat+event_uniquifying.sh
+There have been couple of proposals[1][2] for such a feature, which attempt
+to address the above scenario by granting one extra tick of execution time.
+In patch thread [1] posted by Steven Rostedt, there is ample discussion about
+need for this feature.
 
-diff --git a/tools/perf/tests/shell/stat+event_uniquifying.sh b/tools/perf/tests/shell/stat+event_uniquifying.sh
-new file mode 100755
-index 000000000000..5ec35c52b7d9
---- /dev/null
-+++ b/tools/perf/tests/shell/stat+event_uniquifying.sh
-@@ -0,0 +1,69 @@
-+#!/bin/bash
-+# perf stat events uniquifying
-+# SPDX-License-Identifier: GPL-2.0
-+
-+set -e
-+
-+stat_output=$(mktemp /tmp/__perf_test.stat_output.XXXXX)
-+perf_tool=perf
-+err=0
-+
-+test_event_uniquifying() {
-+  # We use `clockticks` to verify the uniquify behavior.
-+  event="clockticks"
-+
-+  # If the `-A` option is added, the event should be uniquified.
-+  #
-+  # $perf list -v clockticks
-+  #
-+  # List of pre-defined events (to be used in -e or -M):
-+  #
-+  #   uncore_imc_0/clockticks/                           [Kernel PMU event]
-+  #   uncore_imc_1/clockticks/                           [Kernel PMU event]
-+  #   uncore_imc_2/clockticks/                           [Kernel PMU event]
-+  #   uncore_imc_3/clockticks/                           [Kernel PMU event]
-+  #   uncore_imc_4/clockticks/                           [Kernel PMU event]
-+  #   uncore_imc_5/clockticks/                           [Kernel PMU event]
-+  #
-+  #   ...
-+  #
-+  # $perf stat -e clockticks -A -- true
-+  #
-+  #  Performance counter stats for 'system wide':
-+  #
-+  # CPU0            3,773,018      uncore_imc_0/clockticks/
-+  # CPU0            3,609,025      uncore_imc_1/clockticks/
-+  # CPU0                    0      uncore_imc_2/clockticks/
-+  # CPU0            3,230,009      uncore_imc_3/clockticks/
-+  # CPU0            3,049,897      uncore_imc_4/clockticks/
-+  # CPU0                    0      uncore_imc_5/clockticks/
-+  #
-+  #        0.002029828 seconds time elapsed
-+
-+  echo "stat event uniquifying test"
-+  uniquified_event_array=()
-+
-+  # Check how many uniquified events.
-+  while IFS= read -r line; do
-+    uniquified_event=$(echo "$line" | awk '{print $1}')
-+    uniquified_event_array+=("${uniquified_event}")
-+  done < <(${perf_tool} list -v ${event} | grep "\[Kernel PMU event\]")
-+
-+  perf_command="${perf_tool} stat -e $event -A -o ${stat_output} -- true"
-+  $perf_command
-+
-+  # Check the output contains all uniquified events.
-+  for uniquified_event in "${uniquified_event_array[@]}"; do
-+    if ! cat "${stat_output}" | grep -q "${uniquified_event}"; then
-+      echo "Event is not uniquified [Failed]"
-+      echo "${perf_command}"
-+      cat "${stat_output}"
-+      err=1
-+      break
-+    fi
-+  done
-+}
-+
-+test_event_uniquifying
-+rm -f "${stat_output}"
-+exit $err
+However, the concern has been that this can lead to abuse. One extra tick can
+be a long time(about a millisec or more). Peter Zijlstra in response posted a 
+prototype solution[5], which grants 50us execution time extension only.
+This is achieved with the help of a timer started on that cpu at the time of
+granting extra execution time. When the timer fires the thread will be
+preempted, if still running. 
+
+This patchset implements above solution as suggested, with use of restartable
+sequences(rseq) structure for API. Refer [3][4] for further discussions.
+
+v1: 
+https://lore.kernel.org/all/20250215005414.224409-1-prakash.sangappa@oracle.com/
+
+v2:
+https://lore.kernel.org/all/20250418193410.2010058-1-prakash.sangappa@oracle.com/
+- Based on discussions in [3], expecting user application to call sched_yield()
+  to yield the cpu at the end of the critical section may not be advisable as
+  pointed out by Linus.  
+
+  So added a check in return path from a system call to reschedule if time
+  slice extension was granted to the thread. The check could as well be in
+  syscall enter path from user mode.
+  This would allow application thread to call any system call to yield the cpu. 
+  Which system call should be suggested? getppid(2) works.
+
+  Do we still need the change in sched_yield() to reschedule when the thread
+  has current->rseq_sched_delay set?
+
+- Added patch to introduce a sysctl tunable parameter to specify duration of
+  the time slice extension in micro seconds(us), called 'sched_preempt_delay_us'.
+  Can take a value in the range 0 to 100. Default is set to 50us.
+  Setting this tunable to 0 disables the scheduler time slice extension feature.
+
+v3:
+https://lore.kernel.org/all/20250502015955.3146733-1-prakash.sangappa@oracle.com
+- Addressing review comments by Sebastian and Prateek.
+  * Rename rseq_sched_delay -> sched_time_delay. Move its place in
+    struct task_struct near other bits so it fits in existing word.
+  * Use IS_ENABLED(CONFIG_RSEQ) instead of #ifdef to access
+    'sched_time_delay'.
+  * removed rseq_delay_resched_tick() call from hrtick_clear().
+  * Introduced a patch to add a tracepoint in exit_to_user_mode_loop(),
+    suggested by Sebastian.
+  * Added comments to describe RSEQ_CS_FLAG_DELAY_RESCHED flag.
+
+v4:
+- Changed default sched delay extension time to 30us
+- Added patch to indicate to userspace if the thread got preempted in
+  the extended cpu time granted. Uses another bit in rseq cs flags for it.
+  This should help the application to check and avoid having to call a
+  system call to yield cpu, especially sched_yield() as pointed out
+  by Steven Rostedt.
+- Moved tracepoint call towards end of exit_to_user_mode_loop().
+- Added a pr_warn() message when the 'sched_preempt_delay_us' tunable is
+  set higher then the default value of 30us.
+- Patch to add an API to query if sched time extension feature is supported. 
+  A new flag to sys_rseq flags argument called 'RSEQ_FLAG_QUERY_CS_FLAGS',
+  is added, as suggested by Mathieu Desnoyers. 
+  Returns bitmask of all the supported rseq cs flags, in rseq->flags field.
+
+Prakash Sangappa (6):
+  Sched: Scheduler time slice extension
+  Sched: Indicate if thread got rescheduled
+  Sched: Tunable to specify duration of time slice extension
+  Sched: Add scheduler stat for cpu time slice extension
+  Sched: Add tracepoint for sched time slice extension
+  Add API to query supported rseq cs flags
+
+ include/linux/entry-common.h | 11 ++--
+ include/linux/sched.h        | 23 +++++++++
+ include/trace/events/sched.h | 28 +++++++++++
+ include/uapi/linux/rseq.h    | 19 +++++++
+ kernel/entry/common.c        | 27 ++++++++--
+ kernel/rseq.c                | 97 ++++++++++++++++++++++++++++++++++++
+ kernel/sched/core.c          | 50 +++++++++++++++++++
+ kernel/sched/debug.c         |  1 +
+ kernel/sched/syscalls.c      |  5 ++
+ 9 files changed, 253 insertions(+), 8 deletions(-)
+
 -- 
-2.49.0.1045.g170613ef41-goog
+2.43.5
 
 
