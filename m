@@ -1,93 +1,117 @@
-Return-Path: <linux-kernel+bounces-645103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-645107-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 655D0AB4906
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 04:00:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C014AB4911
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 04:01:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EFAD319E4C0B
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 02:00:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0178B3A73FB
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 02:01:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF36B19CC2E;
-	Tue, 13 May 2025 01:59:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF4ABDF42;
+	Tue, 13 May 2025 02:01:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jxrP//VN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="WojAEkx9"
+Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14AB7199FA4;
-	Tue, 13 May 2025 01:59:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 994762A1CA
+	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 02:01:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747101593; cv=none; b=sUNsJq80ecpnMyvKDceZmcn4f8tsPu7n5vQxbwYh0jglP/0qdYjPWoPJGdNe2Q2fvGDmD0r1xbgn9cTI5i1/SiOigZo1jaYl6C398oU9gtvyXby7A6p79IbV5CH7178eI3eC/izgM/XmyYqdiHYfv+a5oWeMUMveqFyvE1aaPQ0=
+	t=1747101670; cv=none; b=AdGqWXt4HI5w+IhFGInOYBqPN+Ix/vglp8hLUrZetiSapbbHLMGmmIAjIngy6dt5s1rEwDpc5K88JwRFszkc5+RA6RJ2jy/GTlC5YKhIUfqcCjmVZ9iU2dJ9/7Uuphvq/GhytGCQUIhJmIJ5d3seIlAXrstMDrXSYDSwExxHsYQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747101593; c=relaxed/simple;
-	bh=IKLpfsU3SJDDrR5HzQvIF9znc20nnNryMt0h6KUIJPs=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=gM4QFjSupnmPZJJKd2iQku9Cxpulxab6UwGA538Tjvz1BQ0YZkB2O+U2X3oDmkcNjkuOuVd0PLLXoRkf/llM1PWOm9UT8gWM9IkjlV8+MXLuvyyXZPH4AdxH0mm+CXJkp+2RUnhjFBfk5pQEgP4Vnhvrc9XsULGhWWmaZZqI1AQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jxrP//VN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80F22C4CEEE;
-	Tue, 13 May 2025 01:59:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747101592;
-	bh=IKLpfsU3SJDDrR5HzQvIF9znc20nnNryMt0h6KUIJPs=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=jxrP//VNpHmJrmH0XMTU3V7CXEqoAGhga/FaxxvdsFba2FP/C2NM3qg/JL6L+vaeE
-	 ddvm8c/GC0YMOdsECV4cuqYDpF8+fcTw1YZKFPotZq9uo8Nif7qAPo4stH+MyPQEeL
-	 xWWE94dsFKg6oYWi2YP74EedvPseSBT5Z5NTbBVvw105xtM6c+vUyyKuBesH4bo3qY
-	 xAfY0bDX4+mk+hd1PUJywuB1VoyFMjd7Dxw151sf7SDiwfMtQEd9FrT/j7EU1rVD6I
-	 XR9MQ2UYgJ6zlu9sOCsc9fQ4EmMD6GLhWVCDh8y1qtu7ESdlUvIH4YWSr/N7P1rX2e
-	 u8DZWcnZBW27Q==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70C5239D60BB;
-	Tue, 13 May 2025 02:00:31 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1747101670; c=relaxed/simple;
+	bh=kxh/Lh7RFMTaonXAnN83PEO9EicnxQWHTtdB/wWUb9E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jJAyLd1Tg0eNqucCFYY34IowG0KRlK4GlFFgv9z+GYF9zpavcaLjz2ZPh1O5dqGSL+IJnRsweI0vvu+t5KVLAG23fwZzy1zHIvQshfzSaWjCNhNdIH7r2JZ7YbbkvJO7XzCEeVQyUT4iJciL51NxFdKUCBNAi+9LyNOmOeDRxgc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=WojAEkx9; arc=none smtp.client-ip=209.85.128.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-7091d7244e8so48172677b3.3
+        for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 19:01:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1747101666; x=1747706466; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Y+4gLT198DkD9ofBl+7O5/TGDFIHm+IzIu5evM3sI1Q=;
+        b=WojAEkx9xwuOo8JWzvImsXzNnEThwAjtqNyh7WIJqY8OJMtXtiMZfALfN9raDvu+Dq
+         wwDi94HeJjALFv/es5aPGbDgjOz/BLycd7ilVMdosWshdA+63RRRKkdtopvUosohvmPD
+         tuWun42cVLXwBJdqd3h1yjcOdUyGWO/CoGao0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747101666; x=1747706466;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Y+4gLT198DkD9ofBl+7O5/TGDFIHm+IzIu5evM3sI1Q=;
+        b=T7BvdxvyOzMu//kUEdppUM5yG7EJ5IEoleMEM5uvmPkOrqXHilGkzB1skb9IryAHY9
+         m2hcvzai+Wz4Zs2pkq55TNsgKYCjwdkGVSpRsATPekHNrJB2mrxqhIXoo4zDggmgPqJ6
+         gMZIDAlgC8K6c6qVCqZCUFlwzVcXvyYkFHFdKrV81NO78npQowyJ01Fruws4sN9DDzmy
+         W+RWz3Fq1Yzd1+bqr68uiSJlBxE26R9/cSjphGFDjz/eecAfg4JSHI59Rd/PffafnzYk
+         Dv9RQ4jbPfIzvRhXVyTrivQqGRUySV2LSNI4xfSuGhR0xL3fBsz7cjSYi9p9axZ1Ke0c
+         tHSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWsjhvm6lc/6V9K1j5OtrFOyXTKaD1neehbQf+i8bg/gvjxbKFUpvZ65EQKOORDM5+vNBxkMGN7nUaWs34=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWYtd1JgwJs0sCwOOGKRb5HSPoTu2o0AgY2M7FgxWfN1xvzqyy
+	HC5R8S88yYNcC98QQPIm1JIf+JUl2p6eLgXH2R8gtznTsfq/NUUfnnL5PQzkduw6R5LSUO0JJtZ
+	H3ft6HCbRfvK7MgnaCHuRqLpATPW6q4Los27hRw==
+X-Gm-Gg: ASbGncu5vfVQJ5fD1umQw80OoftRiTXFAY4BJofLfTGnDZjXAFh5v1buPuess8rqCfF
+	GiPbL2FZPUcBkjGc1QC7UzoyOGgNYuatoXXLPdpDPw7BIzpv48qptcgR+DRFDGkTJrVOTSutcwU
+	C9an0BveS4iSGklkFoUD2/JMQqaha+AVnIIxtfbR7s8jfhlKizxJ+wtwfyXKSZVTF6Yg==
+X-Google-Smtp-Source: AGHT+IEJ325sRwqRS5Q5LcGq4DyDzJGOmAH1jfA1gnDPIfb3WA3FvnEHCnVbCcXsIzlvhWvDXUQ3+b4y3Zp1FOsJ6zo=
+X-Received: by 2002:a05:690c:4b89:b0:708:1852:9897 with SMTP id
+ 00721157ae682-70a3fa24d48mr227093717b3.11.1747101666437; Mon, 12 May 2025
+ 19:01:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net] net: dsa: sja1105: discard incoming frames in
- BR_STATE_LISTENING
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <174710162999.1142511.7206720882789706953.git-patchwork-notify@kernel.org>
-Date: Tue, 13 May 2025 02:00:29 +0000
-References: <20250509113816.2221992-1-vladimir.oltean@nxp.com>
-In-Reply-To: <20250509113816.2221992-1-vladimir.oltean@nxp.com>
-To: Vladimir Oltean <vladimir.oltean@nxp.com>
-Cc: netdev@vger.kernel.org, andrew@lunn.ch, f.fainelli@gmail.com,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- horms@kernel.org, linux-kernel@vger.kernel.org
+References: <alpine.DEB.2.21.2505050944230.31828@angie.orcam.me.uk>
+ <98C88CE8-C3D5-4B75-8545-71DD47C67614@zytor.com> <alpine.DEB.2.21.2505051356340.31828@angie.orcam.me.uk>
+ <1E50C160-EB89-4C5C-B9F0-6441026EE380@zytor.com> <20250505205405.GNaBklbdKLbadRATbr@fat_crate.local>
+ <alpine.DEB.2.21.2505060059010.31828@angie.orcam.me.uk> <20250506141631.GEaBoZvzPCWh88xDzu@fat_crate.local>
+ <alpine.DEB.2.21.2505062228200.21337@angie.orcam.me.uk> <8C172B63-38E1-427B-8511-25ECE5B9E780@alien8.de>
+ <alpine.DEB.2.21.2505121225000.46553@angie.orcam.me.uk> <20250512134853.GGaCH8RUjJwgHq25qx@fat_crate.local>
+ <alpine.DEB.2.21.2505121810040.46553@angie.orcam.me.uk>
+In-Reply-To: <alpine.DEB.2.21.2505121810040.46553@angie.orcam.me.uk>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 12 May 2025 19:00:55 -0700
+X-Gm-Features: AX0GCFthmPe51gp6uIEQVpRBZyDyaNhzTarJmkzn08Ssddaktccz165yk0a4ltQ
+Message-ID: <CAADWXX8+-=pcOUeu_cwX_vkkkGp6jn0GQLUhZX8MxGGRjKz=Lg@mail.gmail.com>
+Subject: Re: [RFC PATCH 0/15] x86: Remove support for TSC-less and CX8-less CPUs
+To: "Maciej W. Rozycki" <macro@orcam.me.uk>, 
+	Konstantin Ryabitsev <konstantin@linuxfoundation.org>
+Cc: Borislav Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@kernel.org>, 
+	linux-kernel@vger.kernel.org, "Ahmed S . Darwish" <darwi@linutronix.de>, 
+	Andrew Cooper <andrew.cooper3@citrix.com>, Ard Biesheuvel <ardb@kernel.org>, 
+	Arnd Bergmann <arnd@kernel.org>, Dave Hansen <dave.hansen@linux.intel.com>, 
+	John Ogness <john.ogness@linutronix.de>, Peter Zijlstra <peterz@infradead.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, 
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello:
+On Mon, May 12, 2025 at 10:29=E2=80=AFAM Maciej W. Rozycki <macro@orcam.me.=
+uk> wrote:
+>
+>  Thank you.  It seems it'll be tough for me though to fulfil the GPG key
+> trustability requirement.  While I've used PGP/GPG since 1995, I haven't
+> been active collecting signatures with my more recent keys/IDs and neithe=
+r
+> I have appeared in public among Linux kernel developers often enough for
+> me to be identified by face over a video call.  Oh well...
 
-This patch was applied to netdev/net.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+I don't think this has been insurmountable before, particularly for
+anybody who has been around for as long as you have.  Even your
+current email goes back to at least the beginnings of git.
 
-On Fri,  9 May 2025 14:38:16 +0300 you wrote:
-> It has been reported that when under a bridge with stp_state=1, the logs
-> get spammed with this message:
-> 
-> [  251.734607] fsl_dpaa2_eth dpni.5 eth0: Couldn't decode source port
-> 
-> Further debugging shows the following info associated with packets:
-> source_port=-1, switch_id=-1, vid=-1, vbid=1
-> 
-> [...]
+If "two decades+ of active kernel development involvement using the
+same email address" doesn't make you eligible for a kernel.org
+account, we're doing something wrong.
 
-Here is the summary with links:
-  - [net] net: dsa: sja1105: discard incoming frames in BR_STATE_LISTENING
-    https://git.kernel.org/netdev/net/c/498625a8ab2c
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+                Linus
 
