@@ -1,116 +1,122 @@
-Return-Path: <linux-kernel+bounces-646729-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-646725-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE272AB5FCD
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 01:10:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 29327AB5FBD
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 01:02:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7A54862E1A
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 23:09:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 673AC3B9334
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 23:02:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A561E20D4FF;
-	Tue, 13 May 2025 23:10:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D7D51E51FF;
+	Tue, 13 May 2025 23:02:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="PqoQm5V2"
-Received: from out162-62-57-87.mail.qq.com (out162-62-57-87.mail.qq.com [162.62.57.87])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Rlma7ZWj"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 531371EFFBE;
-	Tue, 13 May 2025 23:09:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A75113A3F2
+	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 23:02:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747177801; cv=none; b=uZF+5qgdXnByUd9expAp9rg2tDvnwjixoBU7AilNoPKWUmqttWq8A09q7IYC7S9sPAfX2rVs+ScZA+UnJRrn+CKXFp6FE5/MGxS9e9z/H6tff3Y/KtrWzdY7zNbPQgw4x29bmQkjecXVaAOnyALyR4r72FDT4o8Xb7N6d2cAD+8=
+	t=1747177350; cv=none; b=AocfaIaI6YNMpqMgRDtoXE/U46JH2Y2ZdsFDRaBSXp/28dJQ45M26l1cmThDXLyUXLej44VOSNNuvoTpLeRL51VtURjLqQT4+kKVrHCPt2NmGF7OHef6Yy/bSggxqwdYQ+MG4ApcWrFfd3jf3DxeRmBqZtKVPfdBSF1kttbl+J4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747177801; c=relaxed/simple;
-	bh=S6IFkDK9wWbIT48K5AkF79faJvzVr+hp/oQJgln5FrY=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=BzPOKaa1OwFHi89HV8qv8wj+9uuVORuGBmVDi1ZhzOO424vhsRml4seUFzqYP5TrN827hEpsStp5Leutb5zNfXuyciKtQrbl2gmrmQ4bdWZmLoLnDq0OLQsO065dq1S3XzSRpGbKqXbH8tcstGDQX4SLtRg1SA0OJy3ClSQIhps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=PqoQm5V2; arc=none smtp.client-ip=162.62.57.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1747177788; bh=Ozf43I1JSIyHBWszg7fIjcbmty5EorEQyDyL2fU2o7Y=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=PqoQm5V2Lt7RyIBiAAbATkjq7xEszKn6ULUt0vRkryXyy/H8nxzMmMmOrRdeZAeyK
-	 +N5sgkd+pxRqMLmwVLgC97yz4szq8ov8sL9WxCzGDApCW4KXGR+4GbWSJIExfBKEX4
-	 OIWUhIsGVu84a61/4btaGL9xJskUsRUTJZm34/Ls=
-Received: from pek-lxu-l1.corp.ad.wrs.com ([111.198.228.63])
-	by newxmesmtplogicsvrszb16-1.qq.com (NewEsmtp) with SMTP
-	id 490E644; Wed, 14 May 2025 07:01:09 +0800
-X-QQ-mid: xmsmtpt1747177269tz2o0pgv3
-Message-ID: <tencent_251BD325BCBA5EBB0533CD9EC71B1A4B9208@qq.com>
-X-QQ-XMAILINFO: NHTNowOA4hJdOFjT5vYTmoFmA7ieEAZqhEBd5XV3pVwUcL5e8gRRGrcEjvMNAH
-	 6d6NXurnO22Wz1mmEMIGRojiD2QRQCyzjf7hbet4X+rakPeOlrRmva3yJbIVJom7mW/OfBWG6y/V
-	 R/tpGIuUOvMvgNrGnIXMzl/FTo6hyiaHF4Ns44Y52rt4E1m3/7qYsoux4wThJ2gmdtPGFbts53ke
-	 RKNZXT2DUBb3/dqyT/5z8aja+esxhLpVkQIS7+7YxG0mYgjgzyesuFvjcHvbPKWv5teiHzItgmUc
-	 SP9xBF0WQ0YAo1CKY4IqPJhypnTRG/oKbi5ZG+k3zMETVT7LcgIWHNSRPbv+8JO+ziBKzZD6UZO9
-	 hU8vaP+3+O3Uhb7acRPoedADnmNKknUMnt7hgLbuzv0haKJhEmdzMwxJya86qPR08J2c+Ix+Kjy4
-	 /SCKMiaWSXH+hh523XSKS6PBWSzfeqpCE+frv+igVhTBJQMPnLjYtb25DEB3bOZum11KbysmuTc5
-	 s8iB1lRiKMeqpNVS1LUJwkwvSW4F927BQ5YVKFEz+NSBNWxqcpouiVR1NFrvLx+rPBlvTKW59OWE
-	 zIbOwArydaiGShkSOUUQIaKScC5PDIqWW1FM9Y0d75afg1dZLQalFSzLRHSpMjLHN+hjIqlOL1ho
-	 GZEzSjSNn1A/jhwaVl8Mf/Qwmr4e0tBG9OX8NPuoAVjEBxE029RRl2NU8LKVR6H11QgmWbKMzmS5
-	 4wm2y7OkyB9YrnWtl1iqCj8pgLi0kZJ4dI7mow8h4gtUMwSuIjtzRLxWveVFV5vmVWtMlRT8llt3
-	 W9tDjsx3BM+1F+Z5TKbN91SGWWisy5nlHsDh76OpJo75KP1SCyrgLcvgALBVXsH+Av7VaEkTJUI2
-	 pwwqhzouXqqoVkEsP2wKzErsN8OGgr8xtjpUaTdSVfVW/ZL3buEaHEmZgBi/w+rvCf++SfZHQ9N3
-	 ttbl3wQmcEefMaZWV9nEd+bJNHqNgC8bPows/JFxmXf/i71q3HWCBz7Z23P+rs
-X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+0dcc341ee61fc9e4032f@syzkaller.appspotmail.com
-Cc: anna-maria@linutronix.de,
-	frederic@kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com,
-	tglx@linutronix.de
-Subject: [PATCH] media: cxusb: Initialize medion after checking intf
-Date: Wed, 14 May 2025 07:01:09 +0800
-X-OQ-MSGID: <20250513230108.2456593-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <681688da.050a0220.11da1b.001c.GAE@google.com>
-References: <681688da.050a0220.11da1b.001c.GAE@google.com>
+	s=arc-20240116; t=1747177350; c=relaxed/simple;
+	bh=HS7KCuy2/DnDAg76S1NIlhpz08WXNQ2yVcHahXfjjFs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=L06BGe1v2PSkIwv3gNUklSWpDyotaJn0UVcFEjpxQCRFZj85QsKmkELnLp2vytZ1Z0fmTpAvDd6xKxKEVA0ZH799hDlFKtDMVDszwkMd+/hNIxtDCR2wLswUJ18CXnmlPqdi7l83gN4SWz4eyHEnel41+A4lJQKXOhzcmXObxh4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Rlma7ZWj; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-22fa414c478so35168635ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 16:02:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1747177348; x=1747782148; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=wnr8wsbyPnSV+cgyVcx0RwvMFrEee6Q7UKMt4FP/PNg=;
+        b=Rlma7ZWjP0zpz/Pg6SKPA59kiy+YqJIfM9qReKfCrYhpch9SrZ3Hqn1GMMyiUTwUtW
+         7VnC+wDpGQ2cjGrEPrlPHc5mBPdvLCQLXJ4y6QErrqeXrvUX2aVi+f7bs8ULANUpONrz
+         qwJ2l5VEkUwMMMul9ln7dmsXuHGFQ8vFMiMJM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747177348; x=1747782148;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wnr8wsbyPnSV+cgyVcx0RwvMFrEee6Q7UKMt4FP/PNg=;
+        b=P6/tQzdNMBTwrORmskgcluN8H6WABYIsEtVJq8I8+OmRqHuGHUS7VfRwqvbXIal8AY
+         deYJhvmEdgz885nVqwgoBgTFcEaxjuhUZOrByT7By2XtFmCSDom9J3vdENZwwtujSHve
+         WjUaYD/+M6IeuzwBLfR+Oj9abdR4HSd77NDZoBiFS4f/E+DBvLsWNjBTkQVvELR4t7lu
+         OqjiocOIF2eCenxA0pxUPWGe3yyu9Zbflfuwn3X8Omu9Ymm1w0+HyZIy+HdmW6XJ5PhF
+         8F8lWWCL/KAq1R4b7RJwLVwfN6+J2eZlj9ltRQgZ57LlN42QulXIbaE0psXF5IBAFZBM
+         6UnA==
+X-Forwarded-Encrypted: i=1; AJvYcCXojlR2VZ9HDVSt/metaFby6cYeqMeLCoQPQk+eARmnkG15+KNEC3H/swSYdV1PiRHbnG6HWkm8amCR/18=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwgYVuU+FLhESiRlvcIJ1CFYC2WAk2HXr+bcgY8OfTfqmkwHWT2
+	AcNfhizpPiGKGml+OATCipjYQ0zNLk0fhuHE+DW1f6wkng0brhN9kvfugSQSwQ==
+X-Gm-Gg: ASbGnctO6XfEprWoFr1EZHtRU1D9jh5yFt0nuqczQViKMSs9/Dke5iUByuxVNDRiEQi
+	LMjmz+fKf1/5DVUexXMZiQwJPMbNXpGKDXmvlLzTAwCdUI0R8syCthNZOdXEtnBHboq1tGAgZQ7
+	pIZySDpU9KPf3yKa+qfaR4mQg1pd6WfrQv4HuGR845FC1z1HW7tyl9X0CXXxVSmnw0nY0Y71Iq/
+	GJDNxX7UFpYjYEdS//IqxIQJbe7+7byVdiff2X7jX0kg5upG0I/jRj5pIGxz3maDeuCG/3yaWIJ
+	9LWTkRHdvplV46eaVVeP+2zxoTsbddfZIUHVT5U4xgp/RM6P42iwg6312xHNcV0lP1F3rONIORs
+	GiLlYx5LBUC411A==
+X-Google-Smtp-Source: AGHT+IEMEOp04bLsMsppNMCgUTlcEAMu+sUV4QOyJ8uMBJY3bmV1urZIU6x5yerSpa/zqeR/DvrwzQ==
+X-Received: by 2002:a17:903:1207:b0:224:b60:3cd3 with SMTP id d9443c01a7336-2319813ec9cmr17250985ad.19.1747177348251;
+        Tue, 13 May 2025 16:02:28 -0700 (PDT)
+Received: from localhost ([2a00:79e0:2e14:7:b0a6:1dea:5306:7727])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-22fc8271f77sm86309865ad.126.2025.05.13.16.02.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 13 May 2025 16:02:27 -0700 (PDT)
+Date: Tue, 13 May 2025 16:02:26 -0700
+From: Brian Norris <briannorris@chromium.org>
+To: Douglas Anderson <dianders@chromium.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, chintanpandya@google.com,
+	Marc Zyngier <maz@kernel.org>,
+	Maulik Shah <quic_mkshah@quicinc.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] genirq/PM: Fix IRQCHIP_ENABLE_WAKEUP_ON_SUSPEND if depth
+ > 1
+Message-ID: <aCPPgiamOQSSHH-m@google.com>
+References: <20250512173250.1.If5c00cf9f08732f4af5f104ae59b8785c7f69536@changeid>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250512173250.1.If5c00cf9f08732f4af5f104ae59b8785c7f69536@changeid>
 
-dvb_usb_device_exit() is entered because the number of alternate setting
-is less than 2. Check the USB interface in advance to avoid unnecessary
-dvb device initialization and exit.
+On Mon, May 12, 2025 at 05:32:52PM -0700, Doug Anderson wrote:
+> --- a/kernel/irq/chip.c
+> +++ b/kernel/irq/chip.c
+> @@ -272,7 +272,7 @@ int irq_startup(struct irq_desc *desc, bool resend, bool force)
+>  	const struct cpumask *aff = irq_data_get_affinity_mask(d);
+>  	int ret = 0;
+>  
+> -	desc->depth = 0;
+> +	desc->depth--;
 
-Reported-by: syzbot+0dcc341ee61fc9e4032f@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=0dcc341ee61fc9e4032f
-Tested-by: syzbot+0dcc341ee61fc9e4032f@syzkaller.appspotmail.com
-Signed-off-by: Edward Adam Davis <eadavis@qq.com>
----
- drivers/media/usb/dvb-usb/cxusb.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+I'm certainly no expert here, but I'm treading on the same code and ran
+into a problem with this line too. It seems wise to make this a
+decrement, and not an unconditional 0. But I'm not sure that we should
+then proceed to unmask an interrupt that might have depth==1 in the
+general case. I think we should defer the unmask until we actually reach
+0.
 
-diff --git a/drivers/media/usb/dvb-usb/cxusb.c b/drivers/media/usb/dvb-usb/cxusb.c
-index f44529b40989..df86ae7106c1 100644
---- a/drivers/media/usb/dvb-usb/cxusb.c
-+++ b/drivers/media/usb/dvb-usb/cxusb.c
-@@ -1601,13 +1601,9 @@ static int cxusb_probe(struct usb_interface *intf,
- 	int ret;
- 
- 	/* Medion 95700 */
--	if (!dvb_usb_device_init(intf, &cxusb_medion_properties,
-+	if (cxusb_medion_check_intf(intf) &&
-+	    !dvb_usb_device_init(intf, &cxusb_medion_properties,
- 				 THIS_MODULE, &dvbdev, adapter_nr)) {
--		if (!cxusb_medion_check_intf(intf)) {
--			ret = -ENODEV;
--			goto ret_uninit;
--		}
--
- 		_cxusb_power_ctrl(dvbdev, 1);
- 		ret = cxusb_medion_set_mode(dvbdev, false);
- 		if (ret)
--- 
-2.43.0
+In fact, that's one aspect of the very problem I'm dealing with here:
 
+Subject: [PATCH 0/2] genirq: Retain disable-depth across irq_{shutdown,startup}()
+https://lore.kernel.org/all/20250513224402.864767-1-briannorris@chromium.org/
+
+It seems to me (again, not an expert) that maybe you need to solve your
+problems by dodging the disable-depth entirely. But I'm not sure the
+best way to do that.
+
+>  
+>  	if (irqd_is_started(d)) {
+>  		irq_enable(desc);
+
+Brian
 
