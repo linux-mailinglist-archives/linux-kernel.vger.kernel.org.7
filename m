@@ -1,125 +1,86 @@
-Return-Path: <linux-kernel+bounces-646015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-646017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A969DAB56A8
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 16:01:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EBB6AB56AE
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 16:02:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38D543A4840
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 14:01:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C49718975F4
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 14:02:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5355228C84A;
-	Tue, 13 May 2025 14:01:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 996EF298CDC;
+	Tue, 13 May 2025 14:01:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I2ubNbqy"
-Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qbvjHWnC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 592721D47B4;
-	Tue, 13 May 2025 14:01:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E80981531E1;
+	Tue, 13 May 2025 14:01:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747144882; cv=none; b=J2jyRrk9WI6kqpRAwbqrlbFHrn0ZGqnLiZSdNX92vPN3WTsC+duvIYSCdMWrLczEnhSCFtsDfHIOBzNCy1vJ98U14IMPTO4GNeKQj3uXLjmzcqMO6PArfvTIKudsqSM2a8Ior+tRlQVwOE4j9LTZQvsD7vWWGiSZppJ1T0fhV0s=
+	t=1747144911; cv=none; b=b1hw3YFKjOXeyyjwwbfxs8/wWQAvni4c8gtf9aCfpFZqCyEbpH04K2AYAjInt2DVzUtyDg4T9SkMA0miGP4Y5uWe6De6dheJr9zVO4xwQTesyf1fw2XYG9GLKP/ika+J62nfc9ALcpZfoifaJOfNcJNi8Of3RK7ifLCXLe+Wd1E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747144882; c=relaxed/simple;
-	bh=jUGK0MnhCfAAXhuEwPjCMG6LHrz012CuJWOJ/DmpeVQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=QP/yzvipFA8/UcZkh9Yb3CThR26oTG0nfz5D5UTEG1IdBnpm9xKxc3kVA5CcSLdpuRM01JSHNcOz+BxKO6tZ6faAf7mVkDo5v0iCWQHbSgdmJBiFI0SHbFcDYHLNTKK1hKAX8QTZTOJZLs14YOwgpZes2MUwHUl6/Ec/dYmapRM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I2ubNbqy; arc=none smtp.client-ip=209.85.128.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-70a23f4fe8bso52183767b3.2;
-        Tue, 13 May 2025 07:01:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747144880; x=1747749680; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=myBVHObkWyQY3+5UnR6s4iPAJCP05aofkHzUTmt6WZw=;
-        b=I2ubNbqyEShEa4+dW0/e2xidIbRMNDpFlWycCNLYBKhwrSz3pCBMm+4GAF1fSlkAn6
-         ulaJ3F6SMPYGE1HoBaeOvWkyQJh6Z1xuPmbgnFQJw22+2kS4SDXu5wbuY6Quo4epKM60
-         CaPeeRYjg12vwnlHu1U/C2QA30EAmF0bLDlnHRKaDSUbE48TTT1gPevniRClaB4boQZV
-         8z9YOm1H4AJ4fCEmKKoCEt1vHIuZ3T5/i6awWK23R45i1FWdZx3B4AGT7O4rKytVKGpM
-         jtfZMWC4ba3HhB8DelVaGWk3yE5fVJQBRGNTJtVCyUPHAQx8H5r01+GQtcbVCRXd94k6
-         tm5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747144880; x=1747749680;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=myBVHObkWyQY3+5UnR6s4iPAJCP05aofkHzUTmt6WZw=;
-        b=OglZTuNyZuLxLjvpLyLM/WIJfG9wKtNjsQzSHXsZ8FtSiHoGjZGzFrLxPM69o+CU5O
-         nsMxcJwpBOLHHuazrvtVkjwKfwpNn1DFAFtKPlqDXTrgvxOld0fc6P3xvoG11soUZGHm
-         oNcn8CwxqMgZnEhtVxybxj2N4OSLvUphy1SxA0xTko63QKGRA8qA0kTeNOI3OlSN7rC2
-         oSxMCV0olId0OdLwX/+lzCSwmMeP11CE3yhpVw8MVO+l/b1iuKGTnAhV8W30TUbhrVNS
-         87Urqlo0e/zWor29Wo6FeKF5ifeIcEFc1ujlYCqf0q7QkH1DaKrOtu+zrq2lGkHBpMQI
-         JS9A==
-X-Forwarded-Encrypted: i=1; AJvYcCUgPpnLwEZpDaSc+Q/bwu84uGgrRE3x6EIiEa/Iv/QMgTNh/B1HXrhH6bFO8+IrrfJ+3fTO6/y4653E@vger.kernel.org, AJvYcCVfQBM5z+hrTZt93XtSZrPBZCCfxL5dnl6wXR9WLo4OVrtPKjQmVHsiAy97noAVx/moRWXmV9i7rmXe8M1W@vger.kernel.org
-X-Gm-Message-State: AOJu0YxayhPY22BoZ0HKarWQRlgb7/WE6czr7hDykMsy5FM81NMep427
-	rwJ2n9nmYXevof9YTfRHwZq+uQizjNywXnzDkxzLOUxrQtJgbVkd
-X-Gm-Gg: ASbGncuBwE79TuVovhf/VntrtgTulO2PxUiGcJMNQJRaInstDZOcntY1I6kpqzne2r+
-	BoIIYbA0U4oXt/2+6ixf+LgU0yXn5yXPRafJkvfEOl5pcGHSjhvmn4RjO3Tx1Djaz/XAW5N4V4c
-	qFO52iXUuCL145oRHYSwemGtfMiz43IQQoTsmPU2Pb0S4TZvlS0W0oBx0aReOxFHEVMUQxXvxZS
-	/tCZg1gve4g5CNpsVGmyGM8hYWyCnV5l5MFpFv8lQKi6dFMnRFtenuAQKD3gykZJAFSaTlS4vHv
-	2DfSVrArqjAWZWW0tCCVsvqs11lpn41+GWKumEQcnmAiOw+p46o=
-X-Google-Smtp-Source: AGHT+IFiZKthq2Ml6dSOkF0GGY8tdqtCnFKdhFM8W3K+YKPqOfB/ANdvWqEZJk5f0YHttBzxu1gXNA==
-X-Received: by 2002:a05:690c:640d:b0:705:750d:c359 with SMTP id 00721157ae682-70a3fb36f8amr245436137b3.32.1747144879834;
-        Tue, 13 May 2025 07:01:19 -0700 (PDT)
-Received: from localhost ([2a03:2880:25ff:73::])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-70a3d9cbcfesm24338287b3.69.2025.05.13.07.01.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 May 2025 07:01:19 -0700 (PDT)
-From: Joshua Hahn <joshua.hahnjy@gmail.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: "Huang, Ying" <ying.huang@linux.alibaba.com>,
-	gourry@gourry.net,
-	honggyu.kim@sk.com,
-	yunjeong.mun@sk.com,
-	gregkh@linuxfoundation.org,
-	rafael@kernel.org,
-	lenb@kernel.org,
-	dan.j.williams@intel.com,
-	Jonathan.Cameron@huawei.com,
-	dave.jiang@intel.com,
-	horen.chuang@linux.dev,
-	hannes@cmpxchg.org,
-	osalvador@suse.de,
-	linux-kernel@vger.kernel.org,
-	linux-acpi@vger.kernel.org,
-	linux-mm@kvack.org,
-	kernel-team@meta.com
-Subject: Re: [PATCH v8] mm/mempolicy: Weighted Interleave Auto-tuning
-Date: Tue, 13 May 2025 07:01:17 -0700
-Message-ID: <20250513140117.2925329-1-joshua.hahnjy@gmail.com>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20250512152944.eab80697d7404a803f9f65e6@linux-foundation.org>
-References: 
+	s=arc-20240116; t=1747144911; c=relaxed/simple;
+	bh=L+9ualEvGQuA8FcA2AgH6dk6YBfy1El9wfGoDFVDAgc=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=k5KLvrxVENINR0ljyEVb5BlM5t0x1ypkaSr3fumbySuzD+ocBZ748U6QjbTqYox2gKuEZ3FaTjSa6OTzG47V0s0T3FbiKgMskIhDUqCJuppFlgFDO1JtHkVWaNm6mMTqi2pqEIoBt7yPl46P29lM6KxGJrglHInEyEJiDWI33vc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qbvjHWnC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0240AC4CEED;
+	Tue, 13 May 2025 14:01:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747144910;
+	bh=L+9ualEvGQuA8FcA2AgH6dk6YBfy1El9wfGoDFVDAgc=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=qbvjHWnCGIZxVMGnSHSBPF4yeUWTQHHfY1WCPXbmCye0Xzu58I3tDv2+vkxn8DAFe
+	 PyeMjYhGXkbylhgJWJv3C/HoPZ2GfSWM4CQy+HLywGo0qn/nGue+J2G2JpFabt8pK0
+	 faJvG9w3KarMyCMp6Mde9JQhmAleixESmlmRW1w+1iSnCXRS6LyOi0vlOBDJP7Bmq1
+	 pNZNJPqsLkRNhLcB12g4UCja7PHQHc7ZhPgTpBCJx749GUXb0kW2BWGcKHdPOUDqDG
+	 CnPvqjCcrdQ5N5mbBIhbXDtdSZGEarebU9ww4aVB+UbFBHNexCklrWXusH3HDdFgRT
+	 V6+/1EDg3PSWw==
+From: Benjamin Tissoires <bentiss@kernel.org>
+To: Jiri Kosina <jikos@kernel.org>, Rong Zhang <i@rong.moe>
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ bpf@vger.kernel.org, Brian Gerst <brgerst@gmail.com>, 
+ Borislav Petkov <bp@alien8.de>, 
+ =?utf-8?q?Petr_Tesa=C5=99=C3=ADk?= <petr@tesarici.cz>, 
+ bugzilla-daemon@kernel.org, stable@vger.kernel.org
+In-Reply-To: <20250512152420.87441-1-i@rong.moe>
+References: <20250506145548.GGaBoi9Jzp3aeJizTR@fat_crate.local>
+ <20250512152420.87441-1-i@rong.moe>
+Subject: Re: [PATCH] HID: bpf: abort dispatch if device destroyed
+Message-Id: <174714490874.1690070.753423275910575017.b4-ty@kernel.org>
+Date: Tue, 13 May 2025 16:01:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
-On Mon, 12 May 2025 15:29:44 -0700 Andrew Morton <akpm@linux-foundation.org> wrote:
-
-> On Mon, 12 May 2025 07:25:10 -0700 Joshua Hahn <joshua.hahnjy@gmail.com> wrote:
+On Mon, 12 May 2025 23:24:19 +0800, Rong Zhang wrote:
+> The current HID bpf implementation assumes no output report/request will
+> go through it after hid_bpf_destroy_device() has been called. This leads
+> to a bug that unplugging certain types of HID devices causes a cleaned-
+> up SRCU to be accessed. The bug was previously a hidden failure until a
+> recent x86 percpu change [1] made it access not-present pages.
 > 
-> > Andrew, I'm very sorry -- do you think you can fold this fixlet in as well?
+> The bug will be triggered if the conditions below are met:
 > 
-> No probs.
-> 
-> In future, something a little more formal would be preferred, so I
-> don't have to write your changelog and forge your Signed-off-by:!
+> [...]
 
-Hi Andrew,
+Applied to hid/hid.git (for-6.15/upstream-fixes), thanks!
 
-Sorry about that! I'll keep that in mind in the future : -)
-Thank you for being patient and helping us with this patch.
-I hope you have a great day!
+[1/1] HID: bpf: abort dispatch if device destroyed
+      https://git.kernel.org/hid/hid/c/578e1b96fad7
 
-Joshua
+Cheers,
+-- 
+Benjamin Tissoires <bentiss@kernel.org>
+
 
