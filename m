@@ -1,160 +1,178 @@
-Return-Path: <linux-kernel+bounces-646300-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-646230-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D891AAB5AC6
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 19:08:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F0AFAB59C3
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 18:24:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 23A10189B0B0
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 17:07:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE20C189EAE9
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 16:25:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41E9C2BF3ED;
-	Tue, 13 May 2025 17:07:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3596C2BEC2E;
+	Tue, 13 May 2025 16:24:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b="Kwycc4Hv"
-Received: from mail.hugovil.com (mail.hugovil.com [162.243.120.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 857781DFD96;
-	Tue, 13 May 2025 17:07:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.243.120.170
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="PujOiI0d"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2117515533F;
+	Tue, 13 May 2025 16:24:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747156024; cv=none; b=sZNLGdjUpxiCtPANkJSaBPVBgisH8CJM8aWYukt0KkDf6Pc/K4yrvkm4RIGx4Q/ZwhQcXCAwlfXfRaqfR4x+YGA+BDI3L2e/p/M8PvPB8UR9Y3+0fGdXSI9GtMTVdW4VPgXKPiNMB0oqbONeB6nUua3ociVdM0gUpSxz4Yh3bQw=
+	t=1747153485; cv=none; b=KPaTDW9rh1uis5XvlPDPySymkLyv+rKjV9XPUQ+kMkE+9r7wPEPG/fElHUFSvy6KbGDzFgcVcaTCV7TtxuUVJy770/VTbmRrurbh388CmZNuLEMumamS9MM2tpSlCLVx+FWcYVNI1yO+Se/K2FLQQKF4vyxOU2H7a6AbcuDVIvk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747156024; c=relaxed/simple;
-	bh=/wx5j8F6+tuBTmZMB/pfI/6kvL1TBAhK4iTOk5f+lKA=;
-	h=From:To:Cc:Date:Message-Id:MIME-Version:Subject; b=EBao2Lw9xoGpK3e2i4HcDzvF1Kod4szv15P85uc7/bSRXBZGRT8gV0xMy7YPnssMMA1Y8I224NaWGiA8bB+9/3gSlHoCR+zrfNy4uwSyC+DIAYDmkwcznLJVRU2cu6isyDxzUdYLxUk1/aXbdOrdcuhi9LkZ3Sg/nX8WoKGojUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com; spf=pass smtp.mailfrom=hugovil.com; dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b=Kwycc4Hv; arc=none smtp.client-ip=162.243.120.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hugovil.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hugovil.com
-	; s=x; h=Subject:Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Cc:To
-	:From:subject:date:message-id:reply-to;
-	bh=2LurGoPkc6Eg3ZIhwGtbJARXq0QoaSbCX/2p8hC7Mh4=; b=Kwycc4HvYwfW25ZlZaLRjNIj07
-	MrX5/qkDmTwo0FTrnj1sgOu/+s8mhaKH/33RMER9ZSw/wgkBoRr2J01wfylJZt79Fg7F4m3QeA9Do
-	LQX7C+c+OtUvlMLTZO6kHDyFqAd0yxHAiA3ZaT0DBW/hiFIg7x3sVs+vZu6NB9EB6tMw=;
-Received: from [70.80.174.168] (port=43212 helo=pettiford.lan)
-	by mail.hugovil.com with esmtpa (Exim 4.92)
-	(envelope-from <hugo@hugovil.com>)
-	id 1uEsPH-000211-BD; Tue, 13 May 2025 12:23:04 -0400
-From: Hugo Villeneuve <hugo@hugovil.com>
-To: Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>
-Cc: hugo@hugovil.com,
-	Hugo Villeneuve <hvilleneuve@dimonoff.com>,
-	dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org
-Date: Tue, 13 May 2025 12:23:00 -0400
-Message-Id: <20250513162300.532693-1-hugo@hugovil.com>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1747153485; c=relaxed/simple;
+	bh=5ExU0elbNPopRtmR4qkqMuHkiy7iFHwMixxy23Z1xnE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=plX7UVt+lTVhnl2zy2YjYgQ57/iQ/g2ZjH09y3IM2xVr1HKsq6m202jHORx8IsDnNBHoL5BE94tdqihjEo+4U9rcr2P2LajhUCMxBGH3A2LZtQVbiM0K5XXzS3OHPgrOf11l+dyWrod2Gm6UztQkKjvFh4kCa7yn2n/ic9AtAYQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=PujOiI0d; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [10.137.184.60] (unknown [131.107.1.188])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 5A823201DB12;
+	Tue, 13 May 2025 09:24:43 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 5A823201DB12
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1747153483;
+	bh=hPw5Z2uvInKn7g/gZE/EvdCBuTQHsMF4h31bQ1SEDak=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=PujOiI0dqkEedcDbArZnlNr4qQUkjW6EgaOn59dT9qxC2WYV6oog4dOtjs3YNI8TE
+	 iAo+tTqsxqY0YkeqIDjtwXto1i0zsLHljx+IWZtRP3rsFwkrdIs0GdGWeX8X0pmiB1
+	 aqecwOK6IVebzWSG+HdIF3zto+Z4WMHhZemZ+tA8=
+Message-ID: <dd988a9d-edad-4362-a4c2-a6e6b1667e9b@linux.microsoft.com>
+Date: Tue, 13 May 2025 09:24:43 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH hyperv-next v2 1/4] Documentation: hyperv: Confidential
+ VMBus
+To: ALOK TIWARI <alok.a.tiwari@oracle.com>
+Cc: apais@microsoft.com, benhill@microsoft.com, bperkins@microsoft.com,
+ sunilmut@microsoft.com, arnd@arndb.de, bp@alien8.de,
+ catalin.marinas@arm.com, corbet@lwn.net, dave.hansen@linux.intel.com,
+ decui@microsoft.com, haiyangz@microsoft.com, hpa@zytor.com,
+ kys@microsoft.com, mingo@redhat.com, tglx@linutronix.de, wei.liu@kernel.org,
+ will@kernel.org, x86@kernel.org, linux-hyperv@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-arch@vger.kernel.org
+References: <20250511230758.160674-1-romank@linux.microsoft.com>
+ <20250511230758.160674-2-romank@linux.microsoft.com>
+ <5d21de5c-2da2-4a33-8d30-0475bc0edf4b@oracle.com>
+Content-Language: en-US
+From: Roman Kisel <romank@linux.microsoft.com>
+In-Reply-To: <5d21de5c-2da2-4a33-8d30-0475bc0edf4b@oracle.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 70.80.174.168
-X-SA-Exim-Mail-From: hugo@hugovil.com
-X-Spam-Level: 
-X-Spam-Report: 
-	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-Subject: [PATCH] dt-bindings: display: bridge: renesas,dsi: allow properties from dsi-controller
-X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
-X-SA-Exim-Scanned: Yes (on mail.hugovil.com)
 
-From: Hugo Villeneuve <hvilleneuve@dimonoff.com>
 
-Allow to inherit valid properties from the dsi-controller. This fixes the
-following warning when adding a panel property:
 
-rzg2lc.dtb: dsi@10850000: '#address-cells', '#size-cells', 'panel@0' do not
-    match any of the regexes: 'pinctrl-[0-9]+'
-    from schema $id:
-        http://devicetree.org/schemas/display/bridge/renesas,dsi.yaml#
+On 5/11/2025 10:22 PM, ALOK TIWARI wrote:
+> 
+> 
+> On 12-05-2025 04:37, Roman Kisel wrote:
+>> Define what the confidential VMBus is and describe what advantages
+>> it offers on the capable hardware.
+>>
+>> Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
+>> ---
+>>   Documentation/virt/hyperv/vmbus.rst | 41 +++++++++++++++++++++++++++++
+>>   1 file changed, 41 insertions(+)
+>>
+>> diff --git a/Documentation/virt/hyperv/vmbus.rst b/Documentation/virt/ 
+>> hyperv/vmbus.rst
+>> index 1dcef6a7fda3..ca2b948e5070 100644
+>> --- a/Documentation/virt/hyperv/vmbus.rst
+>> +++ b/Documentation/virt/hyperv/vmbus.rst
+>> @@ -324,3 +324,44 @@ rescinded, neither Hyper-V nor Linux retains any 
+>> state about
+>>   its previous existence. Such a device might be re-added later,
+>>   in which case it is treated as an entirely new device. See
+>>   vmbus_onoffer_rescind().
+>> +
+>> +Confidential VMBus
+>> +------------------
+>> +
+> 
+> The purpose and benefits of the Confidential VMBus are not clearly stated.
+> for example:
+> "Confidential VMBus provides a secure communication channel between 
+> guest and paravisor, ensuring that sensitive data is protected from 
+> hypervisor-level access through memory encryption and register state 
+> isolation."
+> 
+>> +The confidential VMBus provides the control and data planes where
+>> +the guest doesn't talk to either the hypervisor or the host. Instead,
+>> +it relies on the trusted paravisor. The hardware (SNP or TDX) encrypts
+>> +the guest memory and the register state also measuring the paravisor
+> 
+> s/alos/while and s/via using/using
+> "register state while measuring the paravisor image using the platform 
+> security"
+> 
+>> +image via using the platform security processor to ensure trusted and
+>> +confidential computing.
+>> +
+>> +To support confidential communication with the paravisor, a VMBus client
+>> +will first attempt to use regular, non-isolated mechanisms for 
+>> communication.
+>> +To do this, it must:
+>> +
+>> +* Configure the paravisor SIMP with an encrypted page. The paravisor 
+>> SIMP is
+>> +  configured by setting the relevant MSR directly, without using GHCB 
+>> or tdcall.
+>> +
+>> +* Enable SINT 2 on both the paravisor and hypervisor, without setting 
+>> the proxy
+>> +  flag on the paravisor SINT. Enable interrupts on the paravisor SynIC.
+>> +
+>> +* Configure both the paravisor and hypervisor event flags page.
+>> +  Both pages will need to be scanned when VMBus receives a channel 
+>> interrupt.
+>> +
+>> +* Send messages to the paravisor by calling HvPostMessage directly, 
+>> without using
+>> +  GHCB or tdcall.
+>> +
+>> +* Set the EOM MSR directly in the paravisor, without using GHCB or 
+>> tdcall.
+>> +
+>> +If sending the InitiateContact message using non-isolated 
+>> HvPostMessage fails,
+>> +the client must fall back to using the hypervisor synic, by using the 
+>> GHCB/tdcall
+>> +as appropriate.
+>> +
+>> +To fall back, the client will have to reconfigure the following:
+>> +
+>> +* Configure the hypervisor SIMP with a host-visible page.
+>> +  Since the hypervisor SIMP is not used when in confidential mode,
+>> +  this can be done up front, or only when needed, whichever makes 
+>> sense for
+>> +  the particular implementation.
+> 
+> "SIMP is not used in confidential mode,
+> this can be done either upfront or only when needed, depending on the 
+> specific implementation."
+> 
+>> +
+>> +* Set the proxy flag on SINT 2 for the paravisor.
+> 
 
-Also add a panel property to the example.
+Alok, thanks for you continued interest and support! I'll incorporate
+your suggestions in the next version of the patchset, great points!
 
-Signed-off-by: Hugo Villeneuve <hvilleneuve@dimonoff.com>
----
- .../bindings/display/bridge/renesas,dsi.yaml  | 21 +++++++++++++++++--
- 1 file changed, 19 insertions(+), 2 deletions(-)
+> 
+> Thanks,
+> Alok
+> 
 
-diff --git a/Documentation/devicetree/bindings/display/bridge/renesas,dsi.yaml b/Documentation/devicetree/bindings/display/bridge/renesas,dsi.yaml
-index e08c24633926b..e0906a46fb118 100644
---- a/Documentation/devicetree/bindings/display/bridge/renesas,dsi.yaml
-+++ b/Documentation/devicetree/bindings/display/bridge/renesas,dsi.yaml
-@@ -128,14 +128,17 @@ required:
-   - power-domains
-   - ports
- 
--additionalProperties: false
-+unevaluatedProperties: false
- 
- examples:
-   - |
-+    #include <dt-bindings/gpio/gpio.h>
-     #include <dt-bindings/clock/r9a07g044-cpg.h>
-     #include <dt-bindings/interrupt-controller/arm-gic.h>
- 
-     dsi0: dsi@10850000 {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-         compatible = "renesas,r9a07g044-mipi-dsi", "renesas,rzg2l-mipi-dsi";
-         reg = <0x10850000 0x20000>;
-         interrupts = <GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>,
-@@ -160,6 +163,20 @@ examples:
-         reset-names = "rst", "arst", "prst";
-         power-domains = <&cpg>;
- 
-+        panel@0 {
-+            compatible = "rocktech,jh057n00900";
-+            reg = <0>;
-+            vcc-supply = <&reg_2v8_p>;
-+            iovcc-supply = <&reg_1v8_p>;
-+            reset-gpios = <&gpio3 13 GPIO_ACTIVE_LOW>;
-+
-+            port {
-+                panel_in: endpoint {
-+                    remote-endpoint = <&dsi0_out>;
-+                };
-+            };
-+        };
-+
-         ports {
-             #address-cells = <1>;
-             #size-cells = <0>;
-@@ -175,7 +192,7 @@ examples:
-                 reg = <1>;
-                 dsi0_out: endpoint {
-                     data-lanes = <1 2 3 4>;
--                    remote-endpoint = <&adv7535_in>;
-+                    remote-endpoint = <&panel_in>;
-                 };
-             };
-         };
-
-base-commit: e9565e23cd89d4d5cd4388f8742130be1d6f182d
 -- 
-2.39.5
+Thank you,
+Roman
 
 
