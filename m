@@ -1,229 +1,143 @@
-Return-Path: <linux-kernel+bounces-646136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-646140-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0BA2AB584F
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 17:19:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 308BDAB5866
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 17:22:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DBC7D7B1CA4
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 15:17:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86570189F3B0
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 15:20:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 659652C2FBD;
-	Tue, 13 May 2025 15:13:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95D892D027B;
+	Tue, 13 May 2025 15:13:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="FLHkemHn";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="l7it4b20"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="efCJ6K5l"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F8842C2ACF;
-	Tue, 13 May 2025 15:13:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F153D2BE7C3
+	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 15:13:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747149219; cv=none; b=SbUi3K78HLmZNrers8kl5rC9du4yyBNrsyjLjbxlyc/6nexGtdvK3TEH2IYRiqK9mMyrcKjbGNGtYgi2E7TjclrNX8LMwh4SSBWL+KlQUJR2F4WKedc+zDK5x/r8DsKBwOVJYxam4GjTmSUHvVZmuc0w+RjWlisr3pDJbib/tEA=
+	t=1747149228; cv=none; b=QwbPr3DKXSLsV3YoqWYxDYbbjAHJRrh0ceYD+BO1a4yySSlAerRWocoj3cOpG6wzFBtZo8T8TfksIeqT3s2fAuyMqSQi+L3u2/L+ibGiUrTzQQniAkQKyv+stOr/NEYO43QNY3/mhOZPOJDn1/0rKZTPjznbb/AHy1nxi4yC8gE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747149219; c=relaxed/simple;
-	bh=8amrdeLjP6iuVIcxRPgHu0Aegf/+POD14kN7I5mAUEE=;
-	h=Message-ID:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Date; b=K8QzwRjN1YgTFS+gFWSk6sI//dkS10MfmzAUfEf9t2ItmFWZSF/fbtPCvWjX7gJ8/R5IuGsH04C3edZj1blykdwKZolm2Vvvl7hLYMc5TPiGMv86lVkTHMyw+QfK23xCrBJslrY8pmr18VEb+f2T8YrBG+ZljDUwtQD2QSdvx24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=FLHkemHn; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=l7it4b20; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Message-ID: <20250513145137.978734056@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1747149216;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=Fh0otM2e5g5OQPHBjloAe8TGbXEVLZ/A+WiYmFpBvA4=;
-	b=FLHkemHnwxgS1nYlj/mSpN94DjlF2lFdJ4q+AikqpUFCrtxAahLQBuZaCiJSThoEebr6Gz
-	LY8WT1yOs0E9ghk4zXc++51ILH7qbwfmnPwk+/km9rORbbQ8aLL3GUffoIga8Ej1FRJGIP
-	0fxml6WmS68aOdQawIrdTgO8v2H17ixqDmqPnFspFYjnk13ZvB5d2d8myyaUxHMR8uxcQG
-	92kTBTv/dk+Qj8Qw02Xm65+/OLEUu86nSMJEHv6N7V4++17OEjml0gjP9WcQNWITqS5c4a
-	ql7wLHcC+WCVqTV/6z7mKntQd/fKhfjTXwDRHM4SZKQ0Ts/yOTCZFctlTCwVVQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1747149216;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=Fh0otM2e5g5OQPHBjloAe8TGbXEVLZ/A+WiYmFpBvA4=;
-	b=l7it4b20CxiX7ogAsGnECBUuNWqUG4M1MJ0h+c7uSaU3hSATsU7b21wpdNkBHP5/VvFln6
-	wAy1UTXnCWm4dxAg==
-From: Thomas Gleixner <tglx@linutronix.de>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: netdev@vger.kernel.org,
- Richard Cochran <richardcochran@gmail.com>,
- Christopher Hall <christopher.s.hall@intel.com>,
- David Zage <david.zage@intel.com>,
- John Stultz <jstultz@google.com>,
- Frederic Weisbecker <frederic@kernel.org>,
- Anna-Maria Behnsen <anna-maria@linutronix.de>,
- Miroslav Lichvar <mlichvar@redhat.com>,
- Werner Abt <werner.abt@meinberg-usa.com>,
- David Woodhouse <dwmw2@infradead.org>,
- Stephen Boyd <sboyd@kernel.org>,
- =?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
- Kurt Kanzenbach <kurt@linutronix.de>,
- Nam Cao <namcao@linutronix.de>,
- Alex Gieringer <gieri@linutronix.de>
-Subject: [patch 22/26] timekeeping: Make do_adjtimex() reusable
-References: <20250513144615.252881431@linutronix.de>
+	s=arc-20240116; t=1747149228; c=relaxed/simple;
+	bh=0V1M6KuFop81SJ8+EHB3ZWjFOFBi21Xwe5ztjsvCLko=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HR3OL9h5el/6BNP5o29ub3gFcWiNlotYnWOgeA1LAEt8n9WVuE2H7S8eIp/1FG3XM/2YMft/1WO6xx17QXupmsg73O5uCSdAFTQjuVFToR/ODwh4WZ5KR5X5OgBULmbsRzJM2/CRdaDAsAOjOQ6+7hRhqyTU3UbY0X7GR271I44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=efCJ6K5l; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76ED9C4CEE9
+	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 15:13:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747149227;
+	bh=0V1M6KuFop81SJ8+EHB3ZWjFOFBi21Xwe5ztjsvCLko=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=efCJ6K5lAN3R/XIUVc1rW0Y1khuBuf/Jx3SUFznVs4uwb6WGePdGR5oSP50hJBRRK
+	 V+jH0e5CFXVHttL6NVXuMAGsU5DiqnWp+mUN4v2ignIO04+wakS57oy5L5yKisKPk0
+	 Rg9lZIdfuc1sMWAo2K7ZNuvHBPTVcEG5JIwv32HgI/FFunCbj70+QX1+NhruRqe/0S
+	 BM2UGZcYOGWaDBhQ3lgHS8oFttvWBkRqGP9VNfMJYMUQxTz+f218vtyT05wcqX6FfA
+	 6nXIPZzqxGl/gNguAAFb99eg8Id7pQm6jLSkNdEYxQ40FR4aKcglUdCShyQJb5jabg
+	 btORsg4w9r77g==
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5fbf52aad74so11593385a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 08:13:47 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVfX4wOR6JMKKWIOIgG2VrjmtmIfykLL2ovDxUnHU72vUzFHUe7MZyE7PjKSATv0KDcCVgB+vtLmGgCrWA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXMdfQ4lpw5jBIIVFYb8LgT1+tqn/708hWTdD955Wpn6ntOEEz
+	L8wp1QHtvKJJpMaZWMQ97MP9h/QflpWc96g/HFA9w2wMeBwIRhxd/zyM2hw3kGBev4roJLF70C/
+	e6+l+9ldVAIRQHj8JNAuXrnHyxxs=
+X-Google-Smtp-Source: AGHT+IHaD7lU1YCxRBoo95f7oQlI76x/yV7S8UFkaFpH7WJO+fktLU7TSXceHUVVZiDmF0sbJfwV9GmZ9lL1a0YH3xg=
+X-Received: by 2002:a05:6402:3603:b0:5ff:8b36:f3fb with SMTP id
+ 4fb4d7f45d1cf-5ff8b36f9b9mr1226436a12.11.1747149226014; Tue, 13 May 2025
+ 08:13:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 13 May 2025 17:13:35 +0200 (CEST)
+References: <20250513092116.25979-1-yangtiezhu@loongson.cn> <20250513092116.25979-3-yangtiezhu@loongson.cn>
+In-Reply-To: <20250513092116.25979-3-yangtiezhu@loongson.cn>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Tue, 13 May 2025 23:13:35 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H4AgHQs4pMqGqe7WfwCA+u7mO3U+=hcm8ZWk5DQHhsO1w@mail.gmail.com>
+X-Gm-Features: AX0GCFtoeZ9Hy0PeIDQU_MUPstbhRADp9w_YmUK1vV3ob9gBtP8Rhi6fDltdOtk
+Message-ID: <CAAhV-H4AgHQs4pMqGqe7WfwCA+u7mO3U+=hcm8ZWk5DQHhsO1w@mail.gmail.com>
+Subject: Re: [PATCH 2/2] LoongArch: uprobe: Remove redundant code about resume_era
+To: Tiezhu Yang <yangtiezhu@loongson.cn>
+Cc: loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Split out the actual functionality of adjtimex() and make do_adjtimex() a
-wrapper which feeds the core timekeeper into it and handles the result
-including audit at the call site.
+Hi, Tiezhu,
 
-This allows to reuse the actual functionality for independent PTP clocks.
+On Tue, May 13, 2025 at 5:21=E2=80=AFPM Tiezhu Yang <yangtiezhu@loongson.cn=
+> wrote:
+>
+> arch_uprobe_skip_sstep() returns true if instruction was emulated,
+> that is to say, there is no need to single step for the emulated
+> instructions, it will point to the destination address directly
+> after the exception, so the resume_era related code is redundant,
+> just remove them.
+>
+> Fixes: 19bc6cb64092 ("LoongArch: Add uprobes support")
+> Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
+> ---
+>  arch/loongarch/include/asm/uprobes.h | 1 -
+>  arch/loongarch/kernel/uprobes.c      | 7 +------
+>  2 files changed, 1 insertion(+), 7 deletions(-)
+>
+> diff --git a/arch/loongarch/include/asm/uprobes.h b/arch/loongarch/includ=
+e/asm/uprobes.h
+> index 99a0d198927f..025fc3f0a102 100644
+> --- a/arch/loongarch/include/asm/uprobes.h
+> +++ b/arch/loongarch/include/asm/uprobes.h
+> @@ -15,7 +15,6 @@ typedef u32 uprobe_opcode_t;
+>  #define UPROBE_XOLBP_INSN      __emit_break(BRK_UPROBE_XOLBP)
+>
+>  struct arch_uprobe {
+> -       unsigned long   resume_era;
+>         u32     insn[2];
+>         u32     ixol[2];
+>         bool    simulate;
+> diff --git a/arch/loongarch/kernel/uprobes.c b/arch/loongarch/kernel/upro=
+bes.c
+> index 0ab9d8d631c4..6022eb0f71db 100644
+> --- a/arch/loongarch/kernel/uprobes.c
+> +++ b/arch/loongarch/kernel/uprobes.c
+> @@ -52,11 +52,7 @@ int arch_uprobe_post_xol(struct arch_uprobe *auprobe, =
+struct pt_regs *regs)
+>
+>         WARN_ON_ONCE(current->thread.trap_nr !=3D UPROBE_TRAP_NR);
+>         current->thread.trap_nr =3D utask->autask.saved_trap_nr;
+> -
+> -       if (auprobe->simulate)
+> -               instruction_pointer_set(regs, auprobe->resume_era);
+> -       else
+> -               instruction_pointer_set(regs, utask->vaddr + LOONGARCH_IN=
+SN_SIZE);
+> +       instruction_pointer_set(regs, utask->vaddr + LOONGARCH_INSN_SIZE)=
+;
+This seems wrong. If in the simulate case, regs->csr_era has already
+pointed to the correct destination address, then here we should only
+handle the non-simulate case.
 
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
----
- kernel/time/timekeeping.c |  110 +++++++++++++++++++++++++---------------------
- 1 file changed, 60 insertions(+), 50 deletions(-)
----
---- a/kernel/time/timekeeping.c
-+++ b/kernel/time/timekeeping.c
-@@ -2580,17 +2580,18 @@ unsigned long random_get_entropy_fallbac
- }
- EXPORT_SYMBOL_GPL(random_get_entropy_fallback);
- 
--/**
-- * do_adjtimex() - Accessor function to NTP __do_adjtimex function
-- * @txc:	Pointer to kernel_timex structure containing NTP parameters
-- */
--int do_adjtimex(struct __kernel_timex *txc)
-+struct adjtimex_result {
-+	struct audit_ntp_data	ad;
-+	struct timespec64	delta;
-+	bool			clock_set;
-+};
-+
-+static int __do_adjtimex(struct tk_data *tkd, struct __kernel_timex *txc,
-+			 struct adjtimex_result *result)
- {
--	struct tk_data *tkd = &tk_core;
--	struct timespec64 delta, ts;
--	struct audit_ntp_data ad;
--	bool offset_set = false;
--	bool clock_set = false;
-+	struct timekeeper *tks = &tkd->shadow_timekeeper;
-+	struct timespec64 ts;
-+	s32 orig_tai, tai;
- 	int ret;
- 
- 	/* Validate the data before disabling interrupts */
-@@ -2599,56 +2600,65 @@ int do_adjtimex(struct __kernel_timex *t
- 		return ret;
- 	add_device_randomness(txc, sizeof(*txc));
- 
--	audit_ntp_init(&ad);
--
- 	ktime_get_real_ts64(&ts);
- 	add_device_randomness(&ts, sizeof(ts));
- 
--	scoped_guard (raw_spinlock_irqsave, &tkd->lock) {
--		struct timekeeper *tks = &tkd->shadow_timekeeper;
--		s32 orig_tai, tai;
--
--		if (!tks->clock_valid)
--			return -ENODEV;
--
--		if (txc->modes & ADJ_SETOFFSET) {
--			delta.tv_sec  = txc->time.tv_sec;
--			delta.tv_nsec = txc->time.tv_usec;
--			if (!(txc->modes & ADJ_NANO))
--				delta.tv_nsec *= 1000;
--			ret = __timekeeping_inject_offset(tkd, &delta);
--			if (ret)
--				return ret;
--
--			offset_set = delta.tv_sec != 0;
--			clock_set = true;
--		}
--
--		orig_tai = tai = tks->tai_offset;
--		ret = ntp_adjtimex(tks->id, txc, &ts, &tai, &ad);
--
--		if (tai != orig_tai) {
--			__timekeeping_set_tai_offset(tks, tai);
--			timekeeping_update_from_shadow(tkd, TK_CLOCK_WAS_SET);
--			clock_set = true;
--		} else {
--			tk_update_leap_state_all(&tk_core);
--		}
--
--		/* Update the multiplier immediately if frequency was set directly */
--		if (txc->modes & (ADJ_FREQUENCY | ADJ_TICK))
--			clock_set |= __timekeeping_advance(tkd, TK_ADV_FREQ);
-+	guard(raw_spinlock_irqsave)(&tkd->lock);
-+
-+	if (!tks->clock_valid)
-+		return -ENODEV;
-+
-+	if (txc->modes & ADJ_SETOFFSET) {
-+		result->delta.tv_sec  = txc->time.tv_sec;
-+		result->delta.tv_nsec = txc->time.tv_usec;
-+		if (!(txc->modes & ADJ_NANO))
-+			result->delta.tv_nsec *= 1000;
-+		ret = __timekeeping_inject_offset(tkd, &result->delta);
-+		if (ret)
-+			return ret;
-+		result->clock_set = true;
-+	}
-+
-+	orig_tai = tai = tks->tai_offset;
-+	ret = ntp_adjtimex(tks->id, txc, &ts, &tai, &result->ad);
-+
-+	if (tai != orig_tai) {
-+		__timekeeping_set_tai_offset(tks, tai);
-+		timekeeping_update_from_shadow(tkd, TK_CLOCK_WAS_SET);
-+		result->clock_set = true;
-+	} else {
-+		tk_update_leap_state_all(&tk_core);
- 	}
- 
-+	/* Update the multiplier immediately if frequency was set directly */
-+	if (txc->modes & (ADJ_FREQUENCY | ADJ_TICK))
-+		result->clock_set |= __timekeeping_advance(tkd, TK_ADV_FREQ);
-+
-+	return ret;
-+}
-+
-+/**
-+ * do_adjtimex() - Accessor function to NTP __do_adjtimex function
-+ * @txc:	Pointer to kernel_timex structure containing NTP parameters
-+ */
-+int do_adjtimex(struct __kernel_timex *txc)
-+{
-+	struct adjtimex_result result = { };
-+	int ret;
-+
-+	ret = __do_adjtimex(&tk_core, txc, &result);
-+	if (ret < 0)
-+		return ret;
-+
- 	if (txc->modes & ADJ_SETOFFSET)
--		audit_tk_injoffset(delta);
-+		audit_tk_injoffset(result.delta);
- 
--	audit_ntp_log(&ad);
-+	audit_ntp_log(&result.ad);
- 
--	if (clock_set)
-+	if (result.clock_set)
- 		clock_was_set(CLOCK_SET_WALL);
- 
--	ntp_notify_cmos_timer(offset_set);
-+	ntp_notify_cmos_timer(result.delta.tv_sec != 0);
- 
- 	return ret;
- }
+Huacai
 
+>
+>         return 0;
+>  }
+> @@ -86,7 +82,6 @@ bool arch_uprobe_skip_sstep(struct arch_uprobe *auprobe=
+, struct pt_regs *regs)
+>
+>         insn.word =3D auprobe->insn[0];
+>         arch_simulate_insn(insn, regs);
+> -       auprobe->resume_era =3D regs->csr_era;
+>
+>         return true;
+>  }
+> --
+> 2.42.0
+>
+>
 
