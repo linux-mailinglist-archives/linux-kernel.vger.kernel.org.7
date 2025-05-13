@@ -1,259 +1,113 @@
-Return-Path: <linux-kernel+bounces-645967-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-645956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE482AB560B
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 15:28:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED7EDAB55ED
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 15:24:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3ED4C4A5B30
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 13:28:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34A3286427E
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 13:23:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6275E28DB7B;
-	Tue, 13 May 2025 13:28:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59F7E28ECC8;
+	Tue, 13 May 2025 13:24:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="omVlSl+s"
-Received: from out30-97.freemail.mail.aliyun.com (out30-97.freemail.mail.aliyun.com [115.124.30.97])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DbwhB7RF"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8437F1E5B9D
-	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 13:28:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.97
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 017B028E61E
+	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 13:24:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747142931; cv=none; b=IdcOKe612/erUnsxeaRzIATGcExDuvdTZv7yA5oirsHtpMWPwR5Hx0zPQjtCCbw6ETKuX9SOIr3r+uCH3tBZMPzJdEwvJHf9pTE3fsz2rZpvOLdE4UVQWrPXdvf+gly+FFvO3JMhhFrYSKnR+jO0mu7RT1Xb8a83mD6kZA+NGeI=
+	t=1747142650; cv=none; b=DzyeYAn7xZfRjCUM6fFXeO6GAm3ei0RMVfe4e/dKdjeD9Ik22FwpzgiVUHSQIF7I4lpa6tANmbm5O2ZHBCkF/CRDLixVaXzvAD+HZClZhn1arbuzlx8vxj6bTts0ZdigbflkaEmxK7KaCNcrJyt7zWVYlEAA4p94+KCmDiSy7Q4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747142931; c=relaxed/simple;
-	bh=UeQ0R6/2OS4BggIY2zYE8XT+93b2kOy9oTbdqkpSZ/U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FEEXPsWh30eis3R45X7UxVfJXtfJZ+nNry2u0YP8sFXrO2GwNnkoQc3vv+Lvfe+xzi61UVni552KP8a3wJPnaCxp7tUw2HWBz+uJ45Om8YzQc7fy8n4k4qVmcxcj0E4+edbObWBS9yTgUpSXPwqHnJhrXz3kyZGkDnZqOl1KJw8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=omVlSl+s; arc=none smtp.client-ip=115.124.30.97
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1747142924; h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
-	bh=SogKgca4SRd3X5KRN0cFvcTQeBOkLPMuNvAdEG4/e1U=;
-	b=omVlSl+sY2nOnPrCLpvvMC+f5MX8/QLRAyeZb+1ICP9XWD4IkSdukKt4MYHhSKD0J8YV9rGDN/caqvpDLHdaH1Trl6H6fuLndm+hSRbiUbtK3Y4ZmKGtP+jiKgwljQlesRjWUwuo1beCSATP2zlnyezyA9EVlACWw+iNQrOK1TI=
-Received: from localhost(mailfrom:feng.tang@linux.alibaba.com fp:SMTPD_---0WabVqvr_1747142606 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Tue, 13 May 2025 21:23:26 +0800
-Date: Tue, 13 May 2025 21:23:25 +0800
-From: Feng Tang <feng.tang@linux.alibaba.com>
-To: Petr Mladek <pmladek@suse.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Lance Yang <lance.yang@linux.dev>, linux-kernel@vger.kernel.org,
-	mhiramat@kernel.org, llong@redhat.com
-Subject: Re: [PATCH v1 1/3] kernel/panic: generalize panic_print's function
- to show sys info
-Message-ID: <aCNHzXkz4wfnIDPM@U-2FWC9VHC-2323.local>
-References: <20250511085254.61446-1-feng.tang@linux.alibaba.com>
- <20250511085254.61446-2-feng.tang@linux.alibaba.com>
- <aCMXf0JOi1g6ZI8u@pathway.suse.cz>
+	s=arc-20240116; t=1747142650; c=relaxed/simple;
+	bh=5eKxaIX3fw3jx/+XOFOXndB/4SjWjO6DJ61Rmj65mQw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=t1FsRd7Fvn8C5Avi6mUCe9RQMePaoj60JxWvoqdhWu5Osk1phCuCcnagV4fyc6R1fUoAw/MKQifidX4wxRLQkHCVL1vLo1U03ybz1lfl3VHK51Uq28i8ZHNPod5vVlFLRDo6zbKt1FzTA5E9cHwn6O3klVX0X0g5FFiXIe8sCpg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DbwhB7RF; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-54fc64e8419so5383024e87.1
+        for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 06:24:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1747142647; x=1747747447; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5eKxaIX3fw3jx/+XOFOXndB/4SjWjO6DJ61Rmj65mQw=;
+        b=DbwhB7RF1JQqu3Vx8YErtq3rTPzu9DrvuTZHBpumUlQ9Fqckpe1d5klxFnDVlvW9a0
+         mbStNuiJFw6GfBvu77Ue2MiUVYjGnhfDkvYoBPIMkNngWUkdhBZXjME64mxikNmE9Obl
+         Bx6okDN+VXaiokTpeMVKPodEUSYw7zYVqSwGTEaDg0KBuIMuEVTI8rbJ6jNHXfC0JJNX
+         dBwe8fYiS2PsBI2LA87kD88l/WduHaiVSySc6bJYyqGQwtAF0gt4vSo2bG7RupqrIt0i
+         P4v1bE3w+K2sqOjV/XJOYUMhzq9cJZChC3eoTF8Ug7CPfW77rOzm6g3EUgOlE3oJw2G8
+         PoGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747142647; x=1747747447;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5eKxaIX3fw3jx/+XOFOXndB/4SjWjO6DJ61Rmj65mQw=;
+        b=JCspg84X1DpM/ZuunPhdqiOvYZ/+uKdd3s6TIS1rTF9JTrAQdDMY4L004RAngDJCgw
+         Enm3PpUHWtFM+0DSaTOwyY2fNtVAYhwI3SlL7bjKVlboRf/YE7BhIflsRuV/kj0rG7xV
+         9bm0+1wZYFXyNAvxAfcP/6GGVTYFBhgi+reA42aMR32ZH96Ey6+fLiV2aFe+tG2UH0Lh
+         PgUgIJKKOmMo01IILysCivEJqyrfyLqkZ2KSWsN5fYBExOD3KsRczg/MVc5oHsgupzmB
+         OXbPBhdx/shj0nttjizCSP+H2Ufv1sP9/lgY11tvgKLpSG0vaGswdtYxYanSwPix8lp0
+         5qSg==
+X-Forwarded-Encrypted: i=1; AJvYcCUhhRlRBrwBqwfD1y4D9X+LpgLlN+bEt5sgtwds9pKAdUAWEM+z76m2NNzAXRIkCtZeU8eZ8rShjQIAJH4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7yS9LRyJTkmMKwPM/W/UxvwE61w/9QEMn9HWssQhnCq3zWtWl
+	wcLhCfD55AccrLXuCk8M21pVcGyNzCr+SHMo5+AerTM9/RcwcKFtL6DKi/Re8kRs3EnCADGMR/v
+	yRKh8CfcEQJ1R6u25kD2uGGq3TvNauoMlARiQwQ==
+X-Gm-Gg: ASbGnct0BeI0rm6dBesoIbGDqvcyY3dCnJkpCtYLWKGHWxkdDlcGOczlmxo3z7FG8Yk
+	QLYjyyEuI4mEJX06B16IxrQ5G2JbHEKh3XTvFXfnhKaZfi1ZDMVpdmvuWzbWnRUBMCwteLuqLNR
+	PataMV8ELnF/fNxSlYd8gwkadWUoUzyJad
+X-Google-Smtp-Source: AGHT+IFQKowijPtKxWmuvEciX1nJf+TDzv0WZoqM/uKvRSmSrIT4h7hRJwXNUJZcQ/uYhV04L0dGE2029I5lSw65p/4=
+X-Received: by 2002:a05:6512:2586:b0:54a:cc10:1050 with SMTP id
+ 2adb3069b0e04-550d0bc78b3mr1158871e87.15.1747142647002; Tue, 13 May 2025
+ 06:24:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <aCMXf0JOi1g6ZI8u@pathway.suse.cz>
+References: <20250509-max77759-mfd-v10-0-962ac15ee3ef@linaro.org> <20250509-max77759-mfd-v10-2-962ac15ee3ef@linaro.org>
+In-Reply-To: <20250509-max77759-mfd-v10-2-962ac15ee3ef@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 13 May 2025 15:23:55 +0200
+X-Gm-Features: AX0GCFvUasElVjJYv3I7eVQPe0A6FsXnY_zILsVN3taTVIhvI167ZdVbaeRULuk
+Message-ID: <CACRpkdZg0ZLcmGbFPqUmRpkw8DJYe5bY8yEDe5+KrnzTWxeXFQ@mail.gmail.com>
+Subject: Re: [PATCH v10 2/3] gpio: max77759: add Maxim MAX77759 gpio driver
+To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, Srinivas Kandagatla <srini@kernel.org>, Kees Cook <kees@kernel.org>, 
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>, Peter Griffin <peter.griffin@linaro.org>, 
+	Tudor Ambarus <tudor.ambarus@linaro.org>, Will McVicker <willmcvicker@google.com>, 
+	kernel-team@android.com, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-hardening@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Petr,
+On Fri, May 9, 2025 at 3:22=E2=80=AFPM Andr=C3=A9 Draszik <andre.draszik@li=
+naro.org> wrote:
 
-Thanks for the review!
+> The Maxim MAX77759 is a companion PMIC for USB Type-C applications and
+> includes Battery Charger, Fuel Gauge, temperature sensors, USB Type-C
+> Port Controller (TCPC), NVMEM, and a GPIO expander.
+>
+> This driver supports the GPIO functions using the platform device
+> registered by the core MFD driver.
+>
+> Acked-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
 
-On Tue, May 13, 2025 at 11:57:19AM +0200, Petr Mladek wrote:
-> On Sun 2025-05-11 16:52:52, Feng Tang wrote:
-> > panic_print was introduced to help debugging kernel panic by dumping
-> > different kinds of system information like tasks' call stack, memory,
-> > ftrace buffer etc. Acutually this function could help debugging cases
-> > like task-hung, soft/hard lockup too, where user may need the snapshot
-> > of system info at that time.
-> > 
-> > Extract sys_show_info() function out to be used by other kernel parts
-> > for debugging.
-> > 
-> > --- a/include/linux/panic.h
-> > +++ b/include/linux/panic.h
-> > @@ -16,6 +16,17 @@ extern void oops_enter(void);
-> >  extern void oops_exit(void);
-> >  extern bool oops_may_print(void);
-> >  
-> > +#define SYS_PRINT_TASK_INFO		0x00000001
-> > +#define SYS_PRINT_MEM_INFO		0x00000002
-> > +#define SYS_PRINT_TIMER_INFO		0x00000004
-> > +#define SYS_PRINT_LOCK_INFO		0x00000008
-> > +#define SYS_PRINT_FTRACE_INFO		0x00000010
-> > +#define SYS_PRINT_ALL_PRINTK_MSG	0x00000020
-> 
-> Please, remove this option from the generic interface. It is
-> controversial. In the current form, it makes sense to replay
-> the log only in panic() after all the other actions:
-> 
-> 	console_verbose();
-> 	bust_spinlocks(1);
-> 	panic_other_cpus_shutdown(_crash_kexec_post_notifiers);
-> 	printk_legacy_allow_panic_sync();
-> 	console_unblank();
-> 	debug_locks_off();
-> 	console_flush_on_panic(CONSOLE_FLUSH_PENDING);
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-OK, will do.
-
-In my RFC version, I did reserved it for panic use only :) and
-added the support to general case in v1 after some hesitation. 
-
-https://lore.kernel.org/lkml/20250507104322.30700-2-feng.tang@linux.alibaba.com/
-
-> 
-> All these operations have some (side-)effect which increases
-> the chance to actually see the messages on the console.
-> 
-> I think that it was primary meant for graphics consoles. But there
-> it would need to be used together with printk_delay
-> (/proc/sys/kernel/printk_delay, sysctl printk_delay).
-> 
-> Note that it creates a hairy code. It is the only reason why we need to
-> call panic_print_sys_info() twice with "false" and "true"
-> parameter.
-
-Yes.
-
-> 
-> That said, I could imagine a generic use, for example, after forcing
-> ignore_loglevel or so. Otherwise, I do not see any advantage in
-> flushing the same messages again, for example, on serial or network
-> consoles where they are likely already stored. We could add this
-> later when there is a real-life demand.
-
-You are right, one main usage is for some product which has only graphics
-console and no serial one. And we also used for serial console sometimes,
-when the console have a lot of user space message mixed with kernel ones,
-and we'd like to see the full clean kernel messages.
-
-> 
-> > +#define SYS_PRINT_ALL_CPU_BT		0x00000040
-> > +#define SYS_PRINT_BLOCKED_TASKS		0x00000080
-> 
-> The generic approach might deserve a separate source file,
-> for example:
-> 
->     include/linux/sys_info.h
->     lib/sys_info.c
-
-Thanks for the suggestion! I'm really not good at naming. 
-
-As panic.c is always built-in, I'll put sys_info.c as obj-y.
-
-> Also I always considered the bitmask as a horrible user interface.
-> It might be used internally. But it would be better to allow a human
-> readable parameter, for example:
-> 
-> 	panic_sys_info=task,mem,timer,lock,ftrace,bt,all_bt,blocked_tasks
-
-Yes, it's convenient for developers, as a cmdline parameter being parsed
-at boot time.
-
-But I think bitmask may be easier for runtime changing as a core parameter
-under /proc/ or /sys/, or from sysctl interface. There are also some other
-modules use debug bitmask controlling printking info for different
-sub-components.
-
-And we have similar control knobs for hung, lockup etc.
-
-Or should I change the name from 'xxx_print_mask' to 'xxx_sysinfo_flag'
-in patch 2/3 ?
-
-> 
-> The console reply might be handled by a separate:
-> 
-> 	panic_console_reply=1
-> 
-> And it would obsolete the existing "panic_print" which is an
-> ugly name and interface from my POV.
-
-Agree it's ugly :). But besides a kernel parameter,  'panic_print' is
-also a sysctl interface, I'm afraid renaming it might break user ABI.
-
-> > +extern void sys_show_info(unsigned long info_mask);
-> > +
-> >  extern bool panic_triggering_all_cpu_backtrace;
-> >  extern int panic_timeout;
-> >  extern unsigned long panic_print;
-> > --- a/kernel/panic.c
-> > +++ b/kernel/panic.c
-> > @@ -208,33 +200,44 @@ void nmi_panic(struct pt_regs *regs, const char *msg)
-> >  }
-> >  EXPORT_SYMBOL(nmi_panic);
-> >  
-> > -static void panic_print_sys_info(bool console_flush)
-> > +void sys_show_info(unsigned long info_mask)
-> >  {
-> > -	if (console_flush) {
-> > -		if (panic_print & PANIC_PRINT_ALL_PRINTK_MSG)
-> > -			console_flush_on_panic(CONSOLE_REPLAY_ALL);
-> > -		return;
-> > -	}
-> > -
-> > -	if (panic_print & PANIC_PRINT_TASK_INFO)
-> > +	if (info_mask & SYS_PRINT_TASK_INFO)
-> >  		show_state();
-> >  
-> > -	if (panic_print & PANIC_PRINT_MEM_INFO)
-> > +	if (info_mask & SYS_PRINT_MEM_INFO)
-> >  		show_mem();
-> >  
-> > -	if (panic_print & PANIC_PRINT_TIMER_INFO)
-> > +	if (info_mask & SYS_PRINT_TIMER_INFO)
-> >  		sysrq_timer_list_show();
-> >  
-> > -	if (panic_print & PANIC_PRINT_LOCK_INFO)
-> > +	if (info_mask & SYS_PRINT_LOCK_INFO)
-> >  		debug_show_all_locks();
-> >  
-> > -	if (panic_print & PANIC_PRINT_FTRACE_INFO)
-> > +	if (info_mask & SYS_PRINT_FTRACE_INFO)
-> >  		ftrace_dump(DUMP_ALL);
-> >  
-> > -	if (panic_print & PANIC_PRINT_BLOCKED_TASKS)
-> > +	if (panic_print & SYS_PRINT_ALL_PRINTK_MSG)
-> > +		console_flush_on_panic(CONSOLE_REPLAY_ALL);
-> 
-> I do not see any advantage in replaying the log at this stage.
-> It might make sense to replay the messages printed before
-> the critical situation. But it makes sense only when they
-> might be filtered/blocked before and can be seen now (unblanked
-> consoles, forced  ignore_loglevel, or so).
-> 
-> I would keep this in the bitmap for backward compactibility.
-> But I would ignore it my the generic print_sys_info().
-
-OK.
-
-> And I would replace panic_print_sys_info(true) call with:
-> 
-> static void panic_console_replay(void)
-> {
-> 	if (panic_print & SYS_PRINT_ALL_PRINTK_MSG)
-> 		console_flush_on_panic(CONSOLE_REPLAY_ALL);
-> }
-
-Nice cleanup! Will do. I'll fold this change with this patch.
-
-Thanks,
-Feng
-
-> 
-> > +	if (info_mask & SYS_PRINT_ALL_CPU_BT)
-> > +		trigger_all_cpu_backtrace();
-> > +
-> > +	if (info_mask & SYS_PRINT_BLOCKED_TASKS)
-> >  		show_state_filter(TASK_UNINTERRUPTIBLE);
-> >  }
-> 
-> Best Regards,
-> Petr
+Yours,
+Linus Walleij
 
