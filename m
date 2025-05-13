@@ -1,332 +1,197 @@
-Return-Path: <linux-kernel+bounces-645643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-645638-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48401AB50D3
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 12:04:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6AD7AB50BE
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 12:02:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC1C5188BDDD
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 10:04:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7845F188DE74
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 10:02:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B38032517A6;
-	Tue, 13 May 2025 10:00:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9D2F24166A;
+	Tue, 13 May 2025 09:59:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Aux8wGVt"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="YZRyJke0"
+Received: from PNZPR01CU001.outbound.protection.outlook.com (mail-centralindiaazolkn19011039.outbound.protection.outlook.com [52.103.68.39])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ABF124EF76;
-	Tue, 13 May 2025 09:59:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747130400; cv=none; b=pYqHg5HbR+zgzaqgRZ3M9TjHis55+Gwz3rxw72rdm7HUAzq+SMt8jGydOXVYTWrY0K1i+yY7Zcnj4JBpyQA9QTWvYtI7mPsqRI/qlO/Ns8W5xCtXLVqwxPE3rOdLVKwp2WCMoAVRIE/t+3Gfu1G5Ca8qSXyiLrSoSxP4XPbFCSc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747130400; c=relaxed/simple;
-	bh=qgfhS8rcfdp9Qsqi8Pwsh8O8L9JbHSE59yiio9tGP5Q=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=Qvl1AjYNV5FF+/yHQyldxzUsBhyKVR93pIyyDwzTlOnWGbwya3Ie+oSu47Nmqfg4+Ah8hPgoebEwz0t8QfqwJGQUQUhYqGgEJS0LpSvaRGKGGJZqB6gxWyqeNhRjLtYIE0B+2bNBnfOoaYegP4WgK/8niS6mqqA+hZTYwZdkNto=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Aux8wGVt; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54D7QRDn014272;
-	Tue, 13 May 2025 09:59:45 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	SVEU4FMB7/KL4huAeWzzozYZI7ATF4mRC5i/rf+NK2U=; b=Aux8wGVt8by824jh
-	wQ4jp6Wr8aB1OQrndCY9dHBHt37VdwP7XYCH18XT2qTbykdKqgvVcXMImK/NJak4
-	OaG+Wu74DudVRPq+vcP9RV/R/uGK4F/qXJIBvz3fcSv+5+ke03jj5NpL7c5WyZil
-	Xe+XLtuw1NGxTCZSz/dRvoCxCXx+5P/ZliKE/rOSHUqGc4AZLyXDxBMijJwMIFO7
-	+K7f+0fRfWAEG8mCt+Jj8fV1J7nwUCq/VkGcyI+p+e/pzF5gD9R0IIHiut+PAHyc
-	4cwfG5J+AtDngBL8cywzYAGjZhEeqD5+/qw1+my+R3Cu47H6ETagpk8E/ON8m+nR
-	OSxDig==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46hyjjq7cq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 13 May 2025 09:59:44 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 54D9xifg009690
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 13 May 2025 09:59:44 GMT
-Received: from nsssdc-sh01-lnx.ap.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 13 May 2025 02:59:38 -0700
-From: Luo Jie <quic_luoj@quicinc.com>
-Date: Tue, 13 May 2025 17:58:32 +0800
-Subject: [PATCH net-next v4 12/14] net: ethernet: qualcomm: Initialize PPE
- L2 bridge settings
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C524F241665;
+	Tue, 13 May 2025 09:59:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.68.39
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747130376; cv=fail; b=X90+nIS8XXHQ4uYGV3GNMsEL5lN89g1owLwaiWXJR9QoFJaten5ZK51uw/V4j9BN3fflNlX/fZ/uNIX9TE5XBvNfHU+NH2fEclKSZbVxSUkyCyequTx3ZbbWbFda5lggIIDEueJojTXTYANyf5fV9VHHhJL2NWVy+n//c+o4l9A=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747130376; c=relaxed/simple;
+	bh=T3Z8tJxUkZYiooR3ra5FEDltMnN6sBngZFEatGT/3KM=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=EDcDTJjxxejcFjnHA9L8SPkWJBZu0npHG62uOBKG1oRTMif1FHVNJBMADHIIWJbjT902xtQCkvL77FKIDNa6HdlGAWU96OOm1pGPtrA8OpaMo1zfGo5bFjJknX/LOyu9GF1YFbl5aKAe8moGx7nHnpPzglZXw3G7EedUYB4ffO4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=YZRyJke0; arc=fail smtp.client-ip=52.103.68.39
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=gSuhugHdgY7btZBXVOpKbDOX1Kmp26r7IP6FJF+Yvuz2NmZJunyK81j9oBWmhcwqr2xIbZz+BtEDBqYCNOdTBrd1in6MhGmCMReqDt66tVd42LKGAoIYN8Y3x4SRPJ7GFTuM0WFyfMGc4Dhq1lk8uoQXPl7EKIL2PH0wyBSGn0sU9CZP0YBCs+yvBQ9y2Dcr5hLFlKPeMWPYStIOIITLv9KEnx+EqRzxvx6F6SeNBiERw6bdv3ilRmGK9BtXyvIKf8mVdWifqFHY+Kx/g501FwU+ZbaCDGGErNe8wCT3IMyl0118YgRbNnW8vvlhDgvqO1IaD83idaVwxrR7kwRI3A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=6E8MvLMr2SfoOmNkHW64wbmwEJbY5tlcCW2mXjci+40=;
+ b=foaag2//ljCO41rLTlIDr4YsT3F7eAovLek7uaNniywIgun+9FjDOnfHfIc7jNAn4mI8WUzX5hFYE0ZNQfHagTpuHHO2mU66iT2rXBncoDmDk4AOrjoohtlV6Uvb+P2yFxEw+fLjoPzegY9f35DQjx8j5z01crhXGsD8D+ykTpmY6S4ccYZvoPv+FOPqXCLQIBFdqfpz22CZTfEzoxDphhcwiQzIDSacXUuxCwuRuUy1EGj6T7fKphDJff37OXbRsRv5PXFDyDCtqkU4sBvSlpirY6yIQWNZDPYujPNQVMBl+9ShUKxulu6Scqi2/dFjj5gqxUNB958eU62XgxqdUw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=6E8MvLMr2SfoOmNkHW64wbmwEJbY5tlcCW2mXjci+40=;
+ b=YZRyJke0BDgofrOHfizA6oiLxDXYZ6UVdPhTFui7oSp1UqOsqxlvb55h20TiWnV4kgrbrLF05ss8GsCepvwnt1Hvnp0n4theIPI2IIi3LZzexeSEGsWKUMYnq2xrfdbdMDMYw8/DSK3ptMuLONJBG5XL+lWqGA+OfGjlSqVlqWJvpnyVOLQUtvwvZ5olyggboUjuoyuCpB/2N2rHzy1UM6f4sCtNPg273UE9ee7LArMkhtei+9m/ytmT7eyNuyLaqWQWC69B3aZ+AG4hPbPSDNC5gxddhvUm/0pLfizYh/W1sKgoJSsDbRL/HY5L34vwBNU07PoeujER8PEhmHFM5Q==
+Received: from MA0P287MB2262.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:100::6)
+ by PN3P287MB1381.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:193::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8722.30; Tue, 13 May
+ 2025 09:59:27 +0000
+Received: from MA0P287MB2262.INDP287.PROD.OUTLOOK.COM
+ ([fe80::ca81:3600:b1e4:fcf4]) by MA0P287MB2262.INDP287.PROD.OUTLOOK.COM
+ ([fe80::ca81:3600:b1e4:fcf4%5]) with mapi id 15.20.8722.027; Tue, 13 May 2025
+ 09:59:26 +0000
+Message-ID:
+ <MA0P287MB2262F586320C31A7F887B5CEFE96A@MA0P287MB2262.INDP287.PROD.OUTLOOK.COM>
+Date: Tue, 13 May 2025 17:59:23 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/4] dt-bindings: riscv: add Sophgo x8 EVB bindings
+To: Inochi Amaoto <inochiama@gmail.com>, Han Gao <rabenda.cn@gmail.com>,
+ devicetree@vger.kernel.org
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Paul Walmsley
+ <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
+ Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+ Thomas Bonnefille <thomas.bonnefille@bootlin.com>,
+ Guo Ren <guoren@kernel.org>, Chao Wei <chao.wei@sophgo.com>,
+ sophgo@lists.linux.dev, linux-riscv@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <cover.1746811744.git.rabenda.cn@gmail.com>
+ <59c175c7bccbd4b5ad241c39b66b0303e0facf81.1746811744.git.rabenda.cn@gmail.com>
+ <MA0P287MB22621824B2FD5E2A64006174FE97A@MA0P287MB2262.INDP287.PROD.OUTLOOK.COM>
+ <CAAT7Ki9=ROP47hsugf3BS1nXr9oOPHWgjQoGfjAZiwHnXS19Pw@mail.gmail.com>
+ <nrtzltuus47rjds3x54e72mtflvjh4najyqdjnagxq5etge5e7@vkikyxa5zf6k>
+From: Chen Wang <unicorn_wang@outlook.com>
+In-Reply-To: <nrtzltuus47rjds3x54e72mtflvjh4najyqdjnagxq5etge5e7@vkikyxa5zf6k>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SGAP274CA0011.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:b6::23)
+ To MA0P287MB2262.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:100::6)
+X-Microsoft-Original-Message-ID:
+ <29f9d65d-9c93-4fa0-8e47-e62cff7be0ed@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20250513-qcom_ipq_ppe-v4-12-4fbe40cbbb71@quicinc.com>
-References: <20250513-qcom_ipq_ppe-v4-0-4fbe40cbbb71@quicinc.com>
-In-Reply-To: <20250513-qcom_ipq_ppe-v4-0-4fbe40cbbb71@quicinc.com>
-To: Andrew Lunn <andrew+netdev@lunn.ch>,
-        "David S. Miller"
-	<davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>, Lei Wei <quic_leiwei@quicinc.com>,
-        Suruchi Agarwal
-	<quic_suruchia@quicinc.com>,
-        Pavithra R <quic_pavir@quicinc.com>,
-        "Simon
- Horman" <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook
-	<kees@kernel.org>,
-        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
-        "Philipp
- Zabel" <p.zabel@pengutronix.de>
-CC: <linux-arm-msm@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-doc@vger.kernel.org>, <linux-hardening@vger.kernel.org>,
-        <quic_kkumarcs@quicinc.com>, <quic_linchen@quicinc.com>,
-        <srinivas.kandagatla@linaro.org>, <bartosz.golaszewski@linaro.org>,
-        <john@phrozen.org>, Luo Jie <quic_luoj@quicinc.com>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1747130311; l=7562;
- i=quic_luoj@quicinc.com; s=20250209; h=from:subject:message-id;
- bh=Z/IXsRftK0q9z9DNYCXaFy+7yOzBFNuGdhFxPvnvi/w=;
- b=ncR8/CJXAaC7oP00NS0HnA/bL9gfRJJkeA92/aJgW8VgYjLBd7Qceq8TlZ0UUW85oAVjhAoVE
- 32g+KbsEcUgClrWFi32i/V6G9ZQ40t3NEOXycjfAYZq2WFmKijIsLSh
-X-Developer-Key: i=quic_luoj@quicinc.com; a=ed25519;
- pk=pzwy8bU5tJZ5UKGTv28n+QOuktaWuriznGmriA9Qkfc=
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTEzMDA5MyBTYWx0ZWRfX9BADdP+QD7Kf
- JG8mYnf2fsPSz2C7T8nYo89ElN8nNr24E5QQtu7eK0k41HCAtbLZu2E2TayQqV0XWtMwOBfQiHf
- 8aqXqVyHWqYJmaLLlJgvjfW6hvqvP9VwKLLN5F9OKn8edGlYfYHmM90GpE2Sjq6dYXa2xaL3rJC
- GR+heggMGO8XqglLNPZcHkgMxV7ZqHGmx/c3DqA/SI4RkgWuBY5SeqWLy4bQdbxOIcx5Br2NWsF
- kyRahNQ1GvdcCw5VAvaDedtHJ9x0/yw79PiWcaZCDqUMUrNQtNLlSMtZZzTY1SwiwxZw/IvHI8m
- ZuNfy6YnwtP53ApTQJBzrV7JWrzNJe01eYjwHyoTr8TRwhuDN07QSuqD8yJxaoGqhuunJ1eZV1k
- Zlcy5KQmJRwoJZMHka3WLW1Hhn3UKyABVQ2uKfV4upoo2BFCmZRwCDCzHPEzbAGt5INN+lLT
-X-Proofpoint-GUID: 0dj56iTnmsbwWZHSEpTzehKM3A3N7jTc
-X-Authority-Analysis: v=2.4 cv=QuVe3Uyd c=1 sm=1 tr=0 ts=68231810 cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=COk6AnOGAAAA:8
- a=kjK3jMQdVcNyYKlBoqoA:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: 0dj56iTnmsbwWZHSEpTzehKM3A3N7jTc
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-12_07,2025-05-09_01,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 suspectscore=0 clxscore=1015 spamscore=0 phishscore=0
- mlxlogscore=999 impostorscore=0 adultscore=0 priorityscore=1501
- lowpriorityscore=0 mlxscore=0 bulkscore=0 classifier=spam authscore=0
- authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2504070000 definitions=main-2505130093
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MA0P287MB2262:EE_|PN3P287MB1381:EE_
+X-MS-Office365-Filtering-Correlation-Id: 12252802-92ed-4ea8-c82d-08dd9204d85e
+X-MS-Exchange-SLBlob-MailProps:
+	Cq7lScuPrnoSu68Y5FdRDlCPOBk43FEt+26GliOreA2ldnvtxRZskCdP6YSQ1AozMCvwcSgaYKVxRW9imP6zeE4toyOeQM5KuTIrEj8mJeKjE7Fp+mBxkp3rggEN/7LyOeY/LwvlNbbzfUWfb3XaLD0C+JgZre6Zqou6yjIWhOyvwg9qZZU6VBPxEvbzcfH7fCH+aT8zKOvzCOaeIaZUqRAU/riHfuFfVZLhm5lmDhqhR3nVo/f2GuiFrBuy1FcbnVATTSOT+oFFnZ1J97DEPHMx6UA/tFWoEn1lGwsFyDVzJnRfBGK0S+0JubAXmf+WbnEbvn3Gw4X7a3EZpG+TNs5QyolNuapaQg03gcW8l+qIeETPPZrwYJv0f5AMa2pGRFC8t13NkFNWfLKiNeRbR+ltQM5zlzy2fc15nzstFh6+ySH01gPAIuAQ/u5CS2yOK4Xg0X/MYqIKw+/v25YAhvoQg3tzAjoxd9zALajb059Ytv7liOuN6P0f4lXNk1EPTjm4M+ejgM4kHEF+phVSMt1jIzyFpYq7ydBm0BZVMjJTKqxKmSdHV//pIZ7fbHOp4q3CZlhbjLNSS1rPWuNwW0+T1adq4yHeAsyWo2bDbePTw/BGvyBGQGLGrS9bFojO6XCIt/Gc1IRydLWoR2A8EtiA7qCoNiMy2scYglKcyRLycSRuOCiV5mCE1fuAxGkeoHvVTC3EcR+qnOu3cSBUoVrPMY5CTLtoOjBPxZUV8boSkVNEeSmff2dEfXMWbl/x8yxztl9nJ2E=
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|15080799009|461199028|6090799003|7092599006|8060799009|19110799006|5072599009|3412199025|440099028;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?VklUOFVGR1BpV2huUEIwbm02S0pzbE5FbFVNVFdVcGltS3hicGpjQ1E4bmhL?=
+ =?utf-8?B?cXNMMjBMNmdtRVFlbFdWQU5PbnhjdWVwK3dTb2k1eHpmWEliY1ZDMjhmNTdK?=
+ =?utf-8?B?bWVTRnRXU2xDM3YyMDhFSW1abjd1V2tlUDNSYkVKNHFUUmZVLzg3NXpnYmlw?=
+ =?utf-8?B?TkdnalFqaHo3NU55QytpL1liZXlBU2RWbktUSE9JZmZsQlcxZEtzN2J6RmJr?=
+ =?utf-8?B?ZXZWRVc4ZVZnam5zd0poZXVuY2kyTUJWL2lzb1FDTCsyRGJsODI2RUJVOEVt?=
+ =?utf-8?B?K0ZEQ1lkQzZwUktROVRyWXBOMXUzMFd0SUpuVUxLcVRHUDRzMFZXS0N3VXE2?=
+ =?utf-8?B?YWc2K0dEdEFIZWdFYkVjYTNSWE16ejRkeUZPSTRtVkdVTU5mWENteVdtaERY?=
+ =?utf-8?B?dEorbDFRZzU5aGFsYWtvLzgrZGg2MXk1TDA2ckZCMTZMQmQ4RFFmMmJUZTU0?=
+ =?utf-8?B?UGVWL0dlNlFVUWRQNkcvelVuaUJldkN2OWxydlkrWmUzcm91N0dqWlNnUVY1?=
+ =?utf-8?B?UmRDT1U2NHAwUlBSOXNaMk5oL2JsaE1Zc2pMeXlpZkk2WkxhbU9pQ2hrQXhw?=
+ =?utf-8?B?QllJK3RCaXZiQzZpNTloaU5XME84Y0tJVVZkbkJtR0oxaG9JS2tGeE5SWnkw?=
+ =?utf-8?B?U3REeUhPb0RucVgwTFBDNGNWOFhxWGVuMEtVNFlJVlBtNWNLdDk0eW1GOG83?=
+ =?utf-8?B?MlRBbytvc1U2Q3lDWnMwcDhJRUVFYmNFaWRqOFc1WURTVlhRRXU0UlBMRHVO?=
+ =?utf-8?B?bUx5NzRaaXRwczlEVEpqamRQRDhxVkFoWGFyRFpZQ09GSkxhS3pFbWdISUxu?=
+ =?utf-8?B?T25jSUZwa3FnZ2FyWE1XcjF2OHBuWUhLd1ZGMHZ4Wmk5M1FGM3VYaUk1Ry9V?=
+ =?utf-8?B?MUQvSEROQXNtWWVuRjZSQUN6c0lQbThCa2lKZ3N1N2RkdTU3LzlHZHNBcmI5?=
+ =?utf-8?B?U0ZyV3RrMitvaXIwdXdMOVpER3ZSME5RNEdickFtZFpsd3p5SHo4RGw4U3hD?=
+ =?utf-8?B?cC83a3plWkROTmUrNEQ3RytybHZtT2hSSEEzQ0hONldXcG14Rm5ZY09KR2VR?=
+ =?utf-8?B?S2NLTmV0ZGFxd09PWUxwUlhOSjRjTEpxRjA3dTVDaER4KzdPTlZoU2poNDMz?=
+ =?utf-8?B?OGlDSnI0TWlNaXNpbVBUYmVVNGhnQjRtaTJhK2lrbVplVzFCQmdCek5OOGcw?=
+ =?utf-8?B?R2tMQzJXVEZOeGxvaGo4SXhXSHZxQWxlQ3N1amxvRHFxTThmb1VXYnA3d1BH?=
+ =?utf-8?B?bFJNSittYUV6aE1VZm5XWGgrWm03SWd5a1lFdWtkTHhPQ29ob3laamQ3d2NF?=
+ =?utf-8?B?NTVGQVNleVV2bGRWYW01K1ZYUkFyS0phcWNPaHZsVGc0dWRoU3F0MnRadDBV?=
+ =?utf-8?B?WHRpd2M5VG9YMnlNOVlKeDdzVkNXOVVmTVQrSzA4Ymlnc0ZQUjdsalFxNXhu?=
+ =?utf-8?B?L2hMTG04dkN1ZkVYb0VnT2czN3JQMUthUUlONExYOXlKZldxVlpSVHhETkw5?=
+ =?utf-8?B?R3pwTEdVbVRrZlpsNTM4UjJUQVVrSzNodWUyVmh2dVZUOXRjQ2RGbGtVaGdz?=
+ =?utf-8?B?a3d4QT09?=
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?NlFucnJFZm1ybUljTjNSS2VYWE5oVCtHVHVpVWRNRFlrTG1ULzAwZnRtVkFK?=
+ =?utf-8?B?c0xEQlhtR3czcmU0SGFHUi9iaXdnSWhsUFptd2ZhM3YzK05oNmVUS3U1NnFH?=
+ =?utf-8?B?M3RzVlE4MlVxNlhXbE1uYnFVanRQaVZXekMrYzBqOHIxdGluaEt5bmoxN2Vy?=
+ =?utf-8?B?RzF3a0R2WWVUeGlSQm1SZlFOQlF5MTlycHduelhUTE94QTBoTmJqWHNzTDJJ?=
+ =?utf-8?B?REZsUUNQTmFEbkRYRlFtWFpZSWo1WWNRcW1zVVhic1VhRGxIbFNFeDRCdU9y?=
+ =?utf-8?B?S05kaGxENDZVWnNqRmk3NnBIMDZxdVZUYTBhT1FSZGdFZDNFVUgyTGFtWDRV?=
+ =?utf-8?B?b0FoeFlraXB2V3YwNksvYmVBWVhKQUFRQU94L1JSRkVWSFRlTXVzK29nc3JH?=
+ =?utf-8?B?YUxjV2xMemVRSWthb01haUVTaWU0U2k1a1lYbXJ2UDhXVFl1S096SmFxZVVu?=
+ =?utf-8?B?TFFrbEdnN2ZiM0w5dTBMNHZMc2JZMUEyUEd1QUZ2TnVUTDc2b1VtZlJMc3Bz?=
+ =?utf-8?B?QkFuaC9uRzBjY2JtUXRteTdrZ2RuK3ZKLytwcjRUZTNuWDlFQTh6UWorM0dy?=
+ =?utf-8?B?R2xUZ0lZQkE4UG8vSDM2em9nRWxwbGt4VWZycmhnZjZkOUVndllLelU4WThY?=
+ =?utf-8?B?RlFVZ1A2NUNBNDgwa3BuSHM1djY1eVJLbUlGQitNZkpRb2lNMG96RmphY00x?=
+ =?utf-8?B?ejVPaU0yMU4zdWFPZEw2OVpEaFRUd2ZPQktyWUVLbkY0LzcvNkt1OVlLaGRK?=
+ =?utf-8?B?b2c1M0lmUEg2QVRsZHZOOERXZkU3cnMvUEE3ZHM0VnRiMTlPRFZ0VnBOdEtz?=
+ =?utf-8?B?ZFFrSytSYlN1c0VVeEJxOW4vbHF0VVFRRWZ0YjkwU05pY3pqcituOUY3OUNx?=
+ =?utf-8?B?blh1YTJHQlBkYWhaVThkSzdPNGpDOGNPWGluQ3hGcnlkOVRPOHBTWlQxWkMx?=
+ =?utf-8?B?OFdYS2tmazZSeFdkSkUwZnRjSjBTWSt1b3FhY3VscytZSUZKa3Q3RzFvN29J?=
+ =?utf-8?B?TlFtdm0wUy9sN0ZZSDJXNVRsUkowOE01N292bi9LdjkyYUd2RWZqNmpFZStD?=
+ =?utf-8?B?SWNiTWw2ZlE1dlFESVo5ZjU1RkJiQmxGNnYzdlFhaFhLMmcrUmlqZ1NMbjBZ?=
+ =?utf-8?B?TVRBb0xtczRTeE9wWldISGlvYm5DY0VYbVdtaVpnR0kzcjFaYS9jMjlyczds?=
+ =?utf-8?B?cGpRS1M5Q3BpdklmdVJiYWJGR0loNS9rbDJaSmZBNzVaVnJ5TEN3RVRlY2pQ?=
+ =?utf-8?B?Nk91VzEyNDRBSzhkblMxamRqREwyQXRKV3o5aitWUGdwMmV6VDl0SWhobnl6?=
+ =?utf-8?B?T09DUjJzUGY2SU55U3FDK0V3UytVUnV0a3dxQVludW9FODIxc1l0WnJsWUpN?=
+ =?utf-8?B?OGxiZUVSV3IzTTBOMXI3NHJIRGZWOHp6bmNOc0JuMFRSdG56TzRSVkhqZXE0?=
+ =?utf-8?B?dldlT0gwb0R3S3hCVTJDTTk1cUp0cjNQQnhKTTI4dkhZM1dtTnkvUjhVZTNs?=
+ =?utf-8?B?OERnT1FuNllhN1JwSzQxdHh3WTJCdmFjMU41ampGSzhuR3ZoR1NvQkZQaUJu?=
+ =?utf-8?B?S1FRK2R2OTV6bEhyZzhRV2FyMGdMNWkzQXQ4MThOWTVGZHpKT2hLWHpHMEZ1?=
+ =?utf-8?B?azlZNlNzTTdYdG1JbGU1NkV6WVdBemwrTVlLV0JuR0lWWllBVUM0eG8rcHdE?=
+ =?utf-8?B?ZjRYeHFtNDVSNXlPUjVGcnAxdVlzMlFIUVhsbCtjQ0tqUnRIaEZYeGRYcEIv?=
+ =?utf-8?Q?8H73jM0rUzpBarwgwLbNVU9hHIkBBrx+UYxweKs?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 12252802-92ed-4ea8-c82d-08dd9204d85e
+X-MS-Exchange-CrossTenant-AuthSource: MA0P287MB2262.INDP287.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 May 2025 09:59:26.8505
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN3P287MB1381
 
-From: Lei Wei <quic_leiwei@quicinc.com>
 
-Initialize the L2 bridge settings for the PPE ports to only enable
-L2 frame forwarding between CPU port and PPE Ethernet ports.
+On 2025/5/13 17:49, Inochi Amaoto wrote:
+> On Tue, May 13, 2025 at 02:48:44PM +0800, Han Gao wrote:
+>> I hope it is sg2042-x8evb.
+>>
+>> Sophgo is also making EVB boards for sg2044.
+>>
+>> I think a distinction needs to be made here.
+>>
+> SG2044 evb has a formal name like srd3-10, but I think it should
+> have a sg2044 prefix. as the name printing on the board has a
+> sg2042 prefix.
+sg2042 prefix? :)
+>
+> But there is something needed to be checked, like whether the "x8evb"
+> should be "evb-1.0" and "x4evb" should be "evb-2.0".
+>
+> Regards,
+> Inochi
 
-The per-port L2 bridge settings are initialized as follows:
-For PPE CPU port, the PPE bridge TX is enabled and FDB learning is
-disabled. For PPE physical ports, the default L2 forwarding action
-is initialized to forward to CPU port only.
+Agreed. To avoid confusion, it is best not to define the official 
+product name yourself, but to confirm with the vendor (here is sophgo) 
+or have them provide it, just like "srd3-10", we contacted sophgo's 
+marketing staff and they provided it.
 
-L2/FDB learning and forwarding will not be enabled for PPE physical
-ports yet, since the port's VSI (Virtual Switch Instance) and VSI
-membership are not yet configured, which are required for FDB
-forwarding. The VSI and FDB forwarding will later be enabled when
-switchdev is enabled.
-
-Signed-off-by: Lei Wei <quic_leiwei@quicinc.com>
-Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
----
- drivers/net/ethernet/qualcomm/ppe/ppe_config.c | 80 +++++++++++++++++++++++++-
- drivers/net/ethernet/qualcomm/ppe/ppe_regs.h   | 50 ++++++++++++++++
- 2 files changed, 129 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/net/ethernet/qualcomm/ppe/ppe_config.c b/drivers/net/ethernet/qualcomm/ppe/ppe_config.c
-index 29d0af091854..6a32f09c02ef 100644
---- a/drivers/net/ethernet/qualcomm/ppe/ppe_config.c
-+++ b/drivers/net/ethernet/qualcomm/ppe/ppe_config.c
-@@ -1915,6 +1915,80 @@ static int ppe_queues_to_ring_init(struct ppe_device *ppe_dev)
- 	return ppe_ring_queue_map_set(ppe_dev, 0, queue_bmap);
- }
- 
-+/* Initialize PPE bridge settings to only enable L2 frame receive and
-+ * transmit between CPU port and PPE Ethernet ports.
-+ */
-+static int ppe_bridge_init(struct ppe_device *ppe_dev)
-+{
-+	u32 reg, mask, port_cfg[4], vsi_cfg[2];
-+	int ret, i;
-+
-+	/* Configure the following settings for CPU port0:
-+	 * a.) Enable Bridge TX
-+	 * b.) Disable FDB new address learning
-+	 * c.) Disable station move address learning
-+	 */
-+	mask = PPE_PORT_BRIDGE_TXMAC_EN;
-+	mask |= PPE_PORT_BRIDGE_NEW_LRN_EN;
-+	mask |= PPE_PORT_BRIDGE_STA_MOVE_LRN_EN;
-+	ret = regmap_update_bits(ppe_dev->regmap,
-+				 PPE_PORT_BRIDGE_CTRL_ADDR,
-+				 mask,
-+				 PPE_PORT_BRIDGE_TXMAC_EN);
-+	if (ret)
-+		return ret;
-+
-+	for (i = 1; i < ppe_dev->num_ports; i++) {
-+		/* Enable invalid VSI forwarding for all the physical ports
-+		 * to CPU port0, in case no VSI is assigned to the physical
-+		 * port.
-+		 */
-+		reg = PPE_L2_VP_PORT_TBL_ADDR + PPE_L2_VP_PORT_TBL_INC * i;
-+		ret = regmap_bulk_read(ppe_dev->regmap, reg,
-+				       port_cfg, ARRAY_SIZE(port_cfg));
-+
-+		if (ret)
-+			return ret;
-+
-+		PPE_L2_PORT_SET_INVALID_VSI_FWD_EN(port_cfg, true);
-+		PPE_L2_PORT_SET_DST_INFO(port_cfg, 0);
-+
-+		ret = regmap_bulk_write(ppe_dev->regmap, reg,
-+					port_cfg, ARRAY_SIZE(port_cfg));
-+		if (ret)
-+			return ret;
-+	}
-+
-+	for (i = 0; i < PPE_VSI_TBL_ENTRIES; i++) {
-+		/* Set the VSI forward membership to include only CPU port0.
-+		 * FDB learning and forwarding take place only after switchdev
-+		 * is supported later to create the VSI and join the physical
-+		 * ports to the VSI port member.
-+		 */
-+		reg = PPE_VSI_TBL_ADDR + PPE_VSI_TBL_INC * i;
-+		ret = regmap_bulk_read(ppe_dev->regmap, reg,
-+				       vsi_cfg, ARRAY_SIZE(vsi_cfg));
-+		if (ret)
-+			return ret;
-+
-+		PPE_VSI_SET_MEMBER_PORT_BITMAP(vsi_cfg, BIT(0));
-+		PPE_VSI_SET_UUC_BITMAP(vsi_cfg, BIT(0));
-+		PPE_VSI_SET_UMC_BITMAP(vsi_cfg, BIT(0));
-+		PPE_VSI_SET_BC_BITMAP(vsi_cfg, BIT(0));
-+		PPE_VSI_SET_NEW_ADDR_LRN_EN(vsi_cfg, true);
-+		PPE_VSI_SET_NEW_ADDR_FWD_CMD(vsi_cfg, PPE_ACTION_FORWARD);
-+		PPE_VSI_SET_STATION_MOVE_LRN_EN(vsi_cfg, true);
-+		PPE_VSI_SET_STATION_MOVE_FWD_CMD(vsi_cfg, PPE_ACTION_FORWARD);
-+
-+		ret = regmap_bulk_write(ppe_dev->regmap, reg,
-+					vsi_cfg, ARRAY_SIZE(vsi_cfg));
-+		if (ret)
-+			return ret;
-+	}
-+
-+	return 0;
-+}
-+
- int ppe_hw_config(struct ppe_device *ppe_dev)
- {
- 	int ret;
-@@ -1947,5 +2021,9 @@ int ppe_hw_config(struct ppe_device *ppe_dev)
- 	if (ret)
- 		return ret;
- 
--	return ppe_queues_to_ring_init(ppe_dev);
-+	ret = ppe_queues_to_ring_init(ppe_dev);
-+	if (ret)
-+		return ret;
-+
-+	return ppe_bridge_init(ppe_dev);
- }
-diff --git a/drivers/net/ethernet/qualcomm/ppe/ppe_regs.h b/drivers/net/ethernet/qualcomm/ppe/ppe_regs.h
-index 8a89d9aa82ae..e990a9409598 100644
---- a/drivers/net/ethernet/qualcomm/ppe/ppe_regs.h
-+++ b/drivers/net/ethernet/qualcomm/ppe/ppe_regs.h
-@@ -117,6 +117,14 @@
- #define PPE_EG_SERVICE_SET_TX_CNT_EN(tbl_cfg, value)	\
- 	FIELD_MODIFY(PPE_EG_SERVICE_W1_TX_CNT_EN, (tbl_cfg) + 0x1, value)
- 
-+/* PPE port bridge configuration */
-+#define PPE_PORT_BRIDGE_CTRL_ADDR		0x60300
-+#define PPE_PORT_BRIDGE_CTRL_ENTRIES		8
-+#define PPE_PORT_BRIDGE_CTRL_INC		4
-+#define PPE_PORT_BRIDGE_NEW_LRN_EN		BIT(0)
-+#define PPE_PORT_BRIDGE_STA_MOVE_LRN_EN		BIT(3)
-+#define PPE_PORT_BRIDGE_TXMAC_EN		BIT(16)
-+
- /* PPE port control configurations for the traffic to the multicast queues. */
- #define PPE_MC_MTU_CTRL_TBL_ADDR		0x60a00
- #define PPE_MC_MTU_CTRL_TBL_ENTRIES		8
-@@ -125,6 +133,36 @@
- #define PPE_MC_MTU_CTRL_TBL_MTU_CMD		GENMASK(15, 14)
- #define PPE_MC_MTU_CTRL_TBL_TX_CNT_EN		BIT(16)
- 
-+/* PPE VSI configurations */
-+#define PPE_VSI_TBL_ADDR			0x63800
-+#define PPE_VSI_TBL_ENTRIES			64
-+#define PPE_VSI_TBL_INC				0x10
-+#define PPE_VSI_W0_MEMBER_PORT_BITMAP		GENMASK(7, 0)
-+#define PPE_VSI_W0_UUC_BITMAP			GENMASK(15, 8)
-+#define PPE_VSI_W0_UMC_BITMAP			GENMASK(23, 16)
-+#define PPE_VSI_W0_BC_BITMAP			GENMASK(31, 24)
-+#define PPE_VSI_W1_NEW_ADDR_LRN_EN		BIT(0)
-+#define PPE_VSI_W1_NEW_ADDR_FWD_CMD		GENMASK(2, 1)
-+#define PPE_VSI_W1_STATION_MOVE_LRN_EN		BIT(3)
-+#define PPE_VSI_W1_STATION_MOVE_FWD_CMD		GENMASK(5, 4)
-+
-+#define PPE_VSI_SET_MEMBER_PORT_BITMAP(tbl_cfg, value)		\
-+	FIELD_MODIFY(PPE_VSI_W0_MEMBER_PORT_BITMAP, tbl_cfg, value)
-+#define PPE_VSI_SET_UUC_BITMAP(tbl_cfg, value)			\
-+	FIELD_MODIFY(PPE_VSI_W0_UUC_BITMAP, tbl_cfg, value)
-+#define PPE_VSI_SET_UMC_BITMAP(tbl_cfg, value)			\
-+	FIELD_MODIFY(PPE_VSI_W0_UMC_BITMAP, tbl_cfg, value)
-+#define PPE_VSI_SET_BC_BITMAP(tbl_cfg, value)			\
-+	FIELD_MODIFY(PPE_VSI_W0_BC_BITMAP, tbl_cfg, value)
-+#define PPE_VSI_SET_NEW_ADDR_LRN_EN(tbl_cfg, value)		\
-+	FIELD_MODIFY(PPE_VSI_W1_NEW_ADDR_LRN_EN, (tbl_cfg) + 0x1, value)
-+#define PPE_VSI_SET_NEW_ADDR_FWD_CMD(tbl_cfg, value)		\
-+	FIELD_MODIFY(PPE_VSI_W1_NEW_ADDR_FWD_CMD, (tbl_cfg) + 0x1, value)
-+#define PPE_VSI_SET_STATION_MOVE_LRN_EN(tbl_cfg, value)		\
-+	FIELD_MODIFY(PPE_VSI_W1_STATION_MOVE_LRN_EN, (tbl_cfg) + 0x1, value)
-+#define PPE_VSI_SET_STATION_MOVE_FWD_CMD(tbl_cfg, value)	\
-+	FIELD_MODIFY(PPE_VSI_W1_STATION_MOVE_FWD_CMD, (tbl_cfg) + 0x1, value)
-+
- /* PPE port control configurations for the traffic to the unicast queues. */
- #define PPE_MRU_MTU_CTRL_TBL_ADDR		0x65000
- #define PPE_MRU_MTU_CTRL_TBL_ENTRIES		256
-@@ -163,6 +201,18 @@
- #define PPE_IN_L2_SERVICE_TBL_RX_CNT_EN		BIT(30)
- #define PPE_IN_L2_SERVICE_TBL_TX_CNT_EN		BIT(31)
- 
-+/* L2 Port configurations */
-+#define PPE_L2_VP_PORT_TBL_ADDR			0x98000
-+#define PPE_L2_VP_PORT_TBL_ENTRIES		256
-+#define PPE_L2_VP_PORT_TBL_INC			0x10
-+#define PPE_L2_VP_PORT_W0_INVALID_VSI_FWD_EN	BIT(0)
-+#define PPE_L2_VP_PORT_W0_DST_INFO		GENMASK(9, 2)
-+
-+#define PPE_L2_PORT_SET_INVALID_VSI_FWD_EN(tbl_cfg, value)	\
-+	FIELD_MODIFY(PPE_L2_VP_PORT_W0_INVALID_VSI_FWD_EN, tbl_cfg, value)
-+#define PPE_L2_PORT_SET_DST_INFO(tbl_cfg, value)		\
-+	FIELD_MODIFY(PPE_L2_VP_PORT_W0_DST_INFO, tbl_cfg, value)
-+
- /* PPE service code configuration for the tunnel packet. */
- #define PPE_TL_SERVICE_TBL_ADDR			0x306000
- #define PPE_TL_SERVICE_TBL_ENTRIES		256
-
--- 
-2.34.1
+Chen
 
 
