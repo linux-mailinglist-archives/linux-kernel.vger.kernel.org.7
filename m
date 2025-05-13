@@ -1,171 +1,158 @@
-Return-Path: <linux-kernel+bounces-645875-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-645891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10274AB54E4
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 14:36:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 353BDAB551C
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 14:43:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9FD167B05C5
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 12:35:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6CA544A5098
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 12:43:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA38628F944;
-	Tue, 13 May 2025 12:35:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 955DB28DEEF;
+	Tue, 13 May 2025 12:43:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CWXJF/nd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=phenome.org header.i=@phenome.org header.b="b4CK2ayA"
+Received: from oak.phenome.org (unknown [193.110.157.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A60128ECCE;
-	Tue, 13 May 2025 12:35:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FFB428CF68;
+	Tue, 13 May 2025 12:43:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.110.157.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747139700; cv=none; b=VVMdk0ld4oBWBKh3doIQAuWACodvNYdAFiWYk7xHhBzpXhPKHwgx5TPZzAp/UyN6134SJsHDXIvR9+mGa8b6+PH6PdSOhlCosspI/lS9JkYm8wzwG8vVMTtgdGnbrb8GAM+DSzdmbh/w19M/cp75EeLyuiC/M5SnBPKRyrI/hq0=
+	t=1747140215; cv=none; b=RGv99m5jUfv8UfmFobkOYmAvTd51dLISQTw9EkgsUHoydR5K8j+Xu6VAhvlHHuPq8IYmANJx08UmW8GYMRbBdrBIW1Ed8fPXawRwkRy+3xJ99zOPr/xl3lKCd+mrBRiLb/2+LilX/5CAx0a0C5+kijQ200OMGJuF0yN2wrxNk1E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747139700; c=relaxed/simple;
-	bh=u2hoH0if4XlY924RAc8QSz9rFsWWAX5jfbtK7C9L0z4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=P7/2QGY0WdCkb+IzFgcz5NlXooWbKW95APh8GXfYlXtPx4HpibqekrJKhE2b8m1falV+PsGi6LIO7l2a71YnJ0WUPLocp8YqxXxsmIO9Td9UlVrJO3kmf9MRrWkPAzDiHbDTXZhzt9NIh+zVa7/IC7mSeO9eZm6/X+KPpgyjh7w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CWXJF/nd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D304DC4CEF3;
-	Tue, 13 May 2025 12:34:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747139699;
-	bh=u2hoH0if4XlY924RAc8QSz9rFsWWAX5jfbtK7C9L0z4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=CWXJF/nd1+fVMyET8fNK5vodONP93mwjpYLAQqZ8Qv9bbC7zAUR9sMCp8zfwks0PI
-	 TaUD7c2F7zJ2e1gUivbrTBi1E4V7jgjEc8iHl1s6ceaFx+7dfHFpHjPDPVOubKsZU3
-	 +fgcmay+TXke23jZgOeGMiMc5G3CJ21GM0RwsP7491Bb2GjvHjUACXIvyPYbkZheMP
-	 GSpZF5sQW+hsrUOeTei0HjzMr+F+7e8yVYJByJo1/WIxet9Qxdr62D2am5w6GcEOH8
-	 iaX+S+aIQItKPdq9JIOmikCsuWWl7jGkfkAIqzs56gpsDK8Ykxgq6NB5PXZ4JNQN0J
-	 wImLnAPfJpyRA==
-From: Arnd Bergmann <arnd@kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Wesley Cheng <quic_wcheng@quicinc.com>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] ALSA: qc_audio_offload: try to reduce address space confusion
-Date: Tue, 13 May 2025 14:34:42 +0200
-Message-Id: <20250513123442.159936-4-arnd@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250513123442.159936-1-arnd@kernel.org>
-References: <20250513123442.159936-1-arnd@kernel.org>
+	s=arc-20240116; t=1747140215; c=relaxed/simple;
+	bh=6iHfKiz4WKe+cAHmUEXMyds2YmUzVKy+KnkYoWTKDQc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NdwH4A6UZ6jAOSlAwO8C4xf4fGjiyX0dxXdoLki5fx/MA30mb+LCN3wov+q26DpB3nvK04R/S4PIJE3SWcwMaVy/c/Ng8fzVIcE6YIVayBnsvgGTNNe+9UQXv2Jowh6VMSp+oF3rdCbKdSWRhUagQT4juz5yZgfwP/MvpM9Nn+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=phenome.org; spf=pass smtp.mailfrom=phenome.org; dkim=pass (2048-bit key) header.d=phenome.org header.i=@phenome.org header.b=b4CK2ayA; arc=none smtp.client-ip=193.110.157.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=phenome.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=phenome.org
+Authentication-Results: oak.phenome.org (amavisd); dkim=pass (2048-bit key)
+ reason="pass (just generated, assumed good)" header.d=phenome.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=phenome.org; h=
+	in-reply-to:content-disposition:content-type:content-type
+	:mime-version:references:message-id:subject:subject:from:from
+	:date:date:received; s=oak1; t=1747139687; x=1748003688; bh=6iHf
+	Kiz4WKe+cAHmUEXMyds2YmUzVKy+KnkYoWTKDQc=; b=b4CK2ayA9+skC79kqW/v
+	hLkKn7UoVL1UlpjpXU6ADilmafCK6x4/ShcRO9IghEPaTunVxAbWlNYuxTal37dX
+	7Ou4lptWY7f0DTiyXzV3ibrZ3tYyqY4JIdGJI+HLURhPQE4gz3X2Jo+zkmY7uH7z
+	Iy0lre3EqPHkfdU4igrrEIy1cujoguSBF+zB70H7Ce3nGt6+X8Xv+WbOSlnhgJ7b
+	lxaemBA9XA3qiISOvSiG+YpEiDgCMUw93LtwteknAt4DoT7RSB4HqJ/jxMAco4T4
+	9R+B2B8D1VTeOF7iKTMWLEzkDaVxMAxxgDKnxkDcnmHchEVnwYg6HvP0Lu0jCUJs
+	tg==
+X-Virus-Scanned: amavisd at oak.phenome.org
+Received: from Antony2201.local (hal.connected.by.freedominter.net [91.132.42.103])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature ECDSA (secp384r1) server-digest SHA384)
+	(No client certificate requested)
+	by oak.phenome.org (Postfix) with ESMTPSA;
+	Tue, 13 May 2025 14:34:45 +0200 (CEST)
+Date: Tue, 13 May 2025 14:34:43 +0200
+From: Antony Antony <antony@phenome.org>
+To: Zilin Guan <zilin@seu.edu.cn>
+Cc: steffen.klassert@secunet.com, herbert@gondor.apana.org.au,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, horms@kernel.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, jianhao.xu@seu.edu.cn
+Subject: Re: [RFC PATCH] xfrm: use kfree_sensitive() for SA secret zeroization
+Message-ID: <aCM8Y9iNXmbuPD5G@Antony2201.local>
+References: <20250512092808.3741865-1-zilin@seu.edu.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250512092808.3741865-1-zilin@seu.edu.cn>
+X-Mutt-References: <20250512092808.3741865-1-zilin@seu.edu.cn>
+X-Mutt-Fcc: ~/sent
 
-From: Arnd Bergmann <arnd@arndb.de>
+On Mon, May 12, 2025 at 09:28:08AM +0000, Zilin Guan wrote:
+> The XFRM subsystem supports redaction of Security Association (SA)
+> secret material when CONFIG_SECURITY lockdown for XFRM secrets is active.
+> High-level copy_to_user_* APIs already omit secret fields, but the
+> state destruction path still invokes plain kfree(), which does not zero
+> the underlying memory before freeing. This can leave SA keys and
+> other confidential data in memory, risking exposure via post-free
+> vulnerabilities.
+> 
+> This patch modifies __xfrm_state_destroy() so that, if SA secret
+> redaction is enabled, it calls kfree_sensitive() on the aead, aalg and
+> ealg structs, ensuring secure zeroization prior to deallocation. When
+> redaction is disabled, the existing kfree() behavior is preserved.
+> 
+> Note that xfrm_redact() is the identical helper function as implemented
+> in net/xfrm/xfrm_user.c. And this patch is an RFC to seek feedback on
+> whether this change is appropriate and if there is a better patch method.
 
-uaudio_transfer_buffer_setup() allocates a buffer for the subs->dev
-device, and the returned address for the buffer is a CPU local virtual
-address that may or may not be in the linear mapping, as well as a DMA
-address token that is accessible by the USB device, and this in turn
-may or may not correspond to the physical address.
+I would prefer to use the existing one than an additional copy. If it is 
+necessary. See the comment bellow.
 
-The use in the driver however assumes that these addresses are the
-linear map and the CPU physical address, respectively. Both are
-nonportable here, but in the end only the virtual address gets
-used by converting it to a physical address that gets mapped into
-a second iommu.
+> 
+> Signed-off-by: Zilin Guan <zilin@seu.edu.cn>
+> ---
+>  net/xfrm/xfrm_state.c | 19 ++++++++++++++++---
+>  1 file changed, 16 insertions(+), 3 deletions(-)
+> 
+> diff --git a/net/xfrm/xfrm_state.c b/net/xfrm/xfrm_state.c
+> index 341d79ecb5c2..b6f2c329ea9d 100644
+> --- a/net/xfrm/xfrm_state.c
+> +++ b/net/xfrm/xfrm_state.c
+> @@ -593,15 +593,28 @@ void xfrm_state_free(struct xfrm_state *x)
+>  }
+>  EXPORT_SYMBOL(xfrm_state_free);
+>  
+> +static bool xfrm_redact(void)
+> +{
+> +	return IS_ENABLED(CONFIG_SECURITY) &&
+> +		security_locked_down(LOCKDOWN_XFRM_SECRET);
+> +}
+> +
+>  static void ___xfrm_state_destroy(struct xfrm_state *x)
+>  {
+> +	bool redact_secret = xfrm_redact();
+>  	if (x->mode_cbs && x->mode_cbs->destroy_state)
+>  		x->mode_cbs->destroy_state(x);
+>  	hrtimer_cancel(&x->mtimer);
+>  	timer_delete_sync(&x->rtimer);
+> -	kfree(x->aead);
+> -	kfree(x->aalg);
+> -	kfree(x->ealg);
+> +	if (redact_secret) {
 
-Make this more explicit by pulling the conversion out first
-and warning if it is not part of the linear map, and using the
-actual physical address to map into the iommu in place of the
-dma address that may already be iommu-mapped into the usb host.
+I recommend using kfree_sensitive() unconditionally.
+This code is not in the fast path, so the overhead compared to kfree() would 
+be acceptable?
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- sound/usb/qcom/qc_audio_offload.c | 32 ++++++++++++++++++++-----------
- 1 file changed, 21 insertions(+), 11 deletions(-)
+It's generally better to always wipe key material explicitly.
+When I originally  submitted the redact patch [1], I assumed that in 
+environments with a good LSM(like AppArmor or SELinux) enabled, 
+kfree_sensitive() would be the default kfree().
 
-diff --git a/sound/usb/qcom/qc_audio_offload.c b/sound/usb/qcom/qc_audio_offload.c
-index c4dde2fa5a1f..46379387c9a5 100644
---- a/sound/usb/qcom/qc_audio_offload.c
-+++ b/sound/usb/qcom/qc_audio_offload.c
-@@ -78,9 +78,9 @@ struct intf_info {
- 	size_t data_xfer_ring_size;
- 	unsigned long sync_xfer_ring_va;
- 	size_t sync_xfer_ring_size;
--	unsigned long xfer_buf_iova;
-+	dma_addr_t xfer_buf_iova;
- 	size_t xfer_buf_size;
--	phys_addr_t xfer_buf_dma;
-+	dma_addr_t xfer_buf_dma;
- 	u8 *xfer_buf_cpu;
- 
- 	/* USB endpoint information */
-@@ -1018,11 +1018,12 @@ static int uaudio_transfer_buffer_setup(struct snd_usb_substream *subs,
- 					struct mem_info_v01 *mem_info)
- {
- 	struct sg_table xfer_buf_sgt;
-+	dma_addr_t xfer_buf_dma;
- 	void *xfer_buf;
- 	phys_addr_t xfer_buf_pa;
- 	u32 len = xfer_buf_len;
- 	bool dma_coherent;
--	unsigned long iova;
-+	dma_addr_t xfer_buf_dma_sysdev;
- 	u32 remainder;
- 	u32 mult;
- 	int ret;
-@@ -1045,29 +1046,38 @@ static int uaudio_transfer_buffer_setup(struct snd_usb_substream *subs,
- 		len = MAX_XFER_BUFF_LEN;
- 	}
- 
--	xfer_buf = usb_alloc_coherent(subs->dev, len, GFP_KERNEL, &xfer_buf_pa);
-+	/* get buffer mapped into subs->dev */
-+	xfer_buf = usb_alloc_coherent(subs->dev, len, GFP_KERNEL, &xfer_buf_dma);
- 	if (!xfer_buf)
- 		return -ENOMEM;
- 
-+	/* Remapping is not possible if xfer_buf is outside of linear map */
-+	xfer_buf_pa = virt_to_phys(xfer_buf);
-+	if (WARN_ON(!page_is_ram(PFN_DOWN(xfer_buf_pa)))) {
-+		ret = -ENXIO;
-+		goto unmap_sync;
-+	}
- 	dma_get_sgtable(subs->dev->bus->sysdev, &xfer_buf_sgt, xfer_buf,
--			xfer_buf_pa, len);
--	iova = uaudio_iommu_map(MEM_XFER_BUF, dma_coherent, xfer_buf_pa, len,
--			      &xfer_buf_sgt);
--	if (!iova) {
-+			xfer_buf_dma, len);
-+
-+	/* map the physical buffer into sysdev as well */
-+	xfer_buf_dma_sysdev = uaudio_iommu_map(MEM_XFER_BUF, dma_coherent,
-+					       xfer_buf_pa, len, &xfer_buf_sgt);
-+	if (!xfer_buf_dma_sysdev) {
- 		ret = -ENOMEM;
- 		goto unmap_sync;
- 	}
- 
--	mem_info->dma = xfer_buf_pa;
-+	mem_info->dma = xfer_buf_dma;
- 	mem_info->size = len;
--	mem_info->iova = PREPEND_SID_TO_IOVA(iova, uaudio_qdev->data->sid);
-+	mem_info->iova = PREPEND_SID_TO_IOVA(xfer_buf_dma_sysdev, uaudio_qdev->data->sid);
- 	*xfer_buf_cpu = xfer_buf;
- 	sg_free_table(&xfer_buf_sgt);
- 
- 	return 0;
- 
- unmap_sync:
--	usb_free_coherent(subs->dev, len, xfer_buf, xfer_buf_pa);
-+	usb_free_coherent(subs->dev, len, xfer_buf, xfer_buf_dma);
- 
- 	return ret;
- }
--- 
-2.39.5
+If kfree_sensitive() is called unconditionally, the call to xfrm_redact() in 
+this file won not be necessary.
 
+
+> +		kfree_sensitive(x->aead);
+> +		kfree_sensitive(x->aalg);
+> +		kfree_sensitive(x->ealg);
+> +	} else {
+> +		kfree(x->aead);
+> +		kfree(x->aalg);
+> +		kfree(x->ealg);
+> +	}
+>  	kfree(x->calg);
+>  	kfree(x->encap);
+>  	kfree(x->coaddr);
+> -- 
+> 2.34.1
+
+-antony
+
+[1] Fixes: c7a5899eb26e ("xfrm: redact SA secret with lockdown confidentiality")
 
