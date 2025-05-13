@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-645201-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-645202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1290AB4A32
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 05:33:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DF92AB4A33
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 05:33:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0653867D34
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 03:32:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A30A046475E
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 03:33:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 136661DF97C;
-	Tue, 13 May 2025 03:32:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 473BC1E5200;
+	Tue, 13 May 2025 03:32:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PPKAWVtG"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nQ8zHYb6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FF58D529;
-	Tue, 13 May 2025 03:32:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7035D529
+	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 03:32:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747107175; cv=none; b=WLWhiOs/EaOm5ZZdFe24AB2JWZH9cLm1apBAD/S4AIKcroKyqBx09ZpZTMb2x1hKVBUCaJ7yK/2WykeOk80rg9f6VwqB4ZZP+njh+5nEW8nWluyGnldCjVvBVdSBEKqo/js/j3yjgep2LrfxR7QeDTruLEtobUjRoK8cmrSLv68=
+	t=1747107178; cv=none; b=oA49MFOHxAyM/mfvVMEt50vuZlaJ42D5N0Rn9krXlv0WUJmN51HQM/ap+jYeaz0BEyg2T2COs4tT+PGXQqCujrklSZxe8NuApvl+FoFDFrU7aU0tjHsn2UWT19Ypg8jp2V7GrO1bC0D0D24zOPKvbfxtlq+rSAs8Qo+QeiGlafc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747107175; c=relaxed/simple;
-	bh=qxFEx8YSHSmwhYRKJUlz0KYTm6gvCnjZ8IEyvKYPhAU=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=hZ3jl717+jVY6/QmA22GwTvOfvSSYzMfRdG9Yly5Q14T0BObvjd1fKdXg03WScxRN0uNj1jQg2XwRFTFgZ0vp69Ev8MJVtoowbbTlosx9fikxWU31tq6H/+HUTKKrLyq7GN8q5dIojzRD7Tu+nq9epc4TE2fONQ8kRkK3r+H21Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PPKAWVtG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 509A5C4CEE7;
-	Tue, 13 May 2025 03:32:55 +0000 (UTC)
+	s=arc-20240116; t=1747107178; c=relaxed/simple;
+	bh=KANwdTrPMrf7Y1HjV27ZsvjwWQA1FisJr3J+a5RRaAc=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=Ft0HqN0wFUTLEc2WFJNPLWfErEN31HGBQK7gmJnHvkFF49L/OmyHUXCIQYVyXEN/AlA548+EOpNblMiVaPbkQgSvGPVMTMV4FewEoxiZm4bkqmaqXiUdBJI/KokwkD7glXeyH/6MvAkgWm5Zx4WonWry3oQE20Wgb4jtYPR8Z7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nQ8zHYb6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82104C4CEE7;
+	Tue, 13 May 2025 03:32:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747107175;
-	bh=qxFEx8YSHSmwhYRKJUlz0KYTm6gvCnjZ8IEyvKYPhAU=;
+	s=k20201202; t=1747107178;
+	bh=KANwdTrPMrf7Y1HjV27ZsvjwWQA1FisJr3J+a5RRaAc=;
 	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=PPKAWVtGg/xsaKQdBGEEk/21XlxRs3FiHsF9BrAbsbq3jhdpSNZ3a57zeMrf5tgKQ
-	 KlsptYP1nxOrXJXQ/S898Q/xdi66UsLjoXaraTzIzQVEkbazZTRu9CbDFnVHuikDJS
-	 CkOrmYzZ6EyV5BKm1ca7bHLu5L5t+CwkrOEjyzvq4wiFY0XWgDRZNLknCewubh6t4g
-	 0KEBdSmUD4dPeI/1+gwHpzn+2MLkcS++M+gN1rf4eizgeaBHdpTniu7G1jEz9vZCNX
-	 1P4/nrSLZISrwDnwA5H/a+e9b1lkjyAvVdquug+5w0xN+AUMXyKmIp6VwDtFARXSl5
-	 WlTuNyKMBGSPg==
+	b=nQ8zHYb6oHCFM/ljLcDeYDR5++1ClN9iMYMelbDp8SGdCAkgduPNPnUbmA5YyKMSr
+	 VlNR50XvkhWanQnxo7yUi7Yw7ZXu2BFwgq3WIs5lz0IS5nq2MSzQeMcIG7ffGRXEpf
+	 85Vwloqf+c4heqUVIBEV5FeIDkFDBtGHtS0Zt2LeUl2gsnLahlN+koO1RWdv5ksh12
+	 dbof3mzXX1P65NjQEs1jewKQPBpg8Bzhw+Gbfmu4drrOF5a/7XBUFFaaB6z9Lm0KXE
+	 gwN+AEeTt7iq5OHI1nW/9wolBUc+qQq/4Aq89wYHtUceGAfbn/TsubtwXOQWnjad/N
+	 +g0/qqIWhquog==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33B0939D6541;
-	Tue, 13 May 2025 03:33:34 +0000 (UTC)
-Subject: Re: [GIT PULL] platform-drivers-x86 for v6.15-5
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70B6739D6541;
+	Tue, 13 May 2025 03:33:37 +0000 (UTC)
+Subject: Re: [GIT PULL] sched_ext: Fixes for v6.15-rc6
 From: pr-tracker-bot@kernel.org
-In-Reply-To: <pdx86-pr-20250512141246-1833516743@linux.intel.com>
-References: <pdx86-pr-20250512141246-1833516743@linux.intel.com>
-X-PR-Tracked-List-Id: <platform-driver-x86.vger.kernel.org>
-X-PR-Tracked-Message-Id: <pdx86-pr-20250512141246-1833516743@linux.intel.com>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git tags/platform-drivers-x86-v6.15-5
-X-PR-Tracked-Commit-Id: bfcfe6d335a967f8ea0c1980960e6f0205b5de6e
+In-Reply-To: <aCKYbH3D3BYW8Hzy@slm.duckdns.org>
+References: <aCKYbH3D3BYW8Hzy@slm.duckdns.org>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <aCKYbH3D3BYW8Hzy@slm.duckdns.org>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/tj/sched_ext.git/ tags/sched_ext-for-6.15-rc6-fixes
+X-PR-Tracked-Commit-Id: 428dc9fc0873989d73918d4a9cc22745b7bbc799
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 7a8bdc7fe0a7a6011de68c5ea483de7ecfb2d833
-Message-Id: <174710721263.1163096.4321814483120947740.pr-tracker-bot@kernel.org>
-Date: Tue, 13 May 2025 03:33:32 +0000
-To: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>, PDx86 <platform-driver-x86@vger.kernel.org>, Hans de Goede <hdegoede@redhat.com>, Andy Shevchenko <andy@kernel.org>
+X-PR-Merge-Commit-Id: e9565e23cd89d4d5cd4388f8742130be1d6f182d
+Message-Id: <174710721603.1163096.7327897116609827431.pr-tracker-bot@kernel.org>
+Date: Tue, 13 May 2025 03:33:36 +0000
+To: Tejun Heo <tj@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-kernel@vger.kernel.org, David Vernet <void@manifault.com>, Andrea Righi <arighi@nvidia.com>, Changwoo Min <changwoo@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
-The pull request you sent on Mon, 12 May 2025 14:12:46 +0300:
+The pull request you sent on Mon, 12 May 2025 14:55:08 -1000:
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git tags/platform-drivers-x86-v6.15-5
+> git://git.kernel.org/pub/scm/linux/kernel/git/tj/sched_ext.git/ tags/sched_ext-for-6.15-rc6-fixes
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/7a8bdc7fe0a7a6011de68c5ea483de7ecfb2d833
+https://git.kernel.org/torvalds/c/e9565e23cd89d4d5cd4388f8742130be1d6f182d
 
 Thank you!
 
