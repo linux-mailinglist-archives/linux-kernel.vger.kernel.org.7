@@ -1,57 +1,69 @@
-Return-Path: <linux-kernel+bounces-645442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-645444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22C68AB4D8B
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 10:01:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C722BAB4D8C
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 10:02:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 750A43AD5E5
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 08:01:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1CD82466BF2
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 08:02:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29A451F2B83;
-	Tue, 13 May 2025 08:01:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 504AC1F37DA;
+	Tue, 13 May 2025 08:02:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AAV8YUF2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="QE38+k6H"
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8178E1E5B95;
-	Tue, 13 May 2025 08:01:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 486AC1F237A;
+	Tue, 13 May 2025 08:02:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747123279; cv=none; b=kFFf3pvvX/S10A/2ZOPPJpLK7k5e1TfeafiJKxo8ORW0omGrjE6MiAIAZZC+UCguBNG+VVxUldhkh4wxJI/8A/9rlBEhsJU7MLrvfnE6DGMf+9xZAx1ZuwHsW/yuSoRc2AcYSv5KYtWIWU+0Yez7+Y5RlqE3KWR1cNk9rkm+0Jo=
+	t=1747123330; cv=none; b=Fs/Dc+kQpA9CoVvacYfEDsIj/oE+ui6v5R3Z9GgcCKvDj4exGI6dC3JmgKXjNmTAooG5KX8JXojZUYwEX0Fubakw/i1yp6JK77dfUA9T4qvsVdLB3g0Cbh90DOTlxn/infv4hrObLaBnaq8v/j0wQwod23BCvU7ioklJG1j7wpQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747123279; c=relaxed/simple;
-	bh=Oc573kWEBDdTWIpT2n5etLi98rzFaM4fnmjFYoe7I64=;
+	s=arc-20240116; t=1747123330; c=relaxed/simple;
+	bh=8AlpCzHz8TYu2I39d9JcmlixFVJtz7YHX6TswcmhI7w=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f5rg/bbtQQZtdWSHGVjm9S5eBY5WOc6DYKvpfNHAxeiT1DZaVYcismwp7oF9q0q7gOtgBuEk/Won/sX55BCqBz6NXXVDYSNOZqrU0PA78RzJ0plh8aShgXz/bmWm8axqVk+Ex7brlXGIDM5J+8s4N+v9PNsSS+Yf1JMvf303wPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AAV8YUF2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD480C4CEE4;
-	Tue, 13 May 2025 08:01:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747123276;
-	bh=Oc573kWEBDdTWIpT2n5etLi98rzFaM4fnmjFYoe7I64=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AAV8YUF2LYcx7wf2j5tZVzMLvL23ks5ih1tII1kMUYlT31j7ZLYlEe0QFY4pRb7zX
-	 gj3bmx5fwvIPlHq/Bs5wW2WtebyH14CiBmf4blZZaaEmKMfgLq60UCdT58HkYjA/ua
-	 E7AFcni+zhyjURXmj7P0YfNN4Gu4efciW5e8z/yTVzdo9zj9b33Pzfy4y/ifdTh+r7
-	 LL+2x2l+6cPQBzZn/XMsD590l3a+n5Emw8B8Fa8Q7rtDcrNRPl113qDEQPJW3lq2bA
-	 1uJ6a8yLDPIAcOpUWeXmQKkn++ju2kN4ct0pD9s6cJTP7LmDFlsk65Q1CVcF+gu2Ye
-	 VZ6kLWx5tXdPA==
-Date: Tue, 13 May 2025 10:01:11 +0200
-From: Niklas Cassel <cassel@kernel.org>
-To: Hans Zhang <18255117159@163.com>
-Cc: lpieralisi@kernel.org, kw@linux.com, bhelgaas@google.com,
-	jingoohan1@gmail.com, manivannan.sadhasivam@linaro.org,
-	robh@kernel.org, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [RESEND PATCH v2 3/3] PCI: cadence: Simplify j721e link status
- check
-Message-ID: <aCL8R7Fa-6VXOXXq@ryzen>
-References: <20250510160710.392122-1-18255117159@163.com>
- <20250510160710.392122-4-18255117159@163.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=hSeM4+3dqA/I2jH+Wky3jmxCinONLx9l6VeJCs1lSp069U7uBFl9XS2x8T3sxi4aHdBiZAdNa5ziCWl/gdbzZwVYFCQth49sA+8mVw2B+t7KOUxzqJSHQLBrqc2JhnBBuZ/nFKo0Mvy7cSlGPhCvtDwuZeME9jdbtHxZjsWu/UE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=QE38+k6H; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=udPvSCRSnS0pLMv4b2XH86HcPTSJhkrdLImmvkdv1Ag=; b=QE38+k6H+mGxa3TKMTxlicJh9M
+	0vMBdCSj6ehOIwHSwWiwZcVQCSMkZVlkQ2yloLbJq3AFvXIffUrm7I6drOxQ5sej9lbUGStQLyLXL
+	xZL361GdJNngh+v+4igmgCNtZkuetRUkNEcv0GNUcFBB4inkfHg+fUaT97+M4anLYfXQOA/wUi88s
+	Som+95F4ndpWdL2WvX1le7NGCH5/S2nnQFOUHRcbwqO2cidhwD4XeXU/tGCucS7Le/m9Pm2pUJdgp
+	7tFYigMgn/VXX0bUiQKo5fx/eUD36Ioj9DBqGKoJCzu6vijpHR88NJnYuOoDQRhObCBm5B+KTbvVy
+	aFdAsLpA==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1uEka7-005hLH-11;
+	Tue, 13 May 2025 16:01:44 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Tue, 13 May 2025 16:01:43 +0800
+Date: Tue, 13 May 2025 16:01:43 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, hannes@cmpxchg.org,
+	yosry.ahmed@linux.dev, nphamcs@gmail.com, chengming.zhou@linux.dev,
+	usamaarif642@gmail.com, ryan.roberts@arm.com, 21cnbao@gmail.com,
+	ying.huang@linux.alibaba.com, akpm@linux-foundation.org,
+	senozhatsky@chromium.org, linux-crypto@vger.kernel.org,
+	davem@davemloft.net, clabbe@baylibre.com, ardb@kernel.org,
+	ebiggers@google.com, surenb@google.com, kristen.c.accardi@intel.com,
+	vinicius.gomes@intel.com, wajdi.k.feghali@intel.com,
+	vinodh.gopal@intel.com
+Subject: Re: [PATCH v9 02/19] crypto: acomp - Reinstate non-chained
+ crypto_acomp_[de]compress().
+Message-ID: <aCL8Z-XHk4StnvPQ@gondor.apana.org.au>
+References: <20250508194134.28392-1-kanchana.p.sridhar@intel.com>
+ <20250508194134.28392-3-kanchana.p.sridhar@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,16 +72,32 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250510160710.392122-4-18255117159@163.com>
+In-Reply-To: <20250508194134.28392-3-kanchana.p.sridhar@intel.com>
 
-On Sun, May 11, 2025 at 12:07:10AM +0800, Hans Zhang wrote:
-> Replace explicit if-else condition with direct return statement in
-> j721e_pcie_link_up(). This reduces code verbosity while maintaining
-> the same logic for detecting PCIe link completion.
-> 
-> Signed-off-by: Hans Zhang <18255117159@163.com>
-> Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> ---
+On Thu, May 08, 2025 at 12:41:17PM -0700, Kanchana P Sridhar wrote:
+>
+> diff --git a/crypto/acompress.c b/crypto/acompress.c
+> index 82fb3c04e68f..d08e0fe8cd9e 100644
+> --- a/crypto/acompress.c
+> +++ b/crypto/acompress.c
+> @@ -310,21 +310,13 @@ static int acomp_do_req_chain(struct acomp_req *req, bool comp)
+>  
+>  int crypto_acomp_compress(struct acomp_req *req)
+>  {
+> -	struct crypto_acomp *tfm = crypto_acomp_reqtfm(req);
+> -
+> -	if (crypto_acomp_req_chain(tfm) || acomp_request_issg(req))
+> -		crypto_acomp_reqtfm(req)->compress(req);
+> -	return acomp_do_req_chain(req, true);
+> +	return crypto_acomp_reqtfm(req)->compress(req);
 
-Reviewed-by: Niklas Cassel <cassel@kernel.org>
+That's not right.  Request chaining has already been removed.
+What remains is linear address support which you've just removed
+with this patch.
+
+Cheers,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
