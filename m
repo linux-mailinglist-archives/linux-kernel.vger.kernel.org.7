@@ -1,152 +1,218 @@
-Return-Path: <linux-kernel+bounces-645490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-645494-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74470AB4E56
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 10:43:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A237AB4E60
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 10:44:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C202186336F
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 08:43:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6E7D167B67
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 08:44:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C456620E6ED;
-	Tue, 13 May 2025 08:43:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C52820F078;
+	Tue, 13 May 2025 08:44:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WXSSj85Z"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i3iw4ppW"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7105F1E9B0B;
-	Tue, 13 May 2025 08:43:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CF0E20E70E;
+	Tue, 13 May 2025 08:44:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747125810; cv=none; b=Z8OFUDcIQtAWlUyZL7IFuUpSf0g97Xjn/ApQMlCeBTn7lErytoDCF6KuLrus1HnNQjg8mBm4i9vlKvB4oXyJtohme2OOja0bPs+qz0C4vrsBYi7AN4WCP1DcHtChoj94BjDtVoYuJU3pY62B7ZGqelk4REEafGJ9cJKxvzNsM5s=
+	t=1747125846; cv=none; b=t9idT65QM1VdxyU8JgplQtARlIY6uNSOMUu5UNvpkPUf1XqEmQt7se18tVc8bmabmbxKK7B1FcrOUX7D5fbGP1hFuZAzhDiaar5p0W+Q3VaeJJmZvj4XzUxAaIPeCcahhG+Ni8OVPbbM8kILvINF8kD1crz2xQi6WMDV4jJMymU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747125810; c=relaxed/simple;
-	bh=QjT3YOsUMwygWaYoCbEkSvebHiZ4cTlT+R0vDMfY58s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RUIU8rbqcxuF1feSd4aUdt0GfDXK8AD7cI6XsbOAk4KPfutQA7BV4v1O+kxj5gXK0O08/omkpLAU9AF86BrsVBCfB8jWcScLsZx8rH9JUq/n/s4W7ghcX64nZWElnwSEnEmxvvJs/RZZY+KQ1WcEB1oPvUAezpW9SZZuZQd+G7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WXSSj85Z; arc=none smtp.client-ip=209.85.218.50
+	s=arc-20240116; t=1747125846; c=relaxed/simple;
+	bh=L9yaJend7sBXzFCyTLUiQsHuLZXpzB/FkXWfDJaUbj8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=en2qzt/5k1wL9fRI5qHQsnlnx+8AzTt0acpa93prvD2FWe96S5XV0uZ+Yma48g5qHwZ8AwuxtxdBzO3wDaqkxfGvnwR5ZghhxQgw8+HcDy8EYixfOZOtl3NvDnNtLcQbeZkzy0R4i9jBvyfkv5bqEuYWb7H3ys3TNm4MYwEZ3sE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i3iw4ppW; arc=none smtp.client-ip=209.85.128.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-ad241d7680eso14942266b.3;
-        Tue, 13 May 2025 01:43:28 -0700 (PDT)
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-43cf05f0c3eso34030495e9.0;
+        Tue, 13 May 2025 01:44:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747125807; x=1747730607; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=0r9SjPagfNFQkslyQTfGS9Ycm3AlorAARH6C/r+EchE=;
-        b=WXSSj85ZjFYe47O3KMZnEr3YNBpFhCC3p4nbjrRnA5MafbthTig/RLQo4gSe5JJ377
-         stq/u6/ESf4kDvaQfoSuZrAUeVtMVOUjZMcfESV0DIwIWOKe7rbpzT4PzICTXNXv732n
-         i7kmZvSS8mkpFj8amrE1szaXeGAe73TqQjCeQZh2/YcWmMi6maPjpFnnIWmr44Pr5+nn
-         I0ADB2oVd+wLTcVdGJueLfYyTpLEjriUlAdM5TVr8diPMxow4YRh3R9QZpe/eBaG4jcd
-         REZk4bS82b3zKQLHnBJuFxRpHF5GIstJevtlKiFRmsUUKtXqtjs5lf6MYjBu3Ptg6Ssi
-         EDBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747125807; x=1747730607;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1747125843; x=1747730643; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=0r9SjPagfNFQkslyQTfGS9Ycm3AlorAARH6C/r+EchE=;
-        b=rVj/AD/Gipi0zIgHvXp/VLTSBNxIC6Y7H2o+xY+kxuT4Rta229BywvULL/EnMSH2v9
-         0GixuKIaCWDI1ASXpJRt3uN1T+91aoSkWnh4+Pq5Z8PWGvN0Ucn+mHlh3RlA4I6+vXtS
-         fxFxBWBy1j3WoDRfNPG3sm6X8RVe+W1EWth3QlNKcaUr0IdkD517HIGn7cgDymOuesag
-         gV1lr0ZDcvehUNqmlA/Ble5re286HjZHdFHtmn+xwqrwPKumFPialCK9FznwUASVTAem
-         MJEFhX6YLmNjMdkGiMiqb9NpcqWuzvMs8qNSfS82WfdIxtOeKkUtnMEU9tryYV2C1Cx0
-         2EEg==
-X-Forwarded-Encrypted: i=1; AJvYcCVkWqu1SZr/l5GZ1pdc6sI7IFROvHBSc7ynuTtnTO+lBAXwA5cesJGfUOjlHY+vF0ENSVOsBM0b@vger.kernel.org, AJvYcCW6NhZeNby8b/YaeEmBWiLA2DCLXyy3/xxWtnWAECRBt1DyWCUm62Bb6YMGJwhcYS7eCpn5ayFx8wKk+A4=@vger.kernel.org, AJvYcCXnABmTK0gB8qUg5u6ap90dtfpvvGqDKcZwbG0KJqs4eukXx1+aVYYtJ4C64xjkdviDQa0rLoNZ@vger.kernel.org
-X-Gm-Message-State: AOJu0YxAOWvMO1tiV9Un8YoHBo9+yKHewRQlogNZcZ0QxRQb/eNmI+GZ
-	+nqSaZO8zDji8RKBRm76WUtWBhGYzrBoFO1IGqPZ2paArydHg7al
-X-Gm-Gg: ASbGncs7FnGaQXH/eRlj0SQlfwFLN8RDU7w70D3iJn9ovVLWPXqUwHrRyiyW3oWOThW
-	lI2XFxTxn5NRvDpu2dlucpz5mueF0NKOCAu/3AXwHJQrBRozlrnC4Xm41pEp2s7oxryucPNYFWR
-	/B9PnYWT40PiPwece+7YXkHkkdNNcNQPIX1Yl6/8qoayIZxcfpUMa3m7PpK9A7L4cylMwFtkUyM
-	JhfF3bkDDb1RmxxHhO9MZpyBebMd/sXyOnlFasWYet9sfO+33dAkhoEQXlZNUS+WU2UzpwWTnPW
-	lc8r3/D38WEEgWl9RGbq8kU4t49lbil8QIaS528=
-X-Google-Smtp-Source: AGHT+IGz63edBcJSmVH/MThA6NK/9To5w0eIvCMwZd+GCqoH9p60yoVQwuovufFZ7fYnUk7yseI/0g==
-X-Received: by 2002:a17:907:2e19:b0:acb:1d24:a9e0 with SMTP id a640c23a62f3a-ad219ac5111mr476045366b.11.1747125806328;
-        Tue, 13 May 2025 01:43:26 -0700 (PDT)
-Received: from skbuf ([188.25.50.178])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad21985127bsm737855066b.163.2025.05.13.01.43.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 May 2025 01:43:25 -0700 (PDT)
-Date: Tue, 13 May 2025 11:43:22 +0300
-From: Vladimir Oltean <olteanv@gmail.com>
-To: Jakob Unterwurzacher <jakobunt@gmail.com>
-Cc: Woojung Huh <woojung.huh@microchip.com>, UNGLinuxDriver@microchip.com,
-	Andrew Lunn <andrew@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>, Marek Vasut <marex@denx.de>,
-	Tristram Ha <Tristram.Ha@microchip.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	jakob.unterwurzacher@cherry.de, stable@vger.kernel.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net v2] net: dsa: microchip: linearize skb for
- tail-tagging switches
-Message-ID: <20250513084322.22354mkqmwxtlpy7@skbuf>
-References: <20250512144416.3697054-1-jakob.unterwurzacher@cherry.de>
- <20250512144416.3697054-1-jakob.unterwurzacher@cherry.de>
+        bh=suJ5Bx35Oi4iLpMJiTea+mMElTP1j3KCM6w4EvztQoQ=;
+        b=i3iw4ppW0zYBllMjix3k/j6KHbqsiLOwg+DPcmcRX14d9jxMUQSAKkGRvcGFhaAYB3
+         BlIu347PtbLe0sc5yUtkvGLF+gszY1ZrcuiCamhOlQs+ZaFD68HxlUY/i1TmihoDQKkk
+         F/dwgVfCxaefvNvWtBxIpyGZw/7C8W1cJgNhL/nnH35k4jIUltfBnfCkzOp4Icy7HYXY
+         P2kj7ZG4I+7UtuRuL4j7TyBfVmph7JZO8cHptqv6ifS48NkHG+GyPx9kUWDYSkNhjbak
+         32vuuZBu19ipmUZfozm51qa0uu+5F1zzwNhKOUSFsa1bfDRSoyXqjAKNRNpLKAHjNqNS
+         fhhg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747125843; x=1747730643;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=suJ5Bx35Oi4iLpMJiTea+mMElTP1j3KCM6w4EvztQoQ=;
+        b=gQzL2HxiXe4MFz3gfc/Pv5tuIdDrtpbtzyd5AuH3s3q2zDJe59g/R2NCjHARF5dQS/
+         Jaj8+KN03IcuRJfl3hzxk/hdPTkxjDO4CyM1izdGaF+JhQwF4H2TL5rKjyQW0qG4Cx5j
+         vbCp9NKB6YrR8y992kXZtXODIcUCRek4q55isgV9BZ7AOL0MybgBtVR/BYjlCNaEt3Mn
+         SZyqG5CjFO/+TiSZucC/pSbUAFtQgpZ7ZAepULGkXzXHIU/jtbnflNdHBwGEQenW9Xod
+         Nlar1Bqw+jTE36MQRW2B92veFWGgO+IYEDX7rCQAxjvx5SOV3A653eAWMPo0tv443AGz
+         432w==
+X-Forwarded-Encrypted: i=1; AJvYcCUBKV9f4fgL72m/5FL2mJjCzR4YSEUgUDFOD7vNJp8oqukq269z+jMoozWPTqDO7LohylU3AUxZOL+ALQd1I1qsSWY=@vger.kernel.org, AJvYcCX3I7hwhMSccCVJPLFUdZ2r28Yf5EbteuXVZ5sY1nkKvbZcMkYGzCW8h3ugI948JAiKQ/m5OmtGBNo=@vger.kernel.org, AJvYcCXfJSrqClzK4+aEdZr+0ViW9G+XtsUxRamYQxXoBnBXhoExj+keOIdwXc8OOOrVF4tWXppIb/IPtKv3FLLG@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0o6Ovm3N91UNGg3bUyV+UdIpyTaITcW/m7vHiKVWQeLjxk63L
+	+t8Bdvfsz2nxeEMZ4W3QuH6CcRBHWcAVr8rN/UkZBWoyQb3fWl6aSl2KhoaKqJwl6eG02NodQ55
+	lfEnjvW1VTG746uFPfrcYftUyrK/79qts7bE=
+X-Gm-Gg: ASbGncvy34IxkDeSRsVGygWfbk+yKTSdIDHOclDflpJAhzIMKOKuSiEr68cptlG3Vji
+	+p3xg+BD9/4qlbChSr4DchVcjfG91qjEbIs76xysONDMVywrbjXYyJRRVafouI5gDnveb+2iuot
+	+8MacaZbBxhmd/+F8pYaQh+W2PLfrWWB8=
+X-Google-Smtp-Source: AGHT+IFAbSRD4ctDa/bn2QZINraMletm8pvh1kXfdlGwsKgIpRgPo2AMChUTHar1yJdSy/J4W1ZRMXsoAtBBI54qNis=
+X-Received: by 2002:a05:6000:2ab:b0:38f:2678:d790 with SMTP id
+ ffacd0b85a97d-3a1f643eaf6mr14541572f8f.33.1747125842610; Tue, 13 May 2025
+ 01:44:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250512144416.3697054-1-jakob.unterwurzacher@cherry.de>
- <20250512144416.3697054-1-jakob.unterwurzacher@cherry.de>
+References: <20250509160121.331073-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250509160121.331073-2-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdVpWxVDOXHGhRqHPTjG6_z3XVqT7ZdJGz7Axk8Rut3Lsw@mail.gmail.com>
+In-Reply-To: <CAMuHMdVpWxVDOXHGhRqHPTjG6_z3XVqT7ZdJGz7Axk8Rut3Lsw@mail.gmail.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Tue, 13 May 2025 09:43:36 +0100
+X-Gm-Features: AX0GCFsoijlVjM5vNAtkxqALz4rLq9y3wkt2SkYGFeOT7rOBfMeMTu0M2P8S9pg
+Message-ID: <CA+V-a8uLE52th_u+ODF+LEAZuS=X9WyyBGg0G6xOdH-xm+EkFQ@mail.gmail.com>
+Subject: Re: [PATCH v4 1/2] clk: renesas: rzv2h-cpg: Skip monitor checks for
+ external clocks
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, May 12, 2025 at 04:44:18PM +0200, Jakob Unterwurzacher wrote:
-> The pointer arithmentic for accessing the tail tag only works
-> for linear skbs.
-> 
-> For nonlinear skbs, it reads uninitialized memory inside the
-> skb headroom, essentially randomizing the tag. I have observed
-> it gets set to 6 most of the time.
-> 
-> Example where ksz9477_rcv thinks that the packet from port 1 comes from port 6
-> (which does not exist for the ksz9896 that's in use), dropping the packet.
-> Debug prints added by me (not included in this patch):
-> 
-> 	[  256.645337] ksz9477_rcv:323 tag0=6
-> 	[  256.645349] skb len=47 headroom=78 headlen=0 tailroom=0
-> 	               mac=(64,14) mac_len=14 net=(78,0) trans=78
-> 	               shinfo(txflags=0 nr_frags=1 gso(size=0 type=0 segs=0))
-> 	               csum(0x0 start=0 offset=0 ip_summed=0 complete_sw=0 valid=0 level=0)
-> 	               hash(0x0 sw=0 l4=0) proto=0x00f8 pkttype=1 iif=3
-> 	               priority=0x0 mark=0x0 alloc_cpu=0 vlan_all=0x0
-> 	               encapsulation=0 inner(proto=0x0000, mac=0, net=0, trans=0)
-> 	[  256.645377] dev name=end1 feat=0x0002e10200114bb3
-> 	[  256.645386] skb headroom: 00000000: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-> 	[  256.645395] skb headroom: 00000010: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-> 	[  256.645403] skb headroom: 00000020: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-> 	[  256.645411] skb headroom: 00000030: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-> 	[  256.645420] skb headroom: 00000040: ff ff ff ff ff ff 00 1c 19 f2 e2 db 08 06
-> 	[  256.645428] skb frag:     00000000: 00 01 08 00 06 04 00 01 00 1c 19 f2 e2 db 0a 02
-> 	[  256.645436] skb frag:     00000010: 00 83 00 00 00 00 00 00 0a 02 a0 2f 00 00 00 00
-> 	[  256.645444] skb frag:     00000020: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01
-> 	[  256.645452] ksz_common_rcv:92 dsa_conduit_find_user returned NULL
-> 
-> Call skb_linearize before trying to access the tag.
-> 
-> This patch fixes ksz9477_rcv which is used by the ksz9896 I have at
-> hand, and also applies the same fix to ksz8795_rcv which seems to have
-> the same problem.
-> 
-> Signed-off-by: Jakob Unterwurzacher <jakob.unterwurzacher@cherry.de>
-> Cc: stable@vger.kernel.org
-> Fixes: 016e43a26bab ("net: dsa: ksz: Add KSZ8795 tag code")
-> Fixes: 8b8010fb7876 ("dsa: add support for Microchip KSZ tail tagging)
-> ---
+Hi Geert,
 
-One of the blamed commits appeared in v4.13 and the other in v5.4.
-I wondered whether separate patches should have been written, so that the
-bug fix for the older commit could be independently backported further.
-But then I looked at https://www.kernel.org/ and it seems that the
-oldest supported LTS branch is 5.4, so that's irrelevant.
+Thank you for the review.
 
-Reviewed-by: Vladimir Oltean <olteanv@gmail.com>
+On Tue, May 13, 2025 at 9:03=E2=80=AFAM Geert Uytterhoeven <geert@linux-m68=
+k.org> wrote:
+>
+> Hi Prabhakar,
+>
+> On Fri, 9 May 2025 at 18:01, Prabhakar <prabhakar.csengg@gmail.com> wrote=
+:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > For module clocks whose parent mux may select an external source, bypas=
+s
+> > the normal monitor (CLK_MON) register check when the external clock is
+> > active. Introduce a new `ext_clk_mux_index` in `struct rzv2h_mod_clk` a=
+nd
+> > `struct mod_clock`, and detect the current mux index in
+> > `rzv2h_mod_clock_is_enabled()` to disable monitoring if it matches the
+> > external source index.
+> >
+> > Provide the `DEF_MOD_MUX_EXTERNAL()` macro for declaring external-sourc=
+e
+> > module clocks, and populate the `ext_clk_mux_index` field in
+> > `rzv2h_cpg_register_mod_clk()`.
+> >
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > ---
+> > v3->v4:
+> > - Dropped external_clk_mux_index and external_clk and introduced
+> >   ext_clk_mux_index.
+> > - Updated DEF_MOD_*() macros to include ext_clk_mux_index.
+> > - Added a new helper function `rzv2h_clk_mux_to_index()` to get the
+> >   current mux index.
+> > - Dropped IS_ERR() check for parent_clk in `rzv2h_clk_mux_to_index()`.
+> > - Updated commit description to clarify the purpose of the patch.
+>
+> Thanks for the update!
+>
+> > --- a/drivers/clk/renesas/rzv2h-cpg.c
+> > +++ b/drivers/clk/renesas/rzv2h-cpg.c
+> > @@ -563,14 +565,38 @@ static void rzv2h_mod_clock_mstop_disable(struct =
+rzv2h_cpg_priv *priv,
+> >         spin_unlock_irqrestore(&priv->rmw_lock, flags);
+> >  }
+> >
+> > +static int rzv2h_clk_mux_to_index(struct clk_hw *hw)
+>
+> Renaming to rzv2h_parent_clk_mux_to_index(), as it operates on the parent=
+...
+>
+Agreed, it makes sense.
+
+> > +{
+> > +       struct clk_hw *parent_hw;
+> > +       struct clk *parent_clk;
+> > +       struct clk_mux *mux;
+> > +       u32 val;
+> > +
+> > +       /* This will always succeed, so no need to check for IS_ERR() *=
+/
+> > +       parent_clk =3D clk_get_parent(hw->clk);
+> > +
+> > +       parent_hw =3D __clk_get_hw(parent_clk);
+> > +       mux =3D to_clk_mux(parent_hw);
+> > +
+> > +       val =3D readl(mux->reg) >> mux->shift;
+> > +       val &=3D mux->mask;
+> > +       return clk_mux_val_to_index(parent_hw, mux->table, 0, val);
+> > +}
+> > +
+> >  static int rzv2h_mod_clock_is_enabled(struct clk_hw *hw)
+> >  {
+> >         struct mod_clock *clock =3D to_mod_clock(hw);
+> >         struct rzv2h_cpg_priv *priv =3D clock->priv;
+> > +       int mon_index =3D clock->mon_index;
+> >         u32 bitmask;
+> >         u32 offset;
+> >
+> > -       if (clock->mon_index >=3D 0) {
+> > +       if (clock->ext_clk_mux_index >=3D 0) {
+> > +               if (rzv2h_clk_mux_to_index(hw) =3D=3D clock->ext_clk_mu=
+x_index)
+>
+> Collapsing into a single if-statement...
+>
+Thanks, makes sense.
+
+> > +                       mon_index =3D -1;
+> > +       }
+> > +
+> > +       if (mon_index >=3D 0) {
+> >                 offset =3D GET_CLK_MON_OFFSET(clock->mon_index);
+>
+> Dropping "clock->"...
+>
+Thanks, makes sense.
+
+Cheers,
+Prabhakar
+
+> >                 bitmask =3D BIT(clock->mon_bit);
+> >
+> >
+>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> i.e. will queue in renesas-clk for v6.17 with the above changes.
+>
+> Gr{oetje,eeting}s,
+>
+>                         Geert
+>
+>
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m6=
+8k.org
+>
+> In personal conversations with technical people, I call myself a hacker. =
+But
+> when I'm talking to journalists I just say "programmer" or something like=
+ that.
+>                                 -- Linus Torvalds
+>
 
