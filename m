@@ -1,187 +1,145 @@
-Return-Path: <linux-kernel+bounces-646598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-646616-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E61E8AB5E34
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 23:00:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B696AB5E5C
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 23:20:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78BC84A1733
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 21:00:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 34E374A4B39
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 21:20:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 697E01FC0E2;
-	Tue, 13 May 2025 21:00:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B445420296D;
+	Tue, 13 May 2025 21:20:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="doln9mqq"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="T6kk4+dt"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA67C18DB3D
-	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 21:00:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8968201262
+	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 21:20:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747170018; cv=none; b=N0lPNHh7oNs1+TRpIX+iL1RJHasWiyjJU7IEgSvlysKtrqV4Ng3rxiz1Suu/7kwhBApMdRydrdR0st/pgGj1im5J3iVqZud2oJG6e36pEqqyrIxwYQNOM8B1DgBqWbXMPYdMEHIeb+ymTL71NxLhP6QPGC6OSSMJdxJUlieoFFI=
+	t=1747171248; cv=none; b=jFR0qRaCZFZ4hLGx5FnyO3IjdROXgDVsMC070riHGnA5K2Uzi6GDeT43uqzT5kW9z9uK5RjW6Er1JaNW+FxHsemw1pjxOwjKLa4MBPFZRxH6061RcNgfz12Rheke/dewr2UCTdhoDaVruTrTwIPetL00tX1/i9hMbyKMI+Si+CY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747170018; c=relaxed/simple;
-	bh=uXBKfrEHx7TPq4q2YOZY45n4LHW3AiqO1stybgZlRFw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=CL3+P0zXnGi5egttTFFCE6Iqu7phijT3lO3vyL1nrT0a+EhhRUP4SIB9WFhA2/Qg8zL//buwMfoXbG5LMjgIX36LbyIOotn/S3fcDGV1YksMJNQ3yyJRYotaTAbsQCLLHLetWBoFuN3WNnktRPsTEuYzk1BE/s0HCF3Xj+gbukE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=doln9mqq; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1747170014;
-	bh=uXBKfrEHx7TPq4q2YOZY45n4LHW3AiqO1stybgZlRFw=;
-	h=From:Date:Subject:To:Cc:From;
-	b=doln9mqquK6hbJ3KKO3U21/pJNa5dzcIc3wNJugbujtmikJj5ghJ6UMdGMdjwWYly
-	 4r+lj37zE2TPlwBOsnp9/9jgEw6y+D4h2GGH22jIaO8bxmrQiySnO5jLpE3w2aDHBr
-	 sb50YxPfQ+/DJcrMMtMq2sifoSs+bFGbNyBWRC478I9jQLwth+DJcsFD2NPzCXXNQw
-	 zLRKvuFhhR3SitGmWKGCeUfEdnb+yHC/bZDDoRs7t/1a9eDMFt/XZK7WSdUfpRwim3
-	 7tFdwCMdKYiuyh0RNAzZJjunzle6Cvbi0BV7SJXWDs93wldKH3WfTU5A7sxE+RHrdp
-	 4v5OO9ZZxH/cQ==
-Received: from [192.168.1.63] (unknown [70.107.117.78])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: nfraprado)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id E48CF17E0509;
-	Tue, 13 May 2025 23:00:12 +0200 (CEST)
-From: =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
-Date: Tue, 13 May 2025 16:59:41 -0400
-Subject: [PATCH] arm64: defconfig: Enable configs for MediaTek Genio EVK
- boards
+	s=arc-20240116; t=1747171248; c=relaxed/simple;
+	bh=M7pXAiXplMTRQs+4RjP4ptAizMSNn/X1Eyo/2bXfjKs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ghmSxMzgZWqBQ7vVkwHCHH0PyHQ7L/6K5+73S+goVKtT1/g3TTQ98o54p4bTUYwfjvanBVxM+JLBF+oMW8f6JbuPayPeLdl/VyHaKb6Os8hC+lM6MD4+i6BZxUARyxHztoWTPdXVIM+rg8pVj0c6AH9pVrhn+/C51Shh1dzOMB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=T6kk4+dt; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-74251cb4a05so5183148b3a.3
+        for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 14:20:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1747171241; x=1747776041; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=tktSgBWAVXWMwa5kK+nyg9pqAy3BG4YkGNfURyQ8YpU=;
+        b=T6kk4+dt+OZKE2v1pg5D/KZVJd6k44Pe+8jU4mn3NnMddNJqVo3msvaXAj2YswDf10
+         F4ATt2wLo88uxZiQM3pIlcZf9cTpQyOI5GBuhfVZ32DxgqZjcgW7lpYeGuQz02tRv9MG
+         mdUY+tHhjRuncOxcxNVwJGaAhTWyBdnxu+WEw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747171241; x=1747776041;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tktSgBWAVXWMwa5kK+nyg9pqAy3BG4YkGNfURyQ8YpU=;
+        b=o4ALOi+hy5zKDQVkS+yd9IPolD459oX89KKL+xwAwVfG0pOsNiyL1zWYRtSqrxwFOB
+         VKIQm239G3btfGrnlGOumwFFUnmiL5koEvu992w1ahtB3gbyWHxeNZO2i87reDrh889W
+         pMJs2YMK1xZhpL8zH04VJX9mQq3C1vycADuAVb8co1jeZcrHp8meYABXZdXZ6nfd9HQu
+         bg8+b72AiX2NvxWrk6mLK3nWeO5XM06o5fjW7KvOlx9hIYgHHYeRp2oUcqWPPg4Q3ibg
+         A7Pm1I09YLHEuAUl0Lh1CSaqMU2tc37qC963+tMo+r8qFrEsvVOtwidtC7v+oHW0YsmV
+         KYIw==
+X-Forwarded-Encrypted: i=1; AJvYcCWCrq+4vjyNH3lD9I4l3cEW7AJrLNpN2kG8ZNq/8MkW3MqJy0ZdF+ls86vC8yxmvE3aTZr5JdwYefHGgR8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyKYpdvTVmdtPoAATF4HvJ03zwVeudW5FXkacRD7CZTUhy2vsMg
+	zXIR+Rhhqf/BKSXPnTK0SBgWcKOtIe4BHcv+1iU99JysB6Oe3fbakge9dMTgZg==
+X-Gm-Gg: ASbGncv4MHF4vIk1lBTegLSuRaDq0gLHmDDSYROAphVE4iqDwyB0scmX11BgwLuHfse
+	fWHKq4MFDlksrLCBk0SJd8j9BKpLiXwMitEJX7lWIBsT36WMY7ol3tyuyhmaKmH7h+RWfJ19hXF
+	+jftaZZ+5emLMQ4UGeJdyLLvAlfKsJTSnUtfypP4J/sD6sF5qabg00V3a8v/gGirvaFnYvEmaGn
+	/24lwAb/KODQJcTtJeQawRzSaMLc/GxDOs4oJZ771D6YFmTczaMNbNd3cGfzGPeowZPTnBJYq9q
+	ATsj9vAZ2lQ7+PEZ6+sDQ+5idfPQqeCmc6k6p10b+l7EoUt76RONCKyBazyF5pR+F/vnnxDS467
+	/
+X-Google-Smtp-Source: AGHT+IG6NMNP7O5vMscL8kEzMjj89CSjv2pzaVBWi4tL1mCe/KfuLBlCNoNKBpsS77XeTzHY9qPexw==
+X-Received: by 2002:a17:903:166e:b0:224:256e:5e3f with SMTP id d9443c01a7336-231980e5929mr15136515ad.25.1747171239761;
+        Tue, 13 May 2025 14:20:39 -0700 (PDT)
+Received: from ubuntu.. ([192.19.161.250])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22fc82a4c41sm86671845ad.237.2025.05.13.14.20.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 May 2025 14:20:39 -0700 (PDT)
+From: Ronak Doshi <ronak.doshi@broadcom.com>
+To: netdev@vger.kernel.org
+Cc: Ronak Doshi <ronak.doshi@broadcom.com>,
+	Guolin Yang <guolin.yang@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Ronghua Zhang <ronghua@vmware.com>,
+	Bhavesh Davda <bhavesh@vmware.com>,
+	Shreyas Bhatewara <sbhatewara@vmware.com>,
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH net] vmxnet3: update MTU after device quiesce
+Date: Tue, 13 May 2025 21:02:40 +0000
+Message-ID: <20250513210243.1828-1-ronak.doshi@broadcom.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250513-genio-defconfig-v1-1-c3862f91b6b2@collabora.com>
-X-B4-Tracking: v=1; b=H4sIALyyI2gC/x3MQQqAIBBA0avErBuwTIuuEi3CGW02GgoRSHdPW
- r7F/xUKZ+ECa1ch8y1FUmwY+g7cecTAKNQMoxqNMoPGwFESEnuXopeAsyVr/GInTQStujJ7ef7
- jtr/vBygLiT5hAAAA
-X-Change-ID: 20250513-genio-defconfig-76d65f8643dd
-To: Catalin Marinas <catalin.marinas@arm.com>, 
- Will Deacon <will@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: kernel@collabora.com, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org, 
- =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
-X-Mailer: b4 0.14.2
 
-Enable the missing configs to get all devices on the MediaTek Genio
-1200, 700, 510 and 350 EVK boards probing, as indicated by the DT
-kselftest.
+Currently, when device mtu is updated, vmxnet3 updates netdev mtu, quiesces
+the device and then reactivates it for the ESXi to know about the new mtu.
+So, technically the OS stack can start using the new mtu before ESXi knows
+about the new mtu.
 
-This includes support for:
+This can lead to issues for TSO packets which use mss as per the new mtu
+configured. This patch fixes this issue by moving the mtu write after
+device quiesce.
 
-Genio 1200/700/510/350:
-* MT6359/MT6357 PMICs Auxiliary ADC
-
-Genio 1200/700/510:
-* MDP3 (video scaling and color space conversion IP block)
-* ITE IT5205 Type-C USB Alternate Mode Passive MUX
-* Himax HX8279 controller based KD070FHFID078 DSI panel
-
-Genio 700/510:
-* Richtek RT1715 USB Type-C PD Controller
-
-Genio 1200:
-* MediaTek PCIe PHY
-* Mediatek MT6360 USB Type-C Port Controller
-
-Genio 350:
-* STARTEK KD070FHFID015 DSI panel
-* MediaTek UART DMA controller (APDMA)
-
-Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+Fixes: d1a890fa37f2 ("net: VMware virtual Ethernet NIC driver: vmxnet3")
+Signed-off-by: Ronak Doshi <ronak.doshi@broadcom.com>
+Acked-by: Guolin Yang <guolin.yang@broadcom.com>
 ---
-Depends on [1].
+ drivers/net/vmxnet3/vmxnet3_drv.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-[1] "[PATCH v4] arm64: defconfig: mediatek: enable PHY drivers"
-https://lore.kernel.org/all/20250512131933.1247830-1-vignesh.raman@collabora.com/
----
- arch/arm64/configs/defconfig | 9 +++++++++
- 1 file changed, 9 insertions(+)
-
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index cb3eacd6406c3a508ce9ee5f4b5c9cd6a429ed3a..cb47d7bea02025d6034093ec3dd2f9f1c6ad4bc8 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -846,6 +846,7 @@ CONFIG_VIDEO_MEDIATEK_JPEG=m
- CONFIG_VIDEO_MEDIATEK_VCODEC=m
- CONFIG_VIDEO_WAVE_VPU=m
- CONFIG_VIDEO_E5010_JPEG_ENC=m
-+CONFIG_VIDEO_MEDIATEK_MDP3=m
- CONFIG_VIDEO_IMX7_CSI=m
- CONFIG_VIDEO_IMX_MIPI_CSIS=m
- CONFIG_VIDEO_IMX8_ISI=m
-@@ -912,6 +913,7 @@ CONFIG_DRM_PANEL_BOE_TV101WUM_NL6=m
- CONFIG_DRM_PANEL_LVDS=m
- CONFIG_DRM_PANEL_SIMPLE=m
- CONFIG_DRM_PANEL_EDP=m
-+CONFIG_DRM_PANEL_HIMAX_HX8279=m
- CONFIG_DRM_PANEL_ILITEK_ILI9882T=m
- CONFIG_DRM_PANEL_KHADAS_TS050=m
- CONFIG_DRM_PANEL_MANTIX_MLAF057WE51=m
-@@ -919,6 +921,7 @@ CONFIG_DRM_PANEL_NOVATEK_NT36672E=m
- CONFIG_DRM_PANEL_RAYDIUM_RM67191=m
- CONFIG_DRM_PANEL_SAMSUNG_ATNA33XC20=m
- CONFIG_DRM_PANEL_SITRONIX_ST7703=m
-+CONFIG_DRM_PANEL_STARTEK_KD070FHFID015=m
- CONFIG_DRM_PANEL_TRULY_NT35597_WQXGA=m
- CONFIG_DRM_PANEL_VISIONOX_VTDR6130=m
- CONFIG_DRM_DISPLAY_CONNECTOR=m
-@@ -1152,6 +1155,8 @@ CONFIG_USB_MASS_STORAGE=m
- CONFIG_TYPEC=m
- CONFIG_TYPEC_TCPM=m
- CONFIG_TYPEC_TCPCI=m
-+CONFIG_TYPEC_RT1711H=m
-+CONFIG_TYPEC_MT6360=m
- CONFIG_TYPEC_TCPCI_MAXIM=m
- CONFIG_TYPEC_FUSB302=m
- CONFIG_TYPEC_QCOM_PMIC=m
-@@ -1162,6 +1167,7 @@ CONFIG_TYPEC_TPS6598X=m
- CONFIG_TYPEC_HD3SS3220=m
- CONFIG_TYPEC_MUX_FSA4480=m
- CONFIG_TYPEC_MUX_GPIO_SBU=m
-+CONFIG_TYPEC_MUX_IT5205=m
- CONFIG_TYPEC_MUX_NB7VPQ904M=m
- CONFIG_TYPEC_MUX_PS883X=m
- CONFIG_TYPEC_MUX_WCD939X_USBSS=m
-@@ -1271,6 +1277,7 @@ CONFIG_PL330_DMA=y
- CONFIG_TEGRA186_GPC_DMA=y
- CONFIG_TEGRA20_APB_DMA=y
- CONFIG_TEGRA210_ADMA=m
-+CONFIG_MTK_UART_APDMA=m
- CONFIG_QCOM_BAM_DMA=y
- CONFIG_QCOM_GPI_DMA=m
- CONFIG_QCOM_HIDMA_MGMT=y
-@@ -1515,6 +1522,7 @@ CONFIG_EXYNOS_ADC=y
- CONFIG_IMX8QXP_ADC=m
- CONFIG_IMX93_ADC=m
- CONFIG_MAX9611=m
-+CONFIG_MEDIATEK_MT6359_AUXADC=m
- CONFIG_MEDIATEK_MT6577_AUXADC=m
- CONFIG_QCOM_SPMI_VADC=m
- CONFIG_QCOM_SPMI_ADC5=m
-@@ -1578,6 +1586,7 @@ CONFIG_PHY_HI6220_USB=y
- CONFIG_PHY_HISTB_COMBPHY=y
- CONFIG_PHY_HISI_INNO_USB2=y
- CONFIG_PHY_MVEBU_CP110_COMPHY=y
-+CONFIG_PHY_MTK_PCIE=m
- CONFIG_PHY_MTK_TPHY=y
- CONFIG_PHY_MTK_HDMI=m
- CONFIG_PHY_MTK_MIPI_DSI=m
-
----
-base-commit: 0c6d548cd52870702eb4150c420d00e9289a79d2
-change-id: 20250513-genio-defconfig-76d65f8643dd
-
-Best regards,
+diff --git a/drivers/net/vmxnet3/vmxnet3_drv.c b/drivers/net/vmxnet3/vmxnet3_drv.c
+index 3df6aabc7e33..58027e82de88 100644
+--- a/drivers/net/vmxnet3/vmxnet3_drv.c
++++ b/drivers/net/vmxnet3/vmxnet3_drv.c
+@@ -3607,8 +3607,6 @@ vmxnet3_change_mtu(struct net_device *netdev, int new_mtu)
+ 	struct vmxnet3_adapter *adapter = netdev_priv(netdev);
+ 	int err = 0;
+ 
+-	WRITE_ONCE(netdev->mtu, new_mtu);
+-
+ 	/*
+ 	 * Reset_work may be in the middle of resetting the device, wait for its
+ 	 * completion.
+@@ -3619,6 +3617,7 @@ vmxnet3_change_mtu(struct net_device *netdev, int new_mtu)
+ 	if (netif_running(netdev)) {
+ 		vmxnet3_quiesce_dev(adapter);
+ 		vmxnet3_reset_dev(adapter);
++		WRITE_ONCE(netdev->mtu, new_mtu);
+ 
+ 		/* we need to re-create the rx queue based on the new mtu */
+ 		vmxnet3_rq_destroy_all(adapter);
+@@ -3638,6 +3637,8 @@ vmxnet3_change_mtu(struct net_device *netdev, int new_mtu)
+ 				   "Closing it\n", err);
+ 			goto out;
+ 		}
++	} else {
++		WRITE_ONCE(netdev->mtu, new_mtu);
+ 	}
+ 
+ out:
 -- 
-Nícolas F. R. A. Prado <nfraprado@collabora.com>
+2.45.2
 
 
