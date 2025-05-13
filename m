@@ -1,85 +1,73 @@
-Return-Path: <linux-kernel+bounces-645855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-645857-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B109FAB5496
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 14:19:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D37AAB549A
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 14:22:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 45C3A17FAC0
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 12:19:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9FEBD19E2359
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 12:22:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BC6424C67B;
-	Tue, 13 May 2025 12:19:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 848F728D8EE;
+	Tue, 13 May 2025 12:22:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="O0s1/nYd"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SYH1Rela"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 666702367B8
-	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 12:19:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 409D321B199
+	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 12:22:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747138790; cv=none; b=Qw3q0s+hMZ9YxpJdWk3YS5hq4Rvieu6CJLNA1E5Z8ECJJCe8R4faGcXIosBEotBNPIgFdnaxB4/BbkmNa67S35LDlGpZxS9UcveiIcQoKzqpPeXxm3vzDuvrCkCn4+ha/d05iCaZuLiLUJk1u8OHq0HzIfUxcRh/ejiAkYqU2SI=
+	t=1747138941; cv=none; b=aOryiWS7upQqX0g2k9eBwjKWXtVxVz+kLHtzMQkzo0XHZ8bBEsC/ur/vYOO9aJFFK2nsKk7ehstu1A6LwXUdPS0f+zwbOpbTs5LLCqBd10MuKr7gX14eBnPvGFzcsgLbp77Bvjrt4xwx9Hatm9expI2FjiAJ3nfGUXxzPVUuLeU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747138790; c=relaxed/simple;
-	bh=PvFrR2MAq2o+yd9APHGuH71FjKQ9+0afcA1dVCja6iA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=YWJuFOyp3y9T/0iIayM8OM3s37tK5lolwjDCekUOHrO6JrWUD36cPgXUdZWr5VwVJmTrkMkjTxz+v3orn2BPEfbTH/WaUb5XEAGxbvCa+BXdgaGhRX688IGvYWTNSsXMwkugMHJ9DFAbA0cpn1TUnqzPMShZPU60E1KVfdzQ7TA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=O0s1/nYd; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1747138788; x=1778674788;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=PvFrR2MAq2o+yd9APHGuH71FjKQ9+0afcA1dVCja6iA=;
-  b=O0s1/nYdcdlOitVX/COgnXEibxp+uai9j6giJaSzj3rq8NAk6tOeLERp
-   iEp841F9+dcKvs0Kc3GesOyxxb81w9gkNItU+EMDdDBdbu1GqftQfaZK+
-   bNy6Evg3Y2IKM5gvo0PJexNd4mJgCVIHrzwrMCS/lNyutR7JoAowuqW2p
-   h3PX+Uldj2uTmIrduK+Oi/FwKefE4KwqiqBS5KPm47TciFIoVyhEo7gv+
-   uGDOqlKPnacmkJQHoMA5RE3/+qj0HrKZwzHM7mk4Nm8PZTWurTByeEKIV
-   3VQgn8t2xxnMhMNHflOwVKdOQ5Zp9+Yf4moFBQCzVaGblY+TNW632U4Dg
-   w==;
-X-CSE-ConnectionGUID: unz45pT/QKm6j+VCmo8+Xg==
-X-CSE-MsgGUID: Gj9YgJFyTzCjJRGTEEDXXw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11431"; a="52788521"
-X-IronPort-AV: E=Sophos;i="6.15,285,1739865600"; 
-   d="scan'208";a="52788521"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 May 2025 05:19:47 -0700
-X-CSE-ConnectionGUID: 3NPLvGBRRAK/n33hhJDhew==
-X-CSE-MsgGUID: GJHOJSAyTsOFFP5L/Qaxww==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,285,1739865600"; 
-   d="scan'208";a="138618720"
-Received: from dalessan-mobl3.ger.corp.intel.com (HELO localhost) ([10.245.244.175])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 May 2025 05:19:44 -0700
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Anusha Srivatsa <asrivats@redhat.com>
-Cc: Maxime Ripard <mripard@kernel.org>, Neil Armstrong
- <neil.armstrong@linaro.org>, Jessica Zhang <quic_jesszhan@quicinc.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann
- <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter
- <simona@ffwll.ch>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, Luca Ceresoli <luca.ceresoli@bootlin.com>
-Subject: Re: [PATCH v4 2/4] drm/panel: Add refcount support
-In-Reply-To: <CAN9Xe3R87TmEzeTEFnhxAZyqdRYNSnPLcGqWATpyt4CHeYdGkg@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20250331-b4-panel-refcounting-v4-0-dad50c60c6c9@redhat.com>
- <20250331-b4-panel-refcounting-v4-2-dad50c60c6c9@redhat.com>
- <87y0vkw8ll.fsf@intel.com>
- <20250429-benign-sidewinder-of-defense-6dd4d8@houat>
- <87o6wfwcef.fsf@intel.com> <20250505-slim-bizarre-marten-a674ac@houat>
- <CAN9Xe3RLazpAXdxxJmyF2QAShDtMSgdoxMdo6ecdYd7aZiP9kA@mail.gmail.com>
- <874ixvtbxy.fsf@intel.com>
- <20250509-rapid-flounder-of-devotion-6b26bb@houat>
- <87r00yj6kv.fsf@intel.com>
- <CAN9Xe3R87TmEzeTEFnhxAZyqdRYNSnPLcGqWATpyt4CHeYdGkg@mail.gmail.com>
-Date: Tue, 13 May 2025 15:19:41 +0300
-Message-ID: <87msbgitya.fsf@intel.com>
+	s=arc-20240116; t=1747138941; c=relaxed/simple;
+	bh=3YbfeYjFKH3IJ2nqQzkl9zckrwJcT/qVhCY37SIrN+w=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=MPub2mIs4qrTEve2lIct3+MbgXk1c5cHi6XUoZOXzDXey22eGaMr4KUNh+REvL1Bx7+F6EpWAU8dbHodsKz01fdvcKDYDuNDVaSs0f2VoZPIi/nTPqr6JaCddjcv5OcFeOoX3Vi90i7dEOVQJkSohdijjbteuIiv/RGp02pUGp4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SYH1Rela; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1747138939;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NT/xrfv5TBvzT3fT6ervznNFvl/oozjfVV92cittWdY=;
+	b=SYH1Rela9FW8JjOnf5q/BLWD6qe1BHs98+DQLCq0cO1jgu7Mx2nI5yxvlp+cngUory2JiP
+	btP6pSNWVbKSzqzf+dQ8mHU4RZarOOdCUX2AVz6DZ6Kv5NT5vFPVZaLAnZOPW76YQZGXg5
+	SfW3mqIxNH2ZYbuc8CCxXTHtFZlr+lU=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-695-MoWDOE8MPl26ge0BF8l44g-1; Tue,
+ 13 May 2025 08:22:15 -0400
+X-MC-Unique: MoWDOE8MPl26ge0BF8l44g-1
+X-Mimecast-MFC-AGG-ID: MoWDOE8MPl26ge0BF8l44g_1747138934
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D44E71801A14;
+	Tue, 13 May 2025 12:22:13 +0000 (UTC)
+Received: from [10.22.89.59] (unknown [10.22.89.59])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E95A21800359;
+	Tue, 13 May 2025 12:22:10 +0000 (UTC)
+From: Benjamin Coddington <bcodding@redhat.com>
+To: Li Lingfeng <lilingfeng3@huawei.com>
+Cc: trondmy@kernel.org, anna@kernel.org, jlayton@kernel.org,
+ linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+ yukuai1@huaweicloud.com, houtao1@huawei.com, yi.zhang@huawei.com,
+ yangerkun@huawei.com, lilingfeng@huaweicloud.com
+Subject: Re: [PATCH v2] nfs: handle failure of nfs_get_lock_context in unlock
+ path
+Date: Tue, 13 May 2025 08:20:54 -0400
+Message-ID: <A447D4AD-9513-4128-945C-8161426D4C4A@redhat.com>
+In-Reply-To: <20250513074226.3362070-1-lilingfeng3@huawei.com>
+References: <20250513074226.3362070-1-lilingfeng3@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,24 +75,116 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-On Mon, 12 May 2025, Anusha Srivatsa <asrivats@redhat.com> wrote:
-> I get that embedding drm_panel within intel_panel which is embedded
-> within intel_connector, which also embeds drm_connector and so on can
-> get confusing to use. But Jani,
-> about drm_panel_follower , which is the panel that is following the
-> intel_panel? Is it the associated
-> touchscreen if any or some other device?
+On 13 May 2025, at 3:42, Li Lingfeng wrote:
 
-Touchscreen, it's stuff under investigation, WIP. Needs a bunch more
-stuff, but just trying to ensure drm_panel doesn't become a blocker
-right off the bat.
+> When memory is insufficient, the allocation of nfs_lock_context in
+> nfs_get_lock_context() fails and returns -ENOMEM. If we mistakenly trea=
+t
+> an nfs4_unlockdata structure (whose l_ctx member has been set to -ENOME=
+M)
+> as valid and proceed to execute rpc_run_task(), this will trigger a NUL=
+L
+> pointer dereference in nfs4_locku_prepare. For example:
+>
+> BUG: kernel NULL pointer dereference, address: 000000000000000c
+> PGD 0 P4D 0
+> Oops: Oops: 0000 [#1] SMP PTI
+> CPU: 15 UID: 0 PID: 12 Comm: kworker/u64:0 Not tainted 6.15.0-rc2-dirty=
+ #60
+> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-2.fc=
+40
+> Workqueue: rpciod rpc_async_schedule
+> RIP: 0010:nfs4_locku_prepare+0x35/0xc2
+> Code: 89 f2 48 89 fd 48 c7 c7 68 69 ef b5 53 48 8b 8e 90 00 00 00 48 89=
+ f3
+> RSP: 0018:ffffbbafc006bdb8 EFLAGS: 00010246
+> RAX: 000000000000004b RBX: ffff9b964fc1fa00 RCX: 0000000000000000
+> RDX: 0000000000000000 RSI: fffffffffffffff4 RDI: ffff9ba53fddbf40
+> RBP: ffff9ba539934000 R08: 0000000000000000 R09: ffffbbafc006bc38
+> R10: ffffffffb6b689c8 R11: 0000000000000003 R12: ffff9ba539934030
+> R13: 0000000000000001 R14: 0000000004248060 R15: ffffffffb56d1c30
+> FS: 0000000000000000(0000) GS:ffff9ba5881f0000(0000) knlGS:00000000
+> CS: 0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 000000000000000c CR3: 000000093f244000 CR4: 00000000000006f0
+> Call Trace:
+>  <TASK>
+>  __rpc_execute+0xbc/0x480
+>  rpc_async_schedule+0x2f/0x40
+>  process_one_work+0x232/0x5d0
+>  worker_thread+0x1da/0x3d0
+>  ? __pfx_worker_thread+0x10/0x10
+>  kthread+0x10d/0x240
+>  ? __pfx_kthread+0x10/0x10
+>  ret_from_fork+0x34/0x50
+>  ? __pfx_kthread+0x10/0x10
+>  ret_from_fork_asm+0x1a/0x30
+>  </TASK>
+> Modules linked in:
+> CR2: 000000000000000c
+> ---[ end trace 0000000000000000 ]---
+>
+> Free the allocated nfs4_unlockdata when nfs_get_lock_context() fails an=
+d
+> return NULL to terminate subsequent rpc_run_task, preventing NULL point=
+er
+> dereference.
+>
+> Fixes: f30cb757f680 ("NFS: Always wait for I/O completion before unlock=
+")
+> Link: https://lore.kernel.org/all/21817f2c-2971-4568-9ae4-1ccc25f7f1ef@=
+huawei.com/
+> Signed-off-by: Li Lingfeng <lilingfeng3@huawei.com>
+> ---
+> Changes in v2:
+>   Add a comment explaining that error handling for ctx acquisition fail=
+ure
+>   is unnecessary.
+>
+>  fs/nfs/nfs4proc.c | 13 ++++++++++++-
+>  1 file changed, 12 insertions(+), 1 deletion(-)
+>
+> diff --git a/fs/nfs/nfs4proc.c b/fs/nfs/nfs4proc.c
+> index 970f28dbf253..e52e2ac1ab39 100644
+> --- a/fs/nfs/nfs4proc.c
+> +++ b/fs/nfs/nfs4proc.c
+> @@ -7074,18 +7074,29 @@ static struct nfs4_unlockdata *nfs4_alloc_unloc=
+kdata(struct file_lock *fl,
+>  	struct nfs4_unlockdata *p;
+>  	struct nfs4_state *state =3D lsp->ls_state;
+>  	struct inode *inode =3D state->inode;
+> +	struct nfs_lock_context *l_ctx;
+>
+>  	p =3D kzalloc(sizeof(*p), GFP_KERNEL);
+>  	if (p =3D=3D NULL)
+>  		return NULL;
+> +	l_ctx =3D nfs_get_lock_context(ctx);
+> +	if (!IS_ERR(l_ctx)) {
+> +		p->l_ctx =3D l_ctx;
+> +	} else {
+> +		kfree(p);
+> +		return NULL;
+> +	}
+>  	p->arg.fh =3D NFS_FH(inode);
+>  	p->arg.fl =3D &p->fl;
+>  	p->arg.seqid =3D seqid;
+>  	p->res.seqid =3D seqid;
+>  	p->lsp =3D lsp;
+>  	/* Ensure we don't close file until we're done freeing locks! */
+> +	/*
+> +	 * Since the caller holds a reference to ctx, the refcount must be no=
+n-zero.
+> +	 * Therefore, error handling for failed ctx acquisition is unnecessar=
+y here.
+> +	 */
 
+I think the additional comment is unnecessary, but otherwise this looks c=
+orrect.
 
-BR,
-Jani.
+Reviewed-by: Benjamin Coddington <bcodding@redhat.com>
 
+Ben
 
--- 
-Jani Nikula, Intel
 
