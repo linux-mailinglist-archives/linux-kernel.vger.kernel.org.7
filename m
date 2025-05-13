@@ -1,120 +1,97 @@
-Return-Path: <linux-kernel+bounces-645465-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-645469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D56A1AB4DF0
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 10:21:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA245AB4E07
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 10:25:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56E741B40B0E
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 08:21:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC8FB8C1DD8
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 08:25:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C77E6202F8B;
-	Tue, 13 May 2025 08:21:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BB2020B7F3;
+	Tue, 13 May 2025 08:25:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="HQ2L1Hd5"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49F9B1F8722
-	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 08:21:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="QMNc+BB2"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A690E204C00;
+	Tue, 13 May 2025 08:25:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747124471; cv=none; b=ecWaAQzp7gx1OkKxGWkaO2VooW919MNjsiVJXzX51uFCTvYN8hFqMfy/DK1TQ+Z7CRNGro3Om2JyJA/kjBOmstGp9xVxsOn0OMayJvxJGXtFKVlAgUsngkBSKW6zjG1Cs77saHVbTORHLjMC8GkD025KyYc6d/6hDt7YT87pJEc=
+	t=1747124712; cv=none; b=DfQuO5nag8CYDHHXs4US+HkCdz2o//h2YGriURqoF97h5yM84JBO2YVsR26ct4RR8AFa6fJHeFebVeU+xjQLn1zl8Yy5+9Hp6erM38X1hwhZkahs8SviRhNK5FDECJcJzUWGNKPh9sXKaLyYuSKjet9DeFkNjBQqJAF1tfB4yxE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747124471; c=relaxed/simple;
-	bh=1KOdnNmnIqOUX05SbnbV5LIlCI8xHi+VUdF/PLiNndY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GkpzTHYCMs7V8PELiVLCw3KdCCmGIk5HpO170qxviydazxjmoOCDhTXsOLoTNlTYlCZ3K6VTfasGr/3IUiSgmOOxSqKQcLqnS9UyC7c+1FARQ5pGFonk42uKysELl90qn7xhb4xIUNwhu47icVApm0NkQyB+HmCIl/BLd7kUuCk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=HQ2L1Hd5; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-442ec3ce724so2195205e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 01:21:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1747124467; x=1747729267; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=s7f9J/hvdAFlkc7sZuIYSGpxSi3u2UaESB5uOoGyVko=;
-        b=HQ2L1Hd5eymHd6MS47++c+wMl/M40Muf8mQQjs8V02pUZ6LQ1ea1VC4rLoa5Plziyj
-         l7P50L6Y3Kg71eqKlB/1AX/70G99H/ZZwxYEZXkpaKdJaCp9ffBt+j3Bu94jHuN+MeIF
-         d0kzzegtLaKQb9gAS/jv4LiHAjOoLEGd5MQVYfaaeDQ5GFBNiHGHy/cRt5D2EmMrABjw
-         w7FGV/MBiV39KPQQZNqheUM/ntcNABWcs1OhaHNLy+neHxbN6EesXDgY6L9p7qaQq7RE
-         yT0l0PSRL4L1mWFGol35A6vE7ewuTK7RiHWenLVJPsiIJ7bMFuXQPCqN6LGTTyVfNaMn
-         XKRQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747124467; x=1747729267;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=s7f9J/hvdAFlkc7sZuIYSGpxSi3u2UaESB5uOoGyVko=;
-        b=O2KY1+vmIaNvRoKIFX2GRhij74p91idhqaF0jYKgffzSc0Cn+0ImadKC7azktp2rWI
-         GRZz4ffP34DuJkeumt6gVCDTYTMPpYgZNSk9pXNaGdyqqqHeWL8iEsZ/2ZmWXqG5aPty
-         yiqsUuraae7XdT1ChG0afd3a0ZspWgUO3R8QHpTNl/W8blav0b9p2xkIgCzOZCvKCNqL
-         s0SSWCxVmENeypPkn7SJo2M7vpj+/31oQqEdRLnLULJw39mpo1qzg6EFajIrcRjq/4iM
-         t594/8qHJUuf5M8waIFq3oQkUPr8FuBZFI27Izeh9S+F30T8rUFbcINRGY8fZkLt+xAd
-         cAWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXIHajdPZXly5EplyHPNbOX8qpi5u0ePGqHLgatksB8oNYhGT7BnR0HSdD4QymZc7j23eEE5KyAYOXVAJg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywu2fHNHCaiFPKfxB8sghIQGvvI/eXjUTs5+Eu+eKAYzFISTyup
-	0ZdmrXykNNbbu9soXqoXk2YQwzJNK7ZfUkoAvsCSYVXLgqOtO8xyjehKLpGMunY=
-X-Gm-Gg: ASbGncspUu8cob9vMXOW8BBLqdas4+OB04LVg0MNXXdFNfmcv0gP/kNbkqIv60KYdOx
-	1xPDl4N6T8YjQSZiJYL27xjZc5+vxAq+7+fa/Nw3114Ro87IhKkt5CLYH6aOeNQb3kgRgBUfdgH
-	MW/lUHI8a2nmbssbb3RTZZa+Yo0ozjJIFQL/ZnF3qEGNhYr0ynLGrnYudTSxPI8cHox098yCH+9
-	raEsIWF4rd2XUHhUDXVzAR6kFRmQHAqmsoQoQnjRQ0r7GGAPLQh5ICKVO9om9bN662mWUqsHQmq
-	twDKbLdTzQvGipB60WwQZiSEP9jLYkNXZ9op6+5j3kGZpLzYeCyYxwrugnpLdm9C7eLEzuSMsgl
-	KUgfgFG0IIQoBsKRBKAI=
-X-Google-Smtp-Source: AGHT+IEcxmMTgov3772rlzrX11O2oD7xnMxEVaaMx9pT7r4MRBGiohY6gWKKNoJRF/yJySyPopi/DA==
-X-Received: by 2002:a05:600c:3b2a:b0:43c:fa0e:4713 with SMTP id 5b1f17b1804b1-442d6d18ae0mr143603615e9.2.1747124467555;
-        Tue, 13 May 2025 01:21:07 -0700 (PDT)
-Received: from ?IPV6:2001:a61:1335:3601:f121:69fe:935a:67bd? ([2001:a61:1335:3601:f121:69fe:935a:67bd])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-442cd3b7e26sm201015165e9.37.2025.05.13.01.21.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 13 May 2025 01:21:07 -0700 (PDT)
-Message-ID: <875848ec-f92b-48a9-b5c2-792bb0121824@suse.com>
-Date: Tue, 13 May 2025 10:21:06 +0200
+	s=arc-20240116; t=1747124712; c=relaxed/simple;
+	bh=/e9IFo7NOULWBraqABWGGOO0QNcEpYAXusfimVcSJhY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=OXVWycWApWh9PATUKIsUSHDeWR14DtxUI3r4FWFPmwsU+wzp6f8dZWgPPDzuE32f7G1JLaG5gGQ7O/9jyRtVGCihMAaZ4l052xhgqb03YHyDFL7ZZ388bZHE8ggfngKA+KvNl11SxFm9k0tCT+WOoUVlo89i1wHvmXArifdS+lE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=QMNc+BB2 reason="signature verification failed"; arc=none smtp.client-ip=220.197.31.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:To:Subject:Content-Type:MIME-Version:
+	Message-ID; bh=jZPrqQGEvdb3YL+9BCnhNo0UsuME3r3d+9fkNikNK/Y=; b=Q
+	MNc+BB2dovCFtIKCnTmaFsjVsKeVInbrmBr3i+zf3+I5DirTTC5WJei2+ua/KaxK
+	J/89b+/Y/NEgrJrSGWtDvuEx7KaZXAiWwU5W+YgtHJGN6CnXo5dQMch1/849aQ15
+	cVXFT2P1n5N17IwxyzaBry5RhP4PNGVfhdinYCf3hc=
+Received: from 00107082$163.com ( [111.35.191.17] ) by
+ ajax-webmail-wmsvr-40-110 (Coremail) ; Tue, 13 May 2025 16:23:49 +0800
+ (CST)
+Date: Tue, 13 May 2025 16:23:49 +0800 (CST)
+From: "David Wang" <00107082@163.com>
+To: "Oliver Neukum" <oneukum@suse.com>
+Cc: mathias.nyman@intel.com, gregkh@linuxfoundation.org,
+	stern@rowland.harvard.edu, surenb@google.com,
+	kent.overstreet@linux.dev, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] USB: core: add a memory pool to urb for
+ host-controller private data
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20240801(9da12a7b)
+ Copyright (c) 2002-2025 www.mailtech.cn 163com
+In-Reply-To: <48d5cae9-ff7c-4076-8b71-8c16bcf00443@suse.com>
+References: <20250512150724.4560-1-00107082@163.com>
+ <20250513055447.5696-1-00107082@163.com>
+ <48d5cae9-ff7c-4076-8b71-8c16bcf00443@suse.com>
+X-NTES-SC: AL_Qu2fBf2Zu04p7ySdZOkZnEYQheY4XMKyuPkg1YJXOp80vyTg8BgQZm9MAUHHws6uNDKhoAi0TT1A0eZkcIVZfqRklkAzFdBynpW860y7Rrd+
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=GBK
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] USB: xhci: use urb hcpriv mempool for private data
-To: David Wang <00107082@163.com>, mathias.nyman@intel.com,
- gregkh@linuxfoundation.org
-Cc: stern@rowland.harvard.edu, linux-usb@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250512150724.4560-1-00107082@163.com>
- <20250513055545.5738-1-00107082@163.com>
-Content-Language: en-US
-From: Oliver Neukum <oneukum@suse.com>
-In-Reply-To: <20250513055545.5738-1-00107082@163.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Message-ID: <4006cec4.794d.196c8be2fd1.Coremail.00107082@163.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:bigvCgD3n7eWASNoTlEDAA--.28447W
+X-CM-SenderInfo: qqqrilqqysqiywtou0bp/xtbB0hdMqmgi-c1uJwADsT
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 
-Hi,
-
-On 13.05.25 07:55, David Wang wrote:
-> xhci keeps alloc/free private data for each enqueue/dequeue cycles,
-> when using a USB webcam, the memory allocation frequency could reach
-> about 1k/s.
-> 
-> URB objects have longer lifecycle than private data, hand over ownership
-> of private data to urb can save lots of memory allocations over time.
-
-I am afraid I need to make a comment about a principal issue.
-
-This patch set overlooks a fundamental issue. You cannot guarantee
-that an URB is reused by the same HC. For example you cannot rule
-out that the next time your URB is resubmitted, it will land with
-XHCI again.
-
-That means you cannot touch just how one HCD handles private data.
-Or you need to record which HC the URB was last used for.
-
-	Regards
-		Oliver
-
+CgpBdCAyMDI1LTA1LTEzIDE2OjExOjIwLCAiT2xpdmVyIE5ldWt1bSIgPG9uZXVrdW1Ac3VzZS5j
+b20+IHdyb3RlOgo+SGksCj4KPk9uIDEzLjA1LjI1IDA3OjU0LCBEYXZpZCBXYW5nIHdyb3RlOgo+
+PiBVUkIgb2JqZWN0cyBoYXZlIGxvbmcgbGlmZWN5Y2xlLCBhbiB1cmIgY2FuIGJlIHJldXNlZCBi
+ZXR3ZWVuCj4+IGVucXVldWUtZGVxdWV1ZSBsb29wczsgVGhlIHByaXZhdGUgZGF0YSBuZWVkZWQg
+Ynkgc29tZSBob3N0IGNvbnRyb2xsZXIKPj4gaGFzIHZlcnkgc2hvcnQgbGlmZWN5Y2xlLCB0aGUg
+bWVtb3J5IGlzIGFsbG9jZWQgd2hlbiBlbnF1ZXVlLCBhbmQKPj4gcmVsZWFzZWQgd2hlbiBkZXF1
+ZXVlLiBGb3IgZXhhbXBsZSwgb24gYSBzeXN0ZW0gd2l0aCB4aGNpLCBzZXZlcmFsCj4+IG1pbnV0
+ZXMgb2YgdXNhZ2Ugb2Ygd2ViY2FtL2tleWJvYXJkL21vdXNlIGhhdmUgbWVtb3J5IGFsbG9jIGNv
+dW50czoKPj4gICAgZHJpdmVycy91c2IvY29yZS91cmIuYzo3NSBbdXNiY29yZV0gZnVuYzp1c2Jf
+YWxsb2NfdXJiIDY2MQo+PiAgICBkcml2ZXJzL3VzYi9ob3N0L3hoY2kuYzoxNTU1IFt4aGNpX2hj
+ZF0gZnVuYzp4aGNpX3VyYl9lbnF1ZXVlIDQyNDg2Mwo+PiBNZW1vcnkgYWxsb2NhdGlvbiBmcmVx
+dWVuY3kgZm9yIGhvc3QtY29udHJvbGxlciBwcml2YXRlIGRhdGEgY2FuIHJlYWNoCj4+IH4xay9z
+Lgo+Cj5GaXJzdCBvZiBhbGwsIHRoYW5rIHlvdSBmb3IgdHJ5aW5nIHRvIHRhY2tsZSB0aGlzIGxv
+bmcgcnVubmluZyBpc3N1ZS4KPgo+PiBAQCAtNzcsNiArNzgsNyBAQCBzdHJ1Y3QgdXJiICp1c2Jf
+YWxsb2NfdXJiKGludCBpc29fcGFja2V0cywgZ2ZwX3QgbWVtX2ZsYWdzKQo+PiAgIAlpZiAoIXVy
+YikKPj4gICAJCXJldHVybiBOVUxMOwo+PiAgIAl1c2JfaW5pdF91cmIodXJiKTsKPj4gKwl1cmIt
+PmhjcHJpdl9tZW1wb29sX2ZsYWdzID0gbWVtX2ZsYWdzOwo+Cj5Oby4gWW91IGNhbm5vdCBkbyB0
+aGlzLiBUaGUgZmxhZ3MgeW91IHBhc3MgdG8gdXNiX2FsbG9jX3VyYigpCj5kZXBlbmQgb24gdGhl
+IGNvbnRleHQgeW91IGNhbGwgaXQgaW4uIEZvciBleGFtcGxlLCBpZiB5b3UgYXJlCj5hbGxvY2F0
+aW5nIGl0IHdoaWxlIGhvbGRpbmcgYSBzcGlubG9jaywgb3UgbmVlZCB0byB1c2UgR0ZQX0FUT01J
+Qwo+Cj5CdXQgdGhhdCBtYXkgb3IgbWF5IG5vdCBiZSB0aGUgc2FtZSBjb250ZXh0IHlvdSBzdWJt
+aXQgdGhlIFVSQiBpbi4KPlJlY29yZGluZyBtZW1fZmxhZ3MgaGVyZSBtYWtlcyBubyBzZW5zZS4K
+Pgo+CVJlZ2FyZHMKPgkJT2xpdmVyCgpUaGFua3MgZm9yIHJldmlld2luZyB0aGlzLiAgVGhlIG1l
+bW9yeSBmbGFnIHRoaW5nIGRvIHJhaXNlIGNvbmNlcm4uIApJIHRoaW5rIEkgY2FuIG1ha2UgYWRq
+dXN0bWVudDogIHJlYWxsb2MgdGhlIG1lbW9yeSBpZiBmbGFnIGNoYW5nZWQuCgoKVGhhbmtzCkRh
+dmlkCg==
 
