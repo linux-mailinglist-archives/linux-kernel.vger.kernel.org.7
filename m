@@ -1,533 +1,150 @@
-Return-Path: <linux-kernel+bounces-645725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-645722-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5AD6AB5308
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 12:43:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5693DAB52B3
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 12:35:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F5BE9A47A6
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 10:33:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D3AE1892557
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 10:32:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E25F259CB1;
-	Tue, 13 May 2025 10:17:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56D712550BB;
+	Tue, 13 May 2025 10:17:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="TtiYfdp5";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="XVdleQyX"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="MlZKfHp5"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C154C259CAB;
-	Tue, 13 May 2025 10:17:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747131454; cv=fail; b=Pwv7aWBwFR70nXb5wQZuPr2YoLrU3aWHKLoHr87uTCyrPIwwSyvPFdH3wL+GFPSDMxsNWsoEHKcVrSrLO39jn0I8tby2Kprqv7bC9MsHZwNtPZchxmRL6I3hPI3AplhBNc5P/kJeu7CnicRwoG7uLgTeDWYlYCQKeMjsqSG+ih0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747131454; c=relaxed/simple;
-	bh=Xid+JrGHALg1W5GUW6ze1xajMc0itl6wfdLqNBbobo4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=O//HmCis7Mf3WtP+Lo+yjjwu9qBycsYg1lqO+7cWswwmPD+xH8W2vjhxOOp7lyp+SEq0bL91BCaNXdyagjTY+IUt0CCVSeTKqzkubEWTdYr6I5PvEztU+K5vMswwRpjzjfJAcS4BFOSd3kDzChv9KwLI9Yh3bCsp4iOZu9cZGlg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=TtiYfdp5; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=XVdleQyX; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54D1C8tn003041;
-	Tue, 13 May 2025 10:16:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2025-04-25; bh=Tdue4lsGTxkmQqQ89f
-	b9PkQhOtHaOjMHjZzHlJn+7Zk=; b=TtiYfdp5NBrW0Ym175mCJjgDPj6wy8WRdV
-	n1kxNd3EoeyjMdKTNVowS/C8kBDN/SNR/u/j6ZDXYXsllU/2wyFrNUdNSlgxq9BP
-	0h000PZEeYECSieNyiN+FHIDXKsi5AR9e1FTun+IQhgbk9qi47v+SpznFqc3WI9W
-	1aNkBOTEs3JlwgSwQJuq8LZDIEMndD7z5ywRMPKnrIfnFFKJyYlz9slfAngAi0Bn
-	bbLXDENaY3E+3rNWoGdEdf6Kjjp16zt/r5/XE+i0Nz/Njprv5BFHF/O7AKpS5NPl
-	iDlGV07lunJEgczFWvBF5o6ext+SJKC1Imn1QyFIsB+MW5D+PIVw==
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 46j059vfye-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 13 May 2025 10:16:33 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 54D97WOC002837;
-	Tue, 13 May 2025 10:16:21 GMT
-Received: from cy3pr05cu001.outbound.protection.outlook.com (mail-westcentralusazlp17013077.outbound.protection.outlook.com [40.93.6.77])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 46jwx444gf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 13 May 2025 10:16:21 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=bn8XJHfLezrBW7CTgzxJVs1Df0pxHjx0lnlzhDkMB5Dndt4K9yK9ju8UKPuA9ia2W0v6fM7A/pbwuuvuXsXmxZC97ndcpVQWqe4QJgJc7E7VCgQSULyDz66Cr7qq/IjZPShloT+SM/d+5T1BmWDCk2Q/JJDtAERjUQlW3TvfTrH16t/ENKFHs0lq+mCz0ruA7kdZJ2o+tf4tckXY7HL0/xal77rXscPxTEPiguYXfDxu94Y+fhiRXSJBhKdFbmd3EhTVLLhGhuqBf0BZ37MJl4p5RJ+h92tD/Xu2MCpseTQU1SPFlSbtiF4f0kwbTPLtt85SuTnVyzRTIn0BNAtkuA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Tdue4lsGTxkmQqQ89fb9PkQhOtHaOjMHjZzHlJn+7Zk=;
- b=O8JHPTDgE9GhQjZbn6gb+Lk1xVi3keKCCZrObOwLEtgxvIsRa8/QYlxKiLOjXRfQ0namB8ZtTg4jRiq24+uh2OKKGsJ4ULfwvWKYYsyWcF4PQfatxSQCwgza0EGmiJ2OxyADodeNaeynKuexuY8syj+kMPOyM+Qf4GyHHiV1+qEfzeFgtHTBkp0gVGnh89GjPWirPX8BcyMu+e3iAjTD0nRm9q8PFMneLVmNjHkwlrkLswDhYFjpoozYXTRJiE0TeYUkcEbfaLAJUFFtmH4YA4L1G+4ylLO3v+woeTHtUKlEBike+7VsQ9S1h0BCj3r1ltHNblZNXM3id61+YophDQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Tdue4lsGTxkmQqQ89fb9PkQhOtHaOjMHjZzHlJn+7Zk=;
- b=XVdleQyXeqvVVGupgvqZ+XmyQo22wVk4et921Z9oxq8LSYlbrtTYAiRrwf+/QA+DjYOHCVDhrjTgepoTQeGv6oaO81cBSidBxheYpxHcyaTtwpoZdqw94t00sibD8l0Ry1caJJUtLzcZrs8F5BPOfWGHOEdIQ22h3FX2zA69Rfg=
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
- by IA3PR10MB8706.namprd10.prod.outlook.com (2603:10b6:208:580::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8722.28; Tue, 13 May
- 2025 10:16:18 +0000
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2%6]) with mapi id 15.20.8699.022; Tue, 13 May 2025
- 10:16:18 +0000
-Date: Tue, 13 May 2025 11:16:16 +0100
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-trace-kernel@vger.kernel.org,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        Borislav Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Tvrtko Ursulin <tursulin@ursulin.net>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
-        Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
-        Pedro Falcato <pfalcato@suse.de>, Peter Xu <peterx@redhat.com>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: Re: [PATCH v2 04/11] mm: convert VM_PFNMAP tracking to
- pfnmap_track() + pfnmap_untrack()
-Message-ID: <8d96176d-f36b-4714-9780-6131c8470f50@lucifer.local>
-References: <20250512123424.637989-1-david@redhat.com>
- <20250512123424.637989-5-david@redhat.com>
- <d180a8d2-87e2-4878-bca1-e6986b7fc110@lucifer.local>
- <c7a4d470-16a7-423f-b9a4-a73210596d8b@redhat.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c7a4d470-16a7-423f-b9a4-a73210596d8b@redhat.com>
-X-ClientProxiedBy: LO0P265CA0007.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:355::18) To DM4PR10MB8218.namprd10.prod.outlook.com
- (2603:10b6:8:1cc::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF8CF244691
+	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 10:17:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747131439; cv=none; b=nqX+wc9f+6cB3mx5/FwpRzT6VJNUa5Ir1CpDH827U0hUveb63r7hmKMVDZkSFX0pAGrVz1PEom4QPO5HATuM1utl7GZ0XPLdw7fFOIDEHrkjaZkuaZPjeOUk9RNtrlTfh1u7P1rGxeyPVoVPyRUZeB5OWzcPli3j2RabG+VHoew=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747131439; c=relaxed/simple;
+	bh=YPtYVXRxNchYVtoNxYECCpShOcMZmmbhDoSB+1Yqhr0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NE61SLsTXUwPFi1v8XVoJu2ULROfNQewLNe9Zz1+GdPJKtJv8FTCAEzqS+/vhkPu4gt5qnrPx8JSgffnLMZugisIdUxICfiw/+tgk9ibVHgo/2g3TRW6zy6Qbsz8V3FsOsqifIcvwhYUAsVw7rT5CKUz2kBeDHiB/IXB0R5PlY4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=MlZKfHp5; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54D6B8Fr027584
+	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 10:17:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	NpvCrOWgU5cpFOIl3kofLU9KI6eGSBahid+fNqQr2k8=; b=MlZKfHp50nLFcOr5
+	ByhiEq1wu2BEnQk0TX+GXaj2syvGESu4faiOq+99mztJk58Z/oPltKBTzCAbmgxW
+	kvKu67aLMUVR0iGzqaQq7F/R9bS8eXy4pfm8EasKEHGVlPZaPcWncVFvu3VE9QaF
+	g6utatSvMwg9AhO/5PcdukuEDJZZSPBXhJj0Tmdx+LjvgxAkUe8eJJ8sJBuPSyNt
+	EJKEJQTVK6hDN8KpkKe3vNCPaaoM6AwRruPuLdiRA5ii5vqmfBdSpF6XLLwph/Ti
+	wN5EdOUfUYEaG2tZS283PP4gYE5pPv2TW1CzxyIoRS7EyGQqHZDLh6FQqejbwh24
+	7YdB1g==
+Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com [209.85.216.72])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46hy15ycm4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 10:17:16 +0000 (GMT)
+Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-30abb33d1d2so8698170a91.0
+        for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 03:17:16 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747131436; x=1747736236;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NpvCrOWgU5cpFOIl3kofLU9KI6eGSBahid+fNqQr2k8=;
+        b=fReGs6GmkNr7rB4+Okoss8nPHhkBlojiqpmxoYZgt5gevbs5NZ0VfBrR5iDbSz0+sZ
+         m/fzFefqg75wIvOq0mVCHMn19GG3D6RlU+JkQD0FLChiAHbVvfXdkeQx3ZJiyQDlafOJ
+         GPxawLH5HPxAeWycIpoymyFwJoInwrhUCqBaSRn8yQvslZSg3yAAiZxiDoe7MBLZjQY4
+         RSHnnpg3q2rvVHAwNIayG+jCEYksD2TGtK+dhazEqHIvJ3a6EClyBpbLh+ZDE2R5Tz17
+         NjjUVZToEOxxi+QuIg0vDzSWNr2DAxmNoRYc3UOIlHwhq0LhvX9fp4g02dsA0o2YbNI5
+         +wYw==
+X-Forwarded-Encrypted: i=1; AJvYcCVD9KLIBhTBBDwKf01NPvSu2g9zYwMEv040Y6Xcs/R+tdHXnRfXoOQ5LWpfMC8NiDBcSGvu0/B276cAjOo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyV4Hw7yMlWy293tvvxilE3zhhUjhEwxG0dnbWNeydNO0699MYG
+	/dmFLr5yE/8FkKAGcqWjUe2XjICkeEuaVQVFpyU7M5vInwVhGh5fHURou0wEMiv1wP+QbkBbCAF
+	vya/THUZ0Ke8kD7ICAniUlvGfEJVYzsBaSkaggeGGZiXTt6WrSPK3lMwXyfTY5D0=
+X-Gm-Gg: ASbGncvdBjPNfWijG2JHXMmZRK8PjU3G+lXy3xRUR4EbF6vbHdICEyp7O5Z2QQgKbvF
+	se/rDPi64uQph5ygubBCOS4qg+oZjjiy5fcvDfviVYfKOFQADStWB5h68BoR/mYobmsLTTDVBZf
+	cNsDfjBdo18oDr9vnpP6JLEJ4fbZL4233SHDmkKdYYpC0I7Hb+6MID+9cCYSJZlRe7do5vnVcO0
+	pmuPMW/esBdpTbTUxuIuqa3/jCzld1OZTWYytvSPe7kbK+ABaXdh292dJ6tzsh95HU+AnbwO2fD
+	OgfMCXivkzEp//16JWJrgdwAp0NcHTihZ+dpqS1UNk1UB0jTYg4=
+X-Received: by 2002:a17:90b:3d8c:b0:2ee:b2e6:4276 with SMTP id 98e67ed59e1d1-30c3d62e5d6mr25261869a91.27.1747131436099;
+        Tue, 13 May 2025 03:17:16 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHIQSglw62YPtOpiT2/xmAHW933FddDkbyK+ln1dlw68QmpU+bhwWTsjnzGBvaYIN3j8T0eJw==
+X-Received: by 2002:a17:90b:3d8c:b0:2ee:b2e6:4276 with SMTP id 98e67ed59e1d1-30c3d62e5d6mr25261822a91.27.1747131435590;
+        Tue, 13 May 2025 03:17:15 -0700 (PDT)
+Received: from [10.152.194.206] ([202.46.23.19])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-30ad4ffbc88sm10327508a91.49.2025.05.13.03.17.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 13 May 2025 03:17:15 -0700 (PDT)
+Message-ID: <26a9e68d-bce6-4bba-871d-13e2aeee3fed@oss.qualcomm.com>
+Date: Tue, 13 May 2025 15:47:12 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|IA3PR10MB8706:EE_
-X-MS-Office365-Filtering-Correlation-Id: c9a44450-faf7-499e-aa81-08dd9207337c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|376014|7416014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?QYCWJXqI/Smk/bY7wWzWVLr9J+R4g7xs5aZbPLnOCMAHQI8R4Eut05hHuufE?=
- =?us-ascii?Q?oVC6Nw4D9Wxkux2RrAMmtJ/cpyKSHVXOmOORqsA+8Sf5e47rbgEAslSnNuC1?=
- =?us-ascii?Q?Lcj7V0SX9FF6sVtS1KoJ+wPMqmZHj28CuGe9Z4jZuJBdkBPeYHHXhGoHshoO?=
- =?us-ascii?Q?8HePjl6XodnFE+n/sOKcXwRWlIW8Rd8nmPuUHBB472qRAl9Ko5dGi4YU57o+?=
- =?us-ascii?Q?E2j5KIeTTMAb4H0kLKd91T1KNpvXYYi6XAMwnTusKEk7v8xfrCJdRbGdz8Vv?=
- =?us-ascii?Q?t22P34IKYbjkkKhJfy2TvbZlrikj9yRru3IxSb/saLwD9dRhQS2Zg6gPqzWa?=
- =?us-ascii?Q?po1aKQTYZNMhO1ARMD77xDa54xt0qjK3kMNBxCvQc2SUn5IgdsvXO94zscyI?=
- =?us-ascii?Q?vVvJ12VhFIcBrm6vhQYRCJU8tax89dd4fnTNjqlF+ARfx+SxlExBj0ww85MZ?=
- =?us-ascii?Q?3v0O2vK+rVTuiXKLztF/quIvEI7lzbXrnlAZizNICsuY92AcUwrz49IAP8D3?=
- =?us-ascii?Q?iKBQzAbbzqILfeqy80I3NL5pN9euJ0vWxe4nPpG9cYXqVdI6ecg1f8XIFlzL?=
- =?us-ascii?Q?R4DSEiHiRHOnAMlNFhvVHB7XHvM0fp+3rspX9igMVcgwuOV6ogpWvwTl9a02?=
- =?us-ascii?Q?/TlyJTM1FM/wapPw1eMsMfJYkvG8w055QXuyyEoTyYEBZWLc2mD5QDb8/z1a?=
- =?us-ascii?Q?Rr8NnzonE0wbl7VzD/bSVMQ8SGXNIRG7zlSONj2fRsNzWGJEAK6Yj1Jl8F4R?=
- =?us-ascii?Q?ptnVdTTajB96dTRdL3MCEWjCmKJxCQAMoBX1mh8HVrJsNcd8M72cB9x5uV00?=
- =?us-ascii?Q?IHkavjoXTVp4MZc1LzqUbLh1wEUwJx/Z5eeZj9Z+Tp/ESGG5whlqgI+8ttlE?=
- =?us-ascii?Q?Sq4OKBKP6mACeI+eLamoiwORt/qu+ImV/xmO6XoRNIaqq3QdNleBUl0DudBi?=
- =?us-ascii?Q?NDrloeVqPDpB38ZNZ5F/T95aEiuq5OLP4exWrDCIrOgPTTTW/m6uNo+IRDIJ?=
- =?us-ascii?Q?cmsmh8NqPFtOaRrMlgln/B6Hlnmjo026HN4YEHlw1PxZTd64wJ96Gvu92X9c?=
- =?us-ascii?Q?A4pzUWJEXPriqPSakHRK0IwkM3tqj97z8Eg0t2xqQYhAwpt4w8s7wPzWxvIV?=
- =?us-ascii?Q?RogW8zHutRC2cRCzB6bqWW/O5i3/gBiy6/OCnbh+WhxuZHzFTw8EdNnVf0k7?=
- =?us-ascii?Q?1M1lfBJfhJiE8jivt0Lc6SZraMb/Z3mSbv2w58enA3zwx/6NYuuLqnKQLo+a?=
- =?us-ascii?Q?5I+7nUYlOA8vzfeeSCCiLNK+Aal5Fp9yUzpsarMd1+CENB6LcJ/L0Kwn4mro?=
- =?us-ascii?Q?3uu76m0hURY2W2pzvoYnu//C9zQmjx8STjGI755KRuBRW9iI6i+6Rsr3EaJu?=
- =?us-ascii?Q?ZMVeTGPP2mOfi5/5FQeZAAFvpHP/XdjUH8vJP+yIdwtyqPSzogU9Dn5lxZXl?=
- =?us-ascii?Q?VIuLDMN25jM=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?5QHHqn+YinFXyr0J2uyjB27RKOSKhmF9onxyIKhdq8Fv3CMZyNFLsSfogR0y?=
- =?us-ascii?Q?r0EeuqfqJI7/Vk6n+TgVOx+xYsDsSleVdijcObO9cdnRPBP13GxfQg/3L55w?=
- =?us-ascii?Q?8ygoLuOApNN35Bm1I2rF0AqK/bhksUNqSmQCGLI+W3C1EVGmkqBjT/8PfWaP?=
- =?us-ascii?Q?Or1fYgZRdbGpBD3arS2lmMEzkIqzvS41zhUJWKG4gc2LX+2XfUCZibkLSQOr?=
- =?us-ascii?Q?WApR93FnwbhgaH3vqapIsBviDpjJ2+4fq+5NwqtWM3tIIP6+VJ2NGogUi52w?=
- =?us-ascii?Q?IYeN7Rtt3uSFXNQGmtvU3ejbrXVWRDw4TbmQd/5nzUtqk5aN6TRMPDwOQzlc?=
- =?us-ascii?Q?9V4xmrGO2iPf4IBUXIS7zD45vrx+uuh2pAeRk4i7WsEm+5C4071P9cBN4Qyp?=
- =?us-ascii?Q?5BzznOCmGuIcO+tAKjLD3KKg7UETZk41TyrXsER9b6QrNlSg0lbcelMI8I3x?=
- =?us-ascii?Q?D07CaJiupRqdpCAI8K+b19TMVkb3EGq1DcjDXIhY4jpgdDy3/T3vs1YqavlM?=
- =?us-ascii?Q?fmm0k3GcUIoHrqtr+k5awRaii5LkRbECCycNRi/KCnI4RMRd1gl/jAXljR5Z?=
- =?us-ascii?Q?kQ/zEIMZcCU4qG6ip7fhyB8gMrtcMTB1zokYRNCGJXHg1kz1NkRvG1LVf32K?=
- =?us-ascii?Q?N+enGVBa2fBFILFwFqJ+DlvVJrC10ptgfeezslF1WPQQ0TwgrprSCIVBRSgM?=
- =?us-ascii?Q?aWVyuJW4OiKdqw9ce8VC4ohKJxuc/QLZbcTUd0DUD9I9lVajjuL4TQSG1Gff?=
- =?us-ascii?Q?ZYtubt9neR0VMmNfwUUpuqKOIqco0qfyEOeyzqSRFtKPo09znppeYEOgZTRg?=
- =?us-ascii?Q?l8y8Uta0hhGzaTpfx7XgulYiYhgg75nio3jh5CYk0qj7AhqOFqPYDFqD2HUO?=
- =?us-ascii?Q?EJtRNvkneYC0VKCY7lEd0BvzjpqBDZ3X1B7heV74JI3JQ1lo20X1RQ2NPra/?=
- =?us-ascii?Q?Vwd0PHvDNLeScmkxI3cywHVqmVSd+rAJA97RP35vJpxhJQEPxW989G3dAvgf?=
- =?us-ascii?Q?zjJUO+2dnxIITeMME4W1TJBlBm2tf5cDa6ec0iX2fYoPP5zBthrai2JbtcxU?=
- =?us-ascii?Q?v132Y3WXv2GwAYH1e1/CHw15WnaW9tVCle4V7msJkW36jxX/oXu6Hf6xXU2z?=
- =?us-ascii?Q?uxuEn37RxQ8x2PO2wNXJDEltg+vRQVWZsRPZLqJwiTEhDkkgEp73P5e7b9n4?=
- =?us-ascii?Q?AkIrCGDnoy3D0jU2FxAg3zckaiKX9CmAJvr78GOUAXPOY99NWW4d0shS/Q9y?=
- =?us-ascii?Q?+Yf/uiySDLq0J/x3FURQEVBdFsQo9I8D3so6j3AtiV17Qc65whl67wytB8H4?=
- =?us-ascii?Q?gdsxWN+DPeOiatvGb9ISy3ChtwACpERhgcnU/8UNn7pJ8oCQp4D6UBXat3mw?=
- =?us-ascii?Q?tFSF3gmkbi+xgIdNqYVO8Nq4NrwFND6beAQ1Lr2cpIaRpEUhjaC6pHWWAJLI?=
- =?us-ascii?Q?7R31n5zeP7G/aNszMZKtMBhV9bBu/CZdSUiXFxBn16tN4wvzLsArpqwW39Du?=
- =?us-ascii?Q?Nj/M9/qCfLl/MaMrAWgqYEMqdhmLCVY9gs6xMzRctjAF9uKjBPvPx1lA8D5D?=
- =?us-ascii?Q?xHmzROf1AQx7fxu/kqWzEFY8or9B5OxFGljNR+g+C+KxenzybHG8Dc1Q/LqY?=
- =?us-ascii?Q?fw=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	KuAV+mGZT+kEK008MqlhNPm8DUTUSfU1gsH5UGt12+pJLyw5WdAKeQdJTD+wCWI5ZfuHQ4v/7g2kUAyd23Q7Pl4BAeIHRdzVnR29KT4WsvBWjs9LURUTqQskPvZx9xk7qMTESSZjrOEMngkYh0SrQzWCeRkou0NfN8+DgekEj/kRInkKO0ecIZiWIiw+6DE+n9lPvHH91DBHnydqo1iTTUYYhtaLk05jf/EWT2qq/XuH6Rdi5l4oZWlt/y51rbVE/sBJeUqC4Y4NTCaxd1+v1llrMfDx+SUH/JYZuu5PIFxCahyTFIshxCUQa2pQYxfiyQ8IQCWDIkY3XN8rFP3AGajlTatwiKypPJ0VDxJWxiwqQolYatY6yHLORiNrCerVXuabbDjQ5KkL7PRFNg5MqKHLlGGixDbG6+Jh1Na82XtC4D1OKAizUYs62Qfqi/NGtHbiMA/uceoJ8ZcQCTFAasleD88nnyS+CA+hE0JXTT46SgHrlGoXFL6lQ4SQnz649h3U5Se3nSIO7VCRIP6K8HSwf/r9Z0Fm9gLOEGS55kTBZqEv2wuQwzo/+Edq+XeOP0SJH77x1LwROuZEzFYYRCwciWCwV9+vaKsAvXHMv8o=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c9a44450-faf7-499e-aa81-08dd9207337c
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 May 2025 10:16:18.4695
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: fXrGCLtWQCfxRKEsCwCf9YiNqWcxEEsGc+Yq6z7wFv8uu0spB5e8zKCMev99pkL947fqzckuz2a+Hb1gvcaRVIdEFtwdnw2HSTRuBlJy79A=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA3PR10MB8706
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH wireless-next 1/2] wifi: mac80211: validate SCAN_FLAG_AP
+ in scan request during MLO
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250513-bug_fix_mlo_scan-v1-0-94235bb42fbe@oss.qualcomm.com>
+ <20250513-bug_fix_mlo_scan-v1-1-94235bb42fbe@oss.qualcomm.com>
+ <16499ad8e4b060ee04c8a8b3615fe8952aa7b07b.camel@sipsolutions.net>
+Content-Language: en-US
+From: Aditya Kumar Singh <aditya.kumar.singh@oss.qualcomm.com>
+In-Reply-To: <16499ad8e4b060ee04c8a8b3615fe8952aa7b07b.camel@sipsolutions.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: -psTVn_ZFehFOQVW782V9pYUOqDMYQQQ
+X-Proofpoint-ORIG-GUID: -psTVn_ZFehFOQVW782V9pYUOqDMYQQQ
+X-Authority-Analysis: v=2.4 cv=P9U6hjAu c=1 sm=1 tr=0 ts=68231c2c cx=c_pps
+ a=RP+M6JBNLl+fLTcSJhASfg==:117 a=j4ogTh8yFefVWWEFDRgCtg==:17
+ a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=C9-73DTKG-V4ExX9xGAA:9
+ a=QEXdDO2ut3YA:10 a=iS9zxrgQBfv6-_F4QbHw:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTEzMDA5OCBTYWx0ZWRfX0MjiP1CJLjx0
+ PjTrVUyuxZE8i2QUMgf2udnWr/MlwtHP4qBAL5jjWjhNED/1V2c0o5+L1TdkS2hVVLLcKXBq5Tx
+ lXqBEtAsX4V3Xjh+WyOuqRKNBHcmWH6LPw6+ZTNw0pU7GPhlYJA0LREv5tzvL36elPOf96zZTXC
+ S7ze7R0q/yE81jsXsSH+wgiXI3pzF/gox/NcbZQ57m0dEx6z3k3jFhnww6PrL21lxGGjyCxSQOB
+ iY0pGfQEBtx++LonlexzAyCNLhZ7UEBIBUuOVpxCLkhZQz2c1BIm4cTj1ngKvFt3ia6Y09RsOAX
+ SmBYKLgi7Fx/5C/YuZ1mugJhQBCUnow4csDUhObbI9Em7vbpig42+9egKz0R5+IluaeZ4pootCd
+ UbPtN9Lt9kQK6GzaEN7oOW8YbeR7HdzSTD07ImeliNWHhaTWWPzGpLvq2zxz8Qdqxc5xvI55
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
  definitions=2025-05-12_07,2025-05-09_01,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 mlxscore=0 spamscore=0
- bulkscore=0 suspectscore=0 phishscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2504070000
- definitions=main-2505130097
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTEzMDA5OCBTYWx0ZWRfX9d/bKIDu1y5J 8VAZlrZMiCMUZbtp7bnxZYycHHwntykeJ6Sqo0Wp+M/ZDfON/J8qCcgx9jjl3S/7CWOKgyFLWtu 1VZKovuktlhVnBRVVAn2/tjoYGxydkVtXtm7QQOOhWDZ7uwjVnD1VIv6UUPOfThO0ILoTLCipwS
- iGvvvW7e3Ac3P0vmSBnb8ZgaAppks6RTmPFk1fHDaTzzBoLiTS3VDEfpSdCf2OYloC9fKG9azx4 4oMNmyKHm/hrku+HN5R6Z/519Ue2WFic+xT0hS/iPqWz8kHbzEruEOv6FavFf9C193dN3qSNYFp RJnSECSpEQF0ktinuKyQSG/M5ZyIk7zF7TewxqzHe2Pnd0bG/VsO2gXHu0zRB5vXnp4wQc26qo5
- 63XP4+WhIPgQjOOCwzag7rhP7Ej/wLibf1qDcBtoekfrLmcUtZ0BhUaMYWEKT2lsYhXn5kGd
-X-Authority-Analysis: v=2.4 cv=RPmzH5i+ c=1 sm=1 tr=0 ts=68231c01 b=1 cx=c_pps a=WeWmnZmh0fydH62SvGsd2A==:117 a=WeWmnZmh0fydH62SvGsd2A==:17 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19
- a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=dt9VzEwgFbYA:10 a=GoEa3M9JfhUA:10 a=VwQbUJbxAAAA:8 a=20KFwNOVAAAA:8 a=yPCof4ZbAAAA:8 a=zMLic4A7THCksA07HIcA:9 a=CjuIK1q_8ugA:10
-X-Proofpoint-ORIG-GUID: 3Mi0-y0Yshj1BAHEBtNVUgCg93T_uYzQ
-X-Proofpoint-GUID: 3Mi0-y0Yshj1BAHEBtNVUgCg93T_uYzQ
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 suspectscore=0 impostorscore=0 bulkscore=0 priorityscore=1501
+ mlxscore=0 adultscore=0 mlxlogscore=885 malwarescore=0 lowpriorityscore=0
+ phishscore=0 clxscore=1015 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
+ definitions=main-2505130098
 
-On Tue, May 13, 2025 at 11:10:45AM +0200, David Hildenbrand wrote:
-> On 12.05.25 18:42, Lorenzo Stoakes wrote:
-> > On Mon, May 12, 2025 at 02:34:17PM +0200, David Hildenbrand wrote:
-> > > Let's use our new interface. In remap_pfn_range(), we'll now decide
-> > > whether we have to track (full VMA covered) or only lookup the
-> > > cachemode (partial VMA covered).
-> > >
-> > > Remember what we have to untrack by linking it from the VMA. When
-> > > duplicating VMAs (e.g., splitting, mremap, fork), we'll handle it similar
-> > > to anon VMA names, and use a kref to share the tracking.
-> > >
-> > > Once the last VMA un-refs our tracking data, we'll do the untracking,
-> > > which simplifies things a lot and should sort our various issues we saw
-> > > recently, for example, when partially unmapping/zapping a tracked VMA.
-> > >
-> > > This change implies that we'll keep tracking the original PFN range even
-> > > after splitting + partially unmapping it: not too bad, because it was
-> > > not working reliably before. The only thing that kind-of worked before
-> > > was shrinking such a mapping using mremap(): we managed to adjust the
-> > > reservation in a hacky way, now we won't adjust the reservation but
-> > > leave it around until all involved VMAs are gone.
-> > >
-> > > If that ever turns out to be an issue, we could hook into VM splitting
-> > > code and split the tracking; however, that adds complexity that might
-> > > not be required, so we'll keep it simple for now.
-> > >
-> > > Acked-by: Ingo Molnar <mingo@kernel.org> # x86 bits
-> > > Signed-off-by: David Hildenbrand <david@redhat.com>
-> >
-> > Other than small nit below,
-> >
-> > Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> >
-> > > ---
-> > >   include/linux/mm_inline.h |  2 +
-> > >   include/linux/mm_types.h  | 11 ++++++
-> > >   mm/memory.c               | 82 +++++++++++++++++++++++++++++++--------
-> > >   mm/mmap.c                 |  5 ---
-> > >   mm/mremap.c               |  4 --
-> > >   mm/vma_init.c             | 50 ++++++++++++++++++++++++
-> > >   6 files changed, 129 insertions(+), 25 deletions(-)
-> > >
-> > > diff --git a/include/linux/mm_inline.h b/include/linux/mm_inline.h
-> > > index f9157a0c42a5c..89b518ff097e6 100644
-> > > --- a/include/linux/mm_inline.h
-> > > +++ b/include/linux/mm_inline.h
-> > > @@ -447,6 +447,8 @@ static inline bool anon_vma_name_eq(struct anon_vma_name *anon_name1,
-> > >
-> > >   #endif  /* CONFIG_ANON_VMA_NAME */
-> > >
-> > > +void pfnmap_track_ctx_release(struct kref *ref);
-> > > +
-> > >   static inline void init_tlb_flush_pending(struct mm_struct *mm)
-> > >   {
-> > >   	atomic_set(&mm->tlb_flush_pending, 0);
-> > > diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-> > > index 15808cad2bc1a..3e934dc6057c4 100644
-> > > --- a/include/linux/mm_types.h
-> > > +++ b/include/linux/mm_types.h
-> > > @@ -763,6 +763,14 @@ struct vma_numab_state {
-> > >   	int prev_scan_seq;
-> > >   };
-> > >
-> > > +#ifdef __HAVE_PFNMAP_TRACKING
-> > > +struct pfnmap_track_ctx {
-> > > +	struct kref kref;
-> > > +	unsigned long pfn;
-> > > +	unsigned long size;	/* in bytes */
-> > > +};
-> > > +#endif
-> > > +
-> > >   /*
-> > >    * Describes a VMA that is about to be mmap()'ed. Drivers may choose to
-> > >    * manipulate mutable fields which will cause those fields to be updated in the
-> > > @@ -900,6 +908,9 @@ struct vm_area_struct {
-> > >   	struct anon_vma_name *anon_name;
-> > >   #endif
-> > >   	struct vm_userfaultfd_ctx vm_userfaultfd_ctx;
-> > > +#ifdef __HAVE_PFNMAP_TRACKING
-> > > +	struct pfnmap_track_ctx *pfnmap_track_ctx;
-> > > +#endif
-> > >   } __randomize_layout;
-> > >
-> > >   #ifdef CONFIG_NUMA
-> > > diff --git a/mm/memory.c b/mm/memory.c
-> > > index 064fc55d8eab9..4cf4adb0de266 100644
-> > > --- a/mm/memory.c
-> > > +++ b/mm/memory.c
-> > > @@ -1371,7 +1371,7 @@ copy_page_range(struct vm_area_struct *dst_vma, struct vm_area_struct *src_vma)
-> > >   	struct mm_struct *dst_mm = dst_vma->vm_mm;
-> > >   	struct mm_struct *src_mm = src_vma->vm_mm;
-> > >   	struct mmu_notifier_range range;
-> > > -	unsigned long next, pfn = 0;
-> > > +	unsigned long next;
-> > >   	bool is_cow;
-> > >   	int ret;
-> > >
-> > > @@ -1381,12 +1381,6 @@ copy_page_range(struct vm_area_struct *dst_vma, struct vm_area_struct *src_vma)
-> > >   	if (is_vm_hugetlb_page(src_vma))
-> > >   		return copy_hugetlb_page_range(dst_mm, src_mm, dst_vma, src_vma);
-> > >
-> > > -	if (unlikely(src_vma->vm_flags & VM_PFNMAP)) {
-> > > -		ret = track_pfn_copy(dst_vma, src_vma, &pfn);
-> > > -		if (ret)
-> > > -			return ret;
-> > > -	}
-> > > -
-> > >   	/*
-> > >   	 * We need to invalidate the secondary MMU mappings only when
-> > >   	 * there could be a permission downgrade on the ptes of the
-> > > @@ -1428,8 +1422,6 @@ copy_page_range(struct vm_area_struct *dst_vma, struct vm_area_struct *src_vma)
-> > >   		raw_write_seqcount_end(&src_mm->write_protect_seq);
-> > >   		mmu_notifier_invalidate_range_end(&range);
-> > >   	}
-> > > -	if (ret && unlikely(src_vma->vm_flags & VM_PFNMAP))
-> > > -		untrack_pfn_copy(dst_vma, pfn);
-> > >   	return ret;
-> > >   }
-> > >
-> > > @@ -1924,9 +1916,6 @@ static void unmap_single_vma(struct mmu_gather *tlb,
-> > >   	if (vma->vm_file)
-> > >   		uprobe_munmap(vma, start, end);
-> > >
-> > > -	if (unlikely(vma->vm_flags & VM_PFNMAP))
-> > > -		untrack_pfn(vma, 0, 0, mm_wr_locked);
-> > > -
-> > >   	if (start != end) {
-> > >   		if (unlikely(is_vm_hugetlb_page(vma))) {
-> > >   			/*
-> > > @@ -2872,6 +2861,36 @@ int remap_pfn_range_notrack(struct vm_area_struct *vma, unsigned long addr,
-> > >   	return error;
-> > >   }
-> > >
-> > > +#ifdef __HAVE_PFNMAP_TRACKING
-> > > +static inline struct pfnmap_track_ctx *pfnmap_track_ctx_alloc(unsigned long pfn,
-> > > +		unsigned long size, pgprot_t *prot)
-> > > +{
-> > > +	struct pfnmap_track_ctx *ctx;
-> > > +
-> > > +	if (pfnmap_track(pfn, size, prot))
-> > > +		return ERR_PTR(-EINVAL);
-> > > +
-> > > +	ctx = kmalloc(sizeof(*ctx), GFP_KERNEL);
-> > > +	if (unlikely(!ctx)) {
-> > > +		pfnmap_untrack(pfn, size);
-> > > +		return ERR_PTR(-ENOMEM);
-> > > +	}
-> > > +
-> > > +	ctx->pfn = pfn;
-> > > +	ctx->size = size;
-> > > +	kref_init(&ctx->kref);
-> > > +	return ctx;
-> > > +}
-> > > +
-> > > +void pfnmap_track_ctx_release(struct kref *ref)
-> > > +{
-> > > +	struct pfnmap_track_ctx *ctx = container_of(ref, struct pfnmap_track_ctx, kref);
-> > > +
-> > > +	pfnmap_untrack(ctx->pfn, ctx->size);
-> > > +	kfree(ctx);
-> > > +}
-> > > +#endif /* __HAVE_PFNMAP_TRACKING */
-> > > +
-> > >   /**
-> > >    * remap_pfn_range - remap kernel memory to userspace
-> > >    * @vma: user vma to map to
-> > > @@ -2884,20 +2903,51 @@ int remap_pfn_range_notrack(struct vm_area_struct *vma, unsigned long addr,
-> > >    *
-> > >    * Return: %0 on success, negative error code otherwise.
-> > >    */
-> > > +#ifdef __HAVE_PFNMAP_TRACKING
-> > >   int remap_pfn_range(struct vm_area_struct *vma, unsigned long addr,
-> > >   		    unsigned long pfn, unsigned long size, pgprot_t prot)
-> > >   {
-> > > +	struct pfnmap_track_ctx *ctx = NULL;
-> > >   	int err;
-> > >
-> > > -	err = track_pfn_remap(vma, &prot, pfn, addr, PAGE_ALIGN(size));
-> > > -	if (err)
-> > > +	size = PAGE_ALIGN(size);
-> > > +
-> > > +	/*
-> > > +	 * If we cover the full VMA, we'll perform actual tracking, and
-> > > +	 * remember to untrack when the last reference to our tracking
-> > > +	 * context from a VMA goes away. We'll keep tracking the whole pfn
-> > > +	 * range even during VMA splits and partial unmapping.
-> > > +	 *
-> > > +	 * If we only cover parts of the VMA, we'll only setup the cachemode
-> > > +	 * in the pgprot for the pfn range.
-> > > +	 */
-> > > +	if (addr == vma->vm_start && addr + size == vma->vm_end) {
-> > > +		if (vma->pfnmap_track_ctx)
-> > > +			return -EINVAL;
-> > > +		ctx = pfnmap_track_ctx_alloc(pfn, size, &prot);
-> > > +		if (IS_ERR(ctx))
-> > > +			return PTR_ERR(ctx);
-> > > +	} else if (pfnmap_setup_cachemode(pfn, size, &prot)) {
-> > >   		return -EINVAL;
-> > > +	}
-> > >
-> > >   	err = remap_pfn_range_notrack(vma, addr, pfn, size, prot);
-> > > -	if (err)
-> > > -		untrack_pfn(vma, pfn, PAGE_ALIGN(size), true);
-> > > +	if (ctx) {
-> > > +		if (err)
-> > > +			kref_put(&ctx->kref, pfnmap_track_ctx_release);
-> > > +		else
-> > > +			vma->pfnmap_track_ctx = ctx;
-> > > +	}
-> > >   	return err;
-> > >   }
-> > > +
-> > > +#else
-> > > +int remap_pfn_range(struct vm_area_struct *vma, unsigned long addr,
-> > > +		    unsigned long pfn, unsigned long size, pgprot_t prot)
-> > > +{
-> > > +	return remap_pfn_range_notrack(vma, addr, pfn, size, prot);
-> > > +}
-> > > +#endif
-> > >   EXPORT_SYMBOL(remap_pfn_range);
-> > >
-> > >   /**
-> > > diff --git a/mm/mmap.c b/mm/mmap.c
-> > > index 50f902c08341a..09c563c951123 100644
-> > > --- a/mm/mmap.c
-> > > +++ b/mm/mmap.c
-> > > @@ -1784,11 +1784,6 @@ __latent_entropy int dup_mmap(struct mm_struct *mm, struct mm_struct *oldmm)
-> > >   		tmp = vm_area_dup(mpnt);
-> > >   		if (!tmp)
-> > >   			goto fail_nomem;
-> > > -
-> > > -		/* track_pfn_copy() will later take care of copying internal state. */
-> > > -		if (unlikely(tmp->vm_flags & VM_PFNMAP))
-> > > -			untrack_pfn_clear(tmp);
-> > > -
-> > >   		retval = vma_dup_policy(mpnt, tmp);
-> > >   		if (retval)
-> > >   			goto fail_nomem_policy;
-> > > diff --git a/mm/mremap.c b/mm/mremap.c
-> > > index 7db9da609c84f..6e78e02f74bd3 100644
-> > > --- a/mm/mremap.c
-> > > +++ b/mm/mremap.c
-> > > @@ -1191,10 +1191,6 @@ static int copy_vma_and_data(struct vma_remap_struct *vrm,
-> > >   	if (is_vm_hugetlb_page(vma))
-> > >   		clear_vma_resv_huge_pages(vma);
-> > >
-> > > -	/* Tell pfnmap has moved from this vma */
-> > > -	if (unlikely(vma->vm_flags & VM_PFNMAP))
-> > > -		untrack_pfn_clear(vma);
-> > > -
-> > >   	*new_vma_ptr = new_vma;
-> > >   	return err;
-> > >   }
-> > > diff --git a/mm/vma_init.c b/mm/vma_init.c
-> > > index 967ca85179864..8e53c7943561e 100644
-> > > --- a/mm/vma_init.c
-> > > +++ b/mm/vma_init.c
-> > > @@ -71,7 +71,51 @@ static void vm_area_init_from(const struct vm_area_struct *src,
-> > >   #ifdef CONFIG_NUMA
-> > >   	dest->vm_policy = src->vm_policy;
-> > >   #endif
-> > > +#ifdef __HAVE_PFNMAP_TRACKING
-> > > +	dest->pfnmap_track_ctx = NULL;
-> > > +#endif
-> > > +}
-> > > +
-> > > +#ifdef __HAVE_PFNMAP_TRACKING
-> > > +static inline int vma_pfnmap_track_ctx_dup(struct vm_area_struct *orig,
-> > > +		struct vm_area_struct *new)
-> > > +{
-> > > +	struct pfnmap_track_ctx *ctx = orig->pfnmap_track_ctx;
-> > > +
-> > > +	if (likely(!ctx))
-> > > +		return 0;
-> > > +
-> > > +	/*
-> > > +	 * We don't expect to ever hit this. If ever required, we would have
-> > > +	 * to duplicate the tracking.
-> > > +	 */
-> > > +	if (unlikely(kref_read(&ctx->kref) >= REFCOUNT_MAX))
-> >
-> > How not expected is this? :) maybe use WARN_ON_ONCE() if it really should
-> > never happen?
-> I guess if we mmap a large PFNMAP and then split it into individual
-> PTE-sized chunks, we could get many VMAs per-process referencing that
-> tracing.
->
-> Combine that with fork() and I assume one could hit this -- when really
-> trying hard to achieve it. (probably as privileged user to get a big
-> VM_PFNMAP, though, but not sure)
+On 5/13/2025 12:47 PM, Johannes Berg wrote:
+> On Tue, 2025-05-13 at 09:26 +0530, Aditya Kumar Singh wrote:
+>>
+>> -		if (sdata->deflink.u.ap.beacon &&
+>> +		if ((sdata->deflink.u.ap.beacon ||
+>> +		     ieee80211_num_beaconing_links(sdata)) &&
+>>
+> 
+> Do we even still need the deflink check? Seems like
+> num_beaconing_links() _should_ return 1 anyway even though it currently
+> doesn't, and we need to fix that?
 
-Right ok, yeah I guess so. It'd be good to see if we could trigger it somehow :)
+If the ieee80211_num_beaconing_links() is modified then deflink check is 
+not required. Do you want to me to send a clean up for that function 
+first or would take this and later the clean up part?
 
->
-> In that case, a WARN_ON_ONCE() would be bad -- because it could be triggered
-> by the user.
+> 
+> Also seems the VLAN carrier handling is broken.
+With this patch? Or in general you are saying? HWSIM test cases seems to 
+be working fine for me with this series applied. May be there is no test 
+case to make it evident?
 
-Ack
-
->
-> We could do a pr_warn_once() instead, stating that this is not supported
-> right now?
-
-Hmm, if we truly think it might happen let's avoid printing anything for now.
-
-Maybe just ++todo for experimenting with triggering?
-
-It's not hugely important!
-
->
-> --
-> Cheers,
->
-> David / dhildenb
->
+-- 
+Aditya
 
