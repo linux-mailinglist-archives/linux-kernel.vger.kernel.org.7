@@ -1,128 +1,117 @@
-Return-Path: <linux-kernel+bounces-646066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-646075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00E21AB5791
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 16:49:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94963AB57B2
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 16:55:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 876CD17458F
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 14:49:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1CA947B69C4
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 14:54:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2FE31B21AD;
-	Tue, 13 May 2025 14:49:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 689941C8639;
+	Tue, 13 May 2025 14:55:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="yXKa9w6X";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="pUIcjLim"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="zr7WqQ6v"
+Received: from out203-205-221-210.mail.qq.com (out203-205-221-210.mail.qq.com [203.205.221.210])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9697B1C84A0;
-	Tue, 13 May 2025 14:49:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA0741A83E2;
+	Tue, 13 May 2025 14:55:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.210
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747147762; cv=none; b=Bpyu8kNzmNRuBe2VXOdoGL2Ej+28hle9AYKwa2+/1dC4nzvBk89+gkAniKT/Y+c6YBhsGW2jaG69ULc+qSMGXjSnSN5/iUMNfOyfZoXdNcaF5UXdfT+xVb5G8pgsuaOdgqfeS8aIfsVwdPPEhtA9AbPRodsRXYrC4SkTkS+IWcM=
+	t=1747148115; cv=none; b=uhtZZDS6NI8woztlbxcQZ4imwqOU9ArZJ7yCIT9jY41FElXit+yunS3J8Ooc2ZRmw4FIaIGcYVKgPP9/0VDo5EqrvhUFmq7D/d2U9/cTX3Wi0HtDndYrvF+iFp29O0UlAiLQP0cVBrypgwS1nxEncdd63oek5vJ+tEm2NoeDtXk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747147762; c=relaxed/simple;
-	bh=horsV6zhU54XLy4AAcl0GiFBdRVk3FtVkYR1dWqa1EI=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=ETOSavsQanwRP1Ww3/VOYQ7Bl6LJGwkDeyFasMM7SfCunXYfaBde/5R2oXsEGp42F2vJUfch5TXICkx8xFN55/YJhwfDYxO7XoveJLBHzYHfhMf1jgzI902kUftKIf0OlbikcNmJg3c2A0EUMhOsTVF4CFcOfLllaKP1jeB7mu4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=yXKa9w6X; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=pUIcjLim; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 13 May 2025 14:49:18 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1747147758;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aKK54Rn44cE0lOKxQ25Io3SwfV+oqPsZvPgN7E2mfYE=;
-	b=yXKa9w6Xa6wNwOtdhTqpNo53VTWs3qJ6snQOiXGr8ouZQOkWd8MK2oARoDHR8dT/+ubRyf
-	0Fb0SD1lJp4/J73vR9x2pMcIjTl/udU15yPAU3ir74LkRYSCgmYd+xG/8sL9QxDUwX4qzb
-	31MHJc96dg8Wj44nj3tr6uPWNRt/jUgjNEjcbuBRi8dW7XTwHHdSUC1oMJv8zPB7nq3S0t
-	N8pfC67NTOgfGPlTMUDIuhqnay8huC6BL6qHavh4B/U1W0d561g40QJqIKIGIHQkqVvvSv
-	coQaQaY2797S0ruaFUSXzbG7JUrbzFT9GvtxHEAWc7dEvJv7qd8wEpVtc4obsw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1747147758;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aKK54Rn44cE0lOKxQ25Io3SwfV+oqPsZvPgN7E2mfYE=;
-	b=pUIcjLimWySQ0OfoMbEYcJAHqyb5jqPSpHCB99phdMrn2l/s5DYTcAN/fO9+erQcX2JQ5c
-	iHGNcQ5iK6xbwvAA==
-From: "tip-bot2 for Alex Shi" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: timers/core] tick/nohz: Remove unused tick_nohz_full_add_cpus_to()
-Cc: Alex Shi <alexs@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250410092423.9831-1-alexs@kernel.org>
-References: <20250410092423.9831-1-alexs@kernel.org>
+	s=arc-20240116; t=1747148115; c=relaxed/simple;
+	bh=xF0FR3rPcOBGp88yQz2/gAEWMOvIBDpTeMGj3UrPZoc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GNMInxchZ5Cj6np9ZlmQQiCv6YYLQxSqwJvQhTg9WUw3/PVBxt3CFNi6WfZ8aLBjXpferrCAKMl7k6nb9lzEau1rRLmsRH6ssyt8+yLiXFBr4pxmB/Dai3PXWKdGn+CEhNifXa3iKPcfH+7dEAfSCJ4+tSd6F9RdqtsCM2+HOZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=zr7WqQ6v; arc=none smtp.client-ip=203.205.221.210
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
+	s=s201512; t=1747147803;
+	bh=vBwPAS74bANjhaoHDiOSBCA9pMoLahUbwD6Y8CSTj64=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=zr7WqQ6vLFpyChvw7pDqeJaKGgmQdsWXKIpBq9BJoHvQDYkX1++U7xYKmEoRU4l0R
+	 ORzm+aEIE4T6CIVdeG7PBC2hj05r45S0eIindIO0YAMNvd4KyUovPbpuBVNr91phJQ
+	 nDnDTkZpuYdLTWPF4pi8rdFs+6u2n7NnuC8QwJFE=
+Received: from [192.168.3.9] ([221.200.22.204])
+	by newxmesmtplogicsvrsza36-0.qq.com (NewEsmtp) with SMTP
+	id C7BB22AA; Tue, 13 May 2025 22:49:59 +0800
+X-QQ-mid: xmsmtpt1747147799tw9xxxoiy
+Message-ID: <tencent_8AACB6DF7CFB7A9826455C093C0903B15207@qq.com>
+X-QQ-XMAILINFO: OIJV+wUmQOUAf2UFzEHsFZSYYq4PEi+fUZaybgZnx8ZUEF9jFksjOdQTSAf1Ig
+	 WRj7hd9aqX6VeNnen9UmrJOnrqGPuOZ9D1bXwIdM/1O0GEiSVndKRLE+bAPLd5xK/rLM37gb0uH7
+	 Xgk4uo3jDZl/DoqXK7sCPCJ9giUCAwi7ASHybmn4K/AUt4IKNq0SfF33lFRxLEO8Cs8XTC691mht
+	 bTwTtBMLbcmo0zu2WLEL+Uwz/KQrwA1+DjRRTV0uPkKSLd2EDXxr5qdGO3BpUzVg0qO+smbhYZUn
+	 hupDAxGHtGZ1wl3PB2VFBFnsbnvQIzbi9t/txyknnl1J7gJ8PHcl54OyY22lrzuLvgnNViByfEax
+	 1tWIIAqgQAJnWXSZ9NV4KFxoJUn2BLiIWyCHPuADj4sO/9IknAXtAss+94xMDkZmQogK2OqhhDau
+	 hVo5O6ZvR0iKBGdHMx7Pb1l/1rxBlEjRZPr1DgNVHOrncC8OxafOVtGM+GKINDpPCDCQ6B8bMYKL
+	 c+yLCUoh0YpS2DxJRZ/J0H/xLoyv+ioo79K3uM3WzaI22Sbmm510vwZMMPebKuutCctEQXNDjyxK
+	 NPQZvC/kWxxTd/twih84iuEo210v9khUWzDEUX/p/UViVUHGAcxEEvpgyBQRAVjqgiOo4pTz4EwV
+	 ApNo1sysQw8Gne8U5+VD0nxIbGpANqZ/9RlhL8fN3HMN5cT0lTNuykHoTRH/N091lIqcHXiEHKCI
+	 H0yJHSNeYXQn934qHif7MV2TqdONEEhApa+1edI/TiHaLAvt41afonpBvvbTWNS/BV/uJgHGzSvn
+	 B0WLdDgvtgw2ras0QFn3wv52nfQYbrKAbfZjMCluGifIXlDqFIaEo2rBqQAJMjOIIpkLMPqO/Rzi
+	 MDlE85HjjdmK+1vU0jffUiNX23VefUULmEcmbb2PPn7WTGm0H3XuJk3Z9chbnRy0YlczyeuBlgaF
+	 7y9wC6prmFKUOjWxLDxl4SxufDl8Wi
+X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
+X-OQ-MSGID: <8b8d4368-286b-4f2a-a189-22591a99d1cb@foxmail.com>
+Date: Tue, 13 May 2025 22:49:59 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174714775803.406.6293002744771643287.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 52/62] objtool/klp: Introduce klp diff subcommand for
+ diffing object files
+To: Josh Poimboeuf <jpoimboe@kernel.org>, x86@kernel.org
+Cc: linux-kernel@vger.kernel.org, Petr Mladek <pmladek@suse.com>,
+ Miroslav Benes <mbenes@suse.cz>, Joe Lawrence <joe.lawrence@redhat.com>,
+ live-patching@vger.kernel.org, Song Liu <song@kernel.org>,
+ Jiri Kosina <jikos@kernel.org>, Marcos Paulo de Souza <mpdesouza@suse.com>,
+ Weinan Liu <wnliu@google.com>, Fazla Mehrab <a.mehrab@bytedance.com>,
+ Chen Zhongjin <chenzhongjin@huawei.com>, Puranjay Mohan <puranjay@kernel.org>
+References: <cover.1746821544.git.jpoimboe@kernel.org>
+ <f6ffe58daf771670a6732fd0f741ca83b19ee253.1746821544.git.jpoimboe@kernel.org>
+Content-Language: en-US
+From: laokz <laokz@foxmail.com>
+In-Reply-To: <f6ffe58daf771670a6732fd0f741ca83b19ee253.1746821544.git.jpoimboe@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-The following commit has been merged into the timers/core branch of tip:
+On 5/10/2025 4:17 AM, Josh Poimboeuf wrote:
+> +
+> +#define sym_for_each_reloc(elf, sym, reloc)				\
+> +	for (reloc = find_reloc_by_dest_range(elf, sym->sec,		\
+> +					      sym->offset, sym->len);	\
+> +	     reloc && reloc_offset(reloc) <  sym->offset + sym->len;	\
+> +	     reloc = rsec_next_reloc(sym->sec->rsec, reloc))
 
-Commit-ID:     6c58d2791d6046727d87db50a5e46644f195dcf9
-Gitweb:        https://git.kernel.org/tip/6c58d2791d6046727d87db50a5e46644f195dcf9
-Author:        Alex Shi <alexs@kernel.org>
-AuthorDate:    Thu, 10 Apr 2025 17:24:16 +08:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Tue, 13 May 2025 16:38:03 +02:00
+This macro intents to walk through ALL relocations for the 'sym'. It 
+seems we have the assumption that, there is at most one single 
+relocation for the same offset and find_reloc_by_dest_range only needs 
+to do 'less than' offset comparison:
 
-tick/nohz: Remove unused tick_nohz_full_add_cpus_to()
+	elf_hash_for_each_possible(reloc, reloc, hash,
+				   sec_offset_hash(rsec, o)) {
+		if (reloc->sec != rsec)
+			continue;
+		if (reloc_offset(reloc) >= offset &&
+		    reloc_offset(reloc) < offset + len) {
+less than ==>		if (!r || reloc_offset(reloc) < reloc_offset(r))
+					r = reloc;
 
-This function isn't used anywhere. Remove it.
+Because if there were multiple relocations for the same offset, the 
+returned one would be the last one in section entry order(hash list has 
+reverse order against section order), then broken the intention.
 
-Signed-off-by: Alex Shi <alexs@kernel.org>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/all/20250410092423.9831-1-alexs@kernel.org
+Right?
 
----
- include/linux/tick.h | 7 -------
- 1 file changed, 7 deletions(-)
+Thanks,
+laokz
 
-diff --git a/include/linux/tick.h b/include/linux/tick.h
-index b8ddc8e..ac76ae9 100644
---- a/include/linux/tick.h
-+++ b/include/linux/tick.h
-@@ -195,12 +195,6 @@ static inline bool tick_nohz_full_enabled(void)
- 	__ret;								\
- })
- 
--static inline void tick_nohz_full_add_cpus_to(struct cpumask *mask)
--{
--	if (tick_nohz_full_enabled())
--		cpumask_or(mask, mask, tick_nohz_full_mask);
--}
--
- extern void tick_nohz_dep_set(enum tick_dep_bits bit);
- extern void tick_nohz_dep_clear(enum tick_dep_bits bit);
- extern void tick_nohz_dep_set_cpu(int cpu, enum tick_dep_bits bit);
-@@ -281,7 +275,6 @@ extern void __init tick_nohz_full_setup(cpumask_var_t cpumask);
- #else
- static inline bool tick_nohz_full_enabled(void) { return false; }
- static inline bool tick_nohz_full_cpu(int cpu) { return false; }
--static inline void tick_nohz_full_add_cpus_to(struct cpumask *mask) { }
- 
- static inline void tick_nohz_dep_set_cpu(int cpu, enum tick_dep_bits bit) { }
- static inline void tick_nohz_dep_clear_cpu(int cpu, enum tick_dep_bits bit) { }
 
