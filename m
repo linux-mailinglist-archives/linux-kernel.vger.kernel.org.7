@@ -1,120 +1,96 @@
-Return-Path: <linux-kernel+bounces-645560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-645616-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 749BBAB4FB5
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 11:27:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 523D9AB5066
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 11:53:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DFE9E7AC892
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 09:26:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1F898C278D
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 09:53:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5F6F202C49;
-	Tue, 13 May 2025 09:27:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EQCXBuIA"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2578C1EB5C2;
+	Tue, 13 May 2025 09:53:37 +0000 (UTC)
+Received: from mta20.hihonor.com (mta20.honor.com [81.70.206.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E0F021FF22
-	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 09:27:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B808A23814A;
+	Tue, 13 May 2025 09:53:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.206.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747128428; cv=none; b=cG8/2T19Bae5qPZ1YHQBJMbQK6mrRet23WZjIxY2e4cskCNfTO4IXMipxvWvSqE1mm68SXxqlIy+Y8kBGWHOgHZD/HJxEGOfw7gQP0xv5wqmD5Cqq9B+wuawzA5M/sIs8Z0MUVSWJXoxP4RbzVgZECLdVwxSVHfFiOItOp+sMIk=
+	t=1747130016; cv=none; b=mAblvLQlB6VZd2MyKiPCFRiEcdlPZRCdI2BimLuoW6/v9j217WZ/JUotjPi8brpebsbbSD+V048ZrJyltNhiAlViAZgEklOu7krqXmB4SObnl7mlEX1MmirTNwptDgSiPKIge2WN9Cmr+efjJ4WTXdnVUYaULdZzq0Bpe3Bp6ao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747128428; c=relaxed/simple;
-	bh=dBHjeKALgKb8PK7SZY/p8ey0dlC17faEy13K5JvMwtg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iuFNmSsMJT8H2oaR6q6SGYULg6huL9wZCk6RIm3H/9raY8Qhdrr2PfLj/vMMLcP0KhqBLxLLq9dY39FeMZUiC+EEUPjorJPnqTJPNRl8wWnhm845bed04iKjd+e1q2ILT+Zx2/hvzjo1RefDRLsa9azj83fSKB9GUN5Br7r62N0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EQCXBuIA; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-54fcc593466so4084341e87.0
-        for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 02:27:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1747128424; x=1747733224; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bRI51hopg7WgPcKQ0KhMvn+lW2eJu7995NqNQ16hkew=;
-        b=EQCXBuIAzkrJ0YcaH2GFD2Kn7IIkRf3EfASYuN9gmZmKU011yTL9ljYuZqcyDQgEjX
-         DatySf72ZK7SO/csXBc9SsEQOhbG95HVAcWAnDdAk4rFptHFzcKZG7tsYxDbmvu0SOdj
-         fYlQBpROD2x9mrbHBbHMsJ0G+mh9VHbn9HJ9FSCkrJKm48dfLbsFW6r6kVlsT2OilRG1
-         moLllsokiYKYf/vq5+zzSFrPLAI6rdDF/q35GLKOKFTmBPJouZFE62KQE1UXe+xmGifh
-         PNSwzVEGFN63bOlK8RoAokLHfdzXfA75TN4LXq11A9uq3/oimB9vsZKHIdBuHYEufTKX
-         t14g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747128424; x=1747733224;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bRI51hopg7WgPcKQ0KhMvn+lW2eJu7995NqNQ16hkew=;
-        b=aj5E+3rUzNR1NeGJpE52dN7ALDbhpeNesE13AhVN9xQsDqfeQDycIRw3okc/yiprUT
-         K4/0E2oUQKmHY4yNILSUrhXBdLxjQmCRhsKwAf3ESS9JJElJexhYZLcZGDCnMn9vsfub
-         vagfr7JmF/q7K2JeuUO+a95cCp726sTDPkon/LeeJpB7qMlDgs9g1TPc3p0T43yWVwow
-         CJOzh5AxAFLKCM6huqVBUpWCNzIqVzFt7giHgRA06Iw/jBGM+hi1tvVGYthscBZ6buys
-         cv/PqWKiLmDK1Oq1mKBIsmrxqlGShNNqVbGjdzkqgp1QPr/f9zhL8zxClgrRl5+iMvTv
-         Zupw==
-X-Forwarded-Encrypted: i=1; AJvYcCVE66h5nI9+2zX5Vx7Aj6q8f1ievQv0oJtACwRS2W+BZitZOkXquduO4Pu3/WIYm9MRHVglk9OI0RcmN08=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYWIrFcj4SS6fZMW/QxNb8YM43PUXVo13aMj5UIEtPkfdjnz2K
-	wiS94uPQAN+ZzVOewWIr9zZ6ZzTB/YiMdUlpeSIXmGQGP8Lr7i37sGgaq2hsZ6qWwtPtF55Ec83
-	/Cd3cI+Afz1sG1yQDCiG3VoylmJ3kt7lQODH50A==
-X-Gm-Gg: ASbGnctf3e2oneB8UuXABr76xPpgYFc33P+2ZNaIA4dTE7PxG6mfVndggTWIXt+Shu4
-	TSoRjcosklRlFHQQ91fHNuv72WW37PW55ZownVaMdFmc4Gjw2fUBjUccB3mfUNrJb24y0D8QkqC
-	Ue2/6HYpY2yUzMe3I6+9v+C1wwNo3DSjHr
-X-Google-Smtp-Source: AGHT+IG9aZSpEQxvWlu8ce2CXwCkeQw4aEsqx0A7UdazXuZrCCQu4J181mxHBoFbawXCJgTrKHYOmXCDjY2BLlsEQTo=
-X-Received: by 2002:a05:6512:6408:b0:545:2950:5360 with SMTP id
- 2adb3069b0e04-54fc67c2233mr4949153e87.22.1747128424591; Tue, 13 May 2025
- 02:27:04 -0700 (PDT)
+	s=arc-20240116; t=1747130016; c=relaxed/simple;
+	bh=WkPoPj7QdMXdas7VfZz2r9mgd9PMl7uh0K0dF6+vB24=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=C0KmLdjKzCZlq5hHjUYQyAB/tTmD/Ro281HcjkMp/GcTejkEg0IrwGa5BLgLE8H3m+DnBvFIFrWFiUpo2dJts++NDJoG1KzGtrQrZ+EV8sSVZOB5ECUt030l7zSQUF63M0sPNSQskrqtKvr700HkCEjlBE8k1BfBgWjKyJKjbEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; arc=none smtp.client-ip=81.70.206.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=honor.com
+Received: from w012.hihonor.com (unknown [10.68.27.189])
+	by mta20.hihonor.com (SkyGuard) with ESMTPS id 4ZxWWL4RR0zYl4S7;
+	Tue, 13 May 2025 17:33:50 +0800 (CST)
+Received: from a010.hihonor.com (10.68.16.52) by w012.hihonor.com
+ (10.68.27.189) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 13 May
+ 2025 17:35:53 +0800
+Received: from localhost.localdomain (10.144.18.117) by a010.hihonor.com
+ (10.68.16.52) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 13 May
+ 2025 17:35:52 +0800
+From: wangtao <tao.wangtao@honor.com>
+To: <sumit.semwal@linaro.org>, <christian.koenig@amd.com>,
+	<benjamin.gaignard@collabora.com>, <Brian.Starkey@arm.com>,
+	<jstultz@google.com>, <tjmercier@google.com>
+CC: <linux-media@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+	<linaro-mm-sig@lists.linaro.org>, <linux-kernel@vger.kernel.org>,
+	<bintian.wang@honor.com>, <yipengxiang@honor.com>, <liulu.liu@honor.com>,
+	<feng.han@honor.com>
+Subject: [PATCH 0/2] dma-buf: Add direct I/O support via DMA_BUF_IOCTL_RW_FILE
+Date: Tue, 13 May 2025 17:27:09 +0800
+Message-ID: <20250513092709.1869-1-tao.wangtao@honor.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250503-pinctrl-msm-fix-v1-0-da9b7f6408f4@oss.qualcomm.com>
- <20250503-pinctrl-msm-fix-v1-1-da9b7f6408f4@oss.qualcomm.com> <CACMJSesqtkorg1akuXjMa9U1fe60aDhfGOSB_T6mX5CtCYDwtg@mail.gmail.com>
-In-Reply-To: <CACMJSesqtkorg1akuXjMa9U1fe60aDhfGOSB_T6mX5CtCYDwtg@mail.gmail.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 13 May 2025 11:26:52 +0200
-X-Gm-Features: AX0GCFs-_g09qTgH6m_jk6ylbKM6K0LWLr1kjRESYHMTO1WN6HIA2pdGmO-YFt0
-Message-ID: <CACRpkdbDNbEpNOLT31+8Jb_fdvnROOtONxFc0hxCFa5AotSwTw@mail.gmail.com>
-Subject: Re: [PATCH 1/4] pinctrl: qcom: don't crash on enabling GPIO HOG pins
-To: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
-	Bjorn Andersson <andersson@kernel.org>, Guenter Roeck <linux@roeck-us.net>, 
-	Josh Cartwright <joshc@codeaurora.org>, Matti Vaittinen <mazziesaccount@gmail.com>, 
-	Doug Anderson <dianders@chromium.org>, linux-arm-msm@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-ClientProxiedBy: w001.hihonor.com (10.68.25.235) To a010.hihonor.com
+ (10.68.16.52)
 
-Hi Dmitry,
+Introduce DMA_BUF_IOCTL_RW_FILE ioctl for direct file I/O on dma-buf objects.
 
-thanks for your patch!
+CURRENT WORKFLOW:
+1. Allocate dma-buf:
+   dmabuf_fd = dmabuf_alloc(len, heap_fd)
+2. Map memory:
+   vaddr = mmap(NULL, len, PROT_READ|PROT_WRITE, MAP_SHARED, dmabuf_fd, 0)
+3. File operations:
+   file_fd = open(file_path, O_RDONLY)
+   lseek(file_fd, pos)
+   // 70% time spent on page cache management and memory copies
+   read(file_fd, vaddr, len)
 
-On Tue, May 6, 2025 at 7:28=E2=80=AFPM Bartosz Golaszewski
-<bartosz.golaszewski@linaro.org> wrote:
-> On Sat, 3 May 2025 at 07:32, Dmitry Baryshkov
-> <dmitry.baryshkov@oss.qualcomm.com> wrote:
+KEY OPTIMIZATIONS:
+- Convert sg_table to bio_vec
+- Enable IOCB_DIRECT flag
+- Execute I/O via vfs_iocb_iter_read()
 
-> > +       /*
-> > +        * hog pins are requested before registering GPIO chip, don't c=
-rash in
-> > +        * gpiochip_line_is_valid().
-> > +        */
-> > +       if (!chip->gpiodev)
-> > +               return 0;
-> > +
->
-> I really dislike you dereferencing gpiodev here which is (implicitly,
-> I know...) very much a private structure for GPIOLIB. Can we move this
-> into gpiochip_line_is_valid() itself?
+OPTIMIZED WORKFLOW:
+   dmabuf_fd = dmabuf_alloc(len, heap_fd)
+   file_fd = open(file_path, O_RDONLY)
+   if (direct_io) arg.flags |= DMA_BUF_RW_FLAGS_DIRECT
+   ioctl(dmabuf_fd, DMA_BUF_IOCTL_RW_FILE, &arg)
 
-I agree with Bartosz. Patch gpiochip_line_is_valid() so everyone
-can benefit from the extended check.
+PERFORMANCE RESULTS:
+- Throughput: 3776 MB/s (UFS 4.0 4GB/s limit)
+- Page cache overhead eliminated
+- Direct data path reduces memory copies
 
-Thanks!
-Linus Walleij
+APPLICABLE SCENARIOS:
+- AI model loading
+- Real-time data acquisition
+- Task snapshot persistence
 
