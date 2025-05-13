@@ -1,96 +1,117 @@
-Return-Path: <linux-kernel+bounces-646247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-646249-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFA83AB5A02
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 18:35:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22529AB5A2B
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 18:38:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4E0F4A647A
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 16:35:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16069866536
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 16:37:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE6E62BF3EC;
-	Tue, 13 May 2025 16:34:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F6FB2BF3F0;
+	Tue, 13 May 2025 16:35:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A8xAZAx9"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="taInxOnV"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 000E02BF3F0
-	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 16:34:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F0E92BE0F5
+	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 16:35:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747154091; cv=none; b=fsJrq2eOIMfR/vHcksNUatllqqa1JdZ/sfHwFm+kt6J0d++RT7PT2L6zU+ptErD4gjEjyVwO20md4U5CapG/o1s2rsnMf+LeiN0W3gx0fANlf/JIwk4rdlx1UmmkZpZd4zRZWinR4Yt/YzVUKhdQsAag7pXRoFYKed8Udor3C0Y=
+	t=1747154146; cv=none; b=RVEzjRhI/k+Y0YrENqZvfe8gSYTzCj3D9OLh6wRFRZDkMTAnERm/8HrtIdRWzJNR35zWCW7NZw3YDfGiqWfURCl32ko0t2uSoFiwq7zgKs3OJWz4jpjQgcmLGnP8/6daG13TmNqZ0d+cHwsENSBUS9MJa+9L0H2LeMGz2io6aoY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747154091; c=relaxed/simple;
-	bh=g6uAgBmdRVJ/MmwO0dYNS5uypb5EK9FZJwFt76vIoQc=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=PVp0QgvRVRFwCbpqwibikfcEaKHVcJfn/qkvocoEjIGNmZq7SqONHXzVyUFHQ5kdXbxWM6eLd6l2rGKSqAXkXrcOkkwH/NGulbPf5SbXCymYQMICg5eBZSlsKf6Ov6+HdRpyE2GxBwIDTop4Yu249XI1ZoZl5MoC8XSV7r+ER2M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A8xAZAx9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09464C4CEED;
-	Tue, 13 May 2025 16:34:48 +0000 (UTC)
+	s=arc-20240116; t=1747154146; c=relaxed/simple;
+	bh=DTMs4yP2ggPA2F1PZB6dLUYJj7PN8M7LJUEZPRRTtP4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dMnwLeDWTFoskN38eiXXsW63d/U9sK5/6bIfmhQUeM6iBnO0sivppqkey4+gxiD5xWq28/GOvV6eIqNf0pz9jo7dKydeQNOdHihyXCetsDSnxoFaofzqIxYdZUQxLGEWFMMFMFeGBvdf2iLga/huzSlbiBwgUQeEaX6y2kbUIRs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=taInxOnV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10D05C4CEE4
+	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 16:35:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747154090;
-	bh=g6uAgBmdRVJ/MmwO0dYNS5uypb5EK9FZJwFt76vIoQc=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=A8xAZAx9JKl8AvNozmvyqowTBtujipU9DMjfnPjdd9rFMcOsMQNpR/du/X6dIl3Uz
-	 MZ9yB/n6jEvjBh+iMXbkVIi9yV0OlxzJwmMQkWW/Ust5PU3be6YDok8mQTRMeA9WX4
-	 QcEVkUKsnERfqti1xirG/YleYzlXVnJDDBnW+a3/pY6yQxoeQvFzzJ9I4WYjSc9WCJ
-	 kBAEo5WwOR3gDn/3zyo0eElh32X/dENgY7GL1I9T+yQWRSlXpKkAcDWro+H7j+vtp+
-	 yJVSXdNduMKMzbleIKgVHma95KYwuciSjE3nzANkGEPqZxTTFuHh2JWtv5ZzsMLOBu
-	 xXwQB8D1ajO2w==
-From: Mark Brown <broonie@kernel.org>
-To: Takashi Iwai <tiwai@suse.com>, Jaroslav Kysela <perex@perex.cz>, 
- Liam Girdwood <lgirdwood@gmail.com>, Nishanth Menon <nm@ti.com>
-Cc: linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
-In-Reply-To: <20250512185739.2907466-1-nm@ti.com>
-References: <20250512185739.2907466-1-nm@ti.com>
-Subject: Re: [PATCH] ASoC: tlv320aic3x: Use dev_err_probe
-Message-Id: <174715408662.98239.15738351990112374855.b4-ty@kernel.org>
-Date: Tue, 13 May 2025 18:34:46 +0200
+	s=k20201202; t=1747154146;
+	bh=DTMs4yP2ggPA2F1PZB6dLUYJj7PN8M7LJUEZPRRTtP4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=taInxOnVwxByvk7Amh3PZpQTJciuHpw5g+N9wLtpknZm7EgEzl7SxcRZPOO8r9WK9
+	 msqwAyYm9tJEW0fsz7mQsYDz68XeUYIwOX1AKB8EWLXN+r/9jm5ZUQ/qsG6n6IyIMC
+	 qbTsbPIF0gyny9EHavB5GcSxOfJLyf4vxggSEerC8UtXvgNVHyfpdJOR4QpFvr9O+1
+	 y2cslQCjk8lnUud5qF/KSWjQWbHqSb+lgyaBzO9hMD4f7j/xEhNqTwbntzUj8e7BeP
+	 Mka9XL4vgt5x58EmCEDaelzezO5Ix/fHA763cjI8C+aWjL3BFe4ixGpSpPNQ7/XW1I
+	 Z1Qf4FdL3e+uQ==
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-ad21c5d9db2so761050466b.3
+        for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 09:35:45 -0700 (PDT)
+X-Gm-Message-State: AOJu0YwcSiqOIEF/Wnh/C/3W1+2nfcQUtwC4y/Q3DGLF5T9eaz4aBb+x
+	6Fa5JsH+2g3qwHqgpE78929pkayn85NJnxA1Oruld6HzVfpgs3mIcbebE6jLnXLmk8F8eKE12ib
+	oW8qwBBmadAaK8Itw+U7Guzfa5Z4=
+X-Google-Smtp-Source: AGHT+IHlEFo8ZKL7+OrPDPZRXEjtqczfBcbSIo+TW5TyyR4WllMbK8p+SbVF8Irk3KeS9kFJZF8uMyCs7tcRwZpUg+I=
+X-Received: by 2002:a17:907:86a1:b0:ad2:39f2:368d with SMTP id
+ a640c23a62f3a-ad4f70f6984mr28817566b.11.1747154144941; Tue, 13 May 2025
+ 09:35:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-c25d1
+References: <20250513002313.954908-1-rdunlap@infradead.org>
+In-Reply-To: <20250513002313.954908-1-rdunlap@infradead.org>
+From: Chanwoo Choi <chanwoo@kernel.org>
+Date: Wed, 14 May 2025 01:35:10 +0900
+X-Gmail-Original-Message-ID: <CAGTfZH1aHVxB+BbJmP+2zCFvR81fGJgK8KBVyx3PkAf3ATatXQ@mail.gmail.com>
+X-Gm-Features: AX0GCFulf_GLeIygHRzs7hY6UkcfEk2TMCR7q5KbvphpjI7hc31b_HZJmjJW5ww
+Message-ID: <CAGTfZH1aHVxB+BbJmP+2zCFvR81fGJgK8KBVyx3PkAf3ATatXQ@mail.gmail.com>
+Subject: Re: [PATCH] extcon: Maxim MAX14526: avoid defined but not used warning
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: linux-kernel@vger.kernel.org, Svyatoslav Ryhel <clamor95@gmail.com>, 
+	Chanwoo Choi <cw00.choi@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 12 May 2025 13:57:39 -0500, Nishanth Menon wrote:
-> During probe the regulator supply drivers may not yet be available.
-> Use dev_err_probe to provide just the pertinent log.
-> 
-> 
+Hi,
 
-Applied to
+In order to keep the consistent style of extcon patches,
+I'd like you to edit the patch title as following:
+- As-Is: extcon: Maxim MAX14526: avoid defined but not used warning
+- To-Be: extcon: max14526: avoid defined but not used warning
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+On Tue, May 13, 2025 at 9:23=E2=80=AFAM Randy Dunlap <rdunlap@infradead.org=
+> wrote:
+>
+> SIMPLE_PM_DEV_OPS() is deprecated according to <linux/pm.h>.
+> Use DEFINE_SIMPLE_PM_DEV_OPS() instead. This avoids a build warning
+> when CONFIG_PM is not enabled:
+>
+> drivers/extcon/extcon-max14526.c:265:12: warning: =E2=80=98max14526_resum=
+e=E2=80=99 defined but not used [-Wunused-function]
+>   265 | static int max14526_resume(struct device *dev)
+>
+> Fixes: c2aeb8647e53 ("extcon: Add basic support for Maxim MAX14526 MUIC")
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> Cc: Svyatoslav Ryhel <clamor95@gmail.com>
+> Cc: Chanwoo Choi <cw00.choi@samsung.com>
+> Cc: MyungJoo Ham <myungjoo.ham@samsung.com>
+> ---
+>  drivers/extcon/extcon-max14526.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> --- linux-next-20250512.orig/drivers/extcon/extcon-max14526.c
+> +++ linux-next-20250512/drivers/extcon/extcon-max14526.c
+> @@ -272,7 +272,7 @@ static int max14526_resume(struct device
+>         return 0;
+>  }
+>
+> -static SIMPLE_DEV_PM_OPS(max14526_pm_ops, NULL, max14526_resume);
+> +static DEFINE_SIMPLE_DEV_PM_OPS(max14526_pm_ops, NULL, max14526_resume);
+>
+>  static const struct of_device_id max14526_match[] =3D {
+>         { .compatible =3D "maxim,max14526" },
+>
 
-Thanks!
 
-[1/1] ASoC: tlv320aic3x: Use dev_err_probe
-      commit: 85f8c2d56caf56aa3379bbc5f1a19fef9aabd23e
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+--=20
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
 
