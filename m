@@ -1,84 +1,61 @@
-Return-Path: <linux-kernel+bounces-645877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-645875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCF27AB550B
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 14:40:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10274AB54E4
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 14:36:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 939017B5C7C
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 12:35:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9FD167B05C5
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 12:35:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9786028DF3E;
-	Tue, 13 May 2025 12:35:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA38628F944;
+	Tue, 13 May 2025 12:35:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="L+cplbNC"
-Received: from mx0b-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CWXJF/nd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 473EB2580FD;
-	Tue, 13 May 2025 12:35:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A60128ECCE;
+	Tue, 13 May 2025 12:35:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747139721; cv=none; b=TLGxS/A2aD2CntUcw5ZnjZGo2i1vTei9Bn26GAiU0Z9akcNrkU4/YgJsAYzkOPsl05+6i9tHlkFKj8hgoOuwb3EXDnjtpMqey4ju0lkSKPWxTGJWg7T7mse3K0+tECIKYAupHjllBrt4t4rAXIkaBCalgDkY9TOlg+XRedyCbwM=
+	t=1747139700; cv=none; b=VVMdk0ld4oBWBKh3doIQAuWACodvNYdAFiWYk7xHhBzpXhPKHwgx5TPZzAp/UyN6134SJsHDXIvR9+mGa8b6+PH6PdSOhlCosspI/lS9JkYm8wzwG8vVMTtgdGnbrb8GAM+DSzdmbh/w19M/cp75EeLyuiC/M5SnBPKRyrI/hq0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747139721; c=relaxed/simple;
-	bh=zGg7o0AByn4EdPHDp/nX5exWXbLFjJ584UbITqi5ydM=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tPC53oaPkNzxttSmpJ2TlbgesPRPgU0aZ20KuEL6ni451bLs2gwXHgvWyFntvewLpoArsofciykyNNLupwVveMb8xo3V8jgUzR5XrM9HUfkhlFA/ay9QrMtevie4UO1wplxiwZzj+98W6RdLmOYEKuqCqkKFl+A5OvXHS0bJXD0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=L+cplbNC; arc=none smtp.client-ip=148.163.135.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
-Received: from pps.filterd (m0375855.ppops.net [127.0.0.1])
-	by mx0b-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54D9mZxC025002;
-	Tue, 13 May 2025 08:35:03 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=DKIM; bh=zbreg
-	+lph2fMuopB8ba+1C84A61YYcv+j3DhZpyOmVA=; b=L+cplbNCK75xhWgwg6m5o
-	LY5rWPNDSdAbh/JKLNf9kq/v7U7TcIf2TJtUloCb8rkeg53qgjeJiSBxpI61smPM
-	F2jj97qMVYT9TjE2ZLdFEHSLC2s352Q7NUXYGJl88IcICh6c0NuBuVDMPU4+wUaX
-	waY2lLr4tXtDbn3OWqfIRR9wunNRmeYhwZKJBb2crm7DB3WSoGVn8qVwIPtsClfD
-	rpJEaGToFUC46lh2NncULhxJUj64kzzIkuKpk8Pgcs5EVxv1lOVyJDt3x84G7ufj
-	MbcXLTkzVc/FfD96IdsuI2WJVZt7aeh/bmbyQ6Xyko+CcXXkT8uBuLUFLD4kDR8q
-	A==
-Received: from nwd2mta4.analog.com ([137.71.173.58])
-	by mx0b-00128a01.pphosted.com (PPS) with ESMTPS id 46m3s98spn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 13 May 2025 08:35:03 -0400 (EDT)
-Received: from ASHBMBX9.ad.analog.com (ASHBMBX9.ad.analog.com [10.64.17.10])
-	by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 54DCZ2bf041030
-	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 13 May 2025 08:35:02 -0400
-Received: from ASHBCASHYB4.ad.analog.com (10.64.17.132) by
- ASHBMBX9.ad.analog.com (10.64.17.10) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.14; Tue, 13 May 2025 08:35:02 -0400
-Received: from ASHBMBX9.ad.analog.com (10.64.17.10) by
- ASHBCASHYB4.ad.analog.com (10.64.17.132) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.14; Tue, 13 May 2025 08:35:01 -0400
-Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx9.ad.analog.com
- (10.64.17.10) with Microsoft SMTP Server id 15.2.986.14 via Frontend
- Transport; Tue, 13 May 2025 08:35:01 -0400
-Received: from work.ad.analog.com (HYB-hERzalRezfV.ad.analog.com [10.65.205.9])
-	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 54DCYirk007479;
-	Tue, 13 May 2025 08:34:46 -0400
-From: Marcelo Schmitt <marcelo.schmitt@analog.com>
-To: <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: <jic23@kernel.org>, <lars@metafoo.de>, <Michael.Hennerich@analog.com>,
-        <dlechner@baylibre.com>, <nuno.sa@analog.com>, <andy@kernel.org>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <linus.walleij@linaro.org>, <brgl@bgdev.pl>,
-        <marcelo.schmitt1@gmail.com>
-Subject: [PATCH v3 04/10] iio: adc: ad4170: Add support for calibration bias
-Date: Tue, 13 May 2025 09:34:42 -0300
-Message-ID: <6213d7b7fb913520f1f143e7ccf8fe16b8579d0c.1747083143.git.marcelo.schmitt@analog.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <cover.1747083143.git.marcelo.schmitt@analog.com>
-References: <cover.1747083143.git.marcelo.schmitt@analog.com>
+	s=arc-20240116; t=1747139700; c=relaxed/simple;
+	bh=u2hoH0if4XlY924RAc8QSz9rFsWWAX5jfbtK7C9L0z4=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=P7/2QGY0WdCkb+IzFgcz5NlXooWbKW95APh8GXfYlXtPx4HpibqekrJKhE2b8m1falV+PsGi6LIO7l2a71YnJ0WUPLocp8YqxXxsmIO9Td9UlVrJO3kmf9MRrWkPAzDiHbDTXZhzt9NIh+zVa7/IC7mSeO9eZm6/X+KPpgyjh7w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CWXJF/nd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D304DC4CEF3;
+	Tue, 13 May 2025 12:34:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747139699;
+	bh=u2hoH0if4XlY924RAc8QSz9rFsWWAX5jfbtK7C9L0z4=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=CWXJF/nd1+fVMyET8fNK5vodONP93mwjpYLAQqZ8Qv9bbC7zAUR9sMCp8zfwks0PI
+	 TaUD7c2F7zJ2e1gUivbrTBi1E4V7jgjEc8iHl1s6ceaFx+7dfHFpHjPDPVOubKsZU3
+	 +fgcmay+TXke23jZgOeGMiMc5G3CJ21GM0RwsP7491Bb2GjvHjUACXIvyPYbkZheMP
+	 GSpZF5sQW+hsrUOeTei0HjzMr+F+7e8yVYJByJo1/WIxet9Qxdr62D2am5w6GcEOH8
+	 iaX+S+aIQItKPdq9JIOmikCsuWWl7jGkfkAIqzs56gpsDK8Ykxgq6NB5PXZ4JNQN0J
+	 wImLnAPfJpyRA==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Wesley Cheng <quic_wcheng@quicinc.com>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 3/3] ALSA: qc_audio_offload: try to reduce address space confusion
+Date: Tue, 13 May 2025 14:34:42 +0200
+Message-Id: <20250513123442.159936-4-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250513123442.159936-1-arnd@kernel.org>
+References: <20250513123442.159936-1-arnd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,106 +63,109 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ADIRuleOP-NewSCL: Rule Triggered
-X-Proofpoint-ORIG-GUID: 9tyFkPhOrUuBf3P-Yo9NCXin5PEqGoGg
-X-Authority-Analysis: v=2.4 cv=ZaUdNtVA c=1 sm=1 tr=0 ts=68233c77 cx=c_pps
- a=3WNzaoukacrqR9RwcOSAdA==:117 a=3WNzaoukacrqR9RwcOSAdA==:17
- a=dt9VzEwgFbYA:10 a=gAnH3GRIAAAA:8 a=1daVv4cnZmPfqeT0XEsA:9
-X-Proofpoint-GUID: 9tyFkPhOrUuBf3P-Yo9NCXin5PEqGoGg
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTEzMDExNyBTYWx0ZWRfX6qiUWuaUTZqM
- ZRhF6pXfDkYH9Xm8X7inNaak49xYwqPnaEjleJuqQw04xIWkITpvi3MxbW7yFynCVow8ZxCCmCT
- 9sis0q9q5lzW+DZbOaU9g2A3kYE6EB6FtGg/QeCu3UD0ld95zRHXL5chpqRn/uPvnwS8UI0mGBP
- bfe75bu4NTp93SyullXgwKA11T+Ivhlzjats0uTu4g9H2OyJloaXGz591SWoTgFVzZ4DuWnObvD
- wRUE4YzpFGRgjbbEI8CCNVWB6nBkE3ZjCZm+q4kva6/9/8bNIhCOLkWFxBK53UG4kFidL+TX/gx
- 9m2uZtdozFuYDgAfM8j8hGpoH4v63C3DQ65DsYWFvZOvwDuSbphli6+BpEJwFhTNIpHv4Em9aIr
- 1w954rmQ4pE5xgbayvn6hSjkt42WR+t8P2eFrxZG6hkMedj2rmZrGNLVUINQXdBO15IBaZYd
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-13_01,2025-05-09_01,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 malwarescore=0 bulkscore=0 phishscore=0 clxscore=1011
- mlxscore=0 impostorscore=0 suspectscore=0 mlxlogscore=999 adultscore=0
- spamscore=0 priorityscore=1501 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
- definitions=main-2505130117
 
-Add support for ADC calibration bias/offset configuration.
+From: Arnd Bergmann <arnd@arndb.de>
 
-Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
+uaudio_transfer_buffer_setup() allocates a buffer for the subs->dev
+device, and the returned address for the buffer is a CPU local virtual
+address that may or may not be in the linear mapping, as well as a DMA
+address token that is accessible by the USB device, and this in turn
+may or may not correspond to the physical address.
+
+The use in the driver however assumes that these addresses are the
+linear map and the CPU physical address, respectively. Both are
+nonportable here, but in the end only the virtual address gets
+used by converting it to a physical address that gets mapped into
+a second iommu.
+
+Make this more explicit by pulling the conversion out first
+and warning if it is not part of the linear map, and using the
+actual physical address to map into the iommu in place of the
+dma address that may already be iommu-mapped into the usb host.
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
-Change log v2 -> v3
-- New patch spun out of the base driver patch.
+ sound/usb/qcom/qc_audio_offload.c | 32 ++++++++++++++++++++-----------
+ 1 file changed, 21 insertions(+), 11 deletions(-)
 
- drivers/iio/adc/ad4170.c | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
-
-diff --git a/drivers/iio/adc/ad4170.c b/drivers/iio/adc/ad4170.c
-index 1df214f7fdec..b02fdd25b4c8 100644
---- a/drivers/iio/adc/ad4170.c
-+++ b/drivers/iio/adc/ad4170.c
-@@ -643,6 +643,7 @@ static const struct iio_chan_spec ad4170_channel_template = {
- 	.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |
- 			      BIT(IIO_CHAN_INFO_SCALE) |
- 			      BIT(IIO_CHAN_INFO_OFFSET) |
-+			      BIT(IIO_CHAN_INFO_CALIBBIAS) |
- 			      BIT(IIO_CHAN_INFO_CALIBSCALE),
- 	.info_mask_separate_available = BIT(IIO_CHAN_INFO_SCALE),
- 	.scan_type = {
-@@ -954,6 +955,9 @@ static int ad4170_read_raw(struct iio_dev *indio_dev,
- 		pga = FIELD_GET(AD4170_AFE_PGA_GAIN_MSK, setup->afe);
- 		*val = chan_info->offset_tbl[pga];
- 		return IIO_VAL_INT;
-+	case IIO_CHAN_INFO_CALIBBIAS:
-+		*val = setup->offset;
-+		return IIO_VAL_INT;
- 	case IIO_CHAN_INFO_CALIBSCALE:
- 		*val = setup->gain;
- 		return IIO_VAL_INT;
-@@ -1083,6 +1087,25 @@ static int ad4170_set_pga(struct ad4170_state *st,
- 	return 0;
- }
+diff --git a/sound/usb/qcom/qc_audio_offload.c b/sound/usb/qcom/qc_audio_offload.c
+index c4dde2fa5a1f..46379387c9a5 100644
+--- a/sound/usb/qcom/qc_audio_offload.c
++++ b/sound/usb/qcom/qc_audio_offload.c
+@@ -78,9 +78,9 @@ struct intf_info {
+ 	size_t data_xfer_ring_size;
+ 	unsigned long sync_xfer_ring_va;
+ 	size_t sync_xfer_ring_size;
+-	unsigned long xfer_buf_iova;
++	dma_addr_t xfer_buf_iova;
+ 	size_t xfer_buf_size;
+-	phys_addr_t xfer_buf_dma;
++	dma_addr_t xfer_buf_dma;
+ 	u8 *xfer_buf_cpu;
  
-+static int ad4170_set_calib_offset(struct ad4170_state *st,
-+				   struct iio_chan_spec const *chan, int val)
-+{
-+	struct ad4170_chan_info *chan_info = &st->chan_infos[chan->address];
-+	struct ad4170_setup *setup = &chan_info->setup;
-+	u32 old_offset;
-+	int ret;
-+
-+	guard(mutex)(&st->lock);
-+	old_offset = setup->offset;
-+	setup->offset = val;
-+
-+	ret = ad4170_write_channel_setup(st, chan->address, false);
-+	if (ret)
-+		setup->offset = old_offset;
-+
-+	return ret;
-+}
-+
- static int ad4170_set_calib_gain(struct ad4170_state *st,
- 				 struct iio_chan_spec const *chan, int val)
+ 	/* USB endpoint information */
+@@ -1018,11 +1018,12 @@ static int uaudio_transfer_buffer_setup(struct snd_usb_substream *subs,
+ 					struct mem_info_v01 *mem_info)
  {
-@@ -1111,6 +1134,8 @@ static int __ad4170_write_raw(struct iio_dev *indio_dev,
- 	switch (info) {
- 	case IIO_CHAN_INFO_SCALE:
- 		return ad4170_set_pga(st, chan, val, val2);
-+	case IIO_CHAN_INFO_CALIBBIAS:
-+		return ad4170_set_calib_offset(st, chan, val);
- 	case IIO_CHAN_INFO_CALIBSCALE:
- 		return ad4170_set_calib_gain(st, chan, val);
- 	default:
-@@ -1139,6 +1164,7 @@ static int ad4170_write_raw_get_fmt(struct iio_dev *indio_dev,
- 	switch (info) {
- 	case IIO_CHAN_INFO_SCALE:
- 		return IIO_VAL_INT_PLUS_NANO;
-+	case IIO_CHAN_INFO_CALIBBIAS:
- 	case IIO_CHAN_INFO_CALIBSCALE:
- 		return IIO_VAL_INT;
- 	default:
+ 	struct sg_table xfer_buf_sgt;
++	dma_addr_t xfer_buf_dma;
+ 	void *xfer_buf;
+ 	phys_addr_t xfer_buf_pa;
+ 	u32 len = xfer_buf_len;
+ 	bool dma_coherent;
+-	unsigned long iova;
++	dma_addr_t xfer_buf_dma_sysdev;
+ 	u32 remainder;
+ 	u32 mult;
+ 	int ret;
+@@ -1045,29 +1046,38 @@ static int uaudio_transfer_buffer_setup(struct snd_usb_substream *subs,
+ 		len = MAX_XFER_BUFF_LEN;
+ 	}
+ 
+-	xfer_buf = usb_alloc_coherent(subs->dev, len, GFP_KERNEL, &xfer_buf_pa);
++	/* get buffer mapped into subs->dev */
++	xfer_buf = usb_alloc_coherent(subs->dev, len, GFP_KERNEL, &xfer_buf_dma);
+ 	if (!xfer_buf)
+ 		return -ENOMEM;
+ 
++	/* Remapping is not possible if xfer_buf is outside of linear map */
++	xfer_buf_pa = virt_to_phys(xfer_buf);
++	if (WARN_ON(!page_is_ram(PFN_DOWN(xfer_buf_pa)))) {
++		ret = -ENXIO;
++		goto unmap_sync;
++	}
+ 	dma_get_sgtable(subs->dev->bus->sysdev, &xfer_buf_sgt, xfer_buf,
+-			xfer_buf_pa, len);
+-	iova = uaudio_iommu_map(MEM_XFER_BUF, dma_coherent, xfer_buf_pa, len,
+-			      &xfer_buf_sgt);
+-	if (!iova) {
++			xfer_buf_dma, len);
++
++	/* map the physical buffer into sysdev as well */
++	xfer_buf_dma_sysdev = uaudio_iommu_map(MEM_XFER_BUF, dma_coherent,
++					       xfer_buf_pa, len, &xfer_buf_sgt);
++	if (!xfer_buf_dma_sysdev) {
+ 		ret = -ENOMEM;
+ 		goto unmap_sync;
+ 	}
+ 
+-	mem_info->dma = xfer_buf_pa;
++	mem_info->dma = xfer_buf_dma;
+ 	mem_info->size = len;
+-	mem_info->iova = PREPEND_SID_TO_IOVA(iova, uaudio_qdev->data->sid);
++	mem_info->iova = PREPEND_SID_TO_IOVA(xfer_buf_dma_sysdev, uaudio_qdev->data->sid);
+ 	*xfer_buf_cpu = xfer_buf;
+ 	sg_free_table(&xfer_buf_sgt);
+ 
+ 	return 0;
+ 
+ unmap_sync:
+-	usb_free_coherent(subs->dev, len, xfer_buf, xfer_buf_pa);
++	usb_free_coherent(subs->dev, len, xfer_buf, xfer_buf_dma);
+ 
+ 	return ret;
+ }
 -- 
-2.47.2
+2.39.5
 
 
