@@ -1,283 +1,919 @@
-Return-Path: <linux-kernel+bounces-645652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-645658-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4AC5AB5119
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 12:09:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A819BAB5120
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 12:09:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7EECE7B6AB4
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 10:05:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 17AA17B7816
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 10:07:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC9A323C8B3;
-	Tue, 13 May 2025 10:05:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB92D241679;
+	Tue, 13 May 2025 10:05:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HCQ+vAGX"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="YA/9MKyE"
+Received: from PNYPR01CU001.outbound.protection.outlook.com (mail-centralindiaazolkn19010007.outbound.protection.outlook.com [52.103.68.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 132D323C4EF
-	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 10:05:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747130716; cv=none; b=kap+xqTihkAGFdyP0ALMzDsUZbgtdosN1B5gzOLV+Oyo2mhQmtt2x3wjrpTAqPNOYyeumtIPiZmrENiFe/Xb5eij90CilYrQjD5IQg7MzxDmJUWYrspXAJcP0SEK2RIUegoDsARPEwyBOGvZhEvwCL8j3/NzbNfsgYYxN9lIY3A=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747130716; c=relaxed/simple;
-	bh=YyD3v+WbDOQFTp5vyVVkGFcEv8zLO8rvXwKavSyvh2A=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Y9I80rFzYgUydWYdWCegZM4ulWTanBttl7lMzeabKZ1uU7jNotnCsm1J+UpAymBdO58wVzPDim5l4yYJGVPtmKW4nS8oN7qSVrUoaAwUXzEqTSKHOX/bgAPZf3HQ07H960Cl0yfI5Nx1WBMOohUT7A7ip9Xgtplp2Gi40GzEx9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HCQ+vAGX; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43cfba466b2so61518425e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 03:05:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1747130712; x=1747735512; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=QhWWECWorCHcz5PzgCKOupXyhBCwucZ82R9EPkot+ts=;
-        b=HCQ+vAGXLH6Klu2UDCbHFN3AoJpvYn9pJflm4owV2XNYZEAkExUGj0Nn27uvDWExP/
-         +cUM1FxgxNqpv7edhP8FEX/Myl/HJz7rGy2BnGLKDhFRRlsKF+JloQD5fW3dvIud1m2l
-         mxHS72ITUAXZSD8Vi/ohBFzNlZEQWj7nTJPdGsfcwPK4SGGZYslhq1pjidvIPL92Ih63
-         W95AKBH9fJ5shK2jb48tM3M/AQT4qVcF7U7KyYz2MVBhYP3kYaAEeLaw8FfbXrxWVzJE
-         0CpTl72/rlWxOueuEkmtGqBxy0Eb7/M+QKmRB6TH2UY1Ua3IoN9IEMycSdCt8nEDRMfr
-         3hmQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747130712; x=1747735512;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QhWWECWorCHcz5PzgCKOupXyhBCwucZ82R9EPkot+ts=;
-        b=gA/g6/loGXDDWDuMm1Dhi3IZCvPMqhkQtt8tflHwLxT3BAT43+SPMT6kxan1YgzcAP
-         WO7qL5BYfiabpY/89ub0Jz57U33IbZ5pFnWhiYcJJ4BhzwNPayMHZqQKIUFtDTlbhvzq
-         d3chcfMGW6KjKUx5iH6b8T+zW1uDPwyyyN/OQuGqfQUq46WUIHAPAu7mPk54A2zYSFd5
-         B87TlnAU0anKe8vC+UlCpBzzkfX/EK8O6fJ2BA7levjifVWnXOjq2rok0BgYptV1vsCH
-         KRAm06lzg0H7SMr+kDqS0G5+7aW2voM9x3HjcM/k+H4y2qq+0eWAyEFpUNfJaxCjcL/n
-         C+eg==
-X-Forwarded-Encrypted: i=1; AJvYcCVQYIT4DCfPCFxa8iCtyr7IXjYIlAj0yTSwzw35r9oZ7A173HwBW85+tThGAU6xDmB2ZKczcOd9saMIhzQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwEjjR/tRy9lO/XzLlTE1UkbrQnGgeKh+M+h8yk1CeJtza04R13
-	wbd5SoBpR53VpnlUfEcLR8rVSJWB2gd5hw9pmEd7WzgnqzbS+Whs7Q8u3l14myA=
-X-Gm-Gg: ASbGncujclTju1+sOBomxkBdM1mMCioXGKypybWTTmSBnARRTe9KHtUTEVOjieZtaUo
-	H2r83F2oF2otK+R7hRQrS5OK7ffGTjZ6Otj/l+oZp8PlZf3io2AUI+0CAd4q1Y//9CaqoDjACAy
-	lm9PWVp83YrevN1DILoGuhmge4cyC3rtakHd2O6SPbUC5hH1u3VxFzzho/cm0z3MSw1Gp+xgArG
-	oUrU6SvEIvxwRJY5PC5bKYYqKh3ckWiR7+O1QPFAxx18CcUKXjAnPXiVqm5L8W9qqdiXQsznfIs
-	XiG1tRZp8HR1ttmgIawQVRmmNkNwUlWcFhlxMIiO8/4m5aVXgT5OunWHVYSEhnQAf+WFr3Pvi1v
-	ToUVVRg==
-X-Google-Smtp-Source: AGHT+IGreNqiZTNFJYJ0Z2EWc1VR4VeNCPalaZtbjoH/OGKpMcfIXGmmyv6G5eCyqWl40Jr+k15oPA==
-X-Received: by 2002:a05:600c:b85:b0:439:9424:1b70 with SMTP id 5b1f17b1804b1-442d6ddebf5mr145115085e9.30.1747130712234;
-        Tue, 13 May 2025 03:05:12 -0700 (PDT)
-Received: from [10.93.3.9] (110.8.30.213.rev.vodafone.pt. [213.30.8.110])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-442d67df501sm157613475e9.12.2025.05.13.03.05.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 13 May 2025 03:05:11 -0700 (PDT)
-Message-ID: <de9470c6-de22-4136-b390-6dcc056495bd@linaro.org>
-Date: Tue, 13 May 2025 11:05:16 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B322923F26A;
+	Tue, 13 May 2025 10:05:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.68.7
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747130738; cv=fail; b=TyfSPzRfGAOcSARSFABtVuXbHlSPS56741cGcp1+U9HiO4gA3Tnm9fk96IVCBOv2xrdUkJ7MNY7jq0z6aDwqkgFlSwGdE6XusGN19W+rEFT+c0w0rUZnAaj4qcdAt+X0HyQWAfWWHRS20BHAZxOX/O0rbiPA0MCp2O+WP4XuO/s=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747130738; c=relaxed/simple;
+	bh=TgC0iLF+NhKodgDINUSMjnVMmTg2Cioemq36r/wHzN8=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=X3k5Ckk9bxN5lAI7+a8TzH9+N3w9QDsPmsUOcEqC4WT7etOjHPk+eynXmy/Y87bwdfX3C07WW4VWxdvfmbpcpFSnphhQpSniQb/DJ/eLtzxXw7eo196JDLRKmfLvkuGZYKxaLwPzoR/Z6V5AI4vFHIbJSvl9jJVN7QVyGBTLt98=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=YA/9MKyE; arc=fail smtp.client-ip=52.103.68.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=YxquxJcCr1uQBW9QdN0ooVSeKYs8tbyHoqJjbHfj/Kd7e3umBWaaZ8HPCRGLl6qVXFWtqkdibWs6lzaHluNNQPWxq4f+RQES4hHuqLuhA+cenXw+CV+7tSE5EQRmWt1Fo3XJHbN39SzXYY4K0oBcktpUL7aPHGJZDRHhEIJzvoUAWp5p9munEAtcpQHbWb+J5gHT6oylqVDBQ0fWJRph9/N8KDoJaGkH0jAIPa9r6EPAT2dM5n8L24RdypW7Wa9Fsqs6YX0D/HK66ehMrnIJaUlOenK+LQje4ajJVEgbLV5T7gHupb1UVj2bmKrf33ulI3Q+GLmYssa1qZjHKheUfw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=gNYY2dr3Qc8KmzFXBvhWbNlJiT2lbWZqBQbGhDRy5Ng=;
+ b=ObHbAOx1OGdZcAAbuVZE632yb6SIZ4nYYWD9nF77WFH70aGfOx6S6/m7u8Rvuu47MhzdGAopu9R5vUg+d04RYXoVsT+UMOoV/7ob+OKo+mw/vcGvwLOFGZV1eAXYVS9UOHq2vg9CepYu0x1XkRfBjZwTTiZ0/rtF7qxknNy6ESvTwrVpgc9dUgckoJF83oQaZ+mJllQFyj9rdnVEtXjESa7MLkaR8M1y7UFXZQg6hi2GGJEk4CWEcj8PNhsIIDr2tg2Syz8dp8aqg84tg0KOPpyZIlKW++jYK1CChITkKMDwi1v86fbDiP2Y1oxi2zUIZ7nB+AUUm5Js/EAu5H/POg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=gNYY2dr3Qc8KmzFXBvhWbNlJiT2lbWZqBQbGhDRy5Ng=;
+ b=YA/9MKyEGHUpW4uaNOdLje5jNjwLwum7ELSedgOX7n1Wi7wkrs2JwRU64gaqsaoFD6SUh/Rhq8q5ElY5bJ7FDvXpmXT+Emg5+hYZdL2ChGJgdBe99c3JvcBAeN4FysDZJuu/LWb6uZwhxJ5Q5+QUb7cB48svsGz3e+J9lF2Fq2HYc+HHv2Om89Y8RYHuw52bdGFIhRkK3k4LrT+XL6b2i2wLdb5Vz6oBBcuaqwnb7rGRaAUYxyTXXWuCM4uip11oPdQckFJFw2eRYkX7m/j/dEXxl9P92SpmJpnJL/HnLL3lSQ8ua1tCCyMaZKeRNufRHXk/hBQIsvKhH+/8PH/JJQ==
+Received: from MA0P287MB2262.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:100::6)
+ by PN0P287MB1395.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:17f::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8722.30; Tue, 13 May
+ 2025 10:05:26 +0000
+Received: from MA0P287MB2262.INDP287.PROD.OUTLOOK.COM
+ ([fe80::ca81:3600:b1e4:fcf4]) by MA0P287MB2262.INDP287.PROD.OUTLOOK.COM
+ ([fe80::ca81:3600:b1e4:fcf4%5]) with mapi id 15.20.8722.027; Tue, 13 May 2025
+ 10:05:26 +0000
+Message-ID:
+ <MA0P287MB22629B5A1F6238FBBF9E3609FE96A@MA0P287MB2262.INDP287.PROD.OUTLOOK.COM>
+Date: Tue, 13 May 2025 18:05:20 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] riscv: dts: sophgo: Add xtheadvector to the sg2042
+ devicetree
+To: Han Gao <rabenda.cn@gmail.com>, devicetree@vger.kernel.org,
+ charlie@rivosinc.com
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Inochi Amaoto <inochiama@gmail.com>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Alexandre Ghiti <alex@ghiti.fr>, sophgo@lists.linux.dev,
+ linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <cover.1746828006.git.rabenda.cn@gmail.com>
+ <af839bc200637e4eae1cb327c95ac98c82bccd52.1746828006.git.rabenda.cn@gmail.com>
+ <MA0P287MB22624E52A6647B43D53DCD2CFE96A@MA0P287MB2262.INDP287.PROD.OUTLOOK.COM>
+ <CAAT7Ki9zCYZ7u+nmQgSkgWgv+QSVb=miLRtcNQRfJFcd8JgcJg@mail.gmail.com>
+ <MA0P287MB2262FF6EFEC6D01796683DE6FE96A@MA0P287MB2262.INDP287.PROD.OUTLOOK.COM>
+ <CAAT7Ki-vamEx2f+nTJbd=WeB815ZheJV=mm7ohzBoZrsoaQV+g@mail.gmail.com>
+From: Chen Wang <unicorn_wang@outlook.com>
+In-Reply-To: <CAAT7Ki-vamEx2f+nTJbd=WeB815ZheJV=mm7ohzBoZrsoaQV+g@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: TYCP286CA0126.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:2b6::10) To MA0P287MB2262.INDP287.PROD.OUTLOOK.COM
+ (2603:1096:a01:100::6)
+X-Microsoft-Original-Message-ID:
+ <f28e363b-0fe4-463c-ad61-70334384867c@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: make -C tools/perf build-test failing on aarch64
-From: James Clark <james.clark@linaro.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>,
- Namhyung Kim <namhyung@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
- Ian Rogers <irogers@google.com>, Jiri Olsa <jolsa@kernel.org>,
- Kan Liang <kan.liang@linux.intel.com>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- linux-perf-users@vger.kernel.org
-References: <aB6vFFcRErPVt7p9@x1>
- <95bd54bf-09b7-4444-94a7-87ab9a3035e6@linaro.org>
-Content-Language: en-US
-In-Reply-To: <95bd54bf-09b7-4444-94a7-87ab9a3035e6@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MA0P287MB2262:EE_|PN0P287MB1395:EE_
+X-MS-Office365-Filtering-Correlation-Id: d773f3bb-7e82-42ac-e331-08dd9205aedd
+X-MS-Exchange-SLBlob-MailProps:
+	obhAqMD0nT+76ZruCrigLPUIQMEMZUn+m0Xa0eV5f81MRvZJCobLh/x9+xVymDR2a1xFnB3zD3SxR1N4cRKnEmR/B2shRBJ7oeVIuEUuBukmk9cozLTCKXGaBFnE7Mr5paYQlhKg+QV2GSolRyipkRcovxCsr1fmgYiUNBOjLfH5Pc+acfNFt+EvHfML/Gsoj1hRSiw4kH72/cLBT0Qn6IzsjQCn9N1PQEEHO8U18JEBLJrMrOzhXXrVhFOAkLsbE4mcn7BXLJRqbxuSr74vTCYUT0+qn2B1ch5z5dB3yX5APvyMYE5KamR+GwY6TtObaKychtQtRSRoenLLt8iwa1EdWVJAdZJGkKY3ZiY4Cbon3HlvvfgrfKjv0PhdGrJVE29L/4nVtQcVUm+HIL23qNyBJOXdIzhUN/sJv6K5ptzy6UAQfkVRYSuaugx+2owBbB1Ri3ysKGwEC50Gu3kjCuMwaECmbQKPDYR17Xvaqz1SSrwOoBq4LxjUQDK9tR/RLmEVSOqJgRzTsRjkb0viGmdb3zYRunmrRtXVW9uVU199L21ucP3GyU7GFHZnxicFRKEWDdB4JNCvhWzw/UZsLAXrG/2OozkRuuom2HsHA4NJFo/1BnFrx67Q8nJpqISYadma2RevUyT6/hNX9T9qFMHNktBQX7ETXS9OMftSe15gFIqXTZghRlbX1NpDtH35hwDa4ZtNU/SEnWdR89bT6VyweIAu7zRxVQXAzYwVwyEJHbjMiVgPrfCXMWRx8N3tSXZFw5jHpnJ5AN3fGIOxRRHsGJBThir2JgLoHhPewGrt25TnvhC7YLI5UQ5sbz0H
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|8060799009|461199028|7092599006|15080799009|6090799003|19110799006|5072599009|1602099012|440099028|3412199025|4302099013|10035399007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?VUF1SzNjOVN3SnpQOEQycWdnb3ZhMG9uNk1EUVhUcWllK1VlZTRXOE1kbHhK?=
+ =?utf-8?B?TDcxQXhKTHRwZ0d1bThhaUlhbWhTbXp3MENxNmp1dFgxRnJoRjF1c3J2TFZD?=
+ =?utf-8?B?Y2ZBMVA2ZkFvdmFvbTNBRnRlWVlUcmw1RFFkNWtmSnp4Ny9CYTNZMTN5SGpr?=
+ =?utf-8?B?aXFLbUJDc1ZKOTh2SVJMTXR5cXNoeXdpTXZ0UndIVDZvM1NIcW1mYVZVRC9k?=
+ =?utf-8?B?TkJsZ0xoVkdUYUEzamVrNUphUGFCckp6bG5pOExpbWdYNEFMNU9WM1krOWlL?=
+ =?utf-8?B?R21PbC9WamR6NFNXS0NLOEZvYlBuT3EwSTZYbGRyak5QTmRkUGt4QWk5WjV6?=
+ =?utf-8?B?eWlpeW03OW9qOFpmMEs4UE5BZWR3cWt3SW5pb0pEZ1ltZmpWbjRoWGQvekFB?=
+ =?utf-8?B?ck9pRXVEWjlzWTVadUNoY29tdmFDRkZzUmFWRHl4bVhiNlQ3WmMrdW56RE1I?=
+ =?utf-8?B?ZVlXV24yaEVkaGhIKzJkOXZmN3dWWVh3cTlIRGNjdDlYNUxEN3BuRk5YOXBv?=
+ =?utf-8?B?c0M1OWMvOGRwOHQvUzJQb2gvcU10WGpkSG1KMDkzZkl0eld2b2kwOXYyUlhO?=
+ =?utf-8?B?ZFd5R3h3bjlnM3VTK2FSU0dWSEVoZVBJaFFwSzhiWlc1akQ5cnh6SHc1NzBs?=
+ =?utf-8?B?c2ppVlNoeGRjRjVIVjhnY3FyUzdpc0Uya2t6TXhKVkRzNEJ2Nm5tSkkwbVJt?=
+ =?utf-8?B?ZHZyRDdlRVUra1gremZ6VHAxYkJ3MVlEUGhZMFJ1UjFOZGJaWW1KTk91a095?=
+ =?utf-8?B?dEwzSkR6bFoyekdaYTlWNHNrOWhCa2k1S1pDZ2RjajRmL2srMzlmWEFpeHBN?=
+ =?utf-8?B?YlFKbnRaT0lYcEJSUWVwYmp4YUtJNXQzYkQvUHNpVEdtNndWTC9uU2lZaHlW?=
+ =?utf-8?B?clBrQVBwYXRBY1YyUnBqUGE0VS9MNVduQlVYWkEzNms5YTBIL3FHbDkrRmRG?=
+ =?utf-8?B?bHd5TG9nZWFWb2RCL09veURBOW9mVG13dFNMdmxkcDM3TFBOTWNKK3lBYU9Y?=
+ =?utf-8?B?LzhDYStvVXBxMDhLQ3ZFLzJuN3BDVEFyTDFnNnN2RllaQTIwa2xMUjNGZVJU?=
+ =?utf-8?B?MWluQlg5bWtrN2gyb09lSXU5ZkNXalZRSExCZTlXN3pMRnNXRWhWWVJQakpz?=
+ =?utf-8?B?K1J3amZ1V3Nta1BMc0ZYREpONWp1bU5JUy9MdG1DUFh6UGJqZVBhYnVSUmtk?=
+ =?utf-8?B?cjNOS1pSVkllWEI3cFVxWkZaM3V4UGxlVFJndHFTMGxCVXFnUEZ6T0dZVDAz?=
+ =?utf-8?B?cVIzU0ZmMlBCMFNRZ09NZ1J0aUZFeGdSbUQxcTZEZW9UdURMVEdNSWNBK1gr?=
+ =?utf-8?B?RUJEZ1RVVW5ENDFoWVNwblZqQ3JWd2Z5UE9XSGZyMC9zcTEvbXNnb1VXRlRi?=
+ =?utf-8?B?OVNWSlBMRmVQcXA0R2lnVzNveDF3SHZ4NW4wWFkyTXZ5c0Z6WEl4dGdwUkh2?=
+ =?utf-8?B?NHJnd2FNdjgzOW81Q0RGUlNkUjZvM1ljWjFlRjNHaFVKa1dyd1lGMDJnakhF?=
+ =?utf-8?B?TXE3amhmK0o3SzhIeTFsNDZjV1J2bWlDZ2k2RXZsL2plVU53S0YrZ1l5SWRi?=
+ =?utf-8?B?bjJmSnRIQXZMQzkxR04zWXFtRmRwbmpxWHNsRnVzR1NMRmxBSjkwYlBzUWdH?=
+ =?utf-8?B?OUJ2V0grYTFBQzY4dmRYRUxsL0tMSVgzVWNCOUYvTDZtNnRxelpyVmtwMEhi?=
+ =?utf-8?B?eWVISmg3WGRsOSs2SUk4MDdGZWdYQjV6dStSTHZYZElCOG5mVFBHMTIxQmRw?=
+ =?utf-8?Q?qQOxUDnQrlZC/+6weq/oePOx1Xeoy3zesSGdJps?=
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?amFtV3dGdk1vZnNOQUc5RUpqU0VJNVFZWkFDL2kzWkFZclZ5WTN5QjVoREFY?=
+ =?utf-8?B?YjRmZE92MEdmOGJ0OXJOTDdXVEYxNVVDSTEvMDBjUEQ2K2YweUVRQml0bzVG?=
+ =?utf-8?B?MDNrdkdaY2JnMnNvYkUrK3RJYW1LUHFjQnVmbG5ETGpWak1wV2ZUZWZmZEgr?=
+ =?utf-8?B?TWxHMkh1SEFGZUhYOEZmTFdXVjMrUnJkYloxZUxXZkNXQTRUYlJWa2hBRk11?=
+ =?utf-8?B?OW11SkcwRmYvV20xam9yaCtmOXpyTG5MRWVUb3phb1FiOUphaDJ1aUVlaDdv?=
+ =?utf-8?B?d0NraXRGOWx2K0RkME94TnVKcHIyRXVOUWJaV0hZUG1uY2xYVjZOV01iZmhZ?=
+ =?utf-8?B?Nm1SeGJMZmhzMkV3bld0TEpMcUtkTEMxM0x3c0FrMnp2bDRja2hMb3BQVWhG?=
+ =?utf-8?B?Zkg2aE9TanlBMnFReHZtYjhtRFhZQ2hjelkwd3JjaGRKMkNpZ1Fzd0xVdUZr?=
+ =?utf-8?B?Nk5IdnRNQ21KR2tCSVlzdlRyN0JDZ1pLVUJjNEVPVnBWNFlCNWxoYk5WdHND?=
+ =?utf-8?B?RFV2aXg3NzVkUGxHK3F6ejU0THRTSlFoWjAzbnMybVZvQjdvbnJMZWVZRjA4?=
+ =?utf-8?B?NHJSWE5xeUNOVzBmUHEvVjc4dCtlQ0Q5ZG92cUdkMUVqK1Y2NEc2WUYxQnNl?=
+ =?utf-8?B?a1ZZakg5VnYwSEh5SmJEUU1YWHRMdlpFRS9yTUdXMVh2dTVyTnRNcEkzQW9J?=
+ =?utf-8?B?eHdoWHpvem13UG9DVXVjTHpvN1RYc3FBZW95TDlMWmhGZXMzaG1RVXh0VG1x?=
+ =?utf-8?B?d0N0NkVFREg4T002NGNZUkdRZUtRemc3Z2pZdnVnTFRPdHppRmp3M3dsNWFY?=
+ =?utf-8?B?MVNvai9qUkFsVElQaUtlejBvMWRaY091Yjdwd2ZlOWpuZnFDK3FjYkdUQnB0?=
+ =?utf-8?B?bGdiV3NaTzczbFFOeVBRZjZQaktHcWNqdXpBdGZlNDRzTU9iVmNsS2djMmI0?=
+ =?utf-8?B?eCtmSGtFUlJ5REIwa05EU1I5NE9xL0xpQU10U0NHMFI5UkI5OXpxZTJ0VVNo?=
+ =?utf-8?B?YUJhOU5ITTF6MTZQZ1ZFYVROem95ZC96dEZXTFRFSm85YzJnWnZvdG13WENi?=
+ =?utf-8?B?ZlVYV0hpNG5tNzNFaFB6U2hSTjJ0cFJvZTJ1a1B3VTcvckRUeGcza2pka3NL?=
+ =?utf-8?B?ckJ3L3NZOWVOYUM5UHlMYU5HbkltakNNVVNTUllTRjRVcWEwZnpqRjMreGxW?=
+ =?utf-8?B?TUFzRTBSNzhrUlg3K0NYUVlUTFdjbVpqd3VWNlJ3MVJ5aGRDV2kvQUNLMDdJ?=
+ =?utf-8?B?ZkpJTmo1bnUvMUptUU9UT3NSRVYyMjFkSUh3UjUwaXhkYUlHK2lQRDVaWDdz?=
+ =?utf-8?B?dE5zS0ZONnhxM1pINlljdXpSam0xQzRhUVBsMHpjSDMwdDNqaWhiTDFOa0Nx?=
+ =?utf-8?B?Sk53ajlFYXVSNXV4WWZkMDA1NWQ0K0IvUG8zc0czbjVRVXl5VHFYSEVPeTVi?=
+ =?utf-8?B?S2RPSWg4L0tOUjE5dU96QmNjaitwVVdyL0JCbklPb2k5Z2VrQVNlTjR3TllI?=
+ =?utf-8?B?ckp0VUhET3RMOS9LTVo2OVA1VlhXYnhyZjFRZkYzajlRanBSdllmRDdCSjBn?=
+ =?utf-8?B?TU1IdmU3QUhPOGQ0dXQ2N3F1alYrSFVTN3Z1MldQb0xabHN3MFRheFlNaGtp?=
+ =?utf-8?B?L2tCYkxqNVBEanVWZWI2ZmNZZ1lJZnVTL3htclVwTkQ2cTdRYlVnMW01RmpB?=
+ =?utf-8?B?M0Q4Yk4vK3lHM0hieEJaVDE0LzBTTmFEQnQrcGtMOE9PZ1M1dFVQMnRnaG5y?=
+ =?utf-8?Q?GTYItz4qF3ewEyISnLIUjKfjG2GTmjCz8umlBtq?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d773f3bb-7e82-42ac-e331-08dd9205aedd
+X-MS-Exchange-CrossTenant-AuthSource: MA0P287MB2262.INDP287.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 May 2025 10:05:26.6310
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN0P287MB1395
 
+Adding Charlie.
 
+Hi, Charlie,
 
-On 11/05/2025 18:46, James Clark wrote:
+Can you please help confirm this? Is there something wrong with my 
+understanding? Copied here below for your quick reference:
+
+> One more question is about writing value of "thead,vlenb". See bindings
+> description in Documentation/devicetree/bindings/riscv/cpus.yaml:
 > 
+> ```
 > 
-> On 10/05/2025 2:42 am, Arnaldo Carvalho de Melo wrote:
->> Hi,
->>
->>     I noticed that upstream is failing on aarch64:
->>
->> acme@raspberrypi:~/git/perf-tools-next $ uname -a
->> Linux raspberrypi 6.12.25+rpt-rpi-2712 #1 SMP PREEMPT Debian 
->> 1:6.12.25-1+rpt1 (2025-04-30) aarch64 GNU/Linux
->> acme@raspberrypi:~/git/perf-tools-next $ grep -m1 Model /proc/cpuinfo
->> Model        : Raspberry Pi 5 Model B Rev 1.1
->> acme@raspberrypi:~/git/perf-tools-next $
->> acme@raspberrypi:~/git/perf-tools-next $ git log --oneline -1 ; time 
->> make -C tools/perf build-test
->> cd17a9b1a779 (HEAD -> perf-tools-next, number/perf-tools-next, 
->> number/HEAD) perf test demangle-ocaml: Switch to using 
->> dso__demangle_sym()
->> make: Entering directory '/home/acme/git/perf-tools-next/tools/perf'
->> - tarpkg: ./tests/perf-targz-src-pkg .
->> make[1]: *** [tests/make:351: tarpkg] Error 2
->> make: *** [Makefile:109: build-test] Error 2
->> make: Leaving directory '/home/acme/git/perf-tools-next/tools/perf'
->>
->> real    0m12.130s
->> user    0m12.653s
->> sys    0m2.091s
->> acme@raspberrypi:~/git/perf-tools-next $
->>
->> I noticed that it is using some files from outside tools/, i.e. kernel
->> files, so I tried adding those (and its dependencies) to the
->> tools/perf/MANIFEST, but stumbled at this point:
->>
->> acme@raspberrypi:~/git/perf-tools-next $ git diff
->> diff --git a/tools/perf/MANIFEST b/tools/perf/MANIFEST
->> index 364b55b00b48..3fe627c4b599 100644
->> --- a/tools/perf/MANIFEST
->> +++ b/tools/perf/MANIFEST
->> @@ -28,3 +28,6 @@ scripts/bpf_doc.py
->>   tools/bpf/bpftool
->>   kernel/bpf/disasm.c
->>   kernel/bpf/disasm.h
->> +scripts/Kbuild.include
->> +scripts/Makefile.asm-headers
->> +include/uapi/asm-generic/Kbuild
->> acme@raspberrypi:~/git/perf-tools-next $
->>
->> To test it directly:
->>
->> acme@raspberrypi:~/git/perf-tools-next $ sh -x 
->> tools/perf/tests/perf-targz-src-pkg tools/perf
->> + set -e
->> + PERF=tools/perf
->> + cd tools/perf/../..
->> + make perf-targz-src-pkg
->>    ARCHIVE perf-6.15.0-rc5.tar.gz
->> + ls -rt perf-6.15.0-rc5.tar.gz
->> + TARBALL=perf-6.15.0-rc5.tar.gz
->> + mktemp -d
->> + TMP_DEST=/tmp/tmp.wzVpK2Gmvw
->> + tar xf perf-6.15.0-rc5.tar.gz -C /tmp/tmp.wzVpK2Gmvw
->> + rm -f perf-6.15.0-rc5.tar.gz
->> + cd -
->> + make -C /tmp/tmp.wzVpK2Gmvw/perf-6.15.0-rc5/tools/perf
->> make: Entering directory '/tmp/tmp.wzVpK2Gmvw/perf-6.15.0-rc5/tools/perf'
->>    BUILD:   Doing 'make -j4' parallel build
->>
->> Auto-detecting system features:
->> ...                                   libdw: [ on  ]
->> ...                                   glibc: [ on  ]
->> ...                                  libelf: [ on  ]
->> ...                                 libnuma: [ on  ]
->> ...                  numa_num_possible_cpus: [ on  ]
->> ...                                 libperl: [ on  ]
->> ...                               libpython: [ on  ]
->> ...                               libcrypto: [ on  ]
->> ...                             libcapstone: [ on  ]
->> ...                               llvm-perf: [ on  ]
->> ...                                    zlib: [ on  ]
->> ...                                    lzma: [ on  ]
->> ...                               get_cpuid: [ OFF ]
->> ...                                     bpf: [ on  ]
->> ...                                  libaio: [ on  ]
->> ...                                 libzstd: [ on  ]
->>
->>    PERF_VERSION = 6.15.rc5.gcd17a9b1a779
->>    GEN     common-cmds.h
->>    GEN     
->> /tmp/tmp.wzVpK2Gmvw/perf-6.15.0-rc5/tools/perf/arch/arm64/include/generated/asm/sysreg-defs.h
->>    CC      jvmti/libjvmti.o
->>    GEN     perf-archive
->>    GEN     perf-iostat
->>    CC      dlfilters/dlfilter-test-api-v0.o
->>    CC      dlfilters/dlfilter-test-api-v2.o
->>    CC      dlfilters/dlfilter-show-cycles.o
->>    CC      jvmti/jvmti_agent.o
->>    CC      jvmti/libstring.o
->>    CC      jvmti/libctype.o
->>    MKDIR   /tmp/tmp.wzVpK2Gmvw/perf-6.15.0-rc5/tools/perf/libapi/fd/
->>    CC      
->> /tmp/tmp.wzVpK2Gmvw/perf-6.15.0-rc5/tools/perf/libapi/fd/array.o
->> make[4]: *** No rule to make target 
->> '/tmp/tmp.wzVpK2Gmvw/perf-6.15.0-rc5/tools/perf/libperf/arch/arm64/include/generated/uapi/asm/unistd_64.h'.  Stop.
->> make[3]: *** [Makefile:108: uapi-asm-generic] Error 2
->> make[2]: *** [Makefile.perf:973: 
->> /tmp/tmp.wzVpK2Gmvw/perf-6.15.0-rc5/tools/perf/libperf/libperf.a] Error 2
->> make[2]: *** Waiting for unfinished jobs....
->>    INSTALL 
->> /tmp/tmp.wzVpK2Gmvw/perf-6.15.0-rc5/tools/perf/libapi/include/api/cpu.h
->>    MKDIR   /tmp/tmp.wzVpK2Gmvw/perf-6.15.0-rc5/tools/perf/libapi/fs/
->>    MKDIR   /tmp/tmp.wzVpK2Gmvw/perf-6.15.0-rc5/tools/perf/libapi/fs/
->>    CC      /tmp/tmp.wzVpK2Gmvw/perf-6.15.0-rc5/tools/perf/libapi/fs/fs.o
->>    CC      
->> /tmp/tmp.wzVpK2Gmvw/perf-6.15.0-rc5/tools/perf/libapi/fs/tracing_path.o
->>    LD      jvmti/jvmti-in.o
->>    CC      /tmp/tmp.wzVpK2Gmvw/perf-6.15.0-rc5/tools/perf/libapi/cpu.o
->>    LD      
->> /tmp/tmp.wzVpK2Gmvw/perf-6.15.0-rc5/tools/perf/libapi/fd/libapi-in.o
->>    CC      /tmp/tmp.wzVpK2Gmvw/perf-6.15.0-rc5/tools/perf/libapi/debug.o
->>    INSTALL 
->> /tmp/tmp.wzVpK2Gmvw/perf-6.15.0-rc5/tools/perf/libapi/include/api/debug.h
->>    INSTALL 
->> /tmp/tmp.wzVpK2Gmvw/perf-6.15.0-rc5/tools/perf/libapi/include/api/io.h
->>    INSTALL 
->> /tmp/tmp.wzVpK2Gmvw/perf-6.15.0-rc5/tools/perf/libapi/include/api/io_dir.h
->>    MKDIR   /tmp/tmp.wzVpK2Gmvw/perf-6.15.0-rc5/tools/perf/libapi/fs/
->>    CC      
->> /tmp/tmp.wzVpK2Gmvw/perf-6.15.0-rc5/tools/perf/libapi/fs/cgroup.o
->>    CC      
->> /tmp/tmp.wzVpK2Gmvw/perf-6.15.0-rc5/tools/perf/libapi/str_error_r.o
->>    INSTALL 
->> /tmp/tmp.wzVpK2Gmvw/perf-6.15.0-rc5/tools/perf/libapi/include/api/fd/array.h
->>    INSTALL 
->> /tmp/tmp.wzVpK2Gmvw/perf-6.15.0-rc5/tools/perf/libapi/include/api/fs/fs.h
->>    INSTALL 
->> /tmp/tmp.wzVpK2Gmvw/perf-6.15.0-rc5/tools/perf/libapi/include/api/fs/tracing_path.h
->>    INSTALL libapi_headers
->>    LD      
->> /tmp/tmp.wzVpK2Gmvw/perf-6.15.0-rc5/tools/perf/libapi/fs/libapi-in.o
->>    LD      
->> /tmp/tmp.wzVpK2Gmvw/perf-6.15.0-rc5/tools/perf/libapi/libapi-in.o
->>    AR      /tmp/tmp.wzVpK2Gmvw/perf-6.15.0-rc5/tools/perf/libapi/libapi.a
->> make[1]: *** [Makefile.perf:290: sub-make] Error 2
->> make: *** [Makefile:76: all] Error 2
->> make: Leaving directory '/tmp/tmp.wzVpK2Gmvw/perf-6.15.0-rc5/tools/perf'
->> acme@raspberrypi:~/git/perf-tools-next $
->>
->> I think this is related to:
->>
->> commit bfb713ea53c746b07ae69fe97fa9b5388e4f34f9 (perf-tools)
->> Author: James Clark <james.clark@linaro.org>
->> Date:   Thu Apr 17 14:55:50 2025 +0100
->>
->>      perf tools: Fix arm64 build by generating unistd_64.h
->>
->> Can you please take a look?
->>
->> Thanks a lot,
->>
->> - Arnaldo
+>    thead,vlenb:
+>      $ref: /schemas/types.yaml#/definitions/uint32
+>      description:
+>        VLEN/8, the vector register length in bytes. This property is
+> required on
+>        thead systems where the vector register length is not identical
+> on all harts, or
+>        the vlenb CSR is not available.
 > 
-> Hmm yeah looks like it's caused by that. I'm travelling tomorrow but 
-> I'll try to take a look.
+> ```
 > 
-> Thanks
-> James
-> 
+> What I am not sure about is whether we should write 128 or 128/8=16?
+> Assuming VLEN of C910 is 128bit.
 
 
-Sent the fix, hopefully 3rd time lucky.
+Thanks, Chen
 
-I know there is the build-test target but I had let my setup bitrot so I 
-wasn't running it. I don't know if you have ever shared any of your 
-docker containers that you use for build testing?
-
-I will also try to get that target added to our CI. We're only running a 
-normal build and then "perf test" there.
-
-Thanks
-James
+On 2025/5/13 17:13, Han Gao wrote:
+>> Assuming VLEN of C910 is 128bit.
+> I refer to the value of c906 because c906 and c910/c920v1 have the same value.
+>
+> Link: https://lore.kernel.org/linux-riscv/20241113-xtheadvector-v11-3-236c22791ef9@rivosinc.com/
+> [1]
+>
+> On Tue, May 13, 2025 at 4:06 PM Chen Wang <unicorn_wang@outlook.com> wrote:
+>>
+>> On 2025/5/13 14:45, Han Gao wrote:
+>>> You can use xxd to convert it.
+>>>
+>>> cat /sys/devices/system/cpu/cpu63/of_node/thead,vlenb | xxd
+>>> 00000000: 0000 0080                                ....
+>>>
+>>> Regards,
+>>> Han
+>> I can read this after disable ERRATA_THEAD_GHOSTWRITE.
+>>
+>> I recommend adding some explanation notes in the commit message. For
+>> example, when we need to enable xtheadvector, the prerequisite is to
+>> turn off "ERRATA_THEAD_GHOSTWRITE".
+>> I found the relevant patch is
+>> https://lore.kernel.org/linux-riscv/20241113-xtheadvector-v11-0-236c22791ef9@rivosinc.com/,
+>> also hope adding this will help later people quickly understand and
+>> avoid my mistakes.
+>>
+>> One more question is about writing value of "thead,vlenb". See bindings
+>> description in Documentation/devicetree/bindings/riscv/cpus.yaml:
+>>
+>> ```
+>>
+>>     thead,vlenb:
+>>       $ref: /schemas/types.yaml#/definitions/uint32
+>>       description:
+>>         VLEN/8, the vector register length in bytes. This property is
+>> required on
+>>         thead systems where the vector register length is not identical
+>> on all harts, or
+>>         the vlenb CSR is not available.
+>>
+>> ```
+>>
+>> What I am not sure about is whether we should write 128 or 128/8=16?
+>> Assuming VLEN of C910 is 128bit.
+>>
+>> Thanks,
+>>
+>> Chen
+>>
+>>> On Tue, May 13, 2025 at 9:19 AM Chen Wang <unicorn_wang@outlook.com> wrote:
+>>>> Hi，Han,
+>>>>
+>>>> I tested with this patch and the machine can bootup. But I find when I
+>>>> run "cat /sys/devices/system/cpu/cpu63/of_node/thead,vlenb", it print
+>>>> nothing, though I expect to see 128.
+>>>>
+>>>> Do you know why?
+>>>>
+>>>> Regards,
+>>>>
+>>>> Chen
+>>>>
+>>>> On 2025/5/10 6:11, Han Gao wrote:
+>>>>> The sg2042 SoCs support xtheadvector so it can be included in the
+>>>>> devicetree. Also include vlenb for the cpu.
+>>>>>
+>>>>> Signed-off-by: Han Gao <rabenda.cn@gmail.com>
+>>>>> ---
+>>>>>     arch/riscv/boot/dts/sophgo/sg2042-cpus.dtsi | 192 +++++++++++++-------
+>>>>>     1 file changed, 128 insertions(+), 64 deletions(-)
+>>>>>
+>>>>> diff --git a/arch/riscv/boot/dts/sophgo/sg2042-cpus.dtsi b/arch/riscv/boot/dts/sophgo/sg2042-cpus.dtsi
+>>>>> index b136b6c4128c..927e0260acbd 100644
+>>>>> --- a/arch/riscv/boot/dts/sophgo/sg2042-cpus.dtsi
+>>>>> +++ b/arch/riscv/boot/dts/sophgo/sg2042-cpus.dtsi
+>>>>> @@ -260,7 +260,8 @@ cpu0: cpu@0 {
+>>>>>                         riscv,isa-base = "rv64i";
+>>>>>                         riscv,isa-extensions = "i", "m", "a", "f", "d", "c",
+>>>>>                                                "zicntr", "zicsr", "zifencei",
+>>>>> -                                            "zihpm";
+>>>>> +                                            "zihpm", "xtheadvector";
+>>>>> +                     thead,vlenb = <128>;
+>>>>>                         reg = <0>;
+>>>>>                         i-cache-block-size = <64>;
+>>>>>                         i-cache-size = <65536>;
+>>>>> @@ -285,7 +286,8 @@ cpu1: cpu@1 {
+>>>>>                         riscv,isa-base = "rv64i";
+>>>>>                         riscv,isa-extensions = "i", "m", "a", "f", "d", "c",
+>>>>>                                                "zicntr", "zicsr", "zifencei",
+>>>>> -                                            "zihpm";
+>>>>> +                                            "zihpm", "xtheadvector";
+>>>>> +                     thead,vlenb = <128>;
+>>>>>                         reg = <1>;
+>>>>>                         i-cache-block-size = <64>;
+>>>>>                         i-cache-size = <65536>;
+>>>>> @@ -310,7 +312,8 @@ cpu2: cpu@2 {
+>>>>>                         riscv,isa-base = "rv64i";
+>>>>>                         riscv,isa-extensions = "i", "m", "a", "f", "d", "c",
+>>>>>                                                "zicntr", "zicsr", "zifencei",
+>>>>> -                                            "zihpm";
+>>>>> +                                            "zihpm", "xtheadvector";
+>>>>> +                     thead,vlenb = <128>;
+>>>>>                         reg = <2>;
+>>>>>                         i-cache-block-size = <64>;
+>>>>>                         i-cache-size = <65536>;
+>>>>> @@ -335,7 +338,8 @@ cpu3: cpu@3 {
+>>>>>                         riscv,isa-base = "rv64i";
+>>>>>                         riscv,isa-extensions = "i", "m", "a", "f", "d", "c",
+>>>>>                                                "zicntr", "zicsr", "zifencei",
+>>>>> -                                            "zihpm";
+>>>>> +                                            "zihpm", "xtheadvector";
+>>>>> +                     thead,vlenb = <128>;
+>>>>>                         reg = <3>;
+>>>>>                         i-cache-block-size = <64>;
+>>>>>                         i-cache-size = <65536>;
+>>>>> @@ -360,7 +364,8 @@ cpu4: cpu@4 {
+>>>>>                         riscv,isa-base = "rv64i";
+>>>>>                         riscv,isa-extensions = "i", "m", "a", "f", "d", "c",
+>>>>>                                                "zicntr", "zicsr", "zifencei",
+>>>>> -                                            "zihpm";
+>>>>> +                                            "zihpm", "xtheadvector";
+>>>>> +                     thead,vlenb = <128>;
+>>>>>                         reg = <4>;
+>>>>>                         i-cache-block-size = <64>;
+>>>>>                         i-cache-size = <65536>;
+>>>>> @@ -385,7 +390,8 @@ cpu5: cpu@5 {
+>>>>>                         riscv,isa-base = "rv64i";
+>>>>>                         riscv,isa-extensions = "i", "m", "a", "f", "d", "c",
+>>>>>                                                "zicntr", "zicsr", "zifencei",
+>>>>> -                                            "zihpm";
+>>>>> +                                            "zihpm", "xtheadvector";
+>>>>> +                     thead,vlenb = <128>;
+>>>>>                         reg = <5>;
+>>>>>                         i-cache-block-size = <64>;
+>>>>>                         i-cache-size = <65536>;
+>>>>> @@ -410,7 +416,8 @@ cpu6: cpu@6 {
+>>>>>                         riscv,isa-base = "rv64i";
+>>>>>                         riscv,isa-extensions = "i", "m", "a", "f", "d", "c",
+>>>>>                                                "zicntr", "zicsr", "zifencei",
+>>>>> -                                            "zihpm";
+>>>>> +                                            "zihpm", "xtheadvector";
+>>>>> +                     thead,vlenb = <128>;
+>>>>>                         reg = <6>;
+>>>>>                         i-cache-block-size = <64>;
+>>>>>                         i-cache-size = <65536>;
+>>>>> @@ -435,7 +442,8 @@ cpu7: cpu@7 {
+>>>>>                         riscv,isa-base = "rv64i";
+>>>>>                         riscv,isa-extensions = "i", "m", "a", "f", "d", "c",
+>>>>>                                                "zicntr", "zicsr", "zifencei",
+>>>>> -                                            "zihpm";
+>>>>> +                                            "zihpm", "xtheadvector";
+>>>>> +                     thead,vlenb = <128>;
+>>>>>                         reg = <7>;
+>>>>>                         i-cache-block-size = <64>;
+>>>>>                         i-cache-size = <65536>;
+>>>>> @@ -460,7 +468,8 @@ cpu8: cpu@8 {
+>>>>>                         riscv,isa-base = "rv64i";
+>>>>>                         riscv,isa-extensions = "i", "m", "a", "f", "d", "c",
+>>>>>                                                "zicntr", "zicsr", "zifencei",
+>>>>> -                                            "zihpm";
+>>>>> +                                            "zihpm", "xtheadvector";
+>>>>> +                     thead,vlenb = <128>;
+>>>>>                         reg = <8>;
+>>>>>                         i-cache-block-size = <64>;
+>>>>>                         i-cache-size = <65536>;
+>>>>> @@ -485,7 +494,8 @@ cpu9: cpu@9 {
+>>>>>                         riscv,isa-base = "rv64i";
+>>>>>                         riscv,isa-extensions = "i", "m", "a", "f", "d", "c",
+>>>>>                                                "zicntr", "zicsr", "zifencei",
+>>>>> -                                            "zihpm";
+>>>>> +                                            "zihpm", "xtheadvector";
+>>>>> +                     thead,vlenb = <128>;
+>>>>>                         reg = <9>;
+>>>>>                         i-cache-block-size = <64>;
+>>>>>                         i-cache-size = <65536>;
+>>>>> @@ -510,7 +520,8 @@ cpu10: cpu@10 {
+>>>>>                         riscv,isa-base = "rv64i";
+>>>>>                         riscv,isa-extensions = "i", "m", "a", "f", "d", "c",
+>>>>>                                                "zicntr", "zicsr", "zifencei",
+>>>>> -                                            "zihpm";
+>>>>> +                                            "zihpm", "xtheadvector";
+>>>>> +                     thead,vlenb = <128>;
+>>>>>                         reg = <10>;
+>>>>>                         i-cache-block-size = <64>;
+>>>>>                         i-cache-size = <65536>;
+>>>>> @@ -535,7 +546,8 @@ cpu11: cpu@11 {
+>>>>>                         riscv,isa-base = "rv64i";
+>>>>>                         riscv,isa-extensions = "i", "m", "a", "f", "d", "c",
+>>>>>                                                "zicntr", "zicsr", "zifencei",
+>>>>> -                                            "zihpm";
+>>>>> +                                            "zihpm", "xtheadvector";
+>>>>> +                     thead,vlenb = <128>;
+>>>>>                         reg = <11>;
+>>>>>                         i-cache-block-size = <64>;
+>>>>>                         i-cache-size = <65536>;
+>>>>> @@ -560,7 +572,8 @@ cpu12: cpu@12 {
+>>>>>                         riscv,isa-base = "rv64i";
+>>>>>                         riscv,isa-extensions = "i", "m", "a", "f", "d", "c",
+>>>>>                                                "zicntr", "zicsr", "zifencei",
+>>>>> -                                            "zihpm";
+>>>>> +                                            "zihpm", "xtheadvector";
+>>>>> +                     thead,vlenb = <128>;
+>>>>>                         reg = <12>;
+>>>>>                         i-cache-block-size = <64>;
+>>>>>                         i-cache-size = <65536>;
+>>>>> @@ -585,7 +598,8 @@ cpu13: cpu@13 {
+>>>>>                         riscv,isa-base = "rv64i";
+>>>>>                         riscv,isa-extensions = "i", "m", "a", "f", "d", "c",
+>>>>>                                                "zicntr", "zicsr", "zifencei",
+>>>>> -                                            "zihpm";
+>>>>> +                                            "zihpm", "xtheadvector";
+>>>>> +                     thead,vlenb = <128>;
+>>>>>                         reg = <13>;
+>>>>>                         i-cache-block-size = <64>;
+>>>>>                         i-cache-size = <65536>;
+>>>>> @@ -610,7 +624,8 @@ cpu14: cpu@14 {
+>>>>>                         riscv,isa-base = "rv64i";
+>>>>>                         riscv,isa-extensions = "i", "m", "a", "f", "d", "c",
+>>>>>                                                "zicntr", "zicsr", "zifencei",
+>>>>> -                                            "zihpm";
+>>>>> +                                            "zihpm", "xtheadvector";
+>>>>> +                     thead,vlenb = <128>;
+>>>>>                         reg = <14>;
+>>>>>                         i-cache-block-size = <64>;
+>>>>>                         i-cache-size = <65536>;
+>>>>> @@ -635,7 +650,8 @@ cpu15: cpu@15 {
+>>>>>                         riscv,isa-base = "rv64i";
+>>>>>                         riscv,isa-extensions = "i", "m", "a", "f", "d", "c",
+>>>>>                                                "zicntr", "zicsr", "zifencei",
+>>>>> -                                            "zihpm";
+>>>>> +                                            "zihpm", "xtheadvector";
+>>>>> +                     thead,vlenb = <128>;
+>>>>>                         reg = <15>;
+>>>>>                         i-cache-block-size = <64>;
+>>>>>                         i-cache-size = <65536>;
+>>>>> @@ -660,7 +676,8 @@ cpu16: cpu@16 {
+>>>>>                         riscv,isa-base = "rv64i";
+>>>>>                         riscv,isa-extensions = "i", "m", "a", "f", "d", "c",
+>>>>>                                                "zicntr", "zicsr", "zifencei",
+>>>>> -                                            "zihpm";
+>>>>> +                                            "zihpm", "xtheadvector";
+>>>>> +                     thead,vlenb = <128>;
+>>>>>                         reg = <16>;
+>>>>>                         i-cache-block-size = <64>;
+>>>>>                         i-cache-size = <65536>;
+>>>>> @@ -685,7 +702,8 @@ cpu17: cpu@17 {
+>>>>>                         riscv,isa-base = "rv64i";
+>>>>>                         riscv,isa-extensions = "i", "m", "a", "f", "d", "c",
+>>>>>                                                "zicntr", "zicsr", "zifencei",
+>>>>> -                                            "zihpm";
+>>>>> +                                            "zihpm", "xtheadvector";
+>>>>> +                     thead,vlenb = <128>;
+>>>>>                         reg = <17>;
+>>>>>                         i-cache-block-size = <64>;
+>>>>>                         i-cache-size = <65536>;
+>>>>> @@ -710,7 +728,8 @@ cpu18: cpu@18 {
+>>>>>                         riscv,isa-base = "rv64i";
+>>>>>                         riscv,isa-extensions = "i", "m", "a", "f", "d", "c",
+>>>>>                                                "zicntr", "zicsr", "zifencei",
+>>>>> -                                            "zihpm";
+>>>>> +                                            "zihpm", "xtheadvector";
+>>>>> +                     thead,vlenb = <128>;
+>>>>>                         reg = <18>;
+>>>>>                         i-cache-block-size = <64>;
+>>>>>                         i-cache-size = <65536>;
+>>>>> @@ -735,7 +754,8 @@ cpu19: cpu@19 {
+>>>>>                         riscv,isa-base = "rv64i";
+>>>>>                         riscv,isa-extensions = "i", "m", "a", "f", "d", "c",
+>>>>>                                                "zicntr", "zicsr", "zifencei",
+>>>>> -                                            "zihpm";
+>>>>> +                                            "zihpm", "xtheadvector";
+>>>>> +                     thead,vlenb = <128>;
+>>>>>                         reg = <19>;
+>>>>>                         i-cache-block-size = <64>;
+>>>>>                         i-cache-size = <65536>;
+>>>>> @@ -760,7 +780,8 @@ cpu20: cpu@20 {
+>>>>>                         riscv,isa-base = "rv64i";
+>>>>>                         riscv,isa-extensions = "i", "m", "a", "f", "d", "c",
+>>>>>                                                "zicntr", "zicsr", "zifencei",
+>>>>> -                                            "zihpm";
+>>>>> +                                            "zihpm", "xtheadvector";
+>>>>> +                     thead,vlenb = <128>;
+>>>>>                         reg = <20>;
+>>>>>                         i-cache-block-size = <64>;
+>>>>>                         i-cache-size = <65536>;
+>>>>> @@ -785,7 +806,8 @@ cpu21: cpu@21 {
+>>>>>                         riscv,isa-base = "rv64i";
+>>>>>                         riscv,isa-extensions = "i", "m", "a", "f", "d", "c",
+>>>>>                                                "zicntr", "zicsr", "zifencei",
+>>>>> -                                            "zihpm";
+>>>>> +                                            "zihpm", "xtheadvector";
+>>>>> +                     thead,vlenb = <128>;
+>>>>>                         reg = <21>;
+>>>>>                         i-cache-block-size = <64>;
+>>>>>                         i-cache-size = <65536>;
+>>>>> @@ -810,7 +832,8 @@ cpu22: cpu@22 {
+>>>>>                         riscv,isa-base = "rv64i";
+>>>>>                         riscv,isa-extensions = "i", "m", "a", "f", "d", "c",
+>>>>>                                                "zicntr", "zicsr", "zifencei",
+>>>>> -                                            "zihpm";
+>>>>> +                                            "zihpm", "xtheadvector";
+>>>>> +                     thead,vlenb = <128>;
+>>>>>                         reg = <22>;
+>>>>>                         i-cache-block-size = <64>;
+>>>>>                         i-cache-size = <65536>;
+>>>>> @@ -835,7 +858,8 @@ cpu23: cpu@23 {
+>>>>>                         riscv,isa-base = "rv64i";
+>>>>>                         riscv,isa-extensions = "i", "m", "a", "f", "d", "c",
+>>>>>                                                "zicntr", "zicsr", "zifencei",
+>>>>> -                                            "zihpm";
+>>>>> +                                            "zihpm", "xtheadvector";
+>>>>> +                     thead,vlenb = <128>;
+>>>>>                         reg = <23>;
+>>>>>                         i-cache-block-size = <64>;
+>>>>>                         i-cache-size = <65536>;
+>>>>> @@ -860,7 +884,8 @@ cpu24: cpu@24 {
+>>>>>                         riscv,isa-base = "rv64i";
+>>>>>                         riscv,isa-extensions = "i", "m", "a", "f", "d", "c",
+>>>>>                                                "zicntr", "zicsr", "zifencei",
+>>>>> -                                            "zihpm";
+>>>>> +                                            "zihpm", "xtheadvector";
+>>>>> +                     thead,vlenb = <128>;
+>>>>>                         reg = <24>;
+>>>>>                         i-cache-block-size = <64>;
+>>>>>                         i-cache-size = <65536>;
+>>>>> @@ -885,7 +910,8 @@ cpu25: cpu@25 {
+>>>>>                         riscv,isa-base = "rv64i";
+>>>>>                         riscv,isa-extensions = "i", "m", "a", "f", "d", "c",
+>>>>>                                                "zicntr", "zicsr", "zifencei",
+>>>>> -                                            "zihpm";
+>>>>> +                                            "zihpm", "xtheadvector";
+>>>>> +                     thead,vlenb = <128>;
+>>>>>                         reg = <25>;
+>>>>>                         i-cache-block-size = <64>;
+>>>>>                         i-cache-size = <65536>;
+>>>>> @@ -910,7 +936,8 @@ cpu26: cpu@26 {
+>>>>>                         riscv,isa-base = "rv64i";
+>>>>>                         riscv,isa-extensions = "i", "m", "a", "f", "d", "c",
+>>>>>                                                "zicntr", "zicsr", "zifencei",
+>>>>> -                                            "zihpm";
+>>>>> +                                            "zihpm", "xtheadvector";
+>>>>> +                     thead,vlenb = <128>;
+>>>>>                         reg = <26>;
+>>>>>                         i-cache-block-size = <64>;
+>>>>>                         i-cache-size = <65536>;
+>>>>> @@ -935,7 +962,8 @@ cpu27: cpu@27 {
+>>>>>                         riscv,isa-base = "rv64i";
+>>>>>                         riscv,isa-extensions = "i", "m", "a", "f", "d", "c",
+>>>>>                                                "zicntr", "zicsr", "zifencei",
+>>>>> -                                            "zihpm";
+>>>>> +                                            "zihpm", "xtheadvector";
+>>>>> +                     thead,vlenb = <128>;
+>>>>>                         reg = <27>;
+>>>>>                         i-cache-block-size = <64>;
+>>>>>                         i-cache-size = <65536>;
+>>>>> @@ -960,7 +988,8 @@ cpu28: cpu@28 {
+>>>>>                         riscv,isa-base = "rv64i";
+>>>>>                         riscv,isa-extensions = "i", "m", "a", "f", "d", "c",
+>>>>>                                                "zicntr", "zicsr", "zifencei",
+>>>>> -                                            "zihpm";
+>>>>> +                                            "zihpm", "xtheadvector";
+>>>>> +                     thead,vlenb = <128>;
+>>>>>                         reg = <28>;
+>>>>>                         i-cache-block-size = <64>;
+>>>>>                         i-cache-size = <65536>;
+>>>>> @@ -985,7 +1014,8 @@ cpu29: cpu@29 {
+>>>>>                         riscv,isa-base = "rv64i";
+>>>>>                         riscv,isa-extensions = "i", "m", "a", "f", "d", "c",
+>>>>>                                                "zicntr", "zicsr", "zifencei",
+>>>>> -                                            "zihpm";
+>>>>> +                                            "zihpm", "xtheadvector";
+>>>>> +                     thead,vlenb = <128>;
+>>>>>                         reg = <29>;
+>>>>>                         i-cache-block-size = <64>;
+>>>>>                         i-cache-size = <65536>;
+>>>>> @@ -1010,7 +1040,8 @@ cpu30: cpu@30 {
+>>>>>                         riscv,isa-base = "rv64i";
+>>>>>                         riscv,isa-extensions = "i", "m", "a", "f", "d", "c",
+>>>>>                                                "zicntr", "zicsr", "zifencei",
+>>>>> -                                            "zihpm";
+>>>>> +                                            "zihpm", "xtheadvector";
+>>>>> +                     thead,vlenb = <128>;
+>>>>>                         reg = <30>;
+>>>>>                         i-cache-block-size = <64>;
+>>>>>                         i-cache-size = <65536>;
+>>>>> @@ -1035,7 +1066,8 @@ cpu31: cpu@31 {
+>>>>>                         riscv,isa-base = "rv64i";
+>>>>>                         riscv,isa-extensions = "i", "m", "a", "f", "d", "c",
+>>>>>                                                "zicntr", "zicsr", "zifencei",
+>>>>> -                                            "zihpm";
+>>>>> +                                            "zihpm", "xtheadvector";
+>>>>> +                     thead,vlenb = <128>;
+>>>>>                         reg = <31>;
+>>>>>                         i-cache-block-size = <64>;
+>>>>>                         i-cache-size = <65536>;
+>>>>> @@ -1060,7 +1092,8 @@ cpu32: cpu@32 {
+>>>>>                         riscv,isa-base = "rv64i";
+>>>>>                         riscv,isa-extensions = "i", "m", "a", "f", "d", "c",
+>>>>>                                                "zicntr", "zicsr", "zifencei",
+>>>>> -                                            "zihpm";
+>>>>> +                                            "zihpm", "xtheadvector";
+>>>>> +                     thead,vlenb = <128>;
+>>>>>                         reg = <32>;
+>>>>>                         i-cache-block-size = <64>;
+>>>>>                         i-cache-size = <65536>;
+>>>>> @@ -1085,7 +1118,8 @@ cpu33: cpu@33 {
+>>>>>                         riscv,isa-base = "rv64i";
+>>>>>                         riscv,isa-extensions = "i", "m", "a", "f", "d", "c",
+>>>>>                                                "zicntr", "zicsr", "zifencei",
+>>>>> -                                            "zihpm";
+>>>>> +                                            "zihpm", "xtheadvector";
+>>>>> +                     thead,vlenb = <128>;
+>>>>>                         reg = <33>;
+>>>>>                         i-cache-block-size = <64>;
+>>>>>                         i-cache-size = <65536>;
+>>>>> @@ -1110,7 +1144,8 @@ cpu34: cpu@34 {
+>>>>>                         riscv,isa-base = "rv64i";
+>>>>>                         riscv,isa-extensions = "i", "m", "a", "f", "d", "c",
+>>>>>                                                "zicntr", "zicsr", "zifencei",
+>>>>> -                                            "zihpm";
+>>>>> +                                            "zihpm", "xtheadvector";
+>>>>> +                     thead,vlenb = <128>;
+>>>>>                         reg = <34>;
+>>>>>                         i-cache-block-size = <64>;
+>>>>>                         i-cache-size = <65536>;
+>>>>> @@ -1135,7 +1170,8 @@ cpu35: cpu@35 {
+>>>>>                         riscv,isa-base = "rv64i";
+>>>>>                         riscv,isa-extensions = "i", "m", "a", "f", "d", "c",
+>>>>>                                                "zicntr", "zicsr", "zifencei",
+>>>>> -                                            "zihpm";
+>>>>> +                                            "zihpm", "xtheadvector";
+>>>>> +                     thead,vlenb = <128>;
+>>>>>                         reg = <35>;
+>>>>>                         i-cache-block-size = <64>;
+>>>>>                         i-cache-size = <65536>;
+>>>>> @@ -1160,7 +1196,8 @@ cpu36: cpu@36 {
+>>>>>                         riscv,isa-base = "rv64i";
+>>>>>                         riscv,isa-extensions = "i", "m", "a", "f", "d", "c",
+>>>>>                                                "zicntr", "zicsr", "zifencei",
+>>>>> -                                            "zihpm";
+>>>>> +                                            "zihpm", "xtheadvector";
+>>>>> +                     thead,vlenb = <128>;
+>>>>>                         reg = <36>;
+>>>>>                         i-cache-block-size = <64>;
+>>>>>                         i-cache-size = <65536>;
+>>>>> @@ -1185,7 +1222,8 @@ cpu37: cpu@37 {
+>>>>>                         riscv,isa-base = "rv64i";
+>>>>>                         riscv,isa-extensions = "i", "m", "a", "f", "d", "c",
+>>>>>                                                "zicntr", "zicsr", "zifencei",
+>>>>> -                                            "zihpm";
+>>>>> +                                            "zihpm", "xtheadvector";
+>>>>> +                     thead,vlenb = <128>;
+>>>>>                         reg = <37>;
+>>>>>                         i-cache-block-size = <64>;
+>>>>>                         i-cache-size = <65536>;
+>>>>> @@ -1210,7 +1248,8 @@ cpu38: cpu@38 {
+>>>>>                         riscv,isa-base = "rv64i";
+>>>>>                         riscv,isa-extensions = "i", "m", "a", "f", "d", "c",
+>>>>>                                                "zicntr", "zicsr", "zifencei",
+>>>>> -                                            "zihpm";
+>>>>> +                                            "zihpm", "xtheadvector";
+>>>>> +                     thead,vlenb = <128>;
+>>>>>                         reg = <38>;
+>>>>>                         i-cache-block-size = <64>;
+>>>>>                         i-cache-size = <65536>;
+>>>>> @@ -1235,7 +1274,8 @@ cpu39: cpu@39 {
+>>>>>                         riscv,isa-base = "rv64i";
+>>>>>                         riscv,isa-extensions = "i", "m", "a", "f", "d", "c",
+>>>>>                                                "zicntr", "zicsr", "zifencei",
+>>>>> -                                            "zihpm";
+>>>>> +                                            "zihpm", "xtheadvector";
+>>>>> +                     thead,vlenb = <128>;
+>>>>>                         reg = <39>;
+>>>>>                         i-cache-block-size = <64>;
+>>>>>                         i-cache-size = <65536>;
+>>>>> @@ -1260,7 +1300,8 @@ cpu40: cpu@40 {
+>>>>>                         riscv,isa-base = "rv64i";
+>>>>>                         riscv,isa-extensions = "i", "m", "a", "f", "d", "c",
+>>>>>                                                "zicntr", "zicsr", "zifencei",
+>>>>> -                                            "zihpm";
+>>>>> +                                            "zihpm", "xtheadvector";
+>>>>> +                     thead,vlenb = <128>;
+>>>>>                         reg = <40>;
+>>>>>                         i-cache-block-size = <64>;
+>>>>>                         i-cache-size = <65536>;
+>>>>> @@ -1285,7 +1326,8 @@ cpu41: cpu@41 {
+>>>>>                         riscv,isa-base = "rv64i";
+>>>>>                         riscv,isa-extensions = "i", "m", "a", "f", "d", "c",
+>>>>>                                                "zicntr", "zicsr", "zifencei",
+>>>>> -                                            "zihpm";
+>>>>> +                                            "zihpm", "xtheadvector";
+>>>>> +                     thead,vlenb = <128>;
+>>>>>                         reg = <41>;
+>>>>>                         i-cache-block-size = <64>;
+>>>>>                         i-cache-size = <65536>;
+>>>>> @@ -1310,7 +1352,8 @@ cpu42: cpu@42 {
+>>>>>                         riscv,isa-base = "rv64i";
+>>>>>                         riscv,isa-extensions = "i", "m", "a", "f", "d", "c",
+>>>>>                                                "zicntr", "zicsr", "zifencei",
+>>>>> -                                            "zihpm";
+>>>>> +                                            "zihpm", "xtheadvector";
+>>>>> +                     thead,vlenb = <128>;
+>>>>>                         reg = <42>;
+>>>>>                         i-cache-block-size = <64>;
+>>>>>                         i-cache-size = <65536>;
+>>>>> @@ -1335,7 +1378,8 @@ cpu43: cpu@43 {
+>>>>>                         riscv,isa-base = "rv64i";
+>>>>>                         riscv,isa-extensions = "i", "m", "a", "f", "d", "c",
+>>>>>                                                "zicntr", "zicsr", "zifencei",
+>>>>> -                                            "zihpm";
+>>>>> +                                            "zihpm", "xtheadvector";
+>>>>> +                     thead,vlenb = <128>;
+>>>>>                         reg = <43>;
+>>>>>                         i-cache-block-size = <64>;
+>>>>>                         i-cache-size = <65536>;
+>>>>> @@ -1360,7 +1404,8 @@ cpu44: cpu@44 {
+>>>>>                         riscv,isa-base = "rv64i";
+>>>>>                         riscv,isa-extensions = "i", "m", "a", "f", "d", "c",
+>>>>>                                                "zicntr", "zicsr", "zifencei",
+>>>>> -                                            "zihpm";
+>>>>> +                                            "zihpm", "xtheadvector";
+>>>>> +                     thead,vlenb = <128>;
+>>>>>                         reg = <44>;
+>>>>>                         i-cache-block-size = <64>;
+>>>>>                         i-cache-size = <65536>;
+>>>>> @@ -1385,7 +1430,8 @@ cpu45: cpu@45 {
+>>>>>                         riscv,isa-base = "rv64i";
+>>>>>                         riscv,isa-extensions = "i", "m", "a", "f", "d", "c",
+>>>>>                                                "zicntr", "zicsr", "zifencei",
+>>>>> -                                            "zihpm";
+>>>>> +                                            "zihpm", "xtheadvector";
+>>>>> +                     thead,vlenb = <128>;
+>>>>>                         reg = <45>;
+>>>>>                         i-cache-block-size = <64>;
+>>>>>                         i-cache-size = <65536>;
+>>>>> @@ -1410,7 +1456,8 @@ cpu46: cpu@46 {
+>>>>>                         riscv,isa-base = "rv64i";
+>>>>>                         riscv,isa-extensions = "i", "m", "a", "f", "d", "c",
+>>>>>                                                "zicntr", "zicsr", "zifencei",
+>>>>> -                                            "zihpm";
+>>>>> +                                            "zihpm", "xtheadvector";
+>>>>> +                     thead,vlenb = <128>;
+>>>>>                         reg = <46>;
+>>>>>                         i-cache-block-size = <64>;
+>>>>>                         i-cache-size = <65536>;
+>>>>> @@ -1435,7 +1482,8 @@ cpu47: cpu@47 {
+>>>>>                         riscv,isa-base = "rv64i";
+>>>>>                         riscv,isa-extensions = "i", "m", "a", "f", "d", "c",
+>>>>>                                                "zicntr", "zicsr", "zifencei",
+>>>>> -                                            "zihpm";
+>>>>> +                                            "zihpm", "xtheadvector";
+>>>>> +                     thead,vlenb = <128>;
+>>>>>                         reg = <47>;
+>>>>>                         i-cache-block-size = <64>;
+>>>>>                         i-cache-size = <65536>;
+>>>>> @@ -1460,7 +1508,8 @@ cpu48: cpu@48 {
+>>>>>                         riscv,isa-base = "rv64i";
+>>>>>                         riscv,isa-extensions = "i", "m", "a", "f", "d", "c",
+>>>>>                                                "zicntr", "zicsr", "zifencei",
+>>>>> -                                            "zihpm";
+>>>>> +                                            "zihpm", "xtheadvector";
+>>>>> +                     thead,vlenb = <128>;
+>>>>>                         reg = <48>;
+>>>>>                         i-cache-block-size = <64>;
+>>>>>                         i-cache-size = <65536>;
+>>>>> @@ -1485,7 +1534,8 @@ cpu49: cpu@49 {
+>>>>>                         riscv,isa-base = "rv64i";
+>>>>>                         riscv,isa-extensions = "i", "m", "a", "f", "d", "c",
+>>>>>                                                "zicntr", "zicsr", "zifencei",
+>>>>> -                                            "zihpm";
+>>>>> +                                            "zihpm", "xtheadvector";
+>>>>> +                     thead,vlenb = <128>;
+>>>>>                         reg = <49>;
+>>>>>                         i-cache-block-size = <64>;
+>>>>>                         i-cache-size = <65536>;
+>>>>> @@ -1510,7 +1560,8 @@ cpu50: cpu@50 {
+>>>>>                         riscv,isa-base = "rv64i";
+>>>>>                         riscv,isa-extensions = "i", "m", "a", "f", "d", "c",
+>>>>>                                                "zicntr", "zicsr", "zifencei",
+>>>>> -                                            "zihpm";
+>>>>> +                                            "zihpm", "xtheadvector";
+>>>>> +                     thead,vlenb = <128>;
+>>>>>                         reg = <50>;
+>>>>>                         i-cache-block-size = <64>;
+>>>>>                         i-cache-size = <65536>;
+>>>>> @@ -1535,7 +1586,8 @@ cpu51: cpu@51 {
+>>>>>                         riscv,isa-base = "rv64i";
+>>>>>                         riscv,isa-extensions = "i", "m", "a", "f", "d", "c",
+>>>>>                                                "zicntr", "zicsr", "zifencei",
+>>>>> -                                            "zihpm";
+>>>>> +                                            "zihpm", "xtheadvector";
+>>>>> +                     thead,vlenb = <128>;
+>>>>>                         reg = <51>;
+>>>>>                         i-cache-block-size = <64>;
+>>>>>                         i-cache-size = <65536>;
+>>>>> @@ -1560,7 +1612,8 @@ cpu52: cpu@52 {
+>>>>>                         riscv,isa-base = "rv64i";
+>>>>>                         riscv,isa-extensions = "i", "m", "a", "f", "d", "c",
+>>>>>                                                "zicntr", "zicsr", "zifencei",
+>>>>> -                                            "zihpm";
+>>>>> +                                            "zihpm", "xtheadvector";
+>>>>> +                     thead,vlenb = <128>;
+>>>>>                         reg = <52>;
+>>>>>                         i-cache-block-size = <64>;
+>>>>>                         i-cache-size = <65536>;
+>>>>> @@ -1585,7 +1638,8 @@ cpu53: cpu@53 {
+>>>>>                         riscv,isa-base = "rv64i";
+>>>>>                         riscv,isa-extensions = "i", "m", "a", "f", "d", "c",
+>>>>>                                                "zicntr", "zicsr", "zifencei",
+>>>>> -                                            "zihpm";
+>>>>> +                                            "zihpm", "xtheadvector";
+>>>>> +                     thead,vlenb = <128>;
+>>>>>                         reg = <53>;
+>>>>>                         i-cache-block-size = <64>;
+>>>>>                         i-cache-size = <65536>;
+>>>>> @@ -1610,7 +1664,8 @@ cpu54: cpu@54 {
+>>>>>                         riscv,isa-base = "rv64i";
+>>>>>                         riscv,isa-extensions = "i", "m", "a", "f", "d", "c",
+>>>>>                                                "zicntr", "zicsr", "zifencei",
+>>>>> -                                            "zihpm";
+>>>>> +                                            "zihpm", "xtheadvector";
+>>>>> +                     thead,vlenb = <128>;
+>>>>>                         reg = <54>;
+>>>>>                         i-cache-block-size = <64>;
+>>>>>                         i-cache-size = <65536>;
+>>>>> @@ -1635,7 +1690,8 @@ cpu55: cpu@55 {
+>>>>>                         riscv,isa-base = "rv64i";
+>>>>>                         riscv,isa-extensions = "i", "m", "a", "f", "d", "c",
+>>>>>                                                "zicntr", "zicsr", "zifencei",
+>>>>> -                                            "zihpm";
+>>>>> +                                            "zihpm", "xtheadvector";
+>>>>> +                     thead,vlenb = <128>;
+>>>>>                         reg = <55>;
+>>>>>                         i-cache-block-size = <64>;
+>>>>>                         i-cache-size = <65536>;
+>>>>> @@ -1660,7 +1716,8 @@ cpu56: cpu@56 {
+>>>>>                         riscv,isa-base = "rv64i";
+>>>>>                         riscv,isa-extensions = "i", "m", "a", "f", "d", "c",
+>>>>>                                                "zicntr", "zicsr", "zifencei",
+>>>>> -                                            "zihpm";
+>>>>> +                                            "zihpm", "xtheadvector";
+>>>>> +                     thead,vlenb = <128>;
+>>>>>                         reg = <56>;
+>>>>>                         i-cache-block-size = <64>;
+>>>>>                         i-cache-size = <65536>;
+>>>>> @@ -1685,7 +1742,8 @@ cpu57: cpu@57 {
+>>>>>                         riscv,isa-base = "rv64i";
+>>>>>                         riscv,isa-extensions = "i", "m", "a", "f", "d", "c",
+>>>>>                                                "zicntr", "zicsr", "zifencei",
+>>>>> -                                            "zihpm";
+>>>>> +                                            "zihpm", "xtheadvector";
+>>>>> +                     thead,vlenb = <128>;
+>>>>>                         reg = <57>;
+>>>>>                         i-cache-block-size = <64>;
+>>>>>                         i-cache-size = <65536>;
+>>>>> @@ -1710,7 +1768,8 @@ cpu58: cpu@58 {
+>>>>>                         riscv,isa-base = "rv64i";
+>>>>>                         riscv,isa-extensions = "i", "m", "a", "f", "d", "c",
+>>>>>                                                "zicntr", "zicsr", "zifencei",
+>>>>> -                                            "zihpm";
+>>>>> +                                            "zihpm", "xtheadvector";
+>>>>> +                     thead,vlenb = <128>;
+>>>>>                         reg = <58>;
+>>>>>                         i-cache-block-size = <64>;
+>>>>>                         i-cache-size = <65536>;
+>>>>> @@ -1735,7 +1794,8 @@ cpu59: cpu@59 {
+>>>>>                         riscv,isa-base = "rv64i";
+>>>>>                         riscv,isa-extensions = "i", "m", "a", "f", "d", "c",
+>>>>>                                                "zicntr", "zicsr", "zifencei",
+>>>>> -                                            "zihpm";
+>>>>> +                                            "zihpm", "xtheadvector";
+>>>>> +                     thead,vlenb = <128>;
+>>>>>                         reg = <59>;
+>>>>>                         i-cache-block-size = <64>;
+>>>>>                         i-cache-size = <65536>;
+>>>>> @@ -1760,7 +1820,8 @@ cpu60: cpu@60 {
+>>>>>                         riscv,isa-base = "rv64i";
+>>>>>                         riscv,isa-extensions = "i", "m", "a", "f", "d", "c",
+>>>>>                                                "zicntr", "zicsr", "zifencei",
+>>>>> -                                            "zihpm";
+>>>>> +                                            "zihpm", "xtheadvector";
+>>>>> +                     thead,vlenb = <128>;
+>>>>>                         reg = <60>;
+>>>>>                         i-cache-block-size = <64>;
+>>>>>                         i-cache-size = <65536>;
+>>>>> @@ -1785,7 +1846,8 @@ cpu61: cpu@61 {
+>>>>>                         riscv,isa-base = "rv64i";
+>>>>>                         riscv,isa-extensions = "i", "m", "a", "f", "d", "c",
+>>>>>                                                "zicntr", "zicsr", "zifencei",
+>>>>> -                                            "zihpm";
+>>>>> +                                            "zihpm", "xtheadvector";
+>>>>> +                     thead,vlenb = <128>;
+>>>>>                         reg = <61>;
+>>>>>                         i-cache-block-size = <64>;
+>>>>>                         i-cache-size = <65536>;
+>>>>> @@ -1810,7 +1872,8 @@ cpu62: cpu@62 {
+>>>>>                         riscv,isa-base = "rv64i";
+>>>>>                         riscv,isa-extensions = "i", "m", "a", "f", "d", "c",
+>>>>>                                                "zicntr", "zicsr", "zifencei",
+>>>>> -                                            "zihpm";
+>>>>> +                                            "zihpm", "xtheadvector";
+>>>>> +                     thead,vlenb = <128>;
+>>>>>                         reg = <62>;
+>>>>>                         i-cache-block-size = <64>;
+>>>>>                         i-cache-size = <65536>;
+>>>>> @@ -1835,7 +1898,8 @@ cpu63: cpu@63 {
+>>>>>                         riscv,isa-base = "rv64i";
+>>>>>                         riscv,isa-extensions = "i", "m", "a", "f", "d", "c",
+>>>>>                                                "zicntr", "zicsr", "zifencei",
+>>>>> -                                            "zihpm";
+>>>>> +                                            "zihpm", "xtheadvector";
+>>>>> +                     thead,vlenb = <128>;
+>>>>>                         reg = <63>;
+>>>>>                         i-cache-block-size = <64>;
+>>>>>                         i-cache-size = <65536>;
 
