@@ -1,133 +1,97 @@
-Return-Path: <linux-kernel+bounces-646187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-646189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA4DBAB5915
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 17:50:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AAD6AB591D
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 17:53:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F58819E2403
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 15:50:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ABD2719E48F6
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 15:53:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 140AF2BE7BF;
-	Tue, 13 May 2025 15:50:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5D3E2BE114;
+	Tue, 13 May 2025 15:52:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uQDD5Qza"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAA3C1ACE0C;
-	Tue, 13 May 2025 15:50:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F1BA1C8632;
+	Tue, 13 May 2025 15:52:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747151408; cv=none; b=Qvun8MlrsRpsk5sYpzHW90MHRACdO0+2btiY9w/9uza/hcy3FTtcJgerh8NACqOZeqqH+pL9NDNV4YeOhnCXRCyoWpJ8XI2Vl/LdnPfuntrg0gjFwaVvOscLRmrpv3NBbZTD7Bqx8S0wZp4aenaQnIFi8Kgrb8xYjeKapXmP+zA=
+	t=1747151576; cv=none; b=Hsb10Rr1P7sy1QJjPYeYGWrOVyBC4knc6kk+Qu+X20kTG8E4VycdxLEyU9FYMdrlaPqsiUayR6U6C0yVxLxkflyb/fsPKlO6Lfitp8H8wdj+riUNfWfrZ4ReBmBFXxLJyraOPMD66KvX4ZzXtsVpexaIwRHzoVMu5c987k78+Fo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747151408; c=relaxed/simple;
-	bh=zKwFqYWMP6cuugdV9Ke6/xcQfhHjHZP9xRGohNCx+wE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=k1W9gUoOokEq6rHsqvT1IXahZN9otgvdtujH4M9AX8bMZlf/v1UrnwgOKjVCItw7kV7ZOiSeZzSi6xQvnElQAevXweyOCKz18+1Ccyc4mild+9g+zYEjXw6sAi5cdMZ07gOdSsDo1KV2rGE6HTDxCJ5wYHfS4JSL1pwj42htOaA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 847D3C4CEE4;
-	Tue, 13 May 2025 15:50:07 +0000 (UTC)
-Date: Tue, 13 May 2025 11:50:32 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
- <linux-trace-kernel@vger.kernel.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Tasos Sahanidis <tasos@tasossah.com>
-Subject: [PATCH] ring-buffer: Fix persistent buffer when commit page is the
- reader page
-Message-ID: <20250513115032.3e0b97f7@gandalf.local.home>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1747151576; c=relaxed/simple;
+	bh=v2B2sJq6WJ3s/RGL6l6vpiYq55R11ku6FNcj8XhDOYs=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=uG66reE/LeEj86dlnwXVJ/p0xvSG/QabdA4jG0VhqDBdcyWj7qRuQoPQkk2N4CQS9Ugb2sOx+mI6aQh7d96HHYjkx8ThUl8WjZUBz+lvleaV4gZYDVFN7Ujvj5g0VTq87NYVHazaULg8ecPpIJuIF/LpK1WhUS9H0/f8u9YEmfk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uQDD5Qza; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B64A6C4CEE4;
+	Tue, 13 May 2025 15:52:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747151573;
+	bh=v2B2sJq6WJ3s/RGL6l6vpiYq55R11ku6FNcj8XhDOYs=;
+	h=From:Date:Subject:To:Cc:From;
+	b=uQDD5QzaGwY38/mORsML5hTD7ymUJRSi82cObZr1bNoKvEZxE64MKQ6PLjprwLvqG
+	 W519cOT031KL/YijYCQjQVSP7FtG4rAD4Gi/FDQMYNLfWHBRvkLJjGVJlL5eDn3TjS
+	 tVPocVDgIq177HUzzQjBeGkCMEAWjRVoZAABqxCE7YDxSaIW2+bNp5Defsxfu1nnW3
+	 a5WQzdePTeTEp5S1X5r6NYnLiXDr5Okc/geq9hM871xkUhr6Hw0BOaBfhSLLFqEMTB
+	 6UyBTxagLXo/J+A8tT+k2siXHBjweU7NV2aqhOkKMNbXX+p0Nt3Tg47e5ts4CuoGTO
+	 RyvG4hcVrc1MQ==
+From: Bjorn Andersson <andersson@kernel.org>
+Date: Tue, 13 May 2025 16:52:46 +0100
+Subject: [PATCH] Revert "remoteproc: core: Clear table_sz when
+ rproc_shutdown"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20250513-revert-rproc-table-sz-v1-1-a8c6b5d6f8a7@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAM1qI2gC/x2M0QpAQBQFf0X32S2WpfyKPKx1cEvoriTy7zaPU
+ zPzUIAKAjXJQ4pTgmxrhDxNyM9uncAyRCaTGZvZvOAoQQ/WXTfPh+sXcLjZFvCjKWtTOVBsd8U
+ o1/9tu/f9ALoYlfxnAAAA
+X-Change-ID: 20250513-revert-rproc-table-sz-53ecf24726ae
+To: Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Bjorn Andersson <andersson@kernel.org>
+X-Mailer: b4 0.14.2
 
-\From: Steven Rostedt <rostedt@goodmis.org>
+Clearing the table_sz on cleanup seemed reasonable, but further
+discussions concluded that this merely working around the issue
+and that the fix is incomplete.
 
-The ring buffer is made up of sub buffers (sometimes called pages as they
-are by default PAGE_SIZE). It has the following "pages":
+As such, revert commit efdde3d73ab2 ("remoteproc: core: Clear table_sz
+when rproc_shutdown") to avoid carrying a partial fix.
 
-  "tail page" - this is the page that the next write will write to
-  "head page" - this is the page that the reader will swap the reader page with.
-  "reader page" - This belongs to the reader, where it will swap the head
-                  page from the ring buffer so that the reader does not
-                  race with the writer.
-
-The writer may end up on the "reader page" if the ring buffer hasn't
-written more than one page, where the "tail page" and the "head page" are
-the same.
-
-The persistent ring buffer has meta data that points to where these pages
-exist so on reboot it can re-create the pointers to the cpu_buffer
-descriptor. But when the commit page is on the reader page, the logic is
-incorrect.
-
-The check to see if the commit page is on the reader page checked if the
-head page was the reader page, which would never happen, as the head page
-is always in the ring buffer. The correct check would be to test if the
-commit page is on the reader page. If that's the case, then it can exit
-out early as the commit page is only on the reader page when there's only
-one page of data in the buffer. There's no reason to iterate the ring
-buffer pages to find the "commit page" as it is already found.
-
-To trigger this bug:
-
-  # echo 1 > /sys/kernel/tracing/instances/boot_mapped/events/syscalls/sys_enter_fchownat/enable
-  # touch /tmp/x
-  # chown sshd /tmp/x
-  # reboot
-
-On boot up, the dmesg will have:
- Ring buffer meta [0] is from previous boot!
- Ring buffer meta [1] is from previous boot!
- Ring buffer meta [2] is from previous boot!
- Ring buffer meta [3] is from previous boot!
- Ring buffer meta [4] commit page not found
- Ring buffer meta [5] is from previous boot!
- Ring buffer meta [6] is from previous boot!
- Ring buffer meta [7] is from previous boot!
-
-Where the buffer on CPU 4 had a "commit page not found" error and that
-buffer is cleared and reset causing the output to be empty and the data lost.
-
-When it works correctly, it has:
-
-  # cat /sys/kernel/tracing/instances/boot_mapped/trace_pipe
-        <...>-1137    [004] .....   998.205323: sys_enter_fchownat: __syscall_nr=0x104 (260) dfd=0xffffff9c (4294967196) filename=(0xffffc90000a0002c) user=0x3e8 (1000) group=0xffffffff (4294967295) flag=0x0 (0
-
-Cc: stable@vger.kernel.org
-Fixes: 5f3b6e839f3ce ("ring-buffer: Validate boot range memory events")
-Reported-by: Tasos Sahanidis <tasos@tasossah.com>
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+Signed-off-by: Bjorn Andersson <andersson@kernel.org>
 ---
- kernel/trace/ring_buffer.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ drivers/remoteproc/remoteproc_core.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
-index 1ca482955dae..6859008ca34d 100644
---- a/kernel/trace/ring_buffer.c
-+++ b/kernel/trace/ring_buffer.c
-@@ -1887,10 +1887,12 @@ static void rb_meta_validate_events(struct ring_buffer_per_cpu *cpu_buffer)
- 
- 	head_page = cpu_buffer->head_page;
- 
--	/* If both the head and commit are on the reader_page then we are done. */
--	if (head_page == cpu_buffer->reader_page &&
--	    head_page == cpu_buffer->commit_page)
-+	/* If the commit_buffer is the reader page, update the commit page */
-+	if (meta->commit_buffer == (unsigned long)cpu_buffer->reader_page->page) {
-+		cpu_buffer->commit_page = cpu_buffer->reader_page;
-+		/* Nothing more to do, the only page is the reader page */
- 		goto done;
-+	}
- 
- 	/* Iterate until finding the commit page */
- 	for (i = 0; i < meta->nr_subbufs + 1; i++, rb_inc_page(&head_page)) {
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index 48d146e1fa560397c11eeb8f824ae0fb844a022b..81b2ccf988e852ac79cee375c7e3f118c2a4b41a 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -2025,7 +2025,6 @@ int rproc_shutdown(struct rproc *rproc)
+ 	kfree(rproc->cached_table);
+ 	rproc->cached_table = NULL;
+ 	rproc->table_ptr = NULL;
+-	rproc->table_sz = 0;
+ out:
+ 	mutex_unlock(&rproc->lock);
+ 	return ret;
+
+---
+base-commit: aa94665adc28f3fdc3de2979ac1e98bae961d6ca
+change-id: 20250513-revert-rproc-table-sz-53ecf24726ae
+
+Best regards,
 -- 
-2.47.2
+Bjorn Andersson <andersson@kernel.org>
 
 
