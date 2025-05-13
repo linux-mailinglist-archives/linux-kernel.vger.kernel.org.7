@@ -1,78 +1,74 @@
-Return-Path: <linux-kernel+bounces-645910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-645914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F6A1AB5562
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 14:57:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74F05AB556B
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 14:59:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F3193A499B
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 12:56:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5491E162B44
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 12:59:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9688A28DF30;
-	Tue, 13 May 2025 12:57:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63FBB28E5E3;
+	Tue, 13 May 2025 12:58:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zarp+dSM"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="HJa03EcJ"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EF3128D8DA;
-	Tue, 13 May 2025 12:57:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C2D928DB72;
+	Tue, 13 May 2025 12:58:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747141026; cv=none; b=Fmzd3e8nqwLHnDjepLkOvHiNGZFlkQY+Rm/zEAzbkm1Aol5LzfNTcYY3Wp0dC+WvpsHYXpl0aO7As5wYpm3kNIVrQWBn4fvF+6DxFvY19LQY6RNi3RPeYyvJZIL2+yzl7DuOwb33qTJkPCyhTzQPWQ0jRcqSFQf+2tlKDHQ4nHc=
+	t=1747141125; cv=none; b=rqC6FbUU9RjDelPwBCmZsdi34tuo8dDX26z4aZm4OBtPFpxtO6eQHnqH3L9uCphkKUkyRqO/K9He9dBB98obGy3jPjpSCcMJZbrL+Dq7PMgggWtjyZzV11NWcX4p17O2GF1mLJXd7aEQhzOwNdLAtBtsYjP24GugyqORTvTzRmg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747141026; c=relaxed/simple;
-	bh=Z/Q3OWGG4uUror9F6q9eZkrcruvRoD7ROPnVAldNGNk=;
+	s=arc-20240116; t=1747141125; c=relaxed/simple;
+	bh=2xIaivkbZl7DdZBmxs97N/RKaoCOHaz1NNoE7jjdeNc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VI1+fwBAjhaQ41aGjx4nay6sHEG4piAAK3idynBVkmBJpF/klpYsIeu/78kXrGlWUJCyTBBw5zW6EFRSXzMkkW9IisQVL1EAP5WZJjvDmg/76CWuIoT2S9+ULRvP1ocLf0EsowYadBC14RbWaA1bcEYYNkY6OLDI/CwrfWuUeJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Zarp+dSM; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-43cfe63c592so58043325e9.2;
-        Tue, 13 May 2025 05:57:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747141022; x=1747745822; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=03yBcZd1C5Kf3vXNHOpqaX6GbesxUIZrlQDHf/MdZ7A=;
-        b=Zarp+dSMpYDswqd58AO9degVEQQvUkfWt0t8ymcAEcnlVviqvDps8vHUaCteJDeByv
-         95ygLKB1QrmmWM6v25ZvizrKmFE4RCab7YVDQ/IDLgFJkvriWGc3ORDKh2BMtlwiGr2s
-         9F0aZjR0UiPk5lYc083q/HWdRqXqI7AV2gjmS87fws+mCj0SZS5uNkU/A7jlSoukWYJ7
-         Gpbbp/IRxJ1vkhxUkp3hXEb+XITKtGbTQNRzSXg9tpGJbhrPIfqRBuKvcXDUn2viyWaE
-         tflkTkXWre5iJ1YLXdv0dM8vbWLLHMXFS6UlpMOZ3KbtUWR5ZerkwIC645VD8KCjhFOb
-         FeIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747141022; x=1747745822;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=03yBcZd1C5Kf3vXNHOpqaX6GbesxUIZrlQDHf/MdZ7A=;
-        b=V1snGHEB7/FKvu6D5+8lmRU3ejioH15hJtRQ7MKiOqGY5ibK5mnKZZht7ZdiprrcX4
-         FM56INQ3CHNBetdlmX3bPlLURpauafkmKsr+NpOpn2r/LaSDt2Q0lQnO2Pajnm+Nf+N4
-         dUiNPddS9zrDHSLyNqyRxRMCFOGg/uBVQrr7rJWN3W8jBceMcFlQtgnOwC6HFLghSBDL
-         1pCeOgQ01VQLRbY/wBtW8ucu3Wukc6WGpZ8NLsh9Jf90aNDYeTiqAtYSKlHhq8eZVCnF
-         pfS51YEW/CbV3LqJfeLHP4gJ/f4j8mGfb/zdWk7pqfMEQkwEqgCjfV5uOdWIJd1C7Gr5
-         zgNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUG/KR/RDhvI/MLbf9tWWINnUDWFRVSgZpIPgRS0MwH7FUdseU86Ald344IcUbs1k+g0pcOpr8RNK6q5WQ=@vger.kernel.org, AJvYcCUZBAb5pp2/pqm9nPeocd+CQAW4ThVGtotaMzD4GLf/rBobX0gOuFMN8F9rFK8NWIfr28ZtliLU@vger.kernel.org
-X-Gm-Message-State: AOJu0YxWDMUMdpjrY/t+YkFBqMzwvK0JDk3sffMRJh3WhgChkoiyB7hE
-	PWSYbn/CB8FvAOf5Iy8aTHD/CPMDEM2Tu3p2nJRHv2H/rnza606M
-X-Gm-Gg: ASbGncuRj4ts7+NLOxcFqktZ4FrkDwwcyBK0lWJkpfaNMOFo+C0Y0haHRxV44OWO9Lr
-	Y6hG6BtBzEYBasB8G1IygFrxuAwM2hvGWxMq1MHe9LmVG7QM1LEM+1XA56hRFeH16UqKwAWUVs/
-	WzBIkWgaNe51nUqCCGcT2Nzhs9YleJFgpxPzTLF+lV7teub6O3cRMGDdwzrlWIDC6FGjj+9vEqo
-	5u/1WYz2HNrRAZJO6lvM6i6qvg4XjG2d1Nzdao/sjt8ujDEkhoqEKPQbprk0PHL4RzettNMD9Sm
-	PRm4VKcgVxRYsoL9y6yC3Qzxmdgl0TdoBWf68Goe/nplbMQ1R1GGPG0T5YihTGh0KGkyYBVj
-X-Google-Smtp-Source: AGHT+IHZL9X1s2X9oNq/syLNUtLSYZBACUE3MU9l1yQ7kT7pQZhyTfvikRP2Kz0THW0u7ZtrcCNjbw==
-X-Received: by 2002:a05:600c:4454:b0:43d:83a:417d with SMTP id 5b1f17b1804b1-442d6d44a31mr173268525e9.12.1747141022101;
-        Tue, 13 May 2025 05:57:02 -0700 (PDT)
-Received: from [192.168.8.100] ([148.252.146.237])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a1f57ddde0sm16465597f8f.14.2025.05.13.05.57.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 13 May 2025 05:57:01 -0700 (PDT)
-Message-ID: <d08b9abf-9b42-47ae-9ec7-36b59931ffb5@gmail.com>
-Date: Tue, 13 May 2025 13:58:10 +0100
+	 In-Reply-To:Content-Type; b=qVp1YIL1jwUt21rf7/Jy1WvrH0+s7Z7s6Ku5uIfBV3j8nLs0JZNA7G1aALAMKG5zu61825BghByJFk3mbhjF41LYE+XScuFKxBJZhCSxRasZ6t61gRLOlbSkMT1eJKdC9QV1qbbDTiWOr26PiiIYKdI37Cnlca36vhfeXjFA5ow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=HJa03EcJ; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54D7edHg019138;
+	Tue, 13 May 2025 12:58:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=tp3MLZ
+	KG7W7RFaoIcRBdhZwY4PyTxg2MSIoSNLmN+6A=; b=HJa03EcJYRaNtIVFYivMYr
+	komzX8EKc63Ha9FbmMMb5wDjlMjrELWY8WEWFC+1JXbexmwzu9uGS4eYgkCKfor+
+	MKfbguq5IiMxw270kSknPt36ztpf+KGduMJ0araV8iixWKKTYi3Zc5vGgW2z807f
+	14MtIu7b1JSbRZXus136GD2KxxvQlpBVo3bos920p8qE6MJ6SnKE5GQDes/eJZK0
+	++I/qpOaeaBus/eRqmP1qQP6LBpOTaMB3+B85VcrClSL4O2x6KORAXYKhUkXc2XI
+	ifFz7+rnV+BlpOvKkCn9ghJu1JAeGHcTKMm1cFVpsHWYMrQT/S2+laMOSifAXiWQ
+	==
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46kpp7c7qm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 13 May 2025 12:58:39 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 54DBG55W003781;
+	Tue, 13 May 2025 12:58:38 GMT
+Received: from smtprelay04.dal12v.mail.ibm.com ([172.16.1.6])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 46jkbkjwha-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 13 May 2025 12:58:38 +0000
+Received: from smtpav02.dal12v.mail.ibm.com (smtpav02.dal12v.mail.ibm.com [10.241.53.101])
+	by smtprelay04.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 54DCwbx528312126
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 13 May 2025 12:58:38 GMT
+Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id CFB655805A;
+	Tue, 13 May 2025 12:58:37 +0000 (GMT)
+Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id B472858060;
+	Tue, 13 May 2025 12:58:36 +0000 (GMT)
+Received: from [9.155.201.30] (unknown [9.155.201.30])
+	by smtpav02.dal12v.mail.ibm.com (Postfix) with ESMTPS;
+	Tue, 13 May 2025 12:58:36 +0000 (GMT)
+Message-ID: <3bd33a06-f8e2-4901-ada1-e970d18afcd4@linux.ibm.com>
+Date: Tue, 13 May 2025 14:58:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,94 +76,84 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC 01/19] netmem: rename struct net_iov to struct netmem_desc
-To: Byungchul Park <byungchul@sk.com>, Mina Almasry <almasrymina@google.com>
-Cc: willy@infradead.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org, kernel_team@skhynix.com,
- kuba@kernel.org, ilias.apalodimas@linaro.org, harry.yoo@oracle.com,
- hawk@kernel.org, akpm@linux-foundation.org, ast@kernel.org,
- daniel@iogearbox.net, davem@davemloft.net, john.fastabend@gmail.com,
- andrew+netdev@lunn.ch, edumazet@google.com, pabeni@redhat.com,
- vishal.moola@gmail.com
-References: <20250509115126.63190-1-byungchul@sk.com>
- <20250509115126.63190-2-byungchul@sk.com>
- <ea4f2f83-e9e4-4512-b4be-af91b3d6b050@gmail.com>
- <20250512132939.GF45370@system.software.com>
- <CAHS8izPoNw9qbtAZgsNxAAPYqu7czdRYSZAXVZbJo9pP-htfDg@mail.gmail.com>
- <20250513020007.GB577@system.software.com>
+Subject: Re: [PATCHv7 10/24] zram: add zlib compression backend support
+To: Sergey Senozhatsky <senozhatsky@chromium.org>
+Cc: Minchan Kim <minchan@kernel.org>, linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ilya Leoshkevich <iii@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>, linux-s390@vger.kernel.org
+References: <20240902105656.1383858-1-senozhatsky@chromium.org>
+ <20240902105656.1383858-11-senozhatsky@chromium.org>
+ <6046d139-2a46-4824-bdfc-687750c1ee5b@linux.ibm.com>
+ <gekqwhcpombpm2u3b4xl7zladuyzbxybeq5wcwt47k7tsgo4bh@rfrxaeqwzypi>
+ <df805c0e-bf25-4cf6-9601-aac594fa0f45@linux.ibm.com>
+ <uaxb7sbvrg3eqn2sp66sg77urjzr7jwi2m2bwigvj5n5cta2xu@qsks2da3zrha>
 Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20250513020007.GB577@system.software.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+From: Zaslonko Mikhail <zaslonko@linux.ibm.com>
+In-Reply-To: <uaxb7sbvrg3eqn2sp66sg77urjzr7jwi2m2bwigvj5n5cta2xu@qsks2da3zrha>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: OID9ya9tM6jNP4UBa0tR3CjUMnw5YYIm
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTEzMDEyMCBTYWx0ZWRfXwGe/IBl2fgcA LUPgZKVmYN1EYSp06KyPYbiP2liaz3/zY5INM/bhLx2YB/gR2WUFwlzVhc8DNAd054HkNrdZmAm GyDTww2ZDW2t4dRGfr0LE/CQZ9mRNvwBf0KPyLUlX+0OYGQhmc2wOzZV9jy9S/TnM1zfml4imh8
+ KidxaUGHzUEtMxl3PmnjaM8nuugB1w3fbFcgFklbT3IVCWMHE/boSnU42Nuuw8FrygyYetTCQ5K OTKIrM5hqeUy7BIk5gbyjDRcGeXsYdap5UQxacPEpQYwDDQNTm+gIEd1bahS+nKKxCbT5htPDR3 DZ+imPRTlLbKbqxYXkmPXXTlJPgGE3TGU3hOtcmik2punG7aQWgnPxS9RwYQhbWRtkWlSHpwwT5
+ KjS3d57a+eF6uTfB6GRyCzCBhyAdflr6w9lJiIh0ltT99ZI0mmT5dZLR+Tj5SUVEaYosdz9B
+X-Authority-Analysis: v=2.4 cv=ZY8dNtVA c=1 sm=1 tr=0 ts=682341ff cx=c_pps a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=pkiKMm3ovRzUbvQedLsA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-GUID: OID9ya9tM6jNP4UBa0tR3CjUMnw5YYIm
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-13_01,2025-05-09_01,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ suspectscore=0 mlxlogscore=999 bulkscore=0 adultscore=0 malwarescore=0
+ priorityscore=1501 phishscore=0 clxscore=1015 mlxscore=0 spamscore=0
+ impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
+ definitions=main-2505130120
 
-On 5/13/25 03:00, Byungchul Park wrote:
-> On Mon, May 12, 2025 at 12:14:13PM -0700, Mina Almasry wrote:
->> On Mon, May 12, 2025 at 6:29 AM Byungchul Park <byungchul@sk.com> wrote:
->>>
->>> On Mon, May 12, 2025 at 02:11:13PM +0100, Pavel Begunkov wrote:
->>>> On 5/9/25 12:51, Byungchul Park wrote:
->>>>> To simplify struct page, the page pool members of struct page should be
->>>>> moved to other, allowing these members to be removed from struct page.
->>>>>
->>>>> Reuse struct net_iov for also system memory, that already mirrored the
->>>>> page pool members.
->>>>>
->>>>> Signed-off-by: Byungchul Park <byungchul@sk.com>
->>>>> ---
->>>>>    include/linux/skbuff.h                  |  4 +--
->>>>>    include/net/netmem.h                    | 20 ++++++------
->>>>>    include/net/page_pool/memory_provider.h |  6 ++--
->>>>>    io_uring/zcrx.c                         | 42 ++++++++++++-------------
->>>>
->>>> You're unnecessarily complicating it for yourself. It'll certainly
->>>> conflict with changes in the io_uring tree, and hence it can't
->>>> be taken normally through the net tree.
->>>>
->>>> Why are you renaming it in the first place? If there are good
->>>
->>> It's because the struct should be used for not only io vetor things but
->>> also system memory.  Current network code uses struct page as system
->>> memory descriptor but struct page fields for page pool will be gone.
->>>
->>> So I had to reuse struct net_iov and I thought renaming it made more
->>> sense.  It'd be welcome if you have better idea.
->>>
->>
->> As I said in another thread, struct page should not embed struct
+Hello,
+
+On 13.05.2025 07:41, Sergey Senozhatsky wrote:
+> Sorry for the delay,
 > 
-> I don't understand here.  Can you explain more?  Do you mean do not use
-> place holder?
+> On (25/05/09 17:18), Zaslonko Mikhail wrote:
+>>> When zram transitioned from Crypto API (scomp) to custom compression
+>>> API I picked the CryptoAPI deflate DEFLATE_DEF_WINBITS value:
+>>>
+>>> crypto/deflate.c: DEFLATE_DEF_WINBITS	11
+>>>
+>>> which is then passed to zlib_deflateInit2() and zlib_inflateInit2().
+>>>
+>>>> I tried to build the kernel with DEFLATE_DEF_WINBITS set to 15 and
+>>>> verified that s390 hardware deflate acceleration works for zram devices
+>>>> with a deflate compression.
+>>>
+>>> If we define it as 15 on non-s390 machines, will there be any
+>>> consequences?  Increased memory usage?  By how much?
+>>
+>> On s390, setting windowBits to 15 would lead to zlib workarea size
+>> increased by 120K (0x24dc8 -> 0x42dc8) per compression stream,
+>> i.e. per online CPU. 
+>> On non-s390 machine, that impact will be about 115K per stream. 
+>> Increasing window size should improve deflate compression,
+>> although the compression speed might be affected. Couldn't find any
+>> relevant zlib benchmarks though.
+>>
+>> Not sure what other consequences might there be for zram. Do you see any?
+> 
+> The increased per-CPU memory usage is the only thing I can think of.
+> I guess for zram we could turn this into a run-time parameter, but for
+> Crypto API compile-time is the only option, I guess.
 
-I assume this:
+With 'run-time parameter' you mean adding 'windowBits' as another deflate compression
+algorithm parameter for zram? Guess we could do this, using default value of 15 then.
 
-struct netmem_desc {
-	...
-};
+> 
+> Can you send a patch series (for zram and Crypto API) that sets
+> windowBits to 15?
 
-struct net_iov {
-	netmem_desc desc;
-};
+I can do it for zram. Not sure if Crypto should be changed as well. Or is it
+supposed to have the same compression defaults as zram?
 
-struct page {
-	union {
-		// eventually will go away
-		netmem_desc desc;
-		...	
-	};
-};
-
-
-And to avoid conflicts with io_uring, you can send something like the
-following to the net tree, and finish the io_uring conversion later.
-
-struct net_iov {
-	struct_group_tagged(netmem_desc, desc,
-		...
-	);
-};
-
--- 
-Pavel Begunkov
-
+Thanks,
+Mikhail
 
