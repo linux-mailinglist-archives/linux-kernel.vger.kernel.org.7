@@ -1,195 +1,154 @@
-Return-Path: <linux-kernel+bounces-645455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-645457-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09C63AB4DB1
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 10:09:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A244AB4DB9
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 10:11:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA565170EE4
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 08:09:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7E3427A8058
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 08:10:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B6D11F5846;
-	Tue, 13 May 2025 08:09:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=cherry.de header.i=@cherry.de header.b="dAj9zqz9"
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2055.outbound.protection.outlook.com [40.107.21.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CC461F5852;
+	Tue, 13 May 2025 08:11:11 +0000 (UTC)
+Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D267A1F473A;
-	Tue, 13 May 2025 08:09:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.55
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747123743; cv=fail; b=oS5wt35qCpgxxhMRkJGbvVXHQsd2fiGVTPWAo+0S6fd+cxL8shpB95J9WGnN4nyc5qzcln8QXfHK/edyaoQqR12j9QtTaBCWbqkbtO3BoYgygteCxvBDhdC/MP7cKXPzQ3VFM0JMLHpdonixmb/5xC+J7n3ZCAhfJnPRRJEP5HI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747123743; c=relaxed/simple;
-	bh=0EE2lJ25n6pK8dKBrsB6nrQwngahHJQmKK+GwvHMKhM=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=pKDqYT5Uo5KxDjQiQtcFQHa9Pw8k6XbKwmzKxvpTSEWcgAInuJ3dySqoFdDhFzGzKD4M5KzHIKnoqCMM5XGuZ1zRxmQrChEGbyavMLlEU7TVZjBQ8hJSBzoYH1Fg5qww7s8LiZXUAi897Hr7c+UeZEgXls6UW9ohrafJDomLEac=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cherry.de; spf=pass smtp.mailfrom=cherry.de; dkim=pass (1024-bit key) header.d=cherry.de header.i=@cherry.de header.b=dAj9zqz9; arc=fail smtp.client-ip=40.107.21.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cherry.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cherry.de
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=IyGcRXyUUeV7UDOn7VYV1E28SaaGeHOgVguCE4PO351Jm3Mm9Rv3T2KM6hhJIPHZc2ecN/XwdCzB22OITq27cXOVN0hPn2+FYZeS/w/HMCQ9Rcj4hYaSx/foxtaWzyapenyGTc1wEjN0GvJ5lpUCYduzUwyyYOjN4gtlBczDX/RwDyQuy2174KrkpSsLeMQFBkHdYIRcvOR4cLVDp2R+y3RotVYN7Fen6QXZW54P4qrkqEnRFagcPkTnTfsTviVwT5PQIM0WTMFowVWBcQ4ack0JnvE+n8ckClzkZwuw+Ovo2bLECVNLGXkY8lDJTQ+c4LRxWDbfvXdFVHeKWGqrRg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=wp5SzzqgjVhxP+eg2p6gn/m2RSBZ/3oOaPHq4ckOsTk=;
- b=A4DQr0JfnE3/0g3bMwgiqOq5BvUU/o+ujwhNy0vlnXLM7kfiFAI8HmxHyULH4GraTEGHhIPqAHJgHV34QDnbJx9qj5N7CcVUcVkVPBFEmhhunvnXfg0BAXTKHWTyZHfj2cZPk7mCU6ZI4LKfOuT7IK2TAdDZp+T/AkxISEQJEwcuq/6lS4OkrigGlKzm2DwUhYkGA65oMfwbpaVV/XkuaiSgt+nIzmJf3OIXU0vKJ73VJT8swf+LGLJVf9iMFQce1Fp+uxiZA0TusSFkkZKVZ5hPnMDzjJtAEHgr+RGv/w9lqVhfQvIN45Tl+pGPS8nWCyrPRDHgETTj6Wa6YeM22A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=cherry.de; dmarc=pass action=none header.from=cherry.de;
- dkim=pass header.d=cherry.de; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cherry.de;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wp5SzzqgjVhxP+eg2p6gn/m2RSBZ/3oOaPHq4ckOsTk=;
- b=dAj9zqz9q7EXuDvZBnjl+lrpNwGh9ZIVF5biBkxemBsUh/9FhX2QcFs/RHFFE7Ya6Uqt0t/5CPAdKuE1N6euaH+slVIFFf5K0vtDpWHH9W5fb9qkvoabSBim3RnC6zeZdxwYyET4sILAmbNr53kXWkUEVmkkS92owoBoaLB3B6Y=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=cherry.de;
-Received: from AS8PR04MB8897.eurprd04.prod.outlook.com (2603:10a6:20b:42c::20)
- by PA2PR04MB10409.eurprd04.prod.outlook.com (2603:10a6:102:415::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8722.29; Tue, 13 May
- 2025 08:08:56 +0000
-Received: from AS8PR04MB8897.eurprd04.prod.outlook.com
- ([fe80::35f6:bc7d:633:369a]) by AS8PR04MB8897.eurprd04.prod.outlook.com
- ([fe80::35f6:bc7d:633:369a%4]) with mapi id 15.20.8722.027; Tue, 13 May 2025
- 08:08:56 +0000
-Message-ID: <bed267de-2e62-439d-9e2c-5629e2d7d187@cherry.de>
-Date: Tue, 13 May 2025 10:08:54 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/6] dt-bindings: arm: rockchip: add PX30-PP1516 boards
- from Theobroma Systems
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
- Heiko Stuebner <heiko.stuebner@cherry.de>
-References: <20250508150955.1897702-1-heiko@sntech.de>
- <20250508150955.1897702-6-heiko@sntech.de>
-Content-Language: en-US
-From: Quentin Schulz <quentin.schulz@cherry.de>
-In-Reply-To: <20250508150955.1897702-6-heiko@sntech.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: WA0P291CA0021.POLP291.PROD.OUTLOOK.COM
- (2603:10a6:1d0:1::25) To AS8PR04MB8897.eurprd04.prod.outlook.com
- (2603:10a6:20b:42c::20)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CC7CA93D;
+	Tue, 13 May 2025 08:11:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747123870; cv=none; b=W3vrwUMcCvo3v04eD2BLOp8xC5e1mNPm2oGqWUZk8YkW7/fSCTtWLMZrqWv/tjAYUH7CTJvsenSEUah6SOX+9GxzRrqEwjHHgCEAles+xUn4hwWO75cRjrOelAvoXczDJs4DOHjF6PG0VnE8EEiFGZGd58/ziVhv4j/Sejo3dhQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747123870; c=relaxed/simple;
+	bh=MM1LpBhM1yC3INK9Qp+qRlKTzWYK6iqm4Jjmr9Ur1LM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IEoVd5kbYI5/ooph/BQG6HWjvMza8hKhU2iPv2zHdKpFIWo7kQgf1p9qe+RdcxkkIolfzEQ7U1PDpqoYdXvLh7sTEdWeaeMPDUks82TxPxASuRea4gZDd24XHSUhefTTlkXJGfKMI07W5+8/WOsGmrAa61kXmOxpDzC8h7h72mk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-7c9376c4dbaso600663485a.0;
+        Tue, 13 May 2025 01:11:08 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747123867; x=1747728667;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5rCtnbZWFEyClftfNf+97GB/L/vNpKwxy5TFS7AwepY=;
+        b=VGbb9e2GYHripd9ylCCZSKlpsQXEngFvwO9SkrdBofjuWu3kErZP9R51WXdgYsIKhV
+         Dg24Cs5d3/Ud4+XsOcy6cvsOLwVlz8qotY63r6hJNeR5A6Jc6FF5a9OZtXeKKVvwQqw+
+         U75lLgFM1taoOyHt7/KqF4Q4yOZ365zkx/ynwuhQHOCMvY1QCL2Vup2xfFeu4/h7/DNX
+         5TtGImsFzLC3fuoU76pzYh9PUthynOXKOuWoM0v4EICnfb7LHFYn0kigxo/qLWg1VZiB
+         nZQdC/HR8fJImpIjV3PZ8q4dkX+MyidfGsHynbEL4rRV33rkx30kGsIzSPGcGFvpufX/
+         Ar6g==
+X-Forwarded-Encrypted: i=1; AJvYcCU7jVpf6cpQQ1O/+RYcLAhqSyFSzH+qkCfqaOm+kKGXNVoOeNQXHT+e5bUek+3ucro9rv/ZkLJsgxzL@vger.kernel.org, AJvYcCUNO51Rg2NKgbQ2pzPKu8DXQof/TCRTj+TZJlXMf9vS4/VwWxtSaN4bb4rjhL6ckfOwN5Z3g0MfVExk4kww@vger.kernel.org, AJvYcCXYUXKwpwbnBO6K3FiMq2/VSdXGy6mDV4liJZRRR8BLINj1TKHKKH+vaTC0S7vqmaSOkynrnBlkw1m8@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGFy5r5c+JVJBaPJv7D/6mR+Z56IIUoFhKaKuCsnCOqGTuBRQe
+	Qyw5+I7yvhcd+S3lCNUYCKRuMOFKdVHoytrXBGUnj68xhjw6ufZnwfeKDaLJ
+X-Gm-Gg: ASbGnctGVpmJ65ZSHRYD2RDjIJdsBpkIJRfTJujJazKe7p98lbbyciqEXGG5Z82WuID
+	SCDYG0sIX0Xlr7mjmlhNt/kiFdw5b7dij8oncGIIiqEPd6pp2ZT+u3Xeeh//vwz1ClfTNCN4QIU
+	3y560MMiAD/a9uKlu9JXsCY36hf4d6x+Aui49qHd8y0pM0g+Gpbxc7PHi7x7jhDFgH51npx31r1
+	oAglwh4U39gd12B32EHhfbQWvIMTA0os9t9Y9Ao9plZpcE98k0X6i7bDXDJYbkkLzCRqVlp+dcg
+	9rVQIdnklKKk383pUBE18i9S7XJEHQrjim+V76+aXaKNCTefAAW3iYkp7Hq8+c9NblYiu0dITLn
+	49zpev0iSJgrHPg==
+X-Google-Smtp-Source: AGHT+IHlXqUOWm0WgsbW/F9Ow1+qrr9RECUNiEfQy23xXhLmkGr5MkdPZjJB/+/S/sbA8kB+qoE8VA==
+X-Received: by 2002:a05:6122:1d02:b0:52a:654e:bd98 with SMTP id 71dfb90a1353d-52c8892c3c5mr2119092e0c.0.1747123856327;
+        Tue, 13 May 2025 01:10:56 -0700 (PDT)
+Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com. [209.85.222.42])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-52c65600d9csm4984631e0c.33.2025.05.13.01.10.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 13 May 2025 01:10:55 -0700 (PDT)
+Received: by mail-ua1-f42.google.com with SMTP id a1e0cc1a2514c-86d6fd581f4so4143545241.1;
+        Tue, 13 May 2025 01:10:55 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU/FbpUm7D9FanKDXa+bp+kcUxhTBKWT7DvSi/uBuSPHjDaljjwJFUauWJo870B1CQitsZY5KNy8Dq27s/N@vger.kernel.org, AJvYcCWIeGIhmUcPpDsnVTwFHiFoJO3+T2w9VynY4iQK8y4863iY0C8NIOzRMc55d3Q1sCiRC5ktdJsqCfH1@vger.kernel.org, AJvYcCX5g5lfbLtWbS9u2gYmOGxUitIQMrOkvT/iladJvRfsRY18zCy/kx8btvH6LyY/3kK31FUUjAYMnxEW@vger.kernel.org
+X-Received: by 2002:a05:6122:3207:b0:523:6eef:af62 with SMTP id
+ 71dfb90a1353d-52c88afe8b8mr1778704e0c.4.1747123855105; Tue, 13 May 2025
+ 01:10:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS8PR04MB8897:EE_|PA2PR04MB10409:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5ccdeeb6-ca12-4427-72ef-08dd91f56842
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?cHFGZ2dyYXRMWi82bWxtdVRNTitrN0lTSlI3Z1p3eHYwN3I3aWhxN1MveFFy?=
- =?utf-8?B?bXVFUWpYUHhnZGxPL0E0bVBIY0w1dDA4ajZwZzVUY0lvcFB4UWVSWU1SSHRS?=
- =?utf-8?B?WU53TUpPR0Q2cmpUV0ZQaDBldjdJbG9jcjJsWitmeVpJR0Q5Z1BlUTdMRXR0?=
- =?utf-8?B?QUZuYWJjakVqdTZaNFhDanU2R1JjSmI5RE90MXAyZWFHeGw4eS9RYTYrZkpE?=
- =?utf-8?B?blRYMTRlYzNSd1A0U1dhRWZDV3RIdmFLdHh0UHc4am5xVzZzZHA4eXBkRUE1?=
- =?utf-8?B?b0ZNT3pkQ0ZoOUNsMHhSblY3QVJhbC84NnJvbEhQMWRKY0dpT1ljRWhqSDVq?=
- =?utf-8?B?UTB1bG10cHRnRDQ5R0lYQzhhOWtkTVZUZjJXa3hKZHRSUFBLTTJndVhqYkZD?=
- =?utf-8?B?NU1GQVVnYmRrZmhWMnEwcDlNcUNXMjh4ZlA2dnc3dDQzQWRRaTgxZFpNWkRG?=
- =?utf-8?B?R1dMZnJRVi9DUU9SRnVHSlJWVlRHWGNWR2M1SkdPdnpqbkt1cGpud29EUUpC?=
- =?utf-8?B?Y0dZTEFlK2llRUJaOENEVDdHZVkxd2E0RGtOOVJ1UytQZ08vbjFsaVVLTk5w?=
- =?utf-8?B?QWZ4cDB2YlBvbVJJTkl1Wkg3ZmI5cEM2SDlhb1FDMCtzZ3A5aXdYdjFNMUZo?=
- =?utf-8?B?L2JBREV6VUZDMnpQZ1dseFFLekJNdkNVTUFGbjNxZ1MyOVR6aDhDMmppZitF?=
- =?utf-8?B?WFk0TXlScWVhOWNLS1lILzBQekFlVjhya1A0OThOa1FhWGtrMnprTktHYm1J?=
- =?utf-8?B?L0pKemN1UFd1SXBnSUlHTGhhSzdXQmlvUGxZell1bGdvblRUSTZNdmg3NmxN?=
- =?utf-8?B?bW9RaFFPRURabS8zd0QvTUl5Y2pkUzV2VWxjVVIzZ2ZUNEZvc3NDaWxPTmI3?=
- =?utf-8?B?SXhUQlVtUC8wSjhndDNxNVJCQXZBS25RVzAwM1F0a0Qvb0F4YzhBN0lNTUl1?=
- =?utf-8?B?NVVjSFppaVlYSzlIWkhpRlpOOS85bFBsWk9UOERScFhiR1VoM0JJaTdCOFhp?=
- =?utf-8?B?aFNqS0FiQjJWOHNFREpPWFd1dWc4dDJMOEVzK2xQUVpTM0MrTm1RTEFISC9H?=
- =?utf-8?B?SGdVYlZXV3ZHckNJSExLejhMd1pzNXpHNHFJY1hCR1V0aDNONDRCUWZycWVB?=
- =?utf-8?B?aTJuSHcxcGp5VHNqQWg5dVJsK09iOGorcXJmVXViMEpZeS9ZdTJmbUZoeWk5?=
- =?utf-8?B?Nm5zaXFMWTM4dXFwT0M4YytjbDF5cUFSZTVvbVVqVHRINU1MUmd6cE5wRUF1?=
- =?utf-8?B?YkIvS29hK2JGaVFmZWRjc3NPd1EvaDR1ZDZCVmdwNXZxV0NVeDIxVkVwcUpj?=
- =?utf-8?B?b1cwenMveUczUUQ1L1BaYkgybzhRRlBsTW5tMVpZTFJWMmhLQ21NVTNVSzVn?=
- =?utf-8?B?Z29LWlZlTVIxVGNNSTVGNk92ekZ0czY5QjRadWRqR1BFYXY5ME5WY05hKzkw?=
- =?utf-8?B?cmkxd1hQQzVncmVmK3RVVjRUL1c3TnBTbWhiSmVQUW4vUCtUQlQrN3NnSjBV?=
- =?utf-8?B?Um9oWkJ5dXUyNklQY3k4NjE5MTlEWkc5aERDREoyZXFXei8xOUhyYnl6SThZ?=
- =?utf-8?B?QXR4aU5YeXRoaDYzSGdNaS9oWHg2OUNQZXdtdjkzM2V1YXZIQnpJeTY3T3o4?=
- =?utf-8?B?d1dGK0Fqb25yRlp5MDNTakEvcFB4MVJZbkpabDRZNDFQN0xjZXVPdjhoWWNB?=
- =?utf-8?B?NUdXSThweWREaSt0bmQ5dFFXaWxwOXRZbi9qQjdCbzNIRFZjbGlWckpYV29R?=
- =?utf-8?B?aVBWbjFTREZpcHpRZHdRdXEranV4MDF0SndNb3F3dHdhVUlkaVdsckh3OGNp?=
- =?utf-8?B?cFgvUVNmMyt6bUVrcVJIWXBGSEVmdXlYaG1sRHhubS9FNktaeFVvNU5TbTk3?=
- =?utf-8?B?Y24wN1RRRTZmcDUxUGJyeFY4ei9OSlFlUzFaQU5Zb3YzMnZOYzcxTTMxVUZC?=
- =?utf-8?Q?2EqvpOyc/xQ=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB8897.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?MTM1NUw5TzJQQldRbzlQaU5NdFJxVHhUVTYxTTJHSjNVTnMyR0hCc2hXVVlJ?=
- =?utf-8?B?N24welVUdzJBNkhxUVU1c25QWnliUmRwc2RuNXVvbmgwa0JKRkhlakFtU1N2?=
- =?utf-8?B?em80VFVtSzJNN0N6MUFWSHo0L2VJL3dTV2J4Tm9qWVdiVmtQS3BBOE53bE95?=
- =?utf-8?B?MnBxVy90a0luYXdXb3JtQVNjOU9BLzVjcGJUSlNjZnZQaE15eVVhcmpKZk9t?=
- =?utf-8?B?ZDM0dE14ZFNUS2hyTGtpZkdTSGhSOGo3TzByaFdoQWpEU1R5enlRMFJMUmpp?=
- =?utf-8?B?MDlkNXJHcStCZlFZNHpnS0JHVlowb0VDblZURzFJQzVnT2dyYzBuc3Q2SEI2?=
- =?utf-8?B?L3dHcjM1YnhwR3FqakNFMFBDTkJkQlRHS1FDVXBqaEdod0RWaWhOT3lXTVZq?=
- =?utf-8?B?VkV4YUNrWUpjV3A1Y3lZdk0xbW41RGZOWkEyVS90VXA4TDc0MnpwZHFyRUlw?=
- =?utf-8?B?ZWttN3p3REdrU1Z0N1dtL3dlVFd4c0lqRjUrQjVQUGJiVmdSRERUVEp1UkJD?=
- =?utf-8?B?OWRLSVM4OXZCZE13bS94QStlSzFHOU9LVDdYY2FLUDFBZmtCUW83Q0wzT3d1?=
- =?utf-8?B?R0dCNU95T2tJME1jTTJ2Z2ViK3k1bE5hU2pJcFNURGtYcWhBOWxyczZOcUFV?=
- =?utf-8?B?b2NocUhydUxFWU5xTDFTcEhmUkI1VkJ5SFNxWDR2VkxLTUhsR21Zdk9sQmdo?=
- =?utf-8?B?dXVSaXhPY3NMbVcydWVVakpwUHJYNjdJOFg4aDY3b0hyd0dCWm1XZTMxRHYr?=
- =?utf-8?B?OXUrSnpuaHVEanlMTnBsQy8zZzhDWGl2TkF5dTl6VjdHLzI1Qml4cTdEQW1p?=
- =?utf-8?B?R0gxcHI2SVNVMUFuak1wMUo4MFYyandjMSt6TllhZkFDcTlxTFVkUWZPVkJQ?=
- =?utf-8?B?YXd1MmhTMzRjYmt1czd3Q2dlelJlS2ljdDEzTWFqcENYbldPOGo2eHFjZ3d4?=
- =?utf-8?B?RW5JcXQwRytlYkVuU0NEbkNGWFA2em9idXZDNExtcVFuTFFGM0xuRDhYOFE1?=
- =?utf-8?B?eExBaEcvMVJDQktuSVdiWHZBaG1lZnFiK3dtU0UwcWwvTGxJZ0lYdkpCM25N?=
- =?utf-8?B?MmZoNDdCQS8yUE81N1lIWVZWYmI1WkdXcnBoaUx2dzRuMWxBYVR5RkJhbUlK?=
- =?utf-8?B?RDliMzVRUXBsWFZ4dkhad21uZ2F1QVp6Z1ZBdU9hZHRDRGV1WXlmaXpERE5a?=
- =?utf-8?B?Z3l4RDdBdEt6c29rLzFWVzBBWVZHbzMvRXFtR2p2UkhhUEhSaWVzWVRBS1Zi?=
- =?utf-8?B?WDg4R21PSmpob1kwMENLUURQQ3RMVDNsa2wrbTlpLzkxMWhhc3Nsc2Q5VCtY?=
- =?utf-8?B?ZTdBTWNyME5Ca2dxb21MOTJVclVhOERWV1QrZEUwcUJyU0srR1ZJMjEvTnlx?=
- =?utf-8?B?YjZxbVJzYkkyWjhaVkxTdHhsZWpYQTFaL05xNHA1c1cyVkM4MkF4RjhoZTVG?=
- =?utf-8?B?Y0JFM3pYQldUYmNNdWk2UHhaZGdTWFFPaTZlbDFjNGZjakJ3Uk4wNGFOdlhP?=
- =?utf-8?B?UUxHWk5xQ1hpUmFIb2JlUVdWRHB4b0VDODNnbzVzb0ZGcFpGK3RGWGdGa1JB?=
- =?utf-8?B?OXZkZ2xQejk3Wml4VnVBSG5TQWtkT1pwN0h5VnFyam5vbFhZL0tDU0czR29s?=
- =?utf-8?B?R1k5Z3ZZRW1JZXRKdUxLa3h2WXJLMHVLamtJY211OW9Edm44THRHS3ErT1hV?=
- =?utf-8?B?WWU1VXREd211R0hTY0ZGQUZHQVBkVlBsdzMyVjFrZ2Q4a3pSZndzcHVONm1K?=
- =?utf-8?B?blRKeHgwWU56N1lCamJqM2h6TTNkQy9WcENpelBRMFAvc0dJY25zc1NpN1pG?=
- =?utf-8?B?NlhKNzBGNnp6UGtlQXl0SWRqR2hhV2dDcy9CbGhLRTRkOC9XVEowdzNqeFVr?=
- =?utf-8?B?Uk90aXBqbkFvNS96TFpWNDQ4QzloZVczblJNZ2N6bU9RamxGQVVjRW12aG1q?=
- =?utf-8?B?ZEYwbkZ5WGZXV2trdmxrRkgwcTI1ZjJVZWtwZ29JWGhab2xaL0E4QTBhc0h2?=
- =?utf-8?B?SCtISUM3MGRtZjEvL0dRTDRpMU1yTjJuMGVJU1dwL3BKUmZEYk44bVZXejJX?=
- =?utf-8?B?R1MrNXNoOFI2Qm5PRXpob05ESHpDTWxhQmNTNStmQ3o4a1BncC9YTXpkUzVJ?=
- =?utf-8?B?dWtLeDliUzZPRFdXZDIrV3dKU0NrY1hIQmd0VXR0V1kzaFN2d0RKbWhDTzF2?=
- =?utf-8?B?R2c9PQ==?=
-X-OriginatorOrg: cherry.de
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5ccdeeb6-ca12-4427-72ef-08dd91f56842
-X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8897.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 May 2025 08:08:56.0916
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 5e0e1b52-21b5-4e7b-83bb-514ec460677e
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: mnxbkD2bzbGUIEikU25lFKPU+JJ0cZmBwxo/OUlo0zmeM2jJnO8ul3awtDsNL3xdZt+tlg+waI6SYRmNeFlnerusK5ESSq7pXgKdC3exV1k=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA2PR04MB10409
+References: <aCGPuKtfprIvwADa@smile.fi.intel.com> <20250512173800.6767-1-trannamatk@gmail.com>
+In-Reply-To: <20250512173800.6767-1-trannamatk@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 13 May 2025 10:10:43 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWiTLbazxfe0joujONfLTQXT73WE=sq5F-4dwOq463b4g@mail.gmail.com>
+X-Gm-Features: AX0GCFvxUbYICZnIC49acrtXEhbKJaNQ34KnJ9GMWMjpL7F8L3vH5lZ8JuyNYOU
+Message-ID: <CAMuHMdWiTLbazxfe0joujONfLTQXT73WE=sq5F-4dwOq463b4g@mail.gmail.com>
+Subject: Re: [PATCH v8 0/5] auxdisplay: add support for TI LP5812 4x3 Matrix
+ LED driver
+To: Nam Tran <trannamatk@gmail.com>
+Cc: andy@kernel.org, lee@kernel.org, pavel@ucw.cz, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, christophe.jaillet@wanadoo.fr, 
+	corbet@lwn.net, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-doc@vger.kernel.org, florian.fainelli@broadcom.com, 
+	bcm-kernel-feedback-list@broadcom.com, linux-rpi-kernel@lists.infradead.org, 
+	linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Heiko,
+Hi Nam,
 
-On 5/8/25 5:09 PM, Heiko Stuebner wrote:
-> From: Heiko Stuebner <heiko.stuebner@cherry.de>
-> 
-> PP1516 are Touchscreen devices built around the PX30 SoC and companion
-> devices to PX30-Cobra, again with multiple display options.
-> 
-> The devices feature an EMMC, OTG port and a 720x1280 display with a
-> touchscreen and camera
-> 
-> Signed-off-by: Heiko Stuebner <heiko.stuebner@cherry.de>
+On Mon, 12 May 2025 at 19:38, Nam Tran <trannamatk@gmail.com> wrote:
+> On Mon, 12 May 2025 Andy Shevchenko wrote:
+> > On Sat, May 10, 2025 at 02:48:02PM +0700, Nam Tran wrote:
+> > > On Thu, 8 May 2025 Lee Jones wrote:
+> > > > On Thu, 08 May 2025, Andy Shevchenko wrote:
+> > > > > On Thu, May 8, 2025 at 5:27=E2=80=AFPM Nam Tran <trannamatk@gmail=
+.com> wrote:
+> > > > > > On Thu, 8 May 2025 Lee Jones wrote:
+> > > > > > > On Thu, 08 May 2025, Andy Shevchenko wrote:
+>
+> ...
+>
+> > > I think setting PWM also same as brightness_set API. However, there a=
+re
+> > > many PWM config for a LED and it is one of other config to make auton=
+omous mode work.
+> > > Therefore, standard led API can use in some use cases only.
+> > >
+> > > Please see the link below for a better visualization of how to config=
+ure the LP5812.
+> > > https://dev.ti.com/gallery/view/LED/LP581x/ver/0.10.0/
+> >
+> > To me it sounds like you should start from the small steps, i.e. do not
+> > implement everything at once. And starting point of the 4 RGB LEDs soun=
+ds
+> > the best approach to me. Then, if needed, you can always move on with
+> > fancy features of this hardware on top of the existing code.
+>
+> Thanks for the suggestion.
+> I understand your point and agree that starting with standard LED APIs is=
+ the preferred approach.
 
-Reviewed-by: Quentin Schulz <quentin.schulz@cherry.de>
+i.e. a drivers/leds/ driver.
 
-Thanks!
-Quentin
+> However, the LP5812 hardware offers more advanced features, and I=E2=80=
+=99d like to support end users all
+> features as shown in the link: https://dev.ti.com/gallery/view/LED/LP581x=
+/ver/0.10.0/.
+> It is easy for end user to investigate and use driver.
+>
+> If I want to keep the current driver interface to meet this expectation, =
+would it be acceptable
+> to move it to the misc subsystem to better support the hardware?
+
+I guess you can add custom sysfs controls for the advanced features
+on top of the drivers/leds/ driver?
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
