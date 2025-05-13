@@ -1,135 +1,202 @@
-Return-Path: <linux-kernel+bounces-646568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-646570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D79BFAB5DE7
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 22:41:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83DE4AB5DE6
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 22:41:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A43974C0FA2
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 20:40:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93CB18C08EB
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 20:40:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E57B2C2FCD;
-	Tue, 13 May 2025 20:38:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55C611F8BC7;
+	Tue, 13 May 2025 20:38:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OUyPI5xp"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QZi0cM4J"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A88452C17B4;
-	Tue, 13 May 2025 20:38:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7F371F4608;
+	Tue, 13 May 2025 20:38:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747168685; cv=none; b=ncSjJl2maBQILEfIgy46H3ssL2DYx7z7uOy6tk/04u6K1Py6PUB1BDWmeupOr9Biaowal7IGeYnkxcutXvRZoWlAciuTSsyGV0+hAxsLJhHLuV45FEL2rO9zLfzyeGKST6F8LaA2IJn0QsZjl9a/Ub/8olwC3/Q3HHs0PbsOwGg=
+	t=1747168722; cv=none; b=mqvx18XY9sSMTHaCfTuqDk4iWyvRnwDuQ2dw7Kmeb22Dfy0029Tzl6TekpcQtDueoUXp+BKrLI+Q3Hiw25syMByJhQ4w9myy6UfQldiSEcl9/cx3qVsmWrtZnCUx4wpytInaofBGwyvXfD+pcoRuGzWfTqYQK1G+oZ+8rtm17/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747168685; c=relaxed/simple;
-	bh=8Lfg9L/fBQ9McgK/dl0rQJBpGwpkcPv9aMzRa9sr5kc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=V1Ms2vF3NuxUfnT+F71N+eP2nPO/6mrcgG2FEzHIzt82CTgaQVR07WTrdmCGCkpIM+KSNJOzXBdHKAXkrQZ2004xOMK0tgk2t0sGKJYOkKLLWKzx1Uuia3HyKKEMh8cpDfd3tDJ+5CSMWHzwfDR2ThWDjSseL6DSn1zb/SlguCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OUyPI5xp; arc=none smtp.client-ip=192.198.163.14
+	s=arc-20240116; t=1747168722; c=relaxed/simple;
+	bh=ZnpLTXMGgaL0ezSeVq7ySrTFe18ZLCGWZe1umzT/glY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Lnn0qnapn434E82ijScuNRz2UmMOqK9OtbCfQYqlSxc8CdxMF/1HTQdyT1FMMAyYYa0VwcfW8ll3C/8RwsnCPVmXZ0VaK6Fantg2RlzaSTevqN0EyL3UkOzwGYLH9BRHAcjfsbfWDD3RzLMTmJIspAUhg57nKNg7nbfV+pPn56Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QZi0cM4J; arc=none smtp.client-ip=192.198.163.19
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1747168684; x=1778704684;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=8Lfg9L/fBQ9McgK/dl0rQJBpGwpkcPv9aMzRa9sr5kc=;
-  b=OUyPI5xpaQO5qddYja9TgsmtJW3APQXRZkxkIWms6nvh9nOP5rKhEjjF
-   pEo4T3Z1xfKddAHHy8HRKCoQqkcmS++FZrzAjSUaTTsFMSH12RnyTgmXO
-   zVtTsNKemEyPirWrA7L1kVSTxCMJSKaVndi9g7JT1/xe7uK0+f3mCMN/j
-   07KFe6hwYtarL0j9HjlCF/djcGWWLwg+l5RM+VCcGs67Z19/6LLrYIje1
-   998EMvPUpJpeA0bUy77IvCRfXZol22BCqPt7ZeR6vpVWhDH7K7g/98Efm
-   68T99nyXJ2bHwFPMgusmRYK0P3FnGf+6Cod+m0zczZOtHWm6fVOD7pQPU
-   g==;
-X-CSE-ConnectionGUID: sHn1M0CkT5SwsCqbiKocig==
-X-CSE-MsgGUID: bt2PDjDSTwGYKOTEdWgW0A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11432"; a="49160498"
+  t=1747168721; x=1778704721;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=ZnpLTXMGgaL0ezSeVq7ySrTFe18ZLCGWZe1umzT/glY=;
+  b=QZi0cM4J6Q0mnQi+lRzGcyrBn7z5kF1SPyaIjwvATvexcTX9g9Lt6SgH
+   4G7mgzR/eewLx40qHvACrfdb9wrT5hYzn/X8TD3BbAiMGZUY+roY1jhd0
+   wuR8+6OZi0WVuMyAZ+uRlrVgogD2xnx2viIjiHoIZ+G8w3ZG/AwP6pu8H
+   O/Nn5PpWi3s25RZ7q1ZwKP2Qw+ghiZmBFrWNy2Hx23PEjZ239FcVuxTxg
+   VVuKm8YwpvsIWy9QcTsH56qeJNKJC6lJ2GH6+uWtI45omPL0Zf2bRGo1b
+   lsAxcilbmO4adAVnsYROOlx/rreGS5wRaExPPEQ8g5M6vSigby9zXsmTg
+   A==;
+X-CSE-ConnectionGUID: +lAjIvjRSCSpF2mskBgRtg==
+X-CSE-MsgGUID: 61l7WWOXSeSUi09pgIeltQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11432"; a="48147347"
 X-IronPort-AV: E=Sophos;i="6.15,286,1739865600"; 
-   d="scan'208";a="49160498"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 May 2025 13:38:01 -0700
-X-CSE-ConnectionGUID: DqlVOjUOSpWSPEPN/6PMmA==
-X-CSE-MsgGUID: 7rhg0/1BTDuX7xq0+Blbfg==
+   d="scan'208";a="48147347"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 May 2025 13:38:40 -0700
+X-CSE-ConnectionGUID: vCPTIcmrTF6f8ibEeArQpQ==
+X-CSE-MsgGUID: 7bDlUerqT46csmmto6AOdA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.15,286,1739865600"; 
-   d="scan'208";a="138241740"
-Received: from sohilmeh.sc.intel.com ([172.25.103.65])
-  by fmviesa008.fm.intel.com with ESMTP; 13 May 2025 13:38:00 -0700
-From: Sohil Mehta <sohil.mehta@intel.com>
-To: x86@kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Xin Li <xin@zytor.com>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Sean Christopherson <seanjc@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Tony Luck <tony.luck@intel.com>,
-	Zhang Rui <rui.zhang@intel.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Sohil Mehta <sohil.mehta@intel.com>,
-	Andrew Cooper <andrew.cooper3@citrix.com>,
-	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-	Jacob Pan <jacob.pan@linux.microsoft.com>,
-	Andi Kleen <ak@linux.intel.com>,
-	Kai Huang <kai.huang@intel.com>,
-	Sandipan Das <sandipan.das@amd.com>,
-	linux-perf-users@vger.kernel.org,
-	linux-edac@vger.kernel.org,
-	kvm@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org
-Subject: [PATCH v6 9/9] x86/nmi: Print source information with the unknown NMI console message
-Date: Tue, 13 May 2025 13:38:03 -0700
-Message-ID: <20250513203803.2636561-10-sohil.mehta@intel.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250513203803.2636561-1-sohil.mehta@intel.com>
-References: <20250513203803.2636561-1-sohil.mehta@intel.com>
+   d="scan'208";a="137697046"
+Received: from ldmartin-desk2.corp.intel.com (HELO [10.125.109.16]) ([10.125.109.16])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 May 2025 13:38:39 -0700
+Message-ID: <c164b38f-f6ee-456b-b6f5-3aef943890fb@intel.com>
+Date: Tue, 13 May 2025 13:38:37 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 00/17] CXL Boot to Bash Documentation
+To: Gregory Price <gourry@gourry.net>, linux-cxl@vger.kernel.org
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel-team@meta.com, dave@stgolabs.net, jonathan.cameron@huawei.com,
+ alison.schofield@intel.com, vishal.l.verma@intel.com, ira.weiny@intel.com,
+ dan.j.williams@intel.com, corbet@lwn.net,
+ Joshua Hahn <joshua.hahnjy@gmail.com>
+References: <20250512162134.3596150-1-gourry@gourry.net>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <20250512162134.3596150-1-gourry@gourry.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The NMI-source bitmap is critical information provided by the NMI-source
-reporting feature. It is very useful in debugging unknown NMIs since it
-can pinpoint the exact source that caused the NMI.
 
-Print the source bitmap along with the "Unknown NMI" kernel log message.
 
-Signed-off-by: Sohil Mehta <sohil.mehta@intel.com>
----
-v6: Drop the tracepoint modification part for now.
+On 5/12/25 9:21 AM, Gregory Price wrote:
+> v3:
+> - Cross-links (Bagas)
+> - Grammar and spelling (Randy)
+> - added fixups to access-coordinates (Bagas)
+> - Drop TODO sections (use-case, memory-tiering, CDAT/UEFI, SRAT Genport)
+>   I unfortunately won't be able to come back around to this for
+>   a while, so I'd rather not let this rot.
 
-v5: New patch
----
- arch/x86/kernel/nmi.c | 3 +++
- 1 file changed, 3 insertions(+)
+Applied to cxl/next
 
-diff --git a/arch/x86/kernel/nmi.c b/arch/x86/kernel/nmi.c
-index 55ecbe2ab5e4..7a288603683f 100644
---- a/arch/x86/kernel/nmi.c
-+++ b/arch/x86/kernel/nmi.c
-@@ -376,6 +376,9 @@ unknown_nmi_error(unsigned char reason, struct pt_regs *regs)
- 	pr_emerg_ratelimited("Uhhuh. NMI received for unknown reason %02x on CPU %d.\n",
- 			     reason, smp_processor_id());
- 
-+	if (cpu_feature_enabled(X86_FEATURE_NMI_SOURCE))
-+		pr_emerg_ratelimited("NMI-source bitmap is 0x%lx\n", fred_event_data(regs));
-+
- 	if (unknown_nmi_panic || panic_on_unrecovered_nmi)
- 		nmi_panic(regs, "NMI: Not continuing");
- 
--- 
-2.43.0
+> 
+> ---
+> 
+> This series converts CXL Boot to Bash Docs from LSFMM '25 to Linux
+> Kernel Docs.  In brief, this document covers (almost) everything Linux
+> expects from platforms to successfully bring volatile CXL memory
+> capacity online as a DAX device and/or SystemRAM.
+> 
+> It covers:
+> 
+> - Platform configuration data (ACPI Tables, EFI Memory Map, EFI Configs)
+> - Linux Build and Boot Parameters
+> - Linux consumption of Platform, Build, and Boot params
+> - Linux creation of base resources (NUMA nodes, memory tiers, etc)
+> - CXL Driver probe process and sysfs structure
+> - DAX Driver interactions between the CXL driver and memory hotplug
+> - Memory hotplug interactions
+> - Page allocator interactions (NUMA nodes, Memory Zones, Reclaim, etc).
+> 
+> Included are example platform configurations (ACPI tables) and cxl
+> decoder configurations to guide platform developers on expected
+> configurations (which may be more strict than the CXL spec).
+> 
+> Co-developed-by: Joshua Hahn <joshua.hahnjy@gmail.com>
+> Signed-off-by: Joshua Hahn <joshua.hahnjy@gmail.com>
+> Signed-off-by: Gregory Price <gourry@gourry.net>
+> 
+> Gregory Price (17):
+>   cxl: update documentation structure in prep for new docs
+>   cxl: docs - access-coordinates doc fixups
+>   cxl: docs/devices - add cxl device and protocol reference
+>   cxl: docs/platform/bios-and-efi documentation
+>   cxl: docs/platform/acpi reference documentation
+>   cxl: docs/platform/example-configs documentation
+>   cxl: docs/linux - overview
+>   cxl: docs/linux - early boot configuration
+>   cxl: docs/linux - add cxl-driver theory of operation
+>   cxl: docs/linux/cxl-driver - add example configurations
+>   cxl: docs/linux/dax-driver documentation
+>   cxl: docs/linux/memory-hotplug
+>   cxl: docs/allocation/dax
+>   cxl: docs/allocation/page-allocator
+>   cxl: docs/allocation/reclaim
+>   cxl: docs/allocation/hugepages
+>   cxl: docs - add self-referencing cross-links
+> 
+>  .../driver-api/cxl/allocation/dax.rst         |  60 ++
+>  .../driver-api/cxl/allocation/hugepages.rst   |  32 +
+>  .../cxl/allocation/page-allocator.rst         |  85 +++
+>  .../driver-api/cxl/allocation/reclaim.rst     |  51 ++
+>  .../driver-api/cxl/devices/device-types.rst   | 165 +++++
+>  Documentation/driver-api/cxl/index.rst        |  45 +-
+>  .../cxl/{ => linux}/access-coordinates.rst    |  35 +-
+>  .../driver-api/cxl/linux/cxl-driver.rst       | 630 ++++++++++++++++++
+>  .../driver-api/cxl/linux/dax-driver.rst       |  43 ++
+>  .../driver-api/cxl/linux/early-boot.rst       | 137 ++++
+>  .../example-configurations/hb-interleave.rst  | 314 +++++++++
+>  .../intra-hb-interleave.rst                   | 291 ++++++++
+>  .../multi-interleave.rst                      | 401 +++++++++++
+>  .../example-configurations/single-device.rst  | 246 +++++++
+>  .../driver-api/cxl/linux/memory-hotplug.rst   |  78 +++
+>  .../driver-api/cxl/linux/overview.rst         | 103 +++
+>  .../driver-api/cxl/platform/acpi.rst          |  76 +++
+>  .../driver-api/cxl/platform/acpi/cedt.rst     |  62 ++
+>  .../driver-api/cxl/platform/acpi/dsdt.rst     |  28 +
+>  .../driver-api/cxl/platform/acpi/hmat.rst     |  32 +
+>  .../driver-api/cxl/platform/acpi/slit.rst     |  21 +
+>  .../driver-api/cxl/platform/acpi/srat.rst     |  44 ++
+>  .../driver-api/cxl/platform/bios-and-efi.rst  | 262 ++++++++
+>  .../cxl/platform/example-configs.rst          |  13 +
+>  .../example-configurations/flexible.rst       | 296 ++++++++
+>  .../example-configurations/hb-interleave.rst  | 107 +++
+>  .../multi-dev-per-hb.rst                      |  90 +++
+>  .../example-configurations/one-dev-per-hb.rst | 136 ++++
+>  ...ry-devices.rst => theory-of-operation.rst} |  10 +-
+>  29 files changed, 3867 insertions(+), 26 deletions(-)
+>  create mode 100644 Documentation/driver-api/cxl/allocation/dax.rst
+>  create mode 100644 Documentation/driver-api/cxl/allocation/hugepages.rst
+>  create mode 100644 Documentation/driver-api/cxl/allocation/page-allocator.rst
+>  create mode 100644 Documentation/driver-api/cxl/allocation/reclaim.rst
+>  create mode 100644 Documentation/driver-api/cxl/devices/device-types.rst
+>  rename Documentation/driver-api/cxl/{ => linux}/access-coordinates.rst (84%)
+>  create mode 100644 Documentation/driver-api/cxl/linux/cxl-driver.rst
+>  create mode 100644 Documentation/driver-api/cxl/linux/dax-driver.rst
+>  create mode 100644 Documentation/driver-api/cxl/linux/early-boot.rst
+>  create mode 100644 Documentation/driver-api/cxl/linux/example-configurations/hb-interleave.rst
+>  create mode 100644 Documentation/driver-api/cxl/linux/example-configurations/intra-hb-interleave.rst
+>  create mode 100644 Documentation/driver-api/cxl/linux/example-configurations/multi-interleave.rst
+>  create mode 100644 Documentation/driver-api/cxl/linux/example-configurations/single-device.rst
+>  create mode 100644 Documentation/driver-api/cxl/linux/memory-hotplug.rst
+>  create mode 100644 Documentation/driver-api/cxl/linux/overview.rst
+>  create mode 100644 Documentation/driver-api/cxl/platform/acpi.rst
+>  create mode 100644 Documentation/driver-api/cxl/platform/acpi/cedt.rst
+>  create mode 100644 Documentation/driver-api/cxl/platform/acpi/dsdt.rst
+>  create mode 100644 Documentation/driver-api/cxl/platform/acpi/hmat.rst
+>  create mode 100644 Documentation/driver-api/cxl/platform/acpi/slit.rst
+>  create mode 100644 Documentation/driver-api/cxl/platform/acpi/srat.rst
+>  create mode 100644 Documentation/driver-api/cxl/platform/bios-and-efi.rst
+>  create mode 100644 Documentation/driver-api/cxl/platform/example-configs.rst
+>  create mode 100644 Documentation/driver-api/cxl/platform/example-configurations/flexible.rst
+>  create mode 100644 Documentation/driver-api/cxl/platform/example-configurations/hb-interleave.rst
+>  create mode 100644 Documentation/driver-api/cxl/platform/example-configurations/multi-dev-per-hb.rst
+>  create mode 100644 Documentation/driver-api/cxl/platform/example-configurations/one-dev-per-hb.rst
+>  rename Documentation/driver-api/cxl/{memory-devices.rst => theory-of-operation.rst} (98%)
+> 
 
 
