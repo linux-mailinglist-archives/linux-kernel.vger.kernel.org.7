@@ -1,225 +1,505 @@
-Return-Path: <linux-kernel+bounces-646338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-646340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35A45AB5B15
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 19:22:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AD85CAB5B1A
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 19:22:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6AA681B43684
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 17:22:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EFF1C1B4358F
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 17:22:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BBD31DA31D;
-	Tue, 13 May 2025 17:19:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A6A82C032A;
+	Tue, 13 May 2025 17:20:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MPxQA2q0"
-Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com [209.85.222.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VKfFUr6X"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB65C2BF962
-	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 17:19:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EECF2C031E;
+	Tue, 13 May 2025 17:20:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747156780; cv=none; b=TGVykfduvzwYPH2IkUdw39zLl8NNMGHZIMpZG8pPijRFAk+ihMoFbiI+Ih1q9is3z5EFO6vcDfeaZy0IQUlHe4rnqraEjtY9kJIqy5/PcQQ+kXwDV6nIgEqyHJfmLGQvnVV28wL7pOAYkbbbBvkebzGqiJxG4x/nzDcQNs4bjoY=
+	t=1747156804; cv=none; b=inp66WzBgWd4u2vn7kJc75T0ccS+M4BEvzbFF4SQdeyufDJ91UVS+QeFW/WR7hEpKVTnKF2YS/1npnQ8Z/Fz8qZswiQm1Xx2vjCiR3c9OityyZYF+BrvweJPRK4wF9+rO9Vplb0i0YZ5p/HHLNXPfkHSLMTT2AN0M8TDCUBZbzU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747156780; c=relaxed/simple;
-	bh=tKnzglOUbxjTqjNWOorvM7J2sUaowqzLBzWcmVegvcs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gNLJcfoWMB5/1l+iFQsNjfySkWrMXzGHPP76tfZMGRxyp7++hfAYqdaDYry/SfS5nOr024NXhuyvHW/BYSrxo+pHaXemSRYPI5PfY7QovH3iegkAnxbLGLN7eB9LfWNQUyRsJ9KPkBYMOj5mLUIa8OLulEFXTAcWWUPfdrpX7YU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MPxQA2q0; arc=none smtp.client-ip=209.85.222.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ua1-f45.google.com with SMTP id a1e0cc1a2514c-8783d2bf386so1565073241.0
-        for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 10:19:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1747156777; x=1747761577; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2WVZtZgOj//5jxHTLtKRf8BjEquu6XdJr3DYNY96xG0=;
-        b=MPxQA2q03Q2VsBf7q6hJduIJ5nzwQUCHnInYhHPk10PL1gyvR2W4QHdqL5cSLrcMXY
-         kKidt2Zgya3hwokFtCkbp+mNRPMIh41F3S8IxlD7VXunJmcQoda+GC7yzTnqZey8pm0I
-         rz9uHJ1F08pw9eUHlSQSoSitJ+JCflLsTEES/k5N0/NxmwCmWbSnuwyBUYwJFiWOm5SX
-         R4PFFkITnmKwByIdRjyrYCUasn+oIYmqCt13mdOdkUPXfmvhS4GlG4v8CJc64GsG5MSB
-         IoxosEZ8R8ErwEhiEhAL2g78EVBOHVomjZLvETHFUnUlS8rCu1+y6/LFT2+0+MvYhsMv
-         pyag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747156777; x=1747761577;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2WVZtZgOj//5jxHTLtKRf8BjEquu6XdJr3DYNY96xG0=;
-        b=skTDJvaMrz1q4c5yltAnzIj2xWrmd92C7E3DOMHG4kjDrPTZb9QTXyvd2mp5w3ZqMv
-         2Qh3P5N7HgRKCkN8MJbEJ1/Rfd9iHCR4vEtaSuLj0G6riWEbzhEzL7CbL5CatBNcFRLz
-         TCyw25c4u88DzSlUOIbGJeOkiUqOlJWQ+l/klCnCIVCPyCkzNpyMvdWneSVi+CJ+/buA
-         4RGkIz+dDRyzHTADW0hMxE72QmnIyty/QnbnRWOK5MYs+4Oso/5//n+5ECLd8U5pwHWu
-         mLqHwAcoRjGHvYPUYVOSFFPRjcMWJNdBW7XFvEjknIfYFKx11834CN9/7oyHNU+E9X9I
-         t8bw==
-X-Forwarded-Encrypted: i=1; AJvYcCWYWrXq9rx6s5cy/1jxOSn/T2jrgdOqrt+3wEYBH7Ly6UJsvQcR6AHHyAkvOK8b3nvImw6DQR3PUNbHhcM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxwpUFCdSBonVikpDXwqrqdScOVkHelh/tZB7qZCxgDYlgBP7n8
-	TC5E9tyEVBWSa3U7z2WqlEoim08+kBckr/h6xzxq6jUpSvWFe4JrryIEw907XwTN6+Sq1srJl2L
-	eIiE6Fp5uj+bAjCRcR3tafY/Oidy0Gi+u7VtMIA==
-X-Gm-Gg: ASbGncuMYynAZXjc0BK8ZFMnTAJktg8TN5U2iYy6S8b4P8N34O/r1IDN8Veg/KhJVY5
-	4TOGcUSn0BTIYmkOdbUoXufApfti9J3GG4Ry9NAsvAgBIjKF6qw1zQitrtwBU+TI2+S6/VC7FiI
-	woVDtdQupCpirAA8+dVlqBAcWgJykcln8=
-X-Google-Smtp-Source: AGHT+IE7SVN4f0UtH0PQNtPFy8g588fN+A85zd+IU9uAeKM1aPz2rmVoENJpTwIiBwisipoYFwbTKfFOf1DxGMVshD8=
-X-Received: by 2002:a05:6102:3e1f:b0:4c3:3eb:e84d with SMTP id
- ada2fe7eead31-4df7dda5483mr356685137.21.1747156777441; Tue, 13 May 2025
- 10:19:37 -0700 (PDT)
+	s=arc-20240116; t=1747156804; c=relaxed/simple;
+	bh=MQuhWpdzL93g7rThL0qxlaSL6Ket9ASq4jJ/RLoxeI8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Oxcta7xU1muK0UEa+7wHFKlF80pAftCLf6xmaTrltAWjUzPayC5DsKXhrpf7RDNatFC8LhghIEZqfw0Do38ICX+/QMnXk9X8+NcRtrLacf1/+Kidrg6DPO86UkpQGvMhBdR11Fd71J/sYVEp86hFQ1QDjO5eInHwZ0XivHMmCME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VKfFUr6X; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6CF0C4CEE4;
+	Tue, 13 May 2025 17:19:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747156803;
+	bh=MQuhWpdzL93g7rThL0qxlaSL6Ket9ASq4jJ/RLoxeI8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VKfFUr6XKjwZWWOe1h2dm2026+ajtQ08OViaXvJUs32VjY9pNgCDp3vdLArWlg/ug
+	 puZwKFsV0jOk0iacJI6p36/oeQziVIxeiSJAUyKnqq/fBml6h8WOzbMgT2/zUegqoy
+	 B4fHJgF8FL0ohX1wmj5VJ4avHzsU1GTK1pwn4i0gDw5oFh/urFsYch6R3cXUojWqDX
+	 KJnzl3Kr6WGFJ9Lb92Rj/xUgjOsndgggZdhKrDOsqNtIsCqskFcnAFLHJarQIC1ORk
+	 D40A/u3s2+8SpfFgxm5uPh7YMDge5lXgrYnokS5rdcBYcNVgn3EY3M+HxeobdcBAaI
+	 b3saKvA8f5miA==
+Date: Tue, 13 May 2025 19:19:56 +0200
+From: Danilo Krummrich <dakr@kernel.org>
+To: Alexandre Courbot <acourbot@nvidia.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Jonathan Corbet <corbet@lwn.net>,
+	John Hubbard <jhubbard@nvidia.com>, Ben Skeggs <bskeggs@nvidia.com>,
+	Joel Fernandes <joelagnelf@nvidia.com>,
+	Timur Tabi <ttabi@nvidia.com>, Alistair Popple <apopple@nvidia.com>,
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	Shirish Baskaran <sbaskaran@nvidia.com>
+Subject: Re: [PATCH v3 16/19] nova-core: Add support for VBIOS ucode
+ extraction for boot
+Message-ID: <aCN_PIYEEzs73AqT@pollux>
+References: <20250507-nova-frts-v3-0-fcb02749754d@nvidia.com>
+ <20250507-nova-frts-v3-16-fcb02749754d@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250512172023.126467649@linuxfoundation.org>
-In-Reply-To: <20250512172023.126467649@linuxfoundation.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Tue, 13 May 2025 18:19:23 +0100
-X-Gm-Features: AX0GCFu7eFv6DmFvFsrCDFVNU1cnMtQjsu-NkieuGgoCmhh6HwuDGcVt7BF5brk
-Message-ID: <CA+G9fYu=z3Bf9zUTjUPWdSpjehsqKmxwH4=Xtjz8BHKTdcvYYw@mail.gmail.com>
-Subject: Re: [PATCH 6.1 00/92] 6.1.139-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
-	broonie@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250507-nova-frts-v3-16-fcb02749754d@nvidia.com>
 
-On Mon, 12 May 2025 at 18:54, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 6.1.139 release.
-> There are 92 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Wed, 14 May 2025 17:19:58 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
-6.1.139-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-6.1.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+On Wed, May 07, 2025 at 10:52:43PM +0900, Alexandre Courbot wrote:
+> From: Joel Fernandes <joelagnelf@nvidia.com>
+> 
+> Add support for navigating and setting up vBIOS ucode data required for
+> GSP to boot. The main data extracted from the vBIOS is the FWSEC-FRTS
+> firmware which runs on the GSP processor. This firmware runs in high
+> secure mode, and sets up the WPR2 (Write protected region) before the
+> Booter runs on the SEC2 processor.
+> 
+> Also add log messages to show the BIOS images.
+> 
+> [102141.013287] NovaCore: Found BIOS image at offset 0x0, size: 0xfe00, type: PciAt
+> [102141.080692] NovaCore: Found BIOS image at offset 0xfe00, size: 0x14800, type: Efi
+> [102141.098443] NovaCore: Found BIOS image at offset 0x24600, size: 0x5600, type: FwSec
+> [102141.415095] NovaCore: Found BIOS image at offset 0x29c00, size: 0x60800, type: FwSec
+> 
+> Tested on my Ampere GA102 and boot is successful.
+> 
+> [applied changes by Alex Courbot for fwsec signatures]
+> [applied feedback from Alex Courbot and Timur Tabi]
+> [applied changes related to code reorg, prints etc from Danilo Krummrich]
+> [acourbot@nvidia.com: fix clippy warnings]
+> [acourbot@nvidia.com: remove now-unneeded Devres acquisition]
+> [acourbot@nvidia.com: fix read_more to read `len` bytes, not u32s]
+> 
+> Cc: Alexandre Courbot <acourbot@nvidia.com>
+> Cc: John Hubbard <jhubbard@nvidia.com>
+> Cc: Shirish Baskaran <sbaskaran@nvidia.com>
+> Cc: Alistair Popple <apopple@nvidia.com>
+> Cc: Timur Tabi <ttabi@nvidia.com>
+> Cc: Ben Skeggs <bskeggs@nvidia.com>
+> Signed-off-by: Joel Fernandes <joelagnelf@nvidia.com>
+> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+> ---
+>  drivers/gpu/nova-core/firmware.rs  |    2 -
+>  drivers/gpu/nova-core/gpu.rs       |    3 +
+>  drivers/gpu/nova-core/nova_core.rs |    1 +
+>  drivers/gpu/nova-core/vbios.rs     | 1147 ++++++++++++++++++++++++++++++++++++
+>  4 files changed, 1151 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/gpu/nova-core/firmware.rs b/drivers/gpu/nova-core/firmware.rs
+> index 1eb216307cd01d975b3d5beda1dc516f34b4b3f2..960982174d834c7c66a47ecfb3a15bf47116b2c5 100644
+> --- a/drivers/gpu/nova-core/firmware.rs
+> +++ b/drivers/gpu/nova-core/firmware.rs
+> @@ -80,8 +80,6 @@ pub(crate) struct FalconUCodeDescV3 {
+>      _reserved: u16,
+>  }
+>  
+> -// To be removed once that code is used.
+> -#[expect(dead_code)]
+>  impl FalconUCodeDescV3 {
+>      pub(crate) fn size(&self) -> usize {
+>          ((self.hdr & 0xffff0000) >> 16) as usize
+> diff --git a/drivers/gpu/nova-core/gpu.rs b/drivers/gpu/nova-core/gpu.rs
+> index ece13594fba687f3f714e255b5436e72d80dece3..4bf7f72247e5320935a517270b5a0e1ec2becfec 100644
+> --- a/drivers/gpu/nova-core/gpu.rs
+> +++ b/drivers/gpu/nova-core/gpu.rs
+> @@ -9,6 +9,7 @@
+>  use crate::firmware::Firmware;
+>  use crate::regs;
+>  use crate::util;
+> +use crate::vbios::Vbios;
+>  use core::fmt;
+>  
+>  macro_rules! define_chipset {
+> @@ -238,6 +239,8 @@ pub(crate) fn new(
+>  
+>          let _sec2_falcon = Falcon::<Sec2>::new(pdev.as_ref(), spec.chipset, bar, true)?;
+>  
+> +        let _bios = Vbios::new(pdev, bar)?;
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+Please add a comment why, even though unused, it is important to create this
+instance.
 
-Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+Also, please use `_` if it's not intended to ever be used.
 
-## Build
-* kernel: 6.1.139-rc1
-* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
-rc.git
-* git commit: 490c91e6621e9ec53a2bd0cced0bd27018fe8597
-* git describe: v6.1.138-93-g490c91e6621e
-* test details:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.1.y/build/v6.1.1=
-38-93-g490c91e6621e
+> +
+>          Ok(pin_init!(Self {
+>              spec,
+>              bar: devres_bar,
+> diff --git a/drivers/gpu/nova-core/nova_core.rs b/drivers/gpu/nova-core/nova_core.rs
+> index 8342482a1aa16da2e69f7d99143c1549a82c969e..ff6d0b40c18f36af4c7e2d5c839fdf77dba23321 100644
+> --- a/drivers/gpu/nova-core/nova_core.rs
+> +++ b/drivers/gpu/nova-core/nova_core.rs
+> @@ -10,6 +10,7 @@
+>  mod gpu;
+>  mod regs;
+>  mod util;
+> +mod vbios;
+>  
+>  kernel::module_pci_driver! {
+>      type: driver::NovaCore,
+> diff --git a/drivers/gpu/nova-core/vbios.rs b/drivers/gpu/nova-core/vbios.rs
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..cd55d8dbf8e12d532f776d7544c7e5f2a865d6f8
+> --- /dev/null
+> +++ b/drivers/gpu/nova-core/vbios.rs
+> @@ -0,0 +1,1147 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +//! VBIOS extraction and parsing.
+> +
+> +// To be removed when all code is used.
+> +#![expect(dead_code)]
+> +
+> +use crate::driver::Bar0;
+> +use crate::firmware::FalconUCodeDescV3;
+> +use core::convert::TryFrom;
+> +use kernel::device;
+> +use kernel::error::Result;
+> +use kernel::num::NumAlign;
+> +use kernel::pci;
+> +use kernel::prelude::*;
+> +
+> +/// The offset of the VBIOS ROM in the BAR0 space.
+> +const ROM_OFFSET: usize = 0x300000;
+> +/// The maximum length of the VBIOS ROM to scan into.
+> +const BIOS_MAX_SCAN_LEN: usize = 0x100000;
+> +/// The size to read ahead when parsing initial BIOS image headers.
+> +const BIOS_READ_AHEAD_SIZE: usize = 1024;
+> +/// The bit in the last image indicator byte for the PCI Data Structure that
+> +/// indicates the last image. Bit 0-6 are reserved, bit 7 is last image bit.
+> +const LAST_IMAGE_BIT_MASK: u8 = 0x80;
+> +
+> +// PMU lookup table entry types. Used to locate PMU table entries
+> +// in the Fwsec image, corresponding to falcon ucodes.
+> +#[expect(dead_code)]
+> +const FALCON_UCODE_ENTRY_APPID_FIRMWARE_SEC_LIC: u8 = 0x05;
+> +#[expect(dead_code)]
+> +const FALCON_UCODE_ENTRY_APPID_FWSEC_DBG: u8 = 0x45;
+> +const FALCON_UCODE_ENTRY_APPID_FWSEC_PROD: u8 = 0x85;
+> +
+> +/// Vbios Reader for constructing the VBIOS data
+> +struct VbiosIterator<'a> {
+> +    pdev: &'a pci::Device,
+> +    bar0: &'a Bar0,
+> +    // VBIOS data vector: As BIOS images are scanned, they are added to this vector
+> +    // for reference or copying into other data structures. It is the entire
+> +    // scanned contents of the VBIOS which progressively extends. It is used
+> +    // so that we do not re-read any contents that are already read as we use
+> +    // the cumulative length read so far, and re-read any gaps as we extend
+> +    // the length.
+> +    data: KVec<u8>,
+> +    current_offset: usize, // Current offset for iterator
+> +    last_found: bool,      // Whether the last image has been found
+> +}
+> +
+> +impl<'a> VbiosIterator<'a> {
+> +    fn new(pdev: &'a pci::Device, bar0: &'a Bar0) -> Result<Self> {
+> +        Ok(Self {
+> +            pdev,
+> +            bar0,
+> +            data: KVec::new(),
+> +            current_offset: 0,
+> +            last_found: false,
+> +        })
+> +    }
+> +
+> +    /// Read bytes from the ROM at the current end of the data vector
+> +    fn read_more(&mut self, len: usize) -> Result {
+> +        let current_len = self.data.len();
+> +        let start = ROM_OFFSET + current_len;
+> +
+> +        // Ensure length is a multiple of 4 for 32-bit reads
+> +        if len % core::mem::size_of::<u32>() != 0 {
+> +            dev_err!(
+> +                self.pdev.as_ref(),
+> +                "VBIOS read length {} is not a multiple of 4\n",
+> +                len
+> +            );
+> +            return Err(EINVAL);
+> +        }
+> +
+> +        self.data.reserve(len, GFP_KERNEL)?;
+> +        // Read ROM data bytes and push directly to vector
+> +        for i in (0..len).step_by(core::mem::size_of::<u32>()) {
+> +            // Read 32-bit word from the VBIOS ROM
+> +            let word = self.bar0.try_read32(start + i)?;
+> +
+> +            // Convert the u32 to a 4 byte array and push each byte
+> +            word.to_ne_bytes()
+> +                .iter()
+> +                .try_for_each(|&b| self.data.push(b, GFP_KERNEL))?;
+> +        }
+> +
+> +        Ok(())
+> +    }
+> +
+> +    /// Read bytes at a specific offset, filling any gap
+> +    fn read_more_at_offset(&mut self, offset: usize, len: usize) -> Result {
+> +        if offset > BIOS_MAX_SCAN_LEN {
+> +            dev_err!(self.pdev.as_ref(), "Error: exceeded BIOS scan limit.\n");
+> +            return Err(EINVAL);
+> +        }
+> +
+> +        // If offset is beyond current data size, fill the gap first
+> +        let current_len = self.data.len();
+> +        let gap_bytes = offset.saturating_sub(current_len);
+> +
+> +        // Now read the requested bytes at the offset
+> +        self.read_more(gap_bytes + len)
+> +    }
+> +
+> +    /// Read a BIOS image at a specific offset and create a BiosImage from it.
+> +    /// self.data is extended as needed and a new BiosImage is returned.
+> +    /// @context is a string describing the operation for error reporting
+> +    fn read_bios_image_at_offset(
+> +        &mut self,
+> +        offset: usize,
+> +        len: usize,
+> +        context: &str,
+> +    ) -> Result<BiosImage> {
+> +        let data_len = self.data.len();
+> +        if offset + len > data_len {
+> +            self.read_more_at_offset(offset, len).inspect_err(|e| {
+> +                dev_err!(
+> +                    self.pdev.as_ref(),
+> +                    "Failed to read more at offset {:#x}: {:?}\n",
+> +                    offset,
+> +                    e
+> +                )
+> +            })?;
+> +        }
+> +
+> +        BiosImage::new(self.pdev, &self.data[offset..offset + len]).inspect_err(|err| {
+> +            dev_err!(
+> +                self.pdev.as_ref(),
+> +                "Failed to {} at offset {:#x}: {:?}\n",
+> +                context,
+> +                offset,
+> +                err
+> +            )
+> +        })
+> +    }
+> +}
+> +
+> +impl<'a> Iterator for VbiosIterator<'a> {
+> +    type Item = Result<BiosImage>;
+> +
+> +    /// Iterate over all VBIOS images until the last image is detected or offset
+> +    /// exceeds scan limit.
+> +    fn next(&mut self) -> Option<Self::Item> {
+> +        if self.last_found {
+> +            return None;
+> +        }
+> +
+> +        if self.current_offset > BIOS_MAX_SCAN_LEN {
+> +            dev_err!(
+> +                self.pdev.as_ref(),
+> +                "Error: exceeded BIOS scan limit, stopping scan\n"
+> +            );
+> +            return None;
+> +        }
+> +
+> +        // Parse image headers first to get image size
+> +        let image_size = match self
+> +            .read_bios_image_at_offset(
+> +                self.current_offset,
+> +                BIOS_READ_AHEAD_SIZE,
+> +                "parse initial BIOS image headers",
+> +            )
+> +            .and_then(|image| image.image_size_bytes())
+> +        {
+> +            Ok(size) => size,
+> +            Err(e) => return Some(Err(e)),
+> +        };
+> +
+> +        // Now create a new BiosImage with the full image data
+> +        let full_image = match self.read_bios_image_at_offset(
+> +            self.current_offset,
+> +            image_size,
+> +            "parse full BIOS image",
+> +        ) {
+> +            Ok(image) => image,
+> +            Err(e) => return Some(Err(e)),
+> +        };
+> +
+> +        self.last_found = full_image.is_last();
+> +
+> +        // Advance to next image (aligned to 512 bytes)
+> +        self.current_offset += image_size;
+> +        self.current_offset = self.current_offset.align_up(512);
+> +
+> +        Some(Ok(full_image))
+> +    }
+> +}
+> +
+> +pub(crate) struct Vbios {
+> +    pub fwsec_image: Option<FwSecBiosImage>,
 
-## Test Regressions (compared to v6.1.136-100-g7b2996f52bc8)
+Please use pub(crate) instead or provide an accessor.
 
-## Metric Regressions (compared to v6.1.136-100-g7b2996f52bc8)
+Also, this shouldn't be an Option, see below comment in Vbios::new().
 
-## Test Fixes (compared to v6.1.136-100-g7b2996f52bc8)
+> +}
+> +
+> +impl Vbios {
+> +    /// Probe for VBIOS extraction
+> +    /// Once the VBIOS object is built, bar0 is not read for vbios purposes anymore.
+> +    pub(crate) fn new(pdev: &pci::Device, bar0: &Bar0) -> Result<Vbios> {
+> +        // Images to extract from iteration
+> +        let mut pci_at_image: Option<PciAtBiosImage> = None;
+> +        let mut first_fwsec_image: Option<FwSecBiosImage> = None;
+> +        let mut second_fwsec_image: Option<FwSecBiosImage> = None;
+> +
+> +        // Parse all VBIOS images in the ROM
+> +        for image_result in VbiosIterator::new(pdev, bar0)? {
+> +            let full_image = image_result?;
+> +
+> +            dev_info!(
 
-## Metric Fixes (compared to v6.1.136-100-g7b2996f52bc8)
+Let's use dev_dbg!() instaed.
 
-## Test result summary
-total: 91883, pass: 73707, fail: 3346, skip: 14630, xfail: 200
+> +                pdev.as_ref(),
+> +                "Found BIOS image: size: {:#x}, type: {}, last: {}\n",
+> +                full_image.image_size_bytes()?,
+> +                full_image.image_type_str(),
+> +                full_image.is_last()
+> +            );
+> +
+> +            // Get references to images we will need after the loop, in order to
+> +            // setup the falcon data offset.
+> +            match full_image {
+> +                BiosImage::PciAt(image) => {
+> +                    pci_at_image = Some(image);
+> +                }
+> +                BiosImage::FwSec(image) => {
+> +                    if first_fwsec_image.is_none() {
+> +                        first_fwsec_image = Some(image);
+> +                    } else {
+> +                        second_fwsec_image = Some(image);
+> +                    }
+> +                }
+> +                // For now we don't need to handle these
+> +                BiosImage::Efi(_image) => {}
+> +                BiosImage::Nbsi(_image) => {}
+> +            }
+> +        }
+> +
+> +        // Using all the images, setup the falcon data pointer in Fwsec.
+> +        // We need mutable access here, so we handle the Option manually.
+> +        let final_fwsec_image = {
+> +            let mut second = second_fwsec_image; // Take ownership of the option
+> +
+> +            if let (Some(second), Some(first), Some(pci_at)) =
+> +                (second.as_mut(), first_fwsec_image, pci_at_image)
+> +            {
+> +                second
+> +                    .setup_falcon_data(pdev, &pci_at, &first)
+> +                    .inspect_err(|e| {
+> +                        dev_err!(pdev.as_ref(), "Falcon data setup failed: {:?}\n", e)
+> +                    })?;
+> +            } else {
+> +                dev_err!(
+> +                    pdev.as_ref(),
+> +                    "Missing required images for falcon data setup, skipping\n"
+> +                );
+> +                return Err(EINVAL);
 
-## Build Summary
-* arc: 5 total, 5 passed, 0 failed
-* arm: 133 total, 133 passed, 0 failed
-* arm64: 41 total, 41 passed, 0 failed
-* i386: 25 total, 19 passed, 6 failed
-* mips: 26 total, 22 passed, 4 failed
-* parisc: 4 total, 4 passed, 0 failed
-* powerpc: 32 total, 31 passed, 1 failed
-* riscv: 11 total, 11 passed, 0 failed
-* s390: 14 total, 14 passed, 0 failed
-* sh: 10 total, 10 passed, 0 failed
-* sparc: 7 total, 7 passed, 0 failed
-* x86_64: 33 total, 31 passed, 2 failed
+This means that if second == None we fail, which makes sense, so why store an
+Option in Vbios? All methods of Vbios fail if fwsec_image == None.
 
-## Test suites summary
-* boot
-* commands
-* kselftest-arm64
-* kselftest-breakpoints
-* kselftest-capabilities
-* kselftest-clone3
-* kselftest-core
-* kselftest-cpu-hotplug
-* kselftest-exec
-* kselftest-fpu
-* kselftest-futex
-* kselftest-intel_pstate
-* kselftest-kcmp
-* kselftest-kvm
-* kselftest-livepatch
-* kselftest-membarrier
-* kselftest-mincore
-* kselftest-mqueue
-* kselftest-openat2
-* kselftest-ptrace
-* kselftest-rseq
-* kselftest-rtc
-* kselftest-sigaltstack
-* kselftest-size
-* kselftest-timers
-* kselftest-tmpfs
-* kselftest-tpm2
-* kselftest-user_events
-* kselftest-vDSO
-* kselftest-x86
-* kunit
-* kvm-unit-tests
-* lava
-* libgpiod
-* libhugetlbfs
-* log-parser-boot
-* log-parser-build-clang
-* log-parser-build-gcc
-* log-parser-test
-* ltp-capability
-* ltp-commands
-* ltp-containers
-* ltp-controllers
-* ltp-cpuhotplug
-* ltp-crypto
-* ltp-cve
-* ltp-dio
-* ltp-fcntl-locktests
-* ltp-fs
-* ltp-fs_bind
-* ltp-fs_perms_simple
-* ltp-hugetlb
-* ltp-ipc
-* ltp-math
-* ltp-mm
-* ltp-nptl
-* ltp-pty
-* ltp-sched
-* ltp-smoke
-* ltp-syscalls
-* ltp-tracing
-* perf
-* rcutorture
+> +            }
+> +            second
+> +        };
 
---
-Linaro LKFT
-https://lkft.linaro.org
+I think this should be:
+
+	let mut second = second_fwsec_image;
+	
+	if let (Some(second), Some(first), Some(pci_at)) =
+	    (second.as_mut(), first_fwsec_image, pci_at_image)
+	{
+	    second
+	        .setup_falcon_data(pdev, &pci_at, &first)
+	        .inspect_err(|e| {
+	            dev_err!(pdev.as_ref(), "Falcon data setup failed: {:?}\n", e)
+	        })?;
+	
+	    Ok(Vbios(second)
+	} else {
+	    dev_err!(
+	        pdev.as_ref(),
+	        "Missing required images for falcon data setup, skipping\n"
+	    );
+	
+	    Err(EINVAL)
+	}
+
+where Vbios can just be
+
+	pub(crate) struct Vbios(FwSecBiosImage);
+
+> +
+> +        Ok(Vbios {
+> +            fwsec_image: final_fwsec_image,
+> +        })
+> +    }
+> +
+> +    pub(crate) fn fwsec_header(&self, pdev: &device::Device) -> Result<&FalconUCodeDescV3> {
+> +        let image = self.fwsec_image.as_ref().ok_or(EINVAL)?;
+> +        image.fwsec_header(pdev)
+> +    }
+> +
+> +    pub(crate) fn fwsec_ucode(&self, pdev: &device::Device) -> Result<&[u8]> {
+> +        let image = self.fwsec_image.as_ref().ok_or(EINVAL)?;
+> +        image.fwsec_ucode(pdev, image.fwsec_header(pdev)?)
+> +    }
+> +
+> +    pub(crate) fn fwsec_sigs(&self, pdev: &device::Device) -> Result<&[u8]> {
+> +        let image = self.fwsec_image.as_ref().ok_or(EINVAL)?;
+> +        image.fwsec_sigs(pdev, image.fwsec_header(pdev)?)
+> +    }
+
+Those then become infallible, e.g.
+
+	pub(crate) fn fwsec_sigs(&self, pdev: &device::Device) -> &[u8] {
+	    self.0.fwsec_sigs(pdev, self.fwsec_header(pdev))
+	}
+
+> +}
+
+<snip>
+
+I have to continue with the rest of this patch later on.
+
+- Danilo
 
