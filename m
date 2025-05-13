@@ -1,160 +1,267 @@
-Return-Path: <linux-kernel+bounces-646069-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-646071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 902BEAB57A5
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 16:52:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BED47AB57A8
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 16:53:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13F2F463697
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 14:52:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0CEB03B6D98
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 14:53:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B6CA1C07C3;
-	Tue, 13 May 2025 14:52:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ADEE20E002;
+	Tue, 13 May 2025 14:53:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="M9/YyRDf"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Idosnr1F"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEC101A9B40
-	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 14:52:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 775861C84A0;
+	Tue, 13 May 2025 14:53:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747147962; cv=none; b=lFbuFrKvNN8Fp6Ap4iET+DwhuNABthSj2l/FCCt52hBKmWG79DpShcdlhsOJK5ulFW6i6tejtXZRGmOHdVDZYLQsn8E7n4JgC3jlTqoHZTA9jL1FBicvmetVaelxGCkGJeiUuSXXddnlpwPupmRRVfZ2CzbecHJAOglR8unrr6M=
+	t=1747148005; cv=none; b=BOCRR1O8HrzIl2Z69NGQs034Mzx1GXxzO26k+uHcgymTnMjoR9r3DDRnWVebuD/08lKo2a/JgwFmFh6fl5msqqS5DDN3sC5RMYCxfhuBmpWFBkxQOW/N9KXNdP6d9imTfb1PJfDpTNqlwGU74b+jiWVp0OojBhZL+zrBUV3ATmA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747147962; c=relaxed/simple;
-	bh=7eTd/KlYKdNBE0gVtB8pRaG5SNHtwy49OeApK0fIKBo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I2JhWqeyORWxu3PftUvjLEXEELMndCYjanKSp3YSD0TfO48QoPKj0eh9fC8KFv4AE7uHbUNsar3Fv9cWCbNuf+s/tzApvVpXcuTeAn6pfHoKuZDXWgT3SlMQKF1bokuX1KpEHD91k3+6+PTUvY2Ynt00u10f7WR6Ba49ZtfMg1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=M9/YyRDf; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3a0b9c371d8so4795161f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 07:52:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1747147959; x=1747752759; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=NprQZFd0msRuigKqMDzXfWDuMemIh6oSVb1Z2bS8NyY=;
-        b=M9/YyRDfc3lZmZf078fLA06/K9MYKxFgXxCBxaa+mJIosp9HlH4Wy092cubEqd+qG0
-         1A1TgLrCLcug1t/nt2RmCeTyNCkusflDweFdarSpZ/EqeCEq/PAUgmvd8yxHVaVkvgxa
-         4oj5paQzNopFRBvLQ/R4AQl/9qGLZ07mUqtt1zFb7ROfb/i0/eHtTB2XwNy3ohYgsiVk
-         /UK5pP9sh8xqGR5Yfvz17YaU+AO1AU0fj6OAioExEm2qH219EUtpbhCLppIy53KciHcd
-         gM8dQJIMAs/Rs88kAxntiNvH6cnMHNx8kIFpTPKVriNIHdSxfFzcoeYgv530U+aNAdNN
-         fvhw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747147959; x=1747752759;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NprQZFd0msRuigKqMDzXfWDuMemIh6oSVb1Z2bS8NyY=;
-        b=uKGx1i1UvBqMsI3QixNtuuVGyXugnhjyFBAbaIOtZcZPi4CBfGGRxcMHOOrJVihjJT
-         eQ41FbwS7ATXHHDmiFbofJ57dHVSws8+X3PNLTmbyHcGDPnSeMEZhdF2NEyMeWBzLO+u
-         Qji3nuVz4vW6ad5CxHiyUm+llZCUF9dSCyi2i8tLA1BjyZgkASSNfCTT9s+FyKhEx6A7
-         Q4riGm92egXnwtDrYro4r9qTdehmtG889IKi6d3+9fRoMbvOrfXRbfZNrhHMMgmd/cMe
-         SPnjZ041ombOdhinYXwv+JcO91tWA5URwfJmdQr8mLstoY5R0yNvSoPRbtXavPoh3DlY
-         gLyw==
-X-Forwarded-Encrypted: i=1; AJvYcCWtmlGLAOJDHsZrB0nuy6HgPpFv1mOkW+K6cz3PcO0J/gDvEZTQzXMdKIlRFEjP8O6AbY0sCzGeTu00kYw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyc791rIHGmiqZ0ZqUXM8nVpPnlWv8mqT5IKHtQ5azAdoaN2wyq
-	fRZ70wG/Nii3Jw7qfexVOvG7OUO0Tm/+4ZgYdDkLRiAb94V65RpNby6/lkjdXSs=
-X-Gm-Gg: ASbGncvmbTHArSmkA7msnkTeg91ufS4c53LnolsOwwgBHMiUe0OQsUE04MOg/0nS3St
-	6m3xC+Gi+2PvaQ/Bpc5ijU1mBHjWoM0jXwYRWpivs47cwrqP+F7NHHJNHEOKWedTLb4yzN8N4uB
-	yy9YaTQATLHt9UiOq88Sqb5ICZ/7HCrQN4j3L/yeprl8CzgZkbIXv3EdlrwRnqm+FS1ZMbyiw9Z
-	QAMJv6Ac5PfoJohuwjXCVUsJHIVOlsp41HfEZlSZ8ZKfSUdF/h6KwysOgvApDO0dPStxjcqt7EK
-	cxJEXD0sfa2lZEmggCf1NVZF/1PlJxozsYTZ7pWjAfP51Q5diK7uybqIjytBxI1D50FSyv86MQm
-	bD3FRdCHfcyzr8Q==
-X-Google-Smtp-Source: AGHT+IGYDcAG8pLfPmYFTyeqzeIaOvsHfnmcsUp0uHL3fXQ+4Wvxm5ZCV+BGXbRBT2JBatXikF9ENg==
-X-Received: by 2002:a5d:6a11:0:b0:3a1:faf3:b608 with SMTP id ffacd0b85a97d-3a1faf3b6c6mr10089134f8f.56.1747147959102;
-        Tue, 13 May 2025 07:52:39 -0700 (PDT)
-Received: from mai.linaro.org (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a1f5a2ce36sm16710394f8f.71.2025.05.13.07.52.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 May 2025 07:52:38 -0700 (PDT)
-Date: Tue, 13 May 2025 16:52:36 +0200
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-To: John Stultz <jstultz@google.com>
-Cc: Will McVicker <willmcvicker@google.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Saravana Kannan <saravanak@google.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Donghoon Yu <hoony.yu@samsung.com>,
-	Hosung Kim <hosung0.kim@samsung.com>, kernel-team@android.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Youngmin Nam <youngmin.nam@samsung.com>,
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 6/7] clocksource/drivers/exynos_mct: Add module support
-Message-ID: <aCNctHq6K7uqFF05@mai.linaro.org>
-References: <20250402233407.2452429-1-willmcvicker@google.com>
- <20250402233407.2452429-7-willmcvicker@google.com>
- <Z_6OZHYfC0bC5289@mai.linaro.org>
- <CANDhNCodHATboF2=U2tTwdEkEJ+PsfB2F=fbBrs=J1UzZTEX8g@mail.gmail.com>
+	s=arc-20240116; t=1747148005; c=relaxed/simple;
+	bh=RhDtWE1dVV9lPXiQK9A9HDu8CZaHny/NUuaK7oa/KgU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ct88rRKGiEgDlIQ52lzfFyK9goXGjWP0ILr/+32mOlMQ2SZE8CsgNJ3yUAK7dt7at35D76fW0E0JSnBPZ70kHtxPKQc/MUDlQUnnyPghyW2UUrPucI/CcAg64cB5hgJeTQDZ2nYLGubPUeDEVlx4JD5+sHpPG7ySoq9GT6pM5YU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Idosnr1F; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5A18C4CEF4;
+	Tue, 13 May 2025 14:53:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747148004;
+	bh=RhDtWE1dVV9lPXiQK9A9HDu8CZaHny/NUuaK7oa/KgU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Idosnr1FBh/PpuspF5gsgf+OXpLUJk7tk7G9iyI7eXjt8+5sI0Jj3i7yS3nrtjZD4
+	 OE1qCdYVmdc2Rdz5+/DKeuRDlgxg2RVSar2Mtr9O9qsWC+FqVXcUsofMBImGYpmGrM
+	 PJUKx4G5GTAXfFOCFXLIma+rTTxwHc6bpupNg5q9Mwgk2VYUxJQqvNW1j/1HBB6LSF
+	 fUUH/0YwbwVnwh9UzDf/qT6wb/uqU9CLHM5HcvWcQH1+VT9013b9kpFko+P51TY4td
+	 otQR8NOFk1f+Lz+UOOQJLcUjwsIvc25o4hOp7aPqlOxyuT0MrlOjXVuZ3CfZrn8ZlL
+	 phAoY/akZusPQ==
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-550d4b7a076so186702e87.2;
+        Tue, 13 May 2025 07:53:24 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVLl1PFlbQ5gy3Xgab5MAywkS2p73dfGryD5hMSurxAiou0C/gZmufINnpKH7LCJQCP/wAHezBg0b0oL3ag@vger.kernel.org, AJvYcCX0lI5RdycgFr31m53eKQ4PQm5vCz3GbhebkAzXGGyJSE6Z0VPYAkE5wwn9LhiR7a2jy+Ql2IfPXiMC3s3R@vger.kernel.org, AJvYcCXncjo9N9P2j4OsY0kDsFfJUzcWzWE8u7tb8RaoIh/I/supa8mzyvUh4SUrDQ8s5750E7gdwNRAIW2IUT5tXfY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6RABQRqiKoXWGaKi+/jqikuMKEh8jSwcbPWp9HbAbxwJLcY1e
+	0TWPDKaDEiKsT8lOnCGVsOa21sS8ZUj4ZBKzW0Jnu2q+f8VRipNfcAneOHjIL4djFeNSJMQb0bV
+	Gze94QYW+Pw7I+A9jyRB+ekFB7h0=
+X-Google-Smtp-Source: AGHT+IHK50oaHFtMBbMleHyqUaAbKlFx84gNC0cIJBrr7mvss1OwFx5aKOvcnFFtEC9IKk6w4XcLUT3LfIl4bLObABQ=
+X-Received: by 2002:a05:6512:2619:b0:545:4cb:b25d with SMTP id
+ 2adb3069b0e04-54fc67b7bb6mr4265580e87.13.1747148003495; Tue, 13 May 2025
+ 07:53:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANDhNCodHATboF2=U2tTwdEkEJ+PsfB2F=fbBrs=J1UzZTEX8g@mail.gmail.com>
+References: <20250502224512.it.706-kees@kernel.org> <CAK7LNAQCZMmAGfPTr1kgp5cNSdnLWMU5kC_duU0WzWnwZrqt2A@mail.gmail.com>
+ <202505031028.7022F10061@keescook> <CAK7LNAQehmFgB3kJtrkVhUKM1NEXGQrfJ3v3piToh7YV7-3ccw@mail.gmail.com>
+ <202505080953.789B3381@keescook> <CAK7LNAQpGXmWNhoE9wLoP01dn2o7KjhedoqHXm474CoCgwHp2Q@mail.gmail.com>
+ <202505081651.EAF0C6B@keescook>
+In-Reply-To: <202505081651.EAF0C6B@keescook>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Tue, 13 May 2025 23:52:46 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQa_ZX=ULUgu+_YNe=A+4kgaZakzdM2Y6QPSWWfnEA2JQ@mail.gmail.com>
+X-Gm-Features: AX0GCFuWQSZF1ok9-cTyrGeb3aw8P4Ea1DCgPaNu4qIZQbEPezGGKicgvHdcmqc
+Message-ID: <CAK7LNAQa_ZX=ULUgu+_YNe=A+4kgaZakzdM2Y6QPSWWfnEA2JQ@mail.gmail.com>
+Subject: Re: [PATCH v2 0/3] Detect changed compiler dependencies for full rebuild
+To: Kees Cook <kees@kernel.org>
+Cc: Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas.schier@linux.dev>, 
+	Petr Pavlu <petr.pavlu@suse.com>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
+	Justin Stitt <justinstitt@google.com>, Marco Elver <elver@google.com>, 
+	Andrey Konovalov <andreyknvl@gmail.com>, Andrey Ryabinin <ryabinin.a.a@gmail.com>, 
+	Richard Weinberger <richard@nod.at>, Anton Ivanov <anton.ivanov@cambridgegreys.com>, 
+	Johannes Berg <johannes@sipsolutions.net>, linux-kernel@vger.kernel.org, 
+	linux-hardening@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+	kasan-dev@googlegroups.com, linux-um@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Apr 15, 2025 at 05:48:41PM -0700, John Stultz wrote:
-> On Tue, Apr 15, 2025 at 9:50 AM Daniel Lezcano
-> <daniel.lezcano@linaro.org> wrote:
-> > On Wed, Apr 02, 2025 at 04:33:57PM -0700, Will McVicker wrote:
-> > > From: Donghoon Yu <hoony.yu@samsung.com>
+On Fri, May 9, 2025 at 8:59=E2=80=AFAM Kees Cook <kees@kernel.org> wrote:
+>
+> On Fri, May 09, 2025 at 08:13:18AM +0900, Masahiro Yamada wrote:
+> > On Fri, May 9, 2025 at 1:56=E2=80=AFAM Kees Cook <kees@kernel.org> wrot=
+e:
 > > >
-> > > On Arm64 platforms the Exynos MCT driver can be built as a module. On
-> > > boot (and even after boot) the arch_timer is used as the clocksource and
-> > > tick timer. Once the MCT driver is loaded, it can be used as the wakeup
-> > > source for the arch_timer.
+> > > On Fri, May 09, 2025 at 01:44:09AM +0900, Masahiro Yamada wrote:
+> > > > On Sun, May 4, 2025 at 2:37=E2=80=AFAM Kees Cook <kees@kernel.org> =
+wrote:
+> > > > >
+> > > > > On Sat, May 03, 2025 at 06:39:28PM +0900, Masahiro Yamada wrote:
+> > > > > > On Sat, May 3, 2025 at 7:54=E2=80=AFAM Kees Cook <kees@kernel.o=
+rg> wrote:
+> > > > > > >
+> > > > > > >  v2:
+> > > > > > >   - switch from -include to -I with a -D gated include compil=
+er-version.h
+> > > > > > >  v1: https://lore.kernel.org/lkml/20250501193839.work.525-kee=
+s@kernel.org/
+> > > > > >
+> > > > > >
+> > > > > > What do you think of my patch as a prerequisite?
+> > > > > > https://lore.kernel.org/linux-kbuild/20250503084145.1994176-1-m=
+asahiroy@kernel.org/T/#u
+> > > > > > Perhaps, can you implement this series more simply?
+> > > > > >
+> > > > > > My idea is to touch a single include/generated/global-rebuild.h
+> > > > > > rather than multiple files such as gcc-plugins-deps.h, integer-=
+wrap.h, etc.
+> > > > > >
+> > > > > > When the file is touched, the entire kernel source tree will be=
+ rebuilt.
+> > > > > > This may rebuild more than needed (e.g. vdso) but I do not thin=
+k
+> > > > > > it is a big deal.
+> > > > >
+> > > > > This is roughly where I started when trying to implement this, bu=
+t I
+> > > > > didn't like the ergonomics of needing to scatter "touch" calls al=
+l over,
+> > > > > which was especially difficult for targets that shared a build ru=
+le but
+> > > > > may not all need to trigger a global rebuild. But what ultimately=
+ pushed
+> > > > > me away from it was when I needed to notice if a non-built source=
+ file
+> > > > > changed (the Clang .scl file), and I saw that I need to be depend=
+ency
+> > > > > driven rather than target driven. (Though perhaps there is a way =
+to
+> > > > > address this with your global-rebuild.h?)
+> > > > >
+> > > > > As far as doing a full rebuild, if it had been available last wee=
+k, I
+> > > > > probably would have used it, but now given the work that Nicolas,=
+ you,
+> > > > > and I have put into this, we have a viable way (I think) to make =
+this
+> > > > > more specific. It does end up being a waste of time/resources to =
+rebuild
+> > > > > stuff that doesn't need to be (efi-stub, vdso, boot code, etc), a=
+nd that
+> > > > > does add up when I'm iterating on something that keeps triggering=
+ a full
+> > > > > rebuild. We already have to do the argument filtering for targets=
+ that
+> > > > > don't want randstruct, etc, so why not capitalize on that and mak=
+e the
+> > > > > rebuild avoid those files too?
+> > > >
+> > > >
+> > > > efi-stub, vdso are very small.
+> > > >
+> > > > Unless this turns out to be painful, I prefer
+> > > > a simpler implementation.
+> > > >
+> > > > You will see how .scl file is handled.
+> > > >
+> > > > See the below code:
+> > > >
+> > > >
+> > > > diff --git a/Kbuild b/Kbuild
+> > > > index f327ca86990c..85747239314c 100644
+> > > > --- a/Kbuild
+> > > > +++ b/Kbuild
+> > > > @@ -67,10 +67,20 @@ targets +=3D $(atomic-checks)
+> > > >  $(atomic-checks): $(obj)/.checked-%: include/linux/atomic/%  FORCE
+> > > >         $(call if_changed,check_sha1)
+> > > >
+> > > > +rebuild-$(CONFIG_GCC_PLUGINS)          +=3D $(addprefix
+> > > > scripts/gcc-plugins/, $(GCC_PLUGIN))
+> > > > +rebuild-$(CONFIG_RANDSTRUCT)           +=3D include/generated/rand=
+struct_hash.h
+> > >
+> > > These are in $(objtree)
 > >
-> > From a previous thread where there is no answer:
+> > Yes.
 > >
-> > https://lore.kernel.org/all/c1e8abec-680c-451d-b5df-f687291aa413@linaro.org/
+> > > > +rebuild-$(CONFIG_UBSAN_INTEGER_WRAP)   +=3D scripts/integer-wrap-i=
+gnore.scl
+> > >
+> > > This is in $(srctree)
 > >
-> > I don't feel comfortable with changing the clocksource / clockevent drivers to
-> > a module for the reasons explained in the aforementionned thread.
-> 
-> I wasn't CC'ed on that, but to address a few of your points:
-> 
-> > I have some concerns about this kind of changes:
+> > Yes.
 > >
-> >   * the core code may not be prepared for that, so loading / unloading
-> > the modules with active timers may result into some issues
-> 
-> That's a fair concern, but permanent modules (which are loaded but not
-> unloaded) shouldn't suffer this issue. I recognize having modules be
-> fully unloadable is generally cleaner and preferred, but I also see
-> the benefit of allowing permanent modules to be one-way loaded so a
-> generic/distro kernel shared between lots of different platforms
-> doesn't need to be bloated with drivers that aren't used everywhere.
-> Obviously any single driver doesn't make a huge difference, but all
-> the small drivers together does add up.
+> > > > +
+> > > > +quiet_cmd_touch =3D TOUCH   $@
+> > > > +      cmd_touch =3D touch $@
+> > > > +
+> > > > +include/generated/global-rebuild.h: $(rebuild-y)
+> > > > +       $(call cmd,touch)
+> > >
+> > > Is this rule going to find the right versions of the dependencies?
+> >
+> > I think so, but please test it.
+>
+> The patch was white-space damaged and wrapped, but I rebuilt it manually
+> and it mostly works. There still seems to be some ordering issues, as
+> some stuff gets rebuilt on a record build:
+>
+> # Clean the tree and pick an "everything" build
+> $ make O=3Dgcc-test clean allmodconfig -s
+>
+> # Make a target normally
+> $ make O=3Dgcc-test kernel/seccomp.o -s
+>
+> # Touch a gcc plugin that was in .config
+> $ touch scripts/gcc-plugins/stackleak_plugin.c
+>
+> # Build and a full rebuild is triggered (good)
+> $ make O=3Dgcc-test kernel/seccomp.o
+> make[1]: Entering directory '/srv/code/gcc-test'
+>   GEN     Makefile
+>   DESCEND objtool
+>   HOSTCXX scripts/gcc-plugins/stackleak_plugin.so
+>   INSTALL libsubcmd_headers
+>   TOUCH   include/generated/global-rebuild.h
+>   CC      kernel/bounds.s
+>   CC      arch/x86/kernel/asm-offsets.s
+>   CALL    ../scripts/checksyscalls.sh
+>   CC      kernel/seccomp.o
+> make[1]: Leaving directory '/srv/code/gcc-test'
+>
+> # Build again, but more stuff gets built
+> $ make O=3Dgcc-test kernel/seccomp.o
+> make[1]: Entering directory '/srv/code/gcc-test'
+>   GEN     Makefile
+>   DESCEND objtool
+>   CC      scripts/mod/empty.o
+>   CC      scripts/mod/devicetable-offsets.s
+>   INSTALL libsubcmd_headers
+>   MKELF   scripts/mod/elfconfig.h
+>   HOSTCC  scripts/mod/modpost.o
+>   HOSTCC  scripts/mod/sumversion.o
+>   HOSTCC  scripts/mod/symsearch.o
+>   HOSTCC  scripts/mod/file2alias.o
+>   HOSTLD  scripts/mod/modpost
+>   CALL    ../scripts/checksyscalls.sh
+> make[1]: Leaving directory '/srv/code/gcc-test'
+>
+> # Third time finally everything is stable
+> $ hmake O=3Dgcc-test kernel/seccomp.o
+> make[1]: Entering directory '/srv/code/gcc-test'
+>   GEN     Makefile
+>   DESCEND objtool
+>   CALL    ../scripts/checksyscalls.sh
+>   INSTALL libsubcmd_headers
+> make[1]: Leaving directory '/srv/code/gcc-test'
+>
+>
+> Note that scripts/mod/* gets rebuilt on the second rebuild.
 
-Perhaps using module_platform_driver_probe() should do the trick with
-some scripts updated for my git hooks to check
-module_platform_driver() is not used.
+Hmm.
+OK, my code did not work.
 
-[ ... ]
+I accept your patch set (although I am not a big fan
+of the added complexity...)
 
--- 
+Could you move the normalize_path macro
+to scripts/Kbuild?
 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+--=20
+Best Regards
+Masahiro Yamada
 
