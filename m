@@ -1,68 +1,86 @@
-Return-Path: <linux-kernel+bounces-646098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-646101-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F082DAB57F1
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 17:04:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1907AAB57FA
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 17:05:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4EAF4A70FF
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 15:03:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 546E11B457F7
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 15:04:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AA092BE7A5;
-	Tue, 13 May 2025 15:03:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60D57299928;
+	Tue, 13 May 2025 15:03:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="Xxr2g0ym"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="ZyEjKwWr"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EE301DDC37;
-	Tue, 13 May 2025 15:03:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FDF71ADFFB
+	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 15:03:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747148582; cv=none; b=LXph4OketG/pxAgPtc6+iExAOqs4YIttBcNJtzgNfzFl7gofRyNMUzKuyN9EfsgFEwnDSvwlr7HoPw+QaIgNF9ShbAfH5xrlCHA2QzVOp1Q46lsecYVjRPPvFjpA7opxPvMKG84e9XWfZodhIq1mHJF7QvHjfna5gSZADgRC/38=
+	t=1747148618; cv=none; b=JuCvJnPiWlDg0kRjF6i2LTCW7RAi6JzcRs9u5nKU1zvXQp3q0iT+R7YbeBmRIAnTdthiSvV8KAv0YkB/V/r9JkcurFL6h98yyMUU0X1ZEvr2TSkLAxxhl0X2cn6+uVIF7IrE6iN51Nix+yPXghEBQw041D70IZtjWOoYxFsxSKY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747148582; c=relaxed/simple;
-	bh=5Wan9BKPnkriXyK42baB0i2uWH9fHkvxaVvN5MyetIw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pu+p9gMqUgZV9ooHzoUmSXdW2wLJCtuPLG7XhUKjQtQWJJQ5osxWjfnNEc/d696JnsSPPAm+2b9Ri1b6xvBjY8ghyT8dUl8et5kH4B30mL4RYKt/Lzko1cN/sbY9YPtGOw7+9juDbiwjO37sfkTlL2NDnX0JQnHFfWH7reTOYqM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=Xxr2g0ym; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Transfer-Encoding:MIME-Version:References:
-	In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=9MOIiVlkFmJiHR6H9Y3gRKMrHtAOOxkJQoBIEkYY0hI=; b=Xxr2g0ym1U/EmuoRB9fUtYnRuv
-	0+3pSPSMvlY4DFogeT3ScpQiSQHIX9rgM5gQ1cbmVymt0vRK/sQy4bYzHGlxFdq2oEubBZYNVYS/h
-	01q8TGl09VfByNxEQS1a+OPA3m8OqR5TL0khowSMmMj5jS4gPcTImhH2MKgDdcQ31BM4Lg7aAfW5S
-	aPlWUJzi7jMkEtfcJCtIJz0/39+Yc5Yzs+ACUbVbrbidscAPJgGpwx0QRMHtlioRm/hIm1yAQwSES
-	eaRini1b5pDrlj26pN4mzirNeqXDGi2NKcIvfwg2OpKjkumTiQC7dRYjveWSYFxpd1xNM0rEgYH7z
-	gCpVzQuw==;
-Received: from i53875a50.versanet.de ([83.135.90.80] helo=localhost.localdomain)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1uEr9d-0008L7-6N; Tue, 13 May 2025 17:02:49 +0200
-From: Heiko Stuebner <heiko@sntech.de>
-To: heiko@sntech.de
-Cc: quentin.schulz@cherry.de,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Heiko Stuebner <heiko.stuebner@cherry.de>
-Subject: [PATCH v2 6/6] arm64: dts: rockchip: add px30-pp1516 base dtsi and board variants
-Date: Tue, 13 May 2025 17:02:34 +0200
-Message-ID: <20250513150234.2331221-7-heiko@sntech.de>
+	s=arc-20240116; t=1747148618; c=relaxed/simple;
+	bh=7h6TDK9XO4vi8HAwbxlZy15xoNWwk+1COdubrAjH45o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LYjuEOizIBVEHT6JGLYfyUmOJuffuCc3Ki33mqow+ZtNEBkCavUCKZjJn42ZzropdJAqkLZa6Y9Uauh1JuNC6hmkQBSFyAdcWeWkPl8vC/95HI51ajbucok+iYSEHZbtZJluHSABPKAPsWwaQpOice3MPt5Bocjj1qqPBE+x0e8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=ZyEjKwWr; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-43cfe63c592so59585125e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 08:03:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ionos.com; s=google; t=1747148614; x=1747753414; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/khpT6y/LHVtwUJo6f8G8UANag+DTR3Iq07zRFJyCJk=;
+        b=ZyEjKwWrsAnW2QYtYj32PxzL4lx/x3OofUPS7qiK7++XAsrRtdbWZ7mUCwmesvoHmI
+         LPx+IZqLQ8o8K0e4vPf1Bs+gfee4Wuvf4hJALUMDUFHuioV0mu32jgdI8ba/iXZ8Sn0e
+         3ysOx0xT9+T0rFv5sAiCPbiG5XISV8aKMnex0HlpsRt78RdD5T3BWzTmFCenMO0n15B5
+         5G2ipFt52JMrEAiKAuGLhekvL0h0HJEpQKUvh0HYtiskBN9XIWBuZzHt2ArnT7aUY4OU
+         9n8lc4aGfg7kNSDTWGaG/vzNqzxcncQ0DaHb77cFxikBcqLBaRoct4q9hzdFNmDPqrHv
+         X7LA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747148614; x=1747753414;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/khpT6y/LHVtwUJo6f8G8UANag+DTR3Iq07zRFJyCJk=;
+        b=irbm2pi8IoR2ypNB/qKEQkbRNURfRWDTmUQuoVYy0H4/zoj2yafx+wbgcQwZdceLvY
+         YbJhONIUhz9ciOfy+qhgxA4kuSrqzG0aqyHIJ0wE9WM2tdUPyOdOotuUTiSBJxlp83X2
+         +wcFaTQeyjNRHXBqCyqI6FKemwFV7VEhWkMtRS8kam4hdl9LYsYlBwIzOUxXQHsE9RKc
+         wBxjYbaVJEkjHWYuWgsTunbRj10YNfjzBauzTfWArIKUs7KHjhGyROn3HczoHYIzMaCN
+         9IZWDeXI2DFTpzPvaFRp8B2Duurn1Q9gk3tn5OnsSoXt8WhGa95bKawTDE5PPku7YGjq
+         Qwrw==
+X-Forwarded-Encrypted: i=1; AJvYcCWvkibyZf9j9UaIiw4DRLd+x2Rx1u1l2mTZP35MtA9I0PuJ6ZjWahQchk0X97BoH4i1YhJWGDsB/nyMAw0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzi8/wE4H5YpLQXDKIUnjaAenXthm6w/OMheYzhm7uTN6Z6xXs8
+	HmmFj7SV1kmeJCRZ0+30gGJzGpjziYTQz7IxEQoife19Ae0gd+yXcl5u+JG37CQ=
+X-Gm-Gg: ASbGncuDaOh1AEYEhQKxIaKCJcmQUN+5WI05ACHxKBzEdP+/o6co3P65bFYrzj9TD8a
+	SifXbZqRhSA5+N8KZVh9uIEGXrR2AeyrMsipc9+VaX3BY4f5p6fZTGowwueVDK1Gv/szj90adrv
+	7Aw4LdJ76YxxM54p7F6Hslf9wMZKP3rjJpJ7/t5NPKchiibDiFj5GkOQZXcwlE4ypbcmVjikYfw
+	lZjK5HLksWjLlrxugJ+JS7kEhTsOpvEpuuGc9U912cw3MEfVvVV9feds/rPBOXG+McYvUo/uhWW
+	easlKZ+KzcC44IjrKWgU/gXbQ/IjBr0rpe/8ZbxJ98l/u9e488vhD2CGp2ZYDrnEHnxpGOQnEek
+	89irP0cXCRKE1RkNoVxYDbrtIddoQnUY1JmgVW1evU6cuu7C6fdg=
+X-Google-Smtp-Source: AGHT+IFEihMN3DpCrImIRC/9uCzJ+D24g5H8VE5PHrXwPAY3J3KM1oWCaSDbh+5QuPzDZpLQql8OBQ==
+X-Received: by 2002:a05:600c:1d84:b0:441:d2d8:bd8b with SMTP id 5b1f17b1804b1-442eb3a33a1mr34112495e9.8.1747148614433;
+        Tue, 13 May 2025 08:03:34 -0700 (PDT)
+Received: from raven.intern.cm-ag (p200300dc6f46c100023064fffe740809.dip0.t-ipconnect.de. [2003:dc:6f46:c100:230:64ff:fe74:809])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-442cd34bc2fsm106800805e9.20.2025.05.13.08.03.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 May 2025 08:03:32 -0700 (PDT)
+From: Max Kellermann <max.kellermann@ionos.com>
+To: viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	jack@suse.cz,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Max Kellermann <max.kellermann@ionos.com>
+Subject: [PATCH v2 1/4] include/linux/fs.h: add inode_lock_killable()
+Date: Tue, 13 May 2025 17:03:24 +0200
+Message-ID: <20250513150327.1373061-1-max.kellermann@ionos.com>
 X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250513150234.2331221-1-heiko@sntech.de>
-References: <20250513150234.2331221-1-heiko@sntech.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,733 +89,42 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Heiko Stuebner <heiko.stuebner@cherry.de>
+Prepare for making inode operations killable while they're waiting for
+the lock.
 
-PP1516 are Touchscreen devices built around the PX30 SoC and companion
-devices to PX30-Cobra, again with multiple display options.
-
-The devices feature an EMMC, OTG port and a 720x1280 display with a
-touchscreen and camera
-
-Signed-off-by: Heiko Stuebner <heiko.stuebner@cherry.de>
+Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
 ---
- arch/arm64/boot/dts/rockchip/Makefile         |   2 +
- .../rockchip/px30-pp1516-ltk050h3146w-a2.dts  |  39 ++
- .../dts/rockchip/px30-pp1516-ltk050h3148w.dts |  39 ++
- arch/arm64/boot/dts/rockchip/px30-pp1516.dtsi | 599 ++++++++++++++++++
- 4 files changed, 679 insertions(+)
- create mode 100644 arch/arm64/boot/dts/rockchip/px30-pp1516-ltk050h3146w-a2.dts
- create mode 100644 arch/arm64/boot/dts/rockchip/px30-pp1516-ltk050h3148w.dts
- create mode 100644 arch/arm64/boot/dts/rockchip/px30-pp1516.dtsi
+ include/linux/fs.h | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/rockchip/Makefile b/arch/arm64/boot/dts/rockchip/Makefile
-index 8151e8bb1cd3..899113f88a29 100644
---- a/arch/arm64/boot/dts/rockchip/Makefile
-+++ b/arch/arm64/boot/dts/rockchip/Makefile
-@@ -8,6 +8,8 @@ dtb-$(CONFIG_ARCH_ROCKCHIP) += px30-engicam-px30-core-ctouch2.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += px30-engicam-px30-core-ctouch2-of10.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += px30-engicam-px30-core-edimm2.2.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += px30-firefly-jd4-core-mb.dtb
-+dtb-$(CONFIG_ARCH_ROCKCHIP) += px30-pp1516-ltk050h3146w-a2.dtb
-+dtb-$(CONFIG_ARCH_ROCKCHIP) += px30-pp1516-ltk050h3148w.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += px30-ringneck-haikou.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += px30-ringneck-haikou-lvds-9904379.dtbo
- dtb-$(CONFIG_ARCH_ROCKCHIP) += px30-ringneck-haikou-video-demo.dtbo
-diff --git a/arch/arm64/boot/dts/rockchip/px30-pp1516-ltk050h3146w-a2.dts b/arch/arm64/boot/dts/rockchip/px30-pp1516-ltk050h3146w-a2.dts
-new file mode 100644
-index 000000000000..b71929bcb33e
---- /dev/null
-+++ b/arch/arm64/boot/dts/rockchip/px30-pp1516-ltk050h3146w-a2.dts
-@@ -0,0 +1,39 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Copyright (c) 2025 Cherry Embedded Solutions GmbH
-+ */
-+
-+/dts-v1/;
-+#include "px30-pp1516.dtsi"
-+
-+/ {
-+	model = "Theobroma Systems PP-1516 with LTK050H3146W-A2 Display";
-+	compatible = "tsd,px30-pp1516-ltk050h3146w-a2", "tsd,px30-pp1516", "rockchip,px30";
-+};
-+
-+&dsi {
-+	status = "okay";
-+
-+	panel@0 {
-+		compatible = "leadtek,ltk050h3146w-a2";
-+		reg = <0>;
-+		backlight = <&backlight>;
-+		iovcc-supply = <&vcc_1v8>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&dsp_rst>;
-+		reset-gpios = <&gpio0 RK_PB2 GPIO_ACTIVE_LOW>;
-+		vci-supply = <&vcc_2v8>;
-+
-+		port {
-+			mipi_in_panel: endpoint {
-+				remote-endpoint = <&mipi_out_panel>;
-+			};
-+		};
-+	};
-+};
-+
-+&dsi_out {
-+	mipi_out_panel: endpoint {
-+		remote-endpoint = <&mipi_in_panel>;
-+	};
-+};
-diff --git a/arch/arm64/boot/dts/rockchip/px30-pp1516-ltk050h3148w.dts b/arch/arm64/boot/dts/rockchip/px30-pp1516-ltk050h3148w.dts
-new file mode 100644
-index 000000000000..a9bd5936c701
---- /dev/null
-+++ b/arch/arm64/boot/dts/rockchip/px30-pp1516-ltk050h3148w.dts
-@@ -0,0 +1,39 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Copyright (c) 2025 Cherry Embedded Solutions GmbH
-+ */
-+
-+/dts-v1/;
-+#include "px30-pp1516.dtsi"
-+
-+/ {
-+	model = "Theobroma Systems PP-1516 with LTK050H3148W Display";
-+	compatible = "tsd,px30-pp1516-ltk050h3148w", "tsd,px30-pp1516", "rockchip,px30";
-+};
-+
-+&dsi {
-+	status = "okay";
-+
-+	panel@0 {
-+		compatible = "leadtek,ltk050h3148w";
-+		reg = <0>;
-+		backlight = <&backlight>;
-+		iovcc-supply = <&vcc_1v8>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&dsp_rst>;
-+		reset-gpios = <&gpio0 RK_PB2 GPIO_ACTIVE_LOW>;
-+		vci-supply = <&vcc_2v8>;
-+
-+		port {
-+			mipi_in_panel: endpoint {
-+				remote-endpoint = <&mipi_out_panel>;
-+			};
-+		};
-+	};
-+};
-+
-+&dsi_out {
-+	mipi_out_panel: endpoint {
-+		remote-endpoint = <&mipi_in_panel>;
-+	};
-+};
-diff --git a/arch/arm64/boot/dts/rockchip/px30-pp1516.dtsi b/arch/arm64/boot/dts/rockchip/px30-pp1516.dtsi
-new file mode 100644
-index 000000000000..10e275301463
---- /dev/null
-+++ b/arch/arm64/boot/dts/rockchip/px30-pp1516.dtsi
-@@ -0,0 +1,599 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Copyright (c) 2025 Cherry Embedded Solutions GmbH
-+ */
-+
-+/dts-v1/;
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/input/input.h>
-+#include <dt-bindings/pinctrl/rockchip.h>
-+#include "px30.dtsi"
-+
-+/ {
-+	aliases {
-+		mmc0 = &emmc;
-+	};
-+
-+	chosen {
-+		stdout-path = "serial5:115200n8";
-+	};
-+
-+	backlight: backlight {
-+		compatible = "pwm-backlight";
-+		power-supply = <&vcc5v0_sys>;
-+		pwms = <&pwm0 0 25000 0>;
-+	};
-+
-+	beeper {
-+		compatible = "pwm-beeper";
-+		pwms = <&pwm1 0 1000 0>;
-+	};
-+
-+	emmc_pwrseq: emmc-pwrseq {
-+		compatible = "mmc-pwrseq-emmc";
-+		pinctrl-0 = <&emmc_reset>;
-+		pinctrl-names = "default";
-+		reset-gpios = <&gpio1 RK_PB3 GPIO_ACTIVE_HIGH>;
-+	};
-+
-+	gpio-leds {
-+		compatible = "gpio-leds";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&debug_led_pin>, <&heartbeat_led_pin>;
-+
-+		/*
-+		 * LED2 on the PCB, left of the USB-C connector.
-+		 * Typically NOT populated.
-+		 */
-+		debug: led-0 {
-+			label = "debug";
-+			gpios = <&gpio3 RK_PC3 GPIO_ACTIVE_HIGH>;
-+			linux,default-trigger = "none";
-+		};
-+
-+		/*
-+		 * LED14 on the PCB, left of the PX30 SoC.
-+		 * Typically NOT populated.
-+		 */
-+		heartbeat: led-1 {
-+			label = "heartbeat";
-+			gpios = <&gpio0 RK_PA0 GPIO_ACTIVE_HIGH>;
-+			linux,default-trigger = "heartbeat";
-+		};
-+	};
-+
-+	vcc5v0_sys: regulator-vccsys {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vcc5v0_sys";
-+		regulator-always-on;
-+		regulator-boot-on;
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+	};
-+
-+	vcc_cam_avdd: regulator-vcc-cam-avdd {
-+		compatible  = "regulator-fixed";
-+		regulator-name = "vcc_cam_avdd";
-+		gpio = <&gpio3 RK_PC0 GPIO_ACTIVE_LOW>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&cam_avdd_en>;
-+		regulator-min-microvolt = <2800000>;
-+		regulator-max-microvolt = <2800000>;
-+		vin-supply = <&vcc_2v8>;
-+	};
-+
-+	vcc_cam_dovdd: regulator-vcc-cam-dovdd {
-+		compatible  = "regulator-fixed";
-+		regulator-name = "vcc_cam_dovdd";
-+		gpio = <&gpio3 RK_PC1 GPIO_ACTIVE_LOW>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&cam_dovdd_en>;
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		vin-supply = <&vcc_1v8>;
-+	};
-+
-+	vcc_cam_dvdd: regulator-vcc-cam-dvdd {
-+		compatible  = "regulator-fixed";
-+		regulator-name = "vcc_cam_dvdd";
-+		gpio = <&gpio3 RK_PC5 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&cam_dvdd_en>;
-+		regulator-min-microvolt = <1200000>;
-+		regulator-max-microvolt = <1200000>;
-+		vin-supply = <&vcc_3v3>;
-+	};
-+
-+	vcc_lens_afvdd: regulator-vcc-lens-afvdd {
-+		compatible  = "regulator-fixed";
-+		regulator-name = "vcc_lens_afvdd";
-+		gpio = <&gpio3 RK_PB2 GPIO_ACTIVE_LOW>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&cam_afvdd_en>;
-+		regulator-min-microvolt = <2800000>;
-+		regulator-max-microvolt = <2800000>;
-+		vin-supply = <&vcc_2v8>;
-+	};
-+};
-+
-+&cpu0 {
-+	cpu-supply = <&vdd_arm>;
-+};
-+
-+&cpu1 {
-+	cpu-supply = <&vdd_arm>;
-+};
-+
-+&cpu2 {
-+	cpu-supply = <&vdd_arm>;
-+};
-+
-+&cpu3 {
-+	cpu-supply = <&vdd_arm>;
-+};
-+
-+&csi_dphy {
-+	status = "okay";
-+};
-+
-+&display_subsystem {
-+	status = "okay";
-+};
-+
-+&dsi_dphy {
-+	status = "okay";
-+};
-+
-+&emmc {
-+	bus-width = <8>;
-+	cap-mmc-highspeed;
-+	/*
-+	 * For hs200 support, U-Boot would have to set the RK809 DCDC4
-+	 * rail to 1.8V from the default of 3.0V. It doesn't do that on
-+	 * devices out in the field, so disable hs200.
-+	 * mmc-hs200-1_8v;
-+	 */
-+	mmc-pwrseq = <&emmc_pwrseq>;
-+	non-removable;
-+	vmmc-supply = <&vcc_3v3>;
-+	vqmmc-supply = <&vcc_emmc>;
-+	status = "okay";
-+};
-+
-+&gpu {
-+	mali-supply = <&vdd_log>;
-+	status = "okay";
-+};
-+
-+/* I2C0 = PMIC, Touchscreen */
-+&i2c0 {
-+	status = "okay";
-+
-+	touchscreen@14 {
-+		compatible = "goodix,gt911";
-+		reg = <0x14>;
-+		AVDD28-supply = <&vcc_2v8>;
-+		interrupt-parent = <&gpio0>;
-+		interrupts = <RK_PA1 IRQ_TYPE_LEVEL_LOW>;
-+		irq-gpios = <&gpio0 RK_PA1 GPIO_ACTIVE_HIGH>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&tch_int &tch_rst>;
-+		reset-gpios = <&gpio0 RK_PB5 GPIO_ACTIVE_HIGH>;
-+		VDDIO-supply = <&vcc_3v3>;
-+	};
-+
-+	rk809: pmic@20 {
-+		compatible = "rockchip,rk809";
-+		reg = <0x20>;
-+		#clock-cells = <0>;
-+		clock-output-names = "xin32k";
-+		interrupt-parent = <&gpio0>;
-+		interrupts = <RK_PA7 IRQ_TYPE_LEVEL_LOW>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pmic_int>;
-+		wakeup-source;
-+		system-power-controller;
-+
-+		vcc1-supply = <&vcc5v0_sys>;
-+		vcc2-supply = <&vcc5v0_sys>;
-+		vcc3-supply = <&vcc5v0_sys>;
-+		vcc4-supply = <&vcc5v0_sys>;
-+		vcc5-supply = <&vcc_3v3>;
-+		vcc6-supply = <&vcc_3v3>;
-+		vcc7-supply = <&vcc_3v3>;
-+		vcc9-supply = <&vcc5v0_sys>;
-+
-+		regulators {
-+			vdd_log: DCDC_REG1 {
-+				regulator-name = "vdd_log";
-+				regulator-always-on;
-+				regulator-boot-on;
-+				regulator-min-microvolt = <950000>;
-+				regulator-max-microvolt = <1350000>;
-+				regulator-ramp-delay = <6001>;
-+
-+				regulator-state-mem {
-+					regulator-on-in-suspend;
-+					regulator-suspend-microvolt = <950000>;
-+				};
-+			};
-+
-+			vdd_arm: DCDC_REG2 {
-+				regulator-name = "vdd_arm";
-+				regulator-always-on;
-+				regulator-boot-on;
-+				regulator-min-microvolt = <950000>;
-+				regulator-max-microvolt = <1350000>;
-+				regulator-ramp-delay = <6001>;
-+
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+					regulator-suspend-microvolt = <950000>;
-+				};
-+			};
-+
-+			vcc_ddr: DCDC_REG3 {
-+				regulator-name = "vcc_ddr";
-+				regulator-always-on;
-+				regulator-boot-on;
-+
-+				regulator-state-mem {
-+					regulator-on-in-suspend;
-+				};
-+			};
-+
-+			vcc_3v0_1v8: vcc_emmc: DCDC_REG4 {
-+				regulator-name = "vcc_3v0_1v8";
-+				regulator-always-on;
-+				regulator-boot-on;
-+				regulator-min-microvolt = <3000000>;
-+				regulator-max-microvolt = <3000000>;
-+
-+				regulator-state-mem {
-+					regulator-on-in-suspend;
-+					regulator-suspend-microvolt = <3000000>;
-+				};
-+			};
-+
-+			vcc_3v3: DCDC_REG5 {
-+				regulator-name = "vcc_3v3";
-+				regulator-always-on;
-+				regulator-boot-on;
-+				regulator-min-microvolt = <3300000>;
-+				regulator-max-microvolt = <3300000>;
-+
-+				regulator-state-mem {
-+					regulator-on-in-suspend;
-+					regulator-suspend-microvolt = <3300000>;
-+				};
-+			};
-+
-+			vcc_1v8: LDO_REG2 {
-+				regulator-name = "vcc_1v8";
-+				regulator-always-on;
-+				regulator-boot-on;
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <1800000>;
-+
-+				regulator-state-mem {
-+					regulator-on-in-suspend;
-+					regulator-suspend-microvolt = <1800000>;
-+				};
-+			};
-+
-+			vcc_1v0: LDO_REG3 {
-+				regulator-name = "vcc_1v0";
-+				regulator-always-on;
-+				regulator-boot-on;
-+				regulator-min-microvolt = <1000000>;
-+				regulator-max-microvolt = <1000000>;
-+
-+				regulator-state-mem {
-+					regulator-on-in-suspend;
-+					regulator-suspend-microvolt = <1000000>;
-+				};
-+			};
-+
-+			vcc_2v8: LDO_REG4 {
-+				regulator-name = "vcc_2v8";
-+				regulator-always-on;
-+				regulator-boot-on;
-+				regulator-min-microvolt = <2800000>;
-+				regulator-max-microvolt = <2800000>;
-+
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+					regulator-suspend-microvolt = <2800000>;
-+				};
-+			};
-+
-+			vccio_sd: LDO_REG5 {
-+				regulator-name = "vccio_sd";
-+				regulator-always-on;
-+				regulator-boot-on;
-+				regulator-min-microvolt = <3000000>;
-+				regulator-max-microvolt = <3000000>;
-+
-+				regulator-state-mem {
-+					regulator-on-in-suspend;
-+					regulator-suspend-microvolt = <3000000>;
-+				};
-+			};
-+
-+			vcc_sdio: LDO_REG6 {
-+				regulator-name = "vcc_sdio";
-+				regulator-always-on;
-+				regulator-boot-on;
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <1800000>;
-+
-+				regulator-state-mem {
-+					regulator-on-in-suspend;
-+					regulator-suspend-microvolt = <1800000>;
-+				};
-+			};
-+
-+			vcc_lcd: LDO_REG7 {
-+				regulator-name = "vcc_lcd";
-+				regulator-always-on;
-+				regulator-boot-on;
-+				regulator-min-microvolt = <1000000>;
-+				regulator-max-microvolt = <1000000>;
-+
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+					regulator-suspend-microvolt = <1000000>;
-+				};
-+			};
-+
-+			vcc_1v8_lcd: LDO_REG8 {
-+				regulator-name = "vcc_1v8_lcd";
-+				regulator-always-on;
-+				regulator-boot-on;
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <1800000>;
-+
-+				regulator-state-mem {
-+					regulator-on-in-suspend;
-+					regulator-suspend-microvolt = <1800000>;
-+				};
-+			};
-+
-+			vcca_1v8: LDO_REG9 {
-+				regulator-name = "vcca_1v8";
-+				regulator-always-on;
-+				regulator-boot-on;
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <1800000>;
-+
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+					regulator-suspend-microvolt = <1800000>;
-+				};
-+			};
-+		};
-+	};
-+};
-+
-+&i2c1 {
-+	clock-frequency = <100000>;
-+	status = "okay";
-+};
-+
-+/* I2C2 = Accelerometer + Camera */
-+&i2c2 {
-+	/* MEMSIC MXC4005 accelerometer is rated for I2C Fast Mode (<=400KHz) */
-+	/* OmniVision OV5675 camera is rated for I2C Fast Mode (<=400KHz) */
-+	clock-frequency = <400000>;
-+	status = "okay";
-+
-+	focus: focus@c {
-+		compatible = "dongwoon,dw9714";
-+		reg = <0xc>;
-+		vcc-supply = <&vcc_lens_afvdd>;
-+	};
-+
-+	accel@15 {
-+		compatible = "memsic,mxc4005";
-+		reg = <0x15>;
-+		interrupt-parent = <&gpio2>;
-+		interrupts = <RK_PB4 IRQ_TYPE_LEVEL_LOW>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&accel_int>;
-+	};
-+
-+	camera@36 {
-+		compatible = "ovti,ov5675";
-+		reg = <0x36>;
-+		clocks = <&cru SCLK_CIF_OUT>;
-+		assigned-clocks = <&cru SCLK_CIF_OUT>;
-+		assigned-clock-rates = <19200000>;
-+		avdd-supply = <&vcc_cam_avdd>;
-+		dvdd-supply = <&vcc_cam_dvdd>;
-+		dovdd-supply = <&vcc_cam_dovdd>;
-+		lens-focus = <&focus>;
-+		orientation = <0>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&cif_clkout_m0 &cam_pwdn>;
-+		reset-gpios = <&gpio2 RK_PB0 GPIO_ACTIVE_LOW>;
-+		rotation = <0>;
-+
-+		port {
-+			ucam_out: endpoint {
-+				remote-endpoint = <&mipi_in_ucam>;
-+				data-lanes = <1 2>;
-+				link-frequencies = /bits/ 64 <450000000>;
-+			};
-+		};
-+	};
-+};
-+
-+&io_domains {
-+	vccio1-supply = <&vcc_sdio>;
-+	vccio2-supply = <&vccio_sd>;
-+	vccio3-supply = <&vcc_1v8>;
-+	vccio4-supply = <&vcc_3v3>;
-+	vccio5-supply = <&vcc_3v3>;
-+	vccio6-supply = <&vcc_emmc>;
-+	status = "okay";
-+};
-+
-+&isp {
-+	status = "okay";
-+
-+	ports {
-+		port@0 {
-+			mipi_in_ucam: endpoint@0 {
-+				reg = <0>;
-+				data-lanes = <1 2>;
-+				remote-endpoint = <&ucam_out>;
-+			};
-+		};
-+	};
-+};
-+
-+&isp_mmu {
-+	status = "okay";
-+};
-+
-+&pinctrl {
-+	camera {
-+		accel_int: accel-int {
-+			rockchip,pins = <2 RK_PB4 RK_FUNC_GPIO &pcfg_pull_none>;
-+		};
-+
-+		cam_afvdd_en: cam-afvdd-en {
-+			rockchip,pins =
-+				<3 RK_PB2 RK_FUNC_GPIO &pcfg_pull_none>;
-+		};
-+
-+		cam_avdd_en: cam-avdd-en {
-+			rockchip,pins =
-+				<3 RK_PC0 RK_FUNC_GPIO &pcfg_pull_none>;
-+		};
-+
-+		cam_dovdd_en: cam-dovdd-en {
-+			rockchip,pins =
-+				<3 RK_PC1 RK_FUNC_GPIO &pcfg_pull_none>;
-+		};
-+
-+		cam_dvdd_en: cam-dvdd-en {
-+			rockchip,pins =
-+				<3 RK_PC5 RK_FUNC_GPIO &pcfg_pull_none>;
-+		};
-+
-+		cam_pwdn: cam-pwdn {
-+			rockchip,pins =
-+				<2 RK_PB0 RK_FUNC_GPIO &pcfg_pull_none>;
-+		};
-+	};
-+
-+	emmc {
-+		emmc_reset: emmc-reset {
-+			rockchip,pins =
-+				<1 RK_PB3 RK_FUNC_GPIO &pcfg_pull_none>;
-+		};
-+	};
-+
-+	leds {
-+		debug_led_pin: debug-led-pin {
-+			rockchip,pins =
-+				<3 RK_PC3 RK_FUNC_GPIO &pcfg_pull_none>;
-+		};
-+
-+		heartbeat_led_pin: heartbeat-led-pin {
-+			rockchip,pins =
-+				<0 RK_PA0 RK_FUNC_GPIO &pcfg_pull_none>;
-+		};
-+	};
-+
-+	panel {
-+		dsp_rst: dsp-rst {
-+			rockchip,pins =
-+				<0 RK_PB2 RK_FUNC_GPIO &pcfg_pull_up>;
-+		};
-+
-+		tch_int: tch-int {
-+			rockchip,pins =
-+				<0 RK_PA1 RK_FUNC_GPIO &pcfg_pull_none>;
-+		};
-+
-+		tch_rst: tch-rst {
-+			rockchip,pins =
-+				<0 RK_PB5 RK_FUNC_GPIO &pcfg_pull_none>;
-+		};
-+	};
-+
-+	pmic {
-+		pmic_int: pmic-int {
-+			rockchip,pins =
-+				<0 RK_PA7 RK_FUNC_GPIO &pcfg_pull_up>;
-+		};
-+	};
-+};
-+
-+&pmu_io_domains {
-+	pmuio1-supply = <&vcc_3v3>;
-+	pmuio2-supply = <&vcc_3v3>;
-+	status = "okay";
-+};
-+
-+&pwm0 {
-+	status = "okay";
-+};
-+
-+&pwm1 {
-+	status = "okay";
-+};
-+
-+&saradc {
-+	vref-supply = <&vcc_1v8>;
-+	status = "okay";
-+};
-+
-+&tsadc {
-+	status = "okay";
-+};
-+
-+&u2phy {
-+	status = "okay";
-+};
-+
-+&u2phy_host {
-+	status = "okay";
-+};
-+
-+&u2phy_otg {
-+	status = "okay";
-+};
-+
-+&uart5 {
-+	pinctrl-0 = <&uart5_xfer>;
-+	status = "okay";
-+};
-+
-+&usb20_otg {
-+	dr_mode = "peripheral";
-+	status = "okay";
-+};
-+
-+&usb_host0_ehci {
-+	status = "okay";
-+};
-+
-+&usb_host0_ohci {
-+	status = "okay";
-+};
-+
-+&vopb {
-+	status = "okay";
-+};
-+
-+&vopb_mmu {
-+	status = "okay";
-+};
-+
-+&wdt {
-+	status = "okay";
-+};
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 016b0fe1536e..5e4ac873228d 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -867,6 +867,11 @@ static inline void inode_lock(struct inode *inode)
+ 	down_write(&inode->i_rwsem);
+ }
+ 
++static inline __must_check int inode_lock_killable(struct inode *inode)
++{
++	return down_write_killable(&inode->i_rwsem);
++}
++
+ static inline void inode_unlock(struct inode *inode)
+ {
+ 	up_write(&inode->i_rwsem);
+@@ -877,6 +882,11 @@ static inline void inode_lock_shared(struct inode *inode)
+ 	down_read(&inode->i_rwsem);
+ }
+ 
++static inline __must_check int inode_lock_shared_killable(struct inode *inode)
++{
++	return down_read_killable(&inode->i_rwsem);
++}
++
+ static inline void inode_unlock_shared(struct inode *inode)
+ {
+ 	up_read(&inode->i_rwsem);
 -- 
 2.47.2
 
