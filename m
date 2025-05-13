@@ -1,145 +1,173 @@
-Return-Path: <linux-kernel+bounces-645530-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-645532-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0E1CAB4EFB
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 11:15:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B66F7AB4EFF
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 11:16:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F076D3B668F
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 09:15:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 405DD17304C
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 09:16:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DFBA1F0985;
-	Tue, 13 May 2025 09:15:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="Jdl0YN6z"
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2A7A214209
-	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 09:15:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B316213E71;
+	Tue, 13 May 2025 09:15:57 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01CC018E362;
+	Tue, 13 May 2025 09:15:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747127709; cv=none; b=PHP95ruaYssrSOJru7nryqq21bj8skBBOkbxkbFFgmjvDozOA/Ij0rGhutYdyItMe9Ta5zRQkgm6tMlJwzxgOZUcD2zN39Jm2uWUxcBGOLMvs7jXX2/d8VO094ve3pERjsseTB+fDXzRcZiBdcpJHrguKh/fuLqWEmYH415ixZo=
+	t=1747127756; cv=none; b=X9PKv5wqx62pYDeL7nU76wTHHiIFkmMbPB1PjY2x7y7c0uuA/HuoRDjLszbkZwe8/HXLZzcCJIySbSW1AryIbK5DuDXaoyVtrQ0mCVz0h7+eY5RHp+2Yhw6MlzcqR7RhMEg7WpUW9/4Mo2cDsR157SbZswOrrJDjRWG7P9HiNoM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747127709; c=relaxed/simple;
-	bh=dCEwNwEt7AuPcFjOYYqXUKN9++me11ouKXeEDU4JZv0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=f6wvF2pMe0M5zBViT8ttRLjv1JJsSnsG3JTWaMVG2H9LamnX7W0wUDluTKWVBgXAoA4tXIlPnFzUMc3EZP8DxFt2jW7QQcZK832U3E8wp0r+t36xgSHCMCZLIHwAsGJYOGDw+QyvBVCOkO+Dlefl0YSjXLRsm3pJhInqxrntNIg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=Jdl0YN6z; arc=none smtp.client-ip=209.85.160.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4775ccf3e56so77790991cf.0
-        for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 02:15:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1747127707; x=1747732507; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=4ihrFZxGWgoMburH5YAF+Sr/kylX3rOORHrh4dczbaY=;
-        b=Jdl0YN6znOpsaNcr/4Y+IU+mukRJybWqwj9SA9se6mTBMEacbqPEIrp4xJOb7w4DZW
-         tF9u+FRecvrs2dwHP7vobbMcXp2vAGOxIh8+tPgNQ1bJPK9v42+J/b1D75lBzq3VTBAo
-         FkW/Vv5JpRL5FeQ2qILC9yAb4ZwluKicFPyp0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747127707; x=1747732507;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4ihrFZxGWgoMburH5YAF+Sr/kylX3rOORHrh4dczbaY=;
-        b=h/YPtQexri02V/JEhYJvbi3a/LzzXH7bp3mUXIbyFpmPC1J/LZ1ZavfFf8Yjwrxrvi
-         YCmut9GkrQwtKLufPhIoFFnY3fQuFyviqrzGvTNf9ejsD08pbORgklAmsStb0Yz1RTC+
-         EEfsmC6EX2R2amfOcpkHxDKG7W3ga6FVoc62gvs2BE8rfoyo51WNGLhbcAlME9XetHk3
-         4mQnxZ6ok1H0ZYFw1skuprQi/rmUOrd/fhAzvETrSC5xJc4A0lHGm0wkmegxcBNdBdL2
-         thBIzEKWH6s1boW55kBVQ29BVvi8xFlPgecWmr0CBNEaaNmOHhHl3CiHo+2y8Je903Pt
-         WIog==
-X-Forwarded-Encrypted: i=1; AJvYcCX/2S3aAXk7vwkJnrSXNeJs0WEGmP/q5n4oNCDgjz4VNdsVa3D9H6eHILPjRIsIKL578DuwnEic2BPExM0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1asXmOu4gAkm1OfXFeW9GlLjakXrfFT1TUUFVRZ3Jj4DFSrJ/
-	zOeD+NcIUCaQGOzZKYNTCFgk4axq29n4sjbFKF+ePwDCiSlK2YQPNjpo/mwkYdgAgDrgOlYH3Cj
-	Mzet+zQ/U14hv7Viqq1VtVTwpg3yK2MvzfQ2zeQ==
-X-Gm-Gg: ASbGncvwh8C11OnpsoxOuu1mF68k1BexEUmcTGsQPu6w+x+nH787Gm4stY8gEgWNguP
-	ylV/hSVEzzCF2yFA0EvEQX8CF+oV8LWcUPLndapOAbiKSdxTPEiU0eqNjOvXTxMIQ/3wU+wQynX
-	DySk5fh1vIUt4H8K1hTbfvBTIKLmKLNz8=
-X-Google-Smtp-Source: AGHT+IE6dZiqGjVqQyApS4pbcBalFyHHbwwvSoEvnbF7u5bEK2A/GpSwhcwNVYs+CDOmzCE0rRDdqSfuQIhXOHmw+f0=
-X-Received: by 2002:a05:622a:1a93:b0:494:6eed:37b1 with SMTP id
- d75a77b69052e-4948732d7bdmr32223981cf.7.1747127706802; Tue, 13 May 2025
- 02:15:06 -0700 (PDT)
+	s=arc-20240116; t=1747127756; c=relaxed/simple;
+	bh=L36Sf6u/RDbBIgdHmhUm9WdOwooC5Gpp6K8/pGAS6us=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CImahyDBXn4m3d9Y/Vpkh6eOCRKM1hcFiM7HT2hZ1jqJ8U8vqmARgyCBRzazGCEPFJBxa0fNQDGqHCr01j2owXzp3NQLlexFMILsq2ivn4RgW+veg1f/7DYEnx8Aw27p2TqpcN+4ycZatROgWAB7IAkglVormEpCykkChXzjhyc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4A734168F;
+	Tue, 13 May 2025 02:15:43 -0700 (PDT)
+Received: from [10.1.197.1] (ewhatever.cambridge.arm.com [10.1.197.1])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 925F23F673;
+	Tue, 13 May 2025 02:15:50 -0700 (PDT)
+Message-ID: <c5a74dfe-68e2-48f1-9bbb-06db8e62ffea@arm.com>
+Date: Tue, 13 May 2025 10:15:49 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250421013346.32530-1-john@groves.net> <20250421013346.32530-14-john@groves.net>
- <nedxmpb7fnovsgbp2nu6y3cpvduop775jw6leywmmervdrenbn@kp6xy2sm4gxr>
- <20250424143848.GN25700@frogsfrogsfrogs> <5rwwzsya6f7dkf4de2uje2b3f6fxewrcl4nv5ba6jh6chk36f3@ushxiwxojisf>
- <20250428190010.GB1035866@frogsfrogsfrogs> <CAJfpegtR28rH1VA-442kS_ZCjbHf-WDD+w_FgrAkWDBxvzmN_g@mail.gmail.com>
- <20250508155644.GM1035866@frogsfrogsfrogs>
-In-Reply-To: <20250508155644.GM1035866@frogsfrogsfrogs>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Tue, 13 May 2025 11:14:55 +0200
-X-Gm-Features: AX0GCFsg_IXaIo9w2jh-HmI1-M2cVqc9zT7I6qGhspawMoCH4j3pG6URFnq5ts0
-Message-ID: <CAJfpegt4drCVNomOLqcU8JHM+qLrO1JwaQbp69xnGdjLn5O6wA@mail.gmail.com>
-Subject: Re: [RFC PATCH 13/19] famfs_fuse: Create files with famfs fmaps
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: John Groves <John@groves.net>, Dan Williams <dan.j.williams@intel.com>, 
-	Bernd Schubert <bschubert@ddn.com>, John Groves <jgroves@micron.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Vishal Verma <vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>, 
-	Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
-	Luis Henriques <luis@igalia.com>, Randy Dunlap <rdunlap@infradead.org>, 
-	Jeff Layton <jlayton@kernel.org>, Kent Overstreet <kent.overstreet@linux.dev>, 
-	Petr Vorel <pvorel@suse.cz>, Brian Foster <bfoster@redhat.com>, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, nvdimm@lists.linux.dev, 
-	linux-cxl@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	Amir Goldstein <amir73il@gmail.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
-	Stefan Hajnoczi <shajnocz@redhat.com>, Joanne Koong <joannelkoong@gmail.com>, 
-	Josef Bacik <josef@toxicpanda.com>, Aravind Ramesh <arramesh@micron.com>, 
-	Ajay Joshi <ajayjoshi@micron.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RESEND PATCH v6 1/3] arm64: Add BBM Level 2 cpu feature
+To: Catalin Marinas <catalin.marinas@arm.com>,
+ Ryan Roberts <ryan.roberts@arm.com>
+Cc: Will Deacon <will@kernel.org>,
+ =?UTF-8?Q?Miko=C5=82aj_Lenczewski?= <miko.lenczewski@arm.com>,
+ yang@os.amperecomputing.com, corbet@lwn.net, jean-philippe@linaro.org,
+ robin.murphy@arm.com, joro@8bytes.org, akpm@linux-foundation.org,
+ paulmck@kernel.org, mark.rutland@arm.com, joey.gouly@arm.com,
+ maz@kernel.org, james.morse@arm.com, broonie@kernel.org,
+ oliver.upton@linux.dev, baohua@kernel.org, david@redhat.com,
+ ioworker0@gmail.com, jgg@ziepe.ca, nicolinc@nvidia.com, mshavit@google.com,
+ jsnitsel@redhat.com, smostafa@google.com, kevin.tian@intel.com,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev
+References: <20250428153514.55772-2-miko.lenczewski@arm.com>
+ <20250428153514.55772-4-miko.lenczewski@arm.com>
+ <20250506142508.GB1197@willie-the-truck>
+ <78fec33d-fe66-4352-be11-900f456c9af3@arm.com>
+ <20250509134904.GA5707@willie-the-truck> <aB4nqtMJuvvp7Vwm@arm.com>
+ <015746d7-ca46-4978-a441-09fba781fdd4@arm.com>
+ <4709ff5a-f89c-426e-ae95-f8356808f4f5@arm.com>
+ <99079d56-428b-4bc4-b20a-dc10032f2a2f@arm.com> <aCIiwrA_MOeVhFre@arm.com>
+Content-Language: en-US
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+In-Reply-To: <aCIiwrA_MOeVhFre@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thu, 8 May 2025 at 17:56, Darrick J. Wong <djwong@kernel.org> wrote:
+On 12/05/2025 17:33, Catalin Marinas wrote:
+> On Mon, May 12, 2025 at 02:35:01PM +0100, Ryan Roberts wrote:
+>> On 12/05/2025 14:24, Suzuki K Poulose wrote:
+>>> On 12/05/2025 14:07, Ryan Roberts wrote:
+>>>> On 09/05/2025 17:04, Catalin Marinas wrote:
+>>>>> On Fri, May 09, 2025 at 02:49:05PM +0100, Will Deacon wrote:
+>>>>>> I wonder if we could treat it like an erratum in some way instead? That
+>>>>>> is, invert things so that CPUs which _don't_ have BBML2_NOABORT are
+>>>>>> considered to have a "BBM_CONFLICT_ABORT" erratum (which we obviously
+>>>>>> wouldn't shout about). Then we should be able to say:
+>>>>>>
+>>>>>>     - If any of the early CPUs don't have BBML2_NOABORT, then the erratum
+>>>>>>       would be enabled and we wouln't elide BBM.
+>>>>>>
+>>>>>>     - If a late CPU doesn't have BBML2_NOABORT then it can't come online
+>>>>>>       if the erratum isn't already enabled.
+>>>>>>
+>>>>>> Does that work? If not, then perhaps the cpufeature/cpuerrata code needs
+>>>>>> some surgery for this.
+>>>>>
+>>>>> Ah, I should have read this thread in order. I think we can treat this
+>>>>> as BBML2_NOABORT available as default based on ID regs and use the
+>>>>> allow/deny-list as an erratum.
+>>>>
+>>>> Just to make sure I've understood all this, I think what you are both saying is
+>>>> we can create a single capability called ARM64_HAS_NO_BBML2_NOABORT of type
+>>>> ARM64_CPUCAP_LOCAL_CPU_ERRATUM. Each CPU will then check it has BBML2 and is in
+>>>> the MIDR allow list; If any of those conditions are not met, the CPU is
+>>>> considered to have ARM64_HAS_NO_BBML2_NOABORT.
+>>>
+>>> I guess we need two caps.
+>>>
+>>> 1. SYSTEM cap -> ARM64_HAS_BBML2. Based on the ID registers
+>>> 2. An erratum -> ARM64_BBML2_ABORTS. Based on BBLM2==1 && !in_midr_list()
+>>
+>> I don't think we *need* two caps; I was suggesting to consider both of these
+>> conditions for the single cap. You are suggesting to separate them. But I think
+>> both approaches give the same result?
+>>
+>> I'm easy either way, but keen to understand why 2 caps are preferred?
+> 
+> I guess it's easier to reason about than a single, negated property but
+> the result should be identical. With two properties we can easily
+> implement the idreg override like nobbml2 since this works on the
+> sanitised ID regs. But we could also implement this differently, no need
+> to rely on the ID regs.
+> 
+> Stepping back a bit, we know that the MIDR allow-list implies
+> BBML2_NOABORT (and at least BBML2 as in the ID regs). In theory, we need
 
-> Well right now my barely functional prototype exposes this interface
-> for communicating mappings to the kernel.  I've only gotten as far as
-> exposing the ->iomap_{begin,end} and ->iomap_ioend calls to the fuse
-> server with no caching, because the only functions I've implemented so
-> far are FIEMAP, SEEK_{DATA,HOLE}, and directio.
->
-> So basically the kernel sends a FUSE_IOMAP_BEGIN command with the
-> desired (pos, count) file range to the fuse server, which responds with
-> a struct fuse_iomap_begin_out object that is translated into a struct
-> iomap.
->
-> The fuse server then responds with a read mapping and a write mapping,
-> which tell the kernel from where to read data, and where to write data.
+Please be aware that BBML2_NOABORT midr list may not always imply BBLM2 
+in ID registers (e.g., AmpereOne. But the plan is to fixup the per cpu
+ID register - struct cpuinfo_arm64 - for such cores at early boot,
+individually, before it is used for sanitisation of the system wide
+copy).
 
-So far so good.
 
-The iomap layer is non-caching, right?   This means that e.g. a
-direct_io request spanning two extents will result in two separate
-requests, since one FUSE_IOMAP_BEGIN can only return one extent.
+> something like a SYSTEM_FEATURE which is the conjunction of all the
+> early CPUs. However, such system-level cap is only checked after all the
+> early CPUs booted _and_ only on the sanitised ID regs rather than MIDR.
+> 
+> We need a LOCAL_CPU feature behaviour to be called on each CPU but still
+> have the conjunction of early CPUs, more like the system one. It should
+> be permitted for late CPUs to have but not optional if already enabled.
+> 
+> So how about we introduce a WEAK_BOOT_CPU_FEATURE which gets enabled by
+> the boot CPU if it has it _but_ cleared by any secondary early CPU if it
+> doesn't (and never enabled by secondary CPUs). When the features are
+> finalised, we know if all early CPUs had it. In combination with
+> PERMITTED_FOR_LATE_CPU, we'd reject late CPUs that don't have it.
 
-And the next direct_io request may need to repeat the query for the
-same extent as the previous one if the I/O boundary wasn't on the
-extent boundary (which is likely).
+That could work, but it introduces this "clearing" a capability, which
+we don't do at the moment.
 
-So some sort of caching would make sense, but seeing the multitude of
-FUSE_IOMAP_OP_ types I'm not clearly seeing how that would look.
+We had an offline discussion about this some time ago, with Mark
+Rutland. The best way to deal with this is to change the way we compute
+capabilities. i.e.,
 
-> I'm a little confused, are you talking about FUSE_NOTIFY_INVAL_INODE?
-> If so, then I think that's the wrong layer -- INVAL_INODE invalidates
-> the page cache, whereas I'm talking about caching the file space
-> mappings that iomap uses to construct bios for disk IO, and possibly
-> wanting to invalidate parts of that cache to force the kernel to upcall
-> the fuse server for a new mapping.
 
-Maybe I'm confused, as the layering is not very clear in my head yet.
+1. Each boot CPU run through all the capabilities and maintain a per-cpu
+    copy of the state.
+2. System wide capabilities can then be constructed from the all early
+    boot CPU capability state (e.g., ANDing all the state from all CPUs
+    for SCOPE_SYSTEM or ORing for LOCAL_CPU).
 
-But in your example you did say that invalidation of data as well as
-mapping needs to be invalidated, so I thought that the simplest thing
-to do is to just invalidate the cached mapping from
-FUSE_NOTIFY_INVAL_INODE as well.
+But this requires a drastic change to the infrastructure.
 
-Thanks,
-Miklos
+> 
+> I think if we can get the above, it would be the cleaner option than
+> trying to bend our minds around double negations like !NO_BBLM2_NOABORT.
+
+Agree, every time I come back to the thread, I have to write down the
+check and stare at it for a minute to agree with what it does. That said
+it may be ideal solution for the short term. Or stick to what we do in
+the patch currently, until we implement per-cpu capability proposal.
+
+Cheers
+Suzuki
+
+> 
+
 
