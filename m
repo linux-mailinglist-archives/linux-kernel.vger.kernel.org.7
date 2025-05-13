@@ -1,103 +1,122 @@
-Return-Path: <linux-kernel+bounces-646265-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-646267-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3593DAB5A64
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 18:43:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E913AB5A63
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 18:43:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7D4F188B848
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 16:41:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 631674A5CDF
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 16:41:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 434CC2BFC64;
-	Tue, 13 May 2025 16:39:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D21462BF3FC;
+	Tue, 13 May 2025 16:40:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pGxiI6Qk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="EpvWxgeA"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97A822BF3EA;
-	Tue, 13 May 2025 16:39:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C8EB12CD96
+	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 16:40:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747154355; cv=none; b=dSz1nGrs+rc9mJpgQH2DfVlgJO5/crXZy1IYKqQu2Pg3O05T/9iO+ClZnuZP+NactQ6+CnGS2zXpyXAJW+GL1+1ZDQ8e/hHioA+XRa2knuTTShsIIMOiT/6PNScotc8qr12BHbcFH6h9VZLXvXFhM2EzhdL9x9NyeOW8YTEykYo=
+	t=1747154416; cv=none; b=Je6SI6bJ4/fkwDzLXNP6oVI3qPkVxb8gFKR+kZGEiDd2FlKsnxcP1PaiM/eL36rB8YYF/FsGChsPQ1IiwPEe4vQGKfWh1RevDBxzWGEPWXjZvbszQecq4/RbMgMHvXyJYOYWoZ1xGn+y0NYPIagpwvsaP1cVqmnwj3SxtgWlT64=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747154355; c=relaxed/simple;
-	bh=dxlqenimSNUo0laSheTrdDLOzROGW5tThbT22cuOvvc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t7ae1YI99a0nLp3TuK2t4RtPab3Z8Wqa/J769YTSkTT0SNBrDMTPQiCNrSvwUpG28bRNcysyw+etdYaKaSLE/NDj0R2tTOM/H/7FQnBSav6+Dql5mDEH64Y0jSAw7AtzHQjxhQ/V1BNwtTefDKxDeiZ5JV/WYUDUltXeAqblLBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pGxiI6Qk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11CE8C4CEE4;
-	Tue, 13 May 2025 16:39:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747154354;
-	bh=dxlqenimSNUo0laSheTrdDLOzROGW5tThbT22cuOvvc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pGxiI6QkrQBW4nzxb6vLUpKdfqDscqoY1mk1yXfBl6+pUfp+wInZISRSJdpu6MjtQ
-	 XF6JGgxBAeH2juhUQ5mUFhnkUkkM0sZO+2e5mKWsNdv6aPG5a0ZQlOJ9Ws8Cye/kbN
-	 t2p0jDWBkFNHex8ruFcg1r2E92DrsG9k8LGEjACuAhVGKiFqKTZsLg3zEbPCZjSZQr
-	 YrHLVuN1N0mLD3GniBocix3cXT+SssC54xP9RsAFT4Ns300SK8OmfE86y8rfAqcU9n
-	 ye70EaO6TDcrI+wYMYkdkJEja9neev6rZ6bxDJT9AW1x8vcHVNWA9mOyVALb3ROm0T
-	 9FlxDQ/Yd3VkA==
-Date: Tue, 13 May 2025 18:39:10 +0200
-From: Benjamin Tissoires <bentiss@kernel.org>
-To: Jiri Kosina <jikos@kernel.org>
-Cc: Werner Sembach <wse@tuxedocomputers.com>, linux-input@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] Disable touchpad on firmware level while not in use
-Message-ID: <4tjbyzn22sctrv7sdn7aetl7vse4epvqqctqgtx73kkh46njbv@lisa3ejipu62>
-References: <20250211133950.422232-1-wse@tuxedocomputers.com>
- <20250211133950.422232-2-wse@tuxedocomputers.com>
- <df09a3f9-6131-435a-ad68-4cea71237e42@tuxedocomputers.com>
- <9q411092-1170-qr2r-27or-96594p19qrqo@xreary.bet>
+	s=arc-20240116; t=1747154416; c=relaxed/simple;
+	bh=t8s4LlADrong56MlLY9Ro5ipz1ZWGzMxHsCJyavnHKY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sFRsF7q1xkT0SjyCjfxb/MW1q5UnDpTTZ2qEjjyCmLoOTi5oKgmax5hqzgZJsTuSNQ3ExwNOoV5M1UlXfRMw7lp9zrNrJYCJSXKetq8IrVswOxh68ArJ+5/H/jrqsFOpwZcRUzyWPE7Mt+Oc4wu5WJ8xE2hRiLUMN8Qodj1MAmU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=EpvWxgeA; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54DDnTbu031932;
+	Tue, 13 May 2025 16:39:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=9zkEZlz6iaOShx92FbCpKeW7/yGm+3aiYj4NIkO1L
+	qk=; b=EpvWxgeA8Iw4zKWQHbCVF2IfKb8Mx8jSc1qNt8CJ81dEP1iIjBrjed0/T
+	z7QY2y6JIp0IptsMDmijsbcf2EyFW7x+jQchu+nxO055YqKZia/h9Mh2aPNru7i4
+	2KrYuOs1EVm3Mt/K5davy8y0p754OSCnWeMfC2kYpaisGCf0/DlOyKTj+rGT2Y69
+	Ny6/z7GCN4TBTtlzDX0e7+m0Lhorx80AzZZZ+0bRUn1Z5kSbDtM5VnEvYzA63huB
+	Ah2DX7m6KUq9j2i4gEKnTdrF1bnEWodsLAf3kaRLXfWA98xd897+xlzR+pDim9Yf
+	lNYEYrcdJssCLzFXipgHECfInnGfw==
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46m7a70trc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 13 May 2025 16:39:59 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 54DENFDo024437;
+	Tue, 13 May 2025 16:39:58 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 46jjmm3vw3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 13 May 2025 16:39:58 +0000
+Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 54DGdu0f57868698
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 13 May 2025 16:39:56 GMT
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 8F12620160;
+	Tue, 13 May 2025 16:39:56 +0000 (GMT)
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 37BC72015F;
+	Tue, 13 May 2025 16:39:55 +0000 (GMT)
+Received: from vishalc-ibm.ibm.com (unknown [9.124.211.212])
+	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 13 May 2025 16:39:54 +0000 (GMT)
+From: Vishal Chourasia <vishalc@linux.ibm.com>
+To: tglx@linutronix.de, peterz@infradead.org, linux-kernel@vger.kernel.org
+Cc: Vishal Chourasia <vishalc@linux.ibm.com>
+Subject: [PATCH] kernel/cpu: fix comment typo
+Date: Tue, 13 May 2025 22:09:42 +0530
+Message-ID: <20250513163941.261240-2-vishalc@linux.ibm.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9q411092-1170-qr2r-27or-96594p19qrqo@xreary.bet>
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=K8ciHzWI c=1 sm=1 tr=0 ts=682375df cx=c_pps a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17 a=dt9VzEwgFbYA:10 a=VnNF1IyMAAAA:8 a=1gxIP76fRNyjLo5ydUMA:9
+X-Proofpoint-GUID: Lt4Dph4VTPXHd4k4gxzLts_oB8dH25Dq
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTEzMDE1OCBTYWx0ZWRfXxl2+9M5OVIwN JQBXT2bgjW6V/+p1BQ/gO5o3dht3rpTEs/UlSKwgplffBK67TtKvBQ+cJRVTURkbz70MmbVyDma q1p0bujjWL6OVV1Hzymj8t5NgeaT7wyndqwgfFWgIDAQVnYx1kp7d0kGcA+xqI3RVD4ZZho8401
+ ZJu1eKtLMknG1aMPthlJTlDt42C8iGsLqrBdrcMxqJdDrkNo9LwuJL7O3dBBHAjZGuPAj1XZ6bk KX1FbdF0ug6eGKrwpeTaU1yPWWEuzJ3/h8fWWyngIUlwHYpuOOtQd+WYKRjG6L7OLfWHw/fD8A2 U5DKGCoq3tESs/9JAs5dZ/mmS6MBgeAVKb8SCF3Xsr07paK4T7T8QeJc60ENE/5tonE2OIzjpIO
+ XHl6LYiuPo2ib3L+mh9+o8NzTwXuRVlIKewY7ZJooSUOWt1p1ykiy1F79JyvvNaEysUSqBr/
+X-Proofpoint-ORIG-GUID: Lt4Dph4VTPXHd4k4gxzLts_oB8dH25Dq
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-13_03,2025-05-09_01,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
+ impostorscore=0 bulkscore=0 suspectscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 priorityscore=1501 mlxlogscore=838
+ phishscore=0 adultscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
+ definitions=main-2505130158
 
-On Apr 24 2025, Jiri Kosina wrote:
-> On Tue, 4 Mar 2025, Werner Sembach wrote:
-> 
-> > > Using the new on_hid_hw_open and on_hid_hw_close functions to disable the
-> > > touchpad on firmware level while not being in use.
-> > >
-> > > This safes some battery and triggers touchpad-disabled-leds hardwired to
-> > > the touchpads firmware, that exist for example on some TongFang barebones.
-> > >
-> > > For a lengthy discussion with all the details see
-> > > https://gitlab.freedesktop.org/libinput/libinput/-/issues/558
-> > 
-> > Any comments if this is a good idea or not?
-> 
-> Sorry for the delay.
-> 
-> To me this looks like generally a good idea; Benjamin, any comments on the 
-> hid-mt part?
+s/Archicture/Architecture
 
-Looks good to me, though my CI is now taking way more time because it's
-not expecting to receive data from the device once the initial setup is
-done.
+Signed-off-by: Vishal Chourasia <vishalc@linux.ibm.com>
+---
+ kernel/cpu.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> 
-> BTW you'd need to adjust the Subject line of the patches to conform to the 
-> subsystem style (i.e. HID: core: ....)
+diff --git a/kernel/cpu.c b/kernel/cpu.c
+index b08bb34b1718..ff9d0b5313d2 100644
+--- a/kernel/cpu.c
++++ b/kernel/cpu.c
+@@ -656,7 +656,7 @@ static int __init smt_cmdline_disable(char *str)
+ early_param("nosmt", smt_cmdline_disable);
+ 
+ /*
+- * For Archicture supporting partial SMT states check if the thread is allowed.
++ * For Architecture supporting partial SMT states check if the thread is allowed.
+  * Otherwise this has already been checked through cpu_smt_max_threads when
+  * setting the SMT level.
+  */
+-- 
+2.49.0
 
-Amended locally and pushed (see the notification email).
-
-Cheers,
-Benjamin
-
-> 
-> Thanks,
-> 
-> -- 
-> Jiri Kosina
-> SUSE Labs
-> 
 
