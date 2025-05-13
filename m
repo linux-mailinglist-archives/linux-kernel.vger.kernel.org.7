@@ -1,395 +1,215 @@
-Return-Path: <linux-kernel+bounces-645299-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-645306-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7057AB4B63
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 07:52:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 49D4DAB4B72
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 07:53:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EBA471B42F48
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 05:51:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B36CB1886971
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 05:53:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E54A202C3A;
-	Tue, 13 May 2025 05:47:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B792D1E7C2D;
+	Tue, 13 May 2025 05:48:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="WWElidYT"
-Received: from out30-113.freemail.mail.aliyun.com (out30-113.freemail.mail.aliyun.com [115.124.30.113])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="CD56wy0e"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2045.outbound.protection.outlook.com [40.107.244.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CDA3204588
-	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 05:47:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.113
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747115249; cv=none; b=ATEQZIggpK2t2jkYzUDqZWamyfEe1IrQfWskiOxrmu2OuDqkbtEy9b1hykyDeV+ap1fa72xftc7O5/h/cFMkW44IIvEf1wTK1gfdqDv59XV7i4da6GCZvncEWEx/L8TmP8u72M4ur3W9HjH7g5pUn3cj+VAFmu2eNYwye0ksAcA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747115249; c=relaxed/simple;
-	bh=xopyDKskOJcR7IkAguhEe0TGMHeLmC1dm6VKFLcIvMI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jF/68Xkug/F7/vT9SKs3IPULl8me+jGKump/LDphUjteU+Olvh9wQfbUWJWL9NeKqDy9EQaDeHUnU9HZ419MofRAU6iQNhEZvTYAZNH3qrURggDR3BVvsUzMLzSfyVZkrJaKtmQX+CpXFwD6dKI3m22UpBEpRejFuxP7HjP4ntM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=WWElidYT; arc=none smtp.client-ip=115.124.30.113
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1747115238; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=aS4dH0hOydCMzOt3b8MdnPAbV0/OYJB5Wc6WlcVrhQU=;
-	b=WWElidYTkNu0jMs56aMBP6nyChxOFq8HUfsvfGZqOWzB2aqZBhkHZ+AYoBehjpqO/Ypp3RB69sBzRAsqabb8z0fj+2oU5eKDbAp8QOP3y+EA9V/hwH1xaDym1TNRxEvz7ql2rdArrxFEUAfX39dz4Ozc61loBIwh8GAgUggQAHY=
-Received: from 30.221.133.89(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WaUWcCa_1747115236 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Tue, 13 May 2025 13:47:17 +0800
-Message-ID: <3617ba19-e721-4e70-bb94-8a207d2aa8a6@linux.alibaba.com>
-Date: Tue, 13 May 2025 13:47:16 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 411021D6DBC
+	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 05:48:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.45
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747115332; cv=fail; b=pP+5DZZ0FGZkzQKYRY+eO3GNcKE9Artc2Oa9u6iGvkZN1nnDAWslt3qOM2PSYYAwJsRRCR2xePyV2R2lp0WOl7faHEjHEwBA+ZQS2zUOWYy0yQlQ/SRPD0QHsZ52jfi6cFxcZ1Ze+GW6uVYm6sRGekZnnwJdicW70rg0d0M3dDs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747115332; c=relaxed/simple;
+	bh=1OfCg1Jd6dDKWm6Tzn44z2SRKOcAXtLfqgZW3xVpyAI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=Tk8M1JK+/BnwTdi3pm6DJynawrCb3R5B9ZiBEdSG7Hh7V/gGmtfVxjNTvUuF4YAoYOLTXVvk40BTiGV1JJktEL+ouqCxH3LYiXhMgWGL3L+XCCJIVciz3WZYKaasvaHagF4SuaUSqbPRJHP+eBho6XlosCQ3u08WX/P9sAs02mI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=CD56wy0e; arc=fail smtp.client-ip=40.107.244.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Kh/5IUS1xKVzfh2QVzzHes+Nl5lu562iweFAf6ETmwYgNaN5GcTs7TyDUEPOA8uHFFZPUuAqrfZDb2wnCLroUSBwx6rPDXL914VlkoK6zmbvd8uBdDwr3tbO67t3iSl/u+gdslYHtID3+7OrwPZZ4bhNw5yuSK09j+AanAgPtT2boeSImjatU+9bJgGtRq5cY1o2vcCVQRGSsEcamxhhnvI9uR7FHKTfDWcPDtq6jitfS+LqO3aP/yRu8SKG12FUFPjH2foCJsqedWrCmxwe0vqPBPr9YUfW4fd7WpC4BBNovKCs0m0rzTUi/TDvpgMywMs7RXKB4PqKXFPRPjRdnA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=AlO/jS5aLXuCc+VTvagciXu1mC3p6P37+NNrRXM3wO8=;
+ b=Gfgp0VaMXjd4T4rz4N2z8rNHKzjFpWd7nZqLvlEgfZN7bmH3r5BP42KrkaJ+5FfBjBRqiqI0PuWqoYQed/z7ob3zAKsgOHilyUYJcUSjWZHrh3BYPtyzug4QZS82xQ1VHyXdygp6jie3o43oSLLc0KmAl7fEJbz46mJEOG8XcsNbH59ssYY1aqE31WESEKI1hTZzt/BP2J2OjHrmOVW3IEbbIohowNJjK4ukzxO7Co639ORy8V9XpOTr+7Vw4tO6cTp3chhtlDywE4VWiXfUumvZAnTNnMC43SLgaPMqS2V9IAaJVkLsiGboYWAZk5N80lDeTjd+VM/S98h7nbm3Kg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=AlO/jS5aLXuCc+VTvagciXu1mC3p6P37+NNrRXM3wO8=;
+ b=CD56wy0eMoB+rplkj5dFa+raok2jEStpp4n/vhgtZpCKlGfCT4wJXc/ul7SRecNFDQuL2ty5+hS7/BPo6i7/HXEkccDd+wBEFmYeWrh7wG1ZBR/XkEDsmRGE6ahvtrfpzamoZPWnzpxIl+I3+Hbu1X3saN+oGeCAiEVn6qJJGGILwBHlQbfpzaq5AGk9sBksWSRAstBLjMfiAnvNZPgcucETijHr4VIDzlnsmOXk6j5JnM27/Gebmj0gu/FJKBo+pb6MqxZgMCR3A47gWJ1u/dj9v4BYcpJk5BvvyMqnYG5yWZVkhyAf8WRwC20ySHz/4KhX0WpyVJiQW2aDw/d3+A==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from LV8PR12MB9620.namprd12.prod.outlook.com (2603:10b6:408:2a1::19)
+ by SA1PR12MB6773.namprd12.prod.outlook.com (2603:10b6:806:258::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8722.29; Tue, 13 May
+ 2025 05:48:44 +0000
+Received: from LV8PR12MB9620.namprd12.prod.outlook.com
+ ([fe80::1b59:c8a2:4c00:8a2c]) by LV8PR12MB9620.namprd12.prod.outlook.com
+ ([fe80::1b59:c8a2:4c00:8a2c%7]) with mapi id 15.20.8722.027; Tue, 13 May 2025
+ 05:48:44 +0000
+Date: Tue, 13 May 2025 07:48:37 +0200
+From: Andrea Righi <arighi@nvidia.com>
+To: Changwoo Min <changwoo@igalia.com>
+Cc: Tejun Heo <tj@kernel.org>, David Vernet <void@manifault.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH sched_ext/for-6.16 0/2] sched_ext: Extend usability of
+ scx_bpf_select_cpu_and()
+Message-ID: <aCLdNcBFaWz4xzgF@gpd3>
+References: <20250512151743.42988-1-arighi@nvidia.com>
+ <876b69d7-ea9b-4ccf-8693-96f1b794f7a1@igalia.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <876b69d7-ea9b-4ccf-8693-96f1b794f7a1@igalia.com>
+X-ClientProxiedBy: MI1P293CA0020.ITAP293.PROD.OUTLOOK.COM
+ (2603:10a6:290:3::18) To LV8PR12MB9620.namprd12.prod.outlook.com
+ (2603:10b6:408:2a1::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] erofs: support deflate decompress by using Intel QAT
-To: Bo Liu <liubo03@inspur.com>, xiang@kernel.org, chao@kernel.org
-Cc: linux-erofs@lists.ozlabs.org, linux-kernel@vger.kernel.org
-References: <20250410042048.3044-1-liubo03@inspur.com>
- <20250410042048.3044-3-liubo03@inspur.com>
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-In-Reply-To: <20250410042048.3044-3-liubo03@inspur.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV8PR12MB9620:EE_|SA1PR12MB6773:EE_
+X-MS-Office365-Filtering-Correlation-Id: bbc26002-af1b-448b-a932-08dd91e1d2aa
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?WsPRE0cDSVBFMkuMCfd/w2kqHKOil4Aj6hBEVUkeNYne4w8iBcOyTfz7xSf6?=
+ =?us-ascii?Q?1Ratz3Elxu3cWhyGqncQCyYEw1X4MzisIY6cq3DoTWtm/Nj+VvuU+52JaQCL?=
+ =?us-ascii?Q?YbfmmrBjfVOOSld+P5e28eBxdN7ciJm4aD4PRojphl6bzoaLhbvAT2FiBtYd?=
+ =?us-ascii?Q?4WXXqAjBkT5uQZ3wQzXIAbp3LiQkfcPOHug43ILX1r0BmCgad1k4+EHHB299?=
+ =?us-ascii?Q?UEWdjdD+E4gZexamjttuz8p2tdB5/iq6jt/FI1flCnf+7v3QZ/DKIkb5IoVP?=
+ =?us-ascii?Q?llkpCZtpAJLxj4qXg0fma0Ku3QZFa4OD/3YCPBjswBJpMOA3hIJH9mq+z7wZ?=
+ =?us-ascii?Q?fiGnnVoWoGWQ+/TIUAeI/trXHrcfQK327erCIf+0asFLGgrWCj9TojYAGRqW?=
+ =?us-ascii?Q?pP2GvSEyZmd+kNa5JUnEwnr/9fIvQwpwSErUHyCbTogdb4+BESxiy8Gv1kCt?=
+ =?us-ascii?Q?w13cfl5W2z9YrKVGo6ofFNKvWjVtx+74x8PmI/ApElfby7+VcjFR+lJhnwck?=
+ =?us-ascii?Q?Y5ZIY38hNU8qmcMTmCHqoiJinPOyeiBvVmvj1ggOdIZ+byiJ+bst1+Y11jXS?=
+ =?us-ascii?Q?pYQVOR1StSl4x7nMaoHyP/xhpt57MTMSQdZ1p0yV2WYMGL79q6to7Xt9CQEE?=
+ =?us-ascii?Q?XyYJosMyt9nM5kjCCKVarwOOa3XcJ8xGOr74tVb+kdnYFV1eRNXjoXQ5m0Rz?=
+ =?us-ascii?Q?NPKhqiPp4OStTyKpnnzOTba2OzdXq7Xbzk/6W6TnDRONChm/HmubEx8eed3C?=
+ =?us-ascii?Q?cjfl1VYMYzYUyY8Sux1t6LgHAxIk96mwUat4HY21VxlPDe8rRn3oW7sF43sR?=
+ =?us-ascii?Q?UrX4MWmy14vzavns0JlZwGe4eHCpKKyZKEWNVnHtH+ZD+7gLAv0v/0tAwMi7?=
+ =?us-ascii?Q?EWIYure15xklkeFKAl8YorSIhI/LPAvviRZMGYZeKB9Jma35noKw6sFCyQBw?=
+ =?us-ascii?Q?tsx/B3auIYXjeKN87GntVk9AaAnA2EcUx7AHb3+Lmvo9iuWRcHvanTaTW6VS?=
+ =?us-ascii?Q?i+QrtiQYOqDxXzntckhrNRwzp0zrw77ZohIqDxV+k4dNZpPO111hqRe7xt+Z?=
+ =?us-ascii?Q?/r0uZ+wl/aUwCysys2q/OkpIsHcR6qzRfIHfGGNnsdwOlwU6JWfjt48+Qd1/?=
+ =?us-ascii?Q?tQPw+XrauwD2n4v+RDtWrjGdya/4ON3ZNJOg0WljQYStpV7GeB5d4S89zBM0?=
+ =?us-ascii?Q?mPFSo0uNlawHd6skWsW/6oJN3L3gs88oYEdAKG4or4T/4ZANUByMGEdu3jSl?=
+ =?us-ascii?Q?4eleJp6sby7uHtuYPaCaoyORFYbrQYK7BJaT0dutjFGrc+oaKlq/RDyHPFxQ?=
+ =?us-ascii?Q?ChTtV+3F/L6uqBgWHx86xuBkeVVKmhHAOdneezTMwwzWHT2WQtOQp/vqkpTx?=
+ =?us-ascii?Q?FxhDAXczj96Fevoi+DYvyd30mOEP+/tjgSCZJ8r135H4YiPbcvngtT0Wuetp?=
+ =?us-ascii?Q?ZwUkAUq9uiE=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR12MB9620.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?5lzzggzyjG/sffU5/gV4IBiTy0cMd9Il1vWDlXBtVJPGsmVDyBu1CPGj4kKS?=
+ =?us-ascii?Q?uUDZvxkIFBOxJZR3ExJ82U8Af7ODryRMd1h3Ku5nEJx9lC5sJZ6iUUfHt+0k?=
+ =?us-ascii?Q?SKNhx8CplYW4VCjXRM5wjQC0EgDRsPHTDMGHOIa7GwFe+tBWzycAkr0VFvbM?=
+ =?us-ascii?Q?B6IBs2rWVV3Q7g6XcUteF85gVH8L65OoFnC7wmjnRiftSp9Mhy843lSd9Dzh?=
+ =?us-ascii?Q?EEz2QTgzIzidBPEFdt4mwpXIPQR8owWHMnJH+cBDjkvYdGnazsVuwn9c9UVY?=
+ =?us-ascii?Q?sopYDzihnQdul3gCnLnWFzPEe+xpPj9XW4vfw7PL3HIEJIj33q8mkCmC+b6E?=
+ =?us-ascii?Q?Y2syHo1jwkIcUpVJtrItCiX9+/gcfOozS7rfs7mPaiwSrTsg0A8R7iDHZprZ?=
+ =?us-ascii?Q?oU6FjBbmiyiIu6LULWC1tjTsbe7KXk9GsCSBqaaj5r5ag/vrZALX97jtJRqK?=
+ =?us-ascii?Q?GWDzlwZ0PxW96FhvapncQf2n+qeCBuJHisALdlsnqk4N34EjAmr2Il/X4ExR?=
+ =?us-ascii?Q?FxOu/6S6OYcko2kCYn9Xx7yggzORIifgsIg5wGfgtLKEHbtPUbuJCsZEpRYm?=
+ =?us-ascii?Q?Dut3MUHLmTfGFEG0byu2goqGtds1xnipxIacEbxVqHvB6pMvQRmPOWZ6oTiY?=
+ =?us-ascii?Q?yJqCauvLfBh4zj1yeN1Az9jxiBVCqPJCqyVLL9cO5DlgUaoMD3/P+oyXr83R?=
+ =?us-ascii?Q?CmjGVMkH+i+5iBk0W0LwI1ausf2DVJc50KO5OsHOGw/tvW00LKCJHJ4fIsZf?=
+ =?us-ascii?Q?wJTh1KuLvrXyRWoyFuCY36EG8wnv+wzjcCFVNOPX8IXecgB7qHwPGaewfMtU?=
+ =?us-ascii?Q?lnMhVw5Rk/2YHHL0Y2D/GUwbtF7/HB2mzxmnjpU0xvQ8p9Oj67Ii5GUUrXRi?=
+ =?us-ascii?Q?bBiUShEn7sBxfCiiFV2MAaaq0+M/prWOWiwtEoXA1LfDTx3+C0aRHIWCDzUM?=
+ =?us-ascii?Q?0LkEN5QtRJSXpvDC/Kbbzhw/YeF96clEPKdhHAzjNMeD2lFpPBPGVOve1sBz?=
+ =?us-ascii?Q?BjuXwa9wvbEr5VS66E+0mhByNnMQHRi4akOSYN137H9WFKj9MIIyy8/RiRk6?=
+ =?us-ascii?Q?LfRQ/qalDelYMVacucRnNTVlqYGkHU7WFKlkxGhwQOHA2tJSmuHQhMCnon7r?=
+ =?us-ascii?Q?cKYJFH9jGHZDnZ0EIqk0OlC4AeS4jKgsazKSYaLlZ0s1XYo9br1d6vDVlgKh?=
+ =?us-ascii?Q?9k1OBJmZqnBAo1ZHfugT+kdyh317SprAoUw8U2bjL4dWpsxmQfMv3qPuFnYK?=
+ =?us-ascii?Q?JZ7Ogbo9vAOoFh/ee/yVkHj3k3Irndciag+XcNJj5YX4Ow+ZAYQKRRtH1PCx?=
+ =?us-ascii?Q?ueQ2NWrF/rEMicd0BWI/1SZhw6xclzyDnaTOEwxBYkG0j2DskVmxA/feDRDf?=
+ =?us-ascii?Q?H8JoiFUZAEIW+ckd2SPd31y0DbMVhcO8xYDc7G73asShzgMBCqdQlV5IqUfC?=
+ =?us-ascii?Q?Pd6MzmmlIynuESk3eBS9Nh62+asuPAXucjz2B4i4QZVRSwortpjaMtK6Ogqn?=
+ =?us-ascii?Q?WjV3BmNelNnIXKitNKzwgFCD0Q+cPtFZVCf9o78k69j7Dwu8snjPX1z7k0Fu?=
+ =?us-ascii?Q?0Nl+DyafRAjpXi+fQ9DgkIafYMZ5od2B3hOuTmXO?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: bbc26002-af1b-448b-a932-08dd91e1d2aa
+X-MS-Exchange-CrossTenant-AuthSource: LV8PR12MB9620.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 May 2025 05:48:44.5526
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 4Od8764PuF4NrV5Ena5WIZ6H/Rg9Z2kUNbdAJ79J37r5DV+tmxvsgceUN0+F3iRV1TtWv1xA27H7jLMeyET5qQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB6773
 
-Hi Bo,
+Hi Changwoo,
 
-On 2025/4/10 12:20, Bo Liu wrote:
-> This patch introdueces the use of the Intel QAT to decompress compressed
-> data in the EROFS filesystem, aiming to improve the decompression speed
-> of compressed datea.
+On Tue, May 13, 2025 at 09:46:04AM +0900, Changwoo Min wrote:
+> Hi Andrea,
 > 
-> We created a 285MiB compressed file and then used the following command to
-> create EROFS images with different cluster size.
->       # mkfs.erofs -zdeflate,level=9 -C16384
+> On 5/13/25 00:14, Andrea Righi wrote:
+> > Many scx schedulers implement their own idle CPU selection policy, which
+> > may be invoked from different contexts, not just from ops.select_cpu().
+> > 
+> > For example, some schedulers may need to trigger a proactive CPU wakeup
+> > from ops.enqueue() after enqueuing a task, while others may expose this
+> > functionality to user space, relying on a BPF test_run call to pick an idle
+> > CPU.
+> > 
+> > To maintain a consistent selection policy, these schedulers often implement
+> > their own idle CPU selection logic, since the built-in one is only usable
+> > from ops.select_cpu(), leading to unnecessary code duplication and
+> > fragmentation.
 > 
-> fio command was used to test random read and small random read(~5%) and
-> sequential read performance.
->       # fio -filename=testfile  -bs=4k -rw=read -name=job1
->       # fio -filename=testfile  -bs=4k -rw=randread -name=job1
->       # fio -filename=testfile  -bs=4k -rw=randread --io_size=14m -name=job1
-> 
-> Here are some performance numbers for reference:
-> 
-> Processors: Intel(R) Xeon(R) 6766E(144 core)
-> Memory:     521 GiB
-> 
-> |-----------------------------------------------------------------------------|
-> |           | Cluster size | sequential read | randread  | small randread(5%) |
-> |-----------|--------------|-----------------|-----------|--------------------|
-> | Intel QAT |    4096      |    538  MiB/s   | 112 MiB/s |     20.76 MiB/s    |
-> | Intel QAT |    16384     |    699  MiB/s   | 158 MiB/s |     21.02 MiB/s    |
-> | Intel QAT |    65536     |    917  MiB/s   | 278 MiB/s |     20.90 MiB/s    |
-> | Intel QAT |    131072    |    1056 MiB/s   | 351 MiB/s |     23.36 MiB/s    |
-> | Intel QAT |    262144    |    1145 MiB/s   | 431 MiB/s |     26.66 MiB/s    |
-> | deflate   |    4096      |    499  MiB/s   | 108 MiB/s |     21.50 MiB/s    |
-> | deflate   |    16384     |    422  MiB/s   | 125 MiB/s |     18.94 MiB/s    |
-> | deflate   |    65536     |    452  MiB/s   | 159 MiB/s |     13.02 MiB/s    |
-> | deflate   |    65536     |    452  MiB/s   | 177 MiB/s |     11.44 MiB/s    |
-> | deflate   |    262144    |    466  MiB/s   | 194 MiB/s |     10.60 MiB/s    |
-> 
-> Signed-off-by: Bo Liu <liubo03@inspur.com>
+> Besides ops.select_cpu() and ops.enqueue(), do you have use cases in
+> mind?
 
-Sorry for late reply due to internal stuffs.
+scx_rustland_core exposes the select_cpu() functionality to user space,
+which internally invokes a custom pick_idle_cpu() from the user-space
+scheduler via a BPF test_run call.
 
-> ---
->   fs/erofs/decompressor_deflate.c | 145 +++++++++++++++++++++++++++++++-
->   fs/erofs/internal.h             |   1 +
->   fs/erofs/sysfs.c                |  30 +++++++
->   3 files changed, 175 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/erofs/decompressor_deflate.c b/fs/erofs/decompressor_deflate.c
-> index c6908a487054..a293c44e86d2 100644
-> --- a/fs/erofs/decompressor_deflate.c
-> +++ b/fs/erofs/decompressor_deflate.c
-> @@ -1,5 +1,8 @@
->   // SPDX-License-Identifier: GPL-2.0-or-later
->   #include <linux/zlib.h>
-> +#include <linux/scatterlist.h>
-> +#include <crypto/acompress.h>
+In this case, having access to scx_bpf_select_cpu_and() would be really
+useful, as it would allow us to eliminate a significant amount of code that
+effectively re-implements the built-in idle CPU selection logic, including
+all the code required to expose all the topology information to BPF.
 
-I guess we could move this feature into a new file called
-"decompressor_crypto.c"?
-
-> +
->   #include "compress.h"
->   
->   struct z_erofs_deflate {
-> @@ -97,7 +100,7 @@ static int z_erofs_load_deflate_config(struct super_block *sb,
->   	return -ENOMEM;
->   }
->   
-> -static int z_erofs_deflate_decompress(struct z_erofs_decompress_req *rq,
-> +static int __z_erofs_deflate_decompress(struct z_erofs_decompress_req *rq,
->   				      struct page **pgpl)
->   {
->   	struct super_block *sb = rq->sb;
-> @@ -178,6 +181,146 @@ static int z_erofs_deflate_decompress(struct z_erofs_decompress_req *rq,
->   	return err;
->   }
->   
-> +static int z_erofs_crypto_decompress_mem(struct z_erofs_decompress_req *rq)
-> +{
-> +	struct erofs_sb_info *sbi = EROFS_SB(rq->sb);
-> +	unsigned int nrpages_out =
-> +				PAGE_ALIGN(rq->pageofs_out + rq->outputsize) >> PAGE_SHIFT;
-> +	unsigned int nrpages_in = PAGE_ALIGN(rq->inputsize) >> PAGE_SHIFT;
-
-I've optimized out those fields in
-commit 0243cc257ffa ("erofs: move {in,out}pages into struct z_erofs_decompress_req")
-
-so we don't need to recalculate here again.
-
-> +	struct sg_table st_src, st_dst;
-> +	struct scatterlist *sg_src, *sg_dst;
-> +	struct acomp_req *req;
-> +	struct crypto_wait wait;
-> +	u8 *headpage;
-> +	int ret, i;
-> +
-> +	WARN_ON(!*rq->in);
-> +	headpage = kmap_local_page(*rq->in);
-> +
-> +	ret = z_erofs_fixup_insize(rq, headpage + rq->pageofs_in,
-> +				min_t(unsigned int, rq->inputsize,
-> +							rq->sb->s_blocksize - rq->pageofs_in));
-> +
-> +	kunmap_local(headpage);
-> +	if (ret) {
-> +		return ret;
-> +	}
-
-Unnecessary brace.
-
-> +
-> +	req = acomp_request_alloc(sbi->erofs_tfm);
-> +	if (!req) {
-> +		erofs_err(rq->sb, "failed to alloc decompress request");
-> +		return -ENOMEM;
-> +	}
-> +
-> +	if (sg_alloc_table(&st_src, nrpages_in, GFP_KERNEL)) {
-> +		acomp_request_free(req);
-> +		return -ENOMEM;
-> +	}
-> +
-> +	if (sg_alloc_table(&st_dst, nrpages_out, GFP_KERNEL)) {
-> +		acomp_request_free(req);
-> +		sg_free_table(&st_src);
-> +		return -ENOMEM;
-> +	}
-> +
-> +	for_each_sg(st_src.sgl, sg_src, nrpages_in, i) {
-> +		if (i == 0)
-> +			sg_set_page(sg_src, rq->in[0],
-> +					PAGE_SIZE - rq->pageofs_in, rq->pageofs_in);
-> +		else
-> +			sg_set_page(sg_src, rq->in[i], PAGE_SIZE, 0);
-
-^ should we consider rq->inputsize here?
-
-> +	}
-> +
-> +	i = 0;
-> +	for_each_sg(st_dst.sgl, sg_dst, nrpages_out, i) {
-> +		if (i == 0)
-> +			sg_set_page(sg_dst, rq->out[0],
-> +					PAGE_SIZE - rq->pageofs_out, rq->pageofs_out);
-> +		 else
-> +			sg_set_page(sg_dst, rq->out[i], PAGE_SIZE, 0);
-
-^ should we consider rq->outputsize here?
-
-> +	}
-> +
-> +	acomp_request_set_params(req, st_src.sgl,
-> +				st_dst.sgl, rq->inputsize, rq->outputsize);
-> +
-> +	crypto_init_wait(&wait);
-> +	acomp_request_set_callback(req, CRYPTO_TFM_REQ_MAY_BACKLOG,
-> +						crypto_req_done, &wait);
-> +
-> +	ret = crypto_wait_req(crypto_acomp_decompress(req), &wait);
-> +	if (ret < 0) {
-> +		if (ret == -EBADMSG && rq->partial_decoding) {
-
-Does QAT support partial decompression?
-
-> +			ret = 0;
-> +		} else {
-> +			erofs_err(rq->sb, "failed to decompress %d in[%u, %u] out[%u]",
-> +					ret, rq->inputsize, rq->pageofs_in, rq->outputsize);
-> +			ret = -EIO;
-> +		}
-> +	} else {
-> +		ret = 0;
-> +	}
-> +
-> +	acomp_request_free(req);
-> +	sg_free_table(&st_src);
-> +	sg_free_table(&st_dst);
-> +	return ret;
-> +}
-> +
-> +static int z_erofs_crypto_prepare_dstpages(struct z_erofs_decompress_req *rq,
-> +							struct page **pagepool)
-> +{
-> +	const unsigned int nr =
-> +				PAGE_ALIGN(rq->pageofs_out + rq->outputsize) >> PAGE_SHIFT;
-
-same here.
-
-Also I suggest fold this `z_erofs_crypto_prepare_dstpages()` into
-__z_erofs_deflate_crypto_decompress().
-
-> +	unsigned int i;
-> +
-> +	for (i = 0; i < nr; ++i) {
-> +		struct page *const page = rq->out[i];
-> +		struct page *victim;
-> +
-> +		if (!page) {
-> +			victim = __erofs_allocpage(pagepool, rq->gfp, true);
-> +			if (!victim)
-> +				return -ENOMEM;
-> +			set_page_private(victim, Z_EROFS_SHORTLIVED_PAGE);
-> +			rq->out[i] = victim;
-> +		}
-> +	}
-> +	return 0;
-> +}
-> +
-> +static int __z_erofs_deflate_crypto_decompress(struct z_erofs_decompress_req *rq,
-> +									 struct page **pgpl)
-
-It seems this function can be used for other hardware
-accelerators, so I guess z_erofs_crypto_decompress is
-enough.
-
-> +{
-> +	const unsigned int nrpages_out =
-> +			PAGE_ALIGN(rq->pageofs_out + rq->outputsize) >> PAGE_SHIFT;
-> +	int ret;
-> +
-> +	/* one optimized fast path only for non bigpcluster cases yet */
-> +	if (rq->inputsize <= PAGE_SIZE && nrpages_out == 1 && !rq->inplace_io) {
-> +		WARN_ON(!*rq->out);
-> +		goto dstmap_out;
-> +	}
-> +
-> +	ret = z_erofs_crypto_prepare_dstpages(rq, pgpl);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +dstmap_out:
-> +	return z_erofs_crypto_decompress_mem(rq);
-> +}
-> +
-> +static int z_erofs_deflate_decompress(struct z_erofs_decompress_req *rq,
-> +				struct page **pgpl)
-
-I wonder if it's possible to add a hardware acceleralor list
-such as
-
-struct z_erofs_crypto_engine {
-	char *name;
-	struct z_erofs_decompressor *decomp;
-	bool enabled;
-};
-
-struct z_erofs_crypto_engine eng = {
-	{ "qat_deflate", &z_erofs_deflate_decomp },
-	...
-
-};
-
-so that we could add more hardware accelerators easily.
-
-> +{
-> +	struct super_block *sb = rq->sb;
-> +	struct erofs_sb_info *sbi = EROFS_SB(sb);
-> +
-> +	if (sbi->erofs_tfm)
-> +		return __z_erofs_deflate_crypto_decompress(rq, pgpl);
-> +	else
-> +		return __z_erofs_deflate_decompress(rq, pgpl);
-> +}
-> +
->   const struct z_erofs_decompressor z_erofs_deflate_decomp = {
->   	.config = z_erofs_load_deflate_config,
->   	.decompress = z_erofs_deflate_decompress,
-> diff --git a/fs/erofs/internal.h b/fs/erofs/internal.h> index 4ac188d5d894..96fcee07d353 100644
-> --- a/fs/erofs/internal.h
-> +++ b/fs/erofs/internal.h
-> @@ -122,6 +122,7 @@ struct erofs_sb_info {
->   	/* pseudo inode to manage cached pages */
->   	struct inode *managed_cache;
->   
-> +	struct crypto_acomp *erofs_tfm;
->   	struct erofs_sb_lz4_info lz4;
->   #endif	/* CONFIG_EROFS_FS_ZIP */
->   	struct inode *packed_inode;
-> diff --git a/fs/erofs/sysfs.c b/fs/erofs/sysfs.c
-> index dad4e6c6c155..d4630697dafd 100644
-> --- a/fs/erofs/sysfs.c
-> +++ b/fs/erofs/sysfs.c
-> @@ -5,6 +5,7 @@
->    */
->   #include <linux/sysfs.h>
->   #include <linux/kobject.h>
-> +#include <crypto/acompress.h>
->   
->   #include "internal.h"
->   
-> @@ -13,6 +14,7 @@ enum {
->   	attr_drop_caches,
->   	attr_pointer_ui,
->   	attr_pointer_bool,
-> +	attr_comp_crypto,
->   };
->   
->   enum {
-> @@ -59,12 +61,14 @@ static struct erofs_attr erofs_attr_##_name = {			\
->   #ifdef CONFIG_EROFS_FS_ZIP
->   EROFS_ATTR_RW_UI(sync_decompress, erofs_mount_opts);
->   EROFS_ATTR_FUNC(drop_caches, 0200);
-> +EROFS_ATTR_FUNC(comp_crypto, 0644);
->   #endif
->   
->   static struct attribute *erofs_attrs[] = {
->   #ifdef CONFIG_EROFS_FS_ZIP
->   	ATTR_LIST(sync_decompress),
->   	ATTR_LIST(drop_caches),
-> +	ATTR_LIST(comp_crypto),
->   #endif
->   	NULL,
->   };
-> @@ -128,6 +132,12 @@ static ssize_t erofs_attr_show(struct kobject *kobj,
->   		if (!ptr)
->   			return 0;
->   		return sysfs_emit(buf, "%d\n", *(bool *)ptr);
-> +	case attr_comp_crypto:
-> +		if (sbi->erofs_tfm)
-> +			return sysfs_emit(buf, "%s\n",
-> +				crypto_comp_alg_common(sbi->erofs_tfm)->base.cra_driver_name);
-> +		else
-> +			return sysfs_emit(buf, "NONE\n");
->   	}
->   	return 0;
->   }
-> @@ -181,6 +191,26 @@ static ssize_t erofs_attr_store(struct kobject *kobj, struct attribute *attr,
->   		if (t & 1)
->   			invalidate_mapping_pages(MNGD_MAPPING(sbi), 0, -1);
->   		return len;
-> +	case attr_comp_crypto:
-
-Then I'd like to make this sysfs to enable accelerators.
+Another potential use case could be within ops.dispatch(). For example, if
+the current CPU isn't the best fit for the first task about to be consumed
+from a DSQ, we could use the built-in idle selection logic to try to pick a
+more suitable idle CPU and bounce the task there.
 
 Thanks,
-Gao XIang
+-Andrea
+
+> 
+> Regards,
+> Changwoo Min
+> 
+> > 
+> > To address this, allow scx_bpf_select_cpu_and() to be used from any
+> > context. This gives scx schedulers the option to use the built-in idle CPU
+> > selection policy in a consistent way, potentially reducing code duplication
+> > and fragmentation.
+> > 
+> > Andrea Righi (2):
+> >        sched_ext: Make scx_kf_allowed_if_unlocked() available outside ext.c
+> >        sched_ext/idle: Make scx_bpf_select_cpu_and() usable from any context
+> > 
+> >   kernel/sched/ext.c      |  5 -----
+> >   kernel/sched/ext.h      |  5 +++++
+> >   kernel/sched/ext_idle.c | 23 +++++++++++++++++------
+> >   3 files changed, 22 insertions(+), 11 deletions(-)
+> > 
+> 
 
