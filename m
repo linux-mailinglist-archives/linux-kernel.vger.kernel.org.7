@@ -1,125 +1,122 @@
-Return-Path: <linux-kernel+bounces-645249-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-645251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B330AB4ACE
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 07:18:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 723D9AB4AEA
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 07:22:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46BE58638A0
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 05:18:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D5763AE7BB
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 05:21:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1860C1DE4E6;
-	Tue, 13 May 2025 05:18:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0D381E520F;
+	Tue, 13 May 2025 05:22:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I9Jk6tvA"
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gwgPIRHW"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F100D12DD95
-	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 05:18:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A12B1B3956;
+	Tue, 13 May 2025 05:22:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747113507; cv=none; b=G+k4AkD+IRSwCjiqw9KoJL3rSSl350Asd11yWQd/0njZ3jlhQ2mHkdnvrjzzLeWuMYTJC/YcBW4bsbbojlw/vDktXd0Abi4wt4pj5W3P7GUBxY1+K8856tZzvaeFpyKCk9/kjazFtwv5s/m6Po3A47dTfHCs0q15IcOB74UUSNo=
+	t=1747113723; cv=none; b=Akgrnv7rJEzuVETQc3pBNWwKkTpnCpn3bWkbzMM/SVA54CSnkZWCuJP9SwOG6ohzEeSyFJA3pjwvxFsm/jqkC6fMSN5FGFx03yJGA769ZEqllbYKscQd+pDrZVXotrxg7Jxqw3smjiJSHZ4CyywTHokKIR3BWnrcSaS1VOpZW6M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747113507; c=relaxed/simple;
-	bh=TbWaJOoWlWsrstw22SjfLYW+lLOas+rg4NEQr9OUqBI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lcPpeLdcE6gip8wf+ilr9j+GeGv26PSwKWC6U1kro7kHV/XIJo8bDjyHCN2p3kflY6rDbjWfubzIgHfmWzKLOPedkx5vQ2g66ZFlupb66WXd8HGhZ20ngTRMtLbRqx2V8j4Px1PPIBmOxEKoTkyXOuW2E3UOedRAzSM88SfmbeM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I9Jk6tvA; arc=none smtp.client-ip=209.85.215.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-b245ff89c99so3004027a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 12 May 2025 22:18:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747113505; x=1747718305; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=bdJUDpbdb/wOJBZlZySRKLEPN389jtk6jMDPKmkruHQ=;
-        b=I9Jk6tvABWpXHeEa4F92kWkOfRSuKO86R9RTDhKBrO9RGZemQxCZx8VBTHjW15kNgM
-         QQ0NTwXLU7ANX/LkK9EXPBX/1S1KqsRkBzaBUkAKPl6SiQ3r5IZ9gbSnQ+YMBcHtkWbr
-         M0x/bW8szeUznhTCwp5OXRqySIQMN63ssZzrKM4wRUih5kW+CIDjJkQbhPHpl1byYhZ/
-         lwC33APNiPw8CO9GUgbVn+4OenwFqZMvl3kGabuZV9qHBMDH12TewaOGOBSyhLEpM3vr
-         0a73xa7ZiU7K16qJjZ0HpLt6RTt07wdOmtUIrQree2kkoGltGTi+YA/uyBIsft8Q+V3b
-         saQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747113505; x=1747718305;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=bdJUDpbdb/wOJBZlZySRKLEPN389jtk6jMDPKmkruHQ=;
-        b=uX6c0SadndXqN4yldnPgDyYW+Xx/PpmHshL/o66pQtG/ECEUnWqjHBc22bLLW5VfcH
-         Alor247wYeJstUhBS9zeup7/rhdLR5Nj0vA+fdS0mfSBkEcm7uchIY9zWWgkO85J+gqe
-         ne7Dqz8dStTiEpmX/EkaV05ohCBJ1iWREY2S8CoYzI4AITXIs5tS5bgRyUlMEiLdZu4l
-         Y+cRhGsNWX95Hf2F24eNAAmRRuPwmzclaEXqgxU0zC6xPlUE6pImDWu5ISNvrNx+M8p2
-         w+TUS74pJt2TG9HhGkvykZ9L1jVV2GNWQkKsxLiU6YuM1BpT47KjeHAWkZfbDm7sg9qh
-         G0Tg==
-X-Gm-Message-State: AOJu0YzX/Fpj9BTU+uAPBubX+31h6RPdExAoZdzSwtv3M/tWj8qD/797
-	it0fKnqIkYOFeR8AYkM/rAY/SYyY4hhS51C9zygnqzu80ZtKBUYGfoe0cw==
-X-Gm-Gg: ASbGnct1z+cSRCXu/g9BRdUwD3bStMTA7xe9zGgeXs16Imh7LGXU+bu315kuRvDCNZ/
-	+XQBY4iuXqHt1q6L2NchMkJVuZ1crRLxAiNKazoNiCqUuxqQtm5sCQi/ryaRWfeKLKEMgPd2Heg
-	wXu/nchlLuynoVfNpep9n41uRU2n0cmKvFHO2FV4rJTlO8vVHeobo+wK1FA7oJ9lcsevJ25eAfD
-	XjEUadeAcGAz5Tat/0tFz05LEX4p3NwebfnmyTXPBoX43sgVpnTfRgAljuRr50ey68nun/MGDln
-	rkoTlmkLVLCM9KeF4bpVeufxvfanDtfa29kT2RMM14xZfaBf8uE1Lokx/htv
-X-Google-Smtp-Source: AGHT+IE4z047sYg79CCZ3Wts8pgUTwrrm6J+L50i+KktfOuifWUw3r1I5YIwxALHOBdGBYG6skBP9g==
-X-Received: by 2002:a17:902:e747:b0:223:fabd:4f99 with SMTP id d9443c01a7336-22fc8b0cbc7mr261044285ad.5.1747113505010;
-        Mon, 12 May 2025 22:18:25 -0700 (PDT)
-Received: from EBJ9932692.tcent.cn ([124.156.216.125])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22fc77420e5sm72618525ad.82.2025.05.12.22.18.22
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Mon, 12 May 2025 22:18:24 -0700 (PDT)
-From: Lance Yang <ioworker0@gmail.com>
-X-Google-Original-From: Lance Yang <lance.yang@linux.dev>
-To: akpm@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org,
-	Lance Yang <ioworker0@gmail.com>,
-	Lance Yang <lance.yang@linux.dev>
-Subject: [PATCH 1/1] MAINTAINERS: add hung-task detector section
-Date: Tue, 13 May 2025 13:18:11 +0800
-Message-ID: <20250513051811.43397-1-lance.yang@linux.dev>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1747113723; c=relaxed/simple;
+	bh=0EkDH2Lu1hmxjJBI+/nOcLCQ85AI1IE323FloCtl0z8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cAERk6HykPS9Friu1QV8F0ARW3dv1q2Srjp5xJ/oJB46vrSTonRq3maeKEvx6WRAYTYjcVDAY6itu06YMWcdiy3vNEeVyWaW1mOnV6zhW6CxZEJyUL1B5757Vw5d5Ys4JsuB9EM/gjxx1vUdr/QPnFPGPsDI2dwYZi0onS4BW/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gwgPIRHW; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1747113722; x=1778649722;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=0EkDH2Lu1hmxjJBI+/nOcLCQ85AI1IE323FloCtl0z8=;
+  b=gwgPIRHWCFsUgAClnqWyOzf3BJ+2ZLTa9IabYgMMz+ZljtoajZaTbY/Z
+   ErC3keVx90kzrT3HgD9ENmnNxr534CGHtAqK6zJOMkgyney+0HNHdXbQ+
+   8rwG1dJC0NnyjzPfF9JjeBba4+Zdg4L0ummBmxVvFfu/CG7XCC8CGZaK4
+   YM2fxUsfRpiiNQwCCbzIoMDTWKskjxsLnWuUUgKebkB1+Lkh7fIjOnXBd
+   6NqQD66hix/WwGRCxHp9oHRqeaYGNJf5JLuffuQsjI00Uiw30BoKYje5s
+   cYxQei15H6nzNpGyFBWy7BZ2HFYSUG/zpnV8IFTnfrW8IwlWSXbsdy8MZ
+   A==;
+X-CSE-ConnectionGUID: 5HL1QRJsSG+EEleohb2aQQ==
+X-CSE-MsgGUID: Wc3vqet8T2CKsx++OoIJxA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11431"; a="60277352"
+X-IronPort-AV: E=Sophos;i="6.15,284,1739865600"; 
+   d="scan'208";a="60277352"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 May 2025 22:22:01 -0700
+X-CSE-ConnectionGUID: 2yRa1fBCTr+KBaBKRRvjHQ==
+X-CSE-MsgGUID: jda8xgckSE+g0j+r2743vw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,284,1739865600"; 
+   d="scan'208";a="138552385"
+Received: from mev-dev.igk.intel.com ([10.237.112.144])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 May 2025 22:21:57 -0700
+Date: Tue, 13 May 2025 07:21:25 +0200
+From: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
+To: Daniel Golle <daniel@makrotopia.org>
+Cc: Felix Fietkau <nbd@nbd.name>, Sean Wang <sean.wang@mediatek.com>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH net] net: ethernet: mtk_eth_soc: fix typo for declaration
+ MT7988 ESW capability
+Message-ID: <aCLW1ZAVQvs8fkUm@mev-dev.igk.intel.com>
+References: <b8b37f409d1280fad9c4d32521e6207f63cd3213.1747110258.git.daniel@makrotopia.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b8b37f409d1280fad9c4d32521e6207f63cd3213.1747110258.git.daniel@makrotopia.org>
 
-From: Lance Yang <ioworker0@gmail.com>
+On Tue, May 13, 2025 at 05:27:30AM +0100, Daniel Golle wrote:
+> From: Bo-Cun Chen <bc-bocun.chen@mediatek.com>
+> 
+> Since MTK_ESW_BIT is a bit number rather than a bitmap, it causes
+> MTK_HAS_CAPS to produce incorrect results. This leads to the ETH
+> driver not declaring MAC capabilities correctly for the MT7988 ESW.
+> 
+> Fixes: 445eb6448ed3 ("net: ethernet: mtk_eth_soc: add basic support for MT7988 SoC")
+> Signed-off-by: Bo-Cun Chen <bc-bocun.chen@mediatek.com>
+> Signed-off-by: Daniel Golle <daniel@makrotopia.org>
+> ---
+>  drivers/net/ethernet/mediatek/mtk_eth_soc.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/ethernet/mediatek/mtk_eth_soc.c b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
+> index 22a532695fb0..6c92072b4c28 100644
+> --- a/drivers/net/ethernet/mediatek/mtk_eth_soc.c
+> +++ b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
+> @@ -4748,7 +4748,7 @@ static int mtk_add_mac(struct mtk_eth *eth, struct device_node *np)
+>  	}
+>  
+>  	if (mtk_is_netsys_v3_or_greater(mac->hw) &&
+> -	    MTK_HAS_CAPS(mac->hw->soc->caps, MTK_ESW_BIT) &&
+> +	    MTK_HAS_CAPS(mac->hw->soc->caps, MTK_ESW) &&
+>  	    id == MTK_GMAC1_ID) {
+>  		mac->phylink_config.mac_capabilities = MAC_ASYM_PAUSE |
+>  						       MAC_SYM_PAUSE |
 
-From: Lance Yang <lance.yang@linux.dev>
+Looks like other usage of MTK_HAS_CAPS is fine, thanks for fixing.
 
-The hung-task detector is missing in MAINTAINERS. While it's been quiet
-recently, I'm actively working on it and volunteering to review patches.
-Adding this section will make it easier for contributors to know who to
-contact.
+Reviewed-by: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
 
-Signed-off-by: Lance Yang <lance.yang@linux.dev>
----
- MAINTAINERS | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 1eadd0ce07c7..c5dfc80b2ae4 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -11100,6 +11100,14 @@ L:	linuxppc-dev@lists.ozlabs.org
- S:	Odd Fixes
- F:	drivers/tty/hvc/
- 
-+HUNG TASK DETECTOR
-+M:	Andrew Morton <akpm@linux-foundation.org>
-+R:	Lance Yang <lance.yang@linux.dev>
-+L:	linux-kernel@vger.kernel.org
-+S:	Maintained
-+F:	include/linux/hung_task.h
-+F:	kernel/hung_task.c
-+
- I2C ACPI SUPPORT
- M:	Mika Westerberg <westeri@kernel.org>
- L:	linux-i2c@vger.kernel.org
--- 
-2.49.0
-
+> -- 
+> 2.49.0
 
