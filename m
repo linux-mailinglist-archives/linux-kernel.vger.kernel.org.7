@@ -1,155 +1,138 @@
-Return-Path: <linux-kernel+bounces-645394-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-645415-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4ED8AB4CA7
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 09:23:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13425AB4CFD
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 09:43:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3838B160B95
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 07:24:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9060E17FF92
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 07:43:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE4A01F09B6;
-	Tue, 13 May 2025 07:23:46 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99B141F12F6;
+	Tue, 13 May 2025 07:43:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OoYGeyAA"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AB3A1F03EF;
-	Tue, 13 May 2025 07:23:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BA2E1E5207;
+	Tue, 13 May 2025 07:43:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747121026; cv=none; b=oHneLYeHJUb7hdaNEy1tuuWAFob6o2wxljkQG4rkfzE396VAkYblu45ohpcImvVI9W1veVglnKx/YPi5C+rpxtW5DKcwPkMuwVrujJucf0L1/D7kVZ1drtZcszT6bHUhK4o+Q5zloi3OhymdIgBH52z4IiULEVAM7aCMjyeEFK4=
+	t=1747122200; cv=none; b=VSJnatwz0HuF1Z+6xuKHxSwI6IVwiZFq3MLWyml05NjH5DGe0syt808lSejW93HZ9+rtdzSac4THo6iTB/wrXbxRDvCjqw5zK2oOfTUaAlI14DbJ+LGsXw/Es/XfRebAAWHvNCqi7bfZzon0+zS0jIvczaFLsc1i0pqQJtXs9Sg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747121026; c=relaxed/simple;
-	bh=eAMV56QcbS3sH7I0axVcwaY3ZHbaB7zlot69tRwU8+8=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Z150IEzaDSkTnCU6OSPouRDFjuI7QhXRK4c9XJJKfSJLkTZXvSrM+jpjhXaSo5hN8/WLYJOeoe4NVTWl9ZLsHz97A0FBb1K4sP3ms228EdJGYixdtOGKCxM2VKd2fVHqPAQuMj3DPro3Wt33D4LdTMRKny8jkIgPA8cpfnH8HhE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4ZxSXX38FDzQkRZ;
-	Tue, 13 May 2025 15:19:40 +0800 (CST)
-Received: from kwepemg500017.china.huawei.com (unknown [7.202.181.81])
-	by mail.maildlp.com (Postfix) with ESMTPS id 9FB5A1402C8;
-	Tue, 13 May 2025 15:23:40 +0800 (CST)
-Received: from huawei.com (10.175.127.227) by kwepemg500017.china.huawei.com
- (7.202.181.81) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 13 May
- 2025 15:23:39 +0800
-From: Li Lingfeng <lilingfeng3@huawei.com>
-To: <trondmy@kernel.org>, <anna@kernel.org>, <jlayton@kernel.org>,
-	<bcodding@redhat.com>
-CC: <linux-nfs@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<yukuai1@huaweicloud.com>, <houtao1@huawei.com>, <yi.zhang@huawei.com>,
-	<yangerkun@huawei.com>, <lilingfeng@huaweicloud.com>,
-	<lilingfeng3@huawei.com>
-Subject: [PATCH v2] nfs: handle failure of nfs_get_lock_context in unlock path
-Date: Tue, 13 May 2025 15:42:26 +0800
-Message-ID: <20250513074226.3362070-1-lilingfeng3@huawei.com>
-X-Mailer: git-send-email 2.31.1
+	s=arc-20240116; t=1747122200; c=relaxed/simple;
+	bh=jolsXHXKcmam1GMy6yynZRDnDDKcH0YQBj1q8mdncu4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LlL48gsFKqmwFWcSESizvlQ05Axw4h3nYgDbknEwi0AvoPEVD2d0Qd50CJlTEqEq8MnJVxyW2sO14IzK1Y3ejUv4v74v2OSDYzglwyClCUebBPi9pfyGR8S1tcnVFGlGVGRQD13u03IZYfagkO0TToaWR0jdGxyIK60hR1mYs7A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OoYGeyAA; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3a1d8c09674so2752290f8f.1;
+        Tue, 13 May 2025 00:43:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747122195; x=1747726995; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fG8oqj+Wp78YD53lMG3NWPJMEgG7b7UFy7qM2sNYujM=;
+        b=OoYGeyAAVV5eNvpgduPOelqJH975lQ5TiiSVm+i2kZVhoEd8vnp5u9niUOS0giUOly
+         uoiZRnmioisFCKnpg6uXv6uXaaUZLDnycttyry5YG0hpMdsuFp2D7Btx8fN3CfF3Zq58
+         aHzlc5R8E3zNBUNiafnUh8iU8rfr5oVZo4ZbzkirTmnSiiW6wp3T90tWIWn1maPSZz9E
+         2w5cLs16sqyD9TiUPsuB1VQ//9wb4I4geXb10dH0Kld0DQugg/nGWG9qlkAM83NVwbZW
+         pZON9516mYSECpj8+zJXpyIMjvO4g8OUTPAQQegxRom622n5IeXCGLW8HigzFUeRCi2s
+         Zn9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747122195; x=1747726995;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fG8oqj+Wp78YD53lMG3NWPJMEgG7b7UFy7qM2sNYujM=;
+        b=MAPtQVNZ3qJ9flHy6JekgdLI/Jv4ZMB4tNFawgHtASHAkD//bh+Y40cWd5lhQcwiBQ
+         OXfwcYmpYONOAL9vzxbP3RkQQu6h3dhPGJ3IpkmSK6AWcb3k3i7XqdkbDUCiqaov8g+g
+         GE8iPyJ3nL8ERwdy2tm8YKBSMqYNP8MUtfFv/Lvxplqu4GZPhBHiZnsloZrXi1qCKDjb
+         xje303mLbSAOSdX/SftS2Ue5Bcgkb3OKxLH1KEF5cUzqKMe2xgbqpaVC+44Ocqg8gQCh
+         fPX/pw7DogtWW/QiMtmBqarJi+Xgomc/rTI43BmrUsTLHXZf8ziUxb67KUxl951zzok6
+         Nigw==
+X-Forwarded-Encrypted: i=1; AJvYcCUOTASAAOVhgDJ/jw1MPJmOlzR2Cq5H0396IvNk3P0e0GRjuTcrEJZ+paJOASVIjV/Kv13+g4Z8OVw7@vger.kernel.org, AJvYcCXO/h9L2z23ldAoR78ELjqFDyxwn7Yxu9HURlm5yQDt+5oxebXVB4PxTFFG514PSbr8zugj8scUgdQ+p3V2@vger.kernel.org
+X-Gm-Message-State: AOJu0YwIaa2tcV2IGbv4uJstIqOWPzqDlh4oJtCBjacOS/DmuqwwcLEV
+	iQ2ZlioUdBpQ7RL2263Ywznzcl517ehDCHt94ERGvoa9OFYansOBpuAp5bw1h7WFDL/aNQFbgr/
+	0dhNC1q3E8SXnJcI2JUbnoaEXn7g=
+X-Gm-Gg: ASbGncuNtAKU98b1Kfy75i47DDPE1s1fNU5+qFsDcT/k7kwlfu9J7AX8wM9lcy0OozU
+	vnYQ3iASk/ehTwOK+BSXbDfgotnNJrxph7LBZlIzbKLSMs1PtFhluuODy3ubbT51A+s2gvfnIeV
+	lK/qU52z7uqGvC1AkiP8aeDl0EwDniL3bpevJW2NxT3yQVAw==
+X-Google-Smtp-Source: AGHT+IEZGFUBGfpFWoH02PF3w4asX5yVpyJ9KxOfndhTR3c9CFgfuFIy472TCk4Qb3+UWsnv0YDG9mgYiKqGQ6eYoMg=
+X-Received: by 2002:a05:6000:430e:b0:3a0:b5ec:f05f with SMTP id
+ ffacd0b85a97d-3a1f6482aabmr12175878f8f.39.1747122195541; Tue, 13 May 2025
+ 00:43:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemg500017.china.huawei.com (7.202.181.81)
+References: <20250512-daily-saga-36a3a017dd42@spud> <20250512-sphere-plenty-8ce4cd772745@spud>
+In-Reply-To: <20250512-sphere-plenty-8ce4cd772745@spud>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Tue, 13 May 2025 08:42:48 +0100
+X-Gm-Features: AX0GCFuqAHW_El1GmwQL0ffwl-eOvi3d0MKWaPdlKXmQfFMsGd_d4EiSnbBSRgQ
+Message-ID: <CA+V-a8tgkNd92USA99UtgydA7F6BdYYB=eBXF7VNR_4h6ViOzA@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] riscv: dts: renesas: add specific RZ/Five cache compatible
+To: Conor Dooley <conor@kernel.org>
+Cc: linux-renesas-soc@vger.kernel.org, 
+	Conor Dooley <conor.dooley@microchip.com>, Ben Zong-You Xie <ben717@andestech.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-When memory is insufficient, the allocation of nfs_lock_context in
-nfs_get_lock_context() fails and returns -ENOMEM. If we mistakenly treat
-an nfs4_unlockdata structure (whose l_ctx member has been set to -ENOMEM)
-as valid and proceed to execute rpc_run_task(), this will trigger a NULL
-pointer dereference in nfs4_locku_prepare. For example:
+On Mon, May 12, 2025 at 2:48=E2=80=AFPM Conor Dooley <conor@kernel.org> wro=
+te:
+>
+> From: Conor Dooley <conor.dooley@microchip.com>
+>
+> When the binding was originally written, it was assumed that all
+> ax45mp-caches had the same properties etc. This has turned out to be
+> incorrect, as the QiLai SoC has a different number of cache-sets.
+>
+> Add a specific compatible for the RZ/Five for property enforcement and
+> in case there turns out to be additional differences between these
+> implementations of the cache controller.
+>
+> Acked-by: Ben Zong-You Xie <ben717@andestech.com>
+> Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+> ---
+>  arch/riscv/boot/dts/renesas/r9a07g043f.dtsi | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-BUG: kernel NULL pointer dereference, address: 000000000000000c
-PGD 0 P4D 0
-Oops: Oops: 0000 [#1] SMP PTI
-CPU: 15 UID: 0 PID: 12 Comm: kworker/u64:0 Not tainted 6.15.0-rc2-dirty #60
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-2.fc40
-Workqueue: rpciod rpc_async_schedule
-RIP: 0010:nfs4_locku_prepare+0x35/0xc2
-Code: 89 f2 48 89 fd 48 c7 c7 68 69 ef b5 53 48 8b 8e 90 00 00 00 48 89 f3
-RSP: 0018:ffffbbafc006bdb8 EFLAGS: 00010246
-RAX: 000000000000004b RBX: ffff9b964fc1fa00 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: fffffffffffffff4 RDI: ffff9ba53fddbf40
-RBP: ffff9ba539934000 R08: 0000000000000000 R09: ffffbbafc006bc38
-R10: ffffffffb6b689c8 R11: 0000000000000003 R12: ffff9ba539934030
-R13: 0000000000000001 R14: 0000000004248060 R15: ffffffffb56d1c30
-FS: 0000000000000000(0000) GS:ffff9ba5881f0000(0000) knlGS:00000000
-CS: 0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000000000000000c CR3: 000000093f244000 CR4: 00000000000006f0
-Call Trace:
- <TASK>
- __rpc_execute+0xbc/0x480
- rpc_async_schedule+0x2f/0x40
- process_one_work+0x232/0x5d0
- worker_thread+0x1da/0x3d0
- ? __pfx_worker_thread+0x10/0x10
- kthread+0x10d/0x240
- ? __pfx_kthread+0x10/0x10
- ret_from_fork+0x34/0x50
- ? __pfx_kthread+0x10/0x10
- ret_from_fork_asm+0x1a/0x30
- </TASK>
-Modules linked in:
-CR2: 000000000000000c
----[ end trace 0000000000000000 ]---
+Cheers,
+Prabhakar
 
-Free the allocated nfs4_unlockdata when nfs_get_lock_context() fails and
-return NULL to terminate subsequent rpc_run_task, preventing NULL pointer
-dereference.
-
-Fixes: f30cb757f680 ("NFS: Always wait for I/O completion before unlock")
-Link: https://lore.kernel.org/all/21817f2c-2971-4568-9ae4-1ccc25f7f1ef@huawei.com/
-Signed-off-by: Li Lingfeng <lilingfeng3@huawei.com>
----
-Changes in v2:
-  Add a comment explaining that error handling for ctx acquisition failure
-  is unnecessary.
-
- fs/nfs/nfs4proc.c | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
-
-diff --git a/fs/nfs/nfs4proc.c b/fs/nfs/nfs4proc.c
-index 970f28dbf253..e52e2ac1ab39 100644
---- a/fs/nfs/nfs4proc.c
-+++ b/fs/nfs/nfs4proc.c
-@@ -7074,18 +7074,29 @@ static struct nfs4_unlockdata *nfs4_alloc_unlockdata(struct file_lock *fl,
- 	struct nfs4_unlockdata *p;
- 	struct nfs4_state *state = lsp->ls_state;
- 	struct inode *inode = state->inode;
-+	struct nfs_lock_context *l_ctx;
- 
- 	p = kzalloc(sizeof(*p), GFP_KERNEL);
- 	if (p == NULL)
- 		return NULL;
-+	l_ctx = nfs_get_lock_context(ctx);
-+	if (!IS_ERR(l_ctx)) {
-+		p->l_ctx = l_ctx;
-+	} else {
-+		kfree(p);
-+		return NULL;
-+	}
- 	p->arg.fh = NFS_FH(inode);
- 	p->arg.fl = &p->fl;
- 	p->arg.seqid = seqid;
- 	p->res.seqid = seqid;
- 	p->lsp = lsp;
- 	/* Ensure we don't close file until we're done freeing locks! */
-+	/*
-+	 * Since the caller holds a reference to ctx, the refcount must be non-zero.
-+	 * Therefore, error handling for failed ctx acquisition is unnecessary here.
-+	 */
- 	p->ctx = get_nfs_open_context(ctx);
--	p->l_ctx = nfs_get_lock_context(ctx);
- 	locks_init_lock(&p->fl);
- 	locks_copy_lock(&p->fl, fl);
- 	p->server = NFS_SERVER(inode);
--- 
-2.31.1
-
+> diff --git a/arch/riscv/boot/dts/renesas/r9a07g043f.dtsi b/arch/riscv/boo=
+t/dts/renesas/r9a07g043f.dtsi
+> index e0ddf8f602c79..a8bcb26f42700 100644
+> --- a/arch/riscv/boot/dts/renesas/r9a07g043f.dtsi
+> +++ b/arch/riscv/boot/dts/renesas/r9a07g043f.dtsi
+> @@ -143,7 +143,8 @@ plic: interrupt-controller@12c00000 {
+>         };
+>
+>         l2cache: cache-controller@13400000 {
+> -               compatible =3D "andestech,ax45mp-cache", "cache";
+> +               compatible =3D "renesas,r9a07g043f-ax45mp-cache", "andest=
+ech,ax45mp-cache",
+> +                            "cache";
+>                 reg =3D <0x0 0x13400000 0x0 0x100000>;
+>                 interrupts =3D <SOC_PERIPHERAL_IRQ(476) IRQ_TYPE_LEVEL_HI=
+GH>;
+>                 cache-size =3D <0x40000>;
+> --
+> 2.45.2
+>
+>
 
