@@ -1,154 +1,164 @@
-Return-Path: <linux-kernel+bounces-645329-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-645331-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F212AB4BB9
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 08:10:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98088AB4BBE
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 08:11:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F28717D591
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 06:10:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35B5319E23FA
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 06:11:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83D331E9916;
-	Tue, 13 May 2025 06:09:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C9C31EB1BA;
+	Tue, 13 May 2025 06:10:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="MMRN3fHd";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="1qd3F3bG";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="MMRN3fHd";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="1qd3F3bG"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Q1HwPYTA"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D3D11E9917
-	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 06:09:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75D371B3956;
+	Tue, 13 May 2025 06:10:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747116589; cv=none; b=L1G6qeLK+T3DPtAzogZOlKKEFN2JQyUFlegSpXOGIqfUoUzL8ScCiU7MxZlUFqLKQKAgBoBOIiVxk6Cu6b7jWzVj0yMTkc+1vFCebTufufUEJi9NVBDjeT3Vx5c18kwPrD5ytWpmVMHaQmTXewRPBtHUnadNKWg/+HrjV8maEcQ=
+	t=1747116627; cv=none; b=Z/FlquKjubxolam+oCxEAuVhCU2JzB+X57jsyFTU8CIpny4Ozj6pLdQnwQuK/f9jncUyQmn8liLmLbHYZ9kSTidkKN4E0uijqPqHRGD+ZQLY9iDj9+UpfWQOco5rNdXnFQsnh9u3hpZS0TA3HeSKWZWbzcHThf9IVu/NKtsPBuU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747116589; c=relaxed/simple;
-	bh=SiAJOcPhF5ZcvLR80Kj3eWSNASMiANtxhQCs1FVKI/k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EDkRFqVKW22A8sPTLQwD+oShjJSDUPAn5430r0aASbJKd0z7cd1Xf/EUpCr0rqw1yhAQz9q0ZX6mIdNgKew7scJidB7IDL7hdojXIIBoi7eL0cgba4JHKwC9os7+DaILg9gT07X+BgqLVC3VSgtH8RCRMBgtIweGrzdskJCRKDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=MMRN3fHd; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=1qd3F3bG; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=MMRN3fHd; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=1qd3F3bG; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	s=arc-20240116; t=1747116627; c=relaxed/simple;
+	bh=pp/g36CGeCan1Eh/sxlUoxIv6TI4DTTer5csaOg+IYw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=jCMzhy/M8yh2fVhN5oiooe1JWVPGtpioDrFXNsc+diWJWHtt/KFtZ2rxD5X+deUCIbvBqjt9LWFG/qIfUjptZwIkf2DtvFDhnngBkFG4pP6mfDXxUSDiikgL4J/jagVjc3mirFh1Ujc2KKbi9PZM7I2ilbxo312UN/rB8V6y3u4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Q1HwPYTA; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1747116621;
+	bh=zckOA6qotZ8O2PcXu2tqk96ixCz/VZ7YSefpJVgwM5A=;
+	h=Date:From:To:Cc:Subject:From;
+	b=Q1HwPYTA80nuhbP9rj/wkd0m0RIuON8BNin8uzlr+11XS5UiSUcnAWzILCzHzKPLa
+	 0kg6zbR2ghSudm9yAGSVxI2cR4doZWUL2RQ/g9Zwr+MMPOr3Eyns9e0/vJL5XyIkoW
+	 oUQMH25zYbssPKH6jgSubDu9ZjqXVepIngwJbczJBl/J8Xl7QhJaeY42UG2Vd311ho
+	 zl14EwaJxHPVhqk03tdOn+i76i8/yf7Yx1WNjZNpVMriuV1BWkwWOzmAq5S0fmmmLK
+	 /N0dn0QtEuh43fJq4y7fWbA7mY8WsvbcqCYRkSFB4diHCcB2uwO2mmNU2gjhcW4fhh
+	 /oeYlIxviD1rg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 6F85E1F387;
-	Tue, 13 May 2025 06:09:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1747116586; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iQl2xd5pYmgmS7e1vmtjBQXxxTTpVuRRCi7wCMozpqY=;
-	b=MMRN3fHdGN6GkBgaqdXY5CLZnCLKqj/DKdkxhCdGJ5tqPAOInfkneSyFHA2+GXngIk5S+X
-	MaN/VSdUbHrvBXFGB4bfEQ4jyK0aPalIGkQcvKu8GqXrTnRdA8/9cVkRKyVRmLD6gWggKS
-	L3KMsMQ2ArA8NScaKMnYP0UslKKDg+M=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1747116586;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iQl2xd5pYmgmS7e1vmtjBQXxxTTpVuRRCi7wCMozpqY=;
-	b=1qd3F3bGOSSQKJZivplnLnZH2NcorMMH268x/J6hf/6J+PkHzFu5EzUWH0V06kf5sV+tsD
-	kgDx5rsb2jE0LnCA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1747116586; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iQl2xd5pYmgmS7e1vmtjBQXxxTTpVuRRCi7wCMozpqY=;
-	b=MMRN3fHdGN6GkBgaqdXY5CLZnCLKqj/DKdkxhCdGJ5tqPAOInfkneSyFHA2+GXngIk5S+X
-	MaN/VSdUbHrvBXFGB4bfEQ4jyK0aPalIGkQcvKu8GqXrTnRdA8/9cVkRKyVRmLD6gWggKS
-	L3KMsMQ2ArA8NScaKMnYP0UslKKDg+M=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1747116586;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iQl2xd5pYmgmS7e1vmtjBQXxxTTpVuRRCi7wCMozpqY=;
-	b=1qd3F3bGOSSQKJZivplnLnZH2NcorMMH268x/J6hf/6J+PkHzFu5EzUWH0V06kf5sV+tsD
-	kgDx5rsb2jE0LnCA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 19822137E8;
-	Tue, 13 May 2025 06:09:46 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id jYShBCriImiJQAAAD6G6ig
-	(envelope-from <hare@suse.de>); Tue, 13 May 2025 06:09:46 +0000
-Message-ID: <0340c51e-6f89-4799-b2f1-19c785a19ff2@suse.de>
-Date: Tue, 13 May 2025 08:09:45 +0200
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZxR0X501Cz4wcx;
+	Tue, 13 May 2025 16:10:20 +1000 (AEST)
+Date: Tue, 13 May 2025 16:10:20 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
+ "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, Pawan Gupta
+ <pawan.kumar.gupta@linux.intel.com>
+Subject: linux-next: manual merge of the tip tree with Linus' tree
+Message-ID: <20250513161020.4e97ddde@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] dm mpath: Interface for explicit probing of active
- paths
-To: Christoph Hellwig <hch@infradead.org>, Kevin Wolf <kwolf@redhat.com>
-Cc: Martin Wilck <mwilck@suse.com>, dm-devel@lists.linux.dev,
- hreitz@redhat.com, mpatocka@redhat.com, snitzer@kernel.org,
- bmarzins@redhat.com, linux-kernel@vger.kernel.org
-References: <20250429165018.112999-1-kwolf@redhat.com>
- <47dd225b433b0df585a25084a2e793344eeda239.camel@suse.com>
- <aCIRUwt5BueQmlMZ@redhat.com> <aCLe5UT2kfzI96TQ@infradead.org>
-Content-Language: en-US
-From: Hannes Reinecke <hare@suse.de>
-In-Reply-To: <aCLe5UT2kfzI96TQ@infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MIME_TRACE(0.00)[0:+];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	ARC_NA(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	RCVD_TLS_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:mid,suse.de:email]
-X-Spam-Score: -4.30
+Content-Type: multipart/signed; boundary="Sig_/_XF9DEQC5hYZD1=Q_MSsa_N";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On 5/13/25 07:55, Christoph Hellwig wrote:
-> On Mon, May 12, 2025 at 05:18:43PM +0200, Kevin Wolf wrote:
->> Yes, it's a bit unfortunate, but we have to work with what we have. QEMU
->> doesn't even necessarily know that it's dealing with a multipath device,
->> so it just has to blindly try the ioctl and see if it works.
-> 
-> Why is qemu even using SG_IO to start with?
-> 
-To be able to forward SCSI commands.
+--Sig_/_XF9DEQC5hYZD1=Q_MSsa_N
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
+Hi all,
+
+Today's linux-next merge of the tip tree got a conflict in:
+
+  arch/x86/kernel/alternative.c
+
+between commits:
+
+  ebebe30794d3 ("x86/ibt: Keep IBT disabled during alternative patching")
+  872df34d7c51 ("x86/its: Use dynamic thunks for indirect branches")
+
+from Linus' tree and commit:
+
+  db5c68c88c07 ("x86/alternatives: Simplify the #include section")
+
+from the tip tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
 Cheers,
+Stephen Rothwell
 
-Hannes
--- 
-Dr. Hannes Reinecke                  Kernel Storage Architect
-hare@suse.de                                +49 911 74053 688
-SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
-HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
+diff --cc arch/x86/kernel/alternative.c
+index 48fd04e90114,ddbc303e41e3..000000000000
+--- a/arch/x86/kernel/alternative.c
++++ b/arch/x86/kernel/alternative.c
+@@@ -1,39 -1,14 +1,17 @@@
+  // SPDX-License-Identifier: GPL-2.0-only
+  #define pr_fmt(fmt) "SMP alternatives: " fmt
+ =20
+- #include <linux/module.h>
+- #include <linux/sched.h>
++ #include <linux/mmu_context.h>
+  #include <linux/perf_event.h>
+- #include <linux/mutex.h>
+- #include <linux/list.h>
+- #include <linux/stringify.h>
+- #include <linux/highmem.h>
+- #include <linux/mm.h>
+  #include <linux/vmalloc.h>
+  #include <linux/memory.h>
+- #include <linux/stop_machine.h>
+- #include <linux/slab.h>
+- #include <linux/kdebug.h>
+- #include <linux/kprobes.h>
+- #include <linux/mmu_context.h>
+- #include <linux/bsearch.h>
+- #include <linux/sync_core.h>
+ +#include <linux/execmem.h>
++=20
+  #include <asm/text-patching.h>
+- #include <asm/alternative.h>
+- #include <asm/sections.h>
+- #include <asm/mce.h>
+- #include <asm/nmi.h>
+- #include <asm/cacheflush.h>
+- #include <asm/tlbflush.h>
+  #include <asm/insn.h>
+- #include <asm/io.h>
+- #include <asm/fixmap.h>
+- #include <asm/paravirt.h>
+- #include <asm/asm-prototypes.h>
+- #include <asm/cfi.h>
++ #include <asm/nmi.h>
+ +#include <asm/ibt.h>
+ +#include <asm/set_memory.h>
+ =20
+  int __read_mostly alternatives_patched;
+ =20
+
+--Sig_/_XF9DEQC5hYZD1=Q_MSsa_N
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmgi4kwACgkQAVBC80lX
+0GyBoQf+ODp5g1CBRnf+VzyeC2Y0VzH/MGS5+9VHeerQ4R3iL94bkEAEsz6qhz5t
+FGocShFVytJnjfdDDQi9RlF2A6YKXAT1Xw4QVtyu+DUBlw6f+dqzyQ+DRRPsoHPL
+v33/dNuECMO9+jpJxJiVYaSbqQCOiTzbV2BsFNWcS7JLSlhQZx4D0d/aavGTYXiP
+Oe+bfP+ikh/NDSuIWv5Edzw5B9Rvux+XXPh0MMT1FfOBRwG6mo/21Or1qLiJ6Nca
+psUw24Cm91Z8Cjn24Vpya5502+961F2LfetGn88KnkBzZz7UDKWb/O6eZ97YVshO
+ktZEOGQv5WojZunjtTAcGt13sDGR2Q==
+=xy/+
+-----END PGP SIGNATURE-----
+
+--Sig_/_XF9DEQC5hYZD1=Q_MSsa_N--
 
