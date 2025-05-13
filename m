@@ -1,376 +1,189 @@
-Return-Path: <linux-kernel+bounces-646538-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-646541-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FF43AB5D79
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 22:01:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 346CEAB5D83
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 22:02:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2693E7AC1A8
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 20:00:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FA703BFC8B
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 20:02:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48AF51EA7C1;
-	Tue, 13 May 2025 20:01:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 345171F30B2;
+	Tue, 13 May 2025 20:02:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="asxJi18G"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n9GkyfPT"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7908FB672;
-	Tue, 13 May 2025 20:01:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DBDFB672;
+	Tue, 13 May 2025 20:02:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747166471; cv=none; b=vDejtxwf7fBNTpD0wSIj7V4A4Nr4v3ddrwLG8zBLai3U72LJWSBUNjCObeu27p6WVggWR6QSub7tBcjZK7pBprUt7y1iHTdHRzIgpljAaDOOyXVKTjyHvXfTKB12bWGPvZg1dHCbJQRhcx7a7PW7ngx3LUwy65pfB71yKpJ4M+Y=
+	t=1747166553; cv=none; b=kaquD5zNgc7Om251jl/C6ipFctnUu5gUMlHtFHt9jXoIKXVGs/1zeYhFxv7q7S13ZU+IXeRv5DXCj7CuBq+7jXXpog5ec0tlYqmDZEYFQQupUyoAuz9lztovXMhnm3YewJAzFb5kGDlVHHS0tjKviP0lPLWTleD9PlJImGe3D+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747166471; c=relaxed/simple;
-	bh=J/Ln1rCxUNZn4wx2VeA4kXZwDs79KYnOBQkoQDHvPCw=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
-	 References:In-Reply-To; b=kfxbtpBkqOBjSWn7dogr878quqqPnhpf0SEzI6C3hmqrYoXxWxNXoVZnbaoQ4s+P3WDM2RvvFHvnE66FV1CnXwGE9JDQMCr4hAlJIgT+kYVCqzJwRPtckbuvDI5sjkS49iiA4WjUcEa0uYjtOAO5+mY/VZFpPh0/pCNZmHAd9uk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=asxJi18G; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6E66C4CEE4;
-	Tue, 13 May 2025 20:01:07 +0000 (UTC)
+	s=arc-20240116; t=1747166553; c=relaxed/simple;
+	bh=p6WCYhpxp8GLyuOSXIMeDTqqLGaMAAOsV7qsxmiGo+o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CaUlMyYg3dmxJD6fpiJp3ry0iWyTMGyXsQgjD6nZ8Wi3D6S/89FRugaIy/BNRLSIK9QywJk1BUDeHsEG74DtZ1aFwvE3MnlHBTHnl0ts5jQkHiayA5Ih0V2w78LFBB0+IFucnIXmh/Qk09838bBV+7K5ou41hwQr+SXn73upJLo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n9GkyfPT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DE51C4CEE4;
+	Tue, 13 May 2025 20:02:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747166470;
-	bh=J/Ln1rCxUNZn4wx2VeA4kXZwDs79KYnOBQkoQDHvPCw=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=asxJi18G2UGx577cdwdm0AOhuPcFEK00mpbkMzLANX9L4i4bWKo1SS02qFVlrDfME
-	 1iM1qErv4dHvNBmOQWp7CKEHW9z9tfZ7vT/rKB342UV959q3alzbu0IRMceQ22Zv3U
-	 o2vEfzJLF+HM2g5K0gEMGIhwT73eREL73CkuIwGbPAtIwoshEycilesc+ayI4l6abJ
-	 5Zh7FkXM0lmllS+vsxkgS33sefMvOFuJjP5/+1Ct6jBtg1T4arf3F5/1Q2mtPbMdEh
-	 agOohrWdKvNsd/lu4ZDNAo0gFmjZitt8VURay9pBZEIv5ksqE3f1v7xxf+2xneyHOn
-	 3CDqTS/GwJFGA==
+	s=k20201202; t=1747166553;
+	bh=p6WCYhpxp8GLyuOSXIMeDTqqLGaMAAOsV7qsxmiGo+o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=n9GkyfPTIwQzjPfwG8LPh5FCg6qnjlZXGB48RvSLebYvdF6ZB76Uyq4Ma/zERdsd9
+	 tal4NsiHb6FqLW+wLZnOypVQO9PbHyuh8aAijH6/2LqMLqyFBf3U8d68+qkpNt4KGU
+	 cIV++1waIZAbVQFZeG74yx2quxh9WerUp3TY4ozBvnZqcDOthDiUASmv2RAMbC7yu5
+	 M9UZi6RMj+/a2dB4AvY3XuGOjJ/o2e0YaMeXTHsUZrYbVNyHHu7tf0Ggcjex39ZZjr
+	 +e2G2d49fPpA8YyRygjG6OhXRg4hB0hIJwMaUavqK+ITJSiTAYTPOAAQ11x5aMIjUM
+	 ln/KzwM5WUnyg==
+Date: Tue, 13 May 2025 17:02:30 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Chun-Tse Shao <ctshao@google.com>
+Cc: linux-kernel@vger.kernel.org, peterz@infradead.org, mingo@redhat.com,
+	namhyung@kernel.org, mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+	irogers@google.com, adrian.hunter@intel.com,
+	kan.liang@linux.intel.com, james.clark@linaro.org,
+	howardchu95@gmail.com, weilin.wang@intel.com, yeoreum.yun@arm.com,
+	linux@treblig.org, linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH v3 0/3] Fix incorrect counts when count the same uncore
+ event multiple times
+Message-ID: <aCOlViKRwS0kE0tg@x1>
+References: <20250512215929.2098240-1-ctshao@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 13 May 2025 22:01:05 +0200
-Message-Id: <D9VATLUHDGU8.53I80TGVRV0J@kernel.org>
-Subject: Re: [PATCH v3] rust: regulator: add a bare minimum regulator
- abstraction
-From: "Benno Lossin" <lossin@kernel.org>
-To: "Daniel Almeida" <daniel.almeida@collabora.com>, "Miguel Ojeda"
- <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
- <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Benno Lossin"
- <benno.lossin@proton.me>, "Andreas Hindborg" <a.hindborg@kernel.org>,
- "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
- "Danilo Krummrich" <dakr@kernel.org>, "Boris Brezillon"
- <boris.brezillon@collabora.com>, "Sebastian Reichel"
- <sebastian.reichel@collabora.com>, "Liam Girdwood" <lgirdwood@gmail.com>,
- "Mark Brown" <broonie@kernel.org>
-Cc: <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>
-X-Mailer: aerc 0.20.1
-References: <20250513-topics-tyr-regulator-v3-1-4cc2704dfec6@collabora.com>
-In-Reply-To: <20250513-topics-tyr-regulator-v3-1-4cc2704dfec6@collabora.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250512215929.2098240-1-ctshao@google.com>
 
-On Tue May 13, 2025 at 5:44 PM CEST, Daniel Almeida wrote:
-> diff --git a/rust/kernel/regulator.rs b/rust/kernel/regulator.rs
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..7b07b64f61fdd4a84ffb38e9b=
-0f90830d5291ab9
-> --- /dev/null
-> +++ b/rust/kernel/regulator.rs
-> @@ -0,0 +1,211 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +//! Regulator abstractions, providing a standard kernel interface to con=
-trol
-> +//! voltage and current regulators.
-> +//!
-> +//! The intention is to allow systems to dynamically control regulator p=
-ower
-> +//! output in order to save power and prolong battery life. This applies=
- to both
-> +//! voltage regulators (where voltage output is controllable) and curren=
-t sinks
-> +//! (where current limit is controllable).
-> +//!
-> +//! C header: [`include/linux/regulator/consumer.h`](srctree/include/lin=
-ux/regulator/consumer.h)
-> +//!
-> +//! Regulators are modeled in Rust with two types: [`Regulator`] and
-> +//! [`EnabledRegulator`].
+On Mon, May 12, 2025 at 02:50:29PM -0700, Chun-Tse Shao wrote:
+> Let's take a look an example, the machine is SKX with 6 IMC devices.
+> 
+>   perf stat -e clockticks,clockticks -I 1000
+>   #           time             counts unit events
+>        1.001127430      6,901,503,174      uncore_imc_0/clockticks/
+>        1.001127430      3,940,896,301      uncore_imc_0/clockticks/
+>        2.002649722        988,376,876      uncore_imc_0/clockticks/
+>        2.002649722        988,376,141      uncore_imc_0/clockticks/
+>        3.004071319      1,000,292,675      uncore_imc_0/clockticks/
+>        3.004071319      1,000,294,160      uncore_imc_0/clockticks/
+> 
+> 1) The events name should not be uniquified.
+> 2) The initial count for the first `clockticks` is doubled.
+> 3) Subsequent count only report for the first IMC device.
+> 
+> The first patch fixes 1) and 3), and the second patch fixes 2).
 
-Would it make sense to store this in a generic variable acting as a type
-state instead of using two different names? So:
+So, after having just the first patch applied I'm getting:
 
-    pub struct Regulator<State: RegulatorState> { /* ... */ }
+  CC      /tmp/build/perf-tools-next/util/bpf-filter-flex.o
+util/parse-events.c: In function ‘__parse_events’:
+util/parse-events.c:2270:25: error: implicit declaration of function ‘evlist__uniquify_name’; did you mean ‘evlist__uniquify_evsel_names’? [-Wimplicit-function-declaration]
+ 2270 |                         evlist__uniquify_name(evlist);
+      |                         ^~~~~~~~~~~~~~~~~~~~~
+      |                         evlist__uniquify_evsel_names
+make[4]: *** [/home/acme/git/perf-tools-next/tools/build/Makefile.build:85: /tmp/build/perf-tools-next/util/parse-events.o] Error 1
+make[4]: *** Waiting for unfinished jobs....
+make[3]: *** [/home/acme/git/perf-tools-next/tools/build/Makefile.build:142: util] Error 2
+make[2]: *** [Makefile.perf:798: /tmp/build/perf-tools-next/perf-util-in.o] Error 2
+make[2]: *** Waiting for unfinished jobs....
 
-    pub trait RegulatorState: private::Sealed {}
 
-    pub struct Enabled;
-    pub struct Disabled;
+  CC      /tmp/build/perf-tools-next/pmu-events/pmu-events.o
+  LD      /tmp/build/perf-tools-next/pmu-events/pmu-events-in.o
+make[1]: *** [Makefile.perf:290: sub-make] Error 2
+make: *** [Makefile:119: install-bin] Error 2
+make: Leaving directory '/home/acme/git/perf-tools-next/tools/perf'
+⬢ [acme@toolbx perf-tools-next]$ 
+⬢ [acme@toolbx perf-tools-next]$ 
+⬢ [acme@toolbx perf-tools-next]$ 
+⬢ [acme@toolbx perf-tools-next]$ 
+⬢ [acme@toolbx perf-tools-next]$ 
+⬢ [acme@toolbx perf-tools-next]$ 
+⬢ [acme@toolbx perf-tools-next]$ 
+⬢ [acme@toolbx perf-tools-next]$ git log --oneline -3
+6ffcaec3ac0d055a (HEAD) perf evlist: Make uniquifying counter names consistent
+4102ff8b1fdaa588 perf metricgroup: Binary search when resolving referred to metrics
+754baf426e099fbf perf pmu: Change aliases from list to hashmap
+⬢ [acme@toolbx perf-tools-next]$
 
-    impl RegulatorState for Enabled {}
-    impl RegulatorState for Disabled {}
+When test building the second patch, it builds, so I'm now looking if
+you used things from the future or if the second patch removes the
+problem.
 
-And then one would use `Regulator<Enabled>` and `Regulator<Disabled>`.
-
-> +//!
-> +//! The transition between these types is done by calling
-> +//! [`Regulator::enable()`] and [`EnabledRegulator::disable()`] respecti=
-vely.
-> +//!
-> +//! Use an enum or [`kernel::types::Either`] to gracefully transition be=
-tween
-> +//! the two states at runtime if needed. Store [`EnabledRegulator`] dire=
-ctly
-> +//! otherwise.
-> +//!
-> +//! See [`Voltage and current regulator API`]("https://docs.kernel.org/d=
-river-api/regulator.html")
-> +//! for more information.
-> +
-> +use crate::{
-> +    bindings,
-> +    device::Device,
-> +    error::{from_err_ptr, to_result, Result},
-> +    prelude::*,
-> +};
-> +
-> +use core::{mem::ManuallyDrop, ptr::NonNull};
-> +
-> +/// A `struct regulator` abstraction.
-> +///
-> +/// # Examples
-> +///
-> +/// Enabling a regulator:
-> +///
-> +/// ```
-> +/// # use kernel::prelude::*;
-> +/// # use kernel::c_str;
-> +/// # use kernel::device::Device;
-> +/// # use kernel::regulator::{Microvolt, Regulator, EnabledRegulator};
-> +/// fn enable(dev: &Device, min_uv: Microvolt, max_uv: Microvolt) -> Res=
-ult {
-> +///    // Obtain a reference to a (fictitious) regulator.
-> +///    let regulator: Regulator =3D Regulator::get(dev, c_str!("vcc"))?;
-> +///
-> +///    // The voltage can be set before enabling the regulator if needed=
-, e.g.:
-> +///    regulator.set_voltage(min_uv, max_uv)?;
-> +///
-> +///    // The same applies for `get_voltage()`, i.e.:
-> +///    let voltage: Microvolt =3D regulator.get_voltage()?;
-> +///
-> +///    // Enables the regulator, consuming the previous value.
-> +///    //
-> +///    // From now on, the regulator is known to be enabled because of t=
-he type
-> +///    // `EnabledRegulator`.
-> +///    let regulator: EnabledRegulator =3D regulator.enable()?;
-> +///
-> +///    // The voltage can also be set after enabling the regulator, e.g.=
-:
-> +///    regulator.set_voltage(min_uv, max_uv)?;
-> +///
-> +///    // The same applies for `get_voltage()`, i.e.:
-> +///    let voltage: Microvolt =3D regulator.get_voltage()?;
-> +///
-> +///    // Dropping an enabled regulator will disable it. The refcount wi=
-ll be
-> +///    // decremented.
-
-Where would you normally store an enabled regulator to keep it alive?
-Maybe adjust the example to do just that?
-
-> +///    drop(regulator);
-> +///    // ...
-> +///    # Ok::<(), Error>(())
-> +/// }
-> +///```
-> +///
-> +/// Disabling a regulator:
-> +///
-> +///```
-> +/// # use kernel::prelude::*;
-> +/// # use kernel::c_str;
-> +/// # use kernel::device::Device;
-> +/// # use kernel::regulator::{Microvolt, Regulator, EnabledRegulator};
-> +/// fn disable(dev: &Device, regulator: EnabledRegulator) -> Result {
-> +///    // We can also disable an enabled regulator without reliquinshing=
- our
-> +///    // refcount:
-> +///    let regulator: Regulator =3D regulator.disable()?;
-> +///
-> +///    // The refcount will be decremented when `regulator` is dropped.
-> +///    drop(regulator);
-> +///    // ...
-> +///    # Ok::<(), Error>(())
-> +/// }
-> +/// ```
-> +///
-> +/// # Invariants
-> +///
-> +/// - [`Regulator`] is a non-null wrapper over a pointer to a `struct
-> +///   regulator` obtained from [`regulator_get()`](https://docs.kernel.o=
-rg/driver-api/regulator.html#c.regulator_get).
-
-This should be "`inner` is a pointer obtained from
-[`regulator_get()`](...)".
-
-> +/// - Each instance of [`Regulator`] is associated with a single count o=
-f
-> +///   [`regulator_get()`](https://docs.kernel.org/driver-api/regulator.h=
-tml#c.regulator_get).
-
-This is redundant, so we should remove it.
-
-> +pub struct Regulator {
-> +    inner: NonNull<bindings::regulator>,
-> +}
-> +
-> +impl Regulator {
-> +    /// Obtains a [`Regulator`] instance from the system.
-> +    pub fn get(dev: &Device, name: &CStr) -> Result<Self> {
-> +        // SAFETY: It is safe to call `regulator_get()`, on a device poi=
-nter
-> +        // received from the C code.
-> +        let inner =3D from_err_ptr(unsafe { bindings::regulator_get(dev.=
-as_raw(), name.as_ptr()) })?;
-> +
-> +        // SAFETY: We can safely trust `inner` to be a pointer to a vali=
-d
-> +        // regulator if `ERR_PTR` was not returned.
-> +        let inner =3D unsafe { NonNull::new_unchecked(inner) };
-> +
-> +        Ok(Self { inner })
-> +    }
-> +
-> +    /// Enables the regulator.
-> +    pub fn enable(self) -> Result<EnabledRegulator> {
-> +        // SAFETY: Safe as per the type invariants of `Regulator`.
-> +        let res =3D to_result(unsafe { bindings::regulator_enable(self.i=
-nner.as_ptr()) });
-> +        res.map(|()| EnabledRegulator { inner: self })
-> +    }
-> +
-> +    /// Sets the voltage for the regulator.
-> +    ///
-> +    /// This can be used to ensure that the device powers up cleanly.
-> +    pub fn set_voltage(&self, min_uv: Microvolt, max_uv: Microvolt) -> R=
-esult {
-> +        // SAFETY: Safe as per the type invariants of `Regulator`.
-> +        to_result(unsafe {
-> +            bindings::regulator_set_voltage(self.inner.as_ptr(), min_uv.=
-0, max_uv.0)
-> +        })
-> +    }
-> +
-> +    /// Gets the current voltage of the regulator.
-> +    pub fn get_voltage(&self) -> Result<Microvolt> {
-> +        // SAFETY: Safe as per the type invariants of `Regulator`.
-> +        let voltage =3D unsafe { bindings::regulator_get_voltage(self.in=
-ner.as_ptr()) };
-> +        if voltage < 0 {
-> +            Err(Error::from_errno(voltage))
-> +        } else {
-> +            Ok(Microvolt(voltage))
-> +        }
-> +    }
-> +}
-> +
-> +impl Drop for Regulator {
-> +    fn drop(&mut self) {
-> +        // SAFETY: By the type invariants, we know that `self` owns a re=
-ference,
-> +        // so it is safe to relinquish it now.
-> +        unsafe { bindings::regulator_put(self.inner.as_ptr()) };
-> +    }
-> +}
-> +
-> +/// A [`Regulator`] that is known to be enabled.
-> +///
-> +/// # Invariants
-> +///
-> +/// - [`EnabledRegulator`] is a valid regulator that has been enabled.
-
-This isn't fully clear what it's supposed to mean to me. Maybe mention
-the `regulator_enable` function?
-
-> +/// - Each instance of [`EnabledRegulator`] is associated with a single =
-count
-> +///   of [`regulator_enable()`](https://docs.kernel.org/driver-api/regul=
-ator.html#c.regulator_enable)
-> +///   that was obtained from the [`Regulator`] instance once it was enab=
-led.
-
-Ah I see you mention it here, then what is the bullet point above about?
-
-Also, please refer to `inner` instead of [`EnabledRegulator`].
-
-> +pub struct EnabledRegulator {
-> +    inner: Regulator,
-> +}
-> +
-> +impl EnabledRegulator {
-> +    fn as_ptr(&self) -> *mut bindings::regulator {
-> +        self.inner.inner.as_ptr()
-> +    }
-> +
-> +    /// Disables the regulator.
-> +    pub fn disable(self) -> Result<Regulator> {
-> +        // Keep the count on `regulator_get()`.
-> +        let regulator =3D ManuallyDrop::new(self);
-
-Why don't we drop the refcount if the `regulator_disable` call fails?
-
-> +
-> +        // SAFETY: Safe as per the type invariants of `Self`.
-> +        let res =3D to_result(unsafe { bindings::regulator_disable(regul=
-ator.as_ptr()) });
-> +
-> +        res.map(|()| Regulator {
-> +            inner: regulator.inner.inner,
-> +        })
-> +    }
-> +
-> +    /// Sets the voltage for the regulator.
-> +    pub fn set_voltage(&self, min_uv: Microvolt, max_uv: Microvolt) -> R=
-esult {
-> +        self.inner.set_voltage(min_uv, max_uv)
-> +    }
-> +
-> +    /// Gets the current voltage of the regulator.
-> +    pub fn get_voltage(&self) -> Result<Microvolt> {
-> +        self.inner.get_voltage()
-> +    }
-> +}
-> +
-> +impl Drop for EnabledRegulator {
-> +    fn drop(&mut self) {
-> +        // SAFETY: By the type invariants, we know that `self` owns a re=
-ference,
-> +        // so it is safe to relinquish it now.
-> +        unsafe { bindings::regulator_disable(self.as_ptr()) };
-
-Same here, what happens to the refcount?
-
----
-Cheers,
-Benno
-
-> +    }
-> +}
-> +
-> +/// A voltage in microvolts.
-> +///
-> +/// The explicit type is used to avoid confusion with other multiples of=
- the
-> +/// volt, which can be desastrous.
-> +#[repr(transparent)]
-> +#[derive(Copy, Clone, PartialEq, Eq)]
-> +pub struct Microvolt(pub i32);
->
-> ---
-> base-commit: edc5e6e019c99b529b3d1f2801d5cce9924ae79b
-> change-id: 20250326-topics-tyr-regulator-e8b98f6860d7
->
-> Best regards,
-
+- Arnaldo
+ 
+> After these fix:
+> 
+>   perf stat -e clockticks,clockticks -I 1000
+>   #           time             counts unit events
+>        1.001127586      4,126,938,857      clockticks
+>        1.001127586      4,121,564,277      clockticks
+>        2.001686014      3,953,806,350      clockticks
+>        2.001686014      3,953,809,541      clockticks
+>        3.003121403      4,137,750,252      clockticks
+>        3.003121403      4,137,749,048      clockticks
+> 
+> I also tested `-A`, `--per-socket`, `--per-die` and `--per-core`, all
+> looks good.
+> 
+> Ian tested `hybrid-merge` and `hwmon`, all looks good as well.
+> 
+> Chun-Tse Shao (1):
+>   perf test: Add stat uniquifying test
+> 
+> Ian Rogers (2):
+>   perf evlist: Make uniquifying counter names consistent
+>   perf parse-events: Use wildcard processing to set an event to merge
+>     into
+> 
+>  tools/perf/builtin-record.c                   |   7 +-
+>  tools/perf/builtin-top.c                      |   7 +-
+>  .../tests/shell/stat+event_uniquifying.sh     |  69 ++++++++
+>  tools/perf/util/evlist.c                      |  66 +++++---
+>  tools/perf/util/evlist.h                      |   3 +-
+>  tools/perf/util/evsel.c                       | 119 ++++++++++++-
+>  tools/perf/util/evsel.h                       |  11 +-
+>  tools/perf/util/parse-events.c                |  90 +++++++---
+>  tools/perf/util/stat-display.c                | 160 ++----------------
+>  tools/perf/util/stat.c                        |  40 +----
+>  10 files changed, 332 insertions(+), 240 deletions(-)
+>  create mode 100755 tools/perf/tests/shell/stat+event_uniquifying.sh
+> 
+> --
+> v3: Rebase with tmp.perf-tools-next. Since most of the conflicts are from
+> lore.kernel.org/20250403194337.40202-5-irogers@google.com, tested v3
+> patches with:
+> 
+>   perf stat -A -C 0,4-5,8 -e "instructions/cpu=0/,l1d-misses/cpu=4,cpu=5/,inst_retired.any/cpu=8/,cycles" -a sleep 0.1
+> 
+>    Performance counter stats for 'system wide':
+> 
+>   CPU0              682,860      instructions/cpu=0/              #    0.27  insn per cycle
+>   CPU4               53,774      l1d-misses
+>   CPU5               18,725      l1d-misses
+>   CPU8              608,698      inst_retired.any/cpu=8/
+>   CPU0            2,574,325      cycles
+>   CPU4            4,267,115      cycles
+>   CPU5            1,741,536      cycles
+>   CPU8            1,969,547      cycles
+> 
+>          0.102746958 seconds time elapsed
+> 
+> v2: lore.kernel.org/20250327225651.642965-1-ctshao@google.com
+>   - Fixes for `hwmon` and `--hybrid-merge`.
+>   - Add a test for event uniquifying.
+> 
+> v1: lore.kernel.org/20250326234758.480431-1-ctshao@google.com
+> 
+> 2.49.0.1045.g170613ef41-goog
 
