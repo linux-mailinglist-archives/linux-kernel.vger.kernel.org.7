@@ -1,94 +1,47 @@
-Return-Path: <linux-kernel+bounces-645354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-645356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E083EAB4C00
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 08:32:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 376F6AB4C08
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 08:34:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA4EC19E5554
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 06:32:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B4D53A507A
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 06:34:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 152551EA7DF;
-	Tue, 13 May 2025 06:32:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 759151EB1A7;
+	Tue, 13 May 2025 06:34:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="yPv77/uJ";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="vQyvztrZ";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="yPv77/uJ";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="vQyvztrZ"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UGocXwC0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC5FE1EA7D6
-	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 06:32:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4E891EB18F
+	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 06:34:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747117936; cv=none; b=mgl58V+4vmqmyKZfARe2COwqvnttWpqY/9pz0PJJps2yet3fWvbtJRFnUY0JeXYJrbhFNlvq42SLTlljUEFfZyjJ2K+qHqx5vSOhnheLc5+OtwRAj3WQWNlS9YfnrMj+9IBorxYhXGJjVm6hj1fyWmI+XIzZ5lGPmzhpfxkBsgk=
+	t=1747118068; cv=none; b=K3wecT/4/3IfZLMVCpwx1AraurBlpyKqotDb+FPDK/6jaX9llWDLyKKDpOHu/HNPXbhWTDfmRPRYKFkvYJY1l44MkyXNdPxT/FFhZfzqToXSW1Cds0JJuiyt5yoIDoC/y6jCbKhqClaK4BPg17kZ2tSYrfV3y+cXsNGypYzcj68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747117936; c=relaxed/simple;
-	bh=IZl1YQRTJNwVCr/kLAahPYK27pMJDP5N3BnT/1OGfmA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=j4uGcM4qr0xHoQKU5L4j46KFwHSVXNrk+/vJSUvljpzF6mJR82tKIJIZVs0ZYya4a9oOCze8+0oWawVzipni2sEGfxMaEC7OWTGzjvEott3n0I/hc31DFGCokMKLgQ2w2npBbSoM5epPTsWNr7quq2L5rs5QRX9ydTwgFCHKOUg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=yPv77/uJ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=vQyvztrZ; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=yPv77/uJ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=vQyvztrZ; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 0BF602119D;
-	Tue, 13 May 2025 06:32:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1747117933; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=g6JbC6wkC/8KlkNKMqPXFLnKJmHN0ICj7kZnD9u1AoA=;
-	b=yPv77/uJtYvhJ/jzS/MgPS4rSu9UtvAivTuMD44D7zxPGsp8UeOp9X57dkXDJLyTTuGG/5
-	O+7RLOyaogApCs2v1ALHjLwZOg1c2d50uYztLEl0Tfhpe+ilZ/WMf0pH1LXOrQtaBvmCL0
-	13w4ux7XJhLcqyYx627jzXYCqUy6rsU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1747117933;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=g6JbC6wkC/8KlkNKMqPXFLnKJmHN0ICj7kZnD9u1AoA=;
-	b=vQyvztrZbOvBEpC7YZM2oYGm7Ue8QdYVKsgdKpr6MUG66dU7ZqJdMzcqR1IloKfvLJHJne
-	D4OuSfd51TXuiQCw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1747117933; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=g6JbC6wkC/8KlkNKMqPXFLnKJmHN0ICj7kZnD9u1AoA=;
-	b=yPv77/uJtYvhJ/jzS/MgPS4rSu9UtvAivTuMD44D7zxPGsp8UeOp9X57dkXDJLyTTuGG/5
-	O+7RLOyaogApCs2v1ALHjLwZOg1c2d50uYztLEl0Tfhpe+ilZ/WMf0pH1LXOrQtaBvmCL0
-	13w4ux7XJhLcqyYx627jzXYCqUy6rsU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1747117933;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=g6JbC6wkC/8KlkNKMqPXFLnKJmHN0ICj7kZnD9u1AoA=;
-	b=vQyvztrZbOvBEpC7YZM2oYGm7Ue8QdYVKsgdKpr6MUG66dU7ZqJdMzcqR1IloKfvLJHJne
-	D4OuSfd51TXuiQCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B5626137E8;
-	Tue, 13 May 2025 06:32:12 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id iz6xKmznImh2RwAAD6G6ig
-	(envelope-from <hare@suse.de>); Tue, 13 May 2025 06:32:12 +0000
-Message-ID: <d2a7fa68-1890-4367-a2ac-59ec220779bd@suse.de>
-Date: Tue, 13 May 2025 08:32:12 +0200
+	s=arc-20240116; t=1747118068; c=relaxed/simple;
+	bh=ORgLMITxeIyffJ4kFtLu1h4Mh8Q9hlUWYLleES2f2lE=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=mpDnK7PxTtfDvrfWhm5BzitXaXt+jqp/CBgdAY4CH8R/ouj9t0xhz4cg6Xo+GcUq/kc9NcgtwHLrAMRcnPDlh1/Dif1Qie1bSf3n2TbR88z435so6dB4vYtHu/GpvBCm+gc8Y5UMNFYfvkeZAukGoppJzMts1rBBWASxC7mRBuo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UGocXwC0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4945BC4CEED;
+	Tue, 13 May 2025 06:34:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747118068;
+	bh=ORgLMITxeIyffJ4kFtLu1h4Mh8Q9hlUWYLleES2f2lE=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=UGocXwC0ochsFRNKa9jZYXMnu8vntCsPFMbXh6206Pj8y7En90phD0RdyN/LxzLCE
+	 82J36pPxSCwjacFcvpBRrF8IDjQlEqacV6O1sKl0tlTAl6Y4h0qvL+PMd2QA1CLush
+	 BS17XOqXNwKt88vXoWhWhNbEQ52P9B6lVkIlEY8+T3ibDhcFIAWAklZbLT4xLwdnbc
+	 TdA//RZn9tf7Vp++nxjG306X7RWiTH447MBVIYyTyxkTfSmCyPWkH4MQs0m8hR0Eco
+	 iGb2iSvmWXHbZiDxohPrDrVwgYoxzjS7vye79OWyCtCbxXXesvY/eW1cnjxPxmOZTT
+	 4vDeMLVhzA0kw==
+Message-ID: <ba2bc9bf-7cec-4871-b603-8130c84fc917@kernel.org>
+Date: Tue, 13 May 2025 14:34:25 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,71 +49,33 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] dm mpath: Interface for explicit probing of active
- paths
+Cc: chao@kernel.org, jaegeuk@kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org
+Subject: Re: [PATCH 1/2] f2fs: use vmalloc instead of kvmalloc in
+ .init_{,de}compress_ctx
 To: Christoph Hellwig <hch@infradead.org>
-Cc: Kevin Wolf <kwolf@redhat.com>, Martin Wilck <mwilck@suse.com>,
- dm-devel@lists.linux.dev, hreitz@redhat.com, mpatocka@redhat.com,
- snitzer@kernel.org, bmarzins@redhat.com, linux-kernel@vger.kernel.org
-References: <20250429165018.112999-1-kwolf@redhat.com>
- <47dd225b433b0df585a25084a2e793344eeda239.camel@suse.com>
- <aCIRUwt5BueQmlMZ@redhat.com> <aCLe5UT2kfzI96TQ@infradead.org>
- <0340c51e-6f89-4799-b2f1-19c785a19ff2@suse.de>
- <aCLjPLCztuXhgpnA@infradead.org>
+References: <20250513055721.2918793-1-chao@kernel.org>
+ <aCLgPLUiFsiCzSBK@infradead.org>
 Content-Language: en-US
-From: Hannes Reinecke <hare@suse.de>
-In-Reply-To: <aCLjPLCztuXhgpnA@infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:email]
-X-Spam-Score: -4.30
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <aCLgPLUiFsiCzSBK@infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 5/13/25 08:14, Christoph Hellwig wrote:
-> On Tue, May 13, 2025 at 08:09:45AM +0200, Hannes Reinecke wrote:
->> On 5/13/25 07:55, Christoph Hellwig wrote:
->>> On Mon, May 12, 2025 at 05:18:43PM +0200, Kevin Wolf wrote:
->>>> Yes, it's a bit unfortunate, but we have to work with what we have. QEMU
->>>> doesn't even necessarily know that it's dealing with a multipath device,
->>>> so it just has to blindly try the ioctl and see if it works.
->>>
->>> Why is qemu even using SG_IO to start with?
->>>
->> To be able to forward SCSI commands.
+On 5/13/25 14:01, Christoph Hellwig wrote:
+> On Tue, May 13, 2025 at 01:57:20PM +0800, Chao Yu wrote:
+>> .init_{,de}compress_ctx uses kvmalloc() to alloc memory, it will try
+>> to allocate physically continuous page first, it may cause more memory
+>> allocation pressure, let's use vmalloc instead to mitigate it.
 > 
-> Why?
-> 
-Reservations and stuff.
-There are customer who use GPFS ...
+> Shouldn't this be handled in kvmalloc instead of working around it in
+> callers?
 
-But yes, I know. We are working on it; it should be possible to hook in
-the generic block reservation code here.
+kvmalloc() will allocate physically continuous page first, so it may race
+w/ other physically continuous page allocator who uses kmalloc(), in
+scenario of there are few physically continuous pages.
 
-Cheers,
+Thanks,
 
-Hannes
--- 
-Dr. Hannes Reinecke                  Kernel Storage Architect
-hare@suse.de                                +49 911 74053 688
-SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
-HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
 
