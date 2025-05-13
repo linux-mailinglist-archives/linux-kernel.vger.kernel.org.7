@@ -1,136 +1,119 @@
-Return-Path: <linux-kernel+bounces-646728-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-646730-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AE4FAB5FC9
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 01:09:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66D9AAB5FCE
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 01:13:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D77EF19E39C8
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 23:09:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D2574466656
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 23:13:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DC481F9413;
-	Tue, 13 May 2025 23:09:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AF96202983;
+	Tue, 13 May 2025 23:13:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GabFUoqT"
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="dZ2Q8r41"
+Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DEFE136337;
-	Tue, 13 May 2025 23:09:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 286521C6FF4
+	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 23:13:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747177777; cv=none; b=rsBrtGdV8iBYccRS5+rtrKJ7dIsydL2iNb7I1hr7FUvrulD3taG0m5/PvH6wHAiCOEg98zzmBx/hJZVfTkrxZgWgPrAyB9RyM2cVfzTfFJwkT21876FwFxw8sqZxGdR98N1+5ykz03+4KcZy7TzROqMLtuDPo7AxvjZlR9j+C+U=
+	t=1747178000; cv=none; b=qnoJGgnDQT6wNC9XZN2h7U17gAyVWC0+YSpmIGbpxecTfVlZ+1vuVUr7AzgAE5cWi4uZdSx8Nsamv/Y+i1c5w6nAU25aJgvWcnq5hSG343koZ0AYjPi1OP+rDXeKu6kpShv+JVx6dhVIHfL5XKuWLcKvJsQUVMiS0duP9YnMqWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747177777; c=relaxed/simple;
-	bh=0uUSQkAKe1c8c9K4WhFW8meHssUZMjO6h9KlXfj/3pI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PNmj2mQpdmIDWWpzPE5hsuMT2aeME5OYlO3d9M1fpT+/cyrcEhpkANmoK3ns6MkIBmhfULw8mG2YvU3yQvLcPZ+Qztvw+GYQnCmIZZUNkI3SlO6VvKkfCsbnu0kE2kn7vQaJFsc4gyQYOm+RTTnlQvF4OqhzRiM45UoseB8egho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GabFUoqT; arc=none smtp.client-ip=209.85.216.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-30a9718de94so5968439a91.0;
-        Tue, 13 May 2025 16:09:36 -0700 (PDT)
+	s=arc-20240116; t=1747178000; c=relaxed/simple;
+	bh=mkNoC9Ryjx5ogPibaruvHLv5BB0SKVa9LeUZetHB668=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mYVbCG7Xfqztb0+hKsMsAQ4e8vUbNZFmVhPkxY2JzQ1rcoI3wb6oy8KHH5MgoLtTJhiRSDdHbsf8gjG5Ac+vCvMlzQq1Nq3sg8GvTSRacGKZQ46rBLvzIqx81GvoBNCyyYA34HZeNRCErPN9ea7kkmvVuG7I4RO2tbSzGls2RCk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=dZ2Q8r41; arc=none smtp.client-ip=209.85.128.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-70a2970cb70so50313537b3.0
+        for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 16:13:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747177776; x=1747782576; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=R+mxhHcPr+TvZqZf0aVFhNrCdir+u6TUHiL5kEkrMXg=;
-        b=GabFUoqTpJ8XvPok34AwfZhkz9GzAlHuOsG02XC/8bnPa6kA6zTbTINjj8pz4K4Qrg
-         1mHH02pq6IQlQIWm9npWqagfetb5jFR53ZuxcolZlTNY7/Ef4A8T/k6bosWqJYqzQZNF
-         py2geUB2tYKbsN0SheUB9cpCsRoJhcqflw3JRUm3Cg33cVViY5iqP1FeOdPH3m7AXfF8
-         lxo5WyAlG8kYwh3yMd540kLqJwwjbFlQiIZNzy55OMICGJFoDbnRxMZHVGfmkanODuy9
-         sE4yaTQYufkDVjqXDZVWrLHpJUBs3DQlf/C5ACFwIutwn/ZcfgVjTY+X1Iw85Omf1fdT
-         J5hQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747177776; x=1747782576;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=paul-moore.com; s=google; t=1747177998; x=1747782798; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=R+mxhHcPr+TvZqZf0aVFhNrCdir+u6TUHiL5kEkrMXg=;
-        b=Y8oYJYCaLPC/idQ1Fu7ywdrGRvNNgGqe1SOt7rUEFzqoeFwUTI5u+2KORvYqjQx5LQ
-         j+bGsA041l/wpLvoo0/5oCLAYj5glOSvOLXfzJAcRBerkuU3qOZlcUMW1lkyQcDkpdHL
-         asSQK5ovD8wXWwJbIGhJuMQUs0I4Fbu/q+8qzPawoQpC0i9n9zzsLlyzeZMo+nLDdt17
-         KTU839oLyND2mNz6DFKCLZWCGbrTs5HJmPVWaYjw9STCui31+0W3YHhSlwMMYQ9BdRgL
-         pI9AIy5t3QlzYMEAigDSkVzhQde8Rddayi3XjSzcs5EhgDP/Im83rMlhgkk9SM++RAPx
-         Abyg==
-X-Forwarded-Encrypted: i=1; AJvYcCUs8o5LlhyoTj3AtiiymgNDAmhTrf0IAykppyedzVxHipSafaxVL80r+gP/JfaZuWVGLYEUaX9QrvdiC3g=@vger.kernel.org, AJvYcCVNwMZ26vzGqUHMSPUUTSAEOdjYV7K34mB9yZSzIQaUjEreDhUi0D7UoeIEs7vTtgSuGYzqyfEqzDbx2A==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxDV2aXGIJwRhDAx6WbSPbsekX5rqfMLdTBOIdIaLVL74MQYuOI
-	1mp5tIJInQ51F+koB8Pm4VKd6mmiweUDYZm0skG/TF4nuD8rG041
-X-Gm-Gg: ASbGncsPV6N3LcUPVZ3MzCoB2QJUbow/3X5RzVciZP10NCTSvb7OBW8giC6CzlZhL6Y
-	hLdQKuSlCR9avoXJAgkYEM3gzRsp/l9BuB2pStADB7iS2mKglJHxJWQSuy6kJJHk8SAnR25MMHR
-	N8c/yBTA5zhmmsW/kUA0ygSLGBZk+hBwB0IBMQHm5AlqyPC2dZdyHbM+XaDiDm2KGTruiWT8t47
-	dvz5PBjX0AwNjXB1tz0bflQxZIFcyTw6t/mGuoqF46U3CQjGYcQD1ZLx41W3BL9AutRE9KeHg95
-	VMBvtoTVgTgXEXE19Yh0r13myoVQZZMB68yXd0waHROq4BJZ/h8=
-X-Google-Smtp-Source: AGHT+IHrL8Z6RQnvzJXvyvY25K4u5b1f4H/BpBsbC5LnWuYDIGCWgBMC9bTkCAR9RY+qKFYik25qsw==
-X-Received: by 2002:a17:90a:d650:b0:2fa:157e:c790 with SMTP id 98e67ed59e1d1-30e2e5d6114mr1878597a91.5.1747177775412;
-        Tue, 13 May 2025 16:09:35 -0700 (PDT)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-30e3349d50bsm147145a91.45.2025.05.13.16.09.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 May 2025 16:09:34 -0700 (PDT)
-Received: by archie.me (Postfix, from userid 1000)
-	id 41F1342439C7; Wed, 14 May 2025 06:09:32 +0700 (WIB)
-Date: Wed, 14 May 2025 06:09:32 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Stephen Rothwell <sfr@canb.auug.org.au>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
-	Peter Zijlstra <peterz@infradead.org>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-Subject: Re: linux-next: manual merge of the tip tree with Linus' tree
-Message-ID: <aCPRLHg46GP0_Pse@archie.me>
-References: <20250513154845.7c03dbe2@canb.auug.org.au>
+        bh=JiQbN1KcgTdXz0K2nzgAi4Zdc8zBRkZfmeECcgv3ydc=;
+        b=dZ2Q8r41/H/WVPFxRkTvgt116JPUMWrXkKLKUm+HTy3Jc4ALAfb4M1xby7fRHPiFRu
+         0o++vToPt831qri85tV9CTMBZ4kVl/GUn8gj2lgwp3/enONWMsJZemHCMwi7ywYbP4On
+         g3006Ln7sZLiLe+acUSk3H+UkV0WfiqLH/KJTAHPT4GYvCYbhcCHIgbEJ6P7FVlyOI+C
+         mO/yVV3Of6Zzh1KJVouhYMkoQ+iJZ3Drt5swuHKTlhBKuLoc+cfjaI+QXY7DXyFrrSJS
+         DmNwBbW29pvpFxdajyc0a5sTSov05eciea0vMwARymoZOiWU+9otaF29R88sTJ3+o4wx
+         g9BQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747177998; x=1747782798;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JiQbN1KcgTdXz0K2nzgAi4Zdc8zBRkZfmeECcgv3ydc=;
+        b=CBZREbMiiw9hQuHxSAfV/c+kk+CLWlFTPIdLPE+lGxtbkKxkvja8FAI0uzHu/qFfw/
+         Je+9F26pwyDcfo7Kv48DwZIaT4oxuifHWuJWLcWwpPgL+QEXlQIRuNfdcuMK009zP9bE
+         5Bq0qFWwQ3PmU7sCylC+qyTvIp/iwv5SvO+Yt56yBNEZUqa9yisyA60fGSYDuB6xjn8N
+         HKZN88bH+4C/xZfhtRaZQcTjandoP0GwA2fO3PFOEqyNEFwGjnHdPaKEHCiQKwvHw8kt
+         qo9AL1pUIYnmDZP6HEIxanN7MM8DSDnqtYtn8YBXsswtGaH36+TzaT5+M9CuPLwC7Q2b
+         QGOg==
+X-Forwarded-Encrypted: i=1; AJvYcCXlZ4KozDI20OfcBOBJ5TJTHrN4bDgxN3yOLnZdBRatIPuCWdvSSsk0uNcN2GWHPcCoZTqHgiV8CmODR1Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/9Py38mREEOmAnwHzUTlEr4WHSbOx0KPLzt7J16Sd2G+bIEDb
+	R8EFb3zcAEN0CNFgeLwZtc3mTImH5oWmTv1cnnSYYHs9nJvxAqLbObmxMZK0YA8hk2zxi2+fYq4
+	+jjd8U7w0TQXurx5A6AT1piia0CpSWihQli2o/1MflwgZCDtaCA==
+X-Gm-Gg: ASbGnctyYP0sAnvJB3/iX7PgI+Mnp4w9Yi1AanXkyk52vS5SnVqN3bwdR7AqQ0NqY7m
+	D/ClldwpyAgf1tmtcD6XzgX6h5vkQ9OAUMRfsDTqrOk9J1wgYya40rxh/j1gpKLKoyxTWWd67s8
+	2Nho5D334WxE7bArCIphogwFLef7Nbhk2O
+X-Google-Smtp-Source: AGHT+IGLKVOpD4gMWPsE80wgsYXtnIT3oZdD49clxQKHdbkqN8XwpQ6PDL6R86iNciW5PD8VH5cUkNh1g8L2GtOCwBU=
+X-Received: by 2002:a05:690c:6a09:b0:709:1bf8:f7a6 with SMTP id
+ 00721157ae682-70c7f2221cbmr21351427b3.28.1747177998122; Tue, 13 May 2025
+ 16:13:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="X6G5xsf+9iNdz6KE"
-Content-Disposition: inline
-In-Reply-To: <20250513154845.7c03dbe2@canb.auug.org.au>
-
-
---X6G5xsf+9iNdz6KE
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+References: <20250508140438.648533-2-alexjlzheng@tencent.com>
+ <20250509032326.GJ2023217@ZenIV> <20250509043757.GL2023217@ZenIV>
+In-Reply-To: <20250509043757.GL2023217@ZenIV>
+From: Paul Moore <paul@paul-moore.com>
+Date: Tue, 13 May 2025 19:13:07 -0400
+X-Gm-Features: AX0GCFttm-rmrczbIyF2qWJ3ynZfRM2SOJV9UI_yLmpmO36LFSjrxOCcAum3iQY
+Message-ID: <CAHC9VhR7-R20Q7A8RGCAMvBxNyUXOcj-dHAcMi-GAyVsxQZ7aQ@mail.gmail.com>
+Subject: Re: [PATCH 1/8] securityfs: don't pin dentries twice, once is enough...
+To: linux-security-module@vger.kernel.org
+Cc: Al Viro <viro@zeniv.linux.org.uk>, alexjlzheng@gmail.com, jmorris@namei.org, 
+	serge@hallyn.com, greg@kroah.com, chrisw@osdl.org, 
+	linux-kernel@vger.kernel.org, Jinliang Zheng <alexjlzheng@tencent.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 13, 2025 at 03:48:45PM +1000, Stephen Rothwell wrote:
-> diff --cc Documentation/admin-guide/hw-vuln/index.rst
-> index ce296b8430fc,cf1511145927..000000000000
-> --- a/Documentation/admin-guide/hw-vuln/index.rst
-> +++ b/Documentation/admin-guide/hw-vuln/index.rst
-> @@@ -23,4 -23,4 +23,5 @@@ are configurable at compile, boot or ru
->      gather_data_sampling
->      reg-file-data-sampling
->      rsb
->  +   indirect-target-selection
-> +    old_microcode
+On Fri, May 9, 2025 at 12:38=E2=80=AFAM Al Viro <viro@zeniv.linux.org.uk> w=
+rote:
+>
+> From 5c463d47c814e16adb6e997a05ca5625df41152d Mon Sep 17 00:00:00 2001
+> From: Al Viro <viro@zeniv.linux.org.uk>
+> Date: Thu, 8 May 2025 23:38:01 -0400
+> Subject: [PATCH 1/8] securityfs: don't pin dentries twice, once is enough=
+...
+>
+> incidentally, securityfs_recursive_remove() is broken without that -
+> it leaks dentries, since simple_recursive_removal() does not expect
+> anything of that sort.  It could be worked around by dput() in
+> remove_one() callback, but it's easier to just drop that double-get
+> stuff.
+>
+> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+> ---
+>  security/inode.c | 2 --
+>  1 file changed, 2 deletions(-)
 
-The resolution LGTM.
+Replying with a lore link to the associated discussion and warning so
+we have some record of it in the LSM patchwork.
 
-Thanks.
+https://lore.kernel.org/linux-security-module/20250509044613.GT2023217@ZenI=
+V/
 
 --=20
-An old man doll... just what I always wanted! - Clara
-
---X6G5xsf+9iNdz6KE
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCaCPRJgAKCRD2uYlJVVFO
-o0uKAP4oOyW1A027V6px2VPwT/NHhkeU4xenNDfDE4URAiFyFwD/aI8SjAi5pyLL
-ByS/ClAeKhO61K5FIyGT89v0Icm3Vw8=
-=hfum
------END PGP SIGNATURE-----
-
---X6G5xsf+9iNdz6KE--
+paul-moore.com
 
