@@ -1,147 +1,155 @@
-Return-Path: <linux-kernel+bounces-645413-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-645394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97AB4AB4CF6
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 09:42:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E4ED8AB4CA7
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 09:23:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E8D6179B91
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 07:42:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3838B160B95
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 07:24:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 076AF1F0E50;
-	Tue, 13 May 2025 07:42:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ktega5MC"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE4A01F09B6;
+	Tue, 13 May 2025 07:23:46 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B24711EFFBB;
-	Tue, 13 May 2025 07:42:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AB3A1F03EF;
+	Tue, 13 May 2025 07:23:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747122166; cv=none; b=XTMzlmdUj2sdmf7A+4uQ7GRaP41Yp0CyIET1O1Lnk/qh0U4QPvbCcZHd7wDCxXNBl0Kjphupw/VqQFg9iTl6gmC14v9xsY48BJTC5N+cxWWhhqQF1ScUcXlF2lLLQn/9fQatgw9J1K/+nsZpp9Fa34uDWAiAQkN2hAgY+TJ8csM=
+	t=1747121026; cv=none; b=oHneLYeHJUb7hdaNEy1tuuWAFob6o2wxljkQG4rkfzE396VAkYblu45ohpcImvVI9W1veVglnKx/YPi5C+rpxtW5DKcwPkMuwVrujJucf0L1/D7kVZ1drtZcszT6bHUhK4o+Q5zloi3OhymdIgBH52z4IiULEVAM7aCMjyeEFK4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747122166; c=relaxed/simple;
-	bh=1zvAcaVW+58ODWkgEa130IxE5WroYchmXUDNj1Zwx/U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JmzpAiUD2WxOMCTYtENoCzhskWjmFR79nUqeYYvOPAPtoPt8dKwbRUqMEgzI3y4P5Hq1ADWgYsUr++1j7Uvy8a4w6zNJHlArFr9h1qUtxLZId3+vdsrE0fQYFY1XVTKagdWElw2g40QBYAECyLTXVd4ZzU/kYn7FDfW3mwnRb88=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ktega5MC; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3a0be50048eso3982391f8f.0;
-        Tue, 13 May 2025 00:42:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747122162; x=1747726962; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=D5EeRPV8Vs99JUS6VGOzkhDsirZOs54DCeOjcjXBhCA=;
-        b=ktega5MCSdLGJSKVPsyD/mOe+/Lr45sMpLAVMnO+bz9MlfPTJVoG+ojEHQPLbj4E0D
-         ZYGIXC1nCCzEVcO/XP8g5fueTSuMuwhgGrxLskIpE/w4tDW+CYp0csd+IOEIo9qK48Xp
-         KbkB4u4noQS1tcnURuvghnV/O92kDjHWA9lP1ULZo2T9b5j/u1eNuIdRyIaYrhXoZbSA
-         fH9s4UKAF1whnjQG4EebbaG8L2Fcy/5EcXWnXrlZXYARUNYH3YEhCzl/CBnYHbefKdtQ
-         oCETprer03Pq4tL+9zv04BSOWSg+4RIaF5bFRRiZ8e+wcY/LLGxBqhgGrM69dsoZp9xe
-         OMQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747122162; x=1747726962;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=D5EeRPV8Vs99JUS6VGOzkhDsirZOs54DCeOjcjXBhCA=;
-        b=tCMUSqu7r8+6RJlJVAL6JCQufF1juY3yLMg8LyjE1bsXEhM9XuM6aSooeaOvcTcAeo
-         /hsJU+BgD3+OXylq5BEp8eu9Hlz0Ywprtm83ntYu+ZBx3J9D7OoESxRA5QPJBaiTfb2S
-         QXbVd9ORBkTqepitmN6BcoO18+ZWpi7JRSTn6f6jAPUhXc70xVQfhhHtwsbXCTSfsnmV
-         h1ct+KhWpHWvS7b/T8Gj2fion+NCP2NbcE2BCm08m3oWQOWC+j5lRlZakhoBEMQ+N2qp
-         pyWASzMmYKu9e3EOUknfuGoL5X+32C0ykNqwhc4JKZW3I09Gs8+qxiCERfG+DEVc8ITD
-         y3NA==
-X-Forwarded-Encrypted: i=1; AJvYcCUH3p/g4Qvf4dG8Ug7en3wp88ertuOkxao1G5RgQq88ZTBXYo5MkOCumGG33QCvGJ+w3DxOH0VOrw6BqeE0@vger.kernel.org, AJvYcCVkMbjWtn8WOrx3100gFv6LXw+h0vsMgnMHrV38UXnj/l/W5nA9xLHRlKaoNTRHw5cRGDLnkFHx0IOi@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxym9AUDSq/V7gOFRr17bWWaPZ7sQlZytP2eT/ntalQHsBU054l
-	tZYHbmocT88CpPhs+4ALCYR+uoboust4jU/1Bwd1QjJEaeveObwHQ9qDb4qQpMhYISJDCDiFBXA
-	3J/tWNA8YfatqZ+zXUIbhAOY3w2Tlf3VH7wA=
-X-Gm-Gg: ASbGncvNz3DYC378DcFFcelFrT3snePDv6fWEVVnSQK15AYGZtAuLrXYyYxNQzoW65X
-	YBhkV7HYAVTm7fcIto0tw7ZKjCEb5p8QoEKz3iYNf71ozC5ySCiAoW8d50eQIkl0Zn99QRTw8pd
-	r8hl0sntQA4CLNwDZ7S0ESluQAYMxEQaQW0F4=
-X-Google-Smtp-Source: AGHT+IFXL/hE4jmoKOkbg3iKF2uwGvdj6kGxF++bvbioySStQ0aLhC+48d08yuAr/x6Z1Pv/Qwpygt+YjxKd19udHHM=
-X-Received: by 2002:a05:6000:2485:b0:39c:13f5:dba0 with SMTP id
- ffacd0b85a97d-3a1f64328bbmr13087447f8f.13.1747122161833; Tue, 13 May 2025
- 00:42:41 -0700 (PDT)
+	s=arc-20240116; t=1747121026; c=relaxed/simple;
+	bh=eAMV56QcbS3sH7I0axVcwaY3ZHbaB7zlot69tRwU8+8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Z150IEzaDSkTnCU6OSPouRDFjuI7QhXRK4c9XJJKfSJLkTZXvSrM+jpjhXaSo5hN8/WLYJOeoe4NVTWl9ZLsHz97A0FBb1K4sP3ms228EdJGYixdtOGKCxM2VKd2fVHqPAQuMj3DPro3Wt33D4LdTMRKny8jkIgPA8cpfnH8HhE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4ZxSXX38FDzQkRZ;
+	Tue, 13 May 2025 15:19:40 +0800 (CST)
+Received: from kwepemg500017.china.huawei.com (unknown [7.202.181.81])
+	by mail.maildlp.com (Postfix) with ESMTPS id 9FB5A1402C8;
+	Tue, 13 May 2025 15:23:40 +0800 (CST)
+Received: from huawei.com (10.175.127.227) by kwepemg500017.china.huawei.com
+ (7.202.181.81) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 13 May
+ 2025 15:23:39 +0800
+From: Li Lingfeng <lilingfeng3@huawei.com>
+To: <trondmy@kernel.org>, <anna@kernel.org>, <jlayton@kernel.org>,
+	<bcodding@redhat.com>
+CC: <linux-nfs@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<yukuai1@huaweicloud.com>, <houtao1@huawei.com>, <yi.zhang@huawei.com>,
+	<yangerkun@huawei.com>, <lilingfeng@huaweicloud.com>,
+	<lilingfeng3@huawei.com>
+Subject: [PATCH v2] nfs: handle failure of nfs_get_lock_context in unlock path
+Date: Tue, 13 May 2025 15:42:26 +0800
+Message-ID: <20250513074226.3362070-1-lilingfeng3@huawei.com>
+X-Mailer: git-send-email 2.31.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250512-daily-saga-36a3a017dd42@spud> <20250512-sevenfold-yeah-d40078a9249e@spud>
-In-Reply-To: <20250512-sevenfold-yeah-d40078a9249e@spud>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Tue, 13 May 2025 08:42:15 +0100
-X-Gm-Features: AX0GCFs3WUCcJVNPxLJlOrk65mHejbVofYUQyPp4oSEDskZVj5B6_lOINocEbfQ
-Message-ID: <CA+V-a8sKAVEZDOxgok94YHWdE9Mgw-z3DRa8UTSf=myxe5O9pA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] dt-bindings: cache: add specific RZ/Five
- compatible to ax45mp
-To: Conor Dooley <conor@kernel.org>
-Cc: linux-renesas-soc@vger.kernel.org, 
-	Conor Dooley <conor.dooley@microchip.com>, Ben Zong-You Xie <ben717@andestech.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemg500017.china.huawei.com (7.202.181.81)
 
-On Mon, May 12, 2025 at 3:12=E2=80=AFPM Conor Dooley <conor@kernel.org> wro=
-te:
->
-> From: Conor Dooley <conor.dooley@microchip.com>
->
-> When the binding was originally written, it was assumed that all
-> ax45mp-caches had the same properties etc. This has turned out to be
-> incorrect, as the QiLai SoC has a different number of cache-sets.
->
-> Add a specific compatible for the RZ/Five for property enforcement and
-> in case there turns out to be additional differences between these
-> implementations of the cache controller.
->
-> Acked-by: Ben Zong-You Xie <ben717@andestech.com>
-> Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
-> ---
->  .../devicetree/bindings/cache/andestech,ax45mp-cache.yaml     | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
->
-Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+When memory is insufficient, the allocation of nfs_lock_context in
+nfs_get_lock_context() fails and returns -ENOMEM. If we mistakenly treat
+an nfs4_unlockdata structure (whose l_ctx member has been set to -ENOMEM)
+as valid and proceed to execute rpc_run_task(), this will trigger a NULL
+pointer dereference in nfs4_locku_prepare. For example:
 
-Cheers,
-Prabhakar
+BUG: kernel NULL pointer dereference, address: 000000000000000c
+PGD 0 P4D 0
+Oops: Oops: 0000 [#1] SMP PTI
+CPU: 15 UID: 0 PID: 12 Comm: kworker/u64:0 Not tainted 6.15.0-rc2-dirty #60
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-2.fc40
+Workqueue: rpciod rpc_async_schedule
+RIP: 0010:nfs4_locku_prepare+0x35/0xc2
+Code: 89 f2 48 89 fd 48 c7 c7 68 69 ef b5 53 48 8b 8e 90 00 00 00 48 89 f3
+RSP: 0018:ffffbbafc006bdb8 EFLAGS: 00010246
+RAX: 000000000000004b RBX: ffff9b964fc1fa00 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: fffffffffffffff4 RDI: ffff9ba53fddbf40
+RBP: ffff9ba539934000 R08: 0000000000000000 R09: ffffbbafc006bc38
+R10: ffffffffb6b689c8 R11: 0000000000000003 R12: ffff9ba539934030
+R13: 0000000000000001 R14: 0000000004248060 R15: ffffffffb56d1c30
+FS: 0000000000000000(0000) GS:ffff9ba5881f0000(0000) knlGS:00000000
+CS: 0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000000000000000c CR3: 000000093f244000 CR4: 00000000000006f0
+Call Trace:
+ <TASK>
+ __rpc_execute+0xbc/0x480
+ rpc_async_schedule+0x2f/0x40
+ process_one_work+0x232/0x5d0
+ worker_thread+0x1da/0x3d0
+ ? __pfx_worker_thread+0x10/0x10
+ kthread+0x10d/0x240
+ ? __pfx_kthread+0x10/0x10
+ ret_from_fork+0x34/0x50
+ ? __pfx_kthread+0x10/0x10
+ ret_from_fork_asm+0x1a/0x30
+ </TASK>
+Modules linked in:
+CR2: 000000000000000c
+---[ end trace 0000000000000000 ]---
 
-> diff --git a/Documentation/devicetree/bindings/cache/andestech,ax45mp-cac=
-he.yaml b/Documentation/devicetree/bindings/cache/andestech,ax45mp-cache.ya=
-ml
-> index d2cbe49f4e15f..82668d327344e 100644
-> --- a/Documentation/devicetree/bindings/cache/andestech,ax45mp-cache.yaml
-> +++ b/Documentation/devicetree/bindings/cache/andestech,ax45mp-cache.yaml
-> @@ -28,6 +28,7 @@ select:
->  properties:
->    compatible:
->      items:
-> +      - const: renesas,r9a07g043f-ax45mp-cache
->        - const: andestech,ax45mp-cache
->        - const: cache
->
-> @@ -70,7 +71,8 @@ examples:
->      #include <dt-bindings/interrupt-controller/irq.h>
->
->      cache-controller@13400000 {
-> -        compatible =3D "andestech,ax45mp-cache", "cache";
-> +        compatible =3D "renesas,r9a07g043f-ax45mp-cache", "andestech,ax4=
-5mp-cache",
-> +                     "cache";
->          reg =3D <0x13400000 0x100000>;
->          interrupts =3D <508 IRQ_TYPE_LEVEL_HIGH>;
->          cache-line-size =3D <64>;
-> --
-> 2.45.2
->
->
+Free the allocated nfs4_unlockdata when nfs_get_lock_context() fails and
+return NULL to terminate subsequent rpc_run_task, preventing NULL pointer
+dereference.
+
+Fixes: f30cb757f680 ("NFS: Always wait for I/O completion before unlock")
+Link: https://lore.kernel.org/all/21817f2c-2971-4568-9ae4-1ccc25f7f1ef@huawei.com/
+Signed-off-by: Li Lingfeng <lilingfeng3@huawei.com>
+---
+Changes in v2:
+  Add a comment explaining that error handling for ctx acquisition failure
+  is unnecessary.
+
+ fs/nfs/nfs4proc.c | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
+
+diff --git a/fs/nfs/nfs4proc.c b/fs/nfs/nfs4proc.c
+index 970f28dbf253..e52e2ac1ab39 100644
+--- a/fs/nfs/nfs4proc.c
++++ b/fs/nfs/nfs4proc.c
+@@ -7074,18 +7074,29 @@ static struct nfs4_unlockdata *nfs4_alloc_unlockdata(struct file_lock *fl,
+ 	struct nfs4_unlockdata *p;
+ 	struct nfs4_state *state = lsp->ls_state;
+ 	struct inode *inode = state->inode;
++	struct nfs_lock_context *l_ctx;
+ 
+ 	p = kzalloc(sizeof(*p), GFP_KERNEL);
+ 	if (p == NULL)
+ 		return NULL;
++	l_ctx = nfs_get_lock_context(ctx);
++	if (!IS_ERR(l_ctx)) {
++		p->l_ctx = l_ctx;
++	} else {
++		kfree(p);
++		return NULL;
++	}
+ 	p->arg.fh = NFS_FH(inode);
+ 	p->arg.fl = &p->fl;
+ 	p->arg.seqid = seqid;
+ 	p->res.seqid = seqid;
+ 	p->lsp = lsp;
+ 	/* Ensure we don't close file until we're done freeing locks! */
++	/*
++	 * Since the caller holds a reference to ctx, the refcount must be non-zero.
++	 * Therefore, error handling for failed ctx acquisition is unnecessary here.
++	 */
+ 	p->ctx = get_nfs_open_context(ctx);
+-	p->l_ctx = nfs_get_lock_context(ctx);
+ 	locks_init_lock(&p->fl);
+ 	locks_copy_lock(&p->fl, fl);
+ 	p->server = NFS_SERVER(inode);
+-- 
+2.31.1
+
 
