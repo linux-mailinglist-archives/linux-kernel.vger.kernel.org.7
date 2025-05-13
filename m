@@ -1,94 +1,86 @@
-Return-Path: <linux-kernel+bounces-646293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-646301-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A668BAB5AB1
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 19:04:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CC616AB5AC5
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 19:07:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB7C016F8DD
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 17:04:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 557C246619E
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 17:07:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5BA62BE7C8;
-	Tue, 13 May 2025 17:03:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C441E2BEC38;
+	Tue, 13 May 2025 17:07:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=jakerice-dev.20230601.gappssmtp.com header.i=@jakerice-dev.20230601.gappssmtp.com header.b="2ZOk3Adk"
-Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="egkiV0DY"
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A3F228DF0E
-	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 17:03:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75E9D2BE110;
+	Tue, 13 May 2025 17:07:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747155835; cv=none; b=Fqjs3n/FqNZurdz+3YO14yEqpMrAZOW+UC6V07OvPTCezLHF4+wqMEpGdAoKlxrv7K5+aK7njgvL1k1EfjBe0Aj8T+4CECJRsMLbUQhG1O4UzuVB/FBhfHPEGdm5gjhc4kNXUX8s9DB9PZkEd7I/srIobbAv9d4/DN+wS0c+q5Q=
+	t=1747156065; cv=none; b=cYHxhfZDOml0MuaLP5F03MZE6j6+cf95SDlM0Uh1zpJ1FgL/iRoZg4Sbb41nb+5FoIFhklzQDxdCP9mrO9Ni6iiXaqyJQWr2BvCtUALM9e4sVDrHEhmp65qw2pqYKF22q3c8xHs0YvIiJ3nIQOxP8DfpAU7VF6N8f24LzSIcqYc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747155835; c=relaxed/simple;
-	bh=yktsR3ZeQzzSy0jShweyCKjgs6hQnMgeyiIZVyv/Pp4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=AU80LbfzbeUsrDJSBumSbVZM/6OvhIzZft1GXAbgXTd/vOUPm07P8lJdeZgsqYm5DYYXetKL3PKf5RTptqve+RC/9p9Qaz6rWnomMHU8Lk+mwjYLkFR+9oJcEuiR4JtbjZAIqJv0e+r9WsN/JSigR4rnMHudtQfXP/ugGRdh0Yo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jakerice.dev; spf=pass smtp.mailfrom=jakerice.dev; dkim=pass (2048-bit key) header.d=jakerice-dev.20230601.gappssmtp.com header.i=@jakerice-dev.20230601.gappssmtp.com header.b=2ZOk3Adk; arc=none smtp.client-ip=209.85.219.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jakerice.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jakerice.dev
-Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-6f0c30a1ca3so74228996d6.1
-        for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 10:03:51 -0700 (PDT)
+	s=arc-20240116; t=1747156065; c=relaxed/simple;
+	bh=uanJLByxQFW3gbTPTgvXVKnJwMqfoxW0i7mA6lk5O9E=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Uv61hEdzp19AD1R+qxJEe9JbrcGQXsMWs/ksmxGTToYlWtJlkH8hSym0JGCs8OprbZe3YfS7q/50TKo406TGaIEbG/V4jbbSjTz8HRCuNhVpJ2+InaumYieMYgB2lVu6fn5hId0wpUcUEQ7PipIJ+/KUhUOkBIVCZbjPJOB1Y94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=egkiV0DY; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-30a99e2bdd4so5248459a91.0;
+        Tue, 13 May 2025 10:07:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=jakerice-dev.20230601.gappssmtp.com; s=20230601; t=1747155831; x=1747760631; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1747156063; x=1747760863; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=+VPC8QqNcp612VN/6Z55kijxODKphGub2fhmJjGDqhU=;
-        b=2ZOk3Adk0BB2nv1JE/hMeEdaqZIYiCO8NRvrc31VVTOm53L5Gf0/VXfadYrddmvmX3
-         2hYHBiXSBfvWg0CzDT1/3kTAxD6Y2kn4ZCB34PcNEtjVYBYlhhbmaEBf70MY27Ui4FnL
-         6L+qZyBqPmhLhOeJNqw9WxyeVp4PrfiG6NNlzowOMx8nbLW0yzt8yPywK3n49zI3WQwT
-         0HTJMyXal1GFliW9BKPqJuYEzbgYvKTfAJnsG+/y4qOT0cq4NtsR8yDYbxoe4gZAGsip
-         9+PAVV+5Ua7izf9MrHM9IBT749sXT4EqmwluolHpRMzBP1divkyxVVykJRekDsG+/H3X
-         hpjw==
+        bh=MfL86GdlhnBK3jXx8LFujEcI9N5sypqjwqtS1nmW2i8=;
+        b=egkiV0DY99hgUVYh5j6LU5NzuheVJ3z7m/T1B/eS46UwSfztNnAK1SDRrkoF3ALCGR
+         JhBGVneemhlmEXw9haPM7+bGR9f0hZEfDFDuytyeSQKFGHVBbsNhnasD0trPS5h4Pljn
+         XFgrqcF+nbY86Zb/LSFNJi4HF9nLvMwMW/4DXBt5cbVH4oQMAiialEssLStnFEdRWUUl
+         HnEdsVqHAv0c7FW3A8MR2OnL6DSf6QZmG+BrjDMX4tHBFFFh7N/N0AQeOF9J5XF5AZvw
+         uYy/DE6uaWL1uqOmU8j6/0ArrU0Ng5TYAzVfxImtWreDNRMIS38q41t+oYDgKM/zO9/Q
+         2RrQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747155831; x=1747760631;
+        d=1e100.net; s=20230601; t=1747156063; x=1747760863;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=+VPC8QqNcp612VN/6Z55kijxODKphGub2fhmJjGDqhU=;
-        b=ry9GhiHD581Q40wIaK8dNFfNTIBXSl54CLfS8RrBg7QuyJICbSTQTqk5euW1c86F0O
-         oVjmW9L+ErOruag9JANOhxwKrTLGGtSQMlqxe9KXUI29qCTPpeQ4UIeZopLj8Mz0xOdl
-         QgtMzdw6qcFQ1oaIA40sVt/awRDSelB7bCoemLyl3EYIjj/4dc8808QjA6XAm2SCyw7W
-         ybAbeL4SfpTi9QO+HrCazztpPXJa39tNBmIcZEmOajxojwIhnYEHtl1LXyoKYjG6du1V
-         g930su5SdnzLII1dzCqnTQ/LT5qeJQGk2jtHkyBjte7U6T16ykL/lWroqHsOR2IAdZsC
-         NmYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWyIJ8lL3Cl9BX/F0QO4RiQp0ggQfawJmQSZObvDQDQuwF2aGvJPyAaYK6wEu9rQdYTSgh1EMcFWlPhkVU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy4ayzxE4FA6JAwg5raZdcBTpq5BPs0aBF8yf4oPc6EYX5TDuyo
-	h5CKmdLEen6wO0VunmfORi0n1nsfbDx1xG6kej6Mj6+y6nFuWsSbVngglmmOmCwlSaN0NZSSsLr
-	E4ik=
-X-Gm-Gg: ASbGnctYQyx5EG/O8upHQ3EhDAwbnkYm7Nu5iACUq3BuuTt3q9OtWMmYvmd5LE+P83l
-	FYuGshSGFo2w88kGp/s4eetHl9g4gI93l/7t5DDhkkoj8lDVQBfUv2c9nScEJvxEb4yHMiAb7ET
-	Akjwo1G08ow+VkZXCmfUqOFcvl/2NH59yygiDqb1ymWa9x6iWVEbGuEHrSHpBPM7Zf67b23Btv7
-	Q3JY4dm1QoQUUnSPvIoEKseFr+0tax354KVkGAxeUdqTWvku3+zJBF0agrnQ//jI1MNKUNrQjCz
-	55+B49NCLXyOht5k1VpeEF8eLNvAI3YowdFaZq5MRTGZJYXWOB+SmHoDqokrwv3ZcEaHEGqHhcG
-	rJZATo6RuwYIf6krMqa1k
-X-Google-Smtp-Source: AGHT+IG/K8JwYBp71eM6Hr+wn3dcg6NSAj+pupBSTJ1J/GCkVfllbnxHOGonjnYK2DrDme958SMxqg==
-X-Received: by 2002:a05:6214:300e:b0:6e8:f166:b1a0 with SMTP id 6a1803df08f44-6f896ea8bfemr2020826d6.36.1747155830835;
-        Tue, 13 May 2025 10:03:50 -0700 (PDT)
-Received: from localhost (c-67-162-238-230.hsd1.md.comcast.net. [67.162.238.230])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6f6e3a4721dsm68488106d6.93.2025.05.13.10.03.50
+        bh=MfL86GdlhnBK3jXx8LFujEcI9N5sypqjwqtS1nmW2i8=;
+        b=uAP2vJHZ6VoudXrF5ftvMaKGJf9GrVYgxZMcCMB9sQ75VeuuXc1p4UfSjFIJbqPp0L
+         fvZBv0/ap2LNcpWGALy6ooZO5zPYeufB3XQR+JmijnyAX6JrScHKk3KOYnWc3zDuPIta
+         vxFtAzOnpCSM33bEHz1gQwRrnRimhrGXNTgPKr34xBDY5KuGf9SFslDikXrHv/ItER0/
+         w3jZXg/2m9vI1eYXTS2i5mem4bqwcLLgkIzbctzk9lY2KWqjpCX3SnMfSEyEC9EHHkl/
+         am5GS8u+xdjavgKi2QZQr4yaTvgzq3pto7koxdKGzyul/pmhKyf6LtZtjRQzDh8gbd+0
+         9boA==
+X-Forwarded-Encrypted: i=1; AJvYcCUJn16IEEuJ8qFI1zF2kGz2rmqxIEAbjKuHwesQ01oQLFBLaFk9wANFXkGBXkN2NVvqsvwmMUmxoC1EUgA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxcNfF0usXHxUXwbpnxnEDJU4GwSn0CwCOGFw95PMpcu/lcDASQ
+	T0xe1pxpryuX5JOchuRUa3aT1QgUDZ9vHm64AHptUtdQF96x94eS
+X-Gm-Gg: ASbGncuJmDOGcx5KoEdDKI0bQ6YTP/fod6wmZpMz4gq0kHjqPuM4jlzibc8Qaw4a2nS
+	ir4/5RE+OGTqc6UH4B1v42rg659l9wPNCp4jwULsE4uVc27JCT1j2/NF9HHOZ7sKeDi6VdEMg38
+	a+w0lmmi2hg+4+8LNZQdTdloZ40I7qEn7CUyW1bNzn4G+dXrdoyiy7bHEYtvLXocmQqw40OBr7Q
+	hD+fEAYgm9pzvUBhcQOCuEXMtGg6DS2gP4wzn1nNtjxV5liJYIFUyJQ3hkRKIr2p3dpBNrCqJ9c
+	NeKAxZVmWyDy4hW2VzQq3lOdKyp8XhBtsrZHW5khChkwa2FDfphWziQc5KxpsPrpEuR/aVX87pN
+	uah6a
+X-Google-Smtp-Source: AGHT+IE550DTZxU0fAa0iB/XH8wB1LPuYOfBQ7sf4z66ubJSzSBXCrqXU7OTN2wRAWtJzZbWszP1Zw==
+X-Received: by 2002:a17:90b:58ef:b0:2ff:64c3:3bd9 with SMTP id 98e67ed59e1d1-30e2e625f04mr394350a91.23.1747156062426;
+        Tue, 13 May 2025 10:07:42 -0700 (PDT)
+Received: from localhost.localdomain ([121.185.186.233])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-30c39e75dbfsm8756276a91.41.2025.05.13.10.07.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 May 2025 10:03:50 -0700 (PDT)
-From: Jake Rice <jake@jakerice.dev>
-To: corbet@lwn.net,
-	linux-doc@vger.kernel.org
-Cc: tj@kernel.org,
-	arighi@nvidia.com,
-	changwoo@igalia.com,
-	ggherdovich@suse.com,
-	me@mostlynerdless.de,
-	ake@jakerice.dev,
-	abovard@linux.ibm.com,
-	devaanshk840@gmail.com,
-	cengiz@kernel.wtf,
+        Tue, 13 May 2025 10:07:42 -0700 (PDT)
+From: Jeongjun Park <aha310510@gmail.com>
+To: tytso@mit.edu,
+	jack@suse.cz
+Cc: linux-ext4@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Jake Rice <jake@jakerice.dev>
-Subject: [PATCH] Documentation: scheduler: Changed lowercase acronyms to uppercase
-Date: Tue, 13 May 2025 13:03:44 -0400
-Message-Id: <20250513170344.3621-1-jake@jakerice.dev>
-X-Mailer: git-send-email 2.34.1
+	syzbot+de24c3fe3c4091051710@syzkaller.appspotmail.com,
+	Jeongjun Park <aha310510@gmail.com>
+Subject: [PATCH] jbd2: fix data-race and null-ptr-deref in jbd2_journal_dirty_metadata()
+Date: Wed, 14 May 2025 02:04:41 +0900
+Message-ID: <20250513170441.54658-1-aha310510@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,31 +89,137 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Everywhere else in this doc, the dispatch queue acronym (DSQ) is
-uppercase. There were a couple places where the acronym was written in
-lowercase. I changed them to uppercase to make it homogeneous.
+Since handle->h_transaction may be a NULL pointer, so we should change it
+to call is_handle_aborted(handle) first before dereferencing it.
 
-Signed-off-by: Jake Rice <jake@jakerice.dev>
+And the following data-race was reported in my fuzzer:
+
+==================================================================
+BUG: KCSAN: data-race in jbd2_journal_dirty_metadata / jbd2_journal_dirty_metadata
+
+write to 0xffff888011024104 of 4 bytes by task 10881 on cpu 1:
+ jbd2_journal_dirty_metadata+0x2a5/0x770 fs/jbd2/transaction.c:1556
+ __ext4_handle_dirty_metadata+0xe7/0x4b0 fs/ext4/ext4_jbd2.c:358
+ ext4_do_update_inode fs/ext4/inode.c:5220 [inline]
+ ext4_mark_iloc_dirty+0x32c/0xd50 fs/ext4/inode.c:5869
+ __ext4_mark_inode_dirty+0xe1/0x450 fs/ext4/inode.c:6074
+ ext4_dirty_inode+0x98/0xc0 fs/ext4/inode.c:6103
+....
+
+read to 0xffff888011024104 of 4 bytes by task 10880 on cpu 0:
+ jbd2_journal_dirty_metadata+0xf2/0x770 fs/jbd2/transaction.c:1512
+ __ext4_handle_dirty_metadata+0xe7/0x4b0 fs/ext4/ext4_jbd2.c:358
+ ext4_do_update_inode fs/ext4/inode.c:5220 [inline]
+ ext4_mark_iloc_dirty+0x32c/0xd50 fs/ext4/inode.c:5869
+ __ext4_mark_inode_dirty+0xe1/0x450 fs/ext4/inode.c:6074
+ ext4_dirty_inode+0x98/0xc0 fs/ext4/inode.c:6103
+....
+
+value changed: 0x00000000 -> 0x00000001
+==================================================================
+
+According to this crash report, there is a read/write data-race in
+jh->b_modified.
+
+This is because the b_state_lock is locked too late.
+
+For some reason, jbd2_journal_dirty_metadata() has been written in a way
+that it does not lock b_state_lock before checking jh->b_transaction.
+
+However, This makes the code that checks jh->b_transaction messy and
+causes a data-race in jh->b_* variables. Since locking b_state_lock
+earlier is not enough to significantly affect performance and most of the
+functions defined in transaction.c lock b_state_lock before
+reading/writing jh->b_*.
+
+Thereforce, I think it would be appropriate to modify 
+jbd2_journal_dirty_metadata() to lock b_state_lock earlier as well.
+
+Reported-by: syzbot+de24c3fe3c4091051710@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=de24c3fe3c4091051710
+Fixes: 6e06ae88edae ("jbd2: speedup jbd2_journal_dirty_metadata()")
+Signed-off-by: Jeongjun Park <aha310510@gmail.com>
 ---
- Documentation/scheduler/sched-ext.rst | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/jbd2/transaction.c | 49 +++++++++++++++----------------------------
+ 1 file changed, 17 insertions(+), 32 deletions(-)
 
-diff --git a/Documentation/scheduler/sched-ext.rst b/Documentation/scheduler/sched-ext.rst
-index 0b2654e2164b..878762b6379d 100644
---- a/Documentation/scheduler/sched-ext.rst
-+++ b/Documentation/scheduler/sched-ext.rst
-@@ -197,8 +197,8 @@ Dispatch Queues
- To match the impedance between the scheduler core and the BPF scheduler,
- sched_ext uses DSQs (dispatch queues) which can operate as both a FIFO and a
- priority queue. By default, there is one global FIFO (``SCX_DSQ_GLOBAL``),
--and one local dsq per CPU (``SCX_DSQ_LOCAL``). The BPF scheduler can manage
--an arbitrary number of dsq's using ``scx_bpf_create_dsq()`` and
-+and one local DSQ per CPU (``SCX_DSQ_LOCAL``). The BPF scheduler can manage
-+an arbitrary number of DSQs using ``scx_bpf_create_dsq()`` and
- ``scx_bpf_destroy_dsq()``.
+diff --git a/fs/jbd2/transaction.c b/fs/jbd2/transaction.c
+index cbc4785462f5..7e6dbf37396f 100644
+--- a/fs/jbd2/transaction.c
++++ b/fs/jbd2/transaction.c
+@@ -1496,41 +1496,25 @@ int jbd2_journal_dirty_metadata(handle_t *handle, struct buffer_head *bh)
+ 	jbd2_debug(5, "journal_head %p\n", jh);
+ 	JBUFFER_TRACE(jh, "entry");
  
- A CPU always executes a task from its local DSQ. A task is "inserted" into a
--- 
-2.34.1
-
+-	/*
+-	 * This and the following assertions are unreliable since we may see jh
+-	 * in inconsistent state unless we grab bh_state lock. But this is
+-	 * crucial to catch bugs so let's do a reliable check until the
+-	 * lockless handling is fully proven.
+-	 */
+-	if (data_race(jh->b_transaction != transaction &&
+-	    jh->b_next_transaction != transaction)) {
+-		spin_lock(&jh->b_state_lock);
+-		J_ASSERT_JH(jh, jh->b_transaction == transaction ||
+-				jh->b_next_transaction == transaction);
+-		spin_unlock(&jh->b_state_lock);
+-	}
++	spin_lock(&jh->b_state_lock);
++
++	J_ASSERT_JH(jh, jh->b_transaction == transaction ||
++			jh->b_next_transaction == transaction);
++
+ 	if (jh->b_modified == 1) {
+ 		/* If it's in our transaction it must be in BJ_Metadata list. */
+-		if (data_race(jh->b_transaction == transaction &&
+-		    jh->b_jlist != BJ_Metadata)) {
+-			spin_lock(&jh->b_state_lock);
+-			if (jh->b_transaction == transaction &&
+-			    jh->b_jlist != BJ_Metadata)
+-				pr_err("JBD2: assertion failure: h_type=%u "
+-				       "h_line_no=%u block_no=%llu jlist=%u\n",
+-				       handle->h_type, handle->h_line_no,
+-				       (unsigned long long) bh->b_blocknr,
+-				       jh->b_jlist);
+-			J_ASSERT_JH(jh, jh->b_transaction != transaction ||
+-					jh->b_jlist == BJ_Metadata);
+-			spin_unlock(&jh->b_state_lock);
+-		}
+-		goto out;
++		if (jh->b_transaction == transaction &&
++			jh->b_jlist != BJ_Metadata)
++			pr_err("JBD2: assertion failure: h_type=%u "
++			       "h_line_no=%u block_no=%llu jlist=%u\n",
++			       handle->h_type, handle->h_line_no,
++			       (unsigned long long) bh->b_blocknr,
++			       jh->b_jlist);
++		J_ASSERT_JH(jh, jh->b_transaction != transaction ||
++				jh->b_jlist == BJ_Metadata);
++		goto out_unlock_bh;
+ 	}
+ 
+-	journal = transaction->t_journal;
+-	spin_lock(&jh->b_state_lock);
+-
+ 	if (is_handle_aborted(handle)) {
+ 		/*
+ 		 * Check journal aborting with @jh->b_state_lock locked,
+@@ -1543,6 +1527,8 @@ int jbd2_journal_dirty_metadata(handle_t *handle, struct buffer_head *bh)
+ 		goto out_unlock_bh;
+ 	}
+ 
++	journal = transaction->t_journal;
++
+ 	if (jh->b_modified == 0) {
+ 		/*
+ 		 * This buffer's got modified and becoming part
+@@ -1628,7 +1614,6 @@ int jbd2_journal_dirty_metadata(handle_t *handle, struct buffer_head *bh)
+ 	spin_unlock(&journal->j_list_lock);
+ out_unlock_bh:
+ 	spin_unlock(&jh->b_state_lock);
+-out:
+ 	JBUFFER_TRACE(jh, "exit");
+ 	return ret;
+ }
+--
 
