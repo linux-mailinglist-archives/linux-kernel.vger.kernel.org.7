@@ -1,49 +1,58 @@
-Return-Path: <linux-kernel+bounces-646737-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-646739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E634AB5FE4
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 01:30:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6147CAB5FE8
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 01:33:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EAC184A3AB6
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 23:30:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06DCE19E629C
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 23:33:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCD08216E23;
-	Tue, 13 May 2025 23:29:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82B5720D4FF;
+	Tue, 13 May 2025 23:32:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c09Gh76p"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=gvernon.com header.i=@gvernon.com header.b="mLR97Mkw"
+Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 270FD214A7B;
-	Tue, 13 May 2025 23:29:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52EA93FBA7
+	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 23:32:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747178995; cv=none; b=btsAIwiq8NPdIjNml94G8Fu2hDNkQn2sZBjyQMxGEwGWtKyYkL1PCWMWOslA5RVApVd+2sSZP4PPDCvel9A0bmec8k4MlygFSinG9xgrjS83EcUf+J4i0FcY4JnzQUtDWgDjjUnLuXtdKIg0yiZRq4sgwKQPetL+jIVhH6Qvvro=
+	t=1747179175; cv=none; b=YuKYY+7R7fmqs7dszrqeO4CsH+M83qCkAsJgb+o8XZCYWO3cxxztAPAv4myHnSSUwymfEc0n5kjPFsajrGgjUE1qPHn9oucLaEfa6c3jyuo6ds+kBisKXGJ4PterEGed2BKRJuZI3t8A7cW1l0Uj5+xje5bCMX0ebvCIjgapqig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747178995; c=relaxed/simple;
-	bh=V6v6GxO0RNmk9V4SKjq+WHNNy5mFb28a8s2NoiAFvJQ=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=AhipE2AEJXhEk0eUjUH0Vl5NSj0OJViu3oqd4MAIr6e9SiLRd6meBJg34NHW1rpf4cuuYC5e9IyV9eF+5ES+7KJ3Jwtv/ttR9mn6B2PyREQ8M8GrUllZlDpjLNRd3EfGNlGCYe865Q8pt8mjT+18N4agftBGS8ktuS8jXFF29Rw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c09Gh76p; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AA5DC4CEE4;
-	Tue, 13 May 2025 23:29:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747178994;
-	bh=V6v6GxO0RNmk9V4SKjq+WHNNy5mFb28a8s2NoiAFvJQ=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=c09Gh76pg2C9i0oPtDWa+lGtbLtXeOf+7XU7XHkTnj9h8/qZiLZR1qkStz/udRHTx
-	 mfpA93rNbugpeEmu8rd9e0YoBFAPH+qTX74Hx08oEHgguAbGUWrW5LZn50a0YozL2P
-	 kYvfi0CNMbYch+20pz0XW8O1qL5n05dQUYTFr08C6g8Ni1BJUMErh71Qv6gJYx7YbM
-	 7fmstQ8htWBtB60B3Rb/6LfSqZTWvIe8jN2tN946ASoGS+n0CK8U0GIptGtYz7OP8e
-	 h/FqZy7WvpwceJRVX8UYWQ0QGYuloaaTeETLFGdqiTM58zzcqghRQqAFlXhJXxcYY5
-	 0FI0coE5h3J/A==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33C74380DBE8;
-	Tue, 13 May 2025 23:30:33 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1747179175; c=relaxed/simple;
+	bh=Hqf9aIfw0eC9nw/y8Rwa4SKcz/q+0hB2F3kBZ6f3lmQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LSU9YOtU/bcHZ/yf6x8W2nHy9NZ/DL7yxuwBDJOt/w7wwHKonjgtKCYt7F6NpCeIPg2VKKZdNItZ5DBRVnAHXK/zzVlSNgchvrrjqYCT8xsYP1PDwF+p6q1rT9t7GUmw19UbuQURRWgA/yYAPd77IDsa4W8QWBWqvY/4KZnMg/0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gvernon.com; spf=pass smtp.mailfrom=gvernon.com; dkim=pass (2048-bit key) header.d=gvernon.com header.i=@gvernon.com header.b=mLR97Mkw; arc=none smtp.client-ip=95.215.58.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gvernon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gvernon.com
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gvernon.com; s=key1;
+	t=1747179170;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=iYcQQzN6vnaXT766TJ+cVQWw0N0NG5qRoAhx0ZwZjFY=;
+	b=mLR97Mkwj5zSlLnN/mlvCwd7qeWtalgeS4/J/A3+Sxl+eLFdZrt+OTWS3CmKuJjDYISsCn
+	2CL4jzCj1ldnYYSHqC+CHKCNvTsxb1S6W7+LTxxKwS5he0SzrwnhUBKD18BmcvdHFqwhyj
+	51A6kJmYvqs+h0K6o03t7qf6hxmc1nCewHEkJbFBhN6qDIhmo7mVZmwQUSzpG7sQoIWbU2
+	pLJQQqVEvRCAoBTji9ZwD/lOc0M7I+ziOPOxUvcvFGuBBc/ST6JucGO7owcaL5cppkvln+
+	GRjhf0rvCs/mlcWCBU5hBpZWsDwIfJm7ca2CVrxM3Rb4lFwF8Bcfx6y1GTa8BA==
+From: George Anthony Vernon <contact@gvernon.com>
+To: airlied@gmail.com,
+	simona@ffwll.ch,
+	skhan@linuxfoundation.org
+Cc: George Anthony Vernon <contact@gvernon.com>,
+	amd-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	linux-kernel-mentees@lists.linux.dev
+Subject: [PATCH] drm/amdgpu: Fix docs build warning
+Date: Wed, 14 May 2025 00:31:55 +0100
+Message-ID: <20250513233212.21186-1-contact@gvernon.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,47 +60,30 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v2 net-next] net: enetc: convert to ndo_hwtstamp_get() and
- ndo_hwtstamp_set()
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <174717903175.1822709.17136638266645022987.git-patchwork-notify@kernel.org>
-Date: Tue, 13 May 2025 23:30:31 +0000
-References: <20250512112402.4100618-1-vladimir.oltean@nxp.com>
-In-Reply-To: <20250512112402.4100618-1-vladimir.oltean@nxp.com>
-To: Vladimir Oltean <vladimir.oltean@nxp.com>
-Cc: netdev@vger.kernel.org, kory.maincent@bootlin.com, wei.fang@nxp.com,
- xiaoning.wang@nxp.com, andrew@lunn.ch, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- claudiu.manoil@nxp.com, horms@kernel.org, richardcochran@gmail.com,
- linux-kernel@vger.kernel.org
+X-Migadu-Flow: FLOW_OUT
 
-Hello:
+The kerneldoc comment for HGCP locality check debug mask was missing a
+semicolon resulting in a documentation build warning. Correct it.
 
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+Signed-off-by: George Anthony Vernon <contact@gvernon.com>
+---
+ drivers/gpu/drm/amd/include/amd_shared.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On Mon, 12 May 2025 14:24:02 +0300 you wrote:
-> New timestamping API was introduced in commit 66f7223039c0 ("net: add
-> NDOs for configuring hardware timestamping") from kernel v6.6. It is
-> time to convert the ENETC driver to the new API, so that the
-> ndo_eth_ioctl() path can be removed completely.
-> 
-> Move the enetc_hwtstamp_get() and enetc_hwtstamp_set() calls away from
-> enetc_ioctl() to dedicated net_device_ops for the LS1028A PF and VF
-> (NETC v4 does not yet implement enetc_ioctl()), adapt the prototypes and
-> export these symbols (enetc_ioctl() is also exported).
-> 
-> [...]
-
-Here is the summary with links:
-  - [v2,net-next] net: enetc: convert to ndo_hwtstamp_get() and ndo_hwtstamp_set()
-    https://git.kernel.org/netdev/net-next/c/51672a6587a0
-
-You are awesome, thank you!
+diff --git a/drivers/gpu/drm/amd/include/amd_shared.h b/drivers/gpu/drm/amd/include/amd_shared.h
+index 4c95b885d1d0..c8eccee9b023 100644
+--- a/drivers/gpu/drm/amd/include/amd_shared.h
++++ b/drivers/gpu/drm/amd/include/amd_shared.h
+@@ -366,7 +366,7 @@ enum DC_DEBUG_MASK {
+ 	DC_HDCP_LC_FORCE_FW_ENABLE = 0x80000,
+ 
+ 	/**
+-	 * @DC_HDCP_LC_ENABLE_SW_FALLBACK If set, upon HDCP Locality Check FW
++	 * @DC_HDCP_LC_ENABLE_SW_FALLBACK: If set, upon HDCP Locality Check FW
+ 	 * path failure, retry using legacy SW path.
+ 	 */
+ 	DC_HDCP_LC_ENABLE_SW_FALLBACK = 0x100000,
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.49.0
 
 
