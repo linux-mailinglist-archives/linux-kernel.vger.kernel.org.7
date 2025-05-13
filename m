@@ -1,130 +1,178 @@
-Return-Path: <linux-kernel+bounces-645500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-645502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AB8AAB4E75
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 10:47:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91733AB4E78
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 10:48:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DA2D87A973F
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 08:45:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55B9319E1D71
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 08:48:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05311211488;
-	Tue, 13 May 2025 08:46:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D9641E9B12;
+	Tue, 13 May 2025 08:47:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="PxVD3RNx"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jkXtyLF4"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B5611F0E20
-	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 08:46:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B997D20F063;
+	Tue, 13 May 2025 08:47:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747126004; cv=none; b=nhLluJOys2nJNDcVN2PpkSTzexUK2oW+QwF10CjEss4VoxhqPVh26EeR71wNU/bTDkLKrf+UhHf0unl8C/qURCNXF4y5uGi7gvKZ5qdFPtB1E36MLXvaBjio8majzslsLEuAutiKJuUWjAuRf9r7F8rfMoe2M+sZF2+i0KvGx3o=
+	t=1747126067; cv=none; b=qcBpNk6Wg2mhcKaQK7E6rvaxncvgUF6l6UN10uT4hrrN+nqXBykfLV1egKPd2ichxhEn5gaFTDXyhkyBltoDsP6O9tEd6319xEfthGn/ceW3r3MdiyUjQoq0zwV0pVyBun3s8NhtQN1FYdwubNEZxkAfrSgUmjq59Dl5vrblAK0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747126004; c=relaxed/simple;
-	bh=Wg0culwec3VKZUOxB58pMb0gWDC63okVOArHAjwqsFA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eakKIH3ZqTUND1qs4/5LaCcq5vzNHcQV2xrCQVUvKFGUeylof2JjasSLYz/lKvy9+HCDFG25SzSmgM2EMgmZRZf593+4Is5z/Vy0vDpu7n3FaKWAJf2cLwM2YN8z04GV5Y3j9Wg6hnhhshQ6p7cUrsOxLQ5RCNS6rqiPwp/maK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=PxVD3RNx; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43cfdc2c8c9so30769375e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 01:46:42 -0700 (PDT)
+	s=arc-20240116; t=1747126067; c=relaxed/simple;
+	bh=U4fXErCQrmf9N3AvpNGYsyb+qIqioH1bT1/sBIu59DU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=paqoHeV8Ctq269WPbRQdUC/+3x44Rd6F+utFLbTfXUdI30jQaxGt36CkwFOSin3/uqM2z7m1CGWWB/zccFMMfRaBu6Qc3B5ZNwO0Xiv5mqDzoWSM/hC66ggYqvPSCpAe+XeuaO/5w40SYvlQV4EFngzcI5HmUwQJrzflO9VaKUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jkXtyLF4; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3a0ac853894so4638537f8f.3;
+        Tue, 13 May 2025 01:47:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1747126001; x=1747730801; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=HfjhkwJGAh4yR1c8YSpW2wV60ay0qJdftBiYqsIF894=;
-        b=PxVD3RNx21KML1+hjsvaPLERh1LUmzdNpYjumIWu7XpmfP6fKM6HCPzQ6V/4kkNpXx
-         ZGBf09d0h0sIxj0NzsBSdVD2iycYszV8NOP7CCuYZzk8ZV4F7hWQmU0anfjhSSu6xj34
-         0PrZrhu80FfjWz34CKwjLPTvcYcj/qxC1X3P9zZer0vTNx4SEjNbj3gdlWGO4bHlryer
-         AwwaZJSGTWQWv+HCVTkLTGEuwFt6ag1V28s1JePH2A9TU8qWCOda2rNk88JLZQtgEkKY
-         JtxzXVUjQWEWMUEMBGO/2A8qRALWvvd7gJNeskfelyE/8xSjDySVABJr0UiEwnQkmGq0
-         /bQw==
+        d=gmail.com; s=20230601; t=1747126064; x=1747730864; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YqUzLMdYqQZHvUetmEUi3oceJygz2KZ2olDSm3gHUWg=;
+        b=jkXtyLF4Iw+y/hElCWHF1WjWa88YFkNiseDSvdUw0k5w/21VnUKp+fVNn3yHoesu7V
+         rpX0U9LIYTY8Nn6R8IpbBj6BDRWeDNpq5OfgJDkKStrbKpIjCARDMoS3LweVTE6LOicu
+         DHAhzbfqL6nq+7RaqF/LMhD9YFFVfqxeZDnncsaJS5/pTna92LentW3U2RNm/M3IZBCV
+         ajIynL1iOWMpF6JvGPFw+vMkb5rag29RKmNdAjmssVLkKhiBS0lforDgrGc6bmuNw3Vw
+         T7t8bcIL6jlmzAXyegyHZZR4uaDCHJ+OdXQVaYfjCej3FEnDBx48x5lPmH/oyJhIsx6v
+         i3vA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747126001; x=1747730801;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HfjhkwJGAh4yR1c8YSpW2wV60ay0qJdftBiYqsIF894=;
-        b=hvlZBaGC/CrEYWYZtBvM/UKEIlaC725bPAqr01GLWXA3JiXNsNUQYhVuj3FYvyppQh
-         EynZZcXtriXdILiaqfwy9KuJe6IvQXQFGegbw6qUlnf/wDfsgbF3/mLn4Ijzqfgx9LcE
-         V/RV7F9gAXGP+WeAFopeJhIqzNOyGPsMGfvRRSAFvSB2ragdfOLv4X1XOIu0oeGgSqzq
-         EJO3pMnYURiG4h9J2NgICJnSyJbeP4Jbbean6gbnzrsRXuzTqysYq2/VuwN+O818+0BN
-         rhOh28aseK5W2vI3GNxmg8Nazn6k33y5bU8JjPUJtcdFY/3Ayr/J48RA7UUKKODWoxH/
-         d68g==
-X-Forwarded-Encrypted: i=1; AJvYcCU8/Bsd5WcHZo+4Lw5Ixacgz8UaVM/ILSjbOlMZbD7SjFEOtfWRIM81/y1cW58DI8B3aVWxbc6G/hYgiC4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwooioepVoB9LIrnX+Jr8AOfbs9l9zu6p6lEBgWFheAvRdiOaiH
-	DO2dhCg9hOGI50zi4bIw+5ucQW6qQg7qaSmivVGh3Ba7tMCMMVXr4w9QqbcWzDs=
-X-Gm-Gg: ASbGnctLHlvfJjQ5mMcR/ikPEhaqlStkHdkH2f+BIACmHkU8eoYmd68K9tg+m+PI00G
-	WsouPiC5Yd9l3KCKytJAR1ZHthgD32D+bG9IgmRSTidUao2t809DtTgWR+7P+SvgAEEuT1VVDHB
-	Vf2M+4NrIvhpGbeZLLn0jlIXeGYGiK3DbAyIodeNCm7b5eNp6UQq0fAK3WCmhxHii1dKsmbacyc
-	Vhiluu5kr+6dlvyYpjm7LUzogS2RiE8EUZX56FdVrclMXTCEy58rE7KuPlIAD6/TvxRN9C2/oe/
-	cPARYAQ73vbD/4f58ZH98wCwXCMXxlY5yzVy59z/dW7n/fc9o4VxDK3iIdTeft4uRsiskpYPTKQ
-	xS+78m2dXborcCWH31sc=
-X-Google-Smtp-Source: AGHT+IFlkh62/Jmur4N3SSe+iYPClCbwAdv/4Xg3Nm9drpcLIpC9JBevCz9JNdvV9lRKrXwHfLczZw==
-X-Received: by 2002:a05:600c:444c:b0:43d:5ec:b2f4 with SMTP id 5b1f17b1804b1-442d6d3dcc8mr163400095e9.10.1747126000696;
-        Tue, 13 May 2025 01:46:40 -0700 (PDT)
-Received: from ?IPV6:2001:a61:1335:3601:f121:69fe:935a:67bd? ([2001:a61:1335:3601:f121:69fe:935a:67bd])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-442d67e138asm156256525e9.10.2025.05.13.01.46.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 13 May 2025 01:46:40 -0700 (PDT)
-Message-ID: <b07c7d9f-a20a-49bc-adbc-d43326b2d2df@suse.com>
-Date: Tue, 13 May 2025 10:46:39 +0200
+        d=1e100.net; s=20230601; t=1747126064; x=1747730864;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YqUzLMdYqQZHvUetmEUi3oceJygz2KZ2olDSm3gHUWg=;
+        b=b/khgA9SBjDhPte2GfYLbjknc7uvPVPhh8ax5KH6zXqDSZ4VDVrDvvWkpRmHSQFfDX
+         psSDxc3DOF/gFGtxVnWknjPKU6NoCjj0sOPDuD68pxoFxw/i5QC3Zg0ASDq6uqPMOToZ
+         GxoHNG8vfDVhxlbNXtErKTp5Xb3uD+KKCsBown0i5P3m/vWUAOKs7CNA5IeZnrWbup2K
+         ZZ4LULqkK5P0TwlG9F+3WnBE+Vm/YtPlJwZU9S16Dn8CR81oKMeVXAHSnt7WFqnAo7Fh
+         DozOSTVg8Ty3l/Er+Uv56XeOALzRGKbeZhNtM3737vK25OC9mu5JyCfa/pJnEnmJQuvU
+         amfg==
+X-Forwarded-Encrypted: i=1; AJvYcCUGMLpPzIVnkRA67zTh6LWx0RTP4z9JkbprWAlad/7nEpJeAMDabWr7kCVHylh4GORr684ak0GpfoieANLw@vger.kernel.org, AJvYcCWQ4YITxueRT3ANHRCaV5jJQGaAB3dtbfhEBscAKdanrEnOf78Imz/zTM6tLgmbxNIP47D+v5mkk26mIKrG7RJHLFA=@vger.kernel.org, AJvYcCXExW6h+9o5c7Eu04gVxg4rNSv/HuP5yFyvEH8g8SsQo1sQ9s2WrKXba0xu/13RwBxaz3U3ZGL1ZTg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxX24FQUh86UB3EyQP3Vp4vrca7yD/sVzy/v6dbpHff9KdudEPF
+	iwvEarQjbOwFvE2i16GWxg9MqfCc9xbk8C5MWlRDxXHtbLJ+C5Or/GJ1orX0v+3T2DB6vlh5fqn
+	aLEhhGaGTvtpIUahApy/xmdd0qUs=
+X-Gm-Gg: ASbGncuoJFmVoNw0e8M26WyeJ+E1hm3RzzuIK8Be04jUC2gCKPN5UPEDsobhTcBks3X
+	os3P5P0NoCH0DiJA/9UPr6QCcAesF3r/D8+kvHMJkk2wVsWuLCMsgepXqsjl0M+T6ChY4pW3QJh
+	zN83v2LbEwmSQOYKZcgFvqA+YwiZvMRs4=
+X-Google-Smtp-Source: AGHT+IFsaj8vThL8OQoi+wj5H8DB+9bjinLdyvzmXeD0z1gbWN+m3r16SLxk+RyBOcnSiYdf9HWVwNP2iwNyzw2zezU=
+X-Received: by 2002:adf:e3c1:0:b0:3a1:f654:ebec with SMTP id
+ ffacd0b85a97d-3a1f654ec75mr11785703f8f.38.1747126063693; Tue, 13 May 2025
+ 01:47:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] USB: core: add a memory pool to urb for
- host-controller private data
-To: David Wang <00107082@163.com>, Oliver Neukum <oneukum@suse.com>
-Cc: mathias.nyman@intel.com, gregkh@linuxfoundation.org,
- stern@rowland.harvard.edu, surenb@google.com, kent.overstreet@linux.dev,
- linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250512150724.4560-1-00107082@163.com>
- <20250513055447.5696-1-00107082@163.com>
- <48d5cae9-ff7c-4076-8b71-8c16bcf00443@suse.com>
- <4006cec4.794d.196c8be2fd1.Coremail.00107082@163.com>
-Content-Language: en-US
-From: Oliver Neukum <oneukum@suse.com>
-In-Reply-To: <4006cec4.794d.196c8be2fd1.Coremail.00107082@163.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250509160121.331073-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250509160121.331073-3-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdX18eBo6HhAqxxga35NFTVt_0oBJzTU=dFUjcCCnPZvHg@mail.gmail.com>
+In-Reply-To: <CAMuHMdX18eBo6HhAqxxga35NFTVt_0oBJzTU=dFUjcCCnPZvHg@mail.gmail.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Tue, 13 May 2025 09:47:17 +0100
+X-Gm-Features: AX0GCFuVm0qewRxuvyj-O5S2JXQTgP4u3pDeXR5GyxchD94fPOfZz2Lki8poNxc
+Message-ID: <CA+V-a8uY3F7BD1gPRNmqfP6=WaenDv47Yx1nT8sW9CH_MBCuhQ@mail.gmail.com>
+Subject: Re: [PATCH v4 2/2] clk: renesas: r9a09g057: Add clock and reset
+ entries for GBETH0/1
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 13.05.25 10:23, David Wang wrote:
+Hi Geert,
 
-Hi,
-  > Thanks for reviewing this.  The memory flag thing do raise concern.
-> I think I can make adjustment:  realloc the memory if flag changed.
+Thank you for the review.
 
-I am sorry. I have been unclear. Here comes a detailed explanation:
+On Tue, May 13, 2025 at 9:03=E2=80=AFAM Geert Uytterhoeven <geert@linux-m68=
+k.org> wrote:
+>
+> Hi Prabhakar,
+>
+> On Fri, 9 May 2025 at 18:01, Prabhakar <prabhakar.csengg@gmail.com> wrote=
+:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > Add clock and reset entries for GBETH instances. Include core clocks fo=
+r
+> > PTP, sourced from PLLETH, and add PLLs, dividers, and static mux clocks
+> > used as clock sources for the GBETH IP.
+> >
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > ---
+> > v3->v4:
+> > - Dropped adding CPG_SSEL1 and CPG_CSDIV0 macros in rzv2h-cpg.h
+> >   as they were already added by XSPI clocks patch
+>
+> Thanks for the update!
+>
+> > --- a/drivers/clk/renesas/rzv2h-cpg.h
+> > +++ b/drivers/clk/renesas/rzv2h-cpg.h
+> > @@ -93,6 +93,7 @@ struct smuxed {
+> >                 .width =3D (_width), \
+> >         })
+> >
+> > +#define CPG_SSEL0              (0x300)
+> >  #define CPG_SSEL1              (0x304)
+> >  #define CPG_CDDIV0             (0x400)
+> >  #define CPG_CDDIV1             (0x404)
+> > @@ -118,6 +119,14 @@ struct smuxed {
+> >  #define SSEL1_SELCTL2  SMUX_PACK(CPG_SSEL1, 8, 1)
+> >  #define SSEL1_SELCTL3  SMUX_PACK(CPG_SSEL1, 12, 1)
+> >
+> > +#define CSDIV0_DIVCTL0 DDIV_PACK(CPG_CSDIV0, 0, 2, CSDIV_NO_MON)
+> > +#define CSDIV0_DIVCTL1 DDIV_PACK(CPG_CSDIV0, 4, 2, CSDIV_NO_MON)
+> > +
+>
+> Moving these above the existing CSDIV0_DIVCTL3...
+>
+> > +#define SSEL0_SELCTL2  SMUX_PACK(CPG_SSEL0, 8, 1)
+> > +#define SSEL0_SELCTL3  SMUX_PACK(CPG_SSEL0, 12, 1)
+> > +#define SSEL1_SELCTL0  SMUX_PACK(CPG_SSEL1, 0, 1)
+> > +#define SSEL1_SELCTL1  SMUX_PACK(CPG_SSEL1, 4, 1)
+> > +
+>
+> Moving these above the existing SSEL1_SELCTL*...
+>
+Got it. Thank you for taking care of this .
 
-What we call "gfp_t" is a combination of flags. They describe
+Cheers,
+Prabhakar
 
-A - the type of memory (always valid)
-B - the way the memory can be allocated (valid only at a specific time)
-
-The URB is a generic data structure to be processed by the CPU, _not_
-the HC. It is always generic kernel memory. Flags of type A make no sense
-to pass.
-In fact you may not know for which device an URB will be used when you
-allocate it. The only valid mem_flags you can pass to usb_alloc_urb()
-are GFP_KERNEL, GFP_NOIO or GFP_ATOMIC.
-
-If you need to reallocate memory for private data you _must_ use
-the flags passed with usb_submit_urb(). A HCD can modify them by adding
-flags of type A, but you cannot change flags of type B.
-For example, if usb_alloc_urb() used GFP_KERNEL to allocate the URB,
-but uses GFP_ATOMIC in usb_submit_urb(), you will deadlock if you save
-and reuse the GFP_KERNEL.
-
-	HTH
-		Oliver
-  
+> >  #define BUS_MSTOP_IDX_MASK     GENMASK(31, 16)
+> >  #define BUS_MSTOP_BITS_MASK    GENMASK(15, 0)
+> >  #define BUS_MSTOP(idx, mask)   (FIELD_PREP_CONST(BUS_MSTOP_IDX_MASK, (=
+idx)) | \
+> > --
+> > 2.49.0
+> >
+>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> i.e. will queue in renesas-clk for v6.17 with the above changes.
+>
+> Gr{oetje,eeting}s,
+>
+>                         Geert
+>
+>
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m6=
+8k.org
+>
+> In personal conversations with technical people, I call myself a hacker. =
+But
+> when I'm talking to journalists I just say "programmer" or something like=
+ that.
+>                                 -- Linus Torvalds
 
