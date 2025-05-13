@@ -1,133 +1,76 @@
-Return-Path: <linux-kernel+bounces-645364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-645367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2470AAB4C3F
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 08:46:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71A3FAB4C47
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 08:48:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 883CA3A13F0
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 06:45:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3AE927AF443
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 06:47:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3F451EC006;
-	Tue, 13 May 2025 06:45:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="E0KHtZbV"
-Received: from mx.denx.de (mx.denx.de [89.58.32.78])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DF7C1EB9F9;
+	Tue, 13 May 2025 06:48:10 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82DB333F7;
-	Tue, 13 May 2025 06:45:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 760211917ED;
+	Tue, 13 May 2025 06:48:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747118748; cv=none; b=NEuqIgypMBVe/Jqd50FFoUpcOP0feWXfVT2V/NK8ELUuTOrfl5o47TH7hss6jZtZgraNg/6Y9KgdBBuVjZWWNupvi/0lE7EeZLHdyeLGMbBh5Q3MMd6NtQcoBvBgyYNv5SiezAi8/8e6JH9Oce5jEvwQfCy/OXSLFT15EYh2nf4=
+	t=1747118889; cv=none; b=sgLqB8gO7IVxoXFozNyAifxOqvoIO64v0l/ixCscnGjvxdwDF9zK0Zf9VJe2VDz0+uSXY47UskoomkbdriwTvbaH+C3iaU/ia70fmHtFnlVRYARySz/oS8koTeGm7v3XSeeTbdCvV4ioQbNNU3yNXCnVBr/dDDqhWLFljL++4ks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747118748; c=relaxed/simple;
-	bh=fj2ri2Wp/bpF018s3Z5QWNmJKfl+cJBrIQMhNjHTIxE=;
+	s=arc-20240116; t=1747118889; c=relaxed/simple;
+	bh=4PLJJYQclSDJxAPd/I6fUc+pgL+dM5fCx2w9Ok0+7DQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I/ygP4YHL+alwYmicgnSkPs4ED/EIZO5+KkFIXbUbfdsRZ6oO8o5KJFTecFRNdT88H5jsEVCzp7GUG9Qx/OfGooaXOvCcVEip7mm+rshi0GnSI5X7dJ+SFD4o35M19vsrghDEvAZ5+HHF+TTeQqjOvD3zP69x3o0J7f9Xlv+eh8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=E0KHtZbV; arc=none smtp.client-ip=89.58.32.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 9794A101F54F9;
-	Tue, 13 May 2025 08:45:38 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
-	t=1747118743; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=Qn06Auz3g3uXaj4CpFAyQVtsbCU17ojJiIvRQnIdr2E=;
-	b=E0KHtZbVqjvstXfX48X+jmcyH/BFx/UtsRsUVlYmqfx2VZ5MOWI2qjXET2vFV9a8L/EmC8
-	USh4JJx/Ik+qXY6xcsB3W2IFzo2KXKS7EDHFQu4yR7YG0SI3yvCB0ZmmTbVWlruXs+CXcl
-	/FP8Pc1TwvZJa+fEQiGojMoiDH2Kef2JIPqAQiaR3/8KbeuAXPZ19P6Z3qICQHMLLR9jtX
-	JRMRksIooA1nFH2PaiarFa1jVH76EeQFfUG2OlNzf1RZgKUz0cfioHzKpehcEcy3GZW8Vh
-	4hotqsD8V9JwcToSaUn3cSnLR/9j+HSTQYflvG79iFkzvtjg1w7ZFFtEaoH0Vg==
-Date: Tue, 13 May 2025 08:45:35 +0200
-From: Pavel Machek <pavel@denx.de>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
-Subject: Re: [PATCH 6.1 00/92] 6.1.139-rc1 review
-Message-ID: <aCLqj2SHnne6U1sG@duo.ucw.cz>
-References: <20250512172023.126467649@linuxfoundation.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=cm/lCh8bzDkex3zMuOlk5gF0RrVf9qRjUEpIt4assXzwdd/5/kVSYXO+dcb6Ph6xBbhAL/C0n5BtBjbmnJ23+DafxiWsqwGsH3lZ5owvsb5TbOVnAZqjLPZ/S/WFmPKvW3v3dvQ/+tvRd04Jyt5OK5Cte+f6D0XyOPEFpPNTSdE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 6783168BEB; Tue, 13 May 2025 08:48:03 +0200 (CEST)
+Date: Tue, 13 May 2025 08:48:03 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: Yu Kuai <yukuai1@huaweicloud.com>
+Cc: Christoph Hellwig <hch@lst.de>, xni@redhat.com, colyli@kernel.org,
+	agk@redhat.com, snitzer@kernel.org, mpatocka@redhat.com,
+	song@kernel.org, linux-kernel@vger.kernel.org,
+	dm-devel@lists.linux.dev, linux-raid@vger.kernel.org,
+	yi.zhang@huawei.com, yangerkun@huawei.com, johnny.chenyi@huawei.com,
+	"yukuai (C)" <yukuai3@huawei.com>
+Subject: Re: [PATCH RFC md-6.16 v3 15/19] md/md-llbitmap: implement APIs to
+ dirty bits and clear bits
+Message-ID: <20250513064803.GA1508@lst.de>
+References: <20250512011927.2809400-1-yukuai1@huaweicloud.com> <20250512011927.2809400-16-yukuai1@huaweicloud.com> <20250512051722.GA1667@lst.de> <0de7efeb-6d4a-2fa5-ed14-e2c0bec0257b@huaweicloud.com> <20250512132641.GC31781@lst.de> <20250512133048.GA32562@lst.de> <69dc5ab6-542d-dcc2-f4ec-0a6a8e49b937@huaweicloud.com> <03f64fc7-4e57-2f32-bffc-04836a9df790@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="m4fjbYD3mk7Y4lHf"
-Content-Disposition: inline
-In-Reply-To: <20250512172023.126467649@linuxfoundation.org>
-X-Last-TLS-Session-Version: TLSv1.3
-
-
---m4fjbYD3mk7Y4lHf
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <03f64fc7-4e57-2f32-bffc-04836a9df790@huaweicloud.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-Hi!
+On Tue, May 13, 2025 at 02:32:04PM +0800, Yu Kuai wrote:
+> However, for bitmap file case, bio is issued from submit_bh(), I'll have
+> to change buffer_head code and I'm not sure if we want to do that.
 
-> This is the start of the stable review cycle for the 6.1.139 release.
-> There are 92 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+Don't bother with the old code, I'm still hoping we can replace it with
+your new code ASAP. 
 
-We see same failure as the other kernels here:
+> +       BIO_STACKED_META,       /* bio is metadata from stacked device */
 
-https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/pipelines/1=
-813565657
-https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/jobs/100111=
-61709
+I don't think that is the right name and description.  The whole point
+of the recursion avoidance is to to supported stacked devices by
+reducing the stack depth.  So we clearly need to document why that
+is not desirable for some very specific cases like reading in metadata
+needed to process a write I/O.  We should also ensure it doesn't
+propagate to lover stacked devices.
 
-arch/x86/kernel/alternative.c: In function 'its_fini_mod':
-1163
-arch/x86/kernel/alternative.c:447:32: error: invalid use of undefined type =
-'struct module'
-1164
-  447 |         for (int i =3D 0; i < mod->its_num_pages; i++) {
-1165
-      |                                ^~
-1166
-arch/x86/kernel/alternative.c:448:33: error: invalid use of undefined type =
-'struct module'
-1167
-  448 |                 void *page =3D mod->its_page_array[i];
-1168
-      |                                 ^~
-1169
-arch/x86/kernel/alternative.c: In function 'its_free_mod':
-1170
-arch/x86/kernel/alternative.c:459:32: error: invalid use of undefined type =
-'struct module'
-1171
-  459 |         for (int i =3D 0; i < mod->its_num_pages; i++) {
-1172
-      |                                ^~
-1173
-
-Reported-by: Pavel Machek (CIP) <pavel@denx.de>
-
-Best regards,
-								Pavel
---=20
-DENX Software Engineering GmbH,        Managing Director: Erika Unter
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-
---m4fjbYD3mk7Y4lHf
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaCLqjwAKCRAw5/Bqldv6
-8lWlAJ9ZtbtZM+Yg+1e2lZxFQ566hyU5WQCghwSwtJj9siRvUnrYIhhLZXr+3ZE=
-=kBwF
------END PGP SIGNATURE-----
-
---m4fjbYD3mk7Y4lHf--
+In fact I wonder if a better interfaces would be one to stash away
+current->bio_list and then restore it after the call, as that would
+enforce all that.
 
