@@ -1,117 +1,291 @@
-Return-Path: <linux-kernel+bounces-645677-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-645701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FE9BAB5197
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 12:16:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 590A0AB5287
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 12:31:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D5594A25EF
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 10:15:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C9DB985659
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 10:24:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0FE126AAA3;
-	Tue, 13 May 2025 10:08:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hMyycpyt"
-Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D1712566F3;
-	Tue, 13 May 2025 10:07:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2767328F93E;
+	Tue, 13 May 2025 10:08:18 +0000 (UTC)
+Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9B6928B7EA;
+	Tue, 13 May 2025 10:08:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747130879; cv=none; b=dvwzXTZSuOH5VrkpTbo5gFSxcNYHFE5ke8dO5D81V2s1TBvFfzVMK+GVs7vihLetD3stvx7+AQ541KesTSpzOEOllPsu527OGMQeVT4PWNAd1+ahBjME9fUiiytZfczpkvdeW7QZABGXhb9Yp4P8Wdg7bjSA+baa5BdCe1d6F6s=
+	t=1747130896; cv=none; b=lWYWPM5piMVNXJiLekfmachphGYQ8MX6mPymLDoxKJq8aJMGyySPkpizdljnqOyQOY6H/JmxDCZvL4uXl6KCeV9h5OVzsNDe7mouQx31GSXn1v66EgxWbktF8Zyx16ciEElnQnbADsohuoL/R8ijr4c4MTzZs8Zp3CAkDijCkEE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747130879; c=relaxed/simple;
-	bh=zHHPe2RlT3alVG++pzwYl1p0dat//Yfu/0wYDLnttxM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QvYQU5veKVAn2Dbq9quWpAHu1xEup20cijF9inToPmPsj8iBN6GsIKCrEk4Ew81fksBYJA40+ArReLi8v4emrX2GTAI5keE+E4wo/s10yziicdQzm+CXvAPlrZgaqEwzguYvIwtb2hNoQrxAOBmy+/90UpD5ErLj2Tn0D8BnIkg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hMyycpyt; arc=none smtp.client-ip=209.85.160.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-4768f90bf36so58757751cf.0;
-        Tue, 13 May 2025 03:07:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747130876; x=1747735676; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=xxTCWdoxxph2uKRlpdzs8tMyten2c/Vtkg5n7lhhiZs=;
-        b=hMyycpytx7XRafWItRyjMfGc8B3xbUh4NaTaUkGCQ9kjeG+AR+cCg1FW+OH1RT5QtD
-         rkpGfaXSZwj0pjUnxnDsaJQxlFvUU0NA+le69ZM5nEt5vjzq1xOmr+V3+pm3pfDxSIbj
-         B24uhqFIVHnbQqTO2QfQZHSJsGXL72mNVj71TJMEEEe+g8GNnEDadEYyNyF8CgInXpIn
-         VseYWYmd9uuk0t65uzxv8O0puB/QNUJR1gaYU71YkkNrwvrAzW//7qoTrd60VDF64Pu8
-         dBziTX5mCSf08FunalzXJskc29IG6vxHlRCs3yqC+WRQHM678SG52MpNOKE46s4M4Eii
-         RK+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747130876; x=1747735676;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xxTCWdoxxph2uKRlpdzs8tMyten2c/Vtkg5n7lhhiZs=;
-        b=UoND/t3rumIrCNvMQP4f5QkNm/fj8Zqqeb0aLP84CbMrm25APolZxgjrtYmNBWA/Ud
-         iE1HM//b/wK8pGk3/1i19eNDQuEoNc/o8KxSzA+QRT6ZKqvsV2blX+2tExzR4V9c6DE7
-         q9SMtG6hbXmZ+4Jae1E/a2AZnNWFZdhzkkfMq4rT5E3DAIdY1J+l29O64MqGw8zDULZb
-         FEE29kJU89cGBCce7TroDZbXoa5ggkcp7mgR8DvQaWb0UaWDipIrF3Njvm04CQInvcWX
-         ntX/ZeCs3+P+85ck6dxofJsjkOLoRyswo/1HLIYfDbBwRw/glZZwBxFxF8AXs0c5AdNj
-         ypvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVeg0unAKF4tx9lNFtTUolVkKXHOBB5WoJmJdTaOanwh0zWoWrU6YRyBdgYnqBzr1ypjrgtCdSA8Jr3@vger.kernel.org, AJvYcCXAUc0A6GJzXC+i+7HWuTpuPdRPWLK/r1pm/ProNSmK2UymgG/MN0AXIQvx4fzQ1hBnnkuUsEa3/KxknxnR@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHMClzD0+HrJBpIOU+XcQLzQHOK+ZFUtzc4bBC6Wfftv8Rfi8T
-	qr4HaFJ6kqjlTlAu7rfGbkuRUGvVGwBTf2ClSuPJ1fgPYdlVjsw6
-X-Gm-Gg: ASbGnctQlpw0T7lHrhkteIGA2zd20s5jUUqrU3MUVYHgJPma/1NxgJyrcjyxjmQOYgP
-	g/99r1bUMN0s1AeuAPNGdjo765x57lxV6JzlT+BIMoWHZ57ToH8Ju1+lX7w8ov41tRTjdqmraJC
-	zv5etI1+s1OW2oDbHmkOLTHVdI3vg1F4THKosKOdO8CHzDfln9acKKBfMWzZDOqGW4OqSMzXfes
-	3kyd8KNPzrlj6eZ/U8X8kqbNFx2OYTL580ePpGJ59UgY4bFofeVYiXYahKDUu5ivcmRdcb4vW7I
-	GpPvVdycO6y7VNyhSMzTCStnX60=
-X-Google-Smtp-Source: AGHT+IH2nYMxmNh6Mi7SbRh4cdJMyyTGclEOl+xdQXn3Xj59qNVfbigfG60vlKhSQo/mjolVBqJhqQ==
-X-Received: by 2002:a05:622a:406:b0:476:a969:90c5 with SMTP id d75a77b69052e-49452761774mr194593351cf.24.1747130875543;
-        Tue, 13 May 2025 03:07:55 -0700 (PDT)
-Received: from localhost ([2001:da8:7001:11::cb])
-        by smtp.gmail.com with UTF8SMTPSA id d75a77b69052e-4945259f42esm63437641cf.78.2025.05.13.03.07.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 May 2025 03:07:55 -0700 (PDT)
-Date: Tue, 13 May 2025 18:07:24 +0800
-From: Inochi Amaoto <inochiama@gmail.com>
-To: Chen Wang <unicorn_wang@outlook.com>, 
-	Inochi Amaoto <inochiama@gmail.com>, Han Gao <rabenda.cn@gmail.com>, devicetree@vger.kernel.org
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, 
-	Thomas Bonnefille <thomas.bonnefille@bootlin.com>, Guo Ren <guoren@kernel.org>, Chao Wei <chao.wei@sophgo.com>, 
-	sophgo@lists.linux.dev, linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/4] dt-bindings: riscv: add Sophgo x8 EVB bindings
-Message-ID: <ya3mpue6pndlzkmr6bouyrqldysmsfcu36b6lwrgbnvo2xw5ru@7ugamdke32nh>
-References: <cover.1746811744.git.rabenda.cn@gmail.com>
- <59c175c7bccbd4b5ad241c39b66b0303e0facf81.1746811744.git.rabenda.cn@gmail.com>
- <MA0P287MB22621824B2FD5E2A64006174FE97A@MA0P287MB2262.INDP287.PROD.OUTLOOK.COM>
- <CAAT7Ki9=ROP47hsugf3BS1nXr9oOPHWgjQoGfjAZiwHnXS19Pw@mail.gmail.com>
- <nrtzltuus47rjds3x54e72mtflvjh4najyqdjnagxq5etge5e7@vkikyxa5zf6k>
- <MA0P287MB2262F586320C31A7F887B5CEFE96A@MA0P287MB2262.INDP287.PROD.OUTLOOK.COM>
+	s=arc-20240116; t=1747130896; c=relaxed/simple;
+	bh=314TpUAkZxMvbV2pk3wlciVKMbaC2tgJL1bvCZ48Y0A=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=BeRSUqCWqQUSBXFtSdWvjiPewnGbMz0MLeAdoEdJk8PdLxSyysstM2X4uOjHdVP/PV4FJTQB0pvwwMIcBEBGTBrroB0JwdlPCCnN+qPiOLOst4yT0efEfNhInBi5tcu1WDkDUU4mH7X9y5aDYbf1glhS375EcRFc8DON42sspx8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
+X-AuditID: a67dfc5b-681ff7000002311f-1e-682319f26b45
+From: Byungchul Park <byungchul@sk.com>
+To: linux-kernel@vger.kernel.org
+Cc: kernel_team@skhynix.com,
+	torvalds@linux-foundation.org,
+	damien.lemoal@opensource.wdc.com,
+	linux-ide@vger.kernel.org,
+	adilger.kernel@dilger.ca,
+	linux-ext4@vger.kernel.org,
+	mingo@redhat.com,
+	peterz@infradead.org,
+	will@kernel.org,
+	tglx@linutronix.de,
+	rostedt@goodmis.org,
+	joel@joelfernandes.org,
+	sashal@kernel.org,
+	daniel.vetter@ffwll.ch,
+	duyuyang@gmail.com,
+	johannes.berg@intel.com,
+	tj@kernel.org,
+	tytso@mit.edu,
+	willy@infradead.org,
+	david@fromorbit.com,
+	amir73il@gmail.com,
+	gregkh@linuxfoundation.org,
+	kernel-team@lge.com,
+	linux-mm@kvack.org,
+	akpm@linux-foundation.org,
+	mhocko@kernel.org,
+	minchan@kernel.org,
+	hannes@cmpxchg.org,
+	vdavydov.dev@gmail.com,
+	sj@kernel.org,
+	jglisse@redhat.com,
+	dennis@kernel.org,
+	cl@linux.com,
+	penberg@kernel.org,
+	rientjes@google.com,
+	vbabka@suse.cz,
+	ngupta@vflare.org,
+	linux-block@vger.kernel.org,
+	josef@toxicpanda.com,
+	linux-fsdevel@vger.kernel.org,
+	jack@suse.cz,
+	jlayton@kernel.org,
+	dan.j.williams@intel.com,
+	hch@infradead.org,
+	djwong@kernel.org,
+	dri-devel@lists.freedesktop.org,
+	rodrigosiqueiramelo@gmail.com,
+	melissa.srw@gmail.com,
+	hamohammed.sa@gmail.com,
+	harry.yoo@oracle.com,
+	chris.p.wilson@intel.com,
+	gwan-gyeong.mun@intel.com,
+	max.byungchul.park@gmail.com,
+	boqun.feng@gmail.com,
+	longman@redhat.com,
+	yskelg@gmail.com,
+	yunseong.kim@ericsson.com,
+	yeoreum.yun@arm.com,
+	netdev@vger.kernel.org,
+	matthew.brost@intel.com,
+	her0gyugyu@gmail.com
+Subject: [PATCH v15 38/43] completion, dept: introduce init_completion_dmap() API
+Date: Tue, 13 May 2025 19:07:25 +0900
+Message-Id: <20250513100730.12664-39-byungchul@sk.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20250513100730.12664-1-byungchul@sk.com>
+References: <20250513100730.12664-1-byungchul@sk.com>
+X-Brightmail-Tracker: H4sIAAAAAAAAAzWSa0hTcRiH+59zds5xuTjMqKMF1souRpbdeIluHwIPhKB0+VBRrTy00Vyx
+	mWkQzZpm2sQUk9RqzpyXzbQZZJctc7m00FbZNDNLqWjlJaZb6eyyFX15efj9eJ/3y0vj4lZB
+	BC1XpvAqpVQhIYWEcDi0fPlY+ALZSvtm8I5nE1BWbybBecOEwHwrAwN3axx0+4YQ+Due4VBc
+	5ERQPvAWh1uOfgTW6jMkvPwwA7q8oyS0F+WScLainoTnX6cw6LtUgIHJEg/vjJ8IeJpvwKDY
+	TUJp8VksMD5jMGGspcCoiYLB6hIKpgZiob3fJQBr7zK4fLWPhPvWdgIcTYMYvLxbRkK/+bcA
+	njraCPDlzQHnRZ0A6kYMJHz1GXEwekcpeNGsx8ChnwUN2oAwa+yXAB7rmjHIun4Tg67X9xDY
+	st9jYDG7SLB7hzBotBThMFnVimAwb5iCzAsTFJRm5CHIzbxEgLZvLfh/BC5fGY+FjGsNBNT9
+	dKEtGznzVTPi7EOjOKdtPMFNel+RnNWnJ7gnBpa7U/KW4rS2XorTW45zjdXRXMV9N8aVe7wC
+	zlJ7nuQsngKKyxnuwriRzk4qYe5u4YYkXiFP5VUrNh0QyirrS8lj1qVpj8bykQZNRuagEJpl
+	1rD2mxUoB9F/ebxnfTAmmcVsT88EHuSZzDy2UfdJkIOENM64prPdV16jYBHGJLLtlVNUkAkm
+	ir1m+0IEPSJmHav7fvqfPpI1NTT/9YQE4p9VnUSQxcxaNl9vIoJOlikMYTve5KF/C+Hsw+oe
+	Ih+J9GhaLRLLlanJUrliTYwsXSlPizl0NNmCAs9lPDW1pwl5nNtbEEMjSaiozT1fJhZIU9Xp
+	yS2IpXHJTFHG7UAkSpKmn+RVR/erjit4dQuaQxOS2aJVvhNJYuawNIU/wvPHeNX/FqNDIjSo
+	7IHNs3jXt22/2aKUvSKnf0lHYfySTn/cHnvX97tLKzP98SlKtfbjAl2uOFVxxJRYlWC7Ufdw
+	Z/TY89XT00yyibCGkiw3Tmxl9Oc+RGyo8xpqeg2e+A5fPZ1ow12nT+1IGHF0uzVbS28/aorU
+	7FtYmB12Z796eNG60CTpQazGISHUMmlsNK5SS/8AUlSKS1gDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAAzWSfUzMcRzHfX/PHcfP1fipkc4aMg9tss+IGRvf2ZiHNuaPOPrN3VTsjsg0
+	pUOiWyGhp6s4rS6Xq608XFrldJrEpdIqatacUlvdHZ0Ldzb/fPba67293/98OFJWTgdzqsRT
+	ojpRES9nJJRk14b0lRMLlijX9N4JA5czg4ICk5GBjkeVCIy1aQQ4Xm6Hbvcogl9v3pKQl9uB
+	oGSwn4Ra6wACS/lFBuxfZkOna5wBW+41BtLLTAy8G/ES0Hf7BgGV5p3wyTBMQVt2KQF5Dgby
+	89IJ3/lKwJShggVDajgMld9jwTsYCbaBLhqaC200WHpXwN2iPgaeW2wUWOuHCLA/LWBgwPiH
+	hjZrKwVuXQh05GTRUDVWysCI20CCwTXOwvtGPQFW/Tyo1vpaL0/+puFVViMBl+8/JqDz4zME
+	DRmfCTAbuxhodo0SUGPOJcHz8CWCId13Fi5dn2IhP02H4Nql2xRo+6Lg10/fcqEzEtKKqymo
+	mu5CmzdhY5ER4ebRcRJra85gj+sDgy1uPYVflwr4yb1+FmsbelmsN5/GNeURuOy5g8AlEy4a
+	myuuMtg8cYPFmd87CTzW3s7uXnhQEh0nxquSRPXqTYclygemfOakZfnZlslslIo8oZmI4wR+
+	reDsWZ+JAjiGXyr09EyRfg7iFws1WcN0JpJwJN81U+gu/Ij8QSC/R7A98LJ+pvhwobjhG+Xv
+	kfLrhKwfF/xa4EOFyurGfz0BPj39sJ3ys4yPErL1lVQ2kujRjAoUpEpMSlCo4qNWaY4rkxNV
+	Z1cdPZFgRr7/MaR4c+qR0769CfEcks+StjrClDJakaRJTmhCAkfKg6RpdT4ljVMknxPVJw6p
+	T8eLmiYUwlHy+dId+8XDMv6Y4pR4XBRPiur/KcEFBKcifk2Z1XNzsa5+7Ixs+MoO5uhIlDfs
+	ae67IndoRorHkJNxaG5LccyLwPcH+BKTIWb6oj3Y/mr2TMetulmLApe9aBmKiwhp+9M9ke7s
+	aKyl3lSEx0ajW5PwE5vm3FnfGtNzPrSueN8ztSe6fzB225GtHzYGXXXpe7e4E9ZtTNmr03bK
+	KY1SERlBqjWKvz/l+6A7AwAA
+X-CFilter-Loop: Reflected
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <MA0P287MB2262F586320C31A7F887B5CEFE96A@MA0P287MB2262.INDP287.PROD.OUTLOOK.COM>
 
-On Tue, May 13, 2025 at 05:59:23PM +0800, Chen Wang wrote:
-> 
-> On 2025/5/13 17:49, Inochi Amaoto wrote:
-> > On Tue, May 13, 2025 at 02:48:44PM +0800, Han Gao wrote:
-> > > I hope it is sg2042-x8evb.
-> > > 
-> > > Sophgo is also making EVB boards for sg2044.
-> > > 
-> > > I think a distinction needs to be made here.
-> > > 
-> > SG2044 evb has a formal name like srd3-10, but I think it should
-> > have a sg2044 prefix. as the name printing on the board has a
-> > sg2042 prefix.
-> sg2042 prefix? :)
+Currently, dept uses dept's map embedded in task_struct to track
+dependencies related to wait_for_completion() and its family.  So it
+doesn't need an explicit map basically.
 
-You are right, I have make a mistake.
+However, for those who want to set the maps with customized class or
+key, introduce a new API to use external maps.
+
+Signed-off-by: Byungchul Park <byungchul@sk.com>
+---
+ include/linux/completion.h | 40 +++++++++++++++++++++-----------------
+ 1 file changed, 22 insertions(+), 18 deletions(-)
+
+diff --git a/include/linux/completion.h b/include/linux/completion.h
+index 4d8fb1d95c0a..e50f7d9b4b97 100644
+--- a/include/linux/completion.h
++++ b/include/linux/completion.h
+@@ -27,17 +27,15 @@
+ struct completion {
+ 	unsigned int done;
+ 	struct swait_queue_head wait;
++	struct dept_map *dmap;
+ };
+ 
+-#define init_completion(x)				\
+-do {							\
+-	__init_completion(x);				\
+-} while (0)
++#define init_completion(x) init_completion_dmap(x, NULL)
+ 
+ /*
+- * XXX: No use cases for now. Fill the body when needed.
++ * XXX: This usage using lockdep's map should be deprecated.
+  */
+-#define init_completion_map(x, m) init_completion(x)
++#define init_completion_map(x, m) init_completion_dmap(x, NULL)
+ 
+ static inline void complete_acquire(struct completion *x, long timeout)
+ {
+@@ -48,8 +46,11 @@ static inline void complete_release(struct completion *x)
+ }
+ 
+ #define COMPLETION_INITIALIZER(work) \
+-	{ 0, __SWAIT_QUEUE_HEAD_INITIALIZER((work).wait), }
++	{ 0, __SWAIT_QUEUE_HEAD_INITIALIZER((work).wait), .dmap = NULL, }
+ 
++/*
++ * XXX: This usage using lockdep's map should be deprecated.
++ */
+ #define COMPLETION_INITIALIZER_ONSTACK_MAP(work, map) \
+ 	(*({ init_completion_map(&(work), &(map)); &(work); }))
+ 
+@@ -90,15 +91,18 @@ static inline void complete_release(struct completion *x)
+ #endif
+ 
+ /**
+- * __init_completion - Initialize a dynamically allocated completion
++ * init_completion_dmap - Initialize a dynamically allocated completion
+  * @x:  pointer to completion structure that is to be initialized
++ * @dmap:  pointer to external dept's map to be used as a separated map
+  *
+  * This inline function will initialize a dynamically created completion
+  * structure.
+  */
+-static inline void __init_completion(struct completion *x)
++static inline void init_completion_dmap(struct completion *x,
++		struct dept_map *dmap)
+ {
+ 	x->done = 0;
++	x->dmap = dmap;
+ 	init_swait_queue_head(&x->wait);
+ }
+ 
+@@ -136,13 +140,13 @@ extern void complete_all(struct completion *);
+ 
+ #define wait_for_completion(x)						\
+ ({									\
+-	sdt_might_sleep_start_timeout(NULL, -1L);			\
++	sdt_might_sleep_start_timeout((x)->dmap, -1L);			\
+ 	__wait_for_completion(x);					\
+ 	sdt_might_sleep_end();						\
+ })
+ #define wait_for_completion_io(x)					\
+ ({									\
+-	sdt_might_sleep_start_timeout(NULL, -1L);			\
++	sdt_might_sleep_start_timeout((x)->dmap, -1L);			\
+ 	__wait_for_completion_io(x);					\
+ 	sdt_might_sleep_end();						\
+ })
+@@ -150,7 +154,7 @@ extern void complete_all(struct completion *);
+ ({									\
+ 	int __ret;							\
+ 									\
+-	sdt_might_sleep_start_timeout(NULL, -1L);			\
++	sdt_might_sleep_start_timeout((x)->dmap, -1L);			\
+ 	__ret = __wait_for_completion_interruptible(x);			\
+ 	sdt_might_sleep_end();						\
+ 	__ret;								\
+@@ -159,7 +163,7 @@ extern void complete_all(struct completion *);
+ ({									\
+ 	int __ret;							\
+ 									\
+-	sdt_might_sleep_start_timeout(NULL, -1L);			\
++	sdt_might_sleep_start_timeout((x)->dmap, -1L);			\
+ 	__ret = __wait_for_completion_killable(x);			\
+ 	sdt_might_sleep_end();						\
+ 	__ret;								\
+@@ -168,7 +172,7 @@ extern void complete_all(struct completion *);
+ ({									\
+ 	int __ret;							\
+ 									\
+-	sdt_might_sleep_start_timeout(NULL, -1L);			\
++	sdt_might_sleep_start_timeout((x)->dmap, -1L);			\
+ 	__ret = __wait_for_completion_state(x, s);			\
+ 	sdt_might_sleep_end();						\
+ 	__ret;								\
+@@ -177,7 +181,7 @@ extern void complete_all(struct completion *);
+ ({									\
+ 	unsigned long __ret;						\
+ 									\
+-	sdt_might_sleep_start_timeout(NULL, t);				\
++	sdt_might_sleep_start_timeout((x)->dmap, t);			\
+ 	__ret = __wait_for_completion_timeout(x, t);			\
+ 	sdt_might_sleep_end();						\
+ 	__ret;								\
+@@ -186,7 +190,7 @@ extern void complete_all(struct completion *);
+ ({									\
+ 	unsigned long __ret;						\
+ 									\
+-	sdt_might_sleep_start_timeout(NULL, t);				\
++	sdt_might_sleep_start_timeout((x)->dmap, t);			\
+ 	__ret = __wait_for_completion_io_timeout(x, t);			\
+ 	sdt_might_sleep_end();						\
+ 	__ret;								\
+@@ -195,7 +199,7 @@ extern void complete_all(struct completion *);
+ ({									\
+ 	long __ret;							\
+ 									\
+-	sdt_might_sleep_start_timeout(NULL, t);				\
++	sdt_might_sleep_start_timeout((x)->dmap, t);			\
+ 	__ret = __wait_for_completion_interruptible_timeout(x, t);	\
+ 	sdt_might_sleep_end();						\
+ 	__ret;								\
+@@ -204,7 +208,7 @@ extern void complete_all(struct completion *);
+ ({									\
+ 	long __ret;							\
+ 									\
+-	sdt_might_sleep_start_timeout(NULL, t);				\
++	sdt_might_sleep_start_timeout((x)->dmap, t);			\
+ 	__ret = __wait_for_completion_killable_timeout(x, t);		\
+ 	sdt_might_sleep_end();						\
+ 	__ret;								\
+-- 
+2.17.1
+
 
