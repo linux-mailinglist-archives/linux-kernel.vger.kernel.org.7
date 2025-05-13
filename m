@@ -1,125 +1,194 @@
-Return-Path: <linux-kernel+bounces-646299-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-646302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC6FBAB5AC4
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 19:07:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2ED0AB5AC9
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 19:09:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44400188A1BF
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 17:07:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 851C0466654
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 17:09:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AD982BEC40;
-	Tue, 13 May 2025 17:06:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAF6128D8CE;
+	Tue, 13 May 2025 17:09:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l4N9AqEq"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="De/jiANt"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE4012BE0EC;
-	Tue, 13 May 2025 17:06:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 378CF2AF10
+	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 17:09:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747156008; cv=none; b=ggzaIZl46exBHCX2Rlno6UIK1otMGh8PtFbX68Gdi+fK2JH9FdyrMtMTdRb7MZYUAMoXVnKNatj5SUYLzU0+pO5lg2BtZhnj7lFz7I8kJkcHFv1/lVxu450oW4VY9v3JG61ETuL6lfVHGcA7tGh4rod3Tx+DIulwXTUYpKBnG0I=
+	t=1747156192; cv=none; b=A8EWAbWAkGyOmQtVC05snJGDG2rWl9y9obFt69TfeiMN3d3ZWqInl/veh/kJGCwnKSr2E/9S1/ZlH3CX+KuKNDz2bTVA7CuWkf4YRcEchJV6ME7NpYf7uMfmXGs/kH40OPxPgU5O11G07wkZXzUrW3G5auPe19l53/RwNz0MDaU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747156008; c=relaxed/simple;
-	bh=GuuUrOBDBLtQJTivMZS9Eor4DSDf3u+U86Nys8bePDI=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=adtDO69/XJ+XLeEtezns+p5WM4tmbf3tkU6KicADDq9b7+pBQKfBGa5bRd89IvKwrx4ze9kSCWyNhJTTDcVHCWhsD3AQZCECjAgqBLxnSBdWv2M8aNwEKMIDhTqXUbbkltgrZXhfQerKzl5JzrOiyppE3ioSlxuHIP4lhCb75Ww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l4N9AqEq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46810C4CEED;
-	Tue, 13 May 2025 17:06:47 +0000 (UTC)
+	s=arc-20240116; t=1747156192; c=relaxed/simple;
+	bh=4OH0bVCUtbU61Gbf8HUbLxGscrrrkKQ42GdgKGwgFA8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=s447je3QTF3kCnVmjpROedItLXozn9ZFtWFarjijJTu5by5y7Y18OVXM9fKZs5DqXcvVGgnr/fb3fP8LmrUIxrkWTHJUXg4pF6HZr/Q4HaVXYo9Mx469K0V8vIUDnqcN2ERSa7ljkwjbCxkPoL+Ao5kSz21l8hFFda4h37rB7xQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=De/jiANt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99AE5C4CEE4;
+	Tue, 13 May 2025 17:09:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747156007;
-	bh=GuuUrOBDBLtQJTivMZS9Eor4DSDf3u+U86Nys8bePDI=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=l4N9AqEqFmYpOf1eS+C/6LqddeqrbI3zLDv3XxYt8GepWQNyzq2TZrDHdS9Vj0kco
-	 uMQJJ0x1caJRkZ5lNsoRDCEbkf7zTsvl9ZtuB/iuQTul9YL/13kxdThbVD39+bN5pt
-	 5+YwJzOZTRuRoJKQGKCBuF1hTgZ3mZeKTn4GqB3rlnj9AlVGSGtluuY5uWRHtVxtQ/
-	 Q1M4O2N0Xgu9wIM8v8OUf2hf1jlVWgzjlFIiteU38xzXlnSI4khQPbEcCxP5ORDZbs
-	 f99OaUvivtcpWILQiw9uAfUiRTOvwTY2ngZQdnGV81GQMs9MzUhUNYrrzksTd0s2pZ
-	 JXjyX+ATuKN/A==
-Date: Tue, 13 May 2025 12:06:45 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=k20201202; t=1747156191;
+	bh=4OH0bVCUtbU61Gbf8HUbLxGscrrrkKQ42GdgKGwgFA8=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=De/jiANtzSXB36c6ArGeIuconZ4jrvJNfi/sEI1DLaCTDXdVQ56K6N6frpkE1H1u+
+	 4dLCuf6UdVDEiTP5jz8Ks9sz+BE+Hzd8I5XJnnsSiOAnE/4BIGxVZkkyqreQnpLD2k
+	 anV/P2ZuN/iLyY3h41zd0lzHB8ZG5bf7fYcONzVRfUUwpIFHKejJXz3SN8ZIxOnhdh
+	 K1u0m+JZi/h3ZmChObLkwLVFSlPX3kS3rOCGO6eAGixG0/wz/a0RyoWn5lDY4bs5ti
+	 JQqYnbmGrSl0KMYrRO9QcfCdVIVmQLMyFM1IDPHxTcGjwKQGfxR0rLkv9feSeJAcwo
+	 AmtqShPYiol4Q==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 3BC79CE0908; Tue, 13 May 2025 10:09:51 -0700 (PDT)
+Date: Tue, 13 May 2025 10:09:51 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Petr Mladek <pmladek@suse.com>
+Cc: Lance Yang <lance.yang@linux.dev>,
+	Feng Tang <feng.tang@linux.alibaba.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
+	mhiramat@kernel.org, llong@redhat.com,
+	John Ogness <john.ogness@linutronix.de>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Tomasz Figa <tfiga@chromium.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Mel Gorman <mgorman@suse.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Michal Hocko <mhocko@suse.com>, Tejun Heo <tj@kernel.org>,
+	Douglas Anderson <dianders@chromium.org>
+Subject: Re: [PATCH v1 0/3] generalize panic_print's dump function to be used
+ by other kernel parts
+Message-ID: <c33acfb8-0078-46e2-b3a3-f753909749c9@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20250511085254.61446-1-feng.tang@linux.alibaba.com>
+ <20250511184617.85d5fe22fde831c1edb8321c@linux-foundation.org>
+ <aCFnjmRWwBjgV2Hv@U-2FWC9VHC-2323.local>
+ <1a5bc420-c716-4d0b-b767-32adf32f4958@linux.dev>
+ <aCNIxWaPVHywfek2@pathway.suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Heiko Stuebner <heiko@sntech.de>, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
- devicetree@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, 
- Conor Dooley <conor+dt@kernel.org>, Fred Bloggs <f.blogs@napier.co.nz>
-To: Hsun Lai <i@chainsx.cn>
-In-Reply-To: <20250513153044.167187-1-i@chainsx.cn>
-References: <20250513153044.167187-1-i@chainsx.cn>
-Message-Id: <174715590563.2918523.6781766383894838049.robh@kernel.org>
-Subject: Re: [PATCH v2 0/2] Add support for Firefly
- Station-M3/ROC-RK3588S-PC
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aCNIxWaPVHywfek2@pathway.suse.cz>
 
-
-On Tue, 13 May 2025 23:30:42 +0800, Hsun Lai wrote:
-> This series add support for Firefly Station-M3/ROC-RK3588S-PC.
+On Tue, May 13, 2025 at 03:27:33PM +0200, Petr Mladek wrote:
+> On Mon 2025-05-12 16:23:30, Lance Yang wrote:
+> > 
+> > 
+> > On 2025/5/12 11:14, Feng Tang wrote:
+> > > Hi Andrew,
+> > > 
+> > > Thanks for the review!
+> > > 
+> > > On Sun, May 11, 2025 at 06:46:17PM -0700, Andrew Morton wrote:
+> > > > On Sun, 11 May 2025 16:52:51 +0800 Feng Tang <feng.tang@linux.alibaba.com> wrote:
+> > > > 
+> > > > > When working on kernel stability issues, panic, task-hung and
+> > > > > software/hardware lockup are frequently met. And to debug them, user
+> > > > > may need lots of system information at that time, like task call stacks,
+> > > > > lock info, memory info etc.
+> > > > > 
+> > > > > panic case already has panic_print_sys_info() for this purpose, and has
+> > > > > a 'panic_print' bitmask to control what kinds of information is needed,
+> > > > > which is also helpful to debug other task-hung and lockup cases.
+> > > > > 
+> > > > > So this patchset extract the function out, and make it usable for other
+> > > > > cases which also need system info for debugging.
+> > > > > 
+> > > > > Locally these have been used in our bug chasing for stablility issues
+> > > > > and was helpful.
+> > > > 
+> > > > Truth.  Our responses to panics, oopses, WARNs, BUGs, OOMs etc seem
+> > > > quite poorly organized.  Some effort to clean up (and document!) all of
+> > > > this sounds good.
+> > > > 
+> > > > My vote is to permit the display of every scrap of information we can
+> > > > think of in all situations.  And then to permit users to select which of
+> > > > that information is to be displayed under each situation.
+> > 
+> > Completely agreed. The tricky part is making a global knob that works for
+> > all situations without breaking userspace, but it's a better system-wide
+> > approach ;)
+> > 
+> > > 
+> > > Good point! Maybe one future todo is to add a gloabl system info dump
+> > > function with ONE global knob for selecting different kinds of information,
+> > > which could be embedded into some cases you mentioned above.
+> > 
+> > IMHO, for features with their own knobs, we need:
+> > a) The global knob (if enabled) turns on all related feature-level knobs,
+> > b) while still allowing users to manually override individual knobs.
+> > 
+> > Something like:
+> > 
+> > If SYS_PRINT_ALL_CPU_BT (global knob) is on, it enables
+> > hung_task_all_cpu_backtrace
+> > for hung-task situation automatically. But users can still disable it via
+> > hung_task_all_cpu_backtrace.
 > 
-> Info of device can be found at:
-> https://wiki.t-firefly.com/en/Station-M3/index.html
+> I am all for unifying the options for printing debug information
+> in various emergency situations. I am just not sure whether we really
+> want to do the same in all situations.
 > 
-> Changes in v2:
-> - Add support for Firefly ROC-RK3588S-PC
-> - Fix rgmii delays
+> Some lockup detectors tries to be more clever, for example:
 > 
-> Hsun Lai (2):
->   dt-bindings: arm: rockchip: Add Firefly ROC-RK3588S-PC
->   arm64: dts: rockchip: add DTs for Firefly ROC-RK3588S-PC
+>   + RCU stall detector prints backtraces only from CPUs which are
+>     involved in the stall, see print_other_cpu_stall().
 > 
->  .../devicetree/bindings/arm/rockchip.yaml     |   5 +
->  arch/arm64/boot/dts/rockchip/Makefile         |   1 +
->  .../boot/dts/rockchip/rk3588s-roc-pc.dts      | 910 ++++++++++++++++++
->  3 files changed, 916 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/rockchip/rk3588s-roc-pc.dts
+>   + Workqueues watchdog shows backtraces from tasks which are
+>     preventing forward progress, see show_cpu_pool_hog().
 > 
-> --
-> 2.34.1
+> And stalls are about scheduling (disabled preemption, disabled IRQ,
+> deadlocks, too long uninterruptible sleep). OOM is about memory
+> usage. Oops is about an invalid memory access. WARNs() are
+> completely random stuff.
 > 
+> Also I am afraid of printing too much information when the system
+> is supposed to continue running. It would make sense to print it in
+> nbcon_cpu_emergency_enter()/exit() context which disables
+> preemption. And it might cause softlockups on its own.
+
+And we did do some of the cleverness that Petr points out because of
+problems caused by flooding the console log.  We first ran into this
+sort of thing on embedded systems with slow serial consoles (where 115K
+baud is now way slow), but it also shows up in other environments, for
+example, those committing large numbers of console logs to stable storage,
+multiplexing large numbers of logs across networks that sometimes get
+congested, and so on.
+
+So I second the call for individual knobs, either in addition to or
+instead of the global knob.
+
+> Finally, I wonder whether ftrace_dump() might cause a livelock when ftrace
+> is adding new messages in parallel.
+
+It definitely can cause problems, and me learning this the hard way is
+why rcutorture calls tracing_off() before calling ftrace_dump().
+
+> The situation is much easier during panic() because the system is
+> going to die() anyway, non-panic CPUs are stopped, ...
 > 
+> That said, I could understand that people might want to see as much
+> information as possible when the console is fast and the range of
+> possible problems is big.
+
+No argument here.
+
+							Thanx, Paul
+
+> Anyway, I have added few more people into Cc who are interested into
+> the various watchdogs.
 > 
-
-
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
-
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
-
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
-
-  pip3 install dtschema --upgrade
-
-
-This patch series was applied (using b4) to base:
- Base: attempting to guess base-commit...
- Base: tags/next-20250513 (exact match)
-
-If this is not the correct base, please add 'base-commit' tag
-(or use b4 which does this automatically)
-
-New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/rockchip/' for 20250513153044.167187-1-i@chainsx.cn:
-
-arch/arm64/boot/dts/rockchip/rk3588s-roc-pc.dtb: leds: leds-gpio: {'rockchip,pins': [[3, 10, 0, 259], [1, 29, 0, 259], [3, 16, 0, 259]], 'phandle': 273} is not of type 'array'
-	from schema $id: http://devicetree.org/schemas/gpio/gpio-consumer.yaml#
-arch/arm64/boot/dts/rockchip/rk3588s-roc-pc.dtb: leds (gpio-leds): 'power', 'user', 'user1' do not match any of the regexes: '(^led-[0-9a-f]$|led)', '^pinctrl-[0-9]+$'
-	from schema $id: http://devicetree.org/schemas/leds/leds-gpio.yaml#
-
-
-
-
-
+> And there is parallel initiative which tries to unify the loglevel or
+> somehow make the filtering easier, see
+> https://lore.kernel.org/r/20250424070436.2380215-1-senozhatsky@chromium.org
+> 
+> Best Regards,
+> Petr
 
