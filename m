@@ -1,126 +1,128 @@
-Return-Path: <linux-kernel+bounces-645081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-645088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93EFDAB48B0
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 03:11:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1EACAB48CA
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 03:21:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9D1D3B1C8D
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 01:11:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F0CB1B41B4E
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 01:21:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3417415442C;
-	Tue, 13 May 2025 01:11:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A8F718DB2B;
+	Tue, 13 May 2025 01:21:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="r4wTNkeG"
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+	dkim=pass (1024-bit key) header.d=airkyi.com header.i=@airkyi.com header.b="Co1n7HhM"
+Received: from smtpbgbr2.qq.com (smtpbgbr2.qq.com [54.207.22.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A188C155382
-	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 01:11:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2814828366;
+	Tue, 13 May 2025 01:21:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.207.22.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747098712; cv=none; b=EbwljSsUw/tyUqbang7XW3dxsItIqGyQIKTeNuHIEeXsriR3/KlVy4w+EIq9z0m8Yxi6xeien/YokFEaiTgx6VTYa4VE9u8RVOjJtXBNWyVHkbfpANoMElRtixKgtMpPQsqtAhOWuN7w16WnBJg5gE2f2EI827w0vNiZIklubcg=
+	t=1747099281; cv=none; b=hGlQfer+qzxRaRncQDA6mFv7PvSEcrBnP47cisxDxQDLX1qQo46iQ0SkscVUC8VzUDMtZhRSd7OvjqV/v0p7xYveB0lz0VVGk3tn0JE5rw2WFvpa2SDkZoXkumDPow6ET92U4bf2U3bewAwZiaFaJQiNtHiQ7UrFKHCGzU4j7DQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747098712; c=relaxed/simple;
-	bh=11sC5CL7ALkDxBRJnk00zA9FuQFKn2BigmhwdJiY6NQ=;
-	h=Mime-Version:Subject:From:To:CC:Message-ID:Date:Content-Type:
-	 References; b=S0AqqC6ryeUa7axM93u5G7bBk/yAskoBqkuZP+t0sxbIl4X3XF2MucjnjSQOFVzKcqBH7Up6h71cTNpAuSgprCVWUI343uNA7ag6mV8Rfru31tn9H+9eWvss5Z+FZqr3aLqYij7hQVSPFzZUnbwaxakdd+n+/5XGuZydWHaK6KQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=r4wTNkeG; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250513011146epoutp04986808a3878438bc69de5db112d5929f~_8QRaJtmy0202802028epoutp04u
-	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 01:11:46 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250513011146epoutp04986808a3878438bc69de5db112d5929f~_8QRaJtmy0202802028epoutp04u
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1747098706;
-	bh=11sC5CL7ALkDxBRJnk00zA9FuQFKn2BigmhwdJiY6NQ=;
-	h=Subject:Reply-To:From:To:CC:Date:References:From;
-	b=r4wTNkeGRIWgHXyaV8eJyYeARVG6964apqUZq0yZhcPLmNmyJgSrb0PP6LD7Bi3/j
-	 KzcmyCd9fMIKWSySB2zV783lBx0z4aqa/znLYsGqLL02kAtB6IsMh6OTKKTu2UG4Si
-	 xkS2HqO0cwQhbl7Plia9Hn3hxhXmcKzvR4mx7xnE=
-Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPS id
-	20250513011145epcas5p4c7cd0f22a7a1f8abca2941c8d5906dc0~_8QQ8r-S90223702237epcas5p48;
-	Tue, 13 May 2025 01:11:45 +0000 (GMT)
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41]) by
-	epsnrtp01.localdomain (Postfix) with ESMTP id 4ZxJN16fWQz6B9mB; Tue, 13 May
-	2025 01:11:45 +0000 (GMT)
+	s=arc-20240116; t=1747099281; c=relaxed/simple;
+	bh=+zXFHp+zs7okALBFZfHmltCz3nqOH4MQBGvpJBntwaY=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=iRpB3+NuiTeY4eD/vSgNYJ/kx/y68VWZMeF1mHrGw+a2JBiA7dA3e+HnBhjbUb1jdE1C9qSZHlE37bcfzL0FNypzuXXCfixir5jMnjZ9nV7k6n58QliVdeTzw1MpH7NQ9wMq1N5Wgs6/nzbcU3i7MiMU+6XlT8g5Caw3cFIjDYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=airkyi.com; spf=pass smtp.mailfrom=airkyi.com; dkim=pass (1024-bit key) header.d=airkyi.com header.i=@airkyi.com header.b=Co1n7HhM; arc=none smtp.client-ip=54.207.22.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=airkyi.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=airkyi.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=airkyi.com;
+	s=altu2504; t=1747099212;
+	bh=sx0QPXnSaLIf4F34i9zHng6KtwZzILwK0rjOsdgpCTc=;
+	h=From:To:Subject:Date:Message-Id;
+	b=Co1n7HhMer8FJlSY9wEQbv7GPvFZf/ZJmY5ZKsmh9Qcjgh3ilo2+j9VAsQ3o/IZvS
+	 Jw+RjyP1i8c4Fpj01luMmECgDyxgwWx3Y85cA7ffZKL8s1cKKhHn+Eu+/BkONJsNbo
+	 EG8GAt3qjwWro6K8biikU2bKEf7paevU9MmpTOWg=
+X-QQ-mid: zesmtpgz8t1747099209t919a02de
+X-QQ-Originating-IP: 5vhkHeA2dWXXDt212fbrUzKzkNBcuE37BFyAXXTQglI=
+Received: from DESKTOP-8BT1A2O.localdomain ( [58.22.7.114])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Tue, 13 May 2025 09:20:07 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 14605522553798699493
+From: Chaoyi Chen <kernel@airkyi.com>
+To: Sandy Huang <hjc@rock-chips.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Andy Yan <andy.yan@rock-chips.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: Chaoyi Chen <chaoyi.chen@rock-chips.com>,
+	Dragan Simic <dsimic@manjaro.org>,
+	dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/2] Convert Rockchip CDN DP binding to yaml
+Date: Tue, 13 May 2025 09:19:02 +0800
+Message-Id: <20250513011904.102-1-kernel@airkyi.com>
+X-Mailer: git-send-email 2.17.1
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpgz:airkyi.com:qybglogicsvrsz:qybglogicsvrsz4a-0
+X-QQ-XMAILINFO: MxdW4jxL6NvXQoGjJXfegqbg1k50qSDlLw4rve6vJXOuUogvtaDcDkc/
+	KWnLXy/+T+NkJ+Izy6Z46f1fWP/dPjVv8e7irs6piqewz3yy8enrSTNAQ+0zCKsNZ4dbxHL
+	ujLnAZ3jIAFUI7t3BosbH3LbUB3tBapDrkVumWTLVBiqg+XpauhYALlJ7Qsl27bTrUUhs6T
+	rlVrFl682kRAJQPWC1fjChxxmE+w3ZdE8x5tfSBTsAF4/34XpdrlV3F2A8kvkdH2qnYtadx
+	Wm6/OWXIYhwrY1uNqdYqDBhQ+xX6HS0psQCc2LpRZp4M5UIJQQ3s6p8K/xArjCHDR+Nw1tj
+	8ioF5lM20/wFuAPGxadFHhDQTbmllcUEwt30KIrCXSsgkwZ83VipnXst96YxsR49aCpyEZF
+	OskKu2luiOX3lbIhcMZsgHPm9BURDVVrC4UARmIlm98DnxjavBaffA9Ro75WFfhwYUh4/kB
+	iTpxOGvvvLOkyz7dE/4HySdCOHs6iG9jZEoD6MoQiqRrlhPnvM8Gb2HEkistD9JOL2RAfTq
+	TEwQmeZ1I0FTqgYKNZswZMVZj3OdBHwc1jlDquIkLUo2lhXgOyW+Vqo+8/Gd5TIxa8XyQZO
+	9QGHyj1SeD7U14Sm+3Jyl34s3/EXfOKvxcolPNVF2Jhcq5XIBIsw5+GurGFMY5hjKB6y17I
+	nG2l2wjJMaGqDa5xQAY0S96j6c94nlnAVyYZ3C8QhDbm0rEu0AZjXvF3HJie+g3vBiWn592
+	p0XZSnt14AoyzHZm8JWeBjhplcI68tIc4LPOoCmWccwP6dOKYg2b9SWbuy9T6HFchtuEdIa
+	TY/jcFzpcIxWZ8oOMi5QAYf8d93m4/bG3oebLDT751XYGk2vb2Vo9wi1ifWX6Gypmma+azs
+	yIVtsllBzQL0lbSRw5MtKn1s0PiV/XFRT+io00QCUkU3RI51faJnG9sex0ZumtoodOL8je0
+	nT88DxQEJA3cjFzfhszIP2ASIC6yyC2y8ftqqAi0zSYjRZA==
+X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
+X-QQ-RECHKSPAM: 0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Subject: [PATCH v2] drm/edid: fixed the bug that hdr metadata was not
- cleared
-Reply-To: feijuan.li@samsung.com
-Sender: Feijuan Li <feijuan.li@samsung.com>
-From: Feijuan Li <feijuan.li@samsung.com>
-To: "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
-	"maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
-	"mripard@kernel.org" <mripard@kernel.org>, "tzimmermann@suse.de"
-	<tzimmermann@suse.de>, "airlied@gmail.com" <airlied@gmail.com>,
-	"simona@ffwll.ch" <simona@ffwll.ch>, "dri-devel@lists.freedesktop.org"
-	<dri-devel@lists.freedesktop.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-CC: Hongfei Tang <hongfei.tang@samsung.com>, Minggui Yan
-	<minggui.yan@samsung.com>, Qilin Wang <qilin.wang@samsung.com>
-X-Priority: 3
-X-Content-Kind-Code: NORMAL
-X-Drm-Type: N,general
-X-Msg-Generator: Mail
-X-Msg-Type: PERSONAL
-X-Reply-Demand: N
-Message-ID: <20250513011145epcms5p84bf94d5c03933fd61f4abf1fadab5016@epcms5p8>
-Date: Tue, 13 May 2025 09:11:45 +0800
-X-CMS-MailID: 20250513011145epcms5p84bf94d5c03933fd61f4abf1fadab5016
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-X-CMS-RootMailID: 20250416093607epcms5p344bcffd7430fe5e30ef9b73db73f7388
-References: <CGME20250416093607epcms5p344bcffd7430fe5e30ef9b73db73f7388@epcms5p8>
 
-Dear maintainer:
+From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
 
-I have changed the patch as your suggestion.
-v1->v2:make a new function for hdr info reset.
+This series convert cdn-dp-rockchip.txt to yaml.
 
+PATCH 1 try to improve coding style on the existing rk3399 cdn-dp
+node.
+PATCH 2 try to convert cdn-dp-rockchip.txt to yaml.
 
-From: =22feijuan.li=22 <feijuan.li=40samsung.com>
-Date: Fri, 18 Apr 2025 14:56:49 +0000
-Subject: =5BPATCH v2=5D drm/edid: fixed the bug that hdr metadata was not r=
-eset
+Changes in v3:
+- Link to V2: https://lore.kernel.org/all/20250509070247.868-1-kernel@airkyi.com/
+- Add more description about phy/extcon
+- Fix some coding style
 
-When DP connected to a device with HDR capability,
-the hdr structure was filled.Then connected to another
-sink device without hdr capability, but the hdr info
-still exist.
+Changes in v2:
+- Link to V1: https://lore.kernel.org/all/20250508064304.670-1-kernel@airkyi.com/
+- Rename binding file name to match compatible
+- Add more description about grf/phy/extcon
+- Fix coding style
 
-Signed-off-by: feijuan.li <feijuan.li=40samsung.com>
----
-=C2=A0drivers/gpu/drm/drm_edid.c=206=20++++++=0D=0A=C2=A01=20file=20changed=
-,=206=20insertions(+)=0D=0A=0D=0Adiff=20--git=20a/drivers/gpu/drm/drm_edid.=
-c=20b/drivers/gpu/drm/drm_edid.c=0D=0Aindex=2013bc4c290b17..cd0e4148f6b0=20=
-100644=0D=0A---=20a/drivers/gpu/drm/drm_edid.c=0D=0A+++=20b/drivers/gpu/drm=
-/drm_edid.c=0D=0A=40=40=20-6576,6=20+6576,11=20=40=40=20static=20void=20drm=
-_update_mso(struct=20drm_connector=20*connector,=0D=0A=C2=A0=20=C2=A0=20=C2=
-=A0=20=C2=A0=20=C2=A0displayid_iter_end(&iter);=0D=0A=C2=A0=7D=0D=0A=C2=A0=
-=0D=0A+static=20void=20drm_reset_hdr_sink_metadata(struct=20drm_connector=
-=20*connector)=0D=0A+=7B=0D=0A+=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20memset(&=
-connector->hdr_sink_metadata,=200,=20sizeof(connector->hdr_sink_metadata));=
-=0D=0A+=7D=0D=0A+=0D=0A=C2=A0/*=20A=20connector=20has=20no=20EDID=20informa=
-tion,=20so=20we've=20got=20no=20EDID=20to=20compute=20quirks=20from.=20Rese=
-t=0D=0A=C2=A0=20*=20all=20of=20the=20values=20which=20would=20have=20been=
-=20set=20from=20EDID=0D=0A=C2=A0=20*/=0D=0A=40=40=20-6651,6=20+6656,7=20=40=
-=40=20static=20void=20update_display_info(struct=20drm_connector=20*connect=
-or,=0D=0A=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0struct=20drm_display_inf=
-o=20*info=20=3D=20&connector->display_info;=0D=0A=C2=A0=20=C2=A0=20=C2=A0=
-=20=C2=A0=20=C2=A0const=20struct=20edid=20*edid;=0D=0A=C2=A0=0D=0A+=C2=A0=
-=20=C2=A0=20=C2=A0=20=C2=A0=20drm_reset_hdr_sink_metadata(connector);=0D=0A=
-=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0drm_reset_display_info(connector)=
-;=0D=0A=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0clear_eld(connector);=0D=
-=0A=C2=A0=0D=0A--=C2=A0=0D=0A2.25.1=0D=0A=0D=0A
+Chaoyi Chen (2):
+  arm64: dts: rockchip: Improve coding style for rk3399 cdn_dp
+  dt-bindings: display: rockchip: Convert cdn-dp-rockchip.txt to yaml
+
+ .../display/rockchip/cdn-dp-rockchip.txt      |  74 --------
+ .../rockchip/rockchip,rk3399-cdn-dp.yaml      | 165 ++++++++++++++++++
+ arch/arm64/boot/dts/rockchip/rk3399-base.dtsi |  10 +-
+ 3 files changed, 174 insertions(+), 75 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/display/rockchip/cdn-dp-rockchip.txt
+ create mode 100644 Documentation/devicetree/bindings/display/rockchip/rockchip,rk3399-cdn-dp.yaml
+
+--
+2.49.0
+
 
