@@ -1,287 +1,152 @@
-Return-Path: <linux-kernel+bounces-646203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-646205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E7E7AB595F
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 18:08:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71C88AB5965
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 18:09:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 837641B6092E
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 16:09:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B08DB3BEB15
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 16:09:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEF742BE7BB;
-	Tue, 13 May 2025 16:08:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F18792BE7C0;
+	Tue, 13 May 2025 16:09:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="cQgcxTg+";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="O4Etl99W";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="cQgcxTg+";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="O4Etl99W"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="J17kZtrd"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 346962BEC2B
-	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 16:08:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88F0014A8B
+	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 16:09:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747152516; cv=none; b=DZXSUnsMsKgBSZk61aWRYNMqgg82j5T0ZZVkRcd7zJafjZIee9wUKfaXYJg/4U5uenLSOATk1wK0BRRMeCB/UbGFiPKk7NMEKvfrKhKVQ+9bfyjhZOc+AKqTTio2e/8zFMTIv47NROHP043UntxzY5WfY5VqkSsMyQdEU2c60Tg=
+	t=1747152581; cv=none; b=FBIDn0qvUmUE1gtnFAiOOXNdN54an/qoYmHG0/YJuBl+xUgCOKGorR5sWWAmH8M6ZYAaFCF3oIdM2scpQrv6JFUbHHu+TSvXv/N1AHC7cyGC2IicBCewvPmHpTu3GYakk6oy+DvuEi858Q1yO5ZbLpiCeqml2mHa7xFrZVOorxI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747152516; c=relaxed/simple;
-	bh=/Vb4sd+3hcM5Me2MdG5VzqnOvvov6MQZnukrsT0Iuac=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UDQ8JtGoGezBgW1wOgsqtFPzitXxy5IL/PToaYUeNzHEpdClBp8N4bHl2Kn5esqnzDn4140NWWtxYHG5pM503lgUYLnnQw4eUmCZmNjtvk+iuMRJcL9fxkEoDvcwERuchw4uNwdQUlm7vzLkCUHCm/GM54HNvcFQZiHLGH567dc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=cQgcxTg+; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=O4Etl99W; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=cQgcxTg+; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=O4Etl99W; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 3FCE0211AC;
-	Tue, 13 May 2025 16:08:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1747152511; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fBvtkgHlz5SobIfyPxIXYeeroBpFTJXa2BoBZCQAARY=;
-	b=cQgcxTg+InItRrJ/Jo2FeGn2PTozXt8Vlb9Z2WsRtvbIvm0tDBXx9aLB3QR6aM4ihhltRW
-	nayHZa/04MV15cc1ajIK+fNqp9oWc40qtt608ybwGErE/yP6NrlC9Zqo8m6ITlQObcfxTF
-	WfBFk+mvCWGMdgi7POZjK0lZ4668P2Y=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1747152511;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fBvtkgHlz5SobIfyPxIXYeeroBpFTJXa2BoBZCQAARY=;
-	b=O4Etl99WSKMRAFEfXcI2fqjvmTC9t+ntOo5upyppAGpQ5UADNQtgaNiR3uOq69mViVW+rl
-	zzxW90OhyV812SBg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1747152511; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fBvtkgHlz5SobIfyPxIXYeeroBpFTJXa2BoBZCQAARY=;
-	b=cQgcxTg+InItRrJ/Jo2FeGn2PTozXt8Vlb9Z2WsRtvbIvm0tDBXx9aLB3QR6aM4ihhltRW
-	nayHZa/04MV15cc1ajIK+fNqp9oWc40qtt608ybwGErE/yP6NrlC9Zqo8m6ITlQObcfxTF
-	WfBFk+mvCWGMdgi7POZjK0lZ4668P2Y=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1747152511;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fBvtkgHlz5SobIfyPxIXYeeroBpFTJXa2BoBZCQAARY=;
-	b=O4Etl99WSKMRAFEfXcI2fqjvmTC9t+ntOo5upyppAGpQ5UADNQtgaNiR3uOq69mViVW+rl
-	zzxW90OhyV812SBg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 221531365D;
-	Tue, 13 May 2025 16:08:31 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id A9/SB39uI2gAFAAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Tue, 13 May 2025 16:08:31 +0000
-Message-ID: <1724b59a-0c3a-482c-b141-b5611665d1f4@suse.cz>
-Date: Tue, 13 May 2025 18:08:30 +0200
+	s=arc-20240116; t=1747152581; c=relaxed/simple;
+	bh=XY/ek0gkSV8i6PpcG+cgSu2ZcZTY5tOvfvynocqr7Ko=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=F6B8hTPU3clVDMBAzdTsDekK4MHq1G9mpJkQ7Ri0khHnp03TvtxDvLWSLs6nTznfsKYFiRWNDQ60PcAXqiLSS6qC4bzajBDplecL7N0p3CeTRPjfLuowQPoblbwc2ShYmaHe8ncYmbRepla0C55i9vSJXAKEzIPxDO2XmIqZzwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=J17kZtrd; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-327e9bee7e9so4019621fa.0
+        for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 09:09:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1747152578; x=1747757378; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=2xPcbPcD1WbFPE2vOJqMYs+044knJo30NqABeyI0uT8=;
+        b=J17kZtrdbUg5RgixPBWdnbRazCwferw+FOAY8z+85ngxVOmMxqdB1AIJM57/SKddhJ
+         eUsLOn0zwGtiOcQiVNqqBOAatK8b+bVUC+lVm9tSVNgY98vLelKD0w6AuTZEjl+e2zEJ
+         01GMQ8XFcfyoXS8FLpJSoywJR/MQ/bkJkJQZpsHmTZ52tOyYKs2PPToYaL5QdvWvvsee
+         abyjGk8+AgGz/dt/8kKjjIKR+rYxxN/D6LNmmkhMQ2cGikhCjbjIlZjp+Jyox6qdFXa6
+         8Y0OdiHFMO50TgnoYSD2G9vHyPIni4hM0KlQR4kPOZ+ZdQg58CQmOZLU/kGjaIUlrMPT
+         WFsQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747152578; x=1747757378;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2xPcbPcD1WbFPE2vOJqMYs+044knJo30NqABeyI0uT8=;
+        b=moR8Jrl6MwU6jtEvP3t5xWjT+7ZC8npB+QVI7R5hr37HPQYOhLkELYg88+BKfSUqqH
+         2qtZ7bXb+2rT+jnAjdJ6gk0NY1TqNZFJEejySF4apj8DMCOrYhGfN6O0AFMwEhmtTkyW
+         tY/oFzZy9eE510nkfSmpo7/r5273RpD+ku4HBrr20BJeZe9RV8Rv2u/NPIduQSrHXjlS
+         1NdNY5WftV//WXA4k8sqY+lPU03ype0Qs9U2J0SQ4aAI5TnVjB4cRvZugoGJpbuhEARO
+         wV96DGJX6HIbUmoP0RrLx915b8BoqbtkEqeVmTtTy0yvQki21sfRV6bb9m+ESwa8Ksy/
+         1+iA==
+X-Forwarded-Encrypted: i=1; AJvYcCW8Wc7fcG24wVyGFe0pOt5P69u2Hh7/2ULTzFUAESpfRR0OeibYCI8zXu6SWt/evjyG6IHypU56MG+12wU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJlNW29YCx/O1IMawnhh/brW7d/damIX6EzZ3hqVS9nWvlzLDE
+	60GWlpb29+QPv4pLFeHv6Jv1Jwv0A2Mgdk8xhlnNKVGJHFLK8vhAR+8wzrTMwhgXw+6HAyR0Vqn
+	5vtebhyK8I3L02t94qL+McWsYx5pqYQxykJP/
+X-Gm-Gg: ASbGnctiIQReVmQiN4X6PRqCMPyvGp1uhHDe8NZcawHQrxVWaXBnR1m8Nv8JP0JExmM
+	7UwI9wPShvkzagfNEau0TbVNLYFvigIzK58xjnYY4JMGT4qu91YftJ+H31l1037eKd3/xZ5xAZQ
+	Rdej3w32CVwt/ydIG8Dai6urYSKG/0DOFFt/l7yD5VESaZsaWWGHVaok5JNM5JmlTIrA==
+X-Google-Smtp-Source: AGHT+IECXHDt0eLcxw25idhLX/8kFgRZr8EWUZbj/LbdzvWUQEcF7UvzYKjtWLoyArk/1sFSJ0f2IWsS7BNTbCOzhcs=
+X-Received: by 2002:a05:651c:885:b0:30d:e104:d64a with SMTP id
+ 38308e7fff4ca-326c46b2b7bmr73376971fa.38.1747152577424; Tue, 13 May 2025
+ 09:09:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/9] slab: add opt-in caching layer of percpu sheaves
-Content-Language: en-US
-To: Harry Yoo <harry.yoo@oracle.com>
-Cc: Suren Baghdasaryan <surenb@google.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Christoph Lameter
- <cl@linux.com>, David Rientjes <rientjes@google.com>,
- Roman Gushchin <roman.gushchin@linux.dev>,
- Uladzislau Rezki <urezki@gmail.com>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, rcu@vger.kernel.org,
- maple-tree@lists.infradead.org
-References: <20250425-slub-percpu-caches-v4-0-8a636982b4a4@suse.cz>
- <20250425-slub-percpu-caches-v4-1-8a636982b4a4@suse.cz>
- <aBAmi38oWka6ckjk@harry>
-From: Vlastimil Babka <vbabka@suse.cz>
-In-Reply-To: <aBAmi38oWka6ckjk@harry>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	MIME_TRACE(0.00)[0:+];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[google.com,oracle.com,linux.com,linux.dev,gmail.com,kvack.org,vger.kernel.org,lists.infradead.org];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[oracle.com:email,suse.cz:mid,suse.cz:email]
-X-Spam-Score: -4.30
+References: <2025040820-REJECTED-6695@gregkh> <20250509072033.1335321-1-dvyukov@google.com>
+ <2025050940-marrow-roundish-8b98@gregkh> <CACT4Y+aiQcbHfj2rB6pGKevUbUoYwrHMu+aC-xh0BCKE8D-8sQ@mail.gmail.com>
+ <2025050924-marmalade-overfill-fc5a@gregkh> <CACT4Y+ZqToLK5R__x8O1ZctsG3wQtRn36JWF2MPRYqY+Zy_CUA@mail.gmail.com>
+ <20250509121036.GA92783@mit.edu> <CACT4Y+Z8ANddFCpNHvNqq6u6=s_aWoYPwu_1HmH19OWeLBi47A@mail.gmail.com>
+ <20250512144402.GA200944@mit.edu> <CACT4Y+as-Uy_BUjLDxfNwC2+78U3kJdaaKL=vbUNMZH9VcLiGQ@mail.gmail.com>
+ <20250513120549.GA9943@mit.edu>
+In-Reply-To: <20250513120549.GA9943@mit.edu>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Tue, 13 May 2025 18:09:24 +0200
+X-Gm-Features: AX0GCFvG059UfwJPZdMMMbtnK_PCOF6YmLs8bxPm__2O2ER2Feq-FUV5fuuH3Cw
+Message-ID: <CACT4Y+Y+E6xnOOJ8zwSdy09FT-OLPPYVFLvZsdpEOkYQ2vsTRg@mail.gmail.com>
+Subject: Re: REJECTED: CVE-2025-0927: heap overflow in the hfs and hfsplus
+ filesystems with manually crafted filesystem
+To: "Theodore Ts'o" <tytso@mit.edu>
+Cc: Greg KH <gregkh@linuxfoundation.org>, cve@kernel.org, 
+	linux-cve-announce@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 4/29/25 03:08, Harry Yoo wrote:
-> On Fri, Apr 25, 2025 at 10:27:21AM +0200, Vlastimil Babka wrote:
->> Specifying a non-zero value for a new struct kmem_cache_args field
->> sheaf_capacity will setup a caching layer of percpu arrays called
->> sheaves of given capacity for the created cache.
->> 
->> Allocations from the cache will allocate via the percpu sheaves (main or
->> spare) as long as they have no NUMA node preference. Frees will also
->> put the object back into one of the sheaves.
->> 
->> When both percpu sheaves are found empty during an allocation, an empty
->> sheaf may be replaced with a full one from the per-node barn. If none
->> are available and the allocation is allowed to block, an empty sheaf is
->> refilled from slab(s) by an internal bulk alloc operation. When both
->> percpu sheaves are full during freeing, the barn can replace a full one
->> with an empty one, unless over a full sheaves limit. In that case a
->> sheaf is flushed to slab(s) by an internal bulk free operation. Flushing
->> sheaves and barns is also wired to the existing cpu flushing and cache
->> shrinking operations.
->> 
->> The sheaves do not distinguish NUMA locality of the cached objects. If
->> an allocation is requested with kmem_cache_alloc_node() (or a mempolicy
->> with strict_numa mode enabled) with a specific node (not NUMA_NO_NODE),
->> the sheaves are bypassed.
->> 
->> The bulk operations exposed to slab users also try to utilize the
->> sheaves as long as the necessary (full or empty) sheaves are available
->> on the cpu or in the barn. Once depleted, they will fallback to bulk
->> alloc/free to slabs directly to avoid double copying.
->> 
->> The sheaf_capacity value is exported in sysfs for observability.
->> 
->> Sysfs CONFIG_SLUB_STATS counters alloc_cpu_sheaf and free_cpu_sheaf
->> count objects allocated or freed using the sheaves (and thus not
->> counting towards the other alloc/free path counters). Counters
->> sheaf_refill and sheaf_flush count objects filled or flushed from or to
->> slab pages, and can be used to assess how effective the caching is. The
->> refill and flush operations will also count towards the usual
->> alloc_fastpath/slowpath, free_fastpath/slowpath and other counters for
->> the backing slabs.  For barn operations, barn_get and barn_put count how
->> many full sheaves were get from or put to the barn, the _fail variants
->> count how many such requests could not be satisfied mainly  because the
->> barn was either empty or full.
-> 
->> While the barn also holds empty sheaves
->> to make some operations easier, these are not as critical to mandate own
->> counters.  Finally, there are sheaf_alloc/sheaf_free counters.
-> 
-> I initially thought we need counters for empty sheaves to see how many times
-> it grabs empty sheaves from the barn, but looks like barn_put
-> ("put full sheaves to the barn") is effectively a proxy for that, right?
+On Tue, 13 May 2025 at 14:05, Theodore Ts'o <tytso@mit.edu> wrote:
+>
+> On Tue, May 13, 2025 at 09:09:34AM +0200, Dmitry Vyukov wrote:
+> > I just hoped for something at least somewhat stronger. Bugs flagged by
+> > fsck won't require fixing in that model.
+>
+> Well, if you have the budget and the headcount to back up that hope,
+> you know where to reach me.  Personally, I've hoped to win the lottery
+> and own a private jet, but given that I'm not willing to pay the $$$
+> for the private jet --- I fly economy.
+>
+> Consider carabiners.  I have one that I use for fastening my keys to
+> my belt loop or knapsack. But there are also carabiners that are
+> certified for climbing.  If you try to use the former for climbing, it
+> wouldn't be safe.  But the climbing carabiner is a lot more expensive
+> and a lot heavier.
+>
+> As far as file systems are concerned, a hardened file system will be
+> more expensive, and will have less performance.  But if you are using
+> file systems in a data center, where the hard drive is in within the
+> Trusted Computing Base, paying the costs for a hardened file system is
+> silly.  And in fact, companies are not silly; I have yet to work for a
+> company, including my current employer, which has been willing to
+> invest in a hardened file system.
+>
+> Now, the good news is that there are ways we can use a non-hardened
+> file system in a safe way.  You just to have the system enforce the
+> constraint that the file system must be fsck'ed before mounting the
+> file system.
 
-Mostly yes, the free sheaves in barn is mainly to make the "replace full
-with empty" easy, but if that fails because there's no empty sheaves, the
-fallback with allocating an empty sheaf should still be successful enough
-that tracking it in detail doesn't seem that useful.
+Ted, have you read what this thread is about? :)
+I was talking only about images that fail fsck.
 
->> Access to the percpu sheaves is protected by local_trylock() when
->> potential callers include irq context, and local_lock() otherwise (such
->> as when we already know the gfp flags allow blocking). The trylock
->> failures should be rare and we can easily fallback. Each per-NUMA-node
->> barn has a spin_lock.
->> 
->> When slub_debug is enabled for a cache with sheaf_capacity also
->> specified, the latter is ignored so that allocations and frees reach the
->> slow path where debugging hooks are processed.
->> 
->> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
->> ---
-> 
-> Reviewed-by: Harry Yoo <harry.yoo@oracle.com>
+Re headcount, if we want that to ever happen, shouldn't we do what I proposed?
 
-Thanks!
-
-> LGTM, with a few nits:
-
-I've applied them, thanks. Responding only to one that needs it:
-
->> +static __fastpath_inline
->> +bool free_to_pcs(struct kmem_cache *s, void *object)
->> +{
->> +	struct slub_percpu_sheaves *pcs;
->> +
->> +restart:
->> +	if (!local_trylock(&s->cpu_sheaves->lock))
->> +		return false;
->> +
->> +	pcs = this_cpu_ptr(s->cpu_sheaves);
->> +
->> +	if (unlikely(pcs->main->size == s->sheaf_capacity)) {
->> +
->> +		struct slab_sheaf *empty;
->> +
->> +		if (!pcs->spare) {
->> +			empty = barn_get_empty_sheaf(pcs->barn);
->> +			if (empty) {
->> +				pcs->spare = pcs->main;
->> +				pcs->main = empty;
->> +				goto do_free;
->> +			}
->> +			goto alloc_empty;
->> +		}
->> +
->> +		if (pcs->spare->size < s->sheaf_capacity) {
->> +			swap(pcs->main, pcs->spare);
->> +			goto do_free;
->> +		}
->> +
->> +		empty = barn_replace_full_sheaf(pcs->barn, pcs->main);
->> +
->> +		if (!IS_ERR(empty)) {
->> +			stat(s, BARN_PUT);
->> +			pcs->main = empty;
->> +			goto do_free;
->> +		}
-> 
-> nit: stat(s, BARN_PUT_FAIL); should probably be here instead?
-
-Hm, the intention was that no, because when PTR_ERR(empty) == -ENOMEM, we
-try alloc_empty_sheaf(), and that will likely succeed, and then
-__pcs_install_empty_sheaf() will just force the put full sheaf (and record a
-BARN_PUT), because we already saw that we're not over capacity. But now I
-see I didn't describe it as a scenario for the function's comment, so I will
-add that.
-
-But technically we should also record stat(s, BARN_PUT_FAIL) when that
-alloc_empty_sheaf() fails, but not when we "goto alloc_empty" from the "no
-spare" above. Bit icky but I'll add that too.
-
->> +
->> +		if (PTR_ERR(empty) == -E2BIG) {
->> +			/* Since we got here, spare exists and is full */
->> +			struct slab_sheaf *to_flush = pcs->spare;
->> +
->> +			stat(s, BARN_PUT_FAIL);
->> +
->> +			pcs->spare = NULL;
->> +			local_unlock(&s->cpu_sheaves->lock);
->> +
->> +			sheaf_flush_unused(s, to_flush);
->> +			empty = to_flush;
->> +			goto got_empty;
->> +		}
-> 
+If we downplay all of these, pretend these don't exist, and argue it's
+not important in any context, unsurprisingly nobody is willing to
+allocate a headcount to fix this "unimportant nothing".
 
 
+> If you want to be even more paranoid (or the proprietary file system
+> doesn't have a good fsck), you could mount the file system via a guest
+> kernel running in a VM, where the VM is locked down using a seccomp
+> sandbox, and which provides file system services via 9pfs to the host
+> kernel.  9pfs is a remote file system which is easy to audit, and this
+> is a key part of the security strategy used by gVisor.
+>
+> See?  Easy peasy!  And far cheaper than attempting to harden a file
+> system.
+>
+>                                                 - Ted
+>
+> P.S.  If some company wants the equivalent of a titanium carabiner,
+> where we invest a huge amount of SWE effort in making a hardened file
+> system which is as performant as possible, I'm certainly willing to
+> work with such a team.  I haven't yet seen the business case where the
+> ROI makes sense, but perhaps some company has a unique situation where
+> such an investment makes sense.
+>
 
