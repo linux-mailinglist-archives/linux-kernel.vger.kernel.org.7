@@ -1,147 +1,109 @@
-Return-Path: <linux-kernel+bounces-645645-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-645653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74185AB50F1
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 12:06:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 54C49AB5115
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 12:09:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 487AC168B3A
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 10:04:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AABAC167AEB
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 10:07:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BF8823C4FA;
-	Tue, 13 May 2025 10:00:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 227B3242D94;
+	Tue, 13 May 2025 10:05:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KQO/JwTU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ATiLhhIt"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF5A52522B4;
-	Tue, 13 May 2025 10:00:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03A3F242D6A;
+	Tue, 13 May 2025 10:05:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747130408; cv=none; b=b8UQLvMk9QWL/Gvo7NBvMU+bW6gG8yG4gOOfJ/SNDo7H69yNwtj9SMBavQ2SrbA/F/nNjRwB7youXg5m4HHEVqRszWXXHnQ7egpGlfiHUBuBcGhUX6zYcaVSUfHm8fwR1rLw3PdI0vbTaFHwhq5N+8pM90XuUD+bpf4Rd1C8cS8=
+	t=1747130721; cv=none; b=ZOs6vsnTl9CP4HDL3KnrI2sf2awiobsStcR33joQa2L90UNxlo3qOa+dhOAdKeK3WEJzC6dN+tLAgmfe3+vPIpvpYI9uBB9wYPviSKqCrA1L6mI60cW+p9xh8FcS7OWL9jL0bv5HU/5W5i8QVDjl8XLtdPwalU29LH9aSh5CaRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747130408; c=relaxed/simple;
-	bh=/fzsepHpqLW4buNd1bdj2oiNVq6iv96nDcrAG+1zr+g=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=uBjJHxO5yFtoiDf/cPFhOEk23jlA33RXnflUajjwDn7dSb9jdvmzcQGHvRs84vrUPCG9LgRRhcC8Q3e+uegnNSlGBsKBmJ89XDjvrCbqPRVcIDMMyBmSqm7cJzQ3JQcxLmhR0+xs/+H3XnNBvjwj5fR6s3dVX3doEomqBUgt8Hw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KQO/JwTU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED998C4CEE4;
-	Tue, 13 May 2025 10:00:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747130408;
-	bh=/fzsepHpqLW4buNd1bdj2oiNVq6iv96nDcrAG+1zr+g=;
-	h=Date:From:To:Cc:Subject:From;
-	b=KQO/JwTU9I9VqnzO8kGRF2uvLUVvfq/A2W85FcpaFwm8GgmndVSghKHfXamVXvL5u
-	 kIkimaMkW2aPk3ug5gZSsDUiV3GP+mYe1qKB1y4LQSVQmekoAZJH0wqXjllQWl20+m
-	 tlOGczev1x2ty37dxJkydGzwb9fHay5rJQ+5WwGL+ACcxX6l6Zj1UO40yqkimOCbKb
-	 20Ldr3ua7X6J8KIiahYmTM9ukm5TZ4txpkAOXKv/T7sCoWIumILEkox2yra4Woz0h/
-	 M1xLPPUHobQtUvS4HgUkgWp9y4TUJBgwXxWRoWXPQW34KAIQ+mP015V96dWUyWIW9o
-	 Q3OccsbyimqdQ==
-Date: Tue, 13 May 2025 12:00:03 +0200
-From: Danilo Krummrich <dakr@kernel.org>
-To: Miguel Ojeda <ojeda@kernel.org>
-Cc: Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] Rust ALLOC for v6.16
-Message-ID: <aCMYI-phNWE1PZGz@pollux>
+	s=arc-20240116; t=1747130721; c=relaxed/simple;
+	bh=Xh9fKQAqfb6ofUz7KYzpmwduHizQHJsdLJ9D0gtxpbs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IieRhrzf5yjtJgeBeokfFKPM+T1XQJBviA25Ocf4doIgGUNVgnkB/z9ox0Fk0fo2ZNoUtEN5zvS7PcZkX9/YBiKJM0be1eROfWfISo3W3LpwISluaTODglz68PqE6fJRqgz62OpUX7pLGoV4P74ajsEp2tyP3ExwUW9g/Nq5tyU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ATiLhhIt; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1747130720; x=1778666720;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=Xh9fKQAqfb6ofUz7KYzpmwduHizQHJsdLJ9D0gtxpbs=;
+  b=ATiLhhItULekGaq03K6GWodJTniRafqMZrmk6U8/E2p+hO+knnNhd38C
+   ZXTuKyCZ9MR15mlAyTspcyyXrXlc8ON1lANSe80hyVQ9MUPsewCK7hG8r
+   p5y4RiXiYi0FMHetFI8+pUYkE3mKWaYkFruWlVnp+gzzCC9ihx0Jw0p/e
+   661seFfJHKCKq2awachTnzXoOzuuL1nWjOVhXUG2u/pFsRBCxWMFhHs38
+   cnQD4/ERumHJN9GMf1NUYhtcUv179vxNegXVXhY58TbsJJnopIBplN4EO
+   qI77frWQtC1BWG3MUTfJd3dBeu4zry+whGiZXgCfEqOAUBtyt011NBiFu
+   w==;
+X-CSE-ConnectionGUID: jTCGZK3SSBqv10tsXGZseg==
+X-CSE-MsgGUID: 08c2tKEPSJC2HfycaQrKig==
+X-IronPort-AV: E=McAfee;i="6700,10204,11431"; a="59606199"
+X-IronPort-AV: E=Sophos;i="6.15,284,1739865600"; 
+   d="scan'208";a="59606199"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 May 2025 03:05:19 -0700
+X-CSE-ConnectionGUID: XleM/XMsQv2MrHqyR+zYFA==
+X-CSE-MsgGUID: 07YhXSkHT8iuKO9MQGvWcg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,284,1739865600"; 
+   d="scan'208";a="137699044"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa007.fm.intel.com with ESMTP; 13 May 2025 03:05:17 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id C36A3217; Tue, 13 May 2025 13:05:15 +0300 (EEST)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-acpi@vger.kernel.org
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>,
+	Mika Westerberg <westeri@kernel.org>,
+	Hans de Goede <hdegoede@redhat.com>
+Subject: [PATCH v1 0/4] gpiolib: acpi: Split quirks to its own file
+Date: Tue, 13 May 2025 13:00:30 +0300
+Message-ID: <20250513100514.2492545-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-Hi Miguel,
+The GPIO ACPI helpers use a few quirks which consumes approximately 20%
+of the file. Besides that the necessary bits are sparse and being directly
+referred. Split them to a separate file. There is no functional change.
 
-Please pull the following ALLOC changes.
+For the new file I used the Hans' authorship of Hans as he the author of
+all those bits (expect very tiny changes made by this series).
 
-Most of them are new methods for Vec, required by binder and nova-core.
+Hans, please check if it's okay and confirm, or suggest better alternative.
 
-All commits have been in linux-next for at least a few days -- no conflicts
-expected.
+Andy Shevchenko (4):
+  gpiolib: acpi: Switch to use enum in acpi_gpio_in_ignore_list()
+  gpiolib: acpi: Handle deferred list via new API
+  gpiolib: acpi: Add acpi_gpio_need_run_edge_events_on_boot() getter
+  gpiolib: acpi: Move quirks to a separate file
 
-- Danilo
+ drivers/gpio/Makefile                         |   1 +
+ .../{gpiolib-acpi.c => gpiolib-acpi-core.c}   | 344 +----------------
+ drivers/gpio/gpiolib-acpi-quirks.c            | 363 ++++++++++++++++++
+ drivers/gpio/gpiolib-acpi.h                   |  15 +
+ 4 files changed, 392 insertions(+), 331 deletions(-)
+ rename drivers/gpio/{gpiolib-acpi.c => gpiolib-acpi-core.c} (79%)
+ create mode 100644 drivers/gpio/gpiolib-acpi-quirks.c
 
-The following changes since commit 0af2f6be1b4281385b618cb86ad946eded089ac8:
+-- 
+2.47.2
 
-  Linux 6.15-rc1 (2025-04-06 13:11:33 -0700)
-
-are available in the Git repository at:
-
-  https://github.com/Rust-for-Linux/linux.git tags/alloc-next-v6.16-2025-05-13
-
-for you to fetch changes up to 771c5a7d9843643b035938624050e7769133b9cc:
-
-  rust: alloc: add Vec::insert_within_capacity (2025-05-07 18:40:45 +0200)
-
-----------------------------------------------------------------
-Alloc changes for v6.16
-
-Box:
-  - support for type coercion, e.g. `Box<T>` to `Box<dyn U>` if T
-    implements U
-
-Vec:
-  - implement new methods (prerequisites for nova-core and binder)
-    - Vec::truncate()
-    - Vec::resize()
-    - Vec::clear()
-    - Vec::pop()
-    - Vec::push_within_capacity()
-      - new error type: PushError
-    - Vec::drain_all()
-    - Vec::retain()
-    - Vec::remove()
-      - new error type: RemoveError
-    - Vec::insert_within_capacity
-      - new error type: InsertError
-  - simplify Vec::push() using Vec::spare_capacity_mut()
-  - split Vec::set_len() into Vec::inc_len() and Vec::dec_len()
-    - add type invariant Vec::len() <= Vec::capacity
-    - simplify Vec::truncate() using Vec::dec_len()
-
-----------------------------------------------------------------
-Alexandre Courbot (1):
-      rust: alloc: allow coercion from `Box<T>` to `Box<dyn U>` if T implements U
-
-Alice Ryhl (7):
-      rust: alloc: add Vec::clear
-      rust: alloc: add Vec::pop
-      rust: alloc: add Vec::push_within_capacity
-      rust: alloc: add Vec::drain_all
-      rust: alloc: add Vec::retain
-      rust: alloc: add Vec::remove
-      rust: alloc: add Vec::insert_within_capacity
-
-Andrew Ballance (2):
-      rust: alloc: add Vec::truncate method
-      rust: alloc: add Vec::resize method
-
-Danilo Krummrich (1):
-      rust: alloc: add missing invariant in Vec::set_len()
-
-Tamir Duberstein (5):
-      rust: alloc: use `spare_capacity_mut` to reduce unsafe
-      rust: alloc: add Vec::len() <= Vec::capacity invariant
-      rust: alloc: add `Vec::dec_len`
-      rust: alloc: refactor `Vec::truncate` using `dec_len`
-      rust: alloc: replace `Vec::set_len` with `inc_len`
-
- rust/kernel/alloc/kbox.rs        |  40 ++++++++++-
- rust/kernel/alloc/kvec.rs        | 430 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++--------
- rust/kernel/alloc/kvec/errors.rs |  61 +++++++++++++++++
- rust/kernel/str.rs               |   2 +-
- rust/kernel/uaccess.rs           |   2 +-
- 5 files changed, 506 insertions(+), 29 deletions(-)
- create mode 100644 rust/kernel/alloc/kvec/errors.rs
 
