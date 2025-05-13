@@ -1,108 +1,537 @@
-Return-Path: <linux-kernel+bounces-646439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-646456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 770FAAB5C31
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 20:20:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF571AB5C6C
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 20:40:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2439E1B47D42
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 18:21:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2803786710F
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 18:39:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39C442BFC68;
-	Tue, 13 May 2025 18:20:49 +0000 (UTC)
-Received: from pegase1.c-s.fr (pegase1.c-s.fr [93.17.236.30])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 426EE2BF982;
-	Tue, 13 May 2025 18:20:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.236.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 494A62BF3DF;
+	Tue, 13 May 2025 18:40:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="Bg0JHItn"
+Received: from smtp-fw-9102.amazon.com (smtp-fw-9102.amazon.com [207.171.184.29])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C1462BF3EA
+	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 18:40:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.171.184.29
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747160448; cv=none; b=Xf8cM7CfIK+fd2lgFi1bo9FUIGxW2WpNRwQe8Z+vlq14boGJ+kix49U93MH4WjT5FsFBSOtTMo0qeHAwA3W1eLKsayHbfvBCARSloyTsuPHMmoxP3lIZJ8hQbwMvuW/WJWuK2yFWLmhXy1RIkdQyoc5IDHWEmBA/lHXdbjFB8bg=
+	t=1747161604; cv=none; b=ixHi9kZaYxBByaZY64vPwuZ004mb/KOzv1T8KFvWzADK1sL/rVH1fWWJm+J7zfMJRz5tUY3m9szVRjlPzfLFFJoym8KHWEK4TiF5Smv7u3RZVqRdeMyv38KIgYPG1k/Xm9Zi4aiSg67qDmzaX8zj7L9OhOP8QbuonnXRyxEDn3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747160448; c=relaxed/simple;
-	bh=/iOEpJ9iPy0tHhofY6MLd8ikKgiJWDZRu8pdfRHgU5g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LrMiR92jvB89DXxOTOM1/8mSVfnisgG5SFtJlZC8k/U3fvdiVgiYFpIV1/9YPkd74VFzRn5O8ICifACNv5fZhzOuttHknJUrUN0vrX8anfkatFgjQ/ijCVaVSk+xO6mo1pSFvqH9oJ5zjaLov3KSLhpcgWYdEOLBuxJTkG86D00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.236.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [192.168.12.233])
-	by localhost (Postfix) with ESMTP id 4ZxkZ65hvGz9sB5;
-	Tue, 13 May 2025 19:51:58 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-	by localhost (pegase1.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id T0z2QbPEdpAx; Tue, 13 May 2025 19:51:58 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase1.c-s.fr (Postfix) with ESMTP id 4ZxkZ6517Mz9sB2;
-	Tue, 13 May 2025 19:51:58 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id A624E8B765;
-	Tue, 13 May 2025 19:51:58 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id gzWKfMy260rW; Tue, 13 May 2025 19:51:58 +0200 (CEST)
-Received: from [192.168.235.99] (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id DEB268B763;
-	Tue, 13 May 2025 19:51:57 +0200 (CEST)
-Message-ID: <a4700ad8-1e6d-4f57-b160-e7b6d172ef60@csgroup.eu>
-Date: Tue, 13 May 2025 19:51:57 +0200
+	s=arc-20240116; t=1747161604; c=relaxed/simple;
+	bh=Inlve9B27G/udqVfkpo+fqAYRJJBogL+t7oOgfg2yNQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hUJL/uIHtQMsTa3T9PA09MIJ9dDgHKBce6EhT2ASBggrLujCuW4VBOPopl2tfk5Y5UtwxK0eDH2ORh/+qr+ZmGdTWAvySq3GTbcWGi237zWkXMvDV1cWjFHm23YV2Z+Ig+Pt2KFJrqyAKLMT3Dh6lClGQGDuGrJ//BURLoNGDpk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.de; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=Bg0JHItn; arc=none smtp.client-ip=207.171.184.29
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
+  t=1747161603; x=1778697603;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=xQlODAc+F1Mjzr3iD1pMBijNuo39nDz1Foa9ysrTKZU=;
+  b=Bg0JHItn36WjO+WLNoPyJ3JLuioqZ5b86eAPjPaTjjZ+lI1/wzW2hCMW
+   ntWL/G6FbQmUB89bzTYSoLHyC7BANe7n5F+r+W/cnvEJ+r/ieSgI1QZSH
+   wTONO6hNxhtExXxkLHkXoyRMMLkLKiOUE3W72Mox9VjBKTbOkZ2CGQNbA
+   QrV09LMM4U7Fk2PGsjkQomF1vKpbSzgnWkVhzwB87xx/XlqsbhmctC2xt
+   3fs0oIApYlHNKrQ+/B3ONReXdo/cvA/jRETGmb+8rgCbh1DOE2wYUIWq9
+   VGr0WehUFapnc0s3hcPT5OvFrO+Zn7UCmnTXOhLbCf0Q65EB5lkKk1av1
+   w==;
+X-IronPort-AV: E=Sophos;i="6.15,285,1739836800"; 
+   d="scan'208";a="520096534"
+Received: from pdx4-co-svc-p1-lb2-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.214])
+  by smtp-border-fw-9102.sea19.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 May 2025 18:02:33 +0000
+Received: from EX19MTAUWC002.ant.amazon.com [10.0.7.35:59787]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.11.234:2525] with esmtp (Farcaster)
+ id 2a6dff77-943e-4bbd-8ead-72bed80543cb; Tue, 13 May 2025 18:02:32 +0000 (UTC)
+X-Farcaster-Flow-ID: 2a6dff77-943e-4bbd-8ead-72bed80543cb
+Received: from EX19D020UWC004.ant.amazon.com (10.13.138.149) by
+ EX19MTAUWC002.ant.amazon.com (10.250.64.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Tue, 13 May 2025 18:02:32 +0000
+Received: from dev-dsk-graf-1a-90d01eec.eu-west-1.amazon.com (172.19.99.218)
+ by EX19D020UWC004.ant.amazon.com (10.13.138.149) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Tue, 13 May 2025 18:02:30 +0000
+From: Alexander Graf <graf@amazon.com>
+To: <kexec@lists.infradead.org>
+CC: <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>,
+	Baoquan He <bhe@redhat.com>, Pasha Tatashin <pasha.tatashin@soleen.com>,
+	<nh-open-source@amazon.com>
+Subject: [PATCH v3] kexec: Enable CMA based contiguous allocation
+Date: Tue, 13 May 2025 18:02:29 +0000
+Message-ID: <20250513180229.7494-1-graf@amazon.com>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] params: Add support for static keys
-To: Kent Overstreet <kent.overstreet@linux.dev>, linux-kernel@vger.kernel.org
-Cc: Luis Chamberlain <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>,
- Sami Tolvanen <samitolvanen@google.com>, Daniel Gomez
- <da.gomez@samsung.com>, linux-modules@vger.kernel.org
-References: <20250510210126.4032840-1-kent.overstreet@linux.dev>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <20250510210126.4032840-1-kent.overstreet@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: EX19D043UWA003.ant.amazon.com (10.13.139.31) To
+ EX19D020UWC004.ant.amazon.com (10.13.138.149)
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+
+When booting a new kernel with kexec_file, the kernel picks a target
+location that the kernel should live at, then allocates random pages,
+checks whether any of those patches magically happens to coincide with
+a target address range and if so, uses them for that range.
+
+For every page allocated this way, it then creates a page list that the
+relocation code - code that executes while all CPUs are off and we are
+just about to jump into the new kernel - copies to their final memory
+location. We can not put them there before, because chances are pretty
+good that at least some page in the target range is already in use by
+the currently running Linux environment. Copying is happening from a
+single CPU at RAM rate, which takes around 4-50 ms per 100 MiB.
+
+All of this is inefficient and error prone.
+
+To successfully kexec, we need to quiesce all devices of the outgoing
+kernel so they don't scribble over the new kernel's memory. We have seen
+cases where that does not happen properly (*cough* GIC *cough*) and hence
+the new kernel was corrupted. This started a month long journey to root
+cause failing kexecs to eventually see memory corruption, because the new
+kernel was corrupted severely enough that it could not emit output to
+tell us about the fact that it was corrupted. By allocating memory for the
+next kernel from a memory range that is guaranteed scribbling free, we can
+boot the next kernel up to a point where it is at least able to detect
+corruption and maybe even stop it before it becomes severe. This increases
+the chance for successful kexecs.
+
+Since kexec got introduced, Linux has gained the CMA framework which
+can perform physically contiguous memory mappings, while keeping that
+memory available for movable memory when it is not needed for contiguous
+allocations. The default CMA allocator is for DMA allocations.
+
+This patch adds logic to the kexec file loader to attempt to place the
+target payload at a location allocated from CMA. If successful, it uses
+that memory range directly instead of creating copy instructions during
+the hot phase. To ensure that there is a safety net in case anything goes
+wrong with the CMA allocation, it also adds a flag for user space to force
+disable CMA allocations.
+
+Using CMA allocations has two advantages:
+
+  1) Faster by 4-50 ms per 100 MiB. There is no more need to copy in the
+     hot phase.
+  2) More robust. Even if by accident some page is still in use for DMA,
+     the new kernel image will be safe from that access because it resides
+     in a memory region that is considered allocated in the old kernel and
+     has a chance to reinitialize that component.
+
+Signed-off-by: Alexander Graf <graf@amazon.com>
+
+---
+
+v1 -> v2:
+
+  - Clarify patch description
+  - Move cma pointer out of kexec_segment. That is a sneaky UAPI struct we
+    can not modify. Fixes non kexec_file path
+  - Coding style
+  - Move memset(0) to only clear remainder
+  - Move kexec_alloc_contig() into kexec_locate_mem_hole(). Makes the code
+    flow easier to read.
+  - Sanitize return values
+
+v2 -> v3:
+
+  - Fix refactoring bug which meant we never exercised the new code path
+---
+ arch/riscv/kernel/elf_kexec.c |   1 +
+ include/linux/kexec.h         |  10 ++++
+ include/uapi/linux/kexec.h    |   1 +
+ kernel/kexec.c                |   2 +-
+ kernel/kexec_core.c           | 100 +++++++++++++++++++++++++++++++---
+ kernel/kexec_file.c           |  47 +++++++++++++++-
+ kernel/kexec_internal.h       |   2 +-
+ 7 files changed, 152 insertions(+), 11 deletions(-)
+
+diff --git a/arch/riscv/kernel/elf_kexec.c b/arch/riscv/kernel/elf_kexec.c
+index e783a72d051f..d81647c98c92 100644
+--- a/arch/riscv/kernel/elf_kexec.c
++++ b/arch/riscv/kernel/elf_kexec.c
+@@ -109,6 +109,7 @@ static int elf_find_pbase(struct kimage *image, unsigned long kernel_len,
+ 	kbuf.mem = KEXEC_BUF_MEM_UNKNOWN;
+ 	kbuf.memsz = ALIGN(kernel_len, PAGE_SIZE);
+ 	kbuf.top_down = false;
++	kbuf.cma = NULL;
+ 	ret = arch_kexec_locate_mem_hole(&kbuf);
+ 	if (!ret) {
+ 		*old_pbase = lowest_paddr;
+diff --git a/include/linux/kexec.h b/include/linux/kexec.h
+index c8971861521a..7821b23bd1e9 100644
+--- a/include/linux/kexec.h
++++ b/include/linux/kexec.h
+@@ -75,6 +75,12 @@ extern note_buf_t __percpu *crash_notes;
+ 
+ typedef unsigned long kimage_entry_t;
+ 
++/*
++ * This is a copy of the UAPI struct kexec_segment and must be identical
++ * to it because it gets copied straight from user space into kernel
++ * memory. Do not modify this structure unless you change the way segments
++ * get ingested from user space.
++ */
+ struct kexec_segment {
+ 	/*
+ 	 * This pointer can point to user memory if kexec_load() system
+@@ -169,6 +175,7 @@ int kexec_image_post_load_cleanup_default(struct kimage *image);
+  * @buf_min:	The buffer can't be placed below this address.
+  * @buf_max:	The buffer can't be placed above this address.
+  * @top_down:	Allocate from top of memory.
++ * @cma:	CMA page if the buffer is backed by CMA.
+  */
+ struct kexec_buf {
+ 	struct kimage *image;
+@@ -180,6 +187,7 @@ struct kexec_buf {
+ 	unsigned long buf_min;
+ 	unsigned long buf_max;
+ 	bool top_down;
++	struct page *cma;
+ };
+ 
+ int kexec_load_purgatory(struct kimage *image, struct kexec_buf *kbuf);
+@@ -310,6 +318,7 @@ struct kimage {
+ 
+ 	unsigned long nr_segments;
+ 	struct kexec_segment segment[KEXEC_SEGMENT_MAX];
++	struct page *segment_cma[KEXEC_SEGMENT_MAX];
+ 
+ 	struct list_head control_pages;
+ 	struct list_head dest_pages;
+@@ -331,6 +340,7 @@ struct kimage {
+ 	 */
+ 	unsigned int hotplug_support:1;
+ #endif
++	unsigned int no_cma:1;
+ 
+ #ifdef ARCH_HAS_KIMAGE_ARCH
+ 	struct kimage_arch arch;
+diff --git a/include/uapi/linux/kexec.h b/include/uapi/linux/kexec.h
+index 5ae1741ea8ea..8958ebfcff94 100644
+--- a/include/uapi/linux/kexec.h
++++ b/include/uapi/linux/kexec.h
+@@ -27,6 +27,7 @@
+ #define KEXEC_FILE_ON_CRASH	0x00000002
+ #define KEXEC_FILE_NO_INITRAMFS	0x00000004
+ #define KEXEC_FILE_DEBUG	0x00000008
++#define KEXEC_FILE_NO_CMA	0x00000010
+ 
+ /* These values match the ELF architecture values.
+  * Unless there is a good reason that should continue to be the case.
+diff --git a/kernel/kexec.c b/kernel/kexec.c
+index a6b3f96bb50c..28008e3d462e 100644
+--- a/kernel/kexec.c
++++ b/kernel/kexec.c
+@@ -152,7 +152,7 @@ static int do_kexec_load(unsigned long entry, unsigned long nr_segments,
+ 		goto out;
+ 
+ 	for (i = 0; i < nr_segments; i++) {
+-		ret = kimage_load_segment(image, &image->segment[i]);
++		ret = kimage_load_segment(image, i);
+ 		if (ret)
+ 			goto out;
+ 	}
+diff --git a/kernel/kexec_core.c b/kernel/kexec_core.c
+index 3e62b944c883..b5b680dd1796 100644
+--- a/kernel/kexec_core.c
++++ b/kernel/kexec_core.c
+@@ -40,6 +40,7 @@
+ #include <linux/hugetlb.h>
+ #include <linux/objtool.h>
+ #include <linux/kmsg_dump.h>
++#include <linux/dma-map-ops.h>
+ 
+ #include <asm/page.h>
+ #include <asm/sections.h>
+@@ -553,6 +554,24 @@ static void kimage_free_entry(kimage_entry_t entry)
+ 	kimage_free_pages(page);
+ }
+ 
++static void kimage_free_cma(struct kimage *image)
++{
++	unsigned long i;
++
++	for (i = 0; i < image->nr_segments; i++) {
++		struct page *cma = image->segment_cma[i];
++		u32 nr_pages = image->segment[i].memsz >> PAGE_SHIFT;
++
++		if (!cma)
++			continue;
++
++		arch_kexec_pre_free_pages(page_address(cma), nr_pages);
++		dma_release_from_contiguous(NULL, cma, nr_pages);
++		image->segment_cma[i] = NULL;
++	}
++
++}
++
+ void kimage_free(struct kimage *image)
+ {
+ 	kimage_entry_t *ptr, entry;
+@@ -591,6 +610,9 @@ void kimage_free(struct kimage *image)
+ 	/* Free the kexec control pages... */
+ 	kimage_free_page_list(&image->control_pages);
+ 
++	/* Free CMA allocations */
++	kimage_free_cma(image);
++
+ 	/*
+ 	 * Free up any temporary buffers allocated. This might hit if
+ 	 * error occurred much later after buffer allocation.
+@@ -716,9 +738,69 @@ static struct page *kimage_alloc_page(struct kimage *image,
+ 	return page;
+ }
+ 
+-static int kimage_load_normal_segment(struct kimage *image,
+-					 struct kexec_segment *segment)
++static int kimage_load_cma_segment(struct kimage *image, int idx)
++{
++	struct kexec_segment *segment = &image->segment[idx];
++	struct page *cma = image->segment_cma[idx];
++	char *ptr = page_address(cma);
++	unsigned long maddr;
++	size_t ubytes, mbytes;
++	int result = 0;
++	unsigned char __user *buf = NULL;
++	unsigned char *kbuf = NULL;
++
++	if (image->file_mode)
++		kbuf = segment->kbuf;
++	else
++		buf = segment->buf;
++	ubytes = segment->bufsz;
++	mbytes = segment->memsz;
++	maddr = segment->mem;
++
++	/* Then copy from source buffer to the CMA one */
++	while (mbytes) {
++		size_t uchunk, mchunk;
++
++		ptr += maddr & ~PAGE_MASK;
++		mchunk = min_t(size_t, mbytes,
++				PAGE_SIZE - (maddr & ~PAGE_MASK));
++		uchunk = min(ubytes, mchunk);
++
++		if (uchunk) {
++			/* For file based kexec, source pages are in kernel memory */
++			if (image->file_mode)
++				memcpy(ptr, kbuf, uchunk);
++			else
++				result = copy_from_user(ptr, buf, uchunk);
++			ubytes -= uchunk;
++			if (image->file_mode)
++				kbuf += uchunk;
++			else
++				buf += uchunk;
++		}
++
++		if (result) {
++			result = -EFAULT;
++			goto out;
++		}
++
++		ptr    += mchunk;
++		maddr  += mchunk;
++		mbytes -= mchunk;
++
++		cond_resched();
++	}
++
++	/* Clear any remainder */
++	memset(ptr, 0, mbytes);
++
++out:
++	return result;
++}
++
++static int kimage_load_normal_segment(struct kimage *image, int idx)
+ {
++	struct kexec_segment *segment = &image->segment[idx];
+ 	unsigned long maddr;
+ 	size_t ubytes, mbytes;
+ 	int result;
+@@ -733,6 +815,9 @@ static int kimage_load_normal_segment(struct kimage *image,
+ 	mbytes = segment->memsz;
+ 	maddr = segment->mem;
+ 
++	if (image->segment_cma[idx])
++		return kimage_load_cma_segment(image, idx);
++
+ 	result = kimage_set_destination(image, maddr);
+ 	if (result < 0)
+ 		goto out;
+@@ -787,13 +872,13 @@ static int kimage_load_normal_segment(struct kimage *image,
+ }
+ 
+ #ifdef CONFIG_CRASH_DUMP
+-static int kimage_load_crash_segment(struct kimage *image,
+-					struct kexec_segment *segment)
++static int kimage_load_crash_segment(struct kimage *image, int idx)
+ {
+ 	/* For crash dumps kernels we simply copy the data from
+ 	 * user space to it's destination.
+ 	 * We do things a page at a time for the sake of kmap.
+ 	 */
++	struct kexec_segment *segment = &image->segment[idx];
+ 	unsigned long maddr;
+ 	size_t ubytes, mbytes;
+ 	int result;
+@@ -858,18 +943,17 @@ static int kimage_load_crash_segment(struct kimage *image,
+ }
+ #endif
+ 
+-int kimage_load_segment(struct kimage *image,
+-				struct kexec_segment *segment)
++int kimage_load_segment(struct kimage *image, int idx)
+ {
+ 	int result = -ENOMEM;
+ 
+ 	switch (image->type) {
+ 	case KEXEC_TYPE_DEFAULT:
+-		result = kimage_load_normal_segment(image, segment);
++		result = kimage_load_normal_segment(image, idx);
+ 		break;
+ #ifdef CONFIG_CRASH_DUMP
+ 	case KEXEC_TYPE_CRASH:
+-		result = kimage_load_crash_segment(image, segment);
++		result = kimage_load_crash_segment(image, idx);
+ 		break;
+ #endif
+ 	}
+diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
+index fba686487e3b..916beae68fb6 100644
+--- a/kernel/kexec_file.c
++++ b/kernel/kexec_file.c
+@@ -27,6 +27,7 @@
+ #include <linux/kernel_read_file.h>
+ #include <linux/syscalls.h>
+ #include <linux/vmalloc.h>
++#include <linux/dma-map-ops.h>
+ #include "kexec_internal.h"
+ 
+ #ifdef CONFIG_KEXEC_SIG
+@@ -230,6 +231,8 @@ kimage_file_prepare_segments(struct kimage *image, int kernel_fd, int initrd_fd,
+ 		ret = 0;
+ 	}
+ 
++	image->no_cma = !!(flags & KEXEC_FILE_NO_CMA);
++
+ 	if (cmdline_len) {
+ 		image->cmdline_buf = memdup_user(cmdline_ptr, cmdline_len);
+ 		if (IS_ERR(image->cmdline_buf)) {
+@@ -406,7 +409,7 @@ SYSCALL_DEFINE5(kexec_file_load, int, kernel_fd, int, initrd_fd,
+ 			      i, ksegment->buf, ksegment->bufsz, ksegment->mem,
+ 			      ksegment->memsz);
+ 
+-		ret = kimage_load_segment(image, &image->segment[i]);
++		ret = kimage_load_segment(image, i);
+ 		if (ret)
+ 			goto out;
+ 	}
+@@ -632,6 +635,39 @@ static int kexec_walk_resources(struct kexec_buf *kbuf,
+ 		return walk_system_ram_res(0, ULONG_MAX, kbuf, func);
+ }
+ 
++static int kexec_alloc_contig(struct kexec_buf *kbuf)
++{
++	size_t nr_pages = kbuf->memsz >> PAGE_SHIFT;
++	unsigned long mem;
++	struct page *p;
++
++	/* User space disabled CMA allocations, bail out. */
++	if (kbuf->image->no_cma)
++		return -EPERM;
++
++	p = dma_alloc_from_contiguous(NULL, nr_pages, get_order(kbuf->buf_align), true);
++	if (!p)
++		return -ENOMEM;
++
++	pr_debug("allocated %zu DMA pages at 0x%lx", nr_pages, page_to_boot_pfn(p));
++
++	mem = page_to_boot_pfn(p) << PAGE_SHIFT;
++
++	if (kimage_is_destination_range(kbuf->image, mem, mem + kbuf->memsz)) {
++		/* Our region is already in use by a statically defined one. Bail out. */
++		pr_debug("CMA overlaps existing mem: 0x%lx+0x%lx\n", mem, kbuf->memsz);
++		dma_release_from_contiguous(NULL, p, nr_pages);
++		return -EBUSY;
++	}
++
++	kbuf->mem = page_to_boot_pfn(p) << PAGE_SHIFT;
++	kbuf->cma = p;
++
++	arch_kexec_post_alloc_pages(page_address(p), (int)nr_pages, 0);
++
++	return 0;
++}
++
+ /**
+  * kexec_locate_mem_hole - find free memory for the purgatory or the next kernel
+  * @kbuf:	Parameters for the memory search.
+@@ -648,6 +684,13 @@ int kexec_locate_mem_hole(struct kexec_buf *kbuf)
+ 	if (kbuf->mem != KEXEC_BUF_MEM_UNKNOWN)
+ 		return 0;
+ 
++	/*
++	 * Try to find a free physically contiguous block of memory first. With that, we
++	 * can avoid any copying at kexec time.
++	 */
++	if (!kexec_alloc_contig(kbuf))
++		return 0;
++
+ 	if (!IS_ENABLED(CONFIG_ARCH_KEEP_MEMBLOCK))
+ 		ret = kexec_walk_resources(kbuf, locate_mem_hole_callback);
+ 	else
+@@ -693,6 +736,7 @@ int kexec_add_buffer(struct kexec_buf *kbuf)
+ 	/* Ensure minimum alignment needed for segments. */
+ 	kbuf->memsz = ALIGN(kbuf->memsz, PAGE_SIZE);
+ 	kbuf->buf_align = max(kbuf->buf_align, PAGE_SIZE);
++	kbuf->cma = NULL;
+ 
+ 	/* Walk the RAM ranges and allocate a suitable range for the buffer */
+ 	ret = arch_kexec_locate_mem_hole(kbuf);
+@@ -705,6 +749,7 @@ int kexec_add_buffer(struct kexec_buf *kbuf)
+ 	ksegment->bufsz = kbuf->bufsz;
+ 	ksegment->mem = kbuf->mem;
+ 	ksegment->memsz = kbuf->memsz;
++	kbuf->image->segment_cma[kbuf->image->nr_segments] = kbuf->cma;
+ 	kbuf->image->nr_segments++;
+ 	return 0;
+ }
+diff --git a/kernel/kexec_internal.h b/kernel/kexec_internal.h
+index d35d9792402d..29e6cebe0c43 100644
+--- a/kernel/kexec_internal.h
++++ b/kernel/kexec_internal.h
+@@ -10,7 +10,7 @@ struct kimage *do_kimage_alloc_init(void);
+ int sanity_check_segment_list(struct kimage *image);
+ void kimage_free_page_list(struct list_head *list);
+ void kimage_free(struct kimage *image);
+-int kimage_load_segment(struct kimage *image, struct kexec_segment *segment);
++int kimage_load_segment(struct kimage *image, int idx);
+ void kimage_terminate(struct kimage *image);
+ int kimage_is_destination_range(struct kimage *image,
+ 				unsigned long start, unsigned long end);
+-- 
+2.34.1
 
 
 
-Le 10/05/2025 à 23:01, Kent Overstreet a écrit :
-> Static keys can now be a module parameter, e.g.
-> 
-> module_param_named(foo, foo.key, static_key_t, 0644)
-> 
-> bcachefs is now using this.
-> 
-> Cc: Luis Chamberlain <mcgrof@kernel.org>
-> Cc: Petr Pavlu <petr.pavlu@suse.com>
-> Cc: Sami Tolvanen <samitolvanen@google.com>
-> Cc: Daniel Gomez <da.gomez@samsung.com>
-> Cc: linux-modules@vger.kernel.org
-> Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
-> ---
->   include/linux/jump_label.h  |  2 ++
->   include/linux/moduleparam.h |  6 ++++++
->   kernel/params.c             | 35 +++++++++++++++++++++++++++++++++++
->   3 files changed, 43 insertions(+)
-> 
-> diff --git a/include/linux/jump_label.h b/include/linux/jump_label.h
-> index fdb79dd1ebd8..0fc9b71db56f 100644
-> --- a/include/linux/jump_label.h
-> +++ b/include/linux/jump_label.h
-> @@ -107,6 +107,8 @@ struct static_key {
->   #endif	/* CONFIG_JUMP_LABEL */
->   };
->   
-> +typedef struct static_key static_key_t;
-> +
 
-Please read https://docs.kernel.org/process/coding-style.html#typedefs
+Amazon Web Services Development Center Germany GmbH
+Tamara-Danz-Str. 13
+10243 Berlin
+Geschaeftsfuehrung: Christian Schlaeger, Jonathan Weiss
+Eingetragen am Amtsgericht Charlottenburg unter HRB 257764 B
+Sitz: Berlin
+Ust-ID: DE 365 538 597
 
-I can't see the reason for a new typedef here. If there is a valid 
-reason please explain in the commit message.
-
-Christophe
 
