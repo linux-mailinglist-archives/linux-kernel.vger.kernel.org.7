@@ -1,192 +1,111 @@
-Return-Path: <linux-kernel+bounces-645160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-645163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53C91AB49AE
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 04:48:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F1A0AB49B7
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 04:49:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9FCDB19E74BB
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 02:48:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9B978C3C77
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 02:49:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5809D1B425C;
-	Tue, 13 May 2025 02:47:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 294651DED78;
+	Tue, 13 May 2025 02:49:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="ddbl+X9v"
-Received: from EUR02-AM0-obe.outbound.protection.outlook.com (mail-am0eur02on2053.outbound.protection.outlook.com [40.107.247.53])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="ZDQVS0Di"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AE4C2A1CA;
-	Tue, 13 May 2025 02:47:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.247.53
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747104477; cv=fail; b=kp07nffao3jiph7oa0Wn8q+M8BUZdw+u3UL/b4FpZUAFWjiaYYeb2Tb112SqI2TsnhW5JntBQ+rPaITeISUgYAAhQT+1tlsn20TyXAiXmdaXg0wg6VxgFoEzNBKrv58yx+WGCNIO11loC79PHs/W+RKa6Sv7iciad3JF51HUWFk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747104477; c=relaxed/simple;
-	bh=xjo4F+EQtfu/ZGSKPuTGFfAcisgpnq+g0qlu2HEO7LY=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=chWeBm0Ke+XrEMPr64IjRgSjDRxqdb23jtjE2NJMYbM/yiiH7gptEx6cyvJ16+xW1AwEOEH5wS01nI+wsa3QBcQ99Qm767IWRJPwmuO5seJEDaTuiAf69/NjJgwmy0sVwbVWMA9+NSQn0xYjbWBULiFtysR38iHve8myeocTNLI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=ddbl+X9v; arc=fail smtp.client-ip=40.107.247.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=w+ODXMsFmNlIbo99HoWXuHnolNV62JvN+vqdA5PqhfWkct1iNiNQiKHMQ4sp9Pb4uGZHWZb4msUoiBEAz7kqRm1IGo/KOCw/O5H9pfgEM0rvrKxlPfZXxtrVo6ugbRxdspP9xpJx3L/FM+phdOvApss15KokByHDCSSi9ic1NS7CscCwhTV8AaekMqWVlCsB13W4WmOTvZjo2XIEt+xCL48Jk11Ysn/URTf1i6DxTfGLsQl5My8akD8OWLLAQLYi/nsyUOsJq8xoXXCY+uikFAmnpvs4bdXMhBkbuq9gIzGBST7y6jRk0rT1ks8z3JUe2GMu+sc2uTjCTPQLHikCdQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=MFamF+OCS8wgcpMpnEcNfHs3S9t5rswoVk0jAMHs+Ds=;
- b=l4T9115JS2+BVPBWE76DOULxe7HM2wpKn5Fanl1sJxJCeAh31ovwJd1TuEfR77ZFvdo4Q9DTmuuDSiikv7pc95FhIUiZa5ZHIXxiGJFU9e4rd4AyvdNyQE9r8f/AI/TyjXwg2aJ1UuQwLAVWXFT/UFzrVlW4dfs2kc3S6eFFvRaF0Idp9htkGKyAwSas3J1oHxVeIjqvv/HHdFu/QtUhf6NemHI238cMxVkbfvAAB42o6IRcbAV2FTuRJ7Z7lJ5hwJeMAQDipXM0r16E6xti6V8JZg8t8eT3dvUTzCIhZ77TfPuRt+FkKQOdqTDmsj6xPoOXVZzeI9/LfdJwe6Kh5A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=MFamF+OCS8wgcpMpnEcNfHs3S9t5rswoVk0jAMHs+Ds=;
- b=ddbl+X9v5i36HgAAZ5AIAUQNzk69/kVQ6WhOV0JJkKWvlZrJQ1t3ieuG0p5dNgMI9avfbxtIKYycl/qaU2UU0dcLrXjfxrJd5SF0YFhEEJA2O7n/IlKAYt5sTc8fduzgfknlarQDhHJTHGXIAJqXenzsvLbSnsrbh5fmvjaQMFaihkgf7YK/Aoy/2kubvYVT0PB7iETP0vGoFtlw5XSYJnxl4nRj63qd9zSR30mhSmNOEh7Zu0w9j2EQGiHQpujPh/fVkCNXy3dp0HjKdGe9vuDCRy/QzbhtwGUxyDF/v1Vh8VMZjZXXWsmAIuk00SyCTXVff1wUZch93lucKIUZsQ==
-Received: from PAXPR04MB8510.eurprd04.prod.outlook.com (2603:10a6:102:211::7)
- by AS8PR04MB7573.eurprd04.prod.outlook.com (2603:10a6:20b:29e::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8722.29; Tue, 13 May
- 2025 02:47:52 +0000
-Received: from PAXPR04MB8510.eurprd04.prod.outlook.com
- ([fe80::a7c2:e2fa:8e04:40db]) by PAXPR04MB8510.eurprd04.prod.outlook.com
- ([fe80::a7c2:e2fa:8e04:40db%4]) with mapi id 15.20.8722.027; Tue, 13 May 2025
- 02:47:52 +0000
-From: Wei Fang <wei.fang@nxp.com>
-To: Vladimir Oltean <vladimir.oltean@nxp.com>, "netdev@vger.kernel.org"
-	<netdev@vger.kernel.org>
-CC: =?iso-8859-1?Q?K=F6ry_Maincent?= <kory.maincent@bootlin.com>, Clark Wang
-	<xiaoning.wang@nxp.com>, Andrew Lunn <andrew@lunn.ch>, "David S. Miller"
-	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Claudiu Manoil
-	<claudiu.manoil@nxp.com>, Simon Horman <horms@kernel.org>, Richard Cochran
-	<richardcochran@gmail.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v2 net-next] net: enetc: convert to ndo_hwtstamp_get() and
- ndo_hwtstamp_set()
-Thread-Topic: [PATCH v2 net-next] net: enetc: convert to ndo_hwtstamp_get()
- and ndo_hwtstamp_set()
-Thread-Index: AQHbwzBmVlv1NLYZCkOzaU3wWu9mm7PP2xMw
-Date: Tue, 13 May 2025 02:47:52 +0000
-Message-ID:
- <PAXPR04MB851094997FBB7BDFDA6EDADB8896A@PAXPR04MB8510.eurprd04.prod.outlook.com>
-References: <20250512112402.4100618-1-vladimir.oltean@nxp.com>
-In-Reply-To: <20250512112402.4100618-1-vladimir.oltean@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PAXPR04MB8510:EE_|AS8PR04MB7573:EE_
-x-ms-office365-filtering-correlation-id: 1e94f278-61de-4684-85f9-08dd91c88e5d
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|7416014|376014|1800799024|366016|38070700018;
-x-microsoft-antispam-message-info:
- =?iso-8859-1?Q?jPh+/+JE18zIOTIYkRqXH/Y4lUXkkXTlRboo59jP99EL11wN8/EiBFn8Nt?=
- =?iso-8859-1?Q?1K4h0AH4yuaOGhx3SYO44xcn636wV/7nYFJhLkILT+IIztLkBvxiq/hPUN?=
- =?iso-8859-1?Q?Wx4+VyTgmcqkuDcR3Wgrq0KYr9w2PbdhwauQ4lvgX0HEpqdpj44pKec5KF?=
- =?iso-8859-1?Q?yBLp4sHIDKW2ovIaRupgKNrXKV/E3WUuXkEYQIAxxOTRWrPLU/3MQh4ZDy?=
- =?iso-8859-1?Q?2WStz6dA2XI5/dmQNnGy7VXOejUX4YfVPks8DoMxYZsTpIYd4gYMblyBdl?=
- =?iso-8859-1?Q?m1oeg33G6ekkE3xbnMDEOCi1Wk4iMgXk3IPZa8rVdPT5ZnyC4UwXObpSZ9?=
- =?iso-8859-1?Q?mrROc7GsSJ/vInoD7sdTe8e49BmNHyNnMTJ9s1AJv0ZxFE2BuaFvfLvxbB?=
- =?iso-8859-1?Q?UoB7Ud/wTjCUoH5nGSYBNYqv2qqk4yyPcwGCApmhnsDsM/5PHhIiiCky46?=
- =?iso-8859-1?Q?ypPYaQUPy4hn2zT2WQlCYZ01MG5b+a3/Tgtic4e/3VNIFd+iUqktuJJvzk?=
- =?iso-8859-1?Q?8nDNH4I7q282bmMUbg2ABW0R0qwDvlj2b2WpD4emJ29aduLZfBcFihSBua?=
- =?iso-8859-1?Q?nS0aHUXUP5R9NoFqrvPJHMigsFrdDYakWakKfgmiE99a8WNKuoBWMQA8sw?=
- =?iso-8859-1?Q?s5TYUcuhhmLp6F6ni+ZcX9Psid5quaTgwxxmfuIG4QymYmiftTjC2h4CDD?=
- =?iso-8859-1?Q?yWr1s3OmJf78TV3+2akN//paQ2Ckg3GGm8FuBjQJmJKTk3EXrE1Hlf9KFi?=
- =?iso-8859-1?Q?GdFjy8+uwa8B4uQ/+MJYfiFs+SgFrbxlcbHJmkqqAo4cBTwx1w/jozSxLl?=
- =?iso-8859-1?Q?PMgi+qraj2uupkHrYhQ5HF1a56BYj0dvlKREKcLFny/P3ZsYjBCLNf0KVn?=
- =?iso-8859-1?Q?V1m46yQz/RkllOZ3t7yGmPnUqw1dudsOuIr7mRO9yzkFC/+rr+lfIpq2Je?=
- =?iso-8859-1?Q?/xjA+CqU30CxqvAsulifJjfctdjQvx1dH8Y82TMDzs3yXfw/+glXH21KT9?=
- =?iso-8859-1?Q?uABMJsiiorqXrRBMNR3hAx6T2JmzPGm0OwopR82Y12pmiTlg+iatPYBHWm?=
- =?iso-8859-1?Q?SdnK6IF5N7vgDjNJOaAQqA3/UsnXsg1Lw24mpK5uxERkzVGSIHhpNF4JeQ?=
- =?iso-8859-1?Q?UBmoGHFKmh2b3Iz5oC5WUQO42zTT9ErEmNh9njQfElm1t1auTbpH1fvRGq?=
- =?iso-8859-1?Q?AQiCom2A16DWPg7enQ8O6bhUA+gPQhJvlxTr88zza3am9R9FZfW90tzz2C?=
- =?iso-8859-1?Q?zIcEpXAvERtGPGV+voZ9+ru3Y7DuQI5+G69/QSdjx3P9OHI6saU7258/Ee?=
- =?iso-8859-1?Q?7AJkCBq2zZ3ei+J7dbbCAZaNYcXhurkFVNCEgbUt1mFYC/KHCkZUtzEuuZ?=
- =?iso-8859-1?Q?NX7jMBDOUz0kiNTGXupeUuwqxlSe2Br1WQ/1borx/qlcvonuN3zA/vtvQL?=
- =?iso-8859-1?Q?zWgbTT1UP9UF+oIcvxxeq/IMPni0DiQJLdz2IoQnJGn2/HCYioSPHK19N3?=
- =?iso-8859-1?Q?nNcVUxb77XoYkyPCKimyNkfAs7aBcXLD71TE4XXxNZWg=3D=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8510.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?iso-8859-1?Q?yYd1hcLBTNBXIoqP6elrflytG5Tv4I/TNOA/XgWAHAuz1dTzskgYBO/c8T?=
- =?iso-8859-1?Q?zbqR03xXaHkuz0Fcqj/uQoB3fCaX4Y6bYGfrV95TigmD7nr9LCTr1TM9iZ?=
- =?iso-8859-1?Q?Ci9xVIu/vpYyUJlCBmOt99S5F34Rnx8cLysGcg5Hm1XN5P91NHfnwi1w12?=
- =?iso-8859-1?Q?HT1Iu/86sMHmrrkSS/rdhYn1cAvA+xL6d/BuSuGMP+C6HM6BUAMwcVZTpq?=
- =?iso-8859-1?Q?pMMAp9XONOyg8jrqoF5IICHW1gufxLVezVeo1ou2+a42VLjmI5aVmm07ji?=
- =?iso-8859-1?Q?XybU40gSqEpKpL4tbgfJHZ1qgMtqEgHX1N7w/bLKKmJ2QH8potK/ZQmOHW?=
- =?iso-8859-1?Q?Z5GLcIbHhO/M/2H1sHeN74wskCHq9dJOH1Nbw2PviPmDJcoFlKcbeKy1SC?=
- =?iso-8859-1?Q?br/ZYkIXXoeGm3quzfEv0OO/r/Xmx5eBGZO/7eMCXhClWFOyiuPm2EGQUT?=
- =?iso-8859-1?Q?D8IaydxAI2pXRDKCqo+yR+K5Dn+l/u1wsLABdD6lCZ0zWevBtX8DqYcadP?=
- =?iso-8859-1?Q?ZasDo8K4KnQIV8BfDFdk8Dy08wLjrVVybPGwV/dqj88VUo2EoCczqTq4tm?=
- =?iso-8859-1?Q?lQNlmdhN7YX3Z7Cg7g+WOxBAQjiYrbv6waRYFoHa3yVK207vgDWfjwpRpB?=
- =?iso-8859-1?Q?HrWWqhdVTs7FXrbkzCr1s6fNaYk2IcBGBW5RYGaCcVfU37KRkRik/xd4Dl?=
- =?iso-8859-1?Q?pDnJKNni1xuvK7AMBjSgY71GV9uLgslQxkjRMzDwKF1oDNnvAGq1fdetOz?=
- =?iso-8859-1?Q?6EW6SN6pffMeOplyUssXrq3GLPFLV7b6dGiaGsb4LVqPcQs37/apWoB1W+?=
- =?iso-8859-1?Q?nlx9oloiETjEZFRAq26V1DRqgXO8xhl/0pxE1wPTdGqsqx8qqokQeAPgV1?=
- =?iso-8859-1?Q?Kf3GVVyuxAcHpKkHLYWYswLlZVjuCVCNiUnEiwxohZmF64WBuAbUVroqEm?=
- =?iso-8859-1?Q?gkjhgSwxoNAka+6WN0MTnMhUxtKfh7Pw8+XWxdCpWaEzocV8shWpFBLZ67?=
- =?iso-8859-1?Q?BTKMHzuW1NslzOig2fpWrcQnkS/HYkr6DuUmhRzR8yv2zRDggA+0fV17Ej?=
- =?iso-8859-1?Q?UR85Huq2L3EwH1hwwTL62XsVFz415FzE3PdzCtqFk9yEdXnRnw+lYt26sw?=
- =?iso-8859-1?Q?+JJno+PlweHTwC0ShmTTPWpfSKiwUjRN8KV3sNCkjEb67FWa0T9Ue2qUOd?=
- =?iso-8859-1?Q?egmLa3XoIA6u3cDg7hiSeLmTwNFEo2n8iMb488mvg3Izwu1wE0BTrnMJsu?=
- =?iso-8859-1?Q?UzYNKX/969mA5DMySsKnGyvoxUdFgzmSC/6fiAi9Z8X00r/sIsEe0ukTsx?=
- =?iso-8859-1?Q?I5dmh0cQw6M4nmJP7x0rxOMBb2Vg0xjvoyF3s2mF5lSe1VnSoP4ptaPagq?=
- =?iso-8859-1?Q?UyjohtvLLXV+mjHNq/coa9DJ1ZpcGZ6EA5G8QnskffYpUvP105um+kRgDe?=
- =?iso-8859-1?Q?MAIiFC0aqKgWHbnE2A6zdIE7Slq2emKJpreKtVhvTLuplJFXc7PRX8w65b?=
- =?iso-8859-1?Q?Jtv8/59mA1GJjgQ19ja37DLnHopUEnNq/Xzsx0Kf08lun+/orVNe4Z8yoF?=
- =?iso-8859-1?Q?4glCR5wN1D1wwkMDcvkiTmQVNp+4TelEtYXADeV8WZpAxS6rzDAY8Wza2F?=
- =?iso-8859-1?Q?zMHFXqtaDwZ1Q=3D?=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CF5217A2FC;
+	Tue, 13 May 2025 02:49:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747104544; cv=none; b=b5XN3QlqscbphGaP2QCYpalIKkoiSdGpBkMtpOYz2a3WJqAfzf8ju+qnIrbuMr+MXgCZ5YiGcNT6b3heVT/cW3YUUx3UuACDOx9EIQBSUSegpHCDQ6u8vczFubyQMK+bWUtMu3bIdxafDlVhzeHKRMsh9hGJ7yyDmqeVFdfEDYo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747104544; c=relaxed/simple;
+	bh=bwq4zSqvt3J11L00/FMtrHMG6dAXZ+FqAzr2T88D7WQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=HqEibH6MPg3Rp21nHCBvKFTvy5pFaiEjamYakEk3lh4p+62CqjLbyEh3eAyXL7/maGZLVHR8vceV+L0mGj6ptsoMIwOiXtXWJMlV7YbHZoqC4tf2JLLABnixMahDgLlEgme+VRVr1KCV2+dIxTuwO6UjigzoBq/4vmuZiz+o1hQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=ZDQVS0Di; arc=none smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54D1CUOL029020;
+	Tue, 13 May 2025 02:48:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	corp-2025-04-25; bh=eTsGCUG+iT3yVZ6P+XF9h8THXsozjCHl66pGtUUnGw0=; b=
+	ZDQVS0DiJu1k0D7NJEeiNKukGtFzR7YJAfEBaOG/5JRwi0IldYmnDMNtM3QU/oxR
+	XZfxJ41qi9dnuwfz1+WES2jwAKJJRVNE5uyFLaui0pI2/PYOu5whaKouvj/TNH9V
+	ABC89iwliIbFnhjoYg2Uz6KRfFhadXGRi0E37GmiNdMyXFXrr4Q3Ou6pfHxmpKJP
+	iA5xk7Gci0I/G5GPKZljsaXmX/i4m8fqB3dqjW03s7/PA+UeG7zeO5r7xDoI+aAl
+	UeeeXxn00loVAsPPBiaIfaxlfM4ZNqTeWKu0b+K2/KgJ/t9gu3QPOeon9/tSvB74
+	qD7bQYbpHhCVd6usgTfbZA==
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 46j1jnku85-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 13 May 2025 02:48:57 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 54CNx4pQ015470;
+	Tue, 13 May 2025 02:48:57 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 46hw8841g4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 13 May 2025 02:48:56 +0000
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 54D2muX4003994;
+	Tue, 13 May 2025 02:48:56 GMT
+Received: from ca-mkp2.ca.oracle.com.com (mpeterse-ol9.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.251.135])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 46hw8841cw-1;
+	Tue, 13 May 2025 02:48:56 +0000
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+To: Yi Zhang <yi.zhang@redhat.com>, Dan Carpenter <dan.carpenter@linaro.org>
+Cc: "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Don Brace <don.brace@microchip.com>,
+        "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+        storagedev@microchip.com, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] scsi: smartpqi: Delete a stray tab in pqi_is_parity_write_stream()
+Date: Mon, 12 May 2025 22:48:10 -0400
+Message-ID: <174710241023.4089939.4684203628798529640.b4-ty@oracle.com>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <aBHarJ601XTGsyOX@stanley.mountain>
+References: <aBHarJ601XTGsyOX@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8510.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1e94f278-61de-4684-85f9-08dd91c88e5d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 May 2025 02:47:52.3879
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: GBre4nzo8mrjP+CMAVSAEVYjM2+5QUkiEoGK+scdg5c7+5zqcrq8MTtOktUIm+O+4/zR7/uhSFnb6YRIr7gfTg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB7573
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-12_07,2025-05-09_01,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=844 adultscore=0
+ suspectscore=0 spamscore=0 malwarescore=0 mlxscore=0 phishscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2504070000 definitions=main-2505130025
+X-Proofpoint-GUID: we2rlMkjJS2XRuwj5R9k3yBTIKiEdFEB
+X-Authority-Analysis: v=2.4 cv=PeH/hjhd c=1 sm=1 tr=0 ts=6822b31a cx=c_pps a=OOZaFjgC48PWsiFpTAqLcw==:117 a=OOZaFjgC48PWsiFpTAqLcw==:17 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=VwQbUJbxAAAA:8 a=aIsAj1sCKrDU7jUvE8EA:9 a=QEXdDO2ut3YA:10 a=UzISIztuOb4A:10
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTEzMDAyNCBTYWx0ZWRfX/j/tE9rPIo9f 3Cntkj9ex1LF+qchRdcBelnnK42skb6MmkNMz5el73WtKplmXjWEMQxWhwQbet1//YprLw/eHmH YvCyyLW/wflDHpToGp2Fbi20f2+WWRA8rCd8WdbY7c5xaQOiBD1g0hNQboks+MDHnjj8lQvnoV9
+ kwYyxBKk5xeKQEQ0IZ2ke/sS5Xg8YYueNXdMSbCnKb/suQxeEDq3+vjuU3+XXTW8tNzyBah9aUi E8WS8PHoYWK7cdn/VjKLyCI+up1trSOzsomnTaIGszQSfgZMo6bmcDd3/gOsDJjWtw9CLDOKZbm cWSMcZRP6TEYdObIBbUy3gT5+4zkTYoiXPwnOPXchr1n2GlP1gP8rRbfJaHIfwuZY689F1qTbtF
+ DBLs+YEC9vEfx3klGhCyPrIg9pmY7olmok0JyNInfJ58l5rObigRulA5qXl9j0JqUC2u0j7l
+X-Proofpoint-ORIG-GUID: we2rlMkjJS2XRuwj5R9k3yBTIKiEdFEB
 
-> New timestamping API was introduced in commit 66f7223039c0 ("net: add
-> NDOs for configuring hardware timestamping") from kernel v6.6. It is
-> time to convert the ENETC driver to the new API, so that the
-> ndo_eth_ioctl() path can be removed completely.
->=20
-> Move the enetc_hwtstamp_get() and enetc_hwtstamp_set() calls away from
-> enetc_ioctl() to dedicated net_device_ops for the LS1028A PF and VF
-> (NETC v4 does not yet implement enetc_ioctl()), adapt the prototypes and
-> export these symbols (enetc_ioctl() is also exported).
->=20
-> Signed-off-by: Vladimir Oltean <vladimir.oltean@nxp.com>
-> ---
-> v1->v2:
-> - remove shim definitions of enetc_hwtstamp_set() and
->   enetc_hwtstamp_get(), replace them with "return -EOPNOTSUPP" if
->   CONFIG_FSL_ENETC_PTP_CLOCK is not enabled.
-> - delete unnecessary config->flags =3D 0 assignment
->=20
+On Wed, 30 Apr 2025 11:09:16 +0300, Dan Carpenter wrote:
 
-ENETC v4 can add timestamp support based on these two new
-interfaces, thanks.
+> We accidentally intended this line an extra tab.  Delete the tab.
+> 
+> 
 
-Reviewed-by: Wei Fang <wei.fang@nxp.com>
+Applied to 6.16/scsi-queue, thanks!
 
+[1/1] scsi: smartpqi: Delete a stray tab in pqi_is_parity_write_stream()
+      https://git.kernel.org/mkp/scsi/c/0e937fd51e8a
+
+-- 
+Martin K. Petersen	Oracle Linux Engineering
 
