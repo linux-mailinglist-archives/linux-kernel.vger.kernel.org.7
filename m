@@ -1,126 +1,176 @@
-Return-Path: <linux-kernel+bounces-645460-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-645468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7995BAB4DCD
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 10:14:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85B46AB4E05
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 10:25:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C3D63B6685
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 08:13:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB7B41B40BFF
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 May 2025 08:25:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8F961F869E;
-	Tue, 13 May 2025 08:13:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mpxSmPI1"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BF012036ED;
+	Tue, 13 May 2025 08:25:07 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DF811F5435
-	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 08:13:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 494AC1F2C58
+	for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 08:25:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747124035; cv=none; b=XZ0/aFHwlcBkVO6izseESe8oqdyo6R22XgSnUh3Xu+983klbHsCZigzItRanh0//G830EL91xgij1j8xfZvxn7mDLIFkqVkV+9sFNVYGNR/n05fRzxbxHtWWjo8xHqXkkP01uwdLpE0+N0DobYsrOmLp789kQlFfXyiExDOYBic=
+	t=1747124707; cv=none; b=m9x4V3tXS8+sfSmnfDDge37SuxOMWI/njApcf5TOUIhl/mnlQ3lnCNt94CADs/zwIlYszrVTa+xWjR/X5DLV+nNSrfj3+kXwfPjWgVG9ZJyy70OvLqsk23KYO1CZjkvbwH4usQIfB0HP+91xAKXHIqampCRr3TnOOmXk3cAKzsQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747124035; c=relaxed/simple;
-	bh=OMO7uyKqiGXSdbBTRpMsGiPhXfiWRanx24fEA05hC4E=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=XzR9hbSOPIRDHBW81cAyOHcycoqqvpl7Wa9gknh4PGcm5FuU7Us1e1ChycNZLsT60Cd2lBF+8ZwNvnrzffC5ECkud4KQDcZ9DI/DQvRElaOmQK8zgOsMvpTUhPNyQeN58FGnBCmo5jvN2OnAMb+O7h0Q6lPv7joTGy/RpEK4gAY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mpxSmPI1; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-43f106a3591so5027665e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 01:13:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1747124031; x=1747728831; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gfD8KA5bfxaU+Q1NTIOmhw+vBh6gQYcxk5fcGmeOrhI=;
-        b=mpxSmPI11h3EKfIiLQkaiAISjzIZ8szj+stMXWAYDNeF53nobikOaDUlLF3CkU1po4
-         FYBbuCIvt20FF94FRmuSXuwTRggl2TtkQN+scQNPeJocCwJ8gvLZEVY6rcF6OfBLGMkR
-         Hl+UCYzU/QAHhXjjSaard7f+AHGsQ0Hsb0sc1gmGcM10OXS2bZJdUnl+KsqFt2/oT+Vg
-         V5z1GcxCQSU54G0NR0Hp4J2N7GrxwvC2rbkGqMPAvDANRLFsB0SuWt0RIA54g5xf76Zd
-         wCXJ7YiZ7V8iKNiNpLwaKYDkwSAJhlkFM7/Uz4dZpfJspADBvSkqLsW7xC0CKXUXZ3hn
-         a3QA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747124031; x=1747728831;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gfD8KA5bfxaU+Q1NTIOmhw+vBh6gQYcxk5fcGmeOrhI=;
-        b=XT2E+pqPnMyYSKKJ2uUISh7JVfCtWcaTdGPI5klyyzgkpEPCmbXXiRpsREogCJGzZd
-         k0X2ooJ/IvUyHtonexvHq784waXb0d596kJdp5sBnqKyf6xYJR0iG23tN65zJwtc1lC/
-         77+MeNuTT69Ca/Pgsf1WVlPmJDVyXcH//OJr/GObAuJYd7E5hpKqTeGnk4m2IXZh7sws
-         fWNs6GBKIfdnChe1LEC1rsxtXgBScqCyN88WTA0qR8lAF7kP+X4EepR46FcL3ximRes/
-         Z0JsVKwLgJYBFQ5g344YDk+VP2VzNdTLLjhasXgWQMwIXPXXN/nqwccD0PFM0ASzeohu
-         hwJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWaq1sIr7MZjMzXhZbpWAQJvviQnhbtxF+5gMwjZBI9mu4biyh0VXAq5WQc10ty0hdmAZm8KwNr2XSmrzo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwyyLB9IRdbKr4sczPbgpmYqiPhLES7ruPBYElD0UIHgPlEgLCj
-	bgCy3N/ru8TXgEsoZW5mDYnKquxaAe0HztZbos7AnEx2UVGjbZp24VTAHxLNHUI=
-X-Gm-Gg: ASbGncvRYgBrmydKbz8LHGotkZS3KvmRk8bCr5rRuOy3LgrchCvTwsz8nJTWP7oOWnx
-	TPpfTEonX8Cd29MnsN6Lij3LWnuykzSYEI5CVONTHQbbxuxcXdUMrlXQXKTrsd99COS6xHJVwFG
-	1yPyxh/A8vcl1MFCk49uVkmX10HDw2Z0xlRYwCF2PJZAKybkr5rZY8FbwcPRzzMVfkuh0Xj4jBP
-	HR0QaEsTMS+790Flx39xSdoqbcP4VflutVVUBxd2P9lI7J8iPgq06qYsaC0GJ+8kpACB82pNIhP
-	/cWGv5ynw2OfATBM3L2kZtIzuhPh4mu3hdjUYSJTHHsxfxwE/SnL9G7KqNDIrp/l7jjHUEc2Vcy
-	9Ruju44vPtLFV/0yF4g==
-X-Google-Smtp-Source: AGHT+IHI0BUvRWvY4Y2/8bHQXKFDvKBHupqbi0BQODrVBg+55fcuB5CxUmKYcrieaLRvHUYS/EkBCg==
-X-Received: by 2002:a05:600c:3490:b0:439:9b3f:2dd9 with SMTP id 5b1f17b1804b1-442d6ddd6a8mr47990065e9.7.1747124030617;
-        Tue, 13 May 2025 01:13:50 -0700 (PDT)
-Received: from [10.61.0.48] (110.8.30.213.rev.vodafone.pt. [213.30.8.110])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-442d687bdc0sm155170805e9.39.2025.05.13.01.13.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 May 2025 01:13:49 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
- Peter Griffin <peter.griffin@linaro.org>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
- tudor.ambarus@linaro.org, andre.draszik@linaro.org, willmcvicker@google.com, 
- kernel-team@android.com
-In-Reply-To: <20250506-contrib-pg-cpu-hotplug-suspend2ram-fixes-v1-v4-0-9f64a2657316@linaro.org>
-References: <20250506-contrib-pg-cpu-hotplug-suspend2ram-fixes-v1-v4-0-9f64a2657316@linaro.org>
-Subject: Re: [PATCH v4 0/5] Fix gs101 CPU hotplug support
-Message-Id: <174712402896.10876.6908975403195941350.b4-ty@linaro.org>
-Date: Tue, 13 May 2025 10:13:48 +0200
+	s=arc-20240116; t=1747124707; c=relaxed/simple;
+	bh=01gdu2/D3CAIxFGAJYGAvo8jk4ASgCy9Nqsv/pOrLog=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=I7V5WlOnfS7w6kRKkkMj9zU4BoSVV4ZQS3dyRoF1nq8NY3QmXdtY90lTisPqvjIP9G4ADOo7hZ0YRnwSB9ZjfliSRIq7FfrIaL7g5mRxCtBzbNAaSphZUMRvgk3hr6agnTG9oaHiw6FHrgUMc6aoHNRIA3jSwcaI0w+69kNWiQM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4ZxTvJ1pjhzQkwZ;
+	Tue, 13 May 2025 16:21:00 +0800 (CST)
+Received: from kwepemk200016.china.huawei.com (unknown [7.202.194.82])
+	by mail.maildlp.com (Postfix) with ESMTPS id 76CDA140123;
+	Tue, 13 May 2025 16:25:00 +0800 (CST)
+Received: from huawei.com (10.67.174.78) by kwepemk200016.china.huawei.com
+ (7.202.194.82) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 13 May
+ 2025 16:25:00 +0800
+From: Yi Yang <yiyang13@huawei.com>
+To: <corey@minyard.net>
+CC: <openipmi-developer@lists.sourceforge.net>,
+	<linux-kernel@vger.kernel.org>, <lujialin4@huawei.com>
+Subject: [PATCH] ipmi: fix underflow in ipmi_create_user()
+Date: Tue, 13 May 2025 08:16:22 +0000
+Message-ID: <20250513081622.125071-1-yiyang13@huawei.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ kwepemk200016.china.huawei.com (7.202.194.82)
 
+Syzkaller reported this bug:
+==================================================================
+BUG: KASAN: global-out-of-bounds in instrument_atomic_read_write include/linux/instrumented.h:96 [inline]
+BUG: KASAN: global-out-of-bounds in atomic_dec include/linux/atomic/atomic-instrumented.h:592 [inline]
+BUG: KASAN: global-out-of-bounds in ipmi_create_user.part.0+0x5e5/0x790 drivers/char/ipmi/ipmi_msghandler.c:1291
+Write of size 4 at addr ffffffff8fc6a438 by task syz.5.1074/5888
 
-On Tue, 06 May 2025 21:57:26 +0100, Peter Griffin wrote:
-> As part of an effort to make suspend to RAM functional upstream on
-> Pixel 6 I noticed that CPU hotplug leads to a system hang.
-> 
-> After debugging and comparing with downstream drivers it became clear
-> that some extra register writes are required to make CPU hotplug
-> functional on these older devices which use a el3mon firmware.
-> 
-> [...]
+CPU: 0 PID: 5888 Comm: syz.5.1074 Not tainted 6.6.0+ #60
+......
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x72/0xa0 lib/dump_stack.c:106
+ print_address_description.constprop.0+0x6b/0x3d0 mm/kasan/report.c:364
+ print_report+0xba/0x280 mm/kasan/report.c:475
+ kasan_report+0xa9/0xe0 mm/kasan/report.c:588
+ check_region_inline mm/kasan/generic.c:181 [inline]
+ kasan_check_range+0x100/0x1c0 mm/kasan/generic.c:187
+ instrument_atomic_read_write include/linux/instrumented.h:96 [inline]
+ atomic_dec include/linux/atomic/atomic-instrumented.h:592 [inline]
+ ipmi_create_user.part.0+0x5e5/0x790 drivers/char/ipmi/ipmi_msghandler.c:1291
+ ipmi_create_user+0x56/0x80 drivers/char/ipmi/ipmi_msghandler.c:1236
+ ipmi_open+0xac/0x2b0 drivers/char/ipmi/ipmi_devintf.c:97
+ chrdev_open+0x276/0x700 fs/char_dev.c:414
+ do_dentry_open+0x6a7/0x1410 fs/open.c:929
+ vfs_open+0xd1/0x440 fs/open.c:1060
+ do_open+0x957/0x10d0 fs/namei.c:3671
+ path_openat+0x258/0x770 fs/namei.c:3830
+ do_filp_open+0x1c7/0x410 fs/namei.c:3857
+ do_sys_openat2+0x5bd/0x6a0 fs/open.c:1428
+ do_sys_open fs/open.c:1443 [inline]
+ __do_sys_openat fs/open.c:1459 [inline]
+ __se_sys_openat fs/open.c:1454 [inline]
+ __x64_sys_openat+0x17a/0x210 fs/open.c:1454
+ do_syscall_x64 arch/x86/entry/common.c:51 [inline]
+ do_syscall_64+0x59/0x110 arch/x86/entry/common.c:81
+ entry_SYSCALL_64_after_hwframe+0x78/0xe2
+RIP: 0033:0x54d2cd
+Code: ff c3 66 2e 0f 1f 84 00 00 00 00 00 90 f3 0f 1e fa 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f4751920048 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
+RAX: ffffffffffffffda RBX: 0000000000796080 RCX: 000000000054d2cd
+RDX: 0000000000000000 RSI: 0000000020004280 RDI: ffffffffffffff9c
+RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+R10: 000000000000001e R11: 0000000000000246 R12: 000000000079608c
+R13: 0000000000000000 R14: 0000000000796080 R15: 00007f4751900000
+ </TASK>
 
-Applied, thanks!
+The buggy address belongs to the variable:
+ ipmi_interfaces+0x38/0x40
 
-[1/5] dt-bindings: soc: google: Add gs101-pmu-intr-gen binding documentation
-      https://git.kernel.org/krzk/linux/c/0475b0d8a1e0f80a47536dfb19c28dc4bb6adc05
-[2/5] dt-bindings: soc: samsung: exynos-pmu: gs101: add google,pmu-intr-gen phandle
-      https://git.kernel.org/krzk/linux/c/83b66cdb5d5b6aa4ed1f085b3b2f917af0c2890b
-[3/5] MAINTAINERS: Add google,gs101-pmu-intr-gen.yaml binding file
-      https://git.kernel.org/krzk/linux/c/20adeaca8bc6a084f2610e7c89a8601c9904a0e2
-[4/5] arm64: dts: exynos: gs101: add pmu-intr-gen syscon node
-      https://git.kernel.org/krzk/linux/c/aaf02428fdd50b818c77644bc0b8a0b282ce8ea4
-[5/5] soc: samsung: exynos-pmu: enable CPU hotplug support for gs101
-      https://git.kernel.org/krzk/linux/c/598995027b9181ada81789bf01fb8ef30d93c9dc
+The buggy address belongs to the physical page:
+page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x45a6a
+flags: 0x3fffff00004000(reserved|node=0|zone=1|lastcpupid=0x1fffff)
+raw: 003fffff00004000 ffffea0001169a88 ffffea0001169a88 0000000000000000
+raw: 0000000000000000 0000000000000000 00000001ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
 
-Best regards,
+Memory state around the buggy address:
+ ffffffff8fc6a300: 00 00 00 00 f9 f9 f9 f9 00 00 00 00 f9 f9 f9 f9
+ ffffffff8fc6a380: 00 00 f9 f9 f9 f9 f9 f9 00 00 00 00 f9 f9 f9 f9
+>ffffffff8fc6a400: 00 00 f9 f9 f9 f9 f9 f9 00 00 00 00 f9 f9 f9 f9
+                                        ^
+ ffffffff8fc6a480: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ ffffffff8fc6a500: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 f9 f9
+==================================================================
+
+In the ipmi_create_user() function, the intf->nr_users variable has an
+underflow issue. Specifically, on the exception path (goto out_kfree;)
+before atomic_add_return(), calling atomic_dec() when intf->nr_users has
+not been incremented will result in an underflow.
+
+Fixes: 8e76741c3d8b ("ipmi: Add a limit on the number of users that may use IPMI")
+Signed-off-by: Yi Yang <yiyang13@huawei.com>
+---
+ drivers/char/ipmi/ipmi_msghandler.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/char/ipmi/ipmi_msghandler.c b/drivers/char/ipmi/ipmi_msghandler.c
+index 3ba9d7e9a6c7..27a12b31cfb6 100644
+--- a/drivers/char/ipmi/ipmi_msghandler.c
++++ b/drivers/char/ipmi/ipmi_msghandler.c
+@@ -1246,18 +1246,18 @@ int ipmi_create_user(unsigned int          if_num,
+  found:
+ 	if (atomic_add_return(1, &intf->nr_users) > max_users) {
+ 		rv = -EBUSY;
+-		goto out_kfree;
++		goto out_dec;
+ 	}
+ 
+ 	INIT_WORK(&new_user->remove_work, free_user_work);
+ 
+ 	rv = init_srcu_struct(&new_user->release_barrier);
+ 	if (rv)
+-		goto out_kfree;
++		goto out_dec;
+ 
+ 	if (!try_module_get(intf->owner)) {
+ 		rv = -ENODEV;
+-		goto out_kfree;
++		goto out_dec;
+ 	}
+ 
+ 	/* Note that each existing user holds a refcount to the interface. */
+@@ -1281,8 +1281,9 @@ int ipmi_create_user(unsigned int          if_num,
+ 	*user = new_user;
+ 	return 0;
+ 
+-out_kfree:
++out_dec:
+ 	atomic_dec(&intf->nr_users);
++out_kfree:
+ 	srcu_read_unlock(&ipmi_interfaces_srcu, index);
+ 	vfree(new_user);
+ 	return rv;
 -- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+2.25.1
 
 
