@@ -1,178 +1,153 @@
-Return-Path: <linux-kernel+bounces-646936-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-646937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73C6EAB6294
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 07:52:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14F07AB6295
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 07:53:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0873F178E8A
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 05:53:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5ED59189C7F8
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 05:53:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55BFA1F91F6;
-	Wed, 14 May 2025 05:52:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 787D81F4CAB;
+	Wed, 14 May 2025 05:52:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TjbXlIr8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b="cbC/6JPC"
+Received: from PNZPR01CU001.outbound.protection.outlook.com (mail-centralindiaazolkn19011032.outbound.protection.outlook.com [52.103.68.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A71C1F4C8D;
-	Wed, 14 May 2025 05:52:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747201954; cv=none; b=XzytgD4TiqYuWoChtg0/v3lZ+68rbXXRGsTY4ACC4jaUuHJ9tIiSVz8kTWCI4P8W1h+mQ/7ew10INnM1zsFxtifzUrDOWqAp6j3E8DvZhalE2ubxE81yWRTJTFYKgemk4L2joBiZjIzdgo1DGgSThB4DBMRDFxfFaQZCVjNKOPU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747201954; c=relaxed/simple;
-	bh=EePur+oXQTN/Q0Mfo8DIsWZ0cPCciOMp+Cc7Bx6MPW8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=LOumkmNwqT5cXj/TiAIyAZFXgJLj3eocSq0C1ntaxi3kRZkbx/roXoMHxWPPjen8U2cXbZHTFHryTxAiSzhIH+5zWy6qN83GprsZzyJ+dgtyUFXmi7+x27tebbSCKPnMwNRbLicgoRVACNv8jiI1my1RyT+7HlyuH1VWgaLjPEE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TjbXlIr8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id E7087C4CEF1;
-	Wed, 14 May 2025 05:52:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747201954;
-	bh=EePur+oXQTN/Q0Mfo8DIsWZ0cPCciOMp+Cc7Bx6MPW8=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=TjbXlIr8tSBr86YWv+eDCsx+UjpMXz7ldV62sd+knYTTatma5LVSElbFrD2yjsvlG
-	 yQPqEW4FX10dFFdu1Js79LubPodXy20IfxboVCQW2Vsv0X5AXOVsARki6cRxgMCnWO
-	 2GL/rE4uH4VvM7C2sDQsuyJNaFk+FilfoSVUpi+Z82II+173liBupp7pU/fNcIWgSs
-	 nWAe8TNKZdyAmznPc1XsyS+np0msVEqahOePAf7r/Sx8xdA/Mx+co824R8z7jSavNO
-	 1rhlIVsVWDIW3Qo5bIAeG4DxbivlQAQqApLdbyu/jU7FWnM/qJklT7kC5b3Y90bRu9
-	 UkKRSZy8km/fw==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9CD3C3ABCB;
-	Wed, 14 May 2025 05:52:33 +0000 (UTC)
-From: George Moussalem via B4 Relay <devnull+george.moussalem.outlook.com@kernel.org>
-Date: Wed, 14 May 2025 09:52:14 +0400
-Subject: [PATCH v10 2/2] arm64: dts: qcom: ipq5018: Enable PCIe
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7BDB1C36
+	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 05:52:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.68.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747201971; cv=fail; b=V+Fo6bKt1qtmx33cJCdDfKF2BjY1KauJG/XeNdDey9wIEpvupH+a168XuNYJG3m6l/uo7Mv0tzW0vXFB8Ni6JkZLhtbs3NM+lFew2u4/684PnS3KqsMOCTZAJsYpiCbcHrX4XclS4OTbzS8jCByvFxyxfyp36qovHNCZleek/Ns=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747201971; c=relaxed/simple;
+	bh=Br8nz4ic/u3+X1W0/P+UcB1tUCBGrxw6tCRPDySGdQ4=;
+	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=tUdVjYcJjaw87M72bU+91DTe9dIwEghaC37Sb23wPp8whu89Nnyiy/EMmLW7utf7ZHCxp34nsQ04Vy6hKgoax5rYbHG9wvKPYpVBe5iAFknpvSUq74U9iYC1taXb2szLVZ7IRwdtkM3crboPZzjNyqIKNpZsaAzZMw1nWeH97qU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com; spf=pass smtp.mailfrom=live.com; dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b=cbC/6JPC; arc=fail smtp.client-ip=52.103.68.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=live.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=NzKHmvTNe13/O/7znvUaGD2vCIr1Z+A1jc5X5JsCRFAAbvLG2BCM9TGQjhMcdOe43befycl6sdQ6oJfzBeY6nhmrB3ZlUlU++ZREOq01yVaNtBGtrl4RqFXUUNsY/2BwEO8WbQcao9q7Fbfx+Q2PKvGn/82EbYGyPyECdFCH8TjpWqfOhiZE97IfTr0V/pmfzUQz5D1fbz3c8z7E6KCmut0u3UqP72NiDvdDvlhO/0NaYwCccaewkPgv1afges0UfhmsWAcQ/CLmFYREFCGf69OXkOQfoYTctSZfJhjswd3xvIhOqIiNnJVqi1ePRhPa60srRdVAwj5W/MUa4bio6g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Br8nz4ic/u3+X1W0/P+UcB1tUCBGrxw6tCRPDySGdQ4=;
+ b=BA1NfAFiAQT1tJaPi0eUqVDKyFYTBaevCdnfJraS5qzTDio0fI7m1twv+q4Zong48F/YRA3FXBGVjLvDukmT8M3v8GK5epQJhznoHT51DrK7/V5bZ2xaisjEm6J0nU9GUMouF7OL9/QbhPZMRcI8dCbBKYz5vmTmk+fOEIjwNrqgwu2IcWNXEB0KBH+VeRypo3oTZ5gc8xl7uVtOiObPrLXjD7jIh3FZiaw+yrl/dxF1NbxqU9KEPwjPN0L+IeDWG5uQavj/AuIatcxTPOTZcdHf4s3eKvz8A8jhUcdpO4pH0/IbDb6vaNeVdk2V3AVhnYJclTzkgpkRTYvTvVp3zA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Br8nz4ic/u3+X1W0/P+UcB1tUCBGrxw6tCRPDySGdQ4=;
+ b=cbC/6JPCBnMXGqlSZp4apUpd74CKWv9BZTkWZ9+b0PpVM1CRJR7f/bTL/6aNuQ4ZV6YptzqQEBD2r8Q/aziAFeWSYZuGJhuXmE1wDQt9filc/YYcqMzumCS3PCu4F3Tbah45XXBqI1CyQecIGERhHvOB5K6uhkBf5Sai8OaHT2Ht+pEVx2eXo5H51qvwPMV72iS4e0CaN7GNMJOBvXsjx/AzIWwl+GCILsyv6ybfK+5YIO2CaDAZdttgCViI4yRXYaZpP0RILIrkiMoRTHaqRH3Su9B2IONKGP4DbexKDS5tOFFJthaN2XR5zFag0KHQ+Dk+7bUPAklUQPzkFnwW8w==
+Received: from PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM (2603:1096:c01:f7::14)
+ by MA0PR01MB6584.INDPRD01.PROD.OUTLOOK.COM (2603:1096:a01:7e::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8722.31; Wed, 14 May
+ 2025 05:52:45 +0000
+Received: from PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
+ ([fe80::324:c085:10c8:4e77]) by PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
+ ([fe80::324:c085:10c8:4e77%5]) with mapi id 15.20.8722.027; Wed, 14 May 2025
+ 05:52:45 +0000
+From: Aditya Garg <gargaditya08@live.com>
+To: "baolu.lu@linux.intel.com" <baolu.lu@linux.intel.com>
+CC: "iommu@lists.linux.dev" <iommu@lists.linux.dev>, "joro@8bytes.org"
+	<joro@8bytes.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/5] iommu/vt-d: Restore WO permissions on second-level
+ paging entries
+Thread-Topic: [PATCH 1/5] iommu/vt-d: Restore WO permissions on second-level
+ paging entries
+Thread-Index: AQHbxJRqUiHP2/xsvUKaG+aLdkkj7g==
+Date: Wed, 14 May 2025 05:52:45 +0000
+Message-ID:
+ <PN3PR01MB9597D59895582119A2F56928B891A@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
+Accept-Language: en-IN, en-US
+Content-Language: en-IN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PN3PR01MB9597:EE_|MA0PR01MB6584:EE_
+x-ms-office365-filtering-correlation-id: efb48ae7-aa1c-4c1b-b03e-08dd92ab8cb3
+x-ms-exchange-slblob-mailprops:
+ bHQ38DpbEWBliItO3MnjFqexImzWs6BA1dwJW86W4JdjAY+4//B7AErWSZB8l9h8qY3Bxg7YvHPryhFkfIcEOOqrjg0cQDxOSpCLRzNa4I+4GzsuK2kB3K9StEwZaLxewvHV6i5V0tDiOSUSfymbPLzBsz1L3P/x15VcA/8OFs1wP4ZnioU5esg53rzEGNB3VENrBnTynzLv3cKrSfybtysuAIwCG11WBygXc8G8h4wjcGEMLAQbVGLUP1lYiGhfm4hf2dC8uFIoMsM9SGv1lvhZ14yegpzah9azQuVwUCYPNarbHZIqzeVAiZX5pp7q8uiG3zXpUTevxFwsDOexDE+1QFAxUruoJO7qqyL8eXrZ+IMF+HuAShi+n+rPy/kq5WaOkt7WoWvKk/qwjAbVW/Dk9FMiwFgV83uvbPeheR9FVBHStynRAryrqVmyTZi5q1tCom7VZFu76AD92IEG/80/IApWIDHiJyZGHRVZn77CGcKEPt1vca3TU9Q0XaTYXOZRY0pnzQy50NlJ4BxZnCJKyl2+0OM2b6HgPy0Qk3MGfZN0AXMtX2PnCxSkFu+a/ijyr+JurFv/LYOuaB8s63O2vaz66p2f6XzAcaOT6YiKqZz/izjdghIgu44HWMSVIOlvT89HiYHDXvEbNG13sU6dvO8QEQBeV5zShsRQqOY38/WE5dQgrA==
+x-microsoft-antispam:
+ BCL:0;ARA:14566002|461199028|15080799009|19110799006|8062599006|8060799009|7092599006|4295299021|440099028|3412199025|102099032;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?tIRm2Qiq+F6m0PCKbB/Ppt+bGcNgYdlN1tH0rf2RSV5iaWnhEQs6D9nSfzql?=
+ =?us-ascii?Q?yKcRLZb9Y268vOt1F7j6RGXPfRMW4XR0ab/CbVtXXHb5wfbcjzQUPx9txn2Z?=
+ =?us-ascii?Q?cKsi4aDzIdEjv2cbZFduwXCj+3e43g8piebAlMXJB47k6ONmdA5jy+o8eqXi?=
+ =?us-ascii?Q?n5Nct1cUehWpjGBpVqM6RkvmTea31gnpVnVwmih0bkPzvWldcYcphGbgmUtK?=
+ =?us-ascii?Q?/qvHRk/EFgDmGUAArimNs85VxDEdiJAwW87MGv4e8LTYHq6x2vyldI8+v6Cf?=
+ =?us-ascii?Q?ChnAOtJLS8MMwIapusTz1f0YKWD2/ywqWZL5WnEEWVVEQOOwHcuBVRG59ZwH?=
+ =?us-ascii?Q?QWTlfvobRZZJ89m/JycF5b0RasbGZ8CFviBv4jKtjtKKPLeIOsodQxslPzvI?=
+ =?us-ascii?Q?6ArjD9lBCIPy0Zzd4XgbZpgXS2L2ckv5Mud6RXUytMuLcYd27mI1kfWn2e6e?=
+ =?us-ascii?Q?/5FrjFbzd7bOAGYP3MMS5271vLur6NdAkyK9+bWMw8f4lv8MT2KoryiPaTwj?=
+ =?us-ascii?Q?3a5I5aeIwS2alEwibvaPWIHyvLUsGNaB+Dg8Lacp28LbJm7H2LysBQf8mgBy?=
+ =?us-ascii?Q?inC7bJBK3Lk8BedbzdvEHtzl9WMT6InlTcmqueADeIVG/hQuKaxTMU3KYUN4?=
+ =?us-ascii?Q?r4WOhc/v7bNPUStD0893nbsmeEafOLtlWQVxqRVV4rgYkITc8fX5mkDS1KXd?=
+ =?us-ascii?Q?E4f1okqYiJh9vdbMfTf5j303QzQ7yXNqnPMPfPZezKfasc7kFZjhISnY7CNK?=
+ =?us-ascii?Q?KgPB8vAsNLmNAulD6pf7uG+4FTD/Y1Y59cm47l2GPbPEABDW4O6/U4nzA0+Z?=
+ =?us-ascii?Q?WIdpk06UpbzINW0ZqMKSWIga2GQNQsFJuRFnYv5VngBmc/SqH4KvbmxFfVY7?=
+ =?us-ascii?Q?+KVs7Pv/hIQX213FgNaVlcTxBXIZUoVjM2eclStftB74QbalEdFxqsxXYMx6?=
+ =?us-ascii?Q?70Qf6hVLVu9uvibBWHWA4DoPZbXhemDo+6qZ4GOLzxb+K8i4ty2dN+2twptf?=
+ =?us-ascii?Q?FJp9zZZaEcwuUpOTyGiCBpP+Ladov2eW8xK0h2eAkpWW+eyghoAavln9WubI?=
+ =?us-ascii?Q?FRTZhzMzJce/LUtZUZgZtafSJl4W+VWJqMK14K/lcvfsDdPVFhc=3D?=
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?D9/rUD30FrChjX0+IIffwvjKYOyUjDGJbxWAjb1QwPTmX0QRhLlSPHdZhur+?=
+ =?us-ascii?Q?NLPyjyfhXm2bKoRMB01ljWb5xFkRIxGVz0xbYbaLD9Eai8MRjJT5+83m5epl?=
+ =?us-ascii?Q?Ib6LuIUeLE76UdDk0Ad8aZec96jO8p+zhevRgEp+25rXK3w+v9H3lzaA1v0O?=
+ =?us-ascii?Q?bSYdP2JKvmxJBu24rBB6EKnokISh6j7F1WkgYw05BFgAEn6lYswWwkcnmdF5?=
+ =?us-ascii?Q?km4BV2sY2wwlO8Z8sEiW26X8w4v+hRqOQL+BVE9ldsNpoSF2eb4PaTjr7mVo?=
+ =?us-ascii?Q?WJ6JLD5XSsZTzRSfJTMgfwn1xCOMkgRrCf5/qjTTAZIFGQ0Bld/p+Q24sWKh?=
+ =?us-ascii?Q?xQ1WVaivfVpweUoExm2yMaStHOV316oI2bqD6nBJTajX12cF3KBnmByQPRgw?=
+ =?us-ascii?Q?pLFoef+92ThZs9kPgW1Lih48556vAyXQzTUeXSet5ha07CkmawO9z1Yb7vk/?=
+ =?us-ascii?Q?ZfXhhj0viAUjQ6wyl1+sPryrFB3UG3EG1ueQCtJTx5n1AclgZf8BDywSGz2i?=
+ =?us-ascii?Q?tAwnkP0pq3ZOByc6L/oY0STltsRkTY+xsjvHdWvuDeZnXXoRk+0MYD0hL1Yc?=
+ =?us-ascii?Q?sfvqQlIGvIOO1u7pNO5/vvsUNHqysdaXHecIjxkBoW3gp9LMw7b/Y93soN18?=
+ =?us-ascii?Q?18Ot5I1dnHpFnFNHBriXEC9sGcyG+smC7H63z6q+IPYOTJjFraHXwZR7ILKW?=
+ =?us-ascii?Q?D73QumCqXX53iizrNAQ2aoapXZ8jV3AXle9hZVzZa4QpjJlchGn7AUohf/uC?=
+ =?us-ascii?Q?kCxETcFza3RQFvrbojd2k9DvkaO2apxn2xZmOdnyMTfwg9lBBsZ5c1R71E6M?=
+ =?us-ascii?Q?jPUiS1xkMWqo/qna1EPKA8XUC1a6S8UEHEqeqxlgOHJIP30wNzxfi2XXN0x4?=
+ =?us-ascii?Q?EWNpYjotuZoF80Dnm4iNrZbNZbddwyFfYCSR5yiC4xflzqSWj6zSDSXMMhie?=
+ =?us-ascii?Q?YQDIo3QdtpkfhtazEBixS9TJ5INsYTvJgrVnku3JPEBq2iOcPEBn8Z/sc3Co?=
+ =?us-ascii?Q?RIuHDTO/LUw/+rCgpl3Tp1gFYKhIv1rVV2nw571r7Cv2J8494uprhhnbgV4W?=
+ =?us-ascii?Q?08e4yXuUCZQJlDcQdjls4n/qKQuPTTkJrvnnpkHZhq7JmDgG0K23w12FO8Xz?=
+ =?us-ascii?Q?t8LrhpzKyuaUDpxKcDRXF1O2P9bhso6CWKN1HbwQTcaTrZI1eEUaonOLY5GM?=
+ =?us-ascii?Q?VhBTffJAUA8kdr6d6nTdAGCsz6PcS80it8zz4zFwMy7V2xylJQoxX1wtPEo?=
+ =?us-ascii?Q?=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID:
+ <B9C268BD4D7EAB40A12D7B3AAE2FEC90@sct-15-20-7719-20-msonline-outlook-ae5c4.templateTenant>
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250514-ipq5018-pcie-v10-2-5b42a8eff7ea@outlook.com>
-References: <20250514-ipq5018-pcie-v10-0-5b42a8eff7ea@outlook.com>
-In-Reply-To: <20250514-ipq5018-pcie-v10-0-5b42a8eff7ea@outlook.com>
-To: Vinod Koul <vkoul@kernel.org>, 
- Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Nitheesh Sekar <quic_nsekar@quicinc.com>, 
- Varadarajan Narayanan <quic_varada@quicinc.com>, 
- Bjorn Helgaas <bhelgaas@google.com>, 
- Lorenzo Pieralisi <lpieralisi@kernel.org>, 
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
- Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, 
- Praveenkumar I <quic_ipkumar@quicinc.com>, 
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-pci@vger.kernel.org, George Moussalem <george.moussalem@outlook.com>, 
- 20250317100029.881286-1-quic_varada@quicinc.com, 
- 20250317100029.881286-2-quic_varada@quicinc.com, 
- Sricharan Ramabadhran <quic_srichara@quicinc.com>, 
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1747201951; l=2062;
- i=george.moussalem@outlook.com; s=20250321; h=from:subject:message-id;
- bh=OKmTrcmt0ksiQwz9dz8aVIs/K+GfvvlMVFo78Mfk/ZA=;
- b=Kdpp0nNjPVPIkhZUEbwUlCo6UHMoANmtgHx2Kel29NApsyxP4Vf0gWcib6DlzyYlQZMG5enJQ
- HaFqTRaMVQXDjtGTc5p3c1nCZm75Lu0AqLuz26tXIig+5Ob1Wnd5E23
-X-Developer-Key: i=george.moussalem@outlook.com; a=ed25519;
- pk=/PuRTSI9iYiHwcc6Nrde8qF4ZDhJBlUgpHdhsIjnqIk=
-X-Endpoint-Received: by B4 Relay for george.moussalem@outlook.com/20250321
- with auth_id=364
-X-Original-From: George Moussalem <george.moussalem@outlook.com>
-Reply-To: george.moussalem@outlook.com
+X-OriginatorOrg: sct-15-20-7719-20-msonline-outlook-ae5c4.templateTenant
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: efb48ae7-aa1c-4c1b-b03e-08dd92ab8cb3
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 May 2025 05:52:45.3929
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MA0PR01MB6584
 
-From: Nitheesh Sekar <quic_nsekar@quicinc.com>
+Hi
 
-Enable the PCIe controller and PHY nodes for RDP 432-c2.
+Since the original patch which this patch aims to revert fixed CVE-2021-470=
+35, I'd
+like to know how is that managed now.
 
-Signed-off-by: Nitheesh Sekar <quic_nsekar@quicinc.com>
-Signed-off-by: Sricharan Ramabadhran <quic_srichara@quicinc.com>
-Acked-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Signed-off-by: George Moussalem <george.moussalem@outlook.com>
----
- arch/arm64/boot/dts/qcom/ipq5018-rdp432-c2.dts | 40 ++++++++++++++++++++++++++
- 1 file changed, 40 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/qcom/ipq5018-rdp432-c2.dts b/arch/arm64/boot/dts/qcom/ipq5018-rdp432-c2.dts
-index 8460b538eb6a3e2d6b971bd9637309809e0c0f0c..43def95e9275258041e7522ba4098a3767be3df1 100644
---- a/arch/arm64/boot/dts/qcom/ipq5018-rdp432-c2.dts
-+++ b/arch/arm64/boot/dts/qcom/ipq5018-rdp432-c2.dts
-@@ -9,6 +9,8 @@
- 
- #include "ipq5018.dtsi"
- 
-+#include <dt-bindings/gpio/gpio.h>
-+
- / {
- 	model = "Qualcomm Technologies, Inc. IPQ5018/AP-RDP432.1-C2";
- 	compatible = "qcom,ipq5018-rdp432-c2", "qcom,ipq5018";
-@@ -28,6 +30,20 @@ &blsp1_uart1 {
- 	status = "okay";
- };
- 
-+&pcie0 {
-+	pinctrl-0 = <&pcie0_default>;
-+	pinctrl-names = "default";
-+
-+	perst-gpios = <&tlmm 15 GPIO_ACTIVE_LOW>;
-+	wake-gpios = <&tlmm 16 GPIO_ACTIVE_LOW>;
-+
-+	status = "okay";
-+};
-+
-+&pcie0_phy {
-+	status = "okay";
-+};
-+
- &sdhc_1 {
- 	pinctrl-0 = <&sdc_default_state>;
- 	pinctrl-names = "default";
-@@ -43,6 +59,30 @@ &sleep_clk {
- };
- 
- &tlmm {
-+	pcie0_default: pcie0-default-state {
-+		clkreq-n-pins {
-+			pins = "gpio14";
-+			function = "pcie0_clk";
-+			drive-strength = <8>;
-+			bias-pull-up;
-+		};
-+
-+		perst-n-pins {
-+			pins = "gpio15";
-+			function = "gpio";
-+			drive-strength = <8>;
-+			bias-pull-up;
-+			output-low;
-+		};
-+
-+		wake-n-pins {
-+			pins = "gpio16";
-+			function = "pcie0_wake";
-+			drive-strength = <8>;
-+			bias-pull-up;
-+		};
-+	};
-+
- 	sdc_default_state: sdc-default-state {
- 		clk-pins {
- 			pins = "gpio9";
-
--- 
-2.49.0
-
-
+Thanks
+Aditya=
 
