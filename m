@@ -1,97 +1,45 @@
-Return-Path: <linux-kernel+bounces-646834-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-646836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C725AAB612C
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 05:26:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9B4CAB6131
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 05:27:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E44A1B4469D
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 03:26:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0313B7B38E4
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 03:25:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5122D1B6CF1;
-	Wed, 14 May 2025 03:26:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dashgXX8"
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FCB81C8639;
+	Wed, 14 May 2025 03:27:04 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C18E2260C;
-	Wed, 14 May 2025 03:26:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0B121B6CF1
+	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 03:26:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747193162; cv=none; b=kCay3ON9YxnOxH2s3c+RpK4V3jx/6e+kAZpm77g3HixaPEaThWzFnI0omuRiQL6GjiEYxwBps+saWI0eW5EslpSe3oU6wTRkX4VyZe0K/0vLhr9//1sL0RqiQo5IuwwX+oO4rg5xtIiF5oXEGTN8hzmGN8aDh9+zd/5q9p8YgYE=
+	t=1747193223; cv=none; b=mBB5ANe+GcjBL7crRnQMS1RI3PLH4P5zeTtS1ewUegLvlipJddLEYqUoPI6bkTpJOGq2eX8J4XiCae3Khj8GJfga+KeUF5625dAlDLfkFU1IXlNnWk30GdTfeN+fLfz54601LvB85YJYHqcT+L4Un9aS1nap4BERAjgzhz0ap2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747193162; c=relaxed/simple;
-	bh=ijzwnnI/HGCOYp81pOseMCjlmDojsIOrtfsqtslA87M=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=IvWm28YS9zBM+247/2imk7rwiXBpEm/DMMtWqmM5v2mDqpew7pjVEs+qZvaoi4YgwLwY7cxiB9OaRXlA3FpKKt4o80BykBoo2aRJKfk1uW7pKVDhs+rkKvgf+zQeC+HZrB+e2ys2pq3WuV2OrC+Y+KGBNKUAnY6E2cfzAH50bZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dashgXX8; arc=none smtp.client-ip=209.85.216.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-306b6ae4fb2so5943335a91.3;
-        Tue, 13 May 2025 20:26:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747193160; x=1747797960; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:date
-         :subject:cc:to:from:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TcDZQwTmMdtyKKt05qTa4r45+8RvNA2opPyhd5OidXw=;
-        b=dashgXX81pwxSGYVdJceiil9kod+EZRv4R2iTfJRHqp5RHS8QvvQ0OD1ThNxtSzfPM
-         F0lL/Gf79uJCMM/y+LU7UmUMl0sCU1LsWVDYcC8Kc+VrpMob2IyirsYQ5DIb8oAuRhiB
-         yKRPMRkRf351yFyHG3XzvFPwZrrFfMJYqhoKYsQ3pOrpKQNnWUksFXxeKpuasKgy3pVI
-         uyaoZLWcvziA79mUaCkfOekEcZ1Had6TTZKNiivAqab2pgGHEeWfRDC8RP2/7UfQFxC9
-         Pbq6HV+ZAwRgCflF1xotLpKiXPjS9xe9t/zsYwFCnJkOigD1e+pC1EgPnAgB/7AS85Xa
-         qJ8g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747193160; x=1747797960;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:date
-         :subject:cc:to:from:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=TcDZQwTmMdtyKKt05qTa4r45+8RvNA2opPyhd5OidXw=;
-        b=Z8yPbDNAvJpz8mQ0s9qZ9KSgE72EPyo8alxZ1DmTCJdP6gS+3VuJJM2Rd9nrBVdxt1
-         Jx5tx5D5sC7+nQ2T0mawasix7DIQU8GBFe/AYJpFz5D71ewUQRE6gEQAtq/oomxQgdkH
-         aTB0BA6BPFjGzvWXyBa+FrcMLykkG9mEEo/oDyhLevD5Kt1AtfVLE/azJomWLEf85sM+
-         S4JdLyURG8KiTalYJgeUmODQYzZKxg+GgtwFzSlk7JjqqZrqMSyMAWgHbsDmJ4vBhag+
-         ogvTDV1tMo24uYuodgVFR8fc51mQkvUQGSFxrO2ya0ZsAJIBgL5SkHnpsgvByGmARiJX
-         94/w==
-X-Forwarded-Encrypted: i=1; AJvYcCUEvlWUGGl/FYlfPBaUXa6iwWZp2KHn0yPqnZDSNSDwL2gci+hfmcfG/6nOc/FHex5mU/GKv3p+DpI71SA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzkY9zQEZoV0E5EMX/uCsaypPdrgM/0bgF7DHazX9Br3+X6+iNl
-	KYv7LmltERXoivagxNhD1dfqqNZTAR6oz7SPUhqQURnlem98zUq3
-X-Gm-Gg: ASbGncu0P6PgPmncPzfTuS72pM04jrQ7AUJwbD4+erE4mz8R/X1zyZYLMtb6yLsWMRF
-	e/BO9Pkw3G16ExbdIHOpacRvECvWJYlvF1fHf2ui6LIVf5hzgJB7lj1zk+3oKCj7kBzZVt4x0CA
-	9YJgbeXRTw7zvZ79vfIk6Aha5ckkLf3cb8pKzEzpb35/fWf0KfgsiYSTozi5uYh2rirGdfWGkV1
-	6FcHWt7J1iTEdeniPwieDvyUQrxTy6l+Wn+8Zeij2wak5m7gcRiElsAmEcv34zxoq3DScVTmSh7
-	VFDtUev9Vm/XOiGQ3cNdQZDg5QVgOLRdMaUPyF4NDoNIvLS3oQbtzQ5fCxatE3BkFQtFCYdb
-X-Google-Smtp-Source: AGHT+IFgFmbcbTy2fzroMryy0JD+lhC7K5WXE5pPjhmZCsckNBHxwrPKsqyWRirO1mBQ4wl5Y94zsA==
-X-Received: by 2002:a17:90b:3b4e:b0:30a:4906:c20c with SMTP id 98e67ed59e1d1-30e2e644d17mr3039146a91.35.1747193160314;
-        Tue, 13 May 2025 20:26:00 -0700 (PDT)
-Received: from dea88b1475bb.. (125-227-29-20.hinet-ip.hinet.net. [125.227.29.20])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-30e33451e6bsm414599a91.22.2025.05.13.20.25.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 May 2025 20:25:59 -0700 (PDT)
-Message-ID: <68240d47.170a0220.ba589.0feb@mx.google.com>
-X-Google-Original-Message-ID: <20250514032452.275855-1-LeoWang>
-From: leo.jt.wang@gmail.com
-X-Google-Original-From: LeoWang
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Joel Stanley <joel@jms.id.au>,
-	Andrew Jeffery <andrew@codeconstruct.com.au>
-Cc: devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-aspeed@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org,
-	george.kw.lee@fii-foxconn.com,
-	leo.jt.wang@fii-foxconn.com,
-	Conor Dooley <conor.dooley@microchip.com>
-Subject: [PATCH 1/2] dt-bindings: arm: aspeed: add Meta Clemente board
-Date: Wed, 14 May 2025 11:24:52 +0800
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <6822b830.050a0220.27a24d.d064@mx.google.com>
-References: <6822b830.050a0220.27a24d.d064@mx.google.com>
+	s=arc-20240116; t=1747193223; c=relaxed/simple;
+	bh=nPnxniUkG96DoIzIVosQNdMaJPp0eBnr+bNWONHO/Q8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fKkmnTy1jPXmxK63BJCpBTiG/6E68vutJwQuyTYIAGIAdqjYvh4tz9Ejw22pJOfzrOr2yBLVPCROd+zyV+tUXEaxX3fUYX4IHgJt/c11Cj80VbH10wYhhPzx6M6rRtecI0Bt/p0mrSwuEMY+NFWr3eMlefKg5UbUxyKvk4cy308=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost (unknown [124.16.138.129])
+	by APP-05 (Coremail) with SMTP id zQCowABXkAh9DSRoaesFFQ--.21701S2;
+	Wed, 14 May 2025 11:26:54 +0800 (CST)
+From: Chen Ni <nichen@iscas.ac.cn>
+To: clemens@ladisch.de,
+	arnd@arndb.de,
+	gregkh@linuxfoundation.org
+Cc: linux-kernel@vger.kernel.org,
+	Chen Ni <nichen@iscas.ac.cn>
+Subject: [PATCH] hpet: Remove unnecessary NULL check before unregister_sysctl_table()
+Date: Wed, 14 May 2025 11:26:37 +0800
+Message-Id: <20250514032637.2317639-1-nichen@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -99,30 +47,48 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:zQCowABXkAh9DSRoaesFFQ--.21701S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrtw18ZF4DKw4DtFWDZrWDJwb_yoWxtwb_CF
+	10qrnFgF95GrnxGa45Arn8ZryY9a15urn3Z3WjqwnxJa92vr4rWr1UZr17ZwnrG392kF9I
+	kry5tr9akr12kjkaLaAFLSUrUUUU1b8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUb-xFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
+	Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AKxVW8Jr
+	0_Cr1UM2kKe7AKxVWUXVWUAwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAK
+	zVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUAVWUtwAv7VC2z280aVAFwI0_Gr0_Cr1lOx
+	8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIF
+	xwCY1x0262kKe7AKxVWUAVWUtwCY02Avz4vE14v_Gr4l42xK82IYc2Ij64vIr41l4I8I3I
+	0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWU
+	GVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI
+	0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0
+	rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r
+	4UJbIYCTnIWIevJa73UjIFyTuYvjTRErWFUUUUU
+X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
 
-From: Leo Wang <leo.jt.wang@fii-foxconn.com>
+unregister_sysctl_table() checks for NULL pointers internally.
+Remove unneeded NULL check here.
 
-Document the new compatibles used on Meta Clemente.
-
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-Signed-off-by: Leo Wang <leo.jt.wang@fii-foxconn.com>
+Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
 ---
- Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/char/hpet.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml b/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
-index a3736f134130..4416a40dcd86 100644
---- a/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
-+++ b/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
-@@ -81,6 +81,7 @@ properties:
-               - asus,x4tf-bmc
-               - facebook,bletchley-bmc
-               - facebook,catalina-bmc
-+              - facebook,clemente-bmc
-               - facebook,cloudripper-bmc
-               - facebook,elbert-bmc
-               - facebook,fuji-bmc
+diff --git a/drivers/char/hpet.c b/drivers/char/hpet.c
+index e110857824fc..0713ea2b2a51 100644
+--- a/drivers/char/hpet.c
++++ b/drivers/char/hpet.c
+@@ -1023,8 +1023,7 @@ static int __init hpet_init(void)
+ 
+ 	result = acpi_bus_register_driver(&hpet_acpi_driver);
+ 	if (result < 0) {
+-		if (sysctl_header)
+-			unregister_sysctl_table(sysctl_header);
++		unregister_sysctl_table(sysctl_header);
+ 		misc_deregister(&hpet_misc);
+ 		return result;
+ 	}
 -- 
-2.43.0
+2.25.1
 
 
