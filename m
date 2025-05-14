@@ -1,87 +1,122 @@
-Return-Path: <linux-kernel+bounces-647926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-647942-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3A27AB6F91
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 17:22:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0159AB6FA2
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 17:25:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3CB73AE8D6
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 15:16:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B8574C67DD
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 15:20:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55F8B2820B3;
-	Wed, 14 May 2025 15:14:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13B431DEFC8;
+	Wed, 14 May 2025 15:16:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eDl1Eynw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UKIKSMN9"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A86B28136B;
-	Wed, 14 May 2025 15:14:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18379F4ED;
+	Wed, 14 May 2025 15:16:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747235679; cv=none; b=HPSy+yNcljVuSa58+Tj7yrZ7QcxNL8U2qt9kHF9KwHtQOc8u5d96l3tKMk9jHo2sf73mjRgqD/CwK3YnEBZBSJf2gomtYZmoylTybTp6BaDLqi+UO8XRw1fVE0OCxyO/QtFMcr8PHquNle4jHCVN9aBCLm+v7vYqFM+sAgyqD1o=
+	t=1747235788; cv=none; b=cC82K9tfD/Mr0BYKgcyJjFQMxiRJeIjbzPFydhmiBp8T2I+P77ceH5Ex8XxdIdSkosJt7U1y2Y3A9zovTZR0ba5bzQF65dzOdF6p3PuiCQtFv6RHh1zob5VuSxMZPCoaJmb3XNVtWWjxeljgETovKaqISSH9wVoucMu2aYJZ9n8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747235679; c=relaxed/simple;
-	bh=Y+K0CTNazLFlZpMgylFelX29INIzg+H1k2D8sZ3bDcA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OZ5AhcclKpVdFscczBQO1I7LNAGMYQykQ9X2oWQET/IsGMbcWknrU8rIHEJejOL6Y0B+THHQhkmLO/nvaV/OTt9TAc1xLkly4h2Jkls4Cy4kpAcoEcTcwFUpXpURdqMIbu5S9EMxSZdOKdNMl+j0NKvvlGCwW0oGMVWmWSa324Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eDl1Eynw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E92A1C4CEE3;
-	Wed, 14 May 2025 15:14:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747235679;
-	bh=Y+K0CTNazLFlZpMgylFelX29INIzg+H1k2D8sZ3bDcA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eDl1EynwApjePrzqmYaRrqbwX6nnm/wMyxORcRzAaGmYbRq3J0exTHedYZIokVLqx
-	 p3FqD3hdkB3pXgRwqpPPfEDXe+oFlCu5Klz4JiyjsaBu6H98BFH4UmWuA1ohiNLgvm
-	 D75u7YH/Wt6zY/mw4npsQHfHbMORIsPkRvEewfK//AZ22J7moOPWUTZxbZHHGivW8l
-	 VCYOdmCjMUwCvDDYZFxLVWE/7mgOVY2EQfEgIp8pcedDFCMY6CRPvM3qZLQedePs8o
-	 EOu+b5IqY0/YFHMNOmtH/ISof9ldZevBTgNSwY8uJsT/4rgbR5/x/QdMDvNIPFV8E8
-	 HM6KjfqQKg9/Q==
-Date: Wed, 14 May 2025 17:14:32 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Francesco Dolcini <francesco@dolcini.it>
-Cc: Dong Aisheng <aisheng.dong@nxp.com>, Shawn Guo <shawnguo@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, Emanuele Ghidoli <emanuele.ghidoli@toradex.com>, 
-	linux-i2c@vger.kernel.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, Francesco Dolcini <francesco.dolcini@toradex.com>
-Subject: Re: [PATCH v1] i2c: lpi2c: implement master_xfer_atomic callback
-Message-ID: <tds5osuthulo4bnlck6dgx3g3aoanca3my2uczdhcipcfcxgpp@opzseflynjar>
-References: <20250319145114.50771-1-francesco@dolcini.it>
+	s=arc-20240116; t=1747235788; c=relaxed/simple;
+	bh=Lm6WAvlTRDzuea0vIj1PVTw6IFK4Z8B0uPlTZZUwRIk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QaS/VP3jfHm5L2629ACVNViIMOKQ2outKzEff5Enm0BwSjxoBlXojOXF5N8KOWgKDuOYiIxnf0WH9QhN9v7uP9Hz4nxAigpXV0Wl4wlliuQ3p9a7WkzrnLzsk1+RttiS8hZPOKgexaxfN+8WRzS5QlVKiPHBNz0MsykNnkqRC/0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UKIKSMN9; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-22e16234307so11612945ad.0;
+        Wed, 14 May 2025 08:16:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747235786; x=1747840586; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=EgsklLZ/mK5aUC96i1ZN36xx7E9PxV2eHr7rkJneVg4=;
+        b=UKIKSMN9hI+bFCEzwgDM98fK9idcg76796uZfiWU/aMVGKJMJdLqFgDkMkhpTKV7kB
+         MTd6A9HFzWeYTmvIzHV0++m5cD85PXyZcOSlR9+UY0gCVLi7rFVuo9rw3yrJQ9+6Ngbs
+         nX+oTS/yeBTGRmSF8gmHhwLrKQz9guIVCraRRH/jQkCZTVlkog96QnUXKcL7zGdaDvSZ
+         YrWf/zZPMEb2wEMHRu3IfRBOpB7BgyQCBBoIWp4nBIXau5oqICoQg2jFeAHAhmdoqE+M
+         QpMfLVGL8s5P0NFyYbityURmh6+yoaZJXCX5ZCzPM/hLZI0EFAGuz6c8l37xYq7qppTp
+         J5GA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747235786; x=1747840586;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=EgsklLZ/mK5aUC96i1ZN36xx7E9PxV2eHr7rkJneVg4=;
+        b=wJrwEdBzjJSk/dRDoOupIHIqzZD/iz4+4EdKzTuncH3ftGVTxwXQZUIqhDLxtl4Rub
+         WHPXK1H42KrdtXB5abWFIbL2GIbwsT0/eqlxktESWbbpaGsPTDpKo42c+EDVXujKwXnn
+         izBj+e53KSKAP58NaGcVM1adBD1uHKJ+QraSvhjwWnCdKUPRaJdoaPoP3HFkTfH58wJx
+         SALusPoJkDl8+5XTOQDp08a9JGzGdY9xNPs5MUcVdCOj9GtsF8D4yOxSsmU5w5GfPjEV
+         v5bY4rZOD1DrX0QQ4twD/cChJyCHqsOSmjMOn6qlYjvQw2vM9qr6ZPjrRn3Gfofqlalh
+         Elfg==
+X-Forwarded-Encrypted: i=1; AJvYcCWoaUSh4XtXHWKSNsKkcJAtoexJslmUx8isvnH5tk1J/9Mn5bX10eSvG5Zp2enoKaEZOF+HbkxdzqAlhMA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzy7uFUqFv24mBS5LUiNvIqyu36WTNIz97N8dfVKWckKiEzNeIr
+	yKJ6y0/g7qIm1Zh/Y9m1sm+pJC4aICvQa8FamOnnAtCrPpxg6EiPVKA2+7Cd4ykMRA==
+X-Gm-Gg: ASbGncupTSh/BH/y/cpglu3oP6U9Y03IetxUwX5QmxNjFvcQTBp0n7vOVwlshUrMxFh
+	6OUbgtF2Y7c7gE2Eu/Ev36uY4+9KNAUEgLACTTd/2OgmVjoDPgGywEEQm2dwYviMsSjtsgatEZA
+	tZQEYWJ3Oq0c5kSQrHdsNCyrBfIkgh1BMckybFI9rJIh+/NMpkPVtcekS2P3CM4ArHN1PUF25o/
+	YxQwBKzLEBBUWHia9RCpGP20SSoojneATIDQl45aQUsu2Ga0j98mzTrAzruCEgt+UOgGQ0csfVK
+	fS2r1jRoB7c++hLCL4HqcIrR52NDLTZxc0YS6Pw6Bxnb7P7lO6QJ6KQ1Z8OfcA==
+X-Google-Smtp-Source: AGHT+IGbVInxx66G7TdCmzBNdgbF6IdqT5fffqnER/G+POHGsBd0cJTXz0qVz+AMlIIPHrATjD1bLA==
+X-Received: by 2002:a17:903:230e:b0:22e:5406:4f62 with SMTP id d9443c01a7336-2317cb62f61mr103264775ad.24.1747235785499;
+        Wed, 14 May 2025 08:16:25 -0700 (PDT)
+Received: from localhost.localdomain ([119.8.44.69])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22fc75468besm100576155ad.3.2025.05.14.08.16.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 May 2025 08:16:25 -0700 (PDT)
+From: Han Gao <rabenda.cn@gmail.com>
+To: devicetree@vger.kernel.org
+Cc: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Alexandre Ghiti <alex@ghiti.fr>,
+	Chen Wang <unicorn_wang@outlook.com>,
+	Inochi Amaoto <inochiama@gmail.com>,
+	Han Gao <rabenda.cn@gmail.com>,
+	linux-riscv@lists.infradead.org,
+	sophgo@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/3] riscv: dts: sophgo: add more sg2042 isa extension support
+Date: Wed, 14 May 2025 23:15:49 +0800
+Message-ID: <cover.1747235487.git.rabenda.cn@gmail.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250319145114.50771-1-francesco@dolcini.it>
+Content-Transfer-Encoding: 8bit
 
-Hi Francesco and Emanuele,
+Add xtheadvector & ziccrse & zfh for sg2042
 
-On Wed, Mar 19, 2025 at 03:51:14PM +0100, Francesco Dolcini wrote:
-> From: Emanuele Ghidoli <emanuele.ghidoli@toradex.com>
-> 
-> Rework the read and write code paths in the driver to support operation
-> in atomic contexts. To achieve this, the driver must not rely on IRQs
-> or perform any scheduling, e.g., via a sleep or schedule routine. Even
-> jiffies do not advance in atomic contexts, so timeouts based on them
-> are substituted with delays.
-> 
-> Implement atomic, sleep-free, and IRQ-less operation. This increases
-> complexity but is necessary for atomic I2C transfers required by some
-> hardware configurations, e.g., to trigger reboots on an external PMIC chip.
-> 
-> Signed-off-by: Emanuele Ghidoli <emanuele.ghidoli@toradex.com>
-> Signed-off-by: Francesco Dolcini <francesco.dolcini@toradex.com>
+Thanks,
+Han
 
-this patch is causing a build regression. I'm going to revert it,
-please check the test report that has been reported and you are
-cc'ed.
+---
 
-Andi
+Changes in v2:
+  add zfh for sg2042
+
+v1: https://lore.kernel.org/linux-riscv/cover.1746828006.git.rabenda.cn@gmail.com/
+
+Han Gao (3):
+  riscv: dts: sophgo: Add xtheadvector to the sg2042 devicetree
+  riscv: dts: sophgo: add ziccrse for sg2042
+  riscv: dts: sophgo: add zfh for sg2042
+
+ arch/riscv/boot/dts/sophgo/sg2042-cpus.dtsi | 512 ++++++++++++--------
+ 1 file changed, 320 insertions(+), 192 deletions(-)
+
+-- 
+2.47.2
+
 
