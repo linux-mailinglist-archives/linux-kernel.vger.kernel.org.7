@@ -1,130 +1,165 @@
-Return-Path: <linux-kernel+bounces-647910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-647918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 835EEAB6F53
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 17:14:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6721AB6F82
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 17:19:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0ECB91BA3C48
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 15:13:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4BC519A051A
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 15:15:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3A7B27FD56;
-	Wed, 14 May 2025 15:11:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4BF927A905;
+	Wed, 14 May 2025 15:13:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SOvW8FT3"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="U6hhd98V"
+Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 938B921D58F
-	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 15:11:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C31C27A900
+	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 15:13:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747235503; cv=none; b=Ck6CB6zfqM3Au7Dh77rHrsiTp+iLXs7CEnhJBflpJghADXLP+Or1Y10FRrGKtMD+RZ/UpFl5I/E1A57lhqeJFQEtWwAxe13KN5IryDf++qtV7EalxFJKgzzinMHntdOvU/nQgXldAw1y8pJHHv8XkkGv3d1d15Gi5AU7eXCXlXY=
+	t=1747235603; cv=none; b=sDr+MaGF4cbAWfHC/1AHa2cBgNDl9LeYReQeU0QPU9fTutBrZB3J/TMgcyVKYqqzLSeyhmM78rzMn0s7sHu0N/yrpv5FixR3AOC2GMVY93+Itny++lm4svz01fVzR1mxVbhqs/dSt7rdJ+GKXbCkAOC6EL7z9FXTBpeI40PGM48=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747235503; c=relaxed/simple;
-	bh=4u/NS1smLHkxhFeUuEbvCE2uMHuDJkj0RIsb2N/7OBQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=CDJbG+fyT+6/E+qTRgQ8chymbuy+WxOEdjmDZouDUoBJz97HxOSKPVBAvD9GnHYgcR2RrecSWFwsKStfXljDDywL9eZNcR58BsBaDM22L95ZNE4pRXvJ2kHybIgek4jdsyQw+am/PKK4iK8kUhRJ6Ng0wtuyrYLyOJu/l8o1gSs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SOvW8FT3; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-22fa414c565so54014255ad.2
-        for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 08:11:41 -0700 (PDT)
+	s=arc-20240116; t=1747235603; c=relaxed/simple;
+	bh=zMHHBnI6m3mo0ePFTe0uKSZzTUP9WZHZ7T2iGlRV0+Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Jl5eJbBAL1DRMb7jsUiEbZLrmDs+Gd8JIC/7VNp3t02+4e4HfDdPJOqi7ZRCuxawh8YAUG7+YrBRUoswPx9EgypQCSru3PTuX+9UxOBfCW5bVT/kkhH5RujpLk7GksnPqez6Fa8Jt/0nqxfEOoL9gJBpkkROGXYYdqi0rLbpKAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=U6hhd98V; arc=none smtp.client-ip=209.85.219.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-e73e9e18556so1038988276.0
+        for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 08:13:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747235501; x=1747840301; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zin9UdB1kGHf9472t90ClCu+DsenV3gklPBeEhXFkBk=;
-        b=SOvW8FT3d4LANFtjcKwButycoGew7xFHKVAAqC8upyNJp1g/mZoJUO16d8/37oCpc2
-         Uc9MIoJHoD9glkhRpEnoP2uMt2vqcGU8Cw9NtDQaJi2TTZ3fgUD9ya6+NeIE69sMvBoZ
-         uHJ4n5zySWhnFjZuzAa4yWcpy4r0N5xvAxa8iFPuM4RfFjHLc3nKURh1CHFHzd2MGQ76
-         j1WMT/DbDNzm8Pyn0BbZLPUJh/PsIVIBrZi6aaJqLKa7zb+rGsY9HrkoPLu30bAVecb9
-         o4S15sFxkyprbRX3Dn+gL+jh7PEPbF4kZDgpE47owaftnKNFI63PesoJyjj9oNXIglA9
-         kw+Q==
+        d=linaro.org; s=google; t=1747235600; x=1747840400; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=J8jj6jRyHpEahWPL1bxwBIDklu0Ui7Dm+eEH5GeKLrc=;
+        b=U6hhd98VBx26nUxFA6BDVx8Z/bzUuTd56wtcK0gpFeIay6o/Q+foCbWD5VEDLMzd0T
+         kHE2SFzJh1kPQPY+76WjoNkIF+kT6v0Lriqkzk2u+BUw77LsMSjtXs5rKPaogRgY7AUJ
+         bonLvuYToOi7YddGdy0OHEa6nTHQdplYgiY3oZBJSJ8J3gRJAtcECrON8ZIpT9RPgz2j
+         ifz/ZBmjTv7S5msxL7Oc1yK/+LSwpfyvv6AeqYrK2qhAf3OwWnnib/VqejHRUAYpBdvD
+         lgyD+w6qm7yES5SsrZECvyZE279SLI+uItobFN8q8NvsH93hvK8WjJv+GuQqQAQLIwUD
+         bogw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747235501; x=1747840301;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zin9UdB1kGHf9472t90ClCu+DsenV3gklPBeEhXFkBk=;
-        b=iF6H8qoJqkzNuGVNVR7OrWiNMcqKjAME1cEmvCFX54SHLU2ZDFRvAf+St0OxsGzgEU
-         27jDeXhWL6ZizrdCa3QBvqqNYV2bQF+coCV1y0CsoZxN8JTsRaDauZ4226Hs+A49F9nc
-         +EAsbBxCEhXs6JfZPk9dp2jPXGf+HRp45I5Pjeh6/ebI/PspiCJvioXf+tvkgJkuxqio
-         6jyc6ua8ZbgpwfJ6oCPwpae6tfRfpHlQZWFKXbq4oEug2fEkl84HAykVXCkmyW5pSPa1
-         nEONJQN4EUYUlpI/FJvJn7TBnlQkBp9Atxn6AUJWK/ME9TNUimu5XdIGpOXhf75ggnel
-         2w3g==
-X-Forwarded-Encrypted: i=1; AJvYcCXH/RPmw6Ym9MVZy2ynCwgAGse/nNfeYs7JcgEN/Jy7pBQNPFWaMQ1RtQOF8cuxbeahkAI/ub+0Fm90x2U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzM35O5qyDyD83NpEerCQrWBstko2+VYPxvtLlMU8RnD3BlQpCd
-	5X4n8R8ug4uyCUBFsKzXrJtfcClug1cyvTQbgcZOldyDKIP0zCv2
-X-Gm-Gg: ASbGncvTzdDrNOv4WNZlPAGA8pGJIiSGI8WiItwVOL/QRRVOOw6T4NgWICYaYl0psHa
-	Zcr3B1Kac3JIJuqAMzh+e6NUhFlOgBFgE2G8fLxxQTZ2ksy2R1mmtOrrzUu7t99OfGnHChDV7Tx
-	xBXwhnA9kBj7Ja1YkDl9Rm5e6zGKF0A3onRFpi4gZeQ8pBsHsgZJ5G/KuNcT1Mj4WOTYO6rDAbE
-	T9L0gAW++vhXN+b3hYBnZYusQJD1/i1D/PN54zGJBlMbnAUaVwjt1haECaIlmUNoQxL1o/ZoZar
-	x8PujnoSLj1T7Bins2kNBKnt+uzcrkrLH7jqj6pql228loOypPbSz00GIxXLHGXeoyBMnxhvwNS
-	XYLwR
-X-Google-Smtp-Source: AGHT+IGQ88drE0lWsNDyF4V9Vy8xJEiVqRdDdnIX5NlkZpbH8m9mBlqKat4+TBTu4eQ2Nf1yk/MQ3A==
-X-Received: by 2002:a17:902:f647:b0:215:9bc2:42ec with SMTP id d9443c01a7336-231983d06d8mr50986825ad.47.1747235500628;
-        Wed, 14 May 2025 08:11:40 -0700 (PDT)
-Received: from ilya.linux (M106072195001.v4.enabler.ne.jp. [106.72.195.1])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22fc829d668sm99836795ad.201.2025.05.14.08.11.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 May 2025 08:11:40 -0700 (PDT)
-From: ilya guterman <amfernusus@gmail.com>
-To: kbusch@kernel.org,
-	axboe@kernel.dk,
-	hch@lst.de,
-	sagi@grimberg.me
-Cc: linux-nvme@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Ilya Guterman <amfernusus@gmail.com>
-Subject: [PATCH v2] drivers/nvme: Add quirks for device 025e:f1ac
-Date: Thu, 15 May 2025 00:11:30 +0900
-Message-ID: <20250514151130.701885-1-amfernusus@gmail.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <0250510102130.14710-1-amfernusus@gmail.com>
-References: <0250510102130.14710-1-amfernusus@gmail.com>
+        d=1e100.net; s=20230601; t=1747235600; x=1747840400;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=J8jj6jRyHpEahWPL1bxwBIDklu0Ui7Dm+eEH5GeKLrc=;
+        b=YB4YRZoV1QS8ZJQ9G79M1amx+rY6b58I0o+G1EV0PLtWqlUAIY84tGDK6TSL5sMDmT
+         5vwKKap9pnOKGU48xtORbJKYikPLm5XbqCxzzJpyTwsveSDmt/Q0r4EMLkUOLyLF/IAK
+         yrEqknrD3iYoBoRz8/wonWr0USAz1vwZ6cT/EOcr5a9D/5qPcGBfMcMewr38PIh5J09h
+         DJPXNgmZnCxEbIBPhN8aabm7kLgvkxFw5/JBNDSoN1uJ59l1ff7zCpbtlxqKJlv/YRyv
+         fEObTgI/coHa/AeTyvDXjnAOF0HHudM5EFcZWsOiVzr31J8hc3Pz8CcAFa4kqLSHMw2V
+         rnjw==
+X-Forwarded-Encrypted: i=1; AJvYcCWMXxRQ2MGQaw0ZUOWcIbIhtFvrmUdsDE4USxuXq6dhKC4JPBk04Cqlvq8ycr8wiOokkcihC3YgfvtVJhM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyIUrKl0XZqKtYFmkDo/ZZ5/1nTvTog0tgY5DwLiDE5fXfQF87q
+	6i2av4Sh1P/kUumU+9QPkA07sYDjeWnfKiCydnzmNiIIGtfEnWFPBxSNA8ab8DorVgqjuDC8GS5
+	MlLohYblgyj2LwI/OhFDpMPK7oHw/y/rE4+3CaA==
+X-Gm-Gg: ASbGncuW16e5ANovVTwPFfA1fC8TCHWiKfIrxGQ+9XcAs55hYI4XA4NNJoe1ENlQTb2
+	RoBvD42CfYmfmWj6Oz6F1Jxap9vcFFdtkqloYyM+FH++wh+NSml51wgcoZTQnOkAo0abtq9WpLJ
+	pC6HRfUhF+kOnVFgPIQ/jGb8mmXKmz+sY=
+X-Google-Smtp-Source: AGHT+IHfG4IdFhrynlohLcjINUvWUYxudJNltoIen2Onw6R0djfVvCV0/FdSfcdQNubeHC89QVS5keitmH669vIpZ7M=
+X-Received: by 2002:a05:6902:2389:b0:e78:f538:1c54 with SMTP id
+ 3f1490d57ef6-e7b2bde5e59mr11105285276.4.1747235600229; Wed, 14 May 2025
+ 08:13:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250423-rk3576-emmc-fix-v3-1-0bf80e29967f@collabora.com>
+ <CAPDyKFp5N23KCZwOTba6vGyk9eaS1-SjSqY52FfPDng-bahn6g@mail.gmail.com> <6154950.lOV4Wx5bFT@workhorse>
+In-Reply-To: <6154950.lOV4Wx5bFT@workhorse>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Wed, 14 May 2025 17:12:44 +0200
+X-Gm-Features: AX0GCFtDU_yTZnx-ehoHmNHeQ7h0DL35V2e2RHKt0pgXDptXnpjYmnfRRnWBnck
+Message-ID: <CAPDyKFpohUibXp_ReVquAxYHY7vZ28P1XmOCTU5GPQdLKYEaNg@mail.gmail.com>
+Subject: Re: [PATCH v3] mmc: sdhci-of-dwcmshc: add PD workaround on RK3576
+To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Cc: Shawn Lin <shawn.lin@rock-chips.com>, Heiko Stuebner <heiko@sntech.de>, 
+	Elaine Zhang <zhangqing@rock-chips.com>, Finley Xiao <finley.xiao@rock-chips.com>, 
+	Adrian Hunter <adrian.hunter@intel.com>, 
+	Sebastian Reichel <sebastian.reichel@collabora.com>, 
+	Detlev Casanova <detlev.casanova@collabora.com>, kernel@collabora.com, 
+	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-mmc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-From: Ilya Guterman <amfernusus@gmail.com>
+On Tue, 13 May 2025 at 16:27, Nicolas Frattaroli
+<nicolas.frattaroli@collabora.com> wrote:
+>
+> On Tuesday, 29 April 2025 12:06:16 Central European Summer Time Ulf Hansson wrote:
+> > On Wed, 23 Apr 2025 at 09:54, Nicolas Frattaroli
+> > <nicolas.frattaroli@collabora.com> wrote:
+> > >
+> > > RK3576's power domains have a peculiar design where the PD_NVM power
+> > > domain, of which the sdhci controller is a part, seemingly does not have
+> > > idempotent runtime disable/enable. The end effect is that if PD_NVM gets
+> > > turned off by the generic power domain logic because all the devices
+> > > depending on it are suspended, then the next time the sdhci device is
+> > > unsuspended, it'll hang the SoC as soon as it tries accessing the CQHCI
+> > > registers.
+> > >
+> > > RK3576's UFS support needed a new dev_pm_genpd_rpm_always_on function
+> > > added to the generic power domains API to handle what appears to be a
+> > > similar hardware design.
+> > >
+> > > Use this new function to ask for the same treatment in the sdhci
+> > > controller by giving rk3576 its own platform data with its own postinit
+> > > function. The benefit of doing this instead of marking the power domains
+> > > always on in the power domain core is that we only do this if we know
+> > > the platform we're running on actually uses the sdhci controller. For
+> > > others, keeping PD_NVM always on would be a waste, as they won't run
+> > > into this specific issue. The only other IP in PD_NVM that could be
+> > > affected is FSPI0. If it gets a mainline driver, it will probably want
+> > > to do the same thing.
+> > >
+> > > Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+> > > Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+> >
+> > Applied for next, thanks!
+> >
+> > Kind regards
+> > Uffe
+> >
+>
+> Hi Uffe,
+>
+> I was wondering whether we can get this into 6.15 as a fix as well, as 6.15
+> should already have the genpd API additions this requires AFAIU.
 
-This commit adds NVME_QUIRK_NO_DEEPEST_PS for
-device [126f:2262], which belongs to device SOLIDIGM P44 Pro SSDPFKKW020X7
+Sure, it makes perfect sense!
 
-The device frequently have trouble exiting the deepest power state (5),
-resulting in the entire disk unresponsive.
+>
+> Fixes tag could be something like:
+>
+>   Fixes: cfee1b507758 ("pmdomain: rockchip: Add support for RK3576 SoC")
+>
+> but may need some more flavorings to keep the stable robot overlords from
+> trying to apply it to 6.14 and earlier and then starting the robot uprising
+> in your inbox when they notice the API is missing.
+>
+> I originally left out the Fixes tag on the rewrite of this using the new
+> API because I wanted to avoid those awkward backport scenarios for a fairly
+> freshly supported SoC, but it'd be great to have this in 6.15 because that
+> will be with us for a full release cycle to come.
 
-Verified by setting nvme_core.default_ps_max_latency_us=10000 and observing them behaving normally.
-Also by running with the patch couldn't reproduce the issue after multiple wake up from sleeps.
-Running without the patch again reprodcued the issue on the first wake from sleep.
+I added the fixes tag and a stable tag to point out that it should be
+applied only for v6.15+.
 
-Signed-off-by: ilya guterman <amfernusus@gmail.com>
----
- drivers/nvme/host/pci.c | 2 ++
- 1 file changed, 2 insertions(+)
+>
+> Kind regards,
+> Nicolas Frattaroli
+>
+>
+>
 
-diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
-index 1dc12784efaf..03a64bc77f7b 100644
---- a/drivers/nvme/host/pci.c
-+++ b/drivers/nvme/host/pci.c
-@@ -3734,6 +3734,8 @@ static const struct pci_device_id nvme_id_table[] = {
- 		.driver_data = NVME_QUIRK_NO_DEEPEST_PS, },
- 	{ PCI_DEVICE(0x1e49, 0x0041),   /* ZHITAI TiPro7000 NVMe SSD */
- 		.driver_data = NVME_QUIRK_NO_DEEPEST_PS, },
-+	{ PCI_DEVICE(0x025e, 0xf1ac),   /* SOLIDIGM  P44 pro SSDPFKKW020X7  */
-+		.driver_data = NVME_QUIRK_NO_DEEPEST_PS, },
- 	{ PCI_DEVICE(0xc0a9, 0x540a),   /* Crucial P2 */
- 		.driver_data = NVME_QUIRK_BOGUS_NID, },
- 	{ PCI_DEVICE(0x1d97, 0x2263), /* Lexar NM610 */
--- 
-2.49.0
-
+Kind regards
+Uffe
 
