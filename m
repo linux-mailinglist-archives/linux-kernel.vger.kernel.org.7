@@ -1,84 +1,113 @@
-Return-Path: <linux-kernel+bounces-647118-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-647115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6942AAB649E
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 09:38:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C189CAB6492
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 09:37:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F268A17AC8F
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 07:38:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0B7A17B6044
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 07:35:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 041E1207A32;
-	Wed, 14 May 2025 07:38:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03FC1201000;
+	Wed, 14 May 2025 07:37:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="NNQc0Geq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="buhjN1K7"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 590C3201004;
-	Wed, 14 May 2025 07:38:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ED16DDD3;
+	Wed, 14 May 2025 07:37:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747208314; cv=none; b=TC5aJaaMs6Y88g4HrUeZvp0n5InWBnbHqlLQwGXriCa0yzsHo54nguWIoNTqTZV6hcpUy5wUISCGg9RaMN/cusXfDEkgmZY9N5GNSaPERLlJ98BZrb6/yyM+t/hvuPvFcJd8fjX+GpASDGyUbmuFZBUChcVAoAuDi2Km1Gjwlf8=
+	t=1747208223; cv=none; b=nuSq8vBtjEF/69Q0zkFhci2kRw9yh0w4Y8QMWsOHcG5b70to7UTL6q4ters3G7youCmqwNZmXdxGmcdc8pjmaRI6bvDfLzl1S/4k8p+FF7lI4JeHY8j+iwdaqAjRm/QmbbMHmm17WyKsY3Ltj5ek95VXyCVjV9kZtKmzx7siNGY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747208314; c=relaxed/simple;
-	bh=FAn473klWAnhnmlMdk63GTbxuuQb/yWgRlVVBKaV7Tw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VqkpKbswGVfo1e4u0uJaAVbu7eFREmmxd5ftwBM9JoS16YVFB2FjLCEzqBu5/svpw2xIirTeYS02kOb229iV+SxyovyFdqWlRO1x86JZgnvYWFJZ9DqkW5eVt3B5kadh4ummcgFQLqASIcyUfpBGnQ3kYXlMBQObfEQujCQomYI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=NNQc0Geq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFADDC4CEE9;
-	Wed, 14 May 2025 07:38:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1747208313;
-	bh=FAn473klWAnhnmlMdk63GTbxuuQb/yWgRlVVBKaV7Tw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NNQc0GeqAGdfUW9/KjWYCMCy9pKHow1UJ9WKSATh3epF6ltJ8U47GkbW4E3H6yar2
-	 ln+VF+keJNXuyiBvab/PNbKWO9CQosIN2Te6mEgxe6ZUQSStVduesKzVprbAlu7vld
-	 lhOUrqlkVyf/OZphw+rx4jrj9OC7ckmMnKAQ5Mk8=
-Date: Wed, 14 May 2025 09:36:45 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Judith Mendez <jm@ti.com>
-Cc: Jiri Slaby <jirislaby@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Nishanth Menon <nm@ti.com>,
-	Santosh Shilimkar <ssantosh@kernel.org>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Tero Kristo <kristo@kernel.org>, Bin Liu <b-liu@ti.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Andrew Davis <afd@ti.com>, linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 3/7] serial: 8250: Add PRUSS UART driver
-Message-ID: <2025051408-discolor-backwash-5574@gregkh>
-References: <20250513215934.933807-1-jm@ti.com>
- <20250513215934.933807-4-jm@ti.com>
+	s=arc-20240116; t=1747208223; c=relaxed/simple;
+	bh=ue9x3OhtscKWrs8Ymm0VLxQDnqFOP/7ucYx5r21GZTk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=O+Mof2KOzcEFtKUOX707NhDoxpgOD9ASHpHTxrU/Kojn+ur9sSyFporc+Yi1ShLwpEBBHA9DJ75CjumjjvJ8YZfcWsskLW1jVgtmGtXt7dWPspk2pKTA2xNMw+DdIgo25HZp/LtEm9OalWZ3QGfIVlp+dp5woLwSfrPgY//g+wQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=buhjN1K7; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1747208219;
+	bh=ue9x3OhtscKWrs8Ymm0VLxQDnqFOP/7ucYx5r21GZTk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=buhjN1K7vUkaE1CVzDPSH/Fypeupmu/d3lo8Nuofa0RTsxQAUFx50EQljn28LlvYk
+	 dIAj7U8J/YB3z2Bm9cM0Si52BDX9QUqj/V/rmC9ie99UDnnI42UmKk6sv5iaRqD5Rh
+	 cLQCEbCB81NDDNMAUoSTrhMmxZg+0nLGg030/HXxs+hafyAsu9hAuKNFi0EvMYa0C+
+	 LelRG388u3NI6Nj/6xQVFfEjb5BQ4JTjJLk73AVYxrFcRgprnUCiuYFFscNGgY4XJD
+	 5N2gVEASecvox2lYlRRZdW5id3w2e6c9TIclhOgWLK6mmraErZLAXFk3iq7hV/HZeI
+	 VWnoVikseyIEg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Zy4t33x9lz4x3d;
+	Wed, 14 May 2025 17:36:59 +1000 (AEST)
+Date: Wed, 14 May 2025 17:36:58 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: Miriam Rachel Korenblit <miriam.rachel.korenblit@intel.com>, Linux
+ Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: Re: linux-next: manual merge of the iwlwifi-next tree with Linus'
+ tree
+Message-ID: <20250514173658.47303e24@canb.auug.org.au>
+In-Reply-To: <958ec4672d9263d23b1f47d8acd1047037e7ff25.camel@sipsolutions.net>
+References: <20250506114402.2f440664@canb.auug.org.au>
+	<f53576b21774ab6ba8294c5d1954f0528764f2fb.camel@sipsolutions.net>
+	<20250507111026.4700e392@canb.auug.org.au>
+	<3d5761da40d0ddf4109d10d6f3c3d2538c4d89d4.camel@sipsolutions.net>
+	<20250508132459.04bd8e70@canb.auug.org.au>
+	<20250514124131.15d0117f@canb.auug.org.au>
+	<20250514125524.1528467f@canb.auug.org.au>
+	<958ec4672d9263d23b1f47d8acd1047037e7ff25.camel@sipsolutions.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250513215934.933807-4-jm@ti.com>
+Content-Type: multipart/signed; boundary="Sig_/f391BSf7yV5=A1G7qPB0Q=M";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Tue, May 13, 2025 at 04:59:30PM -0500, Judith Mendez wrote:
-> From: Bin Liu <b-liu@ti.com>
-> 
-> This adds a new serial 8250 driver that supports the UART in PRUSS or
-> PRU_ICSS*.
-> 
-> The UART sub-module is based on the industry standard TL16C550 UART
-> controller, which has 16-bytes FIFO and supports 16x and 13x over
-> samplings.
+--Sig_/f391BSf7yV5=A1G7qPB0Q=M
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-If it is based on an existing controller, why do we need a new driver
-for this?  Please explain in detail why this code is needed at all, and
-not just a new "quirk" for the existing driver?
+Hi Johannes,
 
-thanks,
+On Wed, 14 May 2025 08:41:35 +0200 Johannes Berg <johannes@sipsolutions.net=
+> wrote:
+>
+> Yes, should be really soon now, though into wireless-next. But that's
+> up-to-date with net, so would resolve all of these issues. In fact that
+> was the plan all along, it's just been taking a bit longer than
+> expected, sorry about that.
 
-greg k-h
+OK, thanks.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/f391BSf7yV5=A1G7qPB0Q=M
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmgkSBoACgkQAVBC80lX
+0GywOwf/YZp3O+5fdxAFIlCZ6TEgjjlw++s3xHnD8TnGR3SBCE4FqtVxh/c3u3dq
+gLlsdyi1uBREcvUdRmAnul7saLwQYLrCt+ghXqBoBKBYddFHXfcVaef3d7AI2KJU
+WCDXe+zq7CyZ59DKIMSWA2TE9zcVDKm6M0ANsBKa6vgovNFmA2lALcPER7j5/6Jn
+1AvYg0cmzjcc4YQOukvUZUtA7QI46i9XyAGgtp3dTbkNFbnl9cQcIgZf4+QQ1iuP
+EvKy+1uCq//xY+omIL/fv7hTSYs8YHkS6JhaBWHx2qXIrgHBB/EPg2rkeQfzUQIE
+IeiLmDHwjK8lcliL+GbtmMhzLdALvw==
+=I0Uh
+-----END PGP SIGNATURE-----
+
+--Sig_/f391BSf7yV5=A1G7qPB0Q=M--
 
