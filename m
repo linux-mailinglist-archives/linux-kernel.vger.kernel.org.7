@@ -1,198 +1,107 @@
-Return-Path: <linux-kernel+bounces-647148-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-647153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E6A7AB64FB
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 09:58:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A78AAB650C
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 10:01:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AFCE83A9882
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 07:58:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E3A11B62AAE
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 08:01:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C89B8217719;
-	Wed, 14 May 2025 07:58:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QCWqqDjQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3796521CC4F;
+	Wed, 14 May 2025 08:00:35 +0000 (UTC)
+Received: from smtpbgbr2.qq.com (smtpbgbr2.qq.com [54.207.22.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B497214202;
-	Wed, 14 May 2025 07:58:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EEF021B9D1;
+	Wed, 14 May 2025 08:00:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.207.22.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747209527; cv=none; b=pCkDxEQ9kGnvGEk5mDouvecYkppx3EnVLV6km2JN4fLVD19agd2Dd+1FfhjV9p6kbVrVcwcWGqx42w9EcrLGp+SRO0VdReJyyNQNW371t98PG6S15TQ4OQ20BVKdJZNW/2+Var/BeNRfNLfYSqv726LbHvJVyyfN23gCsSyfaXY=
+	t=1747209634; cv=none; b=L3l9fimKxjBevnRCSF8aVoi44ZAVte5Yc4qBt7s/mJ4A/DGJ6x+vybv28mn/lvEzTs605lYWKz1ZTrPSlFEPg8R2bZ0qLTt6R3tm7kIGFwqRw1OgZoN1FT2aPFpIfZ2UbKJ6qVKMxMO7u6I612nfivGKrVp66XaTWLf6OvMytYU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747209527; c=relaxed/simple;
-	bh=6tM6IvYJ+UJwErZFj2ILocGq36fJgFxr2ZEBz5WWSCg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=U8HVFQEEr4z1kYTjo8nAM3Bcz4vYiUpS5ycWS0aDSUBkkHCC9dNYNY2W7D1nG+UmUnVvnrKU4f2wVhvCgAAG4gRXgL+xBKkGYSiJ0NVGqjCDZzhWUq+rsawfpCsmO95kRY9IPUVx6Fdwd1XcW4r5sQZOnKgnO2tnLkqZiMDAX9A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QCWqqDjQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D513DC4CEE9;
-	Wed, 14 May 2025 07:58:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747209526;
-	bh=6tM6IvYJ+UJwErZFj2ILocGq36fJgFxr2ZEBz5WWSCg=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=QCWqqDjQJGp4+GtEMpwBpBJeJri1buuxkh2vT6h+qKn+WBBpQPZ91Y8skd0TUhBWt
-	 cF3cmslw8xMzAaM7lb50sQ2Mh4YgXiFmGcCA2tDG3CvhyhJwJRriPVJcdzUO5u6llq
-	 pq/vE07SDfNeQjGO9lw7Ui8M6hf0IbjW34io2ur1yzqZ6hkDbsgaVIAYvmUO1HKUjy
-	 lFC6SggYHzscyo8OBrHW7LQ7mX3IUvPcuUxeIaPJ4t+GYSXJrlcjylxNd7eMbvInb7
-	 VyNgJtvyRzkZRvZb+Jg6UlnWScYBJRL776cLNGfR2cRVpmuD03nzCy1pbxGiul09SF
-	 5uPhX8pxLVOcw==
-Message-ID: <ae19e684-4f46-42b7-bb4e-fc6bb13ed153@kernel.org>
-Date: Wed, 14 May 2025 09:58:39 +0200
+	s=arc-20240116; t=1747209634; c=relaxed/simple;
+	bh=1L5dxb3w3mSwMAqrdtId+6ZWwiYG5boKi1N16EaiagY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=PtOfYuL7OMR2RRl6kGz3oK4LVCCRg7u/YSjHFJnGlyUtwJIZHllx3eJb3VT1RQhaYl60Fzb/uCYD9bLFunWebC9vc79CzMYCiO/8l4DfqdfmpNSN4wPQhZNCvm0U9yw7r5cidIJSK0H6hV0UTeOJ4KBuHcrsh7rDqDGrFVUyFfI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chainsx.cn; spf=none smtp.mailfrom=chainsx.cn; arc=none smtp.client-ip=54.207.22.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chainsx.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=chainsx.cn
+X-QQ-mid: esmtpgz12t1747209560t57538c21
+X-QQ-Originating-IP: UkugXRb1Btj1MtZ3FYGKjn7tGsu8nL5lEn2522Dv+Ag=
+Received: from chainsx-ubuntu-server.lan ( [182.242.225.107])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Wed, 14 May 2025 15:59:18 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 4869173618778214123
+EX-QQ-RecipientCnt: 10
+From: Hsun Lai <i@chainsx.cn>
+To: robh@kernel.org
+Cc: i@chainsx.cn,
+	conor+dt@kernel.org,
+	heiko@sntech.de,
+	krzk+dt@kernel.org,
+	sfr@canb.auug.org.au,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-rockchip@lists.infradead.org
+Subject: [PATCH v2 0/3] Add support for Sakura Pi RK3308B
+Date: Wed, 14 May 2025 15:59:11 +0800
+Message-Id: <20250514075914.194651-1-i@chainsx.cn>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RESEND PATCH 3/5] dt-bindings: media: allegrodvt: add decoder
- dt-bindings for Gen3 IP
-To: Yassine Ouaissa <yassine.ouaissa@allegrodvt.com>,
- Michael Tretter <m.tretter@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Michal Simek <michal.simek@amd.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Heiko Stuebner
- <heiko@sntech.de>, Junhao Xie <bigfoot@classfun.cn>,
- Aradhya Bhatia <a-bhatia1@ti.com>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?=
- <rafal@milecki.pl>, Manivannan Sadhasivam
- <manivannan.sadhasivam@linaro.org>, Kever Yang <kever.yang@rock-chips.com>,
- Hans Verkuil <hverkuil@xs4all.nl>,
- Sebastian Fricke <sebastian.fricke@collabora.com>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
- Wolfram Sang <wsa+renesas@sang-engineering.com>,
- Gaosheng Cui <cuigaosheng1@huawei.com>,
- Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
- Joe Hattori <joe@pf.is.s.u-tokyo.ac.jp>,
- Ricardo Ribalda <ribalda@chromium.org>, linux-media@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-References: <20250513083609.328422-1-yassine.ouaissa@allegrodvt.com>
- <20250513083609.328422-4-yassine.ouaissa@allegrodvt.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250513083609.328422-4-yassine.ouaissa@allegrodvt.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: esmtpgz:chainsx.cn:qybglogicsvrsz:qybglogicsvrsz3a-0
+X-QQ-XMAILINFO: Nn0cKypYUfjdbV0acRFjxyMfhlNsFPYKbPTemBtgV+o0QPcQh1HAEhXz
+	oK3cPe9JXPRSKMgi84MytHxDPJ3ara1RffGPyWNmQq7LHq9UaLnELd+LuCeeH6wTsybLu6q
+	1HleJyJat0zXWAzTcn1y6djXejyc9nNCKlCPXVKtFbMbtmB3QjbF50E9mERqV5F1KcwWYsq
+	xUIKzzKvAaZooREHD5gXtde9T9GY/gRdblhu/yNvPyhHz6ANlTBd9ocO61VxXSa38/C+tek
+	fCvRG1FDhYu/5Qeh1Y91HOpNUW7XLdTQcR6VoWe0LE8WpDu7N891Ax4ITyaEShuvZK4Bafa
+	X9EYtDW4aPEs9KWHh/S5z857BdNqFxST6lZZbXIjpGzPbXOhrFtzI2CRCGYzN4vESfQYXAg
+	tL3xQe3WXHA5jQg9386P4jCCcvbfET6u60QSJWWC8zdzH91zJUIoy9P9QjHb+kOItXQ1bsJ
+	GJ+Xw+0tBJU/rpxS0XrYoJc/Y9F+kqHFdF85iwQ4Bhkx3UllPlmLzXs34DSksgl9Ye27ViL
+	mPNClXXqNnqmry8HNb1GLE4qbDpmdgUQAbT63dXRsInpPskOJq8gHE7XAw6MRe7m5fwDdNm
+	Sr/bU84YF5WVeTr1Fo77TbyZeaTTBiuxQ5y43crCxOnQxK7S8luTutvZDFg4yAU9pT1tH/w
+	G4H8h8q7Gp2+pOQ8fTpAnpcg2EEv/bTiBWDADifVaVfi/KJgn7sP1XWDwzLGyG5z1BkH0eM
+	P0W30mqfRAP/qSOy7XjLcOiHzfnwcow1rQ3EjGdaU1IlfagCJrfo7QgqVSr2lH1Q7vmzM2H
+	1VEMBBbhzDLrEFQZBE8mfrtzg9R1j7xPlZt+/gnLOREI1wiYPP/yoRonFisLusJ04yYKlOP
+	v29ZN+XMSvxOeaPkOmgd2KMvbKvOnw0bYLpJM1Tmfa1EbjlkTeirq/kn1xrLuBfX9gDvuSj
+	u405XmtiOC1VZ08UnKbrPwNKN12BXs5dcn3ClWCaIuA09d+g9iPhN5Qio
+X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
+X-QQ-RECHKSPAM: 0
 
-On 13/05/2025 10:35, Yassine Ouaissa wrote:
-> Add compatible for video decoder on allegrodvt Gen 3 IP.
-> 
-> Signed-off-by: Yassine Ouaissa <yassine.ouaissa@allegrodvt.com>
+This series add support for Sakura Pi RK3308B.
 
-How is this resend? You already sent patches, so this is v2 or v3.
-Version your patches correctly or just use b4 for that.
+Info of device can be found at:
+https://docs.sakurapi.org/article/sakurapi-rk3308b/introduce
 
+Changes in v2:
+- Update regulator names
 
-> ---
->  .../bindings/media/allegrodvt,al300-vdec.yaml | 83 +++++++++++++++++++
->  1 file changed, 83 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/media/allegrodvt,al300-vdec.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/media/allegrodvt,al300-vdec.yaml b/Documentation/devicetree/bindings/media/allegrodvt,al300-vdec.yaml
-> new file mode 100644
-> index 000000000000..4218892d6950
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/media/allegrodvt,al300-vdec.yaml
-> @@ -0,0 +1,83 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/media/allegrodvt,al300-vdec.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Allegro DVT Video IP Decoder Gen 3
-> +
-> +maintainers:
-> +  - Yassine OUAISSA <yassine.ouaissa@allegrodvt.com>
-> +
-> +description:
-> +  The al300-vdec represents the latest generation of Allegro DVT IP decoding
-> +  technology, offering significant advancements over its predecessors.
-> +  This new decoder features enhanced processing capabilities with improved
-> +  throughput and reduced latency.
-> +
-> +  Communication between the host driver software and the MCU is implemented
-> +  through a specialized mailbox interface mechanism. This mailbox system
-> +  provides a structured channel for exchanging commands, parameters, and
-> +  status information between the host CPU and the MCU controlling the codec
-> +  engines.
-> +
-> +properties:
-> +  compatible:
-> +    const: allegrodvt,al300-vdec
-> +
-> +  reg:
-> +    items:
-> +      - description: The registers
-> +      - description: the MCU APB register
-> +
-> +  reg-names:
-> +    items:
-> +      - const: regs
-> +      - const: apb
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    items:
-> +      - description: MCU clock
-> +
-> +  clock-names:
-> +    items:
-> +      - const: mcu_clk
+Changes in v1:
+- Add support for Sakura Pi RK3308B
 
-Nothing improved.
+Hsun Lai (3):
+  dt-bindings: vendor-prefixes: Add SakuraPi prefix
+  dt-bindings: arm: rockchip: Add Sakura Pi RK3308B
+  arm64: dts: rockchip: add DTs for Sakura Pi RK3308B
 
-Best regards,
-Krzysztof
+ .../devicetree/bindings/arm/rockchip.yaml     |   5 +
+ .../devicetree/bindings/vendor-prefixes.yaml  |   2 +
+ arch/arm64/boot/dts/rockchip/Makefile         |   1 +
+ .../dts/rockchip/rk3308-sakurapi-rk3308b.dts  | 274 ++++++++++++++++++
+ 4 files changed, 282 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/rockchip/rk3308-sakurapi-rk3308b.dts
+
+-- 
+2.34.1
+
 
