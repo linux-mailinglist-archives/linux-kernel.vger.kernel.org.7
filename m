@@ -1,216 +1,211 @@
-Return-Path: <linux-kernel+bounces-646751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-646753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F15DAB601A
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 02:22:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FBFBAB601F
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 02:25:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8461F189EBBD
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 00:23:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3FC1F7AD2F0
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 00:24:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B01AB286A1;
-	Wed, 14 May 2025 00:22:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB5F3286A1;
+	Wed, 14 May 2025 00:25:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="VsxMCo3E"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2087.outbound.protection.outlook.com [40.107.237.87])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="tIZ+4Gt2"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2655517736;
-	Wed, 14 May 2025 00:22:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.87
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747182163; cv=fail; b=ERD3QREoO2oLX1FwVUDRMtQvKFbKgOqx7zamUyXjwwABOJVVMVRLuqz7NCp4CtZmv/tw1fdnW52d/C3+osYMq64urYg6+Xv/TGhT46710RzMbnny4jiAkikgXS5m04eeEA4QyKp3BnSi6Hw018kOiV7qMm5gAgJgeMs7Jqaiw1g=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747182163; c=relaxed/simple;
-	bh=nWjUKHabK+7hLqr70t1QhYkgQMFWGuOpbj6MMBnBSnA=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=bOxyJSkROSowkYos28viy78oVy9GIf+Cbv8hYF7C0WzLqPVSU6PXjQUVu2L479KT1c+J54+nl0m9iyKC+q7Xy1e5jGDnmVMMXQ5sbyQmeGVN8QiV6ibXei8PvVty8h3EU2GflYfGghhpkP4QsR6U62gDCfgJ98iRF30xwEWB110=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=VsxMCo3E; arc=fail smtp.client-ip=40.107.237.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=jWmoSOZW807MzA3VvpjTWLlVND5H4vJgl8Ex4GXyHQ5XFKz2vOI1HUgS4t1HcCGZiftA+UAddhpYPOypekWX38nyAoq5WWm44aHSZGaH/94ex1AXg45+CPiu2336rQv0MeZBrw4M9o+cndllT39dbdVJ1cqjLnCTl66kXqS2Mt+azESq+OsRYVQyeLeJ0gDVfGbHit1lIPgmUOYwQsj9/3an+l7GV49OJ3wjnNx/+L+VyGNRGqk3OL2SbDGQO4+fK9+tzDUgWyeSvV31fwtWgLDa89jg+BJJGOFV+63H36+s/QP0pmCSL/Fd5yC53CUyWZ6tRV4s6kkJ4ybQujSViA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=WdxiEWAclReSv/CCqiolz0c8+A0nqLnOb0W++3M8rvs=;
- b=gnKLyw9CTFYyMSFJz/CNsUx004tJBxymXw5XgStg13LzHkPMucaAREAM/yCtqgkzEY4daHt/hE+Ht2jH5yDW4ClVssmIwN5jc0fKQV5/1CuUb5KhGCZhldXggDMnKcLwKHS27TpjRBsbXkq0tjBgGYmmuFwXDe3XdZjXcWeXGzr3Th+rJDxgT2kW4RS6N0D3FcLvTmQIA6scEfSpE6q6CULTECTNwJGjC2NLOPPz5KROOC6dXKgDZuCeQdNNuQW4MFoQn0ukTaxt4Lrf0WLXz1u289c/pt6HnNV13CYUhy+6LHWXKSSE895C6SZSjX5hMrl+68id+avDcE18OgbNCg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=WdxiEWAclReSv/CCqiolz0c8+A0nqLnOb0W++3M8rvs=;
- b=VsxMCo3ERmGWzlv5jDGoonXMEFKPqX6gJe1sXZRcVjt6U4GZ7JK9VtrB18eRPu6jHrgKKcIj1tqoeuiTdPV4m1lmQ2wh5rSKDGcOhEQqQVmhm8B6tmnXNnCPCHTTrYebsyFtI63L4rHFpHIKYfzHLE/JfTUgEw6j5MZIIGbpPfZ87JF2q9FCFcDqV9o4pvQpctfOAsjqfPuTSMzXxKz3PON4uAYlXFgj1bdp5MniHOrIl398Wy1a5jJZJLEfhhUHENG9yThPKr71PMehq9YAOrQHe8e77RNq4YMox1VcFuopcCrk38wAzBjkZfWCIdp4Z3OSJVK5m1exhLCKKHkETw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from LV2PR12MB5968.namprd12.prod.outlook.com (2603:10b6:408:14f::7)
- by SA1PR12MB8988.namprd12.prod.outlook.com (2603:10b6:806:38e::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8722.26; Wed, 14 May
- 2025 00:22:37 +0000
-Received: from LV2PR12MB5968.namprd12.prod.outlook.com
- ([fe80::e6dd:1206:6677:f9c4]) by LV2PR12MB5968.namprd12.prod.outlook.com
- ([fe80::e6dd:1206:6677:f9c4%7]) with mapi id 15.20.8722.027; Wed, 14 May 2025
- 00:22:37 +0000
-Message-ID: <38a7d3f8-3e75-4a1f-bc93-9b301330d898@nvidia.com>
-Date: Tue, 13 May 2025 17:22:35 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/5] objtool/rust: add one more `noreturn` Rust function
- for Rust 1.87.0
-To: Joel Fernandes <joelagnelf@nvidia.com>, Miguel Ojeda <ojeda@kernel.org>
-Cc: Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>,
- rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
- patches@lists.linux.dev, stable@vger.kernel.org,
- Josh Poimboeuf <jpoimboe@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
- ttabi@nvidia.com, acourbot@nvidia.com, apopple@nvidia.com
-References: <20250502140237.1659624-1-ojeda@kernel.org>
- <20250502140237.1659624-2-ojeda@kernel.org>
- <20250513180757.GA1295002@joelnvbox> <20250513215833.GA1353208@joelnvbox>
-Content-Language: en-US
-From: John Hubbard <jhubbard@nvidia.com>
-In-Reply-To: <20250513215833.GA1353208@joelnvbox>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: BY5PR20CA0035.namprd20.prod.outlook.com
- (2603:10b6:a03:1f4::48) To LV2PR12MB5968.namprd12.prod.outlook.com
- (2603:10b6:408:14f::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2F331CD0C;
+	Wed, 14 May 2025 00:25:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747182328; cv=none; b=NWwuxUYyD19rDX4tR9p/oL1tZlP2ilcYDuoLPSW7lmS2uaZnu6eIgXpVgp08Q7nViN3LXx2+JuhFzVY3KonkMqv8rc+9kh9VAixmfewMNTzfyJ8soNfI+IKXZzf+O7aF95O+NI5jxSQSLXf62s5mQGUm5vsYfg9IkQWaqSdqU7c=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747182328; c=relaxed/simple;
+	bh=dgjJ844r8BgnZ2mWaTMe1zHaDX+mRVRhsLIQvxqYhzc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=vBBs4TbgdDtVmhNfu4vilb92d4gmUCNIuxE+/WKe0uI1WqNiw26mH4i34CpcpgMPyIe4zFCUWE20PrgoBIgKh25Bvw+QpAutRFyvMoS6CszAHTECTzouObNmT0PWraCnbS6otec+GCZUKE+Zli5GtDhd5Z93vZIKGVFEf8QKCcY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=tIZ+4Gt2; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 54E0PEES2457992
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 13 May 2025 19:25:14 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1747182314;
+	bh=XXR+h3GqlCTeX8EJC/ptbJ1T3qhG9N1tHc2h+giQv+k=;
+	h=From:To:CC:Subject:Date;
+	b=tIZ+4Gt23xS2gjY7gfDula52QWbp2gP7P+GvPKivsqTqpAVZPV2wAsJN/41infqR+
+	 0qrU0UMJZUpykKyl1Cb4HsmWbR3SjvUBRYvjI+8gmd779CdfMpvALqMgyv0Cj/wDdc
+	 VZu+i8BF8fh8cZPJOzs8wDeNc+pzhtEBEffh2WkA=
+Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 54E0PEZ9115900
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 13 May 2025 19:25:14 -0500
+Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 13
+ May 2025 19:25:13 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE106.ent.ti.com
+ (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 13 May 2025 19:25:13 -0500
+Received: from judy-hp.dhcp.ti.com (judy-hp.dhcp.ti.com [128.247.81.105])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 54E0PDeM015693;
+	Tue, 13 May 2025 19:25:13 -0500
+From: Judith Mendez <jm@ti.com>
+To: Judith Mendez <jm@ti.com>, Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf
+ Hansson <ulf.hansson@linaro.org>
+CC: Josua Mayer <josua@solid-run.com>, <linux-mmc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Nishanth Menon <nm@ti.com>,
+        Francesco Dolcini
+	<francesco@dolcini.it>,
+        Hiago De Franco <hiagofranco@gmail.com>, Moteen Shah
+	<m-shah@ti.com>
+Subject: [PATCH v5] mmc: sdhci_am654: Add SDHCI_QUIRK2_SUPPRESS_V1P8_ENA quirk to am62 compatible
+Date: Tue, 13 May 2025 19:25:13 -0500
+Message-ID: <20250514002513.1179186-1-jm@ti.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV2PR12MB5968:EE_|SA1PR12MB8988:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5c3f8752-43f2-4dd7-d896-08dd927d6e43
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?ZWVYSXBpMlVGeVl1SE9XSkMxcllzQWFkdXI4TTZqOGF5NEQrVTBRV1U4Ty9E?=
- =?utf-8?B?ZFdsd0dzczIzRzlJci9CenRpay9DRTBPcEN2cWRJQ3V4aVlXYzNvcUZlNCtU?=
- =?utf-8?B?YVgwR29qeEtvclZiQmdxSjNwbk05azZ4bEpvekJrcmFraGQyeWxWOHRlSmRi?=
- =?utf-8?B?RlJ6Rk5TTlZJZDIyekY5Z2x2RDgyNXY1dkdiYUhiWS9EOCttaXhkSWhhNUpv?=
- =?utf-8?B?MTgxdGRwNmRkUjlCQTNtMzhTVmpncXJnUWd6bmRmOHYvY2NIYktlTUptSzBi?=
- =?utf-8?B?RjZsWjNKVFhoZ2ZQb2hFbVdZY1psV3ZVYndDT0I4elRtWGMvM1dIYkVYRi81?=
- =?utf-8?B?elJUbHpFWVpGZkYzUlNoRFFRRGMzZWZqUzlyZHM2bmErTFJkTEtpbThYUkRr?=
- =?utf-8?B?cGExT1FZNkR4WEJ4ajJqcnpmek1BV0ZQVENPUUNBZUx1UjQvUVVmWkNERzJS?=
- =?utf-8?B?WDQ2OG4wTUdjQnlqdFoycGxrRE9tL3NaRjBnV1VjR0VuK0c0Nmw1VURVQUtm?=
- =?utf-8?B?RldlZm9tZ0RHV0dJUFZBbmowSkl3b1A3bm13Tm9HcUpJQWN1VXBkaUJxV1lR?=
- =?utf-8?B?WXVpSjdtdGt2dHpVVVArTHdKT2hmaEc3bW9kYjlBVzlCR3JVRnlyNnlzakEz?=
- =?utf-8?B?ZlBxcTVUeGg3Y1RLM3pweVhzM0d5Z0ROQ0VXNmY3OU91b3lsZGEzM3lRaGpw?=
- =?utf-8?B?cmhEUU5tNUhFUjBNYXVYbWJ6ZzhycXFRUzh2RGtPZjVQZVRqWmFDRDM5VjZo?=
- =?utf-8?B?RzhmeGtFLzZBRHdhZWVCaHVUL2dYNlRSaXhjTURuY0FRb1VJekM4cnNMY2dT?=
- =?utf-8?B?Nk55Y2tqK1JRSDVEVUVvYXU1WFNwRHo4elUydldFOFU5ZmlUN2dINEc4dHVK?=
- =?utf-8?B?U2ZhSkltWm9CdVZiUGFPRmpVcVBjbVpJaFE2UWlUNmg1RnBMNlBRcjNpOUZK?=
- =?utf-8?B?L21HVzVRNnpsN0tpZTFtdjNTS0VaNVYyRTE5RHloeHAzTkY0S25pUmJCOGtJ?=
- =?utf-8?B?V214V3dRczg1Wm5TWGE4OXRwSUJhMC9iaVdRL2hMaGRVM2Rta1RYL3NsVVMw?=
- =?utf-8?B?cm1VR3ArdzBQQ2h5Yi8vUGgrNE05WGlKb2QxR2x3M2pYUzZOeUFIZTFXSk4r?=
- =?utf-8?B?RWUyd0orTXRLNzQ3Q3FDdmJIQ3NnSlg1d3RwVjFFSllRRi9LeU0zOTEvR0RI?=
- =?utf-8?B?K2V1dU0rMnRIRTZwbTF1aXNkVkoxL2dHcEo5YUVoZnM3NzJoY0FsVjVnUUlU?=
- =?utf-8?B?OVQwV1NJb2FheVg3U3ZnNVd6b0lBUGVvTE9OS3JuU2lleHQ1MTVMZGk0K09y?=
- =?utf-8?B?MjV1Z0hyeGpLOFBZa2djaEZzTCtxNXFhN29MWm93dDVVRU5zMWZFM0NSVkJr?=
- =?utf-8?B?cTJTbGxxRThqcVZoMEJCQ0xBdXR5TnM3Y1FSclR3Mlp5TG9yZXp3UWkrSmxT?=
- =?utf-8?B?NjZjRTlSK1U2a2JxM0lyS3lZWjVJUFNhMmhHOXZxRXFaR3VhWkNIbHAvcE5t?=
- =?utf-8?B?eU1aZFZxUlJRRFBCSXhWTUpSSW1BZklMcWJpK0dUYVNIRUl4b1NEcXNsc0hD?=
- =?utf-8?B?MzM5N3NuRW14TE1SeSt5ejhyLzZtTEJRNTA4ZEs0eHZWcWFFaWFSOHhsV1U4?=
- =?utf-8?B?dFdONllXb0Q3R055bGlBRGlSaXI4L3FiUjdJVm5XOHloRWpLVmM5Ukk4ZHRZ?=
- =?utf-8?B?ZFRrUkFCQjN4UGJJOGorOWxZbHFkQjJreWxlb3JiVUp6RGRsK2dOdjRiZDJm?=
- =?utf-8?B?SXJtRjc3SVJLeFozYnlYK1Jqd2FwU0sydTVpN3FReTBDaEZja1V3QVhEOCtu?=
- =?utf-8?B?bVJWc0I5YXh2VFJyNkswVFVWNmgxVlYremlLVUJQSHIrQ0MrSDhHZFFpMVMx?=
- =?utf-8?B?TDJYWU9PcDhDdFV2RGt6QmxjLzZyYy8zZTRPNkd2SEpQcWJXMmE5eGJMdU0x?=
- =?utf-8?Q?g79NHXAsTAU=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV2PR12MB5968.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?Tkpla1VhRGFFUWlZWFRVemYzQWpjUlp1cWJZKy8ydDhpREtXOWhIVVRhRVV2?=
- =?utf-8?B?aDJKZWNsNm9jQWZUN2FPMC9CV29iZXo3UHZtcmg5Yy9WWVNzenFlWlRaSmhH?=
- =?utf-8?B?WXg5U0lmRUZqaWZHN0paVWRvQWtuY2o4MjdvRzNhY2RqN253OUhGcDc5a0NS?=
- =?utf-8?B?aUNHTzlSeGdaRGxpNHQyUnJrc2VtZ1RpSVlaUkJGemR6anpjNzBjTmJsWlAz?=
- =?utf-8?B?SnFWVkdBYnIzay9OS2JZS1NpS1djb1lhMlFhNklwVnVaZXNFT2lKa3lWR014?=
- =?utf-8?B?UXBUMTRVdmpRQWhMaUFZQWU3NlcxaFh1WGsxb0pBcGdvMU1nM0Q5eW5KS3Zp?=
- =?utf-8?B?Kzh2ZitDSzFuR1RPbGlsVnJrT28vbG5DdzdSL2VDRWE4MExVUE9IeURQd1Jw?=
- =?utf-8?B?MGwvejQyNVJXZ2RFUXNRckgyQ3lUNERzZ0llb203d1N4V0xGWTZJaHFNMVl1?=
- =?utf-8?B?ekxUVlUxOWFHTStrZ2FXL29SUnk0S3VYbVVsN0s4S2RIWG93MVVWeks4UHJK?=
- =?utf-8?B?K3Vxd1NJbnl4azl5clhwUTlMZHNsNk5uOVBlbU9iblY5cTJVK0s1U09Bd1k0?=
- =?utf-8?B?WjVNWTR5cDR2QXlwOGpkeG5DQWF6ckZKNHNUK0M0Mzl5N29PVVR1cE91V3FZ?=
- =?utf-8?B?M2NORTUyZnN4aUJTUUdQTHhnazRNV2N4RnkxUHBydUowcGl4elpmdVZVemFN?=
- =?utf-8?B?SEpia0R6Ym1rZGIxL0phTkd2aHFteFNyYW5lMm9JQzl5a2p3RVZ1QVJFOS9F?=
- =?utf-8?B?dWR0S0I2ZlZtWTRsdmxBZFBUOU5SMEpjMmg5Q05SdEhJTWxjQXVOMlhUL1Rt?=
- =?utf-8?B?NmtOOE5vcWZqRVZEd1BLbldiSkh5dUw3b1ExdnFOeXY4MEc2NGgxcU14ZmJV?=
- =?utf-8?B?ck8rcjE5RGUzV21NZi91WXFoZERFZEpEdTliQXd1eGdydkNMZXlsMXhMTnhM?=
- =?utf-8?B?SFlnOHZ1dTVaNFFLWWdYSWUzQmQxdC8zMXc2amZ1VzFrZ2plb01hZXFFQStN?=
- =?utf-8?B?ZzVXY1UyUkIxbG92aEdwLzJ5cGJBczlpeWJTSWZqQkU2VVFLMFpjNEhCa2p1?=
- =?utf-8?B?M0lWd0Vmd3lDR2dOa2pMckVNNTAzR0JCZFdLS2JtMXg0QktDeXhXUDdwVFd1?=
- =?utf-8?B?WDltMzBwMDZDbG5zN1BFT3ZLSXRpdmJHU2Z4TllBZnFBUTF3RGE2Qmw0aXd3?=
- =?utf-8?B?SWlyZkJVQ01Wa0hkNElxWHBhZFYxZUVzT1ZlWDMybDN1emNHV2pDZmVIdHJu?=
- =?utf-8?B?QVZiZEpzVFExeEhKcHlRNG5ocXhDRWJMaWJVQ3IxS1dBT3RlM2wySlljYmxS?=
- =?utf-8?B?b1lGTkVHcHl1czNyZU1FTzN6WXRjNVl0VEFaM0xyNUVwQ3JodzBNcFBXRXFr?=
- =?utf-8?B?L1pjcmF3a1RtY1h6NDNOa08wUmVzd1JINVFEb0JlRkVzQUtwdXF1bUxMZWZi?=
- =?utf-8?B?MG9sdDQvdU5iMXNqaUtnL0RIY2tuc055OGJtN0xiQkR2M2w2VjlBVVhjQisr?=
- =?utf-8?B?c2xFRThmMEdsemVyRjBwWE94ZUcrRTJlZ0Q0WmtFanNvam9NQU10MTZ4UWZC?=
- =?utf-8?B?cTk1MGVOcEx5R0cxTW9MeWNIenJDVVk5ZkY1anBZWWJUQ3F0b0doNVVkRzhi?=
- =?utf-8?B?bzY1WnlPaUFuTU1xcWZQZkhvOVBHYUpiQnhWcEtBTjB5OUQwcjFYcno4ZC9V?=
- =?utf-8?B?cENpdUlvRTEzdTl2VWVDNkFMYnlyU055b3g4bFd3aE9kdG8zbUMxaERialJL?=
- =?utf-8?B?QVdqZitmRlhuME4xN2JQQjdKL3FoZ1lySFhpK2FBdjdqNlR5eG5vdEZxNmR5?=
- =?utf-8?B?ZVA3eTNONXFkRmhqRkJvbys3OFVJdmo1QlI2UG5EeW9oQS9DY1loMURYeUtw?=
- =?utf-8?B?Z09qRHhTWXhOa2c2UTkyS1hEWmtkSS9EWXpEc1dtYVQyMFpraUlTUStGaDdm?=
- =?utf-8?B?RnUyYXB5eVJwQTNLN0w5NFJDdGV1cCsvalltM1U2OTZsQldhMW0rVmtPZU1D?=
- =?utf-8?B?b1lSVDZ6aTZkVzV3b2ZuTTEvQlZTSFViUEo4Ni92YUs0U1FVZEVzZXRvQmoy?=
- =?utf-8?B?OVgvUDY3ZDIwS0h6RVcwUnhEdjJZaVYwSVNqWVJseXhpditKWFZRbC84akZO?=
- =?utf-8?Q?xKTBrN89IEfSEB+TYVRUj8PBV?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5c3f8752-43f2-4dd7-d896-08dd927d6e43
-X-MS-Exchange-CrossTenant-AuthSource: LV2PR12MB5968.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 May 2025 00:22:37.6806
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: InO5o4qfM6X5xmBkw7E4R/JRwO3ImCuCQFRQa8ANPeLVgjRUQYzBXMxCmSzv0KPnIumC7kRy31VFBlQqfNg/dw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB8988
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On 5/13/25 2:58 PM, Joel Fernandes wrote:
-> On Tue, May 13, 2025 at 02:07:57PM -0400, Joel Fernandes wrote:
->> On Fri, May 02, 2025 at 04:02:33PM +0200, Miguel Ojeda wrote:
->>> Starting with Rust 1.87.0 (expected 2025-05-15), `objtool` may report:
-...
-> Btw, Danilo mentioned to me the latest Rust compiler (1.86?) does not give
-> this warning for that patch.
+Add a new struct for platform data for the ti,am62-sdhci compatible to
+apply additional quirks, namely "SDHCI_QUIRK2_SUPPRESS_V1P8_ENA", to
+host controllers with am62 compatible.
 
-I'm sorry to burst this happy bubble, but I just upgraded to rustc 1.86 and did
-a clean build, and I *am* setting these warnings:
+This fixes MMC init failures seen across am62x boards.
 
-$ rustc --version
-rustc 1.86.0 (05f9846f8 2025-03-31) (Arch Linux rust 1:1.86.0-1)
+Fixes: ac5a41b472b4 ("Revert "mmc: sdhci_am654: Add sdhci_am654_start_signal_voltage_switch"")
+Fixes: 941a7abd4666 ("mmc: sdhci_am654: Add sdhci_am654_start_signal_voltage_switch")
+Cc: stable@vger.kernel.org
+Suggested-by: Nishanth Menon <nm@ti.com>
+Signed-off-by: Judith Mendez <jm@ti.com>
+---
+Changes since v4:
+- Drop support for quirk in sdhci.c
+- Add quirk member to driver data struct that shall be per compatible quirks
 
-...
-  RUSTC L rust/kernel.o
-rust/kernel.o: warning: objtool: _RNvMNtCsbA27Kl4nY2_6kernel6deviceNtB2_6Device10get_device() falls through to next function _RNvXs4_NtCsbA27Kl4nY2_6kernel9auxiliaryNtB5_6DeviceNtNtB7_5types16AlwaysRefCounted7inc_ref()
-rust/kernel.o: warning: objtool: _RNvMs2_NtNtCsbA27Kl4nY2_6kernel2fs4fileNtB5_9LocalFile4cred() falls through to next function _RNvXs8_NtNtCsbA27Kl4nY2_6kernel2fs4fileNtB5_10BadFdErrorNtNtCs8y00iZOEpTQ_4core3fmt5Debug3fmt()
+Tested on am62x SK, am64x EVM and am64x SK. Tested-bys are welcome
 
-...followed by 10 or 12 more of the same "falls through" type.
+Link to v4:
+https://lore.kernel.org/linux-mmc/20250424180036.1541568-1-jm@ti.com/
+Link to v3 RESEND:
+https://lore.kernel.org/linux-mmc/8678d284-db12-451a-b789-2b75f9932f9f@ti.com
+Link to v2:
+https://lore.kernel.org/linux-mmc/20250417182652.3521104-1-jm@ti.com/
+Link to v1:
+https://lore.kernel.org/linux-mmc/20250407222702.2199047-1-jm@ti.com/
+---
+ drivers/mmc/host/sdhci_am654.c | 41 +++++++++++++++++++++++++++++++++-
+ 1 file changed, 40 insertions(+), 1 deletion(-)
 
+diff --git a/drivers/mmc/host/sdhci_am654.c b/drivers/mmc/host/sdhci_am654.c
+index f75c31815ab0..c2bea228a67a 100644
+--- a/drivers/mmc/host/sdhci_am654.c
++++ b/drivers/mmc/host/sdhci_am654.c
+@@ -155,6 +155,7 @@ struct sdhci_am654_data {
+ 	u32 tuning_loop;
+ 
+ #define SDHCI_AM654_QUIRK_FORCE_CDTEST BIT(0)
++#define SDHCI_AM654_QUIRK_SUPPRESS_V1P8_ENA BIT(1)
+ };
+ 
+ struct window {
+@@ -166,6 +167,7 @@ struct window {
+ struct sdhci_am654_driver_data {
+ 	const struct sdhci_pltfm_data *pdata;
+ 	u32 flags;
++	u32 quirks;
+ #define IOMUX_PRESENT	(1 << 0)
+ #define FREQSEL_2_BIT	(1 << 1)
+ #define STRBSEL_4_BIT	(1 << 2)
+@@ -356,6 +358,29 @@ static void sdhci_j721e_4bit_set_clock(struct sdhci_host *host,
+ 	sdhci_set_clock(host, clock);
+ }
+ 
++static int sdhci_am654_start_signal_voltage_switch(struct mmc_host *mmc, struct mmc_ios *ios)
++{
++	struct sdhci_host *host = mmc_priv(mmc);
++	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
++	struct sdhci_am654_data *sdhci_am654 = sdhci_pltfm_priv(pltfm_host);
++	int ret;
++
++	if ((sdhci_am654->quirks & SDHCI_AM654_QUIRK_SUPPRESS_V1P8_ENA) &&
++	    ios->signal_voltage == MMC_SIGNAL_VOLTAGE_180) {
++		if (!IS_ERR(mmc->supply.vqmmc)) {
++			ret = mmc_regulator_set_vqmmc(mmc, ios);
++			if (ret < 0) {
++				pr_err("%s: Switching to 1.8V signalling voltage failed,\n",
++				       mmc_hostname(mmc));
++				return -EIO;
++			}
++		}
++		return 0;
++	}
++
++	return sdhci_start_signal_voltage_switch(mmc, ios);
++}
++
+ static u8 sdhci_am654_write_power_on(struct sdhci_host *host, u8 val, int reg)
+ {
+ 	writeb(val, host->ioaddr + reg);
+@@ -650,6 +675,18 @@ static const struct sdhci_am654_driver_data sdhci_j721e_4bit_drvdata = {
+ 	.flags = IOMUX_PRESENT,
+ };
+ 
++static const struct sdhci_pltfm_data sdhci_am62_4bit_pdata = {
++	.ops = &sdhci_j721e_4bit_ops,
++	.quirks = SDHCI_QUIRK_MULTIBLOCK_READ_ACMD12,
++	.quirks2 = SDHCI_QUIRK2_PRESET_VALUE_BROKEN,
++};
++
++static const struct sdhci_am654_driver_data sdhci_am62_4bit_drvdata = {
++	.pdata = &sdhci_am62_4bit_pdata,
++	.flags = IOMUX_PRESENT,
++	.quirks = SDHCI_AM654_QUIRK_SUPPRESS_V1P8_ENA,
++};
++
+ static const struct soc_device_attribute sdhci_am654_devices[] = {
+ 	{ .family = "AM65X",
+ 	  .revision = "SR1.0",
+@@ -872,7 +909,7 @@ static const struct of_device_id sdhci_am654_of_match[] = {
+ 	},
+ 	{
+ 		.compatible = "ti,am62-sdhci",
+-		.data = &sdhci_j721e_4bit_drvdata,
++		.data = &sdhci_am62_4bit_drvdata,
+ 	},
+ 	{ /* sentinel */ }
+ };
+@@ -906,6 +943,7 @@ static int sdhci_am654_probe(struct platform_device *pdev)
+ 	pltfm_host = sdhci_priv(host);
+ 	sdhci_am654 = sdhci_pltfm_priv(pltfm_host);
+ 	sdhci_am654->flags = drvdata->flags;
++	sdhci_am654->quirks = drvdata->quirks;
+ 
+ 	clk_xin = devm_clk_get(dev, "clk_xin");
+ 	if (IS_ERR(clk_xin)) {
+@@ -940,6 +978,7 @@ static int sdhci_am654_probe(struct platform_device *pdev)
+ 		goto err_pltfm_free;
+ 	}
+ 
++	host->mmc_host_ops.start_signal_voltage_switch = sdhci_am654_start_signal_voltage_switch;
+ 	host->mmc_host_ops.execute_tuning = sdhci_am654_execute_tuning;
+ 
+ 	pm_runtime_get_noresume(dev);
 
-> 
-> Mine is on 1.85. So if anyone else other than me is suffering from this
-> warning, do upgrade. :-)
-> 
-
-Looks like that might not suffice!
-
-thanks,
+base-commit: aa94665adc28f3fdc3de2979ac1e98bae961d6ca
 -- 
-John Hubbard
+2.49.0
 
 
