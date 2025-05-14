@@ -1,117 +1,127 @@
-Return-Path: <linux-kernel+bounces-646750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-646752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 764E2AB6015
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 02:14:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C10CDAB601D
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 02:23:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9BE053ABFF9
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 00:14:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71D5E19E2218
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 00:23:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E88B4C85;
-	Wed, 14 May 2025 00:14:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PqKGWCg8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EBB81FDD;
-	Wed, 14 May 2025 00:14:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C3E125760;
+	Wed, 14 May 2025 00:23:27 +0000 (UTC)
+Received: from zg8tmja2lje4os4yms4ymjma.icoremail.net (zg8tmja2lje4os4yms4ymjma.icoremail.net [206.189.21.223])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC8DE17736;
+	Wed, 14 May 2025 00:23:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=206.189.21.223
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747181664; cv=none; b=fFWewQhez5K7IyoZ9U+oq2HAAVJ6qAiswMMtS0UNDsqDdVkwCd9mZckk1sl12pFX91vXo/Fbl/IbxQUgLouXadsdKd5ARld1VTY9u7WUZQc5UsugwH6nXFHHDN/km4MJ62yf2QhCeOeWMXmZbB36ML++ejogGMeS2d7l0aZTpAc=
+	t=1747182207; cv=none; b=Rwu3enZxBh6KQbGU2RS+D9g2aQMOmTGX3J3Y0CEmuc5Gotf4XrZvLDGbKLsfNma8sG7Q+KxApKiK6bISaFwLfEclZ0tJvQAO4PdZstCLNLbdygWrdZptkBEtsN1LKXGCR9iaPOZm1xqvMmypDfuHCaj68WJ0/R0VtSokLeMDYgM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747181664; c=relaxed/simple;
-	bh=jDk0BvPdBOsudd297pGyGFep8goSpk+trsNoQeXfyGQ=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=QdiEfvv0/4LRUh/AoK418c3VVZMDPdAMzJvD/jvXpmV/XzsnYXniwjCGcwkzxyJ1Uu5OptGNh7YAVU0Z1FjKdieZn94/8vDyyi2JK43d4E5n24cmHyM+5+OTRcRadBbzfAl//KN6HqE9GvN4May4cmWKwSMUrW0JKuc0oBdlFF4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PqKGWCg8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB457C4CEE4;
-	Wed, 14 May 2025 00:14:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747181664;
-	bh=jDk0BvPdBOsudd297pGyGFep8goSpk+trsNoQeXfyGQ=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=PqKGWCg8dh3loYFuR0jSEDNpWVH6sczf9s2k3j6fH+99wPEjDU5mG84IBYH5MbgD6
-	 bjR2nxsM3pC2s89muWEUGZTb5OpRY+NhJX4YTbeneW+NCPR0lCE+BFYg5zPy8Yv0vs
-	 8RLxEJgzLKFwjZ6k9OyVd8HdRr+7o1BoJNcRiFq1GVK8wBC3J5GLJscsFxtzpbNeaR
-	 5o7g2Tedq+gTAJ8DP6FhEoyUi8KqEgjQeehOQg9wJepzLb2012iEcqacZ+iTAFaRtW
-	 MsXRcMgbsLAI8UZlKD9z2Nytq530gIRICfeorKFZ+sL0L4v+WL7V0rsSewojSI0eoA
-	 J4dtDhDgnN/Rw==
-Date: Tue, 13 May 2025 17:14:22 -0700 (PDT)
-From: Stefano Stabellini <sstabellini@kernel.org>
-X-X-Sender: sstabellini@ubuntu-linux-20-04-desktop
-To: John Ernberg <john.ernberg@actia.se>
-cc: Juergen Gross <jgross@suse.com>, 
-    Stefano Stabellini <sstabellini@kernel.org>, 
-    Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>, 
-    "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>, 
-    "iommu@lists.linux.dev" <iommu@lists.linux.dev>, 
-    "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-    Christoph Hellwig <hch@infradead.org>, 
-    "imx@lists.linux.dev" <imx@lists.linux.dev>
-Subject: Re: [PATCH v2] xen: swiotlb: Wire up map_resource callback
-In-Reply-To: <20250512071440.3726697-1-john.ernberg@actia.se>
-Message-ID: <alpine.DEB.2.22.394.2505131714100.368682@ubuntu-linux-20-04-desktop>
-References: <20250512071440.3726697-1-john.ernberg@actia.se>
-User-Agent: Alpine 2.22 (DEB 394 2020-01-19)
+	s=arc-20240116; t=1747182207; c=relaxed/simple;
+	bh=cFC1F7++j3WMyMwjFA/nCZ2NwSzv1c9tSpdx48jRjmE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=sMnIQgOOCyib3Kl11T8EOQiWGHSbgDZ7efYNZerHfP5HQoiStqE2bqR/Ol9Ugutk2QRnogVZ7YZy9BJ67spaWJ9yBQguVePfyKhhmiblhUPuWCEYGojoBOxFIteWkLsi2k29x1jSM8AxYv6YEfXXmTIYSgmBfk/V4Eg2HI0hEFk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=206.189.21.223
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
+Received: from E0005152DT.eswin.cn (unknown [10.12.96.41])
+	by app2 (Coremail) with SMTP id TQJkCgDHWZNp4iNonLF4AA--.2974S2;
+	Wed, 14 May 2025 08:23:07 +0800 (CST)
+From: dongxuyang@eswincomputing.com
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: ningyu@eswincomputing.com,
+	linmin@eswincomputing.com,
+	huangyifeng@eswincomputing.com,
+	Xuyang Dong <dongxuyang@eswincomputing.com>
+Subject: [PATCH 0/2] Add driver support for ESWIN eic700 SoC clock controller
+Date: Wed, 14 May 2025 08:22:33 +0800
+Message-Id: <20250514002233.187-1-dongxuyang@eswincomputing.com>
+X-Mailer: git-send-email 2.31.1.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:TQJkCgDHWZNp4iNonLF4AA--.2974S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Ww4DJryxKw15Aw45GF15Jwb_yoW8Zw45pF
+	4UCF95Ar1UXFW7Xa1xtayF9ryfAan7JFyYkFZ7Xa4UZas0yFy8JF4ftas8JF97Zw1xAw1S
+	qFn0ga1rCF4UAFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBq14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628v
+	n2kIc2xKxwAKzVCY07xG64k0F24lc7CjxVAaw2AFwI0_Jw0_GFylc2xSY4AK6svPMxAIw2
+	8IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4l
+	x2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrw
+	CI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI
+	42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z2
+	80aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUbknY7UUUUU==
+X-CM-SenderInfo: pgrqw5xx1d0w46hv4xpqfrz1xxwl0woofrz/
 
-On Mon, 12 May 2025, John Ernberg wrote:
-> When running Xen on iMX8QXP, an Arm SoC without IOMMU, DMA performed via
-> its eDMA v3 DMA engine fail with a mapping error.
-> 
-> The eDMA performs DMA between RAM and MMIO space, and it's the MMIO side
-> that cannot be mapped.
-> 
-> MMIO->RAM DMA access cannot be bounce buffered if it would straddle a page
-> boundary and on Xen the MMIO space is 1:1 mapped for Arm, and x86 PV Dom0.
-> Cases where MMIO space is not 1:1 mapped, such as x86 PVH Dom0, requires an
-> IOMMU present to deal with the mapping.
-> 
-> Considering the above the map_resource callback can just be wired to the
-> existing dma_direct_map_resource() function.
-> 
-> There is nothing to do for unmap so the unmap callback is not needed.
-> 
-> Signed-off-by: John Ernberg <john.ernberg@actia.se>
+From: Xuyang Dong <dongxuyang@eswincomputing.com>
 
-Reviewed-by: Stefano Stabellini <sstabellini@kernel.org>
+	Add support for the clock functionality in the Linux kernel.
+	The driver provides basic functionality to manage and control
+	the clock signals for the eic7700 series chips, which are part of
+	the ESWIN SoC family.
 
+	The driver is integrated with the Linux clock subsystem, allowing
+	kernel code to use clock signals on hardware and ensuring proper
+	handling of clock events.
 
-> ---
-> 
-> v2:
->  - Just use dma_direct_map_resource() directly (Stefano Stabellini)
->  - Incorporate some of the discussion and explanations from v1 into the
->     commit message (Stefano, Christoph)
->  - General English improvements in the commit message.
->  - Just this patch now, 1/2 in the previous set was applied
-> 
-> v1: (series) https://lore.kernel.org/xen-devel/20250502114043.1968976-1-john.ernberg@actia.se/
-> ---
->  drivers/xen/swiotlb-xen.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/xen/swiotlb-xen.c b/drivers/xen/swiotlb-xen.c
-> index ef56a2500ed6..da1a7d3d377c 100644
-> --- a/drivers/xen/swiotlb-xen.c
-> +++ b/drivers/xen/swiotlb-xen.c
-> @@ -426,4 +426,5 @@ const struct dma_map_ops xen_swiotlb_dma_ops = {
->  	.alloc_pages_op = dma_common_alloc_pages,
->  	.free_pages = dma_common_free_pages,
->  	.max_mapping_size = swiotlb_max_mapping_size,
-> +	.map_resource = dma_direct_map_resource,
->  };
-> -- 
-> 2.49.0
-> 
+	Features:
+	 Implement support for the ESWIN eic7700 SoC clock controller.
+	 Provide API to manage clock signals for the eic7700 series SoC.
+	 Integrate with the Linux clock subsystem for consistency and
+	 scalability.
+
+	Supported chips:
+	 ESWIN eic7700 series SoC.
+
+	Test:
+	 The tests tested on the Sifive HiFive Premier P550 (which uses the EIC7700 SoC),
+	 including system boot, networking, EMMC, display, and other peripherals.
+	 The drivers for these modules all use the clock module,
+	 so the verifies that this clock driver patch is working properly.
+
+Xuyang Dong (2):
+  dt-bindings: clock: eswin: Documentation for eic7700 SoC
+  clock: eswin: Add eic7700 clock driver
+
+ .../bindings/clock/eswin,eic7700-clock.yaml   |   53 +
+ drivers/clk/Kconfig                           |    1 +
+ drivers/clk/Makefile                          |    1 +
+ drivers/clk/eswin/Kconfig                     |   10 +
+ drivers/clk/eswin/Makefile                    |    8 +
+ drivers/clk/eswin/clk-eic7700.c               | 3811 +++++++++++++++++
+ drivers/clk/eswin/clk-eic7700.h               |  194 +
+ drivers/clk/eswin/clk.c                       | 1069 +++++
+ drivers/clk/eswin/clk.h                       |  209 +
+ .../dt-bindings/clock/eswin,eic7700-clock.h   |  588 +++
+ 10 files changed, 5944 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/eswin,eic7700-clock.yaml
+ create mode 100644 drivers/clk/eswin/Kconfig
+ create mode 100644 drivers/clk/eswin/Makefile
+ create mode 100644 drivers/clk/eswin/clk-eic7700.c
+ create mode 100644 drivers/clk/eswin/clk-eic7700.h
+ create mode 100644 drivers/clk/eswin/clk.c
+ create mode 100644 drivers/clk/eswin/clk.h
+ create mode 100644 include/dt-bindings/clock/eswin,eic7700-clock.h
+
+--
+2.17.1
+
 
