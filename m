@@ -1,104 +1,144 @@
-Return-Path: <linux-kernel+bounces-647276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-647281-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B5D4AB666E
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 10:51:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62571AB6676
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 10:52:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C833919E4818
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 08:51:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB9C14A35B3
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 08:52:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64A81221298;
-	Wed, 14 May 2025 08:50:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43EDD222591;
+	Wed, 14 May 2025 08:51:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="kf4U2n9Y"
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92176202F9A
-	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 08:50:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="XwpkGXeS"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 626F4220F5A;
+	Wed, 14 May 2025 08:51:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747212653; cv=none; b=ctqpX46nEWyWGb7Wd7QqaDnyedKY9kTG0UNYYmocK7PbQ8MxH8D4K0lgm+tSVYVXyJ+4oqLfWlHt8cPMQhrvmiXhYVxHk0yUqwphcJp6q+NBBFKkPBPLn87sQ0ST4Ra7LIyT78NXAPu/ed9dTeCGuO67zpoLwTA9WW6SHOG7+30=
+	t=1747212687; cv=none; b=Ng6bPWMoSrjS2v0K91rKXiHtLiDUKuOH9gtGKtUTjbNV1gZQWImL42y1awZSY0Ca8UIct56wXOwdR9SQM824wHvOLbAA1LvybuyoC6IjTWqyo394B8u19FWAYsGD0iXKG/dllxkmrC2Cmgw4wjPQMqRbdjU4BCPzI2BAuepFXzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747212653; c=relaxed/simple;
-	bh=tSX3jA/HXWZCcxkvdPn0B4RRhN6070u7urtspGwQs0M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OHIJmX5ikS7gUUcmVRFxBHKG07Smeok99C/JNNxNplc3SSdddkJH84uL4DiXn9ps084jW2CETrjARnKQXP9LOzv6WhizD+QtZuG3R8Uzck7jevydB2GYPK1hfW00XcCcOYd4PkbhB7DiaHW1QmD9lDFZmBtaykkHYtsBMNLJSZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=kf4U2n9Y; arc=none smtp.client-ip=209.85.160.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-47698757053so93987991cf.0
-        for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 01:50:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1747212650; x=1747817450; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=tSX3jA/HXWZCcxkvdPn0B4RRhN6070u7urtspGwQs0M=;
-        b=kf4U2n9Y1ExQpfzS5NuhX7Ta/Yr/x6hsB89cupFjqJXG5Joi0c0f0k+st1HHPeumMJ
-         A+Swj5610n7rC2V/bTJVeJLn4ERsHqeGP0sT1gXDDNjbJ5+q3UaSKd7IsJ7uqwwydrai
-         0Nd8tk3J5YvWDNM2FhswhD5eX7hsi0oyBj+es=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747212650; x=1747817450;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tSX3jA/HXWZCcxkvdPn0B4RRhN6070u7urtspGwQs0M=;
-        b=jkrd+og1kiwEb23oUIYobR3bByB4YGMJsXxy8Uj05vys9vY2fuBGVLJPP7sg5OV811
-         UgYm/GJV33n+TVWWnUsM+EiZJbHtRsaQUMtSQBvIlXFOKguMU3VtbAuECWGfOJSLiMRa
-         PRNf/M3S4nwCRkq2zvoXysZmA7gpK/NsfOolm7rKGDgdlklEOk03y45/OCuIa2HsoGij
-         +lBNkAnCNUCiOs8oQT2e0Qnjdyl1D+Mly30Z0PcTaxkwEfWxQN3JXvMsPOuEYRpXQF0Z
-         nJ490llGZhfsRs8MyuxV8AqiBpP3B2l49gNcftNd/NcVrax3l84Ww+/Z8vzoOx3d63yb
-         q+Wg==
-X-Forwarded-Encrypted: i=1; AJvYcCXmXzkBQEyMQPk0H4WeKlDOIVEg9gDa1c0oUKOq66Z57JYpI1wbykjgGBwOws7xa8z0xAIQ8m9Z98vbMLU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywv379J8E7Y93pPCvA00w9XlgSw7miHbLFgMi743B7o16oClf5O
-	K78rxorZYABYVZFAtO9Kc6gDFlfl3UM647ukvPSd02c/OkSeNVAUyHl4Y0k0Y3wXzO0v+H92Ii1
-	jNLZNeyFG0IHQ8YZTkUAqfoX5tdgq2ED6DI73AA==
-X-Gm-Gg: ASbGncs4woDFdfti9Jbs3BzRHSvrNg34izGvBqT0sEmZTL/11A/b/Tvj7EaNFMcSQlQ
-	QCCEFp1KW0EA3WBrc/gdiFpNZCpc/yTqSriIFdRJ0rHKbAeS2Wlrekdec+r3bI0+sfnptK9/Xj/
-	52r5ExVg5nSRUv+zZ+dZkYsRx49fJ8vD3yWiYJHyaQTA==
-X-Google-Smtp-Source: AGHT+IGLeCzQIwc32fG1czjxbITqnFTOhdsSRGzbFubUyBG2WFIbL35MyAP26FPslXlF8Vxt+OWDfIGfCB+vatsKBm8=
-X-Received: by 2002:a05:622a:2517:b0:477:ea0:1b27 with SMTP id
- d75a77b69052e-49495c911b9mr36262961cf.26.1747212650345; Wed, 14 May 2025
- 01:50:50 -0700 (PDT)
+	s=arc-20240116; t=1747212687; c=relaxed/simple;
+	bh=apq+BwYHOxkPhX8ok64w8r4oGNy7ByvWl3MYKvBniB8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=FLS+TTOWj9c03OKYfOgLul5+UgpsTZdYYJnXIfJ69ZnODfaq3rBrrQUNTInatLwi2zlX7yjmNvUb2xn/jEeASRv5Wz8jgLmXOviephV/GHJrbWliaKMbInOWJKT8vFGSdiqaSLubUEBPuYp+9fzuKZo9g/ix5RDxq+GbWU2xQWA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=XwpkGXeS reason="signature verification failed"; arc=none smtp.client-ip=117.135.210.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:To:Subject:Content-Type:MIME-Version:
+	Message-ID; bh=sBFuoDoykQLtmTPGNVji36ZhaQVrt1lynL2bW5GsBiQ=; b=X
+	wpkGXeSBwF9sgNV/XM+nzpfhi2/6IcJFl8RYdcGTFpTd+4lDjLDVXRRavMfqQ1lS
+	D1rI+B+KoNIt6NET14u7c+nMwvyOQpQ/Wq0uqC27dI5cmycMZF3qMiZb4B7WagjM
+	9LqYFFQz2IomS5CzkX69Lh0z7sGK/u2M7qyYhGJrxo=
+Received: from 00107082$163.com ( [111.35.191.17] ) by
+ ajax-webmail-wmsvr-40-138 (Coremail) ; Wed, 14 May 2025 16:50:52 +0800
+ (CST)
+Date: Wed, 14 May 2025 16:50:52 +0800 (CST)
+From: "David Wang" <00107082@163.com>
+To: "Greg KH" <gregkh@linuxfoundation.org>
+Cc: mathias.nyman@intel.com, oneukum@suse.com, stern@rowland.harvard.edu,
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] USB: core: add a memory pool to urb for
+ host-controller private data
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20240801(9da12a7b)
+ Copyright (c) 2002-2025 www.mailtech.cn 163com
+In-Reply-To: <2025051405-glare-crazily-a9fa@gregkh>
+References: <20250513113817.11962-1-00107082@163.com>
+ <20250514064455.5488-1-00107082@163.com>
+ <2025051405-glare-crazily-a9fa@gregkh>
+X-NTES-SC: AL_Qu2fBf6avU4u5CibY+kZnEYQheY4XMKyuPkg1YJXOp80iCXjww4aeXB6GXr77cOqKSqSvxeqUxhu5uNYd61xTbA13njqx69rZwdQABWQVKxD
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=GBK
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250509-fusectl-backing-files-v3-0-393761f9b683@uniontech.com>
- <CAOQ4uxjDwk6NA_UKiJuXfyY=2G33rruu3jr70pthFpBBbSgp1A@mail.gmail.com>
- <CAJfpegvEYUgEbpATpQx8NqVR33Mv-VK96C+gbTag1CEUeBqvnA@mail.gmail.com> <CAJnrk1ZxpOBENHk3Q1dJVY78RSdE+PtFR8UpYukT0dLJv3scHw@mail.gmail.com>
-In-Reply-To: <CAJnrk1ZxpOBENHk3Q1dJVY78RSdE+PtFR8UpYukT0dLJv3scHw@mail.gmail.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Wed, 14 May 2025 10:50:39 +0200
-X-Gm-Features: AX0GCFthxfZY97wXLqodWfQQ_45BmPxv7EIaJAcSOrNefrHrtSaWnhjOExjHadc
-Message-ID: <CAJfpegunxRn3EG3ZoQYteyZ3B6ny_DG1U65=VX25tohQuHCpVQ@mail.gmail.com>
-Subject: Re: [PATCH v3 0/3] fuse: Expose more information of fuse backing
- files to userspace
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: Amir Goldstein <amir73il@gmail.com>, chenlinxuan@uniontech.com, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Bernd Schubert <bernd.schubert@fastmail.fm>
-Content-Type: text/plain; charset="UTF-8"
+Message-ID: <4b376fc2.7e7e.196cdfd512a.Coremail.00107082@163.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:iigvCgD3L9ttWSRo1UsEAA--.39926W
+X-CM-SenderInfo: qqqrilqqysqiywtou0bp/1tbiqAxNqmgkRDyyBAAGsH
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 
-On Tue, 13 May 2025 at 20:52, Joanne Koong <joannelkoong@gmail.com> wrote:
-
-> For getting from conn to fuse server pid, what about adding the server
-> pid to fuse's sysfs info? This use case has come up a few times in
-> production where we've encountered a stuck server and have wanted to
-> identify its pid. I have a patch on a branch I need to clean up and
-> send out for this, but it adds a new "info" file to
-> /sys/fs/fuse/connections/*/ where libfuse can write any identifying
-> info to that file like the server pid or name. If the connection gets
-> migrated to another process then libfuse is responsible for modifying
-> that to reflect the correct info.
-
-Fine, but then why not just write something in /var/run/fuse?
-
-Thanks,
-Miklos
+CkF0IDIwMjUtMDUtMTQgMTU6Mjk6NDIsICJHcmVnIEtIIiA8Z3JlZ2toQGxpbnV4Zm91bmRhdGlv
+bi5vcmc+IHdyb3RlOgo+T24gV2VkLCBNYXkgMTQsIDIwMjUgYXQgMDI6NDQ6NTVQTSArMDgwMCwg
+RGF2aWQgV2FuZyB3cm90ZToKPj4gSGksIAo+PiAKPj4gVXBkYXRlIG1lbW9yeSBmb290cHJpbnRz
+IGFmdGVyIGhvdXJzIG9mIFVTQiBkZXZpY2VzIHVzYWdlCj4+IG9uIG15IHN5c3RlbToKPj4gKEkg
+aGF2ZSB3ZWJjYW0vbWljL2tleWJvYXJkL21vdXNlL2hhcmRkaXNrIGNvbm5lY3RlZCB2aWEgVVNC
+LAo+PiBhIGZ1bGwgcGljdHVyZSBvZiBtZW1vcnkgZm9vdHByaW50cyBpcyBhdHRhY2hlZCBiZWxv
+dykKPj4gKy0tLS0tLS0tLS0tLS0tLS0tLS0tLS0rLS0tLS0tLS0tLS0tLS0tLSstLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tKy0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+Kwo+PiB8IGFjdGl2ZSBtZW1vcnkoYnl0ZXMpIHwgYWN0aXZlIG9iamVjdHMgfCAgICAgICAgICAg
+ICAgIGFsbG9jIGxvY2F0aW9uICAgICAgICAgICAgICB8IHRvdGFsIG9iamVjdHMgY3JlYXRlZCB8
+Cj4+ICstLS0tLS0tLS0tLS0tLS0tLS0tLS0tKy0tLS0tLS0tLS0tLS0tLS0rLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLSstLS0tLS0tLS0tLS0tLS0tLS0tLS0tLSsK
+Pj4gfCAgICAgICAgMjI5MTIgICAgICAgICB8ICAgICAgIDI0ICAgICAgIHwgY29yZS91cmIuYzox
+MDU0OnVyYl9oY3ByaXZfbWVtcG9vbF96YWxsb2MgfCAgICAgICAgIDEwNTIzICAgICAgICAgfAo+
+PiB8ICAgICAgICAxMTc3NiAgICAgICAgIHwgICAgICAgMzEgICAgICAgfCAgICAgICAgY29yZS91
+cmIuYzo3Njp1c2JfYWxsb2NfdXJiICAgICAgICB8ICAgICAgICAgMTEwMjcgICAgICAgICB8Cj4+
+ICstLS0tLS0tLS0tLS0tLS0tLS0tLS0tKy0tLS0tLS0tLS0tLS0tLS0rLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLSstLS0tLS0tLS0tLS0tLS0tLS0tLS0tLSsKPj4g
+Cj4+IFRoZSBjb3VudCBmb3IgYWN0aXZlIFVSQiBvYmplY3RzIHJlbWFpbiBhdCBsb3cgbGV2ZWws
+Cj4+IGl0cyBwZWFrIGlzIGFib3V0IDEyS0Igd2hlbiBJIGNvcGllZCAxMEcgZmlsZSB0byBteSBo
+YXJkZGlzay4KPj4gVGhlIG1lbW9yeSBwb29sIGluIHRoaXMgcGF0Y2ggdGFrZXMgYWJvdXQgMjJL
+QiwgaXRzIHBlYWsgaXMgMjNLQi4KPj4gVGhlIHBhdGNoIG1lYW50IHRvIHJldXNlIG1lbW9yeSB2
+aWEgYSBtZW1wb29sLCB0aGUgbWVtb3J5IGtlcHQgaW4gcG9vbCBpcyBpbmRlZWQKPj4gdGhlICJ0
+cmFkZW9mZiIgd2hlbiB0aGUgc3lzdGVtIGlzIGlkbGUuIChXZWxsLCB3ZSBhcmUgdGFsa2luZyBh
+Ym91dCBtZW1wb29sIGFueXdheS4pCj4+IEhvdyBiYWxhbmNlIHRoZSB0cmFkZW9mZiBpcyBkZXBl
+bmRzIG9uIGhvdyB3ZWxsIHRoZSBtZW1wb29sIGlzIG1hbmFnZWQuCj4+IFRoaXMgcGF0Y2ggdGFr
+ZXMgYSBlYXN5IGFwcHJvYWNoOiBwdXQgZmFpdGggaW4gVVJCIG9iamVjdHMgbWFuYWdlbWVudCBh
+bmQgcHV0Cj4+IGEgc2luZ2xlIHNsb3Qgb2YgbWVtcG9vbCBpbiBVUkIgb24gZGVtYW5kcy4gQW5k
+IHRoZSBjaGFuZ2VzLCBieSBjb3VudGluZyBsaW5lcwo+PiBpbiB0aGlzIHBhdGNoLCBhcmUgdmVy
+eSBzaW1wbGUuCj4+IEJhc2Ugb24gdGhlIHByb2ZpbGluZywgdGhlIG51bWJlciBvZiBhY3RpdmUg
+VVJCIG9iamVjdHMgYXJlIGtlcHQgYXQgYSB2ZXJ5IGxvdyBzY2FsZSwKPj4gb25seSBzZXZlcmFs
+IGNvdWxkIGhhdmUgYSB2ZXJ5IGxvbmcgbGlmZWN5Y2xlLgo+PiBJIHRoaW5rIFVSQiBpcyBhIGdv
+b2QgY2FuZGlkYXRlIGZvciBjYWNoaW5nIHRob3NlIG1lbW9yeSBuZWVkZWQgZm9yIHByaXZhdGUg
+ZGF0YS4KPj4gQnV0IEkgY291bGQgYmUgdmVyeSB3cm9uZywgZHVlIHNpbXBseSB0byB0aGUgbGFj
+ayBvZiBrbm93bGVkZ2UuCj4+IAo+PiBBbmQgYmVmb3JlLCB3aXRob3V0IHRoZSBwYXRjaCwgYSAx
+MCBtaW51dGVzIHdlYmNhbSB1c2FnZSBhbmQgY29weWluZyAxMEcgZmlsZSB0byBoYXJkZGlzawo+
+PiB3b3VsZCB5aWVsZCBoaWdoIHJhdGUgb2YgbWVtb3J5IGFsbG9jYXRpb24gZm9yIHByaXZpYXRl
+IGRhdGEgaW4geGhjaV91cmJfZW5xdWV1ZToKPj4gKy0tLS0tLS0tLS0tLS0tLS0tLS0tLS0rLS0t
+LS0tLS0tLS0tLS0tLSstLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLSstLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLSsKPj4gfCBhY3RpdmUgbWVtb3J5KGJ5dGVzKSB8IGFjdGl2ZSBvYmpl
+Y3RzIHwgICAgICAgICAgIGFsbG9jIGxvY2F0aW9uICAgICAgICAgIHwgdG90YWwgb2JqZWN0cyBj
+cmVhdGVkIHwKPj4gKy0tLS0tLS0tLS0tLS0tLS0tLS0tLS0rLS0tLS0tLS0tLS0tLS0tLSstLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLSstLS0tLS0tLS0tLS0tLS0tLS0tLS0tLSsK
+Pj4gfCAgICAgICAgMjI3ODQgICAgICAgICB8ICAgICAgIDIzICAgICAgIHwgaG9zdC94aGNpLmM6
+MTU1NTp4aGNpX3VyYl9lbnF1ZXVlIHwgICAgICAgICA4OTQyODEgPDwgZ3Jvd3xpbmcgdmVyeSBx
+dWljawo+PiB8ICAgICAgICAxMDg4MCAgICAgICAgIHwgICAgICAgMzEgICAgICAgfCAgICBjb3Jl
+L3VyYi5jOjc1OnVzYl9hbGxvY191cmIgICAgfCAgICAgICAgICA0MDI4ICAgICAgICAgfAo+PiAr
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLSstLS0tLS0tLS0tLS0tLS0tKy0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tKy0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tKwo+PiBJIG9ic2VydmUg
+YSBoaWdoZXN0IGFsbG9jYXRpb24gcmF0ZSBvZiAxLjVLL3MgaW4geGhjaV91cmJfZW5xdWV1ZQo+
+PiB3aGVuIEkgd2FzIGNvcHlpbmcgMTBHIGZpbGUsIGFuZCBoYWQgbXkgd2ViY2FtIG9wZW5lZCBh
+dCB0aGUgc2FtZSB0aW1lLgo+PiAKPj4gQW5kIGFnYWluLCB0byBiZSBob25lc3QsIEkgZGlkIG5v
+dCBvYnNlcnZlIGFueSBvYnNlcnZhYmxlIHBlcmZvcm1hbmNlIGltcHJvdmVtZW50IGZyb20KPj4g
+YW4gZW5kdXNlcidzIHBvaW50IG9mIHZpZXcgd2l0aCB0aGlzIHBhdGNoLiBUaGUgb25seSBzaWdu
+aWZpY2FudCBpbXByb3ZlbWVudCBpcyBtZW1vcnkgZm9vdHByaW50Cj4+IF9udW1iZXJzXy4KPj4g
+SSBndWVzcyBtZW1vcnkgYWxsb2NhdGlvbiBpcyBpbmRlZWQgIl9yZWFsbHkgZGFtbiBmYXN0XyIs
+IGJ1dCBJIHN0aWxsIGhhdmUgdGhlIG1pbmRzZXQgb2YKPj4gInRoZSBsZXNzIGFsbG9jYXRpb24g
+dGhlIGJldHRlciIuCj4KPk5vLCB0aGlzIGlzbid0IG5lY2Vzc2FyaWx5IHRydWUgYXQgYWxsLiAg
+QWxsb2NhdGlvbnMgYXJlIGZhc3QsIGFuZCBpZiB3ZQo+ZnJlZS9hbGxvY2F0ZSB0aGluZ3MgcXVp
+Y2tseSwgaXQncyBldmVuIGZhc3Rlci4gIFVTQiBpcyBsaW1pdGVkIGJ5IHRoZQo+aGFyZHdhcmUg
+dGhyb3VnaHB1dCwgd2hpY2ggaXMgX3ZlcnlfIHNsb3cgY29tcGFyZWQgdG8gbWVtb3J5IGFjY2Vz
+c2VzIG9mCj50aGUgYWxsb2NhdG9yLgo+Cj5TbyB1bmxlc3MgeW91IGNhbiBzaG93IHRoYXQgd2Ug
+YXJlIHVzaW5nIGxlc3MgQ1BVIHRpbWUsIG9yIHNvbWV0aGluZwo+ZWxzZSAicmVhbCIgdGhhdCBp
+cyBtZWFzdXJhYmxlIGluIGEgcmVhbCB3YXkgaW4gdXNlcnNwYWNlLCB0aGF0IHdvdWxkCj5qdXN0
+aWZ5IHRoZSBleHRyYSBjb21wbGV4aXR5LCBpdCdzIGdvaW5nIHRvIGJlIGhhcmQgdG8gZ2V0IG1l
+IHRvIGFncmVlCj50aGF0IHRoaXMgaXMgc29tZXRoaW5nIHRoYXQgbmVlZHMgdG8gYmUgYWRkcmVz
+c2VkIGF0IGFsbC4KClRoYW5rcyBmb3IgZmVlZGJhY2tzfiEgClRoYXQncyB2ZXJ5IHJlYXNvbmFi
+bGUgdG8gbWUsICBhbmQgSSBoYXZlIGJlZW4gcG9uZGVyaW5nIG9uIGhvdwp0byBwcm9maWxlIGEg
+VVNCIHBlcmZvcm1hbmNlLCBidXQgc3RpbGwgbm8gY2x1ZS4KCiBJIHdpbGwga2VlcCB0aGlua2lu
+ZyBhYm91dCBpdCwgaG9wZWZ1bGx5IHRoaXMgMWsrL3MgYWxsb2NhdGlvbiB3b3VsZCBzaG93IHVw
+IHNvbWV3aGVyZSwgb3IgCmNvbmNsdWRlIHRoYXQgaXQgcmVhbGx5IGhhcyBubyBzaWduaWZpY2Fu
+dCBpbXBhY3QgYXQgYWxsLgoKClRoYW5rcwpEYXZpZAoKPgo+QWxzbywgSSdtIHRvdGFsbHkgY29u
+ZnVzZWQgYXMgdG8gd2hhdCB0aGUgImxhdGVzdCIgdmVyc2lvbiBvZiB0aGlzCj5wYXRjaHNldCBp
+cy4uLgo+CnNvcnJ5LCBJIHRoaW5rIEkgbWVzcyB1cCB0aGUgbWFpbHMgd2hlbiBJIGFkZCAicmVw
+bHktdG8iIGhlYWRlciB0byBuZXdlciBwYXRjaGVzCgo+dGhhbmtzLAo+Cj5ncmVnIGstaAo=
 
