@@ -1,90 +1,130 @@
-Return-Path: <linux-kernel+bounces-647914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-647910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC425AB6F77
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 17:18:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 835EEAB6F53
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 17:14:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A15748C7077
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 15:14:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0ECB91BA3C48
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 15:13:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 038DC283FC6;
-	Wed, 14 May 2025 15:12:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3A7B27FD56;
+	Wed, 14 May 2025 15:11:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lTRXw+6g"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SOvW8FT3"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 151951DE4CC
-	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 15:11:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 938B921D58F
+	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 15:11:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747235520; cv=none; b=jiS6Vml19VK0mxRzJnMxTjLl2X09gS/rsAdc0n6epAOBhhZRCBTPIy582KB3xfqkuvxfOmZBMtL7aBxAYGs9q2Yj2tnekzb20Z0W2o3VdzveK/GM4t8PrJJlQuoXMoukbU7GpMxm1y3URtiRD35nbpnJAqGvMOn6VUhYENxXFz4=
+	t=1747235503; cv=none; b=Ck6CB6zfqM3Au7Dh77rHrsiTp+iLXs7CEnhJBflpJghADXLP+Or1Y10FRrGKtMD+RZ/UpFl5I/E1A57lhqeJFQEtWwAxe13KN5IryDf++qtV7EalxFJKgzzinMHntdOvU/nQgXldAw1y8pJHHv8XkkGv3d1d15Gi5AU7eXCXlXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747235520; c=relaxed/simple;
-	bh=awf475v5L8HDJn+JWb3kNXX4Vy1fIT4q517NqJ8iR48=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KoEzURl0QwNvR39MPO4jXo/b6EZfS8NS/HwKEpEJZDy7FWfJYsJSK66eChIwZpgHSv7ZYIXTNCUkOPULDZ72SxiGuYKWFaA8X+oKkVy1F8enLR3s49J8NXZj6Y/K90Wc0MigfvRE5/Z33EGAAm271ox0lW37ai3CedF4ruiSYSo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lTRXw+6g; arc=none smtp.client-ip=209.85.216.45
+	s=arc-20240116; t=1747235503; c=relaxed/simple;
+	bh=4u/NS1smLHkxhFeUuEbvCE2uMHuDJkj0RIsb2N/7OBQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=CDJbG+fyT+6/E+qTRgQ8chymbuy+WxOEdjmDZouDUoBJz97HxOSKPVBAvD9GnHYgcR2RrecSWFwsKStfXljDDywL9eZNcR58BsBaDM22L95ZNE4pRXvJ2kHybIgek4jdsyQw+am/PKK4iK8kUhRJ6Ng0wtuyrYLyOJu/l8o1gSs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SOvW8FT3; arc=none smtp.client-ip=209.85.214.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-30a8cbddce3so6149609a91.1
-        for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 08:11:57 -0700 (PDT)
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-22fa414c565so54014255ad.2
+        for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 08:11:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747235517; x=1747840317; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=awf475v5L8HDJn+JWb3kNXX4Vy1fIT4q517NqJ8iR48=;
-        b=lTRXw+6gte7jBswlCfPRgNoifOY3aelYkeX+D0W+eUSHEEUG3mMDUJzRN9h+l0WctY
-         Op58L0iFZeHUTXYIiLamWGPuCAIEpp9YbWMF8S9vlBU7b2Y3vyrbFOJsn38Sb4/OdO+I
-         N5N4O+CpFPoFht3Cbktutaxhjkan5MfSVhiyE/Kg/zBC6mFG4xOtPkLe60vB7fk2PDva
-         34Vy9wJHUtag4TbvmW4fykGzdbwrdN0Zrx0YgS+Of+5CpOtJcqfCGwFGe2sd7bJ28jdN
-         M7X7KNS/Beo7tDDY1swD4qicuY4uZ51odZJklhUkdTyTHCQkTWBby9MQHpyVQARrQe86
-         61Lw==
+        d=gmail.com; s=20230601; t=1747235501; x=1747840301; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zin9UdB1kGHf9472t90ClCu+DsenV3gklPBeEhXFkBk=;
+        b=SOvW8FT3d4LANFtjcKwButycoGew7xFHKVAAqC8upyNJp1g/mZoJUO16d8/37oCpc2
+         Uc9MIoJHoD9glkhRpEnoP2uMt2vqcGU8Cw9NtDQaJi2TTZ3fgUD9ya6+NeIE69sMvBoZ
+         uHJ4n5zySWhnFjZuzAa4yWcpy4r0N5xvAxa8iFPuM4RfFjHLc3nKURh1CHFHzd2MGQ76
+         j1WMT/DbDNzm8Pyn0BbZLPUJh/PsIVIBrZi6aaJqLKa7zb+rGsY9HrkoPLu30bAVecb9
+         o4S15sFxkyprbRX3Dn+gL+jh7PEPbF4kZDgpE47owaftnKNFI63PesoJyjj9oNXIglA9
+         kw+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747235517; x=1747840317;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=awf475v5L8HDJn+JWb3kNXX4Vy1fIT4q517NqJ8iR48=;
-        b=mX+k+3O2bWNJfBSeXilZo0Q9OrkxRzjysQFocL92ihGrEyksPK1+lc2qXFYjoUSrcC
-         wI0a2P3NrWbRM5Yy0N4IfumelpAkJGgf52quZ3kxhEGEhMo/lq3isHp+qa22Q/DlemSu
-         Fy29mSyuc/lR62Y/ms74r7JVmqviUEu8qa3TM5C5klOeTXZgleZXbBXByI7cdNwg3Jle
-         TgCLQZuIBuJnoUY+D6nI/U4y//ajr/5jmHgOB0G1eZahMJj19RCcvOfzI+Pd0eU8uCyZ
-         Tbn4V7JgfPl73B/iX6CIr+qISZH1rZno61rGQJWg8tda6o56YMcB3/ZrrHy27wf6fkCz
-         D7yQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUjhmHBCcJIH+KXhv1e4rfJjThaKnet+xpbDmb//ED9fakIazpXSwRJVtdhbO0Rd1giTjXZJT9RbvbB0oo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxiXskjidm562h1qFpPINQc8EUqjtcZ2yUA8LsurXGmIQ5VdBTp
-	/DdMxtlw2EB7tRgeA3AnAEHma65gknawS1EnZPch/fGxFwF7g1LJhQS58wq0L+bPay5A1gbOBfm
-	C3ZnhtHsbMIcNt1HoTjFY3+eRp/0=
-X-Gm-Gg: ASbGncuCWLwsPlBmnvYURp/6rWoW48GDawLk84vXjwO2OpGt6H7n+c/v9gBahmlQc8S
-	kHhK/rRlu2F46canGaVcKekjN7Fypsd/9nwI0ejqbaSMHQILWNva3X2Ri6xbGhBuX13BQDg28mE
-	iG0IEVuPGJioxWa64Tx/WrHb+BSBeqavQ=
-X-Google-Smtp-Source: AGHT+IG09TEsTWXm1xnxST1ljuBFVosFHHQsrHWlF8haqR/5NQMLQklS/TRLbG5xiTpv0w8YGq39f69m/tRRiR/LxVY=
-X-Received: by 2002:a17:90b:5305:b0:30e:3834:4be6 with SMTP id
- 98e67ed59e1d1-30e38344ce3mr3376184a91.3.1747235517195; Wed, 14 May 2025
- 08:11:57 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1747235501; x=1747840301;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zin9UdB1kGHf9472t90ClCu+DsenV3gklPBeEhXFkBk=;
+        b=iF6H8qoJqkzNuGVNVR7OrWiNMcqKjAME1cEmvCFX54SHLU2ZDFRvAf+St0OxsGzgEU
+         27jDeXhWL6ZizrdCa3QBvqqNYV2bQF+coCV1y0CsoZxN8JTsRaDauZ4226Hs+A49F9nc
+         +EAsbBxCEhXs6JfZPk9dp2jPXGf+HRp45I5Pjeh6/ebI/PspiCJvioXf+tvkgJkuxqio
+         6jyc6ua8ZbgpwfJ6oCPwpae6tfRfpHlQZWFKXbq4oEug2fEkl84HAykVXCkmyW5pSPa1
+         nEONJQN4EUYUlpI/FJvJn7TBnlQkBp9Atxn6AUJWK/ME9TNUimu5XdIGpOXhf75ggnel
+         2w3g==
+X-Forwarded-Encrypted: i=1; AJvYcCXH/RPmw6Ym9MVZy2ynCwgAGse/nNfeYs7JcgEN/Jy7pBQNPFWaMQ1RtQOF8cuxbeahkAI/ub+0Fm90x2U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzM35O5qyDyD83NpEerCQrWBstko2+VYPxvtLlMU8RnD3BlQpCd
+	5X4n8R8ug4uyCUBFsKzXrJtfcClug1cyvTQbgcZOldyDKIP0zCv2
+X-Gm-Gg: ASbGncvTzdDrNOv4WNZlPAGA8pGJIiSGI8WiItwVOL/QRRVOOw6T4NgWICYaYl0psHa
+	Zcr3B1Kac3JIJuqAMzh+e6NUhFlOgBFgE2G8fLxxQTZ2ksy2R1mmtOrrzUu7t99OfGnHChDV7Tx
+	xBXwhnA9kBj7Ja1YkDl9Rm5e6zGKF0A3onRFpi4gZeQ8pBsHsgZJ5G/KuNcT1Mj4WOTYO6rDAbE
+	T9L0gAW++vhXN+b3hYBnZYusQJD1/i1D/PN54zGJBlMbnAUaVwjt1haECaIlmUNoQxL1o/ZoZar
+	x8PujnoSLj1T7Bins2kNBKnt+uzcrkrLH7jqj6pql228loOypPbSz00GIxXLHGXeoyBMnxhvwNS
+	XYLwR
+X-Google-Smtp-Source: AGHT+IGQ88drE0lWsNDyF4V9Vy8xJEiVqRdDdnIX5NlkZpbH8m9mBlqKat4+TBTu4eQ2Nf1yk/MQ3A==
+X-Received: by 2002:a17:902:f647:b0:215:9bc2:42ec with SMTP id d9443c01a7336-231983d06d8mr50986825ad.47.1747235500628;
+        Wed, 14 May 2025 08:11:40 -0700 (PDT)
+Received: from ilya.linux (M106072195001.v4.enabler.ne.jp. [106.72.195.1])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22fc829d668sm99836795ad.201.2025.05.14.08.11.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 May 2025 08:11:40 -0700 (PDT)
+From: ilya guterman <amfernusus@gmail.com>
+To: kbusch@kernel.org,
+	axboe@kernel.dk,
+	hch@lst.de,
+	sagi@grimberg.me
+Cc: linux-nvme@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Ilya Guterman <amfernusus@gmail.com>
+Subject: [PATCH v2] drivers/nvme: Add quirks for device 025e:f1ac
+Date: Thu, 15 May 2025 00:11:30 +0900
+Message-ID: <20250514151130.701885-1-amfernusus@gmail.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <0250510102130.14710-1-amfernusus@gmail.com>
+References: <0250510102130.14710-1-amfernusus@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250510102130.14710-1-amfernusus@gmail.com> <20250514053802.GA24939@lst.de>
- <CAMraO6-rQsf8T_ocOKbe3yMP+91W=AF6WtRUYVPtNuq43H8qXA@mail.gmail.com> <20250514140738.GA26520@lst.de>
-In-Reply-To: <20250514140738.GA26520@lst.de>
-From: Ilya Guterman <iliyagutermann@gmail.com>
-Date: Thu, 15 May 2025 00:11:21 +0900
-X-Gm-Features: AX0GCFuehCtDeRr6vYqnTbOU63IUI5mPaX291tiTRon8_twT5BtCmqjqyV97H2A
-Message-ID: <CAMraO6-JdHa-LzNns3TJn7-bzM5LHjB9byovP1q4y9=yt-xigQ@mail.gmail.com>
-Subject: Re: [PATCH] drivers/nvme: Add quirks for device 025e:f1ac
-To: Christoph Hellwig <hch@lst.de>
-Cc: kbusch@kernel.org, axboe@kernel.dk, sagi@grimberg.me, 
-	linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-my bad, I was sure I added the Signed-off-by tag.
-I will submit a new version of the patch.
+From: Ilya Guterman <amfernusus@gmail.com>
+
+This commit adds NVME_QUIRK_NO_DEEPEST_PS for
+device [126f:2262], which belongs to device SOLIDIGM P44 Pro SSDPFKKW020X7
+
+The device frequently have trouble exiting the deepest power state (5),
+resulting in the entire disk unresponsive.
+
+Verified by setting nvme_core.default_ps_max_latency_us=10000 and observing them behaving normally.
+Also by running with the patch couldn't reproduce the issue after multiple wake up from sleeps.
+Running without the patch again reprodcued the issue on the first wake from sleep.
+
+Signed-off-by: ilya guterman <amfernusus@gmail.com>
+---
+ drivers/nvme/host/pci.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
+index 1dc12784efaf..03a64bc77f7b 100644
+--- a/drivers/nvme/host/pci.c
++++ b/drivers/nvme/host/pci.c
+@@ -3734,6 +3734,8 @@ static const struct pci_device_id nvme_id_table[] = {
+ 		.driver_data = NVME_QUIRK_NO_DEEPEST_PS, },
+ 	{ PCI_DEVICE(0x1e49, 0x0041),   /* ZHITAI TiPro7000 NVMe SSD */
+ 		.driver_data = NVME_QUIRK_NO_DEEPEST_PS, },
++	{ PCI_DEVICE(0x025e, 0xf1ac),   /* SOLIDIGM  P44 pro SSDPFKKW020X7  */
++		.driver_data = NVME_QUIRK_NO_DEEPEST_PS, },
+ 	{ PCI_DEVICE(0xc0a9, 0x540a),   /* Crucial P2 */
+ 		.driver_data = NVME_QUIRK_BOGUS_NID, },
+ 	{ PCI_DEVICE(0x1d97, 0x2263), /* Lexar NM610 */
+-- 
+2.49.0
+
 
