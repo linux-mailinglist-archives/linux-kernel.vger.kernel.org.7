@@ -1,119 +1,130 @@
-Return-Path: <linux-kernel+bounces-648450-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-648451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D6A6AB76F2
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 22:24:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A00FEAB76F6
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 22:25:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8A6287B1531
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 20:23:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 498D11BA6F7E
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 20:25:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1097298CBF;
-	Wed, 14 May 2025 20:20:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0CE7296727;
+	Wed, 14 May 2025 20:21:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KHrQMgOU"
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=fluxnic.net header.i=@fluxnic.net header.b="AaKPI1b5";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="oO4YOD7x"
+Received: from fhigh-b8-smtp.messagingengine.com (fhigh-b8-smtp.messagingengine.com [202.12.124.159])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35A20298CBE;
-	Wed, 14 May 2025 20:20:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF71F213E79;
+	Wed, 14 May 2025 20:21:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747254011; cv=none; b=EQZVT+fo8rMPQyfx71jixVdCmwY8bmGIjCaFMtI7LNhBLZCHxcfoqxGTi1hs1gHAtgzuL+cxjn+HCaYmH23EhEXbAC+wr9pUJK0XF87AmOwV0ufr3u0EgNujYo6v+shbPblBsdql1jMSiRPCTcQrlKohCB4nSeSD2vS+j2A3fDw=
+	t=1747254065; cv=none; b=En6k0+Nqqcz4CLnv6oZvv2+e3DCkmlv5kBW6U2PcTNrD/A/noAGGsLpjkBN4qSUmTtKpLpQH+mUszXkTEJGXA6k1pchqD1JmjBgYyt5Fa1GuCUUwbaO3ouup6ePZiHNWtZ1y7LpZxZf6dXU0pePQnbZsWM1JQpwktxVaF4ghAlc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747254011; c=relaxed/simple;
-	bh=CsdJeUYinGwWXrVNydnhJE3qs3CHaEYRG19ZLRppBXE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TA61PXMFAmkrSMG6ePDpdczwttEdDab8oinaIS+kI9miUORx6XhJw/2QDmEznZ4mqc7Dw5IG9L26NmL1NqZloXKmZr5ItkWP9Jx9RGsXW1IXutGC+3aQKhSgvnfd1m38UcPqK/ZSHNNdVhFvAiso+7O5YUNsB2bNAr/QTMu+Zx0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KHrQMgOU; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-30db1bd3bebso1882201fa.2;
-        Wed, 14 May 2025 13:20:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747254007; x=1747858807; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=lLsWz+t/NB6tQUSG8q5QMGeVvtWzCR49SOwrB3oJMYU=;
-        b=KHrQMgOUwx+uO6utMC+EM7NGgdSvcp6CuTWdOK5SKn/f7o7AUpy1hvZg/IGPBi2Wp9
-         NeFzGjItcERRUW76QW01kin3KnFutQYXtnzLVQDr14+tKMA6eAhjyeK7+bWZFoOhU71/
-         Bxx8TAY5+KN3ozj3bD/dlSs/tFdW1PFn8S4K5Q4JYpxYAqaxP/XWuF89cW5WQtjMywDs
-         kfymPQVtk0wyY4ONZIlWLihzsHptdG/jhJd/C7Nv1dc+fsRw0K4+M9uuUylorkefh1rY
-         WcfnC+WxFpjfG9Luv+zXGVlmiwFQOZ+xEz3v2TQVLin3CQ82p15b+L3ZhpzRNvJJrvS3
-         T2SA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747254007; x=1747858807;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=lLsWz+t/NB6tQUSG8q5QMGeVvtWzCR49SOwrB3oJMYU=;
-        b=cKUF0O5Kpj7F50l5Tu0qC4M1TBlQc/x1Ay5TS7qi5WnE6fvJLOcy7XNnTmrobRGdlL
-         4TES3KGGKWPwOruGIQuIbX1o+h/8Zkbl/wx9ZmIuNWJa+dvpZ0Gr+BFumrExYp/ieIH+
-         brZYLqgtK5VHKfj08GOyk22560q7FCxVuZYJjmpdUfn5lHsw9CK8vHYKU6i5vVN3gT0V
-         kj6hXQGtzXHTOflEZpxCXgon5nogMXB6WFDgx+V3VuWZKz/RAoKOA3+TmxXF1Ni2ibkD
-         YDooziEhaolpc0wBW8ZL3WeYlSZooCuVT56kCPdHFg+FLkEoEjwkEDZBO9QJuxGFDyyu
-         TYsg==
-X-Forwarded-Encrypted: i=1; AJvYcCVGRLPqZXeIj9jOe6iXnKBEfZykRbgfPe9JYqX8TDi66ACdqH9lpSAUIxtHiPOjejkuP6ZO2Ja7LTFnYjc=@vger.kernel.org, AJvYcCVekj9q1JOw+b6r6TlDD9INKqmy6NET9Z2EEPFt6oRJNihW+PCI4dZttsJ0y6fWFxtMYY2Rg+H1SPSNFFR6S+fiyDld@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3tfEOFfeXn91ZxF+t2xg1h7lywUmEakdlyUj7F7FW4kOCNCWw
-	e5O8mLJrAYaC4wekFg4n4Z2hk5kqdckCpXmBDy6VjfdQzUwQhK6Mv9q+VllLhBA=
-X-Gm-Gg: ASbGncs7a69NKMKfiPI+T4takm4DXbPaQsBxpwGXa5ctk2OUfFGHcsZ7Kq+EcjHlCmQ
-	2sWd5VWkKPL9HNThx1EppLcnlPqsYYIsTCxl7Q0GmHJs5QAsxCRCRbFKCntmgZD3pGWn8lE7N19
-	9ussK1SsTzJu8wLJLMgbQCNH70ql2g5LiBLoKbMpW3Ak2SWK29ENHP/575PQrjxszatyS0dqIK2
-	kzx3/nGAfbES9AZbTtuTUKEydMmIqhV7tZ/3bGqgnhceDO8upDOSZfv0f3jPh0SsFk21MK7U4la
-	kYrU2YjH9IX7+cz8lqEdUdkFhDw+vy5Pdh+q6kxz1fG4riadaw==
-X-Google-Smtp-Source: AGHT+IF/QkZffiFhaKm+a/zd4DO70fd0mZ4eTmBpn5QTqiYlb4drtaIlD/EyTywT/l9GUCLY603MUQ==
-X-Received: by 2002:a2e:ad92:0:b0:30b:9813:b010 with SMTP id 38308e7fff4ca-327ed1ef046mr20224831fa.31.1747254006735;
-        Wed, 14 May 2025 13:20:06 -0700 (PDT)
-Received: from fedora.. ([37.131.106.85])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-326c33c1256sm20767971fa.48.2025.05.14.13.20.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 May 2025 13:20:06 -0700 (PDT)
-From: Devaansh Kumar <devaanshk840@gmail.com>
-To: rostedt@goodmis.org,
-	mhiramat@kernel.org,
-	mathieu.desnoyers@efficios.com
-Cc: Devaansh Kumar <devaanshk840@gmail.com>,
-	linux-trace-kernel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	skhan@linuxfoundation.org,
-	linux-kernel-mentees@lists.linuxfoundation.org
-Subject: [PATCH] tracing: Replace deprecated strncpy() with strscpy() for string keys in hist triggers
-Date: Thu, 15 May 2025 01:49:55 +0530
-Message-ID: <20250514201956.1447439-1-devaanshk840@gmail.com>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1747254065; c=relaxed/simple;
+	bh=GVRJCIwVCNnNb3MIAQJ/6WNQV6YxlH6shaCjoTj+vew=;
+	h=Date:From:To:cc:Message-ID:MIME-Version:Content-Type; b=tpJqcL4z7+Er1wAsMC5kJrMxwMl9nonp4Kt0sVS2UANE4/wSY/XwN/+cC92r5MhMlQmI4wB/ebNp3t61VTIlERO/cYwdD64X5yejzh7szYZQKvO6sRbEIVsT/TUF1LJdWVADsNUQOxtDwZbhn2+kmnRTlnWwLfSUr9/k+N04S7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fluxnic.net; spf=pass smtp.mailfrom=fluxnic.net; dkim=pass (2048-bit key) header.d=fluxnic.net header.i=@fluxnic.net header.b=AaKPI1b5; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=oO4YOD7x; arc=none smtp.client-ip=202.12.124.159
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fluxnic.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fluxnic.net
+Received: from phl-compute-11.internal (phl-compute-11.phl.internal [10.202.2.51])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 9B7DA25400E0;
+	Wed, 14 May 2025 16:21:02 -0400 (EDT)
+Received: from phl-frontend-01 ([10.202.2.160])
+  by phl-compute-11.internal (MEProxy); Wed, 14 May 2025 16:21:02 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fluxnic.net; h=
+	cc:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:message-id:mime-version:reply-to:subject:to:to; s=fm3; t=
+	1747254062; x=1747340462; bh=1NZsnymokUXxmWmAKbgR17C63yo+HACqEnh
+	Iux2U9ZQ=; b=AaKPI1b5mP19bKzQJKEYleJGD41z3buW9Wt4DSiiMaqjeb0rs93
+	UObWAm7OPHIrdhEmvzNC4uknR3B9MHHEyvGwJh52l3ALZ8huME7owUPQIjVKx3fd
+	qrFcg+gdldDC1ApTr48jmG6rx0v3AdBvYxUMhwsqPrSoB5GblgYXla/YSLU5DZ8y
+	BpBFenqapSSrwHgBJCdmdmK7gUTMfiJyJdjKwFC2Bcb+OW/xbfZeUS3E/pQZwzro
+	oYKauafsls7cwhNpUNuUSg+77eRCYHDPLfvh5MbQOK0MObSEai3A05R5w+dTV3PW
+	QSS44hFANhTnqZ6Tgbz9yO2VMujeDlPoafA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:message-id
+	:mime-version:reply-to:subject:to:to:x-me-proxy:x-me-sender
+	:x-me-sender:x-sasl-enc; s=fm3; t=1747254062; x=1747340462; bh=1
+	NZsnymokUXxmWmAKbgR17C63yo+HACqEnhIux2U9ZQ=; b=oO4YOD7xMQF3RJpdV
+	eVERzqzE0YTEPN/ZkmwxuF24LJYq1tLifpQGDt0Fvu+Icc/FhlpPHibfJvktCnXq
+	zRpzppOx+MNPtWqEm+fHhN2FZ0bDLE0BrBsTMy4/l0FD1z68pW7ZoSF272dNIlFo
+	CSh7cXMD/mNwfVopNe2FvOJzs2sJ87Yet0E+2NU0+igN0qXhFMstI5vWQ5iDY+SX
+	wQKKGw/tjQ6XanUMehstz/raJ/zafZT0uPc1d0/pqBSa8sGrprBifH9AwcPCirCO
+	2RiBQ/i2PDtxk7PPTPukp4w1cU5nY+4s/Q/jAL8LmjoNTn5sDIkfbiSWmuucCbG0
+	y5PjA==
+X-ME-Sender: <xms:LvskaPdtQtDcpwTyjtIRma5rw-KqLS1JyrWkh-I_E3WO7ZZ6rCZWpw>
+    <xme:LvskaFPYvjRFHgn7XoFNtA4N2KybOszxPAMEs8WcXQgdXaD7Z5Ro0OkfhWY0HzxLc
+    smbKGE6aheWL-BvnLc>
+X-ME-Received: <xmr:LvskaIgFgUnt0ae4Xe352_36CLXZJpCpgTTbxti4cJfhN3M5SFvdChBJ6xfO3sy60gTgCJWgBlcnTpZNeeLCYMF2VtOd--bG0HJA6tssgxH-X--n6Q>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeftdejleegucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnefgmhhpthihuchsuhgsjhgvtghtucdluddtmdenucfjughr
+    peffhffvvefkgggtsehttdertddttddvnecuhfhrohhmpefpihgtohhlrghsucfrihhtrh
+    gvuceonhhitghosehflhhugihnihgtrdhnvghtqeenucggtffrrghtthgvrhhnpeetvdeg
+    udejhfehvdfhjeegkedvhfejteetveehiefhgffhveevleetheevjefgheenucevlhhush
+    htvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehnihgtohesfhhluhig
+    nhhitgdrnhgvthdpnhgspghrtghpthhtohephedpmhhouggvpehsmhhtphhouhhtpdhrtg
+    hpthhtohepnhhpihhtrhgvsegsrgihlhhisghrvgdrtghomhdprhgtphhtthhopehjihhr
+    ihhslhgrsgihsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehgrhgvghhkhheslhhinh
+    hugihfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgv
+    lhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhsvghrih
+    grlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:LvskaA_3KoUHAcDL6Bbx7H9MXhHAZlUYugEdvGEgKvibQKkqaSJTYg>
+    <xmx:LvskaLtvWk0v-hSXGLcClcjeORLu_MzYYN9NgRpAt3j4bMKocn5u_g>
+    <xmx:LvskaPEwLtvR7Tg6-xZopr-O7P4oAr1KStm9LD26PenDvVkKcVKUmg>
+    <xmx:LvskaCPubGGg-y60RWyn2GBy7OR_SNFD_4-Sf6Y8uxi11SkJIQrYuA>
+    <xmx:LvskaLtNHUB4F_PTmwb5WIzXolrlO0sYcf8I9RT-xLXKvYvH-Vrv8xVZ>
+Feedback-ID: i58514971:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 14 May 2025 16:21:01 -0400 (EDT)
+Received: from xanadu (xanadu.lan [192.168.1.120])
+	by yoda.fluxnic.net (Postfix) with ESMTPSA id 7280A11A27A2;
+	Wed, 14 May 2025 16:21:01 -0400 (EDT)
+Date: Wed, 14 May 2025 16:21:01 -0400 (EDT)
+From: Nicolas Pitre <nico@fluxnic.net>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+    Jiri Slaby <jirislaby@kernel.org>
+cc: npitre@baylibre.com, linux-serial@vger.kernel.org, 
+    linux-kernel@vger.kernel.org
+Message-ID: <62s32907-1954-862o-5p1r-967n6873sp2n@syhkavp.arg>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 
-strncpy() is deprecated for NUL-terminated destination buffers and must
-be replaced by strscpy().
+From 28043dec8352fd857c6878c2ee568620a124b855 Mon Sep 17 00:00:00 2001
+From: Nicolas Pitre <nico@fluxnic.net>
+Date: Wed, 14 May 2025 15:58:22 -0400
+Subject: [PATCH] vt: remove VT_RESIZE and VT_RESIZEX from vt_compat_ioctl()
+From: Nicolas Pitre <npitre@baylibre.com>
 
-See issue: https://github.com/KSPP/linux/issues/90
+They are listed amon those cmd values that "treat 'arg' as an integer"
+which is wrong. They should instead fall into the default case. Probably
+nobody ever exercized that code since 2009 but still.
 
-Signed-off-by: Devaansh Kumar <devaanshk840@gmail.com>
----
- kernel/trace/trace_events_hist.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Signed-off-by: Nicolas Pitre <npitre@baylibre.com>
+Fixes: e92166517e3c ("tty: handle VT specific compat ioctls in vt driver")
 
-diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
-index 1260c23cfa5f..90a4e486fba8 100644
---- a/kernel/trace/trace_events_hist.c
-+++ b/kernel/trace/trace_events_hist.c
-@@ -5225,7 +5225,7 @@ static inline void add_to_key(char *compound_key, void *key,
- 		if (size > key_field->size - 1)
- 			size = key_field->size - 1;
+diff --git a/drivers/tty/vt/vt_ioctl.c b/drivers/tty/vt/vt_ioctl.c
+index 83a3d49535e5..61342e06970a 100644
+--- a/drivers/tty/vt/vt_ioctl.c
++++ b/drivers/tty/vt/vt_ioctl.c
+@@ -1119,8 +1119,6 @@ long vt_compat_ioctl(struct tty_struct *tty,
+ 	case VT_WAITACTIVE:
+ 	case VT_RELDISP:
+ 	case VT_DISALLOCATE:
+-	case VT_RESIZE:
+-	case VT_RESIZEX:
+ 		return vt_ioctl(tty, cmd, arg);
  
--		strncpy(compound_key + key_field->offset, (char *)key, size);
-+		strscpy(compound_key + key_field->offset, (char *)key, size);
- 	} else
- 		memcpy(compound_key + key_field->offset, key, size);
- }
--- 
-2.49.0
-
+ 	/*
 
