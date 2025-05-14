@@ -1,115 +1,133 @@
-Return-Path: <linux-kernel+bounces-647229-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-647218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C33FBAB65EA
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 10:27:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4171AB65D0
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 10:25:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 51E5E4A5F40
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 08:27:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9753F1B63580
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 08:25:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1218521C183;
-	Wed, 14 May 2025 08:26:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 777EA21C183;
+	Wed, 14 May 2025 08:25:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="pMGlMrFN"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="GXuW66rR"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E2F821B9C8;
-	Wed, 14 May 2025 08:26:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35D2A1B414E
+	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 08:25:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747211218; cv=none; b=KT/RK1ayLMwwKr5EOhkp6pfxRa7lX/1eelXqnE9keNVA5p+vFWU4gwuR5cJOL/VGsPyH4zAGjsCiWwfT7bAyxVEQkbR56xzfMz+J3Om4HmtLpyIp1VeZqhvSlVV2vEwUJM6tc9vG6AbhknEkcrVEw5x1fHztEiKzY58UQuaIoPI=
+	t=1747211114; cv=none; b=M+hq09fmXmpmTzOMVRtTI7RSt2MgyEjqnDVqc+1F8J5MRVjizlKIUqYVzPPcL1NzRgzByaSGm7P/Uj61tta5EflTLejk8+ncbE5Wj6QAQfyi1+gRlTtp/mFrr9Ys2YbN06VXt799d5cm7Cq3A5KEsT4Wz2TUap5bSPB8Yd4/cxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747211218; c=relaxed/simple;
-	bh=pazwyUs7Ot0cc4KDotDE+lY96H0cEXZeAVpbnhs/JgU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=rYOKDUfZIa8ts7xm9ya/hsnS2XI4ypX9tvMynBphnnsFR3LBNSMed+KgB76LUwF39/ZMU41BFqgzk4hgZp3KTHWAh+fZ2J+8zpEXNK8r3WF7pjR901YaZX5NY0SuVUuX8CzIodYBIPZKqy2VpIG2qtwb2N/di9ddRh7LkGmRiVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=pMGlMrFN; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54E7vtKW023076;
-	Wed, 14 May 2025 10:26:24 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	ds5+8iM4sRf0Jo4IyqmV53NfBcmFz2cJwNiJZ/wCrmk=; b=pMGlMrFN7CKCc5l+
-	/xUdEV5gxnTpRkg4FOuwGXS51BtuZ1kYDbW2LqiQMA2nhQSxwBFpjwLYCC2AhmDk
-	msfLU+TozS7alcR8HZhZhXZb623TTILmwa7sKOnjfrj5H6LqzSSBzRZvyWS96QXC
-	IWewdZXh737I31ekESxstCKDAXVXyOg1jGM5JpXfULiVEi+6tUDx4AHPQbn9ke2c
-	LGDbfmqBSsPHm40wvkDE9bbbYeAJlHl5fGiH4T7HQpRId+2j7ux8/eK9Vy/8e4s8
-	2DWJq5H67SsCDvyIICQi6YLh8xDI53BVvYN7sh5Yup55vf0X5feVmbg0IB1O8w3z
-	+IM2dA==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 46mbdxtj5k-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 14 May 2025 10:26:24 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id C8B5240044;
-	Wed, 14 May 2025 10:25:13 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 1C3FDB3A736;
-	Wed, 14 May 2025 10:24:03 +0200 (CEST)
-Received: from [10.48.86.79] (10.48.86.79) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 14 May
- 2025 10:24:02 +0200
-Message-ID: <7f79af9a-2b42-48c0-98c5-6bf2afc61206@foss.st.com>
-Date: Wed, 14 May 2025 10:24:02 +0200
+	s=arc-20240116; t=1747211114; c=relaxed/simple;
+	bh=qc/nsUTYkyuzCMF1Z93QgX0RM9mLg6+yezxc1YMOKms=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CZl12dXV28L9/CflpN8Wb9iVUCo9VmLAMIL3vzkYdRLODjq6D+UZpjmyk46eWl9dWLRfWW5QkiYMIn1qRl3IF2bPiKFSDXLwAC2zoMToqk9hp18VJxQnvs3WtAW/EIAhkpd/urcNaJu2IrAZ246KCPeRFxrYsq363vmKrpXVSUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=GXuW66rR; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-442eb5d143eso14568785e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 01:25:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google; t=1747211111; x=1747815911; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Klj8NdPC9rX4nFDMdyr+gujv99cd2TFqTsaOoeEged4=;
+        b=GXuW66rRl5HRZK6+HmBde6lAaByu6v2rXNQzL1341eY8aJITMinoNQYTBVQavz9xuh
+         svrrpag6qrWdcnes/rQbTmKGToGUR2PDD6gj40VV5hgCH7QTVRoB/Od61ItDhZ3YfXEZ
+         wyRWvZTb236F5kHBVbdjLNMZcpAAIawi0o90k=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747211111; x=1747815911;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Klj8NdPC9rX4nFDMdyr+gujv99cd2TFqTsaOoeEged4=;
+        b=H5LYxipGYyF670l6mjH7Myb5gLF7FgqpIX7tfHpqIbw8Uf9NmfQhjU9tUi26EhIceD
+         KhpAqP5c28e9Wp1rFpJn/sOJoJ/knR7b8Ni9FVErBO4IjUcSH+4X3ISeWLola9E8rR2Q
+         svNbGU15qPyQmptrnZhyqq9Rr1E16D7Uv5b16uvVof/1ZNnrKloJnwl34QMI8ylsuWX7
+         LigLQ12aIzjD6JaU3hTY3vFoi5gXFs9jfaPpT+74bTbjXa0p9Si5Y5FOji8pvHF+nclg
+         YB8c4adL+cy+RAw2zB2h6PE/DQjVCIiuIWg4ngocJmqAqTNVlCy80FEAoHQizK9PfMsS
+         kTcA==
+X-Gm-Message-State: AOJu0YwRMymnJQL4BwfitU3g0FhFzPe6cPDJZuJo/UKGpk9JU0zoFf9s
+	xJ0oiIbFsBvZNNreuKPGVr6cAyaCb9NdLy2JgFbJlnZd9mRJLJsYdgB3U0bO2H0s/jUK1UBihY/
+	FZvo=
+X-Gm-Gg: ASbGncs1vzY93MAD/IXeWDy8q+YmCMAHktUPawmoiHy21SQy6Cmaa9v9QP6F0QuNXpm
+	P1vJymfPdkqPgK3t1qeF36VZcJ2eoolW8TFkjcEmWr2v2bmmOeDSRQg5RRTpfjmj4IjnxHqtq36
+	W6RdrAHbPmQC9GknNmR0RhzeqKKzu4VoT9JzR67gtUwYlrCtHQepvxoHhnqI6dpRSEZZBsQ+19x
+	ezIgrGU/5ZM2FU+RKMDy8ae3nF184nzICt+n/qwGmlFE+AF+d99lGksnpOIkWm8YrvDLtmdCwNx
+	VGGZ+UuHNRdC2E8wHYXunbcPkIVRSE1rnOjUZyUF2bJ+6xOgEEG0iTsqpM4FO6hXCSC1sUB+mAa
+	4YI+w8HR/Uc5av2AhDNYaQDCy0mqIqRk0Vqu7/5c8D10=
+X-Google-Smtp-Source: AGHT+IGa+UmxR661YRcC1N4UAkW8IE0iPci8H8/AjxxIIiISRrbp1i8SREEO2kqtiAg1FYOJKvF4RA==
+X-Received: by 2002:a05:600c:1c14:b0:43c:f895:cb4e with SMTP id 5b1f17b1804b1-442f210f6f4mr22958705e9.17.1747211111376;
+        Wed, 14 May 2025 01:25:11 -0700 (PDT)
+Received: from dario-ThinkPad-T14s-Gen-2i.client.m3-hotspots.de ([46.189.28.43])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-442ebda7d2csm30987365e9.3.2025.05.14.01.25.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 May 2025 01:25:10 -0700 (PDT)
+From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+To: linux-kernel@vger.kernel.org
+Cc: Simon Holesch <simon.holesch@bshg.com>,
+	Karthikdatt Anantharamrao <karthikdatt.anantharamrao@in.bosch.com>,
+	michael@amarulasolutions.com,
+	linux-amarula@amarulasolutions.com,
+	Wolfgang Birkner <wolfgang.birkner@bshg.com>,
+	Dario Binacchi <dario.binacchi@amarulasolutions.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Fabio Estevam <festevam@gmail.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Rob Herring <robh@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	devicetree@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 0/9] DTS updates for BSH SMM S2[PRO] boards
+Date: Wed, 14 May 2025 10:24:54 +0200
+Message-ID: <20250514082507.1983849-1-dario.binacchi@amarulasolutions.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: (subset)[PATCH v6 0/7] Add STM32MP25 LPTIM support: MFD, PWM,
- IIO, counter, clocksource
-To: Fabrice Gasnier <fabrice.gasnier@foss.st.com>, <daniel.lezcano@linaro.org>,
-        <lee@kernel.org>, <tglx@linutronix.de>
-CC: <ukleinek@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <jic23@kernel.org>, <robh@kernel.org>, <catalin.marinas@arm.com>,
-        <will@kernel.org>, <devicetree@vger.kernel.org>, <wbg@kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-iio@vger.kernel.org>, <linux-pwm@vger.kernel.org>,
-        <olivier.moysan@foss.st.com>
-References: <20250429125133.1574167-1-fabrice.gasnier@foss.st.com>
-Content-Language: en-US
-From: Alexandre TORGUE <alexandre.torgue@foss.st.com>
-In-Reply-To: <20250429125133.1574167-1-fabrice.gasnier@foss.st.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-14_02,2025-05-14_02,2025-02-21_01
+Content-Transfer-Encoding: 8bit
 
-Hi Fabrice
-
-On 4/29/25 14:51, Fabrice Gasnier wrote:
-> This series adds support for STM32MP25 to MFD PWM, IIO, counter and
-> clocksource low-power timer (LPTIM) drivers.
-> This new variant is managed by using a new DT compatible string, hardware
-> configuration and version registers.
-> It comes with a slightly updated register set, some new features and new
-> interconnect signals inside the SoC.
-> Same feature list as on STM32MP1x is supported currently.
-> The device tree files add all instances in stm32mp251 dtsi file.
-> 
-
-Following patches are applied on stm32-next:
-
-[PATCH v6 5/7] arm64: defconfig: enable STM32 LP timer clockevent driver
-[PATCH v6 6/7] arm64: dts: st: add low-power timer nodes on stm32mp251
-[PATCH v6 7/7] arm64: dts: st: use lptimer3 as tick broadcast source on 
-stm32mp257f-ev1
+The series aims to upstream some parts of the DTS that are currently found
+in the kernel used in the field. This is the first in a series of
+activities intended to eventually lead to the use of an official kernel.
 
 
-Thanks
-Alex
+Karthikdatt Anantharamrao (1):
+  arm64: dts: imx8mn-bsh-smm-s2-common: Enable GPU for smms2 and
+    smms2pro
+
+Michael Trimarchi (3):
+  arm64: dts: imx8mn-bsh-smm-s2-common: Define suspend voltage threshold
+  arm64: dts: imx8mn-bsh-smm-s2-common: Leave regulator under hw state
+    machine
+  arm64: dts: imx8mn-bsh-smm-s2-common: Keep wifi enable during suspend
+
+Simon Holesch (1):
+  arm64: dts: imx8mn-bsh-smm-s2-common: Pull Up Console UART pins
+
+Wolfgang Birkner (4):
+  arm64: dts: imx8mn-bsh-smm-s2-common: Set minimum value for
+    VDD_DRAM_VPU_GPU
+  arm64: dts: imx8mn-bsh-smm-s2-common: Set minimum value for VDD_3V3
+  arm64: dts: imx8mn-bsh-smm-s2-common: Increase drive strength of pmic
+    irq
+  arm64: dts: imx8mn-bsh-smm-s2-common: Disable PMIC SNVS reset target
+    state
+
+ .../freescale/imx8mn-bsh-smm-s2-common.dtsi   | 31 +++++++++++++++----
+ 1 file changed, 25 insertions(+), 6 deletions(-)
+
+-- 
+2.43.0
+
 
