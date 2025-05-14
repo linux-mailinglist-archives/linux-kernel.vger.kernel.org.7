@@ -1,58 +1,59 @@
-Return-Path: <linux-kernel+bounces-647578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-647579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66C92AB6A2E
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 13:38:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFF72AB6A2F
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 13:39:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B4BA8C422A
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 11:38:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC1521B6407D
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 11:38:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7355027978D;
-	Wed, 14 May 2025 11:37:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 081E1278E7E;
+	Wed, 14 May 2025 11:37:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QpCARnYH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BwZWjW0D"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D47BA278E7E
-	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 11:37:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 607B5279798;
+	Wed, 14 May 2025 11:37:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747222650; cv=none; b=ILhiIMKN5ipGgiZRvgS9ZwSqc/oDshhsk/XLfQywwGUGAn7ik9yn0pjO++He1cL6PTo4iSU8Lh2bbEu/I0L2Qri+qRjnTzxDMpp4JT00HBXp9RGjVcDTVXvdR0XSKeUG82Mh7O5AaDlnKhciE4TZecAF0alAdziJ3lNAbXSlXzw=
+	t=1747222653; cv=none; b=Uje65LyWevIpEKnSxNid9nUS4h1x0CucEmENfadowf2jertcOBTOh8Cckx5xe9fA9xs+BGBJ8zYAVjDxW3kJmlZME19Xouf3+Y0M+uZjWNs40mRkR0kro3u3eAVWOM3gdot/q1B69cMmFIsHRPxxCbk5VuX8OXoGN/SnR/unlUY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747222650; c=relaxed/simple;
-	bh=BYLy4VG9xOVs94mC7wIDlxr88txhDai/COmTvrqUImI=;
+	s=arc-20240116; t=1747222653; c=relaxed/simple;
+	bh=tuM+4GBuky8rvhpUbkvytG6IgttQsqZkqThC8BUjoFk=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=st1pnd6cZf0w/21K7pOKTZgLOdzWqPXyII5D9kE4dbo6FIQJc/a9c+uhfMTaFH1bpvbezXby5BMNefb2TWe/WaQjU+rihntMvewJymhUm6iR/GEco7P32qGTFW/S+SuaszTZ9EaMz2QzLUASDknDVEBJGAGCIj+z8cKXqh8b0YY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QpCARnYH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC3D0C4CEF0;
-	Wed, 14 May 2025 11:37:28 +0000 (UTC)
+	 MIME-Version:Content-Type; b=isP7F8I43RDgNzuOCkf79ZAX7xl0oETm6Gw9J9BSSjb+jeqhWj1giMvXrFQvIxrE0AH7rH6wzB1WIUNvs1U3hs/lIqJUVGnOvFCubZUU97nEbOtEKCz9py8XkjiEUX1nnjkEhMalZrN6g08wwWVGcA2uWFRognKb04GxD9I/ySA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BwZWjW0D; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2A0AC4CEE9;
+	Wed, 14 May 2025 11:37:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747222650;
-	bh=BYLy4VG9xOVs94mC7wIDlxr88txhDai/COmTvrqUImI=;
+	s=k20201202; t=1747222652;
+	bh=tuM+4GBuky8rvhpUbkvytG6IgttQsqZkqThC8BUjoFk=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=QpCARnYHBCnmD9i8RUKRToT+x6HCADCEoMOlwLouPPWWEpr7kxNvnbuHOlV2pF4pN
-	 Ey2SdjumPQLi3i4i5GUlSMU011+0l5LdTNc3LGslQkdfAFTBL/TWUgJbCISZV3teLC
-	 LDCQBdHtj4pYur5raesDHyI8qrcneC5P9fd6ew9mc4gRbMjw/LNi++8hDWadBo6mPw
-	 8T8UcyOmA2dSArMY0jV5jK7B47DYVVQH23bTtVeBHUrRCPYex80k6pgxElqbIwE7CV
-	 ib+oB1MbDgFAtTSbB9hsovWsIfRQztKDU9GNfnkxzMY3BNVUaW2783HcgGGgcx7QdU
-	 adTWIRyQ1o7kw==
+	b=BwZWjW0DB2YWPwZbHRAz9qbLC8lObChDm6LbaejDE0itMn1QhvkDMt4XHNbR+rEcP
+	 nwvw7o6snaVjPfjHJ74rDBW4S6TpJXnLcsgxxqoNiUsS3Y0HEj0fpBkP3wx1Isbzd4
+	 82o2NkoN/QbQWBJXGBN7Rtud9EXnCZnTchRde8sSLpaTPqfduuHdiI8fXDcCUy2qaS
+	 wW9TesQpo4auwYqMLvDHLWDwlOauFAajBUebYIym1VWG/WKVxYJ/QNpEBBhMgqNXGd
+	 6if/rga1fg+64h0icT0d2Yb1rPfx5anEsyxjytAg0leihSu48jW+y482FDzkrka98S
+	 sVi8D8+NJZgew==
 From: Vinod Koul <vkoul@kernel.org>
-To: linux-phy@lists.infradead.org, Mike Looijmans <mike.looijmans@topic.nl>
+To: Johan Hovold <johan+linaro@kernel.org>
 Cc: Kishon Vijay Abraham I <kishon@kernel.org>, 
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Michal Simek <michal.simek@amd.com>, linux-arm-kernel@lists.infradead.org, 
+ Dmitry Baryshkov <lumag@kernel.org>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Abel Vesa <abel.vesa@linaro.org>, Qiang Yu <quic_qianyu@quicinc.com>, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
+ linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, 
  linux-kernel@vger.kernel.org
-In-Reply-To: <20250428063648.22034-1-mike.looijmans@topic.nl>
-References: <1b153bce-a66a-45ee-a5c6-963ea6fb1c82.949ef384-8293-46b8-903f-40a477c056ae.298e943d-5a80-491d-b36f-77b3b9a86df9@emailsignatures365.codetwo.com>
- <20250428063648.22034-1-mike.looijmans@topic.nl>
-Subject: Re: [PATCH v2] phy-zynqmp: Postpone getting clock rate until
- actually needed
-Message-Id: <174722264836.85510.7340097492825315236.b4-ty@kernel.org>
-Date: Wed, 14 May 2025 12:37:28 +0100
+In-Reply-To: <20250429075440.19901-1-johan+linaro@kernel.org>
+References: <20250429075440.19901-1-johan+linaro@kernel.org>
+Subject: Re: [PATCH] phy: qcom: qmp-pcie: drop bogus x1e80100 qref supply
+Message-Id: <174722265039.85510.16073616165341473080.b4-ty@kernel.org>
+Date: Wed, 14 May 2025 12:37:30 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,20 +65,18 @@ Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.14.2
 
 
-On Mon, 28 Apr 2025 08:35:47 +0200, Mike Looijmans wrote:
-> At probe time the driver would display the following error and abort:
->   xilinx-psgtr fd400000.phy: Invalid rate 0 for reference clock 0
+On Tue, 29 Apr 2025 09:54:40 +0200, Johan Hovold wrote:
+> The PCIe PHYs on x1e80100 do not a have a qref supply so stop requesting
+> one. This also avoids the follow warning at boot:
 > 
-> At probe time, the associated GTR driver (e.g. SATA or PCIe) hasn't
-> initialized the clock yet, so clk_get_rate() likely returns 0 if the clock
-> is programmable. So this driver only works if the clock is fixed.
+> 	qcom-qmp-pcie-phy 1be0000.phy: supply vdda-qref not found, using dummy regulator
 > 
-> [...]
+> 
 
 Applied, thanks!
 
-[1/1] phy-zynqmp: Postpone getting clock rate until actually needed
-      commit: 065d5885f6180c534b7b176847b3e008f4e11850
+[1/1] phy: qcom: qmp-pcie: drop bogus x1e80100 qref supply
+      commit: eb7a22f830f68997d76e660a02143c2bc72e7fb7
 
 Best regards,
 -- 
