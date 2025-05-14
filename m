@@ -1,84 +1,152 @@
-Return-Path: <linux-kernel+bounces-647752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-647754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8D68AB6CDE
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 15:38:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05D00AB6CE9
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 15:39:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0865C19E7FA5
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 13:38:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B3BA3AB2FC
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 13:38:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D343427AC21;
-	Wed, 14 May 2025 13:38:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A15D27BF84;
+	Wed, 14 May 2025 13:38:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="j+nwTLnG"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ReZ+Dktb"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7886D15AF6;
-	Wed, 14 May 2025 13:38:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0D6E27A935;
+	Wed, 14 May 2025 13:38:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747229891; cv=none; b=uHusC6Eh3+thwNELmXuWG5D9PMVFYjpbrv5LkDptRoI7oqZnAHaFnvfRyiD0wwpcyR6MUzdWYpBT8zmbEpy54Yd0otrGkCfai8ck7VoAl6V/bIbnjfeI1fmOGvuSgnU9jHCh4uRTcebFjPBs/i7GR6zj4bP9ii76OZvSiZwVX/M=
+	t=1747229925; cv=none; b=mZWo9sjXrF9oW11vJlTNcyDJ0vupVJhPKeuTfw/GiE1XlYn1CkZ5OBacu/KhblrJxBDc6cyY810BbxmBXrwEOg7kHOxWJ7+lPuO3qPGABBac6scoz/+QdpKL/I0qAkoW2oFtkCRfjVA92r8hNenD4lNxiuxZ3zf1M++zEr4w+4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747229891; c=relaxed/simple;
-	bh=5ClBZipevonGNISJ//0KQlN0xd1O5NtCKf+GMqisDl0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=npcfrR+zh+EX6FP4L3Abc1YXCHxt/vDd/zzjncY6yWROZn6ITNc/W+8rVvflUS1TIjx4szMhEHCHRhSMyNHzDrDi7rW5LiQO4Bq/xUZFOd1k7I1rTLLVA6ZXSAb2IiZ3fwkv5LdO+v9X2UhzVauayINjhUBKFGpBkcD38anRNIc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=j+nwTLnG; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=TCbxG0sR6k0ek2FO7HVhODHhtN5gSAWTcsnndt8bAnY=; b=j+nwTLnGp++/pDuVRXV/5puhu4
-	kVt4UzOFXLKNMXzkbfTiLtkrR0d25rVC0U0VTpYJfSdtPfJWVBYfodTcI1hnN6xnnTt6RxAYe6evJ
-	zmklAigZcqE/tcQtJmMdp+9yn32HRSoFeocohZPjWmNFyZq24AQ1bHw701u9aPB19Gkg5FCLEYKAF
-	q6GWrWMUAqs4e2cDRduVkTalMj0E4DXS8IpzgTwT4zU87eZ4hjj1gff+qZrCfJCon0nGXEZnQu7ti
-	Ac3rdd0IvOpfKjoMB27XqiZiAsA/778wpMIb0LYXd+UjP1zvUzAsgRmbJfBJo1aVZMi2tKiVoX9NQ
-	lepIj0EA==;
-Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uFCJC-0000000CM7W-0D7K;
-	Wed, 14 May 2025 13:38:06 +0000
-Date: Wed, 14 May 2025 14:38:05 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Theodore Ts'o <tytso@mit.edu>
-Cc: =?utf-8?B?6ZmI5rab5rab?= Taotao Chen <chentaotao@didiglobal.com>,
-	"adilger.kernel@dilger.ca" <adilger.kernel@dilger.ca>,
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-	"linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>
-Subject: Re: [PATCH 1/3] mm/filemap: initialize fsdata with iocb->ki_flags
-Message-ID: <aCScvepl2qxyU40P@casper.infradead.org>
-References: <20250421105026.19577-1-chentaotao@didiglobal.com>
- <20250421105026.19577-2-chentaotao@didiglobal.com>
- <20250514035125.GB178093@mit.edu>
+	s=arc-20240116; t=1747229925; c=relaxed/simple;
+	bh=nY6K1+SlaQ+UADUK/kGAaS+/8C1BO4lwh1dwV6WoJPU=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=kwTG4Ne20z6Sxz+oGzEhrXDiXoQWg5bENqEj7el4E3WhAfNzb38S6woZWw4/wvw+tVsbxBn0bS9IqBLV85jQHMFjW6rWModw5U8V0q5NAwdMkYUYPXJwMgcxOq3GG4bxuPbq7bnEf3vNgrH1WG1P1c+zvsYoXQkKEhRJn8ynY6I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ReZ+Dktb; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54EAuvrR015169;
+	Wed, 14 May 2025 13:38:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=DZtXnReqna5qM33bP9XOTM
+	zSwUOAxxMOxIwtJZ4jlTc=; b=ReZ+DktbpKOIhZC1r39ZpkJZJxfv45up8A2u4u
+	e3+kadwljY8kwXl3gFclGdbeliwMWKl25NObV8Rt/P0gnsvLvaWCQKdKxLwkUc2e
+	p0CTOgmuLH2DkweD2ONNFdx1jaQVuvRoj+ms6hAND9Inbf8cjbjEmKvmDixqvsbW
+	T8CDCbCiz/vbGLRrdpfyiYUXdvnlH/IyQI+sNer3OPdLbrTjerlz1EjbCxnkzXWg
+	5QQ8m7MXXkIH8uq5AAgVxw/taUAtHeWwTqYyUCI4rT0OGfxwpbK72hicr3nt1+oP
+	KjEjLnSpPBbbiKaksyiyrueoRqedzrWskeRrGuHt5h2tKhKQ==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46mbcr2rgk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 14 May 2025 13:38:32 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 54EDcV6O004653
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 14 May 2025 13:38:31 GMT
+Received: from hu-dikshita-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Wed, 14 May 2025 06:38:28 -0700
+From: Dikshita Agarwal <quic_dikshita@quicinc.com>
+Subject: [PATCH v3 0/2] venus driver fixes for vulnerabilities due to
+ unexpected firmware payload
+Date: Wed, 14 May 2025 19:08:07 +0530
+Message-ID: <20250514-venus-fixes-v3-0-32298566011f@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250514035125.GB178093@mit.edu>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAL+cJGgC/x3LQQqAIBBA0avIrBNME7KrRIvUqWZj4ZAE0t2Tl
+ o/Pr8CYCRkmUSFjIaYzNZhOQDjWtKOk2AxaaatsP8iC6Wa50YMsx+iMDyE67yK048r4hzbMy/t
+ +sscnmF0AAAA=
+X-Change-ID: 20250514-venus-fixes-8d93bccd9b9d
+To: Vikash Garodia <quic_vgarodia@quicinc.com>,
+        Bryan O'Donoghue
+	<bryan.odonoghue@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Hans Verkuil
+	<hans.verkuil@cisco.com>
+CC: <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Dikshita Agarwal <quic_dikshita@quicinc.com>,
+        Vedang Nagar <quic_vnagar@quicinc.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1747229908; l=1408;
+ i=quic_dikshita@quicinc.com; s=20240917; h=from:subject:message-id;
+ bh=nY6K1+SlaQ+UADUK/kGAaS+/8C1BO4lwh1dwV6WoJPU=;
+ b=a2ZQCgz6UaunrlyF6VU1k7/gJyB9vUXeW1QKxwinmfvXir6UBHYSpobl0CO0tyLwR5Df6hAlX
+ OrXOlyrcp0NAMCM0DiVn4vO03y7qaYljf4vc4OCts0nW/+E5syRYfYQ
+X-Developer-Key: i=quic_dikshita@quicinc.com; a=ed25519;
+ pk=EEvKY6Ar1OI5SWf44FJ1Ebo1KuQEVbbf5UNPO+UHVhM=
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: EcONL-KDY1NJl8tIJ3a8IJdHrMfyIOCi
+X-Authority-Analysis: v=2.4 cv=Auju3P9P c=1 sm=1 tr=0 ts=68249cd8 cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=VwQbUJbxAAAA:8
+ a=COk6AnOGAAAA:8 a=44IKDa3BNaFQHKjI_o0A:9 a=QEXdDO2ut3YA:10
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: EcONL-KDY1NJl8tIJ3a8IJdHrMfyIOCi
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTE0MDEyMSBTYWx0ZWRfXwMxr/dURS+Kb
+ 1guXLvCPwqlqijOmu6RGC371AbbLwt59G0cQM4bWNMbVg1OzPWLdzRoqHnZCodBxSpSrK+PulAy
+ kH//MDEe+1stEGq0soO9t4pR+cVbe2UC2Tv1rtgBuHN3hOdJFhYSprWyPf0+Rzy/gM7Q1vWTrhp
+ Bnh9eAQFimnVaggtuknWwT9s4ESlXPjW0mVMeBzrYMkMfS31Tb0nSBSat6Ob8YBnhNLfLeTJhqE
+ MHs0jIirVv2ujrE2iXNdSjCVu0/n4PGKcJr0CAdTv8n3BmXPgTrozg6rse4Vpo4MmfTdGpUnjcf
+ foSXBq7tX7uUInKwoIeEpRNdbMksY0ken8nEoc39KL9XQPj+0Vgyy6a8t8Ep17Mc3tMYjZjNsNq
+ F8e/Utet16LgBE9VK3Hndk0wvVavz69Rs0epXpDWPQ4v048R7vihRQZ3eXg4qBG5f01NJAop
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-14_04,2025-05-14_03,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 clxscore=1011 spamscore=0 impostorscore=0 lowpriorityscore=0
+ malwarescore=0 mlxscore=0 adultscore=0 priorityscore=1501 mlxlogscore=769
+ phishscore=0 suspectscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505070000
+ definitions=main-2505140121
 
-On Tue, May 13, 2025 at 11:51:25PM -0400, Theodore Ts'o wrote:
-> I understand that it would be a lot more inconvenient change the
-> function signature of write_begin() to pass through iocb->ki_fags via
-> a new parameter.  But I think that probably is the best way to go.
+This series primarily adds check at relevant places in venus driver
+where there are possible OOB accesses due to unexpected payload
+from venus firmware. The patches describes the specific OOB possibility.
 
-I'd suggest that passing in iocb rather than file is the way to go.
-Most callers of ->write_begin already pass NULL as the first argument so
-would not need to change.  i915/gem passes a non-NULL file, but it only
-operates on shmem and shmem does not use the file argument, so they can
-pass NULL instead.  fs/buffer.c simply passes through the file passed
-to write_begin and can be changed to pass through the iocb passed in.
-exfat_extend_valid_size() has an iocb in its caller and can pass in the
-iocb instead.  generic_perform_write() has an iocb.
+Changes in v3:
+- Add check for validating the size instead of forcefully updating it (Bryan)
+- Reduce duplication of code while handling sequence change event (Vikash)
+- Update the inst->error for failure case instead of slienly breaking (Bryan)
+- Link to v2: https://lore.kernel.org/lkml/20250215-venus-security-fixes-v2-0-cfc7e4b87168@quicinc.com/
+
+Changes in v2:
+- Decompose sequence change event function. 
+- Fix repopulating the packet .with the first read during read_queue.
+- Link to v1: https://lore.kernel.org/r/20250104-venus-security-fixes-v1-0-9d0dd4594cb4@quicinc.com
+
+Signed-off-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
+---
+Vedang Nagar (2):
+      media: venus: fix TOCTOU vulnerability when reading packets from shared memory
+      media: venus: Fix OOB read due to missing payload bound check
+
+ drivers/media/platform/qcom/venus/hfi_msgs.c  | 83 +++++++++++++++++++--------
+ drivers/media/platform/qcom/venus/hfi_venus.c |  3 +
+ 2 files changed, 61 insertions(+), 25 deletions(-)
+---
+base-commit: b64b134942c8cf4801ea288b3fd38b509aedec21
+change-id: 20250514-venus-fixes-8d93bccd9b9d
+
+Best regards,
+-- 
+Dikshita Agarwal <quic_dikshita@quicinc.com>
+
 
