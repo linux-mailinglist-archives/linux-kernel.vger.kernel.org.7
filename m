@@ -1,108 +1,160 @@
-Return-Path: <linux-kernel+bounces-648488-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-648491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26D6EAB77A5
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 23:06:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC389AB77AB
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 23:06:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 58BEF4C6701
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 21:06:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D36001BA5C34
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 21:06:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 547BA297B9C;
-	Wed, 14 May 2025 21:04:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4DCB29673A;
+	Wed, 14 May 2025 21:05:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="C2is0HPq"
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="x+6W/6QD"
+Received: from 004.mia.mailroute.net (004.mia.mailroute.net [199.89.3.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00272296D36;
-	Wed, 14 May 2025 21:04:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747256676; cv=pass; b=afciIDhfXgn5W9/xdP6WlDhbfmEeXblfPEpKwwfdN7N3mErNaxb9UzwfAt5cTM6an2XoBnQu7G6P/HXIXdBLImavBDsiGiFueYL0TFXZHgQmNdMKT1MZpuWXHxSQCfHM9P49S/w69khNfqpUccceDbGNEbWPl+SWyA+cd/O7lOA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747256676; c=relaxed/simple;
-	bh=6RUy2CK1wlmEINbBG4ZAsmJD+VHiDwQbmoBgwzKHUDQ=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=VdE8zTODGSfbi33unSCJxW0bDdxvXG3RQQvu0GQYAx9gszcwYecYym3w1QzldmgdKYDqqXnt7AYz4qeJzOJT3R7N1D3zEkxYpeKBT8sMGqTbihsSS9932fzoc7CCDEGPszYAJUhMopqS7ZMM1tA5aHF8mhH6aAebZ/TjJT6SPBA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=C2is0HPq; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1747256652; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=QhkybkztgduN6xwsObRq/rLRBWErw4neK7emPUg1mze2Ofp4J+TyNbuL3iQziGmDNhrcmkSKIONTDzaPgnPivxGlXTQXg0fTOElARSDxZKB3fH/kD8QFpWiiYR5tBUweAvZtdPH2DI2nuLm3CPJPHNtZjWa+tobYdZKF/aaxMt4=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1747256652; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=6RUy2CK1wlmEINbBG4ZAsmJD+VHiDwQbmoBgwzKHUDQ=; 
-	b=A5B5RDO3uj7FpBclPdV6nNGe+l8E9nVFAvgAHmScO2Qw5O4ICxV46ziqkzaAQ9j316JDfqRz65Ex7vTKEOmPtrTcGM8+WCaX+9NwmZL+Lnp/Hzh1XNOW6dVj0Bmo4wfkxA/m6mOA/2UAwZhzO7x6HHnpV0HXN70QgPylvmG8UJ0=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1747256652;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=6RUy2CK1wlmEINbBG4ZAsmJD+VHiDwQbmoBgwzKHUDQ=;
-	b=C2is0HPqGIsbNZmhmaxH/zQv9ncR3q+3RCioD/9lrj7Th4erKUU5XKFItmWTPUkc
-	g0EX61BiS2NnsS5hHKSS5gY96y/8Ypz0WsU6NDUJabBRh56wPXwIuGFqK3LoN/dbFX9
-	ECdLMYTuloBJu+eKzkvkJbEttW+UlN2lswoZ6lko=
-Received: by mx.zohomail.com with SMTPS id 1747256649706755.5056830075335;
-	Wed, 14 May 2025 14:04:09 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83234296721;
+	Wed, 14 May 2025 21:05:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.7
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747256720; cv=none; b=PXaLJylXN3NyQrc14nQPhD0pHR0mrQCiiOYVvm2QpXCB2UBeZgjCvACNub0XYQTX7rip3yoafJW7Bz7JomBVecnAGIInO050BHdNKKvn9h0WLNmJgiZAKoMETr8kYibA0KVd6w6fRzJVmrPEgR72L3b3IiBnLIwGK4RsOLowN3c=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747256720; c=relaxed/simple;
+	bh=uoRh8aaEuZOB5yWJaOK5GfLIhzapSqZ04TVuCbrANNU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WnnWazttlAVaMckWBf3fprLbRA/Ziy6ZjgbdU3J5c8Yznet9URhi67c4Y6q3R7g9fzgB41GtDQdhw1uo6LDbYH+psAYeUfet2b/R7HKyMs3OsBX+gCHdldXzS5akysRNHL0U0IaBvHEoX7snyJ4Rj1OT/OhmvmWUpUZj1/wMr3A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=x+6W/6QD; arc=none smtp.client-ip=199.89.3.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 004.mia.mailroute.net (Postfix) with ESMTP id 4ZyQph1mslzlytFj;
+	Wed, 14 May 2025 21:05:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1747256712; x=1749848713; bh=4y6PpJpBvWFd4janBIfhVIiK
+	UNQpKumZnChgRc1rMHc=; b=x+6W/6QDkL7EY+dpOuW6aAvIA2BJcx+poFLSCnez
+	c9kP6soLoce7VKhm/J58RbrrT7MdFOBDPzBeUx79eWIh/kUcNUuEfyoL1L07fPfL
+	q7LGxAC8ZkZpHWJ6Nel0i+AJL39sbFHhB2pjddhShrRU6G/F9nwcyyBp15s2s4er
+	/7McPBtoFjzc9lawcVBvslN7QSlH8HvBHjE8HrhUNnki833OeyyhZtZJ/G3Act21
+	8hbBdM0TLEgIn0x6qTRAHV+GGnoLpAq8xToSI1DB2Oz6f0zQwb3BTOLZ5Y7aj480
+	2vaaRwFRkVlJIYQU9ABnkYlF/rvsS7QfoVjJ4GLfd9/p/w==
+X-Virus-Scanned: by MailRoute
+Received: from 004.mia.mailroute.net ([127.0.0.1])
+ by localhost (004.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id q7JJV-5aA4eK; Wed, 14 May 2025 21:05:12 +0000 (UTC)
+Received: from [100.66.154.22] (unknown [104.135.204.82])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 004.mia.mailroute.net (Postfix) with ESMTPSA id 4ZyQpL6nSDzlyj4g;
+	Wed, 14 May 2025 21:04:57 +0000 (UTC)
+Message-ID: <88718b2f-0583-4444-8bf0-7ecf9a45329c@acm.org>
+Date: Wed, 14 May 2025 14:04:56 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.500.181.1.5\))
-Subject: Re: [PATCH v3 1/2] rust: irq: add support for request_irq()
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <497D0D1E-B607-4822-A083-C0C5B9DB3C57@collabora.com>
-Date: Wed, 14 May 2025 18:03:54 -0300
-Cc: Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>,
- Danilo Krummrich <dakr@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>,
- linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <F77F7ABE-3A11-4DF5-942A-2B4FED0AD99E@collabora.com>
-References: <20250514-topics-tyr-request_irq-v3-0-d6fcc2591a88@collabora.com>
- <20250514-topics-tyr-request_irq-v3-1-d6fcc2591a88@collabora.com>
- <D9W5IX9Z7QMU.3DL48O2KYTN1Z@kernel.org>
- <497D0D1E-B607-4822-A083-C0C5B9DB3C57@collabora.com>
-To: Benno Lossin <lossin@kernel.org>
-X-Mailer: Apple Mail (2.3826.500.181.1.5)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] ufs: core: Add HID support
+To: Huan Tang <tanghuan@vivo.com>, alim.akhtar@samsung.com,
+ avri.altman@wdc.com, James.Bottomley@HansenPartnership.com,
+ martin.petersen@oracle.com, matthias.bgg@gmail.com,
+ angelogioacchino.delregno@collabora.com, peter.wang@mediatek.com,
+ manivannan.sadhasivam@linaro.org, quic_nguyenb@quicinc.com,
+ luhongfei@vivo.com, linux-scsi@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org
+Cc: opensource.kernel@vivo.com, Wenxing Cheng <wenxing.cheng@vivo.com>
+References: <20250512131519.138-1-tanghuan@vivo.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20250512131519.138-1-tanghuan@vivo.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+On 5/12/25 6:15 AM, Huan Tang wrote:
+> +What:		/sys/bus/platform/drivers/ufshcd/*/ufs_hid/hid_analysis_trigger
+> +What:		/sys/bus/platform/devices/*.ufs/ufs_hid/hid_analysis_trigger
+> +Date:		April 2025
+> +Contact:	Huan Tang <tanghuan@vivo.com>
+> +Description:
+> +		The host can enable or disable HID analysis operation.
+> +
+> +		=======  =========================================
+> +		disable   disable HID analysis operation
+> +		enable    enable HID analysis operation
+> +		=======  =========================================
+> +
+> +		The file is write only.
 
->> Didn't your commit message mention SpinLockIrq?
->=20
-> This is not upstream yet. I removed all mentions of SpinLockIrq on
-> purpose, but I apparently missed some as you say.
->=20
-> We definitely need interrupt-aware spinlocks to access the data in =
-interrupt
-> context. It is just a matter of deciding whether we will be referring =
-to a type
-> whose API is not 100% formalized as we speak, or to SpinLock itself - =
-which is
-> already upstream - with a caveat. I chose the latter.
->=20
+All HID sysfs attributes occur in the "ufs_hid" directory and have a
+"hid_" prefix. That's two times "hid". Please remove the "hid_" prefix
+from the sysfs attribute names since it is redundant.
 
-Minor correction =3D> to access the data in process context.
+> +static struct attribute *ufs_sysfs_ufs_hid[] = {
+> +	&dev_attr_hid_analysis_trigger.attr,
+> +	&dev_attr_hid_defrag_trigger.attr,
+> +	&dev_attr_hid_fragmented_size.attr,
+> +	&dev_attr_hid_defrag_size.attr,
+> +	&dev_attr_hid_progress_ratio.attr,
+> +	&dev_attr_hid_state.attr,
+> +	NULL,
+> +};
+> +
+> +static const struct attribute_group ufs_sysfs_ufs_hid_group = {
+> +	.name = "ufs_hid",
+> +	.attrs = ufs_sysfs_ufs_hid,
+> +};
 
-=E2=80=94 Daniel=
+Isn't the prefix "ufs_" in "ufs_hid" redundant since this sysfs group
+occurs under a UFS host controller directory?
+
+Regarding the name of this sysfs group, "ufs" occurs twice in that
+name (ufs_sysfs_ufs_hid_group). Please make sure that "ufs" only occurs
+once in that sysfs group name.
+
+>   #define UFS_LUN_DESC_PARAM(_pname, _puname, _duname, _size)		\
+>   static ssize_t _pname##_show(struct device *dev,			\
+>   	struct device_attribute *attr, char *buf)			\
+> @@ -1898,6 +2079,7 @@ const struct attribute_group ufs_sysfs_lun_attributes_group = {
+>   
+>   void ufs_sysfs_add_nodes(struct device *dev)
+>   {
+> +	struct ufs_hba *hba = dev_get_drvdata(dev);
+>   	int ret;
+>   
+>   	ret = sysfs_create_groups(&dev->kobj, ufs_sysfs_groups);
+> @@ -1905,9 +2087,22 @@ void ufs_sysfs_add_nodes(struct device *dev)
+>   		dev_err(dev,
+>   			"%s: sysfs groups creation failed (err = %d)\n",
+>   			__func__, ret);
+> +
+> +	if (hba->dev_info.hid_sup) {
+> +		ret = sysfs_create_group(&dev->kobj, &ufs_sysfs_ufs_hid_group);
+> +		if (ret)
+> +			dev_err(dev,
+> +				"%s: sysfs ufs_hid group creation failed (err = %d)\n",
+> +				__func__, ret);
+> +	}
+>   }
+
+Please merge ufs_sysfs_ufs_hid_group into ufs_sysfs_groups, remove the
+new sysfs_create_group() call and add a visibility callback in
+ufs_sysfs_ufs_hid_group that only makes the attributes in this group
+visible if hba->dev_info.hid_sup == true.
+
+Otherwise this patch looks good to me.
+
+Thanks,
+
+Bart.
 
