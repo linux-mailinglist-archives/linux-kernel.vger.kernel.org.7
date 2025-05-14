@@ -1,241 +1,155 @@
-Return-Path: <linux-kernel+bounces-648460-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-648458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EC6EAB7727
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 22:34:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D5FAAB7724
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 22:33:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 103747A7FD6
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 20:32:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 555799E2374
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 20:33:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A604296172;
-	Wed, 14 May 2025 20:33:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E464218D620;
+	Wed, 14 May 2025 20:33:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Czm4sIlj"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2073.outbound.protection.outlook.com [40.107.220.73])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Fonrt5dx"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D0F929372F;
-	Wed, 14 May 2025 20:33:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.73
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747254821; cv=fail; b=bZB4AUdK6cVSlq97hCoxfg0i0YHV0ezEzUdNjS7QzN0ZkMK1tJAyQvp3kMa7iQbdq+W6gbAHx3zQgAJnSlbYL4KyDduHYNtFTZJDXBcNVcMMi5T4htqwRCbWVzWKyXsF5Be6hRt0Z4cMTy/inGku9GkS3JagrmJwKkJf/Hsz1Ew=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747254821; c=relaxed/simple;
-	bh=lDlZ8XgYya0+ySeAr2ZX+k6Q+mxS9uq/Mzq3sTr+oFw=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Kx5zMovbXX8gscWNdRy+oYb6ZupE255hMjtZeK0Vt3qAV6m/Cmunt2PNGgVFJWE/plqkLTYAa6ZqRRvpYPYMHCEVFpVcDtA3XbciBZP6RiNerJ3FSaeiKgmQRVFia+km5BelhvLAJlykXoE/TiWkRqUdw+YY9l9Q0nWpNowPFvU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Czm4sIlj; arc=fail smtp.client-ip=40.107.220.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=JJBhwyVyrVT2Pq7LNNNCLizS53KnluUiFIlUFpebPOufB3x7uDocHSMJ26yTWeBfUew60DObaSqFWTKRyJTwxtAYBYvyZNeuBxgRe6C3/m1Z9oA4ZrNvRZz0pYR4bMYgdVo8O1/R9EL4EWj8X0zSLldy2ib2s7JInhFY7uEm7pIieyhHfs/gUqJSJcXnWNWiqLTtgbgQ7f15vkVez1TAUgTWZq5X+hvw96nGD3v0cUUBWqkDqD2/rrfHCxEnEBFiKLFFQ8HdHHldwbkgohC61Qp1IVC8rDGYR76DCcQpTFo/Un7HQDXsZytR5SFxFMCit7Rscof3mIy99RwIymkskw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=mTFNCqf9NgukDeTYUwhGd4FbwbIv+S++rtIwEOapBb0=;
- b=o81bUWPpCJQt2+7xekdor6PCz5Kz0YBJBgwHxq+8zHPYxWdFyj/etWO9pwI9W+WNGyR5xciQCg5EAxxD34YXj0RmO1//kc+TRyBqA4xKfQr3JuKBmdg+POQ5HUhWVcvNx0RuX2Nz1qvzcDx7X4R1OFaAIwPxe6MBTGd3iQyMKl//Tdr/Ao9CFAAaDw1eoJMK/5PkhDncvGeLYTtRXZln7gYyBWhcLIPPnFQOMegbTiEAJ9+foD5DDqTiWJjeoIKFhTi8bWlik68rQzBetpJ/IIETxJt4aMV9oIkffoWHQPPwMYREQbKF7gMBrE7xXDoZV4KZDjrGxBI0Zil5+JtWiw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=linux.intel.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=mTFNCqf9NgukDeTYUwhGd4FbwbIv+S++rtIwEOapBb0=;
- b=Czm4sIlj3vVP2p3rUH2XTPgY6maAP++mqoWJf/MXchNxcmUfaUNypaHp4q30K1maA/nInqP7ZkT1Esyf7QEP4MsIkMudCHlScUlf33UUO799fFwnzESoEzrchUNxzkwk0lkwgo7blU9rxXOkRzsuWi21kploAcHm5Z0RjMmF6HEX9WCqnHJNdRbAkMAqBQJ3WCVFhrRJtyby3ect5ijXHkey5uHMLNqpR5aSaqfyKXN+uFIKBGYSORhSX0noATiKo/XQGQLucyyElgOL+X3Fy1GREGXzpf2oibKF4dI/1HKqdV4R/OACmEQuuvRneK7lFMN7CpC8C8ANGwhxq39Zjw==
-Received: from BYAPR01CA0014.prod.exchangelabs.com (2603:10b6:a02:80::27) by
- SA1PR12MB6679.namprd12.prod.outlook.com (2603:10b6:806:252::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8722.29; Wed, 14 May
- 2025 20:33:36 +0000
-Received: from SJ1PEPF000023D1.namprd02.prod.outlook.com
- (2603:10b6:a02:80:cafe::3) by BYAPR01CA0014.outlook.office365.com
- (2603:10b6:a02:80::27) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8699.32 via Frontend Transport; Wed,
- 14 May 2025 20:33:18 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- SJ1PEPF000023D1.mail.protection.outlook.com (10.167.244.7) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8722.18 via Frontend Transport; Wed, 14 May 2025 20:33:35 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 14 May
- 2025 13:33:21 -0700
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Wed, 14 May
- 2025 13:33:21 -0700
-Received: from inno-thin-client (10.127.8.11) by mail.nvidia.com (10.129.68.8)
- with Microsoft SMTP Server id 15.2.1544.14 via Frontend Transport; Wed, 14
- May 2025 13:33:17 -0700
-Date: Wed, 14 May 2025 23:33:17 +0300
-From: Zhi Wang <zhiw@nvidia.com>
-To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-CC: <pbonzini@redhat.com>, <seanjc@google.com>, <rick.p.edgecombe@intel.com>,
-	<isaku.yamahata@intel.com>, <kai.huang@intel.com>, <yan.y.zhao@intel.com>,
-	<tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
-	<dave.hansen@linux.intel.com>, <kvm@vger.kernel.org>, <x86@kernel.org>,
-	<linux-coco@lists.linux.dev>, <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC, PATCH 00/12] TDX: Enable Dynamic PAMT
-Message-ID: <20250514233317.306f69f9.zhiw@nvidia.com>
-In-Reply-To: <20250502130828.4071412-1-kirill.shutemov@linux.intel.com>
-References: <20250502130828.4071412-1-kirill.shutemov@linux.intel.com>
-Organization: NVIDIA
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6B8C200B8B
+	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 20:33:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747254808; cv=none; b=dG2XnDp4Owrlo5B1F0fSQkXzsJVHXMedQCU0MBNVVe/LIlIwKimTvUeYsBQyck7sany07QlIynYLqOP2JcCWy5w4T9Et/eWtzjfGp9emyGPnyFrauXhm9MdZwor7DN1RCC+27qePPV8GfVIgryWndVZqIyPfMgSZNNW3+VqSVMo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747254808; c=relaxed/simple;
+	bh=Zlw6KukSqy0MoALoUU7w7NqQrpbT7N1NaFkIZMziFxU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CG5J04J6J3uuu60Jh6N68Sstv1nWiL/kMwBENHsCwJNBZWVh8YbKDW3MNCXqpRfc+LqOS/XUPpqDN4arunDvIfP1oENmsUFrjpS6e42pohBz3rnsWuTtHrIFH5RRJAcC4gO2Bfh3pFJEzOBMXFk6UTI+64R057SA02GqiZs+8KE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Fonrt5dx; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54EJREcY025425
+	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 20:33:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=dRKzmwRDtNONnFtD+GVYYT/F
+	68o9yjtA9WFV64BwRvQ=; b=Fonrt5dxtERAHoX+tk4nVcXN0KbJukF0i8LppNj8
+	BiiDSM2ha0u32DOZgPVwFc4q+5QUKgVxB7C+TqRcNHBeqyI/0MJ3ZC1SJ+VF32nm
+	lIzXZa6eze32HAtcYmhuqfLo+z5RPR0w49fdVo035mksSwAxbSAVxmnF7F583VTA
+	9G8tDkdTF5ueqE3Gonx25GL4ekwcqtRiTm83oUZzQdTvM6yGErODVlYfscips3Kz
+	F2J/OwsqeWVGBba18/Ldn3v2aO6nSXAuiFFbSDUC8wTAtmEnjLpFESa33Ho+ANlJ
+	K35mkOngTMGL3IHCyzr5IPbutTfBWDg7W5gbx5cWh3vRIA==
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46mbew3wym-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 20:33:25 +0000 (GMT)
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7c54e7922a1so39865185a.2
+        for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 13:33:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747254805; x=1747859605;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dRKzmwRDtNONnFtD+GVYYT/F68o9yjtA9WFV64BwRvQ=;
+        b=VTwV9lj5tyiH7LCRHxJByMjCFQby+tHHPiKuddoE8Kd2DtnslrOM7fZC5VBIaVIYRO
+         ugJ9LuSV3k5R1N4i0uam4j7orcBrHW6EyPW29nz5cXJuIuD6F0K2xqUFuuJS+gLY/0UE
+         ezDoWP96mEWXzUvetyEnulU2jt8GraGPzHSQVYPo01fUe7VSAsERN2dhE2owhui71bYV
+         30/qSwcqXEq1Ou1YgAuWKEy7tfwbO19dRxHfAtRILlzapl6AmqOhz/JBQvjQozNEtGyn
+         8gOb/RL6BpdW3qgrWAsq5KobjUXULf2fVpFw4yaUIwfz3yCEPLvF5mJ5jj2/RUTDXsrI
+         lVAg==
+X-Forwarded-Encrypted: i=1; AJvYcCUfz4f1oSBURpC4US3uovZY9xB3zbEh6Ccrci2+FFAdHIRLHRUwCJp/73sQXuL0iE0j5o1HLplZyeSzsAI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzmI0LcDbvC28t7qotBf72NzXUGvxW6+4WQW9gv9w+TSZcR4Ggw
+	mRu7e0hXKyl5mPEDCfi+p4K9V2RuTk85/JBB2Iq2UVSZuYhcWXPutrkLWY/1MzKTPO2BTgfdYjh
+	TVC2ueipMjaPQHyGoAB0Z6BQRPTPnz7wuMCH2n1B3IZ4XnaVT1PCk7bIcSnZn3Pc=
+X-Gm-Gg: ASbGncsABDcVNCq+H61kILLevURhAXEx8f5WaSTE5Ozph2UyllWoLNd7qbVf74G6aC+
+	iKOW3sTRHxNlMvYVwgHD9f7SlEnj/bYKnWwusl6uIDQFLYMh3kvCXLsB8xDY0vMI3nEuKwA+8Yn
+	VoEAku4DC0RekXZEqnPlizRpfWKZbyUFXWyv3IyGJlsxrdxvet0rOpcF7eL9OzXls3KOtcPYJpv
+	oBB16zXb7QPOr6Ss2m4yErD0zuOLOB0uowryzR9JYxRGnI4SPr96k2LBLfoY+847phpsxu5QGpM
+	2z038BqPN5FdbjT5FXLY5fw/GBmArHwvRCw5oVNpncchfPQZWXv9CNh4wbjHzrerAQ0pBgGps0s
+	=
+X-Received: by 2002:a05:620a:17a1:b0:7c5:5d13:f186 with SMTP id af79cd13be357-7cd287f8e7cmr618135485a.10.1747254804681;
+        Wed, 14 May 2025 13:33:24 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFsUrt5xuy6IhXhWS73X4G6t/mH1OxTdsbAV8OsEnGFxtr3ke2Igx0BWrmUw4ortNrnKDd8Gg==
+X-Received: by 2002:a05:620a:17a1:b0:7c5:5d13:f186 with SMTP id af79cd13be357-7cd287f8e7cmr618132885a.10.1747254804305;
+        Wed, 14 May 2025 13:33:24 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54fc64b6e08sm2379780e87.120.2025.05.14.13.33.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 May 2025 13:33:23 -0700 (PDT)
+Date: Wed, 14 May 2025 23:33:21 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: Konrad Dybcio <konradybcio@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Rob Clark <robdclark@gmail.com>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Akhil P Oommen <quic_akhilpo@quicinc.com>, Sean Paul <sean@poorly.run>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org
+Subject: Re: [PATCH RFT v2 14/15] soc: qcom: ubwc: Add #defines for UBWC
+ swizzle bits
+Message-ID: <rxoefvyob7enrbtdpmsevw5wzatk4dwa5jomscqpxim5sjmymd@dblxslxy7q5v>
+References: <20250514-topic-ubwc_central-v2-0-09ecbc0a05ce@oss.qualcomm.com>
+ <20250514-topic-ubwc_central-v2-14-09ecbc0a05ce@oss.qualcomm.com>
+ <c3txdoumutgk4exshhyi53ef4xziu5bbe3ib67hw4gsvulh4yt@522qphwu3ocx>
+ <c8517af1-5fb9-4350-814a-85ce26e5e334@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-NV-OnPremToCloud: AnonymousSubmission
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PEPF000023D1:EE_|SA1PR12MB6679:EE_
-X-MS-Office365-Filtering-Correlation-Id: a484a758-be2f-44f9-e5f0-08dd93269a09
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|82310400026|1800799024|36860700013|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?TymIWV9n8XvBbP2uIiInFpKSPDrOTh/3YyVHXT+T052UlIdvgFPIzajX4Nv8?=
- =?us-ascii?Q?9Rx6prY68xpJ4yqkdGfjaWvgfiVxHH+bL3GyPyjRORlk9KDBLIt9d1HRzY+m?=
- =?us-ascii?Q?T61gTVsunm4XBxusEM9Pv2RH7vx36b3qLXQJeU9MV3UpeNb27R5e9la0frQO?=
- =?us-ascii?Q?wes8FhTKWfnbFLziRZva+X1NmMAEWVZ1tii+/+TiGkjbue7vEVXES9YoTlLO?=
- =?us-ascii?Q?V1FciSiKN0WR3epEdDwFBlCmpJGrsygpKnkYxM/fOF2l6nORD1USGIO0CATy?=
- =?us-ascii?Q?4zHgQC3Vh98ki9mV7Y6u/nXg4EKLnwuFRsY8Ragxiak0mHmrak/RXA2XZmUU?=
- =?us-ascii?Q?KgpUmcaEjx/oyXvmVBUm/pYi/Np6/bH6V0lYc1C51KLaFi+A4QJe6C5+V341?=
- =?us-ascii?Q?XCxSBV/XAhWZrj+60XlOOb48CngTctojhuGMEx80ViMF74FXcgzjSxLqtuGE?=
- =?us-ascii?Q?0w+9M9I22qOSumru41MO3O4esS/04ZpvXS3MREJmt8v+9HVOGLn4SGJkqUr5?=
- =?us-ascii?Q?8HVR49xCamyFuktd24e1XWW43x926ylBoHg8nXz8jyEWgGG2UJx7u75AEcHw?=
- =?us-ascii?Q?Od1zrZw1dU4X/HsFEuJWUC4yTdNxv+wLpP+QIEEHQEcajU9j0h8mFRHbaxol?=
- =?us-ascii?Q?MfK3MEeiiTf+f2+tEpVGG9bua0hoUbSVbzuZt9loRbDG8Vx5XbKFUCl9tg/K?=
- =?us-ascii?Q?NvY0j+QdB6DEHphXa6Fmcwh/Iur3RWJ1TIMPDEThxaJ/1bYIiIoxJGishRrf?=
- =?us-ascii?Q?Aaz2cdV1AXnZ4RYhX6BniIXrdbrHAo3SK2xJUSLmqaqzbq3sUrMt+OMlnphC?=
- =?us-ascii?Q?IQS8pVKxoKshtqF4KFXiaoBjsNnGuaPP8qjslIDeAqKkh0W3zFnFylVpxM3/?=
- =?us-ascii?Q?ecZ2dQ0xWCVcfxxVXgD21bwb/3RL8OiwneqGtR3sA5nIh6PC4/IVPdIGVU1J?=
- =?us-ascii?Q?95srfYhmbNoL39iV+1/s3wLo84a01+ytseYrFJF/ZGPpgMPqd/EtHp95yhmG?=
- =?us-ascii?Q?ArEu9kJeR+w7NLsE8LaRvXBBCviYy+PelFDSpuC4bi9hYV5DJLkvW292eEbi?=
- =?us-ascii?Q?mmyltwaRNM+lrz1SAPm/8wSKOKSYOYnSvQ+kidD4ddyxsXGvaUFy9zHpq2w1?=
- =?us-ascii?Q?IstDbZ8jMK5GLS1UtwJlXw6bO9oABByV+RfJ37Uuq9tJFII99FEieKLTqQVj?=
- =?us-ascii?Q?ClVJbpYnB9NvJO2we8l5KTdwR84fDcv7QkZFp+2WVEvez+B6YigqRMM5mJ+M?=
- =?us-ascii?Q?0FbGrMUzB9/MGreHI8L27IcBJsWdrLF8PsDvy7b3Jr1DVGBatpsMeNJ8RqvS?=
- =?us-ascii?Q?x6Kcg+DazBklkSo2eVfRgqoQBvZ7URUzuoW6xzB8G1vkOKyAgwTd8XePjSrB?=
- =?us-ascii?Q?veePuAtl5ogJDzuBjq+kQ7cDu5IkXIj6MQ0fQXjWcpjvHaZzd+bzHUR2wN7f?=
- =?us-ascii?Q?7wplGoi/Di/5xweaSqrdFvXOgX2WafzKzJ26A+cPin++sqoQPtz9D4C3SsdM?=
- =?us-ascii?Q?cU12kioW0qH9+Uxa95jV1lZwV4HEgvdb6PpSkaEixUv0spqjKqn3G2Yt4A?=
- =?us-ascii?Q?=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(7416014)(82310400026)(1800799024)(36860700013)(7053199007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 May 2025 20:33:35.8483
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: a484a758-be2f-44f9-e5f0-08dd93269a09
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ1PEPF000023D1.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB6679
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c8517af1-5fb9-4350-814a-85ce26e5e334@oss.qualcomm.com>
+X-Proofpoint-GUID: gox3c0fWz7XmR2GSZoINWQZRl-JPV9hz
+X-Proofpoint-ORIG-GUID: gox3c0fWz7XmR2GSZoINWQZRl-JPV9hz
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTE0MDE4OSBTYWx0ZWRfX9ElPez2I3N4K
+ USt+8YCQxQX+AI7UL2aupGpfQAPHyVf4go3atXuirBFcNkz++U/Shrwbl5mRvtbdQzxQIOq/cg0
+ 15QM6mnIsPWJb/A/RQq4MdMiX74QTy8yfj8+4wK5QyrEGodNYSV39t6Kwm5XhZ58qoJXbquJpIj
+ 5f8mrEbaHLzqlJo1MHOz4ie53QSp/J6OpLsCs0nIOj8lldhmdj/UXFJsU0N66uHX2qejrb6UNFo
+ IcLlRxkc836Q5oJihvsu3ODkxaQ92f1APvgR8isDRBCoOZQFSJLeG/+Y1o7zF90nbgBDyAAAB88
+ zvigyD6O/zSOkEJMGWWJ54i9MPv4puDllQikC2XrqlzXn6ZDOZ+t2/MGI0Jb6hIPQ/cHTlduif+
+ GUaZ2rjIr0jT5/3WxgMP1Ouj9bET7K4UL85Q6wcfnxrO47lN0cgQxCR4WvKQ7sUxT8Hw6JB9
+X-Authority-Analysis: v=2.4 cv=LOFmQIW9 c=1 sm=1 tr=0 ts=6824fe15 cx=c_pps
+ a=qKBjSQ1v91RyAK45QCPf5w==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=dt9VzEwgFbYA:10 a=EUspDBNiAAAA:8 a=V6yTId3DeqrxdCHudOoA:9 a=CjuIK1q_8ugA:10
+ a=NFOGd7dJGGMPyQGDc5-O:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-14_04,2025-05-14_03,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 spamscore=0 adultscore=0 priorityscore=1501 suspectscore=0
+ mlxscore=0 malwarescore=0 mlxlogscore=730 impostorscore=0 bulkscore=0
+ clxscore=1015 phishscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505070000
+ definitions=main-2505140189
 
-On Fri,  2 May 2025 16:08:16 +0300
-"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com> wrote:
+On Wed, May 14, 2025 at 10:09:35PM +0200, Konrad Dybcio wrote:
+> On 5/14/25 9:24 PM, Dmitry Baryshkov wrote:
+> > On Wed, May 14, 2025 at 05:10:34PM +0200, Konrad Dybcio wrote:
+> >> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> >>
+> >> Make the values a bit more meaningful.
+> > 
+> > Not sure if it's more meaningful or not. In the end, we all can read hex
+> > masks.
+> 
+> 0x1d7efc35
+> 
+> magic constants are no bueno
 
-> This RFC patchset enables Dynamic PAMT in TDX. It is not intended to
-> be applied, but rather to receive early feedback on the feature
-> design and enabling.
-> 
-> From our perspective, this feature has a lower priority compared to
-> huge page support. I will rebase this patchset on top of Yan's huge
-> page enabling at a later time, as it requires additional work.
-> 
-> Any feedback is welcome. We are open to ideas.
-> 
+Ack. Then please drop UBWC_SWIZZLE_ENABLE_ALL and list all 1-3.
 
-Do we have any estimation on how much extra cost on TVM creation/destroy
-when tightly couple the PAMT allocation/de-allocation to the private
-page allocation/de-allocation? It has been trendy nowadays that
-meta pages are required to be given to the TSM when doing stuff with
-private page in many platforms. When the pool of the meta page is
-extensible/shrinkable, there are always ideas about batch pre-charge the
-pool and lazy batch reclaim it at a certain path for performance
-considerations or VM characteristics. That might turn into a
-vendor-agnostic path in KVM with tunable configurations.
+> 
+> Konrad
 
-Z.
-
-> =========================================================================
-> 
-> The Physical Address Metadata Table (PAMT) holds TDX metadata for
-> physical memory and must be allocated by the kernel during TDX module
-> initialization.
-> 
-> The exact size of the required PAMT memory is determined by the TDX
-> module and may vary between TDX module versions, but currently it is
-> approximately 0.4% of the system memory. This is a significant
-> commitment, especially if it is not known upfront whether the machine
-> will run any TDX guests.
-> 
-> The Dynamic PAMT feature reduces static PAMT allocations. PAMT_1G and
-> PAMT_2M levels are still allocated on TDX module initialization, but
-> the PAMT_4K level is allocated dynamically, reducing static
-> allocations to approximately 0.004% of the system memory.
-> 
-> PAMT memory is dynamically allocated as pages gain TDX protections.
-> It is reclaimed when TDX protections have been removed from all
-> pages in a contiguous area.
-> 
-> TODO:
->   - Rebase on top of Yan's huge page support series. Demotion requires
->     additional handling with Dynamic PAMT;
->   - Get better vmalloc API from core-mm and simplify patch 02/12.
-> 
-> Kirill A. Shutemov (12):
->   x86/virt/tdx: Allocate page bitmap for Dynamic PAMT
->   x86/virt/tdx: Allocate reference counters for PAMT memory
->   x86/virt/tdx: Add wrappers for TDH.PHYMEM.PAMT.ADD/REMOVE
->   x86/virt/tdx: Account PAMT memory and print if in /proc/meminfo
->   KVM: TDX: Add tdx_pamt_get()/put() helpers
->   KVM: TDX: Allocate PAMT memory in __tdx_td_init()
->   KVM: TDX: Allocate PAMT memory in tdx_td_vcpu_init()
->   KVM: x86/tdp_mmu: Add phys_prepare() and phys_cleanup() to
-> kvm_x86_ops KVM: TDX: Preallocate PAMT pages to be used in page fault
-> path KVM: TDX: Hookup phys_prepare() and phys_cleanup() kvm_x86_ops
->   KVM: TDX: Reclaim PAMT memory
->   x86/virt/tdx: Enable Dynamic PAMT
-> 
->  arch/x86/include/asm/kvm-x86-ops.h          |   2 +
->  arch/x86/include/asm/kvm_host.h             |   5 +
->  arch/x86/include/asm/set_memory.h           |   2 +
->  arch/x86/include/asm/tdx.h                  |  22 ++
->  arch/x86/include/asm/tdx_global_metadata.h  |   1 +
->  arch/x86/kvm/mmu/mmu.c                      |  10 +
->  arch/x86/kvm/mmu/tdp_mmu.c                  |  47 ++++-
->  arch/x86/kvm/vmx/main.c                     |   2 +
->  arch/x86/kvm/vmx/tdx.c                      | 215
-> ++++++++++++++++++-- arch/x86/kvm/vmx/tdx_errno.h                |
-> 1 + arch/x86/kvm/vmx/x86_ops.h                  |   9 +
->  arch/x86/mm/Makefile                        |   2 +
->  arch/x86/mm/meminfo.c                       |  11 +
->  arch/x86/mm/pat/set_memory.c                |   2 +-
->  arch/x86/virt/vmx/tdx/tdx.c                 | 211 ++++++++++++++++++-
->  arch/x86/virt/vmx/tdx/tdx.h                 |   5 +-
->  arch/x86/virt/vmx/tdx/tdx_global_metadata.c |   3 +
->  virt/kvm/kvm_main.c                         |   1 +
->  18 files changed, 522 insertions(+), 29 deletions(-)
->  create mode 100644 arch/x86/mm/meminfo.c
-> 
-
+-- 
+With best wishes
+Dmitry
 
