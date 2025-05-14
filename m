@@ -1,217 +1,290 @@
-Return-Path: <linux-kernel+bounces-648194-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-648197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A66FAB7347
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 19:53:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52588AB7360
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 19:56:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 089701740B7
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 17:53:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7906B3AF5CE
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 17:55:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE3AE1F4607;
-	Wed, 14 May 2025 17:53:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFD8B28368D;
+	Wed, 14 May 2025 17:55:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MK9+4SZ/"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XQ/lqWqZ"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A71331DE4E3
-	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 17:53:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EFD1280CDC;
+	Wed, 14 May 2025 17:55:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747245195; cv=none; b=uBzOaRBxOeYmXV6cacdBpLADN3HR3EbLYI8uDUThYnz2wG9eJwwiNvhUUlHIAUnsqvzqAlrsLBkRFq5MXi1wU9oEx5YsJHJbDTD8RRZkRnBbIMXtAam07qetr0G00dZe01zqEA1aUTxuhx9m+H2Co/ztPl2y6/0iK1CLoJZg9zA=
+	t=1747245358; cv=none; b=p4b88h4wFYhXwXA+1b6EA5QLMits8juWUvy3tOwEZE3tqokMNDIQXyC/FR8G/GeHwgZ3V9WCDXUPLBjB3ZSgw9IhAh0w5X+Mf1BpJ9n7keqQ93fvi+6LsLoPIIIJ5L3P/at3D8NoXmkOVgmjxW8ONJz6rV+EVbb7r5mcIZJ8l6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747245195; c=relaxed/simple;
-	bh=yyrmU6W8SSAQ69TGnG/eTlj7nlNV55pBc8ipgTcqAPo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=V691187o7l/O/2N4oCZFMpeuMQ4xxfxKodLTf57Wn1K28RPQ8kYMWwhe08dtksFwCwQSEKk2dIFY1mjoKK97uNF3YuiF2jHxuKA9eYCMNTcPzBRMg0E777C4xVvALwh6S1y25UpuXDDWht2ameDGboEWWolDyKcO+9VUYBDxGfs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MK9+4SZ/; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1747245192;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=T9gEkHcNNRGwG4zKAICU/T3iGmVhFST3CjssIJGy95U=;
-	b=MK9+4SZ/4zq/7KTGTHW4l89FCuUe/mgoSkA5OsC/aqaRLurNcT6M5DJeuP+EbTj06c7R5R
-	Z+rWDiCeDv0NIv/yumHT9H1eyfsNxwzQ8ionD8HLlh0IefKzc7l/Zf8Ig1hWErmF+RJ2nM
-	DR2KTvoCbM6eayOXWPbGcyEsPnqzzKk=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-379-Hy-hkAOHNH2iPsJHirFWfg-1; Wed, 14 May 2025 13:53:08 -0400
-X-MC-Unique: Hy-hkAOHNH2iPsJHirFWfg-1
-X-Mimecast-MFC-AGG-ID: Hy-hkAOHNH2iPsJHirFWfg_1747245187
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3a1f9ddf04bso26124f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 10:53:08 -0700 (PDT)
+	s=arc-20240116; t=1747245358; c=relaxed/simple;
+	bh=BJ/MngDQrweqXLyzyk/mOzWV+IC2hvudVpGaRIzWNus=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=l32b++IwyWcURW2GWI6zUp8C48tzC0ztrKGsEiE13bRRNaQ767mcOQrZoBhyLI/CWwwd6WxEc0j4bnBPgscsKvExPHvYBjkeu/DaqtdzGrgUtqRK5zs4tdVaRae/TiOr55eAvtXUlmJDVolOmaXhuo0ShRM1HKcqKwA4PoG2nFc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XQ/lqWqZ; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-22fcf9cf3c2so1185485ad.0;
+        Wed, 14 May 2025 10:55:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747245355; x=1747850155; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=tTRZYELUxikHuZrnr6hjy5+oWoL6AQWZaZWVaCTTMUs=;
+        b=XQ/lqWqZ2M4u9d4crmogo+IebQcUqdXBE5yMnEYAJPvKS1pZ1q3zFGvFm32Ar6/wjx
+         Ca8saiemRFhlXBcSWnC+nfcb/ta+faGbk2XaLTY0UlThxA+b2mhAeGdCMTtlofzmPPVC
+         VoI3oTZ/l4DvI5cimH+M5O6+FthwG+3b5LsiAj3o6IfQfiak1sWwW7HZooGB1s5+tBow
+         kICpfVv/V0QAjpF3+blmMjvofk/DE/oo6xnuvR/F+teuc7nupMze4TzX40BvnePLGS6n
+         RYu+kyoTyG53UtXEyv8gaULy3Zre5R60Mhg107ivXGZwfMUnI/+WCq4Dx+21+3LxzJXR
+         bfWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747245187; x=1747849987;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=T9gEkHcNNRGwG4zKAICU/T3iGmVhFST3CjssIJGy95U=;
-        b=uGWD8KdI5G5H9AIqOIhVddavhmlQ7C6BYCXaTEeCpVWNqtSWAk9TmcU3fwNatnEnb+
-         3JUe4yhbK1r1mkvZB4vYSwKg1JV1VAgJ7/bd0+AxWErIC2KwowXHgyWpCS/4O+OT7SF1
-         LQcV7JYdKDI9yLNyy7+MIHp0ASNgiQuTUkvb+Pzx89atyp4h3fhw6M5LLNa+s2IIIG2l
-         UxDiu88ftdVF+osw1c6D1cC0PB84l97CHB3OyT0HEOwxs1REL5JaI3Y+tMcpntRRf3gc
-         csNUXTdtOnym6cV+joHR6SobUjwYm9gEEUWZ+OJ32bqt6lEMHs39Vg+gjl/XDN+Gzxh5
-         iQIA==
-X-Forwarded-Encrypted: i=1; AJvYcCW5jEAJVR8cWc8AezuxUx99Rbs1PeaX3igqUy2vk8lBR14ZG6B+3E4q6mv4ndwzGvwjs/rDYAn/PuWc2Nc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwdTCeg1YkEodonktVVFS5Q4G0bWEgLifSlOjlH23Oe6ajAiYX7
-	GG0tG6kytx04+B++7254QdigYwPYmSbqjw7oeFMavjAv087yGpMcytEg86gBhOrPxKPNUrXaW/B
-	WgVX133FJVnmDOOXr5avi+9XjKTPnAFxXUh+JBPKjVOMmkOQ7ODM4gVbCe8SJAsV3ow3THw74
-X-Gm-Gg: ASbGncvBEboyGiGfEJLsO/onfh7z7P69GJMndc5PuX4sVV9twpyvbH0VJq+sLNyKWne
-	bxNfz9r54teLIvNItCn5L751iFrv3wqGXj/vGucauuLKVaG86g9z8doWCyNABB9kpCY4g+8SUNc
-	9NEA79G0TaNJkNt0e2B/W1IezrDfvx3jv2eWVi25zE3ur44iwQ7YUebURP1VX3Mp/2Pb/PbydhP
-	p8zIKSpFEKfUsfJm8uhFaEzUEXVgGQu6sxY28wJAxUaKjs5iG1awsJZQ41qGo7fgvJlhjGoa3ET
-	G0ojATj3AM0FW3HZGnQQNmEEGykBmF8AGIikbni0CJEMYy4D1I7ssYqRNKF3Lc/XJP/HrGgDn3L
-	mlPJSjkjN4YBHLTkHqFIDJ2bdsHdWa5aZZ+ozMgA=
-X-Received: by 2002:adf:f7cc:0:b0:3a2:2d6:4205 with SMTP id ffacd0b85a97d-3a349921da8mr3561079f8f.47.1747245187407;
-        Wed, 14 May 2025 10:53:07 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHI/rQoUNdarqySB6UGfLmR7K5cvW1c5VoY82rTRIWoLyPgqKa4z52Sz2Zo6d+MLUSeBgWoLg==
-X-Received: by 2002:adf:f7cc:0:b0:3a2:2d6:4205 with SMTP id ffacd0b85a97d-3a349921da8mr3561064f8f.47.1747245187062;
-        Wed, 14 May 2025 10:53:07 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f15:6200:d485:1bcd:d708:f5df? (p200300d82f156200d4851bcdd708f5df.dip0.t-ipconnect.de. [2003:d8:2f15:6200:d485:1bcd:d708:f5df])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a1f58ecccbsm20532621f8f.32.2025.05.14.10.53.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 14 May 2025 10:53:06 -0700 (PDT)
-Message-ID: <18d502c8-7bbe-470e-863c-7c2f42ea2487@redhat.com>
-Date: Wed, 14 May 2025 19:53:04 +0200
+        d=1e100.net; s=20230601; t=1747245355; x=1747850155;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tTRZYELUxikHuZrnr6hjy5+oWoL6AQWZaZWVaCTTMUs=;
+        b=SPm8YmvG0fYfCskbK5K2n8b9iKNprj8WOzT3Zpi9dHs6zXjA6JwZdKVmlRnUYcHAPO
+         OUESx9j7XEYzYAPAGp4oQOXAPwJ9gCkbYWoLQxh2lhBH/VZF3RA6ZKH6Y+ffrzgxKtPK
+         bvCAYK9MIj0L4+zBJtKYIqOy73jcm95ytSxnv8oQwHmvABa2AocuVLl6GBILEJKd8Syh
+         K2jg5ftqfPizz+H9n8SKIb+0xnFaj51zMidq1DlGu0587mQxhRCeffuSD0SYzofizJcm
+         iks0HFkTYdn2/zb5CNYsvxenZ8KJWIymsyG5e3OrXg/BWUe1+p7QInwZeTA4PcK6tpb+
+         lCMw==
+X-Forwarded-Encrypted: i=1; AJvYcCW1yaQdgzlIk9xDdIZegonAgPW/RGPSNAb0OckOzAx5KGNY/NI3aZZec6tBJIBlo9Igly+d26NfH/DGIAnH@vger.kernel.org, AJvYcCWgV0BvBv3R6q4LuXKbF6YCiyPWC+6mC5cdILx9wsCUaoM2dnVyy5aVOeDBkTmYECIPS9O1mj+QliuqfXk=@vger.kernel.org, AJvYcCX8SabYEfbsfBL/hKuqfTfLVzNjFY3k3XTk6XzA0GNzVu6Ig8toJRjMkC8qTIwhIUCWyso58JivYOOIDRww@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3FkzVFeEDcAZxP5UT3kpvt6ecEIBQA2rtyEzHD03WnUtCwcyt
+	gQ5A7izauFz55O+kyHihTN/BmoGzZCSoYvWcIiiEoiNniguINv6S
+X-Gm-Gg: ASbGncs8oqJQnVXfuUvYgXAHSWmpoYrbK3P/uYKgjCOFgoKBPfd28sMJ7Ia3x2x2IeY
+	ZgS9ZqHDDXpxw4jgAuJVTLC/V147ej8DjjL3YtU58meeFA6GFA2I4jD5o+gvtoeLq5CJq3m30jk
+	RC6MsfhZdUFmsrjopCFA6HSBlQTVzO5aKgicBXtg0PqL/Ko2AhSos7Pghu3eAhp8tnmTml47lyG
+	eAUkzvJRDtph5ebxFD1/aWMRCyPOM0xaZMc1VHaMaRUWQVXrjiCPtgQQkydfQkiM1Io4z4Gp2Fj
+	WpsenpKX4N5xFIs10mMcHddpnQXpYqX1E/D+O/S1jJpFcfWMisi+qv8z54N0npKeeGf3zs6CHnt
+	TNYNJUu7lwIZ3rg8VAioDJ7RohQ==
+X-Google-Smtp-Source: AGHT+IERtpGGySrgt5QWAHTWQX1eTHH64LFVqEChCSjMz12Qnsyq4ROalMoWYLN1Prsn3yufEkRtfg==
+X-Received: by 2002:a17:903:32c4:b0:227:e709:f71 with SMTP id d9443c01a7336-2319815e348mr65225885ad.29.1747245354679;
+        Wed, 14 May 2025 10:55:54 -0700 (PDT)
+Received: from localhost ([2a00:79e0:3e00:2601:3afc:446b:f0df:eadc])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22fc8271aebsm101695615ad.107.2025.05.14.10.55.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 May 2025 10:55:54 -0700 (PDT)
+From: Rob Clark <robdclark@gmail.com>
+To: dri-devel@lists.freedesktop.org
+Cc: freedreno@lists.freedesktop.org,
+	linux-arm-msm@vger.kernel.org,
+	Connor Abbott <cwabbott0@gmail.com>,
+	Rob Clark <robdclark@chromium.org>,
+	Abhinav Kumar <quic_abhinavk@quicinc.com>,
+	=?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	=?UTF-8?q?Barnab=C3=A1s=20Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>,
+	Christopher Snowhill <chris@kode54.net>,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	Dmitry Baryshkov <lumag@kernel.org>,
+	Eugene Lepshy <fekz115@gmail.com>,
+	Haoxiang Li <haoxiang_li2024@163.com>,
+	iommu@lists.linux.dev (open list:IOMMU SUBSYSTEM),
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Jessica Zhang <quic_jesszhan@quicinc.com>,
+	Joao Martins <joao.m.martins@oracle.com>,
+	Jonathan Marek <jonathan@marek.ca>,
+	Kevin Tian <kevin.tian@intel.com>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	linaro-mm-sig@lists.linaro.org (moderated list:DMA BUFFER SHARING FRAMEWORK:Keyword:\bdma_(?:buf|fence|resv)\b),
+	linux-arm-kernel@lists.infradead.org (moderated list:ARM SMMU DRIVERS),
+	linux-kernel@vger.kernel.org (open list),
+	linux-media@vger.kernel.org (open list:DMA BUFFER SHARING FRAMEWORK:Keyword:\bdma_(?:buf|fence|resv)\b),
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	Nicolin Chen <nicolinc@nvidia.com>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Sean Paul <sean@poorly.run>,
+	Will Deacon <will@kernel.org>
+Subject: [PATCH v4 00/40] drm/msm: sparse / "VM_BIND" support
+Date: Wed, 14 May 2025 10:53:14 -0700
+Message-ID: <20250514175527.42488-1-robdclark@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 08/11] x86/mm/pat: remove MEMTYPE_*_MATCH
-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org,
- intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- linux-trace-kernel@vger.kernel.org, Dave Hansen
- <dave.hansen@linux.intel.com>, Andy Lutomirski <luto@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
- "H. Peter Anvin" <hpa@zytor.com>, Jani Nikula <jani.nikula@linux.intel.com>,
- Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
- Rodrigo Vivi <rodrigo.vivi@intel.com>, Tvrtko Ursulin
- <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Andrew Morton <akpm@linux-foundation.org>,
- Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
- Pedro Falcato <pfalcato@suse.de>, Peter Xu <peterx@redhat.com>,
- Ingo Molnar <mingo@kernel.org>
-References: <20250512123424.637989-1-david@redhat.com>
- <20250512123424.637989-9-david@redhat.com>
- <f2bxgy5tmb3cpk457lay3hl4wejj5dvttswnvzi2uudxtkkbsm@ktcytlgv64nn>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <f2bxgy5tmb3cpk457lay3hl4wejj5dvttswnvzi2uudxtkkbsm@ktcytlgv64nn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 13.05.25 19:48, Liam R. Howlett wrote:
-> * David Hildenbrand <david@redhat.com> [250512 08:34]:
->> The "memramp() shrinking" scenario no longer applies, so let's remove
->> that now-unnecessary handling.
->>
->> Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
->> Acked-by: Ingo Molnar <mingo@kernel.org> # x86 bits
->> Signed-off-by: David Hildenbrand <david@redhat.com>
-> 
-> small comment, but this looks good.
-> 
-> Reviewed-by: Liam R. Howlett <Liam.Howlett@oracle.com>
+From: Rob Clark <robdclark@chromium.org>
 
-Thanks!
+Conversion to DRM GPU VA Manager[1], and adding support for Vulkan Sparse
+Memory[2] in the form of:
 
-> 
->> ---
->>   arch/x86/mm/pat/memtype_interval.c | 44 ++++--------------------------
->>   1 file changed, 6 insertions(+), 38 deletions(-)
->>
->> diff --git a/arch/x86/mm/pat/memtype_interval.c b/arch/x86/mm/pat/memtype_interval.c
->> index 645613d59942a..9d03f0dbc4715 100644
->> --- a/arch/x86/mm/pat/memtype_interval.c
->> +++ b/arch/x86/mm/pat/memtype_interval.c
->> @@ -49,26 +49,15 @@ INTERVAL_TREE_DEFINE(struct memtype, rb, u64, subtree_max_end,
->>   
->>   static struct rb_root_cached memtype_rbroot = RB_ROOT_CACHED;
->>   
->> -enum {
->> -	MEMTYPE_EXACT_MATCH	= 0,
->> -	MEMTYPE_END_MATCH	= 1
->> -};
->> -
->> -static struct memtype *memtype_match(u64 start, u64 end, int match_type)
->> +static struct memtype *memtype_match(u64 start, u64 end)
->>   {
->>   	struct memtype *entry_match;
->>   
->>   	entry_match = interval_iter_first(&memtype_rbroot, start, end-1);
->>   
->>   	while (entry_match != NULL && entry_match->start < end) {
-> 
-> I think this could use interval_tree_for_each_span() instead.
+1. A new VM_BIND submitqueue type for executing VM MSM_SUBMIT_BO_OP_MAP/
+   MAP_NULL/UNMAP commands
 
-Fancy, let me look at this. Probably I'll send another patch on top of 
-this series to do that conversion. (as you found, patch #9 moves that code)
+2. A new VM_BIND ioctl to allow submitting batches of one or more
+   MAP/MAP_NULL/UNMAP commands to a VM_BIND submitqueue
+
+I did not implement support for synchronous VM_BIND commands.  Since
+userspace could just immediately wait for the `SUBMIT` to complete, I don't
+think we need this extra complexity in the kernel.  Synchronous/immediate
+VM_BIND operations could be implemented with a 2nd VM_BIND submitqueue.
+
+The corresponding mesa MR: https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/32533
+
+Changes in v4:
+- Various locking/etc fixes
+- Optimize the pgtable preallocation.  If userspace sorts the VM_BIND ops
+  then the kernel detects ops that fall into the same 2MB last level PTD
+  to avoid duplicate page preallocation.
+- Add way to throttle pushing jobs to the scheduler, to cap the amount of
+  potentially temporary prealloc'd pgtable pages.
+- Add vm_log to devcoredump for debugging.  If the vm_log_shift module
+  param is set, keep a log of the last 1<<vm_log_shift VM updates for
+  easier debugging of faults/crashes.
+- Link to v3: https://lore.kernel.org/all/20250428205619.227835-1-robdclark@gmail.com/
+
+Changes in v3:
+- Switched to seperate VM_BIND ioctl.  This makes the UABI a bit
+  cleaner, but OTOH the userspace code was cleaner when the end result
+  of either type of VkQueue lead to the same ioctl.  So I'm a bit on
+  the fence.
+- Switched to doing the gpuvm bookkeeping synchronously, and only
+  deferring the pgtable updates.  This avoids needing to hold any resv
+  locks in the fence signaling path, resolving the last shrinker related
+  lockdep complaints.  OTOH it means userspace can trigger invalid
+  pgtable updates with multiple VM_BIND queues.  In this case, we ensure
+  that unmaps happen completely (to prevent userspace from using this to
+  access free'd pages), mark the context as unusable, and move on with
+  life.
+- Link to v2: https://lore.kernel.org/all/20250319145425.51935-1-robdclark@gmail.com/
+
+Changes in v2:
+- Dropped Bibek Kumar Patro's arm-smmu patches[3], which have since been
+  merged.
+- Pre-allocate all the things, and drop HACK patch which disabled shrinker.
+  This includes ensuring that vm_bo objects are allocated up front, pre-
+  allocating VMA objects, and pre-allocating pages used for pgtable updates.
+  The latter utilizes io_pgtable_cfg callbacks for pgtable alloc/free, that
+  were initially added for panthor. 
+- Add back support for BO dumping for devcoredump.
+- Link to v1 (RFC): https://lore.kernel.org/dri-devel/20241207161651.410556-1-robdclark@gmail.com/T/#t
+
+[1] https://www.kernel.org/doc/html/next/gpu/drm-mm.html#drm-gpuvm
+[2] https://docs.vulkan.org/spec/latest/chapters/sparsemem.html
+[3] https://patchwork.kernel.org/project/linux-arm-kernel/list/?series=909700
+
+Rob Clark (40):
+  drm/gpuvm: Don't require obj lock in destructor path
+  drm/gpuvm: Allow VAs to hold soft reference to BOs
+  drm/gem: Add ww_acquire_ctx support to drm_gem_lru_scan()
+  drm/sched: Add enqueue credit limit
+  iommu/io-pgtable-arm: Add quirk to quiet WARN_ON()
+  drm/msm: Rename msm_file_private -> msm_context
+  drm/msm: Improve msm_context comments
+  drm/msm: Rename msm_gem_address_space -> msm_gem_vm
+  drm/msm: Remove vram carveout support
+  drm/msm: Collapse vma allocation and initialization
+  drm/msm: Collapse vma close and delete
+  drm/msm: Don't close VMAs on purge
+  drm/msm: drm_gpuvm conversion
+  drm/msm: Convert vm locking
+  drm/msm: Use drm_gpuvm types more
+  drm/msm: Split out helper to get iommu prot flags
+  drm/msm: Add mmu support for non-zero offset
+  drm/msm: Add PRR support
+  drm/msm: Rename msm_gem_vma_purge() -> _unmap()
+  drm/msm: Drop queued submits on lastclose()
+  drm/msm: Lazily create context VM
+  drm/msm: Add opt-in for VM_BIND
+  drm/msm: Mark VM as unusable on GPU hangs
+  drm/msm: Add _NO_SHARE flag
+  drm/msm: Crashdump prep for sparse mappings
+  drm/msm: rd dumping prep for sparse mappings
+  drm/msm: Crashdec support for sparse
+  drm/msm: rd dumping support for sparse
+  drm/msm: Extract out syncobj helpers
+  drm/msm: Use DMA_RESV_USAGE_BOOKKEEP/KERNEL
+  drm/msm: Add VM_BIND submitqueue
+  drm/msm: Support IO_PGTABLE_QUIRK_NO_WARN_ON
+  drm/msm: Support pgtable preallocation
+  drm/msm: Split out map/unmap ops
+  drm/msm: Add VM_BIND ioctl
+  drm/msm: Add VM logging for VM_BIND updates
+  drm/msm: Add VMA unmap reason
+  drm/msm: Add mmu prealloc tracepoint
+  drm/msm: use trylock for debugfs
+  drm/msm: Bump UAPI version
+
+ drivers/gpu/drm/drm_gem.c                     |   14 +-
+ drivers/gpu/drm/drm_gpuvm.c                   |   15 +-
+ drivers/gpu/drm/msm/Kconfig                   |    1 +
+ drivers/gpu/drm/msm/Makefile                  |    1 +
+ drivers/gpu/drm/msm/adreno/a2xx_gpu.c         |   25 +-
+ drivers/gpu/drm/msm/adreno/a2xx_gpummu.c      |    5 +-
+ drivers/gpu/drm/msm/adreno/a3xx_gpu.c         |   17 +-
+ drivers/gpu/drm/msm/adreno/a4xx_gpu.c         |   17 +-
+ drivers/gpu/drm/msm/adreno/a5xx_debugfs.c     |    4 +-
+ drivers/gpu/drm/msm/adreno/a5xx_gpu.c         |   22 +-
+ drivers/gpu/drm/msm/adreno/a5xx_power.c       |    2 +-
+ drivers/gpu/drm/msm/adreno/a5xx_preempt.c     |   10 +-
+ drivers/gpu/drm/msm/adreno/a6xx_gmu.c         |   32 +-
+ drivers/gpu/drm/msm/adreno/a6xx_gmu.h         |    2 +-
+ drivers/gpu/drm/msm/adreno/a6xx_gpu.c         |   49 +-
+ drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c   |    6 +-
+ drivers/gpu/drm/msm/adreno/a6xx_preempt.c     |   10 +-
+ drivers/gpu/drm/msm/adreno/adreno_device.c    |    4 -
+ drivers/gpu/drm/msm/adreno/adreno_gpu.c       |   99 +-
+ drivers/gpu/drm/msm/adreno/adreno_gpu.h       |   23 +-
+ .../drm/msm/disp/dpu1/dpu_encoder_phys_wb.c   |   14 +-
+ drivers/gpu/drm/msm/disp/dpu1/dpu_formats.c   |   18 +-
+ drivers/gpu/drm/msm/disp/dpu1/dpu_formats.h   |    2 +-
+ drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c       |   18 +-
+ drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c     |   14 +-
+ drivers/gpu/drm/msm/disp/dpu1/dpu_plane.h     |    4 +-
+ drivers/gpu/drm/msm/disp/mdp4/mdp4_crtc.c     |    6 +-
+ drivers/gpu/drm/msm/disp/mdp4/mdp4_kms.c      |   28 +-
+ drivers/gpu/drm/msm/disp/mdp4/mdp4_plane.c    |   12 +-
+ drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c     |    4 +-
+ drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c      |   19 +-
+ drivers/gpu/drm/msm/disp/mdp5/mdp5_plane.c    |   12 +-
+ drivers/gpu/drm/msm/dsi/dsi_host.c            |   14 +-
+ drivers/gpu/drm/msm/msm_drv.c                 |  184 +--
+ drivers/gpu/drm/msm/msm_drv.h                 |   35 +-
+ drivers/gpu/drm/msm/msm_fb.c                  |   18 +-
+ drivers/gpu/drm/msm/msm_fbdev.c               |    2 +-
+ drivers/gpu/drm/msm/msm_gem.c                 |  494 +++---
+ drivers/gpu/drm/msm/msm_gem.h                 |  247 ++-
+ drivers/gpu/drm/msm/msm_gem_prime.c           |   15 +
+ drivers/gpu/drm/msm/msm_gem_shrinker.c        |  104 +-
+ drivers/gpu/drm/msm/msm_gem_submit.c          |  295 ++--
+ drivers/gpu/drm/msm/msm_gem_vma.c             | 1471 ++++++++++++++++-
+ drivers/gpu/drm/msm/msm_gpu.c                 |  214 ++-
+ drivers/gpu/drm/msm/msm_gpu.h                 |  144 +-
+ drivers/gpu/drm/msm/msm_gpu_trace.h           |   14 +
+ drivers/gpu/drm/msm/msm_iommu.c               |  302 +++-
+ drivers/gpu/drm/msm/msm_kms.c                 |   18 +-
+ drivers/gpu/drm/msm/msm_kms.h                 |    2 +-
+ drivers/gpu/drm/msm/msm_mmu.h                 |   38 +-
+ drivers/gpu/drm/msm/msm_rd.c                  |   62 +-
+ drivers/gpu/drm/msm/msm_ringbuffer.c          |   10 +-
+ drivers/gpu/drm/msm/msm_submitqueue.c         |   96 +-
+ drivers/gpu/drm/msm/msm_syncobj.c             |  172 ++
+ drivers/gpu/drm/msm/msm_syncobj.h             |   37 +
+ drivers/gpu/drm/scheduler/sched_entity.c      |   16 +-
+ drivers/gpu/drm/scheduler/sched_main.c        |    3 +
+ drivers/iommu/io-pgtable-arm.c                |   27 +-
+ include/drm/drm_gem.h                         |   10 +-
+ include/drm/drm_gpuvm.h                       |   12 +-
+ include/drm/gpu_scheduler.h                   |   13 +-
+ include/linux/io-pgtable.h                    |    8 +
+ include/uapi/drm/msm_drm.h                    |  149 +-
+ 63 files changed, 3484 insertions(+), 1251 deletions(-)
+ create mode 100644 drivers/gpu/drm/msm/msm_syncobj.c
+ create mode 100644 drivers/gpu/drm/msm/msm_syncobj.h
 
 -- 
-Cheers,
-
-David / dhildenb
+2.49.0
 
 
