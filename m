@@ -1,235 +1,199 @@
-Return-Path: <linux-kernel+bounces-647372-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-647374-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B382AB67AD
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 11:37:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C25D6AB67B6
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 11:37:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D6CE18899C0
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 09:37:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0B631B63751
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 09:38:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E14F22A4EC;
-	Wed, 14 May 2025 09:37:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C433122CBFE;
+	Wed, 14 May 2025 09:37:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=cherry.de header.i=@cherry.de header.b="QYpu823V"
-Received: from AM0PR02CU008.outbound.protection.outlook.com (mail-westeuropeazon11013027.outbound.protection.outlook.com [52.101.72.27])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="gWzR7qk2"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F48F1F4285;
-	Wed, 14 May 2025 09:37:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.72.27
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747215438; cv=fail; b=rf2D1yb6WU9tugVIml4Ery1sBkVU1uyOoTfplBySnxbrDFvKEVainSggUd2+I1IHOq1QDQ7t+s89xSCnYUs7J8+jTanrNpTkiUSbohREbAgns35LYrFRxnNZtAYOl0dMkJgtuoaKyha9vhQuTmOU/KMAiD6D48XWJUfCHVAxRzY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747215438; c=relaxed/simple;
-	bh=0nz4XTLEIjNQ6t3Q/b8WeBCtag35WbLOhOR4cve/4Qg=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=psvcTUK7kOkru4vOH6ZRkmshwm1RE+mNFkqRA5w1TPdwm4tLIIADjALje7hbBr4ZTNmut/U0xhOMAUPNerdoRFnMmdGss+QfPX8PG2eJP6x/jY76vLcs83pJxF/PMwsm98R/HZfANb4WVrk83CI4LRu4KQOSYF8IP7uqZCj6z1Q=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cherry.de; spf=pass smtp.mailfrom=cherry.de; dkim=pass (1024-bit key) header.d=cherry.de header.i=@cherry.de header.b=QYpu823V; arc=fail smtp.client-ip=52.101.72.27
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cherry.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cherry.de
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=VPYluKebvRf9yzugHiyvVXhmGBosLM9H6D/kzlCd0Z9/tB/4gAf4pFuCxYQ9+fc/3OIwYLej4ZPlYnzhlp2wB95xFamq1mwZ0P/l4zUBaU23GRJNkMNnDyy2CNX+FAAkInWf63KYutqrJaJEgaHUkh+HDk6UHE6oQ2lWgpndi6sMzQr5eKAiHZJYhpSqsVBA0263fssGtn26YN404CrODMshH7sAodtA/uEc7Jb0UrSFHPHk9BfNa/S21whqwduHptwtqWp7ZBHxaj4JqPPox3tXnukFOBbJc6Ju9Ldm1o3JXPMNJGyV1iuGCutzrcXT7PzeZlJFM2zQm0821eZbGQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=gONIbD6TQWb8jCrfc2aVJkgXHfm3q6iJXqHPCyR2fGU=;
- b=dTI7IxcxCEMNdCHlfPXBsY2y+2GcSUOW3UAMgqEENASlvncfO4Q515j3067tRlSXwNx/nYVObQfTun6V0q/4LV+64fioidblq8PiyOdTEQhWBFryKjR6ml69y9izR5Vwa1OHPj3uegcEt1kY7vgfDJlQKprlFeS2Uy/8U9ZC+dzAD7dylDFj7y57+qBlv4rIGUCeXPAhiXYwUxY8YBcrLqoMtLvB3ZPWpoWPHbEQmpqiN6eL/0dG8NH6XQR/l5ZhbS96X8mtt5arz/bxB6AWMDPAnUfbN0qJL7eku36U/cgrA9vY0+N2l/v9U+OVJgACaILlFm75MsP5L/YFWNdgmQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=cherry.de; dmarc=pass action=none header.from=cherry.de;
- dkim=pass header.d=cherry.de; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cherry.de;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gONIbD6TQWb8jCrfc2aVJkgXHfm3q6iJXqHPCyR2fGU=;
- b=QYpu823VZtf4Zqw4dYugN8AlAjwR1g935cgcxUfUDqU2qNPcgCuVcDPKDKqUGhGKJmue/fF2IOBMAjcjS3QiJV4zZVKumuMS62ojP+BfMb68hrAi/kb8csk4WekDJNN2DFah2Ka+A9qDLCUfSntiAKo09MVO8uCtIIsrdATwWq8=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=cherry.de;
-Received: from AS8PR04MB8897.eurprd04.prod.outlook.com (2603:10a6:20b:42c::20)
- by DU2PR04MB8615.eurprd04.prod.outlook.com (2603:10a6:10:2da::23) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.26; Wed, 14 May
- 2025 09:37:13 +0000
-Received: from AS8PR04MB8897.eurprd04.prod.outlook.com
- ([fe80::35f6:bc7d:633:369a]) by AS8PR04MB8897.eurprd04.prod.outlook.com
- ([fe80::35f6:bc7d:633:369a%4]) with mapi id 15.20.8722.027; Wed, 14 May 2025
- 09:37:12 +0000
-Message-ID: <c8538d66-a39a-490d-bfbc-95abda3871ef@cherry.de>
-Date: Wed, 14 May 2025 11:37:11 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 6/6] arm64: dts: rockchip: add px30-pp1516 base dtsi
- and board variants
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
- Heiko Stuebner <heiko.stuebner@cherry.de>
-References: <20250513150234.2331221-1-heiko@sntech.de>
- <20250513150234.2331221-7-heiko@sntech.de>
-Content-Language: en-US
-From: Quentin Schulz <quentin.schulz@cherry.de>
-In-Reply-To: <20250513150234.2331221-7-heiko@sntech.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR0P281CA0234.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:b2::18) To AS8PR04MB8897.eurprd04.prod.outlook.com
- (2603:10a6:20b:42c::20)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F077922ACD3
+	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 09:37:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747215444; cv=none; b=LhB8yTIG30o61lEHy0eG/crKjIn7LRqvM7S1D58tR3EtRZ1AUlgAPlV53bu7ZI8f1FwMrUxyCIEpMLF9X3kQegaNj8rmd3EGYDg5G3UJDw2cboJIfcv7uHOj2pocDj0+B9b4LT/VjDylj4qOugulv6PWXto6NUl5LjmieF1lOnc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747215444; c=relaxed/simple;
+	bh=FDUjn+NWpP7XGTtjpLyR9+XZTLtGQfrqPf3Qpzm70e8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dq0lO5pqFOFDm30jwJuazz0YOzaLxX20/Ot1brNfoVGNTqd4uJs4gj1IjwgHi6IZB4ZNrgQ32Litt54fBq4iUV6QqlD0QFbciXAIjKPJzfiNRBWsdfwND0u+xVIlm+pIW6+BhXtIqbtICl84PkIfKwKpkJglKTM46xHsQnwgk68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=gWzR7qk2; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3a1b8e8b2b2so3579855f8f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 02:37:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1747215440; x=1747820240; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=s4mPx04d8ciBVCzc7o5kQLaD0nCzpxnBqCMUyERgNAs=;
+        b=gWzR7qk2obyYq689JHbJPH7b9lctY8xyp64FFoldegbQ/RlbHSpIOSumhFjp1jKT42
+         aZm3hbceQvSSILXQWKOBcgxGgkG8XwTt2DTFlWrJyF1e2iOzWlQZ1XnGfKUrJ2gx1vzL
+         OKAaBNWEbnrHx6skyesnhspWHGcKy2E2k6mBoglLlicRnjVGJp7ZGRJoBMbUUDSkUDKN
+         xZrYDEsfmum5UoWWbfCyQzf9ip71xTA5gfCnJiuyfhndB5B5Lx83YN1KsNg6QfoKLH8U
+         QMFTNK6feop2+m9xqjJtcjU/G83SF0gxtCX1U3C54T9tSmi7TqsUAnPsnWWZAlNfQO0D
+         qBdA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747215440; x=1747820240;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=s4mPx04d8ciBVCzc7o5kQLaD0nCzpxnBqCMUyERgNAs=;
+        b=PnJUALGgYCuiFkhMKrSd0EezKMVfhpGS2P2Ai9m4eV5TvPewn2U2T6MAcmwsyBr4KL
+         yBA6R5cCmdI6dgXaHALVN1zWTm9YuaXlEIjGttpzH0XDDt2g/TXlvUVUpZg8vxLRDVV6
+         hl4wfmkjArWbIFJuitWBGtUQ/IyaHXPyzcajrBhxPKEcapNaWilUFY6xtav5SBr552sI
+         MySWsYHGCzgFo7TX/37BwlxrS2X13tsUAcMFqdXwFFVd6M/SnD+28mCIXBbo4cDhAv66
+         DaV5yHCRLrox+te5isxNdS+rYoCeQcjDO/U13vnzYnzPK0r+/akqaA9cvXYVCvCYxFAc
+         p5IA==
+X-Forwarded-Encrypted: i=1; AJvYcCWrZSdpMomxa2oTyYosA6FlXGdlgkaYRo+n9BsqVsAl04aTrh4uM1wNnkiERcpX5HHxeWT2/8WZ3fDEPiU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyPbC1zJ7bojvpcqRR9m10J7a9r0KpL/ML5Z7pgAoomtVoR/b52
+	Dyo3Mk+yjxejaExTzXQ823Y8ydwd+vSGSFn3wPkM5vHHz1qolpLD8mKYD1fyy8c=
+X-Gm-Gg: ASbGncu4dnaP4pyAWhFHNeWtxnT0TUYAhxJsseU4J7Gas4HCGvB7JHFsAXxOLcGJsg0
+	/YUsMN2qq9nvPQ1j5Iekak+ZUpgY1v4u8ctfOeyad32dOEMjbC9kkrg5qpgdkUR8Q15CBe659vG
+	9aygWOMHWxRkx7fXgBVXxzuopXnS16mFe0BIKPvljdTyEHcFCTgXUnz+72JY/paYLk2idlMTpgE
+	o0e+FqlhT9QvUFaOWSRqnsZckeRWtGqwzdcJclNqZRN1DjMEAW+jpVeI85xv3BSngdtyAFRfHy/
+	qYjY/WWpYgX3u6yxIhThgVGLkekARdW5vfQffMZKnnx22zfI2VPVTcsk9TU=
+X-Google-Smtp-Source: AGHT+IHnSc4wA94qOllSk7otA1xRX53jldMfyoziJ8FC+BVymjse5i0ZvJhyS6S2mppTOQu7gsAr1Q==
+X-Received: by 2002:a05:6000:2586:b0:3a0:8291:20d0 with SMTP id ffacd0b85a97d-3a3496c20afmr2168258f8f.29.1747215440172;
+        Wed, 14 May 2025 02:37:20 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.58])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a1f58ebec4sm19438238f8f.36.2025.05.14.02.37.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 14 May 2025 02:37:19 -0700 (PDT)
+Message-ID: <84b88ab7-65f6-4c9a-a28b-620cc4d8d453@tuxon.dev>
+Date: Wed, 14 May 2025 12:37:17 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS8PR04MB8897:EE_|DU2PR04MB8615:EE_
-X-MS-Office365-Filtering-Correlation-Id: a94a34d1-b8be-4728-be46-08dd92cae7da
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Q1Zlb2VFTUpnTzIzenZEMnMwc0tWWWx1ZnFjalluNUVzaUFjMExpMnN6b1lO?=
- =?utf-8?B?T0xQa01xN1gzN3ZuUTFIdEc2MTNrMkxUdDJLLzNsR0Q0eGlWbEIyTG1aQ3hM?=
- =?utf-8?B?S1MrZElJSzFMcTVCNlpMNGRjRmFQU1dUZkRoOWJ2YmQrUWRTWUJ5cXlrVHZ5?=
- =?utf-8?B?b01JaCtOWWJZNWJaQ1VaR1poaWVoM2ZWN2hxelNOTGJtT1BVelpGdi9oMUJk?=
- =?utf-8?B?OUhmV3VuWXlKOEZjL1dGc1orbnEycjFvSGFDVkZpQ0p5dlBVM3M2cE1CRXNp?=
- =?utf-8?B?OWM2M0x2YWQ0QVpFYkZxbFl3NmpJeGErcHRXS3RoazZidjFsa29ZQlhtK21L?=
- =?utf-8?B?V3JITm9mWUtmYWxocjMyS09rVldjRmI5dWVoOGRHK1MxVHFEQkJ0bUJkR1J4?=
- =?utf-8?B?V1FPZ2R5VmkwbVljbEdESElPWHZPWUQ0QWhlcGt2R2dadUtyN0pMSFQzSnU2?=
- =?utf-8?B?YWp4R0pQWkt3Y1I0bWQ5RVlDZE5OUjV1d2lwS2pVWjZQcnRiYXRRNTlVOHB4?=
- =?utf-8?B?SzlSVkt3dytSTmtxb2ZuUTQ4NC9JdGZOZXU4RTQ5T0pRbVlER1NFd2dMRFU0?=
- =?utf-8?B?OEQ2M3VaNFVXam9sTmNUZHZJSngxRzNEbFdtWXRHajdzbTNmbEtpcmMweUly?=
- =?utf-8?B?U0VtM212MFhodHN4aTF4MTBwbm1RZkJrdDJhbHRDTnAwSG4wOFVDS0c1NnZl?=
- =?utf-8?B?N2srL1R4V2kzVHRIR2JwcXNQME94c29tZ3p1WjVnNy96TFpjajdwR3FsNXdy?=
- =?utf-8?B?RDF3RXBlV2NoejFEN3k5Q1NOS2xXbGVLdjRmM1BZUFpJamFWQjhTWDB3UW5x?=
- =?utf-8?B?dElxUFNuMmQ0OWYvMUlzZXNmcnVwRVlWWk42T0o2TlhybkRremE0MXZETlZu?=
- =?utf-8?B?Ums1cWhJQXpLc2NkOWFpcHB4TENSeGx5ZWE4bmFXME1qcGFXUWlqbnQ0M0Z1?=
- =?utf-8?B?NGpNT2NJbTNVNUlnRk1tbGQ2S3ZXaXZpRzd2Tk42MnkrSVpJWUVUYy84Rjdx?=
- =?utf-8?B?YThJZFBBMEdFRTRaV1czblVzdHY2UG9ra1NHdVNtajZVbGcrLzNyVE1sNXJ0?=
- =?utf-8?B?VjQyZ3lTVEd1Uld6S01nSzIwMnNrMURvQ3ZmZ05DWXJrYkQzekF6NGxIaExl?=
- =?utf-8?B?TXI4MUZRMUdxNnA2KzFlSHlaT3NYcWNsSUNBc1gvU0lCKzdXb0tiekxsditj?=
- =?utf-8?B?UjVOeVJEZHdlaCtRZGp4RVFia3UyNjVkbkNhLzk5c3p6L1V6RTk0QUxUSkQv?=
- =?utf-8?B?My96dTIxcjM0REdnaDhRZ0pzWTdLUVBkc1YzQjM3WlZnWkVjd1BqUFU0aWlj?=
- =?utf-8?B?RHpNaDBVeXlCQUw3YVk5bEh4b1ZPNjdMeFJGNUI0YitPRUl4Z29iUjdhaGQ3?=
- =?utf-8?B?Y1RpRkNGektkZTdNZnpKcUJaQ01zb2k4RVY4b0QvY2Q4MnZmVFBZQm9FdkJ3?=
- =?utf-8?B?dUhMd1JWZjNrdTNHZk1ZVGJaNzVhamFDUnhSbjYzZ21HT20wSjdWNmRQNkYr?=
- =?utf-8?B?bU1DamlQMUdySVNWNkViOGJFMCtQK3Z4Vkg1MkluN3VPUC9pRktDVkorb0VX?=
- =?utf-8?B?MzBLb0VITHpFd1RPWXk5TVl6Ky8xd3hNRlJ0cGdYTURzdC81OEhTcVMrU2lj?=
- =?utf-8?B?RU9oQ3hUVDZnVUpVT1hTdUt1SmJqbU5VdktyeTZwY2xqVFlyVGxncTQvdW9m?=
- =?utf-8?B?bFoyamNScDN2QXlvcXZwQW0zM1FoRHlnelEvelRhcSsxcDl4UnJMc1BtWVNk?=
- =?utf-8?B?elZWbHJZMU5pV1V5OTV3UUZKVjlqdDZieHRwWHp5RVloQmFsUmsrdWZXK0ZF?=
- =?utf-8?B?T3B0Skc5dW90Umo2eDZRbkZmdTlmdU5RdnY2cS81RWRzenFnLzNPdVk5cEZ2?=
- =?utf-8?B?VUoxOTd4ZVZZeHBlZWZ4NStMQ0s1YS96M1V1aGVEb2VVUkJNTTdHSHNpMU0x?=
- =?utf-8?Q?iAQJjo1kyuc=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB8897.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?dlNRSndzdnA3MW04YTBrUUFUQS9OV2tkUGZjdmF6S3dHZmlOaG5Hb3FqbmVN?=
- =?utf-8?B?QVN0RHdMVytsdDNnZVp6YVpiM0M1N2VqVi9Cck1wUUtPZzd0cFdTQzI2UWhk?=
- =?utf-8?B?QU5oc3hJSzE2WWNxcmcyOHFnOWU4ME9aNHg2Z1pST1dmNW5rUHczZGs5NkJS?=
- =?utf-8?B?MG1uc2k1bmhSNjN2UjFrUWZNMCtObEthQlJPYjZsbUNqZlhCbGFybGwwSUxv?=
- =?utf-8?B?VkFpTVhNaytXSzlTR2plcTVxcDNPRmMxczh1LytRSWIyVm9lQXhCRHpNRyto?=
- =?utf-8?B?SWZNSGIwUUErQnB6N2NVTFpXdS9vd0RqRjRCZVpKRFJ0RG15RWJmVCtSamNo?=
- =?utf-8?B?OFE5aXVKQ1B4WE1SVDY4S2N1NVA3Z0dabXB4cUpWK1hkQW1ZcXU2RjFVNnEx?=
- =?utf-8?B?UWlpQXRQaENTb0JmK1dhdmNoanhoL3dPL2xpLzlJYk5NSGV5NFlYN1BYSTJI?=
- =?utf-8?B?cFd4dnA5TkNhVGt0QXBQdTAzblgwSTdiMmg4R0V0a1U5R3RpNkxOcTd5bWVn?=
- =?utf-8?B?T2t1emxndksrYXBzY2plSWkvL1p1VkkwbE5rbkhmTW1jTkRPRlhwakp0UDJF?=
- =?utf-8?B?ZkRJOHFNdDE3ejJ2S242QW9YaFlQaUdFV3VYdDdIcytNZjJFRFJlVmJNV0pl?=
- =?utf-8?B?WUc2N3pqM1p2bjNodHhrVGtIdWZHUytWMDNuZ0l6ZUVlOVJtaE1SREtYVkx0?=
- =?utf-8?B?NlVPdm8vd3ZtTGJkWlJYSUhpUG9NYjNIT3VPQTdoKzA3b3c2YU9ubkx0dkV5?=
- =?utf-8?B?ZEVlcFZ5cWhxTGhJaDY4Y0h3TlJ0WCtlWWdmeHdLWDNDUUV0NW85RFVWT2Vz?=
- =?utf-8?B?R2FoeHpIWS90dDl5TnJMVmxVY1p3RVdDeEphcWxVcjJtOVFiMVdEWVd5a1FJ?=
- =?utf-8?B?a0oraW5scWVLYSs3RVNPdTc2cWk5a3F4NTl5OFgyQ3FydVgzMWI2MmpuZ1RR?=
- =?utf-8?B?NW1Ednkzem1kMi9SOGp5YVRVVnh3Q3ZYekNYQWZiczZqNzIyLzI1Q2pjVWto?=
- =?utf-8?B?K1VLaG1kYWRSQkFkb093ZnZPN0o0alNHaG9jNmxzNjViQWFWaWY1V2hXdEtX?=
- =?utf-8?B?b3F3VEp4K1ZtVVU1cHV4VnI4bWlkL3E2R1htMnNGRWZ5djRtc0RJSTZEVXdS?=
- =?utf-8?B?ZXJHZ21oSURsNGlVTjU4VnJLb25iUXM2emN0bWkvb3IzU0Y0dlVDNSsrZTdq?=
- =?utf-8?B?alJyZWViaEtnUnBDRHB6VTZSa0t3TUgrd1ZEYjRucFpoZFVqMXR5cHBQSUgv?=
- =?utf-8?B?Q1piYWJRL0xTRnQ1Z1lZZUFEblpJb3ZaTUE1eUJTejZqM1dXUXZzVWovTk52?=
- =?utf-8?B?K3RZMWhzWDNmaVMxWUhwcVNYWXh2NFk0RWRtM1NUTC9oY3orZnQ5Wmc0L1Yz?=
- =?utf-8?B?QlhZZ3pLdXVhS0R6L3RXMWtXcXB2VVJ0QXhVR1lqSXI2TTUxaDMzRlhoVkR1?=
- =?utf-8?B?bERXdWRlQzZuUzM1aHBTQVl2VTJkak1iaE5ZdzVhcTVXZ3lBcDdIYXVreTZq?=
- =?utf-8?B?WFAxVFFSRVFjSDB2anREZFJONVJ1aVRKeXY2V1dlRmZPVjZwYmprMFhpa2dL?=
- =?utf-8?B?djZGcE9wRjUvZ0phcWsya2tYL0VhTkdNeUdzS0FEYTAxYlBsbzdmZ0pKakE2?=
- =?utf-8?B?dTh0UWhVZFRCOWU5dXF2NUVKQ1M4WnFMV3lqWXJpcytHaUhXR0h6NXJhT3lB?=
- =?utf-8?B?YnlGaDVRNmQ2WjJKV29mdHc0U01yMGFLcldmdDZyeXZ3RlR4WmU2TnduaE5y?=
- =?utf-8?B?VFg0dXVpZWpuZDk1Mmp4RVNDd0h6RlgyQ0owVU1uMWVyWjRxUkhFcktQZ0xB?=
- =?utf-8?B?YlRGWjgwRitqcUNrTDI4OHNIRUxORU0rTnRSNll2aE80TzY3U2xMNDFhd1Rm?=
- =?utf-8?B?Z3lyZkk1Tkt4NzZjVjljOFg4dWNVR2EzSnQzVU8vL05nQUlsWHkvbGwvUW0x?=
- =?utf-8?B?VXJSaUY4T1hENVlKenV4b3BiYlVMVkt4YnlzM0llSXE4bXZocEdjclk5cmRv?=
- =?utf-8?B?KzNoNjk5WUlDME03LzZnQjlnb0JqanF3QUxkdWxsdEN6dHEwM2xHZmNLVFps?=
- =?utf-8?B?SU56VXM4WkFpZGVpTEFXQk5WcUZEa3pYcnpoQ0FNL05wMDNDRlRoYnRzSzRo?=
- =?utf-8?B?UStaYUYyRnJIL2NLMkowdmN0cGF0ZXpmMVBiSXBzd1JjK25VbCt1NjNhTUZ3?=
- =?utf-8?B?a1E9PQ==?=
-X-OriginatorOrg: cherry.de
-X-MS-Exchange-CrossTenant-Network-Message-Id: a94a34d1-b8be-4728-be46-08dd92cae7da
-X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8897.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 May 2025 09:37:12.8846
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 5e0e1b52-21b5-4e7b-83bb-514ec460677e
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: VLcZGz/3uAQ4RDQBH6OHu5CEx0WvNYcEArLZkA/OGQ3Ix4ly3cGEYPufZrg6Aabykojxa5ATy4giIW3aBWS9kozGU/r33EwzuUb0koZVJ3U=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU2PR04MB8615
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5/8] PCI: rzg3s-host: Add Initial PCIe Host Driver for
+ Renesas RZ/G3S SoC
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com,
+ manivannan.sadhasivam@linaro.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, geert+renesas@glider.be, magnus.damm@gmail.com,
+ mturquette@baylibre.com, sboyd@kernel.org, saravanak@google.com,
+ p.zabel@pengutronix.de, linux-pci@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20250512202550.GA1126561@bhelgaas>
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Content-Language: en-US
+In-Reply-To: <20250512202550.GA1126561@bhelgaas>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Heiko,
+Hi, Bjorn,
 
-On 5/13/25 5:02 PM, Heiko Stuebner wrote:
+On 12.05.2025 23:25, Bjorn Helgaas wrote:
+> On Mon, May 05, 2025 at 02:26:43PM +0300, Claudiu Beznea wrote:
+>> On 01.05.2025 23:12, Bjorn Helgaas wrote:
+>>> On Wed, Apr 30, 2025 at 01:32:33PM +0300, Claudiu wrote:
+>>>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>>>
+>>>> The Renesas RZ/G3S features a PCIe IP that complies with the PCI Express
+>>>> Base Specification 4.0 and supports speeds of up to 5 GT/s. It functions
+>>>> only as a root complex, with a single-lane (x1) configuration. The
+>>>> controller includes Type 1 configuration registers, as well as IP
+>>>> specific registers (called AXI registers) required for various adjustments.
+>>>>
+>>>> Other Renesas RZ SoCs (e.g., RZ/G3E, RZ/V2H) share the same AXI registers
+>>>> but have both Root Complex and Endpoint capabilities. As a result, the PCIe
+>>>> host driver can be reused for these variants with minimal adjustments.
+>> ...
+> 
+>>>> +static void rzg3s_pcie_irqs_init(struct rzg3s_pcie_host *host)
+>>>
+>>> This and many of the following functions have names that don't
+>>> correspond to anything in other drivers, which makes it harder to
+>>> transfer knowledge between the drivers.  If you can find a pattern
+>>> somewhere to follow, it will make it easier for others to read the
+>>> driver.
+>>
+>> OK, I'll think about it. Do you have a recomentation?
+> 
+> Not really.  Maybe pick a driver with recent activity.
+> 
+>>>> +static int rzg3s_pcie_probe(struct platform_device *pdev)
+>>>> +{
+>>>> +	struct device *dev = &pdev->dev;
+>>>> +	void *devres_group_id;
+>>>> +	int ret;
+>>>> +
+>>>> +	devres_group_id = devres_open_group(dev, NULL, GFP_KERNEL);
+>>>> +	if (!devres_group_id)
+>>>> +		return -ENOMEM;
+>>>
+>>> What's the benefit of using devres_open_group()?  No other PCI
+>>> controller drivers use it.
+>>
+>> This driver uses devm_add_action_or_reset() to keep the error path simpler.
+>> Some of the action or reset registered handlers access the controller
+>> registers. Because the driver is attached to the platform bus and the
+>> dev_pm_domain_detach() is called right after driver remove [1] having devm
+>> action or reset handlers accessing controller register will later lead to
+>> hangs when the device_unbind_cleanup() -> devres_release_all() will be
+>> called on remove path. Other issue described in [2] may arries when doing
+>> continuous unbind/bind if the driver has runtime PM API (not case for this
+>> driver at the moment) that access directly controller registers.
+>>
+>> This is because the dev_pm_domain_detach() drops the clocks from PM domain
+>> and any subsequent pm_runtime_resume() (or similar function) call will lead
+>> to no runtime resume of the device.
+>>
+>> There is a solution proposed to this here [2] but it slowly progresses.
+>> Until this will be solved I chosed the appraoch of having the devres group
+>> opened here. If you agree with it, I had the intention to drop this call if
+>> there will be an accepted solution for it. If you are OK with going forward
+>> like this, for the moment, would to prefer me to add a comment about the
+>> reason the devres_open_group() is used here?
+>>
+>> This is not PCIe specific but platform bus specific. There are other
+>> affected drivers on this side (e.g. rzg2l-adc [3], rzg3s-thermal [4]).
+>>
+>> A similar solution as [2] is already used by the i2c subsystem.
+> 
+> OK.  Is there something unique about rzg3s that means it needs
+> devres_open_group(), while other PCI controller drivers do not?  Or
+> should the other drivers be using it too?  Maybe they have similar
+> latent defects that should be fixed.
 
-[...]
+Nothing particular for RZ/G3S. The issue is there for every drivers
+attached to platform bus (at least the ones that have their clocks as part
+of their PM domain as RZ/G3S is having) which are accessing IP registers
+though devres cleanup APIs or are accessing IP registers in the runtime PM
+APIs. This is because these accesses ends up to be done when the clocks
+cannot be enabled anymore though runtime resume calls (detailed explanation
+in [1]). This is the reason for which I am trying to impose it in the
+platform bus driver, but the discussion is slowly progressing and not all
+involved parties agrees with having the fix in the platform bus driver [1].
 
-> +	rk809: pmic@20 {
-> +		compatible = "rockchip,rk809";
-> +		reg = <0x20>;
-> +		#clock-cells = <0>;
-> +		clock-output-names = "xin32k";
-> +		interrupt-parent = <&gpio0>;
-> +		interrupts = <RK_PA7 IRQ_TYPE_LEVEL_LOW>;
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&pmic_int>;
-> +		wakeup-source;
-> +		system-power-controller;
-> +
+[1]
+https://lore.kernel.org/all/20250215130849.227812-1-claudiu.beznea.uj@bp.renesas.com/
 
-Please order alphabetically here.
+> 
+> If there's something unique about rzg3s, please add a brief comment
+> about what it is so we know why it needs devres_open_group().
 
-[...]
+In the initial version I've added a comment in the documentation of struct
+rzg3s_pcie_host::devres_group_id. I'll update the place where this is call,
+too.
 
-> +&pinctrl {
-> +	camera {
-> +		accel_int: accel-int {
-> +			rockchip,pins = <2 RK_PB4 RK_FUNC_GPIO &pcfg_pull_none>;
-> +		};
-> +
-
-The accelerometer is not in the camera module like some of our other 
-products, but on the PCBA directly, so I would put it in a different 
-section in the pinctrl node.
-
-Can you have it this way too:
-
-rockchip,pins =
-         <2 RK_PB4 RK_FUNC_GPIO &pcfg_pull_none>;
-
-so it is consistent with the other ones?
-
-[...]
-
-> +	panel {
-> +		dsp_rst: dsp-rst {
-> +			rockchip,pins =
-> +				<0 RK_PB2 RK_FUNC_GPIO &pcfg_pull_up>;
-
-Same remark as for Cobra, I assume we want a pull down here, to keep in 
-reset until the driver probe drives the pin to orchestrate the reset?
-
-With all the above changed:
-
-Reviewed-by: Quentin Schulz <quentin.schulz@cherry.de>
-
-Thanks!
-Quentin
+Thank you for your review,
+Claudiu
 
