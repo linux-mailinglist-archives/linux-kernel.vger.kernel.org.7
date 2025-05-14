@@ -1,314 +1,242 @@
-Return-Path: <linux-kernel+bounces-647517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-647519-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A624CAB6962
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 13:01:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 888D3AB6967
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 13:02:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1D8C8C2E7E
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 11:00:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBC72189FD37
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 11:02:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C65D2749E5;
-	Wed, 14 May 2025 10:58:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ni8Xan43"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEA89211A3D;
+	Wed, 14 May 2025 11:02:16 +0000 (UTC)
+Received: from mta22.hihonor.com (mta22.honor.com [81.70.192.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2EF6278E53
-	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 10:58:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF726201032;
+	Wed, 14 May 2025 11:02:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.192.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747220337; cv=none; b=hDp2gz81933FYUmussO+7yWFLgwnnDJfl9MD1J/BoqFE8ywIkfvMUhRYIdFx670Tx4d3XEi8FFPI7XYKKL7CpckiobqgbBYq+YXziekf9QaFKVod8xRhkocYHvVy4PhixcYhSoRkNmdPzmT7ltSpuUDpxoKKja+nNT7mwdx9rjw=
+	t=1747220536; cv=none; b=h0wSK+i8HGVpktrmlQMPzVTEeEJFXZL/qjxhVcOShW1GSqAjHi4P5HUsTUGfN71eWLkpZgF0LfOTgO75uj5FIVxHZDmxo4JTlvt6C/103vZVSTNXib7OipilIITYkfgdUdNNBzlc5ZiRAjjKlDMiRWvNgxy1NA35jOBILXAUQNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747220337; c=relaxed/simple;
-	bh=UICIsAOuY4v+Bsy4Q/NjNK0aCOcLZXPpVUJOEItgdJE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lJ1ESCewe4KNfxo6O7+ecVUHIaZhwcff+ArE3QSEZTLWIRczD9+EopmJIskfZXOz8A/VVE2pHvaX4Rl9X6TkMOyygS79pWd2KSBhlRUah29iOsAs1vkjW+9X/RBVIhP+CgVjNvWtCI+sSLq9yov8uSBVStDECyNEKNPom/wtDXo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ni8Xan43; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54E6IOpn026361;
-	Wed, 14 May 2025 10:58:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=BetRiI
-	ZTQ7bdSxfWgGALXL5bpIbRUZUx65iTjrbnDlM=; b=ni8Xan43Ox8RyB5clmk2bA
-	u9uqxqODZltxKqtiQvuuOHjIRqV/RkTpFRXu0wO6GEZdcxnoDRQLwc3e+q2OhJtS
-	Z9Ggc20/8r/h1BWxAs03kf/7CWMY6+CaqtcWMQO5vzlA3Ef7yv0c6Un58RJ/Ctff
-	KURlWmkQ2RWq/hjxLCqXPZ9lZOpyri4mapfewgvf10VJJe/vPgZgYNMKWLEd9Q0G
-	YaSq9P36l6yTaARhKMbwzMf2i9PNVv67xb5WP+N369BhvcNlzGYo9JKADDxo61Ph
-	7vGwHJ5kU8ynF8DPIVzFF1RAPZxvjMfISsngoN8V4ot0JSd91oEVMRSl0TqXkwzQ
-	==
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46mnst18gg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 14 May 2025 10:58:48 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 54EA5JVB015329;
-	Wed, 14 May 2025 10:58:47 GMT
-Received: from smtprelay02.dal12v.mail.ibm.com ([172.16.1.4])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 46mbfpurn3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 14 May 2025 10:58:47 +0000
-Received: from smtpav01.wdc07v.mail.ibm.com (smtpav01.wdc07v.mail.ibm.com [10.39.53.228])
-	by smtprelay02.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 54EAwkjh28836458
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 14 May 2025 10:58:46 GMT
-Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 5B24F5804B;
-	Wed, 14 May 2025 10:58:46 +0000 (GMT)
-Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id E3B1658055;
-	Wed, 14 May 2025 10:58:44 +0000 (GMT)
-Received: from [9.111.92.18] (unknown [9.111.92.18])
-	by smtpav01.wdc07v.mail.ibm.com (Postfix) with ESMTPS;
-	Wed, 14 May 2025 10:58:44 +0000 (GMT)
-Message-ID: <bec7391c-e40d-4633-a2d0-881eb6d18f19@linux.ibm.com>
-Date: Wed, 14 May 2025 12:58:44 +0200
+	s=arc-20240116; t=1747220536; c=relaxed/simple;
+	bh=OBRcMcz1Yj9A4L0go5r2Hi//ZpjDg5kmfbfBOs7ImEg=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=WDPeVVUo9LR3OMT3EjTLpl9Zf73z4YGCDAwcbdvHCbEwITSL8xZZHBDSAns16u6fC4GgHKQnolVWAUacDBeb5AFaYDfqGyEa2tC/fFqNyuPc7YWzCwOQ3h7JdpRe911hlm91E8ti2EQMG0O7tCSvBvGIUSFz2zIWd7WTsRkhCAw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; arc=none smtp.client-ip=81.70.192.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=honor.com
+Received: from w001.hihonor.com (unknown [10.68.25.235])
+	by mta22.hihonor.com (SkyGuard) with ESMTPS id 4Zy9Nk05qXzYl0Tn;
+	Wed, 14 May 2025 19:00:22 +0800 (CST)
+Received: from a009.hihonor.com (10.68.30.244) by w001.hihonor.com
+ (10.68.25.235) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 14 May
+ 2025 19:02:10 +0800
+Received: from a010.hihonor.com (10.68.16.52) by a009.hihonor.com
+ (10.68.30.244) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 14 May
+ 2025 19:02:10 +0800
+Received: from a010.hihonor.com ([fe80::7127:3946:32c7:6e]) by
+ a010.hihonor.com ([fe80::7127:3946:32c7:6e%14]) with mapi id 15.02.1544.011;
+ Wed, 14 May 2025 19:02:10 +0800
+From: wangtao <tao.wangtao@honor.com>
+To: =?utf-8?B?Q2hyaXN0aWFuIEvDtm5pZw==?= <christian.koenig@amd.com>,
+	"sumit.semwal@linaro.org" <sumit.semwal@linaro.org>,
+	"benjamin.gaignard@collabora.com" <benjamin.gaignard@collabora.com>,
+	"Brian.Starkey@arm.com" <Brian.Starkey@arm.com>, "jstultz@google.com"
+	<jstultz@google.com>, "tjmercier@google.com" <tjmercier@google.com>
+CC: "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	"linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"wangbintian(BintianWang)" <bintian.wang@honor.com>, yipengxiang
+	<yipengxiang@honor.com>, liulu 00013167 <liulu.liu@honor.com>, "hanfeng
+ 00012985" <feng.han@honor.com>
+Subject: RE: [PATCH 2/2] dmabuf/heaps: implement DMA_BUF_IOCTL_RW_FILE for
+ system_heap
+Thread-Topic: [PATCH 2/2] dmabuf/heaps: implement DMA_BUF_IOCTL_RW_FILE for
+ system_heap
+Thread-Index: AQHbw+qMldEo/aUx7kiLwLLmDDhXfrPP52GAgACTfSD//4oVgIAB7nTg
+Date: Wed, 14 May 2025 11:02:09 +0000
+Message-ID: <9f732ac8b90e4e819e0a6a5511ac3f6d@honor.com>
+References: <20250513092803.2096-1-tao.wangtao@honor.com>
+ <fdc8f0a2-5b2f-4898-8090-0d7b888c15d8@amd.com>
+ <5b68b2a50d48444b93d97f5d342f37c8@honor.com>
+ <ef978301-6a63-451d-9ae6-171968b26a55@amd.com>
+In-Reply-To: <ef978301-6a63-451d-9ae6-171968b26a55@amd.com>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] zram: support deflate-specific params
-To: Sergey Senozhatsky <senozhatsky@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc: Minchan Kim <minchan@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, Heiko Carstens <hca@linux.ibm.com>,
-        Ilya Leoshkevich <iii@linux.ibm.com>
-References: <20250514024825.1745489-1-senozhatsky@chromium.org>
- <20250514024825.1745489-3-senozhatsky@chromium.org>
-Content-Language: en-US
-From: Zaslonko Mikhail <zaslonko@linux.ibm.com>
-In-Reply-To: <20250514024825.1745489-3-senozhatsky@chromium.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: L_ETc4ufNI1v3IPanPc7xG0qTfvH269h
-X-Authority-Analysis: v=2.4 cv=V+590fni c=1 sm=1 tr=0 ts=68247768 cx=c_pps a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=VnNF1IyMAAAA:8 a=cm27Pg_UAAAA:8 a=mYzGZE5f00aBUjGx16gA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-ORIG-GUID: L_ETc4ufNI1v3IPanPc7xG0qTfvH269h
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTE0MDA5MyBTYWx0ZWRfXyfTQETzYEIYv 3U66ROmOY7GI+ddWKXybCol7oktWJslIPJcwQWxHbmX8VqoqkKX6FaokbhuU8j8SlmHrSdjWCK6 kgL70r3JpnLCybnxW08c7G8ulehamSC4yraVz1M5TN/GqWKVahVRhLRUjjdVWqFxgNLEHHj5VwC
- I/qeLwNUunFPRN34oZGu13L5RTilM4uWJqwEXzYL9+FH1p7EX19XiPJW1yoJiILVtu58ij6bnLk V8d3ftxqKCG2UzN3iGrZGR/AV/HE3SEaHNXV3r2KClHRaCZJAFCxalP+9QQGVatNTvkIGGKkqGv Wvhl612g9OQoAFJcun+nDhKJgS45XnIeZJDWurXs/1+Uch/Gz3AlbULmyeJ6F/px1iyU8uleDbv
- ZuWhwmj83/8ycdWJL2MM/FOyEMoX9ccykV/Ne+5wDyHGJaIgCU/ww3gYssruT9DhaDGDqW/b
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-14_03,2025-05-14_02,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 priorityscore=1501
- mlxlogscore=999 lowpriorityscore=0 bulkscore=0 suspectscore=0
- impostorscore=0 malwarescore=0 phishscore=0 adultscore=0 clxscore=1011
- spamscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2505070000
- definitions=main-2505140093
 
-Looks good to me.
-
-Just a minor comment. If we intend to use raw deflate only, like we do now (no zlib header or
-trailer for the compressed data), we should probably change deflate.winbits to unsigned and
-pass '-deflate.winbits' to zlib_deflateInit2().
-
-
-Also, here is another patch suggestion from my side on top of this one. 
-Let me know what you think.
-
----8<---
-
-zram: Utilize s390 hardware deflate acceleration for zram
-
-Utilize s390 hardware deflate acceleration for zram deflate compression
-by default when the facility is available.
-
-Signed-off-by: Mikhail Zaslonko <zaslonko@linux.ibm.com>
-
-diff --git a/drivers/block/zram/backend_deflate.c b/drivers/block/zram/backend_deflate.c
-index b75016e0e654..5bfc57522e3a 100644
---- a/drivers/block/zram/backend_deflate.c
-+++ b/drivers/block/zram/backend_deflate.c
-@@ -22,10 +22,23 @@ static void deflate_release_params(struct zcomp_params *params)
-
- static int deflate_setup_params(struct zcomp_params *params)
- {
--       if (params->level == ZCOMP_PARAM_NOT_SET)
--               params->level = Z_DEFAULT_COMPRESSION;
--       if (params->deflate.winbits == ZCOMP_PARAM_NOT_SET)
--               params->deflate.winbits = DEFLATE_DEF_WINBITS;
-+       /*
-+        * In case of s390 zlib hardware support available,
-+        * use maximum window size and level one as default compression
-+        * parameters in order to utilize hardware deflate acceleration.
-+        */
-+       if (params->level == ZCOMP_PARAM_NOT_SET) {
-+               if (zlib_deflate_dfltcc_enabled())
-+                       params->level = Z_BEST_SPEED;
-+               else
-+                       params->level = Z_DEFAULT_COMPRESSION;
-+       }
-+       if (params->deflate.winbits == ZCOMP_PARAM_NOT_SET) {
-+               if (zlib_deflate_dfltcc_enabled())
-+                       params->deflate.winbits = -MAX_WBITS;
-+               else
-+                       params->deflate.winbits = DEFLATE_DEF_WINBITS;
-+       }
-
-        return 0;
- }
-
-
-
-On 14.05.2025 04:47, Sergey Senozhatsky wrote:
-> Introduce support of algorithm specific parameters in
-> algorithm_params device attribute.  The expected format
-> is algorithm.param=value.
-> 
-> For starters, add support for deflate.winbits parameter.
-> 
-> Signed-off-by: Sergey Senozhatsky <senozhatsky@chromium.org>
-> ---
->  drivers/block/zram/backend_deflate.c | 10 ++++++----
->  drivers/block/zram/zcomp.h           |  7 +++++++
->  drivers/block/zram/zram_drv.c        | 17 +++++++++++++++--
->  3 files changed, 28 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/block/zram/backend_deflate.c b/drivers/block/zram/backend_deflate.c
-> index 4c00b5b6739f..b75016e0e654 100644
-> --- a/drivers/block/zram/backend_deflate.c
-> +++ b/drivers/block/zram/backend_deflate.c
-> @@ -8,7 +8,7 @@
->  #include "backend_deflate.h"
->  
->  /* Use the same value as crypto API */
-> -#define DEFLATE_DEF_WINBITS		11
-> +#define DEFLATE_DEF_WINBITS		(-11)
->  #define DEFLATE_DEF_MEMLEVEL		MAX_MEM_LEVEL
->  
->  struct deflate_ctx {
-> @@ -24,6 +24,8 @@ static int deflate_setup_params(struct zcomp_params *params)
->  {
->  	if (params->level == ZCOMP_PARAM_NOT_SET)
->  		params->level = Z_DEFAULT_COMPRESSION;
-> +	if (params->deflate.winbits == ZCOMP_PARAM_NOT_SET)
-> +		params->deflate.winbits = DEFLATE_DEF_WINBITS;
->  
->  	return 0;
->  }
-> @@ -57,13 +59,13 @@ static int deflate_create(struct zcomp_params *params, struct zcomp_ctx *ctx)
->  		return -ENOMEM;
->  
->  	ctx->context = zctx;
-> -	sz = zlib_deflate_workspacesize(-DEFLATE_DEF_WINBITS, MAX_MEM_LEVEL);
-> +	sz = zlib_deflate_workspacesize(params->deflate.winbits, MAX_MEM_LEVEL);
->  	zctx->cctx.workspace = vzalloc(sz);
->  	if (!zctx->cctx.workspace)
->  		goto error;
->  
->  	ret = zlib_deflateInit2(&zctx->cctx, params->level, Z_DEFLATED,
-> -				-DEFLATE_DEF_WINBITS, DEFLATE_DEF_MEMLEVEL,
-> +				params->deflate.winbits, DEFLATE_DEF_MEMLEVEL,
->  				Z_DEFAULT_STRATEGY);
->  	if (ret != Z_OK)
->  		goto error;
-> @@ -73,7 +75,7 @@ static int deflate_create(struct zcomp_params *params, struct zcomp_ctx *ctx)
->  	if (!zctx->dctx.workspace)
->  		goto error;
->  
-> -	ret = zlib_inflateInit2(&zctx->dctx, -DEFLATE_DEF_WINBITS);
-> +	ret = zlib_inflateInit2(&zctx->dctx, params->deflate.winbits);
->  	if (ret != Z_OK)
->  		goto error;
->  
-> diff --git a/drivers/block/zram/zcomp.h b/drivers/block/zram/zcomp.h
-> index cfacdfe9044c..4acffe671a5e 100644
-> --- a/drivers/block/zram/zcomp.h
-> +++ b/drivers/block/zram/zcomp.h
-> @@ -7,6 +7,10 @@
->  
->  #define ZCOMP_PARAM_NOT_SET	INT_MIN
->  
-> +struct deflate_params {
-> +	s32 winbits;
-> +};
-> +
->  /*
->   * Immutable driver (backend) parameters. The driver may attach private
->   * data to it (e.g. driver representation of the dictionary, etc.).
-> @@ -17,6 +21,9 @@ struct zcomp_params {
->  	void *dict;
->  	size_t dict_sz;
->  	s32 level;
-> +	union {
-> +		struct deflate_params deflate;
-> +	};
->  
->  	void *drv_data;
->  };
-> diff --git a/drivers/block/zram/zram_drv.c b/drivers/block/zram/zram_drv.c
-> index a11b7a6e35f4..54c57103715f 100644
-> --- a/drivers/block/zram/zram_drv.c
-> +++ b/drivers/block/zram/zram_drv.c
-> @@ -1277,12 +1277,14 @@ static void comp_params_reset(struct zram *zram, u32 prio)
->  
->  	vfree(params->dict);
->  	params->level = ZCOMP_PARAM_NOT_SET;
-> +	params->deflate.winbits = ZCOMP_PARAM_NOT_SET;
->  	params->dict_sz = 0;
->  	params->dict = NULL;
->  }
->  
->  static int comp_params_store(struct zram *zram, u32 prio, s32 level,
-> -			     const char *dict_path)
-> +			     const char *dict_path,
-> +			     struct deflate_params *deflate_params)
->  {
->  	ssize_t sz = 0;
->  
-> @@ -1300,6 +1302,7 @@ static int comp_params_store(struct zram *zram, u32 prio, s32 level,
->  
->  	zram->params[prio].dict_sz = sz;
->  	zram->params[prio].level = level;
-> +	zram->params[prio].deflate.winbits = deflate_params->winbits;
->  	return 0;
->  }
->  
-> @@ -1310,9 +1313,12 @@ static ssize_t algorithm_params_store(struct device *dev,
->  {
->  	s32 prio = ZRAM_PRIMARY_COMP, level = ZCOMP_PARAM_NOT_SET;
->  	char *args, *param, *val, *algo = NULL, *dict_path = NULL;
-> +	struct deflate_params deflate_params;
->  	struct zram *zram = dev_to_zram(dev);
->  	int ret;
->  
-> +	deflate_params.winbits = ZCOMP_PARAM_NOT_SET;
-> +
->  	args = skip_spaces(buf);
->  	while (*args) {
->  		args = next_arg(args, &param, &val);
-> @@ -1343,6 +1349,13 @@ static ssize_t algorithm_params_store(struct device *dev,
->  			dict_path = val;
->  			continue;
->  		}
-> +
-> +		if (!strcmp(param, "deflate.winbits")) {
-> +			ret = kstrtoint(val, 10, &deflate_params.winbits);
-> +			if (ret)
-> +				return ret;
-> +			continue;
-> +		}
->  	}
->  
->  	/* Lookup priority by algorithm name */
-> @@ -1364,7 +1377,7 @@ static ssize_t algorithm_params_store(struct device *dev,
->  	if (prio < ZRAM_PRIMARY_COMP || prio >= ZRAM_MAX_COMPS)
->  		return -EINVAL;
->  
-> -	ret = comp_params_store(zram, prio, level, dict_path);
-> +	ret = comp_params_store(zram, prio, level, dict_path, &deflate_params);
->  	return ret ? ret : len;
->  }
->  
-
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogQ2hyaXN0aWFuIEvDtm5p
+ZyA8Y2hyaXN0aWFuLmtvZW5pZ0BhbWQuY29tPg0KPiBTZW50OiBUdWVzZGF5LCBNYXkgMTMsIDIw
+MjUgOToxOCBQTQ0KPiBUbzogd2FuZ3RhbyA8dGFvLndhbmd0YW9AaG9ub3IuY29tPjsgc3VtaXQu
+c2Vtd2FsQGxpbmFyby5vcmc7DQo+IGJlbmphbWluLmdhaWduYXJkQGNvbGxhYm9yYS5jb207IEJy
+aWFuLlN0YXJrZXlAYXJtLmNvbTsNCj4ganN0dWx0ekBnb29nbGUuY29tOyB0am1lcmNpZXJAZ29v
+Z2xlLmNvbQ0KPiBDYzogbGludXgtbWVkaWFAdmdlci5rZXJuZWwub3JnOyBkcmktZGV2ZWxAbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnOyBsaW5hcm8tDQo+IG1tLXNpZ0BsaXN0cy5saW5hcm8ub3JnOyBs
+aW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOw0KPiB3YW5nYmludGlhbihCaW50aWFuV2FuZykg
+PGJpbnRpYW4ud2FuZ0Bob25vci5jb20+OyB5aXBlbmd4aWFuZw0KPiA8eWlwZW5neGlhbmdAaG9u
+b3IuY29tPjsgPGxpdWx1LmxpdUBob25vci5jb20+OyA8ZmVuZy5oYW5AaG9ub3IuY29tPg0KPiBT
+dWJqZWN0OiBSZTogW1BBVENIIDIvMl0gZG1hYnVmL2hlYXBzOiBpbXBsZW1lbnQNCj4gRE1BX0JV
+Rl9JT0NUTF9SV19GSUxFIGZvciBzeXN0ZW1faGVhcA0KPiANCj4gT24gNS8xMy8yNSAxNDozMCwg
+d2FuZ3RhbyB3cm90ZToNCj4gPj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gPj4gRnJv
+bTogQ2hyaXN0aWFuIEvDtm5pZyA8Y2hyaXN0aWFuLmtvZW5pZ0BhbWQuY29tPg0KPiA+PiBTZW50
+OiBUdWVzZGF5LCBNYXkgMTMsIDIwMjUgNzozMiBQTQ0KPiA+PiBUbzogd2FuZ3RhbyA8dGFvLndh
+bmd0YW9AaG9ub3IuY29tPjsgc3VtaXQuc2Vtd2FsQGxpbmFyby5vcmc7DQo+ID4+IGJlbmphbWlu
+LmdhaWduYXJkQGNvbGxhYm9yYS5jb207IEJyaWFuLlN0YXJrZXlAYXJtLmNvbTsNCj4gPj4ganN0
+dWx0ekBnb29nbGUuY29tOyB0am1lcmNpZXJAZ29vZ2xlLmNvbQ0KPiA+PiBDYzogbGludXgtbWVk
+aWFAdmdlci5rZXJuZWwub3JnOyBkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnOw0KPiA+
+PiBsaW5hcm8tIG1tLXNpZ0BsaXN0cy5saW5hcm8ub3JnOyBsaW51eC1rZXJuZWxAdmdlci5rZXJu
+ZWwub3JnOw0KPiA+PiB3YW5nYmludGlhbihCaW50aWFuV2FuZykgPGJpbnRpYW4ud2FuZ0Bob25v
+ci5jb20+OyB5aXBlbmd4aWFuZw0KPiA+PiA8eWlwZW5neGlhbmdAaG9ub3IuY29tPjsgPGxpdWx1
+LmxpdUBob25vci5jb20+Ow0KPiA+PiA8ZmVuZy5oYW5AaG9ub3IuY29tPg0KPiA+PiBTdWJqZWN0
+OiBSZTogW1BBVENIIDIvMl0gZG1hYnVmL2hlYXBzOiBpbXBsZW1lbnQNCj4gPj4gRE1BX0JVRl9J
+T0NUTF9SV19GSUxFIGZvciBzeXN0ZW1faGVhcA0KPiA+Pg0KPiA+PiBPbiA1LzEzLzI1IDExOjI4
+LCB3YW5ndGFvIHdyb3RlOg0KPiA+Pj4gU3VwcG9ydCBkaXJlY3QgZmlsZSBJL08gb3BlcmF0aW9u
+cyBmb3Igc3lzdGVtX2hlYXAgZG1hLWJ1ZiBvYmplY3RzLg0KPiA+Pj4gSW1wbGVtZW50YXRpb24g
+aW5jbHVkZXM6DQo+ID4+PiAxLiBDb252ZXJ0IHNnX3RhYmxlIHRvIGJpb192ZWMNCj4gPj4NCj4g
+Pj4gVGhhdCBpcyB1c3VhbGx5IGlsbGVnYWwgZm9yIERNQS1idWZzLg0KPiA+IFt3YW5ndGFvXSBU
+aGUgdGVybSAnY29udmVydCcgaXMgbWlzbGVhZGluZyBpbiB0aGlzIGNvbnRleHQuIFRoZSBhcHBy
+b3ByaWF0ZQ0KPiBwaHJhc2luZyBzaG91bGQgYmU6IENvbnN0cnVjdCBiaW9fdmVjIGZyb20gc2df
+dGFibGUuDQo+IA0KPiBXZWxsIGl0IGRvZXNuJ3QgbWF0dGVyIHdoYXQgeW91IGNhbGwgaXQuIFRv
+dWNoaW5nIHRoZSBwYWdlIGluc2lkZSBhbiBzZyB0YWJsZSBvZg0KPiBhIERNQS1idWYgaXMgaWxs
+ZWdhbCwgd2UgZXZlbiBoYXZlIGNvZGUgdG8gYWN0aXZlbHkgcHJldmVudCB0aGF0Lg0KW3dhbmd0
+YW9dIEZvciBhIGRyaXZlciB1c2luZyBETUEtYnVmOiBEb24ndCB0b3VjaCBwYWdlcyBpbiB0aGUg
+c2dfdGFibGUuIEJ1dCB0aGUgc3lzdGVtIGhlYXAgZXhwb3J0ZXIgKHNnX3RhYmxlIG93bmVyKSBz
+aG91bGQgYmUgYWxsb3dlZCB0byB1c2UgdGhlbS4NCklmIGEgZHJpdmVyIHRha2VzIG93bmVyc2hp
+cCB2aWEgZG1hX2J1Zl9tYXBfYXR0YWNobWVudCBvciBzaW1pbGFyIGNhbGxzLCB0aGUgZXhwb3J0
+ZXIgbXVzdCBzdG9wIHVzaW5nIHRoZSBzZ190YWJsZS4NClVzZXItc3BhY2UgcHJvZ3JhbXMgc2hv
+dWxkIGNhbGwgRE1BX0JVRl9JT0NUTF9SV19GSUxFIG9ubHkgd2hlbiB0aGUgRE1BLWJ1ZiBpcyBu
+b3QgYXR0YWNoZWQuDQpUaGUgZXhwb3J0ZXIgbXVzdCBjaGVjayBvd25lcnNoaXAgKGUuZy4sIGVu
+c3VyZSBubyBtYXBfZG1hX2J1Zi92bWFwIGlzIGFjdGl2ZSkgYW5kIGJsb2NrIG5ldyBjYWxscyBk
+dXJpbmcgb3BlcmF0aW9ucy4NCkknbGwgYWRkIHRoZXNlIGNoZWNrcyBpbiBwYXRjaCB2Mi4NCg0K
+PiANCj4gT25jZSBtb3JlOiBUaGlzIGFwcHJvYWNoIHdhcyBhbHJlYWR5IHJlamVjdGVkIG11bHRp
+cGxlIHRpbWVzISBQbGVhc2UgdXNlDQo+IHVkbWFidWYgaW5zdGVhZCENCj4gDQo+IFRoZSBoYWNr
+IHlvdSBjYW1lIHVwIGhlcmUgaXMgc2ltcGx5IG5vdCBuZWNlc3NhcnkuDQpbd2FuZ3Rhb10gTWFu
+eSBwZW9wbGUgbmVlZCBETUEtYnVmIGRpcmVjdCBJL08uIEkgdHJpZWQgaXQgMiB5ZWFycyBhZ28u
+IE15IG1ldGhvZCBpcyBzaW1wbGVyLCB1c2VzIGxlc3MgQ1BVL3Bvd2VyLCBhbmQgcGVyZm9ybXMg
+YmV0dGVyOg0KICAtIFNwZWVkOiAzNDE4IE1CL3MgdnMuIDIwNzMgTUIvcyAodWRtYWJ1ZikgYXQg
+MUdIeiBDUFUuDQogIC0gdWRtYWJ1ZiB3YXN0ZXMgaGFsZiBpdHMgQ1BVIHRpbWUgb24gX19nZXRf
+dXNlcl9wYWdlcy4NCiAgLSBDcmVhdGluZyAzMngzMk1CIERNQS1idWZzICsgcmVhZGluZyAxR0Ig
+ZmlsZSB0YWtlcyAzNDYgbXMgdnMuIDExNDUgbXMgZm9yIHVkbWFidWYgKDEweCBzbG93ZXIpIHZz
+LiAxNTAzIG1zIGZvciBETUEtYnVmIG5vcm1hbC4NCnVkbWFidWYgaXMgc2xpZ2h0bHkgZmFzdGVy
+IGJ1dCBub3QgZW5vdWdoLiBTd2l0Y2hpbmcgdG8gdWRtYWJ1ZiBpcyBlYXN5IGZvciBzbWFsbCBh
+cHBzIGJ1dCBoYXJkIGluIGNvbXBsZXggc3lzdGVtcyB3aXRob3V0IG1ham9yIGJlbmVmaXRzLg0K
+PiANCj4gUmVnYXJkcywNCj4gQ2hyaXN0aWFuLg0KPiANCj4gDQo+ID4gQXBwcmVjaWF0ZSB5b3Vy
+IGZlZWRiYWNrLg0KPiA+Pg0KPiA+PiBSZWdhcmRzLA0KPiA+PiBDaHJpc3RpYW4uDQo+ID4+DQo+
+ID4+PiAyLiBTZXQgSU9DQl9ESVJFQ1Qgd2hlbiBPX0RJUkVDVCBpcyBzdXBwb3J0ZWQgMy4gSW52
+b2tlDQo+ID4+PiB2ZnNfaW9jYl9pdGVyX3JlYWQoKS92ZnNfaW9jYl9pdGVyX3dyaXRlKCkgZm9y
+IGFjdHVhbCBJL08NCj4gPj4+DQo+ID4+PiBQZXJmb3JtYW5jZSBtZXRyaWNzIChVRlMgNC4wIGRl
+dmljZSBANEdCL3MsIEFybTY0IENQVSBAMUdIeik6DQo+ID4+Pg0KPiA+Pj4gfCBNZXRyaWMgICAg
+ICAgICAgICAgfCAgICAxTUIgfCAgICA4TUIgfCAgICA2NE1CIHwgICAxMDI0TUIgfCAgIDMwNzJN
+QiB8DQo+ID4+PiB8LS0tLS0tLS0tLS0tLS0tLS0tLS18LS0tLS0tLTp8LS0tLS0tLTp8LS0tLS0t
+LS06fC0tLS0tLS0tLTp8LS0tLS0tLQ0KPiA+Pj4gfC0tLS0tLS0tLS0tLS0tLS0tLS0tfC0tDQo+
+ID4+PiB8LS0tLS0tLS0tLS0tLS0tLS0tLS18OnwNCj4gPj4+IHwgQnVmZmVyIFJlYWQgKHVzKSAg
+IHwgICAxNjU4IHwgICA5MDI4IHwgICA2OTI5NSB8ICAxMDE5NzgzIHwgIDI5NzgxNzkgfA0KPiA+
+Pj4gfCBEaXJlY3QgUmVhZCAodXMpICAgfCAgICA3MDcgfCAgIDI2NDcgfCAgIDE4Njg5IHwgICAy
+OTk2MjcgfCAgIDkzNzc1OCB8DQo+ID4+PiB8IEJ1ZmZlciBSYXRlIChNQi9zKSB8ICAgIDYwMyB8
+ICAgIDg4NiB8ICAgICA5MjQgfCAgICAgMTAwNCB8ICAgICAxMDMyIHwNCj4gPj4+IHwgRGlyZWN0
+IFJhdGUgKE1CL3MpIHwgICAxNDE0IHwgICAzMDIyIHwgICAgMzQyNSB8ICAgICAzNDE4IHwgICAg
+IDMyNzYgfA0KPiA+Pj4NCj4gPj4+IFNpZ25lZC1vZmYtYnk6IHdhbmd0YW8gPHRhby53YW5ndGFv
+QGhvbm9yLmNvbT4NCj4gPj4+IC0tLQ0KPiA+Pj4gIGRyaXZlcnMvZG1hLWJ1Zi9oZWFwcy9zeXN0
+ZW1faGVhcC5jIHwgMTE4DQo+ID4+PiArKysrKysrKysrKysrKysrKysrKysrKysrKysrDQo+ID4+
+PiAgMSBmaWxlIGNoYW5nZWQsIDExOCBpbnNlcnRpb25zKCspDQo+ID4+Pg0KPiA+Pj4gZGlmZiAt
+LWdpdCBhL2RyaXZlcnMvZG1hLWJ1Zi9oZWFwcy9zeXN0ZW1faGVhcC5jDQo+ID4+PiBiL2RyaXZl
+cnMvZG1hLWJ1Zi9oZWFwcy9zeXN0ZW1faGVhcC5jDQo+ID4+PiBpbmRleCAyNmQ1ZGM4OWVhMTYu
+LmY3YjcxYjk4NDNhYSAxMDA2NDQNCj4gPj4+IC0tLSBhL2RyaXZlcnMvZG1hLWJ1Zi9oZWFwcy9z
+eXN0ZW1faGVhcC5jDQo+ID4+PiArKysgYi9kcml2ZXJzL2RtYS1idWYvaGVhcHMvc3lzdGVtX2hl
+YXAuYw0KPiA+Pj4gQEAgLTIwLDYgKzIwLDggQEANCj4gPj4+ICAjaW5jbHVkZSA8bGludXgvc2Nh
+dHRlcmxpc3QuaD4NCj4gPj4+ICAjaW5jbHVkZSA8bGludXgvc2xhYi5oPg0KPiA+Pj4gICNpbmNs
+dWRlIDxsaW51eC92bWFsbG9jLmg+DQo+ID4+PiArI2luY2x1ZGUgPGxpbnV4L2J2ZWMuaD4NCj4g
+Pj4+ICsjaW5jbHVkZSA8bGludXgvdWlvLmg+DQo+ID4+Pg0KPiA+Pj4gIHN0YXRpYyBzdHJ1Y3Qg
+ZG1hX2hlYXAgKnN5c19oZWFwOw0KPiA+Pj4NCj4gPj4+IEBAIC0yODEsNiArMjgzLDEyMSBAQCBz
+dGF0aWMgdm9pZCBzeXN0ZW1faGVhcF92dW5tYXAoc3RydWN0DQo+IGRtYV9idWYNCj4gPj4gKmRt
+YWJ1Ziwgc3RydWN0IGlvc3lzX21hcCAqbWFwKQ0KPiA+Pj4gIAlpb3N5c19tYXBfY2xlYXIobWFw
+KTsNCj4gPj4+ICB9DQo+ID4+Pg0KPiA+Pj4gK3N0YXRpYyBzdHJ1Y3QgYmlvX3ZlYyAqc3lzdGVt
+X2hlYXBfaW5pdF9idmVjKHN0cnVjdA0KPiA+PiBzeXN0ZW1faGVhcF9idWZmZXIgKmJ1ZmZlciwN
+Cj4gPj4+ICsJCQlzaXplX3Qgb2Zmc2V0LCBzaXplX3QgbGVuLCBpbnQgKm5yX3NlZ3MpIHsNCj4g
+Pj4+ICsJc3RydWN0IHNnX3RhYmxlICpzZ3QgPSAmYnVmZmVyLT5zZ190YWJsZTsNCj4gPj4+ICsJ
+c3RydWN0IHNjYXR0ZXJsaXN0ICpzZzsNCj4gPj4+ICsJc2l6ZV90IGxlbmd0aCA9IDA7DQo+ID4+
+PiArCXVuc2lnbmVkIGludCBpLCBrID0gMDsNCj4gPj4+ICsJc3RydWN0IGJpb192ZWMgKmJ2ZWM7
+DQo+ID4+PiArCXNpemVfdCBzZ19sZWZ0Ow0KPiA+Pj4gKwlzaXplX3Qgc2dfb2Zmc2V0Ow0KPiA+
+Pj4gKwlzaXplX3Qgc2dfbGVuOw0KPiA+Pj4gKw0KPiA+Pj4gKwlidmVjID0ga3ZjYWxsb2Moc2d0
+LT5uZW50cywgc2l6ZW9mKCpidmVjKSwgR0ZQX0tFUk5FTCk7DQo+ID4+PiArCWlmICghYnZlYykN
+Cj4gPj4+ICsJCXJldHVybiBOVUxMOw0KPiA+Pj4gKw0KPiA+Pj4gKwlmb3JfZWFjaF9zZyhzZ3Qt
+PnNnbCwgc2csIHNndC0+bmVudHMsIGkpIHsNCj4gPj4+ICsJCWxlbmd0aCArPSBzZy0+bGVuZ3Ro
+Ow0KPiA+Pj4gKwkJaWYgKGxlbmd0aCA8PSBvZmZzZXQpDQo+ID4+PiArCQkJY29udGludWU7DQo+
+ID4+PiArDQo+ID4+PiArCQlzZ19sZWZ0ID0gbGVuZ3RoIC0gb2Zmc2V0Ow0KPiA+Pj4gKwkJc2df
+b2Zmc2V0ID0gc2ctPm9mZnNldCArIHNnLT5sZW5ndGggLSBzZ19sZWZ0Ow0KPiA+Pj4gKwkJc2df
+bGVuID0gbWluKHNnX2xlZnQsIGxlbik7DQo+ID4+PiArDQo+ID4+PiArCQlidmVjW2tdLmJ2X3Bh
+Z2UgPSBzZ19wYWdlKHNnKTsNCj4gPj4+ICsJCWJ2ZWNba10uYnZfbGVuID0gc2dfbGVuOw0KPiA+
+Pj4gKwkJYnZlY1trXS5idl9vZmZzZXQgPSBzZ19vZmZzZXQ7DQo+ID4+PiArCQlrKys7DQo+ID4+
+PiArDQo+ID4+PiArCQlvZmZzZXQgKz0gc2dfbGVuOw0KPiA+Pj4gKwkJbGVuIC09IHNnX2xlbjsN
+Cj4gPj4+ICsJCWlmIChsZW4gPD0gMCkNCj4gPj4+ICsJCQlicmVhazsNCj4gPj4+ICsJfQ0KPiA+
+Pj4gKw0KPiA+Pj4gKwkqbnJfc2VncyA9IGs7DQo+ID4+PiArCXJldHVybiBidmVjOw0KPiA+Pj4g
+K30NCj4gPj4+ICsNCj4gPj4+ICtzdGF0aWMgaW50IHN5c3RlbV9oZWFwX3J3X2ZpbGUoc3RydWN0
+IHN5c3RlbV9oZWFwX2J1ZmZlciAqYnVmZmVyLA0KPiA+Pj4gK2Jvb2wNCj4gPj4gaXNfcmVhZCwN
+Cj4gPj4+ICsJCWJvb2wgZGlyZWN0X2lvLCBzdHJ1Y3QgZmlsZSAqZmlscCwgbG9mZl90IGZpbGVf
+b2Zmc2V0LA0KPiA+Pj4gKwkJc2l6ZV90IGJ1Zl9vZmZzZXQsIHNpemVfdCBsZW4pDQo+ID4+PiAr
+ew0KPiA+Pj4gKwlzdHJ1Y3QgYmlvX3ZlYyAqYnZlYzsNCj4gPj4+ICsJaW50IG5yX3NlZ3MgPSAw
+Ow0KPiA+Pj4gKwlzdHJ1Y3QgaW92X2l0ZXIgaXRlcjsNCj4gPj4+ICsJc3RydWN0IGtpb2NiIGtp
+b2NiOw0KPiA+Pj4gKwlzc2l6ZV90IHJldCA9IDA7DQo+ID4+PiArDQo+ID4+PiArCWlmIChkaXJl
+Y3RfaW8pIHsNCj4gPj4+ICsJCWlmICghKGZpbHAtPmZfbW9kZSAmIEZNT0RFX0NBTl9PRElSRUNU
+KSkNCj4gPj4+ICsJCQlyZXR1cm4gLUVJTlZBTDsNCj4gPj4+ICsJfQ0KPiA+Pj4gKw0KPiA+Pj4g
+KwlidmVjID0gc3lzdGVtX2hlYXBfaW5pdF9idmVjKGJ1ZmZlciwgYnVmX29mZnNldCwgbGVuLCAm
+bnJfc2Vncyk7DQo+ID4+PiArCWlmICghYnZlYykNCj4gPj4+ICsJCXJldHVybiAtRU5PTUVNOw0K
+PiA+Pj4gKw0KPiA+Pj4gKwlpb3ZfaXRlcl9idmVjKCZpdGVyLCBpc19yZWFkID8gSVRFUl9ERVNU
+IDogSVRFUl9TT1VSQ0UsIGJ2ZWMsDQo+ID4+IG5yX3NlZ3MsIGxlbik7DQo+ID4+PiArCWluaXRf
+c3luY19raW9jYigma2lvY2IsIGZpbHApOw0KPiA+Pj4gKwlraW9jYi5raV9wb3MgPSBmaWxlX29m
+ZnNldDsNCj4gPj4+ICsJaWYgKGRpcmVjdF9pbykNCj4gPj4+ICsJCWtpb2NiLmtpX2ZsYWdzIHw9
+IElPQ0JfRElSRUNUOw0KPiA+Pj4gKw0KPiA+Pj4gKwl3aGlsZSAoa2lvY2Iua2lfcG9zIDwgZmls
+ZV9vZmZzZXQgKyBsZW4pIHsNCj4gPj4+ICsJCWlmIChpc19yZWFkKQ0KPiA+Pj4gKwkJCXJldCA9
+IHZmc19pb2NiX2l0ZXJfcmVhZChmaWxwLCAma2lvY2IsICZpdGVyKTsNCj4gPj4+ICsJCWVsc2UN
+Cj4gPj4+ICsJCQlyZXQgPSB2ZnNfaW9jYl9pdGVyX3dyaXRlKGZpbHAsICZraW9jYiwgJml0ZXIp
+Ow0KPiA+Pj4gKwkJaWYgKHJldCA8PSAwKQ0KPiA+Pj4gKwkJCWJyZWFrOw0KPiA+Pj4gKwl9DQo+
+ID4+PiArDQo+ID4+PiArCWt2ZnJlZShidmVjKTsNCj4gPj4+ICsJcmV0dXJuIHJldCA8IDAgPyBy
+ZXQgOiAwOw0KPiA+Pj4gK30NCj4gPj4+ICsNCj4gPj4+ICtzdGF0aWMgaW50IHN5c3RlbV9oZWFw
+X2RtYV9idWZfcndfZmlsZShzdHJ1Y3QgZG1hX2J1ZiAqZG1hYnVmLA0KPiA+Pj4gKwkJCXN0cnVj
+dCBkbWFfYnVmX3J3X2ZpbGUgKmJhY2spDQo+ID4+PiArew0KPiA+Pj4gKwlzdHJ1Y3Qgc3lzdGVt
+X2hlYXBfYnVmZmVyICpidWZmZXIgPSBkbWFidWYtPnByaXY7DQo+ID4+PiArCWludCByZXQgPSAw
+Ow0KPiA+Pj4gKwlfX3UzMiBvcCA9IGJhY2stPmZsYWdzICYgRE1BX0JVRl9SV19GTEFHU19PUF9N
+QVNLOw0KPiA+Pj4gKwlib29sIGRpcmVjdF9pbyA9IGJhY2stPmZsYWdzICYgRE1BX0JVRl9SV19G
+TEFHU19ESVJFQ1Q7DQo+ID4+PiArCXN0cnVjdCBmaWxlICpmaWxwOw0KPiA+Pj4gKw0KPiA+Pj4g
+KwlpZiAob3AgIT0gRE1BX0JVRl9SV19GTEFHU19SRUFEICYmIG9wICE9DQo+ID4+IERNQV9CVUZf
+UldfRkxBR1NfV1JJVEUpDQo+ID4+PiArCQlyZXR1cm4gLUVJTlZBTDsNCj4gPj4+ICsJaWYgKGRp
+cmVjdF9pbykgew0KPiA+Pj4gKwkJaWYgKCFQQUdFX0FMSUdORUQoYmFjay0+ZmlsZV9vZmZzZXQp
+IHx8DQo+ID4+PiArCQkJIVBBR0VfQUxJR05FRChiYWNrLT5idWZfb2Zmc2V0KSB8fA0KPiA+Pj4g
+KwkJCSFQQUdFX0FMSUdORUQoYmFjay0+YnVmX2xlbikpDQo+ID4+PiArCQlyZXR1cm4gLUVJTlZB
+TDsNCj4gPj4+ICsJfQ0KPiA+Pj4gKwlpZiAoIWJhY2stPmJ1Zl9sZW4gfHwgYmFjay0+YnVmX2xl
+biA+IGRtYWJ1Zi0+c2l6ZSB8fA0KPiA+Pj4gKwkJYmFjay0+YnVmX29mZnNldCA+PSBkbWFidWYt
+PnNpemUgfHwNCj4gPj4+ICsJCWJhY2stPmJ1Zl9vZmZzZXQgKyBiYWNrLT5idWZfbGVuID4gZG1h
+YnVmLT5zaXplKQ0KPiA+Pj4gKwkJcmV0dXJuIC1FSU5WQUw7DQo+ID4+PiArCWlmIChiYWNrLT5m
+aWxlX29mZnNldCArIGJhY2stPmJ1Zl9sZW4gPCBiYWNrLT5maWxlX29mZnNldCkNCj4gPj4+ICsJ
+CXJldHVybiAtRUlOVkFMOw0KPiA+Pj4gKw0KPiA+Pj4gKwlmaWxwID0gZmdldChiYWNrLT5mZCk7
+DQo+ID4+PiArCWlmICghZmlscCkNCj4gPj4+ICsJCXJldHVybiAtRUJBREY7DQo+ID4+PiArDQo+
+ID4+PiArCW11dGV4X2xvY2soJmJ1ZmZlci0+bG9jayk7DQo+ID4+PiArCXJldCA9IHN5c3RlbV9o
+ZWFwX3J3X2ZpbGUoYnVmZmVyLCBvcCA9PQ0KPiA+PiBETUFfQlVGX1JXX0ZMQUdTX1JFQUQsIGRp
+cmVjdF9pbywNCj4gPj4+ICsJCQlmaWxwLCBiYWNrLT5maWxlX29mZnNldCwgYmFjay0+YnVmX29m
+ZnNldCwgYmFjay0NCj4gPj4+IGJ1Zl9sZW4pOw0KPiA+Pj4gKwltdXRleF91bmxvY2soJmJ1ZmZl
+ci0+bG9jayk7DQo+ID4+PiArDQo+ID4+PiArCWZwdXQoZmlscCk7DQo+ID4+PiArCXJldHVybiBy
+ZXQ7DQo+ID4+PiArfQ0KPiA+Pj4gKw0KPiA+Pj4gIHN0YXRpYyB2b2lkIHN5c3RlbV9oZWFwX2Rt
+YV9idWZfcmVsZWFzZShzdHJ1Y3QgZG1hX2J1ZiAqZG1hYnVmKSAgew0KPiA+Pj4gIAlzdHJ1Y3Qg
+c3lzdGVtX2hlYXBfYnVmZmVyICpidWZmZXIgPSBkbWFidWYtPnByaXY7IEBAIC0zMDgsNg0KPiA+
+PiArNDI1LDcNCj4gPj4+IEBAIHN0YXRpYyBjb25zdCBzdHJ1Y3QgZG1hX2J1Zl9vcHMgc3lzdGVt
+X2hlYXBfYnVmX29wcyA9IHsNCj4gPj4+ICAJLm1tYXAgPSBzeXN0ZW1faGVhcF9tbWFwLA0KPiA+
+Pj4gIAkudm1hcCA9IHN5c3RlbV9oZWFwX3ZtYXAsDQo+ID4+PiAgCS52dW5tYXAgPSBzeXN0ZW1f
+aGVhcF92dW5tYXAsDQo+ID4+PiArCS5yd19maWxlID0gc3lzdGVtX2hlYXBfZG1hX2J1Zl9yd19m
+aWxlLA0KPiA+Pj4gIAkucmVsZWFzZSA9IHN5c3RlbV9oZWFwX2RtYV9idWZfcmVsZWFzZSwgIH07
+DQo+ID4+Pg0KPiA+DQoNCg==
 
