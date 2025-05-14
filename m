@@ -1,109 +1,139 @@
-Return-Path: <linux-kernel+bounces-647644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-647640-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2CF6AB6B38
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 14:15:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15E15AB6B1E
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 14:11:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 274403ADE3D
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 12:15:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3AF8118870FE
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 12:11:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 376902777FB;
-	Wed, 14 May 2025 12:15:37 +0000 (UTC)
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E579276056;
+	Wed, 14 May 2025 12:09:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OAVJvTnQ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7369620C016;
-	Wed, 14 May 2025 12:15:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3108278172;
+	Wed, 14 May 2025 12:09:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747224936; cv=none; b=UJNjd5iM4z7Ni0hQKeNLsimouoG1FSvZtqyCRqz2n4VyzXfdJSCSXVY53filB6fNYowgINbDeq252Talta3qgIc35sDaTE7reY0ER1l5i7P9fI5GJnGMp7bWE41tZLUUxtoFhULZJctHrOK/fwyqeB2svnGpj0ejpcNjxDphsLo=
+	t=1747224592; cv=none; b=Oorihrd5xqoD5OwThmvenHL8qkUOAM3ElJG0loHqnTobkfAY38UFDw94iGv5dcVPE1rSZ703r8aEe7BCgY7VqMFTmTm5WEOGkdY2GfHGklgfhD1OEtg20YcxzVbGgG0zVrpf+54hqAyRAQN91UMCUkWrVhTzz1yqzlEwerDRko8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747224936; c=relaxed/simple;
-	bh=ZEtvNC+fDpJZ5ywYIZizTzTkNG6vdMAo0112fJ1kD50=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XUVCJqgyYywDsBBY0XqDRm6ETgTCvnX4Ihfhl86PoB4+V3q92btCAS4DaXttB2Z1WYCnEbFrZqcih1cN4glD43cFmxKrhHnXJaZuENbrOry0CHsrcV7VkWHk7XNuxo0tQoAs9mfEyE8XFy5INxXLITFmoLLRquRN8/7JguQKvU8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost.localdomain (unknown [124.16.141.245])
-	by APP-01 (Coremail) with SMTP id qwCowAAnyvoZiCRo8oIAFQ--.48875S2;
-	Wed, 14 May 2025 20:10:03 +0800 (CST)
-From: Wentao Liang <vulab@iscas.ac.cn>
-To: lgirdwood@gmail.com,
-	broonie@kernel.org,
-	perex@perex.cz,
-	tiwai@suse.com
-Cc: Vijendar.Mukunda@amd.com,
-	mario.limonciello@amd.com,
-	venkataprasad.potturu@amd.com,
-	gregkh@linuxfoundation.org,
-	kuninori.morimoto.gx@renesas.com,
-	peterz@infradead.org,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Wentao Liang <vulab@iscas.ac.cn>,
-	stable@vger.kernel.org
-Subject: [PATCH] ASoC: amd: acp: Add null pointer check in acp_max98388_hw_paramsi()
-Date: Wed, 14 May 2025 20:09:39 +0800
-Message-ID: <20250514120939.581-1-vulab@iscas.ac.cn>
-X-Mailer: git-send-email 2.42.0.windows.2
+	s=arc-20240116; t=1747224592; c=relaxed/simple;
+	bh=G+zX7yuG29hH5z39xxu37DP3nN6P2PRPMHIngMLxze0=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=ejvuQzPq8j/Q+2ACuyxanbZwgnkBPFoannC+U78ZZrBUwx+atFvzwaeSdDJc+c75deNG/a7eCjhK6Wsl/bc3L9jrmAuoWydOKbA8mIeLsohdeXJ/vbAStQYt8v+g3lJGHwveiBGFJIapVvMHAIDRldfBm/9P3E03gkd7vYH3mzg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OAVJvTnQ; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1747224591; x=1778760591;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=G+zX7yuG29hH5z39xxu37DP3nN6P2PRPMHIngMLxze0=;
+  b=OAVJvTnQaQRv27Jwy9muP3Gwsn3o/QQeLZm5mlObsw1EMBfkEeBSK3TP
+   V9Yoy0Fb7endq3LH97WTP+Hbr8/PsmMeK/ozu9dEgBrq4YKhDoFzIh23t
+   N1sZFeI+0J2kYDbpovhd3wt+leNCr8Yb+enVYHspQR+xFtKJS2/ICQ/cS
+   dXjx3Ylj83qnZp/USlfr3xpYqFis5YZ5tVKv8BLA6X8SxqdZ/WzS2k3i/
+   HO60UJ/GXDyQl5etBahZOOk/91zskaRuIXpqswEs9qBMxoc8xeHsN933v
+   I09Q1L0STCXpqOyOkDhdpI3EUfnwPQW8svFJMU2RvOuug4p/xR1n1KdYD
+   A==;
+X-CSE-ConnectionGUID: cLUXxFV1RfSNLSlsTmbG0w==
+X-CSE-MsgGUID: EcOwjA+MRPSPnI584Ithhw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11433"; a="52925403"
+X-IronPort-AV: E=Sophos;i="6.15,288,1739865600"; 
+   d="scan'208";a="52925403"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 May 2025 05:09:51 -0700
+X-CSE-ConnectionGUID: 2d6TnqmwRcSXrkWWQZURaQ==
+X-CSE-MsgGUID: gLyib5SOTgyckvMioRYUuQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,288,1739865600"; 
+   d="scan'208";a="168964151"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.231])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 May 2025 05:09:48 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Wed, 14 May 2025 15:09:44 +0300 (EEST)
+To: Lukas Wunner <lukas@wunner.de>
+cc: Bjorn Helgaas <bhelgaas@google.com>, LKML <linux-kernel@vger.kernel.org>, 
+    linux-pci@vger.kernel.org
+Subject: Re: [PATCH 1/1] PCI: Move reset and restore related code to
+ reset-restore.c
+In-Reply-To: <aCSB9Y5OwNkdiuez@wunner.de>
+Message-ID: <096fbf51-cbbf-67ca-862d-9563f88d7f2d@linux.intel.com>
+References: <20250512120900.1870-1-ilpo.jarvinen@linux.intel.com> <aCRBFWHKa02Hu-ec@wunner.de> <7c8ebe5d-a5be-6aba-1b84-15dd2f32b52f@linux.intel.com> <aCSB9Y5OwNkdiuez@wunner.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qwCowAAnyvoZiCRo8oIAFQ--.48875S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7JFyUJw45Ar1xury3Jr1xuFg_yoWkAFbEkw
-	1rWwn5ZayDKrZayry8A3yfZrW5Zw17ZrZ2krs7tr45CFZ5JayrCryDWFs5ZFZ7Zry8AFnx
-	Z34kGr4FqwnIyjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUb3xFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
-	Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
-	0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
-	jxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr
-	1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E8cxa
-	n2IY04v7MxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4
-	AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE
-	17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMI
-	IF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4l
-	IxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvf
-	C2KfnxnUUI43ZEXa7VUb8hL5UUUUU==
-X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiBwwCA2gkZJ93aQAAsj
+Content-Type: multipart/mixed; boundary="8323328-1317786367-1747224584=:1054"
 
-The acp_max98388_hw_params() calls the snd_soc_card_get_codec_dai(),
-but does not check its return value which is a null pointer if the
-function fails. This can result in a null pointer dereference.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Add a null pointer check for snd_soc_card_get_codec_dai() to avoid null
-pointer dereference when the function fails.
+--8323328-1317786367-1747224584=:1054
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-Fixes: ac91c8c89782 ("ASoC: amd: acp: Add machine driver support for max98388 codec")
-Cc: stable@vger.kernel.org # v6.6
-Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
----
- sound/soc/amd/acp/acp-mach-common.c | 3 +++
- 1 file changed, 3 insertions(+)
+On Wed, 14 May 2025, Lukas Wunner wrote:
 
-diff --git a/sound/soc/amd/acp/acp-mach-common.c b/sound/soc/amd/acp/acp-mach-common.c
-index f7602c1769bf..a795cc1836cc 100644
---- a/sound/soc/amd/acp/acp-mach-common.c
-+++ b/sound/soc/amd/acp/acp-mach-common.c
-@@ -918,6 +918,9 @@ static int acp_max98388_hw_params(struct snd_pcm_substream *substream,
- 						   MAX98388_CODEC_DAI);
- 	int ret;
- 
-+	if (codec_dai)
-+		return -EINVAL;
-+
- 	ret = snd_soc_dai_set_fmt(codec_dai,
- 				  SND_SOC_DAIFMT_CBS_CFS | SND_SOC_DAIFMT_I2S |
- 				  SND_SOC_DAIFMT_NB_NF);
--- 
-2.42.0.windows.2
+> On Wed, May 14, 2025 at 02:29:42PM +0300, Ilpo J=E4rvinen wrote:
+> > On Wed, 14 May 2025, Lukas Wunner wrote:
+> > > > --- a/drivers/pci/pci.c
+> > > > +++ b/drivers/pci/pci.c
+> > > > @@ -69,15 +69,7 @@ struct pci_pme_device {
+> > > >   */
+> > > >  #define PCI_RESET_WAIT 1000 /* msec */
+> > >=20
+> > > I'd move PCI_RESET_WAIT, pci_dev_wait() and
+> > > pci_bridge_wait_for_secondary_bus() to reset.c as well.
+> > > Then pci_dev_d3_sleep() is the only function which is no longer stati=
+c.
+> >=20
+> > Okay I'll move those as well but that static statement is not exactly=
+=20
+> > true, I'll these need to do these as well:
+> >=20
+> > - move pci_bus_max_d3cold_delay() along with=20
+> >   pci_bridge_wait_for_secondary_bus() to keep that static, or turn that
+> >   into a non-static.
+> >=20
+> > - make pcie_wait_for_link_delay() non-static.
+>=20
+> Sorry, missed that.  In that case I suggest moving pcie_wait_for_link()
+> as well.  It is already non-static.  Then you can keep the static on
+> pcie_wait_for_link_delay().
+>
+> Per PCIe r6.2 sec 5.8, a transition from D3cold to D0uninitialized
+> implies a Fundamental Reset.  That could serve as a creative
+> justification in the commit message or in the code comment at the
+> top of reset.c why it contains D3cold-related functions. ;)
 
+Great, this is mushrooming fast :-).
+
+That implies making pcie_wait_for_link_status() non-static, regardless of=
+=20
+location or moving also pcie_retrain_link() which I suppose can't really=20
+be excused to reside in reset.c :-). Now that I think about it, I recall=20
+I ran across this problem which is why the split ended where it was in=20
+this submission.
+
+Maybe, it would make sense to have not only reset.c but also link.c=20
+(for waiting, retraining, and link speed related functions). Those two=20
+files (link.c and reset.c) are kind of inter-related still but the=20
+interface between looks relatively sane and should be one-way (I think, I=
+=20
+didn't attempt this dual split yet).
+
+--=20
+ i.
+
+--8323328-1317786367-1747224584=:1054--
 
