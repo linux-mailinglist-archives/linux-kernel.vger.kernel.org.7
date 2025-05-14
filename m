@@ -1,58 +1,58 @@
-Return-Path: <linux-kernel+bounces-647386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-647384-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E0D6AB67C6
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 11:40:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB093AB67C4
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 11:40:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DAA1F8C0333
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 09:39:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D55BC8C04E4
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 09:39:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E82322F75E;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18F6B22E41D;
 	Wed, 14 May 2025 09:39:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="RyufCY3k";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ibtVUyaV"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="NG6681rr";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="CkBVkwXf"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECAEA22D789
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6D5722D4DA
 	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 09:39:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747215543; cv=none; b=XOMgRlX5GNGEXm+MWGF5f5D2PEHB9WjHUukBQpWxQFKAPAcHrg7FX1QR0dCr3NgCFe8Q5PzXpMquSbdYWXhyh536VLR7C+/wmE565i0i2n+A4T3DhIA1gGk3Q7Vx5OsHxbv1w6owPwejynGH9kQ8NS3jmE3rKU4aAs+94SO4jzE=
+	t=1747215543; cv=none; b=VkO7I5fwkbDPIm05nnmEf6q2eTiGpqfcr/CIgHPf3uSVQHPsXea7g4H2f+ik/yE7Jv+cFLS6pfR+oC3JPvMWmUjZJzue0KCXBJVpfjY/E9nA8TdDxDO5Wa25Lo8IhXGUeWu0h3X0l8BKTpfbRH5cFEw2UwlqQnSgdQuphBas0GA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1747215543; c=relaxed/simple;
-	bh=AubDRqfkPRHxBp7SUrQ2lcZs1wpYfs5RlqD8dw6LGIc=;
+	bh=r5hPhpC1GQ6SEgltegt9K/1SJ5+8vaXWcQjlQm5YELc=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=HhfMd/dkI9MUMHtwvmhGFhX/ztm2W9B+SH25PDG+SXb9JQkGO5qvaB8hZCs9WWanaIwl35vKHRfa/c3zNgoCinXwC2Nb6eLUUGNT8FcyBVZaE46rXNl4e/7Av31Tpb8vTRyQT1clHR/h0vFfIhbXhX3nYDkc0/1+6sYCft/cjHw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=RyufCY3k; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ibtVUyaV; arc=none smtp.client-ip=193.142.43.55
+	 MIME-Version; b=Y1RUDLFjHH0mIzrDD9zj8RCF8101Oj9kbzvu2l4kkd9K4RTy1Ey/+opwA44gf3rg60sZO558M+9Y0NkrKCoHp26U2PSbtv32oFwY/G/jlGdC/YmZ++zt+zueXEpb6S7DdH+1x9T6QyZGOoxmfyUWoMMZ77dOKR/qznBmQVg1SBA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=NG6681rr; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=CkBVkwXf; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 From: Nam Cao <namcao@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1747215539;
+	s=2020; t=1747215540;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=OfgQRDO7AB6uETq0DU5GYjI7YmKL4k2E304qWHHoNUk=;
-	b=RyufCY3k//eNjv7tWeK1662ub2Z1eNq9TjWH1G8DQK4D6b8QfLj8WHd9EU6AIz25PNz3KV
-	gjFDj1dWabJE9+kk7WBAlxgezpJSyahavni5xgGhb1RcWu2G4lZtCZgwdvpUdSj04ZnKdA
-	1qy4FBB8x78xGuRvSMvITyc1G4azGitqZaRZatOgtL1afnB7XZp8KuCyfSK7jEtkE2AdyK
-	YRNocxKLzf0hwRcQK6JmfZIl+LRuH4lH9vJEip9gf8bK+EYOl6GHkQhQaj1fsgfaLYD3vX
-	/U9BBLtNFi9Bbb6B4ev/v/qi9LvEEk5uYBg+2H8Z1Xmlzvbr/TfHKKKYMfhE9A==
+	bh=KXzuHHlv6vCMZTxsn57Dyo4HmF+FRIx0y/mPLwDhWDc=;
+	b=NG6681rr3N6qsdJvQl8R0k8Cxji29Zvu6cMLF5+HemAByizo6iFP5p59IsPg1tjnQf2Byy
+	dI8m3wTM8iYbHKpssw/5neDMZIdXZI7MJHrqACe1HVGqgp91t82yLKc0smlZW6Ax+STRo9
+	cy5XAwokypHhHeokqY8A+xAqNYjtZ43TU3qcVG0a/B9YkOe2ULwaJJlso0lPeUkcdvfRL0
+	ZlWiWSXu/pL5tLR4gqSVjU8WPupjBW5K+10WAtBW/cudGQmAtpk6+XFe9tS0gvqmbOleo3
+	VNiwCg6NE92RjR5MJfUbx8XrdRClmOs3JAkf6VJEaMLwiBSy98h1H7doLwpXhA==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1747215539;
+	s=2020e; t=1747215540;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=OfgQRDO7AB6uETq0DU5GYjI7YmKL4k2E304qWHHoNUk=;
-	b=ibtVUyaVu6qhfG/3XG4o82j7JacZZzxQp03SCi18+9zGlP8MgkBLnsK2EsFCVg/Zf6nSvK
-	ZmyRew9ruVmob8BA==
+	bh=KXzuHHlv6vCMZTxsn57Dyo4HmF+FRIx0y/mPLwDhWDc=;
+	b=CkBVkwXfZ408sLldQe42mDAtMW4btZ/H0/yh2VHbMOiRmnwGu5fCKGBwrjvcTpGgbk08RO
+	+xRPFdd4M8pZfHCA==
 To: Paul Walmsley <paul.walmsley@sifive.com>,
 	Palmer Dabbelt <palmer@dabbelt.com>,
 	Albert Ou <aou@eecs.berkeley.edu>,
@@ -61,9 +61,9 @@ To: Paul Walmsley <paul.walmsley@sifive.com>,
 	linux-kernel@vger.kernel.org
 Cc: Nam Cao <namcao@linutronix.de>,
 	Alexandre Ghiti <alexghiti@rivosinc.com>
-Subject: [PATCH v2 07/11] riscv: kprobes: Remove duplication of RVC_EXTRACT_C2_RS1_REG
-Date: Wed, 14 May 2025 11:38:46 +0200
-Message-Id: <d56955cd683411c6d2f63d13c78e0572462a3269.1747215274.git.namcao@linutronix.de>
+Subject: [PATCH v2 08/11] riscv: kprobes: Remove duplication of RVC_EXTRACT_BTYPE_IMM
+Date: Wed, 14 May 2025 11:38:47 +0200
+Message-Id: <8a8ed970f279fa5f24c90d840c2130e37bc6d16e.1747215274.git.namcao@linutronix.de>
 In-Reply-To: <cover.1747215274.git.namcao@linutronix.de>
 References: <cover.1747215274.git.namcao@linutronix.de>
 Precedence: bulk
@@ -74,30 +74,41 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 
-Use RVC_EXTRACT_C2_RS1_REG, instead of reimplementing it in
-simulate_c_jr_jalr().
+Use RVC_EXTRACT_BTYPE_IMM, instead of reimplementing it in
+simulate_c_bnez_beqz().
 
 Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
 Signed-off-by: Nam Cao <namcao@linutronix.de>
 ---
- arch/riscv/kernel/probes/simulate-insn.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/riscv/kernel/probes/simulate-insn.c | 12 +++---------
+ 1 file changed, 3 insertions(+), 9 deletions(-)
 
 diff --git a/arch/riscv/kernel/probes/simulate-insn.c b/arch/riscv/kernel/p=
 robes/simulate-insn.c
-index 5defbde4dd50..f5d64613dab5 100644
+index f5d64613dab5..e670e55954d2 100644
 --- a/arch/riscv/kernel/probes/simulate-insn.c
 +++ b/arch/riscv/kernel/probes/simulate-insn.c
-@@ -188,7 +188,7 @@ static bool __kprobes simulate_c_jr_jalr(u32 opcode, un=
-signed long addr, struct
-=20
- 	unsigned long jump_addr;
-=20
--	u32 rs1 =3D (opcode >> 7) & 0x1f;
-+	u32 rs1 =3D RVC_EXTRACT_C2_RS1_REG(opcode);
-=20
- 	if (rs1 =3D=3D 0) /* C.JR is only valid when rs1 !=3D x0 */
+@@ -232,16 +232,10 @@ static bool __kprobes simulate_c_bnez_beqz(u32 opcode=
+, unsigned long addr, struc
+ 	if (!rv_insn_reg_get_val(regs, rs1, &rs1_val))
  		return false;
+=20
+-	if ((rs1_val !=3D 0 && is_bnez) || (rs1_val =3D=3D 0 && !is_bnez)) {
+-		offset =3D  ((opcode >> 3)  & 0x3) << 1;
+-		offset |=3D ((opcode >> 10) & 0x3) << 3;
+-		offset |=3D ((opcode >> 2)  & 0x1) << 5;
+-		offset |=3D ((opcode >> 5)  & 0x3) << 6;
+-		offset |=3D ((opcode >> 12) & 0x1) << 8;
+-		offset =3D sign_extend32(offset, 8);
+-	} else {
++	if ((rs1_val !=3D 0 && is_bnez) || (rs1_val =3D=3D 0 && !is_bnez))
++		offset =3D RVC_EXTRACT_BTYPE_IMM(opcode);
++	else
+ 		offset =3D 2;
+-	}
+=20
+ 	instruction_pointer_set(regs, addr + offset);
+=20
 --=20
 2.39.5
 
