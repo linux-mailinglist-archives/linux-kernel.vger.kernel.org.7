@@ -1,168 +1,112 @@
-Return-Path: <linux-kernel+bounces-647921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-647919-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30BB0AB6F87
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 17:20:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88BB5AB6F83
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 17:20:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AAC3D3B7385
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 15:15:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3ECCF9A0910
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 15:15:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D05B327E1A7;
-	Wed, 14 May 2025 15:14:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D591C21D3CD;
+	Wed, 14 May 2025 15:13:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nHwwPK5Z"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DW+Lzp9H"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 642051DB365;
-	Wed, 14 May 2025 15:14:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38529204F9B
+	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 15:13:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747235659; cv=none; b=I4d27WNIcCaatwZMaztTkwE6AcxQxIxYiKiqMzx8VGBaoQ0qymSM1I6IDLEnO//x0bfqM7kGbq92llDlRLalZPy1osGLmVCkxd84jOWYUKr3oO3BTbZt9b0rbbXaxGhwd/w3523EQB8y3xnG0YH0xBPBUYIT+SXyvz31AEV6Z8s=
+	t=1747235634; cv=none; b=s8GvtH9ClGutMr5VZkHBQ7CuMl8kXB0pEpDGhtmUUPcE+KxStF33bewpgELE6rkCDhit7nAZehufJ/q0KqalyERfkvdjsXbaAPXNITj/2yMs9Fr94v98fRzbtPvjhcm1O2b43NmrJndSg+5kVdclR/NVlIaP5JB9vN1OqQVhFfU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747235659; c=relaxed/simple;
-	bh=s3Kbfha29uTtuQf1ul9OkbTJBIWdt3PNF9s6Q1vdBOU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rCXTsbaiQCjXp0uAaC9lniVD/jWoW2MTxTquMpSxbXUzSk7HiDfAWqg9gRmEL63s7Hv8Pt4tHhRIkZBkhXnhIQTTE3GPSzzPXppvmRr/fa0ktlgZB83q1opHAaownyer8BjU+GJ+BJYT6BNtX2Tqj1LSegIS34Y9RrGXbbK3hPI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nHwwPK5Z; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1747235657; x=1778771657;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=s3Kbfha29uTtuQf1ul9OkbTJBIWdt3PNF9s6Q1vdBOU=;
-  b=nHwwPK5ZC0g6+8zOM3+qqOTwgquE6akBnjRt/CX9szeIlkhwy9GQCiG3
-   FY4Ixz82haFsJc6t3msCwynO0re63BY33QIrEAQPzAmAyz18+DXxTdGCv
-   8eiaLDrn71b28WByarPX+4mjFBC7sRNatwOdSJbqGsFthWv0DZProZGy4
-   FxDGSQWXHhvrmFntgWL3FWyNcGK4hKI0bYshIKNup0knCTYyIVnvLJB9S
-   7hCgKaUWkMKjsNR6r9ogdZkq5vOWzzToqb168HuYR8zsuSRLskFFyfqAh
-   UGLWQtGyhwhCAh5Oz4oHHlrx5y97da1cUbktWFU0+XacpQqxEEfaEIdnI
-   Q==;
-X-CSE-ConnectionGUID: OGED4BcmSGWbBsJrvNRytA==
-X-CSE-MsgGUID: 5ZZolu+tRomB0Cy8FKxudQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11433"; a="49072686"
-X-IronPort-AV: E=Sophos;i="6.15,288,1739865600"; 
-   d="scan'208";a="49072686"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 May 2025 08:14:16 -0700
-X-CSE-ConnectionGUID: +ekvycXjRbu3uXq9xn1AGQ==
-X-CSE-MsgGUID: EgQAwr/7RdiUiZ5cjMz0MA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,288,1739865600"; 
-   d="scan'208";a="142939094"
-Received: from kanliang-dev.jf.intel.com ([10.165.154.102])
-  by fmviesa005.fm.intel.com with ESMTP; 14 May 2025 08:14:16 -0700
-From: kan.liang@linux.intel.com
-To: peterz@infradead.org,
-	mingo@redhat.com,
-	namhyung@kernel.org,
-	irogers@google.com,
-	mark.rutland@arm.com,
+	s=arc-20240116; t=1747235634; c=relaxed/simple;
+	bh=O1lz6Q1yfa8CYrEI5GX8mlyJMW/kVMWyCbTcUdCC5eM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=I/teTNc3Av1mB79D6SqIh/b2Ja4OKqB4IVxFDqzb8YdNMKOjtnIbgRU/kE+s/5WwAwsb0Y9/QtQWGUuCI0RAKygtWEatnFYiFJRjkUa0qGFaO5IKmuHuXHsCC+Zdiq48gQwVZ9vEfzMrXsluZ+u8CCg7/EmoRrNXd5hzmgtmWNo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DW+Lzp9H; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0152AC4CEE3;
+	Wed, 14 May 2025 15:13:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747235632;
+	bh=O1lz6Q1yfa8CYrEI5GX8mlyJMW/kVMWyCbTcUdCC5eM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DW+Lzp9HdPWLoHdkJz7iOn+k+Z1Cetdo1F/t4kgwns9ANb8hZ2oHNjsL6dcpj0nb2
+	 TKKuLdr/tyJ4ukjNShLQQ2ZaWdvXybQKk5k0WolzqgvDjiVb+SWQIt4aSKSeo3/S/1
+	 crz3L+LskPut0T8BbdoJMAQ689QSTlbYc2AIf+rIR/dEcFcFEHAhKrWKzIKi6JJpMQ
+	 OjJNXHtw6YTAZyMJX5OnWmekoc4Oy63ZSvAljoqu9p3m0ZXFtRVmRBPob4IJobVyNv
+	 abktZzol5yoSlbzDhCxx4gC/a9SgkkWq9caWAbRKmbe3DlQK3PbRPqFky6OBSYk1Wo
+	 +ZdxE+6/cLK7g==
+Date: Wed, 14 May 2025 16:13:46 +0100
+From: Will Deacon <will@kernel.org>
+To: Ryan Roberts <ryan.roberts@arm.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Pasha Tatashin <pasha.tatashin@soleen.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Christoph Hellwig <hch@infradead.org>,
+	David Hildenbrand <david@redhat.com>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Anshuman Khandual <anshuman.khandual@arm.com>,
+	Alexandre Ghiti <alexghiti@rivosinc.com>,
+	Kevin Brodsky <kevin.brodsky@arm.com>,
+	linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org
-Cc: eranian@google.com,
-	ctshao@google.com,
-	tmricht@linux.ibm.com,
-	Kan Liang <kan.liang@linux.intel.com>
-Subject: [PATCH V2 00/15] perf: Fix the throttle logic for group
-Date: Wed, 14 May 2025 08:13:46 -0700
-Message-Id: <20250514151401.2547932-1-kan.liang@linux.intel.com>
-X-Mailer: git-send-email 2.38.1
+	syzbot+5c0d9392e042f41d45c5@syzkaller.appspotmail.com
+Subject: Re: [PATCH] arm64/mm: Disable barrier batching in interrupt contexts
+Message-ID: <20250514151345.GA10762@willie-the-truck>
+References: <20250512102242.4156463-1-ryan.roberts@arm.com>
+ <20250513204603.GA9866@willie-the-truck>
+ <8d4e66ef-a292-45ff-9c4a-0248aff44fd3@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8d4e66ef-a292-45ff-9c4a-0248aff44fd3@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-From: Kan Liang <kan.liang@linux.intel.com>
+On Wed, May 14, 2025 at 10:29:17AM +0100, Ryan Roberts wrote:
+> On 13/05/2025 21:46, Will Deacon wrote:
+> > On Mon, May 12, 2025 at 11:22:40AM +0100, Ryan Roberts wrote:
+> >> Commit 5fdd05efa1cd ("arm64/mm: Batch barriers when updating kernel
+> >> mappings") enabled arm64 kernels to track "lazy mmu mode" using TIF
+> >> flags in order to defer barriers until exiting the mode. At the same
+> >> time, it added warnings to check that pte manipulations were never
+> >> performed in interrupt context, because the tracking implementation
+> >> could not deal with nesting.
+> >>
+> >> But it turns out that some debug features (e.g. KFENCE, DEBUG_PAGEALLOC)
+> >> do manipulate ptes in softirq context, which triggered the warnings.
+> > 
+> > Hmm. Do we also have to worry about the case where a softirq is triggered
+> > off the back of a hardirq *and* that hardirq is taken while we're in the
+> > middle of e.g. queue_pte_barriers()? In that case, I think we can end
+> > up in strange situations, such as having LAZY_MMU_PENDING set when
+> > LAZY_MMU is clear, although it looks like things still work even in that
+> > case.
+> 
+> I don't see any problem here. This change ensures that we always behave the
+> "old" way in interrupt context. So the interrupt context will never even look at
+> those TIF flags, so it doesn't matter that the task context is midway through
+> changing the flags when the interrupt comes in.
+> 
+> (although somehow I feel like I should be bracing for a zinger :)
 
-Changes since V1:
-- Apply the suggested throttle/unthrottle functions from Peter.
-  The MAX_INTERRUPTS and throttle logs are applied to all events.
-- Update the description and comments accordingly
-- Add Reviewed-by from Ravi and Max
+Ha, for some reason, I was looking at the code _without_ your fix
+applied. Although it's quite hard to think about, I couldn't spot any
+other issues with nesting beyond the one you call out at the end of the
+commit message. Your patch makes all of this a lot simpler, though, so
+I'll pick it up (along with the other one).
 
-The sampling read doesn't work well with a group.
-The issue was originally found by the 'Basic leader sampling test' case
-failed on s390.
-https://lore.kernel.org/all/20250228062241.303309-1-tmricht@linux.ibm.com/
+Thanks,
 
-Stephane debugged it and found it was caused by the throttling logic.
-https://lore.kernel.org/all/CABPqkBQzCMNS_PfLZBWVuX9o8Z55PovwJvpVWMWzyeExFJ5R4Q@mail.gmail.com/
-
-The throttle logic is generic and shared by all ARCHs.
-It also impacts other ARCHs, e.g., X86.
-
-On an Intel GNR machine,
-$ perf record -e "{cycles,cycles}:S" ...
-
-$ perf report -D | grep THROTTLE | tail -2
-            THROTTLE events:        426  ( 9.0%)
-          UNTHROTTLE events:        425  ( 9.0%)
-
-$ perf report -D | grep PERF_RECORD_SAMPLE -a4 | tail -n 5
-0 1020120874009167 0x74970 [0x68]: PERF_RECORD_SAMPLE(IP, 0x1):
-... sample_read:
-.... group nr 2
-..... id 0000000000000327, value 000000000cbb993a, lost 0
-..... id 0000000000000328, value 00000002211c26df, lost 0
-
-The patch set tries to provide a generic fix for the group throttle
-support. So the buggy driver-specific implementation can be removed.
-
-The patch set is only verified on newer Intel platforms.
-
-Kan Liang (15):
-  perf: Fix the throttle logic for a group
-  perf/x86/intel: Remove driver-specific throttle support
-  perf/x86/amd: Remove driver-specific throttle support
-  perf/x86/zhaoxin: Remove driver-specific throttle support
-  powerpc/perf: Remove driver-specific throttle support
-  s390/perf: Remove driver-specific throttle support
-  perf/arm: Remove driver-specific throttle support
-  perf/apple_m1: Remove driver-specific throttle support
-  alpha/perf: Remove driver-specific throttle support
-  arc/perf: Remove driver-specific throttle support
-  csky/perf: Remove driver-specific throttle support
-  loongarch/perf: Remove driver-specific throttle support
-  sparc/perf: Remove driver-specific throttle support
-  xtensa/perf: Remove driver-specific throttle support
-  mips/perf: Remove driver-specific throttle support
-
- arch/alpha/kernel/perf_event.c       | 11 ++----
- arch/arc/kernel/perf_event.c         |  6 +--
- arch/csky/kernel/perf_event.c        |  3 +-
- arch/loongarch/kernel/perf_event.c   |  3 +-
- arch/mips/kernel/perf_event_mipsxx.c |  3 +-
- arch/powerpc/perf/core-book3s.c      |  6 +--
- arch/powerpc/perf/core-fsl-emb.c     |  3 +-
- arch/s390/kernel/perf_cpum_cf.c      |  2 -
- arch/s390/kernel/perf_cpum_sf.c      |  5 +--
- arch/sparc/kernel/perf_event.c       |  3 +-
- arch/x86/events/amd/core.c           |  3 +-
- arch/x86/events/amd/ibs.c            |  4 +-
- arch/x86/events/core.c               |  3 +-
- arch/x86/events/intel/core.c         |  6 +--
- arch/x86/events/intel/ds.c           |  7 ++--
- arch/x86/events/intel/knc.c          |  3 +-
- arch/x86/events/intel/p4.c           |  3 +-
- arch/x86/events/zhaoxin/core.c       |  3 +-
- arch/xtensa/kernel/perf_event.c      |  3 +-
- drivers/perf/apple_m1_cpu_pmu.c      |  3 +-
- drivers/perf/arm_pmuv3.c             |  3 +-
- drivers/perf/arm_v6_pmu.c            |  3 +-
- drivers/perf/arm_v7_pmu.c            |  3 +-
- drivers/perf/arm_xscale_pmu.c        |  6 +--
- kernel/events/core.c                 | 58 +++++++++++++++++++++-------
- 25 files changed, 75 insertions(+), 81 deletions(-)
-
--- 
-2.38.1
-
+Will
 
