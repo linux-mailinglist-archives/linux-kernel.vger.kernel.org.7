@@ -1,212 +1,184 @@
-Return-Path: <linux-kernel+bounces-647029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-647031-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7603DAB63B2
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 09:04:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79E19AB63B4
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 09:04:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64A2A865907
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 07:02:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B43D8188D0CD
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 07:04:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A30421CC41;
-	Wed, 14 May 2025 07:01:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a6FKA/A0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67BFA20FA81;
+	Wed, 14 May 2025 07:02:26 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A8F02153EA;
-	Wed, 14 May 2025 07:01:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0A5020E002;
+	Wed, 14 May 2025 07:02:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747206104; cv=none; b=ekpvfsJC3JHIghVEWtbnZzQgrIJI5hsF1Y+Epb+TLmR+c1b6mZ3FuDU2A6matArSjR+M0Ct+uDkthMaB9Q1boFD+6DvmEm4r4IlQ4un76/ZmjFvubNz3skuOCd8sn4iqIqwHbfm9yDeJ5YhvKLjS2jzC0mtlYrCm4cpn/0SuRY4=
+	t=1747206146; cv=none; b=kKb3Vz4gnEiqAASE+ttkROndzF6zNf5dYLfQEoRulpnwtVTBOCa3+cHIsxoCml/A2v+W/Hjq3uA0o0JIk7JsaaL56xpAbRJVc+DBwKIXykoPe++Lrd9rDPzlHl3mwBk8OOpDvAR72tAX9QbBgvvAb2JJ3bzk7bIVJkv0UFT2vrw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747206104; c=relaxed/simple;
-	bh=Pm8RjpxsF/4T3Jz5C4xdzYDV9KddSNMY1eVaNkY9kdw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=LXhyFzAMpYPQL+PKxZaDjldAtyJp+WiQSE3gsthjYwiYql/NL2pxuniISYAOvvHLN+5I7iFksdJ8u+uy6DErLAyQJZCAwSFjWaMKnH6kt+8Ug28ZzybI6QJGOJK58cf29ut5dBs9neYjmiRkHY0RcKdM8OzOyLuFgexi3BTZjPM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a6FKA/A0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 8AAF6C4CEFD;
-	Wed, 14 May 2025 07:01:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747206102;
-	bh=Pm8RjpxsF/4T3Jz5C4xdzYDV9KddSNMY1eVaNkY9kdw=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=a6FKA/A0VLcb5Wj9gVKWihgGWtje6S1HfASIniNVddjJB7LcLlpoH4C6ole4PKgfz
-	 In1mGbIPWTxxad//6ccgtWDwyzkyeVcTnQtTMwQmUd9xnqEedph7r8xh9GCL10un8h
-	 kIZlndFo2MgahMWmUW32bqguhUcJ/ZD/g/Vb9HKmMIVSr8Tag4Of/zoeSS2HhcV5Op
-	 xL1UxXxI5XQKCC8TnUBd/MDwiH0FzrUnx4QzU44IKrC8lx9Shqg0n7gkPuhCNA+OY2
-	 q5g9Y8ZK0bvAXtx0uLbaOXEIicpMmy/biwOdNSxhR7AT+vpcq5DIbYoEUiHCEY2aJ9
-	 SAWTMrmC2dhEw==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80558C3DA4A;
-	Wed, 14 May 2025 07:01:42 +0000 (UTC)
-From: Xianwei Zhao via B4 Relay <devnull+xianwei.zhao.amlogic.com@kernel.org>
-Date: Wed, 14 May 2025 15:01:35 +0800
-Subject: [PATCH 8/8] dts: arm64: amlogic: add S6 pinctrl node
+	s=arc-20240116; t=1747206146; c=relaxed/simple;
+	bh=rOHLs8WcPCSweIFVaL2DKr9XOsbdFF+IFU25g0KfInc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=EIPrJE0Rcpj88prBPPktWNBbVkSsE32FIpcT5uD35kGzpnjNN0Vn3DVTC6aeyJ24ol/FI+Ryg43O1YKnNybRmA1N907rk2gtjfaen0ooVNhRKesERAR8sF38DW4pN1E/SPNf9qBf+oGhpR9MJ19BhELN7/73VCLd8Yq223gXbOo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Zy41M2xZGzQkxj;
+	Wed, 14 May 2025 14:58:15 +0800 (CST)
+Received: from kwepemg500017.china.huawei.com (unknown [7.202.181.81])
+	by mail.maildlp.com (Postfix) with ESMTPS id 10056180080;
+	Wed, 14 May 2025 15:02:16 +0800 (CST)
+Received: from [10.174.179.155] (10.174.179.155) by
+ kwepemg500017.china.huawei.com (7.202.181.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 14 May 2025 15:02:15 +0800
+Message-ID: <475c6308-97f7-4707-b9a6-7b4572b00752@huawei.com>
+Date: Wed, 14 May 2025 15:02:14 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250514-s6-s7-pinctrl-v1-8-39d368cad250@amlogic.com>
-References: <20250514-s6-s7-pinctrl-v1-0-39d368cad250@amlogic.com>
-In-Reply-To: <20250514-s6-s7-pinctrl-v1-0-39d368cad250@amlogic.com>
-To: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Neil Armstrong <neil.armstrong@linaro.org>, 
- Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: linux-amlogic@lists.infradead.org, linux-gpio@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, 
- Xianwei Zhao <xianwei.zhao@amlogic.com>
-X-Mailer: b4 0.12.4
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1747206100; l=3610;
- i=xianwei.zhao@amlogic.com; s=20231208; h=from:subject:message-id;
- bh=LQtEhTH+4eGkcgIF+Vwy2luHuUbtEoQ8YiYPmKbSysk=;
- b=S8+ebZFd/3aLdScnhUNT2oKPoPi/XIvUCU86CBgbhCRKe7b7J6FzLOMCx5QjOuvMj9DIUAUUw
- Lz+sz4JJ1dwBZz+LtWhw6/woTdNSztnNVqS3qabFwUDOx1uSBwibmHm
-X-Developer-Key: i=xianwei.zhao@amlogic.com; a=ed25519;
- pk=o4fDH8ZXL6xQg5h17eNzRljf6pwZHWWjqcOSsj3dW24=
-X-Endpoint-Received: by B4 Relay for xianwei.zhao@amlogic.com/20231208 with
- auth_id=107
-X-Original-From: Xianwei Zhao <xianwei.zhao@amlogic.com>
-Reply-To: xianwei.zhao@amlogic.com
+User-Agent: =?UTF-8?B?TW96aWxsYSBUaHVuZGVyYmlyZCDmtYvor5XniYg=?=
+Subject: Re: [PATCH v2] nfs: handle failure of nfs_get_lock_context in unlock
+ path
+To: Anna Schumaker <anna.schumaker@oracle.com>, <trondmy@kernel.org>,
+	<anna@kernel.org>, <jlayton@kernel.org>, <bcodding@redhat.com>
+CC: <linux-nfs@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<yukuai1@huaweicloud.com>, <houtao1@huawei.com>, <yi.zhang@huawei.com>,
+	<yangerkun@huawei.com>, <lilingfeng@huaweicloud.com>
+References: <20250513074226.3362070-1-lilingfeng3@huawei.com>
+ <33bee0b7-cd55-4d1a-9afe-63b3b93420ab@oracle.com>
+From: Li Lingfeng <lilingfeng3@huawei.com>
+In-Reply-To: <33bee0b7-cd55-4d1a-9afe-63b3b93420ab@oracle.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
+ kwepemg500017.china.huawei.com (7.202.181.81)
 
-From: Xianwei Zhao <xianwei.zhao@amlogic.com>
+Hi Anna,
 
-Add pinctrl device to support Amlogic S6.
+Thank you for reviewing the patch.
+I agree that handling the error case first makes the code cleaner and
+reduces nesting. Your suggested change looks great to me.
+I'll send v3 soon.
 
-Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
----
- arch/arm64/boot/dts/amlogic/amlogic-s6.dtsi | 97 +++++++++++++++++++++++++++++
- 1 file changed, 97 insertions(+)
+Lingfeng
 
-diff --git a/arch/arm64/boot/dts/amlogic/amlogic-s6.dtsi b/arch/arm64/boot/dts/amlogic/amlogic-s6.dtsi
-index a8c90245c42a..5324079808c4 100644
---- a/arch/arm64/boot/dts/amlogic/amlogic-s6.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/amlogic-s6.dtsi
-@@ -6,6 +6,7 @@
- #include <dt-bindings/interrupt-controller/irq.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/pinctrl/amlogic,pinctrl.h>
- / {
- 	cpus {
- 		#address-cells = <2>;
-@@ -92,6 +93,102 @@ uart_b: serial@7a000 {
- 				clock-names = "xtal", "pclk", "baud";
- 				status = "disabled";
- 			};
-+
-+			periphs_pinctrl: pinctrl {
-+				compatible = "amlogic,pinctrl-s6";
-+				#address-cells = <2>;
-+				#size-cells = <2>;
-+				ranges = <0x0 0x0 0x0 0x4000 0x0 0x340>;
-+
-+				gpioz: gpio@c0 {
-+					reg = <0 0xc0 0 0x20>, <0 0x18 0 0x8>;
-+					reg-names = "gpio", "mux";
-+					gpio-controller;
-+					#gpio-cells = <2>;
-+					gpio-ranges = <&periphs_pinctrl 0 (AMLOGIC_GPIO_Z<<8) 16>;
-+				};
-+
-+				gpiox: gpio@100 {
-+					reg = <0 0x100 0 0x30>, <0 0xc 0 0x8>;
-+					reg-names = "gpio", "mux";
-+					gpio-controller;
-+					#gpio-cells = <2>;
-+					gpio-ranges = <&periphs_pinctrl 0 (AMLOGIC_GPIO_X<<8) 20>;
-+				};
-+
-+				gpioh: gpio@140 {
-+					reg = <0 0x140 0 0x20>, <0 0x2c 0 0x8>;
-+					reg-names = "gpio", "mux";
-+					gpio-controller;
-+					#gpio-cells = <2>;
-+					gpio-ranges = <&periphs_pinctrl 0 (AMLOGIC_GPIO_H<<8) 9>;
-+				};
-+
-+				gpiod: gpio@180 {
-+					reg = <0 0x180 0 0x20>, <0 0x8 0 0x4>;
-+					reg-names = "gpio", "mux";
-+					gpio-controller;
-+					#gpio-cells = <2>;
-+					gpio-ranges = <&periphs_pinctrl 0 (AMLOGIC_GPIO_D<<8) 7>;
-+				};
-+
-+				gpiof: gpio@1a0 {
-+					reg = <0 0x1a0 0 0x20>, <0 0x20 0 0x4>;
-+					reg-names = "gpio", "mux";
-+					gpio-controller;
-+					#gpio-cells = <2>;
-+					gpio-ranges = <&periphs_pinctrl 0 (AMLOGIC_GPIO_F<<8) 5>;
-+				};
-+
-+				gpioe: gpio@1c0 {
-+					reg = <0 0x1c0 0 0x20>, <0 0x48 0 0x4>;
-+					reg-names = "gpio", "mux";
-+					gpio-controller;
-+					#gpio-cells = <2>;
-+					gpio-ranges = <&periphs_pinctrl 0 (AMLOGIC_GPIO_E<<8) 3>;
-+				};
-+
-+				gpioc: gpio@200 {
-+					reg = <0 0x200 0 0x20>, <0 0x24 0 0x4>;
-+					reg-names = "gpio", "mux";
-+					gpio-controller;
-+					#gpio-cells = <2>;
-+					gpio-ranges = <&periphs_pinctrl 0 (AMLOGIC_GPIO_C<<8) 8>;
-+				};
-+
-+				gpiob: gpio@240 {
-+					reg = <0 0x240 0 0x20>, <0 0x0 0 0x8>;
-+					reg-names = "gpio", "mux";
-+					gpio-controller;
-+					#gpio-cells = <2>;
-+					gpio-ranges = <&periphs_pinctrl 0 (AMLOGIC_GPIO_B<<8) 14>;
-+				};
-+
-+				gpioa: gpio@280 {
-+					reg = <0 0x280 0 0x20>, <0 0x40 0 0x8>;
-+					reg-names = "gpio", "mux";
-+					gpio-controller;
-+					#gpio-cells = <2>;
-+					gpio-ranges = <&periphs_pinctrl 0 (AMLOGIC_GPIO_A<<8) 16>;
-+				};
-+
-+				test_n: gpio@2c0 {
-+					reg = <0 0x2c0 0 0x20>;
-+					reg-names = "gpio";
-+					gpio-controller;
-+					#gpio-cells = <2>;
-+					gpio-ranges =
-+						<&periphs_pinctrl 0 (AMLOGIC_GPIO_TEST_N<<8) 1>;
-+				};
-+
-+				gpiocc: gpio@300 {
-+					reg = <0 0x300 0 0x20>, <0 0x14 0 0x4>;
-+					reg-names = "gpio", "mux";
-+					gpio-controller;
-+					#gpio-cells = <2>;
-+					gpio-ranges = <&periphs_pinctrl 0 (AMLOGIC_GPIO_CC<<8) 2>;
-+				};
-+			};
- 		};
- 	};
- };
-
--- 
-2.37.1
-
-
+在 2025/5/13 21:50, Anna Schumaker 写道:
+> Hi Li,
+>
+> On 5/13/25 3:42 AM, Li Lingfeng wrote:
+>> When memory is insufficient, the allocation of nfs_lock_context in
+>> nfs_get_lock_context() fails and returns -ENOMEM. If we mistakenly treat
+>> an nfs4_unlockdata structure (whose l_ctx member has been set to -ENOMEM)
+>> as valid and proceed to execute rpc_run_task(), this will trigger a NULL
+>> pointer dereference in nfs4_locku_prepare. For example:
+>>
+>> BUG: kernel NULL pointer dereference, address: 000000000000000c
+>> PGD 0 P4D 0
+>> Oops: Oops: 0000 [#1] SMP PTI
+>> CPU: 15 UID: 0 PID: 12 Comm: kworker/u64:0 Not tainted 6.15.0-rc2-dirty #60
+>> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-2.fc40
+>> Workqueue: rpciod rpc_async_schedule
+>> RIP: 0010:nfs4_locku_prepare+0x35/0xc2
+>> Code: 89 f2 48 89 fd 48 c7 c7 68 69 ef b5 53 48 8b 8e 90 00 00 00 48 89 f3
+>> RSP: 0018:ffffbbafc006bdb8 EFLAGS: 00010246
+>> RAX: 000000000000004b RBX: ffff9b964fc1fa00 RCX: 0000000000000000
+>> RDX: 0000000000000000 RSI: fffffffffffffff4 RDI: ffff9ba53fddbf40
+>> RBP: ffff9ba539934000 R08: 0000000000000000 R09: ffffbbafc006bc38
+>> R10: ffffffffb6b689c8 R11: 0000000000000003 R12: ffff9ba539934030
+>> R13: 0000000000000001 R14: 0000000004248060 R15: ffffffffb56d1c30
+>> FS: 0000000000000000(0000) GS:ffff9ba5881f0000(0000) knlGS:00000000
+>> CS: 0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>> CR2: 000000000000000c CR3: 000000093f244000 CR4: 00000000000006f0
+>> Call Trace:
+>>   <TASK>
+>>   __rpc_execute+0xbc/0x480
+>>   rpc_async_schedule+0x2f/0x40
+>>   process_one_work+0x232/0x5d0
+>>   worker_thread+0x1da/0x3d0
+>>   ? __pfx_worker_thread+0x10/0x10
+>>   kthread+0x10d/0x240
+>>   ? __pfx_kthread+0x10/0x10
+>>   ret_from_fork+0x34/0x50
+>>   ? __pfx_kthread+0x10/0x10
+>>   ret_from_fork_asm+0x1a/0x30
+>>   </TASK>
+>> Modules linked in:
+>> CR2: 000000000000000c
+>> ---[ end trace 0000000000000000 ]---
+>>
+>> Free the allocated nfs4_unlockdata when nfs_get_lock_context() fails and
+>> return NULL to terminate subsequent rpc_run_task, preventing NULL pointer
+>> dereference.
+>>
+>> Fixes: f30cb757f680 ("NFS: Always wait for I/O completion before unlock")
+>> Link: https://lore.kernel.org/all/21817f2c-2971-4568-9ae4-1ccc25f7f1ef@huawei.com/
+>> Signed-off-by: Li Lingfeng <lilingfeng3@huawei.com>
+>> ---
+>> Changes in v2:
+>>    Add a comment explaining that error handling for ctx acquisition failure
+>>    is unnecessary.
+> Thanks for the patch!
+>
+>>   fs/nfs/nfs4proc.c | 13 ++++++++++++-
+>>   1 file changed, 12 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/fs/nfs/nfs4proc.c b/fs/nfs/nfs4proc.c
+>> index 970f28dbf253..e52e2ac1ab39 100644
+>> --- a/fs/nfs/nfs4proc.c
+>> +++ b/fs/nfs/nfs4proc.c
+>> @@ -7074,18 +7074,29 @@ static struct nfs4_unlockdata *nfs4_alloc_unlockdata(struct file_lock *fl,
+>>   	struct nfs4_unlockdata *p;
+>>   	struct nfs4_state *state = lsp->ls_state;
+>>   	struct inode *inode = state->inode;
+>> +	struct nfs_lock_context *l_ctx;
+>>   
+>>   	p = kzalloc(sizeof(*p), GFP_KERNEL);
+>>   	if (p == NULL)
+>>   		return NULL;
+>> +	l_ctx = nfs_get_lock_context(ctx);
+>> +	if (!IS_ERR(l_ctx)) {
+>> +		p->l_ctx = l_ctx;
+>> +	} else {
+>> +		kfree(p);
+>> +		return NULL;
+>> +	}
+> I was thinking the code would look a little neater if this if / else block
+> was changed to:
+>
+>          if (IS_ERR(l_ctx)) {
+>                  kfree(p);
+>                  return NULL;
+>          }
+>
+>>   	p->arg.fh = NFS_FH(inode);
+>>   	p->arg.fl = &p->fl;
+>>   	p->arg.seqid = seqid;
+>>   	p->res.seqid = seqid;
+>>   	p->lsp = lsp;
+>>   	/* Ensure we don't close file until we're done freeing locks! */
+>> +	/*
+>> +	 * Since the caller holds a reference to ctx, the refcount must be non-zero.
+>> +	 * Therefore, error handling for failed ctx acquisition is unnecessary here.
+>> +	 */
+>>   	p->ctx = get_nfs_open_context(ctx);
+>> -	p->l_ctx = nfs_get_lock_context(ctx);
+> And then update this to set p->l_ctx = l_ctx.
+>
+> What do you think?
+> Anna
+>
+>>   	locks_init_lock(&p->fl);
+>>   	locks_copy_lock(&p->fl, fl);
+>>   	p->server = NFS_SERVER(inode);
+>
 
