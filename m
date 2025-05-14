@@ -1,148 +1,153 @@
-Return-Path: <linux-kernel+bounces-647950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-647896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1175DAB6FA9
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 17:25:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78C4FAB6F0B
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 17:10:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7E0497B9E99
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 15:21:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 303761BA02F3
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 15:11:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CB0B28151A;
-	Wed, 14 May 2025 15:19:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB0361C84BB;
+	Wed, 14 May 2025 15:10:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="djZFgxiA"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vlapqhv+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E113D1C6FF9;
-	Wed, 14 May 2025 15:19:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 210FD12C499;
+	Wed, 14 May 2025 15:10:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747235965; cv=none; b=Qx3BFUgIVgkaZ5If0QV3XsoS/saEl4R+eqvJLuTJwtDA4FkRMssREWgwUz3INlDeqjW2mSIJtFW/YQF+W2NGFKCsEh5uEOKU5ZA6Ocl1jtAbVotth0W9enRy5xkgWHc5t3fB2P9Jo+yrm0umwXMjr/KjWEBRsmiOwUF1ZGFs2ZA=
+	t=1747235448; cv=none; b=JVDTuREUdzh7CuedV4qZLy4ZQSSmBs577yH6gg0MflGuoOWeItibTWvdmqlgeE03+gPFuidpW8tEB6KyzOToF2OVw9/3UmjhJKf9mV8/KxjRw9cG5joEgLWCdqFkqt53oGAtwH59o5+rl8STfkAIEVwXPcbI1h4uy+PahOTe3nk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747235965; c=relaxed/simple;
-	bh=fbDxkuzpwYjrGZLFi5VIbeGvuh+o5LtR/w6gApnTSJQ=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=PBbTx9Xys+AZ94m1F3tzBRKbIbtL7Ym3EcA5WHTc9GgRWCe4onHEXII/pIuvuwwezilFekuO5M6WdtIhTV9hfS72jrHG6RK4LYu4jZqLqJoliaxK7lpDewsYJXXdrVsIdKMCVm6AR1KMywBBFzdUUJa9gVcpQHaXEtsb9Rj7JOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=djZFgxiA; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [127.0.0.1] ([76.133.66.138])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 54EFAEbT3012887
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Wed, 14 May 2025 08:10:15 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 54EFAEbT3012887
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025042001; t=1747235422;
-	bh=yapZ2s67BLNwus6ibHABzXGBCoZzVlVupFJe/q2qy/U=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=djZFgxiAUJE7iFHA0Wd/yFppU4TGqi4fxmoBT1mvTgxRmRiu+8QH1zl3CND+QbbP4
-	 97UVxN+J8QD8iz78UlxzP16emoOIxJpWaoO9qxu1Ec5we80T+FOOb4RfHy40YAODf4
-	 27XX25rvc06YcNMTsxppaOiXgVXhowu2DQa6R8gC1Tcuq8Oq9GVQp3swa9CciK5Vg/
-	 jv/tWyK4JR8CJyAVAYMpVNTUaE0Ax5AVAQfxExqancQ8ZpUjlh9FBEWFvjm5PCVbut
-	 6qwwqWO9GyDweGO8bFsU0TsmuX3ejxdQaqkTWk3Ymh6Yue7onjRsMrCGmrkfplN9Ef
-	 P/Ifsp+Ororjw==
-Date: Wed, 14 May 2025 08:10:12 -0700
-From: "H. Peter Anvin" <hpa@zytor.com>
-To: Arnd Bergmann <arnd@arndb.de>, Andrey Albershteyn <aalbersh@redhat.com>,
-        Richard Henderson <richard.henderson@linaro.org>,
-        Matt Turner <mattst88@gmail.com>, Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Michal Simek <monstr@monstr.eu>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        "James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>,
-        Helge Deller <deller@gmx.de>,
-        Madhavan Srinivasan <maddy@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Naveen N Rao <naveen@kernel.org>, Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Yoshinori Sato <ysato@users.osdn.me>, Rich Felker <dalias@libc.org>,
-        John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-        "David S . Miller" <davem@davemloft.net>,
-        Andreas Larsson <andreas@gaisler.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-        Chris Zankel <chris@zankel.net>, Max Filippov <jcmvbkbc@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-        =?ISO-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-        =?ISO-8859-1?Q?G=FCnther_Noack?= <gnoack@google.com>,
-        =?ISO-8859-1?Q?Pali_Roh=E1r?= <pali@kernel.org>,
-        Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Ondrej Mosnacek <omosnace@redhat.com>, Tyler Hicks <code@tyhicks.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Amir Goldstein <amir73il@gmail.com>
-CC: linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-m68k@vger.kernel.org,
-        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-api@vger.kernel.org, Linux-Arch <linux-arch@vger.kernel.org>,
-        selinux@vger.kernel.org, ecryptfs@vger.kernel.org,
-        linux-unionfs@vger.kernel.org, linux-xfs@vger.kernel.org,
-        Andrey Albershteyn <aalbersh@kernel.org>
-Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v5_0/7=5D_fs=3A_introduce_fi?=
- =?US-ASCII?Q?le=5Fgetattr_and_file=5Fsetattr_syscalls?=
-User-Agent: K-9 Mail for Android
-In-Reply-To: <399fdabb-74d3-4dd6-9eee-7884a986dab1@app.fastmail.com>
-References: <20250513-xattrat-syscall-v5-0-22bb9c6c767f@kernel.org> <399fdabb-74d3-4dd6-9eee-7884a986dab1@app.fastmail.com>
-Message-ID: <B17E8366-DB80-45E6-90D6-294824C40FD9@zytor.com>
+	s=arc-20240116; t=1747235448; c=relaxed/simple;
+	bh=51s1ugliCZ9y9tBTWNjREJUDvKnLeqgTAYWYYnww7tM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=daCJYex311VNpiTLw9Q+3Q2QNV+zfabFCZ7W8i9vDoP6+ar7wvsrCUH410AH0s2N6NnL+nN0NJJoKQny7FrMejOkz2xGTKfMC0kp/7lvbVlnoNNELLIozlPJcHP/iS6QQ5POLydDICJxVXNVH4Vtf3SzYmVjVJewqTdhSVxPqXE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vlapqhv+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4ABA7C4CEE3;
+	Wed, 14 May 2025 15:10:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747235447;
+	bh=51s1ugliCZ9y9tBTWNjREJUDvKnLeqgTAYWYYnww7tM=;
+	h=From:Subject:Date:To:Cc:From;
+	b=Vlapqhv+gM0aiz94PdoikbsOxJ0CMutLOS/yXoa/V2ibUUfYKeT525Jj6iUVj0VIX
+	 oYpBIvSQjvtL8g5q6BYIofpY1WJyDiwCO0KdkmNhwLlAimM898mAQOCcqvF1zepk3N
+	 WaSM/fa+Fj9xvIxu2kzL18E+Qzzkph7XbWFUggQhNoiCsc6S+EutE5L1rZrBs+Xxjf
+	 86iHfDeaJL9cAq2NEkKUOv4U16KTWyGLrUiFo8n8uoLxH6HPsxal56877w2HVyQ51H
+	 9dC9JclMzjXFEDvWnRTN9hPHEGHTC2phWRU045Jpb3XmkTPsPJPk98+wFuRzJYvOCb
+	 DtXQtf41rDeWA==
+From: Konrad Dybcio <konradybcio@kernel.org>
+Subject: [RFT PATCH v2 00/15] Add a single source of truth for UBWC
+ configuration data
+Date: Wed, 14 May 2025 17:10:20 +0200
+Message-Id: <20250514-topic-ubwc_central-v2-0-09ecbc0a05ce@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAFyyJGgC/22NzQ6CMBCEX4Xs2ZLlZxP15HsYYmBdpAlQaAtqC
+ O9uhYMXL5N8k8x8CzixWhycowWszNpp0wdIDxFwU/YPUfoeGFJMCfMMlTeDZjVVT76x9N6WraK
+ MKccak5MQhOFgpdav7fRa7GxlnMK3/5WNdt7Y9yaek2+7OwiP/xxzolBhRpwzcSWEF+NcPE5ly
+ 6br4hBQrOv6AV/4O7HQAAAA
+X-Change-ID: 20250430-topic-ubwc_central-53c540f019e5
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Clark <robdclark@gmail.com>, 
+ Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+ Dmitry Baryshkov <lumag@kernel.org>, 
+ Akhil P Oommen <quic_akhilpo@quicinc.com>, Sean Paul <sean@poorly.run>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Cc: Marijn Suijten <marijn.suijten@somainline.org>, 
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+ dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1747235442; l=3475;
+ i=konrad.dybcio@oss.qualcomm.com; s=20230215; h=from:subject:message-id;
+ bh=51s1ugliCZ9y9tBTWNjREJUDvKnLeqgTAYWYYnww7tM=;
+ b=V9qKgWmQlFJZwWodaXCZPfFPpKAnjadFmxqUc6FdCktyOis3bFJK1AqssaDhaLghlADua9Kaf
+ CDurEBEKoMuCAGpbIwAPzgfphXX6L/ze492vPPSixmCceby0fZGNzM7
+X-Developer-Key: i=konrad.dybcio@oss.qualcomm.com; a=ed25519;
+ pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 
-On May 13, 2025 2:53:23 AM PDT, Arnd Bergmann <arnd@arndb=2Ede> wrote:
->On Tue, May 13, 2025, at 11:17, Andrey Albershteyn wrote:
->
->>
->> 	long syscall(SYS_file_getattr, int dirfd, const char *pathname,
->> 		struct fsxattr *fsx, size_t size, unsigned int at_flags);
->> 	long syscall(SYS_file_setattr, int dirfd, const char *pathname,
->> 		struct fsxattr *fsx, size_t size, unsigned int at_flags);
->
->I don't think we can have both the "struct fsxattr" from the uapi
->headers, and a variable size as an additional argument=2E I would
->still prefer not having the extensible structure at all and just
->use fsxattr, but if you want to make it extensible in this way,
->it should use a different structure (name)=2E Otherwise adding
->fields after fsx_pad[] would break the ioctl interface=2E
->
->I also find the bit confusing where the argument contains both
->"ignored but assumed zero" flags, and "required to be zero"
->flags depending on whether it's in the fsx_pad[] field or
->after it=2E This would be fine if it was better documented=2E
->
->
->> 		fsx=2Efsx_xflags |=3D FS_XFLAG_NODUMP;
->> 		error =3D syscall(468, dfd, "=2E/foo", &fsx, 0);
->
->The example still uses the calling conventions from a previous
->version=2E
->
->       Arnd
+As discussed a lot in the past, the UBWC config must be coherent across
+a number of IP blocks (currently display and GPU, but it also may/will
+concern camera/video as the drivers evolve).
 
-Well, ioctls carry the structure size in the ioctl number, so changing the=
- structure size would change the ioctl number with it=2E
+So far, we've been trying to keep the values reasonable in each of the
+two drivers separately, but it really make sense to do so, especially
+given certain fields (see [1]) may need to be gathered dynamically.
+
+This series introduces a Single Source of Truth (SSOT) database to be
+consumed by multimedia drivers as needed.
+
+[1] https://lore.kernel.org/linux-arm-msm/20250410-topic-smem_dramc-v2-0-dead15264714@oss.qualcomm.com/
+
+Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+---
+Changes in v2:
+- Rearrange some patches
+- Don't zeroalloc a copy of ubwc_config, store a full struct inside
+  adreno_gpu instead (temporary solution until we trust the central db
+  on the HBB value)
+- Improve some commit messages
+- Fix up SM6125's config
+- Don't break userspace abi (hbb value)
+- Don't keep mdss_reg_bus_bw in ubwc_config
+- Add the last patch warning if there are inconsistencies (I don't
+  insist on it getting merged, but I think it's a good idea for the
+  time being)
+- Link to v1: https://lore.kernel.org/r/20250508-topic-ubwc_central-v1-0-035c4c5cbe50@oss.qualcomm.com
+
+---
+Konrad Dybcio (15):
+      soc: qcom: Add UBWC config provider
+      drm/msm: Offset MDSS HBB value by 13
+      drm/msm: Use the central UBWC config database
+      drm/msm/a6xx: Get a handle to the common UBWC config
+      drm/msm/a6xx: Resolve the meaning of AMSBC
+      drm/msm/a6xx: Simplify uavflagprd_inv detection
+      drm/msm/a6xx: Resolve the meaning of UBWC_MODE
+      drm/msm/a6xx: Replace '2' with BIT(1) in level2_swizzling_dis calc
+      drm/msm/a6xx: Resolve the meaning of rgb565_predicator
+      drm/msm/a6xx: Simplify min_acc_len calculation
+      drm/msm/adreno: Switch to the common UBWC config struct
+      drm/msm/a6xx: Drop cfg->ubwc_swizzle override
+      soc: qcom: ubwc: Fix SM6125's ubwc_swizzle value
+      soc: qcom: ubwc: Add #defines for UBWC swizzle bits
+      [RFC] drm/msm/a6xx: Warn if the highest_bank_bit value is overwritten
+
+ drivers/gpu/drm/msm/Kconfig                 |   1 +
+ drivers/gpu/drm/msm/adreno/a5xx_gpu.c       |  20 +-
+ drivers/gpu/drm/msm/adreno/a6xx_gpu.c       | 131 +++++------
+ drivers/gpu/drm/msm/adreno/adreno_gpu.c     |   6 +-
+ drivers/gpu/drm/msm/adreno/adreno_gpu.h     |  46 +---
+ drivers/gpu/drm/msm/disp/dpu1/dpu_hw_sspp.c |   6 +-
+ drivers/gpu/drm/msm/disp/dpu1/dpu_hw_sspp.h |   4 +-
+ drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c     |   7 +-
+ drivers/gpu/drm/msm/disp/dpu1/dpu_kms.h     |   2 +-
+ drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c   |   3 +-
+ drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c      |   2 +-
+ drivers/gpu/drm/msm/disp/dpu1/dpu_rm.h      |   2 +-
+ drivers/gpu/drm/msm/msm_mdss.c              | 333 +++++-----------------------
+ drivers/gpu/drm/msm/msm_mdss.h              |  28 ---
+ drivers/soc/qcom/Kconfig                    |   8 +
+ drivers/soc/qcom/Makefile                   |   1 +
+ drivers/soc/qcom/ubwc_config.c              | 244 ++++++++++++++++++++
+ include/linux/soc/qcom/ubwc.h               |  69 ++++++
+ 18 files changed, 480 insertions(+), 433 deletions(-)
+---
+base-commit: edef457004774e598fc4c1b7d1d4f0bcd9d0bb30
+change-id: 20250430-topic-ubwc_central-53c540f019e5
+
+Best regards,
+-- 
+Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+
 
