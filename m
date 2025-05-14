@@ -1,94 +1,64 @@
-Return-Path: <linux-kernel+bounces-647407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-647429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EB6FAB67FF
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 11:51:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05057AB682A
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 11:57:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9234C1B67179
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 09:52:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9088E7AC0C8
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 09:56:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76C1625D91C;
-	Wed, 14 May 2025 09:51:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AECC225EF9C;
+	Wed, 14 May 2025 09:55:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="QkKLksqX"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="belB5YVB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF6E122D7B2
-	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 09:51:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F096325E827;
+	Wed, 14 May 2025 09:55:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747216311; cv=none; b=O5ilZtwRw72f7fsgObk19DluTj8DLcuOXF/4tDIOZ/4uZKp9uCbUO4Il69w4UXvo1KQnsxQzSpBl13aOIeBBJRY3HR40e3XNRb2DKk+/rEty3GPvw0644qycTUKNFAMiZm1HI66xqt3JT0YIycYl63O9Pqgnp5mN1eH20nduWPo=
+	t=1747216512; cv=none; b=AOxvzlqS0ntHxaYwUpYRm49jOV8r05WVoeY3mLrwS20jhUezDktTYRJMcP4e+CDSWizfPTYX5e4V8fMWPKf4iiPHrE4TPVo8RnYzCJLtDdsLKyyrIAbN8k/UnNn/FTWqiaAXmJIHCZbDWnq/aBozi4x6gXd/AZIpXIxvBuxL35g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747216311; c=relaxed/simple;
-	bh=0UCu58qx5+r5o2FkoxTbEmZMlUiAS0WASZpHPgpTZJg=;
+	s=arc-20240116; t=1747216512; c=relaxed/simple;
+	bh=NU0/laBLJ5U/Z61R8LdAMhWaqpI9feJPmdaQdzlsQqc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q4btbfTA/Wm1FPAuklMrQHIshONj0EaoanhJvpMWypsWPAq7Ywh4KlX6WN99pz96GVkVlig7pRN6HNZj8U64DqipuOvwwWlWzAkRw0Il5tEBUqxklYlOsxQDgWQ4QfkqOaTBHawTcIFp6JxOI5DtPibiO/rvOd57f+lXJHOR0Pk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=QkKLksqX; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5f624291db6so11247454a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 02:51:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1747216307; x=1747821107; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=BVybws1t+U40/vbtZIfwab2hNrCdVfeHjc91VuDwjDg=;
-        b=QkKLksqXEpMVIOBhNhrC+QEbTjfiONxRrVZwgNHrIAjEj87rzkusngGuuVit2oQV0n
-         mQGMNkgLtJ2KYt+MgC6TyU/N723i4jTxgSE55mgaOJMx6Ee3vc7ufV5IHNVcWSuBDswo
-         pEuXoBK84mROqaM5zCZ2O5dA4YNwbHIbxVFpz73NjsZoz90ATvZyexYxSTbtmxYzh8Op
-         lisp7QGm3A3XPl+OjJecziEeM6jgVGElBe7xlPvhOyYh9OhOGaabR+Vta9XCLUS/pdej
-         mlKQjJARDKunglS1Lvtvfn6yQ5d1CujD/2d8+nyy/3k0/2TcV3yHOk6UwHc5SBCtDy2+
-         8AlQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747216307; x=1747821107;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BVybws1t+U40/vbtZIfwab2hNrCdVfeHjc91VuDwjDg=;
-        b=HPJi2O84jLnOqdCIX9RCQ2aiTG9WBcgN6N0rIc9w3WZSzM8mvNcyyEqB3bLUPyVYpE
-         Z+82Cg6xXcx09Qed6QeSZ3GiXlySZjV686Q1nog8LgCVsjTribeuhSHTgDEqk0WYF7+e
-         oL/Nsw/l+ys1tnkXYDdMQYlPWcbiK9N+vp03IvNCQkA8r6iVFoUsBYV/ofRii1zyQmCb
-         z5k3HWK5/SkQy06wGgalFBqEu7kxZ4AbRC/dMeN3lyLicdbeJsWNQPB0UkFGYa2WdNyr
-         rRyc9zb+aUcFg0EpgrK1mrNhUl9w2/VHqflzfClgr9ijxw1qrfHxhTxpgjcnn6z4FaZP
-         wSrg==
-X-Forwarded-Encrypted: i=1; AJvYcCWKAzxbyRMsaYsFrW4X3RjZQArXz4mjvSPJtH72QTyZM6TE+Opm4VrMG/4OlH++HHvls0sGY9crL3sGHLU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwPnnIZ0w/GNs6SH5CQUt9r8RJ9r6CxfBuW8rkpO/NkXqhIlHHk
-	1Yt4DKTkdIuwkOfSEyVTPQpAe7tFjSiY9EoRIMPDLIPrweYq0hqtEmbq8zkoXo0=
-X-Gm-Gg: ASbGnct+UR3cpadMP/dODREGubFBEpUXJlhTJDNegwkh6jLsXsviCacp+K84pAC53HQ
-	ifzsny6x7xcRT5c41U2mfL4l8vW5cthVXoYoNjquYB7nWy4GP9Q+1XC297nhEJ12h67wP3WxiLM
-	SAXTwIUDbg2m86xNhZNc62TSnGxsyFv+xFEAQyZti2dYkXVZG1YmJk3cLyURytX3LXRx78pFj1w
-	70J1pYBSeXa2QjBhrRGEB1mjVgaC8o2gVJKMXyg62GHkxkeFhc/ZOhe6tCrQzKjjzC6dEUt8MYf
-	qGAE9JWOr8bw8g8YXoxB2g6H/eaYMFwOU/Avhkq9ym98/EgwAhz3DQ==
-X-Google-Smtp-Source: AGHT+IGSd1rvJVl8u3DfNMX7dhF6Gp8/xiI2G+noTAd6SIJPTmFef2VtUgYEzSt6Qp8SoVIvBvzS5Q==
-X-Received: by 2002:a17:907:9443:b0:ad2:1d1c:1c8e with SMTP id a640c23a62f3a-ad4f750e521mr279713966b.49.1747216307144;
-        Wed, 14 May 2025 02:51:47 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.130])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad221288a91sm873089766b.15.2025.05.14.02.51.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 May 2025 02:51:46 -0700 (PDT)
-Date: Wed, 14 May 2025 11:51:44 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: Miroslav Benes <mbenes@suse.cz>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	linux-kernel@vger.kernel.org, live-patching@vger.kernel.org,
-	Josh Poimboeuf <jpoimboe@redhat.com>, mingo@kernel.com,
-	juri.lelli@redhat.com, vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-	mgorman@suse.de, vschneid@redhat.com, jpoimboe@kernel.org,
-	jikos@kernel.org, joe.lawrence@redhat.com,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH v2] sched,livepatch: Untangle cond_resched() and
- live-patching
-Message-ID: <aCRnsN-2x4vpjpCx@pathway.suse.cz>
-References: <20250509113659.wkP_HJ5z@linutronix.de>
- <alpine.LSU.2.21.2505131529080.19621@pobox.suse.cz>
- <20250513140310.GA25639@noisy.programming.kicks-ass.net>
- <alpine.LSU.2.21.2505131604530.19621@pobox.suse.cz>
+	 Content-Type:Content-Disposition:In-Reply-To; b=vB3Mf4Y+igvLoEMk0vdyqxzAx5vSkviGoZCuLNhgHBWwqSch4IXylE0AkJhqs1rH0d26F3TcQ/AYYqPF5znXLI0waaEn4ghVAZqKmi0nsAGaHOE0Vk7Fdotwt7XiLhT3P6/8qA7b0Lv8e3RwaI+BD7Yq6R6OIxZGpTBQRVxHt60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=belB5YVB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5A49C4CEE9;
+	Wed, 14 May 2025 09:55:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1747216511;
+	bh=NU0/laBLJ5U/Z61R8LdAMhWaqpI9feJPmdaQdzlsQqc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=belB5YVBvtc5H3/w8UjIZtr7Ri7Fe0orS+bV9pxjvY2IKtEBsSqdynxckERS+mIDo
+	 nZ8By2eA/s7IehP+5jFrpV3EgjTy1aRm6EtX0Qe5UeMaiSe56Tm5GogTQFYGGqz3UB
+	 w9+Du91MUj57+iGJ4bh334CDWjlAKxuNRdfA7rl0=
+Date: Wed, 14 May 2025 11:53:23 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
+	clang-built-linux <llvm@lists.linux.dev>,
+	Anders Roxell <anders.roxell@linaro.org>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Marco Crivellari <marco.crivellari@suse.com>,
+	Thorsten Blum <thorsten.blum@linux.dev>, linux-mips@vger.kernel.org
+Subject: Re: [PATCH 6.14 000/197] 6.14.7-rc1 review
+Message-ID: <2025051415-unloader-likely-b0e6@gregkh>
+References: <20250512172044.326436266@linuxfoundation.org>
+ <CA+G9fYuO5m0EgOAbytJv2Ytp9uj-0jHVUGddaXHLckHk+ZLEHA@mail.gmail.com>
+ <CA+G9fYsGTqCxiXQOY3HEu4Z3CEwmyQoOb8DnpzVToWMW-Y8R5A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,62 +67,81 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <alpine.LSU.2.21.2505131604530.19621@pobox.suse.cz>
+In-Reply-To: <CA+G9fYsGTqCxiXQOY3HEu4Z3CEwmyQoOb8DnpzVToWMW-Y8R5A@mail.gmail.com>
 
-On Tue 2025-05-13 16:05:51, Miroslav Benes wrote:
-> On Tue, 13 May 2025, Peter Zijlstra wrote:
+On Tue, May 13, 2025 at 02:29:20PM +0100, Naresh Kamboju wrote:
+> On Tue, 13 May 2025 at 11:40, Naresh Kamboju <naresh.kamboju@linaro.org> wrote:
+> >
+> > On Mon, 12 May 2025 at 18:43, Greg Kroah-Hartman
+> > <gregkh@linuxfoundation.org> wrote:
+> > >
+> > > This is the start of the stable review cycle for the 6.14.7 release.
+> > > There are 197 patches in this series, all will be posted as a response
+> > > to this one.  If anyone has any issues with these being applied, please
+> > > let me know.
+> > >
+> > > Responses should be made by Wed, 14 May 2025 17:19:58 +0000.
+> > > Anything received after that time might be too late.
+> > >
+> > > The whole patch series can be found in one patch at:
+> > >         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.14.7-rc1.gz
+> > > or in the git tree and branch at:
+> > >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.14.y
+> > > and the diffstat can be found below.
+> > >
+> > > thanks,
+> > >
+> > > greg k-h
+> >
+> > Regressions on mips defconfig tinyconfig and allnoconfig builds failed with
+> > clang-20 toolchain on stable-rc  6.14.7-rc1, 6.12.29-rc1 and 6.6.91-rc1.
+> > But, builds pass with gcc-13.
+> >
+> > * mips, build
+> >   - clang-20-allnoconfig
+> >   - clang-20-defconfig
+> >   - clang-20-tinyconfig
+> >   - korg-clang-20-lkftconfig-hardening
+> >   - korg-clang-20-lkftconfig-lto-full
+> >   - korg-clang-20-lkftconfig-lto-thing
+> >
+> > Regression Analysis:
+> >  - New regression? Yes
+> >  - Reproducibility? Yes
+> >
+> > Build regression: mips defconfig clang-20 instantiation error expected
+> > an immediate
+> >
+> > Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+> >
+> > ## Build error mips
+> > <instantiation>:7:11: error: expected an immediate
+> >  ori $26, r4k_wait_idle_size - 2
+> >           ^
+> > <instantiation>:10:13: error: expected an immediate
+> >  addiu $26, r4k_wait_exit - r4k_wait_insn + 2
+> >             ^
+> > <instantiation>:10:29: error: expected an immediate
+> >  addiu $26, r4k_wait_exit - r4k_wait_insn + 2
+> >                             ^
+> > <instantiation>:7:11: error: expected an immediate
+> >  ori $26, r4k_wait_idle_size - 2
+> >           ^
+> > <instantiation>:10:13: error: expected an immediate
+> >  addiu $26, r4k_wait_exit - r4k_wait_insn + 2
+> >             ^
+> > <instantiation>:10:29: error: expected an immediate
+> >  addiu $26, r4k_wait_exit - r4k_wait_insn + 2
+> >                             ^
 > 
-> > On Tue, May 13, 2025 at 03:34:50PM +0200, Miroslav Benes wrote:
-> > > Hi,
-> > > 
-> > > thanks for the updated version.
-> > > 
-> > > On Fri, 9 May 2025, Sebastian Andrzej Siewior wrote:
-> > > 
-> > > > From: Peter Zijlstra <peterz@infradead.org>
-> > > > 
-> > > > With the goal of deprecating / removing VOLUNTARY preempt, live-patch
-> > > > needs to stop relying on cond_resched() to make forward progress.
-> > > > 
-> > > > Instead, rely on schedule() with TASK_FREEZABLE set. Just like
-> > > > live-patching, the freezer needs to be able to stop tasks in a safe /
-> > > > known state.
-> > > > 
-> > > > Compile tested only.
-> > > 
-> > > livepatch selftests pass and I also ran some more.
-> > >  
-> > > > [bigeasy: use likely() in __klp_sched_try_switch() and update comments]
-> > > > 
-> > > > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> > > > Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> > > 
-> > > Acked-by: Miroslav Benes <mbenes@suse.cz>
-> > > 
-> > > A nit below if there is an another version, otherwise Petr might fix it 
-> > > when merging.
-> > 
-> > Petr or Peter?
-> > 
-> > That is, who are we expecting to merge this :-)
 > 
-> Petr Mladek if it goes through the live patching tree, you if tip. Feel 
-> free to pick it up :).
+> The bisection found this as first bad commit,
+> 
+>     MIPS: Fix idle VS timer enqueue
+> 
+>     [ Upstream commit 56651128e2fbad80f632f388d6bf1f39c928267a ]
 
-IMHO, it might be easier when it goes via tip. Peter, feel free to
-take it.
+Thanks, now dropped from all queues.
 
-The patch does not create any conflict with the klp tree.
-But I guess that there might be some dependent patches in tip...
-
-That said, I could take it via the livepatch tree if Peter preferred
-it from some reasons.
-
-Anyway, the patch looks good and passes the tests. Feel free to use:
-
-Reviewed-by: Petr Mladek <pmladek@suse.com>
-Tested-by: Petr Mladek <pmladek@suse.com>
-
-Best Regards,
-Petr
+greg k-h
 
