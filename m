@@ -1,156 +1,194 @@
-Return-Path: <linux-kernel+bounces-647649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-647642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A0E6AB6B50
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 14:20:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72892AB6B26
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 14:13:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF9441B62544
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 12:21:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9178E4C2389
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 12:13:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA17427702D;
-	Wed, 14 May 2025 12:20:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72335276037;
+	Wed, 14 May 2025 12:13:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kaspersky.com header.i=@kaspersky.com header.b="bBB1baW5";
-	dkim=pass (2048-bit key) header.d=kaspersky.com header.i=@kaspersky.com header.b="KtcrOFi7"
-Received: from mailhub11-fb.kaspersky-labs.com (mailhub11-fb.kaspersky-labs.com [81.19.104.124])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="dRHBEV2c"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A58427510A;
-	Wed, 14 May 2025 12:20:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.19.104.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27409224AED;
+	Wed, 14 May 2025 12:13:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747225243; cv=none; b=YmADbBDwNI9XSswzgzITLU+gWLVTZj/fljNQLEoRwFn08M+Eqtfjr/ul8Tpwij098cGOyqyOMelS6YVh3q02mqzTHU/BU1IgXPqyfZpFmFbXUwjDsKeNyRqzJp6tb+k337BbLPIudMUhyHpUafoF9+xBYW/6+PLbcJuhz6uLA0E=
+	t=1747224829; cv=none; b=YrnF2NID5Y+gBWj/b999CNdnYiv/GmzMFq5oE2fDFKalQi5tLcFKAHQY6lehEDH8oANNTn4KSyFSjnkL82Zju326MQjhPQ/z00k7i3ncwnBbxtuwLYEzytJm+yKtNmXuhJcC7Pp6dtrqInrk1yDNDngQDzX0aMa7bcXF0IoPfZo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747225243; c=relaxed/simple;
-	bh=bCMtLnVD2dgxi8EjKGcWIGCO8ra6AUHVklgwLHB8IbQ=;
-	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=nuqwrMy+fEDw2zqS9goVPjUx71FSYivnhLoKrDO4cRD8TXKJNM0VSZTlbhEBfSBbaoBvoR9lzMqX5EOTMxuDKBTba42Ipv8Oq4dGgSgRX8U3w4r76xu4Ng9f5oq5LbcgICxFf+z6sqD9DzSi3Hh6WhKnbADkS1KGlHFT8UvFnlQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kaspersky.com; spf=pass smtp.mailfrom=kaspersky.com; dkim=pass (2048-bit key) header.d=kaspersky.com header.i=@kaspersky.com header.b=bBB1baW5; dkim=pass (2048-bit key) header.d=kaspersky.com header.i=@kaspersky.com header.b=KtcrOFi7; arc=none smtp.client-ip=81.19.104.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kaspersky.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kaspersky.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kaspersky.com;
-	s=mail202502; t=1747224786;
-	bh=pAjLW2i6DlqO1kn+FO+4QKQ88dteWB/N9XRN4Z86JAo=;
-	h=From:To:Subject:Date:Message-ID:Content-Type:MIME-Version;
-	b=bBB1baW5Ev8WKm3e59WK+xdR5CNo2/JVqpkdYxLLm2KjiU6CRjCd3Y+rJaMxwxmw7
-	 LPvIKXJHXuJeI/p1+1nY11GiWx8pWabQGPRlb+k3vnOkYTPlG/4ooVqnno7bcrI/5J
-	 xrviDOcyvcYwUxWPcRZ07+2GlDT3qmKseMH0WWVcDDacgvUw4V0RY3P47imS5Nc1Ss
-	 wd4X7KO17llqX91Tsr/13bHnDsoy4Oo9KEjj4SMr0qNrPjUlhMk10u83xgEWKlxdnH
-	 puoZjgQfLD1akbfX0EXnG74Oe3JCg5aXBSZismY63KUK4al2zaGuqZ1SOJZ+ZQDfJ3
-	 N+gtvs5Cl/uAA==
-Received: from mailhub11-fb.kaspersky-labs.com (localhost [127.0.0.1])
-	by mailhub11-fb.kaspersky-labs.com (Postfix) with ESMTP id 2D6D7E8F244;
-	Wed, 14 May 2025 15:13:06 +0300 (MSK)
-Received: from mx13.kaspersky-labs.com (mx13.kaspersky-labs.com [91.103.66.164])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
-	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
-	(Client CN "mx13.kaspersky-labs.com", Issuer "Kaspersky MailRelays CA G3" (verified OK))
-	by mailhub11-fb.kaspersky-labs.com (Postfix) with ESMTPS id 03BC9E8F231;
-	Wed, 14 May 2025 15:13:05 +0300 (MSK)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kaspersky.com;
-	s=mail202502; t=1747224776;
-	bh=pAjLW2i6DlqO1kn+FO+4QKQ88dteWB/N9XRN4Z86JAo=;
-	h=From:To:Subject:Date:Message-ID:Content-Type:MIME-Version;
-	b=KtcrOFi7sYoiVBDNR4Znc/i/kYXErdIJGU8ic98y9kHQ5/xXIbeufS6FBaa26lWmp
-	 coIrO2YxLe5drhpOXnQDEBisNnkZ/Z2l40Te3ntqSlrgMDGjjQ+jBrREFCIaBWx664
-	 pWZMt2aIJ+IGg+J9wH+KEwS2ZwY+lMFPJB1VRVKOlJYVYTFzbLcQA/Fbs29nlyq9K6
-	 hIpNs7Kjut6kNf+INdGneqyjaLcV9X8iFsbNNo6/72C/sHoESOGyNzXlce2lAA2kNd
-	 z1717Uu1JnhkZv1QCFXwOiZGDbaczwQie6vA8JxEEL6BslOSj62mwS3KFOf51fXnD0
-	 bLHMXvnP6aDTw==
-Received: from relay13.kaspersky-labs.com (localhost [127.0.0.1])
-	by relay13.kaspersky-labs.com (Postfix) with ESMTP id DC7813E501B;
-	Wed, 14 May 2025 15:12:56 +0300 (MSK)
-Received: from mail-hq2.kaspersky.com (unknown [91.103.66.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(Client CN "mail-hq2.kaspersky.com", Issuer "Kaspersky MailRelays CA G3" (verified OK))
-	by mailhub13.kaspersky-labs.com (Postfix) with ESMTPS id 1C3AB3E5671;
-	Wed, 14 May 2025 15:12:56 +0300 (MSK)
-Received: from HQMAILSRV1.avp.ru (10.64.57.51) by HQMAILSRV2.avp.ru
- (10.64.57.52) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Wed, 14 May
- 2025 15:12:55 +0300
-Received: from HQMAILSRV1.avp.ru ([fe80::44b0:5a05:5379:9408]) by
- HQMAILSRV1.avp.ru ([fe80::44b0:5a05:5379:9408%2]) with mapi id
- 15.02.1748.010; Wed, 14 May 2025 15:12:55 +0300
-From: Vladimir Moskovkin <Vladimir.Moskovkin@kaspersky.com>
-To: Prasanth Ksr <prasanth.ksr@dell.com>
-CC: Hans de Goede <hdegoede@redhat.com>, =?iso-8859-1?Q?Ilpo_J=E4rvinen?=
-	<ilpo.jarvinen@linux.intel.com>, Mario Limonciello
-	<mario.limonciello@dell.com>, Divya Bharathi <divya.bharathi@dell.com>,
-	"Dell.Client.Kernel@dell.com" <Dell.Client.Kernel@dell.com>,
-	"platform-driver-x86@vger.kernel.org" <platform-driver-x86@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"stable@vger.kernel.org" <stable@vger.kernel.org>,
-	"lvc-project@linuxtesting.org" <lvc-project@linuxtesting.org>
-Subject: [PATCH] platform/x86: dell-wmi-sysman: Avoid buffer overflow in
- current_password_store()
-Thread-Topic: [PATCH] platform/x86: dell-wmi-sysman: Avoid buffer overflow in
- current_password_store()
-Thread-Index: AdvEyRwGGRgYB7/5RZGEC7fXF7io4Q==
-Date: Wed, 14 May 2025 12:12:55 +0000
-Message-ID: <39973642a4f24295b4a8fad9109c5b08@kaspersky.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-kse-serverinfo: HQMAILSRV2.avp.ru, 9
-x-kse-attachmentfiltering-interceptor-info: no applicable attachment filtering
- rules found
-x-kse-antivirus-interceptor-info: scan successful
-x-kse-antivirus-info: Clean, bases: 5/14/2025 10:47:00 AM
-x-kse-bulkmessagesfiltering-scan-result: InTheLimit
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1747224829; c=relaxed/simple;
+	bh=H2PRHzXAWxE9uMK6YCAjGgxQwKItUsBz6sbyztBIjFc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VrIVs2B0uvzZ1VassLsPMtjLRVlK8D8ULCvus5cPMC4l54scTrej1GWh/E91s+kKX/GDxqA2VG9iHPeGcrFnZYhivm3jPoH5b+e/N9Fv+sfY/36lzeEjEN+Md4eRnnqvPaV79m1mCI208jNxaJ6lk9X1fliP3Eqy4I72DAt/p6k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=dRHBEV2c; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=+AfK7MCkRVYWu8R51rsh6Q0jzO0vpYJ7OnABWuVAlLw=; b=dRHBEV2cEqxhfNzllZyhYafO0h
+	/hTgKWQXQn7JZ09jG5zYsbQMXqlUDve784VuWkNKz1emP/PBXlLZ30KvDz7bWFgoM3/oPy+uBpVjE
+	SjbfghHTiSnRM3iZf+nXifEOpdp47y3xmOahwnOA12NLahY7d+IzuTzHqoV1EehTa7VfFC6xJOxpg
+	9f5/xe7kkVs4jCEDy3ktJ26eYruBhzENT2hJPxPLAIG0nqxdnaDXgxzlqyZWynPyO5bcnFhP39k9r
+	urtICyboVUk0OcoE3KqPl0KUsfKFhxaNuRdyERMQwWYy2ew+yYBTxFtAfJWz5wvLdJlvWkLbODNqK
+	y2ia513A==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:36192)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1uFAzN-0007GH-1J;
+	Wed, 14 May 2025 13:13:33 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1uFAzG-0004FD-2Z;
+	Wed, 14 May 2025 13:13:26 +0100
+Date: Wed, 14 May 2025 13:13:26 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Sky Huang <SkyLake.Huang@mediatek.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Daniel Golle <daniel@makrotopia.org>,
+	Qingfang Deng <dqfext@gmail.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	balika011 <balika011@gmail.com>, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	Steven Liu <Steven.Liu@mediatek.com>
+Subject: Re: [PATCH net-next v3 2/2] net: phy: mediatek: add driver for
+ built-in 2.5G ethernet PHY on MT7988
+Message-ID: <aCSI5k7uUgAlpSsy@shell.armlinux.org.uk>
+References: <20250514105738.1438421-1-SkyLake.Huang@mediatek.com>
+ <20250514105738.1438421-3-SkyLake.Huang@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-KSMG-AntiPhishing: NotDetected
-X-KSMG-AntiSpam-Interceptor-Info: not scanned
-X-KSMG-AntiSpam-Status: not scanned, disabled by settings
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.0.7854, bases: 2025/05/14 05:39:00 #27979694
-X-KSMG-AntiVirus-Status: NotDetected, skipped
-X-KSMG-LinksScanning: NotDetected
-X-KSMG-Message-Action: skipped
-X-KSMG-Rule-ID: 52
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250514105738.1438421-3-SkyLake.Huang@mediatek.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-If the 'buf' array received from the user contains an empty string, the
-'length' variable will be zero. Accessing the 'buf' array element with
-index 'length - 1' will result in a buffer overflow.
+Hi,
 
-Add a check for an empty string.
+On Wed, May 14, 2025 at 06:57:38PM +0800, Sky Huang wrote:
+> +#define MTK_2P5GPHY_ID_MT7988		(0x00339c11)
+> +
+> +#define MT7988_2P5GE_PMB_FW		"mediatek/mt7988/i2p5ge-phy-pmb.bin"
+> +#define MT7988_2P5GE_PMB_FW_SIZE	(0x20000)
+> +#define MT7988_2P5GE_PMB_FW_BASE	(0x0f100000)
+> +#define MT7988_2P5GE_PMB_FW_LEN		(0x20000)
+> +#define MTK_2P5GPHY_MCU_CSR_BASE	(0x0f0f0000)
+> +#define MTK_2P5GPHY_MCU_CSR_LEN		(0x20)
+> +#define MD32_EN_CFG			(0x18)
 
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
+These parens are all unnecessary, as are ones below around a simple
+number.
 
-Fixes: e8a60aa7404b ("platform/x86: Introduce support for Systems Managemen=
-t Driver over WMI for Dell Systems")
-Cc: stable@vger.kernel.org
-Signed-off-by: Vladimir Moskovkin <Vladimir.Moskovkin@kaspersky.com>
----
- drivers/platform/x86/dell/dell-wmi-sysman/passobj-attributes.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> +#define   MD32_EN			BIT(0)
+> +
+> +#define BASE100T_STATUS_EXTEND		(0x10)
+> +#define BASE1000T_STATUS_EXTEND		(0x11)
+> +#define EXTEND_CTRL_AND_STATUS		(0x16)
+> +
+> +#define PHY_AUX_CTRL_STATUS		(0x1d)
+> +#define   PHY_AUX_DPX_MASK		GENMASK(5, 5)
+> +#define   PHY_AUX_SPEED_MASK		GENMASK(4, 2)
+> +
+> +/* Registers on MDIO_MMD_VEND1 */
+> +#define MTK_PHY_LPI_PCS_DSP_CTRL		(0x121)
 
-diff --git a/drivers/platform/x86/dell/dell-wmi-sysman/passobj-attributes.c=
- b/drivers/platform/x86/dell/dell-wmi-sysman/passobj-attributes.c
-index 230e6ee96636..d8f1bf5e58a0 100644
---- a/drivers/platform/x86/dell/dell-wmi-sysman/passobj-attributes.c
-+++ b/drivers/platform/x86/dell/dell-wmi-sysman/passobj-attributes.c
-@@ -45,7 +45,7 @@ static ssize_t current_password_store(struct kobject *kob=
-j,
- 	int length;
-=20
- 	length =3D strlen(buf);
--	if (buf[length-1] =3D=3D '\n')
-+	if (length && buf[length - 1] =3D=3D '\n')
- 		length--;
-=20
- 	/* firmware does verifiation of min/max password length,
---=20
-2.25.1
+...
 
+> +static int mt798x_2p5ge_phy_load_fw(struct phy_device *phydev)
+> +{
+> +	void __iomem *mcu_csr_base, *pmb_addr;
+> +	struct device *dev = &phydev->mdio.dev;
+
+This will attract a comment about reverse christmas tree.
+
+> +	const struct firmware *fw;
+> +	int ret, i;
+> +	u32 reg;
+
+...
+
+> +static int mt798x_2p5ge_phy_config_init(struct phy_device *phydev)
+> +{
+> +	struct pinctrl *pinctrl;
+> +
+> +	/* Check if PHY interface type is compatible */
+> +	if (phydev->interface != PHY_INTERFACE_MODE_INTERNAL)
+> +		return -ENODEV;
+> +
+> +	/* Setup LED */
+> +	phy_set_bits_mmd(phydev, MDIO_MMD_VEND2, MTK_PHY_LED0_ON_CTRL,
+> +			 MTK_PHY_LED_ON_POLARITY | MTK_PHY_LED_ON_LINK10 |
+> +			 MTK_PHY_LED_ON_LINK100 | MTK_PHY_LED_ON_LINK1000 |
+> +			 MTK_PHY_LED_ON_LINK2500);
+> +	phy_set_bits_mmd(phydev, MDIO_MMD_VEND2, MTK_PHY_LED1_ON_CTRL,
+> +			 MTK_PHY_LED_ON_FDX | MTK_PHY_LED_ON_HDX);
+> +
+> +	/* Switch pinctrl after setting polarity to avoid bogus blinking */
+> +	pinctrl = devm_pinctrl_get_select(&phydev->mdio.dev, "i2p5gbe-led");
+> +	if (IS_ERR(pinctrl))
+> +		dev_err(&phydev->mdio.dev, "Fail to set LED pins!\n");
+
+No, don't do this. config_init() can be called multiple times during
+the lifetime of the driver bound to the device, and each time it is,
+a new managed-dev structure will be allocated to release this action
+each time, thus consuming more and more memory, or possibly failing
+after the first depending on the pinctrl_get_select() behaviour.
+Please find a different way.
+
+...
+
+> +static int mt798x_2p5ge_phy_config_aneg(struct phy_device *phydev)
+> +{
+> +	bool changed = false;
+> +	u32 adv;
+> +	int ret;
+> +
+> +	ret = genphy_c45_an_config_aneg(phydev);
+> +	if (ret < 0)
+> +		return ret;
+> +	if (ret > 0)
+> +		changed = true;
+> +
+> +	/* Clause 45 doesn't define 1000BaseT support. Use Clause 22 instead in
+> +	 * our design.
+> +	 */
+> +	adv = linkmode_adv_to_mii_ctrl1000_t(phydev->advertising);
+> +	ret = phy_modify_changed(phydev, MII_CTRL1000, ADVERTISE_1000FULL, adv);
+> +	if (ret < 0)
+> +		return ret;
+> +	if (ret > 0)
+> +		changed = true;
+> +
+> +	return __genphy_config_aneg(phydev, changed);
+
+Do you want this (which will program EEE and the 10/100 advert) or do
+you want genphy_check_and_restart_aneg() here? Note that
+genphy_c45_an_config_aneg() will already have programmed both the EEE
+and 10/100 adverts via the C45 registers.
+
+Thanks.
+
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
