@@ -1,103 +1,118 @@
-Return-Path: <linux-kernel+bounces-647692-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-647688-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D044AB6BC6
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 14:51:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AFAA8AB6BBF
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 14:48:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E11EA3A775E
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 12:50:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47AC63A5451
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 12:48:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 169B7278E60;
-	Wed, 14 May 2025 12:50:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B54C7278E7E;
+	Wed, 14 May 2025 12:48:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="IxF6vlFn"
-Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p82HrRJe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CD68279329
-	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 12:50:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F86D202990;
+	Wed, 14 May 2025 12:48:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747227046; cv=none; b=Lu58s1PDQlOVzc5iWHHCQThqAOvvRlgLLRSrtaWI9QYcFYvb2y8XbmnRG1lRBsSSrIALNyyFsHagMzr6u78UrQwQ7KqSzLdB/WqgfTbqBzv5SQtIDun/1sqSx3gfY4AOtpKXlJZHMuNdrr/nW+05DFHlfr6nosn5AqiN5FrMpDc=
+	t=1747226923; cv=none; b=MvorQac2it+Eb2uFxxq9Ew/EC4dEeNgJi1Kn2FyYtFSXEH7Z+lAtDvRnXITgnN53L4FEC4h/hShqbo1PQtSvGXi8V5uJPCzd7eueJW2YnM07hl5F1wOvjC1tFjknEMA5W/hVzFvJY7DMLJngtphukp8Y9cUQAMmRBdSjkkv/eFQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747227046; c=relaxed/simple;
-	bh=xsaMT00b8k+kMS92GkXskE2nqsn/Ux50QSzH+gf3Ovo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hHJi8pITHf1sSCjVpWRTa71zkYtGobDsM1N8a6JLme4dxQyrwm1iNH+wOUrNaF2ymr3qh6jzzY4yzRKaQS8RkwYW+iW1A1Tybtxcm6W+uclMpH9IGBWbHGIz0mIezQm/LYzYrxlRMqAbeaeQiZz4qKpS4x8wWCEUeW7ddBAsgb4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=IxF6vlFn; arc=none smtp.client-ip=95.215.58.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <7f3b2d28-38d0-482c-b79a-5aabed6b6ea8@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1747227032;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NFMBLaoGq6dnZ92tVmPA4doF5MtxaUxNygUazLGOe80=;
-	b=IxF6vlFnNK9TlkLzq4WOLGy63ODcKJMYA/IIvpCTPwu/fBjK5WK8TTHAGOF6v+qB0vnR97
-	uUTDJCtEx44YEiXQUIXEyviZq9aG9EhZiiR2iKnD09Ef0ESpsIxRX/+eq1RCiDh0fA+/dg
-	K4GjRwhqaItrLct6Yi7JQaft4ojDsTM=
-Date: Wed, 14 May 2025 14:47:21 +0200
+	s=arc-20240116; t=1747226923; c=relaxed/simple;
+	bh=+TzFHFe0qJMx5mw0cAJgDn8UO6/adeXTHJer83ShHSA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HrpKQrkwi/MoLfAFSuDI7UbEqikVYC4jTDktpmi3+oV+8JqjqhIYwrdUJ1wcV5o62IorBH8Prmh6xkC38mkYIvTlZhA06IGBjNuGHGH8qJn4ExHDc4+70MM8bu2BhbrLhcvgahcQC6x00Zxv/oUPR5UfV8O8PpwFh04RNq+nN1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p82HrRJe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F28C6C4CEE9;
+	Wed, 14 May 2025 12:48:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747226922;
+	bh=+TzFHFe0qJMx5mw0cAJgDn8UO6/adeXTHJer83ShHSA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=p82HrRJeyLpNNB9i/i9altOoEdRFOaTIod9bZC9qgw39Cc2sTBiFzc1ScHDtcU2AO
+	 yjHT2O4BYQkzmnWZ/d30AINiMNkUVwqASIqXZNF1lQh6+/QcD9nGHGtawsDVBsIn87
+	 yhpaCVB3VmrvRtDmUCbbtwm80lG1FPtgECxgR6hgUvEVVDfeYLzln1r1trcrJUAPMA
+	 cXnlInGr9PY5lJEaEXDmGLUbpHU/qCaBiR9nJ4xrmWo5GNwuh0j2XFpH971XlSLC7F
+	 nB/pEvuBYa09XWQ1qmKOB3ZN5zRh7H9J3XI+Go1VLapLnmloAMhMe47vwnSVmcuoyX
+	 4kx/YbjIwepxg==
+Date: Wed, 14 May 2025 14:48:38 +0200
+From: Mark Brown <broonie@kernel.org>
+To: Benno Lossin <lossin@kernel.org>
+Cc: Daniel Almeida <daniel.almeida@collabora.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Boris Brezillon <boris.brezillon@collabora.com>,
+	Sebastian Reichel <sebastian.reichel@collabora.com>,
+	Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH v3] rust: regulator: add a bare minimum regulator
+ abstraction
+Message-ID: <aCSRJnKu3-igA2PK@finisterre.sirena.org.uk>
+References: <20250513-topics-tyr-regulator-v3-1-4cc2704dfec6@collabora.com>
+ <D9VATLUHDGU8.53I80TGVRV0J@kernel.org>
+ <aCRKR5h_X04OXgjq@finisterre.sirena.org.uk>
+ <D9VS6WE94O04.GXFI0K5BH4XN@kernel.org>
+ <aCRti2d5x2bL0mj6@finisterre.sirena.org.uk>
+ <D9VTC578EVTH.2HFJ9TNPFW8NQ@kernel.org>
+ <aCSDnjxVENpimTyf@finisterre.sirena.org.uk>
+ <D9VVPGM147GP.3V338KUZGRQ6D@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH 0/5] ASoC/SOF/PCI/Intel: add Wildcat Lake support
-To: =?UTF-8?Q?P=C3=A9ter_Ujfalusi?= <peter.ujfalusi@linux.intel.com>,
- lgirdwood@gmail.com, broonie@kernel.org
-Cc: linux-sound@vger.kernel.org, kai.vehmanen@linux.intel.com,
- ranjani.sridharan@linux.intel.com, yung-chuan.liao@linux.intel.com,
- guennadi.liakhovetski@linux.intel.com, bhelgaas@google.com,
- linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250508180240.11282-1-peter.ujfalusi@linux.intel.com>
- <0b01a3ae-4766-490e-939d-1d16c2748644@linux.dev>
- <bfb8e9a6-92c1-4079-aec0-b1ad2b245c70@linux.intel.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>
-In-Reply-To: <bfb8e9a6-92c1-4079-aec0-b1ad2b245c70@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="MAQKhxvsN9di15OB"
+Content-Disposition: inline
+In-Reply-To: <D9VVPGM147GP.3V338KUZGRQ6D@kernel.org>
+X-Cookie: Well begun is half done.
 
-On 5/13/25 08:23, Péter Ujfalusi wrote:
-> 
-> 
-> On 12/05/2025 15:59, Pierre-Louis Bossart wrote:
->>
->>> The audio IP in Wildcat Lake (WCL) is largely identical to the one in
->>> Panther Lake, the main difference is the number of DSP cores, memory
->>> and clocking.
->>> It is based on the same ACE3 architecture.
->>>
->>> In SOF the PTL topologies can be re-used for WCL to reduce duplication
->>> of code and topology files. 
->>
->> Is this really true? I thought topology files are precisely the place where a specific pipeline is assigned to a specific core. If the number of cores is lower, then a PTL topology could fail when used on a WCL DSP, no?
-> 
-> Yes, that is true, however for generic (sdw, HDA) topologies this is not
-> an issue as we don't spread the modules (there is no customization per
-> platform).
-> When it comes to product topologies, they can still be named as PTL/WCL
-> if needed and have tailored core use.
-> 
-> It might be that WCL will not use audio configs common with PTL, in that
-> case we still can have sof-wcl-* topologies if desired.
 
-Right, so the topologies can be used except when they cannot :-)
+--MAQKhxvsN9di15OB
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> Fwiw, in case of soundwire we are moving to a even more generic function
-> topology split, where all SDW device can us generic function fragments
-> stitched together to create a complete topology.
-> Those will have to be compatible with all platforms, so wide swing of
-> core use cannot be possible anymore.
+On Wed, May 14, 2025 at 02:23:04PM +0200, Benno Lossin wrote:
+> On Wed May 14, 2025 at 1:50 PM CEST, Mark Brown wrote:
 
-I couldn't follow this explanation, or I am missing some context. My expectation is that as soon as someone starts inserting a 3rd party module all bets on core assignment are off, I am not sure how rules could be generic without adding restrictions on where 3rd party modules are added.
+> > In the C API the disable operation just fails and it's treated as though
+> > you hadn't done anything from a refcounting point of view.
 
+> But if it succeeds it takes ownership? The function `regulator_disable`
+> is also used in the `Drop` impl of the `EnabledRegulator`, so it better
+> give up the refcount, otherwise we would leak it.
+
+I can't understand what you are saying at all, sorry.  What does "take
+ownership" mean, and what is the "it" here?  We are talking about the
+case where regulator_disable() fails here, that means it didn't do what
+it was asked to do.
+
+--MAQKhxvsN9di15OB
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmgkkSUACgkQJNaLcl1U
+h9AbCAf+JDgxG+eMT6GWzObSNk/49wLjU8w1oZgaMIKQlJNrgbR+INIAM0IG1K4r
+OFaplfJbZLG0dGHHHGCVD/GOuMT+g5V3067D8h5XG99ydVjzAity0ddH7cyxX33r
+11mxCAZXN4YupDyBR1+UDcG/WtP+I5aRgk9QhVASVnz+rg90U28k0mpPbQ/4P1Be
+oc2bxfa8sGjDWU2uFcaTPUhhGBp5KIeTAJzOUfLzOMyiA2z5V96k70rdFLVjEYmv
+U48/fM/P6nvLw/I7sbXGfoigiqi+HywkN6gegWe7XuZxuKs2XNNzv/FGiubVOqbK
+1DIDEhiVDy/QEiTe/OfO30jxq5FGDA==
+=ZMYb
+-----END PGP SIGNATURE-----
+
+--MAQKhxvsN9di15OB--
 
