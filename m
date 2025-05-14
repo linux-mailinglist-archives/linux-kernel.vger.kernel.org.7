@@ -1,305 +1,387 @@
-Return-Path: <linux-kernel+bounces-647331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-647333-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FD2FAB671D
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 11:19:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C130AB6729
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 11:20:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B92FE3BD409
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 09:19:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98D554A615D
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 09:19:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE7FA2253FE;
-	Wed, 14 May 2025 09:19:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 936632253AE;
+	Wed, 14 May 2025 09:19:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Vo6mvJO6";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="VE9RIL1O"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="SEu2+Lxx"
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21C3F221557;
-	Wed, 14 May 2025 09:19:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747214361; cv=fail; b=u5l19Px1afrAw6tJiOFrGMnjKpVLeoYII6senzCC1s3cCRAIJNtiIuxBOb8v7nHLr5T2CrdKuKhd/ypJqdDl9wB7wbR2rh7BeBtPr+iXRccOaYfsLZ2p8OQ71NbNev8Ju1TK2L/qYT6LbBp0frOoheNZmzMkLy+A+wcr/9VjbjM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747214361; c=relaxed/simple;
-	bh=WWEyF481t8GbeaiQo1o3m1iOBEEcvw66D5LyRbC7inU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=T/GkfPQ+sIYWA4Yi8YQbms1cBm0Qk8x2YcRkn/6oAKtfoMJtWV/NGW8lTysGCAPaUZdmF6aJi/Np6srhCWj9n9w1GtT4N13eO2v2yE/Pn5TQiBDAYbruevLu2TmRZ8N3G55MK/2qzOZtff9gunQu+pFDKd5U7oNR6HSuag0WiHE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=Vo6mvJO6; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=VE9RIL1O; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54E0ftNx025323;
-	Wed, 14 May 2025 09:19:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2025-04-25; bh=gTY3uZHd9zqFLCIOc7
-	8veSFWxCWiLdiN7Cgw1wGaveg=; b=Vo6mvJO65Z9wS+YWY8brOvIuFTYRgXRNZo
-	tHODkTg5T1pofvbXhdoYfRgOMXtP5X7VKq6HZxjktBIL0J6gBDFZJccFj10d1iWX
-	ZwSWjkzJoOWe3gew0DwUJibngK01OfUQCteviy+fR+D1+Mnhvg1vExjOmpXZ/HIs
-	YClS0Ycrmx5gxXgIA9gF3IW6pcfvj6zvR23ybWvbbObIVHzVGH5LRX+EEiIt7qlc
-	EElmbR5CcPNBu4nTMU0nWQi9qotYCLn6kSjkNRHxrHQI9L9ybmQVeQjj/6olOsI8
-	ectMi+LB/VpAr+wsGUz1QmmEo3uKOmQOOdv372RVNINanXFclGww==
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 46mbchs3w8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 14 May 2025 09:19:01 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 54E81bip008986;
-	Wed, 14 May 2025 09:19:00 GMT
-Received: from cy3pr05cu001.outbound.protection.outlook.com (mail-westcentralusazlp17013077.outbound.protection.outlook.com [40.93.6.77])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 46mc6wdncn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 14 May 2025 09:19:00 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=G8+KjVIVmfJM2O6q2chNJbnOfQ4eiuQG5AJ9JF0PaPJ9EZ4tFPTGbszqvV5xwyw+bx6PQM87vJ53HXpsvBldNoJ2nIPsGfPkI/UbZMB5MN0lIyWOGyCWkdH9ZQeSTRYQW/H1GNVa7Lk3A8xOTOeUkP44jB1CctlDKXfs9Bt2iGtDTu4K4VaEo6JvzNJNR9lAwqhL9iSEygIsSM+XqiZEaEWDTxjR2xG76ESrzQT2nwf3OwA+wUAYz+BZFUOBsaHGLGB1xdEsxyuRJR4/Pw8HrlcprhqWGU5alVbMyLypTVKrdYZlaY0aByixG5lk0lQ8dCwuEP/hPtwu6tzed5df2g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=gTY3uZHd9zqFLCIOc78veSFWxCWiLdiN7Cgw1wGaveg=;
- b=BPQfqjoavbDn70mCNvAfm6C0IVLynqu0e9UlDye/4rlvEcSjajWL5UbKrRliGyCzViSxug5yWCk3PBauTt9+jijss4myoWAVubCcBPNxPhiz/wvnUGknkcaejUbdLuzCeRXLPGXWfnprOJEbUrk8pj0cRQ8w9WADB5Ybzr/QUogFEBgIg+wZBQ+MMWJwhQ+ABxK2ATbak3KeRR2LNo+q65Re/Adl50aPP4uMRkP+KFKIqSygJZhSR7oi3PIqvvjQjsUsmQURGkNOkJ+FHsO/ZQjcVe1JsLtcmWlLMM3QnJaFoqj95toEppFIo2Z1kv2TohqRH4RCJM4nE7VjovnXrg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gTY3uZHd9zqFLCIOc78veSFWxCWiLdiN7Cgw1wGaveg=;
- b=VE9RIL1Ol1FLouuh+q05mmmoBKWXFkc5al5GkKyBNmBecT0CYqx+k3Lut9Ix/lHu/ZfBqrLrISdfdiBDFCg/PfPaux6d7qZgxm31tEXesXPJRpEPNbb/LnatnVsYS4/KxcaSBl3pbYTk44lmwG1knDi+warsJ5NqmJJAeKbplSE=
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
- by IA3PR10MB8465.namprd10.prod.outlook.com (2603:10b6:208:581::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8722.32; Wed, 14 May
- 2025 09:18:57 +0000
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2%6]) with mapi id 15.20.8699.022; Wed, 14 May 2025
- 09:18:57 +0000
-Date: Wed, 14 May 2025 10:18:55 +0100
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
-        Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
-        Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
-        Jann Horn <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-        Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH] mm: remove WARN_ON_ONCE() in file_has_valid_mmap_hooks()
-Message-ID: <729bc3ef-149b-45d0-aee0-d199050f0122@lucifer.local>
-References: <20250514084024.29148-1-lorenzo.stoakes@oracle.com>
- <357de3b3-6f70-49c4-87d4-f6e38e7bec11@redhat.com>
- <f7dddb21-25cb-4de4-8c6e-d588dbc8a7c5@lucifer.local>
- <f3d52fe7-991f-4fd1-a326-6e8bfe54ddec@redhat.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f3d52fe7-991f-4fd1-a326-6e8bfe54ddec@redhat.com>
-X-ClientProxiedBy: LO4P265CA0324.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:390::8) To DM4PR10MB8218.namprd10.prod.outlook.com
- (2603:10b6:8:1cc::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB8BA22541B
+	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 09:19:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747214379; cv=none; b=ZPb+lY5+uS3FyJnFo4jqKnwIDo7x/XZrBkOeWbcUE7KMIqKlYjgsJ3Eau6bXOzY50KGS3QUYlxNbraqLH76UZu5oTLuuOirnp9Abi5IwMcBmikHC7jlwOvUjReK77l46DoW2V2kv/QZfmAtuUdySZ/HEJS+O+HmvJCi1c+blL90=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747214379; c=relaxed/simple;
+	bh=2D2rpbKGcSdInh62Cls4bfflDYQSGcbRv/l5aVvJN7g=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=C52ewuiCVERBthm+HOPboAh6cQ6AFV3e2RXMWVZISbFavmE9icRhwvyEwY1Ygbzwrdl+HZNjM5gbW6DuOpDn+Yy1B1VVLTjH3H7MtigJqd3Qi0Ew6M9GZFZcdaP1EcYTgiatznWGC5gcBLtjCj50khJ1maxmaenp+UOuCBR/nJg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=SEu2+Lxx; arc=none smtp.client-ip=80.241.56.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4Zy78N2fdPz9t76;
+	Wed, 14 May 2025 11:19:32 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1747214372; h=from:from:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dX/+oVQTquS1mWBfFty+DmXpsce2yUrtxG5oSfbjfco=;
+	b=SEu2+LxxTcyE2nVz5ovYvIkYJ3QMqncbbRBSkF2UQlWaVDM1y8ZrpaRwy/ijZ8jQojk9Re
+	Ufr7rprT4vKbS8V5nPraSnW96eJxZBGJTz4PUls+qs3tbLML05MIS9NYjyBiWd4nErDNdl
+	mK+hbjqKwPBlRCsaa65R3qZ9dAdMzbXUjF/so9FAJT3jKQ6pCaxR/RbCpPBOrjz53gfiCb
+	tKI6pJJyg2h2YOcGTtLCjZJQJ/em+Sv/LAF9pKmR2NDRBqxWcnf3M4lLfbMR1HlhxewdYT
+	xlqy6uC+4Ig6J4PHQYPS5ion2S5kAQw9SeyDp0zxsxm7vQmukFO0KbsanAkK3Q==
+Message-ID: <b98ac3e08922f5d1a6a83d1caa9f8d1d4a7aaac2.camel@mailbox.org>
+Subject: Re: [PATCH v2 6/6] drm/sched: Port unit tests to new cleanup design
+From: Philipp Stanner <phasta@mailbox.org>
+Reply-To: phasta@kernel.org
+To: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>, phasta@kernel.org, Lyude
+ Paul <lyude@redhat.com>, Danilo Krummrich <dakr@kernel.org>, David Airlie
+ <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Matthew Brost
+ <matthew.brost@intel.com>, Christian =?ISO-8859-1?Q?K=F6nig?=
+ <ckoenig.leichtzumerken@gmail.com>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+ Thomas Zimmermann <tzimmermann@suse.de>
+Cc: dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
+Date: Wed, 14 May 2025 11:19:25 +0200
+In-Reply-To: <1d753b0f-4770-4f90-b2fb-48193262d713@igalia.com>
+References: <20250424095535.26119-2-phasta@kernel.org>
+	 <20250424095535.26119-8-phasta@kernel.org>
+	 <894cf4cdb7e14b2a21dcf87bfeac4776cb695395.camel@mailbox.org>
+	 <a1c9c680-2927-428c-95e9-2e79d14cec58@igalia.com>
+	 <84021a2461db55617018050b7c0e07a15dceb634.camel@mailbox.org>
+	 <1d753b0f-4770-4f90-b2fb-48193262d713@igalia.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|IA3PR10MB8465:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1b3bba1a-9178-4230-5e51-08dd92c85b24
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|7416014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?7qH0Am/Of0u3jKUtgrh+WBcSEouBmbThG2rR+QGl+ppEPWLbQbKUPgbt8tAI?=
- =?us-ascii?Q?XxnM33VZ1ci6DtXm+S4TFLbVq4FSPWl9TJtRWFkyMJhE1ui7uNpxKqR1dsQp?=
- =?us-ascii?Q?xS1Dixx8RrhmVIeAbHBzWXZIM5AQ6ZolUTw2lzGRarLhakFbhFtsfyGjtwl3?=
- =?us-ascii?Q?jULoc+VQQK+ShrxzthLI86FoMBJR+KQ221uZsvdjt6cA4oycSKUYGk0DaVUQ?=
- =?us-ascii?Q?oAwRgWsPJXl3RPoB2P8nkGDCc5RVEFgRq1SaGFmGRWYN4iewNrJO2cwjq3p7?=
- =?us-ascii?Q?+XQQtfBJKy57oawakAfyv28ClZDRF0TpBbaQrNX09zjcXlkX2xQJQ+YKPLzJ?=
- =?us-ascii?Q?z+RpkLGvRMDKzMGARw5wxWovHnZCW5cUWPH34V2jiqyXFYQH5ieCt646CiTB?=
- =?us-ascii?Q?vL/dDfs9dzo0WfnsBsHTZuU2NE7DiumjdRPr2UC690BuINUUb66dBHxrBR51?=
- =?us-ascii?Q?m2g+BtNrTQiIHSc5NnV+j6JokHsosJO75KPLW1LpTVCFE9jBaXi9rfQKtgMw?=
- =?us-ascii?Q?t55ygqy8qY7gpHpfMwku1kQSYnF7TjMYGiOEgwgeh1bsN0zSMKRW3blv9nBK?=
- =?us-ascii?Q?VdTKfeEdBEgBmbp3fP155X0qNfhkYYHgPH/rT6JT/m5LnjzVpZpCb6Uar1qo?=
- =?us-ascii?Q?e58+52VIihJOajulWuRouUEgFGiCjprXjXMIHZvJ3OuFKjOhbk3NpzYO+nEo?=
- =?us-ascii?Q?jl2Q13X9muSEUU1a6YlvphDB59YGm21Kc5cqTY0iYJLasNkYkC9DBwm2AJPT?=
- =?us-ascii?Q?9mYj4QfvL7jiJnCuij2kaUZMuhkgx4NPBp55sQ23kw4h5fGOi9elf/BBKflc?=
- =?us-ascii?Q?YuySMCKTMlzqFeJZe2pDzj2gjeGajYa7X9ZiQgQ8JDL6+3G+pZUlFmAWfvFU?=
- =?us-ascii?Q?ExPl69imjuJcOGaB0OA90WCqT+dCNthqqLtVRM7F+JiIwouXykJ5gW9qoDFN?=
- =?us-ascii?Q?QhUufkWJFfZnj1mWexCOZ70aRf7hLOYsnvKect9PhQsX5svhwLarOts1/HtJ?=
- =?us-ascii?Q?I83xmwyu7EwmaHqrqqDu5OLjxkqHmKj89/vyhyeF4sSD6cEGDgZRDmAVL5cv?=
- =?us-ascii?Q?HP6s6jT4ic/Q2dOvCUYOqzxQ9Nfu1CcUL9bP5q6pv/hqsv93orq2n3AY/9P9?=
- =?us-ascii?Q?RpkGxwE0cuTnJqriHK5CI0Bq0k13eg0ikpVxvWXS4xd0KyQv17NuT76dWALy?=
- =?us-ascii?Q?GNdEbZdzIVU6JPRuVNptX9Ml/j1Br42YfxVmMWW0myFCdDXWAFrtZzUNTHvS?=
- =?us-ascii?Q?BaLD+5WFCmz8RjPDqdqLPda7+lz5FTfKHb2BLitnSuK67FwylJ/mDxO0t3Vj?=
- =?us-ascii?Q?owuiQ3gt0609sJSuvt+wFiKX6epT5+shcFIw3+mU5gZKfnS5jMZHAIxxqCBr?=
- =?us-ascii?Q?/pnCJoNV6GANO3n8R9mSzvVbeaL+1Xg6hEfbw6imnldkFs108Fsghv/LvOso?=
- =?us-ascii?Q?hkUEaVaRe0M=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(7416014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?IP7PMfrOwQHX3MDQJBIHa1j8O9NrJOyRQ2jMQLJn/m5wmIKi64lZ2dpLINv4?=
- =?us-ascii?Q?CkGGjRn/lc58ppQjPiDD7HVGVNd2EoKM2Wx7BLaQPNdETBCzFpwjqxJ65ah2?=
- =?us-ascii?Q?fDOYNcf9soqZUoYTM8QquYMLyTmhdrMvy4qsSwWEORCN4ebA4v+8GobrwdJO?=
- =?us-ascii?Q?WpGA7/6u6juKz7DeiBn34zqKUIBb/i9RTPCS94Uq/4IpaxaqSfpTjSn9x0wo?=
- =?us-ascii?Q?QXZIZtTqmC7Xiqr2t0OKqOnPA7JfioR0xeicdZEvmOT7ukuofIBBU2iFtBU/?=
- =?us-ascii?Q?qaqdX4EqE8viDJwu0fzXWeRr7V+l14tIG0NeXYLClM8xt7Q2n6QcIJTbf2Yv?=
- =?us-ascii?Q?0aJPjXpoZk5wVxvxWPxdUwhvh2fbnHMYDKKK4f9LUTO9cdq1frnBaYn/c5Ge?=
- =?us-ascii?Q?PzpnwNrskJ6MpF+N68vuwVqUwiRfPgKsvnSrjfEFb7zFoLZOfbGHjon2Ioya?=
- =?us-ascii?Q?0qI1c75fs/g6Xx/VWfPikg7+Uw9XJqnJgprKNnrt0ZqGQr9gR1mxr9nHZA0U?=
- =?us-ascii?Q?SBW4QAt9lqjrNVDEPr/E1FftpqpGGpS9g8SixlvgDP+46sNs7Qi6+0pjZrRf?=
- =?us-ascii?Q?Sm2QriPZRBh27Gh25GpsktUJvsAjfxBhaefn1CUKRwqlP22AQBc26twcfYwl?=
- =?us-ascii?Q?C1T5quDjbHY7SPIPSVzSYcL/mtzB2nPAApPiu3F7Xu03aSCg2JuE0tjsmEnY?=
- =?us-ascii?Q?o0YXSZeGb+8UcQ+SiEElh5YEE+kk99Ubz+4uvjQegb4c3q5WnjYdCw1SRYdO?=
- =?us-ascii?Q?1FHah8VxO/+jtUlH/9w72ScH5VZv4/9H7Cfmx6LH9G9pYodhjQm9FFw60KwN?=
- =?us-ascii?Q?jLudfTgmadHx/C2CbL8a+T+ezETsJ8PvlTXS4w1oDRok2dn9k2vcO6KF4cdU?=
- =?us-ascii?Q?7Q93p8niTVk5U7R0aNg8ttseV8EpeQd9P1a9P+ZS/4TKFFBd21/rD7Ems3rd?=
- =?us-ascii?Q?/vBpuKE9WELpOMAGfkbcPvOkFJLpEhjk2slf5+n5HDcZyjhP2xMKq/VTHfCo?=
- =?us-ascii?Q?02uRmE1YOxsYJr2w79NsjC7MfKy+9bW1e1FDrHmB/W1HA51tCYhwnqKW+Ot1?=
- =?us-ascii?Q?3z98WcX/MTP2R4CmePFdzLPxBHQKCYaWzT1mjYPZjLhHR2tEH+HvHFwGYbSY?=
- =?us-ascii?Q?+Zmgk71IvO3fX7kj1p+jUUP78r12lNqMJxgOrdeSuVJrcK9dUEM4sEBOuccY?=
- =?us-ascii?Q?WxD9IVMTY8rKE0E5GTNSmOGNCY1qxY8SkS4ohWIl6GEu0IpL3ikRvT9lXqbs?=
- =?us-ascii?Q?JU5g811ZRzGaOjLTll2dacOfUYnvydyGk1btDK6SP8ERwRjsOU6lAgsUABmP?=
- =?us-ascii?Q?qSBHx5u57m/ietLB+KA/oAGAsoNpZ/ikn4xW797CL6U2oQ8GJ2oAuStuCHW4?=
- =?us-ascii?Q?cDVfmg09fJDokEAehIEFglPI+O8WmRcBYzdYbzY8CnVdFwBQaoR25C6RDL2u?=
- =?us-ascii?Q?lesmGcZ39m/U+eHAhi1nbEHGjsS2377ihCk2haycm+2dT8/yxcm/Ja8JRHCS?=
- =?us-ascii?Q?FvtVWVJlBPwIpbiDBvg+NNOUlsjpXdtN+jcYL6BFB6ZV3Lp3qSPYI1NW6gfq?=
- =?us-ascii?Q?XMlqQjEjcFY676dGzs/C/vvSlibvYjEfGkVIdCHVFqDFoYQ89Ax082wdpO9x?=
- =?us-ascii?Q?1A=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	KcB5JhqEwzGBS5aJ0+ofNenD+sMNDGN/ARoMASDBXm288dXqsyyx4ak294xl6nTfXjg9bu8VKIyIy6318vNerBvwJgSFRXoIeA3t1DrbuYLYswbGk7KjY42I8KjhYePiHn2DAJF9KfheB1rE9X+s0vxV65KKGdjI1jUZRh9YbBzkLTjPA95dtrxmUlvmrn1aS8L/mGQmR2oefuqr/sdp1+n2SjJLNjUgXZwI4cEohV+p6i8nLanvuwM41j+7Hgrr57ZaUF0ssDFQ6c9IPzOFjIkQRD3v/zFtYwFZO+66Pbgfun9BcJIYkRca6I5YR4agMq84gomoAaRdMsqw3epMLHBsozsdOiTJbKu+QhW8hD82ig+ysn4L8ecvI5D3QLB7q5qAFVkXolisR2frtL3Sxt+A4k0zLrRsZaqr3cRXfDbzup6cwkI0jBMWsPxMOqXWYC47ZjM0M29zmetMzIRHqnyHrE0F3uJkKOTJxikobMHmZViPSP5CIVJ0w14H2IncxVAyd2beeUbgPwqRkcBQCYmmc8/4BNxeN6LT4/3BaSo40nCj4Y9loduNsq90+f4M3d8rcqqV7nzPuDPdDFh2QufiTeLaaYmzXMTdDUnX3sA=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1b3bba1a-9178-4230-5e51-08dd92c85b24
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 May 2025 09:18:57.7349
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: U3V6Rp4yv4gyx21DnIZeI7WHJaS5lv8VWJVtauj+JK8m2ntzr8lMxN0eJutGvXXpAEiGsObeJaohkJgt3h6EPKwGJBRrYUJiYe5+IbgtLSo=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA3PR10MB8465
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-14_03,2025-05-14_02,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 spamscore=0 mlxscore=0
- bulkscore=0 suspectscore=0 malwarescore=0 phishscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505070000
- definitions=main-2505140081
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTE0MDA4MSBTYWx0ZWRfXx5XEtN1HNhRE w+MW8iJsMvohP3ss7LJtOCY5K2S59/PNA4AwdDTonzx9rt76yd+mjxrjF6hJ01XhdgnVoffwUB9 Dnq4CAPzLoJ5KoiYagLrhA5oVofhynvKOYtsCDO6YTJXMhIPznpHCpTAc2LUcNX+F+4v8ThAHRR
- FcE5poIw6d3iHwsdGoBvZ1HqjOSnAi9NEav2H8P8AYZ1DLZGvGxupR9FROtwT8NBInrpLxgACMu GuzRoFkPOvoMPue+u24STQKIsYZ9jPdkivhs3R528hSexys+YVbnoOJ6jBQfYIGOVw5bfURuffH +mAAl//a1DOZJ9P99dUtLAUXaKBftGPaZ8t7urgL5gMc9LVeQcYCB6pe+Wsq4NnMwvXA4JZ5f1W
- 40iW4eFbqVmHnAPYrwRroohLbuVdOZRJOgrtAbnifRq2OdIEV39qXTCnVSHmmfgokIsRs5hw
-X-Authority-Analysis: v=2.4 cv=EtTSrTcA c=1 sm=1 tr=0 ts=68246005 cx=c_pps a=OOZaFjgC48PWsiFpTAqLcw==:117 a=OOZaFjgC48PWsiFpTAqLcw==:17 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10
- a=kj9zAlcOel0A:10 a=dt9VzEwgFbYA:10 a=GoEa3M9JfhUA:10 a=VwQbUJbxAAAA:8 a=QyXUC8HyAAAA:8 a=yPCof4ZbAAAA:8 a=m5yy6awJMB4RzWcAyWoA:9 a=CjuIK1q_8ugA:10
-X-Proofpoint-ORIG-GUID: LYzln788VnzKquAZiM7ej_Q6CxI5WK3c
-X-Proofpoint-GUID: LYzln788VnzKquAZiM7ej_Q6CxI5WK3c
+X-MBO-RS-ID: 599db39402c1399f9b8
+X-MBO-RS-META: dgoc31epst7ynah537peaaxcoarzks9i
 
-On Wed, May 14, 2025 at 11:10:15AM +0200, David Hildenbrand wrote:
-> On 14.05.25 10:56, Lorenzo Stoakes wrote:
-> > On Wed, May 14, 2025 at 10:49:57AM +0200, David Hildenbrand wrote:
-> > > On 14.05.25 10:40, Lorenzo Stoakes wrote:
-> > > > Having encountered a trinity report in linux-next (Linked in the 'Closes'
-> > > > tag) it appears that there are legitimate situations where a file-backed
-> > > > mapping can be acquired but no file->f_op->mmap or file->f_op->mmap_prepare
-> > > > is set, at which point do_mmap() should simply error out with -ENODEV.
-> > > >
-> > > > Since previously we did not warn in this scenario and it appears we rely
-> > > > upon this, restore this situation, while retaining a WARN_ON_ONCE() for the
-> > > > case where both are set, which is absolutely incorrect and must be
-> > > > addressed and thus always requires a warning.
-> > > >
-> > > > If further work is required to chase down precisely what is causing this,
-> > > > then we can later restore this, but it makes no sense to hold up this
-> > > > series to do so, as this is existing and apparently expected behaviour.
-> > > >
-> > > > Reported-by: kernel test robot <oliver.sang@intel.com>
-> > > > Closes: https://lore.kernel.org/oe-lkp/202505141434.96ce5e5d-lkp@intel.com
-> > > > Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> > > > ---
-> > > >
-> > > > Andrew -
-> > > >
-> > > > Since this series is in mm-stable we should take this fix there asap (and
-> > > > certainly get it to -next to fix any further error reports). I didn't know
-> > > > whether it was best for it to be a fix-patch or not, so have sent
-> > > > separately so you can best determine what to do with it :)
-> > >
-> > > A couple more days in mm-unstable probably wouldn't have hurt here,
-> > > especially given that I recall reviewing + seeing review yesterday?
-> > >
-> >
-> > We're coming close to end of cycle, and the review commentary is essentially
-> > style stuff or follow up stuff, and also the series has a ton of tags now, so I
-> > - respectfully (you know I love you man :>) - disagree with this assessment :)
-> >
-> > This situation that arose here is just extremely weird, there's really no reason
-> > anybody should rely on this scenario (yes we should probably try and chase this
-> > down actually, perhaps though a driver somehow sets f_op->mmap to NULL somewhere
-> > in some situation?)
-> >
-> > So I think this (easily fixed) situation doesn't argue _too_ much against that
-> > :)
->
-> Again, I am talking about a couple more days, not weeks or months ;)
->
-> At least looking at the report it sounds like something the test bots would
-> usually find given a bit more time on -next. I might be wrong.
->
-> next-20250500 had the old version without WARN
->
-> next-20250512 had the new version  with WARN
->
-> So the new version has been in -next (looks at calendar) .... for a short
-> time.
+On Wed, 2025-05-14 at 09:30 +0100, Tvrtko Ursulin wrote:
+>=20
+> On 12/05/2025 09:00, Philipp Stanner wrote:
+> > On Thu, 2025-05-08 at 13:51 +0100, Tvrtko Ursulin wrote:
+> > >=20
+> > > Hi Philipp,
+> > >=20
+> > > On 08/05/2025 12:03, Philipp Stanner wrote:
+> > > > On Thu, 2025-04-24 at 11:55 +0200, Philipp Stanner wrote:
+> > > > > The unit tests so far took care manually of avoiding memory
+> > > > > leaks
+> > > > > that
+> > > > > might have occurred when calling drm_sched_fini().
+> > > > >=20
+> > > > > The scheduler now takes care by itself of avoiding memory
+> > > > > leaks
+> > > > > if
+> > > > > the
+> > > > > driver provides the callback
+> > > > > drm_sched_backend_ops.kill_fence_context().
+> > > > >=20
+> > > > > Implement that callback for the unit tests. Remove the manual
+> > > > > cleanup
+> > > > > code.
+> > > >=20
+> > > > @Tvrtko: On a scale from 1-10, how much do you love this patch?
+> > > > :)
+> > >=20
+> > > Specific patch aside, it is the series as a whole I would like to
+> > > be
+> > > sure there isn't a more elegant way to achieve the same end
+> > > result.
+> >=20
+> > I count this as a 9/10 \o/
+>=20
+> :) Yes, sorry, it would a bit lower than that, at least until someone
+> can point out a fatal flaw in my alternative. :)
 
-Right, but nobody expected such a trivial change to be a problem.
+There's no fatal flaw in my approach either :)
 
-However, having spoken to Pedro off-list, it's really obvious this could
-happen, by trying to mmap() literally any file that's not un-mmap()-able, I
-guess we all of us brain farted on this... :)
+>=20
+> > But jokes aside:
+> >=20
+> > >=20
+> > > Like that sketch of a counter proposal I sent for the reasons
+> > > listed
+> > > with it. Which were, AFAIR, to avoid needing to add more state
+> > > machine,
+> >=20
+> > Well the state machine added is basically just the waitqueue. The
+> > WRITE_ONCE booleans are currently just for correctness and clarity.
+> > I've looked at them and want to remove them all in an other patch,
+> > because I think they're not needed (workqueue handles that)
+> >=20
+> > But yes, the added state is > 0
+> >=20
+> > > to avoid mandating drivers have to keep an internal list,
+> >=20
+> > That's not mandated by the scheduler, but by logic itself. All
+> > drivers
+> > need to have a list of on-flight fences. Otherwise the drivers
+> > would
+> > have no chance of signaling those fences once their GPU tells them
+> > to
+> > do so.
+>=20
+> Probably it would be hard to signal without tracking of some sort
+> yes,=20
+> although it wouldn't have to be indexed by fence context, or looked
+> up=20
+> by it so maybe still simpler.
 
-I'm keen for this to land for the next cycle, as I have a ton of follow up
-work to do, and delaying that by a couple months would be deeply painful.
+Well, the decisive point remains that all drivers must know all on-air
+fences, so they all are able to signal those fences.
 
-But sure a couple days would have been fine... :)
+>=20
+> More importantly I think with this comment I was thinking about the
+> fact=20
+> that with ops->cancel_job() approach I was able to remove the _done_=20
+> list tracking from the mock scheduler.
 
-As hinted at at LSF, I'm in favour of a highly formulaic approach to all
-this 'do X, get Y', so an amount of time in mm-unstable etc. could be part
-of that.
+If the done_list is just about avoiding memory leaks, then I should
+also be able to remove it completely, shouldn't I? In this patch here I
+already remove the leak-related code in drm_mock_sched_fini(), but
+hadn't looked too deeply into what else the done_list does. Is it just
+about the leaks?
 
-Not that I'm saying we should replace Andrew with a script :P (sorry
-Andrew!!) but that you know if he were script-like, then everything would
-be super clear.
+>=20
+> > I have now provided two users of the new API, nouveau and the unit
+> > tests. Can you think of a party for which the suggested approach
+> > wouldn't work?
+>=20
+> I did not think along those lines yet so don't know. I just thought
+> it=20
+> was too much code to implement a relatively simple thing and that
+> also a=20
+> few things in the design bothered me.
+>=20
+> If you look at the diffstat from my proposal and ignore kerneldoc and
+> unit test stats, it literally adds 8 lines to drm_sched_fini() and a=20
+> single line to gpu_scheduler.h:
+>=20
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 void (*cancel_job)(struct drm_sched=
+_job *sched_job);
+>=20
+> And in the former after it stops the workers:
+>=20
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (sched->ops->cancel_job) {
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 struct drm_sched_job *job;
+> +
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 list_for_each_entry_reverse(job, &sched-
+> >pending_list,=20
+> list) {
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 sched->ops->ca=
+ncel_job(job);
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 sched->ops->fr=
+ee_job(job);
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 }
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
+>=20
+> To me this looks quite clean. Unless, I say this again, I am missing=20
+> some fatal flaw why it doesn't work.
 
-Of course you get endless edge cases that require a non-script entity to be
-involved but in any case... :)
+It does work. I've stated that before. But mine works, too. And mine
+doesn't have a hard blocker either, as far as I can see.
 
->
-> >
-> > But I take your point obviously!
-> >
-> > > Fixes: c84bf6dd2b83 ("mm: introduce new .mmap_prepare() file callback")
-> >
-> > Is it worth having a fixes tag for something not upstream? This is why I
-> > excluded that. I feel like it's maybe more misleading when the commit hashes are
-> > ephemeral in a certain branch?
->
-> mm-stable is supposed to have stable commit ids (unless Andrew rebases), so
-> we usually use Fixes tags.
+So let's focus on the main differences:
 
-OK wasn't aware of this, this is the information I was missing here thanks!
+Your version adds fewer lines of code, that's correct.
 
->
-> --
-> Cheers,
->
-> David / dhildenb
->
+I think cleaning up through just having the driver signal the fences
+all at once is better because
+   1. The very same code path both for "legacy-fini" and "new-fini" is
+      responsible for cleaning up the jobs. Notably, the free_job()
+      callback is only invoked by the same parties as before, primarily
+      the work items. We don't add a new, only sometimes running, code
+      path *that free's jobs*.
+   2. The scheduler's already fractured design doesn't fracture
+      further: the free_job work item remains responsible for calling
+      free_job(). Having just one party being responsible for one thing
+      is a desirable design goal.
+   3. Considering that many drivers generously (ab)use API internals of
+      the scheduler, and considering that there is already ambiguity of
+      who's responsible for handling job lifetimes, I believe it is
+      safer not to add an additional code path that can free jobs, but
+      keep that one path.
+   4. It reads more cleanly: "We're not canceling a single job here,
+      we're killing all associated jobs now all at once", raising
+      awareness for driver programmers that this is a significant
+      event: we're tearing down while not all of your jobs have
+      finished on your GPU.
+
+>=20
+> > Don't get me wrong, your approach does work and it definitely has
+> > its
+> > charm. However, I think what I propose here is syntactically a bit
+> > cleaner because the classical order of a fence first being signaled
+> > in
+> > the driver and then the associated job being freed as usual by the
+> > scheduler is guaranteed. IOW, we primarily rely on the signaling
+> > path.
+> >=20
+> > Either way, neither your nor my approach would have worked out of
+> > the
+> > box in Nouveau without that driver exploding.
+>=20
+> What do you mean by this - the latest version of your series does or=20
+> does not work for nouveau?
+
+Mine works with Nouveau, but revealed a bug in Nouveau [1]. Yours would
+have ran into that bug, too.
+
+My point is just that your job-by-job approach wouldn't have been
+superior to my approach in practice, i.e., when implementing it in the
+first "beta tester", Nouveau. Would have been the same problem in
+different color.
+
+So just because a cancel_job() callback would result in fewer lines of
+code wouldn't mean it's superior in practice. I expect the same to be
+the case for other drivers, especially those who use scheduler
+internals.
+
+So, summarizing:
+ * My approach works. Your approach works.
+ * It works for all drivers, because they all have a list of fences.
+ * It communicates more clearly to the driver what this is all about.
+ * It keeps the scheduler's design more consistent regarding
+   responsibility / code paths for job life times.
+
+P.
+
+[1] https://lore.kernel.org/dri-devel/20250415121900.55719-2-phasta@kernel.=
+org/
+
+>=20
+> Regards,
+>=20
+> Tvrtko
+>=20
+> >=20
+> > > =C2=A0 and to align
+> > > better with the existing prototypes in the sched ops table (where
+> > > everything operates on jobs).
+> >=20
+> > That's not a hard criteria IMO. Those are sched_backend_ops, not
+> > sched_job_backend_ops, and prepare_job() already takes a parameter
+> > other than a job.
+> >=20
+> >=20
+> > Cheers,
+> > P.
+> >=20
+> > >=20
+> > > Regards,
+> > >=20
+> > > Tvrtko
+> > >=20
+> > > > > Signed-off-by: Philipp Stanner <phasta@kernel.org>
+> > > > > ---
+> > > > > =C2=A0=C2=A0=C2=A0.../gpu/drm/scheduler/tests/mock_scheduler.c=C2=
+=A0 | 34
+> > > > > ++++++++++++-----
+> > > > > --
+> > > > > =C2=A0=C2=A0=C2=A01 file changed, 21 insertions(+), 13 deletions(=
+-)
+> > > > >=20
+> > > > > diff --git a/drivers/gpu/drm/scheduler/tests/mock_scheduler.c
+> > > > > b/drivers/gpu/drm/scheduler/tests/mock_scheduler.c
+> > > > > index f999c8859cf7..a72d26ca8262 100644
+> > > > > --- a/drivers/gpu/drm/scheduler/tests/mock_scheduler.c
+> > > > > +++ b/drivers/gpu/drm/scheduler/tests/mock_scheduler.c
+> > > > > @@ -228,10 +228,30 @@ static void mock_sched_free_job(struct
+> > > > > drm_sched_job *sched_job)
+> > > > > =C2=A0=C2=A0=C2=A0 /* Mock job itself is freed by the kunit frame=
+work. */
+> > > > > =C2=A0=C2=A0=C2=A0}
+> > > > > =C2=A0=C2=A0=20
+> > > > > +static void mock_sched_fence_context_kill(struct
+> > > > > drm_gpu_scheduler
+> > > > > *gpu_sched)
+> > > > > +{
+> > > > > + struct drm_mock_scheduler *sched =3D
+> > > > > drm_sched_to_mock_sched(gpu_sched);
+> > > > > + struct drm_mock_sched_job *job;
+> > > > > + unsigned long flags;
+> > > > > +
+> > > > > + spin_lock_irqsave(&sched->lock, flags);
+> > > > > + list_for_each_entry(job, &sched->job_list, link) {
+> > > > > + spin_lock(&job->lock);
+> > > > > + if (!dma_fence_is_signaled_locked(&job-
+> > > > > > hw_fence)) {
+> > > > > + dma_fence_set_error(&job->hw_fence, -
+> > > > > ECANCELED);
+> > > > > + dma_fence_signal_locked(&job->hw_fence);
+> > > > > + }
+> > > > > + complete(&job->done);
+> > > > > + spin_unlock(&job->lock);
+> > > > > + }
+> > > > > + spin_unlock_irqrestore(&sched->lock, flags);
+> > > > > +}
+> > > > > +
+> > > > > =C2=A0=C2=A0=C2=A0static const struct drm_sched_backend_ops
+> > > > > drm_mock_scheduler_ops =3D {
+> > > > > =C2=A0=C2=A0=C2=A0 .run_job =3D mock_sched_run_job,
+> > > > > =C2=A0=C2=A0=C2=A0 .timedout_job =3D mock_sched_timedout_job,
+> > > > > - .free_job =3D mock_sched_free_job
+> > > > > + .free_job =3D mock_sched_free_job,
+> > > > > + .kill_fence_context =3D mock_sched_fence_context_kill,
+> > > > > =C2=A0=C2=A0=C2=A0};
+> > > > > =C2=A0=C2=A0=20
+> > > > > =C2=A0=C2=A0=C2=A0/**
+> > > > > @@ -300,18 +320,6 @@ void drm_mock_sched_fini(struct
+> > > > > drm_mock_scheduler *sched)
+> > > > > =C2=A0=C2=A0=C2=A0 drm_mock_sched_job_complete(job);
+> > > > > =C2=A0=C2=A0=C2=A0 spin_unlock_irqrestore(&sched->lock, flags);
+> > > > > =C2=A0=C2=A0=20
+> > > > > - /*
+> > > > > - * Free completed jobs and jobs not yet processed by the
+> > > > > DRM
+> > > > > scheduler
+> > > > > - * free worker.
+> > > > > - */
+> > > > > - spin_lock_irqsave(&sched->lock, flags);
+> > > > > - list_for_each_entry_safe(job, next, &sched->done_list,
+> > > > > link)
+> > > > > - list_move_tail(&job->link, &list);
+> > > > > - spin_unlock_irqrestore(&sched->lock, flags);
+> > > > > -
+> > > > > - list_for_each_entry_safe(job, next, &list, link)
+> > > > > - mock_sched_free_job(&job->base);
+> > > > > -
+> > > > > =C2=A0=C2=A0=C2=A0 drm_sched_fini(&sched->base);
+> > > > > =C2=A0=C2=A0=C2=A0}
+> > > > > =C2=A0=C2=A0=20
+> > > >=20
+> > >=20
+> >=20
+>=20
+
 
