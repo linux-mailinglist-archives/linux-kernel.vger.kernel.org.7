@@ -1,230 +1,138 @@
-Return-Path: <linux-kernel+bounces-648245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-648257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BF19AB7418
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 20:09:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7644AB7446
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 20:23:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5E003B6EB0
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 18:08:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4C2947A852C
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 18:22:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D94028A3F3;
-	Wed, 14 May 2025 18:05:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="elpIh2hI"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D79E2820DD;
+	Wed, 14 May 2025 18:23:17 +0000 (UTC)
+Received: from mail-out.aladdin-rd.ru (mail-out.aladdin-rd.ru [91.199.251.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C47FE289838;
-	Wed, 14 May 2025 18:05:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E7C91E9B16;
+	Wed, 14 May 2025 18:23:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.199.251.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747245936; cv=none; b=ZX4iLD2CvFtk1lmY2oJoMpK3+5eJj7fkj87Dg+t1euE8VMiHFYh1P+0zl2OSYE86rDFxdtE2B1LSc5rZqllv95Ur4bH+xpsvPzeOkRKxrL9blqZYLK5UWecEojUaPEp/iE2bXxYC9J1t+c649PoVZP2wvyM85XrlMPaIPV73EPA=
+	t=1747246996; cv=none; b=Sk5BqHMrVxSKIPhjrXdTb7XHQi5Ostq9JMBz5TnQcg12vFXo9VtlaHMTT4rNf4u6DYu+MJAjIVr16z2oJOFuUgzL1uVrSPGuSLcGBdf9VFhoJb/oQ+Uf6q/rsq6hnoktpLRu5hw0n0kCUqTDZ9OTaVG2VNv1HdBoARZ39etPVcI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747245936; c=relaxed/simple;
-	bh=NKLCWMtT9bUeH7wNJNs83ozV84X8TXUuwcufTbcj4lk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fnyXbULSoW7cYjsC2UmVmbKJIkhH6K/2G2a3IIuCY4Q+PRKsRS3g7DBvOZl0rXVjCmcvQwgs4IlM0z0/rTG981CeBhuXgVUHmHKiYl3036IIT2mFuoxA0qnDztGkKQYSQ6ig1gdIO7sNwY8QtOm+ru2l5OvBjpExeH5InSes6+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=elpIh2hI; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-22c336fcdaaso865975ad.3;
-        Wed, 14 May 2025 11:05:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747245934; x=1747850734; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=bdpZ7A9mhCIkEnuwUrHpmchCoydgr+FaDnHXJaGXt58=;
-        b=elpIh2hIECJ+5PFpcHxhf/OyaotXx/i3jk4egJEvt4NlavxdLS7Kg66wEZ3g/XBDIK
-         bVcb9JOz0YXzWFPeInZAi0iIbOu/ki8rUEAj8BkPPh14W1iSTjbULq3xm526i7hS+QVM
-         frsJz2OZyvI9LFee6YjU/ufsGgbrKAJh2PxREVKPtjp9/CMtbfcymThD1NsmXIRZEHRh
-         Au6uFXZ77REDz2pw91hVyqcruUUnhJLjbsClWqNQ1jSPPLsZeuCyEk6j3Sm0jideaOBa
-         ntJ/A2WTC+OJa4eVjUU/iqT2HjAbNCsIHpfn1ySZCumU/Ibo66dg0BVxTjm30pAdHHX2
-         UB6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747245934; x=1747850734;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bdpZ7A9mhCIkEnuwUrHpmchCoydgr+FaDnHXJaGXt58=;
-        b=TPtr8P7w9rzbAo4ssSNbvIgujDO39D559EOZPv6pBm5jWRhWHl3aESxASgSmgcyEFJ
-         2tABqAIb84bdB3hjmEgBLvfFreOz3fNA7DHpZV1zX4rTmqFjSkFUZtt6+L3x6JaAX06F
-         IwxLVMN4To8E7Y1RdpBdXryQGp7HYg4TWn/BbgvEyEdxaoZk1q6Xf2naaSuuVM6555fD
-         hgfzlz7oyhsiqe+VrxSBvlSrm/i0hHYPEdOE3Km7Z4jfbwpJGosHpAhuFArdLl0Vl5MI
-         fOuA2X6JtStgZNkMi1QyF56wAVor9eCtbkWPZDRzpbHC7LmCfhjF+ehYIKCVmqd3734G
-         0djQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUaAQsKONWk7BNvU7XC8Gyhg0k2ejleL/7tO4dL2hz/FtDI+WOrEGOgHz3NchVKJYEhJ7vCJ7zhJ40UaebnXq8=@vger.kernel.org, AJvYcCVz5h1vR7k3kVLzzU80tM1gYEC6ZFmhcdaHzbO2OYhW5Z6s1S6lSAAJ3f+Um8i8I1xpYYmswMxZhKbbOnEO@vger.kernel.org, AJvYcCXVkXIn8Bq6PWCVSdC2iQejQ4wMkjJDAMLWBKSKqU/C//8ozym1mXFbOi+M+z9GMBsvY2dB65mUbSxX@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8i/qHkzVgybBYjSR39MvtNjWRssrRXUSQMn7RlbHEEhxNh4p1
-	EQKcRa370FjLMn/Bhx4ZHIIWNoq9OVacDykLA/tq7lwL4YRJW/qyaWzfoA==
-X-Gm-Gg: ASbGnctVv102hF/DtaSaiqFPkpXc1A/fOnwDK+QRCf7McL1nhDI4FtDDjmhH6SG7/fV
-	QSbWrJELqkU7feCl2Qgfk2Gc3SQsrTx9KUiqRfqt5pN1RMrf0u4zOmH93k8S8wOAT8fJ6bxqOaY
-	DfjA20P9Rtq9T/vlGIGHajbHOSo6mqI9l/u3L94s63DNp5jdSytzY5mUhBUeifKHpYV+nziJZwp
-	CHdujljLHWxlhVsQDwHOVrCykPB0VTsXq9lszG2N7p9GPlHq/AnqAFVM/r+R9v8kXKLqleIvgjs
-	yIdvGL4KOP2Sw+Q6hswSW6EdMJiT7+rrBUoRP8/4+jGDqbJ+SrFBwrrHAOeMoLVXBwJbNfj5iId
-	iSkV8UVhyQHYXNKumJaLKzgwP
-X-Google-Smtp-Source: AGHT+IHOu8dDl8zmaHcg+Jhlmv2CjICYrW/SwrhPLBA/5dt/25XpQEFYQzrfzY4CBzUrzX5L1dlSVg==
-X-Received: by 2002:a17:903:3baf:b0:220:d257:cdbd with SMTP id d9443c01a7336-2319816fad8mr71443675ad.48.1747245933819;
-        Wed, 14 May 2025 11:05:33 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22fc8271f6csm102273595ad.129.2025.05.14.11.05.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 14 May 2025 11:05:32 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <9b951404-3bcf-4302-a647-3cef86b4bd3b@roeck-us.net>
-Date: Wed, 14 May 2025 11:05:31 -0700
+	s=arc-20240116; t=1747246996; c=relaxed/simple;
+	bh=4e1qOJWkWaFSa6R6yvbt8eruwMLzqqkT2IlDLCrqYys=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=L22IxhQcnqq3czH0E2UweUpc5fleRchqCSRMoP+GKSgoG3Rwrz8WH0br8/mTy3HgX2gELkt7YbHFeNIVr77i4eMKB5KuRBAPugf+DNPh9J9U0mKEQTDDIdNU8w8MYRnh3wpopm9Siwt3iYRvv6sHWV/V9YTJvvAVACAcB8JTTS4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=aladdin.ru; spf=pass smtp.mailfrom=aladdin.ru; arc=none smtp.client-ip=91.199.251.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=aladdin.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aladdin.ru
+From: Daniil Dulov <d.dulov@aladdin.ru>
+To: <stable@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: Daniil Dulov <d.dulov@aladdin.ru>, Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <kafai@fb.com>, Song Liu <songliubraving@fb.com>, Yonghong
+ Song <yhs@fb.com>, John Fastabend <john.fastabend@gmail.com>, KP Singh
+	<kpsingh@kernel.org>, Roman Gushchin <guro@fb.com>, <netdev@vger.kernel.org>,
+	<bpf@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<lvc-project@linuxtesting.org>, syzbot <syzkaller@googlegroups.com>, Eric
+ Dumazet <edumazet@google.com>
+Subject: [PATCH 5.10] bpf: Avoid overflows involving hash elem_size
+Date: Wed, 14 May 2025 21:07:33 +0300
+Message-ID: <20250514180733.1271988-1-d.dulov@aladdin.ru>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 4/4] watchdog: qcom: add support to read the restart
- reason from IMEM
-To: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>,
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Wim Van Sebroeck <wim@linux-watchdog.org>, bod.linux@nxsw.ie,
- Srinivas Kandagatla <srini@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org
-References: <20250502-wdt_reset_reason-v3-0-b2dc7ace38ca@oss.qualcomm.com>
- <20250502-wdt_reset_reason-v3-4-b2dc7ace38ca@oss.qualcomm.com>
- <2036ef2f-c7ef-4f42-858d-8d95c430c21a@oss.qualcomm.com>
- <68d280db-f7df-48c8-821d-f7d408c302ad@oss.qualcomm.com>
- <8a763c70-adcf-4a14-bb68-72ddc61fa045@oss.qualcomm.com>
- <8c2a53c2-c11b-4d49-bfb5-b948767ba6c7@oss.qualcomm.com>
- <1e871aed-705f-4142-b72d-4232ae729a37@oss.qualcomm.com>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <1e871aed-705f-4142-b72d-4232ae729a37@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EXCH-2016-01.aladdin.ru (192.168.1.101) To
+ EXCH-2016-01.aladdin.ru (192.168.1.101)
 
-On 5/14/25 06:15, Kathiravan Thirumoorthy wrote:
-> 
-> On 5/6/2025 4:31 PM, Kathiravan Thirumoorthy wrote:
->>
->> On 5/3/2025 3:53 AM, Konrad Dybcio wrote:
->>> On 5/2/25 6:28 PM, Kathiravan Thirumoorthy wrote:
->>>> On 5/2/2025 7:33 PM, Konrad Dybcio wrote:
->>>>>> +static int qcom_wdt_get_restart_reason(struct qcom_wdt *wdt,
->>>>>> +                    const struct qcom_wdt_match_data *data)
->>>>>> +{
->>>>>> +    struct regmap *imem;
->>>>>> +    unsigned int val;
->>>>>> +    int ret;
->>>>>> +
->>>>>> +    imem = syscon_regmap_lookup_by_compatible(data->imem_compatible);
->>>>> Try syscon_regmap_lookup_by_phandle_args() and pass a phandle, see e.g.
->>>>> drivers/phy/qualcomm/phy-qcom-qmp-pcie.c & phy@1bfc000 in x1e80100.dtsi
->>>>>
->>>>> That way all platform specifics will live in the DT, requiring no
->>>>> hardcode-y driver changes on similar platforms
->>>>
->>>> Thanks. I thought about this API but it didn't strike that I can use the args to fetch and match the value.
->>>>
->>>> I need a suggestion here. There is a plan to extend this feature to other IPQ targets and also support WDIOF_POWERUNDER and WDIOF_OVERHEAT cause as well. For IPQ5424, all 3 cause will support and for other IPQ platforms, we are exploring how to integrate WDIOF_OVERHEAT. In any case, can I define the DT entry like below
->>>>
->>>>          imem,phandle = <&imem 0x7b0 <Non secure WDT value> <Power Under value> <Overheat value>>;
->>>>
->>>> and store these in values args[1], args[2] and args[3] respectively and use it for manipulation? If any of the platform doesn't support all 3, I can update the bindings and define the number of args as required.
->>> Let's call the property qcom,restart-reason and only pass the register value
->>>
->>> Because we may have any number of crazy combinations of various restart
->>> reasons, we can go two paths:
->>>
->>> 1. promise really really really hard we won't be too crazy with the number
->>>     of possible values and put them in the driver
->>> 2. go all out on DT properties (such as `bootstatus-overheat`,
->>> `bootstatus-fanfault` etc.
->>
->>
->> Thanks Konrad for the suggestions and the offline discussions.
->>
->> @Guenter, I need a suggestion here. Currently as part of this series, we are planning to expose WDIOF_CARDRESET, WDIOF_POWERUNDER, WDIOF_OVERHEAT reasons.
->>
->> Once this is done, we do have the custom reason codes like Kernel Panic, Secure Watchdog Bite, Bus error timeout, Bus error access and few many. Is it okay to expose these values also via the bootstatus sysFS by extending the current list of reasons? Since these are outside the scope of watchdog, need your thoughts on this.
-> 
-> 
-> Konrad / Guenter,
-> 
-> We had a further discussion on this internally. Outcome is, it wouldn't be ideal to hook the custom restart reason codes in watchdog framework, since there is no involvement of watchdog in such cases. Also I don't find any references to hook the custom values in watchdog's bootstatus.
-> 
-Correct. The watchdog subsystem can only handle watchdog triggered reboots/resets.
+From: Eric Dumazet <edumazet@google.com>
 
+commit e1868b9e36d0ca52e4e7c6c06953f191446e44df upstream.
 
-> If this is fine, I'm planning to resend the series to handle only the non secure watchdog timeout case. In that case, as suggested by Konrad, everything will be handled in DT like below to avoid the device data.
-> 
-> imem,phandle = <&phandle <imem_offset> <value>>;
-> 
-> Kindly share your thoughts and inputs on this to proceed further.
-> 
-Sounds good to me.
+Use of bpf_map_charge_init() was making sure hash tables would not use more
+than 4GB of memory.
 
-Guenter
+Since the implicit check disappeared, we have to be more careful
+about overflows, to support big hash tables.
 
-> 
->>
->>
->>>
->>> I'd much prefer to go with 1 really.. If we used nvmem, we could have a map
->>> of cell names to restart reasons, but we've already established IMEM is
->>> volatile and we shouldn't mess up the convention just because that
->>> subsystem has nicer APIs..
->>>
->>> Unless we rename the subsystem to `fuses`, `magic-values` or something..
->>> +Srini? :P
->>>
->>> Konrad
+syzbot triggers a panic using :
+
+bpf(BPF_MAP_CREATE, {map_type=BPF_MAP_TYPE_LRU_HASH, key_size=16384, value_size=8,
+                     max_entries=262200, map_flags=0, inner_map_fd=-1, map_name="",
+                     map_ifindex=0, btf_fd=-1, btf_key_type_id=0, btf_value_type_id=0,
+                     btf_vmlinux_value_type_id=0}, 64) = ...
+
+BUG: KASAN: vmalloc-out-of-bounds in bpf_percpu_lru_populate kernel/bpf/bpf_lru_list.c:594 [inline]
+BUG: KASAN: vmalloc-out-of-bounds in bpf_lru_populate+0x4ef/0x5e0 kernel/bpf/bpf_lru_list.c:611
+Write of size 2 at addr ffffc90017e4a020 by task syz-executor.5/19786
+
+CPU: 0 PID: 19786 Comm: syz-executor.5 Not tainted 5.10.0-rc3-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x107/0x163 lib/dump_stack.c:118
+ print_address_description.constprop.0.cold+0x5/0x4c8 mm/kasan/report.c:385
+ __kasan_report mm/kasan/report.c:545 [inline]
+ kasan_report.cold+0x1f/0x37 mm/kasan/report.c:562
+ bpf_percpu_lru_populate kernel/bpf/bpf_lru_list.c:594 [inline]
+ bpf_lru_populate+0x4ef/0x5e0 kernel/bpf/bpf_lru_list.c:611
+ prealloc_init kernel/bpf/hashtab.c:319 [inline]
+ htab_map_alloc+0xf6e/0x1230 kernel/bpf/hashtab.c:507
+ find_and_alloc_map kernel/bpf/syscall.c:123 [inline]
+ map_create kernel/bpf/syscall.c:829 [inline]
+ __do_sys_bpf+0xa81/0x5170 kernel/bpf/syscall.c:4336
+ do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+RIP: 0033:0x45deb9
+Code: 0d b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 db b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007fd93fbc0c78 EFLAGS: 00000246 ORIG_RAX: 0000000000000141
+RAX: ffffffffffffffda RBX: 0000000000001a40 RCX: 000000000045deb9
+RDX: 0000000000000040 RSI: 0000000020000280 RDI: 0000000000000000
+RBP: 000000000119bf60 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 000000000119bf2c
+R13: 00007ffc08a7be8f R14: 00007fd93fbc19c0 R15: 000000000119bf2c
+
+Fixes: 755e5d55367a ("bpf: Eliminate rlimit-based memory accounting for hashtab maps")
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Signed-off-by: Alexei Starovoitov <ast@kernel.org>
+Acked-by: Roman Gushchin <guro@fb.com>
+Link: https://lore.kernel.org/bpf/20201207182821.3940306-1-eric.dumazet@gmail.com
+Signed-off-by: Daniil Dulov <d.dulov@aladdin.ru>
+---
+ kernel/bpf/hashtab.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/kernel/bpf/hashtab.c b/kernel/bpf/hashtab.c
+index 4c7cab79d90e..829d6d3a8495 100644
+--- a/kernel/bpf/hashtab.c
++++ b/kernel/bpf/hashtab.c
+@@ -199,7 +199,7 @@ static void *fd_htab_map_get_ptr(const struct bpf_map *map, struct htab_elem *l)
+ 
+ static struct htab_elem *get_htab_elem(struct bpf_htab *htab, int i)
+ {
+-	return (struct htab_elem *) (htab->elems + i * htab->elem_size);
++	return (struct htab_elem *) (htab->elems + i * (u64)htab->elem_size);
+ }
+ 
+ static void htab_free_elems(struct bpf_htab *htab)
+@@ -255,7 +255,7 @@ static int prealloc_init(struct bpf_htab *htab)
+ 	if (!htab_is_percpu(htab) && !htab_is_lru(htab))
+ 		num_entries += num_possible_cpus();
+ 
+-	htab->elems = bpf_map_area_alloc(htab->elem_size * num_entries,
++	htab->elems = bpf_map_area_alloc((u64)htab->elem_size * num_entries,
+ 					 htab->map.numa_node);
+ 	if (!htab->elems)
+ 		return -ENOMEM;
+-- 
+2.34.1
 
 
