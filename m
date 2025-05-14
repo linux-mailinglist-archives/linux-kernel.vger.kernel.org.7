@@ -1,268 +1,212 @@
-Return-Path: <linux-kernel+bounces-648385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-648387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF9D8AB7634
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 21:53:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A68ADAB7637
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 21:54:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96B8B3B7958
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 19:53:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D77074C1868
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 19:54:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D48A9289838;
-	Wed, 14 May 2025 19:53:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01A7C2949E3;
+	Wed, 14 May 2025 19:54:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a+aRdVKe"
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="hNub8KB1"
+Received: from YT5PR01CU002.outbound.protection.outlook.com (mail-canadacentralazon11021096.outbound.protection.outlook.com [40.107.192.96])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70EB2211A16;
-	Wed, 14 May 2025 19:53:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747252420; cv=none; b=Re89Lpm+eCa/0LaDD3PcpOjxMJpl2XTkEfIrcVoyfcx3bV5C7/IEexkNKNiSIYe2Wu8ijCSum4Gstw2eDB9MYU88rQgdANW6rC8Wvux4JYOlcDAZk+UpQ46GXVtDc/Qvz254vo5ZDsz2/QGi6ZapZBxL/QEhpfDO7JX7tXOPEuo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747252420; c=relaxed/simple;
-	bh=o5tDTGaiHLshY8OjJq/NGSYaAhRRUPZLjeGgRea7MvY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Y2r6/J0epZfWHGYT684fVleC5DQKQBeRqlRHwuV+UGn3v8QlH/j4U3WuKw2k657iwS3RBL6kAOpEFFSC+nAfu8bAIRvpSGey8QVkyfj0EGXNg/pLERkDNrjWJnW+cd8N/Hrwf4uTz49cnDHLLaOzd/Rx8voJgr0voDC7mXpQBFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a+aRdVKe; arc=none smtp.client-ip=209.85.215.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-b1396171fb1so52110a12.2;
-        Wed, 14 May 2025 12:53:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747252418; x=1747857218; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YRIf9FO0hwoJQSudwVQSivI2zAyJ6bf8L2XajTcHFwA=;
-        b=a+aRdVKe92TJFTI7P0/p4s9+cvLs1sTj9d2EhS3ToTFzB8i0yHMGu5G+XD7Muqzayg
-         BCA8bDLGNRq6I9qCrmGo1BHsIDhdJ5X2loFc69NeZCTkwUaUqlZiiiBwHOkVZzEKsM1d
-         3/uqPvtTwKvehDdazFyHgI8HmoQAnyBUTd6tJ+8RFEVg0HcMw8pbexoiMAHVbdPzpcUH
-         5bIoo1+P8h5ss1AnmBgi+XjN0amojKjZIAev3EYDvJMrtqmPg1v+MmVrIpOyKj+cDwNM
-         KD8NOFlR2O5OXSSXLXNtMQj877ALyALjPXvWxqgqXMyFcAUyvwvPtT0UnP0y9DCMq/os
-         RstA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747252418; x=1747857218;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YRIf9FO0hwoJQSudwVQSivI2zAyJ6bf8L2XajTcHFwA=;
-        b=RK4YkHtD+bf5PIQl5jrWCYl8VLguou7mlemUANvjzPgI/e0EbKt0QaHXm8NbUJnYiI
-         Tepwe0gDhah3ykjV3Mc/FpyCzQxh+j52yAywchgZd89T37ZvT29400TpeJ8dQZsitwYq
-         qQ2DkYdIDCvOVQenqT0zXa3uDURH5pbPvp2Yd564gmIuGQnrtTJSEOA/g/YcvpG0uURA
-         6N7zLMvebHCaGyUbZKU/d+zdjcP1Zdm5s2Sosnma+k20qJinyCEV2QGs21t6ADhxs+3/
-         FRXQXtPnyeueN3yxsn3iGMQwfSDVQFC0eRm+50BGiV0OWcc+dbAhlQtCoTvV1LZnORfJ
-         u05Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUbUyK4/Z/Tl59RRXLLil0YMuwjzHvC9zaEag5/IC9dhSrGodiiSIcgqbBbtXwJ+6pye8KN9IRxD2thGx0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDVoeZh85cUDTC6jK1EQFjLPBId+w2/KaKTKWN1OpN0Ybe4l1q
-	vMNjN6k3ho87iYAvFKk3Yoa7bPMDxTagp1ItpzK7BtP8xX9Kr9K8Pfm3G6rWPq8bADmrJAVuHfa
-	tfcvKrcq+zmlSYe5676skn1Taeoc=
-X-Gm-Gg: ASbGncvOdW2urFL7us2SZ863zcPAluIK3seCdqmkpZHJlvjtTm6U6s+a0d12ttuvdaM
-	Jvf23UhKNi1xgmdXREX2pEpzhvk+uwk7TWFwiAHYPfSO4/nX3ijKj4LjuMVtFtK3qZpaJ+jRM69
-	N8lLAt7TgwU68pZcy+vWkju8030hYzgLcq
-X-Google-Smtp-Source: AGHT+IFOC0DDoT9GlWD8T1q+isjp9mb/BojgYP2KxE58FD1VAYDQ4POHjr1Pvowm24hdS8Yg0FeBjay1oiOmx+8YF7Q=
-X-Received: by 2002:a17:90b:560b:b0:2fe:d766:ad8e with SMTP id
- 98e67ed59e1d1-30e2e59bccamr7460665a91.4.1747252417564; Wed, 14 May 2025
- 12:53:37 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45D3E293732;
+	Wed, 14 May 2025 19:54:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.192.96
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747252443; cv=fail; b=KrVHYO8/ducs049juvg9J5+KhucbaQJjSwd1iYCV1tGK8jiAhFwWa0rP7HoEHtSv6BomYnSUta53XiYuof5RJ/Euo68PwBJdszYGSgnDTxC1nfCEULBUf3znV6VxO/IVFy1qGjcsyWDlLpdYeUGtbSsU25ii7AW809r9X5kGLJA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747252443; c=relaxed/simple;
+	bh=QlNuEhH4F/X+aV7e9RZAeYjqz8x7JpKIhWa/vtPrQXA=;
+	h=Message-ID:Date:From:To:Subject:Content-Type:MIME-Version; b=Q99lgGzJjDmjICfTosh4yJcZiCXj9uKi1l1WCtwULRusAzkEzQb3gtcerRxJZ+vZybB4340dl93HkP50O2XQlr59umxA0FNFzYZVFrSCgpmcQ4imEDjuJtwmpEtDiMdGO4rb56ZXuNiXuFphxdXdDhD6BVfF7aF8QbvmUEicGBo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=hNub8KB1; arc=fail smtp.client-ip=40.107.192.96
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=RS2iPoWZlREq9SA5FZ4idrxZGmkEH3aJnmJEUaowbF3TmI1fc8NwLxvpAVw4TZCpt+v3uj4wT3epAhyDgTKaVSEKCDtENCb8jDvzV6ZDVEscvQv3fOuH2m3xkef/8LYnNQcjxP+33zM+qfC5mzlTfvkchcr6jCnwrWeAOKezZTYQGyUZFfGRn4pEJd4t40muJPmUAyLbYqAKYZzxXMSnssLeuhmMshQMf14zMCWAmIDk6sZc5A4hzBW8mI+VVSYEPQ2dORNFYPPz1IS0Gx3UR2KLOSfohVBdNkTYK58CzkNXT+3P7k8x87VOxCsGHtA+A/pwVvxUYZwCiQXpPSuoWg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=4QDJnMAJKPADZ9DGRqG4FnB0RmD6nD3t914DrzJhjCA=;
+ b=cGpl4TSeG40oG5ma0NoPaNhHbu0l8cgchPXFBiEB5OsXWAnv0JBdZOZdgq1mKoAdE0MxJ+M41B2P05sDxbmEcnn0wESLs1x479EZPmBnq3NCp/pUt42iDLsJ7m1De9hsbjRcvDV0w/XfSeVOwue0qTpSOhlepn9EfmJrTCwPebcPsvD/3gU339nvm2u0mSAL7LxV4eFGUoAudXFNkrLdYeU8BgaXWHSLblEp502cLcmYpEeSHuWDR75n8QEv3nbocFhu88l6cw6PyU/M2fYvAJdgAah8aL81qTFUv6Awsn2K+XqyiXEB7xkqYWXZSqZ6pSmKBKHiuABxC2nG6GsSNA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=efficios.com; dmarc=pass action=none header.from=efficios.com;
+ dkim=pass header.d=efficios.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=4QDJnMAJKPADZ9DGRqG4FnB0RmD6nD3t914DrzJhjCA=;
+ b=hNub8KB1l4QhJUIM4saaSLUa86MKUYbmV1hrQnOgEy/8896bN2XzeHR6226MAUQpJmXuCXPGr3SBfcPUKbNI4wU5Spx+iCTeUi/0eybga4ttoflipMHU1+cxGFVX2Vcpd2Y9ca9i6dQ7TQorcn/tI7ZCdefQ97dPkvBo6c7a7QKwqGmvyHIJ3NgAlYhLCTJnN+1969qrDvKgYLglWWIRrI2s4nd46PAW2lCdWATBgx0B/A/9UAR+kU7fqPDWEGkrYeN+sVhz4E1gS20L/pEQ6tJOyw2fpKlqLphZLfkPRPTV9IcqiSnKyT5LeUneDxh+/XK3ylGB5SOGB3eFTtt6jg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=efficios.com;
+Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:be::5)
+ by YT3PR01MB9171.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:a0::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8722.32; Wed, 14 May
+ 2025 19:53:56 +0000
+Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+ ([fe80::50f1:2e3f:a5dd:5b4]) by YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+ ([fe80::50f1:2e3f:a5dd:5b4%4]) with mapi id 15.20.8722.031; Wed, 14 May 2025
+ 19:53:56 +0000
+Message-ID: <cd6c769f-8d56-475a-b12a-f47426348b95@efficios.com>
+Date: Wed, 14 May 2025 15:53:55 -0400
+User-Agent: Mozilla Thunderbird
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Content-Language: en-US
+To: lttng-dev@lists.lttng.org, diamon-discuss@lists.linuxfoundation.org,
+ linux-trace-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [RELEASE] LTTng-modules 2.14.0-rc2 (Linux kernel tracer)
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: YQBPR0101CA0338.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:c01:6b::6) To YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:be::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250511173055.406906-1-cgoettsche@seltendoof.de> <20250511173055.406906-14-cgoettsche@seltendoof.de>
-In-Reply-To: <20250511173055.406906-14-cgoettsche@seltendoof.de>
-From: Stephen Smalley <stephen.smalley.work@gmail.com>
-Date: Wed, 14 May 2025 15:53:16 -0400
-X-Gm-Features: AX0GCFt6tOS69tJSh3Ewsfsjru8ywew2zWR-WDHav3k3dPgw9g0D__mhxsv6AB4
-Message-ID: <CAEjxPJ4Q8_PjvvXR9JAs307A0n-9xxS8LkLWE5NmeLgiF-NrdA@mail.gmail.com>
-Subject: Re: [PATCH v3 14/14] selinux: harden MLS context string generation
- against overflows
-To: cgzones@googlemail.com
-Cc: selinux@vger.kernel.org, Paul Moore <paul@paul-moore.com>, 
-	Ondrej Mosnacek <omosnace@redhat.com>, linux-kernel@vger.kernel.org, 
-	=?UTF-8?Q?Thi=C3=A9baud_Weksteen?= <tweek@google.com>, 
-	Casey Schaufler <casey@schaufler-ca.com>, Canfeng Guo <guocanfeng@uniontech.com>, 
-	Takaya Saeki <takayas@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: YT2PR01MB9175:EE_|YT3PR01MB9171:EE_
+X-MS-Office365-Filtering-Correlation-Id: 330e43e5-faa0-480f-d6f0-08dd93210f79
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?bzBJZW96dEt5WkF0N3pIUGE4Mk1CZlpxcm1DZFU2NmZpcWdOdWZhN1N6ZHlP?=
+ =?utf-8?B?R1dtcVJYRVhPZzQ5T2J6RU5TYjR2K3Roa0lHK09UUnZGZUYwQXZNUWFiUHFp?=
+ =?utf-8?B?Zm5mWncrNGxtbE0wQkdPQ2lncVlPMWJSaCtNSHJNUVU1cHJST3UrVEpmc010?=
+ =?utf-8?B?Q2hVVkcxVGJQOXlmTldxUHE3WmdEdndQMklwMHM5Z3lwYmRpT2V5M3BOMkFq?=
+ =?utf-8?B?OWtJTGhLZ21QbklGcUFEOG9xQjZYd01qdnpKRmJmVkRSTVNVRXFWdHc2b3cr?=
+ =?utf-8?B?OTcxSHNrZTQ0cE9nTHEyQzNRZVo3aGtTTGxNN1NWK00vYlduYSt1UXhhb05T?=
+ =?utf-8?B?MjZrVlZCdTF5cDhhMG5wbXVvcERQNEErR3VOVkQwS2laVExnditIRVAwWU1H?=
+ =?utf-8?B?U0hGVFdKSitYdWlFZXlaSXdJNzkwMUNEY084blN5bTljdVovTHY1QTNmWG5J?=
+ =?utf-8?B?SCttMWVrOTBBa0NtdXpVQ0l4b0VoUWxUYXNqQVV2cjZKRzdQWTYrY3djeUFJ?=
+ =?utf-8?B?ZUVxK0cxdU5VQUk5Q2c0VzFwMVBoN25SMDgvazZJeEtlR1Y3R0JlVGJZZy9h?=
+ =?utf-8?B?czN1SlQ1T2htN01oT2RHMFg4dGlvQzdkN24ramhLQ2RpUmJ5QzZLT3hZMTJm?=
+ =?utf-8?B?eFhBa1hQT3VkelVoeTErWkxMQll2NU1Wa1UrelNyNWVLc3dRaWYrWjdQdkNY?=
+ =?utf-8?B?RWlMU2plK1BveUVUTU16QWVhWFNDVndseWd3M0RBVGJXaUltZ0VxakRBcU45?=
+ =?utf-8?B?RE1NcEF4cE96UUttMFdYM2hjUndPSGwrNlhjakxmUkQ4VzNZUHZta2ZYb2Rn?=
+ =?utf-8?B?TzBoS1RRcXZGU21xTkhrRnFIMHg1bVBjczViWDlRQmhpMWg3TTRreHhscDJO?=
+ =?utf-8?B?d2Zyd0llQVpxU0MzNUEyWC95OXpHUHBqYWZBR1ZRR0Y2ZlBDcWVrdm5vb2Fn?=
+ =?utf-8?B?MlpXVTdOTmJDaVR6Y2N5WDA3THdIMkE1U2EvbWJLUXowTnhBb0FYNkk1VElu?=
+ =?utf-8?B?T0Q0d1pkL1BkbzlSR1I3cmZaVEw0bHhnbzlUMExZZTkvY2FGZFJocURidlpU?=
+ =?utf-8?B?Rm5KU0dDdTNCV1ZOR3FyckIxeTRKNW1nTFdvUlRKeUY3S1dWdmhIbDhyUXYy?=
+ =?utf-8?B?blhhMzcvcjBiK3VuNksyZS95clFxV3RQWVRuaW9GeE83TFYxRENTQnd2VDlE?=
+ =?utf-8?B?QW9LN00wRGhJU2dEb3lZUW1MZU4xbDczZTY1SG80L2d4Q3NXQVhjeFV5R0Rs?=
+ =?utf-8?B?RzNxaUU0NndYdTJQdVM5Z0NaSkVZbENodGVNUTRLT2Z6aG5rMEQ4amF0MThB?=
+ =?utf-8?B?aHFVYUFiYStScndSS2J3VWF1Mmc3OGpVR2M3TUhSNStCd01DNkFweitDdk5N?=
+ =?utf-8?B?MDFxTmJVRUJxNHIvOVUzbHdtZ2VicTYzTGxXNzhDTmxoWDRIcG9tWXlzTDFl?=
+ =?utf-8?B?c0dETWRyWFlybnF5RHFweVk4ZlZaK2tQOXB2azFJV0Mvcjlrd0dVV1lET1VT?=
+ =?utf-8?B?U1NTY1E0V0lYNFZhZkhCWEF0d1JTVWQ3TS94MU1ndkgrdmhIdTRsYmlxSW9K?=
+ =?utf-8?B?cmJFeFUyYWtLdHoyaWlwRHN2dStTcmx0NDVXMmFOa2h3bGFpdk1jQXQxYzJh?=
+ =?utf-8?B?ajBzeE9lWFBqSVBiUnZHN1lReWtIU043Q0h5bE9zQ3Q4MU9rUFBtd2xrN2ZE?=
+ =?utf-8?B?YzN4UXU2cnhVSnFaVmJsTmNxT1c4RVJYNVZDc2p1MXo0Z3BQdDliMmhwQTRw?=
+ =?utf-8?B?NWUyZklKUGhKMzFpYVpMSDg1eWNwOVU5S3dINzdUSzZiTWsyU1ZZYVV1MW1s?=
+ =?utf-8?Q?ioYu80wPu/lPYr8wYjBErrzC+eFDIgSMXnp/w=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?SjU2TnJJOU5lVGZGYmgxbjhMQzRaZ0RuSjVEekRqalF5RUI3ek9vODNPNW5H?=
+ =?utf-8?B?anhFVDROTEhHQm02TlpBcFd2Q0gvMnJ4aHUwY0ZZV2pMMm9HWm9ETSs5ZEQ3?=
+ =?utf-8?B?bnU3OWRIUVJUQWNuWkJxemMyUEEydndTdTczUERUSERReGY2SVlmR0pmclFB?=
+ =?utf-8?B?dVg1V1lncFBTZ05vVUZmVWdwc2dReDlPQlIwZDJDRkUyTDJ2ek9aTTJRRkQ3?=
+ =?utf-8?B?VU1FR2hPbU5GMHVwYzkzY1F3SVFjTE4ya3o0YUhCVDRheUlGWHo4RVlka1hQ?=
+ =?utf-8?B?YTl2dVNULzF0Vk5ZMmFIRFU5bTVTQ1V5NisvV2NPRVNmTmR2SGxLTjRCYnlZ?=
+ =?utf-8?B?NEFXdWttMUVDazJjb3RqeEZHR3h6L0c1MjlpbkdGc3J2enkvSjJPVndpQUZD?=
+ =?utf-8?B?NTdMQ29zRzB5eUZsNWdzYUF1eUl5a0JYNGxmL1RqdG9ESVhCZFpsb0RwQk52?=
+ =?utf-8?B?UHdYVmlKeEZJVG94eDVIVHRzbGc0MFNDZTlBZEt1L2MwdE5wVjhweTZkeUx1?=
+ =?utf-8?B?bUFuL0RmRUJlU2IvZHV6dnVJYzBSbFhzQmk5V21ZZlJZL2ZpV0VBanJ3S29L?=
+ =?utf-8?B?QmdhWmxIN01SMUZGcGp4VkE2WjhsUkE2RlkrNzNCVzIvMDdDZlAxS0V4VnpM?=
+ =?utf-8?B?WkIyMzJuNnFPYVZhQVJtb2xaV0NKWnpaejcwK1JKTDVRSWpRczUxZmFmSlh6?=
+ =?utf-8?B?ZnpwTFlSdmhqcUdUdFhKSnAwR3RtMzJad1hhQU9SbXhGZXlDNnpzaVJqYzA0?=
+ =?utf-8?B?N2Q0NVlGbmxCd0hJTnA0THVETGJ1b1FsKzQ1TkRSZ0QxTzVZeXBqRXFnQllZ?=
+ =?utf-8?B?cjJNSU5YWjc4RHZ1ZEIwSE1VdXVURGhoUEp0L3Nha3ZHcUduRGlMNEprbDNm?=
+ =?utf-8?B?ZVlocndydE5MT2RMNlJLZXZucXIvRlkzcWt1OXBjMGhOOG1nWVk1SWxndXha?=
+ =?utf-8?B?OVRRY0p3MEx1KzVZaTUxOElIeUZjSE1vSTMzdzRxWWMwNlhwcVdHZE5hNkt6?=
+ =?utf-8?B?dUd3ZmU4WTMvNEFQaGhIdDdzcDhoMkZHcnYydTArQmc4bmk2aWtPZG1iSWlx?=
+ =?utf-8?B?cERpa0I4YnpuU2tBU3VyQkh2OXI0VnNSSEd3b29DaC9FOTJ6M2FxcFJhYllP?=
+ =?utf-8?B?NngwSjdqRE5qc1hPZzZtdHZ3ZDF4c3dqeGNTR3NDbFlsMW1EUS9WOE5QMzZo?=
+ =?utf-8?B?QVdOVGpCWS9sYkVsbFFXenNmR29UNU16aTdLRWw5WW8vYlFJeWxud00wL3g2?=
+ =?utf-8?B?NG9WbG03cXhORW84NGhwdm04dHZZSVZEVGtKMW9GYVFQWTEzZVNSamJuSEJo?=
+ =?utf-8?B?dzA5NlBKNHJVVm5yNUN5YkZtbnY1V0RVSE16VUdlUmVnaTg1c2ZEZWJVbUlG?=
+ =?utf-8?B?YlZ5VWxmT2cwMDgrV0FZQ283M2JsdzVsTWg3d1llaHpiQnJlUEt4OTFFc0xw?=
+ =?utf-8?B?S2EwQ3MzbXhwYjUrcnhaOWNYMmhINmRqbS9XQVh4WitqZ2NWUFYwZmZjb2Rr?=
+ =?utf-8?B?K24xZmxRckpvWU5GelArTmR5R0NSdE1ZN29KSFVpU1RPalZIZjlrTjFpai96?=
+ =?utf-8?B?V1l4OGR2bnlVMWdVdEF5bTlrVFdDaG9oREt3K1hnZldhcHJlTDExN2hzOVRP?=
+ =?utf-8?B?VW8ra1BvTjFQMG83Y0MzeU5Rb2IvY0pQdUNEdTN2UmlUTHN3dXI2VWo1MDRp?=
+ =?utf-8?B?ZXZmRTRjbjQ0UnIvakdjU3ErQVNlVUxUOEMxRlo5cXo3d0FtUFpTYTlMTEc3?=
+ =?utf-8?B?WGwrdzJpZDNXaFJ3MlFNUnFRbWl0N3RFUVZWanVnbEd0RW1EZ1A1UjdydEkx?=
+ =?utf-8?B?aDdqR0pkMlhNZm51TGRtbXlUem02MkJiMlhvVlZ2R1NnR1NPamtJNnF5RWRs?=
+ =?utf-8?B?dUg0b0UyekdUNngrcTRzbUpiQm5CYkFUWWpNOWtlZnkwKy94ZlNYQTJBZGQ0?=
+ =?utf-8?B?RzV6b3QydFFQVGtsVzZXSEdvTmkyRElaN1QvS3pCM05TYXlYZk5XYUhIN1Nu?=
+ =?utf-8?B?Z1k4dU9NRHFuVW0rOURKNWVnc2R5K0h5UEpvRDNiUk9ibCttdnY5a3pPczlI?=
+ =?utf-8?B?TEkwYWROUEFuWXdseGU0VHpjV1ZaR25PL3BPaUZTRG5JbmM1T2RjUHExNEZX?=
+ =?utf-8?B?Mm1CZ2l1U2JHa3hacEFFZW9iTm9HbFhBVEQwcisyZVBtcS9rdHZHT0NONE9I?=
+ =?utf-8?Q?73xh8zYeWBNvKYJCxPOSIyQ=3D?=
+X-OriginatorOrg: efficios.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 330e43e5-faa0-480f-d6f0-08dd93210f79
+X-MS-Exchange-CrossTenant-AuthSource: YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 May 2025 19:53:56.1267
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4f278736-4ab6-415c-957e-1f55336bd31e
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: o53OVx11Onq/8QjKJyYRhy1t/xQ9led83e9kznvEtOagQTDZai14ZzYjlLqBiHDScBM9tEyQHT5rx5pPu+gRQWCX9q9o9ETqPSkPQ/G1w9c=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: YT3PR01MB9171
 
-On Sun, May 11, 2025 at 1:31=E2=80=AFPM Christian G=C3=B6ttsche
-<cgoettsche@seltendoof.de> wrote:
->
-> From: Christian G=C3=B6ttsche <cgzones@googlemail.com>
->
-> Check the length accumulator for the MLS component of security contexts
-> does not overflow in mls_compute_context_len() resulting in
-> out-of-buffer writes in mls_sid_to_context().
->
-> Signed-off-by: Christian G=C3=B6ttsche <cgzones@googlemail.com>
-> ---
-> v3: add patch
-> ---
->  security/selinux/ss/mls.c      | 18 +++++++++-----
->  security/selinux/ss/services.c | 43 +++++++++++++++++++++++++++++-----
->  2 files changed, 49 insertions(+), 12 deletions(-)
->
-> diff --git a/security/selinux/ss/mls.c b/security/selinux/ss/mls.c
-> index 3cd36e2015fa..aa25724f0b0f 100644
-> --- a/security/selinux/ss/mls.c
-> +++ b/security/selinux/ss/mls.c
-> @@ -42,7 +42,8 @@ int mls_compute_context_len(struct policydb *p, struct =
-context *context)
->         len =3D 1; /* for the beginning ":" */
->         for (l =3D 0; l < 2; l++) {
->                 u32 index_sens =3D context->range.level[l].sens;
-> -               len +=3D strlen(sym_name(p, SYM_LEVELS, index_sens - 1));
-> +               if (check_add_overflow(len, strlen(sym_name(p, SYM_LEVELS=
-, index_sens - 1)), &len))
-> +                       return -EOVERFLOW;
+Hi,
 
-I don't believe these checks are necessary, especially once the other
-limits on identifier lengths land.
-The same applies throughout.
+This is a stable release announcement for the LTTng kernel tracer,
+an out-of-tree kernel tracer for the Linux kernel.
 
->
->                 /* categories */
->                 head =3D -2;
-> @@ -54,24 +55,29 @@ int mls_compute_context_len(struct policydb *p, struc=
-t context *context)
->                                 /* one or more negative bits are skipped =
-*/
->                                 if (head !=3D prev) {
->                                         nm =3D sym_name(p, SYM_CATS, prev=
-);
-> -                                       len +=3D strlen(nm) + 1;
-> +                                       if (check_add_overflow(len, strle=
-n(nm) + 1, &len))
-> +                                               return -EOVERFLOW;
->                                 }
->                                 nm =3D sym_name(p, SYM_CATS, i);
-> -                               len +=3D strlen(nm) + 1;
-> +                               if (check_add_overflow(len, strlen(nm) + =
-1, &len))
-> +                                       return -EOVERFLOW;
->                                 head =3D i;
->                         }
->                         prev =3D i;
->                 }
->                 if (prev !=3D head) {
->                         nm =3D sym_name(p, SYM_CATS, prev);
-> -                       len +=3D strlen(nm) + 1;
-> +                       if (check_add_overflow(len, strlen(nm) + 1, &len)=
-)
-> +                               return -EOVERFLOW;
->                 }
->                 if (l =3D=3D 0) {
->                         if (mls_level_eq(&context->range.level[0],
->                                          &context->range.level[1]))
->                                 break;
-> -                       else
-> -                               len++;
-> +                       else {
-> +                               if (check_add_overflow(len, 1, &len))
-> +                                       return -EOVERFLOW;
-> +                       }
->                 }
->         }
->
-> diff --git a/security/selinux/ss/services.c b/security/selinux/ss/service=
-s.c
-> index 464a4663c993..dc6dce2eb7d2 100644
-> --- a/security/selinux/ss/services.c
-> +++ b/security/selinux/ss/services.c
-> @@ -1247,10 +1247,12 @@ static int context_struct_to_string(struct policy=
-db *p,
->                                     char **scontext, u32 *scontext_len)
->  {
->         char *scontextp;
-> +       size_t len;
-> +       int mls_len;
->
->         if (scontext)
->                 *scontext =3D NULL;
-> -       *scontext_len =3D 0;
-> +       len =3D 0;
->
->         if (context->len) {
->                 *scontext_len =3D context->len;
-> @@ -1263,16 +1265,45 @@ static int context_struct_to_string(struct policy=
-db *p,
->         }
->
->         /* Compute the size of the context. */
-> -       *scontext_len +=3D strlen(sym_name(p, SYM_USERS, context->user - =
-1)) + 1;
-> -       *scontext_len +=3D strlen(sym_name(p, SYM_ROLES, context->role - =
-1)) + 1;
-> -       *scontext_len +=3D strlen(sym_name(p, SYM_TYPES, context->type - =
-1)) + 1;
-> -       *scontext_len +=3D mls_compute_context_len(p, context);
-> +       len +=3D strlen(sym_name(p, SYM_USERS, context->user - 1)) + 1;
-> +       len +=3D strlen(sym_name(p, SYM_ROLES, context->role - 1)) + 1;
-> +       len +=3D strlen(sym_name(p, SYM_TYPES, context->type - 1)) + 1;
-> +
-> +       mls_len =3D mls_compute_context_len(p, context);
-> +       if (unlikely(mls_len < 0)) {
-> +               pr_warn_ratelimited("SELinux: %s:  MLS security context c=
-omponent too large [%s:%s:%s[:[%s:%d]-[%s:%d]]]\n",
-> +                                   __func__,
-> +                                   sym_name(p, SYM_USERS, context->user =
-- 1),
-> +                                   sym_name(p, SYM_ROLES, context->role =
-- 1),
-> +                                   sym_name(p, SYM_TYPES, context->type =
-- 1),
-> +                                   sym_name(p, SYM_LEVELS, context->rang=
-e.level[0].sens - 1),
-> +                                   ebitmap_length(&context->range.level[=
-0].cat),
-> +                                   sym_name(p, SYM_LEVELS, context->rang=
-e.level[1].sens - 1),
-> +                                   ebitmap_length(&context->range.level[=
-1].cat));
-> +               return -EOVERFLOW;
-> +       }
-> +
-> +       if (unlikely(check_add_overflow(len, mls_len, &len) || len > CONT=
-EXT_MAXLENGTH)) {
-> +               pr_warn_ratelimited("SELinux: %s:  security context strin=
-g of length %zu too large [%s:%s:%s[:[%s:%d]-[%s:%d]]]\n",
-> +                                   __func__,
-> +                                   len,
-> +                                   sym_name(p, SYM_USERS, context->user =
-- 1),
-> +                                   sym_name(p, SYM_ROLES, context->role =
-- 1),
-> +                                   sym_name(p, SYM_TYPES, context->type =
-- 1),
-> +                                   sym_name(p, SYM_LEVELS, context->rang=
-e.level[0].sens - 1),
-> +                                   ebitmap_length(&context->range.level[=
-0].cat),
-> +                                   sym_name(p, SYM_LEVELS, context->rang=
-e.level[1].sens - 1),
-> +                                   ebitmap_length(&context->range.level[=
-1].cat));
-> +               return -EOVERFLOW;
-> +       }
-> +
-> +       *scontext_len =3D len;
->
->         if (!scontext)
->                 return 0;
->
->         /* Allocate space for the context; caller must free this space. *=
-/
-> -       scontextp =3D kmalloc(*scontext_len, GFP_ATOMIC);
-> +       scontextp =3D kmalloc(len, GFP_ATOMIC);
->         if (!scontextp)
->                 return -ENOMEM;
->         *scontext =3D scontextp;
-> --
-> 2.49.0
->
+The LTTng project provides low-overhead, correlated userspace and
+kernel tracing on Linux. Its use of the Common Trace Format and a
+flexible control interface allows it to fulfill various workloads.
+
+* New in this release
+
+This 2.14.0-rc2 release is a bug fix release in preparation for the
+final 2.14 release. The most notable changes are a fix to the
+new ring_buffer_flush_or_populate_packet which did not affect x86-64,
+but does affect other architecture, causing a snapshot test to fail.
+
+A "nonseekable_open" is introduced to fix python use of the /proc/lttng
+file, which affects lttng-modules built against Linux kernels older than
+v6.0.
+
+There is an uninitialized variable fix for the experimental CTF2 support,
+which only triggers when building against kernels that do not have
+CONFIG_INIT_STACK_ALL_ZERO=y, which appears in kernel v5.9.
+
+* Detailed change log:
+
+2025-05-14 LTTng modules 2.14.0-rc2
+         * Fix channel_backend lookup during `ring_buffer_flush_or_populate_packet`
+         * Fix: Use `nonseekable_open` for proc files
+         * Fix: metadata-ctf2: enum mappings are not serialized
+
+Feedback is welcome!
+
+Mathieu
+
+Project website: https://lttng.org
+Documentation: https://lttng.org/docs
+Download link: https://lttng.org/download
+
+-- 
+Mathieu Desnoyers
+EfficiOS Inc.
+https://www.efficios.com
+
 
