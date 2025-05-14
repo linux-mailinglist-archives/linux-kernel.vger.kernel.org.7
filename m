@@ -1,286 +1,255 @@
-Return-Path: <linux-kernel+bounces-646980-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-646983-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58568AB6320
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 08:30:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 69C25AB6326
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 08:31:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7772C3AD73A
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 06:30:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 835283A1FD1
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 06:30:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E54D1FECBD;
-	Wed, 14 May 2025 06:30:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 712261FF1A0;
+	Wed, 14 May 2025 06:30:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="drMN6nqj"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="C53qOTN8"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E06911F4CBD
-	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 06:30:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747204224; cv=none; b=YcQeC8l+BkZJ9VgVkjsKXTOhoNQYi0G+Jtud4AAlHAspweH8JkAbi7gHcDwyyjV8Wh3NTaO5Mu5KVLbpVB4u4A6pz3nkltu2qhN5DQ6nCA8t79URwgN4vP3f8/GAfh9dwIE5AuKi9wQ1Kt+zTB8g1DRSC5bcEgLOZCuTshoMXQQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747204224; c=relaxed/simple;
-	bh=4Fu/RdYe0cD2vuBPZ6g0OA+NwElbWIiLpI6udKPtunk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=f90YFmcaWnAcN2LUZRRfmVaDSjRXlXmfk52aerLhDr6ljgXCgZxyAABhUluw8/7iXiGbiUzHsN0tBdfnRB83CzEirjSNnIprl9x15CvJj9+nFZxIZCN4ZD/1bYmKjQUQD2r6Jqpu3KhWG6dnqwo70HK+uLpzobdBvxna7LXotSI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=drMN6nqj; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54E1d1fs006070
-	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 06:30:21 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	3OYdEv51QzKfvKyl8ZgwIQYfMr0WzoPUqWedNGx4V8o=; b=drMN6nqjFRSig3yV
-	lDvbbLMYcz3VTLwBtALpmrmgjWr5A7C2sAmiLc0n9G9J3Cb9gZRrbvt2OA9MSndH
-	8kEPalU6Wrlkl7vGymmxcj69V074a1+ztfi8sgZbIuVT6J52RKRzv7D9yprM6hxK
-	i2NCka/ruOjlQH8AHhLBokDsg5dvMvZ71aB1sQ35yFnbdGx9tSFLLhRJno5g8/4i
-	5uahPUKstKk8F+r1jupge0AQ1Xp6E785gcp39Y9lE7KE6+mSyIFMVN5J+xMcyZan
-	aws38upccg/H3Eu5bdD3y4N4o4xsBLielPV3xSj6TOoOlAdoPaUzKxiWO2DXlWQ2
-	oz5gFQ==
-Received: from mail-pf1-f197.google.com (mail-pf1-f197.google.com [209.85.210.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46mbcnsmbf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 06:30:21 +0000 (GMT)
-Received: by mail-pf1-f197.google.com with SMTP id d2e1a72fcca58-7410079c4a6so4423360b3a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 23:30:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747204220; x=1747809020;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3OYdEv51QzKfvKyl8ZgwIQYfMr0WzoPUqWedNGx4V8o=;
-        b=h4qrGSJxcaF91tLexLrNKya8SmQ1ofhcPsFAW2GzMjjL/CV4+CM+YffTPd6HfT+XFV
-         B5UnXX49UZ6a7PRNpbt6+8Xi5CmVIl3s/IcHezkiTVJqR5rHUOycMDDiSrb1xKEeiVu1
-         pr+BvjG5YbwFWo+gExCsJuIX+qgdqSc2UsWV+CrpHZM5u7A7NlWiDvBJlOq9HkFQKO0s
-         GeY1D7XvA2YNsMebx8nPsA7GRwGabu5Vb6xD8PD/wxPMcsCggZ2MrSypgA/FRfVeUBzw
-         ALCCYAmWx6PUpyledqv32abbXMxcmHnhkhk4Pd6qDEzdc1Z/1m9UaRZ5gOYBr72LIsHO
-         xsYg==
-X-Forwarded-Encrypted: i=1; AJvYcCXDGrpJanJCi7dNc2X3nxrZ4FCp3OVMM33CYaSEIKS9ShU27srM05j2ZdOqAzaq6MC+g+OgxCcFg7STlBY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YydGUoPvpmlyXgA5m8qwCezIhR61Z+EqoCdEJsgLYv6jGQ9w8Lg
-	5PtZ6VbBQnKH5OEeP6p/MUAkV3bgBHGB0upMtxVUsBpnSYLz1AJAfaiHaTS7INbojIqKSb5F3EV
-	OA/A2o9dr/O49FXnRJ9aVrdLYjbjUsItLLics/xmsw1IXIH5HzeVIm6XlbcveOuk=
-X-Gm-Gg: ASbGncutkNGsz9oOHL4wyZXZ3trVu8z2EhuIoNiOjEC1sb/sdzfZPU9QWHX55GM0kFz
-	6neR1d1I3nZcRD3E5CKt8xnfBVTL03x62/ALO/C6VaKVgSEXUmvRxG7EhiXy78b4O6KXna4jpvc
-	1XLfacwt5Lo1eY4hcWCuB7uUktTEteKBFU8GKphZSGNfJ+t/lMJSb0zjohzvHsFbJ5Vav1a3Yan
-	MxHfJgy1I9OXOh1Z5rNpM29aKjcFjUXmNU6ztUxsY7d5wCjauT8hzSlW5zr9NspdJVg0mFJQoaF
-	ND4C7yqOgGhWQroww2RikJd9w413CBpJxf7kkrdLbQ==
-X-Received: by 2002:a05:6a00:849:b0:740:6f69:dce9 with SMTP id d2e1a72fcca58-7428915208cmr2991301b3a.0.1747204220395;
-        Tue, 13 May 2025 23:30:20 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEo6KctwAue9F+Vx18ACg2bqMflRXZkaB6cash8mo/C9AGwxsZu65dw2flirVj1uPaGevYVIQ==
-X-Received: by 2002:a05:6a00:849:b0:740:6f69:dce9 with SMTP id d2e1a72fcca58-7428915208cmr2991254b3a.0.1747204219961;
-        Tue, 13 May 2025 23:30:19 -0700 (PDT)
-Received: from [10.92.214.105] ([202.46.23.19])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74237704ba3sm8811721b3a.31.2025.05.13.23.30.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 13 May 2025 23:30:19 -0700 (PDT)
-Message-ID: <8006a0ae-b45d-d22f-65a9-20a65f3224b0@oss.qualcomm.com>
-Date: Wed, 14 May 2025 12:00:11 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07E45202C34;
+	Wed, 14 May 2025 06:30:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.9
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747204258; cv=fail; b=BcHl5gOoufrqNe6oIFXZtN2EUIF8BCRI6XrvbKfkGG2szW1KH64+dgSvjbEOOYSL7ELo4Sb7p10exFchgVFNUro6N+oXimjP35Q5CKMjoSC+76dbdUAqgBmU0EzsOKez4XP6HSBmOTkcREhcXdBED3CDBQHOze3fAlYFyseXslI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747204258; c=relaxed/simple;
+	bh=SVOggS4MvCvCuzfcYwQVXwhFaK0tknD84DnIcmdpIK8=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=oqZKiK9/vON98O4G/BmKRD48KeDmtk5KC1UFzWgLg0ZIr9SqsrNwZlysQB7mWyySb/4S2MPQcVK+K5ZjWf/KjzBGl4za7vFOT5ZIziwnic+Wl5GsAKNA0Lbb1qEF7E95sh2bQXSLBtgHTPr+/eA1CKRj8hMOgnGm9JX9AYTot/k=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=C53qOTN8; arc=fail smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1747204256; x=1778740256;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=SVOggS4MvCvCuzfcYwQVXwhFaK0tknD84DnIcmdpIK8=;
+  b=C53qOTN810IEf2m+3vH8IFoPZ2ig7ooUoWbKzxqH8FCOF8B9LcDBxfHy
+   T+TkRd/8479HKsgMRazbHavjd8C7WJWLNWM3wIsQh6WEaX6NRwRQiHwN7
+   PLcGqYNVapJEvUMV6hD7iMg2X07doj4mFhlyEYItN9Yz/1/wZdVe79FO+
+   oOunmPQA0JzwnCta4AtTQKMxhLZcUnXmfSw6ICJNeKSvIZebKmD1o5y/u
+   FRgB6Z5hx5vXv8ytl2qH+QZPuMwid6Tu8dp6eVcXl3cv/IjVs9PsR5ay3
+   RiDmESnWsNbd1gG21Xn/3//IRT5WUu0oYWLr9pGTlqFmr2InIzupfy/yh
+   A==;
+X-CSE-ConnectionGUID: 138MCUx+SBOoSLORNLHE1w==
+X-CSE-MsgGUID: 5oc9nxC9TWa8zW6fkwH14A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11432"; a="71583743"
+X-IronPort-AV: E=Sophos;i="6.15,287,1739865600"; 
+   d="scan'208";a="71583743"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 May 2025 23:30:55 -0700
+X-CSE-ConnectionGUID: DEEuOAcgSGi3UDEmPUFOoA==
+X-CSE-MsgGUID: eZvYjfVQRiSvZVt/irtvLg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,287,1739865600"; 
+   d="scan'208";a="143142588"
+Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
+  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 May 2025 23:30:55 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Tue, 13 May 2025 23:30:52 -0700
+Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14 via Frontend Transport; Tue, 13 May 2025 23:30:52 -0700
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (104.47.66.42) by
+ edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.44; Tue, 13 May 2025 23:30:52 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=U+hZFe6s4MqgxDIFrdr/Q9wjiIF0lFGT4jKnvXY86z1fknOhUpcxjfQ9Ns745GdZDTWy82vw7VHauqkNyyqSUDVq/2DWynfyXkrYzWpgXATflM1fMVEOE58rlWi3D57tpwusgw/IHGHASFcZThWjbFXfZIxmxszEhf4+msksyKGCG3cfBe7yoqdZlgdeVAjYlASSuQMJt32TNuNDo6ZaouQngFnL03SUcvkTe01jzlJ+1ppJhYm/GutDArEBtajc31P2TJ43h+S5tovaXDuLyEw8Ygpdw5kBcCTy3X5v4ieJ0R0f8hQyJZ/EdMe9gb5TpOipUZ6/QmDY17UqeHwz0w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=mFZGz/lIWnbBVPMNRFToyR9o1NHOkGtMpkXI2q3dRFE=;
+ b=Lyi+K3khYfaFgh3JXQCJexI0RD0qiXnsra7PXs59daPej8elOL8IACtpfAAHsEzD1Xt4VWjMimCmDFBQz0qwUZAFTWdOIQ/zY6iqNonK0FKN3JYg/nuHE1BYGhbpdrHJ0Sq46aCzzjeGZoHygI1lkqsp8oHB2tYnYLWaXLFFu4A7mxUIiCP1budl8BTr1KyXYt6nF4VDMGi+cUO41J4EeH0kvCLYAllwFmOtUyvCJpqr4OAZ07Lmp4ZqwrZK+k6ZmUxN/nvWFZ8JiHqht+LbPqTDalP2xZrxHlZj+lqVJmYxvXVg2yTDYiH85B78HxLfV/44N1VyW0JmtDYje7WNPA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from CH3PR11MB8660.namprd11.prod.outlook.com (2603:10b6:610:1ce::13)
+ by SA2PR11MB4937.namprd11.prod.outlook.com (2603:10b6:806:118::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8722.31; Wed, 14 May
+ 2025 06:30:45 +0000
+Received: from CH3PR11MB8660.namprd11.prod.outlook.com
+ ([fe80::cfad:add4:daad:fb9b]) by CH3PR11MB8660.namprd11.prod.outlook.com
+ ([fe80::cfad:add4:daad:fb9b%4]) with mapi id 15.20.8699.019; Wed, 14 May 2025
+ 06:30:45 +0000
+Date: Wed, 14 May 2025 14:30:34 +0800
+From: Chao Gao <chao.gao@intel.com>
+To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+CC: <pbonzini@redhat.com>, <seanjc@google.com>, <rick.p.edgecombe@intel.com>,
+	<isaku.yamahata@intel.com>, <kai.huang@intel.com>, <yan.y.zhao@intel.com>,
+	<tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
+	<dave.hansen@linux.intel.com>, <kvm@vger.kernel.org>, <x86@kernel.org>,
+	<linux-coco@lists.linux.dev>, <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC, PATCH 09/12] KVM: TDX: Preallocate PAMT pages to be used
+ in page fault path
+Message-ID: <aCQ4imYKThyxOWuT@intel.com>
+References: <20250502130828.4071412-1-kirill.shutemov@linux.intel.com>
+ <20250502130828.4071412-10-kirill.shutemov@linux.intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250502130828.4071412-10-kirill.shutemov@linux.intel.com>
+X-ClientProxiedBy: KL1PR01CA0003.apcprd01.prod.exchangelabs.com
+ (2603:1096:820::15) To CH3PR11MB8660.namprd11.prod.outlook.com
+ (2603:10b6:610:1ce::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH v4 4/5] PCI: host-common: Add link down handling for host
- bridges
-Content-Language: en-US
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
-        Oliver O'Halloran <oohall@gmail.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        =?UTF-8?Q?Krzysztof_Wilczy=c5=84ski?= <kw@linux.com>,
-        Rob Herring <robh@kernel.org>, Zhou Wang <wangzhou1@hisilicon.com>,
-        Will Deacon <will@kernel.org>, Robert Richter <rric@kernel.org>,
-        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-        Marc Zyngier <maz@kernel.org>,
-        Conor Dooley <conor.dooley@microchip.com>,
-        Daire McNamara <daire.mcnamara@microchip.com>
-Cc: dingwei@marvell.com, cassel@kernel.org, Lukas Wunner <lukas@wunner.de>,
-        linuxppc-dev@lists.ozlabs.org, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-riscv@lists.infradead.org
-References: <20250508-pcie-reset-slot-v4-0-7050093e2b50@linaro.org>
- <20250508-pcie-reset-slot-v4-4-7050093e2b50@linaro.org>
-From: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-In-Reply-To: <20250508-pcie-reset-slot-v4-4-7050093e2b50@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: ER6QTKTHoU34Bg03KTYUfFwc-665UR7F
-X-Proofpoint-ORIG-GUID: ER6QTKTHoU34Bg03KTYUfFwc-665UR7F
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTE0MDA1NSBTYWx0ZWRfX7F53yGg0YXZr
- P4IdpJJ62KnzzYEfwDz2UqzOQuflJRvPx/hdKF8PPIOiS9zDYHapXXHeqByBrYHERkCyy1FW05s
- ZavT/L08yur0nIvy4Kegj4SPCnQNjmI8NZBzo69sd548314a59G1c4ZCXphpqK9p85KdOv/ZMKj
- P7SASQ8xUT7fs97uyFc55K2qDrbX7t6BoV8Onss9JboL1BVr3g8Ez1rQLJDUwhq8kZhrMI9DStu
- fnMy5Cgc/2f/vMo5Rjah5Vw1/SwWN/nzzRx21J2i0lNuegmAWpESeVNHVAQhP5JfSXhP8yDn7dq
- m0gHjVOR3y+yQ+ZunXzcR8CdfzY1pDg4eRBWDh5ICnV+fzIHMnc4q0gufv0Ri+rWf8QdO6mLjMa
- BzKd762kUgCQA8N2oCSBmdGIWBlQ7/uqhhhMw/001G4p74mzADWmHgN9Wc1oyV6bSsAkRdu4
-X-Authority-Analysis: v=2.4 cv=Gp9C+l1C c=1 sm=1 tr=0 ts=6824387d cx=c_pps
- a=rEQLjTOiSrHUhVqRoksmgQ==:117 a=j4ogTh8yFefVWWEFDRgCtg==:17
- a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=KKAkSRfTAAAA:8 a=WP6hIalcOMfy4p2eL3AA:9
- a=QEXdDO2ut3YA:10 a=2VI0MkxyNR6bbpdq8BZq:22 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-14_02,2025-05-14_02,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 clxscore=1015 spamscore=0 lowpriorityscore=0 impostorscore=0
- bulkscore=0 adultscore=0 suspectscore=0 priorityscore=1501 mlxscore=0
- malwarescore=0 mlxlogscore=999 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505070000
- definitions=main-2505140055
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR11MB8660:EE_|SA2PR11MB4937:EE_
+X-MS-Office365-Filtering-Correlation-Id: f6cdef4d-7474-4b82-5bee-08dd92b0dbba
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|7416014|366016|7053199007;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?mrHS/5BZ1td+aFDOtY3+LSWvCqzgu6Sgue/0EV0M6kXdsvI4hiYBiJloMpMt?=
+ =?us-ascii?Q?cIFfj+Wo9jwiLk59jK+egX/6oidI+BEMNUZGeP5LpNGwlSnr7Eq3HodAFeEA?=
+ =?us-ascii?Q?Lz40yRjM6xvwnzB47lI5QmYZY04Tfpmw7gtzg0Pav/ATkKlD62KxHpXGYfNA?=
+ =?us-ascii?Q?KoC2d5DCUWWxUqQ3p4TSJk57ZhWO9fwAdhxXMUBhHF/Sb2eRYnemcy7/v2HH?=
+ =?us-ascii?Q?KkIwIujq+qo4b/lvQ+hh95sitkNUuw2viifyeBW7G80kB6yIJ6xppCECdM3v?=
+ =?us-ascii?Q?dGjEwYgcmI8rHWC5q9Pbobk+5qtufdFb8uoXDmdnXTZKR+1G5abuwtXIMQzj?=
+ =?us-ascii?Q?qPXSMiQRqVCt6mBvzSW6GQDI4hDe237hQQDVpT2p64qlvr1Glf2QVlwA3ZOG?=
+ =?us-ascii?Q?QumgMIG3DGbwEP5qCBbeFEKMqO6IifdEt3KJW6EovvJkHC4Nh8HRSU2PaUvV?=
+ =?us-ascii?Q?zcmb83+PH5yh5I6cqXkEQjZhGok8AXYBsqi8nSc6OP8hAiffBgSq0hTPqFHu?=
+ =?us-ascii?Q?UM6x4p8/1fpMDxeH22gN7XKQiS36hBYbyGu/W8QObi88q8VU7+NDPl3/O/rE?=
+ =?us-ascii?Q?prwAFzuV1FxvKEXE7biwJn4neah67iYoLIymQuvi7jUEeT5ksaxbTtpLmQxC?=
+ =?us-ascii?Q?Jqz7bJKHzQtp9/Fu47MTgfkljoROnpFvQrnBp4ydaa4KIJp6e+uqY9ga00F4?=
+ =?us-ascii?Q?t+QzLf6sHCNtsyewpDTM3uR6XqPupjK5D0hXXQC2P2Tbu6VfGsZJ8Tb4rcIn?=
+ =?us-ascii?Q?4BPB7xT76pLcbPrj6ghWl/gySgHVUCISzOUmCGQU+i0ziulq4eWidqoxPS/V?=
+ =?us-ascii?Q?qF15QGcYXnHob6FC7giMQcO7zT9kvcE5CJTpRpkcFPaGgjP4HOxdoaDr/lco?=
+ =?us-ascii?Q?iZ53Q318FxlB6tMDdt86oJEhE4KnwZLPg3upqOy+x3NGvcRpB/k3gTajmyJk?=
+ =?us-ascii?Q?gwK6v+kxH7JKRPN9jSGwpFarYazkSqJFkaQZZ94ZkBumdgziFTj8OhQ2V3Sm?=
+ =?us-ascii?Q?pr6EcmociPc4xxnd5yvOj5ipFKLrizI7N8jgn6c96HCI6bM3t0cfghctEOfY?=
+ =?us-ascii?Q?4qhD4sYuCwkU4s3BHoVSC7ZpgC82LxiMkgpNFs6wkZgwvXO68x4lQqjrXAO2?=
+ =?us-ascii?Q?4O8RjX6bxrYBNjtZxsVjkRbXUK4SO7NBPDPyiznd3qMDz1ul7rs0KUkbVmpF?=
+ =?us-ascii?Q?K7iAjPSKm0bxjLukFjbPc1d+oQhRZhjg1X1U+ynkd4Lg3B7bm4+Kfo20t9hl?=
+ =?us-ascii?Q?o1nnIAWlpwOhpMzoZxGwN2hMnXI3Lv5u2wx1X/DNlZKrfbSNO8sBz9s381u9?=
+ =?us-ascii?Q?ldBSTP0vArusYpPzZbf+n1zc551Ue9P+XSj9I9kUGqZdONnvhiShKqZxBhxM?=
+ =?us-ascii?Q?Cty68bCrL0yy/PrKWVGSW3ZGW4gOcWt03YpdaEWBPGDQw7hbr+kQJZDdSAnJ?=
+ =?us-ascii?Q?MBgztWnFCEk=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR11MB8660.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(7416014)(366016)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?/iZ72jQH8xYUzxAx9D/Eht9LZ9R1iZP2BOXR9bs2PE2MhP/mFwlHNAaAHSwq?=
+ =?us-ascii?Q?WwgClvWKevCn2acpZIdA09ViYah6TtBiTrcxuXYTmnUvz31TsbmraJ0PA1lr?=
+ =?us-ascii?Q?4Dl65odsteIVWsiCsAAZxJ+NUeJtf5OGbXPG7ct6HpxJq5xGbs9V0Q+BYtsG?=
+ =?us-ascii?Q?XBo025e1f3q5cQXtr3YRRxXn7LpHCzN+mUyMAWV75sotlpyOdDDP8J+BndCF?=
+ =?us-ascii?Q?VWTjAk9iMNZhZ+1d+hXmHxgKSdFbEwMtXpTvmlQ9QN650CHhPbRAkRTdoTHy?=
+ =?us-ascii?Q?WoN664aq3Yd/06Ngq0eMfUPsILxx5vvI9DR0egwnL2eWBZv1L979uvNMDe85?=
+ =?us-ascii?Q?P613LbTVsoyP3L0DO9NXcmc7Q+jZLno3DaDU6anhlXmMa2ceLye80DzHRN4o?=
+ =?us-ascii?Q?2mt3GJ3y/WujuL5X1+nnlVSDdnT2oxMMRgHw6YYmSWsVG5PPIEOxBk31PSfk?=
+ =?us-ascii?Q?yF/wCtjZPuRv9aZFxWsCIIkSCINk+xJnGsuSVHd4D7obfe8qIMheStU5JY8K?=
+ =?us-ascii?Q?nO2Qs8lBEerP+oyFbGZuib3LQq8G5KOhWWcpO9asoKEdMFTp1nMDqGVN8chO?=
+ =?us-ascii?Q?+nzp05wx53cl38bjnPuwsVg+GW36n1FGrLJQyCO9gTJc2zTcdsbI3VWPZc+G?=
+ =?us-ascii?Q?nfYY0ZdTk50Av9PUL4LEN8F/ohXv+OKbhWHxGKWi8v9ocVg0no0yC5Np3LEK?=
+ =?us-ascii?Q?S9+Ck79HFbLwzTPlFdI1IMGT4BDEPYXQz+jGx4DFBrOPMg1f9qedaqQpa/xD?=
+ =?us-ascii?Q?7TTAHNhA/FkSYvncb0twlu0V02jCSP/MioOHiEZxBMqagpxr9fQ/wER8grSh?=
+ =?us-ascii?Q?icO0ZHsRRDXiIbv/BDOmTEOBpfuMp6So93FWDxH5cBqa/hV5tBssJOK5TRkr?=
+ =?us-ascii?Q?pFzVZ53+4DfwLu76CiFHXdykTV2HyxBRqgU4u5D3NlcCHr6Pmh2k4xtLJqAp?=
+ =?us-ascii?Q?xiC+trdnQnkYKKB4w6kunJYdaIZNlAzvNqdwg+Frl5Xcppk8gXfwTxZ0thkM?=
+ =?us-ascii?Q?fV3DjRfBg7h3L+5kB4UqPF8v6H0gB/6irRYz1MtiSE9f3zzlqmhBok2ZDhrS?=
+ =?us-ascii?Q?uhqImxI6AOs+UPB0BTXOmzKcTjywhaZUe+Y8st+zBoKDtq/zev6Vpy0EEhpd?=
+ =?us-ascii?Q?Va2UEFS4gKEi9n9K9CdAY7ujTNEW9DvmC0ahEftwcp1LKWmm5WYsgi0dHo6Z?=
+ =?us-ascii?Q?xsp0fifNT9xchuloc2LDbGVv3gNa7VYbbBBV9J/rbrigU1Sef7EadaQ7f7TR?=
+ =?us-ascii?Q?f/Ldo6AafxTCN15nw+Bo2fdRu/akNcppuxrreEhbrZkpNi73rA8HYaQsrrqj?=
+ =?us-ascii?Q?YPMptBBR54WyQTOila9GpVmB0Wd1nHn3A0o9mK/Y1RxrvV1nL5cD8EVg9OoB?=
+ =?us-ascii?Q?Koz1PdrzhomKq/7XLCPQupISXsxrwBOlk0biR/wU/k2p6hF2A8Y3ClbFX9L9?=
+ =?us-ascii?Q?pL8VUxn41aibK8S8dp7r98p5wwtG1dK+nFvIRhZvWVIiH4JU6oDlk6t079KE?=
+ =?us-ascii?Q?LUTvpcaaN8O1xEjDck3VAdVlklm37wsBy/H+VOo8XgDiGzlNjOlZruUNRvgb?=
+ =?us-ascii?Q?17UnG8kSW3d9xOa8oyYGPucvBo04S1LF32HBnS9U?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: f6cdef4d-7474-4b82-5bee-08dd92b0dbba
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR11MB8660.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 May 2025 06:30:45.6263
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: EVS6o/rFH051BO6HYSpVSKOP2zmUTYT6rHM32bW67bZm7lbSJ8H6Rdb6h7rS77SRRnUnoKwf1LBxJ4gaMg4x2Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA2PR11MB4937
+X-OriginatorOrg: intel.com
 
+On Fri, May 02, 2025 at 04:08:25PM +0300, Kirill A. Shutemov wrote:
+>Preallocate a page to be used in the link_external_spt() and
+>set_external_spte() paths.
+>
+>In the worst-case scenario, handling a page fault might require a
+>tdx_nr_pamt_pages() pages for each page table level.
+>
+>Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+>---
+> arch/x86/include/asm/kvm_host.h |  2 ++
+> arch/x86/kvm/mmu/mmu.c          | 10 ++++++++++
+> 2 files changed, 12 insertions(+)
+>
+>diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+>index 91958c55f918..a5661499a176 100644
+>--- a/arch/x86/include/asm/kvm_host.h
+>+++ b/arch/x86/include/asm/kvm_host.h
+>@@ -849,6 +849,8 @@ struct kvm_vcpu_arch {
+> 	 */
+> 	struct kvm_mmu_memory_cache mmu_external_spt_cache;
+> 
+>+	struct kvm_mmu_memory_cache pamt_page_cache;
+>+
+> 	/*
+> 	 * QEMU userspace and the guest each have their own FPU state.
+> 	 * In vcpu_run, we switch between the user and guest FPU contexts.
+>diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
+>index a284dce227a0..7bfa0dc50440 100644
+>--- a/arch/x86/kvm/mmu/mmu.c
+>+++ b/arch/x86/kvm/mmu/mmu.c
+>@@ -616,6 +616,15 @@ static int mmu_topup_memory_caches(struct kvm_vcpu *vcpu, bool maybe_indirect)
+> 		if (r)
+> 			return r;
+> 	}
+>+
+>+	if (vcpu->kvm->arch.vm_type == KVM_X86_TDX_VM) {
 
+The check for vcpu->kvm->arch.vm_type == KVM_X86_TDX_VM is identical to
+kvm_has_mirrored_tdp() a few lines above.
 
-On 5/8/2025 12:40 PM, Manivannan Sadhasivam wrote:
-> The PCI link, when down, needs to be recovered to bring it back. But that
-> cannot be done in a generic way as link recovery procedure is specific to
-> host bridges. So add a new API pci_host_handle_link_down() that could be
-> called by the host bridge drivers when the link goes down.
-> 
-> The API will iterate through all the slots and calls the pcie_do_recovery()
-> function with 'pci_channel_io_frozen' as the state. This will result in the
-> execution of the AER Fatal error handling code. Since the link down
-> recovery is pretty much the same as AER Fatal error handling,
-> pcie_do_recovery() helper is reused here. First the AER error_detected
-> callback will be triggered for the bridge and the downstream devices. Then,
-> pci_host_reset_slot() will be called for the slot, which will reset the
-> slot using 'reset_slot' callback to recover the link. Once that's done,
-> resume message will be broadcasted to the bridge and the downstream devices
-> indicating successful link recovery.
-> 
-> In case if the AER support is not enabled in the kernel, only
-> pci_bus_error_reset() will be called for each slots as there is no way we
-> could inform the drivers about link recovery.
-> 
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> ---
->   drivers/pci/controller/pci-host-common.c | 58 ++++++++++++++++++++++++++++++++
->   drivers/pci/controller/pci-host-common.h |  1 +
->   drivers/pci/pci.c                        |  1 +
->   drivers/pci/pcie/err.c                   |  1 +
->   4 files changed, 61 insertions(+)
-> 
-> diff --git a/drivers/pci/controller/pci-host-common.c b/drivers/pci/controller/pci-host-common.c
-> index f93bc7034e697250711833a5151f7ef177cd62a0..f916f0a874a61ddfbfd99f96975c00fb66dd224c 100644
-> --- a/drivers/pci/controller/pci-host-common.c
-> +++ b/drivers/pci/controller/pci-host-common.c
-> @@ -12,9 +12,11 @@
->   #include <linux/of.h>
->   #include <linux/of_address.h>
->   #include <linux/of_pci.h>
-> +#include <linux/pci.h>
->   #include <linux/pci-ecam.h>
->   #include <linux/platform_device.h>
->   
-> +#include "../pci.h"
->   #include "pci-host-common.h"
->   
->   static void gen_pci_unmap_cfg(void *ptr)
-> @@ -96,5 +98,61 @@ void pci_host_common_remove(struct platform_device *pdev)
->   }
->   EXPORT_SYMBOL_GPL(pci_host_common_remove);
->   
-> +#if IS_ENABLED(CONFIG_PCIEAER)
-> +static pci_ers_result_t pci_host_reset_slot(struct pci_dev *dev)
-> +{
-> +	int ret;
-> +
-> +	ret = pci_bus_error_reset(dev);
-> +	if (ret) {
-> +		pci_err(dev, "Failed to reset slot: %d\n", ret);
-> +		return PCI_ERS_RESULT_DISCONNECT;
-> +	}
-> +
-> +	pci_info(dev, "Slot has been reset\n");
-> +
-> +	return PCI_ERS_RESULT_RECOVERED;
-> +}
-> +
-> +static void pci_host_recover_slots(struct pci_host_bridge *host)
-> +{
-> +	struct pci_bus *bus = host->bus;
-> +	struct pci_dev *dev;
-> +
-> +	for_each_pci_bridge(dev, bus) {
-> +		if (!pci_is_root_bus(bus))
-bus here is always constant here, we may need to have check
-for dev here like if (!pci_is_root_bus(dev->bus))
-> +			continue;
-> +
-> +		pcie_do_recovery(dev, pci_channel_io_frozen,
-> +				 pci_host_reset_slot);
-> +	}
-> +}
-> +#else
-> +static void pci_host_recover_slots(struct pci_host_bridge *host)
-> +{
-> +	struct pci_bus *bus = host->bus;
-> +	struct pci_dev *dev;
-> +	int ret;
-> +
-> +	for_each_pci_bridge(dev, bus) {
-> +		if (!pci_is_root_bus(bus))Same comment as above.
+>+		int nr = tdx_nr_pamt_pages(tdx_get_sysinfo());
 
-- Krishna Chaitanya.
-> +			continue;
-> +
-> +		ret = pci_bus_error_reset(dev);
-> +		if (ret)
-> +			pci_err(dev, "Failed to reset slot: %d\n", ret);
-> +		else
-> +			pci_info(dev, "Slot has been reset\n");
-> +	}
-> +}
-> +#endif
-> +
-> +void pci_host_handle_link_down(struct pci_host_bridge *bridge)
-> +{
-> +	dev_info(&bridge->dev, "Recovering slots due to Link Down\n");
-> +	pci_host_recover_slots(bridge);
-> +}
-> +EXPORT_SYMBOL_GPL(pci_host_handle_link_down);
-> +
->   MODULE_DESCRIPTION("Common library for PCI host controller drivers");
->   MODULE_LICENSE("GPL v2");
-> diff --git a/drivers/pci/controller/pci-host-common.h b/drivers/pci/controller/pci-host-common.h
-> index d8be024ca68d43afb147fd9104d632b907277144..904698c1a2695888a0fc9c2fac360e456116eb1d 100644
-> --- a/drivers/pci/controller/pci-host-common.h
-> +++ b/drivers/pci/controller/pci-host-common.h
-> @@ -12,5 +12,6 @@
->   
->   int pci_host_common_probe(struct platform_device *pdev);
->   void pci_host_common_remove(struct platform_device *pdev);
-> +void pci_host_handle_link_down(struct pci_host_bridge *bridge);
->   
->   #endif
-> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-> index 13709bb898a967968540826a2b7ee8ade6b7e082..4d396bbab4a8f33cae0ffe8982da120a9f1d92c9 100644
-> --- a/drivers/pci/pci.c
-> +++ b/drivers/pci/pci.c
-> @@ -5781,6 +5781,7 @@ int pci_bus_error_reset(struct pci_dev *bridge)
->   	mutex_unlock(&pci_slot_mutex);
->   	return pci_bus_reset(bridge->subordinate, PCI_RESET_DO_RESET);
->   }
-> +EXPORT_SYMBOL_GPL(pci_bus_error_reset);
->   
->   /**
->    * pci_probe_reset_bus - probe whether a PCI bus can be reset
-> diff --git a/drivers/pci/pcie/err.c b/drivers/pci/pcie/err.c
-> index b834fc0d705938540d3d7d3d8739770c09fe7cf1..3e3084bb7cb7fa06b526e6fab60e77927aba0ad0 100644
-> --- a/drivers/pci/pcie/err.c
-> +++ b/drivers/pci/pcie/err.c
-> @@ -270,3 +270,4 @@ pci_ers_result_t pcie_do_recovery(struct pci_dev *dev,
->   
->   	return status;
->   }
-> +EXPORT_SYMBOL_GPL(pcie_do_recovery);
+Since you're already accessing tdx_sysinfo, you can check if dynamic PAMT is
+enabled and allocate the pamt page cache accordingly.
+
+>+		r = kvm_mmu_topup_memory_cache(&vcpu->arch.pamt_page_cache,
+>+					       nr * PT64_ROOT_MAX_LEVEL);
+>+		if (r)
+>+			return r;
+>+	}
+>+
+> 	return kvm_mmu_topup_memory_cache(&vcpu->arch.mmu_page_header_cache,
+> 					  PT64_ROOT_MAX_LEVEL);
+> }
+>@@ -626,6 +635,7 @@ static void mmu_free_memory_caches(struct kvm_vcpu *vcpu)
+> 	kvm_mmu_free_memory_cache(&vcpu->arch.mmu_shadow_page_cache);
+> 	kvm_mmu_free_memory_cache(&vcpu->arch.mmu_shadowed_info_cache);
+> 	kvm_mmu_free_memory_cache(&vcpu->arch.mmu_external_spt_cache);
+>+	kvm_mmu_free_memory_cache(&vcpu->arch.pamt_page_cache);
+> 	kvm_mmu_free_memory_cache(&vcpu->arch.mmu_page_header_cache);
+> }
 > 
+>-- 
+>2.47.2
+>
 
