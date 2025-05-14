@@ -1,79 +1,106 @@
-Return-Path: <linux-kernel+bounces-647075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-647089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB9BCAB6434
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 09:25:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FDDBAB6455
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 09:29:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0DBF189745D
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 07:25:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D24933A3CDB
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 07:29:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E85F21B9F2;
-	Wed, 14 May 2025 07:24:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="US6T6L92"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0207421C17B;
+	Wed, 14 May 2025 07:28:03 +0000 (UTC)
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8371621B909;
-	Wed, 14 May 2025 07:24:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FE291E520F;
+	Wed, 14 May 2025 07:27:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747207447; cv=none; b=oEJy8jGWsLpuL//3ZatRgclV1UzogMw24GPOdDGAItEx9axKQ3xGKRZVLRsYkBqxHKu2Yo4nL6Wa/197TpujXf4WkxWacVI4zGg3yNgFiPyYCwpgaxHAKmKhbU13WxAUwPZmnAP8kzsEnZWm8BRIok7OrPsZpXdG5sUbRvw+MsY=
+	t=1747207682; cv=none; b=KGECbKpWrCYfm8RHzYr6RKF6wpoceBQTyj/A6mOqEa/gqzlb22pvLV2Act7BUTrhDUeOOnZq+b4o0oxX6SFTrWPf9XhLJoe1K/PBfIsKiS2PQtF9v8hEAvm9oR/7CW9nzL71Nl1E1E8z/T3buCdtSlSZ0yQLeXoTw7tQ+Ha9lSE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747207447; c=relaxed/simple;
-	bh=bTwlpTbHT/sN8S0yFQYo0xHw/kFSMi6RQvsEE+8Hejo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rokqfhZG8YOpdWPqphHM3PN07bRwdrnJHa+zybRbkVCLYjIbeyVGLsN0hMFOb5IUhn0dFPZJ9EX2IiQmp4CpA7aofiRsA/cz6iLJNOgqxhNuafmuVwMtXAXD2H63x9MZVBIdl6yg3cXQBdilvi83RJ4Gq4v++c32JyyaqJ5mX14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=US6T6L92; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E6B4C4CEE9;
-	Wed, 14 May 2025 07:24:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747207446;
-	bh=bTwlpTbHT/sN8S0yFQYo0xHw/kFSMi6RQvsEE+8Hejo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=US6T6L92e+PgVxfTFiZtsowzHdUgdbTzQFYJD4DBA/ne8nwmF46VT5lhGE+qGMM05
-	 TFWSn0y8R7G/SKy8l2UjJZpxPFGAc00fFfYas/GkzEiIT7FDYIhej962RZ+/95lMez
-	 zzcR4A/LHeO25jnMuRj4UXASmX+wlpvJ9j1CKH12GZMg4z8js/Kgpv/2OdI9JwoC7B
-	 oFe1QCVnO4LzzNIwIB2cnYTlfgTEj0hMwIZK3NtR2+63jngcd2ZoTDhG+c9WBGqiBX
-	 KAWmfQEPHgm+2K7891ilrWNq2BthoAF6YTE0EXIGIG0QWVyFU+HVtccIsamjTRSmRq
-	 ttiUBj5qORZSg==
-Message-ID: <aca3dabe-d050-49c3-88c9-6e76ca63e0ec@kernel.org>
-Date: Wed, 14 May 2025 16:24:00 +0900
+	s=arc-20240116; t=1747207682; c=relaxed/simple;
+	bh=9dCg3FNbT51YcOLgSBbAmAz5vhbZxfJOxjdUIN93giQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=WurnaJUoLoHGdJ6vl+E9IgNeSavU2+GdbbjctX7QMZelbmotNdab8Pi5vuNCusi+iYSfM9m4xuIj6g1rgUSoZgyedeKPOkJ5HOjWWtLmOXc2EHbqw6Ty01SpO6V1kmWajRcN1ejYFEJ04YwidFXCoFOM4Lmxw/R6oC0MlLA7PZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost (unknown [124.16.138.129])
+	by APP-03 (Coremail) with SMTP id rQCowAAn0j7zRSRocob6FA--.59550S2;
+	Wed, 14 May 2025 15:27:47 +0800 (CST)
+From: Chen Ni <nichen@iscas.ac.cn>
+To: saeedm@nvidia.com,
+	leon@kernel.org,
+	tariqt@nvidia.com,
+	andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com
+Cc: netdev@vger.kernel.org,
+	linux-rdma@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Chen Ni <nichen@iscas.ac.cn>
+Subject: [PATCH net-next v2] net/mlx5: Use to_delayed_work()
+Date: Wed, 14 May 2025 15:24:19 +0800
+Message-Id: <20250514072419.2707578-1-nichen@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: ata: Convert ti,dm816-ahci to DT schema
-To: "Rob Herring (Arm)" <robh@kernel.org>, Niklas Cassel <cassel@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: linux-ide@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250512215706.4177925-1-robh@kernel.org>
-From: Damien Le Moal <dlemoal@kernel.org>
-Content-Language: en-US
-Organization: Western Digital Research
-In-Reply-To: <20250512215706.4177925-1-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:rQCowAAn0j7zRSRocob6FA--.59550S2
+X-Coremail-Antispam: 1UD129KBjvdXoW7Gw1xJFyxZF15tF47KFWDCFg_yoWDGFb_ur
+	90vryfuw1Y9rn3Kr43ur4fAay09w4vgrs3KFZ8KFZ8J3yDKr1UZ34kZ3srCr1xWr1UAF9x
+	GrsIya13C39rJjkaLaAFLSUrUUUUbb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbf8FF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
+	Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AKxVWxJr
+	0_GcWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r4j6F4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFylc2xSY4AK67AK6r4xMxAIw28IcxkI7VAKI4
+	8JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xv
+	wVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjx
+	v20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20E
+	Y4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267
+	AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUjJGYJUUUUU==
+X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
 
-On 5/13/25 06:57, Rob Herring (Arm) wrote:
-> Convert the TI DM816 AHCI SATA Controller to DT schema format. It's a
-> straight-forward conversion.
-> 
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+Use to_delayed_work() instead of open-coding it.
 
-Applied to for-6.16. Thanks !
+Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+---
+Changelog:
 
-Note: I will wait a little more for the other patches to see if reviews come in.
+v1 -> v2:
 
+1. Specify the target tree.
+---
+ drivers/net/ethernet/mellanox/mlx5/core/cmd.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/cmd.c b/drivers/net/ethernet/mellanox/mlx5/core/cmd.c
+index e53dbdc0a7a1..b1aeea7c4a91 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/cmd.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/cmd.c
+@@ -927,8 +927,7 @@ static void mlx5_cmd_comp_handler(struct mlx5_core_dev *dev, u64 vec, bool force
+ 
+ static void cb_timeout_handler(struct work_struct *work)
+ {
+-	struct delayed_work *dwork = container_of(work, struct delayed_work,
+-						  work);
++	struct delayed_work *dwork = to_delayed_work(work);
+ 	struct mlx5_cmd_work_ent *ent = container_of(dwork,
+ 						     struct mlx5_cmd_work_ent,
+ 						     cb_timeout_work);
 -- 
-Damien Le Moal
-Western Digital Research
+2.25.1
+
 
