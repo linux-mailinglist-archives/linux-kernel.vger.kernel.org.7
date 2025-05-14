@@ -1,136 +1,148 @@
-Return-Path: <linux-kernel+bounces-647032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-647034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7A8DAB63B9
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 09:05:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C69ABAB63BC
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 09:05:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 137AA3AE973
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 07:04:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B18FE3A4457
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 07:04:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C84F219E7D1;
-	Wed, 14 May 2025 07:04:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13692205502;
+	Wed, 14 May 2025 07:04:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TJkmEZ9x"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ZugocUIw";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="mLULY10B";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="2C4DVa9g";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="N/p0pFqt"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 318BD1DB363;
-	Wed, 14 May 2025 07:04:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8E8F203706
+	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 07:04:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747206262; cv=none; b=nRfVJj7BQE0pfZcNDa+QVM2trAQ+Uy2aI9rUzsEdpdcCMAqmfgVPT184LSEia4+p3AO5Ipiv06nWKAAbd8icXlCzg65HyhB2FmAVnxm4AEYMNZZiqr1qic+s/chXClo7TtQTc3EgkoBjiHJGAvQJRyNLKjRyQDH6KyR0uj2SJX4=
+	t=1747206295; cv=none; b=L3B31l4yCRVXsjCWWq7kjzYDWgDEpxuofJXFt5lQfyqBP9iClt1Fkxwif9BoBwDBEb65VFcjHX8qpv5uV/IgiU3lmUdM+OGIF2FvuQMDfepOs+9UY4hD7q4ZBILiA1BzBBUUuTBhyH+APWQtzy+89J8vfQL7148UadtM2uKOlyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747206262; c=relaxed/simple;
-	bh=JrCt+r+RqHKIYDpTXrLwU7/OFpnQPQqybe9N6BMUzcs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=o8Upy0HSQCBX/xSDle0bAsRnfaD8Qb1bVuKG8LmJeo9jNboCEDoP2Tx4J1sQBtQSucyr1oz35ouFw2SLIEosPEtZpi3Opcft/Q0WyialXxrhtA+cykDyyFAUzBfbiVT5R10Ap6Cun5FNqcfdNEG4w3vs0oGIGl7TYouZ9M5kBJg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TJkmEZ9x; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF9D3C4CEE9;
-	Wed, 14 May 2025 07:04:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747206261;
-	bh=JrCt+r+RqHKIYDpTXrLwU7/OFpnQPQqybe9N6BMUzcs=;
-	h=From:To:Cc:Subject:Date:From;
-	b=TJkmEZ9x6vfxipyn8hku7dqjgn4haWIKA9yn8XQ1ke6VzK2Dzux6XaWyzQlKkEZdG
-	 xSC/mRg8bSOjcFdgqhFNSeGeMRcqbM65c8GxzvWPX4pDHiCnBbncvKLFksroLMDVj4
-	 NTHcuVi/1EqEId198KGQuURjpRkVGiBpHKS+i4JM/zPIJP8U7q9NzvMEE4QTOZXUv1
-	 QlgNOYm9XZZDGSPmjfC1Xf+PKpj1oPGr255f5/XokqQ9f6czUmJpsqVNLEKYPrjVi+
-	 DNo2rACAOybzKhyhhlKvIK1XexaT1TK2geSSWErhk9wbOVcOWqU+37wG49Z/wJdsw3
-	 eDmx8EK8JCyeQ==
-From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org
-Subject: [PATCH v4] tracing: Record trace_clock and recover when reboot
-Date: Wed, 14 May 2025 16:04:18 +0900
-Message-ID:  <174720625803.1925039.1815089037443798944.stgit@mhiramat.tok.corp.google.com>
-X-Mailer: git-send-email 2.49.0.1045.g170613ef41-goog
-User-Agent: StGit/0.19
+	s=arc-20240116; t=1747206295; c=relaxed/simple;
+	bh=W+nE2bm0R538h5+mgSpvzoyhg8tnlTIiQzJEp4qhQFU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VxP5ExV0Bfv4oJzdeH5J3gK5yH5X5uPSZebyg2Q04CzN5BYAOLmHcR20XLn6XACraF0EFo3+IrFIys3av76/C/c4W066D15JCHdbTwq6kzan5eWqTVv7cUVa+ts03K8znfRzylJDl+3AzMU2EHCWeCLlxSZpR6cm0ibr75G+T3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ZugocUIw; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=mLULY10B; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=2C4DVa9g; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=N/p0pFqt; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id BF2811F455;
+	Wed, 14 May 2025 07:04:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1747206292; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=aO5KB0Z/fUw5dPBp7DXtt0uD2MFjx2VrVku/p3Ic7no=;
+	b=ZugocUIwRD8Y8IswqsGTU7jt6siT8+PkboLaSf6N+b97h2Nr//p2xTmtAAl+wBNFF2RcYp
+	5L8xXmcCz8AiVRpLvEQalq2rvTz8CR+cagqs+za34Qn3ViX32uGu1E1ATXeXqRXyNPeun4
+	u/ppqmMUEP03OLui5Rck2JXlJOMp4Kc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1747206292;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=aO5KB0Z/fUw5dPBp7DXtt0uD2MFjx2VrVku/p3Ic7no=;
+	b=mLULY10BmcPwkgfMWnHUMRopUL5Pq7HwpSSD6AmkO9ywDWwDy6WnjgjgNYDwI3wzgswhm+
+	kewbZOqx21LH99AQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1747206290; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=aO5KB0Z/fUw5dPBp7DXtt0uD2MFjx2VrVku/p3Ic7no=;
+	b=2C4DVa9g0Y0s5xfDLlsBh9qbvoqzWIh5RzE7bBq++vRNTaQ9h6DAy8n0teZe5qrhOb9Hih
+	U+MxZnSBpMQT+9zCcP5+eiYX3ecBnZCZIyX0lOy2tNuahCAzE6PJh4bEQ+RnV+0JfPTsUE
+	yXzsipcefgRFdR8YoVjlrZljWp0dFuM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1747206290;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=aO5KB0Z/fUw5dPBp7DXtt0uD2MFjx2VrVku/p3Ic7no=;
+	b=N/p0pFqti41wdejig1qcglLCFR7VLe5/wL5Rydbn8sx/5VC7WtiF+0CEJRIbg08TScGHET
+	zOWGm8JYHL5cRbDQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A4014137E8;
+	Wed, 14 May 2025 07:04:50 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 4CTIJZJAJGhYeQAAD6G6ig
+	(envelope-from <dwagner@suse.de>); Wed, 14 May 2025 07:04:50 +0000
+Date: Wed, 14 May 2025 09:04:45 +0200
+From: Daniel Wagner <dwagner@suse.de>
+To: Lukas Bulwahn <lbulwahn@redhat.com>
+Cc: Jens Axboe <axboe@kernel.dk>, Daniel Wagner <wagi@kernel.org>, 
+	Christoph Hellwig <hch@lst.de>, Hannes Reinecke <hare@suse.de>, Ming Lei <ming.lei@redhat.com>, 
+	John Garry <john.g.garry@oracle.com>, linux-block@vger.kernel.org, kernel-janitors@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Subject: Re: [PATCH] block: Remove obsolete configs BLK_MQ_{PCI,VIRTIO}
+Message-ID: <a0c3a812-8a24-481c-9354-4475ac71d68b@flourine.local>
+References: <20250514065513.463941-1-lukas.bulwahn@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250514065513.463941-1-lukas.bulwahn@redhat.com>
+X-Spam-Flag: NO
+X-Spam-Score: -4.30
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[flourine.local:mid,imap1.dmz-prg2.suse.org:helo,suse.de:email]
 
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+On Wed, May 14, 2025 at 08:55:13AM +0200, Lukas Bulwahn wrote:
+> From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+> 
+> Commit 9bc1e897a821 ("blk-mq: remove unused queue mapping helpers") makes
+> the two config options, BLK_MQ_PCI and BLK_MQ_VIRTIO, have no remaining
+> effect.
+> 
+> Remove the two obsolete config options.
 
-Record trace_clock information in the trace_scratch area and recover
-the trace_clock when boot, so that reader can docode the timestamp
-correctly.
-Note that since most trace_clocks records the timestamp in nano-
-seconds, this is not a bug. But some trace_clock, like counter and
-tsc will record the counter value. Only for those trace_clock user
-needs this information.
+A quick grep revealed that there is at least a test config still in the
+tree which uses BLK_MQ_VIRTIO:
 
-Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
----
- Changes in v4:
-   - Use unsigned int instead of int for clock_id.
-   - Check trace_scratch::clock_id is sane.
- Changes in v3:
-   - Save clock_id instead of its name.
- Changes in v2:
-   - instead of exposing it via last_boot_info, set the current
-     trace_clock as the same clock we used in the last boot.
----
- kernel/trace/trace.c |   17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+drivers/gpu/drm/ci/x86_64.config
+108:CONFIG_BLK_MQ_VIRTIO=y
 
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index cf51c30b137f..2c1764ed87b0 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -6066,6 +6066,7 @@ struct trace_mod_entry {
- };
- 
- struct trace_scratch {
-+	unsigned int		clock_id;
- 	unsigned long		text_addr;
- 	unsigned long		nr_entries;
- 	struct trace_mod_entry	entries[];
-@@ -6181,6 +6182,7 @@ static void update_last_data(struct trace_array *tr)
- 	if (tr->scratch) {
- 		struct trace_scratch *tscratch = tr->scratch;
- 
-+		tscratch->clock_id = tr->clock_id;
- 		memset(tscratch->entries, 0,
- 		       flex_array_size(tscratch, entries, tscratch->nr_entries));
- 		tscratch->nr_entries = 0;
-@@ -7403,6 +7405,12 @@ int tracing_set_clock(struct trace_array *tr, const char *clockstr)
- 	tracing_reset_online_cpus(&tr->max_buffer);
- #endif
- 
-+	if (tr->scratch && !(tr->flags & TRACE_ARRAY_FL_LAST_BOOT)) {
-+		struct trace_scratch *tscratch = tr->scratch;
-+
-+		tscratch->clock_id = i;
-+	}
-+
- 	mutex_unlock(&trace_types_lock);
- 
- 	return 0;
-@@ -9628,6 +9636,15 @@ static void setup_trace_scratch(struct trace_array *tr,
- 
- 	/* Scan modules to make text delta for modules. */
- 	module_for_each_mod(make_mod_delta, tr);
-+
-+	/* Set trace_clock as the same of the previous boot. */
-+	if (tscratch->clock_id != tr->clock_id) {
-+		if (tscratch->clock_id >= ARRAY_SIZE(trace_clocks) ||
-+		    tracing_set_clock(tr, trace_clocks[tscratch->clock_id].name) < 0) {
-+			pr_info("the previous trace_clock info is not valid.");
-+			goto reset;
-+		}
-+	}
- 	return;
-  reset:
- 	/* Invalid trace modules */
+Not sure how this is supposed to be handled.
 
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+
+Reviewed-by: Daniel Wagner <dwagner@suse.de>
 
