@@ -1,86 +1,116 @@
-Return-Path: <linux-kernel+bounces-646758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-646760-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD5F6AB602C
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 02:28:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47F86AB6038
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 02:30:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 47DCC4653B7
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 00:28:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EFF441B41D12
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 00:30:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DE52286A1;
-	Wed, 14 May 2025 00:28:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="slEYT9T6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9929B15C0
-	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 00:28:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66209225D7;
+	Wed, 14 May 2025 00:30:26 +0000 (UTC)
+Received: from zg8tmja2lje4os4yms4ymjma.icoremail.net (zg8tmja2lje4os4yms4ymjma.icoremail.net [206.189.21.223])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9440219E0;
+	Wed, 14 May 2025 00:30:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=206.189.21.223
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747182527; cv=none; b=n13Jp8Y6qyUAQ8W37qjRVWiHocdSt/dbRAG/6+BtSKkTjX+1SCICPNxgTwVuNw3Y7bhw+PYVRDz3T3DzJ3b6+cLUHFX5Fpl/yFbpE9dNMQ1BZde4pTNvOvzBHUUz48logylSUk9nvuK3HtnAK5KnYyUks0xEMYuBDY/uf2ZlAQM=
+	t=1747182626; cv=none; b=eAQ2STtAOcDa/VlQs/xkRIhbIAHaaABLMTiLaEhfx/7+uQ7lO7pLgjrTQtX0vz3IMdrP20cxapya1VPh6TcpxB/cwezc2NptwiXFXg2ZSwFpUjmCF9p7ku9lUxzCFLrY56ys1d60XXRdvsX1DWreJNtS/IZV1zJ9lcteo2RrJaA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747182527; c=relaxed/simple;
-	bh=RJdTXy3O6fVGghc66PHeMpt+sTguOoLMO0trGavJx00=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=n+YCjQheO/UmdWXj45ZQgV78akKVpQeSk3K8JtMWLGHnMP36WhCKqntab1rZzcKgq3jQjq04U5ZrUKsJY4VVlNdL3myaY8rqdG/8ARmuHlq//CeSHRc7ojkQ4dw8HRrWxouGXCoNBE9bUoHhK8ZnF0ZYEX9E2Xk4ErVydeNk6RE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=slEYT9T6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4731C4CEE4;
-	Wed, 14 May 2025 00:28:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1747182526;
-	bh=RJdTXy3O6fVGghc66PHeMpt+sTguOoLMO0trGavJx00=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=slEYT9T6viA7pHeeXFxxYNy2KlvNOtxKraIFWbhM/v8JSx93mKp5yf5XuAtLO1/tJ
-	 cX7rMJPMQrwD0MwN2a1GRXs4EkZC3cbMIWHC5DqvbgWIq+q40Y2vuPQnFVJVcKH8CG
-	 BiKylFeFwuKfuusrAbAuK7hXShYtbjd4Csq9kNX8=
-Date: Tue, 13 May 2025 17:28:45 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Nitesh Shetty <nj.shetty@samsung.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jens Axboe <axboe@kernel.dk>,
- Christian Brauner <brauner@kernel.org>, Keith Busch <kbusch@kernel.org>,
- gost.dev@samsung.com, nitheshshetty@gmail.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] iov_iter: Use iov_offset for length calculation in
- iov_iter_aligned_bvec
-Message-Id: <20250513172845.48d1bf39307a543d4a36a1ed@linux-foundation.org>
-In-Reply-To: <20250428095849.11709-1-nj.shetty@samsung.com>
-References: <CGME20250428100738epcas5p3eb82b4ea94b229634f9319d23d7d7e14@epcas5p3.samsung.com>
-	<20250428095849.11709-1-nj.shetty@samsung.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1747182626; c=relaxed/simple;
+	bh=qcJlSkPCiOGZSrlEbQQaWQaj/ShWUe1nOf8dqaN2sSM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hZZBQqkZ373gTOXlo39+iTzOgoQP/AfjLp6fCmiGjIw9ngiONf4tHjMlHWYdA/ZYz+hbpd5/YbThZNZ54VurveX700Sj8+cQADH1SnLiACPuLa9tWeVVhRxAAoypW/cE//FU27qRw+3ILYLQSp/Z751PfmNxvJEUZhNm9M50VoU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=206.189.21.223
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
+Received: from E0005152DT.eswin.cn (unknown [10.12.96.41])
+	by app2 (Coremail) with SMTP id TQJkCgCHJpUY5CNofLR4AA--.14402S2;
+	Wed, 14 May 2025 08:30:18 +0800 (CST)
+From: dongxuyang@eswincomputing.com
+To: p.zabel@pengutronix.de,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: ningyu@eswincomputing.com,
+	linmin@eswincomputing.com,
+	huangyifeng@eswincomputing.com,
+	Xuyang Dong <dongxuyang@eswincomputing.com>
+Subject: [PATCH 0/2] Add driver support for ESWIN eic7700 SoC reset controller
+Date: Wed, 14 May 2025 08:29:45 +0800
+Message-Id: <20250514002945.415-1-dongxuyang@eswincomputing.com>
+X-Mailer: git-send-email 2.31.1.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:TQJkCgCHJpUY5CNofLR4AA--.14402S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Ww4fuF4xJF4kKw43Kry5twb_yoW8WrW7pF
+	45CF13Krn8ZFZ7Xan3Ja10kr4fAa1ftrWY9rs2g3W7X398JF1rJr13tF15ZF9rAw18XryS
+	qF1ag34j9FyjyaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBv14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
+	6r4UJwA2z4x0Y4vEx4A2jsIE14v26F4UJVW0owA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lw4CEc2x0rVAKj4xxMxkF7I0En4kS14v26r1q6r43MxkIecxEwVCm-wCF04
+	k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18
+	MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr4
+	1lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1l
+	IxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4
+	A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUHCJQUUUUU=
+X-CM-SenderInfo: pgrqw5xx1d0w46hv4xpqfrz1xxwl0woofrz/
 
-On Mon, 28 Apr 2025 15:28:48 +0530 Nitesh Shetty <nj.shetty@samsung.com> wrote:
+From: Xuyang Dong <dongxuyang@eswincomputing.com>
 
-> If iov_offset is non-zero, then we need to consider iov_offset in length
-> calculation, otherwise we might pass smaller IOs such as 512 bytes, in
-> below scenario[1].
-> This issue is reproducible using lib-uring test/fixed-seg.c application
-> with fixed buffer on a 512 LBA formatted device.
-> 
-> [1]
-> At present we pass the alignment check,
-> for 512 LBA formatted devices, len_mask = 511
-> when IO is smaller, i->count = 512
-> has an offset, i->io_offset = 3584
-> with bvec values, bvec->bv_offset = 256, bvec->bv_len = 3840.
-> In short, the first 256 bytes are in the current page,
-> next 256 bytes are in the another page.
-> Ideally we expect to fail the IO.
+	Add support for the reset functionality in the Linux kernel.
+	The driver provides basic functionality to manage and control
+	the reset signals for the eic7700 series chips, which are part of
+	the Eswin SoC family.
 
-Thanks.  Can you please send us a description of the userspace-visible
-effects of this issue?  That will help others to determine whether a
--stable backport is desirable and it will be helpful to people who are
-wondering whether this patch will fix an issue they are experiencing.
+	The driver integrates with the Linux reset subsystem, allowing kernel
+	code to trigger resets on the hardware and ensuring proper handling of
+	reset events.
 
+	Features:
+
+	 Implement support for the ESWIN eic7700 SoC reset controller.
+	 Provide API to manage reset signals for the eic7700 series SoC.
+	 Integrate with the Linux reset subsystem for consistency and
+	 scalability.
+
+	Supported chips:
+	 ESWIN eic7700 series SoC.
+
+	Test:
+	 The tests tested on the Sifive HiFive Premier P550 (which uses the EIC7700 SoC),
+	 including system boot, networking, EMMC, display, and other peripherals.
+	 The drivers of these modules all use the reset module,
+	 so the verifies that this clock driver patch is working properly.
+
+Xuyang Dong (2):
+  dt-bindings: reset: eswin: Documentation for eic7700 SoC
+  reset: eswin: Add eic7700 reset driver
+
+ .../bindings/reset/eswin,eic7700-reset.yaml   |  57 +++
+ drivers/reset/Kconfig                         |   9 +
+ drivers/reset/Makefile                        |   1 +
+ drivers/reset/reset-eic7700.c                 | 249 ++++++++++
+ .../dt-bindings/reset/eswin,eic7700-reset.h   | 460 ++++++++++++++++++
+ 5 files changed, 776 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/reset/eswin,eic7700-reset.yaml
+ create mode 100644 drivers/reset/reset-eic7700.c
+ create mode 100644 include/dt-bindings/reset/eswin,eic7700-reset.h
+
+--
+2.17.1
 
 
