@@ -1,109 +1,101 @@
-Return-Path: <linux-kernel+bounces-647231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-647233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F303EAB65F0
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 10:28:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 67D7DAB65F6
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 10:29:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9EDFF4A65A1
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 08:28:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BBC5917A788
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 08:29:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E947E21FF56;
-	Wed, 14 May 2025 08:27:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Uk3y1BYK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0240E21C9F0;
+	Wed, 14 May 2025 08:29:37 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 525B2171C9;
-	Wed, 14 May 2025 08:27:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42CAD218AD4;
+	Wed, 14 May 2025 08:29:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747211278; cv=none; b=aIU6Go3RngmU4NM5zsL6XUsOQgKOCz0VSTd9Biu+ZTHfcN+pKlAn29a8qkjCFKZr7LcF4naC/WQ0Q5jr1+ZtTlxNEQSRMQPb4LkiCX0e6zOZzEwdIOXFqeQ8fLkMsh94kZZHbXDnxzsgbqmCe0yW9bDT+PvWL+2xKxxAob4bp9s=
+	t=1747211376; cv=none; b=Xyg84VhfTtv/k6Ange02OsCvmnrCYuaGtKkOmYnusGpGC4109fDkA5d/S1POS0PHVMw/LiC7NIR9goIO3VGX11zUVW/2QeSkrfNBHI13A9izH485J7GKVcvXM4Qp6Jd3Qy+4SwayTB3LgST3KR2pTlJ3ofAtfOeRY24AuMrk4A8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747211278; c=relaxed/simple;
-	bh=8Zv0UFAoaukRSf4iAndUnXCe6GZ51x88VKQ7WQYC9L0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HBrCLQ2VzyQplj82UDaugXykKiuPpdZDYnOvLv8O4aL1RA7K4B0G54vSf0vgvu4EQtO1DxMsSnDPZ8frJyfvQGKBonnKvLayeq10mMfh/qlGBpZw6DMsxcZEMTF85TuHSCqHCbC67YDBTgCZK7ssePvtCWdR664m4fxAWukEuRY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Uk3y1BYK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 510A3C4CEE9;
-	Wed, 14 May 2025 08:27:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747211278;
-	bh=8Zv0UFAoaukRSf4iAndUnXCe6GZ51x88VKQ7WQYC9L0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Uk3y1BYKYuONg++9dhhTM74lr1fBw+UZXQ7LSRM7LxNQCMphUosRkFJJOepIIUgPy
-	 jS9suTsnuTeewso4BmTv/0GPRxqos3NkAFlS34U6Zu8whTm/3gaHzrIUHrtj01CmS0
-	 j4NlsWo4HEk6IWb+wgJhJh8xV93Ix8y2zVa7Hzci1kUisDkWat+f7LEGQNvWCFfOW/
-	 2bFglSz7PfKjzNl6FJwXePAkX4kzmX6MTNkCrSH9l6Kx59Gh7YI6JUHfYgXd3FawTx
-	 n/KHbngyTKsG0GZHWZZyoaGgCnL4HRwuwVXyGnWBiv3ZBkgve6QBJBnP0x7wUQ0XyX
-	 BIUX61wl1ZHoA==
-Date: Wed, 14 May 2025 10:27:52 +0200
-From: Mark Brown <broonie@kernel.org>
-To: Daniel Almeida <daniel.almeida@collabora.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Boris Brezillon <boris.brezillon@collabora.com>,
-	Sebastian Reichel <sebastian.reichel@collabora.com>,
-	Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v3] rust: regulator: add a bare minimum regulator
- abstraction
-Message-ID: <aCRUCIQtypqIS4Ra@finisterre.sirena.org.uk>
-References: <20250513-topics-tyr-regulator-v3-1-4cc2704dfec6@collabora.com>
+	s=arc-20240116; t=1747211376; c=relaxed/simple;
+	bh=h/RoXrF9EhmVB749ozpnWoC+NsjWTVPhX7E7QNI3cwk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NS/DAgac+cgHtZ0l7ozq8PEzIlO3Rz7sqiy9NhPKBIL/77z4Zto3sRMSjVGqvQsDv+V95MXeXMyea2g4IR0eGzFy4Jo4Sbwxl4XuhmxZua97VaV3MluXxhTSZhk8BCO6fvV9ofhhqnx/XBWLNg9+3Eo5h1LnretPDY/XjQ5L/x8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost.localdomain (unknown [124.16.141.245])
+	by APP-05 (Coremail) with SMTP id zQCowABnpAxcVCRoIdclFQ--.54183S2;
+	Wed, 14 May 2025 16:29:18 +0800 (CST)
+From: Wentao Liang <vulab@iscas.ac.cn>
+To: idosch@nvidia.com,
+	petrm@nvidia.com,
+	andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Wentao Liang <vulab@iscas.ac.cn>
+Subject: [PATCH] mlxsw: spectrum: Reset lossiness configuration when changing MTU
+Date: Wed, 14 May 2025 16:28:59 +0800
+Message-ID: <20250514082900.239-1-vulab@iscas.ac.cn>
+X-Mailer: git-send-email 2.42.0.windows.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="2H11X6Z9uQqYo2UY"
-Content-Disposition: inline
-In-Reply-To: <20250513-topics-tyr-regulator-v3-1-4cc2704dfec6@collabora.com>
-X-Cookie: Well begun is half done.
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:zQCowABnpAxcVCRoIdclFQ--.54183S2
+X-Coremail-Antispam: 1UD129KBjvdXoW7Xr1UJFW3Cr1DJFy8trW3trb_yoWkWFXEkr
+	9rZr1rW3W5ArWYkr1a9rW5Xr9Ik3ZYvFs5GFWDuFyayr9rWrW3JF97XF1xtw4kGayjqrZ8
+	JF4fXa43Xw17AjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUb3kFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
+	Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AKxVWxJr
+	0_GcWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
+	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
+	zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
+	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
+	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIda
+	VFxhVjvjDU0xZFpf9x0JUd-B_UUUUU=
+X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiBgwCA2gkKjK6wAAAsl
 
+The function mlxsw_sp_port_change_mtu() reset the buffer sizes but does
+not reset the lossiness configuration of the buffers. This could lead to
+inconsistent lossiness settings. A proper implementation can be found
+in mlxsw_sp_port_headroom_ets_set().
 
---2H11X6Z9uQqYo2UY
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Add lossiness reset by calling mlxsw_sp_hdroom_bufs_reset_lossiness().
 
-On Tue, May 13, 2025 at 12:44:08PM -0300, Daniel Almeida wrote:
-> Add a bare minimum regulator abstraction to be used by Rust drivers.
-> This abstraction adds a small subset of the regulator API, which is
-> thought to be sufficient for the drivers we have now.
->=20
-> Regulators provide the power needed by many hardware blocks and thus are
-> likely to be needed by a lot of drivers.
->=20
-> It was tested on rk3588, where it was used to power up the "mali"
-> regulator in order to power up the GPU.
+Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
+---
+ drivers/net/ethernet/mellanox/mlxsw/spectrum.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Please also add the new file to the MAINTAINERS entry for the regulator
-API, otherwise this looks fine from a regulator API point of view.
+diff --git a/drivers/net/ethernet/mellanox/mlxsw/spectrum.c b/drivers/net/ethernet/mellanox/mlxsw/spectrum.c
+index 3f5e5d99251b..54aa1dca5076 100644
+--- a/drivers/net/ethernet/mellanox/mlxsw/spectrum.c
++++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum.c
+@@ -797,6 +797,7 @@ static int mlxsw_sp_port_change_mtu(struct net_device *dev, int mtu)
+ 
+ 	hdroom = orig_hdroom;
+ 	hdroom.mtu = mtu;
++	mlxsw_sp_hdroom_bufs_reset_lossiness(&hdroom);
+ 	mlxsw_sp_hdroom_bufs_reset_sizes(mlxsw_sp_port, &hdroom);
+ 
+ 	err = mlxsw_sp_hdroom_configure(mlxsw_sp_port, &hdroom);
+-- 
+2.42.0.windows.2
 
---2H11X6Z9uQqYo2UY
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmgkVAcACgkQJNaLcl1U
-h9CBtQf+LdvA9Pq3fw9YeJCwIkbFO+2Q1YgfdogGK1+wPKEziI6+ecmgTxHulGd6
-mPSAMgE7H5MPyRbyJhI4mf/A95n8vNUQdg0OJTmlIAmo/19nSt1ZB2jILFJmDdmx
-hNxL98bmYSD/YI1drzz3mfhpYUgtGY8HrO636pQYs7mhnAC+C62ElwnpAJ7QEUkA
-9JOrXUu9S2JBSjhbWOII/5iJ1ysZ05tO6y5YFfAvqAoJoJFVTiGAyosWfZBXpUST
-z98UD5w0/YEQkT+fEUqroTKODu1C8jDELhbybz8U83BPMHW9KXXaGsru2iWFD4aF
-ycqcc7cd7jDSCToYvkpSX9ZcCV/Okg==
-=dge/
------END PGP SIGNATURE-----
-
---2H11X6Z9uQqYo2UY--
 
