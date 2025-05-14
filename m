@@ -1,166 +1,131 @@
-Return-Path: <linux-kernel+bounces-647675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-647677-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D550AB6B8D
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 14:38:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3C05AB6B96
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 14:41:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 791421B679E2
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 12:39:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 701DB1B679E0
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 12:41:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C60EA278E51;
-	Wed, 14 May 2025 12:38:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2EA827780D;
+	Wed, 14 May 2025 12:41:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b1h+8wh4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="G9rlyfQZ"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 282CB277038;
-	Wed, 14 May 2025 12:38:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9A4C275866;
+	Wed, 14 May 2025 12:41:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747226318; cv=none; b=MxJeaaLrtoCoDkgDhH+HvaEMGCvDPhWg/IKGfEcmXMGN/qbpA04c0EgNoi8kUIMfKNY7m1Rau8K1HdyzvAV23d5j7kfPCJ/e1yqgo+dnRFX7zJWoOO6Fdu9iG/WSx3gfH3rX7PPMfwrdoW7uhQAu1BFGuSl09S1Xooi684M3ZPE=
+	t=1747226470; cv=none; b=tetH2ep2Oi+up84i3h4LXfcSNZGVkh3kkczdoRtPE6DSbudD0sWcRWB+ZdzEmKV4mHvH5Z7W/2Z8qzhxonLLxC4N1Y2Ubvu6zo9XGPXjq8lPa3rbA9fy2Ut8+hOjudos+q73u0fk2irFrnQpyohG+YnOjh1cy+CftKv/OLlDCnI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747226318; c=relaxed/simple;
-	bh=ZRAbtDLU7nP6o3LdOmMc3nAAyiNgbM8NKuOVKfOJ8W8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ji46UF2tUg3bgIm2v0d5PmIRnX8z15bP4VVBeJ7dvlH/UQSt/vx/2YhIm6FhPFPyDswO3P6CRU9NxWIWJTwKGO5E4xHQlNTL3R853A7k6MGQLvhqt1iQN8lEyDPcPAqknb9VuSUlrzIEGX0CLcE8NDON+LIO6nTJrYwFrgsMtVA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b1h+8wh4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E945C4CEE9;
-	Wed, 14 May 2025 12:38:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747226317;
-	bh=ZRAbtDLU7nP6o3LdOmMc3nAAyiNgbM8NKuOVKfOJ8W8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=b1h+8wh4M9WYHlvQBBJt8UhjWW7n06dcTRpU2HcbXxZEwu9RwNhTKVPC+yneJNMZB
-	 x3ZjUS+ohxAGqbDVY3NbF/kh9sr/2xDsubiKpuNayqz6l20/BnBiIxw+eyB7K0yohf
-	 BtMf3re71j5ozdb66cSmRypL8rn4FvcMbLJRv6vLZqO2BD4lIe3MAbvavBmqQ/5nyL
-	 VfiavAY79QjbnoEzqpIxCcJI1KS/54rXt3Ze7KeZcTSmC5emLahMzJp4C1Ok28JZHu
-	 wuWOAN2cqHoz1SYrTYFS5/BLqqhx+gHCZVuOA2DiOzEPNDaUbwwudf5onaHfoExTNe
-	 yTPDuje/sgJ8A==
-Date: Wed, 14 May 2025 07:38:35 -0500
-From: Rob Herring <robh@kernel.org>
-To: Markus Burri <markus.burri@mt.com>
-Cc: linux-kernel@vger.kernel.org,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Manuel Traut <manuel.traut@mt.com>, Marek Vasut <marex@denx.de>,
-	linux-rtc@vger.kernel.org, devicetree@vger.kernel.org,
-	Markus Burri <markus.burri@bbv.ch>
-Subject: Re: [PATCH v3 6/7] dt-bindings: rtc-rv8803: add tamper detection
- property node
-Message-ID: <20250514123835.GA1729201-robh@kernel.org>
-References: <20250513161922.4064-1-markus.burri@mt.com>
- <20250513161922.4064-7-markus.burri@mt.com>
+	s=arc-20240116; t=1747226470; c=relaxed/simple;
+	bh=/ltR3xE1jIxqOWOOYkUnrtjTiBPuiBIUhmryLaCAdZY=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=LUM7YykCWCRJFtH8/2N5KxUNuHG3jJNS/A2mfw3fqNoHmh1/yMVFOq99NqQG3q3Y80aE8dF6KQTzS2HrNdF9Z4Fu+BgzpReD5GZFl0QEChv7byzJezvg4PriVBS+a08kVDQsq34vlhaaR2z49mU+PGV385k3ijM+qdwQgd1Hu/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=G9rlyfQZ; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54E743OT003207;
+	Wed, 14 May 2025 12:40:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=/ltR3x
+	E1jIxqOWOOYkUnrtjTiBPuiBIUhmryLaCAdZY=; b=G9rlyfQZgDSitkauVm37X7
+	BHyB8FK7hr6A5Gsr62t0bH4q8Py5mggMPDUKguvc7WESApV/lRbzxQMMTg0SX4ra
+	Sw4k+jhxM2P21VSrrgqIKv3hgmO6WXCCsIXO87FWeeOW5XaQQA4p+56iQsIiVntK
+	RhyJO1rrmrIBds5OGJhg7ldrbKDzVQWpbSLwiWgxfMReLT4xgDaWZxFsHV1rMzVa
+	JlmMAlG+59dfqJZn4Ueu7XBp5N0G3Mo65J4cQGQLA7Ak47l0Ory83iOFx5kiyxhz
+	o00IvQb+vZvoXC7F/W7bl5lh9uvVCJ+bkGjlf6h7jw/uYKGEXdBWD7k76d9Q1LNQ
+	==
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46mbh1475f-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 14 May 2025 12:40:42 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 54E9xiIb024281;
+	Wed, 14 May 2025 12:40:42 GMT
+Received: from smtprelay07.wdc07v.mail.ibm.com ([172.16.1.74])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 46mbfs45d0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 14 May 2025 12:40:42 +0000
+Received: from smtpav06.wdc07v.mail.ibm.com (smtpav06.wdc07v.mail.ibm.com [10.39.53.233])
+	by smtprelay07.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 54ECefVe2687684
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 14 May 2025 12:40:42 GMT
+Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D644F58060;
+	Wed, 14 May 2025 12:40:41 +0000 (GMT)
+Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 533225804E;
+	Wed, 14 May 2025 12:40:40 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.143.84])
+	by smtpav06.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 14 May 2025 12:40:40 +0000 (GMT)
+Message-ID: <47edc9708d0ca75489d59ef4b9b6ef2f5de21fe9.camel@linux.ibm.com>
+Subject: Re: [PATCH V2] ima: do not copy measurement list to kdump kernel
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: steven chen <chenste@linux.microsoft.com>, stefanb@linux.ibm.com,
+        roberto.sassu@huaweicloud.com, roberto.sassu@huawei.com,
+        eric.snowberg@oracle.com, ebiederm@xmission.com, paul@paul-moore.com,
+        code@tyhicks.com, bauermann@kolabnow.com,
+        linux-integrity@vger.kernel.org, kexec@lists.infradead.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: madvenka@linux.microsoft.com, nramas@linux.microsoft.com,
+        James.Bottomley@HansenPartnership.com, bhe@redhat.com
+Date: Wed, 14 May 2025 08:40:39 -0400
+In-Reply-To: <20250513143129.1165-1-chenste@linux.microsoft.com>
+References: <20250513143129.1165-1-chenste@linux.microsoft.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250513161922.4064-7-markus.burri@mt.com>
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=RpTFLDmK c=1 sm=1 tr=0 ts=68248f4b cx=c_pps a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=yMhMjlubAAAA:8 a=20KFwNOVAAAA:8 a=1v2mA-L8tnUgDz3cNWsA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-GUID: KFtkED7iNBqTTVFsvX40P1QhtKzqui76
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTE0MDExMSBTYWx0ZWRfX3pqPk3C/XJkr r3Cjk9ibS4n+GvwREoqEgmdxsP/iKvaO9gdEi9N1YlgFW2RYO95N/kkV18+YylD/9VdR7krRWyc TbcjDMX3p4vP/1tge40WSi0IB1A5Pu2N2kNItezM8WAqnk67Fb+63uNMAtsfEQK1Z/LUxeSTnYA
+ iUA2W0L3idNEBZtMzTsq9lr4YEggrO9HqMqCDniCS6QWG+36DOL+HJ3g4BPW1YvFZvcm6lmVW3s HuAiLjC89URa2AglwefOIGQPr8XvsX0Tl0DajMG8XRqAdHt7YOQaIiDMeLG5qp9MwqFL+WasE/4 FMP42jOupTfaIc+zGMk+DjP//R5H8MJuZNbaUxHPY16ptrrQCLNQkbbCJ34JWO2AOTz+ahqKfRd
+ rqMe7WGWp8FC0FwfmMEq2ScZ7jw128Mt51vRO72sspwFHZKsfdzzzrcqtQP4E5x9W5yf3+vo
+X-Proofpoint-ORIG-GUID: KFtkED7iNBqTTVFsvX40P1QhtKzqui76
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-14_04,2025-05-14_02,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 suspectscore=0
+ bulkscore=0 mlxlogscore=999 mlxscore=0 lowpriorityscore=0 malwarescore=0
+ clxscore=1015 impostorscore=0 priorityscore=1501 adultscore=0 phishscore=0
+ classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2505070000
+ definitions=main-2505140111
 
-On Tue, May 13, 2025 at 06:19:21PM +0200, Markus Burri wrote:
-> Document tamper detection property for epson,rx8901 rtc chip.
+On Tue, 2025-05-13 at 07:31 -0700, steven chen wrote:
+> From: Steven Chen <chenste@linux.microsoft.com>
+>=20
+> Kdump kernel doesn't need IMA to do integrity measurement.
+> Hence the measurement list in 1st kernel doesn't need to be copied to
+> kdump kernel.
+>=20
+> Here skip allocating buffer for measurement list copying if loading
+> kdump kernel. Then there won't be the later handling related to
+> ima_kexec_buffer.
+>=20
+> Signed-off-by: Steven Chen <chenste@linux.microsoft.com>
+> Tested-by: Baoquan He <bhe@redhat.com>
+> Acked-by: Baoquan He <bhe@redhat.com>
 
-Looks like a lot more than 1 property. Explain the feature and why it is 
-needed. What the change is is obvious reading the diff.
+Thanks, Boaquan, Steven.
 
-> 
-> Signed-off-by: Markus Burri <markus.burri@mt.com>
-> ---
->  .../devicetree/bindings/rtc/epson,rx8900.yaml | 40 +++++++++++++++++--
->  1 file changed, 37 insertions(+), 3 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/rtc/epson,rx8900.yaml b/Documentation/devicetree/bindings/rtc/epson,rx8900.yaml
-> index 03af81754482..c2e542c9bdc6 100644
-> --- a/Documentation/devicetree/bindings/rtc/epson,rx8900.yaml
-> +++ b/Documentation/devicetree/bindings/rtc/epson,rx8900.yaml
-> @@ -9,9 +9,6 @@ title: EPSON RX8900 / Microcrystal RV8803 Real-Time Clock
->  maintainers:
->    - Marek Vasut <marex@denx.de>
->  
-> -allOf:
-> -  - $ref: rtc.yaml#
-> -
->  properties:
->    compatible:
->      enum:
-> @@ -33,6 +30,43 @@ properties:
->  
->    wakeup-source: true
->  
-> +  tamper:
-> +    description: Subnode for tamper configuration. This
-> +      subnode is only available for epson,rx8901.
+This patch is now queued in next-integrity and next-integrity-testing.
 
-Wrap at 80 char.
+Mimi
 
-> +    type: object
-> +    additionalProperties: false
-
-blank line
-
-> +    properties:
-> +      buffer-mode:
-> +        description: Set the buffer mode to inhibit (0) or overwrite (1).
-> +        minimum: 0
-> +        maximum: 1
-
-Could be boolean?
-
-blank line
-
-> +    patternProperties:
-> +      "^evin-[0-3]$":
-> +        $ref: /schemas/types.yaml#/definitions/uint32-array
-> +        minItems: 3
-> +        maxItems: 3
-> +        description: |
-> +          Event input pin configuration.
-> +          The configuration is an array of tree values and contains
-> +          "pull-resistore", "trigger" and "filter".
-
-pull-resistor
-
-> +          For a detaild description, see epson-rx8901 datasheet.
-
-detailed
-
-blank line between paragraphs.
-
-> +
-> +allOf:
-> +  - $ref: rtc.yaml#
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - epson,rx8901
-> +    then:
-> +      properties:
-> +        tamper: true
-
-Don't need this. It is allowed by default. Invert the if.
-
-> +    else:
-> +      # property is not allowed:
-
-Drop comment
-
-> +      properties:
-> +        tamper: false
-> +
->  required:
->    - compatible
->    - reg
-> -- 
-> 2.39.5
-> 
 
