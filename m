@@ -1,96 +1,167 @@
-Return-Path: <linux-kernel+bounces-648038-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-648040-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47563AB70C9
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 18:09:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C4C2AB70CF
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 18:09:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 860F4188E4B3
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 16:08:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E7391894088
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 16:09:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 825B8220F25;
-	Wed, 14 May 2025 16:08:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83B6427A92A;
+	Wed, 14 May 2025 16:08:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OnMcVn45"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="HP9Skt9r";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="3ZEaJ1jc";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="HP9Skt9r";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="3ZEaJ1jc"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE8B918787A;
-	Wed, 14 May 2025 16:08:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A24427A137
+	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 16:08:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747238891; cv=none; b=Lj3ZYClq+BFrfdVW/pot1OxhBa63sJLnzw6NLNtrUngcS/PITk19IGI4Y3iyQI3Bb2x2B4uV9gqRe7S89QryZmHu9L9qQH+NrbE3M9NBElnePaAzt9n9UoXH2rFc1+rDpYqHxJEAcQ60Z+T7g67cNfnAjre2dAYud8AIiRskfqI=
+	t=1747238928; cv=none; b=hbLW8kKclIUmNrXX7fZHELZ8KmQY5gA66PpBb8kivR2l1wnPkGN4pjzBCtRFTMYSi9hzAIjVDm7Fs77pZilmcgFV1qQPr/n2G/Op7VWBReOfl4PumzfU9fXilZ8ZAKoaUr/3bonjIND4aMx0xCUVU5uU6nLdfcxmTVEAlDgb85Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747238891; c=relaxed/simple;
-	bh=bFpwNz08zrSCvP6Znm9FT0VWYBH5RsAskPNCp1Ece1Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=q3ru26y3luiNids29pWcnzmQ36Mn/Fg0aAeAfy/GobgGTrQK63+Z3HU7TWizyQ+/R549fQRh5Nfji8Z8WfE4RBpQGKNmwE38hkD7R3BHjkgTBC3lZ01CcVLZkXTodIZZ62UNVKCeCPcoh+7o1CQR8whtIaZ4S3kGJEfk4GYNQzc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OnMcVn45; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF96EC4CEE3;
-	Wed, 14 May 2025 16:08:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747238889;
-	bh=bFpwNz08zrSCvP6Znm9FT0VWYBH5RsAskPNCp1Ece1Y=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=OnMcVn45/YQTMIQkGZtwuJuiEwJWKEacaq6GeYjLQnCndzGAqgOagk6/qTzPlfuY+
-	 zUwJBDdV7sLPhCZNScCUM1T0jMvjdaVwfyKHLc+ejCmZPKLaCHlA/jVFPb9TYPgsrI
-	 1V6bl/jh7ZNvIG4zwiRlhyKAr16MUeqcMcWiHJUhl2LizjNw7D/73bZix5QYLPZxky
-	 3vXDqoG0ygV+jsYzjL5X9jKkhRDeSqxCh2X8XoTy7WHUgNLX59nwhm3qnkCSm2dA+u
-	 tpyLRAxP8en5uVuJC6PouadUeOhoIadEWPHYuVVqLSxSM0di6aJeDm6P/LyR0rDPG3
-	 4RD36ULntTS3w==
-Date: Wed, 14 May 2025 09:08:08 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Jijie Shao <shaojijie@huawei.com>
-Cc: <davem@davemloft.net>, <edumazet@google.com>, <pabeni@redhat.com>,
- <andrew+netdev@lunn.ch>, <horms@kernel.org>, <shenjian15@huawei.com>,
- <wangpeiyang1@huawei.com>, <liuyonglong@huawei.com>,
- <chenhao418@huawei.com>, <jonathan.cameron@huawei.com>,
- <shameerali.kolothum.thodi@huawei.com>, <salil.mehta@huawei.com>,
- <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net 2/2] net: hibmcge: fix wrong ndo.open() after reset
- fail issue.
-Message-ID: <20250514090808.2ae43183@kernel.org>
-In-Reply-To: <743a78cc-10d4-45f0-9c46-f021258b577d@huawei.com>
-References: <20250430093127.2400813-1-shaojijie@huawei.com>
-	<20250430093127.2400813-3-shaojijie@huawei.com>
-	<20250501072329.39c6304a@kernel.org>
-	<743a78cc-10d4-45f0-9c46-f021258b577d@huawei.com>
+	s=arc-20240116; t=1747238928; c=relaxed/simple;
+	bh=5fAT4CSDvQk622hLuqJhH4j1jI7xnRXlu4+YkixUDqE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AlhQiLcwHxx7o7K20xIptQ5noj7D9GpMrXkIKdOnJNfinted6CaXabI9TFAA/5WTUzN33fMMzDGAj/wljFRDZ5fSOUwvMdbuqHeNU5Fw9Y7B4CWtkUgTzs1FAnw0e0IxHn2cPXjuHFE0F2diIXEy6ct2RN5ktBeneF2AjpWagw4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=HP9Skt9r; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=3ZEaJ1jc; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=HP9Skt9r; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=3ZEaJ1jc; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 64FC6211C6;
+	Wed, 14 May 2025 16:08:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1747238925; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PwemYqSx1joAsHvddH5vUeTn++S/Lwwkxkdrd/VN3vE=;
+	b=HP9Skt9rm7WKGVr9FhJS2qwWSQVBH16kWhzGzuXqPtnM/6MWapaWsEltEX2cHd7ywkHXvq
+	0E1gGk0BDq0FfYCf0huIb9Nnnqf3kxOH2itS/Zdcz2F61nXWPZ2WD1YuyhF5cX29N06GNW
+	325yGH3/h6im5SHcyN/Pr9/EpGCTqvw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1747238925;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PwemYqSx1joAsHvddH5vUeTn++S/Lwwkxkdrd/VN3vE=;
+	b=3ZEaJ1jculhnrIBINmPnOy5TNzJkzkJPwTpxmwz3MwwbjatG7zMWo8waQCnZUs40+mCAsJ
+	syFDyZQ1ARf5iiAQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1747238925; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PwemYqSx1joAsHvddH5vUeTn++S/Lwwkxkdrd/VN3vE=;
+	b=HP9Skt9rm7WKGVr9FhJS2qwWSQVBH16kWhzGzuXqPtnM/6MWapaWsEltEX2cHd7ywkHXvq
+	0E1gGk0BDq0FfYCf0huIb9Nnnqf3kxOH2itS/Zdcz2F61nXWPZ2WD1YuyhF5cX29N06GNW
+	325yGH3/h6im5SHcyN/Pr9/EpGCTqvw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1747238925;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PwemYqSx1joAsHvddH5vUeTn++S/Lwwkxkdrd/VN3vE=;
+	b=3ZEaJ1jculhnrIBINmPnOy5TNzJkzkJPwTpxmwz3MwwbjatG7zMWo8waQCnZUs40+mCAsJ
+	syFDyZQ1ARf5iiAQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3E58C13306;
+	Wed, 14 May 2025 16:08:45 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 1RI1Dw3AJGhoNgAAD6G6ig
+	(envelope-from <dwagner@suse.de>); Wed, 14 May 2025 16:08:45 +0000
+Date: Wed, 14 May 2025 18:08:40 +0200
+From: Daniel Wagner <dwagner@suse.de>
+To: Ming Lei <ming.lei@redhat.com>
+Cc: Hannes Reinecke <hare@suse.de>, Daniel Wagner <wagi@kernel.org>, 
+	Jens Axboe <axboe@kernel.dk>, Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>, 
+	Sagi Grimberg <sagi@grimberg.me>, "Michael S. Tsirkin" <mst@redhat.com>, 
+	"Martin K. Petersen" <martin.petersen@oracle.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Costa Shulyupin <costa.shul@redhat.com>, Juri Lelli <juri.lelli@redhat.com>, 
+	Valentin Schneider <vschneid@redhat.com>, Waiman Long <llong@redhat.com>, 
+	Frederic Weisbecker <frederic@kernel.org>, Mel Gorman <mgorman@suse.de>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, linux-kernel@vger.kernel.org, linux-block@vger.kernel.org, 
+	linux-nvme@lists.infradead.org, megaraidlinux.pdl@broadcom.com, linux-scsi@vger.kernel.org, 
+	storagedev@microchip.com, virtualization@lists.linux.dev, 
+	GR-QLogic-Storage-Upstream@marvell.com
+Subject: Re: [PATCH v6 6/9] isolation: introduce io_queue isolcpus type
+Message-ID: <706b08be-781c-45d6-8c16-93d6d97b4330@flourine.local>
+References: <20250424-isolcpus-io-queues-v6-0-9a53a870ca1f@kernel.org>
+ <20250424-isolcpus-io-queues-v6-6-9a53a870ca1f@kernel.org>
+ <2db989db-4849-46a9-9bad-0b67d85d1650@suse.de>
+ <dd4719dc-5ac4-44d9-bccb-e867d322864e@flourine.local>
+ <aB1iolILQcvvHDE9@fedora>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aB1iolILQcvvHDE9@fedora>
+X-Spam-Flag: NO
+X-Spam-Score: -4.30
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	FROM_HAS_DN(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[25];
+	MIME_TRACE(0.00)[0:+];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
 
-On Wed, 14 May 2025 10:40:26 +0800 Jijie Shao wrote:
-> on 2025/5/1 22:23, Jakub Kicinski wrote:
-> > On Wed, 30 Apr 2025 17:31:27 +0800 Jijie Shao wrote:  
-> >> If the driver reset fails, it may not work properly.
-> >> Therefore, the ndo.open() operation should be rejected.  
-> > Why not call netif_device_detach() if the reset failed and let the core
-> > code handle blocking the callbacks?  
+On Fri, May 09, 2025 at 10:04:18AM +0800, Ming Lei wrote:
+> > 			io_queue
+> > 			  Isolate from IO queue work caused by multiqueue
+> > 			  device drivers. Restrict the placement of
+> > 			  queues to housekeeping CPUs only, ensuring that
+> > 			  all IO work is processed by a housekeeping CPU.
+> > 
+> > 			  Note: When an isolated CPU issues an IO, it is
+> > 			  forwarded to a housekeeping CPU. This will
+> > 			  trigger a software interrupt on the completion
+> > 			  path.
+> > 
+> > 			  Note: It is not possible to offline housekeeping
+> > 			  CPUs that serve isolated CPUs.
 > 
-> If driver call netif_device_detach() after reset failed,
-> The network port cannot be operated. and I can't re-do the reset.
-> So how does the core code handle blocking callbacks?
-> Is there a good time to call netif_device_attach()?
-> 
-> Or I need to implement pci_error_handlers.resume()?
-> 
-> 
-> [root@localhost sjj]# ethtool --reset enp132s0f1 dedicated
-> ETHTOOL_RESET 0xffff
-> Cannot issue ETHTOOL_RESET: Device or resource busy
-> [root@localhost sjj]# ethtool --reset enp132s0f1 dedicated
-> ETHTOOL_RESET 0xffff
-> Cannot issue ETHTOOL_RESET: No such device
-> [root@localhost sjj]# ifconfig enp132s0f1 up
-> SIOCSIFFLAGS: No such device
+> This patch adds kernel parameter only, but not apply it at all, the above
+> words just confuses everyone, so I'd suggest to not expose the kernel
+> command line & document until the whole mechanism is supported.
 
-netdev APIs may not be the right path to recover the device after reset
-failure. Can you use a PCI reset (via sysfs) or devlink ?
+I'll add this doc update as last patch.
+
+> Especially 'irqaffinity=0 isolcpus=io_queue' requires the application
+> to offline CPU in order, which has to be documented:
+> 
+> https://lore.kernel.org/all/cc5e44dd-e1dc-4f24-88d9-ce45a8b0794f@flourine.local/
+
+Okay, so you want me to extend the above second note in this case. I'll
+give it a go.
 
