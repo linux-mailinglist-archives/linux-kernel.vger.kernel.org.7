@@ -1,145 +1,143 @@
-Return-Path: <linux-kernel+bounces-647361-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-647364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03A0BAB678B
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 11:32:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1161AB6797
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 11:33:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2C2B87AE85F
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 09:31:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4BE1D4A57EA
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 09:33:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B795C227E8A;
-	Wed, 14 May 2025 09:32:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IOYq9BuH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B7C21FF60E;
-	Wed, 14 May 2025 09:32:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68638226CFE;
+	Wed, 14 May 2025 09:33:10 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C9BD19F416
+	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 09:33:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747215144; cv=none; b=pmY7BnFPiALntB4bwxNOreMAI7t3dXBJIqVo9RmCKKQD5fVEq3huLszw8g8IjaJBTfQRZ8Fg7JddWh5tmo1fzeIuamUsnRlHFSaAT23JfYW23RgGgVh+7fVxBWVa9bkv9PF8SHjjOSjaVZ6RwNhx/+Y+9PDfwTjO2+DeJZiKODQ=
+	t=1747215190; cv=none; b=SdszGTFB0Izitezq8dDwkfeawjmHFgQGb3Q8vDO2g+AmfN5WN1ltCcpU42vUtGpGenbOZxx14V9oq/R82TxRM+2z3CozQZccVmh6JSNWgisD4L8Vfi0Kl5RcNYWEJK/uCNTa7HQkDdfPeWbHWUPD7gD7Fz8eOav2nyu8WtpTGtc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747215144; c=relaxed/simple;
-	bh=OsCI+SEfMW/es4yIxIl67MqpGQd1arTAgfmC5tthM/o=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=Qd1k/2LXI0SnN/uGEN4xutktUO6hSuZILs8QytsTgFsRbiCZnXpQw/CiPte5ZpFmvy3Rt713X7voEjCX6hWdO+D1zUZFqm4voVaSJymutL8xypVGiqSI1dPJVB7dLOEMoh8fTY6ua1AsgaM9B0SKFm1WhmicWY085V4bXn4x6tQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IOYq9BuH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22583C4CEE9;
-	Wed, 14 May 2025 09:32:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747215143;
-	bh=OsCI+SEfMW/es4yIxIl67MqpGQd1arTAgfmC5tthM/o=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=IOYq9BuHy+XUHlHP9+BfK9AEUSgQWF/kgBjJLWyXIFqg2kWAcd+HYj0q2Y79hI20O
-	 GA3H6TYlRDjcm/J+FbNpr/hEQjdwUfeBET+RNWSLI6xNEW3JmzzoZ6q/ty9I/7Hoph
-	 Lg3e9gAdKXMkVyDZt7FjqYFxVvp7xl8LdiPPIldcECwwlmQvTm2wb+RIf2dTvimuRF
-	 vAcvVyMPe1IWRudxByjLlFrDQ+4wkzWJ+GfLqbCcDLDGgAQGZFqX8Q3wat8vJgSINK
-	 PrRVJ+Yy+WX+mskIeeraESU4s8dXzu+Ky+tX6CTVI6mSHqQ0Lb3UgcAPWiGRrukaz9
-	 9sHAClmj5slFA==
+	s=arc-20240116; t=1747215190; c=relaxed/simple;
+	bh=2+VFUUPuTsayjw634qwNU/oky6UeePkMHE+2/YPWZfE=;
+	h=Subject:To:References:Cc:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=bJ6aDpGsM7EO26yMDAD8SLkuCrDlEuQ8sAaTKlx52F2OF8WuV46a/G0J4ckDZADLlDfkF6ddqBL7ukEdpoJmiGrss0meOrJf8LNOckLpvtHg8JBMAcAU7PO1lmg+oAy7AKN+0Xe2wfj485PkBsO9EULZ+Oqkc/RusCJYyAscr6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [113.200.148.30])
+	by gateway (Coremail) with SMTP id _____8BxYa9KYyRo7n3mAA--.6785S3;
+	Wed, 14 May 2025 17:32:58 +0800 (CST)
+Received: from [10.130.0.149] (unknown [113.200.148.30])
+	by front1 (Coremail) with SMTP id qMiowMCxrhtIYyRouTbRAA--.23825S3;
+	Wed, 14 May 2025 17:32:56 +0800 (CST)
+Subject: Re: [PATCH 2/2] LoongArch: uprobe: Remove redundant code about
+ resume_era
+To: Huacai Chen <chenhuacai@kernel.org>
+References: <20250513092116.25979-1-yangtiezhu@loongson.cn>
+ <20250513092116.25979-3-yangtiezhu@loongson.cn>
+ <CAAhV-H4AgHQs4pMqGqe7WfwCA+u7mO3U+=hcm8ZWk5DQHhsO1w@mail.gmail.com>
+Cc: loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
+From: Tiezhu Yang <yangtiezhu@loongson.cn>
+Message-ID: <bbd7e5ad-c353-6916-cf9e-8f3aa3fefda9@loongson.cn>
+Date: Wed, 14 May 2025 17:32:56 +0800
+User-Agent: Mozilla/5.0 (X11; Linux mips64; rv:45.0) Gecko/20100101
+ Thunderbird/45.4.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 14 May 2025 11:32:19 +0200
-Message-Id: <D9VS2Q4IX7LH.3JLXQUMWYJ2FP@kernel.org>
-Cc: <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v10 1/5] rust: types: Add Ownable/Owned types
-From: "Benno Lossin" <lossin@kernel.org>
-To: "Oliver Mangold" <oliver.mangold@pm.me>, "Miguel Ojeda"
- <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
- <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Benno Lossin"
- <benno.lossin@proton.me>, "Andreas Hindborg" <a.hindborg@kernel.org>,
- "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
- "Asahi Lina" <lina@asahilina.net>
-X-Mailer: aerc 0.20.1
-References: <20250502-unique-ref-v10-0-25de64c0307f@pm.me>
- <20250502-unique-ref-v10-1-25de64c0307f@pm.me>
-In-Reply-To: <20250502-unique-ref-v10-1-25de64c0307f@pm.me>
+MIME-Version: 1.0
+In-Reply-To: <CAAhV-H4AgHQs4pMqGqe7WfwCA+u7mO3U+=hcm8ZWk5DQHhsO1w@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowMCxrhtIYyRouTbRAA--.23825S3
+X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
+X-Coremail-Antispam: 1Uk129KBj93XoWxJF4rtw4rCF4fCFW3Ww15Awc_yoW5Gw18p3
+	ZrA3Z3KFs8GFykAFyqqFWDZr1Iyr4kGr42gw12yFySyw12qr1Yqr18ta98JFy5ArsYgr10
+	qw1Fy34qvFW7A3gCm3ZEXasCq-sJn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r106r15M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
+	GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27wAqx4
+	xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v2
+	6r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCYjI0SjxkI62AI1cAE67
+	vIY487MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAF
+	wI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUXVWUAwCIc4
+	0Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AK
+	xVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr
+	1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxUzZ2-UUUU
+	U
 
-On Fri May 2, 2025 at 11:02 AM CEST, Oliver Mangold wrote:
-> +/// Types that may be owned by Rust code or borrowed, but have a lifetim=
-e managed by C code.
-> +///
-> +/// It allows such types to define their own custom destructor function =
-to be called when
-> +/// a Rust-owned reference is dropped.
-> +///
-> +/// This is usually implemented by wrappers to existing structures on th=
-e C side of the code.
+On 05/13/2025 11:13 PM, Huacai Chen wrote:
+> Hi, Tiezhu,
+>
+> On Tue, May 13, 2025 at 5:21 PM Tiezhu Yang <yangtiezhu@loongson.cn> wrote:
+>>
+>> arch_uprobe_skip_sstep() returns true if instruction was emulated,
+>> that is to say, there is no need to single step for the emulated
+>> instructions, it will point to the destination address directly
+>> after the exception, so the resume_era related code is redundant,
+>> just remove them.
+>>
+>> Fixes: 19bc6cb64092 ("LoongArch: Add uprobes support")
+>> Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
+>> ---
+>>  arch/loongarch/include/asm/uprobes.h | 1 -
+>>  arch/loongarch/kernel/uprobes.c      | 7 +------
+>>  2 files changed, 1 insertion(+), 7 deletions(-)
+>>
+>> diff --git a/arch/loongarch/include/asm/uprobes.h b/arch/loongarch/include/asm/uprobes.h
+>> index 99a0d198927f..025fc3f0a102 100644
+>> --- a/arch/loongarch/include/asm/uprobes.h
+>> +++ b/arch/loongarch/include/asm/uprobes.h
+>> @@ -15,7 +15,6 @@ typedef u32 uprobe_opcode_t;
+>>  #define UPROBE_XOLBP_INSN      __emit_break(BRK_UPROBE_XOLBP)
+>>
+>>  struct arch_uprobe {
+>> -       unsigned long   resume_era;
+>>         u32     insn[2];
+>>         u32     ixol[2];
+>>         bool    simulate;
+>> diff --git a/arch/loongarch/kernel/uprobes.c b/arch/loongarch/kernel/uprobes.c
+>> index 0ab9d8d631c4..6022eb0f71db 100644
+>> --- a/arch/loongarch/kernel/uprobes.c
+>> +++ b/arch/loongarch/kernel/uprobes.c
+>> @@ -52,11 +52,7 @@ int arch_uprobe_post_xol(struct arch_uprobe *auprobe, struct pt_regs *regs)
+>>
+>>         WARN_ON_ONCE(current->thread.trap_nr != UPROBE_TRAP_NR);
+>>         current->thread.trap_nr = utask->autask.saved_trap_nr;
+>> -
+>> -       if (auprobe->simulate)
+>> -               instruction_pointer_set(regs, auprobe->resume_era);
+>> -       else
+>> -               instruction_pointer_set(regs, utask->vaddr + LOONGARCH_INSN_SIZE);
+>> +       instruction_pointer_set(regs, utask->vaddr + LOONGARCH_INSN_SIZE);
+> This seems wrong. If in the simulate case, regs->csr_era has already
+> pointed to the correct destination address, then here we should only
+> handle the non-simulate case.
 
-The docs should mention `AlwaysRefCounted` and when to use it instead of
-this trait. We should probably also backlink from `AlwaysRefCounted` to
-`Ownable`.
+What is wrong with this code? AFAICT, the code is right.
 
-> +///
-> +/// # Safety
-> +///
-> +/// Implementers must ensure that:
-> +/// - Any objects owned by Rust as [`Owned<T>`] stay alive while that ow=
-ned reference exists (i.e.
-> +///   until the [`release()`](Ownable::release) trait method is called).
+Here are the call chains in the generic code of uprobe:
 
-I don't immediately understand what this means. How about "Any value of
-type `Self` needs to be stored as [`Owned<Self>`]."? And then ask in
-`Owned::from_raw` for a pointer that is valid indefinitely (or at least
-until `release` is called).
+handle_swbp()
+   arch_uprobe_skip_sstep()
+   pre_ssout()
+     arch_uprobe_pre_xol()
+handle_singlestep()
+   arch_uprobe_post_xol()
 
-> +/// - That the C code follows the usual mutable reference requirements. =
-That is, the kernel will
-> +///   never mutate the [`Ownable`] (excluding internal mutability that f=
-ollows the usual rules)
-> +///   while Rust owns it.
+arch_uprobe_post_xol() only handles the instruction that is not emulated
+because if arch_uprobe_skip_sstep() returns true, arch_uprobe_post_xol()
+will not be called, it will be called only if arch_uprobe_skip_sstep()
+returns false.
 
-I feel like this requirement is better put on the `Owned::from_raw`
-function.
+Thanks,
+Tiezhu
 
-> +pub unsafe trait Ownable {
-> +    /// Releases the object (frees it or returns it to foreign ownership=
-).
-> +    ///
-> +    /// # Safety
-> +    ///
-> +    /// Callers must ensure that the object is no longer referenced afte=
-r this call.
-> +    unsafe fn release(this: NonNull<Self>);
-> +}
-> +
-> +/// A subtrait of Ownable that asserts that an [`Owned<T>`] or `&mut Own=
-ed<T>` Rust reference
-> +/// may be dereferenced into a `&mut T`.
-
-The "A subtrait of Ownable that asserts" sounds a bit clumsy to me, how
-about "Type where [`Owned<Self>`] derefs to `&mut Self`."?
-
-> +///
-> +/// # Safety
-> +///
-> +/// Implementers must ensure that access to a `&mut T` is safe, implying=
- that it is okay to call
-> +/// [`core::mem::swap`] on the `Ownable`. This excludes pinned types (me=
-aning: most kernel types).
-
-I don't like that we put this requirement here, since it's actually
-something that should be asserted by `Owned::from_raw`.
-The reason for that is that anyone can call `Owned::from_raw` with a
-pointer pointing to `Self` and there is no safety requirement on that
-function that ensures the correctness of the `DerefMut` impl.
-
-> +pub unsafe trait OwnableMut: Ownable {}
-
-I don't like the name, but at the same time I also have no good
-suggestion :( I'll think some more about it.
-
----
-Cheers,
-Benno
 
