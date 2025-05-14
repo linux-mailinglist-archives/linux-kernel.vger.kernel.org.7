@@ -1,581 +1,319 @@
-Return-Path: <linux-kernel+bounces-648399-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-648401-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C811AB7656
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 22:04:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E826CAB765E
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 22:05:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99CFD3BDB59
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 20:04:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7ECCC189A223
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 20:05:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE0082951C4;
-	Wed, 14 May 2025 20:04:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C16AF295517;
+	Wed, 14 May 2025 20:05:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QHrqa1hk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="d+5e0rg/"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2073.outbound.protection.outlook.com [40.107.244.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5BA8C120;
-	Wed, 14 May 2025 20:04:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747253088; cv=none; b=FNEHJSFMGHLW3iwjzhMvAV7Xmsh6GkBecQ1Vn+BGX8sn9IaZQkTu+vu+JIQPMMCheErZWFgoQblwFmd5bPnnfhUtXkL7BKKmcEDfNslbtwcr24uGQtBNBWMTuMDhd/sEecOK9gZKzrCXzpq+fJWV4XWDGJph/La885T2T8G971c=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747253088; c=relaxed/simple;
-	bh=246Are/mRoUxNFRbYb0hiCd2/mp652DLO+8XgKyNyZg=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=P1RWdPHLhCu0ImCJavSQF3y+q8z76Frw7rawtAK9XnysOqJ9EnwtOJ0RXIMNbqpfNuDzzG3/aJ+BFMspmPdGh99QdKBcXmfMmL2vOgaFtE2aIG7E6qqnsfBpb348kx2qkaiaaQktgjBmR9NDYGI5uYPvWHOqJ32nqjZwWclHqjw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QHrqa1hk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E49D1C4CEE3;
-	Wed, 14 May 2025 20:04:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747253088;
-	bh=246Are/mRoUxNFRbYb0hiCd2/mp652DLO+8XgKyNyZg=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=QHrqa1hkyHdg5BQE9zJg5hzT2huZEvl5JaJtXhsr889AcpaEv2wC7jrb/sxRjqx9y
-	 FckrvB5zc33/cDOKCa9Eq2pl/iqvof72JyvIZor4Kd/yVEpjsXoz1uAQ8iUxz23/EQ
-	 gXwPngA4VgBzAYd3CnFBaYFk3zIESznnjPTyg/YgeG6G07KeA31JIsREGH9f8XS0ay
-	 AmO7gImif1KXRac1MpmGfAM73+1jxtp9GhkOY2nv1Aun/Jn+M5l52sYXbcYQOEk8Fu
-	 9+PQYraZJsZwmi3ZMMT1GTA33MgUXQCeMnM1fb8qyfCclhDjeaPl4kOU6HoOStgo3u
-	 TKyO14MBSHpWA==
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BB232951A6;
+	Wed, 14 May 2025 20:05:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.73
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747253128; cv=fail; b=hsFucEeJGjF5YUNNHm+mJgyT1AeBI6vXJuUu4MQqs09uJ4YIq8txFZUsCGSaWF33HckhLyruTUFXyWGLsumASzLWYxqiqpFjmcImjG+UW/+W3oFMoXSYKT4E2JjczSnQ7j53MUHZAK5Y5pQZdPgnZUqyRZjevS74++VB4xBnA+M=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747253128; c=relaxed/simple;
+	bh=YycmEZEZI2pNcj/hQUm3twCuLxv5Wa9VflAPGvVv90w=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=HgSA7KEUoYbt+QGCnVxUm1F/FFwZNj33lx5a3IRktN8T+tBopsxUh15zs+mky63xqgSvNRPcCGZuZcjlx0zllMUa9c5SZ79bjhjXeSwFRByDhq7mMMWRJ3/PDjsRBEwP5c3MN/C1/RP0CED3ttqfCek1b1tArYJXwSnJz3CmOmE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=d+5e0rg/; arc=fail smtp.client-ip=40.107.244.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=s3g0H61irAmh0CXNwsneeZSOcvwknJJg+RnZZfjaLVAWQt4ofhUZwiyuRIOpEYO2yjLRB7VHw01tJLiKMmgAKhJm4GXEHINMGvqjZkWy8ckjI9Y7Wer34UtMxYGXZ+lmfw838QVPZrUlGGIXD4tZVbqW9TioiPs4bDVn26dUdYUk1QJYs+fFRicVFFHJMRFKHmoq1IiZjRqhnhTnlC2L8lj8BsxlvxNPz/m6X9Tt+xBhZtmuLYdBzER9A3T0Lf6QhaJ2W0uyX1D3/aQmLJH5EDRx8gSLVjUn956yYyS5vmS8eCZEXNbnEqJIhdpeZcZyPHRPHdaK5CWI2ekvpngTlw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=3LMaNDKdd1AKrLPHqbVwhzBvq0gkRQIcizeMA4Gc4LI=;
+ b=m0Q3sFImgouwCla3B68x43WQ+o/7UY/gDWDnznn9JrfK7vZWhZYmin73Q/5ZuZB9oUKAgYevGXGZZH6Obej40ah6lqY+o+GL8PZoX7WqpJlfgxVwvjJjqCC3DKx1bfPEdyV87oiZ8jlcR79lCWnfrEc5ijWiCaXzvXIc44QSTILzJtd0/2MalasVc74iQmJZS36GheLB2QNzyx0Tw9z+W4vVC+6J+Bx8oGrbCbLLSOOcB+X5upHDw+N4ro8V/rH2nfbtzJsQKiUd1vncsJqg/w3cq57hFzI2WlAvHf0jBCdHaXOjJctCafxQavrCDSXEcw7/ivZwORW3uDGskG2GDA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.233) smtp.rcpttodomain=linux.intel.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3LMaNDKdd1AKrLPHqbVwhzBvq0gkRQIcizeMA4Gc4LI=;
+ b=d+5e0rg/nrmzHpbm+8ew9dd+NPhSh0HrKc0K8pJH1tqL4Gi1n149IhzBEZV90oIe0PUdteyetN3oPJHNcgGQiGnjBVSsxPKWMnCuWuM/Xgt3z0Fwv6DVf5Zxmyc/ywgP76rVSnXRfhGCafgbrQsbbMlZZbXbj4v+PMQCULKYPWXI6iGcMtVFmdS8x+byW5i5w1VA1xlDcCkSQ473oeiNz0XWPQXjgG6AlIDcwLGrcisBRQU36u/bZ0mmcOes5eXDam7Me6qvClIu3an3RNiVEtCoAAJYpGPm1oCBlICPyIK+B4VBwVY20Gw1pcKTJbf62SmSsWKky7Cjkti/I8VRbw==
+Received: from MN2PR20CA0022.namprd20.prod.outlook.com (2603:10b6:208:e8::35)
+ by IA0PPFB67404FBA.namprd12.prod.outlook.com (2603:10b6:20f:fc04::be2) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8655.35; Wed, 14 May
+ 2025 20:05:23 +0000
+Received: from BL6PEPF0001AB53.namprd02.prod.outlook.com
+ (2603:10b6:208:e8:cafe::76) by MN2PR20CA0022.outlook.office365.com
+ (2603:10b6:208:e8::35) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8699.29 via Frontend Transport; Wed,
+ 14 May 2025 20:05:23 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.233) by
+ BL6PEPF0001AB53.mail.protection.outlook.com (10.167.241.5) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8722.18 via Frontend Transport; Wed, 14 May 2025 20:05:22 +0000
+Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
+ (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 14 May
+ 2025 13:05:08 -0700
+Received: from drhqmail203.nvidia.com (10.126.190.182) by
+ drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Wed, 14 May 2025 13:05:07 -0700
+Received: from inno-thin-client (10.127.8.11) by mail.nvidia.com
+ (10.126.190.182) with Microsoft SMTP Server id 15.2.1544.14 via Frontend
+ Transport; Wed, 14 May 2025 13:05:03 -0700
+Date: Wed, 14 May 2025 23:05:02 +0300
+From: Zhi Wang <zhiw@nvidia.com>
+To: Xu Yilun <yilun.xu@linux.intel.com>
+CC: Jason Gunthorpe <jgg@nvidia.com>, Alexey Kardashevskiy <aik@amd.com>,
+	<kvm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+	<linux-media@vger.kernel.org>, <linaro-mm-sig@lists.linaro.org>,
+	<sumit.semwal@linaro.org>, <christian.koenig@amd.com>, <pbonzini@redhat.com>,
+	<seanjc@google.com>, <alex.williamson@redhat.com>,
+	<vivek.kasireddy@intel.com>, <dan.j.williams@intel.com>,
+	<yilun.xu@intel.com>, <linux-coco@lists.linux.dev>,
+	<linux-kernel@vger.kernel.org>, <lukas@wunner.de>, <yan.y.zhao@intel.com>,
+	<daniel.vetter@ffwll.ch>, <leon@kernel.org>, <baolu.lu@linux.intel.com>,
+	<zhenzhong.duan@intel.com>, <tao1.su@intel.com>
+Subject: Re: [RFC PATCH 00/12] Private MMIO support for private assigned dev
+Message-ID: <20250514230502.6b64da7f.zhiw@nvidia.com>
+In-Reply-To: <aCRmoDupzK9zTqFL@yilunxu-OptiPlex-7050>
+References: <371ab632-d167-4720-8f0d-57be1e3fee84@amd.com>
+	<4b6dc759-86fd-47a7-a206-66b25a0ccc6d@amd.com>
+	<c10bf9c2-e073-479d-ad1c-6796c592d333@amd.com>
+	<aB3jLmlUKKziwdeG@yilunxu-OptiPlex-7050>
+	<aB4tQHmHzHooDeTE@yilunxu-OptiPlex-7050>
+	<20250509184318.GD5657@nvidia.com>
+	<aB7Ma84WXATiu5O1@yilunxu-OptiPlex-7050>
+	<2c4713b0-3d6c-4705-841b-1cb58cd9a0f5@amd.com>
+	<20250512140617.GA285583@nvidia.com>
+	<20250513130315.0158a626.zhiw@nvidia.com>
+	<aCRmoDupzK9zTqFL@yilunxu-OptiPlex-7050>
+Organization: NVIDIA
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 14 May 2025 22:04:43 +0200
-Message-Id: <D9W5IX9Z7QMU.3DL48O2KYTN1Z@kernel.org>
-Cc: <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>
-Subject: Re: [PATCH v3 1/2] rust: irq: add support for request_irq()
-From: "Benno Lossin" <lossin@kernel.org>
-To: "Daniel Almeida" <daniel.almeida@collabora.com>, "Miguel Ojeda"
- <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
- <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Benno Lossin"
- <benno.lossin@proton.me>, "Andreas Hindborg" <a.hindborg@kernel.org>,
- "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
- "Danilo Krummrich" <dakr@kernel.org>, "Greg Kroah-Hartman"
- <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
- "Thomas Gleixner" <tglx@linutronix.de>
-X-Mailer: aerc 0.20.1
-References: <20250514-topics-tyr-request_irq-v3-0-d6fcc2591a88@collabora.com> <20250514-topics-tyr-request_irq-v3-1-d6fcc2591a88@collabora.com>
-In-Reply-To: <20250514-topics-tyr-request_irq-v3-1-d6fcc2591a88@collabora.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-NV-OnPremToCloud: AnonymousSubmission
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL6PEPF0001AB53:EE_|IA0PPFB67404FBA:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1083feb4-670c-48c1-b82c-08dd9322a8af
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|82310400026|7416014|376014|1800799024|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?CYKDfFJHYYpl8DptySGI40bXgq/o/Q2T1QzDmxgoqc19Vx9qctN0Au8b+2U0?=
+ =?us-ascii?Q?FOwKHPBte4GwbLt+sYKl+eYMUdmyj/Q/hi89bafZXyzQtIZgylhytjv50ykJ?=
+ =?us-ascii?Q?WNQ2M2xHqcN7Zo3CHxJrnvezigjqsnHyWr8yccuqOf80ySoPefoOqJuUQB9v?=
+ =?us-ascii?Q?pJVwwpuzyR9c8e4a3ykXBhY0ux86CrMbpvbKZE/zgXrmNpX24h9tc7BjveLA?=
+ =?us-ascii?Q?LzDcCQcS3ntWiWoSWCa+lnQsFuQDmF9FKaJ7/tM7cbA2dpyLxVFQoV6TyxlL?=
+ =?us-ascii?Q?xIkI/VQ/A3x+NdufKf+d6JFmfoLncuIWwuaAaS1Lq7nyEth2iaGtI0edoJmG?=
+ =?us-ascii?Q?fT9QsLrzBhOQ5BgZ4hUGSKuvZwr3IKRDafwQp28xPqMrrhAlkGQKi3Je/7TG?=
+ =?us-ascii?Q?+gw0WKqZWP+YsLBT1a7Lw3EIG6BJ/WHqSA1GemCVPuhLhA9D0JlMnIEwCUdA?=
+ =?us-ascii?Q?KwSlCLXBEiQOtxcgNc6wwXO1w9syFtmhMCiKdbGnoHPLxNJX+Z8C5gWYqKZN?=
+ =?us-ascii?Q?/BPMvjr/Ddjy4vm8eRrS4w4HkyxplWFcWKkeajjM/UcOBStkjLgNLm7CkCeL?=
+ =?us-ascii?Q?y8V0yY3zKWS9jFsdSquuGdAab8CaeF2PW5NIMpnRVx+jaVJlw8PL5ersFasS?=
+ =?us-ascii?Q?ERqQxy/Zfcwm/DM5PiHovwWw5yKMUzd8gghXdvflFIxBH46ZwpoxXEI+55J2?=
+ =?us-ascii?Q?Hq2ENWNAdOlX3rZ3tRo1UKjkNF6MCN2pogeXmmB60w8HlhiZIwYzSHQA3FYz?=
+ =?us-ascii?Q?+KCNariJ0l4W+tKbAjEElNVYJWSVmzuPZKw9jbSCfSNWq/zAyPNUSlZ2VOgV?=
+ =?us-ascii?Q?yEvtufC5A28z2uG3+njX4eAPzVCh9ye7wXKAhOxHLaRjoHIx5W1r9Haa2x1x?=
+ =?us-ascii?Q?zikZu4h6tdt2ovBol3JnAIq4JbbGNMlddTZ/N4bpx3s23B4hMFECVtuxZT4G?=
+ =?us-ascii?Q?6nzcutlrBzYmmL4iQVNGb2sQKrHj3ex70CIXfItF2+W7I8v7XmhZ6b9rUOD/?=
+ =?us-ascii?Q?1hPAUsxGHWpYDcIzl4D0F8nw8nqefI9H1WDP/FzKT6QbwhgV5GsI72ruuwe2?=
+ =?us-ascii?Q?4kBJaVeSqvuFNlOwcqR3ak8Is8aIS8d4n8tZeWj6GUOFfoC7/syADnjDqjB4?=
+ =?us-ascii?Q?oxySzYIYNAOTq7STxNO5ZdLxoaCtu5/tq46eiGvH66IUai6EB79O62wkTgMq?=
+ =?us-ascii?Q?F9seK2xR4Qjw6krzJqQHLP2uPS9M4iEsh4GKwZFaGXCElHGvLXL9M0rBKBN8?=
+ =?us-ascii?Q?aso2qNNp89gBzKHVtZfGPrErbHymeO3VTW2ZHuCLEtWLQVx6JCAHtaO4J/Dh?=
+ =?us-ascii?Q?BT8lAffGspvFJvvq9HvnJMak5h9cYNynvIpoTuVEfXTUW7T2VbjcQPB7jYQq?=
+ =?us-ascii?Q?fqLyAJjQssAYr2MAVBpw5Mci/fFUpSJZbOfhZ8YUKWNJxH3U8VZieJRjSZXC?=
+ =?us-ascii?Q?SNXcYFJeGz+DNukEniOS6OOW/h0upskxxxvNui79t8358V+i2V5gvJszxhX3?=
+ =?us-ascii?Q?3FoeRzcqH1JjkWPVkSEzElwyWCF5ZXMSuzjM?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(7416014)(376014)(1800799024)(7053199007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 May 2025 20:05:22.2748
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1083feb4-670c-48c1-b82c-08dd9322a8af
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BL6PEPF0001AB53.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PPFB67404FBA
 
-On Wed May 14, 2025 at 9:20 PM CEST, Daniel Almeida wrote:
-> Add support for registering IRQ handlers in Rust.
->
-> IRQ handlers are extensively used in drivers when some peripheral wants
-> to obtain the CPU attention. Registering a handler will make the system
-> invoke the passed-in function whenever the chosen IRQ line is triggered.
->
-> Both regular and threaded IRQ handlers are supported through a Handler
-> (or ThreadedHandler) trait that is meant to be implemented by a type
-> that:
->
-> a) provides a function to be run by the system when the IRQ fires and,
->
-> b) holds the shared data (i.e.: `T`) between process and IRQ contexts.
->
-> The requirement that T is Sync derives from the fact that handlers might
-> run concurrently with other processes executing the same driver,
-> creating the potential for data races.
->
-> Ideally, some interior mutability must be in place if T is to be
-> mutated. This should usually be done through the in-flight SpinLockIrq
-> type.
->
-> Co-developed-by: Alice Ryhl <aliceryhl@google.com>
-> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
-> Signed-off-by: Daniel Almeida <daniel.almeida@collabora.com>
-> ---
->  rust/bindings/bindings_helper.h |   1 +
->  rust/helpers/helpers.c          |   1 +
->  rust/helpers/irq.c              |   9 +
->  rust/kernel/irq.rs              |  24 +++
->  rust/kernel/irq/flags.rs        | 102 +++++++++
->  rust/kernel/irq/request.rs      | 455 ++++++++++++++++++++++++++++++++++=
-++++++
->  rust/kernel/lib.rs              |   1 +
->  7 files changed, 593 insertions(+)
+On Wed, 14 May 2025 17:47:12 +0800
+Xu Yilun <yilun.xu@linux.intel.com> wrote:
 
-Could you split this patch into smaller chunks?
+> On Tue, May 13, 2025 at 01:03:15PM +0300, Zhi Wang wrote:
+> > On Mon, 12 May 2025 11:06:17 -0300
+> > Jason Gunthorpe <jgg@nvidia.com> wrote:
+> > 
+> > > On Mon, May 12, 2025 at 07:30:21PM +1000, Alexey Kardashevskiy
+> > > wrote:
+> > > 
+> > > > > > I'm surprised by this.. iommufd shouldn't be doing PCI
+> > > > > > stuff, it is just about managing the translation control of
+> > > > > > the device.
+> > > > > 
+> > > > > I have a little difficulty to understand. Is TSM bind PCI
+> > > > > stuff? To me it is. Host sends PCI TDISP messages via PCI DOE
+> > > > > to put the device in TDISP LOCKED state, so that device
+> > > > > behaves differently from before. Then why put it in IOMMUFD?
+> > > > 
+> > > > 
+> > > > "TSM bind" sets up the CPU side of it, it binds a VM to a piece
+> > > > of IOMMU on the host CPU. The device does not know about the
+> > > > VM, it just enables/disables encryption by a request from the
+> > > > CPU (those start/stop interface commands). And IOMMUFD won't be
+> > > > doing DOE, the platform driver (such as AMD CCP) will. Nothing
+> > > > to do for VFIO here.
+> > > > 
+> > > > We probably should notify VFIO about the state transition but I
+> > > > do not know VFIO would want to do in response.
+> > > 
+> > > We have an awkward fit for what CCA people are doing to the
+> > > various Linux APIs. Looking somewhat maximally across all the
+> > > arches a "bind" for a CC vPCI device creation operation does:
+> > > 
+> > >  - Setup the CPU page tables for the VM to have access to the MMIO
+> > >  - Revoke hypervisor access to the MMIO
+> > >  - Setup the vIOMMU to understand the vPCI device
+> > >  - Take over control of some of the IOVA translation, at least for
+> > > T=1, and route to the the vIOMMU
+> > >  - Register the vPCI with any attestation functions the VM might
+> > > use
+> > >  - Do some DOE stuff to manage/validate TDSIP/etc
+> > > 
+> > > So we have interactions of things controlled by PCI, KVM, VFIO,
+> > > and iommufd all mushed together.
+> > > 
+> > > iommufd is the only area that already has a handle to all the
+> > > required objects:
+> > >  - The physical PCI function
+> > >  - The CC vIOMMU object
+> > >  - The KVM FD
+> > >  - The CC vPCI object
+> > > 
+> > > Which is why I have been thinking it is the right place to manage
+> > > this.
+> > > 
+> > > It doesn't mean that iommufd is suddenly doing PCI stuff, no, that
+> > > stays in VFIO.
+> > > 
+> > > > > > So your issue is you need to shoot down the dmabuf during
+> > > > > > vPCI device destruction?
+> > > > > 
+> > > > > I assume "vPCI device" refers to assigned device in both
+> > > > > shared mode & prvate mode. So no, I need to shoot down the
+> > > > > dmabuf during TSM unbind, a.k.a. when assigned device is
+> > > > > converting from private to shared. Then recover the dmabuf
+> > > > > after TSM unbind. The device could still work in VM in shared
+> > > > > mode.
+> > > 
+> > > What are you trying to protect with this? Is there some intelism
+> > > where you can't have references to encrypted MMIO pages?
+> > > 
+> > 
+> > I think it is a matter of design choice. The encrypted MMIO page is
+> > related to the TDI context and secure second level translation table
+> > (S-EPT). and S-EPT is related to the confidential VM's context.
+> > 
+> > AMD and ARM have another level of HW control, together
+> > with a TSM-owned meta table, can simply mask out the access to those
+> > encrypted MMIO pages. Thus, the life cycle of the encrypted
+> > mappings in the second level translation table can be de-coupled
+> > from the TDI unbound. They can be reaped un-harmfully later by
+> > hypervisor in another path.
+> > 
+> > While on Intel platform, it doesn't have that additional level of
+> > HW control by design. Thus, the cleanup of encrypted MMIO page
+> > mapping in the S-EPT has to be coupled tightly with TDI context
+> > destruction in the TDI unbind process.
+> 
+> Thanks for the accurate explanation. Yes, in TDX, the
+> references/mapping to the encrypted MMIO page means a CoCo-VM owns
+> the MMIO page. So TDX firmware won't allow the CC vPCI device (which
+> physically owns the MMIO page) unbind/freed from a CoCo-VM, while the
+> VM still have the S-EPT mapping.
+> 
+> AMD doesn't use KVM page table to track CC ownership, so no need to
+> interact with KVM.
+> 
 
-> +pub use request::Handler;
-> +pub use request::IrqReturn;
-> +pub use request::Registration;
-> +pub use request::ThreadedHandler;
-> +pub use request::ThreadedIrqReturn;
-> +pub use request::ThreadedRegistration;
+IMHO, I think it might be helpful that you can picture out what are the
+minimum requirements (function/life cycle) to the current IOMMUFD TSM
+bind architecture:
 
-Why not?:
+1.host tsm_bind (preparation) is in IOMMUFD, triggered by QEMU handling
+the TVM-HOST call.
+2. TDI acceptance is handled in guest_request() to accept the TDI after
+the validation in the TVM)
 
-    pub use request::{Handler, ..., ThreadedRegistration};
+and which part/where need to be modified in the current architecture to
+reach there. Try to fold vendor-specific knowledge as much as possible,
+but still keep them modular in the TSM driver and let's see how it looks
+like. Maybe some example TSM driver code to demonstrate together with
+VFIO dma-buf patch.
 
-> diff --git a/rust/kernel/irq/flags.rs b/rust/kernel/irq/flags.rs
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..3cfaef65ae14f6c02f55ebcf4=
-d52450c0052df30
-> --- /dev/null
-> +++ b/rust/kernel/irq/flags.rs
-> @@ -0,0 +1,102 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +// SPDX-FileCopyrightText: Copyright 2025 Collabora ltd.
-> +
-> +use crate::bindings;
-> +
-> +/// Flags to be used when registering IRQ handlers.
-> +///
-> +/// They can be combined with the operators `|`, `&`, and `!`.
-> +#[derive(Clone, Copy, PartialEq, Eq)]
-> +pub struct Flags(u64);
+If some where is extremely hacky in the TSM driver, let's see how they
+can be lift to the upper level or the upper call passes more parameters
+to them.
 
-The constants below seem to all be 32 bit, why did you choose u64?
+Z.
 
-> +
-> +impl Flags {
-> +    pub(crate) fn into_inner(self) -> u64 {
-> +        self.0
-> +    }
-> +}
-> +pub const NO_DEBUG: Flags =3D Flags(bindings::IRQF_NO_DEBUG as u64);
+> Thanks,
+> Yilun
+> 
+> > 
+> > If the TDI unbind is triggered in VFIO/IOMMUFD, there has be a
+> > cross-module notification to KVM to do cleanup in the S-EPT.
+> > 
+> > So shooting down the DMABUF object (encrypted MMIO page) means
+> > shooting down the S-EPT mapping and recovering the DMABUF object
+> > means re-construct the non-encrypted MMIO mapping in the EPT after
+> > the TDI is unbound. 
+> > 
+> > Z.
+> > 
+> > > > > What I really want is, one SW component to manage MMIO dmabuf,
+> > > > > secure iommu & TSM bind/unbind. So easier coordinate these 3
+> > > > > operations cause these ops are interconnected according to
+> > > > > secure firmware's requirement.
+> > > >
+> > > > This SW component is QEMU. It knows about FLRs and other config
+> > > > space things, it can destroy all these IOMMUFD objects and talk
+> > > > to VFIO too, I've tried, so far it is looking easier to manage.
+> > > > Thanks,
+> > > 
+> > > Yes, qemu should be sequencing this. The kernel only needs to
+> > > enforce any rules required to keep the system from crashing.
+> > > 
+> > > Jason
+> > > 
+> > 
+> 
 
-> diff --git a/rust/kernel/irq/request.rs b/rust/kernel/irq/request.rs
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..55f0ea8f9a93dc9ada67ce91a=
-f686a9634c8e8ed
-> --- /dev/null
-> +++ b/rust/kernel/irq/request.rs
-> @@ -0,0 +1,455 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +// SPDX-FileCopyrightText: Copyright 2025 Collabora ltd.
-> +
-> +//! IRQ allocation and handling
-
-Missing `.`.
-
-> +
-> +use core::marker::PhantomPinned;
-> +use core::ptr::addr_of_mut;
-> +
-> +use pin_init::pin_init_from_closure;
-> +
-> +use crate::alloc::Allocator;
-> +use crate::error::to_result;
-> +use crate::irq::flags::Flags;
-> +use crate::prelude::*;
-> +use crate::str::CStr;
-> +use crate::sync::Arc;
-> +
-> +/// The value that can be returned from an IrqHandler or a ThreadedIrqHa=
-ndler.
-> +#[repr(u32)]
-
-I think we should let the compiler decide the layout & discriminants, it
-might do something smarter when returning this value together with
-others. Then we just need this function:
-
-    fn into_inner(self) -> u32 {
-        match self {
-            Self::None =3D> bindings::irqreturn_IRQ_NONE,
-            Self::Handled =3D> bindings::irqreturn_IRQ_HANDLED,
-        }
-    }
-
-> +pub enum IrqReturn {
-> +    /// The interrupt was not from this device or was not handled.
-> +    None =3D bindings::irqreturn_IRQ_NONE,
-> +
-> +    /// The interrupt was handled by this device.
-> +    Handled =3D bindings::irqreturn_IRQ_HANDLED,
-> +}
-> +
-> +/// Callbacks for an IRQ handler.
-> +pub trait Handler: Sync {
-> +    /// The actual handler function. As usual, sleeps are not allowed in=
- IRQ
-> +    /// context.
-> +    fn handle_irq(&self) -> IrqReturn;
-> +}
-> +
-> +impl<T: ?Sized + Handler + Send> Handler for Arc<T> {
-> +    fn handle_irq(&self) -> IrqReturn {
-> +        T::handle_irq(self)
-> +    }
-> +}
-> +
-> +impl<T: ?Sized + Handler, A: Allocator> Handler for Box<T, A> {
-> +    fn handle_irq(&self) -> IrqReturn {
-> +        T::handle_irq(self)
-> +    }
-> +}
-> +
-> +/// A registration of an IRQ handler for a given IRQ line.
-> +///
-> +/// # Examples
-> +///
-> +/// The following is an example of using `Registration`. It uses a
-> +/// [`SpinLock`](crate::sync::SpinLockIrq) to provide the interior mutab=
-ility.
-> +/// Note that Spinlocks are not safe to use in IRQ context as of now, bu=
-t may be
-> +/// in the future.
-
-Didn't your commit message mention SpinLockIrq?
-
-> +///
-> +/// ```
-> +/// use kernel::prelude::*;
-> +/// use kernel::irq::flags;
-> +/// use kernel::irq::Registration;
-> +/// use kernel::irq::IrqReturn;
-> +/// use kernel::sync::Arc;
-> +/// use kernel::sync::SpinLock;
-> +/// use kernel::c_str;
-> +/// use kernel::alloc::flags::GFP_KERNEL;
-> +///
-> +/// // Declare a struct that will be passed in when the interrupt fires.=
- The u32
-> +/// // merely serves as an example of some internal data.
-> +/// struct Data(SpinLock<u32>);
-> +///
-> +/// // [`handle_irq`] takes &self. This example illustrates interior
-> +/// // mutability can be used when share the data between process contex=
-t and IRQ
-> +/// // context.
-> +///
-> +/// type Handler =3D Data;
-> +///
-> +/// impl kernel::irq::request::Handler for Handler {
-> +///     // This is executing in IRQ context in some CPU. Other CPUs can =
-still
-> +///     // try to access to data.
-> +///     fn handle_irq(&self) -> IrqReturn {
-> +///         // We now have exclusive access to the data by locking the
-> +///         // SpinLock.
-> +///         let mut data =3D self.0.lock();
-> +///         *data +=3D 1;
-> +///
-> +///         IrqReturn::Handled
-> +///     }
-> +/// }
-> +///
-> +/// // This is running in process context.
-> +/// fn register_irq(irq: u32, handler: Handler) -> Result<Arc<Registrati=
-on<Handler>>> {
-> +///     let registration =3D Registration::register(irq, flags::SHARED, =
-c_str!("my-device"), handler);
-> +///
-> +///     // You can have as many references to the registration as you wa=
-nt, so
-> +///     // multiple parts of the driver can access it.
-> +///     let registration =3D Arc::pin_init(registration, GFP_KERNEL)?;
-> +///
-> +///     // The handler may be called immediately after the function abov=
-e
-> +///     // returns, possibly in a different CPU.
-> +///
-> +///     {
-> +///         // The data can be accessed from the process context too.
-> +///         let mut data =3D registration.handler().0.lock();
-> +///         *data =3D 42;
-> +///     }
-> +///
-> +///     Ok(registration)
-> +/// }
-> +///
-> +/// # Ok::<(), Error>(())
-> +///```
-> +///
-> +/// # Invariants
-> +///
-> +/// * We own an irq handler using `&self` as its private data.
-> +///
-> +#[pin_data(PinnedDrop)]
-> +pub struct Registration<T: Handler> {
-> +    irq: u32,
-> +    #[pin]
-> +    handler: T,
-> +    #[pin]
-> +    /// Pinned because we need address stability so that we can pass a p=
-ointer
-> +    /// to the callback.
-> +    _pin: PhantomPinned,
-> +}
-> +
-> +impl<T: Handler> Registration<T> {
-> +    /// Registers the IRQ handler with the system for the given IRQ numb=
-er. The
-> +    /// handler must be able to be called as soon as this function retur=
-ns.
-
-The first line of documentation should be a single sentence description
-of what the item does. It will get rendered next to it on the summary &
-search pages.
-
-What is meant by the second sentence? What about this phrasing?: "The
-handler might be called immediately after this function returns.".
-
-> +    pub fn register(
-> +        irq: u32,
-> +        flags: Flags,
-> +        name: &'static CStr,
-> +        handler: T,
-> +    ) -> impl PinInit<Self, Error> {
-> +        let closure =3D move |slot: *mut Self| {
-> +            // SAFETY: The slot passed to pin initializer is valid for w=
-riting.
-> +            unsafe {
-> +                slot.write(Self {
-> +                    irq,
-> +                    handler,
-> +                    _pin: PhantomPinned,
-> +                })
-> +            };
-> +
-> +            // SAFETY:
-> +            // - The callbacks are valid for use with request_irq.
-> +            // - If this succeeds, the slot is guaranteed to be valid un=
-til the
-> +            // destructor of Self runs, which will deregister the callba=
-cks
-> +            // before the memory location becomes invalid.
-> +            let res =3D to_result(unsafe {
-> +                bindings::request_irq(
-> +                    irq,
-> +                    Some(handle_irq_callback::<T>),
-> +                    flags.into_inner() as usize,
-> +                    name.as_char_ptr(),
-> +                    &*slot as *const _ as *mut core::ffi::c_void,
-
-Please don't use `as` casts when possible, instead use `.cast()` on
-pointers.
-
-> +                )
-> +            });
-> +
-> +            if res.is_err() {
-> +                // SAFETY: We are returning an error, so we can destroy =
-the slot.
-> +                unsafe { core::ptr::drop_in_place(addr_of_mut!((*slot).h=
-andler)) };
-> +            }
-> +
-> +            res
-> +        };
-> +
-> +        // SAFETY:
-> +        // - if this returns Ok, then every field of `slot` is fully
-> +        // initialized.
-> +        // - if this returns an error, then the slot does not need to re=
-main
-> +        // valid.
-> +        unsafe { pin_init_from_closure(closure) }
-
-Please don't use `pin_init_from_closure`, instead do this:
-
-    pin_init!(Self {
-        irq,
-        handler,
-        _pin: PhantomPinned
-    })
-    .pin_chain(|this| {
-        // SAFETY: TODO: correct FFI safety requirements
-        to_result(unsafe {
-            bindings::request_irq(...)
-        })
-    })
-
-The `pin_chain` function is exactly for this use-case, doing some
-operation that might fail after initializing & it will drop the value
-when the closure fails.
-
-> +    }
-> +
-> +    /// Returns a reference to the handler that was registered with the =
-system.
-> +    pub fn handler(&self) -> &T {
-> +        &self.handler
-> +    }
-> +}
-> +
-> +#[pinned_drop]
-> +impl<T: Handler> PinnedDrop for Registration<T> {
-> +    fn drop(self: Pin<&mut Self>) {
-> +        // SAFETY:
-> +        // - `self.irq` is the same as the one passed to `reques_irq`.
-> +        // -  `&self` was passed to `request_irq` as the cookie. It is
-> +        // guaranteed to be unique by the type system, since each call t=
-o
-> +        // `register` will return a different instance of `Registration`=
-.
-
-This is missing important information: `self` is `!Unpin` **and** was
-initializing using pin-init, so it occupied the same memory location for
-the entirety of its lifetime.
-
-> +        //
-> +        // Notice that this will block until all handlers finish executi=
-ng,
-> +        // i.e.: at no point will &self be invalid while the handler is =
-running.
-
-This is good to know!
-
-> +        unsafe { bindings::free_irq(self.irq, &*self as *const Self as *=
-mut core::ffi::c_void) };
-> +    }
-> +}
-> +
-> +/// The value that can be returned from `ThreadedHandler::handle_irq`.
-> +#[repr(u32)]
-> +pub enum ThreadedIrqReturn {
-> +    /// The interrupt was not from this device or was not handled.
-> +    None =3D bindings::irqreturn_IRQ_NONE,
-> +
-> +    /// The interrupt was handled by this device.
-> +    Handled =3D bindings::irqreturn_IRQ_HANDLED,
-> +
-> +    /// The handler wants the handler thread to wake up.
-
-How about "The handler wants the handler thread to take care of the
-interrupt." or is that incorrect?
-
-> +    WakeThread =3D bindings::irqreturn_IRQ_WAKE_THREAD,
-> +}
-> +
-> +/// Callbacks for a threaded IRQ handler.
-
-What is the difference to a normal one?
-
-> +pub trait ThreadedHandler: Sync {
-> +    /// The actual handler function. As usual, sleeps are not allowed in=
- IRQ
-> +    /// context.
-> +    fn handle_irq(&self) -> ThreadedIrqReturn;
-
-Why does this `handle_irq` function return a `ThreadedIrqReturn`...
-
-> +
-> +    /// The threaded handler function. This function is called from the =
-irq
-> +    /// handler thread, which is automatically created by the system.
-> +    fn thread_fn(&self) -> IrqReturn;
-
-... and this `thread_fn` an `IrqReturn`? I would have expected it to be
-the other way around.
-
-> +}
-> +
-> +impl<T: ?Sized + ThreadedHandler + Send> ThreadedHandler for Arc<T> {
-> +    fn handle_irq(&self) -> ThreadedIrqReturn {
-> +        T::handle_irq(self)
-> +    }
-> +
-> +    fn thread_fn(&self) -> IrqReturn {
-> +        T::thread_fn(self)
-> +    }
-> +}
-> +
-> +impl<T: ?Sized + ThreadedHandler, A: Allocator> ThreadedHandler for Box<=
-T, A> {
-> +    fn handle_irq(&self) -> ThreadedIrqReturn {
-> +        T::handle_irq(self)
-> +    }
-> +
-> +    fn thread_fn(&self) -> IrqReturn {
-> +        T::thread_fn(self)
-> +    }
-> +}
-> +
-> +/// A registration of a threaded IRQ handler for a given IRQ line.
-> +///
-> +/// Two callbacks are required: one to handle the IRQ, and one to handle=
- any
-> +/// other work in a separate thread.
-> +///
-> +/// The thread handler is only called if the IRQ handler returns `WakeTh=
-read`.
-
-Ah this is some information that should be on `ThreadedHandler`. (it
-also explains the difference in return types above)
-
-> +///
-> +/// # Examples
-> +///
-> +/// The following is an example of using `ThreadedRegistration`. It uses=
- a
-> +/// [`SpinLock`](crate::sync::SpinLockIrq) to provide the interior mutab=
-ility.
-> +/// Note that Spinlocks are not safe to use in IRQ context as of now, bu=
-t may be
-> +/// in the future.
-> +///
-> +/// ```
-> +/// use kernel::prelude::*;
-> +/// use kernel::irq::flags;
-> +/// use kernel::irq::ThreadedIrqReturn;
-> +/// use kernel::irq::ThreadedRegistration;
-> +/// use kernel::irq::IrqReturn;
-> +/// use kernel::sync::Arc;
-> +/// use kernel::sync::SpinLock;
-> +/// use kernel::alloc::flags::GFP_KERNEL;
-> +/// use kernel::c_str;
-> +///
-> +/// // Declare a struct that will be passed in when the interrupt fires.=
- The u32
-> +/// // merely serves as an example of some internal data.
-> +/// struct Data(SpinLock<u32>);
-> +///
-> +/// // [`handle_irq`] takes &self. This example illustrates interior
-> +/// // mutability can be used when share the data between process contex=
-t and IRQ
-> +/// // context.
-> +///
-> +/// type Handler =3D Data;
-> +///
-> +/// impl kernel::irq::request::ThreadedHandler for Handler {
-> +///     // This is executing in IRQ context in some CPU. Other CPUs can =
-still
-> +///     // try to access to data.
-> +///     fn handle_irq(&self) -> ThreadedIrqReturn {
-> +///         // We now have exclusive access to the data by locking the
-> +///         // SpinLockIrq.
-> +///         let mut data =3D self.0.lock();
-> +///         *data +=3D 1;
-> +///
-> +///         // By returning `WakeThread`, we indicate to the system that=
- the
-> +///         // thread function should be called. Otherwise, return
-> +///         // ThreadedIrqReturn::Handled.
-> +///         ThreadedIrqReturn::WakeThread
-> +///     }
-> +///
-> +///     // This will run (in a separate kthread) if and only if `handle_=
-irq`
-> +///     // returns `WakeThread`.
-> +///     fn thread_fn(&self) -> IrqReturn {
-> +///         // We now have exclusive access to the data by locking the S=
-pinLock.
-> +///         //
-> +///         // Ideally, we should disable interrupts while we are doing =
-this to
-> +///         // avoid deadlocks, but this is not currently possible.
-
-Would this be solved by SpinLockIrq?
-
----
-Cheers,
-Benno
-
-> +///         let mut data =3D self.0.lock();
-> +///         *data +=3D 1;
-> +///
-> +///         IrqReturn::Handled
-> +///     }
-> +/// }
 
