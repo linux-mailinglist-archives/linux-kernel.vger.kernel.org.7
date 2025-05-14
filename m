@@ -1,99 +1,158 @@
-Return-Path: <linux-kernel+bounces-646863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-646866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15F6FAB619E
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 06:35:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84142AB61A6
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 06:43:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C2B917A783C
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 04:32:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7D5F4A30FE
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 04:43:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14D1C1E3DCF;
-	Wed, 14 May 2025 04:33:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 595631F3BA4;
+	Wed, 14 May 2025 04:43:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hJhNeF/u"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oMExfkS2"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B2051DFDE;
-	Wed, 14 May 2025 04:33:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA39D1CFBC;
+	Wed, 14 May 2025 04:43:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747197210; cv=none; b=nV60xmCwekeQuUvhg3e1Aa96i4LILObo9tWeuPWO/LEmqrcxBi8CAR5OMGBFWfvZQVvWHYkfODFFacGjl1JOCsI7HizadCAGlUOZFRdTpvAdS7bEPxQ6/z8IoikcE8eaRrezw/iq5YosTfsfMEOMuNKMcOOGvIEfK3yMCAdyNmc=
+	t=1747197823; cv=none; b=sOCjPdUsvqAqTr4cz0THA0hBAomlHVD/XKSFqPF40k4OHY4NLQYKvvxAuHH5D7UGUydk1PpoE4KL2I8m2/Ni1bdamTqqDDwj5eUAgFXlRUWdbNfUXyUPlKjKAMsCr4Irn6yIMD+MFK4P4FlSOdD+2lFw+1mB+J7jMs2PRx/quA8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747197210; c=relaxed/simple;
-	bh=rN85irsQW9HlYsGJzv0G1rv1gmgbe7VjR8v/qSXPP+U=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=Sy9MYFPIZTUg0lC3sMMDIFU26p0R1nwAqbKdHd/NtCCkKTdd9vj9Zds9+r/VPkDzleVbtXeslU3y2jxVVshO0LnbZe9UWoac3YFxEqfC1kFfx/qYG0+iRsz6aQwjCtX5hUWPWLWu8Iag3/PexjpnCelFGMQhqrYz3nVcgyQr75M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hJhNeF/u; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16EE1C4CEED;
-	Wed, 14 May 2025 04:33:28 +0000 (UTC)
+	s=arc-20240116; t=1747197823; c=relaxed/simple;
+	bh=VwSIJA+wb/j9BMRwnFIEhKMNbP6NKUJalfyZ4f/bLXI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=nTmKYTgiTfto+AQf7n1Nhj/o/d+28VBttqYrAMfrnIxY5zeyaDxjVRvVtXieUcvPRcz6IlMu48Tm5PvJHAm9A2i8XAkh/7TsGsfkNg936ik/pdBKq4tZkY0mdrVgBFwYNYeF6xJ/U2yZ3sKQ5ekSvddzpr7LPrGLIyTpNxdcVZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oMExfkS2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3E03C4CEED;
+	Wed, 14 May 2025 04:43:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747197209;
-	bh=rN85irsQW9HlYsGJzv0G1rv1gmgbe7VjR8v/qSXPP+U=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=hJhNeF/udnWhVaxBgXSG5/Wz8VTHPuQkci3zz2w2BVsSF+QaEDmQEaRb/8aBxhzeR
-	 ismZtWtMjoEFQ/V93QrIooirl62b2iePYy0xA7pBENBncS0tQTAW28OhNxYtm4CFgk
-	 0OquqEiTOrVbKIsifS9s/IxA0pF0bKMWDBFkZWEb/wglNlsyy6x6x4aqAj7PPuGgi+
-	 kKJOKxxAQnR5oKdjp4vABI9F6VAdCPfVIE2aks8NvP+NNCwGV4oI600FJZnnbfWluN
-	 ujWKKRxe2D3K9TH9l53ko9jgmuTKNEmZl3W+2odQEidaZBNV0M8oCHNLMjKxNkCx9s
-	 cZ2eoY6ttaoAA==
-Date: Wed, 14 May 2025 13:33:27 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH] tracing: ring_buffer: Rewind persistent ring buffer
- when reboot
-Message-Id: <20250514133327.3a6382e5aa0e9d5533fe690c@kernel.org>
-In-Reply-To: <20250513203647.524b1331@gandalf.local.home>
-References: <174709742769.1964496.18203163435305117893.stgit@mhiramat.tok.corp.google.com>
-	<20250513203237.0e7ff662@gandalf.local.home>
-	<20250513203647.524b1331@gandalf.local.home>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=k20201202; t=1747197823;
+	bh=VwSIJA+wb/j9BMRwnFIEhKMNbP6NKUJalfyZ4f/bLXI=;
+	h=Date:From:To:Cc:Subject:From;
+	b=oMExfkS28DDprxPjeb/zD7ZImjE//XG+3/r01BwASKFKzpyEqf8o/7g5m6KfmuRZ6
+	 +IHt4YYJnuLlUaHHqj5T7+PSwds2BmP0GE87ddTp97lIBF0+327wtrjsh95q63REjg
+	 liPOBMoWbUujlcy4dQifr+r6fEXNCYxW+PaBWdKA9K9isrlX/VgFDjzg3CR84s0/KQ
+	 3kGh6b4w0mcGthJMiEM5a1Utn/ijo99PcXol1JFJDvPXZr1npfRl/oibH/0SmpTOB1
+	 2a23Aw9AXS1PaUizpkhNnLKTq/Nm2QsVaQgpSeT3shsOXcAn1eQTxSHaLCSu/KHevk
+	 A/QkuPsPWBCdA==
+Date: Wed, 14 May 2025 00:43:41 -0400
+From: Tejun Heo <tj@kernel.org>
+To: Johannes Weiner <hannes@cmpxchg.org>,
+	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>
+Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org
+Subject: [PATCH 1/3 cgroup/for-6.16] cgroup: Minor reorganization of
+ cgroup_create()
+Message-ID: <aCQfffBvNpW3qMWN@mtj.duckdns.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Tue, 13 May 2025 20:36:47 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
+cgroup_bpf init and exit handling will be moved to a notifier chain. In
+prepartion, reorganize cgroup_create() a bit so that the new cgroup is fully
+initialized before any outside changes are made.
 
-> On Tue, 13 May 2025 20:32:37 -0400
-> Steven Rostedt <rostedt@goodmis.org> wrote:
-> 
-> > @@ -9628,6 +9636,14 @@ static void setup_trace_scratch(struct trace_array *tr,
-> >  
-> >  	/* Scan modules to make text delta for modules. */
-> >  	module_for_each_mod(make_mod_delta, tr);
-> > +
-> > +	/* Set trace_clock as the same of the previous boot. */
-> > +	if (tscratch->clock_id != tr->clock_id) {
-> > +		if (tracing_set_clock(tr, trace_clocks[tscratch->clock_id].name) < 0) {
-> > +			pr_info("the previous trace_clock info is not valid.");
-> > +			goto reset;
-> > +		}
-> > +	}
-> >  	return;
-> >   reset:
-> >  	/* Invalid trace modules */
-> 
-> 
-> Hmm, somehow I got your other patch in here :-D
+- cgrp->ancestors[] initialization and the hierarchical nr_descendants and
+  nr_frozen_descendants updates were in the same loop. Separate them out and
+  do the former earlier and do the latter later.
 
-Oops, good catch! I mixed other patch there :-(
+- Relocate cgroup_bpf_inherit() call so that it's after all cgroup
+  initializations are complete.
 
+No visible behavior changes expected.
 
-> 
-> -- Steve
+Signed-off-by: Tejun Heo <tj@kernel.org>
+---
+ kernel/cgroup/cgroup.c |   48 ++++++++++++++++++++++++------------------------
+ 1 file changed, 24 insertions(+), 24 deletions(-)
 
-
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+--- a/kernel/cgroup/cgroup.c
++++ b/kernel/cgroup/cgroup.c
+@@ -5684,7 +5684,7 @@ static struct cgroup *cgroup_create(stru
+ 	struct cgroup_root *root = parent->root;
+ 	struct cgroup *cgrp, *tcgrp;
+ 	struct kernfs_node *kn;
+-	int level = parent->level + 1;
++	int i, level = parent->level + 1;
+ 	int ret;
+ 
+ 	/* allocate the cgroup and its ID, 0 is reserved for the root */
+@@ -5720,11 +5720,8 @@ static struct cgroup *cgroup_create(stru
+ 	if (ret)
+ 		goto out_kernfs_remove;
+ 
+-	if (cgrp->root == &cgrp_dfl_root) {
+-		ret = cgroup_bpf_inherit(cgrp);
+-		if (ret)
+-			goto out_psi_free;
+-	}
++	for (tcgrp = cgrp; tcgrp; tcgrp = cgroup_parent(tcgrp))
++		cgrp->ancestors[tcgrp->level] = tcgrp;
+ 
+ 	/*
+ 	 * New cgroup inherits effective freeze counter, and
+@@ -5742,24 +5739,6 @@ static struct cgroup *cgroup_create(stru
+ 		set_bit(CGRP_FROZEN, &cgrp->flags);
+ 	}
+ 
+-	spin_lock_irq(&css_set_lock);
+-	for (tcgrp = cgrp; tcgrp; tcgrp = cgroup_parent(tcgrp)) {
+-		cgrp->ancestors[tcgrp->level] = tcgrp;
+-
+-		if (tcgrp != cgrp) {
+-			tcgrp->nr_descendants++;
+-
+-			/*
+-			 * If the new cgroup is frozen, all ancestor cgroups
+-			 * get a new frozen descendant, but their state can't
+-			 * change because of this.
+-			 */
+-			if (cgrp->freezer.e_freeze)
+-				tcgrp->freezer.nr_frozen_descendants++;
+-		}
+-	}
+-	spin_unlock_irq(&css_set_lock);
+-
+ 	if (notify_on_release(parent))
+ 		set_bit(CGRP_NOTIFY_ON_RELEASE, &cgrp->flags);
+ 
+@@ -5768,7 +5747,28 @@ static struct cgroup *cgroup_create(stru
+ 
+ 	cgrp->self.serial_nr = css_serial_nr_next++;
+ 
++	if (cgrp->root == &cgrp_dfl_root) {
++		ret = cgroup_bpf_inherit(cgrp);
++		if (ret)
++			goto out_psi_free;
++	}
++
+ 	/* allocation complete, commit to creation */
++	spin_lock_irq(&css_set_lock);
++	for (i = 0; i < level; i++) {
++		tcgrp = cgrp->ancestors[i];
++		tcgrp->nr_descendants++;
++
++		/*
++		 * If the new cgroup is frozen, all ancestor cgroups get a new
++		 * frozen descendant, but their state can't change because of
++		 * this.
++		 */
++		if (cgrp->freezer.e_freeze)
++			tcgrp->freezer.nr_frozen_descendants++;
++	}
++	spin_unlock_irq(&css_set_lock);
++
+ 	list_add_tail_rcu(&cgrp->self.sibling, &cgroup_parent(cgrp)->self.children);
+ 	atomic_inc(&root->nr_cgrps);
+ 	cgroup_get_live(parent);
 
