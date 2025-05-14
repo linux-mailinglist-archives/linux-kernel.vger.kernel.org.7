@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-647932-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-647935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 514EEAB6F94
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 17:22:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7852AAB6F98
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 17:23:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CBA174E1B7D
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 15:18:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 773A94E1ED4
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 15:18:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40087288526;
-	Wed, 14 May 2025 15:14:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA01A289839;
+	Wed, 14 May 2025 15:14:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IAhDzjbJ"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Snfak2FR"
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE20428689C;
-	Wed, 14 May 2025 15:14:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B09282882D6;
+	Wed, 14 May 2025 15:14:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747235690; cv=none; b=UNmWTmCzuht3Veixx1Mv3PaAXLNyRPbC0cND7YZrpeN3cM8ACLktGYoxU2cg12aPKdDOudpLpk2ODLtBBoQa81fDeeTqO0qJjrue+koVd1VmbhHW9ZsFOoeDtBq9APm0ybl7nHoMl+fVX/tGMmm+RBgqe8GNqKovHZuS19bU4BA=
+	t=1747235692; cv=none; b=UFRdDmaT6ENc0wq1OnewGw9HaaWnFkJueIPmZKhia3ANo0AVDO/v+08U2m62Ks9nJUVbn0FI6TXc/SBHcVo4H4l4dL/IPZRSCWEWPsBtSYBQZA1mfZeYRUZ+4lFnYl3ugh0LElgJV2fGl4SmIjOTXb4xokHqYNU6TIgzZT9TqQI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747235690; c=relaxed/simple;
-	bh=jtzi1Dswis+7E8s5xuD4Q5RcegCZpv4/8lL3qUWjHa0=;
+	s=arc-20240116; t=1747235692; c=relaxed/simple;
+	bh=NhpvDIFF3RCGCMgFlua6GwCE5WabCIdXhqFSclRzhlI=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=leICoVuFKNNz66Fqy1A/+qvLhXOyVpDSi13+cqLvz0c9GyrnX4gsvz4puFlcK7hokYYmhfVQyp/mo0AkRtjn0zbbLH0uLomuikCaMxA833jeT7I9YPRIfUqNut1FXOFHlFJr12cyE9cjNHZvIQgDuFju/Wb/o16dH+kJZFp2EY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IAhDzjbJ; arc=none smtp.client-ip=192.198.163.17
+	 MIME-Version; b=Z7fLj/lw0BwFZamsKJlFrY7hoWQTjtinPMOjxDs5LzrKZeKrg+RZzhx9+XEFKncxHAQkKWoS1AqB0HeoMA4K7eBD1LrlTZ5kHMOQq/4Hpqu7UpyWaN96FNHRkK5cLVJJP3wSbx6Fe8AUDMHFIJjvfDT+Yrc6I9MOZHoav+isxoc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Snfak2FR; arc=none smtp.client-ip=192.198.163.17
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1747235689; x=1778771689;
+  t=1747235691; x=1778771691;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=jtzi1Dswis+7E8s5xuD4Q5RcegCZpv4/8lL3qUWjHa0=;
-  b=IAhDzjbJlfsKjjqTPw4QRvxLpUzo1x+8WHhQXQBUNis7ZIkwKAEl44CB
-   x/NLR0JpDNga+UTVn+6qTDV95MsofGQY8rN9IwLe2Wsl9rNdbRwRlPKt+
-   LsiTXtdGTI3MXokg2E60FMFegd+kJgX7MKfCBGqj00JTUndvzp3f0CuEL
-   VvGfuRFGXBdcLPziI5Wsg1okl18qkMuQXcUGNSKLIyLnJ0HbdWpL51jOx
-   +h2i2bSS7LarD3mqi0tPOkVsAopa5oCiacjJdou3Br69gN63UbddIRo+B
-   k3dWadmpamq9BqPGLrDubwQCTGbgOxq/r+XKsjQRtAssRvGoLdSf3fRp2
+  bh=NhpvDIFF3RCGCMgFlua6GwCE5WabCIdXhqFSclRzhlI=;
+  b=Snfak2FRQTTNEv02yZuXd9UI0Rnov3u8vn40QYa9crEgQlPeTsxcOt4D
+   FYz03DTBuWT9vzVbHRY3ctypNUc6pwt/RTcBjs7br0QT/cY9L4B5Clij2
+   nbxJhCAF4RrJ/SCwdVQzFyh1QtFAk2fvRygFUHxm2UMwvF1mvOPae5Xxw
+   5pMt/AoirExAGhAjwrXLWCNjC/uSoVBMu38vKdBMHjVGiEeBz/+KJ8IzT
+   xJA7YicXivuynRjCnil68LBNpUl9t0+iRsywzVdKq/YkrvbOpDCmF87Pa
+   vMnWW9A5ItYipioFSpw29sNTj+Vw1+3lkAhNWrhYNqaBr9j4BpAeypqar
    w==;
-X-CSE-ConnectionGUID: qYIT3d0zTTGYBKQI8zJajQ==
-X-CSE-MsgGUID: xrSx1r5eTxqjXAWCd3Pzqw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11433"; a="49072758"
+X-CSE-ConnectionGUID: rxRJj5EgRy6AzG7fUlzwIA==
+X-CSE-MsgGUID: dbC7JQHiRR2SVNahh+Uw9w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11433"; a="49072766"
 X-IronPort-AV: E=Sophos;i="6.15,288,1739865600"; 
-   d="scan'208";a="49072758"
+   d="scan'208";a="49072766"
 Received: from fmviesa005.fm.intel.com ([10.60.135.145])
   by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 May 2025 08:14:46 -0700
-X-CSE-ConnectionGUID: b9U4YqtdR0+x9gn5tnQ9/Q==
-X-CSE-MsgGUID: BgFcYL/QQCa57Xepg6UOjg==
+X-CSE-ConnectionGUID: Z7MrihvETrqWO9x0Bqm68Q==
+X-CSE-MsgGUID: mwVaS7OrS2eDOd8QyPEg6g==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.15,288,1739865600"; 
-   d="scan'208";a="142939171"
+   d="scan'208";a="142939173"
 Received: from kanliang-dev.jf.intel.com ([10.165.154.102])
-  by fmviesa005.fm.intel.com with ESMTP; 14 May 2025 08:14:45 -0700
+  by fmviesa005.fm.intel.com with ESMTP; 14 May 2025 08:14:46 -0700
 From: kan.liang@linux.intel.com
 To: peterz@infradead.org,
 	mingo@redhat.com,
@@ -69,10 +69,10 @@ Cc: eranian@google.com,
 	ctshao@google.com,
 	tmricht@linux.ibm.com,
 	Kan Liang <kan.liang@linux.intel.com>,
-	Oliver Upton <oliver.upton@linux.dev>
-Subject: [PATCH V2 08/15] perf/apple_m1: Remove driver-specific throttle support
-Date: Wed, 14 May 2025 08:13:54 -0700
-Message-Id: <20250514151401.2547932-9-kan.liang@linux.intel.com>
+	linux-alpha@vger.kernel.org
+Subject: [PATCH V2 09/15] alpha/perf: Remove driver-specific throttle support
+Date: Wed, 14 May 2025 08:13:55 -0700
+Message-Id: <20250514151401.2547932-10-kan.liang@linux.intel.com>
 X-Mailer: git-send-email 2.38.1
 In-Reply-To: <20250514151401.2547932-1-kan.liang@linux.intel.com>
 References: <20250514151401.2547932-1-kan.liang@linux.intel.com>
@@ -94,25 +94,33 @@ event_limit. It already does an inatomic event disable. The pmu->stop
 is not required either.
 
 Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
-Cc: Oliver Upton <oliver.upton@linux.dev>
+Cc: linux-alpha@vger.kernel.org
 ---
- drivers/perf/apple_m1_cpu_pmu.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ arch/alpha/kernel/perf_event.c | 11 +++--------
+ 1 file changed, 3 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/perf/apple_m1_cpu_pmu.c b/drivers/perf/apple_m1_cpu_pmu.c
-index df9a28ba69dc..81b6f1a62349 100644
---- a/drivers/perf/apple_m1_cpu_pmu.c
-+++ b/drivers/perf/apple_m1_cpu_pmu.c
-@@ -474,8 +474,7 @@ static irqreturn_t m1_pmu_handle_irq(struct arm_pmu *cpu_pmu)
- 		if (!armpmu_event_set_period(event))
- 			continue;
+diff --git a/arch/alpha/kernel/perf_event.c b/arch/alpha/kernel/perf_event.c
+index 1f0eb4f25c0f..a3eaab094ece 100644
+--- a/arch/alpha/kernel/perf_event.c
++++ b/arch/alpha/kernel/perf_event.c
+@@ -852,14 +852,9 @@ static void alpha_perf_event_irq_handler(unsigned long la_ptr,
+ 	alpha_perf_event_update(event, hwc, idx, alpha_pmu->pmc_max_period[idx]+1);
+ 	perf_sample_data_init(&data, 0, hwc->last_period);
  
--		if (perf_event_overflow(event, &data, regs))
--			m1_pmu_disable_event(event);
+-	if (alpha_perf_event_set_period(event, hwc, idx)) {
+-		if (perf_event_overflow(event, &data, regs)) {
+-			/* Interrupts coming too quickly; "throttle" the
+-			 * counter, i.e., disable it for a little while.
+-			 */
+-			alpha_pmu_stop(event, 0);
+-		}
+-	}
++	if (alpha_perf_event_set_period(event, hwc, idx))
 +		perf_event_overflow(event, &data, regs);
- 	}
++
+ 	wrperfmon(PERFMON_CMD_ENABLE, cpuc->idx_mask);
  
- 	cpu_pmu->start(cpu_pmu);
+ 	return;
 -- 
 2.38.1
 
