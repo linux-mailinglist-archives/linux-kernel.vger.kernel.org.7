@@ -1,117 +1,152 @@
-Return-Path: <linux-kernel+bounces-647170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-647129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 926A1AB654A
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 10:07:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C097AB64D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 09:50:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2828C178ED2
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 08:07:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 617CC7A208A
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 07:48:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E226821C190;
-	Wed, 14 May 2025 08:07:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ocq3dWFR";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="kh3P5WI+"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FCE520B7FB;
+	Wed, 14 May 2025 07:50:01 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C77B521B9F2;
-	Wed, 14 May 2025 08:07:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 607B91E503C;
+	Wed, 14 May 2025 07:49:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747210026; cv=none; b=SRSRNaoSPkbnr67R0H/IRqJ1FjQUmoTwC1N5Sz5vFlIWJPkN+d77Bc9LLleEFe+DF+ZPaxFhlSlGTSspXjsx473ZDVyn7AOQIVMFHyFaeF4sl0T5LTtlZuLvEBlNAlpT23c0P9lx3Zg2uVGKA+9n56d8Mg2t5R+hexylb1RojuM=
+	t=1747209000; cv=none; b=J7SnfTpsVzY1mCYTwcmojY4nwSoRZZcmE4ydo/pdNcV82dcRhQH/uOXfM88hMNd5vSjcW9IE0+1gvFI6HX7S7EPzZyTYr3mjtQRVtG7s54uARLgriSrFipOO1hMeg7Q6CeumWuvHzjpPqt4Lw6A3aakrBshfXA07yapbOJnHOeg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747210026; c=relaxed/simple;
-	bh=le9TmmWe3Ep/fZUXcz1gf7ffKazv9o/OGUlbZDNKG/Y=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=GZ2QapwjbMW5IzcC7beLdX/9j1kI2vnuXG6A/5W4bpSGee2y7FaATPQekGsTBtsgIaWMvyL3Q5CzVw4oeIba19iztoNhDek2cJVQfSEx8n9RXIdkYnCYm023qodjtCALy5vuhZWoglY/B5X0Cpazwru3/OV73dhyHUvfHkF13U4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ocq3dWFR; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=kh3P5WI+; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 14 May 2025 08:07:02 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1747210023;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=F/5KONtxvJB1hDJGMEVPoPD+UGgoVOBto1ix3KplgQA=;
-	b=ocq3dWFRX4hbycngcCUhc2zpMvvwhE0mcimKAYmu3O/ZwaT0FF7dTyyUqdBH5dUE5X+eMP
-	UpCECSuyWBNq3n4fZVMYMmhcosbn3MQLnqd01vvStp5PNYquscapIPmXo1HoP0y70FRS4W
-	OcyVHBkD7+aPTJ+59MccjF71b87YR5x9sGEko/lXfwTd4M9YcIR8deoY63JtTjtnMFwlWG
-	UPkRvjkMX2u61IFZ+/V2JJntcGaGVzOOuR8RWnDB0hhsiWCIDg6tOiTPenLF5gXlVxcaEp
-	+fLbOvZOpWrx3M+3EoJtOM82Xj8wZ9wkR8eOQ6v4gc/9lP628rbv9emf1WUQJg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1747210023;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=F/5KONtxvJB1hDJGMEVPoPD+UGgoVOBto1ix3KplgQA=;
-	b=kh3P5WI+LEEuVlZzo3ld3dMvBRepMYbiysPo0mU7BFJ2VImhrYsFiO4r1UKwv/FqG2v8J/
-	D0VTliuN2Svl0iDA==
-From: "tip-bot2 for Shivank Garg" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/cleanups] x86/mm/pat: Fix W=1 build kernel-doc warning
-Cc: Shivank Garg <shivankg@amd.com>, Ingo Molnar <mingo@kernel.org>,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250514062637.3287779-3-shivankg@amd.com>
-References: <20250514062637.3287779-3-shivankg@amd.com>
+	s=arc-20240116; t=1747209000; c=relaxed/simple;
+	bh=oi5Bc75/tDYrWnhLecmkWZAtXFeghVW3wUO9i/tb7NI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Bf0cMck1Uc3EbNduARoxxeGJdvsLlPFIqeuHR5dOrnU0ApJHVbnJEO0QxbwNPe1I/E8e4BgnAIUx1mjQtB1f+eFyJJOSBFwdJrU9CE2tSZKzfsO/p4vIujyigpaegw3dOMnW3XeobAH2PZGpFczPeQhMo6wFaWSIKyDUwjlttPk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Zy5402Bt6zyQhn;
+	Wed, 14 May 2025 15:45:36 +0800 (CST)
+Received: from kwepemg500017.china.huawei.com (unknown [7.202.181.81])
+	by mail.maildlp.com (Postfix) with ESMTPS id C3D64180330;
+	Wed, 14 May 2025 15:49:54 +0800 (CST)
+Received: from huawei.com (10.175.127.227) by kwepemg500017.china.huawei.com
+ (7.202.181.81) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 14 May
+ 2025 15:49:53 +0800
+From: Li Lingfeng <lilingfeng3@huawei.com>
+To: <trondmy@kernel.org>, <anna@kernel.org>, <jlayton@kernel.org>,
+	<bcodding@redhat.com>
+CC: <linux-nfs@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<yukuai1@huaweicloud.com>, <houtao1@huawei.com>, <yi.zhang@huawei.com>,
+	<yangerkun@huawei.com>, <lilingfeng@huaweicloud.com>,
+	<lilingfeng3@huawei.com>
+Subject: [PATCH v3] nfs: handle failure of nfs_get_lock_context in unlock path
+Date: Wed, 14 May 2025 16:08:39 +0800
+Message-ID: <20250514080839.298300-1-lilingfeng3@huawei.com>
+X-Mailer: git-send-email 2.31.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174721002225.406.1304432824733939534.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemg500017.china.huawei.com (7.202.181.81)
 
-The following commit has been merged into the x86/cleanups branch of tip:
+When memory is insufficient, the allocation of nfs_lock_context in
+nfs_get_lock_context() fails and returns -ENOMEM. If we mistakenly treat
+an nfs4_unlockdata structure (whose l_ctx member has been set to -ENOMEM)
+as valid and proceed to execute rpc_run_task(), this will trigger a NULL
+pointer dereference in nfs4_locku_prepare. For example:
 
-Commit-ID:     bd6afa43eee175ba146f6f9a27d6d24eeaab0a45
-Gitweb:        https://git.kernel.org/tip/bd6afa43eee175ba146f6f9a27d6d24eeaab0a45
-Author:        Shivank Garg <shivankg@amd.com>
-AuthorDate:    Wed, 14 May 2025 06:26:40 
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Wed, 14 May 2025 09:58:53 +02:00
+BUG: kernel NULL pointer dereference, address: 000000000000000c
+PGD 0 P4D 0
+Oops: Oops: 0000 [#1] SMP PTI
+CPU: 15 UID: 0 PID: 12 Comm: kworker/u64:0 Not tainted 6.15.0-rc2-dirty #60
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-2.fc40
+Workqueue: rpciod rpc_async_schedule
+RIP: 0010:nfs4_locku_prepare+0x35/0xc2
+Code: 89 f2 48 89 fd 48 c7 c7 68 69 ef b5 53 48 8b 8e 90 00 00 00 48 89 f3
+RSP: 0018:ffffbbafc006bdb8 EFLAGS: 00010246
+RAX: 000000000000004b RBX: ffff9b964fc1fa00 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: fffffffffffffff4 RDI: ffff9ba53fddbf40
+RBP: ffff9ba539934000 R08: 0000000000000000 R09: ffffbbafc006bc38
+R10: ffffffffb6b689c8 R11: 0000000000000003 R12: ffff9ba539934030
+R13: 0000000000000001 R14: 0000000004248060 R15: ffffffffb56d1c30
+FS: 0000000000000000(0000) GS:ffff9ba5881f0000(0000) knlGS:00000000
+CS: 0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000000000000000c CR3: 000000093f244000 CR4: 00000000000006f0
+Call Trace:
+ <TASK>
+ __rpc_execute+0xbc/0x480
+ rpc_async_schedule+0x2f/0x40
+ process_one_work+0x232/0x5d0
+ worker_thread+0x1da/0x3d0
+ ? __pfx_worker_thread+0x10/0x10
+ kthread+0x10d/0x240
+ ? __pfx_kthread+0x10/0x10
+ ret_from_fork+0x34/0x50
+ ? __pfx_kthread+0x10/0x10
+ ret_from_fork_asm+0x1a/0x30
+ </TASK>
+Modules linked in:
+CR2: 000000000000000c
+---[ end trace 0000000000000000 ]---
 
-x86/mm/pat: Fix W=1 build kernel-doc warning
+Free the allocated nfs4_unlockdata when nfs_get_lock_context() fails and
+return NULL to terminate subsequent rpc_run_task, preventing NULL pointer
+dereference.
 
-Building the kernel with W=1 generates the following warning:
-
-  arch/x86/mm/pat/memtype.c:692: warning: Function parameter or struct member 'pfn' not described in 'pat_pfn_immune_to_uc_mtrr'
-
-Add missing parameter documentation to fix the kernel-doc warning.
-
-Signed-off-by: Shivank Garg <shivankg@amd.com>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Link: https://lore.kernel.org/r/20250514062637.3287779-3-shivankg@amd.com
+Fixes: f30cb757f680 ("NFS: Always wait for I/O completion before unlock")
+Link: https://lore.kernel.org/all/21817f2c-2971-4568-9ae4-1ccc25f7f1ef@huawei.com/
+Signed-off-by: Li Lingfeng <lilingfeng3@huawei.com>
 ---
- arch/x86/mm/pat/memtype.c | 1 +
- 1 file changed, 1 insertion(+)
+Changes in v3:
+  Handle the error case first.
+ fs/nfs/nfs4proc.c | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/mm/pat/memtype.c b/arch/x86/mm/pat/memtype.c
-index 72d8cbc..51635ae 100644
---- a/arch/x86/mm/pat/memtype.c
-+++ b/arch/x86/mm/pat/memtype.c
-@@ -682,6 +682,7 @@ static enum page_cache_mode lookup_memtype(u64 paddr)
- /**
-  * pat_pfn_immune_to_uc_mtrr - Check whether the PAT memory type
-  * of @pfn cannot be overridden by UC MTRR memory type.
-+ * @pfn: The page frame number to check.
-  *
-  * Only to be called when PAT is enabled.
-  *
+diff --git a/fs/nfs/nfs4proc.c b/fs/nfs/nfs4proc.c
+index 970f28dbf253..d51381bd91a9 100644
+--- a/fs/nfs/nfs4proc.c
++++ b/fs/nfs/nfs4proc.c
+@@ -7074,18 +7074,28 @@ static struct nfs4_unlockdata *nfs4_alloc_unlockdata(struct file_lock *fl,
+ 	struct nfs4_unlockdata *p;
+ 	struct nfs4_state *state = lsp->ls_state;
+ 	struct inode *inode = state->inode;
++	struct nfs_lock_context *l_ctx;
+ 
+ 	p = kzalloc(sizeof(*p), GFP_KERNEL);
+ 	if (p == NULL)
+ 		return NULL;
++	l_ctx = nfs_get_lock_context(ctx);
++	if (IS_ERR(l_ctx)) {
++		kfree(p);
++		return NULL;
++	}
+ 	p->arg.fh = NFS_FH(inode);
+ 	p->arg.fl = &p->fl;
+ 	p->arg.seqid = seqid;
+ 	p->res.seqid = seqid;
+ 	p->lsp = lsp;
+ 	/* Ensure we don't close file until we're done freeing locks! */
++	/*
++	 * Since the caller holds a reference to ctx, the refcount must be non-zero.
++	 * Therefore, error handling for failed ctx acquisition is unnecessary here.
++	 */
+ 	p->ctx = get_nfs_open_context(ctx);
+-	p->l_ctx = nfs_get_lock_context(ctx);
++	p->l_ctx = l_ctx;
+ 	locks_init_lock(&p->fl);
+ 	locks_copy_lock(&p->fl, fl);
+ 	p->server = NFS_SERVER(inode);
+-- 
+2.31.1
+
 
