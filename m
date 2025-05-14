@@ -1,59 +1,58 @@
-Return-Path: <linux-kernel+bounces-648523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-648525-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40DA2AB783C
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 23:55:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E5DDAB7841
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 23:56:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6260A86621D
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 21:54:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F17B1BA5CF6
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 21:56:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4DCE223DC8;
-	Wed, 14 May 2025 21:55:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B4C4223DC6;
+	Wed, 14 May 2025 21:55:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dO+hI2tE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W8MVsKQk"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 244C8223316;
-	Wed, 14 May 2025 21:55:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C59D41FC7CB;
+	Wed, 14 May 2025 21:55:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747259708; cv=none; b=YjbYQ39tm2gEE4laqVe6TMH1ykQSfQZ8CGnxctlqqF3jka5ViODf5qClJYvq6juHGlVvAyYvLUsgCdNkLyEwGqkO8KRuH7S1vC7YpDFTUoRmH0tJRwNFDEgGy2e5MV439yoDQYPsq+gHdbgnEnSWo8LWq9wMuCAaTPw12gK5INc=
+	t=1747259758; cv=none; b=c01bYTcTIPO4FWjyKuXc7C0h0VlrnFl6g91k5K7NsZkYHHRkMX9K53EDMkJ4n7wbLyci0Xhh2RwicbZlJM/DKiRHzSayT+DLHS0qZzh/1tlYhku3Iq2K1TE+A+ZlIltdwZAh9Undsat2PIC2XNeVOeACXyWBqUFcGUyToCgzLfU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747259708; c=relaxed/simple;
-	bh=WFYBeOec3t7SioFHLVzxmxxsHULVEJxgk5kZ80NzcnM=;
+	s=arc-20240116; t=1747259758; c=relaxed/simple;
+	bh=B9AnOxBtfLbjXRuIemT0SPiTgpAkH53dyjMLTG03uJ4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VMzXGqGzwrlrDe4XBNB5ykoa7YOKOA7HD0ElEZ4vQJ8ihDdF9TDgShiQCOFeU79BGxf00diyZsEZSySLZUf04CoeB/PLwekDeSZ0LuWHB1X7FNAVqW5+eN3s8MtHqdBr00rR29Mvv+sIB63D6zflX6hi4m/O4QiXTYbgsDESM6I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dO+hI2tE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D291C4CEE3;
-	Wed, 14 May 2025 21:55:07 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=G4l6Qn33bMRu6bc2vA8tbg4/DxJ4ELa91Gx+UnLMeNs+HP7m46Rv5NwOek80ETh2FmK+lRkpZXTwMHLCG4193JYGwgsdMAJGAY5oLb8SzLhPuwZQhNW5/gkmqYsk64xzINTXbU+RDpr+2EmD4c4Op/VjaIamDXUiWGdePpjDNn0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W8MVsKQk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F3FBC4CEE3;
+	Wed, 14 May 2025 21:55:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747259707;
-	bh=WFYBeOec3t7SioFHLVzxmxxsHULVEJxgk5kZ80NzcnM=;
+	s=k20201202; t=1747259758;
+	bh=B9AnOxBtfLbjXRuIemT0SPiTgpAkH53dyjMLTG03uJ4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dO+hI2tEfw/gW14U8gMv5GQl+3yhV8wU6pACy1xsDF3OQ5SK5HWUU4x9vo3KAzJRA
-	 8XODBFFXsgh7foaQmf68I6ykga+HtDbcduy17NVcla6LRjMGCu0o9i4uX4u42OohKt
-	 QRA/RuMIfxFsRE49VkSbxCURFslCGtTHeyxJRGe6X5Vf6gYgFBjQfXtI5HfRxrN78P
-	 DQuZlNtTI7Q7cIU5GrwCYlPvdeHYr6KDZY9qmSgs7SyoHF5i55yemMDzCMqiDCahwv
-	 OY5oF/UMj4sda8OL61jiHYyFW5CWkqZl5CHTRkmSIuPMzkNPCwdv7e2OLFfQtgeL5M
-	 kbDxbp33BooGA==
-Date: Wed, 14 May 2025 16:55:05 -0500
+	b=W8MVsKQkHOYg7EXRVD3ZDrSrO2k+hAlBFUJKCHvJ2fV+xipeA0DOsJnGHNQC06Bym
+	 mDkzxwrtQgzVIr/O546cxLfSxSfhB6PJfNtDoHISvjUMshzvyovV7P5iM3Y9r4t3XJ
+	 6dx7CBqfp6qF2seWxnY6DYrDT9uSjpvhUq9vgCqGSxBBvaWg1aPVRrDOl1EZhU6VfZ
+	 ySsLVyfW6TgIpMQiT5aFHdPvCMsFq3RlQ/ez703BwVrbIzInvkx2QRXIVhYPWaSl6n
+	 vJCnywafz84hvTTnvxTJkQoFO1FXNOzbuGt53PdvBWm3cUyb+ZrmWh8gPb1p6OcM92
+	 BV/RbuekkgRjg==
+Date: Wed, 14 May 2025 16:55:56 -0500
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: George Moussalem <george.moussalem@outlook.com>
-Cc: Konrad Dybcio <konradybcio@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-arm-msm@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
+To: Ryan.Wanner@microchip.com
+Cc: linux-crypto@vger.kernel.org, claudiu.beznea@tuxon.dev,
+	conor+dt@kernel.org, krzk+dt@kernel.org,
+	linux-arm-kernel@lists.infradead.org, olivia@selenic.com,
 	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Lee Jones <lee@kernel.org>
-Subject: Re: [PATCH 1/2] dt-bindings: mfd: qcom,tcsr: Add compatible for
- ipq5018
-Message-ID: <174725970465.3106098.10580150024417403013.robh@kernel.org>
-References: <20250512-ipq5018-syscon-v1-0-eb1ad2414c3c@outlook.com>
- <20250512-ipq5018-syscon-v1-1-eb1ad2414c3c@outlook.com>
+	nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
+	herbert@gondor.apana.org.au, davem@davemloft.net
+Subject: Re: [PATCH 4/9] dt-bindings: rng: atmel,at91-trng: add sama7d65 TRNG
+Message-ID: <174725975592.3107278.8713820681723567309.robh@kernel.org>
+References: <cover.1747077616.git.Ryan.Wanner@microchip.com>
+ <68e45a56e70e0b0b001870905917e8f7ddac61a3.1747077616.git.Ryan.Wanner@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,15 +61,17 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250512-ipq5018-syscon-v1-1-eb1ad2414c3c@outlook.com>
+In-Reply-To: <68e45a56e70e0b0b001870905917e8f7ddac61a3.1747077616.git.Ryan.Wanner@microchip.com>
 
 
-On Mon, 12 May 2025 18:36:46 +0400, George Moussalem wrote:
-> Document the qcom,tcsr-ipq5018 compatible.
+On Mon, 12 May 2025 12:27:30 -0700, Ryan.Wanner@microchip.com wrote:
+> From: Ryan Wanner <Ryan.Wanner@microchip.com>
 > 
-> Signed-off-by: George Moussalem <george.moussalem@outlook.com>
+> Add compatible for Microchip SAMA7D65 SoC TRNG.
+> 
+> Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
 > ---
->  Documentation/devicetree/bindings/mfd/qcom,tcsr.yaml | 1 +
+>  Documentation/devicetree/bindings/rng/atmel,at91-trng.yaml | 1 +
 >  1 file changed, 1 insertion(+)
 > 
 
