@@ -1,37 +1,64 @@
-Return-Path: <linux-kernel+bounces-647079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-647080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99E6FAB643D
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 09:26:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62FD8AB643E
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 09:26:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A103517FE2C
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 07:26:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F1A5C461893
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 07:26:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7335C2185BD;
-	Wed, 14 May 2025 07:25:04 +0000 (UTC)
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F3A021ADB7;
+	Wed, 14 May 2025 07:25:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BlL1+zLr"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 211E320FAA8
-	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 07:25:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FD86215075;
+	Wed, 14 May 2025 07:25:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747207504; cv=none; b=uRgB5NK9v89m39CPpn2UuR5bqtFHSM7HUYWlkYT97e8rYMvvUOYtBjvL3csYRKXVInqSAbxiGZltccxxTGbYI2qh3LqCS9urmjKGzF5vALhZttzeePUSw0tslA5n+ukYD8f9OgA+DQaNK2IutabowDHjl894j9EEERHK6Jt9L20=
+	t=1747207515; cv=none; b=SaL/qbwgdEEWZv9Og+ztMYOZItgmT+jEa0Tbde9Z4KgSwA7Ora17hAIxv7vNdLF306nnuNZboF6LtW9JCJaKF+DS2l8T9PWRWA6BRfV3RiDSHQZp0on4seNF3RhHiafDbGFX6z50ZNwBr7PiJ0Gsr3SloiFSlsj12rigMlJ6qaA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747207504; c=relaxed/simple;
-	bh=WcsezBt7zk1OwtbAR4+bBHA60/kUhzeK0Wkrdkb9QG8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=YSrW+H+M6zGnJHlVehEWKNOFDCYEA/Mad/LiIrWKEbpGqXPenaiocgVxhaErSjs7IlhkTRlzqj+SraK1mkLo+LArbhgHMLuoxK5aHawsLg0qpEgwV4a46H5oNG1e2v+x77yN+sOaxvggsuHKm3dyULqi5f2C7aj6fHvO3RymYeQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 08D08442BC;
-	Wed, 14 May 2025 07:24:55 +0000 (UTC)
-Message-ID: <602a2de6-3b6f-4fc9-b50d-90539361c50b@ghiti.fr>
-Date: Wed, 14 May 2025 09:24:55 +0200
+	s=arc-20240116; t=1747207515; c=relaxed/simple;
+	bh=BilRJ6f8t76bTmUmG4gNO1cINv8bzGBDa+3qwuJJbbg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Fx7+NfeqgzgLYpPdcWawF1SalHCB3BdrdkDwbPgs2bBisdDypNDmxlsp2TiQUG7I826BjSLTtuBIkCPMNlKOJFpeTbGg1vzwXhHan1aYbdNueQYTZvGEbnbvVuHOGbGPS23phLXFiIMifZxVTeQaHLs2cFhfMQN1yFToqHotr90=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BlL1+zLr; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1747207513; x=1778743513;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=BilRJ6f8t76bTmUmG4gNO1cINv8bzGBDa+3qwuJJbbg=;
+  b=BlL1+zLrMlqnPZm6QgntIrM533VcQyvGEBRDf1eb8MgujGlgdA/E3aIs
+   Lv4NaLy/MOG9bll5StccxBx6r8h0hH+HVHwzRlqUeJQ+b4xh1wt9UbYp+
+   AYx0hc6FB14OCpvL1oDPwn7r2+vf63+6ei1ORSWihcGKjw3nzb/A2uKKq
+   FJWKNjrh3EePkm2ISNzYI0EW/kDpOyZjTuyt/s2NZr5plqUVLvJdfNO/Z
+   mOBcM3TkdeC0vuM+syFjWGswZQjaThs+UlXmdsRLYEuvJ61kJrDC1gin/
+   8c8Iu28iG875azBhgJsLDIh4d2hNjAw+UR7VRxULM2pufQdsDgndvloUg
+   w==;
+X-CSE-ConnectionGUID: 5D8MoYKtSIuGaR7/6UeQoQ==
+X-CSE-MsgGUID: lGVNGCB3SNuW7D3U7XYoRw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11432"; a="59747129"
+X-IronPort-AV: E=Sophos;i="6.15,287,1739865600"; 
+   d="scan'208";a="59747129"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 May 2025 00:25:12 -0700
+X-CSE-ConnectionGUID: ZqYaBnWjQwyzCriZP917pw==
+X-CSE-MsgGUID: RkVqje+FQ1eb7+rf2PELNQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,287,1739865600"; 
+   d="scan'208";a="175083321"
+Received: from unknown (HELO [10.237.72.53]) ([10.237.72.53])
+  by orviesa001.jf.intel.com with ESMTP; 14 May 2025 00:25:10 -0700
+Message-ID: <6fe4e253-330d-4681-af89-834a045dd183@linux.intel.com>
+Date: Wed, 14 May 2025 10:25:08 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -39,99 +66,34 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 01/11] riscv: kprobes: Move branch_rs2_idx to insn.h
-To: Nam Cao <namcao@linutronix.de>, Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <cover.1746997351.git.namcao@linutronix.de>
- <9b528d3c1de5291d1540b3617e63d40b9889c88f.1746997351.git.namcao@linutronix.de>
+Subject: Re: [PATCH] i2c: designware: Fix an error handling path in
+ i2c_dw_pci_probe()
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Mika Westerberg <mika.westerberg@linux.intel.com>,
+ Jan Dabros <jsd@semihalf.com>, Andi Shyti <andi.shyti@kernel.org>,
+ Sanket Goswami <Sanket.Goswami@amd.com>, Wolfram Sang <wsa@kernel.org>,
+ Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+ Nehal Bakulchandra Shah <Nehal-Bakulchandra.shah@amd.com>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ linux-i2c@vger.kernel.org
+References: <fcd9651835a32979df8802b2db9504c523a8ebbb.1747158983.git.christophe.jaillet@wanadoo.fr>
 Content-Language: en-US
-From: Alexandre Ghiti <alex@ghiti.fr>
-In-Reply-To: <9b528d3c1de5291d1540b3617e63d40b9889c88f.1746997351.git.namcao@linutronix.de>
+From: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+In-Reply-To: <fcd9651835a32979df8802b2db9504c523a8ebbb.1747158983.git.christophe.jaillet@wanadoo.fr>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeftdeifeekucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfhfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpeetlhgvgigrnhgurhgvucfihhhithhiuceorghlvgigsehghhhithhirdhfrheqnecuggftrfgrthhtvghrnhepveetvdfhvdeuheekvdettdegheetgeejiefgjeetvedtfeeuvddvtefhjeffgeevnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucfkphepvddttddumeekiedumeeffeekvdemvghfledtmedvrgekvdemvgegsgemudehvgegmeduvgejleenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvtddtudemkeeiudemfeefkedvmegvfheltdemvdgrkedvmegvgegsmeduhegvgeemudgvjeelpdhhvghloheplgfkrfggieemvddttddumeekiedumeeffeekvdemvghfledtmedvrgekvdemvgegsgemudehvgegmeduvgejlegnpdhmrghilhhfrhhomheprghlvgigsehghhhithhirdhfrhdpnhgspghrtghpthhtohepiedprhgtphhtthhopehnrghmtggroheslhhinhhuthhrohhnihigrdguvgdprhgtphhtthhopehprghulhdrfigrlhhmshhlvgihsehsihhfihhvvgdrtghomhdprhgtphhtthhopehprghlm
- hgvrhesuggrsggsvghlthdrtghomhdprhgtphhtthhopegrohhusegvvggtshdrsggvrhhkvghlvgihrdgvughupdhrtghpthhtoheplhhinhhugidqrhhishgtvheslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-GND-Sasl: alex@ghiti.fr
 
-Hi Nam,
-
-On 11/05/2025 23:17, Nam Cao wrote:
-> Similar to other instruction-processing macros/functions, branch_rs2_idx
-> should be in insn.h.
->
-> Move it into insn.h as RV_EXTRACT_RS2_REG. This new name matches the style
-> in insn.h.
->
-> Signed-off-by: Nam Cao <namcao@linutronix.de>
+On 5/13/25 8:56 PM, Christophe JAILLET wrote:
+> If navi_amd_register_client() fails, the previous i2c_dw_probe() call
+> should be undone by a corresponding i2c_del_adapter() call, as already done
+> in the remove function.
+> 
+> Fixes: 17631e8ca2d3 ("i2c: designware: Add driver support for AMD NAVI GPU")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 > ---
->   arch/riscv/include/asm/insn.h            | 5 +++++
->   arch/riscv/kernel/probes/simulate-insn.c | 5 +----
->   2 files changed, 6 insertions(+), 4 deletions(-)
->
-> diff --git a/arch/riscv/include/asm/insn.h b/arch/riscv/include/asm/insn.h
-> index 09fde95a5e8f..debac13a3476 100644
-> --- a/arch/riscv/include/asm/insn.h
-> +++ b/arch/riscv/include/asm/insn.h
-> @@ -64,6 +64,7 @@
->   #define RVG_RS2_OPOFF		20
->   #define RVG_RD_OPOFF		7
->   #define RVG_RS1_MASK		GENMASK(4, 0)
-> +#define RVG_RS2_MASK		GENMASK(4, 0)
->   #define RVG_RD_MASK		GENMASK(4, 0)
->   
->   /* The bit field of immediate value in RVC J instruction */
-> @@ -295,6 +296,10 @@ static __always_inline bool riscv_insn_is_c_jalr(u32 code)
->   	({typeof(x) x_ = (x); \
->   	(RV_X(x_, RVG_RS1_OPOFF, RVG_RS1_MASK)); })
->   
-> +#define RV_EXTRACT_RS2_REG(x) \
-> +	({typeof(x) x_ = (x); \
-> +	(RV_X(x_, RVG_RS2_OPOFF, RVG_RS2_MASK)); })
-
-
-RV_X() definition was inconsistent across multiple files, so I 
-harmonized RV_X() it in this patch 
-https://lore.kernel.org/linux-riscv/20250508125202.108613-3-alexghiti@rivosinc.com/
-
-So here you use the "old" version, would you mind rebasing on top this 
-patchset and use RV_X_mask() instead?
-
-If you can't, let me know and I'll find some time, I'd like to merge 
-those cleanups in 6.16.
-
-Thanks,
-
-Alex
-
-
-> +
->   #define RV_EXTRACT_RD_REG(x) \
->   	({typeof(x) x_ = (x); \
->   	(RV_X(x_, RVG_RD_OPOFF, RVG_RD_MASK)); })
-> diff --git a/arch/riscv/kernel/probes/simulate-insn.c b/arch/riscv/kernel/probes/simulate-insn.c
-> index 6c166029079c..77be381bb8b4 100644
-> --- a/arch/riscv/kernel/probes/simulate-insn.c
-> +++ b/arch/riscv/kernel/probes/simulate-insn.c
-> @@ -121,9 +121,6 @@ bool __kprobes simulate_auipc(u32 opcode, unsigned long addr, struct pt_regs *re
->   #define branch_rs1_idx(opcode) \
->   	(((opcode) >> 15) & 0x1f)
->   
-> -#define branch_rs2_idx(opcode) \
-> -	(((opcode) >> 20) & 0x1f)
-> -
->   #define branch_funct3(opcode) \
->   	(((opcode) >> 12) & 0x7)
->   
-> @@ -157,7 +154,7 @@ bool __kprobes simulate_branch(u32 opcode, unsigned long addr, struct pt_regs *r
->   	unsigned long rs2_val;
->   
->   	if (!rv_insn_reg_get_val(regs, branch_rs1_idx(opcode), &rs1_val) ||
-> -	    !rv_insn_reg_get_val(regs, branch_rs2_idx(opcode), &rs2_val))
-> +	    !rv_insn_reg_get_val(regs, RV_EXTRACT_RS2_REG(opcode), &rs2_val))
->   		return false;
->   
->   	offset_tmp = branch_offset(opcode);
+>   drivers/i2c/busses/i2c-designware-pcidrv.c | 4 +++-
+>   1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+Acked-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
 
