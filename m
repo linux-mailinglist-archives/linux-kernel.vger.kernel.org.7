@@ -1,217 +1,126 @@
-Return-Path: <linux-kernel+bounces-647822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-647824-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F3B5AB6E0A
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 16:21:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB7C5AB6E0C
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 16:21:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 781508616F4
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 14:20:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70A6E1BA0F28
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 14:21:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77FC71C5D4C;
-	Wed, 14 May 2025 14:19:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M279litz"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0863315574E;
+	Wed, 14 May 2025 14:20:23 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33D351A9B4D
-	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 14:19:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82F7A199FAB;
+	Wed, 14 May 2025 14:20:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747232396; cv=none; b=QFEMXmIMS8wu95Du6/zjj3AuWtVu6DZyVH4mBlrcJZ43nBl05zgiYv/tnEzRmoxk7T3qZV1pTDcwRQQc/GgtRb+WXymn7ts7seSjGceVFwb0B/vPWsm1axTIXXIIs22KglF+DOvqlf0AVOChV4pGOUpW+8tKRIYFAHHbg4GcrCA=
+	t=1747232422; cv=none; b=L/Fkwd27H744T8vqE8+hGfupwHuLak9j+hw0DPzS6YrtzrWq3tJOmSFn15WwxJpmwJQT39W9IBNBv+Uy1+FwerP/4k3vpgKVWwDE01+UwM7aTQZ9x/zPQZN9O3LLfeolDcRibikJLGufmo4OcCZ/4K5si9L9Fmw2/5MbBr/YOJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747232396; c=relaxed/simple;
-	bh=i52tK7Qa/0vWcBMHQa2r8gocDr7NDY3QhsZwnqxCFdE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZfoRz3TbuAxAEuk9g46FT/vQE+4wps2QHO2yoM4ecgXlYeXqNq7IMmLM+hdnFen661LV8EMy9yorEQ0Q59Kz5wU42MlgTh1z71VIbgBGsgkht+xwhQkIhcY7Aif7zHgdenLyCq9wrF3THs1WXyhNbgXp6gUr+3ESeNtGUh8WADs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M279litz; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-7390294782bso1032367b3a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 07:19:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747232394; x=1747837194; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UCWsXRxmXy6QdMutDWOCFJCtCkw/mbPHpF2mtN1WEno=;
-        b=M279litzb8jETl5WmbHNcwcBT2wVMzcjDNUHR8QuNLGIf6pQWuM3p6HTjrPRZqvfDV
-         bhxaHge2pEa93zyATYv9TrFhOC1i9npbp5VFottZ1Kp5ypmJ+9ZMB2GA5xAMUqrxkIir
-         WrDAoU5N6jr0goDkNPNwsaV/xnhW+J/6g4PxAMIMhm0En3drnNLaFiC1XFfXZHpYMyOg
-         qeqO0JBg6nBMEZRPLnZ3trc7OYgo8KRxplVd+aLrI4dJ7MD5aWmdBr0ex45RH4NmrhBe
-         ZarSzK+De8c3sD+CVRwEqPPJ8yJ8HhTHhaQqLDF1Ejx0Vi8tOMfrQqDQJARlSDawDxX6
-         l3IQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747232394; x=1747837194;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UCWsXRxmXy6QdMutDWOCFJCtCkw/mbPHpF2mtN1WEno=;
-        b=DNsvIRnJTg0wHZ0m7cTOQ60tv5OYtxPbU9v46cu6mEDyuv17xEarBw7JK0VUntVRrd
-         T/HM+bclUKfAqNfFYCxCwldilospFmkj5WHxo47/BfrNeDXMooNFoFZTKiCdnDFUWHqK
-         Htdo+iiW30LVq4yau51dqcrwyX/ew96jpx899OVMXE+xs/82G7mWWig0x6fT9tdMwto2
-         SwZ3XVTcqCMqdFBrL511DLbsQ7yBDJ5paYSD4NrjVHC0/D/XXfQuR7YSAlmIhGYjQFQa
-         THMpKZ3/kYbt1FrZkZb9ulaHd60H2ZY/+oBpD0UbLTupOo7wRQ7ZnmLm7NoiaS8CW4On
-         AHqg==
-X-Forwarded-Encrypted: i=1; AJvYcCW+9qm24uvSBz3YJhvZyTnY8nGfLxIVEhNOwyCbLfGsEKb3StQTHfbX2yVptwazwsb2ToBrY+J2HY4UaRw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhneA5Ef6De9OeT2pvzEUPyCp85U6xKtKNvngX8Z36uXVpsHG/
-	mQzTr41wdX66zPN4J+L71+vw5Ny3XFr1eR5DcupU5CkKBP4jvmjrzIPVfdmRK0iz+N+oPBUJeu3
-	qClFWBUXL7XXsRVPte7QrWL7YP+w=
-X-Gm-Gg: ASbGnctj+FdJuMFRjE27XdCQdpSNTSVXozLPSw4y7b6ldscqwm0eNu59RujAgCfvbbd
-	kZS5FHiZxQa65RMNpXf+oAZN8MeLoOWnVDeePxY74iNNZWhk5Fnd2SLIpMgCbCfl4dkA2uYY5M6
-	EXkbgcZfYQiKv45O2vm9PfVtrarx6sUP3S
-X-Google-Smtp-Source: AGHT+IFmSfpurhemLwc+ZOF8rZWME7jh33OjnpZDBlz8vLnAa0zqEy2lMLnutVH+y3PAEEspBAxozniI7M430eNACkY=
-X-Received: by 2002:a17:903:2f8d:b0:224:88c:9255 with SMTP id
- d9443c01a7336-2319810fdf6mr22460295ad.3.1747232394295; Wed, 14 May 2025
- 07:19:54 -0700 (PDT)
+	s=arc-20240116; t=1747232422; c=relaxed/simple;
+	bh=6ZlHp5+n6qxvzjAudRpWJc8ejLU2WjsX4VaTriOdCzQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=odNzSvFx9gEkD4GSGURxWdCHIjQjfNuY5bD3bEBZl80LvEEw7mEMOmKKrNzNuXGZporwTd7ayB6P03p5mK+lbQVLDYpXwbCX+aZRe+Hybktyn61H+ntuqaPmQTiCwU5iXGJJ/eYGufqj1c0dHhASCj2+B4PHZGcYUNVVygbqFCY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost.localdomain (unknown [124.16.141.245])
+	by APP-05 (Coremail) with SMTP id zQCowAAnYQmVpiRoMqdLFQ--.32116S2;
+	Wed, 14 May 2025 22:20:07 +0800 (CST)
+From: Wentao Liang <vulab@iscas.ac.cn>
+To: cezary.rojewski@intel.com,
+	liam.r.girdwood@linux.intel.com,
+	peter.ujfalusi@linux.intel.com,
+	yung-chuan.liao@linux.intel.com,
+	ranjani.sridharan@linux.intel.com,
+	kai.vehmanen@linux.intel.com,
+	pierre-louis.bossart@linux.dev,
+	broonie@kernel.org,
+	perex@perex.cz,
+	tiwai@suse.com
+Cc: kuninori.morimoto.gx@renesas.com,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Wentao Liang <vulab@iscas.ac.cn>,
+	stable@vger.kernel.org
+Subject: [PATCH] ASoC: Intel: avs: rt274: Add null pointer check for snd_soc_card_get_codec_dai()
+Date: Wed, 14 May 2025 22:19:47 +0800
+Message-ID: <20250514141947.998-1-vulab@iscas.ac.cn>
+X-Mailer: git-send-email 2.42.0.windows.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250514011610.136607-1-linux@treblig.org>
-In-Reply-To: <20250514011610.136607-1-linux@treblig.org>
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Wed, 14 May 2025 10:19:42 -0400
-X-Gm-Features: AX0GCFvKCnzC_zdkgna2rr71SSUfv7aXR8OPd3gdZJqS1dVizK6WKhUHuuj4ZSc
-Message-ID: <CADnq5_PK-orH987qxNkArVFWEW2hE5UrRhX7oR2J4+4dAH=wGQ@mail.gmail.com>
-Subject: Re: [PATCH] drm/radeon/cik: Clean up doorbells
-To: linux@treblig.org
-Cc: alexander.deucher@amd.com, christophe.jaillet@wanadoo.fr, 
-	christian.koenig@amd.com, airlied@gmail.com, simona@ffwll.ch, 
-	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:zQCowAAnYQmVpiRoMqdLFQ--.32116S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7AryUJFWrXrW7tw15uF18uFg_yoW8AF17pF
+	1qgrZxKFW5Jr4xGF1rXa9Yva45ua48CFWfGrWxta4xAF1xJr93Wrn8t34qkFySkry8J3WU
+	Xr1j9ay0k34rJ3JanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9K14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628v
+	n2kIc2xKxwCY1x0262kKe7AKxVWUtVW8ZwCY02Avz4vE14v_Xryl42xK82IYc2Ij64vIr4
+	1l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK
+	67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI
+	8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAv
+	wI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14
+	v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUeT5lUUUUU
+X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiDAUCA2gkZEjUxQAAs5
 
-On Tue, May 13, 2025 at 9:53=E2=80=AFPM <linux@treblig.org> wrote:
->
-> From: "Dr. David Alan Gilbert" <linux@treblig.org>
->
-> Free doorbells in the error paths of cik_init and in cik_fini.
->
-> Build tested only.
->
-> Suggested-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+The avs_card_suspend_pre() and avs_card_resume_post() in rt274
+calls the snd_soc_card_get_codec_dai(), but does not check its return
+value which is a null pointer if the function fails. This can result
+in a null pointer dereference. A proper implementation can be found
+in acp5x_nau8821_hw_params() and card_suspend_pre().
 
-Applied.  Thanks!
+Add a null pointer check for snd_soc_card_get_codec_dai() to avoid null
+pointer dereference when the function fails.
 
-Alex
+Fixes: a08797afc1f9 ("ASoC: Intel: avs: rt274: Refactor jack handling")
+Cc: stable@vger.kernel.org # v6.2
+Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
+---
+ sound/soc/intel/avs/boards/rt274.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-> ---
-> RFC->v1
->   Renamed ringCP[12]->ring_cp[12]
->   Cleaned up doorbells in cik_startup failure case
->
->  drivers/gpu/drm/radeon/cik.c | 42 +++++++++++++++++++++++++-----------
->  1 file changed, 30 insertions(+), 12 deletions(-)
->
-> diff --git a/drivers/gpu/drm/radeon/cik.c b/drivers/gpu/drm/radeon/cik.c
-> index 11a492f21157..51a3e0fc2f56 100644
-> --- a/drivers/gpu/drm/radeon/cik.c
-> +++ b/drivers/gpu/drm/radeon/cik.c
-> @@ -8548,7 +8548,7 @@ int cik_suspend(struct radeon_device *rdev)
->   */
->  int cik_init(struct radeon_device *rdev)
->  {
-> -       struct radeon_ring *ring;
-> +       struct radeon_ring *ring, *ring_cp1, *ring_cp2;
->         int r;
->
->         /* Read BIOS */
-> @@ -8623,19 +8623,22 @@ int cik_init(struct radeon_device *rdev)
->         ring->ring_obj =3D NULL;
->         r600_ring_init(rdev, ring, 1024 * 1024);
->
-> -       ring =3D &rdev->ring[CAYMAN_RING_TYPE_CP1_INDEX];
-> -       ring->ring_obj =3D NULL;
-> -       r600_ring_init(rdev, ring, 1024 * 1024);
-> -       r =3D radeon_doorbell_get(rdev, &ring->doorbell_index);
-> +       ring_cp1 =3D &rdev->ring[CAYMAN_RING_TYPE_CP1_INDEX];
-> +       ring_cp2 =3D &rdev->ring[CAYMAN_RING_TYPE_CP2_INDEX];
-> +       ring_cp1->ring_obj =3D NULL;
-> +       ring_cp2->ring_obj =3D NULL;
-> +       ring_cp1->doorbell_index =3D RADEON_MAX_DOORBELLS;
-> +       ring_cp2->doorbell_index =3D RADEON_MAX_DOORBELLS;
-> +
-> +       r600_ring_init(rdev, ring_cp1, 1024 * 1024);
-> +       r =3D radeon_doorbell_get(rdev, &ring_cp1->doorbell_index);
->         if (r)
->                 return r;
->
-> -       ring =3D &rdev->ring[CAYMAN_RING_TYPE_CP2_INDEX];
-> -       ring->ring_obj =3D NULL;
-> -       r600_ring_init(rdev, ring, 1024 * 1024);
-> -       r =3D radeon_doorbell_get(rdev, &ring->doorbell_index);
-> +       r600_ring_init(rdev, ring_cp2, 1024 * 1024);
-> +       r =3D radeon_doorbell_get(rdev, &ring_cp2->doorbell_index);
->         if (r)
-> -               return r;
-> +               goto out;
->
->         ring =3D &rdev->ring[R600_RING_TYPE_DMA_INDEX];
->         ring->ring_obj =3D NULL;
-> @@ -8653,12 +8656,16 @@ int cik_init(struct radeon_device *rdev)
->
->         r =3D r600_pcie_gart_init(rdev);
->         if (r)
-> -               return r;
-> +               goto out;
->
->         rdev->accel_working =3D true;
->         r =3D cik_startup(rdev);
->         if (r) {
->                 dev_err(rdev->dev, "disabling GPU acceleration\n");
-> +               radeon_doorbell_free(rdev, ring_cp1->doorbell_index);
-> +               radeon_doorbell_free(rdev, ring_cp2->doorbell_index);
-> +               ring_cp1->doorbell_index =3D RADEON_MAX_DOORBELLS;
-> +               ring_cp2->doorbell_index =3D RADEON_MAX_DOORBELLS;
->                 cik_cp_fini(rdev);
->                 cik_sdma_fini(rdev);
->                 cik_irq_fini(rdev);
-> @@ -8678,10 +8685,16 @@ int cik_init(struct radeon_device *rdev)
->          */
->         if (!rdev->mc_fw && !(rdev->flags & RADEON_IS_IGP)) {
->                 DRM_ERROR("radeon: MC ucode required for NI+.\n");
-> -               return -EINVAL;
-> +               r =3D -EINVAL;
-> +               goto out;
->         }
->
->         return 0;
-> +
-> +out:
-> +       radeon_doorbell_free(rdev, ring_cp1->doorbell_index);
-> +       radeon_doorbell_free(rdev, ring_cp2->doorbell_index);
-> +       return r;
->  }
->
->  /**
-> @@ -8695,6 +8708,7 @@ int cik_init(struct radeon_device *rdev)
->   */
->  void cik_fini(struct radeon_device *rdev)
->  {
-> +       struct radeon_ring *ring;
->         radeon_pm_fini(rdev);
->         cik_cp_fini(rdev);
->         cik_sdma_fini(rdev);
-> @@ -8708,6 +8722,10 @@ void cik_fini(struct radeon_device *rdev)
->         radeon_ib_pool_fini(rdev);
->         radeon_irq_kms_fini(rdev);
->         uvd_v1_0_fini(rdev);
-> +       ring =3D &rdev->ring[CAYMAN_RING_TYPE_CP1_INDEX];
-> +       radeon_doorbell_free(rdev, ring->doorbell_index);
-> +       ring =3D &rdev->ring[CAYMAN_RING_TYPE_CP2_INDEX];
-> +       radeon_doorbell_free(rdev, ring->doorbell_index);
->         radeon_uvd_fini(rdev);
->         radeon_vce_fini(rdev);
->         cik_pcie_gart_fini(rdev);
-> --
-> 2.49.0
->
+diff --git a/sound/soc/intel/avs/boards/rt274.c b/sound/soc/intel/avs/boards/rt274.c
+index 4b6c02a40204..7a8b6ee79f4c 100644
+--- a/sound/soc/intel/avs/boards/rt274.c
++++ b/sound/soc/intel/avs/boards/rt274.c
+@@ -194,6 +194,11 @@ static int avs_card_suspend_pre(struct snd_soc_card *card)
+ {
+ 	struct snd_soc_dai *codec_dai = snd_soc_card_get_codec_dai(card, RT274_CODEC_DAI);
+ 
++	if (!codec_dai) {
++		dev_err(card->dev, "Codec dai not found\n");
++		return -EINVAL;
++	}
++
+ 	return snd_soc_component_set_jack(codec_dai->component, NULL, NULL);
+ }
+ 
+@@ -202,6 +207,11 @@ static int avs_card_resume_post(struct snd_soc_card *card)
+ 	struct snd_soc_dai *codec_dai = snd_soc_card_get_codec_dai(card, RT274_CODEC_DAI);
+ 	struct snd_soc_jack *jack = snd_soc_card_get_drvdata(card);
+ 
++	if (!codec_dai) {
++		dev_err(card->dev, "Codec dai not found\n");
++		return -EINVAL;
++	}
++
+ 	return snd_soc_component_set_jack(codec_dai->component, jack, NULL);
+ }
+ 
+-- 
+2.42.0.windows.2
+
 
