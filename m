@@ -1,99 +1,184 @@
-Return-Path: <linux-kernel+bounces-648403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-648405-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F026AB7664
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 22:06:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EA11EAB7668
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 22:08:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 351FF4C00DB
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 20:06:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 805074C657F
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 20:08:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B4DE295506;
-	Wed, 14 May 2025 20:06:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94C8029550B;
+	Wed, 14 May 2025 20:08:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DrO08dmE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SdkimYli"
+Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3B2A294A12;
-	Wed, 14 May 2025 20:06:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 730DB1E9B0C;
+	Wed, 14 May 2025 20:08:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747253179; cv=none; b=QFX/Myqbn1i7u+gHoC97OjRc9wkQ0zYzgkFKi/fS5xuWzfREFfIK854zARvUZNEy+vjTdOonlE4aJ0xRB+7HwZawCPki5I1NC84l3ZsoZiHwEc+6FI+nnI7yIgkKEzjiPOKfkCc4hFJ5nOxYYg0m1pLmmceAvDliHGP6vCAvG6g=
+	t=1747253291; cv=none; b=c5GkGpu2K1gY0iVNFLGuYgedHq0sszHw/wtz3PzZ+BdZBXbKXBYaII15AauucPaz0ooLkwc7narwU9VZzLUMwBkUJbwCspsamcRgO3Fi6sBfMpqyTDwgzsZgZisIQW5/bNBU/iiL/LGLIQ5Sr/1Mxjb6DyWu2ptWvCY5zXFon0w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747253179; c=relaxed/simple;
-	bh=tO68Tjx6no/A3m+CFy/nfa+gvsMGemKc+uI7gSwx310=;
-	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
-	 References:In-Reply-To; b=d3U5yuWlakDrj5duvZ7JcCJoXoTRak9fplBu/FW831/ecKmt2I1oF8U/HnjfsireaWuzVDW+5igPAzrIrhX4gAi0JQm+/x/X3+lUR86xVp29sOI7BXQMG4YgeDGZLnexZtDv/GWy7iUPQgP/G0QJsKl9ictDOH58G51BEJhgw4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DrO08dmE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B9C3C4CEE3;
-	Wed, 14 May 2025 20:06:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747253179;
-	bh=tO68Tjx6no/A3m+CFy/nfa+gvsMGemKc+uI7gSwx310=;
-	h=Date:To:Cc:Subject:From:References:In-Reply-To:From;
-	b=DrO08dmE6TBeaRTNP4FTAsZ9jJZHd+YYjZXJcfsSrrAAL+UL7GpxrKB521KmbTNNF
-	 IDD7KjxNE7Bi8xNFf0xOO9J4QA7741vGtzn/SnSDx9ArsmMbOX5dyOwIyIORH0dwaD
-	 KlP2Zkeu/VEmB5+Yx1FzvKY2pQujyulSFiL+lR7/HSN76DoWyBXWww0JGk78pMA2M7
-	 CqcHgOqnSRfGzJ7jcfpMSKpYbUccdb0+BBLrK/0OorjgrhJQr7kTuh105fF2CBsSqh
-	 yATP9K1ov1MqvbqyHRx1be6RrhhbUqdKgk7VhBm138ywRWdyuAZ+XBCAsincIYW5rG
-	 xZfFfwOJe4obw==
+	s=arc-20240116; t=1747253291; c=relaxed/simple;
+	bh=X3N2aVqCYNyB+V7LQh7hbMkDswvtRNWzTyi4qd7K6kE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=M0eJOmeN2qwjbauZ3jRruk08FJWpjZR1rGpICF2XGxQIUVDjRkNBRLisotHyoWxKdqm21dKkyaLob3wysm1c6WV1EeUF5c8uDKj6GmW15PdESpWHM0Wr+rCwr2zsc0aMW+a7jVJ81qZvCKciVsGi7lvZZNeL2k6ILg2SLGx1eh4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SdkimYli; arc=none smtp.client-ip=209.85.219.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-e740a09eb00so227096276.0;
+        Wed, 14 May 2025 13:08:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747253287; x=1747858087; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PnMFZJ+Y+vsiV2dHjLhQlDtDDqCoEieHp1SijjKcO3o=;
+        b=SdkimYli/4i2iogdl+A7wNuiekp8x8o5YdoU7XkHFTxmKqDrdEqcsIM7miX8VipraX
+         fAer1UWXiZDVj3g/+yphMsKhfCwaj7pdA8Yw22XPI2IQqJQdtHTjf2h+6xXNzdEXCbhU
+         dsju9R+73jW7C2x7+SLAYGfJhQmr4I9KPPYSgniRGjnVfY+CKbkaLqVFqTm/sqZjXkRs
+         5nBUGWO21sm05IhFeCgchNBqU69T/vf9L9XrubIZPWBQ46JzmkW2bxyxO0f6uZeLn6kC
+         iySY7FRZWP0b+tI4VPKqLXc37zh1c/uZTlsODrLOQ5jouG6pmIBt7JSF1kT/WIhSk+0s
+         8v5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747253287; x=1747858087;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PnMFZJ+Y+vsiV2dHjLhQlDtDDqCoEieHp1SijjKcO3o=;
+        b=MQEHuIB3gu/egDeIyLOyQ5V0Vt26CFKdUKrNHxC3JPrytLQdRzQzvzgJzx3i8nmlZY
+         Jgkd84EmDC0jox5zL+oKkPbHZbNmU8+QZ1Uc0NeOIDQORdn7eL93Zt4H6bx1uGZNkaYM
+         HsjX8WmHrGavBEodasM3F7lT5Trx9zXnNQuk/EPqm2V4q3VH5vg5big0NslSCLOqiEZk
+         EIqOrOtdLvY5qKJZBiK6hh2zvOjTewJt1x6wSsEWwWQ+cts9IuQTNUWr+xAuDCwW9ue7
+         rmthzCHmIKsmHYOLsHIX8yRthASOlvIx+R3vhQaCQ5tlYpG+8KmByJ229mNs1mibmzfU
+         /atw==
+X-Forwarded-Encrypted: i=1; AJvYcCUMofEZwX4QNG71Z34C5bDdM3EOT1ilaDnQOzS3drPN0o6NHHy63nZyVqlOGQ/zLs0JbZY=@vger.kernel.org, AJvYcCUj3Qq2sl3LOqFraMVYLJqR8SFYH+MvuiqcauFCMe3DhC2qQvNU+rQgm8FwhfNWyKhmQWqWVUtULroFs5VX@vger.kernel.org, AJvYcCW3xbn+LklVPp3svfvYoLCP0Jpeh8pdaOh/1kgmkjDmWwOEVn/AnmwZ3aI2I3qCLk7Xbs0hcYuj+5N85ennCLLePw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwhkUXyxOZFCQpHwi9sisbFLvJw22NFaxPouqd3va9RKUXn/XaU
+	NOuTVqYR8NQhGVRtouK0YAgMC3oxIj+lZUdEt3yh5CW0RFrkOJ+LrRlmx3YNUd29DwOV8Jq8E8X
+	OmAZIGFXe7Ap2Cm6ChKwTIupzXmYuAJW8HpMQjA==
+X-Gm-Gg: ASbGncvvVkJOzeEaYSPvMdHQxB26j7zfIfYsqIyNDNkoliDJaGiCpnldeWVmNTr+kXR
+	cD/ET2Nwp3VVvvEOjPF3pDB0K+b+okmMbtF1ZrR5FhkhKg5FyjzTSTcCRYBTyLivfHuJPAvupiM
+	yC0o8VJgej8yTc0kGDfxCL0n5mDd9HKGE=
+X-Google-Smtp-Source: AGHT+IG0ENkGoRAv2XFTfyYLledASg8yeQV6WEFCuVbEtFlCEJIFWwU581QBunws9E5mQlHdoeVQh5wBcothZ116WlI=
+X-Received: by 2002:a05:6902:15ca:b0:e7a:b192:e5c2 with SMTP id
+ 3f1490d57ef6-e7b3d501912mr6481642276.19.1747253287101; Wed, 14 May 2025
+ 13:08:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+References: <20250501225337.928470-1-namhyung@kernel.org>
+In-Reply-To: <20250501225337.928470-1-namhyung@kernel.org>
+From: Howard Chu <howardchu95@gmail.com>
+Date: Wed, 14 May 2025 13:07:56 -0700
+X-Gm-Features: AX0GCFuHPMQ0gNn4Bd4_zoBwRfbhq0Y3tec7aNeRJupUAz4w81z66_u9FkcNAc4
+Message-ID: <CAH0uvogTqNzDd5+xxR-VaGFY0r8=TzBxcXVYN9yxj9TykF5L=A@mail.gmail.com>
+Subject: Re: [PATCH] perf trace: Support --summary-mode=cgroup
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Ian Rogers <irogers@google.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	linux-perf-users@vger.kernel.org, Song Liu <song@kernel.org>, bpf@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 14 May 2025 22:06:14 +0200
-Message-Id: <D9W5K3FPJ3SH.1AMA9VYM75Z4X@kernel.org>
-To: "Daniel Almeida" <daniel.almeida@collabora.com>, "Miguel Ojeda"
- <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
- <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Benno Lossin"
- <benno.lossin@proton.me>, "Andreas Hindborg" <a.hindborg@kernel.org>,
- "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
- "Danilo Krummrich" <dakr@kernel.org>, "Greg Kroah-Hartman"
- <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
- "Thomas Gleixner" <tglx@linutronix.de>
-Cc: <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>
-Subject: Re: [PATCH v3 2/2] rust: platform: add irq accessors
-From: "Benno Lossin" <lossin@kernel.org>
-X-Mailer: aerc 0.20.1
-References: <20250514-topics-tyr-request_irq-v3-0-d6fcc2591a88@collabora.com> <20250514-topics-tyr-request_irq-v3-2-d6fcc2591a88@collabora.com>
-In-Reply-To: <20250514-topics-tyr-request_irq-v3-2-d6fcc2591a88@collabora.com>
 
-On Wed May 14, 2025 at 9:20 PM CEST, Daniel Almeida wrote:
-> +    /// Same as [`Self::irq_by_name`] but does not print an error messag=
-e if an IRQ
-> +    /// cannot be obtained.
-> +    pub fn optional_irq_by_name(&self, name: &CStr) -> Result<u32> {
-> +        // SAFETY: `self.as_raw` returns a valid pointer to a `struct pl=
-atform_device`.
-> +        let res =3D unsafe {
-> +            bindings::platform_get_irq_byname_optional(self.as_raw(), na=
-me.as_char_ptr())
-> +        };
+Hello Namhyung,
+
+Just a single comment although this has been applied.
+
+On Thu, May 1, 2025 at 3:53=E2=80=AFPM Namhyung Kim <namhyung@kernel.org> w=
+rote:
+>
+> Add a new summary mode to collect stats for each cgroup.
+>
+>   $ sudo ./perf trace -as --bpf-summary --summary-mode=3Dcgroup -- sleep =
+1
+>
+>    Summary of events:
+>
+>    cgroup /user.slice/user-657345.slice/user@657345.service/session.slice=
+/org.gnome.Shell@x11.service, 535 events
+>
+>      syscall            calls  errors  total       min       avg       ma=
+x       stddev
+>                                        (msec)    (msec)    (msec)    (mse=
+c)        (%)
+>      --------------- --------  ------ -------- --------- --------- ------=
+---     ------
+>      ppoll                 15      0   373.600     0.004    24.907   197.=
+491     55.26%
+>      poll                  15      0     1.325     0.001     0.088     0.=
+369     38.76%
+>      close                 66      0     0.567     0.007     0.009     0.=
+026      3.55%
+>      write                150      0     0.471     0.001     0.003     0.=
+010      3.29%
+>      recvmsg               94     83     0.290     0.000     0.003     0.=
+037     16.39%
+>      ioctl                 26      0     0.237     0.001     0.009     0.=
+096     50.13%
+>      timerfd_create        66      0     0.236     0.003     0.004     0.=
+024      8.92%
+>      timerfd_settime       70      0     0.160     0.001     0.002     0.=
+012      7.66%
+>      writev                10      0     0.118     0.001     0.012     0.=
+019     18.17%
+>      read                   9      0     0.021     0.001     0.002     0.=
+004     14.07%
+>      getpid                14      0     0.019     0.000     0.001     0.=
+004     20.28%
+>
+
+<SNIP>
+
+> +static int update_cgroup_stats(struct hashmap *hash, struct syscall_key =
+*map_key,
+> +                              struct syscall_stats *map_data)
+> +{
+> +       struct syscall_data *data;
+> +       struct syscall_node *nodes;
 > +
-> +        if res < 0 {
-> +            return Err(Error::from_errno(res));
-> +        }
+> +       if (!hashmap__find(hash, map_key->cgroup, &data)) {
+> +               data =3D zalloc(sizeof(*data));
+> +               if (data =3D=3D NULL)
+> +                       return -ENOMEM;
 > +
-> +        Ok(res as u32)
+> +               data->key =3D map_key->cgroup;
+> +               if (hashmap__add(hash, data->key, data) < 0) {
+> +                       free(data);
+> +                       return -ENOMEM;
+> +               }
+> +       }
+> +
+> +       /* update thread total stats */
+> +       data->nr_events +=3D map_data->count;
+> +       data->total_time +=3D map_data->total_time;
+> +
+> +       nodes =3D reallocarray(data->nodes, data->nr_nodes + 1, sizeof(*n=
+odes));
+> +       if (nodes =3D=3D NULL)
+> +               return -ENOMEM;
+> +
+> +       data->nodes =3D nodes;
+> +       nodes =3D &data->nodes[data->nr_nodes++];
+> +       nodes->syscall_nr =3D map_key->nr;
+> +
+> +       /* each thread has an entry for each syscall, just use the stat *=
+/
 
-This patch could make much use of the function for `Error` that does the
-last 4 lines.
+This comment shouldn't be here.
 
----
-Cheers,
-Benno
+Otherwise,
 
-> +    }
->  }
-> =20
->  impl Deref for Device<device::Core> {
+Reviewed-by: Howard Chu <howardchu95@gmail.com>
 
+Thanks,
+Howard
 
