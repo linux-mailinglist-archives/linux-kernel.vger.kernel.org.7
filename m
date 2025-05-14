@@ -1,56 +1,66 @@
-Return-Path: <linux-kernel+bounces-648034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-648035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2F7DAB70C2
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 18:07:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF68DAB70C5
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 18:07:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5F62188BBEE
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 16:05:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4301188D7D6
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 16:06:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 337AB2797A0;
-	Wed, 14 May 2025 16:05:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F1D1278161;
+	Wed, 14 May 2025 16:05:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vCSeeZyH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fhgUKevX"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FA9A14900B;
-	Wed, 14 May 2025 16:05:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE84F14900B;
+	Wed, 14 May 2025 16:05:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747238729; cv=none; b=Ky5zwZ/n/31F+NHsqwImcDjmk8pIHjKRwezbPO3vWMHK9l4Iy7CzQQKenV3GKITamDOBDGQO9i72Nz7WuQ6/6UOQLAEaB654eyBinI+RVmzPO26AY8+0rNA08qBKtMaCOiNQbXiHuhVWjEeY81WrKT21FNwEKvcfIZnmb+MDqkU=
+	t=1747238738; cv=none; b=ZhjXnoppfHjSHSuu9f5gfYERKct8D77uZPyhHaeAHNoKQe3K1ZwGFERQWB5+czO1Buw0ZvQB6YX+XuvV5aLq+JoKzZc2OE/R0RJGmkLaiLqsMgVDyCBxddh3RnRmoCUt6iB83e4oXyPhB6wlbuv9J1WPjPwae+E25IsMKzJm9b0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747238729; c=relaxed/simple;
-	bh=9ia58EEPZmsQMmA96nqP1xtz6SuZMnnHYxUouZrqGNQ=;
+	s=arc-20240116; t=1747238738; c=relaxed/simple;
+	bh=9G/dho57kzWG+845DqzNm+Vc+/T2+p3QlemMEguLtc8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HoUlqSVKa0eM05grYrfk/jLNce3YuN6rwcJUdrDyCMci95+uuaEx4R2BrMPzzK+GrrpN5EzhnfDtMzSMiHMc2qgAiJof+h2er31Y+HRw/TlcqXtIbT1LDsSeqNRKPtJUhoMeqwwduBiNfZ1IVk64UF8wKppQ1I0omEznFW96U5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vCSeeZyH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D6BAC4CEE3;
-	Wed, 14 May 2025 16:05:29 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=C2rojh8Q3NiUZUOzFHNzlca5u2o6pRLndAc49CpU811KFof6ppi1O37uTs+xkfRKzIMJEyDI/nEs4aqKH2wjblMM5eMdQGPZIdFmp6eKSYV02bX7AnCx2nYqMgRv12YYtYRl3kTGdf66boNNn8PiHqd/69cNBZZ5u0IXq61O2AA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fhgUKevX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B575C4CEE9;
+	Wed, 14 May 2025 16:05:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747238729;
-	bh=9ia58EEPZmsQMmA96nqP1xtz6SuZMnnHYxUouZrqGNQ=;
+	s=k20201202; t=1747238738;
+	bh=9G/dho57kzWG+845DqzNm+Vc+/T2+p3QlemMEguLtc8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=vCSeeZyHskG0dL2n3hM5Y1DzGiBc3u5SFPlO5g20sZC3JVrvr96qAFZm4norQpmxC
-	 rKOkT7V3zhwfHZfHStkTFexIsEuC/ocGaaxZpD+FKr7ae34rW5rBVhpFgNgF7XExYO
-	 Ly5+2gPj2i9DsZ7WaNYha6JYpHReu9Q6w97OS0d5IzDCovUY24H2FFcEzMOlHdjxxP
-	 lstcUZ4zqR4HDDDdxvLvUJyRQFYX2QHvmu7320iiZzWOfT339dLinpXroJ28f2gX+M
-	 9STDD0s7Q2np/HtR68GPFaTbZQxaVtYgKdKqL7Ei8TcZKxxgZlmfd9UI7K9F00EoNk
-	 U2D7lgfTZMd2Q==
-Date: Wed, 14 May 2025 09:05:28 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Hans Holmberg <Hans.Holmberg@wdc.com>
-Cc: "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-	Carlos Maiolino <cem@kernel.org>,
-	Dave Chinner <david@fromorbit.com>, hch <hch@lst.de>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/2] xfs: add inode to zone caching for data placement
-Message-ID: <20250514160528.GM2701446@frogsfrogsfrogs>
-References: <20250514104937.15380-1-hans.holmberg@wdc.com>
- <20250514104937.15380-3-hans.holmberg@wdc.com>
+	b=fhgUKevX4jd886+FJAyjiX/2MSRhZVDJGgLri+N6u5AdRw6Ku7xmZDLFa3qTD9EDz
+	 r4Cd/VV5rfwnUDTLhWli/QLXdWSya2YjIu6uGhzKpdbTqb1nm68GIcKzxHtiX8iKi2
+	 4dTvBfk27E3llp84ceI18yPlmUKIBgBYf6o1hLbY/uQM6/fo3sdjZtKqY1/NHOewdv
+	 RC7ap+GjI5f34f4Y9u7jyo6IlcysllCn3YUOMHcqdD/RY49RIpuZU68cM5pem0WaSs
+	 mGWdPZ6yTO3PbkOdQc/cxNkz2kFddEvt/VnspA8zJXrIn1yaRbRa4Zs3sdCz+YiFJp
+	 ropsDWs3x3+5w==
+Date: Wed, 14 May 2025 18:05:31 +0200
+From: Lorenzo Pieralisi <lpieralisi@kernel.org>
+To: Marc Zyngier <maz@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Sascha Bischoff <sascha.bischoff@arm.com>,
+	Timothy Hayes <timothy.hayes@arm.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v4 18/26] arm64: smp: Support non-SGIs for IPIs
+Message-ID: <aCS/SxDG9M+jh7Wr@lpieralisi>
+References: <20250513-gicv5-host-v4-0-b36e9b15a6c3@kernel.org>
+ <20250513-gicv5-host-v4-18-b36e9b15a6c3@kernel.org>
+ <aCRy4K/jvLr95GOp@lpieralisi>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,196 +69,199 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250514104937.15380-3-hans.holmberg@wdc.com>
+In-Reply-To: <aCRy4K/jvLr95GOp@lpieralisi>
 
-On Wed, May 14, 2025 at 10:50:37AM +0000, Hans Holmberg wrote:
-> Placing data from the same file in the same zone is a great heuristic
-> for reducing write amplification and we do this already - but only
-> for sequential writes.
+On Wed, May 14, 2025 at 12:39:28PM +0200, Lorenzo Pieralisi wrote:
+> On Tue, May 13, 2025 at 07:48:11PM +0200, Lorenzo Pieralisi wrote:
 > 
-> To support placing data in the same way for random writes, reuse the
-> xfs mru cache to map inodes to open zones on first write. If a mapping
-> is present, use the open zone for data placement for this file until
-> the zone is full.
+> [...]
 > 
-> Signed-off-by: Hans Holmberg <hans.holmberg@wdc.com>
-
-Odd, did my rvb from last time get dropped?  This doesn't look like a
-huge change to me...
-
-Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
-
---D
-
-> ---
->  fs/xfs/xfs_mount.h      |   1 +
->  fs/xfs/xfs_zone_alloc.c | 109 ++++++++++++++++++++++++++++++++++++++++
->  2 files changed, 110 insertions(+)
+> >  /*
+> >   * Called from the secondary holding pen, this is the secondary CPU entry point.
+> > diff --git a/arch/arm64/kernel/smp.c b/arch/arm64/kernel/smp.c
+> > index 3b3f6b56e733039cad7ff5b8995db16a68f3c762..3f3712e47c94c62836fb89cd4bfb3595fbb41557 100644
+> > --- a/arch/arm64/kernel/smp.c
+> > +++ b/arch/arm64/kernel/smp.c
+> > @@ -83,7 +83,26 @@ enum ipi_msg_type {
+> >  
+> >  static int ipi_irq_base __ro_after_init;
+> >  static int nr_ipi __ro_after_init = NR_IPI;
+> > -static struct irq_desc *ipi_desc[MAX_IPI] __ro_after_init;
+> > +
+> > +struct ipi_descs {
+> > +	struct irq_desc *descs[MAX_IPI];
+> > +};
+> > +
+> > +static DEFINE_PER_CPU(struct ipi_descs, pcpu_ipi_desc);
+> > +
+> > +#define get_ipi_desc(__cpu, __ipi) (per_cpu_ptr(&pcpu_ipi_desc, __cpu)->descs[__ipi])
+> > +
+> > +static bool percpu_ipi_descs __ro_after_init;
+> > +
+> > +static int ipi_to_irq(int ipi, int cpu)
+> > +{
+> > +	return ipi_irq_base + (cpu * nr_ipi) + ipi;
+> > +}
+> > +
+> > +static int irq_to_ipi(int irq)
+> > +{
+> > +	return (irq - ipi_irq_base) % nr_ipi;
+> > +}
+> >  
+> >  static bool crash_stop;
+> >  
+> > @@ -844,7 +863,7 @@ int arch_show_interrupts(struct seq_file *p, int prec)
+> >  		seq_printf(p, "%*s%u:%s", prec - 1, "IPI", i,
+> >  			   prec >= 4 ? " " : "");
+> >  		for_each_online_cpu(cpu)
+> > -			seq_printf(p, "%10u ", irq_desc_kstat_cpu(ipi_desc[i], cpu));
+> > +			seq_printf(p, "%10u ", irq_desc_kstat_cpu(get_ipi_desc(cpu, i), cpu));
+> >  		seq_printf(p, "      %s\n", ipi_types[i]);
+> >  	}
+> >  
+> > @@ -919,7 +938,13 @@ static void __noreturn ipi_cpu_crash_stop(unsigned int cpu, struct pt_regs *regs
+> >  
+> >  static void arm64_backtrace_ipi(cpumask_t *mask)
+> >  {
+> > -	__ipi_send_mask(ipi_desc[IPI_CPU_BACKTRACE], mask);
+> > +	unsigned int cpu;
+> > +
+> > +	if (!percpu_ipi_descs)
+> > +		__ipi_send_mask(get_ipi_desc(0, IPI_CPU_BACKTRACE), mask);
+> > +	else
+> > +		for_each_cpu(cpu, mask)
+> > +			__ipi_send_single(get_ipi_desc(cpu, IPI_CPU_BACKTRACE), cpu);
+> >  }
+> >  
+> >  void arch_trigger_cpumask_backtrace(const cpumask_t *mask, int exclude_cpu)
+> > @@ -944,7 +969,7 @@ void kgdb_roundup_cpus(void)
+> >  		if (cpu == this_cpu)
+> >  			continue;
+> >  
+> > -		__ipi_send_single(ipi_desc[IPI_KGDB_ROUNDUP], cpu);
+> > +		__ipi_send_single(get_ipi_desc(cpu, IPI_KGDB_ROUNDUP), cpu);
+> >  	}
+> >  }
+> >  #endif
+> > @@ -1013,14 +1038,21 @@ static void do_handle_IPI(int ipinr)
+> >  
+> >  static irqreturn_t ipi_handler(int irq, void *data)
+> >  {
+> > -	do_handle_IPI(irq - ipi_irq_base);
+> > +	do_handle_IPI(irq_to_ipi(irq));
+> >  	return IRQ_HANDLED;
+> >  }
+> >  
+> >  static void smp_cross_call(const struct cpumask *target, unsigned int ipinr)
+> >  {
+> > +	unsigned int cpu;
+> > +
+> >  	trace_ipi_raise(target, ipi_types[ipinr]);
+> > -	__ipi_send_mask(ipi_desc[ipinr], target);
+> > +
+> > +	if (!percpu_ipi_descs)
+> > +		__ipi_send_mask(get_ipi_desc(0, ipinr), target);
+> > +	else
+> > +		for_each_cpu(cpu, target)
+> > +			__ipi_send_single(get_ipi_desc(cpu, ipinr), cpu);
+> >  }
+> >  
+> >  static bool ipi_should_be_nmi(enum ipi_msg_type ipi)
+> > @@ -1046,11 +1078,15 @@ static void ipi_setup(int cpu)
+> >  		return;
+> >  
+> >  	for (i = 0; i < nr_ipi; i++) {
+> > -		if (ipi_should_be_nmi(i)) {
+> > -			prepare_percpu_nmi(ipi_irq_base + i);
+> > -			enable_percpu_nmi(ipi_irq_base + i, 0);
+> > +		if (!percpu_ipi_descs) {
+> > +			if (ipi_should_be_nmi(i)) {
+> > +				prepare_percpu_nmi(ipi_irq_base + i);
+> > +				enable_percpu_nmi(ipi_irq_base + i, 0);
+> > +			} else {
+> > +				enable_percpu_irq(ipi_irq_base + i, 0);
+> > +			}
+> >  		} else {
+> > -			enable_percpu_irq(ipi_irq_base + i, 0);
+> > +			enable_irq(irq_desc_get_irq(get_ipi_desc(cpu, i)));
+> >  		}
+> >  	}
+> >  }
+> > @@ -1064,44 +1100,79 @@ static void ipi_teardown(int cpu)
+> >  		return;
+> >  
+> >  	for (i = 0; i < nr_ipi; i++) {
+> > -		if (ipi_should_be_nmi(i)) {
+> > -			disable_percpu_nmi(ipi_irq_base + i);
+> > -			teardown_percpu_nmi(ipi_irq_base + i);
+> > +		if (!percpu_ipi_descs) {
+> > +			if (ipi_should_be_nmi(i)) {
+> > +				disable_percpu_nmi(ipi_irq_base + i);
+> > +				teardown_percpu_nmi(ipi_irq_base + i);
+> > +			} else {
+> > +				disable_percpu_irq(ipi_irq_base + i);
+> > +			}
+> >  		} else {
+> > -			disable_percpu_irq(ipi_irq_base + i);
+> > +			disable_irq(irq_desc_get_irq(get_ipi_desc(cpu, i)));
+> >  		}
+> >  	}
+> >  }
+> >  #endif
+> >  
+> > -void __init set_smp_ipi_range(int ipi_base, int n)
+> > +static void ipi_setup_ppi(int ipi)
+> > +{
+> > +	int err, irq, cpu;
+> > +
+> > +	irq = ipi_irq_base + ipi;
+> > +
+> > +	if (ipi_should_be_nmi(irq)) {
+> > +		err = request_percpu_nmi(irq, ipi_handler, "IPI", &irq_stat);
+> > +		WARN(err, "Could not request IRQ %d as NMI, err=%d\n", irq, err);
+> > +	} else {
+> > +		err = request_percpu_irq(irq, ipi_handler, "IPI", &irq_stat);
+> > +		WARN(err, "Could not request IRQ %d as IRQ, err=%d\n", irq, err);
+> > +	}
+> > +
+> > +	for_each_possible_cpu(cpu)
+> > +		get_ipi_desc(cpu, ipi) = irq_to_desc(irq);
+> > +
+> > +	irq_set_status_flags(irq, IRQ_HIDDEN);
+> > +}
+> > +
+> > +static void ipi_setup_lpi(int ipi, int ncpus)
+> > +{
+> > +	for (int cpu = 0; cpu < ncpus; cpu++) {
+> > +		int err, irq;
+> > +
+> > +		irq = ipi_to_irq(ipi, cpu);
+> > +
+> > +		err = irq_force_affinity(irq, cpumask_of(cpu));
+> > +
+> > +		WARN(err, "Could not force affinity IRQ %d, err=%d\n", irq, err);
+> > +
+> > +		err = request_irq(irq, ipi_handler, IRQF_NO_AUTOEN, "IPI",
+> > +				  &irq_stat);
 > 
-> diff --git a/fs/xfs/xfs_mount.h b/fs/xfs/xfs_mount.h
-> index e5192c12e7ac..f90c0a16766f 100644
-> --- a/fs/xfs/xfs_mount.h
-> +++ b/fs/xfs/xfs_mount.h
-> @@ -230,6 +230,7 @@ typedef struct xfs_mount {
->  	bool			m_update_sb;	/* sb needs update in mount */
->  	unsigned int		m_max_open_zones;
->  	unsigned int		m_zonegc_low_space;
-> +	struct xfs_mru_cache	*m_zone_cache;  /* Inode to open zone cache */
->  
->  	/*
->  	 * Bitsets of per-fs metadata that have been checked and/or are sick.
-> diff --git a/fs/xfs/xfs_zone_alloc.c b/fs/xfs/xfs_zone_alloc.c
-> index d509e49b2aaa..80add26c0111 100644
-> --- a/fs/xfs/xfs_zone_alloc.c
-> +++ b/fs/xfs/xfs_zone_alloc.c
-> @@ -24,6 +24,7 @@
->  #include "xfs_zone_priv.h"
->  #include "xfs_zones.h"
->  #include "xfs_trace.h"
-> +#include "xfs_mru_cache.h"
->  
->  void
->  xfs_open_zone_put(
-> @@ -796,6 +797,100 @@ xfs_submit_zoned_bio(
->  	submit_bio(&ioend->io_bio);
->  }
->  
-> +/*
-> + * Cache the last zone written to for an inode so that it is considered first
-> + * for subsequent writes.
-> + */
-> +struct xfs_zone_cache_item {
-> +	struct xfs_mru_cache_elem	mru;
-> +	struct xfs_open_zone		*oz;
-> +};
-> +
-> +static inline struct xfs_zone_cache_item *
-> +xfs_zone_cache_item(struct xfs_mru_cache_elem *mru)
-> +{
-> +	return container_of(mru, struct xfs_zone_cache_item, mru);
-> +}
-> +
-> +static void
-> +xfs_zone_cache_free_func(
-> +	void				*data,
-> +	struct xfs_mru_cache_elem	*mru)
-> +{
-> +	struct xfs_zone_cache_item	*item = xfs_zone_cache_item(mru);
-> +
-> +	xfs_open_zone_put(item->oz);
-> +	kfree(item);
-> +}
-> +
-> +/*
-> + * Check if we have a cached last open zone available for the inode and
-> + * if yes return a reference to it.
-> + */
-> +static struct xfs_open_zone *
-> +xfs_cached_zone(
-> +	struct xfs_mount		*mp,
-> +	struct xfs_inode		*ip)
-> +{
-> +	struct xfs_mru_cache_elem	*mru;
-> +	struct xfs_open_zone		*oz;
-> +
-> +	mru = xfs_mru_cache_lookup(mp->m_zone_cache, ip->i_ino);
-> +	if (!mru)
-> +		return NULL;
-> +	oz = xfs_zone_cache_item(mru)->oz;
-> +	if (oz) {
-> +		/*
-> +		 * GC only steals open zones at mount time, so no GC zones
-> +		 * should end up in the cache.
-> +		 */
-> +		ASSERT(!oz->oz_is_gc);
-> +		ASSERT(atomic_read(&oz->oz_ref) > 0);
-> +		atomic_inc(&oz->oz_ref);
-> +	}
-> +	xfs_mru_cache_done(mp->m_zone_cache);
-> +	return oz;
-> +}
-> +
-> +/*
-> + * Update the last used zone cache for a given inode.
-> + *
-> + * The caller must have a reference on the open zone.
-> + */
-> +static void
-> +xfs_zone_cache_create_association(
-> +	struct xfs_inode		*ip,
-> +	struct xfs_open_zone		*oz)
-> +{
-> +	struct xfs_mount		*mp = ip->i_mount;
-> +	struct xfs_zone_cache_item	*item = NULL;
-> +	struct xfs_mru_cache_elem	*mru;
-> +
-> +	ASSERT(atomic_read(&oz->oz_ref) > 0);
-> +	atomic_inc(&oz->oz_ref);
-> +
-> +	mru = xfs_mru_cache_lookup(mp->m_zone_cache, ip->i_ino);
-> +	if (mru) {
-> +		/*
-> +		 * If we have an association already, update it to point to the
-> +		 * new zone.
-> +		 */
-> +		item = xfs_zone_cache_item(mru);
-> +		xfs_open_zone_put(item->oz);
-> +		item->oz = oz;
-> +		xfs_mru_cache_done(mp->m_zone_cache);
-> +		return;
-> +	}
-> +
-> +	item = kmalloc(sizeof(*item), GFP_KERNEL);
-> +	if (!item) {
-> +		xfs_open_zone_put(oz);
-> +		return;
-> +	}
-> +	item->oz = oz;
-> +	xfs_mru_cache_insert(mp->m_zone_cache, ip->i_ino, &item->mru);
-> +}
-> +
->  void
->  xfs_zone_alloc_and_submit(
->  	struct iomap_ioend	*ioend,
-> @@ -819,11 +914,16 @@ xfs_zone_alloc_and_submit(
->  	 */
->  	if (!*oz && ioend->io_offset)
->  		*oz = xfs_last_used_zone(ioend);
-> +	if (!*oz)
-> +		*oz = xfs_cached_zone(mp, ip);
-> +
->  	if (!*oz) {
->  select_zone:
->  		*oz = xfs_select_zone(mp, write_hint, pack_tight);
->  		if (!*oz)
->  			goto out_error;
-> +
-> +		xfs_zone_cache_create_association(ip, *oz);
->  	}
->  
->  	alloc_len = xfs_zone_alloc_blocks(*oz, XFS_B_TO_FSB(mp, ioend->io_size),
-> @@ -1211,6 +1311,14 @@ xfs_mount_zones(
->  	error = xfs_zone_gc_mount(mp);
->  	if (error)
->  		goto out_free_zone_info;
-> +
-> +	/*
-> +	 * Set up a mru cache to track inode to open zone for data placement
-> +	 * purposes. The magic values for group count and life time is the
-> +	 * same as the defaults for file streams, which seems sane enough.
-> +	 */
-> +	xfs_mru_cache_create(&mp->m_zone_cache, mp,
-> +			5000, 10, xfs_zone_cache_free_func);
->  	return 0;
->  
->  out_free_zone_info:
-> @@ -1224,4 +1332,5 @@ xfs_unmount_zones(
->  {
->  	xfs_zone_gc_unmount(mp);
->  	xfs_free_zone_info(mp->m_zone_info);
-> +	xfs_mru_cache_destroy(mp->m_zone_cache);
->  }
-> -- 
-> 2.34.1
+> Heads-up, kbuild bot (sparse) barfed (correctly) at this, because the
+> &irq_stat pointer does not match the request_irq() void *dev_id parameter
+> signature (it is void __percpu *).
 > 
+> Of course, the &irq_stat parameter is unused so this is harmless.
+> 
+> I would just pass NULL (because AFAICS irq_stat in the action handler is
+> unused), the question is why are we passing &irq_stat in
+> request_percpu_irq() if that's unused in ipi_handler() ?
+
+Right, we have to have it there even if the ipi_handler() does not use
+it, that's as much as I can gather by checking the request_percpu_irq()
+interface and the percpu flow handler (handle_percpu_devid_irq()) used
+for SGIs IRQs on GICv3.
+
+For non-SGI IPIs, I will just pass NULL to request_irq() as void *dev_id
+because AFAICS it is not used in arm64 ipi_handler() (I use the
+handle_percpu_irq() flow handler), I applied the fix-up locally FYI.
+
+Lorenzo
 
