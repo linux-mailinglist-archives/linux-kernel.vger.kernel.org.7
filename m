@@ -1,96 +1,244 @@
-Return-Path: <linux-kernel+bounces-647766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-647767-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29998AB6D04
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 15:44:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1C95AB6D11
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 15:45:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B4A331B671C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 13:44:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE71416A6E0
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 13:45:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6851227A92C;
-	Wed, 14 May 2025 13:44:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3973E27A465;
+	Wed, 14 May 2025 13:45:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="RlY0MAC1"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="poaFxfsG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0099335970;
-	Wed, 14 May 2025 13:43:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C11612E1CD;
+	Wed, 14 May 2025 13:45:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747230240; cv=none; b=ebHuqXfV/JiCgAG486KROjPlAh2Mj2K1JXf6wmX93/8UyXrQjaUrgn+2m+W03QUAPyy22P0dmgCe445xXxQNmDCO+zURf0i0uPbeMrm8z/6b+f38AAbCUsl0mEkYOua5/PDH/tA1s72B71IOY6icogl6eLWRvWtBNUnI7rPumDM=
+	t=1747230316; cv=none; b=CSvB/DEzImo9FJv423GzS3bK8gCIYum6EIVw52c1rRgBfDhIS20XpijVmBy36PqdJDIuqjnsTVVwaus9KdaaRXlDFwigrHZFfZQZweQ6qQbmOfo+1S0h/1JDcO2xyHull6VY45bkfIYSKavQMID3nvJxMaT3XArRdJO7ssmQy+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747230240; c=relaxed/simple;
-	bh=jhvYh/l6FiXcGjp04Rwh3X1CLo9llYiEmQf5JBD/Kf4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CiplUa0/Np2TLckx0aelS/xRDLKUGJIkmJG/9OK3ih2T/vQqjbojn5W/EE4yWRIoP0/Ub+b01Mw49xdgGLMFSZFtxlJXcTPV7eW/CTNFZ4rgGl90mdH3NTtjG6xz0CCj+xckDdZzTQq5yFYaNe6vMk9TBVSylq3UQyS114zxZKE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=RlY0MAC1; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1747230237;
-	bh=jhvYh/l6FiXcGjp04Rwh3X1CLo9llYiEmQf5JBD/Kf4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=RlY0MAC16U67eamGI5lpVkLGVIjqsUpw9q7ecO3jcwQw2aExIhcaen14DlGvFdR01
-	 oroEDNOK1JaRGBIqz+l8x2ZFdxUu+ytw3oT7h3DjeNQx3QRnl4n84ezpEEmzUd14je
-	 MjuSRwAj6OL4IO2bUaUqaqN5s8sEZpoW2fGUhG/zmFhG6e4rO2t3Z18Qfb4nh9jyX0
-	 Kl8JBQGVCiMifSDe07wa4In7HUrWCWpfrbvTD21WuAV7rwkx33xK5orSGX8bGdZXUh
-	 lU9PAlao3Tw09FF94MjtAKpM3ozVmjy3Lihmb0naFMYNQa3obHTEoX0J/JVyDtUxv3
-	 QAWD64rvgX3xg==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 0C17F17E07C9;
-	Wed, 14 May 2025 15:43:56 +0200 (CEST)
-Message-ID: <6fc2027b-2afc-433f-a9af-c458221c96ce@collabora.com>
-Date: Wed, 14 May 2025 15:43:55 +0200
+	s=arc-20240116; t=1747230316; c=relaxed/simple;
+	bh=tY9VSV3EYK6S15qOsqtZyfX3P45eQ9SCKeZAOKjnJZQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kQLHc/YU2Mk0bshAhGhttiKUD5gSHBcxNZQFF1ChoX6I0Lv8eDN5QIB2stvmFc5Enc7677Mdk/CBXl4A2mBE1Nz2Ewm1vipbgurE5B6CekfYsDqp68jNNqzpLI2WSdcQcZinuTFmA9x7br3D2r1cVgMhA9ZfvuJI0zVfDoHgD08=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=poaFxfsG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99EFCC4CEE9;
+	Wed, 14 May 2025 13:45:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747230315;
+	bh=tY9VSV3EYK6S15qOsqtZyfX3P45eQ9SCKeZAOKjnJZQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=poaFxfsG3CXVf7CPsoaC7uKLVBomAiUmow3+AqCC1SSxUugf1t1Mu9mbKennO1UZe
+	 e90OWXbI1hhiVNxl6vKdjPtv5G4TckIAFUf96SIlpqaFmsAOMWSP2fyudlvY7COdiZ
+	 5bV/sTy+G0uGTEOCTq3KEVArFYpaxu7UBCUQ+IuWVCOrlylV1RwUrY5Fwfk+jdAC1J
+	 PnkYoFFLQAmjjTWNc8h/lo8DN60Sh+lrFtck4xu0u6b11FTeKNdaZLTaBPt5fa3N9b
+	 FP+h3RXvu1wWCsz2rdAIMMo3fTBtrOixNFJZSQbEVKZae9dTo4kHSADlt1dF1bH1zG
+	 J1/mTCh0OYIkw==
+Date: Wed, 14 May 2025 19:14:57 +0530
+From: Sumit Garg <sumit.garg@kernel.org>
+To: Amirreza Zarrabi <amirreza.zarrabi@oss.qualcomm.com>
+Cc: Jens Wiklander <jens.wiklander@linaro.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Apurupa Pattapu <quic_apurupa@quicinc.com>,
+	Kees Cook <kees@kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	linux-arm-msm@vger.kernel.org, op-tee@lists.trustedfirmware.org,
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
+	linux-doc@vger.kernel.org
+Subject: Re: [PATCH v4 09/11] qcomtee: add primordial object
+Message-ID: <aCSeWWCYNyGJakRp@sumit-X1>
+References: <20250428-qcom-tee-using-tee-ss-without-mem-obj-v4-0-6a143640a6cb@oss.qualcomm.com>
+ <20250428-qcom-tee-using-tee-ss-without-mem-obj-v4-9-6a143640a6cb@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/3] arm64: dts: mt6359: Rename RTC node to match
- binding expectations
-To: Julien Massot <julien.massot@collabora.com>, kernel@collabora.com,
- Sen Chu <sen.chu@mediatek.com>, Sean Wang <sean.wang@mediatek.com>,
- Macpaul Lin <macpaul.lin@mediatek.com>, Lee Jones <lee@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
- <matthias.bgg@gmail.com>, =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?=
- <nfraprado@collabora.com>, Hui Liu <hui.liu@mediatek.com>,
- Yong Wu <yong.wu@mediatek.com>, Joerg Roedel <joro@8bytes.org>,
- Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
- Tinghan Shen <tinghan.shen@mediatek.com>
-Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, iommu@lists.linux.dev
-References: <20250514-mt8395-dtb-errors-v2-0-d67b9077c59a@collabora.com>
- <20250514-mt8395-dtb-errors-v2-3-d67b9077c59a@collabora.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20250514-mt8395-dtb-errors-v2-3-d67b9077c59a@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250428-qcom-tee-using-tee-ss-without-mem-obj-v4-9-6a143640a6cb@oss.qualcomm.com>
 
-Il 14/05/25 10:19, Julien Massot ha scritto:
-> Rename the node 'mt6359rtc' to 'rtc', as required by the binding.
+On Mon, Apr 28, 2025 at 11:06:30PM -0700, Amirreza Zarrabi wrote:
+> After booting, the kernel provides a static object known as the
+> primordial object. This object is utilized by QTEE for native
+> kernel services such as yield or privileged operations.
 > 
-> Fix the following dtb-check error:
+> Signed-off-by: Amirreza Zarrabi <amirreza.zarrabi@oss.qualcomm.com>
+> ---
+>  drivers/tee/qcomtee/Makefile          |  1 +
+>  drivers/tee/qcomtee/core.c            | 19 +++++++---
+>  drivers/tee/qcomtee/primordial_obj.c  | 65 +++++++++++++++++++++++++++++++++++
+>  drivers/tee/qcomtee/qcomtee_private.h |  3 ++
+>  4 files changed, 83 insertions(+), 5 deletions(-)
+
+Looks reasonable to me, feel free to add:
+
+Acked-by: Sumit Garg <sumit.garg@oss.qualcomm.com>
+
+-Sumit
+
 > 
-> mediatek/mt8395-radxa-nio-12l.dtb: pmic: 'mt6359rtc' do not match
-> any of the regexes: 'pinctrl-[0-9]+'
+> diff --git a/drivers/tee/qcomtee/Makefile b/drivers/tee/qcomtee/Makefile
+> index 1b14b943e5f5..a3a2d00e83f0 100644
+> --- a/drivers/tee/qcomtee/Makefile
+> +++ b/drivers/tee/qcomtee/Makefile
+> @@ -3,6 +3,7 @@ obj-$(CONFIG_QCOMTEE) += qcomtee.o
+>  qcomtee-objs += async.o
+>  qcomtee-objs += call.o
+>  qcomtee-objs += core.o
+> +qcomtee-objs += primordial_obj.o
+>  qcomtee-objs += qcom_scm.o
+>  qcomtee-objs += release.o
+>  qcomtee-objs += shm.o
+> diff --git a/drivers/tee/qcomtee/core.c b/drivers/tee/qcomtee/core.c
+> index ad3b28f32529..a1ac492fd21a 100644
+> --- a/drivers/tee/qcomtee/core.c
+> +++ b/drivers/tee/qcomtee/core.c
+> @@ -39,10 +39,12 @@ int qcomtee_next_arg_type(struct qcomtee_arg *u, int i,
+>  }
+>  
+>  /*
+> - * QTEE expects IDs with the QCOMTEE_MSG_OBJECT_NS_BIT set for objects
+> - * of the QCOMTEE_OBJECT_TYPE_CB type.
+> + * QTEE expects IDs with QCOMTEE_MSG_OBJECT_NS_BIT set for objects of
+> + * QCOMTEE_OBJECT_TYPE_CB type. The first ID with QCOMTEE_MSG_OBJECT_NS_BIT
+> + * set is reserved for the primordial object.
+>   */
+> -#define QCOMTEE_OBJECT_ID_START (QCOMTEE_MSG_OBJECT_NS_BIT + 1)
+> +#define QCOMTEE_OBJECT_PRIMORDIAL (QCOMTEE_MSG_OBJECT_NS_BIT)
+> +#define QCOMTEE_OBJECT_ID_START (QCOMTEE_OBJECT_PRIMORDIAL + 1)
+>  #define QCOMTEE_OBJECT_ID_END (U32_MAX)
+>  
+>  #define QCOMTEE_OBJECT_SET(p, type, ...) \
+> @@ -127,7 +129,9 @@ static void qcomtee_object_release(struct kref *refcount)
+>   */
+>  int qcomtee_object_get(struct qcomtee_object *object)
+>  {
+> -	if (object != NULL_QCOMTEE_OBJECT && object != ROOT_QCOMTEE_OBJECT)
+> +	if (object != &qcomtee_primordial_object &&
+> +	    object != NULL_QCOMTEE_OBJECT &&
+> +	    object != ROOT_QCOMTEE_OBJECT)
+>  		return kref_get_unless_zero(&object->refcount);
+>  
+>  	return 0;
+> @@ -140,7 +144,9 @@ EXPORT_SYMBOL_GPL(qcomtee_object_get);
+>   */
+>  void qcomtee_object_put(struct qcomtee_object *object)
+>  {
+> -	if (object != NULL_QCOMTEE_OBJECT && object != ROOT_QCOMTEE_OBJECT)
+> +	if (object != &qcomtee_primordial_object &&
+> +	    object != NULL_QCOMTEE_OBJECT &&
+> +	    object != ROOT_QCOMTEE_OBJECT)
+>  		kref_put(&object->refcount, qcomtee_object_release);
+>  }
+>  EXPORT_SYMBOL_GPL(qcomtee_object_put);
+> @@ -222,6 +228,9 @@ static struct qcomtee_object *qcomtee_local_object_get(unsigned int object_id)
+>  {
+>  	struct qcomtee_object *object;
+>  
+> +	if (object_id == QCOMTEE_OBJECT_PRIMORDIAL)
+> +		return &qcomtee_primordial_object;
+> +
+>  	guard(rcu)();
+>  	object = xa_load(&xa_qcom_local_objects, object_id);
+>  	/* It already checks for %NULL_QCOMTEE_OBJECT. */
+> diff --git a/drivers/tee/qcomtee/primordial_obj.c b/drivers/tee/qcomtee/primordial_obj.c
+> new file mode 100644
+> index 000000000000..a30967d89c91
+> --- /dev/null
+> +++ b/drivers/tee/qcomtee/primordial_obj.c
+> @@ -0,0 +1,65 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
+> + */
+> +
+> +#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+> +
+> +#include <linux/delay.h>
+> +#include "qcomtee_private.h"
+> +
+> +/**
+> + * DOC: Primordial Object
+> + *
+> + * After boot, the kernel provides a static object of type
+> + * %QCOMTEE_OBJECT_TYPE_CB called the primordial object. This object is used
+> + * for native kernel services or privileged operations.
+> + *
+> + * We support:
+> + *  - %QCOMTEE_OBJECT_OP_YIELD to yield by the thread running in QTEE.
+> + *  - %QCOMTEE_OBJECT_OP_SLEEP to wait for a period of time.
+> + */
+> +
+> +#define QCOMTEE_OBJECT_OP_YIELD 1
+> +#define QCOMTEE_OBJECT_OP_SLEEP 2
+> +
+> +static int
+> +qcomtee_primordial_obj_dispatch(struct qcomtee_object_invoke_ctx *oic,
+> +				struct qcomtee_object *primordial_object_unused,
+> +				u32 op, struct qcomtee_arg *args)
+> +{
+> +	int err = 0;
+> +
+> +	switch (op) {
+> +	case QCOMTEE_OBJECT_OP_YIELD:
+> +		cond_resched();
+> +		/* No output object. */
+> +		oic->data = NULL;
+> +		break;
+> +	case QCOMTEE_OBJECT_OP_SLEEP:
+> +		/* Check message format matched QCOMTEE_OBJECT_OP_SLEEP op. */
+> +		if (qcomtee_args_len(args) != 1 ||
+> +		    args[0].type != QCOMTEE_ARG_TYPE_IB ||
+> +		    args[0].b.size < sizeof(u32))
+> +			return -EINVAL;
+> +
+> +		msleep(*(u32 *)(args[0].b.addr));
+> +		/* No output object. */
+> +		oic->data = NULL;
+> +		break;
+> +	default:
+> +		err = -EINVAL;
+> +	}
+> +
+> +	return err;
+> +}
+> +
+> +static struct qcomtee_object_operations qcomtee_primordial_obj_ops = {
+> +	.dispatch = qcomtee_primordial_obj_dispatch,
+> +};
+> +
+> +struct qcomtee_object qcomtee_primordial_object = {
+> +	.name = "primordial",
+> +	.object_type = QCOMTEE_OBJECT_TYPE_CB,
+> +	.ops = &qcomtee_primordial_obj_ops
+> +};
+> diff --git a/drivers/tee/qcomtee/qcomtee_private.h b/drivers/tee/qcomtee/qcomtee_private.h
+> index a6f2c0591580..e59cfb3b79dd 100644
+> --- a/drivers/tee/qcomtee/qcomtee_private.h
+> +++ b/drivers/tee/qcomtee/qcomtee_private.h
+> @@ -219,4 +219,7 @@ int qcomtee_user_object_submit(struct tee_context *ctx,
+>  			       struct tee_param *params, int num_params,
+>  			       int req_id, int errno);
+>  
+> +/* (2) Primordial Object. */
+> +extern struct qcomtee_object qcomtee_primordial_object;
+> +
+>  #endif /* QCOMTEE_PRIVATE_H */
 > 
-> Fixes: 3b7d143be4b7 ("arm64: dts: mt6359: add PMIC MT6359 related nodes")
-> Signed-off-by: Julien Massot <julien.massot@collabora.com>
-
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-
-
+> -- 
+> 2.34.1
+> 
 
