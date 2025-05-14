@@ -1,150 +1,233 @@
-Return-Path: <linux-kernel+bounces-647362-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-647357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC29DAB6792
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 11:33:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C5FBAB6783
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 11:30:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 817404A5F4F
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 09:33:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 363F03B12EC
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 09:30:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BDA7229B17;
-	Wed, 14 May 2025 09:32:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="REUcSlsD"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32DA41FF60E;
-	Wed, 14 May 2025 09:32:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62E2C226863;
+	Wed, 14 May 2025 09:30:27 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FCF91F3B97
+	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 09:30:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747215177; cv=none; b=B/AzAwtyvEzo2WlFwhS1fTTzbSA2FPbV4sZ3la2LkWXPIlOMO/iGAxBsnzEfS8Y9v/YWugkzWbTkwoQuivhjGJZfzGjBuWyO9DDTiLL1HcBSGeVZTzzylJTksj4n2xLUHEVodFdqaInccD7geGZ9cw9NtzFvKvOpHC1ch7Lnz/0=
+	t=1747215027; cv=none; b=cAg0aHdYk+mlta+eAM8G41mAchmpUowBMqWgooJefQqTBOYDRptAZ74S4evWEq8jF2wEeEP0X/qw6+jALI7KLkqEh0wXxLYLMp/JVlP+n31w76neErv2lrhPlMnxi/gSeiojuYouZrd+reIZQTejX+RrWp7SXnvBCe5xHpj6ehc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747215177; c=relaxed/simple;
-	bh=wgcDSzjE3z4wvyTjp53d7JEM1bigTEH6sNQEmXZAFnM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=PTrbzeO50wlqRmTXimeqTBpo+lQ5B9ayho5l9+2f8AU5qhLfhLkgNGN5/Tvvveoe6TeFJiVHXHnIOlz3oza0CVrOWJjcYOI3SCLRYY7dvFEnqYAwPYHgtaNDpePfR/OMD1o5XH/ea0IBqoONnwRqs8AjvP5/8gIUPC7jX3ble4A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=REUcSlsD; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54E7vt3p023085;
-	Wed, 14 May 2025 11:32:42 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	apPuGix0U1l8NbuF2RfEV7srsEyy+YpkXLnEoKgNuME=; b=REUcSlsDCyI8Hyf1
-	Dx5Y5boK9tw1Of6eJxcNtODLpy/xFNDPh/YLxIBUnW7KGAKOruHD7IUgQSjI4S7i
-	CBVc0zCDej1aWz31I9mo/NeQ3/eVjsNJnJ1iIdKHCnSfvbxIOxrPrvIzfrYt/P2e
-	nrrwse+lwg2bwLxhLn4qU7Z0sWttRjd/lJ671EWcDAWey286hEKr27RTU384YVMo
-	UIt+RNh+MkahVlKYt0jc4HsIZo+pHIJ/JalIXzCu1wfGqvKSgPFFsaGTFY6qpuyU
-	Fd3/Ro2LO3nrED4ScbRf0eonPqPp5JZH4xxm0YkeMbEH5nS9yulK0pv3kI7MDrJs
-	WrLA3w==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 46mbdxtwvq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 14 May 2025 11:32:41 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id A901540054;
-	Wed, 14 May 2025 11:31:44 +0200 (CEST)
-Received: from Webmail-eu.st.com (eqndag1node5.st.com [10.75.129.134])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id EC64DB4C73F;
-	Wed, 14 May 2025 11:30:15 +0200 (CEST)
-Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE5.st.com
- (10.75.129.134) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 14 May
- 2025 11:30:15 +0200
-Received: from [10.48.86.222] (10.48.86.222) by SAFDAG1NODE1.st.com
- (10.75.90.17) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 14 May
- 2025 11:30:14 +0200
-Message-ID: <5268ec60-ae2e-425e-a4af-a55cb0c3a1f9@foss.st.com>
-Date: Wed, 14 May 2025 11:30:14 +0200
+	s=arc-20240116; t=1747215027; c=relaxed/simple;
+	bh=e4oqIl7yit0wzEScRbWHOKCE5Dx8IagPx1u+0zntI6o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PVT6FgRpLvCIF49ASkpmmY9q8PWziKo8wAcsqXiUTlj0WJ/LJ5oACHx5KdOX37QHn5GECevKkmpzDZfPifTHH86SG2uDooInExjFtV6092XcAwO0Yx+kqNOXiWHdyTagzcgigP1TatPtcquYTIc+fms1T8a2sQk+6v693YfbMgQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 385BA1688;
+	Wed, 14 May 2025 02:30:13 -0700 (PDT)
+Received: from localhost (e132581.arm.com [10.1.196.87])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 01F863F5A1;
+	Wed, 14 May 2025 02:30:23 -0700 (PDT)
+Date: Wed, 14 May 2025 10:30:19 +0100
+From: Leo Yan <leo.yan@arm.com>
+To: Yeoreum Yun <yeoreum.yun@arm.com>
+Cc: suzuki.poulose@arm.com, mike.leach@linaro.org, james.clark@linaro.org,
+	alexander.shishkin@linux.intel.com, coresight@lists.linaro.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 3/3] coresight: prevent deactivate active config while
+ enabling the config
+Message-ID: <20250514093019.GE26114@e132581.arm.com>
+References: <20250513170622.3071637-1-yeoreum.yun@arm.com>
+ <20250513170622.3071637-2-yeoreum.yun@arm.com>
+ <20250513170622.3071637-3-yeoreum.yun@arm.com>
+ <20250513170622.3071637-4-yeoreum.yun@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/8] counter: stm32-timer-cnt: add support for
- stm32mp25
-To: <jic23@kernel.org>, <wbg@kernel.org>
-CC: <alexandre.torgue@foss.st.com>, <lee@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <catalin.marinas@arm.com>,
-        <will@kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-iio@vger.kernel.org>, <linux-pwm@vger.kernel.org>,
-        <olivier.moysan@foss.st.com>, <ukleinek@kernel.org>
-References: <20250110091922.980627-1-fabrice.gasnier@foss.st.com>
- <20250110091922.980627-4-fabrice.gasnier@foss.st.com>
-Content-Language: en-US
-From: Fabrice Gasnier <fabrice.gasnier@foss.st.com>
-In-Reply-To: <20250110091922.980627-4-fabrice.gasnier@foss.st.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SAFDAG1NODE1.st.com
- (10.75.90.17)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-14_03,2025-05-14_02,2025-02-21_01
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250513170622.3071637-4-yeoreum.yun@arm.com>
 
-On 1/10/25 10:19, Fabrice Gasnier wrote:
-> Add support for STM32MP25 SoC. There are new counter modes that may be
-> implemented in later. Still, use newly introduced compatible to handle
-> this new HW variant and avoid being blocked with existing compatible
-> in SoC dtsi file. Modes supported currently still remains compatible.
-> New timer 20 has encoder capability, add it to the list.
+On Tue, May 13, 2025 at 06:06:22PM +0100, Yeoreum Yun wrote:
+> While enable active config via cscfg_csdev_enable_active_config(),
+> active config could be deactivated via configfs' sysfs interface.
+> This could make UAF issue in below scenario:
 > 
-> Acked-by: William Breathitt Gray <wbg@kernel.org>
-> Signed-off-by: Fabrice Gasnier <fabrice.gasnier@foss.st.com>
+> CPU0                                          CPU1
+> (sysfs enable)                                load module
+>                                               cscfg_load_config_sets()
+>                                               activate config. // sysfs
+>                                               (sys_active_cnt == 1)
+> ...
+> cscfg_csdev_enable_active_config()
+> lock(csdev->cscfg_csdev_lock)
+> // here load config activate by CPU1
+> unlock(csdev->cscfg_csdev_lock)
+> 
+>                                               deactivate config // sysfs
+>                                               (sys_activec_cnt == 0)
+>                                               cscfg_unload_config_sets()
+>                                               unload module
+> 
+> // access to config_desc which freed
+> // while unloading module.
+> cscfg_csdev_enable_config
+> 
+> To address this, use cscfg_config_desc's active_cnt as a reference count
+>  which will be holded when
+>     - activate the config.
+>     - enable the activated config.
+> and put the module reference when config_active_cnt == 0.
+> 
+> Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
 > ---
->  drivers/counter/stm32-timer-cnt.c | 7 +++++--
->  1 file changed, 5 insertions(+), 2 deletions(-)
-
-Hi,
-
-The first patches of this series have been merged.
-
-I'm not sure who shall pick this one ? (I think there's no dependency).
-Or do I need to resend it separately ?
-
-Please advise,
-BR,
-Fabrice
-
+>  .../hwtracing/coresight/coresight-config.h    |  2 +-
+>  .../hwtracing/coresight/coresight-syscfg.c    | 49 +++++++++++++------
+>  2 files changed, 35 insertions(+), 16 deletions(-)
 > 
-> diff --git a/drivers/counter/stm32-timer-cnt.c b/drivers/counter/stm32-timer-cnt.c
-> index e75b69476a00..3d3384cbea87 100644
-> --- a/drivers/counter/stm32-timer-cnt.c
-> +++ b/drivers/counter/stm32-timer-cnt.c
-> @@ -669,12 +669,14 @@ static void stm32_timer_cnt_detect_channels(struct device *dev,
->  	dev_dbg(dev, "has %d cc channels\n", priv->nchannels);
+> diff --git a/drivers/hwtracing/coresight/coresight-config.h b/drivers/hwtracing/coresight/coresight-config.h
+> index b9ebc9fcfb7f..90fd937d3bd8 100644
+> --- a/drivers/hwtracing/coresight/coresight-config.h
+> +++ b/drivers/hwtracing/coresight/coresight-config.h
+> @@ -228,7 +228,7 @@ struct cscfg_feature_csdev {
+>   * @feats_csdev:references to the device features to enable.
+>   */
+>  struct cscfg_config_csdev {
+> -	const struct cscfg_config_desc *config_desc;
+> +	struct cscfg_config_desc *config_desc;
+>  	struct coresight_device *csdev;
+>  	bool enabled;
+>  	struct list_head node;
+> diff --git a/drivers/hwtracing/coresight/coresight-syscfg.c b/drivers/hwtracing/coresight/coresight-syscfg.c
+> index 5d194b9269f5..6d8c212ad434 100644
+> --- a/drivers/hwtracing/coresight/coresight-syscfg.c
+> +++ b/drivers/hwtracing/coresight/coresight-syscfg.c
+> @@ -870,6 +870,25 @@ void cscfg_csdev_reset_feats(struct coresight_device *csdev)
 >  }
+>  EXPORT_SYMBOL_GPL(cscfg_csdev_reset_feats);
 >  
-> -/* encoder supported on TIM1 TIM2 TIM3 TIM4 TIM5 TIM8 */
-> -#define STM32_TIM_ENCODER_SUPPORTED	(BIT(0) | BIT(1) | BIT(2) | BIT(3) | BIT(4) | BIT(7))
-> +/* encoder supported on TIM1 TIM2 TIM3 TIM4 TIM5 TIM8 TIM20 */
-> +#define STM32_TIM_ENCODER_SUPPORTED	(BIT(0) | BIT(1) | BIT(2) | BIT(3) | BIT(4) | BIT(7) | \
-> +					 BIT(19))
+> +static bool cscfg_config_desc_get(struct cscfg_config_desc *config_desc)
+
+I would like to change the return type to int, so the error is handled
+within the function.  As a result, the caller _cscfg_activate_config()
+does not need to explicitly return an error value.
+
+Otherwise, the patch looks good to me.
+
+Thanks,
+Leo
+
+> +{
+> +	if (!atomic_fetch_inc(&config_desc->active_cnt)) {
+> +		/* must ensure that config cannot be unloaded in use */
+> +		if (unlikely(cscfg_owner_get(config_desc->load_owner))) {
+> +			atomic_dec(&config_desc->active_cnt);
+> +			return false;
+> +		}
+> +	}
+> +
+> +	return true;
+> +}
+> +
+> +static void cscfg_config_desc_put(struct cscfg_config_desc *config_desc)
+> +{
+> +	if (!atomic_dec_return(&config_desc->active_cnt))
+> +		cscfg_owner_put(config_desc->load_owner);
+> +}
+> +
+>  /*
+>   * This activate configuration for either perf or sysfs. Perf can have multiple
+>   * active configs, selected per event, sysfs is limited to one.
+> @@ -893,22 +912,17 @@ static int _cscfg_activate_config(unsigned long cfg_hash)
+>  			if (config_desc->available == false)
+>  				return -EBUSY;
 >  
->  static const char * const stm32_timer_trigger_compat[] = {
->  	"st,stm32-timer-trigger",
->  	"st,stm32h7-timer-trigger",
-> +	"st,stm32mp25-timer-trigger",
->  };
+> -			/* must ensure that config cannot be unloaded in use */
+> -			err = cscfg_owner_get(config_desc->load_owner);
+> -			if (err)
+> +			if (!cscfg_config_desc_get(config_desc)) {
+> +				err = -EINVAL;
+>  				break;
+> +			}
+> +
+>  			/*
+>  			 * increment the global active count - control changes to
+>  			 * active configurations
+>  			 */
+>  			atomic_inc(&cscfg_mgr->sys_active_cnt);
 >  
->  static int stm32_timer_cnt_probe_encoder(struct device *dev,
-> @@ -846,6 +848,7 @@ static SIMPLE_DEV_PM_OPS(stm32_timer_cnt_pm_ops, stm32_timer_cnt_suspend,
+> -			/*
+> -			 * mark the descriptor as active so enable config on a
+> -			 * device instance will use it
+> -			 */
+> -			atomic_inc(&config_desc->active_cnt);
+> -
+>  			err = 0;
+>  			dev_dbg(cscfg_device(), "Activate config %s.\n", config_desc->name);
+>  			break;
+> @@ -923,9 +937,8 @@ static void _cscfg_deactivate_config(unsigned long cfg_hash)
 >  
->  static const struct of_device_id stm32_timer_cnt_of_match[] = {
->  	{ .compatible = "st,stm32-timer-counter", },
-> +	{ .compatible = "st,stm32mp25-timer-counter", },
->  	{},
->  };
->  MODULE_DEVICE_TABLE(of, stm32_timer_cnt_of_match);
+>  	list_for_each_entry(config_desc, &cscfg_mgr->config_desc_list, item) {
+>  		if ((unsigned long)config_desc->event_ea->var == cfg_hash) {
+> -			atomic_dec(&config_desc->active_cnt);
+>  			atomic_dec(&cscfg_mgr->sys_active_cnt);
+> -			cscfg_owner_put(config_desc->load_owner);
+> +			cscfg_config_desc_put(config_desc);
+>  			dev_dbg(cscfg_device(), "Deactivate config %s.\n", config_desc->name);
+>  			break;
+>  		}
+> @@ -1050,7 +1063,7 @@ int cscfg_csdev_enable_active_config(struct coresight_device *csdev,
+>  				     unsigned long cfg_hash, int preset)
+>  {
+>  	struct cscfg_config_csdev *config_csdev_active = NULL, *config_csdev_item;
+> -	const struct cscfg_config_desc *config_desc;
+> +	struct cscfg_config_desc *config_desc;
+>  	unsigned long flags;
+>  	int err = 0;
+>  
+> @@ -1065,8 +1078,8 @@ int cscfg_csdev_enable_active_config(struct coresight_device *csdev,
+>  	raw_spin_lock_irqsave(&csdev->cscfg_csdev_lock, flags);
+>  	list_for_each_entry(config_csdev_item, &csdev->config_csdev_list, node) {
+>  		config_desc = config_csdev_item->config_desc;
+> -		if ((atomic_read(&config_desc->active_cnt)) &&
+> -		    ((unsigned long)config_desc->event_ea->var == cfg_hash)) {
+> +		if (((unsigned long)config_desc->event_ea->var == cfg_hash) &&
+> +				cscfg_config_desc_get(config_desc)) {
+>  			config_csdev_active = config_csdev_item;
+>  			csdev->active_cscfg_ctxt = (void *)config_csdev_active;
+>  			break;
+> @@ -1100,7 +1113,11 @@ int cscfg_csdev_enable_active_config(struct coresight_device *csdev,
+>  				err = -EBUSY;
+>  			raw_spin_unlock_irqrestore(&csdev->cscfg_csdev_lock, flags);
+>  		}
+> +
+> +		if (err)
+> +			cscfg_config_desc_put(config_desc);
+>  	}
+> +
+>  	return err;
+>  }
+>  EXPORT_SYMBOL_GPL(cscfg_csdev_enable_active_config);
+> @@ -1139,8 +1156,10 @@ void cscfg_csdev_disable_active_config(struct coresight_device *csdev)
+>  	raw_spin_unlock_irqrestore(&csdev->cscfg_csdev_lock, flags);
+>  
+>  	/* true if there was an enabled active config */
+> -	if (config_csdev)
+> +	if (config_csdev) {
+>  		cscfg_csdev_disable_config(config_csdev);
+> +		cscfg_config_desc_put(config_csdev->config_desc);
+> +	}
+>  }
+>  EXPORT_SYMBOL_GPL(cscfg_csdev_disable_active_config);
+>  
+> -- 
+> LEVI:{C3F47F37-75D8-414A-A8BA-3980EC8A46D7}
+> 
 
