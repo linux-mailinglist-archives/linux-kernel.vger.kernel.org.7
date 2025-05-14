@@ -1,137 +1,146 @@
-Return-Path: <linux-kernel+bounces-647150-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-647152-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51DCBAB6504
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 10:00:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E33CAB6507
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 10:00:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8295A7A4702
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 07:59:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E2863ACFC7
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 08:00:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78C2F218AD4;
-	Wed, 14 May 2025 08:00:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA7C321C16D;
+	Wed, 14 May 2025 08:00:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="caEiEi3C"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E8UOcswx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7A778BE8;
-	Wed, 14 May 2025 08:00:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D3CC200B8B;
+	Wed, 14 May 2025 08:00:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747209622; cv=none; b=uFflc20iPuhBtZfI1d9vSTbS38AZGyYccZpPOzWXAG+L82rAWBYxWvCLmDSJlRwDnZZ9vQg3s5eWBjuUWYOOm4kJy+IUQJYmJcLg1ON1EBxvNe5SXLFxrzkOdZlP+2WISdMxAZPU2FD0rL/nq82KZtRKF/itmLHpT6lX7L2BVKw=
+	t=1747209634; cv=none; b=AOht8RBdb73fyWdJqCiU4GAYp+on9rCjW4by0biyIDW1KxgsApsvwG4RGRGbprfMEdaEELmnoCzR0895tRpykTFzrfmdxaiMYJyv9Ew5LUnEAqa3PclVnoNsPjmzFuADKS7j89Weeb+y5xrGY0Z3Umi1VgMqfeFwMNVbymAXkNs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747209622; c=relaxed/simple;
-	bh=FNnalQEzea7G5/rGNNxlWHjVw5fKy7ofEDIPa/TTLeA=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
-	 In-Reply-To:Content-Type; b=m7a1m4Hhtn3GT4lIRDIW6/2bnUfGxoLNJrjvoOiJYR3JtPYBafywVbsu57d6ZyHl3KGsSaWWTsJsWQu+OL3igZvQ2ZDsAt3CPCIrFaviAZBwHtr3Si8F3CE98eebmg5ZEhW5l2U9Kw+i8JN2RbG0fkctN70pm5J/JMnHGacU+nU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=caEiEi3C; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54E2DTgd015761;
-	Wed, 14 May 2025 08:00:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	eCKY5vGp6iytYr65b9eAol+yPV2ZnG6jSEVYa8k0SgQ=; b=caEiEi3C5Yj9xiAi
-	0vScEPzsyeb1v6BS0lRKl7UMXOxoLxWskwrJ5MHjV+2tJiGb6Ld47U/JgJzTL4n6
-	uX6KcYopbj6jcDRs7Y925oPAAwO5CkxTl2Is4FDSdNPIxFt1D7SAbzC1/Vcz8vHo
-	gA5j5Z11FGUCUl7z4UxX2e6NWvKfgsgR7nZ0TisA9+RJCY5TWLfI5PTgQSPq1VPM
-	SM/kMAwjNpfOcL2mibZxxJC5VRhwoWxXFKAzocKWp4CW6TIAaU9BHGnqS87iOPax
-	mXrR2pCc2KtkwdqM8Sxmh5Id5QFYmzh9n9anFLc17ForVNto9MkA2M5FpFpkBJMJ
-	S3qdLg==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46mbcmhv0t-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 14 May 2025 08:00:18 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 54E80Hho015168
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 14 May 2025 08:00:17 GMT
-Received: from [10.64.68.153] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 14 May
- 2025 01:00:14 -0700
-Message-ID: <d87a6bba-eaed-4ac4-a272-3bb38b1607dc@quicinc.com>
-Date: Wed, 14 May 2025 16:00:12 +0800
+	s=arc-20240116; t=1747209634; c=relaxed/simple;
+	bh=diQeYPgCeCl0N4zVT0rzgL76qvtcdcDvP3VwTZvxUS0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qU0hvZ40Q5z34Y/VLHxA4cfnqRYucH36Y1rK06HneCg+6nXgvIHAcBtkA3xjrTlZ/E/xJOr2l7+v8G2ckBKLtkZ8/jdiSUqSgzRbfRZjm0fFa4iADWsJGhasKkm7XlwSF+mX59u86aIGOwtdrdGdoN62AyBDgdibEoWe+31qONc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E8UOcswx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E78F0C4CEE9;
+	Wed, 14 May 2025 08:00:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747209633;
+	bh=diQeYPgCeCl0N4zVT0rzgL76qvtcdcDvP3VwTZvxUS0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=E8UOcswxhSQiVKtt3m8rF2e4HEHAI8GK4L0ZKhFmmQIqVUZSURnS91joR0W9txWkz
+	 lNJwj/G05D50OQHBGNOyZSb3dPWheiCtPPQg4JvNnZIodthqSY44bskpcHPQ8V5Pja
+	 B84ynZq3CP8KXJcKq9C85zWVud8oPBsYraPSr45mGEoxEuuKcuCCwd1IujRzsuReRi
+	 kUTUA0JODOWheKvowY8sg+Sf9f3FGkWouRExzHA0+sfrSk4qKWTdagx2VxfoYoHTD8
+	 mnR0finwb+WOuOVSNYcPyBdagljhUU1H/lzYvE28Q6g2ke6QztFSg5yWKYxQIT6GYm
+	 9XNh6N8TlarnA==
+Date: Wed, 14 May 2025 10:00:28 +0200
+From: Carlos Maiolino <cem@kernel.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Dave Chinner <david@fromorbit.com>, linux-xfs@vger.kernel.org, 
+	cen zhang <zzzccc427@gmail.com>, lkmm@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] xfs: mark the i_delayed_blks access in xfs_file_release
+ as racy
+Message-ID: <ymjsjb7ich2s5f7tmhslhlnymjmso5o2lsvdoudy3dtbr7vjwk@moxzvvjdh6zl>
+References: <20250513052614.753577-1-hch@lst.de>
+ <aCO7injOF7DFJGY9@dread.disaster.area>
+ <FezVRpM-CK9-HuEp3IpLjF-tP7zIL0rzKfhspjIkdGvS3giuWzM9eeby5_eQjL5_gNG1YC4Zu0snd2lBHnL0xg==@protonmail.internalid>
+ <20250514042946.GA23355@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 0/2] Enable CTCU device for QCS8300
-From: Jie Gan <quic_jiegan@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-CC: Tingwei Zhang <quic_tingweiz@quicinc.com>,
-        Jinlong Mao
-	<quic_jinlmao@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20250327024943.3502313-1-jie.gan@oss.qualcomm.com>
-Content-Language: en-US
-In-Reply-To: <20250327024943.3502313-1-jie.gan@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTE0MDA2OCBTYWx0ZWRfX3y9eAJIyiCv/
- R/xuCuLo/RjI8KKaoiBSfbC3xyKhQNZgjYBKjtpgL9rp6U9VNBM+afUBsJUHXHxqey0QuzOMHN0
- rQYN5RnqN3nrOL8T4zfarjRZipxMLTarBP0yFAxa/zjaSkYbBKn0sszIHuR+rCA8+3w5XkBAXLh
- zYMkt4ettjjrrtTyB52OuoyQXh5IhfThskhnwVKV0RUbjNhd7nlaqsiaR46Pq2SNIyD+nk0047e
- ET5tGiJl7EoUQprU0ewRg6IxRBF6LMwi7k+st/OQRCBDnc83vKmqEVAl+wjgFWTtFRVYDXL3VO3
- afDXFzw1TCaIPXofOhxD0e4ZjXKVCauJyIX/9NApCwiA+t0ouTo84/zPJNrL8pgQZRy92BqG7Ea
- UrvcARVRS0CoMlFnt5gfEl3iTINAJWL7OnJ1/tSqn64ul9V+DmgQcA4885bdCVj32BxrdLK2
-X-Authority-Analysis: v=2.4 cv=G5scE8k5 c=1 sm=1 tr=0 ts=68244d92 cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10
- a=pLMpUjaxxvwfmTDcegsA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-GUID: lCFnLqJMcX4kM6QxzAR3OeYaBZNQQ30e
-X-Proofpoint-ORIG-GUID: lCFnLqJMcX4kM6QxzAR3OeYaBZNQQ30e
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-14_02,2025-05-14_02,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 mlxlogscore=698 clxscore=1015 phishscore=0 bulkscore=0
- suspectscore=0 spamscore=0 impostorscore=0 lowpriorityscore=0 mlxscore=0
- malwarescore=0 adultscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505070000
- definitions=main-2505140068
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250514042946.GA23355@lst.de>
 
+Hi.
 
-
-On 3/27/2025 10:49 AM, Jie Gan wrote:
-> Enable CTCU device for QCS8300 platform. Add a fallback mechnasim in binding to utilize
-> the compitable of the SA8775p platform becuase the CTCU for QCS8300 shares same
-> configurations as SA8775p platform.
+On Wed, May 14, 2025 at 06:29:46AM +0200, Christoph Hellwig wrote:
+> On Wed, May 14, 2025 at 07:37:14AM +1000, Dave Chinner wrote:
+> > On Tue, May 13, 2025 at 07:26:14AM +0200, Christoph Hellwig wrote:
+> > > We don't bother with the ILOCK as this is best-effort and thus a racy
+> > > access is ok.  Add a data_race() annotation to make that clear to
+> > > memory model verifiers.
+> >
+> > IMO, that's the thin edge of a wedge. There are dozens of places in
+> > XFS where we check variable values without holding the lock needed
+> > to serialise the read against modification.
+> 
+> Yes. And the linux kernel memory consistency model ask us to mark them,
+> see tools/memory-model/Documentation/access-marking.txt.
+> 
+> This fails painful at first, but I'd actually wish we'd have tools
+> enforcing this as strongly as possible as developers (well me at least)
+> seem to think a racy access is just fine more often than they should, and
+> needing an annotation and a comment is a pretty good way to sure that.
+> 
+> > Hence my question - are we now going to make it policy that every
+> > possible racy access must be marked with data_race() because there
+> > is some new bot that someone is running that will complain if we
+> > don't? Are you committing to playing whack-a-mole with the memory
+> > model verifiers to silence all the false positives from these
+> > known-to-be-safe access patterns?
+> 
+> It's not really a "new bot".  It has been official memory consistency
+> policy for a while, but it just hasn't been well enforced.  For new code
+> asking if the review is racy and needs a marking or use READ_ONCE() and
+> WRITE_ONCE() has been part of the usual review protocol.  Reviewing old
+> code and fixing things we got wrong will take a while, but I'm actually
+> glad about more bots for that.
 > 
 
-Gentle ping for the series.
+I agree with you here, and we could slowly start marking those shared accesses
+as racy, but bots spitting false-positivies all the time doesn't help much,
+other than taking somebody's else time to look into the report.
 
-dt-binding patch has been reviewed by Krzysztof.
-dts patch has been acked by Konrad.
+Taking as example one case in the previous report, where the report complained
+about concurrent bp->b_addr access during the buffer instantiation.
 
-Thanks,
-Jie
+This seems to be covered by the access-marking.txt doc:
 
-> Jie Gan (2):
->    dt-bindings: arm: add CTCU device for QCS8300
->    arm64: dts: qcom: qcs8300: Add CTCU and ETR nodes
-> 
->   .../bindings/arm/qcom,coresight-ctcu.yaml     |   9 +-
->   arch/arm64/boot/dts/qcom/qcs8300.dtsi         | 153 ++++++++++++++++++
->   2 files changed, 160 insertions(+), 2 deletions(-)
-> 
+"
+...
+Churning the code base with ill-considered additions of data_race(),
+READ_ONCE(), and WRITE_ONCE() is unhelpful.
+...
+"
 
+Then:
+
+"
+...
+Use of Plain C-Language Accesses
+
+2.	Initialization-time and cleanup-time accesses.	This covers
+	a  wide variety of situations, including the uniprocessor
+	phase of system boot, variables to be used by not-yet-spawned
+	kthreads, structures not yet published to reference-counted
+	or RCU-protected data structures, and the cleanup side of any
+	of these situations.
+...
+"
+
+So, I think Dave has a point too. Like what happens with syzkaller
+and random people reporting random syzkaller warnings.
+
+While I appreciate the reports too, I think it would be fair for the reporters
+to spend some time to at least craft a RFC patch fixing the warning.
+
+In this case for example, the reporter explicitly mentioned data_race()
+annotations, so, why not just send a patch attempting fix the warning instead of
+asking somebody else to do that? IMHO, somebody fidgeting with KCSAN has enough
+skills to craft such patch. Of course I might be wrong here, but tweaking debug
+knobs over the kernel and asking somebody else to look at the results doesn't
+seem scalable.
+
+Cheers.
 
