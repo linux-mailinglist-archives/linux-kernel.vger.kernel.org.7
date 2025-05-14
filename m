@@ -1,85 +1,93 @@
-Return-Path: <linux-kernel+bounces-648437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-648441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF606AB76BE
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 22:21:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FA9EAB76D5
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 22:22:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A397F1BA6CDC
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 20:21:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C4064C7B73
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 20:22:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CFC4297B90;
-	Wed, 14 May 2025 20:19:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 796E3298260;
+	Wed, 14 May 2025 20:19:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="W5A4U/Mu"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YLwSqk03"
+Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com [209.85.221.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D445297B66;
-	Wed, 14 May 2025 20:19:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F5F329824D;
+	Wed, 14 May 2025 20:19:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747253956; cv=none; b=cTYfEVXDX/EX8Nwdoaqg/OXAjrAKY2vB8o19tde+FpPY7jOR2qEzY1Ic91qlvT6//CGLP1YD2+GSfPx9rxnmTFgSSncFy+d376uvFbaGGL65os+wHk5Mwt7yqmKCpa/hjgzh79FACO7P6w4tw3uoV/EePVL0qj7hnIuQRowVasQ=
+	t=1747253976; cv=none; b=e7o3u65q3jYCrEUmx0WH1UR72th9caGWHOvHRoeO2dx2orfsHWRgIzZ0EYtJfuafOadGc7da1gYRXHFzPJByrk0JZbufmnS6XywqLnD+KeR0X365/S7HHmvOSou4LvYWCwsUFrcndGBqQXDGP2KpeUqkD1BdYUMNGzdGKjZRzRs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747253956; c=relaxed/simple;
-	bh=hYrU9RvV+4y2DHFLaQiCECHzjwEV+OkrnWnu8hwtrgU=;
+	s=arc-20240116; t=1747253976; c=relaxed/simple;
+	bh=bT9yarjWt4tVIFw8YTecHghmXuOoxUPOnBv6bMf16Q8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iWrInO6x2H9b0gn3AGxsnG8oFx210UazMW94Sl3TcJcCBsW2EeOq1Jq76R1hsIh4wwA7C7MdvhGt3VJW9xxfvosv9aP48AXOAryEa12v8k+b/SuVTlHS2ACNJC97kybmaeBTb0Hr67UdkSNLlHCG3a8Dq46dZW4FAzAGr4fv2/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=W5A4U/Mu; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1747253954; x=1778789954;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=hYrU9RvV+4y2DHFLaQiCECHzjwEV+OkrnWnu8hwtrgU=;
-  b=W5A4U/MuznMYUwssUybHr6Rm/LiqYcRbcNvoGaVrM0pMreeuwRcSJ8Ka
-   84wBWgCnBpmzoL4ysw+gfyJlXo1Hqi1/wC7cgo/3j9fnTCCn1vG7uzFWD
-   D/iq/HDdKCuxjsMvnHPZjla4jtDtYm9cDkvkW2IKpvDl4Jj86amqx6BcK
-   8U7whg80bbHgzJrj6dHAvem/AMlFbgAtMYXesN8Q7ExgLZ8logmU9r2tb
-   pQGMO7Spj/C0Rcwg4YwWjlhMEXntykI3xoonrVhoMMM7mJXTCpFyJdRNK
-   mPtmNXNDE5VBkY52/svEXTCCvTzFEf7N1M/boNYR/0+CRRM+cEDXwQhaz
-   g==;
-X-CSE-ConnectionGUID: 5QWR/utISUGSfEbj7XcfMQ==
-X-CSE-MsgGUID: ROBM/K5iR62ukral0Mu3MQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11433"; a="71677944"
-X-IronPort-AV: E=Sophos;i="6.15,289,1739865600"; 
-   d="scan'208";a="71677944"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 May 2025 13:19:14 -0700
-X-CSE-ConnectionGUID: aoXVi9WcQ9WWpZlstv9FhA==
-X-CSE-MsgGUID: c9k03sXERRO7riqhJkfvNw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,289,1739865600"; 
-   d="scan'208";a="169084389"
-Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
-  by orviesa002.jf.intel.com with ESMTP; 14 May 2025 13:19:10 -0700
-Received: from kbuild by 1992f890471c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uFIZH-000HWZ-2b;
-	Wed, 14 May 2025 20:19:07 +0000
-Date: Thu, 15 May 2025 04:18:24 +0800
-From: kernel test robot <lkp@intel.com>
-To: Xianwei Zhao via B4 Relay <devnull+xianwei.zhao.amlogic.com@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-amlogic@lists.infradead.org, linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Xianwei Zhao <xianwei.zhao@amlogic.com>
-Subject: Re: [PATCH 5/8] pinctrl: meson: support amlogic S6/S7/S7D SoC
-Message-ID: <202505150408.vMuuQH5G-lkp@intel.com>
-References: <20250514-s6-s7-pinctrl-v1-5-39d368cad250@amlogic.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=YrD/kAT57/SxAYe/1kYYG9w5ng+KKRpMBzPwBK3vLCyyqdZmK2se3tIl3hNn9+y83JaNtwhBOt6GIbh4gkY+8l7Sg/htHGxSaNTiE/a1xd0PScVNy1I3KIZ1xkhrSMZYwxYYE7R7UfkjxJ/hbwQ/qRQtpGEuLmCHDJ8qpjuPV24=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YLwSqk03; arc=none smtp.client-ip=209.85.221.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-525b44ec88aso42938e0c.3;
+        Wed, 14 May 2025 13:19:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747253974; x=1747858774; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=bT9yarjWt4tVIFw8YTecHghmXuOoxUPOnBv6bMf16Q8=;
+        b=YLwSqk03L+KDBLPVN3ruMmmITg1ySr0CBC4AQU6ah01FVyJgCfTirOr0sCxHVcbQYH
+         YCJ+bEBAHg6GkLT//eLlePlasY67n0PkBwP4tjxcoEdxXksfI+VwRkWotGTKYKw/pVbZ
+         xw6hScquZ/t4XI/1kvMpyjvY4IDPqeNATKSCVM7e0rF4/jbQDc4/aKXWNzZV0rYE/IKu
+         b6EFsz3H8cPpVyx2OfpmhZhOydnnqHA3VLLdlRBfmGdvzFA9pIBGKo2dh3TGgpTZTSIw
+         PBZ/erACjTlq0yzPxmP0BcJcokBvLLLkDOc56f+uHhuYBGwyY3fQvavUmgV+54H+5HI+
+         9xIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747253974; x=1747858774;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bT9yarjWt4tVIFw8YTecHghmXuOoxUPOnBv6bMf16Q8=;
+        b=aFRi6L22Cwp7BIpv/Myd8Y9JZ7yOuhQlZmeIj7E1DX2JLsnySn1HF/Ic+Dfk7UczoG
+         ZzuRDZHLazS+GcZrHa/FNpWtfiR3VU5nPCNFtELGAn/8d9gT7ovWS0cWWAUrGo8kSFBa
+         OoCME7JeJga9pMaupwfRIrxuudNpW5IS6JUUV29UDy2ZkQnk1zsZrdD5fPHC01lSnED6
+         0vUPzNDZHnc5hSbmG3Rbup0JUlZDw2oIcLmsnbeqfS10lilD837pZk/G1Qj1741noEHO
+         HCe3QIky6EoNT+MJQjk3iafPXYUUD54qLLPO2hQvscFDbmjvEPxAw40SXSTzcAy8mhYe
+         A1wQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUAG1kpvHy5q/QlE0baruH6xyHU1DmnrEQkEFraNsgJGAZZm3IgnRppi+UKHWAf/LSJal2mfQmNoOZ80nzE@vger.kernel.org, AJvYcCUozLJsQvrIWYha7WhsVm/stqkkZZZ3grcxRTOXtuVYrB16omEvlCTsVW/NTho1S09jvT2hh6oWY3UGLJGh@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBrg8e8eDLBEuPr7jjTvvnvKSEtfZ9YkeEGMufGP659tlAw9iT
+	ejJdncm+u43VQYuyCAp5XDf2RBqTkF6UGbTIhoYPo2UbhW9vRW2h
+X-Gm-Gg: ASbGncuZKVbs635TwSA0AuF+iahuyfFd2lJ95j2EBkheCoqK4VvbsDowL5+KF5NE+0e
+	qQzCdnutlyLzV+FTXx2IYH3YF+MwqjIADjU1nHv63whVXdVoB5G4rtxF2u4twl/BSJjsCjr4LCe
+	im9S2SaoxljJC8BsQNTwIIpidwRcFWl0GjLI9chQ4g6h/lwD8QNqLcLzDIwP0EBMPSbD7aizfhh
+	Eusf7q8p4cfUA7JXv2tpNiJHxMwAmlkP9uLbuayWmi/Ea3zkbNhSidXG0GJ59BIpDe8iIl13jLH
+	osf6m2CNFfV9lgupAIheJ2oACkMjeYv2FdfDKoTRqjCwF2j86YIU7xa52M7c
+X-Google-Smtp-Source: AGHT+IEklNn5lxG4rs8q6Ni35Nn2GfrBBAk6umuSy0UZjtOYTCWtiNdraurxKWb0d3N/zhyCFL9RhA==
+X-Received: by 2002:a05:6122:2013:b0:52a:79fd:d05e with SMTP id 71dfb90a1353d-52d9c57a600mr4775615e0c.2.1747253974118;
+        Wed, 14 May 2025 13:19:34 -0700 (PDT)
+Received: from eaf ([2802:8010:d51f:e600:9f56:2539:a02b:bd00])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-52c537264dfsm10133700e0c.13.2025.05.14.13.19.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 May 2025 13:19:33 -0700 (PDT)
+Date: Wed, 14 May 2025 17:19:25 -0300
+From: Ernesto =?utf-8?Q?A=2E_Fern=C3=A1ndez?= <ernesto.mnd.fernandez@gmail.com>
+To: Nick Chan <towinchenmi@gmail.com>
+Cc: Yangtao Li <frank.li@vivo.com>, ethan@ethancedwards.com,
+	asahi@lists.linux.dev, brauner@kernel.org, dan.carpenter@linaro.org,
+	ernesto@corellium.com, gargaditya08@live.com,
+	gregkh@linuxfoundation.org, jack@suse.cz,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-staging@lists.linux.dev, sven@svenpeter.dev, tytso@mit.edu,
+	viro@zeniv.linux.org.uk, willy@infradead.org, slava@dubeyko.com,
+	glaubitz@physik.fu-berlin.de
+Subject: Re: Subject: [RFC PATCH v2 0/8] staging: apfs: init APFS filesystem
+ support
+Message-ID: <20250514201925.GA8597@eaf>
+References: <20250319-apfs-v2-0-475de2e25782@ethancedwards.com>
+ <20250512101122.569476-1-frank.li@vivo.com>
+ <20250512234024.GA19326@eaf>
+ <63eb2228-dcec-40a6-ba02-b4f3a6e13809@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,95 +96,25 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250514-s6-s7-pinctrl-v1-5-39d368cad250@amlogic.com>
+In-Reply-To: <63eb2228-dcec-40a6-ba02-b4f3a6e13809@gmail.com>
 
-Hi Xianwei,
+Hi Nick,
 
-kernel test robot noticed the following build errors:
+On Tue, May 13, 2025 at 12:13:23PM +0800, Nick Chan wrote:
+> 2. When running Linux on iPhone, iPad, iPod touch, Apple TV (currently there are Apple A7-A11 SoC support in
+> upstream), resizing the main APFS volume is not feasible especially on A11 due to shenanigans with the encrypted
+> data volume. So the safe ish way to store a file system on the disk becomes a using linux-apfs-rw on a (possibly
+> fixed size) volume that only has one file and that file is used as a loopback device.
 
-[auto build test ERROR on aa94665adc28f3fdc3de2979ac1e98bae961d6ca]
+That's very interesting. Fragmentation will be brutal after a while though.
+Unless you are patching away the copy-on-write somehow?
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Xianwei-Zhao-via-B4-Relay/dt-bindings-pinctl-amlogic-pinctrl-a4-Add-compatible-string-for-S7/20250514-150438
-base:   aa94665adc28f3fdc3de2979ac1e98bae961d6ca
-patch link:    https://lore.kernel.org/r/20250514-s6-s7-pinctrl-v1-5-39d368cad250%40amlogic.com
-patch subject: [PATCH 5/8] pinctrl: meson: support amlogic S6/S7/S7D SoC
-config: arm64-randconfig-004-20250514 (https://download.01.org/0day-ci/archive/20250515/202505150408.vMuuQH5G-lkp@intel.com/config)
-compiler: clang version 21.0.0git (https://github.com/llvm/llvm-project f819f46284f2a79790038e1f6649172789734ae8)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250515/202505150408.vMuuQH5G-lkp@intel.com/reproduce)
+> 3. Obviously, accessing Mac files from Linux too, not sure how big of a use case that is but apparently it is
+> big enough for hfsplus to continue receive patches here and there.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202505150408.vMuuQH5G-lkp@intel.com/
+True, but the hfsplus driver is already merged and people may be relying on
+it. Still, there was some push to get rid of it recently. I don't expect
+much support for picking up a whole new driver.
 
-All errors (new ones prefixed by >>):
-
->> drivers/pinctrl/meson/pinctrl-amlogic-a4.c:128:13: error: designator into flexible array member subobject
-     128 |         .multi_data[0] = {
-         |                    ^~~~~~~
-     129 |                 .m_bank_id = AMLOGIC_GPIO_CC,
-         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     130 |                 .m_bit_offs = 24,
-         |                 ~~~~~~~~~~~~~~~~~
-     131 |                 .sid = (AMLOGIC_GPIO_X << 8) + 16,
-         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     132 |                 .eid = (AMLOGIC_GPIO_X << 8) + 19,
-         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     133 |         },
-         |         ~
-   drivers/pinctrl/meson/pinctrl-amlogic-a4.c:69:19: note: initialized flexible array member 'multi_data' is here
-      69 |         struct multi_mux multi_data[];
-         |                          ^
-   drivers/pinctrl/meson/pinctrl-amlogic-a4.c:138:13: error: designator into flexible array member subobject
-     138 |         .multi_data[0] = {
-         |                    ^~~~~~~
-     139 |                 .m_bank_id = AMLOGIC_GPIO_CC,
-         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     140 |                 .m_bit_offs = 24,
-         |                 ~~~~~~~~~~~~~~~~~
-     141 |                 .sid = (AMLOGIC_GPIO_X << 8) + 16,
-         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     142 |                 .eid = (AMLOGIC_GPIO_X << 8) + 19,
-         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     143 |         },
-         |         ~
-   drivers/pinctrl/meson/pinctrl-amlogic-a4.c:69:19: note: initialized flexible array member 'multi_data' is here
-      69 |         struct multi_mux multi_data[];
-         |                          ^
-   drivers/pinctrl/meson/pinctrl-amlogic-a4.c:144:13: error: designator into flexible array member subobject
-     144 |         .multi_data[1] = {
-         |                    ^~~~~~~
-     145 |                 .m_bank_id = AMLOGIC_GPIO_F,
-         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     146 |                 .m_bit_offs = 4,
-         |                 ~~~~~~~~~~~~~~~~
-     147 |                 .sid = (AMLOGIC_GPIO_D << 8) + 6,
-         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     148 |                 .eid = (AMLOGIC_GPIO_D << 8) + 6,
-         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     149 |         },
-         |         ~
-   drivers/pinctrl/meson/pinctrl-amlogic-a4.c:69:19: note: initialized flexible array member 'multi_data' is here
-      69 |         struct multi_mux multi_data[];
-         |                          ^
-   3 errors generated.
-
-
-vim +128 drivers/pinctrl/meson/pinctrl-amlogic-a4.c
-
-   125	
-   126	const struct aml_pctl_data s7_priv_data = {
-   127		.number = 1,
- > 128		.multi_data[0] = {
-   129			.m_bank_id = AMLOGIC_GPIO_CC,
-   130			.m_bit_offs = 24,
-   131			.sid = (AMLOGIC_GPIO_X << 8) + 16,
-   132			.eid = (AMLOGIC_GPIO_X << 8) + 19,
-   133		},
-   134	};
-   135	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Ernesto
 
