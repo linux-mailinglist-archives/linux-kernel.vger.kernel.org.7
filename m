@@ -1,100 +1,109 @@
-Return-Path: <linux-kernel+bounces-647639-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-647644-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5077CAB6B21
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 14:11:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2CF6AB6B38
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 14:15:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 99D404C255E
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 12:11:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 274403ADE3D
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 12:15:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E70A2777E1;
-	Wed, 14 May 2025 12:09:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="FPZ4rhXT"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 376902777FB;
+	Wed, 14 May 2025 12:15:37 +0000 (UTC)
+Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5A8D276056;
-	Wed, 14 May 2025 12:09:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7369620C016;
+	Wed, 14 May 2025 12:15:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747224586; cv=none; b=EyVaTf1gZlGowdo9oz2oZUQgnbGcwB7FXkiLWjHtO0qD6zr+EdCUOwvGWi5nhYjX7LG5IkVkjSR6fAWWIQZCRFoYngrkzcZRPy1yQm856umrTCvYpi2DQpvNkWyzXdwy3atshPHU2p4+105tsdwJpc6fjVjJJwAL96IFHY5YZJc=
+	t=1747224936; cv=none; b=UJNjd5iM4z7Ni0hQKeNLsimouoG1FSvZtqyCRqz2n4VyzXfdJSCSXVY53filB6fNYowgINbDeq252Talta3qgIc35sDaTE7reY0ER1l5i7P9fI5GJnGMp7bWE41tZLUUxtoFhULZJctHrOK/fwyqeB2svnGpj0ejpcNjxDphsLo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747224586; c=relaxed/simple;
-	bh=K/9Izu9qiN2K04mZ6Vdme5/q9/qVGbNktQh7S1wszeI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=df0tnF0bjd2sAS8LLqUpzEYcQ5nr6OgjCNFfKKIMi1RBOwiIJC4pWxnhasvQYYP1kjxvforJ9pX6d8RYj6KXrPai66Qjrgx1+0pMZgvQznfowbca2DskWOdcVzUMHn+Zco8xmNY53fuwLfskJhx1KwuE3s0BaK8Qm+jlwqOrtgY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=FPZ4rhXT; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=gR0lq2R8NskzCfbSMLb8IMLoPerOeBsRsJsnYVXF+4s=; b=FPZ4rhXTiKsUN3Trjl9BvKpKQu
-	oAbXd3SqCcB9iceCXJxRpyGZDqADqKWzvqIO43OZ+MrDU1+FyAtVczJyqlcruLupGYu7l6eHgy75s
-	cTbdb0R8ZGmxqmT51E2MsC+6saVq2qKm/yyfEtuIxxbxuxlNj3Vu2ve8CZKdvjGp9/Ug=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1uFAvM-00CYMX-QN; Wed, 14 May 2025 14:09:24 +0200
-Date: Wed, 14 May 2025 14:09:24 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Sky Huang <SkyLake.Huang@mediatek.com>
-Cc: Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Daniel Golle <daniel@makrotopia.org>,
-	Qingfang Deng <dqfext@gmail.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	balika011 <balika011@gmail.com>, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Steven Liu <Steven.Liu@mediatek.com>
-Subject: Re: [PATCH net-next v3 1/2] net: phy: mediatek: Sort config and file
- names in Kconfig and Makefile
-Message-ID: <2147e0e3-44c0-4fd8-916d-53291dc86a6a@lunn.ch>
-References: <20250514105738.1438421-1-SkyLake.Huang@mediatek.com>
- <20250514105738.1438421-2-SkyLake.Huang@mediatek.com>
+	s=arc-20240116; t=1747224936; c=relaxed/simple;
+	bh=ZEtvNC+fDpJZ5ywYIZizTzTkNG6vdMAo0112fJ1kD50=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XUVCJqgyYywDsBBY0XqDRm6ETgTCvnX4Ihfhl86PoB4+V3q92btCAS4DaXttB2Z1WYCnEbFrZqcih1cN4glD43cFmxKrhHnXJaZuENbrOry0CHsrcV7VkWHk7XNuxo0tQoAs9mfEyE8XFy5INxXLITFmoLLRquRN8/7JguQKvU8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost.localdomain (unknown [124.16.141.245])
+	by APP-01 (Coremail) with SMTP id qwCowAAnyvoZiCRo8oIAFQ--.48875S2;
+	Wed, 14 May 2025 20:10:03 +0800 (CST)
+From: Wentao Liang <vulab@iscas.ac.cn>
+To: lgirdwood@gmail.com,
+	broonie@kernel.org,
+	perex@perex.cz,
+	tiwai@suse.com
+Cc: Vijendar.Mukunda@amd.com,
+	mario.limonciello@amd.com,
+	venkataprasad.potturu@amd.com,
+	gregkh@linuxfoundation.org,
+	kuninori.morimoto.gx@renesas.com,
+	peterz@infradead.org,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Wentao Liang <vulab@iscas.ac.cn>,
+	stable@vger.kernel.org
+Subject: [PATCH] ASoC: amd: acp: Add null pointer check in acp_max98388_hw_paramsi()
+Date: Wed, 14 May 2025 20:09:39 +0800
+Message-ID: <20250514120939.581-1-vulab@iscas.ac.cn>
+X-Mailer: git-send-email 2.42.0.windows.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250514105738.1438421-2-SkyLake.Huang@mediatek.com>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qwCowAAnyvoZiCRo8oIAFQ--.48875S2
+X-Coremail-Antispam: 1UD129KBjvdXoW7JFyUJw45Ar1xury3Jr1xuFg_yoWkAFbEkw
+	1rWwn5ZayDKrZayry8A3yfZrW5Zw17ZrZ2krs7tr45CFZ5JayrCryDWFs5ZFZ7Zry8AFnx
+	Z34kGr4FqwnIyjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUb3xFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
+	Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
+	0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
+	jxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr
+	1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E8cxa
+	n2IY04v7MxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4
+	AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE
+	17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMI
+	IF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4l
+	IxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvf
+	C2KfnxnUUI43ZEXa7VUb8hL5UUUUU==
+X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiBwwCA2gkZJ93aQAAsj
 
-On Wed, May 14, 2025 at 06:57:37PM +0800, Sky Huang wrote:
-> From: Sky Huang <skylake.huang@mediatek.com>
-> 
-> Sort config and file names in Kconfig and Makefile in
-> drivers/net/phy/mediatek/ according to sequence in MAINTAINERS.
+The acp_max98388_hw_params() calls the snd_soc_card_get_codec_dai(),
+but does not check its return value which is a null pointer if the
+function fails. This can result in a null pointer dereference.
 
-If you use "make menuconfig" you will notice PHYs are sorted by
-tristate string. So having Gigabit before Soc is correct.
+Add a null pointer check for snd_soc_card_get_codec_dai() to avoid null
+pointer dereference when the function fails.
 
-> --- a/drivers/net/phy/mediatek/Makefile
-> +++ b/drivers/net/phy/mediatek/Makefile
-> @@ -1,4 +1,4 @@
->  # SPDX-License-Identifier: GPL-2.0
-> +obj-$(CONFIG_MEDIATEK_GE_SOC_PHY)	+= mtk-ge-soc.o
->  obj-$(CONFIG_MTK_NET_PHYLIB)		+= mtk-phy-lib.o
->  obj-$(CONFIG_MEDIATEK_GE_PHY)		+= mtk-ge.o
-> -obj-$(CONFIG_MEDIATEK_GE_SOC_PHY)	+= mtk-ge-soc.o
-
-These should be in alphabetic order based on CONFIG_. So
-CONFIG_MTK_NET_PHYLIB is what should move.
-
-    Andrew
-
+Fixes: ac91c8c89782 ("ASoC: amd: acp: Add machine driver support for max98388 codec")
+Cc: stable@vger.kernel.org # v6.6
+Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
 ---
-pw-bot: cr
+ sound/soc/amd/acp/acp-mach-common.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/sound/soc/amd/acp/acp-mach-common.c b/sound/soc/amd/acp/acp-mach-common.c
+index f7602c1769bf..a795cc1836cc 100644
+--- a/sound/soc/amd/acp/acp-mach-common.c
++++ b/sound/soc/amd/acp/acp-mach-common.c
+@@ -918,6 +918,9 @@ static int acp_max98388_hw_params(struct snd_pcm_substream *substream,
+ 						   MAX98388_CODEC_DAI);
+ 	int ret;
+ 
++	if (codec_dai)
++		return -EINVAL;
++
+ 	ret = snd_soc_dai_set_fmt(codec_dai,
+ 				  SND_SOC_DAIFMT_CBS_CFS | SND_SOC_DAIFMT_I2S |
+ 				  SND_SOC_DAIFMT_NB_NF);
+-- 
+2.42.0.windows.2
+
 
