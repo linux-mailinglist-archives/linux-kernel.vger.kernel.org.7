@@ -1,90 +1,73 @@
-Return-Path: <linux-kernel+bounces-646976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-646973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DD86AB6312
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 08:28:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 164DEAB630B
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 08:27:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9BC5F4A2FB8
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 06:28:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9FEE04A2AD9
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 06:27:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 809201FDE1E;
-	Wed, 14 May 2025 06:28:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C4071FE443;
+	Wed, 14 May 2025 06:27:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="R64Cv5HY"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2063.outbound.protection.outlook.com [40.107.236.63])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UIG/pObi"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F48E1FC7E7;
-	Wed, 14 May 2025 06:28:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.63
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747204105; cv=fail; b=sDYM09peTZzbGfuy3aKzOO4BPC3r4lj6ucKmfDo2io/i3SS2Yv3BAVudOlC9p2U5K1sic3Q3LBeu3NjIxUDXhkczuCuLZrjUQJHHzEPZSG+75vCiPuo/Tkp3axsqUqz++rt4F78OsUReIK86x9LASUDaa/Zb6/g/pKe9I5nM/1w=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747204105; c=relaxed/simple;
-	bh=Z7xTmHGHmx5BNaLNtoW2diBS4K1Xe6MsfcHLjWg8QuE=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Z/FSngXD5r9LMNJnARk88uMZ8Z9fWmAyS8R/FntNc5FfMQGUJWgKWCThkzWNDLBwfYtdXd+ZoKKPPipZ/MsYdqeHrDMZ3WK+NE0Ykqv7rxEtNIeQ2JqwdEmEZ8zbN4HfIFkn4UtZbdQxbYiRRONC+trwCoZwkH6oyZMQtnjeOYs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=R64Cv5HY; arc=fail smtp.client-ip=40.107.236.63
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=LtYmlPdNDxq+H3e2oQZM+LWztxcV4rCSUuIPiKbjHp9gsW8QL1LbdYs5t+NCbX2CVuSTNCiHuDwTxmFJ5e0eAZqH1DKy/3f1gEaa+An4hVoWn4EsxO9KkA+icwNBY0QTJ1G/pvbU7Yl+6/BkYYE7MD7LCKu2Vdu14Zat5GiuvE/gaHiCibWfzinOBwYXd2OAL+JovsPKYfY1zcqGF+qOPdz0/1zX/CViyLL9WZWDer9nVHGj/18iYoFopoGXVIa+6MrTRPIrSsKpv5KdGp+clmjR0RSuUJw4vMUDnNOb7JrUSk2v9qPHj9PmAh5eU5RqtrL4WejO/E+zL1eam8PACw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ZGB+WOQ1w9fra0y8sdOvMFeuhitJp2O92INYOiEp1RM=;
- b=JCoSzgDmTwPGRdHfcgLzG0YXkJI3ZPMtBw8C3ljj60hqAY45FIm3V5Z6mziVBSBsuWEuJaDXRw1Dn4Af4G7lW0vJntcHyhmwZ6Xm6rf15TS/u2tFVPrWPe773NfaXN1FUcN1KcNPpDnQcPjiwu7pp+N9KhJ1gjADuFDk4cm/TQRXC41NwWn1PP9yUwUo5el0QOywJ7ohrItNnd7B/cZXOwrWH77951UNdaWfEBK4EHIdn5Nddbn1PbWe5dnAGUCoasFjPFgZPMldYZIDjx2G5gA8qMkO+wLHaWULA02j6ZnGGQxAwy3VecGsWyWICDWcINC5LBJQwPsu7zGH+YgKag==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=linutronix.de smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ZGB+WOQ1w9fra0y8sdOvMFeuhitJp2O92INYOiEp1RM=;
- b=R64Cv5HYGQE45TsVWQcd646n4G9UaksKSOOQguJZF6FhvW7KXzdpcOTM3RvptPvH3z8ONBQSOXBhunXv3pxRjQxkd+obH8pPeQwX13c33BdEPdRQgvmT6VE8aVbHYZyJ1NkOwnqPuS+tNmiuwNZkV/IS5nyV8OtLYP1CBmBDnII=
-Received: from SN7PR04CA0034.namprd04.prod.outlook.com (2603:10b6:806:120::9)
- by DM4PR12MB5961.namprd12.prod.outlook.com (2603:10b6:8:68::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8722.30; Wed, 14 May
- 2025 06:28:19 +0000
-Received: from SA2PEPF00003AE6.namprd02.prod.outlook.com
- (2603:10b6:806:120:cafe::ef) by SN7PR04CA0034.outlook.office365.com
- (2603:10b6:806:120::9) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8699.31 via Frontend Transport; Wed,
- 14 May 2025 06:28:19 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- SA2PEPF00003AE6.mail.protection.outlook.com (10.167.248.6) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8722.18 via Frontend Transport; Wed, 14 May 2025 06:28:19 +0000
-Received: from kaveri.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 14 May
- 2025 01:28:12 -0500
-From: Shivank Garg <shivankg@amd.com>
-To: <tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
-	<dave.hansen@linux.intel.com>, <x86@kernel.org>, <hpa@zytor.com>,
-	<luto@kernel.org>, <peterz@infradead.org>, <rafael@kernel.org>,
-	<pavel@kernel.org>, <akpm@linux-foundation.org>
-CC: <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-	<shivankg@amd.com>, <sohil.mehta@intel.com>, <rui.zhang@intel.com>,
-	<yuntao.wang@linux.dev>, <kai.huang@intel.com>, <xiaoyao.li@intel.com>,
-	<peterx@redhat.com>, <sandipan.das@amd.com>, <ak@linux.intel.com>,
-	<rostedt@goodmis.org>, "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>
-Subject: [PATCH RESEND 2/4] x86/power: hibernate: Fix W=1 build kernel-doc warnings
-Date: Wed, 14 May 2025 06:26:38 +0000
-Message-ID: <20250514062637.3287779-2-shivankg@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250514062637.3287779-1-shivankg@amd.com>
-References: <20250514062637.3287779-1-shivankg@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0F5C1F4177;
+	Wed, 14 May 2025 06:27:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747204039; cv=none; b=qo94L9dZKYoBIFwbO2eIIwOFinDJ7r28I2d9Z6bpWqB3hkInJf9Iac5rHLQwsLyLw675XWdGNnLqrJvxdHL5KaC4W0LKQQO3helDQpLe0tao5shjudiAcmo3ID3pDLKoLeSKGiF25p7W3iztznGr5M/Y5K/230qESWRgnyiXK9c=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747204039; c=relaxed/simple;
+	bh=9z8D49yU8U83ywDMZxLf/UoAlkGa4AgNzdCIJSrLYDU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=njR/tX6lzcwQbm7s8XT1rQbsuZdM1QcygI+4LrVNS0QLSxfkbPOWKIV9wxv/wqER5Yt1alRi8WSNlPG22EO402ZPGmf497NKr7w7/hBKqpu2UMgAI8KxVIzCxJaj5C0rPNNUZUSXAyu1h9QMC4rUcN6xk/IwCrtvcc9DKhcduJU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UIG/pObi; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1747204038; x=1778740038;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=9z8D49yU8U83ywDMZxLf/UoAlkGa4AgNzdCIJSrLYDU=;
+  b=UIG/pObi12SUKDuYv6iMDdtdkEtNanYHtewFzJh7CoIrHPpTclQMUnV3
+   N/x/JLBVlf/abW+/jFyra7ZMom5C9JGZmObj9lV3brUS5nndKknWWtbJX
+   sPEO+rvZ7/PF4IU6XQRheW2pmzS5Hd4prd9SrmLGZbV1QwAIKyHn/pC5T
+   VNOyYwrAwvsCvRBIwvZmWW4LJ9e1dLpM1OxcZcKuj0N7WFahpujqAE+1M
+   ZI00o6wQqNWsWDLwJE6ImmcBPODVsSkfLbA0DejH6pvSE221i2HP6+N55
+   2DA02WOhRBprK+kiHSegkgRb2TUzn7cxZh9E/QYWaWzqD0LGjAU5batxN
+   g==;
+X-CSE-ConnectionGUID: 5BO/dVMvRQKtaDHSLsh/Ig==
+X-CSE-MsgGUID: 6EqyCiWRTsePNwfu9ioICA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11432"; a="60481925"
+X-IronPort-AV: E=Sophos;i="6.15,287,1739865600"; 
+   d="scan'208";a="60481925"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 May 2025 23:27:16 -0700
+X-CSE-ConnectionGUID: 7skri2yKR0+xGxgpJWkmPg==
+X-CSE-MsgGUID: b8lSsuX2T0ODmVgC2D4JfA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,287,1739865600"; 
+   d="scan'208";a="138371012"
+Received: from shsensorbuild.sh.intel.com ([10.239.133.18])
+  by fmviesa008.fm.intel.com with ESMTP; 13 May 2025 23:27:14 -0700
+From: Even Xu <even.xu@intel.com>
+To: jikos@kernel.org,
+	bentiss@kernel.org
+Cc: srinivas.pandruvada@linux.intel.com,
+	linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Even Xu <even.xu@intel.com>,
+	Chong Han <chong.han@intel.com>
+Subject: [PATCH] HID: Intel-thc-hid: Intel-quicki2c: Enhance QuickI2C reset flow
+Date: Wed, 14 May 2025 14:26:38 +0800
+Message-Id: <20250514062639.132017-1-even.xu@intel.com>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,97 +75,80 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA2PEPF00003AE6:EE_|DM4PR12MB5961:EE_
-X-MS-Office365-Filtering-Correlation-Id: b8be5f61-c0b5-4fbd-57b2-08dd92b08480
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|82310400026|7416014|1800799024|36860700013|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?iLVIegvuGEhRLylhE48clljTM6xKiSLqZMDnLJ/TpWPSpSXeqXbSNJ3tkh+9?=
- =?us-ascii?Q?fGWQS7WORLTPCazKYCT27ORzW/iXidzQtF5HVQBCy+uYIvwxJDsaBxD3D/hN?=
- =?us-ascii?Q?xGTFD07XICow4naF1E5w/w/qhFYRYmltOtSpJRCuOINqWqsNLTQbJjEnNlL0?=
- =?us-ascii?Q?XR/ubT8H73bWnSWR70BMfQXWYJDtjqcS4ZTwECUfb2ARhXQP4APt01pvrPuk?=
- =?us-ascii?Q?sWAhhO6aeXd0FHHvYZLhxK1KBa+I+7dhKH5MmclA/YWEs5j/gSyJYmaDQcON?=
- =?us-ascii?Q?+g+tegr4p/gqTLaZEPrY9W6mK5rKSZBepHhvSmUDVAFWriM6aKasu0nCYpri?=
- =?us-ascii?Q?pJXcrDt7erPw3xC5y7PEaMotv6J2/3Zhj7Spb3DDVWN3DMjYBWXa9zdr8Rme?=
- =?us-ascii?Q?qhSHEBbdQ66IJODnG9lJDNrCnsp++PzguR7T8fAxFkCFaUBX4qSeB6EJlSOF?=
- =?us-ascii?Q?MVUT1gwmrIYvV+XZl+NzVNj25OG2U3cLtVhJLbcBGiH8NCj2mtBOeD5Xu7v9?=
- =?us-ascii?Q?Mh8T2ti5O2BCtQWny6m7op5T8LtGTTjvsipiWMqg42arfTwzW49DTXjmuOuj?=
- =?us-ascii?Q?skbwSLuyoOEsHYYpglcbM0jZ439XD97+AEjZSUjJQlg30bXkQ6uY5MOKcuAI?=
- =?us-ascii?Q?ET1q8x0fHWmcyX6J1wCg+SJZZYQ3AWnCUKy+rSnnU4lJCPAoKFGkF93a0kR2?=
- =?us-ascii?Q?OMzm8NAD2D/mimkhSFaTV5FIIBe+9h6dQBLFEyFikcApbr9+dyTdUUYNvEyj?=
- =?us-ascii?Q?XW7FyIvqcFLy+E8NDhyBpwV1dvohcmDTyYECUgm3DZQ6FciXBdHWpgGTgJVB?=
- =?us-ascii?Q?tAaTxRfpB5jmDwaEYDyZwMZ+cE777tVw009DFcWMAindyHDLR4t9Ie0/dQoc?=
- =?us-ascii?Q?cq/VbUq/9zZLBbenvY7lnwwW4Qhclp+t1JxpRQYsAMYG7Q6YVYxJ6SASIxj2?=
- =?us-ascii?Q?zGeiAIIAUallJ2YPPqhyH2TeS+nPQd7B20t/hccVOuP6s3qs8mHeyU4Yk3VQ?=
- =?us-ascii?Q?cajORSfRQQCWyRWqU7PXjZBzG4lTEcmHGqutQUvMRiem97qqJR61Usb/XGGs?=
- =?us-ascii?Q?oOeO80NTmFVMwPTk3kVG3NsdZq8R204TjqQEHGHRJ2/x7mO5mZqA4al+HnKz?=
- =?us-ascii?Q?OG2+KpX08rga4Lp8y8YlQlPYtg2+NNKpXh87I4WBbBZBn0OlTTIEEye1sZ6j?=
- =?us-ascii?Q?siMKg0Y3Wa4p6fwFUQpQiFr0jWz6ZQMlsGDeKwXVcQ1hIc+ByVFGcpTI+gRY?=
- =?us-ascii?Q?Cy15fvHFdx1a4mi/FcTfSCAv1l6PpkGStATj6YuADKr6z4dDJrpmPpvCTtoY?=
- =?us-ascii?Q?MPAbxmsA0c+n+k4wopABMqxh4rVm37eDHPsFq24VSXzBAtMt++YSsMu3ZAEy?=
- =?us-ascii?Q?+1cTBSTk/vjwQPBvj3BfqwiZPtdN669GFLvSq+X4dza0sHs61yDmiBUFKSRq?=
- =?us-ascii?Q?zQiE7XHmtTBaHow5+iGceGt3kJ6GTyiAjyDDll2QPEoVKdolMdKGktLhHPvr?=
- =?us-ascii?Q?yhqwasi71zSd4Xow6EH+DK+h8C+zVcCJRSW6aT7hLwBeJL5f4QhSeKQgOg?=
- =?us-ascii?Q?=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(82310400026)(7416014)(1800799024)(36860700013)(921020);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 May 2025 06:28:19.0726
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: b8be5f61-c0b5-4fbd-57b2-08dd92b08480
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SA2PEPF00003AE6.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB5961
 
-Warnings generated with 'make W=1':
-arch/x86/power/hibernate.c:47: warning: Function parameter or struct member 'pfn' not described in 'pfn_is_nosave'
-arch/x86/power/hibernate.c:92: warning: Function parameter or struct member 'max_size' not described in 'arch_hibernation_header_save'
+During customer board enabling, it was found: some touch devices
+prepared reset response, but either forgot sending interrupt or
+THC missed reset interrupt because of timing issue. THC QuickI2C
+driver depends on interrupt to read reset response, in this case,
+it will cause driver waiting timeout.
 
-Add missing parameter documentation in hibernate functions to
-fix kernel-doc warnings.
+This patch enhances the flow by adding manually reset response
+reading after waiting for reset interrupt timeout.
 
-Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Signed-off-by: Shivank Garg <shivankg@amd.com>
+Signed-off-by: Even Xu <even.xu@intel.com>
+Tested-by: Chong Han <chong.han@intel.com>
+Fixes: 66b59bfce6d9 ("HID: intel-thc-hid: intel-quicki2c: Complete THC QuickI2C driver")
 ---
- arch/x86/power/hibernate.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ .../intel-quicki2c/quicki2c-protocol.c        | 26 ++++++++++++++++++-
+ 1 file changed, 25 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/power/hibernate.c b/arch/x86/power/hibernate.c
-index 5b81d19cd114..a7c23f2a58c9 100644
---- a/arch/x86/power/hibernate.c
-+++ b/arch/x86/power/hibernate.c
-@@ -42,6 +42,7 @@ unsigned long relocated_restore_code __visible;
+diff --git a/drivers/hid/intel-thc-hid/intel-quicki2c/quicki2c-protocol.c b/drivers/hid/intel-thc-hid/intel-quicki2c/quicki2c-protocol.c
+index f493df0d5dc4..a63f8c833252 100644
+--- a/drivers/hid/intel-thc-hid/intel-quicki2c/quicki2c-protocol.c
++++ b/drivers/hid/intel-thc-hid/intel-quicki2c/quicki2c-protocol.c
+@@ -4,6 +4,7 @@
+ #include <linux/bitfield.h>
+ #include <linux/hid.h>
+ #include <linux/hid-over-i2c.h>
++#include <linux/unaligned.h>
  
- /**
-  *	pfn_is_nosave - check if given pfn is in the 'nosave' section
-+ *	@pfn: the page frame number to check.
-  */
- int pfn_is_nosave(unsigned long pfn)
+ #include "intel-thc-dev.h"
+ #include "intel-thc-dma.h"
+@@ -200,6 +201,9 @@ int quicki2c_set_report(struct quicki2c_device *qcdev, u8 report_type,
+ 
+ int quicki2c_reset(struct quicki2c_device *qcdev)
  {
-@@ -86,7 +87,10 @@ static inline u32 compute_e820_crc32(struct e820_table *table)
- /**
-  *	arch_hibernation_header_save - populate the architecture specific part
-  *		of a hibernation image header
-- *	@addr: address to save the data at
-+ *	@addr: address where architecture specific header data will be saved.
-+ *	@max_size: maximum size of architecture specific data in hibernation header.
-+ *
-+ *	Return: 0 on success, -EOVERFLOW if max_size is insufficient.
-  */
- int arch_hibernation_header_save(void *addr, unsigned int max_size)
- {
++	u16 input_reg = le16_to_cpu(qcdev->dev_desc.input_reg);
++	size_t read_len = HIDI2C_LENGTH_LEN;
++	u32 prd_len = read_len;
+ 	int ret;
+ 
+ 	qcdev->reset_ack = false;
+@@ -213,12 +217,32 @@ int quicki2c_reset(struct quicki2c_device *qcdev)
+ 
+ 	ret = wait_event_interruptible_timeout(qcdev->reset_ack_wq, qcdev->reset_ack,
+ 					       HIDI2C_RESET_TIMEOUT * HZ);
+-	if (ret <= 0 || !qcdev->reset_ack) {
++	if (qcdev->reset_ack)
++		return 0;
++
++	/*
++	 * Manually read reset response if it wasn't received, in case reset interrupt
++	 * was missed by touch device or THC hardware.
++	 */
++	ret = thc_tic_pio_read(qcdev->thc_hw, input_reg, read_len, &prd_len,
++			       (u32 *)qcdev->input_buf);
++	if (ret) {
++		dev_err_once(qcdev->dev, "Read Reset Response failed, ret %d\n", ret);
++		return ret;
++	}
++
++	/*
++	 * Check response packet length, it's first 16 bits of packet.
++	 * If response packet length is zero, it's reset response, otherwise not.
++	 */
++	if (get_unaligned_le16(qcdev->input_buf)) {
+ 		dev_err_once(qcdev->dev,
+ 			     "Wait reset response timed out ret:%d timeout:%ds\n",
+ 			     ret, HIDI2C_RESET_TIMEOUT);
+ 		return -ETIMEDOUT;
+ 	}
+ 
++	qcdev->reset_ack = true;
++
+ 	return 0;
+ }
 -- 
-2.34.1
+2.40.1
 
 
