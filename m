@@ -1,64 +1,94 @@
-Return-Path: <linux-kernel+bounces-647006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-646997-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C6C3AB636A
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 08:44:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BF299AB634E
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 08:39:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9388917CBFB
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 06:44:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 215BC4609FB
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 06:39:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B60C35227;
-	Wed, 14 May 2025 06:44:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3A98201262;
+	Wed, 14 May 2025 06:39:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="J5l9N07Z"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="1DrrCWys";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="M6KEQfAy";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="1DrrCWys";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="M6KEQfAy"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 834FB20297D
-	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 06:44:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A23501F2C56
+	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 06:39:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747205043; cv=none; b=Y9EnfSxi8vUuVae8L0cQA8gDXX56r/fOJP/7qcAm8eSQgUfmFB3ojxLcgocYcxCrulDr+LrwfdmmDQtoDf+IHabYXrHnbWZse0bfmsmUNV33HgIn3KTnRY5nhR1lSB1DKego7sg+tCA1xiUepKxejitlatmmi/Zj8ZPQ4LzI4IE=
+	t=1747204776; cv=none; b=V0UW32WMAqpf0451EhrWaMig1T6ZA6Z3ePmmeTv5FV9Kq4TumuhnMv2msILsJoU5ru9wTt6u7CLK1Jqzn5h4OEJiCi2Pg+TemigOlxzio9ij4ijt0zqouT5hG4UDAOUtI9/XHPPuXlMv9NpuReMQ+wSbWMrymt9HBPh+ruEtjYc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747205043; c=relaxed/simple;
-	bh=w/ck8FP/0peMslKPAAUo4+aaobGgd/LaJyMrWDxryIA=;
+	s=arc-20240116; t=1747204776; c=relaxed/simple;
+	bh=t+I9jepCTpJL8tyV3dOboQAZCLRWhrYhIPZr5m8t808=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ELtj8YNy9WgAdoOoEuaWPZoNsIA9NHXuDdvmwRtOg7bVxC/lA2Iky8UfUeRX+0MKO6RT4z7sjPSoyHX1QZHagaVCLBbuApyAedhl8lOpFvQUpuYhZLMI2Y6d6vB9OEK7K7nz1hiclPliGrvGISZuk+k3Uc5WJywJxKVX34qGaeo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=J5l9N07Z; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1747205042; x=1778741042;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=w/ck8FP/0peMslKPAAUo4+aaobGgd/LaJyMrWDxryIA=;
-  b=J5l9N07Zg5nf2W7sf99y0ovRozqt5wgeMCGQOiSZaFIQV6anj3OfJMAA
-   /W739NSeeKVEQBtiBq0LdPbhzwo+wknK3saZ6JDY/UyaL3Q/NzN19iipG
-   Lp2+jMicgBTJFuBRmCdV0uZ5Ak1wpvjIsFOjasTdzVsnz3q0RE91XRssr
-   mdLxLLxtSJVtgYjOZmwwOn8vRaE0/RpiPyMBx3xxtKVZ0BSYsK+PRg/bM
-   ksQciBY+lBv2cxhyfKaZh4lQDseQ3SSuc44CF745h02tzEpyEZiB5x1Ri
-   LB/nnwGuNQkXhlvuiep7TwLqVe8VOAu0xv7YmIjgzTNQ+C3sVvcjxsPGa
-   w==;
-X-CSE-ConnectionGUID: aRmXgfQKQ+qGqLlyFKGcIg==
-X-CSE-MsgGUID: 1KJKTLtSSYCelqdFA7JltA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11432"; a="71584985"
-X-IronPort-AV: E=Sophos;i="6.15,287,1739865600"; 
-   d="scan'208";a="71584985"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 May 2025 23:44:01 -0700
-X-CSE-ConnectionGUID: AJgXBp2CRzuRmYuGHsVlqw==
-X-CSE-MsgGUID: pWI0IcR+QDKEXnsMe19efQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,287,1739865600"; 
-   d="scan'208";a="169044659"
-Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 May 2025 23:43:59 -0700
-Message-ID: <18db51b6-5685-40bf-bf8b-1e787834fdf5@linux.intel.com>
-Date: Wed, 14 May 2025 14:39:21 +0800
+	 In-Reply-To:Content-Type; b=OvqoJxgdY/z7SNHtp0cXqfsZvDfyJcNPwBb/yHs0+D9Tyscbga3TMLvw1mrsPvSblFS5gekNj6fpch8I4Cj3jie/MSwvjAY5qH9L3EbcPemFaOm+rmPxAyXt5A6Ubc67ome1GJA7eRQRjyMY0DXju31vV2nA9osaAqsrKGxP7kA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=1DrrCWys; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=M6KEQfAy; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=1DrrCWys; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=M6KEQfAy; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id D0A1D1F793;
+	Wed, 14 May 2025 06:39:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1747204766; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=t0kF4dO/+KxJMqI/h3j7CUouKL+W5cmBwxlegzo07i8=;
+	b=1DrrCWys1+JN1yBIJncm+kcW7DfWTTRCAEUXbiv1K+lcDKnvdlpGh68U3hVV1LKyClp6aG
+	KtCtWmA2/MXFIZMPt8HOJyN/no5HOyiwnkJWyLXjQuMuz1j9HMab+IaHVXe1MtTCKxssdF
+	KQpXmgAkHm15HBofyURIvb6UTRG5MEM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1747204766;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=t0kF4dO/+KxJMqI/h3j7CUouKL+W5cmBwxlegzo07i8=;
+	b=M6KEQfAyo+8S/KYWgukPNV970s1dpMk/NrXWUfBbq+LNepfQ61k2gxRG0rlWOwYM9xG7Kj
+	iqHaRAxIOl05rlCQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1747204766; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=t0kF4dO/+KxJMqI/h3j7CUouKL+W5cmBwxlegzo07i8=;
+	b=1DrrCWys1+JN1yBIJncm+kcW7DfWTTRCAEUXbiv1K+lcDKnvdlpGh68U3hVV1LKyClp6aG
+	KtCtWmA2/MXFIZMPt8HOJyN/no5HOyiwnkJWyLXjQuMuz1j9HMab+IaHVXe1MtTCKxssdF
+	KQpXmgAkHm15HBofyURIvb6UTRG5MEM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1747204766;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=t0kF4dO/+KxJMqI/h3j7CUouKL+W5cmBwxlegzo07i8=;
+	b=M6KEQfAyo+8S/KYWgukPNV970s1dpMk/NrXWUfBbq+LNepfQ61k2gxRG0rlWOwYM9xG7Kj
+	iqHaRAxIOl05rlCQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0C2D1137E8;
+	Wed, 14 May 2025 06:39:25 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id IQm8OJ06JGjZcQAAD6G6ig
+	(envelope-from <hare@suse.de>); Wed, 14 May 2025 06:39:25 +0000
+Message-ID: <37bb9993-baaa-4dc8-b5d4-e66201e4a462@suse.de>
+Date: Wed, 14 May 2025 08:39:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,37 +96,86 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/5] iommu/vt-d: Restore WO permissions on second-level
- paging entries
-To: Aditya Garg <gargaditya08@live.com>
-Cc: "iommu@lists.linux.dev" <iommu@lists.linux.dev>,
- "joro@8bytes.org" <joro@8bytes.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <PN3PR01MB9597D59895582119A2F56928B891A@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
+Subject: Re: [PATCH 0/2] dm mpath: Interface for explicit probing of active
+ paths
+To: Benjamin Marzinski <bmarzins@redhat.com>,
+ Christoph Hellwig <hch@infradead.org>
+Cc: Kevin Wolf <kwolf@redhat.com>, Martin Wilck <mwilck@suse.com>,
+ dm-devel@lists.linux.dev, hreitz@redhat.com, mpatocka@redhat.com,
+ snitzer@kernel.org, linux-kernel@vger.kernel.org
+References: <20250429165018.112999-1-kwolf@redhat.com>
+ <47dd225b433b0df585a25084a2e793344eeda239.camel@suse.com>
+ <aCIRUwt5BueQmlMZ@redhat.com> <aCLe5UT2kfzI96TQ@infradead.org>
+ <0340c51e-6f89-4799-b2f1-19c785a19ff2@suse.de>
+ <aCLjPLCztuXhgpnA@infradead.org>
+ <d2a7fa68-1890-4367-a2ac-59ec220779bd@suse.de>
+ <aCLrbz3bRLwUbA8p@infradead.org> <aCNzf7MJa-hLQpmv@redhat.com>
 Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <PN3PR01MB9597D59895582119A2F56928B891A@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
+From: Hannes Reinecke <hare@suse.de>
+In-Reply-To: <aCNzf7MJa-hLQpmv@redhat.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:mid,suse.de:email]
+X-Spam-Score: -4.30
 
-On 5/14/25 13:52, Aditya Garg wrote:
-> Hi
+On 5/13/25 18:29, Benjamin Marzinski wrote:
+> On Mon, May 12, 2025 at 11:49:19PM -0700, Christoph Hellwig wrote:
+>> On Tue, May 13, 2025 at 08:32:12AM +0200, Hannes Reinecke wrote:
+>>> Reservations and stuff.
+>>
+>> They should use the kernel persistent reservation API.
 > 
-> Since the original patch which this patch aims to revert fixed CVE-2021-47035, I'd
-> like to know how is that managed now.
+> Currently QEMU isn't sending Persistent Reservation requests to
+> multipath devices at all. It's sending those directly to the underlying
+> scsi devices. The issue here is with all the other SCSI commands that
+> users want to send to their SCSI passthrough device that is actually a
+> multipath device on top of a number of SCSI paths. They expect to
+> get back the actual sense and status information, so QEMU needs to
+> send them via SG_IOs.
+> 
+> Without reading that sense and status information in kernel, the
+> multipath target can't know if it needs to fail a path and retry the
+> ioctl down a different path. QEMU can read this information, but it
+> doesn't know what path the multipath device send the ioctl down. This
+> patch just gives users a way to check the paths in the active pathgroup
+> (which all should be able to handle IO) and fail those that can't.
+> While QEMU is the driver of this, it's completely general functionality.
+> 
+Ouch.
+Different reservations on different paths? Really?
+How do you manage to keep the reservations up-to-date?
 
-Modern IOMMU hardware supports multiple formats of page tables. Some of
-them support write-only permission, but others do not due to
-compatibility with the CPU page table. That's the reason why the
-previous commit removed write-only permission to make it consistent.
+My recommendation is to use the _same_ reservation on all paths,
+precisely to avoid having to re-do reservations on path failure.
+And for that scenario the kernel persistent reservation API
+would work fine.
 
-Nowadays, we have renewed iommu domain allocation interface which takes
-a device pointer and allocation flags. So, if the upper layers, for
-example, VFIO or IOMMUFD, want the iommu driver to enforce write-only
-protection, they should add an allocation flag for this explicitly.
-Otherwise, the IOMMU driver will treat DMA_FROM_DEVICE as a hint, not an
-enforcement.
+Cheers,
 
-Thanks,
-baolu
+Hannes
+-- 
+Dr. Hannes Reinecke                  Kernel Storage Architect
+hare@suse.de                                +49 911 74053 688
+SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
+HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
 
