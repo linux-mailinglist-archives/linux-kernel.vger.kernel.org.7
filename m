@@ -1,124 +1,122 @@
-Return-Path: <linux-kernel+bounces-648039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-648041-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12525AB70CE
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 18:09:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF41EAB70D0
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 18:09:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37062188512D
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 16:09:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A4FF16B050
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 16:09:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FD4C26FD9B;
-	Wed, 14 May 2025 16:08:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B059274659;
+	Wed, 14 May 2025 16:08:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X8uRb7z1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gpqj+bCO"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5E1A1E3762;
-	Wed, 14 May 2025 16:08:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E574E23CE;
+	Wed, 14 May 2025 16:08:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747238923; cv=none; b=mkJF473ltfHKpiEvEhgWt0ooe6Qrt7A43twjNqH954IhUOkBQ25ErAe3B8jf1ji1CnhlqLHBAHmppJ0dqmiZOlMebdHjxqBczkirZFLFbbHw94zviOePpEt6BMuHjL6PVGLfKhav8aQjHDXsURU5cbJKjSRUhIkf+COX6/42kbE=
+	t=1747238939; cv=none; b=U1IB/X0FP6OFDzkONd+9sxx4n0Es4BIwXifJMLTUa8o5EBcKKDe9+DtZecpr4oNjxvGQpP28p0fCsi7m4N1Af3Qb8tRFtzvZA5VhrmApzLxpkmrXO+74ql1Z8c3ESoCHHlTANNGExp82TjsndkZdnJfEFawzBjLAV3vCE2eUtYs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747238923; c=relaxed/simple;
-	bh=hGOUe2xSoGL9oXowpjGUL9c1Ap2l3UhYWn76o1uRYSE=;
+	s=arc-20240116; t=1747238939; c=relaxed/simple;
+	bh=WSQlp+Dh5QGr6EurTALLy9/PXCYuEoCNVlxnRZuV284=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=keZ8ULmuUzb6e+2eR/gi0h90Ety7KrLab9hFqEcMjmhimOHw1Gj+h/CEglvXMG4FsiFpqLbjIqjrus1abMzyeWCPSP7zk68w2cHpfybSYcSS05noimDtQRtaKOssTqoSnSCgUPi8i/JTvh9xl1Qa9qbVVAKWvpLCJOLUgZhsgTk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X8uRb7z1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E61FC4CEE3;
-	Wed, 14 May 2025 16:08:43 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=nQl+XeCaweEuJri/uVoLn7jZsbKm1xXjfcb1VvtlVBhaaxZjLw2y/SxIA+Oq3YuNgFohFw1Cxb4/txY4USKdNB9CPjnWOXDTc4FbuD8ifmMUgDtC29etOcH1PwZNuMs07MHMBi3vgXoUzbn1PeQvnWE0wpK6b80wLTTIExXsgLI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gpqj+bCO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1788C4CEE3;
+	Wed, 14 May 2025 16:08:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747238923;
-	bh=hGOUe2xSoGL9oXowpjGUL9c1Ap2l3UhYWn76o1uRYSE=;
+	s=k20201202; t=1747238938;
+	bh=WSQlp+Dh5QGr6EurTALLy9/PXCYuEoCNVlxnRZuV284=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=X8uRb7z1GWP22+I2dXUrFBGSE7xdYgRUBQrit6b2xTY2KWEoAk0DGNhUefhtYCY6X
-	 J24fzQj0vxVuuNZvQFctlJJuMuV+dUWB9dcMS0ThxLxPk/ZjMyD+kkPvTJ2BamajE+
-	 b6CA1ThkzukP4wqbDUruCiAp+LRjEMwKvubELh4VRPWLGDmtamyl66grw7rl6g3jt7
-	 0kCqWY/Pf4hFESUJH0elOFD+lSgu4PBeT6QAMkYFQ3luovFvG2Xc8kQI2/ymuMuWMY
-	 zAhMFK57lv7YxLzXQEXXVFylFbTTwkNWYM7qzD/5CekHuVPk0GWdGncXDyMj7NSMWM
-	 un8qvC4OwQiog==
-Date: Wed, 14 May 2025 11:08:41 -0500
-From: Rob Herring <robh@kernel.org>
-To: Stephan Gerhold <stephan.gerhold@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Jassi Brar <jassisinghbrar@gmail.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org, Georgi Djakov <djakov@kernel.org>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: Re: [PATCH 1/4] dt-bindings: mailbox: qcom,apcs: Add separate node
- for clock-controller
-Message-ID: <20250514160841.GA2427890-robh@kernel.org>
-References: <20250506-qcom-apcs-mailbox-cc-v1-0-b54dddb150a5@linaro.org>
- <20250506-qcom-apcs-mailbox-cc-v1-1-b54dddb150a5@linaro.org>
- <7vszdea2djl43oojvw3vlrip23f7cfyxkyn6jw3wc2f7yowht5@bgsc2pqscujc>
- <aCNGSwL7043GoJBz@linaro.org>
+	b=Gpqj+bCOZePXoGUhl6GNYU+4uRTymJYRb1tLtydhiM2k+quJrJPO7O1l0oi83NBgB
+	 5NC1wmRjfA5qXQztQG7KTvBMUP6HjG9gDj8ZyUCcnoP3pxRVyVFAZtUPqOg/JkPokA
+	 tWWtRcXTk6ThbX8TXHU5C8VQVlsoPtcars+iAp3VawHIpOFgsNAw0S8VJ82ANTOIoO
+	 GMsmteGjhDuPgmRhoN7rjF8TY4s4GEgNSx3Olv0x/VimrLXypeW6ehEQbHJBU2enU4
+	 Y5SSO53qC57LUuU5YHgPGecIoG+TJYqdfQ2Fs0XvSreYo7gX7lZ+GEo/ybwbZTLG41
+	 c+lkhmFejK5Aw==
+Date: Wed, 14 May 2025 18:08:53 +0200
+From: Mark Brown <broonie@kernel.org>
+To: Benno Lossin <lossin@kernel.org>
+Cc: Daniel Almeida <daniel.almeida@collabora.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Boris Brezillon <boris.brezillon@collabora.com>,
+	Sebastian Reichel <sebastian.reichel@collabora.com>,
+	Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH v3] rust: regulator: add a bare minimum regulator
+ abstraction
+Message-ID: <aCTAFY5USLIchVWL@finisterre.sirena.org.uk>
+References: <20250513-topics-tyr-regulator-v3-1-4cc2704dfec6@collabora.com>
+ <D9VATLUHDGU8.53I80TGVRV0J@kernel.org>
+ <B288AFB1-BA0A-4383-9823-EAC9E5DCA59F@collabora.com>
+ <D9VXPNT4HNXP.1PKET0Q1H7O9Y@kernel.org>
+ <52CFFCA2-F253-49F1-9EA5-2865BD094B25@collabora.com>
+ <D9VZV8APBYWU.2SWXJLHIQ18ZB@kernel.org>
+ <aCS71sbQKn7zeosR@finisterre.sirena.org.uk>
+ <D9W0FJ6MKPTE.1NI5HK0TJRHCM@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="/SyjG8EBHfpAPEFc"
+Content-Disposition: inline
+In-Reply-To: <D9W0FJ6MKPTE.1NI5HK0TJRHCM@kernel.org>
+X-Cookie: Well begun is half done.
+
+
+--/SyjG8EBHfpAPEFc
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aCNGSwL7043GoJBz@linaro.org>
 
-On Tue, May 13, 2025 at 02:16:59PM +0100, Stephan Gerhold wrote:
-> On Sun, May 11, 2025 at 05:48:11PM -0500, Bjorn Andersson wrote:
-> > On Tue, May 06, 2025 at 03:10:08PM +0200, Stephan Gerhold wrote:
-> > > APCS "global" is sort of a "miscellaneous" hardware block that combines
-> > > multiple registers inside the application processor subsystem. Two distinct
-> > > use cases are currently stuffed together in a single device tree node:
-> > > 
-> > >  - Mailbox: to communicate with other remoteprocs in the system.
-> > >  - Clock: for controlling the CPU frequency.
-> > > 
-> > > These two use cases have unavoidable circular dependencies: the mailbox is
-> > > needed as early as possible during boot to start controlling shared
-> > > resources like clocks and power domains, while the clock controller needs
-> > > one of these shared clocks as its parent. Currently, there is no way to
-> > > distinguish these two use cases for generic mechanisms like fw_devlink.
-> > > 
-> > > This is currently blocking conversion of the deprecated custom "qcom,ipc"
-> > > properties to the standard "mboxes", see e.g. commit d92e9ea2f0f9
-> > > ("arm64: dts: qcom: msm8939: revert use of APCS mbox for RPM"):
-> > >   1. remoteproc &rpm needs mboxes = <&apcs1_mbox 8>;
-> > >   2. The clock controller inside &apcs1_mbox needs
-> > >      clocks = <&rpmcc RPM_SMD_XO_CLK_SRC>.
-> > >   3. &rpmcc is a child of remoteproc &rpm
-> > > 
-> > > The mailbox itself does not need any clocks and should probe early to
-> > > unblock the rest of the boot process. The "clocks" are only needed for the
-> > > separate clock controller. In Linux, these are already two separate drivers
-> > > that can probe independently.
-> > > 
-> > 
-> > Why does this circular dependency need to be broken in the DeviceTree
-> > representation?
-> > 
-> > As you describe, the mailbox probes and register the mailbox controller
-> > and it registers the clock controller. The mailbox device isn't affected
-> > by the clock controller failing to find rpmcc...
-> > 
-> 
-> That's right, but the problem is that the probe() function of the
-> mailbox driver won't be called at all. The device tree *looks* like the
-> mailbox depends on the clock, so fw_devlink tries to defer probing until
-> the clock is probed (which won't ever happen, because the mailbox is
-> needed to make the clock available).
-> 
-> I'm not sure why fw_devlink doesn't detect this cycle and tries to probe
-> them anyway, but fact is that we need to split this up in order to avoid
-> warnings and have the supplies/consumers set up properly. Those device
-> links are created based on the device tree and not the drivers.
+On Wed, May 14, 2025 at 06:05:11PM +0200, Benno Lossin wrote:
 
-Does "post-init-providers" providers solve your problem?
+> Gotcha. So calling `regulator_enable` twice on the same regulator is
+> fine?
 
-Rob
+Yes, absolutely.  You might potentially see this with a multi-function
+device where multiple functions on the device need the same supply in
+order to help reduce coordination requirements.
+
+> If that is the case -- and after re-reading the functions exposed on
+> both types `EnabledRegulator` and `Regulator` -- I am confused why we
+> even need two different type states? Both expose the same functions
+> (except `enable` and `disable`) and I don't otherwise see the purpose of
+> having two types.
+
+IIUC the point is to allow Rust's type system to keep track of the
+reference on the regulator, otherwise the user code has to keep track of
+the number of enables it's done like it currently does in C code.
+
+--/SyjG8EBHfpAPEFc
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmgkwBQACgkQJNaLcl1U
+h9BJGAf9FQgChgXlHSQEhzdwlEizPZdPeQ6ua4OKfpaORUGdObaNFzP12L3qLbwH
+Zr1EMaDF1AZcNygWeLauyI5z+kXBegmu63Hr7pKhuwgAkxw/pq5nrvtMbIu8oM8m
+ajic8V2NsNHowlm/oJw16eDLTn/swjQ15RlRr45llf3nIfRE2NVxtXkvwZq6vmgw
+wcIflCDzDH/Nmxl0QBsFZo+TH31McUP7KmARzS8M83lTgV5w1ERBye1o0KYXliT0
+1F4OCUsoTNjZN/CGM2mZMzQADVayDJcRBxVs1u9VdAMu4jCi3XgimZDGK7q6AHWl
+Il5EDOTCw3mAZFWgNrNpvawhbb/9yA==
+=Mm35
+-----END PGP SIGNATURE-----
+
+--/SyjG8EBHfpAPEFc--
 
