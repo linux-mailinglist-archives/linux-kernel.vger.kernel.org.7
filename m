@@ -1,212 +1,187 @@
-Return-Path: <linux-kernel+bounces-648238-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-648239-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C13D0AB7402
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 20:06:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EB75AB7409
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 20:07:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A19B3A47D5
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 18:06:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 589877B8FA4
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 18:05:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C918288524;
-	Wed, 14 May 2025 17:57:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AEDv9zhg"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A7F528314C;
+	Wed, 14 May 2025 17:58:15 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D36A9283127
-	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 17:57:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECED7281370
+	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 17:58:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747245457; cv=none; b=TydzwjAi+ygFN/Nib+HVortVh8YjjWqMrDuqNx7emsun4OHNSAi4Tu0aYKkGXhHl2hdKuIJsTb69VOKIq1Vpup9aFD8mEj8uxgbdHIh+4UMai7NKc3iYjYBJJRCqQgPcBssd2SeN3+iw8jGiRWuR+iv5uKQYjjNPIRy/FOtoA+I=
+	t=1747245495; cv=none; b=kJI67n09Abkxy6Rym0UAE7rVa79yS1IY6/IooVGDJb/z2QYUBq08poLDMJx3IK6O/afejUjwkEq5DmozH4ptzZpoCeS65AvUw1e8o/Dvcfz4Far5KQTOyuAtZDgR50Nd8iHid1zugSsBDMoeH9nZwql7L2bngUjDz4DMyf3keSw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747245457; c=relaxed/simple;
-	bh=X6c/QaHezuYgWRvmYLC83Uyd1iuskmuqUwpmbAVKF08=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=ddzagc6eUDrNAIVb2jBXh4g1S39YyU2IhSPnFOrJMGfR1hUWhCImsScFCw4wangT4+Y1dDcf15bRjXTNANark6CWVn/5gUolBYP+vdQ2DHLW2+K6TvUj25Yn6cNuJHZ3G5sBRQCW9dGgOLBULboNKKR6DCwg1NPWZIDeGMc6WZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AEDv9zhg; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1747245454;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=0bWZ4WIW6USGmd3fCtPku9lyZiPCoKVx7jpPxXIn3KU=;
-	b=AEDv9zhgtwq26Bv5BDb21y56Ziv/St4gZFTVXFKO9pCwlSwXX+aT6F+dH3O/kskpVnsaAN
-	jX+GTCIEfQyGnIm9a2zJ+WlFJ++fMDNV9/K9mO/36m8EMVhbp2nyFDPloRO4eVrHhGxMeC
-	3/VL29DKkVVywYtXAenUKAV53/e7Zqg=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-497-oNdBDxpZMIOV10qYznViWg-1; Wed, 14 May 2025 13:57:33 -0400
-X-MC-Unique: oNdBDxpZMIOV10qYznViWg-1
-X-Mimecast-MFC-AGG-ID: oNdBDxpZMIOV10qYznViWg_1747245452
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3a1fa8742a8so20373f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 10:57:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747245452; x=1747850252;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0bWZ4WIW6USGmd3fCtPku9lyZiPCoKVx7jpPxXIn3KU=;
-        b=QHuiC4wIlZydzvJl3wMl5tSwyMH4WWIeaVcgDx95owREYABoIEVd1gilWuCNZzqSy/
-         coFcafH0nw7DNlMq+p5JejB1XUlOTkfFgZOIRiRu2OKh0huyc7XzXnDhgbSAsF9rJHeH
-         ymCVL9b6K+UXpF5cAOn5mkULSfRQ8BhebDhi4x/eMg22QBMz97SIDb/wcM2kH8U6Fp9q
-         Muo0kJWnzCEkcXfTX4k1kZtjnBLShjHRXf+dloTulynbJMnxjRZd5hUMAMoXituLbu4S
-         te/CewRsh/Q5P8lzxezRFcyohvAjQhNM74SIaWumGivHC1rvyi6Lvv/erJE5KuVBPJw7
-         Y1eQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWCKc5/w+c3Hr2PmaU0XJgwMqnMS5jOZ5SVGg8DDywS1fcqmgTfP582WeATPfCpwr4v9vXqFzrURwJS39Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyxEHDtgEknrY1STlLUg/9zECVqDEB1iAw92PZLXIfbN+EP+TRo
-	7mJqcQur02clB7XlP0ygWbGy3iTq6Fxn6ivKN9eSEur5wxan21jh5w3Lk+NOxx+Bv9eypwVkWLh
-	F7v7whPwqPcn2TkORHI6+nSJ9PVD9hGkpvenx2qQVE2/4uvRfvuRVXjd47VTpqA==
-X-Gm-Gg: ASbGncuuaXW2z8wzuG28HY/YeZ6Wvk4YFmtpVONtSLb9NG8unAh4yDfHfZoPUy4pW+5
-	wji96cjAPGflEnZyzhaN/lme5RVZm++mJ9WTHlMrvK30H9DeEzV9WTwhEiqDbnRpInoaEjkxDFs
-	0xVDdEdNam/aaaDwsGG1aW6AAffsbmsqM2tIxj40NFHe3UNNLT994My82IQO9n84aXIt9ftNySD
-	0rkyMHzZzqSTMXRRwLySDWIiG/DY5jxQl3ZhvGUtacYZdf/PhD+7QltfhcNXk64HIkHwbe8OQ5E
-	6bVH834K4r1TRXAxDEDOcir48Ggz8H0ZzBNkUNRUGa02Rn7BVKKF2NRsgdP9167/qdW3DnT4i5h
-	G7SfGSSFb1qI+qmYQ+uKohOXmh0ymWXSfb/mRods=
-X-Received: by 2002:a05:6000:430d:b0:3a0:b5db:559a with SMTP id ffacd0b85a97d-3a349954e89mr3786751f8f.59.1747245452376;
-        Wed, 14 May 2025 10:57:32 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFp4OKdBffaHI+7gilOZzshfSllV9gdjyqy9+7eDS0fOGPhf7CpV4/kX9mFGXIv7GQk11jdug==
-X-Received: by 2002:a05:6000:430d:b0:3a0:b5db:559a with SMTP id ffacd0b85a97d-3a349954e89mr3786725f8f.59.1747245451911;
-        Wed, 14 May 2025 10:57:31 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f15:6200:d485:1bcd:d708:f5df? (p200300d82f156200d4851bcdd708f5df.dip0.t-ipconnect.de. [2003:d8:2f15:6200:d485:1bcd:d708:f5df])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a1f58ecadfsm20235782f8f.22.2025.05.14.10.57.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 14 May 2025 10:57:31 -0700 (PDT)
-Message-ID: <31998178-7f18-4c5c-9207-180998768cfe@redhat.com>
-Date: Wed, 14 May 2025 19:57:29 +0200
+	s=arc-20240116; t=1747245495; c=relaxed/simple;
+	bh=OIKFuLatd2sjE/5iVdw4MspfZNSVab1gyoq7EYdulEw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=VEZy0B/aByMJZGHnGotkQ0GJQSCSYa8DEFmmW6Q3IVH8yKOiFKUvk7024Ge/XagnaYhOtHFivfK7C+ghuNOXQkTD8kvhvLfij/rwYSiAuGAzzUrFOUD1dWrZD41K/wYj0NeiYYZP1/AS3v3bDuTjtGToPka4HaQf5ykYH5q28LI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD820C4CEEB;
+	Wed, 14 May 2025 17:58:12 +0000 (UTC)
+Date: Wed, 14 May 2025 13:58:39 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Andrew Morton <akpm@linux-foundation.org>, pengdonglin
+ <pengdonglin@xiaomi.com>
+Subject: [GIT PULL] tracing: Fixes for v6.15
+Message-ID: <20250514135839.5f947295@gandalf.local.home>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 03/11] mm: introduce pfnmap_track() and
- pfnmap_untrack() and use them for memremap
-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org,
- intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- linux-trace-kernel@vger.kernel.org, Dave Hansen
- <dave.hansen@linux.intel.com>, Andy Lutomirski <luto@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
- "H. Peter Anvin" <hpa@zytor.com>, Jani Nikula <jani.nikula@linux.intel.com>,
- Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
- Rodrigo Vivi <rodrigo.vivi@intel.com>, Tvrtko Ursulin
- <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Andrew Morton <akpm@linux-foundation.org>,
- Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
- Pedro Falcato <pfalcato@suse.de>, Peter Xu <peterx@redhat.com>,
- Ingo Molnar <mingo@kernel.org>
-References: <20250512123424.637989-1-david@redhat.com>
- <20250512123424.637989-4-david@redhat.com>
- <beqj5nkucukfi7nq7cptzqwksugo5dkljzjg2opzlize7ixfvc@q27zsivgbcow>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <beqj5nkucukfi7nq7cptzqwksugo5dkljzjg2opzlize7ixfvc@q27zsivgbcow>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 13.05.25 19:40, Liam R. Howlett wrote:
-> * David Hildenbrand <david@redhat.com> [250512 08:34]:
->> Let's provide variants of track_pfn_remap() and untrack_pfn() that won't
->> mess with VMAs, and replace the usage in mm/memremap.c.
->>
->> Add some documentation.
->>
->> Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
->> Acked-by: Ingo Molnar <mingo@kernel.org> # x86 bits
->> Signed-off-by: David Hildenbrand <david@redhat.com>
-> 
-> Small nit with this one, but either way:
-> 
-> Reviewed-by: Liam R. Howlett <Liam.Howlett@oracle.com>
 
-Thanks!
+Linus,
 
-[...]
+tracing fixes for 6.15:
 
-> 
-> The other user is pfnmap_track_ctx_alloc() in mm/memory.c which is
-> called from remap_pfn_range(), which also has addr.
-> 
-> Couldn't we just use the address directly?
-> 
-> I think the same holds for untrack as well.
+- Fix sample code that uses trace_array_printk()
 
-Hm, conceptually, I want the "pfntrack" interface to consume ... PFNs :)
+  The sample code for in kernel use of trace_array (that creates an instance
+  for use within the kernel) and shows how to use trace_array_printk() that
+  writes into the created instance, used trace_printk_init_buffers(). But
+  that function is used to initialize normal trace_printk() and produces the
+  NOTICE banner which is not needed for use of trace_array_printk(). The
+  function to initialize that is trace_array_init_printk() that takes the
+  created trace array instance as a parameter.
 
-Actually, I was thinking about converting the "size" parameter to 
-nr_pages as well, but decided to leave that for another day.
+  Update the sample code to reflect the proper usage.
 
-... because I really should be working on (... checking todo list ...) 
-anything else but PAT at this point.
+- Fix preemption count output for stacktrace event
 
-So unless there are strong feelings, I'll leave it that way (the way the 
-old interface also used it), and add it to my todo list (either make it 
-an address or make size -> nr_pages).
+  The tracing buffer shows the preempt count level when an event executes.
+  Because writing the event itself disables preemption, this needs to be
+  accounted for when recording. The stacktrace event did not account for
+  this so the output of the stacktrace event showed preemption was disabled
+  while the event that triggered the stacktrace shows preemption is enabled
+  and this leads to confusion. Account for preemption being disabled for the
+  stacktrace event.
 
-Thanks for all the review Liam!
+  The same happened for stack traces triggered by function tracer.
 
--- 
-Cheers,
+- Fix persistent ring buffer when trace_pipe is used
 
-David / dhildenb
+  The ring buffer swaps the reader page with the next page to read from the
+  write buffer when trace_pipe is used. If there's only a page of data in
+  the ring buffer, this swap will cause the "commit" pointer (last data
+  written) to be on the reader page. If more data is written to the buffer,
+  it is added to the reader page until it falls off back into the write
+  buffer.
 
+  If the system reboots and the commit pointer is still on the reader page,
+  even if new data was written, the persistent buffer validator will miss
+  finding the commit pointer because it only checks the write buffer and
+  does not check the reader page. This causes the validator to fail the
+  validation and clear the buffer, where the new data is lost.
+
+  There was a check for this, but it checked the "head pointer", which was
+  incorrect, because the "head pointer" always stays on the write buffer and
+  is the next page to swap out for the reader page. Fix the logic to catch
+  this case and allow the user to still read the data after reboot.
+
+
+Please pull the latest trace-v6.15-rc6 tree, which can be found at:
+
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
+trace-v6.15-rc6
+
+Tag SHA1: b5e2f786d078bcc3bf257edafb92ed180c8bfb26
+Head SHA1: 1d6c39c89f617c9fec6bbae166e25b16a014f7c8
+
+
+Steven Rostedt (2):
+      tracing: samples: Initialize trace_array_printk() with the correct function
+      ring-buffer: Fix persistent buffer when commit page is the reader page
+
+pengdonglin (2):
+      ftrace: Fix preemption accounting for stacktrace trigger command
+      ftrace: Fix preemption accounting for stacktrace filter command
+
+----
+ kernel/trace/ring_buffer.c          | 8 +++++---
+ kernel/trace/trace_events_trigger.c | 2 +-
+ kernel/trace/trace_functions.c      | 6 +-----
+ samples/ftrace/sample-trace-array.c | 2 +-
+ 4 files changed, 8 insertions(+), 10 deletions(-)
+---------------------------
+diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
+index c0f877d39a24..3f9bf562beea 100644
+--- a/kernel/trace/ring_buffer.c
++++ b/kernel/trace/ring_buffer.c
+@@ -1887,10 +1887,12 @@ static void rb_meta_validate_events(struct ring_buffer_per_cpu *cpu_buffer)
+ 
+ 	head_page = cpu_buffer->head_page;
+ 
+-	/* If both the head and commit are on the reader_page then we are done. */
+-	if (head_page == cpu_buffer->reader_page &&
+-	    head_page == cpu_buffer->commit_page)
++	/* If the commit_buffer is the reader page, update the commit page */
++	if (meta->commit_buffer == (unsigned long)cpu_buffer->reader_page->page) {
++		cpu_buffer->commit_page = cpu_buffer->reader_page;
++		/* Nothing more to do, the only page is the reader page */
+ 		goto done;
++	}
+ 
+ 	/* Iterate until finding the commit page */
+ 	for (i = 0; i < meta->nr_subbufs + 1; i++, rb_inc_page(&head_page)) {
+diff --git a/kernel/trace/trace_events_trigger.c b/kernel/trace/trace_events_trigger.c
+index b66b6d235d91..6e87ae2a1a66 100644
+--- a/kernel/trace/trace_events_trigger.c
++++ b/kernel/trace/trace_events_trigger.c
+@@ -1560,7 +1560,7 @@ stacktrace_trigger(struct event_trigger_data *data,
+ 	struct trace_event_file *file = data->private_data;
+ 
+ 	if (file)
+-		__trace_stack(file->tr, tracing_gen_ctx(), STACK_SKIP);
++		__trace_stack(file->tr, tracing_gen_ctx_dec(), STACK_SKIP);
+ 	else
+ 		trace_dump_stack(STACK_SKIP);
+ }
+diff --git a/kernel/trace/trace_functions.c b/kernel/trace/trace_functions.c
+index 98ccf3f00c51..4e37a0f6aaa3 100644
+--- a/kernel/trace/trace_functions.c
++++ b/kernel/trace/trace_functions.c
+@@ -633,11 +633,7 @@ ftrace_traceoff(unsigned long ip, unsigned long parent_ip,
+ 
+ static __always_inline void trace_stack(struct trace_array *tr)
+ {
+-	unsigned int trace_ctx;
+-
+-	trace_ctx = tracing_gen_ctx();
+-
+-	__trace_stack(tr, trace_ctx, FTRACE_STACK_SKIP);
++	__trace_stack(tr, tracing_gen_ctx_dec(), FTRACE_STACK_SKIP);
+ }
+ 
+ static void
+diff --git a/samples/ftrace/sample-trace-array.c b/samples/ftrace/sample-trace-array.c
+index dac67c367457..4147616102f9 100644
+--- a/samples/ftrace/sample-trace-array.c
++++ b/samples/ftrace/sample-trace-array.c
+@@ -112,7 +112,7 @@ static int __init sample_trace_array_init(void)
+ 	/*
+ 	 * If context specific per-cpu buffers havent already been allocated.
+ 	 */
+-	trace_printk_init_buffers();
++	trace_array_init_printk(tr);
+ 
+ 	simple_tsk = kthread_run(simple_thread, NULL, "sample-instance");
+ 	if (IS_ERR(simple_tsk)) {
 
