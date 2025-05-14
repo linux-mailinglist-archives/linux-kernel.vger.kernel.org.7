@@ -1,211 +1,200 @@
-Return-Path: <linux-kernel+bounces-648167-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-648172-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 761E5AB72EB
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 19:37:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B79BAB7302
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 19:40:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4BB287B1A1C
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 17:36:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 116133B3875
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 17:39:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32BE618DB37;
-	Wed, 14 May 2025 17:37:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1187E283CB3;
+	Wed, 14 May 2025 17:39:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="MUtYkgFS";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="MUtYkgFS"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="a3sLf5q9"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3E38275853
-	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 17:37:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C4FE28151A;
+	Wed, 14 May 2025 17:39:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747244245; cv=none; b=cHoX8iyDkYsMHoLkb+00FGcPvIwpSbc3pUebRFQ85/sEq5K8YJhM1cxeN1wDMkKNpPGY+DzLzdJqI+IFj5sQ+hpPO/Ib7L1vRYNrw0t7QE/d181kQDq5vlEpdrK7n6ozT/Hz4sL5b2wgifPgSbHekSdAit7VK9WhKohma4u+o+0=
+	t=1747244375; cv=none; b=fjQOSag6l1GKXsJdM2GfHQ3++soUCY2XnyKq4ldVBrcyhX4M0wrBxkywBxFDgO9o5ZYYbijEGsk3MVvLN1ung8cben/S/8VkW0dkDBX53a9e52T/qx5zPoYYc9aSPB5+VZfuVZW5/cfO16GhfVfhtv4p6lzKcqc//CKO2SE9NR0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747244245; c=relaxed/simple;
-	bh=JKexnO2Q2BnjLLOK348ei8IMpNVZwDl9P/ySv6Fj1VQ=;
+	s=arc-20240116; t=1747244375; c=relaxed/simple;
+	bh=cSLxshIeNr+V/+u5rK75CUAgh5kaX3jKR2fw3mz1P70=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=MmELmrHfd2YudRZ89UFr/c8wZBAHCSlSasGjlQGg4Niixj1fR+TM7jF1XFIWIH2tDjqSRqEa96bL+m4Acc8wwDRwQPHBkCTZfTBZtyjtD2kod6a3qa5CAL2KslisgXXUi1Ky12lRDj0KzVW3DqvWi+627YbjXl9ynh7BckzIK6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=MUtYkgFS; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=MUtYkgFS; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id BC53B1F399;
-	Wed, 14 May 2025 17:37:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1747244240; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JKexnO2Q2BnjLLOK348ei8IMpNVZwDl9P/ySv6Fj1VQ=;
-	b=MUtYkgFSFubfI/dh4y74gZVNMsj+IryboAYMp56IqA/xCVpXmswAlnTFOmWVtg/dH5rKwf
-	WbKYDingBGEUIEa6UAMKnm4T+Dxn5DPl2nZpICQc5pKc0768p4x8YJ66edeV89gePsFnRf
-	9mxTmBRlHSZAMPX84ilWElLOGqadi0o=
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1747244240; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JKexnO2Q2BnjLLOK348ei8IMpNVZwDl9P/ySv6Fj1VQ=;
-	b=MUtYkgFSFubfI/dh4y74gZVNMsj+IryboAYMp56IqA/xCVpXmswAlnTFOmWVtg/dH5rKwf
-	WbKYDingBGEUIEa6UAMKnm4T+Dxn5DPl2nZpICQc5pKc0768p4x8YJ66edeV89gePsFnRf
-	9mxTmBRlHSZAMPX84ilWElLOGqadi0o=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 63FE413306;
-	Wed, 14 May 2025 17:37:20 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id z0lPFtDUJGgyUAAAD6G6ig
-	(envelope-from <mwilck@suse.com>); Wed, 14 May 2025 17:37:20 +0000
-Message-ID: <50beb356b4dc000446fd186ab754c87f386eaeae.camel@suse.com>
-Subject: Re: [PATCH 0/2] dm mpath: Interface for explicit probing of active
- paths
-From: Martin Wilck <mwilck@suse.com>
-To: Benjamin Marzinski <bmarzins@redhat.com>, Christoph Hellwig
-	 <hch@infradead.org>
-Cc: Kevin Wolf <kwolf@redhat.com>, dm-devel@lists.linux.dev,
- hreitz@redhat.com, 	mpatocka@redhat.com, snitzer@kernel.org,
- linux-kernel@vger.kernel.org, 	pbonzini@redhat.com, Hannes Reinecke
- <hare@suse.com>
-Date: Wed, 14 May 2025 19:37:19 +0200
-In-Reply-To: <aCTDiHMuMncwdp_X@redhat.com>
-References: <20250429165018.112999-1-kwolf@redhat.com>
-	 <47dd225b433b0df585a25084a2e793344eeda239.camel@suse.com>
-	 <aCIRUwt5BueQmlMZ@redhat.com> <aCLe5UT2kfzI96TQ@infradead.org>
-	 <aCMQ5S-gI6vZJxmq@redhat.com> <aCQiz88HksKg791Z@infradead.org>
-	 <aCTDiHMuMncwdp_X@redhat.com>
+	 Content-Type:MIME-Version; b=cE+ypBouNpEhThlsb/SrVCASfAxbLcZXDDDaNO95a1iXFSHmYfQqyQU1dkvayBZoKqISAPNcDoqgRnh8Hcdh0M6xIXDGBkPHtdf+xp6a1928ZiFWe9WAeqkmdUAE82xgxIIcQj6CdiT14LcWEwMglxQ1Gaa+t4cmqH35NcCS8jU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=a3sLf5q9; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54EGNoGp017016;
+	Wed, 14 May 2025 17:37:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=OhYFTK
+	3Y8z/4xazu3XKdTqh8g1BwjMNXvG+8F5JF5lY=; b=a3sLf5q95rLq+ogvCQJGZX
+	V2yY+OSkcxJPwWlGLm5m+YbRqDyBCHDuKaJVszSbyc6wBgriio9qhcS8jZL2kmpm
+	Wt4GZx+6jyOB5ckxK023vjDNAOCrH9Qi1jhunvuv1GZoIrmF8NkPqaIvsKPNtKt6
+	4hgT1Iv7BiUX4NQbm2Gd9ZUtJ6/alASi/l3hSrJm8hGMWRzCT58Ss5nfVjHM8Kb8
+	Aq+p5zH55xzrkCg7OLiv6NLv6BxdnZLp6mjSsBqNtkqxVdTmfyAGiN3UmAdMbp6K
+	DM/3Caw67cLgGwwlDPxkdaL+pvtp/ntrzw506jlQg3dF0R5Xe+sq5+5xXnYcX5Lg
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46mbq8nxys-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 14 May 2025 17:37:55 +0000 (GMT)
+Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 54EHbtLg031046;
+	Wed, 14 May 2025 17:37:55 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46mbq8nxyp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 14 May 2025 17:37:55 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 54EGaGqc019883;
+	Wed, 14 May 2025 17:37:53 GMT
+Received: from smtprelay06.dal12v.mail.ibm.com ([172.16.1.8])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 46mbfrnhv8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 14 May 2025 17:37:53 +0000
+Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
+	by smtprelay06.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 54EHbrIw26608194
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 14 May 2025 17:37:53 GMT
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 716EB58055;
+	Wed, 14 May 2025 17:37:53 +0000 (GMT)
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id C906C58043;
+	Wed, 14 May 2025 17:37:51 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.31.96.173])
+	by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 14 May 2025 17:37:51 +0000 (GMT)
+Message-ID: <edeb23e7884e94006d560898b7f9d2dd257a275e.camel@linux.ibm.com>
+Subject: Re: [PATCH v3 2/9] ima: efi: Drop unnecessary check for
+ CONFIG_MODULE_SIG/CONFIG_KEXEC_SIG
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Thomas =?ISO-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
+        Masahiro
+ Yamada <masahiroy@kernel.org>,
+        Nathan Chancellor <nathan@kernel.org>, Arnd
+ Bergmann <arnd@arndb.de>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Petr Pavlu
+ <petr.pavlu@suse.com>,
+        Sami Tolvanen <samitolvanen@google.com>,
+        Daniel
+ Gomez <da.gomez@samsung.com>, Paul Moore <paul@paul-moore.com>,
+        James
+ Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Jonathan
+ Corbet <corbet@lwn.net>,
+        Madhavan Srinivasan <maddy@linux.ibm.com>,
+        Michael
+ Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Naveen N Rao
+ <naveen@kernel.org>,
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        Dmitry
+ Kasatkin <dmitry.kasatkin@gmail.com>,
+        Eric Snowberg
+ <eric.snowberg@oracle.com>,
+        Nicolas Schier <nicolas.schier@linux.dev>
+Cc: Fabian =?ISO-8859-1?Q?Gr=FCnbichler?= <f.gruenbichler@proxmox.com>,
+        Arnout Engelen <arnout@bzzt.net>, Mattia Rizzolo <mattia@mapreri.org>,
+        kpcyrd <kpcyrd@archlinux.org>, Christian Heusel <christian@heusel.eu>,
+        =?ISO-8859-1?Q?C=E2ju?= Mihai-Drosi <mcaju95@gmail.com>,
+        linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-modules@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-integrity@vger.kernel.org
+Date: Wed, 14 May 2025 13:37:51 -0400
+In-Reply-To: <10ca077d6d51fac10e56c94db4205a482946d15f.camel@linux.ibm.com>
+References: <20250429-module-hashes-v3-0-00e9258def9e@weissschuh.net>
+	 <20250429-module-hashes-v3-2-00e9258def9e@weissschuh.net>
+	 <10ca077d6d51fac10e56c94db4205a482946d15f.camel@linux.ibm.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.1 
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Spam-Flag: NO
-X-Spam-Score: -4.30
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:mid,imap1.dmz-prg2.suse.org:helo]
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: RPOjhr87gRyfajPTapmF9ThaYjREaKWR
+X-Authority-Analysis: v=2.4 cv=GrRC+l1C c=1 sm=1 tr=0 ts=6824d4f4 cx=c_pps a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=VTue-mJiAAAA:8 a=VnNF1IyMAAAA:8 a=cvE8ob5KMqMXAi4NVQcA:9 a=QEXdDO2ut3YA:10
+ a=S9YjYK_EKPFYWS37g-LV:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTE0MDE1OSBTYWx0ZWRfXw38stgEBAl0t 92v/U+3cUWiDo2+zByc4gM0wk3jePfyswMAaKF8sD4OxddTZs4UE+NB2VcDeYErV+mi7iXDLJvh jytWmpJowyB3HAFvoC/P87zqtuhU4ohvwApvR4JcscvN5E9rFDkFyfB3MP21mi3Zb3l+g+pWZQ5
+ /zisZSh5IrT0P2FTctMhkdbGJ+vk/ngQWR21ZkgpICCF4flVjz33Zf7h1seH2KutvMUEHN3jFoN qHhzfy21Le9jr+tImfrJxzgiHGbORUqwHkT3WM+yq8fA3vvdM8IpHWRhsKpfgfdpjELXgFLQIs6 IT8J9qyUx1t9E14ZCdCK7Cxb9XNiDRPETyybcLAf7J3irr/+jfvhA770zoy0OcXw3arFlBdT6iP
+ uQgkQZKJLprO24T3AJbCT8A8FRFqOLmv6LIX4yNw5rmj3w8Rk4AvjRlvWa145C4lQPlIu3+5
+X-Proofpoint-GUID: DzVVxD_mhRAfjC9jgp_93CXh0t-Hz9hv
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-14_04,2025-05-14_03,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ malwarescore=0 lowpriorityscore=0 phishscore=0 mlxscore=0 clxscore=1015
+ mlxlogscore=999 spamscore=0 priorityscore=1501 adultscore=0 bulkscore=0
+ suspectscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505070000
+ definitions=main-2505140159
 
-Hello Ben, hello Christoph,
-
-On Wed, 2025-05-14 at 12:23 -0400, Benjamin Marzinski wrote:
-> On Tue, May 13, 2025 at 09:57:51PM -0700, Christoph Hellwig wrote:
+On Wed, 2025-05-14 at 11:09 -0400, Mimi Zohar wrote:
+> On Tue, 2025-04-29 at 15:04 +0200, Thomas Wei=C3=9Fschuh wrote:
+> > When configuration settings are disabled the guarded functions are
+> > defined as empty stubs, so the check is unnecessary.
+> > The specific configuration option for set_module_sig_enforced() is
+> > about to change and removing the checks avoids some later churn.
 > >=20
-> > SG_IO is fine and the only way for SCSI passthrough.=C2=A0 But doing
-> > SCSI passthrough through md-multipath just doesn't work.=C2=A0 SCSI
-> > isn't
-> > built for layering, and ALUA and it's vendor-specific variants and
-> > alternatives certainly isn't.=C2=A0 If you try that you're playing with
-> > fire and is not chance of ever moving properly.
+> > Signed-off-by: Thomas Wei=C3=9Fschuh <linux@weissschuh.net>
+> >=20
+> > ---
+> > This patch is not strictly necessary right now, but makes looking for
+> > usages of CONFIG_MODULE_SIG easier.
+> > ---
+> > =C2=A0security/integrity/ima/ima_efi.c | 6 ++----
+> > =C2=A01 file changed, 2 insertions(+), 4 deletions(-)
+> >=20
+> > diff --git a/security/integrity/ima/ima_efi.c b/security/integrity/ima/=
+ima_efi.c
+> > index
+> > 138029bfcce1e40ef37700c15e30909f6e9b4f2d..a35dd166ad47beb4a7d46cc3e8fc6=
+04f57e03ecb
+> > 100644
+> > --- a/security/integrity/ima/ima_efi.c
+> > +++ b/security/integrity/ima/ima_efi.c
+> > @@ -68,10 +68,8 @@ static const char * const sb_arch_rules[] =3D {
+> > =C2=A0const char * const *arch_get_ima_policy(void)
+> > =C2=A0{
+> > =C2=A0	if (IS_ENABLED(CONFIG_IMA_ARCH_POLICY) && arch_ima_get_secureboo=
+t()) {
+> > -		if (IS_ENABLED(CONFIG_MODULE_SIG))
+> > -			set_module_sig_enforced();
+> > -		if (IS_ENABLED(CONFIG_KEXEC_SIG))
+> > -			set_kexec_sig_enforced();
+> > +		set_module_sig_enforced();
+> > +		set_kexec_sig_enforced();
+> > =C2=A0		return sb_arch_rules;
 >=20
-> Could you be a bit more specific. All multipath is doing here is
-> forwarding the ioctls to an underlying scsi device, and passing back
-> up
-> the result. Admittedly, it doesn't always make sense to pass the
-> ioctl
-> on from the multipath device to just one scsi device. Persistent
-> Reservations are perfect example of this, and that's why QEMU doesn't
-> use DMs ioctl passthrough code to handle them.=C2=A0
-
-I'd go one step further. Christoph is right to say that what we're
-currently doing in qemu =E2=80=93 passing through every command except the
-PRIN/PROUT to a multipath device =E2=80=93 is a dangerous thing to do.
-
-Passthrough from a dm-multipath device to a SCSI device makes sense
-only for a small subset of the SCSI command set. Basically just for the
-regular IO commands like the various READ and WRITE variants and the
-occasional UNMAP. However, in practice these commands account for 99.y%
-percent of the actual commands sent to devices. The fact that customers
-have been running these setups in large deployments over many years
-suggests that, if other commands ever get passed through to member
-devices, it has rarely had fatal consequences.
-
-Nobody would seriously consider sending ALUA commands to the multipath
-devices. TUR and REQUEST SENSE are other examples for commands that
-can't be reasonably passed through to random member devices of a
-multipath map. There are certainly many more examples. I guess it would
-make sense to review the command set and add some filtering in the qemu
-passthrough code.
-
-AFAIK the only commands that we really need to pass through (except the
-standard ones) are the reservation commands, which get special handling
-by qemu anyway. @Ben, @Kevin, are you aware of anything else?
-
-So: admittedly we're using a framework for passing through any command,
-where we actually need to pass through only a tiny subset of commands.
-Thinking about it this way, it really doesn't look like the perfect
-tool for the job, and we may want to look into a different approach for
-the future.
-
-> Also, when you have ALUA
-> setups, not all the scsi devices are equal. But multipath isn't
-> naievely
-> assuming that they are. It's only passing ioctls to the highest
-> priority
-> activated paths, just like it does for IO, and multipath is in charge
-> of
-> handling explicit alua devices. This hasn't proved to be problematic
-> in
-> practice.
+> Hi Thomas,
 >=20
-> The reality of the situation is that customers have been using this
-> for
-> a while, and the only issue that they run into is that multipath
-> can't
-> tell when a SG_IO has failed due to a retryable error. Currently,
-> they're left with waiting for multipathd's preemptive path checking
-> to
-> fail the path so they can retry down a new one. The purpose of this
-> patchset and Martin's previous one is to handle this problem. If
-> there
-> are unavoidable critical problems that you see with this setup, it
-> would
-> be really helpful to know what they are.
+> I'm just getting to looking at this patch set.=C2=A0 Sorry for the delay.
+>=20
+> Testing whether CONFIG_MODULE_SIG and CONFIG_KEXEC_SIG are configured giv=
+es priority
+> to them, rather than to the IMA support.=C2=A0 Without any other changes,=
+ both signature
+> verifications would be enforced.=C2=A0 Is that the intention?
 
-I'd also be interested in understanding this better. As noted above,
-I'm aware that passing through everything is dangerous and wrong in
-principle. But in practice, we haven't observed anything serious except
-(as Ben already said) the failure to do path failover in the SG_IO code
-path, which both this patch set and my set from the past are intended
-to fix.
+Never mind, got it.
 
-While I am open for looking for better alternatives, I still hope that
-we can find an agreement for a short/mid-term solution that would allow
-us to serve our customers who currently use SCSI passthrough setups.=20
-That would not just benefit us (the enterprise distros), because it
-would also help us fund upstream contributions.
-
-
-Regards
-Martin
+Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
 
