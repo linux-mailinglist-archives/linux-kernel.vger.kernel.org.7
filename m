@@ -1,165 +1,126 @@
-Return-Path: <linux-kernel+bounces-647020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-647027-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F7A5AB6394
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 09:01:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E44FEAB63AB
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 09:02:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B05C246626A
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 07:01:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C2B0E4A059B
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 07:02:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59B892080E8;
-	Wed, 14 May 2025 07:01:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69C8321C9F0;
+	Wed, 14 May 2025 07:01:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YPBehcNK"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P7mXiIXn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C61A41F1524;
-	Wed, 14 May 2025 07:01:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48C8B20C460;
+	Wed, 14 May 2025 07:01:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747206063; cv=none; b=DC7XCSCJgkj/Z4M5jLGjGWqaQ9ZkHOznw5wC6iM7XnkKYSOYmNDndsCmQ+g13JP9sQJRPRh/iq7FR5RbOSO8jCQFpz047QnzmVCKiPFt0eA7QiPwzxmU+w8ZYLwUg9kf+5Bx956Atk/2wJgUzlPH60qZuEFYhccRJaRHaL8JZAk=
+	t=1747206103; cv=none; b=A4h3U2VBDjIxegGGinVXtDcEfdfBebxfVyTvVvv06D392OnZ8cOwiYmfFXG46TdxKfqyHwas2EITTexv1GiYA/LLIA+22jx9K75gJbBa2oUjJ5CpGkDTf8AC7TVoG1mntrif1lSuj3ZgMlFZtBHqQD0mMqJiImhekRkvm1zgGa0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747206063; c=relaxed/simple;
-	bh=00TG9hraW+ho4aYNxAKghUbX1JBVLpm/zp47GHTcitw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cThG7r4rm3Ez9UhC6x7fM4SOPmPmKluINqIEMfyNaU4W2vno8nUoc13/sk2llb3q8RT2BjkPBUCPfa3EOAXuj5RgDNMUnbw0LqEpyP4gjzSDNAN95CcOgqYtIRaHCdaNqrF6gl88eykOBYOx/UzcSbvfyaEGjFftpjk3FmyBrHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YPBehcNK; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-54acc0cd458so7128138e87.0;
-        Wed, 14 May 2025 00:01:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747206060; x=1747810860; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=e4UWq00FQ3wfcO8+cSz3Rl5HWcj+xSQgpD/JijtD+sU=;
-        b=YPBehcNKbzjobQyqhRAJSyjd7U2srH1qw3sKXU9irKjZ8Pm70t9KH3qviwH3xSHULf
-         zypxvWTmVla8+BDbjHYDSHNXfSfZ80O0BOo4c6tKm2VYKw02SV9G+wh8yI4Q8Q5Ppo7n
-         qrTvBkbSmj0eJmPoEerHMsD31HZiBKS2k4IIbq+PN3HfdyjFkDFxRD2jUevo821HOFw9
-         zkc4EIPt2v6ARxOi09Blm7tGWvNhJVcTP39y3w5i89U+IMMPnJ+aYzRG6X5YfkpzruUt
-         cSeSB1ymUk3PCmeHU332ojNn+Czc2zFboOTlr+m2VVoS5JVfIGI/sWGLO9kNybpS5Z5w
-         q3Mg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747206060; x=1747810860;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=e4UWq00FQ3wfcO8+cSz3Rl5HWcj+xSQgpD/JijtD+sU=;
-        b=pslAg+o9b5LDGfRXz3N3QTDYG62bTj9qd7QGM7rYHMKSOm81AYmS5e5eCMWZqGU6jD
-         W7SWEn2DZtyHkRyixGgAc5JYHiSmhD/HwUThpWScOVN4sJJtaSGgBd8dP3kZxR/v1cUE
-         Z2Bf3VMYgYWgt542M0ZkdE88WqqH9RbwhYmUYkGLCO7KTZXviYsWwWndp2fkvIU2T7OB
-         JzqaBmp3Ic7+QUGa97op/2nsoup+R/8EVvOPRKB4AS2sJjYIdTdlz4Rjj8v0GKBfDLXW
-         XYXv4zyMZJ7854qGrsdVHrYBuSxnlaR25QKNBQe4hxUZHuuStoJgP7e3Ko/T9c+uKgMB
-         Hx1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVPzC6ETVycgO//9Iz7aNc/IcSVgIvGUpV7K2F6nbl93g0VRE3qO4lgMLxd2VDx4Q1/BDkiY2AzBKNAl6I=@vger.kernel.org, AJvYcCW9rGi75p+SX7OYsif5oc3OnJvkZKTDIky834UtJVgqWRytuu1EbiF7Y894TXmz9AknT9K+KDIBjMjxUybrLKI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGnHhMmmtcLL61OGsyHG9cX2Ho4l0MkGOLRuaNlJht+TWUYtmd
-	ekPo+DYj5t4UdPWQHsutyKycDU1qRT8VQiUcVpJ89UffdAuFwNcs
-X-Gm-Gg: ASbGnctsaQKzUM7nrAYEN6ifwexYWQdvydOqmtt+wthTTVnI2mh3gRPMWJpPDele0R6
-	bmEgcu0HtG98L8GTbMkb6svNNGC3m+/oxC3wXEvhq1iipu5JMjhLCtwQqmVJ39gU3revoNy4RmI
-	Jd84Y81ivR/pb4hEwu9uxbTTEIIijb+EDlianRtThM4a7gpBiuoRHnx0+5j1EPW9VyjkeWFn5I7
-	D67afmK1eWs5sWEp+sbpiVFg/+0v5FdYlt0eLsmFvnGbgfC9K4B1ARpLbr1gdZsZKgYSyQHuqe1
-	/l+X+bEwkhExxOjUkI76iI1Ki0Ed4HqW7m2aYtHxo0P4qmYMu15zx/p3MCJY151L+jaWdT7lxSN
-	n4k32ppK0n1E393QUSmGlhrRE76xpANkOe1I8w4k=
-X-Google-Smtp-Source: AGHT+IHFvZG1KdFnKOihoApsIRTLV2xT/k/MQynT2nLT5kj+9wfpveOdmyHEDnx5dVQDVckkFIOS+Q==
-X-Received: by 2002:a05:6512:6c4:b0:54f:c57d:d25 with SMTP id 2adb3069b0e04-550d61ddbe6mr762503e87.48.1747206059504;
-        Wed, 14 May 2025 00:00:59 -0700 (PDT)
-Received: from [192.168.1.146] (dsl-hkibng22-54f8dc-251.dhcp.inet.fi. [84.248.220.251])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-550d747b54bsm145249e87.216.2025.05.14.00.00.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 14 May 2025 00:00:58 -0700 (PDT)
-Message-ID: <77afb898-fe6e-480d-9b7a-05cc31d8545b@gmail.com>
-Date: Wed, 14 May 2025 10:00:58 +0300
+	s=arc-20240116; t=1747206103; c=relaxed/simple;
+	bh=UCvwzxK/bPYbO8uWFcLJf6fdSxKUc+Dc5+81ionsKhM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=CKXv5uFDmzTX0Iipv6Ii2r7+jMmOstlXmH89v92SrLHFsSijUMODNOaoZOxIBxheWajnoJnF2dioG+FfYWBF0oUYax4I9R0a+dcP9Y/Zrwn6pDHIB44O6FxAqjL6aSDkAkBGYzxFB8lW0tdzABGpk458D73edQf+/4F1+8pb0zw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P7mXiIXn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 1F1B8C4CEF0;
+	Wed, 14 May 2025 07:01:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747206103;
+	bh=UCvwzxK/bPYbO8uWFcLJf6fdSxKUc+Dc5+81ionsKhM=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=P7mXiIXnzebaTaPNlhq/ZZGro/gSv7BlGzq3xvtbAJqbveA7erQ3vXgAfTCk1ezWk
+	 uUDWA7co+hpz33FeQ1LfvEO26QhinP6Yg6fn4Nd2GhtR6gODmX8AiQGu7GvL5lNhTP
+	 SZQyWCLVD6BxBEHj/6RKtHm+oICmBnn9/n6+1AT9A9a9f9PFwmRjh9Q/K/XjoKor16
+	 8CZENGKEMJIggj86RIVgqfBw4AAyS9k5kGLsCw+BdLk1yEUeGvD4Us9UYbHu0Vtf+f
+	 aslvduTCM5MNaTqeyjK37hjKgHk5uKTKSDEV4IxWrFGpMtgm/RRTZo2aEb4KvwWUi1
+	 8LlafgVcMmoAw==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D566C3ABD9;
+	Wed, 14 May 2025 07:01:42 +0000 (UTC)
+From: Xianwei Zhao via B4 Relay <devnull+xianwei.zhao.amlogic.com@kernel.org>
+Subject: [PATCH 0/8] Add support for Amlogic S7/S7D/S6 pinctrl
+Date: Wed, 14 May 2025 15:01:27 +0800
+Message-Id: <20250514-s6-s7-pinctrl-v1-0-39d368cad250@amlogic.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 0/2] scatterlist rust bindings
-To: Daniel Almeida <daniel.almeida@collabora.com>
-Cc: dakr@kernel.org, lyude@redhat.com, Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>, Valentin Obst <kernel@valentinobst.de>,
- open list <linux-kernel@vger.kernel.org>,
- Marek Szyprowski <m.szyprowski@samsung.com>,
- Robin Murphy <robin.murphy@arm.com>, airlied@redhat.com,
- rust-for-linux@vger.kernel.org,
- "open list:DMA MAPPING HELPERS" <iommu@lists.linux.dev>,
- Petr Tesarik <petr@tesarici.cz>, Andrew Morton <akpm@linux-foundation.org>,
- Herbert Xu <herbert@gondor.apana.org.au>,
- Sui Jingfeng <sui.jingfeng@linux.dev>, Randy Dunlap <rdunlap@infradead.org>,
- Michael Kelley <mhklinux@outlook.com>
-References: <20250512095544.3334680-1-abdiel.janulgue@gmail.com>
- <78DB1F66-9DF5-4679-ADC4-177BED5D4FDE@collabora.com>
-Content-Language: en-US
-From: Abdiel Janulgue <abdiel.janulgue@gmail.com>
-In-Reply-To: <78DB1F66-9DF5-4679-ADC4-177BED5D4FDE@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAMc/JGgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDU0MT3WIz3WJz3YLMvOSSohzdxDTD1KSURAuLRJNUJaCegqLUtMwKsHn
+ RsbW1ADAKQIJfAAAA
+To: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: linux-amlogic@lists.infradead.org, linux-gpio@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, 
+ Xianwei Zhao <xianwei.zhao@amlogic.com>
+X-Mailer: b4 0.12.4
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1747206100; l=1883;
+ i=xianwei.zhao@amlogic.com; s=20231208; h=from:subject:message-id;
+ bh=UCvwzxK/bPYbO8uWFcLJf6fdSxKUc+Dc5+81ionsKhM=;
+ b=9zDdZ22pvS5vNX0fUz5ZoCaN6HYJO/cDbnhKPhZi+P2y4KnpF3VzjKvUGxtZryG6WooZyc0AW
+ PV4rUrCHdZXBqRMOSsRbuUQorKcwea07dQkxMWVfTTRUIFci2gJQl/k
+X-Developer-Key: i=xianwei.zhao@amlogic.com; a=ed25519;
+ pk=o4fDH8ZXL6xQg5h17eNzRljf6pwZHWWjqcOSsj3dW24=
+X-Endpoint-Received: by B4 Relay for xianwei.zhao@amlogic.com/20231208 with
+ auth_id=107
+X-Original-From: Xianwei Zhao <xianwei.zhao@amlogic.com>
+Reply-To: xianwei.zhao@amlogic.com
+
+In some Amlogic SoCs, to save register space or due to some
+abnormal arrangements, two sets of pins share one mux register.
+A group starting from pin0 is the main pin group, which acquires
+the register address through DTS and has management permissions,
+but the register bit offset is undetermined.
+Another GPIO group as a subordinate group. Some pins mux use share
+register and bit offset from bit0 . But this group do not have
+register management permissions.
+
+In SoC S7 and S7D, GPIOX(16~19) mux share with GPIOCC mux register.
+
+In SoC S6, GPIOX(16~19) mux share with GPIOCC mux register, and GPIOD(6)
+mux share with GPIOF mux register.
+
+Add S7/S7D/S6 pinctrl compatible string and device node.
+
+Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
+---
+Xianwei Zhao (8):
+      dt-bindings: pinctl: amlogic,pinctrl-a4: Add compatible string for S7
+      dt-bindings: pinctl: amlogic,pinctrl-a4: Add compatible string for S7D
+      dt-bindings: pinctl: amlogic,pinctrl-a4: Add compatible string for S6
+      pinctrl: meson: a4: remove special data processing
+      pinctrl: meson: support amlogic S6/S7/S7D SoC
+      dts: arm64: amlogic: add S7 pinctrl node
+      dts: arm64: amlogic: add S7D pinctrl node
+      dts: arm64: amlogic: add S6 pinctrl node
+
+ .../bindings/pinctrl/amlogic,pinctrl-a4.yaml       |   9 +-
+ arch/arm64/boot/dts/amlogic/amlogic-s6.dtsi        |  97 ++++++++++++++++++
+ arch/arm64/boot/dts/amlogic/amlogic-s7.dtsi        |  81 +++++++++++++++
+ arch/arm64/boot/dts/amlogic/amlogic-s7d.dtsi       |  90 +++++++++++++++++
+ drivers/pinctrl/meson/pinctrl-amlogic-a4.c         | 111 ++++++++++++++++-----
+ 5 files changed, 363 insertions(+), 25 deletions(-)
+---
+base-commit: aa94665adc28f3fdc3de2979ac1e98bae961d6ca
+change-id: 20250514-s6-s7-pinctrl-af1ebda88a4e
+
+Best regards,
+-- 
+Xianwei Zhao <xianwei.zhao@amlogic.com>
 
 
-On 12/05/2025 14:19, Daniel Almeida wrote:
-> Hi Abdiel,
-> 
->> On 12 May 2025, at 06:53, Abdiel Janulgue <abdiel.janulgue@gmail.com> wrote:
->>
->> Hi,
->>
->> Here are the scatterlist bindings that has been brewing for a while in my
->> local tree while working with Nova code. The bindings are used mostly to
->> build the radix3 table from the GSP firmware which is loaded via dma.
->> This interface can be used on top of existing kernel scatterlist objects
->> or to allocate a new one from scratch.
->>
->> Some questions still need to be resolved, which mostly come from
->> the DeviceSGTable::dma_map() function. Primarily, what if you call
->> bindings::dma_map_sgtable() on an already mapped sg_table? From my
-> 
-> Perhaps we should introduce a type for buffers which are known to be mapped. Then
-> we can simply not offer the option to map for that type.
-> 
->> experiments it doesn't seem to do anything and no indication is returned if
->> the call succeeded or not. Should we save the "mapping info" to a list
->> everytime we call DeviceSGTable::dma_map more than once?
-> 
-> What mapping info are you referring to?
-> 
-Basically the dma_data_direction enum and possibly `Device`, if we 
-decouple SGTable from the device. So this approach would mean that 
-every-time SGTable::dma_map() is called, unique mapping object(s) would 
-be created, and which would get unmapped later on the destructor:
-
-struct SgtDmaMap {
-     dev: ARef<Device>,
-     dir: DmaDataDirection,
-}
-
-impl SgtDmaMap {
-     /// Creates a new mapping object
-     fn new(dev: &Device, dir: DmaDataDirection) -> Self {
-         Self { dev: dev.into(), dir, }
-     }
-}
-...
-...
-
-impl SGTable {
-     pub fn dma_map(dev: &Device, dir: DmaDataDirection) -> 
-Result<SgtDmaMap>
-
-But I'm not sure if there is any point to that as the C 
-`dma_map_sgtable()` doesn't seem to care anyway (I could be wrong with 
-this) if the sg_table gets mapped more than once?
-
-Regards,
-Abdiel
 
