@@ -1,90 +1,144 @@
-Return-Path: <linux-kernel+bounces-648409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-648411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CDF5AB767C
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 22:13:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31829AB7690
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 22:14:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09058172C0B
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 20:13:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8FF21BA63C1
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 20:14:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB7EC295502;
-	Wed, 14 May 2025 20:12:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D4A02957C3;
+	Wed, 14 May 2025 20:14:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YjrD7uF3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="eAQno6Ka"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0768F2951A6;
-	Wed, 14 May 2025 20:12:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D6AA293753
+	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 20:14:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747253563; cv=none; b=U2Ldwm1yVc2UkHM6TR7httQPyMlgzHGBbFAijREDikc6Qh9w1T/U/quJgdrmyyaJm+8ORPb7DmUgiD9fNV4ZRtwplH++NLj0i7LBifZsFoK1wJIO1GWo+UGCrQMKKpajj0GCykgTOQNKrfxmqXry6LZuUVJajlI0KMGDj8ye1kg=
+	t=1747253644; cv=none; b=i1TxxsFmvoVt6Lej9Tmxhf8bdcGOoWvOVZ1SsfODXM/6v1pyJkCjrxR5eYpc8gwaDjKyKJZcxEY4gb1/kA2ErWBEJpabzmmh/cVq9FHDQQTd4Ep4vX3qjWgvIpm/C7KD6rOPqXNXCQLGMk1V4yk5ok/C2GUpxM/3ljZ44t5Zmbg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747253563; c=relaxed/simple;
-	bh=OzKdPvbRk8hZ5qrmc01ogW5Qt/80h78/YBJYjWWOc4I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=urRKIJzbyAW6in45N7aIQRZpT50No0TSWsEN/V74N3Spm2Wjlbn99jVKUHaAldHSwEdhZVMkl90LqHj6xUuJHGsFrMlZI73eI3VJtLBUnifNZ60gB4oJOkORb/3Lv96B+nYYotr2nGJMv/5cbAX1psCxZEZ/oj7vmWzDLcmQ4C4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YjrD7uF3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9CB4FC4CEE3;
-	Wed, 14 May 2025 20:12:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747253562;
-	bh=OzKdPvbRk8hZ5qrmc01ogW5Qt/80h78/YBJYjWWOc4I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YjrD7uF3s4MzpmCi5++bmuEF1uYLGz2YMBnsiMqoFW7YDj5mc8aOQESHbZu88v1DH
-	 /d18hc+b+qCiFIU8wjE+VT3AUBn0WHkoTjMtfQSxakcobRGXhUIUhXcjPqfE+3ENm4
-	 50iYiKTv8Q57RXy9OlgNnwEWWkUcdDj30VbH5Lu0yYNjQhv5K538xqA5La1qGLzQyq
-	 J+Y37RDoc0V7KiNuD3QEUxsqrff7ZF0EBInFFBUijITqyrdwWAepJiQqqBBdPcRYzZ
-	 baQkY+Gry6SJbiMS9tY+h8YfTzXl7CVbMG3lItpymdu1EpEzqXNWmzOfa9fyCEN98Z
-	 xI4qL7dgk4dgw==
-Date: Wed, 14 May 2025 15:12:41 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Olivier Benjamin <olivier.benjamin@bootlin.com>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>, linux-media@vger.kernel.org,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	s=arc-20240116; t=1747253644; c=relaxed/simple;
+	bh=4AtAxAz5XCYC01uWKwLjgY2ITITdF031o9n1wsPBzmw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=At969sPWlT6a/MSfrK4D8NGDCDbc/rp4g7AlygPMANFLxR+np3jbYo38LYNc3sNqHccxBRnXW3um0KiwMpEHLws8UwTsknV8K6mP3L/G+0CxvHaK7p4ZEjIFAd/MT3S0Y0B/9iDhDFRS7kEGHGpNsGsFRtWM5YtqY+/4pPDz9gU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=eAQno6Ka; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-7399838db7fso283583b3a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 13:14:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1747253642; x=1747858442; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=c9puVoSYvf2ZCA0MRaHWdsYInOPeWpOtDifMmwWo0K0=;
+        b=eAQno6KaPRLNVG+JpoteJjuj0aqILKDNCEwE4BOFCeRLZ4MJUfTbfxZgluZ1ogqK1L
+         Vp/oEy+2MUShTHthxBPEmS32qUEZAS130aEG6GgADHpHjdHCM+Zbjjd1Inz1tNrvfu6F
+         maJDM9FYgPuMeRFRL0JRyxEu9Oc8GFT24B/hY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747253642; x=1747858442;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=c9puVoSYvf2ZCA0MRaHWdsYInOPeWpOtDifMmwWo0K0=;
+        b=lmOOGakVSp2Q89zUBWtlmrEaB6AY4qzrGk4pDSSDnGTi72EsH12bW6RHqnZ8jFoE/N
+         HkB7is6Hgx38lz6iJQ6ncGiMBGeGteN2oKjyKhYcNUdSyNcb8pI6rcqG318xKQ1v/hJL
+         dg0RGFlWsizoWVKrQQqt4FIn9nAP4uyMAWtXVtqhUW2KU0gA2bHXEkxNZg7ZOSiaLeVm
+         llPCmOOMiUI+wzMKh0pWSyd75skMdnThWjuVErnay8V1STy5+wFudYwSJTiR1ayAKJoX
+         9xa/7T6ZzAzc8ZEr+5Zz/ydJ6Mrwbf0KLXY8y1reqj4zPQfDUniv27jpKRvgTiqGjsAa
+         GXfQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVQlRxSr4Z+MYHuLKRnMExOor5PyT1hvxoHWZqpSF8Qm9uh8LVsmkVlvkjmCMkiaYA2k0+FE0qag8EKccc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwwCqIpgEFug7X6vg4dftf0q6kvF+QpMqN4UOWKBZ2T54/Uu5Qs
+	cFkAOIaHdTxak05CVqWMEYg25wbA3hQD8R2TVb5NGppGtCbjrR430Dj6VFnr8HEaqw==
+X-Gm-Gg: ASbGnculZJHlD3sdUNHFHAXpVneBTLrw2We64snRjFY9dNRAt+fZhXTEqJtEqBcTOrH
+	F1Q49XndxDdnedDIEe2yixuEYZISXSozzSdIU60hOOj68mUToZRhyMVjSPkVbkyppGwqWs6w8xs
+	NZbDAmOa/e47XX2mkXOThu/wRwPLkFfV8h83dN+43xUHarpMAHCHyL3/EHp147QO8BOF+yZHsHf
+	gyQqKTqJJGwpUuFHXpCpA8h4+nh4/dbAvXnez/USh0E+krnh7eh9rZHdlKZe9P6VFWzTasLceae
+	Owb9PDr8qHU8Zi6i6IcsVq1edplxY6jFjnlGKNxHHo0e0RjzA2n9dXdGvSJr0PuUQEO2ieFmjay
+	i10UkhWYcwNTNHg==
+X-Google-Smtp-Source: AGHT+IHoUXLcPOugi0OP5qmWxF/0I5CG1K6+KioRdB/AvGshIQxAvD0Unf702FWVo16AMekYC9DA/w==
+X-Received: by 2002:a05:6a00:828c:b0:740:6f6:7338 with SMTP id d2e1a72fcca58-742961a931fmr1111602b3a.3.1747253642419;
+        Wed, 14 May 2025 13:14:02 -0700 (PDT)
+Received: from localhost ([2a00:79e0:2e14:7:cd06:335b:936a:7dc1])
+        by smtp.gmail.com with UTF8SMTPSA id 41be03b00d2f7-b2350ddbf13sm9303926a12.59.2025.05.14.13.14.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 14 May 2025 13:14:01 -0700 (PDT)
+From: Brian Norris <briannorris@chromium.org>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Tsai Sung-Fu <danielsftsai@google.com>,
+	Douglas Anderson <dianders@chromium.org>,
 	linux-kernel@vger.kernel.org,
-	Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Nicholas Roth <nicholas@rothemail.net>,
-	linux-rockchip@lists.infradead.org,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Fabio Estevam <festevam@gmail.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Heiko Stuebner <heiko@sntech.de>, imx@lists.linux.dev,
-	Shawn Guo <shawnguo@kernel.org>
-Subject: Re: [PATCH v3 2/4] dt-bindings: media: imx258: inherit
- video-interface-devices properties
-Message-ID: <174725356050.2958291.9709026924364137236.robh@kernel.org>
-References: <20250509-camera-v3-0-dab2772d229a@bootlin.com>
- <20250509-camera-v3-2-dab2772d229a@bootlin.com>
+	Brian Norris <briannorris@chromium.org>
+Subject: [PATCH v2 0/2] genirq: Retain depth for managed IRQs across CPU hotplug
+Date: Wed, 14 May 2025 13:13:15 -0700
+Message-ID: <20250514201353.3481400-1-briannorris@chromium.org>
+X-Mailer: git-send-email 2.49.0.1045.g170613ef41-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250509-camera-v3-2-dab2772d229a@bootlin.com>
+Content-Transfer-Encoding: 8bit
 
+v1:
+ https://lore.kernel.org/lkml/20250513224402.864767-1-briannorris@chromium.org/
+ [PATCH 0/2] genirq: Retain disable-depth across irq_{shutdown,startup}()
 
-On Fri, 09 May 2025 23:51:38 +0200, Olivier Benjamin wrote:
-> Update the IMX258 binding to inherit properties defined in the
-> video-interface-devices binding.
-> 
-> Signed-off-by: Olivier Benjamin <olivier.benjamin@bootlin.com>
-> ---
->  Documentation/devicetree/bindings/media/i2c/sony,imx258.yaml | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
+I'm seeing problems in a driver that:
+(a) requests an affinity-managed IRQ (struct
+    irq_affinity_desc::is_managed == 1);
+(b) disables that IRQ (disable_irq()); and
+(c) undergoes CPU hotplug for the affined CPU.
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+When we do the above, the genirq core leaves the IRQ in a different
+state than it started -- the kernel IRQ is re-enabled after CPU hot
+unplug/plug.
+
+This problem seems to stem from the behavior of irq_shutdown() and
+irq_shutdown(): that they assume they always run with an enabled IRQ,
+and can simply set depth to 1 and 0 respectively.
+
+I incorporate a fix suggested by Thomas Gleixner in patch 1, and provide
+some new kunit test cases for this area in patch 2.
+
+Side note: I understand my colleague has reported other issues related
+to the same code:
+
+  Subject: [PATCH] genirq/PM: Fix IRQCHIP_ENABLE_WAKEUP_ON_SUSPEND if depth > 1
+  https://lore.kernel.org/lkml/20250512173250.1.If5c00cf9f08732f4af5f104ae59b8785c7f69536@changeid/
+
+We're addressing different problems, but they do happen to hit on some
+of the same awkwardness in irq_startup(). These two patches would
+probably need to be reconciled in some way.
+
+Changes in v2:
+ * Adapt Thomas Gleixner's alternative solution, to focus only on CPU
+   hotplug cases
+ * add request_irq()/disable_irq()/free_irq()/request_irq() test
+   sequence
+ * clean up more resources in tests
+ * move tests to patch 2 (i.e., after bugs are fixed and tests pass)
+ * adapt to irq_startup_managed() (new API)
+
+Brian Norris (2):
+  genirq: Retain depth for managed IRQs across CPU hotplug
+  genirq: Add kunit tests for depth counts
+
+ kernel/irq/Kconfig      |  11 ++
+ kernel/irq/Makefile     |   1 +
+ kernel/irq/chip.c       |  22 +++-
+ kernel/irq/cpuhotplug.c |   2 +-
+ kernel/irq/internals.h  |   1 +
+ kernel/irq/irq_test.c   | 229 ++++++++++++++++++++++++++++++++++++++++
+ 6 files changed, 264 insertions(+), 2 deletions(-)
+ create mode 100644 kernel/irq/irq_test.c
+
+-- 
+2.49.0.1045.g170613ef41-goog
 
 
