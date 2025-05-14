@@ -1,132 +1,157 @@
-Return-Path: <linux-kernel+bounces-647200-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-647202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C609AB659E
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 10:17:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BF45AB659F
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 10:18:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B10F47A8B03
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 08:16:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26A6317CDF7
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 08:18:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D791F27454;
-	Wed, 14 May 2025 08:15:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B49922257B;
+	Wed, 14 May 2025 08:16:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O+sGc+7L"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="bKqKMOAc";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="LOmrDegf"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33FE522126D
-	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 08:15:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 729832222B9;
+	Wed, 14 May 2025 08:16:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747210540; cv=none; b=tz4x47db8+ZueBTs3l2rxg7Sg5Wml7X14j5tmFLUfCVouqjRco75160rc6jaYvkqf0sbCWn7m9w/dd0vbPU53JN2sEKB2ask1IalbTgqDl6S1FjvMCZwtaXTleSdNY97N4bN2TBeRb6kFJKALNyF/YqkvUjZNVcnfu+gnV22PPY=
+	t=1747210562; cv=none; b=bw/oDROTJZih30hdJzZB2HewY491Z7QTCp0dbj29OdmrlHaQhhPcY6USC87KgP/X6Kw7F76zpPO9e3hFObHDjUnvna2vLo6ykBmTWkwd/p5UlzMz805a03gJOqiDtzbfD/5pbSXcsOS+dMO35+5TfbiiuLq+iAfjVRM7t6PZmxs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747210540; c=relaxed/simple;
-	bh=JmFV/6TbRYWkoashtzIc4qEABXlVyLSaZRRjtdNIx9U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gEOiHRlUmQsxY54mHNpAlkHnvAwMOldKsCoWjvT0GEpMzmSMwjyOL337fsRYzmHsjPA0DleDLkLDENSKrKFU0wHIB6kWgOr9HFucx5BnvwX9rc+FFlhC0ncALHry7KkjXeWLDAT58np87HUunJHQaE0rQGm4+tWhwlJhGVDGqFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O+sGc+7L; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43BCCC4CEE9;
-	Wed, 14 May 2025 08:15:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747210539;
-	bh=JmFV/6TbRYWkoashtzIc4qEABXlVyLSaZRRjtdNIx9U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=O+sGc+7LwX1Ej5RdW9jtRbYqSg1E6m/LKXtMus24cfw7YfxQnvqYo8IVEGamIjksi
-	 ++++bQ82G+MBM+UmOQVCKQ2PoUf2ug7yHmMzm3gX1+lyNlNit68CxiAamEj7xX2GgP
-	 dzbugGU2c7Ha3wkN35AShkaWZXDlKAPowTZU5w7tX9SzX0hzPEusbXlKiGaExiWtF6
-	 rMuTKuWRxuo8FH2AVYvj5MBIx1zcxs4cdHPp9aCOKkW1FOXk8UIDQtRLaskCcyCsYN
-	 AYLm1rQD1v46MCFc4Ibb/KJNnyA5Q6IsUxwDo6lHgJ2YX89SNDIv2MiWSoUlGYmAnN
-	 NvH70dqoQ1+qw==
-Date: Wed, 14 May 2025 10:15:35 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Ard Biesheuvel <ardb+git@google.com>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [RFC PATCH v2 4/6] x86/boot: Set 5-level paging CPU cap before
- entering C code
-Message-ID: <aCRRJ_ahL2IRXxcj@gmail.com>
-References: <20250513111157.717727-8-ardb+git@google.com>
- <20250513111157.717727-12-ardb+git@google.com>
+	s=arc-20240116; t=1747210562; c=relaxed/simple;
+	bh=mWLNDnatG6xVgkJtpID1GmaF+BJbhEmDLi+tmSnmJY8=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=RfRR8vWzWrCR0firnt4BLECWGqWNSCegd+FtxJAvddTD/EsIGI+WHLeD+/gjBKOZsmJUn6NOqENaOp5l+tCMHs/hwL8WV195PThZowG+cAvZA0jZsTXQBWHzXO0Jdqk6gQr4liOnGYvWIkssy07l0IObd3/y09TM/v2VWQES1SY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=bKqKMOAc; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=LOmrDegf; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 14 May 2025 08:15:56 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1747210557;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0bcw7JMdnkEvRhff3/pmf6K4X3Rjj+ZkR7PQYauiRf8=;
+	b=bKqKMOAcRWXGkM6vv5ja5FBr77qXdj3aYGRK2hXSXWEkL8T2s88GSIlDcTWYZos34nVX2N
+	oqaI41FiuAuEvecW1/7hDfp14DZjG6w5aE+81NiX5Tlm5S9sKecw4lqICnfVI0rRU59st2
+	yeZvLxI8GMwEvx7JPJayolFpqAL4/I0f0sFl2cIAqWvC8e+oepxL6Gacfyp45utbbuLO5y
+	ohIXHbZDbjWHMfFZ5d3XZ1i26GowmXqRnu+GerSqpnj5hz2mSfSiaRnlhnqRqXgHkdUceZ
+	/CgDOzK4atHOi3FqWQqtUdMJwKDJ0k2HU57IXHAJnfm1RTbcc4BlVF+W28frSQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1747210557;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0bcw7JMdnkEvRhff3/pmf6K4X3Rjj+ZkR7PQYauiRf8=;
+	b=LOmrDegfDp/W4vn7OOUGjgoJQu3fLfwUlpgNak56d4jgFXden2iqTVr1PP1Q7X4oUH/gYF
+	UbkWotWr/A5fIiBw==
+From: "tip-bot2 for Ard Biesheuvel" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/core] x86/boot: Defer initialization of VM space related
+ global variables
+Cc: Ard Biesheuvel <ardb@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+ Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250513111157.717727-9-ardb+git@google.com>
+References: <20250513111157.717727-9-ardb+git@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250513111157.717727-12-ardb+git@google.com>
+Message-ID: <174721055669.406.6313674757003043527.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
+The following commit has been merged into the x86/core branch of tip:
 
-* Ard Biesheuvel <ardb+git@google.com> wrote:
+Commit-ID:     64797551baec252f953fa8234051f88b0c368ed5
+Gitweb:        https://git.kernel.org/tip/64797551baec252f953fa8234051f88b0c368ed5
+Author:        Ard Biesheuvel <ardb@kernel.org>
+AuthorDate:    Tue, 13 May 2025 13:11:59 +02:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Wed, 14 May 2025 10:06:35 +02:00
 
-> diff --git a/arch/x86/kernel/asm-offsets.c b/arch/x86/kernel/asm-offsets.c
-> index ad4ea6fb3b6c..6259b474073b 100644
-> --- a/arch/x86/kernel/asm-offsets.c
-> +++ b/arch/x86/kernel/asm-offsets.c
-> @@ -33,6 +33,14 @@
->  
->  static void __used common(void)
->  {
-> +	OFFSET(CPUINFO_x86, cpuinfo_x86, x86);
-> +	OFFSET(CPUINFO_x86_vendor, cpuinfo_x86, x86_vendor);
-> +	OFFSET(CPUINFO_x86_model, cpuinfo_x86, x86_model);
-> +	OFFSET(CPUINFO_x86_stepping, cpuinfo_x86, x86_stepping);
-> +	OFFSET(CPUINFO_cpuid_level, cpuinfo_x86, cpuid_level);
-> +	OFFSET(CPUINFO_x86_capability, cpuinfo_x86, x86_capability);
-> +	OFFSET(CPUINFO_x86_vendor_id, cpuinfo_x86, x86_vendor_id);
-> +
->  	BLANK();
->  	OFFSET(TASK_threadsp, task_struct, thread.sp);
->  #ifdef CONFIG_STACKPROTECTOR
-> diff --git a/arch/x86/kernel/asm-offsets_32.c b/arch/x86/kernel/asm-offsets_32.c
-> index 2b411cd00a4e..e0a292db97b2 100644
-> --- a/arch/x86/kernel/asm-offsets_32.c
-> +++ b/arch/x86/kernel/asm-offsets_32.c
-> @@ -12,15 +12,6 @@ void foo(void);
->  
->  void foo(void)
->  {
-> -	OFFSET(CPUINFO_x86, cpuinfo_x86, x86);
-> -	OFFSET(CPUINFO_x86_vendor, cpuinfo_x86, x86_vendor);
-> -	OFFSET(CPUINFO_x86_model, cpuinfo_x86, x86_model);
-> -	OFFSET(CPUINFO_x86_stepping, cpuinfo_x86, x86_stepping);
-> -	OFFSET(CPUINFO_cpuid_level, cpuinfo_x86, cpuid_level);
-> -	OFFSET(CPUINFO_x86_capability, cpuinfo_x86, x86_capability);
-> -	OFFSET(CPUINFO_x86_vendor_id, cpuinfo_x86, x86_vendor_id);
-> -	BLANK();
-> -
+x86/boot: Defer initialization of VM space related global variables
 
-This is needed so that we can run (well, build) the setup_force_cpu_cap 
-macro on x86-64 too, right?
+The global pseudo-constants 'page_offset_base', 'vmalloc_base' and
+'vmemmap_base' are not used extremely early during the boot, and cannot be
+used safely until after the KASLR memory randomization code in
+kernel_randomize_memory() executes, which may update their values.
 
-Could you please split out this portion into a separate patch, to 
-simplify the more dangerous half of the patch?
+So there is no point in setting these variables extremely early, and it
+can wait until after the kernel itself is mapped and running from its
+permanent virtual mapping.
 
-> -	if (IS_ENABLED(CONFIG_X86_5LEVEL) && (native_read_cr4() & X86_CR4_LA57))
-> -		setup_force_cpu_cap(X86_FEATURE_5LEVEL_PAGING);
+Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Link: https://lore.kernel.org/r/20250513111157.717727-9-ardb+git@google.com
+---
+ arch/x86/boot/startup/map_kernel.c |  3 ---
+ arch/x86/kernel/head64.c           |  9 ++++++---
+ 2 files changed, 6 insertions(+), 6 deletions(-)
 
-> +#ifdef CONFIG_X86_5LEVEL
-> +	/*
-> +	 * Set the X86_FEATURE_5LEVEL_PAGING capability before calling into the
-> +	 * C code, so that it is guaranteed to have a consistent view of any
-> +	 * global pseudo-constants that are derived from pgtable_l5_enabled().
-> +	 */
-> +	mov	%cr4, %rax
-> +	btl	$X86_CR4_LA57_BIT, %eax
-> +	jnc	0f
-> +
-> +	setup_force_cpu_cap X86_FEATURE_5LEVEL_PAGING
-> +0:
-> +#endif
-
-Nice!
-
-Thanks,
-
-	Ingo
+diff --git a/arch/x86/boot/startup/map_kernel.c b/arch/x86/boot/startup/map_kernel.c
+index 099ae25..905e873 100644
+--- a/arch/x86/boot/startup/map_kernel.c
++++ b/arch/x86/boot/startup/map_kernel.c
+@@ -29,9 +29,6 @@ static inline bool check_la57_support(void)
+ 	__pgtable_l5_enabled	= 1;
+ 	pgdir_shift		= 48;
+ 	ptrs_per_p4d		= 512;
+-	page_offset_base	= __PAGE_OFFSET_BASE_L5;
+-	vmalloc_base		= __VMALLOC_BASE_L5;
+-	vmemmap_base		= __VMEMMAP_BASE_L5;
+ 
+ 	return true;
+ }
+diff --git a/arch/x86/kernel/head64.c b/arch/x86/kernel/head64.c
+index 510fb41..14f7dda 100644
+--- a/arch/x86/kernel/head64.c
++++ b/arch/x86/kernel/head64.c
+@@ -62,13 +62,10 @@ EXPORT_SYMBOL(ptrs_per_p4d);
+ #ifdef CONFIG_DYNAMIC_MEMORY_LAYOUT
+ unsigned long page_offset_base __ro_after_init = __PAGE_OFFSET_BASE_L4;
+ EXPORT_SYMBOL(page_offset_base);
+-SYM_PIC_ALIAS(page_offset_base);
+ unsigned long vmalloc_base __ro_after_init = __VMALLOC_BASE_L4;
+ EXPORT_SYMBOL(vmalloc_base);
+-SYM_PIC_ALIAS(vmalloc_base);
+ unsigned long vmemmap_base __ro_after_init = __VMEMMAP_BASE_L4;
+ EXPORT_SYMBOL(vmemmap_base);
+-SYM_PIC_ALIAS(vmemmap_base);
+ #endif
+ 
+ /* Wipe all early page tables except for the kernel symbol map */
+@@ -244,6 +241,12 @@ asmlinkage __visible void __init __noreturn x86_64_start_kernel(char * real_mode
+ 	/* Kill off the identity-map trampoline */
+ 	reset_early_page_tables();
+ 
++	if (pgtable_l5_enabled()) {
++		page_offset_base	= __PAGE_OFFSET_BASE_L5;
++		vmalloc_base		= __VMALLOC_BASE_L5;
++		vmemmap_base		= __VMEMMAP_BASE_L5;
++	}
++
+ 	clear_bss();
+ 
+ 	/*
 
