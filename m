@@ -1,210 +1,170 @@
-Return-Path: <linux-kernel+bounces-647641-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-647653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3DD9AB6B20
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 14:11:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84770AB6B56
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 14:22:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C000188682F
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 12:11:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69DF4189100D
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 12:22:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07ADC27510A;
-	Wed, 14 May 2025 12:10:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91CBE2741A0;
+	Wed, 14 May 2025 12:22:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="mjLPrrgL";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="NaRt2/Uz";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="mjLPrrgL";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="NaRt2/Uz"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="BqclIBag"
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7615275878
-	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 12:10:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98E922749CC
+	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 12:22:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747224651; cv=none; b=Zv211O8g5iekpqx0a/tH42MI1zsKeDV4oYRfi+iLIWeaXNVTy7UAx9pg+vCWI7dP0kqYX9kiMlbPxQBLaOE5m2+PGEIgROcuWH5gdpYgZ8BiWc/e1ab/mw3/axV7j6GKvU0Ye5VPM7SsuPxb/Uu6h6WwB8R1PuVgwH0te5+nN2Y=
+	t=1747225345; cv=none; b=OIHJEKJD9k9nLJjGGUI3AhWKoZlPTK3BWJMk6lfwkhdPVCXJCW+j+kq0Wss1SPiLhtU8HumErh//z7p6YvwsYOmnrdy5/RYslYuYe/yfeIExyKq+Qkpx2vB9mBoogSJpZ/oZDDVDz9Qeky8GL+0junpbWM5pL8ox2a2fTzQvwtg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747224651; c=relaxed/simple;
-	bh=ujFU64lUnTiA1/QHpshqazoqqgK3H8Ez9VWMW+ljgu0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OcItK/nAc7xpo8izG4kDW94asDLX0i/ZyRA7I1MDAny5qyuWcKbrJw5toqtr1DdTsnN8t+jtWyoGAOjrfQagMEOhQB1Orb/poq2avQSn/zgFBBmCSDDfJSDKz/nCXMzO9zsMx9Txjhthfu3bmYjVzbL+S8NH19sJ9JqoxX67dKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=mjLPrrgL; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=NaRt2/Uz; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=mjLPrrgL; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=NaRt2/Uz; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from kitsune.suse.cz (unknown [10.100.12.127])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id D16A01F745;
-	Wed, 14 May 2025 12:10:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1747224646; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Lw+353Ca7lhmfXTfDio3C8efnVDU+1woQnWA/apBzB8=;
-	b=mjLPrrgLHlt+uXShOhyDAy/FpSMJaFSOUxmUDhtG0J+v+vjkmPwq8pne0bvJ6B3jc+qlyy
-	sqQfahb1UcC1AhI1m7QWS6vVEw4L4w1TnfObHfxFK3ETV/HxGA+uQ2lHc5w0In8WYnxt5p
-	YKV03EDbyAXtyulGCNjI2/F0H2psbOo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1747224646;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Lw+353Ca7lhmfXTfDio3C8efnVDU+1woQnWA/apBzB8=;
-	b=NaRt2/UziOA672AmZIuYg6dQ8m4AL5lbhAgC6p8eP2LKvjGiSmon2085un6zbIEa/hdMjz
-	nqbocSZWw+QOYtAQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1747224646; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Lw+353Ca7lhmfXTfDio3C8efnVDU+1woQnWA/apBzB8=;
-	b=mjLPrrgLHlt+uXShOhyDAy/FpSMJaFSOUxmUDhtG0J+v+vjkmPwq8pne0bvJ6B3jc+qlyy
-	sqQfahb1UcC1AhI1m7QWS6vVEw4L4w1TnfObHfxFK3ETV/HxGA+uQ2lHc5w0In8WYnxt5p
-	YKV03EDbyAXtyulGCNjI2/F0H2psbOo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1747224646;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Lw+353Ca7lhmfXTfDio3C8efnVDU+1woQnWA/apBzB8=;
-	b=NaRt2/UziOA672AmZIuYg6dQ8m4AL5lbhAgC6p8eP2LKvjGiSmon2085un6zbIEa/hdMjz
-	nqbocSZWw+QOYtAQ==
-Date: Wed, 14 May 2025 14:10:45 +0200
-From: Michal =?iso-8859-1?Q?Such=E1nek?= <msuchanek@suse.de>
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Jonathan McDowell <noodles@earth.li>,
-	Paul Menzel <pmenzel@molgen.mpg.de>
-Subject: Re: [PATCH v3] tpm: tis: Double the timeout B to 4s
-Message-ID: <aCSIRS1fq_b9sByn@kitsune.suse.cz>
-References: <4e4640bd-0313-4594-9667-82340ed9368a@molgen.mpg.de>
- <20250404082325.13876-1-msuchanek@suse.de>
- <Z--d7Obw2UEk8Pve@kernel.org>
+	s=arc-20240116; t=1747225345; c=relaxed/simple;
+	bh=rMgMN8R6Q7ND9q/Yqv4kQ8GRgwl0/UP4/ERz6QhnkpY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=sxYdJ1MkD5JbHUck0DXX02JPkktJ9EaPSt8u4AAX6UYzNARUuyFKAr3wOpmIe/cXzhnrxnQOCMwg5L843fXk7rZyNo4t4R/Y9bk8iFtZLAT+xYRFH+xbzUqJf0SRcHsobcD4F0wFTISSMB9xv9WZvq/p7Il/QY9RAv0GxUhFVnM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=BqclIBag; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20250514121224euoutp01e9f690c47d27041ad10dbaca4d5765b6~-Y6XF7osO1121811218euoutp01s
+	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 12:12:24 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20250514121224euoutp01e9f690c47d27041ad10dbaca4d5765b6~-Y6XF7osO1121811218euoutp01s
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1747224744;
+	bh=fSDRvy2fK9ZBMkD7zZdvUkDbKKAV/Jv8n/pyxdGD2wM=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=BqclIBagRBc2gzEtRSFp7A+9yQOTGQoaRf99iUSnG1MZHBk6chuQg/O/ZyjXqJTaZ
+	 eyNNbUYnlhzm5QbgrdgTpumpXbcDm+NR5ro6NM04mhFQyJpBitAddFW5KleQTON6UV
+	 sAqfU0S6/fDKaJ+1HaSNoIHTIgU//rBL3Q3R4apA=
+Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250514121223eucas1p1265764bb4bc28f10b65fab83b1725805~-Y6WlRww31485814858eucas1p1D;
+	Wed, 14 May 2025 12:12:23 +0000 (GMT)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250514121220eusmtip2059ff98b04e6b87e5195ea200a8599a1~-Y6TyZSaP1756517565eusmtip2p;
+	Wed, 14 May 2025 12:12:20 +0000 (GMT)
+Message-ID: <8eedf638-9fa5-470e-976e-9b18971f7b46@samsung.com>
+Date: Wed, 14 May 2025 14:12:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z--d7Obw2UEk8Pve@kernel.org>
-X-Spam-Flag: NO
-X-Spam-Score: -4.30
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	MISSING_XM_UA(0.00)[];
-	RCVD_COUNT_ZERO(0.00)[0];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmx.de];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[gmx.de,ziepe.ca,vger.kernel.org,earth.li,molgen.mpg.de];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email]
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 0/2] scatterlist rust bindings
+To: Abdiel Janulgue <abdiel.janulgue@gmail.com>, Daniel Almeida
+	<daniel.almeida@collabora.com>
+Cc: dakr@kernel.org, lyude@redhat.com, Miguel Ojeda <ojeda@kernel.org>, Alex
+	Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo
+	<gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
+	<bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, Andreas
+	Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor
+	Gross <tmgross@umich.edu>, Valentin Obst <kernel@valentinobst.de>, open list
+	<linux-kernel@vger.kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+	airlied@redhat.com, rust-for-linux@vger.kernel.org, "open list:DMA MAPPING
+ HELPERS" <iommu@lists.linux.dev>, Petr Tesarik <petr@tesarici.cz>, Andrew
+	Morton <akpm@linux-foundation.org>, Herbert Xu
+	<herbert@gondor.apana.org.au>, Sui Jingfeng <sui.jingfeng@linux.dev>, Randy
+	Dunlap <rdunlap@infradead.org>, Michael Kelley <mhklinux@outlook.com>
+Content-Language: en-US
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <77afb898-fe6e-480d-9b7a-05cc31d8545b@gmail.com>
+Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20250514121223eucas1p1265764bb4bc28f10b65fab83b1725805
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20250514070104eucas1p1b2e420e8827d55521bd9aca3e1341ee7
+X-EPHeader: CA
+X-CMS-RootMailID: 20250514070104eucas1p1b2e420e8827d55521bd9aca3e1341ee7
+References: <20250512095544.3334680-1-abdiel.janulgue@gmail.com>
+	<78DB1F66-9DF5-4679-ADC4-177BED5D4FDE@collabora.com>
+	<CGME20250514070104eucas1p1b2e420e8827d55521bd9aca3e1341ee7@eucas1p1.samsung.com>
+	<77afb898-fe6e-480d-9b7a-05cc31d8545b@gmail.com>
 
-Hello,
+On 14.05.2025 09:00, Abdiel Janulgue wrote:
+>
+> On 12/05/2025 14:19, Daniel Almeida wrote:
+>> Hi Abdiel,
+>>
+>>> On 12 May 2025, at 06:53, Abdiel Janulgue 
+>>> <abdiel.janulgue@gmail.com> wrote:
+>>>
+>>> Hi,
+>>>
+>>> Here are the scatterlist bindings that has been brewing for a while 
+>>> in my
+>>> local tree while working with Nova code. The bindings are used 
+>>> mostly to
+>>> build the radix3 table from the GSP firmware which is loaded via dma.
+>>> This interface can be used on top of existing kernel scatterlist 
+>>> objects
+>>> or to allocate a new one from scratch.
+>>>
+>>> Some questions still need to be resolved, which mostly come from
+>>> the DeviceSGTable::dma_map() function. Primarily, what if you call
+>>> bindings::dma_map_sgtable() on an already mapped sg_table? From my
+>>
+>> Perhaps we should introduce a type for buffers which are known to be 
+>> mapped. Then
+>> we can simply not offer the option to map for that type.
+>>
+>>> experiments it doesn't seem to do anything and no indication is 
+>>> returned if
+>>> the call succeeded or not. Should we save the "mapping info" to a list
+>>> everytime we call DeviceSGTable::dma_map more than once?
+>>
+>> What mapping info are you referring to?
+>>
+> Basically the dma_data_direction enum and possibly `Device`, if we 
+> decouple SGTable from the device. So this approach would mean that 
+> every-time SGTable::dma_map() is called, unique mapping object(s) 
+> would be created, and which would get unmapped later on the destructor:
+>
+> struct SgtDmaMap {
+>     dev: ARef<Device>,
+>     dir: DmaDataDirection,
+> }
+>
+> impl SgtDmaMap {
+>     /// Creates a new mapping object
+>     fn new(dev: &Device, dir: DmaDataDirection) -> Self {
+>         Self { dev: dev.into(), dir, }
+>     }
+> }
+> ...
+> ...
+>
+> impl SGTable {
+>     pub fn dma_map(dev: &Device, dir: DmaDataDirection) -> 
+> Result<SgtDmaMap>
+>
+> But I'm not sure if there is any point to that as the C 
+> `dma_map_sgtable()` doesn't seem to care anyway (I could be wrong with 
+> this) if the sg_table gets mapped more than once?
 
-On Fri, Apr 04, 2025 at 11:53:00AM +0300, Jarkko Sakkinen wrote:
-> On Fri, Apr 04, 2025 at 10:23:14AM +0200, Michal Suchanek wrote:
-> > With some Infineon chips the timeouts in tpm_tis_send_data (both B and
-> > C) can reach up to about 2250 ms.
-> > 
-> > Timeout C is retried since
-> > commit de9e33df7762 ("tpm, tpm_tis: Workaround failed command reception on Infineon devices")
-> > 
-> > Timeout B still needs to be extended.
-> > 
-> > The problem is most commonly encountered with context related operation
-> > such as load context/save context. These are issued directly by the
-> > kernel, and there is no retry logic for them.
-> > 
-> > When a filesystem is set up to use the TPM for unlocking the boot fails,
-> > and restarting the userspace service is ineffective. This is likely
-> > because ignoring a load context/save context result puts the real TPM
-> > state and the TPM state expected by the kernel out of sync.
-> > 
-> > Chips known to be affected:
-> > tpm_tis IFX1522:00: 2.0 TPM (device-id 0x1D, rev-id 54)
-> > Description: SLB9672
-> > Firmware Revision: 15.22
-> > 
-> > tpm_tis MSFT0101:00: 2.0 TPM (device-id 0x1B, rev-id 22)
-> > Firmware Revision: 7.83
-> > 
-> > tpm_tis MSFT0101:00: 2.0 TPM (device-id 0x1A, rev-id 16)
-> > Firmware Revision: 5.63
-> > 
-> > Link: https://lore.kernel.org/linux-integrity/Z5pI07m0Muapyu9w@kitsune.suse.cz/
-> > Signed-off-by: Michal Suchanek <msuchanek@suse.de>
-> > ---
-> > v2: Only extend timeout B
-> > v3: Update commit message
-> > ---
-> >  drivers/char/tpm/tpm_tis_core.h | 2 +-
-> >  include/linux/tpm.h             | 2 +-
-> >  2 files changed, 2 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/char/tpm/tpm_tis_core.h b/drivers/char/tpm/tpm_tis_core.h
-> > index 970d02c337c7..6c3aa480396b 100644
-> > --- a/drivers/char/tpm/tpm_tis_core.h
-> > +++ b/drivers/char/tpm/tpm_tis_core.h
-> > @@ -54,7 +54,7 @@ enum tis_int_flags {
-> >  enum tis_defaults {
-> >  	TIS_MEM_LEN = 0x5000,
-> >  	TIS_SHORT_TIMEOUT = 750,	/* ms */
-> > -	TIS_LONG_TIMEOUT = 2000,	/* 2 sec */
-> > +	TIS_LONG_TIMEOUT = 4000,	/* 4 secs */
-> >  	TIS_TIMEOUT_MIN_ATML = 14700,	/* usecs */
-> >  	TIS_TIMEOUT_MAX_ATML = 15000,	/* usecs */
-> >  };
-> > diff --git a/include/linux/tpm.h b/include/linux/tpm.h
-> > index 6c3125300c00..3db0b6a87d45 100644
-> > --- a/include/linux/tpm.h
-> > +++ b/include/linux/tpm.h
-> > @@ -224,7 +224,7 @@ enum tpm2_const {
-> >  
-> >  enum tpm2_timeouts {
-> >  	TPM2_TIMEOUT_A          =    750,
-> > -	TPM2_TIMEOUT_B          =   2000,
-> > +	TPM2_TIMEOUT_B          =   4000,
-> >  	TPM2_TIMEOUT_C          =    200,
-> >  	TPM2_TIMEOUT_D          =     30,
-> >  	TPM2_DURATION_SHORT     =     20,
-> > -- 
-> > 2.47.1
-> > 
-> > 
-> 
-> Cc: stable@vger.kernel.org # v6.1+
-> 
-> Probably best that I'll piggyback a patch set for stable with the two
-> fixes, in order to cause least noise. I need to do this *after* an
-> ack'd PR to -rc2.
 
-While there is talk about stable this does not seem to be applied
-anywhere I could find. Is that expected?
+Standard DMA-mapping C api doesn't have the notion of the object, 
+although in case of sgtable structure, one might add some flags might 
+there. Originally the sgtable based helpers were just trivial wrappers 
+for dma_sync_sg_*() and dma_unmap_sg() ensuring proper parameters (and 
+avoiding the confusion which nents to pass).
 
-Thanks
+It is generally assumed that caller uses the DMA API properly and there 
+are no checks for double dma_map calls. It is only correct to call 
+dma_map_sgtable() for the same sgtable structure after earlier call to 
+dma_unmap_sgtable().
 
-Michal
 
-> 
-> Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
-> 
-> BR, Jarkko
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
+
 
