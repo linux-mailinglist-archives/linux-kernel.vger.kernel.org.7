@@ -1,170 +1,156 @@
-Return-Path: <linux-kernel+bounces-647653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-647649-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84770AB6B56
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 14:22:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A0E6AB6B50
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 14:20:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69DF4189100D
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 12:22:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF9441B62544
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 12:21:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91CBE2741A0;
-	Wed, 14 May 2025 12:22:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA17427702D;
+	Wed, 14 May 2025 12:20:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="BqclIBag"
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+	dkim=pass (2048-bit key) header.d=kaspersky.com header.i=@kaspersky.com header.b="bBB1baW5";
+	dkim=pass (2048-bit key) header.d=kaspersky.com header.i=@kaspersky.com header.b="KtcrOFi7"
+Received: from mailhub11-fb.kaspersky-labs.com (mailhub11-fb.kaspersky-labs.com [81.19.104.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98E922749CC
-	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 12:22:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A58427510A;
+	Wed, 14 May 2025 12:20:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.19.104.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747225345; cv=none; b=OIHJEKJD9k9nLJjGGUI3AhWKoZlPTK3BWJMk6lfwkhdPVCXJCW+j+kq0Wss1SPiLhtU8HumErh//z7p6YvwsYOmnrdy5/RYslYuYe/yfeIExyKq+Qkpx2vB9mBoogSJpZ/oZDDVDz9Qeky8GL+0junpbWM5pL8ox2a2fTzQvwtg=
+	t=1747225243; cv=none; b=YmADbBDwNI9XSswzgzITLU+gWLVTZj/fljNQLEoRwFn08M+Eqtfjr/ul8Tpwij098cGOyqyOMelS6YVh3q02mqzTHU/BU1IgXPqyfZpFmFbXUwjDsKeNyRqzJp6tb+k337BbLPIudMUhyHpUafoF9+xBYW/6+PLbcJuhz6uLA0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747225345; c=relaxed/simple;
-	bh=rMgMN8R6Q7ND9q/Yqv4kQ8GRgwl0/UP4/ERz6QhnkpY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=sxYdJ1MkD5JbHUck0DXX02JPkktJ9EaPSt8u4AAX6UYzNARUuyFKAr3wOpmIe/cXzhnrxnQOCMwg5L843fXk7rZyNo4t4R/Y9bk8iFtZLAT+xYRFH+xbzUqJf0SRcHsobcD4F0wFTISSMB9xv9WZvq/p7Il/QY9RAv0GxUhFVnM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=BqclIBag; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20250514121224euoutp01e9f690c47d27041ad10dbaca4d5765b6~-Y6XF7osO1121811218euoutp01s
-	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 12:12:24 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20250514121224euoutp01e9f690c47d27041ad10dbaca4d5765b6~-Y6XF7osO1121811218euoutp01s
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1747224744;
-	bh=fSDRvy2fK9ZBMkD7zZdvUkDbKKAV/Jv8n/pyxdGD2wM=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=BqclIBagRBc2gzEtRSFp7A+9yQOTGQoaRf99iUSnG1MZHBk6chuQg/O/ZyjXqJTaZ
-	 eyNNbUYnlhzm5QbgrdgTpumpXbcDm+NR5ro6NM04mhFQyJpBitAddFW5KleQTON6UV
-	 sAqfU0S6/fDKaJ+1HaSNoIHTIgU//rBL3Q3R4apA=
-Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250514121223eucas1p1265764bb4bc28f10b65fab83b1725805~-Y6WlRww31485814858eucas1p1D;
-	Wed, 14 May 2025 12:12:23 +0000 (GMT)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20250514121220eusmtip2059ff98b04e6b87e5195ea200a8599a1~-Y6TyZSaP1756517565eusmtip2p;
-	Wed, 14 May 2025 12:12:20 +0000 (GMT)
-Message-ID: <8eedf638-9fa5-470e-976e-9b18971f7b46@samsung.com>
-Date: Wed, 14 May 2025 14:12:19 +0200
+	s=arc-20240116; t=1747225243; c=relaxed/simple;
+	bh=bCMtLnVD2dgxi8EjKGcWIGCO8ra6AUHVklgwLHB8IbQ=;
+	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=nuqwrMy+fEDw2zqS9goVPjUx71FSYivnhLoKrDO4cRD8TXKJNM0VSZTlbhEBfSBbaoBvoR9lzMqX5EOTMxuDKBTba42Ipv8Oq4dGgSgRX8U3w4r76xu4Ng9f5oq5LbcgICxFf+z6sqD9DzSi3Hh6WhKnbADkS1KGlHFT8UvFnlQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kaspersky.com; spf=pass smtp.mailfrom=kaspersky.com; dkim=pass (2048-bit key) header.d=kaspersky.com header.i=@kaspersky.com header.b=bBB1baW5; dkim=pass (2048-bit key) header.d=kaspersky.com header.i=@kaspersky.com header.b=KtcrOFi7; arc=none smtp.client-ip=81.19.104.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kaspersky.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kaspersky.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kaspersky.com;
+	s=mail202502; t=1747224786;
+	bh=pAjLW2i6DlqO1kn+FO+4QKQ88dteWB/N9XRN4Z86JAo=;
+	h=From:To:Subject:Date:Message-ID:Content-Type:MIME-Version;
+	b=bBB1baW5Ev8WKm3e59WK+xdR5CNo2/JVqpkdYxLLm2KjiU6CRjCd3Y+rJaMxwxmw7
+	 LPvIKXJHXuJeI/p1+1nY11GiWx8pWabQGPRlb+k3vnOkYTPlG/4ooVqnno7bcrI/5J
+	 xrviDOcyvcYwUxWPcRZ07+2GlDT3qmKseMH0WWVcDDacgvUw4V0RY3P47imS5Nc1Ss
+	 wd4X7KO17llqX91Tsr/13bHnDsoy4Oo9KEjj4SMr0qNrPjUlhMk10u83xgEWKlxdnH
+	 puoZjgQfLD1akbfX0EXnG74Oe3JCg5aXBSZismY63KUK4al2zaGuqZ1SOJZ+ZQDfJ3
+	 N+gtvs5Cl/uAA==
+Received: from mailhub11-fb.kaspersky-labs.com (localhost [127.0.0.1])
+	by mailhub11-fb.kaspersky-labs.com (Postfix) with ESMTP id 2D6D7E8F244;
+	Wed, 14 May 2025 15:13:06 +0300 (MSK)
+Received: from mx13.kaspersky-labs.com (mx13.kaspersky-labs.com [91.103.66.164])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "mx13.kaspersky-labs.com", Issuer "Kaspersky MailRelays CA G3" (verified OK))
+	by mailhub11-fb.kaspersky-labs.com (Postfix) with ESMTPS id 03BC9E8F231;
+	Wed, 14 May 2025 15:13:05 +0300 (MSK)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kaspersky.com;
+	s=mail202502; t=1747224776;
+	bh=pAjLW2i6DlqO1kn+FO+4QKQ88dteWB/N9XRN4Z86JAo=;
+	h=From:To:Subject:Date:Message-ID:Content-Type:MIME-Version;
+	b=KtcrOFi7sYoiVBDNR4Znc/i/kYXErdIJGU8ic98y9kHQ5/xXIbeufS6FBaa26lWmp
+	 coIrO2YxLe5drhpOXnQDEBisNnkZ/Z2l40Te3ntqSlrgMDGjjQ+jBrREFCIaBWx664
+	 pWZMt2aIJ+IGg+J9wH+KEwS2ZwY+lMFPJB1VRVKOlJYVYTFzbLcQA/Fbs29nlyq9K6
+	 hIpNs7Kjut6kNf+INdGneqyjaLcV9X8iFsbNNo6/72C/sHoESOGyNzXlce2lAA2kNd
+	 z1717Uu1JnhkZv1QCFXwOiZGDbaczwQie6vA8JxEEL6BslOSj62mwS3KFOf51fXnD0
+	 bLHMXvnP6aDTw==
+Received: from relay13.kaspersky-labs.com (localhost [127.0.0.1])
+	by relay13.kaspersky-labs.com (Postfix) with ESMTP id DC7813E501B;
+	Wed, 14 May 2025 15:12:56 +0300 (MSK)
+Received: from mail-hq2.kaspersky.com (unknown [91.103.66.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(Client CN "mail-hq2.kaspersky.com", Issuer "Kaspersky MailRelays CA G3" (verified OK))
+	by mailhub13.kaspersky-labs.com (Postfix) with ESMTPS id 1C3AB3E5671;
+	Wed, 14 May 2025 15:12:56 +0300 (MSK)
+Received: from HQMAILSRV1.avp.ru (10.64.57.51) by HQMAILSRV2.avp.ru
+ (10.64.57.52) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Wed, 14 May
+ 2025 15:12:55 +0300
+Received: from HQMAILSRV1.avp.ru ([fe80::44b0:5a05:5379:9408]) by
+ HQMAILSRV1.avp.ru ([fe80::44b0:5a05:5379:9408%2]) with mapi id
+ 15.02.1748.010; Wed, 14 May 2025 15:12:55 +0300
+From: Vladimir Moskovkin <Vladimir.Moskovkin@kaspersky.com>
+To: Prasanth Ksr <prasanth.ksr@dell.com>
+CC: Hans de Goede <hdegoede@redhat.com>, =?iso-8859-1?Q?Ilpo_J=E4rvinen?=
+	<ilpo.jarvinen@linux.intel.com>, Mario Limonciello
+	<mario.limonciello@dell.com>, Divya Bharathi <divya.bharathi@dell.com>,
+	"Dell.Client.Kernel@dell.com" <Dell.Client.Kernel@dell.com>,
+	"platform-driver-x86@vger.kernel.org" <platform-driver-x86@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"stable@vger.kernel.org" <stable@vger.kernel.org>,
+	"lvc-project@linuxtesting.org" <lvc-project@linuxtesting.org>
+Subject: [PATCH] platform/x86: dell-wmi-sysman: Avoid buffer overflow in
+ current_password_store()
+Thread-Topic: [PATCH] platform/x86: dell-wmi-sysman: Avoid buffer overflow in
+ current_password_store()
+Thread-Index: AdvEyRwGGRgYB7/5RZGEC7fXF7io4Q==
+Date: Wed, 14 May 2025 12:12:55 +0000
+Message-ID: <39973642a4f24295b4a8fad9109c5b08@kaspersky.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-kse-serverinfo: HQMAILSRV2.avp.ru, 9
+x-kse-attachmentfiltering-interceptor-info: no applicable attachment filtering
+ rules found
+x-kse-antivirus-interceptor-info: scan successful
+x-kse-antivirus-info: Clean, bases: 5/14/2025 10:47:00 AM
+x-kse-bulkmessagesfiltering-scan-result: InTheLimit
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 0/2] scatterlist rust bindings
-To: Abdiel Janulgue <abdiel.janulgue@gmail.com>, Daniel Almeida
-	<daniel.almeida@collabora.com>
-Cc: dakr@kernel.org, lyude@redhat.com, Miguel Ojeda <ojeda@kernel.org>, Alex
-	Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo
-	<gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
-	<bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, Andreas
-	Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor
-	Gross <tmgross@umich.edu>, Valentin Obst <kernel@valentinobst.de>, open list
-	<linux-kernel@vger.kernel.org>, Robin Murphy <robin.murphy@arm.com>,
-	airlied@redhat.com, rust-for-linux@vger.kernel.org, "open list:DMA MAPPING
- HELPERS" <iommu@lists.linux.dev>, Petr Tesarik <petr@tesarici.cz>, Andrew
-	Morton <akpm@linux-foundation.org>, Herbert Xu
-	<herbert@gondor.apana.org.au>, Sui Jingfeng <sui.jingfeng@linux.dev>, Randy
-	Dunlap <rdunlap@infradead.org>, Michael Kelley <mhklinux@outlook.com>
-Content-Language: en-US
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-In-Reply-To: <77afb898-fe6e-480d-9b7a-05cc31d8545b@gmail.com>
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20250514121223eucas1p1265764bb4bc28f10b65fab83b1725805
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20250514070104eucas1p1b2e420e8827d55521bd9aca3e1341ee7
-X-EPHeader: CA
-X-CMS-RootMailID: 20250514070104eucas1p1b2e420e8827d55521bd9aca3e1341ee7
-References: <20250512095544.3334680-1-abdiel.janulgue@gmail.com>
-	<78DB1F66-9DF5-4679-ADC4-177BED5D4FDE@collabora.com>
-	<CGME20250514070104eucas1p1b2e420e8827d55521bd9aca3e1341ee7@eucas1p1.samsung.com>
-	<77afb898-fe6e-480d-9b7a-05cc31d8545b@gmail.com>
+X-KSMG-AntiPhishing: NotDetected
+X-KSMG-AntiSpam-Interceptor-Info: not scanned
+X-KSMG-AntiSpam-Status: not scanned, disabled by settings
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.0.7854, bases: 2025/05/14 05:39:00 #27979694
+X-KSMG-AntiVirus-Status: NotDetected, skipped
+X-KSMG-LinksScanning: NotDetected
+X-KSMG-Message-Action: skipped
+X-KSMG-Rule-ID: 52
 
-On 14.05.2025 09:00, Abdiel Janulgue wrote:
->
-> On 12/05/2025 14:19, Daniel Almeida wrote:
->> Hi Abdiel,
->>
->>> On 12 May 2025, at 06:53, Abdiel Janulgue 
->>> <abdiel.janulgue@gmail.com> wrote:
->>>
->>> Hi,
->>>
->>> Here are the scatterlist bindings that has been brewing for a while 
->>> in my
->>> local tree while working with Nova code. The bindings are used 
->>> mostly to
->>> build the radix3 table from the GSP firmware which is loaded via dma.
->>> This interface can be used on top of existing kernel scatterlist 
->>> objects
->>> or to allocate a new one from scratch.
->>>
->>> Some questions still need to be resolved, which mostly come from
->>> the DeviceSGTable::dma_map() function. Primarily, what if you call
->>> bindings::dma_map_sgtable() on an already mapped sg_table? From my
->>
->> Perhaps we should introduce a type for buffers which are known to be 
->> mapped. Then
->> we can simply not offer the option to map for that type.
->>
->>> experiments it doesn't seem to do anything and no indication is 
->>> returned if
->>> the call succeeded or not. Should we save the "mapping info" to a list
->>> everytime we call DeviceSGTable::dma_map more than once?
->>
->> What mapping info are you referring to?
->>
-> Basically the dma_data_direction enum and possibly `Device`, if we 
-> decouple SGTable from the device. So this approach would mean that 
-> every-time SGTable::dma_map() is called, unique mapping object(s) 
-> would be created, and which would get unmapped later on the destructor:
->
-> struct SgtDmaMap {
->     dev: ARef<Device>,
->     dir: DmaDataDirection,
-> }
->
-> impl SgtDmaMap {
->     /// Creates a new mapping object
->     fn new(dev: &Device, dir: DmaDataDirection) -> Self {
->         Self { dev: dev.into(), dir, }
->     }
-> }
-> ...
-> ...
->
-> impl SGTable {
->     pub fn dma_map(dev: &Device, dir: DmaDataDirection) -> 
-> Result<SgtDmaMap>
->
-> But I'm not sure if there is any point to that as the C 
-> `dma_map_sgtable()` doesn't seem to care anyway (I could be wrong with 
-> this) if the sg_table gets mapped more than once?
+If the 'buf' array received from the user contains an empty string, the
+'length' variable will be zero. Accessing the 'buf' array element with
+index 'length - 1' will result in a buffer overflow.
 
+Add a check for an empty string.
 
-Standard DMA-mapping C api doesn't have the notion of the object, 
-although in case of sgtable structure, one might add some flags might 
-there. Originally the sgtable based helpers were just trivial wrappers 
-for dma_sync_sg_*() and dma_unmap_sg() ensuring proper parameters (and 
-avoiding the confusion which nents to pass).
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
 
-It is generally assumed that caller uses the DMA API properly and there 
-are no checks for double dma_map calls. It is only correct to call 
-dma_map_sgtable() for the same sgtable structure after earlier call to 
-dma_unmap_sgtable().
+Fixes: e8a60aa7404b ("platform/x86: Introduce support for Systems Managemen=
+t Driver over WMI for Dell Systems")
+Cc: stable@vger.kernel.org
+Signed-off-by: Vladimir Moskovkin <Vladimir.Moskovkin@kaspersky.com>
+---
+ drivers/platform/x86/dell/dell-wmi-sysman/passobj-attributes.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+diff --git a/drivers/platform/x86/dell/dell-wmi-sysman/passobj-attributes.c=
+ b/drivers/platform/x86/dell/dell-wmi-sysman/passobj-attributes.c
+index 230e6ee96636..d8f1bf5e58a0 100644
+--- a/drivers/platform/x86/dell/dell-wmi-sysman/passobj-attributes.c
++++ b/drivers/platform/x86/dell/dell-wmi-sysman/passobj-attributes.c
+@@ -45,7 +45,7 @@ static ssize_t current_password_store(struct kobject *kob=
+j,
+ 	int length;
+=20
+ 	length =3D strlen(buf);
+-	if (buf[length-1] =3D=3D '\n')
++	if (length && buf[length - 1] =3D=3D '\n')
+ 		length--;
+=20
+ 	/* firmware does verifiation of min/max password length,
+--=20
+2.25.1
 
 
