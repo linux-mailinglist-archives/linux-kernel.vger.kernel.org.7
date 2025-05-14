@@ -1,247 +1,138 @@
-Return-Path: <linux-kernel+bounces-647478-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-647484-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7581AB68DD
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 12:32:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C3F0AB6901
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 12:38:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F640177995
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 10:32:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 476477AF0CB
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 10:36:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B307527056B;
-	Wed, 14 May 2025 10:32:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85D5B270EAD;
+	Wed, 14 May 2025 10:37:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="d2pBLYav"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2069.outbound.protection.outlook.com [40.107.223.69])
+	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="FSXoj7xB"
+Received: from out162-62-57-137.mail.qq.com (out162-62-57-137.mail.qq.com [162.62.57.137])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4667E42A82;
-	Wed, 14 May 2025 10:32:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.69
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747218725; cv=fail; b=m349c4FjcVgIpFvLjj6BMg5P1Nvbe0hJHtC7TzTpcMMfACB9K6QKBy9aSO+c7ARAa5QLNsXQeebSiR8lMdmqJS+RFJW15F+HhhWWYCkZlnpg1qgrcZx9zlbof5NzfuUsXdzd81AyLgvK7xfmIpe6SQDW4fzES6gKzvcz6PpIBQ4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747218725; c=relaxed/simple;
-	bh=FqeJ+u6AcnmIyWUadsDliP6pyjCjVmrg++reNAFYGx0=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=TYoSaTaKLm5j2ZlzwwuxGmTqOOO0pM4EUAuGu/kwPMBEjYpc0qBTyT41YC7VXJUI4Q5FhRSG5hKL6/si5M5VuhgHr1hox4kahjr50ZuaLe6NwiOxcv/qty+2LTcxeU2QsNgTZY1QBrj3qjTWU79utJzf2jnf9QbymjDTqoxjK7o=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=d2pBLYav; arc=fail smtp.client-ip=40.107.223.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=oq84SgZx6EE8c5pD2AamUSF4zHI2OL/CK5P3zHIz/HpKBGfwl2Xftx1qN3HWLnECxzKA7TJN7bm0rxJz6Yy6jWTs7WlQodSpNruP5xdOtBR7SyvD1jjsbiBN986ISykMALtwvti24o2/57CSU3D1A5/RW2PfM3LS3r1LdgnU0/AXwjpo8TwquECbHz/BWyxejJHYtHkCxRMXAmQ2Efg5OegGVF85XJXDZiTISzydr7f+d7Q2116SdYOzQxh4rvQwUHSJq19DFx+tIeR1t29BVP2QB0Lt2HsDYaSkZaTVDbmDTF7EQIhLI8ZQheMbNZvqtOhkBVWo8b1y/O8pueuYsQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=N3CvaS1dKZAy+NE73h+FE3kDH5yr5oXpDryWOfxkv7g=;
- b=dE0pUQkZH5hou0A4TPOzwkTGXMgW+w+FdwDoAuznlKI2mRSeQWLt4suU1nri8mS8laY8PjfP8TGT1r1BfgFLLvv3M2b3o+VZCG4pIZY2o3xd6nO1P7zOKmcYfkGtIgMrAOyUiKDXWGVOJzMy69Ez2kHnGjGscX3mPvKZAAIu59JD1z1Y22vBwiel6Q8HT/FEzgcCZDG6fHJsssaUVZp6/B47d8EKUJfOzxvEe9g4p/c7bkB6uxnyJwd5o39LCTHAoRNgRNJ5dmq3gGnHZ2a1UwVxwGkd2AVOHVX3dMpII0+MckWVWYEqFlliZN3i0cgYSs2nJyiqnknEEFyb1i8w9g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=N3CvaS1dKZAy+NE73h+FE3kDH5yr5oXpDryWOfxkv7g=;
- b=d2pBLYavrZiJ3AdUe1uSTgR8yb97x3v8kvTGZ9Wn/9Zh1+u+ZpZLzU0aia0abgUnD2JUXM7zAmbiKzbCMmoY2JOjXR2pXCHCxfd5W2Af2ne0DTAQx08o4mr0s99mabGhCN7COg4qGw9d4yX9+8VwDh9pCNxNbqxhQG5BZ8P8IeQZ1VRvSsdv/zrdIr1MuDGtrKHLWQJAA/klR0fK4+jXtylQGa+jJEKJk3cAZyjcK0ww4U0vFTpYChPDrGa/F3gcLxhaiTxRzKd8IVdiXhb9NAxRuvXs8K5+LhIZ0F4ua8o7GeLxk5dQ3IDrv6VrvJMl2ged7AT5dPhLArGqqSaUpA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SJ2PR12MB8784.namprd12.prod.outlook.com (2603:10b6:a03:4d0::11)
- by CH3PR12MB7548.namprd12.prod.outlook.com (2603:10b6:610:144::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8722.29; Wed, 14 May
- 2025 10:32:01 +0000
-Received: from SJ2PR12MB8784.namprd12.prod.outlook.com
- ([fe80::1660:3173:eef6:6cd9]) by SJ2PR12MB8784.namprd12.prod.outlook.com
- ([fe80::1660:3173:eef6:6cd9%3]) with mapi id 15.20.8722.027; Wed, 14 May 2025
- 10:32:00 +0000
-Message-ID: <da080e61-4e54-4334-a239-1619bf8fea0c@nvidia.com>
-Date: Wed, 14 May 2025 11:31:55 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/2] cpufreq: tegra124: Allow building as a module
-To: webgeek1234@gmail.com, "Rafael J. Wysocki" <rafael@kernel.org>,
- Viresh Kumar <viresh.kumar@linaro.org>,
- Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-tegra@vger.kernel.org
-References: <20250508-tegra124-cpufreq-v4-0-d142bcbd0234@gmail.com>
- <20250508-tegra124-cpufreq-v4-2-d142bcbd0234@gmail.com>
-From: Jon Hunter <jonathanh@nvidia.com>
-Content-Language: en-US
-In-Reply-To: <20250508-tegra124-cpufreq-v4-2-d142bcbd0234@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO2P265CA0161.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:9::29) To SJ2PR12MB8784.namprd12.prod.outlook.com
- (2603:10b6:a03:4d0::11)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62F16227BA2;
+	Wed, 14 May 2025 10:37:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.137
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747219070; cv=none; b=RueSamcOHkv5MmVKKwQb+e1UNBGS6RocEkVSbYfxjq46lwpKs+CJH0QEEaTvSX9ee2E3iSGvfcwNZglb45wwTtlA4jijNlbtfqD/KGu0tOTHWav8y3C7rIXBSQBWgOVeLTCEC2IpfOeuuTh6e8vVoqfOAjS++axynxB8FzFL+2I=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747219070; c=relaxed/simple;
+	bh=DyFXiTcMAkicdWTVDAKnT/4bbZdHgYHMQphd7Xj8oq4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bPvEoIz1gnKsLt/aZsIK/q8ReTCDPj1MuxbwAkHlEequPxr68zwwoxfEfMaCIMLkFfodLirh08sPupcHBNTS0dAJ2ym3qTgZ+cGXOVv0sJcBOzTMwUSz1uNOSjenSgOTHzAWwACa0UMYRV3eOrmWJFR9jBEdzsjLC9eEYUWMHOw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=FSXoj7xB; arc=none smtp.client-ip=162.62.57.137
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
+	s=s201512; t=1747218755;
+	bh=7dNO5ovMYH1mWfxjDIePge4MNb8pZoHkoH4FCjpkoGM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=FSXoj7xByPT3d6/Fz5Zoy7IH3KAZAeXALVWGXacOn8FUQN3yhQvfTME5QWogDFQDJ
+	 Cq5GnGpb3R4ooTvO7JfncVFvPt0FxHPYpJusO7mhAGytVYgDQnD8aVCQjXh8Ks2QBa
+	 EPLsrMcy5n8TNgqirHYXMexaaQcJpYhK8/Dm/U6k=
+Received: from [IPV6:2408:822e:4b0:fb41:1d81:21ec:4709:dc61] ([2408:822e:4b0:fb41:1d81:21ec:4709:dc61])
+	by newxmesmtplogicsvrszb20-0.qq.com (NewEsmtp) with SMTP
+	id 8209080A; Wed, 14 May 2025 18:32:32 +0800
+X-QQ-mid: xmsmtpt1747218752tcrmi01u7
+Message-ID: <tencent_984AF5DAF2F307EA419A747031F0920C7C09@qq.com>
+X-QQ-XMAILINFO: MtZ6QPwsmM9Xc4kQFqh/DnQ+d6a0cPXvuLpK4kC59gnGC4fa2b7/ItgsCafU4t
+	 YJU0t3WjecYSE66bKOjpuTmMwV4cT2618krSETTAGOuKB2L5ESsiGHcE+r8CpQYaa5TvjXXxsYTN
+	 CQ5QoX5c3NhLkVup5VvNJdqit/6LEZPlo/ZUyMrcOUm/um4EUgOqIWJiRq/ABH7RE4ZAmWTHZymq
+	 laxOoRsVdh3Ci6GJ8L7FqvKjyyCNj6Lc+OP2As4OZs/SLXspriUlQ7tOpREJX9KrI4iERWsPR7Fr
+	 BekXctBPq+zlIccbI/1GqWFhTM9B/BaebwkQeohFEgYNR+L/XOex7J1f2SeqGNOqbxGJTfQ3ZWab
+	 /N71Ju4plBC3UjO9tFJzXH9ZAo9GWXsnHzYr+FM1qmne6a/OGzA9H+96KLsWz3WwOT3ESHD8CD/B
+	 FNPSVUwGMbm/NgyTlbfN88RFloKEXGevemcWONln6qsPMB7e138Q0fSdBcvT0b0IQB8bk9tKOtcD
+	 aglHVuC/2fWKJ+dj5o3vrVu71M0yOBgJ2s5KHQU2rz1vejgphKs7/0MY6L4FxyFFx3jp5l1fT4XQ
+	 balvg0amN466HmB3TcRyezrHK3paqePrhvCgQEwMe7IArcqvkVI2VWykbK9tyb1ReChZ1PjMYRg1
+	 j/ajjugBilYAE2jC3HZ4EwhFH+R153ujgknU6RSlKvpkU9X9fhZAOuiaVpf7XlLqlQ0R7br/pit0
+	 h8Bht/49A7FTipRAm2cT923VLmZdFx8kmF4W4DJlIYe4+JHyRea5ACf8qK7daYqUEK+czItBPdV5
+	 Bt6wyQsOeEoBWoEpD/qcx+zv5GRO98aX3eL3/q9BR9h6ciBWotlbLvR4hn3Y+VKS58GAr9VVA0PM
+	 hObLGidqR/H+BWjWfe4XvaAE/gYbcagQVnVgKCtTzJpB7NvAhf2ARPHhm46ljqfvGSQI+7elA9Ng
+	 cQld0tpVPjIXbxws9WKg==
+X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
+X-OQ-MSGID: <cc1104ab-89df-40ad-b3f9-ff15f4012008@foxmail.com>
+Date: Wed, 14 May 2025 18:32:32 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR12MB8784:EE_|CH3PR12MB7548:EE_
-X-MS-Office365-Filtering-Correlation-Id: f6681187-d6b4-4bf9-64a4-08dd92d28f4d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|10070799003|366016|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?alRKaVJOcDNuWGJoUWtnR3pJVlhTUk16Tk9Cc1IxckF3NXMrTjhnd3dyTEZs?=
- =?utf-8?B?dWo3MUhuMllzYUdFeUl5b3FsaDRnTWxqY0Q0ak14REcrelZ1MW9GMWQzMHJm?=
- =?utf-8?B?ei9ReUg0bWsrWXlWbEhwNW9aQVIySWo1TWlzT1FuMjdPb2h6c3lmeVY1NDdF?=
- =?utf-8?B?OXk4OVJuSmFKWHhCYWxUQnVWSEpTVW5RL2l1T2JNdW1oQzMzRjFUSGRTT2dV?=
- =?utf-8?B?S0QxVVh0bDF6WHNjODcxRElFNE1yTkg0dEEwWDYyNkIrWXpCVDlmZGpiZUd5?=
- =?utf-8?B?aTB2L3FYUUo3TEFyQlliMTd1eFFKcG82emxwOEdEMVU3T1NmUnd1NExNaUJ6?=
- =?utf-8?B?T0tvRmtWQXlpMUN4dVNtYlFCeHRPTWFLWHZYSmFFbjgwNVU0dkVwaTRzSGp6?=
- =?utf-8?B?ZXFCTlgvM01OZkhwQlVncWdIdzFjdTBGdlBmZHlad0E4Y3lFMmREQWJJRGpK?=
- =?utf-8?B?NWx6blpuZmxTWHhlbERydEUzZkRTMkpMTzZPS2Yzc1kvODNMUU5FKzFMUk1M?=
- =?utf-8?B?ZW9TOGc1T1JmQ0V2UFBub3FvV0xXMlUvWEwwSTd3b2U4ZGlpYXljRGUxbnp1?=
- =?utf-8?B?TTRhV0J5emdGZ2RiV3pPZDIwcUR5ckFZVW45SUN6U0VnUExCUVFoSjlBSnJQ?=
- =?utf-8?B?TFZRWXRSOFV6aU5qUnl1c1JoYVBvQ3FsNDg5THY2L0hBWmNtQkpMbTVWS3BU?=
- =?utf-8?B?MWVESnFlUWRPTlJISDVMdGJkWm5NbmIzSHpzQUhGOWZsM3kvZS92WERXRHR3?=
- =?utf-8?B?T2NDa3ZrZ055a2pTYVNXVGRlTVVoV2tCOUQ2S3RDYW5pLytUODQ0TitmUC9q?=
- =?utf-8?B?bkNmZVNuNzAxZmtUdnpBVjlCcVBYZXlvVU1adExaTC9YbUEyZUFCWDNZV2Ns?=
- =?utf-8?B?VGhuSm0veDhFa2ZBSkc4TGhCMHlRektVQmY0Yit6N2pxS2w0UEdnTHlVbWxw?=
- =?utf-8?B?ejBoZXZDNnNLaWlaeEg5K0R6YWZRYmNMMmZmdUdUelRrU09lcmN4aVJScVQ2?=
- =?utf-8?B?MVRtZkRYdmtjNEQ5ZTJCaTBHeFd2MjhqZlAxcUYwMTlXQ2lQSUEvTDVRWmJ5?=
- =?utf-8?B?andhZUZLQVZBbVJvRVJHNlZqcVBLa0RpUStJUGdqdFJNaXJjcUtBU0pTTVRS?=
- =?utf-8?B?cy83dHR5RXpFSVo3enRKSjY2RHgvY0J3aGFKMnVzSG5XQmJlWXloUUxpbzc5?=
- =?utf-8?B?ZW5RaFJndVpUcWtMYkg5aEhGVlluMCtrUU41aUNKQm1MMCtSZlQ2dkU4Mllw?=
- =?utf-8?B?dDljQ1FrQWhZbktncnRhaWlmWjIrSVRxaklqUVRUS0t4eXY0RzJUangvUGky?=
- =?utf-8?B?RHZLeE5Ud2xIaVQ4ZEdFRzlvQ0NHOVdKenM0S0lrMDVOTy9iUW8rMnp0UVlt?=
- =?utf-8?B?bUlVV3VGNEtDUFhkV0FkSFBVR2lYOXpmUmZhYnh4a041Nm50U1ZLTW5WUUw0?=
- =?utf-8?B?S0JENzRQSnpyUngzSTdJYXdIOVVFVmlwdG8rZFc1WnRPdlVVMkRNdzUxZUk1?=
- =?utf-8?B?d0cxMVlRbXhxeXZLM2NjQ2tCWS9ZUkUrMFFlUWxZMUxnVWdESFV4YWpSdk5W?=
- =?utf-8?B?Y3FBdnE5b04vVVR0MXA1QVpzNlNZRTJyYTI3T2JRTERWT0dqU3dtSG0vZW9T?=
- =?utf-8?B?ZnpBRFFpLzNDKzRzdXA0NitXSlQ4TzNROHh6elpHN1E3azFqM1lKUmpNcjRh?=
- =?utf-8?B?SWlzaUh4Ni94dTZlYnVTbnlmc3p6YTRWYWdBbXAvN0MwM1NvaFE4VVBhckpi?=
- =?utf-8?B?bGVtcSt0MkRuTWJpT3lqYlhycC9TZjIyaXN1SFVYdUVnRklTeUViNFI3RXFB?=
- =?utf-8?B?K1NPNmtNL2pqL05aZWRXOVplalJ5VUlTM2FmZlVjVy9HS0dwb1doVDdpUjRR?=
- =?utf-8?B?SHFmbXdGZW9QK3VaRXQ1ZUwyQVlmbi9XUGIwdWcxUkYwNndtYUYzK21KSVVp?=
- =?utf-8?Q?jgWJtqiDKFg=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB8784.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(10070799003)(366016)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?OWsveEMwbjEzVC9CSVdLcXRicWhJTWNWOTFCUTFxUEpkYzdUdk83NllRQjVi?=
- =?utf-8?B?THNxT1VJOXhqYndYS05oOUl4MVFMUTJhYTY3Z0ZDbU5JaXg3N2xjMllDSjNZ?=
- =?utf-8?B?dE0xQ0hBT0JEa2NxQThQNHBIZkM5STBrd2FuaUIrVldvanZIbGVpZWJqRjA4?=
- =?utf-8?B?MlFTSldLUWZUclBnREhvaXozYjlsc2M2dFhCbk9TWUw0WGhtT3Z2OUFxVmpG?=
- =?utf-8?B?NW15bUFQZk9iZldCU2t0NGNFSlVBVlFKSm1vQ2NkaWZ1dEp3N0F5ZWdyRzdM?=
- =?utf-8?B?MkpGQjdWY0hNS2JrNysvZEgyOFVVcmk2ZVNaNG5qTnVqbjRTZHIvV3JzWmVD?=
- =?utf-8?B?Y0N4SnZLMk8ycHcvbUZNMGU2TUFSR0pXaVdxVEMyZmlvVksyUmFCUFRqMkta?=
- =?utf-8?B?dzVTRVpBeUozN09WdEJOQjNvU2pQa3N0cmJQQzVoYlR4anhKNUJ5YmgxYk96?=
- =?utf-8?B?L1VFMC9CZ1J6a1lpTUtHTDBIdDJGNThKcEV4RnFHc20xNzd1dnBSZUJPVk9t?=
- =?utf-8?B?TjR6K2JZdVpjVHB4VS9qTnZUT2x1OE9HWkp6RGFveXhIZ3A1cHlRN0pVQXU5?=
- =?utf-8?B?NkNha0kxUy9KMXRDK1AyQ2J0N1RuSEpqZVViaUMzaDZQdFh2cnhmZytNeGlS?=
- =?utf-8?B?eUlpc21DZHNpSmw2LzBnRkNndWpYZTcxcHl0NHJSdHZKSmttd3NQWklOelRI?=
- =?utf-8?B?U0lSQkNRTkFOWUY3bDFYbXNqT3hWTkVhOFp1VThRNnZzeVZ0eUVoRlNqbDV3?=
- =?utf-8?B?UmRFY1ZWUTFwNnp2dlU3NTNpaGNGZVdaMFFybVpCT1NYcmJBekMyZDJvcVQz?=
- =?utf-8?B?M3Urb0V1UGhRemN2RVpuMFFVRWNxK0Zrem9NeU9KNWJYSWpGMEd2VVNYOTJH?=
- =?utf-8?B?SjV1TTZVYlhuNUMwTzE0amRRUENOT3AzUmlQUldxS3RLenB4ZnR2T0w3eFhj?=
- =?utf-8?B?QlJPM3o3RmxYVGpOdWMyRlJwSEx5MnNxNS9aLzUzNkp0OEdhZFZibGQ3aXJW?=
- =?utf-8?B?YnZxOWVhUS9RN3dLNlhzR3BwRGhXK3BDQ2NrZFhQVGkwWGRMaW4zbUxDVk5V?=
- =?utf-8?B?bTFiNnVuaVVDb1k4aTc1bjF2L1FCbHFwMEVDd0lydzdZV1J0bVA1TEIxTXBH?=
- =?utf-8?B?Q3AxSG8rYkRyMERiS215L1BxNjF1a0luQldNYmR3U2pOQUwya2IzNmFlOVNB?=
- =?utf-8?B?VG1kUmZLTFRsY1VtMkpUYm9tLzgzUkMzNTdTdXAwMmh3QmtwbTNEeC8rOXJE?=
- =?utf-8?B?WmFUeWR1U28yN2FWK0pLVDdoRWNxcTUyeER5NVRhd2RhM3M5c1RDY1hHOVBW?=
- =?utf-8?B?M2g5WmpaUHE1ZlFtc0M4TDlNZFlGb0x4Z3JGSldFNDgzaWpDenFOTTBscjRK?=
- =?utf-8?B?UExncHViSC9qR1NGUk9Ba3RZRzY0SEZhOExxY0RjcXdlcXFSTHJQRlNNWWtQ?=
- =?utf-8?B?MTVKZWM0bVZNcVNxZCs0czNwemFKZkc5U05sL3B5MnR0ZzFXNnBwQUM5VHdj?=
- =?utf-8?B?cFMrWnpQOHB0WU1SWm5yOU94V1h1SzBlaUQ3VElhMGlGN1l2M1hWWmhVOEpE?=
- =?utf-8?B?VXVGRDV1ZWI0aXhkZm4rdzNoNFhrd09KcGZoSkNJa0RXWEVVR3o5ckV5QXhQ?=
- =?utf-8?B?NHlFUm1nUzFBUWlPS1RSZ1oxT1cwdmJmUDk0MzI3WUNCMnVxVWcwbGFtWHNr?=
- =?utf-8?B?NkNsTVoyQ3hsVWNnbUpSaCtNTk1zSTZXai9rQkwvN2pCZDA2M0Z6dVZQR3NG?=
- =?utf-8?B?ZXhlMCtTMlBCS0Qxb1cwYlAwKzZQS3B6WFE1M2Fub3ZiNmJHczR4bkxWZ0pj?=
- =?utf-8?B?TjFEditQbFhVTFE2anlSOHEyMzZVeUJXM3RJeUtHVjRodGlKUG9uMXAyQVdP?=
- =?utf-8?B?TjVLdDZhdVF4WkpURnY5QXR6aWVoTWd5Vkp6YVJhTzFFdytGWHYvc1lXeFc5?=
- =?utf-8?B?ajQxWE9oYS9wL050ZVh1N1AxcWFiZms1VWZtRkc0b3FpckZDODlOUUJiYkpy?=
- =?utf-8?B?bDJDZ2JZVVVBN3RFQktVLzExR2lRdktpVDY1Sjh6S05Xb1RaMjV4K1YrY0RX?=
- =?utf-8?B?SXJzaG1yeGZWeG5nUDNzb0lMZGRYUnE4a2h3YlkvUExHWDQ4NDdER1Z5QUxN?=
- =?utf-8?B?M3NXaVFPNEJWZVY5WFBnS0kwZDYweCtYZVJMcjdGQ1FrM2FlbURma0xsYWdr?=
- =?utf-8?B?b2VCNXpkQmpxaTdVUjVSOUZrR3ZTRDJhV2QrQTNpRDNVQVpEeXFiZHZ4TUFv?=
- =?utf-8?B?ZDE5dnlSbVhlVHhKUVpSNXlLdWJ3PT0=?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f6681187-d6b4-4bf9-64a4-08dd92d28f4d
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB8784.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 May 2025 10:32:00.4189
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 7/ZLFlAFEjbdOEYPh8jvbMzhSbsIh6inBc4sKiaKF3//TPN9/bFlyjL5P4EVkNqNC11KTqwPaWU4tKcAbkxXAA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB7548
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 52/62] objtool/klp: Introduce klp diff subcommand for
+ diffing object files
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
+ Petr Mladek <pmladek@suse.com>, Miroslav Benes <mbenes@suse.cz>,
+ Joe Lawrence <joe.lawrence@redhat.com>, live-patching@vger.kernel.org,
+ Song Liu <song@kernel.org>, Jiri Kosina <jikos@kernel.org>,
+ Marcos Paulo de Souza <mpdesouza@suse.com>, Weinan Liu <wnliu@google.com>,
+ Fazla Mehrab <a.mehrab@bytedance.com>,
+ Chen Zhongjin <chenzhongjin@huawei.com>, Puranjay Mohan <puranjay@kernel.org>
+References: <cover.1746821544.git.jpoimboe@kernel.org>
+ <f6ffe58daf771670a6732fd0f741ca83b19ee253.1746821544.git.jpoimboe@kernel.org>
+ <tencent_8AACB6DF7CFB7A9826455C093C0903B15207@qq.com>
+ <c63auxjhv2lanvir4rryy3kp6qpni4q7p62ng6hnvoo4w4idvf@i4mx3asblvis>
+Content-Language: en-US
+From: laokz <laokz@foxmail.com>
+In-Reply-To: <c63auxjhv2lanvir4rryy3kp6qpni4q7p62ng6hnvoo4w4idvf@i4mx3asblvis>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-
-On 09/05/2025 01:04, Aaron Kling via B4 Relay wrote:
-> From: Aaron Kling <webgeek1234@gmail.com>
+On 5/14/2025 4:45 AM, Josh Poimboeuf wrote:
+> On Tue, May 13, 2025 at 10:49:59PM +0800, laokz wrote:
+>> On 5/10/2025 4:17 AM, Josh Poimboeuf wrote:
+>>> +
+>>> +#define sym_for_each_reloc(elf, sym, reloc)				\
+>>> +	for (reloc = find_reloc_by_dest_range(elf, sym->sec,		\
+>>> +					      sym->offset, sym->len);	\
+>>> +	     reloc && reloc_offset(reloc) <  sym->offset + sym->len;	\
+>>> +	     reloc = rsec_next_reloc(sym->sec->rsec, reloc))
+>>
+>> This macro intents to walk through ALL relocations for the 'sym'. It seems
+>> we have the assumption that, there is at most one single relocation for the
+>> same offset and find_reloc_by_dest_range only needs to do 'less than' offset
+>> comparison:
+>>
+>> 	elf_hash_for_each_possible(reloc, reloc, hash,
+>> 				   sec_offset_hash(rsec, o)) {
+>> 		if (reloc->sec != rsec)
+>> 			continue;
+>> 		if (reloc_offset(reloc) >= offset &&
+>> 		    reloc_offset(reloc) < offset + len) {
+>> less than ==>		if (!r || reloc_offset(reloc) < reloc_offset(r))
+>> 					r = reloc;
+>>
+>> Because if there were multiple relocations for the same offset, the returned
+>> one would be the last one in section entry order(hash list has reverse order
+>> against section order), then broken the intention.
 > 
-> This requires three changes:
-> * A soft dependency on cpufreq-dt as this driver only handles power
->    management and cpufreq-dt does the real operations
-> * Adding a remove routine to remove the cpufreq-dt device
-> * Adding a exit routine to handle cleaning up the driver
+> Right.  Is that a problem?  I don't believe I've ever seen two
+> relocations for the same offset.
 > 
-> Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
-> ---
->   drivers/cpufreq/Kconfig.arm        |  2 +-
->   drivers/cpufreq/tegra124-cpufreq.c | 36 ++++++++++++++++++++++++++++++++----
->   2 files changed, 33 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
-> index 4f9cb943d945c244eb2b29f543d14df6cac4e5d4..625f6fbdaaf5fd774e3b0bb996eb7ce980da41ee 100644
-> --- a/drivers/cpufreq/Kconfig.arm
-> +++ b/drivers/cpufreq/Kconfig.arm
-> @@ -238,7 +238,7 @@ config ARM_TEGRA20_CPUFREQ
->   	  This adds the CPUFreq driver support for Tegra20/30 SOCs.
->   
->   config ARM_TEGRA124_CPUFREQ
-> -	bool "Tegra124 CPUFreq support"
-> +	tristate "Tegra124 CPUFreq support"
->   	depends on ARCH_TEGRA || COMPILE_TEST
->   	depends on CPUFREQ_DT
->   	default y
-> diff --git a/drivers/cpufreq/tegra124-cpufreq.c b/drivers/cpufreq/tegra124-cpufreq.c
-> index bc0691e8971f9454def37f489e4a3e244100b9f4..b6059c91f2474c56809c403eca94eacf51df734f 100644
-> --- a/drivers/cpufreq/tegra124-cpufreq.c
-> +++ b/drivers/cpufreq/tegra124-cpufreq.c
-> @@ -16,6 +16,8 @@
->   #include <linux/pm_opp.h>
->   #include <linux/types.h>
->   
-> +static struct platform_device *platform_device;
-> +
->   struct tegra124_cpufreq_priv {
->   	struct clk *cpu_clk;
->   	struct clk *pllp_clk;
-> @@ -176,6 +178,21 @@ static int __maybe_unused tegra124_cpufreq_resume(struct device *dev)
->   	return err;
->   }
->   
-> +static void tegra124_cpufreq_remove(struct platform_device *pdev)
-> +{
-> +	struct tegra124_cpufreq_priv *priv = dev_get_drvdata(&pdev->dev);
-> +
-> +	if (!IS_ERR(priv->cpufreq_dt_pdev)) {
-> +		platform_device_unregister(priv->cpufreq_dt_pdev);
-> +		priv->cpufreq_dt_pdev = ERR_PTR(-ENODEV);
-> +	}
-> +
-> +	clk_put(priv->pllp_clk);
-> +	clk_put(priv->pllx_clk);
-> +	clk_put(priv->dfll_clk);
-> +	clk_put(priv->cpu_clk);
 
+Thanks for the clarification. I asked this because I noticed the 
+patchset have done some code refactoring, so guess if we could make it 
+more general to other architectures which not support objtool yet. Such 
+as RISC-V, it is not unusual having multiple relocs for same offset, 
+like vmlinux.o might have:
 
-If we use devm_clk_get() in probe, then we should be able to avoid this.
+000c 0000010a00000017 R_RISCV_PCREL_HI20 0000000000000000 .LANCHOR0 + 48
+000c 0000000000000033 R_RISCV_RELAX                         48
 
-Jon
+0044 0000061700000023 R_RISCV_ADD32   0000000000000048 pe_head_start + 0
+0044 000dd5b900000027 R_RISCV_SUB32   0000000000000002 _start + 0
 
--- 
-nvpublic
+But it is a bit off-topic:/
+
+Regards,
+laokz
 
 
