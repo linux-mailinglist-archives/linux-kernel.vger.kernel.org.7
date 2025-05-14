@@ -1,95 +1,62 @@
-Return-Path: <linux-kernel+bounces-647325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-647327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 495CDAB670C
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 11:13:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB5C4AB6710
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 11:14:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1FFE46520B
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 09:13:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B3DD172BA3
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 09:14:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B55802222C3;
-	Wed, 14 May 2025 09:13:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E245221F1D;
+	Wed, 14 May 2025 09:14:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="bEl1Gf5v";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="nwvSBOrm";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Cq72lhzG";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="tCmuaFQg"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="iGha87tN"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99AFB15199A
-	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 09:13:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA56A21B9E7;
+	Wed, 14 May 2025 09:14:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747214013; cv=none; b=LqO82c6dgiSHR7DNv04zvveJxWBbJmtrDh+Efslq2NNQmxP2SOY6U/PAZ5c1ncvNxggYwhNE0jfG0Y02jXNNO7HbR2sedH3krBNYdTKjBUnsXnD+JCs2KtA5QH8jH7PVIYl71hVeTrWjBrBKLHy0MrkdXLzzmtHV5WSMJQubpQc=
+	t=1747214056; cv=none; b=WDzL/Ip59y65cMOaEbSUWGONjzK8lSoEdsHrEgW+cFoBdRqASoyO2hhGRXo2ymaSILCJcNDT4N7xpgJwtwOjxybvlZXl2ABXXaITW6fXUGLpCSG/6atEowPKIJ9x0aBZhfCa1hWrFq+d6pQtJNJ74HngUjmAlmSAnlJNkhPxz8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747214013; c=relaxed/simple;
-	bh=cFeVRe+A70sYpv8Ge9aAo11X2NPgN11proufQ2VgVNQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sPB/wX2C/iwIrTZPBzhVk9pPSKdO2LOttuAQ/Nm2mlFV6OD3mhAznaf5TK8uPCqFOjCu6fWt02+5ipkDSPi7q2zZTFeVxEr2B7SNhLA//ulqwTCcJa86wj85/TL3MQqn2Cer9u5HMwx74UIqY8bmv7kUnInJ3Zsh2mZdCfOb/M0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=bEl1Gf5v; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=nwvSBOrm; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Cq72lhzG; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=tCmuaFQg; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 619AF1F455;
-	Wed, 14 May 2025 09:13:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1747214009; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IJzDrZLzl0GAfPyXpLtIqKtYKjkB62YGWcSeN006vHk=;
-	b=bEl1Gf5vMzoW9w/RxKz7jsH1lSM2aHfdI5U/pXt3hgqp1KefKLXMTlsA13FPuvDCQWbaxa
-	BL47D6iLzqOGwpP8T2ElMsRyscv2wU7zvur0Uwtp3XElvuU8gxCPJEXUGnGp29Dz8FWMh+
-	Ep+nHRDcoByE9x5uBGUfGVO/Ehsu81w=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1747214009;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IJzDrZLzl0GAfPyXpLtIqKtYKjkB62YGWcSeN006vHk=;
-	b=nwvSBOrmxl/LGpG5yITjUvoH8OxYyE+rUnKD3ugEpQfzsFRhA5f2ccdSDLdoAR2OtW3no2
-	dGvU5PgK4fqdRgAQ==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=Cq72lhzG;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=tCmuaFQg
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1747214008; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IJzDrZLzl0GAfPyXpLtIqKtYKjkB62YGWcSeN006vHk=;
-	b=Cq72lhzGbBW2QBWBijcCbYFFzRnKmRnDPomsIRwrLGtBjNfqFjavbOPNuQsv/HhNBKL+49
-	oRvgFR4RZlBTyeojT8a9rBpar/Ues7wYdSjZM6cPTSIfUYbyOD4eEsKB0cj+QuHBe69KX1
-	9iAeTXraf0CKhxyucl/PRkubTfH/moA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1747214008;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IJzDrZLzl0GAfPyXpLtIqKtYKjkB62YGWcSeN006vHk=;
-	b=tCmuaFQg24TDWQ/gg5VCK6pSMVIlUoOElC66m8lfe8VgK7I3/fJZI5WJi9A/Wey4o5d5jQ
-	u0NmFuTgk9u7vlAg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3AD50137E8;
-	Wed, 14 May 2025 09:13:28 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id mlXdDLheJGgAJAAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Wed, 14 May 2025 09:13:28 +0000
-Message-ID: <8e13926d-b685-4802-a207-ade2001cb657@suse.cz>
-Date: Wed, 14 May 2025 11:13:27 +0200
+	s=arc-20240116; t=1747214056; c=relaxed/simple;
+	bh=zqbpr1/pmEwXyeTCn/N+XUxN2P/HcKgvmsCSU107Kms=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=mU193zevbnAXfkHcPFslIniE59Mq7i7drV5HF7wmthbG4yewh18BK9zCrHdALJOyJ67TUK+4h8Ype5xwbYz2L5HNhArOSXSCcz8x2zcgwcSjYmDoMi0ZJEze6sOneNiqr4tgFv51BEQpkjzlvhRt60YOqiZZ7fG4U/9NWMf8DQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=iGha87tN; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54E8Gru1016770;
+	Wed, 14 May 2025 09:14:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	L3zUiP6IGnNCzK66tqCkthGESqX/+EF8UayPwSJbE2I=; b=iGha87tNgMJ07ecN
+	dm+ElJDjdr54p/8EF7jnDMDLFj6nM5eMqF7McozJXkTBIGYjA6Vd79R70MyjygCA
+	YDJxgQAS/IdCwfmnnyOFf50JnLArWwsso5iFbPb+4+xUjl1KzDLduHSVQmNNa2MA
+	3gUanvUb3qSyUE32dzxDtKrcAnJP+Pt7AgA1GVPYGTHySxpfHDPt1MXuwO8jlrKD
+	QEqC7MVEd+n8CaLqRJo7Wno2ymCg2GkYpioddGBTQ8+BYN+ZTgFZrBhGxXhlp7BS
+	JQqNg4LgQQWBtzTeZrs0mRtAcTKnJks7LFhrge6AbUcN1inI1v1x4n0P7TN2sQma
+	l1Xaag==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46mbcmt4ps-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 14 May 2025 09:14:10 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 54E9EAkZ008832
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 14 May 2025 09:14:10 GMT
+Received: from [10.239.105.44] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 14 May
+ 2025 02:14:07 -0700
+Message-ID: <38bf94e1-ebed-4d03-8ea0-4040009e8d31@quicinc.com>
+Date: Wed, 14 May 2025 17:14:04 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,83 +64,105 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm: remove WARN_ON_ONCE() in file_has_valid_mmap_hooks()
+Subject: Re: [PATCH v1] tty: serdev: serdev-ttyport: Fix use-after-free in
+ ttyport_close() due to uninitialized serport->tty
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: Rob Herring <robh@kernel.org>, Jiri Slaby <jirislaby@kernel.org>,
+        <linux-serial@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <liulzhao@qti.qualcomm.com>, <quic_chejiang@quicinc.com>,
+        <zaiyongc@qti.qualcomm.com>, <quic_zijuhu@quicinc.com>,
+        <quic_mohamull@quicinc.com>,
+        Panicker Harish <quic_pharish@quicinc.com>
+References: <20250430111617.1151390-1-quic_cxin@quicinc.com>
+ <2025043022-rumbling-guy-26fb@gregkh>
+ <d388b471-482b-48ba-a504-694529535362@quicinc.com>
+ <2025050851-splatter-thesaurus-f54e@gregkh>
 Content-Language: en-US
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- David Hildenbrand <david@redhat.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>, Mike Rapoport
- <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>,
- Michal Hocko <mhocko@suse.com>, Jann Horn <jannh@google.com>,
- Pedro Falcato <pfalcato@suse.de>, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- Matthew Wilcox <willy@infradead.org>
-References: <20250514084024.29148-1-lorenzo.stoakes@oracle.com>
- <357de3b3-6f70-49c4-87d4-f6e38e7bec11@redhat.com>
- <f7dddb21-25cb-4de4-8c6e-d588dbc8a7c5@lucifer.local>
-From: Vlastimil Babka <vbabka@suse.cz>
-In-Reply-To: <f7dddb21-25cb-4de4-8c6e-d588dbc8a7c5@lucifer.local>
-Content-Type: text/plain; charset=UTF-8
+From: Xin Chen <quic_cxin@quicinc.com>
+In-Reply-To: <2025050851-splatter-thesaurus-f54e@gregkh>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Rspamd-Queue-Id: 619AF1F455
-X-Spam-Flag: NO
-X-Spam-Score: -4.51
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[16];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.cz:mid,suse.cz:dkim];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Rspamd-Action: no action
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: lEqEWXYHHo7jUVR5aXmMi69kvT4mu4c1
+X-Authority-Analysis: v=2.4 cv=HZ4UTjE8 c=1 sm=1 tr=0 ts=68245ee2 cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10
+ a=_VqJUKEpYW178Kr0VN0A:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-GUID: lEqEWXYHHo7jUVR5aXmMi69kvT4mu4c1
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTE0MDA4MCBTYWx0ZWRfX9882ezAd70Oi
+ UWom0AbIgqDOHR6vQdIrDQ3mt7lNxjvycj+6pBqBryjV6ll1d79XYFvDtX6Jw5mrfA9W+UkyswC
+ yPCbY3u/fLAFhS3VnOPf7zNSyNLOdLbFvJ9ZXOZwMKuqF5pifZhgBbTvuo+hgYBy0NM3nOFBhRF
+ 0nGgAMYssF737L7pqCd874hrZijSserHVV+OgIO8Cs3uCDs0dgFwEolCBLAHX+/73sdZoovPOqT
+ wlpCAaMqD5HOP/WB/P+NJ+Nx0G6CpPAhFpg8FcOjh8cHTepsmYLwh6CzslZ9smtiKP6P02ry9Bn
+ 1IZi8uJi6AnQP4GS5yZBBmmwbBX/t2gfdfqLcXS2zr4YhDH8N50fXfBzfrJKXW13G353vF0TyFI
+ rfZUwqzhGMgiV8UQB8dMQsuMX//EnkkY+Q2JQfeVBXQ4w+IRdNOoQJzFEO3U+K9kQfZdPouV
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-14_03,2025-05-14_02,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 adultscore=0 spamscore=0 clxscore=1015 priorityscore=1501
+ suspectscore=0 mlxscore=0 mlxlogscore=813 lowpriorityscore=0 malwarescore=0
+ bulkscore=0 phishscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505070000
+ definitions=main-2505140080
 
-On 5/14/25 10:56, Lorenzo Stoakes wrote:
->> Fixes: c84bf6dd2b83 ("mm: introduce new .mmap_prepare() file callback")
 
-Ah yeah I missed there wasn't one.
 
-> Is it worth having a fixes tag for something not upstream? This is why I
-> excluded that. I feel like it's maybe more misleading when the commit hashes are
-> ephemeral in a certain branch?
-
-Yeah it can be useful, in case the fixed commit gets backported somewhere,
-tools can warn that there's a follow up fix. As mm-stable hashes should not
-be ephemeral, then this should remain valid (and if there's a rebase for
-some reason then the fix could be squashed).
-
+On 5/8/2025 5:41 PM, Greg Kroah-Hartman wrote:
+> On Thu, May 08, 2025 at 05:29:18PM +0800, Xin Chen wrote:
 >>
->> Acked-by: David Hildenbrand <david@redhat.com>
+>> On 4/30/2025 7:40 PM, Greg Kroah-Hartman wrote:
+>>> On Wed, Apr 30, 2025 at 07:16:17PM +0800, Xin Chen wrote:
+>>>> When ttyport_open() fails to initialize a tty device, serport->tty is not
+>>>> --- a/drivers/tty/serdev/serdev-ttyport.c
+>>>> +++ b/drivers/tty/serdev/serdev-ttyport.c
+>>>> @@ -88,6 +88,10 @@ static void ttyport_write_flush(struct serdev_controller *ctrl)
+>>>>  {
+>>>>  	struct serport *serport = serdev_controller_get_drvdata(ctrl);
+>>>>  	struct tty_struct *tty = serport->tty;
+>>>> +	if (!tty) {
+>>>> +		dev_err(&ctrl->dev, "tty is null\n");
+>>>> +		return;
+>>>> +	}
+>>>
+>>> What prevents tty from going NULL right after you just checked this?
+>>
+>> First sorry for reply so late for I have a long statutory holidays.
+>> Maybe I don't get your point. From my side, there is nothing to prevent it.
+>> Check here is to avoid code go on if tty is NULL.
 > 
-> Thanks!
+> Yes, but the problem is, serport->tty could change to be NULL right
+> after you check it, so you have not removed the real race that can
+> happen here.  There is no lock, so by adding this check you are only
+> reducing the risk of the problem happening, not actually fixing the
+> issue so that it will never happen.
 > 
->>
->> --
->> Cheers,
->>
->> David / dhildenb
->>
+> Please fix it so that this can never happen.
+> 
+
+Actually I have never thought the race condition issue since the crash I met is
+not caused by race condition. It's caused due to Bluetooth driver call
+ttyport_close() after ttyport_open() failed. This two action happen one after
+another in one thread and it seems impossible to have race condition. And with
+my fix the crash doesn't happen again in several test of same case.
+
+Let me introduce the complete process for you:
+  1) hci_dev_open_sync()->
+hci_dev_init_sync()->hci_dev_setup_sync()->hdev->setup()(hci_uart_setup)->qca_setup(),
+here in qca_setup(), qca_read_soc_version() fails and goto out, then calls
+serdev_device_close() to close tty normally. And then call serdev_device_open()
+to retry.
+  2) serdev_device_open() fails due to tty_init_dev() fails, then tty gets
+released, which means this time the tty has been freed succesfully.
+  3) Return back to upper func  hci_dev_open_sync(),
+hdev->close()(hci_uart_close) is called. And hci_uart_close calls
+hci_uart_flush() and serdev_device_close(). serdev_device_close() tries to close
+tty again, it's calltrace is serdev_device_close()->ttyport_close()->tty_lock(),
+tty_unlock(), tty_release_struct(). The four funcs hci_uart_flush(), tty_lock(),
+tty_unlock(), tty_release_struct() read tty pointer's value, which is invalid
+and causes crash.
 
 
