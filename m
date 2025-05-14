@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-647929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-647931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B888AAB6F97
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 17:22:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2769AB6F89
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 17:20:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4887F3B225E
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 15:17:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 748817B7383
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 15:16:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F18128541B;
-	Wed, 14 May 2025 15:14:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83B0B287507;
+	Wed, 14 May 2025 15:14:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="L4KNQBKD"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FRosZTLe"
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D1EF2749F1;
-	Wed, 14 May 2025 15:14:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86DE42820C7;
+	Wed, 14 May 2025 15:14:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747235687; cv=none; b=A6dwk5WSE2ftSE9E1kZY7wlHQ6+u71+c5asqLzqyobbRoNjMDnJAqyPkoAV3prH+OU5IAxVoBlQxT904F3rQpfrl5a9W25q89U0joTpXUFfWLOJVI9PcFu+U9QSqSI0wfapuK0H+zZunwU1sQDtmC2kUjJ9fSkPFUZEtIxyvVSI=
+	t=1747235688; cv=none; b=YYbAULH1bGLvb7saYQYdRss394PnjO7KfKo3jZtDAYGVgat+FQzweHOpd+O6OVEhBezzFhNZ4uJSkzJ/lJbiB4vr1Hl0YdxqHRSur5AYx3vEHbHB48Nv3vbVnypfjvJErIuEmklLXkGTIAdqHJcw0QKZuw0zcBEb1ZVVulwIPPg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747235687; c=relaxed/simple;
-	bh=0hRB1IvQlzGriWaTL732AEH9Fmh4KKnhaup08Q0Jp/4=;
+	s=arc-20240116; t=1747235688; c=relaxed/simple;
+	bh=eftPXZUtS7TWj+fyRnjgJB01av2QQsqnM0j4qbjXMQk=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=BRwih52cce0q5dSr0Q+IpznmmaCXxMLigAsSAdhhnU5uGOZwnpUULMinsr/3Ebx4lwNiB6TgVi9YT0IGizyYJplmri7bN7/LsXIpGI3ac9WJUIthwpKqD5wEjiuGe2yiddiO136tcckB9Q4Pcg8AMr+FshK8FSIjytPyFHI9E1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=L4KNQBKD; arc=none smtp.client-ip=192.198.163.17
+	 MIME-Version; b=J0PHqPSx63MrGeHDmoF8IMEqKZLYiKN6y23PeqlOqp/qJqELehSgVyXAJNLGvmKSqqOQCmt9+YBTTcJjnn07y6G4eU6mD3YQWgpC1yIBY4hRxn7BD4PxIN0P6xgF/G99HbCOZhlzO9vH4Hcu8bzBYiqoWjVS5tZbLCnCoAahRxM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FRosZTLe; arc=none smtp.client-ip=192.198.163.17
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
@@ -35,28 +35,28 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   t=1747235686; x=1778771686;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=0hRB1IvQlzGriWaTL732AEH9Fmh4KKnhaup08Q0Jp/4=;
-  b=L4KNQBKDlXrM8wvYhKpFmv7GOCCxTzhBCo28I5z5RxVA+4bZz+0qr3am
-   NLjbIpe8Fbd+VGWxqx7Nb+c74oDUFSizz8Pcto5wghblVxax+Uvfarlin
-   1V87syDJI0/9fEcpHn07M9C96eSoGSLH+oHlW+f/CxpdxWlQ66rAM+MH5
-   zOMyeQoIaawhyR+YjIspcKGp26ukMpkoHutMZ75/HMynnf9708oQkletw
-   o8solHDhmQo34WPcUuV53vxRLM3cTCQtyZuNdGRo5lQDs/fHcXf7hwBpZ
-   yBms+T5wJSAZIsMz5q8INrf0UxSLlZ5MVgtZSnj5P+xJvM0l6C47SVH2G
-   w==;
-X-CSE-ConnectionGUID: rXFmLqM6Sjm7Zj30fWl68g==
-X-CSE-MsgGUID: J/I3yQiuRVKndNd6kN6bkg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11433"; a="49072719"
+  bh=eftPXZUtS7TWj+fyRnjgJB01av2QQsqnM0j4qbjXMQk=;
+  b=FRosZTLeiVxmFuH36Vl3u+7QBQ5Ur+X1bLYfKyGYrJngtikwZOz1raxE
+   yxp6Yo4FbB12JDVUo2L0PbmMeJ+8R9Q9nQNTQU+5WHVuThDb7tnC4r796
+   X9rC6mZ7cdwXVcccIhjOa+2zFW+f1g237ewkZbyMc4uDJubrTnuQSoYrf
+   DlUfBMpeBBHOjvNyKAUcdetsNMM49Ss8yWisaBRR9Zifyjp/5wHSFV7BE
+   PXSvjESbbnhpGfKRtGud0+crqQyckUAtDe0iWPgGBkIdZhwo+xAxWgR6Y
+   EN3MXx71b4gtv/exsnJgGLd8l6NxqIGn0Em1Qey6euL9bOpqS7vWU6CEd
+   Q==;
+X-CSE-ConnectionGUID: 3wGaa6vEQN+FFVjTU65Gcg==
+X-CSE-MsgGUID: zmU2tb3OSyydU5eMN7oh4w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11433"; a="49072727"
 X-IronPort-AV: E=Sophos;i="6.15,288,1739865600"; 
-   d="scan'208";a="49072719"
+   d="scan'208";a="49072727"
 Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 May 2025 08:14:43 -0700
-X-CSE-ConnectionGUID: ZwAYKfp0R7mD55WQIr3nOA==
-X-CSE-MsgGUID: UlfTyqo8Qkitcobp/Y9ixA==
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 May 2025 08:14:44 -0700
+X-CSE-ConnectionGUID: gG+wDnInSwu+VvYjARXzXA==
+X-CSE-MsgGUID: LoRybGhBS4KvjBMm5+qKlg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.15,288,1739865600"; 
-   d="scan'208";a="142939161"
+   d="scan'208";a="142939163"
 Received: from kanliang-dev.jf.intel.com ([10.165.154.102])
-  by fmviesa005.fm.intel.com with ESMTP; 14 May 2025 08:14:43 -0700
+  by fmviesa005.fm.intel.com with ESMTP; 14 May 2025 08:14:44 -0700
 From: kan.liang@linux.intel.com
 To: peterz@infradead.org,
 	mingo@redhat.com,
@@ -69,11 +69,11 @@ Cc: eranian@google.com,
 	ctshao@google.com,
 	tmricht@linux.ibm.com,
 	Kan Liang <kan.liang@linux.intel.com>,
-	Ravi Bangoria <ravi.bangoria@amd.com>,
-	Sandipan Das <sandipan.das@amd.com>
-Subject: [PATCH V2 03/15] perf/x86/amd: Remove driver-specific throttle support
-Date: Wed, 14 May 2025 08:13:49 -0700
-Message-Id: <20250514151401.2547932-4-kan.liang@linux.intel.com>
+	silviazhao <silviazhao-oc@zhaoxin.com>,
+	CodyYao-oc <CodyYao-oc@zhaoxin.com>
+Subject: [PATCH V2 04/15] perf/x86/zhaoxin: Remove driver-specific throttle support
+Date: Wed, 14 May 2025 08:13:50 -0700
+Message-Id: <20250514151401.2547932-5-kan.liang@linux.intel.com>
 X-Mailer: git-send-email 2.38.1
 In-Reply-To: <20250514151401.2547932-1-kan.liang@linux.intel.com>
 References: <20250514151401.2547932-1-kan.liang@linux.intel.com>
@@ -94,26 +94,20 @@ Besides the throttle, perf_event_overflow may return true because of
 event_limit. It already does an inatomic event disable. The pmu->stop
 is not required either.
 
-Reviewed-by: Ravi Bangoria <ravi.bangoria@amd.com>
 Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
-Cc: Sandipan Das <sandipan.das@amd.com>
-Cc: Ravi Bangoria <ravi.bangoria@amd.com>
+Cc: silviazhao <silviazhao-oc@zhaoxin.com>
+Cc: CodyYao-oc <CodyYao-oc@zhaoxin.com>
 ---
+ arch/x86/events/zhaoxin/core.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Changes since V1:
-- Add Reviewed-by from Ravi
-
- arch/x86/events/amd/core.c | 3 +--
- arch/x86/events/amd/ibs.c  | 4 +---
- 2 files changed, 2 insertions(+), 5 deletions(-)
-
-diff --git a/arch/x86/events/amd/core.c b/arch/x86/events/amd/core.c
-index 30d6ceb4c8ad..5e64283b9bf2 100644
---- a/arch/x86/events/amd/core.c
-+++ b/arch/x86/events/amd/core.c
-@@ -1003,8 +1003,7 @@ static int amd_pmu_v2_handle_irq(struct pt_regs *regs)
- 
- 		perf_sample_save_brstack(&data, event, &cpuc->lbr_stack, NULL);
+diff --git a/arch/x86/events/zhaoxin/core.c b/arch/x86/events/zhaoxin/core.c
+index 2fd9b0cf9a5e..49a5944fac63 100644
+--- a/arch/x86/events/zhaoxin/core.c
++++ b/arch/x86/events/zhaoxin/core.c
+@@ -397,8 +397,7 @@ static int zhaoxin_pmu_handle_irq(struct pt_regs *regs)
+ 		if (!x86_perf_event_set_period(event))
+ 			continue;
  
 -		if (perf_event_overflow(event, &data, regs))
 -			x86_pmu_stop(event, 0);
@@ -121,21 +115,6 @@ index 30d6ceb4c8ad..5e64283b9bf2 100644
  	}
  
  	/*
-diff --git a/arch/x86/events/amd/ibs.c b/arch/x86/events/amd/ibs.c
-index 0252b7ea8bca..4bbbca02aeb1 100644
---- a/arch/x86/events/amd/ibs.c
-+++ b/arch/x86/events/amd/ibs.c
-@@ -1373,9 +1373,7 @@ static int perf_ibs_handle_irq(struct perf_ibs *perf_ibs, struct pt_regs *iregs)
- 		hwc->sample_period = perf_ibs->min_period;
- 
- out:
--	if (throttle) {
--		perf_ibs_stop(event, 0);
--	} else {
-+	if (!throttle) {
- 		if (perf_ibs == &perf_ibs_op) {
- 			if (ibs_caps & IBS_CAPS_OPCNTEXT) {
- 				new_config = period & IBS_OP_MAX_CNT_EXT_MASK;
 -- 
 2.38.1
 
