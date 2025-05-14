@@ -1,150 +1,132 @@
-Return-Path: <linux-kernel+bounces-648593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-648595-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9E54AB7928
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 00:45:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BDFCAB792D
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 00:48:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F14B1B67B2E
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 22:45:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC7FD4C6DEE
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 22:48:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE0F31F2B90;
-	Wed, 14 May 2025 22:45:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E02D5224AFA;
+	Wed, 14 May 2025 22:48:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="b+9XFCzN"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JT9NQioB"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F709DDC1
-	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 22:45:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDC9E21C163
+	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 22:48:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747262726; cv=none; b=t6BciGRLz9/CGNnC7UE/s93oOhLnQpApSv5alyopPsH3U3oepQ6oLpaXjQElGitKJxQ9wQI1Tihkjvf3WptXIMAA2HoWB7muBZGUwFtFevLsPrOa1ba6BLs6gS/SQkLln8iRdolvdkA3oN8Wz4WJDA9vFdGLQjz0RJgoelBzSWU=
+	t=1747262913; cv=none; b=mcjFG7kFEi1B6o19wVm5YCJpPzSOERNGRkxfDqBO7/SAiz+dYAZProgsow6t796Nu2GEIengUDtLBIOc6M7mzlZjdCYduWILAjUNLWjfrg9FxHE8WVcsajoifEl6W/O6+O3ocCjvOLD91QB4g83SYL6Bk5PfMOu0OGn36BzNRvE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747262726; c=relaxed/simple;
-	bh=mqJP2sZT8Eo6k92CZV4PoOt3At0pB7bBNfTKSsvm9II=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gIkBTHr2VQHhevG+nEmAvtwsmESlsJRys+XJK8ncCeRDWyi/CX+YjehtKDRYObrNoKUdZl6ZMpUxhEZw9X4jT3ElWLefDAbpI9iQfM3Wzqj3EbbRvbUBCY633UQW4MFDQ8cI+GLAPaGAWWUTsPovYExx7HuGcAiTfroi7Sfh25M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=b+9XFCzN; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (cust-east-par-46-193-72-226.cust.wifirst.net [46.193.72.226])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 45DAD725;
-	Thu, 15 May 2025 00:45:06 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1747262706;
-	bh=mqJP2sZT8Eo6k92CZV4PoOt3At0pB7bBNfTKSsvm9II=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=b+9XFCzNmHGLlmuuL5bVjHpnCb8lRRK8Tct4qrdz+Rax/F1cNREijoh2j59yqAzTK
-	 qCip3W/dSJeGZ6RMPo5ubyAXtO30xC0gDHnI3j9EUrbGmKzgGt2Ry01ukmBGjYuqpQ
-	 pVY3xSI6uCQkEdxaky+AUqEUYeZgFuejOjHHZWck=
-Date: Thu, 15 May 2025 00:45:15 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Marco Felsch <m.felsch@pengutronix.de>
-Cc: andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org,
-	jonas@kwiboo.se, jernej.skrabec@gmail.com,
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-	tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	kernel@pengutronix.de
-Subject: Re: [PATCH 1/3] drm/bridge: fsl-ldb: make use of driver_private
-Message-ID: <20250514224515.GM23592@pendragon.ideasonboard.com>
-References: <20250514222453.440915-1-m.felsch@pengutronix.de>
- <20250514222453.440915-2-m.felsch@pengutronix.de>
+	s=arc-20240116; t=1747262913; c=relaxed/simple;
+	bh=fw4ASR0dC84nfQEf3FUe/wm41N26f7aWrG3iJtseeR0=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=eveXQBrfXX5he78flGz7jICgGoUT1+Yrlsm7azQ3nFuQn5m0ByOihI1kHvA7L2ZPSGmO8bdLjhdkBJIJQXTe1JM/vwC61j1+57iwMbit4ILAMgN9HU+HuNGzKk6IV11a0eY9DkySGA3ItN/TxVhzyiUQgDdIku1y5mcvosmg/5Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JT9NQioB; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-30c1c4a8274so322306a91.2
+        for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 15:48:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1747262911; x=1747867711; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=UgYJ+Uk5kzzZuLLJjG5/CvuJkRdqBhrdQNgIB/qPRsA=;
+        b=JT9NQioBd/xWwaOrtayCcz3BLySw6ZeAsts9BDUOwtyBSpKcCgveom/0LKwo4KlSsy
+         GRGnmRxx8OrnRUxaYDsBB6kiEqvngGZsyt3WkmFlQx25bTavzKSdQ+z8gponfkQ4E1JI
+         sk9ZG6zi3cJZ/atzqw9KA0ISIpduqFSaUYrECKLLuleJx8hSitSzJX/fTihtk0grgvlm
+         sPhx0PaWhghKeZarEQp6bdgzYghc2uZHnBHHC3u80M7kkNu+8LLBhqpx1vDbBELR18eE
+         GjO9H2v/R8L271+ghupAqx6ddC3pVt30NcOuJblzZQv0Bc3I9SSaRIXoKJ2PPmVELYlz
+         QVnw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747262911; x=1747867711;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=UgYJ+Uk5kzzZuLLJjG5/CvuJkRdqBhrdQNgIB/qPRsA=;
+        b=DW1jxfKvaBy08ZtOcRFAPZjJjZJF+ZnPrT+XsTf/ez8G7LHmAzHrVswunevmNaQffl
+         Tr2aZT4U4KcX+othXX8JsHZNlQDiNx5SRnBUcLk8SmLC0k16Xvt4/IWxibdDeWtOwiIv
+         cPnZPrGaRtFWexlquQbr9h0NTvVFafPXxSQgIvg5PLYb5RoaKi1GvyOx9FB5sTH+hmn2
+         FJL0Y0FbCf1gx2NNFkXojYfQt0MAYZ7gNXuthdLByYlzlh5Lwl6qLul5HZPyj7XNRFAQ
+         8AunAj9R9Qx7x5OsCKEnAUFpwEMMi64sD5yNVAL0yx5LG3fsYjQbRYI5skSRVodK/K3O
+         H0lg==
+X-Forwarded-Encrypted: i=1; AJvYcCXnKr1DCuNmqc/SMwhyEI0BkhNy+fdE/9IDww9kNFxfzNJJhL4XbiZnG27K3IpuEIe/7T+1bbTj2diMI+U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWRn+p6S4S64LTqY0MBt7NFRwQ21Z3pqBMG3RAgXA+P4FrfXEJ
+	F2L0wxyN3g+9TMtKrmYEe3kzmEBrL4kznLiZgKXAwp2jB7QUMXQzPhxG+doJlSJeZb7TdJ6mKBp
+	Z4A==
+X-Google-Smtp-Source: AGHT+IG10+Iq5L5Cda3ijuQh+2a54en45CtzZHeDe6mY71MnV/tUAELSpjY7VbeAe1Lg4OZmV0PYigFgkQQ=
+X-Received: from pjbsh11.prod.google.com ([2002:a17:90b:524b:b0:2fa:1803:2f9f])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3b43:b0:2f6:d266:f462
+ with SMTP id 98e67ed59e1d1-30e2e68a300mr7400689a91.35.1747262911047; Wed, 14
+ May 2025 15:48:31 -0700 (PDT)
+Date: Wed, 14 May 2025 15:48:29 -0700
+In-Reply-To: <20250324173121.1275209-2-mizhang@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250514222453.440915-2-m.felsch@pengutronix.de>
+Mime-Version: 1.0
+References: <20250324173121.1275209-1-mizhang@google.com> <20250324173121.1275209-2-mizhang@google.com>
+Message-ID: <aCUdvaM4xkLzRF8J@google.com>
+Subject: Re: [PATCH v4 01/38] perf: Support get/put mediated PMU interfaces
+From: Sean Christopherson <seanjc@google.com>
+To: Mingwei Zhang <mizhang@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Paolo Bonzini <pbonzini@redhat.com>, Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, Liang@google.com, 
+	Kan <kan.liang@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	Yongwei Ma <yongwei.ma@intel.com>, Xiong Zhang <xiong.y.zhang@linux.intel.com>, 
+	Dapeng Mi <dapeng1.mi@linux.intel.com>, Jim Mattson <jmattson@google.com>, 
+	Sandipan Das <sandipan.das@amd.com>, Zide Chen <zide.chen@intel.com>, 
+	Eranian Stephane <eranian@google.com>, Shukla Manali <Manali.Shukla@amd.com>, 
+	Nikunj Dadhania <nikunj.dadhania@amd.com>
+Content-Type: text/plain; charset="us-ascii"
 
-Hi Marco,
+On Mon, Mar 24, 2025, Mingwei Zhang wrote:
+> +/*
+> + * Currently invoked at VM creation to
+> + * - Check whether there are existing !exclude_guest events of PMU with
+> + *   PERF_PMU_CAP_MEDIATED_VPMU
+> + * - Set nr_mediated_pmu_vms to prevent !exclude_guest event creation on
+> + *   PMUs with PERF_PMU_CAP_MEDIATED_VPMU
+> + *
+> + * No impact for the PMU without PERF_PMU_CAP_MEDIATED_VPMU. The perf
+> + * still owns all the PMU resources.
+> + */
+> +int perf_get_mediated_pmu(void)
+> +{
+> +	guard(mutex)(&perf_mediated_pmu_mutex);
+> +	if (atomic_inc_not_zero(&nr_mediated_pmu_vms))
+> +		return 0;
+> +
+> +	if (atomic_read(&nr_include_guest_events))
+> +		return -EBUSY;
+> +
+> +	atomic_inc(&nr_mediated_pmu_vms);
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(perf_get_mediated_pmu);
 
-Thank you for the patch.
+IMO, all of the mediated PMU logic should be guarded with a Kconfig.  I strongly
+suspect KVM x86 will be the only user for the foreseeable, e.g. arm64 is trending
+toward a partioned PMU approach, and subjecting other architectures to the (minor)
+overhead associated with e.g. nr_mediated_pmu_vms seems pointless.  The other
+nicety is that it helps encapsulate the mediated PMU code, which for those of us
+that haven't been living and breathing this for the last few months, is immensely
+helpful.
 
-On Thu, May 15, 2025 at 12:24:51AM +0200, Marco Felsch wrote:
-> Make use of the drm_bridge::driver_private data instead of
-> container_of() wrapper.
+> +void perf_put_mediated_pmu(void)
 
-I suppose this is a personal preference, but I like usage of
-container_of() better. In my opinion it conveys better that struct
-fsl_ldb "unherits" from struct drm_bridge.
-
-> No functional changes.
-> 
-> Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
-> ---
->  drivers/gpu/drm/bridge/fsl-ldb.c | 14 +++++---------
->  1 file changed, 5 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/bridge/fsl-ldb.c b/drivers/gpu/drm/bridge/fsl-ldb.c
-> index 0fc8a14fd800..fa29f2bf4031 100644
-> --- a/drivers/gpu/drm/bridge/fsl-ldb.c
-> +++ b/drivers/gpu/drm/bridge/fsl-ldb.c
-> @@ -99,11 +99,6 @@ static bool fsl_ldb_is_dual(const struct fsl_ldb *fsl_ldb)
->  	return (fsl_ldb->ch0_enabled && fsl_ldb->ch1_enabled);
->  }
->  
-> -static inline struct fsl_ldb *to_fsl_ldb(struct drm_bridge *bridge)
-> -{
-> -	return container_of(bridge, struct fsl_ldb, bridge);
-> -}
-> -
->  static unsigned long fsl_ldb_link_frequency(struct fsl_ldb *fsl_ldb, int clock)
->  {
->  	if (fsl_ldb_is_dual(fsl_ldb))
-> @@ -115,7 +110,7 @@ static unsigned long fsl_ldb_link_frequency(struct fsl_ldb *fsl_ldb, int clock)
->  static int fsl_ldb_attach(struct drm_bridge *bridge,
->  			  enum drm_bridge_attach_flags flags)
->  {
-> -	struct fsl_ldb *fsl_ldb = to_fsl_ldb(bridge);
-> +	struct fsl_ldb *fsl_ldb = bridge->driver_private;
->  
->  	return drm_bridge_attach(bridge->encoder, fsl_ldb->panel_bridge,
->  				 bridge, flags);
-> @@ -124,7 +119,7 @@ static int fsl_ldb_attach(struct drm_bridge *bridge,
->  static void fsl_ldb_atomic_enable(struct drm_bridge *bridge,
->  				  struct drm_bridge_state *old_bridge_state)
->  {
-> -	struct fsl_ldb *fsl_ldb = to_fsl_ldb(bridge);
-> +	struct fsl_ldb *fsl_ldb = bridge->driver_private;
->  	struct drm_atomic_state *state = old_bridge_state->base.state;
->  	const struct drm_bridge_state *bridge_state;
->  	const struct drm_crtc_state *crtc_state;
-> @@ -226,7 +221,7 @@ static void fsl_ldb_atomic_enable(struct drm_bridge *bridge,
->  static void fsl_ldb_atomic_disable(struct drm_bridge *bridge,
->  				   struct drm_bridge_state *old_bridge_state)
->  {
-> -	struct fsl_ldb *fsl_ldb = to_fsl_ldb(bridge);
-> +	struct fsl_ldb *fsl_ldb = bridge->driver_private;
->  
->  	/* Stop channel(s). */
->  	if (fsl_ldb->devdata->lvds_en_bit)
-> @@ -270,7 +265,7 @@ fsl_ldb_mode_valid(struct drm_bridge *bridge,
->  		   const struct drm_display_info *info,
->  		   const struct drm_display_mode *mode)
->  {
-> -	struct fsl_ldb *fsl_ldb = to_fsl_ldb(bridge);
-> +	struct fsl_ldb *fsl_ldb = bridge->driver_private;
->  
->  	if (mode->clock > (fsl_ldb_is_dual(fsl_ldb) ? 160000 : 80000))
->  		return MODE_CLOCK_HIGH;
-> @@ -309,6 +304,7 @@ static int fsl_ldb_probe(struct platform_device *pdev)
->  	fsl_ldb->dev = &pdev->dev;
->  	fsl_ldb->bridge.funcs = &funcs;
->  	fsl_ldb->bridge.of_node = dev->of_node;
-> +	fsl_ldb->bridge.driver_private = fsl_ldb;
->  
->  	fsl_ldb->clk = devm_clk_get(dev, "ldb");
->  	if (IS_ERR(fsl_ldb->clk))
-
--- 
-Regards,
-
-Laurent Pinchart
+To avoid confusion with perf_put_guest_context() in future patches, I think it
+makes sense to go with something like perf_{create,release}_mediated_pmu().  I
+actually like the get/put terminology in isolation, but they look weird side-by-side.
 
