@@ -1,103 +1,142 @@
-Return-Path: <linux-kernel+bounces-647146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-647171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF23BAB64F7
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 09:57:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CB0A8AB654B
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 10:07:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 612701B6468C
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 07:57:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E99621B61069
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 08:07:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D322121FF31;
-	Wed, 14 May 2025 07:56:39 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1691D21ADDE;
+	Wed, 14 May 2025 08:07:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dk2G5NsW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53871218AB9
-	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 07:56:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7375921ABC5
+	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 08:07:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747209399; cv=none; b=V7u3pYWQ7Vbf1hYBljmMuOLU2/1m5EzZEuZtRWb+9jey3S9wiQerPMeTRcH/v9EiUN0ew9MPM9jtUuB9bq7JMhA0rYiV8Iu62FaZa1Pze5UyYWL3h1+RBJoOyqF/MkAH+/rB3fi95G63lJmXnI/e6DhylSnJmNZeoUXyQy7gmMM=
+	t=1747210032; cv=none; b=iHWeXq7zeqbDC3Fj3i5cADIXSvxbbcgxNGgax9DNb3k+BnSOA4tdUaf/ay2YVQqZk/q3BbJgru9VD8IYlNQKjMcZPGxq578h2QI/Xoi7EGa0T0b/5cMoRjkT70fRGZYSNI7jvfLzXi+ouA/NpUqHQQ30TflIVy8/29IKE+gel2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747209399; c=relaxed/simple;
-	bh=WSr9kxBydcy+eQdCxaSc/j0puaSCJFK65LGCie+xys4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=k33CA2RXJfjLYRYyEGKBFE1wEcZ7QaoGZQjt7wdenmbVmkNTk2JAJGYGER543RGhd87/hYPhYK4A0opUIIiAeBJjzc8ib6D+qNBu2vrsDGvSXeIJ5kxNLXiZ5zj21wIF7EMAX5QXACBpsnACNa0IPnTr+/BvLxgKI0yCb04Oawc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Zy5JG4lG4z4f3jt8
-	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 15:56:14 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id 3A04E1A1BB4
-	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 15:56:34 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.101.6])
-	by APP1 (Coremail) with SMTP id cCh0CgDXOnuvTCRoTNWvMA--.62928S7;
-	Wed, 14 May 2025 15:56:34 +0800 (CST)
-From: Kemeng Shi <shikemeng@huaweicloud.com>
-To: hughd@google.com,
-	baolin.wang@linux.alibaba.com,
-	akpm@linux-foundation.org
-Cc: linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 5/5] mm/shmem: remove unneeded xa_is_value() check in shmem_unuse_swap_entries()
-Date: Thu, 15 May 2025 00:50:47 +0800
-Message-Id: <20250514165047.946884-6-shikemeng@huaweicloud.com>
-X-Mailer: git-send-email 2.30.0
-In-Reply-To: <20250514165047.946884-1-shikemeng@huaweicloud.com>
-References: <20250514165047.946884-1-shikemeng@huaweicloud.com>
+	s=arc-20240116; t=1747210032; c=relaxed/simple;
+	bh=atq4OyunGhqoNfgvwaQn9WsZWeXNxlUETXtkiRCcoKU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tBebB59zx/RqhDEIGfIe65a4Net7LmmXPBrR5w+/Fa9grT0KL+nzyF1xQ+JDGriK/y60xpgYBXDbsJpBJHIpe17XEmnHkBR1HeLyynupHZkQTYAKXyRLsY1a3f9k1dtnSoJj5ZGIGB5r/AzE6ueKMp2SD3ehcqJJJzwrIZCYb7w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dk2G5NsW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7FDCC4CEF1;
+	Wed, 14 May 2025 08:07:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747210031;
+	bh=atq4OyunGhqoNfgvwaQn9WsZWeXNxlUETXtkiRCcoKU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=dk2G5NsWaWPX2GuVGxH0z8BjZtgXiGG854Vji5wK12Gb8ewT/FlY01rIuUNb2U28p
+	 /7MliM2imLmkkQn2kge7KDHqjAhJSeJ2DCoU0cMBYRj3RCXvCtBUneeVJ57v2js5b0
+	 tgU3Yg66mEnke21LlqIGQr/aTL1PuJyc85a2dG+yUL4TrQQSQdUTSGDu6Pyq2GWnMP
+	 76TKlxGc3b4XFQdSb7Yxg3jqmAI45kn5PZLa8fu84sAqGfc1ixEKe8wASnzDlLWKzl
+	 eGmN03/JeR2SpY79OnU02f5olnOsUZDMni4ZLl4WQ9QB0I+usncU2yUBhmttzGnlJX
+	 QjwNoJ5LOcHtA==
+Message-ID: <ec74ae4e-7fd6-45e6-a5c0-4b98cc97d6e0@kernel.org>
+Date: Wed, 14 May 2025 10:07:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: defconfig: Enable configs for MediaTek Genio EVK
+ boards
+To: =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: kernel@collabora.com, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org
+References: <20250513-genio-defconfig-v1-1-c3862f91b6b2@collabora.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250513-genio-defconfig-v1-1-c3862f91b6b2@collabora.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgDXOnuvTCRoTNWvMA--.62928S7
-X-Coremail-Antispam: 1UD129KBjvdXoW7XF1UGF45Aw1DJr13uw4kWFg_yoW3Gwb_ur
-	y8J3W8GrWrur4xXFsIkr4fXFZ0gr4v9ryDZ3WUtFyayryDtFn5Gr4kJr4ayry7uF4qga90
-	yrn7XrsIkrnrWjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbqkYFVCjjxCrM7AC8VAFwI0_Wr0E3s1l1xkIjI8I6I8E6xAIw20E
-	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l87I20VAvwVAaII0Ic2I_JFv_Gryl82
-	xGYIkIc2x26280x7IE14v26r126s0DM28IrcIa0xkI8VCY1x0267AKxVW5JVCq3wA2ocxC
-	64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM2
-	8EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4UJVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq
-	3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8w
-	Aqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE
-	14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwCY1x0262kKe7
-	AKxVWUAVWUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02
-	F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw
-	1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUCVW8JwCI42IY6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r
-	1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07ja
-	g4hUUUUU=
-X-CM-SenderInfo: 5vklyvpphqwq5kxd4v5lfo033gof0z/
 
-As only value entry will be added to fbatch in shmem_find_swap_entries(),
-there is no need to do xa_is_value() check in shmem_unuse_swap_entries().
+On 13/05/2025 22:59, Nícolas F. R. A. Prado wrote:
+> Enable the missing configs to get all devices on the MediaTek Genio
+> 1200, 700, 510 and 350 EVK boards probing, as indicated by the DT
+> kselftest.
+> 
+> This includes support for:
+> 
+> Genio 1200/700/510/350:
+> * MT6359/MT6357 PMICs Auxiliary ADC
+> 
+> Genio 1200/700/510:
+> * MDP3 (video scaling and color space conversion IP block)
+> * ITE IT5205 Type-C USB Alternate Mode Passive MUX
+> * Himax HX8279 controller based KD070FHFID078 DSI panel
+> 
+> Genio 700/510:
+> * Richtek RT1715 USB Type-C PD Controller
+> 
+> Genio 1200:
+> * MediaTek PCIe PHY
+> * Mediatek MT6360 USB Type-C Port Controller
+> 
+> Genio 350:
+> * STARTEK KD070FHFID015 DSI panel
+> * MediaTek UART DMA controller (APDMA)
+> 
+> Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
 
-Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
----
- mm/shmem.c | 2 --
- 1 file changed, 2 deletions(-)
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-diff --git a/mm/shmem.c b/mm/shmem.c
-index dfd2f730833c..f1d45fcff5e8 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -1446,8 +1446,6 @@ static int shmem_unuse_swap_entries(struct inode *inode,
- 	for (i = 0; i < folio_batch_count(fbatch); i++) {
- 		struct folio *folio = fbatch->folios[i];
- 
--		if (!xa_is_value(folio))
--			continue;
- 		error = shmem_swapin_folio(inode, indices[i], &folio, SGP_CACHE,
- 					mapping_gfp_mask(mapping), NULL, NULL);
- 		if (error == 0) {
--- 
-2.30.0
-
+Best regards,
+Krzysztof
 
