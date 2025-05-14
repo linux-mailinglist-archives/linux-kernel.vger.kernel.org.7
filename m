@@ -1,106 +1,135 @@
-Return-Path: <linux-kernel+bounces-647097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-647105-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8467AB646C
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 09:31:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 112F0AB647B
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 09:34:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D228D189F5D5
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 07:31:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46767867087
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 07:33:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFAF3171C9;
-	Wed, 14 May 2025 07:30:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C358F2040B0;
+	Wed, 14 May 2025 07:33:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="hwWbh2qr"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="yBJNzP/6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B380B1DA31D;
-	Wed, 14 May 2025 07:30:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A7041A3155;
+	Wed, 14 May 2025 07:33:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747207842; cv=none; b=RrIRCoucO0OnS0JpuNWURmAh9l9Piu7TfQEwGGW0pEV1ptWeNKKKJlSJep2Cp5whlatIlnLAL6T9TzgU/shiw74HJ9F1XAdl615uX4HV8QILaqkb/os/n5HX6G+JLBY8zfdUuX6gdHI4D9sGPqxsYemzmMDVBn+whLKJ3zroXxw=
+	t=1747207994; cv=none; b=cLGdwrF8HsHE9dBez7lq1S/eFe6i+etqmhh+Dte7MbVABxGCLlPvoBxV7JxDf5m2+hgmVTllwmryDK+C5jPAIY5NLeYMfZqGtVUrKCfYYKOS4Ao6k7383zzx/yv/mL/fBIl11CZi/XP52yGJGBNWQNwqNGXTp1aThRaORZUiIr0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747207842; c=relaxed/simple;
-	bh=CD4dJW+Gv+4m3iDMae7kIM/vg/0boHM3mQg6Gj/PAFo=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=FBhFuE9dQ1kMcRcPkf41vYevVJlGAELwyPh5JyM1x7r1cJyUi5PYRwzFfqHrkNXcn0vfsKjOq4BSxy55itD9aw/ekc9aC7Z4bGxkbfE9NfM95bQAlBFNb0kDBaj5Z/BtHM2XHo7ar2YL49JP8sSc8sSGadFdzSC7cV0ER/GMrto=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=hwWbh2qr; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1747207835;
-	bh=RRbMfXRZxB7U1lwx5jZiu9Md8X1fQf1+AbUlEL3dcUg=;
-	h=Date:From:To:Cc:Subject:From;
-	b=hwWbh2qrtJtWlmjom8KjQi/4yuqTvbGyiZacECjFDhkD6GWE9/VL6VvCFE2mvNAdx
-	 EpGGlbX06+VqvJ4gK74S0IcL8Z3t+7U0a1eGNUYM4ZXsy1rvvUgEDkLMPB2tZ9f2fx
-	 JJrOixg9fhXru4w8dY+ivj+gk432VsNt07WLQRZze7J71mc8BBsovdBqZ2gZ9YnT5d
-	 CkgOgPZ1AgAdphoXfnD2UwMUET0k4yoOaRcyr3J55uw4cEow1JAZ5YjHLec8V5JCz5
-	 oEA3E2uhFb3wczRfoghJD8KH0Ne9PiYMXcOsV+3Ve8KIsEiRWtsKe1YMCG9pmJDnXQ
-	 i7iPV0k94F8Mw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Zy4kf5lWVz4xQg;
-	Wed, 14 May 2025 17:30:34 +1000 (AEST)
-Date: Wed, 14 May 2025 17:30:33 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier
- <mathieu.poirier@linaro.org>, Greg KH <greg@kroah.com>, Arnd Bergmann
- <arnd@arndb.de>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: duplicate patch in the rpmsg tree
-Message-ID: <20250514173033.647a4dd1@canb.auug.org.au>
+	s=arc-20240116; t=1747207994; c=relaxed/simple;
+	bh=aMSOQWVWeoNv0lVBaoClSjorw3TTumNswBEIUZbZhII=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ofc96Xot4ioekubvzccph/0dql05DeVsQe636Z6s0MtZTUawRq9gci86F8XfNP9MJLB/6AbcLzhvxop1GVQOubphuruPfrBI3dNKmAiKNpbxmLObnf22YHL8AOXty3kK26zbbtdL774i/Q51zQlirXyqm9bTZwqwuxtbLqqp4w4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=yBJNzP/6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CED6FC4CEF1;
+	Wed, 14 May 2025 07:33:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1747207993;
+	bh=aMSOQWVWeoNv0lVBaoClSjorw3TTumNswBEIUZbZhII=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=yBJNzP/61tfn1OQwYbB5+8TyTD+iK+MDo9jkU75tUSd7omI+LFjV5tTBaAQckGFd/
+	 0TNMvaLuJc/nnkQoD5fkqlRI3LVmbchTRxExww+0IM7j85DaF4G0IyaqI6H774bJRn
+	 L6lSXZhZJ12eck/2X2lap5xrg+RQiFQBhv+fO9KA=
+Date: Wed, 14 May 2025 09:31:25 +0200
+From: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+To: "Chen, Jay" <jay.chen@siemens.com>
+Cc: "mathias.nyman@intel.com" <mathias.nyman@intel.com>,
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"Shao, Tzi Yang" <tziyang.shao@siemens.com>
+Subject: Re: [PATCH] usb: xhci: Set avg_trb_len = 8 for EP0 during Address
+ Device
+Message-ID: <2025051451-pedicure-aspire-1c8d@gregkh>
+References: <JH0PR06MB7294E46B393F1CA5FE0EE4F78396A@JH0PR06MB7294.apcprd06.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_//athPkFYMEJ2U6METMfXPvC";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <JH0PR06MB7294E46B393F1CA5FE0EE4F78396A@JH0PR06MB7294.apcprd06.prod.outlook.com>
 
---Sig_//athPkFYMEJ2U6METMfXPvC
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Tue, May 13, 2025 at 09:07:00AM +0000, Chen, Jay wrote:
+> From fef893bcf0add89795b85bcc1f6bdae537f1dabe Mon Sep 17 00:00:00 2001
+> From: "jay.chen" <jay.chen@siemens.com>
+> Date: Tue, 13 May 2025 15:03:44 +0800
+> Subject: [PATCH] usb: xhci: Set avg_trb_len = 8 for EP0 during Address Device
+> Command
+> 
+> According to the xHCI 1.2 spec (Section 6.2.3, p.454), the Average
+> TRB Length (avg_trb_len) for control endpoints should be set to 8.
+> 
+> Currently, during the Address Device Command, EP0's avg_trb_len remains 0,
+> which may cause some xHCI hardware to reject the Input Context, resulting
+> in device enumeration failures. In extreme cases, using a zero avg_trb_len
+> in calculations may lead to division-by-zero errors and unexpected system
+> crashes.
+> 
+> This patch sets avg_trb_len to 8 for EP0 in
+> xhci_setup_addressable_virt_dev(), ensuring compliance with the spec
+> and improving compatibility across various host controller implementations.
+> 
+> Link: https://bugzilla.kernel.org/show_bug.cgi?id=220033
+> Signed-off-by: jay.chen <jay.chen@siemens.com>
+> ---
+> drivers/usb/host/xhci-mem.c | 2 ++
+> 1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/usb/host/xhci-mem.c b/drivers/usb/host/xhci-mem.c
+> index d698095fc88d..fed9e9d1990c 100644
+> --- a/drivers/usb/host/xhci-mem.c
+> +++ b/drivers/usb/host/xhci-mem.c
+> @@ -1166,6 +1166,8 @@ int xhci_setup_addressable_virt_dev(struct xhci_hcd *xhci, struct usb_device *ud
+>       ep0_ctx->deq = cpu_to_le64(dev->eps[0].ring->first_seg->dma |
+>                                  dev->eps[0].ring->cycle_state);
+> 
+> +      ep0_ctx->tx_info |= cpu_to_le32(EP_AVG_TRB_LENGTH(8));
+> +
+>       trace_xhci_setup_addressable_virt_device(dev);
+> 
+>        /* Steps 7 and 8 were done in xhci_alloc_virt_device() */
+> -- 
+> 2.43.5
 
-Hi all,
 
-The following commit is also in the char-misc tree as a different commit
-(but the same patch):
+Hi,
 
-  317c69397867 ("rpmsg: qcom_smd: Fix uninitialized return variable in __qc=
-om_smd_send()")
+This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
+a patch that has triggered this response.  He used to manually respond
+to these common problems, but in order to save his sanity (he kept
+writing the same thing over and over, yet to different people), I was
+created.  Hopefully you will not take offence and will fix the problem
+in your patch and resubmit it so that it can be accepted into the Linux
+kernel tree.
 
-This is commit
+You are receiving this message because of the following common error(s)
+as indicated below:
 
-  77feb17c950e ("rpmsg: qcom_smd: Fix uninitialized return variable in __qc=
-om_smd_send()")
+- Your patch is malformed (tabs converted to spaces, linewrapped, etc.)
+  and can not be applied.  Please read the file,
+  Documentation/process/email-clients.rst in order to fix this.
 
-in the char-misc tree.
+- This looks like a new version of a previously submitted patch, but you
+  did not list below the --- line any changes from the previous version.
+  Please read the section entitled "The canonical patch format" in the
+  kernel file, Documentation/process/submitting-patches.rst for what
+  needs to be done here to properly describe this.
 
---=20
-Cheers,
-Stephen Rothwell
+If you wish to discuss this problem further, or you have questions about
+how to resolve this issue, please feel free to respond to this email and
+Greg will reply once he has dug out from the pending patches received
+from other developers.
 
---Sig_//athPkFYMEJ2U6METMfXPvC
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+thanks,
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmgkRpkACgkQAVBC80lX
-0Gxykwf+JmkuecUAMSAjXbcFCEOH3gf39uyuY7wqPReHLBWaPkEvsk+VVJhg3vgy
-RWazQw01NcQ1U0jK+Hw7sXlT3FwDgWsZb/hlL9f8NWvBQ0i0DrdeudL/ptsMTlh0
-+YlABGZsP/ioIqzgwb7Gbf4LLjWkqWcn4t1auGec48axKia6zv1rAshkTm0CxxKz
-aIXesZnaLb3k1HYEBMJMM1WsL1hNA7yCErRJwdgVAn9PBR+Lc4utGpZKpWaeNfsn
-6tEre8XxNKkFaGa5MmZWvt1+ajuSIQF4kBcQQZyVQfxV139hIe8b4fLkzEvL5VnV
-ujoKkszJJHEJ4mx5+uN7t19qzqjy5w==
-=4roA
------END PGP SIGNATURE-----
-
---Sig_//athPkFYMEJ2U6METMfXPvC--
+greg k-h's patch email bot
 
