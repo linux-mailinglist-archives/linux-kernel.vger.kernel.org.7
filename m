@@ -1,119 +1,149 @@
-Return-Path: <linux-kernel+bounces-648549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-648547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F10CDAB78B3
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 00:07:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DFCAAB78B7
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 00:07:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7D4F189E495
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 22:07:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B5A43A59F9
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 22:06:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A047235057;
-	Wed, 14 May 2025 22:04:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C3EC231824;
+	Wed, 14 May 2025 22:04:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SZvDOd5I"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b4VW0Ubv"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AE2522577C;
-	Wed, 14 May 2025 22:04:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D7D6221296;
+	Wed, 14 May 2025 22:04:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747260280; cv=none; b=j14oSrAuG4U7o9Azd8y7VpJzLKsTvoPJCOKqm6sMh1AGm3WmaLQZadOb8qQtraCMzUWThXhTUM6Db4h5QP0XJ2MlwRm4LC3wQ+D0p8D0E1M28h2n67PrQsKwu02tobDPPIot5WrC3IiIcdUoxNudp1jLFQaIwbtYtQO15Tg7ax4=
+	t=1747260274; cv=none; b=sbpta92qKF7gy4iVab+HwUGrruVdEc+oYhX25BiiOssbavs66YFGqhkUsc9QvgZ2jqN+jgMds/YHeXCnLUPAXvL4RqPAXF3bhwROy8jNV1lEPXVaHMooQn6GKasgEHj972RhD/uUsJVMB+zEiAwabFDTEoTi+s7py9Uw3weZ5pA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747260280; c=relaxed/simple;
-	bh=VF/6ptY3YAA/WhG9VLCXpoTM5T1oQlAmB00KMlDK8LQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k+56FoJMKU2GVwND4mZgAO6kTNdOkREUqRQYcTsbgElOEd09e1xAeX+uVpE6smdP/uC9CIE5nDHf2syLfJXrxhiYD4g1SLYKJBCdYyianKKq+Uq5OJUPK78uegtudNWPZMCNCVpy7j/0ZwWt4oTU+T3skLw8YsGRfp1SkPym2fQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SZvDOd5I; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0FFF9C4CEED;
-	Wed, 14 May 2025 22:04:40 +0000 (UTC)
+	s=arc-20240116; t=1747260274; c=relaxed/simple;
+	bh=GofPJKcSMTqtWvKIscS1eZ3G1JH+s1zbLWmsYPBuvtI=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=MTo1F81qPNF5ldPshU3Ur8jOpi9OOVAWWiCr/7xc4WcLyXbHK1iWuyjHvF+hp2uyXu19QABix+i5VsgH6Yb1m41so93apGq3UE7Ka/pXDkXbvJxKDHLMNpYGaSxohwS3hq/SB664UgFxuvikvLpcVhCntLnfj1TvyURK29+aNjU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b4VW0Ubv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F0C0C4CEEF;
+	Wed, 14 May 2025 22:04:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747260280;
-	bh=VF/6ptY3YAA/WhG9VLCXpoTM5T1oQlAmB00KMlDK8LQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SZvDOd5IsEj3W7FooGL26wkWPwWGxk8bH/xzhj85q0rf1OJ0umY1BbrW2e2cubOq9
-	 FZbQ1zAV1yAdrPaWE658yaUur5UHhW85U8fQJNQI+eJmXigtQT+P77QHGj/zoMHVh9
-	 U8rQqKcZti+UbL9XHXJjj3VmMdqmm32ZrR40hEI4/elboe1ZSuNpjvimNHLBVz9LMw
-	 mGeYfLKOIl0+4MetZAh5uzPZYG8pEmSQRYi3x4pElF6d8o6b5aKGi/SDM9Vj1ySsBL
-	 5lXS3v3eRMGysVRbj6BDqp8WcIrUggMWqKiqDnbOtD641TOh0qjOsdbz2KT7je2B+R
-	 tMA7KQOKqYiNA==
-Date: Wed, 14 May 2025 17:04:38 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Cosmin Tanislav <demonsingur@gmail.com>
-Cc: Ross Burton <ross.burton@arm.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Eric Biggers <ebiggers@google.com>,
-	Dongcheng Yan <dongcheng.yan@intel.com>,
-	Julien Massot <julien.massot@collabora.com>,
-	Liam Girdwood <lgirdwood@gmail.com>, linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org, Liu Ying <victor.liu@nxp.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Zhi Mao <zhi.mao@mediatek.com>,
-	=?iso-8859-1?Q?N=EDcolas_F_=2E_R_=2E_A_=2E?= Prado <nfraprado@collabora.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Mark Brown <broonie@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Will Deacon <will@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	linux-arm-kernel@lists.infradead.org,
-	Hans Verkuil <hverkuil@xs4all.nl>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	linux-staging@lists.linux.dev,
-	Linus Walleij <linus.walleij@linaro.org>,
-	linux-media@vger.kernel.org,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Elinor Montmasson <elinor.montmasson@savoirfairelinux.com>,
-	Cosmin Tanislav <cosmin.tanislav@analog.com>,
-	Ricardo Ribalda <ribalda@chromium.org>,
-	Kieran Bingham <kieran.bingham@ideasonboard.com>,
-	Taniya Das <quic_tdas@quicinc.com>,
-	Tommaso Merciai <tomm.merciai@gmail.com>,
-	Niklas =?iso-8859-1?Q?S=F6derlund?= <niklas.soderlund@ragnatech.se>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 08/19] dt-bindings: media: i2c: max96712: add support
- for I2C ATR
-Message-ID: <174726027793.3124111.7562097751443784673.robh@kernel.org>
-References: <20250512212832.3674722-1-demonsingur@gmail.com>
- <20250512212832.3674722-9-demonsingur@gmail.com>
+	s=k20201202; t=1747260274;
+	bh=GofPJKcSMTqtWvKIscS1eZ3G1JH+s1zbLWmsYPBuvtI=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=b4VW0UbvM1foRVLyhSsYkbutkTtNDGp86d3vZb+EscZ4wdISAFS98lQCq3NzaXiay
+	 ZhP0tDP5ZmZ2TC/v97vaS1rvTe++YT0MyFwONocFzQClXNc+fP0gIxz6IpKOjMAdfv
+	 Q8K2F5B0m0Wzjt4JFqc+BxmDyzJpkGoDoH+TtN8Cv7tbXaPPn9bE6rxA0L1tSlbEg1
+	 jhCCuNLdGg+fX6Qq9OGJyk+95DUiV3EjaKqxqJdZ+5RhVCPAkx+uwSyjGxDrRu5bD7
+	 itPolyZ6dd+7cXX2Dpb0amdwS9g6WqbrcfcKO4pZLDRvXKYi/J2rZk++3gaUrLiC1b
+	 tQK9tYAoQ+dGA==
+From: Christian Brauner <brauner@kernel.org>
+Date: Thu, 15 May 2025 00:03:40 +0200
+Subject: [PATCH v7 7/9] coredump: validate socket name as it is written
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250512212832.3674722-9-demonsingur@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250515-work-coredump-socket-v7-7-0a1329496c31@kernel.org>
+References: <20250515-work-coredump-socket-v7-0-0a1329496c31@kernel.org>
+In-Reply-To: <20250515-work-coredump-socket-v7-0-0a1329496c31@kernel.org>
+To: linux-fsdevel@vger.kernel.org, Jann Horn <jannh@google.com>, 
+ Daniel Borkmann <daniel@iogearbox.net>, 
+ Kuniyuki Iwashima <kuniyu@amazon.com>
+Cc: Eric Dumazet <edumazet@google.com>, Oleg Nesterov <oleg@redhat.com>, 
+ "David S. Miller" <davem@davemloft.net>, 
+ Alexander Viro <viro@zeniv.linux.org.uk>, 
+ Daan De Meyer <daan.j.demeyer@gmail.com>, 
+ David Rheinsberg <david@readahead.eu>, Jakub Kicinski <kuba@kernel.org>, 
+ Jan Kara <jack@suse.cz>, Lennart Poettering <lennart@poettering.net>, 
+ Luca Boccassi <bluca@debian.org>, Mike Yuan <me@yhndnzj.com>, 
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+ =?utf-8?q?Zbigniew_J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, 
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+ linux-security-module@vger.kernel.org, 
+ Christian Brauner <brauner@kernel.org>, 
+ Alexander Mikhalitsyn <alexander@mihalicyn.com>
+X-Mailer: b4 0.15-dev-c25d1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1725; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=GofPJKcSMTqtWvKIscS1eZ3G1JH+s1zbLWmsYPBuvtI=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWSoCntci0xSrJ0wQfNh4ZtD9w89yM3Y/Vzq4yu1Zd+Fn
+ ScaLDsa1lHKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjCRC/0M/z0rNt7Jif9xcMfP
+ WRxXnty4Jm2QLnnrxqdXf7et8pe6cXAhw//84jeTOLYqfTnxO3jRbI5pc+aUr2E2WGrwtW+mg1r
+ 8FlduAA==
+X-Developer-Key: i=brauner@kernel.org; a=openpgp;
+ fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
+In contrast to other parameters written into
+/proc/sys/kernel/core_pattern that never fail we can validate enabling
+the new AF_UNIX support. This is obviously racy as hell but it's always
+been that way.
 
-On Tue, 13 May 2025 00:28:17 +0300, Cosmin Tanislav wrote:
-> MAX96712 and MAX96724 have more than one GMSL2 link, and each link is
-> capable of connecting to a separate serializer. If these serializers
-> have the same CFG pins configuration, they will also have the same I2C
-> address, causing conflicts unless the deserializer changes the address
-> of the connected serializers.
-> 
-> The MAX96712 and MAX96724 support changing the I2C address of the
-> connected serializers.
-> 
-> Document this capability.
-> 
-> Signed-off-by: Cosmin Tanislav <demonsingur@gmail.com>
-> ---
->  .../bindings/media/i2c/maxim,max96712.yaml    | 31 +++++++++++++++++++
->  1 file changed, 31 insertions(+)
-> 
+Signed-off-by: Christian Brauner <brauner@kernel.org>
+---
+ fs/coredump.c | 37 ++++++++++++++++++++++++++++++++++---
+ 1 file changed, 34 insertions(+), 3 deletions(-)
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+diff --git a/fs/coredump.c b/fs/coredump.c
+index 6ee38e3da108..d4ff08ef03e5 100644
+--- a/fs/coredump.c
++++ b/fs/coredump.c
+@@ -1228,13 +1228,44 @@ void validate_coredump_safety(void)
+ 	}
+ }
+ 
++static inline bool check_coredump_socket(void)
++{
++	if (core_pattern[0] != '@')
++		return true;
++
++	/*
++	 * Coredump socket must be located in the initial mount
++	 * namespace. Don't give the that impression anything else is
++	 * supported right now.
++	 */
++	if (current->nsproxy->mnt_ns != init_task.nsproxy->mnt_ns)
++		return false;
++
++	/* Must be an absolute path. */
++	if (*(core_pattern + 1) != '/')
++		return false;
++
++	return true;
++}
++
+ static int proc_dostring_coredump(const struct ctl_table *table, int write,
+ 		  void *buffer, size_t *lenp, loff_t *ppos)
+ {
+-	int error = proc_dostring(table, write, buffer, lenp, ppos);
++	int error;
++	ssize_t retval;
++	char old_core_pattern[CORENAME_MAX_SIZE];
++
++	retval = strscpy(old_core_pattern, core_pattern, CORENAME_MAX_SIZE);
++
++	error = proc_dostring(table, write, buffer, lenp, ppos);
++	if (error)
++		return error;
++	if (!check_coredump_socket()) {
++		strscpy(core_pattern, old_core_pattern, retval + 1);
++		return -EINVAL;
++	}
+ 
+-	if (!error)
+-		validate_coredump_safety();
++	validate_coredump_safety();
+ 	return error;
+ }
+ 
+
+-- 
+2.47.2
 
 
