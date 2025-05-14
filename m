@@ -1,180 +1,125 @@
-Return-Path: <linux-kernel+bounces-647431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-647433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8579DAB683E
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 11:58:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5D00AB6843
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 11:59:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09ABF8C2C73
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 09:57:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EC34C7A2DAA
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 09:58:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC213221281;
-	Wed, 14 May 2025 09:58:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBC5625DD01;
+	Wed, 14 May 2025 09:59:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="HFJin9uy"
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eNRNDZ1s"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 439B513E41A
-	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 09:58:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AFDA13E41A;
+	Wed, 14 May 2025 09:59:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747216684; cv=none; b=qgR8ibjLIoxHkxemUvnRFxkt5Knon0DCX3cJQcfKn7qg898VMIDeJNJyH76gIkjGqOztevazjnj1Oo0uWjq1wnnMioXcR1CpLby4OPSFxsywWEB2IAVwUEDEOr9t2rsMjhjm6fyzEJn5HxN62sYDav3lguS4r1TOKBlr16jA7vM=
+	t=1747216768; cv=none; b=KrEy5u3aicTrbjN+Zj/ntmDENnsOYRBz17y6RgxjPbO2hmfgiEke2x+CwqUk5Uqpngpn6tLERpGSDW48lSyn5etx/APcCJPf4k8aqnentfIQT01bL9P/DOa5QgCUdihFg8PomXXjfcVQQpraL57bSmdbepzgQFpZrIpXxUzCYbk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747216684; c=relaxed/simple;
-	bh=bS6OiwwODtIhVfytW0IXHsyd6ZKxJRnv6rBUnfwIwaw=;
-	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=U4g3aczHfrdYxRUuLHSAN28pg0CO5T03M7oe+8/XS4tnmTLeamW5iwpUvaCCY4/fFMGmeEcNv2Jz1oFrRhOGsoWVM6lL/a1EZ5J+I8Yj+/aZZ3CMADTdT+fuFYkoUwD36pvZOZ25ZH4rcESzQ617RRPiJPU6/owKLptCqQ8fUvU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=HFJin9uy; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-30de488cf81so65814691fa.1
-        for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 02:58:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1747216680; x=1747821480; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:references
-         :mime-version:in-reply-to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Sef9ctaVHOch8HKf4l4HAkMpIwdQ/iI1WZkRcq3n7hA=;
-        b=HFJin9uypWSHptoKRRqB/qFGU4LePrUzUdwNqJs0iS+MreEZ2idXsqc557Xa8XKkBd
-         Y0Jby+6L/Xh9tGA5T+YRKcyG5gVPp6CYHgDYj+r0g2sndHQQ5r7rLjVRnYGWg/z3dySf
-         Qp2L9LwCAhvw4fERF+IMrvaRrM+lpfqJa4kTgDktGkR8gPQ+vJXhFZrNLuQeW7q8XRN0
-         O3WPcEyBlHhqRFF04NOc4yIJku1HKxf77ZuBUF7/RXOpaaETSLPzKdl0b4ohkSiolvN6
-         v0kqsSy5ndpSvUduH9WYABDhsnc/v5knsfDJk4zOTwAmHzBzGbqVlOMx1Gd86jLkSaxu
-         hFzA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747216680; x=1747821480;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:references
-         :mime-version:in-reply-to:from:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Sef9ctaVHOch8HKf4l4HAkMpIwdQ/iI1WZkRcq3n7hA=;
-        b=nMNSKzv7aeGeScY3PB2JR0+ri8AkBXXBlrOZmIhF8dtCBT2LjQW/EUEDwVXTSvvdj7
-         BX7Q1RZCLWPBDa8pRLAnPhHZTXaguNsB0ulFmBxyKz9QPZvfFfyJrH2UZinn5avAoxoK
-         ROiqfND9JilNVPS2zbyp5ZbkpBgnSzPU4mXv2R4f1hKldoV3Ir7w2bVkdFVc1qk8b63V
-         c7ljTr5GzVxX8PzgfyxrhEN63fSH8idKg6NYgffhpnparaR5orDqKG/KAsM+B8MMxVWT
-         lWGtuyObeEIDd7gnIoJ9dXSJKOCrdAO460Y/T1P/Bld7MTgmSe+pAHF/vyHIf/Eh/R+I
-         v4jQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVWC586lryHMtDMoUWhMAYElJACasKRuC1XLZk3mZ8eFcZY0Vr6iduT1qYZS2cISn8jYOKlPdwsYCWTM2g=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywja2pHdOefhFLoiS8tos5iYJQ5xpIALKvNf6JRIsHOrYWMPmPx
-	qD+qhI3XJ4u3MxtAkG5CM0jf2qCrRD/sPuTA+5q5+pfB/NsAchv5axE46ug4xl4oALyo4nyACW7
-	ug2jmmfGU4U2l6hIbSGWdVGsisRgrygDHftQ+Rg==
-X-Gm-Gg: ASbGncv9Juz1ruqJkCVVMjhpecBKP7rR4BDsL6B5EvILcrFz6wakDbEu7GAk5LNTmtN
-	8FLjSobr8i0/Stn6zaofQwvxq5T5zMbx9EqDMkgaJplZoSy13HT/ioUC4tc/2GPPAyGh+tmCL5B
-	9r+dRyQN7uJsd0FI45z7K/Km8TIvSHDQc=
-X-Google-Smtp-Source: AGHT+IEGW1BwG0vWRm5BlH8SykmxSxEEcq2RxvplxQZDDT5E7U5dCDchPUbWlRgl684WDWawwv+GOAwQdpalrax/dWE=
-X-Received: by 2002:a05:651c:221e:b0:302:2598:de91 with SMTP id
- 38308e7fff4ca-327ed11b3a1mr9949641fa.16.1747216680139; Wed, 14 May 2025
- 02:58:00 -0700 (PDT)
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Wed, 14 May 2025 02:57:59 -0700
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Wed, 14 May 2025 02:57:59 -0700
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-In-Reply-To: <CACRpkdaErq4uwjjqug3BbiHMKbP=4PkzpXPuQ57+2mgjJQ7ACQ@mail.gmail.com>
+	s=arc-20240116; t=1747216768; c=relaxed/simple;
+	bh=DFWBWtDSqR8SDwwJtzp31DXqPLTJtPjXKwlJ59tHuw4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KxP1MPW9vYcbqvAp6v5YUNeiIbEMlqVcSzuNHMeMJqBTm+z10xv0I4S63gNPb4uUcJz2L7hXO+IJm+tJeAYujzOtds2yiekToggp0lDXq2AkILtFt2Tj0Onv4xJIQwLXQBj1SZhkd9wCempjAgSjkUx9t1SNzAb32ttkqIlXZx8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eNRNDZ1s; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A79EC4CEE9;
+	Wed, 14 May 2025 09:59:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747216767;
+	bh=DFWBWtDSqR8SDwwJtzp31DXqPLTJtPjXKwlJ59tHuw4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=eNRNDZ1saDM5pd0BO9HYUFWnKRLy0b9aOYmdqJbi8at3nCZgR97+D3U1d4HFu+/0A
+	 y3lfS/vu1MIL8619oCtOYKlyN0bl6TmC0R1eEv+4kU99pKfqEHqPbRgl+A6y4Q9lkD
+	 rHIDua7v5d5cgVb2yx6uIBCbP2FQAww5S/Q7dD8K5dJ6JFZi8EWTWYJvdQCE4mMDcZ
+	 VNoEXMrm49XLLf1X0RxU+pXlyEeulsbbedHWq7JdZqe+3UbnFscvENWuQW5X7GkxQO
+	 5suy9IcdIjvJSGLb5dknxZdHbat+JET4qMEhDvjaVxOV1H4pkYvTHJKEnX8aqajFOR
+	 b6OeVYv4M030Q==
+Message-ID: <a0c0fc86-844f-4006-851c-31a092a6bb08@kernel.org>
+Date: Wed, 14 May 2025 11:59:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250513-pinctrl-msm-fix-v2-0-249999af0fc1@oss.qualcomm.com>
- <20250513-pinctrl-msm-fix-v2-1-249999af0fc1@oss.qualcomm.com> <CACRpkdaErq4uwjjqug3BbiHMKbP=4PkzpXPuQ57+2mgjJQ7ACQ@mail.gmail.com>
-Date: Wed, 14 May 2025 02:57:59 -0700
-X-Gm-Features: AX0GCFuzMkv-uw4OkxtcQ7B0bROFFsRTNAPuiGhyru3oWFwWfGG6-KWTDkLR3FY
-Message-ID: <CAMRc=McwKEPZx=P1LMkWu6++=jLiU_+eDEHB=PRcJoFqVGufpA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] gpiolib: don't crash on enabling GPIO HOG pins
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, Guenter Roeck <linux@roeck-us.net>, 
-	Josh Cartwright <joshc@codeaurora.org>, Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
-	Matti Vaittinen <mazziesaccount@gmail.com>, Doug Anderson <dianders@chromium.org>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/5] watchdog: s3c2410_wdt: Replace hardcoded values
+ with macro definitions
+To: Sangwook Shin <sw617.shin@samsung.com>, alim.akhtar@samsung.com,
+ wim@linux-watchdog.org, linux@roeck-us.net
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Kyunghwan Seo <khwan.seo@samsung.com>
+References: <20250514094220.1561378-1-sw617.shin@samsung.com>
+ <CGME20250514095335epcas2p139710b146aaf4709a0a7aafcabe2f7c7@epcas2p1.samsung.com>
+ <20250514094220.1561378-2-sw617.shin@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250514094220.1561378-2-sw617.shin@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, 14 May 2025 00:18:41 +0200, Linus Walleij
-<linus.walleij@linaro.org> said:
-> On Tue, May 13, 2025 at 8:39=E2=80=AFPM Dmitry Baryshkov
-> <dmitry.baryshkov@oss.qualcomm.com> wrote:
->
->> On Qualcomm platforms if the board uses GPIO hogs msm_pinmux_request()
->> calls gpiochip_line_is_valid(). After commit 8015443e24e7 ("gpio: Hide
->> valid_mask from direct assignments") gpiochip_line_is_valid() uses
->> gc->gpiodev, which is NULL when GPIO hog pins are being processed.
->> Thus after this commit using GPIO hogs causes the following crash. In
->> order to fix this, verify that gc->gpiodev is not NULL.
->>
->> Note: it is not possible to reorder calls (e.g. by calling
->> msm_gpio_init() before pinctrl registration or by splitting
->> pinctrl_register() into _and_init() and pinctrl_enable() and calling the
->> latter function after msm_gpio_init()) because GPIO chip registration
->> would fail with EPROBE_DEFER if pinctrl is not enabled at the time of
->> registration.
->>
->> pc : gpiochip_line_is_valid+0x4/0x28
->> lr : msm_pinmux_request+0x24/0x40
->> sp : ffff8000808eb870
->> x29: ffff8000808eb870 x28: 0000000000000000 x27: 0000000000000000
->> x26: 0000000000000000 x25: ffff726240f9d040 x24: 0000000000000000
->> x23: ffff7262438c0510 x22: 0000000000000080 x21: ffff726243ea7000
->> x20: ffffab13f2c4e698 x19: 0000000000000080 x18: 00000000ffffffff
->> x17: ffff726242ba6000 x16: 0000000000000100 x15: 0000000000000028
->> x14: 0000000000000000 x13: 0000000000002948 x12: 0000000000000003
->> x11: 0000000000000078 x10: 0000000000002948 x9 : ffffab13f50eb5e8
->> x8 : 0000000003ecb21b x7 : 000000000000002d x6 : 0000000000000b68
->> x5 : 0000007fffffffff x4 : ffffab13f52f84a8 x3 : ffff8000808eb804
->> x2 : ffffab13f1de8190 x1 : 0000000000000080 x0 : 0000000000000000
->> Call trace:
->>  gpiochip_line_is_valid+0x4/0x28 (P)
->>  pin_request+0x208/0x2c0
->>  pinmux_enable_setting+0xa0/0x2e0
->>  pinctrl_commit_state+0x150/0x26c
->>  pinctrl_enable+0x6c/0x2a4
->>  pinctrl_register+0x3c/0xb0
->>  devm_pinctrl_register+0x58/0xa0
->>  msm_pinctrl_probe+0x2a8/0x584
->>  sdm845_pinctrl_probe+0x20/0x88
->>  platform_probe+0x68/0xc0
->>  really_probe+0xbc/0x298
->>  __driver_probe_device+0x78/0x12c
->>  driver_probe_device+0x3c/0x160
->>  __device_attach_driver+0xb8/0x138
->>  bus_for_each_drv+0x84/0xe0
->>  __device_attach+0x9c/0x188
->>  device_initial_probe+0x14/0x20
->>  bus_probe_device+0xac/0xb0
->>  deferred_probe_work_func+0x8c/0xc8
->>  process_one_work+0x208/0x5e8
->>  worker_thread+0x1b4/0x35c
->>  kthread+0x144/0x220
->>  ret_from_fork+0x10/0x20
->> Code: b5fffba0 17fffff2 9432ec27 f9400400 (f9428800)
->>
->> Fixes: 8015443e24e7 ("gpio: Hide valid_mask from direct assignments")
->> Reported-by: Doug Anderson <dianders@chromium.org>
->> Closes: https://lore.kernel.org/r/CAD=3DFV=3DVg8_ZOLgLoC4WhFPzhVsxXFC19N=
-rF38W6cW_W_3nFjbw@mail.gmail.com
->> Tested-by: Douglas Anderson <dianders@chromium.org>
->> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
->
-> (...)
->> +       /*
->> +        * hog pins are requested before registering GPIO chip
->> +        */
->> +       if (!gc->gpiodev)
->> +               return true;
->
-> LGTM, Bartosz if it's fine with you as well can you ACK this and I'll
-> stick the patches in fixes and get it to Torvalds pronto.
->
-> Yours,
-> Linus Walleij
->
+On 14/05/2025 11:42, Sangwook Shin wrote:
+> Modify the code to utilize macro-defined values instead of hardcoded
+> values. The value 0x100 in the s3c2410wdt_set_heartbeat function represents
+> S3C2410_WTCON_PRESCALE_MAX + 1, but it is hardcoded, making its meaning
+> difficult to understand and reducing code readability.
+> 
+> Signed-off-by: Sangwook Shin <sw617.shin@samsung.com>
+> Signed-off-by: Kyunghwan Seo <khwan.seo@samsung.com>
+Your DCO is not looking correct. You must be the last signing person.
+What is actually Kyunghwan's contribution here and what does his SoB
+mean? Who wrote the patch?
 
-Sure,
-
-Acked-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Best regards,
+Krzysztof
 
