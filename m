@@ -1,84 +1,227 @@
-Return-Path: <linux-kernel+bounces-647663-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-647645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D787CAB6B68
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 14:30:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82889AB6B3B
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 14:16:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6CB8A1677D2
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 12:30:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3CD419E4F3F
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 12:16:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E948277020;
-	Wed, 14 May 2025 12:30:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30C7027701E;
+	Wed, 14 May 2025 12:15:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="HukT74WZ"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3695275855;
-	Wed, 14 May 2025 12:30:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M1+cQeMW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CDF7216E1B;
+	Wed, 14 May 2025 12:15:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747225812; cv=none; b=bjcUDXf4JXct0ZOb3Km2031I4t1JSj8DXAFsKBEMhKYsgTitZsgXDLaJM6xCeT5sUHZO2jbdEqhnj6cpfVTL/hatf0WNQ4obMn8d1jd9hat/Ww3u4HLmsorYNjd4cNhxFOvKA0CwFxvpMhBa/shS2YdoIs+9qiFJ2ufauJdI9b4=
+	t=1747224956; cv=none; b=JlWTUi+ygkb1dtqsoUHRIgjP/XcHM+CKP77tLN9AM6AGXX51psKBtkmFxeDkZlRr4Ot4d/PrDP1ef7SfIdmWeuDv9cy28Go3ZbHCKW3080zv8PTn0JEAqlpl/jDv6UC/yQNI85FfbVS1wk6EnPbZdt/tX2kM4r8FOkd0L/3vmW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747225812; c=relaxed/simple;
-	bh=tP9L5C1rvddbEnxd24vplfYVy2/tC/gIQexaA+xejZw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=sBYLghv08ftsZIcggBFkOrsdGEm5g5jlbJtLvDr4vbcdzj2/eTKA6Jve3OzyEd5YNgiMBdDfugYqQd+KNxYnlVMHRqEG950hB1DUzMJs/zbiBzgFcQwAwb/a5A12FjA13pWDcspvmVYwQ76iZx7kxWGHSkbj6EjOKgWcc3asWMM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=HukT74WZ reason="signature verification failed"; arc=none smtp.client-ip=117.135.210.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:To:Subject:Content-Type:MIME-Version:
-	Message-ID; bh=gL2u/ROB3I3qIp0hFELWnUpvndH2DoBDZRYJJ5eJ9pg=; b=H
-	ukT74WZ+2tsADoEtliKDQXVUzMKdpMKq8DVh8dUAOMxXXan2W1dOP3Zokq7yk1S9
-	lzCoITf/jYaj2WIrcpAa8bfBTD5/ZaMqB8vPQNi2QDj9Ho1014ea103WE7ofmCEY
-	qn7RD2kLwptd1oupgJ/Y2CKBvPmYMSSKmRYHFp7Rik=
-Received: from 00107082$163.com ( [111.35.191.17] ) by
- ajax-webmail-wmsvr-40-146 (Coremail) ; Wed, 14 May 2025 20:14:41 +0800
- (CST)
-Date: Wed, 14 May 2025 20:14:41 +0800 (CST)
-From: "David Wang" <00107082@163.com>
-To: "Oliver Neukum" <oneukum@suse.com>
-Cc: mathias.nyman@intel.com, gregkh@linuxfoundation.org,
-	stern@rowland.harvard.edu, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] USB: core: add a memory pool to urb for
- host-controller private data
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20240801(9da12a7b)
- Copyright (c) 2002-2025 www.mailtech.cn 163com
-In-Reply-To: <7419cfbc-1269-46fc-95b9-502e6fe23226@suse.com>
-References: <20250512150724.4560-1-00107082@163.com>
- <20250513113817.11962-1-00107082@163.com>
- <51fe78fb-5d73-458f-b3d1-fc84cd6c5869@suse.com>
- <484fe5f7.9d28.196cea2c6db.Coremail.00107082@163.com>
- <7419cfbc-1269-46fc-95b9-502e6fe23226@suse.com>
-X-NTES-SC: AL_Qu2fBf6Zu0Aj5yScZekZnEYQheY4XMKyuPkg1YJXOp80tCb8wgUaeXBjIGn77cOIKS2Svxeadh1H8uJQYYtJWbKDkJ09LockjeE16/gfbRha
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=GBK
+	s=arc-20240116; t=1747224956; c=relaxed/simple;
+	bh=9n/gNZw600QYUrMnwKTPNOK3/L5E5TG7yt1bw6N/svI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LNhk2QW+m/UeQ2U9q8fWYaVjtUUq9h73bmREfaYkF7BDQi2GVuw3GNOA+itch3BNIYGQNiFvDBPbbo3lTF8GFm27PiddTaiggJ9WZZ7upeXXYfiySmWIXSsDFb1Jk7q85Fb0vuq4jt/qbUZuzGzktCiCHUQSHDmJVsdGJIlFh34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M1+cQeMW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8568C4AF09;
+	Wed, 14 May 2025 12:15:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747224955;
+	bh=9n/gNZw600QYUrMnwKTPNOK3/L5E5TG7yt1bw6N/svI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=M1+cQeMWeqFSPExhk2kOfMFngdVAt2HwSd0ZJmBOWDHDUThPSte3saMbGGulfctDJ
+	 i/XCbsgPEM4LsgCVmUC9QzhzQykraXRWS/gHvf1/uVlcbZwGzB6oDBhN/92wtzZyDd
+	 /IzEFqyUKVDUCcxb/r4PCSBzemRYF614GYWprujtb8M75/CUlHuIg2foxNfqmuCBhb
+	 Pqc/HQABYG2NHFKteOho680MSX6ZxrytZJ8l3/9hwFTCbiPKUAN2mtO4OdzcHiTyJs
+	 mXsF4vvWGLZZwocs3tqbiwD+xdHdRq93qA9uZctVGww5Zil5HdlvhPb3mzoWavJMoC
+	 vLLS3+y0k6rHg==
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-ad1a87d93f7so1022824766b.0;
+        Wed, 14 May 2025 05:15:55 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV29C4U9/wlUkre8EHvErsEW1LhLearf6RO7rGs0V+wTYGW7ucwlsMDjGJcaqP4HjVaXYw9XqChKqS5VsJl@vger.kernel.org, AJvYcCWVkSo+dXBxitHKtpzywl27DOCD+zzzZEySqT9mj/LsoLSdcRs4W2nV0DSDb/vRiZ+J3hjrcxHx1XsG@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyn7HK8qeKlU38R9dA+/GZyhFoYpYp/unIdwcAkO2KUGL1faiGq
+	XuqfOG4XW4xm7p8K1iTIXbkU4R85RkgJKe+gWys0Adp3kooSNp2DFFJtuAxJyiyRHKyoxlwv6MX
+	wlzAnIyMsgLn7ngndS0t1PmmpmA==
+X-Google-Smtp-Source: AGHT+IFNbUCzY9o57wMu/2S9u0Ncn14dOvkR5s246HZBkwluWFPiNZ8XXqpaD0331VMZ5nRZZ+nBtsn19B0XOLtHKws=
+X-Received: by 2002:a17:907:9488:b0:ad2:4fa0:88d1 with SMTP id
+ a640c23a62f3a-ad4f70d3335mr289668866b.9.1747224954458; Wed, 14 May 2025
+ 05:15:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <7542e47.9ea9.196ceb7e927.Coremail.00107082@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:kigvCgD3v7QyiSRoMIUEAA--.29610W
-X-CM-SenderInfo: qqqrilqqysqiywtou0bp/xtbBkBtNqmgkhOVIpwADst
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+References: <20250505144613.1287360-1-robh@kernel.org> <34dcdbd4fb15a988f15e812faa566b32506a2f2f.camel@codeconstruct.com.au>
+In-Reply-To: <34dcdbd4fb15a988f15e812faa566b32506a2f2f.camel@codeconstruct.com.au>
+From: Rob Herring <robh@kernel.org>
+Date: Wed, 14 May 2025 07:15:42 -0500
+X-Gmail-Original-Message-ID: <CAL_Jsq+8k=7+zV6v4KEws0VNRt5pJYyuSNkNDU=d8neriCcKLQ@mail.gmail.com>
+X-Gm-Features: AX0GCFshp9fzygWtFgg9ShuDUbXUnQtrRdwSG1FTt2nCPz1p1tunvy0s6IbfukQ
+Message-ID: <CAL_Jsq+8k=7+zV6v4KEws0VNRt5pJYyuSNkNDU=d8neriCcKLQ@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: interrupt-controller: Convert
+ aspeed,ast2xxx-scu-ic to DT schema
+To: Andrew Jeffery <andrew@codeconstruct.com.au>
+Cc: Eddie James <eajames@linux.ibm.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, 
+	Lee Jones <lee@kernel.org>, Andrew Jeffery <andrew@aj.id.au>, linux-aspeed@lists.ozlabs.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-CkF0IDIwMjUtMDUtMTQgMjA6MDM6MDIsICJPbGl2ZXIgTmV1a3VtIiA8b25ldWt1bUBzdXNlLmNv
-bT4gd3JvdGU6Cj4KPgo+T24gMTQuMDUuMjUgMTM6NTEsIERhdmlkIFdhbmcgd3JvdGU6Cj4gIAo+
-PiBJIGFtIG5vdCBxdWl0ZSBzdXJlIGFib3V0IHRoZSBjb25jZXJuIGhlcmUsIGRvIHlvdSBtZWFu
-IHNvbWVib2R5IGNyZWF0ZSBhIHVyYiwKPj4gYW5kIHRoZW4gdXNiX2luaXRfdXJiKCkgaGVyZSwg
-YW5kIG5ldmVyIHVzZSB1cmJfZGVzdHJveSB0byByZWxlYXNlIGl0Pwo+Cj5ZZXMuCj4KPj4gCj4+
-IFRoYXQgd291bGQgY2F1c2UgbWVtb3J5IGxlYWsgaWYgdXJiX2Rlc3Ryb3kgaXMgbm90IGNhbGxl
-ZC4uLi4uLkJ1dCBpcyB0aGlzIHJlYWxseSBwb3NzaWJsZT8uCj4KPkkgdGhpbmsgYSBmZXcgZHJp
-dmVycyB1bmRlciBkcml2ZXJzL21lZGlhIGRvIHNvLgoKVGhhdCB3b3VsZCBjYXVzZSByZWFsIHBy
-b2JsZW0gaGVyZS4uLi4gSSB3aWxsICBrZWVwIHRoaXMgaW4gbWluZC4uLgooSXQgaXMgcmVhbGx5
-IGEgYmFkIHBhdHRlcm4gdG8gaGF2ZSBvbmx5IGluaXQgZnVuY3Rpb24sIGl0IHNob3VsZCBiZSBw
-YWlyZWQKd2l0aCBjb3JyZXNwb25kaW5nICJyZWxlYXNlIiB0byBjYW5jZWwgc2lkZS1lZmZlY3Rz
-Li4uLi4uKQoKClRoYW5rc34KRGF2aWQKCgo+Cj4JUmVnYXJkcwo+CQlPbGl2ZXIK
+On Tue, May 6, 2025 at 10:26=E2=80=AFPM Andrew Jeffery
+<andrew@codeconstruct.com.au> wrote:
+>
+> Hi Rob,
+>
+> Thanks for the conversion. One comment below:
+>
+> On Mon, 2025-05-05 at 09:46 -0500, Rob Herring (Arm) wrote:
+> > Convert the Aspeed SCU interrupt controller binding to schema format.
+> > It's a straight-forward conversion of the typical interrupt
+> > controller.
+> >
+> > Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> > ---
+> >  .../aspeed,ast2500-scu-ic.yaml                | 48
+> > +++++++++++++++++++
+> >  .../aspeed,ast2xxx-scu-ic.txt                 | 23 ---------
+> >  .../bindings/mfd/aspeed,ast2x00-scu.yaml      |  9 +++-
+> >  MAINTAINERS                                   |  2 +-
+> >  4 files changed, 57 insertions(+), 25 deletions(-)
+> >  create mode 100644 Documentation/devicetree/bindings/interrupt-
+> > controller/aspeed,ast2500-scu-ic.yaml
+> >  delete mode 100644 Documentation/devicetree/bindings/interrupt-
+> > controller/aspeed,ast2xxx-scu-ic.txt
+> >
+> > diff --git a/Documentation/devicetree/bindings/interrupt-
+> > controller/aspeed,ast2500-scu-ic.yaml
+> > b/Documentation/devicetree/bindings/interrupt-
+> > controller/aspeed,ast2500-scu-ic.yaml
+> > new file mode 100644
+> > index 000000000000..d5287a2bf866
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/interrupt-
+> > controller/aspeed,ast2500-scu-ic.yaml
+> > @@ -0,0 +1,48 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +# Copyright 2025 Eddie James
+> > +%YAML 1.2
+> > +---
+> > +$id:
+> > http://devicetree.org/schemas/interrupt-controller/aspeed,ast2500-scu-i=
+c.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Aspeed AST25XX and AST26XX SCU Interrupt Controller
+> > +
+> > +maintainers:
+> > +  - Eddie James <eajames@linux.ibm.com>
+> > +
+> > +properties:
+> > +  compatible:
+> > +    enum:
+> > +      - aspeed,ast2500-scu-ic
+> > +      - aspeed,ast2600-scu-ic0
+> > +      - aspeed,ast2600-scu-ic1
+> > +
+> > +  reg:
+> > +    maxItems: 1
+> > +
+> > +  '#interrupt-cells':
+> > +    const: 1
+> > +
+> > +  interrupts:
+> > +    maxItems: 1
+> > +
+> > +  interrupt-controller: true
+> > +
+> > +required:
+> > +  - compatible
+> > +  - reg
+> > +  - '#interrupt-cells'
+> > +  - interrupts
+> > +  - interrupt-controller
+> > +
+> > +additionalProperties: false
+> > +
+> > +examples:
+> > +  - |
+> > +    interrupt-controller@18 {
+> > +        compatible =3D "aspeed,ast2500-scu-ic";
+> > +        reg =3D <0x18 0x4>;
+> > +        #interrupt-cells =3D <1>;
+> > +        interrupts =3D <21>;
+> > +        interrupt-controller;
+> > +    };
+> > diff --git a/Documentation/devicetree/bindings/interrupt-
+> > controller/aspeed,ast2xxx-scu-ic.txt
+> > b/Documentation/devicetree/bindings/interrupt-
+> > controller/aspeed,ast2xxx-scu-ic.txt
+> > deleted file mode 100644
+> > index 251ed44171db..000000000000
+> > --- a/Documentation/devicetree/bindings/interrupt-
+> > controller/aspeed,ast2xxx-scu-ic.txt
+> > +++ /dev/null
+> > @@ -1,23 +0,0 @@
+> > -Aspeed AST25XX and AST26XX SCU Interrupt Controller
+> > -
+> > -Required Properties:
+> > - - #interrupt-cells            : must be 1
+> > - - compatible                  : must be "aspeed,ast2500-scu-ic",
+> > -                                 "aspeed,ast2600-scu-ic0" or
+> > -                                 "aspeed,ast2600-scu-ic1"
+> > - - interrupts                  : interrupt from the parent
+> > controller
+> > - - interrupt-controller                : indicates that the
+> > controller receives and
+> > -                                 fires new interrupts for child
+> > busses
+> > -
+> > -Example:
+> > -
+> > -    syscon@1e6e2000 {
+> > -        ranges =3D <0 0x1e6e2000 0x1a8>;
+> > -
+> > -        scu_ic: interrupt-controller@18 {
+> > -            #interrupt-cells =3D <1>;
+> > -            compatible =3D "aspeed,ast2500-scu-ic";
+> > -            interrupts =3D <21>;
+> > -            interrupt-controller;
+> > -        };
+> > -    };
+> > diff --git a/Documentation/devicetree/bindings/mfd/aspeed,ast2x00-
+> > scu.yaml b/Documentation/devicetree/bindings/mfd/aspeed,ast2x00-
+> > scu.yaml
+> > index c800d5e53b65..12986ebe7ec7 100644
+> > --- a/Documentation/devicetree/bindings/mfd/aspeed,ast2x00-scu.yaml
+> > +++ b/Documentation/devicetree/bindings/mfd/aspeed,ast2x00-scu.yaml
+> > @@ -48,8 +48,15 @@ properties:
+> >
+> >  patternProperties:
+> >    '^p2a-control@[0-9a-f]+$':
+> > -    description: See Documentation/devicetree/bindings/misc/aspeed-
+> > p2a-ctrl.txt
+> >      type: object
+> > +    additionalProperties: true
+> > +    properties:
+> > +      compatible:
+> > +        contains:
+> > +          enum:
+> > +            - aspeed,ast2500-scu-ic
+> > +            - aspeed,ast2600-scu-ic0
+> > +            - aspeed,ast2600-scu-ic1
+>
+> This change should be done on the interrupt-controller pattern property
+> node rather than the p2a-controller node.
+
+Indeed, I fixed it up when applying.
+
+
+Rob
 
