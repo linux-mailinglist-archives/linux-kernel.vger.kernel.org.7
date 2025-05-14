@@ -1,109 +1,124 @@
-Return-Path: <linux-kernel+bounces-646783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-646785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5028CAB607A
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 03:35:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42115AB6084
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 03:42:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85FA786230E
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 01:35:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87C011B430BF
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 01:42:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05E8D17A304;
-	Wed, 14 May 2025 01:35:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C22118C02E;
+	Wed, 14 May 2025 01:42:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FdnemOgK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hDviCHLe"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D1331DFF7;
-	Wed, 14 May 2025 01:35:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 310AE18859B
+	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 01:42:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747186524; cv=none; b=bbofwORvwdDyAl267SQtRZoESHd0aA4IQdGdQc1H6QVF8kjdE+Wct9dOMIZ5OBZMWKnpbFyQlXq+lvYWi82bgvfcng1ydDtyhdwezk+Go5ya0bbfBuHLfDl6/ZlchS5NaBAfel6todMIU+nyCM+p0qvvx8ErYbx09J2ZoyDP3m8=
+	t=1747186925; cv=none; b=eZo6FIsCuPl1/ePzGstlxEsClTaPnD8eJZJTMjnjJiJRaP4sLxmnH6rQzkTYQcrmskBj/YyLx5FAqem70yY6dmcRsEmqKYOfnrSkvtDWlJLwxraoZQzATJUyZM2T4Qr/+cd6x/X8wwPmV/R7M+10x2PhwwQNit7uC9Dn3oH/BbQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747186524; c=relaxed/simple;
-	bh=Im7N0oKWDU/sVPmXcPmyEfKbD0S7NlMA6kBuG2IflwM=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=DCbwOWGRws9aTg5fBy2+PeEhuofaHeqP7WPJ2w2ToecaIEpg7x8Bf2jetGkZNkCLzJEEvzviTeluqyghtk41HpBpqZCdn9gI4pvdQ7vVd3Plgy+yI4uU0T4V51dFUu6hKbWVVg/PYEBwHmqBJuZ62OFBUARhOuPi3WDQrq0npvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FdnemOgK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1D1AC4CEED;
-	Wed, 14 May 2025 01:35:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747186523;
-	bh=Im7N0oKWDU/sVPmXcPmyEfKbD0S7NlMA6kBuG2IflwM=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=FdnemOgK87ktFsdK4vpGVK27n1qyCGaFCflx8j1ynsUIdzmLcJZ8Zve7+PP/Y/YRb
-	 GAaF3dLuzZw8wxKEnp5nx17q72ELJ6MVXCCNBzyG4P585sl0N4wcXUZcYhVdUwQ4jZ
-	 utWUMucYu6fHtE6IxoV989HfWf+2dX+FPXRLU7zKHJQoX7OSEMOiCI6A6KRYMvS+OK
-	 VhfV1Qs9gsLb/0OiEwxNhqi1N6ZSmbZ9/T5ueNVEHDA/NO47OUvFpivgmTStTDNOGF
-	 6QrkDEJAsq9Y90M63wgX4/yNTT8Er/8Sfnf9f1/t0ZwdKDeTtNdgGLpRcPGvR0syIz
-	 V5mjoR+gtIrfg==
-Date: Tue, 13 May 2025 20:35:21 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1747186925; c=relaxed/simple;
+	bh=cGEgwZmgqQTS2ygoAiNzKYg+uSWno+UzEHA6/2/FQ1g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AjMiFz0vr3iq8he7vu4uLvaTlUajNIr+Filp2jvUDoDUXXCH67QcLdjIXB0HCg1bnMIXESLOQzd2DnetUjN2gJJDdTCqyFHzfFCwmC/y6Ef3xeEbMHp4vPZtEVWyrPoA8phWyQ0aNItULprerFTQzEkSEnj2rwl+wYmp8G0ehdk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hDviCHLe; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-22e6a088e16so2644565ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 18:42:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747186923; x=1747791723; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=82tOiKYSlWiRPbo/gDIQRfx9of4V2dOX4JgTL8C7ii8=;
+        b=hDviCHLe8n2u4eudVjCDHj7rsKAf2gRaZ0oDi+HxvgBoJY3TMwEyP055rkvBFNx97d
+         qBF7/oqDznE6OzY/HjpsXVAIRaQAtRzpg/dQGzHJ17lIij87OCPJFq8woFVlZHB2838I
+         uwEbpsdXV7bhbnozcxVNexkuaYOA66cJ/V3vAy3kMAq09IenvepvCvaCYCmniJ+NyCDW
+         AhRucbN5A1oVXWus4bdsDJut9izFjnMQdFL2u2nM5Wp07RewX7UBPpk2PFKhANN0lMzl
+         sYSBHCKKvwdAd1osGKHBnlu39qxmzRWG7rjTsEu6mdI6RGAXM+xjYGVct5PgGt8iIB60
+         6KJQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747186923; x=1747791723;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=82tOiKYSlWiRPbo/gDIQRfx9of4V2dOX4JgTL8C7ii8=;
+        b=U3Us1JqvOhlueElPGM0hdNMm0AQLvnDJJoBEuQvYXdr7uwaJ17VkaNIgTbi2QMUWu0
+         89OrN+8MKi3XsZ3PRz/awnpkHpTV2G++WajNTjZpeTaou7kAhyD35IWz0LxgFEga9MEX
+         YDq9nj0IAXa53dn43M7/IPjejrYb2QQS4/sVvdHQ4UIuav1dbc69x6s2XyJ6cMvaRCc+
+         Cop3yr3KqmjCeqCeMI7TqxXf+SRejU62YzO36CvWucBl0HXkQxIenc29CcyX3bNYeDQ2
+         Z84Ie9B1cMwfVRVku+4LkcK8tR5Q8HyFRv8B9bF7bI9Rd6+n83XLKKIVnpNIjciy4puX
+         fB3g==
+X-Forwarded-Encrypted: i=1; AJvYcCXhzMsK+j3g6kobtoNJ9RoAsP3jctF4l4cXnIYgcvvKkqStgkpLo64w7QDNIi9uNLdRLKEzsdmqyUztBmg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+m/yWxrXWoMke2J8eeS4S4FGtKe9ZE2V+TwgJtPVawU/bvYFF
+	qYDbSxqjOVG5c4U/7wQSDY8Jsf5k7+GMylPzgsAGVpqTsf8s6Nex
+X-Gm-Gg: ASbGncsJ8k66ak4kNMLQGlsebJk6vHvyl7pqZnFVDTFebsNvZJpUaKjRYk9TogvPd5Z
+	X/eIIrsIXPsU4hrse/Cw2RAZLeINGxkZ2Tq6DLK9N0J/6pgyY1qNCeJzBbtVlMRa8YfphLgqRNL
+	GuxtEdv/SOLNsFmwG6ejStTmY2KApbw41L13AiJevnbRiqZQw/VAbl4jgw+i8uRLrnu6niZYdG3
+	R+nUKtW0HvjL/z95grOJ+FeuQe5JtGztMiODEOyqvkd5+nLIysWj01RoDYVKlclm3I1Rz/zjFhd
+	+HMAXyaB8xLDTul6q94ptMYRBVFwg/KP/NKM2ShgtVilUrpevEBttQlttUgRhgE=
+X-Google-Smtp-Source: AGHT+IFIk7IJGw/uTRyIdBXZ7R74+M9tJir8t+7eJlq7ujoV0qWJhLnIh10ZuaUyIj7mBfGlJWXqbw==
+X-Received: by 2002:a17:903:18b:b0:223:3394:3a2e with SMTP id d9443c01a7336-23197f92bb8mr22478725ad.18.1747186923276;
+        Tue, 13 May 2025 18:42:03 -0700 (PDT)
+Received: from [10.189.144.225] ([43.224.245.249])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22fc828b38csm87518545ad.173.2025.05.13.18.42.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 13 May 2025 18:42:02 -0700 (PDT)
+Message-ID: <f62b0d18-f5af-4063-b644-f6b8069ca200@gmail.com>
+Date: Wed, 14 May 2025 09:41:59 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: krzk+dt@kernel.org, huangyifeng@eswincomputing.com, 
- p.zabel@pengutronix.de, ningyu@eswincomputing.com, 
- devicetree@vger.kernel.org, conor+dt@kernel.org, 
- linux-kernel@vger.kernel.org, linmin@eswincomputing.com
-To: dongxuyang@eswincomputing.com
-In-Reply-To: <20250514003121.473-1-dongxuyang@eswincomputing.com>
-References: <20250514002945.415-1-dongxuyang@eswincomputing.com>
- <20250514003121.473-1-dongxuyang@eswincomputing.com>
-Message-Id: <174718652184.181383.530303771736709791.robh@kernel.org>
-Subject: Re: [PATCH 1/2] dt-bindings: reset: eswin: Documentation for
- eic7700 SoC
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 1/2] erofs: add 'fsoffset' mount option for file-backed
+ & bdev-based mounts
+To: Hongbo Li <lihongbo22@huawei.com>, xiang@kernel.org, chao@kernel.org,
+ zbestahu@gmail.com, jefflexu@linux.alibaba.com, dhavale@google.com
+Cc: linux-erofs@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+ Sheng Yong <shengyong1@xiaomi.com>, Wang Shuai <wangshuai12@xiaomi.com>
+References: <20250513113418.249798-1-shengyong1@xiaomi.com>
+ <a20ac409-f8a5-48d6-9e8b-3c40f829bea9@huawei.com>
+ <a78509f0-f333-4a53-a618-2f05a53ff91b@huawei.com>
+Content-Language: en-US, fr-CH
+From: Sheng Yong <shengyong2021@gmail.com>
+In-Reply-To: <a78509f0-f333-4a53-a618-2f05a53ff91b@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-
-On Wed, 14 May 2025 08:31:21 +0800, dongxuyang@eswincomputing.com wrote:
-> From: Xuyang Dong <dongxuyang@eswincomputing.com>
+On 5/13/25 21:59, Hongbo Li wrote:
 > 
-> Add device tree binding documentation and header file for the ESWIN
-> eic7700 reset controller module.
 > 
-> Signed-off-by: Yifeng Huang <huangyifeng@eswincomputing.com>
-> Signed-off-by: Xuyang Dong <dongxuyang@eswincomputing.com>
-> ---
->  .../bindings/reset/eswin,eic7700-reset.yaml   |  47 +++
->  .../dt-bindings/reset/eswin,eic7700-reset.h   | 460 ++++++++++++++++++
->  2 files changed, 517 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/reset/eswin,eic7700-reset.yaml
->  create mode 100644 include/dt-bindings/reset/eswin,eic7700-reset.h
+> On 2025/5/13 21:56, Hongbo Li wrote:
+>>
+>>
+>> On 2025/5/13 19:34, Sheng Yong wrote:
+>>> From: Sheng Yong <shengyong1@xiaomi.com>
+>>>
+[...]
+>>> can share storage.
+>>> +fsoffset=%s            Specify image offset for file-backed or bdev- 
+>>> based mounts.
+> Hi, Yong
 > 
+> fsoffset should be formatted with %lu ?
 
-My bot found errors running 'make dt_binding_check' on your patch:
+Oops, yes, it should be %lu.
 
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/reset/eswin,eic7700-reset.example.dtb: sys-crg@51828000 (syscon): compatible: ['syscon', 'simple-mfd'] is too short
-	from schema $id: http://devicetree.org/schemas/mfd/syscon-common.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/reset/eswin,eic7700-reset.example.dtb: sys-crg@51828000 (syscon): reg: [[0, 1367506944], [0, 524288]] is too long
-	from schema $id: http://devicetree.org/schemas/mfd/syscon-common.yaml#
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250514003121.473-1-dongxuyang@eswincomputing.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+thanks
+> 
+> Thanks,
+> Hongbo
+> 
+[...]
 
 
