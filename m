@@ -1,276 +1,93 @@
-Return-Path: <linux-kernel+bounces-647797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-647799-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E17DDAB6DB9
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 16:00:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71CACAB6DC2
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 16:01:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4B2417B0047
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 13:58:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B0A94C6D9A
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 14:00:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AE9E2868B8;
-	Wed, 14 May 2025 13:57:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZM/eWa2I"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81E9D27E7FC;
+	Wed, 14 May 2025 13:58:06 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C80B5278162;
-	Wed, 14 May 2025 13:57:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 921D627A929
+	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 13:58:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747231047; cv=none; b=IAQUCCV6jH8SE5z6BYYRH75TR5CVSo5r6h7IgUEnwigeh/MFjj4550MGm7F+Qu9eKTjtTaI/9ebHSQ9Itj7v5pJV8slS9RChtcG/HGpg0hK9AY7kzV8aK0YSaQdDML70gTWpbx5U440T4anoYfG/DVsHrlhygucp5bgBkd8N/o8=
+	t=1747231086; cv=none; b=XGmdN1CbTvZ5c3NY1Vg0L13UzEw84Ymuxd1wVqGLQZIoWon428287sXC1NQjXpirdzPLVFQuy9g6ZFmAlDvtYgUS3oFDCXSU10kCDFMG4FYJmZMwErRnPRqcYlBnA25UJvJhyjia/AYL84Hvac1M7b/986KM8pOrEHPVZLKt6zI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747231047; c=relaxed/simple;
-	bh=BhLOVDIWnEq0nnThxI1EmaSEQnntC6wSwC5bMYkcfp4=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=bANhV5LSG5itctH5nU8IqopKsKWYoIo7CZ5ZtM0T8h29n1cet8D8Qe8CHgLaA0qP0RWOO4EmWmcqJxgtHdTpqi2o8RTD+Jutkj/JowWThVO/eYf8T/mjHKpS+yEcI3DVnMsGRh9eENx1j/EFSwhSAHXh7kU+McbfE6iJy8NhhRw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZM/eWa2I; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B56AC4CEE9;
-	Wed, 14 May 2025 13:57:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747231047;
-	bh=BhLOVDIWnEq0nnThxI1EmaSEQnntC6wSwC5bMYkcfp4=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=ZM/eWa2IafVzJRCl6gFkh6G4SyEEzlPqnE78PZMlVIxe60Cxw5OI9Chs9PlTWlY6N
-	 rz83gkG+VTD0SQFjj0MgeZP146TRVO7PqJ0wsiAGqpvGYziieFEr095GlvoRB7AB3/
-	 smJ34QR+cpv96hoJejaQ/5OXZvDBp0EU3Y8m8JuqU+fGuRi8d7Hc+p6smX/totyldB
-	 2hS85ErNgrxexWxXTTSNfqiv4CfKoW27usKvwe436uCMcrF2Tr5WUc19YBuZf34vOW
-	 F6RvJMLiJr+hjbF8eJHJH6nVl+SFG8B5zSWn0b9mlp/+/AAPT0Si1eRMOKuhNxYRx0
-	 JqOP0gJfjH6/g==
+	s=arc-20240116; t=1747231086; c=relaxed/simple;
+	bh=LWyAOvzRnXuIZA8cLevaGutmbqIQDsqlc4rNxMh6jXc=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=CcuZNRLPReyrmJffc6momqIyGGAvByOTHvOSDSyAMEemXAqa2FTFN58gEir26IoXgvhlqNC78tXWIbJxpFwqPoU3h148ol1IRX+MgFF1msSNG6QnI6SvZsSlSTDMHx551nCsSMNo/B1YIbzuluRPGv8fr7aUSioa4BLXM3LFOjM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3da8e79f6c6so40190485ab.3
+        for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 06:58:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747231083; x=1747835883;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=D0+yF4RILSxJaNDLV//8NLYN3xc4izbjtIG3syz7JXc=;
+        b=X4CYS1xVmYeQxfMPEBxpyGAd6UuDmVIme+FS+8W67GFmJZawlhWp3Q0N7HjA41S6G0
+         9ITyu1158cYlOEIMcduTpJ2FG3sJJAjjzMevtOfvBb+NpFEd6lvj8ljjPAXD6crHJJs/
+         zUoNo9jrzRaVTQTfQwry9i78DUWZimKf/wNtcLZP4wiFDBeFDWaRf0jJLS4q7Q2DxC67
+         wTDziqUXpfccKw+tFu+F7w5yyAPHs3ibVfXHe0Rjnb7+qwG8dJtlG5W3fDxONCAaZJ50
+         cjpEAWtTKAW2ElAVOSbHqyaKva4v2coJFkKEnvrzPebfsnsl86omhZT29KhoFmi73wjP
+         WKQw==
+X-Forwarded-Encrypted: i=1; AJvYcCXopMH5TFJFTQKr5SLw3WGs659DvbJS+9DVHS++Islr//YBK8iGy7ajt5DDJvlLU7o5hKjZFrBLhl1/C4U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBTRDuMfR77DTiVMK3m5m1EUhgqrKxDZgZ+qW7ZYc+PFFwvQT2
+	5Ncw4KIh42Py86PGTfeB1XuzOTO12wVNh3xZI5oDizrp4ZrlMTqdhayUmJ1+00yiAyZIJNJebxR
+	lkw5eD9mNWuzCAp+SKJIoosHT8h+wMGsR5AapFTsHOiPKyQnkJX0OXuA=
+X-Google-Smtp-Source: AGHT+IG7nK7DACC9FvxEeV9+wB2/wCISw0/U2axZ45Q+rzSrmJ5n0M5GBgXa4if78wtL/2uUoiiQbLrwRmJIqknQFKiKHVqvdU08
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 14 May 2025 15:57:22 +0200
-Message-Id: <D9VXPNT4HNXP.1PKET0Q1H7O9Y@kernel.org>
-Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
- <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
- <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Benno Lossin" <benno.lossin@proton.me>,
- "Andreas Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl"
- <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>, "Danilo
- Krummrich" <dakr@kernel.org>, "Boris Brezillon"
- <boris.brezillon@collabora.com>, "Sebastian Reichel"
- <sebastian.reichel@collabora.com>, "Liam Girdwood" <lgirdwood@gmail.com>,
- "Mark Brown" <broonie@kernel.org>, <linux-kernel@vger.kernel.org>,
- <rust-for-linux@vger.kernel.org>
-Subject: Re: [PATCH v3] rust: regulator: add a bare minimum regulator
- abstraction
-From: "Benno Lossin" <lossin@kernel.org>
-To: "Daniel Almeida" <daniel.almeida@collabora.com>
-X-Mailer: aerc 0.20.1
-References: <20250513-topics-tyr-regulator-v3-1-4cc2704dfec6@collabora.com>
- <D9VATLUHDGU8.53I80TGVRV0J@kernel.org>
- <B288AFB1-BA0A-4383-9823-EAC9E5DCA59F@collabora.com>
-In-Reply-To: <B288AFB1-BA0A-4383-9823-EAC9E5DCA59F@collabora.com>
+MIME-Version: 1.0
+X-Received: by 2002:a05:6e02:b4c:b0:3d9:6c9a:f35d with SMTP id
+ e9e14a558f8ab-3db6f7ad066mr33144265ab.10.1747231083625; Wed, 14 May 2025
+ 06:58:03 -0700 (PDT)
+Date: Wed, 14 May 2025 06:58:03 -0700
+In-Reply-To: <67f1c7df.050a0220.0a13.0256.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6824a16b.a70a0220.3e9d8.0015.GAE@google.com>
+Subject: Re: [syzbot] [mm?] general protection fault in mremap
+From: syzbot <syzbot+5250c4727db03e3436cc@syzkaller.appspotmail.com>
+To: Liam.Howlett@oracle.com, akpm@linux-foundation.org, eadavis@qq.com, 
+	jannh@google.com, liam.howlett@oracle.com, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, lorenzo.stoakes@oracle.com, nogikh@google.com, 
+	pfalcato@suse.de, syzkaller-bugs@googlegroups.com, syzkaller@googlegroups.com, 
+	vbabka@suse.cz
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed May 14, 2025 at 3:01 PM CEST, Daniel Almeida wrote:
->> On 13 May 2025, at 17:01, Benno Lossin <lossin@kernel.org> wrote:
->> On Tue May 13, 2025 at 5:44 PM CEST, Daniel Almeida wrote:
->>> diff --git a/rust/kernel/regulator.rs b/rust/kernel/regulator.rs
->>> new file mode 100644
->>> index 0000000000000000000000000000000000000000..7b07b64f61fdd4a84ffb38e=
-9b0f90830d5291ab9
->>> --- /dev/null
->>> +++ b/rust/kernel/regulator.rs
->>> @@ -0,0 +1,211 @@
->>> +// SPDX-License-Identifier: GPL-2.0
->>> +
->>> +//! Regulator abstractions, providing a standard kernel interface to c=
-ontrol
->>> +//! voltage and current regulators.
->>> +//!
->>> +//! The intention is to allow systems to dynamically control regulator=
- power
->>> +//! output in order to save power and prolong battery life. This appli=
-es to both
->>> +//! voltage regulators (where voltage output is controllable) and curr=
-ent sinks
->>> +//! (where current limit is controllable).
->>> +//!
->>> +//! C header: [`include/linux/regulator/consumer.h`](srctree/include/l=
-inux/regulator/consumer.h)
->>> +//!
->>> +//! Regulators are modeled in Rust with two types: [`Regulator`] and
->>> +//! [`EnabledRegulator`].
->>=20
->> Would it make sense to store this in a generic variable acting as a type
->> state instead of using two different names? So:
->>=20
->>    pub struct Regulator<State: RegulatorState> { /* ... */ }
->>=20
->>    pub trait RegulatorState: private::Sealed {}
->>=20
->>    pub struct Enabled;
->>    pub struct Disabled;
->>=20
->>    impl RegulatorState for Enabled {}
->>    impl RegulatorState for Disabled {}
->>=20
->> And then one would use `Regulator<Enabled>` and `Regulator<Disabled>`.
->
-> This seems like just another way of doing the same thing.
->
-> I have nothing against a typestate, it's an elegant solution really, but =
-so is
-> the current one. I'd say let's keep what we have unless there is somethin=
-g
-> objectively better about a typestatethat makes it worthy to change this.
+syzbot suspects this issue was fixed by commit:
 
-I'd say it's cleaner and we already have some APIs that utilize type
-states, so I'd prefer we use that where it makes sense.
+commit 36eed5400805b294f1df39b0e3ebc5b7971b3c16
+Author: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Date:   Sun Mar 30 16:20:48 2025 +0000
 
->>> +/// # Invariants
->>> +///
->>> +/// - [`Regulator`] is a non-null wrapper over a pointer to a `struct
->>> +///   regulator` obtained from [`regulator_get()`](https://docs.kernel=
-.org/driver-api/regulator.html#c.regulator_get).
->>=20
->> This should be "`inner` is a pointer obtained from
->> [`regulator_get()`](...)".
->>=20
->>> +/// - Each instance of [`Regulator`] is associated with a single count=
- of
->>> +///   [`regulator_get()`](https://docs.kernel.org/driver-api/regulator=
-.html#c.regulator_get).
->>=20
->> This is redundant, so we should remove it.
->
-> Why is this redundant? It says that we are associated with a *single* ref=
-count.
+    mm/mremap: do not set vrm->vma NULL immediately prior to checking it
 
-I'd fold it into the previous bullet point. To me they aren't really
-disjoint.
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=118356f4580000
+start commit:   a2cc6ff5ec8f Merge tag 'firewire-updates-6.15' of git://gi..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=adffebefc9feb9d6
+dashboard link: https://syzkaller.appspot.com/bug?extid=5250c4727db03e3436cc
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1693d404580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=178ac94c580000
 
->>> +/// A [`Regulator`] that is known to be enabled.
->>> +///
->>> +/// # Invariants
->>> +///
->>> +/// - [`EnabledRegulator`] is a valid regulator that has been enabled.
->>=20
->> This isn't fully clear what it's supposed to mean to me. Maybe mention
->> the `regulator_enable` function?
->>=20
->>> +/// - Each instance of [`EnabledRegulator`] is associated with a singl=
-e count
->>> +///   of [`regulator_enable()`](https://docs.kernel.org/driver-api/reg=
-ulator.html#c.regulator_enable)
->>> +///   that was obtained from the [`Regulator`] instance once it was en=
-abled.
->>=20
->> Ah I see you mention it here, then what is the bullet point above about?
->
-> Again, the word _single_ is what is important here.
+If the result looks correct, please mark the issue as fixed by replying with:
 
-I don't see the point in stating it in two separate bullet points.
+#syz fix: mm/mremap: do not set vrm->vma NULL immediately prior to checking it
 
->>> +pub struct EnabledRegulator {
->>> +    inner: Regulator,
->>> +}
->>> +
->>> +impl EnabledRegulator {
->>> +    fn as_ptr(&self) -> *mut bindings::regulator {
->>> +        self.inner.inner.as_ptr()
->>> +    }
->>> +
->>> +    /// Disables the regulator.
->>> +    pub fn disable(self) -> Result<Regulator> {
->>> +        // Keep the count on `regulator_get()`.
->>> +        let regulator =3D ManuallyDrop::new(self);
->>=20
->> Why don't we drop the refcount if the `regulator_disable` call fails?
->
-> I am operating under the assumption that regulator_enable() and
-> regulator_disable() do not touch the reference count. Note that we do not
-> acquire a new reference when we build EnabledRegulator in Regulator::enab=
-le(),
-> we merely move our instance of Regulator into EnabledRegulator.
->
-> disable() takes EnabledRegulator by value in order to convert it to Regul=
-ator.
-> If we let the destructor run, that will decrement the refcount as it call=
-s
-> inner.drop(), so that is why the ManuallyDrop is there in the first place=
-. =20
->
-> Now if disable() fails, perhaps we should somehow return `self` to the ca=
-ller.
-> That would let them retry the operation, even if it's unlikely to be of a=
-ny
-> help, as Mark said. In this sense, I agree that there is a leak that I
-> overlooked.
-
-I see two different options on what to do about the leak:
-
-(1) implement `disable` in terms of a new function `try_disable`
-    returning `Result<Regulator, DisableError>` where `DisableError`
-    gives access to the `EnabledRegulator`.
-
-(2) document that the `disable` function leaks the refcount if an error
-    is returned.
-
-I have a slight preference for (1), but if Mark & you decide that it's
-not necessary, since users of regulators won't need it any time soon,
-then go with (2).
-
-> On a second note, Benno, do you have a clean way to return both kernel::E=
-rror
-> and `self` here? I assume that introducing a separate error type just for=
- this
-> function is overkill.
-
-It's pretty common in Rust to have a custom error type for those cases.
-I think we should also do it here, Alice already used the pattern in the
-alloc module [1].
-
-[1]: https://lore.kernel.org/all/20250502-vec-methods-v5-3-06d20ad9366f@goo=
-gle.com
-
->>> +
->>> +        // SAFETY: Safe as per the type invariants of `Self`.
->>> +        let res =3D to_result(unsafe { bindings::regulator_disable(reg=
-ulator.as_ptr()) });
->>> +
->>> +        res.map(|()| Regulator {
->>> +            inner: regulator.inner.inner,
->>> +        })
->>> +    }
->>> +
->>> +    /// Sets the voltage for the regulator.
->>> +    pub fn set_voltage(&self, min_uv: Microvolt, max_uv: Microvolt) ->=
- Result {
->>> +        self.inner.set_voltage(min_uv, max_uv)
->>> +    }
->>> +
->>> +    /// Gets the current voltage of the regulator.
->>> +    pub fn get_voltage(&self) -> Result<Microvolt> {
->>> +        self.inner.get_voltage()
->>> +    }
->>> +}
->>> +
->>> +impl Drop for EnabledRegulator {
->>> +    fn drop(&mut self) {
->>> +        // SAFETY: By the type invariants, we know that `self` owns a =
-reference,
->>> +        // so it is safe to relinquish it now.
->>> +        unsafe { bindings::regulator_disable(self.as_ptr()) };
->>=20
->> Same here, what happens to the refcount?
->
-> It remains the same, we never acquired one when we enabled, so we are rel=
-ying
-> on inner.drop() to decrement it.
-
-Ah I overlooked that. Then it's fine.
-
----
-Cheers,
-Benno
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
