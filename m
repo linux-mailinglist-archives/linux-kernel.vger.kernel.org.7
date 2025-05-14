@@ -1,378 +1,185 @@
-Return-Path: <linux-kernel+bounces-647662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-647669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6A42AB6B65
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 14:27:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CC42AB6B80
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 14:35:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93931188A109
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 12:27:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91C7E1B67712
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 12:35:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5267278E62;
-	Wed, 14 May 2025 12:26:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C0642777FC;
+	Wed, 14 May 2025 12:35:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iVPBBlK5"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (2048-bit key) header.d=damsy.net header.i=@damsy.net header.b="oMTg1HUK";
+	dkim=permerror (0-bit key) header.d=damsy.net header.i=@damsy.net header.b="8rhNJnqq"
+Received: from jeth.damsy.net (jeth.damsy.net [51.159.152.102])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25C5422A4EA
-	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 12:26:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 962B322A4EA;
+	Wed, 14 May 2025 12:35:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.159.152.102
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747225593; cv=none; b=dOX86rStH2fveu6IkpvAP93irERE3tZQaTzFiDj1EqzxQqHfbmXayG9dTZRol/lBMKZdyH0WjyDhHzwZsLXHKogeg8l9XKzUnJlqRk3/9czAqVouuvK4PbnT0hxWqMeL95pk8SHCT5x0ggKd5hbQarmrANSvEVq54463A5mKk88=
+	t=1747226128; cv=none; b=VgdfJ2sueVr8xmILctMSFICQpUJVONIsuhvJP3qJx/8/WMylj1a2sKVfRrX2aioXQbgdHXBSZMAGg8d/7NLsFF5bK8VhtgYEKpxpwl/IlBsc1DF+XTyKcA0bp+hQB7PqeWVW/ZLvN5zsEyG1pK772Elo6OTh2x0cr51z8BOqfZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747225593; c=relaxed/simple;
-	bh=QM3FL+BY//hfpGJznOviWt6mq1QiVU6+56YTt5XPeTk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=nkXw22LLYFQcbGpRS3Be9B466Mx5+8Ni9lfvCe4qKW4HpB470Z7XOwt3Tryvqdmpw/OHf0zgcD1zB0jIjxHNQ+L/kOy28Nkq47PoVPgNuxYW+ynkf7IUjfSUsacMqDTlHMlYMjIiT6gaBV3XXJtE3q8RBOtCFahGxKxoI/EomGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iVPBBlK5; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1747225591; x=1778761591;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=QM3FL+BY//hfpGJznOviWt6mq1QiVU6+56YTt5XPeTk=;
-  b=iVPBBlK5MiD2c5ftrN6cV1K9QicwrGFs8xhr+HbX3bT0ilRGGrQvWzDp
-   IhNc9MLI70MLCo7jQuv+MacFJTDGGnwlFrMUIQsCm4gOusUGSEwOLq9Ei
-   7mWkar20lT04YDtmAh6whOAaYA+U2CP8xuy9fUkhcfdC2BQfjRfHOA6Ls
-   Kv+bh2lmy5Y9wdnSscc0CeARjQHuI16rW6MKkfqmvr9Zk8FV4/KSU531T
-   2V6PjTIST88oWaISmqsyAz5cwSCcz2YxWjSUNAjYtw2J3aHVnv8ZnxTDQ
-   oONS7liebHDtp6X2hzAdXg2IN0oH3yNAYzzLpvkDcBMVXkSyygg5DOOiN
-   g==;
-X-CSE-ConnectionGUID: 59u1n/xQS0m5uNXzqCH5Ow==
-X-CSE-MsgGUID: tnXucWhoRAi2Ec/KL3GdjA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11433"; a="49098856"
-X-IronPort-AV: E=Sophos;i="6.15,288,1739865600"; 
-   d="scan'208";a="49098856"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 May 2025 05:26:31 -0700
-X-CSE-ConnectionGUID: jE/BIcWJTemMXBVFD1anYQ==
-X-CSE-MsgGUID: x02M7RV8S5KB14IZZg2Nnw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,288,1739865600"; 
-   d="scan'208";a="137946729"
-Received: from jraag-z790m-itx-wifi.iind.intel.com ([10.190.239.23])
-  by orviesa006.jf.intel.com with ESMTP; 14 May 2025 05:26:28 -0700
-From: Raag Jadav <raag.jadav@intel.com>
-To: gregkh@linuxfoundation.org,
-	david.m.ertman@intel.com,
-	ira.weiny@intel.com,
-	lee@kernel.org,
-	andriy.shevchenko@linux.intel.com,
-	mika.westerberg@linux.intel.com,
-	heikki.krogerus@linux.intel.com
-Cc: linux-kernel@vger.kernel.org,
-	Raag Jadav <raag.jadav@intel.com>
-Subject: [PATCH v5 2/2] mfd: core: Support auxiliary device
-Date: Wed, 14 May 2025 17:54:32 +0530
-Message-Id: <20250514122432.4019606-3-raag.jadav@intel.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250514122432.4019606-1-raag.jadav@intel.com>
-References: <20250514122432.4019606-1-raag.jadav@intel.com>
+	s=arc-20240116; t=1747226128; c=relaxed/simple;
+	bh=2dw3JOnHoUcdzGRN6kdhMybNLL/lLmz++l0w6F81qtA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=V4dGyynKORV0CW2f9XXEgZRmtMCDCMKkcg9MzoUWe/8/su/EYLnVdQh9pxeD0QaaJSRK+04G6CJHeUUj3yJAQVcrCwbECJZzXvkyj1INYqZ5l74V4n3EyKrEERZcXH0QmKxBNBjlYGLyzoAB91fS2JMpKXT0UhghVds78wIoEwc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=damsy.net; spf=pass smtp.mailfrom=damsy.net; dkim=pass (2048-bit key) header.d=damsy.net header.i=@damsy.net header.b=oMTg1HUK; dkim=permerror (0-bit key) header.d=damsy.net header.i=@damsy.net header.b=8rhNJnqq; arc=none smtp.client-ip=51.159.152.102
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=damsy.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=damsy.net
+DKIM-Signature: v=1; a=rsa-sha256; s=202408r; d=damsy.net; c=relaxed/relaxed;
+	h=From:To:Subject:Date:Message-ID; t=1747225555; bh=l7CVYbiYMp3bpjoLvOLIf89
+	4834vFxO7Y79o9x78pyY=; b=oMTg1HUKKUobVlbG1lxjwnSVhtfqSEmona5UDnIjZyLZ4MADxl
+	Iu+V4jDnCCa+oX6zJ5zpHnio52K1/GJjoriWc1Bl19m/F9Op7LPsok/s5OcAIziZgoGoGDpL/Gq
+	3DFUKcpBQniDaFPUFgVDsB0pE/7ZCIlPpHGPKafTS6OCDVZ1KeLhvn1hWVbyKe8ryC8P996eUyS
+	yoMVJNdLRG9ONuljR661KK1wpqwL5g4LF6x2NFg3Nf03bcRAc2Li+IyvqhLsZ0rbEuM0lWfTQ18
+	jSMTrtwtA/eip8TZHZ1M8LwKajaKqlXm5yI+W8s8V9AFFA3EEtABl6/eWFxNl59TMrw==;
+DKIM-Signature: v=1; a=ed25519-sha256; s=202408e; d=damsy.net; c=relaxed/relaxed;
+	h=From:To:Subject:Date:Message-ID; t=1747225555; bh=l7CVYbiYMp3bpjoLvOLIf89
+	4834vFxO7Y79o9x78pyY=; b=8rhNJnqqS9bntJ5mODbeO/T1NcD6UqMJSaRqqa55oYbmm812Ve
+	EVdgv1k90iVoDZxU6Dwj9GmsxfIwPu7djNBw==;
+Message-ID: <34321866-6991-4aa0-98e9-6d6b7c37e8e4@damsy.net>
+Date: Wed, 14 May 2025 14:25:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 00/10] Improve gpu_scheduler trace events + UAPI
+To: Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>,
+ Philipp Stanner <phasta@kernel.org>
+Cc: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>,
+ =?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
+ Abhinav Kumar <quic_abhinavk@quicinc.com>,
+ Alex Deucher <alexander.deucher@amd.com>,
+ Boris Brezillon <boris.brezillon@collabora.com>,
+ Danilo Krummrich <dakr@kernel.org>, David Airlie <airlied@gmail.com>,
+ Dmitry Baryshkov <lumag@kernel.org>, Felix Kuehling
+ <Felix.Kuehling@amd.com>, Frank Binns <frank.binns@imgtec.com>,
+ Jonathan Corbet <corbet@lwn.net>, Liviu Dudau <liviu.dudau@arm.com>,
+ Lizhi Hou <lizhi.hou@amd.com>, Lucas De Marchi <lucas.demarchi@intel.com>,
+ Lucas Stach <l.stach@pengutronix.de>, Lyude Paul <lyude@redhat.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Matt Coster <matt.coster@imgtec.com>, Matthew Brost
+ <matthew.brost@intel.com>, Maxime Ripard <mripard@kernel.org>,
+ Melissa Wen <mwen@igalia.com>, Min Ma <min.ma@amd.com>,
+ Oded Gabbay <ogabbay@kernel.org>, Philipp Stanner <phasta@kernel.org>,
+ Qiang Yu <yuq825@gmail.com>, Rob Clark <robdclark@gmail.com>,
+ Rob Herring <robh@kernel.org>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
+ Simona Vetter <simona@ffwll.ch>, Steven Price <steven.price@arm.com>,
+ Sumit Semwal <sumit.semwal@linaro.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, amd-gfx@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org, etnaviv@lists.freedesktop.org,
+ freedreno@lists.freedesktop.org, intel-xe@lists.freedesktop.org,
+ lima@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
+ linux-arm-msm@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+ nouveau@lists.freedesktop.org
+References: <20250424083834.15518-1-pierre-eric.pelloux-prayer@amd.com>
+Content-Language: en-US
+From: Pierre-Eric Pelloux-Prayer <pierre-eric@damsy.net>
+In-Reply-To: <20250424083834.15518-1-pierre-eric.pelloux-prayer@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Extend MFD subsystem to support auxiliary child device. This is useful
-for MFD usecases where parent device is on a discoverable bus and doesn't
-fit into the platform device criteria. Purpose of this implementation is
-to provide discoverable MFDs just enough infrastructure to register
-independent child devices without abusing the platform device.
+Hi Philipp,
 
-Current support is limited to just PCI type MFDs, but this can be further
-extended to support other types like USB in the future.
+Did you get a chance to take a look at the latest revision of this series?
 
-Signed-off-by: Raag Jadav <raag.jadav@intel.com>
----
- drivers/mfd/Kconfig      |   2 +-
- drivers/mfd/mfd-core.c   | 185 +++++++++++++++++++++++++++++----------
- include/linux/mfd/core.h |   3 +
- 3 files changed, 142 insertions(+), 48 deletions(-)
+Thanks,
+Pierre-Eric
 
-diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-index 93773201a517..4c71a3f962c9 100644
---- a/drivers/mfd/Kconfig
-+++ b/drivers/mfd/Kconfig
-@@ -8,8 +8,8 @@ menu "Multifunction device drivers"
- 
- config MFD_CORE
- 	tristate
-+	select AUXILIARY_BUS
- 	select IRQ_DOMAIN
--	default n
- 
- config MFD_CS5535
- 	tristate "AMD CS5535 and CS5536 southbridge core functions"
-diff --git a/drivers/mfd/mfd-core.c b/drivers/mfd/mfd-core.c
-index 76bd316a50af..174925bb7bf6 100644
---- a/drivers/mfd/mfd-core.c
-+++ b/drivers/mfd/mfd-core.c
-@@ -10,9 +10,11 @@
- #include <linux/kernel.h>
- #include <linux/platform_device.h>
- #include <linux/acpi.h>
-+#include <linux/auxiliary_bus.h>
- #include <linux/list.h>
- #include <linux/property.h>
- #include <linux/mfd/core.h>
-+#include <linux/pci.h>
- #include <linux/pm_runtime.h>
- #include <linux/slab.h>
- #include <linux/module.h>
-@@ -136,10 +138,108 @@ static int mfd_match_of_node_to_dev(struct platform_device *pdev,
- 	return 0;
- }
- 
--static int mfd_add_device(struct device *parent, int id,
--			  const struct mfd_cell *cell,
--			  struct resource *mem_base,
--			  int irq_base, struct irq_domain *domain)
-+static int mfd_fill_device_resources(struct device *dev, const struct mfd_cell *cell,
-+				     struct resource *mem_base, int irq_base,
-+				     struct irq_domain *domain, struct resource *res)
-+{
-+	int r, ret;
-+
-+	for (r = 0; r < cell->num_resources; r++) {
-+		res[r].name  = cell->resources[r].name;
-+		res[r].flags = cell->resources[r].flags;
-+
-+		/* Find out base to use */
-+		if ((cell->resources[r].flags & IORESOURCE_MEM) && mem_base) {
-+			res[r].parent = mem_base;
-+			res[r].start  = mem_base->start + cell->resources[r].start;
-+			res[r].end    = mem_base->start + cell->resources[r].end;
-+		} else if (cell->resources[r].flags & IORESOURCE_IRQ) {
-+			if (domain) {
-+				/* Unable to create mappings for IRQ ranges. */
-+				WARN_ON(cell->resources[r].start != cell->resources[r].end);
-+				res[r].start = res[r].end = irq_create_mapping(domain,
-+						cell->resources[r].start);
-+			} else {
-+				res[r].start = irq_base + cell->resources[r].start;
-+				res[r].end   = irq_base + cell->resources[r].end;
-+			}
-+		} else {
-+			res[r].parent = cell->resources[r].parent;
-+			res[r].start  = cell->resources[r].start;
-+			res[r].end    = cell->resources[r].end;
-+		}
-+
-+		if (!cell->ignore_resource_conflicts) {
-+			if (has_acpi_companion(dev)) {
-+				ret = acpi_check_resource_conflict(&res[r]);
-+				if (ret)
-+					return ret;
-+			}
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static void mfd_release_auxiliary_device(struct device *dev)
-+{
-+	kfree(to_auxiliary_dev(dev));
-+}
-+
-+static int mfd_add_auxiliary_device(struct device *parent, int id, const struct mfd_cell *cell,
-+				    struct resource *mem_base, int irq_base,
-+				    struct irq_domain *domain)
-+{
-+	struct auxiliary_device *auxdev;
-+	struct resource *res;
-+	int ret = -ENOMEM;
-+
-+	auxdev = kzalloc(sizeof(*auxdev), GFP_KERNEL);
-+	if (!auxdev)
-+		return ret;
-+
-+	res = kcalloc(cell->num_resources, sizeof(*res), GFP_KERNEL);
-+	if (!res)
-+		goto fail_alloc_res;
-+
-+	auxdev->name = cell->name;
-+	/* Use parent id for discoverable devices */
-+	auxdev->id = dev_is_pci(parent) ? pci_dev_id(to_pci_dev(parent)) : cell->id;
-+
-+	auxdev->dev.parent = parent;
-+	auxdev->dev.type = &mfd_dev_type;
-+	auxdev->dev.release = mfd_release_auxiliary_device;
-+
-+	ret = auxiliary_device_init(auxdev);
-+	if (ret)
-+		goto fail_aux_init;
-+
-+	ret = mfd_fill_device_resources(&auxdev->dev, cell, mem_base, irq_base, domain, res);
-+	if (ret)
-+		goto fail_aux_add;
-+
-+	auxdev->resource = res;
-+	auxdev->num_resources = cell->num_resources;
-+
-+	ret = __auxiliary_device_add(auxdev, parent->driver->name);
-+	if (ret)
-+		goto fail_aux_add;
-+
-+	return 0;
-+
-+fail_aux_add:
-+	/* auxdev will be freed with the put_device() and .release sequence */
-+	auxiliary_device_uninit(auxdev);
-+fail_aux_init:
-+	kfree(res);
-+fail_alloc_res:
-+	kfree(auxdev);
-+	return ret;
-+}
-+
-+static int mfd_add_platform_device(struct device *parent, int id, const struct mfd_cell *cell,
-+				   struct resource *mem_base, int irq_base,
-+				   struct irq_domain *domain)
- {
- 	struct resource *res;
- 	struct platform_device *pdev;
-@@ -148,7 +248,6 @@ static int mfd_add_device(struct device *parent, int id,
- 	bool disabled = false;
- 	int ret = -ENOMEM;
- 	int platform_id;
--	int r;
- 
- 	if (id == PLATFORM_DEVID_AUTO)
- 		platform_id = id;
-@@ -227,44 +326,9 @@ static int mfd_add_device(struct device *parent, int id,
- 			goto fail_of_entry;
- 	}
- 
--	for (r = 0; r < cell->num_resources; r++) {
--		res[r].name = cell->resources[r].name;
--		res[r].flags = cell->resources[r].flags;
--
--		/* Find out base to use */
--		if ((cell->resources[r].flags & IORESOURCE_MEM) && mem_base) {
--			res[r].parent = mem_base;
--			res[r].start = mem_base->start +
--				cell->resources[r].start;
--			res[r].end = mem_base->start +
--				cell->resources[r].end;
--		} else if (cell->resources[r].flags & IORESOURCE_IRQ) {
--			if (domain) {
--				/* Unable to create mappings for IRQ ranges. */
--				WARN_ON(cell->resources[r].start !=
--					cell->resources[r].end);
--				res[r].start = res[r].end = irq_create_mapping(
--					domain, cell->resources[r].start);
--			} else {
--				res[r].start = irq_base +
--					cell->resources[r].start;
--				res[r].end   = irq_base +
--					cell->resources[r].end;
--			}
--		} else {
--			res[r].parent = cell->resources[r].parent;
--			res[r].start = cell->resources[r].start;
--			res[r].end   = cell->resources[r].end;
--		}
--
--		if (!cell->ignore_resource_conflicts) {
--			if (has_acpi_companion(&pdev->dev)) {
--				ret = acpi_check_resource_conflict(&res[r]);
--				if (ret)
--					goto fail_res_conflict;
--			}
--		}
--	}
-+	ret = mfd_fill_device_resources(&pdev->dev, cell, mem_base, irq_base, domain, res);
-+	if (ret)
-+		goto fail_res_conflict;
- 
- 	ret = platform_device_add_resources(pdev, res, cell->num_resources);
- 	if (ret)
-@@ -302,6 +366,16 @@ static int mfd_add_device(struct device *parent, int id,
- 	return ret;
- }
- 
-+static int mfd_add_device(struct device *parent, int id, const struct mfd_cell *cells,
-+			  struct resource *mem_base, int irq_base, struct irq_domain *domain)
-+{
-+	/* TODO: Convert platform device abusers and remove this flag */
-+	if (dev_is_pci(parent) && id == MAUX_TYPE)
-+		return mfd_add_auxiliary_device(parent, id, cells, mem_base, irq_base, domain);
-+
-+	return mfd_add_platform_device(parent, id, cells, mem_base, irq_base, domain);
-+}
-+
- /**
-  * mfd_add_devices - register child devices
-  *
-@@ -340,16 +414,22 @@ int mfd_add_devices(struct device *parent, int id,
- }
- EXPORT_SYMBOL(mfd_add_devices);
- 
--static int mfd_remove_devices_fn(struct device *dev, void *data)
-+static int mfd_remove_auxiliary_device(struct device *dev, void *data)
-+{
-+	struct auxiliary_device *auxdev = to_auxiliary_dev(dev);
-+
-+	auxiliary_device_delete(auxdev);
-+	auxiliary_device_uninit(auxdev);
-+	return 0;
-+}
-+
-+static int mfd_remove_platform_device(struct device *dev, void *data)
- {
- 	struct platform_device *pdev;
- 	const struct mfd_cell *cell;
- 	struct mfd_of_node_entry *of_entry, *tmp;
- 	int *level = data;
- 
--	if (dev->type != &mfd_dev_type)
--		return 0;
--
- 	pdev = to_platform_device(dev);
- 	cell = mfd_get_cell(pdev);
- 
-@@ -372,6 +452,17 @@ static int mfd_remove_devices_fn(struct device *dev, void *data)
- 	return 0;
- }
- 
-+static int mfd_remove_devices_fn(struct device *dev, void *data)
-+{
-+	if (dev->type != &mfd_dev_type)
-+		return 0;
-+
-+	if (dev_is_platform(dev))
-+		return mfd_remove_platform_device(dev, data);
-+
-+	return mfd_remove_auxiliary_device(dev, data);
-+}
-+
- void mfd_remove_devices_late(struct device *parent)
- {
- 	int level = MFD_DEP_LEVEL_HIGH;
-diff --git a/include/linux/mfd/core.h b/include/linux/mfd/core.h
-index faeea7abd688..85ca273b3873 100644
---- a/include/linux/mfd/core.h
-+++ b/include/linux/mfd/core.h
-@@ -12,6 +12,9 @@
- 
- #include <linux/platform_device.h>
- 
-+/* TODO: Convert platform device abusers and remove this flag */
-+#define MAUX_TYPE	INT_MIN
-+
- #define MFD_RES_SIZE(arr) (sizeof(arr) / sizeof(struct resource))
- 
- #define MFD_CELL_ALL(_name, _res, _pdata, _pdsize, _id, _compat, _of_reg, _use_of_reg, _match) \
--- 
-2.34.1
+Le 24/04/2025 à 10:38, Pierre-Eric Pelloux-Prayer a écrit :
+> Hi,
+> 
+> The initial goal of this series was to improve the drm and amdgpu
+> trace events to be able to expose more of the inner workings of
+> the scheduler and drivers to developers via tools.
+> 
+> Then, the series evolved to become focused only on gpu_scheduler.
+> The changes around vblank events will be part of a different
+> series, as well as the amdgpu ones.
+> 
+> Moreover Sima suggested to make some trace events stable uAPI,
+> so tools can rely on them long term.
+> 
+> The first patches extend and cleanup the gpu scheduler events,
+> then add a documentation entry in drm-uapi.rst.
+> 
+> The last 2 patches are new in v8. One is based on a suggestion
+> from Tvrtko and gets rid of drm_sched_job::id. The other is a
+> cleanup of amdgpu trace events to use the fence=%llu:%llu format.
+> 
+> The drm_sched_job patches don't affect gpuvis which has code to parse
+> the gpu_scheduler events but these events are not enabled.
+> 
+> Changes since v8:
+> * swapped patches 8 & 9
+> * rebased on drm-next
+> 
+> Changes since v7:
+> * uint64_t -> u64
+> * reworked dependencies tracing (Tvrtko)
+> * use common name prefix for all events (Tvrtko)
+> * dropped drm_sched_job::id (Tvrtko)
+> 
+> Useful links:
+> - userspace tool using the updated events:
+> https://gitlab.freedesktop.org/tomstdenis/umr/-/merge_requests/37
+> - v8:
+> https://lists.freedesktop.org/archives/dri-devel/2025-March/496781.html
+> 
+> Pierre-Eric Pelloux-Prayer (10):
+>    drm/debugfs: output client_id in in drm_clients_info
+>    drm/sched: store the drm client_id in drm_sched_fence
+>    drm/sched: add device name to the drm_sched_process_job event
+>    drm/sched: cleanup gpu_scheduler trace events
+>    drm/sched: trace dependencies for gpu jobs
+>    drm/sched: add the drm_client_id to the drm_sched_run/exec_job events
+>    drm/sched: cleanup event names
+>    drm: get rid of drm_sched_job::id
+>    drm/doc: document some tracepoints as uAPI
+>    drm/amdgpu: update trace format to match gpu_scheduler_trace
+> 
+>   Documentation/gpu/drm-uapi.rst                |  19 ++++
+>   drivers/accel/amdxdna/aie2_ctx.c              |   3 +-
+>   drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd.c    |   2 +-
+>   drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c        |   3 +-
+>   drivers/gpu/drm/amd/amdgpu/amdgpu_job.c       |   8 +-
+>   drivers/gpu/drm/amd/amdgpu/amdgpu_job.h       |   3 +-
+>   drivers/gpu/drm/amd/amdgpu/amdgpu_trace.h     |  32 +++---
+>   drivers/gpu/drm/drm_debugfs.c                 |  10 +-
+>   drivers/gpu/drm/etnaviv/etnaviv_gem_submit.c  |   2 +-
+>   drivers/gpu/drm/imagination/pvr_job.c         |   2 +-
+>   drivers/gpu/drm/imagination/pvr_queue.c       |   5 +-
+>   drivers/gpu/drm/imagination/pvr_queue.h       |   2 +-
+>   drivers/gpu/drm/lima/lima_gem.c               |   2 +-
+>   drivers/gpu/drm/lima/lima_sched.c             |   6 +-
+>   drivers/gpu/drm/lima/lima_sched.h             |   3 +-
+>   drivers/gpu/drm/msm/msm_gem_submit.c          |   8 +-
+>   drivers/gpu/drm/nouveau/nouveau_sched.c       |   3 +-
+>   drivers/gpu/drm/panfrost/panfrost_drv.c       |   2 +-
+>   drivers/gpu/drm/panthor/panthor_drv.c         |   3 +-
+>   drivers/gpu/drm/panthor/panthor_mmu.c         |   2 +-
+>   drivers/gpu/drm/panthor/panthor_sched.c       |   5 +-
+>   drivers/gpu/drm/panthor/panthor_sched.h       |   3 +-
+>   .../gpu/drm/scheduler/gpu_scheduler_trace.h   | 100 +++++++++++++-----
+>   drivers/gpu/drm/scheduler/sched_entity.c      |  16 ++-
+>   drivers/gpu/drm/scheduler/sched_fence.c       |   4 +-
+>   drivers/gpu/drm/scheduler/sched_internal.h    |   2 +-
+>   drivers/gpu/drm/scheduler/sched_main.c        |  11 +-
+>   .../gpu/drm/scheduler/tests/mock_scheduler.c  |   2 +-
+>   drivers/gpu/drm/v3d/v3d_submit.c              |   2 +-
+>   drivers/gpu/drm/xe/xe_sched_job.c             |   3 +-
+>   include/drm/gpu_scheduler.h                   |  13 ++-
+>   31 files changed, 184 insertions(+), 97 deletions(-)
+> 
 
 
