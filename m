@@ -1,116 +1,158 @@
-Return-Path: <linux-kernel+bounces-647010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-647039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B8D0AB6370
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 08:47:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A5773AB63C8
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 09:08:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FECA3B4742
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 06:46:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 216B43B5D6E
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 07:07:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0394A1FCFF1;
-	Wed, 14 May 2025 06:46:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA33B204F99;
+	Wed, 14 May 2025 07:07:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="RW5E0WU9"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=apitzsch.eu header.i=@apitzsch.eu header.b="sL5dV/9F"
+Received: from www637.your-server.de (www637.your-server.de [168.119.26.117])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 701A4189B91;
-	Wed, 14 May 2025 06:46:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F22C41F4297;
+	Wed, 14 May 2025 07:07:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.26.117
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747205195; cv=none; b=sC86pboSSW8CyjMMqfN+yGmKsUse489qmvKUCHnBliLECcRkxCPcHo/wJ2rbY7ax+9O2bf8nDARzUkNNeNnJm9iDZOxN/2nqxQ7NrHQwFEPkEESkRv6kIh/Z9l3sSIdjuVd+WQtsi51E0FUMwShpDN/1q0FcCu7HoKE1ykpIk6w=
+	t=1747206478; cv=none; b=NsE9xQlDsfijz5bSQuaDvNRQsiJIfu0267phe3ioNEoclndvBd6RKykV8WTJymOMNPMKquH7EDKXZu4qpDZTchGjGe+s0gqfCKdFzdDciqXXDY9IjP5Uld+ZZsjcwOWcfWoG8YxYfU3Uu864SC9nTEbrJuVR5YH93x9lTq/YRxY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747205195; c=relaxed/simple;
-	bh=FzGNWUXaTGFCsKM26TvwH4ODCe27nbD10lyCM1jLg5c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eHp8kXtmEpyaCdMGN0SsYXww1UVWXh0MNOhNm73xdGvMAQovArDswB/WUiKY5+MC5601Y2KmshZ6HVl9kQILzO5grY4tnXjX4vAZajRvUpm2RxQ/05FhBIkFIS1f6BrXRAF/KRg4jVClsis4ceV/V00Bo/IIBYhcV7L4ygf6duw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=RW5E0WU9; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=7ov3BrHnMc54FiJziPsXfPfJ1Oc7ryhefOuk35kozoE=; b=RW5E0WU95KQRmEF8BPGEMuYuYT
-	iPsC5xWyKEr1Ak3spD7rKwXv/a8wV52mgqwguq60OItVvrj/qgEBwhqKrHuuGrgo6oXhGdKEOHdRh
-	lav9E8NjG0qp0UDvh86a/PUfr/UkTpKKnW6ugXFl5mZ84k16jIBrnA18zaAi+BQC+znrFwLcZcTVv
-	lXDJZCSZtd+Zt6KAJTumoN8kdXNLYOKM2ypE+5sYNQyPgaGMg2OJogJzetgwfeDSXuMMtxLFewuZu
-	Ct+pbtqgILdfgXQ1hSwDWDkoBmbPoB88Ho5m1qPzteHYSft2IIv+G3wzLi6rekac1J3pNfSlCvsk5
-	FT0l5Gpw==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uF5sn-0000000BsCw-0hO7;
-	Wed, 14 May 2025 06:46:25 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 8DBA7300717; Wed, 14 May 2025 08:46:24 +0200 (CEST)
-Date: Wed, 14 May 2025 08:46:24 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: dan.j.williams@intel.com, linux-cxl@vger.kernel.org,
-	linux-kernel@vger.kernel.org, David Lechner <dlechner@baylibre.com>,
-	Ingo Molnar <mingo@kernel.org>,
-	"Fabio M. De Francesco" <fabio.maria.de.francesco@linux.intel.com>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>
-Subject: Re: [PATCH 1/7] cleanup: Introduce DEFINE_ACQUIRE() a CLASS() for
- conditional locking
-Message-ID: <20250514064624.GA24938@noisy.programming.kicks-ass.net>
-References: <681d8ce06c869_1229d6294e@dwillia2-xfh.jf.intel.com.notmuch>
- <20250509104028.GL4439@noisy.programming.kicks-ass.net>
- <681ea7d5ea04b_2a2bb100cf@dwillia2-mobl4.notmuch>
- <20250512105026.GP4439@noisy.programming.kicks-ass.net>
- <20250512182559.GB25891@noisy.programming.kicks-ass.net>
- <20250512185817.GA1808@noisy.programming.kicks-ass.net>
- <CAHk-=whxPoFnZ4cLKh4X3m4qVcaak__G8+0iG-aOGO7YkS3LdA@mail.gmail.com>
- <20250513070918.GB25763@noisy.programming.kicks-ass.net>
- <20250513085001.GC25891@noisy.programming.kicks-ass.net>
- <CAHk-=wjBiAqaWnXG_44ajMCqU3nNQOC1RQ6SUmKYC03Y1G=r1g@mail.gmail.com>
+	s=arc-20240116; t=1747206478; c=relaxed/simple;
+	bh=uupTZbALMk3yttvJTX5G36GcIjhVqzlvhfKBHvxb0lw=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=g0mBqOVXwxEp8daS93ZZ2Z57ZxBkh6XM9JX0/nyyQTL5dktj4hqV12X2M9a77jCL6+7QTVh6dRzi94tAjlrvHDvpXu9MmvKQSUGFyLAkExAlvJT6v82wXNxqAuLOQpNjpl6pODoCWpFTdt5hSa8g11axM4H7v/S6cD0pHFVb4zs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=apitzsch.eu; spf=pass smtp.mailfrom=apitzsch.eu; dkim=pass (2048-bit key) header.d=apitzsch.eu header.i=@apitzsch.eu header.b=sL5dV/9F; arc=none smtp.client-ip=168.119.26.117
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=apitzsch.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=apitzsch.eu
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=apitzsch.eu
+	; s=default2410; h=MIME-Version:Content-Transfer-Encoding:Content-Type:
+	References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=xquf9GW/CPgN5hAwZauqU2lgQdp+6IfMQtz1ecIpvm4=; b=sL5dV/9FNGNXrT2WgjsgDg/CaO
+	/1vFwyOZQvFaMfVMYoBAmGSc2NTtiBaelaD7lS0nAjkhfk4O00opOXkiC5H0bO90TdFnm5aFTh7v3
+	sKCsVMw8TKB/7cYRf/ydvWfIJsKnk+qTz85Eyo0AgMZ2oV8n8wpzFo85mzfrNnoEoVpAG6U2fHmmo
+	EGo8gAJ5HxJ7GzB1xA08MppmKrgnLX19giC2XCwDkRGXkWX1W/41kPlD0x84jMnj8D/TrTvEnZ7zs
+	RrCqg7Vdd1tcnZgoY6vCQ9n+5EcXVYOk7drmh94uTy2B74JW79TkjbiYQUfvM13dwtpahkEI/VPFA
+	LK5Zvf8Q==;
+Received: from sslproxy07.your-server.de ([78.47.199.104])
+	by www637.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96.2)
+	(envelope-from <git@apitzsch.eu>)
+	id 1uF5tC-000PUh-2G;
+	Wed, 14 May 2025 08:46:50 +0200
+Received: from localhost ([127.0.0.1])
+	by sslproxy07.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <git@apitzsch.eu>)
+	id 1uF5tC-000D3j-1E;
+	Wed, 14 May 2025 08:46:50 +0200
+Message-ID: <ed4c877531a87d89141b115bcddd2ec7c95b8e2a.camel@apitzsch.eu>
+Subject: Re: [PATCH v2 4/4] media: i2c: imx214: Remove hard-coded external
+ clock frequency
+From: =?ISO-8859-1?Q?Andr=E9?= Apitzsch <git@apitzsch.eu>
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: Ricardo Ribalda <ribalda@kernel.org>, Mauro Carvalho Chehab
+	 <mchehab@kernel.org>, ~postmarketos/upstreaming@lists.sr.ht, 
+	phone-devel@vger.kernel.org, linux-media@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, laurent.pinchart@ideasonboard.com
+Date: Wed, 14 May 2025 08:46:48 +0200
+In-Reply-To: <aBnHI1APgjfcj2xG@kekkonen.localdomain>
+References: <20250505-imx214_ccs_pll-v2-0-f50452061ff1@apitzsch.eu>
+	 <20250505-imx214_ccs_pll-v2-4-f50452061ff1@apitzsch.eu>
+	 <aBnHI1APgjfcj2xG@kekkonen.localdomain>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wjBiAqaWnXG_44ajMCqU3nNQOC1RQ6SUmKYC03Y1G=r1g@mail.gmail.com>
+X-Authenticated-Sender: andre@apitzsch.eu
+X-Virus-Scanned: Clear (ClamAV 1.0.7/27636/Tue May 13 10:40:46 2025)
 
-On Tue, May 13, 2025 at 12:46:29PM -0700, Linus Torvalds wrote:
-> On Tue, 13 May 2025 at 01:50, Peter Zijlstra <peterz@infradead.org> wrote:
-> >
-> > +#define __GUARD_IS_ERR(_ptr) \
-> > +       ({ unsigned long _var = (__force unsigned long)(_ptr); \
-> > +          bool _s; \
-> > +          asm_inline volatile ("cmp %[val], %[var]" \
-> > +                               : "=@ccns" (_s) \
-> > +                               : [val] "i" (-MAX_ERRNO), \
-> > +                                 [var] "r" (_var)); \
-> > +          unlikely(_s); })
-> 
-> I think that this might be acceptable if it was some actual common operation.
-> 
-> But for just the conditional guard test, I think it's cute, but I
-> don't think it's really worth it.
+Hello Sakari,
 
-Its actually every guard, the destructor is shared between unconditional
-and conditional locks.
+Am Dienstag, dem 06.05.2025 um 08:24 +0000 schrieb Sakari Ailus:
+> Hi Andr=C3=A9,
+>=20
+> On Mon, May 05, 2025 at 11:05:56PM +0200, Andr=C3=A9 Apitzsch via B4 Rela=
+y
+> wrote:
+> > From: Andr=C3=A9 Apitzsch <git@apitzsch.eu>
+> >=20
+> > Instead rely on the rate set on the clock (using assigned-clock-
+> > rates
+> > etc.)
+> >=20
+> > Signed-off-by: Andr=C3=A9 Apitzsch <git@apitzsch.eu>
+> > ---
+> > =C2=A0drivers/media/i2c/imx214.c | 6 ------
+> > =C2=A01 file changed, 6 deletions(-)
+> >=20
+> > diff --git a/drivers/media/i2c/imx214.c
+> > b/drivers/media/i2c/imx214.c
+> > index
+> > 9e9be47394ec768a5b34d44b06b5bbb0988da5a1..c12996e294dccebb18c608254
+> > f1e0d14dc064423 100644
+> > --- a/drivers/media/i2c/imx214.c
+> > +++ b/drivers/media/i2c/imx214.c
+> > @@ -32,7 +32,6 @@
+> > =C2=A0
+> > =C2=A0#define IMX214_REG_FAST_STANDBY_CTRL	CCI_REG8(0x0106)
+> > =C2=A0
+> > -#define IMX214_DEFAULT_CLK_FREQ	24000000
+> > =C2=A0#define IMX214_DEFAULT_LINK_FREQ	600000000
+> > =C2=A0/* Keep wrong link frequency for backward compatibility */
+> > =C2=A0#define IMX214_DEFAULT_LINK_FREQ_LEGACY	480000000
+> > @@ -1405,11 +1404,6 @@ static int imx214_probe(struct i2c_client
+> > *client)
+> > =C2=A0		return dev_err_probe(dev, PTR_ERR(imx214->xclk),
+> > =C2=A0				=C2=A0=C2=A0=C2=A0=C2=A0 "failed to get xclk\n");
+> > =C2=A0
+> > -	ret =3D clk_set_rate(imx214->xclk, IMX214_DEFAULT_CLK_FREQ);
+> > -	if (ret)
+> > -		return dev_err_probe(dev, ret,
+> > -				=C2=A0=C2=A0=C2=A0=C2=A0 "failed to set xclk
+> > frequency\n");
+> > -
+>=20
+> Oops. I missed this is what the driver was doing already. Indeed,
+> this is one of the historic sensor drivers that do set the frequency
+> in DT systems.
+>=20
+> The driver never used the clock-frequency property and instead used a
+> fixed frequency. Changing the behaviour now could be problematic.
+>=20
+> There are options here that I think we could do:
+>=20
+> 1) use your v1 patch (4) which uses "clock-frequency" if it exists
+> and otherwise uses the default, fixed frequency or
+>=20
+> 2) set the frequency only if the "clock-frequency" property exists.
+> The DT currently requires clock-frequency and the YAML conversion was
+> done in 2020 whereas the driver is from 2018. If we do this, the
+> clock-frequency should be deprecated (or even removed from bingings).
+>=20
+> I wonder what others think. Cc'd Laurent in any case.
 
-> Right now IS_ERR_OR_NULL() generates pretty disgusting code, with
-> clang doing things like this:
-> 
->         testq   %rdi, %rdi
->         sete    %al
->         cmpq    $-4095, %rdi                    # imm = 0xF001
->         setae   %cl
->         orb     %al, %cl
->         je      .LBB3_1
+I would go with option 2 and add a patch which updates the bindings,
+i.e. which deprecates 'clock-frequency',  to this series.
 
-Whee, that is creative indeed :-)
+Best regards,
+Andr=C3=A9
+>=20
+> > =C2=A0	ret =3D imx214_get_regulators(dev, imx214);
+> > =C2=A0	if (ret < 0)
+> > =C2=A0		return dev_err_probe(dev, ret, "failed to get
+> > regulators\n");
+> >=20
 
