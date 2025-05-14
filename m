@@ -1,143 +1,98 @@
-Return-Path: <linux-kernel+bounces-647994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-648010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CA90AB7053
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 17:52:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25E14AB708D
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 17:59:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B75BA3AA5DC
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 15:52:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80F8518862C7
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 15:57:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBD2F202F71;
-	Wed, 14 May 2025 15:52:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 443CA27A107;
+	Wed, 14 May 2025 15:53:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DgeDh45V"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y78eKOdR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09B9E19CCF5
-	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 15:52:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C4FF282ED;
+	Wed, 14 May 2025 15:53:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747237950; cv=none; b=URkaa3UGJd+ot4rh+LJHWhm3YtmGIsEV8Hqb9pTQnyBEglr5B5y7vagik07Ub7ZUuC0y7ltpP7wRTxxgo1dS8m6dFP+xM6Lr/zj5vBx+DdGwF/aE9S4g+J4G0/7FHOTaDWsIzRaJmh55aeLGHZ5l1qDdhpIxv4GDFBJKS9fzHIE=
+	t=1747238026; cv=none; b=Bd0LXW8FPfFhG6oLX3J7Q9vv+2moqDUaAHN33iXhyAeoUaC8wlvri/D6j4GPVNdQF9cpijHd/5/cNgI9mTzBZX6/w0SbhSMDDlJH3EyEf1INeHMP5UNGmt2jXVL09ie3PW53VBMpl7RhMbRUaLwkHW9eZkb5vEG4rAD1uD+6jK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747237950; c=relaxed/simple;
-	bh=X4CKE5jwHff5AvjJ8izpnOfbIQaMYG4xNDaMlvlye4w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bTBGXrVL1YmtP1GECU5WI0UHO71fk6HPFH9LAz7b76sWBX5wHbs+TpDVlXRhGLlDdtvdsY5gT64jFE0vXApBiFR7442BOJf4xKZtyPqLXyWLE8tn0FzlazEsl+9fRygqtUk8/7WJWkK1Z/BqIahkIgjTK0md6Sf4EDJAJehXghs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DgeDh45V; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1747237948; x=1778773948;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=X4CKE5jwHff5AvjJ8izpnOfbIQaMYG4xNDaMlvlye4w=;
-  b=DgeDh45VD/PuZlMap5Gzy9+MjubQpvjTa7j9FgOGHgx7uzzNIE6JXRuh
-   10scbb7Q1DLXoLYfgXh7Nmxs9FtdfOwQA6g9WUuj04Fr8ecOlzArJr1D/
-   H0/MQ0Mouy7VJg3BiNmRtdNX5bL65/9MCW2/g8nz6D3rFv+DMqj17cYxu
-   veuqqj19ttzHfAh8KHXYO7FQ+XTmFuNlAgf8GuGNy8LVvx3aIM6akTQ4E
-   acc99iJgahMoSAuAP2JSERN95dBQVupi/zPFYFIlnxVVDVgaTspvXeKZ3
-   clsCHDRZhLTtp55Z7aFE7ixc3kvQ/QRcpbD/cP3ff5XRQU7IN4oPtQOKa
-   Q==;
-X-CSE-ConnectionGUID: WljISb4ARhCNxXPoxJ87ow==
-X-CSE-MsgGUID: 3tf286+IT92rcvEOaxOvyw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11433"; a="52952133"
-X-IronPort-AV: E=Sophos;i="6.15,288,1739865600"; 
-   d="scan'208";a="52952133"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 May 2025 08:52:25 -0700
-X-CSE-ConnectionGUID: jv1HsYezQi6cL5v51Mjucg==
-X-CSE-MsgGUID: kmQ+AorYSCityTDL5VYLnQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,288,1739865600"; 
-   d="scan'208";a="142108939"
-Received: from dnelso2-mobl.amr.corp.intel.com (HELO [10.124.222.101]) ([10.124.222.101])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 May 2025 08:52:24 -0700
-Message-ID: <66f5b7f0-8109-4c10-80ef-783ba8bccae6@intel.com>
-Date: Wed, 14 May 2025 08:52:20 -0700
+	s=arc-20240116; t=1747238026; c=relaxed/simple;
+	bh=vUJao5RA1FECEfxSWQAdWVDba5icQlbRNS/+nM7I1XA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=P8v1D9t+r/Qw//9rej7zlM8jSMWm5LZ3rrcjR8uBhVrCSvTH0C4dCEW3bKw0WjX2zzGAcwgEP3zjivn3nO+FWAe3bKw3lN3Uw9HzN5iapGXRLnWVVireHmhhRVU0rD00Igh24smMKM1GBbGLDBeghWjAVvkpbv4C5/iXz2SutyE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y78eKOdR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE2EDC4CEE3;
+	Wed, 14 May 2025 15:53:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747238025;
+	bh=vUJao5RA1FECEfxSWQAdWVDba5icQlbRNS/+nM7I1XA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=Y78eKOdRFrLUEiUBM1SjlXL7oRujznCCqxO9wf2G2oOD9TN2Ebo6oDaN8UqBIfxeb
+	 aWnLSJptIzyb6deKVSSSaG88mP/gOk6blsI0ixxK0+ugCcbLT1sTUEH+wPSqqoFCzd
+	 NrDwhODn1LHwSSlOcsHP+Z2yBK+YWGzd3S51vCqksTihqk7j4GjdvM6dfDYLosMJQC
+	 XgEAIne+vE4btJf6fvGkPkSjMIwj7l1TtRocV9S04g7Jz/aJY1+DhtiW03cOXkXjxc
+	 sJZ9LtUJAz42jN4OnviELHlaWXL/q9M6Lhuf6E6+CxlrrIShttRlcoaJckbAksStvY
+	 mbWRrlg51jbGA==
+From: Conor Dooley <conor@kernel.org>
+To: Ben Zong-You Xie <ben717@andestech.com>
+Cc: Conor Dooley <conor.dooley@microchip.com>,
+	paul.walmsley@sifive.com,
+	palmer@dabbelt.com,
+	aou@eecs.berkeley.edu,
+	alex@ghiti.fr,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	tglx@linutronix.de,
+	daniel.lezcano@linaro.org,
+	prabhakar.mahadev-lad.rj@bp.renesas.com,
+	geert+renesas@glider.be,
+	magnus.damm@gmail.com,
+	devicetree@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	tim609@andestech.com
+Subject: Re: (subset) [PATCH v4 0/9] add Voyager board support
+Date: Wed, 14 May 2025 16:53:34 +0100
+Message-ID: <20250514-spherical-spindle-0315375167ea@spud>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20250514095350.3765716-1-ben717@andestech.com>
+References: <20250514095350.3765716-1-ben717@andestech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2.1 2/5] x86/virt/tdx: Mark memory cache state incoherent
- when making SEAMCALL
-To: Kai Huang <kai.huang@intel.com>, bp@alien8.de, tglx@linutronix.de,
- peterz@infradead.org, mingo@redhat.com
-Cc: kirill.shutemov@linux.intel.com, hpa@zytor.com, x86@kernel.org,
- linux-kernel@vger.kernel.org, pbonzini@redhat.com, seanjc@google.com,
- rick.p.edgecombe@intel.com, reinette.chatre@intel.com,
- isaku.yamahata@intel.com, dan.j.williams@intel.com, thomas.lendacky@amd.com,
- ashish.kalra@amd.com, nik.borisov@suse.com, sagis@google.com
-References: <ab08a6a1f4d1873eb09d5ad625c42a51d29e5971.1746874095.git.kai.huang@intel.com>
- <20250514101022.7537-1-kai.huang@intel.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <20250514101022.7537-1-kai.huang@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=566; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=o01yVTTzZFhpDmtQ1GzGggNP3iMTUpd+Z6Ki8ySZNTY=; b=owGbwMvMwCFWscWwfUFT0iXG02pJDBkqe2plgqcGXXx24ZJRo7eKQ0z/e+93Vx9a5G6+3NHcd vhTz3+OjlIWBjEOBlkxRZbE230tUuv/uOxw7nkLM4eVCWQIAxenAExkzURGhpvcXafWN5TLGk0V kuDQE2MseHjPKVR0cfSi1uzww2WX5zEyHFtzLcn4jujdLJevx6ZcnXtsso5DEvskM7Fwjw8iR5f 1cgEA
+X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
+Content-Transfer-Encoding: 8bit
 
-On 5/14/25 03:10, Kai Huang wrote:
-> Turn on that boolean when the kernel does SEAMCALL so that kexec can
-> correctly flush cache.  Note not all SEAMCALL leaf functions generate
-> dirty cachelines of TDX private memory, but for simplicity, just treat
-> all of them do.
+From: Conor Dooley <conor.dooley@microchip.com>
 
-It's not just for simplicity.
+On Wed, 14 May 2025 17:53:41 +0800, Ben Zong-You Xie wrote:
+> The Voyager is a 9.6” x 9.6” Micro ATX form factor development board
+> including Andes QiLai SoC. This patch series adds minimal device tree
+> files for the QiLai SoC and the Voyager board [1].
+> 
+> Now only support basic uart drivers to boot up into a basic console. Other
+> features will be added later.
+> 
+> [...]
 
-There's no contract in place for when the TDX module will dirty memory
-or not. A call that is "clean" today might dirty memory tomorrow.
+Applied to riscv-cache-for-next, thanks!
 
-The _only_ thing we know is that SEAMCALLs can dirty cachelines. We
-don't know when or how they do it. This blurb makes it sound like it's
-possible to optimize this. It's not.
+[6/9] dt-bindings: cache: add QiLai compatible to ax45mp
+      https://git.kernel.org/conor/c/51b081cdb923
+
+Thanks,
+Conor.
 
