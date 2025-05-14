@@ -1,121 +1,106 @@
-Return-Path: <linux-kernel+bounces-647376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-647378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B235AB67BB
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 11:38:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 79D3DAB67BF
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 11:39:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F3771B6500E
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 09:38:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C12C1B65D34
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 09:39:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E986022CBF8;
-	Wed, 14 May 2025 09:37:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCD9E22B8CB;
+	Wed, 14 May 2025 09:39:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cBYxh0W3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="akjHKHTd";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="GROZoH0n"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41BEB22ACCE;
-	Wed, 14 May 2025 09:37:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9584322ACD3
+	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 09:38:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747215477; cv=none; b=YSPiGqLT6OzUx8NWPDStDgKdnH43pehOZqC9q7CMwQ2tblHfah6Sx/wiyzzqkE1ZocnkptpE+mYivvpo5XJN7kgqoNGDhsY2/nzIexLR+/rcdOS/idDvAxYi97bOJPd21AMIXYX+4DuVRxd6+ykUZfrTKsg91JK6pL0HvY4EGuo=
+	t=1747215540; cv=none; b=gy7/Z3srCzJsrMGrzONlywXQC1ucfXFvk1XuFntiYnWUIg0aXbscgqFpAfxQZYZDDUnDhKc+iL4SgJQCL0QcJrptPczkhbgsIi3+6UaT7UNo639nKLatn8eyMbZctbFPWm9STWjKApRJcyk/8VNuKj2c/0zI9wuKzAzQcdKp7m0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747215477; c=relaxed/simple;
-	bh=NurdwnwGbSV9JUS/xzW5xcSfhaak9b3QqCAV7BzFooA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rgQvUFNWaIknILT3HxuLtcnu3ILxmaGjPOpKs5MeRHoxan4gp3da0GmzLW4whyPLHAEd13aFd2/0LVCDngW17Zxz2sM3zxBQRm98xmhWa/KCEwfL8IyfelB7vX+cSJ7XKcbESsDpJ+jyAf1EOb7AZNZQ6vT1BAFX5rK7ccAQLJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cBYxh0W3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D65DC4CEEB;
-	Wed, 14 May 2025 09:37:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747215476;
-	bh=NurdwnwGbSV9JUS/xzW5xcSfhaak9b3QqCAV7BzFooA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cBYxh0W3tiCiq6Ri/9ZWOL4LFwslxGL8iDU9kKOrVza7U2egvvwsWSjfZWtRhBKED
-	 FeuiIqGeiawtU/chMWX+08IyuhK++0NZwI3O7MjcVwqr897AnF6Wcvpx3Hl1BUZ/9R
-	 h2U7T8YKt8C+WqrpqxAbRA+LM1ls9BXOf+fy8dS0nEV7XM8VMREff6m9gypZraKL/M
-	 /UTXYGUwa3sKzXofDq74PbH+7ZUlQrlYVZVYjJUXOASDGVXvnm+k8BU0TuCiT45UWx
-	 tT85cjVrBLNx4n3EhKiRCyFRykqQ6rFY44JxUiy0tqbgjOdItiSugScA/JFqPMxISb
-	 K1EDDzvY81d8A==
-Date: Wed, 14 May 2025 10:37:51 +0100
-From: Simon Horman <horms@kernel.org>
-To: mhklinux@outlook.com
-Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
-	decui@microsoft.com, andrew+netdev@lunn.ch, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	James.Bottomley@hansenpartnership.com, martin.petersen@oracle.com,
-	linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org, linux-scsi@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH net 2/5] hv_netvsc: Use vmbus_sendpacket_mpb_desc() to
- send VMBus messages
-Message-ID: <20250514093751.GF3339421@horms.kernel.org>
-References: <20250513000604.1396-1-mhklinux@outlook.com>
- <20250513000604.1396-3-mhklinux@outlook.com>
+	s=arc-20240116; t=1747215540; c=relaxed/simple;
+	bh=h/kcPQL5cDBGxEiXlSfwtWkXEJ+Uhq4yRCnSRwFX3j4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kgxdTgIJKtqcEIWOmtFXEy6xjH+QBEmD1VqiOV6mb6QPKnRtZSU7e9iRUTZh7hFlJdXWuIO6S2qhCigc4+o7MAEdPpk5PmskR6Raowq4J+puAC2vxOEwc0G37TqnmgCpADRSuunsJRPN47n2NvurUHQsXPePQmA76upJ9uhq6bo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=akjHKHTd; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GROZoH0n; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Nam Cao <namcao@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1747215536;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=zSbuYDRtVvHSPCJT7OiqBZPf1qjnHuxHcxmCjMw550E=;
+	b=akjHKHTdS+qA9f2SWAX76YwS7nCi/1TgOE+zVabQITFoOBufupyyO5lWVEGYYGHi3euo9N
+	BtCH3pNcj0GuptlONdSI5ZIqouX6J6YgaYSYBYk1s7DrY7292HZhK3Y6YsLruMyFWMfXAL
+	eMp2lpUI7ZSK3vmxFlWEedm4uD54UyawXdBBO+e8QAtrlEkN/vcOzJtAMjfRcXVajfSxSr
+	fVyiz+5M8qoZxsLb/aYmEI5mYtljoSNt27TLrDFFesr/ElZ9GUJ0kK48zsGN1JS0l5Pgp5
+	7Z71n5uD9IfpOGFmlZGVKSrumOuNfI/q7mh/4VcOFa6WrdRmumlqhTVDWWKYiA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1747215536;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=zSbuYDRtVvHSPCJT7OiqBZPf1qjnHuxHcxmCjMw550E=;
+	b=GROZoH0n+qX75m8UErZojwBTQ289hvnd0Da8jPvXuIcH22Bna6qsUu3EDc2B0+bC4t4j7V
+	G+uVE3yVziLpErDQ==
+To: Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Alexandre Ghiti <alex@ghiti.fr>,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: Nam Cao <namcao@linutronix.de>
+Subject: [PATCH v2 00/11] riscv: kprobes: Clean up instruction simulation
+Date: Wed, 14 May 2025 11:38:39 +0200
+Message-Id: <cover.1747215274.git.namcao@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250513000604.1396-3-mhklinux@outlook.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, May 12, 2025 at 05:06:01PM -0700, mhkelley58@gmail.com wrote:
-> From: Michael Kelley <mhklinux@outlook.com>
-> 
-> netvsc currently uses vmbus_sendpacket_pagebuffer() to send VMBus
-> messages. This function creates a series of GPA ranges, each of which
-> contains a single PFN. However, if the rndis header in the VMBus
-> message crosses a page boundary, the netvsc protocol with the host
-> requires that both PFNs for the rndis header must be in a single "GPA
-> range" data structure, which isn't possible with
-> vmbus_sendpacket_pagebuffer(). As the first step in fixing this, add a
-> new function netvsc_build_mpb_array() to build a VMBus message with
-> multiple GPA ranges, each of which may contain multiple PFNs. Use
-> vmbus_sendpacket_mpb_desc() to send this VMBus message to the host.
-> 
-> There's no functional change since higher levels of netvsc don't
-> maintain or propagate knowledge of contiguous PFNs. Based on its
-> input, netvsc_build_mpb_array() still produces a separate GPA range
-> for each PFN and the behavior is the same as with
-> vmbus_sendpacket_pagebuffer(). But the groundwork is laid for a
-> subsequent patch to provide the necessary grouping.
-> 
-> Cc: <stable@vger.kernel.org> # 6.1.x
-> Signed-off-by: Michael Kelley <mhklinux@outlook.com>
-> ---
->  drivers/net/hyperv/netvsc.c | 50 +++++++++++++++++++++++++++++++++----
->  1 file changed, 45 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/net/hyperv/netvsc.c b/drivers/net/hyperv/netvsc.c
-> index d6f5b9ea3109..6d1705f87682 100644
-> --- a/drivers/net/hyperv/netvsc.c
-> +++ b/drivers/net/hyperv/netvsc.c
-> @@ -1055,6 +1055,42 @@ static int netvsc_dma_map(struct hv_device *hv_dev,
->  	return 0;
->  }
->  
-> +/* Build an "array" of mpb entries describing the data to be transferred
-> + * over VMBus. After the desc header fields, each "array" entry is variable
-> + * size, and each entry starts after the end of the previous entry. The
-> + * "offset" and "len" fields for each entry imply the size of the entry.
-> + *
-> + * The pfns are in HV_HYP_PAGE_SIZE, because all communication with Hyper-V
-> + * uses that granularity, even if the system page size of the guest is larger.
-> + * Each entry in the input "pb" array must describe a contiguous range of
-> + * guest physical memory so that the pfns are sequential if the range crosses
-> + * a page boundary. The offset field must be < HV_HYP_PAGE_SIZE.
+Hi,
 
-Hi Michael,
+There is some instruction-processing code in kprobes simulate code. These
+code should be insn.h. In fact, most of them is duplicating insn.h.
 
-Is there a guarantee that this constraint is met. And moreover, is there a
-guarantee that all of the entries will fit in desc? I am slightly concerned
-that there may be an overrun lurking here.
+This series remove the duplicated bits and make use of macros already
+defined in insn.h. The non-duplicated bits are moved into insn.h.
 
-...
+v2:
+  rebase on top of Alex's patches [1]. This means replacing RV_X with
+  RV_X_mask for the first 2 patches. The rest is the same.
+
+[1] https://lore.kernel.org/linux-riscv/20250508125202.108613-1-alexghiti@r=
+ivosinc.com/
+
+Nam Cao (11):
+  riscv: kprobes: Move branch_rs2_idx to insn.h
+  riscv: kprobes: Move branch_funct3 to insn.h
+  riscv: kprobes: Remove duplication of RV_EXTRACT_JTYPE_IMM
+  riscv: kprobes: Remove duplication of RV_EXTRACT_RS1_REG
+  riscv: kprobes: Remove duplication of RV_EXTRACT_BTYPE_IMM
+  riscv: kproves: Remove duplication of RVC_EXTRACT_JTYPE_IMM
+  riscv: kprobes: Remove duplication of RVC_EXTRACT_C2_RS1_REG
+  riscv: kprobes: Remove duplication of RVC_EXTRACT_BTYPE_IMM
+  riscv: kprobes: Remove duplication of RV_EXTRACT_RD_REG
+  riscv: kprobes: Remove duplication of RV_EXTRACT_UTYPE_IMM
+  riscv: kprobes: Remove duplication of RV_EXTRACT_ITYPE_IMM
+
+ arch/riscv/include/asm/insn.h            |  9 +++
+ arch/riscv/kernel/probes/simulate-insn.c | 94 +++++-------------------
+ 2 files changed, 28 insertions(+), 75 deletions(-)
+
+--=20
+2.39.5
+
 
