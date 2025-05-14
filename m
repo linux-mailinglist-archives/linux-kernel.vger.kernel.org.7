@@ -1,103 +1,141 @@
-Return-Path: <linux-kernel+bounces-647387-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-647377-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C48CAB67CC
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 11:41:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AB92AB67BE
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 11:39:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 20E647B5694
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 09:39:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F6AC16725D
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 09:39:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BC2E230270;
-	Wed, 14 May 2025 09:39:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A1D41F4C98;
+	Wed, 14 May 2025 09:38:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="DRvvYk6c";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="d38MzEbN"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PDgYAL4Q"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B431B22D9FF
-	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 09:39:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C720B21C16D;
+	Wed, 14 May 2025 09:38:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747215544; cv=none; b=Z5KIQcQWbwQK8Dvp2LZ0SwmWO1Hr2dq7krWpK+cnBEEfyBFAB5ppqH6QdHgXP5A4JdPi8TT1iIgyUXnftzjSPfrrvF3p1qOfGR3TdeH5ACyUKfJUSNMDZpW/L2do99cO8pAICzTpIc7eeAgbz5TgcQRHhng/LhZSNhQn1Fg6fAY=
+	t=1747215536; cv=none; b=CkA7AOe0n//JtGBgXAd7El46X+a3ZqFQPqjM+iAlwYpgss53DMO5w2LIYVPOyM4Zrg/YZf8DGmsfSB9gr0oMAlmCHmEOEHRTv+qte/+sXEFktY2/xfcf7mXiTjZWj8AyYsChjQgbKvq/BIH3NIYDHJVtHiVM2+ciqQydCwGFUQA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747215544; c=relaxed/simple;
-	bh=bTLzb+Ezuh7TwlU6p0BQuHaTpUzDUWvpnpKsbIn10+4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=rjrCRpyX/y9sKQl/XQZmEUy/hHzBWp0ukwrdeLERKmpMCFhQRp5Zp8bzFJUYVZL/uRZJV/JScSZQY3tNYK5RYSz/bCx6gaHUc7Klpp5lXccCSDn6MMpKTB3V41exj0inTII1X7wnbjzY9oN6rfKCn2oqY0Fy4bbdg/NF8g7g/4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=DRvvYk6c; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=d38MzEbN; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Nam Cao <namcao@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1747215541;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=K31BZ+j3XRd8vHo0dCxUnqdgWHJZ/Z7V6F2CPRYuCbE=;
-	b=DRvvYk6c/U8XNuYzayAq7PxEtAYweKvWNdyc99uyL2joXAAABOHAdOI3pRm5eOFVFVEgUR
-	MBSQGF63KB8eFq01XLppGYCSkBPzzqfCj+cW6DoMORslUFgaGCoun0dZ6MMqp4s2fTCfGi
-	lZCbLz9fvn6wBNTCo8nwHe5CHpIqtBhqnzndo3heuQ7DiKYXdXaC/PWgqAKODAodptbU0C
-	g/kf5t8cStoeBHG6ACz6Xt69cz0H86uA+sXA97VNFmDztTp39TzoxT+8w+f+HLpWzlftAl
-	+Gt4CkXT6orIZ+ShHxBVnoNb9hp7K1SRA+DZpQaLSWVaflO9dCtalG4FghwZlQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1747215541;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=K31BZ+j3XRd8vHo0dCxUnqdgWHJZ/Z7V6F2CPRYuCbE=;
-	b=d38MzEbN7AJxqLXq5RdEhXH154Ne6BMPE07o2CY8WmsywLpE0O7fi9iezjGRtFewNvDqXO
-	26244oroFV8C+HAw==
-To: Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Alexandre Ghiti <alex@ghiti.fr>,
-	linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: Nam Cao <namcao@linutronix.de>,
-	Alexandre Ghiti <alexghiti@rivosinc.com>
-Subject: [PATCH v2 11/11] riscv: kprobes: Remove duplication of RV_EXTRACT_ITYPE_IMM
-Date: Wed, 14 May 2025 11:38:50 +0200
-Message-Id: <8ae34e966c312ae5cf6c09a35ddc290cce942208.1747215274.git.namcao@linutronix.de>
-In-Reply-To: <cover.1747215274.git.namcao@linutronix.de>
-References: <cover.1747215274.git.namcao@linutronix.de>
+	s=arc-20240116; t=1747215536; c=relaxed/simple;
+	bh=/HtRjQVvBFILgrC0Hi5f/Rs7A+6DOr3qwrunJOTC18A=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
+	 References:In-Reply-To; b=Fp+pz4gDJgvOdWhKoaOE4fIpKC3q+pLJox4zBnLAxTcQvCTJPDUZQyrbCuJHOz4PtSZ0I/0zJkpk1YryT/tIQk9jzL7/RC5+7nqoCJOb3AuQvL6OXyIfi2LPBNASbOBCAdyuyDNtMbOfylMmBWnxckuZXvt9KQQft6R8y1MMABg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PDgYAL4Q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48677C4CEE9;
+	Wed, 14 May 2025 09:38:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747215535;
+	bh=/HtRjQVvBFILgrC0Hi5f/Rs7A+6DOr3qwrunJOTC18A=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=PDgYAL4QCpqxzaUFU7HIqjmKxnVK11e8ppHvbMfn1Zbcg2eqGbZlS8eR9OW1A2Vle
+	 qN5Ht1MP6WvBk22zYLZnjmISz7jsWspWDB22B+Ilh5dNTsBmAypBCfDYZaT1Sc6s/W
+	 UDMVwjBbvvjpI3gL/lV0fjilZaRHPgKrdomzQbmLWAiawJTT+0Wu/86ju4QQ/cjmRt
+	 2ESiBHlrhqt3F1m4f8sm/mvzlypwE7opAUqdRmAKZFTY8xrWRr9OY72oAMLDtz66pF
+	 /Y7SUExgAPJjpQ/KDWWNJFSTq+KZ9euY3YlKpwAiWrooxyCokS71r4S8xbFX5Msbez
+	 b8/aRT7qrN8Jw==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 14 May 2025 11:38:50 +0200
+Message-Id: <D9VS7Q1LVMU0.14MJI8ACKVXLU@kernel.org>
+Subject: Re: [PATCH v5 1/4] rust: debugfs: Bind DebugFS directory creation
+From: "Benno Lossin" <lossin@kernel.org>
+To: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
+Cc: "Matthew Maurer" <mmaurer@google.com>, "Miguel Ojeda"
+ <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
+ <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Benno Lossin"
+ <benno.lossin@proton.me>, "Andreas Hindborg" <a.hindborg@kernel.org>,
+ "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
+ "Danilo Krummrich" <dakr@kernel.org>, "Rafael J. Wysocki"
+ <rafael@kernel.org>, "Sami Tolvanen" <samitolvanen@google.com>, "Timur
+ Tabi" <ttabi@nvidia.com>, <linux-kernel@vger.kernel.org>,
+ <rust-for-linux@vger.kernel.org>
+X-Mailer: aerc 0.20.1
+References: <20250505-debugfs-rust-v5-0-3e93ce7bb76e@google.com>
+ <20250505-debugfs-rust-v5-1-3e93ce7bb76e@google.com>
+ <D9VPJFJ44PUP.3D0HGIEJC9UGY@kernel.org>
+ <2025051451-charm-lankiness-8d59@gregkh>
+In-Reply-To: <2025051451-charm-lankiness-8d59@gregkh>
 
-Use RV_EXTRACT_ITYPE_IMM, instead of re-implementing it in simulate_jalr().
+On Wed May 14, 2025 at 10:49 AM CEST, Greg Kroah-Hartman wrote:
+> On Wed, May 14, 2025 at 09:33:05AM +0200, Benno Lossin wrote:
+>> On Tue May 6, 2025 at 1:51 AM CEST, Matthew Maurer wrote:
+>> > +impl<'a> Dir<'a> {
+>> > +    /// Create a new directory in DebugFS. If `parent` is [`None`], i=
+t will be created at the root.
+>> > +    #[cfg(CONFIG_DEBUG_FS)]
+>> > +    fn create<'b>(name: &CStr, parent: Option<&'a Dir<'b>>) -> Self {
+>> > +        let parent_ptr =3D match parent {
+>> > +            Some(parent) =3D> parent.0.as_ptr(),
+>> > +            None =3D> core::ptr::null_mut(),
+>> > +        };
+>> > +        // SAFETY:
+>> > +        // * `name` argument points to a NUL-terminated string that l=
+ives across the call, by
+>> > +        //   invariants of `&CStr`.
+>> > +        // * If `parent` is `None`, `parent` accepts null pointers to=
+ mean create at root.
+>> > +        // * If `parent` is `Some`, `parent` accepts live dentry debu=
+gfs pointers.
+>> > +        //   so we can call `Self::from_ptr`.
+>> > +        let dir =3D unsafe { bindings::debugfs_create_dir(name.as_cha=
+r_ptr(), parent_ptr) };
+>> > +
+>> > +        // SAFETY: `debugfs_create_dir` either returns an error code =
+or a legal `dentry` pointer,
+>> > +        Self(unsafe { Entry::from_ptr(dir) })
+>> > +    }
+>> > +
+>> > +    #[cfg(not(CONFIG_DEBUG_FS))]
+>> > +    fn create<'b>(_name: &CStr, _parent: Option<&'a Dir<'b>>) -> Self=
+ {
+>> > +        Self(Entry::new())
+>> > +    }
+>> > +
+>> > +    /// Create a DebugFS subdirectory.
+>>=20
+>> I'm not familiar with debugfs, if I run `Dir::create(c"foo", None)`
+>> twice, will both of the returned values refer to the same or different
+>> directories?=20
+>
+> You can not create a directory, or file, in the same location with the
+> same name.  The call will fail, so don't do that :)
+>
+>> What if I give a parent?
+>
+> Same thing, it will fail.
+>
+>> If the answer in both cases is that they will refer to the same
+>> directory, then I'd change the docs to mention that.
+>
+> Nope, that does not happen.
+>
+>> So instead of
+>> "Creates" we could say "Finds or creates" or something better.
+>
+> Find does not happen.
+>
+>> If they refer to different files, then I am confused how that would look
+>> like in user-land :)
+>
+> Agreed, which is why that does not happen :)
 
-Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
-Signed-off-by: Nam Cao <namcao@linutronix.de>
+Ah that makes sense, thanks for explaining :)
+
 ---
- arch/riscv/kernel/probes/simulate-insn.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/riscv/kernel/probes/simulate-insn.c b/arch/riscv/kernel/p=
-robes/simulate-insn.c
-index 2b3cd69d6f8e..fa581590c1f8 100644
---- a/arch/riscv/kernel/probes/simulate-insn.c
-+++ b/arch/riscv/kernel/probes/simulate-insn.c
-@@ -64,7 +64,7 @@ bool __kprobes simulate_jalr(u32 opcode, unsigned long ad=
-dr, struct pt_regs *reg
- 	 */
- 	bool ret;
- 	unsigned long base_addr;
--	u32 imm =3D (opcode >> 20) & 0xfff;
-+	u32 imm =3D RV_EXTRACT_ITYPE_IMM(opcode);
- 	u32 rd_index =3D RV_EXTRACT_RD_REG(opcode);
- 	u32 rs1_index =3D RV_EXTRACT_RS1_REG(opcode);
-=20
---=20
-2.39.5
-
+Cheers,
+Benno
 
