@@ -1,199 +1,159 @@
-Return-Path: <linux-kernel+bounces-647670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-647672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0B61AB6B82
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 14:36:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A5AA2AB6B85
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 14:37:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4594E1B67707
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 12:36:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 02A05188EE98
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 12:37:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DFE127702C;
-	Wed, 14 May 2025 12:36:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 875B427702C;
+	Wed, 14 May 2025 12:36:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="ZAGp3nc+"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="h8hxmmL/"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45F2D1F582C;
-	Wed, 14 May 2025 12:36:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D69F275108
+	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 12:36:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747226192; cv=none; b=ri4rRuMTRZoqPcCo1sa1qZ4zEQB83HocAmLb0DyMn50Hs5RJghxc7l0ujqEgzmvANqdfbdyClLRwmxrNOjwlu7VOqrvJtSVW/wjb9NyWvuZ/uVwo6vfV5DR1ycFbzlCNiRCw12rZl/M9sXJdQDfr0FLTPFU5dKhqRL5YnWzdtrg=
+	t=1747226217; cv=none; b=bE3r8kyGj7toEEH3g7BM5EnYem0WP/HChwlFKVPaG6noHCXy0T7mvvVBo5IkBAyoJ4V/4TCT5X0u5gcFpN+LSi4u9h3GTl8jkyxr+fn9MMXX8e6fpWsuaIA5fvby2H/pPqZ0OPGBeQLurVEU0AZJStwv+z2LumbJYdNWXmPtsCI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747226192; c=relaxed/simple;
-	bh=wvsdiJsKD6QmRj9PJvvy8ci556EOSrI0fkrAAdKIOKw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=PngAyhmSt34RGlSZh6rsNjfp/poD9tcT35dCYu95c8zV9bB5P82uPm1igENfNfAM0cuKxs5gOC7CO4bs0QSOyGI01ymJm0MqiWv6mnqkLkcPkPQwwNA1iewrxNRr+2RobKuKtFS3UaKcnwHk8lJeLit4DH5Q2fX69x09VdomVGA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=ZAGp3nc+; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1747226188;
-	bh=wvsdiJsKD6QmRj9PJvvy8ci556EOSrI0fkrAAdKIOKw=;
-	h=From:Date:Subject:To:Cc:From;
-	b=ZAGp3nc+C+oM1pLvBZf1p1hJ50zvG+FWZ2DUD1ve3bBQIqFDmdBdNPaimrjLxr+XA
-	 FoIb2Nfubsbu35iLBy2PMx7JNFL0dxqI5boaMh5GUCoS5lHlPLnnZOWWKnIMK5jdML
-	 b/Nsrf/V1a+DJhA0QzVJ2XJYIerYfHPiQTQJVdSg8Vx9sdMwb0scKCIzUlLJQQVRxx
-	 f9OYr9Vb5q2Oppo8JhTMpwGJVkYEFJ1rcdkfmIRRHHTjWfV3e6Y1TOLMTVdF9hU5PO
-	 Ynt2WZmumt8xQrEk1hVLyCARePli78UyZDa8TnErutCk7x7OlgZLORL1vmM0rDl3ND
-	 ZdR5Lxa819lJA==
-Received: from [192.168.1.63] (unknown [70.107.117.78])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: nfraprado)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 0B10217E090E;
-	Wed, 14 May 2025 14:36:24 +0200 (CEST)
-From: =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
-Date: Wed, 14 May 2025 08:36:06 -0400
-Subject: [PATCH] regulator: dt-bindings: mt6357: Drop fixed compatible
- requirement
+	s=arc-20240116; t=1747226217; c=relaxed/simple;
+	bh=eufx3So/bAnO7PD8ZJ8HOzPMI3sdrcaT1YO7Rhkhv4I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YtehAoXLg0RFrKwCA1SxNv2XN8E44p5+rDg2ElKjMK+ZJrFZjcqeCyuX7HOX7V7NLzUCX1xwGAJmhARAf4GZKt5flMIDivsGpCrm1mXQvmWW/uze5TTJVKx1W2PjEyRkkkTzApiWGL2EC/dyoMHgljhkMRMq3pcW+AHRhlSfNfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=h8hxmmL/; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1747226215; x=1778762215;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=eufx3So/bAnO7PD8ZJ8HOzPMI3sdrcaT1YO7Rhkhv4I=;
+  b=h8hxmmL/t99NPhcG1d87Yx4+DfERiWR+zit6XH65NlPnTNkFDw01G/Cs
+   Ya87PvILkIbabKStjHU2EIn8u1Z7T8ygn+CrEcNy1KLcAEyl5LzbOr7iS
+   oXN6g2S7Xj8pNb+iUcbXdZh2L8uJFHdY7WCOWyWrjM1AH5ePGEBuk1cda
+   OHDDN6gAF1c7B4cmIKZ67G99hTbre6wVZsU/aSW2hPHXrxY2NQV0xIZXR
+   htVIg8xRV/l3Tx8SHV8k4hQ+Yjym4YyqtM6od1KV5w9kKj2ZWhIpBnoe1
+   UYGZzsFdpyvdlAiZ9GELTy9j61ZOIbgdki95lwRa9IeDQVBiICB1ZqgYc
+   Q==;
+X-CSE-ConnectionGUID: AgRr2w+8RAiVG4sHXtNkOg==
+X-CSE-MsgGUID: TD2xw8yPQXiTHST+092D1g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11433"; a="49285751"
+X-IronPort-AV: E=Sophos;i="6.15,288,1739865600"; 
+   d="scan'208";a="49285751"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 May 2025 05:36:55 -0700
+X-CSE-ConnectionGUID: A70/DbwxQd+xnTlEAGu4wQ==
+X-CSE-MsgGUID: ZW3wGdvkShqN/PUiS37UWw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,288,1739865600"; 
+   d="scan'208";a="161319859"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 May 2025 05:36:52 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1uFBLt-00000001YCg-46UG;
+	Wed, 14 May 2025 15:36:49 +0300
+Date: Wed, 14 May 2025 15:36:49 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Raag Jadav <raag.jadav@intel.com>
+Cc: gregkh@linuxfoundation.org, david.m.ertman@intel.com,
+	ira.weiny@intel.com, lee@kernel.org,
+	mika.westerberg@linux.intel.com, heikki.krogerus@linux.intel.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 1/2] driver core: auxiliary bus: Introduce auxiliary
+ device resource management
+Message-ID: <aCSOYRJXaiJpch6u@smile.fi.intel.com>
+References: <20250514122432.4019606-1-raag.jadav@intel.com>
+ <20250514122432.4019606-2-raag.jadav@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250514-mt6357-regulator-fixed-compatibles-removal-bindings-v1-1-2421e9cc6cc7@collabora.com>
-X-B4-Tracking: v=1; b=H4sIADWOJGgC/xWNywqDMBBFf0Vm3QGjRkt/pbiIZkwH8pBJKgXx3
- xuXh8u554RMwpTh1ZwgdHDmFCuoRwPrx0RHyLYydG2nW616DGXs9YRC7utNSYIb/8jimsJuCi+
- ect1COozHhaPl6DJqGtVmBtLPYYL6vAvd1l19z9f1B4DEtDqFAAAA
-X-Change-ID: 20250513-mt6357-regulator-fixed-compatibles-removal-bindings-5e61fa4e5847
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Chen Zhong <chen.zhong@mediatek.com>, 
- Fabien Parent <fabien.parent@linaro.org>, 
- Alexandre Mergnat <amergnat@baylibre.com>
-Cc: kernel@collabora.com, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-mediatek@lists.infradead.org, 
- =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250514122432.4019606-2-raag.jadav@intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Some of the regulators on the MT6357 PMIC currently reference the
-fixed-regulator dt-binding, which enforces the presence of a
-regulator-fixed compatible. However since all regulators on the MT6357
-PMIC are handled by a single mt6357-regulator driver, probed through
-MFD, the compatibles don't serve any purpose. In fact they cause
-failures in the DT kselftest since they aren't probed by the fixed
-regulator driver as would be expected. Furthermore this is the only
-dt-binding in this family like this: mt6359-regulator and
-mt6358-regulator don't require those compatibles.
+On Wed, May 14, 2025 at 05:54:31PM +0530, Raag Jadav wrote:
+> With more and more drivers adopting to auxiliary bus infrastructure comes
+> the need for managing resources at auxiliary device level. This is useful
+> for cases where parent device shares variable number and type of resources
+> with auxiliary child device but doesn't require any active involvement in
+> managing them.
+> 
+> This reduces potential duplication of resource APIs that may be required by
+> parent device driver. With this in place parent driver will be responsible
+> for filling up respective resources and its count in auxiliary device
+> structure before registering it, so that the leaf drivers can utilize in
+> their probe function. Lifecycle of these resources will be as long as the
+> auxiliary device exists.
 
-Commit d77e89b7b03f ("arm64: dts: mediatek: mt6357: Drop regulator-fixed
-compatibles") removed the compatibles from Devicetree, but missed
-updating the binding, which still requires them, introducing dt-binding
-errors. Remove the compatible requirement by referencing the plain
-regulator dt-binding instead to fix the dt-binding errors.
+...
 
-Fixes: d77e89b7b03f ("arm64: dts: mediatek: mt6357: Drop regulator-fixed compatibles")
-Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
----
- .../bindings/regulator/mediatek,mt6357-regulator.yaml        | 12 +-----------
- 1 file changed, 1 insertion(+), 11 deletions(-)
+> +/**
+> + * auxiliary_get_irq_optional - get an optional IRQ for auxiliary device
+> + * @auxdev: auxiliary device
+> + * @num: IRQ number index
+> + *
+> + * Gets an IRQ for a auxiliary device. Device drivers should check the return value
+> + * for errors so as to not pass a negative integer value to the request_irq()
+> + * APIs. This is the same as auxiliary_get_irq(), except that it does not print an
+> + * error message if an IRQ can not be obtained.
+> + *
+> + * For example::
+> + *
+> + *		int irq = auxiliary_get_irq_optional(auxdev, 0);
+> + *		if (irq < 0)
+> + *			return irq;
+> + *
+> + * Return: non-zero IRQ number on success, negative error number on failure.
+> + */
+> +int auxiliary_get_irq_optional(struct auxiliary_device *auxdev, unsigned int num)
+> +{
+> +	struct resource *r;
+> +	int ret = -ENXIO;
+> +
+> +	r = auxiliary_get_resource(auxdev, IORESOURCE_IRQ, num);
+> +	if (!r)
+> +		goto out;
+> +
+> +	/*
+> +	 * The resources may pass trigger flags to the irqs that need to be
+> +	 * set up. It so happens that the trigger flags for IORESOURCE_BITS
+> +	 * correspond 1-to-1 to the IRQF_TRIGGER* settings.
+> +	 */
+> +	if (r->flags & IORESOURCE_BITS) {
+> +		struct irq_data *irqd;
+> +
+> +		irqd = irq_get_irq_data(r->start);
+> +		if (!irqd)
+> +			goto out;
+> +		irqd_set_trigger_type(irqd, r->flags & IORESOURCE_BITS);
+> +	}
+> +
+> +	ret = r->start;
+> +	if (WARN(!ret, "0 is an invalid IRQ number\n"))
+> +		ret = -EINVAL;
+> +out:
+> +	return ret;
+> +}
 
-diff --git a/Documentation/devicetree/bindings/regulator/mediatek,mt6357-regulator.yaml b/Documentation/devicetree/bindings/regulator/mediatek,mt6357-regulator.yaml
-index 6327bb2f6ee080a178ff3e982768c5eb0595e771..698266c09e25359a516d969a0487cc94444b842d 100644
---- a/Documentation/devicetree/bindings/regulator/mediatek,mt6357-regulator.yaml
-+++ b/Documentation/devicetree/bindings/regulator/mediatek,mt6357-regulator.yaml
-@@ -33,7 +33,7 @@ patternProperties:
- 
-   "^ldo-v(camio18|aud28|aux18|io18|io28|rf12|rf18|cn18|cn28|fe28)$":
-     type: object
--    $ref: fixed-regulator.yaml#
-+    $ref: regulator.yaml#
-     unevaluatedProperties: false
-     description:
-       Properties for single fixed LDO regulator.
-@@ -112,7 +112,6 @@ examples:
-           regulator-enable-ramp-delay = <220>;
-         };
-         mt6357_vfe28_reg: ldo-vfe28 {
--          compatible = "regulator-fixed";
-           regulator-name = "vfe28";
-           regulator-min-microvolt = <2800000>;
-           regulator-max-microvolt = <2800000>;
-@@ -125,14 +124,12 @@ examples:
-           regulator-enable-ramp-delay = <110>;
-         };
-         mt6357_vrf18_reg: ldo-vrf18 {
--          compatible = "regulator-fixed";
-           regulator-name = "vrf18";
-           regulator-min-microvolt = <1800000>;
-           regulator-max-microvolt = <1800000>;
-           regulator-enable-ramp-delay = <110>;
-         };
-         mt6357_vrf12_reg: ldo-vrf12 {
--          compatible = "regulator-fixed";
-           regulator-name = "vrf12";
-           regulator-min-microvolt = <1200000>;
-           regulator-max-microvolt = <1200000>;
-@@ -157,14 +154,12 @@ examples:
-           regulator-enable-ramp-delay = <264>;
-         };
-         mt6357_vcn28_reg: ldo-vcn28 {
--          compatible = "regulator-fixed";
-           regulator-name = "vcn28";
-           regulator-min-microvolt = <2800000>;
-           regulator-max-microvolt = <2800000>;
-           regulator-enable-ramp-delay = <264>;
-         };
-         mt6357_vcn18_reg: ldo-vcn18 {
--          compatible = "regulator-fixed";
-           regulator-name = "vcn18";
-           regulator-min-microvolt = <1800000>;
-           regulator-max-microvolt = <1800000>;
-@@ -183,7 +178,6 @@ examples:
-           regulator-enable-ramp-delay = <264>;
-         };
-         mt6357_vcamio_reg: ldo-vcamio18 {
--          compatible = "regulator-fixed";
-           regulator-name = "vcamio";
-           regulator-min-microvolt = <1800000>;
-           regulator-max-microvolt = <1800000>;
-@@ -212,28 +206,24 @@ examples:
-           regulator-always-on;
-         };
-         mt6357_vaux18_reg: ldo-vaux18 {
--          compatible = "regulator-fixed";
-           regulator-name = "vaux18";
-           regulator-min-microvolt = <1800000>;
-           regulator-max-microvolt = <1800000>;
-           regulator-enable-ramp-delay = <264>;
-         };
-         mt6357_vaud28_reg: ldo-vaud28 {
--          compatible = "regulator-fixed";
-           regulator-name = "vaud28";
-           regulator-min-microvolt = <2800000>;
-           regulator-max-microvolt = <2800000>;
-           regulator-enable-ramp-delay = <264>;
-         };
-         mt6357_vio28_reg: ldo-vio28 {
--          compatible = "regulator-fixed";
-           regulator-name = "vio28";
-           regulator-min-microvolt = <2800000>;
-           regulator-max-microvolt = <2800000>;
-           regulator-enable-ramp-delay = <264>;
-         };
-         mt6357_vio18_reg: ldo-vio18 {
--          compatible = "regulator-fixed";
-           regulator-name = "vio18";
-           regulator-min-microvolt = <1800000>;
-           regulator-max-microvolt = <1800000>;
+Please, do not inherit the issues that the respective platform device API has.
+And after all, why do you need this? What's wrong with plain fwnode_irq_get()?
 
----
-base-commit: edef457004774e598fc4c1b7d1d4f0bcd9d0bb30
-change-id: 20250513-mt6357-regulator-fixed-compatibles-removal-bindings-5e61fa4e5847
-
-Best regards,
 -- 
-Nícolas F. R. A. Prado <nfraprado@collabora.com>
+With Best Regards,
+Andy Shevchenko
+
 
 
