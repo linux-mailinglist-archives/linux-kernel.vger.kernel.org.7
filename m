@@ -1,239 +1,99 @@
-Return-Path: <linux-kernel+bounces-646799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-646801-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11A4FAB60AC
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 04:07:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79E58AB60B3
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 04:18:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 21B477B3C0A
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 02:06:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11984462477
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 02:18:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 722F41DF268;
-	Wed, 14 May 2025 02:07:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eZnGKT6I"
-Received: from mail-il1-f180.google.com (mail-il1-f180.google.com [209.85.166.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DABB81DF990;
+	Wed, 14 May 2025 02:18:13 +0000 (UTC)
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3462417C220;
-	Wed, 14 May 2025 02:07:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D17528EC;
+	Wed, 14 May 2025 02:18:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747188438; cv=none; b=oOCCPPg/at6oRWfKIzC68ZNKZKK4HN6uOpx3v/s89DwINEnFG3+8M9lFVxzAGps9LE7hlJOLIs05sI/xGaQCqz0g0kzANAjuBszcOSYIRVY5hwU/ieLGigR2cqdRyWzMPUnGP1tELeLgfSbMXFWCdqwOOv5cpppdwMWhDEXYtyE=
+	t=1747189093; cv=none; b=Y0t4Qlq5sd607x9dj6cEebTi+bC+jD8QXTwApk163nuW93YiE+Xu6a3IhyTdlNPpE1pq/i+ChnOcdg7SVF4hZvHilcote4U0MpkikI+U9lZP5TySxJlpsVdRDvlDbxZxRbuHJzKr7QE6b9JHtXWHYf0T+GFw/cPRrYzRwdF2zhw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747188438; c=relaxed/simple;
-	bh=d+d/UHC/2vh3oGoJlIs98iUvpQrj7IQBkL/Dj8ejIW0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FRhqHr0rrLeb7hhqYmlQs3FYhE25opOASdZwkKQ8WgibBvQ1oVjM4iQZVH+EzJN7MTo2aPHjUnckL6aW1DvrJsyyHJpSR/RDU//05N5en8Iiu6VclCZ21vFVd6PFbT18UUEICQmCnV6HUhS2cvuFHlt/iNXRHdASvD+sXzwl9VY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eZnGKT6I; arc=none smtp.client-ip=209.85.166.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f180.google.com with SMTP id e9e14a558f8ab-3d80bbf3aefso24011565ab.1;
-        Tue, 13 May 2025 19:07:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747188436; x=1747793236; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Y/bFA6/U6p24AkyJ1ZYs9l1TykpsfywK1D/cyRMHnvA=;
-        b=eZnGKT6IjLENJ1GKSOKPowPAJCmzoTAGx8n6pYt6npriiH/tSyE53oGaWj+hYQ1lu5
-         qnE/pHNJbtlTWeM8ta9/OkCzOkJ4dqfQDsi5OlmEX62u3kbzYbIvO4eIXlV+d+NonJGg
-         g0WTF9c5bCfTuN7oaxZqsxa6t5v/FNdEvSORixK7Ui5lUvqTlIYCLh4q5C+/qRU64nl5
-         2lN5xVmnbb+rnGpj6SBw4EVBVtnNxBWKZW0TAf7i0y5qyteON+ob9M+GowzIu9YN36lX
-         RA6zGZitzCLvntYMj6ukl390R7xS5F7q1Ih7u/hyx1jNRiEfioRmjTMn81FDaaiMcESh
-         jeDQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747188436; x=1747793236;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Y/bFA6/U6p24AkyJ1ZYs9l1TykpsfywK1D/cyRMHnvA=;
-        b=upX3UnQpX2fLoAe8TL94/gYVahiUORotujix6DCs1Lm6TMxoUkAh5p/6Gm6oxgym0W
-         Aoj2w9K+ltnwr70W2vfBRZrvww0w+Tn5/4u3b+4i5Rzp26fUKtaz/kIphaiHNz3NB+qG
-         PX8/nTJRoaZzYpTzNNJIBm3BiXZqMIZEJ3fw4FHwtLb1DPvHvulaRuT3umhCOLuhCLdl
-         h/+jt5rVEDDZDmmCNf/tMEADuMM88lZ5h85YKTTi3TOyGz717X6IzNtfVrWuMh+p7qQC
-         ETceBtiCMmnPswr1i9XefVrUeZjGNF0W6IpJwrwHAP8eWctnu+hubP+A2wek4xKi+rks
-         gduA==
-X-Forwarded-Encrypted: i=1; AJvYcCViurdsqsO3EbiebeFNAu/uJ4YGP+6nqiPGw4yp+qlRwfLVgKLOLl1fsS7pfmzr9bN06yvW4o1IGnaz+4HyAkxXRElh@vger.kernel.org, AJvYcCWyIyMnaG4rrZNUxvRdNdzKpDk9RQRnZSzgxcHySYmOrkeRaVf/H1dmEtggnR/AIQzcbc9RphMeKPF3Bi9s@vger.kernel.org, AJvYcCXKqomUtdKT8U9x3S6hP7Tk3of7Z18DwVn2qQJPTTbcEo7JxOtBUCLdzNwtqyzhhzeiVbDQYtRFaJ2QnA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWTcSRreSJm3K9t1rWntCdVVxI/aKGWzH1iVzOW8sGbigl2BPu
-	TfxbEcW9+phOwcv5e86J5zJGL6lBg0gB0nYyyZGquAnpWaWRQJyim4jzax6cB1+DxzcYGGb+xMT
-	o+VbxehS3XYO1yPJ+OCMpMBH+8q+YSHMd
-X-Gm-Gg: ASbGncs+QV7FgIr9inhWGQCF+NSIMoQ+D+yuJUfE0U+pmcZIHKEUA2OcatzdNdYOOym
-	RZCvSp4g8w5GSh8prqktw3Bg1Nh0QxWu5SEiAR+596f/ibTEjod4BdbCHIR0QrYAvIfdvvwlhjf
-	RZQuiqBvPGSO531+PpfDizzNTDZh/F35MDGf8GXC0BQIc=
-X-Google-Smtp-Source: AGHT+IEr08TMAyUm/9QQeyOr8KtPuKG/2U/rWccNP+stG8wlpLFB4BxjyikCZYcP3mPRpTPOOjPaBYqBpGjiTDqKrjE=
-X-Received: by 2002:a05:6e02:1a24:b0:3d8:1ea5:26d1 with SMTP id
- e9e14a558f8ab-3db6f7f1928mr21706145ab.18.1747188436093; Tue, 13 May 2025
- 19:07:16 -0700 (PDT)
+	s=arc-20240116; t=1747189093; c=relaxed/simple;
+	bh=jeG/FAJefYbzI8TrL1ERuKTf3OMl1j8IcfrW8q4fXhw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=iSWjx1B7pJcnLRN2cutPelqAAwXksU/CALWLNr/uSrCacrWGEEQt/wT943phguloCO+qtda9KRQhIQbjUVjCy+NP/1uPPzcvy8Tv94pH4nThzXCeeElhdxtW7H2G90D5H6R6Nz0Du3x8IDgEtE4NOPHhE6Mor1KzaLOBGTv+6Lc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost (unknown [124.16.138.129])
+	by APP-03 (Coremail) with SMTP id rQCowACHLzzZ+yNoCZHaFA--.50879S2;
+	Wed, 14 May 2025 10:11:37 +0800 (CST)
+From: Chen Ni <nichen@iscas.ac.cn>
+To: kent.overstreet@linux.dev
+Cc: linux-bcachefs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Chen Ni <nichen@iscas.ac.cn>
+Subject: [PATCH] bcachefs: Convert comma to semicolon
+Date: Wed, 14 May 2025 10:10:36 +0800
+Message-Id: <20250514021036.2120816-1-nichen@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250512024935.64704-1-kerneljasonxing@gmail.com>
- <20250512024935.64704-3-kerneljasonxing@gmail.com> <20250513185810.3d57dfe2a0c05784ddf8f0a9@kernel.org>
- <CAL+tcoCThLOL1AKPamh2fpeDjYEqvEber0Eddc2ZVxi6VAYJkQ@mail.gmail.com>
- <20250513222235.33fd1817970cd601b18e92cf@kernel.org> <CAL+tcoAGCdowY14QL7HEqbW3ewAJi0OXpWNVkbqq9cM6xRmLkg@mail.gmail.com>
- <20250514102908.6a431966ef5b0f5f197bdb48@kernel.org>
-In-Reply-To: <20250514102908.6a431966ef5b0f5f197bdb48@kernel.org>
-From: Jason Xing <kerneljasonxing@gmail.com>
-Date: Wed, 14 May 2025 10:06:39 +0800
-X-Gm-Features: AX0GCFuaJe8Eh3FWohwPcHBpERUmy5aA78jEO82YxPZonoGVPXH3QI8BQVKxTbQ
-Message-ID: <CAL+tcoD63WBnmMeRhs77YBLEzsb4wQUYqO_U1wXcCUY4XNXptw@mail.gmail.com>
-Subject: Re: [PATCH v1 2/5] relayfs: introduce dump of relayfs statistics function
-To: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: axboe@kernel.dk, rostedt@goodmis.org, mathieu.desnoyers@efficios.com, 
-	akpm@linux-foundation.org, linux-kernel@vger.kernel.org, 
-	linux-block@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	Jason Xing <kernelxing@tencent.com>, Yushan Zhou <katrinzhou@tencent.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:rQCowACHLzzZ+yNoCZHaFA--.50879S2
+X-Coremail-Antispam: 1UD129KBjvdXoW7Gr4rCw4kuw4kuw1xGrW3ZFb_yoWftwc_Wa
+	4DA3W8Cw1SkrnYqr1avr4Yqan0g3yY9F4fWry2ya98Way5t343uFs3G343Xr9xAw45WF17
+	tay2qr98CF1fujkaLaAFLSUrUUUUbb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbsAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
+	Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AKxVW8Jr
+	0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj
+	6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr
+	0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7MxkF7I0En4kS14v2
+	6r126r1DMxkIecxEwVAFwVW8JwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJV
+	W8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF
+	1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6x
+	IIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvE
+	x4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnU
+	UI43ZEXa7VUbT5l5UUUUU==
+X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
 
-On Wed, May 14, 2025 at 9:29=E2=80=AFAM Masami Hiramatsu <mhiramat@kernel.o=
-rg> wrote:
->
-> On Tue, 13 May 2025 21:46:25 +0800
-> Jason Xing <kerneljasonxing@gmail.com> wrote:
->
-> > > > > > +
-> > > > > > +     if (flags & RELAY_DUMP_BUF_FULL)
-> > > > > > +             offset +=3D snprintf(buf, sizeof(unsigned int), "=
-%u", full_counter);
-> > > > > > +
-> > > > > > +     snprintf(buf + offset, 1, "\n");
-> > > > >
-> > > > > Is there any reason to return the value as string?
-> > > > > If it returns a digit value and the caller makes it a string,
-> > > > > it could be more flexible for other use cases.
-> > > >
-> > > > Thanks for the feedback.
-> > > >
-> > > > I will remove the above one as you pointed out in the next revision=
-.
-> > > > And it seems unnecessary to add '\0' at the end of the buffer like
-> > > > "*buf =3D '\0';"?
-> > >
-> > > Sorry, I think you missed my point. I meant it should be
-> > >
-> > > /* Return the number of fullfilled buffer in the channel */
-> > > size_t relay_full(struct rchan *chan);
-> > >
-> > > And keep the snprintf() in the blk_dropped_read() because that functi=
-on
-> > > is responsible for formatting the output.
-> >
-> > Oh, sorry, it's not what I want because (please see patch [4/5] [1])
-> > relay_dump() works to print various statistics of the buffer. In this
-> > patch, 'full' counter is the first one.
-> >
-> > [1]: https://lore.kernel.org/all/20250512024935.64704-5-kerneljasonxing=
-@gmail.com/
->
-> Yes, that's why I asked you to make it just returning raw value.
-> The string formatting of those values is blk_dropped_read()s business
-> (because it is a 'read' callback), not for relayfs.
->
-> For example, other relayfs user wants to summarize the values or
-> calculate the percentage form that value. Also, we don't need to
-> bother to check the buffer size etc, because blk_dropped_read()
-> knows that.
+Replace comma between expressions with semicolons.
 
-Oh, it makes sense. Thanks.
+Using a ',' in place of a ';' can have unintended side effects.
+Although that is not the case here, it is seems best to use ';'
+unless ',' is intended.
 
-I will make relay_dump() return raw value which depends on what kind
-of flag caller passes, like RELAY_DUMP_BUF_FULL or RELAY_DUMP_WRT_BIG
-or even more other info. On top of that, I can then get rid of the
-annoying buffer-related code snippets :)
+Found by inspection.
+No functional change intended.
+Compile tested only.
 
-Thanks,
-Jason
+Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+---
+ fs/bcachefs/disk_groups.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
->
-> >
-> > >
-> > > static ssize_t blk_dropped_read(struct file *filp, char __user *buffe=
-r,
-> > >                                 size_t count, loff_t *ppos)
-> > > {
-> > >         struct blk_trace *bt =3D filp->private_data;
-> > >         char buf[16];
-> > >
-> > >         snprintf(buf, sizeof(buf), "%zu\n", relay_full(bt->rchan));
-> > >
-> > >         return simple_read_from_buffer(buffer, count, ppos, buf, strl=
-en(buf));
-> > > }
-> > >
-> > > But the question is that what blk_subbuf_start_callback() counts
-> > > is really equal to what the relay_full() counts, because it seems
-> > > relay_full() just returns the current status of the channel, but
-> > > bt->dropped is the accumlated number of dropping events.
-> > >
-> > > This means that if the client (reader) reads the subbufs the
-> > > number of full subbufs will be decreased, but the number of
-> > > dropped event does not change.
-> >
-> > At least in this series, I didn't give the 'full' counter any chance
-> > to decrement, which means it's compatible with blktrace, unless
-> > __relay_reset() is triggered :)
->
-> Ah, OK. I missed what [1/5] does. I agree that this does the
-> same thing.
->
-> >
-> > While discussing with you on this point, I suddenly recalled that in
-> > some network drivers, they implemented 'wake' and 'stop' as a pair to
-> > know what the current status of a certain queue is. I think I can add
-> > a similar thing to the buffer about 1) how many times are the buffer
-> > full, 2) how many times does the buffer get rid of being full.
->
-> Sounds nice.
->
-> Thank you,
->
-> >
-> > Thanks,
-> > Jason
-> >
-> > >
-> > > Can you recheck it?
-> > >
-> > > Thank you,
-> > >
-> > > >
-> > > > While at it, I'm thinking if I can change the return value of
-> > > > relay_dump() to "how many bytes do we actually write into the buffe=
-r"?
-> > > > Does it sound better?
-> > > >
-> > > > Thanks,
-> > > > Jason
-> > > >
-> > > > >
-> > > > > Thank you,
-> > > > >
-> > > > > > +}
-> > > > > > +EXPORT_SYMBOL_GPL(relay_dump);
-> > > > > > +
-> > > > > >  /**
-> > > > > >   *   relay_file_open - open file op for relay files
-> > > > > >   *   @inode: the inode
-> > > > > > --
-> > > > > > 2.43.5
-> > > > > >
-> > > > >
-> > > > >
-> > > > > --
-> > > > > Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> > >
-> > >
-> > > --
-> > > Masami Hiramatsu (Google) <mhiramat@kernel.org>
->
->
-> --
-> Masami Hiramatsu (Google) <mhiramat@kernel.org>
+diff --git a/fs/bcachefs/disk_groups.c b/fs/bcachefs/disk_groups.c
+index c20ecf5e5381..5b03e93630b8 100644
+--- a/fs/bcachefs/disk_groups.c
++++ b/fs/bcachefs/disk_groups.c
+@@ -413,7 +413,7 @@ void bch2_disk_path_to_text(struct printbuf *out, struct bch_fs *c, unsigned v)
+ {
+ 	out->atomic++;
+ 	rcu_read_lock();
+-	__bch2_disk_path_to_text(out, rcu_dereference(c->disk_groups), v),
++	__bch2_disk_path_to_text(out, rcu_dereference(c->disk_groups), v);
+ 	rcu_read_unlock();
+ 	--out->atomic;
+ }
+-- 
+2.25.1
+
 
