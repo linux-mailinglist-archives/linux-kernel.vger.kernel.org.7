@@ -1,141 +1,134 @@
-Return-Path: <linux-kernel+bounces-647450-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-647453-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 156B5AB687D
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 12:15:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F832AB6886
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 12:15:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C309C1BA06E9
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 10:15:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BEABC1BA07A6
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 10:16:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B722F2701BA;
-	Wed, 14 May 2025 10:15:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C51692701DC;
+	Wed, 14 May 2025 10:15:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iVsAw0OE"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qo3ZZehc"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72A5325DD07
-	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 10:15:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 801382581;
+	Wed, 14 May 2025 10:15:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747217706; cv=none; b=O38Gos9Tlhu74e4uBNnq/KhqIPvRus2qsRu22YF3QPhtPfH2ds1Wfhq4mDiwIVRzN06S9lYhc5Q9r1pLVCXJsXGFXNBRvHuUVJTCtFar/XSm4Fx1ijjI9qP/GXE3rY1J0OatQnUlr2ndDVRnT+H6O8eQochofBLw5lezW9edLuc=
+	t=1747217737; cv=none; b=aTdjYrebEvC80doBjJgFG0SJjLU6Q7G+87v0qSDGn3dgaSgSzRDnuECR4oTma/+K2ZpqkSm48FI6pDFUCaaXfMDpPwE5p56OKnxKK2lzkqgojmuFIsMJvWJIc5OG1ywQvIah/+2Tz9uKlTGSskgGed1sZ+NEjWT6nbsIwTP3+vM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747217706; c=relaxed/simple;
-	bh=wDmraekW7m0pgFwPRFE4S7PnYUyPMFc7PeEJ7Alaud0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LeGhrooD+SmQVpTTA4kMSUZemr3dhc8ZihC/jRA7gHbRnrHSQy8UvYicjqQW0eZrSSYHPp2yYB2IJ/jKxyZT0boVgiMg+bSYqhak+yvbnTjuoUkEQHdBxjoRFGBFGDHBPX8ya2LzzyVQpnv2zFC+lJsyUXHnJfO2Qi7dPx/A3kU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iVsAw0OE; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1747217703;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=K8LKDxEPlK0zUrqmN4DZvo7SZOHbpNlPdUFt+T51TxI=;
-	b=iVsAw0OE2vGJCyUNvW6ugcxjU7vSSbGD92RyjT5sMmupNXNUIMZ88541/tp/VEhQ7n1qUT
-	oyWnl0avt8d9/CuW1efMdgdTscgETcK1B+EEX2UgC5ldbk+X3PFwvq/x10HC/J02w9tfJK
-	dbjyRG8CUIEO5V+pbDti8SHEJ2epFCE=
-Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
- [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-696-nkjWSNYMMLqNZseHEO-MeA-1; Wed, 14 May 2025 06:15:02 -0400
-X-MC-Unique: nkjWSNYMMLqNZseHEO-MeA-1
-X-Mimecast-MFC-AGG-ID: nkjWSNYMMLqNZseHEO-MeA_1747217701
-Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-ad224fe3745so534391666b.3
-        for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 03:15:01 -0700 (PDT)
+	s=arc-20240116; t=1747217737; c=relaxed/simple;
+	bh=ssO4ukeUbQgCkn9GJpQqPZ8WdzsgnN5XWWHPJpyoKkg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dF8z62DS/eqeoZvFtr0yXxVo0Dsx2PgV2vfo/4J4JvmVN1YojVRXVYl9IepktSyGihtSURgZjRlVSv42vVXdEG+R7yXJ6cZcDlOxWvMPDcjTSDT87z69/TAQyYQwUzGm7588owaieoRxF5Rise3g8PLAB/apuhxYUuaJYO/IPdU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Qo3ZZehc; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-442ec3ce724so12711325e9.0;
+        Wed, 14 May 2025 03:15:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747217733; x=1747822533; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=kQOcHyhTA7FXjlUu3W5vkMRaWzYm7ctPhDbr+85eCas=;
+        b=Qo3ZZehccz4qSAxEuf9vriU/+7mzFTURuZh5qBDEhWsblIUTWh6Aq7fMPsmNU3KVlH
+         hhhJsdqQY24lb4UctWnn+3vEhSA2VR6URzW5dGERHG8nw25c/o9z42OytocHTYoeGnRw
+         +zGt8u4w7zjgPHVUMI1iS6V820atdJWui2UbPZMdtFRFKFUCl7lrhAw2n2le0YuoOGS5
+         MHqmG/5HchGLWqd+nQkvTkE7MAIEZ7LD3JX5ecidNIMH+2LvhmbuY3LaifF4SUYKwgo3
+         YtI3bo/R09ZYf/MV5lBDT20wl6O5vQAGQR+f8lSqeBu98zfB/aysU67ykr4jIvPEO9rt
+         FHLA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747217701; x=1747822501;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=K8LKDxEPlK0zUrqmN4DZvo7SZOHbpNlPdUFt+T51TxI=;
-        b=n0GsYDf80dsUvScVpiGQuX0JfWE2/s4OOrYug7tcmEtGU0H7NbpWvj0CspnQlV4M9r
-         7UfnJg53Uxmx5ZkEDPWJIGnQe+s69iNTWwlaxXI+KDxpZv7RlMG9M8aU3+P9/+A5FB6i
-         zuu7mrF7GVrHEoNiASuvXH78ySYm0JM/vAXUd6iIhajQOH2ogsTsWap2UWZdgPL6lnMo
-         00Iz2EsT6i9stEzNKetESc7NeQVaW3dKuSpyWZewjRwhmg/phttMTDy/xRErq0dZC+2V
-         YqijVNu+6cTdMAwwCHUzsRy8KibVYc8h627zvQsRclcylSPWY8oxjayQP0WibD44l7DH
-         ZIvg==
-X-Forwarded-Encrypted: i=1; AJvYcCXXr6uP003cgadx21zhiXDTjfjrbWesOUxMOC1TGHAgcTnyz7/+LODyCysCRukLnIa09g1Sd5j0AUhw3K8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YymJVtT+d2KrptdJ7iBOfzL8qVU6jPiDgWK/zHK2otrx39KKb9I
-	Qe/Y58XMeuF7puvklax4qIpRlMSf11PNgFIb0ZyyCb0qb5pSvZbEB5r9IYCWngN79LStvcV+yi5
-	jnRAwzv9ZeI6ndtv1kc0DmUOL+io3segVyXziX5rTHJOKb9PKqhuUsT9cBf31pg==
-X-Gm-Gg: ASbGncs2r+BrqVlQXzKeSNe3Yf0zUbt/9mdmGAswXq+hOk4IaSbgpMQcHMv/LDCOhVc
-	+DT6OaCS4Rkjmt7JgOPrDe8H98kkUpXWH/Gu63wVhM6kyaa8ONYLxrdOC++REGkkIjRKiLdSYgV
-	wcv8+0THXl/JaNyhFnyWxSBh/evN86DI/owCZwc3Wq6vaGiHsIOhmhLb9iR5HDUC2F5Q7Ockx3L
-	9bVCP9J0HXFdCgHEkMyBOz82oqvQYrck63a2NDp9KEHfr33IrU/kkB9HUzEcpagQiSjzMaVHVf2
-	h6E7or5qGHeAYW3oVQ==
-X-Received: by 2002:a17:907:96ab:b0:ad2:293d:166e with SMTP id a640c23a62f3a-ad4f717a571mr262750166b.31.1747217700925;
-        Wed, 14 May 2025 03:15:00 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHL7kdzll3t4oQ25ZYCbLYS9k6oyFJfi2q4wOT/F3rxR/d4Hx5O00NDK2zGNm+A5NAW2+hs3g==
-X-Received: by 2002:a17:907:96ab:b0:ad2:293d:166e with SMTP id a640c23a62f3a-ad4f717a571mr262748266b.31.1747217700550;
-        Wed, 14 May 2025 03:15:00 -0700 (PDT)
-Received: from [192.168.37.224] ([109.36.142.219])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad21947acf8sm912226966b.85.2025.05.14.03.14.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 14 May 2025 03:14:59 -0700 (PDT)
-Message-ID: <adda844f-1dc7-4c4d-90f1-ddba1c99be65@redhat.com>
-Date: Wed, 14 May 2025 12:14:57 +0200
+        d=1e100.net; s=20230601; t=1747217733; x=1747822533;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=kQOcHyhTA7FXjlUu3W5vkMRaWzYm7ctPhDbr+85eCas=;
+        b=uJ1dIu1Y6wlSOxo4raaZzDpqTtOAAHSZSMP2cWBaZntVV0SEnBln4DiVJMHFYAo8hj
+         hXlEWZcl3Chnbyonf9gEKR13HxzAGKTiuPPWUSk5hGWdUND1grbeAerxihMFqDBm7vzM
+         wtMgDvhQ/hDMedGJubCfeFggj6v7yy3hcfU8bKuWd1WOptN5O8d4SXj24v3YtBe0WcuI
+         cr51j9AGwJLiPsQow6mbB78Ywl3jz+ek4hVYXBqfOIITray6i8/weXAJkjTxXH0q540z
+         z/Xgoi9lriCjfO0QRNXuM2zRmPxYOKhlC0YoTA9VJoCpWif839DX7jmrD4zUxrESRfKo
+         6IDw==
+X-Forwarded-Encrypted: i=1; AJvYcCVoB1lOWyjxsqSEleMh1oUWBLxjKVa89oNpgx5K87DRLSFAGA3uvFhuGVhEM8BFDOJXBN5bNXkVoygpnONhP6Uyrjs=@vger.kernel.org, AJvYcCVpS48Yt4JWScURuBsYZ2C7Y8uEq4b8v9TczOl0/ELa9v6s/SxRwvroPTA1QbXLQtbEnZO4iJJGOjZWIMQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzwVJDqTZrj+XdSHQBXq3n4OX4d9TPFOBdgtPBVA2E6Q9hSoBgw
+	kSS3v0gcC9IIpg6NYmkDZSwjNHoL31mUh3ScXRkUJ7dLUGm4Q9uN
+X-Gm-Gg: ASbGncsUm4cu8tx1FYstquGIS/EZ5DO96YwOi3Zb1NkcZllMKIF9fTUZD/fOmLNMRHT
+	OCTPtEJoUHWNnyHK/wKArXNnHNFe/d056NEOBHj0gS04IBHM6mZsR3Gf/Mpv0hXrjkvRW8PqXIO
+	bmsbN/CjtLZkkrtI8cd6ZQmw+x5p1vKkzhlG7edTn8kiB0lzObx5jWFIoKSMxmf4gcFWv5kabsm
+	oNXVwe2/1psX7yrL7UXCN3EVZQuOQmW0BjKWyh6sEq9qRuU08s+zsbmAr2ONFgvx84qTyIBFjy6
+	h02Z0b0nKvW475MryjfO0w1zAECWjYbQEpzwNxHopAjLM3CIPMokKn9cEVe2vvpTjh1/TM207DJ
+	c
+X-Google-Smtp-Source: AGHT+IFqTCbpndw7EMXL2jk2y68KQhmuPeUYs/oDgtjqa4fdHjjvn0HjjgU3YNNIWuDMohlT+kuuCQ==
+X-Received: by 2002:a5d:5f8e:0:b0:3a1:f535:e9be with SMTP id ffacd0b85a97d-3a349694ac7mr2097950f8f.7.1747217733372;
+        Wed, 14 May 2025 03:15:33 -0700 (PDT)
+Received: from iku.Home ([2a06:5906:61b:2d00:6140:13af:687a:7a66])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a1f58f3afdsm19530249f8f.60.2025.05.14.03.15.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 May 2025 03:15:32 -0700 (PDT)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-renesas-soc@vger.kernel.org
+Cc: devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 00/10] Add GBETH, OSTM, RIIC, WDT, and GPU support for RZ/V2N SoC and EVK board
+Date: Wed, 14 May 2025 11:15:18 +0100
+Message-ID: <20250514101528.41663-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 0/4] gpiolib: acpi: Split quirks to its own file
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
- Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org,
- linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Mika Westerberg <westeri@kernel.org>
-References: <20250513100514.2492545-1-andriy.shevchenko@linux.intel.com>
-Content-Language: en-US, nl
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <20250513100514.2492545-1-andriy.shevchenko@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi,
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-On 13-May-25 12:00, Andy Shevchenko wrote:
-> The GPIO ACPI helpers use a few quirks which consumes approximately 20%
-> of the file. Besides that the necessary bits are sparse and being directly
-> referred. Split them to a separate file. There is no functional change.
-> 
-> For the new file I used the Hans' authorship of Hans as he the author of
-> all those bits (expect very tiny changes made by this series).
-> 
-> Hans, please check if it's okay and confirm, or suggest better alternative.
+Hi All,
 
-Thanks, the entire series looks good to me:
+This patch series adds support for the following components on the
+RZ/V2N SoC and RZ/V2N EVK board:
+1. GBETH (Gigabit Ethernet)
+2. OSTM (General TImer)
+3. RIIC (I2C)
+4. WDT (Watchdog Timer)
+5. GE3D (Mali-G31 GPU)
 
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+Cheers
+Prabhakar 
 
-Regards,
+Lad Prabhakar (10):
+  arm64: dts: renesas: r9a09g056: Add GBETH nodes
+  arm64: dts: renesas: r9a09g056n48-rzv2n-evk: Enable GBETH
+  arm64: dts: renesas: r9a09g056: Add OSTM0-OSTM7 nodes
+  arm64: dts: renesas: r9a09g056n48-rzv2n-evk: Enable OSTM timers on
+    RZ/V2N EVK
+  arm64: dts: renesas: r9a09g056: Add RIIC controllers
+  arm64: dts: renesas: r9a09g056n48-rzv2n-evk: Enable RIIC controllers
+  arm64: dts: renesas: r9a09g056: Add WDT0-WDT3 nodes
+  arm64: dts: renesas: r9a09g056n48-rzv2n-evk: Enable WDT1
+  arm64: dts: renesas: r9a09g056: Add Mali-G31 GPU node
+  arm64: dts: renesas: r9a09g056n48-rzv2n-evk: Enable Mali-G31 GPU
 
-Hans
+ arch/arm64/boot/dts/renesas/r9a09g056.dtsi    | 569 ++++++++++++++++++
+ .../dts/renesas/r9a09g056n48-rzv2n-evk.dts    | 211 +++++++
+ 2 files changed, 780 insertions(+)
 
-
-
-
-> Andy Shevchenko (4):
->   gpiolib: acpi: Switch to use enum in acpi_gpio_in_ignore_list()
->   gpiolib: acpi: Handle deferred list via new API
->   gpiolib: acpi: Add acpi_gpio_need_run_edge_events_on_boot() getter
->   gpiolib: acpi: Move quirks to a separate file
-> 
->  drivers/gpio/Makefile                         |   1 +
->  .../{gpiolib-acpi.c => gpiolib-acpi-core.c}   | 344 +----------------
->  drivers/gpio/gpiolib-acpi-quirks.c            | 363 ++++++++++++++++++
->  drivers/gpio/gpiolib-acpi.h                   |  15 +
->  4 files changed, 392 insertions(+), 331 deletions(-)
->  rename drivers/gpio/{gpiolib-acpi.c => gpiolib-acpi-core.c} (79%)
->  create mode 100644 drivers/gpio/gpiolib-acpi-quirks.c
-> 
+-- 
+2.49.0
 
 
