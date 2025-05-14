@@ -1,113 +1,78 @@
-Return-Path: <linux-kernel+bounces-647516-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-647507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44F8FAB6961
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 13:00:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BD5BAB6947
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 12:58:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F37DA8C2CAD
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 11:00:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 542E419E38FE
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 10:58:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BB5327932D;
-	Wed, 14 May 2025 10:58:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 603A92741A0;
+	Wed, 14 May 2025 10:57:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FrQIKYJM"
-Received: from mail-ot1-f53.google.com (mail-ot1-f53.google.com [209.85.210.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="r9Mau5Q0"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9D47276053;
-	Wed, 14 May 2025 10:58:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE8B620F079;
+	Wed, 14 May 2025 10:57:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747220335; cv=none; b=lX1Qx/Ro5Ss5PTCHSxZuFonQ08FFXVRRpxzFg/BAw20xsc6wsycZ+XErNg01Uaq6qnz2yfGfTjon3NgYElYvntSeojpQD07XoBRUZvKgH98gGQYutkEQAQPy2tdm4L0j79//APR6f6wODUOrqmqd9C/HRyNxVYSJiopZrPXTjuI=
+	t=1747220272; cv=none; b=UmZGYdcp1HtYbWYITEOrc45Fjrq1PRrGFQkJP6txn8YIb0i3KSHi+JTFkQW9Touf8IbzsO5b/BRRwQOvmKXR7YJ+a4DLLyfIh/y/RxddC4c3ZyJTBgu+gCsyw/uVFpdvFnNwd0TDaoEzNxKVuKoaKCHhNQ6iVVIxR0vWJc0zd2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747220335; c=relaxed/simple;
-	bh=bDOrowS5NDCnhOqDvuFplAJW+UVvxHo3B+vHfABMAP8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=suwU0eV3hxOXxOIxwiMjgWyq0fPtKMwVTZ1sZBlbpUEkEKPzEmrYzoOvN3OoHpT1I8Dr/IiR7tlw3Ida5O2frush7o9pWtVLfKrN40DTvLIW7O+mkRb6F5h7rv8LJodh7Tj5S7bxJtYRxYnd83p5fiCKX1yXQF31SQPgNiRctnc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FrQIKYJM; arc=none smtp.client-ip=209.85.210.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f53.google.com with SMTP id 46e09a7af769-72c40235c34so1871294a34.3;
-        Wed, 14 May 2025 03:58:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747220333; x=1747825133; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qD5w6c0a6kvz0Ef85ipEl+D0Znk2XoV05BpXME7RAZc=;
-        b=FrQIKYJMrfTtP/dxB3ZECMuHLMNKQWKfe8gzy1uN1qEbPirkfSxJ39237KQ8XLuptI
-         NVLaci8dfX+LjFelEEYOOrM/e6WgCh/CYvmbCjuu6tXEqkMFNaYcdpW5cqMX1RQzKML3
-         uphyQLRsg2HfaGrRtlei/EURIlN6d3W1R5+iTtVu0KE+rZlSPvVy5NR/GRxd2hVbS3dz
-         +y9itwxhRqNzWSArcJ7pLSh5qHJ3EQ3TBG70T2FUkoyD6L3DNL5z3EaCRAbN+hM1rNho
-         r8NFMFNTr4gxVmV3LnNPnCQMQ0reFPSEVsIURdDN2OjGqnWfSVrrTODeG1uVS5tKubeV
-         WVlg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747220333; x=1747825133;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qD5w6c0a6kvz0Ef85ipEl+D0Znk2XoV05BpXME7RAZc=;
-        b=ESYS668TAYaUNO1e17LW9qjdsI6pnUS6qaANaiHiw/wFp0ci3w5sOxt88eNEYZ2WXT
-         Ecb2ITLIbU/g163Rez3uKT/UzpuZ1+fJQhvbn5AgopPOg95mhalWfhljyGoeimezo1lf
-         AgdRYEMBJ747pDy3Edi/2ppuzOUMPsyjsmOzFC2/7Qr9JtytnGIPwcomU/vzxFyNChI/
-         VRcg5vx92Ze+fDQLduaIA3lgXWva2V+MDOf2RIxkUx2SEbDKjVBLzWnqj/cv8FeyO9EL
-         Ndpe/bJuwA7JvK89emxC+kQ/7xYr33nu4/S9TdnvmwR/DZMKf7b2WAB9tFmzJQPNSHHc
-         dNjw==
-X-Forwarded-Encrypted: i=1; AJvYcCUpT4mUcXfksiDyhzD4W4bvFvgxQZKGc3bdMbyrQX2EYyshx8dw+myn9RKUWeQ+Gi1t2094AGP9fFFDTqs=@vger.kernel.org, AJvYcCUthJPjkYUOJhhBjVlPorcYXFd/8f4lvlNVo+AovQvquA+vFfpNo/55JIP85zpu7cwx2qVtoptQmUWxEYvXoDE=@vger.kernel.org, AJvYcCXGXcuu+4Q3+/qVFc5M9OOtAnceqXhdHfHXiVeplTg6ibBAw19bqA75+cZVA1cxehA+Si/rDjXsI7CD@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCGyiFnZuNoMG2I1x0hyYILaT72S34eDy0p6lDPcjoemrGgMJ1
-	pVEEz5OIFl6voFSBoW/gK4QSG0qEmeTuuSvAFEYAZx/dkmAPeCYO
-X-Gm-Gg: ASbGncu+7+j7J5GL98NRwky5i0sAX6e+KgjvO3ryWvFYS7KGN9lNOAtUo/4v4hXfsCZ
-	msia5NvcE4MT50D2QT85JiR87+Xn0KoWTZSBSxA1SGF5vXgaAhVHh3x0JrVqoo+3bUNaCNjrYT4
-	Udrpx/QDjoWmjv3PD10PJO363ueAVb+tdLNwc4rAF3TX0/tIOev4BhTEcu57zgSomVdQSHC/oRM
-	nDsYFwgXZXfAS0hVzJKqVmk7WKgQnuHHON1J+Ey2dJb90WUCaw/qCzx4FtrXUNECmqJkc95EPxg
-	8YrLmRmIeDrnXN6/f1SEKk/4AyrqJMmjU9kDq0kwicw5n+tJZTyk3pstlZbjXjr350jaRKZ5ut8
-	tUKU4tAuiJOdWufyu4RFsCQz8wPrchZWXpA==
-X-Google-Smtp-Source: AGHT+IE54MfSAuxodqlDuPCWb0IgGKv5g1H7LzyyZwbg9zyX4LOVBOAb43K73rSiK2QfFtlG75L38w==
-X-Received: by 2002:a05:6830:368f:b0:727:345d:3b72 with SMTP id 46e09a7af769-734e144c500mr1437251a34.16.1747220332495;
-        Wed, 14 May 2025 03:58:52 -0700 (PDT)
-Received: from my-computer.lan (c-73-76-29-249.hsd1.tx.comcast.net. [73.76.29.249])
-        by smtp.googlemail.com with ESMTPSA id 586e51a60fabf-2dba060be9esm2654535fac.10.2025.05.14.03.58.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 May 2025 03:58:52 -0700 (PDT)
-From: Andrew Ballance <andrewjballance@gmail.com>
-To: dakr@kernel.org,
-	a.hindborg@kernel.org,
-	airlied@gmail.com,
-	akpm@linux-foundation.org,
-	alex.gaynor@gmail.com,
-	aliceryhl@google.com,
-	andrewjballance@gmail.com,
-	andriy.shevchenko@linux.intel.com,
-	arnd@arndb.de,
-	benno.lossin@proton.me,
-	bhelgaas@google.com,
-	bjorn3_gh@protonmail.com,
-	boqun.feng@gmail.com,
-	daniel.almeida@collabora.com,
-	fujita.tomonori@gmail.com,
-	gary@garyguo.net,
-	gregkh@linuxfoundation.org,
-	kwilczynski@kernel.org,
-	me@kloenk.dev,
-	ojeda@kernel.org,
-	raag.jadav@intel.com,
-	rafael@kernel.org,
-	simona@ffwll.ch,
-	tmgross@umich.edu
-Cc: dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	nouveau@lists.freedesktop.org,
-	rust-for-linux@vger.kernel.org
-Subject: [PATCH v2 6/6] rust: pci: make Bar generic over Io
-Date: Wed, 14 May 2025 05:57:34 -0500
-Message-ID: <20250514105734.3898411-7-andrewjballance@gmail.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250514105734.3898411-1-andrewjballance@gmail.com>
-References: <20250514105734.3898411-1-andrewjballance@gmail.com>
+	s=arc-20240116; t=1747220272; c=relaxed/simple;
+	bh=v3UaeziQ9iWm0SzOtTXjOYc6QJZ7OWv9cuGAmZwuNeY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HmP9PPeXqAj3JSrOveJmIdGv5ElCnTfY4j1Kc/tdvwDR4OYrcktLYa1zckJBBxeVSsTXkDp/KQZ8f9W5ks4vX5Chnm02byTIT8yTbUfUW3zvkBotkuk49x5sBlvYmgsi2oj0pXhmB3U1u6C+mXh36SW9S1C2pMiYmdX3vNsSbmc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=r9Mau5Q0; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 43292bfc30b211f082f7f7ac98dee637-20250514
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=t5BczD62lnpqa0ma5zM61wuTG/WMMoKoipb4gYjC294=;
+	b=r9Mau5Q0bJsLSbLlhJgW2UZhJEtiBHhccw7mTkCherPwXVB90XbuwgmENiBTHNUXx/gkg0OAU4DnJGNg+sfD5oc4cWCLvxDbvbc0wjE1a9HQwOVFmPA/CB4Lu1sHdPZw6sKt9ZWsIGz0iADk3f9KRyK4VK1E/doqeS9ZES3kq6s=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.2.1,REQID:809faf4b-1fc8-4a1a-a400-e60a63a3bdbe,IP:0,UR
+	L:0,TC:0,Content:-25,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+	:release,TS:-25
+X-CID-META: VersionHash:0ef645f,CLOUDID:dc1bc173-805e-40ad-809d-9cec088f3bd8,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|50,EDM:-3,IP:ni
+	l,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
+	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 43292bfc30b211f082f7f7ac98dee637-20250514
+Received: from mtkmbs13n1.mediatek.inc [(172.21.101.193)] by mailgw02.mediatek.com
+	(envelope-from <skylake.huang@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1662059587; Wed, 14 May 2025 18:57:43 +0800
+Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
+ MTKMBS14N1.mediatek.inc (172.21.101.75) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.39; Wed, 14 May 2025 18:57:41 +0800
+Received: from mtksitap99.mediatek.inc (10.233.130.16) by
+ mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1258.39 via Frontend Transport; Wed, 14 May 2025 18:57:41 +0800
+From: Sky Huang <SkyLake.Huang@mediatek.com>
+To: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>, "David S. Miller"
+	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Daniel Golle
+	<daniel@makrotopia.org>, Qingfang Deng <dqfext@gmail.com>, SkyLake Huang
+	<SkyLake.Huang@mediatek.com>, Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	balika011 <balika011@gmail.com>, <linux-kernel@vger.kernel.org>,
+	<netdev@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-mediatek@lists.infradead.org>
+CC: Steven Liu <Steven.Liu@mediatek.com>, Sky Huang
+	<skylake.huang@mediatek.com>
+Subject: [PATCH net-next v3 0/2] Add built-in 2.5G ethernet phy support on MT7988
+Date: Wed, 14 May 2025 18:57:36 +0800
+Message-ID: <20250514105738.1438421-1-SkyLake.Huang@mediatek.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -115,239 +80,46 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-MTK: N
 
-renames `Bar` to `RawBar` and makes it generic over `IoAccess`.
-a user can give a compile time suggestion when mapping a bar so
-that the type of io can be known.
+From: Sky Huang <skylake.huang@mediatek.com>
 
-updates nova-core and rust_driver_pci to use new bar api.
+This patchset adds support for built-in 2.5Gphy on MT7988, change file
+and config sequence in related Kconfig and Makefile.
 
-Suggested-by: Danilo Krummrich <dakr@kernel.org>
-Signed-off-by: Andrew Ballance <andrewjballance@gmail.com>
 ---
- drivers/gpu/nova-core/driver.rs |   4 +-
- rust/kernel/pci.rs              | 101 +++++++++++++++++++++++++-------
- samples/rust/rust_driver_pci.rs |   2 +-
- 3 files changed, 83 insertions(+), 24 deletions(-)
+Change in v2:
+- Add missing dt-bindings and dts node.
+- Remove mtk_phy_leds_state_init() temporarily. I'm going to add LED support
+later.
+- Remove "Firmware loading/trigger ok" log.
+- Add macro define for 0x800e & 0x800f
 
-diff --git a/drivers/gpu/nova-core/driver.rs b/drivers/gpu/nova-core/driver.rs
-index a08fb6599267..c03283d1e60e 100644
---- a/drivers/gpu/nova-core/driver.rs
-+++ b/drivers/gpu/nova-core/driver.rs
-@@ -11,7 +11,7 @@ pub(crate) struct NovaCore {
- }
- 
- const BAR0_SIZE: usize = 8;
--pub(crate) type Bar0 = pci::Bar<BAR0_SIZE>;
-+pub(crate) type Bar0 = pci::MMIoBar<BAR0_SIZE>;
- 
- kernel::pci_device_table!(
-     PCI_TABLE,
-@@ -33,7 +33,7 @@ fn probe(pdev: &pci::Device<Core>, _info: &Self::IdInfo) -> Result<Pin<KBox<Self
-         pdev.enable_device_mem()?;
-         pdev.set_master();
- 
--        let bar = pdev.iomap_region_sized::<BAR0_SIZE>(0, c_str!("nova-core/bar0"))?;
-+        let bar = pdev.iomap_region_sized_mmio::<BAR0_SIZE>(0, c_str!("nova-core/bar0"))?;
- 
-         let this = KBox::pin_init(
-             try_pin_init!(Self {
-diff --git a/rust/kernel/pci.rs b/rust/kernel/pci.rs
-index 9f5ca22d327a..42fbe597b06e 100644
---- a/rust/kernel/pci.rs
-+++ b/rust/kernel/pci.rs
-@@ -11,8 +11,7 @@
-     devres::Devres,
-     driver,
-     error::{to_result, Result},
--    io::Io,
--    io::IoRaw,
-+    io::{Io, IoAccess, IoRaw, MMIo},
-     str::CStr,
-     types::{ARef, ForeignOwnable, Opaque},
-     ThisModule,
-@@ -259,15 +258,21 @@ pub struct Device<Ctx: device::DeviceContext = device::Normal>(
- ///
- /// # Invariants
- ///
--/// `Bar` always holds an `IoRaw` inststance that holds a valid pointer to the start of the I/O
-+/// `Bar` always holds an `I` inststance that holds a valid pointer to the start of the I/O
- /// memory mapped PCI bar and its size.
--pub struct Bar<const SIZE: usize = 0> {
-+pub struct RawBar<const SIZE: usize = 0, I: IoAccess<SIZE> = Io<SIZE>> {
-     pdev: ARef<Device>,
--    io: IoRaw<SIZE>,
-+    io: I,
-     num: i32,
- }
- 
--impl<const SIZE: usize> Bar<SIZE> {
-+/// a pci bar that can be either PortIo or MMIo
-+pub type IoBar<const SIZE: usize = 0> = RawBar<SIZE, Io<SIZE>>;
-+
-+/// a pci bar that maps a [`MMIo`].
-+pub type MMIoBar<const SIZE: usize = 0> = RawBar<SIZE, MMIo<SIZE>>;
-+
-+impl<const SIZE: usize, I: IoAccess<SIZE>> RawBar<SIZE, I> {
-     fn new(pdev: &Device, num: u32, name: &CStr) -> Result<Self> {
-         let len = pdev.resource_len(num)?;
-         if len == 0 {
-@@ -299,7 +304,7 @@ fn new(pdev: &Device, num: u32, name: &CStr) -> Result<Self> {
-             return Err(ENOMEM);
-         }
- 
--        let io = match IoRaw::new(ioptr, len as usize) {
-+        let raw = match IoRaw::new(ioptr, len as usize) {
-             Ok(io) => io,
-             Err(err) => {
-                 // SAFETY:
-@@ -311,7 +316,22 @@ fn new(pdev: &Device, num: u32, name: &CStr) -> Result<Self> {
-             }
-         };
- 
--        Ok(Bar {
-+        // SAFETY:
-+        // - `raw` is from `pci_iomap`
-+        // - addresses from `pci_iomap` should be accesed through ioread/iowrite
-+        let io = match unsafe { I::from_raw_cookie(raw) } {
-+            Ok(io) => io,
-+            Err(err) => {
-+                // SAFETY:
-+                // `pdev` is valid by the invariants of `Device`.
-+                // `ioptr` is guaranteed to be the start of a valid I/O mapped memory region.
-+                // `num` is checked for validity by a previous call to `Device::resource_len`.
-+                unsafe { Self::do_release(pdev, ioptr, num) };
-+                return Err(err);
-+            }
-+        };
-+
-+        Ok(RawBar {
-             pdev: pdev.into(),
-             io,
-             num,
-@@ -338,25 +358,24 @@ fn release(&self) {
-     }
- }
- 
--impl Bar {
-+impl RawBar {
-     fn index_is_valid(index: u32) -> bool {
-         // A `struct pci_dev` owns an array of resources with at most `PCI_NUM_RESOURCES` entries.
-         index < bindings::PCI_NUM_RESOURCES
-     }
- }
- 
--impl<const SIZE: usize> Drop for Bar<SIZE> {
-+impl<const SIZE: usize, I: IoAccess<SIZE>> Drop for RawBar<SIZE, I> {
-     fn drop(&mut self) {
-         self.release();
-     }
- }
- 
--impl<const SIZE: usize> Deref for Bar<SIZE> {
--    type Target = Io<SIZE>;
-+impl<const SIZE: usize, I: IoAccess<SIZE>> Deref for RawBar<SIZE, I> {
-+    type Target = I;
- 
-     fn deref(&self) -> &Self::Target {
--        // SAFETY: By the type invariant of `Self`, the MMIO range in `self.io` is properly mapped.
--        unsafe { Io::from_raw_ref(&self.io) }
-+        &self.io
-     }
- }
- 
-@@ -379,7 +398,7 @@ pub fn device_id(&self) -> u16 {
- 
-     /// Returns the size of the given PCI bar resource.
-     pub fn resource_len(&self, bar: u32) -> Result<bindings::resource_size_t> {
--        if !Bar::index_is_valid(bar) {
-+        if !RawBar::index_is_valid(bar) {
-             return Err(EINVAL);
-         }
- 
-@@ -389,22 +408,62 @@ pub fn resource_len(&self, bar: u32) -> Result<bindings::resource_size_t> {
-         Ok(unsafe { bindings::pci_resource_len(self.as_raw(), bar.try_into()?) })
-     }
- 
--    /// Mapps an entire PCI-BAR after performing a region-request on it. I/O operation bound checks
-+    /// Maps an entire PCI-BAR after performing a region-request on it. I/O operation bound checks
-     /// can be performed on compile time for offsets (plus the requested type size) < SIZE.
-     pub fn iomap_region_sized<const SIZE: usize>(
-         &self,
-         bar: u32,
-         name: &CStr,
--    ) -> Result<Devres<Bar<SIZE>>> {
--        let bar = Bar::<SIZE>::new(self, bar, name)?;
-+    ) -> Result<Devres<IoBar<SIZE>>> {
-+        self.iomap_region_sized_hint::<SIZE, Io<SIZE>>(bar, name)
-+    }
-+
-+    /// Maps an entire PCI-BAR after performing a region-request on it.
-+    pub fn iomap_region(&self, bar: u32, name: &CStr) -> Result<Devres<IoBar>> {
-+        self.iomap_region_sized::<0>(bar, name)
-+    }
-+
-+    /// Maps an entire PCI-BAR after performing a region-request on it. I/O operation bound checks
-+    /// can be performed on compile time for offsets (plus the requested type size) < SIZE.
-+    /// where it is known that the bar is [`MMIo`]
-+    pub fn iomap_region_sized_mmio<const SIZE: usize>(
-+        &self,
-+        bar: u32,
-+        name: &CStr,
-+    ) -> Result<Devres<MMIoBar<SIZE>>> {
-+        self.iomap_region_sized_hint::<SIZE, MMIo<SIZE>>(bar, name)
-+    }
-+
-+    /// Maps an entire PCI-BAR after performing a region-request on it.
-+    /// where it is known that the bar is [`MMIo`]
-+    pub fn iomap_region_mmio(&self, bar: u32, name: &CStr) -> Result<Devres<MMIoBar>> {
-+        self.iomap_region_sized_hint::<0, MMIo<0>>(bar, name)
-+    }
-+
-+    /// Maps an entire PCI-BAR after performing a region-request where the
-+    /// type of Io backend is known at compile time.
-+    pub fn iomap_region_hint<I: IoAccess>(
-+        &self,
-+        bar: u32,
-+        name: &CStr,
-+    ) -> Result<Devres<RawBar<0, I>>> {
-+        let bar = RawBar::<0, I>::new(self, bar, name)?;
-         let devres = Devres::new(self.as_ref(), bar, GFP_KERNEL)?;
- 
-         Ok(devres)
-     }
-+    /// Maps an entire PCI-BAR after performing a region-request where the
-+    /// type of Io backend is known at compile time. I/O operation bound checks
-+    /// can be performed on compile time for offsets (plus the requested type size) < SIZE.
-+    pub fn iomap_region_sized_hint<const SIZE: usize, I: IoAccess<SIZE>>(
-+        &self,
-+        bar: u32,
-+        name: &CStr,
-+    ) -> Result<Devres<RawBar<SIZE, I>>> {
-+        let bar = RawBar::<SIZE, I>::new(self, bar, name)?;
-+        let devres = Devres::new(self.as_ref(), bar, GFP_KERNEL)?;
- 
--    /// Mapps an entire PCI-BAR after performing a region-request on it.
--    pub fn iomap_region(&self, bar: u32, name: &CStr) -> Result<Devres<Bar>> {
--        self.iomap_region_sized::<0>(bar, name)
-+        Ok(devres)
-     }
- }
- 
-diff --git a/samples/rust/rust_driver_pci.rs b/samples/rust/rust_driver_pci.rs
-index a8d292f4c1b3..b645155142db 100644
---- a/samples/rust/rust_driver_pci.rs
-+++ b/samples/rust/rust_driver_pci.rs
-@@ -18,7 +18,7 @@ impl Regs {
-     const END: usize = 0x10;
- }
- 
--type Bar0 = pci::Bar<{ Regs::END }>;
-+type Bar0 = pci::IoBar<{ Regs::END }>;
- 
- #[derive(Debug)]
- struct TestIndex(u8);
+Change in v3:
+1. Remove unnecessary headers and unnecessary print log.
+2. ioremap IO space (MT7988_2P5GE_PMB_FW_BASE/MTK_2P5GPHY_MCU_CSR_BASE)
+directly instead of of_iomap() compatible node (mediatek,2p5gphy-fw) from dtsi
+3. Call mt798x_2p5ge_phy_load_fw() from .probe instead of .config_init. This is
+tested ok with openWRT-24.10 and "mediatek/mt7988/i2p5ge-phy-pmb.bin" firmware
+is embedded into kernel image instead of rootfs image.
+4. Use request_firmware_direct instead of request_firmware. We don't want sysfs
+fallback in this driver to avoid blocking.
+5. Remove mtk_i2p5ge_phy_priv sturct since it's not used anymore.
+---
+Sky Huang (2):
+  net: phy: mediatek: Sort config and file names in Kconfig and Makefile
+  net: phy: mediatek: add driver for built-in 2.5G ethernet PHY on
+    MT7988
+
+ MAINTAINERS                          |   1 +
+ drivers/net/phy/mediatek/Kconfig     |  31 ++-
+ drivers/net/phy/mediatek/Makefile    |   3 +-
+ drivers/net/phy/mediatek/mtk-2p5ge.c | 322 +++++++++++++++++++++++++++
+ 4 files changed, 346 insertions(+), 11 deletions(-)
+ create mode 100644 drivers/net/phy/mediatek/mtk-2p5ge.c
+
 -- 
-2.49.0
+2.45.2
 
 
