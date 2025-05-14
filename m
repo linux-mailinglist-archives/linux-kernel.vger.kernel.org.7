@@ -1,42 +1,64 @@
-Return-Path: <linux-kernel+bounces-647217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-647229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47283AB65DB
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 10:26:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C33FBAB65EA
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 10:27:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4B21C7AAEF2
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 08:23:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 51E5E4A5F40
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 08:27:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3980721B9E3;
-	Wed, 14 May 2025 08:24:08 +0000 (UTC)
-Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1218521C183;
+	Wed, 14 May 2025 08:26:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="pMGlMrFN"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5865E4C6C
-	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 08:24:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E2F821B9C8;
+	Wed, 14 May 2025 08:26:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747211047; cv=none; b=ND00t1m4TcnBppQ160j2uCdk5/g1Gptyq2qXP4ecRqpPcl+FQ0TILJgR+KXkr9yEj1658HdaThMMx82ZNExg7CGxx0x/+yuftQE4Wh3h56U312DnvI0Gt3H5VR40CFxGJY8eUuv37zqlijQ94r/j/lwBpLaX5Mf52FnEsRznWq4=
+	t=1747211218; cv=none; b=KT/RK1ayLMwwKr5EOhkp6pfxRa7lX/1eelXqnE9keNVA5p+vFWU4gwuR5cJOL/VGsPyH4zAGjsCiWwfT7bAyxVEQkbR56xzfMz+J3Om4HmtLpyIp1VeZqhvSlVV2vEwUJM6tc9vG6AbhknEkcrVEw5x1fHztEiKzY58UQuaIoPI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747211047; c=relaxed/simple;
-	bh=S7mfk1HdTzLSLmpVIW7q3D+ovdCW9ja16x7BWEHeXk4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tNKBVxvSDp63Oq4hY3FnHMOSkCYwmCO3oz7o8JoFNiuNMNVRMY5sf2HGWnUBYu2FL04x6gZPU2holYzJ+MhAas3adOfgQ5D/yH8vaFmcrtxgcuJgAg0DpEdw8FJoA4lVVgJ1Wy2r74ffC1K/34m9GkQ5+k5ajb0Y2bjJZ3V+EWU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
-Received: from [192.168.0.192] (ip5f5af522.dynamic.kabel-deutschland.de [95.90.245.34])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: pmenzel)
-	by mx.molgen.mpg.de (Postfix) with ESMTPSA id B9FB061E6479A;
-	Wed, 14 May 2025 10:23:45 +0200 (CEST)
-Message-ID: <12cc81d5-f134-4460-9139-754a69821f12@molgen.mpg.de>
-Date: Wed, 14 May 2025 10:23:44 +0200
+	s=arc-20240116; t=1747211218; c=relaxed/simple;
+	bh=pazwyUs7Ot0cc4KDotDE+lY96H0cEXZeAVpbnhs/JgU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=rYOKDUfZIa8ts7xm9ya/hsnS2XI4ypX9tvMynBphnnsFR3LBNSMed+KgB76LUwF39/ZMU41BFqgzk4hgZp3KTHWAh+fZ2J+8zpEXNK8r3WF7pjR901YaZX5NY0SuVUuX8CzIodYBIPZKqy2VpIG2qtwb2N/di9ddRh7LkGmRiVE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=pMGlMrFN; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54E7vtKW023076;
+	Wed, 14 May 2025 10:26:24 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	ds5+8iM4sRf0Jo4IyqmV53NfBcmFz2cJwNiJZ/wCrmk=; b=pMGlMrFN7CKCc5l+
+	/xUdEV5gxnTpRkg4FOuwGXS51BtuZ1kYDbW2LqiQMA2nhQSxwBFpjwLYCC2AhmDk
+	msfLU+TozS7alcR8HZhZhXZb623TTILmwa7sKOnjfrj5H6LqzSSBzRZvyWS96QXC
+	IWewdZXh737I31ekESxstCKDAXVXyOg1jGM5JpXfULiVEi+6tUDx4AHPQbn9ke2c
+	LGDbfmqBSsPHm40wvkDE9bbbYeAJlHl5fGiH4T7HQpRId+2j7ux8/eK9Vy/8e4s8
+	2DWJq5H67SsCDvyIICQi6YLh8xDI53BVvYN7sh5Yup55vf0X5feVmbg0IB1O8w3z
+	+IM2dA==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 46mbdxtj5k-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 14 May 2025 10:26:24 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id C8B5240044;
+	Wed, 14 May 2025 10:25:13 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 1C3FDB3A736;
+	Wed, 14 May 2025 10:24:03 +0200 (CEST)
+Received: from [10.48.86.79] (10.48.86.79) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 14 May
+ 2025 10:24:02 +0200
+Message-ID: <7f79af9a-2b42-48c0-98c5-6bf2afc61206@foss.st.com>
+Date: Wed, 14 May 2025 10:24:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -44,40 +66,50 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: qca6174 hw3.2 target 0x05030000 chip_id 0x00340aff: firmware
- crashed!
-To: Jamie <jamie@stimulussoft.com>
-Cc: Baochen Qiang <quic_bqiang@quicinc.com>,
- Jeff Johnson <jjohnson@kernel.org>, ath10k@lists.infradead.org,
- LKML <linux-kernel@vger.kernel.org>
-References: <5aa2dae4-94ba-45cb-b138-bb40c89a85eb@molgen.mpg.de>
- <486e9f27-3b03-4317-a1fc-1bd92235db1c@molgen.mpg.de>
- <90a764d0-c230-43bb-b7e5-189544839f8d@quicinc.com>
- <e2e58098-4589-4ae4-bc38-6b009823b071@molgen.mpg.de>
- <82b9e966-5e12-4a13-98d4-0ffa88505f97@molgen.mpg.de>
- <1909038a-bde9-4def-bcb8-0f67bff5c62d@stimulussoft.com>
+Subject: Re: (subset)[PATCH v6 0/7] Add STM32MP25 LPTIM support: MFD, PWM,
+ IIO, counter, clocksource
+To: Fabrice Gasnier <fabrice.gasnier@foss.st.com>, <daniel.lezcano@linaro.org>,
+        <lee@kernel.org>, <tglx@linutronix.de>
+CC: <ukleinek@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <jic23@kernel.org>, <robh@kernel.org>, <catalin.marinas@arm.com>,
+        <will@kernel.org>, <devicetree@vger.kernel.org>, <wbg@kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <linux-iio@vger.kernel.org>, <linux-pwm@vger.kernel.org>,
+        <olivier.moysan@foss.st.com>
+References: <20250429125133.1574167-1-fabrice.gasnier@foss.st.com>
 Content-Language: en-US
-From: Paul Menzel <pmenzel@molgen.mpg.de>
-In-Reply-To: <1909038a-bde9-4def-bcb8-0f67bff5c62d@stimulussoft.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+From: Alexandre TORGUE <alexandre.torgue@foss.st.com>
+In-Reply-To: <20250429125133.1574167-1-fabrice.gasnier@foss.st.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-14_02,2025-05-14_02,2025-02-21_01
 
-Dear Jamie,
+Hi Fabrice
+
+On 4/29/25 14:51, Fabrice Gasnier wrote:
+> This series adds support for STM32MP25 to MFD PWM, IIO, counter and
+> clocksource low-power timer (LPTIM) drivers.
+> This new variant is managed by using a new DT compatible string, hardware
+> configuration and version registers.
+> It comes with a slightly updated register set, some new features and new
+> interconnect signals inside the SoC.
+> Same feature list as on STM32MP1x is supported currently.
+> The device tree files add all instances in stm32mp251 dtsi file.
+> 
+
+Following patches are applied on stm32-next:
+
+[PATCH v6 5/7] arm64: defconfig: enable STM32 LP timer clockevent driver
+[PATCH v6 6/7] arm64: dts: st: add low-power timer nodes on stm32mp251
+[PATCH v6 7/7] arm64: dts: st: use lptimer3 as tick broadcast source on 
+stm32mp257f-ev1
 
 
-Am 14.05.25 um 10:19 schrieb Jamie:
-> Check your voltages. In my case, my voltage settings were wrong.
-
-Where did you do this? In the system firmware?
-
-> After adjusting them, the drivers started working again.
-Then it’s a different problem. I am using a Dell XPS 13 9360 laptop, and 
-I didn’t fiddle with any voltages. Even if Linux’ power management 
-behavior changed, it’s hard to pinpoint a possible regression, as I have 
-no reproducer.
-
-
-Kind regards,
-
-Paul
+Thanks
+Alex
 
