@@ -1,144 +1,159 @@
-Return-Path: <linux-kernel+bounces-647281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-647278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62571AB6676
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 10:52:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BBB2AB6673
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 10:51:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB9C14A35B3
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 08:52:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9ED9F3A8D81
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 08:51:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43EDD222591;
-	Wed, 14 May 2025 08:51:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10C4022157F;
+	Wed, 14 May 2025 08:51:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="XwpkGXeS"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 626F4220F5A;
-	Wed, 14 May 2025 08:51:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="u2ECZjR3";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="/l6f7NQ+";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="u2ECZjR3";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="/l6f7NQ+"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 226A921E098
+	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 08:51:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747212687; cv=none; b=Ng6bPWMoSrjS2v0K91rKXiHtLiDUKuOH9gtGKtUTjbNV1gZQWImL42y1awZSY0Ca8UIct56wXOwdR9SQM824wHvOLbAA1LvybuyoC6IjTWqyo394B8u19FWAYsGD0iXKG/dllxkmrC2Cmgw4wjPQMqRbdjU4BCPzI2BAuepFXzI=
+	t=1747212666; cv=none; b=FYxiZ9WKJmLUNbwsgIe3RMKbVq1wUeWJjUuX2bJMcsLfWZTCs9zH+6lASMmOUIJsnR0NjZkFbh5kawu7vvAB/BRZVrWgFV8J6xI1XiCcjMQE/7q7HSgjdtO8+yB2R0Dix3BU5qCfUS70rmO4mYstXXoAoqehAjowS/8jR2nhMJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747212687; c=relaxed/simple;
-	bh=apq+BwYHOxkPhX8ok64w8r4oGNy7ByvWl3MYKvBniB8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=FLS+TTOWj9c03OKYfOgLul5+UgpsTZdYYJnXIfJ69ZnODfaq3rBrrQUNTInatLwi2zlX7yjmNvUb2xn/jEeASRv5Wz8jgLmXOviephV/GHJrbWliaKMbInOWJKT8vFGSdiqaSLubUEBPuYp+9fzuKZo9g/ix5RDxq+GbWU2xQWA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=XwpkGXeS reason="signature verification failed"; arc=none smtp.client-ip=117.135.210.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:To:Subject:Content-Type:MIME-Version:
-	Message-ID; bh=sBFuoDoykQLtmTPGNVji36ZhaQVrt1lynL2bW5GsBiQ=; b=X
-	wpkGXeSBwF9sgNV/XM+nzpfhi2/6IcJFl8RYdcGTFpTd+4lDjLDVXRRavMfqQ1lS
-	D1rI+B+KoNIt6NET14u7c+nMwvyOQpQ/Wq0uqC27dI5cmycMZF3qMiZb4B7WagjM
-	9LqYFFQz2IomS5CzkX69Lh0z7sGK/u2M7qyYhGJrxo=
-Received: from 00107082$163.com ( [111.35.191.17] ) by
- ajax-webmail-wmsvr-40-138 (Coremail) ; Wed, 14 May 2025 16:50:52 +0800
- (CST)
-Date: Wed, 14 May 2025 16:50:52 +0800 (CST)
-From: "David Wang" <00107082@163.com>
-To: "Greg KH" <gregkh@linuxfoundation.org>
-Cc: mathias.nyman@intel.com, oneukum@suse.com, stern@rowland.harvard.edu,
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] USB: core: add a memory pool to urb for
- host-controller private data
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20240801(9da12a7b)
- Copyright (c) 2002-2025 www.mailtech.cn 163com
-In-Reply-To: <2025051405-glare-crazily-a9fa@gregkh>
-References: <20250513113817.11962-1-00107082@163.com>
- <20250514064455.5488-1-00107082@163.com>
- <2025051405-glare-crazily-a9fa@gregkh>
-X-NTES-SC: AL_Qu2fBf6avU4u5CibY+kZnEYQheY4XMKyuPkg1YJXOp80iCXjww4aeXB6GXr77cOqKSqSvxeqUxhu5uNYd61xTbA13njqx69rZwdQABWQVKxD
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=GBK
+	s=arc-20240116; t=1747212666; c=relaxed/simple;
+	bh=6tEYE069E4mzL3+5dNxHHrmo0j7FVAindoCB3iDcvBA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=d4rOVAnzV+wD/gHyBFsMBqIMVLVVEn6BmfE2X0AVs+8VF+wVkc+ZxOcpLFiKA0LTHwqzma1NIZJ/jZPuUSjYKS9YmBiP1QqCzcJErdSdn2U0qDKdMffQeEQAmMqv1Qv1AxcvQiZe/J05K5ny4l2OZq89FasyfsfKol9jQKXs+PE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=u2ECZjR3; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=/l6f7NQ+; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=u2ECZjR3; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=/l6f7NQ+; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 24EE021201;
+	Wed, 14 May 2025 08:51:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1747212662; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1U2ujuZD1jkB0o1rfSCE6ebNEMGjdZEJaT7dHDxjfSc=;
+	b=u2ECZjR3e1UIcJ1Cl9Ch3q93M8Kx/H21EsXRySOh8CWj2ha8JXy5U7SnYYD0MZMeyR+K6w
+	cbuPP+vVecZKcD+pK9fzOupcrXTUXfordU3SSI1c8b2rgkbN5Jx6uoU2Z8jFZDmVa2XIF8
+	3Tv8oOQqylZkteqzE122GA7qUtFhV2o=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1747212662;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1U2ujuZD1jkB0o1rfSCE6ebNEMGjdZEJaT7dHDxjfSc=;
+	b=/l6f7NQ+h5DrDRwc8EAJztzyphVOW4AYnVxcluu0qZsoeBsj6D+fyATUejRNJKT8qgF4l1
+	/9DsX0OFaPZkJnAg==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1747212662; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1U2ujuZD1jkB0o1rfSCE6ebNEMGjdZEJaT7dHDxjfSc=;
+	b=u2ECZjR3e1UIcJ1Cl9Ch3q93M8Kx/H21EsXRySOh8CWj2ha8JXy5U7SnYYD0MZMeyR+K6w
+	cbuPP+vVecZKcD+pK9fzOupcrXTUXfordU3SSI1c8b2rgkbN5Jx6uoU2Z8jFZDmVa2XIF8
+	3Tv8oOQqylZkteqzE122GA7qUtFhV2o=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1747212662;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1U2ujuZD1jkB0o1rfSCE6ebNEMGjdZEJaT7dHDxjfSc=;
+	b=/l6f7NQ+h5DrDRwc8EAJztzyphVOW4AYnVxcluu0qZsoeBsj6D+fyATUejRNJKT8qgF4l1
+	/9DsX0OFaPZkJnAg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 310D8137E8;
+	Wed, 14 May 2025 08:51:01 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id G6TeCHVZJGimHAAAD6G6ig
+	(envelope-from <pfalcato@suse.de>); Wed, 14 May 2025 08:51:01 +0000
+Date: Wed, 14 May 2025 09:50:55 +0100
+From: Pedro Falcato <pfalcato@suse.de>
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, David Hildenbrand <david@redhat.com>, 
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Mike Rapoport <rppt@kernel.org>, 
+	Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, Jann Horn <jannh@google.com>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH] mm: remove WARN_ON_ONCE() in file_has_valid_mmap_hooks()
+Message-ID: <pt5ni6ofhzbiiemnmrueg3w2hicfmi5qvqctz4ixasl2qrgjo7@dr5qcp52txuf>
+References: <20250514084024.29148-1-lorenzo.stoakes@oracle.com>
+ <9b5d232e-7579-42a9-bcbe-a4674bf76fe4@suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <4b376fc2.7e7e.196cdfd512a.Coremail.00107082@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:iigvCgD3L9ttWSRo1UsEAA--.39926W
-X-CM-SenderInfo: qqqrilqqysqiywtou0bp/1tbiqAxNqmgkRDyyBAAGsH
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9b5d232e-7579-42a9-bcbe-a4674bf76fe4@suse.cz>
+X-Spam-Flag: NO
+X-Spam-Score: -3.80
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[16];
+	MIME_TRACE(0.00)[0:+];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,intel.com:email,suse.de:email,oracle.com:email,imap1.dmz-prg2.suse.org:helo]
 
-CkF0IDIwMjUtMDUtMTQgMTU6Mjk6NDIsICJHcmVnIEtIIiA8Z3JlZ2toQGxpbnV4Zm91bmRhdGlv
-bi5vcmc+IHdyb3RlOgo+T24gV2VkLCBNYXkgMTQsIDIwMjUgYXQgMDI6NDQ6NTVQTSArMDgwMCwg
-RGF2aWQgV2FuZyB3cm90ZToKPj4gSGksIAo+PiAKPj4gVXBkYXRlIG1lbW9yeSBmb290cHJpbnRz
-IGFmdGVyIGhvdXJzIG9mIFVTQiBkZXZpY2VzIHVzYWdlCj4+IG9uIG15IHN5c3RlbToKPj4gKEkg
-aGF2ZSB3ZWJjYW0vbWljL2tleWJvYXJkL21vdXNlL2hhcmRkaXNrIGNvbm5lY3RlZCB2aWEgVVNC
-LAo+PiBhIGZ1bGwgcGljdHVyZSBvZiBtZW1vcnkgZm9vdHByaW50cyBpcyBhdHRhY2hlZCBiZWxv
-dykKPj4gKy0tLS0tLS0tLS0tLS0tLS0tLS0tLS0rLS0tLS0tLS0tLS0tLS0tLSstLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tKy0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-Kwo+PiB8IGFjdGl2ZSBtZW1vcnkoYnl0ZXMpIHwgYWN0aXZlIG9iamVjdHMgfCAgICAgICAgICAg
-ICAgIGFsbG9jIGxvY2F0aW9uICAgICAgICAgICAgICB8IHRvdGFsIG9iamVjdHMgY3JlYXRlZCB8
-Cj4+ICstLS0tLS0tLS0tLS0tLS0tLS0tLS0tKy0tLS0tLS0tLS0tLS0tLS0rLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLSstLS0tLS0tLS0tLS0tLS0tLS0tLS0tLSsK
-Pj4gfCAgICAgICAgMjI5MTIgICAgICAgICB8ICAgICAgIDI0ICAgICAgIHwgY29yZS91cmIuYzox
-MDU0OnVyYl9oY3ByaXZfbWVtcG9vbF96YWxsb2MgfCAgICAgICAgIDEwNTIzICAgICAgICAgfAo+
-PiB8ICAgICAgICAxMTc3NiAgICAgICAgIHwgICAgICAgMzEgICAgICAgfCAgICAgICAgY29yZS91
-cmIuYzo3Njp1c2JfYWxsb2NfdXJiICAgICAgICB8ICAgICAgICAgMTEwMjcgICAgICAgICB8Cj4+
-ICstLS0tLS0tLS0tLS0tLS0tLS0tLS0tKy0tLS0tLS0tLS0tLS0tLS0rLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLSstLS0tLS0tLS0tLS0tLS0tLS0tLS0tLSsKPj4g
-Cj4+IFRoZSBjb3VudCBmb3IgYWN0aXZlIFVSQiBvYmplY3RzIHJlbWFpbiBhdCBsb3cgbGV2ZWws
-Cj4+IGl0cyBwZWFrIGlzIGFib3V0IDEyS0Igd2hlbiBJIGNvcGllZCAxMEcgZmlsZSB0byBteSBo
-YXJkZGlzay4KPj4gVGhlIG1lbW9yeSBwb29sIGluIHRoaXMgcGF0Y2ggdGFrZXMgYWJvdXQgMjJL
-QiwgaXRzIHBlYWsgaXMgMjNLQi4KPj4gVGhlIHBhdGNoIG1lYW50IHRvIHJldXNlIG1lbW9yeSB2
-aWEgYSBtZW1wb29sLCB0aGUgbWVtb3J5IGtlcHQgaW4gcG9vbCBpcyBpbmRlZWQKPj4gdGhlICJ0
-cmFkZW9mZiIgd2hlbiB0aGUgc3lzdGVtIGlzIGlkbGUuIChXZWxsLCB3ZSBhcmUgdGFsa2luZyBh
-Ym91dCBtZW1wb29sIGFueXdheS4pCj4+IEhvdyBiYWxhbmNlIHRoZSB0cmFkZW9mZiBpcyBkZXBl
-bmRzIG9uIGhvdyB3ZWxsIHRoZSBtZW1wb29sIGlzIG1hbmFnZWQuCj4+IFRoaXMgcGF0Y2ggdGFr
-ZXMgYSBlYXN5IGFwcHJvYWNoOiBwdXQgZmFpdGggaW4gVVJCIG9iamVjdHMgbWFuYWdlbWVudCBh
-bmQgcHV0Cj4+IGEgc2luZ2xlIHNsb3Qgb2YgbWVtcG9vbCBpbiBVUkIgb24gZGVtYW5kcy4gQW5k
-IHRoZSBjaGFuZ2VzLCBieSBjb3VudGluZyBsaW5lcwo+PiBpbiB0aGlzIHBhdGNoLCBhcmUgdmVy
-eSBzaW1wbGUuCj4+IEJhc2Ugb24gdGhlIHByb2ZpbGluZywgdGhlIG51bWJlciBvZiBhY3RpdmUg
-VVJCIG9iamVjdHMgYXJlIGtlcHQgYXQgYSB2ZXJ5IGxvdyBzY2FsZSwKPj4gb25seSBzZXZlcmFs
-IGNvdWxkIGhhdmUgYSB2ZXJ5IGxvbmcgbGlmZWN5Y2xlLgo+PiBJIHRoaW5rIFVSQiBpcyBhIGdv
-b2QgY2FuZGlkYXRlIGZvciBjYWNoaW5nIHRob3NlIG1lbW9yeSBuZWVkZWQgZm9yIHByaXZhdGUg
-ZGF0YS4KPj4gQnV0IEkgY291bGQgYmUgdmVyeSB3cm9uZywgZHVlIHNpbXBseSB0byB0aGUgbGFj
-ayBvZiBrbm93bGVkZ2UuCj4+IAo+PiBBbmQgYmVmb3JlLCB3aXRob3V0IHRoZSBwYXRjaCwgYSAx
-MCBtaW51dGVzIHdlYmNhbSB1c2FnZSBhbmQgY29weWluZyAxMEcgZmlsZSB0byBoYXJkZGlzawo+
-PiB3b3VsZCB5aWVsZCBoaWdoIHJhdGUgb2YgbWVtb3J5IGFsbG9jYXRpb24gZm9yIHByaXZpYXRl
-IGRhdGEgaW4geGhjaV91cmJfZW5xdWV1ZToKPj4gKy0tLS0tLS0tLS0tLS0tLS0tLS0tLS0rLS0t
-LS0tLS0tLS0tLS0tLSstLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLSstLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLSsKPj4gfCBhY3RpdmUgbWVtb3J5KGJ5dGVzKSB8IGFjdGl2ZSBvYmpl
-Y3RzIHwgICAgICAgICAgIGFsbG9jIGxvY2F0aW9uICAgICAgICAgIHwgdG90YWwgb2JqZWN0cyBj
-cmVhdGVkIHwKPj4gKy0tLS0tLS0tLS0tLS0tLS0tLS0tLS0rLS0tLS0tLS0tLS0tLS0tLSstLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLSstLS0tLS0tLS0tLS0tLS0tLS0tLS0tLSsK
-Pj4gfCAgICAgICAgMjI3ODQgICAgICAgICB8ICAgICAgIDIzICAgICAgIHwgaG9zdC94aGNpLmM6
-MTU1NTp4aGNpX3VyYl9lbnF1ZXVlIHwgICAgICAgICA4OTQyODEgPDwgZ3Jvd3xpbmcgdmVyeSBx
-dWljawo+PiB8ICAgICAgICAxMDg4MCAgICAgICAgIHwgICAgICAgMzEgICAgICAgfCAgICBjb3Jl
-L3VyYi5jOjc1OnVzYl9hbGxvY191cmIgICAgfCAgICAgICAgICA0MDI4ICAgICAgICAgfAo+PiAr
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLSstLS0tLS0tLS0tLS0tLS0tKy0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tKy0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tKwo+PiBJIG9ic2VydmUg
-YSBoaWdoZXN0IGFsbG9jYXRpb24gcmF0ZSBvZiAxLjVLL3MgaW4geGhjaV91cmJfZW5xdWV1ZQo+
-PiB3aGVuIEkgd2FzIGNvcHlpbmcgMTBHIGZpbGUsIGFuZCBoYWQgbXkgd2ViY2FtIG9wZW5lZCBh
-dCB0aGUgc2FtZSB0aW1lLgo+PiAKPj4gQW5kIGFnYWluLCB0byBiZSBob25lc3QsIEkgZGlkIG5v
-dCBvYnNlcnZlIGFueSBvYnNlcnZhYmxlIHBlcmZvcm1hbmNlIGltcHJvdmVtZW50IGZyb20KPj4g
-YW4gZW5kdXNlcidzIHBvaW50IG9mIHZpZXcgd2l0aCB0aGlzIHBhdGNoLiBUaGUgb25seSBzaWdu
-aWZpY2FudCBpbXByb3ZlbWVudCBpcyBtZW1vcnkgZm9vdHByaW50Cj4+IF9udW1iZXJzXy4KPj4g
-SSBndWVzcyBtZW1vcnkgYWxsb2NhdGlvbiBpcyBpbmRlZWQgIl9yZWFsbHkgZGFtbiBmYXN0XyIs
-IGJ1dCBJIHN0aWxsIGhhdmUgdGhlIG1pbmRzZXQgb2YKPj4gInRoZSBsZXNzIGFsbG9jYXRpb24g
-dGhlIGJldHRlciIuCj4KPk5vLCB0aGlzIGlzbid0IG5lY2Vzc2FyaWx5IHRydWUgYXQgYWxsLiAg
-QWxsb2NhdGlvbnMgYXJlIGZhc3QsIGFuZCBpZiB3ZQo+ZnJlZS9hbGxvY2F0ZSB0aGluZ3MgcXVp
-Y2tseSwgaXQncyBldmVuIGZhc3Rlci4gIFVTQiBpcyBsaW1pdGVkIGJ5IHRoZQo+aGFyZHdhcmUg
-dGhyb3VnaHB1dCwgd2hpY2ggaXMgX3ZlcnlfIHNsb3cgY29tcGFyZWQgdG8gbWVtb3J5IGFjY2Vz
-c2VzIG9mCj50aGUgYWxsb2NhdG9yLgo+Cj5TbyB1bmxlc3MgeW91IGNhbiBzaG93IHRoYXQgd2Ug
-YXJlIHVzaW5nIGxlc3MgQ1BVIHRpbWUsIG9yIHNvbWV0aGluZwo+ZWxzZSAicmVhbCIgdGhhdCBp
-cyBtZWFzdXJhYmxlIGluIGEgcmVhbCB3YXkgaW4gdXNlcnNwYWNlLCB0aGF0IHdvdWxkCj5qdXN0
-aWZ5IHRoZSBleHRyYSBjb21wbGV4aXR5LCBpdCdzIGdvaW5nIHRvIGJlIGhhcmQgdG8gZ2V0IG1l
-IHRvIGFncmVlCj50aGF0IHRoaXMgaXMgc29tZXRoaW5nIHRoYXQgbmVlZHMgdG8gYmUgYWRkcmVz
-c2VkIGF0IGFsbC4KClRoYW5rcyBmb3IgZmVlZGJhY2tzfiEgClRoYXQncyB2ZXJ5IHJlYXNvbmFi
-bGUgdG8gbWUsICBhbmQgSSBoYXZlIGJlZW4gcG9uZGVyaW5nIG9uIGhvdwp0byBwcm9maWxlIGEg
-VVNCIHBlcmZvcm1hbmNlLCBidXQgc3RpbGwgbm8gY2x1ZS4KCiBJIHdpbGwga2VlcCB0aGlua2lu
-ZyBhYm91dCBpdCwgaG9wZWZ1bGx5IHRoaXMgMWsrL3MgYWxsb2NhdGlvbiB3b3VsZCBzaG93IHVw
-IHNvbWV3aGVyZSwgb3IgCmNvbmNsdWRlIHRoYXQgaXQgcmVhbGx5IGhhcyBubyBzaWduaWZpY2Fu
-dCBpbXBhY3QgYXQgYWxsLgoKClRoYW5rcwpEYXZpZAoKPgo+QWxzbywgSSdtIHRvdGFsbHkgY29u
-ZnVzZWQgYXMgdG8gd2hhdCB0aGUgImxhdGVzdCIgdmVyc2lvbiBvZiB0aGlzCj5wYXRjaHNldCBp
-cy4uLgo+CnNvcnJ5LCBJIHRoaW5rIEkgbWVzcyB1cCB0aGUgbWFpbHMgd2hlbiBJIGFkZCAicmVw
-bHktdG8iIGhlYWRlciB0byBuZXdlciBwYXRjaGVzCgo+dGhhbmtzLAo+Cj5ncmVnIGstaAo=
+On Wed, May 14, 2025 at 10:42:53AM +0200, Vlastimil Babka wrote:
+> On 5/14/25 10:40, Lorenzo Stoakes wrote:
+> > Having encountered a trinity report in linux-next (Linked in the 'Closes'
+> > tag) it appears that there are legitimate situations where a file-backed
+> > mapping can be acquired but no file->f_op->mmap or file->f_op->mmap_prepare
+> > is set, at which point do_mmap() should simply error out with -ENODEV.
+> > 
+> > Since previously we did not warn in this scenario and it appears we rely
+> > upon this, restore this situation, while retaining a WARN_ON_ONCE() for the
+> > case where both are set, which is absolutely incorrect and must be
+> > addressed and thus always requires a warning.
+> > 
+> > If further work is required to chase down precisely what is causing this,
+> > then we can later restore this, but it makes no sense to hold up this
+> > series to do so, as this is existing and apparently expected behaviour.
+> > 
+> > Reported-by: kernel test robot <oliver.sang@intel.com>
+> > Closes: https://lore.kernel.org/oe-lkp/202505141434.96ce5e5d-lkp@intel.com
+> > Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> 
+> Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
+
+Reviewed-by: Pedro Falcato <pfalcato@suse.de>
+
+-- 
+Pedro
 
