@@ -1,159 +1,323 @@
-Return-Path: <linux-kernel+bounces-648081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-648083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E32EFAB714E
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 18:27:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5575AB7154
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 18:28:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7ACC48C5734
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 16:26:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB2368C63E9
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 16:26:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6033927A44E;
-	Wed, 14 May 2025 16:26:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50AD21E4110;
+	Wed, 14 May 2025 16:26:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DPjDmFdg"
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	dkim=pass (2048-bit key) header.d=tomeuvizoso-net.20230601.gappssmtp.com header.i=@tomeuvizoso-net.20230601.gappssmtp.com header.b="tW6KXxWl"
+Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E06EC17A31F;
-	Wed, 14 May 2025 16:26:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B59721C198
+	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 16:26:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747239982; cv=none; b=mw1xvBpep6/fJW1HaKmrsnoojzakCEDikd2R+PRcNsP/MbpWW48pIN3+QJXLoWbtPSco1Cxke7DNRdrQDvO3XqsWOe1H/ScKzagYQ1vJzWcKNbPYryEzszpd3hOOrBhNIjTS/IYU1pv/jSsP54z8IwgDQCIRnThLaB37FfJldTo=
+	t=1747240013; cv=none; b=ToHN6TaHAsST/HomsIi4n7Fa69olsK4RPhG/lnXljilHpsgSqprC2q/Fq5R/l8GCqxWoq7GbVF2K/0X54l2ZuZXILm6hKvbiqoo7cX7ghm1uGjyeNyb+mczDb5FsAq9ecMpcoQdrr8TmLmpSMi4uyAvA3jIRtYy6W8e05P4Xj3M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747239982; c=relaxed/simple;
-	bh=GIESU+iUZJaPMI+zA9vfT9gZW6/Sx15SV7jAG8TtOP8=;
+	s=arc-20240116; t=1747240013; c=relaxed/simple;
+	bh=9QOQNm1DtryVnoeSN7DGC61nsEhaIMM2YYX27XDU2u4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uWQyxSbu8A1u3ta0bKAUFChHWnuLSLxeziCTLutsV4aNkawIIk6H8WLjo0nXy4CPHP5NZRSlXknmPCekCzbBLF5ieq2jYCi8dTI/8jEJkTz0XYfOZ6LSHgb5LAZSRSKfbGIZSia8lZIA0rUn5O5A0u6Yg/63Nlr4Qejuup4VcYw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DPjDmFdg; arc=none smtp.client-ip=209.85.208.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-326d823304fso37166071fa.0;
-        Wed, 14 May 2025 09:26:20 -0700 (PDT)
+	 To:Cc:Content-Type; b=laRVroHSXN6RQNEfDjnCr85A2ocAaZkDPCMq4l2aWGVhFq5etWek300UmDlfC6XJ3+lOMNS5YGZhW4AUFt2zxnOqYGlFnl7VpDwjqZOcU9JjH/7pfShaOF3BidkewMz+e02/MJWzN1pee8+qIxVuqgZQnFJYIYbnD2NQ7vIl+oQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tomeuvizoso.net; spf=pass smtp.mailfrom=tomeuvizoso.net; dkim=pass (2048-bit key) header.d=tomeuvizoso-net.20230601.gappssmtp.com header.i=@tomeuvizoso-net.20230601.gappssmtp.com header.b=tW6KXxWl; arc=none smtp.client-ip=209.85.128.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tomeuvizoso.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tomeuvizoso.net
+Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-70a23f4fe8bso66163037b3.2
+        for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 09:26:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747239979; x=1747844779; darn=vger.kernel.org;
+        d=tomeuvizoso-net.20230601.gappssmtp.com; s=20230601; t=1747240010; x=1747844810; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=wMNBvOAelRf/aEmSOjmnBt5f4s2CUzlEA7lgWB9KPa4=;
-        b=DPjDmFdgVbiY1uD1LFx8Eq0a5p6PM7RpUqMZUHqER5Io3FYJC2Ff+zEnPVH9R1BzEz
-         CTtFbfsK2cMAjwL0yTMda09d7hqFqEJBev9msTC+byRDqhrRJXViuaztEg3lYg8gqodg
-         uFkOqgsZF0wdzp+Y8Z5LOJUwrpJeZzD+iAieuqTISCMH/zsQ+W1o0bWDmz4wXk3JCbw5
-         U0ODjnc641O4/Rq5sEyilEBBa5G6hkRtegozY1A8my9mQTIq2FuAfQ7zxuwJfxFmYpkz
-         Ae9mQ3i4IumyHsRENabOh7ZRo66PEuxUCADgLdHAlwvp3gYqOGWaiuECvR5/6a1jV8If
-         qe7g==
+        bh=gJ0AzCyNbBw7LmTlYnlYRUZRvc6BiWujoVO60kyzOiU=;
+        b=tW6KXxWljaiMmR2np+P1joBCEqM4CtD+NZd0mrqRmHRWzXS828ZOSDtNmgq4vBxlMh
+         +yJfIY98WIpc7m8RNjqvDRv3fAJunQRYFGUL2QEdxfliDqkG+t8q6eKdeJ5iotFAbfOB
+         g6dKFfqVbNLxXZlpPifyHJPGWhg122FRdGhA2D6Iadw1fY85506ZM0tnTGsvTUgaDBaY
+         zuP5k1vmEkGdzyX9WerwK4ePCv2i+Ff5juHT0AYHiRHoUbz6Bd5kghDTl6/obqQcRfVy
+         ZOStTNr6eW/y01sdLU9P4zFgHolRPuO52CPlgSP0hll7RaRAujd4WzU6gGrNFoMowqoD
+         MtnQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747239979; x=1747844779;
+        d=1e100.net; s=20230601; t=1747240010; x=1747844810;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=wMNBvOAelRf/aEmSOjmnBt5f4s2CUzlEA7lgWB9KPa4=;
-        b=IzS6j0HIdr/K8B49uIMmFXQs/PIhmE2eTw/HXFBIVpiMMPpz7Z88oXI4Z/BjhBZOKi
-         rK9XsloreLXBEJimfouH2fAN8fKfEYp9QefxEaCBmbef8VDx1OrDQjztbfVuOcuriaD6
-         aOCKk2QJaqhrAzofV7BGIhWsxtzXDb5vGOosbweC/R4J+d9KNOOOUcKaFBJv3SOgG5zw
-         7WZnCUxNFbob/noSI7/PPKwsI1h3bnCC0K3O1BtxK6KSKeWAeDg1D14Q0bvDEnuCM4rO
-         aphfmuvoMWvwfzUHkOYYtO4778djaXZYPSSLWZvwOiScNCDfqPMbiTTm1e6sOo1FUhOI
-         GaJA==
-X-Forwarded-Encrypted: i=1; AJvYcCUV8Ht7YbiNE6qbP1MccXyl1dQghMuLXQ1mPMkGfgvQkDiYycLdXHoaMUApMOlpr7YBsg5pu+998CMt+Lg=@vger.kernel.org, AJvYcCWCTwvMO8enLrEW3N6ozQdPZkE+SEyw13og577mDaU34IsTdULA5tYtBbnMEnrY1pGXf3mzWP2VQ6dtbrQ=@vger.kernel.org, AJvYcCWNN/QXjE1RJxsdwuybwHpEnBs97Ye7hS5+ibX1V0mkEnjYNZwP98775mILNtHXI2SnkG6vip1MF84=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNGrbgbu0iwoMh2mAXfhvHvkX/6Vn3tGkKSnvMZ4v96DHX4h+r
-	BK6svyvCDdP+9GCHEywVBSCjEimpfIIflRyacSiLdszER/EDK/FdutSwzS1RjzE1PL+LraushgK
-	d2gwSidLnOyXZL+K3l8R/+5NZWFo=
-X-Gm-Gg: ASbGnctkEMseMXJayK8fLt+mCcqdS0sEebUvTv4Q79AeGSgTPMGuPOf97Iam32wAu7/
-	IKHqP2gPLqDIhwV08kWZsQLjgEhLxp9fQxA5jG0UveohMxCt63Ycnln01iT8ze92hsoFOaf0Rou
-	Hm1BQ3xS/FYJ6yml0C7h/pU6i5HBa115bvMw==
-X-Google-Smtp-Source: AGHT+IEuGSm3mBr75lUKxAMiFBWmCn7dZDNntjwFzklEiUcmiYMNyrKwOHaq+huwYB9vJJqB47JrALQJlga5dT+Q07E=
-X-Received: by 2002:a2e:bc08:0:b0:30b:e3d9:37e5 with SMTP id
- 38308e7fff4ca-327ed0d72ccmr15714531fa.13.1747239978632; Wed, 14 May 2025
- 09:26:18 -0700 (PDT)
+        bh=gJ0AzCyNbBw7LmTlYnlYRUZRvc6BiWujoVO60kyzOiU=;
+        b=Zn+AJYVQbqjzHbfUznWmFf89pQnXW23fVwkvNOquwuyzBEgNNdvKgVL7KK4avRiFw7
+         KUzPWu+q4ttbteGxq4LsGs5levm3qdh3G35xdnvo5/N50UPQs/d8vlmp0ybAay9rkEmR
+         cYPizGcODwbdjtwMgLsJf1ULJ6ontZYN4uUYxKg+IXQTtjWwaZtaM/0d2eTa6G7N31mh
+         tE59KRPRb7lVbYbXGgrImMCT3tzBSYpHLaC4a+6HHW8gzBgPEAEHjWexC56iydpsux0I
+         YAkzyJfrqXZFV/uYg72S6yQ7+0mqHlWYBPluI6RHlTo5XHfabQJHTJUY6ua8tE5zcOq1
+         y9wA==
+X-Forwarded-Encrypted: i=1; AJvYcCU7VPTqWBQ7HJXN4UVTSuU+U9BYqf2076+sHRZGHLqvinWRy5SrjZpANhvMK4Jsff8rUSCRtFTGEtQabO4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyEYcY5E3WBOZeGDzE014w3tDE6RIef9YoPVy+YgWG4GVojpzYX
+	0RlXGqBAZ+pBE4ZbnjyRHdS41jHPopI86Au0qSB4+oaxOfhIsM743uSAr6KQM/8=
+X-Gm-Gg: ASbGnct4qOVHeG6QxHCRjWG9vPha9YKgNxSNIAhGVL6TzIu/GI3lYvub7x6gqIBYcp5
+	Z1/o2pXTU99LBnIFR2WPsNeqxDvZ1lyK7gfyWf1fpiJ0QVOMoNvcKd9mvfyXnaDMbziLbzuJl0s
+	wBYe6ZiKSreohl8O6w3+Ed8QmLK8fVaCt6iOTD800iqO0b+cdVgT6ps1wwxjRg42AtiU5vFiu9v
+	nTcqgy0gv9H+pacscTIeVZ7miaWu/tSc/3fA3R1cd3C+3FjlveMi84+zXmEQDAE1S67fY2DNtUV
+	LYeyOeCpVQBXbBMxBPd1wg+TkTAr2yhkeR+IdomE5guxHQWqorsT5cXzuxnt1NKsg56hIhg0AVB
+	vMxzzAY5rkMGlIM7DCvU=
+X-Google-Smtp-Source: AGHT+IG+uTH2mFy8MPlKHWxCcLd2xL3H9qSutUTXT/habpIlOeQQg0fLL94X9rKsK/xpDtOCZ5yThg==
+X-Received: by 2002:a05:690c:3341:b0:6ef:94db:b208 with SMTP id 00721157ae682-70c7f221d1amr55077777b3.24.1747240010102;
+        Wed, 14 May 2025 09:26:50 -0700 (PDT)
+Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com. [209.85.219.170])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-70a3d9cb5ccsm29779187b3.90.2025.05.14.09.26.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 14 May 2025 09:26:49 -0700 (PDT)
+Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e78f528aa8eso6069068276.3;
+        Wed, 14 May 2025 09:26:49 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUQL6ZUqYR60/mjV7HZhQEUUW3dKH/vXljeyx4HVQPs53n/4gdMFXJA60weEhzFTn9PbJPN0f/vY2QqEHr3@vger.kernel.org, AJvYcCUkiGgBr2jDg+RYBsWsC6RF+sbXYhchzxbvXkmUid1KIu74NSQ52V5i1zj7LZBhXSQfJuuLC9kFnYIj@vger.kernel.org, AJvYcCUrtu+y4sofV1DOlWAtNJKGYdJdeQ3kPSMCaDUI7en2vDddYaeBCRz6BMixfN+3/ZPvzdwY0o3SchsGZq0=@vger.kernel.org, AJvYcCVcOXqOIpGd59hPHSY2ywtDrnJ3+QTcI6Kis0KdjT/oMPW7lFkqx5un/W9UnT9spgVJRek7n+8cQRbW@vger.kernel.org
+X-Received: by 2002:a05:6902:1202:b0:e6d:f160:bbdf with SMTP id
+ 3f1490d57ef6-e7b3d59ae2fmr4832866276.36.1747240009056; Wed, 14 May 2025
+ 09:26:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250508-tegra124-cpufreq-v4-0-d142bcbd0234@gmail.com>
- <20250508-tegra124-cpufreq-v4-1-d142bcbd0234@gmail.com> <040b0d8b-e862-48dd-9b77-9266a5194f99@nvidia.com>
- <CALHNRZ_AH-OkDak_RDoA3FB6EVO78r5G=5zosiJEXk4UGLH=fQ@mail.gmail.com>
-In-Reply-To: <CALHNRZ_AH-OkDak_RDoA3FB6EVO78r5G=5zosiJEXk4UGLH=fQ@mail.gmail.com>
-From: Aaron Kling <webgeek1234@gmail.com>
-Date: Wed, 14 May 2025 11:26:06 -0500
-X-Gm-Features: AX0GCFuHlyC0-Iz38p3CLXOkhiqmbRzxA0tQ5KfR89ZAPRMKo0iCPoXGbUHFpN8
-Message-ID: <CALHNRZ8Ri4sv7JkFj6t8b3VT=LU9ZS0Wc_8US2b3xGimLY6P6g@mail.gmail.com>
-Subject: Re: [PATCH v4 1/2] cpufreq: tegra124: Remove use of disable_cpufreq
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
-	Thierry Reding <thierry.reding@gmail.com>, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+References: <20250225-6-10-rocket-v2-0-d4dbcfafc141@tomeuvizoso.net>
+ <20250225-6-10-rocket-v2-1-d4dbcfafc141@tomeuvizoso.net> <20250225160248.GA2563229-robh@kernel.org>
+In-Reply-To: <20250225160248.GA2563229-robh@kernel.org>
+From: Tomeu Vizoso <tomeu@tomeuvizoso.net>
+Date: Wed, 14 May 2025 18:26:38 +0200
+X-Gmail-Original-Message-ID: <CAAObsKD01rdYf0E6Vev6oFRZEf1f006oi+ghgVUn+h=aRx-hmQ@mail.gmail.com>
+X-Gm-Features: AX0GCFvDEBwxCoW2ZGLJEEIKb_2H5q_lCEI2NWi7ZFVAMNUkSoshPa20AanOMV0
+Message-ID: <CAAObsKD01rdYf0E6Vev6oFRZEf1f006oi+ghgVUn+h=aRx-hmQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/7] dt-bindings: npu: rockchip,rknn: Add bindings
+To: Rob Herring <robh@kernel.org>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Heiko Stuebner <heiko@sntech.de>, Oded Gabbay <ogabbay@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Sumit Semwal <sumit.semwal@linaro.org>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	Sebastian Reichel <sebastian.reichel@collabora.com>, Jeffrey Hugo <quic_jhugo@quicinc.com>, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linux-doc@vger.kernel.org, 
+	linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, May 9, 2025 at 11:57=E2=80=AFAM Aaron Kling <webgeek1234@gmail.com>=
- wrote:
->
-> On Fri, May 9, 2025 at 6:04=E2=80=AFAM Jon Hunter <jonathanh@nvidia.com> =
-wrote:
-> >
-> >
-> >
-> > On 09/05/2025 01:04, Aaron Kling via B4 Relay wrote:
-> > > From: Aaron Kling <webgeek1234@gmail.com>
-> > >
-> > > Instead, unregister the cpufreq device for this fatal fail case.
-> >
-> > This is not a complete sentence. Seems to be a continuation of the
-> > subject which is not clear to the reader (at least not to me). No
-> > mention of why or what this is fixing, if anything?
->
-> I can clean up the subject and message in a new revision. More on the
-> reasoning below.
->
-> > >
-> > > Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
-> > > ---
-> > >   drivers/cpufreq/tegra124-cpufreq.c | 5 ++++-
-> > >   1 file changed, 4 insertions(+), 1 deletion(-)
-> > >
-> > > diff --git a/drivers/cpufreq/tegra124-cpufreq.c b/drivers/cpufreq/teg=
-ra124-cpufreq.c
-> > > index 514146d98bca2d8aa59980a14dff3487cd8045f6..bc0691e8971f9454def37=
-f489e4a3e244100b9f4 100644
-> > > --- a/drivers/cpufreq/tegra124-cpufreq.c
-> > > +++ b/drivers/cpufreq/tegra124-cpufreq.c
-> > > @@ -168,7 +168,10 @@ static int __maybe_unused tegra124_cpufreq_resum=
-e(struct device *dev)
-> > >   disable_dfll:
-> > >       clk_disable_unprepare(priv->dfll_clk);
-> > >   disable_cpufreq:
-> > > -     disable_cpufreq();
-> > > +     if (!IS_ERR(priv->cpufreq_dt_pdev)) {
-> > > +             platform_device_unregister(priv->cpufreq_dt_pdev);
-> > > +             priv->cpufreq_dt_pdev =3D ERR_PTR(-ENODEV);
-> > > +     }
-> >
-> > So you are proposing to unregister the device in resume? That seems odd=
-.
-> > I see there is no remove for this driver, but I really don't see the
-> > value in this.
->
-> This was suggested by Viresh in v1 [0] to replace the call to
-> disable_cpufreq, which is not currently an exported function. I'm open
-> to other suggestions.
->
-> Sincerely,
-> Aaron
->
-> [0] https://lore.kernel.org/all/20250421054452.fdlrrhtsimyucbup@vireshk-i=
-7/
+Hi Rob,
 
-Viresh, could you comment here please? As you were the one that
-suggested replacing disable_cpufreq with an unregister instead of
-exporting said function. I can make the code changes and verify they
-work as intended, but I'm not familiar enough with this subsystem to
-know what a good option here is. Are there any other cpufreq drivers
-that have to handle a resume failure like this?
+On Tue, Feb 25, 2025 at 5:02=E2=80=AFPM Rob Herring <robh@kernel.org> wrote=
+:
+>
+> On Tue, Feb 25, 2025 at 08:55:47AM +0100, Tomeu Vizoso wrote:
+> > Add the bindings for the Neural Processing Unit IP from Rockchip.
+> >
+> > v2:
+> > - Adapt to new node structure (one node per core, each with its own
+> >   IOMMU)
+> > - Several misc. fixes from Sebastian Reichel
+> >
+> > Signed-off-by: Tomeu Vizoso <tomeu@tomeuvizoso.net>
+> > Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+> > ---
+> >  .../bindings/npu/rockchip,rknn-core.yaml           | 152 +++++++++++++=
+++++++++
+> >  1 file changed, 152 insertions(+)
+> >
+> > diff --git a/Documentation/devicetree/bindings/npu/rockchip,rknn-core.y=
+aml b/Documentation/devicetree/bindings/npu/rockchip,rknn-core.yaml
+> > new file mode 100644
+> > index 0000000000000000000000000000000000000000..e8d0afe4a7d1c4f166cf13a=
+9f4aa7c1901362a3f
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/npu/rockchip,rknn-core.yaml
+> > @@ -0,0 +1,152 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/npu/rockchip,rknn-core.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Neural Processing Unit IP from Rockchip
+> > +
+> > +maintainers:
+> > +  - Tomeu Vizoso <tomeu@tomeuvizoso.net>
+> > +
+> > +description:
+> > +  Rockchip IP for accelerating inference of neural networks, based on =
+NVIDIA's
+> > +  open source NVDLA IP.
+> > +
+> > +properties:
+> > +  $nodename:
+> > +    pattern: '^npu-core@[a-f0-9]+$'
+> > +
+> > +  compatible:
+> > +    oneOf:
+> > +      - items:
+> > +          - enum:
+> > +              - rockchip,rk3588-rknn-core-top
+> > +          - const: rockchip,rknn-core-top
+>
+> Drop the fallbacks unless you have some evidence that the IP is the
+> same across a lot of SoCs. If you don't, then
+> rockchip,rk3588-rknn-core-top can be the fallback whenever there are
+> more compatible SoCs.
+>
+> Or if there's version/feature registers that otherwise make it
+> discoverable, then a common compatible is fine.
+>
+> > +      - items:
+> > +          - enum:
+> > +              - rockchip,rk3588-rknn-core
+> > +          - const: rockchip,rknn-core
+>
+> I don't understand the difference between core and core-top. That needs
+> to be explained in the top-level description.
+>
+> > +
+> > +  reg:
+> > +    maxItems: 1
+> > +
+> > +  clocks:
+> > +    minItems: 2
+> > +    maxItems: 4
+> > +
+> > +  clock-names:
+> > +    items:
+> > +      - const: aclk
+> > +      - const: hclk
+> > +      - const: npu
+> > +      - const: pclk
+> > +    minItems: 2
+> > +
+> > +  interrupts:
+> > +    maxItems: 1
+> > +
+> > +  iommus:
+> > +    maxItems: 1
+> > +
+> > +  npu-supply: true
+> > +
+> > +  power-domains:
+> > +    maxItems: 1
+> > +
+> > +  resets:
+> > +    maxItems: 2
+> > +
+> > +  reset-names:
+> > +    items:
+> > +      - const: srst_a
+> > +      - const: srst_h
+> > +
+> > +  sram-supply: true
+>
+> Group supply properties together
+>
+> > +
+> > +required:
+> > +  - compatible
+> > +  - reg
+> > +  - clocks
+> > +  - clock-names
+> > +  - interrupts
+> > +  - iommus
+> > +  - npu-supply
+> > +  - power-domains
+> > +  - resets
+> > +  - reset-names
+> > +  - sram-supply
+> > +
+> > +allOf:
+> > +  - if:
+> > +      properties:
+> > +        compatible:
+> > +          contains:
+> > +            enum:
+> > +              - rockchip,rknn-core-top
+> > +    then:
+> > +      properties:
+> > +        clocks:
+> > +          minItems: 4
+> > +
+> > +        clock-names:
+> > +          minItems: 4
+> > +  - if:
+> > +      properties:
+> > +        compatible:
+> > +          contains:
+> > +            enum:
+> > +              - rockchip,rknn-core
+> > +    then:
+> > +      properties:
+> > +        clocks:
+> > +          maxItems: 2
+> > +        clock-names:
+> > +          maxItems: 2
+> > +
+> > +additionalProperties: false
+> > +
+> > +examples:
+> > +  - |
+> > +    #include <dt-bindings/clock/rockchip,rk3588-cru.h>
+> > +    #include <dt-bindings/interrupt-controller/irq.h>
+> > +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> > +    #include <dt-bindings/power/rk3588-power.h>
+> > +    #include <dt-bindings/reset/rockchip,rk3588-cru.h>
+> > +
+> > +    bus {
+> > +      #address-cells =3D <2>;
+> > +      #size-cells =3D <2>;
+> > +
+> > +      rknn_core_top: npu-core@fdab0000 {
+>
+> npu@...
 
-Sincerely,
-Aaron
+Can you extend on why you would prefer to have npu@? As each node
+corresponds to a core inside the NPU, I went with npu-core@.
+
+Thanks,
+
+Tomeu
+
+> > +        compatible =3D "rockchip,rk3588-rknn-core-top", "rockchip,rknn=
+-core-top";
+> > +        reg =3D <0x0 0xfdab0000 0x0 0x9000>;
+> > +        assigned-clocks =3D <&scmi_clk SCMI_CLK_NPU>;
+> > +        assigned-clock-rates =3D <200000000>;
+> > +        clocks =3D <&cru ACLK_NPU0>, <&cru HCLK_NPU0>,
+> > +                 <&scmi_clk SCMI_CLK_NPU>, <&cru PCLK_NPU_ROOT>;
+> > +        clock-names =3D "aclk", "hclk", "npu", "pclk";
+> > +        interrupts =3D <GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH 0>;
+> > +        iommus =3D <&rknn_mmu_top>;
+> > +        npu-supply =3D <&vdd_npu_s0>;
+> > +        power-domains =3D <&power RK3588_PD_NPUTOP>;
+> > +        resets =3D <&cru SRST_A_RKNN0>, <&cru SRST_H_RKNN0>;
+> > +        reset-names =3D "srst_a", "srst_h";
+> > +        sram-supply =3D <&vdd_npu_mem_s0>;
+> > +      };
+> > +
+> > +      rknn_core_1: npu-core@fdac0000 {
+> > +        compatible =3D "rockchip,rk3588-rknn-core", "rockchip,rknn-cor=
+e";
+> > +        reg =3D <0x0 0xfdac0000 0x0 0x9000>;
+> > +        clocks =3D <&cru ACLK_NPU1>, <&cru HCLK_NPU1>;
+> > +        clock-names =3D "aclk", "hclk";
+> > +        interrupts =3D <GIC_SPI 111 IRQ_TYPE_LEVEL_HIGH 0>;
+> > +        iommus =3D <&rknn_mmu_1>;
+> > +        npu-supply =3D <&vdd_npu_s0>;
+> > +        power-domains =3D <&power RK3588_PD_NPU1>;
+> > +        resets =3D <&cru SRST_A_RKNN1>, <&cru SRST_H_RKNN1>;
+> > +        reset-names =3D "srst_a", "srst_h";
+> > +        sram-supply =3D <&vdd_npu_mem_s0>;
+> > +      };
+> > +    };
+> > +...
+> >
+> > --
+> > 2.48.1
+> >
 
