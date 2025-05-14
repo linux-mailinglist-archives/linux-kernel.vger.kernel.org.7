@@ -1,278 +1,216 @@
-Return-Path: <linux-kernel+bounces-647686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-647684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B72AAB6BB6
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 14:46:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 468E1AB6BB1
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 14:46:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0853D16CDE6
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 12:46:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A2F13A474F
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 12:46:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5F4827990E;
-	Wed, 14 May 2025 12:46:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97EAD270571;
+	Wed, 14 May 2025 12:46:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="d6UbKUSJ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ERhxU54o"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E70A2798F0;
-	Wed, 14 May 2025 12:46:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D500E34CF5;
+	Wed, 14 May 2025 12:46:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747226793; cv=none; b=Pyf1vFFdv3mEMxmuwU8ykPBiqL1wDL/3sy9ek3gQgrEJ9e9UFFZYx/JV+6A4n9zoT+Zjri2HaSjd3MFZo2/ry30rme9WeG659q0FWd4eAIzwfXcNIMIT3z8SqJsJOFcx5k7AIfWsk1MLsf06mweT09Bc4u5nOA8QWEYStOnNoW0=
+	t=1747226780; cv=none; b=sT3cXxMJxb5Z5KR8eFxp9RC7WIqy9co9xc4g8XTssSD4+fE4QJx+rULM1eTCuMRfUHNysJE7h9P8yVEDAfz1gljpmSXsA3mr0bPMDflkdz1fxB59Ff1xXWvEQD2MSoX3FS7Keog9i8/xqFTRNuB+gb5nfGTzXvjU6VACbb9VktY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747226793; c=relaxed/simple;
-	bh=BUgSEOK7zJn4CATqu59tiupdNB3czkL+OCUJvfXe/1U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XmgzUzI6sIF8hvZbGkR6MXihk1DPgrwLbE9tFw2egIBuVmQduBsM5j3oiar7ujG2dpsnofooSFklxJhjelghjbyYqpePJVOGBv/Eou86Yo9+Q2P8FZRHd0bzcjWpJkYhr5GeciOOkpEye+Xn/tpB9KGzMkf1RUeSX0uiORy2fuU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=d6UbKUSJ; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1747226790; x=1778762790;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=BUgSEOK7zJn4CATqu59tiupdNB3czkL+OCUJvfXe/1U=;
-  b=d6UbKUSJB5yEbfk3ajTt+aG8p79O8YOeHbgtRrQm8YZU04YQ3ki6BSls
-   KH5YeNH2WUaJghnQ2IbySabcgMnwOtVeYmih4V+kp/SKv1no2KkAYmooH
-   VTWZc8UouJKIhxsSOsZcOZgKmNaeafPJq5S/7i+73GK8QeJgcvqYo8TsR
-   ftde1PWJZ08cKI59qKxos7QcWoecJrGKLqu3TrkMW7/9PDoWklyin/P0G
-   kLQi83+kDOIVvMZalCKjKqrs0R8Px+gozBEwxNWONyYOR19gMqUH9jvC6
-   3Rr8g4EY9Vl2KpXyqBbACoLaqR5pt9DJPN3oGINd2U7sPaX3Ae+xOeF5m
-   A==;
-X-CSE-ConnectionGUID: sZ+y3uFrTcKBqf+jdD7xpA==
-X-CSE-MsgGUID: pBvpslkFR1yg56rG59mnLw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11433"; a="48992264"
-X-IronPort-AV: E=Sophos;i="6.15,288,1739865600"; 
-   d="scan'208";a="48992264"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 May 2025 05:46:29 -0700
-X-CSE-ConnectionGUID: rUXdi+5SR7qQyzL3Wy2ykQ==
-X-CSE-MsgGUID: x2SA57B0SQaTgc5J+7zhNg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,288,1739865600"; 
-   d="scan'208";a="169118792"
-Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
-  by fmviesa001.fm.intel.com with ESMTP; 14 May 2025 05:46:23 -0700
-Received: from kbuild by 1992f890471c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uFBV6-000H7N-2B;
-	Wed, 14 May 2025 12:46:20 +0000
-Date: Wed, 14 May 2025 20:46:11 +0800
-From: kernel test robot <lkp@intel.com>
-To: Byungchul Park <byungchul@sk.com>, linux-kernel@vger.kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	kernel_team@skhynix.com, torvalds@linux-foundation.org,
-	damien.lemoal@opensource.wdc.com, linux-ide@vger.kernel.org,
-	adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
-	mingo@redhat.com, peterz@infradead.org, will@kernel.org,
-	tglx@linutronix.de, rostedt@goodmis.org, joel@joelfernandes.org,
-	sashal@kernel.org, daniel.vetter@ffwll.ch, duyuyang@gmail.com,
-	johannes.berg@intel.com, tj@kernel.org, tytso@mit.edu,
-	willy@infradead.org, david@fromorbit.com, amir73il@gmail.com,
-	gregkh@linuxfoundation.org, kernel-team@lge.com, linux-mm@kvack.org,
-	akpm@linux-foundation.org, mhocko@kernel.org, minchan@kernel.org,
-	hannes@cmpxchg.org, vdavydov.dev@gmail.com
-Subject: Re: [PATCH v15 33/43] dept: assign unique dept_key to each distinct
- dma fence caller
-Message-ID: <202505142049.8vYH34nZ-lkp@intel.com>
-References: <20250513100730.12664-34-byungchul@sk.com>
+	s=arc-20240116; t=1747226780; c=relaxed/simple;
+	bh=S4U3IKiBfcd42Hz/OWlQRE41HRNxq7Bto8HSmxmDbMQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pSMYYoOB2qyKQ86Npu2f5j2Y04ZaRrkESwJ5c0FjIe6BZynP4yIpfYaAaggSOiAerzhRF1EVvJKcFClu0t2EELc/QKj9d9PVEZpDcTikawSImah3ejG/LbPtboM6moRqa297e6tB9Po+fG5Kk6r9cco1PlucwQzXRNZ6DdOtSgY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ERhxU54o; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-739b3fe7ce8so5995102b3a.0;
+        Wed, 14 May 2025 05:46:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747226778; x=1747831578; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=1FEo+M4Kzgn7iECngUXq9Y1nzefmNWO2FcU0hxjdQC0=;
+        b=ERhxU54o1VQHBZmBm4qPUSBczKWeGCxUxAy0vU5LW0PDZqrtBsK7O+CEBF7FSHE4Y/
+         nddvpDcJ86lDtTRwTv07auZ1zKqoEGbLk0TDNfK6h9s5gTJJu8lWA8Tjk/VhfDP1sMTS
+         MAkNNyho/d1IGNc+vg4fZymanG24Vs8SJg40H6ER1b04/Wjlf1uO18O/mXsmp7oZdZ8F
+         6tVJ8c3AqZBU5+I9u8ztluOiEJKjP5ok+zW9LUsqJK49F3hK4396gwMGtR3oFtMtjXZy
+         v8tqiDJl1URyEP7ND6vI/oSg3Ex4RLliysHvkaJth8kTONqgVwIgXMGmlIc/5pljdZUf
+         sFLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747226778; x=1747831578;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1FEo+M4Kzgn7iECngUXq9Y1nzefmNWO2FcU0hxjdQC0=;
+        b=uhsVbmI2mPSY/rMAGuwMZCjOcX0Np7HtMuGY2A9KHBfr99nIfg+IIKEjFUqFAMi1q1
+         4hAsUBi7Rx1bsMldycnRSu2Pd73TJ13L+xOdyMUQLT30AqE93yjJJj6MJblPv6zjt9FO
+         e5vZsGjPA/mWpxvMdNw9F5GQR0HwYFC++iocPuc336JTifZmOVSz/nxioCSHz4fXOvdu
+         ni8pWqA4jwJLYqk21JuwnQN5o8v/Rkh8apI4i+ms28/Lv8gqQYWrR1FAAbKvaZwKgoqd
+         vsko2dzAnyrbt4G8rvvHTFpIHRIpQhyI2UNl/Me7uGujj5pwnPsbsBebpgTX6PURFcxg
+         F++Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUdoEajjx7dO5pGNqlvZjnr43XApfElxko8dZBqsbCUpj35A9VdyFiqq7KY3BfubmIq1Bj6LMytrtII2A==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwOmrcdDvGv90CcNxk7fmmNqq6txHX1MAcTTZCuUeiKosjB/AyL
+	bax+55uGDrljyJ9R4+4v9g98lGGWCpoF6nFoov9LGOegXEOYkJq1
+X-Gm-Gg: ASbGncsTq5nBgltHoLQ8GnmwKwXJOkVwDbGF20ROMBn5Owm3U40pMRgKpaJ5Ir8xhq4
+	GVVgbsTZre6B2WFOAjGffD5DnuzH6U1sp5MwKs+TVqBpi1Dkod0i7z9btd5JTqOAjb3wib3yF7N
+	q0x4QeIwQzxEHCAVnza5w0c4N0KTkIX3UfwEU6yTKZoE8dP4ixEy+Sa214m5uV1Qfvzvsg66yqq
+	sxRHFo/k2S1xSQW+qadLEfTTE7HIvgqcqfddvtxEnClryi5YlQQTzd7v4AIY9BpTMN/ye8vGIQZ
+	nqHYmChvxCtAc77SYU4fmuWB+jIWF/kUlEiWGmvqjGoArjAVrtPZL+7SNpFxlgkRiyloyQm39l+
+	VMrRpldTn5nSQ/RLYNpRHh1cQiISEZan/068=
+X-Google-Smtp-Source: AGHT+IEcoNpXgF2QzoP1X1bi0ULDj9GA0jxmcbkP6IqfHKb/Ihwdr1mlKjq0eAzrEinnLtB6gIHK3g==
+X-Received: by 2002:a17:903:3508:b0:223:5e76:637a with SMTP id d9443c01a7336-231981006a8mr49595705ad.23.1747226777908;
+        Wed, 14 May 2025 05:46:17 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-30e3345ecbesm1426821a91.28.2025.05.14.05.46.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 14 May 2025 05:46:17 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <4ce8c308-15e5-4489-a890-612c4e97c98d@roeck-us.net>
+Date: Wed, 14 May 2025 05:46:16 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250513100730.12664-34-byungchul@sk.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: w83627hf crash when loaded on ARM
+To: Corentin Labbe <clabbe.montjoie@gmail.com>, jdelvare@suse.com,
+ linux-hwmon@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+References: <aCRZhtgOKC7kCPG6@Red>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <aCRZhtgOKC7kCPG6@Red>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Byungchul,
+On 5/14/25 01:51, Corentin Labbe wrote:
+> Hello
+> 
+> On my sun8i-a33-olinuxino, when w83627hf is modprobed, it crashes:
+> [  177.854109] 8<--- cut here ---
+> [  177.854166] Unable to handle kernel paging request at virtual address fee0002e when write
+> [  177.854189] [fee0002e] *pgd=00000000
+> [  177.854227] Internal error: Oops: 805 [#1] SMP ARM
+> [  177.859231] Modules linked in: w83627hf(+) hwmon_vid dm_crypt twofish_generic twofish_common serpent_generic sha3_generic jitterentropy_rng drbg ccm algif_aead cmac cfg80211 bluetooth ecdh_generic ecc ctr axp20x_usb_power sun4i_backend axp20x_pek sun4i_frontend des_generic lima drm_shmem_helper gpu_sched drm_dma_helper aes_arm_bs sun6i_drc aes_arm snd_soc_simple_card snd_soc_simple_card_utils sunxi snd_soc_core sun4i_gpadc_iio musb_hdrc sun4i_ss libdes ac97_bus snd_pcm_dmaengine snd_pcm snd_timer snd soundcore iio_hwmon
+> [  177.908280] CPU: 0 UID: 0 PID: 7279 Comm: modprobe Not tainted 6.15.0-rc6-next-20250513-00001-g1d1183a441d8 #64 NONE
+> [  177.918890] Hardware name: Allwinner sun8i Family
+> [  177.923593] PC is at w83627hf_find+0x5c/0x234 [w83627hf]
+> [  177.928953] LR is at w83627hf_find+0x4c/0x234 [w83627hf]
+> [  177.934280] pc : [<bf2ce05c>]    lr : [<bf2ce04c>]    psr: 60000013
+> [  177.940544] sp : f0e61df0  ip : 00000000  fp : c2236f00
+> [  177.945766] r10: c918bb90  r9 : 00000000  r8 : 00000000
+> [  177.950989] r7 : c2236f00  r6 : f0e61e0e  r5 : ffffff87  r4 : f0e61e10
+> [  177.957513] r3 : fee0002e  r2 : 00000000  r1 : 00000000  r0 : c8dd3640
+> [  177.964038] Flags: nZCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment none
+> [  177.971172] Control: 10c5387d  Table: 478dc06a  DAC: 00000051
+> [  177.976914] Register r0 information: slab kmalloc-64 start c8dd3640 pointer offset 0 size 64
+> [  177.985375] Register r1 information: NULL pointer
+> [  177.990086] Register r2 information: NULL pointer
+> [  177.994791] Register r3 information: 0-page vmalloc region starting at 0xfee00000 allocated at pci_reserve_io+0x0/0x30
+> [  178.005498] Register r4 information: 2-page vmalloc region starting at 0xf0e60000 allocated at kernel_clone+0xa4/0x384
+> [  178.016203] Register r5 information: non-paged memory
+> [  178.021257] Register r6 information: 2-page vmalloc region starting at 0xf0e60000 allocated at kernel_clone+0xa4/0x384
+> [  178.031955] Register r7 information: slab filp start c2236f00 pointer offset 0 size 136
+> [  178.039976] Register r8 information: NULL pointer
+> [  178.044681] Register r9 information: NULL pointer
+> [  178.049386] Register r10 information: slab inode_cache start c918bb90 pointer offset 0 size 384
+> [  178.058099] Register r11 information: slab filp start c2236f00 pointer offset 0 size 136
+> [  178.066203] Register r12 information: NULL pointer
+> [  178.070996] Process modprobe (pid: 7279, stack limit = 0x80574f80)
+> [  178.077179] Stack: (0xf0e61df0 to 0xf0e62000)
+> [  178.081539] 1de0:                                     00400000 00000000 bf2ce234 c1f6fe00
+> [  178.089715] 1e00: c794abc0 bf2ce26c 00000000 00000000 00000000 0000002e 00000000 00000000
+> [  178.097888] 1e20: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 14ef0d3e
+> [  178.106062] 1e40: bf2ce234 bf2ce234 c1f6fe00 c031ca28 00000000 00000000 00000000 00000000
+> [  178.114237] 1e60: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+> [  178.122412] 1e80: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 14ef0d3e
+> [  178.130586] 1ea0: bf2c9940 c8dd3f80 000d6b18 c2236f00 c1fa6350 c03f2794 c2236f00 c1fa6350
+> [  178.138760] 1ec0: 00000000 c2236f00 000d6b18 c03f4860 f0e61ee4 7fffffff 00000000 00000002
+> [  178.146935] 1ee0: 00000000 f0e73000 f0e76ca4 f0e77768 f0e73000 00009230 f0e7bb50 f0e7b9a4
+> [  178.155109] 1f00: f0e78c88 00000c00 00000f90 00002560 0000126d 00000000 00002550 00000029
+> [  178.163283] 1f20: 0000002a 00000027 00000000 00000017 00000000 00000000 00000000 14ef0d3e
+> [  178.171457] 1f40: 000000d0 c1fa5f40 00000001 c03f4bc0 c1fa6290 000d6b18 c918bb90 00000000
+> [  178.179632] 1f60: c1fa6290 00000000 00000000 f0e61f6c f0e61f6c fffffffc 000a0000 14ef0d3e
+> [  178.187807] 1f80: 00000000 000d6b18 000d66d0 000d6b18 0000017b c0300324 c794abc0 0000017b
+> [  178.195981] 1fa0: 000d4c94 c03000c0 000d6b18 000d66d0 00000003 000d6b18 00000000 000d6af0
+> [  178.204155] 1fc0: 000d6b18 000d66d0 000d6b18 0000017b 000d6af0 00000000 00000001 000d4c94
+> [  178.212330] 1fe0: becffaa0 becffa90 0002ef30 b6ee6300 80000010 00000003 00000000 00000000
+> [  178.220500] Call trace:
+> [  178.220539]  w83627hf_find [w83627hf] from sensors_w83627hf_init+0x38/0xdcc [w83627hf]
+> [  178.231022]  sensors_w83627hf_init [w83627hf] from do_one_initcall+0x58/0x200
+> [  178.238190]  do_one_initcall from do_init_module+0x54/0x200
+> [  178.243783]  do_init_module from init_module_from_file+0x94/0xd0
+> [  178.249805]  init_module_from_file from sys_finit_module+0x1a4/0x300
+> [  178.256174]  sys_finit_module from ret_fast_syscall+0x0/0x54
+> [  178.261844] Exception stack(0xf0e61fa8 to 0xf0e61ff0)
+> [  178.266897] 1fa0:                   000d6b18 000d66d0 00000003 000d6b18 00000000 000d6af0
+> [  178.275072] 1fc0: 000d6b18 000d66d0 000d6b18 0000017b 000d6af0 00000000 00000001 000d4c94
+> [  178.283243] 1fe0: becffaa0 becffa90 0002ef30 b6ee6300
+> [  178.288299] Code: e5943004 e3e05078 e7f33053 e2433612 (e5c35000)
+> [  178.294391] ---[ end trace 0000000000000000 ]---
+> [  178.299008] note: modprobe[7279] exited with irqs disabled
+> 
+> Regards
+> 
 
-kernel test robot noticed the following build errors:
+That probably happens with lots of drivers which access the 0x2e / 0x4e I/O ports blindly
+assuming they are accessible. You'll have to black-list the driver. Or, rather, its build
+should not even be enabled in the first place.
 
-[auto build test ERROR on 82f2b0b97b36ee3fcddf0f0780a9a0825d52fec3]
+Guenter
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Byungchul-Park/llist-move-llist_-head-node-definition-to-types-h/20250513-181346
-base:   82f2b0b97b36ee3fcddf0f0780a9a0825d52fec3
-patch link:    https://lore.kernel.org/r/20250513100730.12664-34-byungchul%40sk.com
-patch subject: [PATCH v15 33/43] dept: assign unique dept_key to each distinct dma fence caller
-config: arm64-allmodconfig (https://download.01.org/0day-ci/archive/20250514/202505142049.8vYH34nZ-lkp@intel.com/config)
-compiler: clang version 19.1.7 (https://github.com/llvm/llvm-project cd708029e0b2869e80abe31ddb175f7c35361f90)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250514/202505142049.8vYH34nZ-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202505142049.8vYH34nZ-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> drivers/gpu/drm/amd/amdgpu/amdgpu_mes.c:1372:3: error: cannot jump from this indirect goto statement to one of its possible targets
-    1372 |                 drm_exec_retry_on_contention(&exec);
-         |                 ^
-   include/drm/drm_exec.h:123:4: note: expanded from macro 'drm_exec_retry_on_contention'
-     123 |                         goto *__drm_exec_retry_ptr;             \
-         |                         ^
-   drivers/gpu/drm/amd/amdgpu/amdgpu_mes.c:1399:2: note: possible target of indirect goto statement
-    1399 |         dma_fence_wait(fence, false);
-         |         ^
-   include/linux/dma-fence.h:679:2: note: expanded from macro 'dma_fence_wait'
-     679 |         sdt_might_sleep_start_timeout(NULL, MAX_SCHEDULE_TIMEOUT);      \
-         |         ^
-   include/linux/dept_sdt.h:45:45: note: expanded from macro 'sdt_might_sleep_start_timeout'
-      45 |                 dept_stage_wait(__m, __m ? NULL : &__key, _THIS_IP_, __func__, t);\
-         |                                                           ^
-   include/linux/instruction_pointer.h:10:41: note: expanded from macro '_THIS_IP_'
-      10 | #define _THIS_IP_  ({ __label__ __here; __here: (unsigned long)&&__here; })
-         |                                         ^
-   drivers/gpu/drm/amd/amdgpu/amdgpu_mes.c:1399:2: note: jump enters a statement expression
-   include/linux/dma-fence.h:679:2: note: expanded from macro 'dma_fence_wait'
-     679 |         sdt_might_sleep_start_timeout(NULL, MAX_SCHEDULE_TIMEOUT);      \
-         |         ^
-   include/linux/dept_sdt.h:45:45: note: expanded from macro 'sdt_might_sleep_start_timeout'
-      45 |                 dept_stage_wait(__m, __m ? NULL : &__key, _THIS_IP_, __func__, t);\
-         |                                                           ^
-   include/linux/instruction_pointer.h:10:20: note: expanded from macro '_THIS_IP_'
-      10 | #define _THIS_IP_  ({ __label__ __here; __here: (unsigned long)&&__here; })
-         |                    ^
-   drivers/gpu/drm/amd/amdgpu/amdgpu_mes.c:1399:2: note: jump enters a statement expression
-   include/linux/dma-fence.h:675:38: note: expanded from macro 'dma_fence_wait'
-     675 | #define dma_fence_wait(f, intr)                                         \
-         |                                                                         ^
-   1 error generated.
---
->> drivers/gpu/drm/xe/xe_svm.c:807:3: error: cannot jump from this indirect goto statement to one of its possible targets
-     807 |                 drm_exec_retry_on_contention(&exec);
-         |                 ^
-   include/drm/drm_exec.h:123:4: note: expanded from macro 'drm_exec_retry_on_contention'
-     123 |                         goto *__drm_exec_retry_ptr;             \
-         |                         ^
-   drivers/gpu/drm/xe/xe_svm.c:831:2: note: possible target of indirect goto statement
-     831 |         dma_fence_wait(fence, false);
-         |         ^
-   include/linux/dma-fence.h:679:2: note: expanded from macro 'dma_fence_wait'
-     679 |         sdt_might_sleep_start_timeout(NULL, MAX_SCHEDULE_TIMEOUT);      \
-         |         ^
-   include/linux/dept_sdt.h:45:45: note: expanded from macro 'sdt_might_sleep_start_timeout'
-      45 |                 dept_stage_wait(__m, __m ? NULL : &__key, _THIS_IP_, __func__, t);\
-         |                                                           ^
-   include/linux/instruction_pointer.h:10:41: note: expanded from macro '_THIS_IP_'
-      10 | #define _THIS_IP_  ({ __label__ __here; __here: (unsigned long)&&__here; })
-         |                                         ^
-   drivers/gpu/drm/xe/xe_svm.c:831:2: note: jump enters a statement expression
-   include/linux/dma-fence.h:679:2: note: expanded from macro 'dma_fence_wait'
-     679 |         sdt_might_sleep_start_timeout(NULL, MAX_SCHEDULE_TIMEOUT);      \
-         |         ^
-   include/linux/dept_sdt.h:45:45: note: expanded from macro 'sdt_might_sleep_start_timeout'
-      45 |                 dept_stage_wait(__m, __m ? NULL : &__key, _THIS_IP_, __func__, t);\
-         |                                                           ^
-   include/linux/instruction_pointer.h:10:20: note: expanded from macro '_THIS_IP_'
-      10 | #define _THIS_IP_  ({ __label__ __here; __here: (unsigned long)&&__here; })
-         |                    ^
-   drivers/gpu/drm/xe/xe_svm.c:831:2: note: jump enters a statement expression
-   include/linux/dma-fence.h:675:38: note: expanded from macro 'dma_fence_wait'
-     675 | #define dma_fence_wait(f, intr)                                         \
-         |                                                                         ^
-   1 error generated.
---
->> drivers/gpu/drm/xe/xe_gt_pagefault.c:164:3: error: cannot jump from this indirect goto statement to one of its possible targets
-     164 |                 drm_exec_retry_on_contention(&exec);
-         |                 ^
-   include/drm/drm_exec.h:123:4: note: expanded from macro 'drm_exec_retry_on_contention'
-     123 |                         goto *__drm_exec_retry_ptr;             \
-         |                         ^
-   drivers/gpu/drm/xe/xe_gt_pagefault.c:181:2: note: possible target of indirect goto statement
-     181 |         dma_fence_wait(fence, false);
-         |         ^
-   include/linux/dma-fence.h:679:2: note: expanded from macro 'dma_fence_wait'
-     679 |         sdt_might_sleep_start_timeout(NULL, MAX_SCHEDULE_TIMEOUT);      \
-         |         ^
-   include/linux/dept_sdt.h:45:45: note: expanded from macro 'sdt_might_sleep_start_timeout'
-      45 |                 dept_stage_wait(__m, __m ? NULL : &__key, _THIS_IP_, __func__, t);\
-         |                                                           ^
-   include/linux/instruction_pointer.h:10:41: note: expanded from macro '_THIS_IP_'
-      10 | #define _THIS_IP_  ({ __label__ __here; __here: (unsigned long)&&__here; })
-         |                                         ^
-   drivers/gpu/drm/xe/xe_gt_pagefault.c:181:2: note: jump enters a statement expression
-   include/linux/dma-fence.h:679:2: note: expanded from macro 'dma_fence_wait'
-     679 |         sdt_might_sleep_start_timeout(NULL, MAX_SCHEDULE_TIMEOUT);      \
-         |         ^
-   include/linux/dept_sdt.h:45:45: note: expanded from macro 'sdt_might_sleep_start_timeout'
-      45 |                 dept_stage_wait(__m, __m ? NULL : &__key, _THIS_IP_, __func__, t);\
-         |                                                           ^
-   include/linux/instruction_pointer.h:10:20: note: expanded from macro '_THIS_IP_'
-      10 | #define _THIS_IP_  ({ __label__ __here; __here: (unsigned long)&&__here; })
-         |                    ^
-   drivers/gpu/drm/xe/xe_gt_pagefault.c:181:2: note: jump enters a statement expression
-   include/linux/dma-fence.h:675:38: note: expanded from macro 'dma_fence_wait'
-     675 | #define dma_fence_wait(f, intr)                                         \
-         |                                                                         ^
-   1 error generated.
-
-
-vim +1372 drivers/gpu/drm/amd/amdgpu/amdgpu_mes.c
-
-f1d93c9c2722a2 Jack Xiao       2020-03-27  1357  
-737dad0b5d609f Jack Xiao       2020-09-09  1358  int amdgpu_mes_ctx_unmap_meta_data(struct amdgpu_device *adev,
-737dad0b5d609f Jack Xiao       2020-09-09  1359  				   struct amdgpu_mes_ctx_data *ctx_data)
-737dad0b5d609f Jack Xiao       2020-09-09  1360  {
-737dad0b5d609f Jack Xiao       2020-09-09  1361  	struct amdgpu_bo_va *bo_va = ctx_data->meta_data_va;
-737dad0b5d609f Jack Xiao       2020-09-09  1362  	struct amdgpu_bo *bo = ctx_data->meta_data_obj;
-737dad0b5d609f Jack Xiao       2020-09-09  1363  	struct amdgpu_vm *vm = bo_va->base.vm;
-2acc73f81f2500 Christian König 2022-08-16  1364  	struct dma_fence *fence;
-2acc73f81f2500 Christian König 2022-08-16  1365  	struct drm_exec exec;
-2acc73f81f2500 Christian König 2022-08-16  1366  	long r;
-2acc73f81f2500 Christian König 2022-08-16  1367  
-05d249352f1ae9 Rob Clark       2023-11-20  1368  	drm_exec_init(&exec, 0, 0);
-2acc73f81f2500 Christian König 2022-08-16  1369  	drm_exec_until_all_locked(&exec) {
-2acc73f81f2500 Christian König 2022-08-16  1370  		r = drm_exec_lock_obj(&exec,
-2acc73f81f2500 Christian König 2022-08-16  1371  				      &ctx_data->meta_data_obj->tbo.base);
-2acc73f81f2500 Christian König 2022-08-16 @1372  		drm_exec_retry_on_contention(&exec);
-2acc73f81f2500 Christian König 2022-08-16  1373  		if (unlikely(r))
-2acc73f81f2500 Christian König 2022-08-16  1374  			goto out_unlock;
-737dad0b5d609f Jack Xiao       2020-09-09  1375  
-2acc73f81f2500 Christian König 2022-08-16  1376  		r = amdgpu_vm_lock_pd(vm, &exec, 0);
-2acc73f81f2500 Christian König 2022-08-16  1377  		drm_exec_retry_on_contention(&exec);
-2acc73f81f2500 Christian König 2022-08-16  1378  		if (unlikely(r))
-2acc73f81f2500 Christian König 2022-08-16  1379  			goto out_unlock;
-737dad0b5d609f Jack Xiao       2020-09-09  1380  	}
-737dad0b5d609f Jack Xiao       2020-09-09  1381  
-737dad0b5d609f Jack Xiao       2020-09-09  1382  	amdgpu_vm_bo_del(adev, bo_va);
-737dad0b5d609f Jack Xiao       2020-09-09  1383  	if (!amdgpu_vm_ready(vm))
-737dad0b5d609f Jack Xiao       2020-09-09  1384  		goto out_unlock;
-737dad0b5d609f Jack Xiao       2020-09-09  1385  
-2acc73f81f2500 Christian König 2022-08-16  1386  	r = dma_resv_get_singleton(bo->tbo.base.resv, DMA_RESV_USAGE_BOOKKEEP,
-2acc73f81f2500 Christian König 2022-08-16  1387  				   &fence);
-737dad0b5d609f Jack Xiao       2020-09-09  1388  	if (r)
-737dad0b5d609f Jack Xiao       2020-09-09  1389  		goto out_unlock;
-737dad0b5d609f Jack Xiao       2020-09-09  1390  	if (fence) {
-737dad0b5d609f Jack Xiao       2020-09-09  1391  		amdgpu_bo_fence(bo, fence, true);
-737dad0b5d609f Jack Xiao       2020-09-09  1392  		fence = NULL;
-737dad0b5d609f Jack Xiao       2020-09-09  1393  	}
-737dad0b5d609f Jack Xiao       2020-09-09  1394  
-737dad0b5d609f Jack Xiao       2020-09-09  1395  	r = amdgpu_vm_clear_freed(adev, vm, &fence);
-737dad0b5d609f Jack Xiao       2020-09-09  1396  	if (r || !fence)
-737dad0b5d609f Jack Xiao       2020-09-09  1397  		goto out_unlock;
-737dad0b5d609f Jack Xiao       2020-09-09  1398  
-737dad0b5d609f Jack Xiao       2020-09-09  1399  	dma_fence_wait(fence, false);
-737dad0b5d609f Jack Xiao       2020-09-09  1400  	amdgpu_bo_fence(bo, fence, true);
-737dad0b5d609f Jack Xiao       2020-09-09  1401  	dma_fence_put(fence);
-737dad0b5d609f Jack Xiao       2020-09-09  1402  
-737dad0b5d609f Jack Xiao       2020-09-09  1403  out_unlock:
-737dad0b5d609f Jack Xiao       2020-09-09  1404  	if (unlikely(r < 0))
-737dad0b5d609f Jack Xiao       2020-09-09  1405  		dev_err(adev->dev, "failed to clear page tables (%ld)\n", r);
-2acc73f81f2500 Christian König 2022-08-16  1406  	drm_exec_fini(&exec);
-737dad0b5d609f Jack Xiao       2020-09-09  1407  
-737dad0b5d609f Jack Xiao       2020-09-09  1408  	return r;
-737dad0b5d609f Jack Xiao       2020-09-09  1409  }
-737dad0b5d609f Jack Xiao       2020-09-09  1410  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
