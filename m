@@ -1,229 +1,316 @@
-Return-Path: <linux-kernel+bounces-647371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-647373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3228FAB67AB
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 11:36:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB63CAB67B1
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 11:37:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B36A3169810
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 09:36:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1191D3AA5E1
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 09:37:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DFFE22A7F8;
-	Wed, 14 May 2025 09:36:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8496C22B8C2;
+	Wed, 14 May 2025 09:37:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Y+DhdTS7"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HpBpenUJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85C451FC7E7
-	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 09:36:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A22BE22AE7E;
+	Wed, 14 May 2025 09:37:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747215387; cv=none; b=PgAi3Uml0sTuU3JYdzFB8CZEwETDJ5iPruq/aJXouf1gHQN+NJW+gOQta4ZmJItz32SZrMc/oM9O60PJPpOY6CBzrlyToz8Wqe78zBOELoRfZW3AwoGzCNs23+jUF4P/t0v3ZetBFU/ShRHHhcrhysyPOrrPdMKB7aiMP01kXYg=
+	t=1747215442; cv=none; b=h2X6FWiEHkcRlyzURrXmIQRpTppvVY60ZgAIc+Rw7qSLoK3mpkoB9WPZUteWylA36x7cX453QRNT7VMK8XfsX/dE8P23WJQ6dcQ4ngM0VyL4Q3sPDopna3cOXtQKOsqDpYrzKChgW9RbHgXYisTO+xt7D+he2O9+FSno7q081yQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747215387; c=relaxed/simple;
-	bh=WsUpKh0jFlrZUEdFtK5gAGnp8UK4rihuv//4tsWo8+E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fWzKBHP6T7Qw6cQICQ4e7Z+us9MWLY1tV8YS1hYlBda/BIiMBvHOQqZZTmIEMwuZms2jOLccrwo547cLGs5jSQzAxyijuBeqGUX7P4tBCnu5mOGQ0BPz/MhCTyafdoSziW2tdYW7Srmk0afwpVQcEjPD/m0M3+9pax4OEi1tyCA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Y+DhdTS7; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1747215383;
-	bh=WsUpKh0jFlrZUEdFtK5gAGnp8UK4rihuv//4tsWo8+E=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Y+DhdTS7jNVGBQdcWzrHJFILvdLIT88gTy9Y7Kr9NjX19jFsK//8u8vF2KMP+sKCF
-	 FZHaAYkbI8xz0EsyhGMVNIGT9HREydFlytz5zLkRZgPHv9Lv+cEh5/nk9D/PVofPoQ
-	 H3C7Y3xzLHN/aGkDJWnZregDakcXEEM5YYkn9c+NemU/EXH89evC4Ix831WWMl4Snd
-	 vohUZeDwtdIW6nJYW5bGwuaRznwQtdgoP7d9bfoGd5tMMtPLDTfAe5woZPL9qpAp8l
-	 vt39pFLpaABDAlvDWQhJ4CM8gnlckrJWXHZxgOoNdfqNHKMsW7ey5EnY6kxhMzUz4o
-	 2YAfyU/A5Y5Yg==
-Received: from [192.168.50.250] (unknown [171.76.80.110])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: vignesh)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 9BD9B17E120C;
-	Wed, 14 May 2025 11:36:21 +0200 (CEST)
-Message-ID: <ffe67dc5-f694-4780-83c3-7d671dfc4a4f@collabora.com>
-Date: Wed, 14 May 2025 15:06:18 +0530
+	s=arc-20240116; t=1747215442; c=relaxed/simple;
+	bh=avleXqFdRiHvr/nv0iuJrbDTjUHK6V3QXiYtGVW87k4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VsRl9/jCJLjFxpyZQaK4YyGCYFs5EmE36otu5IGT5Ik3zeM+AqwGJ93mQY3Sme5l/+0PTUEGZWISjnXiw7mpQ+k6BgIJTnFdLtC8UvE97u5k2sAK147ZbbN6eehT0oILUTanI0hwOv6rHcgYFov9pmKQiLqiKJw+RWmJ4y9++sk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HpBpenUJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0193C4CEEB;
+	Wed, 14 May 2025 09:37:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747215442;
+	bh=avleXqFdRiHvr/nv0iuJrbDTjUHK6V3QXiYtGVW87k4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HpBpenUJfwFge/x8Pqj6VQG9zPiPfjmW9I+3aewe0J8ufh5Oy8t9z8i5D6DXzrVco
+	 25Hdku+wKOcb8AaMF/UVFwk3jC0VIDnN7RtUmYkQ1kQ7ReojJdAatHfzMj0JNs1lbU
+	 pNaKvpAxXi8reY1IsHoxn65gQGZZrGRSZ6pINFiJIebod1BRlzEs+54w0ePUTqwaVE
+	 a3VxZvR/FVtjwuDav1JUbeL3KUlo1W9Own5EnOcWEu0q1knabx8vPohF42tHxBQumx
+	 JrrKxeCNzNUAFej808sqGsnAwic6ZeFRSi57o+IepkdIH7TfGFWOMnCG/fb1xCY4FH
+	 xaIQZeP0H9EWQ==
+Date: Wed, 14 May 2025 15:07:09 +0530
+From: Sumit Garg <sumit.garg@kernel.org>
+To: Amirreza Zarrabi <amirreza.zarrabi@oss.qualcomm.com>
+Cc: Jens Wiklander <jens.wiklander@linaro.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Apurupa Pattapu <quic_apurupa@quicinc.com>,
+	Kees Cook <kees@kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	linux-arm-msm@vger.kernel.org, op-tee@lists.trustedfirmware.org,
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
+	linux-doc@vger.kernel.org
+Subject: Re: [PATCH v4 05/11] firmware: qcom: scm: add support for object
+ invocation
+Message-ID: <aCRkRTMFi65zBODh@sumit-X1>
+References: <20250428-qcom-tee-using-tee-ss-without-mem-obj-v4-0-6a143640a6cb@oss.qualcomm.com>
+ <20250428-qcom-tee-using-tee-ss-without-mem-obj-v4-5-6a143640a6cb@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: amlogic: Synchronous Abort with v6.15-rc6
-To: Neil Armstrong <neil.armstrong@linaro.org>,
- linux-amlogic <linux-amlogic@lists.infradead.org>
-Cc: khilman@baylibre.com, jbrunet@baylibre.com,
- martin.blumenstingl@googlemail.com, sboyd@kernel.org,
- daniels <daniels@collabora.com>, Daniel Stone <daniel@fooishbar.org>,
- lumag@kernel.org, robdclark <robdclark@gmail.com>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <eb9281cc-de91-48a4-bbd6-f67ddc67a9dd@collabora.com>
- <b090cef6-5b9e-4149-872d-0316666f9e90@linaro.org>
- <714a719a-9e56-4158-a8ce-118b7ddb97b3@collabora.com>
- <919fa7f1-d198-429b-8f31-70f085a4c79f@linaro.org>
-Content-Language: en-US
-From: Vignesh Raman <vignesh.raman@collabora.com>
-In-Reply-To: <919fa7f1-d198-429b-8f31-70f085a4c79f@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250428-qcom-tee-using-tee-ss-without-mem-obj-v4-5-6a143640a6cb@oss.qualcomm.com>
 
-Hi Neil,
+Hi Amir,
 
-On 13/05/25 21:25, Neil Armstrong wrote:
-> On 13/05/2025 16:26, Vignesh Raman wrote:
->> Hi Neil,
->>
->> On 13/05/25 15:25, neil.armstrong@linaro.org wrote:
->>> Hi,
->>>
->>> On 13/05/2025 11:41, Vignesh Raman wrote:
->>>> Hi,
->>>>
->>>> The Amlogic Meson G12B (A311D) SoC board (meson-g12b-a311d-khadas- 
->>>> vim3) fails to boot with the following logs,
->>>>
->>>> https://gitlab.freedesktop.org/vigneshraman/linux/-/jobs/76210200
->>>>
->>>> 02:58:27.819: Starting kernel ...
->>>> 02:58:27.819: "Synchronous Abort" handler, esr 0x96000010, far 
->>>> 0x51000d8
->>>> 02:58:27.819: "Synchronous Abort" handler, esr 0x96000010, far 
->>>> 0x51000c8
->>>> 02:58:27.819: elr: 0000000001002a48 lr : 0000000001002c88 (reloc)
->>>> 02:58:27.819: elr: 00000000f2f26a48 lr : 00000000f2f26c88
->>>> 02:58:27.819: x0 : 00000000050fffc0 x1 : 0000000001004383
->>>> 02:58:27.819: x2 : 00000000f2f6a358 x3 : 000000000000003f
->>>> 02:58:27.819: x4 : 00000000f4fefffc x5 : 0000000000000010
->>>> 02:58:27.819: x6 : 00000000f4e5b000 x7 : 00000000050fffa0
->>>> 02:58:27.819: x8 : 0000000000000008 x9 : 0000000000000001
->>>> 02:58:27.820: x10: 0000000000000010 x11: 0000000000000004
->>>> 02:58:27.820: x12: 00000000f4fefc00 x13: 0000000000000000
->>>> 02:58:27.820: x14: 00000000f4fefc00 x15: 0000000000000000
->>>> 02:58:27.820: x16: 00000000f2f6d0e0 x17: 0000000000c0c0c0
->>>> 02:58:27.820: x18: 00000000f0f21d90 x19: 00000000050fffc0
->>>> 02:58:27.820: x20: 0000000000000000 x21: 000000007ffe9000
->>>> 02:58:27.820: x22: 0000000000001710 x23: 00000000f0f0e8c0
->>>> 02:58:27.820: x24: 0000000000000000 x25: 0000000000000000
->>>> 02:58:27.820: x26: 0000000000000000 x27: 0000000000000000
->>>> 02:58:27.820: x28: 00000000f0f4f790 x29: 00000000050fff60
->>>> 02:58:27.820: Code: a9025bf5 f9001bf7 f9400641 36000141 (f9408663)
->>>> 02:58:27.820: Resetting CPU ...
->>>>
->>>
->>> Could you boot with earlycon enabled to at least have a clue of 
->>> what's happening ?
->>
->> There is a synchronous abort right after 'Starting kernel...'. Maybe 
->> this prevents any early console logs from appearing.
->>
->> https://gitlab.freedesktop.org/vigneshraman/linux/-/jobs/76243455
->>
->> 13:54:02.013: => setenv bootargs 'console=ttyAML0,115200n8 root=/dev/ 
->> nfs rw nfsroot=192.168.201.1:/var/lib/lava/dispatcher/tmp/18641665/ 
->> extract-nfsrootfs-h2fjsmdc,tcp,hard,v3 init=/init rootwait 
->> usbcore.quirks=0bda:8153:k earlycon=meson,0xff803000 keep_bootcon  
->> ip=dhcp'
->> 13:54:02.014: $ booti 0x1080000 - 0x1000000
->> 13:54:02.014: => booti 0x1080000 - 0x1000000
->> 13:54:02.014: Moving Image from 0x1080000 to 0x1200000, end=5160000
->> 13:54:02.014: ## Flattened Device Tree blob at 01000000
->> 13:54:02.014:    Booting using the fdt blob at 0x1000000
->> 13:54:02.014: Working FDT set to 1000000
->> 13:54:02.014: ERROR: reserving fdt memory region failed (addr=5000000 
->> size=300000 flags=4)
->> 13:54:02.014:    Loading Device Tree to 000000007ffe9000, end 
->> 000000007ffff57c ... OK
->> 13:54:02.014: Working FDT set to 7ffe9000
->> 13:54:02.014: Starting kernel ...
->> 13:54:02.014: "Synchronous Abort" handler, esr 0x96000010, far 0x51000d8
->> 13:54:02.014: "Synchronous Abort" handler, esr 0x96000010, far 0x51000c8
->> 13:54:02.014: elr: 0000000001002a48 lr : 0000000001002c88 (reloc)
->> 13:54:02.014: elr: 00000000f2f26a48 lr : 00000000f2f26c88
->> 13:54:02.014: x0 : 00000000050fffc0 x1 : 0000000001004383
->> 13:54:02.014: x2 : 00000000f2f6a358 x3 : 000000000000003f
->> 13:54:02.014: x4 : 00000000f4fefffc x5 : 0000000000000010
->> 13:54:02.014: x6 : 00000000f4e5b000 x7 : 00000000050fffa0
->> 13:54:02.014: x8 : 0000000000000008 x9 : 0000000000000001
->> 13:54:02.014: x10: 0000000000000010 x11: 0000000000000004
->> 13:54:02.014: x12: 00000000f4fefc00 x13: 0000000000000000
->> 13:54:02.014: x14: 00000000f4fefc00 x15: 0000000000000000
->> 13:54:02.014: x16: 00000000f2f6d0e0 x17: 0000000000c0c0c0
->> 13:54:02.014: x18: 00000000f0f21d90 x19: 00000000050fffc0
->> 13:54:02.014: x20: 0000000000000000 x21: 000000007ffe9000
->> 13:54:02.014: x22: 0000000000001710 x23: 00000000f0f0e8c0
->> 13:54:02.014: x24: 0000000000000000 x25: 0000000000000000
->> 13:54:02.014: x26: 0000000000000000 x27: 0000000000000000
->> 13:54:02.014: x28: 00000000f0f566a0 x29: 00000000050fff60
->> 13:54:02.014: Code: a9025bf5 f9001bf7 f9400641 36000141 (f9408663)
->> 13:54:02.014: Resetting CPU ...
+On Mon, Apr 28, 2025 at 11:06:26PM -0700, Amirreza Zarrabi wrote:
+> Qualcomm TEE (QTEE) hosts Trusted Applications (TAs) and services in
+> the secure world, accessed via objects. A QTEE client can invoke these
+> objects to request services. Similarly, QTEE can request services from
+> the nonsecure world using objects exported to the secure world.
 > 
-> In fact, this is an U-boot fault, not Linux. I guess perhaps the Linux 
-> kernel is too big, can you check the size difference since v6.14 ?
-
-Yes, looks like the kernel image size causes this issue. I disabled a 
-few configs in drm-ci, and the kernel image size was around 49M. It 
-booted fine with v6.15-rc1.
-
-In previous tests, v6.14-rc7 kernel image size was 52M, and v6.15-rc1 
-kernel image size was 53M.
-
-Thanks for the pointers.
-
-Regards,
-Vignesh
-
+> Add low-level primitives to facilitate the invocation of objects hosted
+> in QTEE, as well as those hosted in the nonsecure world.
 > 
->>
->> Successful logs with v6.14-rc7,
->> https://gitlab.freedesktop.org/vigneshraman/linux/-/jobs/76248143
->>
->>>
->>> BPI-M2S (A311D) is booting fine on v6.15-rc, see https://gitlab.com/ 
->>> amlogic-foss/abcd-linux-test/-/jobs/10004997032
->>>
->>> But perhaps something specific to the VIM3 is breaking, do you change 
->>> the kernel config for the DRM ?
->>
->> Yes, we change the config. Please see the config used to build the 
->> kernel,
->> https://gitlab.freedesktop.org/vigneshraman/linux/-/jobs/76243439/ 
->> artifacts/file/artifacts/testing:arm64_config
->>
->> Regards,
->> Vignesh
->>
->>>
->>> Neil
->>>
->>>
->>>> The board boots successfully in v6.14-rc7, but the issue appears 
->>>> starting from v6.15-rc1. These tests were run in drm-ci.
->>>>
->>>> On bisecting the kernel, the first bad commit identified by git 
->>>> biscet is,
->>>>
->>>> 59c35416f4246aee66b5f5523fdc950b83325d82 is the first bad commit
->>>> commit 59c35416f4246aee66b5f5523fdc950b83325d82
->>>> Merge: 472863ab2aca e988adcb5dee
->>>> Author: Linus Torvalds <torvalds@linux-foundation.org>
->>>> Date:   Sat Mar 29 17:23:34 2025 -0700
->>>>
->>>>      Merge tag 'clk-for-linus' of git://git.kernel.org/pub/scm/ 
->>>> linux/ kernel/git/clk/linux
->>>>
->>>> Please could you look into this issue. Thank you.
->>>>
->>>> Regards,
->>>> Vignesh
->>>
->>
+> If support for object invocation is available, the qcom_scm allocates
+> a dedicated child platform device. The driver for this device communicates
+> with QTEE using low-level primitives.
 > 
+> Signed-off-by: Amirreza Zarrabi <amirreza.zarrabi@oss.qualcomm.com>
+> ---
+>  drivers/firmware/qcom/qcom_scm.c       | 128 +++++++++++++++++++++++++++++++++
+>  drivers/firmware/qcom/qcom_scm.h       |   7 ++
+>  include/linux/firmware/qcom/qcom_scm.h |  27 +++++++
+>  3 files changed, 162 insertions(+)
+> 
+> diff --git a/drivers/firmware/qcom/qcom_scm.c b/drivers/firmware/qcom/qcom_scm.c
+> index fc4d67e4c4a6..bff1b0d3306e 100644
+> --- a/drivers/firmware/qcom/qcom_scm.c
+> +++ b/drivers/firmware/qcom/qcom_scm.c
+> @@ -2084,6 +2084,124 @@ static int qcom_scm_qseecom_init(struct qcom_scm *scm)
+>  
+>  #endif /* CONFIG_QCOM_QSEECOM */
+>  
+> +#ifdef CONFIG_QCOMTEE
+> +
+> +/**
+> + * qcom_scm_qtee_invoke_smc() - Invoke a QTEE object.
+> + * @inbuf: start address of memory area used for inbound buffer.
+> + * @inbuf_size: size of the memory area used for inbound buffer.
+> + * @outbuf: start address of memory area used for outbound buffer.
+> + * @outbuf_size: size of the memory area used for outbound buffer.
+> + * @result: result of QTEE object invocation.
+> + * @response_type: response type returned by QTEE.
+> + *
+> + * @response_type determines how the contents of @inbuf and @outbuf
+> + * should be processed.
+> + *
+> + * Return: On success, return 0 or <0 on failure.
+> + */
+> +int qcom_scm_qtee_invoke_smc(phys_addr_t inbuf, size_t inbuf_size,
+> +			     phys_addr_t outbuf, size_t outbuf_size,
+> +			     u64 *result, u64 *response_type)
+> +{
+> +	struct qcom_scm_desc desc = {
+> +		.svc = QCOM_SCM_SVC_SMCINVOKE,
+> +		.cmd = QCOM_SCM_SMCINVOKE_INVOKE,
+> +		.owner = ARM_SMCCC_OWNER_TRUSTED_OS,
+> +		.args[0] = inbuf,
+> +		.args[1] = inbuf_size,
+> +		.args[2] = outbuf,
+> +		.args[3] = outbuf_size,
+> +		.arginfo = QCOM_SCM_ARGS(4, QCOM_SCM_RW, QCOM_SCM_VAL,
+> +					 QCOM_SCM_RW, QCOM_SCM_VAL),
+> +	};
+> +	struct qcom_scm_res res;
+> +	int ret;
+> +
+> +	ret = qcom_scm_call(__scm->dev, &desc, &res);
+> +	if (ret)
+> +		return ret;
+> +
+> +	*response_type = res.result[0];
+> +	*result = res.result[1];
+> +
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL(qcom_scm_qtee_invoke_smc);
+> +
+> +/**
+> + * qcom_scm_qtee_callback_response() - Submit response for callback request.
+> + * @buf: start address of memory area used for outbound buffer.
+> + * @buf_size: size of the memory area used for outbound buffer.
+> + * @result: Result of QTEE object invocation.
+> + * @response_type: Response type returned by QTEE.
+> + *
+> + * @response_type determines how the contents of @buf should be processed.
+> + *
+> + * Return: On success, return 0 or <0 on failure.
+> + */
+> +int qcom_scm_qtee_callback_response(phys_addr_t buf, size_t buf_size,
+> +				    u64 *result, u64 *response_type)
+> +{
+> +	struct qcom_scm_desc desc = {
+> +		.svc = QCOM_SCM_SVC_SMCINVOKE,
+> +		.cmd = QCOM_SCM_SMCINVOKE_CB_RSP,
+> +		.owner = ARM_SMCCC_OWNER_TRUSTED_OS,
+> +		.args[0] = buf,
+> +		.args[1] = buf_size,
+> +		.arginfo = QCOM_SCM_ARGS(2, QCOM_SCM_RW, QCOM_SCM_VAL),
+> +	};
+> +	struct qcom_scm_res res;
+> +	int ret;
+> +
+> +	ret = qcom_scm_call(__scm->dev, &desc, &res);
+> +	if (ret)
+> +		return ret;
+> +
+> +	*response_type = res.result[0];
+> +	*result = res.result[1];
+> +
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL(qcom_scm_qtee_callback_response);
+> +
+> +static void qcom_scm_qtee_free(void *data)
+> +{
+> +	struct platform_device *qtee_dev = data;
+> +
+> +	platform_device_unregister(qtee_dev);
+> +}
+> +
+> +static int qcom_scm_qtee_init(struct qcom_scm *scm)
+> +{
+> +	struct platform_device *qtee_dev;
+> +	int ret;
+> +
 
+I am still unable to get the QCOMTEE driver to work on db845c. As I can
+see machine: "qcom,sdm845" is not supported for tzmem based on SHM
+brigde here: drivers/firmware/qcom/qcom_tzmem.c +81. I am still seeing
+following logs from userspace:
+
+# /mnt/unittest -d
+[test_print_diagnostics_info][31] test_get_client_env_object.
+[test_supplicant_release][65] test_supplicant_worker killed.
+
+I think you should first check here for SHM bridge support. If available
+then only add a QTEE platform device.
+
+-Sumit
+
+> +	/* Setup QTEE interface device. */
+> +	qtee_dev = platform_device_alloc("qcomtee", -1);
+> +	if (!qtee_dev)
+> +		return -ENOMEM;
+> +
+> +	qtee_dev->dev.parent = scm->dev;
+> +
+> +	ret = platform_device_add(qtee_dev);
+> +	if (ret) {
+> +		platform_device_put(qtee_dev);
+> +		return ret;
+> +	}
+> +
+> +	return devm_add_action_or_reset(scm->dev, qcom_scm_qtee_free, qtee_dev);
+> +}
+> +
+> +#else
+> +
+> +static int qcom_scm_qtee_init(struct qcom_scm *scm)
+> +{
+> +	return 0;
+> +}
+> +
+> +#endif /* CONFIG_QCOMTEE */
+> +
+>  /**
+>   * qcom_scm_is_available() - Checks if SCM is available
+>   */
+> @@ -2319,6 +2437,16 @@ static int qcom_scm_probe(struct platform_device *pdev)
+>  	ret = qcom_scm_qseecom_init(scm);
+>  	WARN(ret < 0, "failed to initialize qseecom: %d\n", ret);
+>  
+> +	/*
+> +	 * Initialize the QTEE object interface.
+> +	 *
+> +	 * This only represents the availability for QTEE object invocation
+> +	 * and callback support. On failure, ignore the result. Any subsystem
+> +	 * depending on it may fail if it tries to access this interface.
+> +	 */
+> +	ret = qcom_scm_qtee_init(scm);
+> +	WARN(ret < 0, "failed to initialize qcomtee: %d\n", ret);
+> +
+>  	return 0;
+>  
+>  err:
+> diff --git a/drivers/firmware/qcom/qcom_scm.h b/drivers/firmware/qcom/qcom_scm.h
+> index 097369d38b84..a25202e99f7c 100644
+> --- a/drivers/firmware/qcom/qcom_scm.h
+> +++ b/drivers/firmware/qcom/qcom_scm.h
+> @@ -152,6 +152,13 @@ struct qcom_tzmem_pool *qcom_scm_get_tzmem_pool(void);
+>  #define QCOM_SCM_SVC_GPU			0x28
+>  #define QCOM_SCM_SVC_GPU_INIT_REGS		0x01
+>  
+> +/* ARM_SMCCC_OWNER_TRUSTED_OS calls */
+> +
+> +#define QCOM_SCM_SVC_SMCINVOKE			0x06
+> +#define QCOM_SCM_SMCINVOKE_INVOKE_LEGACY	0x00
+> +#define QCOM_SCM_SMCINVOKE_CB_RSP		0x01
+> +#define QCOM_SCM_SMCINVOKE_INVOKE		0x02
+> +
+>  /* common error codes */
+>  #define QCOM_SCM_V2_EBUSY	-12
+>  #define QCOM_SCM_ENOMEM		-5
+> diff --git a/include/linux/firmware/qcom/qcom_scm.h b/include/linux/firmware/qcom/qcom_scm.h
+> index 983e1591bbba..bf5e64f6deba 100644
+> --- a/include/linux/firmware/qcom/qcom_scm.h
+> +++ b/include/linux/firmware/qcom/qcom_scm.h
+> @@ -176,4 +176,31 @@ static inline int qcom_scm_qseecom_app_send(u32 app_id,
+>  
+>  #endif /* CONFIG_QCOM_QSEECOM */
+>  
+> +#ifdef CONFIG_QCOMTEE
+> +
+> +int qcom_scm_qtee_invoke_smc(phys_addr_t inbuf, size_t inbuf_size,
+> +			     phys_addr_t outbuf, size_t outbuf_size,
+> +			     u64 *result, u64 *response_type);
+> +int qcom_scm_qtee_callback_response(phys_addr_t buf, size_t buf_size,
+> +				    u64 *result, u64 *response_type);
+> +
+> +#else /* CONFIG_QCOMTEE */
+> +
+> +static inline int qcom_scm_qtee_invoke_smc(phys_addr_t inbuf, size_t inbuf_size,
+> +					   phys_addr_t outbuf,
+> +					   size_t outbuf_size, u64 *result,
+> +					   u64 *response_type)
+> +{
+> +	return -EINVAL;
+> +}
+> +
+> +static inline int qcom_scm_qtee_callback_response(phys_addr_t buf,
+> +						  size_t buf_size, u64 *result,
+> +						  u64 *response_type)
+> +{
+> +	return -EINVAL;
+> +}
+> +
+> +#endif /* CONFIG_QCOMTEE */
+> +
+>  #endif
+> 
+> -- 
+> 2.34.1
+> 
+> 
 
