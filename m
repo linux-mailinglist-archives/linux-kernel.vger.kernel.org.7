@@ -1,106 +1,137 @@
-Return-Path: <linux-kernel+bounces-647089-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-647079-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FDDBAB6455
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 09:29:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99E6FAB643D
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 09:26:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D24933A3CDB
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 07:29:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A103517FE2C
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 07:26:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0207421C17B;
-	Wed, 14 May 2025 07:28:03 +0000 (UTC)
-Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7335C2185BD;
+	Wed, 14 May 2025 07:25:04 +0000 (UTC)
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FE291E520F;
-	Wed, 14 May 2025 07:27:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 211E320FAA8
+	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 07:25:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747207682; cv=none; b=KGECbKpWrCYfm8RHzYr6RKF6wpoceBQTyj/A6mOqEa/gqzlb22pvLV2Act7BUTrhDUeOOnZq+b4o0oxX6SFTrWPf9XhLJoe1K/PBfIsKiS2PQtF9v8hEAvm9oR/7CW9nzL71Nl1E1E8z/T3buCdtSlSZ0yQLeXoTw7tQ+Ha9lSE=
+	t=1747207504; cv=none; b=uRgB5NK9v89m39CPpn2UuR5bqtFHSM7HUYWlkYT97e8rYMvvUOYtBjvL3csYRKXVInqSAbxiGZltccxxTGbYI2qh3LqCS9urmjKGzF5vALhZttzeePUSw0tslA5n+ukYD8f9OgA+DQaNK2IutabowDHjl894j9EEERHK6Jt9L20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747207682; c=relaxed/simple;
-	bh=9dCg3FNbT51YcOLgSBbAmAz5vhbZxfJOxjdUIN93giQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=WurnaJUoLoHGdJ6vl+E9IgNeSavU2+GdbbjctX7QMZelbmotNdab8Pi5vuNCusi+iYSfM9m4xuIj6g1rgUSoZgyedeKPOkJ5HOjWWtLmOXc2EHbqw6Ty01SpO6V1kmWajRcN1ejYFEJ04YwidFXCoFOM4Lmxw/R6oC0MlLA7PZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost (unknown [124.16.138.129])
-	by APP-03 (Coremail) with SMTP id rQCowAAn0j7zRSRocob6FA--.59550S2;
-	Wed, 14 May 2025 15:27:47 +0800 (CST)
-From: Chen Ni <nichen@iscas.ac.cn>
-To: saeedm@nvidia.com,
-	leon@kernel.org,
-	tariqt@nvidia.com,
-	andrew+netdev@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com
-Cc: netdev@vger.kernel.org,
-	linux-rdma@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Chen Ni <nichen@iscas.ac.cn>
-Subject: [PATCH net-next v2] net/mlx5: Use to_delayed_work()
-Date: Wed, 14 May 2025 15:24:19 +0800
-Message-Id: <20250514072419.2707578-1-nichen@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1747207504; c=relaxed/simple;
+	bh=WcsezBt7zk1OwtbAR4+bBHA60/kUhzeK0Wkrdkb9QG8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=YSrW+H+M6zGnJHlVehEWKNOFDCYEA/Mad/LiIrWKEbpGqXPenaiocgVxhaErSjs7IlhkTRlzqj+SraK1mkLo+LArbhgHMLuoxK5aHawsLg0qpEgwV4a46H5oNG1e2v+x77yN+sOaxvggsuHKm3dyULqi5f2C7aj6fHvO3RymYeQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 08D08442BC;
+	Wed, 14 May 2025 07:24:55 +0000 (UTC)
+Message-ID: <602a2de6-3b6f-4fc9-b50d-90539361c50b@ghiti.fr>
+Date: Wed, 14 May 2025 09:24:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:rQCowAAn0j7zRSRocob6FA--.59550S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7Gw1xJFyxZF15tF47KFWDCFg_yoWDGFb_ur
-	90vryfuw1Y9rn3Kr43ur4fAay09w4vgrs3KFZ8KFZ8J3yDKr1UZ34kZ3srCr1xWr1UAF9x
-	GrsIya13C39rJjkaLaAFLSUrUUUUbb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbf8FF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
-	Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AKxVWxJr
-	0_GcWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r4j6F4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
-	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFylc2xSY4AK67AK6r4xMxAIw28IcxkI7VAKI4
-	8JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xv
-	wVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjx
-	v20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20E
-	Y4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267
-	AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUjJGYJUUUUU==
-X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 01/11] riscv: kprobes: Move branch_rs2_idx to insn.h
+To: Nam Cao <namcao@linutronix.de>, Paul Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <cover.1746997351.git.namcao@linutronix.de>
+ <9b528d3c1de5291d1540b3617e63d40b9889c88f.1746997351.git.namcao@linutronix.de>
+Content-Language: en-US
+From: Alexandre Ghiti <alex@ghiti.fr>
+In-Reply-To: <9b528d3c1de5291d1540b3617e63d40b9889c88f.1746997351.git.namcao@linutronix.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeftdeifeekucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfhfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpeetlhgvgigrnhgurhgvucfihhhithhiuceorghlvgigsehghhhithhirdhfrheqnecuggftrfgrthhtvghrnhepveetvdfhvdeuheekvdettdegheetgeejiefgjeetvedtfeeuvddvtefhjeffgeevnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucfkphepvddttddumeekiedumeeffeekvdemvghfledtmedvrgekvdemvgegsgemudehvgegmeduvgejleenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvtddtudemkeeiudemfeefkedvmegvfheltdemvdgrkedvmegvgegsmeduhegvgeemudgvjeelpdhhvghloheplgfkrfggieemvddttddumeekiedumeeffeekvdemvghfledtmedvrgekvdemvgegsgemudehvgegmeduvgejlegnpdhmrghilhhfrhhomheprghlvgigsehghhhithhirdhfrhdpnhgspghrtghpthhtohepiedprhgtphhtthhopehnrghmtggroheslhhinhhuthhrohhnihigrdguvgdprhgtphhtthhopehprghulhdrfigrlhhmshhlvgihsehsihhfihhvvgdrtghomhdprhgtphhtthhopehprghlm
+ hgvrhesuggrsggsvghlthdrtghomhdprhgtphhtthhopegrohhusegvvggtshdrsggvrhhkvghlvgihrdgvughupdhrtghpthhtoheplhhinhhugidqrhhishgtvheslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-GND-Sasl: alex@ghiti.fr
 
-Use to_delayed_work() instead of open-coding it.
+Hi Nam,
 
-Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
----
-Changelog:
+On 11/05/2025 23:17, Nam Cao wrote:
+> Similar to other instruction-processing macros/functions, branch_rs2_idx
+> should be in insn.h.
+>
+> Move it into insn.h as RV_EXTRACT_RS2_REG. This new name matches the style
+> in insn.h.
+>
+> Signed-off-by: Nam Cao <namcao@linutronix.de>
+> ---
+>   arch/riscv/include/asm/insn.h            | 5 +++++
+>   arch/riscv/kernel/probes/simulate-insn.c | 5 +----
+>   2 files changed, 6 insertions(+), 4 deletions(-)
+>
+> diff --git a/arch/riscv/include/asm/insn.h b/arch/riscv/include/asm/insn.h
+> index 09fde95a5e8f..debac13a3476 100644
+> --- a/arch/riscv/include/asm/insn.h
+> +++ b/arch/riscv/include/asm/insn.h
+> @@ -64,6 +64,7 @@
+>   #define RVG_RS2_OPOFF		20
+>   #define RVG_RD_OPOFF		7
+>   #define RVG_RS1_MASK		GENMASK(4, 0)
+> +#define RVG_RS2_MASK		GENMASK(4, 0)
+>   #define RVG_RD_MASK		GENMASK(4, 0)
+>   
+>   /* The bit field of immediate value in RVC J instruction */
+> @@ -295,6 +296,10 @@ static __always_inline bool riscv_insn_is_c_jalr(u32 code)
+>   	({typeof(x) x_ = (x); \
+>   	(RV_X(x_, RVG_RS1_OPOFF, RVG_RS1_MASK)); })
+>   
+> +#define RV_EXTRACT_RS2_REG(x) \
+> +	({typeof(x) x_ = (x); \
+> +	(RV_X(x_, RVG_RS2_OPOFF, RVG_RS2_MASK)); })
 
-v1 -> v2:
 
-1. Specify the target tree.
----
- drivers/net/ethernet/mellanox/mlx5/core/cmd.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+RV_X() definition was inconsistent across multiple files, so I 
+harmonized RV_X() it in this patch 
+https://lore.kernel.org/linux-riscv/20250508125202.108613-3-alexghiti@rivosinc.com/
 
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/cmd.c b/drivers/net/ethernet/mellanox/mlx5/core/cmd.c
-index e53dbdc0a7a1..b1aeea7c4a91 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/cmd.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/cmd.c
-@@ -927,8 +927,7 @@ static void mlx5_cmd_comp_handler(struct mlx5_core_dev *dev, u64 vec, bool force
- 
- static void cb_timeout_handler(struct work_struct *work)
- {
--	struct delayed_work *dwork = container_of(work, struct delayed_work,
--						  work);
-+	struct delayed_work *dwork = to_delayed_work(work);
- 	struct mlx5_cmd_work_ent *ent = container_of(dwork,
- 						     struct mlx5_cmd_work_ent,
- 						     cb_timeout_work);
--- 
-2.25.1
+So here you use the "old" version, would you mind rebasing on top this 
+patchset and use RV_X_mask() instead?
 
+If you can't, let me know and I'll find some time, I'd like to merge 
+those cleanups in 6.16.
+
+Thanks,
+
+Alex
+
+
+> +
+>   #define RV_EXTRACT_RD_REG(x) \
+>   	({typeof(x) x_ = (x); \
+>   	(RV_X(x_, RVG_RD_OPOFF, RVG_RD_MASK)); })
+> diff --git a/arch/riscv/kernel/probes/simulate-insn.c b/arch/riscv/kernel/probes/simulate-insn.c
+> index 6c166029079c..77be381bb8b4 100644
+> --- a/arch/riscv/kernel/probes/simulate-insn.c
+> +++ b/arch/riscv/kernel/probes/simulate-insn.c
+> @@ -121,9 +121,6 @@ bool __kprobes simulate_auipc(u32 opcode, unsigned long addr, struct pt_regs *re
+>   #define branch_rs1_idx(opcode) \
+>   	(((opcode) >> 15) & 0x1f)
+>   
+> -#define branch_rs2_idx(opcode) \
+> -	(((opcode) >> 20) & 0x1f)
+> -
+>   #define branch_funct3(opcode) \
+>   	(((opcode) >> 12) & 0x7)
+>   
+> @@ -157,7 +154,7 @@ bool __kprobes simulate_branch(u32 opcode, unsigned long addr, struct pt_regs *r
+>   	unsigned long rs2_val;
+>   
+>   	if (!rv_insn_reg_get_val(regs, branch_rs1_idx(opcode), &rs1_val) ||
+> -	    !rv_insn_reg_get_val(regs, branch_rs2_idx(opcode), &rs2_val))
+> +	    !rv_insn_reg_get_val(regs, RV_EXTRACT_RS2_REG(opcode), &rs2_val))
+>   		return false;
+>   
+>   	offset_tmp = branch_offset(opcode);
 
