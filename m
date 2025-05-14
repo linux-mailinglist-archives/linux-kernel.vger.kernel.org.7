@@ -1,387 +1,217 @@
-Return-Path: <linux-kernel+bounces-647333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-647337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C130AB6729
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 11:20:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9998FAB6736
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 11:20:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98D554A615D
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 09:19:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E668E7A8ACD
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 09:19:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 936632253AE;
-	Wed, 14 May 2025 09:19:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44BAA22A4E4;
+	Wed, 14 May 2025 09:19:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="SEu2+Lxx"
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+	dkim=pass (1024-bit key) header.d=cherry.de header.i=@cherry.de header.b="N2Bi08Gs"
+Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2072.outbound.protection.outlook.com [40.107.20.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB8BA22541B
-	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 09:19:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747214379; cv=none; b=ZPb+lY5+uS3FyJnFo4jqKnwIDo7x/XZrBkOeWbcUE7KMIqKlYjgsJ3Eau6bXOzY50KGS3QUYlxNbraqLH76UZu5oTLuuOirnp9Abi5IwMcBmikHC7jlwOvUjReK77l46DoW2V2kv/QZfmAtuUdySZ/HEJS+O+HmvJCi1c+blL90=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747214379; c=relaxed/simple;
-	bh=2D2rpbKGcSdInh62Cls4bfflDYQSGcbRv/l5aVvJN7g=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=C52ewuiCVERBthm+HOPboAh6cQ6AFV3e2RXMWVZISbFavmE9icRhwvyEwY1Ygbzwrdl+HZNjM5gbW6DuOpDn+Yy1B1VVLTjH3H7MtigJqd3Qi0Ew6M9GZFZcdaP1EcYTgiatznWGC5gcBLtjCj50khJ1maxmaenp+UOuCBR/nJg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=SEu2+Lxx; arc=none smtp.client-ip=80.241.56.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4Zy78N2fdPz9t76;
-	Wed, 14 May 2025 11:19:32 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1747214372; h=from:from:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dX/+oVQTquS1mWBfFty+DmXpsce2yUrtxG5oSfbjfco=;
-	b=SEu2+LxxTcyE2nVz5ovYvIkYJ3QMqncbbRBSkF2UQlWaVDM1y8ZrpaRwy/ijZ8jQojk9Re
-	Ufr7rprT4vKbS8V5nPraSnW96eJxZBGJTz4PUls+qs3tbLML05MIS9NYjyBiWd4nErDNdl
-	mK+hbjqKwPBlRCsaa65R3qZ9dAdMzbXUjF/so9FAJT3jKQ6pCaxR/RbCpPBOrjz53gfiCb
-	tKI6pJJyg2h2YOcGTtLCjZJQJ/em+Sv/LAF9pKmR2NDRBqxWcnf3M4lLfbMR1HlhxewdYT
-	xlqy6uC+4Ig6J4PHQYPS5ion2S5kAQw9SeyDp0zxsxm7vQmukFO0KbsanAkK3Q==
-Message-ID: <b98ac3e08922f5d1a6a83d1caa9f8d1d4a7aaac2.camel@mailbox.org>
-Subject: Re: [PATCH v2 6/6] drm/sched: Port unit tests to new cleanup design
-From: Philipp Stanner <phasta@mailbox.org>
-Reply-To: phasta@kernel.org
-To: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>, phasta@kernel.org, Lyude
- Paul <lyude@redhat.com>, Danilo Krummrich <dakr@kernel.org>, David Airlie
- <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Matthew Brost
- <matthew.brost@intel.com>, Christian =?ISO-8859-1?Q?K=F6nig?=
- <ckoenig.leichtzumerken@gmail.com>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
- Thomas Zimmermann <tzimmermann@suse.de>
-Cc: dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
-Date: Wed, 14 May 2025 11:19:25 +0200
-In-Reply-To: <1d753b0f-4770-4f90-b2fb-48193262d713@igalia.com>
-References: <20250424095535.26119-2-phasta@kernel.org>
-	 <20250424095535.26119-8-phasta@kernel.org>
-	 <894cf4cdb7e14b2a21dcf87bfeac4776cb695395.camel@mailbox.org>
-	 <a1c9c680-2927-428c-95e9-2e79d14cec58@igalia.com>
-	 <84021a2461db55617018050b7c0e07a15dceb634.camel@mailbox.org>
-	 <1d753b0f-4770-4f90-b2fb-48193262d713@igalia.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5031F225A35;
+	Wed, 14 May 2025 09:19:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.72
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747214398; cv=fail; b=a1mIqPQl3i80bOgWYvmXPznNPPv8TYi1+t38IFrzNIIljxsSmhCnH0iT0JkA7X7UKXiQcfVr+LP8FF2EoMgLcb5AL0IR52WCHqb8Ok3aHPbPq0VsHaXu6iCeXGp3az81LyFCYWuTjuKLlfZ1YGksyAifGQj858sfw3JsIjRa3kg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747214398; c=relaxed/simple;
+	bh=BnkcqNptr9IGgVnl1VGIOBuiX+b4JsCT5cSFNL9y+bw=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=qL8Tr07gbvH4tYcTxgKZ5WyhBEOM74yGROVW8KMPKjHA9i6UvkOvoNU0bYMD5QfE4SPwV/YSp2RVZXKYxgKvDtoKQxJhISqvlR3g4vlsAGLdAD3VoviMbNggpyaT4lp1lNuwMPvHZFXDJ1TIxbFgzdl72MVk0lAtNFcfXXgjo70=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cherry.de; spf=pass smtp.mailfrom=cherry.de; dkim=pass (1024-bit key) header.d=cherry.de header.i=@cherry.de header.b=N2Bi08Gs; arc=fail smtp.client-ip=40.107.20.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cherry.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cherry.de
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=UuGFAy3KduRJhWRuSRnnJf2TPhr/fz50xYEjvGVbJB8lp0BOc4gxPgSHXriXMLf1hyqoP2h9BtHw650qU1X4fDXeU5VRRFp7FmXynHsD4qpUCPtM/jsGspWCu01leCfwEzO8BBYTNwWQpqBbj3S76MVd6jO1rdi7A6iDg7kWciDB2KTg66Nuaukgvr/60ry1wjmg0WF1+pWzrdGR596oeeIkbRrC0ZcM8PY38JmWGb/lfVtud1d4n5iT86IVv7VctWlHD4aBSWTS5RORNfB3AW/kFlMwe9y+iv2+653LuZH2qXZ9zYGcbSWozQVAoiamw2l9eACrD+FA5Ol/EQwGjA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=DHdAyc7T37crNON7aP7QYhLqQwfhCBf0oqkYLA2PY6c=;
+ b=JWPWR8OhqtacCsgViih5lfhDa1fiicnyZwm6Gsx1jNbqplabfMUxL91OyqQE5YK5SHFvz1hnfZogTcHjDtiCED1SK5AArnY1XwBrRdSWSogZn8v6N9ibAtvS9WfkaraFoh5ScXAyOVxokKv7/sDf6Q0RWYmTA+U61BR8EQCivfvzdiaMAWyTNe3210B42INC3ZbP4mQTLL/HjIiOEodkBDP+ZtjqNZQDDzmuDMKP0eOTENDnxSKeBy3Yg5mYP4AxidSO5/YU2IAa3jnfO0Zrg9MkOmjyizpuDjnDDyEJgfC+d2xVEDkCnHnBnhwazHT5Z7xvmqp6xQHHzHMaMGvwtQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=cherry.de; dmarc=pass action=none header.from=cherry.de;
+ dkim=pass header.d=cherry.de; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cherry.de;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=DHdAyc7T37crNON7aP7QYhLqQwfhCBf0oqkYLA2PY6c=;
+ b=N2Bi08Gs4frfuOz9kdP0xNxNo4D3PZrCToynCWI583AG+170w0o0WvYccwXcfxXlGCoMB7emSvrbI2Ic8x0mWrhT7UxBHmrTE+f3woaMiqw1PIitZ6KKYgFQl5OwU1kDE0vKiFujNiEcdCm/nMYIxDsv8/cn6UYPMXH8W1qi80U=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=cherry.de;
+Received: from AS8PR04MB8897.eurprd04.prod.outlook.com (2603:10a6:20b:42c::20)
+ by DB9PR04MB10010.eurprd04.prod.outlook.com (2603:10a6:10:4ee::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8722.29; Wed, 14 May
+ 2025 09:19:49 +0000
+Received: from AS8PR04MB8897.eurprd04.prod.outlook.com
+ ([fe80::35f6:bc7d:633:369a]) by AS8PR04MB8897.eurprd04.prod.outlook.com
+ ([fe80::35f6:bc7d:633:369a%4]) with mapi id 15.20.8722.027; Wed, 14 May 2025
+ 09:19:49 +0000
+Message-ID: <72f7ad52-a6b4-446b-8c2a-50f030307e31@cherry.de>
+Date: Wed, 14 May 2025 11:19:48 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 4/6] arm64: dts: rockchip: add px30-cobra base dtsi and
+ board variants
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Heiko Stuebner <heiko.stuebner@cherry.de>
+References: <20250513150234.2331221-1-heiko@sntech.de>
+ <20250513150234.2331221-5-heiko@sntech.de>
+Content-Language: en-US
+From: Quentin Schulz <quentin.schulz@cherry.de>
+In-Reply-To: <20250513150234.2331221-5-heiko@sntech.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: FR3P281CA0006.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:1d::16) To AS8PR04MB8897.eurprd04.prod.outlook.com
+ (2603:10a6:20b:42c::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MBO-RS-ID: 599db39402c1399f9b8
-X-MBO-RS-META: dgoc31epst7ynah537peaaxcoarzks9i
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS8PR04MB8897:EE_|DB9PR04MB10010:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7ea6d70f-f317-4151-2118-08dd92c879c0
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?NGhUSTZ3WEV3QjQ4cjdVMVNXUXVWODNtbFFoYW9pd05mbVM3WWFSb1JxdER6?=
+ =?utf-8?B?bFZQSjM5Q2xINzNybUxQUkZYcUgwZGVJQTFsNFBNdXpJTy91OEFOYmRCRjVw?=
+ =?utf-8?B?bk1CcTF6VFo3VG90TWR2ZTZJQktVVGU5blhBMmZYMkhySFowWnU5V29xc2VB?=
+ =?utf-8?B?WHByalJzZ0svSk5UUm51dmVneFY3WERuai8rUHVIR1pxaW1BU3c1dW4rdHZD?=
+ =?utf-8?B?Y2VsbFlObnhaa0U2SzdiSkZPelJaMXVUWkVPYWFGakROOXhZT0RYM3NZblk2?=
+ =?utf-8?B?NTI4Yk42Nkcwd2JaOVlRcFNJZWN1aERleC9mWmVHa2h3MUl3RUhKRGw0QzNx?=
+ =?utf-8?B?UldxQjlienU3S2phODlDVFJ5S1czT0hpUkxxdWV0SlRoNk1nKy9Bb2FuMVJi?=
+ =?utf-8?B?c1U1MWNXaENxQmJqaXBqaU9kTktOZWlDMlRwSWVqdzVvNUlyN0xzV202T2xw?=
+ =?utf-8?B?QXJTd2FGQ2VjcVhSdllYR2JjNm1zeEJOVzAvajF4dkREZkE1aUp3Q21zaUg0?=
+ =?utf-8?B?bFRxVHE5WTNweFNyaEZMNy9kU0NnWnhGSFRZajNVME93dHZoYzljNE1ycWZu?=
+ =?utf-8?B?OU01aWQ5Q2c5aXVlc0FNQ3QrYUdDVE94b2xxYlk3aUkxaWtxNC8vQkVoNUwx?=
+ =?utf-8?B?QzltKzZOUjV1RThuSklNWUtwRDc4d1Zod0JhK2RBbWdnbG96ck9wbmNabmR6?=
+ =?utf-8?B?ekxwZUtQejZyWHZzTGkvVmdEdzZGN3NaV0s2ZDJyUkdLN2gwOEdweG4wZjJ0?=
+ =?utf-8?B?aG8rcTBOWmJVaVZEY0doZEFhdWdzbFVFemRjWGU4eDhHL3FVU3FSQjZIRnUr?=
+ =?utf-8?B?NlhmbDhVNnFvYTRrV0hKanZoUFlObzAxMHRUOE9hakdrVVorT3JmUU9odW5j?=
+ =?utf-8?B?cEozaUt0SnIydk8xRUdNZHZJKy9zUnM3VUl2MXFVSXZSdlgrdHpBc1VkcHlK?=
+ =?utf-8?B?QVBDVTBIODFpSmdOMWozaXZOV2ZBWkZsSVBQS1B1NU1oNlVPc3lTTFI2Z3ov?=
+ =?utf-8?B?ZmtQUFBKZ1Z5UjE0QlVTTE4rNEFDRFFFbU1VdmNhZGJxeWtObVNnM0FvelRM?=
+ =?utf-8?B?UEt0MmpsMXFyUG5BdGxvbFNINHJRNit5K0FRWjVFQXF4Tkl3NlRoRjBUWi9P?=
+ =?utf-8?B?elZtbGFSWUpNbW9kbXJxR3lteXVVSEJMWllvWDBEN285Y0FwMndiQ0s4a0VV?=
+ =?utf-8?B?T0U2c0dBNS9RWUV0Q1lxQ09XbzNLMU9DNFB5UzFEdEhOb1dqQUhRbldnUDB1?=
+ =?utf-8?B?UUord0hHbnkxNmdOclhJZk5hK2wwNDdVTnVkTUhDMGVDTlFBVnR0YTNRS0Yr?=
+ =?utf-8?B?QkFrUFQ4ZFR2clRUblVabmdlVXBBSFlUVUY1MnI0OSszaWZGM3BFV2JWczdU?=
+ =?utf-8?B?RmpuTDk4VXptaEVXSGxvY0J3VVlFSDA2ZENVNnVSbmNqTFNZK2lOclFGU05J?=
+ =?utf-8?B?UnVzcERyZWVJL1VaVy9Bc2doc1ZkaVZmQVNIS1Z2VWx1cExLL2JQcHp5eTk0?=
+ =?utf-8?B?L1FYMkNrU2FGT21YWnhoK3FSMVN4SG0zR2QwdU5KUk55b2NjOVphVGhOMUpl?=
+ =?utf-8?B?aFRZTEtZaW5tTEdtZEVBbHpVeVJvMGkrUitycm1TVFBZaVY3K1V2UGFCT3Ax?=
+ =?utf-8?B?aTIrb0lmYkRnbkJTUlNuQjExTGtTbkRjOGc0Y2Q3WWMxME9mTzd4NWMwc3kw?=
+ =?utf-8?B?bnNmbVJBWW5ZSWdHUzYzd1JlY0dyZ3phU3hxK0ZFQytCL2VWZXFkc2VBUXkv?=
+ =?utf-8?B?Y0NOT1hjRWNodDQ0M0N3T1pKeDYzZStZNFkzS29zSHpvQ2YxUDVsVXpGdVZE?=
+ =?utf-8?B?NVV2bEdpQldibUcrVHhOMnY3M2FuTEt3Sk1maHJvaHVreXRVZTVZc2F5akNO?=
+ =?utf-8?B?RmE5SUVnZHltQ2NQcjh4YXY2UmQxcjBlc2NtVVVvdWptVEM5ZzN6dmlFUUxm?=
+ =?utf-8?Q?ob8b0KuSkmU=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB8897.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?ckVyMXdzL0lGVWJMWE9OeW9nSG9LOHNjazJPd0prbUZpTG1LTGY5VDRzNk1v?=
+ =?utf-8?B?NENxakxpcnBxS1ZCb3VhNXpPMVlVWTRqKy9xVCtlREZmVFcvNWxwVmFnNGh4?=
+ =?utf-8?B?bElzbUJxTXdYTjNhMVVlMTFBNnRrVmU2Sk5weDRmdUg2YkdkUW9kYi9pL2Rp?=
+ =?utf-8?B?VGZVMWsyUTQ1SUNiWEZNT1NWaXRvOTVMZ2JWZG9VK2ZMR29tNlR2MmhNVHcy?=
+ =?utf-8?B?NlV0RCtBWVhZeDF4aTNaRGxtTEhQb0hKUEwrQWsrbi8zUFF3QkhxemMvUHhW?=
+ =?utf-8?B?OTdLVkplUXNTMWppSWFSeThVWStEUzlaeHRtLytpd2FGMGNtaG8xem1vMEgr?=
+ =?utf-8?B?bGpuTzBQNnU3ak1YUzE5bmloZko1VjJJMHpmdmNhZVcveFZtVFJDemFmRXhu?=
+ =?utf-8?B?TFZiOWlnZWRsOS9TV3BYS0xTSVVlQXp6NUx2dFR5QVRjY3pwTnh4d2lKYW9z?=
+ =?utf-8?B?dEYxTzlWRjliL3hDTFBIa2hMM1NDdVd1RWdxNUk5ejVnd2daL1RndnIrUXpF?=
+ =?utf-8?B?ZHhxR3dCOTlzeVpOanAxdFh4SGx1UjVYSHpFdnhOdjg0ai94cUUxUS9qdE5B?=
+ =?utf-8?B?Y1RiNHlIZ3FyN2RpK2pWOEFIeDJQSkg1dTNIaUJtd1FlN3Q4VmRYNWJCdjln?=
+ =?utf-8?B?dUVYR2NxN1ltSWlicmZtWTZqOXhDeTVlK0k5Ukx1UWZvU0xvU2lrT1Z3VXM0?=
+ =?utf-8?B?MnBuMnhucklhVDgvSldVQTB5dHQyN09ZblpnN3FVeVJ5Q3pTVWo4bk11dXUr?=
+ =?utf-8?B?Uk01WU1NNFdTMzlGT243djNMZnpDY1FlM2lhMEZZOGJTbGRRZmJ3T28yN3g4?=
+ =?utf-8?B?RUQ5SmN5N2Fpbm52ZUsrVnE0Z0thcG9yell4Q1lZUXFIaGdJSGp6V0J1Y2tK?=
+ =?utf-8?B?c24rMi8zWEZFOGVUZlN0R2IxTXNSZ0JUQkhFOGxPcmpwTWgvOHBrektNN2tw?=
+ =?utf-8?B?TTcrOFBQWlh2MHVtd2hmVHBkS1ZpdFhIdWdvMC9xUmg4N0RXMUxKREluZnd2?=
+ =?utf-8?B?MFJXTjMxdUNJTnNMSUJzbHE0aEVCNFVvU3BLOVN5Ty9DSDYyRWxvWlkvdTZw?=
+ =?utf-8?B?V3dJNS9sQzFxaDNVeXo5RW0xS08rRytzcW90ZSt4VktsM2ZrMEEvVG1QWXFz?=
+ =?utf-8?B?SHl3VVlvR0tzOGFKbmxHQjdETm50QlRRNWlUK2ttUE5KeTFYSG00U3U5SHFv?=
+ =?utf-8?B?OTdpNHM5ODVrOXV5d2hodVNLdDEzVXpJak94TXI0b2hzR1JJQ05yNXNramc2?=
+ =?utf-8?B?VE9DNEdGOWtYc1Byc3hTZW0xOXIyKy9QOFVDTlhiTEhsNWJjTG85RldJN0ZX?=
+ =?utf-8?B?NGt1WmVtTExCSStYdU5GQlFtQlBHdnlYMzNtQ08zSU9zRk42YzhSMGZXeEZ1?=
+ =?utf-8?B?dGl1d082OTVaWDhGd2pXMEYxZ1kzZmJTMmlMbENOb3dTeHNvZW02ODRWczUx?=
+ =?utf-8?B?ZzNLSm1WMks5emdxT0Q0OXYrNHc1WGYwZzltMXZjcFV3REx1dHRZaXNTaEdp?=
+ =?utf-8?B?M2xtcGFMSXhBTjFlOXBOd1krNmRuVitVb0xhMWpTV0F2THBKT3pRRHk1b0Y0?=
+ =?utf-8?B?MGFFNW1aMVRTT1VEbGhuSytIWlprakNtS1lETE9rMHZ3YWxHdU9KN1hQWm5U?=
+ =?utf-8?B?ZU9JcXFNL1pIMUhhTGpGZ0FBTDBUSEpRYnk5TmdFSDZTcC9hb3pFc1BkVlRE?=
+ =?utf-8?B?QXR0K3RBNHdFN3RicFFiU2pNd2xBdGpySlJ1amRmM2RZaEZ4VFp2OXIzeE9B?=
+ =?utf-8?B?K0NUS1I5T1NjaWkxbHh5YjMydnJIemZiSmJQT3lzN1V0alRzeStjQThPL2cr?=
+ =?utf-8?B?UWRkMzZhMjFpTytmM3JsblBudFRoamlEeFR4R2krUXJNNSt2V2dYTVVUajd6?=
+ =?utf-8?B?QTdEV0ZmZ0VDOTNoQ285ZWxYNVJZenpndzdHTW5CR1Z5MStqOEFZYjEzeUc2?=
+ =?utf-8?B?MlJwMkthNjNpTk54bERaV05NejRsRGg5T1VBT0tRU1lQYjEvdmxYSEZpRjFC?=
+ =?utf-8?B?N29oTzQxTExiZldVQkxxWWxoc2RoaG0zcHFpbk9XTWV6RkdBd3RZOXd4cE15?=
+ =?utf-8?B?M3lzVktiRHgvSDAyMENPWHF4d04vR3pKcUxYU0FxNW5UbnU1ZHdxbC92dTFF?=
+ =?utf-8?B?d1BKYkRmYkpsT2JYZkhQY0VtZ0EzSFlNVVhjOWJsTGJleUhZVFNUWnVVNE9h?=
+ =?utf-8?B?dFE9PQ==?=
+X-OriginatorOrg: cherry.de
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7ea6d70f-f317-4151-2118-08dd92c879c0
+X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8897.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 May 2025 09:19:49.1799
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 5e0e1b52-21b5-4e7b-83bb-514ec460677e
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: mB5/k+YgAcOoYB8HiB5Xjnr04//+VtUI02Sd/plXmlq8StzUQ3DX5v7LUXzppLwW8LwUhnFUh5cH+YWxiSNvmQITNCfHXRmCabdgrIrAVxc=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR04MB10010
 
-On Wed, 2025-05-14 at 09:30 +0100, Tvrtko Ursulin wrote:
->=20
-> On 12/05/2025 09:00, Philipp Stanner wrote:
-> > On Thu, 2025-05-08 at 13:51 +0100, Tvrtko Ursulin wrote:
-> > >=20
-> > > Hi Philipp,
-> > >=20
-> > > On 08/05/2025 12:03, Philipp Stanner wrote:
-> > > > On Thu, 2025-04-24 at 11:55 +0200, Philipp Stanner wrote:
-> > > > > The unit tests so far took care manually of avoiding memory
-> > > > > leaks
-> > > > > that
-> > > > > might have occurred when calling drm_sched_fini().
-> > > > >=20
-> > > > > The scheduler now takes care by itself of avoiding memory
-> > > > > leaks
-> > > > > if
-> > > > > the
-> > > > > driver provides the callback
-> > > > > drm_sched_backend_ops.kill_fence_context().
-> > > > >=20
-> > > > > Implement that callback for the unit tests. Remove the manual
-> > > > > cleanup
-> > > > > code.
-> > > >=20
-> > > > @Tvrtko: On a scale from 1-10, how much do you love this patch?
-> > > > :)
-> > >=20
-> > > Specific patch aside, it is the series as a whole I would like to
-> > > be
-> > > sure there isn't a more elegant way to achieve the same end
-> > > result.
-> >=20
-> > I count this as a 9/10 \o/
->=20
-> :) Yes, sorry, it would a bit lower than that, at least until someone
-> can point out a fatal flaw in my alternative. :)
+Hi Heiko,
 
-There's no fatal flaw in my approach either :)
+On 5/13/25 5:02 PM, Heiko Stuebner wrote:
 
->=20
-> > But jokes aside:
-> >=20
-> > >=20
-> > > Like that sketch of a counter proposal I sent for the reasons
-> > > listed
-> > > with it. Which were, AFAIR, to avoid needing to add more state
-> > > machine,
-> >=20
-> > Well the state machine added is basically just the waitqueue. The
-> > WRITE_ONCE booleans are currently just for correctness and clarity.
-> > I've looked at them and want to remove them all in an other patch,
-> > because I think they're not needed (workqueue handles that)
-> >=20
-> > But yes, the added state is > 0
-> >=20
-> > > to avoid mandating drivers have to keep an internal list,
-> >=20
-> > That's not mandated by the scheduler, but by logic itself. All
-> > drivers
-> > need to have a list of on-flight fences. Otherwise the drivers
-> > would
-> > have no chance of signaling those fences once their GPU tells them
-> > to
-> > do so.
->=20
-> Probably it would be hard to signal without tracking of some sort
-> yes,=20
-> although it wouldn't have to be indexed by fence context, or looked
-> up=20
-> by it so maybe still simpler.
+[...]
 
-Well, the decisive point remains that all drivers must know all on-air
-fences, so they all are able to signal those fences.
+> +	rk809: pmic@20 {
+> +		compatible = "rockchip,rk809";
+> +		reg = <0x20>;
+> +		#clock-cells = <0>;
+> +		clock-output-names = "xin32k";
+> +		interrupt-parent = <&gpio0>;
+> +		interrupts = <RK_PA7 IRQ_TYPE_LEVEL_LOW>;
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&pmic_int>;
+> +		wakeup-source;
+> +		system-power-controller;
 
->=20
-> More importantly I think with this comment I was thinking about the
-> fact=20
-> that with ops->cancel_job() approach I was able to remove the _done_=20
-> list tracking from the mock scheduler.
+Please order the properties alphabetically, system-power-controller is 
+not where it should be.
 
-If the done_list is just about avoiding memory leaks, then I should
-also be able to remove it completely, shouldn't I? In this patch here I
-already remove the leak-related code in drm_mock_sched_fini(), but
-hadn't looked too deeply into what else the done_list does. Is it just
-about the leaks?
+[...]
 
->=20
-> > I have now provided two users of the new API, nouveau and the unit
-> > tests. Can you think of a party for which the suggested approach
-> > wouldn't work?
->=20
-> I did not think along those lines yet so don't know. I just thought
-> it=20
-> was too much code to implement a relatively simple thing and that
-> also a=20
-> few things in the design bothered me.
->=20
-> If you look at the diffstat from my proposal and ignore kerneldoc and
-> unit test stats, it literally adds 8 lines to drm_sched_fini() and a=20
-> single line to gpu_scheduler.h:
->=20
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 void (*cancel_job)(struct drm_sched=
-_job *sched_job);
->=20
-> And in the former after it stops the workers:
->=20
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (sched->ops->cancel_job) {
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 struct drm_sched_job *job;
+> +	panel {
+> +		dsp_rst: dsp-rst {
+> +			rockchip,pins =
+> +				<0 RK_PB2 RK_FUNC_GPIO &pcfg_pull_up>;
+> +		};
 > +
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 list_for_each_entry_reverse(job, &sched-
-> >pending_list,=20
-> list) {
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 sched->ops->ca=
-ncel_job(job);
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 sched->ops->fr=
-ee_job(job);
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 }
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
->=20
-> To me this looks quite clean. Unless, I say this again, I am missing=20
-> some fatal flaw why it doesn't work.
 
-It does work. I've stated that before. But mine works, too. And mine
-doesn't have a hard blocker either, as far as I can see.
+I would actually have a pull down here to hold the display in reset 
+until the driver is probed and goes through the reset procedure?
 
-So let's focus on the main differences:
+With the two above done:
 
-Your version adds fewer lines of code, that's correct.
+Reviewed-by: Quentin Schulz <quentin.schulz@cherry.de>
 
-I think cleaning up through just having the driver signal the fences
-all at once is better because
-   1. The very same code path both for "legacy-fini" and "new-fini" is
-      responsible for cleaning up the jobs. Notably, the free_job()
-      callback is only invoked by the same parties as before, primarily
-      the work items. We don't add a new, only sometimes running, code
-      path *that free's jobs*.
-   2. The scheduler's already fractured design doesn't fracture
-      further: the free_job work item remains responsible for calling
-      free_job(). Having just one party being responsible for one thing
-      is a desirable design goal.
-   3. Considering that many drivers generously (ab)use API internals of
-      the scheduler, and considering that there is already ambiguity of
-      who's responsible for handling job lifetimes, I believe it is
-      safer not to add an additional code path that can free jobs, but
-      keep that one path.
-   4. It reads more cleanly: "We're not canceling a single job here,
-      we're killing all associated jobs now all at once", raising
-      awareness for driver programmers that this is a significant
-      event: we're tearing down while not all of your jobs have
-      finished on your GPU.
-
->=20
-> > Don't get me wrong, your approach does work and it definitely has
-> > its
-> > charm. However, I think what I propose here is syntactically a bit
-> > cleaner because the classical order of a fence first being signaled
-> > in
-> > the driver and then the associated job being freed as usual by the
-> > scheduler is guaranteed. IOW, we primarily rely on the signaling
-> > path.
-> >=20
-> > Either way, neither your nor my approach would have worked out of
-> > the
-> > box in Nouveau without that driver exploding.
->=20
-> What do you mean by this - the latest version of your series does or=20
-> does not work for nouveau?
-
-Mine works with Nouveau, but revealed a bug in Nouveau [1]. Yours would
-have ran into that bug, too.
-
-My point is just that your job-by-job approach wouldn't have been
-superior to my approach in practice, i.e., when implementing it in the
-first "beta tester", Nouveau. Would have been the same problem in
-different color.
-
-So just because a cancel_job() callback would result in fewer lines of
-code wouldn't mean it's superior in practice. I expect the same to be
-the case for other drivers, especially those who use scheduler
-internals.
-
-So, summarizing:
- * My approach works. Your approach works.
- * It works for all drivers, because they all have a list of fences.
- * It communicates more clearly to the driver what this is all about.
- * It keeps the scheduler's design more consistent regarding
-   responsibility / code paths for job life times.
-
-P.
-
-[1] https://lore.kernel.org/dri-devel/20250415121900.55719-2-phasta@kernel.=
-org/
-
->=20
-> Regards,
->=20
-> Tvrtko
->=20
-> >=20
-> > > =C2=A0 and to align
-> > > better with the existing prototypes in the sched ops table (where
-> > > everything operates on jobs).
-> >=20
-> > That's not a hard criteria IMO. Those are sched_backend_ops, not
-> > sched_job_backend_ops, and prepare_job() already takes a parameter
-> > other than a job.
-> >=20
-> >=20
-> > Cheers,
-> > P.
-> >=20
-> > >=20
-> > > Regards,
-> > >=20
-> > > Tvrtko
-> > >=20
-> > > > > Signed-off-by: Philipp Stanner <phasta@kernel.org>
-> > > > > ---
-> > > > > =C2=A0=C2=A0=C2=A0.../gpu/drm/scheduler/tests/mock_scheduler.c=C2=
-=A0 | 34
-> > > > > ++++++++++++-----
-> > > > > --
-> > > > > =C2=A0=C2=A0=C2=A01 file changed, 21 insertions(+), 13 deletions(=
--)
-> > > > >=20
-> > > > > diff --git a/drivers/gpu/drm/scheduler/tests/mock_scheduler.c
-> > > > > b/drivers/gpu/drm/scheduler/tests/mock_scheduler.c
-> > > > > index f999c8859cf7..a72d26ca8262 100644
-> > > > > --- a/drivers/gpu/drm/scheduler/tests/mock_scheduler.c
-> > > > > +++ b/drivers/gpu/drm/scheduler/tests/mock_scheduler.c
-> > > > > @@ -228,10 +228,30 @@ static void mock_sched_free_job(struct
-> > > > > drm_sched_job *sched_job)
-> > > > > =C2=A0=C2=A0=C2=A0 /* Mock job itself is freed by the kunit frame=
-work. */
-> > > > > =C2=A0=C2=A0=C2=A0}
-> > > > > =C2=A0=C2=A0=20
-> > > > > +static void mock_sched_fence_context_kill(struct
-> > > > > drm_gpu_scheduler
-> > > > > *gpu_sched)
-> > > > > +{
-> > > > > + struct drm_mock_scheduler *sched =3D
-> > > > > drm_sched_to_mock_sched(gpu_sched);
-> > > > > + struct drm_mock_sched_job *job;
-> > > > > + unsigned long flags;
-> > > > > +
-> > > > > + spin_lock_irqsave(&sched->lock, flags);
-> > > > > + list_for_each_entry(job, &sched->job_list, link) {
-> > > > > + spin_lock(&job->lock);
-> > > > > + if (!dma_fence_is_signaled_locked(&job-
-> > > > > > hw_fence)) {
-> > > > > + dma_fence_set_error(&job->hw_fence, -
-> > > > > ECANCELED);
-> > > > > + dma_fence_signal_locked(&job->hw_fence);
-> > > > > + }
-> > > > > + complete(&job->done);
-> > > > > + spin_unlock(&job->lock);
-> > > > > + }
-> > > > > + spin_unlock_irqrestore(&sched->lock, flags);
-> > > > > +}
-> > > > > +
-> > > > > =C2=A0=C2=A0=C2=A0static const struct drm_sched_backend_ops
-> > > > > drm_mock_scheduler_ops =3D {
-> > > > > =C2=A0=C2=A0=C2=A0 .run_job =3D mock_sched_run_job,
-> > > > > =C2=A0=C2=A0=C2=A0 .timedout_job =3D mock_sched_timedout_job,
-> > > > > - .free_job =3D mock_sched_free_job
-> > > > > + .free_job =3D mock_sched_free_job,
-> > > > > + .kill_fence_context =3D mock_sched_fence_context_kill,
-> > > > > =C2=A0=C2=A0=C2=A0};
-> > > > > =C2=A0=C2=A0=20
-> > > > > =C2=A0=C2=A0=C2=A0/**
-> > > > > @@ -300,18 +320,6 @@ void drm_mock_sched_fini(struct
-> > > > > drm_mock_scheduler *sched)
-> > > > > =C2=A0=C2=A0=C2=A0 drm_mock_sched_job_complete(job);
-> > > > > =C2=A0=C2=A0=C2=A0 spin_unlock_irqrestore(&sched->lock, flags);
-> > > > > =C2=A0=C2=A0=20
-> > > > > - /*
-> > > > > - * Free completed jobs and jobs not yet processed by the
-> > > > > DRM
-> > > > > scheduler
-> > > > > - * free worker.
-> > > > > - */
-> > > > > - spin_lock_irqsave(&sched->lock, flags);
-> > > > > - list_for_each_entry_safe(job, next, &sched->done_list,
-> > > > > link)
-> > > > > - list_move_tail(&job->link, &list);
-> > > > > - spin_unlock_irqrestore(&sched->lock, flags);
-> > > > > -
-> > > > > - list_for_each_entry_safe(job, next, &list, link)
-> > > > > - mock_sched_free_job(&job->base);
-> > > > > -
-> > > > > =C2=A0=C2=A0=C2=A0 drm_sched_fini(&sched->base);
-> > > > > =C2=A0=C2=A0=C2=A0}
-> > > > > =C2=A0=C2=A0=20
-> > > >=20
-> > >=20
-> >=20
->=20
-
+Thanks!
+Quentin
 
