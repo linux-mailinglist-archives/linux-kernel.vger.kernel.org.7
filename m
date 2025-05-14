@@ -1,114 +1,204 @@
-Return-Path: <linux-kernel+bounces-648056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-648082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82CFEAB70FD
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 18:16:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52770AB7151
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 18:27:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 49F434A133D
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 16:16:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45AC88C5DF2
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 16:26:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5211813CA9C;
-	Wed, 14 May 2025 16:16:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5FBA198E63;
+	Wed, 14 May 2025 16:26:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="VJ8/jxmT"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="ry8VG5Oc"
+Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2EA741C7F;
-	Wed, 14 May 2025 16:16:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1CBD1F1931;
+	Wed, 14 May 2025 16:26:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747239375; cv=none; b=HnJWe8J4lNWVSxjK2TblyVVbXvbfRlgHgaclw00L9eXjQczxHg8yaiYffmkQ+O3lqPPDQ/VvDFCNpg8pOfHE9dlO7+aY4j7hzseDAwhMzl6PMUUDMYoroNIx69C0kLEl3K3xVE17kgfOJJuNfgD7el9SDsgULqcilUwqwE/lhX8=
+	t=1747239993; cv=none; b=OtyDdExraXxmLSfLh3vf5cef3o/5L6Fs/M4/SrXAkDtvxtQDPpCYbmRQ1ucRzDieoMV0yFED+XHMChu0qKdbmpDRaAJ9i6kG8N5l200/KJhK6iaCLpttmfd8xCHaj0hQ+WrOFX0UnPtt3geG0vUHqBd0+6j34Zj1R4nOv8K1SG8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747239375; c=relaxed/simple;
-	bh=L56BHg7idQInNPACvdXlMxVfabEdIqucYp+BwdLRpRc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FBZNNJBY0Yep0icxzbeasNlDtDbvApTMZIWLkca4H6JiUp+zrezFCU39eU1/dMpOz26Xv974wx3vXyMJ0e6WGUkk6Z/T5P+JlNar1QEzuea9+epnkyZjiJjPE80ooIWUof4AiCDRMSoYDScDYmMEj2TZJVTuPAHkhcSnYS4EKAk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=VJ8/jxmT; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1747239371;
-	bh=L56BHg7idQInNPACvdXlMxVfabEdIqucYp+BwdLRpRc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=VJ8/jxmT0KYTMC1m66xSDfazeaaGbaktNYbLyMSS6DpuTRumu/b+yhz+lo/xURPvD
-	 osduEWzKC8asqNi0+cGkLVKlwRwic1kAXMysIK6y1p+Nhtz+eBJYlrZtZARGNV8z4F
-	 Oty4Y37A0RFLspWtATxRce3S2ATWQD4aBuQjGOOwRzg0kwMygmuYraRVeWkKwy3CTM
-	 JWvEhMrshMFtx7gPiYGXqxcas1dUC4ke1fE2OMFj0PowRO4Qgj9khoebTCbuH+Apn4
-	 Um4wNauKGtMuMiQOStajteiV52cbKUgJgBQLS0LI+Qje95025d4XYxxskVX2RYyvB9
-	 bnG6B9t07O4eQ==
-Received: from [10.40.0.100] (185-251-200-162.lampert.tv [185.251.200.162])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: mriesch)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 9B72C17E0CD1;
-	Wed, 14 May 2025 18:16:11 +0200 (CEST)
-Message-ID: <ced4b6b2-69c4-4d84-ab8b-7360d2b80ebb@collabora.com>
-Date: Wed, 14 May 2025 18:16:11 +0200
+	s=arc-20240116; t=1747239993; c=relaxed/simple;
+	bh=TDtZLkoLaoUO/Jbe9u7OfS6V+mxNZUjGDh0ct8/VoGI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=CPzLO/O/0Rdk+3XLaj7N50mjUcBOslz9dmMXYDqpt9J2O/tG9Yqy8ZGuY+/LX1xpnb3oAgr0fumpkiAfwgMU5u+kBYnsw8G5jF60SS4b8Y8FAVpQ2S3GSS/MIZ1zCCbC0LPIZJZI8emHh8qzFLYXqKfCOeGAN0sEh9o9EIE3mGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=ry8VG5Oc; arc=none smtp.client-ip=193.68.50.107
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
+Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
+	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id 4ED2AA033A;
+	Wed, 14 May 2025 18:18:12 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:from:from:message-id:mime-version:reply-to:subject:subject:to
+	:to; s=mail; bh=w4cPfXtu/36KJ7d3kTTSCLSd63SmospMQ3mRMjbyoKo=; b=
+	ry8VG5OcuPJBHR+i//bwjxyo9xo1z/joraaXLlw2pHbcgVnYShecYYDaR99bR/Q5
+	+2emwNuXuHFE2G8WPp2DJSF2wxnxxVgudIb52miKCt3Dc6JshapMQMG2v1TG/YOe
+	JNzvcAM/HR+F8Ee2qXFD0SQc1GAIneR2sGdMaaAnQAWJu4E1fsJMUzr/1VGlWPSV
+	com2HeicAcgc4aVmWARvdWmHmvo4IW+1s5yvTm4FS3rAhrlf3zO/8F/tMWwDYxxD
+	wv4xJaR2jk6M5drE+D9uQS+AVTnDnoCw+RA4dd7Bf/XFKihEPmnexpfUZ8WL6dS4
+	ybBi+gRO/RgkXH2xH0Ley7xFSLStfSOhySYfP+oOHHsYV8NDWatcoMjbFo8jwseC
+	HUfppXWhOrJc9zjXzUXcUUzlTpXEa/xGDUq8OQsQMYsfsnUB0MjsC0SdEItWZ6cg
+	wCVS6JUiPsMzABDHJDExj8nxu6l4UodOMZNs/VZPpU4LrNLI0tNBWBbMZo/vOWrE
+	bwKUdu76EgKQUC2gHQOnBjnpN3ILm7eJtLlWhmUqhWmc4ehw8zOvFrRluxmctDoa
+	ywOloa/8Qkv9gMNHaPzmkWouAha6YpnuPoklx/wwnDqeg0syjmqS6VxgIKzfh6ic
+	omHC23bLXgGfKWF4I4WfAEEUMWzHnK33jHnx9agDFdo=
+From: =?UTF-8?q?Bence=20Cs=C3=B3k=C3=A1s?= <csokas.bence@prolan.hu>
+To: <dmaengine@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-sunxi@lists.linux.dev>, <linux-kernel@vger.kernel.org>
+CC: =?UTF-8?q?Bence=20Cs=C3=B3k=C3=A1s?= <csokas.bence@prolan.hu>, "Chen-Yu
+ Tsai" <wens@kernel.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, "Chen-Yu
+ Tsai" <wens@csie.org>, Julian Calaby <julian.calaby@gmail.com>, Vinod Koul
+	<vkoul@kernel.org>, Samuel Holland <samuel@sholland.org>
+Subject: [PATCH v9] dma-engine: sun4i: Simplify error handling in probe()
+Date: Wed, 14 May 2025 18:18:01 +0200
+Message-ID: <20250514161803.229600-1-csokas.bence@prolan.hu>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] media: i2c: imx415: Request the sensor clock without a
- name
-To: Matthias Fend <matthias.fend@emfend.at>,
- Sakari Ailus <sakari.ailus@linux.intel.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250514-imx415-v1-1-bb29fa622bb1@emfend.at>
-Content-Language: en-US
-From: Michael Riesch <michael.riesch@collabora.com>
-In-Reply-To: <20250514-imx415-v1-1-bb29fa622bb1@emfend.at>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ESET-AS: R=OK;S=0;OP=CALC;TIME=1747239491;VERSION=7991;MC=2098525897;ID=2622337256;TRN=0;CRV=0;IPC=;SP=0;SIPS=0;PI=3;F=0
+X-ESET-Antispam: OK
+X-EsetResult: clean, is OK
+X-EsetId: 37303A296767155D617160
 
-Hi Matthias,
+Clean up error handling by using devm functions and dev_err_probe(). This
+should make it easier to add new code, as we can eliminate the "goto
+ladder" in sun4i_dma_probe().
 
-Thanks for giving this patch a spin.
+Suggested-by: Chen-Yu Tsai <wens@kernel.org>
+Reviewed-by: Jernej Skrabec <jernej.skrabec@gmail.com>
+Acked-by: Chen-Yu Tsai <wens@csie.org>
+Reviewed-by: Julian Calaby <julian.calaby@gmail.com>
+Signed-off-by: Bence Csókás <csokas.bence@prolan.hu>
+---
 
-FTR some context here:
-https://lore.kernel.org/all/20241130141716.1007115-1-matthias.fend@emfend.at/
+Notes:
+    Changes in v2:
+    * rebase on current next
+    Changes in v3:
+    * rebase on current next
+    * collect Jernej's tag
+    Changes in v4:
+    * rebase on current next
+    * collect Chen-Yu's tag
+    Changes in v5:
+    * reformat msg to 75 cols
+    * keep `\n`s in error messages
+    Changes in v6:
+    * remove redundant braces
+    * break lines to stay under 85 cols
+    * reword subject and message
+    Changes in v7:
+    * rebase onto current next
+    * collect Julian's tag
+    Changes in v8:
+    * rebase onto current next
+    Changes in v9:
+    * rebase onto current next
 
-On 5/14/25 12:51, Matthias Fend wrote:
-> Request the sensor clock without specifying a name so that the driver
-> behaves as described in the imx415 bindings.
-> 
-> Signed-off-by: Matthias Fend <matthias.fend@emfend.at>
+ drivers/dma/sun4i-dma.c | 46 ++++++++++++-----------------------------
+ 1 file changed, 13 insertions(+), 33 deletions(-)
 
-Reviewed-by: Michael Riesch <michael.riesch@collabora.com>
+diff --git a/drivers/dma/sun4i-dma.c b/drivers/dma/sun4i-dma.c
+index 24796aaaddfa..00d2fd38d17f 100644
+--- a/drivers/dma/sun4i-dma.c
++++ b/drivers/dma/sun4i-dma.c
+@@ -1249,11 +1249,10 @@ static int sun4i_dma_probe(struct platform_device *pdev)
+ 	if (priv->irq < 0)
+ 		return priv->irq;
+ 
+-	priv->clk = devm_clk_get(&pdev->dev, NULL);
+-	if (IS_ERR(priv->clk)) {
+-		dev_err(&pdev->dev, "No clock specified\n");
+-		return PTR_ERR(priv->clk);
+-	}
++	priv->clk = devm_clk_get_enabled(&pdev->dev, NULL);
++	if (IS_ERR(priv->clk))
++		return dev_err_probe(&pdev->dev, PTR_ERR(priv->clk),
++				     "Couldn't start the clock\n");
+ 
+ 	if (priv->cfg->has_reset) {
+ 		priv->rst = devm_reset_control_get_exclusive_deasserted(&pdev->dev, NULL);
+@@ -1328,12 +1327,6 @@ static int sun4i_dma_probe(struct platform_device *pdev)
+ 		vchan_init(&vchan->vc, &priv->slave);
+ 	}
+ 
+-	ret = clk_prepare_enable(priv->clk);
+-	if (ret) {
+-		dev_err(&pdev->dev, "Couldn't enable the clock\n");
+-		return ret;
+-	}
+-
+ 	/*
+ 	 * Make sure the IRQs are all disabled and accounted for. The bootloader
+ 	 * likes to leave these dirty
+@@ -1343,33 +1336,23 @@ static int sun4i_dma_probe(struct platform_device *pdev)
+ 
+ 	ret = devm_request_irq(&pdev->dev, priv->irq, sun4i_dma_interrupt,
+ 			       0, dev_name(&pdev->dev), priv);
+-	if (ret) {
+-		dev_err(&pdev->dev, "Cannot request IRQ\n");
+-		goto err_clk_disable;
+-	}
++	if (ret)
++		return dev_err_probe(&pdev->dev, ret, "Cannot request IRQ\n");
+ 
+-	ret = dma_async_device_register(&priv->slave);
+-	if (ret) {
+-		dev_warn(&pdev->dev, "Failed to register DMA engine device\n");
+-		goto err_clk_disable;
+-	}
++	ret = dmaenginem_async_device_register(&priv->slave);
++	if (ret)
++		return dev_err_probe(&pdev->dev, ret,
++				     "Failed to register DMA engine device\n");
+ 
+ 	ret = of_dma_controller_register(pdev->dev.of_node, sun4i_dma_of_xlate,
+ 					 priv);
+-	if (ret) {
+-		dev_err(&pdev->dev, "of_dma_controller_register failed\n");
+-		goto err_dma_unregister;
+-	}
++	if (ret)
++		return dev_err_probe(&pdev->dev, ret,
++				     "Failed to register translation function\n");
+ 
+ 	dev_dbg(&pdev->dev, "Successfully probed SUN4I_DMA\n");
+ 
+ 	return 0;
+-
+-err_dma_unregister:
+-	dma_async_device_unregister(&priv->slave);
+-err_clk_disable:
+-	clk_disable_unprepare(priv->clk);
+-	return ret;
+ }
+ 
+ static void sun4i_dma_remove(struct platform_device *pdev)
+@@ -1380,9 +1363,6 @@ static void sun4i_dma_remove(struct platform_device *pdev)
+ 	disable_irq(priv->irq);
+ 
+ 	of_dma_controller_free(pdev->dev.of_node);
+-	dma_async_device_unregister(&priv->slave);
+-
+-	clk_disable_unprepare(priv->clk);
+ }
+ 
+ static struct sun4i_dma_config sun4i_a10_dma_cfg = {
 
-Thanks and best regards,
-Michael
+base-commit: 3c018bf5a0ee3abe8d579d6a0dda616c3858d7b2
+-- 
+2.43.0
 
-> ---
->  drivers/media/i2c/imx415.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/i2c/imx415.c b/drivers/media/i2c/imx415.c
-> index 9f37779bd6111f434c198ad1cf70c14b80724042..278e743646ea15819d5a79577e786b47c259dbfa 100644
-> --- a/drivers/media/i2c/imx415.c
-> +++ b/drivers/media/i2c/imx415.c
-> @@ -1251,7 +1251,7 @@ static int imx415_parse_hw_config(struct imx415 *sensor)
->  		return dev_err_probe(sensor->dev, PTR_ERR(sensor->reset),
->  				     "failed to get reset GPIO\n");
->  
-> -	sensor->clk = devm_clk_get(sensor->dev, "inck");
-> +	sensor->clk = devm_clk_get(sensor->dev, NULL);
->  	if (IS_ERR(sensor->clk))
->  		return dev_err_probe(sensor->dev, PTR_ERR(sensor->clk),
->  				     "failed to get clock\n");
-> 
-> ---
-> base-commit: 9f35e33144ae5377d6a8de86dd3bd4d995c6ac65
-> change-id: 20250514-imx415-c65889e55211
-> 
-> Best regards,
 
 
