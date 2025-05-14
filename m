@@ -1,112 +1,154 @@
-Return-Path: <linux-kernel+bounces-647249-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-647251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70203AB6630
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 10:40:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C0C4AB6636
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 10:40:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2907619E6298
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 08:40:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 328F6865BCF
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 08:40:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B198721B9E0;
-	Wed, 14 May 2025 08:40:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79E2C2206B2;
+	Wed, 14 May 2025 08:40:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NnuqKWQh"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="ZDmZZybQ"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A410B70838
-	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 08:39:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1D1320C038
+	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 08:40:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747212000; cv=none; b=ZJvqOv/SoypHgc5ejYRq4LnmJ5fIzQszU/DzOLOzgRBn2sLxl2+RGAxxea1lb2Ypyr2pygEoE4eu4RnX8J31rOMsZ0gPlyYSZ9pOuJnJUnBaikCrvarwExCNMATxW5Xv+tG4ITE8VIX0bzI7fSvHINH5Z4xXHiPkbWgWY/acO3c=
+	t=1747212037; cv=none; b=Z1kkb7bixn6g0YwhDGDydPlLyn9YKF/sSJjn7FD/nlaQM5DyLNxlvwMoGhBhUtxxOXoC0WWeBFwX0FzBjHlz2D58s+Tqubf/7kk4js3VgbZwe7laISa5plcUCKZU20FQlMOHUp07LsYzskce0qvLECd98/AMXZWzGuSgb9uwfDk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747212000; c=relaxed/simple;
-	bh=7IBu6SqoOaixh4a2E5UhMsl0v0l4ryM3zDotZ/2zmxc=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ZEpkrRNVUkvRpPPwbBQrh34EnJ4pU5X1K7WXxew0sw5WPov2JqjxUFjRMZ2igmE6KjFIj4BxXpC7X+5c8Dsbd0spAv9qvmOTcJ1i7i/sKTErEl2F6KG9WGl6GONZrRp7ZcMQRhMoTcthLQAOojXzEZHcDdf8w6rgTSkCCLnXRsw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NnuqKWQh; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1747211998; x=1778747998;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=7IBu6SqoOaixh4a2E5UhMsl0v0l4ryM3zDotZ/2zmxc=;
-  b=NnuqKWQhLSRJhU9HrhxpJBU+og/Htmb4wThDKzn3RPlWbYSNJAkBhCPD
-   wcgiZ+CMuWVJsDvB4MT5zaEIroDs21VkLqiLa3codBbVfekGXNFK028gb
-   GrBM4esRIHj6B/T3p5u5ThkDwOEd6tBVAzlTRMxv0Y1XEDXWktEsJsYgV
-   xkOgeUvA97w5o7wxg3yKj4DgpX21B6/rcSx3hh13k87CuKwxemb3kDKPy
-   mPLFn66sffQdE7+xBC6EjGeo6pmDRutvGDfwUpISx3QFVX5+GlL1ijzxt
-   z4a/iyT34fbCgWA6lOfFRJHJfEgkzlQ1pZcEQqrTplzXOavmTfT3kQij7
-   A==;
-X-CSE-ConnectionGUID: L1KVlgTSSN+BS1hpLhztEg==
-X-CSE-MsgGUID: Miyde0CPSkS5Ar8kkpqHCg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11432"; a="48964633"
-X-IronPort-AV: E=Sophos;i="6.15,287,1739865600"; 
-   d="scan'208";a="48964633"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 May 2025 01:39:58 -0700
-X-CSE-ConnectionGUID: fkoVliQkTt+1gp7aIeKD2g==
-X-CSE-MsgGUID: 8yaHo7RnTMuc0hUxCalqWw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,287,1739865600"; 
-   d="scan'208";a="142913537"
-Received: from bergbenj-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.180])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 May 2025 01:39:52 -0700
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: "feijuan.li" <feijuan.li@samsung.com>, jingoohan1@gmail.com,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org,
- tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Cc: feijuan.li@samsung.com, hongfei.tang@samsung.com,
- minggui.yan@samsung.com, qilin.wang@samsung.com
-Subject: Re: [PATCH v3] drm/edid: fixed the bug that hdr metadata was not reset
-In-Reply-To: <20250514063511.4151780-1-feijuan.li@samsung.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <CGME20250514063420epcas5p2bdd64000965a5ceffa196f123db8fb2e@epcas5p2.samsung.com>
- <20250514063511.4151780-1-feijuan.li@samsung.com>
-Date: Wed, 14 May 2025 11:39:49 +0300
-Message-ID: <878qmzio16.fsf@intel.com>
+	s=arc-20240116; t=1747212037; c=relaxed/simple;
+	bh=bOvlpJgB38yWtB6iHmH6Tk5IzM3ygnlwVf/ZOxmrdgk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aIA3A5AF773E9Drx4sJ64pqNsJXOWlk4w7PrKjtQGeSPq6TiZpJIANQ4Txfl06s0/r85qngxMmE5a8dQA8HVIJp8H24E/GsXRlXyQWbRMViRpN19Oibyvlbrc3qkV+MURyxJPsiUN5biokBvEFl00v/0qalaIlwB/ZaXH6P6zcw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=ZDmZZybQ; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3a1f5d2d91eso3751299f8f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 01:40:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1747212034; x=1747816834; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=XUZ+TWBCEumVyKUR1t0gEvLsedm10yxyAulY/94k4bA=;
+        b=ZDmZZybQav+Ly9/LFyPILWry6DnnrY7Uj2P8/t3fZ/8N6MlvjwPOq8ochp2fYz5Xjf
+         dgWsby0IOuX+FJsM9VGytDmIRBtmPx+lpjgqFDOdam3M9q1L+onH3PauIvfnHSpBJ6LX
+         p0EBhBcBNdj3QoGi76bdIVf+Hh6vTLUG2tcLdMaeG0J5P855WrBo1AplITse9EmmDWnq
+         X2eert3ic6eWEpMyTC1vXimz+wpJWgBq7kB9HYrB/f/1OXBwEV1ul3Hdt/XvvEk96r3v
+         NQwPJcj00AtxHQF4by7aLMCaTG1GPtyylCvykwd6bg+Z2AOyM6HNVtE6MfkjGF5/8ETs
+         Jd0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747212034; x=1747816834;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XUZ+TWBCEumVyKUR1t0gEvLsedm10yxyAulY/94k4bA=;
+        b=dGZWDv2H+j449y/PLHMXWGuUfSably8xjwcaFSX2JRhiE8HzH8E52S3OQog+ZE0i2F
+         UIC+k735bOzzSrMtOlxyMv3MGkgdvwvxkq4YFEkMChn09sbNX7gHPxxJvPeHbZ8iqKfv
+         iPQ8Oah+DtMp0hNvqF3LsKnDt2Iw/1eVjKqkfd0y4TCYCD8AAskb2cCSWHGa/Rfzd/Ai
+         XocJ1Zvl2a7J0TizaW2jnSbfGxC04+iSftMgM6aOV7Rz73dQbpBInI9fG9HBkukifn1J
+         VQ97aU8ieNHHa+wY/iVvems1T6U6W/1SP1DKRQGlvS7kPVNzCL7AIkUa0/hn9ZQNe+Vn
+         douA==
+X-Forwarded-Encrypted: i=1; AJvYcCUtvwRN00kjArg6EjsyNwhm8RiIp2exhdzxh/nA+HeFlVQ2hdkRte9fMvv1Jp0ZAg1pkauidw8WvjWQsH4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzNCkLIAFn8viULeHGIO7nXhXgKFjimS8eOWTXiVGb4dyJTHrl+
+	kFTjqQXNQp44VNqH9DKbmMuot+GwYHYFguWTDzUXtnSkk4okhq9Xp213wqFe5TY=
+X-Gm-Gg: ASbGncvXgItERXUDgMxmLR9Qmt8EKMqaNPy0+QSkuWdq7tSRV8LkeTYToXtadb5kHXy
+	ECg9lWouCd5ZYcM5iRJ10hJ0JFN2Mi2DsuGDtzk03hw3B5V8hkc/AhxfQmcClRonIFSMSzD4VXW
+	5ar2WkfvT1LMep7rDfKro3GeAzLhpjhghuBGIK8fq36eaYH9VQ/p7XEFENl6S8cKoU5ZbBAgdgg
+	+1OSOnlnULZDtGRIpNOnvC0JBieH4hLTomxZaL47DEW7MDpiM3hZ/lNroPx/2BvQHNoSi08YLp3
+	zrcbkjOIa3EIuDCC8hBRwxeJKmddopziPxdGmpuetIrQkrcmjJTVxg==
+X-Google-Smtp-Source: AGHT+IFF2gEltVWksw/7sMuSeu0VYvts2lcQdv0P/daOYEJ1wwTuGxfg8BHv9/A6qpkaqat5IeIqJg==
+X-Received: by 2002:a05:6000:4284:b0:3a0:7f85:1905 with SMTP id ffacd0b85a97d-3a3493dada6mr2246544f8f.0.1747212034024;
+        Wed, 14 May 2025 01:40:34 -0700 (PDT)
+Received: from [10.100.51.48] ([193.86.92.181])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4dea857f729sm7994896137.1.2025.05.14.01.40.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 14 May 2025 01:40:33 -0700 (PDT)
+Message-ID: <3b8dad35-5af2-41f3-aea2-07db9761dd4a@suse.com>
+Date: Wed, 14 May 2025 10:40:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 5/5] module: Provide EXPORT_SYMBOL_GPL_FOR_MODULES()
+ helper
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: mcgrof@kernel.org, x86@kernel.org, hpa@zytor.com,
+ samitolvanen@google.com, da.gomez@samsung.com, masahiroy@kernel.org,
+ nathan@kernel.org, nicolas@fjasle.eu, linux-kernel@vger.kernel.org,
+ linux-modules@vger.kernel.org, linux-kbuild@vger.kernel.org,
+ hch@infradead.org, gregkh@linuxfoundation.org, roypat@amazon.co.uk
+References: <20250502141204.500293812@infradead.org>
+ <20250502141844.369838967@infradead.org>
+Content-Language: en-US
+From: Petr Pavlu <petr.pavlu@suse.com>
+In-Reply-To: <20250502141844.369838967@infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, 14 May 2025, "feijuan.li" <feijuan.li@samsung.com> wrote:
-> When DP connected to a device with HDR capability,
-> the hdr structure was filled.Then connected to another
-> sink device without hdr capability, but the hdr info
-> still exist.
->
-> Signed-off-by: feijuan.li <feijuan.li@samsung.com>
-
-Reviewed-by: Jani Nikula <jani.nikula@intel.com>
-
-
+On 5/2/25 16:12, Peter Zijlstra wrote:
+> Helper macro to more easily limit the export of a symbol to a given
+> list of modules.
+> 
+> Eg:
+> 
+>   EXPORT_SYMBOL_GPL_FOR_MODULES(preempt_notifier_inc, "kvm");
+> 
+> will limit the use of said function to kvm.ko, any other module trying
+> to use this symbol will refure to load (and get modpost build
+> failures).
+> 
+> Requested-by: Masahiro Yamada <masahiroy@kernel.org>
+> Requested-by: Christoph Hellwig <hch@infradead.org>
+> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 > ---
->  drivers/gpu/drm/drm_edid.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/gpu/drm/drm_edid.c b/drivers/gpu/drm/drm_edid.c
-> index 13bc4c290b17..9edb3247c767 100644
-> --- a/drivers/gpu/drm/drm_edid.c
-> +++ b/drivers/gpu/drm/drm_edid.c
-> @@ -6596,6 +6596,7 @@ static void drm_reset_display_info(struct drm_connector *connector)
->  	info->has_hdmi_infoframe = false;
->  	info->rgb_quant_range_selectable = false;
->  	memset(&info->hdmi, 0, sizeof(info->hdmi));
-> +	memset(&connector->hdr_sink_metadata, 0, sizeof(connector->hdr_sink_metadata));
+> [...]
+> --- a/include/linux/export.h
+> +++ b/include/linux/export.h
+> @@ -24,11 +24,17 @@
+>  	.long sym
+>  #endif
 >  
->  	info->edid_hdmi_rgb444_dc_modes = 0;
->  	info->edid_hdmi_ycbcr444_dc_modes = 0;
+> -#define ___EXPORT_SYMBOL(sym, license, ns)		\
+> +/*
+> + * LLVM integrated assembler cam merge adjacent string literals (like
+> + * C and GNU-as) passed to '.ascii', but not to '.asciz' and chokes on:
+> + *
+> + *   .asciz "MODULE_" "kvm" ;
+> + */
 
--- 
-Jani Nikula, Intel
+Typo: "cam" -> "can't". I can correct it when picking up the series.
+
+Reviewed-by: Petr Pavlu <petr.pavlu@suse.com>
+
+-- Petr
+
+> +#define ___EXPORT_SYMBOL(sym, license, ns...)		\
+>  	.section ".export_symbol","a"		ASM_NL	\
+>  	__export_symbol_##sym:			ASM_NL	\
+>  		.asciz license			ASM_NL	\
+> -		.asciz ns			ASM_NL	\
+> +		.ascii ns "\0"			ASM_NL	\
+>  		__EXPORT_SYMBOL_REF(sym)	ASM_NL	\
+>  	.previous
+>  
+> @@ -85,4 +91,6 @@
+>  #define EXPORT_SYMBOL_NS(sym, ns)	__EXPORT_SYMBOL(sym, "", ns)
+>  #define EXPORT_SYMBOL_NS_GPL(sym, ns)	__EXPORT_SYMBOL(sym, "GPL", ns)
+>  
+> +#define EXPORT_SYMBOL_GPL_FOR_MODULES(sym, mods) __EXPORT_SYMBOL(sym, "GPL", "module:" mods)
+> +
+>  #endif /* _LINUX_EXPORT_H */
+> 
+> 
 
