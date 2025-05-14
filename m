@@ -1,143 +1,171 @@
-Return-Path: <linux-kernel+bounces-647846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-647857-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E84FAB6E55
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 16:47:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69C3CAB6E7D
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 16:50:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABDF53BA485
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 14:46:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9186A3BA24D
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 14:50:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F4211AC458;
-	Wed, 14 May 2025 14:47:09 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E00A186E20;
-	Wed, 14 May 2025 14:47:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D41B61C6FF6;
+	Wed, 14 May 2025 14:48:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="jG99cOU+"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89B7D2749C6;
+	Wed, 14 May 2025 14:48:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747234028; cv=none; b=RPhh/7FRY9MLWg1O1Em93+Uk4Uz1BFl+20PM0CHb/pQIEDdHjtmwjKdqpGmPHEW/MQBZP4rR5OeuJKBxFda8i+TbXoqJCYjiksluvZVmm5Z08kYocOWyilNpVG2Rj0woGt0ok8ZABLd3URempkOgkV0mpmt4Hdfelits/QVcTo4=
+	t=1747234134; cv=none; b=Ci8f8Vtj4l/K5xBpSlQKgRDUgSxekohMuFWxd0HGqJJcvxyxlLO5TKrKPMPkoVIMLW9QKXDBAGr2bNU6OnIKB3I0ppeeilW5qxxVrm7CUoHaSkyDj4NvEYKBHKlMpXIV3PKFXLkOD/sGls8F58G39uHNE7lQQbOMt/uce2CXDkg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747234028; c=relaxed/simple;
-	bh=6fEQeP6TUDzlobvmkS1WrL/Rzys4yqsPWMlZIiFtHxQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=InOPdjX1APhFvXjz1fZ96MRWcxSWxiKPbRO6CW6bwAckqFk7mq/vT/UKZI1R5uKpsH51EINFBODt+2WePkPtoi/2ValDp8ofvXN41dDzeqARxj7LO/ODeLRGrX/WAP/VdBcKzNyffAnreiBhOLVXBIjUUw2pXjHUE6McCkqJuxw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [223.64.68.186])
-	by gateway (Coremail) with SMTP id _____8Bx367mrCRoM__mAA--.30260S3;
-	Wed, 14 May 2025 22:47:02 +0800 (CST)
-Received: from localhost.localdomain (unknown [223.64.68.186])
-	by front1 (Coremail) with SMTP id qMiowMCxLBvhrCRo1vnRAA--.19452S2;
-	Wed, 14 May 2025 22:47:01 +0800 (CST)
-From: Huacai Chen <chenhuacai@loongson.cn>
-To: Huacai Chen <chenhuacai@kernel.org>
-Cc: loongarch@lists.linux.dev,
-	Xuefeng Li <lixuefeng@loongson.cn>,
-	Guo Ren <guoren@kernel.org>,
-	Xuerui Wang <kernel@xen0n.name>,
-	Jiaxun Yang <jiaxun.yang@flygoat.com>,
-	linux-kernel@vger.kernel.org,
-	Huacai Chen <chenhuacai@loongson.cn>,
-	stable@vger.kernel.org,
-	Xianglai Li <lixianglai@loongson.cn>
-Subject: [PATCH] LoongArch: Save and restore CSR.CNTC for hibernation
-Date: Wed, 14 May 2025 22:46:43 +0800
-Message-ID: <20250514144643.1620870-1-chenhuacai@loongson.cn>
-X-Mailer: git-send-email 2.47.1
+	s=arc-20240116; t=1747234134; c=relaxed/simple;
+	bh=S1Tv5seaUyKpTUhwUVjcwaVgNefXie8/d6meg7WHH4g=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=KkQt1Xugcn49lFTwHlyLAfTg4I93TNzEcWjcPcXAJDDO/ya4dY2A22qnJcuNzGfGsTbd9bwMmlUae+bpPMYbRrYwiZeGsbYA3jbOpW55bIBAebLvkGigO1/vpA41l7qwztDAp5AWmGMG1Btzy0HUAbWptuTPl5XBIJDVkNlWWLk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=jG99cOU+; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54E6IQZH026395;
+	Wed, 14 May 2025 14:48:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=/y32Pq
+	DRTmB9OsHjOqffgO3cxRDIFcN3iXySsATDOxg=; b=jG99cOU+3NPE2uY1SyyqCV
+	+Lmi4Hpw9CqhY9eSRHL44CyGc98Gia2EcveTQSNVi5/MQAQ1NxWyo2iRA34s6BkV
+	/F/qPCM6vxcI+B+u8mL3Ux/e6xEBwzVMK2o5P+gBq4KdZ6cfpzBo18dufASe05z1
+	N20fkSJHS9aZBFdKedO/A4lK/FsdmU5Da4KzhKN9yLxQmLcJHpqm4LHBP2QklXjw
+	FLf2FPIn8eE15dnB7GIRFZ4uI4KSHFUTBqqHhKvibwEPDxBTPtvFx8zzCsqmCXox
+	CAr6a+LfpTu/Iff4ChHosieLrZ4hcxbuarXXP70id/1nNRgzS2ktRJf+yFUUeGUg
+	==
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46mnst2etw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 14 May 2025 14:48:29 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 54EDJoEx026954;
+	Wed, 14 May 2025 14:48:28 GMT
+Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 46mbfpcrj4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 14 May 2025 14:48:28 +0000
+Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
+	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 54EEmOJB58589608
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 14 May 2025 14:48:24 GMT
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 8D9BB20161;
+	Wed, 14 May 2025 14:48:24 +0000 (GMT)
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 03F6620162;
+	Wed, 14 May 2025 14:48:24 +0000 (GMT)
+Received: from p-imbrenda (unknown [9.152.224.66])
+	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 14 May 2025 14:48:23 +0000 (GMT)
+Date: Wed, 14 May 2025 16:48:22 +0200
+From: Claudio Imbrenda <imbrenda@linux.ibm.com>
+To: Christian Borntraeger <borntraeger@linux.ibm.com>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+        Ignacio Moreno Gonzalez
+ <Ignacio.MorenoGonzalez@kuka.com>,
+        kernel test robot <lkp@intel.com>, oe-kbuild-all@lists.linux.dev,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        Yang Shi
+ <yang@os.amperecomputing.com>,
+        Janosch Frank <frankja@linux.ibm.com>,
+        David
+ Hildenbrand <david@redhat.com>,
+        Heiko Carstens <hca@linux.ibm.com>, Vasily
+ Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>, kvm@vger.kernel.org,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        pbonzini@redhat.com
+Subject: Re: [akpm-mm:mm-new 320/331] arch/s390/kvm/gaccess.c:321:2: error:
+ expected identifier
+Message-ID: <20250514164822.4b44dc5c@p-imbrenda>
+In-Reply-To: <0da0f2fc-c97f-4e95-b28e-fa8e7bede9cb@linux.ibm.com>
+References: <202505140943.IgHDa9s7-lkp@intel.com>
+	<63ddfc13-6608-4738-a4a2-219066e7a36d@kuka.com>
+	<8e506dd6-245f-4987-91de-496c4e351ace@lucifer.local>
+	<20250514162722.01c6c247@p-imbrenda>
+	<0da0f2fc-c97f-4e95-b28e-fa8e7bede9cb@linux.ibm.com>
+Organization: IBM
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowMCxLBvhrCRo1vnRAA--.19452S2
-X-CM-SenderInfo: hfkh0x5xdftxo6or00hjvr0hdfq/
-X-Coremail-Antispam: 1Uk129KBj93XoW7Ar4kKw13Gw48tw18Zw1xCrX_yoW8tF1xpF
-	WDArWDKr40k3Z7Ja9xt3yDZr98Jrn5C3W3Wa1qy348Cwn3Xr45Zr4kKwnYqF4Yq3yrAa10
-	vFW8Cw1aqa17W3gCm3ZEXasCq-sJn29KB7ZKAUJUUUU5529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUyEb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
-	GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27wAqx4
-	xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v2
-	6r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwCF04k20xvY0x0EwI
-	xGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480
-	Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7
-	IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k2
-	6cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxV
-	AFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU8zwZ7UUUUU==
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: yCPpAy43Tt1i9T-xP-kkPDcB9UDi83gN
+X-Authority-Analysis: v=2.4 cv=V+590fni c=1 sm=1 tr=0 ts=6824ad3d cx=c_pps a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17 a=kj9zAlcOel0A:10 a=dt9VzEwgFbYA:10 a=VnNF1IyMAAAA:8 a=yPCof4ZbAAAA:8 a=FEjADQhAx8tm0xh6MsIA:9 a=CjuIK1q_8ugA:10
+X-Proofpoint-ORIG-GUID: yCPpAy43Tt1i9T-xP-kkPDcB9UDi83gN
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTE0MDEzMCBTYWx0ZWRfX12irjiclNwuP T7FN+ygx0oTU8D3iBX1J55lKNEwAttYnU7+RBQXHs1bHZICBcRNWGUU/MnXXwDutGcLT4NZuYoW 9afmguP3vQOjWQgZr85vQytlkSElhT03uH2c1CeNU3D4AiB9gC7cXHzpTPvCj9dU0/nFQx83o7D
+ XynfQauzfUPIEpw8Uw05pvCihNCZs4K18YVMyPlkcZjGIUV6wA1+h8AWYMiWezKywYCV7t/wllD X6aytexoDD9WYD3lBOIqMLGwQI6leNxKhSq9yG+UYzDCJfpeJaFzNPIfl5do6OsEGhHgKMSg5Ff jWtw9GbBHVbyh/iLU8snfmfv9n81BW2bJfSvuTLrTbvGmnfyCqCqqmGm71Wg818OSQDvA/Pe8nU
+ OOiaYYkKwcdfEDusXlAFBiahBdUoLDtAHAB7QLkg8VDPhGe1c329vTBOlCjnAOBmbdK67nQ7
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-14_04,2025-05-14_03,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 priorityscore=1501
+ mlxlogscore=999 lowpriorityscore=0 bulkscore=0 suspectscore=0
+ impostorscore=0 malwarescore=0 phishscore=0 adultscore=0 clxscore=1015
+ spamscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2505070000
+ definitions=main-2505140130
 
-Save and restore CSR.CNTC for hibernation which is similar to suspend.
+On Wed, 14 May 2025 16:39:11 +0200
+Christian Borntraeger <borntraeger@linux.ibm.com> wrote:
 
-For host this is unnecessary because sched clock is ensured continuous,
-but for kvm guest sched clock isn't enough because rdtime.d should also
-be continuous.
+> Am 14.05.25 um 16:27 schrieb Claudio Imbrenda:
+> > On Wed, 14 May 2025 14:48:44 +0100
+> > Lorenzo Stoakes <lorenzo.stoakes@oracle.com> wrote:
+> >   
+> >> +cc s390 people, kvm s390 people + lists. sorry for noise but get_maintainers.pl
+> >> says there's a lot of you :)
+> >>
+> >> On Wed, May 14, 2025 at 03:28:47PM +0200, Ignacio Moreno Gonzalez wrote:  
+> >>> Hi,
+> >>>
+> >>> Due to the line:
+> >>>
+> >>> include/linux/huge_mm.h:509 '#include <uapi/asm/mman.h>'  
+> >>
+> >> BTW, I didn't notice at the time, but shouldn't this be linux/mman.h? You
+> >> shouldn't be importing this header this way generally (only other users are arch
+> >> code).
+> >>
+> >> But at any rate, you will ultimately import the PROT_NONE declaration.
+> >>  
+> >>>
+> >>> there is a name collision in arch/s390/kvm/gaccess.c, where 'PROT_NONE' is also defined as value for 'enum prot_type'.  
+> >>
+> >> That is crazy. Been there since 2022 also...!
+> >>  
+> >>>
+> >>> A possible fix for this would be to rename PROT_NONE in the enum to PROT_TYPE_NONE.  
+> > 
+> > please write a patch to rename PROT_NONE in our enum to
+> > PROT_TYPE_DUMMY, I can review it quickly.
+> > 
+> > if Paolo has no objections, I'm fine with having the patch go through
+> > the mm tree  
+> 
+> Yes, lets do a quick fix and I can also do
+> Acked-by: Christian Borntraeger <borntraeger@linux.ibm.com>
+> 
+> for a s/PROT_NONE/PROT_TYPE_NONE/g
+> patch.
 
-Host::rdtime.d = Host::CSR.CNTC + counter
-Guest::rdtime.d = Host::CSR.CNTC + Host::CSR.GCNTC + Guest::CSR.CNTC + counter
-
-so,
-
-Guest::rdtime.d = Host::rdtime.d + Host::CSR.GCNTC + Guest::CSR.CNTC
-
-To ensure Guest::rdtime.d continuous, Host::rdtime.d should be at first
-continuous, while Host::CSR.GCNTC / Guest::CSR.CNTC is maintained by KVM.
-
-Cc: stable@vger.kernel.org
-Signed-off-by: Xianglai Li <lixianglai@loongson.cn>
-Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
----
- arch/loongarch/kernel/time.c     | 2 +-
- arch/loongarch/power/hibernate.c | 3 +++
- 2 files changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/arch/loongarch/kernel/time.c b/arch/loongarch/kernel/time.c
-index e2d3bfeb6366..bc75a3a69fc8 100644
---- a/arch/loongarch/kernel/time.c
-+++ b/arch/loongarch/kernel/time.c
-@@ -111,7 +111,7 @@ static unsigned long __init get_loops_per_jiffy(void)
- 	return lpj;
- }
- 
--static long init_offset __nosavedata;
-+static long init_offset;
- 
- void save_counter(void)
- {
-diff --git a/arch/loongarch/power/hibernate.c b/arch/loongarch/power/hibernate.c
-index 1e0590542f98..e7b7346592cb 100644
---- a/arch/loongarch/power/hibernate.c
-+++ b/arch/loongarch/power/hibernate.c
-@@ -2,6 +2,7 @@
- #include <asm/fpu.h>
- #include <asm/loongson.h>
- #include <asm/sections.h>
-+#include <asm/time.h>
- #include <asm/tlbflush.h>
- #include <linux/suspend.h>
- 
-@@ -14,6 +15,7 @@ struct pt_regs saved_regs;
- 
- void save_processor_state(void)
- {
-+	save_counter();
- 	saved_crmd = csr_read32(LOONGARCH_CSR_CRMD);
- 	saved_prmd = csr_read32(LOONGARCH_CSR_PRMD);
- 	saved_euen = csr_read32(LOONGARCH_CSR_EUEN);
-@@ -26,6 +28,7 @@ void save_processor_state(void)
- 
- void restore_processor_state(void)
- {
-+	sync_counter();
- 	csr_write32(saved_crmd, LOONGARCH_CSR_CRMD);
- 	csr_write32(saved_prmd, LOONGARCH_CSR_PRMD);
- 	csr_write32(saved_euen, LOONGARCH_CSR_EUEN);
--- 
-2.47.1
-
+I'd rather have PROT_TYPE_DUMMY, since it's a dummy value and not
+something that indicates "no protection"
 
