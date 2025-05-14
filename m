@@ -1,115 +1,365 @@
-Return-Path: <linux-kernel+bounces-648017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-648018-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13B67AB708F
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 17:59:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6348EAB7095
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 17:59:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0553177EFF
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 15:58:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB56E3A71D1
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 15:58:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52C402586EA;
-	Wed, 14 May 2025 15:58:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A69AB25C809;
+	Wed, 14 May 2025 15:58:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gk1YqMLh"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="NgpPAltU"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 477EA1DF254;
-	Wed, 14 May 2025 15:58:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AAAA282ED;
+	Wed, 14 May 2025 15:58:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747238288; cv=none; b=YJR/P9dcRRJlO5YkE8Vn8Tq39v4tcTm1uCsP1802opY30DlxxkaLL1y9DM3mv2JNOTJ5Ev+g2MC/riC4/JmGIFi6iJl279bRomVvnejiPFwn8jEZ0jf1YnBdAsMG1AvNrUPU87wC32KnNpNPTcyB9B9KOBn+U4Xs5QpQM3GHiTs=
+	t=1747238329; cv=none; b=YTKc78Z/t+im3fFmrFx0Ar1UB5hHhmD+O+rZl8qOyXr3LZrkWzEZfSQOW1n7beCdaiDyJCD5xYion7NtkyXQ6PetwAPWpvibr2YXnoDCJz/xude3LbgT1I7SRC0BfSVCMwQ7AAcbHQFN9MjRi90O4CfnDZaUe9/9QptGOODWN/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747238288; c=relaxed/simple;
-	bh=fpKmBmEzp50TR8APNwZcmeWT4nycvxyHG74DrWJq0sw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HV8Y79m8dSreCezYbqFqo0OePf9uwG4+WkMzj7A2wuMTzjjLPAAz7UfDyK8O0uzG6MjPl9Fh5J/1pQUwXY9O3QWN35+uw6iSKgeVE8sWKoueJFSfht1T8HyZn5XfxnfLhgO5qF5ssWsD1t7LJeIZSeUxOYYBbkEs7aEnS4CoRp8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Gk1YqMLh; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-7406c6dd2b1so984352b3a.0;
-        Wed, 14 May 2025 08:58:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747238286; x=1747843086; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=fpKmBmEzp50TR8APNwZcmeWT4nycvxyHG74DrWJq0sw=;
-        b=Gk1YqMLhpGHSO45TJBhS7Xv31qb4tEP0+egi4EwGD8Z0P39jGyRquxyqnt4Z2u/R91
-         +Uti/hZJBEe3wj+et/SPY7ZKkmiTLmC34yZgL/Mup56Ns6gCXwSL2ocz7Iw9gCAPctEm
-         GDpKgxz0z0bWlvcWA17nqtQXDRJVJTvNwXIZyjwfRm7MW+OgqJEdw3w/vyk7GUA8lscZ
-         bPfLy5i7erq3e4bZuKJm0BVyM/zdZBbibCmg4DX+RZU9lPcVp38Hbd5au8DAnpO99tVp
-         jktYKVeviyS97Vlky2fNzaIlKld3cpiJyYiprlvMJ+A0wfaB6rg93dDjXpMSNIqZRzp+
-         EMEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747238286; x=1747843086;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fpKmBmEzp50TR8APNwZcmeWT4nycvxyHG74DrWJq0sw=;
-        b=tEXT8Kvq3XQA6p2CXwwFJcDxBZzFMTAFZfTeqpiI7PVeYvDQIsn4L7TbUeRM66gsvc
-         8LU/wJXq9bRITazzPDnHqXF6PV78kY+H1v0B88iQNpgphjGDzLTkRFIMDmarQUQo7DaE
-         YRRoh1F4RAgBMK0h2qjvvI4s6J7X3yLEBXXDwm2kTnXfen+v33J+HF1kUt4P6j2eMMms
-         PbOj2npcrMDZuqT/D3MrvL/V8+RFSa5SqYmamLMZ4GuZvrLYI3oJFWEMuBLd9Vf8mqDq
-         Ur/SMEuhiE3mDTwddhXqQoG8MbWJPySQUYiM+vAxdWAdi1B+wvxdyy7wOfiCeFdqiESA
-         AIGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV2KIDiGfUrwCTdUevefZGkMm1bhpnuql2oq5Idx/IYMPd/icDG82LJYVwtK3j5NNE18B3OfhoO@vger.kernel.org, AJvYcCXowj3Ux3B0mSj36nW/by4OHiDfHCv9odZ6VZbUwZbx499/22MTHDk8GT3T+2Fes+FqZZhI1VfQTvEv4MY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzfDKVUaJTnQzgQNzDOb7oiQblFfB5F6QrGlaiSOjKxiM5NSpjp
-	ImaXQ/C4SfL3a7ngTadHEnEbeHNl8Q5K9GujDPZUnQvsVQl/b13s
-X-Gm-Gg: ASbGncsGgxPRN9Yudjzy8CpdsvWiYbd5LSR+sDNZD4Cg5wTYTkmwapwXT4sd5zum1N+
-	uPOPgH2cLjK3H9Zi4//fkR/r2E8eko6T+iIqxy4+6sq8BBMKcypJ4ZOwtZisjfvO37jq4D8P94S
-	ccVUbblou6YIA/f0KIuIujNfBsS07O8wDn1eRJAsG1avQ8Q1AZQbp8Vx1KJlEX+HJxrXFezAldn
-	F8FZk7abt9BWSi50Ljazn/gdV+yzzPuvwxiWFMBuvY7W6fJdccYACqVxMoS6kBUIfyWcz0w639B
-	ChMvXMtT7pbHVz02h/GHop8yc5aEjOfC6pLuci4jGUtaKRdHNZMsmtuVKLwPJQ6ymzvw7yY=
-X-Google-Smtp-Source: AGHT+IEGtOwegxBLaY+Q6tQVIrHN3fYemJ8QgU8MQUPTrc4QFAGE7i3gBDzE7oFdfo9l2d909PY1ng==
-X-Received: by 2002:a17:902:ec88:b0:215:a2f4:d4ab with SMTP id d9443c01a7336-231b3985156mr930205ad.7.1747238286420;
-        Wed, 14 May 2025 08:58:06 -0700 (PDT)
-Received: from hoboy.vegasvil.org ([2600:1700:2430:6f6f:e2d5:5eff:fea5:802f])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22fc8271f77sm100631825ad.126.2025.05.14.08.58.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 May 2025 08:58:05 -0700 (PDT)
-Date: Wed, 14 May 2025 08:58:03 -0700
-From: Richard Cochran <richardcochran@gmail.com>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Miroslav Lichvar <mlichvar@redhat.com>,
-	LKML <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org,
-	Christopher Hall <christopher.s.hall@intel.com>,
-	David Zage <david.zage@intel.com>, John Stultz <jstultz@google.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	Werner Abt <werner.abt@meinberg-usa.com>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>,
-	Kurt Kanzenbach <kurt@linutronix.de>,
-	Nam Cao <namcao@linutronix.de>,
-	Alex Gieringer <gieri@linutronix.de>
-Subject: Re: [patch 00/26] timekeeping: Provide support for independent PTP
- timekeepers
-Message-ID: <aCS9ixXXLmva5-BT@hoboy.vegasvil.org>
-References: <20250513144615.252881431@linutronix.de>
- <aCRCe8STiX03WcxU@localhost>
- <871psrk1x2.ffs@tglx>
+	s=arc-20240116; t=1747238329; c=relaxed/simple;
+	bh=HP06nWuxTmL6ZClR4puw3sVL0ndk41lusHH26XdkLtg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=G+pVRQi8Axt+fd4kKNrViciu8O9zLZ8uQnDpzEg3gZKibCB2xPjJ4hbO3OMrhbDViHj1csLdrWTRCj/UccOFTtXGfczXQ/4v6yowp9rPfYeY7Y2PQOpvuQIpm5YQFxBZ63jOcxJOJSoLzsBxzRsty5AyGLTevwTmMYTQsgHlgBo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=NgpPAltU; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1747238325;
+	bh=HP06nWuxTmL6ZClR4puw3sVL0ndk41lusHH26XdkLtg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=NgpPAltUzBWKcnOQ2MJrfk8yEa3QL5pB8YivdGG07OwUkZaZlWSle+mvlg9FQGOn2
+	 DzA5cnnKZC7fzIp87oQVFHav3mGqmtJS+VIG/lN0Pbyqo4mSkT/zxz151/ynSTdSOO
+	 g9H3BEKMgZ7nD+dEv/zdyAt77P7g/Hqk4DASYocyQBLfLkwD4attQG5iRryxEDkTtq
+	 90kRN1NKVzlzcdDDaDmbCPpQVNuULw5MqVpuzT1MB+artuYISzTquY+f0V5MgsmwA/
+	 pkYIzIcCLV/GC42Tx3lzpLAeo6Nhi+EES3Fs2Hx2y5/1MOMzYtLiNPsiWXjhXULMeI
+	 2S4TQtinE99Ug==
+Received: from [10.40.0.100] (185-251-200-162.lampert.tv [185.251.200.162])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: mriesch)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 3497E17E0CD1;
+	Wed, 14 May 2025 17:58:44 +0200 (CEST)
+Message-ID: <344fe705-d1f7-45d0-b540-93fc8718f8e2@collabora.com>
+Date: Wed, 14 May 2025 17:58:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <871psrk1x2.ffs@tglx>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 00/14] media: rockchip: add a driver for the rockchip
+ camera interface
+To: Mehdi Djait <mehdi.djait@linux.intel.com>,
+ Maxime Chevallier <maxime.chevallier@bootlin.com>,
+ =?UTF-8?Q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ Gerald Loacker <gerald.loacker@wolfvision.net>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Markus Elfring <Markus.Elfring@web.de>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring
+ <robh+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+ Kever Yang <kever.yang@rock-chips.com>,
+ Nicolas Dufresne <nicolas.dufresne@collabora.com>,
+ Sebastian Reichel <sebastian.reichel@collabora.com>,
+ Collabora Kernel Team <kernel@collabora.com>,
+ Paul Kocialkowski <paulk@sys-base.io>,
+ Alexander Shiyan <eagle.alexander923@gmail.com>,
+ Val Packett <val@packett.cool>, Rob Herring <robh@kernel.org>,
+ Philipp Zabel <p.zabel@pengutronix.de>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org,
+ Michael Riesch <michael.riesch@wolfvision.net>,
+ Mehdi Djait <mehdi.djait@bootlin.com>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+References: <20240220-rk3568-vicap-v7-0-7581fd96a33a@collabora.com>
+Content-Language: en-US
+From: Michael Riesch <michael.riesch@collabora.com>
+In-Reply-To: <20240220-rk3568-vicap-v7-0-7581fd96a33a@collabora.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, May 14, 2025 at 10:54:33AM +0200, Thomas Gleixner wrote:
+Hi all,
 
-> CLOCK_AUX0-7 sounds really good to me and makes sense. I picked PTP
-> because that's where I was coming from. I'll rework that accordingly and
-> make the config enablement independent of PTP as well:
+On 5/14/25 17:41, Michael Riesch via B4 Relay wrote:
+> Habidere,
+> 
+> This series introduces support for the Rockchip Camera Interface (CIF),
+> which is featured in many Rockchip SoCs in different variations.
+> [...]
 
-+1 for using AUX naming instead of PTP.
+I believe the cover letter is already long enough, hence I send the
+v4l2-compliance reports in this reply (please find them below). There
+are two of them, one for the DVP and one for the MIPI CSI-2 (only one
+stream/MIPI CSI-2 VC).
 
-Thanks,
-Richard
+Best regards,
+Michael
+
+$ v4l2-compliance -d 0 -s
+v4l2-compliance 1.28.1, 64 bits, 64-bit time_t
+
+Compliance test for rockchip-cif device /dev/video0:
+
+Driver Info:
+        Driver name      : rockchip-cif
+        Card type        : rockchip-cif
+        Bus info         : platform:fdfe0000.video-capture
+        Driver version   : 6.15.0
+        Capabilities     : 0xa4201000
+                Video Capture Multiplanar
+                I/O MC
+                Streaming
+                Extended Pix Format
+                Device Capabilities
+        Device Caps      : 0x24201000
+                Video Capture Multiplanar
+                I/O MC
+                Streaming
+                Extended Pix Format
+Media Driver Info:
+        Driver name      : rockchip-cif
+        Model            : rockchip-cif
+        Serial           :
+        Bus info         : platform:fdfe0000.video-capture
+        Media version    : 6.15.0
+        Hardware revision: 0x00000000 (0)
+        Driver version   : 6.15.0
+Interface Info:
+        ID               : 0x03000006
+        Type             : V4L Video
+Entity Info:
+        ID               : 0x00000004 (4)
+        Name             : rkcif-dvp0-id0
+        Function         : V4L2 I/O
+        Pad 0x01000005   : 0: Sink
+          Link 0x02000008: from remote pad 0x1000003 of entity
+'rkcif-dvp0' (Video Interface Bridge): Data, Enabled
+
+Required ioctls:
+        test MC information (see 'Media Driver Info' above): OK
+        test VIDIOC_QUERYCAP: OK
+        test invalid ioctls: OK
+
+Allow for multiple opens:
+        test second /dev/video0 open: OK
+        test VIDIOC_QUERYCAP: OK
+        test VIDIOC_G/S_PRIORITY: OK
+        test for unlimited opens: OK
+
+Debug ioctls:
+        test VIDIOC_DBG_G/S_REGISTER: OK (Not Supported)
+        test VIDIOC_LOG_STATUS: OK (Not Supported)
+
+Input ioctls:
+        test VIDIOC_G/S_TUNER/ENUM_FREQ_BANDS: OK (Not Supported)
+        test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+        test VIDIOC_S_HW_FREQ_SEEK: OK (Not Supported)
+        test VIDIOC_ENUMAUDIO: OK (Not Supported)
+        test VIDIOC_G/S/ENUMINPUT: OK
+        test VIDIOC_G/S_AUDIO: OK (Not Supported)
+        Inputs: 1 Audio Inputs: 0 Tuners: 0
+
+Output ioctls:
+        test VIDIOC_G/S_MODULATOR: OK (Not Supported)
+        test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+        test VIDIOC_ENUMAUDOUT: OK (Not Supported)
+        test VIDIOC_G/S/ENUMOUTPUT: OK (Not Supported)
+        test VIDIOC_G/S_AUDOUT: OK (Not Supported)
+        Outputs: 0 Audio Outputs: 0 Modulators: 0
+
+Input/Output configuration ioctls:
+        test VIDIOC_ENUM/G/S/QUERY_STD: OK (Not Supported)
+        test VIDIOC_ENUM/G/S/QUERY_DV_TIMINGS: OK (Not Supported)
+        test VIDIOC_DV_TIMINGS_CAP: OK (Not Supported)
+        test VIDIOC_G/S_EDID: OK (Not Supported)
+
+Control ioctls (Input 0):
+        test VIDIOC_QUERY_EXT_CTRL/QUERYMENU: OK (Not Supported)
+        test VIDIOC_QUERYCTRL: OK (Not Supported)
+        test VIDIOC_G/S_CTRL: OK (Not Supported)
+        test VIDIOC_G/S/TRY_EXT_CTRLS: OK (Not Supported)
+        test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: OK (Not Supported)
+        test VIDIOC_G/S_JPEGCOMP: OK (Not Supported)
+        Standard Controls: 0 Private Controls: 0
+
+Format ioctls (Input 0):
+        test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK
+        test VIDIOC_G/S_PARM: OK (Not Supported)
+        test VIDIOC_G_FBUF: OK (Not Supported)
+        test VIDIOC_G_FMT: OK
+        test VIDIOC_TRY_FMT: OK
+        test VIDIOC_S_FMT: OK
+        test VIDIOC_G_SLICED_VBI_CAP: OK (Not Supported)
+        test Cropping: OK (Not Supported)
+        test Composing: OK (Not Supported)
+        test Scaling: OK
+
+Codec ioctls (Input 0):
+        test VIDIOC_(TRY_)ENCODER_CMD: OK (Not Supported)
+        test VIDIOC_G_ENC_INDEX: OK (Not Supported)
+        test VIDIOC_(TRY_)DECODER_CMD: OK (Not Supported)
+
+Buffer ioctls (Input 0):
+        test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: OK
+        test CREATE_BUFS maximum buffers: OK
+        test VIDIOC_REMOVE_BUFS: OK
+        test VIDIOC_EXPBUF: OK
+        test Requests: OK (Not Supported)
+
+Test input 0:
+
+Streaming ioctls:
+        test read/write: OK (Not Supported)
+        test blocking wait: OK
+        test MMAP (no poll): OK
+        test MMAP (select): OK
+        test MMAP (epoll): OK
+        test USERPTR (no poll): OK (Not Supported)
+        test USERPTR (select): OK (Not Supported)
+        test DMABUF: Cannot test, specify --expbuf-device
+
+Total for rockchip-cif device /dev/video0: 55, Succeeded: 55, Failed: 0,
+Warnings: 0
+$
+
+$ v4l2-compliance -d 1 -s
+v4l2-compliance 1.28.1, 64 bits, 64-bit time_t
+
+Compliance test for rockchip-cif device /dev/video1:
+
+Driver Info:
+        Driver name      : rockchip-cif
+        Card type        : rockchip-cif
+        Bus info         : platform:fdfe0000.video-capture
+        Driver version   : 6.15.0
+        Capabilities     : 0xa4201000
+                Video Capture Multiplanar
+                I/O MC
+                Streaming
+                Extended Pix Format
+                Device Capabilities
+        Device Caps      : 0x24201000
+                Video Capture Multiplanar
+                I/O MC
+                Streaming
+                Extended Pix Format
+Media Driver Info:
+        Driver name      : rockchip-cif
+        Model            : rockchip-cif
+        Serial           :
+        Bus info         : platform:fdfe0000.video-capture
+        Media version    : 6.15.0
+        Hardware revision: 0x00000000 (0)
+        Driver version   : 6.15.0
+Interface Info:
+        ID               : 0x0300000f
+        Type             : V4L Video
+Entity Info:
+        ID               : 0x0000000d (13)
+        Name             : rkcif-mipi0-id0
+        Function         : V4L2 I/O
+        Pad 0x0100000e   : 0: Sink
+          Link 0x02000011: from remote pad 0x100000c of entity
+'rkcif-mipi0' (Video Interface Bridge): Data, Enabled
+
+Required ioctls:
+        test MC information (see 'Media Driver Info' above): OK
+        test VIDIOC_QUERYCAP: OK
+        test invalid ioctls: OK
+
+Allow for multiple opens:
+        test second /dev/video1 open: OK
+        test VIDIOC_QUERYCAP: OK
+        test VIDIOC_G/S_PRIORITY: OK
+        test for unlimited opens: OK
+
+Debug ioctls:
+        test VIDIOC_DBG_G/S_REGISTER: OK (Not Supported)
+        test VIDIOC_LOG_STATUS: OK (Not Supported)
+
+Input ioctls:
+        test VIDIOC_G/S_TUNER/ENUM_FREQ_BANDS: OK (Not Supported)
+        test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+        test VIDIOC_S_HW_FREQ_SEEK: OK (Not Supported)
+        test VIDIOC_ENUMAUDIO: OK (Not Supported)
+        test VIDIOC_G/S/ENUMINPUT: OK
+        test VIDIOC_G/S_AUDIO: OK (Not Supported)
+        Inputs: 1 Audio Inputs: 0 Tuners: 0
+
+Output ioctls:
+        test VIDIOC_G/S_MODULATOR: OK (Not Supported)
+        test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+        test VIDIOC_ENUMAUDOUT: OK (Not Supported)
+        test VIDIOC_G/S/ENUMOUTPUT: OK (Not Supported)
+        test VIDIOC_G/S_AUDOUT: OK (Not Supported)
+        Outputs: 0 Audio Outputs: 0 Modulators: 0
+
+Input/Output configuration ioctls:
+        test VIDIOC_ENUM/G/S/QUERY_STD: OK (Not Supported)
+        test VIDIOC_ENUM/G/S/QUERY_DV_TIMINGS: OK (Not Supported)
+        test VIDIOC_DV_TIMINGS_CAP: OK (Not Supported)
+        test VIDIOC_G/S_EDID: OK (Not Supported)
+
+Control ioctls (Input 0):
+        test VIDIOC_QUERY_EXT_CTRL/QUERYMENU: OK (Not Supported)
+        test VIDIOC_QUERYCTRL: OK (Not Supported)
+        test VIDIOC_G/S_CTRL: OK (Not Supported)
+        test VIDIOC_G/S/TRY_EXT_CTRLS: OK (Not Supported)
+        test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: OK (Not Supported)
+        test VIDIOC_G/S_JPEGCOMP: OK (Not Supported)
+        Standard Controls: 0 Private Controls: 0
+
+Format ioctls (Input 0):
+        test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK
+        test VIDIOC_G/S_PARM: OK (Not Supported)
+        test VIDIOC_G_FBUF: OK (Not Supported)
+        test VIDIOC_G_FMT: OK
+        test VIDIOC_TRY_FMT: OK
+        test VIDIOC_S_FMT: OK
+        test VIDIOC_G_SLICED_VBI_CAP: OK (Not Supported)
+        test Cropping: OK (Not Supported)
+        test Composing: OK (Not Supported)
+        test Scaling: OK
+
+Codec ioctls (Input 0):
+        test VIDIOC_(TRY_)ENCODER_CMD: OK (Not Supported)
+        test VIDIOC_G_ENC_INDEX: OK (Not Supported)
+        test VIDIOC_(TRY_)DECODER_CMD: OK (Not Supported)
+
+Buffer ioctls (Input 0):
+        test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: OK
+        test CREATE_BUFS maximum buffers: OK
+        test VIDIOC_REMOVE_BUFS: OK
+        test VIDIOC_EXPBUF: OK
+        test Requests: OK (Not Supported)
+
+Test input 0:
+
+Streaming ioctls:
+        test read/write: OK (Not Supported)
+        test blocking wait: OK
+        test MMAP (no poll): OK
+        test MMAP (select): OK
+        test MMAP (epoll): OK
+        test USERPTR (no poll): OK (Not Supported)
+        test USERPTR (select): OK (Not Supported)
+        test DMABUF: Cannot test, specify --expbuf-device
+
+Total for rockchip-cif device /dev/video1: 55, Succeeded: 55, Failed: 0,
+Warnings: 0
+$
+
 
