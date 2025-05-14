@@ -1,290 +1,417 @@
-Return-Path: <linux-kernel+bounces-647559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-647553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81895AB69F1
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 13:29:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFD08AB69DC
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 13:28:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 949EF1B61CB5
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 11:30:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E1E01B61082
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 11:28:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDB1027D760;
-	Wed, 14 May 2025 11:27:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B516279910;
+	Wed, 14 May 2025 11:26:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="yZ4fBlsp"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="osmreAO0";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="yHt0XU60"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E7CA276053;
-	Wed, 14 May 2025 11:27:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10205270EDD;
+	Wed, 14 May 2025 11:26:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747222024; cv=none; b=ioKnL3FFG2sH7aK+NmRRsrpINrRIOCVERkb1kjE8YaeD/dyHGWeyKF+rscJgSEzAeR8NoRE9v50Utzx8nq2z7J1TZ+gmRgxYoehOykCSfWB4iQ65n3ba9WLvwnI12fa+KtWQhcCjy0/KfK32K4JN9kHo0IGCVDI9HaIKXufVXek=
+	t=1747222007; cv=none; b=dvbiN5W8FijopgRhgxnCH4JRBxxvtnwRjzK12PGgIRqybRSU3ev/1LMa48WXQ9LFNawgW2Byg8dmsuwLiUAXFg+m4KytAglVKFFXZ5OcELmOkXxWXfAD+OHCfaqbMzR4m7pYZh4v9XVrsL1uw7QQln6pY5NwTQhvCjHI8pC9lTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747222024; c=relaxed/simple;
-	bh=OpIz8hToTsa12D3dl29WGsxu3kAJVZb1M4NVtWM4qwE=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dczXn+6AFYdjZ3fBq4VdX0IXDR7E8/LjbNREWHULlG4y9fnnN/TzqFEYzxNaVC4yyXI5v877hRadNSMiUEpGqXla7yGpnU/hRalBOP++c0PNu7TAJEVsfcMuMYnbqnp+HmAMXiBk3cWihNvrY/UB9/YmoqaQYPYN03EBxDV4Jy4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=yZ4fBlsp; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 54EBQpF33126881
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 14 May 2025 06:26:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1747222011;
-	bh=NSVMFkYXwf8uF4rEPRU6EjL/j3hreF33Qtnl3skMvwc=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=yZ4fBlspfcI42EkS16g2RnfwXwfDFAk9RtNdKpMxmiKf7QINSIrqIagXUXFQ1hoqM
-	 YHE/uQQxWs1jTGYNR8YezTGW0HVH/wZwH93MZ3IA6QJ3IS8qah1j9HrXK1zVxGJASI
-	 XTtBFW9/JwXiF+d2w/UXf1zxR/7gswaICbRpAD2Y=
-Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 54EBQp47085433
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 14 May 2025 06:26:51 -0500
-Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 14
- May 2025 06:26:51 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 14 May 2025 06:26:50 -0500
-Received: from ws.dhcp.ti.com (ws.dhcp.ti.com [10.24.69.232])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 54EBPSVI107507;
-	Wed, 14 May 2025 06:26:44 -0500
-From: Rishikesh Donadkar <r-donadkar@ti.com>
-To: <jai.luthra@linux.dev>, <laurent.pinchart@ideasonboard.com>,
-        <mripard@kernel.org>
-CC: <r-donadkar@ti.com>, <y-abhilashchandra@ti.com>, <devarsht@ti.com>,
-        <vaishnav.a@ti.com>, <s-jain1@ti.com>, <vigneshr@ti.com>,
-        <mchehab@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <sakari.ailus@linux.intel.com>,
-        <hverkuil-cisco@xs4all.nl>, <tomi.valkeinen@ideasonboard.com>,
-        <jai.luthra@ideasonboard.com>, <changhuang.liang@starfivetech.com>,
-        <jack.zhu@starfivetech.com>, <linux-kernel@vger.kernel.org>,
-        <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>
-Subject: [PATCH v4 12/12] media: ti: j721e-csi2rx: Change the drain architecture for multistream
-Date: Wed, 14 May 2025 16:55:27 +0530
-Message-ID: <20250514112527.1983068-13-r-donadkar@ti.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250514112527.1983068-1-r-donadkar@ti.com>
-References: <20250514112527.1983068-1-r-donadkar@ti.com>
+	s=arc-20240116; t=1747222007; c=relaxed/simple;
+	bh=Dmdzq1HqHXFlGeScLcvyy5MJykYpW5jdCrDxBib4pnw=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=S41sHsamm+SuG4hVJ/3WF5uHXE4fP30vOy5dCHiX1KwFfBpSuhTEz53bM6G1WOMEXzxRi2FeV26xrIpBivAx3REHoV0M3pwQCZQpx/TFr/iFzuxSHnpF1TJq/xZGYT+tslJUxzQUA0NFoJsajOfyNIjPaIMb5pgJqueP9E3msLQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=osmreAO0; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=yHt0XU60; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 14 May 2025 11:26:42 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1747222003;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=r4MmoorwssmZnnFVueAQ9JshEtVxtY1NBr4ukutp5m4=;
+	b=osmreAO0DZNGqhkXZGr9UMKMn2JYRagkNpxIEJyJYuEEldLyGMHA9gOk3Z5PVBRcMT0tER
+	aw4S1meVt0Rcypus2ouYoEU2+z69YKjREzQCPtXUXMcO5oqSv6Y+83u172sp3R4EkwMv6U
+	Az7QJeEMKVDUa9d5Kh7GzSH0VOejCvX2mngeFmrBISy4KvMadIxrzS9yMVNU741cKaXIMt
+	Tq2PZ64DuLhPay+v+OiVvd68YjUvr93yyZ36FyBjfSTsKZb0gY/9R+hap2xNCgp1c8Srzd
+	Hw5L/HIkRsHjyGbLG7YreH+VLh4OIIn/V1oglPnYohizoblTZyWw4f+dOT3cvg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1747222003;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=r4MmoorwssmZnnFVueAQ9JshEtVxtY1NBr4ukutp5m4=;
+	b=yHt0XU6093AyjKDo6KXKxsd/KmyaUMhjspQpH5j8zeQDbtw2Gitnn16hAWkP0Kr3HzuERW
+	DcpTkf5PEq57NkDQ==
+From: "tip-bot2 for Peter Zijlstra" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject:
+ [tip: sched/core] sched,livepatch: Untangle cond_resched() and live-patching
+Cc: "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ Thomas Gleixner <tglx@linutronix.de>, Petr Mladek <pmladek@suse.com>,
+ Miroslav Benes <mbenes@suse.cz>, Josh Poimboeuf <jpoimboe@kernel.org>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250509113659.wkP_HJ5z@linutronix.de>
+References: <20250509113659.wkP_HJ5z@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Message-ID: <174722200203.406.16353479744714543012.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On buffer starvation the DMA is marked IDLE, and the stale data in the
-internal FIFOs gets drained only on the next VIDIOC_QBUF call from the
-userspace. This approach works fine for a single stream case.
+The following commit has been merged into the sched/core branch of tip:
 
-But in multistream scenarios, buffer starvation for one stream i.e. one
-virtual channel, can block the shared HW FIFO of the CSI2RX IP. This can
-stall the pipeline for all other virtual channels, even if buffers are
-available for them.
+Commit-ID:     676e8cf70cb0533e1118e29898c9a9c33ae3a10f
+Gitweb:        https://git.kernel.org/tip/676e8cf70cb0533e1118e29898c9a9c33ae3a10f
+Author:        Peter Zijlstra <peterz@infradead.org>
+AuthorDate:    Fri, 09 May 2025 13:36:59 +02:00
+Committer:     Peter Zijlstra <peterz@infradead.org>
+CommitterDate: Wed, 14 May 2025 13:16:24 +02:00
 
-This patch introduces a new architecture, that continuously drains data
-from the shared HW FIFO into a small (32KiB) buffer if no buffers are made
-available to the driver from the userspace. This ensures independence
-between different streams, where a slower downstream element for one
-camera does not block streaming for other cameras.
+sched,livepatch: Untangle cond_resched() and live-patching
 
-Signed-off-by: Rishikesh Donadkar <r-donadkar@ti.com>
+With the goal of deprecating / removing VOLUNTARY preempt, live-patch
+needs to stop relying on cond_resched() to make forward progress.
+
+Instead, rely on schedule() with TASK_FREEZABLE set. Just like
+live-patching, the freezer needs to be able to stop tasks in a safe /
+known state.
+
+[bigeasy: use likely() in __klp_sched_try_switch() and update comments]
+
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Petr Mladek <pmladek@suse.com>
+Tested-by: Petr Mladek <pmladek@suse.com>
+Tested-by: Miroslav Benes <mbenes@suse.cz>
+Acked-by: Miroslav Benes <mbenes@suse.cz>
+Acked-by: Josh Poimboeuf <jpoimboe@kernel.org>
+Link: https://lore.kernel.org/r/20250509113659.wkP_HJ5z@linutronix.de
 ---
- .../platform/ti/j721e-csi2rx/j721e-csi2rx.c   | 96 +++++++------------
- 1 file changed, 33 insertions(+), 63 deletions(-)
+ include/linux/livepatch_sched.h | 14 +++------
+ include/linux/sched.h           |  6 +----
+ kernel/livepatch/transition.c   | 49 ++++++++-----------------------
+ kernel/sched/core.c             | 50 +++++---------------------------
+ 4 files changed, 27 insertions(+), 92 deletions(-)
 
-diff --git a/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c b/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c
-index ba2a30bfed37d..3b046d3cf7e5a 100644
---- a/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c
-+++ b/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c
-@@ -57,7 +57,6 @@
- #define TI_CSI2RX_MAX_SOURCE_PADS	TI_CSI2RX_MAX_CTX
- #define TI_CSI2RX_MAX_PADS		(1 + TI_CSI2RX_MAX_SOURCE_PADS)
+diff --git a/include/linux/livepatch_sched.h b/include/linux/livepatch_sched.h
+index 013794f..065c185 100644
+--- a/include/linux/livepatch_sched.h
++++ b/include/linux/livepatch_sched.h
+@@ -3,27 +3,23 @@
+ #define _LINUX_LIVEPATCH_SCHED_H_
  
--#define DRAIN_TIMEOUT_MS		50
- #define DRAIN_BUFFER_SIZE		SZ_32K
+ #include <linux/jump_label.h>
+-#include <linux/static_call_types.h>
++#include <linux/sched.h>
  
- struct ti_csi2rx_fmt {
-@@ -77,7 +76,6 @@ struct ti_csi2rx_buffer {
+ #ifdef CONFIG_LIVEPATCH
  
- enum ti_csi2rx_dma_state {
- 	TI_CSI2RX_DMA_STOPPED,	/* Streaming not started yet. */
--	TI_CSI2RX_DMA_IDLE,	/* Streaming but no pending DMA operation. */
- 	TI_CSI2RX_DMA_ACTIVE,	/* Streaming and pending DMA operation. */
- };
+ void __klp_sched_try_switch(void);
  
-@@ -245,6 +243,10 @@ static const struct ti_csi2rx_fmt ti_csi2rx_formats[] = {
- static int ti_csi2rx_start_dma(struct ti_csi2rx_ctx *ctx,
- 			       struct ti_csi2rx_buffer *buf);
+-#if !defined(CONFIG_PREEMPT_DYNAMIC) || !defined(CONFIG_HAVE_PREEMPT_DYNAMIC_CALL)
+-
+ DECLARE_STATIC_KEY_FALSE(klp_sched_try_switch_key);
  
-+/* Forward declarations needed by ti_csi2rx_drain_callback. */
-+static int ti_csi2rx_drain_dma(struct ti_csi2rx_ctx *ctx);
-+static int ti_csi2rx_dma_submit_pending(struct ti_csi2rx_ctx *ctx);
-+
- static const struct ti_csi2rx_fmt *find_format_by_fourcc(u32 pixelformat)
+-static __always_inline void klp_sched_try_switch(void)
++static __always_inline void klp_sched_try_switch(struct task_struct *curr)
  {
- 	unsigned int i;
-@@ -596,9 +598,28 @@ static void ti_csi2rx_setup_shim(struct ti_csi2rx_ctx *ctx)
- 
- static void ti_csi2rx_drain_callback(void *param)
- {
--	struct completion *drain_complete = param;
-+	struct ti_csi2rx_ctx *ctx = param;
-+	struct ti_csi2rx_dma *dma = &ctx->dma;
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&dma->lock, flags);
- 
--	complete(drain_complete);
-+	if (dma->state == TI_CSI2RX_DMA_STOPPED) {
-+		spin_unlock_irqrestore(&dma->lock, flags);
-+		return;
-+	}
-+
-+	/*
-+	 * If dma->queue is empty, it signals no buffer has arrived from
-+	 * user space, so, queue more transaction to drain dma
-+	 */
-+	if (list_empty(&dma->queue)) {
-+		if (ti_csi2rx_drain_dma(ctx))
-+			dev_warn(ctx->csi->dev, "DMA drain failed\n");
-+	} else {
-+		ti_csi2rx_dma_submit_pending(ctx);
-+	}
-+	spin_unlock_irqrestore(&dma->lock, flags);
+-	if (static_branch_unlikely(&klp_sched_try_switch_key))
++	if (static_branch_unlikely(&klp_sched_try_switch_key) &&
++	    READ_ONCE(curr->__state) & TASK_FREEZABLE)
+ 		__klp_sched_try_switch();
  }
+ 
+-#endif /* !CONFIG_PREEMPT_DYNAMIC || !CONFIG_HAVE_PREEMPT_DYNAMIC_CALL */
+-
+ #else /* !CONFIG_LIVEPATCH */
+-static inline void klp_sched_try_switch(void) {}
+-static inline void __klp_sched_try_switch(void) {}
++static inline void klp_sched_try_switch(struct task_struct *curr) {}
+ #endif /* CONFIG_LIVEPATCH */
+ 
+ #endif /* _LINUX_LIVEPATCH_SCHED_H_ */
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index f96ac19..b981959 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -44,7 +44,6 @@
+ #include <linux/seqlock_types.h>
+ #include <linux/kcsan.h>
+ #include <linux/rv.h>
+-#include <linux/livepatch_sched.h>
+ #include <linux/uidgid_types.h>
+ #include <linux/tracepoint-defs.h>
+ #include <asm/kmap_size.h>
+@@ -2089,9 +2088,6 @@ extern int __cond_resched(void);
+ 
+ #if defined(CONFIG_PREEMPT_DYNAMIC) && defined(CONFIG_HAVE_PREEMPT_DYNAMIC_CALL)
+ 
+-void sched_dynamic_klp_enable(void);
+-void sched_dynamic_klp_disable(void);
+-
+ DECLARE_STATIC_CALL(cond_resched, __cond_resched);
+ 
+ static __always_inline int _cond_resched(void)
+@@ -2112,7 +2108,6 @@ static __always_inline int _cond_resched(void)
+ 
+ static inline int _cond_resched(void)
+ {
+-	klp_sched_try_switch();
+ 	return __cond_resched();
+ }
+ 
+@@ -2122,7 +2117,6 @@ static inline int _cond_resched(void)
+ 
+ static inline int _cond_resched(void)
+ {
+-	klp_sched_try_switch();
+ 	return 0;
+ }
+ 
+diff --git a/kernel/livepatch/transition.c b/kernel/livepatch/transition.c
+index ba06945..2351a19 100644
+--- a/kernel/livepatch/transition.c
++++ b/kernel/livepatch/transition.c
+@@ -29,22 +29,13 @@ static unsigned int klp_signals_cnt;
  
  /*
-@@ -616,12 +637,9 @@ static int ti_csi2rx_drain_dma(struct ti_csi2rx_ctx *ctx)
+  * When a livepatch is in progress, enable klp stack checking in
+- * cond_resched().  This helps CPU-bound kthreads get patched.
++ * schedule().  This helps CPU-bound kthreads get patched.
+  */
+-#if defined(CONFIG_PREEMPT_DYNAMIC) && defined(CONFIG_HAVE_PREEMPT_DYNAMIC_CALL)
+-
+-#define klp_cond_resched_enable() sched_dynamic_klp_enable()
+-#define klp_cond_resched_disable() sched_dynamic_klp_disable()
+-
+-#else /* !CONFIG_PREEMPT_DYNAMIC || !CONFIG_HAVE_PREEMPT_DYNAMIC_CALL */
+ 
+ DEFINE_STATIC_KEY_FALSE(klp_sched_try_switch_key);
+-EXPORT_SYMBOL(klp_sched_try_switch_key);
+ 
+-#define klp_cond_resched_enable() static_branch_enable(&klp_sched_try_switch_key)
+-#define klp_cond_resched_disable() static_branch_disable(&klp_sched_try_switch_key)
+-
+-#endif /* CONFIG_PREEMPT_DYNAMIC && CONFIG_HAVE_PREEMPT_DYNAMIC_CALL */
++#define klp_resched_enable() static_branch_enable(&klp_sched_try_switch_key)
++#define klp_resched_disable() static_branch_disable(&klp_sched_try_switch_key)
+ 
+ /*
+  * This work can be performed periodically to finish patching or unpatching any
+@@ -365,26 +356,18 @@ static bool klp_try_switch_task(struct task_struct *task)
+ 
+ void __klp_sched_try_switch(void)
  {
- 	struct ti_csi2rx_dev *csi = ctx->csi;
- 	struct dma_async_tx_descriptor *desc;
--	struct completion drain_complete;
- 	dma_cookie_t cookie;
- 	int ret;
- 
--	init_completion(&drain_complete);
+-	if (likely(!klp_patch_pending(current)))
+-		return;
 -
- 	desc = dmaengine_prep_slave_single(ctx->dma.chan, csi->drain.paddr,
- 					   csi->drain.len, DMA_DEV_TO_MEM,
- 					   DMA_PREP_INTERRUPT | DMA_CTRL_ACK);
-@@ -631,7 +649,7 @@ static int ti_csi2rx_drain_dma(struct ti_csi2rx_ctx *ctx)
- 	}
+ 	/*
+-	 * This function is called from cond_resched() which is called in many
+-	 * places throughout the kernel.  Using the klp_mutex here might
+-	 * deadlock.
+-	 *
+-	 * Instead, disable preemption to prevent racing with other callers of
+-	 * klp_try_switch_task().  Thanks to task_call_func() they won't be
+-	 * able to switch this task while it's running.
++	 * This function is called from __schedule() while a context switch is
++	 * about to happen. Preemption is already disabled and klp_mutex
++	 * can't be acquired.
++	 * Disabled preemption is used to prevent racing with other callers of
++	 * klp_try_switch_task(). Thanks to task_call_func() they won't be
++	 * able to switch to this task while it's running.
+ 	 */
+-	preempt_disable();
++	lockdep_assert_preemption_disabled();
  
- 	desc->callback = ti_csi2rx_drain_callback;
--	desc->callback_param = &drain_complete;
-+	desc->callback_param = ctx;
- 
- 	cookie = dmaengine_submit(desc);
- 	ret = dma_submit_error(cookie);
-@@ -640,13 +658,6 @@ static int ti_csi2rx_drain_dma(struct ti_csi2rx_ctx *ctx)
- 
- 	dma_async_issue_pending(ctx->dma.chan);
- 
--	if (!wait_for_completion_timeout(&drain_complete,
--					 msecs_to_jiffies(DRAIN_TIMEOUT_MS))) {
--		dmaengine_terminate_sync(ctx->dma.chan);
--		dev_dbg(csi->dev, "DMA transfer timed out for drain buffer\n");
--		ret = -ETIMEDOUT;
--		goto out;
--	}
- out:
- 	return ret;
- }
-@@ -694,9 +705,11 @@ static void ti_csi2rx_dma_callback(void *param)
- 
- 	ti_csi2rx_dma_submit_pending(ctx);
- 
--	if (list_empty(&dma->submitted))
--		dma->state = TI_CSI2RX_DMA_IDLE;
--
-+	if (list_empty(&dma->submitted)) {
-+		if (ti_csi2rx_drain_dma(ctx))
-+			dev_warn(ctx->csi->dev,
-+				 "DMA drain failed on one of the transactions\n");
-+	}
- 	spin_unlock_irqrestore(&dma->lock, flags);
- }
- 
-@@ -749,7 +762,7 @@ static void ti_csi2rx_stop_dma(struct ti_csi2rx_ctx *ctx)
- 		 * enforced before terminating DMA.
- 		 */
- 		ret = ti_csi2rx_drain_dma(ctx);
--		if (ret && ret != -ETIMEDOUT)
-+		if (ret)
- 			dev_warn(ctx->csi->dev,
- 				 "Failed to drain DMA. Next frame might be bogus\n");
- 	}
-@@ -816,57 +829,14 @@ static void ti_csi2rx_buffer_queue(struct vb2_buffer *vb)
- 	struct ti_csi2rx_ctx *ctx = vb2_get_drv_priv(vb->vb2_queue);
- 	struct ti_csi2rx_buffer *buf;
- 	struct ti_csi2rx_dma *dma = &ctx->dma;
--	bool restart_dma = false;
- 	unsigned long flags = 0;
--	int ret;
- 
- 	buf = container_of(vb, struct ti_csi2rx_buffer, vb.vb2_buf);
- 	buf->ctx = ctx;
- 
- 	spin_lock_irqsave(&dma->lock, flags);
 -	/*
--	 * Usually the DMA callback takes care of queueing the pending buffers.
--	 * But if DMA has stalled due to lack of buffers, restart it now.
+-	 * Make sure current didn't get patched between the above check and
+-	 * preempt_disable().
 -	 */
--	if (dma->state == TI_CSI2RX_DMA_IDLE) {
--		/*
--		 * Do not restart DMA with the lock held because
--		 * ti_csi2rx_drain_dma() might block for completion.
--		 * There won't be a race on queueing DMA anyway since the
--		 * callback is not being fired.
--		 */
--		restart_dma = true;
--		dma->state = TI_CSI2RX_DMA_ACTIVE;
--	} else {
--		list_add_tail(&buf->list, &dma->queue);
--	}
-+	list_add_tail(&buf->list, &dma->queue);
- 	spin_unlock_irqrestore(&dma->lock, flags);
+-	if (unlikely(!klp_patch_pending(current)))
+-		goto out;
++	if (likely(!klp_patch_pending(current)))
++		return;
+ 
+ 	/*
+ 	 * Enforce the order of the TIF_PATCH_PENDING read above and the
+@@ -395,11 +378,7 @@ void __klp_sched_try_switch(void)
+ 	smp_rmb();
+ 
+ 	klp_try_switch_task(current);
 -
--	if (restart_dma) {
--		/*
--		 * Once frames start dropping, some data gets stuck in the DMA
--		 * pipeline somewhere. So the first DMA transfer after frame
--		 * drops gives a partial frame. This is obviously not useful to
--		 * the application and will only confuse it. Issue a DMA
--		 * transaction to drain that up.
--		 */
--		ret = ti_csi2rx_drain_dma(ctx);
--		if (ret && ret != -ETIMEDOUT)
--			dev_warn(ctx->csi->dev,
--				 "Failed to drain DMA. Next frame might be bogus\n");
--
--		spin_lock_irqsave(&dma->lock, flags);
--		ret = ti_csi2rx_start_dma(ctx, buf);
--		if (ret) {
--			vb2_buffer_done(&buf->vb.vb2_buf, VB2_BUF_STATE_ERROR);
--			dma->state = TI_CSI2RX_DMA_IDLE;
--			spin_unlock_irqrestore(&dma->lock, flags);
--			dev_err(ctx->csi->dev, "Failed to start DMA: %d\n", ret);
--		} else {
--			list_add_tail(&buf->list, &dma->submitted);
--			spin_unlock_irqrestore(&dma->lock, flags);
--		}
--	}
+-out:
+-	preempt_enable();
+ }
+-EXPORT_SYMBOL(__klp_sched_try_switch);
+ 
+ /*
+  * Sends a fake signal to all non-kthread tasks with TIF_PATCH_PENDING set.
+@@ -508,7 +487,7 @@ void klp_try_complete_transition(void)
+ 	}
+ 
+ 	/* Done!  Now cleanup the data structures. */
+-	klp_cond_resched_disable();
++	klp_resched_disable();
+ 	patch = klp_transition_patch;
+ 	klp_complete_transition();
+ 
+@@ -560,7 +539,7 @@ void klp_start_transition(void)
+ 			set_tsk_thread_flag(task, TIF_PATCH_PENDING);
+ 	}
+ 
+-	klp_cond_resched_enable();
++	klp_resched_enable();
+ 
+ 	klp_signals_cnt = 0;
+ }
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index a3507ed..bece0ba 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -66,6 +66,7 @@
+ #include <linux/vtime.h>
+ #include <linux/wait_api.h>
+ #include <linux/workqueue_api.h>
++#include <linux/livepatch_sched.h>
+ 
+ #ifdef CONFIG_PREEMPT_DYNAMIC
+ # ifdef CONFIG_GENERIC_ENTRY
+@@ -6676,6 +6677,8 @@ static void __sched notrace __schedule(int sched_mode)
+ 	if (sched_feat(HRTICK) || sched_feat(HRTICK_DL))
+ 		hrtick_clear(rq);
+ 
++	klp_sched_try_switch(prev);
++
+ 	local_irq_disable();
+ 	rcu_note_context_switch(preempt);
+ 
+@@ -7336,7 +7339,6 @@ EXPORT_STATIC_CALL_TRAMP(might_resched);
+ static DEFINE_STATIC_KEY_FALSE(sk_dynamic_cond_resched);
+ int __sched dynamic_cond_resched(void)
+ {
+-	klp_sched_try_switch();
+ 	if (!static_branch_unlikely(&sk_dynamic_cond_resched))
+ 		return 0;
+ 	return __cond_resched();
+@@ -7508,7 +7510,6 @@ int sched_dynamic_mode(const char *str)
+ #endif
+ 
+ static DEFINE_MUTEX(sched_dynamic_mutex);
+-static bool klp_override;
+ 
+ static void __sched_dynamic_update(int mode)
+ {
+@@ -7516,8 +7517,7 @@ static void __sched_dynamic_update(int mode)
+ 	 * Avoid {NONE,VOLUNTARY} -> FULL transitions from ever ending up in
+ 	 * the ZERO state, which is invalid.
+ 	 */
+-	if (!klp_override)
+-		preempt_dynamic_enable(cond_resched);
++	preempt_dynamic_enable(cond_resched);
+ 	preempt_dynamic_enable(might_resched);
+ 	preempt_dynamic_enable(preempt_schedule);
+ 	preempt_dynamic_enable(preempt_schedule_notrace);
+@@ -7526,8 +7526,7 @@ static void __sched_dynamic_update(int mode)
+ 
+ 	switch (mode) {
+ 	case preempt_dynamic_none:
+-		if (!klp_override)
+-			preempt_dynamic_enable(cond_resched);
++		preempt_dynamic_enable(cond_resched);
+ 		preempt_dynamic_disable(might_resched);
+ 		preempt_dynamic_disable(preempt_schedule);
+ 		preempt_dynamic_disable(preempt_schedule_notrace);
+@@ -7538,8 +7537,7 @@ static void __sched_dynamic_update(int mode)
+ 		break;
+ 
+ 	case preempt_dynamic_voluntary:
+-		if (!klp_override)
+-			preempt_dynamic_enable(cond_resched);
++		preempt_dynamic_enable(cond_resched);
+ 		preempt_dynamic_enable(might_resched);
+ 		preempt_dynamic_disable(preempt_schedule);
+ 		preempt_dynamic_disable(preempt_schedule_notrace);
+@@ -7550,8 +7548,7 @@ static void __sched_dynamic_update(int mode)
+ 		break;
+ 
+ 	case preempt_dynamic_full:
+-		if (!klp_override)
+-			preempt_dynamic_disable(cond_resched);
++		preempt_dynamic_disable(cond_resched);
+ 		preempt_dynamic_disable(might_resched);
+ 		preempt_dynamic_enable(preempt_schedule);
+ 		preempt_dynamic_enable(preempt_schedule_notrace);
+@@ -7562,8 +7559,7 @@ static void __sched_dynamic_update(int mode)
+ 		break;
+ 
+ 	case preempt_dynamic_lazy:
+-		if (!klp_override)
+-			preempt_dynamic_disable(cond_resched);
++		preempt_dynamic_disable(cond_resched);
+ 		preempt_dynamic_disable(might_resched);
+ 		preempt_dynamic_enable(preempt_schedule);
+ 		preempt_dynamic_enable(preempt_schedule_notrace);
+@@ -7584,36 +7580,6 @@ void sched_dynamic_update(int mode)
+ 	mutex_unlock(&sched_dynamic_mutex);
  }
  
- static int ti_csi2rx_get_route(struct ti_csi2rx_ctx *ctx)
--- 
-2.34.1
-
+-#ifdef CONFIG_HAVE_PREEMPT_DYNAMIC_CALL
+-
+-static int klp_cond_resched(void)
+-{
+-	__klp_sched_try_switch();
+-	return __cond_resched();
+-}
+-
+-void sched_dynamic_klp_enable(void)
+-{
+-	mutex_lock(&sched_dynamic_mutex);
+-
+-	klp_override = true;
+-	static_call_update(cond_resched, klp_cond_resched);
+-
+-	mutex_unlock(&sched_dynamic_mutex);
+-}
+-
+-void sched_dynamic_klp_disable(void)
+-{
+-	mutex_lock(&sched_dynamic_mutex);
+-
+-	klp_override = false;
+-	__sched_dynamic_update(preempt_dynamic_mode);
+-
+-	mutex_unlock(&sched_dynamic_mutex);
+-}
+-
+-#endif /* CONFIG_HAVE_PREEMPT_DYNAMIC_CALL */
+-
+ static int __init setup_preempt_mode(char *str)
+ {
+ 	int mode = sched_dynamic_mode(str);
 
