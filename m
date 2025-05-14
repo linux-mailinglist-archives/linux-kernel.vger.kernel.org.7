@@ -1,123 +1,112 @@
-Return-Path: <linux-kernel+bounces-648276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-648278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C50B5AB748C
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 20:43:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13432AB748F
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 20:43:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D84B1B61BEB
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 18:42:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9DAA94C5173
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 18:43:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90DA1289375;
-	Wed, 14 May 2025 18:42:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8380128A1CD;
+	Wed, 14 May 2025 18:42:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="p8NkvsKP"
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="P8wGW7MJ"
+Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82C652882D1
-	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 18:42:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FCD8289E2A
+	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 18:42:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747248125; cv=none; b=Xfn9qhIwvjzdPIb2XMA/z4s2L/aaPzL88SeIf4F1YkXmeZPYelLMfyZlGgTSV58ywropYzXJIFZMhMqun3Yv2vRUDYacyh8s7CcdIDNgm8y2f1EPeqn92bX8589LoC3dUIyWwuik4Zy4zIwdMekLELosLACl1R6WsnghoPWBhqo=
+	t=1747248149; cv=none; b=j8JeHj8awapQPy+RMD0BYBB0Mk8UYZDMluf+Rk6bKT9KkW5n9RRLfIHS12KTpisZl5Fuk9pa/ba7t8thO+/ikMOh2qaDOk5bOzqUswrTfImBqfakCS3RV7ucIIwBXqTstyLLaqEDgxKVMEWGR9J/Prhq0AHTnFz1ZLDV5k3Vc1E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747248125; c=relaxed/simple;
-	bh=8WPS6fJFn9ZOxrssZfprQKVrhRW5a0xtdjp+RK/angE=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=nOT4qTtSzfGchsCMlCEWL8IaoxsPc9R2kClfAvxrCS96Sj9dxzwm2dC1X2P9WkEQnaybQxNa5aN53EiEhGYqJk3NnaGPbER5dnOxbj/jKrO6N5kq7ljV7dV9TNoHmknZEbHVhqOYp47ImUOiat9AeeuRkTX7Y0geaoH3la0b08w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--dionnaglaze.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=p8NkvsKP; arc=none smtp.client-ip=209.85.215.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--dionnaglaze.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b1ffc678adfso30401a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 11:42:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1747248123; x=1747852923; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=CYJuHf6JfZCBn/xacOL2tI46jqMW4+1r9XjhA6jdQBY=;
-        b=p8NkvsKPnNZ+zrvsTHEQjWzLb7E6Mb53DL0RSpRW1F0PrZPxzKFPKssadzM+phgSff
-         I/tpjw3zfzsIcXCB7DYeWvJ0y4rlPMZC3a+3v+0S5idn4r+YTo/w5w9rcCEvFlanBN/m
-         GT/hyb7gpk/WM5Bc41F/XzqVMVLqtGijFzeDWokwbhMsqBEc9CepwWJkUk2zztEKMYn5
-         B55/G0ClyEvabZaNtJCXr9u2jDp9Xlnb9al53MaiJtSQx/kijKgz7B/TSacbPV5++FAY
-         MF6beYoWQg2FNYQx6QVN39v6MztgFbjpEXX8PDz6iMmXTT7aoBQpKT5uaZqRau87Wm7F
-         yv0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747248123; x=1747852923;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CYJuHf6JfZCBn/xacOL2tI46jqMW4+1r9XjhA6jdQBY=;
-        b=uw+hit6gvFdo52bkSuebGF6ujtfKFFUHHdvfpmQyjmd5tHrGdeVcpY7v/Fut94qcRO
-         6dM5tRqK3MfMZCzwGBjZnnSbl7wj20jskZUuPejnJ/6Qs3NrQ+cAfuLNHw2o7ufmd0ND
-         qFksKj8a5e3GR3LA4kNi0P41AdS4gqnhbYU94jxQ5FSLKWW8AdqxS1GtDRjsyvCf/GY0
-         wkUUzS4yRAIh+QBXhwX5u6UlF2lI30ibXT/1Z9nGMo/ts8Hk/hLwTaxbySDpZDNIpQTi
-         oy7Za0CRAE/ZFjvu/4JOdpLdeELbJ+DIutSfN9j8qPa1yFS3CwzLe0L/dnhTh+5SCDNy
-         Zdsg==
-X-Gm-Message-State: AOJu0YylS6hk+4Jdc/pzMrXmj7d2v7putCKx6ODDL4aDlUsnoB3m5LE0
-	9xm3A8SApQfSBTWMu+HUqhQ633PSsc9E22HOMKqOX1S26iMYmOy/zX93wdVSbI1Na7te3JO2NsK
-	l4KorZ+vMm29tFjJBLmsyPg==
-X-Google-Smtp-Source: AGHT+IHaW0tGNG2An47wn7ypYPKbD5kAKXhci3mLdyKHvLgmgeV/RB/EAKA0ZnHx69e5p2D6/yHVAiXZ18yI4rGUsg==
-X-Received: from pfks12.prod.google.com ([2002:a05:6a00:194c:b0:740:6f6:7346])
- (user=dionnaglaze job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6a21:6d88:b0:1f5:5ca4:2744 with SMTP id adf61e73a8af0-215ff0d4647mr5637627637.17.1747248122860;
- Wed, 14 May 2025 11:42:02 -0700 (PDT)
-Date: Wed, 14 May 2025 18:41:36 +0000
-In-Reply-To: <20250514184136.238446-1-dionnaglaze@google.com>
+	s=arc-20240116; t=1747248149; c=relaxed/simple;
+	bh=q5ui5UAA6sDZXoXLBnSfIAbWomRc12PZFrAUaIo0Yng=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pSba8uYa8625pZ1ES2u8LOgETFBeErpjdZfGt+9C3wPToRSySuEEkGm2LI9Uwv+04d37uxmjEFS74Ytj6aqIQkx+6bzbQlv2eQMYsmQSHqjulb1gGGQu3TXtx1WPbxNkQOcWl1VTGIk5Qjp6EpXcy1R94DyYwy9qLvG35Hk5BmI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=P8wGW7MJ; arc=none smtp.client-ip=95.215.58.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1747248134;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=YEf1BORBOsBfo/7P9FA9WA9o/wcYctYmHhlHLcMB2F8=;
+	b=P8wGW7MJnEsuLTwzuaIdy5oghtUCutOUk7BEW93Dp+0lHf1rTbBInjISZQqBj6qTjL32AF
+	uRgwwPtFy+qSahTFpwam6wMOGvzpZRcebdeTC5YyqJ5mv2uNhe6xUKmbw9OUKRs9wDzd/y
+	nl1MyifIpr2ZSWRbhhgNdUVofCVyA8M=
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Johannes Weiner <hannes@cmpxchg.org>,
+	Michal Hocko <mhocko@kernel.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Muchun Song <muchun.song@linux.dev>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Harry Yoo <harry.yoo@oracle.com>,
+	Yosry Ahmed <yosry.ahmed@linux.dev>,
+	bpf@vger.kernel.org,
+	linux-mm@kvack.org,
+	cgroups@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Meta kernel team <kernel-team@meta.com>
+Subject: [PATCH v2 0/7] memcg: make memcg stats irq safe
+Date: Wed, 14 May 2025 11:41:51 -0700
+Message-ID: <20250514184158.3471331-1-shakeel.butt@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250514184136.238446-1-dionnaglaze@google.com>
-X-Mailer: git-send-email 2.49.0.1045.g170613ef41-goog
-Message-ID: <20250514184136.238446-4-dionnaglaze@google.com>
-Subject: [PATCH v4 2/2] The ccp driver can be overloaded even with guest
- request rate limits. The return value of -EBUSY means that there is no
- firmware error to report back to user space, so the guest VM would see this
- as exitinfo2 = 0. The false success can trick the guest to update its message
- sequence number when it shouldn't have.
-From: Dionna Glaze <dionnaglaze@google.com>
-To: kvm@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-coco@lists.linux.dev, 
-	Dionna Glaze <dionnaglaze@google.com>, Thomas Lendacky <Thomas.Lendacky@amd.com>, 
-	Paolo Bonzini <pbonzini@redhat.com>, Joerg Roedel <jroedel@suse.de>, Peter Gonda <pgonda@google.com>, 
-	Borislav Petkov <bp@alien8.de>, Sean Christopherson <seanjc@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Instead, when ccp returns -EBUSY, that is reported to userspace as the
-throttling return value.
+This series converts memcg stats to be irq safe i.e. memcg stats can be
+updated in any context (task, softirq or hardirq) without disabling the
+irqs. This is still not nmi-safe on all architectures but after this
+series converting memcg charging and stats nmi-safe will be easier.
 
-Cc: Thomas Lendacky <Thomas.Lendacky@amd.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Joerg Roedel <jroedel@suse.de>
-Cc: Peter Gonda <pgonda@google.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Sean Christopherson <seanjc@google.com>
+Changes since v1:
+-----------------
+1. Rebased on mm-new.
+2. Cleanups in first patch as suggested by Vlastimil.
 
-Signed-off-by: Dionna Glaze <dionnaglaze@google.com>
----
- arch/x86/kvm/svm/sev.c | 5 +++++
- 1 file changed, 5 insertions(+)
+Changes since RFC[1]:
+--------------------
+1. Rebased on next-20250513 (mm tree has some conflicts with cgroup
+   tree).
+2. Does not depend of nmi-safe memcg series [2].
+3. Made memcg_rstat_updated re-entrant using this_cpu_* ops as suggested
+   by Vlastimil.
+4. Fixes some spelling mistakes as suggested by Vlastimil.
+5. Rearranged the 6th and 7th patch as suggested by Vlastimil.
 
-diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
-index ddbfdce9dc18..5901a7f59f88 100644
---- a/arch/x86/kvm/svm/sev.c
-+++ b/arch/x86/kvm/svm/sev.c
-@@ -4065,6 +4065,11 @@ static int snp_handle_guest_req(struct vcpu_svm *svm, gpa_t req_gpa, gpa_t resp_
- 	 * the PSP is dead and commands are timing out.
- 	 */
- 	ret = sev_issue_cmd(kvm, SEV_CMD_SNP_GUEST_REQUEST, &data, &fw_err);
-+	if (ret == -EBUSY) {
-+		svm_vmgexit_no_action(svm, SNP_GUEST_ERR(SNP_GUEST_VMM_ERR_BUSY, fw_err));
-+		ret = 1;
-+		goto out_unlock;
-+	}
- 	if (ret && !fw_err)
- 		goto out_unlock;
- 
+Link: http://lore.kernel.org/20250513031316.2147548-1-shakeel.butt@linux.dev [1]
+Link: http://lore.kernel.org/20250509232859.657525-1-shakeel.butt@linux.dev [2]
+
+Shakeel Butt (7):
+  memcg: memcg_rstat_updated re-entrant safe against irqs
+  memcg: move preempt disable to callers of memcg_rstat_updated
+  memcg: make mod_memcg_state re-entrant safe against irqs
+  memcg: make count_memcg_events re-entrant safe against irqs
+  memcg: make __mod_memcg_lruvec_state re-entrant safe against irqs
+  memcg: no stock lock for cpu hot-unplug
+  memcg: objcg stock trylock without irq disabling
+
+ include/linux/memcontrol.h |  41 +--------
+ mm/memcontrol-v1.c         |   6 +-
+ mm/memcontrol.c            | 170 +++++++++++++++----------------------
+ mm/swap.c                  |   8 +-
+ mm/vmscan.c                |  14 +--
+ 5 files changed, 86 insertions(+), 153 deletions(-)
+
 -- 
-2.49.0.1045.g170613ef41-goog
+2.47.1
 
 
