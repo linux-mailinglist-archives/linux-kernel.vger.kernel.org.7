@@ -1,139 +1,146 @@
-Return-Path: <linux-kernel+bounces-648590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-648592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41668AB7923
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 00:43:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FC8AAB7926
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 00:44:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1161A1B66E7D
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 22:43:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9EF1B86850F
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 22:44:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7948B223DF5;
-	Wed, 14 May 2025 22:43:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1605822330F;
+	Wed, 14 May 2025 22:44:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="s85SoNad"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="NOPCxL0z"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EC721E7C12
-	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 22:42:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5B461E5B71
+	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 22:44:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747262580; cv=none; b=RQT+7EEk1f6S9lVtoebUbx2D+rpwTy1UbYZhrqedGekLclagTwySZX+kIJx1VLUS1nB86Eqey+lRukBBdydvVIm9KtcDT1V3fzZ805fH7LqASqMpxtqfaGBpYkhC4aKeeFAWWZOdib5RKO8EloJp8B+Krm7kCvQCKvgIwjFDATw=
+	t=1747262663; cv=none; b=BFK88BUeyJnsZBrwBkIQRxYRmvsWRm+w2x4mlC6OLuuSJmd7beW9SDQ4fnijRnDFCBfxqrFoKauOzpZouKGAccaOONWOXnUhASbnRbKfk0tCIwgDEKbIKJivl35SaWgibHDSB73jxrGLFdqgq3Gk1dUX291Qrz9t2huNrLv5HrY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747262580; c=relaxed/simple;
-	bh=dTPmZVat3iQg7xidgKQIVmtAxTHyJlLqxSmrH1cnngg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IQRvUB8sDV8KaqGSl3WaVk4AXA3Vv7qRWICB8b4M+wlge0mgqdyoFbEF6R7EtkG9UJSREYyGZSFwCkEwl50coVhcBUs4qCE1w+Kmt1pMpLNtBBbHj3sUUTfnUPtk1PnX9fgWQ+m4QdPd0EvjVSL4bEaqeteIcpJ9anQw+w+Rsk4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=s85SoNad; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5fce6c7598bso4173a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 15:42:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1747262577; x=1747867377; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dTPmZVat3iQg7xidgKQIVmtAxTHyJlLqxSmrH1cnngg=;
-        b=s85SoNadIzhAVB2X+ehz87h3Up3PKQ4vQc8H/UR80ygwWhUTuU3N6/qRNC8E2v/y0X
-         fcqTEmTlAodQNCC0qirCSHqVwOS7b99lPBra+YIDGCRt0SgWqpIgaMV4hOteEgIvJIjO
-         2bWOSNBgBiHpP1ggdQj9u+kPGiw3ONXqGzUys1cEg4UbqIhEYvLzmG7rFMQefCY2MkQg
-         MCoGB8w3B0cN7GCvnyqVqq2dvmHlyUIvViumVkFquy8qewLf0b4jghHONU749UOokM0r
-         tKsuZ+O3EFIg055TDkffj27Pp72QJgX1GXEwFrkjwpzWDIBCqDJzVn6bRei1L26wJbw5
-         0/Sw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747262577; x=1747867377;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dTPmZVat3iQg7xidgKQIVmtAxTHyJlLqxSmrH1cnngg=;
-        b=bkTm8S0MzU5K3O6vEvZE2UCVwv+r4rh+gw//stSmwuTfRLq372LHUY+w1zaf/RYZee
-         56xBB8alqYq56U4gIztK8C7D14frazEIA3FuWq6KtZRd4oHZhi4TT9ktNrUSOSa4PVSE
-         ciQpWKbAr6JInHPCVoWJe2qORxiXfcNCUy3SRABpde87hco0e4w/49UGXFMG9MSj7hzr
-         yssJoZSaEwKyZSjkapjBlJ7r19d9omzdUa5R/gdmFd6qTgJMsqsxH9BxG7InWWajaEIs
-         pBfHxsse0SNhaKNq3s6KAESS2251ljjo3xuTl07oUc9VZOM75cJqCLyoP/HVsOOXnRWN
-         YkFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX7pPvyTQjHDZv+tDcq4azSF9Exb14FvYomMZwWeFA6vsc+sYm66VqnBhluUXdCxM6W+GRvazFGo1AG240=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyj6KS/VtrdjQXq4UKtKuEQ9cwNFCnz5X8T9uJJbWZK8Eky8B7q
-	1ExI2jGVLcs8FUM18kC/b+jg0K4agGMZeI4OkOmPHJya0OVvAemlFKzDYZUvtGObozSWbCvyG8H
-	IzW0ST028QD72ASDBKnc2PZaGovtZsMuly1tj+DE+
-X-Gm-Gg: ASbGncuaocCCsq4xnfjZ1676Lx0Ed8aje39Yu1j9xudAm7XWHgypA4Lu6nBmuTTB/Nu
-	MOylUO1qwTSP+5ZdwsNVyVjhK5/HOuXjwbGt8u1DgvCLdUq7R+oItv9IPo3+F7Q0TBK2iOmpxbY
-	UmaKiVEUINUQe6jboN4vClf04FUJF6PkYLuuvyw6pLD5WqfqRXzfo7AJY5seAyD4o=
-X-Google-Smtp-Source: AGHT+IHU5Im31tvtHgwHOxA22uas4hBjTuXNbL5LJxD9MN/KwYiyJvt4pBB8Ap/BPSBA0Mm9bModh/Lb20VewV6efp8=
-X-Received: by 2002:a50:cd19:0:b0:5fc:a9f0:3d15 with SMTP id
- 4fb4d7f45d1cf-5ffce28bb43mr11926a12.1.1747262577341; Wed, 14 May 2025
- 15:42:57 -0700 (PDT)
+	s=arc-20240116; t=1747262663; c=relaxed/simple;
+	bh=a9g5/nTsv58/kN/3kVuw5tJnxuUMmHXHoyRiQwDN6KA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CK028Z96CUJW5uRXod10kv6BuU+eCmU8AUOqn93IMKh+t3rVLbS71KugQ/LJ2vbnfhmmjwt58d4y66qs5wHeZ8klQt17SBaSL4HosEY+9HhmlwaGilhg2OpnxUO+Lrcwuj2FEOrCCWP1O+gFKu9OdEebp6gsDAK/G30/haSwfjo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=NOPCxL0z; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (cust-east-par-46-193-72-226.cust.wifirst.net [46.193.72.226])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 6030082A;
+	Thu, 15 May 2025 00:44:01 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1747262641;
+	bh=a9g5/nTsv58/kN/3kVuw5tJnxuUMmHXHoyRiQwDN6KA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NOPCxL0zZeEpZY+zGdWCZqYl2+Wtn65QqMDz3lWi06Alj2mZ+ip3dTKMu33YxtXhU
+	 /Ho+PLZx9vDJB8ay/R75U0/ZlAh8Ei7gXTjXJiCUFVawTJk+TCw3wnkSxuCJZm+JO3
+	 FFLvZjbSNtHwEHqW0y5WMSwINo7NFtTWK6vuaQmM=
+Date: Thu, 15 May 2025 00:44:10 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Marco Felsch <m.felsch@pengutronix.de>
+Cc: andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org,
+	jonas@kwiboo.se, jernej.skrabec@gmail.com,
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+	tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	kernel@pengutronix.de
+Subject: Re: [PATCH 3/3] drm/bridge: fsl-ldb: simplify device_node error
+ handling
+Message-ID: <20250514224410.GL23592@pendragon.ideasonboard.com>
+References: <20250514222453.440915-1-m.felsch@pengutronix.de>
+ <20250514222453.440915-4-m.felsch@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250505-debugfs-rust-v5-0-3e93ce7bb76e@google.com>
- <20250505-debugfs-rust-v5-4-3e93ce7bb76e@google.com> <D9VPA1M45WBK.1TB4KOUXD24BD@kernel.org>
- <aCRdNJ2oq-REBotd@pollux> <D9VSJTPCSNXV.1LCXKGKVDGP96@kernel.org>
- <CAGSQo00Pj0qF90712K7xACNEvr2e0q=98b8-0VUcXLD5V+oDhg@mail.gmail.com>
- <aCUVuXO_jORqlxwr@pollux> <CAGSQo02nP8MT8q-_gQwjUGFNSyiW2AKOQ3V4yy9jofDzjc0SpA@mail.gmail.com>
- <CAGSQo017FgGmStYxLX7JeqV+AcMUMjmnxF6KBesFhc31BieBbw@mail.gmail.com> <d61e11e2d99659cf13d0e20f56afe319720d03b7.camel@nvidia.com>
-In-Reply-To: <d61e11e2d99659cf13d0e20f56afe319720d03b7.camel@nvidia.com>
-From: Matthew Maurer <mmaurer@google.com>
-Date: Wed, 14 May 2025 15:42:46 -0700
-X-Gm-Features: AX0GCFtfpNUWJr0poQ4vDSPImERirBrJ6RO-O60RIY74nWeZMm7_rHwF_g6VGdI
-Message-ID: <CAGSQo02-vYG-hkP2VXBVX9Lp8+=gxkyKh7TAYkAYhpiz6gj54w@mail.gmail.com>
-Subject: Re: [PATCH v5 4/4] rust: samples: Add debugfs sample
-To: Timur Tabi <ttabi@nvidia.com>
-Cc: "dakr@kernel.org" <dakr@kernel.org>, "tmgross@umich.edu" <tmgross@umich.edu>, 
-	"benno.lossin@proton.me" <benno.lossin@proton.me>, 
-	"gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, "gary@garyguo.net" <gary@garyguo.net>, 
-	"a.hindborg@kernel.org" <a.hindborg@kernel.org>, "lossin@kernel.org" <lossin@kernel.org>, 
-	"bjorn3_gh@protonmail.com" <bjorn3_gh@protonmail.com>, "boqun.feng@gmail.com" <boqun.feng@gmail.com>, 
-	"rafael@kernel.org" <rafael@kernel.org>, "alex.gaynor@gmail.com" <alex.gaynor@gmail.com>, 
-	"aliceryhl@google.com" <aliceryhl@google.com>, "ojeda@kernel.org" <ojeda@kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"samitolvanen@google.com" <samitolvanen@google.com>, 
-	"rust-for-linux@vger.kernel.org" <rust-for-linux@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250514222453.440915-4-m.felsch@pengutronix.de>
 
-On Wed, May 14, 2025 at 3:40=E2=80=AFPM Timur Tabi <ttabi@nvidia.com> wrote=
-:
->
-> On Wed, 2025-05-14 at 15:32 -0700, Matthew Maurer wrote:
-> > One further possibility here, which we'd need Greg to weigh in on - we
-> > could add a method to the debugfs API intended for Rust usage which
-> > specifically releases a directory or file *without* releasing any
-> > nested elements. This would mean we could get rid of all the lifetimes
-> > on directory and file handles.
->
-> I had a conversation with Greg about this topic just the other week.
->
-> https://lore.kernel.org/linux-doc/20250429173958.3973958-1-ttabi@nvidia.c=
-om/
->
-> There are two versions of debugfs_remove:
->
-> void debugfs_remove(struct dentry *dentry);
-> #define debugfs_remove_recursive debugfs_remove
->
-> Unfortunately, the direction that we've been going is to get rid of debug=
-fs_remove_recursive() and
-> have drivers only call debugfs_remove().
->
-> What would solve your problem is doing the opposite: making debugfs_remov=
-e() be non-recursive and
-> require drivers to call debugfs_remove_recursive() if that's what they re=
-ally want.
->
-> Maybe we need debugfs_remove_single()?
->
+Hi Marco,
 
-Yes, having access to `debugfs_remove_single()`, if it has the
-properties I would expect (namely that the kernel objects for
-inaccessible directories continue to exist, they're just not reachable
-through the VFS) would allow this design. It's not obvious to me if
-it's the design we want, but it would enable that design.
+On Thu, May 15, 2025 at 12:24:53AM +0200, Marco Felsch wrote:
+> Make use of __free(device_node) to simplify the of_node_put() error
+> handling paths. No functional changes.
+> 
+> Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
+> ---
+>  drivers/gpu/drm/bridge/fsl-ldb.c | 24 +++++++++---------------
+>  1 file changed, 9 insertions(+), 15 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/bridge/fsl-ldb.c b/drivers/gpu/drm/bridge/fsl-ldb.c
+> index e0a229c91953..cea9ddaa5e01 100644
+> --- a/drivers/gpu/drm/bridge/fsl-ldb.c
+> +++ b/drivers/gpu/drm/bridge/fsl-ldb.c
+> @@ -287,8 +287,9 @@ static const struct drm_bridge_funcs funcs = {
+>  static int fsl_ldb_probe(struct platform_device *pdev)
+>  {
+>  	struct device *dev = &pdev->dev;
+> -	struct device_node *panel_node;
+> -	struct device_node *remote1, *remote2;
+> +	struct device_node *panel_node __free(device_node) = NULL;
+> +	struct device_node *remote1 __free(device_node) = NULL;
+> +	struct device_node *remote2 __free(device_node) = NULL;
+>  	struct drm_panel *panel;
+>  	struct fsl_ldb *fsl_ldb;
+>  	int dual_link;
+> @@ -321,21 +322,16 @@ static int fsl_ldb_probe(struct platform_device *pdev)
+>  	remote2 = of_graph_get_remote_node(dev->of_node, 2, 0);
+>  	fsl_ldb->ch0_enabled = (remote1 != NULL);
+>  	fsl_ldb->ch1_enabled = (remote2 != NULL);
+> -	panel_node = of_node_get(remote1 ? remote1 : remote2);
+> -	of_node_put(remote1);
+> -	of_node_put(remote2);
+> +	panel_node = remote1 ? remote1 : remote2;
+
+This will cause a double put of panel_node, once due to __free() on
+remote1 or remote2, and the second time due to __free() on panel_node.
+
+>  
+> -	if (!fsl_ldb->ch0_enabled && !fsl_ldb->ch1_enabled) {
+> -		of_node_put(panel_node);
+> +	if (!fsl_ldb->ch0_enabled && !fsl_ldb->ch1_enabled)
+>  		return dev_err_probe(dev, -ENXIO, "No panel node found");
+> -	}
+>  
+>  	dev_dbg(dev, "Using %s\n",
+>  		fsl_ldb_is_dual(fsl_ldb) ? "dual-link mode" :
+>  		fsl_ldb->ch0_enabled ? "channel 0" : "channel 1");
+>  
+>  	panel = of_drm_find_panel(panel_node);
+> -	of_node_put(panel_node);
+>  	if (IS_ERR(panel))
+>  		return dev_err_probe(dev, PTR_ERR(panel), "drm panel not found\n");
+>  
+> @@ -345,14 +341,12 @@ static int fsl_ldb_probe(struct platform_device *pdev)
+>  				     "drm panel-bridge add failed\n");
+>  
+>  	if (fsl_ldb_is_dual(fsl_ldb)) {
+> -		struct device_node *port1, *port2;
+> +		struct device_node *port1 __free(device_node) =
+> +			of_graph_get_port_by_id(dev->of_node, 1);
+> +		struct device_node *port2 __free(device_node) =
+> +			of_graph_get_port_by_id(dev->of_node, 2);
+>  
+> -		port1 = of_graph_get_port_by_id(dev->of_node, 1);
+> -		port2 = of_graph_get_port_by_id(dev->of_node, 2);
+>  		dual_link = drm_of_lvds_get_dual_link_pixel_order(port1, port2);
+> -		of_node_put(port1);
+> -		of_node_put(port2);
+> -
+>  		if (dual_link < 0)
+>  			return dev_err_probe(dev, dual_link,
+>  					     "Error getting dual link configuration\n");
+
+-- 
+Regards,
+
+Laurent Pinchart
 
