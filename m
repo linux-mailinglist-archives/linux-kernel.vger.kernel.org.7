@@ -1,178 +1,149 @@
-Return-Path: <linux-kernel+bounces-647132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-647164-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F4CAAB64DB
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 09:50:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 866BEAB653A
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 10:05:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 540244A1DE1
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 07:50:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF409189246E
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 08:05:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59EB121B195;
-	Wed, 14 May 2025 07:50:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D23521ABC5;
+	Wed, 14 May 2025 08:05:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Ke5CDRyt"
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b="rcbke93f"
+Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.17.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B4062063F0;
-	Wed, 14 May 2025 07:50:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E86C2153C1;
+	Wed, 14 May 2025 08:05:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747209015; cv=none; b=Dq+Wb7caF/5tQPDbqFThQ61c6XdDTjqHqT4k0a+JuU3GSLJK+JvSlpt6VpruL2h++iHMb+ghO5tSzUJZ831WJSGpV8q3camEettKvAFjTGmYzbfAZ4dqpaVWHGQj5XdQFAcMiS+qrckBF9nNITktXFlyYUgh44uCMMh2bnmZ6hc=
+	t=1747209918; cv=none; b=foXzIus6XCPD4IBNVwmD6iZq1+Eu8RxL/PDDAJBC34Q4x71+4igl/PQuHY6A/z3gCXOZGC1VlPxNZNiaJ7OSxjhZKNWpMRYtquaT7ETM1uxvl2EIDw0QxZdOiE+A8ZTkHVF9QzOPFacIdQgkHwv4gG8PDihqJIS5r9qfJzJm2d0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747209015; c=relaxed/simple;
-	bh=/tF8K2NTeCCHaif76f7Ley4J0CpUJfvELhKFRVyp/KY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=YzBT84kP6uSW7HuiS1wJkWdpRw+aCnTegtx1+s6XUvP197d/ib2Pu56kU28dK2inVWBuZUsSeihOt6UryPXqWnMwXAPE2EUp+TBadlvmqcV1w925zvXj2K25ggMgdZWJq1VYg3qe6+Xx8PLY+6yOd/ys5txqXERsF8STXXhVSQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Ke5CDRyt; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 691B0439D3;
-	Wed, 14 May 2025 07:50:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1747209011;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=v1aRf1qlofiLBTSf6ULbxEoBgoZVuSsMmJGqVz5ikGs=;
-	b=Ke5CDRyti81LkO2ACUXpk4vagGwlcXLNrl8rN9C5TOLXprgj4YkOj5Ox1mk16qRKEbM1r9
-	BehkrqDihpbBaXUI5vorvs2d4fkFNtjUcmQzuMeMJVyswTGZd/FFUeXNsIOBCklTHayGEc
-	UtxxyTqjY1UoYbdNoG9dkb2t75ashK7UrwnbZNT8+CLoZpuLpCumjqWxqSyJluVasFhyFQ
-	0415YcjVJxXNBwodVBbSF8VvwxAV5Zdkyjr4Sz9S44goJUE3UxmVHIukpQF5jx6J6DXsjv
-	NpJvLbVqJQA/Vhng3hU9CAv0K9nIM07lhTVwDUlsp0HncVDusLSE6MRpaDd2Ag==
-From: Romain Gantois <romain.gantois@bootlin.com>
-Date: Wed, 14 May 2025 09:49:59 +0200
-Subject: [PATCH net-next 3/3] net: phy: dp83869: Support 1000Base-X SFP
- modules
+	s=arc-20240116; t=1747209918; c=relaxed/simple;
+	bh=D8OQaUiF9ozJCoauKAS5nZUGADoLflOKv0y58rOk+NY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=P9yIvhW8jeYQTfoFHL41j/Slt319fs640Up+TWh1hAZ0KLP3ZH0woswxr7/i7T2RUt72RvL6jWlcXjwAqsxdDijfBFDoEY2sw6vrcmBRsuigu9eZMKtq/wN07c/c3V+cKPag941S3vbiEjMCOHa9Hr5McGRX6yvR+EX23bILl+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu; spf=pass smtp.mailfrom=heusel.eu; dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b=rcbke93f; arc=none smtp.client-ip=212.227.17.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=heusel.eu
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=heusel.eu;
+	s=s1-ionos; t=1747209908; x=1747814708; i=christian@heusel.eu;
+	bh=haYVFLZs9fBtTp6OIgr3UBDWUsGQCSa/8Q+bRYFMm/A=;
+	h=X-UI-Sender-Class:Date:From:To:Cc:Subject:Message-ID:References:
+	 MIME-Version:Content-Type:In-Reply-To:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=rcbke93f93yJ9spk7Hu5gzEVXH41q/TVL+D5v8J9PFGiLIHGmRsMrkQ7OGx8PZWT
+	 YZ9m1lFrGkKaHKCoZqglIJ6WGu30OyngVyoaA9mhADOAWDpWOz0h7JSx0/Pba6EHh
+	 eTrwC5iF5kYYL1o91ycbdDHQ20TQA/mJDkDdKtKpuXi9Yx4aW0PCiM6ARorrwJgn5
+	 1EwcehH/p49TNZuG589ntsnKEpja4MFMQkoznvdHhVs7xIMndUfiJpXMbjmzrUTUJ
+	 iSv7ndasdog+AUMm9wQ1qwISUtJmPSCkSb8DybyGRe84RK4Z36Xejp5ix+Dlf+0yc
+	 WY5RphMvYssUmUDrcQ==
+X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
+Received: from localhost ([129.206.223.183]) by mrelayeu.kundenserver.de
+ (mreue106 [212.227.15.183]) with ESMTPSA (Nemesis) id
+ 1Mduym-1untjN3pBe-00iwMd; Wed, 14 May 2025 09:50:16 +0200
+Date: Wed, 14 May 2025 09:50:11 +0200
+From: Christian Heusel <christian@heusel.eu>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, 
+	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, 
+	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com, f.fainelli@gmail.com, 
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, 
+	hargar@microsoft.com, broonie@kernel.org
+Subject: Re: [PATCH 6.14 000/197] 6.14.7-rc1 review
+Message-ID: <e15c1189-ca41-4fff-a5e2-1faf3f5cd737@heusel.eu>
+References: <20250512172044.326436266@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250514-dp83869-1000basex-v1-3-1bdb3c9c3d63@bootlin.com>
-References: <20250514-dp83869-1000basex-v1-0-1bdb3c9c3d63@bootlin.com>
-In-Reply-To: <20250514-dp83869-1000basex-v1-0-1bdb3c9c3d63@bootlin.com>
-To: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, 
- Russell King <linux@armlinux.org.uk>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Romain Gantois <romain.gantois@bootlin.com>
-X-Mailer: b4 0.14.2
-X-GND-State: clean
-X-GND-Score: -50
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeftdeigeefucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenufgrugcufihorhgushculdehtddmnecujfgurhephfffufggtgfgkfhfjgfvvefosehtjeertdertdejnecuhfhrohhmpeftohhmrghinhcuifgrnhhtohhishcuoehrohhmrghinhdrghgrnhhtohhishessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepkeelieefteelffeuheevtdetkefhfffhteffkefgtefhkeevudeutdeugfffheegnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopegludelvddrudeikedrtddrudefngdpmhgrihhlfhhrohhmpehrohhmrghinhdrghgrnhhtohhishessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepuddvpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopehthhhomhgrshdrphgvthgriiiiohhnihessghoohhtlhhinhdrtghomhdprhgtphhtthhopehnvghtuggvvhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdro
- hhrghdprhgtphhtthhopehrohhmrghinhdrghgrnhhtohhishessghoohhtlhhinhdrtghomhdprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepphgrsggvnhhisehrvgguhhgrthdrtghomh
-X-GND-Sasl: romain.gantois@bootlin.com
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="eoa2746jorp77t5c"
+Content-Disposition: inline
+In-Reply-To: <20250512172044.326436266@linuxfoundation.org>
+X-Provags-ID: V03:K1:gbXT6haEMcQAe/Lfo1+KLm1ogB12H+n9UXmN+ULdOH/2kRFYhW5
+ n1oBn7xZxRSTxpmQzmCBX9hFEcs/945/RmYsNUyCsDh+rRJoM3cgkX/dJT3+4xYgCA5WJEN
+ WFOYEInNLHXWAJmsIckqaPzDwVn0bjHQPISCrii92+mUrh7cm7ENRqeKjnRMX0eVBU61gEe
+ ARyvDf3+cG1Y65Ux1Uj9Q==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:+A8uhVPbaCA=;x6zyvJkm7XE3ZmYPx7D3MEEBBLJ
+ DeJPn92dvjhPW+ACPGyD91LS/YZ81/M/rm+GgPqRDiERfAu/s/OKg8Fohs8Dlfzs9ZDMZbmMe
+ fvOKRX+gkJ8zSfBsNpw+lCqEHLE9Wsg0eGb6to2Sj7c2jNqbOlRCU5/rBNUobZ130a/I+7kKh
+ UVkmZm0icV3VN2VUR99G65Erm9IVNVRtxOWb9zkxkZ5r46ZZ9HwR4axQ2itFHpX8g43MYW7Mj
+ p0r4dcjL2XtJHUPTzRwvpoiXDGiUfP5T4MFXCfXn0DiyXqy1s8dvNGEhMGytdwjBBQYKoP4sI
+ Pm7CPkVto+/SXiSJP6nDSyGxaM+NkYKDHs2nVsLBsBXKtAwFq3wK1f7DKsO+bFT02cocNGf7C
+ 6Kx/K0LruSowmhsjf1TS8syXoSEn3VG/tvzDL0NFy8ZuQbMNGblqBrs3gevQ7H/ZkkB/WPXQd
+ qSDpbo95DaVfWRzhuzMtvVp68vHSDG8hJRQXpgFyXM23PkVjUoTJVIhuuH4XTdrbiri84/0Q9
+ nsGlwuFX+xe6S+BZFCJgdIkSt+kcXVXwQWfTaTm8jW64AxIHzTlnKXeV1heSXMYijD27Q+7M3
+ w5xyfSQ0NJImzIdgUi2MCVww2GKaiAHYN3cD9sfzp30MamLF7Qg7GdpjoTaEcijw4GK5jS7Pm
+ 7pOUMrGnbsOH/Vr4iCYs+Roby03eiYh0OttnBFSm8g+64Ej1vSooAN+7/aBCA2CGVZKOxtN9D
+ wnpzQ59BIrYzYqhCI9Yo2/7MbiVuGcL/V32pbZlwxZ0m3QnkmOA2oVMDuFcXyxfbaFtGymKET
+ BULId3FTzdK1bY8/lKJCGUtKdDEDafrf/krBYAij4tDidZr4sXLXMC8vGp5G47bjb/N6W+Qfw
+ rQgAw8wy38WfReSx6a8MPuNBLxEmK/fCS9yU+bByuT416pJXfOv7/eafgjFGzrZFIerPqJH3Q
+ YlWvkcFLutqXMOwXcH+BT/Ll648ZfqJDu6kURsl2L8tb3m1T2R9o2oBZ+UxAUo4h6t6ixSZ7q
+ JzQylnGsgLtSLpRhzRSvvJHbYXHMGQY99KKZMDEcpZ8K7UGONQqvRBnqzhGYcR14ck33bwn8z
+ xPnq1S9duNLrVSKGk/AL0ZDjgnD6zwEkYxFWgP8AS6Y+dDGis0H2RSeaew1opay8g7KcwRQ7o
+ bwr4RFi0p0qY6G2bS+ei2FPan5UAebHP6Zw+bxkjyCb6ZzI3hbEjWSg8xpC83sSTVQyighmL8
+ i2xq5z0X3jRHytOyxFrM3fZaHN3QzakD2uorJge1gRqepoPntJPNf0RS8PPEaLmTgKlfuq0Ap
+ CAQPqV5h11leWlHrkSikhW1R6UzibfsRCnV977xuWeuKHGt14sm/QXrV31ac0WQ2QCOTdGXmV
+ FMHkISGVLiULOj0rVd2/lNlXCLhNKmNVBGofj7c63yiRQmlK4yrscPyWFdyg0FPDV2Lqn8lEa
+ xR3I4uw==
 
-The DP83869 PHY supports multiple operational modes, including
-RGMII-to-1000Base-X, which can be used to link an RGMII-capable Ethernet
-MAC to a downstream fiber SFP module.
 
-+-------+          +---------+            +-----------------+
-|       |  RGMII   |         | 1000Base-X |                 |
-|  MAC  |<-------> | DP83869 |<---------->| fiber SFP module|
-|       |          |         |            |                 |
-+-------+          +---------+            +-----------------+
+--eoa2746jorp77t5c
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 6.14 000/197] 6.14.7-rc1 review
+MIME-Version: 1.0
 
-Register the attach_port() callback, to set the supported downstream
-interface modes for SFP ports and provide the configure_mii() callback,
-which sets the correct DP83869 operational mode when a compatible SFP
-module is inserted.
+On 25/05/12 07:37PM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.14.7 release.
+> There are 197 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>=20
+> Responses should be made by Wed, 14 May 2025 17:19:58 +0000.
+> Anything received after that time might be too late.
 
-Signed-off-by: Romain Gantois <romain.gantois@bootlin.com>
----
- drivers/net/phy/dp83869.c | 53 +++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 53 insertions(+)
+As it turns out my [previous concern][0] was just about a bit too noisy
+logging facility you can add my
 
-diff --git a/drivers/net/phy/dp83869.c b/drivers/net/phy/dp83869.c
-index 000660aae16ed46166774e7235cd8a6df94be047..6d43c39ac525714a495327ec5a1a22b5e653b1cd 100644
---- a/drivers/net/phy/dp83869.c
-+++ b/drivers/net/phy/dp83869.c
-@@ -10,6 +10,7 @@
- #include <linux/module.h>
- #include <linux/of.h>
- #include <linux/phy.h>
-+#include <linux/phy_port.h>
- #include <linux/delay.h>
- #include <linux/bitfield.h>
- 
-@@ -876,6 +877,57 @@ static int dp83869_config_init(struct phy_device *phydev)
- 	return ret;
- }
- 
-+static int dp83869_port_configure_serdes(struct phy_port *port, bool enable,
-+					 phy_interface_t interface)
-+{
-+	struct phy_device *phydev = port_phydev(port);
-+	struct dp83869_private *dp83869;
-+	int ret;
-+
-+	if (!enable)
-+		return 0;
-+
-+	dp83869 = phydev->priv;
-+
-+	switch (interface) {
-+	case PHY_INTERFACE_MODE_1000BASEX:
-+		dp83869->mode = DP83869_RGMII_1000_BASE;
-+		break;
-+	default:
-+		phydev_err(phydev, "Incompatible SFP module inserted\n");
-+		return -EINVAL;
-+	}
-+
-+	ret = dp83869_configure_mode(phydev, dp83869);
-+	if (ret)
-+		return ret;
-+
-+	/* Update advertisement */
-+	if (mutex_trylock(&phydev->lock)) {
-+		ret = dp83869_config_aneg(phydev);
-+		mutex_unlock(&phydev->lock);
-+	}
-+
-+	return ret;
-+}
-+
-+static const struct phy_port_ops dp83869_serdes_port_ops = {
-+	.configure_mii = dp83869_port_configure_serdes,
-+};
-+
-+static int dp83869_attach_port(struct phy_device *phydev,
-+			       struct phy_port *port)
-+{
-+	if (!port->is_serdes)
-+		return 0;
-+
-+	port->ops = &dp83869_serdes_port_ops;
-+
-+	__set_bit(PHY_INTERFACE_MODE_1000BASEX, port->interfaces);
-+
-+	return 0;
-+}
-+
- static int dp83869_probe(struct phy_device *phydev)
- {
- 	struct dp83869_private *dp83869;
-@@ -931,6 +983,7 @@ static int dp83869_phy_reset(struct phy_device *phydev)
- 	.set_tunable	= dp83869_set_tunable,			\
- 	.get_wol	= dp83869_get_wol,			\
- 	.set_wol	= dp83869_set_wol,			\
-+	.attach_port    = dp83869_attach_port,                  \
- 	.suspend	= genphy_suspend,			\
- 	.resume		= genphy_resume,			\
- }
+Tested-by: Christian Heusel <christian@heusel.eu>
 
--- 
-2.49.0
+Tested on a ThinkPad E14 Gen 3 with a AMD Ryzen 5 5500U CPU and on the
+Steam Deck (LCD variant) aswell as a Framework Desktop.
 
+[0]: https://lore.kernel.org/all/32c592ea-0afd-4753-a81d-73021b8e193c@heuse=
+l.eu
+
+--eoa2746jorp77t5c
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEb3ea3iR6a4oPcswTwEfU8yi1JYUFAmgkSzMACgkQwEfU8yi1
+JYUNOg//WRqjquS5bV7IYbM6vdnKVi7bESIe2ce4jguJp17CZQ3+FxOvQW0jYsi3
+cgMojZOmhWh8xby1gm4tEondsgw3SNdRY1fE8ciGUIKrJVfh3PCdRzxJFSLiXky8
+E/5gP4cNFasaa4gHrc46Z3/4VwcMfnCzCvPrS4O+tS78ubpV9GrY3znM+nsKNGPP
+qOeTv91Jgo6akiS8m6PbdwvfJkBvAOOm2fzC4mLuqe1QJPuEoF5UHP207H+2hQa5
+bpVvc3Jelxrwfc/D55dd8PGoPua26IdeF46l7GHB9CBWTYjz7IdI25xnfLYo1ZC/
+W9T9G1IXj51KP0iv67J8tdmopy8Kc/5UzggQi+4np3nEBXjotO1gyzJqLck/QbY9
+fBuagLNdrBxtgK7vPAXCrJ+HsV/Cb2hP9bUKlZa2Ft6bArIfiewCH8quNIKOlIAk
+frLpfB9nAm1U3YaKXCgCV8ZpUiZnTr+mzsZUePc7qoaIaPbXb6IvMzjmsWOGfFud
+ksoGdlkmYVlYCj5G/uHYEq5K52mgNDSu9SMiG4ltpGpFy2meDWkqRpu9U/5fasJr
+LCmCRPgIzy29vL7Ap+Ey9io/wY6st+im8XngqWAn2x5EMBXsgA9RAtrDHtdh2Qre
+0q4G6An0AeqhMfp0jOxlj6BPiOiS8RfYsZzpznk35TMe+Qo7tRU=
+=kIOH
+-----END PGP SIGNATURE-----
+
+--eoa2746jorp77t5c--
 
