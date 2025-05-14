@@ -1,126 +1,187 @@
-Return-Path: <linux-kernel+bounces-648110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-648111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08C4CAB71AF
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 18:40:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5759FAB71BB
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 18:41:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A1811B67B3D
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 16:40:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C17C98C8051
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 16:40:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6453C28750D;
-	Wed, 14 May 2025 16:39:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 990C927E7F9;
+	Wed, 14 May 2025 16:39:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="V76k7bJI"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fABKhUDG"
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 363B0280CD9;
-	Wed, 14 May 2025 16:39:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 676A227A455;
+	Wed, 14 May 2025 16:39:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747240750; cv=none; b=UJ2eUcg4c1J13LGHZ1rdXuljv78oF9Ui5VUu+harZuThMITzJ82syRvPWZirA+MXDBku9C70TmFePVHzZgJnZBnpLhipbZdB6ZCCTA8NIb6sHHmBkQgWwoye1aZEHur3xozAsZinEbvAtFwUulBXpbhoDSCvDo0lJxiaWE5OFgc=
+	t=1747240761; cv=none; b=ARPWYSk4BxZhH5+eqVVnw4OKPX9PFdMGXReaGERb2yN72SEuEgngAwOG76PHO7hR/arHyfV1flzA7gPFVk0z/D5FgefH1Akfma6Qg0yjymJyLrNCRydLlEvXBTSIsr92iF/0OnBpo3kLdGtagiWImvw5za+ZnNxO4piV51MyA0w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747240750; c=relaxed/simple;
-	bh=BQxpe1gKe+N60hkJWYTw2nQy3pGjcVIp7WcxAHzbnzc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KMiTAknBxNIen+2TVY9hr7ToPCXcSs6pF/G+NTInBM61jHsYgatKbamcmPDPf4TcInrcvPtLDnC/jsZRIEek2wOqeXrFC37hMao5OXQTX9AK4nNNkpwPeZcertl4tn629irAlyYTzbbgLeiP9UKLKnORgI8OL0we3lWvf/KE5tY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=V76k7bJI; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1747240748; x=1778776748;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=BQxpe1gKe+N60hkJWYTw2nQy3pGjcVIp7WcxAHzbnzc=;
-  b=V76k7bJI695UACFv8aY83WK0uvv2KE3+tKztSwMCLoC65k0tyfgo4BAw
-   zFfyFsmuNRCmq4b3lGhv39slDdJ4yAumwo6v7oI2M42rNAp9LzzZKwO40
-   FTdIYdWmm7DGEcVc3rMt44o8M44o21vcfCIlnxwlHd1eGdddBAl+4L+PW
-   dkxtPDMeJdpTu3OIbioYnG+TSF2+XYKZz894kY6zU0TWJwZuksuSnRVTh
-   54sRdArih3E9WBjpV734c1+i8T07OHw4+vyaSE7Y6c1c5HCmVhQWHOU3Y
-   2ImYdlcMC5SNufXfL5zZxicZ4Z0hTgAzree2xuANpRohIghlsorYNOMKt
-   A==;
-X-CSE-ConnectionGUID: 6+owG774QI6LsKcfQHTQoQ==
-X-CSE-MsgGUID: G10WDY9oR7quijS9GMLb/Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11433"; a="49223612"
-X-IronPort-AV: E=Sophos;i="6.15,288,1739865600"; 
-   d="scan'208";a="49223612"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 May 2025 09:39:07 -0700
-X-CSE-ConnectionGUID: dL1HJHziTNqYT0Ugnl+VeQ==
-X-CSE-MsgGUID: HT6VqRyKSneRimqS3nA3iA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,288,1739865600"; 
-   d="scan'208";a="138511665"
-Received: from mgoodin-mobl3.amr.corp.intel.com (HELO [10.124.222.100]) ([10.124.222.100])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 May 2025 09:39:06 -0700
-Message-ID: <d46bd014-02d9-44ec-a29d-b925f268ee03@linux.intel.com>
-Date: Wed, 14 May 2025 09:39:05 -0700
+	s=arc-20240116; t=1747240761; c=relaxed/simple;
+	bh=p5viIBVvjlwrAnWfCjIwvHWJv8sSaMN44nMg71GuewQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=m0t2KmSlS12hWz29jsWqRp+g1/vzxz5kf17+/u/KVS5Ea3wl96rk3oyGt9Q8eP/P3cTIVdeL/RBgpxC1IbHGTgX5Iyw5qEkU1id2Y0m9JdaBWMMOifbiPT+6HaSxjJ2T37Vz0fJ/8frpbmY0RuLe/cfqKBJDwh2+XbX4Oitz6Js=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fABKhUDG; arc=none smtp.client-ip=209.85.216.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-30c54b40112so43225a91.2;
+        Wed, 14 May 2025 09:39:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747240758; x=1747845558; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZGE6CkQLlIR21zzBElTsCFwtw1zLGIlMSnQHwkT+hU0=;
+        b=fABKhUDGhH0ytaBvXGMqgB8b2YZ+Mm9EARx7FQ7rVOYtr58qC9Q1ti8Odmt4TeH187
+         eN1F9NMCwlrdSjz7S6ZqI0Ih6oDDWs0AIoawlDylR+kdtBhmKy/CBrwrsXuC6YeQdDOU
+         HetbV43biEgNHUbGnyNkyUvl3csPhQpNQuoRUTVUR9ePCYewlB/z58hbysHM7mc7YJB1
+         0Gw+mRUG0SMEnfwTX/xy/ugxK5yUueo0z+ncMuv521RUr626RIUO/wQMHBXLspuSWHD9
+         hb5ApslhGi6rm6yiBfrDUtQ7c7YgvfUxBpOZZCpm8NY/O0uqPzQpMZIOcR6gW9Ghddox
+         nXLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747240759; x=1747845559;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZGE6CkQLlIR21zzBElTsCFwtw1zLGIlMSnQHwkT+hU0=;
+        b=DMjz99ixDDYymnmnpTD6eNRfiGC7XTAlwITJpfKiOl5MU0v/+xVr+4X/vCzAhuQ7eA
+         AAEUyHojPutEnYdho2kjMdyHXsctngtzRnjwZlE1iOm2dKv2cQaNanvUcgcfNn2tPBMN
+         MMoCuWUPHHMt+6/Gj9uaz+77KpKRQ3MJnEmqr/jkNqSaauX7e/TgHa4LPsJIAhQx5GrR
+         31/eVe2R9K621Lsl5gkLkTqov1r2lxNeWQMsoMCOev/lKv17eB+gnNaD3jDy6ZnM2FV0
+         Y46ri52YEq+nQ+41PIeY0w3y2ct1eejo3jwbDTz3DHPkM1GwmaFvWNLK1Ac9DCaK0BJP
+         407A==
+X-Forwarded-Encrypted: i=1; AJvYcCViYd151cqNKxSe8c0EKNLeSX68MyJgp9eksC+jwibM2rNmps/ww1QQTsbJMwQu+vBgGlibzJj/SHClyv7G@vger.kernel.org, AJvYcCX0b5aVHpugc6AvmEuYZz6z4bPHVeXXb0S52jc5NkbdMTh7PhK0ULFWYQ5m+ROx4v6N4H4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw26ll7IjZZuiQk/dBcy+L4bAikNtEP26+NCYMdbcZM5jqpeBmd
+	ndd7Bp9MY2guHykg/hXR/x29Ou97ybQgnBtlBZcGeLQuZV99dwgiKCycSPtIL3V/YpTF0M3xF/3
+	Pm9+NHPP5B3j+djaxSd8tg5qdOCk=
+X-Gm-Gg: ASbGncuDk+xtdPFWuBqBlgwqWBEy0t4C9bYdVa0O5Vgjk8MTsP0YntDLsWCGn/H8Ci2
+	rphnOUsqc2dfr7W3RuVZ3W0l5AMZyTg+NX5TMCb4b1ROoiqnXaJRCiJC3fKOi49QYybnbT+68jv
+	Pm2fsN8gcNf0cCu2Ys91MOSrp/3tlis5/wNA0MJ0gTvTTRkpP+Q0ktX51PVmM=
+X-Google-Smtp-Source: AGHT+IHHtKDDivlTMiX58+vm5vnXdKeV/iJfUEmGmGeSD8ZwBZVQ+lzAzAaFyJTeRL0m7sKVn2JzATV+P6VG3YwqZ8Y=
+X-Received: by 2002:a17:90a:d005:b0:30a:29be:8fe1 with SMTP id
+ 98e67ed59e1d1-30e2e5e5a57mr7673113a91.9.1747240758568; Wed, 14 May 2025
+ 09:39:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/5] PCI/ERR: Remove misleading TODO regarding kernel
- panic
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
- Oliver O'Halloran <oohall@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
- Rob Herring <robh@kernel.org>, Zhou Wang <wangzhou1@hisilicon.com>,
- Will Deacon <will@kernel.org>, Robert Richter <rric@kernel.org>,
- Alyssa Rosenzweig <alyssa@rosenzweig.io>, Marc Zyngier <maz@kernel.org>,
- Conor Dooley <conor.dooley@microchip.com>,
- Daire McNamara <daire.mcnamara@microchip.com>
-Cc: dingwei@marvell.com, cassel@kernel.org, Lukas Wunner <lukas@wunner.de>,
- Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
- linuxppc-dev@lists.ozlabs.org, linux-pci@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-riscv@lists.infradead.org
-References: <20250508-pcie-reset-slot-v4-0-7050093e2b50@linaro.org>
- <20250508-pcie-reset-slot-v4-1-7050093e2b50@linaro.org>
-Content-Language: en-US
-From: Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@linux.intel.com>
-In-Reply-To: <20250508-pcie-reset-slot-v4-1-7050093e2b50@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250513035853.75820-1-jiayuan.chen@linux.dev>
+ <CAADnVQJJ7pLsm0UTzPOj1H+rdaaY7Lv0As0Te-b+7zieQbntkw@mail.gmail.com> <4741dfb9fa4cf32cef28d9f2b7e7c2e788430800@linux.dev>
+In-Reply-To: <4741dfb9fa4cf32cef28d9f2b7e7c2e788430800@linux.dev>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Wed, 14 May 2025 09:39:06 -0700
+X-Gm-Features: AX0GCFv5zQZmwj3rMgHWwjCh-Y5RekU2Z97uGRJBFskDLUYPSr3APfI0Lbvo68k
+Message-ID: <CAEf4BzZdAft9HUc2MOoQqC_SwkiBQgRTPZHB8MJmwVTY8N=sWQ@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v1] bpftool: Add support for custom BTF path in
+ prog load/loadall
+To: Jiayuan Chen <jiayuan.chen@linux.dev>
+Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, bpf <bpf@vger.kernel.org>, 
+	Quentin Monnet <qmo@kernel.org>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-On 5/8/25 12:10 AM, Manivannan Sadhasivam wrote:
-> A PCI device is just another peripheral in a system. So failure to
-> recover it, must not result in a kernel panic. So remove the TODO which
-> is quite misleading.
+On Tue, May 13, 2025 at 6:51=E2=80=AFPM Jiayuan Chen <jiayuan.chen@linux.de=
+v> wrote:
 >
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> ---
-
-Reviewed-by: Kuppuswamy Sathyanarayanan 
-<sathyanarayanan.kuppuswamy@linux.intel.com>
-
->   drivers/pci/pcie/err.c | 1 -
->   1 file changed, 1 deletion(-)
+> 2025/5/14 05:19, "Alexei Starovoitov" <alexei.starovoitov@gmail.com> wrot=
+e:
 >
-> diff --git a/drivers/pci/pcie/err.c b/drivers/pci/pcie/err.c
-> index 31090770fffcc94e15ba6e89f649c6f84bfdf0d5..de6381c690f5c21f00021cdc7bde8d93a5c7db52 100644
-> --- a/drivers/pci/pcie/err.c
-> +++ b/drivers/pci/pcie/err.c
-> @@ -271,7 +271,6 @@ pci_ers_result_t pcie_do_recovery(struct pci_dev *dev,
->   
->   	pci_uevent_ers(bridge, PCI_ERS_RESULT_DISCONNECT);
->   
-> -	/* TODO: Should kernel panic here? */
->   	pci_info(bridge, "device recovery failed\n");
->   
->   	return status;
+> >
+> > On Mon, May 12, 2025 at 8:59 PM Jiayuan Chen <jiayuan.chen@linux.dev> w=
+rote:
+> >
+> > >
+> > > This patch exposes the btf_custom_path feature to bpftool, allowing u=
+sers
+> > >
+> > >  to specify a custom BTF file when loading BPF programs using prog lo=
+ad or
+> > >
+> > >  prog loadall commands. This feature is already supported by libbpf, =
+and
+> > >
+> > >  this patch makes it accessible through the bpftool command-line inte=
+rface.
+> > >
+> > >  Signed-off-by: Jiayuan Chen <jiayuan.chen@linux.dev>
+> > >
+> > >  ---
+> > >
+> > >  tools/bpf/bpftool/prog.c | 11 ++++++++++-
+> > >
+> > >  1 file changed, 10 insertions(+), 1 deletion(-)
+> > >
+> > >  diff --git a/tools/bpf/bpftool/prog.c b/tools/bpf/bpftool/prog.c
+> > >
+> > >  index f010295350be..63f84e765b34 100644
+> > >
+> > >  --- a/tools/bpf/bpftool/prog.c
+> > >
+> > >  +++ b/tools/bpf/bpftool/prog.c
+> > >
+> > >  @@ -1681,8 +1681,17 @@ static int load_with_options(int argc, char *=
+*argv, bool first_prog_only)
+> > >
+> > >  } else if (is_prefix(*argv, "autoattach")) {
+> > >
+> > >  auto_attach =3D true;
+> > >
+> > >  NEXT_ARG();
+> > >
+> > >  + } else if (is_prefix(*argv, "custom_btf")) {
+> > >
+> > >  + NEXT_ARG();
+> > >
+> > >  +
+> > >
+> > >  + if (!REQ_ARGS(1))
+> > >
+> > >  + goto err_free_reuse_maps;
+> > >
+> > >  +
+> > >
+> > >  + open_opts.btf_custom_path =3D GET_ARG();
+> > >
+> >
+> > I don't see a use case yet.
+> >
+> > What exactly is the scenario where it's useful ?
+> >
 >
--- 
-Sathyanarayanan Kuppuswamy
-Linux Kernel Developer
+> This patch just exposes the btf_custom_path feature of libbpf to bpftool.
+> The argument 'btf_custom_path' in libbpf is used for those kernes that
+> don't have CONFIG_DEBUG_INFO_BTF enabled but still want to perform CO-RE
+> relocations. Specifically for older kernels, separate BTF files are alrea=
+dy
+> provided: https://github.com/aquasecurity/btfhub-archive/.
+> If we want load prog using bpftool on those systems, we have to hack
+> btf__load_vmlinux_btf() before or write custom loader with libbpf and spe=
+cify
+> 'btf_custom_path'.
+>
+> I also found a the similar topic:
+> https://lore.kernel.org/bpf/20220215225856.671072-1-mauricio@kinvolk.io/
+>
+> Additionally, pwru supports "--kernel-btf" which serves the same purpose =
+as
+> this patch.
+>
+> Therefore, using an external BTF file is a common practice.
 
+I think it's fine to expose this to bpftool. But maybe call the option
+"kernel_btf" to make it more obvious that this is BTF representing
+kernel types, as opposed to program BTF itself.
 
