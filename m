@@ -1,156 +1,90 @@
-Return-Path: <linux-kernel+bounces-647402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-647404-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB82DAB67F2
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 11:49:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3131AB67F7
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 11:50:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0A663AE5F6
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 09:49:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E3323AE60B
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 09:50:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7E3D25D543;
-	Wed, 14 May 2025 09:49:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C0F125E452;
+	Wed, 14 May 2025 09:50:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pKs64Hxf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="sqs1Fuy5"
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B176227E8A
-	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 09:49:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A79025D532;
+	Wed, 14 May 2025 09:50:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747216176; cv=none; b=gZQDMIUKFVBcyTt8afF5beiy3/v69w3y2A7Y86qbuHRgmJVc9uP2I8oYK2vvp74bIgosIofPWVbo6YU+XygkaKrBdUlyI6FyS49+nk+TE2iLq9h6zDC3X1bBlgSHE9WKxfVYt9DRUyT3Yy3PhDUGfGIaW13/l+zT9zzg2Y7UCsI=
+	t=1747216222; cv=none; b=awx8ZqvDkut5NRXP5eKMaHwrUETsUdzc1jEqwVd4YEfQ3OCMQsyke5J0938dnghCGf77vxii8mWZFGBj8vIjyOTpCq2rf6zfryGQblSL0/8He43XGdUYd6+xS4UcKmRekWPFbebNPfJYJd3SyZ01MLDzfpMxu3ETPRUOp85Pgvc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747216176; c=relaxed/simple;
-	bh=ZUxbNPok00xgvrse1DjvLDyCIT7mk7E3kbSUMYBuso4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=G8JK6ukl7YhCwNcQmeVKHvwST/YeLHkFd4UqPjA4yFJ+nsP6ZsLVFGST+uA7a6xaTpzdak/tDNkqb6juwvlGDOznigaI+MHAgHWJxlFtHzgigDaRzMQ3IRrXSiED8BPOw92Q6b+GN7lW2tdQaK4+d9ns6aod1XG1oPspN9NC2hs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pKs64Hxf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86DF0C4CEEB
-	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 09:49:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747216175;
-	bh=ZUxbNPok00xgvrse1DjvLDyCIT7mk7E3kbSUMYBuso4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=pKs64Hxfr0pbJnuU2141K4FiyslXU1SlDxswblZN32yPY2NejkYjy1qmN7sVx2dCQ
-	 jTBKFJoP+MFnuWnIg11Byu7zHWnXisFbQdxQkkhV3q6hQ/Pqq3YKzmlarNLkj8xrgw
-	 P0qXXEaeHR/9U1b1XLMkn8UDUzAutVs904kx5Hc09nwb1/err2atVs12hhdEgRq7dg
-	 8aTEqfLT6d+sLml6dZ/i1OF8cnSsdHq14jM2LswQSJML7BdSI2ucEdl/clceK8LJQu
-	 eV9jOUi953aMLCMEjn7FAORNFKExw2miBoR7HAIDL/onNF7GEVl8cmtJK5YPw+M/6i
-	 aUwmMtqfdjyJg==
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-550d7afa0c7so604015e87.1
-        for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 02:49:35 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUYboJqPJ0gQsBCNZMpwiWUTBVFZZTglriy1rCy0mz1WCffY7SYZt/aVIArWJHvPivOoqsnfUSdH8foT2o=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5v/dtZ53j3hqtnSJ66LG2TkLx+2JdcuRAL8Rt4sGjeLR+ErEV
-	vEW458gRHVB21Df/8J8QAc0ZyN6ZnclzokdtXDtFh+kEGkQvu3JOPoQ+eBqdCCe6vCLvRPVsokH
-	z5SGE7yb6SgEHGlm3c7s57KEac00=
-X-Google-Smtp-Source: AGHT+IEPzdcrMfT1Ez4KIAIvZfz2GLh7DiH0sGOmc7zP8edxV82ODHEYybJ00DImdZZ4KfCTfu10LIriE8XyAMu9OdU=
-X-Received: by 2002:a05:6512:2910:b0:54f:c3b7:e618 with SMTP id
- 2adb3069b0e04-550d5fa264cmr766809e87.13.1747216173875; Wed, 14 May 2025
- 02:49:33 -0700 (PDT)
+	s=arc-20240116; t=1747216222; c=relaxed/simple;
+	bh=QwqOklaBfFJutW99xC+wN/w4YccIgFRU3Dw+1/TYFP8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fUN0ReRMCHV78gT/MciLn8HBPkmvfrFdmyvnMgbVLNrIxW4S4vWtlGbyCI3rg6j7+8kTr2me2Vzqoqz38C9yTsDPiYq3UPWK9uIWR5WgMNP/f/m8QlKs9iGXHJgYCAxIkA8hMNDc9LmL3dUarhwafc0/f1naSfg/UfhEmHxxZY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=sqs1Fuy5; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=jtcA7X16BmiR/IJddjcp1JXHzW6I5BCr86J0rmb29Lc=; b=sqs1Fuy5mdu/oDqsqtz2rwDpXI
+	IsrNysRXdc2SmzCIKtwhSdIDbGA11SE6acVI6nuDmsCWUmRh6dl0GRjbrLXSshsg4Kf4Or5bb7Azu
+	uqL4+QeFQM8FH1tGGt/jyw/cHBukd02pae4/Ticyj2iZnAYXKLOyN0f6NOjkuzMSavMm4jmOvl6Rr
+	oX8fF3AaQzhBYOEfNObwGCT+tbXg9uW0DiGIM4shYDLp8Ul9agCS457vuRzcsXo9us53uTA+UyBaa
+	vXwYBKyccdAvYNi9vMsSy7q0srIDKvpZdGZUzQgvcAnO8EjCTFB8+rFpTHsUbW1f6QbXBw06cuXam
+	K9ysFj5A==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1uF8kb-0060nU-1e;
+	Wed, 14 May 2025 17:50:10 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Wed, 14 May 2025 17:50:09 +0800
+Date: Wed, 14 May 2025 17:50:09 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Laurent M Coquerel <laurent.m.coquerel@intel.com>,
+	Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	George Abraham P <george.abraham.p@intel.com>,
+	Suman Kumar Chakraborty <suman.kumar.chakraborty@intel.com>,
+	Karthikeyan Gopal <karthikeyan.gopal@intel.com>,
+	qat-linux@intel.com, linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH next] crypto: qat/qat_6xxx - Fix NULL vs IS_ERR() check
+ in adf_probe()
+Message-ID: <aCRnUY1XfQPCpf_6@gondor.apana.org.au>
+References: <aBxOkY99jQF7q-7M@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250513111157.717727-8-ardb+git@google.com> <20250513111157.717727-11-ardb+git@google.com>
- <CAMzpN2jTPFTA9NhXfsrTZ0-prUH-1DbZ5ewt92BZSMqBCZyskw@mail.gmail.com> <aCRRk_4hLD36UQVd@gmail.com>
-In-Reply-To: <aCRRk_4hLD36UQVd@gmail.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Wed, 14 May 2025 10:49:22 +0100
-X-Gmail-Original-Message-ID: <CAMj1kXHzka4hXXE8UU9MvPnuqa1Jd0XBiNP8FGkj6Oc9J5JaWQ@mail.gmail.com>
-X-Gm-Features: AX0GCFvArFk_Oy7vp7W8qygCPXZZwSMStOu8NQhes0onEfh3dX8jspWAGFVUajs
-Message-ID: <CAMj1kXHzka4hXXE8UU9MvPnuqa1Jd0XBiNP8FGkj6Oc9J5JaWQ@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 3/6] x86/cpu: Allow caps to be set arbitrarily early
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Brian Gerst <brgerst@gmail.com>, Ard Biesheuvel <ardb+git@google.com>, linux-kernel@vger.kernel.org, 
-	x86@kernel.org, Linus Torvalds <torvalds@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aBxOkY99jQF7q-7M@stanley.mountain>
 
-On Wed, 14 May 2025 at 09:17, Ingo Molnar <mingo@kernel.org> wrote:
->
->
-> * Brian Gerst <brgerst@gmail.com> wrote:
->
-> > On Tue, May 13, 2025 at 7:40=E2=80=AFAM Ard Biesheuvel <ardb+git@google=
-.com> wrote:
-> > >
-> > > From: Ard Biesheuvel <ardb@kernel.org>
-> > >
-> > > cpu_feature_enabled() uses a ternary alternative, where the late vari=
-ant
-> > > is based on code patching and the early variant accesses the capabili=
-ty
-> > > field in boot_cpu_data directly.
-> > >
-> > > This allows cpu_feature_enabled() to be called quite early, but it st=
-ill
-> > > requires that the CPU feature detection code runs before being able t=
-o
-> > > rely on the return value of cpu_feature_enabled().
-> > >
-> > > This is a problem for the implementation of pgtable_l5_enabled(), whi=
-ch
-> > > is based on cpu_feature_enabled(X86_FEATURE_5LEVEL_PAGING), and may b=
-e
-> > > called extremely early. Currently, there is a hacky workaround where
-> > > some source files that may execute before (but also after) CPU featur=
-e
-> > > detection have a different version of pgtable_l5_enabled(), based on =
-the
-> > > USE_EARLY_PGTABLE_L5 preprocessor macro.
-> > >
-> > > Instead, let's make it possible to set CPU feature arbitrarily early,=
- so
-> > > that the X86_FEATURE_5LEVEL_PAGING capability can be set before even
-> > > entering C code.
-> > >
-> > > This involves relying on static initialization of boot_cpu_data and t=
-he
-> > > cpu_caps_set/cpu_caps_cleared arrays, so they all need to reside in
-> > > .data. This ensures that they won't be cleared along with the rest of
-> > > BSS.
-> > >
-> > > Note that forcing a capability involves setting it in both
-> > > boot_cpu_data.x86_capability[] and cpu_caps_set[].
-> > >
-> > > Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
-> > > ---
-> > >  arch/x86/kernel/cpu/common.c | 10 ++++------
-> > >  1 file changed, 4 insertions(+), 6 deletions(-)
-> > >
-> > > diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/commo=
-n.c
-> > > index bbec5c4cd8ed..aaa6d9e51ef1 100644
-> > > --- a/arch/x86/kernel/cpu/common.c
-> > > +++ b/arch/x86/kernel/cpu/common.c
-> > > @@ -704,8 +704,8 @@ static const char *table_lookup_model(struct cpui=
-nfo_x86 *c)
-> > >  }
-> > >
-> > >  /* Aligned to unsigned long to avoid split lock in atomic bitmap ops=
- */
-> > > -__u32 cpu_caps_cleared[NCAPINTS + NBUGINTS] __aligned(sizeof(unsigne=
-d long));
-> > > -__u32 cpu_caps_set[NCAPINTS + NBUGINTS] __aligned(sizeof(unsigned lo=
-ng));
-> > > +__u32 __read_mostly cpu_caps_cleared[NCAPINTS + NBUGINTS] __aligned(=
-sizeof(unsigned long));
-> > > +__u32 __read_mostly cpu_caps_set[NCAPINTS + NBUGINTS] __aligned(size=
-of(unsigned long));
-> >
-> > Is there any scenario where capabilities are changed after boot?
->
-> Not supposed to...
->
-> > If not, this could possibly be __ro_after_init.
->
-> Yeah, and in a separate patch.
->
+On Thu, May 08, 2025 at 09:26:25AM +0300, Dan Carpenter wrote:
+> The pcim_iomap_region() returns error pointers.  It doesn't return NULL
+> pointers.  Update the check to match.
+> 
+> Fixes: 17fd7514ae68 ("crypto: qat - add qat_6xxx driver")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>  drivers/crypto/intel/qat/qat_6xxx/adf_drv.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
-OK.
+Patch applied.  Thanks.
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
