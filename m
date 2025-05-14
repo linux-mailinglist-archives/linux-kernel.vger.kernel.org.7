@@ -1,336 +1,154 @@
-Return-Path: <linux-kernel+bounces-647483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-647485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2804CAB68F4
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 12:37:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5EC5AB6904
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 12:39:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 306E13A1D04
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 10:37:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 829441B6484E
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 10:39:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 219FA274668;
-	Wed, 14 May 2025 10:37:01 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFA8827057C;
+	Wed, 14 May 2025 10:38:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Kqm9pMei"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 682621C3039
-	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 10:36:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68132205519;
+	Wed, 14 May 2025 10:38:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747219020; cv=none; b=Q2FavFW0ClTunCaTcRDTlF7Fgu9L161N3bdYEogmfQWAF+RF3kF0iyRdh0dYzcdgmY2BU8NAGgMZ+P6M2dMa6APRwfR8x5lzDbC/3VCn0LRCYiTVUdx+H9z9WOVUEEKUo4vrp6sQZozx/rzHN8QmlmQis+hkXWZYghPxHbwol18=
+	t=1747219134; cv=none; b=E+xtGey3UP1Hs1VQvUj74P1vHIG7SEF3ND1YAneFcYi80tR/uV/RP/483X6LacLWL8KtennpnmiQOBZ3Jrb6Irax5p28y9tvXAQxz6JmVQgNeQcGZlEt3jEKLxhv4UAk6uOCmbbpwzQmBwQ03+MC+zLMs+31lc2yvaQeRND23Wk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747219020; c=relaxed/simple;
-	bh=uKFFlHLknlfJ9L1hP+29ctSOJj1098wcy9w2nmieQ14=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=CUadkpRxS5vaX4IRhLk/VqKI9mObpRFE9pixKCmxKWi0kphLVEwOOSVtTKIuKY6JrRITkFELBGEHDZX4i3fQJV1IBJ/NeTsqhZIm4IVarldd+ivxD7WwoOAvaAp17fB533KDydS0NhJjF4Ox2kU67M69fsd6/KZt8SyrkNIHPLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=ratatoskr.trumtrar.info)
-	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
-	(envelope-from <s.trumtrar@pengutronix.de>)
-	id 1uF9Tm-0004uZ-Gb; Wed, 14 May 2025 12:36:50 +0200
-From: Steffen Trumtrar <s.trumtrar@pengutronix.de>
-Date: Wed, 14 May 2025 12:36:31 +0200
-Subject: [PATCH v2 4/4] leds: lp5860: detect and report fault state
+	s=arc-20240116; t=1747219134; c=relaxed/simple;
+	bh=QLH0gNrBQapb4DgKV7C9hWr0X48Qc8YYIoKa2VE6OQo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eontHHzPxbk/Exvd3RKfcra/ug3GPe//m29fNygnlnBmVBrtqln6ud5uqiz019PaNfpXSwhrchD/BNq/3HGNEn9foyOPm/hWc7DFld8IfJwokQM9zhZrSJqqceSfEywCGw6J35cbohnRmjgzkJAW5ow552mgOipz63MGt+0dE38=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Kqm9pMei; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-54b09cb06b0so8997830e87.1;
+        Wed, 14 May 2025 03:38:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747219130; x=1747823930; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=u18rizJH6zQQVk6mtazUuj8QZQOQdRFQC+xxUzR/EJw=;
+        b=Kqm9pMeiPj6Vy61mLm6TXx3rgplHL0sZEkcO7olw2k2+B5FkMkUdW1Y5hiqPE3CEE1
+         iXwlLlB8pVAW+Wm1WXctJc51EgYTRJv6IAr21cOvieHrH/7qV1KSKgy9UKK+j+1u2YYR
+         71N3jwcHwpPaLC/IOCb8ZO0CHRe5C9V0wTyEmncccuNcIUIsq3t8FnJSPNdddu4egwln
+         auOYlhAQeqGsim42js5B5XnevPQGHBAbOhFfeyOgXkqzYzCPDpzDh8XErZ0E/lchU/10
+         ozXUoP1v00oOUY2+w2AgZ3fV7bq5kgT1/HrcCiztn+Q0Rjpns28oyplZV6rlJlRFzrYY
+         ce+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747219130; x=1747823930;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=u18rizJH6zQQVk6mtazUuj8QZQOQdRFQC+xxUzR/EJw=;
+        b=NtXqGL8idsIndIeNhapQuXYssMRX+z5u+T0rHl/FeAxLDU65HZZW5MRwabMhvSuHLU
+         n2L7GIAuHIryJJfjDB74DgcGoZ3yuAURfMPgfV1kqXmRWiRF1nYDRGw2Vdw5TMDXjjT+
+         oHiMu/1W8DSFXUQQaio0lBDfNaDs5RdYkeX/NqKhPW1lUcfmwNG04s3vSD+rL+wzlZQ+
+         BEviyrTE8tMlik/ikKLC8W81Xl/3dmgWzN37yb9T/yW2icaFMgcnlW/ekS48KA2o91Bv
+         ZELOV0axsahMn4oCejog6a11OBu2kOyu2+7C4tc7NYKkO9xnatn7pcaFitUWUJ+gdVCF
+         ofNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWHY77cPkgsguaDLRUF9y8ntQpBE1MqGrVEfAA4TMOkEklXjX46bQwHEF31EssZZpIan7oUUdb8@vger.kernel.org, AJvYcCWo+Bc78NQ3PVASVXdJo6Tzg6MEXzKYGnaFATo48vLdeq/XT33WlA4HZC9xLv4TraXXEhMI3wqOdMHmVqY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQ+m5vX9m7H+F48QgGA2ORNAXfPbXQa4n1WCfDGlvCbVODuiSu
+	UYbV98q5n1s4JpXZ3wstAUgn9+2XYC7yRFDScZsyXonJ+/PT2Skr
+X-Gm-Gg: ASbGncuu7YeKgj4d24vsujwNpfm82S6PtaW9cqbVeZd4Bt5tfBm3ohwD2yN8YvJfo4d
+	idCPJJL11+22VumO8pYkgnP/u15D1XnQMwyoxywXmWkswaYrqC0XaaJoFiQX8aIM9G7ieZ2Oh4d
+	ospSKVohCr/IcaMuLRPuCMw53GiJVkS3B1IL5ep4RPktNrobIdXdiMdhtJxsuZW4gzAw/ivLfa6
+	5mmao3ZusnCikR1BYN3PTZaXlryTM2LxfUPqUPjsTBNb11Wuks0mtdTybQKklNVNmWKRTQ4fllV
+	8/e+TYnG9rMLKq3nLb/4+kGDM7k5R4k2qvGd0lYbv4C3AqTKupTw6VKOWaaTbLXL2AHDVI+YZVa
+	J
+X-Google-Smtp-Source: AGHT+IFIIeAIX8+mI9Youa23uFVdTyrEGM2yaHMFY1grmhUQonUuDWo6/3mO/dKIWsCisjaqVpzwiA==
+X-Received: by 2002:a05:651c:505:b0:30b:a20d:1c06 with SMTP id 38308e7fff4ca-327ecf6b72bmr11420301fa.0.1747219130279;
+        Wed, 14 May 2025 03:38:50 -0700 (PDT)
+Received: from localhost.localdomain ([91.197.2.199])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-326e19da2bcsm11535601fa.74.2025.05.14.03.38.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 May 2025 03:38:49 -0700 (PDT)
+From: Andrey Kriulin <kitotavrik.s@gmail.com>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Andrey Kriulin <kitotavrik.s@gmail.com>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Josef Bacik <josef@toxicpanda.com>,
+	NeilBrown <neilb@suse.de>,
+	Jan Kara <jack@suse.cz>,
+	linux-kernel@vger.kernel.org,
+	lvc-project@linuxtesting.org,
+	stable@vger.kernel.org,
+	Andrey Kriulin <kitotavrik.media@gmail.com>
+Subject: [PATCH v2] fs: minix: Fix handling of corrupted directories
+Date: Wed, 14 May 2025 13:38:35 +0300
+Message-ID: <20250514103837.27152-1-kitotavrik.s@gmail.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250514-v6-14-topic-ti-lp5860-v2-4-72ecc8fa4ad7@pengutronix.de>
-References: <20250514-v6-14-topic-ti-lp5860-v2-0-72ecc8fa4ad7@pengutronix.de>
-In-Reply-To: <20250514-v6-14-topic-ti-lp5860-v2-0-72ecc8fa4ad7@pengutronix.de>
-To: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Steffen Trumtrar <kernel@pengutronix.de>, Pavel Machek <pavel@kernel.org>
-Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, kernel@pengutronix.de, 
- Steffen Trumtrar <s.trumtrar@pengutronix.de>
-X-Mailer: b4 0.14.2
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
-X-SA-Exim-Mail-From: s.trumtrar@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
 
-The lp5860 can detect shorts and open circuits. If an open (LOD) or
-short (LSD) is detected, the global bit in LP5860_FAULT_STATE is set.
-The channel that caused this can be read from the corresponding Dot_lsdX
-and Dot_lodX register and bit offset.
+If the directory is corrupted and the number of nlinks is less than 2
+(valid nlinks have at least 2), then when the directory is deleted, the
+minix_rmdir will try to reduce the nlinks(unsigned int) to a negative
+value.
 
-The global bits can be cleared by writing 0xf to the LOD/LSD_clear
-register.
+Make nlinks validity check for directory.
 
-Signed-off-by: Steffen Trumtrar <s.trumtrar@pengutronix.de>
+Found by Linux Verification Center (linuxtesting.org) with Syzkaller.
+
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Cc: stable@vger.kernel.org
+Signed-off-by: Andrey Kriulin <kitotavrik.media@gmail.com>
+Signed-off-by: Andrey Kriulin <kitotavrik.s@gmail.com>
 ---
- Documentation/ABI/testing/sysfs-class-spi-lp5860 |  50 +++++++++
- drivers/leds/leds-lp5860-core.c                  | 137 +++++++++++++++++++++++
- drivers/leds/leds-lp5860.h                       |  10 ++
- 3 files changed, 197 insertions(+)
+v2: Move nlinks validaty check to V[12]_minix_iget() per Jan Kara
+<jack@suse.cz> request. Change return error code to EUCLEAN. Don't block
+directory in r/o mode per Al Viro <viro@zeniv.linux.org.uk> request.
 
-diff --git a/Documentation/ABI/testing/sysfs-class-spi-lp5860 b/Documentation/ABI/testing/sysfs-class-spi-lp5860
-index d24b49d38ecae55f1a1a4e465fbe71d30eff497e..292e5988ef5c6c1b353446f362dbd5b82d185c54 100644
---- a/Documentation/ABI/testing/sysfs-class-spi-lp5860
-+++ b/Documentation/ABI/testing/sysfs-class-spi-lp5860
-@@ -21,3 +21,53 @@ Contact:        Steffen Trumtrar <kernel@pengutronix.de>
- Description:
- 	Contains and sets the current for the R color group.
- 	Can be adjusted in 128 steps from 0% to 100% of the maximum output current.
-+
-+What:           /sys/class/spi_master/spi<bus>/spi<bus>.<dev>/fault_state
-+Date:           May 2025
-+KernelVersion:  6.15
-+Contact:        Steffen Trumtrar <kernel@pengutronix.de>
-+Description:
-+	Contains and sets the global fault state:
-+
-+	* 3: Open and short detected
-+	* 2: Open detected
-+	* 1: Short detected
-+
-+	Can be cleared by writing the corresponding value back to fault_state.
-+
-+	Example usage::
-+
-+		## Read
-+		# cat /sys/class/spi_master/spi<bus>/spi<bus>.<dev>/fault_state
-+		2
-+
-+		## Write
-+		# echo 2 > /sys/class/spi_master/spi<bus>/spi<bus>.<dev>/fault_state
-+
-+What:           /sys/class/spi_master/spi<bus>/spi<bus>.<dev>/fault_state_open
-+Date:           May 2025
-+KernelVersion:  6.15
-+Contact:        Steffen Trumtrar <kernel@pengutronix.de>
-+Description:
-+	Contains all LEDs and channels where an open condition was detected.
-+	The format is ledname:channel.
-+
-+	Example usage::
-+
-+		## Read
-+		# cat /sys/class/spi_master/spi<bus>/spi<bus>.<dev>/fault_state_open
-+		rgb1:0 rgb2:4
-+
-+What:           /sys/class/spi_master/spi<bus>/spi<bus>.<dev>/fault_state_short
-+Date:           May 2025
-+KernelVersion:  6.15
-+Contact:        Steffen Trumtrar <kernel@pengutronix.de>
-+Description:
-+	Contains all LEDs and channels where a short condition was detected.
-+	The format is ledname:channel.
-+
-+	Example usage::
-+
-+		## Read
-+		# cat /sys/class/spi_master/spi<bus>/spi<bus>.<dev>/fault_state_short
-+		rgb1:0 rgb2:4
-diff --git a/drivers/leds/leds-lp5860-core.c b/drivers/leds/leds-lp5860-core.c
-index c3ce2528783a1910a267c1b35a65ad27a63083db..0a802bc7a6aca25dab5cf012a1a0fcb2edcf9432 100644
---- a/drivers/leds/leds-lp5860-core.c
-+++ b/drivers/leds/leds-lp5860-core.c
-@@ -27,6 +27,140 @@ static struct lp5860_led *mcled_cdev_to_led(struct led_classdev_mc *mc_cdev)
- 	return container_of(mc_cdev, struct lp5860_led, mc_cdev);
- }
- 
-+static const char *lp5860_find_led(struct lp5860 *lp, unsigned int idx)
-+{
-+	struct mc_subled *mc_led_info;
-+	struct lp5860_led *led;
-+	int i, j;
-+
-+	for (i = lp->leds_size - 1; i >= 0; i--) {
-+		led = &lp->leds[i];
-+
-+		mc_led_info = led->mc_cdev.subled_info;
-+
-+		for (j = 0; j < led->mc_cdev.num_colors; j++) {
-+			if (mc_led_info[j].channel == idx)
-+				goto out;
+ fs/minix/inode.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
+
+diff --git a/fs/minix/inode.c b/fs/minix/inode.c
+index f007e389d5d2..d815397b8b0d 100644
+--- a/fs/minix/inode.c
++++ b/fs/minix/inode.c
+@@ -517,6 +517,14 @@ static struct inode *V1_minix_iget(struct inode *inode)
+ 		iget_failed(inode);
+ 		return ERR_PTR(-ESTALE);
+ 	}
++	if (S_ISDIR(raw_inode->i_mode) && raw_inode->i_nlinks < 2) {
++		printk("MINIX-fs: inode directory with corrupted number of links");
++		if (!sb_rdonly(inode->i_sb)) {
++			brelse(bh);
++			iget_failed(inode);
++			return ERR_PTR(-EUCLEAN);
 +		}
 +	}
-+
-+out:
-+	return led->mc_cdev.led_cdev.dev->kobj.name;
-+}
-+
-+static ssize_t lp5860_fault_state_lod_lsd(struct lp5860 *led, char *buf,
-+					  unsigned int reg, unsigned int length)
-+{
-+	unsigned int value = 0;
-+	unsigned int i, j;
-+	unsigned int max_bits;
-+	unsigned int offset = 0;
-+	int len = 0;
-+	bool match = false;
-+	int ret;
-+
-+	for (i = 0; i < length; i++) {
-+		match = false;
-+		ret = regmap_read(led->regmap, reg + i, &value);
-+		if (ret)
-+			return ret;
-+
-+		max_bits = BITS_PER_BYTE;
-+		// every 3rd Dot_x register only has 2 bits
-+		if (i%3 == 2)
-+			max_bits = 2;
-+
-+		for (j = 0; j < max_bits; j++) {
-+			offset++;
-+			if (value & BIT(j)) {
-+				len += sprintf(buf + len, "%s:%d",
-+					       lp5860_find_led(led, offset),
-+					       offset-1);
-+				match = true;
-+				len += sprintf(buf + len, " ");
-+			}
+ 	inode->i_mode = raw_inode->i_mode;
+ 	i_uid_write(inode, raw_inode->i_uid);
+ 	i_gid_write(inode, raw_inode->i_gid);
+@@ -555,6 +563,14 @@ static struct inode *V2_minix_iget(struct inode *inode)
+ 		iget_failed(inode);
+ 		return ERR_PTR(-ESTALE);
+ 	}
++	if (S_ISDIR(raw_inode->i_mode) && raw_inode->i_nlinks < 2) {
++		printk("MINIX-fs: inode directory with corrupted number of links");
++		if (!sb_rdonly(inode->i_sb)) {
++			brelse(bh);
++			iget_failed(inode);
++			return ERR_PTR(-EUCLEAN);
 +		}
 +	}
-+
-+	buf[len++] = '\n';
-+
-+	return len;
-+}
-+
-+static ssize_t lp5860_fault_state_open_show(struct device *dev,
-+					    struct device_attribute *attr,
-+					    char *buf)
-+{
-+	struct lp5860 *led = dev_get_drvdata(dev);
-+	unsigned int value = 0;
-+	int ret;
-+
-+	ret = regmap_read(led->regmap, LP5860_FAULT_STATE, &value);
-+	if (ret)
-+		return ret;
-+
-+	if (!(value & LP5860_FAULT_STATE_LOD))
-+		return 0;
-+
-+	return lp5860_fault_state_lod_lsd(led, buf, LP5860_DOT_LOD_START,
-+					  LP5860_DOT_LOD_LENGTH);
-+}
-+static LP5860_DEV_ATTR_R(fault_state_open);
-+
-+static ssize_t lp5860_fault_state_short_show(struct device *dev,
-+					     struct device_attribute *attr, char *buf)
-+{
-+	struct lp5860 *led = dev_get_drvdata(dev);
-+	unsigned int value = 0;
-+	int ret;
-+
-+	ret = regmap_read(led->regmap, LP5860_FAULT_STATE, &value);
-+	if (ret)
-+		return ret;
-+
-+	if (!(value & LP5860_FAULT_STATE_LSD))
-+		return 0;
-+
-+	return lp5860_fault_state_lod_lsd(led, buf, LP5860_DOT_LSD_START,
-+					  LP5860_DOT_LSD_LENGTH);
-+}
-+static LP5860_DEV_ATTR_R(fault_state_short);
-+
-+static ssize_t lp5860_fault_state_show(struct device *dev,
-+				  struct device_attribute *attr, char *buf)
-+{
-+	struct lp5860 *led = dev_get_drvdata(dev);
-+	unsigned int value = 0;
-+	int ret;
-+
-+	ret = regmap_read(led->regmap, LP5860_FAULT_STATE, &value);
-+	if (ret)
-+		return ret;
-+	return sysfs_emit(buf, "%d\n", (value & 0x3));
-+}
-+
-+static ssize_t lp5860_fault_state_store(struct device *dev,
-+					struct device_attribute *attr,
-+					const char *buf, size_t len)
-+{
-+	struct lp5860 *led = dev_get_drvdata(dev);
-+	unsigned int value = 0;
-+	int ret;
-+
-+	if (kstrtoint(buf, 0, &value))
-+		return -EINVAL;
-+
-+	if (value & LP5860_FAULT_STATE_LOD)
-+		ret = regmap_write(led->regmap, LP5860_LOD_CLEAR, 0xf);
-+	if (value & LP5860_FAULT_STATE_LSD)
-+		ret = regmap_write(led->regmap, LP5860_LSD_CLEAR, 0xf);
-+
-+	if (ret < 0)
-+		return ret;
-+	return len;
-+}
-+static LP5860_DEV_ATTR_RW(fault_state);
-+
- LP5860_SHOW_MODE(r_current_set, LP5860_R_CURRENT_SET, LP5860_CC_GROUP_MASK, 0)
- LP5860_STORE_MODE(r_current_set, LP5860_R_CURRENT_SET, LP5860_CC_GROUP_MASK, 0)
- static LP5860_DEV_ATTR_RW(r_current_set);
-@@ -40,6 +174,9 @@ LP5860_STORE_MODE(b_current_set, LP5860_B_CURRENT_SET, LP5860_CC_GROUP_MASK, 0)
- static LP5860_DEV_ATTR_RW(b_current_set);
- 
- static struct attribute *lp5860_attributes[] = {
-+	&dev_attr_fault_state_open.attr,
-+	&dev_attr_fault_state_short.attr,
-+	&dev_attr_fault_state.attr,
- 	&dev_attr_r_current_set.attr,
- 	&dev_attr_g_current_set.attr,
- 	&dev_attr_b_current_set.attr,
-diff --git a/drivers/leds/leds-lp5860.h b/drivers/leds/leds-lp5860.h
-index 3b8342a832bc75afdf2318fd4ee1ee9ce105cbe3..4b1f9e2f85b9bbd16d4082521a25cdb217a5a315 100644
---- a/drivers/leds/leds-lp5860.h
-+++ b/drivers/leds/leds-lp5860.h
-@@ -196,6 +196,9 @@
- #define LP5860_DOT_CS_ON		0x01
- #define LP5860_DOT_CS_OFF		0x00
- 
-+#define LP5860_FAULT_STATE_LOD		BIT(1)
-+#define LP5860_FAULT_STATE_LSD		BIT(0)
-+
- /* dot lod Value */
- #define LP5860_DOT_LOD0_OFFSET		0
- #define LP5860_DOT_LOD1_OFFSET		1
-@@ -209,6 +212,8 @@
- #define LP5860_DOT_LOD_ON		0x01
- #define LP5860_DOT_LOD_OFF		0x00
- 
-+#define LP5860_DOT_LOD_LENGTH		0x20
-+
- /* dot lsd Value */
- #define LP5860_DOT_LSD0_OFFSET		0
- #define LP5860_DOT_LSD1_OFFSET		1
-@@ -222,6 +227,8 @@
- #define LP5860_DOT_LSD_ON		0x01
- #define LP5860_DOT_LSD_OFF		0x00
- 
-+#define LP5860_DOT_LSD_LENGTH		0x20
-+
- /* REG FAULT_STATE */
- #define LP5860_GLOBAL_LOD_OFFSET	1
- #define LP5860_GLOBAL_LOD_STATE		BIT(1)
-@@ -257,6 +264,9 @@
-  */
- #define LP5860_MAX_LED_CHANNELS		4
- 
-+#define LP5860_DEV_ATTR_R(name)	\
-+	DEVICE_ATTR(name, 0444, lp5860_##name##_show, NULL)
-+
- #define LP5860_DEV_ATTR_RW(name)	\
- 	DEVICE_ATTR(name, 0644, lp5860_##name##_show, lp5860_##name##_store)
- 
-
+ 	inode->i_mode = raw_inode->i_mode;
+ 	i_uid_write(inode, raw_inode->i_uid);
+ 	i_gid_write(inode, raw_inode->i_gid);
 -- 
-2.47.1
+2.47.2
 
 
