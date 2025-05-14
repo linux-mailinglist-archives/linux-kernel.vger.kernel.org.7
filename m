@@ -1,77 +1,73 @@
-Return-Path: <linux-kernel+bounces-646956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-646958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A593AAB62D9
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 08:17:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5645DAB62E0
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 08:20:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E72163BF1F1
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 06:17:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BD513BF648
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 06:20:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCA311F6679;
-	Wed, 14 May 2025 06:17:39 +0000 (UTC)
-Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C84281FC7E7;
+	Wed, 14 May 2025 06:20:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="L4L20iy8"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF50513D539;
-	Wed, 14 May 2025 06:17:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A27001E5B7E;
+	Wed, 14 May 2025 06:20:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747203459; cv=none; b=b5eT+uZawmT2yuuTAh3o2kZbysf2u/CXYnOFu92GlFocGUMBBnQOMOsh4aZ8vWWXxaAyhB+1cHu+mQfQDpJa3/DdJiSe0muNkXFgPtGxdjNKprrUTQopihqH7eyUIZNIbwL5vadKPqBBk1vt6a3LvaRmz5xC5AOD6QnrQwzUdgI=
+	t=1747203639; cv=none; b=o5T89W1AYt+ofrSQ5fkXHubIuxW2/Eh/ARVSJvY//SmanXfNmMOG7HJJyFeKzijOlFNfBmlK/2ovxXwVnaMmMoe5O82CHmq28G4GUNey2FaNQw5F6hrfao3qymdD8btXgVdhlMSI6serzN9iATj1bLOQXMa1MIiQCVokJF79bY0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747203459; c=relaxed/simple;
-	bh=CWHORAXG2oiiaHYAWxfkNRLv9y4YW0URPt7RpnYjehg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kj8wQIQI5wkmGYSbxXcFnAhDjY9MPuZfOH+vpyDwfyauY7peHI18hb+AH1skNGOQQGM0hqRm4xKbXd9R250yO9r105qIYdvWo/iBMavqtsubhUbXgCkmmOyurwvO8RyH07bKqOX+7MM7fF+ONwpTXC/NMMvGEE9Ce9KlozS4IfU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-7cd0a7b672bso305311785a.2;
-        Tue, 13 May 2025 23:17:37 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747203456; x=1747808256;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Ckf4J7K6nhKzDsTt0cIUCHXIZuk9xFjMGBfmOU3gBK0=;
-        b=G35C11uL6IchaVz5AgxrfSy+4cM1yE84Y2j+Fgmbp8zFkg5sOj+Qdr+daaEPxrEasI
-         +procYuEDZ6keZ7DDrUI6m43R+sXer0j0cflNT2LpIxxajUiqoi4Atr01QsUd3ctw5qf
-         q5VvzjurwDVj2MgQpVdKHt7AwOCsY2sfxp00kUiEJCjC2cElYTyYAYUVWvK88N23XQuX
-         LZj2VqZ922akkOgUAvtsFm2zqTlzsm7t3io0gidvgZbEzzR4GVAP2IiO9fXFBXQk1cnp
-         DlW9a01/4j1qtlwuqJdw3CNFVJRoZJhXZvidipVT+hURG1DUtIZdpbRM6ZyWr//b39dk
-         bmKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWCab+8oYAJO1HTNkNMz75DFROAK0Z+fM7H+ZQkuUf98fSMUH8M/O8fs0m+ugKdpLiTUQD84ekuC8sXYo0H+Q==@vger.kernel.org, AJvYcCXk6QKcIdRgjzSCoEpJf9BHmjwRCX/8NTbsirHe3lb8ESxwlRCIvniPkumS+6828n6mgybNB8p0DEo=@vger.kernel.org, AJvYcCXw5biE2bMra6xPXJS/jNNvFMg6h5YIpYCN1YpQrDw57c7J78De1ISEoh10pqcHVi9EUek+dc4LDxFZZM6I@vger.kernel.org
-X-Gm-Message-State: AOJu0YwI5UAkIPpHJbMjgTp/7iaIvpR+/7+4cR5Mdvf1TmFjZxL0noGt
-	DBU981/0xHcnXoOt/MMPXoJk3RxIHAEvJJ382gxsKKI/aktpE3z4jg8lsAVLYGU=
-X-Gm-Gg: ASbGncv60gLM1DJt9gf75pz44vN8vFTijnTC2N3I8bpLKxjOM1o+21+GmFAkOz9DQ0Q
-	za8+KiQ3s7mOKKDWuTiu3k//jJNmj+3E1Q7u8LsJ3b9PCb1bReIzvIt0twT1SMSH/jAt+QICur5
-	rNrXB+ONYBE9waHz+b8sp+ntCjhAqsSpDTEJlw/A83ZN+GjIs5HEKx6hzlo6ZKAgF6wD4L8oqNt
-	I+v3hFG8F2GkQIVdRfobBjhGEB5Lc6WBfmLgc94OLEjfBDd5t3RKk/BgXobycDFFfq4eVWJwlYR
-	S/EVfuqaAPjbfKVGhS9UpC1gj805U7CLpBAIIWLAisLVdTlOnf1Xi8Aq+xC/XzxWDNU0He4/kI9
-	Vs5YF0LQUCljTK9fJrHTqCg==
-X-Google-Smtp-Source: AGHT+IFQ60TWyhSc7sQ4amWJetvm+Kt1H/in4TeBBB4ppBeiWIkLKv3Ija3+K6/Fnd8UfI6vwl9dPQ==
-X-Received: by 2002:a05:620a:2596:b0:7c5:e226:9da2 with SMTP id af79cd13be357-7cd2888e3b3mr365807085a.47.1747203456454;
-        Tue, 13 May 2025 23:17:36 -0700 (PDT)
-Received: from localhost.localdomain (ip170.ip-51-81-44.us. [51.81.44.170])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7cd00f9b24esm807118985a.62.2025.05.13.23.17.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 May 2025 23:17:36 -0700 (PDT)
-From: Chen Linxuan <chenlinxuan@uniontech.com>
-To: Miklos Szeredi <miklos@szeredi.hu>,
-	Jonathan Corbet <corbet@lwn.net>
-Cc: zhanjun@uniontech.com,
-	niecheng1@uniontech.com,
-	wentao@uniontech.com,
-	Chen Linxuan <chenlinxuan@uniontech.com>,
-	Amir Goldstein <amir73il@gmail.com>,
-	linux-fsdevel@vger.kernel.org,
+	s=arc-20240116; t=1747203639; c=relaxed/simple;
+	bh=88nezXdYGNGQB9lTU7R3VQCwT/9EyWgD9gKupfZ20zQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=sieCjDsyj8mdkSFEo8wJXJ+nIB3mfKKWpBbrPL+rPz4nm0CEZ3t+T/WzEBUc/ltHsI2HQYs4umRkLFE6lsS6P1QTCCtDBfhEnjqNVIiFKwZc3eybmJOg8NEuithQi9hLqwwQFkHmmTvAKOeNVEifnmMv4SpjmX517e/HPvN9O/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=L4L20iy8; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1747203637; x=1778739637;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=88nezXdYGNGQB9lTU7R3VQCwT/9EyWgD9gKupfZ20zQ=;
+  b=L4L20iy8E4iNEpDFazKjs6oc1qMeDCmaoAWPSYfaAmL/nVr5a2/5aR82
+   AxbhL82Jji9xwDtrpQ6NmrfS/aTXfGIr3YfuqS0QP96FYpsrHEKuYzKFo
+   Z/pvlMlJRgG7LnfV8TwgSK0c46Q/XErfwBUNmkNJxOG0dl0MND42/5qw/
+   y9JHRzAXB8zkGF5imNcm3edzoeVgEesZoPcxxR/oppVmaQBQjZwmhkYYh
+   JREAE4AwNbKprVNPhBOdvRZrBpDQdcpKPqwyA+l7kPt6Y2/lBBcbWC0S6
+   InpoeysPkTaOCPbpqLyh7b+OwKMtNrqXBHfrma83y90fsytMrMBpGwAZp
+   Q==;
+X-CSE-ConnectionGUID: IB64I9kIRpistIyTn6yW7g==
+X-CSE-MsgGUID: 9zIV6tnLR0OqE6rIQFEmXw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11432"; a="48192356"
+X-IronPort-AV: E=Sophos;i="6.15,287,1739865600"; 
+   d="scan'208";a="48192356"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 May 2025 23:20:37 -0700
+X-CSE-ConnectionGUID: vc8AOPCRRiuqJC3SOXoJTA==
+X-CSE-MsgGUID: hQ+sP/jIS2OPowGLfyDujQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,287,1739865600"; 
+   d="scan'208";a="138866960"
+Received: from shsensorbuild.sh.intel.com ([10.239.133.18])
+  by orviesa008.jf.intel.com with ESMTP; 13 May 2025 23:20:36 -0700
+From: Even Xu <even.xu@intel.com>
+To: jikos@kernel.org,
+	bentiss@kernel.org
+Cc: srinivas.pandruvada@linux.intel.com,
+	linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
 	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [RFC PATCH] doc: fuse: Add max_background and congestion_threshold
-Date: Wed, 14 May 2025 14:17:04 +0800
-Message-ID: <20250514061703.483505-2-chenlinxuan@uniontech.com>
-X-Mailer: git-send-email 2.43.0
+	Even Xu <even.xu@intel.com>
+Subject: [PATCH v1 0/7] Add two new features for QuickI2C
+Date: Wed, 14 May 2025 14:19:37 +0800
+Message-Id: <20250514061944.125857-1-even.xu@intel.com>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,44 +76,35 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-As I preparing patches adding selftests for fusectl,
-I notice that documentation of max_background and congestion_threshold
-is missing.
+In order to improve THC compatibility with lagacy HIDI2C touch device,
+on Panther lake (PTL) platform, THC hardware introduces two new features
+for I2C subsystem:
+- Input max input size control
+- Input interrupt delay
 
-This patch add some descriptions about these two files.
+This patch set adds APIs for above two features' setting and enabling
+in THC hardware layer driver, and enable them in QuickI2C driver.
 
-Cc: Amir Goldstein <amir73il@gmail.com>
-Signed-off-by: Chen Linxuan <chenlinxuan@uniontech.com>
----
- Documentation/filesystems/fuse.rst | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+Even Xu (7):
+  HID: Intel-thc-hid: Intel-thc: Add thc_dma_content into kernel doc
+  HID: Intel-thc-hid: Intel-thc: Refine code comments
+  HID: Intel-thc-hid: Intel-thc: Introduce max input size control
+  HID: Intel-thc-hid: Intel-thc: Introduce interrupt delay control
+  HID: Intel-thc-hid: Intel-quicki2c: Refine code comments
+  HID: Intel-thc-hid: Intel-quicki2c: Add driver data support
+  HID: Intel-thc-hid: Intel-quicki2c: Add two new features to PTL
 
-diff --git a/Documentation/filesystems/fuse.rst b/Documentation/filesystems/fuse.rst
-index 1e31e87aee68c..c589316c8bb35 100644
---- a/Documentation/filesystems/fuse.rst
-+++ b/Documentation/filesystems/fuse.rst
-@@ -129,6 +129,20 @@ For each connection the following files exist within this directory:
- 	  connection.  This means that all waiting requests will be aborted an
- 	  error returned for all aborted and new requests.
- 
-+        max_background
-+          The maximum number of background requests that can be outstanding
-+          at a time. When the number of background requests reaches this limit,
-+          further requests will be blocked until some are completed, potentially
-+          causing I/O operations to stall.
-+
-+        congestion_threshold
-+          The threshold of background requests at which the kernel considers
-+          the filesystem to be congested. When the number of background requests
-+          exceeds this value, the kernel will skip asynchronous readahead
-+          operations, reducing read-ahead optimizations but preserving essential
-+          I/O, as well as suspending non-synchronous writeback operations
-+          (WB_SYNC_NONE), delaying page cache flushing to the filesystem.
-+
- Only the owner of the mount may read or write these files.
- 
- Interrupting filesystem operations
+ Documentation/hid/intel-thc-hid.rst           |  27 +++
+ .../intel-quicki2c/pci-quicki2c.c             | 204 +++++++++++-------
+ .../intel-quicki2c/quicki2c-dev.h             |  55 +++--
+ .../intel-thc-hid/intel-thc/intel-thc-dev.c   | 140 ++++++++++++
+ .../intel-thc-hid/intel-thc/intel-thc-dev.h   |  29 ++-
+ .../intel-thc-hid/intel-thc/intel-thc-dma.c   |  40 ++++
+ .../intel-thc-hid/intel-thc/intel-thc-dma.h   |  38 ++--
+ .../intel-thc-hid/intel-thc/intel-thc-hw.h    |   5 +
+ 8 files changed, 417 insertions(+), 121 deletions(-)
+
 -- 
-2.43.0
+2.40.1
 
 
