@@ -1,138 +1,164 @@
-Return-Path: <linux-kernel+bounces-647664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-647700-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D47ACAB6B6B
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 14:30:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AF17AB6BE7
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 14:57:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E15EA1891A4B
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 12:30:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60B133B4DA2
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 12:56:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26156278162;
-	Wed, 14 May 2025 12:30:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B50B27A45A;
+	Wed, 14 May 2025 12:56:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g07a3AcL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="PBG6VKrN"
+Received: from mslow3.mail.gandi.net (mslow3.mail.gandi.net [217.70.178.249])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E9694204E;
-	Wed, 14 May 2025 12:30:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C542327934B;
+	Wed, 14 May 2025 12:56:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.178.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747225816; cv=none; b=gUNbOYawsBYFi9uFYJJLmNw0rdKDIJexe3KdFgxe+5uvIsVOt+MT3QPDS65/1CYQCAg/YTSQET1y2UNlqN3zo4DCcS8YXxk0ciabCJ4Df3ufTm5vF6pJd57Hdq41DsnEo3kqHbXaxPDF/lQOuX/3LkfEVfZVVJJsSMBOrwvF2xw=
+	t=1747227407; cv=none; b=her2OU65OIuQ4Ofp9yynEfKRztunrRH1YWvoqT6TizPjHkYf3TD8JPsF2Prktsb5R3pvbcLrznHL5UX3UIlOyRjVnpTNIN+CxG/fGFaIgaZUJhKXQEQmRYx0WtO0c7F9u7qLyzdezjEc1S7/d9Zd0ODzwwgFuDmRiM+WpgCmSf4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747225816; c=relaxed/simple;
-	bh=N0xJs94j/KJlo1F/0VWrO0/MuprYI/5rbc28hnkrVQw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=a3s7QnT3xBx2wHgmSX7c6sXO/ZDsZymFx1MJoKAWojxDhpnFff3xqmI9d+E5bz6I39d4NvCRqKEiiX4SSyEPcK2H5dVHUwS4c3v3QDU5BfM+eDsb2/97WDZb8hB9CxfZ7olB8UcGXyqaOnARJ4apfcXEKC1ZSMHlqgxv5AmELJE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g07a3AcL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B55CC4CEE9;
-	Wed, 14 May 2025 12:30:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747225814;
-	bh=N0xJs94j/KJlo1F/0VWrO0/MuprYI/5rbc28hnkrVQw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=g07a3AcLDIOnRiGSNzYyF/MpiN36vOgbo8aiRd0aJ6/bgEXcj5b6cv5rXSY6inhZj
-	 gOhQqzuLLF6DSXaX+bpwKHC2xSHDvXk5Af8cYr7sIABxOAC3wQiSMiY1ViHChGaIqa
-	 Bn4KXHSUgGFSnV2KvYh0CQTqMr9d7kSdPF5cGkqhJYDbCikt6ifsQm29mRq/bbi12N
-	 U64Z5MNewJku4Y9rw8pCJJA7f7r9Mu5L41gra3CDtqAOCFkXANJPKfMOiz9ximXYzr
-	 Vl73/Xks26mb7YsEmVrut2brS/CDu6mW17VGNXtN7Kx69Sp5H18CskVenhSb7WXRW3
-	 +UOwbdaF6t+bQ==
-Message-ID: <11048853-ec27-4d51-9188-7e701d84a3a1@kernel.org>
-Date: Wed, 14 May 2025 14:30:09 +0200
+	s=arc-20240116; t=1747227407; c=relaxed/simple;
+	bh=NX/VvfyT3yx4Tep6l3birVN50K6v721rMzQfg9guXs4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Fus3hUWeloUmXqlVdypnPJkwpm7W8E83IJnqPdWWqySS0qo2TBuwqk/XBRHyK7P2NrRkHkP1WOTKxD6KXPlRlcCpRWHEEbTflPAJbGCRP+sFdg/+eIVUjjBVu53ZcPUL13XL/c6sf4hOjc5AfZuKU3QpaIAoLAz9XDjeobsVJr8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=PBG6VKrN; arc=none smtp.client-ip=217.70.178.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	by mslow3.mail.gandi.net (Postfix) with ESMTP id 3DB4258309E;
+	Wed, 14 May 2025 12:32:08 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 1252E42D43;
+	Wed, 14 May 2025 12:32:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1747225927;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pjPEOeClLl5IrMnfRqcS70xURLRIMkwA33VVWgiUGOA=;
+	b=PBG6VKrNjxcPNI7qF1o9rk8f9Jb7Pgchx2d3X8+YOdJ8NGPD9LDHlb4gUWb1JXsjJ4al1q
+	CiB8fba/7GQQMUJZeemX9GiPgIY6sidHf9duyfp8k5lDb84Q4WwiX0jR8BURvESxpWubcm
+	PCVKKe8eDpgt38irBLTe9aD45TUcuA1mqIJ3ISEggndXjCiGwdBOFQNKNZP8ZiVKxo5IRr
+	5Ni5EACRi3BpR8pVZrZzxNbs1vVxHqbrWvLzrQD38Mmf6KS0NY6CX2/pRIz1cbEhGGBn2H
+	xSAQ7IuzxMEZnQaDYBJhQGZ6twbAbtt0dZe0Zb3cpteTxLr1ZM0/r6SVRgHEdg==
+From: Romain Gantois <romain.gantois@bootlin.com>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Heiner Kallweit <hkallweit1@gmail.com>,
+ Russell King <linux@armlinux.org.uk>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Maxime Chevallier <maxime.chevallier@bootlin.com>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject:
+ Re: [PATCH net-next 3/3] net: phy: dp83869: Support 1000Base-X SFP modules
+Date: Wed, 14 May 2025 14:32:00 +0200
+Message-ID: <10709391.nUPlyArG6x@fw-rgant>
+In-Reply-To: <99c9d8f8-1557-4f90-8762-b04a09cb497c@lunn.ch>
+References:
+ <20250514-dp83869-1000basex-v1-0-1bdb3c9c3d63@bootlin.com>
+ <20250514-dp83869-1000basex-v1-3-1bdb3c9c3d63@bootlin.com>
+ <99c9d8f8-1557-4f90-8762-b04a09cb497c@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/7] Introduce PRU UART driver
-To: Judith Mendez <jm@ti.com>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Nishanth Menon <nm@ti.com>,
- Santosh Shilimkar <ssantosh@kernel.org>,
- Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>,
- Bin Liu <b-liu@ti.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Andrew Davis <afd@ti.com>, linux-kernel@vger.kernel.org,
- linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-References: <20250513215934.933807-1-jm@ti.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250513215934.933807-1-jm@ti.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; boundary="nextPart2360622.iZASKD2KPV";
+ micalg="pgp-sha256"; protocol="application/pgp-signature"
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeftdejtddtucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkfgjfhggtgesghdtreertddtjeenucfhrhhomheptfhomhgrihhnucfirghnthhoihhsuceorhhomhgrihhnrdhgrghnthhoihhssegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeetveeileegkeetvefgtdegffdviefgvdevkefhgfetieffvddvkedujeefvdfgtdenucffohhmrghinhepkhgvrhhnvghlrdhorhhgpdgsohhothhlihhnrdgtohhmnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopehffidqrhhgrghnthdrlhhotggrlhhnvghtpdhmrghilhhfrhhomheprhhomhgrihhnrdhgrghnthhoihhssegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeduuddprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhopehhkhgrlhhlfigvihhtudesghhmrghilhdrtghomhdprhgtphhtthhopehlihhnuhigsegrrhhmlhhinhhugidrohhrghdruhhkpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtp
+ hhtthhopegvughumhgriigvthesghhoohhglhgvrdgtohhmpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehprggsvghnihesrhgvughhrghtrdgtohhmpdhrtghpthhtohepmhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomh
+X-GND-Sasl: romain.gantois@bootlin.com
 
-On 13/05/2025 23:59, Judith Mendez wrote:
-> The PRU_ICSSG subsystems in am64x SoC, the PRU subsystem in am62 SoC, and
-> PRU_ICSS subsystem in am335x SoC include a UART sub-module. This patch
-> series introduces the driver and the corresponding binding documentation
-> for this UART sub-module.
-> 
-> The DTS patches for adding PRU UART nodes and enabling PRU UART is added
-> in this v1 version, but marked as DONOTMERGE since the patches only add
-> context to this series.
-> 
-> This driver version has been tested on the following boards: am64x SK and
-> am62x SK.
-> 
-> The RFC version of this driver has been previously tested on am335x SK as
-> well. DTS patches for enabling PRU UART for am335x SK will be sent as a
-> separate series once this series is merged.
-> 
-> Changes since RFC:
-So this is v2 or v3. If this is confusing, just use b4 which does it for
-you.
+--nextPart2360622.iZASKD2KPV
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"; protected-headers="v1"
+From: Romain Gantois <romain.gantois@bootlin.com>
+To: Andrew Lunn <andrew@lunn.ch>
+Date: Wed, 14 May 2025 14:32:00 +0200
+Message-ID: <10709391.nUPlyArG6x@fw-rgant>
+In-Reply-To: <99c9d8f8-1557-4f90-8762-b04a09cb497c@lunn.ch>
+MIME-Version: 1.0
 
-Otherwise how are we supposed to compare it with b4 diff?
+On Wednesday, 14 May 2025 14:22:48 CEST Andrew Lunn wrote:
+> > +static int dp83869_port_configure_serdes(struct phy_port *port, bool
+> > enable, +					 phy_interface_t interface)
+> > +{
+> > +	struct phy_device *phydev = port_phydev(port);
+> > +	struct dp83869_private *dp83869;
+> > +	int ret;
+> > +
+> > +	if (!enable)
+> > +		return 0;
+> > +
+> > +	dp83869 = phydev->priv;
+> > +
+> > +	switch (interface) {
+> > +	case PHY_INTERFACE_MODE_1000BASEX:
+> > +		dp83869->mode = DP83869_RGMII_1000_BASE;
+> > +		break;
+> > +	default:
+> > +		phydev_err(phydev, "Incompatible SFP module inserted\n");
+> > +		return -EINVAL;
+> > +	}
+> 
+> There is also DP83869_RGMII_SGMII_BRIDGE. Can this be used with the
+> SERDES? Copper SFPs often want SGMII.
 
-Best regards,
-Krzysztof
+It can definitely be used to support non-DAC copper modules. In fact, I've 
+implemented support for these modules locally, but I'm planning to upstream 
+this part of the SFP support later, as there is some additional trickiness to 
+solve beforehand.
+
+To quickly summarize the issue, non-DAC copper module support requires reading 
+autonegotiation results from the downstream PHY and relaying them back to the 
+MAC. This requires some kind of stacked PHY support in the kernel, which has 
+been in discussion for a while now:
+
+https://lore.kernel.org/all/20241119115136.74297db7@fedora.home/
+
+So as things currently stand, SGMII SFP support in this driver is blocked 
+until some kind of generic stacked PHY support is implemented in the kernel.
+
+Thanks,
+
+-- 
+Romain Gantois, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--nextPart2360622.iZASKD2KPV
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEYFZBShRwOvLlRRy+3R9U/FLj284FAmgkjUAACgkQ3R9U/FLj
+284zdhAAk0GTv70YpkAUSlaZox0jB91q0KP0Xtb2qb5CEH0UC3M4Uxehx2No5VUT
++e/SjXEa2FDhcjkewAdJJLVKwhcwKlAIHSGwgVgSXAQqNa+NwMmLytuGbr0qb67k
+p7+GG8+wwtKwJdQZP1wrytiS4oDaNO8fsI3xxemGN2GyvOVhJCYmzoh64mWsRy5k
+NtoWFvyUa2pGSgstJmrteHhe7RHwWx88FvEJoVyBEU8ju9IgXviAGC7KmFzIAKwO
+o6Vyq5GLZ04/KeDMnGpCF/DfNIRNFjCwe0RvXXyEyLDg3YVvf4xJmYnv6NcLeyQ2
+YZp822nkowXBIjS+X9XWI5Zv+n7ZGDLdH4vmZZ5T1NzdvKCtJr6QW1DM6KNeaQfi
+MRtBvqb+P0V4BUJxv6Cbsh53ZRWk75da7Vhd4uRaxR7B1YSiH45z792mbpZH/Cu0
+xSPHMT7kPlwYVCo1yM6B+4pBHBKx8x4KnvHckPiq1CNoV7tj9ZC8H/xOq0C9fNtY
+W8l3a9tw3Ad0yvuMregIXJT+xLPg4TkZ8XMbyrdPXt0S/o1be9zpMc+CLZtHc+rr
+KyLfoKV+SBz3nlgqBQ0anKmfQ10DCZtm1PuZsiMmzXdbjEiXuX/Y5e4RYq72w6NE
+OjH5wvb+dieD2SGjo0gCA2j7L+SluDcYll16smY9HtWDmQW8IA4=
+=QjE0
+-----END PGP SIGNATURE-----
+
+--nextPart2360622.iZASKD2KPV--
+
+
+
 
