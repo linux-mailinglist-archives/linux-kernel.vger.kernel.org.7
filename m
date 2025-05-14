@@ -1,202 +1,471 @@
-Return-Path: <linux-kernel+bounces-647704-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-647706-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 453F8AB6BFE
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 15:01:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B7ACAB6C03
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 15:02:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 048381B67CB4
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 13:01:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E2DD188F1F1
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 13:02:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38D3A278772;
-	Wed, 14 May 2025 13:00:55 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 600842798F0;
+	Wed, 14 May 2025 13:02:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="Y0fl0BTa"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD22E226161;
-	Wed, 14 May 2025 13:00:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747227654; cv=none; b=Duboz/Zv6qbr2nlX2manPHAHFkKwv7Jyy9vRQ0yUUKlAWDSeM0xjzyYkGVKbYpV0aaPD4ihcbLTu6dm1Ra44kEP0Gcf4QbTCsT8uU2KqaF66GOVLPCws+fBW+B3ZrHKCWZP74LDUaqmCfF5AiIaT3BTMyzgv7ihN0qZrEoqQ58A=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747227654; c=relaxed/simple;
-	bh=CEiFtx7FE/2HC35P4zMuC7HYmQigEV5gQ/191dTVZpM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qDlA42hhp6RYoBKhP1cXqJ0XBdAW1NkYXT7Cw/mUdM8nTcsLFuaN+aM0xy/K0Je7O6nSdcRoswxYYSHU6pEgip4zAGl2hsjw4JSbmYkjyWewx7kFE5yrgemBaj5Jli8bgmrfMF0Dex3dwVOivYLtS8DbRoGcPo7EldEJEL5aHjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DF36C4CEE9;
-	Wed, 14 May 2025 13:00:53 +0000 (UTC)
-Date: Wed, 14 May 2025 09:00:50 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH] tracing: ring_buffer: Rewind persistent ring buffer
- when reboot
-Message-ID: <20250514090050.52db97ed@batman.local.home>
-In-Reply-To: <20250514150059.6edf09bd72862ca175b64c98@kernel.org>
-References: <174709742769.1964496.18203163435305117893.stgit@mhiramat.tok.corp.google.com>
-	<20250513203237.0e7ff662@gandalf.local.home>
-	<20250514150059.6edf09bd72862ca175b64c98@kernel.org>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DE7C270EA4;
+	Wed, 14 May 2025 13:02:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747227733; cv=pass; b=UGXL5mKllN030NOQVVq45bqHl9JYxQlHU4TypbqsXqDKzJN26zNW4dZDcTd1kh9BSmsTqo5jHwGRMa9AYZLwUfKMlChXYmwexb5+v6fTmW4LVdzrdbz1gG78inXx3rFMPcThq1BROxssoOPfYAqiXDCg+IsnEdCZYSLSHiA6zzA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747227733; c=relaxed/simple;
+	bh=p9r6O331AJ4r4Wcqa6M7x5SSQV7iiv/+EHtBdWNXFF8=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=djwecCaTO6Njfr0bIAFFZmkF+iqpPihhIPriICIXcHEd1tw+MVvdB4ylsEH/2GKuum0Fe7hVkxitSqgo5/SED1k7PfbiVHs7GNuY5J/yD9kSVpQSPJL3dUG2hkYCQfA98R1hEEurxdHeOFkuog/yeTmO0y/g87S114WPkO7RKko=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=Y0fl0BTa; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1747227704; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=TNyqrLGMcOdUGQ2l7W5ki+10cDGAPpmnGXSQOsg4Xoi3o+mE8KMavTT7fraX57+dpc2q7wl2E4IbJmsXaVJ1UM02qqX8YntoJey/Wwjw4fTjWegBpqyQ0oBDIFKqbYcejxFWpqUmL1BBa13iCZ7JfTcOUcJnVf1XHf3Ijcl3vqI=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1747227704; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=twf4ykxCP/D3c5PBMNSbJYpzis0uKSfZP5jGEGEcUc0=; 
+	b=bE6iuzrWGphfsq56PwomvpZI8VhzPsDNOsNaf6edxz3G3iOyXPG03Zv7ZIGhm8v1osBqMHUDipx6E5BKkKdFJqPppaecJ2KD/cuzDRsKv2clMMMv9w/I26jQClHl/bhFjxStFk/1Ahe1/ZfnIjO4Ez9cuIjduZf+hHN2EzvyKD4=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1747227704;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=twf4ykxCP/D3c5PBMNSbJYpzis0uKSfZP5jGEGEcUc0=;
+	b=Y0fl0BTacjFnLO6o9pZ4iWd9ynzuN1+XIninAQMcj9YHUJjC3YAFfY3GqapbnDkI
+	iYssKiXDDBQ82+fMgvEfx+sh0QrcUT/vjOy9sA4O5OFJpf7maNfqsiQLdK0U5cHjKMW
+	A3bxluLR9Xg0IlL/I7gZGbL1JbMviDpiFRcoliYQ=
+Received: by mx.zohomail.com with SMTPS id 17472277023271020.7864144501841;
+	Wed, 14 May 2025 06:01:42 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.500.181.1.5\))
+Subject: Re: [PATCH v3] rust: regulator: add a bare minimum regulator
+ abstraction
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <D9VATLUHDGU8.53I80TGVRV0J@kernel.org>
+Date: Wed, 14 May 2025 10:01:26 -0300
+Cc: Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>,
+ Danilo Krummrich <dakr@kernel.org>,
+ Boris Brezillon <boris.brezillon@collabora.com>,
+ Sebastian Reichel <sebastian.reichel@collabora.com>,
+ Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>,
+ linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <B288AFB1-BA0A-4383-9823-EAC9E5DCA59F@collabora.com>
+References: <20250513-topics-tyr-regulator-v3-1-4cc2704dfec6@collabora.com>
+ <D9VATLUHDGU8.53I80TGVRV0J@kernel.org>
+To: Benno Lossin <lossin@kernel.org>
+X-Mailer: Apple Mail (2.3826.500.181.1.5)
+X-ZohoMailClient: External
 
-On Wed, 14 May 2025 15:00:59 +0900
-Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
-> > 
-> > Is that a problem? I'm thinking that the data in the buffer should not be
-> > used.  
-> 
-> Yes, even if we read (dump) the previous boot data, the data is
-> in the buffer. Thus the kernel rebooted before reusing the buffer
-> the dumped pages are recovered again. Unless comparing with the
-> previous dump data, we can not know this data is older boot or not.
-> Anyway, user can avoid this issue by clearing the trace buffer
-> explicitly.
+Hi Benno,
 
-What we could do, and I don't think this would be too hard, is once the
-buffer is empty and it's still LAST_BOOT buffer, we simply clear it in
-the kernel.
+> On 13 May 2025, at 17:01, Benno Lossin <lossin@kernel.org> wrote:
+>=20
+> On Tue May 13, 2025 at 5:44 PM CEST, Daniel Almeida wrote:
+>> diff --git a/rust/kernel/regulator.rs b/rust/kernel/regulator.rs
+>> new file mode 100644
+>> index =
+0000000000000000000000000000000000000000..7b07b64f61fdd4a84ffb38e9b0f90830=
+d5291ab9
+>> --- /dev/null
+>> +++ b/rust/kernel/regulator.rs
+>> @@ -0,0 +1,211 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +
+>> +//! Regulator abstractions, providing a standard kernel interface to =
+control
+>> +//! voltage and current regulators.
+>> +//!
+>> +//! The intention is to allow systems to dynamically control =
+regulator power
+>> +//! output in order to save power and prolong battery life. This =
+applies to both
+>> +//! voltage regulators (where voltage output is controllable) and =
+current sinks
+>> +//! (where current limit is controllable).
+>> +//!
+>> +//! C header: =
+[`include/linux/regulator/consumer.h`](srctree/include/linux/regulator/con=
+sumer.h)
+>> +//!
+>> +//! Regulators are modeled in Rust with two types: [`Regulator`] and
+>> +//! [`EnabledRegulator`].
+>=20
+> Would it make sense to store this in a generic variable acting as a =
+type
+> state instead of using two different names? So:
+>=20
+>    pub struct Regulator<State: RegulatorState> { /* ... */ }
+>=20
+>    pub trait RegulatorState: private::Sealed {}
+>=20
+>    pub struct Enabled;
+>    pub struct Disabled;
+>=20
+>    impl RegulatorState for Enabled {}
+>    impl RegulatorState for Disabled {}
+>=20
+> And then one would use `Regulator<Enabled>` and `Regulator<Disabled>`.
 
-That way after a reboot, a read of trace_pipe that reads the entire
-buffer will end up resetting the buffer, and I think that will solve
-this problem.
+This seems like just another way of doing the same thing.
+
+I have nothing against a typestate, it's an elegant solution really, but =
+so is
+the current one. I'd say let's keep what we have unless there is =
+something
+objectively better about a typestatethat makes it worthy to change this.
+
+>=20
+>> +//!
+>> +//! The transition between these types is done by calling
+>> +//! [`Regulator::enable()`] and [`EnabledRegulator::disable()`] =
+respectively.
+>> +//!
+>> +//! Use an enum or [`kernel::types::Either`] to gracefully =
+transition between
+>> +//! the two states at runtime if needed. Store [`EnabledRegulator`] =
+directly
+>> +//! otherwise.
+>> +//!
+>> +//! See [`Voltage and current regulator =
+API`]("https://docs.kernel.org/driver-api/regulator.html")
+>> +//! for more information.
+>> +
+>> +use crate::{
+>> +    bindings,
+>> +    device::Device,
+>> +    error::{from_err_ptr, to_result, Result},
+>> +    prelude::*,
+>> +};
+>> +
+>> +use core::{mem::ManuallyDrop, ptr::NonNull};
+>> +
+>> +/// A `struct regulator` abstraction.
+>> +///
+>> +/// # Examples
+>> +///
+>> +/// Enabling a regulator:
+>> +///
+>> +/// ```
+>> +/// # use kernel::prelude::*;
+>> +/// # use kernel::c_str;
+>> +/// # use kernel::device::Device;
+>> +/// # use kernel::regulator::{Microvolt, Regulator, =
+EnabledRegulator};
+>> +/// fn enable(dev: &Device, min_uv: Microvolt, max_uv: Microvolt) -> =
+Result {
+>> +///    // Obtain a reference to a (fictitious) regulator.
+>> +///    let regulator: Regulator =3D Regulator::get(dev, =
+c_str!("vcc"))?;
+>> +///
+>> +///    // The voltage can be set before enabling the regulator if =
+needed, e.g.:
+>> +///    regulator.set_voltage(min_uv, max_uv)?;
+>> +///
+>> +///    // The same applies for `get_voltage()`, i.e.:
+>> +///    let voltage: Microvolt =3D regulator.get_voltage()?;
+>> +///
+>> +///    // Enables the regulator, consuming the previous value.
+>> +///    //
+>> +///    // =46rom now on, the regulator is known to be enabled =
+because of the type
+>> +///    // `EnabledRegulator`.
+>> +///    let regulator: EnabledRegulator =3D regulator.enable()?;
+>> +///
+>> +///    // The voltage can also be set after enabling the regulator, =
+e.g.:
+>> +///    regulator.set_voltage(min_uv, max_uv)?;
+>> +///
+>> +///    // The same applies for `get_voltage()`, i.e.:
+>> +///    let voltage: Microvolt =3D regulator.get_voltage()?;
+>> +///
+>> +///    // Dropping an enabled regulator will disable it. The =
+refcount will be
+>> +///    // decremented.
+>=20
+> Where would you normally store an enabled regulator to keep it alive?
+> Maybe adjust the example to do just that?
+
+In your driver=E2=80=99s private data.
+
+>=20
+>> +///    drop(regulator);
+>> +///    // ...
+>> +///    # Ok::<(), Error>(())
+>> +/// }
+>> +///```
+>> +///
+>> +/// Disabling a regulator:
+>> +///
+>> +///```
+>> +/// # use kernel::prelude::*;
+>> +/// # use kernel::c_str;
+>> +/// # use kernel::device::Device;
+>> +/// # use kernel::regulator::{Microvolt, Regulator, =
+EnabledRegulator};
+>> +/// fn disable(dev: &Device, regulator: EnabledRegulator) -> Result =
+{
+>> +///    // We can also disable an enabled regulator without =
+reliquinshing our
+>> +///    // refcount:
+>> +///    let regulator: Regulator =3D regulator.disable()?;
+>> +///
+>> +///    // The refcount will be decremented when `regulator` is =
+dropped.
+>> +///    drop(regulator);
+>> +///    // ...
+>> +///    # Ok::<(), Error>(())
+>> +/// }
+>> +/// ```
+>> +///
+>> +/// # Invariants
+>> +///
+>> +/// - [`Regulator`] is a non-null wrapper over a pointer to a =
+`struct
+>> +///   regulator` obtained from =
+[`regulator_get()`](https://docs.kernel.org/driver-api/regulator.html#c.re=
+gulator_get).
+>=20
+> This should be "`inner` is a pointer obtained from
+> [`regulator_get()`](...)".
+>=20
+>> +/// - Each instance of [`Regulator`] is associated with a single =
+count of
+>> +///   =
+[`regulator_get()`](https://docs.kernel.org/driver-api/regulator.html#c.re=
+gulator_get).
+>=20
+> This is redundant, so we should remove it.
+
+Why is this redundant? It says that we are associated with a *single* =
+refcount.
+
+>=20
+>> +pub struct Regulator {
+>> +    inner: NonNull<bindings::regulator>,
+>> +}
+>> +
+>> +impl Regulator {
+>> +    /// Obtains a [`Regulator`] instance from the system.
+>> +    pub fn get(dev: &Device, name: &CStr) -> Result<Self> {
+>> +        // SAFETY: It is safe to call `regulator_get()`, on a device =
+pointer
+>> +        // received from the C code.
+>> +        let inner =3D from_err_ptr(unsafe { =
+bindings::regulator_get(dev.as_raw(), name.as_ptr()) })?;
+>> +
+>> +        // SAFETY: We can safely trust `inner` to be a pointer to a =
+valid
+>> +        // regulator if `ERR_PTR` was not returned.
+>> +        let inner =3D unsafe { NonNull::new_unchecked(inner) };
+>> +
+>> +        Ok(Self { inner })
+>> +    }
+>> +
+>> +    /// Enables the regulator.
+>> +    pub fn enable(self) -> Result<EnabledRegulator> {
+>> +        // SAFETY: Safe as per the type invariants of `Regulator`.
+>> +        let res =3D to_result(unsafe { =
+bindings::regulator_enable(self.inner.as_ptr()) });
+>> +        res.map(|()| EnabledRegulator { inner: self })
+>> +    }
+>> +
+>> +    /// Sets the voltage for the regulator.
+>> +    ///
+>> +    /// This can be used to ensure that the device powers up =
+cleanly.
+>> +    pub fn set_voltage(&self, min_uv: Microvolt, max_uv: Microvolt) =
+-> Result {
+>> +        // SAFETY: Safe as per the type invariants of `Regulator`.
+>> +        to_result(unsafe {
+>> +            bindings::regulator_set_voltage(self.inner.as_ptr(), =
+min_uv.0, max_uv.0)
+>> +        })
+>> +    }
+>> +
+>> +    /// Gets the current voltage of the regulator.
+>> +    pub fn get_voltage(&self) -> Result<Microvolt> {
+>> +        // SAFETY: Safe as per the type invariants of `Regulator`.
+>> +        let voltage =3D unsafe { =
+bindings::regulator_get_voltage(self.inner.as_ptr()) };
+>> +        if voltage < 0 {
+>> +            Err(Error::from_errno(voltage))
+>> +        } else {
+>> +            Ok(Microvolt(voltage))
+>> +        }
+>> +    }
+>> +}
+>> +
+>> +impl Drop for Regulator {
+>> +    fn drop(&mut self) {
+>> +        // SAFETY: By the type invariants, we know that `self` owns =
+a reference,
+>> +        // so it is safe to relinquish it now.
+>> +        unsafe { bindings::regulator_put(self.inner.as_ptr()) };
+>> +    }
+>> +}
+>> +
+>> +/// A [`Regulator`] that is known to be enabled.
+>> +///
+>> +/// # Invariants
+>> +///
+>> +/// - [`EnabledRegulator`] is a valid regulator that has been =
+enabled.
+>=20
+> This isn't fully clear what it's supposed to mean to me. Maybe mention
+> the `regulator_enable` function?
+>=20
+>> +/// - Each instance of [`EnabledRegulator`] is associated with a =
+single count
+>> +///   of =
+[`regulator_enable()`](https://docs.kernel.org/driver-api/regulator.html#c=
+.regulator_enable)
+>> +///   that was obtained from the [`Regulator`] instance once it was =
+enabled.
+>=20
+> Ah I see you mention it here, then what is the bullet point above =
+about?
+
+Again, the word _single_ is what is important here.
+
+>=20
+> Also, please refer to `inner` instead of [`EnabledRegulator`].
+>=20
+>> +pub struct EnabledRegulator {
+>> +    inner: Regulator,
+>> +}
+>> +
+>> +impl EnabledRegulator {
+>> +    fn as_ptr(&self) -> *mut bindings::regulator {
+>> +        self.inner.inner.as_ptr()
+>> +    }
+>> +
+>> +    /// Disables the regulator.
+>> +    pub fn disable(self) -> Result<Regulator> {
+>> +        // Keep the count on `regulator_get()`.
+>> +        let regulator =3D ManuallyDrop::new(self);
+>=20
+> Why don't we drop the refcount if the `regulator_disable` call fails?
+
+I am operating under the assumption that regulator_enable() and
+regulator_disable() do not touch the reference count. Note that we do =
+not
+acquire a new reference when we build EnabledRegulator in =
+Regulator::enable(),
+we merely move our instance of Regulator into EnabledRegulator.
+
+disable() takes EnabledRegulator by value in order to convert it to =
+Regulator.
+If we let the destructor run, that will decrement the refcount as it =
+calls
+inner.drop(), so that is why the ManuallyDrop is there in the first =
+place. =20
+
+Now if disable() fails, perhaps we should somehow return `self` to the =
+caller.
+That would let them retry the operation, even if it's unlikely to be of =
+any
+help, as Mark said. In this sense, I agree that there is a leak that I
+overlooked.
+
+On a second note, Benno, do you have a clean way to return both =
+kernel::Error
+and `self` here? I assume that introducing a separate error type just =
+for this
+function is overkill.
 
 
+>> +
+>> +        // SAFETY: Safe as per the type invariants of `Self`.
+>> +        let res =3D to_result(unsafe { =
+bindings::regulator_disable(regulator.as_ptr()) });
+>> +
+>> +        res.map(|()| Regulator {
+>> +            inner: regulator.inner.inner,
+>> +        })
+>> +    }
+>> +
+>> +    /// Sets the voltage for the regulator.
+>> +    pub fn set_voltage(&self, min_uv: Microvolt, max_uv: Microvolt) =
+-> Result {
+>> +        self.inner.set_voltage(min_uv, max_uv)
+>> +    }
+>> +
+>> +    /// Gets the current voltage of the regulator.
+>> +    pub fn get_voltage(&self) -> Result<Microvolt> {
+>> +        self.inner.get_voltage()
+>> +    }
+>> +}
+>> +
+>> +impl Drop for EnabledRegulator {
+>> +    fn drop(&mut self) {
+>> +        // SAFETY: By the type invariants, we know that `self` owns =
+a reference,
+>> +        // so it is safe to relinquish it now.
+>> +        unsafe { bindings::regulator_disable(self.as_ptr()) };
+>=20
+> Same here, what happens to the refcount?
 
-> > +
-> > +		/* Stop rewind if the page is invalid. */
-> > +		ret = rb_validate_buffer(head_page->page, cpu_buffer->cpu);
-> > +		if (ret < 0)
-> > +			break;
-> > +
-> > +		/* Recover the number of entries. */
-> > +		local_set(&head_page->entries, ret);
-> > +		if (ret)
-> > +			local_inc(&cpu_buffer->pages_touched);
-> > +		entries += ret;
-> > +		entry_bytes += rb_page_commit(head_page);  
-> 
-> If we validate the pages again later (because fixing head_page),
-> we can skip this part.
+It remains the same, we never acquired one when we enabled, so we are =
+relying
+on inner.drop() to decrement it.
 
-The validator takes a bit of time. I would rather not do another loop
-if we don't have to. If this is duplicate code, lets just make a static
-inline helper function that does it and use that in both places.
-
-> 
-> > +	}
-> > +
-> > +	/* The last rewind page must be skipped. */
-> > +	if (head_page != orig_head)
-> > +		rb_inc_page(&head_page);
-> > +
-> > +	if (head_page != orig_head) {  
-> 
-> Ah, I forgot this part (setup new reader_page)
-> 
-> > +		struct buffer_page *bpage = orig_head;
-> > +
-> > +		rb_dec_page(&bpage);
-> > +		/*
-> > +		 * Move the reader page between the orig_head and the page
-> > +		 * before it.
-> > +		 */  
-> -----
-> > +		cpu_buffer->reader_page->list.next = &orig_head->list;
-> > +		cpu_buffer->reader_page->list.prev = orig_head->list.prev;
-> > +		orig_head->list.prev = &cpu_buffer->reader_page->list;
-> > +
-> > +		bpage->list.next = &cpu_buffer->reader_page->list;  
-> -----
-> These seems the same as (because head_page->list.prev->next encodes
-> flags, but we don't read that pointer.);
-> 
-> 		list_insert(&orig_head->list, &cpu_buffer->reader_page->list);
-
-I thought about this, but because the pointers are used to encode
-flags, I try to avoid using the list_*() functions all together on
-these. Just to remind everyone that these are "special" lists.
-
-I prefer it open coded because that way I can see exactly what it is
-doing. Note, this is not just assigning pointers, it is also clearing
-flags in the process.
-
-We could add a comment that states something like:
-
-	/*
-	 * This is the same as:
-	 *   list_insert(&orig_head->list, &cpu_buffer->read_page->list);
-	 * but as it is also clearing flags, its open coded so that
-	 * there's no chance that list_insert() gets optimized where
-	 * it doesn't do the extra work that this is doing.
-	 */
-
-?
-
--- Steve
+>=20
+> ---
+> Cheers,
+> Benno
+>=20
+>> +    }
+>> +}
+>> +
+>> +/// A voltage in microvolts.
+>> +///
+>> +/// The explicit type is used to avoid confusion with other =
+multiples of the
+>> +/// volt, which can be desastrous.
+>> +#[repr(transparent)]
+>> +#[derive(Copy, Clone, PartialEq, Eq)]
+>> +pub struct Microvolt(pub i32);
+>>=20
+>> ---
+>> base-commit: edc5e6e019c99b529b3d1f2801d5cce9924ae79b
+>> change-id: 20250326-topics-tyr-regulator-e8b98f6860d7
+>>=20
+>> Best regards,
+>=20
+>=20
 
 
-> 
-> > +
-> > +		/* Make the head_page the new reader page */
-> > +		cpu_buffer->reader_page = head_page;
-> > +		bpage = head_page;
-> > +		rb_inc_page(&head_page);
-> > +		head_page->list.prev = bpage->list.prev;
-> > +		rb_dec_page(&bpage);
-> > +		bpage->list.next = &head_page->list;
-> > +		rb_set_list_to_head(&bpage->list);
-> > +
-> > +		cpu_buffer->head_page = head_page;
-> > +		meta->head_buffer = (unsigned long)head_page->page;
-> > +
-> > +		/* Reset all the indexes */
-> > +		bpage = cpu_buffer->reader_page;
-> > +		meta->buffers[0] = rb_meta_subbuf_idx(meta, bpage->page);
-> > +		bpage->id = 0;
-> > +
-> > +		for (i = 0, bpage = head_page; i < meta->nr_subbufs;
-> > +		     i++, rb_inc_page(&bpage)) {
-> > +			meta->buffers[i + 1] = rb_meta_subbuf_idx(meta, bpage->page);
-> > +			bpage->id = i + 1;
-> > +		}
-> > +		head_page = orig_head;
-> > +	}
-> > +
-> >  	/* Iterate until finding the commit page */
-> >  	for (i = 0; i < meta->nr_subbufs + 1; i++, rb_inc_page(&head_page)) {
-> >  
-> > @@ -5348,7 +5439,6 @@ rb_get_reader_page(struct ring_buffer_per_cpu *cpu_buffer)
-> >  	 */
-> >  	local_set(&cpu_buffer->reader_page->write, 0);
-> >  	local_set(&cpu_buffer->reader_page->entries, 0);
-> > -	local_set(&cpu_buffer->reader_page->page->commit, 0);
-> >  	cpu_buffer->reader_page->real_end = 0;
-> >  
-> >   spin:
-> > @@ -6642,7 +6732,7 @@ int ring_buffer_read_page(struct trace_buffer *buffer,
-> >  		cpu_buffer->read_bytes += rb_page_size(reader);
-> >  
-> >  		/* swap the pages */
-> > -		rb_init_page(bpage);
-> > +//		rb_init_page(bpage);
-> >  		bpage = reader->page;
-> >  		reader->page = data_page->data;
-> >  		local_set(&reader->write, 0);  
-> 
-> Thank you,
-> 
-> 
-> 
+=E2=80=94 Daniel
 
 
