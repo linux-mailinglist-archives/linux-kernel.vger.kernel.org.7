@@ -1,356 +1,202 @@
-Return-Path: <linux-kernel+bounces-647060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-647067-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 829BCAB6404
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 09:21:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6042FAB6410
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 09:23:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3855D1B606EF
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 07:21:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB9D0175ADC
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 07:23:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6E041FCFFC;
-	Wed, 14 May 2025 07:21:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70A3720C465;
+	Wed, 14 May 2025 07:22:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uHY3ujTT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="OJBazy+c"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBAD51FF7B0;
-	Wed, 14 May 2025 07:21:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DA711F9F73
+	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 07:22:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747207264; cv=none; b=P/jNjXqPMelEPf5j+7U/f3MvgB5gikM81NZOYvYUkpx80hPjKEFoyYzK3ZvwpmyZ8t83XNOT+2dY4lqxAme9rc98VlMEOqQSHXdqN5UK8V3KRLAGci3L9JO8pN9mk+kY1rTaMKEnHhQJl1UrdQnc+gQdRsEyJ7EQA02Nak+SSJs=
+	t=1747207330; cv=none; b=mvP33rIv61IyC9mPgbeUjCA/KUMueSTmylyMrmiu+S+87rfJOBdvEGUOJhaLeqfTTvTwjG5KmcMLfBlGpRmAVGAL4K4Aw3qQIuQrXE8cV5f4BRe08oQwXZ1R07wccHFHANFS4ySpcpapRZPdWhijn/MP2D2dC0LFnK/RVfEJtDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747207264; c=relaxed/simple;
-	bh=P8AX7jbxVoygV9YOfCd7NneW4qV1TixrkbkMfsHBAhM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZAH36WYgJBN6RatIdB4d/qB1oXzeyE6sAZL5hzAAtwXjtxux15YwF1G7prcMu5cSvnRVbCrEitVH32niiHiy0KJmFtFOT8dkQm5B/y/33RG7UYbO3NgJo0qgUEUhffqlslqlGGK3rCkNdCnAlX292UpPjeJ/dkZ2Gb3fZ+iOnqA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uHY3ujTT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5262DC4CEE9;
-	Wed, 14 May 2025 07:21:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747207263;
-	bh=P8AX7jbxVoygV9YOfCd7NneW4qV1TixrkbkMfsHBAhM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uHY3ujTTkXIy/18Z7KbzL4vIqpbusGR1VSr9UwuHKOzryKYe3VBbRVU80kS1fPVX9
-	 otlJpDtU46z2WdZWCAEMRlTkHG0RQHVTfMOt+pjbXwnS4mMkuBWroVgzHdxVbTIDBq
-	 8f5ZcYwh8QBTY76f3haFBYSll5USRHnGicZOFkH7jdhvB0JYdP1OSTyf2mvPvxzchx
-	 mT7oNUvZTyxXBBx7BAUTVLEA5TJOTo35KLlj8F/GTYVfXBLOBxjyP9wzDfRCvNNWz1
-	 SIOmi3Xdst6yZF40vIcAqtmzUInG/Od6gv61Q1xszbz3eGupl+OSX0Gmo+3CWRYFrj
-	 82hpq0Pq3DIOg==
-Date: Wed, 14 May 2025 09:20:58 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: linux-kernel@vger.kernel.org
-Cc: linux-tip-commits@vger.kernel.org, Ashish Kalra <ashish.kalra@amd.com>,
-	"Borislav Petkov (AMD)" <bp@alien8.de>,
-	Pankaj Gupta <pankaj.gupta@amd.com>,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	Srikanth Aithal <sraithal@amd.com>, stable@vger.kernel.org,
-	x86@kernel.org
-Subject: Re: [tip: x86/urgent] x86/sev: Do not touch VMSA pages during SNP
- guest memory kdump
-Message-ID: <aCREWka5uQndvTN_@gmail.com>
-References: <20250428214151.155464-1-Ashish.Kalra@amd.com>
- <174715966762.406.12942579862694214802.tip-bot2@tip-bot2>
+	s=arc-20240116; t=1747207330; c=relaxed/simple;
+	bh=xsIXzxcogPEj7WI1OQx1l9ITv7ODZeAyB0f4aMhmg0k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Q0D4ZltuL4+1nKI1d8V2IT4QMJB7J7K21m4KgM3Y4m+U60mEXJytSPD7J7PaEg/8plR/EO+uCaY/otjiBGexCnQ9q43OgOnNd7xNH8Mn4mkX37dpHcgxyLsXHjhY/GYs7NJf+qTLrgaKWNMw0O1Q+lTcnQlmgvt9cZAhFFRwJFQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=OJBazy+c; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-ad23db02350so712746866b.1
+        for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 00:22:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1747207327; x=1747812127; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tcbw5sLrHE1qbiw4ucHwavhVf9qACz67c1w54poiYio=;
+        b=OJBazy+c3+gEW5HW4kB/WltiOBKafN68yV1O4L8vwACBYd26ud99VGXZPIxIQcocKt
+         /Ex5DKanYGbYSrqz+G3NYcdm1SS94pkXfrj57y8WflSHslm5V3oiHYtkdKVx2ikuTNiI
+         Hwo7DhqTkVTS8i6VURaZWKuBGEW8kYfVqLa7UQ+BpqQXYnLzObqTWaOK5wRsRiaNtwIK
+         dqEf/7OjGLlgxQEyZW7GKkKnz3o91LsJg0aBylI3ijscxPW3GtmRUhEiPjroNO8au4It
+         MwxIP82yFosa4fGK3MAJ48iB6sx8oN492j29U3J64RHwqQSOMSAaH1NVyokLeM9/DWZk
+         uXqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747207327; x=1747812127;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tcbw5sLrHE1qbiw4ucHwavhVf9qACz67c1w54poiYio=;
+        b=tCMemn5DyrWdNWAQ8acer7RfI9wvuWYefn0JKFa1GaCuupn6fLk46xem7Yal7Z9O+o
+         387P4A6ggGLc4/GaUjh2DPXfREmRRRjw1AK0hX40K/CuN9wbEbZi2Rbir/w5HIy4qASk
+         yNDpRRlh74pkqn9P3AwMDrYjiYzV32/5jh3Fmw9h16XmQISD+BuvzNY+ltjmBJR355lw
+         hV7nTABzaLxenCSKBSU//qnSpEKXHsUjxq4PIjBu4PjPJ6WTgHCPxBiov48+cffEe5e/
+         YIUpt6hPKiF5VMoxrKeEbhtyw/LnOi31yx6XEK5vnBAjqfNulWyeknyJM2GagXn4Q/On
+         +NeQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUM5Bv+3AiG1+cysai0B7HLvRGryiBaE/5qlypLG2XgpIyhivquBDflGhJmm8AUGEDp5kE95ru3dsehguY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0+NKnh/YAYdch0/M8NNO6nejuEfLafPpsHB+U9qxjgZf/E4Ra
+	cqT159mDqXjHZTcuzYvUC+GdmCWslESjrjXBBk/ZzkNTmY2jwqCNri2Io0IPbTGp41/gIdDUKij
+	bFy6LxDY3TLMIr5nogvNdnyw5DsxkHKOU80eN+g==
+X-Gm-Gg: ASbGncsELoKxC988GVRYwsmZbuNOn635ZQQBqvI8Sybk9ov06jQk7aYrYdFeiQwfa+z
+	OQ98BPGKmezoEL6EXSl0Zcpf5CvAZq3xAastC3Z7K7LDwxsYu1Y/WNbfLpLmnBwqOZZqKkmT0n5
+	H/DBWSaqXpmGCg/a34tXGLhJjRSyN1fqk=
+X-Google-Smtp-Source: AGHT+IHqsMqx3BaDCWn45qMLaOEYvPW7XUqjv7SdJvzZ3hWp+AKyoxb4KrcmHMVJwGZocnpesHw3un4CM8pfyBJnatc=
+X-Received: by 2002:a17:907:7f94:b0:acb:b1be:4873 with SMTP id
+ a640c23a62f3a-ad4f70f6129mr261521866b.2.1747207326486; Wed, 14 May 2025
+ 00:22:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <174715966762.406.12942579862694214802.tip-bot2@tip-bot2>
+References: <20250429085048.1310409-1-guodong@riscstar.com>
+In-Reply-To: <20250429085048.1310409-1-guodong@riscstar.com>
+From: Guodong Xu <guodong@riscstar.com>
+Date: Wed, 14 May 2025 15:21:53 +0800
+X-Gm-Features: AX0GCFscwF3i-VATg9tXixD2-TDlOGgy-oyXk_jgaiYVherKFdQgiFo0yj7WIAw
+Message-ID: <CAH1PCMai91WjooaF8HzY=rJWpFT4Drnx7fcs4+NCsLT4pGEKUA@mail.gmail.com>
+Subject: Re: [PATCH v3 0/6] pwm: Update PWM_PXA driver for SpacemiT K1
+To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, conor+dt@kernel.org, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, alex@ghiti.fr, Yixun Lan <dlan@gentoo.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, drew@pdp7.com, Inochi Amaoto <inochiama@gmail.com>, 
+	geert+renesas@glider.be, heylenay@4d2.org, tglx@linutronix.de, 
+	hal.feng@starfivetech.com, unicorn_wang@outlook.com, duje.mihanovic@skole.hr, 
+	heikki.krogerus@linux.intel.com
+Cc: Alex Elder <elder@riscstar.com>, linux-pwm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi, All
 
-* tip-bot2 for Ashish Kalra <tip-bot2@linutronix.de> wrote:
+On Tue, Apr 29, 2025 at 4:51=E2=80=AFPM Guodong Xu <guodong@riscstar.com> w=
+rote:
+>
+> This patchset adds support for the SpacemiT K1 SoC in the PWM_PXA driver
+> and updates related device tree bindings. The changes enable PWM
+> functionality on the K1 platform through driver enhancements,
+> configuration updates, and device tree additions.
+>
 
-> The following commit has been merged into the x86/urgent branch of tip:
-> 
-> Commit-ID:     d2062cc1b1c367d5d019f595ef860159e1301351
-> Gitweb:        https://git.kernel.org/tip/d2062cc1b1c367d5d019f595ef860159e1301351
-> Author:        Ashish Kalra <ashish.kalra@amd.com>
-> AuthorDate:    Mon, 28 Apr 2025 21:41:51 
-> Committer:     Borislav Petkov (AMD) <bp@alien8.de>
-> CommitterDate: Tue, 13 May 2025 19:40:44 +02:00
-> 
-> x86/sev: Do not touch VMSA pages during SNP guest memory kdump
-> 
-> When kdump is running makedumpfile to generate vmcore and dump SNP guest
-> memory it touches the VMSA page of the vCPU executing kdump.
-> 
-> It then results in unrecoverable #NPF/RMP faults as the VMSA page is
-> marked busy/in-use when the vCPU is running and subsequently a causes
-> guest softlockup/hang.
+Gentle ping, any comments or concerns on this patchset?
+Any feedback would be greatly appreciated.
 
-s/subsequently a causes
- /subsequently causes
+Thanks in advance!
+Best regards,
+Guodong
 
-> Additionally, other APs may be halted in guest mode and their VMSA pages
-> are marked busy and touching these VMSA pages during guest memory dump
-> will also cause #NPF.
-> 
-> Issue AP_DESTROY GHCB calls on other APs to ensure they are kicked out
-> of guest mode and then clear the VMSA bit on their VMSA pages.
-> 
-> If the vCPU running kdump is an AP, mark it's VMSA page as offline to
-> ensure that makedumpfile excludes that page while dumping guest memory.
-
-s/mark it's VMSA page
- /mark its VMSA page
-
-> 
-> Fixes: 3074152e56c9 ("x86/sev: Convert shared memory back to private on kexec")
-> Signed-off-by: Ashish Kalra <ashish.kalra@amd.com>
-> Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-> Reviewed-by: Pankaj Gupta <pankaj.gupta@amd.com>
-> Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
-> Tested-by: Srikanth Aithal <sraithal@amd.com>
-> Cc: stable@vger.kernel.org
-> Link: https://lore.kernel.org/20250428214151.155464-1-Ashish.Kalra@amd.com
-> ---
->  arch/x86/coco/sev/core.c | 244 ++++++++++++++++++++++++--------------
->  1 file changed, 158 insertions(+), 86 deletions(-)
-> 
-> diff --git a/arch/x86/coco/sev/core.c b/arch/x86/coco/sev/core.c
-> index b0c1a7a..41060ba 100644
-> --- a/arch/x86/coco/sev/core.c
-> +++ b/arch/x86/coco/sev/core.c
-> @@ -959,6 +959,102 @@ void snp_accept_memory(phys_addr_t start, phys_addr_t end)
->  	set_pages_state(vaddr, npages, SNP_PAGE_STATE_PRIVATE);
->  }
->  
-> +static int vmgexit_ap_control(u64 event, struct sev_es_save_area *vmsa, u32 apic_id)
-> +{
-> +	bool create = event != SVM_VMGEXIT_AP_DESTROY;
-> +	struct ghcb_state state;
-> +	unsigned long flags;
-> +	struct ghcb *ghcb;
-> +	int ret = 0;
-> +
-> +	local_irq_save(flags);
-> +
-> +	ghcb = __sev_get_ghcb(&state);
-> +
-> +	vc_ghcb_invalidate(ghcb);
-> +
-> +	if (create)
-> +		ghcb_set_rax(ghcb, vmsa->sev_features);
-> +
-> +	ghcb_set_sw_exit_code(ghcb, SVM_VMGEXIT_AP_CREATION);
-> +	ghcb_set_sw_exit_info_1(ghcb,
-> +				((u64)apic_id << 32)	|
-> +				((u64)snp_vmpl << 16)	|
-> +				event);
-> +	ghcb_set_sw_exit_info_2(ghcb, __pa(vmsa));
-> +
-> +	sev_es_wr_ghcb_msr(__pa(ghcb));
-> +	VMGEXIT();
-> +
-> +	if (!ghcb_sw_exit_info_1_is_valid(ghcb) ||
-> +	    lower_32_bits(ghcb->save.sw_exit_info_1)) {
-> +		pr_err("SNP AP %s error\n", (create ? "CREATE" : "DESTROY"));
-> +		ret = -EINVAL;
-> +	}
-> +
-> +	__sev_put_ghcb(&state);
-> +
-> +	local_irq_restore(flags);
-> +
-> +	return ret;
-> +}
-> +
-> +static int snp_set_vmsa(void *va, void *caa, int apic_id, bool make_vmsa)
-> +{
-> +	int ret;
-> +
-> +	if (snp_vmpl) {
-> +		struct svsm_call call = {};
-> +		unsigned long flags;
-> +
-> +		local_irq_save(flags);
-> +
-> +		call.caa = this_cpu_read(svsm_caa);
-> +		call.rcx = __pa(va);
-> +
-> +		if (make_vmsa) {
-> +			/* Protocol 0, Call ID 2 */
-> +			call.rax = SVSM_CORE_CALL(SVSM_CORE_CREATE_VCPU);
-> +			call.rdx = __pa(caa);
-
-This can probably use svsm_caa_pa instead of __pa(), like 
-sev_es_init_vc_handling() does, see below.
-
-> +			call.r8  = apic_id;
-> +		} else {
-> +			/* Protocol 0, Call ID 3 */
-> +			call.rax = SVSM_CORE_CALL(SVSM_CORE_DELETE_VCPU);
-> +		}
-> +
-> +		ret = svsm_perform_call_protocol(&call);
-> +
-> +		local_irq_restore(flags);
-> +	} else {
-> +		/*
-> +		 * If the kernel runs at VMPL0, it can change the VMSA
-> +		 * bit for a page using the RMPADJUST instruction.
-> +		 * However, for the instruction to succeed it must
-> +		 * target the permissions of a lesser privileged (higher
-> +		 * numbered) VMPL level, so use VMPL1.
-> +		 */
-> +		u64 attrs = 1;
-> +
-> +		if (make_vmsa)
-> +			attrs |= RMPADJUST_VMSA_PAGE_BIT;
-> +
-> +		ret = rmpadjust((unsigned long)va, RMP_PG_SIZE_4K, attrs);
-> +	}
-> +
-> +	return ret;
-> +}
-> +
-> +static void snp_cleanup_vmsa(struct sev_es_save_area *vmsa, int apic_id)
-> +{
-> +	int err;
-> +
-> +	err = snp_set_vmsa(vmsa, NULL, apic_id, false);
-> +	if (err)
-> +		pr_err("clear VMSA page failed (%u), leaking page\n", err);
-> +	else
-> +		free_page((unsigned long)vmsa);
-
-So the argument types here are really messy:
-
- - We pass in a 'struct sev_es_save_area *vmsa' to snp_cleanup_vmsa(), 
-   which passes it down to snp_set_vmsa() as a void *, where it's 
-   force-type-cast to 'unsigned long' ...
-
- - While within snp_cleanup_vmsa() we also force-cast it to 'unsigned 
-   long' yet again.
-
-It would be much cleaner to do a single, obvious force-cast to a 
-virtual address type within snp_cleanup_vmsa():
-
-   unsigned long vmsa_va = (unsigned long)vmsa;
-
-And change snp_set_vmsa()'s parameter to 'unsigned long vmsa_va', to 
-get rid of a lot of forced/dangerous type conversions.
-
-Plus the handling of 'caa' pointers it really messy AFAICS:
-
- - alloc_runtime_data() calculates svsm_caa_pa physical addresses for 
-   each CPU:
-
-                per_cpu(svsm_caa_pa, cpu) = __pa(caa);
-
-   Which is used by sev_es_init_vc_handling():
-
-                call.rcx = this_cpu_read(svsm_caa_pa);
-
-   But snp_set_vmsa() calculates the physical address *again* instead 
-   of using svsm_caa_pa:
-
-                call.caa = this_cpu_read(svsm_caa);
-                ...
-                        call.rdx = __pa(caa);
-
-   Same for snp_set_vmsa():
-
-                call.caa = this_cpu_read(svsm_caa);
-                call.rcx = __pa(va);
-
-Why? Either this is something subtle and undocumented, or at minimum 
-this unnecessarily complicates the code and creates inconsistent 
-patterns of implementing the same functionality.
-
-> +}
-> +
->  static void set_pte_enc(pte_t *kpte, int level, void *va)
->  {
->  	struct pte_enc_desc d = {
-> @@ -1055,6 +1151,65 @@ void snp_kexec_begin(void)
->  		pr_warn("Failed to stop shared<->private conversions\n");
->  }
->  
-> +/*
-> + * Shutdown all APs except the one handling kexec/kdump and clearing
-> + * the VMSA tag on AP's VMSA pages as they are not being used as
-> + * VMSA page anymore.
-
-s/Shutdown
-  Shut down
-
-'shutdown' is a noun, the verb is 'to shut down'.
-
-> + */
-> +static void shutdown_all_aps(void)
-> +{
-> +	struct sev_es_save_area *vmsa;
-> +	int apic_id, this_cpu, cpu;
-> +
-> +	this_cpu = get_cpu();
-> +
-> +	/*
-> +	 * APs are already in HLT loop when enc_kexec_finish() callback
-> +	 * is invoked.
-> +	 */
-> +	for_each_present_cpu(cpu) {
-> +		vmsa = per_cpu(sev_vmsa, cpu);
-> +
-> +		/*
-> +		 * The BSP or offlined APs do not have guest allocated VMSA
-> +		 * and there is no need  to clear the VMSA tag for this page.
-
-Whitespace noise:
-
-   s/  / /
-
-> +		 */
-> +		if (!vmsa)
-> +			continue;
-> +
-> +		/*
-> +		 * Cannot clear the VMSA tag for the currently running vCPU.
-> +		 */
-> +		if (this_cpu == cpu) {
-> +			unsigned long pa;
-> +			struct page *p;
-> +
-> +			pa = __pa(vmsa);
-> +			/*
-> +			 * Mark the VMSA page of the running vCPU as offline
-> +			 * so that is excluded and not touched by makedumpfile
-> +			 * while generating vmcore during kdump.
-
-s/so that is excluded
- /so that it is excluded
-
-> +			 */
-> +			p = pfn_to_online_page(pa >> PAGE_SHIFT);
-> +			if (p)
-> +				__SetPageOffline(p);
-> +			continue;
-> +		}
-> +
-> +		apic_id = cpuid_to_apicid[cpu];
-> +
-> +		/*
-> +		 * Issue AP destroy to ensure AP gets kicked out of guest mode
-> +		 * to allow using RMPADJUST to remove the VMSA tag on it's
-> +		 * VMSA page.
-
-s/on it's VMSA page
- /on its VMSA page
-
-> +		 */
-> +		vmgexit_ap_control(SVM_VMGEXIT_AP_DESTROY, vmsa, apic_id);
-> +		snp_cleanup_vmsa(vmsa, apic_id);
-
-Boris, please don't rush these SEV patches without proper review first! ;-)
-
-Thanks,
-
-	Ingo
+> Functionality has been verified on the Banana Pi BPI-F3 board using PWM14=
+,
+> configured as a pwm-backlight. Per community feedback, the actual
+> pwm-backlight node is not included in this patchset but can be found in
+> patch 7 of the v1 series, with modification of pwms property to 4-cell
+> format to match updated binding (#pwm-cells =3D <3>) since v3.
+>
+> +               pwms =3D <&pwm14 0 2000 0>;
+>
+> This patchset is based on [spacemit/for-next]
+>   base: https://github.com/spacemit-com/linux for-next
+>
+> Plus the following dependencies:
+> 1. Clock controller driver, posted by Heylen Chu (v8), with most of it ha=
+s
+>    been accepted:
+> https://lore.kernel.org/all/20250416135406.16284-1-heylenay@4d2.org/
+> 2. Reset controller driver, posted by Alex Elder (v5):
+> https://lore.kernel.org/all/20250418145401.2603648-1-elder@riscstar.com/
+>
+> Major differences between v3 and v2:
+>  - Patch 1:
+>     - Added: Reviewed-by: Rob Herring (Arm) <robh@kernel.org> # v2.
+>     - When compatible string contains "spacemit,k1-pwm",
+>       #pwm-cells must be 3.
+>  - Patch 2:
+>     - Dropped the addition of a reset_control field to struct pxa_pwm_chi=
+p.
+>     - Using a local variable in pwm_probe() instead.
+>  - Patch 3:
+>     - In k1.dtsi, changed #pwm-cells =3D <1> to <3>.
+>
+> Major differences between v2 and v1:
+>  - Dropped the addition of spacemit,k1-pwm as a compatible string in the
+>    PWM_PXA driver; instead, it now falls back to marvell,pxa910-pwm.
+>  - Removed pinctrl settings for all PWM nodes (pwm0-pwm14); only the
+>    pwm14_1 configuration is included in this version.
+>  - Changed PWM_PXA from built-in to a loadable module (=3Dm) in the
+>    riscv defconfig.
+>
+> v2 consists of the following patches:
+> Patch 1: Add spacemit,k1-pwm compatible string (with fallback to
+>            marvell,pxa910-pwm) and support optional resets property.
+> Patch 2: Add reset controller support to the PWM_PXA driver.
+> Patch 3: Add device tree nodes for all 20 PWM instances on K1.
+> Patch 4: Add pinctrl settings for PWM14.
+> Patch 5: Add ARCH_SPACEMIT dependency to the PWM_PXA Kconfig entry.
+> Patch 6: Enable PWM and PWM_PXA in riscv defconfig for SpacemiT K1.
+>
+> v2:
+> https://lore.kernel.org/all/20250420070251.378950-1-guodong@riscstar.com/
+>
+> v1:
+> https://lore.kernel.org/all/20250411131423.3802611-1-guodong@riscstar.com=
+/
+>
+> Best regards,
+> Guodong Xu
+>
+> Guodong Xu (6):
+>   dt-bindings: pwm: marvell,pxa-pwm: Add SpacemiT K1 PWM support
+>   pwm: pxa: add optional reset control
+>   riscv: dts: spacemit: add PWM support for K1 SoC
+>   riscv: dts: spacemit: add pwm14_1 pinctrl setting
+>   pwm: Kconfig: add depends on ARCH_SPACEMIT to PWM_PXA
+>   riscv: defconfig: Enable PWM support for SpacemiT K1 SoC
+>
+>  .../bindings/pwm/marvell,pxa-pwm.yaml         |  35 +++-
+>  arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi  |   7 +
+>  arch/riscv/boot/dts/spacemit/k1.dtsi          | 180 ++++++++++++++++++
+>  arch/riscv/configs/defconfig                  |   2 +
+>  drivers/pwm/Kconfig                           |   2 +-
+>  drivers/pwm/pwm-pxa.c                         |   7 +
+>  6 files changed, 225 insertions(+), 8 deletions(-)
+>
+>
+> base-commit: cb9c3aeae509b36afbdf46942a7a0a0dfc856ce7
+> prerequisite-patch-id: a5d2fb43fd88525fa6c8ee767c31adfee87f1012
+> prerequisite-patch-id: 8a8d0eefd0b4423d87f3c093b451a0fa60622ec4
+> prerequisite-patch-id: 30f92f93e5b3577bde61424303f21c709a715ec5
+> prerequisite-patch-id: d774b8281b5c6a822445365ee94925e1ab6c7a93
+> prerequisite-patch-id: 54a4f5d065eb9f212fd99efec6e7e06abbb9bad8
+> prerequisite-patch-id: 93962be60d1b58a98d947edf51b4af9edf513785
+> prerequisite-patch-id: 5f53f8bf16fb067628092daebc4831293261aa01
+> --
+> 2.43.0
+>
 
