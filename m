@@ -1,88 +1,144 @@
-Return-Path: <linux-kernel+bounces-647784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-647785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAD9AAB6D4B
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 15:52:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DDEBAB6D52
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 15:52:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F301B17DAE6
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 13:52:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3D361BA057D
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 13:52:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A8A327A929;
-	Wed, 14 May 2025 13:52:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C616327BF76;
+	Wed, 14 May 2025 13:52:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uso0hJVy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VaW0tDVl"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E95D327A465;
-	Wed, 14 May 2025 13:51:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 529A027BF6C
+	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 13:52:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747230720; cv=none; b=BgXVx9iuLL4ibvziws4DD/Li4bxMKCcuGYyxRO3LCJyvAwCYiknRVvK89IOBqFxgGdckaXZ7OivkQecAA6Uom7rFThXMsvLWh4aKaz9BqATs5cepocCAbEaSMvpvfpbj15LP/Ph6mwBNnZfgvm+/K7sGHJmJRyZmuOPNl7fUU8c=
+	t=1747230725; cv=none; b=nqlGsfbysVD+tUgOvgmyTXgAZQvZQlxD1b/x081/6CqOpXDC8bfVv6x7s3q0HJSzQh5lZVxbSpWmycjhnerfZ9LdMwH86TD8HEZerVV8igbD03RQMm/J6zm7s/SI3GCYe4XFx3ngfvE5R3i3kysHKmTfqG4f53fgXp7jqDEm4D4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747230720; c=relaxed/simple;
-	bh=rs/y2qCidzn+BQiOCdfK57l84V553VHXEK31pa13fvk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eNHbq3i+rrgvZ9l0McZB40Z4FV+WjuaiRlaKeXIZ0i8YEdSor6bhuJjV3BrseRy2EIcaght8/I35ldgDjTGnhjjyOD4aqZ/H2A3VjvX/X67FI3ha4YVXLK94J6zEAs6UsHoNuSwl3diBS2T6XQX4kqeGYoqYe4qgvWE3PN2u5tI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uso0hJVy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F3AFC4CEE3;
-	Wed, 14 May 2025 13:51:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747230719;
-	bh=rs/y2qCidzn+BQiOCdfK57l84V553VHXEK31pa13fvk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uso0hJVyosXz3IX++YjTfZ7B1daXkj6DRKu30H3m/Vq19L3vG94KJosg36Su6Huyv
-	 7nYPzWVafd4EAaGhE7x1f4hpX0Kyd3C9XGU5zbHAyez37Aqi6p16e7PjfPxLzDN7OF
-	 j0F6SEUGETSEY/1Q/Z/aSLSimQtG8/C8GDEgTYEkeqSvdpghwlUwTa/sHVRbAsBNK+
-	 tlaz/jI8q5R609eMX4Fvw3CaA2jkM/amOAcc4VOzdCOIIN2tP8cu7N7qeq8BrOOjdb
-	 Mc3TfN5k5yfKK6BGyRDIeR1bPipuQMMCuTB+QRrq8gbmx0mUcnVmMBgCuAGA3R9QMl
-	 ShK6vyTxxPCWw==
-Date: Wed, 14 May 2025 15:51:54 +0200
-From: Carlos Maiolino <cem@kernel.org>
-To: hch <hch@lst.de>
-Cc: Hans Holmberg <Hans.Holmberg@wdc.com>, 
-	"linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>, Dave Chinner <david@fromorbit.com>, 
-	"Darrick J . Wong" <djwong@kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 0/2] Add mru cache for inode to zone allocation mapping
-Message-ID: <sa3yttklz3onf627vxqcjysgyoa455r3z7mgmbzmn3pgs7eawb@43tke54bauuz>
-References: <20250514104937.15380-1-hans.holmberg@wdc.com>
- <crz1SUPoyTcs_C4T6KXOlfQz6_QBJf7FI8uzRE_ItAzp5Z89le5VY4LXGEG4TkFkSxntO97kOVPJ8a-8ctZdlg==@protonmail.internalid>
- <20250514130014.GA20738@lst.de>
+	s=arc-20240116; t=1747230725; c=relaxed/simple;
+	bh=yAktS0IcTttm+5igPEE95jdF3S5CsNJvlNvqBV1C72Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=G+Z1Lp7TBbnJXhReV9Gf7OHvutLCb8mNNFBO6WjRHblvGXMreZZ9RsuA/1YyOlffAjzhczOyn0O+HgGnmZdv3Zud/o8bSlMGks0flSoAx9yLTRCCc+e3QRUECUTIUyLx2IWhGcyvp08IPanMII7N9eLqvciVNQjMptIrZyF06HY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VaW0tDVl; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-442f4a3a4d6so4631415e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 06:52:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1747230721; x=1747835521; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=pzH7d+l+7UapIjPhhBZ1DFv41GO7ARQVP3TgvTdkaus=;
+        b=VaW0tDVlP2msl6IIsUXEtC8x98BfNSvU3VSAzkOw60lY9q0y65L7QadJqVMUUS9PeL
+         tvXyRLgygl21IwiN2uBrRA1RWDG8YWRpnUQNV1CtFr5302IkFjUhzoFKqK+IIaVK3203
+         DueEoMRm0XK060JhlGh5XZbYAWlUqo5t2JXaDR7+CCUsBkaN61nQBr693Mw1pltkSXK1
+         K+rXvpyIMKlSUk7N1vz2Dc/jBl9jkqTDyxi/X+py/dT8AAamunczXDDuAEr0nac4ZA7K
+         GL+bsp4e4rmTsnZoLN4pnCdQa7m3eWkrJZvlxEJpq3UdjFeQ7xYw/r/miWsKCs2ckMkq
+         wEZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747230721; x=1747835521;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pzH7d+l+7UapIjPhhBZ1DFv41GO7ARQVP3TgvTdkaus=;
+        b=M2G7yMXuWUSJk2bebWwX2zTAewnqgXuZPNq7Ls2CvqrKhoVaMVaXRVI/qQcrTmBeD9
+         zLT7l9QLGUv+RJxzRmSJMDyqpektnrxfMr67xaFC8xtIhCPihIfe8Yo78n25+Tq7X6Ne
+         iBbAb7egqqbNekV+w+TBih9AfwtJ9++T6IRX0c+Yxh4D1EqWv/nhEaNAEJSQozsLWwre
+         pQ0Kmxvv04ZizW3fr8c9BnsGAJ9eUr3B5pdWUiGXEomX/3LG1r/sJE6RP77nSiDfUvcP
+         Y+1NBPuxXzNpjN2d+VVqwluN3hxxyyI83WYJMaqbCuJjT8Q/WeymplljNJuFMExHvAvm
+         9lyg==
+X-Forwarded-Encrypted: i=1; AJvYcCUGQo+vRXEhDx80eX3cG7TAW4JbuXL7EB7tI3qurS5zEm2P+L69Cr42ZgMWEGVrSzdQGnwS3d6bUleDIS4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywhy5D6TGfB6Qzo7jJ5mdwIn2CZlJxeyLyDCP18/IdJxZRg65JE
+	rNpy3OZYsgHKz9xwA5WVcvuKRMdL+vAL/Sf7m9hCCUduGkp7MW7tGSdEiEPtV0eME4GZcVvQhYm
+	zH5jlvQ==
+X-Gm-Gg: ASbGncsevFMGgRbOPFqmZow6VPZ9R9h1bofNNutMLbVv4h2bZjlo0q5FcFiGdd4Pr/B
+	jSW8e8/6lBsdyRldE1fRSuOO1m2LhcRTikybk+8cuGcYrzxAjPiqqlJ4hyDmEcxFMpb2g8DDhTr
+	dhmmFfyDs9p+Z/75TG6MDyjTbQZvPBLTGtpLGq6LCcExUHmOtJEc5BtvFA/Qz/zVTXtQPnjP8VH
+	8V1FS48ZbFr24t0NkokL46QCCVJOu1RAGL80MltelV2LkqrqtHbAWxlgKp4dbkQHCY+cJPr0k1I
+	EpGtbxd68fDZp8k3rft0Hm30MSDxRP3sM+6ZXbZKOJcYM6qFL881agHXuW9fh5r0X1/SIp7s8gb
+	gSWHsrMApz2cJ
+X-Google-Smtp-Source: AGHT+IFj9i5QTyKcpRv7+tejxsKkLmxlMRzgDUG9rJki22dIq9ouqJs9twLL4571+qHl8gfmhK4eAA==
+X-Received: by 2002:a05:600c:8707:b0:439:9434:4f3b with SMTP id 5b1f17b1804b1-442f1a42318mr38467255e9.8.1747230721455;
+        Wed, 14 May 2025 06:52:01 -0700 (PDT)
+Received: from [192.168.2.1] (146725694.box.freepro.com. [130.180.211.218])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-442f397b6fbsm31591395e9.39.2025.05.14.06.51.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 14 May 2025 06:52:00 -0700 (PDT)
+Message-ID: <b4c704d9-c94e-4e89-b3ed-f715bef4e379@linaro.org>
+Date: Wed, 14 May 2025 15:51:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250514130014.GA20738@lst.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 0/7] Add EcoNet EN751221 MIPS platform support
+To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+Cc: Caleb James DeLisle <cjd@cjdns.fr>, linux-mips@vger.kernel.org,
+ tglx@linutronix.de, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, benjamin.larsson@genexis.eu,
+ linux-mediatek@lists.infradead.org
+References: <20250507134500.390547-1-cjd@cjdns.fr>
+ <aCNWM5Xq7wnHVCrc@mai.linaro.org> <aCNhVw7oMRhHQNq_@alpha.franken.de>
+Content-Language: en-US
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <aCNhVw7oMRhHQNq_@alpha.franken.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, May 14, 2025 at 03:00:14PM +0200, hch wrote:
-> On Wed, May 14, 2025 at 10:50:36AM +0000, Hans Holmberg wrote:
-> > While I was initially concerned by adding overhead to the allocation
-> > path, the cache actually reduces it as as we avoid going through the
-> > zone allocation algorithm for every random write.
-> >
-> > When I run a fio workload with 16 writers to different files in
-> > parallel, bs=8k, iodepth=4, size=1G, I get these throughputs:
-> >
-> > baseline	with_cache
-> > 774 MB/s	858 MB/s (+11%)
-> >
-> > (averaged over three runs ech on a nullblk device)
-> >
-> > I see similar, figures when benchmarking on a zns nvme drive (+17%).
+On 5/13/25 17:12, Thomas Bogendoerfer wrote:
+> On Tue, May 13, 2025 at 04:24:51PM +0200, Daniel Lezcano wrote:
+>> On Wed, May 07, 2025 at 01:44:53PM +0000, Caleb James DeLisle wrote:
+>>> EcoNet MIPS SoCs are big endian machines based on 34Kc and 1004Kc
+>>> processors. They are found in xDSL and xPON modems, and contain PCM
+>>> (VoIP), Ethernet, USB, GPIO, I2C, SPI (Flash), UART, and PCIe.
+>>>
+>>> The EcoNet MIPS SoCs are divided broadly into two families, the
+>>> EN751221 family based on the 34Kc, and the EN751627 family based on
+>>> the 1004Kc. Individual SoCs within a family are very similar, only
+>>> with different peripherals.
+>>>
+>>> This patchset adds basic "boots to a console" support for the EN751221
+>>> family and adds SmartFiber XP8421-B, a low cost commercially available
+>>> board that is useful for testing and development.
+>>>
+>>> Note that Airoha (AN7523, AN7581) is similar to EcoNet in terms of
+>>> peripherals, and for historical reasons Airoha chips are sometimes
+>>> referred to with the EN75xx prefix. However this is a different
+>>> platform because Airoha chips are ARM based.
+>>>
+>>> This patchset is against mips-next.
+>>>
+>>> v4 -> v5
+>>> * 2/7 clocksource/drivers: Add EcoNet Timer HPT driver:
+>>>    * Improve explanation of HPT timer in changelog
+>>>    * Move pr_info to pr_debug per recommendation
+>>>    * Remove pointless debug on spurious interrupt
+>>>    * Small code-style change
+>>
+>> Shall I pick the clocksource + bindings changes through my tree ?
 > 
-> Very nice!
-> 
-> These should probably go into the commit message for patch 2 so they
-> are recorded.  Carlos, is that something you can do when applying?
-> 
-Absolutely. Could you RwB patch 1? I just got your RwB on patch 2.
+> please do, I'll take the remaining patches.
 
-I'll add this to the tree today, I need to do another rebase anyway.
+
+Applied patch 1 et 2, thanks!
+
+
+-- 
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
