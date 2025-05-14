@@ -1,124 +1,135 @@
-Return-Path: <linux-kernel+bounces-647940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-647920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 301F6AB6F9C
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 17:24:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1DD4AB6F84
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 17:20:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C0396170114
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 15:19:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73A709A0D34
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 15:15:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98BC528C5DC;
-	Wed, 14 May 2025 15:14:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73FDB27B4EB;
+	Wed, 14 May 2025 15:14:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ixl1aWjY"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qde/O+A4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54BF428A1CD;
-	Wed, 14 May 2025 15:14:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFFD521FF31;
+	Wed, 14 May 2025 15:14:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747235695; cv=none; b=JgL423EMPGrLiAtNBSfsiPAWvVQ8cZYqRIU0lxktoL1MMMkQLTUTDMUEy7zi/Zc3h8qjLt2YVHx+4A8ZE8pBNVdJnAPt58MeL4I+3MnDpY7H7cgONnJqZeKt+2zWP6T/NU/ZQJOGY3g05LCH5o1zgIGsXjj+tD9o+gd6jEQnHMw=
+	t=1747235647; cv=none; b=YnsvhkWNLlREyZMEtZdQioOozROn7MULY7GKENGgGh8X7d2LVsqzzdFMWssnylQw2T/g4SWNvgF1UO2k366eD+a3z0ZSXtZEL4KpjwpAba6XL20sOmNDxHYeG7G14m9gjBTeL2ozXEErnDVAufS/ysRnSwzvhdJX7FKUSAWlXNM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747235695; c=relaxed/simple;
-	bh=ZWv03XD/Q1kgk/HFJzz+qCMhdC25MzBMQsMSIBLWzs0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=VY+Ri9I6INunPrJVcLQ8wNEmcpzZANn8usxlEYk51XIVzf2QjmiXEHhDqGETVqNoqB749wysOGsH/J2iP6bJeFmRNgjXDj/v8x24xP1VnsxHrCzhZ7Su5Abr7MvVwIsmjMsTJXXhT3A5H+/wCbMXK8p4+5Oq9qJhEham1No88Gw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ixl1aWjY; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1747235693; x=1778771693;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=ZWv03XD/Q1kgk/HFJzz+qCMhdC25MzBMQsMSIBLWzs0=;
-  b=ixl1aWjYh9wCzgA6TI4NzHCZIK78ZANauQz/beLEV52ODNx8rnfBRndC
-   bDfuCevJHYfYtRvHNQqI2eK8y5yxTMBbDI4XoAf3AdTEErVSBSC0Kb9uc
-   23V0dJMq3zDo+kuSbqg2RiwdOjqL9vcf6VzQ8C7O6bqNCibqLRljE0Tt/
-   EEQ92992UsOa4+lzMx3YuORgsFFJ6FdvrKv3MYcFd2DXvkHiOXXwFsQ8R
-   f/TmJXvts822ILaXZVYoNheNx+2ItnNKaDSm+Niv4XqwxeoYWlRoxKkW8
-   xyaQrNZfJphnSfK/qwXXaqCxxcD2yNobmAdjL1EGBLygh7qVo2Gh7wWKA
-   A==;
-X-CSE-ConnectionGUID: dZpSFbBASKWyCrRuLWS3aw==
-X-CSE-MsgGUID: R8I+6cTSSkyttApBR8kqRg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11433"; a="49072807"
-X-IronPort-AV: E=Sophos;i="6.15,288,1739865600"; 
-   d="scan'208";a="49072807"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 May 2025 08:14:48 -0700
-X-CSE-ConnectionGUID: awuxL/G3Q2eVgn4/8N2g5Q==
-X-CSE-MsgGUID: 3KgVMnuPQqyDjnFdQTxxBg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,288,1739865600"; 
-   d="scan'208";a="142939179"
-Received: from kanliang-dev.jf.intel.com ([10.165.154.102])
-  by fmviesa005.fm.intel.com with ESMTP; 14 May 2025 08:14:48 -0700
-From: kan.liang@linux.intel.com
-To: peterz@infradead.org,
-	mingo@redhat.com,
-	namhyung@kernel.org,
-	irogers@google.com,
-	mark.rutland@arm.com,
-	linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org
-Cc: eranian@google.com,
-	ctshao@google.com,
-	tmricht@linux.ibm.com,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Max Filippov <jcmvbkbc@gmail.com>
-Subject: [PATCH V2 14/15] xtensa/perf: Remove driver-specific throttle support
-Date: Wed, 14 May 2025 08:14:00 -0700
-Message-Id: <20250514151401.2547932-15-kan.liang@linux.intel.com>
-X-Mailer: git-send-email 2.38.1
-In-Reply-To: <20250514151401.2547932-1-kan.liang@linux.intel.com>
-References: <20250514151401.2547932-1-kan.liang@linux.intel.com>
+	s=arc-20240116; t=1747235647; c=relaxed/simple;
+	bh=ASy4XXDUZ+XqgKJMKMfMraYghZijkdij/uWWZG56WI8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mORlD20YTZDiOstDUqRJPkHxgyJoq+0XUpnwCoc6hYc31tneFywSdztTnNlmdCy1tsYNunrMBbCJNvJAtTDUfsQJwOPh4+drZ1v3g4A873FBmK8nnrcPzNJHLTO9dktQT7gjGG+rIHql4McQBftRwBYUadzcvGeVOPBSS5NhRrA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qde/O+A4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0AB88C4CEE3;
+	Wed, 14 May 2025 15:14:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747235647;
+	bh=ASy4XXDUZ+XqgKJMKMfMraYghZijkdij/uWWZG56WI8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qde/O+A4Int0tYt4EQwVneuXsRQr1YUBRqt7rxRMlvMEWAJba/NBWkoZqkNIgIebj
+	 9S0lhDyh8DffOLN0Qy+hBivOJB2moQtFdeamW2PvJQAbIwCSONv0pmYxMS7J7dRtxg
+	 fFSCY3LP0kcoKl+3Afu/mO2T6+9zfnKuLAixYUcjkzJs3N4z57CdVxf9dcKKtk58iY
+	 PeQ1oLnGtJpLI1gPyy93GClLSVtFJJ6iTkuvAsghIQ4OMvusPwQMhN7IRQUuKhNbR0
+	 FS0eCeyHMXbNNc0jk1gQmvfkg7n0joHw80vdo1QDSRvZ4jCSzBhPWo9JW4xwPO6QUs
+	 9AcK7XSRN/Xpw==
+Date: Wed, 14 May 2025 16:14:01 +0100
+From: Will Deacon <will@kernel.org>
+To: Ryan Roberts <ryan.roberts@arm.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	David Hildenbrand <david@redhat.com>,
+	Dave Chinner <david@fromorbit.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Kalesh Singh <kaleshsingh@google.com>, Zi Yan <ziy@nvidia.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [RFC PATCH v4 5/5] mm/filemap: Allow arch to request folio size
+ for exec memory
+Message-ID: <20250514151400.GB10762@willie-the-truck>
+References: <20250430145920.3748738-1-ryan.roberts@arm.com>
+ <20250430145920.3748738-6-ryan.roberts@arm.com>
+ <20250509135223.GB5707@willie-the-truck>
+ <c52861ac-9622-4d4f-899e-3a759f04af12@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c52861ac-9622-4d4f-899e-3a759f04af12@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-From: Kan Liang <kan.liang@linux.intel.com>
+On Tue, May 13, 2025 at 01:46:06PM +0100, Ryan Roberts wrote:
+> On 09/05/2025 14:52, Will Deacon wrote:
+> > On Wed, Apr 30, 2025 at 03:59:18PM +0100, Ryan Roberts wrote:
+> >> diff --git a/mm/filemap.c b/mm/filemap.c
+> >> index e61f374068d4..37fe4a55c00d 100644
+> >> --- a/mm/filemap.c
+> >> +++ b/mm/filemap.c
+> >> @@ -3252,14 +3252,40 @@ static struct file *do_sync_mmap_readahead(struct vm_fault *vmf)
+> >>  	if (mmap_miss > MMAP_LOTSAMISS)
+> >>  		return fpin;
+> >>  
+> >> -	/*
+> >> -	 * mmap read-around
+> >> -	 */
+> >>  	fpin = maybe_unlock_mmap_for_io(vmf, fpin);
+> >> -	ra->start = max_t(long, 0, vmf->pgoff - ra->ra_pages / 2);
+> >> -	ra->size = ra->ra_pages;
+> >> -	ra->async_size = ra->ra_pages / 4;
+> >> -	ra->order = 0;
+> >> +	if (vm_flags & VM_EXEC) {
+> >> +		/*
+> >> +		 * Allow arch to request a preferred minimum folio order for
+> >> +		 * executable memory. This can often be beneficial to
+> >> +		 * performance if (e.g.) arm64 can contpte-map the folio.
+> >> +		 * Executable memory rarely benefits from readahead, due to its
+> >> +		 * random access nature, so set async_size to 0.
+> > 
+> > In light of this observation (about randomness of instruction fetch), do
+> > you think it's worth ignoring VM_RAND_READ for VM_EXEC?
+> 
+> Hmm, yeah that makes sense. Something like:
+> 
+> ---8<---
+> diff --git a/mm/filemap.c b/mm/filemap.c
+> index 7b90cbeb4a1a..6c8bf5116c54 100644
+> --- a/mm/filemap.c
+> +++ b/mm/filemap.c
+> @@ -3233,7 +3233,8 @@ static struct file *do_sync_mmap_readahead(struct vm_fault
+> *vmf)
+>         if (!ra->ra_pages)
+>                 return fpin;
+> 
+> -       if (vm_flags & VM_SEQ_READ) {
+> +       /* VM_EXEC case below is already intended for random access */
+> +       if ((vm_flags & (VM_SEQ_READ | VM_EXEC)) == VM_SEQ_READ) {
+>                 fpin = maybe_unlock_mmap_for_io(vmf, fpin);
+>                 page_cache_sync_ra(&ractl, ra->ra_pages);
+>                 return fpin;
+> ---8<---
 
-The throttle support has been added in the generic code. Remove
-the driver-specific throttle support.
+I was thinking about the:
 
-Besides the throttle, perf_event_overflow may return true because of
-event_limit. It already does an inatomic event disable. The pmu->stop
-is not required either.
+	if (vm_flags & VM_RAND_READ)
+		return fpin;
 
-Reviewed-by: Max Filippov <jcmvbkbc@gmail.com>
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
-Cc: Max Filippov <jcmvbkbc@gmail.com>
----
+code above this which bails if VM_RAND_READ is set. That seems contrary
+to the code you're adding which says that, even for random access
+patterns where readahead doesn't help, it's still worth sizing the folio
+appropriately for contpte mappings.
 
-Changes since V1:
-- Add Reviewed-by from Max
-
- arch/xtensa/kernel/perf_event.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/arch/xtensa/kernel/perf_event.c b/arch/xtensa/kernel/perf_event.c
-index 183618090d05..223f1d452310 100644
---- a/arch/xtensa/kernel/perf_event.c
-+++ b/arch/xtensa/kernel/perf_event.c
-@@ -388,8 +388,7 @@ irqreturn_t xtensa_pmu_irq_handler(int irq, void *dev_id)
- 			struct pt_regs *regs = get_irq_regs();
- 
- 			perf_sample_data_init(&data, 0, last_period);
--			if (perf_event_overflow(event, &data, regs))
--				xtensa_pmu_stop(event, 0);
-+			perf_event_overflow(event, &data, regs);
- 		}
- 
- 		rc = IRQ_HANDLED;
--- 
-2.38.1
-
+Will
 
