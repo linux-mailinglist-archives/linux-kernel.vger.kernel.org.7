@@ -1,82 +1,103 @@
-Return-Path: <linux-kernel+bounces-647687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-647692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C569AB6BB9
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 14:47:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D044AB6BC6
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 14:51:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB59F16ABA1
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 12:47:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E11EA3A775E
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 12:50:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C1472750F4;
-	Wed, 14 May 2025 12:47:26 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEE1B225795
-	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 12:47:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 169B7278E60;
+	Wed, 14 May 2025 12:50:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="IxF6vlFn"
+Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CD68279329
+	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 12:50:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747226845; cv=none; b=Jq6RPfLq32DL/U9F/BtoHin9sRjkdd3SWaa++Y3UrTz6qd/UMgvxmvzp+mLG5BEm+xxmQTO+vOHPJkkHPJJqtnfPGc0179QAhoybc927IZmzlI+9q4Crxqf8eGyZweXGBVLI2UlN0vFDjzHKCOnThbxOKy2fEcVSN9S/bHYzF0A=
+	t=1747227046; cv=none; b=Lu58s1PDQlOVzc5iWHHCQThqAOvvRlgLLRSrtaWI9QYcFYvb2y8XbmnRG1lRBsSSrIALNyyFsHagMzr6u78UrQwQ7KqSzLdB/WqgfTbqBzv5SQtIDun/1sqSx3gfY4AOtpKXlJZHMuNdrr/nW+05DFHlfr6nosn5AqiN5FrMpDc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747226845; c=relaxed/simple;
-	bh=emNvKAL6WxOIayo5hU+Fv9v/5W1lyX7L3acFQrHOjvg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Jr5TT6ZiseKJQZyBnq6DzBjdudgS1tUY3S6Dy7lixbh5AKo9TtH7YGBE+3pTUsgWzAmkSKBS8M5Z9T4wP/l6qTQLW0rhuyk3xjgoAKeUo6F2q94uE2srSrsJSMtMaNmdgFOZCdoN8sx+Cqv0KWCFs9ljMxWGE3otAnVv7NB8lRs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B800A150C;
-	Wed, 14 May 2025 05:47:04 -0700 (PDT)
-Received: from localhost (e132581.arm.com [10.1.196.87])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8C9653F673;
-	Wed, 14 May 2025 05:47:15 -0700 (PDT)
-Date: Wed, 14 May 2025 13:47:10 +0100
-From: Leo Yan <leo.yan@arm.com>
-To: Yeoreum Yun <yeoreum.yun@arm.com>
-Cc: suzuki.poulose@arm.com, mike.leach@linaro.org, james.clark@linaro.org,
-	alexander.shishkin@linux.intel.com, coresight@lists.linaro.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 3/3] coresight: prevent deactivate active config while
- enabling the config
-Message-ID: <20250514124710.GA389636@e132581.arm.com>
-References: <20250513170622.3071637-1-yeoreum.yun@arm.com>
- <20250513170622.3071637-2-yeoreum.yun@arm.com>
- <20250513170622.3071637-3-yeoreum.yun@arm.com>
- <20250513170622.3071637-4-yeoreum.yun@arm.com>
- <20250514093019.GE26114@e132581.arm.com>
- <aCR4x/+Wp8JoqG9P@e129823.arm.com>
+	s=arc-20240116; t=1747227046; c=relaxed/simple;
+	bh=xsaMT00b8k+kMS92GkXskE2nqsn/Ux50QSzH+gf3Ovo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hHJi8pITHf1sSCjVpWRTa71zkYtGobDsM1N8a6JLme4dxQyrwm1iNH+wOUrNaF2ymr3qh6jzzY4yzRKaQS8RkwYW+iW1A1Tybtxcm6W+uclMpH9IGBWbHGIz0mIezQm/LYzYrxlRMqAbeaeQiZz4qKpS4x8wWCEUeW7ddBAsgb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=IxF6vlFn; arc=none smtp.client-ip=95.215.58.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <7f3b2d28-38d0-482c-b79a-5aabed6b6ea8@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1747227032;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NFMBLaoGq6dnZ92tVmPA4doF5MtxaUxNygUazLGOe80=;
+	b=IxF6vlFnNK9TlkLzq4WOLGy63ODcKJMYA/IIvpCTPwu/fBjK5WK8TTHAGOF6v+qB0vnR97
+	uUTDJCtEx44YEiXQUIXEyviZq9aG9EhZiiR2iKnD09Ef0ESpsIxRX/+eq1RCiDh0fA+/dg
+	K4GjRwhqaItrLct6Yi7JQaft4ojDsTM=
+Date: Wed, 14 May 2025 14:47:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aCR4x/+Wp8JoqG9P@e129823.arm.com>
+Subject: Re: [PATCH 0/5] ASoC/SOF/PCI/Intel: add Wildcat Lake support
+To: =?UTF-8?Q?P=C3=A9ter_Ujfalusi?= <peter.ujfalusi@linux.intel.com>,
+ lgirdwood@gmail.com, broonie@kernel.org
+Cc: linux-sound@vger.kernel.org, kai.vehmanen@linux.intel.com,
+ ranjani.sridharan@linux.intel.com, yung-chuan.liao@linux.intel.com,
+ guennadi.liakhovetski@linux.intel.com, bhelgaas@google.com,
+ linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250508180240.11282-1-peter.ujfalusi@linux.intel.com>
+ <0b01a3ae-4766-490e-939d-1d16c2748644@linux.dev>
+ <bfb8e9a6-92c1-4079-aec0-b1ad2b245c70@linux.intel.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>
+In-Reply-To: <bfb8e9a6-92c1-4079-aec0-b1ad2b245c70@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Hi Levi,
-
-On Wed, May 14, 2025 at 12:04:39PM +0100, Yeoreum Yun wrote:
-
-[...]
-
-
-> > > +static bool cscfg_config_desc_get(struct cscfg_config_desc *config_desc)
-> >
-> > I would like to change the return type to int, so the error is handled
-> > within the function.  As a result, the caller _cscfg_activate_config()
-> > does not need to explicitly return an error value.
+On 5/13/25 08:23, Péter Ujfalusi wrote:
 > 
-> I think it's not good since cscfg_config_desc_get() failed only when
-> try_module_get() failed and its return type is "bool".
+> 
+> On 12/05/2025 15:59, Pierre-Louis Bossart wrote:
+>>
+>>> The audio IP in Wildcat Lake (WCL) is largely identical to the one in
+>>> Panther Lake, the main difference is the number of DSP cores, memory
+>>> and clocking.
+>>> It is based on the same ACE3 architecture.
+>>>
+>>> In SOF the PTL topologies can be re-used for WCL to reduce duplication
+>>> of code and topology files. 
+>>
+>> Is this really true? I thought topology files are precisely the place where a specific pipeline is assigned to a specific core. If the number of cores is lower, then a PTL topology could fail when used on a WCL DSP, no?
+> 
+> Yes, that is true, however for generic (sdw, HDA) topologies this is not
+> an issue as we don't spread the modules (there is no customization per
+> platform).
+> When it comes to product topologies, they can still be named as PTL/WCL
+> if needed and have tailored core use.
+> 
+> It might be that WCL will not use audio configs common with PTL, in that
+> case we still can have sof-wcl-* topologies if desired.
 
-Understood.  I thought it would be easier for later maintenance if we
-encapsulate error handling in the function, but I don't have strong
-opinion.  It is fine for me to return bool type.
+Right, so the topologies can be used except when they cannot :-)
 
-Thanks,
-Leo
+> Fwiw, in case of soundwire we are moving to a even more generic function
+> topology split, where all SDW device can us generic function fragments
+> stitched together to create a complete topology.
+> Those will have to be compatible with all platforms, so wide swing of
+> core use cannot be possible anymore.
+
+I couldn't follow this explanation, or I am missing some context. My expectation is that as soon as someone starts inserting a 3rd party module all bets on core assignment are off, I am not sure how rules could be generic without adding restrictions on where 3rd party modules are added.
+
 
