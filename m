@@ -1,257 +1,169 @@
-Return-Path: <linux-kernel+bounces-646823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-646827-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5035AB60FB
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 04:55:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EF0AAB6108
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 05:01:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B541C7AD487
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 02:54:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 65F3F1B42972
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 03:01:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4DF41EB189;
-	Wed, 14 May 2025 02:55:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="glhNtDAv"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 212491DFE8;
-	Wed, 14 May 2025 02:55:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F99E1DF268;
+	Wed, 14 May 2025 03:00:53 +0000 (UTC)
+Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3071F4ED;
+	Wed, 14 May 2025 03:00:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747191338; cv=none; b=IzqJIamxBX/XYnXUHJcT0PxCyxuiXBDWizVHQeyN1DTzMHFFmtGlfjSLGkdjOLbeNsUi0Yy9Pks6zLP06i2uF8UPDHWmUjnN+7seFt8ZTW1wHEUkzGIBEx88nBma5UjVe5mUUqJEHJKDo1nu9QrWaJv1QSrpyMMUIdWzm1MJHtU=
+	t=1747191653; cv=none; b=A6q6Z2hk7ySQESZgqAxK9i5qKcV7d5rb3iroSavdq0mb15pHrfL7WiWIFXVFDsdPy6B/vxcZehdQ1McRok+w2LNi3wTNXY+FSz8y61sFbasFtiN9auZmmpjCUA9WOWH9dEaXE34vtMjIqoEIhd40Zap65hzYzvzpUgFcRxZpZrY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747191338; c=relaxed/simple;
-	bh=8WU7JbOh6C0UWBPkkNHuS/Os4UhSVCxmYCsLSjeovik=;
+	s=arc-20240116; t=1747191653; c=relaxed/simple;
+	bh=vX8mNa31YG9zmPqphOmHRm2XjzaN7O5/YoRb0FhDIVU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tTqwWhw5NDSiZ3XB3T70CmXedyJbf8MmIs7ovKziBG0aj0Izj041L0fGLTPXq7QqH4rxVMdtWTCU7XRe53FAazFoih+qVF021vPBLHf2ixyPZZx9FumFwXXJrZcbm9MPSElwFWrrwuNsFiTQPaq0MnqTmdTkgzj4IJA5jtxM6wE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=glhNtDAv; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1747191336; x=1778727336;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=8WU7JbOh6C0UWBPkkNHuS/Os4UhSVCxmYCsLSjeovik=;
-  b=glhNtDAvKl7+QPnc+78v+7C++U79gjggUnqH4fcpJfpsQjm/ovED52Ej
-   itZKYb50zTm1VioH2SEFYwFzoOOFKrdrT03tdAFO9joAIXMUjSeAh8boH
-   Z/iHyINvoyH0Ds8COHtVcNq6RHgN2Nu+p4UIJ5UDyb4Tw3CkNcr1kGimf
-   VKxV+jLPR+ogVCL+GEPgkexujyufSv8jZeaCS79O/zUlx/RImi6jSoDSl
-   695ddg06M1S27nkQOli+StV68djpZpekI7M2PCIHr8/aSYXAbIl7HNPKk
-   nVhacrLAZtd5uVd2TAj6uZk68sMJJrESXLe6FlXQ+ywud5IVDtBuORh7r
-   Q==;
-X-CSE-ConnectionGUID: VAFUKZQtQZ2XNdjHgbB+Fw==
-X-CSE-MsgGUID: cVYPm5xfR5qwDrrtUZPfRQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11432"; a="48999419"
-X-IronPort-AV: E=Sophos;i="6.15,287,1739865600"; 
-   d="scan'208";a="48999419"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 May 2025 19:55:31 -0700
-X-CSE-ConnectionGUID: Lxk1gkQwQy2unYt0HbrQbQ==
-X-CSE-MsgGUID: zukZUz2fQBC0dorp8L1SWQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,287,1739865600"; 
-   d="scan'208";a="143075326"
-Received: from ranerica-svr.sc.intel.com ([172.25.110.23])
-  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 May 2025 19:55:31 -0700
-Date: Tue, 13 May 2025 20:00:38 -0700
-From: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-To: Rob Herring <robh@kernel.org>
-Cc: x86@kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	"K. Y. Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
-	Michael Kelley <mhklinux@outlook.com>, devicetree@vger.kernel.org,
-	Saurabh Sengar <ssengar@linux.microsoft.com>,
-	Chris Oo <cho@microsoft.com>, linux-hyperv@vger.kernel.org,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	"Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-	Ricardo Neri <ricardo.neri@intel.com>
-Subject: Re: [PATCH v3 05/13] x86/dt: Parse the `enable-method` property of
- CPU nodes
-Message-ID: <20250514030038.GA3300@ranerica-svr.sc.intel.com>
-References: <20250503191515.24041-1-ricardo.neri-calderon@linux.intel.com>
- <20250503191515.24041-6-ricardo.neri-calderon@linux.intel.com>
- <20250512155415.GB3377771-robh@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ttuXnJERibiw0gBMTSQyMFEsI9+fVYBe0WD+bbPF/ttj64ORxY6i+8ltPb47bKyN21tcEpwr63+FTBcI6YR0E8ZXMxLnklf5hW5lNjE9+2YlpFJX23FPv5+nb5vH8kEMdEGaF6Mwm6GS64THPKh+BNo8yUnyBOlk8fb76vA5no4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
+X-AuditID: a67dfc5b-669ff7000002311f-65-6824075daadc
+Date: Wed, 14 May 2025 12:00:40 +0900
+From: Byungchul Park <byungchul@sk.com>
+To: Toke =?iso-8859-1?Q?H=F8iland-J=F8rgensen?= <toke@redhat.com>
+Cc: willy@infradead.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	kernel_team@skhynix.com, kuba@kernel.org, almasrymina@google.com,
+	ilias.apalodimas@linaro.org, harry.yoo@oracle.com, hawk@kernel.org,
+	akpm@linux-foundation.org, ast@kernel.org, daniel@iogearbox.net,
+	davem@davemloft.net, john.fastabend@gmail.com,
+	andrew+netdev@lunn.ch, edumazet@google.com, pabeni@redhat.com,
+	vishal.moola@gmail.com
+Subject: Re: [RFC 13/19] page_pool: expand scope of is_pp_{netmem,page}() to
+ global
+Message-ID: <20250514030040.GA48035@system.software.com>
+References: <20250509115126.63190-1-byungchul@sk.com>
+ <20250509115126.63190-14-byungchul@sk.com>
+ <87y0v22dzn.fsf@toke.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20250512155415.GB3377771-robh@kernel.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <87y0v22dzn.fsf@toke.dk>
 User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrHIsWRmVeSWpSXmKPExsXC9ZZnoW4su0qGwZdHKhZz1q9hs1j9o8Ji
+	+YMdrBZfft5mt1i88BuzxZzzLSwWT489Yre4v+wZi8We9u3MFr0tv5ktmnasYLK4sK2P1eLy
+	rjlsFvfW/Ge1OLZAzOLb6TeMFpcOP2KxWL/vBqvF7x9z2ByEPbasvMnksXPWXXaPBZtKPTav
+	0PLounGJ2WPTqk42j02fJrF73Lm2h83jxIzfLB47d3xm8vj49BaLx/t9V9k8Pm+SC+CN4rJJ
+	Sc3JLEst0rdL4Mpo27+JqWCLRMXSt2cZGxgvC3cxcnJICJhILL++jwnG3nD5LSOIzSKgKnF4
+	6ytmEJtNQF3ixo2fQDYHh4iAo8TpH+ldjFwczAJ7mCUun50OVi8sECpx+lcDWD2vgIVEa1Mn
+	C4gtJFAr8WbrNXaIuKDEyZlPwOLMAjoSO7feYQOZySwgLbH8HwdEWF6ieetssDGcQCfcO/id
+	DcQWFVCWOLDtOBPIXgmBU+wSZx61skLcLClxcMUNlgmMgrOQrJiFZMUshBWzkKxYwMiyilEo
+	M68sNzEzx0QvozIvs0IvOT93EyMwlpfV/onewfjpQvAhRgEORiUeXgtd5Qwh1sSy4srcQ4wS
+	HMxKIrzXs4BCvCmJlVWpRfnxRaU5qcWHGKU5WJTEeY2+lacICaQnlqRmp6YWpBbBZJk4OKUa
+	GKW4LINn7E8+9Mtl56R9mp/50yY43sl/M6csO9d8xcTbAQtlLtgfDpP7f7ykbPvSEA7r1DeK
+	zE+ehAbFLdjamvOpKUatbokic1bx+XXvIhLcBB1UJKbISR9r1Hw9V+Pt4d0pC3IVpDcdFF4Y
+	xd0WWr960hPGIKEHuU1xsspHfktdzVhycO+yUiWW4oxEQy3mouJEAHTBG17hAgAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrKIsWRmVeSWpSXmKPExsXC5WfdrBvLrpJhMLGX12LO+jVsFqt/VFgs
+	f7CD1eLLz9vsFosXfmO2mHO+hcXi6bFH7Bb3lz1jsdjTvp3ZorflN7NF044VTBaH555ktbiw
+	rY/V4vKuOWwW99b8Z7U4tkDM4tvpN4wWlw4/YrFYv+8Gq8XvH3PYHEQ8tqy8yeSxc9Zddo8F
+	m0o9Nq/Q8ui6cYnZY9OqTjaPTZ8msXvcubaHzePEjN8sHjt3fGby+Pj0FovH+31X2TwWv/jA
+	5PF5k1wAXxSXTUpqTmZZapG+XQJXRtv+TUwFWyQqlr49y9jAeFm4i5GTQ0LARGLD5beMIDaL
+	gKrE4a2vmEFsNgF1iRs3fgLZHBwiAo4Sp3+kdzFycTAL7GGWuHx2Oli9sECoxOlfDWD1vAIW
+	Eq1NnSwgtpBArcSbrdfYIeKCEidnPgGLMwvoSOzceocNZCazgLTE8n8cEGF5ieats8HGcAKd
+	cO/gdzYQW1RAWeLAtuNMExj5ZiGZNAvJpFkIk2YhmbSAkWUVo0hmXlluYmaOqV5xdkZlXmaF
+	XnJ+7iZGYGQuq/0zcQfjl8vuhxgFOBiVeHgtdJUzhFgTy4orcw8xSnAwK4nwXs8CCvGmJFZW
+	pRblxxeV5qQWH2KU5mBREuf1Ck9NEBJITyxJzU5NLUgtgskycXBKNTD2WHh9C3wbzdLdudD1
+	5nmBgL8bX5hfc+6zkw4+VrExxfTD+s2xBQxv5h6XWXWma4rB+jBd6brCS5pbxfcJrtm4P+fO
+	rquhNvu9WwMW1oUkei9qTHgmk7qKj31vWzaLftzz6AI3ybDnEsf7zs1qWb902pFtbB3SPC4M
+	1Y81D/57utJ7/z+dV81KLMUZiYZazEXFiQD6qRSxyAIAAA==
+X-CFilter-Loop: Reflected
 
-On Mon, May 12, 2025 at 10:54:15AM -0500, Rob Herring wrote:
-> On Sat, May 03, 2025 at 12:15:07PM -0700, Ricardo Neri wrote:
-> > Add functionality to parse and validate the `enable-method` property for
-> > platforms that use alternative methods to wakeup secondary CPUs (e.g., a
-> > wakeup mailbox).
-> > 
-> > Most x86 platforms boot secondary CPUs using INIT assert, de-assert
-> > followed by a Start-Up IPI messages. These systems do no need to specify an
-> > `enable-method` property in the cpu@N nodes of the DeviceTree.
-> > 
-> > Although it is possible to specify a different `enable-method` for each
-> > secondary CPU, the existing functionality relies on using the
-> > APIC wakeup_secondary_cpu{ (), _64()} callback to wake up all CPUs. Ensure
-> > that either all CPUs specify the same `enable-method` or none at all.
-> > 
-> > Signed-off-by: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+On Mon, May 12, 2025 at 02:46:36PM +0200, Toke Høiland-Jørgensen wrote:
+> Byungchul Park <byungchul@sk.com> writes:
+> 
+> > Other than skbuff.c might need to check if a page or netmem is for page
+> > pool, for example, page_alloc.c needs to check the page state, whether
+> > it comes from page pool or not for their own purpose.
+> >
+> > Expand the scope of is_pp_netmem() and introduce is_pp_page() newly, so
+> > that those who want to check the source can achieve the checking without
+> > accessing page pool member, page->pp_magic, directly.
+> >
+> > Signed-off-by: Byungchul Park <byungchul@sk.com>
 > > ---
-> > Changes since v2:
-> >  - Introduced this patch.
-> > 
-> > Changes since v1:
-> >  - N/A
-> > ---
-> >  arch/x86/kernel/devicetree.c | 88 +++++++++++++++++++++++++++++++++++-
-> >  1 file changed, 86 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/arch/x86/kernel/devicetree.c b/arch/x86/kernel/devicetree.c
-> > index dd8748c45529..5835afc74acd 100644
-> > --- a/arch/x86/kernel/devicetree.c
-> > +++ b/arch/x86/kernel/devicetree.c
-> > @@ -127,8 +127,59 @@ static void __init dtb_setup_hpet(void)
+> >  include/net/page_pool/types.h |  2 ++
+> >  net/core/page_pool.c          | 10 ++++++++++
+> >  net/core/skbuff.c             |  5 -----
+> >  3 files changed, 12 insertions(+), 5 deletions(-)
+> >
+> > diff --git a/include/net/page_pool/types.h b/include/net/page_pool/types.h
+> > index 36eb57d73abc6..d3e1a52f01e09 100644
+> > --- a/include/net/page_pool/types.h
+> > +++ b/include/net/page_pool/types.h
+> > @@ -299,4 +299,6 @@ static inline bool is_page_pool_compiled_in(void)
+> >  /* Caller must provide appropriate safe context, e.g. NAPI. */
+> >  void page_pool_update_nid(struct page_pool *pool, int new_nid);
 > >  
-> >  #ifdef CONFIG_X86_LOCAL_APIC
+> > +bool is_pp_netmem(netmem_ref netmem);
+> > +bool is_pp_page(struct page *page);
+> >  #endif /* _NET_PAGE_POOL_H */
+> > diff --git a/net/core/page_pool.c b/net/core/page_pool.c
+> > index b61c1038f4c68..9c553e5a1b555 100644
+> > --- a/net/core/page_pool.c
+> > +++ b/net/core/page_pool.c
+> > @@ -1225,3 +1225,13 @@ void net_mp_niov_clear_page_pool(struct netmem_desc *niov)
 > >  
-> > +#ifdef CONFIG_SMP
-> > +static const char *dtb_supported_enable_methods[] __initconst = { };
-> 
-> If you expect this list to grow, I would say the firmware should support 
-> "spin-table" enable-method and let's stop the list before it starts. 
-
-Actually, I was thinking on dropping this patch altogether. It does not
-seem to be needed: if there is a reserved-memory region for the mailbox,
-use it. Otherwise, keep using the INIT-!INIT-SIPI messages. No need to
-add extra complexity and maintainance burden with checks for an `enable-
-method`.
-
-> Look at the mess that's arm32 enable-methods... Considering you have no 
-> interrupts, I imagine what you have is not much different from a 
-> spin-table (write a jump address to an address)? Maybe it would already 
-> work as long as jump table is reserved (And in that case you don't need 
-> the compatible or any binding other than for cpu nodes).
-
-Correct, the spin-table is similar to the ACPI mailbox but there are
-differences: the latter lets you send a command to control when, if ever,
-secondary CPUs are booted.
-
-> 
-> OTOH, as the wakeup-mailbox seems to be defined by ACPI, that seems 
-> fine to add,
-
-Yes, and Linux for x86 already supports the ACPI mailbox and that code can
-be reused.
-
-> but I would simplify the code here to not invite more 
-> entries. Further ones should be rejected IMO.
-
-Unconditionally checking for the presence of mailbox works in this sense
-too.
-
-> 
+> >  	page_pool_clear_pp_info(netmem);
+> >  }
 > > +
-> > +static bool __init dtb_enable_method_is_valid(const char *enable_method_a,
-> > +					      const char *enable_method_b)
+> > +bool is_pp_netmem(netmem_ref netmem)
 > > +{
-> > +	int i;
-> > +
-> > +	if (!enable_method_a && !enable_method_b)
-> > +		return true;
-> > +
-> > +	if (strcmp(enable_method_a, enable_method_b))
-> > +		return false;
-> > +
-> > +	for (i = 0; i < ARRAY_SIZE(dtb_supported_enable_methods); i++) {
-> > +		if (!strcmp(enable_method_a, dtb_supported_enable_methods[i]))
-> > +			return true;
-> > +	}
-> > +
-> > +	return false;
+> > +	return (netmem_get_pp_magic(netmem) & ~0x3UL) == PP_SIGNATURE;
 > > +}
 > > +
-> > +static int __init dtb_configure_enable_method(const char *enable_method)
+> > +bool is_pp_page(struct page *page)
 > > +{
-> > +	/* Nothing to do for a missing enable-method or if the system has one CPU */
-> > +	if (!enable_method || IS_ERR(enable_method))
-> > +		return 0;
-> > +
-> > +	return -ENOTSUPP;
+> > +	return is_pp_netmem(page_to_netmem(page));
 > > +}
-> > +#else /* !CONFIG_SMP */
-> > +static inline bool dtb_enable_method_is_valid(const char *enable_method_a,
-> > +					      const char *enable_method_b)
-> > +{
-> > +	/* No secondary CPUs. We do not care about the enable-method. */
-> > +	return true;
-> > +}
-> > +
-> > +static inline int dtb_configure_enable_method(const char *enable_method)
-> > +{
-> > +	return 0;
-> > +}
-> > +#endif /* CONFIG_SMP */
-> > +
-> > +static void __init dtb_register_apic_id(u32 apic_id, struct device_node *dn)
-> > +{
-> > +	topology_register_apic(apic_id, CPU_ACPIID_INVALID, true);
-> > +	set_apicid_to_node(apic_id, of_node_to_nid(dn));
-> > +}
-> > +
-> >  static void __init dtb_cpu_setup(void)
-> >  {
-> > +	const char *enable_method = ERR_PTR(-EINVAL), *this_em;
-> >  	struct device_node *dn;
-> >  	u32 apic_id;
+> > diff --git a/net/core/skbuff.c b/net/core/skbuff.c
+> > index 6cbf77bc61fce..11098c204fe3e 100644
+> > --- a/net/core/skbuff.c
+> > +++ b/net/core/skbuff.c
+> > @@ -893,11 +893,6 @@ static void skb_clone_fraglist(struct sk_buff *skb)
+> >  		skb_get(list);
+> >  }
 > >  
-> > @@ -138,9 +189,42 @@ static void __init dtb_cpu_setup(void)
-> >  			pr_warn("%pOF: missing local APIC ID\n", dn);
-> >  			continue;
-> >  		}
-> > -		topology_register_apic(apic_id, CPU_ACPIID_INVALID, true);
-> > -		set_apicid_to_node(apic_id, of_node_to_nid(dn));
-> > +
-> > +		/*
-> > +		 * Also check the enable-method of the secondary CPUs, if present.
-> > +		 *
-> > +		 * Systems that use the INIT-!INIT-StartUp IPI sequence to boot
-> > +		 * secondary CPUs do not need to define an enable-method.
-> > +		 *
-> > +		 * All CPUs must have the same enable-method. The enable-method
-> > +		 * must be supported. If absent in one secondary CPU, it must be
-> > +		 * absent for all CPUs.
-> > +		 *
-> > +		 * Compare the first secondary CPU with the rest. We do not care
-> > +		 * about the boot CPU, as it is enabled already.
-> > +		 */
-> > +
-> > +		if (apic_id == boot_cpu_physical_apicid) {
-> > +			dtb_register_apic_id(apic_id, dn);
-> > +			continue;
-> > +		}
-> > +
-> > +		this_em = of_get_property(dn, "enable-method", NULL);
+> > -static bool is_pp_netmem(netmem_ref netmem)
+> > -{
+> > -	return (netmem_get_pp_magic(netmem) & ~0x3UL) == PP_SIGNATURE;
+> > -}
+> > -
 > 
-> Use typed accessors. of_property_match_string() would be good here. 
-> There's some desire to avoid more of_property_read_string() calls too 
-> because that leaks un-refcounted DT data to the caller (really only an 
-> issue in overlays).
+> This has already been moved to mm.h (and the check changed) by commit:
+> 
+> cd3c93167da0 ("page_pool: Move pp_magic check into helper functions")
+> 
+> You should definitely rebase this series on top of that (and the
+> subsequent ee62ce7a1d90 ("page_pool: Track DMA-mapped pages and unmap
+> them when destroying the pool")), as these change the semantics of how
+> page_pool interacts with struct page.
+> 
+> Both of these are in net-next, which Mina already asked you to rebase
 
-Thanks for this information! However, I plan to scrap this code and
-unconditionally use the mailbox if detected.
+Is this net-next you are mentioning?  I will rebase on this if so.
 
-I would still like to get your inputs on the next submission with updated
-code to use the mailbox if you agree.
+   https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git/
 
-BR,
-Ricardo
+	Byungchul
+
+> on, so I guess you'll pick it up there, put flagging it here just for
+> completeness :)
+> 
+> -Toke
+> 
 
