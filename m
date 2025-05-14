@@ -1,135 +1,172 @@
-Return-Path: <linux-kernel+bounces-647105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-647102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 112F0AB647B
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 09:34:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4614CAB6476
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 09:33:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46767867087
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 07:33:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E12F1B62DFF
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 07:33:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C358F2040B0;
-	Wed, 14 May 2025 07:33:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 122D019C558;
+	Wed, 14 May 2025 07:31:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="yBJNzP/6"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TckigEK1"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A7041A3155;
-	Wed, 14 May 2025 07:33:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 751BBE55B
+	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 07:31:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747207994; cv=none; b=cLGdwrF8HsHE9dBez7lq1S/eFe6i+etqmhh+Dte7MbVABxGCLlPvoBxV7JxDf5m2+hgmVTllwmryDK+C5jPAIY5NLeYMfZqGtVUrKCfYYKOS4Ao6k7383zzx/yv/mL/fBIl11CZi/XP52yGJGBNWQNwqNGXTp1aThRaORZUiIr0=
+	t=1747207911; cv=none; b=Liai98wJmQkiAgw9Ys9qGJYX8o6Mgd18a5EpdQ4YjwXE5sQDzX14dek0bx3MNYpSywyJ9y698nwRzwhcxfjK01Tpt0Cl90UdtsUS+54T28zq8ihOwq9DTq1Ra6sBkd9hoR0o7JGlUxF7wtSgnGbYO78aRt8H0EoLtP9V9buKe1Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747207994; c=relaxed/simple;
-	bh=aMSOQWVWeoNv0lVBaoClSjorw3TTumNswBEIUZbZhII=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ofc96Xot4ioekubvzccph/0dql05DeVsQe636Z6s0MtZTUawRq9gci86F8XfNP9MJLB/6AbcLzhvxop1GVQOubphuruPfrBI3dNKmAiKNpbxmLObnf22YHL8AOXty3kK26zbbtdL774i/Q51zQlirXyqm9bTZwqwuxtbLqqp4w4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=yBJNzP/6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CED6FC4CEF1;
-	Wed, 14 May 2025 07:33:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1747207993;
-	bh=aMSOQWVWeoNv0lVBaoClSjorw3TTumNswBEIUZbZhII=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=yBJNzP/61tfn1OQwYbB5+8TyTD+iK+MDo9jkU75tUSd7omI+LFjV5tTBaAQckGFd/
-	 0TNMvaLuJc/nnkQoD5fkqlRI3LVmbchTRxExww+0IM7j85DaF4G0IyaqI6H774bJRn
-	 L6lSXZhZJ12eck/2X2lap5xrg+RQiFQBhv+fO9KA=
-Date: Wed, 14 May 2025 09:31:25 +0200
-From: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-To: "Chen, Jay" <jay.chen@siemens.com>
-Cc: "mathias.nyman@intel.com" <mathias.nyman@intel.com>,
-	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"Shao, Tzi Yang" <tziyang.shao@siemens.com>
-Subject: Re: [PATCH] usb: xhci: Set avg_trb_len = 8 for EP0 during Address
- Device
-Message-ID: <2025051451-pedicure-aspire-1c8d@gregkh>
-References: <JH0PR06MB7294E46B393F1CA5FE0EE4F78396A@JH0PR06MB7294.apcprd06.prod.outlook.com>
+	s=arc-20240116; t=1747207911; c=relaxed/simple;
+	bh=Mn5HbuWyqJ7C2JVqgyygApgDsStKx1RO3AbkQziNxxk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FK+DWvI4HypL/Z6pfiPh3IBgC+lZAZF6zd0bdCKWfUxmDXSej4v0FhkoZG97MpPWFnUSLF3SzXxVU2ukNGoj3xifhoJd478qJZM+Cc30XN/b3NZ9tAUgMthHmZaXHqKERdPszvXW109Bdrey2X4norCAbZWaU8QT/zM17cQz4YI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TckigEK1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16DFCC4CEE9;
+	Wed, 14 May 2025 07:31:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747207909;
+	bh=Mn5HbuWyqJ7C2JVqgyygApgDsStKx1RO3AbkQziNxxk=;
+	h=From:To:Cc:Subject:Date:From;
+	b=TckigEK1BxIipXvIYkFynkipGEYWAr5NqeRY1R2x5o3+8hRLcdZf/xhiLCXWj/uQU
+	 XOXpkgqTPZP5I67KS26pxRB0+zjJnk0VVoLL3Kfjd+xZS01gL6HQx8tPTwwWtjq+h+
+	 LjqMtjNmfJg/yznQaSeBXDhEGRQm90/C4k3YvUVa1P6F1+wfwlPT0c4UYpbfvfSEqr
+	 7XIUUXo1iBgMe9uiITCoWFLvuNxnwZPcxIQFHY3jCA8/4lxlv1RYhYd3O6NaDDVptK
+	 40YyjLO61TGEtLH5eSzNrkzbHCG2ajTLZHYv6hcprNiZK4LZxstZ+HXFO8zaNhHqVo
+	 0RZ7SOwQVzw/A==
+From: Philipp Stanner <phasta@kernel.org>
+To: Zack Rusin <zack.rusin@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Philipp Stanner <phasta@kernel.org>
+Subject: [PATCH v3] drm/vmwgfx: Use non-hybrid PCI devres API
+Date: Wed, 14 May 2025 09:31:27 +0200
+Message-ID: <20250514073126.85443-2-phasta@kernel.org>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <JH0PR06MB7294E46B393F1CA5FE0EE4F78396A@JH0PR06MB7294.apcprd06.prod.outlook.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, May 13, 2025 at 09:07:00AM +0000, Chen, Jay wrote:
-> From fef893bcf0add89795b85bcc1f6bdae537f1dabe Mon Sep 17 00:00:00 2001
-> From: "jay.chen" <jay.chen@siemens.com>
-> Date: Tue, 13 May 2025 15:03:44 +0800
-> Subject: [PATCH] usb: xhci: Set avg_trb_len = 8 for EP0 during Address Device
-> Command
-> 
-> According to the xHCI 1.2 spec (Section 6.2.3, p.454), the Average
-> TRB Length (avg_trb_len) for control endpoints should be set to 8.
-> 
-> Currently, during the Address Device Command, EP0's avg_trb_len remains 0,
-> which may cause some xHCI hardware to reject the Input Context, resulting
-> in device enumeration failures. In extreme cases, using a zero avg_trb_len
-> in calculations may lead to division-by-zero errors and unexpected system
-> crashes.
-> 
-> This patch sets avg_trb_len to 8 for EP0 in
-> xhci_setup_addressable_virt_dev(), ensuring compliance with the spec
-> and improving compatibility across various host controller implementations.
-> 
-> Link: https://bugzilla.kernel.org/show_bug.cgi?id=220033
-> Signed-off-by: jay.chen <jay.chen@siemens.com>
-> ---
-> drivers/usb/host/xhci-mem.c | 2 ++
-> 1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/usb/host/xhci-mem.c b/drivers/usb/host/xhci-mem.c
-> index d698095fc88d..fed9e9d1990c 100644
-> --- a/drivers/usb/host/xhci-mem.c
-> +++ b/drivers/usb/host/xhci-mem.c
-> @@ -1166,6 +1166,8 @@ int xhci_setup_addressable_virt_dev(struct xhci_hcd *xhci, struct usb_device *ud
->       ep0_ctx->deq = cpu_to_le64(dev->eps[0].ring->first_seg->dma |
->                                  dev->eps[0].ring->cycle_state);
-> 
-> +      ep0_ctx->tx_info |= cpu_to_le32(EP_AVG_TRB_LENGTH(8));
-> +
->       trace_xhci_setup_addressable_virt_device(dev);
-> 
->        /* Steps 7 and 8 were done in xhci_alloc_virt_device() */
-> -- 
-> 2.43.5
+vmwgfx enables its PCI device with pcim_enable_device(). This,
+implicitly, switches the function pci_request_regions() into managed
+mode, where it becomes a devres function.
 
+The PCI subsystem wants to remove this hybrid nature from its
+interfaces. To do so, users of the aforementioned combination of
+functions must be ported to non-hybrid functions.
 
-Hi,
+Moreover, since both functions are already managed in this driver, the
+calls to pci_release_regions() are unnecessary.
 
-This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
-a patch that has triggered this response.  He used to manually respond
-to these common problems, but in order to save his sanity (he kept
-writing the same thing over and over, yet to different people), I was
-created.  Hopefully you will not take offence and will fix the problem
-in your patch and resubmit it so that it can be accepted into the Linux
-kernel tree.
+Remove the calls to pci_release_regions().
 
-You are receiving this message because of the following common error(s)
-as indicated below:
+Replace the call to sometimes-managed pci_request_regions() with one to
+always-managed pcim_request_all_regions().
 
-- Your patch is malformed (tabs converted to spaces, linewrapped, etc.)
-  and can not be applied.  Please read the file,
-  Documentation/process/email-clients.rst in order to fix this.
+Signed-off-by: Philipp Stanner <phasta@kernel.org>
+Reviewed-by: Zack Rusin <zack.rusin@broadcom.com>
+---
+Changes in v3:
+  - Use the correct driver name in the commit message. (Zack)
 
-- This looks like a new version of a previously submitted patch, but you
-  did not list below the --- line any changes from the previous version.
-  Please read the section entitled "The canonical patch format" in the
-  kernel file, Documentation/process/submitting-patches.rst for what
-  needs to be done here to properly describe this.
+Changes in v2:
+  - Fix unused variable error.
+---
+ drivers/gpu/drm/vmwgfx/vmwgfx_drv.c | 14 +++-----------
+ 1 file changed, 3 insertions(+), 11 deletions(-)
 
-If you wish to discuss this problem further, or you have questions about
-how to resolve this issue, please feel free to respond to this email and
-Greg will reply once he has dug out from the pending patches received
-from other developers.
+diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c b/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
+index 0695a342b1ef..37b832e552a4 100644
+--- a/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
++++ b/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
+@@ -713,7 +713,7 @@ static int vmw_setup_pci_resources(struct vmw_private *dev,
+ 
+ 	pci_set_master(pdev);
+ 
+-	ret = pci_request_regions(pdev, "vmwgfx probe");
++	ret = pcim_request_all_regions(pdev, "vmwgfx probe");
+ 	if (ret)
+ 		return ret;
+ 
+@@ -733,7 +733,6 @@ static int vmw_setup_pci_resources(struct vmw_private *dev,
+ 		if (!dev->rmmio) {
+ 			drm_err(&dev->drm,
+ 				"Failed mapping registers mmio memory.\n");
+-			pci_release_regions(pdev);
+ 			return -ENOMEM;
+ 		}
+ 	} else if (pci_id == VMWGFX_PCI_ID_SVGA2) {
+@@ -754,11 +753,9 @@ static int vmw_setup_pci_resources(struct vmw_private *dev,
+ 		if (IS_ERR(dev->fifo_mem)) {
+ 			drm_err(&dev->drm,
+ 				  "Failed mapping FIFO memory.\n");
+-			pci_release_regions(pdev);
+ 			return PTR_ERR(dev->fifo_mem);
+ 		}
+ 	} else {
+-		pci_release_regions(pdev);
+ 		return -EINVAL;
+ 	}
+ 
+@@ -836,7 +833,6 @@ static int vmw_driver_load(struct vmw_private *dev_priv, u32 pci_id)
+ 	int ret;
+ 	enum vmw_res_type i;
+ 	bool refuse_dma = false;
+-	struct pci_dev *pdev = to_pci_dev(dev_priv->drm.dev);
+ 
+ 	vmw_sw_context_init(dev_priv);
+ 
+@@ -852,7 +848,7 @@ static int vmw_driver_load(struct vmw_private *dev_priv, u32 pci_id)
+ 		return ret;
+ 	ret = vmw_detect_version(dev_priv);
+ 	if (ret)
+-		goto out_no_pci_or_version;
++		return ret;
+ 
+ 
+ 	for (i = vmw_res_context; i < vmw_res_max; ++i) {
+@@ -1152,15 +1148,13 @@ static int vmw_driver_load(struct vmw_private *dev_priv, u32 pci_id)
+ 
+ 	if (dev_priv->ctx.staged_bindings)
+ 		vmw_binding_state_free(dev_priv->ctx.staged_bindings);
+-out_no_pci_or_version:
+-	pci_release_regions(pdev);
++
+ 	return ret;
+ }
+ 
+ static void vmw_driver_unload(struct drm_device *dev)
+ {
+ 	struct vmw_private *dev_priv = vmw_priv(dev);
+-	struct pci_dev *pdev = to_pci_dev(dev->dev);
+ 	enum vmw_res_type i;
+ 
+ 	unregister_pm_notifier(&dev_priv->pm_nb);
+@@ -1196,8 +1190,6 @@ static void vmw_driver_unload(struct drm_device *dev)
+ 		idr_destroy(&dev_priv->res_idr[i]);
+ 
+ 	vmw_mksstat_remove_all(dev_priv);
+-
+-	pci_release_regions(pdev);
+ }
+ 
+ static void vmw_postclose(struct drm_device *dev,
+-- 
+2.49.0
 
-thanks,
-
-greg k-h's patch email bot
 
