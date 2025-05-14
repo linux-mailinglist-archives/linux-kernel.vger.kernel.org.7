@@ -1,119 +1,113 @@
-Return-Path: <linux-kernel+bounces-647237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-647242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DFE1AB6609
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 10:33:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 01C2EAB661D
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 10:35:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F14B3A9B3C
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 08:33:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05BE7865125
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 08:35:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D69E521B9E0;
-	Wed, 14 May 2025 08:33:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A57C221CC5C;
+	Wed, 14 May 2025 08:35:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hm8iVqZM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="dz80wl+v"
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 456EB1B414E
-	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 08:33:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A9E621B195;
+	Wed, 14 May 2025 08:35:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747211598; cv=none; b=q2vXaBf4dvgmnJxOfhtOsltBMX9wJG2hwu7lbRqY02tuLTmq2UKUROcTkfAeFp2SUe5cKf9jcohOwm/ahmCqsB4Z7mrSQfbEE6x/t2k5lDMlIkoSMSxcjNyAXiBHwGHg34Ec20Rv922DICr2ctdtCJB/7oyoWkTcx6pT3mhJtq8=
+	t=1747211731; cv=none; b=tegCXXWG3QdCUK8sVq6eyKCTcELHizhqbxmmcJrtaACONFFtspuLSSaiBU5Kfk8p7LhCyu0qEXl6KFEqANX6YNEgGu4iWQ85HHKV1ykhs04tncgRtND1xgZ8X3tvy4pyp4i4SgnXycE8+LPNJnUFui1OOxuudB8IIJjgokX/w1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747211598; c=relaxed/simple;
-	bh=3CXpvZ6r0gzI/d2EhYFqbuGUg457rbvvifYrJSBg878=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bOj991FvnGWHuz14VCekX9XDaqohoGepaKW8VNLsArLz9KshEbuWenaSGYfkLIQ3+GBUUKg0lyZqJRtgKDv40VPIuO8ujBTd35jj4ZEltL0xu+5RlJzq8vDHSSf7fb6x3HubDTAAlvOY0G14MiN6TyECspsfnw/g09UyKm/SvmU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Hm8iVqZM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38FB9C4CEE9;
-	Wed, 14 May 2025 08:33:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747211597;
-	bh=3CXpvZ6r0gzI/d2EhYFqbuGUg457rbvvifYrJSBg878=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Hm8iVqZM6376zga6toinURm9wKZa2XbgbO+4YI1CAsaI4/EjJg89Sg/0oPye41aSp
-	 hGAm7BK9nGHVZmx3MCiisEXbMB1svmyEvr2zQDrKDSW5ilUNjGfQI9n50Be+K3+Nk4
-	 DafLcGIBhAgDmZcA6l8QrP08O6UdpfWvbxJhihXmr4h1F9tp5/bHRXADgwP5YQAVj9
-	 31yu93xj0c/Q0/i3/iL1TnagMm+YuY3C1sh6ePI4DRuE37T99R0sN4y+NAczEE+k5x
-	 DmfYt4kwEU+0yKluuq3hmWBfQEXId0lcvXpjEmkUXDuyCparO8m/wCXTyocLxbBcqK
-	 +rIP74zMAyh0g==
-Date: Wed, 14 May 2025 10:33:13 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc: Ard Biesheuvel <ardb+git@google.com>, linux-kernel@vger.kernel.org,
-	x86@kernel.org, Ard Biesheuvel <ardb@kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [RFC PATCH v2 2/6] x86/cpu: Use a new feature flag for 5 level
- paging
-Message-ID: <aCRVSaNVH6waid4c@gmail.com>
-References: <20250513111157.717727-8-ardb+git@google.com>
- <20250513111157.717727-10-ardb+git@google.com>
- <7uh3pi23cdd5r2t6ln5p2z2htgmzo5b6omlhb6vyddobcbqqnt@nyujbhsnpioh>
- <aCROdV_fIygO8OoM@gmail.com>
- <jjvzxxat34tc2uebx3sjqpuft3onxk2izv6azvmmrvr2yxkir7@jqeumosuzmrd>
+	s=arc-20240116; t=1747211731; c=relaxed/simple;
+	bh=tyHS19Jo+iP3Lquv30HuR8SaMuhl3ZrpELRb1028Wj4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=UubdvUA0qChdz44pIVO0y8zf4TP1beoApYFGheNk6hwnd2+G4W3HXaejXuIGdxAkobOTO9g96+t7YQlOBzf55rUo8LTEQquz2fhUEpwJT81sHtk9fLXogN7gQ+k7CnpIVxJliAIXMZUS0bJ/KYTsUVMDXOUGf3QrZ+2+WaRSmBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=dz80wl+v; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54E7w1Jx022967;
+	Wed, 14 May 2025 10:35:18 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	zTYcnTgzrTSARrdRyGgDqevHWfgdqMFkurpjm2teTzU=; b=dz80wl+vuCkp60ij
+	7FaCb6Y6rODPhEpIjDoGI+ijqilMSRtvYWm7EnQx9GskOVNIsUs1uVfmNsv+G5Ay
+	cRSz2iiBT5+l55aIFj3fJr7kRNWkgkQ6RZTQpTRwMb7D5OIhDBOrxfd0O/ry0klN
+	3Mt8OA2itjnWurK3iiNcG5oq/w8l+I+4J7E/hI4RhD0v38DQ/pTJrvE1ppDKxczQ
+	VOzgCkLMnebXGBJnI7fdiqdSUm+jWCaGP/DRZENCfrUbqLpFuo8yNS96tbUAzTCE
+	s5R9cyuwQKvkhwUI4wPqL7TMC6IEwiyx+sY4DtQdnp0IzufcwdAa3Al16bjuR/O2
+	pdndOw==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 46mbds2h27-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 14 May 2025 10:35:18 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 8AEA64004D;
+	Wed, 14 May 2025 10:34:14 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id D13E2B3CFAB;
+	Wed, 14 May 2025 10:33:33 +0200 (CEST)
+Received: from [10.48.86.79] (10.48.86.79) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 14 May
+ 2025 10:33:33 +0200
+Message-ID: <8e25c2e3-fbc6-4d60-8362-2b0fb3066821@foss.st.com>
+Date: Wed, 14 May 2025 10:33:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <jjvzxxat34tc2uebx3sjqpuft3onxk2izv6azvmmrvr2yxkir7@jqeumosuzmrd>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 4/4] ARM: dts: stm32: add initial support for
+ stm32mp157-ultra-fly-sbc board
+To: =?UTF-8?B?R29yYW4gUmHEkWVub3ZpxIc=?= <goran.radni@gmail.com>,
+        Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        =?UTF-8?B?QsO2cmdlIFN0csO8bXBmZWw=?=
+	<boerge.struempfel@gmail.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>
+CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <20250508143818.2574558-1-goran.radni@gmail.com>
+ <20250508143818.2574558-5-goran.radni@gmail.com>
+Content-Language: en-US
+From: Alexandre TORGUE <alexandre.torgue@foss.st.com>
+In-Reply-To: <20250508143818.2574558-5-goran.radni@gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-14_02,2025-05-14_02,2025-02-21_01
 
+Hi Goran
 
-* Kirill A. Shutemov <kirill@shutemov.name> wrote:
-
-> On Wed, May 14, 2025 at 10:04:05AM +0200, Ingo Molnar wrote:
-> > 
-> > * Kirill A. Shutemov <kirill@shutemov.name> wrote:
-> > 
-> > > On Tue, May 13, 2025 at 01:12:00PM +0200, Ard Biesheuvel wrote:
-> > > > From: Ard Biesheuvel <ardb@kernel.org>
-> > > > 
-> > > > Currently, the LA57 CPU feature flag is taken to mean two different
-> > > > things at once:
-> > > > - whether the CPU implements the LA57 extension, and is therefore
-> > > >   capable of supporting 5 level paging;
-> > > > - whether 5 level paging is currently in use.
-> > > > 
-> > > > This means the LA57 capability of the hardware is hidden when a LA57
-> > > > capable CPU is forced to run with 4 levels of paging. It also means the
-> > > > the ordinary CPU capability detection code will happily set the LA57
-> > > > capability and it needs to be cleared explicitly afterwards to avoid
-> > > > inconsistencies.
-> > > > 
-> > > > Separate the two so that the CPU hardware capability can be identified
-> > > > unambigously in all cases.
-> > > 
-> > > Unfortunately, there's already userspace that use la57 flag in
-> > > /proc/cpuinfo as indication that 5-level paging is active. :/
-> > > 
-> > > See va_high_addr_switch.sh in kernel selftests for instance.
-> > 
-> > Kernel selftests do not really count if that's the only userspace that 
-> > does this - but they indeed increase the likelihood that some external 
-> > userspace uses /proc/cpuinfo in that fashion. Does such external 
-> > user-space code exist?
+On 5/8/25 16:38, Goran Rađenović wrote:
+> Add support for Ultratronik's stm32mp157c fly board. This board embeds
+> a STM32MP157c SOC and 1GB of DDR3. Several connections are available on
+> this boards: 2*USB2.0, 1*USB2.0 MiniUSB, Debug UART, 1*UART, 1*USART,
+> SDcard, RJ45, ...
 > 
-> I am not aware of any production code that does this. But changing is
-> risky.
+> This patch enables basic support for a kernel boot - SD-card or eMMC.
+> 
+> Signed-off-by: Goran Rađenović <goran.radni@gmail.com>
+> 
 
-Would production code ever really care about this?
+Series applied on stm32-next.
 
-> Maybe leave "la57" flag in cpuinfo for 5-level paging enabled case and add
-> "la57_enumerated" or "la57_capable" to indicate that the hardware supports
-> 5-level paging?
-
-Yeah, see my other mail, I think renaming X86_FEATURE_LA57 to 
-X86_FEATURE_LA57_HW and exposing it as an additional 'la57_hw' flag in 
-/proc/cpuinfo would be the way to go, if this is a compatibility 
-concern.
-
-Thanks,
-
-	Ingo
+regards
+alex
 
