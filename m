@@ -1,186 +1,123 @@
-Return-Path: <linux-kernel+bounces-646774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-646776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0A14AB6060
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 03:16:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BF275AB6067
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 03:17:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9110F1B439F4
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 01:16:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5544419E0D25
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 01:17:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1BE678F43;
-	Wed, 14 May 2025 01:16:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC38E156C69;
+	Wed, 14 May 2025 01:17:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="WgGedhVm"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NWdg4JyX"
+Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B60E21DFE8
-	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 01:16:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C69653D984;
+	Wed, 14 May 2025 01:17:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747185385; cv=none; b=Mj9QfT/WQ00oY2CGICO1snHd6IgI5DUtzwclMIqW3AXLrBu+TofOMW95APgzbkzfzSTlYw/SwuqWtAtPVezaZNwiBcQfgc0FmMtF2/KsdfEAgEeDdgzwnOdMBlBdrYS8DxASdso8IkfFhAyv+YhNRjlbIBu6Id2/d473oo0Lb+k=
+	t=1747185430; cv=none; b=sfbN9WxxUCUkOIrCzHihjlUbXqBsxcPnZr/7H0OtxfHYoyY5Rw2gCUajjwgOZXT5FrxG66YwtKPjV6KuAVeEaTsbNtBH7JEWr/oqoT7z5+26H5v9Wx6b+b3llKm7MJE2i5J5ta/9B+fzlcF3CbmE/2WuhBfah6uUL8/sq8QCnAM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747185385; c=relaxed/simple;
-	bh=2iyMcmTUCksrl8tcWLl+IWP5N2afJcL8MbqS/UWeXQc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MB80I6+gKp2JRvKoXl6GA+EnBGtbK/+YDtd2cr/9Yd+qWWPk12a/Y1B0XY2I8oBXnOX+pjhwEecifaDLLOd5nxMMW13qrnXrvshMeHziyeIwefIMrCx6ikMNhCu0zAjCCQeycJikN/rnpdtIWSQinWtOhfP8xcEsCHcKUYY2W3w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=WgGedhVm; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=1hs0q+mYysLcaiUGDRGU9TTWH9u5sOR249xe+14mUYE=; b=WgGedhVmEtnihbug
-	SFvkbuRhV8goYYF6lKHH2iKLLNc8rG4SVCmXVxAWsML0+B9VAbNCQ+ToGlPa+bFCPDv5gLjq65LTL
-	wdEjOe6Ih+peKUx/B3FBq5j1yYptpGsrpGL3Fccnlq+FhVTpcj+K+pHpt1g7r+qphZQ3Bjz9c7cd2
-	lxCpD8+tFTksaAJFpsW51xhj0jAaGraa9BYTtT/5xVItG+6TXZC9Tu7vVz+d5tosp6h83Fu9NVfhm
-	7Y3FxO6XaXXZu929fpm1eHeKo2l7q5TbbL0wFgM5cGU143FyYKYWVODs95f1H4ZaYb6RY1TpeSYld
-	aAPQZz4AiVKysSYc4w==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1uF0jD-003Oxd-2I;
-	Wed, 14 May 2025 01:16:11 +0000
-From: linux@treblig.org
-To: alexander.deucher@amd.com,
-	christophe.jaillet@wanadoo.fr,
-	christian.koenig@amd.com
-Cc: airlied@gmail.com,
-	simona@ffwll.ch,
-	amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH] drm/radeon/cik: Clean up doorbells
-Date: Wed, 14 May 2025 02:16:10 +0100
-Message-ID: <20250514011610.136607-1-linux@treblig.org>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1747185430; c=relaxed/simple;
+	bh=nSrQLIIz5NOYeKv3kZaGWloZT+mJKQ6M7Z/Z39vrA4M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=G9kttIrdSA4BDmVb5XdFaZEMNhbM2TFE/BCTLdNvhS9bdCu9yPsVwDdMf4YwRInw0NCporIIXmqAdbawdcXWTy5Um/JyMIqPhpdoNGTqqFTI+CYzvpKW7223lLJBwwNvGJdd6PNfm2Q4LUrrjfw7i0xL9loKMK45DiQSxGwnjko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NWdg4JyX; arc=none smtp.client-ip=209.85.219.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-6f5373067b3so88991426d6.2;
+        Tue, 13 May 2025 18:17:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747185427; x=1747790227; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=nEaVOh/9lfsZXQCmNPE6lSqX4P2H8nzTwz/gMp/qKyg=;
+        b=NWdg4JyX+k3PGBStFbWwTw1A7SF6FnE9w9WR1oBl0IbO9YbLgS2Ym+ChmRdGA4m/2v
+         n40tn5RWhUDlCWOgzfKW4zUHDJxN3ZsEvYhXwsTQyWwsEpa6rANqgJLMmWJwzKKhx+2H
+         hU5/XxuGbjtVtCrRVWLAT2mqMxxrvNNw5oQJP860lF1E2BRAyiUNFBQERLqHBwK7KOj9
+         KfHdOxxsSmAsrlxZLZ4guj11L/WDGN03utEM4U5LXkj5ykiyzy8aLxwsbVSgACr6Fzw6
+         G8HGT0hDFqp74ZbLsoDrf92l2HF4X7ZX7xj0wQpf8WeQByz/O32qkD6HsmbQ0EtJWuDz
+         OBOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747185427; x=1747790227;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nEaVOh/9lfsZXQCmNPE6lSqX4P2H8nzTwz/gMp/qKyg=;
+        b=E2e3kNPUAP/9tfAE7ICVzc2YXe76mmfk0H1AbOhmoU+miWI8fAbDajTdSMvHMCmHs3
+         e0A8iZ7U2vt6rfSX+uSwVjd2S+1osy4qOaYbMXX4OWyPeC8RPd6tPuYke0JRgaeARp9v
+         EDpGNHILYg95mta92hohu9MFiNyfPtg7xOa9LIFrN1g/PZfekMYDUKYgHXF3pBO928v/
+         HjjjmXsWFSrseB2snmRJtCNSisb5Ipe+d+04V8fPSskBvfGntIV8DvF56alb0AV5YY82
+         xF9ovAtxzmmVhxSJUPTepA19aDggQeMTepmgxypPtUv8ef7WrsxxvY8Ol88LzdoJDhyW
+         zT/w==
+X-Forwarded-Encrypted: i=1; AJvYcCUdzOOHr2ij+GdVONp47UVhytscV3icsMi1tdqCVQbVMQA7kt1gaZWQyTXqNlfBlOhnwLYVVaPU7IWY@vger.kernel.org, AJvYcCVjn13RECH4tglXPaDJDuMYX+qNMVmKEGiBz2+ZjunfYPZDeQYiLVkAYFjq+5XLWTtP/NRJP6lktEIKnQLn@vger.kernel.org, AJvYcCVpEiOlSllR1f6W4SpjBG7nkUT/4ihMthXxrPlNvv0kvilJXJJ1GyS9hDcG7FhG8iyAoirSM6OTHHM9@vger.kernel.org, AJvYcCVpigvjM6nC3jsaWFQ1fSvDWkM1BAaxbxP/0SVP/u0k2j9ztg6gavanyG8BTQmmU0WnDUCIHS03JVai@vger.kernel.org, AJvYcCXhminsnedlBW3vF7JvAO0IGqGISrcNIZrMBMMrPr3e1kDJl9YibzxgnluSDHfH23jBIci8Xzhj83EDlVA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyry1cmqnmo1rSGHOU5znnjYgaD+CceGxCAJWWSQ+EY7U+B488J
+	eyJotgQ0msaqSeS8WVpodfZamOXj/Wi+Mh8MrOxzvtPpvtTF7RAF
+X-Gm-Gg: ASbGncs+XNjovWJGQyftVMo+1Ys6K6pFLMgfB2BXbRupm9x8IbgOCeyhkOKmheuKlpX
+	+gGuX43KEC82fG0VWmmT+aRlU2FrfZbRrxQYqfe5s82aQCTorhpHZvvFJoEBfzYMgT2Fy5GWjkt
+	/TzPgNlyabfWMa77M/mPaVndE61+z1d5Q9MzvRzcjdpB8nQo5GzAZXkNkNJ7bk4cYlVWkwoxbIM
+	5Bd/zdFhWBHC3wr0qfPIny/SxWfJXRpNn3Ha5gvqWQmJC4S0XEFMX1ZZpaJ0WAsQqdiC2LRcR0O
+	VYoo3bbPD/9DzG7IFSWpNEY6vkI=
+X-Google-Smtp-Source: AGHT+IFq80xt7wr+N4Is1nsHfkVqlHuQBXPmL2/8vRvaUgO/7OiqL00yD+wmu1pLVR3Zg8H9LoV5EQ==
+X-Received: by 2002:a05:6214:2468:b0:6d4:238e:35b0 with SMTP id 6a1803df08f44-6f896e4c936mr24184336d6.17.1747185427543;
+        Tue, 13 May 2025 18:17:07 -0700 (PDT)
+Received: from localhost ([2001:da8:7001:11::cb])
+        by smtp.gmail.com with UTF8SMTPSA id 6a1803df08f44-6f6e39f588asm74175596d6.49.2025.05.13.18.17.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 May 2025 18:17:07 -0700 (PDT)
+Date: Wed, 14 May 2025 09:16:35 +0800
+From: Inochi Amaoto <inochiama@gmail.com>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>, 
+	Inochi Amaoto <inochiama@gmail.com>
+Cc: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Chen Wang <unicorn_wang@outlook.com>, 
+	Andi Shyti <andi.shyti@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Samuel Holland <samuel.holland@sifive.com>, 
+	Ulf Hansson <ulf.hansson@linaro.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Alexandre Ghiti <alex@ghiti.fr>, Thomas Bonnefille <thomas.bonnefille@bootlin.com>, 
+	Jarkko Nikula <jarkko.nikula@linux.intel.com>, Jisheng Zhang <jszhang@kernel.org>, 
+	Chao Wei <chao.wei@sophgo.com>, linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org, 
+	sophgo@lists.linux.dev, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, linux-mmc@vger.kernel.org, Yixun Lan <dlan@gentoo.org>, 
+	Longbin Li <looong.bin@gmail.com>
+Subject: Re: [PATCH v2 02/10] dt-bindings: timer: Add Sophgo SG2044 ACLINT
+ timer
+Message-ID: <g45xqtuit7apkduwsfsmw7giqttrb7kjtobejs44rtslx37ynp@ugic2medlczo>
+References: <20250413223507.46480-1-inochiama@gmail.com>
+ <20250413223507.46480-3-inochiama@gmail.com>
+ <aCNYItP6SWImMvFv@mai.linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aCNYItP6SWImMvFv@mai.linaro.org>
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
+On Tue, May 13, 2025 at 04:33:06PM +0200, Daniel Lezcano wrote:
+> On Mon, Apr 14, 2025 at 06:34:56AM +0800, Inochi Amaoto wrote:
+> > Like SG2042, SG2044 implements an enhanced ACLINT, so add necessary
+> > compatible string for SG2044 SoC.
+> > 
+> > Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
+> > Acked-by: Rob Herring (Arm) <robh@kernel.org>
+> > ---
+> 
+> Applied patch 2, thanks!
+> 
 
-Free doorbells in the error paths of cik_init and in cik_fini.
+Thanks, as you take this patch, I will drop this one in our repo
+to avoid duplicate.
 
-Build tested only.
-
-Suggested-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
----
-RFC->v1
-  Renamed ringCP[12]->ring_cp[12]
-  Cleaned up doorbells in cik_startup failure case
-
- drivers/gpu/drm/radeon/cik.c | 42 +++++++++++++++++++++++++-----------
- 1 file changed, 30 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/gpu/drm/radeon/cik.c b/drivers/gpu/drm/radeon/cik.c
-index 11a492f21157..51a3e0fc2f56 100644
---- a/drivers/gpu/drm/radeon/cik.c
-+++ b/drivers/gpu/drm/radeon/cik.c
-@@ -8548,7 +8548,7 @@ int cik_suspend(struct radeon_device *rdev)
-  */
- int cik_init(struct radeon_device *rdev)
- {
--	struct radeon_ring *ring;
-+	struct radeon_ring *ring, *ring_cp1, *ring_cp2;
- 	int r;
- 
- 	/* Read BIOS */
-@@ -8623,19 +8623,22 @@ int cik_init(struct radeon_device *rdev)
- 	ring->ring_obj = NULL;
- 	r600_ring_init(rdev, ring, 1024 * 1024);
- 
--	ring = &rdev->ring[CAYMAN_RING_TYPE_CP1_INDEX];
--	ring->ring_obj = NULL;
--	r600_ring_init(rdev, ring, 1024 * 1024);
--	r = radeon_doorbell_get(rdev, &ring->doorbell_index);
-+	ring_cp1 = &rdev->ring[CAYMAN_RING_TYPE_CP1_INDEX];
-+	ring_cp2 = &rdev->ring[CAYMAN_RING_TYPE_CP2_INDEX];
-+	ring_cp1->ring_obj = NULL;
-+	ring_cp2->ring_obj = NULL;
-+	ring_cp1->doorbell_index = RADEON_MAX_DOORBELLS;
-+	ring_cp2->doorbell_index = RADEON_MAX_DOORBELLS;
-+
-+	r600_ring_init(rdev, ring_cp1, 1024 * 1024);
-+	r = radeon_doorbell_get(rdev, &ring_cp1->doorbell_index);
- 	if (r)
- 		return r;
- 
--	ring = &rdev->ring[CAYMAN_RING_TYPE_CP2_INDEX];
--	ring->ring_obj = NULL;
--	r600_ring_init(rdev, ring, 1024 * 1024);
--	r = radeon_doorbell_get(rdev, &ring->doorbell_index);
-+	r600_ring_init(rdev, ring_cp2, 1024 * 1024);
-+	r = radeon_doorbell_get(rdev, &ring_cp2->doorbell_index);
- 	if (r)
--		return r;
-+		goto out;
- 
- 	ring = &rdev->ring[R600_RING_TYPE_DMA_INDEX];
- 	ring->ring_obj = NULL;
-@@ -8653,12 +8656,16 @@ int cik_init(struct radeon_device *rdev)
- 
- 	r = r600_pcie_gart_init(rdev);
- 	if (r)
--		return r;
-+		goto out;
- 
- 	rdev->accel_working = true;
- 	r = cik_startup(rdev);
- 	if (r) {
- 		dev_err(rdev->dev, "disabling GPU acceleration\n");
-+		radeon_doorbell_free(rdev, ring_cp1->doorbell_index);
-+		radeon_doorbell_free(rdev, ring_cp2->doorbell_index);
-+		ring_cp1->doorbell_index = RADEON_MAX_DOORBELLS;
-+		ring_cp2->doorbell_index = RADEON_MAX_DOORBELLS;
- 		cik_cp_fini(rdev);
- 		cik_sdma_fini(rdev);
- 		cik_irq_fini(rdev);
-@@ -8678,10 +8685,16 @@ int cik_init(struct radeon_device *rdev)
- 	 */
- 	if (!rdev->mc_fw && !(rdev->flags & RADEON_IS_IGP)) {
- 		DRM_ERROR("radeon: MC ucode required for NI+.\n");
--		return -EINVAL;
-+		r = -EINVAL;
-+		goto out;
- 	}
- 
- 	return 0;
-+
-+out:
-+	radeon_doorbell_free(rdev, ring_cp1->doorbell_index);
-+	radeon_doorbell_free(rdev, ring_cp2->doorbell_index);
-+	return r;
- }
- 
- /**
-@@ -8695,6 +8708,7 @@ int cik_init(struct radeon_device *rdev)
-  */
- void cik_fini(struct radeon_device *rdev)
- {
-+	struct radeon_ring *ring;
- 	radeon_pm_fini(rdev);
- 	cik_cp_fini(rdev);
- 	cik_sdma_fini(rdev);
-@@ -8708,6 +8722,10 @@ void cik_fini(struct radeon_device *rdev)
- 	radeon_ib_pool_fini(rdev);
- 	radeon_irq_kms_fini(rdev);
- 	uvd_v1_0_fini(rdev);
-+	ring = &rdev->ring[CAYMAN_RING_TYPE_CP1_INDEX];
-+	radeon_doorbell_free(rdev, ring->doorbell_index);
-+	ring = &rdev->ring[CAYMAN_RING_TYPE_CP2_INDEX];
-+	radeon_doorbell_free(rdev, ring->doorbell_index);
- 	radeon_uvd_fini(rdev);
- 	radeon_vce_fini(rdev);
- 	cik_pcie_gart_fini(rdev);
--- 
-2.49.0
-
+Regards,
+Inochi
 
