@@ -1,144 +1,124 @@
-Return-Path: <linux-kernel+bounces-646789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-646792-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0528AAB6094
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 03:52:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BA05AB609B
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 03:56:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3F45D7B0062
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 01:51:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2A7A1B617D7
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 01:56:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1E801D8DFB;
-	Wed, 14 May 2025 01:52:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFC361DF260;
+	Wed, 14 May 2025 01:56:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="PezMostV"
-Received: from out30-112.freemail.mail.aliyun.com (out30-112.freemail.mail.aliyun.com [115.124.30.112])
+	dkim=pass (2048-bit key) header.d=fluxnic.net header.i=@fluxnic.net header.b="VcUKUKuE";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="oaog5whK"
+Received: from fhigh-a3-smtp.messagingengine.com (fhigh-a3-smtp.messagingengine.com [103.168.172.154])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78528282F1
-	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 01:52:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.112
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 804C61DAC92;
+	Wed, 14 May 2025 01:56:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747187564; cv=none; b=uYvzvFiYMft3VRCz4vQOCZlpRWWNpJ5LgPCxVZKsr6xKi1Bbr9F1xjzNcgOQUzSz/ztEfm+z7jsZbqooXj7+b8IKlGngQ+rq7xE55buitzIr3c52+SRbtFjKUlWP47BWzt9xCWtUvWHxy5AG42xIafWwoOxoc6bTZWqkxfvKXwU=
+	t=1747187778; cv=none; b=FwOiLoamH2ba6HQIsFdZZ5Bt9dw+sXbSfUFTwTuiKEsnQdrFmAnA4Ldm9MfCVUAVBNHXA160/moCGKnxLZfgyHcVHJV/xfyVSY5+CRGUhv3MSUgyFTaFHhp2zcpj4pOJQZZQHAYZRuryvI9+n3TVViRYMiOU64jfFiDqY193FLI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747187564; c=relaxed/simple;
-	bh=ArzmPrUUimxgO3OLbTZZyHprCgkECw047we4m+4Wy3Q=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=DS5PEwVOxbUbSMLl3ykFOP0ILOI9Ip5G/CVwjXsg8DJn3VWMsm4IVvCSjVURdi55EfCunhzyJZfhtfPVhQWo5D0ZfW7BYtpRmEv0ep4c5Tv1K91t7OwOcm6urJv8NiyiAOSn5vzHHGhynmKuJJnuUvM2FczVaBKrYbBB8MPljD0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=PezMostV; arc=none smtp.client-ip=115.124.30.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1747187552; h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
-	bh=PcUnhacTHmV8p2KHssTwLk+L9RMh0PlQReOgV31H3LA=;
-	b=PezMostViuOX8PYL0tHTiMPDn1VSiZrOty+I2+3sPIIsz6pXBxs4iTo4FmJapzI3zkbZuU3FO4TnUDjZJE4NtaChiWqjwF7BTBbJN8D0iZnMKXQ7mhaAzz8j4ORRuGpAAsXBPXsJZTegaoYcBpvEE+UHBYB65fF/9bWf8ORUZVU=
-Received: from DESKTOP-5N7EMDA(mailfrom:ying.huang@linux.alibaba.com fp:SMTPD_---0WajTcAk_1747187551 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Wed, 14 May 2025 09:52:32 +0800
-From: "Huang, Ying" <ying.huang@linux.alibaba.com>
-To: Zi Yan <ziy@nvidia.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,  David Hildenbrand
- <david@redhat.com>,  Alistair Popple <apopple@nvidia.com>,  Matthew Brost
- <matthew.brost@intel.com>,  Joshua Hahn <joshua.hahnjy@gmail.com>,  Rakie
- Kim <rakie.kim@sk.com>,  linux-mm@kvack.org,  linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH] MAINTAINERS: add mm memory policy section
-In-Reply-To: <F5EEDDBD-C151-42CB-8880-CCA9A841A4DC@nvidia.com> (Zi Yan's
-	message of "Tue, 13 May 2025 12:06:28 -0400")
-References: <20250513160007.132378-1-lorenzo.stoakes@oracle.com>
-	<F5EEDDBD-C151-42CB-8880-CCA9A841A4DC@nvidia.com>
-Date: Wed, 14 May 2025 09:52:32 +0800
-Message-ID: <87wmakt0v3.fsf@DESKTOP-5N7EMDA>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1747187778; c=relaxed/simple;
+	bh=kprDUzz3HORek4jgXz1YTQRAJVW8oMV2aHsige+efKo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=csDKNfKknn556l0c48/2jO02NwMe6RF4n35pqVMhRvWUEhMiV2VYnQ5xu7PTjQDJSIp5Y1n2M/bCUqfBc+jIKMY+mUnKXut881dhX0L55mexfP3ip7TzhXO1z4kIjltUj78W67cqqW+SvdCZyqfb1a+EHDlxTfw0eLPY7SEidlE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fluxnic.net; spf=pass smtp.mailfrom=fluxnic.net; dkim=pass (2048-bit key) header.d=fluxnic.net header.i=@fluxnic.net header.b=VcUKUKuE; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=oaog5whK; arc=none smtp.client-ip=103.168.172.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fluxnic.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fluxnic.net
+Received: from phl-compute-02.internal (phl-compute-02.phl.internal [10.202.2.42])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 514661140095;
+	Tue, 13 May 2025 21:56:13 -0400 (EDT)
+Received: from phl-frontend-02 ([10.202.2.161])
+  by phl-compute-02.internal (MEProxy); Tue, 13 May 2025 21:56:13 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fluxnic.net; h=
+	cc:cc:content-transfer-encoding:content-type:date:date:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to; s=fm3; t=1747187773; x=1747274173; bh=vhpfVrpjQAxMVNP9kRsPQ
+	04hdep/8LVopp9unopJ7zA=; b=VcUKUKuEQVusCUhfap+PNpTtEgjLc/Tmz2cKd
+	sKWVXGQJ5DZShfBk3Rp5mWVjm4qZQ2M8bPe8355A4av3IPBAD2By4kW0gKDahbQW
+	hk6UpVdOHlqDig8Ca8x7u+ZGyY0DpN4ISEEZHCrtT+6G224nkaRqjeIisrAGm/Gb
+	Wt6qtwG4LzeGGRE1dNVJ88E7x0L2fJNC4M+PrA7tMTyuANdEyElrnzcvKOcif75I
+	2pKsF+8kZqRgKtxXXKtu0TlCZcKHwWMudp3xXi9ZTuWnlv8UfDBi+LZFi1cxSVtz
+	9bEr4v8nC0ABkEIky2gz4hwQ8i2MH9KN0AVxfBFKbjwmAA6Ew==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
+	1747187773; x=1747274173; bh=vhpfVrpjQAxMVNP9kRsPQ04hdep/8LVopp9
+	unopJ7zA=; b=oaog5whKPAL1rE3RNNcoK25wafkrf4DEOXmYFYDgM1JOvAZsSyj
+	iFHlVI9bhutFDCfPU/AgQ/ABLRpHE3OuXsyHtKeZJZtxjIVueFKVZXo62Nalrtka
+	i/sJAWHNIXppXu7l/bt6nfPQmn/ws1FuDaysi+gvYBePdaTt9cQ2hV9CHm/mNJgB
+	hod8Rg4KeNZIgn4yaA6lNTh/KdXalMdLpO3U5kvZcB3CU0db4iqCwSy+zA+POilu
+	e/amhM9IKGNyttIR1bR2jpk/u15F7x+vUMegTJEDFtTtOXbEFoTsXmIxN03ZV3ZE
+	Pbd7fnWxTCSLI8nvClyPB4M6AGxTPrMTriw==
+X-ME-Sender: <xms:PPgjaIKhCp1oqs_qrEo5dD70_HPzP4M0WEFNTUMUgl4dGrbkkrIhkA>
+    <xme:PPgjaIKsb1JjUj100s8cn0y6-t0-NGrnfnmD4DoMdnhttty1xqkD28JpWRFIr_lGt
+    DLaT6RDXiLyCYEWn_U>
+X-ME-Received: <xmr:PPgjaIuXwSkJ7SnwmjYsShouzYJZtHCUdGlLicJUOEfXSQ-Tsexvka2sV-zqOy2pbHKJfINjvxXFduLwBmmAMTNuutShPX-B1XJfgrXP6jF5quoS_A>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeftdehjedvucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhephffvvefufffkofgggfestdekredtredttden
+    ucfhrhhomheppfhitgholhgrshcurfhithhrvgcuoehnihgtohesfhhluhignhhitgdrnh
+    gvtheqnecuggftrfgrthhtvghrnhephefhfeetueeiteeigfffieelveethfduleegheel
+    teehudetuedvjeffffdvhfevnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
+    hmrghilhhfrhhomhepnhhitghosehflhhugihnihgtrdhnvghtpdhnsggprhgtphhtthho
+    peehpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehnphhithhrvgessggrhihlih
+    gsrhgvrdgtohhmpdhrtghpthhtohepjhhirhhishhlrggshieskhgvrhhnvghlrdhorhhg
+    pdhrtghpthhtohepghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgpd
+    hrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+    pdhrtghpthhtoheplhhinhhugidqshgvrhhirghlsehvghgvrhdrkhgvrhhnvghlrdhorh
+    hg
+X-ME-Proxy: <xmx:PPgjaFbUmzgqPBlNvr3MN8QkeY3SSZ1gpwwYnmu8TquVla9zyS0vbA>
+    <xmx:PPgjaPZwqqpyVwsa3dwkTPvwqD3sGF6PbvqF6KX2n_goI67TtlA1oA>
+    <xmx:PPgjaBC5vcOjbqMnhyeAw7u10GKOvBLDXdw7Sht5g91RmECPHz6Icg>
+    <xmx:PPgjaFa9ablJ_8YPhXR0KxGP-Gk3S3JUagoTk4k_OyCivCRGTnUMQg>
+    <xmx:PfgjaFqIhDBKTBzVe_BY9x2gIoJeqSa1cjFdFJ8alCx7Vb-WG5Z29dTb>
+Feedback-ID: i58514971:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 13 May 2025 21:56:12 -0400 (EDT)
+Received: from xanadu.lan (OpenWrt.lan [192.168.1.1])
+	by yoda.fluxnic.net (Postfix) with ESMTPSA id 119C011A0BC6;
+	Tue, 13 May 2025 21:56:12 -0400 (EDT)
+From: Nicolas Pitre <nico@fluxnic.net>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>
+Cc: Nicolas Pitre <npitre@baylibre.com>,
+	linux-serial@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/2] vt: bracketed paste and cursor position
+Date: Tue, 13 May 2025 21:52:56 -0400
+Message-ID: <20250514015554.19978-1-nico@fluxnic.net>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Zi Yan <ziy@nvidia.com> writes:
+A different kind of VT console update this time. These patches:
 
-> On 13 May 2025, at 12:00, Lorenzo Stoakes wrote:
->
->> As part of the ongoing efforts to sub-divide memory management
->> maintainership and reviewership, establish a section for memory policy a=
-nd
->> migration and add appropriate maintainers and reviewers.
->>
->> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
->> ---
->>
->> REVIEWERS NOTES:
->>
->> I took a look through git blame, past commits, etc. and came up with what
->> seems to be a reasonable list of people here, if you don't feel you ought
->> to be here, or if you feel anybody is missing (including yourself!) let =
-me
->> know :)
->
-> +Ying, who added batched TLB flushing to page migration code. Let=E2=80=
-=99s see
-> if he is interested in mm/migrate.c.
+- add bracketed paste support to the VT console
 
-Hi, Zi,
+- overcome a /dev/vcsa limitation with cursor position retrieval
 
-Thank you very much to nominate me!
+They are submitted together to avoid merge conflicts as they touch some
+common code.
 
-Hi, Lorenzo,
+Tested on top of linux v6.15.0-rc4.
 
-I have contributed the batched TLB flushing to page migration and some
-review comments for weighted interleave policy.  Please feel free to add
-me to the reviewer list if you think that it's appropriate.
-
-R: Ying Huang <ying.huang@linux.alibaba.com>
-
->>
->> David has kindly already agreed to be co-maintainer for this section.
->>
->>  MAINTAINERS | 18 ++++++++++++++++++
->>  1 file changed, 18 insertions(+)
->>
->> diff --git a/MAINTAINERS b/MAINTAINERS
->> index 80aa09f2e735..29d73593038c 100644
->> --- a/MAINTAINERS
->> +++ b/MAINTAINERS
->> @@ -15567,6 +15567,24 @@ W:	http://www.linux-mm.org
->>  T:	git git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm
->>  F:	mm/gup.c
->>
->> +MEMORY MANAGEMENT - MEMORY POLICY AND MIGRATION
->> +M:	Andrew Morton <akpm@linux-foundation.org>
->> +M:	David Hildenbrand <david@redhat.com>
->> +R:	Zi Yan <ziy@nvidia.com>
->
-> Acked-by: Zi Yan <ziy@nvidia.com>
->
->> +R:	Alistair Popple <apopple@nvidia.com>
->> +R:	Matthew Brost <matthew.brost@intel.com>
->> +R:	Joshua Hahn <joshua.hahnjy@gmail.com>
->> +R:	Rakie Kim <rakie.kim@sk.com>
->> +L:	linux-mm@kvack.org
->> +S:	Maintained
->> +W:	http://www.linux-mm.org
->> +T:	git git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm
->> +F:	include/linux/mempolicy.h
->> +F:	include/linux/migrate.h
->> +F:	mm/mempolicy.c
->> +F:	mm/migrate.c
->> +F:	mm/migrate_device.c
->> +
->>  MEMORY MANAGEMENT - NUMA MEMBLOCKS AND NUMA EMULATION
->>  M:	Andrew Morton <akpm@linux-foundation.org>
->>  M:	Mike Rapoport <rppt@kernel.org>
->> --
->> 2.49.0
-
----
-Best Regards,
-Huang, Ying
+diffstat:
+ drivers/tty/vt/selection.c     | 35 ++++++++++++++++++++++++++++++----
+ drivers/tty/vt/vt.c            | 37 ++++++++++++++++++++++++++++++++++++
+ include/linux/console_struct.h |  1 +
+ include/uapi/linux/tiocl.h     |  5 +++++
+ 4 files changed, 74 insertions(+), 4 deletions(-)
 
