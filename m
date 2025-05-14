@@ -1,136 +1,114 @@
-Return-Path: <linux-kernel+bounces-648548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-648543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FE63AB78B0
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 00:07:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05F94AB78A3
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 00:06:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC3A41BA37C2
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 22:07:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 323FA4A3994
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 22:05:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87986231A57;
-	Wed, 14 May 2025 22:04:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 440C722D7B9;
+	Wed, 14 May 2025 22:04:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PUdZ7K0j"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UF4woT/P"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D740E2153D8;
-	Wed, 14 May 2025 22:04:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D40922D4C1;
+	Wed, 14 May 2025 22:04:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747260280; cv=none; b=dhwMPkH54szJuhLOHTDfAf3KnTKEnWSWtznrCdZ0vCtvWztH50RQvSOzF1Eyh7xpWvReIA3JTVYXb5SsOnCrfq7bTdehpLDnVGCi3DXoDzI0M/GyHRVs6QROYykYQODpdJthwIzU37PajcWYi6x52wF4JoItB3HIsyLpsvZTp3M=
+	t=1747260256; cv=none; b=vBEXnXA5C7Rguz5mqoC69VD4n7FXdtJ7tyVAVb0cS/Aiict3NVtrxcR5nOPT/Ei1U8aprYuQHTUtyi7SyUjf6rTcN8j1xknai82rn3bF19B70DrrnMAx+o6RpOvN2B9DXebuK0CC+MWooOONQzGIKcxLgwppAPy6y8ItNGVOv0Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747260280; c=relaxed/simple;
-	bh=WF46UsPN75VDjMGLBPpKqGhF8yXGNp/YIhfAlM9Ro+U=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=IG9u3ra5NFGEVdrBHRcHQtpmnHG4ef4xR5e3rfXCp/TO7WkVLWGAIf2YSBSAqz9CAMokQM27dt/FvOY7jX1bw7cWdQfD47TSvt24gsUYy9FlhqVS5Mg0hojgjPpO+u/g++QjcKCA1PmNUNN03lmnsqKl4DMnyBP/gLLeElwCqtg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PUdZ7K0j; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4B48C4CEE3;
-	Wed, 14 May 2025 22:04:34 +0000 (UTC)
+	s=arc-20240116; t=1747260256; c=relaxed/simple;
+	bh=kSYN5wSnAW3gZ+9G6lJ65RsA0L1GRRokgz8LEmwge8I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b5OwNfpGm5flvUVfz9kFls8afXtMy2+oOcnSex6dJR+K5qDMM8QHEJD2JaBUIa1Y/p/mj/Vr6LGgFJmihScte22Wba0kDuOBAjLenaCy3ewYbIBUp1Ta+Nic7SiLG4PwwRtT+snEDG4uAQ8Uc/B3M9P6F2QwsPj8cJufjzEhBWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UF4woT/P; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 756E9C4CEEF;
+	Wed, 14 May 2025 22:04:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747260279;
-	bh=WF46UsPN75VDjMGLBPpKqGhF8yXGNp/YIhfAlM9Ro+U=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=PUdZ7K0j17nsI5ayN7DSVjltWpYjm6oTU1mp9NUMsiQ9ampYAeKPhPeTt5brHKqQh
-	 b1YCx1yrkI4VntLHgZSntgzZxTZm/caerNwwEbZfo3cmjqmUAAc+WZtu2wrI3aEliM
-	 ri/vW74f+MTIsZTTIZ9s9SYep4C/tnT4eUj+KgBI15odyyFD3ZMQTMMsWqMdoD3TBE
-	 BQo0NsjZUHoei2FKsRI6FKvdPXAoQNC2wdOgDR1y60rz7ozbuM8mS24iiXkbAH+g6f
-	 SGDX5xFhxlvhWX7rj2wfQa8CG5G5AJztoexZMQcmzdeXHoign0VYTe4epLf9WTRdY2
-	 WYn7RL2x4q9UA==
-From: Christian Brauner <brauner@kernel.org>
-Date: Thu, 15 May 2025 00:03:41 +0200
-Subject: [PATCH v7 8/9] selftests/pidfd: add PIDFD_INFO_COREDUMP
- infrastructure
+	s=k20201202; t=1747260255;
+	bh=kSYN5wSnAW3gZ+9G6lJ65RsA0L1GRRokgz8LEmwge8I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UF4woT/PdK5/zYCNEqorTNCUe/N1+BoNjs3pgsYXQuukwOstmZoDbUxS7Rm7nq8KT
+	 wCApHTnyhWsv8YVBvX2mTKGT7gfAY7iY9SLqJF3dhZkS/HdNf4JTOHRG2VUXFQViaV
+	 Q/81W/B9Bc29AxdKGJ9kLJhqEZTogfMZ+dP70Q35UQs4X9W2iu+VlLwv9596fFaQ/P
+	 Cetobslyxg/fVJ6XpjZ2BroXp6QCY5SMWy8lI0rJ3KlGe7tal5IFRhemOa9kfjgvHb
+	 2BChcdGELMAm+P/DUho+o0GQ3Ho31ZWZJlf4ajL7h+tRO7bzrNrq+90VcJ39nab4p1
+	 Pn0EtQOi7+TQQ==
+Date: Wed, 14 May 2025 17:04:13 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Cosmin Tanislav <demonsingur@gmail.com>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>,
+	Kieran Bingham <kieran.bingham@ideasonboard.com>,
+	Eric Biggers <ebiggers@google.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Hans Verkuil <hverkuil@xs4all.nl>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Will Deacon <will@kernel.org>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Ross Burton <ross.burton@arm.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Dongcheng Yan <dongcheng.yan@intel.com>,
+	Julien Massot <julien.massot@collabora.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	linux-media@vger.kernel.org,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	Elinor Montmasson <elinor.montmasson@savoirfairelinux.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Cosmin Tanislav <cosmin.tanislav@analog.com>,
+	Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
+	Taniya Das <quic_tdas@quicinc.com>,
+	linux-arm-kernel@lists.infradead.org, linux-staging@lists.linux.dev,
+	Ricardo Ribalda <ribalda@chromium.org>,
+	linux-kernel@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Niklas =?iso-8859-1?Q?S=F6derlund?= <niklas.soderlund@ragnatech.se>,
+	Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Liu Ying <victor.liu@nxp.com>,
+	=?iso-8859-1?Q?N=EDcolas_F_=2E_R_=2E_A_=2E?= Prado <nfraprado@collabora.com>,
+	linux-gpio@vger.kernel.org,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Tommaso Merciai <tomm.merciai@gmail.com>,
+	Zhi Mao <zhi.mao@mediatek.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH v3 07/19] dt-bindings: media: i2c: max96712: use pattern
+ properties for ports
+Message-ID: <174726025353.3123437.1360215980060366369.robh@kernel.org>
+References: <20250512212832.3674722-1-demonsingur@gmail.com>
+ <20250512212832.3674722-8-demonsingur@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250515-work-coredump-socket-v7-8-0a1329496c31@kernel.org>
-References: <20250515-work-coredump-socket-v7-0-0a1329496c31@kernel.org>
-In-Reply-To: <20250515-work-coredump-socket-v7-0-0a1329496c31@kernel.org>
-To: linux-fsdevel@vger.kernel.org, Jann Horn <jannh@google.com>, 
- Daniel Borkmann <daniel@iogearbox.net>, 
- Kuniyuki Iwashima <kuniyu@amazon.com>
-Cc: Eric Dumazet <edumazet@google.com>, Oleg Nesterov <oleg@redhat.com>, 
- "David S. Miller" <davem@davemloft.net>, 
- Alexander Viro <viro@zeniv.linux.org.uk>, 
- Daan De Meyer <daan.j.demeyer@gmail.com>, 
- David Rheinsberg <david@readahead.eu>, Jakub Kicinski <kuba@kernel.org>, 
- Jan Kara <jack@suse.cz>, Lennart Poettering <lennart@poettering.net>, 
- Luca Boccassi <bluca@debian.org>, Mike Yuan <me@yhndnzj.com>, 
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
- =?utf-8?q?Zbigniew_J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, 
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
- linux-security-module@vger.kernel.org, 
- Christian Brauner <brauner@kernel.org>, 
- Alexander Mikhalitsyn <alexander@mihalicyn.com>
-X-Mailer: b4 0.15-dev-c25d1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1381; i=brauner@kernel.org;
- h=from:subject:message-id; bh=WF46UsPN75VDjMGLBPpKqGhF8yXGNp/YIhfAlM9Ro+U=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWSoCntKiHV/2tWx+UDRFq9PT75FCXS2rnSs5PT8MNHWi
- tPMcK1VRykLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwEQKixkZ1mqXeZYdZTVnDI+1
- 0p/xf7HU1aasrZ6W2dVuX6avPCwby/DPxi1xptY83v/HVkpxXs2729aYl3PifPG23QrbV8S9cGr
- hAgA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp;
- fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250512212832.3674722-8-demonsingur@gmail.com>
 
-Add PIDFD_INFO_COREDUMP infrastructure so we can use it in tests.
 
-Signed-off-by: Christian Brauner <brauner@kernel.org>
----
- tools/testing/selftests/pidfd/pidfd.h | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+On Tue, 13 May 2025 00:28:16 +0300, Cosmin Tanislav wrote:
+> The MAX96712 and MAX96724 support up to 4 separate PHYs, depending on
+> the selected PHY configuration. Use patternProperties to document this.
+> 
+> The input ports are all the same, use patternProperties for them.
+> 
+> Signed-off-by: Cosmin Tanislav <demonsingur@gmail.com>
+> ---
+>  .../bindings/media/i2c/maxim,max96712.yaml    | 29 +++++++------------
+>  1 file changed, 10 insertions(+), 19 deletions(-)
+> 
 
-diff --git a/tools/testing/selftests/pidfd/pidfd.h b/tools/testing/selftests/pidfd/pidfd.h
-index 55bcf81a2b9a..887c74007086 100644
---- a/tools/testing/selftests/pidfd/pidfd.h
-+++ b/tools/testing/selftests/pidfd/pidfd.h
-@@ -131,6 +131,26 @@
- #define PIDFD_INFO_EXIT			(1UL << 3) /* Always returned if available, even if not requested */
- #endif
- 
-+#ifndef PIDFD_INFO_COREDUMP
-+#define PIDFD_INFO_COREDUMP	(1UL << 4)
-+#endif
-+
-+#ifndef PIDFD_COREDUMPED
-+#define PIDFD_COREDUMPED	(1U << 0) /* Did crash and... */
-+#endif
-+
-+#ifndef PIDFD_COREDUMP_SKIP
-+#define PIDFD_COREDUMP_SKIP	(1U << 1) /* coredumping generation was skipped. */
-+#endif
-+
-+#ifndef PIDFD_COREDUMP_USER
-+#define PIDFD_COREDUMP_USER	(1U << 2) /* coredump was done as the user. */
-+#endif
-+
-+#ifndef PIDFD_COREDUMP_ROOT
-+#define PIDFD_COREDUMP_ROOT	(1U << 3) /* coredump was done as root. */
-+#endif
-+
- #ifndef PIDFD_THREAD
- #define PIDFD_THREAD O_EXCL
- #endif
-@@ -150,6 +170,9 @@ struct pidfd_info {
- 	__u32 fsuid;
- 	__u32 fsgid;
- 	__s32 exit_code;
-+	__u32 coredump_mask;
-+	__u32 __spare1;
-+	__u64 coredump_cookie;
- };
- 
- /*
-
--- 
-2.47.2
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
 
