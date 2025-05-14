@@ -1,138 +1,215 @@
-Return-Path: <linux-kernel+bounces-648257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-648247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7644AB7446
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 20:23:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8975EAB741B
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 20:09:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4C2947A852C
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 18:22:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 20A0A189EF57
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 18:09:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D79E2820DD;
-	Wed, 14 May 2025 18:23:17 +0000 (UTC)
-Received: from mail-out.aladdin-rd.ru (mail-out.aladdin-rd.ru [91.199.251.16])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09FBF1C8621;
+	Wed, 14 May 2025 18:09:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PBHecUyM"
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E7C91E9B16;
-	Wed, 14 May 2025 18:23:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.199.251.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99EE2196C7C;
+	Wed, 14 May 2025 18:09:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747246996; cv=none; b=Sk5BqHMrVxSKIPhjrXdTb7XHQi5Ostq9JMBz5TnQcg12vFXo9VtlaHMTT4rNf4u6DYu+MJAjIVr16z2oJOFuUgzL1uVrSPGuSLcGBdf9VFhoJb/oQ+Uf6q/rsq6hnoktpLRu5hw0n0kCUqTDZ9OTaVG2VNv1HdBoARZ39etPVcI=
+	t=1747246162; cv=none; b=XKkXH77iwKbd54Mcf4W76Zwfr3dLCEHZsn7z6PlTA/mFtECzuYsuH4XqU9S3EiwDmNFQ6zrVHTctYwX1FUJRElkCVZfuyw43ljFKXw8TBgPJApGgq8D68M9jwIuYOsK4JL+P1qVnBkjVWAa8Va/IfOeYLCgGt2w/3MK6dr5kysc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747246996; c=relaxed/simple;
-	bh=4e1qOJWkWaFSa6R6yvbt8eruwMLzqqkT2IlDLCrqYys=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=L22IxhQcnqq3czH0E2UweUpc5fleRchqCSRMoP+GKSgoG3Rwrz8WH0br8/mTy3HgX2gELkt7YbHFeNIVr77i4eMKB5KuRBAPugf+DNPh9J9U0mKEQTDDIdNU8w8MYRnh3wpopm9Siwt3iYRvv6sHWV/V9YTJvvAVACAcB8JTTS4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=aladdin.ru; spf=pass smtp.mailfrom=aladdin.ru; arc=none smtp.client-ip=91.199.251.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=aladdin.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aladdin.ru
-From: Daniil Dulov <d.dulov@aladdin.ru>
-To: <stable@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC: Daniil Dulov <d.dulov@aladdin.ru>, Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <kafai@fb.com>, Song Liu <songliubraving@fb.com>, Yonghong
- Song <yhs@fb.com>, John Fastabend <john.fastabend@gmail.com>, KP Singh
-	<kpsingh@kernel.org>, Roman Gushchin <guro@fb.com>, <netdev@vger.kernel.org>,
-	<bpf@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<lvc-project@linuxtesting.org>, syzbot <syzkaller@googlegroups.com>, Eric
- Dumazet <edumazet@google.com>
-Subject: [PATCH 5.10] bpf: Avoid overflows involving hash elem_size
-Date: Wed, 14 May 2025 21:07:33 +0300
-Message-ID: <20250514180733.1271988-1-d.dulov@aladdin.ru>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1747246162; c=relaxed/simple;
+	bh=TWEeF3FIwffivcD69LOpbpJvcTv56PwYnVjLEOxgtac=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PNNzbd3nNb8Xdec0THrrPali/iY0lTn5fItRHJNHANOfCB7zyDgO//XWVlG9NiGtwvg6EMabQcifRmLRW0tS88B1X8e1xV4xl13KrKPagdjtIZp7BYimUpAXhMOrL4AlmCrXEAkgAg43tl9+KJNi1Iewxctlz5cOeeQ2V7WsRvE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PBHecUyM; arc=none smtp.client-ip=209.85.215.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-b1fd59851baso17121a12.0;
+        Wed, 14 May 2025 11:09:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747246158; x=1747850958; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=ULDTPZ/Q8WDC42rx45jcf2YeFArXxWDu9Vq6TcbBvkc=;
+        b=PBHecUyMo/KZ7G6uiIh0e5YZmHhDqr0PvMCHPzn9UHZGgwoNbImxRXkqRVsxNoGTh1
+         Ny4noHAnnOgVO9nUzAVvhlKRYO9ys39ZFRNnekDDlSKfuJhRHdsRpV5sy7ETB4vZnktb
+         Hoqt0WG51f949v+nJRoHAnHrBaXV+Fv5yv+tZayIADoEBUjTOOabVp7YIOO1BBWWKNEz
+         m8+z/RH3xgOSNpJ6IOBIxnyu5Al5oeLZ87pFTstzRzq1HQgiulh8v+Mtltzb/QhWq0Oy
+         CKOhM3qRjQv7fnXYxzD+DnfmSspFl2Rim+zb0K9TR54xigUsT9G9n4/h1SQr+S01UGvy
+         +rlA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747246158; x=1747850958;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ULDTPZ/Q8WDC42rx45jcf2YeFArXxWDu9Vq6TcbBvkc=;
+        b=OIxWU2Ae38cD+Ilq2ucGPVur1I9Nb5MdHoSTXBnTwstc7cgQTW5iSMF/VhYHBgiLbT
+         NWWJxaAAIDHil69+Top3nzy0X7jNPOk6E8YETLzUGE7HK1SvKN3urMFfd0gjNw5IHWfG
+         +K+vUwfcaGXY5v+EluAeVsehk/BBxFn/200AdO37cuA6nfS3FC8+M12KMT3hXaVWTt5C
+         9TesUxrHXKEj6tp8b/ve5el9Y8oMVOGnyYE0aYXAMYY7ohDX9UjrqPUylj9wgJ/pAgaK
+         h7xB7/Ptx0RbCQOQO/B3Vcx5WmtyIjhBNojYYRKBNhrt0OQd7bRAn7aGYnAtMyCLRUhj
+         PRlQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV1WCRb0Sw9EetYIUX+uKM5OnTMUA9MbKdckLi53S1r3lNSz0iLh9actxG20Gkblxp9zmHQ9w64zZw6@vger.kernel.org, AJvYcCXxkwX/Dmo/FX6zQVBOeq5ZEN0rrVm9TKAwkrwkJyMbzU9hl8raX6Xvs61UIgsycrnK8zN8L9n718f/U52J@vger.kernel.org
+X-Gm-Message-State: AOJu0YwD3lz9Kj8ZU/LbVyivfV0FAzXR7EB73SmJSBulK7Rd7QjMIeoN
+	L7YcnDs3ap74GqfrLmPmLUXuWGdTl28lPIMMl3cOseGgOkYQ+C2t
+X-Gm-Gg: ASbGnct5F2tdZ6sZ7ppdYvgLQADsyC6qnjlBBxZ6ScT9QorSzyj5Zw8MjfCGhdLJfVp
+	mXr4jirtEJEDg3Ni0ipL+ejJ6kxUC2k0RBSweZftcn8R9O3PQkuoK0lhX5r0emXOx+VwMHnxhZa
+	BnxJmZdCJO2k029OdUmn7w4rIablD54o9epSBJt+fZ39uL11xvEwRkUGTZitbk1uJVbW3PUdU7N
+	r79BPj5LMg+WbOGYbJ2bsNyeTOX6lMqXDjKvA8Xz2q/N+ar4ZO9t1s3pQQC3YsVyR558PymnezI
+	9zAXc5nuWxd+kYd8EkC+NNlSxn3bxuGzWKxqcCcNWjTjDVU14Uy1any6k1emgZWb5L2ofbVxVS+
+	Cy5MVj+nfohxWIjevRZxitBjj
+X-Google-Smtp-Source: AGHT+IEW+o/7nHuU3n9jWceYrdb8uyM7bO7kRGY33fwGU7J24OIzl7vJ8KpCEgSRgpMjKR3aAqeIDA==
+X-Received: by 2002:a17:90b:1fcd:b0:301:1d9f:4ba2 with SMTP id 98e67ed59e1d1-30e2e625db6mr6285302a91.28.1747246157704;
+        Wed, 14 May 2025 11:09:17 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-30e371d626esm1678651a91.44.2025.05.14.11.09.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 14 May 2025 11:09:17 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <2a8e1ae7-2a8a-4cd8-b699-c010019c766e@roeck-us.net>
+Date: Wed, 14 May 2025 11:09:15 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 0/2] Add the NXP S32 Watchdog
+To: Daniel Lezcano <daniel.lezcano@linaro.org>, wim@linux-watchdog.org
+Cc: linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org,
+ S32@nxp.com, ghennadi.procopciuc@nxp.com, thomas.fossati@linaro.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ devicetree@vger.kernel.org, alexandru-catalin.ionita@nxp.com
+References: <20250410082616.1855860-1-daniel.lezcano@linaro.org>
+ <650c336b-a698-42f5-ad59-7dcdf24667f4@linaro.org>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <650c336b-a698-42f5-ad59-7dcdf24667f4@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EXCH-2016-01.aladdin.ru (192.168.1.101) To
- EXCH-2016-01.aladdin.ru (192.168.1.101)
 
-From: Eric Dumazet <edumazet@google.com>
+On 5/14/25 08:30, Daniel Lezcano wrote:
+> On 4/10/25 10:26, Daniel Lezcano wrote:
+>> The NXP S32 watchdog, referenced in the documentation as the Software
+>> Watchdog Timer is actually a hardware watchdog. The system has one
+>> watchdog per core but an assertation does not directly reset the
+>> system as this behavior relies on a particular setup and another
+>> component which is not part of these changes. However the first
+>> watchdog on the system, tied with the Cortex-M4 #0 is a particular
+>> case where it will reset the system directly. This is enough for the
+>> watchdog purpose on Linux.
+>>
+>> The watchdog relies on the default timeout described in the device
+>> tree but if another timeout is needed at boot time, it can be changed
+>> with the module parameter.
+>>
+>> If the kernel has to service the watchdog in place of the userspace,
+>> it can specify the 'early-enable' option at boot time.
+>>
+>> And finally, if starting the watchdog has no wayback then the option
+>> 'nowayout' can be also specified in the boot option.
+>>
+>> Changelog:
+>>
+>>   - v4:
+>>      - Update the watchdog timeout when the callback is called (Alexandru-Catalin Ionita)
+>>      - Fix the clocks bindings to have all the clocks described (Krzysztof Kozlowski)
+>>
+>>   - v3:
+>>      - Add the clocks for the module and the register (Ghennadi Procopciuc)
+>>      - Use the clock name from the driver
+>>      - Removed Review-by tag from Krzysztof Kozlowski as the bindings changed
+>>
+>>   - v2:
+>>      - Removed debugfs code as considered pointless for a such simple
+>>        driver (Arnd Bergmann)
+>>      - Replaced __raw_readl / __raw_writel by readl and writel (Arnd Bergmann)
+>>      - Reordered alphabetically the headers (Guenter Roeck)
+>>      - Enclosed macro parameter into parenthesis (Guenter Roeck)
+>>      - Fixed checkpatch reported errors (Guenter Roeck)
+>>      - Clarified a ping on a stopped timer does not affect it (Guenter Roeck)
+>>      - Used wdt_is_running() to save an extra IO (Guenter Roeck)
+>>      - Fixed a misleading comment about starting the watchdog at boot time (Guenter Roeck)
+>>      - Replaced allocation size sizeof(struct ...) by sizeof(*var) (Krzysztof Kozlowski)
+>>      - Drop old way of describing the module and use table module device (Krzysztof Kozlowski)
+>>      - Replaced additionalProperties by unevaluatedProperties (Rob Herring)
+>>      - Removed the DT bindings description as it is obvious (Ghennadi Procopciuc)
+>>      - Fixed DT bindings compatible string (Krzysztof Kozlowski)
+>>
+>>   - v1: initial posting
+>>
+>> Daniel Lezcano (2):
+>>    dt-bindings: watchdog: Add NXP Software Watchdog Timer
+>>    watchdog: Add the Watchdog Timer for the NXP S32 platform
+>>
+>>   .../bindings/watchdog/nxp,s32g2-swt.yaml      |  54 +++
+>>   drivers/watchdog/Kconfig                      |   9 +
+>>   drivers/watchdog/Makefile                     |   1 +
+>>   drivers/watchdog/s32g_wdt.c                   | 315 ++++++++++++++++++
+>>   4 files changed, 379 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/watchdog/nxp,s32g2-swt.yaml
+>>   create mode 100644 drivers/watchdog/s32g_wdt.c
+> 
+> Hi,
+> 
+> Gentle ping, we are close to the merge window.
+> 
 
-commit e1868b9e36d0ca52e4e7c6c06953f191446e44df upstream.
+AFAICS the patches do have Reviewed-by: tags, so this is just waiting for Wim
+to pick it up.
 
-Use of bpf_map_charge_init() was making sure hash tables would not use more
-than 4GB of memory.
-
-Since the implicit check disappeared, we have to be more careful
-about overflows, to support big hash tables.
-
-syzbot triggers a panic using :
-
-bpf(BPF_MAP_CREATE, {map_type=BPF_MAP_TYPE_LRU_HASH, key_size=16384, value_size=8,
-                     max_entries=262200, map_flags=0, inner_map_fd=-1, map_name="",
-                     map_ifindex=0, btf_fd=-1, btf_key_type_id=0, btf_value_type_id=0,
-                     btf_vmlinux_value_type_id=0}, 64) = ...
-
-BUG: KASAN: vmalloc-out-of-bounds in bpf_percpu_lru_populate kernel/bpf/bpf_lru_list.c:594 [inline]
-BUG: KASAN: vmalloc-out-of-bounds in bpf_lru_populate+0x4ef/0x5e0 kernel/bpf/bpf_lru_list.c:611
-Write of size 2 at addr ffffc90017e4a020 by task syz-executor.5/19786
-
-CPU: 0 PID: 19786 Comm: syz-executor.5 Not tainted 5.10.0-rc3-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x107/0x163 lib/dump_stack.c:118
- print_address_description.constprop.0.cold+0x5/0x4c8 mm/kasan/report.c:385
- __kasan_report mm/kasan/report.c:545 [inline]
- kasan_report.cold+0x1f/0x37 mm/kasan/report.c:562
- bpf_percpu_lru_populate kernel/bpf/bpf_lru_list.c:594 [inline]
- bpf_lru_populate+0x4ef/0x5e0 kernel/bpf/bpf_lru_list.c:611
- prealloc_init kernel/bpf/hashtab.c:319 [inline]
- htab_map_alloc+0xf6e/0x1230 kernel/bpf/hashtab.c:507
- find_and_alloc_map kernel/bpf/syscall.c:123 [inline]
- map_create kernel/bpf/syscall.c:829 [inline]
- __do_sys_bpf+0xa81/0x5170 kernel/bpf/syscall.c:4336
- do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
-RIP: 0033:0x45deb9
-Code: 0d b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 db b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007fd93fbc0c78 EFLAGS: 00000246 ORIG_RAX: 0000000000000141
-RAX: ffffffffffffffda RBX: 0000000000001a40 RCX: 000000000045deb9
-RDX: 0000000000000040 RSI: 0000000020000280 RDI: 0000000000000000
-RBP: 000000000119bf60 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 000000000119bf2c
-R13: 00007ffc08a7be8f R14: 00007fd93fbc19c0 R15: 000000000119bf2c
-
-Fixes: 755e5d55367a ("bpf: Eliminate rlimit-based memory accounting for hashtab maps")
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Signed-off-by: Alexei Starovoitov <ast@kernel.org>
-Acked-by: Roman Gushchin <guro@fb.com>
-Link: https://lore.kernel.org/bpf/20201207182821.3940306-1-eric.dumazet@gmail.com
-Signed-off-by: Daniil Dulov <d.dulov@aladdin.ru>
----
- kernel/bpf/hashtab.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/kernel/bpf/hashtab.c b/kernel/bpf/hashtab.c
-index 4c7cab79d90e..829d6d3a8495 100644
---- a/kernel/bpf/hashtab.c
-+++ b/kernel/bpf/hashtab.c
-@@ -199,7 +199,7 @@ static void *fd_htab_map_get_ptr(const struct bpf_map *map, struct htab_elem *l)
- 
- static struct htab_elem *get_htab_elem(struct bpf_htab *htab, int i)
- {
--	return (struct htab_elem *) (htab->elems + i * htab->elem_size);
-+	return (struct htab_elem *) (htab->elems + i * (u64)htab->elem_size);
- }
- 
- static void htab_free_elems(struct bpf_htab *htab)
-@@ -255,7 +255,7 @@ static int prealloc_init(struct bpf_htab *htab)
- 	if (!htab_is_percpu(htab) && !htab_is_lru(htab))
- 		num_entries += num_possible_cpus();
- 
--	htab->elems = bpf_map_area_alloc(htab->elem_size * num_entries,
-+	htab->elems = bpf_map_area_alloc((u64)htab->elem_size * num_entries,
- 					 htab->map.numa_node);
- 	if (!htab->elems)
- 		return -ENOMEM;
--- 
-2.34.1
+Guenter
 
 
