@@ -1,208 +1,203 @@
-Return-Path: <linux-kernel+bounces-647071-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-647052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33366AB6427
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 09:24:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DC66AB63F3
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 09:18:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 08DDE16771D
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 07:24:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE093170CCB
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 07:18:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 460AA21FF2D;
-	Wed, 14 May 2025 07:22:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07FA520D4F4;
+	Wed, 14 May 2025 07:18:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Y2c23Flt"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2083.outbound.protection.outlook.com [40.107.223.83])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=usama.anjum@collabora.com header.b="gpFiuabP"
+Received: from sender3-pp-f112.zoho.com (sender3-pp-f112.zoho.com [136.143.184.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 060D22063F0;
-	Wed, 14 May 2025 07:22:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.83
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4423E4C7C;
+	Wed, 14 May 2025 07:18:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.184.112
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747207358; cv=fail; b=o4ogW5TA7sKJ5bV2bTu5NIOo8357obYbfNaMYMqA/hfJyG74IW30IbZMOnWMC/jEwDrh82wpP/fOIQtbGOKBuaC8em9oo1bEt1ItXYvNzDI0ViHZAbX6ngUMUacIYBwUz38/x58If2f1RyemNeDxoTfpF+2vLuCXwII3rEwnneo=
+	t=1747207118; cv=pass; b=a00zuRfAITxpv6ALVfZkAuqA+rop7tKCbo6LcgRmychJEOpQ28brKsG3uDkKWZU2oL+luW49yEE31IJyD3LCkYuqCmLj3W5Wrb0+cAkFsyNlnp+Uv4YVJlzV2/dhIOyrLLTOmSGFMO1OSD/W7TyGXKItvP1PQ188BuRySfMk3Jk=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747207358; c=relaxed/simple;
-	bh=/URuWQg3VABghLblrjDT3v15vLJfKWCE4pjxZeikgIE=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=feEVO8nzsU1ucCcBT9oFBR3BkNU15K+MAf9DJO9g1+MSvIWn/ibdfae1E3t1sv73+t70ZvIwIOgk37w249GHyNrcRAtATqX//GPDXZfgkFiTZRI7lpuCT5X5NAZVfkDs+HmG+IuOzVdomHtuEurKGvpwS23j4Dyv32oYlZs5hb0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Y2c23Flt; arc=fail smtp.client-ip=40.107.223.83
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=S2YUc4VJ68EmgMxTNhbqrAiAdiEOBnVLQVu6GTEbYXN2Whk1pyK5kMXpE5keQeogSqOunrSaI7Dv3rJKt2ZY/SYV5zXsPX8kV+7bZ7TeuIbPoU4nov/n8S098S+pfv6mRZTB6RMZwXe8fWQdqdUgVicvI60uMHu+L3XxIk7QTiqyWvCPcTnfydcOjSzOILAQC/Bms9faxKXKb2cIfyZPU6jH29JbcRGDpBlNxOzSBfIxeG9i8tTepHwqYpWFWtK4jqipbLWpL1DC9OuxAHsGdy8LiUE4zt8L4A1MrQN0UfD4P+p6V6KmRMKNQAwNXnx67MZDQAYtQW96PJF8Gx8/zA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=YSrTQM/cZla3IDNfWfNZWmhgY++mmj2s02nVRwa5fFw=;
- b=PTG+ZQRGaVGQLpLy9tJU55/ONDN3oKI22vPnjQVg/GdJxzInhQGp8I62D0iScAwu1ObnSTRK0Wc/vRFlDC/3uThOy9b1H6Src8SvzGLAP/PIiEO8Q4mK8832/dhosSPLGrgl1aUq9opcTSN59uYtHm4HMykmpftSnHDM1ecp991z/fYErYHSZuyeZOLEUXDPV+FTG7f/VnwxuNecmbRZN97HJvc6uve1SgKv7zg3mADVjGJIuH3bvCt5UYa3HzPwqebX42fumHAmZ/ife5xf5mXTVhra6SbWxXMFuLylchj2f+j/MVlHnczh22c294NXskTSxjHqpGZ+MH1wnCCoiA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YSrTQM/cZla3IDNfWfNZWmhgY++mmj2s02nVRwa5fFw=;
- b=Y2c23FltV/iAqMKfF7P3ATdFXAuuyrmC6BPzLaeyMTczBZWNSvW/LCdF/xsF/9AOmZWZ9QjBgaJvd7zkDG8S7oaUiMIrRsESb7nRy02uhvCBXPwrJR9MQzic16fi7U7a0g/rCiGjEjdTbcG2gH9yzZTwb5c2tO0y8UOgyuD7Q4g=
-Received: from BL1PR13CA0322.namprd13.prod.outlook.com (2603:10b6:208:2c1::27)
- by IA1PR12MB8263.namprd12.prod.outlook.com (2603:10b6:208:3f8::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8722.30; Wed, 14 May
- 2025 07:22:25 +0000
-Received: from BN3PEPF0000B072.namprd04.prod.outlook.com
- (2603:10b6:208:2c1:cafe::d7) by BL1PR13CA0322.outlook.office365.com
- (2603:10b6:208:2c1::27) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8746.11 via Frontend Transport; Wed,
- 14 May 2025 07:22:25 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- BN3PEPF0000B072.mail.protection.outlook.com (10.167.243.117) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8722.18 via Frontend Transport; Wed, 14 May 2025 07:22:25 +0000
-Received: from BLR-L-NUPADHYA.xilinx.com (10.180.168.240) by
- SATLEXMB04.amd.com (10.181.40.145) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Wed, 14 May 2025 02:22:15 -0500
-From: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
-To: <linux-kernel@vger.kernel.org>
-CC: <bp@alien8.de>, <tglx@linutronix.de>, <mingo@redhat.com>,
-	<dave.hansen@linux.intel.com>, <Thomas.Lendacky@amd.com>, <nikunj@amd.com>,
-	<Santosh.Shukla@amd.com>, <Vasant.Hegde@amd.com>,
-	<Suravee.Suthikulpanit@amd.com>, <David.Kaplan@amd.com>, <x86@kernel.org>,
-	<hpa@zytor.com>, <peterz@infradead.org>, <seanjc@google.com>,
-	<pbonzini@redhat.com>, <kvm@vger.kernel.org>,
-	<kirill.shutemov@linux.intel.com>, <huibo.wang@amd.com>,
-	<naveen.rao@amd.com>, <francescolavra.fl@gmail.com>, <tiala@microsoft.com>
-Subject: [RFC PATCH v6 10/32] x86/apic: Change apic_*_vector() vector param to unsigned
-Date: Wed, 14 May 2025 12:47:41 +0530
-Message-ID: <20250514071803.209166-11-Neeraj.Upadhyay@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250514071803.209166-1-Neeraj.Upadhyay@amd.com>
-References: <20250514071803.209166-1-Neeraj.Upadhyay@amd.com>
+	s=arc-20240116; t=1747207118; c=relaxed/simple;
+	bh=vCQn8TFGM628timJ+axGQvEslXu2HdTJbzhOFutuu48=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=TcjjoOcqMBL/oRTmdWYGDHKw24NGTb2zxMpPTqval0jRXYL3LY6Y9OJ8wYzjR30Lo6fFosMsWH3F9jbW+F+UahhadwF2irOICiX3EMheHC9nIU4XVaoCwjhbo6j5dUcEj0THtaLRnQ/0KqstQY1qsrpOcfgRCABKVG2wpwKqeOM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=usama.anjum@collabora.com header.b=gpFiuabP; arc=pass smtp.client-ip=136.143.184.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1747207072; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=cy+hd7SOFg0yFgxCaFVUWI7aomD/dHrw+f6RLmsChBZjYiOU/yU++//+A338Uqgty+PXa06ZHecF/6UFcYJy8TNrS0wSDk76KOQcd8lilkuS7YGQHN7krMrszvoM04uQ5YG1LXH6RXp6LwEyt0fB88nqckkF8/LyDf/Hkg/PEbM=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1747207072; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=ibXEmXTnH9FdlMBQTesZfHCGW3hwMYrnoFmfNGLlv90=; 
+	b=i7249UYxoUd3KeYUv4wUtv1OUCv/UCwE8ePv+ucyxUfGjPqF7wVD2kdDPM7+qYjSPF17t9zNBjF3o4QMuS4JdSM2RvEI7iJqEsSs+MBbFBCnQ+RyaZTijftAQeB8tTQALxSr1WPKP1e9HhHJtLxHMnwRcfWsGPX4vBaPHR6vjK0=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=usama.anjum@collabora.com;
+	dmarc=pass header.from=<usama.anjum@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1747207072;
+	s=zohomail; d=collabora.com; i=usama.anjum@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Cc:Cc:Subject:Subject:To:To:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=ibXEmXTnH9FdlMBQTesZfHCGW3hwMYrnoFmfNGLlv90=;
+	b=gpFiuabPVRr6arlU820jgsCaDYFwmcp+5BaEVU7R3S7FctE1E5IndnBuqfchYkrw
+	VOvdBt1hyY3yVhyG1uHz5mZwuG1ycGuwu9C0xhY6S9jBwZ7jqjMS6bonK8p2M1a/R5C
+	Y0zsZ/7F/63pZz2g9EqkiuCH2BGdDgPoNriiSgik=
+Received: by mx.zohomail.com with SMTPS id 1747207069715402.95018488662095;
+	Wed, 14 May 2025 00:17:49 -0700 (PDT)
+Message-ID: <951203c6-44a6-4fa9-afad-6ce3973774ae@collabora.com>
+Date: Wed, 14 May 2025 12:17:41 +0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Cc: usama.anjum@collabora.com, kernel@collabora.com,
+ sebastian.reichel@collabora.com, Carl Vanderlip <quic_carlv@quicinc.com>,
+ Alex Elder <elder@kernel.org>, mhi@lists.linux.dev,
+ linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-wireless@vger.kernel.org, ath11k@lists.infradead.org,
+ ath12k@lists.infradead.org
+Subject: Re: [PATCH v4] bus: mhi: host: don't free bhie tables during
+ suspend/hibernation
+To: Jeff Hugo <jeff.hugo@oss.qualcomm.com>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ Jeff Johnson <jjohnson@kernel.org>, Youssef Samir
+ <quic_yabdulra@quicinc.com>, Matthew Leung <quic_mattleun@quicinc.com>,
+ Yan Zhen <yanzhen@vivo.com>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>,
+ Jacek Lawrynowicz <jacek.lawrynowicz@linux.intel.com>,
+ Kunwu Chan <chentao@kylinos.cn>, Troy Hanson <quic_thanson@quicinc.com>,
+ "Dr. David Alan Gilbert" <linux@treblig.org>
+References: <20250506144941.2715345-1-usama.anjum@collabora.com>
+ <4a6b83f4-885a-46e1-ae31-21a4f3959bae@oss.qualcomm.com>
+ <5521efad-1ca8-41e3-b820-5527d634c539@collabora.com>
+ <57e04b5a-9f04-49bb-8a7d-978276e9033f@oss.qualcomm.com>
+Content-Language: en-US
+From: Muhammad Usama Anjum <usama.anjum@collabora.com>
+In-Reply-To: <57e04b5a-9f04-49bb-8a7d-978276e9033f@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN3PEPF0000B072:EE_|IA1PR12MB8263:EE_
-X-MS-Office365-Filtering-Correlation-Id: f82d3377-a5c2-43b1-e86f-08dd92b81397
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|36860700013|1800799024|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?vyezw77QtYfsd7yombv/BQbsyxdyB/oo8gIf0GbFkIxuImsSKmfyrxTmo0eu?=
- =?us-ascii?Q?3giqUdqjWPLQNHCi7eG6KKOm4LvN/kADGgHVGrEhh/wLLQCNcFH/XftuMDSM?=
- =?us-ascii?Q?ydmMEA8d4M380k0LSLghZ+UzGiAcNmZJgUrQ2ioBOV9BnoY5Ip6EhM+RLS0F?=
- =?us-ascii?Q?9X+4fOukgNMjgTz9y/q7J/oGSEciEsgnlqHhUJAP7zudPi3y68pHseNTrNvB?=
- =?us-ascii?Q?rSHwHL1WYvQAGbnKgNQyaMyQHw9Emi0EqcikKAQPJI/vQWXSdF9ArjWr0WOL?=
- =?us-ascii?Q?97X4BWnFoTfavK/aMY78ioj1FVqO+FmYsty8Y8BqA5MrnFoJsXtnZSPyu2na?=
- =?us-ascii?Q?MpfNe3Jspy3ghBas/TOgFxCNKmZDXZ8jteEn3QssLPy0mJkJ1LVjvKB9+qIi?=
- =?us-ascii?Q?qNLOWKy4dxllEF/uxfeW/AqJg2K5UuEs6UW5Hv8DEXym5h14Ml3EAWqZ4Fzz?=
- =?us-ascii?Q?bpKEoSMAUib0RP/US+grUtL0jKbmDzooyhZ7cfEHZP+KqMTMWbmSgFDFnqSb?=
- =?us-ascii?Q?QIzBR4b6sDMgJoZVo74zU4DdIeCSUUKXeEn+uPMyahiesxJfara5/qT17wNG?=
- =?us-ascii?Q?jqKnwlDLGIf8iXT5k010StFfPFeit/kD14eJ3eoPrIUzTotsC+Ad3daEAcA1?=
- =?us-ascii?Q?z+NxI8DyjkV9M6Urj5m2pkGMo+udNlgeoICh7bN0mvZVvVnE6LzTmQdxnKwR?=
- =?us-ascii?Q?vtXKP7fdkGo8/1064Y7TGl9KWgm6EfAvHkDlG3x1/doSysjM3rMYuuc/spro?=
- =?us-ascii?Q?S5sgbsFne0nc2M0mYM5g1yqB/X4q2D9VqG8uoh4FL07oS6ddSnkMtTz2uX75?=
- =?us-ascii?Q?hSRNuvNylh8QejGRgz0TD1hZTQg2PXz9npeHdZQ4oqEXfo4j/mec7za5VYl0?=
- =?us-ascii?Q?93iN93JqXjG/Bm4jWDMKbObPCny+nPI32pRQlqPHIYIdgRCw2lXVXM5b4EqO?=
- =?us-ascii?Q?iR1Rfsg/3a3PCgpEu12bJ7VXQlJyMhASnnlyw/WHEXNP+M6i8SNBCENLgdgn?=
- =?us-ascii?Q?xNoVUhREy0h3kVMoem446eaeBT1aGZUe0pEVk1inKWDX6poc4pkkph6pfvJo?=
- =?us-ascii?Q?5ktpNIg9PSIdQzPigWjbp+F29/V9AgukAAKVgHRMrMkFQc6Ox9XMbVRnz9Ix?=
- =?us-ascii?Q?Cqa4t6D+PmDvfQs1tzbyXcj8AYHKunWuifKvx0KQKby6++R2cBLDGPro8MXN?=
- =?us-ascii?Q?q9xZRThR0myorX8mun5vrC742XOot2MEcUdnNI80DexI+0PFqYjLWU+zuj45?=
- =?us-ascii?Q?HN0ZPFdPmmjhiRZq2Tn0whum/1k8BtwHHQ6Q8m/NINYVIAq4B4K/DYBhpHb5?=
- =?us-ascii?Q?hAwAHYUlGsGAlWvWrNLKDvNkfhe/ueJP4Tbpg9QEeXi4oAZLO82ZqyLOgMdk?=
- =?us-ascii?Q?Wmm5u3bP/RDm+pwsCmnVW118yuRZizh7w8OEnVKd+FMbngJDDuAm+CZMdorq?=
- =?us-ascii?Q?XUvl3MCVw4g9zjYP0EGk7YM4bso2ci5y/ROntugENgwqk7t5qzYfeQDa0JLQ?=
- =?us-ascii?Q?tP9S9ENy+GG0PcicK5uOO9PXO0voGKbGjt2r?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 May 2025 07:22:25.6412
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: f82d3377-a5c2-43b1-e86f-08dd92b81397
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BN3PEPF0000B072.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB8263
+X-ZohoMailClient: External
 
-Change vector parameter of apic_{set|clear|test}_vector to
-unsigned int to optimize code generation for modulo operation.
+On 5/13/25 8:16 PM, Jeff Hugo wrote:
+> On 5/13/2025 12:44 AM, Muhammad Usama Anjum wrote:
+>> On 5/12/25 11:46 PM, Jeff Hugo wrote:
+>>> On 5/6/2025 8:49 AM, Muhammad Usama Anjum wrote:
+>>>> Fix dma_direct_alloc() failure at resume time during bhie_table
+>>>> allocation because of memory pressure. There is a report where at
+>>>> resume time, the memory from the dma doesn't get allocated and MHI
+>>>> fails to re-initialize.
+>>>>
+>>>> To fix it, don't free the memory at power down during suspend /
+>>>> hibernation. Instead, use the same allocated memory again after every
+>>>> resume / hibernation. This patch has been tested with resume and
+>>>> hibernation both.
+>>>>
+>>>> The rddm is of constant size for a given hardware. While the fbc_image
+>>>> size depends on the firmware. If the firmware changes, we'll free and
+>>>> allocate new memory for it.
+>>>
+>>> Why is it valid to load new firmware as a result of suspend?  I don't
+>>> users would expect that.
+>> I'm not sure its valid or not. Like other users, I also don't expect
+>> that firmware would get changed. It doesn't seem to be tested and hence
+>> supported case.
+>>
+>> But other drivers have code which have implementation like this. I'd
+>> mentioned previously that this patch was motivated from the ath12k [1]
+>> and ath11k [2] patches. They don't free the memory and reuse the same
+>> memory if new size is same.
+> 
+> It feels like this justification needs to be detailed in the commit
+> text. I suspect at some point we'll have another MHI device where the FW
+> will need to be cached.
+Okay. I'll add this information to the commit message. Currently I've
+not seen firmware caching being used other than graphics driver.
 
-On gcc-14.2, code generation for below C statement is given
-after it.
+> 
+>>>> diff --git a/drivers/bus/mhi/host/boot.c b/drivers/bus/mhi/host/boot.c
+>>>> index efa3b6dddf4d2..bc8459798bbee 100644
+>>>> --- a/drivers/bus/mhi/host/boot.c
+>>>> +++ b/drivers/bus/mhi/host/boot.c
+>>>> @@ -584,10 +584,17 @@ void mhi_fw_load_handler(struct mhi_controller
+>>>> *mhi_cntrl)
+>>>>         * device transitioning into MHI READY state
+>>>>         */
+>>>>        if (fw_load_type == MHI_FW_LOAD_FBC) {
+>>>
+>>> Why is this FBC specific?
+>> It seems we allocate fbc_image only when firmware load type is
+>> FW_LOAD_FBC. I'm just optimizing the buffer allocation here.
+> 
+> We alloc bhie tables in non FBC usecases. Is this somehow an FBC
+> specific issue? Perhaps you could clarify the limits of this solution in
+> the commit text?
+Okay. I'll add information that we are optimizing the bhie allocations.
+It has nothing to do with firmware type. I've found only 2 bhie
+allocations; fbc_image and rddm_image. So we are optimizing those.
 
-long nr = APIC_VECTOR_TO_BIT_NUMBER(vec);
+> 
+>>
+>>>
+>>>> -        ret = mhi_alloc_bhie_table(mhi_cntrl, &mhi_cntrl->fbc_image,
+>>>> fw_sz);
+>>>> -        if (ret) {
+>>>> -            release_firmware(firmware);
+>>>> -            goto error_fw_load;
+>>>> +        if (mhi_cntrl->fbc_image && fw_sz != mhi_cntrl->prev_fw_sz) {
+>>>> +            mhi_free_bhie_table(mhi_cntrl, mhi_cntrl->fbc_image);
+>>>> +            mhi_cntrl->fbc_image = NULL;
+>>>> +        }
+>>>> +        if (!mhi_cntrl->fbc_image) {
+>>>> +            ret = mhi_alloc_bhie_table(mhi_cntrl, &mhi_cntrl-
+>>>>> fbc_image, fw_sz);
+>>>> +            if (ret) {
+>>>> +                release_firmware(firmware);
+>>>> +                goto error_fw_load;
+>>>> +            }
+>>>> +            mhi_cntrl->prev_fw_sz = fw_sz;
+>>>>            }
+>>>>              /* Load the firmware into BHIE vec table */
+>>>> diff --git a/drivers/bus/mhi/host/pm.c b/drivers/bus/mhi/host/pm.c
+>>>> index e6c3ff62bab1d..107d71b4cc51a 100644
+>>>> --- a/drivers/bus/mhi/host/pm.c
+>>>> +++ b/drivers/bus/mhi/host/pm.c
+>>>> @@ -1259,10 +1259,19 @@ void mhi_power_down(struct mhi_controller
+>>>> *mhi_cntrl, bool graceful)
+>>>>    }
+>>>>    EXPORT_SYMBOL_GPL(mhi_power_down);
+>>>>    +static void __mhi_power_down_unprepare_keep_dev(struct
+>>>> mhi_controller *mhi_cntrl)
+>>>> +{
+>>>> +    mhi_cntrl->bhi = NULL;
+>>>> +    mhi_cntrl->bhie = NULL;
+>>>
+>>> Why?
+>> This function is shorter version of mhi_unprepare_after_power_down(). As
+>> we need different code path in case of suspend/hibernation case, I was
+>> adding a new API which Mani asked me remove and consolidate into
+>> mhi_power_down_keep_dev() instead. So this static function has been
+>> added. [3]
+> 
+> I don't understand the need to zero these out.  Also, if you are copying
+> part of the functionality of mhi_unprepare_after_power_down(), shouldn't
+> that functionality be moved into your new API to eliminate duplication?
+This how the cleanup works mhi_unprepare_after_power_down(). Yeah, it
+makes sense to use this function in mhi_unprepare_after_power_down().
 
-* Without change:
+Sending next version soon.
+> 
 
- mov    eax,edi
- sar    eax,0x1f
- shr    eax,0x1b
- add    edi,eax
- and    edi,0x1f
- sub    edi,eax
- movsxd rdi,edi
- mov    QWORD PTR [rsp-0x8],rdi
 
-* With change:
-
- and    edi,0x1f
- mov    QWORD PTR [rsp-0x8],rdi
-
-Signed-off-by: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
----
-Changes since v5:
-
- - New change.
-
- arch/x86/include/asm/apic.h | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/arch/x86/include/asm/apic.h b/arch/x86/include/asm/apic.h
-index 1f9cfb5eb54e..2acf695ed1b7 100644
---- a/arch/x86/include/asm/apic.h
-+++ b/arch/x86/include/asm/apic.h
-@@ -547,17 +547,17 @@ static __always_inline void apic_set_reg64(char *regs, int reg, u64 val)
- 	*((u64 *) (regs + reg)) = val;
- }
- 
--static inline void apic_clear_vector(int vec, void *bitmap)
-+static inline void apic_clear_vector(unsigned int vec, void *bitmap)
- {
- 	clear_bit(APIC_VECTOR_TO_BIT_NUMBER(vec), bitmap + APIC_VECTOR_TO_REG_OFFSET(vec));
- }
- 
--static inline void apic_set_vector(int vec, void *bitmap)
-+static inline void apic_set_vector(unsigned int vec, void *bitmap)
- {
- 	set_bit(APIC_VECTOR_TO_BIT_NUMBER(vec), bitmap + APIC_VECTOR_TO_REG_OFFSET(vec));
- }
- 
--static inline int apic_test_vector(int vec, void *bitmap)
-+static inline int apic_test_vector(unsigned int vec, void *bitmap)
- {
- 	return test_bit(APIC_VECTOR_TO_BIT_NUMBER(vec), bitmap + APIC_VECTOR_TO_REG_OFFSET(vec));
- }
 -- 
-2.34.1
-
+Regards,
+Usama
 
