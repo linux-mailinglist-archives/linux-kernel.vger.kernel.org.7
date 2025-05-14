@@ -1,98 +1,105 @@
-Return-Path: <linux-kernel+bounces-647178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-647181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A691BAB655E
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 10:11:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 59117AB6564
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 10:12:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 41401172592
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 08:11:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E1C934A61CF
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 08:12:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BD8A21B195;
-	Wed, 14 May 2025 08:11:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AA2A21C9E1;
+	Wed, 14 May 2025 08:11:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Q3ohjz62"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="YDVFVU7v"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEEC921ADC3;
-	Wed, 14 May 2025 08:11:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71A8821ABCF;
+	Wed, 14 May 2025 08:11:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747210283; cv=none; b=kzNUV+vwy0xoXiZwd/tnYZZavv5NER5B0iXyO7uAwDoZKOhS+bZHrVSecDn2baRrxLRSwcQoa5sMLLv268nIuzp3xckIHPi33yBTyfgGLNISM6l/Ii7iaD1RNAM3AihWjzm88RtjQLRyIK6xrSW2B+cXRBXhPPytb9G2DASjZc8=
+	t=1747210307; cv=none; b=O8e4WugGIKky+hRFtbfaTM2grmUnagf5sCtEVH1Eqhfxp2wZvY6btgjBFm+lEDzVs3sKm07LUAXkiVcpmJsMy3ZXZ688x8RfEe9jhTiDXRZ7vepC/M1Tek0bz/GrPI5QaczcR+QAzyd/a0yYbEtsjQv+Orvqoh2HKEnTOAqMuBA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747210283; c=relaxed/simple;
-	bh=crecp3yT2SZLjBUhnRURx5oUzcLwjGoGZoCGTxx3isA=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Z/T9YBr2oS7VHmxqCuSXB3giFphDxOYB/yWsst8MXNMYBmnUMr4Y9wmGek3s/FxCbv2OgYpiIAPeT2ioRrF4dusrqDV/covF6Ps+x4g7kBD8FLkN7dYwp6nmmUbAnkOcseZ17at5Ct+bHDcBiT3whNiqqwbwoK8L4c0vZwjDnPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Q3ohjz62; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1747210279;
-	bh=crecp3yT2SZLjBUhnRURx5oUzcLwjGoGZoCGTxx3isA=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=Q3ohjz62grUXQrGlMZmV14eAlrlnVDazHA+kNoz2opWnap5zMJoUYEri+JOLeIYO8
-	 1l0nsxPkr994hI4PSEzVqba64Tny61FlFN9GYmwZXDIcEbJytJe8wMjSSDJ6/m/a/F
-	 KBEHwPY/ovWtKaIUnBWPpxBf/47bWFJxiX5BXB7JRTdOCtT+uhs7MM4GbkO2lCH5pG
-	 PBscEESi+ceSpfJQemzEQlTpCgHHNKqqPKaVScAqm/LfvZUAhTKNozXL/ciOywe1EI
-	 78hMJbuWrXrtrJ0e9n96xwF/euvGBiCyWFaZ8JJxOz/FZg0UxTUK2ZKwa1EX6tA9ws
-	 bazKi7SoCGEnA==
-Received: from apertis-1.home (2a01cb0892F2D600c8f85CF092D4Af51.ipv6.abo.wanadoo.fr [IPv6:2a01:cb08:92f2:d600:c8f8:5cf0:92d4:af51])
+	s=arc-20240116; t=1747210307; c=relaxed/simple;
+	bh=HNBqAM7JXRbvo2se9y6yfdhZRKG3Llrhnh2jkIvkrjQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UGrwr37Gd2CQq8IpaH5ih94vmrEN675yfmTrGkOQyfYPBfmSi5rnYZxWuhFWU7Uzy2RyU41d2n6PEw+0iFB1StaO1TgSBRmw7b2w8o4nY+6AYnMQ8urf/xI9EIJ9oQVq/2h1qQRNX2IOHoCfRtVHxYN5OhnSfDNY2PpNcZ8+0ts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=YDVFVU7v; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id AC53040E0258;
+	Wed, 14 May 2025 08:11:40 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id veJ6WnyXLA6A; Wed, 14 May 2025 08:11:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1747210295; bh=pM6qHR2IMAysyGbXGPcwspD06t/7gB1GJ/HkT8pOlr0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YDVFVU7vR/w2vT+Gk6MTJLZIDE3jY+xj7DRo0iZQclnvbc0I5dm7aRegiGlyCDczw
+	 kYT6i2kHQ1wWXdDarTXZQUICMcgK5fH8cOw89U8yLTRit9uszw3Za9D8rSR6NvqU3g
+	 Wbg8NoskvgE3jZJHJqKBIkN3WJvtr9515ZhQeta3k+MO1arNhI0UerTlWBiG10/RWI
+	 rIUGLXcOQO8kDbPX6j8lkdLluR5wJ9y32u0fmsWBlgmQmT+rSa5DaT9NZh8yDfoUaY
+	 JKuu9zDaFwQvQe0cP8zitudZgX03F4OPm3i1SzS1Uj2hc1DhK3jFyIY/no1R03QxIE
+	 PVZNg5mtq+Sy7weyxtkSX1dw8Llw8k+WlMPMN1RXVJ64rVc4kNkA0j7MpPzpJjU2i+
+	 xVHboiAEMyRRQJyEhwzrhSh4haXcK/JX1/4lrnG6mqsPTbBBBrJnIlw2EiyTcmf0pt
+	 1CTw+hkIV6WjXk8mApe25yTbXSGu3TUt+rER6Ve9Hok8qUC1FZwkcsHG6FwNkzc0ZD
+	 rLv4UJH3DCwIjGjFaVTDsTVM8h+0hmgce+psDHfSWjxhyw6P3QJKLyE9sqjQ7eYON0
+	 fwNr+A5Bpe7wXHGnEFXaT8fdZmdtZVcA3sY3zXrhhN+X2AniansJv7BSM5Alc0eF00
+	 2TcTDEw9Xgs8jzXC50p/adRA=
+Received: from zn.tnic (p579690ee.dip0.t-ipconnect.de [87.150.144.238])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
 	(No client certificate requested)
-	(Authenticated sender: jmassot)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id EC67D17E07F2;
-	Wed, 14 May 2025 10:11:17 +0200 (CEST)
-Message-ID: <5578490565f6d37fa435ca0c02fcfc2cb685baf8.camel@collabora.com>
-Subject: Re: [PATCH 1/4] dt-bindings: mfd: mediatek: mt6397: Add
- #sound-dai-cells property
-From: Julien Massot <julien.massot@collabora.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>, kernel@collabora.com, Sen Chu	
- <sen.chu@mediatek.com>, Sean Wang <sean.wang@mediatek.com>, Macpaul Lin	
- <macpaul.lin@mediatek.com>, Lee Jones <lee@kernel.org>, Rob Herring	
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley	
- <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- =?ISO-8859-1?Q?N=EDcolas?= "F. R. A. Prado"	 <nfraprado@collabora.com>, Hui
- Liu <hui.liu@mediatek.com>, Yong Wu	 <yong.wu@mediatek.com>, Joerg Roedel
- <joro@8bytes.org>, Will Deacon	 <will@kernel.org>, Robin Murphy
- <robin.murphy@arm.com>, Tinghan Shen	 <tinghan.shen@mediatek.com>
-Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-mediatek@lists.infradead.org, iommu@lists.linux.dev
-Date: Wed, 14 May 2025 10:11:17 +0200
-In-Reply-To: <79148223-d87f-486e-9d51-979f9188a837@kernel.org>
-References: <20250505-mt8395-dtb-errors-v1-0-9c4714dcdcdb@collabora.com>
-	 <20250505-mt8395-dtb-errors-v1-1-9c4714dcdcdb@collabora.com>
-	 <79148223-d87f-486e-9d51-979f9188a837@kernel.org>
-Organization: Collabora Ltd.
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.1 (3.56.1-1.fc42) 
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id AF2CD40E01ED;
+	Wed, 14 May 2025 08:11:26 +0000 (UTC)
+Date: Wed, 14 May 2025 10:11:20 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org,
+	Ashish Kalra <ashish.kalra@amd.com>,
+	Pankaj Gupta <pankaj.gupta@amd.com>,
+	Tom Lendacky <thomas.lendacky@amd.com>,
+	Srikanth Aithal <sraithal@amd.com>, stable@vger.kernel.org,
+	x86@kernel.org
+Subject: Re: [tip: x86/urgent] x86/sev: Do not touch VMSA pages during SNP
+ guest memory kdump
+Message-ID: <20250514081120.GAaCRQKOVcm4dgqp59@fat_crate.local>
+References: <20250428214151.155464-1-Ashish.Kalra@amd.com>
+ <174715966762.406.12942579862694214802.tip-bot2@tip-bot2>
+ <aCREWka5uQndvTN_@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <aCREWka5uQndvTN_@gmail.com>
 
-Hi Krzysztof,
+On Wed, May 14, 2025 at 09:20:58AM +0200, Ingo Molnar wrote:
+> Boris, please don't rush these SEV patches without proper review first! ;-)
 
-On Thu, 2025-05-08 at 08:01 +0200, Krzysztof Kozlowski wrote:
-> On 05/05/2025 15:23, Julien Massot wrote:
-> > The 'mt6359.dtsi' file already uses the '#sound-dai-cells' property.
-> > Add the corresponding property to the binding to fix the following
-> > dtb-check error:
-> If this is a DAI, then you miss dai-common reference. If not, you need
-> to explain it in commit msg.
+You didn't read the R-by and SOB tags at the beginning?
 
-Thanks for the review, I will add the missing dai-common reference in the v=
-2.
+Feel free to propose fixes, Tom and I will review them and even test them for
+you!
 
-Regards,
-Julien
+But ontop of those: those are fixes and the "issues" you've pointed out are to
+existing code which this patch only moves.
+
+I would usually say "Thx" here but not this time.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
