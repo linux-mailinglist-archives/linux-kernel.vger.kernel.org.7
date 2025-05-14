@@ -1,227 +1,72 @@
-Return-Path: <linux-kernel+bounces-647699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-647689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F5D9AB6BE2
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 14:56:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D43D7AB6BC1
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 14:50:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 146AD17ADDE
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 12:56:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 031E07A5372
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 12:48:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BE752797BB;
-	Wed, 14 May 2025 12:56:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=case.edu header.i=@case.edu header.b="SYoT6DTf"
-Received: from mta-outp-cfd-1.case.edu (mta-outp-cfd-1.case.edu [129.22.103.35])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4EF8278772;
+	Wed, 14 May 2025 12:49:57 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2A3D1F4639
-	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 12:56:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=129.22.103.35
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747227404; cv=pass; b=UuSAADd8xfDtAJ5f8uI0C49UhebiArR4P1iBSAc1koYH4UrN/N+b7hdoGGVIdMyprqHi4/X3VSuk8wuNLeIx4qIcgZN2+JyAzOWgLCDJqPZWv3/3p3Yl+ztT5QnHf7pOuDaY6yyKda3CArylXlscQVrQumTQ+RAUlgsoVj8nJBQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747227404; c=relaxed/simple;
-	bh=H23KFw/6YBiqbHRBAplGutuAWNOTYRKqsZ37/mbJohk=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=eTxXDNMWv0GKy22i93Ku087R348o3lz2pZg5uVDlitxfB1FJMED/U3B9Nnz/XXXBS/vn2qwX4EQlC1csmVQV2vBiiVCS5wcD+5LxA+0Kj2z2+3GXGCcHeUZmd4yJ1F2nmLx+KPpwVu2VHJiooZqwgPrWD+32X2JmCh6NKOCCJR8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=case.edu; spf=pass smtp.mailfrom=case.edu; dkim=pass (2048-bit key) header.d=case.edu header.i=@case.edu header.b=SYoT6DTf; arc=pass smtp.client-ip=129.22.103.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=case.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=case.edu
-Authentication-Results: mta-outp-cfd-1;
-       spf=pass (mta-outp-cfd-1.case.edu: domain of case.edu designates 209.85.219.70 as permitted sender) smtp.mailfrom=case.edu ;
-       dkim=pass (Good 2048 bit rsa-sha256 signature) header.d=case.edu header.i=None header.s=g-case;
-       dmarc=pass (p=REJECT sp=Undefined pct=100 dis=NONE) header.from=case.edu;
-ARC-Filter: OpenARC Filter v1.0.0 mta-outp-cfd-1.case.edu 5924A11E0
-Authentication-Results: mta-outp-cfd-1; arc=none smtp.remote-ip=129.22.103.228
-ARC-Seal: i=1; a=rsa-sha256; d=case.edu; s=cwru-mta; t=1747226945; cv=none;
-	b=OhXCyLAA/qstckm5Mm9NOAqUGLmZ2pkesbhsgFg1DOESTZQGMygtU5eh/LvWKkgHvogzZdDEElIW3AufkZBLpRnaNUAaleOD/dZiJMO/7TvQ6mI6O1QLlENtgh4r6Eq1J5CMxWkMRc4/hClbNBn/+mNV/U86mBsh4Cg3N2ocq/EHAM82cjB1dKXMivieuBaKMaPS7VCrodYP30kw2k5jzC1+0VBttn6Oa7ryf/gYK1ICAHRq0rUk1Q14T5ZwNJLEGXGsMwwKx3jcgz7OFP2vd69osTPgf5Aa2bHstzpFx6Xx1DOQma6ZQiB64hTo7FgZWt/RssuIF7fQzVzaD4VDTw==
-ARC-Message-Signature: i=1; a=rsa-sha256; d=case.edu; s=cwru-mta;
-	t=1747226945; c=relaxed/simple;
-	bh=H23KFw/6YBiqbHRBAplGutuAWNOTYRKqsZ37/mbJohk=;
-	h=DKIM-Signature:Message-ID:Date:MIME-Version:Subject:To:From:to:
-	 subject:message-id:date:from:mime-version:dkim-signature; b=T+7kloZzX5qYpvbP3z7u4usP/vFHptKceL1bgPC91dT28XSO1vmNxSxJx20ksenwey8MD6+qJ0gmPUDv79MixNR72PsmlcsIdMR4u5HwXXbKNbeqRPFpEP2f960se6seEZ6NbrYE/dPsbd4h2gnFXgS+i2jfPgGhZD37EaYZ3DoCGpFVJfjgU5WY4QfEKnD1KWEMIKiDdDW5T61Y/tra0l5I06zH+/e7dLZ0lSyHtI+2OeMXtGTAt5ImJtA2j9a4sGf0cXHMQXjYlUVwc2FNqnoZcLGmEY3AZy54y2FI9GIdQ9LltFNXWcYLdX/PEaizNFfU1KcpKYC4fN0m58GqEw==
-ARC-Authentication-Results: i=1; mta-outp-cfd-1; spf=pass (mta-outp-cfd-1.case.edu: domain of case.edu designates 209.85.219.70 as permitted sender) smtp.mailfrom=case.edu; dkim=pass (Good 2048 bit rsa-sha256 signature) header.d=case.edu header.i=None header.s=g-case; dmarc=pass (p=REJECT sp=Undefined pct=100 dis=NONE) header.from=case.edu
-Received-SPF: Pass (mta-outp-cfd-1.case.edu: domain of case.edu designates 209.85.219.70 as permitted sender) client-ip=209.85.219.70
-Received: from mpv-out-ksl-1.case.edu (mpv-out-ksl-1.case.edu [129.22.103.228])
-	by mta-outp-cfd-1.case.edu (Postfix) with ESMTPS id 5924A11E0
-	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 08:49:05 -0400 (EDT)
-Received: from mpv-local-ksl-1.case.edu (EHLO mpv-local-ksl-1.case.edu) ([129.22.103.235])
-	by mpv-out-ksl-1.case.edu (MOS 4.4.8-GA FastPath queued)
-	with ESMTP id DCW45850;
-	Wed, 14 May 2025 08:49:05 -0400 (EDT)
-Received: from mail-qv1-f70.google.com (EHLO mail-qv1-f70.google.com) ([209.85.219.70])
-	by mpv-local-ksl-1.case.edu (MOS 4.4.8-GA FastPath queued)
-	with ESMTP id EKB30042;
-	Wed, 14 May 2025 08:49:04 -0400 (EDT)
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6f53f748240so163258016d6.3
-        for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 05:49:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=case.edu; s=g-case; t=1747226944; x=1747831744; darn=vger.kernel.org;
-        h=in-reply-to:organization:autocrypt:from:references:to
-         :content-language:subject:cc:reply-to:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=H23KFw/6YBiqbHRBAplGutuAWNOTYRKqsZ37/mbJohk=;
-        b=SYoT6DTfysavWjIBb5ibSZYNCh1E8E9G8hIFAkGPvK45Vyxr09CV33+fleEX2vw5/z
-         Q2j+yVXpv4HK65hVWtOEyNrKZO2c54TeOk3zeiAhn8hbn3/vZ7li9lQm1nsptDWqgA3w
-         DBGhMN3gRyhHV6Lxe7wqulqgBYuENlLMd7JGanvyTh5uloVqQK/gjcLsSmWLoToTvEs6
-         P1Frn+rYK+yqI1RIeoAB+aUOrljczehSwLPvSZmycR8urRKTHO3FITe9bEvWssAlVdxu
-         jzIODkD90fd5k7vtA4ph7N437XiIRLXfAnKCdvb9jdyYWyFJsL1HVrnMM7yxc+8d3aIA
-         rR8g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747226944; x=1747831744;
-        h=in-reply-to:organization:autocrypt:from:references:to
-         :content-language:subject:cc:reply-to:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=H23KFw/6YBiqbHRBAplGutuAWNOTYRKqsZ37/mbJohk=;
-        b=RwwQAnE1Iqg0rksdW2VtQmL/K2JICU0sNyj9+BVZryKzhoYCp93yH71YsDWonNhgYl
-         WymhOYfVfgIhw14HOspZUqJPCYlRXgyMx9c1ToTECWBVk1isD3Gv4nzmiYZ+HhPFs2qK
-         VbPibKs5DdijAFJIqQ1JK0wZbwciNVyWPHy44Yasw6M3ZAND3hbA56RVjLOrubkGzYAC
-         IJLaf0qNnvcVmcCLPlShFhETYixvSgBAbAJ9VZp/aDLnCzovFP7IznuxFYP1rfcYRqqq
-         qCkEX9vaZFmnEAKUCdUJzkMVOLfmUJ9eHlVFhK6NgzjnWHBoe2xWaZRXMnRvLXHVSwQH
-         oLHA==
-X-Forwarded-Encrypted: i=1; AJvYcCVpmK2zrn9jVhnYdF20Z/0yBfjT5CR/BM+GK1EaBiZXcd5T820uOLQnlqtAv7+ClMZ1Fx+UJBtEQ3WqMio=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzjyoeJJnso5Em+ZoRaA04IdPl/G90aQQBVDZ3g3InMkLn154Rv
-	T9fQsdH/pwuhupmxyJZpI21pTQYOjQ24BGjRxH406pwBDbwAADCGsQX+ZVvF9R2odQn2DtVsatI
-	Zx60mimnMW65CK0lbHeoxt/XVaZQkbRPSGFo+h2yA0ZBnNrcorN3CgTjQ7gmIvYs=
-X-Gm-Gg: ASbGncscVnSC2+eCMVe+au6s8Q8XtGMi0mo8zR7YWzOSCZgajitm+4uR5UEPvzygzf8
-	oPrLL+JFex9ZL9BXWNBIC+R1+j+ZH/8xR3PhiO3XH9f89i2v6xL7Y2prxM5HnzLwTysfRxaj7fn
-	uQx/5S0YomaYFJrj6cwUWBTNHiUEMxjMKkAsXOuvfHcnQu3qSY6N35+a7FuCacTc7MTn3p4x6cd
-	70Rj7HLOdldMJFYuy2HEaP48gbIPEERE/PgQDWpc2jS5ZSiq0KPOpe6DZbZTya8B9Hw+x45UUWP
-	GXsdjg6BkTgGo/M3QAdimMwtATMbIm4GRRjulFoJxp9dg/32Je8KujJTOci2jHDHY7hNoVgl0w=
-	=
-X-Received: by 2002:a05:6214:21ad:b0:6f4:c602:806e with SMTP id 6a1803df08f44-6f896e3fec2mr50868666d6.13.1747226943604;
-        Wed, 14 May 2025 05:49:03 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEEtwlQ14DtF6O3cZcsGZzgP2A9K/NUkdK5N8BNr+YLd1S14ZNfvBQa1BEnvTAza0IpLemntQ==
-X-Received: by 2002:a05:6214:21ad:b0:6f4:c602:806e with SMTP id 6a1803df08f44-6f896e3fec2mr50868286d6.13.1747226943210;
-        Wed, 14 May 2025 05:49:03 -0700 (PDT)
-Received: from ?IPV6:2603:6010:dc00:1e:f5e5:3614:5780:f83d? ([2603:6010:dc00:1e:f5e5:3614:5780:f83d])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6f6e3a52382sm80386186d6.94.2025.05.14.05.49.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 14 May 2025 05:49:02 -0700 (PDT)
-Message-ID: <63dd526c-20cb-4493-8ac5-e87a44c74419@case.edu>
-Date: Wed, 14 May 2025 08:49:00 -0400
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48196202990;
+	Wed, 14 May 2025 12:49:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747226997; cv=none; b=Y2MTVEvZmjpFMCw6XSP4/XiIu94V7B6zyChmNSz1fZRB3I6U0dWx1W3FH/KY8Xt18W1dwJTbBpz+UXcYz83Hz9zpmsBlNjXASMJFDB5BFyNiRlpnX/v62PlTvT4jEzS4npMbnx7InmIhGxjXgKLd6cCg36vycYRDlxH9oxCbTo4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747226997; c=relaxed/simple;
+	bh=991Gcq7ITMJefXFXrMRPa7mwgVGZpj5Z3vbGCI3ftIw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=iMnJ7hcVtwbvstaRLPglpKWuaeuyRn4GH7f4JBzETNhkUyu69FeOlJs2hutKNpE7TNVebTbLj1B3EchqI9ru51LE6BQXUfcpsAQafSky/Uj36mZAq0PqliWQQX8L27ABZh8MpQimk8JIvH1d011lYRWpFk6VtBYnGgv1uQ4d6Q0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A72BC4CEE9;
+	Wed, 14 May 2025 12:49:55 +0000 (UTC)
+Date: Wed, 14 May 2025 08:49:46 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] tracing: Record trace_clock and recover when reboot
+Message-ID: <20250514084946.17c3ffd7@batman.local.home>
+In-Reply-To: <20250514101431.e1363d1a60ed2548feb4cef0@kernel.org>
+References: <174709628747.1945884.11884057542151507891.stgit@mhiramat.tok.corp.google.com>
+	<20250513135652.7cb970cf@gandalf.local.home>
+	<20250514101431.e1363d1a60ed2548feb4cef0@kernel.org>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Reply-To: chet.ramey@case.edu
-Cc: chet.ramey@case.edu, Alexander Viro <viro@zeniv.linux.org.uk>,
-        Etienne Champetier <champetier.etienne@gmail.com>,
-        Marc Dionne <marc.dionne@auristor.com>,
-        Jeffrey Altman
- <jaltman@auristor.com>,
-        Steve French <sfrench@samba.org>, linux-afs@lists.infradead.org,
-        openafs-devel@openafs.org, linux-cifs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] afs, bash: Fix open(O_CREAT) on an extant AFS file in a
- sticky dir
-Content-Language: en-US
-To: Christian Brauner <brauner@kernel.org>,
-        David Howells <dhowells@redhat.com>
-References: <433928.1745944651@warthog.procyon.org.uk>
- <20250505-erproben-zeltlager-4c16f07b96ae@brauner>
-From: Chet Ramey <chet.ramey@case.edu>
-Autocrypt: addr=chet.ramey@case.edu; keydata=
- xsDiBEEOsGwRBACFa0A1oa71HSZLWxAx0svXzhOZNQZOzqHmSuGOG92jIpQpr8DpvgRh40Yp
- AwdcXb8QG1J5yGAKeevNE1zCFaA725vGSdHUyypHouV0xoWwukYO6qlyyX+2BZU+okBUqoWQ
- koWxiYaCSfzB2Ln7pmdys1fJhcgBKf3VjWCjd2XJTwCgoFJOwyBFJdugjfwjSoRSwDOIMf0D
- /iQKqlWhIO1LGpMrGX0il0/x4zj0NAcSwAk7LaPZbN4UPjn5pqGEHBlf1+xDDQCkAoZ/VqES
- GZragl4VqJfxBr29Ag0UDvNbUbXoxQsARdero1M8GiAIRc50hj7HXFoERwenbNDJL86GPLAQ
- OTGOCa4W2o29nFfFjQrsrrYHzVtyA/9oyKvTeEMJ7NA3VJdWcmn7gOu0FxEmSNhSoV1T4vP2
- 1Wf7f5niCCRKQLNyUy0wEApQi4tSysdz+AbgAc0b/bHYVzIf2uO2lIEZQNNt+3g2bmXgloWm
- W5fsm/di50Gm1l1Na63d3RZ00SeFQos6WEwLUHEB0yp6KXluXLLIZitEJM0wQ2hldCBSYW1l
- eSAoQ2FzZSBzdGFuZGFyZCkgPGNoZXQucmFtZXlAY2FzZS5lZHU+wl8EExECAB8FAkPi19EC
- GwMHCwkIBwMCAQMVAgMDFgIBAh4BAheAAAoJELtYafBk6nSrelkAn31Gsuib7GcCZHbv5L5t
- VKYR9LklAJ4hzUHKA49Z0QXR+qCb80osIcmPSc7ATQRBDrBvEAQAkK6TAOKBEM+EC4j6V/7o
- /riVZqcgU5cid2qG9TXdwNtD9a3kvA/ObZBO93sX59wc6Bnwo4VJxsOmMlpGrAjJsxNwg3QH
- akEtf8LXRbVpj5xStdmBdQZUhIQyalo/2/TZq5OijtddUQcL5cs70hTv/FpT3wUvr2Xr8rjF
- 41IFEz8AAwcD/A0CZEGlzIrT5WCBnl6xBog/8vKiUCbarByat3d1mL6DbizvKNXQRTC9E/vE
- dENAWCQCjr75Bu55xT8n3SXGtWdDC5xmZ/P3OBYORP8yl8H8I1FIosWOFirbIeYdZPq8SPD1
- HL+EXo9zSiHVrrZRJ19ooCKKbSdXHFCY+aJG+0KZwkkEGBECAAkFAkEOsG8CGwwACgkQu1hp
- 8GTqdKvjcACfZlkVCDwaz/NTO9cy3t69oWpVPNwAnRwe0qk/WL/gfhH346xh5B3HFbFN
-Organization: ITS, Case Western Reserve University
-In-Reply-To: <20250505-erproben-zeltlager-4c16f07b96ae@brauner>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------85Jz5FfALLMAEBt32OGUtd5w"
-X-Mirapoint-Received-SPF: 209.85.219.70 mail-qv1-f70.google.com chet.ramey@case.edu 5 none
-X-Mirapoint-Received-SPF: 129.22.103.235 mpv-local-ksl-1.case.edu chet.ramey@case.edu 5 none
-X-Junkmail-Status: score=10/90, host=mpv-out-ksl-1.case.edu
-X-Junkmail-Signature-Raw: score=unknown,
-	refid=str=0001.0A002126.6824911A.0035,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0,
-	ip=0.0.0.0,
-	so=2016-11-06 16:00:04,
-	dmn=2013-03-21 17:37:32,
-	mode=single engine
-X-Junkmail-IWF: false
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------85Jz5FfALLMAEBt32OGUtd5w
-Content-Type: multipart/mixed; boundary="------------pZEuYk6TQBKl8aeUUzadh7Ih";
- protected-headers="v1"
-From: Chet Ramey <chet.ramey@case.edu>
-Reply-To: chet.ramey@case.edu
-To: Christian Brauner <brauner@kernel.org>,
- David Howells <dhowells@redhat.com>
-Cc: chet.ramey@case.edu, Alexander Viro <viro@zeniv.linux.org.uk>,
- Etienne Champetier <champetier.etienne@gmail.com>,
- Marc Dionne <marc.dionne@auristor.com>, Jeffrey Altman
- <jaltman@auristor.com>, Steve French <sfrench@samba.org>,
- linux-afs@lists.infradead.org, openafs-devel@openafs.org,
- linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Message-ID: <63dd526c-20cb-4493-8ac5-e87a44c74419@case.edu>
-Subject: Re: [PATCH] afs, bash: Fix open(O_CREAT) on an extant AFS file in a
- sticky dir
-References: <433928.1745944651@warthog.procyon.org.uk>
- <20250505-erproben-zeltlager-4c16f07b96ae@brauner>
-In-Reply-To: <20250505-erproben-zeltlager-4c16f07b96ae@brauner>
+On Wed, 14 May 2025 10:14:31 +0900
+Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
 
---------------pZEuYk6TQBKl8aeUUzadh7Ih
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
+> > In case the tscratch->clock_id gets corrupted, we better make sure it
+> > doesn't overflow:
+> > 
+> > 		if (tscratch->clock_id >= ARRAY_SIZE(trace_clocks) ||
+> > 		    tracing_set_clock(tr, trace_clocks[tscratch->clock_id].name) < 0) {  
+> 
+> Good catch! BTW, don't we have any check about scratch area?
+> (e.g. adding a checksum)
 
-T24gNS81LzI1IDk6MTQgQU0sIENocmlzdGlhbiBCcmF1bmVyIHdyb3RlOg0KDQo+PiBUaGlz
-IHdvcmtzIGFyb3VuZCB0aGUga2VybmVsIG5vdCBiZWluZyBhYmxlIHRvIHZhbGlkbHkgY2hl
-Y2sgdGhlDQo+PiBjdXJyZW50X2ZzdWlkKCkgYWdhaW5zdCBpX3VpZCBvbiB0aGUgZmlsZSBv
-ciB0aGUgZGlyZWN0b3J5IGJlY2F1c2UgdGhlDQo+PiB1aWRzcGFjZXMgb2YgdGhlIHN5c3Rl
-bSBhbmQgb2YgQUZTIG1heSB3ZWxsIGJlIGRpc2pvaW50LiAgVGhlIHByb2JsZW0gbGllcw0K
-Pj4gd2l0aCB0aGUgdWlkIGNoZWNrcyBpbiBtYXlfY3JlYXRlX2luX3N0aWNreSgpLg0KPj4N
-Cj4+IEhvd2V2ZXIsIHRoZSBiYXNoIHdvcmsgYXJvdW5kIGlzIGdvaW5nIHRvIGJlIHJlbW92
-ZWQ6DQo+IA0KPiBXaHkgaXMgaXQgcmVtb3ZlZD8gVGhhdCdzIGEgdmVyeSBzdHJhbmdlIGNv
-bW1lbnQ6DQoNCkkgdGhpbmsgdGhpcyBxdWVzdGlvbiBoYXMgYmVlbiBhZGVxdWF0ZWx5IGFu
-c3dlcmVkLg0KDQoNCj4gU28gdGhlbiBqdXN0IGRvbid0IHJlbW92ZSBpdC4gSSBkb24ndCBz
-ZWUgYSByZWFzb24gZm9yIHVzIHRvIHdvcmthcm91bmQNCj4gdXNlcnNwYWNlIGNyZWF0aW5n
-IGEgYnVnIGZvciBpdHNlbGYgYW5kIGZvcmNpbmcgdXMgdG8gYWRkIHR3byBuZXcgaW5vZGUN
-Cj4gb3BlcmF0aW9ucyB0byB3b3JrIGFyb3VuZCBpdC4NCg0KSSB0aGluayB0aGlzIHNob3dz
-IHRoYXQgdXNlcnNwYWNlIGFwcGxpY2F0aW9ucyBzaG91bGQgYmUgdmVyeSBjYXV0aW91cw0K
-YWJvdXQgcHV0dGluZyBpbiB3b3JrYXJvdW5kcyBmb3Iga2VybmVsIGJ1Z3MsIGFuZCBtYWtp
-bmcgdGhlbSBhcyBsaW1pdGVkDQppbiBzY29wZSBhcyBwb3NzaWJsZS4NCg0KDQotLSANCmBg
-VGhlIGx5ZiBzbyBzaG9ydCwgdGhlIGNyYWZ0IHNvIGxvbmcgdG8gbGVybmUuJycgLSBDaGF1
-Y2VyDQoJCSBgYEFycyBsb25nYSwgdml0YSBicmV2aXMnJyAtIEhpcHBvY3JhdGVzDQpDaGV0
-IFJhbWV5LCBVVGVjaCwgQ1dSVSAgICBjaGV0QGNhc2UuZWR1ICAgIGh0dHA6Ly90aXN3d3cu
-Y3dydS5lZHUvfmNoZXQvDQo=
+We could, but it would require updating every time we update the
+scratch area.
 
---------------pZEuYk6TQBKl8aeUUzadh7Ih--
+Currently, the scratch area is only considered valid if the ring buffer
+is proven to be valid. But if this becomes a problem, we probably
+should add a checksum or something.
 
---------------85Jz5FfALLMAEBt32OGUtd5w
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-wmMEABEIACMWIQR8ATX7CIqvbGbGULm7WGnwZOp0qwUCaCSRPAUDAAAAAAAKCRC7WGnwZOp0q/cd
-AJ0YC9WUqxzUhmZxvvlNd+VRUfB+aACeK1+oHx4Wpo53yFc78F/fFnTazM8=
-=JIZz
------END PGP SIGNATURE-----
-
---------------85Jz5FfALLMAEBt32OGUtd5w--
+-- Steve
 
