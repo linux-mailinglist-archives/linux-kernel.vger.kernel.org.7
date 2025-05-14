@@ -1,110 +1,146 @@
-Return-Path: <linux-kernel+bounces-646777-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-646779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B12E3AB606B
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 03:20:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1101AB6070
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 03:26:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 196857ABBE3
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 01:19:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 55F81464CCC
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 01:26:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 427B114D2B7;
-	Wed, 14 May 2025 01:20:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A61CE1519BC;
+	Wed, 14 May 2025 01:26:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LVnbcZ6I"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hPUwfQbO"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 961223C465;
-	Wed, 14 May 2025 01:20:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07B173C00;
+	Wed, 14 May 2025 01:26:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747185618; cv=none; b=jDTb6sr8bSVR9cRrBfOZa5n1kJ/SJUsbhsPg4HQNVgarRJMU8RsI0RHzuhRjEz6jxKnprlRh8J2YzMKzvON3K08RzjZSkupX6+nFvpriq0pgFsrVJkiSAXh2UFipTJoUAD9ItKU0sOHncEmRPHM1DMVpDECf2RMZ0Srv+lhWrys=
+	t=1747185996; cv=none; b=dWU14/kFAtZnHtR8H12TP9R2HGtafsRKD0KGyDHVofdx41JaTaK2YhEfLVM/SNmbC8ACVH+UIjat8ij2ML3UKUoEE29rIAxwa+2Mu2NY8wCGzMWKOSwG6A6YY1Zin0gaYZY6g4ytGbOeE4g1GaizvCvNDVYjiTabtlAJ7EvJQEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747185618; c=relaxed/simple;
-	bh=KdGOJpWhkG5aCZovyVjlPOMdNid9TydX7NrAFCJGDjA=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=MsHY4h0b4ZklZvUO2Z4R5rptfNVHyKrZZQKopEndbaHf3Qxrn1us/ws1YEuZI8yRt0gSPUqW3zsV2VlSewMdOiwlAHwb/BHCz1lwMmr9l7EvgBq+V3AQ+SYIxxP0d+Zr1pSg1rdIXvCTdJMPb+7tiZg5FFak5FNhfYOFaV60ipI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LVnbcZ6I; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD5AAC4CEE4;
-	Wed, 14 May 2025 01:20:15 +0000 (UTC)
+	s=arc-20240116; t=1747185996; c=relaxed/simple;
+	bh=U0F6kN/3BrA8/yua4t0F7JSzc9uNHz91fX+ER7J1wMQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sD4XJkMB+/z2PPyvU46RdS8oTVuAOjnZsyDUJ6Lu+7UP1S0b7DSeZTS8Hcg1u9bBn3aBNDl+zjMHdYDQ1BdZpHyw43/H9kJUgHytmfQOJZsq4894KiQgvfTcuDlvGNgGVPMp7CQs3oZh9IfqCFNY846SI4z9jfba6RApT45aCkg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hPUwfQbO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6432FC4CEE4;
+	Wed, 14 May 2025 01:26:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747185616;
-	bh=KdGOJpWhkG5aCZovyVjlPOMdNid9TydX7NrAFCJGDjA=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=LVnbcZ6IbRsHUSEP7DCi6RcHJn+aTvvSA/QNWMkyu/yQljQafO0gJg06ArLlE3uXf
-	 vr7pH3yiSTi+MBX4S6NhkmnwjjDGMAVMY0ik5RckJDjuhP6cw0BLhqXzjklQf54lZW
-	 ZU4b/3URTI4BLp9WNhqDJrUKWxg0Sz27IdmTCCBgvaO6pmvnynHHDbjZYoWfxgl5X8
-	 U9FYlt1eyFgZF/T0rwdffNVbrX4W06dYnVB4xpbRGv7SiAgU3s9ED/sVnPorqoOYTH
-	 zDPI2bsOFyqL0bs1MhDknacjGPQnq0315sQ1Lzt8nFd/Pc/bZX3/ykNAF9ZLyM6aEX
-	 oU91Dk1w4e7RA==
-Date: Tue, 13 May 2025 20:20:14 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=k20201202; t=1747185995;
+	bh=U0F6kN/3BrA8/yua4t0F7JSzc9uNHz91fX+ER7J1wMQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hPUwfQbOOzlMUND78gmSa+K7TVclojnoZIJdL6WBPRyyq4tVssCp9jgRtXDXlMHjK
+	 uRxLXQu+O5IYisyJgd7Ybx3LRQ/IKKr4c7bYQYwERqGEjbtqYWDn8/jqh3q2kbahhW
+	 mrm/YyN6b1cRkiMpTWTbulqGJ5pMS1hgOll0jA9011iM/z5VztUFLDX0lLfGls86Ou
+	 IKPYLtex8S+49OKEO30MFCt0tW0xfLRtfRLg33iUzD+2x7Pno/nnGF5nkFtKlP+oYG
+	 LTWnKnA0di6xw7WCv60W4b9l3ucOJ2ELUKwBQej6aAbV0c42NcDX639nlVzYqUF7vs
+	 oL1WjpR36EqAg==
+Date: Wed, 14 May 2025 09:26:27 +0800
+From: "Peter Chen (CIX)" <peter.chen@kernel.org>
+To: Pawel Laszczak <pawell@cadence.com>
+Cc: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: Re: [PATCH v2] usb: cdnsp: Fix issue with detecting command
+ completion event
+Message-ID: <20250514012627.GA623775@nchen-desktop>
+References: <20250513052613.447330-1-pawell@cadence.com>
+ <PH7PR07MB9538AA45362ACCF1B94EE9B7DD96A@PH7PR07MB9538.namprd07.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: linmin@eswincomputing.com, krzk+dt@kernel.org, 
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
- mturquette@baylibre.com, sboyd@kernel.org, ningyu@eswincomputing.com, 
- conor+dt@kernel.org, devicetree@vger.kernel.org, 
- huangyifeng@eswincomputing.com
-To: dongxuyang@eswincomputing.com
-In-Reply-To: <20250514002516.290-1-dongxuyang@eswincomputing.com>
-References: <20250514002233.187-1-dongxuyang@eswincomputing.com>
- <20250514002516.290-1-dongxuyang@eswincomputing.com>
-Message-Id: <174718561404.161129.10398945158829194944.robh@kernel.org>
-Subject: Re: [PATCH 1/2] dt-bindings: clock: eswin: Documentation for
- eic7700 SoC
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <PH7PR07MB9538AA45362ACCF1B94EE9B7DD96A@PH7PR07MB9538.namprd07.prod.outlook.com>
 
+On 25-05-13 05:30:09, Pawel Laszczak wrote:
+> In some cases, there is a small-time gap in which CMD_RING_BUSY
+> can be cleared by controller but adding command completion event
+> to event ring will be delayed. As the result driver will return
+> error code.
+> This behavior has been detected on usbtest driver (test 9) with
+> configuration including ep1in/ep1out bulk and ep2in/ep2out isoc
+> endpoint.
+> Probably this gap occurred because controller was busy with adding
+> some other events to event ring.
+> The CMD_RING_BUSY is cleared to '0' when the Command Descriptor
+> has been executed and not when command completion event has been
+> added to event ring.
+> 
+> To fix this issue for this test the small delay is sufficient
+> less than 10us) but to make sure the problem doesn't happen again
+> in the future the patch introduces 10 retries to check with delay
+> about 20us before returning error code.
 
-On Wed, 14 May 2025 08:25:16 +0800, dongxuyang@eswincomputing.com wrote:
-> From: Xuyang Dong <dongxuyang@eswincomputing.com>
+Does the ./scripts/checkpatch.pl report warning if the delay time is
+20us for udelay?
+
+Peter
 > 
-> Add device tree binding documentation and header file for
-> the ESWIN EIC7700 clock controller module.
-> 
-> Signed-off-by: Yifeng Huang <huangyifeng@eswincomputing.com>
-> Signed-off-by: Xuyang Dong <dongxuyang@eswincomputing.com>
+> Fixes: 3d82904559f4 ("usb: cdnsp: cdns3 Add main part of Cadence USBSSP DRD Driver")
+> cc: stable@vger.kernel.org
+> Signed-off-by: Pawel Laszczak <pawell@cadence.com>
 > ---
->  .../bindings/clock/eswin,eic7700-clock.yaml   |  43 ++
->  .../dt-bindings/clock/eswin,eic7700-clock.h   | 588 ++++++++++++++++++
->  2 files changed, 641 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/eswin,eic7700-clock.yaml
->  create mode 100644 include/dt-bindings/clock/eswin,eic7700-clock.h
+> Changelog:
+> v2:
+> - replaced usleep_range with udelay
+> - increased retry counter and decreased the udelay value
+> 
+>  drivers/usb/cdns3/cdnsp-gadget.c | 18 +++++++++++++++++-
+>  1 file changed, 17 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/usb/cdns3/cdnsp-gadget.c b/drivers/usb/cdns3/cdnsp-gadget.c
+> index 4824a10df07e..58650b7f4173 100644
+> --- a/drivers/usb/cdns3/cdnsp-gadget.c
+> +++ b/drivers/usb/cdns3/cdnsp-gadget.c
+> @@ -547,6 +547,7 @@ int cdnsp_wait_for_cmd_compl(struct cdnsp_device *pdev)
+>  	dma_addr_t cmd_deq_dma;
+>  	union cdnsp_trb *event;
+>  	u32 cycle_state;
+> +	u32 retry = 10;
+>  	int ret, val;
+>  	u64 cmd_dma;
+>  	u32  flags;
+> @@ -578,8 +579,23 @@ int cdnsp_wait_for_cmd_compl(struct cdnsp_device *pdev)
+>  		flags = le32_to_cpu(event->event_cmd.flags);
+>  
+>  		/* Check the owner of the TRB. */
+> -		if ((flags & TRB_CYCLE) != cycle_state)
+> +		if ((flags & TRB_CYCLE) != cycle_state) {
+> +			/*
+> +			 * Give some extra time to get chance controller
+> +			 * to finish command before returning error code.
+> +			 * Checking CMD_RING_BUSY is not sufficient because
+> +			 * this bit is cleared to '0' when the Command
+> +			 * Descriptor has been executed by controller
+> +			 * and not when command completion event has
+> +			 * be added to event ring.
+> +			 */
+> +			if (retry--) {
+> +				udelay(20);
+> +				continue;
+> +			}
+> +
+>  			return -EINVAL;
+> +		}
+>  
+>  		cmd_dma = le64_to_cpu(event->event_cmd.cmd_trb);
+>  
+> -- 
+> 2.43.0
 > 
 
-My bot found errors running 'make dt_binding_check' on your patch:
+-- 
 
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/eswin,eic7700-clock.example.dtb: sys-crg@51828000 (syscon): compatible: ['syscon', 'simple-mfd'] is too short
-	from schema $id: http://devicetree.org/schemas/mfd/syscon-common.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/eswin,eic7700-clock.example.dtb: sys-crg@51828000 (syscon): reg: [[0, 1367506944], [0, 524288]] is too long
-	from schema $id: http://devicetree.org/schemas/mfd/syscon-common.yaml#
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250514002516.290-1-dongxuyang@eswincomputing.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+Best regards,
+Peter
 
