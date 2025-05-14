@@ -1,64 +1,81 @@
-Return-Path: <linux-kernel+bounces-647720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-647724-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B92B0AB6C2E
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 15:08:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AF14AB6C3F
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 15:10:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D65723B0EF2
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 13:08:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34E0E3B31DE
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 13:10:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 769A1279910;
-	Wed, 14 May 2025 13:08:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AE2027A46D;
+	Wed, 14 May 2025 13:10:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="i8rQf3eg"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="oYZKdarR"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 247521805B;
-	Wed, 14 May 2025 13:08:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8C1527A44E
+	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 13:10:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747228106; cv=none; b=hvOjp+mfWEyYqoifDiHcUnGSdi24oJ6BL4jowC08u073Nssvi2rMsrvOiML30YbK3lLqhybBB0/Ibc/LY4reaDI/c7wDCiQbitiMoyKNZAr2BDxEHW3UykCmzr3ikT2busCs0le2+jiDp1LLHDLH9MCzGBQ8B8n1tDbbn88zauw=
+	t=1747228223; cv=none; b=qDofoLbbT57nuCcTQroFbEgEwFbulNBCCMrfzyJIF1UeVrWpLSBSj9EHTa7FwzrBo4YoLXv/5o36vz3c3Ui+D5Lrp31tQq9WE2yG//+iobiKscMKWFHQRJ52/Xg/OqMuf7qjWgs7L0W3oQmWGmT6znTrU6KCHkfEMFp3u/Zhass=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747228106; c=relaxed/simple;
-	bh=SVRgRL86JVF3OrrXSAO0oxvw+IbDlhp+cAEEK0Nj1hM=;
+	s=arc-20240116; t=1747228223; c=relaxed/simple;
+	bh=xcAjH4iEjrkMXvyb521V6+fvdIlb5bIbkB1CSs7bCZc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=V/8cy/XrLT1FZPIMs/MarfD7dcyuA+eS6w5LKEPy8s+QHM5YZDpEdN5DAtAV6fmATLOaVDHeBErH/uq1xBJc7Sn7nGJtW09YezNeMrIobkjdbBAy2WhAKvhh7hnpn6P9HiGmjoPGPafqIf3UDd2kOwK5f8VxTrz5cSnmSS9piw8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=i8rQf3eg; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1747228105; x=1778764105;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=SVRgRL86JVF3OrrXSAO0oxvw+IbDlhp+cAEEK0Nj1hM=;
-  b=i8rQf3egMnuwMGrmzy2N5+uDjFb0zgaOvjwtV3S//IAxQ1ucQZox1kHv
-   I12i3BT/gbvou07JQvTGLKNr5h+YdHqXdFKJR8HrlVFczXKvuNywYyG/K
-   x/AZ6j5WueCdf1NQUQ4Fc6UKR3ut/FmJ8zhpmwpPF+58mNmaQ4gapoZ01
-   8jrqetzt15DYcfxxhTb1JqxV7QTBdR4pJbRBzSuJEsAHOBJDkRHCJoLN6
-   Dg/pAHgEIDYdHvBXT5zC3SC6QMX4YqYjAWKOvn3P3MEtiNOWAytgMYGmZ
-   rkeaJ4YWmLWV9JsQuQeJYRGEcZ3cDZPQvd1h2ZKuHLhenpyEkq5CosAZ1
-   w==;
-X-CSE-ConnectionGUID: GtvaTzMpRuCtwWkFqaFRSw==
-X-CSE-MsgGUID: R8qV3v+zQ1+zfHUVfeY8/w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11433"; a="51762049"
-X-IronPort-AV: E=Sophos;i="6.15,288,1739865600"; 
-   d="scan'208";a="51762049"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 May 2025 06:08:21 -0700
-X-CSE-ConnectionGUID: 8/1e31aFQXupl/9Zr6oFjw==
-X-CSE-MsgGUID: VTNSiZKHROaIsr7Y6de9dg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,288,1739865600"; 
-   d="scan'208";a="168975723"
-Received: from carterle-desk.ger.corp.intel.com (HELO [10.245.246.189]) ([10.245.246.189])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 May 2025 06:08:19 -0700
-Message-ID: <0e1005de-f5f8-4ad4-ad23-5fac81b24b33@linux.intel.com>
-Date: Wed, 14 May 2025 16:09:30 +0300
+	 In-Reply-To:Content-Type; b=I+AxjQ5MiLng95l7ze1KfnuF+IpBUDsXqLg07bSxJzAK0YSIL8V1R3wAIgR5V7BqTFyvm+42nG7WzOWIcCCU8dbFYQPPezR8DJxGi0BwltSHcMpLgBDVhltl8ihlSzxvrO72utDwtO7q43vFDlOt6nOSUlR9hLybOiEzS2RlxJE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=oYZKdarR; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54E8pN45029463;
+	Wed, 14 May 2025 13:09:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=McKolM
+	Qvb55hck4pQRmljZVk0o5e+NP2bZCcZdD7Lf0=; b=oYZKdarRndsWlHZZ2+gjIf
+	n1HGe1gZcyUkwvVPd4vBtUo3CFLxJGtBSGybhTP4UcT1mNGjyYvmK/Cq0osU3Mve
+	D6jff8rRmV3C49EnGfSxf9lIsKpfyp6f6HJOhzEXxAnBRTyBqTqHdUBaZN21dYYB
+	2IWuP2TNwYsGATR56h1nWS1AuN1aFGNrLBPZdmb4V1/yRcpiAf/QA1PODZLDBl2x
+	Id9ar5yVHoAU8oOIVKZwh1Ra/Cnk1Fi8TaPqJ4afvN8xC23l7b4AnBSc6bFTH04V
+	qoF2CbN9XB35AirmFXYmbnq8UGyRLvIMvHLCBoF3ZvNyYbkblzu5P2k3eH4M7Sxg
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46mr1gh75h-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 14 May 2025 13:09:57 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 54ECi8KN006762;
+	Wed, 14 May 2025 13:09:56 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46mr1gh75e-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 14 May 2025 13:09:56 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 54E9pVQ2021424;
+	Wed, 14 May 2025 13:09:55 GMT
+Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 46mbfrm9v6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 14 May 2025 13:09:55 +0000
+Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
+	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 54ED9pQH59703672
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 14 May 2025 13:09:51 GMT
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 5D54120172;
+	Wed, 14 May 2025 13:09:51 +0000 (GMT)
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4AF722016D;
+	Wed, 14 May 2025 13:09:48 +0000 (GMT)
+Received: from [9.87.145.82] (unknown [9.87.145.82])
+	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 14 May 2025 13:09:48 +0000 (GMT)
+Message-ID: <9b936f0c-14d0-4601-927e-89fc0b7016b6@linux.ibm.com>
+Date: Wed, 14 May 2025 18:39:47 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,77 +83,93 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/5] ASoC/SOF/PCI/Intel: add Wildcat Lake support
-To: Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
- lgirdwood@gmail.com, broonie@kernel.org
-Cc: linux-sound@vger.kernel.org, kai.vehmanen@linux.intel.com,
- ranjani.sridharan@linux.intel.com, yung-chuan.liao@linux.intel.com,
- guennadi.liakhovetski@linux.intel.com, bhelgaas@google.com,
- linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250508180240.11282-1-peter.ujfalusi@linux.intel.com>
- <0b01a3ae-4766-490e-939d-1d16c2748644@linux.dev>
- <bfb8e9a6-92c1-4079-aec0-b1ad2b245c70@linux.intel.com>
- <7f3b2d28-38d0-482c-b79a-5aabed6b6ea8@linux.dev>
+Subject: Re: [PATCH v1] powerpc/eeh: Fix missing PE bridge reconfiguration
+ during VFIO EEH recovery
+To: Narayana Murty N <nnmlinux@linux.ibm.com>, mahesh@linux.ibm.com,
+        maddy@linux.ibm.com, mpe@ellerman.id.au, linuxppc-dev@lists.ozlabs.org
+Cc: linux-kernel@vger.kernel.org, oohall@gmail.com, npiggin@gmail.com,
+        christophe.leroy@csgroup.eu, naveen@kernel.org,
+        gwshan@linux.vnet.ibm.com, benh@kernel.crashing.org, agraf@suse.de,
+        vaibhav@linux.ibm.com
+References: <20250508062928.146043-1-nnmlinux@linux.ibm.com>
 Content-Language: en-US
-From: =?UTF-8?Q?P=C3=A9ter_Ujfalusi?= <peter.ujfalusi@linux.intel.com>
-In-Reply-To: <7f3b2d28-38d0-482c-b79a-5aabed6b6ea8@linux.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From: Ganesh G R <ganeshgr@linux.ibm.com>
+In-Reply-To: <20250508062928.146043-1-nnmlinux@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: vp_JmzGcVB9K5AAqpm7sbLZis4BmuKCh
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTE0MDExNSBTYWx0ZWRfX0wyJdccglwNp xKV0dSoG83rzqNwioHrvHQWxSkEDnJ31K64PwNA7UkY/DAdhCQjo5jLzPjJTMxXsXq2O4s+74ez aZHYGe8tMTPISLVWg5QRL1TBjw+Tyq6Fwy04fW7MDO/Ec5GX7mBtU1Or+pPMjBNnlcDrclyQEqS
+ OyM4bBiU6fJd6FYCvdYfKy3gZpL0ovY3HFDpuMd4wz2akKqGz5aTaojFYr2NLh7dnefKRv+cEj/ smASnmIxdXtWZseDVmRBeqiTNQnLPo1/GlOHUF5zpQTSlYa6hOHBT+ergWJAxiEzezniO3y4b5M n9fSjZBpBlCaKZcydb79BfoSgxfvtQjnJcO9arQKk/TgyxUwD00AuR5nj+m0hcNykAyGE686lGP
+ WxC7rrsK4S9UAuf8t69Uv7PJOFVmybRhpEtxZCCznPrMmcuVoC8edCvPx9LslJWXAq6NKwhN
+X-Proofpoint-GUID: wG5sNZ45GPfphW7TLGpr2hg9dGrBJQer
+X-Authority-Analysis: v=2.4 cv=QOxoRhLL c=1 sm=1 tr=0 ts=68249625 cx=c_pps a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=VnNF1IyMAAAA:8 a=87gp3Zgmo8FheM39fz4A:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-14_04,2025-05-14_02,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 suspectscore=0
+ phishscore=0 spamscore=0 lowpriorityscore=0 malwarescore=0 impostorscore=0
+ clxscore=1011 mlxscore=0 bulkscore=0 priorityscore=1501 mlxlogscore=999
+ classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2505070000
+ definitions=main-2505140115
 
-
-
-On 14/05/2025 15:47, Pierre-Louis Bossart wrote:
-> On 5/13/25 08:23, Péter Ujfalusi wrote:
->>
->>
->> On 12/05/2025 15:59, Pierre-Louis Bossart wrote:
->>>
->>>> The audio IP in Wildcat Lake (WCL) is largely identical to the one in
->>>> Panther Lake, the main difference is the number of DSP cores, memory
->>>> and clocking.
->>>> It is based on the same ACE3 architecture.
->>>>
->>>> In SOF the PTL topologies can be re-used for WCL to reduce duplication
->>>> of code and topology files. 
->>>
->>> Is this really true? I thought topology files are precisely the place where a specific pipeline is assigned to a specific core. If the number of cores is lower, then a PTL topology could fail when used on a WCL DSP, no?
->>
->> Yes, that is true, however for generic (sdw, HDA) topologies this is not
->> an issue as we don't spread the modules (there is no customization per
->> platform).
->> When it comes to product topologies, they can still be named as PTL/WCL
->> if needed and have tailored core use.
->>
->> It might be that WCL will not use audio configs common with PTL, in that
->> case we still can have sof-wcl-* topologies if desired.
+On 5/8/25 11:59 AM, Narayana Murty N wrote:
+> VFIO EEH recovery for PCI passthrough devices fails on PowerNV and pseries
+> platforms due to missing host-side PE bridge reconfiguration. In the
+> current implementation, eeh_pe_configure() only performs RTAS or OPAL-based
+> bridge reconfiguration for native host devices, but skips it entirely for
+> PEs managed through VFIO in guest passthrough scenarios.
 > 
-> Right, so the topologies can be used except when they cannot :-)
-
-Right, topologies can be used when they are usable, if a new WCL only
-config pops it's head then we can add it as sof-wcl-* or so-ptl-* if it
-is expected to be present in PTL variants.
-
->> Fwiw, in case of soundwire we are moving to a even more generic function
->> topology split, where all SDW device can us generic function fragments
->> stitched together to create a complete topology.
->> Those will have to be compatible with all platforms, so wide swing of
->> core use cannot be possible anymore.
+> This leads to incomplete EEH recovery when a PCI error affects a
+> passthrough device assigned to a QEMU/KVM guest. Although VFIO triggers the
+> EEH recovery flow through VFIO_EEH_PE_ENABLE ioctl, the platform-specific
+> bridge reconfiguration step is silently bypassed. As a result, the PE's
+> config space is not fully restored, causing subsequent config space access
+> failures or EEH freeze-on-access errors inside the guest.
 > 
-> I couldn't follow this explanation, or I am missing some context. My expectation is that as soon as someone starts inserting a 3rd party module all bets on core assignment are off, I am not sure how rules could be generic without adding restrictions on where 3rd party modules are added.
+> This patch fixes the issue by ensuring that eeh_pe_configure() always
+> invokes the platform's configure_bridge() callback (e.g.,
+> pseries_eeh_phb_configure_bridge) even for VFIO-managed PEs. This ensures
+> that RTAS or OPAL calls to reconfigure the PE bridge are correctly issued
+> on the host side, restoring the PE's configuration space after an EEH
+> event.
+> 
+> This fix is essential for reliable EEH recovery in QEMU/KVM guests using
+> VFIO PCI passthrough on PowerNV and pseries systems.
+> 
+> Tested with:
+> - QEMU/KVM guest using VFIO passthrough (IBM Power9,(lpar)Power11 host)
+> - Injected EEH errors with pseries EEH errinjct tool on host, recovery
+>    verified on qemu guest.
+> - Verified successful config space access and CAP_EXP DevCtl restoration
+>    after recovery
+> 
+> Fixes: 212d16cdca2d ("powerpc/eeh: EEH support for VFIO PCI device")
+> Signed-off-by: Narayana Murty N <nnmlinux@linux.ibm.com>
+> Reviewed-by: Vaibhav Jain <vaibhav@linux.ibm.com>
+> ---
+>   arch/powerpc/kernel/eeh.c | 2 ++
+>   1 file changed, 2 insertions(+)
+> 
+> diff --git a/arch/powerpc/kernel/eeh.c b/arch/powerpc/kernel/eeh.c
+> index 83fe99861eb1..ca7f7bb2b478 100644
+> --- a/arch/powerpc/kernel/eeh.c
+> +++ b/arch/powerpc/kernel/eeh.c
+> @@ -1509,6 +1509,8 @@ int eeh_pe_configure(struct eeh_pe *pe)
+>   	/* Invalid PE ? */
+>   	if (!pe)
+>   		return -ENODEV;
+> +	else
+> +		ret = eeh_ops->configure_bridge(pe);
+> 
+>   	return ret;
+>   }
+> --
+> 2.48.1
+> 
+Looks good to me.
+Reviewed-by: Ganesh Goudar <ganeshgr@linux.ibm.com>
 
-As soon as anyone inserts 3rd party modules in topologies they will
-create said topology for the machine they use and either select seaid
-topology for the machine or use override to load that.
-
-You cannot really add 3rd party modules to generic topologies since
-somehow you need to make sure that the 3rd party module is somehow
-available at the same time.
-
-The difference regarding to audio in PTL to WCL is about the same as ARL
-to ARL-S, yet with sof-arl-* topologies this somehow was not an issue
-(and tgl and adl).
-
--- 
-Péter
 
 
