@@ -1,96 +1,122 @@
-Return-Path: <linux-kernel+bounces-647340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-647342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A244EAB673E
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 11:21:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13FC9AB6746
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 11:22:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3C973AC996
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 09:21:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BA46B7AA1D5
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 09:20:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B73852253E9;
-	Wed, 14 May 2025 09:20:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A48992288CC;
+	Wed, 14 May 2025 09:21:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pnmRo8LQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b="qD0gdPGH"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AB3622759B;
-	Wed, 14 May 2025 09:20:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75A422253EB
+	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 09:20:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747214416; cv=none; b=k5NLS+yAj1LY4ycGpiz5K+vK6StfqMUZ584kYA+6EXcsHo3AHpwiN4hjKQ65IjKx4/DKAghaKnwl2rJbavFuW6d+g2+DCpjiJ1QgI30nwbMxR7quN4bR2rt35ZISlGvYoQFJLSosJhZJyjPMjd0aYfiFXnedlXY1Q/fAhQUCvD4=
+	t=1747214461; cv=none; b=hvZIN29QP17OVfhz8dkvERD5haS/Ej1D/OdRRj7gVxr+iDd9BQuXdkYTT67yxyLxneWEDWc2ENAMscAVij7EZMmz34jhvBHEYUjnBpK32RLYTO9DFWbTbXctde8DkV894LUSW7gTfBIFRBaMAlXcrFj3TwTlywHHqIjVd14Nvho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747214416; c=relaxed/simple;
-	bh=Te/mzdTJQVi3tOLsA4uKcCRYE3xSnphzXRz0GtFpJg0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LeJJHrncWv3VhIsC7EToyi/tWplQW43Nr9IiFdZbAXLkNMCArKwQzUi2M6MCUwUrRq0/D0w2uytPlHzPdW3Ax86YnjBk077CfaraTXNi1vQ02imot4AjDg2ySnlBIL8/FT0Ef515fga1G78gu1zA+q7B0+nNSLmRz7wJ+2f/iDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pnmRo8LQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9663C4CEEB;
-	Wed, 14 May 2025 09:20:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747214414;
-	bh=Te/mzdTJQVi3tOLsA4uKcCRYE3xSnphzXRz0GtFpJg0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pnmRo8LQpi5IKxRxe43nTenmpXHv74afXKw2XcytrIf3leNl/Kw2xr6E7ezyc7IyF
-	 HBUmsCgO/s76h5HuI41hcfZa/035ub2L04/N4HCR3v6EEybdUsoyRzTyZoyuzGuoOM
-	 zfyVSefVKyhr4eARe6kobUD5w34+Q9L6hHWfmQ84fG4CrmpnZPB8mMDLa2qisYw88X
-	 DuCU57Qms1U7/VwcX8gtJdwh3/LBkqLbLE1J+59yCLYCwCRcFbQ3ozqC7yOlxC0261
-	 0FKrDCVcoexTAG2eRIrTGrnsu23Kj8PDC1vdETTy++c4HZ7O/IsKxVFvNnurCkXHaG
-	 TcmgAZfp1pU2w==
-Date: Wed, 14 May 2025 11:20:07 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Shivank Garg <shivankg@amd.com>
-Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-	luto@kernel.org, peterz@infradead.org, rafael@kernel.org,
-	pavel@kernel.org, akpm@linux-foundation.org,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	sohil.mehta@intel.com, rui.zhang@intel.com, yuntao.wang@linux.dev,
-	kai.huang@intel.com, xiaoyao.li@intel.com, peterx@redhat.com,
-	sandipan.das@amd.com, ak@linux.intel.com, rostedt@goodmis.org
-Subject: Re: [PATCH RESEND 1/4] x86/mm: pgtable: Fix W=1 build kernel-doc
- warnings
-Message-ID: <aCRgRxmO6rsR-0k3@gmail.com>
-References: <20250514062637.3287779-1-shivankg@amd.com>
- <aCRMT0TlpFvpRGYk@gmail.com>
- <6c4b227e-abdd-4e7f-8abd-d85cae0f0ec3@amd.com>
+	s=arc-20240116; t=1747214461; c=relaxed/simple;
+	bh=KHCva7RS+KUG/JBkXstocwt+pRK+aJOvr2dtVHXWRx0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Tks0QaAepMUHXRt1oQ2iSaKaSibMn7FtNzLXfGit9uBaeCfSSkpKK8G5qs6f1jftr0VSxsLamF9LdoIevr2m4ekKpSJPWlouLpITCRjKP6stqalniMW8Dj0cwwMfiNiRIizxM5Jd3tZZ3SdlKxYaMtfl0ZsHOp1eE3/cUkPJN4k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com; spf=pass smtp.mailfrom=cloud.com; dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b=qD0gdPGH; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloud.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-22e6880d106so45941355ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 02:20:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=citrix.com; s=google; t=1747214459; x=1747819259; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ibOaHY58habuMEQUy1e1j8bMM1DI8FzR+feZU4NgPsg=;
+        b=qD0gdPGHF1wm29IJ+9URKTTcK84gpzzq4tUT0ETH1aBrqWwHYQDQvu4JV4Rz+L7lh4
+         DA7ZW/JuhYf74w3yzxC5M4aSUhtqRSCbX6QfeU4RxDgFvwlJ0HxG/ciXNBQxVxr54zz6
+         ecR55zGfk9+n/tvENbeC2h/7EbZX4X+C16Q/g=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747214459; x=1747819259;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ibOaHY58habuMEQUy1e1j8bMM1DI8FzR+feZU4NgPsg=;
+        b=smu7mIrovGiEgwETeAX9UX2GEOnqIerL5essj8dNSFRpvYUDnmStXQ2wu0bdsOX6g3
+         /8caK2Cll1afXV/xklBQ6zoh2IhiTnSjqDMM/tZXj6jICgVuyvSfhH2a/u8fdscKOtbr
+         0uRF4GOSxDnZKyssYjg4X7jAA+8UlUgPpHS5Gm3REbbxdGDPpF71m3cwm1v5fBv1iwTr
+         hMG4dLsDHOy/IA+I3ylUfYdE4ASQG3YzOQAo21pko8e+Rh5CmQqbKy2eh7a7aP+fXBYR
+         YtwtemlPLqUE+Dl/aa4BjehzppZbwW7XYUmqcLfIkfEOagIo014WBQVwXJo8aAv6gH6f
+         EM4g==
+X-Forwarded-Encrypted: i=1; AJvYcCX0WoFnsUWDxfoJPtKpc4g5TiwnW49UAG6KOaTh4B7XL/H1wyvBer1P4OAfBGYTyv4t7Y8vNB77YNDFmro=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxnH7y1WJg/8cp3QU7LtY74VWGNJn+gi8qInn+hIjLNqZV9vVf7
+	8ixa2ilRqVUp3m3m6OsVPUeY8Izg7RbjfW4ZwRP8DXGKZvkcdCnY5jY2i8ImHfU=
+X-Gm-Gg: ASbGncvhON4Bo2P7uuIpCRlJDsDKazqucaXQ/c1urvIXqbJlaXT1wKrVjNv9LhBNbR1
+	r5W+HNPFF7CP/mGJfiJZQgrN1x4lESe2mzw4KqFCaEq1CIg/PhKnj8re9gfrTRr6PKc2XmDMgmh
+	eFEQ1XAfj4M6hUg7utuqgFnxoqVCTfo+Qk/gNe0dQp0seex2kgAB3h/36a56yQlzjtACLopB63q
+	JsDCqyxT62fUdaFJvq9wEEdg6TGczC/mbYrPSPCq/EfVamrADEIjpwt6lNM+gLaevR484XN18tG
+	s+YF9bSo7FU5emmNALjnWtVrX3cbtl+X+XB5gy6/4LDD6IXCuKmgJw/0UGJ3ikIWhJU=
+X-Google-Smtp-Source: AGHT+IGSWLVb97SerQP51yUp7nrx2ZnEYwBo9CbV8YH53jj0P/avx90b8Y2UNutxqjPaGH7wgrsK6g==
+X-Received: by 2002:a17:903:120c:b0:215:8d49:e2a7 with SMTP id d9443c01a7336-231983e5c25mr35466905ad.50.1747214458567;
+        Wed, 14 May 2025 02:20:58 -0700 (PDT)
+Received: from localhost ([84.78.159.3])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-22fc753fe13sm94696225ad.14.2025.05.14.02.20.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 May 2025 02:20:58 -0700 (PDT)
+From: Roger Pau Monne <roger.pau@citrix.com>
+To: xen-devel@lists.xenproject.org,
+	linux-kernel@vger.kernel.org
+Cc: jason.andryuk@amd.com,
+	Roger Pau Monne <roger.pau@citrix.com>,
+	Juergen Gross <jgross@suse.com>,
+	Stefano Stabellini <sstabellini@kernel.org>,
+	Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>
+Subject: [PATCH] xen: enable XEN_UNPOPULATED_ALLOC as part of xen.config
+Date: Wed, 14 May 2025 11:20:36 +0200
+Message-ID: <20250514092037.28970-1-roger.pau@citrix.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6c4b227e-abdd-4e7f-8abd-d85cae0f0ec3@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+PVH dom0 is useless without XEN_UNPOPULATED_ALLOC, as otherwise it will
+very likely balloon out all dom0 memory to map foreign and grant pages.
 
-* Shivank Garg <shivankg@amd.com> wrote:
+Enable it by default as part of xen.config.  This also requires enabling
+MEMORY_HOTREMOVE and ZONE_DEVICE.
 
-> >> @@ -665,6 +665,9 @@ void native_set_fixmap(unsigned /* enum fixed_addresses */ idx,
-> >>  #ifdef CONFIG_X86_5LEVEL
-> >>  /**
-> >>   * p4d_set_huge - setup kernel P4D mapping
-> >> + * @p4d: Pointer to a p4d entry.
-> >> + * @addr: Virtual Address associated with p4d.
-> >> + * @prot: Protection bits to use.
-> > 
-> > How about using the same capitalization you already see in this 
-> > description?
+Signed-off-by: Roger Pau Monné <roger.pau@citrix.com>
+---
+ kernel/configs/xen.config | 3 +++
+ 1 file changed, 3 insertions(+)
 
-> Please review the revised patch with suggested changes.
+diff --git a/kernel/configs/xen.config b/kernel/configs/xen.config
+index 6878b9a49be8..1875a0a5047a 100644
+--- a/kernel/configs/xen.config
++++ b/kernel/configs/xen.config
+@@ -13,6 +13,8 @@ CONFIG_SCSI=y
+ CONFIG_FB=y
+ CONFIG_INPUT_MISC=y
+ CONFIG_MEMORY_HOTPLUG=y
++CONFIG_MEMORY_HOTREMOVE=y
++CONFIG_ZONE_DEVICE=y
+ CONFIG_TTY=y
+ # Technically not required but otherwise produces
+ # pretty useless systems starting from allnoconfig
+@@ -47,3 +49,4 @@ CONFIG_XEN_GNTDEV=m
+ CONFIG_XEN_GRANT_DEV_ALLOC=m
+ CONFIG_SWIOTLB_XEN=y
+ CONFIG_XEN_PRIVCMD=m
++CONFIG_XEN_UNPOPULATED_ALLOC=y
+-- 
+2.48.1
 
-I think you misunderstood: why are you using 'p4d', while a line before 
-it's 'P4D'? It's an acronym, and only used lowercase when it's a local 
-variable. 'p4d is a pointer to a p4d entry' is doubly confusing in that 
-regard ...
-
-Same for PMD/PUD etc.
-
-Thanks,
-
-	Ingo
 
