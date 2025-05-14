@@ -1,148 +1,143 @@
-Return-Path: <linux-kernel+bounces-647413-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-647395-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C694FAB6814
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 11:54:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B426AB67DD
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 11:45:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75B4C8C0799
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 09:53:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D1011886526
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 09:45:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26BCE262FCD;
-	Wed, 14 May 2025 09:53:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0F712356BC;
+	Wed, 14 May 2025 09:44:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="VCzszoMP"
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="QmlzMFpi"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7742925E453
-	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 09:53:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3E82230BC1
+	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 09:44:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747216427; cv=none; b=UVRjNJQ/XNWKGdwUWwAcMQTwsE2K9iA1Yd40pA0vy5xHJkfljOjLrHYRavui4gX9p3Mmsgx2jBs/m6yAMS/cGGkUD4IlxlyjPIqSIE+zS7TTts33NdfDf7c2fnplkhkylfROq7Q8OgaAD37Ral8PGRA0z6dt1LfrM4URRnRfhII=
+	t=1747215898; cv=none; b=dThN1SPbYmrBiA2ZBQuE4ZZjEpagGTEvnLU0aMLSUtbL09t4p/Q1YjUc2dptFkIi+24KmYlfMQHjY2mirgkbl+WeA/7ModtdjX9ExXUJ0wudPS188x802MQYAunRHJ27IncTqXlem4+jAXj0/WB21a3mc8ZQDwcV/K0eYMJ5M+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747216427; c=relaxed/simple;
-	bh=622+LtoyH7U4bpu0gZpm1wzigDBNma3B5KPFSwSgLl8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=BvNinDOQKmSAcccL1KQPUWfuMbtuqSe8SRvRvFAPIEr9gC+H/sgVxtsCdqY4iAWFw6ehuL95XtFRZmlQVo7dTilzWDjIeYOpNgcModXsFzH0uVLeWj0jBoT+tZU2L+A2cRTHh1DJBiLQy+vubQaYqVI4HUEjVipmdZNmxg8WZTM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=VCzszoMP; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas2p4.samsung.com (unknown [182.195.41.56])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250514095343epoutp042fdbc245a75c5a0c25a1cf127d68b1ea~-XBR9y3WW0360003600epoutp04I
-	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 09:53:43 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250514095343epoutp042fdbc245a75c5a0c25a1cf127d68b1ea~-XBR9y3WW0360003600epoutp04I
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1747216423;
-	bh=euDg0lpNrnAL1l5Mdnq3mtKgKzdVtdPZ2zegxJqxchA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=VCzszoMPD7nw+jtgtfo2yfzdf/o4bMLtODt74fiW+R3xb4WJ06a0eCqguMG3Yn7SH
-	 szze6IKugVyKyuyOuQzR59luLsAEpd0Sv8D99ePX/GC46n0/wJjKCWniNFo9n0K9IU
-	 BlBPudwPjGSHHgXhte574g6PB2FsE6YePr7cWUY8=
-Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
-	epcas2p1.samsung.com (KnoxPortal) with ESMTPS id
-	20250514095343epcas2p134dadafb319aee512fab07dc76564974~-XBRh5m0j0288702887epcas2p1D;
-	Wed, 14 May 2025 09:53:43 +0000 (GMT)
-Received: from epcas2p3.samsung.com (unknown [182.195.36.101]) by
-	epsnrtp04.localdomain (Postfix) with ESMTP id 4Zy7vp4ZT4z6B9m7; Wed, 14 May
-	2025 09:53:42 +0000 (GMT)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas2p3.samsung.com (KnoxPortal) with ESMTPA id
-	20250514095342epcas2p366f8abb441850d4b503926425082f2e7~-XBQj9krg1373113731epcas2p3H;
-	Wed, 14 May 2025 09:53:42 +0000 (GMT)
-Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20250514095341epsmtrp1a88bf0b1c84a630ccc397dcf28e64214~-XBQiV3do1996219962epsmtrp1S;
-	Wed, 14 May 2025 09:53:41 +0000 (GMT)
-X-AuditID: b6c32a52-41dfa70000004c16-da-68246825082b
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	B9.55.19478.52864286; Wed, 14 May 2025 18:53:41 +0900 (KST)
-Received: from localhost.localdomain (unknown [10.229.9.126]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20250514095341epsmtip16e419ee7529645ed800122dee606b8f0~-XBQYfbc43083530835epsmtip1Q;
-	Wed, 14 May 2025 09:53:41 +0000 (GMT)
-From: Sangwook Shin <sw617.shin@samsung.com>
-To: krzk@kernel.org, alim.akhtar@samsung.com, wim@linux-watchdog.org,
-	linux@roeck-us.net
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
-	linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org, Sangwook Shin
-	<sw617.shin@samsung.com>, Kyunghwan Seo <khwan.seo@samsung.com>
-Subject: [PATCH v2 5/5] watchdog: s3c2410_wdt: exynosautov9: Enable
- supported features
-Date: Wed, 14 May 2025 18:42:20 +0900
-Message-Id: <20250514094220.1561378-6-sw617.shin@samsung.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250514094220.1561378-1-sw617.shin@samsung.com>
+	s=arc-20240116; t=1747215898; c=relaxed/simple;
+	bh=Zn4zpe0vq/Cog1u5FSWrBKwbijYy0b4wPlo2LEAa4BA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YxVO1KzdjXZP5zOvQ6wVw3gqFkIpFNgHf3eIrrdAhaLn9nbpsH1kPDIt5bW9cGB9k5lh6hzWIpZ+s4lL7Z2j5NnvQvPl98Gi66yc3RLbAD6XSDoNDsuYXvXhUYSBUBKhJnhRM52r4t3+ntTNUZ804Co8aBnrg9YwclFXborot/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=QmlzMFpi; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5f7ec0e4978so4666810a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 02:44:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1747215893; x=1747820693; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=2q9R53V/fDMcpMH8guJFLg3icpz0ciPeizfC22LHQ0I=;
+        b=QmlzMFpijvPGx32siDe6hsh8cNyMuvXMDukDf/FPV5ZwkCgPYy4hGgCJTII9BZ1JLk
+         Rpj5MD23jFDZwb+3W9yuYkmhpr2rbr5AKo6wnkAatNjhz9DqHCMQGtSrHg4WR+Z8EJRz
+         GI2cKZm4TbIms/DdBfunPzVLG8umBhKZ2WVorxMklrFyngb/WO8HrQ3dOf51CV+21425
+         WaBZQ207R/Ne5/hmArbo71cywNPAe3kLrDZXuEqK2L9VKo+QXZhXJuhOtr4LuRrH/C8Q
+         6tQUnW0XahIeqSagZH0uk4P1OXnYeC2Ag/73iAPAE5MgoAhF0/DbAISAi+8+2vwkW2Tv
+         OOPg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747215893; x=1747820693;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2q9R53V/fDMcpMH8guJFLg3icpz0ciPeizfC22LHQ0I=;
+        b=nCMDOwtMEZtwrH2+VwckRqxyHthD2QTFuTSSsGT9kytjtooqqmJ0X6ZhbpZurNIvyx
+         3G5U5Sj+KSVmLmVefsN+WLha84zpKL0xQa1pulxskzgzFbnkBLod34IBpYyBqJ5nL+7N
+         L9OY1lc1K/myXNOJPuxli9DsNgLUHrT1nOCIWN+TEXS9wWdv9D1VIIFom93ya8yfBz3X
+         MNdOncUrcXOh3aAYdi5MO32eAO89M4gi/YbbtXa7g/Wfu210xWU3RU3oqAz/hSpwi0Sy
+         /rVUoJXm6Uvvv1+UbO4z+3Sn6JkCFp8hgIq7p9dP9H1WGG++B6hoNcXhIw+wFlOTqa9J
+         whGA==
+X-Forwarded-Encrypted: i=1; AJvYcCU7BvVjaqpTJzpy0yixH2qnVJIUbLMUuIrm2WXU85maMkixDKaT3YJuI5EVnrv8Srmdf4JFfVoYGfKDd/4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWwTOtOIUHXsx3AL415mrjL0fFU6gY6wc/gNARG+yCF81Y7rhB
+	e4WKg4yqAvb58gFQL0QuYs3NSrVcuJNXqu6PRGA5iyxvx/S/loaEnsSyK/N23I8=
+X-Gm-Gg: ASbGncvTX8Km1CbLLch8v0br4Q6FGL02vJMD6sc+prSMNrybPdkDjj9fwulFyTm+Cmv
+	7VceYcCpdVIGuOGnGpGLzc3UMzMepNH14QWBMrurRU0ebTtLKJV2BhLs0F1e+eJmc53fDbUdyDe
+	GonREMVMLpkGA8w73OlUO9hkgsNBzdIwhY1Qcs04b6ESaTOiDZnVKGHqKS8Ro29ev4jRB2esgsk
+	tOQkDW8KBk/qrL40/+RcCV3IgpdFg7G/lM1CeFVV2ndy16Ax/9eCKWp9iy3MT2KUEzLu+DnJSca
+	9SJGrPoTRlBoUeIfahaFsuQ2EVWJKo70t26Ly55cqCaJ/IUWPxpZjA==
+X-Google-Smtp-Source: AGHT+IE96oxIRsIzDau62o1mwFDV6pP1y6bpVXTUnqkiWb6obYj5PC8SIj6KP+Uab5KGwnBB/dtV+Q==
+X-Received: by 2002:a05:6402:268f:b0:5f8:5672:69cb with SMTP id 4fb4d7f45d1cf-5ff986a37b1mr1905243a12.5.1747215892878;
+        Wed, 14 May 2025 02:44:52 -0700 (PDT)
+Received: from pathway.suse.cz ([176.114.240.130])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ff9ab7e329sm822698a12.37.2025.05.14.02.44.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 May 2025 02:44:52 -0700 (PDT)
+Date: Wed, 14 May 2025 11:44:49 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: Miroslav Benes <mbenes@suse.cz>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	linux-kernel@vger.kernel.org, live-patching@vger.kernel.org,
+	Peter Zijlstra <peterz@infradead.org>,
+	Josh Poimboeuf <jpoimboe@redhat.com>, mingo@kernel.com,
+	juri.lelli@redhat.com, vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+	mgorman@suse.de, vschneid@redhat.com, jpoimboe@kernel.org,
+	jikos@kernel.org, joe.lawrence@redhat.com,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH v2] sched,livepatch: Untangle cond_resched() and
+ live-patching
+Message-ID: <aCRl9h_p3Yu8Gxci@pathway.suse.cz>
+References: <20250509113659.wkP_HJ5z@linutronix.de>
+ <alpine.LSU.2.21.2505131529080.19621@pobox.suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrCLMWRmVeSWpSXmKPExsWy7bCSnK5qhkqGwcUvFhYP5m1js5jffonR
-	4vz5DewWmx5fY7W4vGsOm8WM8/uYLG6s28du8WThGSaLGYtPslk8fvmP2YHLY9OqTjaPlWvW
-	sHpsXlLvsfN7A7tH35ZVjB6fN8kFsEVx2aSk5mSWpRbp2yVwZcxcsp+5YCl3xeVVdg2MFzm7
-	GDk5JARMJNrP/2fvYuTiEBLYzijx42AzaxcjB1BCSuLdM0uIGmGJ+y1HWCFqPjBKTNzwnwUk
-	wSagIzH9320wW0QgTuJY+2ZmkCJmgUeMElfm9TCBJIQFwiR6v+5gA7FZBFQlWs6sAovzCthK
-	9Ow4xQixQV5i5qXv7CA2p4CdxNyWVjaQI4SAapq2e0CUC0qcnPkEbBczUHnz1tnMExgFZiFJ
-	zUKSWsDItIpRNLWgODc9N7nAUK84Mbe4NC9dLzk/dxMjOOC1gnYwLlv/V+8QIxMH4yFGCQ5m
-	JRHe61nKGUK8KYmVValF+fFFpTmpxYcYpTlYlMR5lXM6U4QE0hNLUrNTUwtSi2CyTBycUg1M
-	OQ9ebZu/7MeX7QvCo77LvNzxwb2c/VP3m6cZEterUx4GLJqw6GHT4r8XLmZ/63q3qpG9wPR/
-	4mfhJV6hV5acCzi7PGrP79KnK/jOGbzc8eRWh9O6BKt8if+hzmU32RUu3n79dVJCiwjHp9gE
-	MeYmKWvGFwzulq7nCz/w7UhX+1z/R8NV78WRdT9WZRZFXLfSf3Gv4seO2qstd9/Ihc29HtQV
-	r/zisnq/lEFsrKd+/bw40fyo1uUP5k39fpDlo8NzmeArSYZ9Ei68mk1l1pVtmQwbXv1VFH5w
-	6eQp+y+bV39y0TTrM7i6+kH/uy0x88xkglslDrgwb+zitZvqtcG6Ztmd+ud7TdbrmBo48E1s
-	UmIpzkg01GIuKk4EAO3sg/fnAgAA
-X-CMS-MailID: 20250514095342epcas2p366f8abb441850d4b503926425082f2e7
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-cpgsPolicy: CPGSC10-234,N
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250514095342epcas2p366f8abb441850d4b503926425082f2e7
-References: <20250514094220.1561378-1-sw617.shin@samsung.com>
-	<CGME20250514095342epcas2p366f8abb441850d4b503926425082f2e7@epcas2p3.samsung.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.LSU.2.21.2505131529080.19621@pobox.suse.cz>
 
-Enable supported features for ExynosAutov9 SoC.
-- QUIRK_HAS_DBGACK_BIT
-- QUIRK_HAS_32BIT_MAXCNT
+On Tue 2025-05-13 15:34:50, Miroslav Benes wrote:
+> On Fri, 9 May 2025, Sebastian Andrzej Siewior wrote:
+> 
+> > From: Peter Zijlstra <peterz@infradead.org>
+> > 
+> > With the goal of deprecating / removing VOLUNTARY preempt, live-patch
+> > needs to stop relying on cond_resched() to make forward progress.
+> > 
+> > Instead, rely on schedule() with TASK_FREEZABLE set. Just like
+> > live-patching, the freezer needs to be able to stop tasks in a safe /
+> > known state.
+> > 
+> > @@ -365,27 +356,20 @@ static bool klp_try_switch_task(struct task_struct *task)
+> >  
+> >  void __klp_sched_try_switch(void)
+> >  {
+> > +	/*
+> > +	 * This function is called from __schedule() while a context switch is
+> > +	 * about to happen. Preemption is already disabled and klp_mutex
+> > +	 * can't be acquired.
+> > +	 * Disabled preemption is used to prevent racing with other callers of
+> > +	 * klp_try_switch_task(). Thanks to task_call_func() they won't be
+> > +	 * able to switch to this task while it's running.
+> > +	 */
+> > +	lockdep_assert_preemption_disabled();
+> > +
+> > +	/* Make sure current didn't get patched */
+> >       if (likely(!klp_patch_pending(current)))
+> >                return;
+> 
+> This last comment is not precise. If !klp_patch_pending(), there is 
+> nothing to do. Fast way out. So if it was up to me, I would remove the 
+> line all together.
 
-Signed-off-by: Sangwook Shin <sw617.shin@samsung.com>
-Signed-off-by: Kyunghwan Seo <khwan.seo@samsung.com>
----
- drivers/watchdog/s3c2410_wdt.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+I think that this is not just a speedup. Right below is a read memory
+barrier. It says that we need to read TIF_PATCH_PENDING here to
+make sure that klp_target_state is correct after the barrier.
 
-diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
-index 3c12a3ae50f8..bbc1d9916f67 100644
---- a/drivers/watchdog/s3c2410_wdt.c
-+++ b/drivers/watchdog/s3c2410_wdt.c
-@@ -275,7 +275,8 @@ static const struct s3c2410_wdt_variant drv_data_exynosautov9_cl0 = {
- 	.cnt_en_reg = EXYNOS850_CLUSTER0_NONCPU_OUT,
- 	.cnt_en_bit = 7,
- 	.quirks = QUIRK_HAS_WTCLRINT_REG | QUIRK_HAS_PMU_MASK_RESET |
--		  QUIRK_HAS_PMU_RST_STAT | QUIRK_HAS_PMU_CNT_EN,
-+		  QUIRK_HAS_PMU_RST_STAT | QUIRK_HAS_PMU_CNT_EN |
-+		  QUIRK_HAS_DBGACK_BIT | QUIRK_HAS_32BIT_MAXCNT,
- };
- 
- static const struct s3c2410_wdt_variant drv_data_exynosautov9_cl1 = {
-@@ -287,7 +288,8 @@ static const struct s3c2410_wdt_variant drv_data_exynosautov9_cl1 = {
- 	.cnt_en_reg = EXYNOSAUTOV9_CLUSTER1_NONCPU_OUT,
- 	.cnt_en_bit = 7,
- 	.quirks = QUIRK_HAS_WTCLRINT_REG | QUIRK_HAS_PMU_MASK_RESET |
--		  QUIRK_HAS_PMU_RST_STAT | QUIRK_HAS_PMU_CNT_EN,
-+		  QUIRK_HAS_PMU_RST_STAT | QUIRK_HAS_PMU_CNT_EN |
-+		  QUIRK_HAS_DBGACK_BIT | QUIRK_HAS_32BIT_MAXCNT,
- };
- 
- static const struct s3c2410_wdt_variant drv_data_gs101_cl0 = {
--- 
-2.40.1
+Anyway, I agree that the comment is confusing and might be removed.
+The comment above the memory barrier might/should be enough.
 
+Best Regards,
+Petr
 
