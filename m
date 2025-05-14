@@ -1,192 +1,87 @@
-Return-Path: <linux-kernel+bounces-647114-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-647116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CE12AB648D
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 09:36:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21331AB6497
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 09:37:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B1941171BC9
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 07:36:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 502017A52E7
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 07:36:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A019A20E002;
-	Wed, 14 May 2025 07:35:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B55F202983;
+	Wed, 14 May 2025 07:37:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="nNgNkH+N";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="NtAYZTz7"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="TBqJlo1F"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C7A820C038
-	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 07:35:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAD32DDD3;
+	Wed, 14 May 2025 07:37:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747208154; cv=none; b=iN/Ukd/equFJkC/P142EOITVfgMFNKHrupQPheuBkqBv2CXUfu3NI2PspGF9Dn+f4fODrRV8K5bRCVziYvAHllvNrgiuz5DRsfjCBhxLhOpOB1dg+NleBFVi9EeQRsHYlkjFJwoyLSf//t3qHRg7WhwHFsU2BIOaLkVGomgwEAk=
+	t=1747208260; cv=none; b=dJmmOMngl2FnX/Id+lDQqHlLEPbvHq6nyJ8skTRsQ2HECWkung54a71Pox99S/+iD35uC+Sf02++5C1Yovfonm8uPQGAOKZDQxgStbU2GIIK5GYyTqp9yS8Yu38WgeiZdG26DMralkwNx1fO3qW1YYO0wXGu314dNG25G0LizI0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747208154; c=relaxed/simple;
-	bh=bsg6bw0yPfNZ4O08qHdudsUY91A0rZ+kVoO8mgYHzzA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Z1txquR8fHovPOuXfAH5ANKnes3nT7ostx8RxNYStY540GxP2yd7OTJ6V/UECdSWJ8xCTKBJYkb3RS/KVgR5q7El6XVx6gd44Zec8ae/silkXQzgnoBnmqIUYr0syAs/EbT2uwFbABiqDyKReV/EwkfCxRqXJY7ITJB4AU5aXcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=nNgNkH+N; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=NtAYZTz7; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1747208150;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xF4E5LVzONdS3f7YqJRhw616wWVZro5wISDTX0iuhEA=;
-	b=nNgNkH+NwoKusOWd5fvUACBLqXIt3SKSuR+6DttQBbby9p00EDh6Sk+9aNuibxCaK16thw
-	xa0JqZJnB6k5UI6CWWqpxJKQVdhNTtwGxENw7mP0sYrTWbN9rfvpxFyzQW40nWvZELPhqR
-	f8ZzJ0oZj55sUBbcOO5pbnTij9spptCB6vljwtjW//4pB+Hcc6/uu0mTlRFRbQNaodPDAk
-	SSzp7ZFwHhCU0JBwbYq68dPCJ8sIDglcnKhQy1NYiavMPcQJBD1WmcVQ4iHPEQNm95COoT
-	oyNbWFx6VB53QJyjNLD7pUasQEpz6c/B9BvAYSsPkksQYHiCafB/H3EjfAp57w==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1747208150;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xF4E5LVzONdS3f7YqJRhw616wWVZro5wISDTX0iuhEA=;
-	b=NtAYZTz7zkP1E60poG9LK42fTjWAXipEYuS8rual0CM9qeGI5taQLyvmPa9rKjUhgiXuj7
-	8L5OVSeP7yntyJBA==
-To: Brian Norris <briannorris@chromium.org>
-Cc: Douglas Anderson <dianders@chromium.org>, Tsai Sung-Fu
- <danielsftsai@google.com>, linux-kernel@vger.kernel.org, Brian Norris
- <briannorris@chromium.org>
-Subject: Re: [PATCH 2/2] genirq: Retain disable depth across irq
- shutdown/startup
-In-Reply-To: <20250513224402.864767-3-briannorris@chromium.org>
-References: <20250513224402.864767-1-briannorris@chromium.org>
- <20250513224402.864767-3-briannorris@chromium.org>
-Date: Wed, 14 May 2025 09:35:49 +0200
-Message-ID: <877c2jk5ka.ffs@tglx>
+	s=arc-20240116; t=1747208260; c=relaxed/simple;
+	bh=F0y7ofSa6UIPn9c0w+nXpRMsY1EP8Pck94HcAtDu9x4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=u9AzT3oYthFdPCw+yF92ONs7ny9orYVv+UYZ3uw0QyDUzUiLku57mC1s+BZ8bGyUQw55K3V463MsJ8JmdPZHgssq9pVJiRNKk8VTdbQzW7UuE5M+MrP428QkKt1mj21IHbdKX2m1bGzw0X2mWubZNhjNViu62nAquOCVVBEGVxE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=TBqJlo1F; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39A39C4CEF4;
+	Wed, 14 May 2025 07:37:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1747208259;
+	bh=F0y7ofSa6UIPn9c0w+nXpRMsY1EP8Pck94HcAtDu9x4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TBqJlo1FN2MYi6K+ntxiI8tL0a4PCqvFQ0MAxaC8jOfEbHzXNGbLO9eqXIHMXwWqd
+	 GI4UieoUdXBW1HI/h1zlAqvmWQ8x1xichmOcwL3CS+8Ec1ImwRSZH61/jCxV0+YboF
+	 LODSFDaVioCXpIC8XNzmBKj7k4X06lnDbSGf4fi8=
+Date: Wed, 14 May 2025 09:35:50 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Judith Mendez <jm@ti.com>
+Cc: Jiri Slaby <jirislaby@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Nishanth Menon <nm@ti.com>,
+	Santosh Shilimkar <ssantosh@kernel.org>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Tero Kristo <kristo@kernel.org>, Bin Liu <b-liu@ti.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Andrew Davis <afd@ti.com>, linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 0/7] Introduce PRU UART driver
+Message-ID: <2025051449-scarily-evaluator-0e03@gregkh>
+References: <20250513215934.933807-1-jm@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250513215934.933807-1-jm@ti.com>
 
-On Tue, May 13 2025 at 15:42, Brian Norris wrote:
-> If an IRQ is shut down and restarted while it was already disabled, its
-> depth is clobbered and reset to 0. This can produce unexpected results,
-> as:
-> 1) the consuming driver probably expected it to stay disabled and
-> 2) the kernel starts complaining about "Unbalanced enable for IRQ N" the
->    next time the consumer calls enable_irq()
->
-> This problem can occur especially for affinity-managed IRQs that are
-> already disabled before CPU hotplug.
+On Tue, May 13, 2025 at 04:59:27PM -0500, Judith Mendez wrote:
+> The PRU_ICSSG subsystems in am64x SoC, the PRU subsystem in am62 SoC, and
+> PRU_ICSS subsystem in am335x SoC include a UART sub-module. This patch
+> series introduces the driver and the corresponding binding documentation
+> for this UART sub-module.
+> 
+> The DTS patches for adding PRU UART nodes and enabling PRU UART is added
+> in this v1 version, but marked as DONOTMERGE since the patches only add
+> context to this series.
 
-Groan.
+This prevents the series from being merged as our tools want to take the
+whole series :(
 
-> I'm not very confident this is a fully correct fix, as I'm not sure I've
-> grokked all the startup/shutdown logic in the IRQ core. This probably
-> serves better as an example method to pass the tests in patch 1.
+So please, submit this in a format that we can handle.  As-is, this just
+makes me want to ignore it totally and focus on patch series that can be
+applied.  In other words, what would you do if you were in the position
+of attempting to review this?
 
-It's close enough except for a subtle detail.
+thanks,
 
-> @@ -272,7 +272,9 @@ int irq_startup(struct irq_desc *desc, bool resend, bool force)
->  	const struct cpumask *aff = irq_data_get_affinity_mask(d);
->  	int ret = 0;
->  
-> -	desc->depth = 0;
-> +	desc->depth--;
-> +	if (desc->depth)
-> +		return 0;
-
-This breaks a
-
-     request_irq()
-     disable_irq()
-     free_irq()
-     request_irq()
-
-sequence.
-  
-So the only case where the disable depth needs to be preserved is for
-managed interrupts in the hotunplug -> shutdown -> hotplug -> startup
-scenario. Making that explicit avoids chasing all other places and
-sprinkle desc->depth = 1 into them. Something like the uncompiled below
-should do the trick.
-
-Thanks,
-
-        tglx
----
-diff --git a/kernel/irq/chip.c b/kernel/irq/chip.c
-index 36cf1b09cc84..b88e9d36d933 100644
---- a/kernel/irq/chip.c
-+++ b/kernel/irq/chip.c
-@@ -223,6 +223,19 @@ __irq_startup_managed(struct irq_desc *desc, const struct cpumask *aff,
- 		return IRQ_STARTUP_ABORT;
- 	return IRQ_STARTUP_MANAGED;
- }
-+
-+void irq_startup_managed(struct irq_desc *desc)
-+{
-+	/*
-+	 * Only start it up when the disable depth is 1, so that a disable,
-+	 * hotunplug, hotplug sequence does not end up enabling it during
-+	 * hotplug unconditionally.
-+	 */
-+	desc->depth--;
-+	if (!desc->depth)
-+		irq_startup(desc, IRQ_RESEND, IRQ_START_COND);
-+}
-+
- #else
- static __always_inline int
- __irq_startup_managed(struct irq_desc *desc, const struct cpumask *aff,
-@@ -290,6 +303,7 @@ int irq_startup(struct irq_desc *desc, bool resend, bool force)
- 			ret = __irq_startup(desc);
- 			break;
- 		case IRQ_STARTUP_ABORT:
-+			desc->depth = 1;
- 			irqd_set_managed_shutdown(d);
- 			return 0;
- 		}
-@@ -322,7 +336,13 @@ void irq_shutdown(struct irq_desc *desc)
- {
- 	if (irqd_is_started(&desc->irq_data)) {
- 		clear_irq_resend(desc);
--		desc->depth = 1;
-+		/*
-+		 * Increment disable depth, so that a managed shutdown on
-+		 * CPU hotunplug preserves the actual disabled state when the
-+		 * CPU comes back online. See irq_startup_managed().
-+		 */
-+		desc->depth++;
-+
- 		if (desc->irq_data.chip->irq_shutdown) {
- 			desc->irq_data.chip->irq_shutdown(&desc->irq_data);
- 			irq_state_set_disabled(desc);
-diff --git a/kernel/irq/cpuhotplug.c b/kernel/irq/cpuhotplug.c
-index 15a7654eff68..3ed5b1592735 100644
---- a/kernel/irq/cpuhotplug.c
-+++ b/kernel/irq/cpuhotplug.c
-@@ -219,7 +219,7 @@ static void irq_restore_affinity_of_irq(struct irq_desc *desc, unsigned int cpu)
- 		return;
- 
- 	if (irqd_is_managed_and_shutdown(data))
--		irq_startup(desc, IRQ_RESEND, IRQ_START_COND);
-+		irq_startup_managed(desc);
- 
- 	/*
- 	 * If the interrupt can only be directed to a single target
-diff --git a/kernel/irq/internals.h b/kernel/irq/internals.h
-index b0290849c395..8d2b3ac80ef3 100644
---- a/kernel/irq/internals.h
-+++ b/kernel/irq/internals.h
-@@ -87,6 +87,7 @@ extern void __enable_irq(struct irq_desc *desc);
- extern int irq_activate(struct irq_desc *desc);
- extern int irq_activate_and_startup(struct irq_desc *desc, bool resend);
- extern int irq_startup(struct irq_desc *desc, bool resend, bool force);
-+void irq_startup_managed(struct irq_desc *desc);
- 
- extern void irq_shutdown(struct irq_desc *desc);
- extern void irq_shutdown_and_deactivate(struct irq_desc *desc);
+greg k-h
 
