@@ -1,59 +1,58 @@
-Return-Path: <linux-kernel+bounces-647582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-647584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B286AB6A36
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 13:39:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B84DAB6A3A
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 13:40:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3158D3BE42E
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 11:39:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A9503AD034
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 11:39:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D165D27A93B;
-	Wed, 14 May 2025 11:37:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E2DB27BF6C;
+	Wed, 14 May 2025 11:37:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S2sECodp"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r82oBJfp"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AB8127A918;
-	Wed, 14 May 2025 11:37:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6019C27A91A;
+	Wed, 14 May 2025 11:37:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747222659; cv=none; b=n9FEuYlZCtIYRSexzZ5v3k+6Ox6PUk2lxfABDX7oiDI2hVz8HkZlbktcpeT6P5YqQPzO3/VK1C2cJ3V056490AiCgZk/ofUnf6KbtZOwF4ftsM/5qlzDqE8n5sRWqz1ampiAnaRWaIeQ3DucyEbK1F20IWPa6yAr+VIYqzWHD/A=
+	t=1747222661; cv=none; b=t4dIqY38mM02D7+xo3fr3yLfWQNOBSX+QS2C/3Rj+FgyrrkzxgiZ6Z8owjtAwhdU0x0NqfR8o8/vvCDt9ZoJj9lzaNabo3O40RlGCCv0DcNvlwQFeYAUK8BB39ONroFQjbmyLi21Qnig7ih5rwPjPkISVFiSA6H1HvRTV8bMbik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747222659; c=relaxed/simple;
-	bh=PIe7R02ZRUfkyIGks0BCtEM0QJgK8//iDeGDTITbzGg=;
+	s=arc-20240116; t=1747222661; c=relaxed/simple;
+	bh=nHQOZYmbI/4ct4CBLqfNfvzIFv0fI2toaT4deYFmMOo=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=rPE9EdaWh7iGFOwMekRV60dnn4NjMYjkElCf+gpGHO3rXPBmN5mWUsptgBXebm5XsSSS2LLvvL06NL9IiXhsuqQ0D6sGqBVmxfRjpBl4huwIr0CyB4fVa31HwWs8bRgEiWn1flkqIOGAQWl642/4yhi8BxlqwcaaRaUoj+dcgno=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S2sECodp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC204C4CEEB;
-	Wed, 14 May 2025 11:37:36 +0000 (UTC)
+	 MIME-Version:Content-Type; b=UIs7AWC+dXT+I5QfxxqvJEUzAXpSed3b/muiuS6rFHJmWnuzlCUMJ4Y3xEtalUgAkJd869BWsvuqO7HZtEyXvsaSymgaEWM0oxZ7sW5UehOdVqKxB/KTf1nboa9cecWjUKOl3Obt2OUu91BR4vywK4aSnJcpinLHDJZY1u4vdkk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r82oBJfp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60529C4CEF4;
+	Wed, 14 May 2025 11:37:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747222658;
-	bh=PIe7R02ZRUfkyIGks0BCtEM0QJgK8//iDeGDTITbzGg=;
+	s=k20201202; t=1747222660;
+	bh=nHQOZYmbI/4ct4CBLqfNfvzIFv0fI2toaT4deYFmMOo=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=S2sECodpkb/8puFcDPG/SZLY/CP4xmgyZtTWxLMnuE3AMYmCVp93ZEDSaZ4DzWzh3
-	 bGnfA0luZMHA5DM0R+I3nWIeOQqPP1hExCq1mfPzsYp3B+tiSNngDskPSUzDqX/pzd
-	 E4jg23q/Mx4ZTAZm8mDmiaIK9GGQajbMVVOcNglj66mTkgDUvoLKMV2opCfjBJ0yaS
-	 J7fYZRTSwF2xSpOKcEReH+uRKpFHpFK5BOiOeRBAK+xene91IDcjBKugENhcMQ54fi
-	 O6INyyNye5cg9mxYCdf37XnDdjSOriqX3Nvf1+6dt1KdM6SUc/CERDzMshTe71Oz8H
-	 FwCKTPUY706nQ==
+	b=r82oBJfpP9WiBmJ3vF6vqtpXCdXxLBgwvnil/LbS08zqtFLMePpT7SelCKQwIpQwn
+	 Fqj75fpMrgtXmtDM82/QxW/IgdFXNHRtvuFfmmQD8bQp0fMKOiD4S0OHfemel3N20b
+	 AwGgOh3s9f3D87Ls0Ts2XKhplZdk8JOum9Vr+14GxdXhkUMyjLSw3G0xkk6v/YzK+L
+	 Q3Dt50kSqN5oxU5DVjecq42bbaFpfxDALfyxf1DnoTnKVF4fJTyXtGGjcNSzbeuEbP
+	 M1fztMjtfiWNt5mH2ADbB4y0Atixja/lLfnVKOsaC4nng3xE5XKqfq6IGQEDctJp//
+	 eRLaEaSSt2GAw==
 From: Vinod Koul <vkoul@kernel.org>
 To: Kishon Vijay Abraham I <kishon@kernel.org>, 
- Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>, 
- Alexander Stein <alexander.stein@ew.tq-group.com>
-Cc: linux-phy@lists.infradead.org, imx@lists.linux.dev, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250429090152.1094243-1-alexander.stein@ew.tq-group.com>
-References: <20250429090152.1094243-1-alexander.stein@ew.tq-group.com>
-Subject: Re: [PATCH 1/1] phy: freescale: imx8m-pcie: Simplify with
- dev_err_probe()
-Message-Id: <174722265646.85510.13417598033555165566.b4-ty@kernel.org>
-Date: Wed, 14 May 2025 12:37:36 +0100
+ Dmitry Baryshkov <lumag@kernel.org>, 
+ Varadarajan Narayanan <quic_varada@quicinc.com>, 
+ Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250415-revert_hs_phy_settings-v3-0-3a8f86211b59@oss.qualcomm.com>
+References: <20250415-revert_hs_phy_settings-v3-0-3a8f86211b59@oss.qualcomm.com>
+Subject: Re: [PATCH v3 0/2] Reuse the IPQ6018 QUSB2 PHY settings for
+ IPQ5424
+Message-Id: <174722265904.85510.2115353055770936721.b4-ty@kernel.org>
+Date: Wed, 14 May 2025 12:37:39 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,15 +64,24 @@ Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.14.2
 
 
-On Tue, 29 Apr 2025 11:01:52 +0200, Alexander Stein wrote:
-> Error handling in probe() can be a bit simpler with dev_err_probe().
+On Tue, 15 Apr 2025 09:52:49 +0530, Kathiravan Thirumoorthy wrote:
+> With the current settings, compliance tests are failing, especially eye
+> diagram (Host High-speed Signal Quality) tests. Reuse the IPQ6018
+> settings, as mentioned in the Hardware Design Document.
 > 
+> Merge Strategy:
+> --------------
+> Both the patch in the series should be merged together to avoid breaking
+> the USB feature.
 > 
+> [...]
 
 Applied, thanks!
 
-[1/1] phy: freescale: imx8m-pcie: Simplify with dev_err_probe()
-      commit: 74c2524a51ab7a0539eb5ec64ee594c981f3d8a0
+[1/2] Revert "phy: qcom-qusb2: add QUSB2 support for IPQ5424"
+      commit: 8a040e13afd94a1f91acaf8e0505769d4f7f5af4
+[2/2] phy: qcom-qusb2: reuse the IPQ6018 settings for IPQ5424
+      commit: 25c36b54eafc98b3ef004e2037cea1328d9b8bc5
 
 Best regards,
 -- 
