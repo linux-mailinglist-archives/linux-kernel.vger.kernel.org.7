@@ -1,213 +1,222 @@
-Return-Path: <linux-kernel+bounces-647408-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-647400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B04EAB6802
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 11:53:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CE8FAB67EA
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 11:47:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDCC71B67251
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 09:53:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 18D6B4A5EFF
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 09:48:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B9CE25DD09;
-	Wed, 14 May 2025 09:52:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA22E25D218;
+	Wed, 14 May 2025 09:47:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Xp3ySUz6"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="EbUWeUT4"
+Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2076.outbound.protection.outlook.com [40.107.20.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E965C259CB1;
-	Wed, 14 May 2025 09:52:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747216373; cv=none; b=h9AOqXzH9DSo1lRlgUxU+QhKUWBfrQRfVEYCgWRqJ1u98WlcO++V01Q2fMs1eFsVsppKm8sNEgcVw8ln5RHOVb1y0Hrm72mMoLawE+MjTkVgSMc56brlyf2mkhSb37P8XBxtBwcM6HDGahvVv3xBvKJWTeQMFbGuJ2rOqWkNPAo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747216373; c=relaxed/simple;
-	bh=DlDgEjTIw8VY2y5DvL0wFj1k14fF3hRHHDZCoRPLVMY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TVpoJ/FcIarnB6+gdACaHpcZYt8hO3oHYpEXa5Cvu0nBHijRLJvqasHBLML3OC6D3KvuyWmXy/M03d9/LPmIkAqj8pRUzHJoJlIPRseM4IH2xi9t14zElawQ3vbM0vrpLxYQclQ7Mv5+jzx+yUrsGTnNN/Nc3chmG7oQXvzm6+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Xp3ySUz6; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1747216372; x=1778752372;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=DlDgEjTIw8VY2y5DvL0wFj1k14fF3hRHHDZCoRPLVMY=;
-  b=Xp3ySUz6q9qtPP+5sTiRQAgBhy8FmmJHhYuMp9dYgdMo6WJpUNMR6oGr
-   9TyBKumXOm2Lki68qA4+Mvmav9NZIQywgV7fq0YF1UT204l8NrRSOc/6w
-   lToMb8yh4RY8sMQ2UY2Pk8x/XYGlLOccH3OVwp+a5rqnbWOH1MrnwRjdf
-   bR0ws3VtItHwUQy8qIdRJFlqm9Duk56xOv6bPxXn8OQZHoklR00It39vL
-   L+CDr7zp37XJELeV0KPF9t8ThV8R8ZOwKZIj6L11yPLDuMR9LMtsOMfcL
-   OgiYj9DXhjDuYuXxNhPPy9AVw+/su1fsaC9ylKMRcjwSyZ9s7AoHamrwK
-   Q==;
-X-CSE-ConnectionGUID: jg1Dc9RuRb+dsHy9BLFutg==
-X-CSE-MsgGUID: dC78j0cpTL2dfPSUXrb3fQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11432"; a="52911883"
-X-IronPort-AV: E=Sophos;i="6.15,287,1739865600"; 
-   d="scan'208";a="52911883"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 May 2025 02:52:51 -0700
-X-CSE-ConnectionGUID: 1vGlQfU6TTiVJ/FihayGEA==
-X-CSE-MsgGUID: vcaR5YHEQmC6RgOptATxfw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,287,1739865600"; 
-   d="scan'208";a="142866085"
-Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
-  by fmviesa005.fm.intel.com with ESMTP; 14 May 2025 02:52:46 -0700
-Date: Wed, 14 May 2025 17:47:12 +0800
-From: Xu Yilun <yilun.xu@linux.intel.com>
-To: Zhi Wang <zhiw@nvidia.com>
-Cc: Jason Gunthorpe <jgg@nvidia.com>, Alexey Kardashevskiy <aik@amd.com>,
-	kvm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
-	sumit.semwal@linaro.org, christian.koenig@amd.com,
-	pbonzini@redhat.com, seanjc@google.com, alex.williamson@redhat.com,
-	vivek.kasireddy@intel.com, dan.j.williams@intel.com,
-	yilun.xu@intel.com, linux-coco@lists.linux.dev,
-	linux-kernel@vger.kernel.org, lukas@wunner.de, yan.y.zhao@intel.com,
-	daniel.vetter@ffwll.ch, leon@kernel.org, baolu.lu@linux.intel.com,
-	zhenzhong.duan@intel.com, tao1.su@intel.com
-Subject: Re: [RFC PATCH 00/12] Private MMIO support for private assigned dev
-Message-ID: <aCRmoDupzK9zTqFL@yilunxu-OptiPlex-7050>
-References: <371ab632-d167-4720-8f0d-57be1e3fee84@amd.com>
- <4b6dc759-86fd-47a7-a206-66b25a0ccc6d@amd.com>
- <c10bf9c2-e073-479d-ad1c-6796c592d333@amd.com>
- <aB3jLmlUKKziwdeG@yilunxu-OptiPlex-7050>
- <aB4tQHmHzHooDeTE@yilunxu-OptiPlex-7050>
- <20250509184318.GD5657@nvidia.com>
- <aB7Ma84WXATiu5O1@yilunxu-OptiPlex-7050>
- <2c4713b0-3d6c-4705-841b-1cb58cd9a0f5@amd.com>
- <20250512140617.GA285583@nvidia.com>
- <20250513130315.0158a626.zhiw@nvidia.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEEC425487B;
+	Wed, 14 May 2025 09:47:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.76
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747216071; cv=fail; b=BubW4ePY284MO9JMm2S61QurXOhld0BGInqEKB3JIbskqovIBZUbhvmafG6uYRqmTktpd8DU2Gs90IsXSmX31XjoKS4A13/BU7lMLkC1EM2zwYq+D71k2I61iafvmuU75T/aKIdjwSRbDDauP+YGpMS6+aQGYgJ7UYNA8CYkUMc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747216071; c=relaxed/simple;
+	bh=NHKosSgBkUz1f4WsR/yKXTaYFQta1Wmwz3xVbp+VY1c=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=TeXMeJHBOzcV29mQCUngW8JaMrt6kxLO6yfPRCJmxYgq4yiD6eYZwJiofp3DItKvJD74aUGi2DfKSrsJDbRNjaR9Q3Yb3P/byhdOgPHLYMk7zz/VfRtSSf5jpl//34FszfZ/oUMSoiAmQpFKY0We/I4GhJCE/QJWwFkbBAyisD4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=EbUWeUT4; arc=fail smtp.client-ip=40.107.20.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=sPwptER4Z6+eAfOFI4dvuoUc8JXf+cQKHf4FVOWXX00fuCxiuvTA/h/IGmnYycWXCwfWC4YRyVEKX4QAMoL/CHD2X2LircqCdGuKD50qUwz/MSVnbxhA6LvDKSLDxosdwSASzEKdiOBsfpx7LFXW8LR4tUR9JgMib9zdx+JuxFEHPmXfFKh1GtIs8NqzS8QbkdAe6/GRX6p0m8VOMjXajfXAa7YDLO6T4qNfPVnQhKMNBvHsjYNSp2r2m6N/AdYYRqPIfkQ2Ptg7S/BrPPiFjurlwIKWgR3rViaC2VDfNxtLWwnHd+sZbOJz0xtzXck8gt/i0IaU7KJ3Q/svIsdR/g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=jr05PoxdbyXU83I5GFGTZ0B4h5EL8Bgl6f8LngHF2go=;
+ b=XV5Ayib9P+sGlznWyTZyRU0M8FuKR6XszCdQlSQMBoFrBf5RcJ85dundmw4LC3DZ5o0fyaHSl45a2036e4GoefrsqcsDbKgGyMqJEnHM/7JimVdieH4LNlmTGe1QtBnyoG7pUjE2+Km1flDcYElXvff4Dj26IgHNscGzg5sX3NtF6BnGqPIAUKithG3SlCXZwOyupQzuu4exUSvWDsgrcGAmjQEbXqAWW0Sh4FzO4J84EZjX6v7U1pke6A9nxWvqwrMVm3+nmnHaI9EpYopV4sqvPL9cy3t94wqvNGc3uTUWd901t8vJD+2fVZtEWB2l6/EiwL/N40pu42ZKwYZm4A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=jr05PoxdbyXU83I5GFGTZ0B4h5EL8Bgl6f8LngHF2go=;
+ b=EbUWeUT4M5RTp9uJlLwlvrjMiUf5RR5mDvqHcqwKuMMFznDgmUZGiasPytO/HT5ddlIvpkY4BgW84o5K8xa/6rhIX9RtnIJHYp1QutGI0e/BnzgOTaqgYbvAJQhSQQzzUt7AjqJvU069xHpq9rTdfvgNdgZl1nC8FcDuNC8Uy6vVzVXxL492HqG3pCUR8fMqxrQ5ePPL+7BAzdxDNwNaEdinV/1tB93MwGirtGpdpJgb8ML9NKtN/pmKlnyEPahN5hjWoIjcJ95sE0cTnZiM381XRofZRmsKR2nPcClgHZTmRVEPrKQK0kASNkQ35eLztvwxhoJAghvxIira55cl8g==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from DU2PR04MB8567.eurprd04.prod.outlook.com (2603:10a6:10:2d6::21)
+ by AS8PR04MB8497.eurprd04.prod.outlook.com (2603:10a6:20b:340::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8722.31; Wed, 14 May
+ 2025 09:47:46 +0000
+Received: from DU2PR04MB8567.eurprd04.prod.outlook.com
+ ([fe80::4db:3dc0:c292:493a]) by DU2PR04MB8567.eurprd04.prod.outlook.com
+ ([fe80::4db:3dc0:c292:493a%3]) with mapi id 15.20.8722.027; Wed, 14 May 2025
+ 09:47:46 +0000
+From: ziniu.wang_1@nxp.com
+To: adrian.hunter@intel.com,
+	ulf.hansson@linaro.org,
+	linux-mmc@vger.kernel.org
+Cc: haibo.chen@nxp.com,
+	shawnguo@kernel.org,
+	s.hauer@pengutronix.de,
+	kernel@pengutronix.de,
+	festevam@gmail.com,
+	imx@lists.linux.dev,
+	s32@nxp.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 1/2] mmc: sdhci: export APIs for sdhci irq wakeup
+Date: Wed, 14 May 2025 17:49:02 +0800
+Message-Id: <20250514094903.1771642-1-ziniu.wang_1@nxp.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: AS4P189CA0014.EURP189.PROD.OUTLOOK.COM
+ (2603:10a6:20b:5d7::17) To DU2PR04MB8567.eurprd04.prod.outlook.com
+ (2603:10a6:10:2d6::21)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250513130315.0158a626.zhiw@nvidia.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DU2PR04MB8567:EE_|AS8PR04MB8497:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3cdbb778-df3b-4c61-3cc0-08dd92cc613a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|52116014|366016|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?4MufiTVjSZLVNhE3qQoWt3qBi5Q1UFIN4w3rZDCvl1CY6ea+94dYl9pZQ3Ta?=
+ =?us-ascii?Q?L8WrPVRMKxCniHjh0+63QXcITIL33vKkuVcRQ5rpyH36141ZDhdi7ebXpaAg?=
+ =?us-ascii?Q?2dOi7lS4ryHwxSRnKNvalzwflSA19EJCCjIipmsWoF0XZk2znoARq9bbVduA?=
+ =?us-ascii?Q?+RgwRHvcOtIzQI4j+wxGcHvi146OUY/baB/9PJEZSBUq8bFyOpVU+u5b/4+O?=
+ =?us-ascii?Q?iXRv+GqdSpRtrXCLyTKNJDnEvnKWVb0o7vcPotwwDoK5ih2G7X74GWSDBYNy?=
+ =?us-ascii?Q?LbrdmYTjqsaGDAULsKKfKY2fSz8hq1XyLvIF4yGD24SpRtloSK37Fshy9wL5?=
+ =?us-ascii?Q?WMz9z59LaRP8OuHmDicz47A2Dsh6zN/4blWolNK+b4KID933IS9bt7RFjc9a?=
+ =?us-ascii?Q?Ed9zWtewsSn3rqIM7pllxCOmN+X8yYtXHBahBv58nb9Nbc5IKvUx0DZfLmNn?=
+ =?us-ascii?Q?oMe8ozBn2DcvpYKDIgXUJ52msLzCL6MHpmkL+Z19db3QNDckUwxWng9ErgoN?=
+ =?us-ascii?Q?7Clsjd/lTYM/8APzLPZWoBtwPdi4eeBhjgO8ja0xpBfZoo9G+Db9nV/2DxPA?=
+ =?us-ascii?Q?ElAZxOXq5xYdu1E8RfjrgALwGG9wE6LpauNERYB9nhlaZ/uyEJLzqcPPwgDT?=
+ =?us-ascii?Q?N88a/SKD0Zzy/47Vhr2OYTE/IRe9uNag+tQaTLl+ojrZ5YSh4XynS8F34xG4?=
+ =?us-ascii?Q?6C/aKPP37n5MNXz/BgWeZAxasfErjfEj0uKuTtGyGuhxSYmxSh16dAgqhC8t?=
+ =?us-ascii?Q?YBunomaovR9WXtfP61Quunmwvo6Iqv15lgFSzRLWdDal4rnADe9VvKPTgbU5?=
+ =?us-ascii?Q?ojMUW9QYGEj/bJqHCdf/AnHXDBRUyoV5yd5oYQpFLu7IsQwB20hEXlMaIetm?=
+ =?us-ascii?Q?w5LaVpZkfhExTIyxOOwjVfBVlAIOLcw6kv5ar7t2DrANP0tm955Kqf8IpUhQ?=
+ =?us-ascii?Q?gT9RvdlIlvwhIRWHC0imoKcvALD5gIKzEwSeDlJJ5Lr+APME3QuJISnL+EgN?=
+ =?us-ascii?Q?Wk61EnvODeHzgf3wFK3aEuFJH2FfOQAknZ043z1rBuBimGeiIcfAWMdBYxf4?=
+ =?us-ascii?Q?HiIgYVuugsU4ymCFg5KC0L8ItDi076VIyPkQTEoUf8YIKThzwubHmRnePYeo?=
+ =?us-ascii?Q?LWd8JmcDuGeKCP7uIyYr0DXgoxuvWu4P+TfncQ4QD4brbbBlwMyO5bHXsgGS?=
+ =?us-ascii?Q?Z+HLo1Y5p4cxaSP+ImLu5OLRlh2YVVzis+MZWqXuch/QxD1nayEypyfRCK2+?=
+ =?us-ascii?Q?KGsS/X3PsPmesRyCOebkS+NjnlYOOrSSE87e6LJP1CZkdgN5WehjpYGGA+qM?=
+ =?us-ascii?Q?ZFZggO3azCUbn6TJgLHgl2Yrbe6FFePmJoFn6zy0mP8mt8VrUmLqSyzwVlNi?=
+ =?us-ascii?Q?D/oPrgOYGvcKsR94Sr6vtNGHGEWJpQJrlt24y/gfF/Ss0R/hNy7u8YWTqS/a?=
+ =?us-ascii?Q?1GRO/m3PAicLa/T2B1/VftdR8zcXlshR3ka55qJaO0cbnotXCHb4DOqbveaP?=
+ =?us-ascii?Q?Kq/WYVMPwesNRmA=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU2PR04MB8567.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(52116014)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?adL6qYlfbj1nT2+/0Xb8guJXWOgyeKSR99JM9Q7aUJbPrYWzfxzVm5DnOKQm?=
+ =?us-ascii?Q?CSBv/N2Gmtd8MGN7AJm8gmI8quD2JdqHIrmFcJuSQvRbInJghw3fS360rNi+?=
+ =?us-ascii?Q?Mi+mA60nzgpga0uDIeEWnzmX19DfaEYGd3xbQNaws8f5CePBzssKl4EYzvpx?=
+ =?us-ascii?Q?cp7tdliM93vgKA6Kh75jEheRILNX2KESwdwhcDMCgpGEflt9Vshup2v5dSPm?=
+ =?us-ascii?Q?sKkAL4WiyEG9H7PfA6ElCHLIOKrQ1gfW3146T4u2tc8lx1urCYZM/pagOjF9?=
+ =?us-ascii?Q?J892js4ZXEug8TZV2ES1MnoFYHnQJ4UbuSNANRtFFfqHXMk1HbN4QmiwfOq5?=
+ =?us-ascii?Q?ZnPN5poVm9UFaPizbOWhpBLbR2gDWkHkPV6uDZSI/tuTy+sbwS5gdgTfIaW1?=
+ =?us-ascii?Q?lWrLMO78OkhqS3PZ37MJ4YKdeOQKltv6lBGJV+Ig2Ao2Yo2gBPf8B6SVPil3?=
+ =?us-ascii?Q?xL1ADalJgBzAUHIQqJCerWK03ZpUmLLKyco+wokO2spAZcSRVzLIxwYpqz+u?=
+ =?us-ascii?Q?9RzCoAxdqgWqrqNfYFThqlLwxNylp/XzyB5n7lIsr+/DqtjfTOubgzCMKZlf?=
+ =?us-ascii?Q?sGpmWYKLYPdSOAAJIOHD9TbLUagwPDoZXM8nhIw/kOa4RPuVIXptDkTSYZWv?=
+ =?us-ascii?Q?2p50L5B0Cm9Un4PyklSrJeNdwAtooZFjlbzoJwsCeOWfXX6ULaYfjftbuQG1?=
+ =?us-ascii?Q?RXqdEuW72Fs9zu0hgcMp0VvKx3PZUOJF7WDd6ZLkt6Xad2wbyF9FN483vvqV?=
+ =?us-ascii?Q?b59iu+OWYu9wldpcoRqd/NBjxvpmg0XUw4oEGZ/2MO8+44OjOrQbvA+xm0XC?=
+ =?us-ascii?Q?n01LQpVfzEpQC5fEECNgE1/HP9K25+GVGch868jCBvFXJX3irIqLctZj5QMM?=
+ =?us-ascii?Q?h03ObGq9Ljp64UP+V7+6HmqqQAVzoI6lbNqtM5Cx6/3jdmLTA/P/EObQZ7Lz?=
+ =?us-ascii?Q?OUZi+UZVlBOuPXmD2uzCAfFmUKK9HAzlumT1cO/GZrAExQA/svmhTi3ADZdt?=
+ =?us-ascii?Q?dF/vTkxA3F2HtDMKZ8cFbSQfC5/qIzULfgw4XBtGfTBMEKtE8oIWkI5HitS0?=
+ =?us-ascii?Q?4zE2mexAByEtx29khTkbFNeXNqh/En6xNrPN/SmfQRrGPwowr3IrDxogJ//q?=
+ =?us-ascii?Q?+Xh3Dbg8MiVd5hQGpey0iYj9SfuCvujwp4Y+g5ksld5KO+9Wt6HCTQ7lsAW5?=
+ =?us-ascii?Q?NMgvjsskL5RwKIQeFZ6nBNSShBFf3olG7DdKV2Ep52Goaswez18eytRg3xzj?=
+ =?us-ascii?Q?nhgQ3YOrqboOBBsEkI38IPfjP/nhvRaWSet73nX59qXJ6Lm8+5L+4FMk5yz+?=
+ =?us-ascii?Q?kqfBWPCUM0BKZ48jh9W96kSAssZHQ58E0deqtoLlogwA9uhhkTb6wivl7fte?=
+ =?us-ascii?Q?vPje9qPKGYrJDMXu94k6NQszKba20yHho5/IkFSok02CaZ/zsvQGbaXbXRoD?=
+ =?us-ascii?Q?kjULbwIgM1s8npInWyP0h8VOV7mh+WVhUXFp2ZGM2639l1tRRxDeQuILoRor?=
+ =?us-ascii?Q?KZOgr/+W0JGRMOA5yStDX/+2PlD9xpWduGM3V5z2RiTew0f6ykgANssmqm+Y?=
+ =?us-ascii?Q?Tv1FIuVEbVl5KL2aVeis0CQ4a9StIe+O1f+sbuJp?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3cdbb778-df3b-4c61-3cc0-08dd92cc613a
+X-MS-Exchange-CrossTenant-AuthSource: DU2PR04MB8567.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 May 2025 09:47:46.2971
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 8zWObU26sHq5ONy6Lkf5isNLh9onCzM3Lze1bE3gOdHo89iqVLbrVe7gmvd8Ds5qKAvoI9IG96tonWqONuyMbw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB8497
 
-On Tue, May 13, 2025 at 01:03:15PM +0300, Zhi Wang wrote:
-> On Mon, 12 May 2025 11:06:17 -0300
-> Jason Gunthorpe <jgg@nvidia.com> wrote:
-> 
-> > On Mon, May 12, 2025 at 07:30:21PM +1000, Alexey Kardashevskiy wrote:
-> > 
-> > > > > I'm surprised by this.. iommufd shouldn't be doing PCI stuff,
-> > > > > it is just about managing the translation control of the device.
-> > > > 
-> > > > I have a little difficulty to understand. Is TSM bind PCI stuff?
-> > > > To me it is. Host sends PCI TDISP messages via PCI DOE to put the
-> > > > device in TDISP LOCKED state, so that device behaves differently
-> > > > from before. Then why put it in IOMMUFD?
-> > > 
-> > > 
-> > > "TSM bind" sets up the CPU side of it, it binds a VM to a piece of
-> > > IOMMU on the host CPU. The device does not know about the VM, it
-> > > just enables/disables encryption by a request from the CPU (those
-> > > start/stop interface commands). And IOMMUFD won't be doing DOE, the
-> > > platform driver (such as AMD CCP) will. Nothing to do for VFIO here.
-> > > 
-> > > We probably should notify VFIO about the state transition but I do
-> > > not know VFIO would want to do in response.
-> > 
-> > We have an awkward fit for what CCA people are doing to the various
-> > Linux APIs. Looking somewhat maximally across all the arches a "bind"
-> > for a CC vPCI device creation operation does:
-> > 
-> >  - Setup the CPU page tables for the VM to have access to the MMIO
-> >  - Revoke hypervisor access to the MMIO
-> >  - Setup the vIOMMU to understand the vPCI device
-> >  - Take over control of some of the IOVA translation, at least for
-> > T=1, and route to the the vIOMMU
-> >  - Register the vPCI with any attestation functions the VM might use
-> >  - Do some DOE stuff to manage/validate TDSIP/etc
-> > 
-> > So we have interactions of things controlled by PCI, KVM, VFIO, and
-> > iommufd all mushed together.
-> > 
-> > iommufd is the only area that already has a handle to all the required
-> > objects:
-> >  - The physical PCI function
-> >  - The CC vIOMMU object
-> >  - The KVM FD
-> >  - The CC vPCI object
-> > 
-> > Which is why I have been thinking it is the right place to manage
-> > this.
-> > 
-> > It doesn't mean that iommufd is suddenly doing PCI stuff, no, that
-> > stays in VFIO.
-> > 
-> > > > > So your issue is you need to shoot down the dmabuf during vPCI
-> > > > > device destruction?
-> > > > 
-> > > > I assume "vPCI device" refers to assigned device in both shared
-> > > > mode & prvate mode. So no, I need to shoot down the dmabuf during
-> > > > TSM unbind, a.k.a. when assigned device is converting from
-> > > > private to shared. Then recover the dmabuf after TSM unbind. The
-> > > > device could still work in VM in shared mode.
-> > 
-> > What are you trying to protect with this? Is there some intelism where
-> > you can't have references to encrypted MMIO pages?
-> > 
-> 
-> I think it is a matter of design choice. The encrypted MMIO page is
-> related to the TDI context and secure second level translation table
-> (S-EPT). and S-EPT is related to the confidential VM's context.
-> 
-> AMD and ARM have another level of HW control, together
-> with a TSM-owned meta table, can simply mask out the access to those
-> encrypted MMIO pages. Thus, the life cycle of the encrypted mappings in
-> the second level translation table can be de-coupled from the TDI
-> unbound. They can be reaped un-harmfully later by hypervisor in another
-> path.
-> 
-> While on Intel platform, it doesn't have that additional level of
-> HW control by design. Thus, the cleanup of encrypted MMIO page mapping
-> in the S-EPT has to be coupled tightly with TDI context destruction in
-> the TDI unbind process.
+From: Luke Wang <ziniu.wang_1@nxp.com>
 
-Thanks for the accurate explanation. Yes, in TDX, the references/mapping
-to the encrypted MMIO page means a CoCo-VM owns the MMIO page. So TDX
-firmware won't allow the CC vPCI device (which physically owns the MMIO
-page) unbind/freed from a CoCo-VM, while the VM still have the S-EPT mapping.
+Export the sdhci_enable_irq_wakeups() and sdhci_disable_irq_wakeups,
+so other driver can use them.
 
-AMD doesn't use KVM page table to track CC ownership, so no need to
-interact with KVM.
+Signed-off-by: Haibo Chen <haibo.chen@nxp.com>
+Signed-off-by: Luke Wang <ziniu.wang_1@nxp.com>
+---
+ drivers/mmc/host/sdhci.c | 6 ++++--
+ drivers/mmc/host/sdhci.h | 2 ++
+ 2 files changed, 6 insertions(+), 2 deletions(-)
 
-Thanks,
-Yilun
+diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+index fd5681d1e31f..32fa0b2bb912 100644
+--- a/drivers/mmc/host/sdhci.c
++++ b/drivers/mmc/host/sdhci.c
+@@ -3755,7 +3755,7 @@ static bool sdhci_cd_irq_can_wakeup(struct sdhci_host *host)
+  * sdhci_disable_irq_wakeups() since it will be set by
+  * sdhci_enable_card_detection() or sdhci_init().
+  */
+-static bool sdhci_enable_irq_wakeups(struct sdhci_host *host)
++bool sdhci_enable_irq_wakeups(struct sdhci_host *host)
+ {
+ 	u8 mask = SDHCI_WAKE_ON_INSERT | SDHCI_WAKE_ON_REMOVE |
+ 		  SDHCI_WAKE_ON_INT;
+@@ -3787,8 +3787,9 @@ static bool sdhci_enable_irq_wakeups(struct sdhci_host *host)
+ 
+ 	return host->irq_wake_enabled;
+ }
++EXPORT_SYMBOL_GPL(sdhci_enable_irq_wakeups);
+ 
+-static void sdhci_disable_irq_wakeups(struct sdhci_host *host)
++void sdhci_disable_irq_wakeups(struct sdhci_host *host)
+ {
+ 	u8 val;
+ 	u8 mask = SDHCI_WAKE_ON_INSERT | SDHCI_WAKE_ON_REMOVE
+@@ -3802,6 +3803,7 @@ static void sdhci_disable_irq_wakeups(struct sdhci_host *host)
+ 
+ 	host->irq_wake_enabled = false;
+ }
++EXPORT_SYMBOL_GPL(sdhci_disable_irq_wakeups);
+ 
+ int sdhci_suspend_host(struct sdhci_host *host)
+ {
+diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
+index cd0e35a80542..f9d65dd0f2b2 100644
+--- a/drivers/mmc/host/sdhci.h
++++ b/drivers/mmc/host/sdhci.h
+@@ -875,6 +875,8 @@ void sdhci_adma_write_desc(struct sdhci_host *host, void **desc,
+ 			   dma_addr_t addr, int len, unsigned int cmd);
+ 
+ #ifdef CONFIG_PM
++bool sdhci_enable_irq_wakeups(struct sdhci_host *host);
++void sdhci_disable_irq_wakeups(struct sdhci_host *host);
+ int sdhci_suspend_host(struct sdhci_host *host);
+ int sdhci_resume_host(struct sdhci_host *host);
+ int sdhci_runtime_suspend_host(struct sdhci_host *host);
+-- 
+2.34.1
 
-> 
-> If the TDI unbind is triggered in VFIO/IOMMUFD, there has be a
-> cross-module notification to KVM to do cleanup in the S-EPT.
-> 
-> So shooting down the DMABUF object (encrypted MMIO page) means shooting
-> down the S-EPT mapping and recovering the DMABUF object means
-> re-construct the non-encrypted MMIO mapping in the EPT after the TDI is
-> unbound. 
-> 
-> Z.
-> 
-> > > > What I really want is, one SW component to manage MMIO dmabuf,
-> > > > secure iommu & TSM bind/unbind. So easier coordinate these 3
-> > > > operations cause these ops are interconnected according to secure
-> > > > firmware's requirement.
-> > >
-> > > This SW component is QEMU. It knows about FLRs and other config
-> > > space things, it can destroy all these IOMMUFD objects and talk to
-> > > VFIO too, I've tried, so far it is looking easier to manage. Thanks,
-> > 
-> > Yes, qemu should be sequencing this. The kernel only needs to enforce
-> > any rules required to keep the system from crashing.
-> > 
-> > Jason
-> > 
-> 
 
