@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-648659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-648660-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A894FAB7A0B
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 01:55:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CC1BAB7A0F
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 01:55:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A49363B9AF1
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 23:54:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D200F1648C4
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 23:55:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E47525C823;
-	Wed, 14 May 2025 23:43:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9380D25D206;
+	Wed, 14 May 2025 23:43:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="111Uf9wO"
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lWpVxQE4"
+Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D902025A647
-	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 23:43:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ABB225C703
+	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 23:43:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747266235; cv=none; b=mER0t69zvy7vuWrMaOyCYVtdKJm6Z9GwrWCZppz68Mg6BvtRHVLBmSyWx1NMmvzAUX5kuyuATbfjLyB3BOoonr6v8PEjl7aTo5fNR2wVueyqDetaPUsrdIAXU+MdAJe/JBA29tW695qgymSxE10rsxq/gQ8fv/EaL+F3xzWiHvc=
+	t=1747266237; cv=none; b=DAONtRcAG5W3Pj9r9TK1CWZ30DNbmYlmg7e1dUzMJPbA+oA725Jb/rMEO4DqOT2p9MEqVjDzzBBz54hZPBtnNTKXtBPoj9920pvwpXyVA0d5wemsO7h+lvKUPoXqHwlzznphEOwv6t6vqX6Gzt2SrYmO6oy99nURyNUjpnZW56Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747266235; c=relaxed/simple;
-	bh=VqiXtJ8KCG1AwXpHhLg8Tkfzo/8n2mGO7InnOeWdcDY=;
+	s=arc-20240116; t=1747266237; c=relaxed/simple;
+	bh=IMiKEMd6OxkBoCNVWLOzENvmPQZSLrc1NWT7HaivxWo=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=JdHiwtstDrMkezmjeaI2J1dkzyaJ/82yQ764CixS12jQHhgHN9NhcC1xcsmryIE/qRBd9vvEdiB6iJZ0MEkXb9n6NLcRxBYcKkooE+kGmzR1T0G22I/Oy2D4cljM12F1iDvhLqtFHBtg5dYajWzQBKmNyRTb8UN5TjjXf/V2SiE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=111Uf9wO; arc=none smtp.client-ip=209.85.215.201
+	 To:Cc:Content-Type; b=JlpCMwUC2M6GKrqHXF441sd6mGWnaB28+ZlVq0M53QQ6lYMukmh4k7z0hMrDCCVDOHFvwtjpz/m1fSO0D/LIR50zfFK7vBHJ3QAwAzaa9DlDabAvOECZqZBeizeNF3JZNL3iMwsuL6pgHRoIYKtBn+EH3wyLjt4MQ00hnJPRI60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lWpVxQE4; arc=none smtp.client-ip=209.85.210.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-af534e796baso143661a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 16:43:53 -0700 (PDT)
+Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-74292762324so272254b3a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 16:43:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1747266233; x=1747871033; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1747266235; x=1747871035; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=nKDqtrlVHa3bdl8p7B56FX6c4Fp0ZkjHF2tEioSPG28=;
-        b=111Uf9wOEjtVRI+7u5zYWfd01lgDWNNuYt8aIRyqSwV3BHctLFinfwtB7sMMSzMb7Y
-         KkDHErE14TALE8cOpztroHnZfVVrtiI1hqdQ29XCet0kqS9bKQap824RCfDEa7wWlr9H
-         iMd+rmupLM85LytKutiGMozV75kGwHgCEiFN9tmESn2fhta6Eo7Q0Gy5YG3sPcTnpXfX
-         g9NYnGteyAOoNpQr3Izzq38oKs6am5+Xkbn/zKNelh+lZvPHi8LTzCY5C+7AIK6iaMGC
-         LUuDUQ8+xP7Trq+TVdPczkIMaJ4AMZhmJXScJqmP02PIUiX766dqRysonYu5OBMHwkgJ
-         47EQ==
+        bh=uuq1bEexdRhfFEX1jCABHc+UNgsIInH8N9P0pZ09IXA=;
+        b=lWpVxQE4i8lmzDx5Y94IGz4ODljbyX6Edr1/iYC4JCNTqGAzQ6GikucSHNnRdq0k9N
+         wODK+Rtr5JQD3u7Q4n1hTrv1wMtqWIsI6jlbUXvyaBIzUK1CVwoWo00ULPQ5LC/wZqiS
+         /bz3GW6jBJR7jEyjvg4tIouNzElyQ9t89PXCO6piR8SqKWCbJX3JZRXVQIbVHhmGrzTR
+         EXveltb979x2WHXeqroFn69h5lENXc+dbWBkAiJzhre355kM2mZbge3awmsRNQ2huF6w
+         A/wQlyKBLnINIQSFc6jVv4srKLs4mHAC1wZXBUH4Ml4webkymYKUtL1aKuFuz6lkdWst
+         nnyw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747266233; x=1747871033;
+        d=1e100.net; s=20230601; t=1747266235; x=1747871035;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nKDqtrlVHa3bdl8p7B56FX6c4Fp0ZkjHF2tEioSPG28=;
-        b=E3CwLbZoEGpVoyUANdJnw9I7pRUxIh5mIZvJe/TBUTB9m5hAUqSJsMTZKVkwoRYuUG
-         Gj4UCNfpJk5girI2fxfw82QfyIBJDAsMCsuze+CbzOvaSCNZAoiWOFbJBZbF7lMW7KbZ
-         T167M9K9aApWPMqrjCVElu2ZRoBcMf4vuwBoH0f4sDNOBd6rM5ORhmIPG0nuQip0d83O
-         Dx87LHEaUJgxv4yAaN4CDu/+Fkbpck/lIrLmlquHmK1EhuVmcVzoMvO3l+iPBJ58Sgzz
-         rWTFjVcaHzqMaVRFNS89ejhXiygzJQ/3hVK2WotQrv1OWtP6OCcf5KjZdEZ2oT//ppaL
-         jqcA==
-X-Forwarded-Encrypted: i=1; AJvYcCWw2sJE4vyympl//1Ifrc6IamNyzB54/3gS2eR/4UpMSbAyzCmFdmhbzAjJ0Gh+TAARSizeHG/RH2Cyb1k=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz6CrQF7WT0AfUJNK6KNr2e+NXZBlt5qJ65/ZIUfG0OGtMvaB+H
-	IqYuTTQZPNFa7bVhPtz3FBiLWxV8kNL6+lkxXBL32m7XjLBvMR3pc+mDJUt/oIX7kdHiVIUCnsv
-	wxsbq5bnlX5XqWM7V/VQpjQ==
-X-Google-Smtp-Source: AGHT+IGnPIRIGLxCiEdg+1CVTBfIREiEwND24QECga88Bq6mE7e6bLUoxaAGPBs3XSZHbyYwxbSdih97V+hzi1KYgg==
-X-Received: from pjbsh12.prod.google.com ([2002:a17:90b:524c:b0:308:861f:fddb])
+        bh=uuq1bEexdRhfFEX1jCABHc+UNgsIInH8N9P0pZ09IXA=;
+        b=YM6/rjz9+L301VYu6XCqCurpaXvDYvsi0KZn/c/7mnqQ7800vb7/vJ6h+nosdnOKYq
+         60czeVxN1SxfthZGqaq0bi0EguwSR26QK0mbhZOtNp+7XEdcwMIE7V+C9TgC2ZC8qnDg
+         s8S7hBCs5WwxApKc5nq7OQMUBS7qMyI//lOh7akNvytks8R9naB7Aa6SslRnnOaYQnwe
+         Ctghxy4O4mf/mfbNoLO5VuDkMOk0smmNzaRUbbX4iS0rbP9n6JIxbUr6fqFem8MsuUF2
+         lwtRa0W1Y+n6xGsAI00B+L8fThOZo9SLWeTcrv0BRziwdjjI4rWQhZ5xNjZPg+UOj3+h
+         IzJw==
+X-Forwarded-Encrypted: i=1; AJvYcCVfyStszW/vnyyn+ucqcgsCQ58576hb06eHc9bJOGXvCMgIY3iP5jWPS11lQh8yOMhGd7OF0sRJKdRzECE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwRCh9LREEdQrh0pndmcSwF9yCdmaF770mI1WMkRwLLP3p4ItGL
+	HGKbu4iC8vLCHFGp6ozNM5KomS1PEtid5dHDPhbnj9FwGET1kvXAID/6Se58FXJBTmN3QKDgZEj
+	5KkThgLwJ02eTvpjsxxHDZQ==
+X-Google-Smtp-Source: AGHT+IEP7NX45yVSRggtsTELkRXbv8SEWvt+7ORsl2x8HhwmdlC6ogf+zGJHadz5Krd2YgHwh61qzF+l2O1bbO5BGw==
+X-Received: from pfmv16.prod.google.com ([2002:a62:a510:0:b0:736:3cd5:ba3f])
  (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:90b:2742:b0:301:98fc:9b2f with SMTP id 98e67ed59e1d1-30e2e583da8mr7514670a91.1.1747266233160;
- Wed, 14 May 2025 16:43:53 -0700 (PDT)
-Date: Wed, 14 May 2025 16:42:15 -0700
+ 2002:a05:6a00:181c:b0:740:9d7c:aeb9 with SMTP id d2e1a72fcca58-74289377cb0mr7546070b3a.21.1747266234724;
+ Wed, 14 May 2025 16:43:54 -0700 (PDT)
+Date: Wed, 14 May 2025 16:42:16 -0700
 In-Reply-To: <cover.1747264138.git.ackerleytng@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <cover.1747264138.git.ackerleytng@google.com>
 X-Mailer: git-send-email 2.49.0.1045.g170613ef41-goog
-Message-ID: <28d1e564df1b9774611563146afa7da91cdd4dc0.1747264138.git.ackerleytng@google.com>
-Subject: [RFC PATCH v2 36/51] mm: Convert split_folio() macro to function
+Message-ID: <a7a0eb4053059731f70c18d4aa4736b6cf1b4e35.1747264138.git.ackerleytng@google.com>
+Subject: [RFC PATCH v2 37/51] filemap: Pass address_space mapping to ->free_folio()
 From: Ackerley Tng <ackerleytng@google.com>
 To: kvm@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
 	x86@kernel.org, linux-fsdevel@vger.kernel.org
@@ -107,35 +107,234 @@ Cc: ackerleytng@google.com, aik@amd.com, ajones@ventanamicro.com,
 	vbabka@suse.cz, viro@zeniv.linux.org.uk, vkuznets@redhat.com, 
 	wei.w.wang@intel.com, will@kernel.org, willy@infradead.org, 
 	xiaoyao.li@intel.com, yan.y.zhao@intel.com, yilun.xu@intel.com, 
-	yuzenghui@huawei.com, zhiquan1.li@intel.com
+	yuzenghui@huawei.com, zhiquan1.li@intel.com, Mike Day <michael.day@amd.com>
 Content-Type: text/plain; charset="UTF-8"
 
-This will prevent the macro from overriding any function and function
-calls defined as split_folio().
+From: Elliot Berman <quic_eberman@quicinc.com>
 
-Change-Id: I88a66bd876731b272282a42468c3bf8ac008b7cc
+The plan is to be able to support multiple allocators for guest_memfd
+folios. To allow each allocator to handle release of a folio from a
+guest_memfd filemap, ->free_folio() needs to retrieve allocator
+information that is stored on the guest_memfd inode.
+
+->free_folio() shouldn't assume that folio->mapping is set/valid, and
+the mapping is well-known to callers of .free_folio(). Hence, pass
+address_space mapping to ->free_folio() for the callback to retrieve
+any necessary information.
+
+Link: https://lore.kernel.org/all/15f665b4-2d33-41ca-ac50-fafe24ade32f@redhat.com/
+Suggested-by: David Hildenbrand <david@redhat.com>
+Acked-by: David Hildenbrand <david@redhat.com>
+Change-Id: I8bac907832a0b2491fa403a6ab72fcef1b4713ee
+Signed-off-by: Elliot Berman <quic_eberman@quicinc.com>
+Tested-by: Mike Day <michael.day@amd.com>
 Signed-off-by: Ackerley Tng <ackerleytng@google.com>
 ---
- include/linux/huge_mm.h | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ Documentation/filesystems/locking.rst |  2 +-
+ Documentation/filesystems/vfs.rst     | 15 +++++++++------
+ fs/nfs/dir.c                          |  9 +++++++--
+ fs/orangefs/inode.c                   |  3 ++-
+ include/linux/fs.h                    |  2 +-
+ mm/filemap.c                          |  9 +++++----
+ mm/secretmem.c                        |  3 ++-
+ mm/vmscan.c                           |  4 ++--
+ virt/kvm/guest_memfd.c                |  3 ++-
+ 9 files changed, 31 insertions(+), 19 deletions(-)
 
-diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-index e893d546a49f..f392ff49a816 100644
---- a/include/linux/huge_mm.h
-+++ b/include/linux/huge_mm.h
-@@ -99,7 +99,11 @@ extern struct kobj_attribute thpsize_shmem_enabled_attr;
- #define thp_vma_allowable_order(vma, vm_flags, tva_flags, order) \
- 	(!!thp_vma_allowable_orders(vma, vm_flags, tva_flags, BIT(order)))
+diff --git a/Documentation/filesystems/locking.rst b/Documentation/filesystems/locking.rst
+index 0ec0bb6eb0fb..c3d7430481ae 100644
+--- a/Documentation/filesystems/locking.rst
++++ b/Documentation/filesystems/locking.rst
+@@ -263,7 +263,7 @@ prototypes::
+ 	sector_t (*bmap)(struct address_space *, sector_t);
+ 	void (*invalidate_folio) (struct folio *, size_t start, size_t len);
+ 	bool (*release_folio)(struct folio *, gfp_t);
+-	void (*free_folio)(struct folio *);
++	void (*free_folio)(struct address_space *, struct folio *);
+ 	int (*direct_IO)(struct kiocb *, struct iov_iter *iter);
+ 	int (*migrate_folio)(struct address_space *, struct folio *dst,
+ 			struct folio *src, enum migrate_mode);
+diff --git a/Documentation/filesystems/vfs.rst b/Documentation/filesystems/vfs.rst
+index ae79c30b6c0c..bba1ac848f96 100644
+--- a/Documentation/filesystems/vfs.rst
++++ b/Documentation/filesystems/vfs.rst
+@@ -833,7 +833,7 @@ cache in your filesystem.  The following members are defined:
+ 		sector_t (*bmap)(struct address_space *, sector_t);
+ 		void (*invalidate_folio) (struct folio *, size_t start, size_t len);
+ 		bool (*release_folio)(struct folio *, gfp_t);
+-		void (*free_folio)(struct folio *);
++		void (*free_folio)(struct address_space *, struct folio *);
+ 		ssize_t (*direct_IO)(struct kiocb *, struct iov_iter *iter);
+ 		int (*migrate_folio)(struct mapping *, struct folio *dst,
+ 				struct folio *src, enum migrate_mode);
+@@ -1011,11 +1011,14 @@ cache in your filesystem.  The following members are defined:
+ 	clear the uptodate flag if it cannot free private data yet.
  
--#define split_folio(f) split_folio_to_list(f, NULL)
-+int split_folio_to_list(struct folio *folio, struct list_head *list);
-+static inline int split_folio(struct folio *folio)
+ ``free_folio``
+-	free_folio is called once the folio is no longer visible in the
+-	page cache in order to allow the cleanup of any private data.
+-	Since it may be called by the memory reclaimer, it should not
+-	assume that the original address_space mapping still exists, and
+-	it should not block.
++	free_folio is called once the folio is no longer visible in
++	the page cache in order to allow the cleanup of any private
++	data.  Since it may be called by the memory reclaimer, it
++	should not assume that the original address_space mapping
++	still exists at folio->mapping. The mapping the folio used to
++	belong to is instead passed for free_folio to read any
++	information it might need from the mapping. free_folio should
++	not block.
+ 
+ ``direct_IO``
+ 	called by the generic read/write routines to perform direct_IO -
+diff --git a/fs/nfs/dir.c b/fs/nfs/dir.c
+index bd23fc736b39..148433f6d9d4 100644
+--- a/fs/nfs/dir.c
++++ b/fs/nfs/dir.c
+@@ -55,7 +55,7 @@ static int nfs_closedir(struct inode *, struct file *);
+ static int nfs_readdir(struct file *, struct dir_context *);
+ static int nfs_fsync_dir(struct file *, loff_t, loff_t, int);
+ static loff_t nfs_llseek_dir(struct file *, loff_t, int);
+-static void nfs_readdir_clear_array(struct folio *);
++static void nfs_free_folio(struct address_space *, struct folio *);
+ static int nfs_do_create(struct inode *dir, struct dentry *dentry,
+ 			 umode_t mode, int open_flags);
+ 
+@@ -69,7 +69,7 @@ const struct file_operations nfs_dir_operations = {
+ };
+ 
+ const struct address_space_operations nfs_dir_aops = {
+-	.free_folio = nfs_readdir_clear_array,
++	.free_folio = nfs_free_folio,
+ };
+ 
+ #define NFS_INIT_DTSIZE PAGE_SIZE
+@@ -230,6 +230,11 @@ static void nfs_readdir_clear_array(struct folio *folio)
+ 	kunmap_local(array);
+ }
+ 
++static void nfs_free_folio(struct address_space *mapping, struct folio *folio)
 +{
-+	return split_folio_to_list(folio, NULL);
++	nfs_readdir_clear_array(folio);
 +}
++
+ static void nfs_readdir_folio_reinit_array(struct folio *folio, u64 last_cookie,
+ 					   u64 change_attr)
+ {
+diff --git a/fs/orangefs/inode.c b/fs/orangefs/inode.c
+index 5ac743c6bc2e..884cc5295f3e 100644
+--- a/fs/orangefs/inode.c
++++ b/fs/orangefs/inode.c
+@@ -449,7 +449,8 @@ static bool orangefs_release_folio(struct folio *folio, gfp_t foo)
+ 	return !folio_test_private(folio);
+ }
  
- #ifdef CONFIG_PGTABLE_HAS_HUGE_LEAVES
- #define HPAGE_PMD_SHIFT PMD_SHIFT
+-static void orangefs_free_folio(struct folio *folio)
++static void orangefs_free_folio(struct address_space *mapping,
++				struct folio *folio)
+ {
+ 	kfree(folio_detach_private(folio));
+ }
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 0fded2e3c661..9862ea92a2af 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -455,7 +455,7 @@ struct address_space_operations {
+ 	sector_t (*bmap)(struct address_space *, sector_t);
+ 	void (*invalidate_folio) (struct folio *, size_t offset, size_t len);
+ 	bool (*release_folio)(struct folio *, gfp_t);
+-	void (*free_folio)(struct folio *folio);
++	void (*free_folio)(struct address_space *mapping, struct folio *folio);
+ 	ssize_t (*direct_IO)(struct kiocb *, struct iov_iter *iter);
+ 	/*
+ 	 * migrate the contents of a folio to the specified target. If
+diff --git a/mm/filemap.c b/mm/filemap.c
+index bed7160db214..a02c3d8e00e8 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -226,11 +226,11 @@ void __filemap_remove_folio(struct folio *folio, void *shadow)
+ 
+ void filemap_free_folio(struct address_space *mapping, struct folio *folio)
+ {
+-	void (*free_folio)(struct folio *);
++	void (*free_folio)(struct address_space*, struct folio *);
+ 
+ 	free_folio = mapping->a_ops->free_folio;
+ 	if (free_folio)
+-		free_folio(folio);
++		free_folio(mapping, folio);
+ 
+ 	folio_put_refs(folio, folio_nr_pages(folio));
+ }
+@@ -820,7 +820,8 @@ EXPORT_SYMBOL(file_write_and_wait_range);
+ void replace_page_cache_folio(struct folio *old, struct folio *new)
+ {
+ 	struct address_space *mapping = old->mapping;
+-	void (*free_folio)(struct folio *) = mapping->a_ops->free_folio;
++	void (*free_folio)(struct address_space *, struct folio *) =
++		mapping->a_ops->free_folio;
+ 	pgoff_t offset = old->index;
+ 	XA_STATE(xas, &mapping->i_pages, offset);
+ 
+@@ -849,7 +850,7 @@ void replace_page_cache_folio(struct folio *old, struct folio *new)
+ 		__lruvec_stat_add_folio(new, NR_SHMEM);
+ 	xas_unlock_irq(&xas);
+ 	if (free_folio)
+-		free_folio(old);
++		free_folio(mapping, old);
+ 	folio_put(old);
+ }
+ EXPORT_SYMBOL_GPL(replace_page_cache_folio);
+diff --git a/mm/secretmem.c b/mm/secretmem.c
+index c0e459e58cb6..178507c1b900 100644
+--- a/mm/secretmem.c
++++ b/mm/secretmem.c
+@@ -152,7 +152,8 @@ static int secretmem_migrate_folio(struct address_space *mapping,
+ 	return -EBUSY;
+ }
+ 
+-static void secretmem_free_folio(struct folio *folio)
++static void secretmem_free_folio(struct address_space *mapping,
++				 struct folio *folio)
+ {
+ 	set_direct_map_default_noflush(&folio->page);
+ 	folio_zero_segment(folio, 0, folio_size(folio));
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index 3783e45bfc92..b8add4d0cf18 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -788,7 +788,7 @@ static int __remove_mapping(struct address_space *mapping, struct folio *folio,
+ 		xa_unlock_irq(&mapping->i_pages);
+ 		put_swap_folio(folio, swap);
+ 	} else {
+-		void (*free_folio)(struct folio *);
++		void (*free_folio)(struct address_space *, struct folio *);
+ 
+ 		free_folio = mapping->a_ops->free_folio;
+ 		/*
+@@ -817,7 +817,7 @@ static int __remove_mapping(struct address_space *mapping, struct folio *folio,
+ 		spin_unlock(&mapping->host->i_lock);
+ 
+ 		if (free_folio)
+-			free_folio(folio);
++			free_folio(mapping, folio);
+ 	}
+ 
+ 	return 1;
+diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
+index 24d270b9b725..c578d0ebe314 100644
+--- a/virt/kvm/guest_memfd.c
++++ b/virt/kvm/guest_memfd.c
+@@ -1319,7 +1319,8 @@ static void kvm_gmem_invalidate(struct folio *folio)
+ static inline void kvm_gmem_invalidate(struct folio *folio) {}
+ #endif
+ 
+-static void kvm_gmem_free_folio(struct folio *folio)
++static void kvm_gmem_free_folio(struct address_space *mapping,
++				struct folio *folio)
+ {
+ 	folio_clear_unevictable(folio);
+ 
 -- 
 2.49.0.1045.g170613ef41-goog
 
