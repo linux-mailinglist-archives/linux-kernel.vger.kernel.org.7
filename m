@@ -1,104 +1,117 @@
-Return-Path: <linux-kernel+bounces-648022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-647993-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05F41AB7099
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 18:00:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9C4EAB7052
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 17:52:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C0C3F7A39F1
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 15:58:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB7AA1B66246
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 15:52:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01C7E27A112;
-	Wed, 14 May 2025 15:59:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A19F1202F71;
+	Wed, 14 May 2025 15:52:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="dh3coW4l"
-Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZH6D9Bpo"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 417F527703E;
-	Wed, 14 May 2025 15:59:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34C1719CCF5
+	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 15:52:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747238387; cv=none; b=gWfIMFeEecGBVPTln8tWvp4/j7K610gksqxOzvCdPt9oHWoJx3BMtVfKfPdUzLBKx0KkbPSgE1AcdUkz3uf+hP+v5VIWg7p7Xh8H29eNc+wFkTzPyT3F7rtWEp2QeQOr2gpoBtVptvTH25jZ1QmbaST383lTeWIV9xnnA/LHSkY=
+	t=1747237942; cv=none; b=bvSfr6Rv/Jg8VtXjD1DC8q6diSe6Vd2E6vOn38PBK2l/9bEQFTMADPjU2W+ajS9ZP84hy4YMAp9nTlyy0s8J1wNNDgizOIuEWV6kWJBbncBYWsDNRxIc0QMEU78KHHI6wOmOQBS+fj8NRaqkZFw1GG2JtkXL3Y/eoz37+BijaSQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747238387; c=relaxed/simple;
-	bh=orMYHSP5ssuSjH/hleG580PAr5anMD7LK5PDBxTlud4=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=fUGo/V6V6+I8ZJTIUHter1laA6u5lZPZSj0YteZBMtjkAEylTOLVHVyv/q76JqX6dttE/YAf2O1gcrs6oElfjLypqDm5U5gsdfl8QdEhZzlu9NucoOylPt+psNq3EiZEh2fy1iTn0PtRzqX5INaUObmm2ki2FmOuUVGI3qITafo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=dh3coW4l; arc=none smtp.client-ip=217.194.8.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
-Received: from [127.0.0.1] (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
-	by mail11.truemail.it (Postfix) with ESMTPA id 9891B1F91E;
-	Wed, 14 May 2025 17:51:28 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
-	s=default; t=1747237888;
-	bh=orMYHSP5ssuSjH/hleG580PAr5anMD7LK5PDBxTlud4=; h=From:To:Subject;
-	b=dh3coW4lpuAUBquC4TUhoOP6ncC52bSE3nyZgB9wUZ8JgoTeM4NA0O9X36z3/vtmo
-	 vJClLHwHAToxJZFfYU/405c0DDZZbhU9mSwRqzpVEp8VZwvI1zjmesY82h8ldUHTVI
-	 0wIUaBu8yYLgGehvIysDjZPsiyOxxy5xFMkItZH14Jo3Cj0dembW6Sv7d/fx7V9A+d
-	 7fUrmnOWc+DJt4Btqe44v2qQ9R9yteHA32eRWCGL2bRcP5ywsTphx4dY0Os6xZLWih
-	 mETPsXNNgc5LqtDk7sxrELvXasMoWYwud3y50B7RKwsrR3J52QgstRnAxNhIjl/UBg
-	 U4Hq3Tw7DYKvg==
-Date: Wed, 14 May 2025 17:51:27 +0200
-From: Francesco Dolcini <francesco@dolcini.it>
-To: Andi Shyti <andi.shyti@kernel.org>
-CC: Dong Aisheng <aisheng.dong@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>,
- Emanuele Ghidoli <emanuele.ghidoli@toradex.com>, linux-i2c@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org,
- Francesco Dolcini <francesco.dolcini@toradex.com>
-Subject: Re: [PATCH v1] i2c: lpi2c: implement master_xfer_atomic callback
-User-Agent: K-9 Mail for Android
-In-Reply-To: <tds5osuthulo4bnlck6dgx3g3aoanca3my2uczdhcipcfcxgpp@opzseflynjar>
-References: <20250319145114.50771-1-francesco@dolcini.it> <tds5osuthulo4bnlck6dgx3g3aoanca3my2uczdhcipcfcxgpp@opzseflynjar>
-Message-ID: <3C1EEBEB-E691-4EB7-A008-A1FE9CEE7238@dolcini.it>
+	s=arc-20240116; t=1747237942; c=relaxed/simple;
+	bh=Fdymo7U/XQEsHjtymqpQe81QQ1ZBEYcPOe4F2NEP0dA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DdAuOj6usV5yyDVNi53kmDhkfFDw/Z/jFWcGA2UYGXEwHBdTsqVZi8y5ksyg7oWq2DriKt58AKM/DqzN9naY2Q54yYpQcw79DbPh7y/uyVGsVkxjT0ag6nEscBY0PIQNxiR7WqwPwvD34NP0i/TQt9X0g84If09ERaJUZNCvUvE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZH6D9Bpo; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1747237940; x=1778773940;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Fdymo7U/XQEsHjtymqpQe81QQ1ZBEYcPOe4F2NEP0dA=;
+  b=ZH6D9BpoA6g/fMzCLsEWcg3stAUITwU50YSmC1/Xm73zn0rv56qiwLU0
+   ZiIcUL3MZ5zGcayTGj9ZKT6hxG3KCq6zwuo3PoYfRHPO3yyhpyIEUshbj
+   9I+K3MI3wYRoFNIg0qjhbW1eGoRQu4DD9gUDDV0sWGrNn4VltoEcAoEqe
+   6Uhd138mZsdo3lsStdH5v158YZaxRHWjgUyPG92DmN5QjI8u9ke1NXzUW
+   7Ej+rhYFor40uyKtLESCM4orsqldz9kAiRA8uZrthWxn4dfW7UYckXYY/
+   y+7CTbwlvfc8BeYOWkgiHAC0dkQAFnMxWPCVs/CqHruqHCfd4dEJcLTFt
+   A==;
+X-CSE-ConnectionGUID: ZQCw9QFIQK2lAkwUeGojIg==
+X-CSE-MsgGUID: b+LEqMVBTk64UIbQuf9sKg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11433"; a="51782772"
+X-IronPort-AV: E=Sophos;i="6.15,288,1739865600"; 
+   d="scan'208";a="51782772"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 May 2025 08:52:19 -0700
+X-CSE-ConnectionGUID: rQSTQNjNSJOC6i4n3g2xKw==
+X-CSE-MsgGUID: jqP9JqDoT+OHu+94y0EHDA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,288,1739865600"; 
+   d="scan'208";a="161369778"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 May 2025 08:52:16 -0700
+Date: Wed, 14 May 2025 18:52:13 +0300
+From: Raag Jadav <raag.jadav@intel.com>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: david.m.ertman@intel.com, ira.weiny@intel.com, lee@kernel.org,
+	andriy.shevchenko@linux.intel.com, mika.westerberg@linux.intel.com,
+	heikki.krogerus@linux.intel.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 1/2] driver core: auxiliary bus: Introduce auxiliary
+ device resource management
+Message-ID: <aCS8LThO37Vt26im@black.fi.intel.com>
+References: <20250514122432.4019606-1-raag.jadav@intel.com>
+ <20250514122432.4019606-2-raag.jadav@intel.com>
+ <2025051433-fade-flirt-d3e0@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2025051433-fade-flirt-d3e0@gregkh>
 
-Il 14 maggio 2025 17:14:32 CEST, Andi Shyti <andi=2Eshyti@kernel=2Eorg> ha =
-scritto:
->Hi Francesco and Emanuele,
->
->On Wed, Mar 19, 2025 at 03:51:14PM +0100, Francesco Dolcini wrote:
->> From: Emanuele Ghidoli <emanuele=2Eghidoli@toradex=2Ecom>
->>=20
->> Rework the read and write code paths in the driver to support operation
->> in atomic contexts=2E To achieve this, the driver must not rely on IRQs
->> or perform any scheduling, e=2Eg=2E, via a sleep or schedule routine=2E=
- Even
->> jiffies do not advance in atomic contexts, so timeouts based on them
->> are substituted with delays=2E
->>=20
->> Implement atomic, sleep-free, and IRQ-less operation=2E This increases
->> complexity but is necessary for atomic I2C transfers required by some
->> hardware configurations, e=2Eg=2E, to trigger reboots on an external PM=
-IC chip=2E
->>=20
->> Signed-off-by: Emanuele Ghidoli <emanuele=2Eghidoli@toradex=2Ecom>
->> Signed-off-by: Francesco Dolcini <francesco=2Edolcini@toradex=2Ecom>
->
->this patch is causing a build regression=2E I'm going to revert it,
->please check the test report that has been reported and you are
->cc'ed=2E
->
->Andi
+On Wed, May 14, 2025 at 02:35:01PM +0200, Greg KH wrote:
+> On Wed, May 14, 2025 at 05:54:31PM +0530, Raag Jadav wrote:
+> > With more and more drivers adopting to auxiliary bus infrastructure comes
+> > the need for managing resources at auxiliary device level. This is useful
+> > for cases where parent device shares variable number and type of resources
+> > with auxiliary child device but doesn't require any active involvement in
+> > managing them.
+> > 
+> > This reduces potential duplication of resource APIs that may be required by
+> > parent device driver. With this in place parent driver will be responsible
+> > for filling up respective resources and its count in auxiliary device
+> > structure before registering it, so that the leaf drivers can utilize in
+> > their probe function. Lifecycle of these resources will be as long as the
+> > auxiliary device exists.
+> > 
+> > Signed-off-by: Raag Jadav <raag.jadav@intel.com>
+> > ---
+> >  drivers/base/auxiliary.c      | 145 ++++++++++++++++++++++++++++++++++
+> >  include/linux/auxiliary_bus.h |  18 +++++
+> >  2 files changed, 163 insertions(+)
+> 
+> Sorry, but again, you are not following the required rules for Intel
+> kernel submissions for this subsystem.  Please work with the Intel
+> kernel team to fix this up before you resend.
 
-I am looking at it, it's a warning with W=3D1, not a build error=2E I woul=
-d not revert this patch, just wait for a follow up patch or comment that wi=
-ll address that warning=2E
+Apologies again if I have broken any rules here. Since this is following
+the recommendations[1][2] of community maintainers, my understanding is
+that this needed their attention.
 
-Francesco=20
+[1] https://lore.kernel.org/r/2025032514-ipad-schilling-9928@gregkh
+[2] https://lore.kernel.org/r/20250501125028.GM1567507@google.com
+
+Thanks for guidance, let me fix this.
+
+Raag
 
