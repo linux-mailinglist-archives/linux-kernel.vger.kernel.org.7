@@ -1,78 +1,91 @@
-Return-Path: <linux-kernel+bounces-648100-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-648112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7568AB719B
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 18:38:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E06D3AB71C7
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 18:43:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 520058C71E3
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 16:38:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3ECDF174DA7
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 16:41:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71A4027A900;
-	Wed, 14 May 2025 16:38:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D02F427FD7F;
+	Wed, 14 May 2025 16:39:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h7cZzGoa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="VMWuD3Zf"
+Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D18A118C011
-	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 16:38:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B56427F165;
+	Wed, 14 May 2025 16:39:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747240710; cv=none; b=N3ABNihQSqI5EQBiW1LF1EuMG7tAxipwrZV/0UWWhee+TjAZwhvVegDGiykluDQqHjMrLwQ48fV2g5XWMTMbbRXXReAq+HotSzKano+uFjS2RPUM1GCs6c7HxYOAmmvfS0niPwPcoiBA5xKryWW7WWnfdZkFgiim46Bj2hiXaIg=
+	t=1747240780; cv=none; b=cYz6OmF+pwWSMiEHbq3Li8lz1rzFUmTGKG71LtfEesFSxuvOLBdnILKV0anTwRnnDdkgeIXNsxA/At7JW7wV7XPJ13c6SRMepD7NOLy8Jjj9qsd+2cH5/yOBn9tIxMHZ2vb6blPdXLEpsc1IF1sHji+Jd7XTAMtRUFPKaT5h6zg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747240710; c=relaxed/simple;
-	bh=bzbDzI4Ez8wa1Uh1GkwX2f0BYckJ+tBjU0J9J8XVnqo=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=MutA2vL58LlWesQxqEGtAZ7956dLyGdMs/9ZcIHz4Dk4eqiykshtT3NCrpeRYbdxeXJkSqSwXeq/cbBRgTRwR3I9zVthaqDduciWCK1fCgfyX0YSnBSn2wtFNI08XVTvR+PinmHdaR/sG7HPpBj2jw2fzB2K3QV81ZPzUaXJQhA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h7cZzGoa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADDBDC4CEE3;
-	Wed, 14 May 2025 16:38:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747240710;
-	bh=bzbDzI4Ez8wa1Uh1GkwX2f0BYckJ+tBjU0J9J8XVnqo=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=h7cZzGoaqjPpJdyg15oYzhuZ2x8bT9ukTM3eWexgL59cNwzjAn/koIZduJL8epF++
-	 E5mJ1q6Qa+Y3i0C/KJU2yrKwPcrisjqyhyLMK/TPjRDPg1FlBvsdeCimSr8xpObAJL
-	 PUTrtBmWE39sdId4lL/Y8SzPdgDVH3Yk5MmOAI7aeOhDgW+6kouq5JHDFmSo2C2rwK
-	 0lnxnpU3gPz3dTnjrfHnnh0cT8r1Ms8KxlrRrp5VklSCiBW0c+UxnchHrNICb577HK
-	 NYSqzesr+IjG33WLNqfb7cM8DAOfSgqe1mlf8iWyAV90ND8wnnoAtp8PKMj/DIBBu4
-	 hR39vEmvfCz3A==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 39AB7380AA66;
-	Wed, 14 May 2025 16:39:09 +0000 (UTC)
-Subject: Re: [GIT PULL] soc: fixes for 6.15, part 2
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <660e30e8-7ae7-4a55-a136-9b0aa4e5ad0b@app.fastmail.com>
-References: <660e30e8-7ae7-4a55-a136-9b0aa4e5ad0b@app.fastmail.com>
-X-PR-Tracked-List-Id: <linux-arm-kernel.lists.infradead.org>
-X-PR-Tracked-Message-Id: <660e30e8-7ae7-4a55-a136-9b0aa4e5ad0b@app.fastmail.com>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git tags/soc-fixes-6.15-2
-X-PR-Tracked-Commit-Id: 15eaaa71e8ef142b122942b35653d513cfb90050
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 00f281fd9d8ddc1a83d3b188c087edac2116a089
-Message-Id: <174724074813.2432206.562898073472288541.pr-tracker-bot@kernel.org>
-Date: Wed, 14 May 2025 16:39:08 +0000
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, soc@kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1747240780; c=relaxed/simple;
+	bh=PFRZPFn4Tg43o1WBB6rYz5Q1cQoHHUPD8kep2QLS68k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=i/sNwtFx7wB8ZpMtkYGZsnuC5YYaouABl7I/tGI1G0qUsRfVCQaQT9Rkk0Sps2LlWkGUEaiRIiHCp47b8f9eJAzniJYyCZhxO1YKcEggbOZA7ibwImQRupSnOW+l05oRPj2UurMxcxWtKogp981OIAQ2c/bf1nVqi1pJEOa1adw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=VMWuD3Zf; arc=none smtp.client-ip=95.215.58.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 14 May 2025 09:39:15 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1747240765;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/xWysm/w4j0tfuTGmtdmeiPQvB/oeNRyr4xijzKsPPM=;
+	b=VMWuD3ZfACb2Ls14tQJ6HXUOUKgV3OvLhyn/U/jHgtuxbvNJ/MMb5d1jb3KA9MSVrSj/24
+	nVk2Bq5GmgzyQ23cNPg4ARmKuhrKo/divVMJijkDn7h/2EXKn+f6L5iKLYGJc3fSyOAkdy
+	WCBR4ejOmuv6XRaKQ+1n5wR8zOctWJY=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Andrew Morton <akpm@linux-foundation.org>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Muchun Song <muchun.song@linux.dev>, 
+	Alexei Starovoitov <ast@kernel.org>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
+	Harry Yoo <harry.yoo@oracle.com>, Yosry Ahmed <yosry.ahmed@linux.dev>, bpf@vger.kernel.org, 
+	linux-mm@kvack.org, cgroups@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Meta kernel team <kernel-team@meta.com>
+Subject: Re: [PATCH 1/7] memcg: memcg_rstat_updated re-entrant safe against
+ irqs
+Message-ID: <bnofgbnkkcgvybob7dt2bzti3bfsxwcaur5iobttyzxtfb7iue@oo6sj5pfjgud>
+References: <20250514050813.2526843-1-shakeel.butt@linux.dev>
+ <20250514050813.2526843-2-shakeel.butt@linux.dev>
+ <cb50a1c8-1f94-4a49-b5b3-8d2008c9f272@suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cb50a1c8-1f94-4a49-b5b3-8d2008c9f272@suse.cz>
+X-Migadu-Flow: FLOW_OUT
 
-The pull request you sent on Wed, 14 May 2025 10:07:54 +0200:
+On Wed, May 14, 2025 at 11:50:16AM +0200, Vlastimil Babka wrote:
+> On 5/14/25 07:08, Shakeel Butt wrote:
+> > The function memcg_rstat_updated() is used to track the memcg stats
+> > updates for optimizing the flushes. At the moment, it is not re-entrant
+> > safe and the callers disabled irqs before calling. However to achieve
+> > the goal of updating memcg stats without irqs, memcg_rstat_updated()
+> > needs to be re-entrant safe against irqs.
+> > 
+> > This patch makes memcg_rstat_updated() re-entrant safe using this_cpu_*
+> > ops. On archs with CONFIG_ARCH_HAS_NMI_SAFE_THIS_CPU_OPS, this patch is
+> > also making memcg_rstat_updated() nmi safe.
+> > 
+> > Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
+> 
+> Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
+> 
+> Some nits:
+> 
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git tags/soc-fixes-6.15-2
-
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/00f281fd9d8ddc1a83d3b188c087edac2116a089
-
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Thanks Vlastimil. I will address your comments in v2 and Andrew asked me
+to rebase over mm-new instead of next which I will do as well.
 
