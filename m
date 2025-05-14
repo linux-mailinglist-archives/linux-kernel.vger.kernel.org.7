@@ -1,153 +1,104 @@
-Return-Path: <linux-kernel+bounces-647214-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-647216-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3298BAB65C4
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 10:21:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5EA1AB65C9
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 10:22:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D5993AEB8D
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 08:21:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE08A189A311
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 08:22:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C31421B9E0;
-	Wed, 14 May 2025 08:21:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6490421CC6A;
+	Wed, 14 May 2025 08:22:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="M5Wv0/p3";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="BDrJ4X4D"
-Received: from fout-b3-smtp.messagingengine.com (fout-b3-smtp.messagingengine.com [202.12.124.146])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Fo2WMeMu"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CDD94A0F
-	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 08:21:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3027D2063F0;
+	Wed, 14 May 2025 08:22:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747210879; cv=none; b=cRB6NMkEiLTRbDck1n6407MT80LSTITI0Nm/cHMJP39KMEE4iU8p1IfFELzxr9molbS6xzuj24dCHMdoKWi7FKKElDnW7TfGdbjoDmAHvQk5tYKS/Swl4jZOTNHjRquwrmeFF62oAo3xTd8bXVF/9WQZDezhuDOeI8conphd0+w=
+	t=1747210935; cv=none; b=HgoK13U4Ygf9dLkJD2M28bkyrW3uxLLBimtyBDKFhdj7gsJigA8dEaDQV9Rblhmo7AEeeH8od9IYCwO1vzr+Fd6VcG8fOOUwzLh04f6WJGW2D5oADWVg2Sk2+7zQviZr1JtTcSOFj2IWOCl4HDFlz6Yw3Rio7PgJNvJ3tsMBikE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747210879; c=relaxed/simple;
-	bh=+qCz5Y1Cvu3t6eGy/8WDhGhgVRs3s59MwWSoGq8FM+k=;
+	s=arc-20240116; t=1747210935; c=relaxed/simple;
+	bh=g4ftrT3Y1diYK/vCIN1dyaP/i3jvVe8cYbbMXbhVDSs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TD1vaALpGSA8XYgBQrk4h34+CeptQeIH+4pwsqqj0G8MxT9KVTiZa57ZWibLx4SJzGK80rNzr+xzgMD2vEC++5ytCkYpf4NDOrzvVKfgD2XRffu+Lo6yTrDMOBqRj66zryM8WpPJ14k1uPEjvlNF7sHmZWAyKTXI8IYcOF+pqrA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=M5Wv0/p3; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=BDrJ4X4D; arc=none smtp.client-ip=202.12.124.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
-Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
-	by mailfout.stl.internal (Postfix) with ESMTP id 4BB571140093;
-	Wed, 14 May 2025 04:21:16 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-09.internal (MEProxy); Wed, 14 May 2025 04:21:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm2; t=1747210876; x=
-	1747297276; bh=C7B9xklrPBdiOB1WdiiGqRFEIojGW5kErpndHo8XMeQ=; b=M
-	5Wv0/p3fUGbLZ14WCQniYNYPusvuKSwT90JnEBmZzka0DRXlj++eJBDupQtQPXmY
-	9zTFfTDOX3CaZLOpggV6XgR7bKusUChAPzUfpRTQbnNeJeMAr0BV7LIjdqxa6X7d
-	2y1Ah9pFkm+v4iFe2vAyxZ4oLB4bjlmqkxvholrB1xjSCqOrztEQU1mmeRuU5rse
-	edLAYBn7DB/o7b3lRTW+55GSUFwEdfO3KwPcZLfPACLCIts+DzzZ/bBwOux/Wczx
-	hyglr70JeaSjadzI0EdTWb45TSS7UVtuX9Uvdou00GA2ID35XO2aUy46+Z1fTs71
-	WDFXQ5I3ZVwKqOTpZzP0w==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-	1747210876; x=1747297276; bh=C7B9xklrPBdiOB1WdiiGqRFEIojGW5kErpn
-	dHo8XMeQ=; b=BDrJ4X4Dm/i3Y5lRSVy5FsJSkzdyZzPQU+nqwiBIXUJhAy46fmz
-	VZljHvk9BtiYDdpL2XrVRvvfI6HO0Es95RK9lfh5VdFFlavNs1VyBBa6zCtdCnJL
-	83OJqO5MqXfK0zXDzUrESvyaaSqTRj+W0Z1iFnD6wcVR2ggDgOV2HaHiO3SaXPbc
-	D2WOKWk/r73P54ocCmBwGWtoCr33ADmkI9hh31zTUhdpfhdR5OP767AccQY//cH2
-	LWXuPe6jr89PJze89T1DE6mkk25Zh4jikQQueJJExt1QtgVxlgX3jlNWWu7L4aYZ
-	ATl181dfhaim0hMP2lq1gNGx3oQi4DIAwJQ==
-X-ME-Sender: <xms:e1IkaNi2cxdXzn-HVkUUQAw47AVByEl3BG3nKGusVOLGUgOiSl82IQ>
-    <xme:e1IkaCAGoRka8aetZKDxFPw_Lh_L9Veil9WBmE1xKn3hHUSC4WSUTUgs2oTtdrepS
-    _QoQcicMfm3wj5vlzE>
-X-ME-Received: <xmr:e1IkaNGz8PHf0lZq7CmYtrJGc_UW3-4DfXwQsfWjJXeThAhgwmQ3ohx_zAg2KcIy_X7j8Q>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeftdeigeelucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtsfdttddt
-    vdenucfhrhhomhepfdfmihhrihhllhcutedrucfuhhhuthgvmhhovhdfuceokhhirhhilh
-    hlsehshhhuthgvmhhovhdrnhgrmhgvqeenucggtffrrghtthgvrhhnpeffvdevueetudfh
-    hfffveelhfetfeevveekleevjeduudevvdduvdelteduvefhkeenucevlhhushhtvghruf
-    hiiigvpedunecurfgrrhgrmhepmhgrihhlfhhrohhmpehkihhrihhllhesshhhuhhtvghm
-    ohhvrdhnrghmvgdpnhgspghrtghpthhtohepiedpmhhouggvpehsmhhtphhouhhtpdhrtg
-    hpthhtoheprghruggssehkvghrnhgvlhdrohhrghdprhgtphhtthhopehmihhnghhosehk
-    vghrnhgvlhdrohhrghdprhgtphhtthhopegrrhgusgdoghhithesghhoohhglhgvrdgtoh
-    hmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdho
-    rhhgpdhrtghpthhtohepgiekieeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthhorh
-    hvrghlughssehlihhnuhigqdhfohhunhgurghtihhonhdrohhrgh
-X-ME-Proxy: <xmx:fFIkaCTCmYz-fTs6KltNFf7O8YS_tS6DFjkv0oFmwr8T6IRqrrNd-Q>
-    <xmx:fFIkaKzFV29Vi-oQ7MvTi_ptuY7mVZLsiBtexKRRrx7VTN49RhR9mw>
-    <xmx:fFIkaI5ObicVDh89QlyudxSmDYhfzHTlDSmE64dlmjLsUusApAAdyQ>
-    <xmx:fFIkaPyXEObcT44AP70A0PwU0T9V0R53gpZzy-W3yNdGg7MvvMorJw>
-    <xmx:fFIkaGjXrsM4ZhgdmIoMY4DqMNJDRo9m7SrTQYJ0xf_qAlcu6GsnrysE>
-Feedback-ID: ie3994620:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 14 May 2025 04:21:13 -0400 (EDT)
-Date: Wed, 14 May 2025 11:21:10 +0300
-From: "Kirill A. Shutemov" <kirill@shutemov.name>
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: Ingo Molnar <mingo@kernel.org>, Ard Biesheuvel <ardb+git@google.com>, 
-	linux-kernel@vger.kernel.org, x86@kernel.org, Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [RFC PATCH v2 2/6] x86/cpu: Use a new feature flag for 5 level
- paging
-Message-ID: <62225ofhgw35cjrw6vr6qs3wbhotigbswin3542ltq5wkxelvh@jfkht7a6b2bs>
-References: <20250513111157.717727-8-ardb+git@google.com>
- <20250513111157.717727-10-ardb+git@google.com>
- <7uh3pi23cdd5r2t6ln5p2z2htgmzo5b6omlhb6vyddobcbqqnt@nyujbhsnpioh>
- <aCROdV_fIygO8OoM@gmail.com>
- <CAMj1kXGChWHhbfjUgTQ37+epLjivrKhV8unwyZCHvNTJL2f57w@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Uu3SfS1bgtkYDT69mGY/LTlP53fGjnAjH9fYnd4SfeLWaeYJ/yg5HZG1iKw5EUuzNG02SMZAC4Tx3oKl9jGAAXYiMGjlKyiMCYbKhBqP65I1UwaHG5FNVzxi560bG2HfFgCxow33wGyl8lhPk7J5qs/2RdiMoDBkn0e4tOrc8Lk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Fo2WMeMu; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id BC7F140E0163;
+	Wed, 14 May 2025 08:22:11 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id UBpfIHn--jso; Wed, 14 May 2025 08:22:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1747210927; bh=+Nwf+c9pXNlMrfiw/N5h45Pxm/oamtWzy4ZxIo6/j3c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Fo2WMeMu8CA3WlfstGOdLaFGlaRAifEjv4CoUvd1TQzW32iEMwJp98hEVIQiJDFom
+	 BBp2IjmB3GVWTuy1AiUpXTU8TqsEzmfGqYf/88W6BV7qs9VCsszaSTFDhfLXlFQ90D
+	 xl/mlnt/B/zpgIvTuE7JEXn74kDXZ2TQKgWJHLddvq5D5xq3EkucE5iQY9xOcCGEHo
+	 YvBzCLlmKZjFg9pn7Zaceqem6MDyNRxKoILQma4VCrotwVBKYKdBDsFw6PjE0mCw98
+	 cH9wMLlXSvXfTbwy/ZnnR8kNg03dAhyF43M3ZlM5nbQHC/Gy5Pi9JH9/DVIM5rZPke
+	 upLDQGdhVkydsAmIweJPPV8p0F1evxBMh1vN2gpkBjPiT0wJ2DI+KO1XKuvn23MKl3
+	 jHSlUY3tNjQ93mZaGKlMOSLlwtwCVl0eYT+QMO4Q61tx3ceEHxj+JXhUbFP9HFoB4u
+	 FKwBzTAb163MRjsWJACzDg+8O0ZXYaMabZkLMztAdPPopmjFjTmYU8WInZ/fyPuibT
+	 Aw3YwnTe+WhtBei2VLUTUbl1O7lsucNHkyWMJPBu65xEKjtgMHjwh4kxlNkjKQAjmD
+	 Fmaiahuv7SCBi1qcjKtFQkoEpJOQbAUtf7w3aLgQX4qHkVUWyJ9fTLmOAhfMjs5+lO
+	 Zz4Zk6HL8jter8KqUPckU5yQ=
+Received: from zn.tnic (p579690ee.dip0.t-ipconnect.de [87.150.144.238])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id AF58F40E0266;
+	Wed, 14 May 2025 08:21:57 +0000 (UTC)
+Date: Wed, 14 May 2025 10:21:57 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Ard Biesheuvel <ardb+git@google.com>, linux-kernel@vger.kernel.org,
+	linux-efi@vger.kernel.org, x86@kernel.org,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Dionna Amalie Glaze <dionnaglaze@google.com>,
+	Kevin Loughlin <kevinloughlin@google.com>,
+	Tom Lendacky <thomas.lendacky@amd.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [RFT PATCH v3 00/21] x86: strict separation of startup code
+Message-ID: <20250514082157.GCaCRSpffav0xWQ586@fat_crate.local>
+References: <20250512190834.332684-23-ardb+git@google.com>
+ <20250512191705.GHaCJJMcpPTS4ioLpm@fat_crate.local>
+ <aCMYrgd9DDQl7G1W@gmail.com>
+ <20250513101250.GAaCMbIpk6kdVMizng@fat_crate.local>
+ <aCMraFZ2yJQNyHf3@gmail.com>
+ <20250513141633.GDaCNUQdRl6ci2zK5T@fat_crate.local>
+ <aCQ2L3L2DQX80blY@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAMj1kXGChWHhbfjUgTQ37+epLjivrKhV8unwyZCHvNTJL2f57w@mail.gmail.com>
+In-Reply-To: <aCQ2L3L2DQX80blY@gmail.com>
 
-On Wed, May 14, 2025 at 09:14:56AM +0100, Ard Biesheuvel wrote:
-> On Wed, 14 May 2025 at 09:04, Ingo Molnar <mingo@kernel.org> wrote:
-> >
-> >
-> > * Kirill A. Shutemov <kirill@shutemov.name> wrote:
-> >
-> > > On Tue, May 13, 2025 at 01:12:00PM +0200, Ard Biesheuvel wrote:
-> > > > From: Ard Biesheuvel <ardb@kernel.org>
-> > > >
-> > > > Currently, the LA57 CPU feature flag is taken to mean two different
-> > > > things at once:
-> > > > - whether the CPU implements the LA57 extension, and is therefore
-> > > >   capable of supporting 5 level paging;
-> > > > - whether 5 level paging is currently in use.
-> > > >
-> > > > This means the LA57 capability of the hardware is hidden when a LA57
-> > > > capable CPU is forced to run with 4 levels of paging. It also means the
-> > > > the ordinary CPU capability detection code will happily set the LA57
-> > > > capability and it needs to be cleared explicitly afterwards to avoid
-> > > > inconsistencies.
-> > > >
-> > > > Separate the two so that the CPU hardware capability can be identified
-> > > > unambigously in all cases.
-> > >
-> > > Unfortunately, there's already userspace that use la57 flag in
-> > > /proc/cpuinfo as indication that 5-level paging is active. :/
-> > >
-> > > See va_high_addr_switch.sh in kernel selftests for instance.
-> >
-> > Kernel selftests do not really count if that's the only userspace that
-> > does this - but they indeed increase the likelihood that some external
-> > userspace uses /proc/cpuinfo in that fashion. Does such external
-> > user-space code exist?
-> >
-> 
-> Bah, that seems likely if this is the only way user space is able to
-> infer that the kernel is using 5-level paging.
+On Wed, May 14, 2025 at 08:20:31AM +0200, Ingo Molnar wrote:
+> See Ard's excellent description:
 
-Well, you can also try to map high addresses. lam.c selftest does this.
+Btw, you somehow conveniently ignored the patch Ard mentioned started all
+this: a patch you committed without any review.
+
+Sounds familiar?
 
 -- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
