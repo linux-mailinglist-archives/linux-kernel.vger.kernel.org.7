@@ -1,63 +1,56 @@
-Return-Path: <linux-kernel+bounces-648032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-648034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C88EAB70BC
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 18:06:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2F7DAB70C2
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 18:07:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6318616BA9C
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 16:05:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5F62188BBEE
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 16:05:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FCEA27A44E;
-	Wed, 14 May 2025 16:05:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 337AB2797A0;
+	Wed, 14 May 2025 16:05:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="exI/7OTy"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vCSeeZyH"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BA9D1C862D;
-	Wed, 14 May 2025 16:05:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FA9A14900B;
+	Wed, 14 May 2025 16:05:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747238701; cv=none; b=MZHDXCAhwzb+4PfUtsK+FDon+gkn5WUJglUyiJpE67TINoya5eqh4xHwPejzLOJTXZoIBM3oYagcpegR0PTw4j6lMOeBEjL3Z4KnK4Di9xYN76ZbPW7o3+70MO2xoL24oVcwKd4NpqrIF4ekjF0NLhYAf/P0y+sr4GMwjVLcqbQ=
+	t=1747238729; cv=none; b=Ky5zwZ/n/31F+NHsqwImcDjmk8pIHjKRwezbPO3vWMHK9l4Iy7CzQQKenV3GKITamDOBDGQO9i72Nz7WuQ6/6UOQLAEaB654eyBinI+RVmzPO26AY8+0rNA08qBKtMaCOiNQbXiHuhVWjEeY81WrKT21FNwEKvcfIZnmb+MDqkU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747238701; c=relaxed/simple;
-	bh=RkTxB0ZxzYAlqUbtPbrV4H9RQUd/PeOBalusgwRU4PQ=;
+	s=arc-20240116; t=1747238729; c=relaxed/simple;
+	bh=9ia58EEPZmsQMmA96nqP1xtz6SuZMnnHYxUouZrqGNQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Amjy+LaDoHE0rX+TPbR5S8ur+ctXungzP5m2phiOskhuB+ozFBCmyimvoj9nMv+bWPktIfpZdU95KgEMmKa/7PmxYyVlbFIi+TQhBgzTk1K70Iikn6w/gnw9gQjG9ZrJo4Bnj6KT8SHxLP0oK575VF5g586MhBONkX6MEqjyHUU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=exI/7OTy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA8E2C4CEE3;
-	Wed, 14 May 2025 16:05:00 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=HoUlqSVKa0eM05grYrfk/jLNce3YuN6rwcJUdrDyCMci95+uuaEx4R2BrMPzzK+GrrpN5EzhnfDtMzSMiHMc2qgAiJof+h2er31Y+HRw/TlcqXtIbT1LDsSeqNRKPtJUhoMeqwwduBiNfZ1IVk64UF8wKppQ1I0omEznFW96U5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vCSeeZyH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D6BAC4CEE3;
+	Wed, 14 May 2025 16:05:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747238701;
-	bh=RkTxB0ZxzYAlqUbtPbrV4H9RQUd/PeOBalusgwRU4PQ=;
+	s=k20201202; t=1747238729;
+	bh=9ia58EEPZmsQMmA96nqP1xtz6SuZMnnHYxUouZrqGNQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=exI/7OTyHwVQ4yU9GlyrC6Q1hbJTnYs6PYs3JiP+nrVv1++gwisHzaVv0wWvYlHWQ
-	 1HN34m8JJorMxTUMDHJN9j3KMw6rKNq2IUv3TSc82Kvx2VpHNERr3y+P5rxWH1v3Wu
-	 3LZwkymkIUmoX1rcU5n8bAibpdVfhHSlYj9XKrLA18WSvRa0aMamciKHhp5gqeSfTO
-	 /mllHgmeoJhCnFsAw0mnZpupjOIbCBIyNmIKqZMJoawYIVF4s5RP7SUB5Q7PsxSiXU
-	 ARKSz7ODHRbZm4TtlpowsV9qUh114yyxhQmXew1KdVJnzKyjl01+hg/g+nAaKcSflF
-	 zd+68Zpr2a/Zg==
-Date: Wed, 14 May 2025 11:04:59 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: David Airlie <airlied@gmail.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	Jessica Zhang <quic_jesszhan@quicinc.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Simona Vetter <simona@ffwll.ch>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>
-Subject: Re: [PATCH v3 1/4] dt-bindings: display: panel: Document Renesas
- R61307 based DSI panel
-Message-ID: <174723869857.2423571.2570619557941621488.robh@kernel.org>
-References: <20250506092718.106088-1-clamor95@gmail.com>
- <20250506092718.106088-2-clamor95@gmail.com>
+	b=vCSeeZyHskG0dL2n3hM5Y1DzGiBc3u5SFPlO5g20sZC3JVrvr96qAFZm4norQpmxC
+	 rKOkT7V3zhwfHZfHStkTFexIsEuC/ocGaaxZpD+FKr7ae34rW5rBVhpFgNgF7XExYO
+	 Ly5+2gPj2i9DsZ7WaNYha6JYpHReu9Q6w97OS0d5IzDCovUY24H2FFcEzMOlHdjxxP
+	 lstcUZ4zqR4HDDDdxvLvUJyRQFYX2QHvmu7320iiZzWOfT339dLinpXroJ28f2gX+M
+	 9STDD0s7Q2np/HtR68GPFaTbZQxaVtYgKdKqL7Ei8TcZKxxgZlmfd9UI7K9F00EoNk
+	 U2D7lgfTZMd2Q==
+Date: Wed, 14 May 2025 09:05:28 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Hans Holmberg <Hans.Holmberg@wdc.com>
+Cc: "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+	Carlos Maiolino <cem@kernel.org>,
+	Dave Chinner <david@fromorbit.com>, hch <hch@lst.de>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/2] xfs: add inode to zone caching for data placement
+Message-ID: <20250514160528.GM2701446@frogsfrogsfrogs>
+References: <20250514104937.15380-1-hans.holmberg@wdc.com>
+ <20250514104937.15380-3-hans.holmberg@wdc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,20 +59,196 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250506092718.106088-2-clamor95@gmail.com>
+In-Reply-To: <20250514104937.15380-3-hans.holmberg@wdc.com>
 
-
-On Tue, 06 May 2025 12:27:15 +0300, Svyatoslav Ryhel wrote:
-> R61307 is liquid crystal driver for high-definition amorphous silicon
-> (a-Si) panels and is ideal for tablets and smartphones.
+On Wed, May 14, 2025 at 10:50:37AM +0000, Hans Holmberg wrote:
+> Placing data from the same file in the same zone is a great heuristic
+> for reducing write amplification and we do this already - but only
+> for sequential writes.
 > 
-> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> To support placing data in the same way for random writes, reuse the
+> xfs mru cache to map inodes to open zones on first write. If a mapping
+> is present, use the open zone for data placement for this file until
+> the zone is full.
+> 
+> Signed-off-by: Hans Holmberg <hans.holmberg@wdc.com>
+
+Odd, did my rvb from last time get dropped?  This doesn't look like a
+huge change to me...
+
+Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
+
+--D
+
 > ---
->  .../display/panel/renesas,r61307.yaml         | 94 +++++++++++++++++++
->  1 file changed, 94 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/display/panel/renesas,r61307.yaml
+>  fs/xfs/xfs_mount.h      |   1 +
+>  fs/xfs/xfs_zone_alloc.c | 109 ++++++++++++++++++++++++++++++++++++++++
+>  2 files changed, 110 insertions(+)
 > 
-
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-
+> diff --git a/fs/xfs/xfs_mount.h b/fs/xfs/xfs_mount.h
+> index e5192c12e7ac..f90c0a16766f 100644
+> --- a/fs/xfs/xfs_mount.h
+> +++ b/fs/xfs/xfs_mount.h
+> @@ -230,6 +230,7 @@ typedef struct xfs_mount {
+>  	bool			m_update_sb;	/* sb needs update in mount */
+>  	unsigned int		m_max_open_zones;
+>  	unsigned int		m_zonegc_low_space;
+> +	struct xfs_mru_cache	*m_zone_cache;  /* Inode to open zone cache */
+>  
+>  	/*
+>  	 * Bitsets of per-fs metadata that have been checked and/or are sick.
+> diff --git a/fs/xfs/xfs_zone_alloc.c b/fs/xfs/xfs_zone_alloc.c
+> index d509e49b2aaa..80add26c0111 100644
+> --- a/fs/xfs/xfs_zone_alloc.c
+> +++ b/fs/xfs/xfs_zone_alloc.c
+> @@ -24,6 +24,7 @@
+>  #include "xfs_zone_priv.h"
+>  #include "xfs_zones.h"
+>  #include "xfs_trace.h"
+> +#include "xfs_mru_cache.h"
+>  
+>  void
+>  xfs_open_zone_put(
+> @@ -796,6 +797,100 @@ xfs_submit_zoned_bio(
+>  	submit_bio(&ioend->io_bio);
+>  }
+>  
+> +/*
+> + * Cache the last zone written to for an inode so that it is considered first
+> + * for subsequent writes.
+> + */
+> +struct xfs_zone_cache_item {
+> +	struct xfs_mru_cache_elem	mru;
+> +	struct xfs_open_zone		*oz;
+> +};
+> +
+> +static inline struct xfs_zone_cache_item *
+> +xfs_zone_cache_item(struct xfs_mru_cache_elem *mru)
+> +{
+> +	return container_of(mru, struct xfs_zone_cache_item, mru);
+> +}
+> +
+> +static void
+> +xfs_zone_cache_free_func(
+> +	void				*data,
+> +	struct xfs_mru_cache_elem	*mru)
+> +{
+> +	struct xfs_zone_cache_item	*item = xfs_zone_cache_item(mru);
+> +
+> +	xfs_open_zone_put(item->oz);
+> +	kfree(item);
+> +}
+> +
+> +/*
+> + * Check if we have a cached last open zone available for the inode and
+> + * if yes return a reference to it.
+> + */
+> +static struct xfs_open_zone *
+> +xfs_cached_zone(
+> +	struct xfs_mount		*mp,
+> +	struct xfs_inode		*ip)
+> +{
+> +	struct xfs_mru_cache_elem	*mru;
+> +	struct xfs_open_zone		*oz;
+> +
+> +	mru = xfs_mru_cache_lookup(mp->m_zone_cache, ip->i_ino);
+> +	if (!mru)
+> +		return NULL;
+> +	oz = xfs_zone_cache_item(mru)->oz;
+> +	if (oz) {
+> +		/*
+> +		 * GC only steals open zones at mount time, so no GC zones
+> +		 * should end up in the cache.
+> +		 */
+> +		ASSERT(!oz->oz_is_gc);
+> +		ASSERT(atomic_read(&oz->oz_ref) > 0);
+> +		atomic_inc(&oz->oz_ref);
+> +	}
+> +	xfs_mru_cache_done(mp->m_zone_cache);
+> +	return oz;
+> +}
+> +
+> +/*
+> + * Update the last used zone cache for a given inode.
+> + *
+> + * The caller must have a reference on the open zone.
+> + */
+> +static void
+> +xfs_zone_cache_create_association(
+> +	struct xfs_inode		*ip,
+> +	struct xfs_open_zone		*oz)
+> +{
+> +	struct xfs_mount		*mp = ip->i_mount;
+> +	struct xfs_zone_cache_item	*item = NULL;
+> +	struct xfs_mru_cache_elem	*mru;
+> +
+> +	ASSERT(atomic_read(&oz->oz_ref) > 0);
+> +	atomic_inc(&oz->oz_ref);
+> +
+> +	mru = xfs_mru_cache_lookup(mp->m_zone_cache, ip->i_ino);
+> +	if (mru) {
+> +		/*
+> +		 * If we have an association already, update it to point to the
+> +		 * new zone.
+> +		 */
+> +		item = xfs_zone_cache_item(mru);
+> +		xfs_open_zone_put(item->oz);
+> +		item->oz = oz;
+> +		xfs_mru_cache_done(mp->m_zone_cache);
+> +		return;
+> +	}
+> +
+> +	item = kmalloc(sizeof(*item), GFP_KERNEL);
+> +	if (!item) {
+> +		xfs_open_zone_put(oz);
+> +		return;
+> +	}
+> +	item->oz = oz;
+> +	xfs_mru_cache_insert(mp->m_zone_cache, ip->i_ino, &item->mru);
+> +}
+> +
+>  void
+>  xfs_zone_alloc_and_submit(
+>  	struct iomap_ioend	*ioend,
+> @@ -819,11 +914,16 @@ xfs_zone_alloc_and_submit(
+>  	 */
+>  	if (!*oz && ioend->io_offset)
+>  		*oz = xfs_last_used_zone(ioend);
+> +	if (!*oz)
+> +		*oz = xfs_cached_zone(mp, ip);
+> +
+>  	if (!*oz) {
+>  select_zone:
+>  		*oz = xfs_select_zone(mp, write_hint, pack_tight);
+>  		if (!*oz)
+>  			goto out_error;
+> +
+> +		xfs_zone_cache_create_association(ip, *oz);
+>  	}
+>  
+>  	alloc_len = xfs_zone_alloc_blocks(*oz, XFS_B_TO_FSB(mp, ioend->io_size),
+> @@ -1211,6 +1311,14 @@ xfs_mount_zones(
+>  	error = xfs_zone_gc_mount(mp);
+>  	if (error)
+>  		goto out_free_zone_info;
+> +
+> +	/*
+> +	 * Set up a mru cache to track inode to open zone for data placement
+> +	 * purposes. The magic values for group count and life time is the
+> +	 * same as the defaults for file streams, which seems sane enough.
+> +	 */
+> +	xfs_mru_cache_create(&mp->m_zone_cache, mp,
+> +			5000, 10, xfs_zone_cache_free_func);
+>  	return 0;
+>  
+>  out_free_zone_info:
+> @@ -1224,4 +1332,5 @@ xfs_unmount_zones(
+>  {
+>  	xfs_zone_gc_unmount(mp);
+>  	xfs_free_zone_info(mp->m_zone_info);
+> +	xfs_mru_cache_destroy(mp->m_zone_cache);
+>  }
+> -- 
+> 2.34.1
+> 
 
