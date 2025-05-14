@@ -1,134 +1,125 @@
-Return-Path: <linux-kernel+bounces-647348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-647329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CEF9AB6757
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 11:23:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B3F4AB6715
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 11:15:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 244A84A7C0B
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 09:23:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E7F8E7A7686
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 09:14:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 372FC22DFA5;
-	Wed, 14 May 2025 09:21:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9FE0224B08;
+	Wed, 14 May 2025 09:15:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="BlZjdebh"
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JVxe6Zka"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 107BE22576A;
-	Wed, 14 May 2025 09:21:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BB361BC3F;
+	Wed, 14 May 2025 09:15:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747214496; cv=none; b=Vgpq/zxMZYcCUH+7Yd8N8WoXx2MjH7Vghv1v6PsDESVYMB8hpx51FwC11joIQYuftHPJuItwGH4vcDtgnntCNHVlww0SBiWYKdh2czUegjREMsEvIqX3KLeLGWFKl/qPwVgHFCqaZUiDXR5qh5sVZXANMvq3RbBjxrf9AgkcyZ0=
+	t=1747214147; cv=none; b=ptqicpzoaLT0LHeaYwPYgD61C7QnZS3OAHq3dfmoRoJaTNNV/fZApGC2OtVIbzu9UZDFmybxSxKtJ5L/teCtpeSSboxmwxrLbOsy5yYm5RCQxzOQB0cuNF4oidqCzTknAArCAQl8V70bb3xuNweZbjrIsVRO2DA/LfZR3jABgj0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747214496; c=relaxed/simple;
-	bh=i9LSW+S4PAZOlz8NvEMuLQl0XMu60kzZIjrm0p4e00A=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HrTje0d2Z6CSHWTKP2+F7eyaHOwtokGdJwWUxf68c9g6AQq4D3Je70OmL6poMb9cNamY4LWZnjxeJ9S2bo647UR+QsWKOv7eYQA4cwsWBrJfnfGS5P0IclCyGApKHeu77ehemT8kidnosSCV1J2d7c06BcrKSSMYcdrGaAYCHic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=BlZjdebh; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54E7w8pW023322;
-	Wed, 14 May 2025 11:21:09 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	99SNtvnMFqK7qNsbPspBqDAiBIpPQhzr7yAu4VDBnp8=; b=BlZjdebhX5jqrVHb
-	VNH2gIrtZp6/CWej+WSDKFR8rDQ/+uw/hmRiSrnBfECN+47hpxo4YaaS5t/TnK7O
-	0dWSgI+8FYvFnupDGloJSq9XFifgbfTc1R3iId7GlPX08pjIs9Au7DOr0DVKrttF
-	xsV0jYCm+GQ9sHA+2pabxuu7h4hMnNhtA8zjyEnwBF9bSilF8nX++g1lxbb1wx57
-	gyDf2C5wUy5T1CCaL4A3VV+0tuOtgRhCcAh+9btinErWgKzZtI6HFlYSM56AEf7B
-	/GtE4k2R+qki+BrZZa74TluH+KWSxSXo3eigYMx/9jujnpDHOUQXM3l9LjLhg2Pn
-	Rz99MA==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 46mbds2s3n-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 14 May 2025 11:21:09 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 7B8AE40047;
-	Wed, 14 May 2025 11:19:37 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 0F5A0B48E9E;
-	Wed, 14 May 2025 11:18:20 +0200 (CEST)
-Received: from localhost (10.130.77.120) by SHFDAG1NODE3.st.com (10.75.129.71)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 14 May
- 2025 11:18:19 +0200
-From: Christian Bruel <christian.bruel@foss.st.com>
-To: <christian.bruel@foss.st.com>, <lpieralisi@kernel.org>, <kw@linux.com>,
-        <manivannan.sadhasivam@linaro.org>, <robh@kernel.org>,
-        <bhelgaas@google.com>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <mcoquelin.stm32@gmail.com>, <alexandre.torgue@foss.st.com>,
-        <p.zabel@pengutronix.de>, <thippeswamy.havalige@amd.com>,
-        <shradha.t@samsung.com>, <quic_schintav@quicinc.com>,
-        <cassel@kernel.org>, <johan+linaro@kernel.org>
-CC: <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v9 9/9] arm64: dts: st: Enable PCIe on the stm32mp257f-ev1 board
-Date: Wed, 14 May 2025 11:15:30 +0200
-Message-ID: <20250514091530.3249364-10-christian.bruel@foss.st.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250514091530.3249364-1-christian.bruel@foss.st.com>
-References: <20250514091530.3249364-1-christian.bruel@foss.st.com>
+	s=arc-20240116; t=1747214147; c=relaxed/simple;
+	bh=1cKoue+upTo4HfjWM/Vwi5Qay2EkwgJIx0igGvDWUwg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iLHUbXtOboFwV0aEmC5/gPN6GG3TSCcnU60Aqt0Pm27aaD/wyAdfp4qkoSNdR5Hrxwi1ySfc/0kmh9ZDcDGXpA93aCJY/9bN7GhV2/gJ1H02V4SFahlUMn0QgEV/bySEBiVsWhc331zQEPOZkgM1UXY4n2DdssOlFGYHvMwp//E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JVxe6Zka; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 764C1C4CEE9;
+	Wed, 14 May 2025 09:15:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747214146;
+	bh=1cKoue+upTo4HfjWM/Vwi5Qay2EkwgJIx0igGvDWUwg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JVxe6Zka6jWGS+tUAFUL78fgvJsnjKkZzqksLrW3yyshPyT5rWbBhgZqjFCjewVed
+	 qStVS4di+0Lj2l5vZgJe/+CxQiX0AuP5EI4bd99SZBaHycPeWXVICIW3haayavbCeP
+	 BlFlSBz2Du4jk9Cw3cTy6WgHijEL4bQGFAxc0rx+GybtjFawzTAuzqWIfZAHIzOeIB
+	 pz+a/FbjvHvk2ZRoAUS85yNXnuLJpnEI6mf34w9+n5Qca0kfLt8rqyqp1U/TZNrHlK
+	 rHwpmjzMK4PjWRWCTOC5eNERmuAmQutzD8k/wi7ANenKb9PzxwY1nQpu1X9E2J8w7O
+	 sd06XPpg7XQbw==
+Date: Wed, 14 May 2025 11:15:41 +0200
+From: Ingo Molnar <mingo@kernel.org>
+To: Borislav Petkov <bp@alien8.de>
+Cc: linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org,
+	Ashish Kalra <ashish.kalra@amd.com>,
+	Pankaj Gupta <pankaj.gupta@amd.com>,
+	Tom Lendacky <thomas.lendacky@amd.com>,
+	Srikanth Aithal <sraithal@amd.com>, stable@vger.kernel.org,
+	x86@kernel.org
+Subject: Re: [tip: x86/urgent] x86/sev: Do not touch VMSA pages during SNP
+ guest memory kdump
+Message-ID: <aCRfPTxaPvoqILq8@gmail.com>
+References: <20250428214151.155464-1-Ashish.Kalra@amd.com>
+ <174715966762.406.12942579862694214802.tip-bot2@tip-bot2>
+ <aCREWka5uQndvTN_@gmail.com>
+ <20250514081120.GAaCRQKOVcm4dgqp59@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE3.st.com
- (10.75.129.71)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-14_03,2025-05-14_02,2025-02-21_01
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250514081120.GAaCRQKOVcm4dgqp59@fat_crate.local>
 
-Add PCIe RC and EP support on stm32mp257f-ev1 board.
-Default to RC mode.
 
-Signed-off-by: Christian Bruel <christian.bruel@foss.st.com>
----
- arch/arm64/boot/dts/st/stm32mp257f-ev1.dts | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+* Borislav Petkov <bp@alien8.de> wrote:
 
-diff --git a/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts b/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts
-index 9d1a1155e36c..85f99a1ca154 100644
---- a/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts
-+++ b/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts
-@@ -257,6 +257,27 @@ scmi_vdd_sdcard: regulator@23 {
- 	};
- };
- 
-+&pcie_ep {
-+	pinctrl-names = "default", "init";
-+	pinctrl-0 = <&pcie_pins_a>;
-+	pinctrl-1 = <&pcie_init_pins_a>;
-+	reset-gpios = <&gpioj 8 GPIO_ACTIVE_LOW>;
-+	status = "disabled";
-+};
-+
-+&pcie_rc {
-+	pinctrl-names = "default", "init", "sleep";
-+	pinctrl-0 = <&pcie_pins_a>;
-+	pinctrl-1 = <&pcie_init_pins_a>;
-+	pinctrl-2 = <&pcie_sleep_pins_a>;
-+	status = "okay";
-+
-+	pcie@0,0 {
-+		 reset-gpios = <&gpioj 8 GPIO_ACTIVE_LOW>;
-+		 wake-gpios = <&gpioh 5 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
-+	};
-+};
-+
- &sdmmc1 {
- 	pinctrl-names = "default", "opendrain", "sleep";
- 	pinctrl-0 = <&sdmmc1_b4_pins_a>;
--- 
-2.34.1
+> On Wed, May 14, 2025 at 09:20:58AM +0200, Ingo Molnar wrote:
+> > Boris, please don't rush these SEV patches without proper review first! ;-)
+> 
+> You didn't read the R-by and SOB tags at the beginning?
 
+Reviewed-by tags and SOB tags don't necessarily imply a proper review, 
+as my review feedback here amply demonstrates.
+
+> Feel free to propose fixes, Tom and I will review them and even test 
+> them for you!
+> 
+> But ontop of those: those are fixes and the "issues" you've pointed 
+> out are to existing code which this patch only moves.
+
+Firstly, while you may be inclined to ignore the half dozen typos in 
+the changelog and the comments as inconsequential, do your scare-quotes 
+around 'issues' imply that you don't accept the other issues my review 
+identified, such as the messy type conversions and the inconsistent 
+handling of svsm_caa_pa as valid? That would be sad.
+
+Secondly, the fact that half of the patch is moving/refactoring code, 
+while the other half is adding new code is no excuse to ignore review 
+feedback for the code that gets moved/refactored - reviewers obviously 
+need to read and understand the code that gets moved too. This is 
+kernel maintenance 101.
+
+And the new functionality introduced obviously expands on the bad 
+practices & fragile code I outlined.
+
+This is a basic requirement when implementing new functionality (and 
+kdump never really worked on SEV-SNP I suppose, at least since August 
+laste year, so it's basically new functionality), is to have a clean 
+codebase it is extending, especially if the changes are so large:
+
+   1 file changed, 158 insertions(+), 86 deletions(-)
+
+All these problems accumulate and may result in fragility and bugs.
+
+Third, this patch should have been split into two parts to begin with: 
+the first one refactors the code into vmgexit_ap_control() and moves 
+snp_set_vmsa() and snp_cleanup_vmsa() - and a second, smaller, easier 
+to review patch that does the real changes. Right now the actual 
+changes are hidden within the noise of code movement and refactoring.
+
+> I would usually say "Thx" here but not this time.
+
+Oh wow, you really don't take constructive criticism of patches very 
+well. Review feedback isn't a personal attack against you. Please don't 
+shoot the messenger.
+
+Thanks,
+
+	Ingo
 
