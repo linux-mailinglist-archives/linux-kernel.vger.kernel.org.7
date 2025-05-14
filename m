@@ -1,146 +1,148 @@
-Return-Path: <linux-kernel+bounces-648337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-648362-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 757F2AB7595
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 21:16:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49B90AB75DE
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 21:26:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7C10A7A066F
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 19:15:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E469E3AE592
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 19:26:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FB6121C187;
-	Wed, 14 May 2025 19:16:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F82828D8EE;
+	Wed, 14 May 2025 19:26:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Lns3HHti"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=aol.com header.i=@aol.com header.b="Uf8J97o5"
+Received: from sonic304-25.consmr.mail.gq1.yahoo.com (sonic304-25.consmr.mail.gq1.yahoo.com [98.137.68.206])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EFD92AF10
-	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 19:16:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66165191F98
+	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 19:26:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=98.137.68.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747250178; cv=none; b=TzpNoV3v97+Stv3I9bg+GAAzM7NgSwYwtqVtVBnW4z2qvidDxwFAeaZ1Xxu2D2MC4J3CZ7YIhNPwMYonQhAIbPvILp2zKh6kXyiU32s4ii1QurWYk7U1Y3jJiAooozBlXF4tufqbWaC8vz/V9ksrQX9PMKEjD4gNgocqccEJGO4=
+	t=1747250796; cv=none; b=MMVKX5KnTSIannJXygs8B6g7Mu39FNRhuNGAggAtGdIhwbBOy6PiNMKZuxpfWgau7d3vdX7d2iYDxJvoQuHqsekDuGE6dpUKJ0+xQLV+YImZ9HjjKAMSKDD4xmwgIbFgVt0K0+fL2+RMBMhxv4UcOcbZbBsOEIwmsRKCVbf/0TA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747250178; c=relaxed/simple;
-	bh=sWxwoINTiUROD4lu7fI1DNevVivaJ7bCBhxrqTdtQKM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CYNUhLSByCJbbAi2+5AJyApTMQMbMUgijoGaqeQxSn+cuJ3u/e14uKxqIvkZXf+rpP1GCg/NpMxE78ADUWhjm2qK+FInKWSooiqbgX9ez5aa2ya73dheO3Qz415R3KFh6cmnysMRPtah54NhN5ev8I9owZt5KjwyCjCjGsuDX14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Lns3HHti; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54EJ79lZ013144
-	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 19:16:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=minyAMejHL/JFJSA+xnqXanR
-	0wPcS9nRnV+dThvhjwE=; b=Lns3HHtiVUtP/NGibWUj+J6urosA2DXc5wZXE29E
-	WVsS8lufGfsD95s6JIg7kr4Q88QfY0i71mZO3BE2c8SLk8JHX4ey2BYJiIPPhbww
-	t845x1xlxtpI102dL1j05C+927cduWGj/S4HLVV2KfsEQYEia0QCVYr5emZSBT9B
-	BenrRNn0ROazfBZiHajZCUmPm7o7XCOk4eWkwpdllVtDginRxEd0EXVtyrkuWJ0o
-	nhRkmuGlT9iym4iq5rggruV+YEknguQC1A5wQrawfcXMvF4XfX3NnYelfZtLCW7L
-	XooLD23kpBlhYX4HdWtM496ctZGJA2jvjn1L5R2LILLY9g==
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46mbcmkv1x-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 19:16:15 +0000 (GMT)
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6f6899cccbdso3811566d6.3
-        for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 12:16:15 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747250174; x=1747854974;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=minyAMejHL/JFJSA+xnqXanR0wPcS9nRnV+dThvhjwE=;
-        b=o2305fqTgKXzMvjuITaJOukoYyhfxT4LTKTsWNsv0wDjayufgFhUth7Oqks8UoeBW+
-         Lg9mYDy1h/3gJmntknyBgx0ENM/2nT6Qqzyw706i6Q3pEZ9ika5A/7m345glMEmzMnXQ
-         /lg5OdXXGUmFV9+Y5W5QoFh5Yh8RitCvUgB8NGYJAGlDC1pCVoZCWDzHoehL3cy1LRxN
-         kQ58VSuPjmWvXGzmUqNIEPlCngCKF13ki3n6UrIDusYTGPQ4akWfxqhTsaKbw6xNCUxJ
-         ajd2osdqoAq/qZ5Wr37L1b4Z+iOxyoV7G83bSQfyIlVcTE/H3rbyPMwisU8k1Hbo9Mxt
-         i8Kw==
-X-Forwarded-Encrypted: i=1; AJvYcCX1iVk3nO5OSYPBCyWWe0RdFdrwQkuUgSL/JzsFx7LTjC/Ct6t08atMgOh5h+c5GaOXkbqoaBh5/H7Xm4g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGwLuMYAKsXdT0q+HWpmVeWv4GU/DE+BDqwPZkRWdOD7/4um7r
-	o2h2GgyrMHI/XIk+hnbWsE13+7qyHyG+MyakjbWelA81vtX8EauMaODDNSV5VUUvQb3V+TXjYBY
-	+Iw4WQ62DkKF4YkpAHmUYMGXe8xYHXVNf3uwopXvStxATqAxAm+Cnuqc/hrBvo9k=
-X-Gm-Gg: ASbGncvS38+PltIr1pMebfoQ11MRf8dPuAv5C1bTeSSPIJRVUEcu0VK/JffiCT1oZ/U
-	HnFqScmKNd7kW4OahtzP7WdtvlRbJNDzf3I30Upak7ujtcgEmeC60aIyZLWIIqEwyjbKupi73Gt
-	IQ/6Y1u0hv0mdfkeG0ZZyOS2aBTI3lb+LDKyWyvEfzkvLeZhnCAemivq2/vCFeHzPC/piTuZLAa
-	7OjJJgWXGMDsDBVFC6eSHqu/krQ8u6wubShDblY09yKT+g4OR3PvdOWGZIxbLQhP646y5sXD1+J
-	AqYStG+4TRXJqhVNBoU4F+OBsHtB3+rMuTARKdm6eG/kxfmC4fM712AYBisPpn72WJ7OwCN0xl0
-	=
-X-Received: by 2002:a05:6214:5014:b0:6e8:e828:820d with SMTP id 6a1803df08f44-6f896ed0844mr92862866d6.36.1747250172417;
-        Wed, 14 May 2025 12:16:12 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGi4OASQm4gJGGxeccfV1ldsNxSDl4KQOG6jMf/3jYLWvcUhPLkhO6KcplkBwZ0Dv0kasxkIQ==
-X-Received: by 2002:a05:6214:5014:b0:6e8:e828:820d with SMTP id 6a1803df08f44-6f896ed0844mr92857286d6.36.1747250167947;
-        Wed, 14 May 2025 12:16:07 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54fc64beae2sm2343713e87.161.2025.05.14.12.16.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 May 2025 12:16:07 -0700 (PDT)
-Date: Wed, 14 May 2025 22:16:05 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Konrad Dybcio <konradybcio@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, Rob Clark <robdclark@gmail.com>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Akhil P Oommen <quic_akhilpo@quicinc.com>, Sean Paul <sean@poorly.run>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: [PATCH RFT v2 05/15] drm/msm/a6xx: Resolve the meaning of AMSBC
-Message-ID: <bkcbfzkgypyghmugpg2lopxyp2wfsogrclaqxfwrflcceimj3l@lhv3dv6mfrw6>
-References: <20250514-topic-ubwc_central-v2-0-09ecbc0a05ce@oss.qualcomm.com>
- <20250514-topic-ubwc_central-v2-5-09ecbc0a05ce@oss.qualcomm.com>
+	s=arc-20240116; t=1747250796; c=relaxed/simple;
+	bh=VXL/P8CLyy2P1CUPDChST5YDYNuOKCrLNS+EGjG+AFI=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=eEETSauq+0TIb+1z31+OolROrR984ZXN3Lf7ueLSSwOZb9nyF4fpDUEYaXykptO3Zt16M+TV2kSUF/Rm83p+I5oNkNo7UjmmnuZlovimj5cBVx4EoT2VIx/FBqGyFmw5XeU3Kgq7aRyPcvoJsO1VpBv7ceH9BUpnvfreJrYchdY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=aol.com; spf=pass smtp.mailfrom=aol.com; dkim=pass (2048-bit key) header.d=aol.com header.i=@aol.com header.b=Uf8J97o5; arc=none smtp.client-ip=98.137.68.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=aol.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aol.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1747250794; bh=TPlDicIWMRqRIW2310f0dn23Sj0w+ZmFXbh4nVRsg+k=; h=Subject:From:To:Cc:Date:In-Reply-To:References:From:Subject:Reply-To; b=Uf8J97o5jm6VxNjBULCpOlmbzLlaVv39JQ00ez1Wi8X2I9nR4Lnw7phvFdaYnp5ny8TGiKOFBhLe0/BLju4iOwV9F1TMoDo+QZeWJr/khdnqno0rwRt+dZM2UepnVR7cfaouGU3Klpgm9kmPEHrhIG556TyI5Efgnw//EwRo45e55jiezTqfxNWrWxX4ed+VGV+NJuudQhGsZO4qJsTErb8nvcQm5pOI3m53hhJ+vLaAJDyoquIUCXb9Og88HtxltA7B6Mv8iOBust0Mjtno76DOzSBDRGuyC4WPde9AHY7EPO+7HcCpd2BRZJouNUjpiqw3XP8jFalKPQGA9/nEUg==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1747250794; bh=+5ff0kXEa0e0h+vAi3oJl+bHFNYmJloOke+aakJttal=; h=X-Sonic-MF:Subject:From:To:Date:From:Subject; b=GdM7iiPIvoocUsYR0XP4bJP00+JnWeQrhZbqCv3AyV6YUvFamFv5Q/gTFkooe3bSfn5uwkZCipd+aPyq6fIifrmUPoFA9bsAQF6M0PFlbxhc1JAd5chHiJ6owJuCe30isdl8ZNqyWLTaIbJeAzanN/7j7QGj/RnJSDruZHSJ0VNy9AF5QgFZFML5LWbSbJNcqRdtmHkimCZFuArfjLJdJ1iFDM8is6NIL39NEK28Ow9SqD7UIiuzv7MLKWRvxR9wp97wOC/YNoYwn29n952Vzf+fe+OpgIUSgQBPL4HCpqU5/TZTkBqxjUdJ6UYrcAOskSUoNKMmQARa2CRbHhCO7g==
+X-YMail-OSG: 1BJEQWMVM1moD7mbuebnh_iJHAhx1t2hNuGdzhiSuyggkMnLzcLzXTcn2.tXD4g
+ UZWT0gU1B5XB0.AJjkFki8xn89LTJhEii6pLQa5kyXO6XJheS2yOm6ImRZzHAx8ajokfk.3ZhdE5
+ ZIRl_T2Bp3ROszri8L3jHA88xPv31qXwfuMgyVnGdqNcQbLKBTJQ1kKIxFrXx.rvusZmLnH8xfcR
+ NVCyBVXV23VJE.WAyHNKKUHSxLStdC7erfcgNC2lNhCwVmSoLa3lxUvzOmqayLTKYeOfa39wKkDW
+ E6Tf_2dNloX9xBHvTJlrqCD9253E8SQDyHKG8FkJEwe2oQ85mpjIB_RaDJ2e5ShOV5u2wEqeLYiE
+ diRZbftsvjNLGF_DXjR0mQv6WhOvmCidBOfgeigiIbkDRqOGBaBoLQafxy.0xG5k51WU6bzHt3Xs
+ .vg0iP9fRhs1iPXxcUCYzuQ7DZo5eNBLhxIDxm5QedjbsBxGuBNJJ6WaN4pnpQ1XRmk1CuSzR3N9
+ _IbUOM4dw5fTo40IQFbRuATlBTT_04Kx4xy2_f54qRhuZ_3eJ1CciNTuTQ39GABqdqCGmnSVDsfC
+ _r.ps7Junl1CyKqNxp1nqoaLtLMQqFyeUVEJZrIlT.WR1SOKgwALEmRADd9V_5a0TEicLjageeHj
+ ifPd2QM3CNWhTvj57F9uuxUe04yFvoCIQX2KxS8MkQZLqc5wc8HgwkdhZjMvdd5xCgoEuKRt_7Rx
+ TKt5gWHBkGf3JU7YXbZEsPNUNZBgxyVz2Pal2uDiEtLmlp8B0GdT55pizIXiP57owgFcOWuYYuqG
+ KcFb0nujetDmJPq.N5U8vm4FEM4sKxI5AvzpcLhQf4PPbHRVc5h.xUgqF1H7RoQ0U0e0NaejjTXW
+ 8pW_Ly73G0JoIIL0ELW0AKeK9w0iAFptp8_OeO6I05jCk6VmQCacm6mdNVC.fo.oRIw4ujI7ph0D
+ .TwqOGNevIaA9qZbbDbeuMKlEADyQbHu5bXrOITMaF2TZwWR2XZjX6H1rmKoNgIYGc8JCUJUDdpb
+ S_66hxpXfCxECfYp1CMJn5S67YasHi2Bsoje6wHJ6acnJ8J9i83VG_env6gEdqqcheSWKKMzMk1p
+ Rfin.ZuW.o1mvcOuDVPvAkaN_lBgW.mK9fBLp76ZvAQsKwPjTtXPlecnpYX7qrvjecl.7lt_VJch
+ F.zssnTjFavfnG5DhOjI7WRoGvmP15Ybau_1wdmoy5rZy566_dgojRlujbQN_ohq96Ucf4UlUFSq
+ JIHTtZxsyCm1QRtduV_3rsSxu9msBrSqVnV_RUFJd0BV_vBb9Cd.E.PCc8vLfkS.WbVEMCFkiFRl
+ K3rh7mqIvimgu.DMw5M7EEh65hu5McrsioxzuhWx2KLT3IxTfDhvOwOz0u6pHzfifDg1BgpmqnRe
+ tKFqGONqMii5GJ.4.Y7siNu27tUFdZ6MosrvmKJN5F0p09F1DSUo1smZrUgHtKMSHZhxkfU0EwXB
+ S37OgSaaLrWqSOiwK_0kIc79i38ChRGEGn9Wh.yBLM9ySONFjLogcjf9LpLmANF.3svZjJLNsQg1
+ hmCq40EchFNC4OaLDs2EkqxsKAbI0Isgknhs4J_rb2jUnnpQkO0e3.c.Cxlvu.p_a7vV7cYzXQH3
+ U7a9sRYOcPU92ZHFrBnhAkkk7vJyFG6sWPbVbzpdZMG.XJHu45apB3Mvhbg_JDl79XFFWZ9CtEbW
+ u5rEzrkl8apb2rSj7EbuAZQeEQJSh2msOLRCyGserdc9REa64Ow6SxjLUEu8_9j2YjsJL38UDwzi
+ HkDbmBgSLf75gUhc5Oo0R32Jektrcwmj0d145m4.FZRiPZF7kl15U_mh5Hjpt0FSSfg5R.HQQ_3d
+ 7TryI3i2grnucxHnEQjDqwzYoh8Fz6h_nbUa_n3lnrLfA5mf.MC2Qtw4_EvhZX_HaM3wDfk17lqM
+ JcGohAzjat_2PAi33KMbTVBo_UeLEttaRreCeN7J_NuyC.1Vqkt7ZUcSPzYPs0QCqbLQHKLQC9kR
+ h5VaKwCOm70T8p_n5.x7tlww5BnKRTq8xCzAEhzdHzJD01QvD.T9z726sbQJjSDkYe_G7xTxL6Oc
+ Q9JKJK4RUZSQ_05f7QXoy0MEAJ6xjlS0zVHzsUE1qh3lajWGmCh17CQMzhIJJ8TutVreYbssWoiw
+ Ca7XWoXRsV3Cn9cSzlyTlh3cS
+X-Sonic-MF: <rubenru09@aol.com>
+X-Sonic-ID: fae6de29-71b6-4027-8b57-58e2edef86c8
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic304.consmr.mail.gq1.yahoo.com with HTTP; Wed, 14 May 2025 19:26:34 +0000
+Received: by hermes--production-ir2-858bd4ff7b-bdxql (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 4b2911a8d5146feae00c6603fcc64af0;
+          Wed, 14 May 2025 19:16:22 +0000 (UTC)
+Message-ID: <098b949b8ddc5b706adb927d04460943c245bef8.camel@aol.com>
+Subject: Re: [PATCH] x86/cpu/intel: replace deprecated strcpy with strscpy
+From: Ruben Wauters <rubenru09@aol.com>
+To: "H. Peter Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>, 
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
+ <dave.hansen@linux.intel.com>, 	x86@kernel.org
+Cc: linux-kernel@vger.kernel.org
+Date: Wed, 14 May 2025 20:16:20 +0100
+In-Reply-To: <758195078eee66ce97c05091004bca9d5c3b6cd9.camel@aol.com>
+References: <20250507185459.8769-1-rubenru09.ref@aol.com>
+		 <20250507185459.8769-1-rubenru09@aol.com>
+		 <3AFD7702-7D6F-479C-950A-CA439E01838C@zytor.com>
+	 <758195078eee66ce97c05091004bca9d5c3b6cd9.camel@aol.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.0-1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250514-topic-ubwc_central-v2-5-09ecbc0a05ce@oss.qualcomm.com>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTE0MDE3NSBTYWx0ZWRfX02Fnbc9iLPLK
- 3whC2Fl8gvP8TuRDudTFvDBzg5CRZkMOYOMaylLtCGaPo2ze68jt4L9fMdlj7bKdJLu+yeI9MnQ
- dlqgbiyqqeyY3j9M8ILYiWa28sK4xea5SSL8J73q4ZormGGysFTKsGVZywJIXKX+U/BlgeouOoN
- ce9O2qTzvfgxUbTwmnDu7NfXqyVr/i9qrRrV5xC/VWZ4s58cZ10Wcrt//k51P09/iHpWhN7v0RL
- qj6iqZxmRkSAHzU1ngHeVwjfpUh4x9aHPIOQw1pGFdOhHU82TrayRgKw5FchjcqIyOCM25+qzWT
- Mk0TjMidi3aoLv3d1eyfWgU4QiTBvUrx4ZPKAYBzbD2Zeuo/4NhCHPYZM2Ga8LPh+bzW6EuOUs7
- pkZBKf0x1chQIhMRdwvBRwNsdx6Q7+yJvrTYtipyKJGPdHDcqC8ZNv85IIWjS7ypzj8bbZxp
-X-Authority-Analysis: v=2.4 cv=G5scE8k5 c=1 sm=1 tr=0 ts=6824ebff cx=c_pps
- a=oc9J++0uMp73DTRD5QyR2A==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=dt9VzEwgFbYA:10 a=EUspDBNiAAAA:8 a=UiqBTq1rjkrdqcEHUKQA:9 a=CjuIK1q_8ugA:10
- a=iYH6xdkBrDN1Jqds4HTS:22
-X-Proofpoint-GUID: POiBZaivwFCiX0y-vS7NaiYbTI8i5wpt
-X-Proofpoint-ORIG-GUID: POiBZaivwFCiX0y-vS7NaiYbTI8i5wpt
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-14_04,2025-05-14_03,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 mlxlogscore=769 clxscore=1015 phishscore=0 bulkscore=0
- suspectscore=0 spamscore=0 impostorscore=0 lowpriorityscore=0 mlxscore=0
- malwarescore=0 adultscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505070000
- definitions=main-2505140175
+X-Mailer: WebService/1.1.23840 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.aol
 
-On Wed, May 14, 2025 at 05:10:25PM +0200, Konrad Dybcio wrote:
-> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> 
-> The bit must be set to 1 if the UBWC encoder version is >= 3.0, drop it
-> as a separate field.
-> 
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> ---
->  drivers/gpu/drm/msm/adreno/a6xx_gpu.c | 12 +++---------
->  1 file changed, 3 insertions(+), 9 deletions(-)
-> 
+On Wed, 2025-05-07 at 21:30 +0100, Ruben Wauters wrote:
+> On Wed, 2025-05-07 at 13:14 -0700, H. Peter Anvin wrote:
+> > On May 7, 2025 11:51:36 AM PDT, Ruben Wauters <rubenru09@aol.com>
+> > wrote:
+> > > strcpy is deprecated due to lack of bounds checking.
+> > > This patch replaces strcpy with strscpy, the recommended
+> > > alternative for
+> > > null terminated strings, to follow best practices.
+> > >=20
+> > > Signed-off-by: Ruben Wauters <rubenru09@aol.com>
+> > > ---
+> > > arch/x86/kernel/cpu/intel.c | 2 +-
+> > > 1 file changed, 1 insertion(+), 1 deletion(-)
+> > >=20
+> > > diff --git a/arch/x86/kernel/cpu/intel.c
+> > > b/arch/x86/kernel/cpu/intel.c
+> > > index 584dd55bf739..b49bba30434d 100644
+> > > --- a/arch/x86/kernel/cpu/intel.c
+> > > +++ b/arch/x86/kernel/cpu/intel.c
+> > > @@ -607,7 +607,7 @@ static void init_intel(struct cpuinfo_x86 *c)
+> > > 		}
+> > >=20
+> > > 		if (p)
+> > > -			strcpy(c->x86_model_id, p);
+> > > +			strscpy(c->x86_model_id, p);
+> > > 	}
+> > > #endif
+> > >=20
+> >=20
+> > strscpy() needs a buffer length; this patch wouldn't even compile!
+>=20
+> Hi, this is incorrect, strscpy is defined in string.h as
+> #define strscpy(dst, src, ...)	\
+> 	CONCATENATE(__strscpy, COUNT_ARGS(__VA_ARGS__))(dst, src,
+> __VA_ARGS__)
+>=20
+> the third parameter is optional, and it works perfectly fine with two
+> parameters. I have compiled it, and there are no errors.
+>=20
+> > Not to mention that the string in question is generated in such a
+> > way
+> > that cannot be unterminated.
+>=20
+> I'm not entirely sure what you mean here? The assignments above are
+> null terminated strings, which the two parameter version works fine
+> with.
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Hello
 
--- 
-With best wishes
-Dmitry
+Just wanted to check that everything was ok with this patch, and that
+any concerns were addressed or explained. Please do let me know if
+there is anything I need to do or change to get this patch applied.
+
+Ruben Wauters
 
