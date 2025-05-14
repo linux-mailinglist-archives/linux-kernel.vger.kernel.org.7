@@ -1,166 +1,104 @@
-Return-Path: <linux-kernel+bounces-648030-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-648033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AA74AB70B3
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 18:05:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11D0EAB70B7
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 18:05:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA28116600D
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 16:04:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44D693A3937
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 16:05:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5492F1E4110;
-	Wed, 14 May 2025 16:04:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AFD72741B7;
+	Wed, 14 May 2025 16:05:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gdaCLCcs"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yy0QP7v7"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADDD619E806;
-	Wed, 14 May 2025 16:04:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BABFE22A1E5;
+	Wed, 14 May 2025 16:05:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747238656; cv=none; b=ENtXfx74roJwpS3ZDL5nSgxOnEmIZtAw+RmeaPCyjFhvlXki+tGH53jhiuiNzooBIUjmYuScOcw4EwbHmHnBDHd7jelzJ04GX4nva+G0t1sHvUDeDZFjFOGSkPsxLzdePoYIOX9lTRcKWL82VZ8UgkIwUvw8eYg7PIB0civoOmU=
+	t=1747238717; cv=none; b=YDFQwnEI2UQDq8s+kbi4YEn3mNJgaYQiSbnQUQPlCMrl9PNnbTWp/PSxEoVucvg6EN1nFyywsb/HTGO0/G3UhRjywJo2lbjsj6G1h3ZkDCGkrKsBRxdUENJqpLm/1dAEbMU80morVaa00J7Lu125NAUXPBosxosVNPNO/Dk+KOs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747238656; c=relaxed/simple;
-	bh=UoILDnodfwOQfF4Slytdr6msXd/TxOnELBTp+mEsNYE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IRcTkVExnTGEzr7bQTt+GP+EifM7cnIKaa8AO10EKLItFFRRYW6HWNI7T2yvnzuSxnZrqyxfwS39NBo+KKB0ukHoy8aPd28Vc926UeFGk7MyeR2HaZQB7GmEEW+zRCDUgUR8tZPgpCiJ/z2F0SU6XZhOX5ITQ7tlQ+eMhypDLhQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gdaCLCcs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1646CC4CEE3;
-	Wed, 14 May 2025 16:04:14 +0000 (UTC)
+	s=arc-20240116; t=1747238717; c=relaxed/simple;
+	bh=K5SbCUR48viLumkMFB4d7bJeXuIy++1ZKMdNBUHbUFE=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=H8AG09Mx8yFTrs54BX7o+olG4dKdMnW6IeyFn2IuJhNZdSA4DRoHNCO2y2o4CUqtwBUzAa7XUQVP1MWeBP667ZvCw6mlR+15t8xqL2dL24pIcrPH+H9FRodjEdr5yMGYw47mgQIEKGbNOG6ShztOdpznbAawNwDh6Nfp5VmaPfg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Yy0QP7v7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA930C4CEE3;
+	Wed, 14 May 2025 16:05:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747238654;
-	bh=UoILDnodfwOQfF4Slytdr6msXd/TxOnELBTp+mEsNYE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gdaCLCcs11Cu1hg+8W9I5k07vrZa8caQxBD5XI9vJn2ey58p3Zk6bFob8ZpEDpVZ8
-	 DqK9HPNuGQDy7oAF3aq8worLfxkrBFCiXvURJxfvB3w/L/Pl7sDV1L6kl0vPDQ213J
-	 Il0LlumxlZET2D/EM4l10/XYU8HF696FHyIGpDcnQVnMv6zTTBzSHIMbSliB5fL3fI
-	 KTlQ6iPserXdf56v7DdejD5ZeCWKl2atBtK775dPtZ9Nt5CuXRZ01dKzoRW3i8DAAX
-	 zYYyrYjOgYbuN0Iut4oPqxvZzwlHw2WlX4l65hEns1SlOgiltgEiuVYCUqVVUPvaGu
-	 dmKbwUvklAWzw==
-Date: Wed, 14 May 2025 09:04:13 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Hans Holmberg <Hans.Holmberg@wdc.com>
-Cc: "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-	Carlos Maiolino <cem@kernel.org>,
-	Dave Chinner <david@fromorbit.com>, hch <hch@lst.de>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] xfs: free the item in xfs_mru_cache_insert on failure
-Message-ID: <20250514160413.GL2701446@frogsfrogsfrogs>
-References: <20250514104937.15380-1-hans.holmberg@wdc.com>
- <20250514104937.15380-2-hans.holmberg@wdc.com>
+	s=k20201202; t=1747238717;
+	bh=K5SbCUR48viLumkMFB4d7bJeXuIy++1ZKMdNBUHbUFE=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=Yy0QP7v7ghmckWndnzmIs0qPPRDE1FBSrLltHlpSBFEWqaaeCfjoibV4vD1yKPFv5
+	 Sq7vWsus/M7SF/4SalFwYhIKrT7L832eBRF08Iasql+db0I2eU1tZMMYmH2OqFhPI/
+	 4uUFfSr+gJhXaJCy0hsdX9dbZLqBItGDDYAci5mPkG12Qq7l+zKaMZ1vQaeVfX+tWX
+	 +4/8txqrO/DUbM7qj+D5TXVzk1ASpDUzEVLfyRtNTYcDao38t1+6psPVHMc9TD56au
+	 vzoQN0Slw0VO8shqVXmiX6qHuWVrQ4yjk41k3RfgPMK0hJIaJytn/SXHW4aTHX93do
+	 eucpC0DElWW6g==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250514104937.15380-2-hans.holmberg@wdc.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 14 May 2025 18:05:11 +0200
+Message-Id: <D9W0FJ6MKPTE.1NI5HK0TJRHCM@kernel.org>
+Cc: "Daniel Almeida" <daniel.almeida@collabora.com>, "Miguel Ojeda"
+ <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
+ <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Benno Lossin"
+ <benno.lossin@proton.me>, "Andreas Hindborg" <a.hindborg@kernel.org>,
+ "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
+ "Danilo Krummrich" <dakr@kernel.org>, "Boris Brezillon"
+ <boris.brezillon@collabora.com>, "Sebastian Reichel"
+ <sebastian.reichel@collabora.com>, "Liam Girdwood" <lgirdwood@gmail.com>,
+ <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>
+Subject: Re: [PATCH v3] rust: regulator: add a bare minimum regulator
+ abstraction
+From: "Benno Lossin" <lossin@kernel.org>
+To: "Mark Brown" <broonie@kernel.org>
+X-Mailer: aerc 0.20.1
+References: <20250513-topics-tyr-regulator-v3-1-4cc2704dfec6@collabora.com>
+ <D9VATLUHDGU8.53I80TGVRV0J@kernel.org>
+ <B288AFB1-BA0A-4383-9823-EAC9E5DCA59F@collabora.com>
+ <D9VXPNT4HNXP.1PKET0Q1H7O9Y@kernel.org>
+ <52CFFCA2-F253-49F1-9EA5-2865BD094B25@collabora.com>
+ <D9VZV8APBYWU.2SWXJLHIQ18ZB@kernel.org>
+ <aCS71sbQKn7zeosR@finisterre.sirena.org.uk>
+In-Reply-To: <aCS71sbQKn7zeosR@finisterre.sirena.org.uk>
 
-On Wed, May 14, 2025 at 10:50:37AM +0000, Hans Holmberg wrote:
-> From: Christoph Hellwig <hch@lst.de>
-> 
-> Call the provided free_func when xfs_mru_cache_insert as that's what
-> the callers need to do anyway.
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> Signed-off-by: Hans Holmberg <hans.holmberg@wdc.com>
+On Wed May 14, 2025 at 5:50 PM CEST, Mark Brown wrote:
+> On Wed, May 14, 2025 at 05:38:40PM +0200, Benno Lossin wrote:
+>> On Wed May 14, 2025 at 4:40 PM CEST, Daniel Almeida wrote:
+>> > By the way, IIUC, regulator_disable() does not disable a regulator nec=
+essarily.
+>> > It just tells the system that you don't care about it being enabled an=
+ymore. It can
+>> > still remain on if there are other users.
+>
+>> Hmm, so a `struct regulator` might already be enabled and calling
+>> `regulator_enable` doesn't do anything?
+>
+> It takes a reference to the regulator.  This may or may not result in a
+> change in an underlying physical regulator.
 
-Looks ok,
-Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
+Gotcha. So calling `regulator_enable` twice on the same regulator is
+fine?
 
---D
+If that is the case -- and after re-reading the functions exposed on
+both types `EnabledRegulator` and `Regulator` -- I am confused why we
+even need two different type states? Both expose the same functions
+(except `enable` and `disable`) and I don't otherwise see the purpose of
+having two types.
 
-> ---
->  fs/xfs/xfs_filestream.c | 15 ++++-----------
->  fs/xfs/xfs_mru_cache.c  | 15 ++++++++++++---
->  2 files changed, 16 insertions(+), 14 deletions(-)
-> 
-> diff --git a/fs/xfs/xfs_filestream.c b/fs/xfs/xfs_filestream.c
-> index a961aa420c48..044918fbae06 100644
-> --- a/fs/xfs/xfs_filestream.c
-> +++ b/fs/xfs/xfs_filestream.c
-> @@ -304,11 +304,9 @@ xfs_filestream_create_association(
->  	 * for us, so all we need to do here is take another active reference to
->  	 * the perag for the cached association.
->  	 *
-> -	 * If we fail to store the association, we need to drop the fstrms
-> -	 * counter as well as drop the perag reference we take here for the
-> -	 * item. We do not need to return an error for this failure - as long as
-> -	 * we return a referenced AG, the allocation can still go ahead just
-> -	 * fine.
-> +	 * If we fail to store the association, we do not need to return an
-> +	 * error for this failure - as long as we return a referenced AG, the
-> +	 * allocation can still go ahead just fine.
->  	 */
->  	item = kmalloc(sizeof(*item), GFP_KERNEL | __GFP_RETRY_MAYFAIL);
->  	if (!item)
-> @@ -316,14 +314,9 @@ xfs_filestream_create_association(
->  
->  	atomic_inc(&pag_group(args->pag)->xg_active_ref);
->  	item->pag = args->pag;
-> -	error = xfs_mru_cache_insert(mp->m_filestream, pino, &item->mru);
-> -	if (error)
-> -		goto out_free_item;
-> +	xfs_mru_cache_insert(mp->m_filestream, pino, &item->mru);
->  	return 0;
->  
-> -out_free_item:
-> -	xfs_perag_rele(item->pag);
-> -	kfree(item);
->  out_put_fstrms:
->  	atomic_dec(&args->pag->pagf_fstrms);
->  	return 0;
-> diff --git a/fs/xfs/xfs_mru_cache.c b/fs/xfs/xfs_mru_cache.c
-> index d0f5b403bdbe..08443ceec329 100644
-> --- a/fs/xfs/xfs_mru_cache.c
-> +++ b/fs/xfs/xfs_mru_cache.c
-> @@ -414,6 +414,8 @@ xfs_mru_cache_destroy(
->   * To insert an element, call xfs_mru_cache_insert() with the data store, the
->   * element's key and the client data pointer.  This function returns 0 on
->   * success or ENOMEM if memory for the data element couldn't be allocated.
-> + *
-> + * The passed in elem is freed through the per-cache free_func on failure.
->   */
->  int
->  xfs_mru_cache_insert(
-> @@ -421,14 +423,15 @@ xfs_mru_cache_insert(
->  	unsigned long		key,
->  	struct xfs_mru_cache_elem *elem)
->  {
-> -	int			error;
-> +	int			error = -EINVAL;
->  
->  	ASSERT(mru && mru->lists);
->  	if (!mru || !mru->lists)
-> -		return -EINVAL;
-> +		goto out_free;
->  
-> +	error = -ENOMEM;
->  	if (radix_tree_preload(GFP_KERNEL))
-> -		return -ENOMEM;
-> +		goto out_free;
->  
->  	INIT_LIST_HEAD(&elem->list_node);
->  	elem->key = key;
-> @@ -440,6 +443,12 @@ xfs_mru_cache_insert(
->  		_xfs_mru_cache_list_insert(mru, elem);
->  	spin_unlock(&mru->lock);
->  
-> +	if (error)
-> +		goto out_free;
-> +	return 0;
-> +
-> +out_free:
-> +	mru->free_func(mru->data, elem);
->  	return error;
->  }
->  
-> -- 
-> 2.34.1
-> 
+---
+Cheers,
+Benno
 
