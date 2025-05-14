@@ -1,152 +1,92 @@
-Return-Path: <linux-kernel+bounces-646835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-646833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77056AB612E
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 05:26:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EFC7AB6126
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 05:23:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 389901B44762
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 03:26:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 550043BAFF0
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 03:22:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 505C41EFF80;
-	Wed, 14 May 2025 03:26:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iDAjfITm"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E75B81A5B95;
+	Wed, 14 May 2025 03:22:58 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E728A2260C;
-	Wed, 14 May 2025 03:26:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E6AF2260C
+	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 03:22:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747193169; cv=none; b=Wrk1QZ7UkyK95CZ6OVGpS8ud2pVv+oMTSi/H9vPXtsdxEOqfaDQAo9pOsVvGQdOtgSxmynZYHQ4VW5polkTBca7Rjeffgo0dqpalY7A/YNpFxsThhl7BPAnu68fQik/29XUOybOjyYr+a3ra7qo6tl6F5vcnd0NU/EkJ1OOjjnU=
+	t=1747192978; cv=none; b=NIfpTy0EqFZhMC2GSMC2qjFN/91EksURLjm2ADbvEjNqh+Vj7TYoF1FCUCN1tI2j+QeGJxkZRtg7A3SYIpWQoUxq0fhuU/S8NsxHLgX1POdTVvrLCis43SKeOwSdni+wsryajclaaBjZ9NbXrCmS/ixMrkhs9x//stUveOMartk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747193169; c=relaxed/simple;
-	bh=Vl2JsS0XoEFiPBo2fr8NpOs+oJP1wxKRrrfjW+0W2cw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HgPAwgEf+5nllTVBdIma9ehGbt2ii4jksQK4z33u9DF8CyYaRn79X+kJDmtU9eIqxq/6Ylw/8SFI/vZg9e6L6IzBd3xQFbCja/YHseeigSiuCVLSq+hF2oEAn0Y9nUBuEE1mcEWwRhUy1J6/48RoJBHJaXGkSc5L57Gqfjhk9zQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iDAjfITm; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1747193168; x=1778729168;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Vl2JsS0XoEFiPBo2fr8NpOs+oJP1wxKRrrfjW+0W2cw=;
-  b=iDAjfITmbHsjerNVQjnIEb/F+0E0U0P8kvZkCez91M8aRa0evoQq3UNB
-   Q6pwqaob9QZVoaUfYBRpEJcCuxA6m+tnQS05wTrUaBwOQ92RN7OeaYnUW
-   TA3Drmnjesf6qZV9Rutm+H5gF43XF4TNV6qTl5wJloRxGwEqW8FGkMaPX
-   hlFhXGOBP9ocWbshZTHxDV4FHbygZEdRg6b9Rb5oGYThopzIP84Gb3+ot
-   nllM9/P9dD0xa8HU63RIfhdoKppvmwrIRe58iBIDjm9aRYy92n47t/RIM
-   mliqlLx596A1nNaSHsTGurjVzHSoanhCZdO3P8Fje4h7SHa1vEHKYmgqI
-   A==;
-X-CSE-ConnectionGUID: 8qYWF0CgQ7G5w5LYKjGj2w==
-X-CSE-MsgGUID: zrIJFVyCTcm/1jkAwhfExQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11432"; a="60471341"
-X-IronPort-AV: E=Sophos;i="6.15,287,1739865600"; 
-   d="scan'208";a="60471341"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 May 2025 20:26:07 -0700
-X-CSE-ConnectionGUID: fvdv4vi/TEOML9s+DB98Cg==
-X-CSE-MsgGUID: IVD+dxO3Q+uiMjPNb8pcYw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,287,1739865600"; 
-   d="scan'208";a="137948936"
-Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
-  by fmviesa007.fm.intel.com with ESMTP; 13 May 2025 20:26:01 -0700
-Date: Wed, 14 May 2025 11:20:27 +0800
-From: Xu Yilun <yilun.xu@linux.intel.com>
-To: Alexey Kardashevskiy <aik@amd.com>
-Cc: Jason Gunthorpe <jgg@nvidia.com>, kvm@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
-	linaro-mm-sig@lists.linaro.org, sumit.semwal@linaro.org,
-	christian.koenig@amd.com, pbonzini@redhat.com, seanjc@google.com,
-	alex.williamson@redhat.com, vivek.kasireddy@intel.com,
-	dan.j.williams@intel.com, yilun.xu@intel.com,
-	linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org,
-	lukas@wunner.de, yan.y.zhao@intel.com, daniel.vetter@ffwll.ch,
-	leon@kernel.org, baolu.lu@linux.intel.com, zhenzhong.duan@intel.com,
-	tao1.su@intel.com
-Subject: Re: [RFC PATCH 00/12] Private MMIO support for private assigned dev
-Message-ID: <aCQL+/HDYcxfWM4F@yilunxu-OptiPlex-7050>
-References: <20250107142719.179636-1-yilun.xu@linux.intel.com>
- <371ab632-d167-4720-8f0d-57be1e3fee84@amd.com>
- <4b6dc759-86fd-47a7-a206-66b25a0ccc6d@amd.com>
- <c10bf9c2-e073-479d-ad1c-6796c592d333@amd.com>
- <aB3jLmlUKKziwdeG@yilunxu-OptiPlex-7050>
- <aB4tQHmHzHooDeTE@yilunxu-OptiPlex-7050>
- <20250509184318.GD5657@nvidia.com>
- <aB7Ma84WXATiu5O1@yilunxu-OptiPlex-7050>
- <2c4713b0-3d6c-4705-841b-1cb58cd9a0f5@amd.com>
+	s=arc-20240116; t=1747192978; c=relaxed/simple;
+	bh=JHjw40U/jLRTYa/Yaf6ozNMpJStR/ybWKAoPyGJvYU4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HwUMsJZh587UkaI0U9wSDYF7FwaYga1TNYHb7bhZQiSCc16oI8q1FEZE0AcWvqtJ7DdsBrYSjkwccWUDqElbzbsf9K/WwVHL2RsVnwmSwNfab/9VE4L160F8FkuEEcR8ltYNF0Ft3lgbFiOGN4V7lNVAwjutmdyw7GepV+k1MqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost (unknown [124.16.138.129])
+	by APP-05 (Coremail) with SMTP id zQCowAAHRg6EDCRoqHoFFQ--.22191S2;
+	Wed, 14 May 2025 11:22:44 +0800 (CST)
+From: Chen Ni <nichen@iscas.ac.cn>
+To: phil@philpotter.co.uk
+Cc: linux-kernel@vger.kernel.org,
+	Chen Ni <nichen@iscas.ac.cn>
+Subject: [PATCH] cdrom: Remove unnecessary NULL check before unregister_sysctl_table()
+Date: Wed, 14 May 2025 11:21:39 +0800
+Message-Id: <20250514032139.2317578-1-nichen@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2c4713b0-3d6c-4705-841b-1cb58cd9a0f5@amd.com>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:zQCowAAHRg6EDCRoqHoFFQ--.22191S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrtw18ZF4DKw4xCryrGw47twb_yoWxtrb_Ka
+	40qr4xJryFyr1DWryjyw15uFWjk3Z09rna9F1jgrn8Ja4DZr48Wr4UZr1UXwsrWay8CFnx
+	AryUXrya9rWj9jkaLaAFLSUrUUUU1b8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUb-xFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
+	Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AKxVW8Jr
+	0_Cr1UM2kKe7AKxVWUXVWUAwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAK
+	zVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUXVWUAwAv7VC2z280aVAFwI0_Gr0_Cr1lOx
+	8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIF
+	xwCY1x0262kKe7AKxVWUAVWUtwCY02Avz4vE14v_Gr4l42xK82IYc2Ij64vIr41l4I8I3I
+	0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWU
+	GVWUWwC2zVAF1VAY17CE14v26r1Y6r17MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI
+	0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0
+	rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r
+	4UJbIYCTnIWIevJa73UjIFyTuYvjTREGQ6UUUUU
+X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
 
-On Mon, May 12, 2025 at 07:30:21PM +1000, Alexey Kardashevskiy wrote:
-> 
-> 
-> On 10/5/25 13:47, Xu Yilun wrote:
-> > On Fri, May 09, 2025 at 03:43:18PM -0300, Jason Gunthorpe wrote:
-> > > On Sat, May 10, 2025 at 12:28:48AM +0800, Xu Yilun wrote:
-> > > > On Fri, May 09, 2025 at 07:12:46PM +0800, Xu Yilun wrote:
-> > > > > On Fri, May 09, 2025 at 01:04:58PM +1000, Alexey Kardashevskiy wrote:
-> > > > > > Ping?
-> > > > > 
-> > > > > Sorry for late reply from vacation.
-> > > > > 
-> > > > > > Also, since there is pushback on 01/12 "dma-buf: Introduce dma_buf_get_pfn_unlocked() kAPI", what is the plan now? Thanks,
-> > > > > 
-> > > > > As disscussed in the thread, this kAPI is not well considered but IIUC
-> > > > > the concept of "importer mapping" is still valid. We need more
-> > > > > investigation about all the needs - P2P, CC memory, private bus
-> > > > > channel, and work out a formal API.
-> > > > > 
-> > > > > However in last few months I'm focusing on high level TIO flow - TSM
-> > > > > framework, IOMMUFD based bind/unbind, so no much progress here and is
-> > > > > still using this temporary kAPI. But as long as "importer mapping" is
-> > > > > alive, the dmabuf fd for KVM is still valid and we could enable TIO
-> > > > > based on that.
-> > > > 
-> > > > Oh I forgot to mention I moved the dmabuf creation from VFIO to IOMMUFD
-> > > > recently, the IOCTL is against iommufd_device.
-> > > 
-> > > I'm surprised by this.. iommufd shouldn't be doing PCI stuff, it is
-> > > just about managing the translation control of the device.
-> > 
-> > I have a little difficulty to understand. Is TSM bind PCI stuff? To me
-> > it is. Host sends PCI TDISP messages via PCI DOE to put the device in
-> > TDISP LOCKED state, so that device behaves differently from before. Then
-> > why put it in IOMMUFD?
-> 
-> 
-> "TSM bind" sets up the CPU side of it, it binds a VM to a piece of IOMMU on the host CPU.
+unregister_sysctl_table() checks for NULL pointers internally.
+Remove unneeded NULL check here.
 
-I didn't fully get your idea, are you defending for "TSM bind is NOT PCI
-stuff"? To me it is not true.
+Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+---
+ drivers/cdrom/cdrom.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-TSM bind also sets up the device side. From your patch, it calls
-tsm_tdi_bind(), which in turn calls spdm_forward(), I assume it is doing
-TDISP LOCK. And TDISP LOCK changes device a lot.
+diff --git a/drivers/cdrom/cdrom.c b/drivers/cdrom/cdrom.c
+index b163e043c687..21a10552da61 100644
+--- a/drivers/cdrom/cdrom.c
++++ b/drivers/cdrom/cdrom.c
+@@ -3677,8 +3677,7 @@ static void cdrom_sysctl_register(void)
+ 
+ static void cdrom_sysctl_unregister(void)
+ {
+-	if (cdrom_sysctl_header)
+-		unregister_sysctl_table(cdrom_sysctl_header);
++	unregister_sysctl_table(cdrom_sysctl_header);
+ }
+ 
+ #else /* CONFIG_SYSCTL */
+-- 
+2.25.1
 
-> The device does not know about the VM, it just enables/disables encryption by a request from the CPU (those start/stop interface commands).
-> And IOMMUFD won't be doing DOE, the platform driver (such as AMD CCP) will. Nothing to do for VFIO here.
-
-IOMMUFD calls tsm_tdi_bind(), which is an interface doing PCI stuff.
-
-Thanks,
-Yilun
-
-> 
-> We probably should notify VFIO about the state transition but I do not know VFIO would want to do in response.
-> 
-> 
 
