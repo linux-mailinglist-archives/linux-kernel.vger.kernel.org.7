@@ -1,71 +1,79 @@
-Return-Path: <linux-kernel+bounces-647315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-647302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A37FAB66F0
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 11:06:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26331AB66BE
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 11:03:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 196E94A77B2
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 09:06:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4DD723A59DD
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 09:03:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07F2422CBCC;
-	Wed, 14 May 2025 09:04:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="O77Q0Uxg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB6C121C188;
+	Wed, 14 May 2025 09:03:44 +0000 (UTC)
+Received: from smtp134-83.sina.com.cn (smtp134-83.sina.com.cn [180.149.134.83])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AC5022B8A2
-	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 09:04:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D0B61F03C0
+	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 09:03:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.149.134.83
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747213480; cv=none; b=VrYPHjWmVeSx8N63udLMDI1uj3sAKOyhcdPkEwNRzPmBwmsDSE97fYyW2pelikjJUBcnlTitN3UWnAJfXoVPHnZThTxTLYxtRzPhNTyek2oDMSMABoOvB37zCjGFEhLcSYxuX9gXKMfmvhEolotCAyIiDal2Gmr694KL8ixoJd0=
+	t=1747213424; cv=none; b=RGGE51091AjRO4h4aZbRUESC1uaHRj2stgICY4usNfmsy6S1wsi6+iKZFjeyWNkcdiYV9VyGjXMW1eTnI9U7kNM5hn0TOnlqO3nTo2YNniTMMB4tbeQS5dgfNzh7vM+CXtOlBX9chzdrN2T2XWGpqqwghtZW/alR9dgnMle9NQA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747213480; c=relaxed/simple;
-	bh=bPkh4v05q3iDJCa8E4B6EhDSDgs3Hv+NFYG5HDhkbHQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZzOfY17k3ah99PmB+DNr6YoQOAdQn4M14XaIEL70zSaRU3UxsLeT0Dqz19upw3CmZ3C+PajCqLtV1o9krg5qesimM5dWKeYrSarIiNlkd63myohTdNp8Kt76W1lQ1Ry5e9iS80fI3HPC00k4x3HftFw/Doq9m+vtACkgyVaRVes=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=O77Q0Uxg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15DF4C19423;
-	Wed, 14 May 2025 09:04:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1747213479;
-	bh=bPkh4v05q3iDJCa8E4B6EhDSDgs3Hv+NFYG5HDhkbHQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=O77Q0UxgVQqoYf2JdmWH2PenMnB/3co36rJjNog+Lc362cvWiFWNzBC9z3WGNskOn
-	 15gR8ilVo4ANPWQvpWGAmEHvQrYF8oOBUZvuFqH90pM3i6zvpPl+H9nMgf6/9XJr3J
-	 PicBjNC9sW7P++6tLHE8BA1qpUNrprXM4vuFwAOI=
-Date: Wed, 14 May 2025 11:02:51 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>
-Cc: Tejun Heo <tj@kernel.org>, Chengming Zhou <zhouchengming@bytedance.com>,
-	linux-kernel@vger.kernel.org, Chen Ridong <chenridong@huawei.com>
-Subject: Re: [PATCH] kernfs: Relax constraint in draining guard
-Message-ID: <2025051439-domain-basis-218e@gregkh>
-References: <20250505121201.879823-1-mkoutny@suse.com>
- <aBlJlqfAlayxfMc7@slm.duckdns.org>
- <yxzbobrza26uiezc3fpcvtsv64wnn5hkk3urmqhdox4ae2d6zs@lkznubanccwj>
+	s=arc-20240116; t=1747213424; c=relaxed/simple;
+	bh=ziWob2KcOHQRSNdwzOrRUz9+fKNcXjfLgssZQxm8WRs=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=Z1R5pCYVyVDvLhqUkzKCXQqAu+n5XNhBLEY96tepGyaZLDYwwZGb7UhlPtwIFhmdvEFv6/8WYeSm+UuZO6cftPi82L2JN53eIKN9MBqMCWHB6hZjP4fhOSq2x8rKvTz1xzX08Pu78QpY83Ibb8JMIo9vWQ7+ImBActanp9yrh4w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=everest-semi.com; spf=pass smtp.mailfrom=everest-semi.com; arc=none smtp.client-ip=180.149.134.83
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=everest-semi.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=everest-semi.com
+Received: from unknown (HELO zy-virtual-machine.localdomain)([180.172.39.205])
+	by sina.net (10.185.250.29) with ESMTP
+	id 68245C43000052F6; Wed, 14 May 2025 17:03:00 +0800 (CST)
+X-Sender: zhangyi@everest-semi.com
+X-Auth-ID: zhangyi@everest-semi.com
+Authentication-Results: sina.net;
+	 spf=none smtp.mailfrom=zhangyi@everest-semi.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=zhangyi@everest-semi.com
+X-SMAIL-MID: 9A565A5DA68D4B78B7225D164D86049B
+X-SMAIL-UIID: 9A565A5DA68D4B78B7225D164D86049B-20250514-170300
+From: Zhang Yi <zhangyi@everest-semi.com>
+To: broonie@kernel.org
+Cc: robh@kernel.org,
+	tiwai@suse.com,
+	devicetree@vger.kernel.org,
+	conor+dt@kernel.org,
+	lgirdwood@gmail.com,
+	linux-kernel@vger.kernel.org,
+	linux-sound@vger.kernel.org,
+	perex@perex.cz,
+	krzk+dt@kernel.org,
+	amadeuszx.slawinski@linux.intel.com,
+	krzk@kernel.org
+Subject: RE: [RESEND v7 0/2] ASoC: codecs: add support for ES8389
+Date: Wed, 14 May 2025 17:02:57 +0800
+Message-Id: <20250514090257.34585-1-zhangyi@everest-semi.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <yxzbobrza26uiezc3fpcvtsv64wnn5hkk3urmqhdox4ae2d6zs@lkznubanccwj>
 
-On Tue, May 13, 2025 at 11:06:40AM +0200, Michal Koutný wrote:
-> On Mon, May 05, 2025 at 01:28:22PM -1000, Tejun Heo <tj@kernel.org> wrote:
-> ...
-> > Acked-by: Tejun Heo <tj@kernel.org>
+> This doesn't apply:
 > 
-> Is it correct to expect Greg picking it through his repo?
+> Applying: ASoC: codecs: add support for ES8389
+> error: sha1 information is lacking or useless (sound/soc/codecs/Kconfig).
+> error: could not build fake ancestor
+> Patch failed at 0001 ASoC: codecs: add support for ES8389
+> hint: Use 'git am --show-current-patch=diff' to see the failed patch
+> When you have resolved this problem, run "git am --continue".
+> If you prefer to skip this patch, run "git am --skip" instead.
+> To restore the original branch and stop patching, run "git am --abort".
+> broonie@finisterre:~/git/apply$ git am --abort
 
-Yes, I will take this when I catch up with pending patches, thanks.
-
-greg k-h
+I'm confused as to why this happened.
+I made the patch based on the following branch
+https://web.git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/?h=next-20250513
 
