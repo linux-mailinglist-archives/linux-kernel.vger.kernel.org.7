@@ -1,894 +1,126 @@
-Return-Path: <linux-kernel+bounces-647762-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-647764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18370AB6CF9
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 15:41:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97B45AB6CFE
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 15:41:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 687D919E8899
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 13:41:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EAB0F3B390E
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 13:41:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E06227A44C;
-	Wed, 14 May 2025 13:39:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DB8227A92F;
+	Wed, 14 May 2025 13:41:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KNOu2FGO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Etg9//1p"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27DC927A456;
-	Wed, 14 May 2025 13:39:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0F0927A451;
+	Wed, 14 May 2025 13:41:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747229994; cv=none; b=YotZ4lWlA3E4EiV3X05QB6H9vP9LDeFQRzfzhr3Um6mmLTuHo7fO4/LiGjfw2Wc64Ms5JQxrm0pUgx82jXCuhfIu9tB9OhwMI60lbBEafuNJ6/4mgdt3uKbvWAvrJiOiaD17EIXpQ/WXtkKkzVVYlasY8qU1XQ/hEcA8sQOlDZw=
+	t=1747230084; cv=none; b=jf1ASiMUO8mqcNjGfStnPWBJVnsis6DhEgdebI8Df+Yj71DRD0+3J6/lmaqaxBRoUAkFWSlXNUdJvmDc1UfQF1GqtAmibFJfpAlTeHFasSw2Zusr6PSFvRZHRaIKWHwpsEP2pbTmf/3wHNelBTG2nJZYlQA2x1mjzsc3p5F05jo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747229994; c=relaxed/simple;
-	bh=EfCzh3eHVwZ/eR35JtxkEJctic1UTIV+cXSZtCOgyQY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=azXiejXu+pbpNkZjkP3fdwU5zaCCI2ZDh9yzoUzyU94dSMLbyIgaxC9IqgMCXrIiZP87Dxstv2kRI7l6BNdOLUg9snVC1Do+bV9xbqg2QMQLiFe3GH9f+uiPEMnAxHhfxtmGudB8BCB/4H9LW2rZAY5fD0XaAySAuQ+8hRig1Zc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KNOu2FGO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8C3EC4CEE9;
-	Wed, 14 May 2025 13:39:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747229993;
-	bh=EfCzh3eHVwZ/eR35JtxkEJctic1UTIV+cXSZtCOgyQY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KNOu2FGOl9bOImORI+NJ2g1JK5ggJoCNi2hXhpAcpTJe7U65P0USLwYYNB/o0uCWC
-	 xzVSYKLKzQHJkN8xWSUP/dieZLsUH1P8UAjHHlyegXUMCVWTK6C4+kR79J9si5gfwL
-	 ImNLQlb+7qE3+LTDlA+cLvvPZxg12DB91wDnrB7iUzUquKe/DLF6odtYwtKbx2JS5P
-	 eTIdDaZUq2km6e9GrkkZHz9tWgWmuBfg+Mn6Ep399qIXdG6aBJLhn09sbMIC4r4SNc
-	 dKKtGB5UNiDNmMM+MZXJZwzmq5deE4ZZSa7LfGMbN7rRDkJbHza7MqCdW2f8h+4H3x
-	 IteO9P114SpUQ==
-Date: Wed, 14 May 2025 08:39:51 -0500
-From: Rob Herring <robh@kernel.org>
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: quentin.schulz@cherry.de, krzk+dt@kernel.org, conor+dt@kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Heiko Stuebner <heiko.stuebner@cherry.de>
-Subject: Re: [PATCH v2 4/6] arm64: dts: rockchip: add px30-cobra base dtsi
- and board variants
-Message-ID: <20250514133951.GA1975151-robh@kernel.org>
-References: <20250513150234.2331221-1-heiko@sntech.de>
- <20250513150234.2331221-5-heiko@sntech.de>
+	s=arc-20240116; t=1747230084; c=relaxed/simple;
+	bh=H/N51E0LqMl7HeehbCHJuuOwqwUbhjnbjpt/f0tR828=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=D48H/IipBQ6xyWoflMfzpgsVO+fiTVG5q+pnU2D2KxKBMeXXE3D7Ef0jIyfdLsLpbUcrCgQNdPAhTknAQrzbUhlLHKQkNe3m+131goaysM0tATGFEwhnb5CvvSVQB8OzXtvZ7AbsScG3opmIJpNcLcNRiJ7dLqc7CZhhkm+upfE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Etg9//1p; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-7423df563d6so5484246b3a.0;
+        Wed, 14 May 2025 06:41:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747230082; x=1747834882; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=rivdPuEvC6CEZBUy2Q25Rs7NDnkf11vHyvHzOhnGBpU=;
+        b=Etg9//1px8J5vEjRjbUpQ8SiiHsaeiXpvu50gTLsgtkig7FpcH92yOAA6taWISMO8A
+         8S2Ygyr0yFTopMz44RolI7cl8Q/IvZwLB0TlM/fwNsGAB+EgBlNqWyL+jJulxilVzwmH
+         vigmnpqsH18Y1iftgL21aWJsEvBPz2wNVmt0fZH0ubtR9HqILD7T4le209UpeyOWbHZI
+         ahF6UdWMSF1JY+oHTTA0JxwvbBRvhJ4bdO/6QVEd/nvYSnQgnnxBl+Nixi7Fo2dsciHr
+         Tj/XRwrgI/Ng8SvJHpvyYKM2YYZYkt+Cbmld4iZLlC8sfacBpdwN4I1QgYztoWUz/kP/
+         08rA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747230082; x=1747834882;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rivdPuEvC6CEZBUy2Q25Rs7NDnkf11vHyvHzOhnGBpU=;
+        b=SZomALA4Sl6tXx6WQuOKgK68tYRy2VJqxbUKl80YLBqVPG/hYmU/0r2am6DaMunRos
+         wvhxBw3ZLJlUJGyMMoXd12bNULh1Unfz8Ze3l2I3rhrqQyn/tLibgAbgnrh0ywdxT+bS
+         LBAXcnCslBdXF0Xslsn6TH7wKQ8OjDmxYaDXF2eEjKHijz1CmjRRsI5nrJCjR+ihvB/1
+         Q1o7vA/oaPhRhp3e3uTt1pbnb1wjTbMReiwlmrwFf7tt6X6OHGSJU6xVMp0K/dI7XmtN
+         on7qr1vviVyquzW3XKTwQKHtlu6OEOQWUvgFeV2s2ZcRRBNvMfJrLJz1lbaxOdrJxZJM
+         shUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXdGsnbfKnL38EyHbqelNtu8oOEvJICubyfnZzZjmduibmYeC/7N3E1xLMN7UeF3EdyXr9c25HSWxkcYeo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3+znSOPK8Pvgsm+dhToYPlywUeU+EQUjF1N5qiTIkALfQA1Vw
+	ttFkYNX28IS0phi+r1jV4/rJoj4HnqyhTeSYXC10WhXvHwc0iYMp
+X-Gm-Gg: ASbGncs3YhP+SwptVI9Xq0AdXpVM8Otc46jtiFOsnZqhwjRHF5tSgKAE3DszeZfzmG2
+	MpuO/EZwziD2FEkXEqo6tgTrwjxgSXp+3KkSHNmywkANyPvmAK6Nw7rZGxAzkWEQvXCw4a1rabz
+	sS8T5GKDQP1I+U0lftsCOEgnSATEIbHKzX56UBpGYqdDSJbqF9FPv3JABJkU1vvxriDAXeP5D2f
+	HIe9hCENzNVwbARojEn7zRZYoM/p2HMclTcuv10ULKP9aT868NFxewaxkGetnb2EPiVP0WQ4k7a
+	YIs8Wn+dLhTvmcf/rh7xqByb/hUqn1o1VXXbiS0eT8uVsfZQ81v93eM0YJG2gX9Q33/gOqf4kIW
+	jF2baWA9MhXcSwEHI/15QF/MtELElIg/wtBAuce4/eT7I
+X-Google-Smtp-Source: AGHT+IG7v5XjeboOI0O4h15ehtIlHLg82qIQw27/8YEWo2PzF+Jzb+j/iJWgUCU2QE1pyY8DnHYUKA==
+X-Received: by 2002:a05:6a21:b94:b0:215:eca3:c146 with SMTP id adf61e73a8af0-215ff1910fbmr5898909637.29.1747230081951;
+        Wed, 14 May 2025 06:41:21 -0700 (PDT)
+Received: from localhost.localdomain (123-194-189-72.dynamic.kbronet.com.tw. [123.194.189.72])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74237a0cde3sm9784501b3a.94.2025.05.14.06.41.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 May 2025 06:41:21 -0700 (PDT)
+From: "jay.chen" <shawn2000100@gmail.com>
+To: mathias.nyman@intel.com,
+	gregkh@linuxfoundation.org
+Cc: linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	"jay.chen" <shawn2000100@gmail.com>
+Subject: [PATCH] usb: xhci: Set avg_trb_len = 8 for EP0 during Address Device Command
+Date: Wed, 14 May 2025 21:40:08 +0800
+Message-ID: <20250514134011.16285-1-shawn2000100@gmail.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250513150234.2331221-5-heiko@sntech.de>
+Content-Transfer-Encoding: 8bit
 
-On Tue, May 13, 2025 at 05:02:32PM +0200, Heiko Stuebner wrote:
-> From: Heiko Stuebner <heiko.stuebner@cherry.de>
-> 
-> Cobra are Touchscreen devices built around the PX30 SoC using
-> a variety of display options.
-> 
-> The devices feature an EMMC, network port, usb host + OTG ports and
-> a 720x1280 display with a touchscreen.
-> 
-> Signed-off-by: Heiko Stuebner <heiko.stuebner@cherry.de>
-> ---
->  arch/arm64/boot/dts/rockchip/Makefile         |   4 +
->  .../rockchip/px30-cobra-ltk050h3146w-a2.dts   |  39 ++
->  .../dts/rockchip/px30-cobra-ltk050h3146w.dts  |  39 ++
->  .../dts/rockchip/px30-cobra-ltk050h3148w.dts  |  39 ++
->  .../dts/rockchip/px30-cobra-ltk500hd1829.dts  |  73 +++
->  arch/arm64/boot/dts/rockchip/px30-cobra.dtsi  | 566 ++++++++++++++++++
->  6 files changed, 760 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/rockchip/px30-cobra-ltk050h3146w-a2.dts
->  create mode 100644 arch/arm64/boot/dts/rockchip/px30-cobra-ltk050h3146w.dts
->  create mode 100644 arch/arm64/boot/dts/rockchip/px30-cobra-ltk050h3148w.dts
->  create mode 100644 arch/arm64/boot/dts/rockchip/px30-cobra-ltk500hd1829.dts
->  create mode 100644 arch/arm64/boot/dts/rockchip/px30-cobra.dtsi
-> 
-> diff --git a/arch/arm64/boot/dts/rockchip/Makefile b/arch/arm64/boot/dts/rockchip/Makefile
-> index 3e8771ef69ba..8151e8bb1cd3 100644
-> --- a/arch/arm64/boot/dts/rockchip/Makefile
-> +++ b/arch/arm64/boot/dts/rockchip/Makefile
-> @@ -1,4 +1,8 @@
->  # SPDX-License-Identifier: GPL-2.0
-> +dtb-$(CONFIG_ARCH_ROCKCHIP) += px30-cobra-ltk050h3146w-a2.dtb
-> +dtb-$(CONFIG_ARCH_ROCKCHIP) += px30-cobra-ltk050h3146w.dtb
-> +dtb-$(CONFIG_ARCH_ROCKCHIP) += px30-cobra-ltk050h3148w.dtb
-> +dtb-$(CONFIG_ARCH_ROCKCHIP) += px30-cobra-ltk500hd1829.dtb
->  dtb-$(CONFIG_ARCH_ROCKCHIP) += px30-evb.dtb
->  dtb-$(CONFIG_ARCH_ROCKCHIP) += px30-engicam-px30-core-ctouch2.dtb
->  dtb-$(CONFIG_ARCH_ROCKCHIP) += px30-engicam-px30-core-ctouch2-of10.dtb
-> diff --git a/arch/arm64/boot/dts/rockchip/px30-cobra-ltk050h3146w-a2.dts b/arch/arm64/boot/dts/rockchip/px30-cobra-ltk050h3146w-a2.dts
-> new file mode 100644
-> index 000000000000..1d26164be7b8
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/rockchip/px30-cobra-ltk050h3146w-a2.dts
-> @@ -0,0 +1,39 @@
-> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-> +/*
-> + * Copyright (c) 2025 Cherry Embedded Solutions GmbH
-> + */
-> +
-> +/dts-v1/;
-> +#include "px30-cobra.dtsi"
-> +
-> +/ {
-> +	model = "Theobroma Systems Cobra with LTK050H3146W-A2 Display";
-> +	compatible = "tsd,px30-cobra-ltk050h3146w-a2", "tsd,px30-cobra", "rockchip,px30";
-> +};
-> +
-> +&dsi {
-> +	status = "okay";
-> +
-> +	panel@0 {
-> +		compatible = "leadtek,ltk050h3146w-a2";
-> +		reg = <0>;
-> +		backlight = <&backlight>;
-> +		iovcc-supply = <&vcc_1v8>;
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&dsp_rst>;
-> +		reset-gpios = <&gpio0 RK_PB2 GPIO_ACTIVE_LOW>;
-> +		vci-supply = <&vcc_2v8>;
-> +
-> +		port {
+According to the xHCI 1.2 spec (Section 6.2.3, p.454), the Average
+TRB Length (avg_trb_len) for control endpoints should be set to 8.
 
-'port' is not allowed by this binding.
+Currently, during the Address Device Command, EP0's avg_trb_len remains 0,
+which may cause some xHCI hardware to reject the Input Context, resulting
+in device enumeration failures. In extreme cases, using a zero avg_trb_len
+in calculations may lead to division-by-zero errors and unexpected system
+crashes.
 
-> +			mipi_in_panel: endpoint {
-> +				remote-endpoint = <&mipi_out_panel>;
-> +			};
-> +		};
-> +	};
-> +};
-> +
-> +&dsi_out {
-> +	mipi_out_panel: endpoint {
-> +		remote-endpoint = <&mipi_in_panel>;
-> +	};
-> +};
-> diff --git a/arch/arm64/boot/dts/rockchip/px30-cobra-ltk050h3146w.dts b/arch/arm64/boot/dts/rockchip/px30-cobra-ltk050h3146w.dts
-> new file mode 100644
-> index 000000000000..82c6acdb4fae
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/rockchip/px30-cobra-ltk050h3146w.dts
-> @@ -0,0 +1,39 @@
-> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-> +/*
-> + * Copyright (c) 2025 Cherry Embedded Solutions GmbH
-> + */
-> +
-> +/dts-v1/;
-> +#include "px30-cobra.dtsi"
-> +
-> +/ {
-> +	model = "Theobroma Systems Cobra with LTK050H3146W Display";
-> +	compatible = "tsd,px30-cobra-ltk050h3146w", "tsd,px30-cobra", "rockchip,px30";
-> +};
-> +
-> +&dsi {
-> +	status = "okay";
-> +
-> +	panel@0 {
-> +		compatible = "leadtek,ltk050h3146w";
-> +		reg = <0>;
-> +		backlight = <&backlight>;
-> +		iovcc-supply = <&vcc_1v8>;
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&dsp_rst>;
-> +		reset-gpios = <&gpio0 RK_PB2 GPIO_ACTIVE_LOW>;
-> +		vci-supply = <&vcc_2v8>;
-> +
-> +		port {
-> +			mipi_in_panel: endpoint {
-> +				remote-endpoint = <&mipi_out_panel>;
-> +			};
-> +		};
-> +	};
-> +};
-> +
-> +&dsi_out {
-> +	mipi_out_panel: endpoint {
-> +		remote-endpoint = <&mipi_in_panel>;
-> +	};
-> +};
-> diff --git a/arch/arm64/boot/dts/rockchip/px30-cobra-ltk050h3148w.dts b/arch/arm64/boot/dts/rockchip/px30-cobra-ltk050h3148w.dts
-> new file mode 100644
-> index 000000000000..94449132df38
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/rockchip/px30-cobra-ltk050h3148w.dts
-> @@ -0,0 +1,39 @@
-> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-> +/*
-> + * Copyright (c) 2025 Cherry Embedded Solutions GmbH
-> + */
-> +
-> +/dts-v1/;
-> +#include "px30-cobra.dtsi"
-> +
-> +/ {
-> +	model = "Theobroma Systems Cobra with ltk050h3148w Display";
-> +	compatible = "tsd,px30-cobra-ltk050h3148w", "tsd,px30-cobra", "rockchip,px30";
-> +};
-> +
-> +&dsi {
-> +	status = "okay";
-> +
-> +	panel@0 {
-> +		compatible = "leadtek,ltk050h3148w";
-> +		reg = <0>;
-> +		backlight = <&backlight>;
-> +		iovcc-supply = <&vcc_1v8>;
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&dsp_rst>;
-> +		reset-gpios = <&gpio0 RK_PB2 GPIO_ACTIVE_LOW>;
-> +		vci-supply = <&vcc_2v8>;
-> +
-> +		port {
-> +			mipi_in_panel: endpoint {
-> +				remote-endpoint = <&mipi_out_panel>;
-> +			};
-> +		};
-> +	};
-> +};
-> +
-> +&dsi_out {
-> +	mipi_out_panel: endpoint {
-> +		remote-endpoint = <&mipi_in_panel>;
-> +	};
-> +};
-> diff --git a/arch/arm64/boot/dts/rockchip/px30-cobra-ltk500hd1829.dts b/arch/arm64/boot/dts/rockchip/px30-cobra-ltk500hd1829.dts
-> new file mode 100644
-> index 000000000000..d7b639e7ccab
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/rockchip/px30-cobra-ltk500hd1829.dts
-> @@ -0,0 +1,73 @@
-> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-> +/*
-> + * Copyright (c) 2025 Cherry Embedded Solutions GmbH
-> + */
-> +
-> +/dts-v1/;
-> +#include "px30-cobra.dtsi"
-> +
-> +/ {
-> +	model = "Theobroma Systems Cobra prototype with LTK500HD1829 Display";
-> +	compatible = "tsd,px30-cobra-ltk500hd1829", "tsd,px30-cobra", "rockchip,px30";
-> +
-> +	aliases {
-> +		mmc1 = &sdmmc;
-> +	};
-> +};
-> +
-> +&dsi {
-> +	status = "okay";
-> +
-> +	panel@0 {
-> +		compatible = "leadtek,ltk500hd1829";
-> +		reg = <0>;
-> +		backlight = <&backlight>;
-> +		iovcc-supply = <&vcc_1v8>;
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&dsp_rst>;
-> +		reset-gpios = <&gpio0 RK_PB2 GPIO_ACTIVE_LOW>;
-> +		vcc-supply = <&vcc_2v8>;
-> +
-> +		port {
-> +			mipi_in_panel: endpoint {
-> +				remote-endpoint = <&mipi_out_panel>;
-> +			};
-> +		};
-> +	};
-> +};
-> +
-> +&dsi_out {
-> +	mipi_out_panel: endpoint {
-> +		remote-endpoint = <&mipi_in_panel>;
-> +	};
-> +};
-> +
-> +&pinctrl {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&cobra_pin_hog>, <&cobra_proto_hog>;
-> +
-> +	hog {
-> +		cobra_proto_hog: cobra-proto-hog {
-> +			rockchip,pins =
-> +				/* STUSB4500 open drain outout POWER_OK2, needs pull-up */
-> +				<3 RK_PB1 RK_FUNC_GPIO &pcfg_pull_up>,
-> +				/* STUSB4500 open drain outout POWER_OK3, needs pull-up */
-> +				<3 RK_PB2 RK_FUNC_GPIO &pcfg_pull_up>;
-> +		};
-> +	};
-> +};
-> +
-> +&sdmmc {
-> +	bus-width = <4>;
-> +	broken-cd;
-> +	cap-sd-highspeed;
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&sdmmc_clk &sdmmc_cmd &sdmmc_bus4>;
-> +	sd-uhs-sdr12;
-> +	sd-uhs-sdr25;
-> +	sd-uhs-sdr50;
-> +	sd-uhs-sdr104;
-> +	vmmc-supply = <&vccio_sd>;
-> +	vqmmc-supply = <&vccio_sd>;
-> +	status = "okay";
-> +};
-> diff --git a/arch/arm64/boot/dts/rockchip/px30-cobra.dtsi b/arch/arm64/boot/dts/rockchip/px30-cobra.dtsi
-> new file mode 100644
-> index 000000000000..77626f0d0a06
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/rockchip/px30-cobra.dtsi
-> @@ -0,0 +1,566 @@
-> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-> +/*
-> + * Copyright (c) 2025 Cherry Embedded Solutions GmbH
-> + */
-> +
-> +/dts-v1/;
-> +#include <dt-bindings/gpio/gpio.h>
-> +#include <dt-bindings/input/input.h>
-> +#include <dt-bindings/leds/common.h>
-> +#include <dt-bindings/pinctrl/rockchip.h>
-> +#include "px30.dtsi"
-> +
-> +/ {
-> +	aliases {
-> +		ethernet0 = &gmac;
-> +		mmc0 = &emmc;
-> +	};
-> +
-> +	chosen {
-> +		stdout-path = "serial5:115200n8";
-> +	};
-> +
-> +	backlight: backlight {
-> +		compatible = "pwm-backlight";
-> +		power-supply = <&vcc5v0_sys>;
-> +		pwms = <&pwm0 0 25000 0>;
-> +	};
-> +
-> +	beeper {
-> +		compatible = "pwm-beeper";
-> +		pwms = <&pwm1 0 1000 0>;
-> +	};
-> +
-> +	emmc_pwrseq: emmc-pwrseq {
-> +		compatible = "mmc-pwrseq-emmc";
-> +		pinctrl-0 = <&emmc_reset>;
-> +		pinctrl-names = "default";
-> +		reset-gpios = <&gpio1 RK_PB3 GPIO_ACTIVE_HIGH>;
-> +	};
-> +
-> +	gpio-leds {
-> +		compatible = "gpio-leds";
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&heartbeat_led_pin>;
-> +
-> +		/*
-> +		 * LED14 on the PCB. Typically NOT populated.
-> +		 */
-> +		led-0 {
-> +			color = <LED_COLOR_ID_BLUE>;
-> +			gpios = <&gpio0 RK_PA0 GPIO_ACTIVE_HIGH>;
-> +			label = "heartbeat";
-> +			linux,default-trigger = "heartbeat";
-> +		};
-> +	};
-> +
-> +	pwm-leds {
-> +		compatible = "pwm-leds";
-> +
-> +		ring_red: led-0 {
-> +			color = <LED_COLOR_ID_RED>;
-> +			default-state = "off";
-> +			label = "ring_red";
-> +			pwms = <&pwm5 0 1000000 0>;
-> +			max-brightness = <255>;
-> +		};
-> +
-> +		ring_green: led-1 {
-> +			color = <LED_COLOR_ID_GREEN>;
-> +			default-state = "off";
-> +			label = "ring_green";
-> +			pwms = <&pwm6 0 1000000 0>;
-> +			max-brightness = <255>;
-> +		};
-> +
-> +		ring_blue: led-2 {
-> +			color = <LED_COLOR_ID_BLUE>;
-> +			default-state = "off";
-> +			label = "ring_blue";
-> +			pwms = <&pwm7 0 1000000 0>;
-> +			max-brightness = <255>;
-> +		};
-> +	};
-> +
-> +	/* also named 5V_Q7 in schematics */
-> +	vcc5v0_sys: regulator-vccsys {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "vcc5v0_sys";
-> +		regulator-always-on;
-> +		regulator-boot-on;
-> +		regulator-min-microvolt = <5000000>;
-> +		regulator-max-microvolt = <5000000>;
-> +	};
-> +};
-> +
-> +&cpu0 {
-> +	cpu-supply = <&vdd_arm>;
-> +};
-> +
-> +&cpu1 {
-> +	cpu-supply = <&vdd_arm>;
-> +};
-> +
-> +&cpu2 {
-> +	cpu-supply = <&vdd_arm>;
-> +};
-> +
-> +&cpu3 {
-> +	cpu-supply = <&vdd_arm>;
-> +};
-> +
-> +&display_subsystem {
-> +	status = "okay";
-> +};
-> +
-> +&dsi_dphy {
-> +	status = "okay";
-> +};
-> +
-> +&emmc {
-> +	bus-width = <8>;
-> +	cap-mmc-highspeed;
-> +	/*
-> +	 * For hs200 support, U-Boot would have to set the RK809 DCDC4
-> +	 * rail to 1.8V from the default of 3.0V. It doesn't do that on
-> +	 * devices out in the field, so disable hs200.
-> +	 * mmc-hs200-1_8v;
-> +	 */
-> +	mmc-pwrseq = <&emmc_pwrseq>;
-> +	non-removable;
-> +	vmmc-supply = <&vcc_3v3>;
-> +	vqmmc-supply = <&vcc_emmc>;
-> +	status = "okay";
-> +};
-> +
-> +&gmac {
-> +	clock_in_out = "output";
-> +	phy-handle = <&dp83825>;
-> +	phy-supply = <&vcc_3v3>;
-> +	status = "okay";
-> +};
-> +
-> +&gpu {
-> +	mali-supply = <&vdd_log>;
-> +	status = "okay";
-> +};
-> +
-> +/* I2C0 = PMIC, STUSB4500, RTC */
-> +&i2c0 {
-> +	status = "okay";
-> +
-> +	rk809: pmic@20 {
-> +		compatible = "rockchip,rk809";
-> +		reg = <0x20>;
-> +		#clock-cells = <0>;
-> +		clock-output-names = "xin32k";
-> +		interrupt-parent = <&gpio0>;
-> +		interrupts = <RK_PA7 IRQ_TYPE_LEVEL_LOW>;
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&pmic_int>;
-> +		wakeup-source;
-> +		system-power-controller;
-> +
-> +		vcc1-supply = <&vcc5v0_sys>;
-> +		vcc2-supply = <&vcc5v0_sys>;
-> +		vcc3-supply = <&vcc5v0_sys>;
-> +		vcc4-supply = <&vcc5v0_sys>;
-> +		vcc5-supply = <&vcc_3v3>;
-> +		vcc6-supply = <&vcc_3v3>;
-> +		vcc7-supply = <&vcc_3v3>;
-> +		vcc9-supply = <&vcc5v0_sys>;
-> +
-> +		regulators {
-> +			vdd_log: DCDC_REG1 {
-> +				regulator-name = "vdd_log";
-> +				regulator-always-on;
-> +				regulator-boot-on;
-> +				regulator-min-microvolt = <950000>;
-> +				regulator-max-microvolt = <1350000>;
-> +				regulator-ramp-delay = <6001>;
-> +
-> +				regulator-state-mem {
-> +					regulator-on-in-suspend;
-> +					regulator-suspend-microvolt = <950000>;
-> +				};
-> +			};
-> +
-> +			vdd_arm: DCDC_REG2 {
-> +				regulator-name = "vdd_arm";
-> +				regulator-always-on;
-> +				regulator-boot-on;
-> +				regulator-min-microvolt = <950000>;
-> +				regulator-max-microvolt = <1350000>;
-> +				regulator-ramp-delay = <6001>;
-> +
-> +				regulator-state-mem {
-> +					regulator-off-in-suspend;
-> +					regulator-suspend-microvolt = <950000>;
-> +				};
-> +			};
-> +
-> +			vcc_ddr: DCDC_REG3 {
-> +				regulator-name = "vcc_ddr";
-> +				regulator-always-on;
-> +				regulator-boot-on;
-> +
-> +				regulator-state-mem {
-> +					regulator-on-in-suspend;
-> +				};
-> +			};
-> +
-> +			vcc_3v0_1v8: vcc_emmc: DCDC_REG4 {
-> +				regulator-name = "vcc_3v0_1v8";
-> +				regulator-always-on;
-> +				regulator-boot-on;
-> +				regulator-min-microvolt = <3000000>;
-> +				regulator-max-microvolt = <3000000>;
-> +
-> +				regulator-state-mem {
-> +					regulator-on-in-suspend;
-> +					regulator-suspend-microvolt = <3000000>;
-> +				};
-> +			};
-> +
-> +			vcc_3v3: DCDC_REG5 {
-> +				regulator-name = "vcc_3v3";
-> +				regulator-always-on;
-> +				regulator-boot-on;
-> +				regulator-min-microvolt = <3300000>;
-> +				regulator-max-microvolt = <3300000>;
-> +
-> +				regulator-state-mem {
-> +					regulator-on-in-suspend;
-> +					regulator-suspend-microvolt = <3300000>;
-> +				};
-> +			};
-> +
-> +			vcc_1v8: LDO_REG2 {
-> +				regulator-name = "vcc_1v8";
-> +				regulator-always-on;
-> +				regulator-boot-on;
-> +				regulator-min-microvolt = <1800000>;
-> +				regulator-max-microvolt = <1800000>;
-> +
-> +				regulator-state-mem {
-> +					regulator-on-in-suspend;
-> +					regulator-suspend-microvolt = <1800000>;
-> +				};
-> +			};
-> +
-> +			vcc_1v0: LDO_REG3 {
-> +				regulator-name = "vcc_1v0";
-> +				regulator-always-on;
-> +				regulator-boot-on;
-> +				regulator-min-microvolt = <1000000>;
-> +				regulator-max-microvolt = <1000000>;
-> +
-> +				regulator-state-mem {
-> +					regulator-on-in-suspend;
-> +					regulator-suspend-microvolt = <1000000>;
-> +				};
-> +			};
-> +
-> +			vcc_2v8: LDO_REG4 {
-> +				regulator-name = "vcc_2v8";
-> +				regulator-always-on;
-> +				regulator-boot-on;
-> +				regulator-min-microvolt = <2800000>;
-> +				regulator-max-microvolt = <2800000>;
-> +
-> +				regulator-state-mem {
-> +					regulator-off-in-suspend;
-> +					regulator-suspend-microvolt = <2800000>;
-> +				};
-> +			};
-> +
-> +			/*
-> +			 * vccio_sd also supplies the vmmc supply on prototypes
-> +			 * with sd-slots, so needs to stay single voltage for
-> +			 * those. Production models don't have sd-slots anymore
-> +			 * and only supply vccio2 from this regulator.
-> +			 */
-> +			vccio_sd: LDO_REG5 {
-> +				regulator-name = "vccio_sd";
-> +				regulator-always-on;
-> +				regulator-boot-on;
-> +				regulator-min-microvolt = <3000000>;
-> +				regulator-max-microvolt = <3000000>;
-> +
-> +				regulator-state-mem {
-> +					regulator-on-in-suspend;
-> +					regulator-suspend-microvolt = <3000000>;
-> +				};
-> +			};
-> +
-> +			/* vcc_sdio also supplies the pull-up resistors for i2c1 */
-> +			vcc_sdio: LDO_REG6 {
-> +				regulator-name = "vcc_sdio";
-> +				regulator-always-on;
-> +				regulator-boot-on;
-> +				regulator-min-microvolt = <3000000>;
-> +				regulator-max-microvolt = <3000000>;
-> +
-> +				regulator-state-mem {
-> +					regulator-on-in-suspend;
-> +					regulator-suspend-microvolt = <3300000>;
-> +				};
-> +			};
-> +
-> +			vcc_lcd: LDO_REG7 {
-> +				regulator-name = "vcc_lcd";
-> +				regulator-always-on;
-> +				regulator-boot-on;
-> +				regulator-min-microvolt = <1000000>;
-> +				regulator-max-microvolt = <1000000>;
-> +
-> +				regulator-state-mem {
-> +					regulator-off-in-suspend;
-> +					regulator-suspend-microvolt = <1000000>;
-> +				};
-> +			};
-> +
-> +			vcc_1v8_lcd: LDO_REG8 {
-> +				regulator-name = "vcc_1v8_lcd";
-> +				regulator-always-on;
-> +				regulator-boot-on;
-> +				regulator-min-microvolt = <1800000>;
-> +				regulator-max-microvolt = <1800000>;
-> +
-> +				regulator-state-mem {
-> +					regulator-on-in-suspend;
-> +					regulator-suspend-microvolt = <1800000>;
-> +				};
-> +			};
-> +
-> +			vcca_1v8: LDO_REG9 {
-> +				regulator-name = "vcca_1v8";
-> +				regulator-always-on;
-> +				regulator-boot-on;
-> +				regulator-min-microvolt = <1800000>;
-> +				regulator-max-microvolt = <1800000>;
-> +
-> +				regulator-state-mem {
-> +					regulator-off-in-suspend;
-> +					regulator-suspend-microvolt = <1800000>;
-> +				};
-> +			};
-> +		};
-> +	};
-> +};
-> +
-> +&i2c1 {
-> +	clock-frequency = <100000>;
-> +	status = "okay";
-> +};
-> +
-> +&i2c2 {
-> +	clock-frequency = <100000>;
-> +	i2c-scl-falling-time-ns = <50>;
-> +	i2c-scl-rising-time-ns = <300>;
-> +	status = "okay";
-> +
-> +	touchscreen@14 {
-> +		compatible = "goodix,gt911";
-> +		reg = <0x14>;
-> +		AVDD28-supply = <&vcc_2v8>;
-> +		interrupt-parent = <&gpio0>;
-> +		interrupts = <RK_PA1 IRQ_TYPE_LEVEL_LOW>;
-> +		irq-gpios = <&gpio0 RK_PA1 GPIO_ACTIVE_HIGH>;
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&tch_int &tch_rst>;
-> +		reset-gpios = <&gpio0 RK_PB5 GPIO_ACTIVE_HIGH>;
-> +		touchscreen-inverted-x;
-> +		VDDIO-supply = <&vcc_3v3>;
-> +	};
-> +};
-> +
-> +/*
-> + * Enable pull-ups to prevent floating pins when the touch
-> + * panel is not connected.
-> + */
-> +&i2c2_xfer {
-> +	rockchip,pins =
-> +		<2 RK_PB7 2 &pcfg_pull_up>,
-> +		<2 RK_PC0 2 &pcfg_pull_up>;
-> +};
-> +
-> +&io_domains {
-> +	vccio1-supply = <&vcc_sdio>;
-> +	vccio2-supply = <&vccio_sd>;
-> +	vccio3-supply = <&vcc_3v3>;
-> +	vccio4-supply = <&vcc_3v3>;
-> +	vccio5-supply = <&vcc_1v8>;
-> +	vccio6-supply = <&vcc_emmc>;
-> +	status = "okay";
-> +};
-> +
-> +&mdio {
-> +	dp83825: ethernet-phy@0 {
-> +		compatible = "ethernet-phy-ieee802.3-c22";
-> +		reg = <0x0>;
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&phy_rst>;
-> +		reset-assert-us = <50000>;
-> +		reset-deassert-us = <50000>;
-> +		reset-gpios = <&gpio2 RK_PB6 GPIO_ACTIVE_LOW>;
-> +	};
-> +};
-> +
-> +&pinctrl {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&cobra_pin_hog>;
-> +
-> +	hog {
-> +		cobra_pin_hog: cobra-pin-hog {
-> +			rockchip,pins =
-> +				/* USB_HUB2_RESET */
-> +				<0 RK_PA5 RK_FUNC_GPIO &pcfg_output_high>,
-> +				/* USB_HUB1_RESET */
-> +				<0 RK_PB4 RK_FUNC_GPIO &pcfg_output_high>,
-> +				/* The default pull-down can keep the IC in reset. */
-> +				<3 RK_PB6 RK_FUNC_GPIO &pcfg_pull_none>;
-> +				/* USB-A 5V enable */
-> +				<3 RK_PC0 RK_FUNC_GPIO &pcfg_output_high>,
-> +				/* USB-A data enable */
-> +				<3 RK_PD3 RK_FUNC_GPIO &pcfg_output_high>,
-> +		};
-> +	};
-> +
-> +	emmc {
-> +		emmc_reset: emmc-reset {
-> +			rockchip,pins =
-> +				<1 RK_PB3 RK_FUNC_GPIO &pcfg_pull_none>;
-> +		};
-> +	};
-> +
-> +	ethernet {
-> +		phy_rst: phy-rst {
-> +			rockchip,pins =
-> +				<2 RK_PB6 RK_FUNC_GPIO &pcfg_pull_none>;
-> +		};
-> +	};
-> +
-> +	leds {
-> +		heartbeat_led_pin: heartbeat-led-pin {
-> +			rockchip,pins =
-> +				<0 RK_PA0 RK_FUNC_GPIO &pcfg_pull_none>;
-> +		};
-> +	};
-> +
-> +	panel {
-> +		dsp_rst: dsp-rst {
-> +			rockchip,pins =
-> +				<0 RK_PB2 RK_FUNC_GPIO &pcfg_pull_up>;
-> +		};
-> +
-> +		tch_int: tch-int {
-> +			rockchip,pins =
-> +				<0 RK_PA1 RK_FUNC_GPIO &pcfg_pull_none>;
-> +		};
-> +
-> +		tch_rst: tch-rst {
-> +			rockchip,pins =
-> +				<0 RK_PB5 RK_FUNC_GPIO &pcfg_pull_none>;
-> +		};
-> +	};
-> +
-> +	pmic {
-> +		pmic_int: pmic-int {
-> +			rockchip,pins =
-> +				<0 RK_PA7 RK_FUNC_GPIO &pcfg_pull_up>;
-> +		};
-> +	};
-> +};
-> +
-> +&pmu_io_domains {
-> +	pmuio1-supply = <&vcc_3v3>;
-> +	pmuio2-supply = <&vcc_3v3>;
-> +	status = "okay";
-> +};
-> +
-> +&pwm0 {
-> +	status = "okay";
-> +};
-> +
-> +&pwm1 {
-> +	status = "okay";
-> +};
-> +
-> +&pwm5 {
-> +	status = "okay";
-> +};
-> +
-> +&pwm6 {
-> +	status = "okay";
-> +};
-> +
-> +&pwm7 {
-> +	status = "okay";
-> +};
-> +
-> +&saradc {
-> +	vref-supply = <&vcc_1v8>;
-> +	status = "okay";
-> +};
-> +
-> +&tsadc {
-> +	status = "okay";
-> +};
-> +
-> +&u2phy {
-> +	status = "okay";
-> +};
-> +
-> +&u2phy_host {
-> +	status = "okay";
-> +};
-> +
-> +&u2phy_otg {
-> +	status = "okay";
-> +};
-> +
-> +&uart1 {
-> +	/delete-property/ dmas;
-> +	/delete-property/ dma-names;
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&uart1_xfer>;
-> +	status = "okay";
-> +};
-> +
-> +&uart5 {
-> +	pinctrl-0 = <&uart5_xfer>;
-> +	status = "okay";
-> +};
-> +
-> +&usb20_otg {
-> +	status = "okay";
-> +};
-> +
-> +&usb_host0_ehci {
-> +	status = "okay";
-> +};
-> +
-> +&usb_host0_ohci {
-> +	status = "okay";
-> +};
-> +
-> +&vopb {
-> +	status = "okay";
-> +};
-> +
-> +&vopb_mmu {
-> +	status = "okay";
-> +};
-> +
-> +&vopl {
-> +	status = "disabled";
-> +};
-> +
-> +&vopl_mmu {
-> +	status = "disabled";
-> +};
-> +
-> +&wdt {
-> +	status = "okay";
-> +};
-> -- 
-> 2.47.2
-> 
+This patch sets avg_trb_len to 8 for EP0 in
+xhci_setup_addressable_virt_dev(), ensuring compliance with the spec
+and improving compatibility across various host controller implementations.
+
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=220033
+Signed-off-by: jay.chen <shawn2000100@gmail.com>
+---
+ drivers/usb/host/xhci-mem.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/usb/host/xhci-mem.c b/drivers/usb/host/xhci-mem.c
+index d698095fc88d..fed9e9d1990c 100644
+--- a/drivers/usb/host/xhci-mem.c
++++ b/drivers/usb/host/xhci-mem.c
+@@ -1166,6 +1166,8 @@ int xhci_setup_addressable_virt_dev(struct xhci_hcd *xhci, struct usb_device *ud
+ 	ep0_ctx->deq = cpu_to_le64(dev->eps[0].ring->first_seg->dma |
+ 				   dev->eps[0].ring->cycle_state);
+ 
++	ep0_ctx->tx_info |= cpu_to_le32(EP_AVG_TRB_LENGTH(8));
++
+ 	trace_xhci_setup_addressable_virt_device(dev);
+ 
+ 	/* Steps 7 and 8 were done in xhci_alloc_virt_device() */
+-- 
+2.43.5
+
 
