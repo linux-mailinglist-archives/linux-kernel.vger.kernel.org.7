@@ -1,218 +1,79 @@
-Return-Path: <linux-kernel+bounces-647070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-647075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D63BAB6425
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 09:23:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB9BCAB6434
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 09:25:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D31023B8B28
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 07:23:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0DBF189745D
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 07:25:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A351E21B9C2;
-	Wed, 14 May 2025 07:22:35 +0000 (UTC)
-Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E85F21B9F2;
+	Wed, 14 May 2025 07:24:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="US6T6L92"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 644BE21B9E7
-	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 07:22:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8371621B909;
+	Wed, 14 May 2025 07:24:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747207355; cv=none; b=RqvFQWCzt0lSR79adolU14gUlEY8r15ov2zlExk1r15CmeBxB14x6UlbR36QDFNips6SMFWu1jTgK0K78usD6ToL9OhdkAZKVN/m2H50uI3l1Fbc1ll6bePHdVX31caLi90Zaa334XemRcLRIRdTSnua3wQpiLVkk8WbwACyD9Q=
+	t=1747207447; cv=none; b=oEJy8jGWsLpuL//3ZatRgclV1UzogMw24GPOdDGAItEx9axKQ3xGKRZVLRsYkBqxHKu2Yo4nL6Wa/197TpujXf4WkxWacVI4zGg3yNgFiPyYCwpgaxHAKmKhbU13WxAUwPZmnAP8kzsEnZWm8BRIok7OrPsZpXdG5sUbRvw+MsY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747207355; c=relaxed/simple;
-	bh=3K8+UROH2lad+1F58LcMgymw21A293jB5IQv7CVpJVU=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Xwl5jEBU3sB4uq7/dS0KvoXuFeOc8/BtL4TvY2P56xz5kpDHhPMwRvEw6l8GP53wA2OPbtCuwsKAK0HGRMaivT7RQYU2/aHFLbj7BZ1Q7dTb0Ax8uJscdbCS9wG+hbuBNbSklV/+ScRNB7N/QP6CGH+csTTCTVH/a5jrTaPP8Lk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-86176e300fdso587088939f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 00:22:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747207351; x=1747812151;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=iE5bcm8mdpELr1AiyyL6gVdV++CEoXGYC5kY2cjeD8o=;
-        b=QhKN2PAaYEuVwpW1bvUs3OcfiJQIAPeTSWTwAOA7wXmY4YZ8lZFDRQVwvRhk+3BrrN
-         9EBrCMjVLBdItzC7BCMC7gVpVipu3n0ZoFnP1CiOd0b7BjC3IknKMypR0lB8T41NY/mJ
-         bjpkkhRdtKvTgyk36CG14I8SkyzvJGT5E7HoHB+J/tGIGu7yjPyTmRVqAYqRAQ682Jfr
-         ci8hFhb6B7B+E6NlqWAB/e/TR9a+zZsXqLCxDMAg5F9TiSgKzmrXWMhuIcNz7g4ZNveG
-         6qxXzGTLvE5KiNLxJ5qlsHek9EYkGCNFUNP6bFogJb1K4+sNTvRvhg4D0tFXIZ5ZC5iH
-         j48A==
-X-Forwarded-Encrypted: i=1; AJvYcCVSJUVmMEt6HqHqDqw9NsFrdBqFEprewxGWuix4aGpVGWp2gI/hn/knztmI8FItEWx0G9G5ZOLnTBX95NY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzvbp5Qff/8nBsvpn5g7UqZyCBT1qkK1Wp1h5WMhC8zYtHk4tYL
-	Cw6v3v41+0g90zoQKHh31WWv2sQfcd6JmBQlKP6m6rAV1goHU//yZfQA+68nZAyNmurMlWjEje7
-	5sqj12x8rr31urdhElE3w2Uoy8MRcO4ZZiusmS6zIpnUpkjvjkc+VIWc=
-X-Google-Smtp-Source: AGHT+IFOhi6hZg4kABvaOZ36Lya3zQr6Mh/Vtk8qSk/VsVb8yneWOLDhU5vgc19ZMfKYoZmeUY4qIzrsvIePZH8/y0LZKhA7XoO1
+	s=arc-20240116; t=1747207447; c=relaxed/simple;
+	bh=bTwlpTbHT/sN8S0yFQYo0xHw/kFSMi6RQvsEE+8Hejo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rokqfhZG8YOpdWPqphHM3PN07bRwdrnJHa+zybRbkVCLYjIbeyVGLsN0hMFOb5IUhn0dFPZJ9EX2IiQmp4CpA7aofiRsA/cz6iLJNOgqxhNuafmuVwMtXAXD2H63x9MZVBIdl6yg3cXQBdilvi83RJ4Gq4v++c32JyyaqJ5mX14=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=US6T6L92; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E6B4C4CEE9;
+	Wed, 14 May 2025 07:24:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747207446;
+	bh=bTwlpTbHT/sN8S0yFQYo0xHw/kFSMi6RQvsEE+8Hejo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=US6T6L92e+PgVxfTFiZtsowzHdUgdbTzQFYJD4DBA/ne8nwmF46VT5lhGE+qGMM05
+	 TFWSn0y8R7G/SKy8l2UjJZpxPFGAc00fFfYas/GkzEiIT7FDYIhej962RZ+/95lMez
+	 zzcR4A/LHeO25jnMuRj4UXASmX+wlpvJ9j1CKH12GZMg4z8js/Kgpv/2OdI9JwoC7B
+	 oFe1QCVnO4LzzNIwIB2cnYTlfgTEj0hMwIZK3NtR2+63jngcd2ZoTDhG+c9WBGqiBX
+	 KAWmfQEPHgm+2K7891ilrWNq2BthoAF6YTE0EXIGIG0QWVyFU+HVtccIsamjTRSmRq
+	 ttiUBj5qORZSg==
+Message-ID: <aca3dabe-d050-49c3-88c9-6e76ca63e0ec@kernel.org>
+Date: Wed, 14 May 2025 16:24:00 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:3a86:b0:862:fe54:df4e with SMTP id
- ca18e2360f4ac-86a08df32demr283701339f.7.1747207351388; Wed, 14 May 2025
- 00:22:31 -0700 (PDT)
-Date: Wed, 14 May 2025 00:22:31 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <682444b7.a00a0220.104b28.0009.GAE@google.com>
-Subject: [syzbot] [sctp?] INFO: rcu detected stall in inet6_rtm_newaddr (3)
-From: syzbot <syzbot+3e17d9c9a137bb913b61@syzkaller.appspotmail.com>
-To: davem@davemloft.net, dsahern@kernel.org, edumazet@google.com, 
-	horms@kernel.org, kuba@kernel.org, linux-kernel@vger.kernel.org, 
-	linux-sctp@vger.kernel.org, lucien.xin@gmail.com, marcelo.leitner@gmail.com, 
-	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dt-bindings: ata: Convert ti,dm816-ahci to DT schema
+To: "Rob Herring (Arm)" <robh@kernel.org>, Niklas Cassel <cassel@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: linux-ide@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250512215706.4177925-1-robh@kernel.org>
+From: Damien Le Moal <dlemoal@kernel.org>
+Content-Language: en-US
+Organization: Western Digital Research
+In-Reply-To: <20250512215706.4177925-1-robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On 5/13/25 06:57, Rob Herring (Arm) wrote:
+> Convert the TI DM816 AHCI SATA Controller to DT schema format. It's a
+> straight-forward conversion.
+> 
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 
-syzbot found the following issue on:
+Applied to for-6.16. Thanks !
 
-HEAD commit:    e9565e23cd89 Merge tag 'sched_ext-for-6.15-rc6-fixes' of g..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=17bd4af4580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=bc44e21a0b824ef8
-dashboard link: https://syzkaller.appspot.com/bug?extid=3e17d9c9a137bb913b61
-compiler:       Debian clang version 20.1.2 (++20250402124445+58df0ef89dd6-1~exp1~20250402004600.97), Debian LLD 20.1.2
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14a572f4580000
+Note: I will wait a little more for the other patches to see if reviews come in.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/35d8c0778a31/disk-e9565e23.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/5f73f5f4ca4c/vmlinux-e9565e23.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/ad13ba9fecea/bzImage-e9565e23.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+3e17d9c9a137bb913b61@syzkaller.appspotmail.com
-
-rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
-rcu: 	0-...!: (2 ticks this GP) idle=4c1c/1/0x4000000000000000 softirq=17820/17820 fqs=0
-rcu: 	(detected by 1, t=10502 jiffies, g=13441, q=130 ncpus=2)
-Sending NMI from CPU 1 to CPUs 0:
-NMI backtrace for cpu 0
-CPU: 0 UID: 0 PID: 5964 Comm: syz-executor Not tainted 6.15.0-rc6-syzkaller-00047-ge9565e23cd89 #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
-RIP: 0010:lock_release+0x2a2/0x3e0 kernel/locking/lockdep.c:5890
-Code: b8 09 b8 ff ff ff ff 65 0f c1 05 49 79 d7 10 83 f8 01 75 51 48 c7 44 24 20 00 00 00 00 9c 8f 44 24 20 f7 44 24 20 00 02 00 00 <75> 56 f7 c3 00 02 00 00 74 01 fb 65 48 8b 05 fb 3c d7 10 48 3b 44
-RSP: 0018:ffffc90000007bf8 EFLAGS: 00000046
-RAX: 0000000000000001 RBX: 0000000000000006 RCX: 51a5468642bc5400
-RDX: 0000000000000002 RSI: ffffffff8d936f16 RDI: ffffffff8bc1d820
-RBP: ffff8880269f8b40 R08: ffff88802cf3bc83 R09: 1ffff110059e7790
-R10: dffffc0000000000 R11: ffffed10059e7791 R12: 0000000000000002
-R13: 0000000000000002 R14: ffff88805a967300 R15: ffff8880269f8000
-FS:  0000555587b64500(0000) GS:ffff8881260c7000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000200000000600 CR3: 000000007d574000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <IRQ>
- __raw_spin_unlock include/linux/spinlock_api_smp.h:141 [inline]
- _raw_spin_unlock+0x16/0x50 kernel/locking/spinlock.c:186
- spin_unlock include/linux/spinlock.h:391 [inline]
- advance_sched+0x99f/0xc90 net/sched/sch_taprio.c:981
- __run_hrtimer kernel/time/hrtimer.c:1761 [inline]
- __hrtimer_run_queues+0x52c/0xc60 kernel/time/hrtimer.c:1825
- hrtimer_interrupt+0x45b/0xaa0 kernel/time/hrtimer.c:1887
- local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1038 [inline]
- __sysvec_apic_timer_interrupt+0x108/0x410 arch/x86/kernel/apic/apic.c:1055
- instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1049 [inline]
- sysvec_apic_timer_interrupt+0xa1/0xc0 arch/x86/kernel/apic/apic.c:1049
- </IRQ>
- <TASK>
- asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
-RIP: 0010:unwind_next_frame+0x180c/0x2390 arch/x86/kernel/unwind_orc.c:665
-Code: 85 f4 08 00 00 b3 01 8b 84 24 84 00 00 00 41 39 06 4c 8b 7c 24 48 48 8b 7c 24 70 0f 85 54 01 00 00 48 8b 44 24 58 80 3c 28 00 <74> 05 e8 7d 05 b0 00 4d 8b 66 38 49 8d 7e 08 48 89 f8 48 c1 e8 03
-RSP: 0018:ffffc90003fceeb8 EFLAGS: 00000246
-RAX: 1ffff920007f9df8 RBX: ffffffff90b37101 RCX: 0000000000000001
-RDX: ffffc90003fcefc8 RSI: dffffc0000000000 RDI: ffffc90003fcefc0
-RBP: dffffc0000000000 R08: ffffc90003fcff48 R09: 0000000000000000
-R10: ffffc90003fcefd8 R11: fffff520007f9dfd R12: ffffc90003fcff48
-R13: ffffc90003fcefd8 R14: ffffc90003fcef88 R15: ffffffff8171ca05
- arch_stack_walk+0x11c/0x150 arch/x86/kernel/stacktrace.c:25
- stack_trace_save+0x9c/0xe0 kernel/stacktrace.c:122
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3e/0x80 mm/kasan/common.c:68
- poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
- __kasan_kmalloc+0x93/0xb0 mm/kasan/common.c:394
- kasan_kmalloc include/linux/kasan.h:260 [inline]
- __do_kmalloc_node mm/slub.c:4327 [inline]
- __kmalloc_noprof+0x27a/0x4f0 mm/slub.c:4339
- kmalloc_noprof include/linux/slab.h:909 [inline]
- kzalloc_noprof include/linux/slab.h:1039 [inline]
- fib6_info_alloc+0x30/0xf0 net/ipv6/ip6_fib.c:155
- ip6_route_info_create+0x4b3/0x1360 net/ipv6/route.c:3802
- ip6_route_add+0x28/0x160 net/ipv6/route.c:3896
- addrconf_prefix_route net/ipv6/addrconf.c:2487 [inline]
- inet6_addr_add+0x6b2/0xc00 net/ipv6/addrconf.c:3052
- inet6_rtm_newaddr+0x93d/0xd20 net/ipv6/addrconf.c:5063
- rtnetlink_rcv_msg+0x7cc/0xb70 net/core/rtnetlink.c:6955
- netlink_rcv_skb+0x21c/0x490 net/netlink/af_netlink.c:2534
- netlink_unicast_kernel net/netlink/af_netlink.c:1313 [inline]
- netlink_unicast+0x758/0x8d0 net/netlink/af_netlink.c:1339
- netlink_sendmsg+0x805/0xb30 net/netlink/af_netlink.c:1883
- sock_sendmsg_nosec net/socket.c:712 [inline]
- __sock_sendmsg+0x21c/0x270 net/socket.c:727
- __sys_sendto+0x3bd/0x520 net/socket.c:2180
- __do_sys_sendto net/socket.c:2187 [inline]
- __se_sys_sendto net/socket.c:2183 [inline]
- __x64_sys_sendto+0xde/0x100 net/socket.c:2183
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xf6/0x210 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f281bd907fc
-Code: 2a 5f 02 00 44 8b 4c 24 2c 4c 8b 44 24 20 89 c5 44 8b 54 24 28 48 8b 54 24 18 b8 2c 00 00 00 48 8b 74 24 10 8b 7c 24 08 0f 05 <48> 3d 00 f0 ff ff 77 34 89 ef 48 89 44 24 08 e8 70 5f 02 00 48 8b
-RSP: 002b:00007f281c0df670 EFLAGS: 00000293 ORIG_RAX: 000000000000002c
-RAX: ffffffffffffffda RBX: 00007f281cae4620 RCX: 00007f281bd907fc
-RDX: 0000000000000040 RSI: 00007f281cae4670 RDI: 0000000000000003
-RBP: 0000000000000000 R08: 00007f281c0df6c4 R09: 000000000000000c
-R10: 0000000000000000 R11: 0000000000000293 R12: 0000000000000003
-R13: 0000000000000000 R14: 00007f281cae4670 R15: 0000000000000000
- </TASK>
-rcu: rcu_preempt kthread timer wakeup didn't happen for 10501 jiffies! g13441 f0x0 RCU_GP_WAIT_FQS(5) ->state=0x402
-rcu: 	Possible timer handling issue on cpu=0 timer-softirq=8937
-rcu: rcu_preempt kthread starved for 10502 jiffies! g13441 f0x0 RCU_GP_WAIT_FQS(5) ->state=0x402 ->cpu=0
-rcu: 	Unless rcu_preempt kthread gets sufficient CPU time, OOM is now expected behavior.
-rcu: RCU grace-period kthread stack dump:
-task:rcu_preempt     state:I stack:27496 pid:16    tgid:16    ppid:2      task_flags:0x208040 flags:0x00004000
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5382 [inline]
- __schedule+0x16e2/0x4cd0 kernel/sched/core.c:6767
- __schedule_loop kernel/sched/core.c:6845 [inline]
- schedule+0x165/0x360 kernel/sched/core.c:6860
- schedule_timeout+0x12b/0x270 kernel/time/sleep_timeout.c:99
- rcu_gp_fqs_loop+0x301/0x1540 kernel/rcu/tree.c:2046
- rcu_gp_kthread+0x99/0x390 kernel/rcu/tree.c:2248
- kthread+0x711/0x8a0 kernel/kthread.c:464
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:153
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+-- 
+Damien Le Moal
+Western Digital Research
 
