@@ -1,149 +1,114 @@
-Return-Path: <linux-kernel+bounces-646911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-646913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C31B1AB623D
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 07:23:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A26AAB6241
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 07:24:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 613F2860628
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 05:23:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9BD11B4475A
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 05:24:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40C301F4165;
-	Wed, 14 May 2025 05:23:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C63971F4634;
+	Wed, 14 May 2025 05:23:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="mnO46xr3"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="IHznTGbV"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F07B3EA98;
-	Wed, 14 May 2025 05:23:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8268A1F4199;
+	Wed, 14 May 2025 05:23:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747200209; cv=none; b=YuXAIflqtVunlkrSaZDYx4QDpsulot8q0jVLetIZV1mLuLQgavx6DZpY8F/lMI2szOiIPeG9NOa1ezlpWn0w1k3LrM9ljFEd8wotwivNLLxvy8kqRTgmkjDodN3T3RTSifol9oru8ggdNgXzfyu0r9Jzhzpefgnk2RuJ1sPmbmI=
+	t=1747200224; cv=none; b=D67wpxxc2UJPAkNwfNd5aIe4UL1MbzUD/idg8MXhqx6koQrjOLGid6lyL+e/dGPfdCw0aH2gvOYBPjoAwyD4ZuvxUF0LQAZpwoQV/J4Zjhp8tI/b2DSbHmVJ1deRQ1eQfk3E5BDIfjMTXzdt9Z4an4gx9zZ72EpUGc86xqIWySg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747200209; c=relaxed/simple;
-	bh=PjZkzPb6qnl12zHf3pahrAM5KdkGBNztYJzBS7MQ4GY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=dqiUuSBRedXlkli2kbQkg1vxx6S5GbPhLGqyIVhiluixQ7K0+zPzA0Go1sqw0Baj+/j7fT8kuDUiJa0MAY4Oyx8/4SoBly5P9f58o4YiY14lRab7SdbTyQUkgbItq+LnLNZuSzqV9RFlUaEiCWryPco4rjCNZ4vTH+3pvf3TE4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=mnO46xr3; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1747200200;
-	bh=i+7zWi9EvsmtyiPZJIl0RxaxjOBp9ccf2cSnG0886H8=;
-	h=Date:From:To:Cc:Subject:From;
-	b=mnO46xr3GFylUW55UzbiZA5fx1x6dRWQoyNZxHRr8i9poHYi02Kv6ilAmxCPP20a6
-	 49po66PlQtkCW/9Z1sCFkVJsjL7C6MkiXWg7QGa960x3p+Z8N9ImcAk9DVu5xBvd8h
-	 b0m/Wn3kaT3fGFIFZq1MKeNqH6I+43laB+QSlmVD54oM9gHnbKzCGo0JYeYTF9qahJ
-	 zbKdVvAsT7xLcmbV19gShdciD2wxU/uLHoYmvNAmj+SaDGeW4x3UrascrC8HJe+XAX
-	 Y7Db6dsfOrfYcsWeJbxyaFR2i7hwCn8n7qG11MZxGbBne0ouU+n10Loinr+BQYtNa/
-	 n3stZRf25EO+Q==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Zy1vq4xsQz4x8f;
-	Wed, 14 May 2025 15:23:19 +1000 (AEST)
-Date: Wed, 14 May 2025 15:23:18 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
- "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>,
- David Miller <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Paolo
- Abeni <pabeni@redhat.com>
-Cc: Raju Rangoju <Raju.Rangoju@amd.com>, Networking
- <netdev@vger.kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the tip tree
-Message-ID: <20250514152318.52714b39@canb.auug.org.au>
+	s=arc-20240116; t=1747200224; c=relaxed/simple;
+	bh=CeHI+cIr6NUlwOnIvXT4LpSzTw0rK5nSGivGDK1Njvo=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=q3/YoVV2tq43A/+g8Cn3YvMNgxMFup+Cq49sHqmOsT4oMprlREEkUjnNJPoqDqiSsYW3leWUL3Wvf4IGW6GXjtiG2S2SAclVEuNiH3G+JlKlGxD5q6A0pYOgn5hTt6YG6mbaJTwrC0/r6KCGaANFIsseCHNJjLQ5gtE4DBWlU1Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=IHznTGbV; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54E2bvot018490;
+	Wed, 14 May 2025 05:23:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=cRVmaLRJQz/c9QbnOFcZw+
+	QDA4D2ENmz4GqbrkEZaDY=; b=IHznTGbVwZPHcg55/yOQ1rXTbb8IaorB1R4tuc
+	9VBv4mzqdKi/E+fju8m1C2h753wyOoUr8SIZQGpNrz7oOVZOWnrk6xBbPL1grd72
+	S8meJfC+FG7HBXmwjneIpXmrZfuZVbB7QgjKpI4Y6UHEcQF1MpR0vDwokgWdJrvo
+	tD/9GOyN8kScfwUDTzfbn7SnYAV2Cju+WoavOZaUbwg8fyOft0HnRbj108nE0nDR
+	VM9hj/AkYinM02RSfq2S805yfy+95A9XBiMFWVT5C2DcdY0MtdZQ1Eac+5Qply08
+	vEXKLAC/O8Kj2vsEcQ+MFEIQfYsfEbgNmj3tZL9bg2Lza7LQ==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46mbcmsfbx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 14 May 2025 05:23:38 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 54E5Nc6s025997
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 14 May 2025 05:23:38 GMT
+Received: from hu-lxu5-sha.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 13 May 2025 22:23:35 -0700
+From: Ling Xu <quic_lxu5@quicinc.com>
+To: <cros-qcom-dts-watchers@chromium.org>, <andersson@kernel.org>,
+        <konradybcio@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <quic_lxu5@quicinc.com>, <ekansh.gupta@oss.qualcomm.com>
+Subject: [PATCH 0/3] arm64: dts: qcom: sc7280: Add property for sc7280
+Date: Wed, 14 May 2025 10:53:20 +0530
+Message-ID: <20250514052323.3881600-1-quic_lxu5@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/G7FAMtDx3rupFH52VPU.BBt";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: ccUOGlLQU5m66DROA8BeN_NFlsK-cEvc
+X-Authority-Analysis: v=2.4 cv=HZ4UTjE8 c=1 sm=1 tr=0 ts=682428da cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=dt9VzEwgFbYA:10 a=e1-p2UAVmv_opGtAIfoA:9
+X-Proofpoint-GUID: ccUOGlLQU5m66DROA8BeN_NFlsK-cEvc
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTE0MDA0NSBTYWx0ZWRfX9vpUy+52bHw5
+ 7UZK8Na/DW9L+J7bIgNBUdVh9qM7mYD734tFRu2ryb9yKF6yGkeLY5DQJ6K2LGXPyZpDHKOxfOz
+ DHCUD1qdUEESMQFe7kw8au66TMQ+Lo8tDpfMTaOPGwcBCCzkNDdxq6wf85dJHtiII3um17FisT/
+ 4gFtxkrKVvGY+X1IBbhr4Q3QA9SKCflRlCMOeWUlfv5HedZ54YgpMEo/IFi6YsxfIqZDLbusaNX
+ wsGer2zkT31ZyiXVcd+2YPE+tB5t530fUfAWhSOG+LR7CpAhHn5RQqFYpEYC3zPgLyigCxEFoCS
+ 0YeGtAxtfMmpp4BIt3rXZPBNqOPczJlFbxms6lXeQm4H0Xwcad2+yEcbbZ5CrApi3pJ/vNnS9af
+ VRwnj/9ZdspeC3qw42v1RckUcp2d9HrMZ40uCC7fqGDQ3qzTTHPk6dItlh41QnZJ9oOg0iSE
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-14_01,2025-05-09_01,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 adultscore=0 spamscore=0 clxscore=1011 priorityscore=1501
+ suspectscore=0 mlxscore=0 mlxlogscore=424 lowpriorityscore=0 malwarescore=0
+ bulkscore=0 phishscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505070000
+ definitions=main-2505140045
 
---Sig_/G7FAMtDx3rupFH52VPU.BBt
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+This patch series add memory region, nsessions and dma-coherent property
+for sc7280.
 
-Hi all,
+Ling Xu (3):
+  arm64: dts: qcom: sc7280: Add memory region for audiopd
+  arm64: dts: qcom: sc7280: Add nsessions property for adsp
+  arm64: dts: qcom: sc7280: Add dma-coherent property for fastrpc nodes
 
-After merging the tip tree, today's linux-next build (x86_64 allmodconfig)
-failed like this:
+ arch/arm64/boot/dts/qcom/sc7280.dtsi | 26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
 
-In file included from drivers/net/ethernet/amd/xgbe/xgbe-dev.c:18:
-drivers/net/ethernet/amd/xgbe/xgbe-smn.h:15:10: fatal error: asm/amd_nb.h: =
-No such file or directory
-   15 | #include <asm/amd_nb.h>
-      |          ^~~~~~~~~~~~~~
+-- 
+2.34.1
 
-Caused by commit
-
-  bcbb65559532 ("x86/platform/amd: Move the <asm/amd_nb.h> header to <asm/a=
-md/nb.h>")
-
-interacting with commit
-
-  e49479f30ef9 ("amd-xgbe: add support for new XPCS routines")
-
-from the net-next tree.
-
-I have applied the following merge resolution for today.
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Wed, 14 May 2025 14:49:31 +1000
-Subject: [PATCH] fix up for "x86/platform/amd: Move the <asm/amd_nb.h> head=
-er
- to <asm/amd/nb.h>"
-
-interacting with "amd-xgbe: add support for new XPCS routines" from the
-net-next tree.
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/net/ethernet/amd/xgbe/xgbe-smn.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/ethernet/amd/xgbe/xgbe-smn.h b/drivers/net/etherne=
-t/amd/xgbe/xgbe-smn.h
-index 3fd03d39c18a..c6ae127ced03 100644
---- a/drivers/net/ethernet/amd/xgbe/xgbe-smn.h
-+++ b/drivers/net/ethernet/amd/xgbe/xgbe-smn.h
-@@ -12,7 +12,7 @@
-=20
- #ifdef CONFIG_AMD_NB
-=20
--#include <asm/amd_nb.h>
-+#include <asm/amd/nb.h>
-=20
- #else
-=20
---=20
-2.47.2
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/G7FAMtDx3rupFH52VPU.BBt
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmgkKMYACgkQAVBC80lX
-0GzBUQf/S64XRZpKD5EbVXfNAbmm9ocGmqdb6XJB0l6y7NS3Rc2i7DJj8Vof9qJt
-ZwHBK75oUf+iLmXOQLxdsSvy5xTARlK6qjt/qeWRSQm+Lwxy2Ed4Sh02bLnwkrVr
-bpRcfguGBFBN4ZWzUdeFKGBj3JtdPKxboGXWxqJc9pjsHUxWnzE7sVdnW5JbGTvD
-k62B76HgGe4dYcUGfo11BXMpTFwF9NVFD04I5TP4rko4UNQvYKFq7HovHPcogvii
-zz9l66nNNID9Kd6VBou5pA1UOiF2IG5zxrmOkaqjG5UXB1yGK9RfGqISavF5mUDT
-t9yiwRxSJ+Nmw61krY3WOikpCthuRw==
-=SMPZ
------END PGP SIGNATURE-----
-
---Sig_/G7FAMtDx3rupFH52VPU.BBt--
 
