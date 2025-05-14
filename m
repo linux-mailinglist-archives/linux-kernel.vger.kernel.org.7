@@ -1,181 +1,374 @@
-Return-Path: <linux-kernel+bounces-646978-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-646975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D22A0AB6316
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 08:29:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6960FAB6310
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 08:28:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B30019E6542
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 06:29:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1081B4A2BBB
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 06:28:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D05D91F4261;
-	Wed, 14 May 2025 06:28:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4B011FF7DC;
+	Wed, 14 May 2025 06:28:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="y0rvArIo"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2041.outbound.protection.outlook.com [40.107.220.41])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Di/90cZ4"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ADBF1FC7E7;
-	Wed, 14 May 2025 06:28:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.41
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747204138; cv=fail; b=kf0j1H+Ukqn4reOrxd4D1XfiadttJbdU0eb3Z/x9DHQtNfNzw8X9hff1G3h2xJz3kyBaqvSQhu23EPJD7S1kcMN1GfnWvi1I4w6ZwFfsSftnktyDy8ca5GqDmQWRNq1He3Jr7LvGHCGmDjVYtuTbQUifqq2nQ487tVei+F65jw0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747204138; c=relaxed/simple;
-	bh=CCMf4WsaLhz9e6nnpNse4SCP6G700qLNV0Q/DOzW/m0=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=K6wWlwFWami9PBSMFB8fctSZJHUrCdBYXXg+vp7d+MWHDg+1UupsEsqRnAac1TNriTgZWX9QlH5e5ey3X73jnjeO/NYVkkcwpkR1cGPC3Hrln7Aij1zA4b0gbfLawr0RA7UdkgoeYFUZszYulHz+EH//0FXFZNhm/8TJz8R+TgM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=y0rvArIo; arc=fail smtp.client-ip=40.107.220.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=HJ+OvbLtiAKu1nhlW1UKAfNj/q6gp34YYWTrWffghhI688xA66NGGWifX+J7sxs21nt+rVGs832U32XvJrN4/DMRAAdw6ETejOGsyEsPQ0ZofjjbrcMgc7QaxXhIAvRizor88KhXD+Ax63cRYmXT0yCNbNq5KgBKWVDRD/EYXRRcjAha1cVQFf1d1xDJ/+KHbpLxYvI6drFK5dk+sURley19UZPNmg2DHuQVkN8H3b0Fn1FRldhf7NT/8qPDY/sKLDRrkuiDkNG6g7Fxt5WiKXoSukgETME/7dWYhftZFVTvgfBX5jGV+Mlu53tauQlyt/RY48TbOlM9hriG26eiLg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9cLAhnGR2pw9ZZ6or1ESe1Y/oAiVS6Dbb/g04RDC78w=;
- b=xgijx41KJYhKJIGi8EmkWUj6Fn+w3io34cVEHiRXRFLkzKYr1VToS3Sx4lHOrKv8dqjSyHjIbsDjHHvvpgewyd26V2JHO6Jm3Ar7sBjPXE8i9XNGhBfLO7f4m7rCawZ1YBpSCf33iC5bxUQF9ta1h+5En5cEq5gS2qR7B0m7td/LoXnfBB+mPUFsvxjGKImrElbn5r8jaMhgh6E83fFp5oKLGEfyWU0/UJfbhfVy5WYF3M/K15UEqQdOnPpU3mgBBLEtfVYyZSG4eszNx2nHLdh7GunncbYdqL/nojCbULeWIAA5Pm73WHXwuMNaSM8UA4/1a8IokuKJkgH+7E4OMQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=linutronix.de smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9cLAhnGR2pw9ZZ6or1ESe1Y/oAiVS6Dbb/g04RDC78w=;
- b=y0rvArIoPCthyld8W1VKUiSWlFMt4yd/ggqMR6agixX5x5WWhE2CTCkS/+jiVM+z7zLtpuR3sPKlmJW1x4pOniWbtOU6p25XrT0OfDwZIStkmZV0to8+pk5dE61nwksdm07KqqyAWWWCwQkg8KOnhyolCWMBpEQ6THq4rISY9Bw=
-Received: from SA1P222CA0111.NAMP222.PROD.OUTLOOK.COM (2603:10b6:806:3c5::8)
- by MN0PR12MB5762.namprd12.prod.outlook.com (2603:10b6:208:375::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8722.28; Wed, 14 May
- 2025 06:28:50 +0000
-Received: from SA2PEPF00003AE8.namprd02.prod.outlook.com
- (2603:10b6:806:3c5:cafe::a9) by SA1P222CA0111.outlook.office365.com
- (2603:10b6:806:3c5::8) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8746.16 via Frontend Transport; Wed,
- 14 May 2025 06:28:50 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- SA2PEPF00003AE8.mail.protection.outlook.com (10.167.248.8) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8722.18 via Frontend Transport; Wed, 14 May 2025 06:28:49 +0000
-Received: from kaveri.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 14 May
- 2025 01:28:43 -0500
-From: Shivank Garg <shivankg@amd.com>
-To: <tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
-	<dave.hansen@linux.intel.com>, <x86@kernel.org>, <hpa@zytor.com>,
-	<luto@kernel.org>, <peterz@infradead.org>, <rafael@kernel.org>,
-	<pavel@kernel.org>, <akpm@linux-foundation.org>
-CC: <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-	<shivankg@amd.com>, <sohil.mehta@intel.com>, <rui.zhang@intel.com>,
-	<yuntao.wang@linux.dev>, <kai.huang@intel.com>, <xiaoyao.li@intel.com>,
-	<peterx@redhat.com>, <sandipan.das@amd.com>, <ak@linux.intel.com>,
-	<rostedt@goodmis.org>
-Subject: [PATCH RESEND 4/4] x86/apic: Fix W=1 build kernel-doc warning
-Date: Wed, 14 May 2025 06:26:42 +0000
-Message-ID: <20250514062637.3287779-4-shivankg@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250514062637.3287779-1-shivankg@amd.com>
-References: <20250514062637.3287779-1-shivankg@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF80D1FC7E7
+	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 06:28:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747204093; cv=none; b=KACDtOOTKNhECkQlad+RUXDM8sCvWnMMP2koZYhcfaN6PrDABuv3Fpnbt6EkxddlBGAXGGcwpbeFBaC3M6k/4tFFXMM9N7k/gniVM5nglvAetGPOClfp4EUpbaeDU57GCp9xohu4JJqkWbIUJWyh0xFPmRs6UyHudROzvV31dts=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747204093; c=relaxed/simple;
+	bh=UQ1J5sAQuLUSnUT79u1IDdk8KzumY3Ko6aSIBtrrU9E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kx+Hu9gFfEQiBmq6nh2EtExNcfDQ6pTiTpCr4305/7WSpdpxJQYTfM91nX8TLwngNDo/GdUgfmuSlaLn9tOqom362fzEkjRDPLazNHCPmzWn/uuwO0hYbMajCHz2ZZ/42psyXdz99SWxItJNAeYWTpNolgjj4tzG7ZNHElwLLWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Di/90cZ4; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1747204090;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hOp4hY0PMAH5wqsNNGlH3vrlg2J5pgcfFuboWc+PXtg=;
+	b=Di/90cZ435SI9Dsm7fdWp/j6ZuoKAcVIYlhBkoopfxXmyu2lm84Yr91MQwRc9hGMp+n+Uo
+	0ihdK9NHZBGuA/e4phLvEQ35GRpsHapf6t0KlZ0CQiHaDCXQpqA8zfxy+EkJpN6F7YDSAx
+	V8cNAgLq70qHVW/IwQT2bf5ppoyuRlg=
+Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com
+ [209.85.216.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-278-6M00uCQHMmS4Ayyc-IE6PQ-1; Wed, 14 May 2025 02:28:08 -0400
+X-MC-Unique: 6M00uCQHMmS4Ayyc-IE6PQ-1
+X-Mimecast-MFC-AGG-ID: 6M00uCQHMmS4Ayyc-IE6PQ_1747204087
+Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-30a80fe759bso8506976a91.1
+        for <linux-kernel@vger.kernel.org>; Tue, 13 May 2025 23:28:08 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747204087; x=1747808887;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hOp4hY0PMAH5wqsNNGlH3vrlg2J5pgcfFuboWc+PXtg=;
+        b=J26m7RKfm/juHqB3EImHgPzjxLi4l2QwE1NqmzPT3WFfPQwf0fHu3PxXCMh+rY7NSf
+         gjjG+Ic9jrp4XYRiuICT4g9lTH28sQTr1kU1pqHpfypZx8pymb0mz6JZPm+3+ee0Nmr2
+         r4N55udARtMgPYLwgiAqNW53bAlPhwlqAkNokPSWeNsDmuitg89Z7CPg1A+aX2aNvefh
+         YhD14KUcelWNzACNcGYI3yWojLHZ5V0olhOAfiXt46KTNQ6/WGKbO5Yap6XARTOUlVeH
+         XAUyQzRVzqGYcsIHEhOAnzv/RG5gGiY4X1DMQk3NEV9S5k2UkI/GMnXZJcHElaLTNmt2
+         Tn+g==
+X-Forwarded-Encrypted: i=1; AJvYcCUtric8xr3uqKoIigPhHACM1PfrqOMIx1ivJrvwYLZxjSGsC6XPajlVJlfS/mGftMLRMs05LUnKMw+C9LQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzqrw+7kzEO1OV8aPRrB+EKQk+4qIoIVZ5BkwYBilE6/3jiYRMG
+	h3eoBp3bHpFvK4iktIYaOHChz0isPMO1vj5KwJTiMuLoUIdBJc/pkZqZEr6+9qAGaPqDa9qD35M
+	H1pPZKR6zMIR+g0rMVG64mO/RBB6zIzYVG2VKGllumV67KshHfMMcefVUnZv9LeTAH3dYFGZAg+
+	ttBs2Dn44v1ix1SMESyWQczKGlb4lxWKJUKCgq
+X-Gm-Gg: ASbGnctR67enrSw4I92grWAiwpsRJFPwHKn+37lDVN2LTuoUEOvkm3clWWGJsQs8yre
+	LOjV7eOCXhjPiltMpAF91pis+MPNP/0aB0IqS4kM5wr0TJUiax+vnE4S/H2OD9nNJO0L3
+X-Received: by 2002:a17:90b:3b4a:b0:2ff:6a5f:9b39 with SMTP id 98e67ed59e1d1-30e2e5dcde5mr3933264a91.18.1747204087113;
+        Tue, 13 May 2025 23:28:07 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGa8v+OcSzRWdhZzNcxoBuSbj+/AdqHp+HfAdjjwy0jvkIl0bUIQMv+O4S+pz9KyLi+opmWvTkyIhYe/KrmvWU=
+X-Received: by 2002:a17:90b:3b4a:b0:2ff:6a5f:9b39 with SMTP id
+ 98e67ed59e1d1-30e2e5dcde5mr3933239a91.18.1747204086621; Tue, 13 May 2025
+ 23:28:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA2PEPF00003AE8:EE_|MN0PR12MB5762:EE_
-X-MS-Office365-Filtering-Correlation-Id: 374cd920-3abe-4d34-bab3-08dd92b096cc
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|1800799024|82310400026|7416014|376014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?LTogHDvQtWPSET96QicYkfSRLoVAKMj2Mk1O5m4MdOJvRHOIz8E2LRFGSlsX?=
- =?us-ascii?Q?Je6zyWowhEXyEYG4ZmFeOwyx78VfezaVTXQh3P8fCdrjOLApTVcNTlP0VUNb?=
- =?us-ascii?Q?erv8W59AGhkxPsU0t33WHO/xsEKxVSU976f1pw52313JP0LD5t5fTnbK0L9Z?=
- =?us-ascii?Q?7rdvjcpwQoRtKOI7VXAFs++h5UVm651wWAqS8NnG3YvJMReHYy+njeZSQ60P?=
- =?us-ascii?Q?GP0umpW/OGWlN6MISclaPYOQJ7kIPzLt01lAu22ON2bAgr+XxUqVI3oBGlGo?=
- =?us-ascii?Q?CrS/2OpkVOo+u6foy+JX/x9teyBV/m6ekE0qhZmw0nJkAfELijDSm9tysZIN?=
- =?us-ascii?Q?lW1oz3JYf3tuSwcDIJ0VoBNJ4xnQ9q9iuqjNHRX9boO2g5mgQH9+dLv5SJpN?=
- =?us-ascii?Q?won1+VfQmLB/VpGeUzp/KMUfVhVDdMKh3zQehy4vsCDUTbM2MQUPhsJe/MW+?=
- =?us-ascii?Q?TDzJe5D3J4qYr1/wgwbWD4RwqLZ72/7phlqxQTPCPyAIaMgXVWXbwZuBn3hu?=
- =?us-ascii?Q?Crh3zqW+49LxBV+suqxIBqimHMglHSD6R5F0tEBPS32kXHZMt0KgkBZVwaqf?=
- =?us-ascii?Q?WjrEAWEFAev38UBdfjFVhwgz7h9/UB1I0qoj95MMDokHH4t4yBml2V3aSbXk?=
- =?us-ascii?Q?Yt/mHAIkrB4LzAQEwj3Bb73s9SXjyqm54AiBlT02XHE4ZWwL5NFIzXgV8/PQ?=
- =?us-ascii?Q?90Ng381CQ319Gub+WF/d45wtU+GiOOxwhbQrvaleAaD2gerdAJCooc8LfP3B?=
- =?us-ascii?Q?NmuTqObHA2IP0+EckTkkLNx5j58w2nH90UAndENI3px6pbI7/fUljFZjeykH?=
- =?us-ascii?Q?GHb60GomM1nG48oPiRxoOm5Xn1Cu9RLEs5/EyHhShWFW4G1oYteXqLvMGphw?=
- =?us-ascii?Q?yRBMdA/ZrADHY4aYkWdM8JS+0I+XkacdwIk1/Kkn7YPrBPtrDGUHuxw2SYEk?=
- =?us-ascii?Q?kNcEBgaBzAlR0ebZ9fIV+9FZxUh9iThDoWH+C7n6WZnRwSwBV+4mDHiMwrJO?=
- =?us-ascii?Q?FMXQAUtr5Z4HBfdZTrfxDPjGKeHxbEMITTmwsG17Aib5CefC/qX3Y5ts2MJS?=
- =?us-ascii?Q?1e3I7BVNQ9B4Lrh1fkpObof7A8znTwvA/JAxxvgChsGs4uk7De0DljTw0Y0E?=
- =?us-ascii?Q?xu/MjV13r4AT7RdtdEe6Dm+WhNg1dxaD30eTQKIu3/exPBGQzo81KasAvqcB?=
- =?us-ascii?Q?BPJmpvFaXqh28ArH2kDK2j/VgJBevjGz1bgpvsB6UQftLIhXqR9z4V4ZMj5D?=
- =?us-ascii?Q?RD6JIy+X6TVoZlpIZPC1vqZMpSZVlOKR2ee1nGsCOOM2Yy5vXli/a1ksdo4M?=
- =?us-ascii?Q?xBarRms+uWaFTygayUT8myjRSPekLbfLEyUaMbWrpr+gHMOHVPPJrMeJBjbY?=
- =?us-ascii?Q?urP5M9mcmeNEA2iDJdecBaTH1fUUPSYaTogpUEfRtLQY85gXzIYikV87eNTI?=
- =?us-ascii?Q?BiasYjPve2C/ge7bBbaPD0DCPCxcA1FrUqmoP9mIJAkYmN3KNoQkFFi9gbae?=
- =?us-ascii?Q?7Sj8+8HIFR7oW9lsUT44utAs6gUsZDLTZ0V8f1pPoRZQB4KHQSqZP6SK9g?=
- =?us-ascii?Q?=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(82310400026)(7416014)(376014)(921020);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 May 2025 06:28:49.7778
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 374cd920-3abe-4d34-bab3-08dd92b096cc
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SA2PEPF00003AE8.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB5762
+References: <20250404145241.1125078-1-jon@nutanix.com> <CACGkMEsFc-URhXBCGZ1=CTMZKcWPf57pYy1TcyKLL=N65u+F0Q@mail.gmail.com>
+ <B32E2C5D-25FB-427F-8567-701C152DFDE6@nutanix.com> <CACGkMEucg5mduA-xoyrTRK5nOkdHvUAkG9fH6KpO=HxMVPYONA@mail.gmail.com>
+ <CAJaqyWdhLCNs_B0gcxXHut7xufw23HMR6PaO11mqAQFoGkdfXQ@mail.gmail.com> <92470838-2B98-4FC6-8E5B-A8AF14965D4C@nutanix.com>
+In-Reply-To: <92470838-2B98-4FC6-8E5B-A8AF14965D4C@nutanix.com>
+From: Jason Wang <jasowang@redhat.com>
+Date: Wed, 14 May 2025 14:27:55 +0800
+X-Gm-Features: AX0GCFvO5_TynaC7ilLiE_zM1DHi8DARvxgXq012o8cd1y0a6sUXeX2xGypEwtA
+Message-ID: <CACGkMEugQPYZuL75i7xBGy9vUmkH=6NN1uhi9wuLa4ruebAcew@mail.gmail.com>
+Subject: Re: [PATCH] vhost/net: remove zerocopy support
+To: Jon Kohler <jon@nutanix.com>
+Cc: Eugenio Perez Martin <eperezma@redhat.com>, "Michael S. Tsirkin" <mst@redhat.com>, 
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
+	"virtualization@lists.linux.dev" <virtualization@lists.linux.dev>, 
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Stefano Brivio <sbrivio@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Building the kernel with W=1 generates the following warning:
+On Thu, May 1, 2025 at 9:21=E2=80=AFAM Jon Kohler <jon@nutanix.com> wrote:
+>
+>
+>
+> > On Apr 16, 2025, at 6:15=E2=80=AFAM, Eugenio Perez Martin <eperezma@red=
+hat.com> wrote:
+> >
+> > !-------------------------------------------------------------------|
+> >  CAUTION: External Email
+> >
+> > |-------------------------------------------------------------------!
+> >
+> > On Tue, Apr 8, 2025 at 8:28=E2=80=AFAM Jason Wang <jasowang@redhat.com>=
+ wrote:
+> >>
+> >> On Tue, Apr 8, 2025 at 9:18=E2=80=AFAM Jon Kohler <jon@nutanix.com> wr=
+ote:
+> >>>
+> >>>
+> >>>
+> >>>> On Apr 6, 2025, at 7:14=E2=80=AFPM, Jason Wang <jasowang@redhat.com>=
+ wrote:
+> >>>>
+> >>>> !-------------------------------------------------------------------=
+|
+> >>>> CAUTION: External Email
+> >>>>
+> >>>> |-------------------------------------------------------------------=
+!
+> >>>>
+> >>>> On Fri, Apr 4, 2025 at 10:24=E2=80=AFPM Jon Kohler <jon@nutanix.com>=
+ wrote:
+> >>>>>
+> >>>>> Commit 098eadce3c62 ("vhost_net: disable zerocopy by default") disa=
+bled
+> >>>>> the module parameter for the handle_tx_zerocopy path back in 2019,
+> >>>>> nothing that many downstream distributions (e.g., RHEL7 and later) =
+had
+> >>>>> already done the same.
+> >>>>>
+> >>>>> Both upstream and downstream disablement suggest this path is rarel=
+y
+> >>>>> used.
+> >>>>>
+> >>>>> Testing the module parameter shows that while the path allows packe=
+t
+> >>>>> forwarding, the zerocopy functionality itself is broken. On outboun=
+d
+> >>>>> traffic (guest TX -> external), zerocopy SKBs are orphaned by eithe=
+r
+> >>>>> skb_orphan_frags_rx() (used with the tun driver via tun_net_xmit())
+> >>>>
+> >>>> This is by design to avoid DOS.
+> >>>
+> >>> I understand that, but it makes ZC non-functional in general, as ZC f=
+ails
+> >>> and immediately increments the error counters.
+> >>
+> >> The main issue is HOL, but zerocopy may still work in some setups that
+> >> don't need to care about HOL. One example the macvtap passthrough
+> >> mode.
+> >>
+> >>>
+> >>>>
+> >>>>> or
+> >>>>> skb_orphan_frags() elsewhere in the stack,
+> >>>>
+> >>>> Basically zerocopy is expected to work for guest -> remote case, so
+> >>>> could we still hit skb_orphan_frags() in this case?
+> >>>
+> >>> Yes, you=E2=80=99d hit that in tun_net_xmit().
+> >>
+> >> Only for local VM to local VM communication.
+>
+> Sure, but the tricky bit here is that if you have a mix of VM-VM and VM-e=
+xternal
+> traffic patterns, any time the error path is hit, the zc error counter wi=
+ll go up.
+>
+> When that happens, ZC will get silently disabled anyhow, so it leads to s=
+poradic
+> success / non-deterministic performance.
 
-arch/x86/kernel/apic/apic.c:2140: warning: Function parameter or struct member 'spurious_interrupt' not described in 'DEFINE_IDTENTRY_IRQ'
-arch/x86/kernel/apic/apic.c:2140: warning: expecting prototype for spurious_interrupt(). Prototype was for DEFINE_IDTENTRY_IRQ() instead
+As discussed, the main issue is safety: a malicious VM can refuse to
+receive packets which may cause tx to be stuck. So scarfing
+performance for safety is the only way to go. If we can find a way to
+fix them, it could be relaxed.
 
-Fix the description format to fix the warning.
+>
+> >>
+> >>> If you punch a hole in that *and* in the
+> >>> zc error counter (such that failed ZC doesn=E2=80=99t disable ZC in v=
+host), you get ZC
+> >>> from vhost; however, the network interrupt handler under net_tx_actio=
+n and
+> >>> eventually incurs the memcpy under dev_queue_xmit_nit().
+> >>
+> >> Well, yes, we need a copy if there's a packet socket. But if there's
+> >> no network interface taps, we don't need to do the copy here.
+> >>
+>
+> Agreed on the packet socket side. I recently fixed an issue in lldpd [1] =
+that prevented
+> this specific case; however, there are still other trip wires spread out =
+across the
+> stack that would need to be addressed.
+>
+> [1] https://github.com/lldpd/lldpd/commit/622a91144de4ae487ceebdb333863e9=
+f660e0717
 
-Signed-off-by: Shivank Garg <shivankg@amd.com>
----
- arch/x86/kernel/apic/apic.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+I see.
 
-diff --git a/arch/x86/kernel/apic/apic.c b/arch/x86/kernel/apic/apic.c
-index 62584a347931..f888a28d400f 100644
---- a/arch/x86/kernel/apic/apic.c
-+++ b/arch/x86/kernel/apic/apic.c
-@@ -2128,9 +2128,10 @@ static noinline void handle_spurious_interrupt(u8 vector)
- }
- 
- /**
-- * spurious_interrupt - Catch all for interrupts raised on unused vectors
-- * @regs:	Pointer to pt_regs on stack
-- * @vector:	The vector number
-+ * DEFINE_IDTENTRY_IRQ - Handler for spurious interrupts
-+ * @spurious_interrupt: Catch all for interrupts raised on unused vectors
-+ * regs:	Pointer to pt_regs on stack
-+ * vector:	The vector number
-  *
-  * This is invoked from ASM entry code to catch all interrupts which
-  * trigger on an entry which is routed to the common_spurious idtentry
--- 
-2.34.1
+>
+> >
+> > Hi!
+> >
+> > I need more time diving into the issues. As Jon mentioned, vhost ZC is
+> > so little used I didn't have the chance to experiment with this until
+> > now :). But yes, I expect to be able to overcome these for pasta, by
+> > adapting buffer sizes or modifying code etc.
+>
+> Another tricky bit here is that it has been disabled both upstream and do=
+wnstream
+> for so long, the code naturally has a bit of wrench-in-the-engine.
+>
+> RE Buffer sizes: I tried this as well, because I think on sufficiently fa=
+st systems,
+> zero copy gets especially interesting in GSO/TSO cases where you have meg=
+a
+> payloads.
+
+Yes.
+
+>
+> I tried playing around with the good copy value such that ZC restricted i=
+tself to
+> only lets say 32K payloads and above, and while it *does* work (with enou=
+gh
+> holes punched in), absolute t-put doesn=E2=80=99t actually go up, its jus=
+t that CPU utilization
+> goes down a pinch. Not a bad thing for certain, but still not great.
+>
+> In fact, I found that tput actually went down with this path, even with Z=
+C occurring
+> successfully, as there was still a mix of ZC and non-ZC because you can o=
+nly
+> have so many pending at any given time before the copy path kicks in agai=
+n.
+
+TCP has hursitisc that may try to coalesce more writes into a larger
+packet so we might get "worse" throughput when vhost becomes faster.
+For example, only my testing environment, qemu, is faster than vhost
+single TCP stream testing of netperf.
+
+>
+>
+> >
+> >>>
+> >>> This is no more performant, and in fact is actually worse since the t=
+ime spent
+> >>> waiting on that memcpy to resolve is longer.
+> >>>
+> >>>>
+> >>>>> as vhost_net does not set
+> >>>>> SKBFL_DONT_ORPHAN.
+> >>
+> >> Maybe we can try to set this as vhost-net can hornor ulimit now.
+>
+> Yea I tried that, and while it helps kick things further down the stack, =
+its not actually
+> faster in any testing I=E2=80=99ve drummed up.
+
+Can I see the codes?
+
+>
+> >>
+> >>>>>
+> >>>>> Orphaning enforces a memcpy and triggers the completion callback, w=
+hich
+> >>>>> increments the failed TX counter, effectively disabling zerocopy ag=
+ain.
+> >>>>>
+> >>>>> Even after addressing these issues to prevent SKB orphaning and err=
+or
+> >>>>> counter increments, performance remains poor. By default, only 64
+> >>>>> messages can be zerocopied, which is immediately exhausted by workl=
+oads
+> >>>>> like iperf, resulting in most messages being memcpy'd anyhow.
+> >>>>>
+> >>>>> Additionally, memcpy'd messages do not benefit from the XDP batchin=
+g
+> >>>>> optimizations present in the handle_tx_copy path.
+> >>>>>
+> >>>>> Given these limitations and the lack of any tangible benefits, remo=
+ve
+> >>>>> zerocopy entirely to simplify the code base.
+> >>>>>
+> >>>>> Signed-off-by: Jon Kohler <jon@nutanix.com>
+> >>>>
+> >>>> Any chance we can fix those issues? Actually, we had a plan to make
+> >>>> use of vhost-net and its tx zerocopy (or even implement the rx
+> >>>> zerocopy) in pasta.
+> >>>
+> >>> Happy to take direction and ideas here, but I don=E2=80=99t see a cle=
+ar way to fix these
+> >>> issues, without dealing with the assertions that skb_orphan_frags_rx =
+calls out.
+> >>>
+> >>> Said another way, I=E2=80=99d be interested in hearing if there is a =
+config where ZC in
+> >>> current host-net implementation works, as I was driving myself crazy =
+trying to
+> >>> reverse engineer.
+> >>
+> >> See above.
+> >>
+> >>>
+> >>> Happy to collaborate if there is something we could do here.
+> >>
+> >> Great, we can start here by seeking a way to fix the known issues of
+> >> the vhost-net zerocopy code.
+> >>
+> >
+> > Happy to help here :).
+> >
+> > Jon, could you share more details about the orphan problem so I can
+> > speed up the help? For example, can you describe the code changes and
+> > the code path that would lead to that assertion of
+> > skb_orphan_frags_rx?
+> >
+> > Thanks!
+> >
+>
+> Sorry for the slow response, getting back from holiday and catching up.
+>
+> When running through tun.c, there are a handful of places where ZC turns =
+into
+> a full copy, whether that is in the tun code itself, or in the interrupt =
+handler when
+> tun xmit is running.
+>
+> For example, tun_net_xmit mandatorily calls skb_orphan_frags_rx. Anything
+> with frags will get this memcpy, which are of course the =E2=80=9Cjuicy=
+=E2=80=9D targets here as
+> they would take up the most memory bandwidth in general. Nasty catch22 :)
+>
+> There are also plenty of places that call normal skb_orphan_frags, which
+> triggers because vhost doesn=E2=80=99t set SKBFL_DONT_ORPHAN. That=E2=80=
+=99s an easy
+> fix, but still something to think about.
+>
+> Then there is the issue of packet sockets, which throw a king sized wrenc=
+h into
+> this. Its slightly insidious, but it isn=E2=80=99t directly apparent that=
+ loading some user
+> space app nukes zero copy, but it happens.
+>
+> See my previous comment about LLDPD, where a simply compiler snafu caused
+> one socket option to get silently break, and it then ripped out ZC capabi=
+lity. Easy
+> fix, but its an example of how this can fall over.
+>
+> Bottom line, I=E2=80=99d *love****** have ZC work, work well and so on. I=
+=E2=80=99m open to ideas
+> here :) (up to and including both A) fixing it and B) deleting it)
+
+Zerocopy still has its advantages in some specific setups. Maybe a way
+to start is to make it work automatically depending on the lower
+setups? For example, enable it by default with macvtap.
+
+Thanks
+
+>
 
 
