@@ -1,104 +1,113 @@
-Return-Path: <linux-kernel+bounces-647609-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-647612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07664AB6AAA
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 13:56:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F23F3AB6AAF
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 13:57:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91DD34A57B2
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 11:56:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3162D3A4F97
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 11:57:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05B7327510A;
-	Wed, 14 May 2025 11:56:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E702D2749D9;
+	Wed, 14 May 2025 11:57:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JhtGUTxZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="dj06PK2Y"
+Received: from out30-132.freemail.mail.aliyun.com (out30-132.freemail.mail.aliyun.com [115.124.30.132])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D0CD2741BD;
-	Wed, 14 May 2025 11:56:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F8A01F8676
+	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 11:57:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747223770; cv=none; b=M92Wx+lsunfLlKMw8qfntc24cEMDAtUFwRUCOHUA7nKdKTksBvfLzxGgZBQqFA4xtHuKm73rlxKrK+d3j4IdarLcygzEGYl3YcAXMR/hc7a2jOR0pmQ3uWGfe3x2cEVx1voZ1te+gOBRKtjU+gR5r2n2iskvbMjnj7xYvUO7IyU=
+	t=1747223853; cv=none; b=TqiWwOgnOS7N045n2LZEzzAXOJmiC66TUyvlPDv8+Svitw145lnrjTK3Ab9QBTwmk1tfEXJ0SO28QdWICn3fwo3wwIKtILxTY7jF7pPeHqdDUcPV9G6qZFJkkuHR6N0D4bsDCx5g+5cTq8cH1l9FOMWwv/pQjqNSPWKIl9N3S+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747223770; c=relaxed/simple;
-	bh=GSVCoM5zRcLUg41O7L+uXh/4+IIxs1QtlAeMm8dJr0I=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=aUkkW0Asgc/fp/Xb8VHWG9poZGLlqd/j3QyOLlrdwtyu1/n+NZvVUJLRCT3F4OMghKAKwUCZBUIBO4w9/j85z8tHJ+oSUnMU59nrg3aL9sDPTmKvv3fC22bG0UiHjJH/baQOcHJTQRxUDkQ01L+3ouGlDRKSZ0aBL2Z+J+IDjd0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JhtGUTxZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id E0969C4CEF1;
-	Wed, 14 May 2025 11:56:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747223769;
-	bh=GSVCoM5zRcLUg41O7L+uXh/4+IIxs1QtlAeMm8dJr0I=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=JhtGUTxZsy6UialNotwg48l6a0jdFy7/lzAB/F2XIypy0U/Gc8u337nT4zHNxLxVS
-	 qk9Y8QyU60gI3LlYEicFCdXDTYKcW3zCd2x5ctxX/SMHbJGayNlqTAlywa6QxWa993
-	 4OKS1DmcpBk44vdT5zbvlWBLYcRsAgE68E3VmkwSmt7Tj6vFnrJRW8Wu0odc/PbWHK
-	 DKtWZ90YL0F1goSD3jzh5dkt1IdiyjCbihtou7WonjY3VNIXICT0d0sxCo5ySZyJCW
-	 KfgEZiOVNuua6BInPuU/0Uaq8YzXm6ZK6OQrz+QE25iGppPVUvBZvv7gQJYrgAxLz/
-	 De6MZZfM3voDQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D32ADC3ABDE;
-	Wed, 14 May 2025 11:56:09 +0000 (UTC)
-From: Alejandro Enrique via B4 Relay <devnull+alejandroe1.geotab.com@kernel.org>
-Date: Wed, 14 May 2025 13:55:55 +0200
-Subject: [PATCH 2/2] gnss: ubx: add u-blox,neo-m9 compatible
+	s=arc-20240116; t=1747223853; c=relaxed/simple;
+	bh=7o2UTN2Hk2J5TcPymHM0vTaw+1G2DDoWlH6zf9b+SbI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ep+53mjfEMWodgr/dSsPXTogz/MoEwM4t+pA3r5aEGH2thtcLi3HhHv/ICBabLWh6c9M8Lc3P8L0EwD/HHtBhMeSfYIBM7Wymuei7MSHW6Hcwn1w/rb53o3oxvRnyZg/nnPuU437iM9Sh4nXF1fMrXlIo8lzeKQMnaKlOBHStN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=dj06PK2Y; arc=none smtp.client-ip=115.124.30.132
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1747223840; h=From:To:Subject:Date:Message-ID:MIME-Version;
+	bh=X6Xt+gme88eWtaAzO7wjB1rqU85g/KZnskzOAk8sCIk=;
+	b=dj06PK2Y7bIXqgY7FIWGT0u93ysUnZDrD/04/DptaMqj7nA+YIBVhYG5rJTxz1Iv3qMmx8BOVK0AxtaXCxazW80j6a6JTQeuZipT/o3kCwmKh+Y9KOalHLyzv5K4OSzVU3An86HEpBU6oYVnbM+nihIXVCa57tBZ0Retob0c4gY=
+Received: from x31i01179.sqa.na131.tbsite.net(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0Walx0ZR_1747223834 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Wed, 14 May 2025 19:57:19 +0800
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+To: linux-erofs@lists.ozlabs.org
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Gao Xiang <hsiangkao@linux.alibaba.com>
+Subject: [PATCH] erofs: refine readahead tracepoint
+Date: Wed, 14 May 2025 19:57:13 +0800
+Message-ID: <20250514115713.2719705-1-hsiangkao@linux.alibaba.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250514-ubx-m9-v1-2-193973a4f3ca@geotab.com>
-References: <20250514-ubx-m9-v1-0-193973a4f3ca@geotab.com>
-In-Reply-To: <20250514-ubx-m9-v1-0-193973a4f3ca@geotab.com>
-To: Johan Hovold <johan@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
- Alejandro Enrique <alejandroe1@geotab.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1747223768; l=669;
- i=alejandroe1@geotab.com; s=20250514; h=from:subject:message-id;
- bh=KiIso4vtHVKYcUMsG8FY0qTIhtRbhyM34Q0yiSQ9xCA=;
- b=PVY1f03vSetltMmpL6CZOcSbhbOJeLAjcXwD3qOa/O+SeFRxWYYQPjs9ks9rI3FF22RvzVEoP
- r6s80h3JsfXACZ3chq1WuLW3T0+JMU4Ift0hcTZ40hMlq8wT9QIkaJF
-X-Developer-Key: i=alejandroe1@geotab.com; a=ed25519;
- pk=xzHMPbqczL/tMsjXr26iLoHwIzLveHVnT+GIU4p1k38=
-X-Endpoint-Received: by B4 Relay for alejandroe1@geotab.com/20250514 with
- auth_id=404
-X-Original-From: Alejandro Enrique <alejandroe1@geotab.com>
-Reply-To: alejandroe1@geotab.com
+Content-Transfer-Encoding: 8bit
 
-From: Alejandro Enrique <alejandroe1@geotab.com>
+ - trace_erofs_readpages => trace_erofs_readahead;
 
-Add compatible for u-blox NEO-M9 GPS module.
+ - Rename a redundant statement `nrpages = readahead_count(rac);`;
 
-Signed-off-by: Alejandro Enrique <alejandroe1@geotab.com>
+ - Move the tracepoint to the beginning of z_erofs_readahead().
+
+Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
 ---
- drivers/gnss/ubx.c | 1 +
- 1 file changed, 1 insertion(+)
+ fs/erofs/zdata.c             | 5 ++---
+ include/trace/events/erofs.h | 4 ++--
+ 2 files changed, 4 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/gnss/ubx.c b/drivers/gnss/ubx.c
-index 92402f6082c415c7b9051338eef5406b09e09455..2d69f1b4a5979f96d3d4ce72b122f3bd05892b55 100644
---- a/drivers/gnss/ubx.c
-+++ b/drivers/gnss/ubx.c
-@@ -124,6 +124,7 @@ static const struct of_device_id ubx_of_match[] = {
- 	{ .compatible = "u-blox,neo-6m" },
- 	{ .compatible = "u-blox,neo-8" },
- 	{ .compatible = "u-blox,neo-m8" },
-+	{ .compatible = "u-blox,neo-m9" },
- 	{},
- };
- MODULE_DEVICE_TABLE(of, ubx_of_match);
-
+diff --git a/fs/erofs/zdata.c b/fs/erofs/zdata.c
+index b8e6b76c23d5..29541e0787b8 100644
+--- a/fs/erofs/zdata.c
++++ b/fs/erofs/zdata.c
+@@ -1855,13 +1855,12 @@ static void z_erofs_readahead(struct readahead_control *rac)
+ {
+ 	struct inode *const inode = rac->mapping->host;
+ 	Z_EROFS_DEFINE_FRONTEND(f, inode, readahead_pos(rac));
+-	struct folio *head = NULL, *folio;
+ 	unsigned int nrpages = readahead_count(rac);
++	struct folio *head = NULL, *folio;
+ 	int err;
+ 
++	trace_erofs_readahead(inode, readahead_index(rac), nrpages, false);
+ 	z_erofs_pcluster_readmore(&f, rac, true);
+-	nrpages = readahead_count(rac);
+-	trace_erofs_readpages(inode, readahead_index(rac), nrpages, false);
+ 	while ((folio = readahead_folio(rac))) {
+ 		folio->private = head;
+ 		head = folio;
+diff --git a/include/trace/events/erofs.h b/include/trace/events/erofs.h
+index c69c7b1e41d1..644d4cbd3d80 100644
+--- a/include/trace/events/erofs.h
++++ b/include/trace/events/erofs.h
+@@ -113,7 +113,7 @@ TRACE_EVENT(erofs_read_folio,
+ 		__entry->raw)
+ );
+ 
+-TRACE_EVENT(erofs_readpages,
++TRACE_EVENT(erofs_readahead,
+ 
+ 	TP_PROTO(struct inode *inode, pgoff_t start, unsigned int nrpage,
+ 		bool raw),
+@@ -138,7 +138,7 @@ TRACE_EVENT(erofs_readpages,
+ 
+ 	TP_printk("dev = (%d,%d), nid = %llu, start = %lu nrpage = %u raw = %d",
+ 		show_dev_nid(__entry),
+-		(unsigned long)__entry->start,
++		(unsigned long)__entry->start,`
+ 		__entry->nrpage,
+ 		__entry->raw)
+ );
 -- 
-2.34.1
-
+2.43.5
 
 
