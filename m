@@ -1,136 +1,157 @@
-Return-Path: <linux-kernel+bounces-646840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-646843-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 914A1AB613D
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 05:34:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F0FA9AB6143
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 05:35:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 466961B44A4C
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 03:34:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80C6A1B44F66
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 03:36:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D6D01DEFFE;
-	Wed, 14 May 2025 03:34:14 +0000 (UTC)
-Received: from smtp134-86.sina.com.cn (smtp134-86.sina.com.cn [180.149.134.86])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A32C3130E58;
+	Wed, 14 May 2025 03:35:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="DvuikcOq"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CDD61A83E2
-	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 03:34:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.149.134.86
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D4652F22
+	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 03:35:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747193653; cv=none; b=p/XQlUSDH56e7DNXfOxQAwnYWPhhqimygW2SV36uM6yVAYIrNSFCdXAgCcheTK5k4f9nsw+/z5ae36Rp07h73NqpPVNz0hKs5WWMtXqeUTeyOdMicvyKDXBqIeT495c91zxfBJbruH5fzwvyfqG4iMZaiBVxPdoowEjhF/40UVw=
+	t=1747193747; cv=none; b=mI8K8Y3IRK4/GhwG37InkNgaHPPrGZ1V3amYVMIyKxS0DpfV07Xr/yTrEVcmAnX1MIzPI+Zd9ABWKrsjZ9Q1uojK50czHzQsTaEGdmgP2Fmpp9SFmPoketJZK/xMt4cBgx095fGY80hZ5bN0YIF1Xd7jg0j9qwyhVq0UW5CaHpc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747193653; c=relaxed/simple;
-	bh=mqJ2zpr0rM1SozvZK0nLMqNWqEKb6AcbZ6KjfpKuxrc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=V6OXQ6b3pEULIiXoxhDpvxLRt7PoN7F7hAaT0FwTpmf9VisH2KXC/GR8kgojtOpYkHy1rs3bLcwkYPcNbrlZLYVCC1tos1mP/Mi834Av+vKSzkgM37dgRt0vW1BC2vB4mCA9RZ5/1HEh7SIEwu7nr8b4qoEsDRiVE1zrSrHD66Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=everest-semi.com; spf=pass smtp.mailfrom=everest-semi.com; arc=none smtp.client-ip=180.149.134.86
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=everest-semi.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=everest-semi.com
-Received: from unknown (HELO zy-virtual-machine.localdomain)([180.172.39.205])
-	by sina.net (10.185.250.30) with ESMTP
-	id 68240F0900001008; Wed, 14 May 2025 11:33:32 +0800 (CST)
-X-Sender: zhangyi@everest-semi.com
-X-Auth-ID: zhangyi@everest-semi.com
-Authentication-Results: sina.net;
-	 spf=none smtp.mailfrom=zhangyi@everest-semi.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=zhangyi@everest-semi.com
-X-SMAIL-MID: 8F35DFED0E944B93BEB9FFBD51A8AC56
-X-SMAIL-UIID: 8F35DFED0E944B93BEB9FFBD51A8AC56-20250514-113332
-From: Zhang Yi <zhangyi@everest-semi.com>
-To: broonie@kernel.org,
-	robh@kernel.org,
-	tiwai@suse.com,
-	devicetree@vger.kernel.org,
-	conor+dt@kernel.org,
-	lgirdwood@gmail.com,
-	linux-kernel@vger.kernel.org,
-	linux-sound@vger.kernel.org,
-	perex@perex.cz,
-	krzk+dt@kernel.org
-Cc: amadeuszx.slawinski@linux.intel.com,
-	krzk@kernel.org,
-	Zhang Yi <zhangyi@everest-semi.com>
-Subject: [RESEND v7 2/2] ASoC: dt-bindings: Add Everest ES8389 audio CODEC
-Date: Wed, 14 May 2025 11:33:27 +0800
-Message-Id: <20250514033327.32641-3-zhangyi@everest-semi.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20250514033327.32641-1-zhangyi@everest-semi.com>
-References: <20250514033327.32641-1-zhangyi@everest-semi.com>
+	s=arc-20240116; t=1747193747; c=relaxed/simple;
+	bh=dNa202f7uBhzdx+4Rgy1FGXfZT3ZNrWCIiuMiGYdesA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oHN9t2AYETvoCMp6NGepqIyYTxdTBLiZ/PjoPfvpOwXrjgjhoQgpAZmndLaiWuAAl/7dMchjpYODTXNdH7yU9f2y1Tzpxdz3fWz2BSGLUsrbDdPaEw2d/3VK89SH0XAfL6TuV9VZ82qRM6JaRd2RDA2xfZX95CQZ+SDCmiIpceE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=DvuikcOq; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54DIsg8S025407;
+	Wed, 14 May 2025 03:35:14 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=SPkwKx
+	RZ0jZWUYWozH5i6AyzMDzsb6UiTpEj0ygaXeo=; b=DvuikcOqqeRT+RbKoj6GHC
+	wm1rcotG8nxLoJEvZM2GbxUsORFE3saF5cADFMsZWLa04qoeCBSCc9VaH9FINvTv
+	7XUzZHsLLH7IhF48fGmefEdWQjUcZytb5qcUC0ydHwoYaI/meg5MGjtfQOklY9h2
+	yGuPOFTrBJiqlcPz91OojDd6iPUXTbWD1LMlk3+KEAOID90YrddIy/87Z8RoLsYi
+	7dDBdnywbCD/lgvhk3j/DsXawy4uyrWbOURZv6PUTYMGtwYllKSGRmyFTBJtoBll
+	Sk1ZywSqoTSmVZz5uHlO6EaF5hJ7QXcj6/QOPvkZTy11Xm3j4JRn6ewfyd7VcJJg
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46mbs6hu27-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 14 May 2025 03:35:14 +0000 (GMT)
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 54E3ZDRh009700;
+	Wed, 14 May 2025 03:35:13 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46mbs6hu25-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 14 May 2025 03:35:13 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 54E24oM7026656;
+	Wed, 14 May 2025 03:35:13 GMT
+Received: from smtprelay01.wdc07v.mail.ibm.com ([172.16.1.68])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 46mbfpa2fy-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 14 May 2025 03:35:12 +0000
+Received: from smtpav01.wdc07v.mail.ibm.com (smtpav01.wdc07v.mail.ibm.com [10.39.53.228])
+	by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 54E3ZCPX23920982
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 14 May 2025 03:35:12 GMT
+Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 3281158059;
+	Wed, 14 May 2025 03:35:12 +0000 (GMT)
+Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 84D0A58055;
+	Wed, 14 May 2025 03:35:09 +0000 (GMT)
+Received: from [9.204.206.207] (unknown [9.204.206.207])
+	by smtpav01.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 14 May 2025 03:35:09 +0000 (GMT)
+Message-ID: <876dd739-d708-40f1-82ad-45090a26664e@linux.ibm.com>
+Date: Wed, 14 May 2025 09:05:08 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] powerpc: Transliterate author name and remove FIXME
+To: Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Thorsten Blum <thorsten.blum@linux.dev>
+Cc: Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin
+ <npiggin@gmail.com>, Naveen N Rao <naveen@kernel.org>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+References: <20241110162139.5179-2-thorsten.blum@linux.dev>
+ <87v7wuy3p5.fsf@mpe.ellerman.id.au>
+ <55B1EE24-BEC9-4A8D-84B0-ED32FCC070A5@linux.dev>
+ <87v7weodqn.fsf@mpe.ellerman.id.au>
+ <d9e232bb-5069-4526-b781-f4e316bda95d@csgroup.eu>
+ <774CD605-AE6F-4D37-AB50-B9676858CDFA@linux.dev>
+ <504A9138-865E-4CB3-8E1C-E19C4B86F1D3@linux.dev>
+ <922be2ed-aed2-4c55-b7b0-37abfc745500@csgroup.eu>
+Content-Language: en-US
+From: Madhavan Srinivasan <maddy@linux.ibm.com>
+In-Reply-To: <922be2ed-aed2-4c55-b7b0-37abfc745500@csgroup.eu>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTE0MDAyNSBTYWx0ZWRfX2Gd79AK1XC2v 0ROZDxXV0Kh6npqxTTzr/70KAEfsohpa7XqQ/Y9Q7MVDLaNxPxO3u5GnPOOctxOvncZ+oKvfco/ BhaVkTN0wVCOl7FHai/C6jmcYRqRpzE409BQRbEvB4p+mPpy/JLbskjx3Sn/ffx9SlhMG/p9REA
+ QRMiIsS0zEDgLSSAgi42ZHe9KGaNQTt6+X3lWZWD6EMLDLk0PIhU/AH6Ttsox7szE+FayRcY6Na 6+u9DpeJgFP7ahHfetlyvxgFpKSvPnBOSeTMIav/I+EK4N/ls6i2k9q5bScaL9v0EiqL6RV3Xdm nAnOc5Nl3I131xKwN90wUwqTIW+f9d3gri3mFo/rqjAMtVtJpnsV8194m/5N66En4UN7ijZAAfk
+ MzwLMbD6vtlZ8xs5B7sdrq+W0mBwIEwJhPvxy3gBwaP1nZCVfbYuYni/R9FVs6gxIVBn57T6
+X-Proofpoint-ORIG-GUID: RygOFpSGw5FOOlyWFCprbu40DsIUmHJz
+X-Authority-Analysis: v=2.4 cv=d5f1yQjE c=1 sm=1 tr=0 ts=68240f72 cx=c_pps a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=UqCG9HQmAAAA:8 a=NEAV23lmAAAA:8 a=voM4FWlXAAAA:8 a=1UX6Do5GAAAA:8
+ a=gmKdWFfqcPwGhx-9FWsA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=IC2XNlieTeVoXbcui8wp:22 a=Et2XPkok5AAZYJIKzHr1:22
+X-Proofpoint-GUID: HvOB_mhN5i6zhAb8yKPuvkeo6NcrL5n_
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-14_01,2025-05-09_01,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 bulkscore=0
+ spamscore=0 clxscore=1015 mlxscore=0 lowpriorityscore=0 priorityscore=1501
+ suspectscore=0 mlxlogscore=872 impostorscore=0 adultscore=0 phishscore=0
+ classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2505070000
+ definitions=main-2505140025
 
-Add device tree binding documentation for Everest ES8389 which
-is different from ES8388
 
-Signed-off-by: Zhang Yi <zhangyi@everest-semi.com>
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- .../bindings/sound/everest,es8389.yaml        | 50 +++++++++++++++++++
- 1 file changed, 50 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/sound/everest,es8389.yaml
 
-diff --git a/Documentation/devicetree/bindings/sound/everest,es8389.yaml b/Documentation/devicetree/bindings/sound/everest,es8389.yaml
-new file mode 100644
-index 000000000000..a673df485ab3
---- /dev/null
-+++ b/Documentation/devicetree/bindings/sound/everest,es8389.yaml
-@@ -0,0 +1,50 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/sound/everest,es8389.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Everest ES8389 audio CODEC
-+
-+maintainers:
-+  - Michael Zhang <zhangyi@everest-semi.com>
-+
-+allOf:
-+  - $ref: dai-common.yaml#
-+
-+properties:
-+  compatible:
-+    const: everest,es8389
-+
-+  reg:
-+    maxItems: 1
-+
-+  clocks:
-+    items:
-+      - description: clock for master clock (MCLK)
-+
-+  clock-names:
-+    items:
-+      - const: mclk
-+
-+  "#sound-dai-cells":
-+    const: 0
-+
-+required:
-+  - compatible
-+  - reg
-+  - "#sound-dai-cells"
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    i2c {
-+      #address-cells = <1>;
-+      #size-cells = <0>;
-+      es8389: codec@10 {
-+        compatible = "everest,es8389";
-+        reg = <0x10>;
-+        #sound-dai-cells = <0>;
-+      };
-+    };
--- 
-2.17.1
+On 5/13/25 11:18 PM, Christophe Leroy wrote:
+> 
+> 
+> Le 13/05/2025 à 16:10, Thorsten Blum a écrit :
+>> On 7. Jan 2025, at 13:16, Thorsten Blum wrote:
+>>> On 23. Nov 2024, at 11:19, Christophe Leroy wrote:
+>>>> Isn't our file just a copy of the one from binutils ? Shouldn't we adjust it based on commit https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fgithub.com%2Fbminor%2Fbinutils-gdb%2Fcommit%2F2ce18a16268a&data=05%7C02%7Cchristophe.leroy%40csgroup.eu%7Cab93fab4ad1e43fbaaee08dd9227edf0%7C8b87af7d86474dc78df45f69a2011bb5%7C0%7C0%7C638827422381661999%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=pYe0b3WZhhmX3IHNh58Ogf%2BFMLYsdA7zn93%2B74D%2F%2FsA%3D&reserved=0 ?
+>>>
+>>> It looks like it's a copy and the name is spelled the same as in my patch:
+>>>
+>>>   "Mimi Phuong-Thao Vo"
+>>>
+>>> What's missing to get this merged?
+>>
+>> Does it make sense to resubmit this or do we leave the name and the
+>> FIXME as is?
+> 
+> Thanks for the ping, your patch is not lost, it is still here: https://patchwork.ozlabs.org/project/linuxppc-dev/patch/20241110162139.5179-2-thorsten.blum@linux.dev/
+> 
+> Maddy, what do you think about the way forward ?
+
+Was waiting for someone to chime to confirm. But I guess will pull it in .
+
+Thanks.
+
+
+> 
+> Thanks
+> Christophe
+> 
 
 
