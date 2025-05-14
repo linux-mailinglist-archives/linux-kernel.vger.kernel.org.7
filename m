@@ -1,163 +1,75 @@
-Return-Path: <linux-kernel+bounces-647121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-647123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CF06AB64A8
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 09:39:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E24AAB64B2
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 09:41:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 449E33B7270
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 07:39:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C77F5173521
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 07:41:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8C5420C465;
-	Wed, 14 May 2025 07:39:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="zwexy0jw"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDB10201004;
+	Wed, 14 May 2025 07:41:22 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84E84215181
-	for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 07:39:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61C9483A14;
+	Wed, 14 May 2025 07:41:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747208354; cv=none; b=dUsdQo4wf7IShc5ArL3lsd642S3sMMh6injzVXtUprrzAGbUCEIENcYLioPKp6bTQAS5xeybNH89y7UWLpAlZddhp+irVORrSx2hAzN4bFmlUlYiVEqcOnzEztDdW4EsHxjaeEEjIg8TgcPjBO1XwXuZfq1y9i0whZeI3ArUd4A=
+	t=1747208482; cv=none; b=fYOzKlHECPTac+JEjlw+HWvJdItj1llfc2daDZz74F010x2OGpVpk7kI9cv6b6KBzo/NiZ9TTFrp9rhM4ebsLBSmPgDmHcZae9dW3T/bBGXg7lzJtDr/ufFJ6cC3eK4W6aj23hcjiGRkejNw3VE/2PwYaA/YtxHfvFejdpTBs+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747208354; c=relaxed/simple;
-	bh=kVQoQu1xI3xg82klmMxIsn7w8l/v5NLalZuo0VZW3bg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=LslsEYLmE4JgWm5HudUHd6GkQY4fX11diaWIIJaH8q9PXV0qZBnhLO+uJxJ1K/dQHllUKRu/ED83GUcpTjpV4nq3V9t1rjOAQ1cAGY5Ky15tmK/Czu7jEOi0rlZgY6GLXI9nUQ1vORwClZ6GuDuK5VgceZ/+BTxauwMusmln3Bc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=zwexy0jw; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3a064a3e143so3725966f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 00:39:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1747208349; x=1747813149; darn=vger.kernel.org;
-        h=mime-version:message-id:date:user-agent:references:in-reply-to
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZVmGNhpPip+++PUOZC2sGERkflrjQCplFYAdCCvMfb8=;
-        b=zwexy0jwybQ7JQtRI/froMEnI8PPBN8BOtZZTsW4OuKLyk8l4G+HfdeYjzNId5Ke9k
-         SZ+6FVlrCtmqN9T7qNjvjKnHfhjywZloU6xvOXf2/SyGeYlhmmxkov3GQoLPplBShth/
-         ub4aMmJR/7TmQhp5pWB63s5fFZx5D6qS/T5tRqo4XcRb1tENcmnwzGnLeK4TFOj12MpT
-         qXAXDT1kfMj9gbiS9AF9a45byMNnTstIPX48WFFYjL+1dfRBh5PJH0K5T1qgVaRedR7r
-         vE/lLrvSoAiuJDKT0bScNYEOErxbUnKNkIahywvkN5FYdulanYbQVBF3YuDJvstW9r4n
-         fYKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747208349; x=1747813149;
-        h=mime-version:message-id:date:user-agent:references:in-reply-to
-         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZVmGNhpPip+++PUOZC2sGERkflrjQCplFYAdCCvMfb8=;
-        b=dfK7gnSD6rO9zEG0vxXlDcYjpCgc4MRf+GgqWLwJnSrC6RcGrkjqOLOdv50G98bhQW
-         rnO3nMtsc98pCZZ3fMqNLtOTEnxAYaKZftekKtrecBUiTBu5GichjwQoNgjukBGz+6JQ
-         11rHIM8y9RJEMsK6aNvKod2wQRtqbw/SyVwQLdmYdctebh/6iLlZdmxhmlqu5DLZmf0x
-         LtrE3IOMnuyzNMaj4YDvgxTy1esXyT+V+/ZiReNiMIIY+AgACJ1O0Xe4VN/5WqemQt+w
-         m+JjHMvRQGrdYiEG5D7cYygMJr1+msj3lzvPatX8MKr7LVGWZm3TcAuGnDQpaKNIIbJB
-         tu1w==
-X-Forwarded-Encrypted: i=1; AJvYcCVKNtFZpHtHpnmVG4KnqEvr5bS5lweLDGr4Jyxhbjz9Z1dhUPvWe+FJIryk9JCKrfHxExLGTA5BuFkpub4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwskuQEsI5GBmgg4j9HbKYRVFjezv5SaAGR7lCjpzG5rTKiGTOF
-	gecZ+QfgdgL3aO2xsKZFzeXmEgp0O/w5L+OMZAxSc87y3r6mJ4IPA3sIhlAB8sA=
-X-Gm-Gg: ASbGncvox8pnFVqNsmaZC34J8CivZ7DA1oGiW8cLh8cpjUiLbJOFe6SQSAVfpvM5On2
-	/Ol2uWj6Nqec6PutD5khaHL4ALNRj9xCzplQ2MgLhB0kDPzfiUjqIPIgfSHH2NBJrQu27lpyihE
-	iul3sRjf0Mp/3a5eqb5R4enX0pdpmrCSq230DoiY30ZVBspwHGQda06J7gq6nnu61/CB1kDMJds
-	JXgBHVQJxdPAl1Di7j3LZ2NIyqM99ANE7T97A0+XWwDKxwr6RbFQosQXncPsI3VoWyrR63CYLWN
-	XrEaOOTIyjeWNI7Gp3BBvUU4V5Rtnwwiq94DH9YwW1EfWzQAllM=
-X-Google-Smtp-Source: AGHT+IG7CrNBn/EFtls8jFCa6+Od8EZnVpuoJGdjw4zpKMEd5j+UzCgUpQFM4d3fwpyVX79bArzG+Q==
-X-Received: by 2002:a05:6000:4201:b0:3a0:ac96:bd41 with SMTP id ffacd0b85a97d-3a3496c4024mr1989692f8f.27.1747208348669;
-        Wed, 14 May 2025 00:39:08 -0700 (PDT)
-Received: from localhost ([2a01:e0a:3c5:5fb1:3b94:a3ea:946a:aa90])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3a1f5a2cf2bsm18503449f8f.80.2025.05.14.00.39.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 May 2025 00:39:08 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Jian Hu <jian.hu@amlogic.com>
-Cc: Xianwei Zhao <xianwei.zhao@amlogic.com>,  Chuan Liu
- <chuan.liu@amlogic.com>,  Neil Armstrong <neil.armstrong@linaro.org>,
-  Kevin Hilman <khilman@baylibre.com>,  "Stephen Boyd" <sboyd@kernel.org>,
-  Michael Turquette <mturquette@baylibre.com>,  "Dmitry Rokosov"
- <ddrokosov@sberdevices.ru>,  robh+dt <robh+dt@kernel.org>,  Rob Herring
- <robh@kernel.org>,  devicetree <devicetree@vger.kernel.org>,  linux-clk
- <linux-clk@vger.kernel.org>,  linux-amlogic
- <linux-amlogic@lists.infradead.org>,  linux-kernel
- <linux-kernel@vger.kernel.org>,  linux-arm-kernel
- <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v3 5/6] clk: meson: add MESON_PCLK_V2 for sys gate clock
-In-Reply-To: <20250509074825.1933254-6-jian.hu@amlogic.com> (Jian Hu's message
-	of "Fri, 9 May 2025 07:48:23 +0000")
-References: <20250509074825.1933254-1-jian.hu@amlogic.com>
-	<20250509074825.1933254-6-jian.hu@amlogic.com>
-User-Agent: mu4e 1.12.9; emacs 30.1
-Date: Wed, 14 May 2025 09:39:07 +0200
-Message-ID: <1jzfffy738.fsf@starbuckisacylon.baylibre.com>
+	s=arc-20240116; t=1747208482; c=relaxed/simple;
+	bh=JsiVAsFG1XKaIWx9sq38p2xafzRumZE3uqYzsBqzHes=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ejzVmXW2rRrndUytHBms1TGV34Ov+vBkZq117BzS8NVuRjGF3M2jP8PJTahpwE2P1awllI9x5CXL9DppXENMs8IvNJUllLqeUDHtUHd8pLJW7H1N6+7TVCojvguZFmXbGxT1jHeySMRiU+MyCOYuiI+2Ygj1ReGrIh/M9/g+vwg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4043EC4CEF3;
+	Wed, 14 May 2025 07:41:20 +0000 (UTC)
+Date: Wed, 14 May 2025 09:39:33 +0200
+From: Greg KH <greg@kroah.com>
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
+	Ard Biesheuvel <ardb@kernel.org>, linux-spdx@vger.kernel.org
+Subject: Re: [PATCH] lib/crc32: add SPDX license identifier
+Message-ID: <2025051423-gallstone-carpentry-1c5a@gregkh>
+References: <20250514052409.194822-1-ebiggers@kernel.org>
+ <87bjrvk9gj.ffs@tglx>
+ <20250514061425.GA237199@sol>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250514061425.GA237199@sol>
 
-On Fri 09 May 2025 at 07:48, Jian Hu <jian.hu@amlogic.com> wrote:
+On Tue, May 13, 2025 at 11:14:25PM -0700, Eric Biggers wrote:
+> On Wed, May 14, 2025 at 08:11:40AM +0200, Thomas Gleixner wrote:
+> > On Tue, May 13 2025 at 22:24, Eric Biggers wrote:
+> > 
+> > > From: Eric Biggers <ebiggers@google.com>
+> > >
+> > > lib/crc32.c and include/linux/crc32.h got missed by the bulk SPDX
+> > > conversion because of the nonstandard explanation of the license.
+> > > However, crc32.c clearly states that it's licensed under the GNU General
+> > > Public License, Version 2.  And the comment in crc32.h clearly indicates
+> > > that it's meant to have the same license as crc32.c.  Therefore, apply
+> > > SPDX-License-Identifier: GPL-2.0-only to both files.
+> > >
+> > > Signed-off-by: Eric Biggers <ebiggers@google.com>
+> > 
+> > Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+> 
+> Thanks.
+> 
+> I forgot to mention: I'm planning to take this patch through the crc tree.
 
-> A new MESON_PCLK_V2 macro is introduced for the sys gate clock. Its parent
-> is an SCMI clock. It belongs to another clock controller, and the parent
-> configuration is different from  that of MESON_PCLK. This avoids new macro
-> definition in the peripheral clock driver.
->
-> Signed-off-by: Jian Hu <jian.hu@amlogic.com>
-> ---
->  drivers/clk/meson/clk-regmap.h | 24 ++++++++++++++++++++++++
->  1 file changed, 24 insertions(+)
->
-> diff --git a/drivers/clk/meson/clk-regmap.h b/drivers/clk/meson/clk-regmap.h
-> index e365312da54e..61b8fc2d875f 100644
-> --- a/drivers/clk/meson/clk-regmap.h
-> +++ b/drivers/clk/meson/clk-regmap.h
+Great!
 
-This file is not meant for amlogic specific stuff. I know some found
-their way in regardless but that's being fixed
-
-> @@ -134,4 +134,28 @@ struct clk_regmap _name = {						\
->  
->  #define MESON_PCLK_RO(_name, _reg, _bit, _pname)	\
->  	__MESON_PCLK(_name, _reg, _bit, &clk_regmap_gate_ro_ops, _pname)
-> +
-> +#define __MESON_PCLK_V2(_name, _reg, _bit, _ops, _pname)		\
-> +struct clk_regmap _name = {						\
-> +	.data = &(struct clk_regmap_gate_data){				\
-> +		.offset = (_reg),					\
-> +		.bit_idx = (_bit),					\
-> +	},								\
-> +	.hw.init = &(struct clk_init_data) {				\
-> +		.name = #_name,						\
-> +		.ops = _ops,						\
-> +		.parent_data = &(const struct clk_parent_data) {	\
-> +			.fw_name = #_pname,				\
-> +		},							\
-> +		.num_parents = 1,					\
-> +		.flags = (CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED),	\
-> +	},								\
-> +}
-
-The proliferation of those macros has been going on for far too long,
-add using CLK_IGNORE_UNUSED inside is certainly a mistake I won't
-repeat.
-
-This will be part of more general clean-up that currently depends on a
-this [1] patch to go further. You'll have to be patient.
-
-[1]: https://lore.kernel.org/r/20250417-clk-hw-get-helpers-v1-0-7743e509612a@baylibre.com
-
-> +
-> +#define MESON_PCLK_V2(_name, _reg, _bit, _pname)	\
-> +	__MESON_PCLK_V2(_name, _reg, _bit, &clk_regmap_gate_ops, _pname)
-> +
-> +#define MESON_PCLK_RO_V2(_name, _reg, _bit, _pname)	\
-> +	__MESON_PCLK_V2(_name, _reg, _bit, &clk_regmap_gate_ro_ops, _pname)
-> +
->  #endif /* __CLK_REGMAP_H */
-
--- 
-Jerome
+Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
