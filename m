@@ -1,160 +1,135 @@
-Return-Path: <linux-kernel+bounces-647058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-647061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23CB9AB63FF
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 09:20:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC27DAB6405
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 09:21:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD34316C0AA
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 07:20:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E7671B61730
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 07:21:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 977E120B7F9;
-	Wed, 14 May 2025 07:20:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D15F321421F;
+	Wed, 14 May 2025 07:21:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rFM3h+X/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lWv8THlX"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAD6220468E;
-	Wed, 14 May 2025 07:20:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B91E212B18;
+	Wed, 14 May 2025 07:21:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747207240; cv=none; b=DWn68eZSfMyjLGeM2nCdK/vf/hgDLVFUKuTsMu5tsK0g81TQClKaJUBjID/2hN57HFoLLEMHuCNPZ8R7ajsky3S837jWOWH8sjJ2we8fiFJrNIukxt0xn+tvnWtLrqB2esb1a0s+Tgc0hDtjMmGlrcrrRBr95RxGFCoJqAnZ6t0=
+	t=1747207267; cv=none; b=J3+t8xwb9cVu9qbjAG68SoADs+1MHsJLcVgJytA1uaCDZOpgGQUa2oyCh7y3mlydcDpi5lHiWeBGzMkMWl/uh1z86I+FIXLYVhSVMz8+ZiXuIIzl8RFTqx+qrntdbueiX5jutfURnicpGo4T3COY6kuj7/2fWm8G8S2ZPoYUZB8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747207240; c=relaxed/simple;
-	bh=YhVPnz7x2+6fbhYqBsQFdZJpHMREgWV1ZUsd3Ba4Ci4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=C18mQ8xQmVqPuzPVq/2CSzWmKQkX7GbJ6MLH8AT3jKC5SVseN40N/5JGR/wnNqXWbNem+V31Rx1lPIY1W9cR8Y3NS+qTnkBs8+9c16FnaqrjnN/gFiuRD22oNaHjW4dcdWFvVSFZwkmH9yUAYXRoGb5sz+dNxUFlvyMY8SAfuzo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rFM3h+X/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03D74C4CEF0;
-	Wed, 14 May 2025 07:20:36 +0000 (UTC)
+	s=arc-20240116; t=1747207267; c=relaxed/simple;
+	bh=Ws6ZSCxwg/wx/wNYOlISgwQNyA8aAFPpi5VIr4QaBps=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=k2+Dlfjc3ipXIT/3kRMvfDWdG9E6v1f7Gxvo9oBqge6DZllwWZSl9Q91Vw5LHqAIeixXRGeYcKpjdXi2BtIJ2lOWUtSbbGrcz8IGEL0CBfziO62BETzmJOlroxZxrk13OJCfJQQYWlOSWfa8PzQ7J4u1V6+y5kp7OcqeAIbP2hA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lWv8THlX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7AAAC4CEEB;
+	Wed, 14 May 2025 07:20:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747207238;
-	bh=YhVPnz7x2+6fbhYqBsQFdZJpHMREgWV1ZUsd3Ba4Ci4=;
-	h=From:To:Cc:Subject:Date:From;
-	b=rFM3h+X/5dUH6f0ex5ygM/hRowk8UY8U5w32F9VXaadtNfPbOkowHV8SglQnI92EL
-	 8uzBNifdN/aeKkTnNVmxU6X03JpRNG7qCwICH0ShTTAQ6BufwsU99cwiuYLSqvLoJs
-	 A116VZsYBntcMtBwGA8LV8zLQ0Q1dX59iTD/0XfdfbXEXeQil3WSLRsvahxLdLoD7i
-	 ItNWXWdEMdVqQ+wYKLjO/Pe4e/MpRUky+kVScWQiJ0Ow6Wia/SAUBaX5ZwhnPLfuLy
-	 8VStqq+I5I7AHN5MvGeyIR5OoXCeiJeSBinZR+WRyzgqLhaw7/9/vZX6nl6LGEXiII
-	 fFgNAMfSptfLg==
-From: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>
-To: gregkh@linuxfoundation.org
-Cc: linux-serial@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
-	Mans Rullgard <mans@mansr.com>,
-	stable@vger.kernel.org
-Subject: [PATCH] tty: serial: 8250_omap: fix TX with DMA for am33xx
-Date: Wed, 14 May 2025 09:20:35 +0200
-Message-ID: <20250514072035.2757435-1-jirislaby@kernel.org>
-X-Mailer: git-send-email 2.49.0
+	s=k20201202; t=1747207266;
+	bh=Ws6ZSCxwg/wx/wNYOlISgwQNyA8aAFPpi5VIr4QaBps=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=lWv8THlXY5f21F2Tnj1n+tnnNyMXZupJa/7dBSpk5BU8IVDJbLCzc2fv/WIDj5NWh
+	 V51DIlbKnjS0vhlGAd/d6myt4wgUYiyu7Ub4vvwApVdvZnR3iMzQc6K9WxEcQHNNEg
+	 RdLjFDGZIl2Z96WpDiPhKyZJZvcsxXLzWoP9VAt6WnufUpaRd/w4SYQUV5iLmPk/+N
+	 P50XXHAk7Gy9rUYXGFyctnfCeLCbXJt7ticI686PgturpvmF5mUGJu5p7cy1hr8Fkl
+	 8u1M1M55dkXExXHtHpEA9cmdzhVdNeZIFGLj0+FsJDSQqMNshj5h/OW3Z4mqimpZWZ
+	 2anRtyg7zJeyw==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 14 May 2025 09:20:49 +0200
+Message-Id: <D9VPA1M45WBK.1TB4KOUXD24BD@kernel.org>
+Cc: <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>
+Subject: Re: [PATCH v5 4/4] rust: samples: Add debugfs sample
+From: "Benno Lossin" <lossin@kernel.org>
+To: "Matthew Maurer" <mmaurer@google.com>, "Miguel Ojeda"
+ <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
+ <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Benno Lossin"
+ <benno.lossin@proton.me>, "Andreas Hindborg" <a.hindborg@kernel.org>,
+ "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
+ "Danilo Krummrich" <dakr@kernel.org>, "Greg Kroah-Hartman"
+ <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ "Sami Tolvanen" <samitolvanen@google.com>, "Timur Tabi" <ttabi@nvidia.com>
+X-Mailer: aerc 0.20.1
+References: <20250505-debugfs-rust-v5-0-3e93ce7bb76e@google.com>
+ <20250505-debugfs-rust-v5-4-3e93ce7bb76e@google.com>
+In-Reply-To: <20250505-debugfs-rust-v5-4-3e93ce7bb76e@google.com>
 
-Commit 1788cf6a91d9 ("tty: serial: switch from circ_buf to kfifo")
-introduced an error in the TX DMA handling for 8250_omap.
+On Tue May 6, 2025 at 1:51 AM CEST, Matthew Maurer wrote:
+> +impl kernel::Module for RustDebugFs {
+> +    fn init(_this: &'static ThisModule) -> Result<Self> {
+> +        // Create a debugfs directory in the root of the filesystem call=
+ed "sample_debugfs".
+> +        let debugfs =3D Dir::new(c_str!("sample_debugfs"));
+> +
+> +        {
+> +            // Create a subdirectory, so "sample_debugfs/subdir" now exi=
+sts.
+> +            // We wrap it in `ManuallyDrop` so that the subdirectory is =
+not automatically discarded
+> +            // at the end of the scope - it will be cleaned up when `deb=
+ugfs` is.
+> +            let sub =3D ManuallyDrop::new(debugfs.subdir(c_str!("subdir"=
+)));
 
-When the OMAP_DMA_TX_KICK flag is set, the "skip_byte" is pulled from
-the kfifo and emitted directly in order to start the DMA. While the
-kfifo is updated, dma->tx_size is not decreased. This leads to
-uart_xmit_advance() called in omap_8250_dma_tx_complete() advancing the
-kfifo by one too much.
+I dislike the direct usage of `ManuallyDrop`. To me the usage of
+`ManuallyDrop` signifies that one has to opt out of `Drop` without the
+support of the wrapped type. But in this case, `Dir` is sometimes
+intended to not be dropped, so I'd rather have a `.keep()` function I
+saw mentioned somewhere.
 
-In practice, transmitting N bytes has been seen to result in the last
-N-1 bytes being sent repeatedly.
+> +
+> +            // Create a single file in the subdirectory called "example"=
+ that will read from the
+> +            // `EXAMPLE` atomic variable.
+> +            // We `forget` the result to avoid deleting the file at the =
+end of the scope.
+> +            forget(sub.fmt_file(c_str!("example"), &EXAMPLE, &|example, =
+f| {
+> +                writeln!(f, "Reading atomic: {}", example.load(Ordering:=
+:Relaxed))
+> +            }));
 
-This change fixes the problem by moving all of the dma setup after the
-OMAP_DMA_TX_KICK handling and using kfifo_len() instead of the DMA size
-for the 4-byte cutoff check. This slightly changes the behaviour at
-buffer wraparound, but it still transmits the correct bytes somehow.
-
-Now, the "skip_byte" would no longer be accounted to the stats. As
-previously, dma->tx_size included also this skip byte, up->icount.tx was
-updated by aforementioned uart_xmit_advance() in
-omap_8250_dma_tx_complete(). Fix this by using the uart_fifo_out()
-helper instead of bare kfifo_get().
-
-Based on patch by Mans Rullgard <mans@mansr.com>
-
-Fixes: 1788cf6a91d9 ("tty: serial: switch from circ_buf to kfifo")
-Reported-by: Mans Rullgard <mans@mansr.com>
-Cc: stable@vger.kernel.org
+Similarly here, I'd rather have a `.keep()` function than people start
+using `forget` all over the place.
 
 ---
-The same as for the original patch, I would appreaciate if someone
-actually tests this one on a real HW too.
+Cheers,
+Benno
 
-A patch to optimize the driver to use 2 sgls is still welcome. I will
-not add it without actually having the HW.
----
- drivers/tty/serial/8250/8250_omap.c | 25 ++++++++++---------------
- 1 file changed, 10 insertions(+), 15 deletions(-)
-
-diff --git a/drivers/tty/serial/8250/8250_omap.c b/drivers/tty/serial/8250/8250_omap.c
-index c9b1c689a045..bb23afdd63f2 100644
---- a/drivers/tty/serial/8250/8250_omap.c
-+++ b/drivers/tty/serial/8250/8250_omap.c
-@@ -1151,16 +1151,6 @@ static int omap_8250_tx_dma(struct uart_8250_port *p)
- 		return 0;
- 	}
- 
--	sg_init_table(&sg, 1);
--	ret = kfifo_dma_out_prepare_mapped(&tport->xmit_fifo, &sg, 1,
--					   UART_XMIT_SIZE, dma->tx_addr);
--	if (ret != 1) {
--		serial8250_clear_THRI(p);
--		return 0;
--	}
--
--	dma->tx_size = sg_dma_len(&sg);
--
- 	if (priv->habit & OMAP_DMA_TX_KICK) {
- 		unsigned char c;
- 		u8 tx_lvl;
-@@ -1185,18 +1175,22 @@ static int omap_8250_tx_dma(struct uart_8250_port *p)
- 			ret = -EBUSY;
- 			goto err;
- 		}
--		if (dma->tx_size < 4) {
-+		if (kfifo_len(&tport->xmit_fifo) < 4) {
- 			ret = -EINVAL;
- 			goto err;
- 		}
--		if (!kfifo_get(&tport->xmit_fifo, &c)) {
-+		if (!uart_fifo_out(&p->port, &c, 1)) {
- 			ret = -EINVAL;
- 			goto err;
- 		}
- 		skip_byte = c;
--		/* now we need to recompute due to kfifo_get */
--		kfifo_dma_out_prepare_mapped(&tport->xmit_fifo, &sg, 1,
--				UART_XMIT_SIZE, dma->tx_addr);
-+	}
-+
-+	sg_init_table(&sg, 1);
-+	ret = kfifo_dma_out_prepare_mapped(&tport->xmit_fifo, &sg, 1, UART_XMIT_SIZE, dma->tx_addr);
-+	if (ret != 1) {
-+		ret = -EINVAL;
-+		goto err;
- 	}
- 
- 	desc = dmaengine_prep_slave_sg(dma->txchan, &sg, 1, DMA_MEM_TO_DEV,
-@@ -1206,6 +1200,7 @@ static int omap_8250_tx_dma(struct uart_8250_port *p)
- 		goto err;
- 	}
- 
-+	dma->tx_size = sg_dma_len(&sg);
- 	dma->tx_running = 1;
- 
- 	desc->callback = omap_8250_dma_tx_complete;
--- 
-2.49.0
+> +            // Now, "sample_debugfs/subdir/example" will print "Reading =
+atomic: 8\n" when read.
+> +        }
+> +
+> +        // Change the value in the variable displayed by the file. This =
+is intended to demonstrate
+> +        // that the module can continue to change the value used by the =
+file.
+> +        EXAMPLE.store(10, Ordering::Relaxed);
+> +        // Now, "sample_debugfs/subdir/example" will print "Reading atom=
+ic: 10\n" when read.
+> +
+> +        // Save the root debugfs directory we created to our module obje=
+ct. It will be
+> +        // automatically cleaned up when our module is unloaded because =
+dropping the module object
+> +        // will drop the `Dir` handle. The base directory, the subdirect=
+ory, and the file will all
+> +        // continue to exist until the module is unloaded.
+> +        Ok(Self { _debugfs: debugfs })
+> +    }
+> +}
 
 
