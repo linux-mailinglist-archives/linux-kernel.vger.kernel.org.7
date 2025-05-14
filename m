@@ -1,147 +1,199 @@
-Return-Path: <linux-kernel+bounces-647668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-647670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54503AB6B7C
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 14:35:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0B61AB6B82
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 14:36:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 818B53AD512
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 12:35:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4594E1B67707
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 May 2025 12:36:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F002D276037;
-	Wed, 14 May 2025 12:35:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DFE127702C;
+	Wed, 14 May 2025 12:36:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z8OGSJ2P"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="ZAGp3nc+"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AFDE22A4EA;
-	Wed, 14 May 2025 12:35:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45F2D1F582C;
+	Wed, 14 May 2025 12:36:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747226115; cv=none; b=WjfTpKGsEJ+eJQwJ1Fm0WtCUpy/b/dm9f3iVwcsfUTLdZkSsdatvYVlx5kOips78NV4wHPdfGJO0fOIPVB6EcsAErDXftTKN/mvexhPFOhBROM4GuaAUmMW7ISaWnF7zoVdJkxsRyiLYhbnMVY1Qwyfn76kcZx7h5jFusV+TXRA=
+	t=1747226192; cv=none; b=ri4rRuMTRZoqPcCo1sa1qZ4zEQB83HocAmLb0DyMn50Hs5RJghxc7l0ujqEgzmvANqdfbdyClLRwmxrNOjwlu7VOqrvJtSVW/wjb9NyWvuZ/uVwo6vfV5DR1ycFbzlCNiRCw12rZl/M9sXJdQDfr0FLTPFU5dKhqRL5YnWzdtrg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747226115; c=relaxed/simple;
-	bh=FqKEEgh2CgxDQgoHYR3IHgfrOAxC4C3q34QQPyLKnZ8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ugKypSRVwLeErL2K3RTuE41rE5nlhicI9MhQANwVn0Wx2s3E5pSTYCEHYGH3SauCZKtJ9vMzONLeewzTty7O5e0vsMQ1002zMcN7vTaRo3fr3OJmtQw55+3jA80cQpoaADl7daCFvS6EOuvBgnOnecQsvX93Ikc7zA90oJ7fdGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z8OGSJ2P; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BBAFC4CEE9;
-	Wed, 14 May 2025 12:35:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747226115;
-	bh=FqKEEgh2CgxDQgoHYR3IHgfrOAxC4C3q34QQPyLKnZ8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Z8OGSJ2P078kwQym6+Q0t6XZ7/BkHTLvacYqtwtaqh6zLjr3vykRQheOYWMikz1Vp
-	 I7BiYZ8xBbUyWfllKKWFSRmbRLAOfVo6JX5Ddfa3k1SHGloLnuBq9yimw2ZaXdzplI
-	 DIVfCI7M++0cJZUhr+Kd6B6v205QCP4SzaAUN/w0uAHCuPd+qp2nxs2ZwrukR8RJah
-	 svSgMWEXaO39PvS67G4taKdyVQvENyV91gXN06V/FZtsFxNa3mmho+1BjCdwK7Qfoe
-	 sHRu/NLnnbELbpwRhq88cf7/CiMx15OO1OSKIHB5w7BNIExTlewEn8ZD6pbDVOmE6h
-	 mMODW+VzqWd7g==
-Message-ID: <3f989f5c-312c-4fac-8cc0-f387de84925a@kernel.org>
-Date: Wed, 14 May 2025 14:35:09 +0200
+	s=arc-20240116; t=1747226192; c=relaxed/simple;
+	bh=wvsdiJsKD6QmRj9PJvvy8ci556EOSrI0fkrAAdKIOKw=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=PngAyhmSt34RGlSZh6rsNjfp/poD9tcT35dCYu95c8zV9bB5P82uPm1igENfNfAM0cuKxs5gOC7CO4bs0QSOyGI01ymJm0MqiWv6mnqkLkcPkPQwwNA1iewrxNRr+2RobKuKtFS3UaKcnwHk8lJeLit4DH5Q2fX69x09VdomVGA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=ZAGp3nc+; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1747226188;
+	bh=wvsdiJsKD6QmRj9PJvvy8ci556EOSrI0fkrAAdKIOKw=;
+	h=From:Date:Subject:To:Cc:From;
+	b=ZAGp3nc+C+oM1pLvBZf1p1hJ50zvG+FWZ2DUD1ve3bBQIqFDmdBdNPaimrjLxr+XA
+	 FoIb2Nfubsbu35iLBy2PMx7JNFL0dxqI5boaMh5GUCoS5lHlPLnnZOWWKnIMK5jdML
+	 b/Nsrf/V1a+DJhA0QzVJ2XJYIerYfHPiQTQJVdSg8Vx9sdMwb0scKCIzUlLJQQVRxx
+	 f9OYr9Vb5q2Oppo8JhTMpwGJVkYEFJ1rcdkfmIRRHHTjWfV3e6Y1TOLMTVdF9hU5PO
+	 Ynt2WZmumt8xQrEk1hVLyCARePli78UyZDa8TnErutCk7x7OlgZLORL1vmM0rDl3ND
+	 ZdR5Lxa819lJA==
+Received: from [192.168.1.63] (unknown [70.107.117.78])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: nfraprado)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 0B10217E090E;
+	Wed, 14 May 2025 14:36:24 +0200 (CEST)
+From: =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
+Date: Wed, 14 May 2025 08:36:06 -0400
+Subject: [PATCH] regulator: dt-bindings: mt6357: Drop fixed compatible
+ requirement
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/7] dt-bindings: soc: ti: pruss: Add documentation for
- PRU UART support
-To: Judith Mendez <jm@ti.com>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Nishanth Menon <nm@ti.com>,
- Santosh Shilimkar <ssantosh@kernel.org>,
- Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>,
- Bin Liu <b-liu@ti.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Andrew Davis <afd@ti.com>, linux-kernel@vger.kernel.org,
- linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-References: <20250513215934.933807-1-jm@ti.com>
- <20250513215934.933807-3-jm@ti.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250513215934.933807-3-jm@ti.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20250514-mt6357-regulator-fixed-compatibles-removal-bindings-v1-1-2421e9cc6cc7@collabora.com>
+X-B4-Tracking: v=1; b=H4sIADWOJGgC/xWNywqDMBBFf0Vm3QGjRkt/pbiIZkwH8pBJKgXx3
+ xuXh8u554RMwpTh1ZwgdHDmFCuoRwPrx0RHyLYydG2nW616DGXs9YRC7utNSYIb/8jimsJuCi+
+ ect1COozHhaPl6DJqGtVmBtLPYYL6vAvd1l19z9f1B4DEtDqFAAAA
+X-Change-ID: 20250513-mt6357-regulator-fixed-compatibles-removal-bindings-5e61fa4e5847
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Chen Zhong <chen.zhong@mediatek.com>, 
+ Fabien Parent <fabien.parent@linaro.org>, 
+ Alexandre Mergnat <amergnat@baylibre.com>
+Cc: kernel@collabora.com, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-mediatek@lists.infradead.org, 
+ =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
+X-Mailer: b4 0.14.2
 
-On 13/05/2025 23:59, Judith Mendez wrote:
-> Add documentation for PRU UART node which is for PRU serial UART
-> based-off the industry standard TL16C550 asynchronous communications
-> element.
-> 
-> Signed-off-by: Judith Mendez <jm@ti.com>
-> ---
->  Documentation/devicetree/bindings/soc/ti/ti,pruss.yaml | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
+Some of the regulators on the MT6357 PMIC currently reference the
+fixed-regulator dt-binding, which enforces the presence of a
+regulator-fixed compatible. However since all regulators on the MT6357
+PMIC are handled by a single mt6357-regulator driver, probed through
+MFD, the compatibles don't serve any purpose. In fact they cause
+failures in the DT kselftest since they aren't probed by the fixed
+regulator driver as would be expected. Furthermore this is the only
+dt-binding in this family like this: mt6359-regulator and
+mt6358-regulator don't require those compatibles.
 
-Nothing in cover letter explains dependency and this the most important
-part of cover letter. Otherwise how maintainers are supposed to guess
-what they can take and what cannot?
+Commit d77e89b7b03f ("arm64: dts: mediatek: mt6357: Drop regulator-fixed
+compatibles") removed the compatibles from Devicetree, but missed
+updating the binding, which still requires them, introducing dt-binding
+errors. Remove the compatible requirement by referencing the plain
+regulator dt-binding instead to fix the dt-binding errors.
 
-Squash the patch with previous in such case.
+Fixes: d77e89b7b03f ("arm64: dts: mediatek: mt6357: Drop regulator-fixed compatibles")
+Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+---
+ .../bindings/regulator/mediatek,mt6357-regulator.yaml        | 12 +-----------
+ 1 file changed, 1 insertion(+), 11 deletions(-)
 
-> diff --git a/Documentation/devicetree/bindings/soc/ti/ti,pruss.yaml b/Documentation/devicetree/bindings/soc/ti/ti,pruss.yaml
-> index 927b3200e29e..54397297cbf5 100644
-> --- a/Documentation/devicetree/bindings/soc/ti/ti,pruss.yaml
-> +++ b/Documentation/devicetree/bindings/soc/ti/ti,pruss.yaml
-> @@ -324,6 +324,13 @@ patternProperties:
->      $ref: /schemas/net/ti,davinci-mdio.yaml#
->      type: object
->  
-> +  serial@[a-f0-9]+$:
-> +    description: |
+diff --git a/Documentation/devicetree/bindings/regulator/mediatek,mt6357-regulator.yaml b/Documentation/devicetree/bindings/regulator/mediatek,mt6357-regulator.yaml
+index 6327bb2f6ee080a178ff3e982768c5eb0595e771..698266c09e25359a516d969a0487cc94444b842d 100644
+--- a/Documentation/devicetree/bindings/regulator/mediatek,mt6357-regulator.yaml
++++ b/Documentation/devicetree/bindings/regulator/mediatek,mt6357-regulator.yaml
+@@ -33,7 +33,7 @@ patternProperties:
+ 
+   "^ldo-v(camio18|aud28|aux18|io18|io28|rf12|rf18|cn18|cn28|fe28)$":
+     type: object
+-    $ref: fixed-regulator.yaml#
++    $ref: regulator.yaml#
+     unevaluatedProperties: false
+     description:
+       Properties for single fixed LDO regulator.
+@@ -112,7 +112,6 @@ examples:
+           regulator-enable-ramp-delay = <220>;
+         };
+         mt6357_vfe28_reg: ldo-vfe28 {
+-          compatible = "regulator-fixed";
+           regulator-name = "vfe28";
+           regulator-min-microvolt = <2800000>;
+           regulator-max-microvolt = <2800000>;
+@@ -125,14 +124,12 @@ examples:
+           regulator-enable-ramp-delay = <110>;
+         };
+         mt6357_vrf18_reg: ldo-vrf18 {
+-          compatible = "regulator-fixed";
+           regulator-name = "vrf18";
+           regulator-min-microvolt = <1800000>;
+           regulator-max-microvolt = <1800000>;
+           regulator-enable-ramp-delay = <110>;
+         };
+         mt6357_vrf12_reg: ldo-vrf12 {
+-          compatible = "regulator-fixed";
+           regulator-name = "vrf12";
+           regulator-min-microvolt = <1200000>;
+           regulator-max-microvolt = <1200000>;
+@@ -157,14 +154,12 @@ examples:
+           regulator-enable-ramp-delay = <264>;
+         };
+         mt6357_vcn28_reg: ldo-vcn28 {
+-          compatible = "regulator-fixed";
+           regulator-name = "vcn28";
+           regulator-min-microvolt = <2800000>;
+           regulator-max-microvolt = <2800000>;
+           regulator-enable-ramp-delay = <264>;
+         };
+         mt6357_vcn18_reg: ldo-vcn18 {
+-          compatible = "regulator-fixed";
+           regulator-name = "vcn18";
+           regulator-min-microvolt = <1800000>;
+           regulator-max-microvolt = <1800000>;
+@@ -183,7 +178,6 @@ examples:
+           regulator-enable-ramp-delay = <264>;
+         };
+         mt6357_vcamio_reg: ldo-vcamio18 {
+-          compatible = "regulator-fixed";
+           regulator-name = "vcamio";
+           regulator-min-microvolt = <1800000>;
+           regulator-max-microvolt = <1800000>;
+@@ -212,28 +206,24 @@ examples:
+           regulator-always-on;
+         };
+         mt6357_vaux18_reg: ldo-vaux18 {
+-          compatible = "regulator-fixed";
+           regulator-name = "vaux18";
+           regulator-min-microvolt = <1800000>;
+           regulator-max-microvolt = <1800000>;
+           regulator-enable-ramp-delay = <264>;
+         };
+         mt6357_vaud28_reg: ldo-vaud28 {
+-          compatible = "regulator-fixed";
+           regulator-name = "vaud28";
+           regulator-min-microvolt = <2800000>;
+           regulator-max-microvolt = <2800000>;
+           regulator-enable-ramp-delay = <264>;
+         };
+         mt6357_vio28_reg: ldo-vio28 {
+-          compatible = "regulator-fixed";
+           regulator-name = "vio28";
+           regulator-min-microvolt = <2800000>;
+           regulator-max-microvolt = <2800000>;
+           regulator-enable-ramp-delay = <264>;
+         };
+         mt6357_vio18_reg: ldo-vio18 {
+-          compatible = "regulator-fixed";
+           regulator-name = "vio18";
+           regulator-min-microvolt = <1800000>;
+           regulator-max-microvolt = <1800000>;
 
-Do not need '|' unless you need to preserve formatting.
+---
+base-commit: edef457004774e598fc4c1b7d1d4f0bcd9d0bb30
+change-id: 20250513-mt6357-regulator-fixed-compatibles-removal-bindings-5e61fa4e5847
 
 Best regards,
-Krzysztof
+-- 
+Nícolas F. R. A. Prado <nfraprado@collabora.com>
+
 
