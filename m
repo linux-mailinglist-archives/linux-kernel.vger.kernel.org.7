@@ -1,113 +1,342 @@
-Return-Path: <linux-kernel+bounces-649658-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-649661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C46FAB872C
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 14:59:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B1E79AB8737
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 15:00:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3C8F97A2414
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 12:58:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EF69F7AADC4
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 12:59:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18EAC299AA8;
-	Thu, 15 May 2025 12:59:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40D0B29A9E9;
+	Thu, 15 May 2025 13:00:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="SWJarbqB"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="YQ0YEZrS"
+Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7439429898C
-	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 12:59:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 590C829A9D2
+	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 13:00:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747313958; cv=none; b=Ah6TkY/wFja77QOJs3+7uPxchBtKavdcgUes/I9V8w9bA379uDCDbAAMgZpLBwWqGf/c9KtIaRSWaGadgqyScy02UQJJICU3CcxfF935FBEvGcKNfgK+s+mZwNuf6kAowrXrmjLkEknQaK0aM2twm6Iuma6tqMEaVZRsXPUsAEM=
+	t=1747314027; cv=none; b=iou3Bfdrm4Pmncafb0iDVREi3BKEsn54XusnkRoiA9PZllT0Qy0t8eyD0Ra7twH7eegKi+aEK87X0skh7dMGYwOhcjxpsuK9MEi3C1n1IGOGU7ft92Ut3B3CYzkQT2CpoQKPb8IxPV93PUgUXo8z5bxcG3AI44gvk3nDioaKm7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747313958; c=relaxed/simple;
-	bh=OibAgO1lF+UrLS/2SrpwgUDc/nYn6zF9seSKQty2XPk=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=pNPmg67YZXLoAhXWOzk6F8XgM/6bVA99jkpwQ2uFRGWIAo5A10VzZlOO31nf7ZdvSiRcZQL5BrR4seubZs6zcSd6mh1AWTNdAZnkOJGhX6fOT8hVr8VvrRKAhQzGM0GgVbks2ZkoBWspAV7lt+7TSq6dN/aN45/JnOz8NP0SxWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=SWJarbqB; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-440685d6afcso9959885e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 05:59:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1747313954; x=1747918754; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8Qawhlvmv36yrM5PLXHrynEKEEyc5YE0PdfccMvrE2Y=;
-        b=SWJarbqBBFHiPWCrYUdPCysLjD4CHx5I5ox6xTlD8puj8u6CIUmdLhxeoNqF5kGGq4
-         PiQrGVg6toZdaz6aKdgWzTnZ6nNlPxe8U46Hnu7MNmYx4/eYsMcvYAkwosx37MT4KkCW
-         F2fsezvj/QIFF9FQucom6LNfVAO6goDLcPT8E6JLK0k901Waq+AwUx53+K9jyu10w5X7
-         8XEJoJSVOGJPe+REkyREO8SriQdH9jpxB5Ji/55m5+YqyrJMLuqMEyynrKj3kH8oSkGV
-         C0/pSCCN7r6rc8VBdiWf2tpDv1eW4+zum65W4/eo+difKzxVinP0F32zB/ap1rRsdn06
-         3/xA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747313954; x=1747918754;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8Qawhlvmv36yrM5PLXHrynEKEEyc5YE0PdfccMvrE2Y=;
-        b=BwkwATwx0mJ//30AyDJF7ElDskfLVwr0K0v7dMnqkI0E0yHGbzhmhgAK1ag5PaXtJ+
-         PvjzZHExMi0KC/lcHRZlNhKB5dC18ZiUOuye8X9rzJANs1HtIeBDNLgWIbOnxfZ93Mcc
-         jgsxJIBdXOmdaCpDbqRi73jo2xlTIxO9QRDardJquny+TVKrbgAwsuTwWvmmr1VhRJGC
-         /xRMRGz8nKdE3RR0ocBpTwObW9V+NVMcN+ERYgVNB/DD8sATtwVvdfgEX6q4FNCR/FK4
-         sHydocReRytfqsUL85W3tUCAewhbaVik2Tou8Ufwyx+49k/tToGY2bogexh1FN0N26Wx
-         /xzg==
-X-Forwarded-Encrypted: i=1; AJvYcCUVFExeIYiZNiWfNQ9u9clZSTBqE1A5NtdonguviJjP/t7P2S8lPbRQbwyNUkaWpMonXpqNIKmhUu8ecY8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxzOCkQXmN6yAWeBVkNHHkCm8rYpbwXyDUx9QeBRexLhUiRldD/
-	Z1EBxylvgM0pNyo/Nyq0NuUIFVsi4tT2i/RaUFKwAxD03eDCI7fbpHILu+widAc=
-X-Gm-Gg: ASbGnctDSHV8ihU4Y5UF2XN1u68iAi0PpuIiyftypXkliMFPEwjGxIGfudaDipDe6wr
-	FnDkF2cUsbYUiacqazCA4Wy7TJ8txScRkPIIVLtrZ1AvK09Ngl2UhWlAv5qPktL7Ci/pex2rUBf
-	J9egnL1Hzq2g4sA4xNOa/+m8EADFvxLZUuvlzAKz7DOZQULNMf2u53WGtKsP0jGo4A4HaRr+7Th
-	pVafnrOIUeChlFnkT5A0sAoFGcUizuML+bc7iq1k2a0CPTO4IMDAVfD2gZllUIUHiASTxC4lMGO
-	g74yhAFBj1SIZ2Z5F+8pDnBqgIW/HthyWzDknDCGLE53fD0bdicO3knprPhmZiiGqw==
-X-Google-Smtp-Source: AGHT+IFyeqD0A0IScg3QZihC1XrEVTucJipRcuMxEvf1pQxV8DR8pNFyFAx+gn85sF514EVzZ/V3/Q==
-X-Received: by 2002:a05:600c:3554:b0:442:e109:3032 with SMTP id 5b1f17b1804b1-442f970a9bfmr25956895e9.24.1747313953125;
-        Thu, 15 May 2025 05:59:13 -0700 (PDT)
-Received: from toaster.baylibre.com ([2a01:e0a:3c5:5fb1:82b8:c32f:4d8c:199e])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-442f39e8578sm71180475e9.29.2025.05.15.05.59.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 May 2025 05:59:12 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Neil Armstrong <neil.armstrong@linaro.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Kevin Hilman <khilman@baylibre.com>, 
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
- Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
- Alexandre Torgue <alexandre.torgue@foss.st.com>, 
- Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Samuel Holland <samuel@sholland.org>, 
- =?utf-8?q?Emilio_L=C3=B3pez?= <emilio@elopez.com.ar>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- linux-stm32@st-md-mailman.stormreply.com, linux-sunxi@lists.linux.dev
-In-Reply-To: <20250404-kconfig-defaults-clk-v1-0-4d2df5603332@linaro.org>
-References: <20250404-kconfig-defaults-clk-v1-0-4d2df5603332@linaro.org>
-Subject: Re: (subset) [PATCH 0/5] clk: Do not enable by default during
- compile testing
-Message-Id: <174731395227.3761659.8617180462546520115.b4-ty@baylibre.com>
-Date: Thu, 15 May 2025 14:59:12 +0200
+	s=arc-20240116; t=1747314027; c=relaxed/simple;
+	bh=069WWNaBNOdGxapm5+teX/2X7XGRTzvIlToc1CqrwN0=;
+	h=MIME-Version:Date:Content-Type:From:Message-ID:Subject:To:Cc:
+	 In-Reply-To:References; b=Yn72XVs7tq7EDsxW6PgYfAsAswr13WGPpa+ffsNe8+qAbJAurZvORm4s+Qi1u35mt60dIIuFhJ1d44CphVqNPLdhZGJrhBz7ZBxzZsv7D7HV9gb+3P8RYiNwwB9Ir9+Ip2fdmfzzwQR4xooNoliOhWH7Z9lg+3TtMYHKMjb0bpc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=YQ0YEZrS; arc=none smtp.client-ip=91.218.175.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1747314013;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PdiS0ZXJtT9OI5f7vo+jFOFjHxyJbWuYbPxzzpD0umM=;
+	b=YQ0YEZrSUMFiSnJJCYJFIPNGVsN9kQ0ZJ3iWRmm5ROi+oe0Z9KWLeyiKksBoTOP+W3W35c
+	KT60cUqHELFpF+dC5y82hMj3vvMgoUn0cFLAT/P7jSPImvaaQ5+N5nyd9JTn0ujdMRvDE5
+	UfmSsFQ69m7WgaME8eOHTbS/V/rGXgE=
+Date: Thu, 15 May 2025 13:00:07 +0000
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
+Content-Transfer-Encoding: quoted-printable
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: "Jiayuan Chen" <jiayuan.chen@linux.dev>
+Message-ID: <6a0524f8edd81f3bfafe8e139951b7ac78dd1fc0@linux.dev>
+TLS-Required: No
+Subject: Re: [PATCH bpf-next v2] bpftool: Add support for custom BTF path in
+ prog load/loadall
+To: "Quentin Monnet" <qmo@kernel.org>, bpf@vger.kernel.org
+Cc: "Alexei Starovoitov" <ast@kernel.org>, "Daniel Borkmann"
+ <daniel@iogearbox.net>, "Andrii Nakryiko" <andrii@kernel.org>, "Martin
+ KaFai Lau" <martin.lau@linux.dev>, "Eduard Zingerman"
+ <eddyz87@gmail.com>, "Song Liu" <song@kernel.org>, "Yonghong Song"
+ <yonghong.song@linux.dev>, "John Fastabend" <john.fastabend@gmail.com>,
+ "KP Singh" <kpsingh@kernel.org>, "Stanislav Fomichev" <sdf@fomichev.me>,
+ "Hao Luo" <haoluo@google.com>, "Jiri Olsa" <jolsa@kernel.org>, "Daniel
+ Xu" <dxu@dxuuu.xyz>, "Mykyta Yatsenko" <yatsenko@meta.com>, "Tao Chen"
+ <chen.dylane@gmail.com>, linux-kernel@vger.kernel.org
+In-Reply-To: <d4e30634-b64e-47c7-9089-a37d20e29d2f@kernel.org>
+References: <20250515065018.240188-1-jiayuan.chen@linux.dev>
+ <d4e30634-b64e-47c7-9089-a37d20e29d2f@kernel.org>
+X-Migadu-Flow: FLOW_OUT
 
-Applied to clk-meson (clk-meson-next), thanks!
+May 15, 2025 at 17:17, "Quentin Monnet" <qmo@kernel.org> wrote:
 
-[1/5] clk: meson: Do not enable by default during compile testing
-      https://github.com/BayLibre/clk-meson/commit/0afce85ed26c
+>=20
+>=202025-05-15 14:50 UTC+0800 ~ Jiayuan Chen <jiayuan.chen@linux.dev>
+>=20
+>=20>=20
+>=20> This patch exposes the btf_custom_path feature to bpftool, allowing=
+ users
+> >=20
+>=20>  to specify a custom BTF file when loading BPF programs using prog =
+load or
+> >=20
+>=20>  prog loadall commands.
+> >=20
+>=20>=20=20
+>=20>=20
+>=20>  The argument 'btf_custom_path' in libbpf is used for those kernes =
+that
+> >=20
+>=20
+> Typo: "kernes"
+>=20
+>=20>=20
+>=20> don't have CONFIG_DEBUG_INFO_BTF enabled but still want to perform =
+CO-RE
+> >=20
+>=20>  relocations.
+> >=20
+>=20>=20=20
+>=20>=20
+>=20>  Signed-off-by: Jiayuan Chen <jiayuan.chen@linux.dev>
+> >=20
+>=20>  ---
+> >=20
+>=20>  tools/bpf/bpftool/Documentation/bpftool-prog.rst | 7 ++++++-
+> >=20
+>=20>  tools/bpf/bpftool/bash-completion/bpftool | 2 +-
+> >=20
+>=20>  tools/bpf/bpftool/prog.c | 12 +++++++++++-
+> >=20
+>=20>  3 files changed, 18 insertions(+), 3 deletions(-)
+> >=20
+>=20>=20=20
+>=20>=20
+>=20>  diff --git a/tools/bpf/bpftool/Documentation/bpftool-prog.rst b/to=
+ols/bpf/bpftool/Documentation/bpftool-prog.rst
+> >=20
+>=20>  index d6304e01afe0..e60a829ab8d0 100644
+> >=20
+>=20>  --- a/tools/bpf/bpftool/Documentation/bpftool-prog.rst
+> >=20
+>=20>  +++ b/tools/bpf/bpftool/Documentation/bpftool-prog.rst
+> >=20
+>=20>  @@ -127,7 +127,7 @@ bpftool prog pin *PROG* *FILE*
+> >=20
+>=20>  Note: *FILE* must be located in *bpffs* mount. It must not contain=
+ a dot
+> >=20
+>=20>  character ('.'), which is reserved for future extensions of *bpffs=
+*.
+> >=20
+>=20>=20=20
+>=20>=20
+>=20>  -bpftool prog { load | loadall } *OBJ* *PATH* [type *TYPE*] [map {=
+ idx *IDX* | name *NAME* } *MAP*] [{ offload_dev | xdpmeta_dev } *NAME*] =
+[pinmaps *MAP_DIR*] [autoattach]
+> >=20
+>=20>  +bpftool prog { load | loadall } *OBJ* *PATH* [type *TYPE*] [map {=
+ idx *IDX* | name *NAME* } *MAP*] [{ offload_dev | xdpmeta_dev } *NAME*] =
+[pinmaps *MAP_DIR*] [autoattach] [kernel_btf *BTF_DIR*]
+> >=20
+>=20>  Load bpf program(s) from binary *OBJ* and pin as *PATH*. **bpftool=
+ prog
+> >=20
+>=20>  load** pins only the first program from the *OBJ* as *PATH*. **bpf=
+tool prog
+> >=20
+>=20>  loadall** pins all programs from the *OBJ* under *PATH* directory.=
+ **type**
+> >=20
+>=20>  @@ -153,6 +153,11 @@ bpftool prog { load | loadall } *OBJ* *PATH* =
+[type *TYPE*] [map { idx *IDX* | na
+> >=20
+>=20>  program does not support autoattach, bpftool falls back to regular=
+ pinning
+> >=20
+>=20>  for that program instead.
+> >=20
+>=20>=20=20
+>=20>=20
+>=20>  + The **kernel_btf** option allows specifying an external BTF file=
+ to replace
+> >=20
+>=20>  + the system's own vmlinux BTF file for CO-RE relocations. NOTE th=
+at any
+> >=20
+>=20>  + other feature (e.g., fentry/fexit programs, struct_ops, etc) wil=
+l require
+> >=20
+>=20
+> Nit: No need for both "e.g." and "etc", they're redundant.
+>=20
+>=20>=20
+>=20> + actual kernel BTF like /sys/kernel/btf/vmlinux.
+> >=20
+>=20>  +
+> >=20
+>=20
+> Can we rephrase the second part of the paragraph a little bit please?
+>=20
+>=20=E2=80=9CAny other feature=E2=80=9D could be clearer, how about:
+>=20
+>=20 Note that any other feature relying on BTF (such as fentry/fexit
+>=20
+>=20 programs, struct_ops) requires the BTF file for the actual
+>=20
+>=20 kernel running on the host, often exposed at
+>=20
+>=20 /sys/kernel/btf/vmlinux.
+>=20
+>=20>=20
+>=20> Note: *PATH* must be located in *bpffs* mount. It must not contain =
+a dot
+> >=20
+>=20>  character ('.'), which is reserved for future extensions of *bpffs=
+*.
+> >=20
+>=20>=20=20
+>=20>=20
+>=20>  diff --git a/tools/bpf/bpftool/bash-completion/bpftool b/tools/bpf=
+/bpftool/bash-completion/bpftool
+> >=20
+>=20>  index 1ce409a6cbd9..609938c287b7 100644
+> >=20
+>=20>  --- a/tools/bpf/bpftool/bash-completion/bpftool
+> >=20
+>=20>  +++ b/tools/bpf/bpftool/bash-completion/bpftool
+> >=20
+>=20>  @@ -511,7 +511,7 @@ _bpftool()
+> >=20
+>=20>  ;;
+> >=20
+>=20>  *)
+> >=20
+>=20>  COMPREPLY=3D( $( compgen -W "map" -- "$cur" ) )
+> >=20
+>=20>  - _bpftool_once_attr 'type pinmaps autoattach'
+> >=20
+>=20>  + _bpftool_once_attr 'type pinmaps autoattach kernel_btf'
+> >=20
+>=20>  _bpftool_one_of_list 'offload_dev xdpmeta_dev'
+> >=20
+>=20>  return 0
+> >=20
+>=20>  ;;
+> >=20
+>=20
+> Correct, but right before this could you also add the following, please=
+:
+>=20
+>=20 @@ -505,13 +505,13 @@ _bpftool()
+>=20
+>=20 _bpftool_get_map_names
+>=20
+>=20 return 0
+>=20
+>=20 ;;
+>=20
+>=20 - pinned|pinmaps)
+>=20
+>=20 + pinned|pinmaps|kernel_btf)
+>=20
+>=20 _filedir
+>=20
+>=20 return 0
+>=20
+>=20 ;;
+>=20
+>=20 *)
+>=20
+>=20This will make the completion offer file names after the user has typ=
+ed
+>=20
+>=20"kernel_btf".
+>=20
+>=20>=20
+>=20> diff --git a/tools/bpf/bpftool/prog.c b/tools/bpf/bpftool/prog.c
+> >=20
+>=20>  index f010295350be..3b6a361dd0f8 100644
+> >=20
+>=20>  --- a/tools/bpf/bpftool/prog.c
+> >=20
+>=20>  +++ b/tools/bpf/bpftool/prog.c
+> >=20
+>=20>  @@ -1681,8 +1681,17 @@ static int load_with_options(int argc, char=
+ **argv, bool first_prog_only)
+> >=20
+>=20>  } else if (is_prefix(*argv, "autoattach")) {
+> >=20
+>=20>  auto_attach =3D true;
+> >=20
+>=20>  NEXT_ARG();
+> >=20
+>=20>  + } else if (is_prefix(*argv, "kernel_btf")) {
+> >=20
+>=20>  + NEXT_ARG();
+> >=20
+>=20>  +
+> >=20
+>=20>  + if (!REQ_ARGS(1))
+> >=20
+>=20>  + goto err_free_reuse_maps;
+> >=20
+>=20>  +
+> >=20
+>=20>  + open_opts.btf_custom_path =3D GET_ARG();
+> >=20
+>=20>  } else {
+> >=20
+>=20>  - p_err("expected no more arguments, 'type', 'map' or 'dev', got: =
+'%s'?",
+> >=20
+>=20>  + p_err("expected no more arguments, "
+> >=20
+>=20>  + "'type', 'map', 'dev', 'offload_dev', 'xdpmeta_dev', 'pinmaps', =
+"
+> >=20
+>=20>  + "'autoattach', or 'kernel_btf', got: '%s'?",
+> >=20
+>=20
+> Some of them were missing, thanks for this! Can you remove "dev" from
+>=20
+>=20the list, please? It's been deprecated in favour of "offload_dev", to
+>=20
+>=20avoid confusion with "xdpmeta_dev".
+>=20
+>=20pw-bot: cr
+>=20
+>=20>=20
+>=20> *argv);
+> >=20
+>=20>  goto err_free_reuse_maps;
+> >=20
+>=20>  }
+> >=20
+>=20>  @@ -2474,6 +2483,7 @@ static int do_help(int argc, char **argv)
+> >=20
+>=20>  " [map { idx IDX | name NAME } MAP]\\\n"
+> >=20
+>=20>  " [pinmaps MAP_DIR]\n"
+> >=20
+>=20>  " [autoattach]\n"
+> >=20
+>=20>  + " [kernel_btf BTF_DIR]\n"
+> >=20
+>=20>  " %1$s %2$s attach PROG ATTACH_TYPE [MAP]\n"
+> >=20
+>=20>  " %1$s %2$s detach PROG ATTACH_TYPE [MAP]\n"
+> >=20
+>=20>  " %1$s %2$s run PROG \\\n"
+> >=20
+>=20
+> Thanks,
+>=20
+>=20Quentin
+>
 
-Best regards,
---
-Jerome
-
+Thank you, Quentin. Your suggestions are all very valuable; I will make t=
+he updates.
 
