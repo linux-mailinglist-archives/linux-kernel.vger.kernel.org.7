@@ -1,110 +1,82 @@
-Return-Path: <linux-kernel+bounces-649246-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-649249-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE0C0AB81EF
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 11:05:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E326AB81DD
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 11:03:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6571F3A60B8
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 09:01:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C3EA18862AE
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 09:02:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CB8C297A58;
-	Thu, 15 May 2025 09:00:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C597D296FC0;
+	Thu, 15 May 2025 09:01:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cPZHrRFZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="mQREhR4+"
+Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A53E628A735;
-	Thu, 15 May 2025 09:00:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F12D1288C9A
+	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 09:01:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747299600; cv=none; b=PqdbHhDgirf3TrizqUdipF+L3h7lbFRAVHI9LCuv6O5xl5+9BZcZWa3xEy01BWfnVXY8oX457z9EwJrYs75NHCnEJoZGyFRhI2s5ggvKRv6Lb3XZf5HNnVVUpks72evITGXQ08xTv2o30RLqlD9oF/CqaVZP+cLTcp32c5Ryh60=
+	t=1747299668; cv=none; b=UA5PhVumhQjeJToNWXnKIZY9GKOFtnc6SMcFUK2uLqbCdBJG9Pc3UvpKVmg+3XBRHaaqSiYQ7FcSfgUiUIu0SfvvuGGUy2LRzuAEa9ADXpl6gYu68bI9jHkB1Acil/SwZndHgvMPZdh25Gs0+FOAJdYE1KDjHO3Hz0qgHH45eYA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747299600; c=relaxed/simple;
-	bh=rHy4emrIBLZbJ3QtrnS37i1Uyh6E0LFIHII0qhsVPRU=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=bSlhmPZ8O00aTDK57smNBOFDbKOp/rVwPW7Bb1Cs5q8NCT0dfrohTpkeAMUXaDRVDzJvkBIPiSxMHv9WA4LMFr2kaV3Xwh+QI3q43TShxIYWCY5P4hX3zABPTCCYVqvhZvPAZ2D13rcj1PnhQKZDk2PbUVgqK6J43J6weImHD98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cPZHrRFZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5022EC4CEE9;
-	Thu, 15 May 2025 08:59:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747299600;
-	bh=rHy4emrIBLZbJ3QtrnS37i1Uyh6E0LFIHII0qhsVPRU=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=cPZHrRFZwUiZpLDBAHEXVEO87FttS6GNGCHxlZY3SXhnK8MUFjvRF4PKjohYjT0d8
-	 XDHH6zo85WbnxuwsDp1F+ohK0FO8+74FyV5ug/lwUuMeuAg+QQJ/5mkbCfujrv5j8o
-	 8mtD7LBqP4PGnAtXKzO6r/q9cdo5H8+AQitMrhgVKW9onRURFFRNsvsOg70Ox5SH1A
-	 ySHXzg5zX+SL3larrBRlkJZ79Y4aWuGXRj6G2d49alkgzUGybcBxwAWhR+Ty2fBZC2
-	 dxRJ9tc1f5aQGzCplH9R5MwQ9DFhmJh0uG5H/i6Vy1I98lA9HtTQ7L5o/4DQOX0Nh/
-	 0q+BcRyFvl3sQ==
+	s=arc-20240116; t=1747299668; c=relaxed/simple;
+	bh=qg2je0jGwPczjxr7UEmyEcBXhwDxjfTpDkAe2rcZ8Zw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KnnqdSZNfoWXyeCzykvTlRpFuPmMrzVdFffzWXEBaNQfWxprOucOcmKa8HhGVW23alRvvZQiY5/HgjYj8J6yUrs6tnIbKjBjGC+r7lvOz6N2iruLy+/jNK+89YJfJzM5GlR9r7E2F2JEmpu+4NhMt781e/J+Cf9P8jCUvyulABE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=mQREhR4+; arc=none smtp.client-ip=91.218.175.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <fca05051-56f1-495e-aaf0-997fa2150fcd@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1747299653;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+KnDKuPjMe2fUCcW1tV4lBlMzw+7EXjmMesGcn74GA4=;
+	b=mQREhR4+7ST03MmzWDJZ3MiA8ALnrMc17zUGVXVIIajCaxIhp6gbhYtojMSw1eH53Llacd
+	hzdqFzfqeRk165SZNv8dp4nR+TZ2jNWOaxEa6E9lOuUTHitGbOY61LHajBJgqhd2lAHZkF
+	oeGASFMsLnbDRS/egJ3/rYdPa+oTbTI=
+Date: Thu, 15 May 2025 11:00:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Subject: Re: [PATCH 0/5] ASoC/SOF/PCI/Intel: add Wildcat Lake support
+To: Peter Ujfalusi <peter.ujfalusi@linux.intel.com>, lgirdwood@gmail.com,
+ broonie@kernel.org
+Cc: linux-sound@vger.kernel.org, kai.vehmanen@linux.intel.com,
+ ranjani.sridharan@linux.intel.com, yung-chuan.liao@linux.intel.com,
+ guennadi.liakhovetski@linux.intel.com, bhelgaas@google.com,
+ linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250508180240.11282-1-peter.ujfalusi@linux.intel.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>
+In-Reply-To: <20250508180240.11282-1-peter.ujfalusi@linux.intel.com>
 Content-Type: text/plain; charset=UTF-8
-Date: Thu, 15 May 2025 10:59:44 +0200
-Message-Id: <D9WM0BP5446N.1NVNDCZ4Y2QN1@kernel.org>
-Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
- <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
- <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Benno Lossin" <benno.lossin@proton.me>,
- "Andreas Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl"
- <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>, "Greg
- Kroah-Hartman" <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
- <rafael@kernel.org>, "Sami Tolvanen" <samitolvanen@google.com>, "Timur
- Tabi" <ttabi@nvidia.com>, <linux-kernel@vger.kernel.org>,
- <rust-for-linux@vger.kernel.org>
-Subject: Re: [PATCH v5 4/4] rust: samples: Add debugfs sample
-From: "Benno Lossin" <lossin@kernel.org>
-To: "Matthew Maurer" <mmaurer@google.com>, "Danilo Krummrich"
- <dakr@kernel.org>
-X-Mailer: aerc 0.20.1
-References: <20250505-debugfs-rust-v5-0-3e93ce7bb76e@google.com>
- <20250505-debugfs-rust-v5-4-3e93ce7bb76e@google.com>
- <D9VPA1M45WBK.1TB4KOUXD24BD@kernel.org> <aCRdNJ2oq-REBotd@pollux>
- <CAGSQo0204_Dz65G33pAN3_iY=ejPXJRdAiB4ioM-nvMkAh0YXQ@mail.gmail.com>
-In-Reply-To: <CAGSQo0204_Dz65G33pAN3_iY=ejPXJRdAiB4ioM-nvMkAh0YXQ@mail.gmail.com>
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Wed May 14, 2025 at 11:55 PM CEST, Matthew Maurer wrote:
-> On Wed, May 14, 2025 at 2:07=E2=80=AFAM Danilo Krummrich <dakr@kernel.org=
-> wrote:
->> However, I really think we should keep the code as it is in this version=
- and
->> just don't provide an example that utilizes ManuallyDrop and forget().
->>
->> I don't see how the idea of "manually dropping" (sub-)directories and fi=
-les
->> provides any real value compared to just storing their instance in a dri=
-ver
->> structure as long as they should stay alive, which is much more intuitiv=
-e
->> anyways.
->
-> We can't easily do this, because dropping a root directory recursively
-> drops everything underneath it. This means that if I have
->
-> foo/
->   - bar/
->   - baz/
->
-> Then my directory handle for `bar` have to be guaranteed to outlive my
-> directory handle for `foo` so that I know it's didn't get deleted
-> under me. This is why they have a borrow onto their parent directory.
-> This borrow means that you can't (without `unsafe`, or something like
-> `yoke`) keep handles to `foo` and `bar` in the same struct.
+On 5/8/25 20:02, Peter Ujfalusi wrote:
+> Hi,
+> 
+> The audio IP in Wildcat Lake (WCL) is largely identical to the one in
+> Panther Lake, the main difference is the number of DSP cores, memory
+> and clocking.
+> It is based on the same ACE3 architecture.
+> 
+> In SOF the PTL topologies can be re-used for WCL to reduce duplication
+> of code and topology files. 
 
-Is there no refcount that we can use instead of borrowing? I guess not,
-since one can call `debugfs_remove`. What about a refcount on the rust
-side? or is debugfs not used for "debugging" and needs to have the
-performance of no refcount?
+The thread clarified that the statement above is for generic topologies. Using specific cores and/or a 3rd party module will force topology editors to provide device-specific configurations.
 
----
-Cheers,
-Benno
+Reviewed-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>
+
 
