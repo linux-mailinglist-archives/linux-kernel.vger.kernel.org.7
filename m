@@ -1,155 +1,180 @@
-Return-Path: <linux-kernel+bounces-650198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-650200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12953AB8E77
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 20:05:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE178AB8E81
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 20:08:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44EFE1BA82B3
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 18:06:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B8141BC5CE1
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 18:08:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F126B25A633;
-	Thu, 15 May 2025 18:05:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8139C25B68A;
+	Thu, 15 May 2025 18:08:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="md5Rt4ES"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="it4p5Hh5"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFE741EA7F9;
-	Thu, 15 May 2025 18:05:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DDCD25A338;
+	Thu, 15 May 2025 18:08:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747332343; cv=none; b=VwYTt1ktSxzNH6oCji2jz0nq5KVJi6hz4GO+a6PBsl1PPqgV4FFmVPEFlPSDzg7PJSK3DhOL57G9sWHrLikN7rxELdLCq10aBkxJduuo0EgMvIRH3xbtZM30c1TQ0EAFIfZvOL238aOJUi1tX3vvR7YefrZKOp691mylVgjrAQs=
+	t=1747332503; cv=none; b=cR/rNk0D2izHM2hdhlwG63RnOEDjq+QNheEylGHP6egLAYWTgJ+ep++s0u+kyT7rvBRHe2T9akbLWO6qNYSKKGKBpRogh/kqmdKbSNWwMKN2cjiqJL0rSHJzGWVmLRT5r+Ya3FXvjYrsu8KdioJ6fK+AWRE+6dIcvVg0lvLvsgA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747332343; c=relaxed/simple;
-	bh=qoH6LccZOlhTi7y76NH6szhTMUifU4ew3xvC7+xhRr8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mTZhbnvDHTH1+vtexn8ZhIe4DP13k1eHlXUXfdfZmjPCXCFQfrnoH3Km+wZY6+LuiUlDwUrOrLUNANSZDoo5XezoXBW62VwDw5N7frUK4wJYkqUQ2cBaAyYNZpnlLg0Pbtu2RBQFIVwB0RcB42dzLCm57eJXfPFn9WKoNeyeiIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=md5Rt4ES; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43cf848528aso10337395e9.2;
-        Thu, 15 May 2025 11:05:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747332340; x=1747937140; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=4THNUf1uXf81C9jvxSlBYnSoxyqZaGOpOTb4vLyxUPk=;
-        b=md5Rt4ESPXCzQaEyuulZMmaCn0Xg+ILgR+/BUsbE5SDuNkwp9H0V3HijYIyIQG6qRU
-         572aTNiTDMO1jqdbdQJghDO/Z38ihXnVIp60juLj+JMxnSFKcwQGrPlmm0qa3qfic/2w
-         Nhl8FhBNi/tOOn3SzKMgcJW6jK2M+wcEE1Ml0SWQ/sWE90YJaYgJFtalptHHxIg7mUd/
-         BoANLeHAH+crySHgrPc7kWofbPGDYXHyQdC15JehTP1iTKmt39S8y/qwVUFB++qMZ7np
-         EKAsXOCAZHAzQKJQZiKsnS7rM1kMiyloowWKxZFPOvV7+uWtMlwWy2spFKfJQ/rSSS3Z
-         ixqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747332340; x=1747937140;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4THNUf1uXf81C9jvxSlBYnSoxyqZaGOpOTb4vLyxUPk=;
-        b=ZgqEOk+9HvewUBL8rlSX0y5A2P1VRQmpJEg8ijOohD+wYomBk08lumodUjdDx+9tXp
-         oIQmTh91LTneCMcAP6WcYS0F7BmK/WMPmBc+//KNKpmIuSb36DZivClUl9wsJ6inrlHM
-         nazHAB/iLWPbyBALQ8tygPau+SixQ2Xssq4CFP5cW3YzuuGmoDmOvM8CQcrfHQZwKQEe
-         upLBSCaK9so0WdvF8WdZLhKPhaVg1PS+eMLLt8zkATYJA1UVbD9k9qq5/VEJYoIWKz37
-         Pdcq117c7kPkk9HGGOgdxoGnTz4jQk8Q2ZQSpMd+0P3bMqu4Y33aDU1xwdodOgIrydrl
-         FZ1A==
-X-Forwarded-Encrypted: i=1; AJvYcCViGskOvtc/pFl2PujVSujvaqe1SIdo1fXdh7VvKTy6GuJjyCrziBhm+GzGekTxQ+qokhHTzSsRgXPaRYE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZGDJ6+ZAoWla2er3mpBEvb01wr7jXgzV9maZcsrF4mEKlINVU
-	thJp3W2V8xyi33ihFZYAqtGeVthdITiI7wCBPqa9QTUtnBBRKcbYmEDN
-X-Gm-Gg: ASbGncvq1UpZrPY/b3gKyN1CsVLyVRNwWC2FqjgNeJfxFAC+0JMjYXa95ihiyWrvaKR
-	AN/qnqAulJgc42SPJ9zy8gG1xDuHkkhAeOYXgkk9taxRxqVLij/17/UPvHdZfImrNfyd0jX+BY/
-	NG/VbKlfb8Mj3Uk+QvKniqKhTvJftPkRbDBSVE0LwYZ+9BNCneXHkrMuRReh1ZdE2/BfIwQivkz
-	EWz5dm70JBbxZsSrV6YJtyxUIhRLTYgTY4R2dRRFroHrchuk3/XNPY5KLKwSFu2bHsXE+cLKcoR
-	c2UAHum7pOeJ8wBveOpQfwijnOMJPhClykjphmGSgx6O3wY85IiqXdYduQT69iXjq8bg1SXRu6Q
-	yiye45wkATGr/Vqen07NIEwquhYPremcHTv5A/dnBykg/0E9p3yUEQj1O5V7m+wjsnFBolxTInf
-	2zZRKzvJrtaw==
-X-Google-Smtp-Source: AGHT+IEAMZI0gYj6jUL1XNnD21cZordm0Cbrsc9of7B1lYW2lChuusSGJbdvOqSY1ZAdEKpZBYJs0w==
-X-Received: by 2002:a05:6000:4285:b0:3a0:b990:ab72 with SMTP id ffacd0b85a97d-3a35c847d18mr690722f8f.42.1747332339783;
-        Thu, 15 May 2025 11:05:39 -0700 (PDT)
-Received: from ?IPV6:2003:ea:8f4a:2300:ec36:b14d:f12:70b? (p200300ea8f4a2300ec36b14d0f12070b.dip0.t-ipconnect.de. [2003:ea:8f4a:2300:ec36:b14d:f12:70b])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3a35ca4d1easm231079f8f.5.2025.05.15.11.05.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 15 May 2025 11:05:39 -0700 (PDT)
-Message-ID: <9714d7a5-196d-4f7f-ab01-dcbbf883f064@gmail.com>
-Date: Thu, 15 May 2025 20:06:05 +0200
+	s=arc-20240116; t=1747332503; c=relaxed/simple;
+	bh=AgsXEgybKJC5NgUaI+KPLkWpvyHX1LAfCpawBKt7gHA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=s+Mr9x4F/8oht/jC8aZSShtfbwyr9Xru1BrQ4NrNn/dOUqyq+3CxCPiwyI71gGhQyY0TQRu/blERTreJsRI8IWIzaFty6veNmFMm3ARFH+T73Al0F6pvA/PBn/IGXKht7AVoJqgiretV3pHn5oZBMiq25qpngv/s1MhLjcEAWWE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=it4p5Hh5; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1747332502; x=1778868502;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=AgsXEgybKJC5NgUaI+KPLkWpvyHX1LAfCpawBKt7gHA=;
+  b=it4p5Hh5YJ+rjjs3gWvB4akbNIbamtbXwUeMdii/Q9fhYMwzqS0MBYE9
+   9avIM5VCN33yoT3pZ8otDW53lCqtzpExRbci7NuUV6RFPxWCMmsfgkmp2
+   HMme5ohEFtaNA7xHUNe9gYxpRlcN39iMtBwB3xU0pHZ1MZ37hUar27QCM
+   EIuZ4OAbHIXV2w2/w4qMaSCFKdo/XuF3r65ha1kfC/LTjXBw55yNuFbUT
+   kgoAqA5CUfaJelW24VCiXPHPuVJDjDaoIzFA0i8c3rr0xEajSJ6H086D2
+   TzxZon9Q5OEw9MDdy0unz0HOk4HsOYZR97oCK28yp53HTr2OYz0ABt4ZH
+   Q==;
+X-CSE-ConnectionGUID: 3ak+ML4iTEClwd93i3bcjw==
+X-CSE-MsgGUID: x5M5CW/FRw6AFimu8iNi1g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11434"; a="60304166"
+X-IronPort-AV: E=Sophos;i="6.15,291,1739865600"; 
+   d="scan'208";a="60304166"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2025 11:08:21 -0700
+X-CSE-ConnectionGUID: 0qlDoZHvQuWXHzOv/4v1hg==
+X-CSE-MsgGUID: wC3Reo/iRc6O5IOzpxZAKw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,291,1739865600"; 
+   d="scan'208";a="138841415"
+Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
+  by fmviesa008.fm.intel.com with ESMTP; 15 May 2025 11:08:09 -0700
+Date: Fri, 16 May 2025 02:02:29 +0800
+From: Xu Yilun <yilun.xu@linux.intel.com>
+To: Zhi Wang <zhiw@nvidia.com>
+Cc: Jason Gunthorpe <jgg@nvidia.com>, Alexey Kardashevskiy <aik@amd.com>,
+	kvm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
+	sumit.semwal@linaro.org, christian.koenig@amd.com,
+	pbonzini@redhat.com, seanjc@google.com, alex.williamson@redhat.com,
+	vivek.kasireddy@intel.com, dan.j.williams@intel.com,
+	yilun.xu@intel.com, linux-coco@lists.linux.dev,
+	linux-kernel@vger.kernel.org, lukas@wunner.de, yan.y.zhao@intel.com,
+	daniel.vetter@ffwll.ch, leon@kernel.org, baolu.lu@linux.intel.com,
+	zhenzhong.duan@intel.com, tao1.su@intel.com
+Subject: Re: [RFC PATCH 00/12] Private MMIO support for private assigned dev
+Message-ID: <aCYsNSFQJZzHVOFI@yilunxu-OptiPlex-7050>
+References: <c10bf9c2-e073-479d-ad1c-6796c592d333@amd.com>
+ <aB3jLmlUKKziwdeG@yilunxu-OptiPlex-7050>
+ <aB4tQHmHzHooDeTE@yilunxu-OptiPlex-7050>
+ <20250509184318.GD5657@nvidia.com>
+ <aB7Ma84WXATiu5O1@yilunxu-OptiPlex-7050>
+ <2c4713b0-3d6c-4705-841b-1cb58cd9a0f5@amd.com>
+ <20250512140617.GA285583@nvidia.com>
+ <20250513130315.0158a626.zhiw@nvidia.com>
+ <aCRmoDupzK9zTqFL@yilunxu-OptiPlex-7050>
+ <20250514230502.6b64da7f.zhiw@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v2] r8169: add support for RTL8127A
-To: ChunHao Lin <hau@realtek.com>, nic_swsd@realtek.com,
- andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250515095303.3138-1-hau@realtek.com>
-Content-Language: en-US
-From: Heiner Kallweit <hkallweit1@gmail.com>
-Autocrypt: addr=hkallweit1@gmail.com; keydata=
- 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
-In-Reply-To: <20250515095303.3138-1-hau@realtek.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250514230502.6b64da7f.zhiw@nvidia.com>
 
-On 15.05.2025 11:53, ChunHao Lin wrote:
-> This adds support for 10Gbs chip RTL8127A.
+> IMHO, I think it might be helpful that you can picture out what are the
+> minimum requirements (function/life cycle) to the current IOMMUFD TSM
+> bind architecture:
 > 
-> Signed-off-by: ChunHao Lin <hau@realtek.com>
-> ---
-> v1 -> v2: update phy parameters
-> 
->  drivers/net/ethernet/realtek/r8169.h          |   1 +
->  drivers/net/ethernet/realtek/r8169_main.c     |  29 ++-
->  .../net/ethernet/realtek/r8169_phy_config.c   | 166 ++++++++++++++++++
->  3 files changed, 193 insertions(+), 3 deletions(-)
-> 
+> 1.host tsm_bind (preparation) is in IOMMUFD, triggered by QEMU handling
+> the TVM-HOST call.
+> 2. TDI acceptance is handled in guest_request() to accept the TDI after
+> the validation in the TVM)
 
-Reviewed-by: Heiner Kallweit <hkallweit1@gmail.com>
+I'll try my best to brainstorm and make a flow in ASCII. 
+
+(*) means new feature
+
+
+      Guest          Guest TSM       QEMU           VFIO            IOMMUFD       host TSM          KVM 
+      -----          ---------       ----           ----            -------       --------          ---
+1.                                                                               *Connect(IDE)
+2.                                 Init vdev            
+3.                                *create dmabuf   
+4.                                               *export dmabuf                              
+5.                                create memslot
+6.                                                                                              *import dmabuf
+7.                                setup shared DMA
+8.                                                                 create hwpt
+9.                                               attach hwpt
+10.                                  kvm run
+11.enum shared dev
+12.*Connect(Bind)
+13.                  *GHCI Bind
+14.                                  *Bind
+15                                                                 CC viommu alloc
+16.                                                                vdevice allloc
+16.                                              *attach vdev
+17.                                                               *setup CC viommu
+18                                                                 *tsm_bind
+19.                                                                                  *bind
+20.*Attest
+21.               *GHCI get CC info
+22.                                 *get CC info
+23.                                                                *vdev guest req
+24.                                                                                 *guest req
+25.*Accept
+26.             *GHCI accept MMIO/DMA
+27.                                *accept MMIO/DMA
+28.                                                               *vdev guest req
+29.                                                                                 *guest req
+30.                                                                                              *map private MMIO
+31.             *GHCI start tdi
+32.                                *start tdi
+33.                                                               *vdev guest req
+34.                                                                                 *guest req
+35.Workload...
+36.*disconnect(Unbind)
+37.              *GHCI unbind
+38.                                *Unbind
+39.                                            *detach vdev
+40.                                                               *tsm_unbind
+41.                                                                                 *TDX stop tdi
+42.                                                                                 *TDX disable mmio cb
+43.                                            *cb dmabuf revoke
+44.                                                                                               *unmap private MMIO
+45.                                                                                 *TDX disable dma cb
+46.                                                              *cb disable CC viommu
+47.                                                                                 *TDX tdi free
+48.                                                                                 *enable mmio
+49.                                            *cb dmabuf recover
+50.workable shared dev
+
+TSM unbind is a little verbos & specific to TDX Connect, but SEV TSM could
+ignore these callback. Just implement an "unbind" tsm ops.
+
+Thanks,
+Yilun
+
+> 
+> and which part/where need to be modified in the current architecture to
+> reach there. Try to fold vendor-specific knowledge as much as possible,
+> but still keep them modular in the TSM driver and let's see how it looks
+> like. Maybe some example TSM driver code to demonstrate together with
+> VFIO dma-buf patch.
+> 
+> If some where is extremely hacky in the TSM driver, let's see how they
+> can be lift to the upper level or the upper call passes more parameters
+> to them.
+> 
 
