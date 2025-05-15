@@ -1,77 +1,111 @@
-Return-Path: <linux-kernel+bounces-649489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-649466-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5CC0AB8573
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 13:59:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B500AB8522
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 13:45:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5D143BA3F9
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 11:59:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C5EF3AE8CF
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 11:44:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B1C22989BE;
-	Thu, 15 May 2025 11:59:39 +0000 (UTC)
-Received: from baidu.com (mx22.baidu.com [220.181.50.185])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57DCE298258;
+	Thu, 15 May 2025 11:44:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="0FpzRxTF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6643E1FF7CD
-	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 11:59:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.181.50.185
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A55C428DEE6;
+	Thu, 15 May 2025 11:44:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747310379; cv=none; b=Esr+sXnUllTFOsWOeNnFROA9HEouW80xeivZGChQJpHUq3dZFWGiZqr4X5FSYCFb9gPO+j7m4tyVBbDxmQqsAEgGUJNSaQWWMxsB388TEWvyyidLKcmHyky5pshLVGV/XSAdR6AJc5yeAVnm31mRSp/cIQQ27nlxv7MpsLWgZuY=
+	t=1747309497; cv=none; b=Mqyeb4EmRVspcURZ6l/S14YYWYaQWZxjfaLZDz45SWStVZ4fGqf7Ualf20HKRtg/FFzxY32JpRL31r5Y5J+SglRNdUKKziqkJb9sNLlMN18YQ6G1okBvfXQLhjoB32RNXg0DhTwH/GjAGBw8uUlTLOgIoXiUzib59ruKbxsHOgk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747310379; c=relaxed/simple;
-	bh=W5tQpGezyACQ07x3k8e9Qln0LgPn+x2pDoFNSogLARM=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Mv8533QlBUu1Ne3MCt69ugh1RKVJzKc1BYgkBSzvIbluIAEypm+4fsWZEiELT3066WOazlJf4/pPMIDvFDgSqfYdTEOOr1No7MKqtcEuTmms78jmmkjQSh+wPJdMENHydW+QHKZxyN4FZ2hyJ5zlN06EZBNvJ1auEtNl8fnRw7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com; spf=pass smtp.mailfrom=baidu.com; arc=none smtp.client-ip=220.181.50.185
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baidu.com
-From: Wenjie Xu <xuwenjie04@baidu.com>
-To: <muchun.song@linux.dev>, <osalvador@suse.de>, <akpm@linux-foundation.org>
-CC: <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>, Wenjie Xu
-	<xuwenjie04@baidu.com>, Li RongQing <lirongqing@baidu.com>
-Subject: [PATCH] hugetlb: Show nr_huge_pages in report_hugepages()
-Date: Thu, 15 May 2025 19:42:31 +0800
-Message-ID: <20250515114231.65824-1-xuwenjie04@baidu.com>
-X-Mailer: git-send-email 2.41.0
+	s=arc-20240116; t=1747309497; c=relaxed/simple;
+	bh=9L1IyfyzQObJzbaVGvEPZrNbRGkTUP7BBjXPMB7XoiU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eVH7apNf7AiL1QTEZpGD0mD1FIFThfztaAFERLvzSzgMc7SAJ1EOqVaMHGXQ8hfW6NLm2aG8aSB8GpUTl63Uvp9tBYxzBAWSuMm3BtwTK4KEUaWb9voiaGX8sEuFPgCbzsL5/0B2WKO2zzWxBHm0IIhOYggfNFuYeqE5dFIup6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=0FpzRxTF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA271C4CEED;
+	Thu, 15 May 2025 11:44:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1747309497;
+	bh=9L1IyfyzQObJzbaVGvEPZrNbRGkTUP7BBjXPMB7XoiU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=0FpzRxTFUsa9HxV6CXrpFGp2bV4BtdySujaFJyCtIqWXoTIPVZM+s82/v1ggGc/ct
+	 JwpUZ889TWiSgw7hA59a5J+/ti3J2dOpXmme8ucvgXNUrJMgRUQ1TLawj9EMHwanZ4
+	 5/nzvO8qoLqnRhTrq7/3JgOQvtwzafeSaYbcFmG0=
+Date: Thu, 15 May 2025 13:43:09 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Benno Lossin <lossin@kernel.org>
+Cc: Matthew Maurer <mmaurer@google.com>, Danilo Krummrich <dakr@kernel.org>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Timur Tabi <ttabi@nvidia.com>, linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH v5 4/4] rust: samples: Add debugfs sample
+Message-ID: <2025051524-festival-afterglow-8483@gregkh>
+References: <20250505-debugfs-rust-v5-0-3e93ce7bb76e@google.com>
+ <20250505-debugfs-rust-v5-4-3e93ce7bb76e@google.com>
+ <D9VPA1M45WBK.1TB4KOUXD24BD@kernel.org>
+ <aCRdNJ2oq-REBotd@pollux>
+ <CAGSQo0204_Dz65G33pAN3_iY=ejPXJRdAiB4ioM-nvMkAh0YXQ@mail.gmail.com>
+ <D9WM0BP5446N.1NVNDCZ4Y2QN1@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: BJHW-Mail-Ex13.internal.baidu.com (10.127.64.36) To
- BJHW-MAIL-EX28.internal.baidu.com (10.127.64.43)
-X-Baidu-BdMsfe-DateCheck: 1_BJHW-Mail-Ex12_2025-05-15 19:42:40:672
-X-FEAS-Client-IP: 10.127.64.35
-X-FE-Policy-ID: 52:10:53:SYSTEM
+In-Reply-To: <D9WM0BP5446N.1NVNDCZ4Y2QN1@kernel.org>
 
-The number of pre-allocated huge pages should be nr_huge_pages, not
-free_huge_pages, although they are same during booting stage
+On Thu, May 15, 2025 at 10:59:44AM +0200, Benno Lossin wrote:
+> On Wed May 14, 2025 at 11:55 PM CEST, Matthew Maurer wrote:
+> > On Wed, May 14, 2025 at 2:07 AM Danilo Krummrich <dakr@kernel.org> wrote:
+> >> However, I really think we should keep the code as it is in this version and
+> >> just don't provide an example that utilizes ManuallyDrop and forget().
+> >>
+> >> I don't see how the idea of "manually dropping" (sub-)directories and files
+> >> provides any real value compared to just storing their instance in a driver
+> >> structure as long as they should stay alive, which is much more intuitive
+> >> anyways.
+> >
+> > We can't easily do this, because dropping a root directory recursively
+> > drops everything underneath it. This means that if I have
+> >
+> > foo/
+> >   - bar/
+> >   - baz/
+> >
+> > Then my directory handle for `bar` have to be guaranteed to outlive my
+> > directory handle for `foo` so that I know it's didn't get deleted
+> > under me. This is why they have a borrow onto their parent directory.
+> > This borrow means that you can't (without `unsafe`, or something like
+> > `yoke`) keep handles to `foo` and `bar` in the same struct.
+> 
+> Is there no refcount that we can use instead of borrowing? I guess not,
+> since one can call `debugfs_remove`. What about a refcount on the rust
+> side? or is debugfs not used for "debugging" and needs to have the
+> performance of no refcount?
 
-Signed-off-by: Wenjie Xu <xuwenjie04@baidu.com>
-Signed-off-by: Li RongQing <lirongqing@baidu.com>
----
- mm/hugetlb.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+debugfs should never have any performance issues (i.e. you don't use it
+for performant things.)
 
-diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-index 6ea1be71aa42..2a4d4551749a 100644
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -3740,7 +3740,7 @@ static void __init report_hugepages(void)
- 
- 		string_get_size(huge_page_size(h), 1, STRING_UNITS_2, buf, 32);
- 		pr_info("HugeTLB: registered %s page size, pre-allocated %ld pages\n",
--			buf, h->free_huge_pages);
-+			buf, h->nr_huge_pages);
- 		if (nrinvalid)
- 			pr_info("HugeTLB: %s page size: %lu invalid page%s discarded\n",
- 					buf, nrinvalid, nrinvalid > 1 ? "s" : "");
--- 
-2.41.0
+So refcount away!  That should never be an issue.
 
+thanks,
+
+greg k-h
 
