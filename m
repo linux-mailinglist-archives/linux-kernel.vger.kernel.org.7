@@ -1,85 +1,85 @@
-Return-Path: <linux-kernel+bounces-650385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-650387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D9A9AB90C6
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 22:25:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67E57AB90CA
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 22:26:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE7C8176DCA
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 20:25:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42D477B5C08
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 20:25:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37FFB29B237;
-	Thu, 15 May 2025 20:25:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 096F629B776;
+	Thu, 15 May 2025 20:26:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oyfdx/tg"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Wdc3ReDq"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6EBB298CC6
-	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 20:25:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B04921F5827;
+	Thu, 15 May 2025 20:26:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747340718; cv=none; b=D1NvMM7uRN+Xt+pikEcEu9Y3U2If7cEUyG/xRs1AiQRJCOQAUQUll953KcuQkY9aIzsyo+nGdSa/LatyOlgMLYeL+qO883tBBtrpHHwz1J5v4HAluD9ASEa9RBwclqcBapVDCS4ObhF7jpKZM298iyU7BdrXIQfGRoJIqMHmzHw=
+	t=1747340774; cv=none; b=a7XLOIdfFLAei99TpkXyDJvDNBZCxxFpoi5fYWmlJ7aD8ZAizjYbs8I8RrDOr6oxg5XkCGCONlSJI5ztkh/J7ZumRP1WXGsFaVOI62XHS0Cy1aFe3Eg72a1JZVthzRmiNIQDY1Vdv/w917bhG9by3IPJSAaRbd6u/A5YwCOF7LM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747340718; c=relaxed/simple;
-	bh=cEMlm+36YbPPJ9hANH6fcWzYz4CWIwOAXvDkXtiIIpA=;
+	s=arc-20240116; t=1747340774; c=relaxed/simple;
+	bh=TxY7a/noT4+XphSwUtR0Qw3R/xm0x/v1iIZu5905ch8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MBh5eLGh4/WjbcDRZsaSc6J7UWj/RLQabWTaE96+LiCciTp1v0TTb8CK1CqOfGxLq5PL8bpVwIjttxK058ZjYtkca6GF742be9bEdkCTlPb245SXzgtGJieh+yKXA6U0XUdbRjtZOnk5hlXwXc3BRySwrBJRqNtEaqFMQViAgF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oyfdx/tg; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-22e45088d6eso17039495ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 13:25:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1747340716; x=1747945516; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=zUTfWForHlbZrJBv1cAxwqbk62WlolptWTpwwDZry+A=;
-        b=oyfdx/tgvwOZSqHmy5qDSJcJBFsEiCgGTLd8hbPsSUHX28Q5m1c5+HdYVrU9NVU3hz
-         YJdCPaZYTAMoPCaMwumWKfbJaeOYbphJ3hrYk/kZo3t5zWT+rc7DHtELfm3Cc+GKHn7l
-         YPfHurVH/m5DvN8CYpib/ujWUlW+1ipNQvJTQlleg4qroWn78zOsYCtno89y/oDPH1K9
-         U11/hUdFnZozOJ2roq5vOdZCipRPR46SuWaru51XIn7V4yJPPDx/ibQOe6bSVa4/gkvu
-         j8lOuOUWv2nHZva3bpe5qcS4CxsKYuvCzvVbUWIEzT+WMqSeyhXKRyLND9IcL60sghdn
-         Rizw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747340716; x=1747945516;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zUTfWForHlbZrJBv1cAxwqbk62WlolptWTpwwDZry+A=;
-        b=YU9FavXxLoWVm2S4AwQss5BIPXVh3pMd0AV4hYpq5ysKIpqojrUcmERyDsrEav+Gjt
-         9GW+yoT3lqEuuZsz+6MO9czXj9efyEIK4UQcaO8MLKk8bwSNIvSzXhkY4yKkCzVYXZr6
-         2YYPugu7Q4Zk0U8fTO2/Lu3qgV1/KwHaHFGh2cwlgEF1vmV/pmdrj1+/L6gSUWDhRBXt
-         CZTB7kDRgszbTvkxItixY8G+gv0NiAaFlOJ6oTXrfEdbZKTs1zqH+lelM2k03PyKhtmK
-         6VDy4XPHd4QQDa+R/zKwfSdSEPaRmrhXwwJ5/biGjr2Gp2IqDB2CUJHVNXGRQYTwMdU8
-         sPSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW8QAhQ7nrTWeAHCbATuJhtLjzt6GLbYRdf2FASwU7uR/9Gz+CLRiJqcTOfwOj9tDFyb5+ehAbfRnAjXN4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwxdmWRLNXu30pn7JqM0MFT3g6jHFmnKnCLBYJsKfZt4TKjGocc
-	Ys/Jkk58Se411uocYlRpHCm3bI/AaccBPin6l/BlW5f76uqiX8IcrE5zMfDmzrcsSEZv8r4xZ59
-	WZApi
-X-Gm-Gg: ASbGnct6UiTL+j706RhqsdYvUfPAFR+lthFR3ufm1C2mb1sL7WQrm39RdqZEr5WaeYo
-	ldUm5yQMX+fhTo1v08ASb0ut4DMfaHQOGzuBPLil6vhmsXWPI7ZBWM/3236MIvyuO3g3s/Uuljp
-	K7+zDdotxojxV2mwv0crkBNEWRTEjxKn192fBusUUaGEsK381awOHKWsl3hFVq9U70W/4y112mx
-	r/YE0ALwHOu7AAol6Ouag40hIsc3oOABqmGUmbgEqloK52IihA0GJH/5C5ipiE0WClR0E8NG/6Q
-	o6pqjKTyQHFehlp+SV0BaC/VR90swnpDwIVPjBRiP7QH1VGcSxKTYV8=
-X-Google-Smtp-Source: AGHT+IH7u31BXIHf5hNai5YAN/j8hWa4qZF2kgL+u1GNmBbTs/yeUNpckzK4SUgqojO2Yx9Bj5NmpQ==
-X-Received: by 2002:a17:903:b8f:b0:224:c76:5e57 with SMTP id d9443c01a7336-231d459bee3mr8271575ad.39.1747340715957;
-        Thu, 15 May 2025 13:25:15 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:1d7a:b4f2:fe56:fa4e])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-231d4b017b0sm1879275ad.95.2025.05.15.13.25.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 May 2025 13:25:15 -0700 (PDT)
-Date: Thu, 15 May 2025 14:25:13 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Dawei Li <dawei.li@linux.dev>
-Cc: andersson@kernel.org, linux-remoteproc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, set_pte_at@outlook.com
-Subject: Re: [PATCH v2 2/3] rpmsg: char: Implement eptdev based on anon inode
-Message-ID: <aCZNqVbGKa_EaCBT@p14s>
-References: <20250509155927.109258-1-dawei.li@linux.dev>
- <20250509155927.109258-3-dawei.li@linux.dev>
+	 Content-Type:Content-Disposition:In-Reply-To; b=uYmH1T3l6j9Cdx84hzIbtU9+uMbWcJRWNBWu9rZ59W8RZWp932OkBjx/UcNi+Am1GFrXH26QhqjXpArCYxpIz/R9mOyPlWiPq9deRO5ygCqqAu0WFJxHMVhczIElsmKfJr7WXOH6IIDdQBa6LPcz/qzP6OQdTYyB2NalKkQxPJQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Wdc3ReDq; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1747340772; x=1778876772;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=TxY7a/noT4+XphSwUtR0Qw3R/xm0x/v1iIZu5905ch8=;
+  b=Wdc3ReDq+4VORUT8hc5BF66A7E9XrMEaOYgSM+eai2Tk5fF+VNUAPX+7
+   tVeTQxPlCcGfDuMRMq/WMbcP39L6wHSzj1/1femB2fwDX/qShDvlQ46E/
+   1ylVGcWvO/riWpmWOrlB+5RTVAZlSpdDaOfY1wN2weSMV5T5gUDTYsiIz
+   XGbGj0rJPY+ga5NGrn5frV/4LJj0oz59oLXI3hBY5H2cY7S0EEDg9ql/b
+   66V8whVExSXprsb7yLtmID7cvNCQqtuC4Wqmnau4zdXZeOnjsBpvw0foS
+   kqsu/Ub5rLdy5qF/cMf64erqJ8/CWB/OQxlt5ccA3q7w5gJYmn8uZcLuO
+   g==;
+X-CSE-ConnectionGUID: t1TP3vtuSXyKYvxqFe4gPA==
+X-CSE-MsgGUID: oJjOmh72QiCcWxUCfmQKqA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11434"; a="59938533"
+X-IronPort-AV: E=Sophos;i="6.15,292,1739865600"; 
+   d="scan'208";a="59938533"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2025 13:26:11 -0700
+X-CSE-ConnectionGUID: vUztFMGqQJi1FIgG+GTGMA==
+X-CSE-MsgGUID: iraNBp1BRJCATn9l8/pqmg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,292,1739865600"; 
+   d="scan'208";a="138977709"
+Received: from gkhatri-mobl.amr.corp.intel.com (HELO desk) ([10.125.146.13])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2025 13:26:11 -0700
+Date: Thu, 15 May 2025 13:26:03 -0700
+From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+To: Kees Cook <kees@kernel.org>
+Cc: Shung-Hsi Yu <shung-hsi.yu@suse.com>, bpf@vger.kernel.org,
+	linux-mm@kvack.org, Andrii Nakryiko <andrii@kernel.org>,
+	Ihor Solodrai <ihor.solodrai@linux.dev>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Michal Hocko <mhocko@suse.com>, Vlastimil Babka <vbabka@suse.cz>,
+	Uladzislau Rezki <urezki@gmail.com>, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org, regressions@lists.linux.dev,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Eduard Zingerman <eddyz87@gmail.com>
+Subject: Re: [REGRESSION] bpf verifier slowdown due to vrealloc() change
+ since 6.15-rc6
+Message-ID: <20250515202552.znxvzcnhpdjqmlbm@desk>
+References: <20250515-bpf-verifier-slowdown-vwo2meju4cgp2su5ckj@6gi6ssxbnfqg>
+ <C66C764E-C898-457D-93F0-A680983707F0@kernel.org>
+ <202505150911.1254C695D@keescook>
+ <20250515171821.6je7a4uvmttcdiia@desk>
+ <202505151039.DAA202A@keescook>
+ <20250515175205.th7pjvord6fum35a@desk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,124 +88,67 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250509155927.109258-3-dawei.li@linux.dev>
+In-Reply-To: <20250515175205.th7pjvord6fum35a@desk>
 
-On Fri, May 09, 2025 at 11:59:26PM +0800, Dawei Li wrote:
-> Introduce new eptdev abstraction based on anon inode. The new API is
-> exactly same with legacy one except:
+On Thu, May 15, 2025 at 10:52:13AM -0700, Pawan Gupta wrote:
+> On Thu, May 15, 2025 at 10:41:41AM -0700, Kees Cook wrote:
+> > On Thu, May 15, 2025 at 10:18:21AM -0700, Pawan Gupta wrote:
+> > > On Thu, May 15, 2025 at 09:51:15AM -0700, Kees Cook wrote:
+> > > > On Thu, May 15, 2025 at 07:51:26AM -0700, Kees Cook wrote:
+> > > > > On May 15, 2025 6:12:25 AM PDT, Shung-Hsi Yu <shung-hsi.yu@suse.com> wrote:
+> > > > > >There is an observable slowdown when running BPF selftests on 6.15-rc6
+> > > > > >kernel[1] built with tools/testing/selftests/bpf/{config,config.x86_64}.
+> > > > > [...]
+> > > > > Where can I find the .config for the slow runs?
+> > > > 
+> > > > Oops, I can read. :) Doing a build now...
+> > > > 
+> > > > > And how do I run the test myself directly?
+> > > > 
+> > > > I found:
+> > > > https://docs.kernel.org/bpf/bpf_devel_QA.html
+> > > > 
+> > > > But it doesn't seem to cover a bunch of stuff (no way to prebuild the
+> > > > tests, no info on building the test modules).
+> > > > 
+> > > > This seems to be needed:
+> > > > 
+> > > > make O=regression-bug -C tools/testing/selftests/bpf/test_kmods
+> > > > 
+> > > > But then the booted kernel doesn't load it (missing signatures?)
+> > > > 
+> > > > Anyway, I'll keep digging...
+> > > 
+> > > After struggling with this for a while, I figured vmtest.sh is the easiest
+> > > way to test bpf:
+> > > 
+> > > ./tools/testing/selftests/bpf/vmtest.sh -i ./test_progs
+> > 
+> > I can't even build the test_progs. :(
+> > 
+> > $ make test_progs
+> > ...
+> >   CLNG-BPF [test_progs] bpf_iter_tasks.bpf.o
+> > progs/bpf_iter_tasks.c:98:8: error: call to undeclared function 'bpf_copy_from_user_task_str'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+> >    98 |         ret = bpf_copy_from_user_task_str((char *)task_str1, sizeof(task_str1), ptr, task, 0
+> > );
+> >       |               ^
+> > 1 error generated.
 > 
-> - It's anonymous and devnode/path free.
-> - Its fops->open() is empty.
+> I just tried on the latest upstream, and I am getting the same error. My
+> earlier bisection was on a stable-rc for 6.14.y:
 > 
-> Signed-off-by: Dawei Li <dawei.li@linux.dev>
-> ---
->  drivers/rpmsg/rpmsg_char.c | 44 ++++++++++++++++++++++++++++++++++++++
->  drivers/rpmsg/rpmsg_char.h | 19 ++++++++++++++++
->  2 files changed, 63 insertions(+)
+> https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git/commit/?h=linux-6.14.y
 > 
-> diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
-> index 5b2a883d6236..b0ec05f88013 100644
-> --- a/drivers/rpmsg/rpmsg_char.c
-> +++ b/drivers/rpmsg/rpmsg_char.c
-> @@ -13,6 +13,7 @@
->  
->  #define pr_fmt(fmt)	KBUILD_MODNAME ": " fmt
->  
-> +#include <linux/anon_inodes.h>
->  #include <linux/cdev.h>
->  #include <linux/device.h>
->  #include <linux/fs.h>
-> @@ -517,6 +518,49 @@ int rpmsg_chrdev_eptdev_create(struct rpmsg_device *rpdev, struct device *parent
->  }
->  EXPORT_SYMBOL(rpmsg_chrdev_eptdev_create);
->  
-> +static const struct file_operations rpmsg_eptdev_anon_fops = {
-> +	.owner = THIS_MODULE,
-> +	.release = rpmsg_eptdev_release,
-> +	.read_iter = rpmsg_eptdev_read_iter,
-> +	.write_iter = rpmsg_eptdev_write_iter,
-> +	.poll = rpmsg_eptdev_poll,
-> +	.unlocked_ioctl = rpmsg_eptdev_ioctl,
-> +	.compat_ioctl = compat_ptr_ioctl,
-> +};
-> +
-> +int rpmsg_eptdev_create(struct rpmsg_device *rpdev, struct device *parent,
-> +			struct rpmsg_channel_info chinfo, int *pfd)
+> ... where it was first reported:
+> 
+> https://lore.kernel.org/stable/20250515041659.smhllyarxdwp7cav@desk/
 
-rpmsg_anonymous_eptdev_create()
+I can confirm on v6.14.7-rc2 the test verif_scale_loop3_fail is now
+passing(in <10 secs) after applying your first patch (mm: vmalloc: Actually
+use the in-place vrealloc region). The the test passes after applying your
+second patch also.
 
-> +{
-> +	struct rpmsg_eptdev *eptdev;
-> +	int ret, fd;
-> +
-> +	eptdev = __rpmsg_chrdev_eptdev_alloc(rpdev, parent, false);
-> +	if (IS_ERR(eptdev))
-> +		return PTR_ERR(eptdev);
-> +
-> +	ret =  __rpmsg_chrdev_eptdev_add(eptdev, chinfo, false);
-> +	if (ret) {
-> +		dev_err(&eptdev->dev, "failed to add %s\n", eptdev->chinfo.name);
-> +		return ret;
-> +	}
-> +
-> +	fd = anon_inode_getfd("rpmsg-eptdev", &rpmsg_eptdev_anon_fops, eptdev, O_RDWR | O_CLOEXEC);
-> +	if (fd < 0) {
-> +		put_device(&eptdev->dev);
-> +		return fd;
-> +	}
-> +
-> +	mutex_lock(&eptdev->ept_lock);
-> +	ret = __rpmsg_eptdev_open(eptdev);
-> +	mutex_unlock(&eptdev->ept_lock);
-> +
-> +	if (!ret)
-> +		*pfd = fd;
-> +
-> +	return ret;
-> +}
-> +EXPORT_SYMBOL(rpmsg_eptdev_create);
-> +
->  static int rpmsg_chrdev_probe(struct rpmsg_device *rpdev)
->  {
->  	struct rpmsg_channel_info chinfo;
-> diff --git a/drivers/rpmsg/rpmsg_char.h b/drivers/rpmsg/rpmsg_char.h
-> index 117d9cbc52f0..8cc2c14537da 100644
-> --- a/drivers/rpmsg/rpmsg_char.h
-> +++ b/drivers/rpmsg/rpmsg_char.h
-> @@ -19,6 +19,19 @@
->  int rpmsg_chrdev_eptdev_create(struct rpmsg_device *rpdev, struct device *parent,
->  			       struct rpmsg_channel_info chinfo);
->  
-> +/**
-> + * rpmsg_eptdev_create() - register ep device and its associated fd based on an endpoint
-> + * @rpdev:  prepared rpdev to be used for creating endpoints
-> + * @parent: parent device
-> + * @chinfo: associated endpoint channel information.
-> + * @pfd: fd in represent of endpoint device
-> + *
-> + * This function create a new rpmsg endpoint device and its associated fd to instantiate a new
-> + * endpoint based on chinfo information.
-> + */
-> +int rpmsg_eptdev_create(struct rpmsg_device *rpdev, struct device *parent,
-> +			struct rpmsg_channel_info chinfo, int *pfd);
-> +
->  /**
->   * rpmsg_chrdev_eptdev_destroy() - destroy created char device endpoint.
->   * @data: private data associated to the endpoint device
-> @@ -36,6 +49,12 @@ static inline int rpmsg_chrdev_eptdev_create(struct rpmsg_device *rpdev, struct
->  	return -ENXIO;
->  }
->  
-> +static inline int rpmsg_eptdev_create(struct rpmsg_device *rpdev, struct device *parent,
-> +				      struct rpmsg_channel_info chinfo, int *pfd)
-> +{
-> +	return -ENXIO;
-> +}
-> +
->  static inline int rpmsg_chrdev_eptdev_destroy(struct device *dev, void *data)
->  {
->  	return -ENXIO;
-> -- 
-> 2.25.1
-> 
+For some reason I am unable to build the bpf selftests on latest upstream.
+I may be missing something that is required on latest upstream :-(
 
