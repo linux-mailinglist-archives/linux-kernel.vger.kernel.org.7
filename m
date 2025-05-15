@@ -1,161 +1,191 @@
-Return-Path: <linux-kernel+bounces-650191-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-650193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41522AB8E5E
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 20:01:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 80D70AB8E64
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 20:02:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C5D6503ED2
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 18:01:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0BBDA503F58
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 18:02:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4653825A2DA;
-	Thu, 15 May 2025 18:01:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B3CC25A62B;
+	Thu, 15 May 2025 18:02:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LV2k/B8h"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fYLu+Rx1"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DDAB143C5D;
-	Thu, 15 May 2025 18:01:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08D0F2586C7;
+	Thu, 15 May 2025 18:02:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747332085; cv=none; b=m9OdBUwbmLPkA4P5xnw9uhNDYmPcYFcLvtKEJMkVW/ZR+KZSKHcH37X3PXl2GH4o9YdqwMUbYuJcyCkZIm66P55R55zaXnrYJoIJiqAw8qUdhXRUc6Lz9hX6hbhvkwVIR0xJZpPkxylV5KEdZ3pgqHPapdR1iXlcTN6FjbSajlg=
+	t=1747332132; cv=none; b=j+RwZbzQCxmtIoH+gMp3R1NhMVEFSeq8vb6RP0KLZ/37Xh/UWp1cdhwYkJ+S+E0l6v2yO7Qo9ocd5gKFm1Rf986LPpdoEgOSc/Zcw1nf8H2yz5TChzLdkjIcQWgdZzOYVUnvEEtWdJ3lzPDRfYkxeOWvB8gdkCeMsPYxlLjuMtk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747332085; c=relaxed/simple;
-	bh=QNsvzp8+Y020QhH/c0iTZMAZvM6gN/18xTUJ7KgeZXU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XVmAQND/D8LywwbpjsZYu8+G61Lgybbo0cp0LNvEyZfnrpd4pNiZgWP+aDmePb7CkMTXdnO0NHSg1gSlF7Ec7v3JuFjT6mdG48lqLSeu+6ykf6CmuHGleA5/oqj4tnagdIpV6HDcVX+cCXnxyY/xFloAfTUCDTE+BWNMg1Umu34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LV2k/B8h; arc=none smtp.client-ip=209.85.128.53
+	s=arc-20240116; t=1747332132; c=relaxed/simple;
+	bh=xYxE3KmAJuDBwEUTV/7JBSyd7GH9iHMFGQRs1lUAZlc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QgKXzeBV/tgDxLGJOx+tea9/HxzvrI0vPQRPDAX0w92GkQCNn4gk3V5sWVyUVwmhHuMVLl1cstdCluDEQ08QB8pX2toTLnpTUY5wQs6LxgwqyTQcDJ+1sT/sFzjtSdCWvS5vBpfGlAzr86xwwWdKQIUoitzEkYPlgNeUFd4xigw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fYLu+Rx1; arc=none smtp.client-ip=209.85.208.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-442ed8a275fso14124925e9.2;
-        Thu, 15 May 2025 11:01:23 -0700 (PDT)
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-600210e4219so793017a12.0;
+        Thu, 15 May 2025 11:02:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747332082; x=1747936882; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=ftL1zu9G85h+3xwDkEOI0cxrRxUcnx00/pKAwf99vzk=;
-        b=LV2k/B8hsjx2UgfSRqvTa6ekUK429Y/f53oa61hQ4jri9MyCJ2ppE1YuTZUGIi5mSK
-         rk4LFRyzHUI+U14bqvMcvgR86BwCZC0TxeR+iWvwo77UrAFnOVQzGHTVwtV3ejX3dKLU
-         faulSMKdeglpb+BABiP14caNFWDlB0QzyI66zYLrTsatBwcGZ5pwEN3vze6efj3je7VV
-         97ua4AWZd4BBlPEGe56J3Ky5aSE0ERmJKJImAbhIVrRTRgXib865kGo7yti1CQDJA87R
-         JePjbJWjuWHfAlRp+1T4N0xJXtCn/JGzI92vSW1ktcx/8qswRBnR0grp8A8QkkwYtHSV
-         /nhg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747332082; x=1747936882;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1747332129; x=1747936929; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ftL1zu9G85h+3xwDkEOI0cxrRxUcnx00/pKAwf99vzk=;
-        b=ZFAdkk7JtRA4HiZhygn12Jglw4YYfEmfF0pCsLh1KPQKIQjLlmUcpu9DrHw9J6xt28
-         QKpYg8p9apznstfKk0Zah8YjFbpRriR9JuGydOK4rN8fciiZqAYiIQR0BFyJMonp4Oh4
-         zls8cRlqxIumrVmTzZw9gbll+vO9plpNT67PWuAkAT1oROTHxLT2bjEwpZgLFFDdI3Q2
-         hEI9Mkxkiv0NmWismJ9iUN7W9c/EROWp4pl0/y1zTuI2Dmh2cQYJFmAzN5x0C/FMG1Gg
-         xozIS/PMscBCG4ia4N8enxi00ZreRW4Bozgam5OrD3jaGrAmgkKvXsiX9ygUFLg4PBHt
-         o+Zw==
-X-Forwarded-Encrypted: i=1; AJvYcCX+xE8e15oAiomwBsC5hYD1wsxgrGQhdaxecepMjkWuOV/eqggItqrdgQNclbesHvJgAvgPvBtK38Z4s6U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzTk3EvEY8Qt9YEwpwgEiyvDH/fvXPjAzA3nDKmLZMTs9iBAA/w
-	KQXAX//YthD/oBexrjOsvkKPOTwz1hoQdD8BYlgHTY/uXNRI8PjF0GQV
-X-Gm-Gg: ASbGncvta9c4Xo1X4sPq6J71EDIJ/lO75Yt/BCUKJSeFGLcATsUXclzj5vGtXob68s/
-	ipF/UsrKXYdRDe7+grRx45JS+MaCXcD9UsC5CvIupllNMOfiKIIg+xGCnoCKh1xdM1ArgoMoarZ
-	13grwPgzWcdVZlTI4q9+WLaWTTU1jaBM5/0BZMmrcdkEPK9vGdXJ27KXJlsrOyMShO3dhzhsiGN
-	dg8hTq4it+0Ows/3QMmTBbc2xtRIjKFeSZV1nUVc2yIqXYECpT1h+fieQ8ACl/l7zjIbnnolRsA
-	ajHIHU7tROr72FDU/itNByxx7p86096u9vyq/x7bVFH1j2/MB24k2y6rcRkP4mn0e3TBaNk/XcZ
-	2NkQ5YiQubPYVJDs2Wsf15Pq11wXAeZo94L+sCOypgiRFAlgBqVjZPYWYKg5+5Eeo4lylWXfrU/
-	B+VQdsOrDDwg==
-X-Google-Smtp-Source: AGHT+IHgeAM+8FzyBqZPg1R1yIQBqNvQ8UD9T6HygfSREDafkbuj7z9GEsOUiA8q4FoXVXqYMORHGg==
-X-Received: by 2002:a05:600c:4e0d:b0:43d:ac5:11e8 with SMTP id 5b1f17b1804b1-442fd664a0dmr4465545e9.21.1747332081787;
-        Thu, 15 May 2025 11:01:21 -0700 (PDT)
-Received: from ?IPV6:2003:ea:8f4a:2300:ec36:b14d:f12:70b? (p200300ea8f4a2300ec36b14d0f12070b.dip0.t-ipconnect.de. [2003:ea:8f4a:2300:ec36:b14d:f12:70b])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-442fd4a0a5dsm5329295e9.0.2025.05.15.11.01.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 15 May 2025 11:01:21 -0700 (PDT)
-Message-ID: <2898dcdd-1955-4aeb-959a-58bf8166102f@gmail.com>
-Date: Thu, 15 May 2025 20:01:47 +0200
+        bh=bNN+vfuMJJgSzRBBX1dcv69JrH0Sd8EtzpYEboDV/q8=;
+        b=fYLu+Rx1EldXlJSmKgme1AVOXXw/BgC3RyBSt2P4eMUCEM3HVvFt3kpsWb/0sfGID0
+         FyGnh7lpEBHGl/Fua/VuI+7iUdjaRnaUkh4CY1hsvpT6qtUki4+YyshD9LNDVqXZEv43
+         uP7QVnMP/en4EhYOJTFVDf+M/MEZFmlqRJJ7OLkBDZCuYBgURO7BGGM8JLagYG94lDHQ
+         C6L5PV8jVeGuWUKqwJ6h0yl1y7qxOpDveRmf9A+/XnNd17qcWAJM2sj+M8rXS3qOzcIo
+         YTrybl6x7QVQglBhxFEP6wVyFWqHqpfiG5hYXVX4EODm8YZmNLj5uV80J/Vaft+a+CC5
+         sGTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747332129; x=1747936929;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bNN+vfuMJJgSzRBBX1dcv69JrH0Sd8EtzpYEboDV/q8=;
+        b=Ywrfz4eQL8CIEGfspD2HyEhxyBipRYCOjorM1qAxKniCeS7tLhU4AP4/2lpRIZBAJa
+         r+ovJZTV6g8FuKx+JnovFxBrtKIrCijjuE/Qh/j0KLVVGLLPCPtJSqhwKB0eosXCc0u5
+         e6DYg3GTRRg4jqWwmQLoTzFXl1cxl/OAfYiuaPiKvmf0Db65mmmmGUKeO4PBAUeIJsqY
+         vVBIEDTJ5BxVimWBVy6hxQPnuE12uG8FfjJ8kOSyQHDX0mHvycoepudYWRCOD0F7l5En
+         vrv62Y/IziDQeNWbQSLJfEDhfEUJCt2Q65FnbEnAuLpJ1/sVbRq+zW3qHe6cP//SavI7
+         YnbQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUKe15P+uT21THv7UTC82c3jHL6cP/lo8qSgqdYv2fwS/CAqh2wZBKM1TmAWvBWE7VA0NP5wpEqIeNf0Es=@vger.kernel.org, AJvYcCWePnP5eKI31ey6ZTaYog2s1KD1b5pAierqV9U1vU2bWckzvSp8CZbnOmELt1fA/g2HU0ORm6cjN3E=@vger.kernel.org, AJvYcCXWJqD4OqJeSy4p9uUyEWxuvudpSx9czuxS2F3/C1lU5zvyYjis6oDKQ26DU7TOsWj3POQxaqhwUGcf7I6O5BSHMe8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMWRDtVd5HgyMEOIB2wz5QnegNaSWquzKeWCUITj0vuFNEkswu
+	GAUfWiW+XF0SXjlUS+qgCMspOLlf00K8KFz9VLThs1byE5tHc2CfqHGcXhPxiTKrZrPSzMpshVK
+	3gs0Z/yYHvLBMjiehNSAEJUkoUHSx4mc=
+X-Gm-Gg: ASbGncuLsrkE+MT4S8L38gD+DRWoXuqr0o/rK9Q16nCwvtx/15fCyUz9mFQiBMwEeYO
+	r9nOD6luk1t2t994UDWC3hhUON+T1b38vzORQihfE2BLO/PFEvCN50hjmyOVbOSnZ22r3zIZbUj
+	Ccuay4D8H00lIDzljsz7YN/Ef4JoYj4yU=
+X-Google-Smtp-Source: AGHT+IGJ3VLgyC5oRyYT9SJhjLgRqlja96rlJ3f3rzeXshYp1J9lbgDhqI7B6B7Y0eDrmuUni3A/DX8mMtH0+4aqo58=
+X-Received: by 2002:a17:907:980f:b0:ad2:41ae:a1e4 with SMTP id
+ a640c23a62f3a-ad50f7c4f3dmr407267966b.24.1747332128837; Thu, 15 May 2025
+ 11:02:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next] r8169: add support for RTL8127A
-To: Hau <hau@realtek.com>, nic_swsd <nic_swsd@realtek.com>,
- "andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>,
- "davem@davemloft.net" <davem@davemloft.net>,
- "edumazet@google.com" <edumazet@google.com>,
- "kuba@kernel.org" <kuba@kernel.org>, "pabeni@redhat.com" <pabeni@redhat.com>
-Cc: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20250515030323.4602-1-hau@realtek.com>
- <c57f0ef9-62c6-4821-a695-e8e4724f1cb7@gmail.com>
- <a3bb102cb48f49179fae5167b1a6bacc@realtek.com>
-Content-Language: en-US
-From: Heiner Kallweit <hkallweit1@gmail.com>
-Autocrypt: addr=hkallweit1@gmail.com; keydata=
- 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
-In-Reply-To: <a3bb102cb48f49179fae5167b1a6bacc@realtek.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250430123306.15072-1-linux.amoon@gmail.com> <aCR9RzGMWEuI0pxS@mai.linaro.org>
+ <CANAwSgSA-JHMRD7-19wijOY=TSWD-sv6yyrT=mH+wkUJuvxFAw@mail.gmail.com> <92c2949e-2fc1-40e9-9dea-e3d9f7aa571d@linaro.org>
+In-Reply-To: <92c2949e-2fc1-40e9-9dea-e3d9f7aa571d@linaro.org>
+From: Anand Moon <linux.amoon@gmail.com>
+Date: Thu, 15 May 2025 23:31:50 +0530
+X-Gm-Features: AX0GCFsEAXplwRDB3NXZqHZ-d-ohJ2IJuxMQMC4KvVGNnVidBm-TZoRYGMggWAM
+Message-ID: <CANAwSgQryVLdRVd9KRBnaUcjtX8xR9w9BBTCvoqKH6funkj=2A@mail.gmail.com>
+Subject: Re: [PATCH v6 0/4] Exynos Thermal code improvement
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Zhang Rui <rui.zhang@intel.com>, 
+	Lukasz Luba <lukasz.luba@arm.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
+	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
+	"open list:SAMSUNG THERMAL DRIVER" <linux-pm@vger.kernel.org>, 
+	"open list:SAMSUNG THERMAL DRIVER" <linux-samsung-soc@vger.kernel.org>, 
+	"moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" <linux-arm-kernel@lists.infradead.org>, 
+	open list <linux-kernel@vger.kernel.org>, 
+	"open list:CLANG/LLVM BUILD SUPPORT:Keyword:b(?i:clang|llvm)b" <llvm@lists.linux.dev>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 15.05.2025 11:37, Hau wrote:
->>
->> On 15.05.2025 05:03, ChunHao Lin wrote:
->>> This adds support for 10Gbs chip RTL8127A.
->>>
->> Thanks, Hau. One question wrt EEE:
->> Curently we disable EEE at 5Gbps, likely because support in
->> RTL8126 still has some flaws. Not 100% sure, but I assume also 10Gbps
->> supports EEE. How about EEE support at 5Gbps and 10Gbps in RTL8127? Can it
->> be enabled or better not?
->>
-> rtl8126 and rtl8127 EEE can be enabled at all supported speed now. 
-> 
-OK, then I will send a follow-up patch enabling EEE at 5Gbps for all
-RTL8126 versions.
+Hi Daniel,
+
+On Thu, 15 May 2025 at 18:59, Daniel Lezcano <daniel.lezcano@linaro.org> wr=
+ote:
+>
+> On 5/15/25 13:10, Anand Moon wrote:
+> > Hi Daniel,
+> >
+> > On Wed, 14 May 2025 at 16:53, Daniel Lezcano <daniel.lezcano@linaro.org=
+> wrote:
+> >>
+> >> On Wed, Apr 30, 2025 at 06:02:56PM +0530, Anand Moon wrote:
+> >>> Hi All,
+> >>
+> >> Hi Anand,
+> >>
+> >> if the goal of the changes is to do cleanups, I recommend to rework
+> >> how the code is organized. Instead of having the data->soc check all
+> >> around the functions, write per platform functions and store them in
+> >> struct of_device_id data field instead of the soc version.
+> >>
+> >> Basically get rid of exynos_map_dt_data by settings the different ops
+> >> in a per platform structure.
+> >>
+> >> Then the initialization routine would be simpler to clean.
+> >>
+> >
+> > Thanks, I had previously attempted this approach.
+> > The goal is to split the exynos_tmu_data structure to accommodate
+> > SoC-specific callbacks for initialization and configuration.
+> >
+> > In my earlier attempt, I tried to refactor the code to achieve this.
+> > However, the main challenge I encountered was that the
+> > exynos_sensor_ops weren=E2=80=99t being correctly mapped for each SoC.
+> >
+> > Some SoC have multiple sensor
+> > exynos4x12
+> >                      tmu: tmu@100c0000
+> > exynos5420
+> >                  tmu_cpu0: tmu@10060000
+> >                  tmu_cpu1: tmu@10064000
+> >                  tmu_cpu2: tmu@10068000
+> >                  tmu_cpu3: tmu@1006c000
+> >                  tmu_gpu: tmu@100a0000
+> >   exynos5433
+> >                  tmu_atlas0: tmu@10060000
+> >                  tmu_atlas1: tmu@10068000
+> >                  tmu_g3d: tmu@10070000
+> > exynos7
+> >                  tmu@10060000
+> >
+> > It could be a design issue of the structure.or some DTS issue.
+> > So what I found in debugging it is not working correctly.
+> >
+> > static const struct thermal_zone_device_ops exynos_sensor_ops =3D {
+> >          .get_temp =3D exynos_get_temp,
+> >          .set_emul_temp =3D exynos_tmu_set_emulation,
+> >          .set_trips =3D exynos_set_trips,
+> > };
+> >
+> > The sensor callback will not return a valid pointer and soc id for the =
+get_temp.
+> >
+> > Here is my earlier version of local changes.
+> > [1] https://pastebin.com/bbEP04Zh exynos_tmu.c
+> > [2] https://pastebin.com/PzNz5yve Odroid U3 dmesg.log
+> > [3] https://pastebin.com/4Yjt2d2u    Odroid Xu4 dmesg.log
+> >
+> > I want to re-model the structure to improve the code.
+> > Once Its working condition I will send this for review.
+> >
+> > If you have some suggestions please let me know.
+>
+> I suggest to do the conversion step by step beginning by
+> exynos4210_tmu_clear_irqs, then by exynos_map_dt_data as the first
+> cleanup iteration
+>
+Ok you want IRQ handle per SoC call back functions?
+so on all the changes depending on SoC id should be moved to
+respective callback functions to reduce the code.
+
+Thank  you for having a look into my changes
+
+Thanks
+-Anand
+>
+> --
+> <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software for AR=
+M SoCs
+>
+> Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+> <http://twitter.com/#!/linaroorg> Twitter |
+> <http://www.linaro.org/linaro-blog/> Blog
 
