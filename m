@@ -1,170 +1,135 @@
-Return-Path: <linux-kernel+bounces-649188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-649214-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46500AB8147
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 10:48:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C210DAB8194
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 10:55:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3158B9E3955
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 08:45:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 909881886B0A
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 08:53:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6D54286D5C;
-	Thu, 15 May 2025 08:45:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6517928D8CF;
+	Thu, 15 May 2025 08:53:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="W+Du45ot";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="392r+Jex";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="W+Du45ot";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="392r+Jex"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=inventec.com header.i=@inventec.com header.b="JIbYk9p2"
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B6881FF5F3
-	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 08:45:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA05B286D5C
+	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 08:53:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747298740; cv=none; b=gPtrMXEWTNpS5UBf3O0VcS2lnifCImwvwFgWql1NWzOoQ8lTbtZluEPmMIszLy//2S/NRj0cNnQc6jL7ijmnwgLCVlswnvE1xDhJIKL8fkzbWW/SPGC5RD7ilh1gvZ/lSlxf9fqCb5UOgWwpqnKKU4v0ENNvywr2HsCL/m/5/A4=
+	t=1747299204; cv=none; b=KmgJakdWBivpJoYMN7vuvnMqz+h75Tou4XQ9+7bP5f7MH4DvBJ/jBk0AKHk0Y0YXc0EsJEmBXFDY50SIo4E9oXIPAa/ZQO9gBzTztdrBqaMLv5dqNDQxS2l7UTeyqhq1+MYBRQftOJyuM2Y78d0EkD5zeTWJWOOcr4T3L9UOjJo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747298740; c=relaxed/simple;
-	bh=vSsNhJiyAn3s3OhcgAxNKV1C08rwcm+xP8znhvNGVVs=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=gEPEDcc4wTF0QAjQR/KXQsVPE0P+C2kSWQnR/v3UZ7zM5MXkgYyAxXr0YWgWdLPiRLZ+RnZA4u8WLBvamSWBB70d2Cbs/g8KIx20SSkZLP70WVRI8Kexsf+EyAsD++ZtYdm7/Q99zd1mNmukrLdq+cXWxwVsF6qCW7Ay6JIhH4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=W+Du45ot; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=392r+Jex; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=W+Du45ot; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=392r+Jex; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id E475C2115E;
-	Thu, 15 May 2025 08:45:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1747298736; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VumhYrRKD4m6/mW6n6DUnExU9MsUD1DrmUJaXs125Mg=;
-	b=W+Du45otPPQRaFkRaLYmcz7ggB6BCAlpE/zVfwtlsWAPIP3ON+1StnIgtZrga7yadtRdfq
-	U8K4trvMAxchBtiReYjdE8L1eCpyrdyRgQAqINXsHZkoMlGnv/pUS/4YI3sEN/1EuiJgSN
-	miaVemQzC4zTXlkE8LbJrhgXLuVaTeM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1747298736;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VumhYrRKD4m6/mW6n6DUnExU9MsUD1DrmUJaXs125Mg=;
-	b=392r+JexXT9DmX8Q0iB8+hJXlgQxtamR/qGkLsIhys0UPMnz3m4UE0VjVifL7hJuTjiN/g
-	vyt71YdzetYB9xCg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1747298736; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VumhYrRKD4m6/mW6n6DUnExU9MsUD1DrmUJaXs125Mg=;
-	b=W+Du45otPPQRaFkRaLYmcz7ggB6BCAlpE/zVfwtlsWAPIP3ON+1StnIgtZrga7yadtRdfq
-	U8K4trvMAxchBtiReYjdE8L1eCpyrdyRgQAqINXsHZkoMlGnv/pUS/4YI3sEN/1EuiJgSN
-	miaVemQzC4zTXlkE8LbJrhgXLuVaTeM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1747298736;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VumhYrRKD4m6/mW6n6DUnExU9MsUD1DrmUJaXs125Mg=;
-	b=392r+JexXT9DmX8Q0iB8+hJXlgQxtamR/qGkLsIhys0UPMnz3m4UE0VjVifL7hJuTjiN/g
-	vyt71YdzetYB9xCg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CFEF4137E8;
-	Thu, 15 May 2025 08:45:36 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id lHp0MrCpJWjcPwAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Thu, 15 May 2025 08:45:36 +0000
-Message-ID: <07f321d5-4416-4be4-9696-00f0d83895f5@suse.cz>
-Date: Thu, 15 May 2025 10:45:36 +0200
+	s=arc-20240116; t=1747299204; c=relaxed/simple;
+	bh=lIfNCPP66O5sWacTogM/feH6CoiW9xHNdDEGcTAOa1g=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=f+r4HJta0kq8K0ayF1jBzE0yq4zm0FF9BUdQ+yQgUMn1wHaCd4f+DopX0u5fBHOypPiqKLaxLuAB7zFmW8OzgZCh4DSoG48bQIl6LVZXdOEmbflMnQHsXZfQhvVnCfpF9Im+ZM9eVLUTjljyb6kn3NVgC/yARkFGV5oftj7lpYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=inventec.com; spf=pass smtp.mailfrom=inventec.com; dkim=pass (2048-bit key) header.d=inventec.com header.i=@inventec.com header.b=JIbYk9p2; arc=none smtp.client-ip=209.85.215.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=inventec.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inventec.com
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-b24f986674fso642518a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 01:53:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=inventec.com; s=google; t=1747299201; x=1747904001; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nOVoQnwWT25lQttWoZH7JoBjuOJGRtQg1frpngi8VzY=;
+        b=JIbYk9p23k25N0ts46ZfByaxfR0wUe8eftbnQ8WcAraUkc5xwLHLFqGjjEukAywz6N
+         xSR1QlxoxfR27yuHr2SMsufGmo4iLnqENPkJKf0yWc6eUI7Ip51A+C8pXOwOTTsMWTcA
+         2m21uEEzRYwdxC0NsLOM2H6iSYtdMdDzNxlQI2FLcuBTS9IyA/b2O+4ZzbywUS0ZM+Go
+         M1ln70M26ZUX26+5VM+EUUV4+kf13mIc9ImYLFzoIxZSZuYL8fXnC0Fnomg92SCdwsy3
+         wIfQATH+vKhLNKmwIZ4b5TPob6Rp6xCh/kSfn2VeVPMTyC70Eyl7YnXo+D0KjFRIaBor
+         /I0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747299201; x=1747904001;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nOVoQnwWT25lQttWoZH7JoBjuOJGRtQg1frpngi8VzY=;
+        b=CVjlZ0B2QNgb1EZNl/XnJpj+8t8ta+wxhiA0LKATOCqpWkuNVYXkBbQLm7O3I928l6
+         Vh/B6MyX8/dR0XUdFqjHgr9Aavz6a0UjdbJRe3l2Krur7+H9lPVnzddQcjpJNhDCgGkf
+         Qsr04fWctyjwIBy81yuZ79kq1yTwDimpiYWXgG3n4GU7H1Bk0RS/uI6nL2Hr3Cmblg5u
+         b8bghCSZqDSzgjyHH9BUez7rYDpwmfzw1RbRyvWArGfaiAM9DwPksfS/A6nNdOYFvv5T
+         6PJDeEMtCCbZ47UEc2m2WmR79LcKZskJS+thDy1ahNK8ppPrWY6lVyaTclXwAnBI9ooP
+         jMyg==
+X-Forwarded-Encrypted: i=1; AJvYcCXcoVmHaXkryE7CHx8z8uWbtSULm6Iotwej9y+Beobyh0Yx52CjZzdxwE+U5rFl5I2ReSMMN7d3EJInguc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzIFTvtG/AURyWyKOhha3UQOlacL2RAcAUO+/3xMwUaKs6g890f
+	/rCL+2ZEUfHXuv7OoouF0giuhWs7ZBc8dF58qDS+gi8mIpSL0quAB5MaFQljxI0=
+X-Gm-Gg: ASbGncvO/yx/6iX4PFYwDjk1mj9o4BAEiR1nJYNVjMgoqkX2lOO35AK5gWJb8nCcxag
+	Y7MMWvJNgkJ3WoBUnetjqNm85brEPP+ItQ99DyUYaYGSYGpKonLgI9yW2P+SYHrNYfLW64POB5I
+	DbTJTBoxJbyOg5rRbuHJPV4gcDKiic4272/4oGIZdg/nNABgRmDKnHx7Y8obcy2ffgTVk3O8eXl
+	CHCUzzu78tQxZYTNQKe8caxDxEaLfNONdpUhESr3pHhPwbeophM4J2++FhwKQK3dUuBebH1LZ8+
+	tVQ1S9GIMqwI1fEtdxlHeL8w04ad1pJlxg4z1KM/5LwW1Co+6uN+evsbWDnUfYEy96DUrF1bupJ
+	jWZdeLwUrfv5q9hntGs7tWpJpcTKAXuZs
+X-Google-Smtp-Source: AGHT+IENsPZ/AMQVPFzwdzV24c1hYE73gMI1F84hexuGBFYoNLNqWR0VXSlco8GETzsjYyrN3LMd4Q==
+X-Received: by 2002:a17:903:1252:b0:21f:2e:4e4e with SMTP id d9443c01a7336-231b3970b19mr36155395ad.5.1747299200653;
+        Thu, 15 May 2025 01:53:20 -0700 (PDT)
+Received: from localhost.localdomain (60-250-242-163.hinet-ip.hinet.net. [60.250.242.163])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22fc7742f3csm111237665ad.99.2025.05.15.01.53.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 15 May 2025 01:53:20 -0700 (PDT)
+From: Chiang Brian <chiang.brian@inventec.com>
+To: chiang.brian@inventec.com
+Cc: alex@ghiti.fr,
+	aou@eecs.berkeley.edu,
+	corbet@lwn.net,
+	jdelvare@suse.com,
+	linux-doc@vger.kernel.org,
+	linux-hwmon@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	linux@roeck-us.net,
+	palmer@dabbelt.com,
+	paul.walmsley@sifive.com
+Subject: Re: [PATCH v7 2/2] hwmon: (pmbus/tps53679) Add support for TPS53685
+Date: Thu, 15 May 2025 16:45:40 +0800
+Message-Id: <20250515084540.1558914-1-chiang.brian@inventec.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20250515083706.1554823-1-chiang.brian@inventec.com>
+References: <20250515083706.1554823-1-chiang.brian@inventec.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/9] slab: add sheaf support for batching kfree_rcu()
- operations
-Content-Language: en-US
-From: Vlastimil Babka <vbabka@suse.cz>
-To: Suren Baghdasaryan <surenb@google.com>
-Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Christoph Lameter <cl@linux.com>, David Rientjes <rientjes@google.com>,
- Roman Gushchin <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>,
- Uladzislau Rezki <urezki@gmail.com>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, rcu@vger.kernel.org,
- maple-tree@lists.infradead.org
-References: <20250425-slub-percpu-caches-v4-0-8a636982b4a4@suse.cz>
- <20250425-slub-percpu-caches-v4-2-8a636982b4a4@suse.cz>
- <CAJuCfpGVx2jG+S2ch2hqK=sAdmTcs9dW0kOdopxgLtH4V_wNXQ@mail.gmail.com>
- <f181285e-4167-4581-a712-8e444a0ab2bb@suse.cz>
-In-Reply-To: <f181285e-4167-4581-a712-8e444a0ab2bb@suse.cz>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Spam-Flag: NO
-X-Spam-Score: -4.30
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[oracle.com,linux.com,google.com,linux.dev,gmail.com,kvack.org,vger.kernel.org,lists.infradead.org];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_DN_SOME(0.00)[]
 
-On 5/14/25 16:01, Vlastimil Babka wrote:
-> On 5/6/25 23:34, Suren Baghdasaryan wrote:
->> On Fri, Apr 25, 2025 at 1:27 AM Vlastimil Babka <vbabka@suse.cz> wrote:
->>> @@ -2631,6 +2637,24 @@ static void sheaf_flush_unused(struct kmem_cache *s, struct slab_sheaf *sheaf)
->>>         sheaf->size = 0;
->>>  }
->>>
->>> +static void __rcu_free_sheaf_prepare(struct kmem_cache *s,
->>> +                                    struct slab_sheaf *sheaf);
->> 
->> I think you could safely move __rcu_free_sheaf_prepare() here and
->> avoid the above forward declaration.
+On 15/05/2025 08:37 GMT, Chiang Brian wrote:
 > 
-> Right, done.
+> On 14/03/2025 07:11, Chiang Brian wrote:
+> > 
+> > On 14/03/2025 04:28, Chiang Brian wrote:
+> > > Add undocumented tps53685 into compatible in dt-bindings
+> > > 
+> > > Signed-off-by: Chiang Brian <chiang.brian@inventec.com>
+> > >  Documentation/devicetree/bindings/trivial-devices.yaml | 2 ++
+> > >  1 file changed, 2 insertions(+)
+> > > 
+> > > diff --git a/Documentation/devicetree/bindings/trivial-devices.yaml b/Documentation/devicetree/bindings/trivial-devices.yaml
+> > > index fadbd3c041c8..c98d69facb48 100644
+> > > --- a/Documentation/devicetree/bindings/trivial-devices.yaml
+> > > +++ b/Documentation/devicetree/bindings/trivial-devices.yaml
+> > > @@ -380,6 +380,8 @@ properties:
+> > >            - ti,tps53676
+> > >              # TI Dual channel DCAP+ multiphase controller TPS53679
+> > >            - ti,tps53679
+> > > +            # TI Dual channel DCAP+ multiphase controller TPS53685 with AMD-SVI3
+> > > +          - ti,tps53685
+> >
+> > There is no user of such compatible, so how can it be undocumented?
 > 
->>> @@ -5304,6 +5340,140 @@ bool free_to_pcs(struct kmem_cache *s, void *object)
->>>         return true;
->>>  }
->>>
->>> +static void __rcu_free_sheaf_prepare(struct kmem_cache *s,
->>> +                                    struct slab_sheaf *sheaf)
->> 
->> This function seems to be an almost exact copy of free_to_pcs_bulk()
->> from your previous patch. Maybe they can be consolidated?
-> 
-> True, I've extracted it to __kmem_cache_free_bulk_prepare().
+> The following link is the patch which I would like to add support tps53685,
+> and I think it is the user of the compatible:
+> https://lore.kernel.org/lkml/20250314033040.3190642-1-chiang.brian@inventec.com/
 
-... and that was a mistake as free_to_pcs_bulk() diverges in patch 9/9 in a
-way that this makes it too infeasible
+Sorry for the wrong post, and please ignore it.
+Thank you.
+
+Best Regards,
+Brian Chiang
 
