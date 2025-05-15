@@ -1,223 +1,198 @@
-Return-Path: <linux-kernel+bounces-648813-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-648815-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27E14AB7C28
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 05:18:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FC03AB7C2B
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 05:20:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BCDF81BA7763
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 03:18:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C37EC4C6606
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 03:20:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED6AC25B1CE;
-	Thu, 15 May 2025 03:18:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fibocomcorp.onmicrosoft.com header.i=@fibocomcorp.onmicrosoft.com header.b="EgaHhw9h"
-Received: from SEYPR02CU001.outbound.protection.outlook.com (mail-koreacentralazon11023141.outbound.protection.outlook.com [40.107.44.141])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BE0B17BA3;
-	Thu, 15 May 2025 03:18:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.44.141
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747279090; cv=fail; b=n3LbYaQg2UPhJkJPw8yeTHbDbgFh6WVTW/+XKcyQXKeY467Mjkfh8qOUeZRIpqIEs/RSucA9vQtTuIzOQX4sqNLpTSjDd1/jkiIwp72iNNZ+haXluldN5otrTpa0ayqVV3J0oSsBqxWl1uCUB6ampbkvVoPW/a/J9nKNViYKeYQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747279090; c=relaxed/simple;
-	bh=RqCRMlqWOV7RBASrnVbt/oxZz1ha3/kR54QBeaFzqFU=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=YKSZhnLv0e68Hp9DGWLkBvoAzLJ5LLbpq0BAoqmIjmYolMY3msgQsBrgA8otPXmYHm3OMYOLyUd4Ipxw8Cptbb7h+ddCkGM69lrhwGEjuOS8ZtBq45ElWICdQuXFujNjbSx38X1t70QF7IIg5RtKwlrXAPLY6URkZbQeeqY0vm8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fibocom.com; spf=pass smtp.mailfrom=fibocom.com; dkim=pass (1024-bit key) header.d=fibocomcorp.onmicrosoft.com header.i=@fibocomcorp.onmicrosoft.com header.b=EgaHhw9h; arc=fail smtp.client-ip=40.107.44.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fibocom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fibocom.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=nvYJ7buWk5axVkVzDwzokgCUISAmSACJ2rDZyB9eD4Pjf6a2fFQEOtu+rZFQkTEt4kAm3IOBQEZGXpKVehUl67y/Rn5pkbTo/pOwAaTnjWREuArlO5ZSIYtPCNnawItFXZQX845q5Oun+Vd7zbh0uO5X5HvLRu4BP4lgjnJGwU96W0D7kZ9PL4UPfVqlyIqcNi3MhXrY0Y0YJFboP6sXWinwr8HEOpRFr9jHQX6v+midgtsqC5ydmGqqgNO/QSQiBsaZF3p/34L+c2agQsADlMQUIAU2EQ4nmyuXZR9r9faWXwvdrcauBMwgKRaHKZo1470z3poxqofe43DAqQRtDA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=hBMN+GRtJJDYBUKragPrGaRYI5mmdtAgkKFutxwO9ZQ=;
- b=dyBoD6oYMxA88D/4Au9seYZMyfFquJDwf6Mwgi5IUx2/KNkxuWSQsbYoc3aFqgiE6zMMBDOeOnk1k/nfOcn3uX6DVKsQW29tZTfuz1SXR6L7oC6ksl7qWpv7QgGdBJeme05PxOlouhoFOMoJtY3ylw/Q/o5c/fL6wpYpuDMw1LyK8aJV0B9WQ5FxYa8vN4j89rzS+9dNXFDrK3+AosfjIo8aaST2uddaHrca3ozDYgcSf6cvLx0QH/ltNyd+vdYFiVbMzXrY8YOiD8eQlOpIp38UZQwJbSY8U1XVmmy8DOqs6D1EgzOqSgGvoshByi+HDbQqf2rtoq8XUv1m40eM5Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=fibocom.com; dmarc=pass action=none header.from=fibocom.com;
- dkim=pass header.d=fibocom.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=fibocomcorp.onmicrosoft.com; s=selector1-fibocomcorp-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=hBMN+GRtJJDYBUKragPrGaRYI5mmdtAgkKFutxwO9ZQ=;
- b=EgaHhw9hkK+AXOBt+yjHjGfZM/rOMxsT6bxmrmuNaKxbR/L9Y1ejrmmVPLGHa2xtf+7gx3P/7dLxrzkkb5O8ZDlWMwq2XJI6wOGjopM8OqzgXlPO+uUZzFeX5Xc/9t7hRDx6joXrQhgklwxkOPuqC5drYMXb5d+sl7K5X+d1LjA=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=fibocom.com;
-Received: from TY0PR02MB5766.apcprd02.prod.outlook.com (2603:1096:400:1b5::6)
- by KL1PR02MB6332.apcprd02.prod.outlook.com (2603:1096:820:e9::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8722.32; Thu, 15 May
- 2025 03:18:01 +0000
-Received: from TY0PR02MB5766.apcprd02.prod.outlook.com
- ([fe80::f53d:47b:3b04:9a8b]) by TY0PR02MB5766.apcprd02.prod.outlook.com
- ([fe80::f53d:47b:3b04:9a8b%4]) with mapi id 15.20.8722.027; Thu, 15 May 2025
- 03:18:00 +0000
-From: Jinjian Song <jinjian.song@fibocom.com>
-To: chandrashekar.devegowda@intel.com,
-	chiranjeevi.rapolu@linux.intel.com,
-	haijun.liu@mediatek.com,
-	m.chetan.kumar@linux.intel.com,
-	ricardo.martinez@linux.intel.com,
-	loic.poulain@linaro.org,
-	ryazanov.s.a@gmail.com,
-	johannes@sipsolutions.net,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com
-Cc: linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	angelogioacchino.delregno@collabora.com,
-	linux-arm-kernel@lists.infradead.org,
-	matthias.bgg@gmail.com,
-	corbet@lwn.net,
-	linux-mediatek@lists.infradead.org,
-	helgaas@kernel.org,
-	danielwinkler@google.com,
-	andrew+netdev@lunn.ch,
-	horms@kernel.org,
-	Jinjian Song <jinjian.song@fibocom.com>
-Subject: [net v1] net: wwan: t7xx: Fix napi rx poll issue
-Date: Thu, 15 May 2025 11:17:42 +0800
-Message-Id: <20250515031743.246178-1-jinjian.song@fibocom.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SG2PR06CA0243.apcprd06.prod.outlook.com
- (2603:1096:4:ac::27) To TY0PR02MB5766.apcprd02.prod.outlook.com
- (2603:1096:400:1b5::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E74F619CD01;
+	Thu, 15 May 2025 03:20:12 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B07B617BA3
+	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 03:20:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747279212; cv=none; b=f7DyQkGIKuoDkff7noIz5gPi8rEUmmm3XVDj0TtRrhXq7qdihSGzNTEW9ziff+/KQmrPtPOW/m0Eaa1yGA2S/HFsIrdXJFjlLMDVgSwBWil7W7BsdsrTQ0uVdvmcr19zyHVqD+7A/zoEXJXqy7C14k3/oEtm1dA89lwPXyGUjVc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747279212; c=relaxed/simple;
+	bh=wmyDntFHg9J1aeNDqXH9NMNtAddxfUhTvQ+e7PrYACI=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=fn6lg4LFfkbn8+dz+N3OFzTaa4/5QsAt2Xsq5sSG4ZPFhgQIuizmgd6JGlt43VhgBVQqeisGFI22m60Tgrv2BVMXS1NVL4lP4YNPnmgK3k3ZZnsjvrXOSe1AIwsHTt+MBJ5P9iutUtbDQADVSLEIfgKF2bgJ2stpXKqOHN4+26Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.20.42.24])
+	by gateway (Coremail) with SMTP id _____8AxHHJmXSVoIaPoAA--.50643S3;
+	Thu, 15 May 2025 11:20:06 +0800 (CST)
+Received: from [10.20.42.24] (unknown [10.20.42.24])
+	by front1 (Coremail) with SMTP id qMiowMBxb8deXSVorxzUAA--.14896S3;
+	Thu, 15 May 2025 11:20:01 +0800 (CST)
+Subject: Re: [PATCH] mm/page_alloc.c: Avoid infinite retries caused by cpuset
+ race
+To: Vlastimil Babka <vbabka@suse.cz>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Suren Baghdasaryan <surenb@google.com>
+Cc: Harry Yoo <harry.yoo@oracle.com>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, Michal Hocko <mhocko@suse.com>,
+ Brendan Jackman <jackmanb@google.com>, Johannes Weiner <hannes@cmpxchg.org>,
+ Zi Yan <ziy@nvidia.com>
+References: <20250416082405.20988-1-zhangtianyang@loongson.cn>
+ <aAYXP4f417_bx6Is@harry> <025e3f51-2ab5-bc58-5475-b57103169a82@loongson.cn>
+ <20250422171116.f3928045a13205dc1b9a46ea@linux-foundation.org>
+ <CAJuCfpHbXmjAr2Rt0Mo_i32hpGOyXnVtXUd4qFjXriH9eYFDkQ@mail.gmail.com>
+ <20250510200740.b7de2408e40be7ad5392fed9@linux-foundation.org>
+ <CAJuCfpFdC6hgFSPy3M2sagkFobWeCuxLdcWiyV5pnzB55dgjZg@mail.gmail.com>
+ <20250513121609.a9741e49a0e865f25f966de1@linux-foundation.org>
+ <e783c311-2f3c-42ba-b0ba-734a206cf04c@suse.cz>
+From: Tianyang Zhang <zhangtianyang@loongson.cn>
+Message-ID: <75a7258b-224c-c4f2-47a9-fda3775d268c@loongson.cn>
+Date: Thu, 15 May 2025 11:19:20 +0800
+User-Agent: Mozilla/5.0 (X11; Linux mips64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TY0PR02MB5766:EE_|KL1PR02MB6332:EE_
-X-MS-Office365-Filtering-Correlation-Id: ea21e94d-3ffc-469f-3d6f-08dd935f18c8
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|7416014|52116014|376014|366016|921020|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?yAIq+GGQChM4A+5w8T6HskRORiitjhz22RVMWk1tgEJnFWz9b/alwddi+rg+?=
- =?us-ascii?Q?0MQ3WKh4dGe/5LP/FyflrmWbWQrVEY1o+uG5Esc4mRqKZLGqDmxEIukHzCmN?=
- =?us-ascii?Q?xAkcCmALC0erSoiJDwvMxnkxwyChKVn6sc+XDl2pXiaKAsE+vazc1rpXpokB?=
- =?us-ascii?Q?Anlre2X5V+PWYp1C487kq7hDBym4hYpVvfgFWqbqH7J9mr4jwkJmmwWoiZQt?=
- =?us-ascii?Q?Tu3IdU9TZZAFbP+8Vf4IPMYahnHgkJzsQEKaZ5VXEHRsHXIwuk+tA7FCMisu?=
- =?us-ascii?Q?fQJ/H/R9IZWpG2ZR4feJpy87BFfEQa3ZDDgRD2AZShcQu5W5KRLj+8AUbi0m?=
- =?us-ascii?Q?dSd7/uyTBitJwPnJwuaTL5PhO0Snt5FNI4QKlYSz6mvvUEANOjQeC9W97UCC?=
- =?us-ascii?Q?fgXgGtypWFfd7EWNfauX1o+t4QQGhuAWnL2BYzuHNQw7m8pdzekk+9P3ARXb?=
- =?us-ascii?Q?ugxeM/bKtXQfqCqPhjGhnQel5dmF6dWyXTCr8gC+7bKkIf+vlrlAUvoMEYiJ?=
- =?us-ascii?Q?r082xAlXuNFnrfloSkw7Csv0D2mDBLvRm4OXR5alUllwD/EHybUH7IIZLYKn?=
- =?us-ascii?Q?RFILgbp9eRQUi4FFYmEQOuFlLR1sr9uozzbqUrsR0ZLXWqIScGcTAizPg4uz?=
- =?us-ascii?Q?wMXAEaj/85ZA6cJn9ExoeeviDiK2OOxppYEYhWV2I66aMiBFtQVKYYR0dWxX?=
- =?us-ascii?Q?hR5hm4vdWzfq6nnZsl5urtWe4mmB9ai9/ywO7VxRNGpNf7fdfNveKdJhwBGz?=
- =?us-ascii?Q?kzHjFoE71vdBI7dZvM572PdWV5gVZGC0vFCPuZBnIbp2aimBwTo5HI8Xa+El?=
- =?us-ascii?Q?zjiGC0GED8JvORt2NRvtvx9wt5KXQQXeV4nINbsaxVOeiZN+UoUCPa3XvoSl?=
- =?us-ascii?Q?nyCDQDsYXgihW31mUZZL34oB+1YMafaQ+vZ0b4NWTFvGB4dQVW/NK7jL9PFD?=
- =?us-ascii?Q?XVGBpZY0Ui3hsOJeBBelZRzwPDOnRh0wWZjc7LGxXs7PevZUhd1TCJ6UGvQB?=
- =?us-ascii?Q?6ahWMOk2HDo3dn80bo9y/M4vwjJsvyX4oB4dyak9cbzQF+8C0NVtpPFC7nMr?=
- =?us-ascii?Q?luYB1JH7c/6mZueLVNmhe3KQIyx3YsrMjQSu7GC2STOzWu7WpbYyC4pxEaPR?=
- =?us-ascii?Q?JGID+cAw0gKNQvgVNvhcgCiFBfwftlziTFop72E6MRiLLqZV4em09pLCDYbs?=
- =?us-ascii?Q?36OTFOTdidyGWQl3lKUtIfm91pQnhPMjOolKTqwJuBXsboWeoiyzjDHXljAW?=
- =?us-ascii?Q?KOLoHBtVksI2A6G6Mfjlnr7waEj6nGSvFh7hLD1/+ZLCj4/SUY4JQaWQm6+Q?=
- =?us-ascii?Q?JQWfCcrOLtijFUriB93DbBL4hFUcPugXzpQyP9AOBL46MfbSwv6s8zatQkxQ?=
- =?us-ascii?Q?ZV8IDW8CqTvYWCeUKzhFjY8mWbeJhY7e6nUfgL0c2Ov+/LjUA/FN1/5BFyrH?=
- =?us-ascii?Q?0eBQLkDJnt7cKbzWZvm9fLEH6OUaQ0VSek09fkzzWwCvO0JSN8u0w/fXIaTH?=
- =?us-ascii?Q?Duaz+U+PAuwvK8M=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY0PR02MB5766.apcprd02.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(52116014)(376014)(366016)(921020)(38350700014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?SdhgG8LxrQHzrnRgAOPGppE2HlqjOgdzKqvUa6sdi5gWUaKTe1+O5XMrrAFY?=
- =?us-ascii?Q?ie1ThFD7dq/C9gNB2X7I3RxjVoQQ05/2wWNAlonqCv4GfTD3XoNvPJ/s8LN+?=
- =?us-ascii?Q?wIDIWx6w1axTqwckv7kRotdvHg0S+IgueFf+8eijASyCS+ku/F/H2Np+fhlE?=
- =?us-ascii?Q?WQRtfucHYFgRWwqFYmdetELQ41zA1GrrVa7uwbxh0MATGSEVg5Frs5V3wayt?=
- =?us-ascii?Q?rUotBxz6xkoSdkmn7AbLBL8GtxBxIDT4trynEdOe2Wtkkb8yToRsomgoqtli?=
- =?us-ascii?Q?TSTiRzKx7giu6PFezvAadBVMEqiSjGMC2yVLZRotj3T6mJ6+JESNwo8ZomaD?=
- =?us-ascii?Q?QHhFnTuPOh75/8nP935mvq0nbNn252pr31ZdRSWhPihAV4Wchwi5MtqbsJEg?=
- =?us-ascii?Q?8bJt/pO5qg42YjV9XkWh6zQZ/lpUkv0E2BuGACEXb+77hXyca/pbcKAbGII3?=
- =?us-ascii?Q?IyhEVqjFEEV2YX9JDp5M/T6fhkWnGSpRUMoeqy2q0bNnsXLm61YMSAyBVCsy?=
- =?us-ascii?Q?ZJjzEhMqPsdxFyAWIPIMOi1G6wxGPCCLdMf8dFUCW9SMO07Aa8Mo8i66OaFa?=
- =?us-ascii?Q?NqYisQMZGDrXjB6sQ1I+/S1HnKEQJ+B02FwnGPBAupqgWdHCK5g83IgnYxPW?=
- =?us-ascii?Q?NJRDnyEMxqZz7Z/p2fH58C8qGtdvEovySYXEwf/xxtpV8XWrdPnWqivLAiNB?=
- =?us-ascii?Q?gtcjEXJBc/EUnFetnnT0SLizCzVSfEOm9cBEvETFl8Kj1Qjbpr+QufiDzn/3?=
- =?us-ascii?Q?M4QEOp9uy5fFgZYp13G8e7KNqxUqvTP9/5HZscauVueIc12505OOqrewebxE?=
- =?us-ascii?Q?RL5o/J+ZwIHks4ZI688mzyQrsfEqVIYyHEQL7RnVjgPSSP5ioFdUrMSGlYlA?=
- =?us-ascii?Q?Lepbqc+meWJLkf2uTzgH3Nip2W2cq8uLxNbl4Fo0mbYN6fmEX1ZMB2VfrKjr?=
- =?us-ascii?Q?8DQ/5M+UJhfFDngy2pfgm4zILvnOszldoKSp3wpdAp2/uDot5L8KLre+s6oo?=
- =?us-ascii?Q?cQEszmaLz5YSnXLPFXDoKhy/+CIAJEWlF3RyMqy96MPUsaO6C1BlmNEWgX0U?=
- =?us-ascii?Q?uCnqqFnTAeD4c/fAoeTYNUTBIXLFwHSyVi6gckgO0HtBd1LNHeFpA4++tfr5?=
- =?us-ascii?Q?7J9NamSLPolIzGh73YGQQ+r+2LB9H7hZvuCta+CzZnpgug876K1PS0VcLucU?=
- =?us-ascii?Q?aeu6p1AqF10aig0td8SnR2FvdrbrvUDRHZTO8dj3ayfpf3DQgkM+0zT8h1FU?=
- =?us-ascii?Q?v4o+fOVDk6kqSNwfAAIiTxHTcOvGebGjEXiSTGOJDIbWvnYgb0+1+10G3RFw?=
- =?us-ascii?Q?BHmTHgM/JAFdzMu2n0wpePC1osSbYPJnjRkVhcM/4C3c4WVDT8JBsNBccBET?=
- =?us-ascii?Q?U9vQLQp4sLhwVsAPjl7kGF8AIlEnR5f6z/Dj2vGXo51j2hc5aucdNytLMvNz?=
- =?us-ascii?Q?c79OaJ8i3ofY9dmdnqwS7poc5gxppZtP9v9GBRepkKpqFAPwzMADNm9L5y0X?=
- =?us-ascii?Q?vOiUeaO0ENAuIqLpQ7kEcoT9b3lTjitk1pLWinZO/KXTRZa/NxGcrJO/8XV1?=
- =?us-ascii?Q?x7WZWN5OovcImzTUcd5Y0vCJTkp4XepeO4ZrSRmgnMb1RHZwjHB4X/ba/Fms?=
- =?us-ascii?Q?VA=3D=3D?=
-X-OriginatorOrg: fibocom.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ea21e94d-3ffc-469f-3d6f-08dd935f18c8
-X-MS-Exchange-CrossTenant-AuthSource: TY0PR02MB5766.apcprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 May 2025 03:18:00.7928
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 889bfe61-8c21-436b-bc07-3908050c8236
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: nl6UwWZxDrKc2vxAEoyHKn9xMXIBQISzBYD8VvdyHeVSSnuodktO+RtqiYZKqZTJbYILe2H9RcPfKcRmMKOtbxr4PXODXks2VWl/2cObyBA=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR02MB6332
+In-Reply-To: <e783c311-2f3c-42ba-b0ba-734a206cf04c@suse.cz>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-CM-TRANSID:qMiowMBxb8deXSVorxzUAA--.14896S3
+X-CM-SenderInfo: x2kd0wxwld05hdqjqz5rrqw2lrqou0/
+X-Coremail-Antispam: 1Uk129KBj93XoWxWw17Jw4fZr18Jw15ArWUAwc_yoWrAw15pF
+	95uF1j9a1rJFWIk392yFykury0v39rJrW3JFWUJ34xZwnxCr4Iyry7urs8uFyUZrsIkF1j
+	qr4YyryxXF1YvagCm3ZEXasCq-sJn29KB7ZKAUJUUUUD529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUP0b4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
+	GcCE3s1ln4kS14v26r126r1DM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2
+	x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1q6rW5
+	McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7
+	I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCF
+	x2IqxVCFs4IE7xkEbVWUJVW8JwCFI7km07C267AKxVWUAVWUtwC20s026c02F40E14v26r
+	1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij
+	64vIr41lIxAIcVC0I7IYx2IY67AKxVWUCVW8JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr
+	0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF
+	0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU8TCJPUUUUU==
 
-When driver handles the napi rx polling requests, the netdev might
-have been released by the dellink logic triggered by the disconnect
-operation on user plane. However, in the logic of processing skb in
-polling, an invalid netdev is still being used, which causes a panic.
+Hi,
 
-BUG: kernel NULL pointer dereference, address: 00000000000000f1
-Oops: 0000 [#1] PREEMPT SMP NOPTI
-RIP: 0010:dev_gro_receive+0x3a/0x620
-[...]
-Call Trace:
- <IRQ>
- ? __die_body+0x68/0xb0
- ? page_fault_oops+0x379/0x3e0
- ? exc_page_fault+0x4f/0xa0
- ? asm_exc_page_fault+0x22/0x30
- ? __pfx_t7xx_ccmni_recv_skb+0x10/0x10 [mtk_t7xx (HASH:1400 7)]
- ? dev_gro_receive+0x3a/0x620
- napi_gro_receive+0xad/0x170
- t7xx_ccmni_recv_skb+0x48/0x70 [mtk_t7xx (HASH:1400 7)]
- t7xx_dpmaif_napi_rx_poll+0x590/0x800 [mtk_t7xx (HASH:1400 7)]
- net_rx_action+0x103/0x470
- irq_exit_rcu+0x13a/0x310
- sysvec_apic_timer_interrupt+0x56/0x90
- </IRQ>
-
-Fixes: 5545b7b9f294 ("net: wwan: t7xx: Add NAPI support")
-Signed-off-by: Jinjian Song <jinjian.song@fibocom.com>
----
- drivers/net/wwan/t7xx/t7xx_netdev.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/net/wwan/t7xx/t7xx_netdev.c b/drivers/net/wwan/t7xx/t7xx_netdev.c
-index 91fa082e9cab..2116ff81728b 100644
---- a/drivers/net/wwan/t7xx/t7xx_netdev.c
-+++ b/drivers/net/wwan/t7xx/t7xx_netdev.c
-@@ -324,6 +324,7 @@ static void t7xx_ccmni_wwan_dellink(void *ctxt, struct net_device *dev, struct l
- 	if (WARN_ON(ctlb->ccmni_inst[if_id] != ccmni))
- 		return;
- 
-+	ctlb->ccmni_inst[if_id] = NULL;
- 	unregister_netdevice(dev);
- }
- 
--- 
-2.34.1
+在 2025/5/14 下午3:34, Vlastimil Babka 写道:
+> On 5/13/25 21:16, Andrew Morton wrote:
+>> On Tue, 13 May 2025 09:26:53 -0700 Suren Baghdasaryan <surenb@google.com> wrote:
+>>
+>>>>>> This has been in mm-hotfixes-unstable for six days.  Hopefully we'll
+>>>>>> see some review activity soon (please).
+>>>>> I reviewed and provided my feedback but saw neither a reply nor a
+>>>>> respin with proposed changes.
+>>>> OK, thanks.  Do you have time to put together a modified version of this?
+>>> I think the code is fine as is. Would be good to add Fixes: tag but it
+>>> will require some investigation to find the appropriate patch to
+>>> reference here.
+>> Below is what is in mm-hotfixes.  It doesn't actually have any
+>> acked-by's or reviewed-by's.
+>>
+>> So... final call for review, please.
+>>
+>>
+>> From: Tianyang Zhang <zhangtianyang@loongson.cn>
+>> Subject: mm/page_alloc.c: avoid infinite retries caused by cpuset race
+>> Date: Wed, 16 Apr 2025 16:24:05 +0800
+>>
+>> __alloc_pages_slowpath has no change detection for ac->nodemask in the
+>> part of retry path, while cpuset can modify it in parallel.  For some
+>> processes that set mempolicy as MPOL_BIND, this results ac->nodemask
+>> changes, and then the should_reclaim_retry will judge based on the latest
+>> nodemask and jump to retry, while the get_page_from_freelist only
+>> traverses the zonelist from ac->preferred_zoneref, which selected by a
+>> expired nodemask and may cause infinite retries in some cases
+>>
+>> cpu 64:
+>> __alloc_pages_slowpath {
+>>          /* ..... */
+>> retry:
+>>          /* ac->nodemask = 0x1, ac->preferred->zone->nid = 1 */
+>>          if (alloc_flags & ALLOC_KSWAPD)
+>>                  wake_all_kswapds(order, gfp_mask, ac);
+>>          /* cpu 1:
+>>          cpuset_write_resmask
+>>              update_nodemask
+>>                  update_nodemasks_hier
+>>                      update_tasks_nodemask
+>>                          mpol_rebind_task
+>>                           mpol_rebind_policy
+>>                            mpol_rebind_nodemask
+>> 		// mempolicy->nodes has been modified,
+>> 		// which ac->nodemask point to
+>>
+>>          */
+>>          /* ac->nodemask = 0x3, ac->preferred->zone->nid = 1 */
+>>          if (should_reclaim_retry(gfp_mask, order, ac, alloc_flags,
+>>                                   did_some_progress > 0, &no_progress_loops))
+>>                  goto retry;
+>> }
+>>
+>> Simultaneously starting multiple cpuset01 from LTP can quickly reproduce
+>> this issue on a multi node server when the maximum memory pressure is
+>> reached and the swap is enabled
+>>
+>> Link: https://lkml.kernel.org/r/20250416082405.20988-1-zhangtianyang@loongson.cn
+>> Fixes: 902b62810a57 ("mm, page_alloc: fix more premature OOM due to race with cpuset update").
+> After the discussion in this thread, Suren retracted this Fixes: suggestion.
+> I think it actually goes back to this one which introduced the
+> preferred_zoneref caching.
+>
+> Fixes: c33d6c06f60f ("mm, page_alloc: avoid looking up the first zone in a
+> zonelist twice")
+Yes, the problem should be introduced by this patch, thank you
+>
+>> Signed-off-by: Tianyang Zhang <zhangtianyang@loongson.cn>
+>> Cc: Vlastimil Babka <vbabka@suse.cz>
+>> Cc: Suren Baghdasaryan <surenb@google.com>
+>> Cc: Michal Hocko <mhocko@suse.com>
+>> Cc: Brendan Jackman <jackmanb@google.com>
+>> Cc: Johannes Weiner <hannes@cmpxchg.org>
+>> Cc: Zi Yan <ziy@nvidia.com>
+>> Cc: <stable@vger.kernel.org>
+>> Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+> I would have placed the check bit further down, just above the
+> should_reclaim_retry() call, but it's not that important to hold up a fix
+> and can be done later.
+>
+> Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
+>
+>> ---
+>>
+>>   mm/page_alloc.c |    8 ++++++++
+>>   1 file changed, 8 insertions(+)
+>>
+>> --- a/mm/page_alloc.c~mm-page_allocc-avoid-infinite-retries-caused-by-cpuset-race
+>> +++ a/mm/page_alloc.c
+>> @@ -4562,6 +4562,14 @@ restart:
+>>   	}
+>>   
+>>   retry:
+>> +	/*
+>> +	 * Deal with possible cpuset update races or zonelist updates to avoid
+>> +	 * infinite retries.
+>> +	 */
+>> +	if (check_retry_cpuset(cpuset_mems_cookie, ac) ||
+>> +	    check_retry_zonelist(zonelist_iter_cookie))
+>> +		goto restart;
+>> +
+>>   	/* Ensure kswapd doesn't accidentally go to sleep as long as we loop */
+>>   	if (alloc_flags & ALLOC_KSWAPD)
+>>   		wake_all_kswapds(order, gfp_mask, ac);
+>> _
+>>
 
 
