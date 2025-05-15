@@ -1,234 +1,225 @@
-Return-Path: <linux-kernel+bounces-649421-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-649423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8330DAB84A2
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 13:16:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F510AB84A6
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 13:17:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F2414A6FB1
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 11:16:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E88BC3B41D8
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 11:17:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9348829671C;
-	Thu, 15 May 2025 11:16:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14F71297A57;
+	Thu, 15 May 2025 11:17:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZyBnSX10"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Dmn9GImV"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC72B202C5D;
-	Thu, 15 May 2025 11:16:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1101C2C9
+	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 11:17:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747307761; cv=none; b=DbrJhtcgRsKgn2MySjn7u8WHXNdqDhXP4MwFt5f4QUZ1Uvpg91Viot6fF6y45l7+Gnzc60dXgEjb9lStYo59trePWpyFZqh4ovXZUfz2IcjCZAh7ek2e8ANC1fRH9CInanW+OqnPZ4SdRdI8UtL6I0vNP7xsIE/dupnV4ojtCWM=
+	t=1747307854; cv=none; b=mJ4YD9EIWfTIa1Qi3rRK3fT37ZvnetjDIukK4vBSLGel6OtaBJQsCZFjq/Say2wXiVKXd4uQrVjEfKnQ/lpH1PpY+UjZqe2If5M2edrwb2TarDzx0VjQtXbbeIVx6uxMVQSB9FGpNICPvesHSmt9kUUN4JfIO6ZRpiWrxiMj5Nc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747307761; c=relaxed/simple;
-	bh=15KP2pl6dWb1y5/Go7dvJ7kbiOO+tNWUThlBC2YivmE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=SX4vDmQDlzbr/NLFWHK7PabekUeMOgHbc0tZaNigiM9eaeJPZw2dvQt/u4IeI784m2lII7vbZHS8Be8cc9ulNKZ98YqbPOqYASylpeBvqMKWQXD4TE1nTeFyvGXATdNbb7vb7F60D7rh+W8FzMgLzjQNPB5+kuKEk82bPE9BjiA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZyBnSX10; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99F96C4CEE7;
-	Thu, 15 May 2025 11:15:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747307760;
-	bh=15KP2pl6dWb1y5/Go7dvJ7kbiOO+tNWUThlBC2YivmE=;
-	h=From:To:Cc:Subject:Date:From;
-	b=ZyBnSX10tyblkRxhmOiwlDFQulDd2bDibTSzQPGXi6i3yyH1BYCxHSfHK56elpRJq
-	 GcYJ8YF5ORkfHwgyBccI6P0EJXcg7ADzjGILpz6MTn5k04D6pmAabAMIYfmykukkOB
-	 jZd+tnvB0M6mjcGZ5LKYGAyznOakpmbpE/oIHCWmxK+j0270J619f7aO3hmIogCfIu
-	 QR7Fm29pVfvHGmSn+XTh4jsEoyF2cFfJ2H+F/l+q0DN6a6xCKqa6XRZ5dJu2nDoDGq
-	 mkTDSxQJlIOUzkbBm2jrspv7G0wS1BpCRljPlV5c/KGTfRboNuxR4gSWcDFMxqWYF1
-	 bHovMBag8j1Kw==
-From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org
-Subject: [PATCH v2] tracing: ring_buffer: Rewind persistent ring buffer when reboot
-Date: Thu, 15 May 2025 20:15:56 +0900
-Message-ID:  <174730775661.3893490.10420015749079085314.stgit@mhiramat.tok.corp.google.com>
-X-Mailer: git-send-email 2.49.0.1101.gccaa498523-goog
-User-Agent: StGit/0.19
+	s=arc-20240116; t=1747307854; c=relaxed/simple;
+	bh=Dcblf3rP0VSvMo8m6duc6axe6PdbXnCW8pPpIQCirQY=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=EaLNuBPSWDFEcWdHDblWRqbN6+5oROBEqJmsgia96//Uh0y/jtZO7LYGyys/FwkYy/oWZP+aOUt4+yRR6UXxX70+HIWjq3gZElzEsH3X3M+Wcb3aV7JK98Rme+LGVeyixn57jvcyvG1P/vKk3vX64WtGgce0XqOIrHmab3c8Wi0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Dmn9GImV; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1747307853; x=1778843853;
+  h=date:from:to:cc:subject:message-id;
+  bh=Dcblf3rP0VSvMo8m6duc6axe6PdbXnCW8pPpIQCirQY=;
+  b=Dmn9GImVkEIP0iF1oxEzbpgJOGgJPjEkMpZ23sk6tUJFSquHPLV6b5v3
+   SehHQl6/Eug0m7p5DpwuyHUCx9vrQs0gZxgc1Amz6rLBDKia1TrzCPvKx
+   3XXNgMiTKIwwMGSrPxnL0S6jDrPGbhYvRMiOUj/Req98jxBoEJrUOk/ZE
+   bjg8twd7kIaxXgof2SNu+pwn6l1g6NyoaqkizRHM+EZ0Nt+pPt/kGlfy+
+   4UFjtAFQ4ZdDEWKQxaDTOctlt4dtCFPkHvCutQ4R7trzoej93koL6hnr0
+   e2OmIULCS72l6EP2yxIXNWyS/IuaKwFEsNEZYHFlGkdkGQHfiRdP4hPYS
+   w==;
+X-CSE-ConnectionGUID: hjovG3oCR6KlcKi2Sj7lYA==
+X-CSE-MsgGUID: YVcrmMA9QDeS/jz4l/gLOA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11433"; a="36855852"
+X-IronPort-AV: E=Sophos;i="6.15,291,1739865600"; 
+   d="scan'208";a="36855852"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2025 04:17:32 -0700
+X-CSE-ConnectionGUID: WgZCSrGNQbaENVMzdFfbUg==
+X-CSE-MsgGUID: 0sHAVgdQSciGEY0Ka0ozfA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,291,1739865600"; 
+   d="scan'208";a="143542131"
+Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
+  by fmviesa004.fm.intel.com with ESMTP; 15 May 2025 04:17:32 -0700
+Received: from kbuild by 1992f890471c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uFWae-000IJN-30;
+	Thu, 15 May 2025 11:17:28 +0000
+Date: Thu, 15 May 2025 19:16:44 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:irq/core] BUILD SUCCESS WITH WARNING
+ 58eb5721a445ea0af310d1410d7117a1910627bc
+Message-ID: <202505151934.tuMwr7bw-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
 
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git irq/core
+branch HEAD: 58eb5721a445ea0af310d1410d7117a1910627bc  genirq/manage: Use the correct lock guard in irq_set_irq_wake()
 
-Rewind persistent ring buffer pages which have been read in the
-previous boot. Those pages are highly possible to be lost before
-writing it to the disk if the previous kernel crashed. In this
-case, the trace data is kept on the persistent ring buffer, but
-it can not be read because its commit size has been reset after
-read.
-This skips clearing the commit size of each sub-buffer and
-recover it after reboot.
+Warning (recently discovered and may have been fixed):
 
-Note: If you read the previous boot data via trace_pipe, that
-is not accessible in that time. But reboot without clearing (or
-reusing) the read data, the read data is recovered again in the
-next boot.
-Thus, when you read the previous boot data, clear it by
-`echo > trace`.
+    https://lore.kernel.org/oe-kbuild-all/202505151057.xbyXAbEn-lkp@intel.com
 
-Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
----
- Changes in v2:
-  - Stop rewind if timestamp is not older.
-  - Rewind reader page and reset all indexes.
-  - Make ring_buffer_read_page() not clear the commit size.
----
- kernel/trace/ring_buffer.c |   99 ++++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 95 insertions(+), 4 deletions(-)
+    kernel/irq/debugfs.c:233:26: warning: 'sprintf' may write a terminating nul past the end of the destination [-Wformat-overflow=]
 
-diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
-index 6859008ca34d..48f5f248eb4c 100644
---- a/kernel/trace/ring_buffer.c
-+++ b/kernel/trace/ring_buffer.c
-@@ -1358,6 +1358,13 @@ static inline void rb_inc_page(struct buffer_page **bpage)
- 	*bpage = list_entry(p, struct buffer_page, list);
- }
- 
-+static inline void rb_dec_page(struct buffer_page **bpage)
-+{
-+	struct list_head *p = rb_list_head((*bpage)->list.prev);
-+
-+	*bpage = list_entry(p, struct buffer_page, list);
-+}
-+
- static struct buffer_page *
- rb_set_head_page(struct ring_buffer_per_cpu *cpu_buffer)
- {
-@@ -1866,10 +1873,11 @@ static int rb_validate_buffer(struct buffer_data_page *dpage, int cpu)
- static void rb_meta_validate_events(struct ring_buffer_per_cpu *cpu_buffer)
- {
- 	struct ring_buffer_cpu_meta *meta = cpu_buffer->ring_meta;
--	struct buffer_page *head_page;
-+	struct buffer_page *head_page, *orig_head;
- 	unsigned long entry_bytes = 0;
- 	unsigned long entries = 0;
- 	int ret;
-+	u64 ts;
- 	int i;
- 
- 	if (!meta || !meta->head_buffer)
-@@ -1885,8 +1893,93 @@ static void rb_meta_validate_events(struct ring_buffer_per_cpu *cpu_buffer)
- 	entry_bytes += local_read(&cpu_buffer->reader_page->page->commit);
- 	local_set(&cpu_buffer->reader_page->entries, ret);
- 
--	head_page = cpu_buffer->head_page;
-+	orig_head = head_page = cpu_buffer->head_page;
-+	ts = head_page->page->time_stamp;
-+
-+	/*
-+	 * Try to rewind the head so that we can read the pages which already
-+	 * read in the previous boot.
-+	 */
-+	if (head_page == cpu_buffer->tail_page)
-+		goto rewound;
-+
-+	rb_dec_page(&head_page);
-+	for (i = 0; i < meta->nr_subbufs + 1; i++, rb_dec_page(&head_page)) {
-+
-+		/* Rewind until tail (writer) page. */
-+		if (head_page == cpu_buffer->tail_page)
-+			break;
-+
-+		/* Ensure the page has older data than head. */
-+		if (ts < head_page->page->time_stamp)
-+			break;
-+
-+		ts = head_page->page->time_stamp;
-+		/* Ensure the page has correct timestamp and some data. */
-+		if (!ts || rb_page_commit(head_page) == 0)
-+			break;
-+
-+		/* Stop rewind if the page is invalid. */
-+		ret = rb_validate_buffer(head_page->page, cpu_buffer->cpu);
-+		if (ret < 0)
-+			break;
-+
-+		/* Recover the number of entries and update stats. */
-+		local_set(&head_page->entries, ret);
-+		if (ret)
-+			local_inc(&cpu_buffer->pages_touched);
-+		entries += ret;
-+		entry_bytes += rb_page_commit(head_page);
-+	}
-+	pr_info("Rewound %d pages on cpu%d\n", i, cpu_buffer->cpu);
-+
-+	/* The last rewound page must be skipped. */
-+	if (head_page != orig_head)
-+		rb_inc_page(&head_page);
- 
-+	/* If there are rewound pages, rewind the reader page too. */
-+	if (head_page != orig_head) {
-+		struct buffer_page *bpage = orig_head;
-+
-+		rb_dec_page(&bpage);
-+		/*
-+		 * Insert the reader_page before the original head page.
-+		 * Since the list encode RB_PAGE flags, general list
-+		 * operations should be avoided.
-+		 */
-+		cpu_buffer->reader_page->list.next = &orig_head->list;
-+		cpu_buffer->reader_page->list.prev = orig_head->list.prev;
-+		orig_head->list.prev = &cpu_buffer->reader_page->list;
-+		bpage->list.next = &cpu_buffer->reader_page->list;
-+
-+		/* Make the head_page tthe new read page */
-+		cpu_buffer->reader_page = head_page;
-+		bpage = head_page;
-+		rb_inc_page(&head_page);
-+		head_page->list.prev = bpage->list.prev;
-+		rb_dec_page(&bpage);
-+		bpage->list.next = &head_page->list;
-+		rb_set_list_to_head(&bpage->list);
-+
-+		cpu_buffer->head_page = head_page;
-+		meta->head_buffer = (unsigned long)head_page->page;
-+
-+		/* Reset all the indexes */
-+		bpage = cpu_buffer->reader_page;
-+		meta->buffers[0] = rb_meta_subbuf_idx(meta, bpage->page);
-+		bpage->id = 0;
-+
-+		for (i = 0, bpage = head_page; i < meta->nr_subbufs;
-+		     i++, rb_inc_page(&bpage)) {
-+			meta->buffers[i + 1] = rb_meta_subbuf_idx(meta, bpage->page);
-+			bpage->id = i + 1;
-+		}
-+
-+		/* We'll restart verifying from orig_head */
-+		head_page = orig_head;
-+	}
-+
-+ rewound:
- 	/* If the commit_buffer is the reader page, update the commit page */
- 	if (meta->commit_buffer == (unsigned long)cpu_buffer->reader_page->page) {
- 		cpu_buffer->commit_page = cpu_buffer->reader_page;
-@@ -5348,7 +5441,6 @@ rb_get_reader_page(struct ring_buffer_per_cpu *cpu_buffer)
- 	 */
- 	local_set(&cpu_buffer->reader_page->write, 0);
- 	local_set(&cpu_buffer->reader_page->entries, 0);
--	local_set(&cpu_buffer->reader_page->page->commit, 0);
- 	cpu_buffer->reader_page->real_end = 0;
- 
-  spin:
-@@ -6642,7 +6734,6 @@ int ring_buffer_read_page(struct trace_buffer *buffer,
- 		cpu_buffer->read_bytes += rb_page_size(reader);
- 
- 		/* swap the pages */
--		rb_init_page(bpage);
- 		bpage = reader->page;
- 		reader->page = data_page->data;
- 		local_set(&reader->write, 0);
+Warning ids grouped by kconfigs:
 
+recent_errors
+`-- x86_64-randconfig-123-20250515
+    `-- kernel-irq-debugfs.c:warning:sprintf-may-write-a-terminating-nul-past-the-end-of-the-destination
+
+elapsed time: 1461m
+
+configs tested: 124
+configs skipped: 8
+
+tested configs:
+alpha                             allnoconfig    gcc-14.2.0
+alpha                            allyesconfig    gcc-14.2.0
+arc                              alldefconfig    gcc-14.2.0
+arc                              allmodconfig    gcc-14.2.0
+arc                               allnoconfig    gcc-14.2.0
+arc                              allyesconfig    gcc-14.2.0
+arc                   randconfig-001-20250514    gcc-13.3.0
+arc                   randconfig-002-20250514    gcc-14.2.0
+arm                              allmodconfig    gcc-14.2.0
+arm                               allnoconfig    clang-21
+arm                              allyesconfig    gcc-14.2.0
+arm                          ep93xx_defconfig    clang-21
+arm                            mps2_defconfig    clang-21
+arm                        multi_v7_defconfig    gcc-14.2.0
+arm                         nhk8815_defconfig    clang-21
+arm                   randconfig-001-20250514    clang-21
+arm                   randconfig-002-20250514    clang-21
+arm                   randconfig-003-20250514    gcc-7.5.0
+arm                   randconfig-004-20250514    gcc-7.5.0
+arm                         vf610m4_defconfig    gcc-14.2.0
+arm64                            allmodconfig    clang-19
+arm64                             allnoconfig    gcc-14.2.0
+arm64                 randconfig-001-20250514    clang-17
+arm64                 randconfig-002-20250514    gcc-5.5.0
+arm64                 randconfig-003-20250514    gcc-5.5.0
+arm64                 randconfig-004-20250514    clang-21
+csky                              allnoconfig    gcc-14.2.0
+csky                  randconfig-001-20250514    gcc-13.3.0
+csky                  randconfig-002-20250514    gcc-14.2.0
+hexagon                          allmodconfig    clang-17
+hexagon                           allnoconfig    clang-21
+hexagon                          allyesconfig    clang-21
+hexagon               randconfig-001-20250514    clang-21
+hexagon               randconfig-002-20250514    clang-21
+i386                             allmodconfig    gcc-12
+i386                              allnoconfig    gcc-12
+i386                             allyesconfig    gcc-12
+i386        buildonly-randconfig-001-20250514    clang-20
+i386        buildonly-randconfig-002-20250514    gcc-12
+i386        buildonly-randconfig-003-20250514    clang-20
+i386        buildonly-randconfig-004-20250514    clang-20
+i386        buildonly-randconfig-006-20250514    gcc-12
+i386                                defconfig    clang-20
+loongarch                         allnoconfig    gcc-14.2.0
+loongarch             randconfig-001-20250514    gcc-14.2.0
+loongarch             randconfig-002-20250514    gcc-14.2.0
+m68k                              allnoconfig    gcc-14.2.0
+m68k                         amcore_defconfig    gcc-14.2.0
+microblaze                        allnoconfig    gcc-14.2.0
+mips                              allnoconfig    gcc-14.2.0
+mips                   sb1250_swarm_defconfig    gcc-14.2.0
+nios2                             allnoconfig    gcc-14.2.0
+nios2                 randconfig-001-20250514    gcc-7.5.0
+nios2                 randconfig-002-20250514    gcc-11.5.0
+openrisc                          allnoconfig    gcc-14.2.0
+openrisc                         allyesconfig    gcc-14.2.0
+openrisc                            defconfig    gcc-14.2.0
+openrisc                 simple_smp_defconfig    gcc-14.2.0
+parisc                           allmodconfig    gcc-14.2.0
+parisc                            allnoconfig    gcc-14.2.0
+parisc                           allyesconfig    gcc-14.2.0
+parisc                              defconfig    gcc-14.2.0
+parisc                randconfig-001-20250514    gcc-12.4.0
+parisc                randconfig-002-20250514    gcc-10.5.0
+powerpc                    adder875_defconfig    gcc-14.2.0
+powerpc                          allmodconfig    gcc-14.2.0
+powerpc                           allnoconfig    gcc-14.2.0
+powerpc                          allyesconfig    clang-21
+powerpc               randconfig-001-20250514    clang-17
+powerpc               randconfig-002-20250514    gcc-5.5.0
+powerpc               randconfig-003-20250514    gcc-7.5.0
+powerpc64             randconfig-001-20250514    gcc-10.5.0
+powerpc64             randconfig-002-20250514    clang-19
+powerpc64             randconfig-003-20250514    gcc-5.5.0
+riscv                            allmodconfig    clang-21
+riscv                             allnoconfig    gcc-14.2.0
+riscv                            allyesconfig    clang-16
+riscv                               defconfig    clang-21
+riscv                 randconfig-001-20250514    gcc-7.5.0
+riscv                 randconfig-002-20250514    gcc-14.2.0
+s390                             alldefconfig    gcc-14.2.0
+s390                             allmodconfig    clang-18
+s390                              allnoconfig    clang-21
+s390                             allyesconfig    gcc-14.2.0
+s390                                defconfig    clang-21
+s390                  randconfig-001-20250514    clang-21
+s390                  randconfig-002-20250514    clang-21
+sh                               allmodconfig    gcc-14.2.0
+sh                                allnoconfig    gcc-14.2.0
+sh                               allyesconfig    gcc-14.2.0
+sh                        apsh4ad0a_defconfig    gcc-14.2.0
+sh                                  defconfig    gcc-14.2.0
+sh                    randconfig-001-20250514    gcc-11.5.0
+sh                    randconfig-002-20250514    gcc-9.3.0
+sh                   rts7751r2dplus_defconfig    gcc-14.2.0
+sparc                            allmodconfig    gcc-14.2.0
+sparc                             allnoconfig    gcc-14.2.0
+sparc                 randconfig-001-20250514    gcc-8.5.0
+sparc                 randconfig-002-20250514    gcc-14.2.0
+sparc64                             defconfig    gcc-14.2.0
+sparc64               randconfig-001-20250514    gcc-14.2.0
+sparc64               randconfig-002-20250514    gcc-14.2.0
+um                               allmodconfig    clang-19
+um                                allnoconfig    clang-21
+um                               allyesconfig    gcc-12
+um                                  defconfig    clang-21
+um                             i386_defconfig    gcc-12
+um                    randconfig-001-20250514    gcc-12
+um                    randconfig-002-20250514    gcc-12
+um                           x86_64_defconfig    clang-21
+x86_64                            allnoconfig    clang-20
+x86_64                           allyesconfig    clang-20
+x86_64      buildonly-randconfig-001-20250514    clang-20
+x86_64      buildonly-randconfig-002-20250514    gcc-12
+x86_64      buildonly-randconfig-003-20250514    gcc-12
+x86_64      buildonly-randconfig-004-20250514    gcc-12
+x86_64      buildonly-randconfig-005-20250514    clang-20
+x86_64      buildonly-randconfig-006-20250514    gcc-12
+x86_64                              defconfig    gcc-11
+x86_64                          rhel-9.4-rust    clang-18
+xtensa                            allnoconfig    gcc-14.2.0
+xtensa                randconfig-001-20250514    gcc-10.5.0
+xtensa                randconfig-002-20250514    gcc-12.4.0
+xtensa                         virt_defconfig    gcc-14.2.0
+
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
