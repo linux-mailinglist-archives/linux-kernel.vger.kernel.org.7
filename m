@@ -1,253 +1,893 @@
-Return-Path: <linux-kernel+bounces-650320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-650322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C14FAB8FCA
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 21:17:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 396A5AB8FCD
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 21:17:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9596B4E855C
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 19:17:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C03571BC2713
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 19:18:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E3F025D1E1;
-	Thu, 15 May 2025 19:17:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D95E028A1D1;
+	Thu, 15 May 2025 19:17:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="rkXnPYlt"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2089.outbound.protection.outlook.com [40.107.223.89])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZznomIsl"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E0EF4690;
-	Thu, 15 May 2025 19:17:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.89
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747336631; cv=fail; b=d08Wm5XHH9ayiwWP6nkNILUsiUbe0DmLRar3l7yWddsUQqMuM+B6nfMm1s+ASt0j7bQYuHodfsQnSb20BNMabHTq32UR2sjU9Dj3wJab51Hnv6sA9n1wJ10tkLOxNUjJwfEu0YTu/BJZWyyFNi/zpaVAtXUfZXmN3F/e4amszs8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747336631; c=relaxed/simple;
-	bh=uoyDfTo+WZBEFr1KtXMtF38neT45DkVvKlTwXYHTLUA=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=nq4gp5GDo12Lwm2fVGVR7lwwMCnWKTdg3Ru7MOIT4mU2tSOL7f3pSOOs4mjfnyzWDJfx0YlCyJT6qM/29w1tY1gVEJyb4vDQJRdidDFNwJtx2blsHulgc1ArUBruyq0nWxZWYqAGvmOuyhuLkVRYkzDksV5zEXGLqSjK/XlkJQw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=rkXnPYlt; arc=fail smtp.client-ip=40.107.223.89
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=bcVAjkExyQKxZYJUjj0PFb6qboz46x4ZBBjC1Hyazy8VwpEvJ9+ST5COH9ijLhe1ZkK8z58tuI4Wd+ZAD0zbnBKPRA1Lw8V6zkRX9RYUZDjiypCIsNkoMvaKj4kmO2a0fKFgiu96Z9nEIqbWYszICXkssxKTcrmjajcKkIfXv9Kc/6EXxB4BhEp6KeVRnUHp6ax2qEXx6qDJyw0AjVMNRZ0t2MfKkUUVorSEd8m3Ff0Od2Kpey6csdkgTMxO2TAufVEhvFrFu/w9E6a4MMQ48ieQe8LYfw91x0s3JEl/VDSTNTqLeeHdSKwKbV5IxpzdEezq+g56jeDt6m29fulOXA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=LCoyiY062KxW8ghblZQE73GfF14AlvogToXc32sfFPM=;
- b=a59t6vqMS8cUxcSrbamIQUGqPrBj1qZowukB6aRFMo1FIN+RDIa27DGOLyF8CnFjPaRRB/iBO/efb7nilam7ziVO34GhCGfCxkHWRmlmSGFD6ARTN2zDwcalNIrJumIZ9MzD/xnEFzEm3mn2r0onSynGpE5cdCedeYlB+McFpGHsDVWJza40MFfhzyFWg/NZ1FKgp4CAAOpinU9+I2eF1vvBo3GPpioZVgm0P5V12Jn3WHFMYJ1qJiWK31ypNgxONXnHw8XbsEb2KbOQnKEEUeobTnpoHpqMSTHNajOTJr/RUqCLF/lKwZIGHiPRX6bniU+pYJpY/ePDe2mH9kXuWQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=LCoyiY062KxW8ghblZQE73GfF14AlvogToXc32sfFPM=;
- b=rkXnPYltXb2vOd75hftI7cxV4Mi406PJ9qF4aLEemQTryczWP68Dt1XWQtiJdqVnAsHiogucxMS3VS0Fu5syIu/Nbfmo+YpQhn9GYl+fvJLRot8ASf4Ji5oIvUe9oK1zGUpbso3XP+y13pKXTp3qDIteOj5Z2Bpqei0t+3NFHUZEUgjPzkBai/S48bk6+uvlninW0JDwxZLKzW76lqwObx+/NDEkZuCD6zBW5NQv/Tf+MVhq3esplCyrbyci21XlLY9jG05qxZUdseOYjAyzM1cFLHBdDatUFwppAgSz6Ob4sku2iiSgHBLvJl3knwIGhroXKosRWBHp/CO5W0pITA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from LV2PR12MB5968.namprd12.prod.outlook.com (2603:10b6:408:14f::7)
- by DS2PR12MB9663.namprd12.prod.outlook.com (2603:10b6:8:27a::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8722.30; Thu, 15 May
- 2025 19:17:03 +0000
-Received: from LV2PR12MB5968.namprd12.prod.outlook.com
- ([fe80::e6dd:1206:6677:f9c4]) by LV2PR12MB5968.namprd12.prod.outlook.com
- ([fe80::e6dd:1206:6677:f9c4%7]) with mapi id 15.20.8722.027; Thu, 15 May 2025
- 19:17:03 +0000
-Message-ID: <8b14b078-b899-42e8-8522-599daa65bc63@nvidia.com>
-Date: Thu, 15 May 2025 12:17:00 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] rust: add basic ELF sections parser
-To: Timur Tabi <timur@kernel.org>, Greg KH <gregkh@linuxfoundation.org>
-Cc: Alexandre Courbot <acourbot@nvidia.com>, Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>,
- linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
-References: <20250515-elf-v1-1-4b53745453c0@nvidia.com>
- <2025051543-override-rockiness-3ead@gregkh>
- <D9WLFTPRB9FJ.OL6I760HKALZ@nvidia.com> <D9WP3YU31199.Q8IEDBJZ87LU@nvidia.com>
- <2025051532-gentleman-reset-58f2@gregkh>
- <CAOZdJXWKLu0y+kwC+Bm8nBCLizQVpsDdDUoS--hVgz2vnuZJQg@mail.gmail.com>
-Content-Language: en-US
-From: John Hubbard <jhubbard@nvidia.com>
-In-Reply-To: <CAOZdJXWKLu0y+kwC+Bm8nBCLizQVpsDdDUoS--hVgz2vnuZJQg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SJ0PR05CA0184.namprd05.prod.outlook.com
- (2603:10b6:a03:330::9) To LV2PR12MB5968.namprd12.prod.outlook.com
- (2603:10b6:408:14f::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B378191F6C
+	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 19:17:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747336659; cv=none; b=CLuGsut6UiAuzxIYMJWccbFczJ0B1vR5gs5JDy/TEG0r6gk7M3kmfCBjd8EHUTt7JC7irTYiGwwYYo8shsPgQ8kBMxGB7J2pH8aBhHXOzGt4lijp0kuGj22WnnvUmPAxF5gjK/JlENX+PJEkU4GM0WkSVBBefMmQXBQBJwknw4k=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747336659; c=relaxed/simple;
+	bh=L4ErrlartbpiaXjuuc4IMxcUD86ChXOTzftrgtTG3Mc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nKaDV/Iuy926TmGh/Ht6QXpEiomk7I1KvoUpbHk8CxMXFlGgyKh8qmMRDf4i5z1uwpKjMrLR+vVtSEfrni7kk8wPgFhPbaGC/jj8Gd3f8UsSynfQVFUhA0GawnKwsjydfcC78Ar7z0WLun2/O4WWpjVe4yXSne6aQfN/iFUioEQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZznomIsl; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1747336654;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=sJNMtDx5hX6lhKqp4kq8GqC8YkQ6trkiCXO1tYpsLKU=;
+	b=ZznomIslLMzifwVFznBBWLSkh3sm7DazxLLcNVOTEm7JituHs2VE0rexGE8w4NXbjZgGua
+	oorbgnWlKCd7x2d7Xz/sKHclDqvwNcDfO4VGHO4IwiBSG9SzlX1kjrmlZtrRJeNgqZylpj
+	+i7Rjw0iGHWUx1HZ3gtAkntKmrtMtvg=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-592-jIweWxi9MDi_OJlUNsG9gQ-1; Thu, 15 May 2025 15:17:32 -0400
+X-MC-Unique: jIweWxi9MDi_OJlUNsG9gQ-1
+X-Mimecast-MFC-AGG-ID: jIweWxi9MDi_OJlUNsG9gQ_1747336651
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3a35989e5b2so592147f8f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 12:17:32 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747336651; x=1747941451;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=sJNMtDx5hX6lhKqp4kq8GqC8YkQ6trkiCXO1tYpsLKU=;
+        b=DjRV9TJum8bjMVYLPNOeP19eRM/aLmAL7VQovprkl75fALalyMrCIKctJOhMgUDiPH
+         aCIspdM1NyPUOKssPc93q2ZASxO04AiLKRxY1+gT2YqA6pYPCvXBWFr9/k5ftgQCL6Vr
+         0qBq2KcfODPgn3CAuQweWOuYVqhJxF5qNPDln/heDWEkSsRsPxKeXgao3rf+YTKpn9hm
+         Zwo66cWS1pWp060FvaTRlOsf/MFFwJwpL7Fvbvq5MFk+d+RPaTDTso/qSFUkEf2x7N/9
+         EOO6AI/yhqNjbVu+sYMwuTbqGMJX+GbahVselxCDDXitXTVVVFuGrg8dKlb+Rx/FpW/E
+         H+9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVaH+06JnJh+oUgzcyepFLqqzFbWzbbYdWNV3+b8EkdDYIWiXZj9NLpjTakoCpsfQZNwBOVvacXG72/5fI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8AVWAMKzQJAQ3ctLxbfLgo2X6uniCqvxWy675eEnWhwXtub7a
+	2FkeUuZbJjTg5EOgeoMIeS9neJaRE7VvSLDus7N9ZZZUJMTLsyy1BjamTLuLtl/3F5GcOy25tLJ
+	80/+iyE/U/xs31dCXMyLd1wyl7LEKZZVM//oMadypPPiSHu+0u49v4FqiWAPNqxjDww==
+X-Gm-Gg: ASbGncs/jYdyGmJVI5TM9qHSxMJto10ic5dJqx9E/ZoLGYDdaRNCG1LlXWv5GDt5EFc
+	4oURL+wqfeJED6i4shXHpqIhh77+hrBSpOtyySGwqrEwrSDGM3VFPu4otVrmdevWZfEdx0m3z3L
+	Zz8tYjTedXGD4Om5hDk+MMO0QPVooTkgejZNHHUtBD9d9MnkexwfjJH6y0T053Sq1Cl503ZIRWU
+	L3UUKgJAulEy/xic3L9R9SjKlTDUL7UvYZYmLu+jvuRoTjjnGaTECWbeEHSig5jvfQ6RETHfN7u
+	DalXk0FlP+eKqEJzElis1okVZen4RMPQXd4DtwPF0EAKgr/AZGtXoioihuDkZkFQbLeu2PUxDVe
+	ZgmaR3M+7cBeh4SFDCpgfB3SWGicaMmFriNf12Mw=
+X-Received: by 2002:a5d:5f8d:0:b0:3a1:f5c6:2bd with SMTP id ffacd0b85a97d-3a35c835163mr1013214f8f.31.1747336651056;
+        Thu, 15 May 2025 12:17:31 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IECT8dyUlXgGTgoGjmJtA6ShxjYaPIjG4aJRMZeEL1TlBKtaWpU5rNup1niQGn7Xjq8wdQwXw==
+X-Received: by 2002:a5d:5f8d:0:b0:3a1:f5c6:2bd with SMTP id ffacd0b85a97d-3a35c835163mr1013167f8f.31.1747336650376;
+        Thu, 15 May 2025 12:17:30 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f4a:8900:884a:b3af:e3c9:ec88? (p200300d82f4a8900884ab3afe3c9ec88.dip0.t-ipconnect.de. [2003:d8:2f4a:8900:884a:b3af:e3c9:ec88])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-442f39ef8f7sm76660795e9.39.2025.05.15.12.17.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 15 May 2025 12:17:29 -0700 (PDT)
+Message-ID: <869607c4-5deb-451e-bd83-fe5890bd54cf@redhat.com>
+Date: Thu, 15 May 2025 21:17:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV2PR12MB5968:EE_|DS2PR12MB9663:EE_
-X-MS-Office365-Filtering-Correlation-Id: ff5aa70c-9c56-4a09-b5e2-08dd93e512f6
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|7416014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Mm16c1ZFcmMvT0xHZUdhWUZ6dUVuaW5IS0tjWElsSHFOdFgveEtGdUxLN3lJ?=
- =?utf-8?B?V01vVjZ0SEJXSjUzV3FUMVpYMzdIZGZ0M1d5anpKWEpGMmtRcVpJV3luSjlK?=
- =?utf-8?B?Y0twb3YvVm1EYnA2MjdxRG1nMnowUUd4VktJNjh4S2FwR0FvaDlpbS9BZUlj?=
- =?utf-8?B?UHplZ2FhK1YybTdCSjIzVlBGT2NJLzdvVTIyYjBTVVZOQmJQN3JLam4wcXA5?=
- =?utf-8?B?SmRsVUp0biszYjBZWW5yc04yYUlDZFdnK3FPeEVJL1ZiUGdqQlJuMWFQcWhJ?=
- =?utf-8?B?TGlURTQ5Zi9FRW5wQkV6bkZzVUIvNnJUWFVMWVoyYjRhUTZyY0pGQmlJcmU5?=
- =?utf-8?B?Um55RnlBekV5TDloQTRubDZGQUFPZzIyR2U1eDB0MnVGcHRhQW9hZHduWHJJ?=
- =?utf-8?B?b2M2N0ZpdlJVTk5tZEw2RTNiR3ZVd0Z6cFplQzdSb0dWSHRPMzhpZjByZVAz?=
- =?utf-8?B?YjF5NUVoWHVHSU5Kamk2MVJNT2ZQWGpvQkpPUUhpSXhaWWtkbWtYR3czcTVy?=
- =?utf-8?B?OGxtWXVadHRGemIyTlVZdWkyUUlYVHF3V1lPTGpmbDkvbzgwQWI0amdDMGpF?=
- =?utf-8?B?a2xrMmxBdXE1YXZmMWJHSUF1UitCMjFjUWxQbG83QW8rdHdDRXZWOHRKUFRP?=
- =?utf-8?B?SjJVTUFSU2ladElodktrUC9kRUNpYVpqcFp1emlDaEVpaDZxK1RRaXgxTVpX?=
- =?utf-8?B?cjRkVGo1eDFWelRmWE5jQlAveFM5OE1SZkpuNnI1NmNjMUFVdVBPZUpSVERo?=
- =?utf-8?B?ZVZYbTV2aStHUWZhN3J2c0drMEtaQUJZZTY2MDNuMjV5VzhmblpRVHJuTVpM?=
- =?utf-8?B?b1c5dE82SWVwWWc3TmdTQ1ZJdXF5cWVFMFlUb2JvTGE2WEg2aVRYSWZrb3Ix?=
- =?utf-8?B?SS9wT2VhM0RScU9QeGNVdUJNK3UySTMzdEl1K216U1NxcytORTN2Rm9GNTA0?=
- =?utf-8?B?b2FvdUtSZHFZQzhhaHhqaGFXd2dNQ1o4aC8rbUM2UzRuamhSNUhTcEhjcnp2?=
- =?utf-8?B?bXhuYkM4cllERFhZdUVCV3lKME5JS0ZzVFFzTVdqMEJkU0JoOWs4aUc4bWlI?=
- =?utf-8?B?UXRYVHI2VjQvemFBVUl4eFMzMXAySjBrNU90NFA4RTgvZ1QyNzF6MmJtbm5x?=
- =?utf-8?B?WXpEbEQxZUxuR2x6eCtESTE0M3pNb3IrM3l1SXUvQVYveTZwaHYxcm5zNmt5?=
- =?utf-8?B?WHo5Ukc2ZE1kdG1Tb0tNMjFGYmNkcFZ6bWFiTXhuSzNNYXh4ZDBrR2dpU1pF?=
- =?utf-8?B?TzZNeTl2aHpFRFQyZGFXVm1HK2loVWgzUlRWeWtOVG5CVHFGQURTQzhtZExn?=
- =?utf-8?B?a0llRjFMYVF3S0QyeVRCNVlYZXBKWUZmQWljdE9rL1VSZzBTTWhFbmZkSXpn?=
- =?utf-8?B?SVpEeitJVlBoaEJSaEpFb0RuTC8yVllsdEZtNkNhcW9UMWt1NTM0clE1dUZr?=
- =?utf-8?B?MkxGSnhQNCtwSHhYSVJVbWVjYkFVNTJ4SnJRRVd3T0RzMHM3MmRRVmZJVFpW?=
- =?utf-8?B?UEtUd2ZSZ0lHaC9vOWFlMDVIc3R1YWc3ZUpINVBJQ2tOcHFheGluRm1RMVRT?=
- =?utf-8?B?QS9DMFBRTEtMcm5VaHlsd3habldMRGJvZ1YvbTQ5UThmMmQ4NmJLNG9sQWw5?=
- =?utf-8?B?SGNIT0ZiSS9iSkVLK0hRNy92aWJGQTc4Nm8wMnFLYk1Vc1MvWjZhM3JYMlpa?=
- =?utf-8?B?Ulh3MmJGOUVIWXI3ODNGd05TTVMzWlk4NGg0ZEJaSU9XNE9PdEx0cjE0bzlN?=
- =?utf-8?B?ZENWMStHc2xlYWlreXVvL2RiSGxlNE93ejRiWU9KcGdKT1RNeHZxNTNUUHVu?=
- =?utf-8?B?Y0RCU0k0Um5wbDZ1UTMxWEszOE9KZy9FQlk1eE1qNmRXdDJ1bk4wamtHMm0x?=
- =?utf-8?B?ODVMZ2tESnIrNzBJRDJtbVZLekNmU3E3Titlc1NtL1dMZ2FLVlpXNDRtV29r?=
- =?utf-8?Q?7vD3icBVm8s=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV2PR12MB5968.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(7416014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?ZEpEMldqSjF0a0Nzb0RHcWNsTDNGMFQrWC9xZ0Y5STFieHI1ajdxMEo3SkpM?=
- =?utf-8?B?ZDVUZWpUVzN2clV2MnpWQmNmaGdPeTUzenBTTkJWSXc0WElVY0hMbkZkZkVX?=
- =?utf-8?B?bStxUU4vSEJxSkhRbjVUeURMaytpdTJGT1Rsc0RBTEYybDcybHR0bzZ4ckl0?=
- =?utf-8?B?dXYwRG5ZY0JnNVIvbHZ6T3E3RGt6bUpNT21wdmo2SHFZVjZ0ekxjTTgxS3I4?=
- =?utf-8?B?SG5YTXJiUGpFSVpKK0I4SUw1NlI1ZUhPclNYdlVSejY0Tk5DZ2h5bWloMVVQ?=
- =?utf-8?B?S1k3aW9ya0tmekZ4Nnk4NGF6MDE2dGJRTVpTeThwMkw0MlJsMTg1MDlWOUtz?=
- =?utf-8?B?MjhqNTJxbmFnekxoYjVXYnZPTzBkYWJpclovWXcwakJtQ1dsQTMwdFBjQ2cx?=
- =?utf-8?B?YWdrM0RzaG1KU252bDBuMEtSTldHeEo4VUQxdW5lbDJhZkliOWE2dVp6ZlNY?=
- =?utf-8?B?UlgxU3g3NUxFMGxoMGtWV3hEekF0eEVWam80dEhUb1RiSUlkWGFGZWptVkQ0?=
- =?utf-8?B?UWlZejgzZHE2SWFRT3BiamEyM2NxOHlXdWloRVJ5ZEtNTEpDaWJFR3ZESXVh?=
- =?utf-8?B?Q0dUWVdmRy9mcTZDZmZsbFM4NmxwalFJVjhsK2RDVm9aWFl1eUhvNDdwdVlT?=
- =?utf-8?B?dzZyMWY4bXpmVHdKc0JWN0F2dWI5VzRFbnYzTGNCWHhONXFEYnhuTDF1djhn?=
- =?utf-8?B?ZmwzK3BiQm16Q0hjdVBBQTBkNVBFTnViL3VVWFFoa2dUbUc3OERJSTVRQlRK?=
- =?utf-8?B?UkVBOFlvN1ZqMGFvQmZWdnVNd0RxYU01L3hFUFdYNHU5V3lUUVY0bnVOZ1py?=
- =?utf-8?B?Tkg3ZklEVGZyQThWT2JrQ0hzOHh5WS9Tck1LODlaYkZLM3d0dHErUk90eW1q?=
- =?utf-8?B?MVo1T1RON3JhN2RGalkvcFN3WlEzK0U1SC94cnRsdTN0WjVvR3VVZ21abDFk?=
- =?utf-8?B?RDVVYVF0OHRseHMxSVdabE1tWUIyTk83WmMrb1pMMGdoa1pYY2tJR2hWVUVF?=
- =?utf-8?B?cnZKZklIYUlTZVYzeUJEY2ozenY5SmlFYkNmVlgxVEVBL2F3TVBsS3F4K0Er?=
- =?utf-8?B?d0RRODViTU1yTXNrM2I4NXN4b25mWTdEZ2gwQ05GdkdiYmpFMEdEZFJZS3dy?=
- =?utf-8?B?Rzd6VEtqbjU2SG5HeW12VWo5YlA0bUtCd3dDOU9wN1lhZHh1M0Q5VlRxeUox?=
- =?utf-8?B?aXg3dFRnc2VOcTVWUnhlZ3lhSnZDNXpYejdLMFBvMHkrRXdGYUZIUDZyaExG?=
- =?utf-8?B?MTMyMGZWWWRZV2tqS3VuTE5Vc2JCVStSd2lSekRXWjUwRVRzRTNralkxUEFw?=
- =?utf-8?B?NHBZYzZRUHlkVzRxbVdMOG5WYzEzREdoTVZwek1ybmZtaFd4ZWtXeHhQNDNZ?=
- =?utf-8?B?RVFQcEx1c2Z5dmcyRVBtZk02MzRNeUFzRG41SnR0azVsaTg4dlRCVE5YdUdL?=
- =?utf-8?B?NUFTeHRVTmhLQ29xYzhmRGZNSCtrMDNhV296ckpMQ1lTS2ozVzNCOXp0dXNq?=
- =?utf-8?B?Z1M2VitsK3ZkTXpXWVZpSXRMTHJXSjZxMW9PUFoxL25zL2RyditlMTlxT1dB?=
- =?utf-8?B?VXAxWmhlaTM1OSttK0RrM015S2p2bG14WnI3U2xzbWVuaUQrb0lYc2tQY09Y?=
- =?utf-8?B?SGVDNFFXRkRvU1FobUxVaEtrQnljSnVqQjB6alNDWExzYWowY0VXdmJhdE1W?=
- =?utf-8?B?YWx0MDVqK1htckRyT3U4eGZuSExxSFdVME80THI1TmtYKzViT091Z05lUEdR?=
- =?utf-8?B?MGdaSEovcTE2K21WUFJmT2Rac2ozL29qY0JIWkk5WEU5UzV5emZtcEp1K3lR?=
- =?utf-8?B?OFhRNGYzSXZyWlpxSVVNYnNmb0VnSUlDLzEyN1dQV2NzWk01VTdnNmRXaXRQ?=
- =?utf-8?B?TFV4MXpZRlNIQ0Vtem95RjBkdVd6UHlPRVN2dU1DdWhRbFpVRjluMDJ2Ujdu?=
- =?utf-8?B?cXNVeXovQ1FTUTFpeC9QaGRuUzVLY1FwenliV2dJbGZOVlFxZGRQWDU4Qnkx?=
- =?utf-8?B?NUFQRXNUMUhWMnZoSm9iRUdXd21yTnM2Zzc1WDRrT1Jld2pGejhqc0RyQUtl?=
- =?utf-8?B?Q2tLWHphY1JuZDRQUG9FK3R6bjNXdytWeWFsTW0rb04wYjhMeSt2cEpCQVhK?=
- =?utf-8?Q?0KPDPn1QU3HvFXR8/jI4lVOQe?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ff5aa70c-9c56-4a09-b5e2-08dd93e512f6
-X-MS-Exchange-CrossTenant-AuthSource: LV2PR12MB5968.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 May 2025 19:17:03.3386
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: sKhY9ggxcdiIj1pCOid9Ug6FL2iJH/rcff2Ci72UfltrDSJhk5xoGNJx5AjC2+5JK7IAWsAC1/v653etvckNTw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS2PR12MB9663
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/6] prctl: introduce PR_THP_POLICY_DEFAULT_HUGE for the
+ process
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Usama Arif <usamaarif642@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+ hannes@cmpxchg.org, shakeel.butt@linux.dev, riel@surriel.com,
+ ziy@nvidia.com, laoar.shao@gmail.com, baolin.wang@linux.alibaba.com,
+ Liam.Howlett@oracle.com, npache@redhat.com, ryan.roberts@arm.com,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, kernel-team@meta.com
+References: <20250515133519.2779639-1-usamaarif642@gmail.com>
+ <20250515133519.2779639-2-usamaarif642@gmail.com>
+ <c0af0eb2-d10f-4ee3-87dd-c23cca6cfd1a@lucifer.local>
+ <ddc0dd46-8541-4d4a-ac59-287e11e1d3ff@gmail.com>
+ <02ead03b-339b-45c8-b252-d31a66501c39@lucifer.local>
+ <732ff995-0e18-4e8c-a0a5-14da400d4078@gmail.com>
+ <6c66e167-1be5-4298-8131-5434d9ff67df@lucifer.local>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <6c66e167-1be5-4298-8131-5434d9ff67df@lucifer.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 5/15/25 7:30 AM, Timur Tabi wrote:
-> On Thu, May 15, 2025 at 6:43 AM Greg KH <gregkh@linuxfoundation.org> wrote:
->>> Or if ELF is the problem, I don't mind introducing a WAD loader. ;)
+On 15.05.25 20:36, Lorenzo Stoakes wrote:
+> One thing I wanted to emphasise - shouldn't we invoke
+> khugepaged_enter_vma() for VMAs we set VM_HUGEPAGE for?
+> 
+> I note in __mmap_new_vma() we do so for non-anon VMAs _prior_ to invoking
+> vma_set_thp_policy().
+> 
+> I _really_ hate putting in conditional logic like this for specific
+> cases. Feels very hacky.
+> 
+> On Thu, May 15, 2025 at 05:47:34PM +0100, Usama Arif wrote:
 >>
->> The "problem" I'm not understanding is why does the kernel have to do
->> any of this parsing at all?
+>>
+>> On 15/05/2025 17:06, Lorenzo Stoakes wrote:
+>>
+>>>> Its doing the same as KSM as suggested by David. Does KSM break these tests?
+>>>> Is there some specific test you can point to that I can run that is breaking
+>>>> with this patch and not without it?
+>>>
+>>> They don't build, at all. I explain how you can attempt a build below.
+>>>
+>>
+>> Ah yes, I initially thought by break you meant they were failing. I saw that,
+>> will fix it.
+>>
+>>> And no, KSM doesn't break the tests, because steps were taken to make them
+>>> not break the tests :) I mean it's really easy - it's just adding some
+>>> trivial stubs.
+>>>
+>>
+>> Yes, will do Thanks!
 > 
-> Nova will need to parse ELF headers in order to properly load and boot
-> Nvidia firmware images.  Nouveau does this already:
+> Thanks.
 > 
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/gpu/drm/nouveau/nvkm/subdev/gsp/r535.c#n2931
+>>
+>>> If you need help with it just ping me in whatever way helps and I can help!
+>>>
+>>> It's understandable as it's not necessarily clear this is a thing (maybe we
+>>> need self tests to build it, but that might break CI setups so unclear).
+>>>
+>>> The merging is much more important!
+> 
+> To re-emphasise ^ the merging is key - I will unfortunately have to NACK
+> any series that breaks it. So this is an absolute requirement here.
+> 
+>>>
+>>>>
+>>>>
+>>>>> I really feel this series needs to be an RFC until we can get some
+>>>>> consensus on how to approach this.
+>>>>
+>>>> There was consensus in https://lore.kernel.org/all/97702ff0-fc50-4779-bfa8-83dc42352db1@redhat.com/
+>>>
+>>> I disagree with this asssessment, that doesn't look like consensus at all,
+>>> I think at least this is a very contentious or at least _complicated_ topic
+>>> that we need to really dig into.
+>>>
+>>> So in my view - it's this kind of situation that warrants an RFC until
+>>> there's some stabilisation and agreement on a way forward.
+>>>
+>>
+>> Sure will change next revision to RFC, unless hopefully maybe we can
+>> get a consensus in this revision :)
+> 
+> Thanks!
+> 
+>>
+>>>>
+>>>>>
+>>>>> On Thu, May 15, 2025 at 02:33:30PM +0100, Usama Arif wrote:
+>>>>>> This is set via the new PR_SET_THP_POLICY prctl.
+>>>>>
+>>>>> What is?
+>>>>>
+>>>>> You're making very major changes here, including adding a new flag to
+>>>>> mm_struct (!!) and the explanation/justification for this is missing.
+>>>>>
+>>>>
+>>>> I have added the justification in your reply to the coverletter.
+>>>
+>>> As stated there, you've not explained why alternatives are unworkable, I
+>>> think we need this!
+>>>
+>>> Sort of:
+>>>
+>>> 1. Why not cgroups? blah blah blah
+>>> 2. Why not process_madvise()? blah blah blah
+>>> 3. Why not bpf? blah blah blah
+>>> 4. Why not <something I've not thought of>? blah blah blah
+>>>
+>>
+>> I will add this in the next cover letter.
+> 
+> Thanks
+> 
+>>
+>>
+>>>>
+>>>>>> This will set the MMF2_THP_VMA_DEFAULT_HUGE process flag
+>>>>>> which changes the default of new VMAs to be VM_HUGEPAGE. The
+>>>>>> call also modifies all existing VMAs that are not VM_NOHUGEPAGE
+>>>>>> to be VM_HUGEPAGE. The policy is inherited during fork+exec.
+>>>>>
+>>>>> So you can only set this flag?
+>>>>>
+>>>>
+>>>> ??
+>>>
+>>> This patch is only allowing the setting of this flag. I am asking 'so you
+>>> can only set this flag?'
+>>>
+>>> To which it appears the answer is, yes I think :)
+>>>
+>>> An improved cover letter could say something like:
+>>>
+>>> "
+>>> Here we implement the first flag intended to allow the _overriding_ of huge
+>>> page policy to ensure that, when
+>>> /sys/kernel/mm/transparent_hugepage/enabled is set to madvise, we are able
+>>> to maintain fine-grained control of individual processes, including any
+>>> fork/exec'd, by setting this flag.
+>>>
+>>> In subsequent commits, we intend to permit further such control.
+>>> "
+>>>
+>>>>
+>>>>>>
+>>>>>> This allows systems where the global policy is set to "madvise"
+>>>>>> to effectively have THPs always for the process. In an environment
+>>>>>> where different types of workloads are stacked on the same machine,
+>>>>>> this will allow workloads that benefit from always having hugepages
+>>>>>> to do so, without regressing those that don't.
+>>>>>
+>>>>> Again, this explanation really makes no sense at all to me, I don't really
+>>>>> know what you mean, you're not going into what you're doing in this change,
+>>>>> this is just a very unclear commit message.
+>>>>>
+>>>>
+>>>> I hope this is answered in my reply to your coverletter.
+>>>
+>>> You still need to improve the cover letter here I think, see above for a
+>>> suggestion!
+>>>
+>>
+>> Sure, will do in the next revision, Thanks!
+> 
+> Thanks
+> 
+>>>>
+>>>>>>
+>>>>>> Signed-off-by: Usama Arif <usamaarif642@gmail.com>
+>>>>>> ---
+>>>>>>   include/linux/huge_mm.h                       |  3 ++
+>>>>>>   include/linux/mm_types.h                      | 11 +++++++
+>>>>>>   include/uapi/linux/prctl.h                    |  4 +++
+>>>>>>   kernel/fork.c                                 |  1 +
+>>>>>>   kernel/sys.c                                  | 21 ++++++++++++
+>>>>>>   mm/huge_memory.c                              | 32 +++++++++++++++++++
+>>>>>>   mm/vma.c                                      |  2 ++
+>>>>>>   tools/include/uapi/linux/prctl.h              |  4 +++
+>>>>>>   .../trace/beauty/include/uapi/linux/prctl.h   |  4 +++
+>>>>>>   9 files changed, 82 insertions(+)
+>>>>>>
+>>>>>> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+>>>>>> index 2f190c90192d..e652ad9ddbbd 100644
+>>>>>> --- a/include/linux/huge_mm.h
+>>>>>> +++ b/include/linux/huge_mm.h
+>>>>>> @@ -260,6 +260,9 @@ static inline unsigned long thp_vma_suitable_orders(struct vm_area_struct *vma,
+>>>>>>   	return orders;
+>>>>>>   }
+>>>>>>
+>>>>>> +void vma_set_thp_policy(struct vm_area_struct *vma);
+>>>>>
+>>>>> This is a VMA-specific function but you're putting it in huge_mm.h? Why
+>>>>> can't
+>>>> this be in vma.h or vma.c?
+>>>>>
+>>>>
+>>>> Sure can move it there.
+>>>>
+>>>>>> +void process_vmas_thp_default_huge(struct mm_struct *mm);
+>>>>>
+>>>>> 'vmas' is redundant here.
+>>>>>
+>>>>
+>>>> Sure.
+>>>>>> +
+>>>>>>   unsigned long __thp_vma_allowable_orders(struct vm_area_struct *vma,
+>>>>>>   					 unsigned long vm_flags,
+>>>>>>   					 unsigned long tva_flags,
+>>>>>> diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+>>>>>> index e76bade9ebb1..2fe93965e761 100644
+>>>>>> --- a/include/linux/mm_types.h
+>>>>>> +++ b/include/linux/mm_types.h
+>>>>>> @@ -1066,6 +1066,7 @@ struct mm_struct {
+>>>>>>   		mm_context_t context;
+>>>>>>
+>>>>>>   		unsigned long flags; /* Must use atomic bitops to access */
+>>>>>> +		unsigned long flags2;
+>>>>>
+>>>>>
+>>>>> Ugh, god really??
+>>>>>
+>>>>> I really am not a fan of adding flags2 just to add a prctl() feature like
+>>>>> this. This is crazy.
+>>>>>
+>>>>> Also this is a TERRIBLE name. I mean, no please PLEASE no.
+>>>>>
+>>>>> Do we really have absolutely no choice but to add a new flags field here?
+>>>>>
+>>>>> It again doesn't help that you don't mention nor even try to justify this
+>>>>> in the commit message or cover letter.
+>>>>>
+>>>>
+>>>> And again, I hope my reply to your email has given you the justification.
+>>>
+>>> No :) I understood why you did this though of course.
+>>>
+>>>>
+>>>>> If this is a 32-bit kernel vs. 64-bit kernel thing so we 'ran out of bits',
+>>>>> let's just go make this flags field 64-bit on 32-bit kernels.
+>>>>>
+>>>>> I mean - I'm kind of insisting we do that to be honest. Because I really
+>>>>> don't like this.
+>>>>
+>>>>
+>>>> If the maintainers want this, I will make it a 64 bit only feature. We
+>>>> are only using it for 64 bit servers. But it will probably mean ifdef
+>>>> config 64 bit in a lot of places.
+>>>
+>>> I'm going to presume you are including me in this category rather than
+>>> implying that you are deferring only to others :)
+>>>
+>>
+>> Yes ofcourse! I mean all maintainers :)
+>>
+>> And hopefully everyone else as well :)
+>>
+>>> So, there's another option:
+>>>
+>>> Have a prerequisite series that makes mm_struct->flags 64-bit on 32-bit
+>>> kernels, which solves this problem everywhere and avoids us wasting a bunch
+>>> of memory for a very specific usecase, splitting flag state across 2 fields
+>>> (which are no longer atomic as a whole of course), adding confusion,
+>>> possibly subtly breaking anywhere that assumes mm->flags completely
+>>> describes mm-granularity flag state etc.
+>>>
+>>
+>> This is probably a very basic question, but by make mm_struct->flags 64-bit on 32-bit
+>> do you mean convert flags to unsigned long long when !CONIFG_64BIT?
+> 
+> Yes. This would be a worthwhile project in its own right.
+> 
+> I will be changing vma->vm_flags in the same way soon.
+> 
+>>
+>>> The RoI here is not looking good, otherwise.
+>>>
+>>>>
+>>>>>
+>>>>> Also if we _HAVE_ to have this, shouldn't we duplicate that comment about
+>>>>> atomic bitops?...
+>>>>>
+>>>>
+>>>> Sure
+>>>>
+>>>>>>
+>>>>>>   #ifdef CONFIG_AIO
+>>>>>>   		spinlock_t			ioctx_lock;
+>>>>>> @@ -1744,6 +1745,11 @@ enum {
+>>>>>>   				 MMF_DISABLE_THP_MASK | MMF_HAS_MDWE_MASK |\
+>>>>>>   				 MMF_VM_MERGE_ANY_MASK | MMF_TOPDOWN_MASK)
+>>>>>>
+>>>>>> +#define MMF2_THP_VMA_DEFAULT_HUGE		0
+>>>>>
+>>>>> I thought the whole idea was to move away from explicitly refrencing 'THP'
+>>>>> in a future where large folios are implicit and now we're saying 'THP'.
+>>>>>
+>>>>> Anyway the 'VMA' is totally redundant here.
+>>>>>
+>>>>
+>>>> Sure, I can remove VMA.
+>>>> I see THP everywhere in the kernel code.
+>>>> Its mentioned 108 times in transhuge.rst alone :)
+>>>> If you have any suggestion to rename this flag, happy to take it :)
+>>>
+>>> Yeah I mean it's a mess man, and it's not your fault... Again naming is
+>>> hard, I put a suggestion in reply to cover letter anyway...
+>>>
+>>>>
+>>>>>> +#define MMF2_THP_VMA_DEFAULT_HUGE_MASK		(1 << MMF2_THP_VMA_DEFAULT_HUGE)
+>>>>>
+>>>>> Do we really need explicit trivial mask declarations like this?
+>>>>>
+>>>>
+>>>> I have followed the convention that has existed in this file, please see below
+>>>> links :)
+>>>> https://elixir.bootlin.com/linux/v6.14.6/source/include/linux/mm_types.h#L1645
+>>>> https://elixir.bootlin.com/linux/v6.14.6/source/include/linux/mm_types.h#L1623
+>>>> https://elixir.bootlin.com/linux/v6.14.6/source/include/linux/mm_types.h#L1603
+>>>> https://elixir.bootlin.com/linux/v6.14.6/source/include/linux/mm_types.h#L1582
+>>>
+>>> Ack, yuck but ack.
+>>>
+>>>>
+>>>>
+>>>>>> +
+>>>>>> +#define MMF2_INIT_MASK		(MMF2_THP_VMA_DEFAULT_HUGE_MASK)
+>>>>>
+>>>>>> +
+>>>>>>   static inline unsigned long mmf_init_flags(unsigned long flags)
+>>>>>>   {
+>>>>>>   	if (flags & (1UL << MMF_HAS_MDWE_NO_INHERIT))
+>>>>>> @@ -1752,4 +1758,9 @@ static inline unsigned long mmf_init_flags(unsigned long flags)
+>>>>>>   	return flags & MMF_INIT_MASK;
+>>>>>>   }
+>>>>>>
+>>>>>> +static inline unsigned long mmf2_init_flags(unsigned long flags)
+>>>>>> +{
+>>>>>> +	return flags & MMF2_INIT_MASK;
+>>>>>> +}
+>>>>>> +
+>>>>>>   #endif /* _LINUX_MM_TYPES_H */
+>>>>>> diff --git a/include/uapi/linux/prctl.h b/include/uapi/linux/prctl.h
+>>>>>> index 15c18ef4eb11..325c72f40a93 100644
+>>>>>> --- a/include/uapi/linux/prctl.h
+>>>>>> +++ b/include/uapi/linux/prctl.h
+>>>>>> @@ -364,4 +364,8 @@ struct prctl_mm_map {
+>>>>>>   # define PR_TIMER_CREATE_RESTORE_IDS_ON		1
+>>>>>>   # define PR_TIMER_CREATE_RESTORE_IDS_GET	2
+>>>>>>
+>>>>>> +#define PR_SET_THP_POLICY		78
+>>>>>> +#define PR_GET_THP_POLICY		79
+>>>>>> +#define PR_THP_POLICY_DEFAULT_HUGE	0
+>>>>>> +
+>>>>>>   #endif /* _LINUX_PRCTL_H */
+>>>>>> diff --git a/kernel/fork.c b/kernel/fork.c
+>>>>>> index 9e4616dacd82..6e5f4a8869dc 100644
+>>>>>> --- a/kernel/fork.c
+>>>>>> +++ b/kernel/fork.c
+>>>>>> @@ -1054,6 +1054,7 @@ static struct mm_struct *mm_init(struct mm_struct *mm, struct task_struct *p,
+>>>>>>
+>>>>>>   	if (current->mm) {
+>>>>>>   		mm->flags = mmf_init_flags(current->mm->flags);
+>>>>>> +		mm->flags2 = mmf2_init_flags(current->mm->flags2);
+>>>>>>   		mm->def_flags = current->mm->def_flags & VM_INIT_DEF_MASK;
+>>>>>>   	} else {
+>>>>>>   		mm->flags = default_dump_filter;
+>>>>>> diff --git a/kernel/sys.c b/kernel/sys.c
+>>>>>> index c434968e9f5d..1115f258f253 100644
+>>>>>> --- a/kernel/sys.c
+>>>>>> +++ b/kernel/sys.c
+>>>>>> @@ -2658,6 +2658,27 @@ SYSCALL_DEFINE5(prctl, int, option, unsigned long, arg2, unsigned long, arg3,
+>>>>>>   			clear_bit(MMF_DISABLE_THP, &me->mm->flags);
+>>>>>>   		mmap_write_unlock(me->mm);
+>>>>>>   		break;
+>>>>>> +	case PR_GET_THP_POLICY:
+>>>>>> +		if (arg2 || arg3 || arg4 || arg5)
+>>>>>> +			return -EINVAL;
+>>>>>> +		if (!!test_bit(MMF2_THP_VMA_DEFAULT_HUGE, &me->mm->flags2))
+>>>>>
+>>>>> I really don't think we need the !!? Do we?
+>>>>
+>>>> I have followed the convention that has existed in this file already,
+>>>> please see:
+>>>> https://elixir.bootlin.com/linux/v6.14.6/source/kernel/sys.c#L2644
+>>>
+>>> OK, but please don't, I don't see why this is necessary. if (truthy) is
+>>> fine.
+>>>
+>>> Unless somebody has a really good reason why this is necessary, it's just
+>>> ugly ceremony.
+>>>
+>>
+>> Agreed :)
+> 
+> Thanks
+> 
+>>
+>>>>
+>>>>>
+>>>>> Shouldn't we lock the mm when we do this no? Can't somebody change this?
+>>>>>
+>>>>
+>>>> It wasn't locked in PR_GET_THP_DISABLE
+>>>> https://elixir.bootlin.com/linux/v6.14.6/source/kernel/sys.c#L2644
+>>>>
+>>>> I can acquire do mmap_write_lock_killable the same as PR_SET_THP_POLICY
+>>>> in the next series.
+>>>>
+>>>> I can also add the lock in PR_GET_THP_DISABLE.
+>>>
+>>> Well, the issue I guess is... if the flags field is atomic, and we know
+>>> over this call maybe we can rely on mm sticking around, then we probalby
+>>> don't need an mmap lock actually.
+>>>
+>>>>
+>>>>>> +			error = PR_THP_POLICY_DEFAULT_HUGE;
+>>>
+>>> Wait, error = PR_THP_POLICY_DEFAULT_HUGE? Is this the convention for
+>>> returning here? :)
+>>
+>> I see a few of the PR_GET_.. setting the return value. I hope I didnt
+>> misinterpret that.
+> 
+> Yeah I thought it might be the case. I reemphasise my dislike of prctl().
+> 
+>>
+>>>
+>>>>>> +		break;
+>>>>>> +	case PR_SET_THP_POLICY:
+>>>>>> +		if (arg3 || arg4 || arg5)
+>>>>>> +			return -EINVAL;
+>>>>>> +		if (mmap_write_lock_killable(me->mm))
+>>>>>> +			return -EINTR;
+>>>>>> +		switch (arg2) {
+>>>>>> +		case PR_THP_POLICY_DEFAULT_HUGE:
+>>>>>> +			set_bit(MMF2_THP_VMA_DEFAULT_HUGE, &me->mm->flags2);
+>>>>>> +			process_vmas_thp_default_huge(me->mm);
+>>>>>> +			break;
+>>>>>> +		default:
+>>>>>> +			return -EINVAL;
+>>>
+>>> Oh I just noticed - this is really broken - you're not unlocking the mmap()
+>>> here on error... :) you definitely need to fix this.
+>>>
+>>
+>> Ah yes, will do Thanks!
+> 
+> Thanks
+> 
+>>
+>>>>>> +		}
+>>>>>> +		mmap_write_unlock(me->mm);
+>>>>>> +		break;
+>>>>>>   	case PR_MPX_ENABLE_MANAGEMENT:
+>>>>>>   	case PR_MPX_DISABLE_MANAGEMENT:
+>>>>>>   		/* No longer implemented: */
+>>>>>> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+>>>>>> index 2780a12b25f0..64f66d5295e8 100644
+>>>>>> --- a/mm/huge_memory.c
+>>>>>> +++ b/mm/huge_memory.c
+>>>>>> @@ -98,6 +98,38 @@ static inline bool file_thp_enabled(struct vm_area_struct *vma)
+>>>>>>   	return !inode_is_open_for_write(inode) && S_ISREG(inode->i_mode);
+>>>>>>   }
+>>>>>>
+>>>>>> +void vma_set_thp_policy(struct vm_area_struct *vma)
+>>>>>> +{
+>>>>>> +	struct mm_struct *mm = vma->vm_mm;
+>>>>>> +
+>>>>>> +	if (test_bit(MMF2_THP_VMA_DEFAULT_HUGE, &mm->flags2))
+>>>>>> +		vm_flags_set(vma, VM_HUGEPAGE);
+>>>>>> +}
+>>>>>> +
+>>>>>> +static void vmas_thp_default_huge(struct mm_struct *mm)
+>>>>>> +{
+>>>>>> +	struct vm_area_struct *vma;
+>>>>>> +	unsigned long vm_flags;
+>>>>>> +
+>>>>>> +	VMA_ITERATOR(vmi, mm, 0);
+>>>>>
+>>>>> This is a declaration, it should be grouped with declarations...
+>>>>>
+>>>>
+>>>> Sure, will make the change in next version.
+>>>>
+>>>> Unfortunately checkpatch didn't complain.
+>>>
+>>> Checkpatch actually complains the other way :P it doesn't understand
+>>> macros.
+>>>
+>>> So you'll start getting a warning here, which you can ignore. It sucks, but
+>>> there we go. Making checkpatch.pl understand that would be a pain, probs.
+>>>
+>>>>
+>>>>>> +	for_each_vma(vmi, vma) {
+>>>>>> +		vm_flags = vma->vm_flags;
+>>>>>> +		if (vm_flags & VM_NOHUGEPAGE)
+>>>>>> +			continue;
+>>>>>
+>>>>> Literally no point in you putting vm_flags as a separate variable here.
+>>>>>
+>>>>
+>>>> Sure, will make the change in next version.
+>>>
+>>> Thanks!
+>>>
+>>>>
+>>>>> So if you're not overriding VM_NOHUGEPAGE, the whole point of this exercise
+>>>>> is to override global 'never'?
+>>>>>
+>>>>
+>>>> Again, I am not overriding never.
+>>>>
+>>>> hugepage_global_always and hugepage_global_enabled will evaluate to false
+>>>> and you will not get a hugepage.
+>>>
+>>> Yeah, again ack, but I kind of hate that we set VM_HUGEPAGE everywhere even
+>>> if the policy is never.
+>>>
+>>> And we now get into realms of:
+>>>
+>>> 'Hey I set prctl() to make everything huge pages, and PR_GET_THP_POLICY
+>>> says I've set that, but nothing is huge? BUG???'
+>>>
+>>> Of course then you get into - if somebody sets it to never, do we go around
+>>> and remove VM_HUGEPAGE and this MMF_ flag?
+>>>
+>>>>
+>>>>
+>>>>> I'm really concerned about this.
+>>>>>
+>>>>>> +		vm_flags_set(vma, VM_HUGEPAGE);
+>>>>>> +	}
+>>>>>> +}
+>>>>>
+>>>>> Do we have an mmap write lock established here? Can you confirm that? Also
+>>>>> you should add an assert for that here.
+>>>>>
+>>>>
+>>>> Yes I do, its only called in PR_SET_THP_POLICY where mmap_write lock was taken.
+>>>> I can add an assert if it helps.
+>>>
+>>> It not only helps, it's utterly critical :)
+>>>
+>>> 'It's only called in xxx()' is famous last words for a programmer, because
+>>> later somebody (maybe even your good self) calls it from somewhere else
+>>> and... we've all been there...
+>>>
+>>
+>> Thanks! Will do.
+> 
+> Thanks.
+> 
+>>>>
+>>>>>> +
+>>>>>> +void process_vmas_thp_default_huge(struct mm_struct *mm)
+>>>>>> +{
+>>>>>> +	if (test_bit(MMF2_THP_VMA_DEFAULT_HUGE, &mm->flags2))
+>>>>>> +		return;
+>>>>>> +
+>>>>>> +	set_bit(MMF2_THP_VMA_DEFAULT_HUGE, &mm->flags2);
+>>>>>> +	vmas_thp_default_huge(mm);
+>>>>>> +}
+>>>>>> +
+>>>>>> +
+>>>>>>   unsigned long __thp_vma_allowable_orders(struct vm_area_struct *vma,
+>>>>>>   					 unsigned long vm_flags,
+>>>>>>   					 unsigned long tva_flags,
+>>>>>> diff --git a/mm/vma.c b/mm/vma.c
+>>>>>> index 1f2634b29568..101b19c96803 100644
+>>>>>> --- a/mm/vma.c
+>>>>>> +++ b/mm/vma.c
+>>>>>> @@ -2476,6 +2476,7 @@ static int __mmap_new_vma(struct mmap_state *map, struct vm_area_struct **vmap)
+>>>>>>   	if (!vma_is_anonymous(vma))
+>>>>>>   		khugepaged_enter_vma(vma, map->flags);
+>>>>>>   	ksm_add_vma(vma);
+>>>>>> +	vma_set_thp_policy(vma);
+>>>>>
+>>>>> You're breaking VMA merging completely by doing this here...
+>>>>>
+>>>>> Now I can map one VMA with this policy set, then map another immediately
+>>>>> next to it and - oops - no merge, ever, because the VM_HUGEPAGE flag is not
+>>>>> set in the new VMA on merge attempt.
+>>>>>
+>>>>> I realise KSM is just as broken (grr) but this doesn't justify us
+>>>>> completely breaking VMA merging here.
+>>>>
+>>>> I think this answers it. Its doing the same as KSM.
+>>>
+>>> Yes, but as I said there, it's not acceptable, at all.
+>>>
+>>> You're making it so litearlly VMA merging _does not happen at all_. That's
+>>> unacceptable and might even break some workloads.
+>>>
+>>> You'll certainly cause very big kernel metadata usage.
+>>>
+>>> Consider:
+>>>
+>>> |-----------------------------|..................|
+>>> | some VMA flags, VM_HUGEPAGE | proposed new VMA |
+>>> |-----------------------------|..................|
+>>>
+>>> Now, because you set VM_HUGEPAGE _after any merge is attempted_, this will
+>>> _always_ be fragmented, forever.
+>>>
+>>
+>> So if __mmap_new_vma and do_brk_flags are called after merge attempt,
+>> is it possible to vma_set_thp_policy (or do something similar) before
+>> the merge attempt?
+>>
+>> Actually I just read your reply to the next block, so I think its ok?
+>> Added more to the next block.
+>>
+>> I dont have any preference on where its put, so happy with putting this
+>> earlier.
+> 
+> Yeah, you can just do it earlier. But you maybe should just set the flag in
+> the appropriate field rather than using the set flags helper.
+> 
+>>
+>>
+>>> That's just not... acceptable.
+>>>
+>>> The fact KSM is broken this way doesn't make that OK.
+>>>
+>>> Especially on brk(), which now will _always_ allocate new VMAs for every
+>>> brk() expansion which doesn't seem very efficient.
+>>>
+>>> It may also majorly degrade performance.
+>>>
+>>> That makes me think we need some perf testing for this ideally...
+>>>
+>>>>
+>>>>>
+>>>>> You need to set earlier than this. Then of course a driver might decide to
+>>>>> override this, so maybe then we need to override that.
+>>>>>
+>>>>> But then we're getting into realms of changing fundamental VMA code _just
+>>>>> for this feature_.
+>>>>>
+>>>>> Again I'm iffy about this. Very.
+>>>>>
+>>>>> Also you've broken the VMA userland tests here:
+>>>>>
+>>>>> $ cd tools/testing/vma
+>>>>> $ make
+>>>>> ...
+>>>>> In file included from vma.c:33:
+>>>>> ../../../mm/vma.c: In function ‘__mmap_new_vma’:
+>>>>> ../../../mm/vma.c:2486:9: error: implicit declaration of function ‘vma_set_thp_policy’; did you mean ‘vma_dup_policy’? [-Wimplicit-function-declaration]
+>>>>>   2486 |         vma_set_thp_policy(vma);
+>>>>>        |         ^~~~~~~~~~~~~~~~~~
+>>>>>        |         vma_dup_policy
+>>>>> make: *** [<builtin>: vma.o] Error 1
+>>>>>
+>>>>> You need to create stubs accordingly.
+>>>>>
+>>>>
+>>>> Thanks will do.
+>>>
+>>> Thanks!
+>>>
+>>>>
+>>>>>>   	*vmap = vma;
+>>>>>>   	return 0;
+>>>>>>
+>>>>>> @@ -2705,6 +2706,7 @@ int do_brk_flags(struct vma_iterator *vmi, struct vm_area_struct *vma,
+>>>>>>   	mm->map_count++;
+>>>>>>   	validate_mm(mm);
+>>>>>>   	ksm_add_vma(vma);
+>>>>>> +	vma_set_thp_policy(vma);
+>>>>>
+>>>>> You're breaking merging again... This is quite a bad case too as now you'll
+>>>>> have totally fragmented brk VMAs no?
+>>>>>
+>>>>
+>>>> Again doing it the same as KSM.
+>>>
+>>> That doesn't make it ok. Just because KSM is broken doesn't make this ok. I
+>>> mean grr at KSM :) I'm going to look into that and see about
+>>> investigating/fixing that behaviour.
+>>>
+>>> obviously I can't accept anything that will fundamentally break VMA
+>>> merging.
+>>>
+>>
+>> Ofcourse!
+>>
+>>> The answer really is to do this earlier, but you risk a driver overriding
+>>> it, but that's OK I think (I don't even think any in-tree ones do actually
+>>> _anywhere_ - and yes I was literally reading through _every single_ .mmap()
+>>> callback lately because I am quite obviously insane ;)
+>>>
+>>> Again I can help with this.
+>>>
+>>
+>> Appreaciate it!
+>>
+>> I am actually not familiar with the merge code. I will try and have a look,
+>> but if you could give a pointer to the file:line after which its not acceptable
+>> to have and I can move vma_set_thp_policy to before it or try and do something
+>> similar to that.
+> 
+> Ack.
+> 
+> I wrote the latest merge and mmap() code so am well placed on this :>)
+> 
+> But I don't think we should use vma_set_thp_policy() in these places, we
+> should just set the flag, to avoid trying to do a write lock etc. etc.,
+> plus we want to set the flag in a place that's not a VMA yet in both cases.
+> 
+> So we'd need something like in do_mmap():
+> 
+> +	vm_flags |= mm_implied_vma_flags(mm);
+> 	addr = mmap_region(file, addr, len, vm_flags, pgoff, uf);
+> 
+> Where mm_implied_vma_flags() reads the MMF flags and sees if any imply VMA
+> flags.
+> 
+> But we have something for that already don't we? mm->def_flags.
+> 
+> Can't we use that actually? That should work for mmap too?
 
-Hi Greg!
+Yeah, look at
 
-Nouveau influenced us heavily here, because having firmware that we
-can post once, and use everywhere (Nouveau and Nova), is very attractive.
+commit 1860033237d4be09c5d7382585f0c7229367a534
+Author: Michal Hocko <mhocko@suse.com>
+Date:   Mon Jul 10 15:48:02 2017 -0700
 
-Alex and Timur discuss other details that explain why the standard 
-user-space approach is less simple and clean than it might appear at
-first glance, but I wanted to emphasize that the firmware re-use point
-a little bit, too.
+     mm: make PR_SET_THP_DISABLE immediately active
 
-Oh, and also: the ELF images are going to remain extremely simple,
-because there is nothing now (nor can I see anything in the future)
-that would drive anyone to do complicated things. For example, if
-there is some exotic new thing in the future, it could be put into
-its own firmware image if necessary--because we understand that
-this parser here is intended to be a simple subset of ELF, and
-left alone really.
 
-thanks,
+Where we moved away from that. As raised, I am not sure I like what we 
+did with PR_SET_THP_DISABLE.
+
+And I don't want any new magical prctl like that that add new magical 
+internal toggles.
+
+OTOH, I am completely fine with a prctl that just changes the default 
+for new VMAs (just like applying madvise imemdiately afterwards). I'm 
+also fine with a prtctl that changes all existing VMAs, but maybe just 
+issuing a madvise() is the better solution, to cleanly separate it.
+
+All not too crazy and not too invasive -- piggybagging on VM_HUGEPAGE / 
+VM_NOHUGEPAGE.
+
+I can life with that if it solves a use case.
+
 -- 
-John Hubbard
+Cheers,
 
-> 
-> In addition, we are adding new ELF image support to Nouveau to support
-> newer Hopper and Blackwell GPUs:
-> 
-> https://lore.kernel.org/nouveau/20250511210722.80350-55-bskeggs@nvidia.com/T/
-> (grep for "elf_header[]")
-> 
-> For this new code, I used ELF for new firmware images. I did this for
-> a few reasons:
-> 
-> 1. In addition to the large GSP-RM binary, there are 3 "meta data"
-> blobs that are very small (<100 bytes) and I wanted a way to combine
-> all blobs into one file to keep things neat.
-> 2. I didn't want to invent a new encapsulation format from scratch.
-> 3. ELF allows you to use existing user-space tools to parse the file
-> if you are so inclined.
-> 4. ELF contained all of the header bits I was looking for.
-> 5. I was even able to include a CRC in the ELF header, for extra validation.
-> 6. Structs for the headers already exist in the kernel and are used by
-> other drivers.
-> 
-> 
-> 
->  What does it do with these segments that
->> userspace can't do instead?  Why does patching have to be done within
->> the kernel at all?  What prevents all of this from being done elsewhere?
->>
->> And ELF parsing is "tricky" in places, and you aren't using the existing
->> elf parser, as proof of needing a new parser in rust :)
->>
->> thanks,
->>
->> greg k-h
->>
-> 
-
+David / dhildenb
 
 
