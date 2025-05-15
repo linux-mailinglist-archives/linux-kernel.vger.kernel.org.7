@@ -1,140 +1,145 @@
-Return-Path: <linux-kernel+bounces-648726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-648728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FE7DAB7AD9
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 03:10:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C2200AB7ADD
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 03:11:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15A974C7C9B
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 01:10:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 59C494C7C26
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 01:11:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37E69269806;
-	Thu, 15 May 2025 01:10:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2AF726981A;
+	Thu, 15 May 2025 01:11:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="C8qJuhi9"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mql/u/g8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7769C801
-	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 01:10:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41F27242D61;
+	Thu, 15 May 2025 01:11:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747271435; cv=none; b=Dojnv9FHVyrMlV2RadCfO6/tAIu4Kv44V3GywTsVfj2uqzyT3IgRbjYSt/407+kiNWzusAm5KOriKgDtPaSIiPMHszIcwGaZekeFLLqLiMrhjAUfhQFxS4bDxpB2dAoBBjDhRu7Ls0vuIGyDFsbqh3Pg9/UZkGKMK122taOYzQA=
+	t=1747271478; cv=none; b=BKjG0eWll4yXX+Q/UxQuhcLphF7pnraPSi23micrth0Qi+ZTRM9tlO42TKZWaZmpwnKVBBRaISWk7gIrXXUinHVnCydXC2mHOedtFdMRETyHLcB20hIIdTwZQ5fYH2V6fLw+yGa4GzRkLYmuprIY2xJAtkWS78nID9u8jKhapRs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747271435; c=relaxed/simple;
-	bh=Vpi9yO3lle9qXbfYWi9NIZVtgdUtOs1fM2z5YMQE7aI=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=qd66g7akDdke6kahYhEPlkTTe2mmQZYnUv7MjcadBK/nVo7oCG4bNkeElxH2008Qs/lLoRlw2dLKuwGm3b5kavXscMIRXiBAp0arwy7JaUut629MUrjI/9xRwFTeWnUcb5KWKyu3mm+SBwz7QQw7xcnPk0h4soX7zq5caNJAhyc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=C8qJuhi9; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-54fbd1ba65dso378458e87.0
-        for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 18:10:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1747271431; x=1747876231; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=e5n+9oNBJa8I1ajVPNmF7REMZSoiE89WgACRz/GpvLA=;
-        b=C8qJuhi9+pK8klWhqgaZ9wDkhg09VYXr+49AOnG1yGI05kpjVkeS+Lj2+uZyFP8u5q
-         TyxERTSHlg7dhgPU/rJhLxSLvBYOG9xK8iDvPl42W0J9ez5yW0JennVhamyFnL+sKN5N
-         1Mlgi3IGGooG3MgV/hZE0S+gEyX80RykhaYzmLAiV1LcitlERShCF1dNaSi7UymHiuNN
-         cV7DH0U8lg3V7nm4VAWXHUHeY/ux0Cvg8KOewm/CSAdtGO16dIA9+JI6gw8AYqxhhOCN
-         57CEjXjPG6P5fOVCyfejLscaxZZLkqOm7COQru6JU166Taw4a9m96qDevLxXWjY65iVM
-         10UA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747271431; x=1747876231;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=e5n+9oNBJa8I1ajVPNmF7REMZSoiE89WgACRz/GpvLA=;
-        b=GVAYSweF7KhnPcms9OUHfEYufOKWaNN3ftpmnT6jF7DUbA/pIxZb3V+zOGXBSKZc9b
-         iYWZH+cc9SJpUPkAaBN2zU5A+oN7urUuUhmAAijFh5tFY+EodFvdZEmUfcCaaS3FN5M+
-         wvY/pcuu4+/Zvz2YDG4Rk4Vlc9UiVuyO4zA0EZALHlsLdIarBFfRoiSsjHbwKtda7ztB
-         HA/TZw2ZQz5DtDUsHFz1JKD/6Ec3d3+1dC9X9Fnoc1BkyayH/1e/qTxLfCm0kAmwnBMm
-         c7ZVfHi/k51kLaOR0Qs/+BXY1OPYMsPLsiejCp8Gi1briO5rEMtM82z9Ie2KWbfglySf
-         uDLg==
-X-Forwarded-Encrypted: i=1; AJvYcCXL/0ltjzKaSz8ySwcvUUXXhdyjLTV4lWT+eUGBJhzgUabWlVss0LlZpozE4TiN0cviEXh1bHKUv/i5ToA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzginCQzq5kEdbPur90o5nSMPzzqLwr/WEIKnkGPrIcGp5wj+9d
-	rl0RSHh2e6fXI0UQ5xGIi6pAsBugpMstDLxbt6SRQKj8wWDsH7xmOwzfOnRBMFY=
-X-Gm-Gg: ASbGnctkZLsXZcvtwj9vEvMMtmcZqnii/yLIEpeqlVZyzqg4kjnMI/MMpf1TFHyTaRK
-	EacWpOyHBWD8ddVL6P8LbLeq7/SZVSEgNEvepOHsoBzKrJ0i9XjjLXzG/b6rh4FZUokkaWyqoG3
-	Y3+CmyiPTmc59wipdcnxFI1ItuCnADCloxHM3JlM3bfX5KWoEsPp+vmYkgLqKPhWuUNlilMQNTR
-	wBlRfIAzvxP7QJn3OJk/wwMXFwlTxN5biwxAAdsyTdpxM3xNOkYSI+vwVILVgpJyvTn19vv9VhY
-	y/EvV41T7hnHydbdaIJeAScBeKGAjJyKUmNofX3UA7VxAKXh7Mp6mA==
-X-Google-Smtp-Source: AGHT+IGQdtgUjYwqZiSEo4a5YI+wlqPvR0EFz1KQrGzfKFyM/SVmJN7/CJAxhwlH89l4W+9gi2visg==
-X-Received: by 2002:a05:6512:3e0c:b0:54f:c3bf:988e with SMTP id 2adb3069b0e04-550dd0135d3mr189215e87.33.1747271431225;
-        Wed, 14 May 2025 18:10:31 -0700 (PDT)
-Received: from [10.24.138.144] ([91.230.138.172])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54fc64cd208sm2438411e87.253.2025.05.14.18.10.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 May 2025 18:10:30 -0700 (PDT)
-Message-ID: <44bdd2c97a8c91acb4b7e101f85f9a261b6c5cbc.camel@dubeyko.com>
-Subject: Re: =?UTF-8?Q?=E5=9B=9E=E5=A4=8D=3A?=
- =?UTF-8?Q?_=E5=9B=9E=E5=A4=8D=3A?=  [PATCH 2/2] hfs: fix to update ctime
- after rename
-From: Viacheslav Dubeyko <slava@dubeyko.com>
-To: =?UTF-8?Q?=E6=9D=8E=E6=89=AC=E9=9F=AC?= <frank.li@vivo.com>,  Viacheslav
- Dubeyko <Slava.Dubeyko@ibm.com>, "glaubitz@physik.fu-berlin.de"
- <glaubitz@physik.fu-berlin.de>
-Cc: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
- "linux-kernel@vger.kernel.org"
-	 <linux-kernel@vger.kernel.org>
-Date: Wed, 14 May 2025 18:10:26 -0700
-In-Reply-To: <SEZPR06MB5269F2CCD9AD085D2712842FE895A@SEZPR06MB5269.apcprd06.prod.outlook.com>
-References: <20250429201517.101323-1-frank.li@vivo.com>
-			 <20250429201517.101323-2-frank.li@vivo.com>
-		 <24ef85453961b830e6ab49ea3f8f81ff7c472875.camel@ibm.com>
-		 <SEZPR06MB5269E572825AE202D1E146A6E888A@SEZPR06MB5269.apcprd06.prod.outlook.com>
-	 <c19db3b68063cd361c475aaebdd95a232aef710c.camel@dubeyko.com>
-	 <SEZPR06MB5269F2CCD9AD085D2712842FE895A@SEZPR06MB5269.apcprd06.prod.outlook.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.1 (by Flathub.org) 
+	s=arc-20240116; t=1747271478; c=relaxed/simple;
+	bh=aYYX6/Kut38IE4Ji3iGpvGGHrQkkirCFw/76I17L7yI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Yhoo8G3HtDNRAUVSOFQx16JQ4fB1qj18i+Ba15XgH0mzvvcunbDUEAcLwv0HSSHUbhUW0RQZOAj4hGKLJeiWXOpkU0M5MBnTJuxYuLCB/2EF7BnYGwyfoN0hBM+8mG7WKe3hLdW6n522PRTR0vRP04Il/v7j7YJtydWGB4d1K64=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Mql/u/g8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9690DC4CEE3;
+	Thu, 15 May 2025 01:11:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747271476;
+	bh=aYYX6/Kut38IE4Ji3iGpvGGHrQkkirCFw/76I17L7yI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Mql/u/g81Ki2TNHN/Dnx1n/a7aZS6SnZhNp43wHsJZiWeTzgEpTxREhOEDpvWuCxc
+	 l3VbObvhq20ZOjKoNhbz24rlJR8Ghj63kfATOjkQaRWwe+gek02JsNWBYvibY10LE3
+	 R9nM88WPm8H92abqqWicD9WiaAVO2nDXwZstl+K/GWWAEK88nURceqrJjEcWbtrcS9
+	 wOp304UPiE0zANUhCZKsgWfI2Vqqo6mxpKvfTWe/d6FHz68HznxCgcKQgLWFQdAINh
+	 5ivazcPfWOHs8P/Jxxu4+VAaTBH4BF+dKe7H8q7HkqyETq0ewySy6foyJZkwITWWXK
+	 FMOADm6aKBbcw==
+Date: Thu, 15 May 2025 09:11:08 +0800
+From: "Peter Chen (CIX)" <peter.chen@kernel.org>
+To: Pawel Laszczak <pawell@cadence.com>
+Cc: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: Re: [PATCH v2] usb: cdnsp: Fix issue with detecting command
+ completion event
+Message-ID: <20250515011108.GA684089@nchen-desktop>
+References: <20250513052613.447330-1-pawell@cadence.com>
+ <PH7PR07MB9538AA45362ACCF1B94EE9B7DD96A@PH7PR07MB9538.namprd07.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <PH7PR07MB9538AA45362ACCF1B94EE9B7DD96A@PH7PR07MB9538.namprd07.prod.outlook.com>
 
-On Sat, 2025-05-10 at 05:31 +0000, =E6=9D=8E=E6=89=AC=E9=9F=AC wrote:
-> Hi Slava,
->=20
-> > If I understood correctly "ERROR: access time has changed for file1
-> > after remount" means atime has been changed.
->=20
-> In fact, it seems that it is not the atime that has been changed, but
-> the disk atime that has been not changed.=20
-> The inode in memory has a newer atime, but the atime is not updated
-> to the disk when write_inode is executed(hfs has no atime in disk
-> format).
->=20
-> For ERROR: access time has changed for file1 after remount
->=20
-> Before:
-> 	Access:=C2=A0 2025-05-09 14:05:40
-> 	Modify:=C2=A0 2025-05-09 14:05:38
-> 	Change:=C2=A0 2025-05-09 14:05:38
->=20
-> After umount&mount:
-> 	Access:=C2=A0 2025-05-09 14:05:38		<-- back to mtime
-> 	Modify:=C2=A0 2025-05-09 14:05:38
-> 	Change:=C2=A0 2025-05-09 14:05:38
->=20
-> So we get inconsistent results for atime.
->=20
-> Am I missing something?
->=20
+On 25-05-13 05:30:09, Pawel Laszczak wrote:
+> In some cases, there is a small-time gap in which CMD_RING_BUSY
+> can be cleared by controller but adding command completion event
+> to event ring will be delayed. As the result driver will return
+> error code.
+> This behavior has been detected on usbtest driver (test 9) with
+> configuration including ep1in/ep1out bulk and ep2in/ep2out isoc
+> endpoint.
+> Probably this gap occurred because controller was busy with adding
+> some other events to event ring.
+> The CMD_RING_BUSY is cleared to '0' when the Command Descriptor
+> has been executed and not when command completion event has been
+> added to event ring.
+> 
+> To fix this issue for this test the small delay is sufficient
+> less than 10us) but to make sure the problem doesn't happen again
+> in the future the patch introduces 10 retries to check with delay
+> about 20us before returning error code.
+> 
+> Fixes: 3d82904559f4 ("usb: cdnsp: cdns3 Add main part of Cadence USBSSP DRD Driver")
+> cc: stable@vger.kernel.org
+> Signed-off-by: Pawel Laszczak <pawell@cadence.com>
 
-This is was my point. We need to make the access time (atime) always
-the same as the modification time (mtime) because we cannot save the
-atime on disk. This is what I meant by atime =3D=3D mtime. And this atime
-change is happening in HFS driver logic that needs to be corrected.
+Acked-by: Peter Chen <peter.chen@kernel.org>
 
-Thanks,
-Slava.
+Peter
+> ---
+> Changelog:
+> v2:
+> - replaced usleep_range with udelay
+> - increased retry counter and decreased the udelay value
+> 
+>  drivers/usb/cdns3/cdnsp-gadget.c | 18 +++++++++++++++++-
+>  1 file changed, 17 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/usb/cdns3/cdnsp-gadget.c b/drivers/usb/cdns3/cdnsp-gadget.c
+> index 4824a10df07e..58650b7f4173 100644
+> --- a/drivers/usb/cdns3/cdnsp-gadget.c
+> +++ b/drivers/usb/cdns3/cdnsp-gadget.c
+> @@ -547,6 +547,7 @@ int cdnsp_wait_for_cmd_compl(struct cdnsp_device *pdev)
+>  	dma_addr_t cmd_deq_dma;
+>  	union cdnsp_trb *event;
+>  	u32 cycle_state;
+> +	u32 retry = 10;
+>  	int ret, val;
+>  	u64 cmd_dma;
+>  	u32  flags;
+> @@ -578,8 +579,23 @@ int cdnsp_wait_for_cmd_compl(struct cdnsp_device *pdev)
+>  		flags = le32_to_cpu(event->event_cmd.flags);
+>  
+>  		/* Check the owner of the TRB. */
+> -		if ((flags & TRB_CYCLE) != cycle_state)
+> +		if ((flags & TRB_CYCLE) != cycle_state) {
+> +			/*
+> +			 * Give some extra time to get chance controller
+> +			 * to finish command before returning error code.
+> +			 * Checking CMD_RING_BUSY is not sufficient because
+> +			 * this bit is cleared to '0' when the Command
+> +			 * Descriptor has been executed by controller
+> +			 * and not when command completion event has
+> +			 * be added to event ring.
+> +			 */
+> +			if (retry--) {
+> +				udelay(20);
+> +				continue;
+> +			}
+> +
+>  			return -EINVAL;
+> +		}
+>  
+>  		cmd_dma = le64_to_cpu(event->event_cmd.cmd_trb);
+>  
+> -- 
+> 2.43.0
+> 
 
+-- 
+
+Best regards,
+Peter
 
