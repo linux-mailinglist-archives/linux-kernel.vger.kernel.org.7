@@ -1,130 +1,126 @@
-Return-Path: <linux-kernel+bounces-649812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-649814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77EA1AB8973
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 16:29:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0280EAB897B
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 16:30:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 58F0718853D0
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 14:27:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9662B3ADD09
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 14:30:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72DD31E5B71;
-	Thu, 15 May 2025 14:27:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25A241FC7E7;
+	Thu, 15 May 2025 14:30:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LTVokyQA"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="C3eS4PNw";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="fTAV4Lfs"
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F5E81DE3B5
-	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 14:27:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D1C21DE4C2;
+	Thu, 15 May 2025 14:30:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747319254; cv=none; b=QN1bJeL6Hws4NVJRduOK1BuQaXH01052C12BXEhrim+A0wF/W/hFfx5L3e+ZDN/7R6fXSuHpysf0lgB0RS1JZX0HEhmwPzui2eyvII5bfdakFgA2vy8cQKazzzPG5EU/JH8xb7p0c/wF8I/H3T7qoLhaElwGh0VLgO+x8EctF1Y=
+	t=1747319407; cv=none; b=NTYGMfSSto5HrsKlogk3WK/844ZyKIrQTb5ebA2btRGNA4AZxm2mZxy6g8WTF1q8KZ7ZYpfoefQs9EtX053c02ASCgy3uHuy8DQQwGK5xT732UDVMCFxeiJfmv/oXaCJ4Y6GIv6A1Rh+jTd1+jI1d6YQnVjbp7qZvHU89+0deO4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747319254; c=relaxed/simple;
-	bh=CrapUCqtIZ64bZ3SgviGRhkKvc64KRNrgaWs4qmblys=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=I1m/NeLBohHoyw8R8FzTLluxRwDLYnf7TDrcGPSAJND4qomJ1TUa4CgHvDTeIfHZaUCwQ6MJQl6AmlDa0shqQw3J+Sw2YLe850AfXedlceKYOOUMzJOaB6NlC7KsXeSusaGQonioax04b0D46/qa7nos8dUM6nA4ZqizZY6xWig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LTVokyQA; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1747319251;
+	s=arc-20240116; t=1747319407; c=relaxed/simple;
+	bh=yx80i3ss/njcwOPYKpAMbsSUwMCd96dYzPK4X7KLZMM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mb7G6pRjCJanOkKp6K4CLxHae2281983OCNaFVJ75EeLAwtRrRLjQ4dSD8yzbd016CGAU5XxyonrooLd3W03ZL72xKOkTqHM1uHqhlbro4uk86EZPoYY6klWpAt8gVzYx9mBy60/aouPNzV1Svl3vof9VpQeHveol+NI2b+vgJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=C3eS4PNw; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=fTAV4Lfs reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1747319403; x=1778855403;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=b0tlbhLxSAEmnsveQS8FGSEE3bwObFXqb/3UCcwAnPI=;
+  b=C3eS4PNwG9J/kdRo66Bx+VLJiWr4BQeIojmHH0Z7OYI9DKSZZlq4S+yv
+   n7dJ4PfBNDOOB+2u9QZa3vfjQdGzUROpCrMDx8VFwGISJsdFIaQ1ZAiUU
+   85NRnlw/I5bvDSog6CXOPqjnW4mrOuhTIOLUtRLFmgqsxc6XfRQpObuNi
+   KylH++ftkJlIA8KHGwQjb4UH7o7xV3N9nkT9XoiNctjOSaVRqUnuvsdTm
+   rZ9ZEjfl5JIq1F0IJzWLlpo/7FPjcRetjhZFVkUY6Mqr7wePQYMOBVccE
+   cKkFQsQBdP63rm4bdYQmvvTAmoGKnCAzhdBvotSEicjPmo03wKwGof1y9
+   g==;
+X-CSE-ConnectionGUID: ifQO2kpWT6iGHzb89wHLHw==
+X-CSE-MsgGUID: fskjUjC/TveuJCG2KldNMA==
+X-IronPort-AV: E=Sophos;i="6.15,291,1739833200"; 
+   d="scan'208";a="44102182"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 15 May 2025 16:29:59 +0200
+X-CheckPoint: {6825FA67-20-C7E25413-F4312D34}
+X-MAIL-CPID: 282EDE4D20DD297041C25D142FD40109_4
+X-Control-Analysis: str=0001.0A006368.6825FA7B.0013,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 468C816A011;
+	Thu, 15 May 2025 16:29:55 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1747319395;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=huz51ddnBUzqXDXluJaM4urWwAvADCicLLosUlW1Gco=;
-	b=LTVokyQAKHTbvPk2LyRPOuB+TfoZHIvDwMo/BDaoJYPlHrScHS08qAOIEVrWBKSaqLUkiv
-	cvHpvDBKFAc2H3TagPHDU6f4XkqvnG8k+/TTTYUsVOdjPK1F+J82jeZvXJoHjDUS1clUaG
-	ef0+OSwFxVvc1ehGasa2kSpmqRG6G2A=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-634--eGkgGfDO3SZIGdB4BNHlQ-1; Thu, 15 May 2025 10:27:30 -0400
-X-MC-Unique: -eGkgGfDO3SZIGdB4BNHlQ-1
-X-Mimecast-MFC-AGG-ID: -eGkgGfDO3SZIGdB4BNHlQ_1747319250
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-43d007b2c79so8277535e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 07:27:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747319249; x=1747924049;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=huz51ddnBUzqXDXluJaM4urWwAvADCicLLosUlW1Gco=;
-        b=ouxt3Rh64A53cj6eBzoofWpu/924zf4zcDdqiWiCmSGQuFusOmLHcXp5a4Ihq7hCp7
-         J/iZgvqwtE+dVYqGD6YTe3kbP4mACZIm7AcbF4mojyCj9I4GAQNhSZd5CtBpTHzZsKW3
-         9qrBDiZr70K77/O/FjSQF+HG5af/0Pnqaa4OYyvD8HBUqKqNXX6w2hq5eY6sroFemeUP
-         qLHx/Fo5BCpt7s8deWWv3akK3njP/fVzNWQ7m/sB/gL459SAW+M+y8Dnii4LmygsymsU
-         V1Ci1MYHfaGfjZSB6567t7jkIV0g1tZtYMhiEUd05pwFUQwoivoXaf9rT0vmvg06tgFU
-         UA2g==
-X-Forwarded-Encrypted: i=1; AJvYcCUyD83FEFtJyl+hZMAfE0FA36RG/nTZD7LP7jqKm1YGErTNKqFb9tuMDLnCcxHMk2RUl/2DsSy8Vv/7pDo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YydfL8QVjsrUoGBCnwUeXC2XlqZ6pzQg1pXQvgG0WHS1ZVaiWnu
-	3jJrzAQVSNNkoO8jg0jxhsEE58wbFuYesCfX/AWMon8UdBG1L7P6Bdk7upaFb1u6ciCOP2N1RCp
-	O8tbYqJZLOSjhQG7Km9QJ7sFYEderkjeQ88oPvtX6EBJpGKF6nTnoE9EbTX3y+g==
-X-Gm-Gg: ASbGncsR8yeWEV1X92Jfy9VNBoxw704az6qRT1iKz75KG1+IuNDuaFXxDMIqgxebWO5
-	OtFGNBTTkBse8+aeeEtVGnbFwsS34kAN+cYrWQ6CpxGi+vQjkQvkpvzc+/KOV6nJlhib7LR1/Vc
-	uQ4O9bNuLWyJ0Pm3ZbTTYw5ad7tC2hcUUeCP+twlKaK8tD2vOtxSOH+I7lpHb4shUyMZcJwlDgc
-	ofLNAkrIxDVzBDvp4yVrGpmfp8FbppJMeu3rL4TIKoe4zhNZ6nmTdGDfSR6cUBbZ6IINxYy0GF+
-	xoqTHfulSYpCQZoRM8c=
-X-Received: by 2002:a05:6000:1a8d:b0:3a0:b979:4e7c with SMTP id ffacd0b85a97d-3a349699b9bmr6954412f8f.3.1747319249248;
-        Thu, 15 May 2025 07:27:29 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHqqzNDS8gHcKXPhus7Y5b5W05r7fTBd+OoE1w+5qSXRDsxkK+I6bPjSes89yOPcONJkNsChw==
-X-Received: by 2002:a05:6000:1a8d:b0:3a0:b979:4e7c with SMTP id ffacd0b85a97d-3a349699b9bmr6954387f8f.3.1747319248915;
-        Thu, 15 May 2025 07:27:28 -0700 (PDT)
-Received: from ?IPV6:2a0d:3344:2440:8010::f39? ([2a0d:3344:2440:8010::f39])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a1f5a2ceccsm23174624f8f.64.2025.05.15.07.27.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 15 May 2025 07:27:28 -0700 (PDT)
-Message-ID: <9d16bff8-1a8f-404b-a5eb-6da5321a3bb8@redhat.com>
-Date: Thu, 15 May 2025 16:27:27 +0200
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=b0tlbhLxSAEmnsveQS8FGSEE3bwObFXqb/3UCcwAnPI=;
+	b=fTAV4LfsxM8jq31QLG9bsTHnjTM2R1Ydftfm+t52ujoCupSJqa8L12p9ijgRKipWnMr7tq
+	aZECbz7plNdc5DV7cVIC64ITpMpW51S+QoPqK1HO9DWNDJO3aQOYt//ykfYjLSJw4zK+Hf
+	qSBFL9JEZaW3O4fDFqoMmaIXVBknHnlq4W8V0Dgu4TK9AA3xfkVpYrpLbj44lBsjIB1vql
+	uZbr1rwqb90Xl9uuj+ELAp6mPBQe0dYf/jELUDXpQ3HZFdyDCHmIkfoItcym/YCj2Wxx7L
+	ipXva2eJuTBvNLxD0b2Rr4wsMYTKVaIbojLC4ahOeany/mwTib82TVw20yE0+A==
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: Dave Stevenson <dave.stevenson@raspberrypi.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: Alexander Stein <alexander.stein@ew.tq-group.com>,
+	linux-media@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/1] media: dt-bindings: sony,imx219: Allow props from video-interface-devices
+Date: Thu, 15 May 2025 16:29:42 +0200
+Message-ID: <20250515142945.1348722-1-alexander.stein@ew.tq-group.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [BUG] WARNING in ipmr_rules_exit
-To: Guoyu Yin <y04609127@gmail.com>, davem@davemloft.net
-Cc: dsahern@kernel.org, edumazet@google.com, kuba@kernel.org,
- horms@kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <CAJNGr6tmGa7_tq8+zDqQx1=8u6G+VtHPqSg1mRYqTDqT986buQ@mail.gmail.com>
-Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <CAJNGr6tmGa7_tq8+zDqQx1=8u6G+VtHPqSg1mRYqTDqT986buQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-On 5/15/25 1:37 PM, Guoyu Yin wrote:
-> I discovered a kernel crash using the Syzkaller framework, described
-> as "WARNING in ipmr_rules_exit." This issue occurs in the
-> ipmr_free_table function at net/ipv4/ipmr.c:440, specifically when
-> ipmr_rules_exit calls ipmr_free_table, triggering the
-> WARN_ON_ONCE(!ipmr_can_free_table(net)); warning.
-> 
-> From the call stack, this warning is triggered during the exit of a
-> network namespace, specifically in ipmr_net_exit_batch when calling
-> ipmr_rules_exit. The warning indicates that ipmr_can_free_table
-> returned false, suggesting that the mrt table may still have active
-> data structures when attempting to free it.
+Allow properties from video-interface-devices. The change is identical to
+commit b6339ecfd0865 ("media: dt-bindings: sony,imx290: Allow props from
+video-interface-devices")
 
-Thanks for the report, I could actually reproduce the splat. I'm testing
-a patch I hope to share it soon.
+Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+---
+ Documentation/devicetree/bindings/media/i2c/sony,imx219.yaml | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-For the record, the above analysis is incorrect: the warning is
-triggered by a netns creation failure, not at netns exit time; the
-problem is that the running kernel has:
-
-# CONFIG_IP_MROUTE_MULTIPLE_TABLES is not set
-
-and the ipmr_can_free_table() implementation in such case is
-incomplete/wrong.
-
-Cheers,
-
-Paolo
+diff --git a/Documentation/devicetree/bindings/media/i2c/sony,imx219.yaml b/Documentation/devicetree/bindings/media/i2c/sony,imx219.yaml
+index 8b23e5fc6a24f..38c3759bcd9f5 100644
+--- a/Documentation/devicetree/bindings/media/i2c/sony,imx219.yaml
++++ b/Documentation/devicetree/bindings/media/i2c/sony,imx219.yaml
+@@ -16,6 +16,9 @@ description: |-
+   Image data is sent through MIPI CSI-2, which is configured as either 2 or
+   4 data lanes.
+ 
++allOf:
++  - $ref: /schemas/media/video-interface-devices.yaml#
++
+ properties:
+   compatible:
+     const: sony,imx219
+@@ -79,7 +82,7 @@ required:
+   - VDDL-supply
+   - port
+ 
+-additionalProperties: false
++unevaluatedProperties: false
+ 
+ examples:
+   - |
+-- 
+2.43.0
 
 
