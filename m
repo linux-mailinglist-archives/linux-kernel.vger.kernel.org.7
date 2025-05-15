@@ -1,270 +1,162 @@
-Return-Path: <linux-kernel+bounces-648714-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-648711-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60F1DAB7AC0
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 02:51:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 792C6AB7AB5
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 02:49:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 759A74C43B6
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 00:50:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12C7A1B661B1
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 00:49:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21FBD1474B8;
-	Thu, 15 May 2025 00:49:45 +0000 (UTC)
-Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0242E70838;
+	Thu, 15 May 2025 00:49:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="obcs8GVN"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46DD3191F8F;
-	Thu, 15 May 2025 00:49:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.178.238
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C068F6D17
+	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 00:49:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747270184; cv=none; b=Q6ERE0Upz0DLycg0i6QFQB5XRGY79SHYjSWVl7sA/eLoiMH4dM7KiIoG0hsJchRK0kVpa6qXGrWjBFjSw9lkgdfX/CCy3ZDo+f3YBI/J0zxh2yxbaKMuz7qRP9yhlIsfhM4s4YWhfVOTUGSherO5sPZWNq4AVfXcUmQco08K710=
+	t=1747270166; cv=none; b=n4V67dHkZnI6yfxuCtcUs3IeT68XYw6FWI2sZF01780lUH2twhBEwO0+OOHKGIuAV6IzgGi4ir+2EzGEbA5zOJ2R87bLBo6QvyYlAo0XGmItT+pcmwVQEVX6kXUfHVQCxpyktutgtqCNxaH5p24cfj9d/cfeal3Pkdhm/tOVwnM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747270184; c=relaxed/simple;
-	bh=CTBGn+FAblEG8xDs0u55dsuE1wYtE1s9QGMT0UlaHwM=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=kXqCMPxy5fiIy+rpErqg/5H9DAGT4vAzeOCOjhYoLAdqIr7+wkRvW+z3dImH+UvYw9GBKOe8Us8Try17bzkTMPb060hejpm70q/6Qqw6ctP7FEf9n+gd05fan9YDbon2CgxNhJ38d6mgjLk7jC66bT7QkvkDYczGUwqRwTi6EeE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.178.238
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
-Received: from pps.filterd (m0250812.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54F0k3U7016375;
-	Thu, 15 May 2025 00:49:25 GMT
-Received: from ala-exchng01.corp.ad.wrs.com (ala-exchng01.wrs.com [147.11.82.252])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 46mbc8sxgb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Thu, 15 May 2025 00:49:24 +0000 (GMT)
-Received: from ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) by
- ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.43; Wed, 14 May 2025 17:49:20 -0700
-Received: from pek-lpg-core1.wrs.com (147.11.136.210) by
- ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server id
- 15.1.2507.43 via Frontend Transport; Wed, 14 May 2025 17:49:16 -0700
-From: <jianqi.ren.cn@windriver.com>
-To: <gregkh@linuxfoundation.org>, <stable@vger.kernel.org>
-CC: <patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-        <jianqi.ren.cn@windriver.com>, <idosch@nvidia.com>,
-        <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-        <pabeni@redhat.com>, <jhs@mojatatu.com>, <xiyou.wangcong@gmail.com>,
-        <jiri@resnulli.us>, <vladbu@mellanox.com>, <netdev@vger.kernel.org>
-Subject: [PATCH 5.10.y] net/sched: flower: Fix chain template offload
-Date: Thu, 15 May 2025 08:49:13 +0800
-Message-ID: <20250515004913.3611901-1-jianqi.ren.cn@windriver.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1747270166; c=relaxed/simple;
+	bh=jPnzg6PNsN6lUzHoKMbxdMvPtIe0LNuhdxU8f6d8XHM=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=Vglqjl7WabD5RH84WU8zQOovSXMOlJI5qwtsGYMMaeKSegyAaneL0MEwPoYouQIMShbwgOc1pPHTHdeTW2ti6GrPSkBF3BcqJRpXJggpBy2JC6z3QM5dK5b01elAJNP4dR3zRAGxHHUzyEsGkbF7fYw17Nph9luiFpb4UMjw86Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=obcs8GVN; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-30df7c1287fso340290a91.1
+        for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 17:49:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1747270164; x=1747874964; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=hMfietv3cfwdDUfJJ6Vu0q3GZ0OBruwHSCB3xq9gft0=;
+        b=obcs8GVNe6j8T8Ck0DEPBVHuNs5kfkVvmPdQjAX/POma6uMLdaKQDNhIPdTaBz4E5R
+         pHNut+1MSlI4muJ9zQFato4ySFqBU8/c7AbxiOGuSO5/nEhlh3eKXBGCO2IxtQnO2hec
+         J3/97txx7W1+gfWHWXOtj3CPIdra4mT9sFOoOv9lZvtYvvKz88Y7jfpbdB6eHebuLZrS
+         g1yIra/n6G1r7reDrpvFL2NLqaSKksHxP9W0vPtbKaRl0vIQtGLZOlAfcODktPCKCFaj
+         1m0euXS8SXN/wbpZA25gvjktpgwoKxjLM3UNhadZqqzOLbaZaxmH4pMcFDQWYX44cIUp
+         2SWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747270164; x=1747874964;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hMfietv3cfwdDUfJJ6Vu0q3GZ0OBruwHSCB3xq9gft0=;
+        b=mSeisprbOPLQQUftmEWL+acYfLlS9Aclq0kJRxmbAr3bzqloE+ChhtRNOZ5iV/l7wF
+         Rpq+zxoYxf8taqdaXW0ggfojmA99WBKuKxJEh2drpJshsAU5sA2IwoAEtnBFbj94+baI
+         G+VSK4Uj4i6TmjEihhgb4kprLhB6C17PSHZ8o9SX9hJEmTLAs5UM8U3P6SPye2UYoKGr
+         kHVgO5DudVvUnNS6KiG1U5uobqpxqn3dErhNqDR7ip9e78UbBIKT29aEk0UPmJcFB9mj
+         GWW/lN8yNsRFT03xvurbKGNgRWOe6X/FkdIA8rNrDn2ARe8dQ2G1p+mtFZ/+FrwQMGoz
+         RK/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVYkLGOJm5Z50swGKyZvIgy6rhFtZxVsCcUVjHrJvyG4Z1gXuAyioEzE6W//COtzXwIz11dOXjFFMJx2LE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwqckGO81PeUe4OV11JkXQMOhOitdMM8Fx8IeC/FqpYiAqn1qrN
+	giDZaI96/0TH5P0s6u7RtasYXL/gcVYgUf8XPD79h3yYngo9OGeyO7EXJqAhZVbX28h3ierZKbu
+	sAA==
+X-Google-Smtp-Source: AGHT+IEkFXVGxtOuqdcAPO0vpFEVYeUwvYJWz2kVDDpTt9pJsdBPXKA7ndT83tbNuCGk6UN2X+RRAvKJR+4=
+X-Received: from pjc14.prod.google.com ([2002:a17:90b:2f4e:b0:2fc:1356:bcc3])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:38c8:b0:2ff:5a9d:937f
+ with SMTP id 98e67ed59e1d1-30e2e65affamr8466341a91.24.1747270163943; Wed, 14
+ May 2025 17:49:23 -0700 (PDT)
+Date: Wed, 14 May 2025 17:49:22 -0700
+In-Reply-To: <20250324173121.1275209-1-mizhang@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-GUID: 4rEBOr7PsorjKeEQ0GcwI45B7qS8RyVX
-X-Proofpoint-ORIG-GUID: 4rEBOr7PsorjKeEQ0GcwI45B7qS8RyVX
-X-Authority-Analysis: v=2.4 cv=IIACChvG c=1 sm=1 tr=0 ts=68253a15 cx=c_pps a=/ZJR302f846pc/tyiSlYyQ==:117 a=/ZJR302f846pc/tyiSlYyQ==:17 a=dt9VzEwgFbYA:10 a=Ikd4Dj_1AAAA:8 a=J1Y8HTJGAAAA:8 a=t7CeM3EgAAAA:8 a=uSdy2bKQw3vfi-H1j0oA:9 a=y1Q9-5lHfBjTkpIzbSAN:22
- a=FdTzh2GWekK77mhwV6Dw:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTE1MDAwNSBTYWx0ZWRfX8Z/iYC9pUWTF BWO0+I1GOyFjkwM5N39aFOgQ+yJHv4H1Sk8j5OdQBjMYQoB7Rktvs9x8QIZ1mvfL6bHoyc02vVl lEkRYrbtpWRIlfwqkS/sS93U+k01p8JjAcbtDr4L/lOp+TqK+5awtMLyCAHGC5a3UphZtceyEml
- P4wFCDQveFiVKG5C7BK9UniFS83obmYa0M1ZKQYFV1dxR5sosayn45NM8m3QsnkjEaa4UxtrCdf G8VkICH9izbUQe4ZcIfxQ3zbCbpexV2BAsh8c+Qhk13+H/aODDSCCbG1gYpbsnyJ5FK2t57UTiQ e7vN7FarFzf9XyAv37rGRRZtAksTG9xP6+i9FDeTqizpkMGgsJNrB0azeyN36VDYk2y7R4CCpeM
- KcWQxm9hwU5DSREA1Lh2G2+abvUiraxotZKpaPJsfzFAUow/GC108eCmkj+IUFsxR3Lh/L6N
-X-Sensitive_Customer_Information: Yes
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-14_05,2025-05-14_03,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- spamscore=0 mlxscore=0 suspectscore=0 malwarescore=0 phishscore=0
- bulkscore=0 impostorscore=0 mlxlogscore=999 priorityscore=1501
- clxscore=1015 adultscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.21.0-2505070000
- definitions=main-2505150005
+Mime-Version: 1.0
+References: <20250324173121.1275209-1-mizhang@google.com>
+Message-ID: <aCU6EjbXzPct9v7B@google.com>
+Subject: Re: [PATCH v4 00/38] Mediated vPMU 4.0 for x86
+From: Sean Christopherson <seanjc@google.com>
+To: Mingwei Zhang <mizhang@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Paolo Bonzini <pbonzini@redhat.com>, Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, Liang@google.com, 
+	Kan <kan.liang@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	Yongwei Ma <yongwei.ma@intel.com>, Xiong Zhang <xiong.y.zhang@linux.intel.com>, 
+	Dapeng Mi <dapeng1.mi@linux.intel.com>, Jim Mattson <jmattson@google.com>, 
+	Sandipan Das <sandipan.das@amd.com>, Zide Chen <zide.chen@intel.com>, 
+	Eranian Stephane <eranian@google.com>, Shukla Manali <Manali.Shukla@amd.com>, 
+	Nikunj Dadhania <nikunj.dadhania@amd.com>
+Content-Type: text/plain; charset="us-ascii"
 
-From: Ido Schimmel <idosch@nvidia.com>
+On Mon, Mar 24, 2025, Mingwei Zhang wrote:
+> Dapeng Mi (18):
+>   KVM: x86/pmu: Introduce enable_mediated_pmu global parameter
+>   KVM: x86/pmu: Check PMU cpuid configuration from user space
+>   KVM: x86: Rename vmx_vmentry/vmexit_ctrl() helpers
+>   KVM: x86/pmu: Add perf_capabilities field in struct kvm_host_values{}
+>   KVM: x86/pmu: Move PMU_CAP_{FW_WRITES,LBR_FMT} into msr-index.h header
+>   KVM: VMX: Add macros to wrap around
+>     {secondary,tertiary}_exec_controls_changebit()
+>   KVM: x86/pmu: Check if mediated vPMU can intercept rdpmc
+>   KVM: x86/pmu/vmx: Save/load guest IA32_PERF_GLOBAL_CTRL with
+>     vm_exit/entry_ctrl
+>   KVM: x86/pmu: Optimize intel/amd_pmu_refresh() helpers
+>   KVM: x86/pmu: Setup PMU MSRs' interception mode
+>   KVM: x86/pmu: Handle PMU MSRs interception and event filtering
+>   KVM: x86/pmu: Switch host/guest PMU context at vm-exit/vm-entry
+>   KVM: x86/pmu: Handle emulated instruction for mediated vPMU
+>   KVM: nVMX: Add macros to simplify nested MSR interception setting
+>   KVM: selftests: Add mediated vPMU supported for pmu tests
+>   KVM: Selftests: Support mediated vPMU for vmx_pmu_caps_test
+>   KVM: Selftests: Fix pmu_counters_test error for mediated vPMU
+>   KVM: x86/pmu: Expose enable_mediated_pmu parameter to user space
+> 
+> Kan Liang (8):
+>   perf: Support get/put mediated PMU interfaces
+>   perf: Skip pmu_ctx based on event_type
+>   perf: Clean up perf ctx time
+>   perf: Add a EVENT_GUEST flag
+>   perf: Add generic exclude_guest support
+>   perf: Add switch_guest_ctx() interface
+>   perf/x86: Support switch_guest_ctx interface
+>   perf/x86/intel: Support PERF_PMU_CAP_MEDIATED_VPMU
+> 
+> Mingwei Zhang (5):
+>   perf/x86: Forbid PMI handler when guest own PMU
+>   perf/x86/core: Plumb mediated PMU capability from x86_pmu to
+>     x86_pmu_cap
+>   KVM: x86/pmu: Exclude PMU MSRs in vmx_get_passthrough_msr_slot()
+>   KVM: x86/pmu: introduce eventsel_hw to prepare for pmu event filtering
+>   KVM: nVMX: Add nested virtualization support for mediated PMU
+> 
+> Sandipan Das (4):
+>   perf/x86/core: Do not set bit width for unavailable counters
+>   KVM: x86/pmu: Add AMD PMU registers to direct access list
+>   KVM: x86/pmu/svm: Set GuestOnly bit and clear HostOnly bit when guest
+>     write to event selectors
+>   perf/x86/amd: Support PERF_PMU_CAP_MEDIATED_VPMU for AMD host
+> 
+> Xiong Zhang (3):
+>   x86/irq: Factor out common code for installing kvm irq handler
+>   perf: core/x86: Register a new vector for KVM GUEST PMI
+>   KVM: x86/pmu: Register KVM_GUEST_PMI_VECTOR handler
 
-[ Upstream commit 32f2a0afa95fae0d1ceec2ff06e0e816939964b8 ]
+I ran out of time today and didn't get emails send for all patches.  I'm planning
+on getting that done tomorrow.
 
-When a qdisc is deleted from a net device the stack instructs the
-underlying driver to remove its flow offload callback from the
-associated filter block using the 'FLOW_BLOCK_UNBIND' command. The stack
-then continues to replay the removal of the filters in the block for
-this driver by iterating over the chains in the block and invoking the
-'reoffload' operation of the classifier being used. In turn, the
-classifier in its 'reoffload' operation prepares and emits a
-'FLOW_CLS_DESTROY' command for each filter.
+I already have most of the proposed changes implemented:
 
-However, the stack does not do the same for chain templates and the
-underlying driver never receives a 'FLOW_CLS_TMPLT_DESTROY' command when
-a qdisc is deleted. This results in a memory leak [1] which can be
-reproduced using [2].
+  https://github.com/sean-jc/linux.git x86/mediated_pmu
 
-Fix by introducing a 'tmplt_reoffload' operation and have the stack
-invoke it with the appropriate arguments as part of the replay.
-Implement the operation in the sole classifier that supports chain
-templates (flower) by emitting the 'FLOW_CLS_TMPLT_{CREATE,DESTROY}'
-command based on whether a flow offload callback is being bound to a
-filter block or being unbound from one.
+It compiles and doesn't explode, but it's not fully functional (PMU tests fail).
+I'll poke at it over the next few days, but if someone is itching to figure out
+what I broke, then by all means.
 
-As far as I can tell, the issue happens since cited commit which
-reordered tcf_block_offload_unbind() before tcf_block_flush_all_chains()
-in __tcf_block_put(). The order cannot be reversed as the filter block
-is expected to be freed after flushing all the chains.
-
-[1]
-unreferenced object 0xffff888107e28800 (size 2048):
-  comm "tc", pid 1079, jiffies 4294958525 (age 3074.287s)
-  hex dump (first 32 bytes):
-    b1 a6 7c 11 81 88 ff ff e0 5b b3 10 81 88 ff ff  ..|......[......
-    01 00 00 00 00 00 00 00 e0 aa b0 84 ff ff ff ff  ................
-  backtrace:
-    [<ffffffff81c06a68>] __kmem_cache_alloc_node+0x1e8/0x320
-    [<ffffffff81ab374e>] __kmalloc+0x4e/0x90
-    [<ffffffff832aec6d>] mlxsw_sp_acl_ruleset_get+0x34d/0x7a0
-    [<ffffffff832bc195>] mlxsw_sp_flower_tmplt_create+0x145/0x180
-    [<ffffffff832b2e1a>] mlxsw_sp_flow_block_cb+0x1ea/0x280
-    [<ffffffff83a10613>] tc_setup_cb_call+0x183/0x340
-    [<ffffffff83a9f85a>] fl_tmplt_create+0x3da/0x4c0
-    [<ffffffff83a22435>] tc_ctl_chain+0xa15/0x1170
-    [<ffffffff838a863c>] rtnetlink_rcv_msg+0x3cc/0xed0
-    [<ffffffff83ac87f0>] netlink_rcv_skb+0x170/0x440
-    [<ffffffff83ac6270>] netlink_unicast+0x540/0x820
-    [<ffffffff83ac6e28>] netlink_sendmsg+0x8d8/0xda0
-    [<ffffffff83793def>] ____sys_sendmsg+0x30f/0xa80
-    [<ffffffff8379d29a>] ___sys_sendmsg+0x13a/0x1e0
-    [<ffffffff8379d50c>] __sys_sendmsg+0x11c/0x1f0
-    [<ffffffff843b9ce0>] do_syscall_64+0x40/0xe0
-unreferenced object 0xffff88816d2c0400 (size 1024):
-  comm "tc", pid 1079, jiffies 4294958525 (age 3074.287s)
-  hex dump (first 32 bytes):
-    40 00 00 00 00 00 00 00 57 f6 38 be 00 00 00 00  @.......W.8.....
-    10 04 2c 6d 81 88 ff ff 10 04 2c 6d 81 88 ff ff  ..,m......,m....
-  backtrace:
-    [<ffffffff81c06a68>] __kmem_cache_alloc_node+0x1e8/0x320
-    [<ffffffff81ab36c1>] __kmalloc_node+0x51/0x90
-    [<ffffffff81a8ed96>] kvmalloc_node+0xa6/0x1f0
-    [<ffffffff82827d03>] bucket_table_alloc.isra.0+0x83/0x460
-    [<ffffffff82828d2b>] rhashtable_init+0x43b/0x7c0
-    [<ffffffff832aed48>] mlxsw_sp_acl_ruleset_get+0x428/0x7a0
-    [<ffffffff832bc195>] mlxsw_sp_flower_tmplt_create+0x145/0x180
-    [<ffffffff832b2e1a>] mlxsw_sp_flow_block_cb+0x1ea/0x280
-    [<ffffffff83a10613>] tc_setup_cb_call+0x183/0x340
-    [<ffffffff83a9f85a>] fl_tmplt_create+0x3da/0x4c0
-    [<ffffffff83a22435>] tc_ctl_chain+0xa15/0x1170
-    [<ffffffff838a863c>] rtnetlink_rcv_msg+0x3cc/0xed0
-    [<ffffffff83ac87f0>] netlink_rcv_skb+0x170/0x440
-    [<ffffffff83ac6270>] netlink_unicast+0x540/0x820
-    [<ffffffff83ac6e28>] netlink_sendmsg+0x8d8/0xda0
-    [<ffffffff83793def>] ____sys_sendmsg+0x30f/0xa80
-
-[2]
- # tc qdisc add dev swp1 clsact
- # tc chain add dev swp1 ingress proto ip chain 1 flower dst_ip 0.0.0.0/32
- # tc qdisc del dev swp1 clsact
- # devlink dev reload pci/0000:06:00.0
-
-Fixes: bbf73830cd48 ("net: sched: traverse chains in block with tcf_get_next_chain()")
-Signed-off-by: Ido Schimmel <idosch@nvidia.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-[Minor conflict resolved due to code context change.]
-Signed-off-by: Jianqi Ren <jianqi.ren.cn@windriver.com>
-Signed-off-by: He Zhe <zhe.he@windriver.com>
----
-Verified the build test
----
- include/net/sch_generic.h |  4 ++++
- net/sched/cls_api.c       |  9 ++++++++-
- net/sched/cls_flower.c    | 23 +++++++++++++++++++++++
- 3 files changed, 35 insertions(+), 1 deletion(-)
-
-diff --git a/include/net/sch_generic.h b/include/net/sch_generic.h
-index 4db11c4695cf..22d2f739692a 100644
---- a/include/net/sch_generic.h
-+++ b/include/net/sch_generic.h
-@@ -361,6 +361,10 @@ struct tcf_proto_ops {
- 						struct nlattr **tca,
- 						struct netlink_ext_ack *extack);
- 	void			(*tmplt_destroy)(void *tmplt_priv);
-+	void			(*tmplt_reoffload)(struct tcf_chain *chain,
-+						   bool add,
-+						   flow_setup_cb_t *cb,
-+						   void *cb_priv);
- 
- 	/* rtnetlink specific */
- 	int			(*dump)(struct net*, struct tcf_proto*, void *,
-diff --git a/net/sched/cls_api.c b/net/sched/cls_api.c
-index beedd0d2b509..521fd4d6eb31 100644
---- a/net/sched/cls_api.c
-+++ b/net/sched/cls_api.c
-@@ -1413,6 +1413,9 @@ tcf_block_playback_offloads(struct tcf_block *block, flow_setup_cb_t *cb,
- 	     chain_prev = chain,
- 		     chain = __tcf_get_next_chain(block, chain),
- 		     tcf_chain_put(chain_prev)) {
-+		if (chain->tmplt_ops && add)
-+			chain->tmplt_ops->tmplt_reoffload(chain, true, cb,
-+							  cb_priv);
- 		for (tp = __tcf_get_next_proto(chain, NULL); tp;
- 		     tp_prev = tp,
- 			     tp = __tcf_get_next_proto(chain, tp),
-@@ -1428,6 +1431,9 @@ tcf_block_playback_offloads(struct tcf_block *block, flow_setup_cb_t *cb,
- 				goto err_playback_remove;
- 			}
- 		}
-+		if (chain->tmplt_ops && !add)
-+			chain->tmplt_ops->tmplt_reoffload(chain, false, cb,
-+							  cb_priv);
- 	}
- 
- 	return 0;
-@@ -2772,7 +2778,8 @@ static int tc_chain_tmplt_add(struct tcf_chain *chain, struct net *net,
- 	ops = tcf_proto_lookup_ops(name, true, extack);
- 	if (IS_ERR(ops))
- 		return PTR_ERR(ops);
--	if (!ops->tmplt_create || !ops->tmplt_destroy || !ops->tmplt_dump) {
-+	if (!ops->tmplt_create || !ops->tmplt_destroy || !ops->tmplt_dump ||
-+	    !ops->tmplt_reoffload) {
- 		NL_SET_ERR_MSG(extack, "Chain templates are not supported with specified classifier");
- 		module_put(ops->owner);
- 		return -EOPNOTSUPP;
-diff --git a/net/sched/cls_flower.c b/net/sched/cls_flower.c
-index 9f6f8430d037..6c9d2afd91fe 100644
---- a/net/sched/cls_flower.c
-+++ b/net/sched/cls_flower.c
-@@ -2409,6 +2409,28 @@ static void fl_tmplt_destroy(void *tmplt_priv)
- 	kfree(tmplt);
- }
- 
-+static void fl_tmplt_reoffload(struct tcf_chain *chain, bool add,
-+			       flow_setup_cb_t *cb, void *cb_priv)
-+{
-+	struct fl_flow_tmplt *tmplt = chain->tmplt_priv;
-+	struct flow_cls_offload cls_flower = {};
-+
-+	cls_flower.rule = flow_rule_alloc(0);
-+	if (!cls_flower.rule)
-+		return;
-+
-+	cls_flower.common.chain_index = chain->index;
-+	cls_flower.command = add ? FLOW_CLS_TMPLT_CREATE :
-+				   FLOW_CLS_TMPLT_DESTROY;
-+	cls_flower.cookie = (unsigned long) tmplt;
-+	cls_flower.rule->match.dissector = &tmplt->dissector;
-+	cls_flower.rule->match.mask = &tmplt->mask;
-+	cls_flower.rule->match.key = &tmplt->dummy_key;
-+
-+	cb(TC_SETUP_CLSFLOWER, &cls_flower, cb_priv);
-+	kfree(cls_flower.rule);
-+}
-+
- static int fl_dump_key_val(struct sk_buff *skb,
- 			   void *val, int val_type,
- 			   void *mask, int mask_type, int len)
-@@ -3214,6 +3236,7 @@ static struct tcf_proto_ops cls_fl_ops __read_mostly = {
- 	.bind_class	= fl_bind_class,
- 	.tmplt_create	= fl_tmplt_create,
- 	.tmplt_destroy	= fl_tmplt_destroy,
-+	.tmplt_reoffload = fl_tmplt_reoffload,
- 	.tmplt_dump	= fl_tmplt_dump,
- 	.owner		= THIS_MODULE,
- 	.flags		= TCF_PROTO_OPS_DOIT_UNLOCKED,
--- 
-2.34.1
-
+Given that I've already made many modifications (I have a hard time reviewing a
+series this big without editing as I go), unless someone objects, I'll post v5
+(and v6+ as needed), though that'll like be days/weeks as I need to get it working,
+and want to do more passes over the code, shortlogs, and changelogs. 
 
