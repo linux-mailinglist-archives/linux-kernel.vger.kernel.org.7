@@ -1,273 +1,255 @@
-Return-Path: <linux-kernel+bounces-650142-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-650144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84B18AB8DA8
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 19:24:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DC3DAB8DAC
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 19:24:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00ED53AC3B0
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 17:23:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F09D01BC479F
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 17:24:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCD44259C80;
-	Thu, 15 May 2025 17:23:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99A0025A2AA;
+	Thu, 15 May 2025 17:24:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g8k4izbo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D25F9q7Z"
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FC3D256C9E;
-	Thu, 15 May 2025 17:23:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B2402594AA;
+	Thu, 15 May 2025 17:24:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747329832; cv=none; b=OT5oVO2BY9GPR6ZYZPFr2OUmpJSoEpEb/bFwFntt2WK2FQb2mf8s04yLnBt+wajS4q13LwcQ1iXmqyS5mofg/eoj2utfW3vdwk2iN2GZYUx0EmQ5aPqqnOLQOlFPStJAom/2rfLNq1vMukcmGr19sSQyRaajfoeqpm5S+NbJ1+Q=
+	t=1747329846; cv=none; b=SlpAOQLuQRNgtN1ocTAsm6ipmoe0R0dDdl/YWIb0kvx2+S9BO3mQN5CewAu97Xx6y0MIgwopvWtAbXQB/oTSbUBTEgpIo1WNDcOdMJxDaDEty7zy/N6UN1kDYViLc0lbMnDTLS0M+yLawTKP52XSkMkl/3pgatH25nP0+ZWt0xE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747329832; c=relaxed/simple;
-	bh=u82z6V+UxR0TG68YO34FSdeIVHuIUfHqLUEEfehwl9s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GGkcVV0j+/oV36iYzB1hKsjsxECEkjOIHH5v8EyS6JbDw3w4ypgvk7dBru5mHq0RlhvON7X0gKvWUigPvKdPvbUqxonen7Ck9j+T6C2Bx4cw37lzYhnDnE4YpQHy/KPzIkgs4eMu/6YLPE49cHU0/PCMoocz4O0k/LVwn5Y5tjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g8k4izbo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7EF5C4CEE7;
-	Thu, 15 May 2025 17:23:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747329831;
-	bh=u82z6V+UxR0TG68YO34FSdeIVHuIUfHqLUEEfehwl9s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=g8k4izbo5xYZeRv6Ch+yGUWImUwFWBmT04pdnqXgrVZH84ztssHonrd/WzrzhY515
-	 BiKRhAJhdrud8Ddxd762NVAcc7ABQ/h7+El2hsatVOZqEzE8Qr6D0tXWrckymvDpwR
-	 rzrpdyqJ8Hw0Ehteu2l+dmAnf1tDO7FHszqpEoWCmCuhanXUBKnr5q5gifzccKkp9/
-	 V8PcJZShRe/Ih8b1XQ1FFDS0iSZpyJ4d+nvCmKyKiMr5sWTTeZ5aKUIwyuypCYzcOZ
-	 ufXGK20qkRT42Ow/CTEtwd++K15YyEGa1Rm0QznAfdn+iEzg8vix2sFXCJhify8zBq
-	 UaDl72Pl2j4rA==
-Date: Thu, 15 May 2025 19:23:46 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Andreas Hindborg <a.hindborg@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	Boqun Feng <boqun.feng@gmail.com>, Lyude Paul <lyude@redhat.com>,
-	Rust ML <rust-for-linux@vger.kernel.org>
-Subject: [PATCH -v2 01/10] rust: Rename timer_container_of() to
- hrtimer_container_of()
-Message-ID: <aCYjIg6OIENQBY_K@gmail.com>
-References: <20250507175338.672442-1-mingo@kernel.org>
- <qqz686a7_ob8uzbREL3X3P-MTdPUVJo9hi33Dsv-3kgJoB1_bE0ynnuXFVLIwbZ5dNkntegTdZhkBp04syneXA==@protonmail.internalid>
- <20250507175338.672442-2-mingo@kernel.org>
- <877c2spaag.fsf@kernel.org>
- <exZlQK8ioPft3NijtFzp4A_qkGlCunbqRbqwq8STs5kyK8khboJDM8LqVH7EZTImMbpeMOnxadeRvyEnyU69kA==@protonmail.internalid>
- <aBu2ocPIFOvq_EiA@gmail.com>
- <87jz6mnpnm.fsf@kernel.org>
+	s=arc-20240116; t=1747329846; c=relaxed/simple;
+	bh=jVTMc+G+MsnGu7yvTEf/heR8X6WrFkO6OQ92iSvyc/k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TOqh5cCwvvAbNXm5uYQT7Z2eg8u9z4xIKPIK8x2Sv409/+nFw3C7tRAWYXuQWaD7vP73pS8BbaCPbCgB7/O4pSvcvTMKSm7xPpZvJGXh9e12gQdMQxC4ByBYN3H6O5l3RyqDveP7kv47rbbhFxjQEMNJ0qT4fv0E1wUEOrNKkUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D25F9q7Z; arc=none smtp.client-ip=209.85.128.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-7099bc957d9so12265157b3.0;
+        Thu, 15 May 2025 10:24:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747329844; x=1747934644; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=us+1sw+TjwAzbWDuUs5/7h91LAqit4Y+rsQEVdNjnnc=;
+        b=D25F9q7Zd39RwPEkDqeCU4oQYUJIxQiP78lL+DZMHBiHcmXKQRKilR/qQ5s1tGHzgw
+         ErxhXw5OYzkMLUOl6wsRBgcCp0e2C/nbfhjfkDfU+akuC+JcTXCZneUKw3NwbQUQAkzl
+         ZlasiyRTB7yuSRlViKPgTi7w6kb1YDRc+Tj71Iz/DRzvXdTULNuhTevEQPYx8XRtXH0L
+         K57e1dF5IvxtqOwMQkmgPdQUnYoxELKsHGIND0UmrZNalimkXZw5TQP6fQraruZFskcO
+         M+QW0oUvmX/2faYwkyZ5FAV4SyUQ7mMfnSNmG+DM2Vs576Swq6IrgYnrOWf0C7VhU2G0
+         QQrg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747329844; x=1747934644;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=us+1sw+TjwAzbWDuUs5/7h91LAqit4Y+rsQEVdNjnnc=;
+        b=YJbLOh5FTshR27+JNhvZ43xPJgDUug2AuU2rQEwch52KxL2t/FBZqBq6DIq+VlyfbK
+         0ia4UM69/vymmtd3hE1+Bv4apoMYWPE8I52B0tqUI8PUaS5rjDweNAWEvumeTPf92dd5
+         Z4BOk2F1fMjf7JoBqNO1DNjn88UGyzHvjNht1GYjbJ5rAlfmf98SEiIVOmgvplf49+Uq
+         TPMhd8HGgXxxdDv123Yxzp1sZ62u1Hhp/j7uEdzCXXVAAwRagSH5K1ZTKHdoCdcioCSS
+         dNuK7vYNVQuJFjlcRkS0IhlyPBoKa/6e03BFow6kTH6opY2m+JeVNV6MkxB2bvDbwWCQ
+         tecA==
+X-Forwarded-Encrypted: i=1; AJvYcCVQC49/rGFXdGaiN8zOrxqgdHtyf/3x47u/xP9QgQ5zdQ2Bangtil9EpflaKLf8gS1oYPLrQ+IkCFJO07c=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzzgzgojp07r2UBH8rmTZ45HTZdNRCpMvKIt2HZNy41zRt40Sbh
+	ZNLEQuYL19UPVDYGk+VhT+Y4/hlFDJcIBnsGv0JvmzXKL4lrOkMSLYQ6XP96XIhUJQ+W8OEDS24
+	SMWLNkFEK5JfYwADo4qbqlLFGXT8TM/o=
+X-Gm-Gg: ASbGnctN22jbWhc7ZgswFZ0sW1s44poxnaZYcZSUb6PCZ8nXowXfqEqIzuMibHHDm6A
+	kZGEU0ahSr/gpw+1NFctf5beog6CZLKRA+vlJAXf1alWxIEikJfHsELzOx8VH/L9hcouyv3EpAu
+	rb3DhNwGr3akBTJIQAJNhpqy2YkVtsw9yU
+X-Google-Smtp-Source: AGHT+IEjTEoJRq2T3LULkfk9Zh9aHi/xSNGmuKKzDYSZ6rjqdu8cGJaPZyPzb5syYIGHMSt4dS7tNSz/nGd90u+Sjyk=
+X-Received: by 2002:a05:690c:4c13:b0:703:c3ed:1f61 with SMTP id
+ 00721157ae682-70ca7a14077mr7892047b3.20.1747329843704; Thu, 15 May 2025
+ 10:24:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87jz6mnpnm.fsf@kernel.org>
+References: <20250515152432.77835-1-stefano.radaelli21@gmail.com> <2b2ef0bd-6491-41a0-b2e1-81e2b83167ef@lunn.ch>
+In-Reply-To: <2b2ef0bd-6491-41a0-b2e1-81e2b83167ef@lunn.ch>
+From: Stefano Radaelli <stefano.radaelli21@gmail.com>
+Date: Thu, 15 May 2025 19:23:53 +0200
+X-Gm-Features: AX0GCFtrXZdRTTe1Z1VhonDgvkBWT9Gpepioxgzk2FCQBn1UeCMIbi53mBPc35U
+Message-ID: <CAK+owogXdnvoiVNBn_6uBZgqoHrkiQmVU58ip1Wqd6v8VX5f6A@mail.gmail.com>
+Subject: Re: [PATCH] net: phy: add driver for MaxLinear MxL86110 PHY
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Heiner Kallweit <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Xu Liang <lxu@maxlinear.com>
+Content-Type: text/plain; charset="UTF-8"
 
+Hi Andrew,
 
-* Andreas Hindborg <a.hindborg@kernel.org> wrote:
+> If there is only one page, does these make any sense?
 
-> "Ingo Molnar" <mingo@kernel.org> writes:
-> 
-> > * Andreas Hindborg <a.hindborg@kernel.org> wrote:
-> >
-> >> "Ingo Molnar" <mingo@kernel.org> writes:
-> >>
-> >> > This primitive is dealing with 'struct hrtimer' objects, not
-> >> > 'struct timer_list' objects - so clarify the name.
-> >> >
-> >> > We want to introduce the timer_container_of() symbol in the kernel
-> >> > for timer_list, make sure there's no clash of namespaces, at least
-> >> > on the conceptual plane.
-> >>
-> >> Is this a resend?
-> >
-> > I noted the changes in the boilerplate:
-> >
-> >   Changes in -v3:
-> >
-> >     - Picked up review tags
-> >     - Rebased to v6.15-rc5
-> >
-> > This particular patch didn't change.
-> 
-> Thanks. I didn't get the cover letter, but I should have looked for it.
+You're totally right: the MxL86110 does not have a traditional page
+mechanism like other PHYs. The so-called "page" access via register 30
+is simply the standard MaxLinear mechanism to access extended
+registers: reg 30 is used to select the register address, and reg 31 is used
+for the data. So in this case, I can drop both 'phy_select_page()' and the
+'read_page'/'write_page' functions entirely, and just keep the
+'mxl86110_{read,write}_extended_reg()' helpers.
 
-Sorry about that, I have added your Cc: to the main timer_container_of 
-patch as well.
+> This is confusing. It looks identical to mxl86110_write_page(). So
+> regnum is actually page?
 
-> >> [1] https://lore.kernel.org/all/877c3cbdq2.fsf@kernel.org
-> >
-> > Yeah, saw that, but you said you are fine with it if I insist, and I'd
-> > like to have this to free up the timer_* namespace.
-> 
-> Yes. I did not hear any proper insisting till now though.
+Exactly; as mentioned above, regnum isn't a page, it's the actual address
+of the extended register I'm trying to access. The name `regnum` is
+still accurate
+because it corresponds to the extended register map defined by MaxLinear
+and written to reg 30 before accessing reg 31.
 
-:) I always see these threads in their full context, and I didn't
-immediately realize that you only saw part of it, with a limited, 
-misleading context, and was slow at reacting to your concern.
+> So does the value 1 here mean 8ns? 0 would be 2ns?
 
-> > Since I think we'd like to introduce the timer_container_of() in 
-> > the future it would be nice to do this rename, as:
-> >
-> > 	$ git grep -w timer_container_of
-> >
-> > will have hrtimer related false positive hits in rust/ code, even
-> > though the namespaces are obviously independent.
-> 
-> Ok, I see. I'm not used to grepping like that, but I see how that can be
-> annoying.
-> 
-> >
-> > The Rust method is arguably a minor misnomer as well: you have
-> > work_container_of around struct work, but timer_container_of is around
-> > struct hrtimer?
-> 
-> Yes, you are right.
-> 
-> Feel free to take this through tip. Otherwise maybe Miguel can pick it
-> up in the rust PR for 6.15.
-> 
-> Acked-by: Andreas Hindborg <a.hindborg@kernel.org>
+Setting RXDLY_ENABLE = 1 enables the internal fixed RX_CLK delay
+provided by the PHY, but the actual delay value depends on the
+RX clock frequency: approximately 2 ns at 125 MHz, and ~8 ns at 25 or 2.5 MHz.
+I'm not explicitly selecting 2 or 8 ns, it's applied automatically by the PHY
+based on clock rate.
 
-Thank you!!
+Since this delay is additive with the configurable digital RX delay
+set in `CFG1_REG`, I only configure 150 ps in the digital field to
+avoid over-delaying.
+That said, if you prefer, I can disable `RXDLY_ENABLE` and set to 1950 ps
+directly in the digital delay field. Just let me know what you'd prefer here.
 
-The tentative merge plan is/was that, if everything goes smoothly, we'd 
-send this and the general timer_container_of() patch to Linus a few 
-days before -rc1, due to the substantial cross section of the changes:
+Thanks again,
+Stefano
 
-  treewide, timers: Rename from_timer() => timer_container_of()
-
-  693 files changed, 913 insertions(+), 913 deletions(-)
-
-:-/
-
-But with your Acked-by we can now send the Rust patch through the 
-regular channels with the timer tree and only send the single treewide 
-patch to Linus separately.
-
-If things are too busy in the merge window for Thomas or Linus, the 
-non-Rust patch can easily slip to the v6.17 merge window though.
-
-Thanks,
-
-	Ingo
-
-====================>
-From: Ingo Molnar <mingo@kernel.org>
-Date: Mon, 14 Apr 2025 11:19:20 +0200
-Subject: [PATCH] rust: Rename timer_container_of() to hrtimer_container_of()
-
-This primitive is dealing with 'struct hrtimer' objects, not
-'struct timer_list' objects - so clarify the name.
-
-We want to introduce the timer_container_of() symbol in the kernel
-for timer_list, make sure there's no clash of namespaces, at least
-on the conceptual plane.
-
-Tested-by: Miguel Ojeda <ojeda@kernel.org>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Acked-by: Miguel Ojeda <ojeda@kernel.org>
-Acked-by: Andreas Hindborg <a.hindborg@kernel.org>
-Cc: Alex Gaynor <alex.gaynor@gmail.com>
-Cc: Anna-Maria Behnsen <anna-maria@linutronix.de>
-Cc: Boqun Feng <boqun.feng@gmail.com>
-Cc: Frederic Weisbecker <frederic@kernel.org>
-Cc: Lyude Paul <lyude@redhat.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Rust ML <rust-for-linux@vger.kernel.org>
----
- -v2: Add Andreas Hindborg's Acked-by
-
- rust/kernel/time/hrtimer.rs         | 4 ++--
- rust/kernel/time/hrtimer/arc.rs     | 2 +-
- rust/kernel/time/hrtimer/pin.rs     | 2 +-
- rust/kernel/time/hrtimer/pin_mut.rs | 2 +-
- rust/kernel/time/hrtimer/tbox.rs    | 2 +-
- 5 files changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/rust/kernel/time/hrtimer.rs b/rust/kernel/time/hrtimer.rs
-index ce53f8579d18..f3fb7a0caf2f 100644
---- a/rust/kernel/time/hrtimer.rs
-+++ b/rust/kernel/time/hrtimer.rs
-@@ -338,7 +338,7 @@ pub unsafe trait HasHrTimer<T> {
-     /// # Safety
-     ///
-     /// `ptr` must point to a [`HrTimer<T>`] field in a struct of type `Self`.
--    unsafe fn timer_container_of(ptr: *mut HrTimer<T>) -> *mut Self
-+    unsafe fn hrtimer_container_of(ptr: *mut HrTimer<T>) -> *mut Self
-     where
-         Self: Sized;
- 
-@@ -498,7 +498,7 @@ unsafe fn raw_get_timer(
-             }
- 
-             #[inline]
--            unsafe fn timer_container_of(
-+            unsafe fn hrtimer_container_of(
-                 ptr: *mut $crate::time::hrtimer::HrTimer<$timer_type>,
-             ) -> *mut Self {
-                 // SAFETY: As per the safety requirement of this function, `ptr`
-diff --git a/rust/kernel/time/hrtimer/arc.rs b/rust/kernel/time/hrtimer/arc.rs
-index 4a984d85b4a1..5cfe6c27795f 100644
---- a/rust/kernel/time/hrtimer/arc.rs
-+++ b/rust/kernel/time/hrtimer/arc.rs
-@@ -80,7 +80,7 @@ impl<T> RawHrTimerCallback for Arc<T>
- 
-         // SAFETY: By C API contract `ptr` is the pointer we passed when
-         // queuing the timer, so it is a `HrTimer<T>` embedded in a `T`.
--        let data_ptr = unsafe { T::timer_container_of(timer_ptr) };
-+        let data_ptr = unsafe { T::hrtimer_container_of(timer_ptr) };
- 
-         // SAFETY:
-         //  - `data_ptr` is derived form the pointer to the `T` that was used to
-diff --git a/rust/kernel/time/hrtimer/pin.rs b/rust/kernel/time/hrtimer/pin.rs
-index f760db265c7b..d16a676b0639 100644
---- a/rust/kernel/time/hrtimer/pin.rs
-+++ b/rust/kernel/time/hrtimer/pin.rs
-@@ -83,7 +83,7 @@ impl<'a, T> RawHrTimerCallback for Pin<&'a T>
- 
-         // SAFETY: By the safety requirement of this function, `timer_ptr`
-         // points to a `HrTimer<T>` contained in an `T`.
--        let receiver_ptr = unsafe { T::timer_container_of(timer_ptr) };
-+        let receiver_ptr = unsafe { T::hrtimer_container_of(timer_ptr) };
- 
-         // SAFETY:
-         //  - By the safety requirement of this function, `timer_ptr`
-diff --git a/rust/kernel/time/hrtimer/pin_mut.rs b/rust/kernel/time/hrtimer/pin_mut.rs
-index 90c0351d62e4..17c68f8fbb37 100644
---- a/rust/kernel/time/hrtimer/pin_mut.rs
-+++ b/rust/kernel/time/hrtimer/pin_mut.rs
-@@ -87,7 +87,7 @@ impl<'a, T> RawHrTimerCallback for Pin<&'a mut T>
- 
-         // SAFETY: By the safety requirement of this function, `timer_ptr`
-         // points to a `HrTimer<T>` contained in an `T`.
--        let receiver_ptr = unsafe { T::timer_container_of(timer_ptr) };
-+        let receiver_ptr = unsafe { T::hrtimer_container_of(timer_ptr) };
- 
-         // SAFETY:
-         //  - By the safety requirement of this function, `timer_ptr`
-diff --git a/rust/kernel/time/hrtimer/tbox.rs b/rust/kernel/time/hrtimer/tbox.rs
-index 2071cae07234..9dace895ce58 100644
---- a/rust/kernel/time/hrtimer/tbox.rs
-+++ b/rust/kernel/time/hrtimer/tbox.rs
-@@ -103,7 +103,7 @@ impl<T, A> RawHrTimerCallback for Pin<Box<T, A>>
- 
-         // SAFETY: By C API contract `ptr` is the pointer we passed when
-         // queuing the timer, so it is a `HrTimer<T>` embedded in a `T`.
--        let data_ptr = unsafe { T::timer_container_of(timer_ptr) };
-+        let data_ptr = unsafe { T::hrtimer_container_of(timer_ptr) };
- 
-         // SAFETY:
-         //  - As per the safety requirements of the trait `HrTimerHandle`, the
+Il giorno gio 15 mag 2025 alle ore 18:33 Andrew Lunn <andrew@lunn.ch>
+ha scritto:
+>
+> > +/* only 1 page for MXL86110 */
+> > +#define MXL86110_DEFAULT_PAGE        0
+>
+> > +/**
+> > + * mxl86110_read_page - Read current page number
+> > + * @phydev: Pointer to the PHY device
+> > + *
+> > + * Return: The currently selected page number, or negative errno on failure.
+> > + */
+> > +static int mxl86110_read_page(struct phy_device *phydev)
+> > +{
+> > +     return __phy_read(phydev, MXL86110_EXTD_REG_ADDR_OFFSET);
+> > +};
+>
+> If there is only one page, does these make any sense?
+>
+> > +static int mxl86110_write_page(struct phy_device *phydev, int page)
+> > +{
+> > +     return __phy_write(phydev, MXL86110_EXTD_REG_ADDR_OFFSET, page);
+> > +};
+> > +
+> > +/**
+> > + * mxl86110_write_extended_reg() - write to a PHY's extended register
+> > + * @phydev: pointer to a &struct phy_device
+> > + * @regnum: register number to write
+> > + * @val: value to write to @regnum
+> > + *
+> > + * NOTE: This function assumes the caller already holds the MDIO bus lock
+> > + * or otherwise has exclusive access to the PHY. If exclusive access
+> > + * cannot be guaranteed, please use mxl86110_locked_write_extended_reg()
+> > + * which handles locking internally.
+> > + *
+> > + * returns 0 or negative error code
+> > + */
+> > +static int mxl86110_write_extended_reg(struct phy_device *phydev, u16 regnum, u16 val)
+> > +{
+> > +     int ret;
+> > +
+> > +     ret = __phy_write(phydev, MXL86110_EXTD_REG_ADDR_OFFSET, regnum);
+>
+> This is confusing. It looks identical to mxl86110_write_page(). So
+> regnum is actually page?
+>
+> > +     if (ret < 0)
+> > +             return ret;
+> > +
+> > +     return __phy_write(phydev, MXL86110_EXTD_REG_ADDR_DATA, val);
+>
+> And within that page, there is a single register at address
+> MXL86110_EXTD_REG_ADDR_DATA?
+>
+> If you keep the write_page() and read_page(), it looks like you can
+> replace this with
+>
+>         return phy_write_paged(phydev, regnum,
+>                                MXL86110_EXTD_REG_ADDR_DATA,
+>                                val);
+>
+> > +static int mxl86110_set_wol(struct phy_device *phydev, struct ethtool_wolinfo *wol)
+> > +{
+> > +     struct net_device *netdev;
+> > +     int page_to_restore;
+> > +     const u8 *mac;
+> > +     int ret = 0;
+> > +
+> > +     if (wol->wolopts & WAKE_MAGIC) {
+> > +             netdev = phydev->attached_dev;
+> > +             if (!netdev)
+> > +                     return -ENODEV;
+> > +
+> > +             page_to_restore = phy_select_page(phydev, MXL86110_DEFAULT_PAGE);
+> > +             if (page_to_restore < 0)
+> > +                     goto error;
+>
+> If there is only one page, i think this can be removed. And everywhere
+> else in the driver.
+>
+> > +     /*
+> > +      * RX_CLK delay (RXDLY) enabled via CHIP_CFG register causes a fixed
+> > +      * delay of approximately 2 ns at 125 MHz or 8 ns at 25/2.5 MHz.
+> > +      * Digital delays in RGMII_CFG1 register are additive
+> > +      */
+> > +     switch (phydev->interface) {
+> > +     case PHY_INTERFACE_MODE_RGMII:
+> > +             val = 0;
+> > +             break;
+> > +     case PHY_INTERFACE_MODE_RGMII_RXID:
+> > +             val = MXL86110_EXT_RGMII_CFG1_RX_DELAY_150PS;
+>
+> This should be 2000ps, or the nearest you can get to it.
+>
+> > +             break;
+> > +     case PHY_INTERFACE_MODE_RGMII_TXID:
+> > +             val = MXL86110_EXT_RGMII_CFG1_TX_1G_DELAY_2250PS |
+> > +                     MXL86110_EXT_RGMII_CFG1_TX_10MB_100MB_DELAY_2250PS;
+> > +             break;
+> > +     case PHY_INTERFACE_MODE_RGMII_ID:
+> > +             val = MXL86110_EXT_RGMII_CFG1_TX_1G_DELAY_2250PS |
+> > +                     MXL86110_EXT_RGMII_CFG1_TX_10MB_100MB_DELAY_2250PS;
+> > +             val |= MXL86110_EXT_RGMII_CFG1_RX_DELAY_150PS;
+>
+> Same here.
+>
+> > +             break;
+> > +     default:
+> > +             ret = -EINVAL;
+> > +             goto err_restore_page;
+> > +     }
+> > +     ret = mxl86110_modify_extended_reg(phydev, MXL86110_EXT_RGMII_CFG1_REG,
+> > +                                        MXL86110_EXT_RGMII_CFG1_FULL_MASK, val);
+> > +     if (ret < 0)
+> > +             goto err_restore_page;
+> > +
+> > +     /* Configure RXDLY (RGMII Rx Clock Delay) to keep the default
+> > +      * delay value on RX_CLK (2 ns for 125 MHz, 8 ns for 25 MHz/2.5 MHz)
+> > +      */
+> > +     ret = mxl86110_modify_extended_reg(phydev, MXL86110_EXT_CHIP_CFG_REG,
+> > +                                        MXL86110_EXT_CHIP_CFG_RXDLY_ENABLE, 1);
+>
+> So does the value 1 here mean 8ns? 0 would be 2ns?
+>
+>     Andrew
+>
+> ---
+> pw-bot: cr
 
