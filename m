@@ -1,104 +1,179 @@
-Return-Path: <linux-kernel+bounces-649436-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-649442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA1E4AB84D4
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 13:28:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76FE0AB84E6
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 13:30:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 810964E0FE6
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 11:28:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 042841BC1A8A
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 11:30:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE171298CDB;
-	Thu, 15 May 2025 11:27:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9123C29898C;
+	Thu, 15 May 2025 11:28:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oCAoqxMF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="UhMe6nlw";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="MQMDuRLc";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="UhMe6nlw";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="MQMDuRLc"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 414A9298CAB;
-	Thu, 15 May 2025 11:27:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41D0C29AB0D
+	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 11:28:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747308475; cv=none; b=GaqJiLPB8+f/1geJYy8K7WcoZ1HLW/sBXj57Z4LEOnsfm11BYfRBaswjV1Asq9+tIuiXDJRVYL+iiEL4A8JWr9o/ZfjEb75zlsnFt/xSRuGRLfOa6UqhEFdMAPnPZHCy9i2i7wNbARsIDGC/g1jt99FhX7Js6w9bisskwiKrHso=
+	t=1747308485; cv=none; b=HcI+EjbVmGnFjdaWtHqvqnaoEnEsZ0qfe7C11Ufz0ffvTh8lX/QOe6t5wSnIL7AnyRQarw1xAEQ8XUtWdJJ0stKYfM/twI+CmlLtq+GaWsc04Z5UC1Xz8lYHL9OhBfaIujrjz+Sa036YMpM8EXT7nnCHsMih/bQjhGlFilVryF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747308475; c=relaxed/simple;
-	bh=hEdn/KMFnQYxoJkipPDpMMQgvm9AX3Cj0DehCIJCKdU=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=XORt4Kgy5m/HPNUCfyzVyH2Mc/MJqdbsWA8o8+AXEb4ltz0JpNbKxfqJ9uFSbi8K3OxqTBwUJPsSalN6TtujOqTp+9LdMWk2fyWMH8c6CKjfDjkX72BI78Clh+OeCFG0/3OLls+MBENHbMfBw/d881blk7QjiL37x+JDevJRHO8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oCAoqxMF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1596C4CEE7;
-	Thu, 15 May 2025 11:27:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747308474;
-	bh=hEdn/KMFnQYxoJkipPDpMMQgvm9AX3Cj0DehCIJCKdU=;
-	h=From:To:In-Reply-To:References:Subject:Date:From;
-	b=oCAoqxMFxd3Bx0asZewMNTXIS25QhnO6ODsfMvFLIsmjndLHZ7bdSw4BcsK5RsZut
-	 2sekFmetTmFFinIZgtukwnC2uuDACqJbdvglxitv/sXMGz1mhduwLxXRZBjfAM7l7n
-	 UQCAxHkAyBRBYkURCkBxKAtIWU7iZe72b62NQAGOP9eSie6PB9y7iE/xcze8OKWmgT
-	 GNELujMQ/fr41mmdOGVMhbCSM8ZPWhIi7R7K523m8qtGd3yhiECpYSSUgRCufLAirA
-	 j4Oh6jAR62jNmPgmLLkhq3lNJZQQJwnd5C1oc8EbN8CwiAT28aMmI15y3BcIT6F6ml
-	 iDEx4J4OXR7dA==
-From: Mark Brown <broonie@kernel.org>
-To: krzk@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
- conor+dt@kernel.org, thierry.reding@gmail.com, jonathanh@nvidia.com, 
- skomatineni@nvidia.com, ldewangan@nvidia.com, kyarlagadda@nvidia.com, 
- smangipudi@nvidia.com, bgriffis@nvidia.com, linux-spi@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Vishwaroop A <va@nvidia.com>
-In-Reply-To: <20250513200043.608292-1-va@nvidia.com>
-References: <20250513200043.608292-1-va@nvidia.com>
-Subject: Re: [PATCH V4 1/2] dt-bindings: spi: tegra: Document IOMMU
- property for Tegra234 QSPI
-Message-Id: <174730846801.345421.6379001926087017421.b4-ty@kernel.org>
-Date: Thu, 15 May 2025 13:27:48 +0200
+	s=arc-20240116; t=1747308485; c=relaxed/simple;
+	bh=gFtZ9DObvmyZAhGz65qZCinfw7wwY99cEpmS02/Utpk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Yf76vuhNICbZASq3CaQLu/giaBmXzPXDLuQhpgOvj65M5UFiqXouLgyIxXnbsvFVAif06kRprn3ZD0jzsS6AQUC6PkFwRZS54m2kDdPEfZMUh5Veebg5Nd/VKEhRpnCHS8vMHBDMJdMzbLSpP+Fw0rbLD88LjgZQtgXBeuT9qYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=UhMe6nlw; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=MQMDuRLc; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=UhMe6nlw; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=MQMDuRLc; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 45A20211A5;
+	Thu, 15 May 2025 11:28:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1747308482; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=C0N2RU0v+rAl/EZz0pWzktGkWbPzQnZSDw/JRpT7800=;
+	b=UhMe6nlwokVyfbgDMR3EjckzbYYKZ06AFbaKNwkehvOuw8Q2Ulyb0kEi8IVibz2nwZov5w
+	KMBd8p/zoSYBothcXIYeSIOWWMlTcXaaucY6NH4b7KL8q6EWBRm/QA27Vx8OUY+l4DWAvl
+	7VQUPJpW65CkCBrF+lWBR7SDLNx8y78=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1747308482;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=C0N2RU0v+rAl/EZz0pWzktGkWbPzQnZSDw/JRpT7800=;
+	b=MQMDuRLcPpSfefmfK2yB+pX40WuqFUZSLhCCxTT8akOb/n3W+KRXwbkMdF+BRylaapzxKf
+	SOEdMfwFDWaZRoBQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1747308482; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=C0N2RU0v+rAl/EZz0pWzktGkWbPzQnZSDw/JRpT7800=;
+	b=UhMe6nlwokVyfbgDMR3EjckzbYYKZ06AFbaKNwkehvOuw8Q2Ulyb0kEi8IVibz2nwZov5w
+	KMBd8p/zoSYBothcXIYeSIOWWMlTcXaaucY6NH4b7KL8q6EWBRm/QA27Vx8OUY+l4DWAvl
+	7VQUPJpW65CkCBrF+lWBR7SDLNx8y78=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1747308482;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=C0N2RU0v+rAl/EZz0pWzktGkWbPzQnZSDw/JRpT7800=;
+	b=MQMDuRLcPpSfefmfK2yB+pX40WuqFUZSLhCCxTT8akOb/n3W+KRXwbkMdF+BRylaapzxKf
+	SOEdMfwFDWaZRoBQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2C898139D0;
+	Thu, 15 May 2025 11:28:02 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id UVfXCsLPJWi9cwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 15 May 2025 11:28:02 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 5DA43A08CF; Thu, 15 May 2025 13:28:00 +0200 (CEST)
+Date: Thu, 15 May 2025 13:28:00 +0200
+From: Jan Kara <jack@suse.cz>
+To: Max Kellermann <max.kellermann@ionos.com>
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/4] include/linux/fs.h: add inode_lock_killable()
+Message-ID: <2cn6o6b4wkjdx6bxz3r7nrfgxe5tx52q7qyd2wdl432tjqaclk@njcvjewd4pta>
+References: <20250513150327.1373061-1-max.kellermann@ionos.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-c25d1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250513150327.1373061-1-max.kellermann@ionos.com>
+X-Spam-Flag: NO
+X-Spam-Score: -3.80
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	MISSING_XM_UA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo,suse.cz:email]
 
-On Tue, 13 May 2025 20:00:42 +0000, Vishwaroop A wrote:
-> Add the 'iommus' property to the Tegra QSPI device tree binding.
-> The property is needed for Tegra234 when using the internal DMA
-> controller, and is not supported on other Tegra chips, as DMA is
-> handled by an external controller.
+On Tue 13-05-25 17:03:24, Max Kellermann wrote:
+> Prepare for making inode operations killable while they're waiting for
+> the lock.
 > 
+> Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
+
+Looks good. Feel free to add:
+
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+								Honza
+
+> ---
+>  include/linux/fs.h | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
 > 
-
-Applied to
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
-
-Thanks!
-
-[1/2] dt-bindings: spi: tegra: Document IOMMU property for Tegra234 QSPI
-      commit: 4614fd6342ab69feebb067d5db84a9bfb9aada9f
-[2/2] spi: tegra210-quad: Add support for internal DMA
-      commit: 017f1b0bae08e8b456cf35cbdaae93ec19b50f0a
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index 016b0fe1536e..5e4ac873228d 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -867,6 +867,11 @@ static inline void inode_lock(struct inode *inode)
+>  	down_write(&inode->i_rwsem);
+>  }
+>  
+> +static inline __must_check int inode_lock_killable(struct inode *inode)
+> +{
+> +	return down_write_killable(&inode->i_rwsem);
+> +}
+> +
+>  static inline void inode_unlock(struct inode *inode)
+>  {
+>  	up_write(&inode->i_rwsem);
+> @@ -877,6 +882,11 @@ static inline void inode_lock_shared(struct inode *inode)
+>  	down_read(&inode->i_rwsem);
+>  }
+>  
+> +static inline __must_check int inode_lock_shared_killable(struct inode *inode)
+> +{
+> +	return down_read_killable(&inode->i_rwsem);
+> +}
+> +
+>  static inline void inode_unlock_shared(struct inode *inode)
+>  {
+>  	up_read(&inode->i_rwsem);
+> -- 
+> 2.47.2
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
