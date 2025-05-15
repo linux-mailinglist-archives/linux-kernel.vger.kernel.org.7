@@ -1,111 +1,159 @@
-Return-Path: <linux-kernel+bounces-649466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-649464-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B500AB8522
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 13:45:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 06AF3AB851E
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 13:44:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C5EF3AE8CF
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 11:44:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0FFAF3AD79E
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 11:44:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57DCE298258;
-	Thu, 15 May 2025 11:44:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6582929827D;
+	Thu, 15 May 2025 11:44:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="0FpzRxTF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="geJHtel/"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A55C428DEE6;
-	Thu, 15 May 2025 11:44:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DA4626AD0;
+	Thu, 15 May 2025 11:44:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747309497; cv=none; b=Mqyeb4EmRVspcURZ6l/S14YYWYaQWZxjfaLZDz45SWStVZ4fGqf7Ualf20HKRtg/FFzxY32JpRL31r5Y5J+SglRNdUKKziqkJb9sNLlMN18YQ6G1okBvfXQLhjoB32RNXg0DhTwH/GjAGBw8uUlTLOgIoXiUzib59ruKbxsHOgk=
+	t=1747309450; cv=none; b=fATB9+YNk/lZdWH7MsdSVL7jl/xgZkOpU5lmAXrSqsGUC1GtTXuMLKMKUGsiZ+cdwpN0WcveBsc6R/LZPCOkh9vUgGTEDCnkFZ/dRyA3WjLTRjAsUZt/9C9hNAcGTOCGmlKy+Qw1X8S1TZwkqSUz5PiGJz0Jc5m64sPeV3ZpTf8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747309497; c=relaxed/simple;
-	bh=9L1IyfyzQObJzbaVGvEPZrNbRGkTUP7BBjXPMB7XoiU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eVH7apNf7AiL1QTEZpGD0mD1FIFThfztaAFERLvzSzgMc7SAJ1EOqVaMHGXQ8hfW6NLm2aG8aSB8GpUTl63Uvp9tBYxzBAWSuMm3BtwTK4KEUaWb9voiaGX8sEuFPgCbzsL5/0B2WKO2zzWxBHm0IIhOYggfNFuYeqE5dFIup6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=0FpzRxTF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA271C4CEED;
-	Thu, 15 May 2025 11:44:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1747309497;
-	bh=9L1IyfyzQObJzbaVGvEPZrNbRGkTUP7BBjXPMB7XoiU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=0FpzRxTFUsa9HxV6CXrpFGp2bV4BtdySujaFJyCtIqWXoTIPVZM+s82/v1ggGc/ct
-	 JwpUZ889TWiSgw7hA59a5J+/ti3J2dOpXmme8ucvgXNUrJMgRUQ1TLawj9EMHwanZ4
-	 5/nzvO8qoLqnRhTrq7/3JgOQvtwzafeSaYbcFmG0=
-Date: Thu, 15 May 2025 13:43:09 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Benno Lossin <lossin@kernel.org>
-Cc: Matthew Maurer <mmaurer@google.com>, Danilo Krummrich <dakr@kernel.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Timur Tabi <ttabi@nvidia.com>, linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v5 4/4] rust: samples: Add debugfs sample
-Message-ID: <2025051524-festival-afterglow-8483@gregkh>
-References: <20250505-debugfs-rust-v5-0-3e93ce7bb76e@google.com>
- <20250505-debugfs-rust-v5-4-3e93ce7bb76e@google.com>
- <D9VPA1M45WBK.1TB4KOUXD24BD@kernel.org>
- <aCRdNJ2oq-REBotd@pollux>
- <CAGSQo0204_Dz65G33pAN3_iY=ejPXJRdAiB4ioM-nvMkAh0YXQ@mail.gmail.com>
- <D9WM0BP5446N.1NVNDCZ4Y2QN1@kernel.org>
+	s=arc-20240116; t=1747309450; c=relaxed/simple;
+	bh=2H5KIqNQmBmyDV57fqFZKvELSZdXowmg5XqoG7ZDEIA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Jkatl/wiUWH/JPOGID4arqTs7HP10wOP3dZA53dUg7RhBlTkg6g1JZVF3QkyMhy0MAziDabtzVq4TA2fJRyZUnIwaMlOkN0amrQIDJGE8ElsBEENxMFOoOkezrj3tHJ0o4hADGOe4BxuZdT+GT8T/CeRRLdnWnLKlqBzlMS1J2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=geJHtel/; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=4EIg5oOs7ULbz83N09ZfXxoK0Xg+DnktC4ZDSGogzJ0=; b=geJHtel/NTEFLCETukj4rEru8f
+	DTcZfviPipN15Ne5XDBQH8OUbGglWEzeo30JTmc/NxYBd8B2Jwg8Z/YMY2mo32dq6LSJbjG4ZHShg
+	zAYen0uU7oRU1wdt+XxzqVn9F3dQhLqF8lGawb/3OV2F7wpAXttMVVieGreabNCKeuB/UlmrUrGKG
+	rTkkNogBaE54a2XY0j95OxPeMmyOxcdC4Cueiy5aSACulINIA2cd2msTbgKF7YcSPRVfpVvBcNqmD
+	a04Hn7lckIgU5AdmUTdV7BGlD6jNOOkwCsI4NacH0Mk0v7WF42ooxarWhvnl0/fc5TUjl5i1S4D5e
+	wiQIqPUg==;
+Received: from i53875a50.versanet.de ([83.135.90.80] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1uFX0K-0003eK-ND; Thu, 15 May 2025 13:44:00 +0200
+From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
+To: Matthias Kaehlcke <mka@chromium.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Benjamin Bara <benjamin.bara@skidata.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Klaus Goger <klaus.goger@theobroma-systems.com>,
+ Lukasz Czechowski <lukasz.czechowski@thaumatec.com>
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org,
+ Lukasz Czechowski <lukasz.czechowski@thaumatec.com>, stable@vger.kernel.org
+Subject:
+ Re: [PATCH v2 2/5] dt-bindings: usb: cypress,hx3: Add support for all
+ variants
+Date: Thu, 15 May 2025 13:43:59 +0200
+Message-ID: <3784948.RUnXabflUD@diego>
+In-Reply-To: <20250425-onboard_usb_dev-v2-2-4a76a474a010@thaumatec.com>
+References:
+ <20250425-onboard_usb_dev-v2-0-4a76a474a010@thaumatec.com>
+ <20250425-onboard_usb_dev-v2-2-4a76a474a010@thaumatec.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <D9WM0BP5446N.1NVNDCZ4Y2QN1@kernel.org>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-On Thu, May 15, 2025 at 10:59:44AM +0200, Benno Lossin wrote:
-> On Wed May 14, 2025 at 11:55 PM CEST, Matthew Maurer wrote:
-> > On Wed, May 14, 2025 at 2:07 AM Danilo Krummrich <dakr@kernel.org> wrote:
-> >> However, I really think we should keep the code as it is in this version and
-> >> just don't provide an example that utilizes ManuallyDrop and forget().
-> >>
-> >> I don't see how the idea of "manually dropping" (sub-)directories and files
-> >> provides any real value compared to just storing their instance in a driver
-> >> structure as long as they should stay alive, which is much more intuitive
-> >> anyways.
-> >
-> > We can't easily do this, because dropping a root directory recursively
-> > drops everything underneath it. This means that if I have
-> >
-> > foo/
-> >   - bar/
-> >   - baz/
-> >
-> > Then my directory handle for `bar` have to be guaranteed to outlive my
-> > directory handle for `foo` so that I know it's didn't get deleted
-> > under me. This is why they have a borrow onto their parent directory.
-> > This borrow means that you can't (without `unsafe`, or something like
-> > `yoke`) keep handles to `foo` and `bar` in the same struct.
-> 
-> Is there no refcount that we can use instead of borrowing? I guess not,
-> since one can call `debugfs_remove`. What about a refcount on the rust
-> side? or is debugfs not used for "debugging" and needs to have the
-> performance of no refcount?
+Am Freitag, 25. April 2025, 17:18:07 Mitteleurop=C3=A4ische Sommerzeit schr=
+ieb Lukasz Czechowski:
+> The Cypress HX3 hubs use different default PID value depending
+> on the variant. Update compatibles list.
+> Becasuse all hub variants use the same driver data, allow the
+> dt node to have two compatibles: leftmost which matches the HW
+> exactly, and the second one as fallback.
+>=20
+> Fixes: 1eca51f58a10 ("dt-bindings: usb: Add binding for Cypress HX3 USB 3=
+=2E0 family")
+> Cc: stable@vger.kernel.org # 6.6
+> Cc: stable@vger.kernel.org # Backport of the patch ("dt-bindings: usb: us=
+b-device: relax compatible pattern to a contains") from list: https://lore.=
+kernel.org/linux-usb/20250418-dt-binding-usb-device-compatibles-v2-1-b3029f=
+14e800@cherry.de/
+> Cc: stable@vger.kernel.org # Backport of the patch in this series fixing =
+product ID in onboard_dev_id_table in drivers/usb/misc/onboard_usb_dev.c dr=
+iver
+> Signed-off-by: Lukasz Czechowski <lukasz.czechowski@thaumatec.com>
 
-debugfs should never have any performance issues (i.e. you don't use it
-for performant things.)
+Looking at linux-next, it seems like patch1 of this series was applied [0].
+The general convention would be for the binding (this patch) also going
+through a driver tree.
 
-So refcount away!  That should never be an issue.
+I guess I _could_ apply it together with the board-level patches, but
+for that would need an Ack from Greg .
 
-thanks,
+@Greg, do you want to merge this patch ?
 
-greg k-h
+
+Thanks a lot
+Heiko
+
+
+
+[0] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/com=
+mit/?id=3D9f657a92805cfc98e11cf5da9e8f4e02ecff2260
+
+> ---
+>  .../devicetree/bindings/usb/cypress,hx3.yaml          | 19 +++++++++++++=
++++---
+>  1 file changed, 16 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/usb/cypress,hx3.yaml b/Doc=
+umentation/devicetree/bindings/usb/cypress,hx3.yaml
+> index 1033b7a4b8f953424cc3d31d561992c17f3594b2..d6eac1213228d2acb50ebc959=
+d1ff15134c5a91c 100644
+> --- a/Documentation/devicetree/bindings/usb/cypress,hx3.yaml
+> +++ b/Documentation/devicetree/bindings/usb/cypress,hx3.yaml
+> @@ -14,9 +14,22 @@ allOf:
+> =20
+>  properties:
+>    compatible:
+> -    enum:
+> -      - usb4b4,6504
+> -      - usb4b4,6506
+> +    oneOf:
+> +      - enum:
+> +          - usb4b4,6504
+> +          - usb4b4,6506
+> +      - items:
+> +          - enum:
+> +              - usb4b4,6500
+> +              - usb4b4,6508
+> +          - const: usb4b4,6504
+> +      - items:
+> +          - enum:
+> +              - usb4b4,6502
+> +              - usb4b4,6503
+> +              - usb4b4,6507
+> +              - usb4b4,650a
+> +          - const: usb4b4,6506
+> =20
+>    reg: true
+> =20
+>=20
+>=20
+
+
+
+
 
