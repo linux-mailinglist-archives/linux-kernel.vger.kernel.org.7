@@ -1,120 +1,81 @@
-Return-Path: <linux-kernel+bounces-648983-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-648987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D78FDAB7E60
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 08:57:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CA45AB7E71
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 09:00:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 70047167E83
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 06:57:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27D421BA5497
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 07:00:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B0EB29710C;
-	Thu, 15 May 2025 06:57:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FAE829713D;
+	Thu, 15 May 2025 06:59:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sYSAb5vA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AMoyN5rX"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D847223DD3
-	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 06:57:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 682FC1F584E;
+	Thu, 15 May 2025 06:59:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747292223; cv=none; b=JItArf2mDehI5plPRM3+0YVFYrPJxd06cBfcGWFyzgpuJpB8ncmtG4Jnr0fYCmaTwUJ7VlmLFg+kl1g/Rkysn9m47kJN+tVe0CbcmOXPj5Ug57XOl54J4nqzKbhoBmHxZ52palnYYORKCU/rN9ckSyimZsSE9jkFU9Hjrf1GzCs=
+	t=1747292398; cv=none; b=pa6J2Ylw13puZY3gvMzdZm3yKpNGKxXcPNO2Sbg6/oHV3xlYkzWGJfNIiTEU6/AAJ7CejaX+De4dpCUjhIemHlfL/8eBEpljZWGOwx3+b1cw+x39Gbev6Ko5py2MlNFK3r1JOToQA6bo9lFTnwKnuvPOh1C1as3GI4u7zwxEnBg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747292223; c=relaxed/simple;
-	bh=Qll8diZjQKEQnp7Bq5ZY7hVG43EA47fwhWoEUnz+qdg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VMkeYLSHGC+kwWS1dE7vF6XAWpFstS2Z8eC0WrCK13RVGvHO+AEe9gm3BhPBYpVoT4nTiN+gC5U1VpBESc2QY3df9gR7kuN9mdvqKRS+ZiLaKI48IQ3QQ0ymKBpwsoE1ncIq4X1u9kqkId0M7rbHdsRQpobFQtPiXVSWcDUuOo0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sYSAb5vA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82458C4CEED;
-	Thu, 15 May 2025 06:57:01 +0000 (UTC)
+	s=arc-20240116; t=1747292398; c=relaxed/simple;
+	bh=9Z2IqZ5m8YOW1MqoOMZwaeiUIhfh9EJVeS/GBQAC8ow=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=X0edSGWXcE9lTCldoeECCq4rrukmE4u0Tb2JuOfdPM7Gzoqy8p9hELMmHdWfTKtXDhJyvqMIrbDJCqt2R1bFj74PmhMiBcDNEMpCj5G/JCOU2RBaA39yE/pC2SEEtPeV7mqSEMtWB1dZC8Y5bOir58Addsnj6ZkPc9+mPXoPDso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AMoyN5rX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A756C4CEE7;
+	Thu, 15 May 2025 06:59:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747292223;
-	bh=Qll8diZjQKEQnp7Bq5ZY7hVG43EA47fwhWoEUnz+qdg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sYSAb5vAzX3axD7HE+9pbRSZ4A0EklXtGTobFtDq2CMyLbpTNJd+evhktGfHRO3uH
-	 0DlPKGiAFxE9GHsPvhBjiyUIcPKn5BbX9x1HURAtwv8yR7ubO+80OyQ8d1uoJyjS2B
-	 NteJcptc+sa+4aE3SZs37hS9FieA0B8FtaeUcsQ4e3fT8DzZmZBAGY6NCYO6o9KQqk
-	 yxMHZT1XU4OCQiCOyUJRoDjLkKSGNjQ9LbMXe0FrTFPuZ+yyqQy32SCEaUf5pVnoN5
-	 UuwV+nsJguRVVHEz9ggR3m8LUx9e34aFE9k9GyR+KVM3hjo8wCWZkLqLYLarZLbT0z
-	 0oeeSyh4AF+GQ==
-Date: Thu, 15 May 2025 08:56:59 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Ard Biesheuvel <ardb+git@google.com>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Brian Gerst <brgerst@gmail.com>
-Subject: Re: [PATCH v3 2/7] x86/cpu: Allow caps to be set arbitrarily early
-Message-ID: <aCWQOzCla7i__iEl@gmail.com>
-References: <20250514104242.1275040-9-ardb+git@google.com>
- <20250514104242.1275040-11-ardb+git@google.com>
+	s=k20201202; t=1747292398;
+	bh=9Z2IqZ5m8YOW1MqoOMZwaeiUIhfh9EJVeS/GBQAC8ow=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=AMoyN5rX623UrFf2iaP1U4+U2TrDwOA6j++UMkvu3kPlAhQLM2E9N7daDjEwonLZG
+	 mhCxo99dwbCQxfwwi7QC4CfNMDY5Ke8IhjoZLJO2aAhoOBxRsG+w6hG/z3ni9yl3Nf
+	 g3P0IwbVz3i5P+YKU3weOWXWC/dTvYf/44fwXaAlBuIWRCsqX7juWbgB5jlVNbNWOt
+	 LJ4MFP7TRgzBDacfxYkTHQeziIbO4Rz+U6F2dCWLIFNLJm7n3GNUKmzth1z9FGlv5u
+	 A0KGIoGoEQmwceD6iyKMfBwxI2SQdgjsbdhBiD/CTz8Y2MpbZrtUKi2BgMVgMGr2oB
+	 JrbzNsXfvt+2Q==
+From: Lee Jones <lee@kernel.org>
+To: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, 
+ George Moussalem <george.moussalem@outlook.com>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250512-ipq5018-syscon-v1-1-eb1ad2414c3c@outlook.com>
+References: <20250512-ipq5018-syscon-v1-0-eb1ad2414c3c@outlook.com>
+ <20250512-ipq5018-syscon-v1-1-eb1ad2414c3c@outlook.com>
+Subject: Re: (subset) [PATCH 1/2] dt-bindings: mfd: qcom,tcsr: Add
+ compatible for ipq5018
+Message-Id: <174729239616.728974.7482157548269441059.b4-ty@kernel.org>
+Date: Thu, 15 May 2025 07:59:56 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250514104242.1275040-11-ardb+git@google.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.15-dev-b75d9
 
+On Mon, 12 May 2025 18:36:46 +0400, George Moussalem wrote:
+> Document the qcom,tcsr-ipq5018 compatible.
+> 
+> 
 
-* Ard Biesheuvel <ardb+git@google.com> wrote:
+Applied, thanks!
 
-> From: Ard Biesheuvel <ardb@kernel.org>
-> 
-> cpu_feature_enabled() uses a ternary alternative, where the late variant
-> is based on code patching and the early variant accesses the capability
-> field in boot_cpu_data directly.
-> 
-> This allows cpu_feature_enabled() to be called quite early, but it still
-> requires that the CPU feature detection code runs before being able to
-> rely on the return value of cpu_feature_enabled().
-> 
-> This is a problem for the implementation of pgtable_l5_enabled(), which
-> is based on cpu_feature_enabled(X86_FEATURE_5LEVEL_PAGING), and may be
-> called extremely early. Currently, there is a hacky workaround where
-> some source files that may execute before (but also after) CPU feature
-> detection have a different version of pgtable_l5_enabled(), based on the
-> USE_EARLY_PGTABLE_L5 preprocessor macro.
-> 
-> Instead, let's make it possible to set CPU feature arbitrarily early, so
-> that the X86_FEATURE_5LEVEL_PAGING capability can be set before even
-> entering C code.
-> 
-> This involves relying on static initialization of boot_cpu_data and the
-> cpu_caps_set/cpu_caps_cleared arrays, so they all need to reside in
-> .data. This ensures that they won't be cleared along with the rest of
-> BSS.
-> 
-> Note that forcing a capability involves setting it in both
-> boot_cpu_data.x86_capability[] and cpu_caps_set[].
-> 
-> Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
-> ---
->  arch/x86/kernel/cpu/common.c | 9 +++------
->  1 file changed, 3 insertions(+), 6 deletions(-)
-> 
-> diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-> index 6f7827015834..f6f206743d6a 100644
-> --- a/arch/x86/kernel/cpu/common.c
-> +++ b/arch/x86/kernel/cpu/common.c
-> @@ -704,8 +704,8 @@ static const char *table_lookup_model(struct cpuinfo_x86 *c)
->  }
->  
->  /* Aligned to unsigned long to avoid split lock in atomic bitmap ops */
-> -__u32 cpu_caps_cleared[NCAPINTS + NBUGINTS] __aligned(sizeof(unsigned long));
-> -__u32 cpu_caps_set[NCAPINTS + NBUGINTS] __aligned(sizeof(unsigned long));
-> +__u32 __read_mostly cpu_caps_cleared[NCAPINTS + NBUGINTS] __aligned(sizeof(unsigned long));
-> +__u32 __read_mostly cpu_caps_set[NCAPINTS + NBUGINTS] __aligned(sizeof(unsigned long));
+[1/2] dt-bindings: mfd: qcom,tcsr: Add compatible for ipq5018
+      commit: a49b7d3746fe6e0b3eaf1da065be111fe2299c5b
 
-This change is not mentioned in the changelog AFAICS, but it should be 
-in a separate patch anyway.
+--
+Lee Jones [李琼斯]
 
-Thanks,
-
-	Ingo
 
