@@ -1,186 +1,442 @@
-Return-Path: <linux-kernel+bounces-649017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-649025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B717AB7EDF
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 09:33:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3C6EAB7EF0
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 09:36:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 95BD017376E
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 07:33:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D9D53A2ECF
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 07:35:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47AC3226183;
-	Thu, 15 May 2025 07:33:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="OeZftPa4"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C77DF28368D;
+	Thu, 15 May 2025 07:35:46 +0000 (UTC)
+Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5F411FDE15
-	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 07:33:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4EB42749C0;
+	Thu, 15 May 2025 07:35:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747294433; cv=none; b=QRcgDKDXmUCeV/+s32MNmT96JuBNBudDp/1ZJ33uUtyjKy/H97CKKPBKazOHH9K6Fp9leMqQCbZyyK6oBNurlpuHqB7t/rBnOObvS76dxhCI/JUNhNkkd+kqVDWLB8GpLH6OEFkkrwbO3GpUbX+/CZ9Hat8lOVKfJan51uYhBYU=
+	t=1747294546; cv=none; b=o/hEN4A4alL98Rl6pvwAm7ULutEyV/cP6PnqlKiGhcsrzuM0uBf74fCFDhLVWQivXlujd/9UTWrHe6FQhEsGjZJx/XXIsqHtSFVNfrFKovS1BWmXMYRFBQaR6EnKifuzy2Z1X4RpqTFqsL3LZME5EZUSxnSdRsV/I6hbr5i4I9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747294433; c=relaxed/simple;
-	bh=JNzgfSL4CsTGy1bjrPz4RxndSl0WA53cyHjzmh8RFj4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fMe8yanc+Ez6wgHjD5petLAJnoapcv3ON45hCq8BT6FrfgYkr2uQ6ga5z8LHGOxDP+m5bQIA6i6ZhU4N8HqALvVyRFy5m6SjX/7ozlsRFpMlHlsq5mXthoyEGPDW8Fm5HdyxsKCtCLh7QoGBBaofGuh0Fgu2shm9sf8dhx+B2XY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=OeZftPa4; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [192.168.7.202] ([71.202.166.45])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 54F7WfsF3336298
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Thu, 15 May 2025 00:32:41 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 54F7WfsF3336298
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025042001; t=1747294363;
-	bh=FTKlSsiJd9+jpos7AVLXF8LAqgwtfl1Qy7H7vRzCDXE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=OeZftPa4P2RcLNrfq7mYvwL9TgxRMcLlkVGZC6h8vETFbJVCjpBbzmpzH5AR13wKx
-	 15mv9dkcpvv5ouP63h6d4FyAbbBv4ahXZZT/mJEs0YcVe4dSsuiidCYyb5eLIFmmab
-	 KZh7WExvvM7f5dcUXiiH4kI087BVfYMnwIxDBqPfWZBau2sgqY1q7vFYn0CwCYjxM9
-	 k2IdZTAsWYVBOheuyRj88cuKgPcjoyTQbvMyOTslRINSkfMVXRDIiVGVCAqieKjmOF
-	 vIstWyCK+xY4GqiDXwaoMJ8FcLhCdyf9Y7Wv9kaBeH/qOTfV0h+xsRne4kDWAibHx3
-	 4HrOazqt1wu0g==
-Message-ID: <652dfd63-e41c-4d7a-8fea-40509e8191ef@zytor.com>
-Date: Thu, 15 May 2025 00:32:40 -0700
+	s=arc-20240116; t=1747294546; c=relaxed/simple;
+	bh=zClRaKQdUXGC0UaJH2EaGNCbySr1fs44a9f7xGw5akk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qFJ/hHTKREAe7SOJqmYSnZJS8usvv7EqAJdI/FUtDiahC7EZuyIDutlk/0YQmkBLRSr73HwnEpBMN8JdZ7wUh6hN4lbksdzPNZD9d/3s5a6vXcUhe2q39RveBPcDcXLuSt1uqqGVFBBnpM0Ik5tqHCCvjI0qoxTVgdGOa8xK+Nw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-7c55500cf80so51346085a.1;
+        Thu, 15 May 2025 00:35:43 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747294542; x=1747899342;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=harYvwBRn7GyyYvuKyey4/F9XcHEoNQ/j36WaB/W8s4=;
+        b=W1ff+uHI9Y/rrZZX36FnENsRndT1qM/n3+GqcwCcuUgE7LRGV8ToNXNXLlhyukA4br
+         l1RE8+g0EK6zcfwH5HsLlmvprUUbSEK6XHSfb4vNyoht+N0bsU1Jxz1lWGPwRkdliWPR
+         dAEOF4QT3IJKVW7zF5caos1FTVRrE6w4zOXUlMFfSx7KLVXj6V9k53jVqlIcZ9QCpcMM
+         2TAj+fYuYeWo5+3q5fGvyHwISfik8oDZ4BCrpe9cKKc9OuyGNvBx0qqIHx6Lxk/g5JdM
+         IvSpm1pQs8oVhgtkohdzShHdMwAcVfAM7/z61HWJtHLA3NZR0fBuTfeqgfhGCFIaenL4
+         iPJw==
+X-Forwarded-Encrypted: i=1; AJvYcCU0MvyfwBEz6q3IJEoUF3FCnPUKfN1fVzYZOC1WTn7GI+iNFRCAXYyLT77IhAjAO4JfA4XbrxJer5ZkdIxY@vger.kernel.org, AJvYcCVR9QJ+9ENBUU5QTXJXyqzyK538XvwecWo4lR+ZnsUkVkh8F9IQbBZ9J4Bhdb+UEz2zI5RFYLUGRy8cNAvD8uEl@vger.kernel.org, AJvYcCX1sNfyLwAr8DorNvhkJXj1Cdj82m16srfAFNO+Tq/4gaTXOI3za0BiCGA+a98l6F6i+MYhkcsayThYCwwl@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6kbuPXloCyoWThV2MkS9BBUvoVegkx9d2iQh3vxeYZPWjJ0Cm
+	OQPFXjVq3Bo+7kaPiMn5eqpigBZq51Y9H1aCZL4SmFYov74tsXHe
+X-Gm-Gg: ASbGncvG8V1UdVyR9vWf3m7qbNEnpmdPbfBhbF2NhuvLwXnajcvV8K7A21zZc+oZlHS
+	0YBuSZH5OYdBdN0BKTxyAYUneFzwIVfDnltLc0JkDI4FdbQE/52LkJbJvBGgBqlhGFvN0JMVr00
+	UOODOMAmjrcol4GiUT/U8llDAWUMtHDzBIFk85Wqa1r+a0LVWAn6EpnCNAMwJcYlLhGXaGU1kwk
+	4m19lEXVNh0bV2DLvU3H7dXSe0pB2/KmrxF0tLY3oJ8dzNw0FXGiR9qa/Zlo8p3IHxLQj9RhACD
+	CtXNH6XoewjT+U3XznH4ObagIOBsj69rWHb4Bj+B+lSWMmhGg52/Hg/GjmqPLM/yowaxvVkDYR4
+	h87n94iENvBCLbRfso613Sw==
+X-Google-Smtp-Source: AGHT+IHtkzbOPMQiJ/VBBAm81blRK95Sq3tOLA7DixsT4IsjRcY/JSG1nSmQlWrlkIYbyiLRfv0Hcg==
+X-Received: by 2002:a05:6214:400c:b0:6e4:4011:9df7 with SMTP id 6a1803df08f44-6f896e3fdc3mr110865726d6.16.1747294542421;
+        Thu, 15 May 2025 00:35:42 -0700 (PDT)
+Received: from localhost.localdomain (ip171.ip-51-81-44.us. [51.81.44.171])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6f6e39f588asm91036526d6.49.2025.05.15.00.35.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 15 May 2025 00:35:41 -0700 (PDT)
+From: Chen Linxuan <chenlinxuan@uniontech.com>
+To: Shuah Khan <shuah@kernel.org>,
+	Miklos Szeredi <miklos@szeredi.hu>
+Cc: zhanjun@uniontech.com,
+	niecheng1@uniontech.com,
+	wentao@uniontech.com,
+	Chen Linxuan <chenlinxuan@uniontech.com>,
+	Amir Goldstein <amir73il@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH] selftests: Add functional test for the abort file in fusectl
+Date: Thu, 15 May 2025 15:34:45 +0800
+Message-ID: <20250515073449.346774-2-chenlinxuan@uniontech.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/6] x86/paravirt: Switch MSR access pv_ops functions to
- instruction interfaces
-To: "H. Peter Anvin" <hpa@zytor.com>,
-        =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?=
- <jgross@suse.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org,
-        virtualization@lists.linux.dev, Peter Zijlstra <peterz@infradead.org>
-Cc: Ajay Kaher <ajay.kaher@broadcom.com>,
-        Alexey Makhalov <alexey.amakhalov@broadcom.com>,
-        Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>,
-        Thomas Gleixner
- <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        xen-devel@lists.xenproject.org
-References: <20250506092015.1849-1-jgross@suse.com>
- <20250506092015.1849-6-jgross@suse.com>
- <722f5b30-20e9-4540-98e4-d211d7c44cbe@zytor.com>
- <9f4e33d5-9cb3-4079-b764-87a15265fd52@suse.com>
- <ff567466-a46a-4f66-935a-8fae1140c1a2@suse.com>
- <eb077393-ea95-4ac0-9479-980e227f7bff@zytor.com>
- <6cc20ef6-d8e5-4c74-89d9-6a949c84b397@suse.com>
- <DDA7C560-1BD9-40A6-8B93-28D5AC10EBB2@zytor.com>
-Content-Language: en-US
-From: Xin Li <xin@zytor.com>
-Autocrypt: addr=xin@zytor.com; keydata=
- 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
- l75w1xInsg==
-In-Reply-To: <DDA7C560-1BD9-40A6-8B93-28D5AC10EBB2@zytor.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 5/13/2025 3:24 PM, H. Peter Anvin wrote:
-> On May 12, 2025 11:06:02 PM PDT, "Jürgen Groß" <jgross@suse.com> wrote:
->> On 13.05.25 07:55, Xin Li wrote:
->>> On 5/12/2025 4:24 AM, Juergen Gross wrote:
->>>> Now with the mentioned patch really attached. :-)
->>>>
->>>
->>> Does it allow patching with an instruction more than 6 bytes long?
->>>
->>> The immediate form MSR instructions are 9 bytes long.
->>
->> Yes, shouldn't be a problem.
->>
->>
->> Juergen
-> 
-> However, it is more than that. The immediate instructions have a different interface, and it makes more sense to use the extra bytes to shuffle the bits around for the legacy forms:
-> 
-> Write:
-> 
->      mov %rax,%rdx
->      shr $32,%rdx
->      wrmsr(ns)
-> 
-> Read:
-> 
->      rdmsr
->      shl $32,%rdx
->      or %rdx,%rax
-> 
-> For the write case, this also means that two separate trap points are needed.
-> 
-> As far as Xen (the only user of pv msrs), note that it only paravirtualizes a very small number of MSRs, and some of those are fairly performance sensitive, so not going through the Xen framework for MSRs known to be either native or null on Xen would definitely be a win.
-> 
-> 
+This patch add a simple functional test for the "about" file
+in fusectlfs (/sys/fs/fuse/connections/ID/about).
 
-Hi Juergen,
+A simple fuse daemon is added for testing.
 
-I have some update on this thread while working on it.
+Related discussion can be found in the link below.
 
-If we continue down the path of maintaining pvops MSR APIs as this patch
-series does, it seems we’ll need to duplicate the ALTERNATIVE code in
-three different places.
+Link: https://lore.kernel.org/all/CAOQ4uxjKFXOKQxPpxtS6G_nR0tpw95w0GiO68UcWg_OBhmSY=Q@mail.gmail.com/
+Cc: Amir Goldstein <amir73il@gmail.com>
+Signed-off-by: Chen Linxuan <chenlinxuan@uniontech.com>
+---
+ MAINTAINERS                                   |   1 +
+ tools/testing/selftests/Makefile              |   1 +
+ .../selftests/filesystems/fusectl/.gitignore  |   3 +
+ .../selftests/filesystems/fusectl/Makefile    |  21 +++
+ .../selftests/filesystems/fusectl/fuse_mnt.c  | 146 ++++++++++++++++++
+ .../filesystems/fusectl/fusectl_test.c        | 115 ++++++++++++++
+ 6 files changed, 287 insertions(+)
+ create mode 100644 tools/testing/selftests/filesystems/fusectl/.gitignore
+ create mode 100644 tools/testing/selftests/filesystems/fusectl/Makefile
+ create mode 100644 tools/testing/selftests/filesystems/fusectl/fuse_mnt.c
+ create mode 100644 tools/testing/selftests/filesystems/fusectl/fusectl_test.c
 
-1) The MSR access primitives defined in <asm/msr.h>, which is used when
-    CONFIG_PARAVIRT=n.
+diff --git a/MAINTAINERS b/MAINTAINERS
+index f21f1dabb5fe1..efc6c89113b95 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -9740,6 +9740,7 @@ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git
+ F:	Documentation/filesystems/fuse.rst
+ F:	fs/fuse/
+ F:	include/uapi/linux/fuse.h
++F:	tools/testing/selftests/filesystems/fusectl
+ 
+ FUTEX SUBSYSTEM
+ M:	Thomas Gleixner <tglx@linutronix.de>
+diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
+index 80fb84fa3cfcb..a9bfefa961889 100644
+--- a/tools/testing/selftests/Makefile
++++ b/tools/testing/selftests/Makefile
+@@ -36,6 +36,7 @@ TARGETS += filesystems/fat
+ TARGETS += filesystems/overlayfs
+ TARGETS += filesystems/statmount
+ TARGETS += filesystems/mount-notify
++TARGETS += filesystems/fusectl
+ TARGETS += firmware
+ TARGETS += fpu
+ TARGETS += ftrace
+diff --git a/tools/testing/selftests/filesystems/fusectl/.gitignore b/tools/testing/selftests/filesystems/fusectl/.gitignore
+new file mode 100644
+index 0000000000000..3e72e742d08e8
+--- /dev/null
++++ b/tools/testing/selftests/filesystems/fusectl/.gitignore
+@@ -0,0 +1,3 @@
++# SPDX-License-Identifier: GPL-2.0-only
++fuse_mnt
++fusectl_test
+diff --git a/tools/testing/selftests/filesystems/fusectl/Makefile b/tools/testing/selftests/filesystems/fusectl/Makefile
+new file mode 100644
+index 0000000000000..612aad69a93aa
+--- /dev/null
++++ b/tools/testing/selftests/filesystems/fusectl/Makefile
+@@ -0,0 +1,21 @@
++# SPDX-License-Identifier: GPL-2.0-or-later
++
++CFLAGS += -Wall -O2 -g $(KHDR_INCLUDES)
++
++TEST_GEN_PROGS := fusectl_test
++TEST_GEN_FILES := fuse_mnt
++
++include ../../lib.mk
++
++VAR_CFLAGS := $(shell pkg-config fuse --cflags 2>/dev/null)
++ifeq ($(VAR_CFLAGS),)
++VAR_CFLAGS := -D_FILE_OFFSET_BITS=64 -I/usr/include/fuse
++endif
++
++VAR_LDLIBS := $(shell pkg-config fuse --libs 2>/dev/null)
++ifeq ($(VAR_LDLIBS),)
++VAR_LDLIBS := -lfuse -pthread
++endif
++
++$(OUTPUT)/fuse_mnt: CFLAGS += $(VAR_CFLAGS)
++$(OUTPUT)/fuse_mnt: LDLIBS += $(VAR_LDLIBS)
+diff --git a/tools/testing/selftests/filesystems/fusectl/fuse_mnt.c b/tools/testing/selftests/filesystems/fusectl/fuse_mnt.c
+new file mode 100644
+index 0000000000000..d12b17f30fadc
+--- /dev/null
++++ b/tools/testing/selftests/filesystems/fusectl/fuse_mnt.c
+@@ -0,0 +1,146 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * fusectl test file-system
++ * Creates a simple FUSE filesystem with a single read-write file (/test)
++ */
++
++#define FUSE_USE_VERSION 26
++
++#include <fuse.h>
++#include <stdio.h>
++#include <string.h>
++#include <errno.h>
++#include <fcntl.h>
++#include <stdlib.h>
++#include <unistd.h>
++
++#define MAX(a, b) ((a) > (b) ? (a) : (b))
++
++static char *content;
++static size_t content_size = 0;
++static const char test_path[] = "/test";
++
++static int test_getattr(const char *path, struct stat *st)
++{
++	memset(st, 0, sizeof(*st));
++
++	if (!strcmp(path, "/")) {
++		st->st_mode = S_IFDIR | 0755;
++		st->st_nlink = 2;
++		return 0;
++	}
++
++	if (!strcmp(path, test_path)) {
++		st->st_mode = S_IFREG | 0664;
++		st->st_nlink = 1;
++		st->st_size = content_size;
++		return 0;
++	}
++
++	return -ENOENT;
++}
++
++static int test_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
++			off_t offset, struct fuse_file_info *fi)
++{
++	if (strcmp(path, "/"))
++		return -ENOENT;
++
++	filler(buf, ".", NULL, 0);
++	filler(buf, "..", NULL, 0);
++	filler(buf, test_path + 1, NULL, 0);
++
++	return 0;
++}
++
++static int test_open(const char *path, struct fuse_file_info *fi)
++{
++	if (strcmp(path, test_path))
++		return -ENOENT;
++
++	return 0;
++}
++
++static int test_read(const char *path, char *buf, size_t size, off_t offset,
++		     struct fuse_file_info *fi)
++{
++	if (strcmp(path, test_path) != 0)
++		return -ENOENT;
++
++	if (!content || content_size == 0)
++		return 0;
++
++	if (offset >= content_size)
++		return 0;
++
++	if (offset + size > content_size)
++		size = content_size - offset;
++
++	memcpy(buf, content + offset, size);
++
++	return size;
++}
++
++static int test_write(const char *path, const char *buf, size_t size,
++		      off_t offset, struct fuse_file_info *fi)
++{
++	size_t new_size;
++
++	if (strcmp(path, test_path) != 0)
++		return -ENOENT;
++
++	if(offset > content_size)
++		return -EINVAL;
++
++	new_size = MAX(offset + size, content_size);
++
++	if (new_size > content_size)
++		content = realloc(content, new_size);
++
++	content_size = new_size;
++
++	if (!content)
++		return -ENOMEM;
++
++	memcpy(content + offset, buf, size);
++
++	return size;
++}
++
++static int test_truncate(const char *path, off_t size)
++{
++	if (strcmp(path, test_path) != 0)
++		return -ENOENT;
++
++	if (size == 0) {
++		free(content);
++		content = NULL;
++		content_size = 0;
++		return 0;
++	}
++
++	content = realloc(content, size);
++
++	if (!content)
++		return -ENOMEM;
++
++	if (size > content_size)
++		memset(content + content_size, 0, size - content_size);
++
++	content_size = size;
++	return 0;
++}
++
++static struct fuse_operations memfd_ops = {
++	.getattr = test_getattr,
++	.readdir = test_readdir,
++	.open = test_open,
++	.read = test_read,
++	.write = test_write,
++	.truncate = test_truncate,
++};
++
++int main(int argc, char *argv[])
++{
++	return fuse_main(argc, argv, &memfd_ops, NULL);
++}
+diff --git a/tools/testing/selftests/filesystems/fusectl/fusectl_test.c b/tools/testing/selftests/filesystems/fusectl/fusectl_test.c
+new file mode 100644
+index 0000000000000..8ff130ae43122
+--- /dev/null
++++ b/tools/testing/selftests/filesystems/fusectl/fusectl_test.c
+@@ -0,0 +1,115 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++// Copyright (c) 2025 Chen Linxuan <chenlinxuan@uniontech.com>
++
++#define _GNU_SOURCE
++
++#include <errno.h>
++#include <fcntl.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
++#include <sys/mount.h>
++#include <sys/stat.h>
++#include <sys/types.h>
++#include <sys/wait.h>
++#include <unistd.h>
++#include <dirent.h>
++#include <linux/limits.h>
++
++#include "../../kselftest_harness.h"
++
++#define FUSECTL_MOUNTPOINT "/sys/fs/fuse/connections"
++#define FUSE_MOUNTPOINT "/tmp/fuse_mnt_XXXXXX"
++#define FUSE_DEVICE "/dev/fuse"
++#define FUSECTL_TEST_VALUE "1"
++
++FIXTURE(fusectl){
++	char fuse_mountpoint[sizeof(FUSE_MOUNTPOINT)];
++	int connection;
++};
++
++FIXTURE_SETUP(fusectl)
++{
++	const char *fuse_mnt_prog = "./fuse_mnt";
++	int status, pid;
++	struct stat statbuf;
++
++	strcpy(self->fuse_mountpoint, FUSE_MOUNTPOINT);
++
++	if (!mkdtemp(self->fuse_mountpoint))
++		SKIP(return,
++		     "Failed to create FUSE mountpoint %s",
++		     strerror(errno));
++
++	if (access(FUSECTL_MOUNTPOINT, F_OK))
++		SKIP(return,
++		     "FUSE control filesystem not mounted");
++
++	pid = fork();
++	if (pid < 0)
++		SKIP(return,
++		     "Failed to fork FUSE daemon process: %s",
++		     strerror(errno));
++
++	if (pid == 0) {
++		execlp(fuse_mnt_prog, fuse_mnt_prog, self->fuse_mountpoint, NULL);
++		exit(errno);
++	}
++
++	waitpid(pid, &status, 0);
++	if (!WIFEXITED(status) || WEXITSTATUS(status) != 0) {
++		SKIP(return,
++		     "Failed to start FUSE daemon %s",
++		     strerror(WEXITSTATUS(status)));
++	}
++
++	if (stat(self->fuse_mountpoint, &statbuf))
++		SKIP(return,
++		     "Failed to stat FUSE mountpoint %s",
++		     strerror(errno));
++
++	self->connection = statbuf.st_dev;
++}
++
++FIXTURE_TEARDOWN(fusectl)
++{
++	umount(self->fuse_mountpoint);
++	rmdir(self->fuse_mountpoint);
++}
++
++TEST_F(fusectl, abort)
++{
++	char path_buf[PATH_MAX];
++	int abort_fd, test_fd, ret;
++
++	sprintf(path_buf, "/sys/fs/fuse/connections/%d/abort", self->connection);
++
++	ASSERT_EQ(0, access(path_buf, F_OK));
++
++	abort_fd = open(path_buf, O_WRONLY);
++	ASSERT_GE(abort_fd, 0);
++
++	sprintf(path_buf, "%s/test", self->fuse_mountpoint);
++
++	test_fd = open(path_buf, O_RDWR);
++	ASSERT_GE(test_fd, 0);
++
++	ret = read(test_fd, path_buf, sizeof(path_buf));
++	ASSERT_EQ(ret, 0);
++
++	ret = write(test_fd, "test", sizeof("test"));
++	ASSERT_EQ(ret, sizeof("test"));
++
++	ret = lseek(test_fd, 0, SEEK_SET);
++	ASSERT_GE(ret, 0);
++
++	ret = write(abort_fd, FUSECTL_TEST_VALUE, sizeof(FUSECTL_TEST_VALUE));
++	ASSERT_GT(ret, 0);
++
++	close(abort_fd);
++
++	ret = read(test_fd, path_buf, sizeof(path_buf));
++	ASSERT_LT(ret, 0);
++}
++
++TEST_HARNESS_MAIN
+-- 
+2.43.0
 
-2) The pvops native MSR functions pv_native_{rd,wr}msr{,_safe}() defined
-    in arch/x86/kernel/paravirt.c, used when CONFIG_PARAVIRT=y on bare
-    metal.
-
-3) The pvops Xen MSR functions paravirt_{read,write}_msr{,_safe}()
-    defined in <asm/paravirt.h>, used when CONFIG_PARAVIRT_XXL=y.
-
-hpa had mentioned to me earlier that this would be a maintenance burden
-— something I only truly realized once I got hands-on with it.
-
-Maybe you have something in mind to address it?
-
-Also add PeterZ to the To list because he cares it.
-
-Thanks!
-     Xin
 
