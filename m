@@ -1,94 +1,89 @@
-Return-Path: <linux-kernel+bounces-649848-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-649856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79D94AB89F2
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 16:54:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96180AB8A0B
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 16:57:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BBF1016D6D6
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 14:53:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55BDBA07F21
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 14:54:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A42A13B7A3;
-	Thu, 15 May 2025 14:52:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EE9515A864;
+	Thu, 15 May 2025 14:54:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="drY2wyQ9"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ExprBEY4"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16F2C1F8F09;
-	Thu, 15 May 2025 14:52:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2BE653363;
+	Thu, 15 May 2025 14:54:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747320746; cv=none; b=i3gFXocJfeMOnilMnRKSIduxkQJDIjlIcXwUfOVcYrIQHk2MYswV4rKzfOjp8Y9xCMGIC/F/Zq/cAM0dH3ybd5E99rYKsY8Np+MLye3iUpxSdwewQ7Rb/6GCRjmW0dFcXq6xeNBtStA6eC+OmmicjikSmBErPskpXioys9DAiS4=
+	t=1747320862; cv=none; b=fC4d/9x7dzhpxEUorTRB12iQVTV5v1fmuojjmVgsP1r4+rjJ47GczhvtNQ2JMXq+koAHKUQMxQa4fkXwrt/z6hIkQzdUI+O0GwFGskbflKG/iabOmdNSlLinVCNeNDIH4H9uZs7RtE2SaVHYuj394+IBRqPAO+WBuP6Tr7Xcg4c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747320746; c=relaxed/simple;
-	bh=mr5eN8kDDujcymHMecpSJ6P6WIBjSLa0r0ZCXb+95X0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=s6Xe1MmMR4yw/FscSe0HLUSqWDGnAIZ2rOC4MgP0cQjD5IYUPFT4k0ldW9t/NoRQJS8m9wPx3ihevTtTfmxKNuPErhVgao6lUd71Bvo+g7AfI0GsFxzhMB50U7jqiH7xuZ9Sx9q7PCcBw2AWxfSDRhcL3Rf86rmlN9k5Xhhe4RM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=drY2wyQ9; arc=none smtp.client-ip=209.85.218.51
+	s=arc-20240116; t=1747320862; c=relaxed/simple;
+	bh=dt+vTGfHYFKWmSNzmatAnrVxES49h0xgerKxeszNoEE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TWn4HDu5VTshy+eUvL225n061mrzw1wyobwmmsyQYLav5ALLzEajJGHyHGUIz/nKoUo/nZUgU4vLzaCU+A6NR2LDvuXDVuEnFu9MOy9L7qTOxCKslTc+3kIsYHyteKi/1Xwd5k/1A1u5ziyA3c46kGy3uktVOtqvYSHuSlPMNz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ExprBEY4; arc=none smtp.client-ip=209.85.208.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-ad238c68b35so193928066b.1;
-        Thu, 15 May 2025 07:52:24 -0700 (PDT)
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5fbdf6973e7so1332951a12.2;
+        Thu, 15 May 2025 07:54:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747320743; x=1747925543; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qqWQ4T2nQ1xuhm/I08cl/zAkrwJKQvzmwnNYg7uixA0=;
-        b=drY2wyQ9Wqkv7jDNxAsRsFsVqcB0FWm2vm2h6MSj2BD0Ut0IF8WyBiyTgxh/831nMZ
-         u8Tp5+1I80rwo+Xl1CIvF2Dw1ELLO4LKFLGenB2NHyL4gXm3zd9WOyCja4f39edelzXI
-         3/XHVWrkfDYJZRXDMw4RXaneXJzmatSeFFBp/tN33TZio/4fSEL8UUR8Nb6G2l6LBHsK
-         BvUbkm7giqJtfkx0XyBJ5cxxnW5Y81ORSCMcdR/9OQHuaP5nXZvegkKxJOCzYeL4ilgf
-         wvjRJLRcEvaWSCnu2CxGU9O5aCSeyq5AiaYghQXxYSpsaYjdG2rtn3QIisZG2nExw8gJ
-         d2wg==
+        d=gmail.com; s=20230601; t=1747320859; x=1747925659; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=AnZP8zYyxLfJR8Q5g++toUplHuGONRuvc6eCNUa3kD8=;
+        b=ExprBEY4G40GxJaLmHsNGbuerPxNKG4rrrN3ESl34xGATvj5izurs47/Csif8CTdLc
+         TU52O56UmqjfYxEjdfrXpDl9aWJpOjZW8nzw19HZjHbjXh/mg4UuVoZ30coRG1L8rmFS
+         MLVBIyVjsJOkg4ORt54k3re7uElf1ysSA10MlXF0fLaJ+pO7SoFgQHevbUKrfkBFgv5I
+         0DSZcSjModa7CMTJrkigRtEzLKjD3SbC+u2HGlkbiHFfZcSecP68xy8UlZZkhemHIgU2
+         OSFt6yQ06+UAqUHvyXJ4eRy4/Syd2b671t63aHt+4Dz9tmsboyLgeIcsqE8VyebhSQe/
+         pmVQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747320743; x=1747925543;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qqWQ4T2nQ1xuhm/I08cl/zAkrwJKQvzmwnNYg7uixA0=;
-        b=aEsfCTFyq7HDXRoyx2YMnGbSlPEu3Il3ONUnoXbEA6hK/cAvWU2uLqeYcG9Wq6FU/C
-         MC2Cfjdn2+2B99WsDFrZHcoOW0vU+h377e6QG3V6QKwBjhSIA4rIeDhbbXQnn00ToQg+
-         +kR6/eqIXcSE7SW0Cykz9Y9/fxabqiOPmbHq6MtifNZtsFTakzg7mUk87c96aBTdYCQp
-         Cv6vtr50O+TwEw/h7IkUdWZ4EAyRJUCakmJniKLdBL7OZPgZjUb3ylqVPbPQQGy7oOon
-         7T2n1QV776dfRvUfFLbjsdmc9PMDwnz/clvSD436oDhMoTwDHwup2GHPo7cmnYJGWwa1
-         Ov+w==
-X-Forwarded-Encrypted: i=1; AJvYcCVBr6e90N4gXmmT0Szq0rNB2eoUn5/fu8DCJhGHnGroKSQpX+Vhe019LcY+gOyYXwgbDxeZgL15BLGQwec=@vger.kernel.org, AJvYcCX9xFt7ip5DluG49Ffvf6KoRBGmDItkT/nl74/O2ta0DRrc6UfZJIfqgaH0s2VhCIf+PhV0aZSY@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz6GgLVQANNF8IfZgkRJ8mo8yTF/G8tk4qtuGLGupQg3mJE8oEw
-	pbck3diloFF4FnLU88pgdhuqPcywjUFbhePeF6xSj0+debCw8odr
-X-Gm-Gg: ASbGncuPO+qGMlgRDFBk7ZihHyyKqvbyaZm0z/G7UZ0FAX/kazPW0rOmfe2beBLkuP8
-	f/AJYF0l1VRAtqNoqsMpY3gXtdRPey1DUPJ8CMxvofhCMikp13SFyKeRRa010FrpajXKQP349s1
-	eNehlYI/mhn8aJ2/mkKpG4d/NKt9OZA270QH5gl4VvyByeYskPvtbzK7s9Fjg5ECN/yjJR7374d
-	05EFRHRsDSnfA0D7J3OPapUdIqbFqzlrCfbTfGLu6EZ+fHliXXod1rVM7/utu1cqp0NBr0lhUie
-	bx2rqCnwIkdU6ddIGzUOfHOBn0oLmRNW1FTz8cR+Ptmk1knTn0uzBl0YazF+CQ==
-X-Google-Smtp-Source: AGHT+IEfE3FRqZ+5JKYy1hLeEyiCcglI8CUTeWPDh897m7vydljAH740Y/LC1+zq3IhEF93yuoKWXA==
-X-Received: by 2002:a17:907:c409:b0:ace:5461:81dd with SMTP id a640c23a62f3a-ad515d7a850mr247977366b.3.1747320743060;
-        Thu, 15 May 2025 07:52:23 -0700 (PDT)
-Received: from debian-vm.localnet ([2a01:4b00:d20c:cddd:20c:29ff:fe56:c86])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad52d275d9fsm871366b.74.2025.05.15.07.52.22
+        d=1e100.net; s=20230601; t=1747320859; x=1747925659;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=AnZP8zYyxLfJR8Q5g++toUplHuGONRuvc6eCNUa3kD8=;
+        b=Q8G9+iQC0ioUYqWOZOsxndgnJbx30PJCVYSCxwZ+NyLWh9pbRbhS9W/gKitq09EAJ+
+         x4nskKZGWRdO3qfsRozqkHGXATUHPANw7Zsu4CO+SlUM98c8ucJY+S4CwqABEOTDxpQs
+         h2vybFiwhpTDnmBRtKJL9q3R4toShCpKzLcDIUpLioRYudfT5BF6BvmJx44KZCmouwe6
+         gg8EPvbcNiIg08medqoiaiTo0EgzHYjO7Mue7RCjuhKXvnyhqOFgxV3BXxt6dXKAVLV8
+         nJKPzmh2s5tIqIDzy0/0Qh0yA3/jk/Xlv5rYCLsZv7wVjKU+hxv9V1Ez+pGVYC/K5OrA
+         /Cvg==
+X-Forwarded-Encrypted: i=1; AJvYcCWclpwLj9ezA8L5hXa8Zx9u7LVEXZWn1HdJnKt3N6hT7fu+dvBdrs8+eRqU468DaW7CnfTxOmT1wMLXY2s=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyi8Vp2UNo5hq1x5Whyf0DuvIHeaTC9+pcB2llM2ow/GHg+WoRN
+	zZnQaZCw4NY7cNXp78jq3CWkeolPPwDxapSo65S3Lc0pQFHUWSvBI69lHB8Y7ZHdeQ==
+X-Gm-Gg: ASbGncuIzjGxdxwXt/B9L5BxwyS8B/EjeczK4c8UKRreDRKgveOsBWvGcQqQpjNB0Tb
+	CLj/gmrTY+5P7VgwHwKCoGmvVo3AwEl7OJT1k35lqk67Ib2zcaNRu9JaiS6kwwprbTWWwftkavE
+	ANq6kaQgcK/bHIMXk4L4MGfK30Rk2W8asbGJKt5ETGUjF0LhJ4mZXkoxHE6qyi8G9aby1jM4OmU
+	KkRxZDq895bYMJr1YDPFr/+oo4MYz0+e0leiPs5L/KWUVhleegJaHPfqnA+TLlIY5bU1gdrISzr
+	nahr3hHSVoxyrjcP0zOSB5n9VIt1HbCvaEoPFN+HGLrPW3W1gDRM0vZSwoqcDw==
+X-Google-Smtp-Source: AGHT+IHyHUvPaBRGkNVp8odY45xlwAbsmexgkeI6ikJkzUPH8XilLTMjzxiK002IG5equ6vL2TEwzQ==
+X-Received: by 2002:a05:6402:1ecc:b0:5fb:1fbd:e3ad with SMTP id 4fb4d7f45d1cf-5ff988a5ecfmr6853430a12.13.1747320858961;
+        Thu, 15 May 2025 07:54:18 -0700 (PDT)
+Received: from avt74j0.fritz.box ([2a02:8109:8617:d700:2d36:8b46:22ae:7bde])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5fc9d710549sm10332681a12.76.2025.05.15.07.54.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 May 2025 07:52:22 -0700 (PDT)
-From: Zak Kemble <zakkemble@gmail.com>
-To: Doug Berger <opendmb@gmail.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Zak Kemble <zakkemble@gmail.com>
-Subject: [PATCH v2 3/3] net: bcmgenet: expose more stats in ethtool
-Date: Thu, 15 May 2025 15:51:42 +0100
-Message-Id: <20250515145142.1415-4-zakkemble@gmail.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250515145142.1415-1-zakkemble@gmail.com>
-References: <20250515145142.1415-1-zakkemble@gmail.com>
+        Thu, 15 May 2025 07:54:18 -0700 (PDT)
+From: Martin Hecht <mhecht73@gmail.com>
+To: linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	mchehab@kernel.org,
+	hverkuil@xs4all.nl,
+	sakari.ailus@linux.intel.com
+Cc: laurent.pinchart@ideasonboard.com,
+	tomm.merciai@gmail.com,
+	martin.hecht@avnet.eu,
+	michael.roeder@avnet.eu,
+	Martin Hecht <mhecht73@gmail.com>
+Subject: [PATCH v3] MAINTAINERS: Update my email address to gmail.com
+Date: Thu, 15 May 2025 16:51:50 +0200
+Message-ID: <20250515145150.1419247-2-mhecht73@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,75 +92,33 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Expose more per-queue and overall stats in ethtool
+Replace my corporate email address by @gmail.com.
 
-Signed-off-by: Zak Kemble <zakkemble@gmail.com>
+Signed-off-by: Martin Hecht <mhecht73@gmail.com>
 ---
- .../net/ethernet/broadcom/genet/bcmgenet.c    | 29 ++++++++++++++++++-
- 1 file changed, 28 insertions(+), 1 deletion(-)
+ Changes since v2:
+        Updated body and message format.
 
-diff --git a/drivers/net/ethernet/broadcom/genet/bcmgenet.c b/drivers/net/ethernet/broadcom/genet/bcmgenet.c
-index d0c6b5d4c..5f227bf2a 100644
---- a/drivers/net/ethernet/broadcom/genet/bcmgenet.c
-+++ b/drivers/net/ethernet/broadcom/genet/bcmgenet.c
-@@ -1029,6 +1029,10 @@ struct bcmgenet_stats {
- 			tx_rings[num].stats64, packets), \
- 	STAT_GENET_SOFT_MIB64("txq" __stringify(num) "_bytes", \
- 			tx_rings[num].stats64, bytes), \
-+	STAT_GENET_SOFT_MIB64("txq" __stringify(num) "_errors", \
-+			tx_rings[num].stats64, errors), \
-+	STAT_GENET_SOFT_MIB64("txq" __stringify(num) "_dropped", \
-+			tx_rings[num].stats64, dropped), \
- 	STAT_GENET_SOFT_MIB64("rxq" __stringify(num) "_bytes", \
- 			rx_rings[num].stats64, bytes),	 \
- 	STAT_GENET_SOFT_MIB64("rxq" __stringify(num) "_packets", \
-@@ -1036,7 +1040,23 @@ struct bcmgenet_stats {
- 	STAT_GENET_SOFT_MIB64("rxq" __stringify(num) "_errors", \
- 			rx_rings[num].stats64, errors), \
- 	STAT_GENET_SOFT_MIB64("rxq" __stringify(num) "_dropped", \
--			rx_rings[num].stats64, dropped)
-+			rx_rings[num].stats64, dropped), \
-+	STAT_GENET_SOFT_MIB64("rxq" __stringify(num) "_multicast", \
-+			rx_rings[num].stats64, multicast), \
-+	STAT_GENET_SOFT_MIB64("rxq" __stringify(num) "_missed", \
-+			rx_rings[num].stats64, missed), \
-+	STAT_GENET_SOFT_MIB64("rxq" __stringify(num) "_length_errors", \
-+			rx_rings[num].stats64, length_errors), \
-+	STAT_GENET_SOFT_MIB64("rxq" __stringify(num) "_over_errors", \
-+			rx_rings[num].stats64, over_errors), \
-+	STAT_GENET_SOFT_MIB64("rxq" __stringify(num) "_crc_errors", \
-+			rx_rings[num].stats64, crc_errors), \
-+	STAT_GENET_SOFT_MIB64("rxq" __stringify(num) "_frame_errors", \
-+			rx_rings[num].stats64, frame_errors), \
-+	STAT_GENET_SOFT_MIB64("rxq" __stringify(num) "_fragmented_errors", \
-+			rx_rings[num].stats64, fragmented_errors), \
-+	STAT_GENET_SOFT_MIB64("rxq" __stringify(num) "_broadcast", \
-+			rx_rings[num].stats64, broadcast)
+ Changes since v1:
+        Remove whithespace in front of Signed-off-by.
+
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 5dee8459a614..e4a4f247d826 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -811,7 +811,7 @@ F:	drivers/media/platform/allegro-dvt/
  
- /* There is a 0xC gap between the end of RX and beginning of TX stats and then
-  * between the end of TX stats and the beginning of the RX RUNT
-@@ -1057,6 +1077,11 @@ static const struct bcmgenet_stats bcmgenet_gstrings_stats[] = {
- 	STAT_RTNL(rx_dropped),
- 	STAT_RTNL(tx_dropped),
- 	STAT_RTNL(multicast),
-+	STAT_RTNL(rx_missed_errors),
-+	STAT_RTNL(rx_length_errors),
-+	STAT_RTNL(rx_over_errors),
-+	STAT_RTNL(rx_crc_errors),
-+	STAT_RTNL(rx_frame_errors),
- 	/* UniMAC RSV counters */
- 	STAT_GENET_MIB_RX("rx_64_octets", mib.rx.pkt_cnt.cnt_64),
- 	STAT_GENET_MIB_RX("rx_65_127_oct", mib.rx.pkt_cnt.cnt_127),
-@@ -2412,6 +2437,8 @@ static unsigned int bcmgenet_desc_rx(struct bcmgenet_rx_ring *ring,
- 		u64_stats_add(&stats->bytes, len);
- 		if (dma_flag & DMA_RX_MULT)
- 			u64_stats_inc(&stats->multicast);
-+		else if (dma_flag & DMA_RX_BRDCAST)
-+			u64_stats_inc(&stats->broadcast);
- 		u64_stats_update_end(&stats->syncp);
- 
- 		/* Notify kernel */
+ ALLIED VISION ALVIUM CAMERA DRIVER
+ M:	Tommaso Merciai <tomm.merciai@gmail.com>
+-M:	Martin Hecht <martin.hecht@avnet.eu>
++M:	Martin Hecht <mhecht73@gmail.com>
+ L:	linux-media@vger.kernel.org
+ S:	Maintained
+ F:	Documentation/devicetree/bindings/media/i2c/alliedvision,alvium-csi2.yaml
 -- 
-2.39.5
+2.43.0
 
 
