@@ -1,219 +1,242 @@
-Return-Path: <linux-kernel+bounces-648930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-648933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 011E1AB7DB8
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 08:21:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76274AB7DDE
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 08:23:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E5BDA7A8A22
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 06:20:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E1A54A66DC
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 06:23:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 004F32882A1;
-	Thu, 15 May 2025 06:21:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EE34297B83;
+	Thu, 15 May 2025 06:22:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="gjTM4P1h"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2063.outbound.protection.outlook.com [40.107.92.63])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="csVn2Z6A"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25C0114D2BB;
-	Thu, 15 May 2025 06:21:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.63
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747290066; cv=fail; b=EhcJv1Z/xd94/TkXEjo7WLyzZm+SQm2WU1DlCmbUIzJxSYI52FmOg7FZLcfr26fEjpU/VesvW5NjmGbBzxKz4+3xBmWtMuAQn1PE1m59pu1IGUEJxvC460hF4udbIwWO0Hf9BOw4AtQ+JE6H2wrZ6GmDgjah4eCHgwMS9Karxk4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747290066; c=relaxed/simple;
-	bh=LJ+VlFMd3nbCh2uYxkmQhCXg6MpZpZDKKv+S+f1Q2RU=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Kiyq4nWPoCPDHGeUo4uE6gwemPhQLoW1O/R7gJ5zuSmMtV8JfOSh1bQSW+qImM2X+nq4CUv5eukkCNkIz1vIOJM967z6CrU3T40tLROyuZZ7bDF4BJTSedr+LyEIQMg4LFy+IXlt2AR908F+o0GbiP7p8YeEWezOto5SRewqj94=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=gjTM4P1h; arc=fail smtp.client-ip=40.107.92.63
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=A3//HU61pEV6E41FbGigrDw+XziUdAE/gnpQe+4QbYBStHMyiEGnkViHRf9UIeSFCiGzyEzg0i8PxktJVBPItdr7+Nojl/MOsgi2OzXDpVAy0m7ONJGOPS1V6gUX46Jsus0PO90Mako3KkZeOTgo9oPV7spkSLNJSx8pOw9yHMOMhmhw6iewSHc/UI6cauRkvRgrTBYO8pTxkbhtFIhBGvE0lJ7HdfUZwsxg33tFN2YHUa3078tZwoHCApzFX2hZPashv8GpYkGUeATL8jomf7FmbKCo3cuP+2g9knNIBsWqH0tsq7qCPTN1ilWctMH4gTIA2ZUt668a3llVwu2YiA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Xag84aVXXbKoA33RxkLobpb+PM4NDmqk++wcPRpEdTI=;
- b=F1QQVF1F+YUTIbNiy863W+74ygRCexjLiuXUzcJjeFkFxUgdC1uJtHSA+1BFt1w+djJyHcs5at2B6L+eS7n236jznBzOvoXWlIYXviuDHMbuhuzkr8Hyx9rm/mxFMbvYmByansTyYbKVgXdE/IyJwmZBKK5njkkxC55Ry7w5CWXxURYMvOn646U6za+zVlQfEOLrICi2yGKR/UPirMRgkPmpmYnXFh9YK8jQJcm7+4x6TEiE/WYfs6wTGFpqLEqB8xJdb2BQt1fxnNFoO2YqTDRL8AsOiRElXI03k045LQswd+LVVICbADhR05GYdFJJH8brWNMzEg3KP2KQ3k+sBw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Xag84aVXXbKoA33RxkLobpb+PM4NDmqk++wcPRpEdTI=;
- b=gjTM4P1heTYVezJ2n9KWG7N5frSPAMrVPI8aMs6MrqK4rpiRqb4nkqU7HPv2lVnRv6t7xVSEvrXwRBLXDVkwFjSnXA9MWLcA6W0aSmsfcERRgT0/1+uVqJdvky98UZL3NhtBzwqyq+LdH2fr94bfIfHP6vmi28dJ3GJ3/1PA+GY=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from BL1PR12MB5946.namprd12.prod.outlook.com (2603:10b6:208:399::8)
- by SA1PR12MB8919.namprd12.prod.outlook.com (2603:10b6:806:38e::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8722.29; Thu, 15 May
- 2025 06:21:01 +0000
-Received: from BL1PR12MB5946.namprd12.prod.outlook.com
- ([fe80::dd32:e9e3:564e:a527]) by BL1PR12MB5946.namprd12.prod.outlook.com
- ([fe80::dd32:e9e3:564e:a527%4]) with mapi id 15.20.8722.027; Thu, 15 May 2025
- 06:21:00 +0000
-Message-ID: <7d561e3a-ae5c-4077-9cc8-c6711a5298b1@amd.com>
-Date: Thu, 15 May 2025 11:50:51 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [net-next PATCH v4 09/11] net: macb: Move most of mac_config to
- mac_prepare
-To: sean.anderson@linux.dev, vineeth.karumanchi@amd.com,
- netdev@vger.kernel.org, andrew+netdev@lunn.ch, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- linux@armlinux.org.uk
-Cc: upstream@airoha.com, horms@kernel.org, hkallweit1@gmail.com,
- kory.maincent@bootlin.com, linux-kernel@vger.kernel.org,
- ansuelsmth@gmail.com, claudiu.beznea@microchip.com,
- nicolas.ferre@microchip.com
-References: <20250512161013.731955-1-sean.anderson@linux.dev>
- <20250512161416.732239-1-sean.anderson@linux.dev>
- <6a8f1a28-29c0-4a8b-b3c2-d746a3b57950@amd.com>
- <964d667a-c17e-47ff-b7d8-fb5b5a2f1eef@linux.dev>
-Content-Language: en-US
-From: "Karumanchi, Vineeth" <vineeth@amd.com>
-In-Reply-To: <964d667a-c17e-47ff-b7d8-fb5b5a2f1eef@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: PN4P287CA0121.INDP287.PROD.OUTLOOK.COM
- (2603:1096:c01:2b2::8) To BL1PR12MB5946.namprd12.prod.outlook.com
- (2603:10b6:208:399::8)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFBF328153C;
+	Thu, 15 May 2025 06:22:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747290134; cv=none; b=DEYcANiIV5dZcDbew8pKTOzE+V6XeqGNRx6SnVt+RnbE5QA0y7FTvkJjgss2owOQk5FJkeisKkrdeVAri90ErPmKE5dP4r7UVqdTb05q/Vu9WSrMWSyZgqlbF0j/QWVM5+d+dimIJuxC2VA/2FddrFPk3RMQpVbpaZC8EPV/bkA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747290134; c=relaxed/simple;
+	bh=4zeGaBUvC1Q9ojCS6BwilpI7jNLQBxZR8OQzD04olA4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=aZlcfSXT5CbRIMu7VzrNjfVnNpoYKAF8GFVGRQPClmxVNhYzNp9GV5h7mUUIWkabRUK8jOmu50bMLTGwCQfKnvfqfkfF2ql9TVyPeEmwz4hqrZeRbpaJgW4A88XU4hMx6wQx0KC0J63X0maijNprTSJudN2XXvgkDfLeYTYyWjo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=csVn2Z6A; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 2371DC4CEE7;
+	Thu, 15 May 2025 06:22:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747290134;
+	bh=4zeGaBUvC1Q9ojCS6BwilpI7jNLQBxZR8OQzD04olA4=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=csVn2Z6A8Sl3SqKO3MI5MubdJCB8umTAnTFO5SMw/elfFoZzdsYdpt/RDZBpzTS+D
+	 b750TEKmduBW/BRISjdWknmxjvrJAYeRR44lbMSBNOUpiYAsSnBENfmfAX3ObU7JVQ
+	 eNW5xm5MtIbtcwh1+Z7tidGqaTMKf9Iqz2SRS7bDVweaSYrkAilHX91qq8m+CeeUiQ
+	 RNHfqKizr6VUkCFuk6znR7+3fICDvCWnHSYmIugJsJl+3L+WwdHZX9flrmZvjfN9Sg
+	 n6So2U4wZNplCdbAxlEe+FGj0Tz64KBRC80c7riOnfTgdIGurersTsNtpn4AP0Od6A
+	 QJMsL2mWgXgPA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16C3EC2D0CD;
+	Thu, 15 May 2025 06:22:14 +0000 (UTC)
+From: Sven Peter via B4 Relay <devnull+sven.svenpeter.dev@kernel.org>
+Subject: [PATCH v6 00/10] Apple Mac System Management Controller
+Date: Thu, 15 May 2025 06:21:12 +0000
+Message-Id: <20250515-smc-6-15-v6-0-c47b1ef4b0ae@svenpeter.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL1PR12MB5946:EE_|SA1PR12MB8919:EE_
-X-MS-Office365-Filtering-Correlation-Id: b05d424e-da80-4fc3-7cbb-08dd9378a91e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?L1ZiZUVteGpEbzZxcWVFZUZ6eTlSWHR6c2x5RmJRbU15MFdrVEU0TkxNZDl3?=
- =?utf-8?B?SG1vUVRITjUyeC9nQXQ1NndpbC84SlhrWFVZK2FCU3VKaTFRckVpem9URytM?=
- =?utf-8?B?SGdzZE5Sb0ZYQXpFNUgvUTlxZ0lsTE9KOHBtVmR2NVdZb2V1amlWUXpGWWdC?=
- =?utf-8?B?QnZVNWd1YndocENlWmNQWjFTM2E0YzMydmxUNkR6MXZMT0xZMGVFUkJaeGFq?=
- =?utf-8?B?WXNWRDg1Vlh6Q2p4STA1cWVhMzRWMjR2NHgxbkpnOWUrcXJ2RUNPbHBMcHZE?=
- =?utf-8?B?SjMwdHhLdjNsUE1YdWN6WGtYS2F5c0h0RkZuTWtKTDR1d2wrbDdMdmZiTlk5?=
- =?utf-8?B?cnQ3Q3BGZW1JYlZybjVWNEp2YUtnUUhFeVdKWlJhSTJDOGordkY4NERjZFpI?=
- =?utf-8?B?enR5SGhDdmJvK1hZbzVNRWlFYmFXSTh3YXNHd3Y1TS9teHVZcWdZODJsVlEx?=
- =?utf-8?B?TnBpV3ZOYXd4MnJnd3J1ZmY1NDBTRGZMS2lGKy9vbHRqYlltMnhaempSTDBS?=
- =?utf-8?B?clQzQ1JDSGF3eHFsZU4xd3RnZ0JwZEFKdmRrdjRBL2JOdGcvdTE5SjZZZTJ4?=
- =?utf-8?B?WE9vVXdtYUV2SU9GR0NuTjgzdWRhTi9zc29OTE1vSTd1TFdISHd2MDFoM3hy?=
- =?utf-8?B?aTZDTXRMQ2l5SzU2dU9uTERHdzB2dTNLNStSb3lIY2c2cllKVldkSllIRm5E?=
- =?utf-8?B?ekladEp4QzVtUVMwM0dNUUNob0tlYmFCdlRqZnhJVUlZQ2FvcUtYRWtHTThY?=
- =?utf-8?B?NVZPd3NIb2orb2FOUDZIRE4vY0tPNkdSdGhKeWdPM203U2VCRnNxZ2hYdGx5?=
- =?utf-8?B?RDFUY2tzR3E2RVZnQnR0cjJZMjUvUldWaW1uU2wwYy82NHliQmhEMUVYQ29S?=
- =?utf-8?B?NWJjNGhrZ3NZVGljdU9kTmREdWR2QmNkRkU4VjBlZGRianowUTNWVnEzRzRV?=
- =?utf-8?B?SmxiSTgvVUx0Y2U5VTFIajBPbXVzRjhQQmxjTzhXenRpa0VmT0Z0clhmQXFy?=
- =?utf-8?B?R0dWc0pOeHZNc0VFaTJyQXR0cFF4SHlBd2tua05QSnpxNmYrWkxTTWo1M3Zh?=
- =?utf-8?B?VHpCVGZ0MEVIZWt4ZG9HL3l2dDNOSjY2OE9wWU82NkxRaTR3cmU5UEtiS0to?=
- =?utf-8?B?NjFPN29ESzErLzRuNjBtSEpRSUhNaWtJUFRtQWZua2JHNUdMS1hJQUtSMGVJ?=
- =?utf-8?B?WVZteWJUaE5nYnlnVEo4WXM3K3Q3OW5ZbzNteEhPMGtkdTNsZEh6Mi9Uc2ZZ?=
- =?utf-8?B?SkN0eEs3WWhtN3dhcVhsaHVKTHQwdG13V3NCMTN1YzZWdVJ0bklodDU5VG1F?=
- =?utf-8?B?YUNINmxOaHRDU0kva3dBQy9vb0NwaXNjcGk3VXBOa3o2YnFlUnU1cW5nSDBF?=
- =?utf-8?B?VnpIQlAyZUV0ZDhiaE5ybitkWU5tVGxnRURNcEowcEFWb2JSdHNURk9YOVN2?=
- =?utf-8?B?QUJrODNZS3d4RGtGSWVReUdrWDhHVFUyYUROaVBVQi91YlhMZ2FxbTJaUldE?=
- =?utf-8?B?bkpuSjY5d3U1ME5BYndRaHduL3gxRXRGUGZESlpuRU9QOENub1dDbm1ick5C?=
- =?utf-8?B?SE0vU0tER3hYS1JobVZsRm5ESW4xMFppQ2FkRmFhTVhEd1N5NFVoODZ3eE9H?=
- =?utf-8?B?SEtOdHhLakxtWUdESndxZkttNmVMWU92OXJoWEJJanUvejVyM3JHY1gzaXJa?=
- =?utf-8?B?OWsyOHVZejVtMGg5L2FBTDk2TVpQb0xYSUFwWTZZUTBWT2d4aFBJRjZtTDRr?=
- =?utf-8?B?dmxWZVBuMkVPUEhhazErT1ZIWkF5YVJVL1BpTnM5aElZeER6dGhaK2MxbVpE?=
- =?utf-8?B?U2N4VysvZThOb1p1a2ttQmhqZFdHSVB5WlZBUmR4T1MwdUhKbHl0dDIyeTVq?=
- =?utf-8?Q?qyPLQAqe68FjH?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR12MB5946.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?dmZvN0RyWDllTXVRZ3BoM2RWWWRJQlkrQ3NLcHlTY1FwV0xPV25rV0c3M3dE?=
- =?utf-8?B?T3pJdUFWWnoxd3ZmY1Bpazkzb0psd2hlMWR6TVQ5dVNOV3hTWXd4ZmFzNHcv?=
- =?utf-8?B?eHkrNzVnU2piSVovM0phbk5SWWdqNGxkYjV1LzVJczA0Z2NtaUI1UXM2RU5q?=
- =?utf-8?B?ZGxmV1ZZTVZsM2x5SHNuakVuelU3T3Z6bC9EVExZd2Fha0J2RDBmdDFsZm1I?=
- =?utf-8?B?dWdnb3NPTGIxWlV4c05nbFllTHQ2cnQvQSswQ05OdjR5RzlpemhleXRRNlo1?=
- =?utf-8?B?SFpGUERkNDNwZ0NSaW1yMG4xS0piOXI0bmUvOExXVmxMaVlwbGoyRGVGSklZ?=
- =?utf-8?B?bUQraFdXL0tWTXpuT2VYSS9tSWM0T05IYlVncnlhRG1UWXZiT3FjY1k2MU5P?=
- =?utf-8?B?UU51OTAvZUpoNUhIekxWeDZ1Q09HM1JIQlZ0ald0S3hrZ3g0eGYxYnN1Q3Yx?=
- =?utf-8?B?dzkyc2FHS2dqaUtXZXVYVGMwdDg2aVpCZy9JQTNERlVnR2kxRVNKWWNvUUdk?=
- =?utf-8?B?cjhIc01TdWhsamcwRkdtV1JWMFJPRUFJZ1VyZkg1czBxU1N6aXdCNmE4bWU0?=
- =?utf-8?B?bVFjM0NDYmwxc1pNakQ4VjF4eUJnY0JlQnZkSEZnLzZjaDZSZFZaMFRCSHdy?=
- =?utf-8?B?aStGT2RjQmZRSjJxT3ZuR3BsQkV5R0FUbzEzU2lHZEVlTFVWbGJYZzJEOVdG?=
- =?utf-8?B?OUZuakZueStZS3c2QURFQytUWFJpN0o4ZGJ0MFo1MmU3OCtxYk50VGZub0pG?=
- =?utf-8?B?TzRWbFZmUXllRnVxdlBJTVlzT3BiY2dESXVNeVhta25TelJzR0c4N1I3bWR2?=
- =?utf-8?B?bmorc3FnNmYzcnV0REZaZmpUa3JINWNiTmRydGRHeG91TW5BTFVCOTBmNEpn?=
- =?utf-8?B?OFJuTWxScTEyaW1tbjlmNEpCL01IdHlaRHFuZStNT2krTlZSalNFZ1Q4RTF1?=
- =?utf-8?B?WndWeXVIV1pUN1J0SlhKMmhnUXN3SEZxamRHQU50cktJaTBuOTdqMUFsNnVp?=
- =?utf-8?B?amMzVmJDMGhlYzN5YUpPQ0NFcFF0V2k0dUNDUHhBYlFGWjMwYklPV3VXWG0w?=
- =?utf-8?B?Z0RZZjgvbGg4bStyeTNTVGdsOWVjRmhFQlRJNlI3VXhBWXdNRjJvMHFSeU93?=
- =?utf-8?B?c3VQcVJyWTcwNWc0TVdnN2wyWWZiQmZUSFByWUt1QWpIY3lqR1VUK1VEWDFk?=
- =?utf-8?B?QU1kRnljMEVWTi9HOFlpWkFxTlJ5M0NYSDFBZmJKYmtpajZpVTRYOFNoYkYr?=
- =?utf-8?B?WXlvY3dpZmVFOEZZUlVuZGxrT3UzaUFKV2dVMXdoSGlzbW9oa0FXRlpoOVg1?=
- =?utf-8?B?TlI1Yk5EbExBZG16Z0dIdGtGd2c5Q2Z0OGxnSlB4Q2c4a3NJbW1LV2lCYitV?=
- =?utf-8?B?blVPR3FUelFReFp6YjdGcisxWkNuR1JJS1k4Z0pHdlRiVTZvZ2djTWdyM1dW?=
- =?utf-8?B?SW1yZ0pmb2tiWEtTSTFsd3FrandZeFBlcUJvMndjNjN2eWh0dVBSSDFjZmJS?=
- =?utf-8?B?QnFTWVZyRUx5K3Q3WURyUStZaHFaTmVJQ3B2VWVnUFdNSjdKbksvZzhOeXJT?=
- =?utf-8?B?SDVnbzd1ei9LZmpMdnhkUTU2WU85Z3hLRTA5R3hKQUpldnpQQ3NYSVFiS2FH?=
- =?utf-8?B?UG9ucjhGY0lkNGlxam5sL3BsLy9SWUU1dlhoZnY2a0JMR0xwUFo3bytHVDRt?=
- =?utf-8?B?Vzh0V3l0Y0c0MHFMTStTUjZtK1VuUDRWZ09QeDZQZCt5VUdtS01JTEhIN29O?=
- =?utf-8?B?aTVvT09ZSHR6S0Vyb2l3QWJNS0ZoUWZRR1dxdkg0TG1HTGFJQnhKa013ckN5?=
- =?utf-8?B?N0gwbnBGSUxVZXUvRkpQeUpxQkVtUTNhbzg0VzVKRHk4Y0N5bFB6T0RYVnZo?=
- =?utf-8?B?enExVjgxN01IazZ2NmxvYm1JVGxxRW1HQ0QyRERxNGNFbXg4MTV3aEw1emo0?=
- =?utf-8?B?Tzh3YmhleS9tQ3JIYlRmS0ZNTW9JUmtRcjJpbHd0WWdZYzYvZTY0dW03U2o0?=
- =?utf-8?B?Z2RlekFPQ2Z0cE5NQ0dDelVFVjVUQXRNYmZwamRDL3B6aHpsYml1UWorOWta?=
- =?utf-8?B?MW95YWUybVMzS2NTUitMY3c2NjRETjJmWUlTK3FqaGw4cDNBaDNGeHdlN3Fv?=
- =?utf-8?Q?RIjW3Ek+JyxWe/gMmQc4A8hWv?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b05d424e-da80-4fc3-7cbb-08dd9378a91e
-X-MS-Exchange-CrossTenant-AuthSource: BL1PR12MB5946.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 May 2025 06:21:00.2189
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: TGCZjq6KJharioAN9hpPDN+6LvLmYEA5EIX+OU+5e8zf9pVWo2xJ26jCSHoo+Pms
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB8919
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIANmHJWgC/13MQQ6CMBCF4auQWVszhU4DrriHcWHpVLoQSEsaD
+ eHuFlxIXL7J/N8CkYPnCJdigcDJRz8OeehTAV1/Hx4svM0bSiwJK1QiPjuhhSThkK2WDVfSKsj
+ vU2DnXzt1veXd+ziP4b3LSW3XL5KZH5KUQEGIpjGalHZdGxMPE88czpYTbFCiQyzlIaYcO2pqN
+ NbI2tj/eF3XD+K8fWjhAAAA
+X-Change-ID: 20250304-smc-6-15-f0ed619e31d4
+To: Sven Peter <sven@svenpeter.dev>, Janne Grunau <j@jannau.net>, 
+ Alyssa Rosenzweig <alyssa@rosenzweig.io>, Neal Gompa <neal@gompa.dev>, 
+ Hector Martin <marcan@marcan.st>, Linus Walleij <linus.walleij@linaro.org>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Sebastian Reichel <sre@kernel.org>, 
+ Lee Jones <lee@kernel.org>, Marc Zyngier <maz@kernel.org>, 
+ "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>
+Cc: asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+ linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=7511; i=sven@svenpeter.dev;
+ h=from:subject:message-id;
+ bh=4zeGaBUvC1Q9ojCS6BwilpI7jNLQBxZR8OQzD04olA4=;
+ b=owGbwMvMwCHmIlirolUq95LxtFoSQ4ZqB1vgt88/QjfM+n7KTPLoEil3G/Gj/DdOiTiFbHRXb
+ +BXtbzZUcrCIMbBICumyLJ9v73pk4dvBJduuvQeZg4rE8gQBi5OAZhI+RKG/2GGJdFRj9jNJ55j
+ 9PSXe3i7dBmTxo+YV0G7/W+y2gQe3c/w3z28aVtD+4H+FX17jrrN3eP3p0Neq+tAh/LX2mX6/eu
+ aOQA=
+X-Developer-Key: i=sven@svenpeter.dev; a=openpgp;
+ fpr=A1E3E34A2B3C820DBC4955E5993B08092F131F93
+X-Endpoint-Received: by B4 Relay for sven@svenpeter.dev/default with
+ auth_id=167
+X-Original-From: Sven Peter <sven@svenpeter.dev>
+Reply-To: sven@svenpeter.dev
 
+Hi,
 
+This series adds support for the System Management Controller found in
+Apple Silicon devices which we model as a mfd. It also includes support
+for the GPIO block and the power/reset block as sub-devices.
 
-On 5/13/2025 10:10 PM, Sean Anderson wrote:
-> On 5/13/25 11:29, Karumanchi, Vineeth wrote:
->> Hi Sean,
->>
->> Sorry for the delayed response.
->>
->> We are working on MACB with two internal PCS's (10G-BASER, 1000-BASEX) supporting 1G, 2.5G, 5G, and 10G with AN disabled.
->>
->> I have sent an initial RFC : https://lore.kernel.org/netdev/20241009053946.3198805-1-vineeth.karumanchi@amd.com/
->>
->> Currently, we are working on integrating the MAC in fixed-link and phy-mode.
-> 
-> I had a look your series and based on the feedback you got I think this
-> patch will help you ensure the PCS changes stay separate from the MAC
-> stuff. I found it confusing on first read that you were configuring the
-> "1G" PCS from the USX PCS callback. I think you are using 1G/2G speeds
-> with the "1G" PCS and 5G/10G speeds with the USX PCS?
-> 
+Changes between v5 and v6:
+  - Actually reorder struct members this time, start comments with an
+    uppercase letter, and use devm_ for mfd_register_devices instead of
+    dropping those fixup commits by accident
+  - Stefan's comment: Renamed ret to bfr in the reboot driver
+  - Sebastian's comments on the reboot driver:
+    - Moved Kconfig dependencies to MFD device and made reboot only
+      depend on that one
+    - Removed sysfs file to configure "reboot after power loss" for now
+      since this probably belongs in a userspace tool that directly
+      writes to nvmem instead
+    - Dropped setting pdev->dev.of_node since that's already done
+      automatically and adjusted #include to linux/mod_devicetable.h
+    - Dropped MODULE_ALIAS which was probably a leftover from a previous
+      version that did not use of_match_table
+  - Rob's comments to the dt-bindings
+    - Removed examples from sub-devices and added them to the main smc
+      binding
+    - Removed a spurious |
 
-yes, this patch does help.
+Changes between v4 and v5:
+  - Alyssa's comments:
+    - Made the WARN_ON in the reboot driver more obvious
+    - Added missing brackets around a for loop in the reboot driver
+    - Used min instead of open-coded variant inside the gpio driver
+    - Reoder struct memebers to prevent padding inside the mfd driver
+  - Lee's comments:
+    - All comments now start with an uppercase letter
+    - Removed apple_smc_read_ioft_scaled and apple_smc_read_f32_scaled
+      since these are not yet used and likely don't belong into
+      drivers/mfd
+    - Relaced if (ret != 0) with if (ret) when possible
+    - Used devm_platform_get_and_ioremap_resource to get and map the
+      SRAM resource
+    - Used reverse Christmas-tree formating when declaring variables
+    - Dropped _platform left-overs from probe and remove functions
+    - Removed dev_dbg prints which are no long required after
+      development
+    - Reworked is_alive/is_initialized so that it's obvious how errors
+      during boot are propagated from the callback to the probe function
+    - Used dev_warn instead of dev_err in a few places
+    - Removed no-op apple_smc_rtkit_shmem_destroy; this required an
+      additional change in rtkit.c because we had a check there that's a
+      bit too strict
+    - Removed struct resource in apple_smc_rtkit_shmem_setup and
+      open-coded resource_contains instead
+    - Unwrapped lines with less than 100 chars
+    - Made sure to compile with W=1 and ran scripts/kernel-doc -v
+      on macsmc.h once and fixed any fallout
+  - Removed first_key/last_key from struct smc and moved
+    apple_smc_find_first_key_index to the gpio driver since it's only
+    used there anyway to find the index of the first GPIO key (gP00)
+  - Return -EIO when a command fails instead of whatever SMC returns
+    which does not map to Linux errnos on errors
 
-The IP was designed to configure all speeds (1G, 2.5G, 5G and 10G) from 
-USX registers only, hence we are using USX PCS callback.
+Changes between v3 and v4:
+  - Added documentation for all functions and structs
+  - Fixed dt-bindings and re-ordered commits so that the mfd one comes
+    last and can include the gpio subdevice
+  - Added the reset driver and corresponding bindings
+  - Reworked the atomic mode inside SMC since the previous implementation
+    called mutex_lock from atomic context
+  - Removed the backend split for now which lead to a quite intense discussion
+    for the previous versions which hadn't been solved as far as I could tell
+    from the old threads.
+    It's also been 2+ years and I haven't heard of any backend implementation
+    for T2 or even older macs. It's also unclear to me which sub-devices
+    are actually useful there because at least GPIO and shutdown/reboot
+    from this series will not work as-is there.
+    I'd rather have this initial version which only supports M1+ macs upstream
+    and then iterate there if any other backend is developed.
+    I'll gladly help to re-introduce backend support if it's ever required.
 
-> Do you know if there is any public documentation for 10G support
-> (even on non-versal SoCs)? That will make it easier to review your
-> patch.
-> 
-> --Sean
+Dependencies:
+The code and dt-bindings themselves apply cleanly to 6.15-rc1 but
+the device tree changes require the already merged SPMI controller
+and SPMI NVMEM series which will be part of 6.16.
+The series is also using the printf format specifiers which will
+land in 6.16 via the drm-misc tree.
+A tree with all dependencies for testing is available at
+https://github.com/AsahiLinux/linux/commits/smc-v6/.
 
-The Cadence IP document is internal, but we can share TRM of our board, 
-which goes public later this month. I will add the link of it in our 
-patch series.
+Merging:
+The dt-binding patches all depend on each other such that they all
+should probably go together with the mfd device itself.
+The following commits also depend on mfd due to the new header file and
+will either have to go through the mfd tree as well or we'll need an
+immutable branch there or we just wait one kernel release and I'll
+re-submit the rest then.
+I'll take the device tree updates through our tree which also has the
+previous device tree updates these depend on.
 
+v5: https://lore.kernel.org/asahi/20250511-smc-6-15-v5-0-f5980bdb18bd@svenpeter.dev/
+v4: https://lore.kernel.org/asahi/20250503-smc-6-15-v4-0-500b9b6546fc@svenpeter.dev/
+v3: https://lore.kernel.org/asahi/Y2qEpgIdpRTzTQbN@shell.armlinux.org.uk/
+v2: https://lore.kernel.org/asahi/YxdInl2qzQWM+3bs@shell.armlinux.org.uk/
+v1: https://lore.kernel.org/asahi/YxC5eZjGgd8xguDr@shell.armlinux.org.uk/
+
+Best,
+
+Sven
+
+---
+Hector Martin (5):
+      gpio: Add new gpio-macsmc driver for Apple Macs
+      power: reset: macsmc-reboot: Add driver for rebooting via Apple SMC
+      arm64: dts: apple: t8103: Add SMC node
+      arm64: dts: apple: t8112: Add SMC node
+      arm64: dts: apple: t600x: Add SMC node
+
+Russell King (Oracle) (2):
+      dt-bindings: gpio: Add Apple Mac SMC GPIO block
+      dt-bindings: mfd: Add Apple Mac System Management Controller
+
+Sven Peter (3):
+      dt-bindings: power: reboot: Add Apple Mac SMC Reboot Controller
+      soc: apple: rtkit: Make shmem_destroy optional
+      mfd: Add Apple Silicon System Management Controller
+
+ .../devicetree/bindings/gpio/apple,smc-gpio.yaml   |  29 ++
+ .../devicetree/bindings/mfd/apple,smc.yaml         |  79 ++++
+ .../bindings/power/reset/apple,smc-reboot.yaml     |  40 ++
+ MAINTAINERS                                        |   7 +
+ arch/arm64/boot/dts/apple/t600x-die0.dtsi          |  35 ++
+ arch/arm64/boot/dts/apple/t8103.dtsi               |  35 ++
+ arch/arm64/boot/dts/apple/t8112.dtsi               |  35 ++
+ drivers/gpio/Kconfig                               |  10 +
+ drivers/gpio/Makefile                              |   1 +
+ drivers/gpio/gpio-macsmc.c                         | 292 ++++++++++++
+ drivers/mfd/Kconfig                                |  18 +
+ drivers/mfd/Makefile                               |   1 +
+ drivers/mfd/macsmc.c                               | 498 +++++++++++++++++++++
+ drivers/power/reset/Kconfig                        |   9 +
+ drivers/power/reset/Makefile                       |   1 +
+ drivers/power/reset/macsmc-reboot.c                | 294 ++++++++++++
+ drivers/soc/apple/rtkit.c                          |   3 +-
+ include/linux/mfd/macsmc.h                         | 279 ++++++++++++
+ 18 files changed, 1664 insertions(+), 2 deletions(-)
+---
+base-commit: 5abab6ab4ebacfff5857b63bd349902a6568d2e8
+change-id: 20250304-smc-6-15-f0ed619e31d4
+
+Best regards,
 -- 
-🙏 vineeth
+Sven Peter <sven@svenpeter.dev>
+
 
 
