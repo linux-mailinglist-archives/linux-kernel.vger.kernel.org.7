@@ -1,86 +1,86 @@
-Return-Path: <linux-kernel+bounces-650041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-650043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25CA6AB8C84
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 18:33:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DECFAB8C91
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 18:36:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12B8B1BC529D
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 16:33:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF23C1BC17D4
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 16:36:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82F6D21FF3E;
-	Thu, 15 May 2025 16:33:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40B827262B;
+	Thu, 15 May 2025 16:36:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="U3IkSFIw"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="LiROpoKj"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF43E21FF33
-	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 16:33:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10D351A23A0
+	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 16:36:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747326814; cv=none; b=CTnLQPd+YA4yRpbnpLBLp1lgUpCjU+cwiQXTB/iMHEIbBIx43Y906hvjsUFKNKPyxx/1Ut6Jkn1QPTFrlZHXtSZUyed48jRwPEcGgdRO4AoScC9othX0S5xS2ZiC9f92YvxzfKqoztOEWxekYEaf5U3fSU18q0Nc1YJvTDon72E=
+	t=1747326967; cv=none; b=aFRlGXpOk96ZnDavivrr/u3e3E6VMjXzOwcIGr91Ytr8NKSWtMNQ2gez5VhFKGq+Zej3QlPOVBRK7Kq1Y1iLLZaBL8CgRYAMsG+he8LNruurX0iZQAdNZl66fHh38+jyZYdpAe5u/Smq4JvIPQ4jt3uWW9yaYjK4t0+NKV1HPds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747326814; c=relaxed/simple;
-	bh=vfsPo6kqmoyc6t4RDCZRubbTIjpZOLVaBI3BRmArROw=;
+	s=arc-20240116; t=1747326967; c=relaxed/simple;
+	bh=+8W5Ri/pFFeLcmGKvvOvJvdcCwN2VlT7nuhw+jr1CLo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DaeC3fdGOelSPEF1Ng3mz2OqGDJyopuB1u11BelxhahKc/9Bu1SpMsPDFC/HaJVgyfhCi4fbM447VNz2Ingmy7/wKmriKgXC2FrjSG3yUCcco6Z3w0ixnR83Y5o7UX51tu/nnHP6qxLcS/hQgW7BUaAFuTPHmRL3mZQ00Iye09g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=U3IkSFIw; arc=none smtp.client-ip=205.220.168.131
+	 In-Reply-To:Content-Type; b=NVB+NMj38X7QausJSJLk2UB7gRqmSQOh4/wEG/Px69n7gG47hwoBVmusq87RGl5Y4RSp2JOnhjeDV7FqMZwhKLc4vW4AWmpEcIm55gQ3MBclFUM1sHCzBhO4jH0plpntBDndfmvBQ8CO8ACmIIGxrGwGKG2MxTiwXqmH74kFvBc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=LiROpoKj; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54FEF914016622
-	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 16:33:32 GMT
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54FEFDdM001798
+	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 16:36:04 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	862jGz73qlWJ7n8nlKWUcwMkWwMBWWvd7YMchYZdOp4=; b=U3IkSFIwni0+8jPw
-	3kt9k1RvvxZOnwblZ42CI0zG/ean0/BUNKo6oo0xYcDCo250o9aMOROr2TJipmMu
-	K4KwVQ9qOg54gY6rrBrTmkygLc+dNdoQ/nUftCRmVGgiS1L3Hu0wgCP+5rE3Lr0L
-	jDdJYpiGG1n0EY6T34cYOKbfTRVSoi/G4BuVxScyyWoUEPpvPfkXqLhEeulK0pDA
-	cfMIvnD2GToP0C7bQTtY4fR2foyMlborZkvoTUMZ+iEti39qVRBm08ZMvgE+EyTb
-	7zYOfEwGK0LMS3GCuZZmMqtOiAGjPjP2tPN/2YXNA8msdkIZzNKSNFQ4KW2Hhz2p
-	hJdEfA==
-Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46mbcmq1bd-1
+	Mf1yxC4j/0xqckE1bjp6hJEa7TWXoohzaf1QFVhnFec=; b=LiROpoKjmM84CxmY
+	UidQ2afnAkgqV+FMbKnoXu4FFizXiPKgDgrqgzJYYhTBDWSa2J9kWEa4K0ua+8PY
+	bhA2GIdI3LCaisKR23O/t7EM3ZU/WfKbVYG/zMtQmCis4H84VcWdgW6TSzJuX2d1
+	TDOXnTW1dX5oiw/5tZ3ZT4BYPCXHmFsI2a1PADrQLubPMw3zlfwFTTZrNWDWSShx
+	wLD8OZd+YYCAoIWapErPYpjRpsZs3jR5ZKYLPG5LCTJFOsdCPSRl2SV4CR+zHek2
+	b/t4L4nnwrnRFw5sv+szt03PcJltkkalO9fDQQSwshB0se1tWbBg4HT9qdNnuyhx
+	zSbnJA==
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46mbcresyw-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 16:33:31 +0000 (GMT)
-Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-22aa75e6653so9124265ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 09:33:31 -0700 (PDT)
+	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 16:36:04 +0000 (GMT)
+Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6f8ac35546eso444526d6.2
+        for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 09:36:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747326811; x=1747931611;
-        h=content-transfer-encoding:in-reply-to:content-language:from
+        d=1e100.net; s=20230601; t=1747326964; x=1747931764;
+        h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=862jGz73qlWJ7n8nlKWUcwMkWwMBWWvd7YMchYZdOp4=;
-        b=d+12gbenf1Zph0Lp2qiJCKzkGKGkokZZEuF2Ye5WTSkshbehFWRvFi+DNjRNXfOLP0
-         /pCtb5oWC9l31E9TewoYt+QJ7UomX/ChAahSz2bdFvoiiT5vuMH+agXEi4oXEFRo1aUM
-         sg7GNcnCcO5u3taUGLUOjPRGv1hALS/LtQyPrABQlf0FOAb0+ZFFnDoom9E6ux6mUzQN
-         2eaOZaNIlynhANoryos3dXMHi85vJMaw4lx9x9kQiqIpNe1MwNhXTSJ8EFkl5+9K5sAp
-         thXaDzC444uj8tS0sdQUwFml2XyHKl7Za1DUo7UpF0SfqK7po/hB1j+Cp6jSk1EMnc5d
-         5iAg==
-X-Forwarded-Encrypted: i=1; AJvYcCVyjQYxNJ4HcthFXGtqogP6wUEeZdqMwxECTV482iCysRavp6v1ypFHSTlEDFLX2uGaLJacy7e4QkYtMXA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFs55wfM//wRMaX4u9mu0ftnxTjCKJ4xnOgPkzF59orsUqVnfl
-	X5sQccORi2l7/esY4a/+CbphVhaBDkVUOKz0ogmC2aGFiGkbymaygVaSggYjxDyEnXJaVylF1YF
-	GKKSY6746HaVBYXO9+QNa5uL+JiACYFwQ5IVbWGNyB35eQJ90CgmyV2KTYILtpx1S5rw=
-X-Gm-Gg: ASbGncvhcm70y4knLlHknnHGv8qKVRWb21Gh6DR9gBLOMBJTCE/y2qyt5nExF/kxfu7
-	OZRZjQNstD9GDf4wMGWiFoLTC99CtEHuKQWCIF0svn+7iYP02s86wS6uxSmuUfUAwfocVqLEw+9
-	iDp/+EOAASifcXbcOxQbqtoTun5EhkrxlOaWM13qzkP2rbVzxKJ518wAYdDjOQnrFaLwNHL6PrI
-	WVKQQUJV53bfWw/1gvxcSJwfxYr1jPsypJwNlWUeNeMy25Xmqm+npfoI46q+qSQ2XiUXtfObkwA
-	g5m1CMQ/9yVKNtoqDVKT0Plec9eQ98bkUuLp1k5bj+01PNT10vsvEhVzVY5Vo+TRgcA=
-X-Received: by 2002:a17:903:2ece:b0:223:432b:593d with SMTP id d9443c01a7336-231d4599a7amr1470065ad.42.1747326810618;
-        Thu, 15 May 2025 09:33:30 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH4winHiJbc+0IhMnMet2XZCLQUA+UOfrUcc7trJErFRppvnj05B0//ijXWpNHLurqvAGyknA==
-X-Received: by 2002:a17:903:2ece:b0:223:432b:593d with SMTP id d9443c01a7336-231d4599a7amr1469915ad.42.1747326810095;
-        Thu, 15 May 2025 09:33:30 -0700 (PDT)
-Received: from [10.227.110.203] (i-global254.qualcomm.com. [199.106.103.254])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-231c38d2fb4sm10421385ad.228.2025.05.15.09.33.29
+        bh=Mf1yxC4j/0xqckE1bjp6hJEa7TWXoohzaf1QFVhnFec=;
+        b=vElsC2U07z8iH/Qgo6K9diycLoau/F8iwDDl+7417sQ5YPj/QS9T72eDfMHVBEidCH
+         WsUltMousb5wDHeN+TIHDvgKH5a1iugeA6ylqTckKB5LQjxzjQqOnFdFHJCuke6q0zrd
+         iihMql5sh5DPaZKfFFHQwGEAGK4RBj3yo4m3/IDdpzsKhIUiFJzakVZ1tP3SHEQUibz1
+         X8kMRzfsmnLTSAyHNmURqgbQxx9ZLS8EG0QxtmKcWA8FS5QGrmLiflSm8joCKN7xb0FI
+         5Q8vsuSF9RfL9vwhHhNhpO49gzDK//tQlAUHrDl0g+f5VfrpwEJpEyFVWO6xOjSYFZuu
+         xqhw==
+X-Forwarded-Encrypted: i=1; AJvYcCUiiG+vgAqPsV3Sfr/F8YM11HIv+zQ8R3yiu2KfaxUFrwhcrlOBr+PgNqjvRSGV8eGEFTgUSy8uA53xTl8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8VbyFDpexyu/0hsw1uCldSgPBalUiLmnl1KYp6cCFwvfP98zB
+	ksobbIJc/XiLrJb2Ea2j3Mywo48Db0y2mgcntVCFrORpErDipSaUVVDkuP/lRYSA0Y4NfGl+r3a
+	Kpa+y2w6l40H3DDGcOpzttGnP5G83dQwyq88XSmXcxNoKY9KsiS3cwTZH87PROMzGUhY=
+X-Gm-Gg: ASbGncshbctcxGSQR5WzXkkJNmjZ7VA7a+45QZM2vTuaul1SQZ0bRbXOM1MegEltIuF
+	FbYUlbE2UPrVvMIJrVFTHCusVFraS076uyet266OaHTkwCcqqlhn4OFqMFsqiAif0nEuhEB7SYj
+	6hQI4vPxRWH03hHGhuVKImUCMkxZn3ZIwTPOMp64gjhQzsXYZzJLs3/o9KXafZ3k42QMTLDzyb/
+	dTMc8gsa3NxC3uHaUBwTEllGV3aR6yO5NCkQkWypDJZ30/nNjgVg+dfIBDQR0zuwedEi8+l4Oi2
+	2QfGBcwIp26aG7XXmMO7glU1tdNzGRrfIl8TpTPbB/PxdBgtwvUWxIttCDUXC77+wA==
+X-Received: by 2002:a05:6214:2602:b0:6e4:449c:ab1d with SMTP id 6a1803df08f44-6f8b0806253mr2293826d6.2.1747326963634;
+        Thu, 15 May 2025 09:36:03 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEvNUL5j6UfTHgiyVUOwjbW+ErGEGSr6X1GGt17A/3JvM7gfGdKNGvp9n+/7pu4N7fYdG51Lg==
+X-Received: by 2002:a05:6214:2602:b0:6e4:449c:ab1d with SMTP id 6a1803df08f44-6f8b0806253mr2293666d6.2.1747326963035;
+        Thu, 15 May 2025 09:36:03 -0700 (PDT)
+Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6005a6e63a0sm72049a12.39.2025.05.15.09.36.00
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 15 May 2025 09:33:29 -0700 (PDT)
-Message-ID: <2b0a1115-b75f-491b-b2e3-85b6f433b9d9@oss.qualcomm.com>
-Date: Thu, 15 May 2025 09:33:28 -0700
+        Thu, 15 May 2025 09:36:01 -0700 (PDT)
+Message-ID: <d0a036e7-605b-4475-8ddc-69482e16f0b3@oss.qualcomm.com>
+Date: Thu, 15 May 2025 18:35:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,166 +88,113 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 9/9] CodingStyle: flip the rule about curlies
-To: Alexey Dobriyan <adobriyan@gmail.com>,
-        Greg KH <gregkh@linuxfoundation.org>
-Cc: corbet@lwn.net, workflows@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250509203430.3448-1-adobriyan@gmail.com>
- <20250509203430.3448-9-adobriyan@gmail.com>
- <2025051001-undertow-unsolved-3aee@gregkh>
- <433d5f82-3ca9-40b8-82e8-acd647f55d67@oss.qualcomm.com>
- <2025051204-runt-mobility-6fbc@gregkh>
- <d21af9bc-baec-4b13-b0e0-d02829822682@p183>
-From: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
+Subject: Re: [PATCH RFT v2 13/15] soc: qcom: ubwc: Fix SM6125's ubwc_swizzle
+ value
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Konrad Dybcio <konradybcio@kernel.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, Rob Clark <robdclark@gmail.com>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Akhil P Oommen <quic_akhilpo@quicinc.com>, Sean Paul <sean@poorly.run>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org
+References: <20250514-topic-ubwc_central-v2-0-09ecbc0a05ce@oss.qualcomm.com>
+ <20250514-topic-ubwc_central-v2-13-09ecbc0a05ce@oss.qualcomm.com>
+ <lkkwnmnk32igcev3gykmtxsohyskj6ehylaypg2dyxbedvksee@lnuc4lfmzrkm>
+ <9a05d545-1bf2-4f66-8838-b6969ba37baa@oss.qualcomm.com>
+ <d7417290-a245-422c-ba00-3532661ea02d@oss.qualcomm.com>
+ <466148c9-2461-4140-9ba9-5a3427ec6461@oss.qualcomm.com>
+ <4ec678b4-9e69-4ba0-a59d-f2e0948a73ce@oss.qualcomm.com>
 Content-Language: en-US
-In-Reply-To: <d21af9bc-baec-4b13-b0e0-d02829822682@p183>
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <4ec678b4-9e69-4ba0-a59d-f2e0948a73ce@oss.qualcomm.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTE1MDE2NCBTYWx0ZWRfX2RdNxaXzEZrw
- 3Gk9HcrtJ2wzOXdPDhP+oDt5utp9I/IFLU8S0LtkbrMRpA/ZXPv6B+QfgCqp1h2TrDGIafZlj81
- g53dYNt82j8sEVBzo2LK5Y5ITnmCS1LjT7USclxnNhip+VmcU1ddwRvinFibneLxz3BGXQ8uQmq
- 8XPP78Vt2g0kiSDDJc7MWbXoxLlDLHiCXtUbwqzTvAaBu3KPU2eCUit0/rWDNcrdv9TjAGUiSaE
- /6AVYWOlE2BqfpIw7cOIhEmowgHwh8+vOjUsTpYovJsL9qlPptLoidn/1VQpDpGJEe2gIegRRVV
- u1AMG2OzXrwtRrXHVrIVTgJWXm4+KnV1lVGz4ZOqQfvDPRARl5425+PI3d2jHuZ+C3hIX4rg6DL
- p+rOsaADOsGU0u1HFU2KoXqMGcwPVJ+n1Tb/zS643Hw2FqZL4oVXtIARuE1Rg94SM/gTHncN
-X-Authority-Analysis: v=2.4 cv=G5scE8k5 c=1 sm=1 tr=0 ts=6826175b cx=c_pps
- a=JL+w9abYAAE89/QcEU+0QA==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=nLmYZ6Dm7FMJzT2TopcA:9
- a=QEXdDO2ut3YA:10 a=324X-CrmTo6CU4MGRt3R:22
-X-Proofpoint-GUID: CFZEBpW0kKf0saOESFGqiAijbVOmvcQM
-X-Proofpoint-ORIG-GUID: CFZEBpW0kKf0saOESFGqiAijbVOmvcQM
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-ORIG-GUID: B3CQiDin_PDk9y8mNCMsY-5ypi8C5ncf
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTE1MDE2NCBTYWx0ZWRfX6b7K+oBv9Uh4
+ b4sEmHjXuSSzZeLyHmhnPyjO46K+teYdmA6jYFMYbhS4LdJtRDK/Ig+jerDU8r5jefGByUDxcpG
+ qajcWPbQ/Gkz7KL8QHfNE0I+mpMM+Zs+ltU5l0V8OKI7fH+gpc6QEj8pCCN6co39FVx5cPdbzTV
+ Tl0EHSgynoWe1ZaQYtehkGqVdyI5yenqX/Ik5MZA0t1sxSGFoCtGpfxyoFh3bRn4/fOIl9MHoBk
+ mZVXGz5jgdltylQDpZ653ySFPiGrAWhIGlxL0cq1q5XK08H1z+y13nlDgsYMdqUJSKcwLdcyblD
+ WrrDabz0oWM50apwNh4fUkuqvT6aV2HijnKqNt7X2Ou5w2fvG4j7bZWPiiFiW8+Ia0W3LMtF0iU
+ amJ8Mja0X6PiQ0/nqPHqkJ7DgztAjvvtxqpEEolc9PzFB00gah9zeEMxveqnEl3kijnU+MeS
+X-Authority-Analysis: v=2.4 cv=K7UiHzWI c=1 sm=1 tr=0 ts=682617f4 cx=c_pps
+ a=7E5Bxpl4vBhpaufnMqZlrw==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=EUspDBNiAAAA:8 a=_jjhv_60NFWZV4FgBwEA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=pJ04lnu7RYOZP9TFuWaZ:22
+X-Proofpoint-GUID: B3CQiDin_PDk9y8mNCMsY-5ypi8C5ncf
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
  definitions=2025-05-15_07,2025-05-15_01,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 mlxlogscore=712 clxscore=1015 phishscore=0 bulkscore=0
- suspectscore=0 spamscore=0 impostorscore=0 lowpriorityscore=0 mlxscore=0
- malwarescore=0 adultscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ adultscore=0 priorityscore=1501 mlxscore=0 suspectscore=0 malwarescore=0
+ phishscore=0 mlxlogscore=999 clxscore=1015 bulkscore=0 impostorscore=0
+ lowpriorityscore=0 spamscore=0 classifier=spam authscore=0 authtc=n/a authcc=
  route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505070000
  definitions=main-2505150164
 
-On 5/13/2025 12:06 PM, Alexey Dobriyan wrote:
-> On Mon, May 12, 2025 at 06:56:56PM +0200, Greg KH wrote:
->> On Mon, May 12, 2025 at 09:43:10AM -0700, Jeff Johnson wrote:
->>> On 5/9/2025 11:18 PM, Greg KH wrote:
->>>> On Fri, May 09, 2025 at 11:34:30PM +0300, Alexey Dobriyan wrote:
->>>>> Require set of curlies {} in all if/else branches and all loops
->>>>> not matter how simple.
+On 5/15/25 6:21 PM, Dmitry Baryshkov wrote:
+> On 15/05/2025 19:18, Konrad Dybcio wrote:
+>> On 5/14/25 10:33 PM, Dmitry Baryshkov wrote:
+>>> On 14/05/2025 23:05, Konrad Dybcio wrote:
+>>>> On 5/14/25 9:23 PM, Dmitry Baryshkov wrote:
+>>>>> On Wed, May 14, 2025 at 05:10:33PM +0200, Konrad Dybcio wrote:
+>>>>>> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+>>>>>>
+>>>>>> The value of 7 (a.k.a. GENMASK(2, 0), a.k.a. disabling levels 1-3 of
+>>>>>> swizzling) is what we want on this platform (and others with a UBWC
+>>>>>> 1.0 encoder).
+>>>>>>
+>>>>>> Fix it to make mesa happy (the hardware doesn't care about the 2 higher
+>>>>>> bits, as they weren't consumed on this platform).
+>>>>>>
+>>>>>> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+>>>>>> ---
+>>>>>>    drivers/soc/qcom/ubwc_config.c | 2 +-
+>>>>>>    1 file changed, 1 insertion(+), 1 deletion(-)
+>>>>>>
+>>>>>> diff --git a/drivers/soc/qcom/ubwc_config.c b/drivers/soc/qcom/ubwc_config.c
+>>>>>> index 9caecd071035ccb03f14464e9b7129ba34a7f862..96b94cf01218cce2dacdba22c7573ba6148fcdd1 100644
+>>>>>> --- a/drivers/soc/qcom/ubwc_config.c
+>>>>>> +++ b/drivers/soc/qcom/ubwc_config.c
+>>>>>> @@ -103,7 +103,7 @@ static const struct qcom_ubwc_cfg_data sm6115_data = {
+>>>>>>    static const struct qcom_ubwc_cfg_data sm6125_data = {
+>>>>>>        .ubwc_enc_version = UBWC_1_0,
+>>>>>>        .ubwc_dec_version = UBWC_3_0,
+>>>>>> -    .ubwc_swizzle = 1,
+>>>>>> +    .ubwc_swizzle = 7,
+>>>>>>        .highest_bank_bit = 14,
+>>>>>>    };
+>>>>>
+>>>>> Add a comment and squash into the patch 1.
 >>>>
->>>> Sorry, but no, we are not going to change this long-term coding style
->>>> rule for no real reason at this point in time.
+>>>> I don't think that's a good idea, plus this series should be merged
+>>>> together anyway
 >>>
->>> Is the infamous Apple SSL bug (CVE-2014-1266) a good reason?
+>>> Well... Granted Rob's comment, I really think the patches should be reordered a bit:
+>>>
+>>> - MDSS: offset HBB by 13 (patch 2)
+>>> - switch drm/msm/mdss and display to common DB (patches 1+3 squashed)
+>>> - get a handle (patch 4)
+>>> - resolve / simplify (patches 5-10, not squashed)
+>>> - fix sm6125 (patch 13)
+>>> - WARN_ON (swizzle != swizzle) or (HBB != HBB)
+>>> - switch to common R/O config, keeping WARN_ON for the calculated values (with the hope to drop them after testing)
+>>
+>> Does this bring any functional benefit? This series is unfun to remix
 > 
-> Indeed.
+> I know the pain.
 > 
-> Thanks, curlies were inspired by this CVE but I forgot to mention it.
-> 
->> One bug in 2014 will require us to touch 30+ million lines of code?
-> 
-> Nobody is proposing to reformat 30 mil lines at one commit
-> (as much as I'd like it).
-> 
-> Old code will stay old, new code will be formatted per new rules.
-> 
->> Please be reasonable.
-> 
-> I'm very reasonable. Each patch details rationale why specific style is
-> better.
-> 
->> And everyone, remember _why_ we have a coding style.  It's not so much
->> the specifics of _what_ the coding style is,
-> 
-> What? When was the last time you read it? It is very much about specifics:
-> 8 spaces, opening curly on the same line except at function scope,
-> 80 columns, recent rule about to format function attributes.
-> 
-> It could have even more specific if there is pre-commit hook forcing
-> formatting like commercial companies do.
-> 
->> one at all.  Don't argue the specifics of the coding style without a
->> really really good reason why, with real details and proof.
-> 
-> What is "really really good"?
-> 
-> How do you know when it is good reason or not?
-> 
-> I think I have good reason: I programmed a little in another languages
-> where some of the rules don't apply. In particular C++/Rust don't have
-> a rule about declaring variables upfront. Nor does any popular programming
-> language designed in the last 35 years (?).
-> 
-> Such experience made me realize that linux-kernel CodingStyle in this
-> regard is pointless at best and counter-productive. It was so obvious.
-> 
->> It took us a long time to increase the default line length, and that too
->> is still argued about for very good and valid reasons.
-> 
-> It still 80 columns in CodingStyle.
-> 
->> That was discussed in detail, not just thrown at us like this patch series was.
-> 
-> Oh come on. In Russia we say "not my first year of marriage".
-> 
-> One of the unwritten rules of linux-kernel is to NEVER post [RFC]
-> as it will be ignored, but to post a [PATCH] and Cc specific people
-> to force a discussion.
-> 
-> I don't want to look like a thief who sneaks in occasional declaration
-> in the middle of a function or set of curlies and get yelled by compilers
-> or maintainers (especially those armed with checkpatch.pl).
-> 
-> I'll codify this first in CodingStyle, then delete relevant checks from
-> checkpatch.pl (citing CodingStyle of course).
+> The functional benefit is to have the WARN_ON and side-by-side comparison of common_ubwc_config vs computed ubwc_config for HBB and swizzle.
 
-I replied only this patch in the series because, when I first started
-programming using the Linux Coding Style in 2004, the single statement brace
-rule was the only rule I disagreed with. And that was in part due to the fact
-that, at three of my previous employers, the C coding style had dictated
-mandatory use of braces. So the explicit prohibition of braces for single
-statement conditionals really surprised me.
+HBB I agree, since we'll be outsourcing it to yet another driver, swizzle
+should be good enough (tm) - I scanned through the values in the driver
+and couldn't find anything wrong just by eye
 
-And note the rule, as written, is not what actually seems to be enforced (at
-least by checkpatch.pl). What seems to be enforced is to not use braces where
-the conditional is a single line and there is a single line statement. In
-other words, if either the conditional or the single statement span multiple
-lines, then braces are allowed (or encouraged?). As examples, checkpatch.pl
-does not complain about any of the following (either to recommend adding
-braces or removing braces):
+I realize this sounds funny, but all in all I don't think it's worth the
+effort just for that one
 
-	if (a_really_long_line_function_name(a_really_long_identifier) ||
-	    another_really_long_function_name(another_long_identifier)) {
-		braced();
-	}
-
-	if (a_really_long_line_function_name(a_really_long_identifier) ||
-	    another_really_long_function_name(another_long_identifier))
-		not_braced();
-
-	if (a)
-		call_a_really_long_function(with_long_argument,
-					    another_log_argument);
-
-	if (a) {
-		call_a_really_long_function(with_long_argument,
-					    another_log_argument);
-	}
-
-I'll also note that the popular style guide published by Michael Barr as well
-as the MISRA C standard also dictate braces (but I'll admit that both of these
-have other rules which contradict the Linux style and where I agree with the
-Linux style).
-
-All of that said, ultimately, the Coding Style is supposed to be enforce
-consistent style that is readable and maintainable. I get that. I personally
-believe that requiring braces makes the code more maintainable, and doesn't
-detract from readability. However I'm also agree that changing the rule would
-need to eventually lead to changing all the code that doesn't conform (since
-one of the reasons for having a style is to have consistency), so I'm also
-swayed by admonition to not "argue the specifics of the coding style without a
-really really good reason why, with real details and proof," so I'll let
-others have their say.
-
-/jeff
-
+Konrad
 
