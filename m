@@ -1,196 +1,117 @@
-Return-Path: <linux-kernel+bounces-649152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-649159-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D9B2AB80D9
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 10:36:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED570AB80E2
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 10:37:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C50CB9E3498
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 08:33:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1FE79174875
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 08:35:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B22228C001;
-	Thu, 15 May 2025 08:31:11 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F1CE28850F;
+	Thu, 15 May 2025 08:32:24 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCBF320E6F3
-	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 08:31:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3FF627FB16;
+	Thu, 15 May 2025 08:32:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747297870; cv=none; b=BOqmzicBldg6r/hYIEpfi5fLTKU4YFYR5YB+q0g0JttYCyp9GMUZmbFvYJMhilWfb08dITMvjKQgXNKlEHipy+R5JlfH0uLD03XwWbijxXrSqz8PImlqsXNhk2qhRqwgN7jpHalEIiK7mfNUMEOD0Pb7sUTieix5VzPVTAnjVKA=
+	t=1747297943; cv=none; b=aGi8cEy6O9L8392l4WkFiyzCT38zY035YovoplMxxM1OrV6eVcQz1OpjcE/JzpIdf3D6b8rVN92LZfbs7uMteFWCWoNRPT0nJn8sZAMOL2jNlg6o1A93ba6hoTX8cstg7C2QO8DDZLpYF4+y+mcHevh3ttYY5mT/uiYWvrt2dpI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747297870; c=relaxed/simple;
-	bh=FO/zY60A1+vrKtY976d6dV7XcxWh60VUNCWaoOgbi84=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KA/d9T5K+VEgNNArWMkFdtKsYdx5qokj1H0FCGf232pQj8a2o23Uop9a/3rJn5tKewIWVoBJMsCG2MEa8Pj4n1xs4zz62e4BzLNOCTyNVpNr5ozC8jokhXa3RmJoE38seVNBAiKjAtLUW6ZTM40jUm0RpnUjKKvRr1dgU3V5CzM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1uFTzZ-0002Xz-Sm; Thu, 15 May 2025 10:31:01 +0200
-Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1uFTzY-002qOg-2u;
-	Thu, 15 May 2025 10:31:01 +0200
-Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1uFTzZ-00B8D2-0q;
-	Thu, 15 May 2025 10:31:01 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
-	kernel@pengutronix.de,
+	s=arc-20240116; t=1747297943; c=relaxed/simple;
+	bh=ft0dKBqcbX3Ig1fHTnCsSOWKg6T6rN12vq7j5B2OZUM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=icPL5hpWtEhhlWbmm527xrrFX+3HqC6lrM3taMeSBCRt/ocs6qlfkK4E8nbuQXgOeGpodtPuRb4HKKrFILNnAj5M+oB+kzrIxwvaAWNw1vpHRSC4P6OLqIl/unlw9mIkz0Cx3oS3XgLY4fP1SYwJmMFEPxnSYrN4GIqK0Du/AUs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost (unknown [124.16.138.129])
+	by APP-05 (Coremail) with SMTP id zQCowAAHRg58piVoyo_ZFQ--.49488S2;
+	Thu, 15 May 2025 16:31:56 +0800 (CST)
+From: Chen Ni <nichen@iscas.ac.cn>
+To: jic23@kernel.org,
+	dlechner@baylibre.com,
+	nuno.sa@analog.com,
+	andy@kernel.org,
+	mcoquelin.stm32@gmail.com,
+	alexandre.torgue@foss.st.com,
+	u.kleine-koenig@baylibre.com,
+	tglx@linutronix.de,
+	robh@kernel.org,
+	jirislaby@kernel.org,
+	fabrice.gasnier@foss.st.com
+Cc: linux-iio@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>
-Subject: [PATCH net-next v4 4/4] net: selftests: add PHY loopback tests with HW checksum offload
-Date: Thu, 15 May 2025 10:31:00 +0200
-Message-Id: <20250515083100.2653102-5-o.rempel@pengutronix.de>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250515083100.2653102-1-o.rempel@pengutronix.de>
-References: <20250515083100.2653102-1-o.rempel@pengutronix.de>
+	Chen Ni <nichen@iscas.ac.cn>
+Subject: [PATCH v2] iio: adc: stm32-adc: Fix race in installing chained IRQ handler
+Date: Thu, 15 May 2025 16:31:01 +0800
+Message-Id: <20250515083101.3811350-1-nichen@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+X-CM-TRANSID:zQCowAAHRg58piVoyo_ZFQ--.49488S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrtrWUJF45KF13ZFyxGw4UArb_yoWkGrgEg3
+	97ZwnxGw4Iyr9Iyw17XFnxZa4SqrW8KwsrCr1vvFZ3Gr9rZry5ZrsIvFsxur18WFykCas7
+	ZFyxC3yfC3y5GjkaLaAFLSUrUUUUbb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbfkFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
+	Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AKxVWxJr
+	0_GcWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v26r4UJVWxJr1lOx8S6xCaFVCjc4AY6r
+	1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02
+	628vn2kIc2xKxwCY1x0262kKe7AKxVW8ZVWrXwCY02Avz4vE14v_GFyl42xK82IYc2Ij64
+	vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8G
+	jcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2I
+	x0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK
+	8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I
+	0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjTRuksqDUUUU
+X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
 
-Introduce two new PHY loopback tests that validate hardware checksum
-offload functionality using UDP and TCP packets. These tests set
-csum_mode = CHECKSUM_PARTIAL, allowing the NIC to compute transport
-checksums.
+Fix a race where a pending interrupt could be received and the handler
+called before the handler's data has been setup, by converting to
+irq_set_chained_handler_and_data().
 
-Tests are only executed if the device advertises NETIF_F_HW_CSUM
-support. If not, they are skipped with -EOPNOTSUPP.
-
-Also register the tests under descriptive names in the test list.
-
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
-Reviewed-by: Simon Horman <horms@kernel.org>
+Fixes: d58c67d1d851 ("iio: adc: stm32-adc: add support for STM32MP1")
+Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
 ---
-changes v4:
-- s/Returns /Return: /
----
- net/core/selftests.c | 80 ++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 80 insertions(+)
+Changelog:
 
-diff --git a/net/core/selftests.c b/net/core/selftests.c
-index d533246f0a26..ade6aeae7b59 100644
---- a/net/core/selftests.c
-+++ b/net/core/selftests.c
-@@ -539,6 +539,79 @@ static int net_test_phy_loopback_tcp(struct net_device *ndev)
- 	return __net_test_loopback(ndev, &attr);
- }
+v1 -> v2:
+
+1. Add Fixes tag.
+---
+ drivers/iio/adc/stm32-adc-core.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/iio/adc/stm32-adc-core.c b/drivers/iio/adc/stm32-adc-core.c
+index bd3458965bff..21c04a98b3b6 100644
+--- a/drivers/iio/adc/stm32-adc-core.c
++++ b/drivers/iio/adc/stm32-adc-core.c
+@@ -430,10 +430,9 @@ static int stm32_adc_irq_probe(struct platform_device *pdev,
+ 		return -ENOMEM;
+ 	}
  
-+/**
-+ * net_test_phy_loopback_udp_hwcsum - PHY loopback test using UDP with HW
-+ *                                    checksum
-+ * @ndev: The network device to test
-+ *
-+ * Sends and receives a UDP packet through the device's internal PHY loopback
-+ * path. The packet is configured for hardware checksum offload
-+ * (CHECKSUM_PARTIAL), allowing the NIC to compute the transport checksum.
-+ *
-+ * Expected packet path:
-+ *   Test code → MAC driver → MAC HW → xMII → PHY →
-+ *   internal PHY loopback → xMII → MAC HW → MAC driver → test code
-+ *
-+ * The test frame includes Ethernet (14B), IPv4 (20B), UDP (8B), and a
-+ * small payload (13B), totaling 55 bytes before MAC padding/FCS. Most
-+ * MACs pad this to the minimum Ethernet payload (60 bytes before FCS).
-+ *
-+ * If the device does not support NETIF_F_HW_CSUM, the test is skipped
-+ * and -EOPNOTSUPP is returned.
-+ *
-+ * Return: 0 on success, or negative error code on failure.
-+ */
-+static int net_test_phy_loopback_udp_hwcsum(struct net_device *ndev)
-+{
-+	struct net_packet_attrs attr = { };
-+
-+	if (!(ndev->features & NETIF_F_HW_CSUM))
-+		return -EOPNOTSUPP;
-+
-+	attr.dst = ndev->dev_addr;
-+	attr.tcp = false;
-+	attr.csum_mode = NET_TEST_CHECKSUM_PARTIAL;
-+
-+	return __net_test_loopback(ndev, &attr);
-+}
-+
-+/**
-+ * net_test_phy_loopback_tcp_hwcsum - PHY loopback test using TCP with HW
-+ *                                    checksum
-+ * @ndev: The network device to test
-+ *
-+ * Sends and receives a TCP packet through the device's internal PHY loopback
-+ * path. The packet is configured for hardware checksum offload
-+ * (CHECKSUM_PARTIAL), allowing the NIC to compute the transport checksum.
-+ *
-+ * Expected packet path:
-+ *   Test code → MAC driver → MAC HW → xMII → PHY →
-+ *   internal PHY loopback → xMII → MAC HW → MAC driver → test code
-+ *   (via packet_type handler)
-+ *
-+ * The test frame includes Ethernet (14B), IPv4 (20B), TCP (20B),
-+ * and a small payload (13B), totaling 67 bytes before FCS.
-+ * No additional padding is required.
-+ *
-+ * If the device does not support NETIF_F_HW_CSUM, the test is skipped
-+ * and -EOPNOTSUPP is returned.
-+ *
-+ * Return: 0 on success, or negative error code on failure.
-+ */
-+static int net_test_phy_loopback_tcp_hwcsum(struct net_device *ndev)
-+{
-+	struct net_packet_attrs attr = { };
-+
-+	if (!(ndev->features & NETIF_F_HW_CSUM))
-+		return -EOPNOTSUPP;
-+
-+	attr.dst = ndev->dev_addr;
-+	attr.tcp = true;
-+	attr.csum_mode = NET_TEST_CHECKSUM_PARTIAL;
-+
-+	return __net_test_loopback(ndev, &attr);
-+}
-+
- static const struct net_test {
- 	char name[ETH_GSTRING_LEN];
- 	int (*fn)(struct net_device *ndev);
-@@ -562,6 +635,13 @@ static const struct net_test {
- 	}, {
- 		.name = "PHY loopback TCP (SW csum)    ",
- 		.fn = net_test_phy_loopback_tcp,
-+	}, {
-+		/* Conditional HW checksum tests */
-+		.name = "PHY loopback UDP (HW csum)    ",
-+		.fn = net_test_phy_loopback_udp_hwcsum,
-+	}, {
-+		.name = "PHY loopback TCP (HW csum)    ",
-+		.fn = net_test_phy_loopback_tcp_hwcsum,
- 	}, {
- 		/* This test should be done after all PHY loopback test */
- 		.name = "PHY internal loopback, disable",
+-	for (i = 0; i < priv->cfg->num_irqs; i++) {
+-		irq_set_chained_handler(priv->irq[i], stm32_adc_irq_handler);
+-		irq_set_handler_data(priv->irq[i], priv);
+-	}
++	for (i = 0; i < priv->cfg->num_irqs; i++)
++		irq_set_chained_handler_and_data(priv->irq[i],
++						 stm32_adc_irq_handler, priv);
+ 
+ 	return 0;
+ }
 -- 
-2.39.5
+2.25.1
 
 
