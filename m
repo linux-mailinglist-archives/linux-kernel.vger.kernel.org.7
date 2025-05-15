@@ -1,78 +1,114 @@
-Return-Path: <linux-kernel+bounces-650465-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-650467-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A3FEAB91D5
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 23:38:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7ADC5AB91D9
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 23:39:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 611A31B687A5
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 21:38:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7EFB5A0110D
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 21:39:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FA2E289E06;
-	Thu, 15 May 2025 21:38:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7B191FCFC0;
+	Thu, 15 May 2025 21:39:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K31KdXOY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BZe7E/ib"
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C81E4288C87;
-	Thu, 15 May 2025 21:38:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F22A6B664;
+	Thu, 15 May 2025 21:39:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747345098; cv=none; b=CyEHXKlva07kpfT2BrdvKHsdXBvF54gV3Yd0VNmMaCz5VYezw1sLnDqTbSEhlW5TnEeOaDoa9j5RPjadrvlkFUw54XPwJQbcSz8CXUVgK1ck1HWh9YjojivLsBOVzaC44bZTqXXQX8tVoG7B6LkOnx7pVwxiH41r5bTSIUEyFGM=
+	t=1747345161; cv=none; b=oootb+nwpUnoaCZ23xcu573MYQUnj5AePZBB2TT2RWEzHz/6y5TLlgJPMlVv7Qi/ynEeMAEFaMac2WB4VxBN0GNtmiFqAno+qjcB+mkzbdum1Y9A3EiTgKwwt18jKab9dZH3NSToE2qfk967vk9FdT3hCFmOfOk4FQzAUeus+0Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747345098; c=relaxed/simple;
-	bh=I0VJ54g+rCd2LeWV16KeN3C0m8XxrIxWPhYbD+tiPTI=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=H0cDLwEwK+olShg2Az0vmj+phVMWkaG0ONygIPJoS3s2btbi7jci8c3YCwt3rwmxjfscSgWlnT8bVIoQBkFZolwazUnOLvAbjCds/VDjNaqIQ5g5ryhHgZCoqoGMIWzSVmu1e57xw99GqCHyIprbn6fgTrZt98WRdVfQVvxiuZg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K31KdXOY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6718C4CEF0;
-	Thu, 15 May 2025 21:38:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747345098;
-	bh=I0VJ54g+rCd2LeWV16KeN3C0m8XxrIxWPhYbD+tiPTI=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=K31KdXOY9RGZE7gtMzjyCOgAk0HjJEIJ/BYdiXq8lMjdRO1yIJQIKK8GNIswnN0j4
-	 OOMAvz5bKka1nLSUh5jSAA7cBkZsR1HPcq0pFzfekxQayue1Yl9QyZMz6s8l1jdD1s
-	 lJLKPD66ZoZsXU98frq5ocdeRQkncZFhcyi7sHXny0OGqWYxy/wMMxkvsJxMABdH3Q
-	 gc9dud+leSpWh2gYlEc71/j8GZkUg3eUHIQUMvlV3Fdk85pR8O/zOuVNd4qxQBC9/s
-	 hLMpgamgUKxPEUtudsq/3/IrdX0kd3QXr/Kg5iPXYU2LcNvYmgxa0nfeXuBq6b8t0H
-	 3DJD+ijoUCi8Q==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EC93D3806659;
-	Thu, 15 May 2025 21:38:56 +0000 (UTC)
-Subject: Re: [GIT PULL] bcachefs fixes for 6.15-rc7
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <2xklzlq5qc54lhpq7qnp5p6ou4kc56mglrvwg6omwd4gsz4mjg@da4pvcv3v5aj>
-References: <2xklzlq5qc54lhpq7qnp5p6ou4kc56mglrvwg6omwd4gsz4mjg@da4pvcv3v5aj>
-X-PR-Tracked-List-Id: <linux-bcachefs.vger.kernel.org>
-X-PR-Tracked-Message-Id: <2xklzlq5qc54lhpq7qnp5p6ou4kc56mglrvwg6omwd4gsz4mjg@da4pvcv3v5aj>
-X-PR-Tracked-Remote: git://evilpiepirate.org/bcachefs.git tags/bcachefs-2025-05-15
-X-PR-Tracked-Commit-Id: 9c09e59cc55cdf7feb29971fd792fc1947010b79
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: fee3e843b309444f48157e2188efa6818bae85cf
-Message-Id: <174734513568.3255917.15437071296478822391.pr-tracker-bot@kernel.org>
-Date: Thu, 15 May 2025 21:38:55 +0000
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1747345161; c=relaxed/simple;
+	bh=XLjz8gJZUesCCRUYEuMqFQ7rRJFtNdWciD6tOyLP8lA=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=P58j90c/QJD5+9UugGYVLoAYWKKRSGm1lKgPR3oPJTP6T+R/5GXf42saq0etQVmayJ4x63w08FqPDj9Nn5JnD0iRGhK/wmhBA8Cd5sVftzoMLqkuOWFq/iOhxkLtGec+Dkrk5RYjD9cVlVUOZ0YQdLR0NfZhoiYio9cGmQsofLA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BZe7E/ib; arc=none smtp.client-ip=209.85.215.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-af51596da56so1117423a12.0;
+        Thu, 15 May 2025 14:39:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747345157; x=1747949957; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=XLjz8gJZUesCCRUYEuMqFQ7rRJFtNdWciD6tOyLP8lA=;
+        b=BZe7E/ibYEBmPljafi7O4N1aT19AWNoWtJ90IeE/McSb22jLe73p7p5eUHcqO629XI
+         CUyPhmghUYmRW9gJ83NgR/Xr6dztOMUdn+RgXNzxZwdBImlkGvWtnP5VjqEm+3MRQ7LX
+         cCv61Y8iyW9EkpaaqvywqdDF6E02M/YwOQwQftr5aKlh5UaKJRhZyJQiyqjZMpcwVNhG
+         TmHYT1+EOUJ72KXyge4e2MEJ3Jqzm2VUX9Ca4FSKJouRrBd0farQU2vpkEsa9S6KKVtp
+         AILPuObJTnBWe06YmNiESeUBAjtJcQfYTmi1g11TsWRyZVoUd40oezcPtXRaWQtDMvtJ
+         PC/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747345157; x=1747949957;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=XLjz8gJZUesCCRUYEuMqFQ7rRJFtNdWciD6tOyLP8lA=;
+        b=QCnOE4ALKSYNEm4VseCYnpNObX1UvJ+SRRcihDNNBGJl4P5GSgPrif1s0yvG+D1Evr
+         5X1x2nxCZXLp4/0bvNIYh6vq9C+R6NcAT0vb3G0k55iRFwgvZqSHSNuR1NYKQAYhcr4b
+         5GRpY0LYA29vnt5AuRAOl7GGunkm1VkW9tpDcFDmlhNtfcQSXq4MiZiexmmczdey6SBu
+         7f7Q12TmK8hcAGtk0oXeAvRwaf+DHWfxk6SZDTNdpaYzC9G4nYQairx5iEav9P/IBS2h
+         HfXpXgoNdaQyEE+gr3QRu31Ucn66+RriF2Gf2dw4K2mluYJvvnYRla9jx6c3iuaOkcCW
+         Xi9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVPdkA8rIfWtYviunlj99Dbuga7/Eq9A/zfK606jdYU9a3LOftS8mibo20L1pjzbcNxuBRyQj8STWlZGw0HRoFg@vger.kernel.org, AJvYcCVxFnJvCWI93NTYuF2MzPiCklQrCMgAFWOKO9ZiHhH6OOINagvHGRWrrAmRE8FJsU0CSyY=@vger.kernel.org, AJvYcCW0eo++fcTsFtuAViVT9CSQB6M8OP51vDmBEOAFkDfpjPPucOydEkB0XaaFsxF8s4LLkY7855FaodzW8gAf@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTel6LycI/tfEisiSn6DN12RsL1A4Ru3ISf9MR6lAADaijGLKr
+	0f+3xLaQOlLfhkwLZc30PBeQnFUgZwNTSblaKzHhHioDYJhePdDXyAv+
+X-Gm-Gg: ASbGncsvF96Pxj5SwsGdjlFf8RaSvoesmhf0w6nR2VDNhgNZppEYMqfSydGezk4SSvF
+	MfmrZhvVjGuHjqq1Vyle9sqjALk47Qg8fnVOB8EZijbOECjEsK0/7ccoD2F9yCAjXjGeT7WPNpO
+	keoWPHKgUyQeyiZG9udZPRj4dWQPci0XpjPfhVc9cszUT858zr6HbMgpB2DwpKtZMdfnY/mMRsO
+	WEhS/GnTFm/mJRjkIg3CsF6yP4tnhp2IGGSoFk15hL+G/hfhIBxCeUSEjh7U6Eup7IMfZHBW/ni
+	JWj2udMqBlESGvCpKryqazUuoUuMUwlxZCEXE89p61Ao9Ig=
+X-Google-Smtp-Source: AGHT+IFJqucu55xwtaxuHQzfFV/gJjZGnpp0tvXJvbw+T1Fs0ayZCl8h/rq1RQyoE1z30b0ZtoMYgg==
+X-Received: by 2002:a17:90b:184d:b0:2ee:e317:69ab with SMTP id 98e67ed59e1d1-30e7d2fda18mr1694038a91.0.1747345157045;
+        Thu, 15 May 2025 14:39:17 -0700 (PDT)
+Received: from [192.168.0.56] ([38.34.87.7])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b26eaf700e6sm371106a12.29.2025.05.15.14.39.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 15 May 2025 14:39:16 -0700 (PDT)
+Message-ID: <73abd7d20395a02b6664ea5ceacb46c530da3b2e.camel@gmail.com>
+Subject: Re: [REGRESSION] bpf verifier slowdown due to vrealloc() change
+ since 6.15-rc6
+From: Eduard Zingerman <eddyz87@gmail.com>
+To: Kees Cook <kees@kernel.org>
+Cc: Shung-Hsi Yu <shung-hsi.yu@suse.com>, bpf@vger.kernel.org, 
+	linux-mm@kvack.org, Andrii Nakryiko <andrii@kernel.org>, Ihor Solodrai	
+ <ihor.solodrai@linux.dev>, Andrew Morton <akpm@linux-foundation.org>,
+ Michal Hocko <mhocko@suse.com>, Vlastimil Babka <vbabka@suse.cz>,
+ Uladzislau Rezki <urezki@gmail.com>, 	linux-kernel@vger.kernel.org,
+ linux-hardening@vger.kernel.org, 	regressions@lists.linux.dev, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>,  Alexei Starovoitov	
+ <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, Pawan Gupta	
+ <pawan.kumar.gupta@linux.intel.com>
+Date: Thu, 15 May 2025 14:39:14 -0700
+In-Reply-To: <202505151435.ECC98E09@keescook>
+References: 
+	<20250515-bpf-verifier-slowdown-vwo2meju4cgp2su5ckj@6gi6ssxbnfqg>
+	 <202505150845.0F9E154@keescook>
+	 <c36245a48149a12180ec710c65d317a12cdfa020.camel@gmail.com>
+	 <202505151435.ECC98E09@keescook>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
 
-The pull request you sent on Thu, 15 May 2025 17:00:09 -0400:
+On Thu, 2025-05-15 at 14:36 -0700, Kees Cook wrote:
 
-> git://evilpiepirate.org/bcachefs.git tags/bcachefs-2025-05-15
+[...]
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/fee3e843b309444f48157e2188efa6818bae85cf
+> Well that's pretty definitive! Thank you! I'll send out a properly
+> formatted patch. May I add your Tested-by?
 
-Thank you!
+Sure, thank you.
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
 
