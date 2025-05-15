@@ -1,170 +1,237 @@
-Return-Path: <linux-kernel+bounces-649549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-649542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14575AB8612
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 14:17:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04BD5AB8603
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 14:16:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65660A014C5
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 12:15:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 051751BC415F
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 12:14:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D13729993C;
-	Thu, 15 May 2025 12:12:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2FD929A329;
+	Thu, 15 May 2025 12:11:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RJZcBgXP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="nGL3bljv"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADA20298C20;
-	Thu, 15 May 2025 12:12:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 806E82253B5;
+	Thu, 15 May 2025 12:11:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747311146; cv=none; b=pett/EHgQy2vIee152kWHjFdYYCNM1chaCIVwZlTEfWTBEfWsXA6UwiZ8DJ3lND9Vy2YOXl932Ay4D2ul5CS5PptWVbHlNVeVqKNVGUeuWaeBNQfDE5zFWtFvz5SMDTWNuJQNyWmWrQZhr1kSzPQ98+/F9ScQblnSnI25tzFyak=
+	t=1747311078; cv=none; b=RAGvB0gxRXx/uODN3tuW0QpU1EZjiSaM06JC4Lx7ZnFqYrZuxMUBErIU2LLa4uhbfH2gk4wTw0M6TOYTbS66yrp3V8mVtRmMreEJvAtfpeMMTG+iXv3uL+kLA6kyvTpaiGaeNyFPmd6a3Z/8LudYHt1AGpmhY5WLHYwqqoWiF7E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747311146; c=relaxed/simple;
-	bh=03JwlIwu8lDcxYQpEQ/ErJ5U/dB4OmhZv0qKPqMq1Rs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nZhHcuX6ySHclddkbec1o+TcBwolAi06dWUsK4y8ZhBcqQIuxuGa3CH32aiKpiTicVoEj+CEoDEFOE1L16oihHD8uqOW9AXeH7lSoeDeijCfY+oCa73u7Dx4LMR8VIvWobAx7Ee5D6E9cG7cbiU8kRjBn+5nC2j9SDbKd3vq73k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RJZcBgXP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCCE8C4CEE7;
-	Thu, 15 May 2025 12:12:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747311146;
-	bh=03JwlIwu8lDcxYQpEQ/ErJ5U/dB4OmhZv0qKPqMq1Rs=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=RJZcBgXPKL3/UcKpZIFzMGweS3miC0n1XZc+WmoTfOWwYzoj9439WOuZ84E7IGsjm
-	 XYAZoikpg1uosFp5EN/pp4ZO+ttbXY2APn9q7Th4dlQPNefwavqFzP/NjpLZsCtrsG
-	 2CBM76k+pFpz9MKj+dqDt2S/XdvKNokVfZGq/7tGJ8oHuDmRPSAzRGbk/sjBgRIKHb
-	 e6UC+RI7U31R/HjIcGZm+TBsXWZH2iLluoYaP9opdrmfSoyEn/8bk8GuCWtjyr8OLL
-	 17VPi3EMAhJkJ3wmeIDRluknc+gr5yT76aX2cWxITvhD8Ga5XuHLosUl/MGc3WhXIj
-	 Lw8iO6mnvKc4A==
-From: Jiri Olsa <jolsa@kernel.org>
-To: Oleg Nesterov <oleg@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Andrii Nakryiko <andrii@kernel.org>
-Cc: bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	x86@kernel.org,
-	Song Liu <songliubraving@fb.com>,
-	Yonghong Song <yhs@fb.com>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Hao Luo <haoluo@google.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Alan Maguire <alan.maguire@oracle.com>,
-	David Laight <David.Laight@ACULAB.COM>,
-	=?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <thomas@t-8ch.de>,
-	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCHv2 perf/core 04/22] uprobes: Add uprobe_write function
-Date: Thu, 15 May 2025 14:11:01 +0200
-Message-ID: <20250515121121.2332905-5-jolsa@kernel.org>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250515121121.2332905-1-jolsa@kernel.org>
-References: <20250515121121.2332905-1-jolsa@kernel.org>
+	s=arc-20240116; t=1747311078; c=relaxed/simple;
+	bh=5RY6uiXS/ZzXcSSm8cSYdtyLD8Tx6Li3VSci1x5DSp4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=nMtjM4mBuPp/B9aaXFqCTz2LjBrygWQLQzXrhuanCIfm8C1BgKxPr/jQQi6lMgT2mP0lytdSIr7PiIl9EfpREAv/AurNB9jfELJRikWcZEy13fIG3rBLUmfLNx4aFidw2X+4hPbSs2LiJpEBdBrJf9zyCh3eSUHqT9++ggCbIVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=nGL3bljv; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54F8r6tM025425;
+	Thu, 15 May 2025 12:11:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	NZ4vY1GpR00WojFpTMhmvN8KS4SHARU9tU/1aeFcgJk=; b=nGL3bljvjVIA1Of3
+	LA9ukpoEis1WGe9SSpL0wg8ewgxl8UKlayGYv8ZZYvKxJpMzhu5tWXb5fztoUJUG
+	npgOV1GX8LCyuYdDwMnA4Ea76EnvPNEnIL8U4hthMtirqQMSruG1K+neTA5BGKCm
+	9Tq8xk+3NlgVLBVwNFMRWFCUw1x2IGrBgNbzWT0cBKRtKGVKuFLBiOXBhSjHT5K5
+	51Edq7Mrg/5ln89gTTFRZGpd4aDeL1MihEgc1u4wSCiT4/CLH/x5NhEjWdJURC+e
+	Su7CWPLoW6o5eMBDrAvUM2Ix3l/mzGrfi+z2c/CXSriAZ5JQ5+U0smYJgkNAvI3x
+	TM+XaQ==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46mbew5ynu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 15 May 2025 12:11:10 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 54FCB9qZ027706
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 15 May 2025 12:11:09 GMT
+Received: from [10.50.16.181] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 15 May
+ 2025 05:11:04 -0700
+Message-ID: <b663539d-5ad6-399b-1e7b-0b8b9daca10d@quicinc.com>
+Date: Thu, 15 May 2025 17:41:01 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH v3 1/2] media: venus: fix TOCTOU vulnerability when
+ reading packets from shared memory
+Content-Language: en-US
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Dikshita Agarwal
+	<quic_dikshita@quicinc.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Hans Verkuil
+	<hans.verkuil@cisco.com>
+CC: <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Vedang Nagar <quic_vnagar@quicinc.com>
+References: <20250514-venus-fixes-v3-0-32298566011f@quicinc.com>
+ <20250514-venus-fixes-v3-1-32298566011f@quicinc.com>
+ <ad92cf06-636a-417a-b03b-0d90c9243446@linaro.org>
+ <0c50c24a-35fa-acfb-a807-b4ed5394506b@quicinc.com>
+ <b0c48989-4ce7-4338-b4bb-565ea8b6cd82@linaro.org>
+From: Vikash Garodia <quic_vgarodia@quicinc.com>
+In-Reply-To: <b0c48989-4ce7-4338-b4bb-565ea8b6cd82@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: Fps4AESXgYbpn6TXVbw5C7U3R4CXlYtH
+X-Proofpoint-ORIG-GUID: Fps4AESXgYbpn6TXVbw5C7U3R4CXlYtH
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTE1MDExOSBTYWx0ZWRfX1Mpcc1kY/QbP
+ GRYpQNWb0HBzH0FPKknK43TCRHSF9txqd+j3ejRWaQC0nAIW624y6csaZ2sa/qWH0oD5VodVoOs
+ ANPl4KAEgJmXLPLH9vq9PDSOaK1qi48AnFabI7CUVZbtmhQlM8ta81/JdQvoMYCceY79qVbUZ86
+ 6WBsebOs4cxJVEBSVAdbM53oyqkhadFvJfrkv/fhbqeaeIf0xSsEFWcGHZf4pfdmZy+NkSVYN8K
+ htJp8/1QCQPzkMDrcAyoCxzhoQbym+o/2ibjnotsXLmQEUv3QUmmRn3ceFPC/KdZOvRGQwGv96e
+ hn8DQTQd9W8y7QwK6WCCvVJbfp428FULBtBWu+nidHliI/MFHpCij71d5E6fDEBMswQcDm2S+It
+ BWd+1/7cFeuzaFwWlE2N+mlAlIPRY901YOjGU+vFzMrbf0MqlFFkx5bfKuWNyZMupsKJByOg
+X-Authority-Analysis: v=2.4 cv=LOFmQIW9 c=1 sm=1 tr=0 ts=6825d9de cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10
+ a=cgA5pjseBJ7OkrGVO9IA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-15_05,2025-05-14_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 spamscore=0 adultscore=0 priorityscore=1501 suspectscore=0
+ mlxscore=0 malwarescore=0 mlxlogscore=999 impostorscore=0 bulkscore=0
+ clxscore=1015 phishscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505070000
+ definitions=main-2505150119
 
-Adding uprobe_write function that does what uprobe_write_opcode did
-so far, but allows to pass verify callback function that checks the
-memory location before writing the opcode.
 
-It will be used in following changes to implement specific checking
-logic for instruction update.
+On 5/15/2025 3:58 PM, Bryan O'Donoghue wrote:
+> On 15/05/2025 10:56, Vikash Garodia wrote:
+>> memcpy(hfi_dev->pkt_buf, rd_ptr from shared queue, dwords..)
+>>
+>> pkt_hdr = (struct hfi_pkt_hdr *) (hfi_dev->pkt_buf);
+>>
+>> if ((pkt_hdr->size >> 2) != dwords)
+>>      return -EINVAL;
+> 
+> Yeah it would be better wrt the commit log.
+> 
+> But does it really give additional data-confidence - I don't believe it does.
+> 
+> => The firmware can update the pkt header after our subsequent-to-memcpy() check.
+How will that matter if the queue is updated after memcpy to local packet ? All
+processing of data would be from local packet.
 
-The uprobe_write_opcode now calls uprobe_write with verify_opcode as
-the verify callback.
+> 
+> Again this is a data-lifetime expectation question.
+> 
+> You validate the received data against a maximum size reading to a buffer you
+> know the size of - and do it once.
+> 
+> The firmware might corrupt that data in-between but that is not catastrophic for
+> the APSS which has a buffer of a known size containing potential bad data.
+There is no way to authenticate the content of payload. We are trying to avoid
+vulnerability by ensuring OOB does not happen by validating the size _alone_. Do
+you see rest of the data in payload can lead to any kind of vulnerability ?
 
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
----
- include/linux/uprobes.h |  5 +++++
- kernel/events/uprobes.c | 14 ++++++++++----
- 2 files changed, 15 insertions(+), 4 deletions(-)
+> 
+> Fine - and additional check after the mempcy() only imparts verisimilitude -
+> only validates our data at the time of the check.
+> 
+> my-linear-uninterrupted-context:
+> 
+> memcpy();
+> 
+> if(*rd_ptr >> 2 > len) <- doesn't branch
+>     return -EBAD
+> 
+> if(*rd_ptr >> 2 > len) <- does branch firmware went nuts
+>     return -EBAD
+> 
+> Superficially you might say this addresses the problem
+> 
+> if (*rd_ptr > MAX)
+>     return -EBAD;
+> 
+> memcpy();
+> 
+> if (*rd_ptr > MAX)
+>     return -EBAD;
+> 
+> But what if the "malicious" firmware only updated the data in the packet, not
+> the length - or another field we are not checking ?
+That does not cause any vulnerability. You can check and suggest if you see a
+vulnerability when the data outside length is an issue w.r.t vulnerability.
 
-diff --git a/include/linux/uprobes.h b/include/linux/uprobes.h
-index 7447e15559b8..e13382054435 100644
---- a/include/linux/uprobes.h
-+++ b/include/linux/uprobes.h
-@@ -187,6 +187,9 @@ struct uprobes_state {
- 	struct xol_area		*xol_area;
- };
- 
-+typedef int (*uprobe_write_verify_t)(struct page *page, unsigned long vaddr,
-+				     uprobe_opcode_t *opcode);
-+
- extern void __init uprobes_init(void);
- extern int set_swbp(struct arch_uprobe *aup, struct vm_area_struct *vma, unsigned long vaddr);
- extern int set_orig_insn(struct arch_uprobe *aup, struct vm_area_struct *vma, unsigned long vaddr);
-@@ -195,6 +198,8 @@ extern bool is_trap_insn(uprobe_opcode_t *insn);
- extern unsigned long uprobe_get_swbp_addr(struct pt_regs *regs);
- extern unsigned long uprobe_get_trap_addr(struct pt_regs *regs);
- extern int uprobe_write_opcode(struct arch_uprobe *auprobe, struct vm_area_struct *vma, unsigned long vaddr, uprobe_opcode_t);
-+extern int uprobe_write(struct arch_uprobe *auprobe, struct vm_area_struct *vma, const unsigned long opcode_vaddr,
-+			uprobe_opcode_t opcode, uprobe_write_verify_t verify);
- extern struct uprobe *uprobe_register(struct inode *inode, loff_t offset, loff_t ref_ctr_offset, struct uprobe_consumer *uc);
- extern int uprobe_apply(struct uprobe *uprobe, struct uprobe_consumer *uc, bool);
- extern void uprobe_unregister_nosync(struct uprobe *uprobe, struct uprobe_consumer *uc);
-diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-index 37d3a3f6e48a..777de9b95dd7 100644
---- a/kernel/events/uprobes.c
-+++ b/kernel/events/uprobes.c
-@@ -399,7 +399,7 @@ static bool orig_page_is_identical(struct vm_area_struct *vma,
- 	return identical;
- }
- 
--static int __uprobe_write_opcode(struct vm_area_struct *vma,
-+static int __uprobe_write(struct vm_area_struct *vma,
- 		struct folio_walk *fw, struct folio *folio,
- 		unsigned long opcode_vaddr, uprobe_opcode_t opcode)
- {
-@@ -488,6 +488,12 @@ static int __uprobe_write_opcode(struct vm_area_struct *vma,
-  */
- int uprobe_write_opcode(struct arch_uprobe *auprobe, struct vm_area_struct *vma,
- 		const unsigned long opcode_vaddr, uprobe_opcode_t opcode)
-+{
-+	return uprobe_write(auprobe, vma, opcode_vaddr, opcode, verify_opcode);
-+}
-+
-+int uprobe_write(struct arch_uprobe *auprobe, struct vm_area_struct *vma,
-+		 const unsigned long opcode_vaddr, uprobe_opcode_t opcode, uprobe_write_verify_t verify)
- {
- 	const unsigned long vaddr = opcode_vaddr & PAGE_MASK;
- 	struct mm_struct *mm = vma->vm_mm;
-@@ -510,7 +516,7 @@ int uprobe_write_opcode(struct arch_uprobe *auprobe, struct vm_area_struct *vma,
- 	 * page that we can safely modify. Use FOLL_WRITE to trigger a write
- 	 * fault if required. When unregistering, we might be lucky and the
- 	 * anon page is already gone. So defer write faults until really
--	 * required. Use FOLL_SPLIT_PMD, because __uprobe_write_opcode()
-+	 * required. Use FOLL_SPLIT_PMD, because __uprobe_write()
- 	 * cannot deal with PMDs yet.
- 	 */
- 	if (is_register)
-@@ -522,7 +528,7 @@ int uprobe_write_opcode(struct arch_uprobe *auprobe, struct vm_area_struct *vma,
- 		goto out;
- 	folio = page_folio(page);
- 
--	ret = verify_opcode(page, opcode_vaddr, &opcode);
-+	ret = verify(page, opcode_vaddr, &opcode);
- 	if (ret <= 0) {
- 		folio_put(folio);
- 		goto out;
-@@ -561,7 +567,7 @@ int uprobe_write_opcode(struct arch_uprobe *auprobe, struct vm_area_struct *vma,
- 	/* Walk the page tables again, to perform the actual update. */
- 	if (folio_walk_start(&fw, vma, vaddr, 0)) {
- 		if (fw.page == page)
--			ret = __uprobe_write_opcode(vma, &fw, folio, opcode_vaddr, opcode);
-+			ret = __uprobe_write(vma, &fw, folio, opcode_vaddr, opcode);
- 		folio_walk_end(&fw, vma);
- 	}
- 
--- 
-2.49.0
+> 
+> As I say if this can happen
+> 
+> 
+> if (*rd_ptr > MAX)
+>     return -EBAD;
+> 
+> memcpy();
+> 
+> if (*rd_ptr > MAX)  // good
+>     return -EBAD;
+> 
+> 
+> if (*rd_ptr > MAX) //bad
+>     return -EBAD;
+> 
+> then this can happen
+> 
+> if (*rd_ptr > MAX)
+>     return -EBAD;
+> 
+> memcpy();
+> 
+> if (*rd_ptr > MAX) // good
+>     return -EBAD;
+> 
+> 
+> if (*rd_ptr > MAX) //good
+>     return -EBAD;
+> 
+> if (*rd_ptr > MAX) //bad
+>     return -EBAD;
+> 
+> We need to have a crisp and clear definition of the data-lifetime. Since we
+> don't have a checksum element in the header the only check that makes sense is
+> to validate the buffer size
+> 
+> data_len = *ptr_val >> 2;
+> if (data_len > max)
+>     return BAD;
+> 
+> Using the data_len in memcpy if the *ptr_val can change is _NOT_ TOCTOU
+> 
+> This is TOCTOU
+> 
+> if (*ptr_val > max)
+>     return EBAD;
+> 
+> memcpy(dst, src, *ptr_val);
+> 
+> Because I validated the content of the pointer and then I relied on the data
+> that pointer pointed to, which might have changed.
+Yes, precisely for that, memcpy() does not rely on ptr_val. The one you are
+referring as data_len is same as dword.
 
+Regards,
+Vikash
+> 
+> TBH I think the entire premise of this patch is bogus.
+> 
+> ---
+> bod
 
