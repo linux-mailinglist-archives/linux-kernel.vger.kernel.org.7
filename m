@@ -1,147 +1,119 @@
-Return-Path: <linux-kernel+bounces-650479-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-650482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A38BBAB9218
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 00:03:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30591AB921E
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 00:04:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8B453A9A9B
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 22:02:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C3332174745
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 22:04:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80757288C9D;
-	Thu, 15 May 2025 22:02:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 705F028B418;
+	Thu, 15 May 2025 22:04:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Fnv34oAX"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="g8K60zFO"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A22C2192EB
-	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 22:02:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65DD921D3CD
+	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 22:04:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747346575; cv=none; b=AE2p7BR6AW17uOsNlV/ckHFLeArQFh0hOG3hqJhYW449OCdNUeCIz8A7B95QnkuteGh6N6AC/lUYYgVFdk46ROYO/un07gyzYCKVmEc4yPJ5X2qRRia5ZAJROVDzqcF6ivLo6FYIDhH5SbwEnaj919xxZU3NDC17s8iAihYsaFw=
+	t=1747346657; cv=none; b=Wy9uvhTGf17OD4E9cx3n4875mRv0+3NxKBWORwZfK6P6VJtxqcDbJXseDXZEeT5SEKjaBTlHxcialbkhoBrX0kPvYG2vouN73Lsb2GefAJflzeQB8pcYMrPgsqgR4fzdpiip+x/2GVxgzBTUer4f69yjfhbpQZmw5DyaHv8Srz8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747346575; c=relaxed/simple;
-	bh=Wpi1y51hGjRQmOPEdKddEeCkBUbhfg86pbv2pJmpZQ4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a9CLgNY8s2Z/LVLR2j+HoIVOPDTNao4P/u4JmyxYrKrfrbCdYfBZwe+DqQy6pNjzBlhkhcNOhfO5Nfc5j8PLg4LfxYs9RHugZiUfwvlhily28QTycTVLb5KzSs5P3ooTZrdPHUcoE9IpGgGQFoSGLUu3enOy/7m8gT9eunCQ5qI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Fnv34oAX; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1747346571; x=1778882571;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Wpi1y51hGjRQmOPEdKddEeCkBUbhfg86pbv2pJmpZQ4=;
-  b=Fnv34oAX0e3VW51dR844FCEdGyE37kndA9P9vIBNj7xJFdOwa1yuaERQ
-   FedMvEIRt6G+qCyEJoKIR/wR99S//v4JOervb/Nu0it8/iBjpLhAUb/Q1
-   EgT+BcPLw9tvblenlTVr9THAGjMfXScV/TrlHWSs5uX+A1uMdh8BvHCMJ
-   S266EU8DFP+UZ4XB9k8fXcvOOVhtI1ctw1LoGb/8acDgjIpTddheS3uq+
-   J8fspYpJ52dCCfM4W9FvO1pRitcMFeSg6IXZjc6oq25k6F0bWGNxgc1Qw
-   O6iCxFRtWyPqQz2b7SfUlyV5C64TyvsF+qf1s5fsuWTyie3Eq6b0YwrKk
-   A==;
-X-CSE-ConnectionGUID: NdFrUe36Qt6CtbXAaS49pQ==
-X-CSE-MsgGUID: qJAIWYldTw6bXpQrBdQ4nQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11434"; a="49000594"
-X-IronPort-AV: E=Sophos;i="6.15,292,1739865600"; 
-   d="scan'208";a="49000594"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2025 15:02:51 -0700
-X-CSE-ConnectionGUID: XpfqRAKzRQSKMWA8venlGw==
-X-CSE-MsgGUID: dGJEbi+TRQm43ajJCTpANw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,292,1739865600"; 
-   d="scan'208";a="138898238"
-Received: from gkhatri-mobl.amr.corp.intel.com (HELO desk) ([10.125.146.13])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2025 15:02:50 -0700
-Date: Thu, 15 May 2025 15:02:43 -0700
-From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-To: "Kaplan, David" <David.Kaplan@amd.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"x86@kernel.org" <x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] x86/bugs: Restructure ITS mitigation
-Message-ID: <20250515220243.fk4z7rifcxdm2e7h@desk>
-References: <20250515134756.93274-1-david.kaplan@amd.com>
- <20250515211159.njyxgxuxmyhqx46m@desk>
- <LV3PR12MB92655C23DF46F1F3B88139009490A@LV3PR12MB9265.namprd12.prod.outlook.com>
+	s=arc-20240116; t=1747346657; c=relaxed/simple;
+	bh=fwldXoroq5XBUEJ0quH7C1UmH9HOLo1mqXHCCdRb9cc=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=c3Y9ZmFoNPlj6O2RveMKW91k5+FIoev/gnq2LYHYgKCuR3fV+Ojv2OyKUUX7WkZmTy4I0Dx+9GDbieY+UpGnMLe8GW2lWAifTVCJ+YK3blo8Do0Pd6vhcqBAoTdKGSMPyZjBU0EGCZrdZK08noJCG8LMZb9vOPoMEbCLo8nfzC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--dionnaglaze.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=g8K60zFO; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--dionnaglaze.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-22e3abea7e8so16452585ad.2
+        for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 15:04:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1747346655; x=1747951455; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=NL+bcQz8U5Llwby9qZ/g3HOxD9xJ00J+/SoiAzJaZ80=;
+        b=g8K60zFOexZNXR22KtdHYdHVegUROSBdwft1g7p5S6WzLJKl60FVJXdzJ3Y3E4rQqC
+         2i82QFEkIoM519kCRy6ydJUQ/SPupDmoxHSvxAtgrt7ez9arLpmh0Oyjr2RTxLAQvCNn
+         PMxxIkTxzg3xT/tnq9F0S5kJHey60vyDz3k5Nl0ECsG60gB8JVftx87doClsiEz2cEmD
+         6j07ncdLra29EIwPTWgmfa9L9231+tan1fbmioWxIg9I24KtQma2rfkCLd8aAlEIybT7
+         MR68/yAKe34CoQZQJ3OJkEcY8PoMxcehgtFGm7ike2j6BrAUJ0DkHwy7IyBtuNnrZoxO
+         grZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747346655; x=1747951455;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=NL+bcQz8U5Llwby9qZ/g3HOxD9xJ00J+/SoiAzJaZ80=;
+        b=a8J1MiY978KmtIBjYqbSGTqMfpsRPPVYdY1iQaw+IfUZlfa7/emo6fyq/O17vHjkgm
+         Qtt473GvPAppHATd+wQP8R2LyW3NtHErQCxISTTzO9+zIbOlERAkj1NsHScbLskxbRZh
+         q0AesXk0cwJcTw1TjnHgJJvcGaheLGzG8yongMZxSh6B5AAcJprLvUykJKGaFuFRa/Ho
+         w4oYlPCUh4OyQ0B17hIpSdyrnNXplDbG9sQ1ABR739f/TTICAvXSN027TE3ZJCDM1uFA
+         /YYsQa85UaJxCIAl/K1IWIh3kqlJmyIIeg0CW9338Q1N9MHo3HuQUqjMYTD8z6WoXNgs
+         Vq7g==
+X-Gm-Message-State: AOJu0YwSBuTmGM3rXbmE5Q7m1yM24W8PZ5tvCpl/5DtKnalFLx/0aKC4
+	vayXX+54n5f1xH+aqntpYz4/8dJc+vxZBe/ocuPOHUdQGRuxMxZ13QK2xpjt0UZAW8NkKuVkdkR
+	SawUYKsFBRNEtnXHu2VVXWVf1Bg==
+X-Google-Smtp-Source: AGHT+IG/Mw7qmj3Mxbl76BVdTruv+BrUfU87J4WKFPJAAHk/FfhcnDpLwk4Q9Zzdf5/4KmQMj3JGw2Mx0UiqJxmNNg==
+X-Received: from plgi15.prod.google.com ([2002:a17:902:cf0f:b0:223:294f:455a])
+ (user=dionnaglaze job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:902:e5ca:b0:223:f9a4:3f9c with SMTP id d9443c01a7336-231d43d5526mr11709575ad.9.1747346655484;
+ Thu, 15 May 2025 15:04:15 -0700 (PDT)
+Date: Thu, 15 May 2025 22:03:58 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <LV3PR12MB92655C23DF46F1F3B88139009490A@LV3PR12MB9265.namprd12.prod.outlook.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.49.0.1101.gccaa498523-goog
+Message-ID: <20250515220400.1096945-1-dionnaglaze@google.com>
+Subject: [PATCH v5 0/2] kvm: sev: Add SNP guest request throttling
+From: Dionna Glaze <dionnaglaze@google.com>
+To: kvm@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-coco@lists.linux.dev, 
+	Dionna Glaze <dionnaglaze@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, May 15, 2025 at 09:15:59PM +0000, Kaplan, David wrote:
-> [AMD Official Use Only - AMD Internal Distribution Only]
-> 
-> > -----Original Message-----
-> > From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-> > Sent: Thursday, May 15, 2025 4:12 PM
-> > To: Kaplan, David <David.Kaplan@amd.com>
-> > Cc: Thomas Gleixner <tglx@linutronix.de>; Borislav Petkov <bp@alien8.de>; Peter
-> > Zijlstra <peterz@infradead.org>; Josh Poimboeuf <jpoimboe@kernel.org>; Ingo
-> > Molnar <mingo@redhat.com>; Dave Hansen <dave.hansen@linux.intel.com>;
-> > x86@kernel.org; H. Peter Anvin <hpa@zytor.com>; linux-kernel@vger.kernel.org
-> > Subject: Re: [PATCH] x86/bugs: Restructure ITS mitigation
-> >
-> > Caution: This message originated from an External Source. Use proper caution
-> > when opening attachments, clicking links, or responding.
-> >
-> >
-> > On Thu, May 15, 2025 at 08:47:56AM -0500, David Kaplan wrote:
-> > ...
-> > > +static void __init its_apply_mitigation(void) {
-> > > +     /* its=stuff forces retbleed stuffing and is enabled there. */
-> > > +     if (its_mitigation != ITS_MITIGATION_ALIGNED_THUNKS)
-> > > +             return;
-> > > +
-> > > +     if (!boot_cpu_has(X86_FEATURE_RETPOLINE))
-> > > +             setup_force_cpu_cap(X86_FEATURE_INDIRECT_THUNK_ITS);
-> > > +
-> > > +     setup_force_cpu_cap(X86_FEATURE_RETHUNK);
-> > > +     set_return_thunk(its_return_thunk);
-> > > +}
-> > > +
-> > >  #undef pr_fmt
-> > >  #define pr_fmt(fmt)     "Spectre V2 : " fmt
-> > >
-> > >
-> > > base-commit: 04bdd560124ec4d02d1d11ee3abc88d51954d7b8
-> >
-> > I am having trouble applying this patch to upstream and tip/master. I can't seem to
-> > find this base-commit in Linus's or tip tree. Please let me know what am I missing?
-> 
-> Hmm.  I was working off origin/master on tip.  This was the base commit in my git log from this morning:
-> 
-> commit 04bdd560124ec4d02d1d11ee3abc88d51954d7b8 (origin/master, origin/HEAD)
-> Merge: 61e94712bb24 e59236b5a09e
-> Author: Ingo Molnar <mingo@kernel.org>
-> Date:   Thu May 15 10:16:23 2025 +0200
-> 
-> Not sure if something happened to it since?
+The GHCB specification recommends that SNP guest requests should be
+rate limited. Add a command to permit the VMM to set the rate limit
+on a per-VM scale.
 
-Likely yes. I am getting:
+The AMD-SP is a global resource that must be shared across VMs, so
+its time should be multiplexed across VMs fairly. It is the
+responsibility of the VMM to ensure all SEV-SNP VMs have a rate limit
+set such that the collective set of VMs on the machine have a rate of
+access that does not exceed the device's capacity.
 
-	Notice: this object is not reachable from any branch.
+The sev-guest device already respects the SNP_GUEST_VMM_ERR_BUSY
+result code, so utilize that result to cause the guest to retry after
+waiting momentarily.
 
-when I go to this link:
+Changes since v4:
+  * Fixed build failure caused by rebase.
+  * Added ratelimit.h include.
+  * Added rate bounds checking to stay within ratelimit types.
+Changes since v3:
+  * Rebased on master, changed module parameter to mem_enc_ioctl
+    command. Changed commit descriptions. Much time has passed.
+Changes since v2:
+  * Rebased on v7, changed "we" wording to passive voice.
+Changes since v1:
+  * Added missing Ccs to patches.
 
-https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/commit?id=04bdd560124ec4d02d1d11ee3abc88d51954d7b8
+Dionna Glaze (2):
+  kvm: sev: Add SEV-SNP guest request throttling
+  kvm: sev: If ccp is busy, report busy to guest
 
-> Or is there something else I can provide to help?
+ .../virt/kvm/x86/amd-memory-encryption.rst    | 23 +++++++++++
+ arch/x86/include/uapi/asm/kvm.h               |  7 ++++
+ arch/x86/kvm/svm/sev.c                        | 38 +++++++++++++++++++
+ arch/x86/kvm/svm/svm.h                        |  3 ++
+ 4 files changed, 71 insertions(+)
 
-No, I am able to apply now. Earlier my b4 based script failed because it
-couldn't find the base-commit. It works when I am apply manually, sorry to
-bother you.
+-- 
+2.49.0.1101.gccaa498523-goog
+
 
