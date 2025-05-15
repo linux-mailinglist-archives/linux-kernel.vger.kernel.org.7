@@ -1,121 +1,134 @@
-Return-Path: <linux-kernel+bounces-649256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-649258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB677AB81FB
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 11:06:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB9E8AB821A
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 11:10:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BA5577AC759
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 09:04:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9E343B1BB2
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 09:08:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 676C72920AC;
-	Thu, 15 May 2025 09:06:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23CB5295D89;
+	Thu, 15 May 2025 09:08:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OND4TY4x"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ApKlazq5"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C14092882A5;
-	Thu, 15 May 2025 09:06:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 708682874F6;
+	Thu, 15 May 2025 09:08:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747299966; cv=none; b=HxLKo2SxXpcKwCvAN3mxQQyAqj07fjLvpJC4fRTWlz9Q4hN6BISV1AgBvuUHlPvi+vRzpUE7CeJ5dsyJGx/jJd8uuaVe+7+AJbQ+m+a1Ju5zBw+HYxFd1soXwLwrjb917RA2+6Ytr8nddQcF7D/u9cpDI+O3uqZfsCF+SDzik50=
+	t=1747300108; cv=none; b=IfjSgxEHp/ASBbdik8emtyaz9IbVJzql7hK4WwahQb/RKHCe2xH1eywtIehLgrqunJMen9X1Y05ZtGePekl+qsVC/mu10wtZdWHysdrl2/Bo3m0QHsl0HiTZWAsyzUD1sTDz6GrBjvv9FJn92rMiwfeRW75QUU+JmyK9iF7OrVo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747299966; c=relaxed/simple;
-	bh=KVY2YR7khCYNOCGLba4NVihio2a5hTYB8gCPwnroNdo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YBu/mCRpHC3G1sSH07AEhJDEfTUAe1T2WVvSndKVAkG84nW/wv/oUdBM7wz0VBVLcTFVb5v34xjP0p5FLm6KgWbmdtGWT4EpxPVNG1hNRn+6vo2z7lk/DHb5r+NYXcZRJjCC7A4Sd1DtVUTaDkJZHGnk7dtf5xVLOL8fdgliSZk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OND4TY4x; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A383EC4CEE7;
-	Thu, 15 May 2025 09:06:03 +0000 (UTC)
+	s=arc-20240116; t=1747300108; c=relaxed/simple;
+	bh=XFzy7WaSOUcaOMc38XVxK8vXpVMM6q+AqJl1IFqnOFQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FmYLvXD8CRBwyorho6YdfkFYGc28MkXKnUcQTkIDcPXeIaQ6VdcCO7MOovZ1kpVhJKsYVICrdBF3kbYgyUs2d2/+z0NMJRLI7Z0ebUtj3NeYglFbFFz21rUMEbaFm+gchigdjDkPsR90uQ49dxyOeyeLMZrO1e3HXmUF8bkSmCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ApKlazq5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB226C4CEE7;
+	Thu, 15 May 2025 09:08:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747299966;
-	bh=KVY2YR7khCYNOCGLba4NVihio2a5hTYB8gCPwnroNdo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OND4TY4xJq4Hnv4qPFKzx89EsiDAYuzN/vQh+XCTq1XkESWagGO7QkZWuyq6aH06x
-	 0nfBBBBAQoV9ELVRL60bJoCLtuj+W5tucWLqRMarMn8pXSkc08c4f0LSmKU5wwqwQM
-	 6KrtbXvA6YxpgjnOtDcqP50HnMkk3MFBdDfIg8WZTFxZmYjtUyz93jDpTjaFH5SCRW
-	 XmkZgcIHjdCD6K3RffNQSUED2duOj/IuG5bxjFKswmvsNIXwsEEY/t5JtwKoRjURb1
-	 1C9xR5VrKixOOnwk91no+2nJ+/e4MlX10zDAQZGEifuttyKzsUTjNP/0GyxbiRkv2W
-	 NgMEwTOey4Slw==
-Date: Thu, 15 May 2025 11:06:00 +0200
-From: Danilo Krummrich <dakr@kernel.org>
-To: Rob Clark <robdclark@gmail.com>
-Cc: dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-	linux-arm-msm@vger.kernel.org, Connor Abbott <cwabbott0@gmail.com>,
-	Rob Clark <robdclark@chromium.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 01/40] drm/gpuvm: Don't require obj lock in destructor
- path
-Message-ID: <aCWueFzx2QzF7LVg@pollux>
-References: <20250514175527.42488-1-robdclark@gmail.com>
- <20250514175527.42488-2-robdclark@gmail.com>
- <aCWrwz2IF6VBUi4e@pollux>
+	s=k20201202; t=1747300107;
+	bh=XFzy7WaSOUcaOMc38XVxK8vXpVMM6q+AqJl1IFqnOFQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ApKlazq5I0EropczmqCcSC3T1audi5oO7wy+wgPhViuKajHe63N+QcBR0BDSgqkzh
+	 I4I2GauFdT9UCyQNDDjL4jBUnL71flul5n45Rqh5yvK9u67fNJC51/dS4nNxfGSDbp
+	 j9QARBg8lWlxjuyM4MWYHCoL2CIXquhoie3pqULAeCDsSGATqyrDW5AeEvc6/KIBnV
+	 TBw/SFqsGL5GnC53Pje046dOzz5l+gYl34Jnuem1k7RzkuODmSRZPqqAA/nlj0L18a
+	 IuCDgz6VSoINPgpY/Z/A5YIMLKTnEM4vv7tXiSRIAIzl/ODa+z/u25EETGGxb38eDm
+	 R+aTUwWzguMNg==
+Message-ID: <56fea07e-a047-47f1-9c71-1a92cad15eb0@kernel.org>
+Date: Thu, 15 May 2025 11:08:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aCWrwz2IF6VBUi4e@pollux>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] dt-bindings: usb: samsung,exynos-dwc3: add dt-schema
+ ExynosAutov920
+To: Pritam Manohar Sutar <pritam.sutar@samsung.com>,
+ gregkh@linuxfoundation.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, alim.akhtar@samsung.com, Thinh.Nguyen@synopsys.com
+Cc: linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, rosa.pila@samsung.com, dev.tailor@samsung.com,
+ faraz.ata@samsung.com, muhammed.ali@samsung.com, selvarasu.g@samsung.com
+References: <20250514140741.415981-1-pritam.sutar@samsung.com>
+ <CGME20250514135755epcas5p41291579e7eb266d92b91b82621e0fa5d@epcas5p4.samsung.com>
+ <20250514140741.415981-2-pritam.sutar@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250514140741.415981-2-pritam.sutar@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, May 15, 2025 at 10:54:27AM +0200, Danilo Krummrich wrote:
-> Hi Rob,
-> 
-> Can you please CC me on patches for GPUVM?
-> 
-> On Wed, May 14, 2025 at 10:53:15AM -0700, Rob Clark wrote:
-> > From: Rob Clark <robdclark@chromium.org>
-> > 
-> > See commit a414fe3a2129 ("drm/msm/gem: Drop obj lock in
-> > msm_gem_free_object()") for justification.
-> 
-> Please write a proper commit message that explains the problem and the solution.
-> Please don't just refer to another commit and leave it to the reviewer of the
-> patch to figure this out.
-> 
-> > Signed-off-by: Rob Clark <robdclark@chromium.org>
-> > ---
-> >  drivers/gpu/drm/drm_gpuvm.c | 7 +++++--
-> >  1 file changed, 5 insertions(+), 2 deletions(-)
-> 
-> 
-> > diff --git a/drivers/gpu/drm/drm_gpuvm.c b/drivers/gpu/drm/drm_gpuvm.c
-> > index f9eb56f24bef..1e89a98caad4 100644
-> > --- a/drivers/gpu/drm/drm_gpuvm.c
-> > +++ b/drivers/gpu/drm/drm_gpuvm.c
-> > @@ -1511,7 +1511,9 @@ drm_gpuvm_bo_destroy(struct kref *kref)
-> >  	drm_gpuvm_bo_list_del(vm_bo, extobj, lock);
-> >  	drm_gpuvm_bo_list_del(vm_bo, evict, lock);
-> >  
-> > -	drm_gem_gpuva_assert_lock_held(obj);
-> > +	if (kref_read(&obj->refcount) > 0)
-> > +		drm_gem_gpuva_assert_lock_held(obj);
-> > +
-> >  	list_del(&vm_bo->list.entry.gem);
-> 
-> This seems wrong.
-> 
-> A VM_BO object keeps a reference of the underlying GEM object, so this should
-> never happen.
-> 
-> This function calls drm_gem_object_put() before it returns.
+On 14/05/2025 16:07, Pritam Manohar Sutar wrote:
 
-I noticed your subsequent patch that allows VM_BO structures to have weak
-references to GEM objects.
+>  
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: samsung,exynosautov920-dwusb3
+> +    then:
+> +      properties:
+> +        clocks:
+> +          minItems: 2
+> +          maxItems: 2
+> +        clock-names:
+> +          items:
+> +            - const: ref
+> +            - const: susp_clk
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-However, even with that this seems wrong. If the reference count of the GEM
-object is zero when drm_gpuvm_bo_destroy() is called it means that the GEM
-object is dead. However, until drm_gpuvm_bo_destroy() is called the GEM object
-potentially remains to be on the extobj and eviced list, which means that other
-code paths might fetch it from those lists and consider it to be a valid GEM
-object.
+Best regards,
+Krzysztof
 
