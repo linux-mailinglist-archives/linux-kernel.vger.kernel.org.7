@@ -1,41 +1,41 @@
-Return-Path: <linux-kernel+bounces-648976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-648979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FD5FAB7E53
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 08:54:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D63F9AB7E56
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 08:54:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2035E8C59C3
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 06:53:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1B438C5C37
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 06:54:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FDAE296FBD;
-	Thu, 15 May 2025 06:53:57 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77DF92980B7;
+	Thu, 15 May 2025 06:53:59 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E231D1C27
-	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 06:53:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53B10297129
+	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 06:53:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747292037; cv=none; b=pv7ydTHgJHB13dJcRelW7AMTg5yiSqlvnT8W4Dd/H3KTx4KB9i3SkFkSPyDbqufNs1qFrB8DVTmrzxjG2Os8sVph+3cfVpdqIQEdr+saGTGIIym8Md91igM1VL5ZXyz3w9wuNGXqNQw8KKmA7ePS00sIaIhHkPoDDsbuGua6Prg=
+	t=1747292039; cv=none; b=DhZafiaDozzdZuo6JfGzuQQIVTzwEg8Omdg1bkhQKr4Nd1WmdX/Jek7l8CMSW4zS81B4HMNx4KwJ4hrw9kp20CskayMmGwKS2YYbTtHioomxfsS1Y6+7Sx/r4Sh29CCUKlouX+Q6w923EFvzdq6w4tNhDMBsU5SuY3Tol9xowFM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747292037; c=relaxed/simple;
-	bh=WZpkloR/6cUcMn25k8bR7k/Or01cajOZ/gqD9Tt6mb8=;
+	s=arc-20240116; t=1747292039; c=relaxed/simple;
+	bh=IvviUiMfFa2Il5r7kiUngPBt19pjIZJAasz6QAnn2r4=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=bcLz08iFcScPkNalD8ADtdoz36B8Jyi2R3xADNk2WCTptG94F+e7O6WSJ4vhHzXh5mkIHuV/jRTOJBTlBGbE3ss+OpWVOO6jPUmBsyDgM5N/w3IoSSIW3QepzVTbjMdX2cHJbyrllwQFpA3qoVDmLgb/m7BMnbGODA1ygpJtC30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+	 MIME-Version; b=mDtdFnPlf/sBz3LGSIiaOzQXOznG0sJIyuF6BDIg2/BeMAJVursfyqu73EI6I9HAaR2lM68GoL19hxAl1gHipph8KFI82NEsApdC+xFH+FUHIjT0tT83UUJS2EtMunFRbrKeQLr2NKVYbk3pjuPx4J77pHd6lEsUXHZER4VN2yg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4ZygsL60Z2z4f3k5c
-	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 14:53:26 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4ZygsF6pnKz4f3jd1
+	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 14:53:21 +0800 (CST)
 Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 70CAD1A14F3
+	by mail.maildlp.com (Postfix) with ESMTP id BC5A81A0359
 	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 14:53:46 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.175.101.6])
-	by APP4 (Coremail) with SMTP id gCh0CgAHbGB3jyVoyDnbMQ--.29023S5;
+	by APP4 (Coremail) with SMTP id gCh0CgAHbGB3jyVoyDnbMQ--.29023S6;
 	Thu, 15 May 2025 14:53:46 +0800 (CST)
 From: Kemeng Shi <shikemeng@huaweicloud.com>
 To: hughd@google.com,
@@ -43,9 +43,9 @@ To: hughd@google.com,
 	akpm@linux-foundation.org
 Cc: linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 3/5] mm/shmem: Fix potential dead loop in shmem_unuse()
-Date: Thu, 15 May 2025 23:47:56 +0800
-Message-Id: <20250515154758.956521-4-shikemeng@huaweicloud.com>
+Subject: [PATCH v2 4/5] mm: shmem: only remove inode from swaplist when it's swapped page count is 0
+Date: Thu, 15 May 2025 23:47:57 +0800
+Message-Id: <20250515154758.956521-5-shikemeng@huaweicloud.com>
 X-Mailer: git-send-email 2.30.0
 In-Reply-To: <20250515154758.956521-1-shikemeng@huaweicloud.com>
 References: <20250515154758.956521-1-shikemeng@huaweicloud.com>
@@ -56,89 +56,54 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgAHbGB3jyVoyDnbMQ--.29023S5
-X-Coremail-Antispam: 1UD129KBjvJXoW7ZFWfWrWDtw45Ar4xGr43trb_yoW8Zr1Upr
-	n8u3srtrWrZrykGFWIy3W8urWaqw4SgF4Utay3C3Z5A3WUtr42grnFqFyUu393CrZxXrW3
-	KFn29ry3Aa1vyrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUPFb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M280x2IEY4vEnII2IxkI6r1a6r45M2
-	8IrcIa0xkI8VA2jI8067AKxVWUWwA2048vs2IY020Ec7CjxVAFwI0_Gr0_Xr1l8cAvFVAK
-	0II2c7xJM28CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4
-	x0Y4vE2Ix0cI8IcVCY1x0267AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l
-	84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I
-	8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AK
-	xVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lc7CjxVAaw2AFwI
-	0_JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG
-	67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMI
-	IYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E
-	14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJV
-	W8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUaTKu
-	UUUUU
+X-CM-TRANSID:gCh0CgAHbGB3jyVoyDnbMQ--.29023S6
+X-Coremail-Antispam: 1UD129KBjvdXoWrtw18Wr1rtw18WFyUWrWxWFg_yoWDZFb_Wa
+	10qw15WrW7Wrs7uF42kas3tF9Yg3y8Kr1DCF93tFW7CF9Igr4kZan8X3yfWayxuay5XFn8
+	G3WkAr12krnFgjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbqkYFVCjjxCrM7AC8VAFwI0_Wr0E3s1l1xkIjI8I6I8E6xAIw20E
+	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l87I20VAvwVAaII0Ic2I_JFv_Gryl82
+	xGYIkIc2x26280x7IE14v26r126s0DM28IrcIa0xkI8VCY1x0267AKxVW8JVW5JwA2ocxC
+	64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM2
+	8EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4UJVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq
+	3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8w
+	Aqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE
+	14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwCY1x0262kKe7
+	AKxVWUAVWUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02
+	F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw
+	1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r
+	1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07jv
+	Wl9UUUUU=
 X-CM-SenderInfo: 5vklyvpphqwq5kxd4v5lfo033gof0z/
 
-If multi shmem_unuse() for different swap type is called concurrently,
-a dead loop could occur as following:
-shmem_unuse(typeA)               shmem_unuse(typeB)
- mutex_lock(&shmem_swaplist_mutex)
- list_for_each_entry_safe(info, next, ...)
-  ...
-  mutex_unlock(&shmem_swaplist_mutex)
-  /* info->swapped may drop to 0 */
-  shmem_unuse_inode(&info->vfs_inode, type)
+Even if we fail to allocate a swap entry, the inode might have previously
+allocated entry and we might take inode containing swap entry off swaplist.
+As a result, try_to_unuse() may enter a potential dead loop to repeatedly
+look for inode and clean it's swap entry.
+Only take inode off swaplist when it's swapped page count is 0 to fix the
+issue.
 
-                                  mutex_lock(&shmem_swaplist_mutex)
-                                  list_for_each_entry(info, next, ...)
-                                   if (!info->swapped)
-                                    list_del_init(&info->swaplist)
-
-                                  ...
-                                  mutex_unlock(&shmem_swaplist_mutex)
-
-  mutex_lock(&shmem_swaplist_mutex)
-  /* iterate with offlist entry and encounter a dead loop */
-  next = list_next_entry(info, swaplist);
-  ...
-
-Restart the iteration if the inode is already off shmem_swaplist list
-to fix the issue.
-
-Fixes: b56a2d8af9147 ("mm: rid swapoff of quadratic complexity")
+Fixes: b487a2da3575b ("mm, swap: simplify folio swap allocation")
 Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
 ---
- mm/shmem.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ mm/shmem.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/mm/shmem.c b/mm/shmem.c
-index 495e661eb8bb..aeeddf612baa 100644
+index aeeddf612baa..07b8e1400c67 100644
 --- a/mm/shmem.c
 +++ b/mm/shmem.c
-@@ -1505,6 +1505,7 @@ int shmem_unuse(unsigned int type)
- 		return 0;
- 
- 	mutex_lock(&shmem_swaplist_mutex);
-+start_over:
- 	list_for_each_entry_safe(info, next, &shmem_swaplist, swaplist) {
- 		if (!info->swapped) {
- 			list_del_init(&info->swaplist);
-@@ -1523,13 +1524,15 @@ int shmem_unuse(unsigned int type)
- 		cond_resched();
- 
- 		mutex_lock(&shmem_swaplist_mutex);
--		next = list_next_entry(info, swaplist);
--		if (!info->swapped)
--			list_del_init(&info->swaplist);
- 		if (atomic_dec_and_test(&info->stop_eviction))
- 			wake_up_var(&info->stop_eviction);
- 		if (error)
- 			break;
-+		if (list_empty(&info->swaplist))
-+			goto start_over;
-+		next = list_next_entry(info, swaplist);
-+		if (!info->swapped)
-+			list_del_init(&info->swaplist);
+@@ -1651,8 +1651,8 @@ static int shmem_writepage(struct page *page, struct writeback_control *wbc)
+ 		BUG_ON(folio_mapped(folio));
+ 		return swap_writepage(&folio->page, wbc);
  	}
+-
+-	list_del_init(&info->swaplist);
++	if (!info->swapped)
++		list_del_init(&info->swaplist);
  	mutex_unlock(&shmem_swaplist_mutex);
- 
+ 	if (nr_pages > 1)
+ 		goto try_split;
 -- 
 2.30.0
 
