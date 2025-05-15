@@ -1,194 +1,116 @@
-Return-Path: <linux-kernel+bounces-650457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-650459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB2F8AB91BD
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 23:23:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E166EAB91C0
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 23:23:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 996821C0059E
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 21:23:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5ACFF4E7F8B
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 21:23:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B303284B4B;
-	Thu, 15 May 2025 21:21:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C9CA289E35;
+	Thu, 15 May 2025 21:23:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=apitzsch.eu header.i=@apitzsch.eu header.b="AMa8qTqF"
-Received: from www637.your-server.de (www637.your-server.de [168.119.26.117])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Era89RFd"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BBB7171C9;
-	Thu, 15 May 2025 21:21:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.26.117
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E8BE2550A6;
+	Thu, 15 May 2025 21:23:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747344118; cv=none; b=LVb0o+Bo6gl/PWjMZhGciQVXzC1pmbPukYczTKppkjo5KpTjMz+/mm2ohwvUGhHQNoIXyKYYwCMUQj0mQZ2EgbfKnzZ/0iT74M5ksTdqhaysilZ4dBcJvJnINCg/iLm1GKs173EIiLJFvD/1Yql9uxefE7lalXqWQ48zWyTM6+w=
+	t=1747344206; cv=none; b=n4hkWc8OvzdPpV5XVUw5P9nLy6196L/+ISc1JAzOsENVhqNZzHfPE53il2dKCs/QEx7QaZw6aKxMk1MyVKgddXqh7exF9BJPAS650+4g7tMd5JLn1S6LEkulgu0VWyY/Rnqvq/0KISaNwimK7afUToTi9OcLAEdaHpqbV9+1iYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747344118; c=relaxed/simple;
-	bh=xt3t2zCy2rbwmCE3z2RJVblyMEfL0A/VWx0xyaHd7aU=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=GDc2mL/477DGx6nYUV+kIjTiL3LeHLN5VZx2nqSsuX7zjHLIarLwipzCeVpGBdC2M33iB+pPGAiYEJ6NU3WguzfQR72uhKwvtnBjY7eCVV/eGJl6pnh729PbA6GRQ+NndOewQgSRel8WalrJdZ3Vvh000/CyE2lxplnm9/IqUjU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=apitzsch.eu; spf=pass smtp.mailfrom=apitzsch.eu; dkim=pass (2048-bit key) header.d=apitzsch.eu header.i=@apitzsch.eu header.b=AMa8qTqF; arc=none smtp.client-ip=168.119.26.117
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=apitzsch.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=apitzsch.eu
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=apitzsch.eu
-	; s=default2410; h=MIME-Version:Content-Transfer-Encoding:Content-Type:
-	References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=DtyhCMdgGFayCf64QkOsFNDpi9zrn2dltmKT58BWfNE=; b=AMa8qTqFCQDf2tkSKrh/yhpr4Z
-	bd0xc/jKnEYbF+skfZoWd/cegUyHus3VGyXluieMOBaKkA3Kx5gp1nuP7Gngn1TVj/K6bhKlhgff+
-	CNOD0x2DcmBtv1LgS11Vy+A9Kc/770lOi7EBmOLG+t7gOepHGm3ABibms9Z54Gf9oPTMPlymPQCEf
-	ntgnQSVbvo44WIeHzIbDzr0OMxNPJythVPF/lo6s6cZWdwu0N1QzqmouA2cbgPi8TwZkcB0H569eT
-	9t7k3hifkgn4MktDC2z9iBtSS3qQOnRuNQ0oqPCvDDZSgV9g2jvLRrcm/fYR4blA4tp6ghLqB37AB
-	N2JPtv5w==;
-Received: from sslproxy07.your-server.de ([78.47.199.104])
-	by www637.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96.2)
-	(envelope-from <git@apitzsch.eu>)
-	id 1uFg1Q-000Crw-1g;
-	Thu, 15 May 2025 23:21:44 +0200
-Received: from localhost ([127.0.0.1])
-	by sslproxy07.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <git@apitzsch.eu>)
-	id 1uFg1Q-0006IK-0f;
-	Thu, 15 May 2025 23:21:44 +0200
-Message-ID: <7d2d4c3bc5e8d49fbcd4763487f82db634b06205.camel@apitzsch.eu>
-Subject: Re: [PATCH v2 4/4] media: i2c: imx214: Remove hard-coded external
- clock frequency
-From: =?ISO-8859-1?Q?Andr=E9?= Apitzsch <git@apitzsch.eu>
-To: Sakari Ailus <sakari.ailus@linux.intel.com>, Laurent Pinchart
-	 <laurent.pinchart@ideasonboard.com>
-Cc: Ricardo Ribalda <ribalda@kernel.org>, Mauro Carvalho Chehab
-	 <mchehab@kernel.org>, ~postmarketos/upstreaming@lists.sr.ht, 
-	phone-devel@vger.kernel.org, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Date: Thu, 15 May 2025 23:21:42 +0200
-In-Reply-To: <aCZWV6xj4vap5PFZ@svinhufvud>
-References: <20250505-imx214_ccs_pll-v2-0-f50452061ff1@apitzsch.eu>
-	 <20250505-imx214_ccs_pll-v2-4-f50452061ff1@apitzsch.eu>
-	 <aBnHI1APgjfcj2xG@kekkonen.localdomain>
-	 <20250515085846.GR23592@pendragon.ideasonboard.com>
-	 <aCXWDnZhffjlt+8i@svinhufvud>
-	 <20250515130340.GC12492@pendragon.ideasonboard.com>
-	 <aCZWV6xj4vap5PFZ@svinhufvud>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.1 
+	s=arc-20240116; t=1747344206; c=relaxed/simple;
+	bh=oVYbB4mvS5cfWCiHQJsTQZyBYXY5ZEDYJpI67V0lKb0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cunh2oHtRfuh/pYlXOcY332yIHaxP4s4scZZy5SXg4QMm99pYOuhQu3wr3ZKq3Qw0hPfNjLp+OtO+OrIHZCasEGU8MW9vlwfCoJKfPYioaFPudcBbFY9L91FGiuyDFgYuY6UJsOrO4SdQkNNN3YcT34eLcxj+gRbGBYPzoc6UQk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Era89RFd; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
+	:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=ZuFYpEebz7eNMFM2Au2qK78qxUP2XIO3+2uAIGKCqFo=; b=Era89RFdEYToePNFSYPchDIGdE
+	GIgWTfTw826wSiHIo4qlKg2jvVe6sy2ThdpsC+0BnPvoDbDmMUwwbDfFeWgfGqLM4asa8Hb5PERy0
+	1i8mUE5545Z6nD6s079M3JvU9NVw8KetFgApzRAGLPQUNN/y34bP6ecnxnj2SV+XZc3EY89Hkm1iJ
+	VLO6YTdtBMdgpFfwWp8yzvFpCM4JW9qA16i73P3ZScH3jfPEpR/Tp6UgiWvL2KV+wr/7wIGi9eaEX
+	mCKa3vryZZ3EY36Y2jNgNL7rmc28JtK5nXW7QWgSiHLu95k2wPDFW3wDPlAfpdZEJ/M8xOx9rXc9P
+	4jebtc3g==;
+Received: from [50.53.25.54] (helo=[192.168.254.17])
+	by desiato.infradead.org with esmtpsa (Exim 4.98.1 #2 (Red Hat Linux))
+	id 1uFg2f-0000000Ha4B-3VvL;
+	Thu, 15 May 2025 21:23:06 +0000
+Message-ID: <e0e6a6cb-3b73-471f-97f8-415fd6ac5333@infradead.org>
+Date: Thu, 15 May 2025 14:22:56 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Authenticated-Sender: andre@apitzsch.eu
-X-Virus-Scanned: Clear (ClamAV 1.0.7/27638/Thu May 15 10:41:10 2025)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v10 04/13] platform/x86: hfi: Introduce AMD Hardware
+ Feedback Interface Driver
+To: Mario Limonciello <superm1@kernel.org>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: Mario Limonciello <mario.limonciello@amd.com>,
+ Perry Yuan <perry.yuan@amd.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+ "H . Peter Anvin" <hpa@zytor.com>, Jonathan Corbet <corbet@lwn.net>,
+ Huang Rui <ray.huang@amd.com>, "Gautham R . Shenoy"
+ <gautham.shenoy@amd.com>, "Rafael J . Wysocki" <rafael@kernel.org>,
+ Viresh Kumar <viresh.kumar@linaro.org>,
+ "open list:AMD HETERO CORE HARDWARE FEEDBACK DRIVER"
+ <platform-driver-x86@vger.kernel.org>,
+ "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)"
+ <linux-kernel@vger.kernel.org>,
+ "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+ "open list:AMD PSTATE DRIVER" <linux-pm@vger.kernel.org>,
+ Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
+References: <20250515211950.3102922-1-superm1@kernel.org>
+ <20250515211950.3102922-5-superm1@kernel.org>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20250515211950.3102922-5-superm1@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Sakari, Hi Laurent,
+just a coding style nit:
 
-Am Freitag, dem 16.05.2025 um 00:02 +0300 schrieb Sakari Ailus:
-> Hi Laurent,
->=20
-> On Thu, May 15, 2025 at 03:03:40PM +0200, Laurent Pinchart wrote:
-> > On Thu, May 15, 2025 at 02:54:54PM +0300, Sakari Ailus wrote:
-> > > On Thu, May 15, 2025 at 10:58:46AM +0200, Laurent Pinchart wrote:
-> > > > On Tue, May 06, 2025 at 08:24:03AM +0000, Sakari Ailus wrote:
-> > > > > On Mon, May 05, 2025 at 11:05:56PM +0200, Andr=C3=A9 Apitzsch via
-> > > > > B4 Relay wrote:
-> > > > > > From: Andr=C3=A9 Apitzsch <git@apitzsch.eu>
-> > > > > >=20
-> > > > > > Instead rely on the rate set on the clock (using assigned-
-> > > > > > clock-rates
-> > > > > > etc.)
-> > > > > >=20
-> > > > > > Signed-off-by: Andr=C3=A9 Apitzsch <git@apitzsch.eu>
-> > > > > > ---
-> > > > > > =C2=A0drivers/media/i2c/imx214.c | 6 ------
-> > > > > > =C2=A01 file changed, 6 deletions(-)
-> > > > > >=20
-> > > > > > diff --git a/drivers/media/i2c/imx214.c
-> > > > > > b/drivers/media/i2c/imx214.c
-> > > > > > index
-> > > > > > 9e9be47394ec768a5b34d44b06b5bbb0988da5a1..c12996e294dccebb1
-> > > > > > 8c608254f1e0d14dc064423 100644
-> > > > > > --- a/drivers/media/i2c/imx214.c
-> > > > > > +++ b/drivers/media/i2c/imx214.c
-> > > > > > @@ -32,7 +32,6 @@
-> > > > > > =C2=A0
-> > > > > > =C2=A0#define IMX214_REG_FAST_STANDBY_CTRL	CCI_REG8(0x0106)
-> > > > > > =C2=A0
-> > > > > > -#define IMX214_DEFAULT_CLK_FREQ	24000000
-> > > > > > =C2=A0#define IMX214_DEFAULT_LINK_FREQ	600000000
-> > > > > > =C2=A0/* Keep wrong link frequency for backward compatibility *=
-/
-> > > > > > =C2=A0#define IMX214_DEFAULT_LINK_FREQ_LEGACY	480000000
-> > > > > > @@ -1405,11 +1404,6 @@ static int imx214_probe(struct
-> > > > > > i2c_client *client)
-> > > > > > =C2=A0		return dev_err_probe(dev, PTR_ERR(imx214-
-> > > > > > >xclk),
-> > > > > > =C2=A0				=C2=A0=C2=A0=C2=A0=C2=A0 "failed to get
-> > > > > > xclk\n");
-> > > > > > =C2=A0
-> > > > > > -	ret =3D clk_set_rate(imx214->xclk,
-> > > > > > IMX214_DEFAULT_CLK_FREQ);
-> > > > > > -	if (ret)
-> > > > > > -		return dev_err_probe(dev, ret,
-> > > > > > -				=C2=A0=C2=A0=C2=A0=C2=A0 "failed to set xclk
-> > > > > > frequency\n");
-> > > > > > -
-> > > > >=20
-> > > > > Oops. I missed this is what the driver was doing already.
-> > > > > Indeed, this is one of the historic sensor drivers that do
-> > > > > set the frequency in DT systems.
-> > > > >=20
-> > > > > The driver never used the clock-frequency property and
-> > > > > instead used a fixed frequency. Changing the behaviour now
-> > > > > could be problematic.
-> > > > >=20
-> > > > > There are options here that I think we could do:
-> > > > >=20
-> > > > > 1) use your v1 patch (4) which uses "clock-frequency" if it
-> > > > > exists and otherwise uses the default, fixed frequency or
-> > > > >=20
-> > > > > 2) set the frequency only if the "clock-frequency" property
-> > > > > exists. The DT currently requires clock-frequency and the
-> > > > > YAML conversion was done in 2020 whereas the driver is from
-> > > > > 2018. If we do this, the clock-frequency should
-> > > > > be deprecated (or even removed from bingings).
-> > > > >=20
-> > > > > I wonder what others think. Cc'd Laurent in any case.
-> > > >=20
-> > > > Maybe I'm missing something, but I don't really see the issue
-> > > > here. The clock-frequency DT property is currently ignored, and
-> > > > this patch doesn't change that situation, does it ?
-> > > >=20
-> > > > The change of behaviour here is related to the assigned-clock-
-> > > > rates property. If that property is specified today, it will
-> > > > set the clock rate, and the driver will override it to 24MHz
-> > > > right after.
-> > > > With this patch, the clock rate won't be overridden. I think
-> > > > the risk of regression is very low here, as I don't expect
-> > > > systems to set assigned-clock-rates in DT to a value different
-> > > > than 24MHz and expect the driver to override it.
-> > >=20
-> > > If the DTS had assigned-clock-rates set correctly, then yes. How
-> > > much can we trust the older DTS did have that?
-> >=20
-> > I am relatively confident that DT-based systems wouldn't have an
-> > assigned-clock-rates property with a frequency that doesn't match
-> > IMX214_DEFAULT_CLK_FREQ. The real question is whether or not I'm
-> > over-confident :-)
->=20
-> The assigned-clock stuff wasn't always there. But nowadays I guess a
-> lot of things in practice depends on it.
->=20
-> So I guess doing this should be fine then.
+On 5/15/25 2:19 PM, Mario Limonciello wrote:
+> diff --git a/drivers/platform/x86/amd/hfi/Kconfig b/drivers/platform/x86/amd/hfi/Kconfig
+> new file mode 100644
+> index 0000000000000..476e4a9ed67a9
+> --- /dev/null
+> +++ b/drivers/platform/x86/amd/hfi/Kconfig
+> @@ -0,0 +1,17 @@
+> +# SPDX-License-Identifier: GPL-2.0-only
+> +#
+> +# AMD Hardware Feedback Interface Driver
+> +#
+> +
+> +config AMD_HFI
+> +	bool "AMD Hetero Core Hardware Feedback Driver"
+> +	depends on ACPI
+> +	depends on CPU_SUP_AMD
+> +	help
+> +	 Select this option to enable the AMD Heterogeneous Core Hardware
+> +	 Feedback Interface. If selected, hardware provides runtime thread
+> +	 classification guidance to the operating system on the performance and
+> +	 energy efficiency capabilities of each heterogeneous CPU core. These
+> +	 capabilities may vary due to the inherent differences in the core types
+> +	 and can also change as a result of variations in the operating
+> +	 conditions of the system such as power and thermal limits.
 
-Just to be clear, this patch is fine and no changes are needed?
+Help text should be indented with one tab + 2 spaces.
 
-Should the bindings be updated in this series or can that be done
-later?
+-- 
+~Randy
 
-Best regards,
-Andr=C3=A9
 
