@@ -1,54 +1,79 @@
-Return-Path: <linux-kernel+bounces-649854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-649857-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3865DAB8A01
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 16:56:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6859CAB8A09
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 16:57:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3623816EBAA
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 14:54:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E40851649F7
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 14:56:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01C342153E1;
-	Thu, 15 May 2025 14:53:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50B2D1F8EFF;
+	Thu, 15 May 2025 14:56:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Pr+dR13n"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hspj6D5h"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83097207DE2;
-	Thu, 15 May 2025 14:53:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 298B31F463C;
+	Thu, 15 May 2025 14:56:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747320809; cv=none; b=FGAwYvEE6oZipIzV6k0+S6d5VkSdFkpXP5B8ouR/g1aggAXH9opFL541hFyBnvzNE9vezUMYrgzwqWqpQfUPoewbG2NkIYAsrx2tytuY4ByNRjstIEogYIPS+cy0XDsh9gEAnR78GrSIeXTN3Lczndy8tRyzHkz4t/n/4mTnjps=
+	t=1747320982; cv=none; b=TCVFagKirrN9Rs6OFEzR51IMGViCbn4gEvAMbgQFbkc6OCGfj4d3L1Bm9UuZfv+Mr5ZBbV9PL2g0Ds/NZVUXHjZqUZQ+DWpnNUbRl9Jrrhtao/vckF/Jdhsxp5FUgcZzgkiF/FAnDnXaSScbBN327/qmU92MZHCM/13ZjRxN9pc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747320809; c=relaxed/simple;
-	bh=HpQRl43T3yE7eJuYJAXq7uvNAvyBKP3XkwGFJiWhycM=;
+	s=arc-20240116; t=1747320982; c=relaxed/simple;
+	bh=Qm0m/hotLW+VdK6WWoX74xsrInhbyz9pPd69ng1kBM8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MouLGLMeKpysb6OnxBYDiMHQeDcVs5mW7ejhmM0sD/z6yeH8X8dFrHwp+nqDkWfTWGtAXshKSTe25y/wFXOd+JyZcrlYOCGhdnTGxZ3KCxhZUuhcioTUqDNkkgMzkcHedpniPbhRNClswc8Z+Ert+SsYYx21pqUNwyf4F9SKeqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Pr+dR13n; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1747320805;
-	bh=HpQRl43T3yE7eJuYJAXq7uvNAvyBKP3XkwGFJiWhycM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Pr+dR13n4yOyDf4BqB5b+ZxTRwYBoLgRHSm9VECFKNQl8TWz3tXg0E4/bYhGiajqO
-	 jZHyV21wg+e+pbvg8LKtAjt4YUrJ0R9EOmHg6kh0cVeB3nUaKR8TBrJ39u93Yfy6V8
-	 BtMw2z1OLYXU/db8iG05px3LYYqUrFN+TJA8QGEiXZIijf36YHLmyj3MbTg8vLIzRd
-	 Qoh2ehDg07ud7V5PF6uO3YXQkeV1Ys3bOK2zguLts63pTQonFtPjG3s7uQIO8VO7YF
-	 Y1ctfZnKyYX+KzMTC4vxYBE0lxsLh23E9FaoXerQ3f0h4Llw+KVCILvh0N5KkqTeTI
-	 VSLAMO4cTUBOQ==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id E966A17E0062;
-	Thu, 15 May 2025 16:53:24 +0200 (CEST)
-Message-ID: <b693991a-db50-4871-91a4-20d9859a2f43@collabora.com>
-Date: Thu, 15 May 2025 16:53:24 +0200
+	 In-Reply-To:Content-Type; b=GZsQw4QsqBftkUvI0tM9rxaBfCdaulsYVJ/o48R1lpF3oendQ0wig5SnhES4W3gG+o+dz2BmN9CLctdYZhmHkszyKfCwCXWQv8M+u+6ULUo6ODCzOR34VPsFq2h5NK5EEtk55e47jUlKjXDAhyr2VXXiIkYtMqM+iCTyvqLmII8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Hspj6D5h; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-442ccf0e1b3so12521705e9.3;
+        Thu, 15 May 2025 07:56:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747320979; x=1747925779; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=i00DZSigj4HO3cEyoE/GqwcF01iYA3ZyYRpABBl2Q3E=;
+        b=Hspj6D5h2YI5XjlnVbs2o4znmlFynLsMP/pm0LRZsvrz8ZtyMCOxrqvQAMrWpZ8gEo
+         xDbaRJQlVjGnYh0i3Xl9dk0aCoJHKvdfULJhm1r63mFFaFZpUjV9cktjHBimc8ifQ3bL
+         3J2vMV6fhTLaiS4PxnngdZ10efSNWsqIlSB9dLRK0++0STFOUpjWDxtino57Nk5SY7Mr
+         q8CAX4ksx6iudhTyTJkgZomFlhgBszukA8tRfrknrtpZElwfjPvVuDRH9pyZ/69H8nMn
+         +CCh61Kbl4ZqYGDKgBKA086UO0Uj/iwLSIkuYYXopZjuEfF/Qhn74lQFT3/OyomvQToY
+         0r6g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747320979; x=1747925779;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=i00DZSigj4HO3cEyoE/GqwcF01iYA3ZyYRpABBl2Q3E=;
+        b=n2mWgnNLoH1/LkP3O+A4fV3+pjuirmdeRF02bAFUd0k1F8Cm94P42P1d+kc3X45ivO
+         oHS79cRsKV2j6DRuk4nqpLVkNZ6tcXRKwXkA+IlBFaFtzqS529yD2QdfFahQ4K4/IgnU
+         T/R3/C7epTFu3cmFindZ6nNx+X9N7joYXibQE+bCLjNye2PU/Rp27/qeypq4aji1AfYO
+         6TLRoZ09uCFubJRhIcce1k4/R4AMeqgWBUDxy4zBMRO7g9t11NzU/11tstoGY8VvWGmW
+         FCSSXS9jBGYQNEYVASnatcUIYs85s4zQ0GccWuFXhfRzlqG4WXgRA9YBkg78lPYzhKMd
+         Oyhg==
+X-Forwarded-Encrypted: i=1; AJvYcCWG8U/ZSSZbNAqxNoTjopIYVirEBBhxnrbGq0DsUQ5eVt0YMLMGdOuPRI8zMDx5riiMfhTb7JyBpXfqIpLs@vger.kernel.org, AJvYcCXhdYE0gB8ltJoox/iS13PdA2HM2S0Xv2ffA0Xk9R18ozUVicVfjKn4QWC/3O5eBThOGsIRCEabbus=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwanJAgvtRPB5BgcPUikvPBTDF3XNsjNgSCQIM9MRsSBq1HLVQ5
+	Xzlw77x9iaq5ErQzIGz4ZD0HUBYBI0ABULnXztwiSOaccQVG8MIDTlan
+X-Gm-Gg: ASbGncvI5lWxq+CV3AKVw9+fcuXkY1gxvnQenjZQCy8BFCjfdL4FQAjpL+eenwjwS8F
+	mGS0+2mkJD1PmDsbI/THBABMiWlNDd7h1XRCWZZSnWxhJoh5NZdPY7iJTXOwN3dbNjW3y5bs0UX
+	MgBDANnRmUzgMeoviviy14VSxbZzpraxLAtPZtNKrmj1i8jEl8Hw0yxxLNNUvkqYSCNhHUoI7tF
+	nsSu3xliHNahtRgD3UyaCkVkbJXqyT0YOKUL7YQsQaTgWzdjCNRGYbA54r+u3tJxq6Z1KDBXQ/d
+	wulrLjtLLwp+sTpI7z4mK+8cW2YFkGKmbtu9csZqAZOzVY9CXlWdcLQDlJt1M28GdCgAhRdCFi/
+	oyW4pRXU60reZmvZehKU6q0COm4M+J62FseEn3kwTXZoKtFo=
+X-Google-Smtp-Source: AGHT+IGhM2toVCyVqFIfoU5wU2HqYy+Ro6Hr5E+jedD8Qvx7CEfurv/u22tCaMeOjI9rTOnTUhf5wg==
+X-Received: by 2002:a05:6000:438a:b0:39c:2669:d7f4 with SMTP id ffacd0b85a97d-3a35c845f15mr61588f8f.43.1747320979137;
+        Thu, 15 May 2025 07:56:19 -0700 (PDT)
+Received: from ?IPV6:2a01:4b00:b211:ad00:1096:2c00:b223:9747? ([2a01:4b00:b211:ad00:1096:2c00:b223:9747])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a355e03404sm1734114f8f.40.2025.05.15.07.56.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 15 May 2025 07:56:18 -0700 (PDT)
+Message-ID: <47603579-4d42-4617-8386-6656341c8d56@gmail.com>
+Date: Thu, 15 May 2025 15:56:18 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,39 +81,40 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] arm64: dts: mediatek: mt8188: Add missing
- #reset-cells property
-To: Julien Massot <julien.massot@collabora.com>, kernel@collabora.com,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- Garmin Chang <garmin.chang@mediatek.com>,
- Friday Yang <friday.yang@mediatek.com>
-Cc: Conor Dooley <conor.dooley@microchip.com>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
-References: <20250515-dtb-check-mt8188-v1-0-cda383cbeb4f@collabora.com>
- <20250515-dtb-check-mt8188-v1-2-cda383cbeb4f@collabora.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Subject: Re: [PATCH 1/6] prctl: introduce PR_THP_POLICY_DEFAULT_HUGE for the
+ process
+To: David Hildenbrand <david@redhat.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+ hannes@cmpxchg.org, shakeel.butt@linux.dev, riel@surriel.com,
+ ziy@nvidia.com, laoar.shao@gmail.com, baolin.wang@linux.alibaba.com,
+ Liam.Howlett@oracle.com, npache@redhat.com, ryan.roberts@arm.com,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, kernel-team@meta.com
+References: <20250515133519.2779639-1-usamaarif642@gmail.com>
+ <20250515133519.2779639-2-usamaarif642@gmail.com>
+ <c0af0eb2-d10f-4ee3-87dd-c23cca6cfd1a@lucifer.local>
+ <2d30bcce-6f80-468f-945d-b63eff726db5@redhat.com>
 Content-Language: en-US
-In-Reply-To: <20250515-dtb-check-mt8188-v1-2-cda383cbeb4f@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Usama Arif <usamaarif642@gmail.com>
+In-Reply-To: <2d30bcce-6f80-468f-945d-b63eff726db5@redhat.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Il 15/05/25 15:31, Julien Massot ha scritto:
-> The binding now require the '#reset-cells' property but the
-> devicetree has not been updated which trigger dtb-check errors.
+
+
+On 15/05/2025 15:44, David Hildenbrand wrote:
+> On 15.05.25 16:40, Lorenzo Stoakes wrote:
+>> Overall I feel this series should _DEFINITELY_ be an RFC. This is pretty
+>> outlandish stuff and needs discussion.
+>>
+>> You're basically making it so /sys/kernel/mm/transparent_hugepage/enabled =
+>> never is completely ignored and overridden.
 > 
-> Fixes: 9a5cd59640ac ("dt-bindings: clock: mediatek: Add SMI LARBs reset for MT8188")
+> I thought I made it very clear during earlier discussions that never means never.
+> 
 
-That's not really a fix though, so after you drop the Fixes tag.....
-
-> Signed-off-by: Julien Massot <julien.massot@collabora.com>
-
-....you can get my:
-
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-
+Yes never means never, this is only implementing your suggestion in the original series.
+If the policy is set to never, hugepage_global_always and hugepage_global_enabled will
+evaluate to false and we wont get a hugepage.
 
 
