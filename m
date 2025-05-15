@@ -1,168 +1,124 @@
-Return-Path: <linux-kernel+bounces-649708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-649710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 329B0AB8801
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 15:32:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1E36AB8806
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 15:32:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D77FB1BC4012
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 13:32:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EFABB4E6ED1
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 13:32:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EF061684A4;
-	Thu, 15 May 2025 13:31:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1463F1DDC1A;
+	Thu, 15 May 2025 13:31:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="PKCo5cJV"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ciq.com header.i=@ciq.com header.b="EGM4ScRm"
+Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 089E84B1E52;
-	Thu, 15 May 2025 13:31:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D10C678F26
+	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 13:31:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747315911; cv=none; b=tp5JtqAxkmOVjtQMJhyJpx6/KekR10anNuqEIkACVaQwxohdDizUMG/9XfUgU2edVMGarb3jH3d1cC8HNqYde0CNaZWEKoC1U+wgBah72Cly9N+sL41nII7sF9ugnK1GnpYF3yraUi366CXoqZ6D9I0afboaROmMZ4a1VFVxYkE=
+	t=1747315918; cv=none; b=QT4RzEwhTNc2MNxg/HOsjm2aIBISKGrcsOcx9mHGL64109yqScKRnhFZ1ldEfbopurtdIEfKdSGN/uLsV3KDE05h8/h3vYpPR3/b2cQLc3wU0rkdKxac1TbUMu+NReVrTtujQiP6PzOYKB+hAQolN73lQD9+ewfBUzAmysf3RIU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747315911; c=relaxed/simple;
-	bh=E6HitapnSoXVXZhWdCC31t/7KXrJLpjM/uxQsFuXi7o=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=X6g/IsW+/BeGjEjg3IujX7ycptAlVMN6fUvWojVkK8j+RDFKGVUIPMft2ZIEIFUfamlUqkHa1mv+ChqFVwIsUi03vLcbbMhHO3scsV3s6aXIOUnt4XMKZkGxPNyc/0buM13UkpSZEQBk5lCB0HaXRK4QXUGWxiov1wwkx/212Io=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=PKCo5cJV; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1747315908;
-	bh=E6HitapnSoXVXZhWdCC31t/7KXrJLpjM/uxQsFuXi7o=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=PKCo5cJVB6wGic0dq0bZjBjpRDl9J0G2Hvb9iKGzjFJlvY+OV2uPFHZi3oan+ESwY
-	 UYeGOpzVAoomdZmFj4NPIsDWyRVAZ+uVHZSXORtAvMYJ2L6PiWW8V1bi3I5He4KFrK
-	 hKrwumbAWn/qsUDgJw5mwqedNIzzMk01nnk3Zd17NjK9HWn62BxrlHsVSA+BNfWqUy
-	 g+Qu9ZK7fSRxhtBWA1VINdbLDUjyrLJrlvBeCGpE08tmilNo1GKzf3Gt2uny77p+Wu
-	 +WCCKqXznk2Jn97OVZuH3JFsNO/flF5Qx4+nBOnqVBY5fGIpi6tK354gXpH2uSHZST
-	 o+emaZ/modeGQ==
-Received: from apertis-1.home (2a01cb0892f2D600c8F85cf092D4Af51.ipv6.abo.wanadoo.fr [IPv6:2a01:cb08:92f2:d600:c8f8:5cf0:92d4:af51])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: jmassot)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 8BD1F17E0630;
-	Thu, 15 May 2025 15:31:47 +0200 (CEST)
-From: Julien Massot <julien.massot@collabora.com>
-Date: Thu, 15 May 2025 15:31:44 +0200
-Subject: [PATCH 2/3] arm64: dts: mediatek: mt8188: Add missing #reset-cells
- property
+	s=arc-20240116; t=1747315918; c=relaxed/simple;
+	bh=Y8GGo2AMVQLbxKDyPRfMjRfAQBjFC7gN/PCZcDvLNIo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TA3xwhm+sDtMk0Q4FyipISCIMlBeUCLx0TIUQ8F6B7zjPnCSlfVH3j09R+SOZ5GfXYGyvMRMHVnSV3AgFqSyO69XWrx7oPEPxmLQULl7KuUaIQiV3KDBie2E2E28IPWl6VDmXQ3Jvshq2fpTFf5IpGbmNE/3dkp0efzv9W1mJ24=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ciq.com; spf=pass smtp.mailfrom=ciq.com; dkim=pass (2048-bit key) header.d=ciq.com header.i=@ciq.com header.b=EGM4ScRm; arc=none smtp.client-ip=209.85.222.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ciq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ciq.com
+Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-7c5568355ffso76931785a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 06:31:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ciq.com; s=s1; t=1747315916; x=1747920716; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=idQ7sd0YlO6Ua6mQ5kuc0PUAbrEds8+KAPjDg8rCdTM=;
+        b=EGM4ScRmj1n/VlfczGUQ5cHVcYCC+BIk19rooYOGJRVROie3Do3pZ2Ri7j72vmyZmJ
+         7xtWF78/oO15hpoBEEtWfxy18UtVRE3npxpuKGGy12NctkfAOn0hf4dEUYds4Bwe8UGC
+         lIReRIQ12AhEQT/Qw/kIIjZK60VnuDpvB2olS4Pcc6tkXuMBQN13WYkBZO9HpR1lEiB5
+         /VobMaDmnpGygaUzGMxIc8ztKjvrL8m9w7jrEws4l2+ta8b/PLKBMGuHx4oi62eXuDGZ
+         jpCLEiduTnPE2vOrdapI+Uy4dQjya1Kww5LAHlCTPhZyAdHdOqZKiodUrncE7LcP0SbC
+         fXRg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747315916; x=1747920716;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=idQ7sd0YlO6Ua6mQ5kuc0PUAbrEds8+KAPjDg8rCdTM=;
+        b=vopimpiW6kH/jv2s4+XYt9doOL+qE9NjN0LTceIucMAcrXxSniGstwH04v7wv1QnIC
+         Wj/35fOKycWWT47os7mxLCi7xOSnjTuHfD6URdzpy0Lk5qyG/9w8kDzhe6Pbe6ro3gaw
+         BPl9G1Z0znfN2x5E8qdeXFJHy2QG3R6ciZfjkYyXfkkBsvbES/jOQB7rDpEgaZClnQjV
+         CrZustQdIRUTWXcs/tJNniO+m5r2xTUmoHaX9zTrQFOr1AeRSouwrutENcxx4g0HlTfJ
+         tMk3TF7yA2LVKpMpCylQ0IaF07PnIp8BpECWxCOxgmJ/lzfOxIXk0GJlXqCxb4RlDOm2
+         JP2g==
+X-Forwarded-Encrypted: i=1; AJvYcCV2o89OIEwbl3RlCvOO/0kQU+hWWSAbLc4E5PbMwp+FnUYEUYIEG3xy66TgH+LgaYf6PnZF33+y6EUU/to=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMBqK7U8I7yx0JlomLtnKQlMcxwdtg8s/loY4oPRcR7d72/VEG
+	G3R1SAfeZrJm9lTV1RKQWe8jafCaY74FNCvjHitB7BECtApvvikxLdYfrfsusLB4HBnhOxnL9MC
+	+qCNtirzxQ1XHpqYh4EhS1N5Q0x056fpFnvxmjA==
+X-Gm-Gg: ASbGncuaoHw+FDoIhy9oAm3okg/QCq2cXIZEB7DF5B7n0DImhPVtEl0BzjGt5f+LSXe
+	5GDo00b1cneecLxWiexBHTQ3EO6DATnXc8kKMcjMBBtpp4YaSIYfc2q5sZjSnYtd7nWBwa60SSu
+	cwxN4gDEpyDBvyIVvX2/35fFhvdC+/keln
+X-Google-Smtp-Source: AGHT+IFftrViizvwzo527CdaZ+aGd3PB2+/eA4itoniQfclfljSm+WYpnBXwFNoTgGMvKSyjqiFv6xwETd/kIumJRy0=
+X-Received: by 2002:a05:620a:2445:b0:7c7:b4ba:ebf9 with SMTP id
+ af79cd13be357-7cd287e16bemr972802585a.22.1747315915661; Thu, 15 May 2025
+ 06:31:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250515-dtb-check-mt8188-v1-2-cda383cbeb4f@collabora.com>
-References: <20250515-dtb-check-mt8188-v1-0-cda383cbeb4f@collabora.com>
-In-Reply-To: <20250515-dtb-check-mt8188-v1-0-cda383cbeb4f@collabora.com>
-To: kernel@collabora.com, Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Garmin Chang <garmin.chang@mediatek.com>, 
- Friday Yang <friday.yang@mediatek.com>
-Cc: Conor Dooley <conor.dooley@microchip.com>, linux-clk@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
- Julien Massot <julien.massot@collabora.com>
-X-Mailer: b4 0.14.2
+References: <20250514125624.330060065@linuxfoundation.org>
+In-Reply-To: <20250514125624.330060065@linuxfoundation.org>
+From: Brett Mastbergen <bmastbergen@ciq.com>
+Date: Thu, 15 May 2025 09:31:44 -0400
+X-Gm-Features: AX0GCFt_T4qmlAP_NoDOQdZAbnEbFphd6WaqCYxvy8tpdv3fkVAu8JdgYSY-VoQ
+Message-ID: <CAOBMUvhtrfhJ7s2s6nL3dSoq2a3YwrHV60eRQ5e4si6Qhu3tdA@mail.gmail.com>
+Subject: Re: [PATCH 6.12 000/184] 6.12.29-rc2 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
+	broonie@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The binding now require the '#reset-cells' property but the
-devicetree has not been updated which trigger dtb-check errors.
+On Wed, May 14, 2025 at 9:06=E2=80=AFAM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 6.12.29 release.
+> There are 184 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Fri, 16 May 2025 12:55:38 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
+6.12.29-rc2.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-6.12.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-Fixes: 9a5cd59640ac ("dt-bindings: clock: mediatek: Add SMI LARBs reset for MT8188")
-Signed-off-by: Julien Massot <julien.massot@collabora.com>
----
- arch/arm64/boot/dts/mediatek/mt8188.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+Builds successfully.  Boots and works on qemu and Dell XPS 15 9520 w/
+Intel Core i7-12600H
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt8188.dtsi b/arch/arm64/boot/dts/mediatek/mt8188.dtsi
-index 296090fbaf4953db8075f72073509b731dc41e51..dec6ce3e94e92c8e1e2c3680cb3584394d9058bd 100644
---- a/arch/arm64/boot/dts/mediatek/mt8188.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt8188.dtsi
-@@ -2647,36 +2647,42 @@ imgsys1_dip_top: clock-controller@15110000 {
- 			compatible = "mediatek,mt8188-imgsys1-dip-top";
- 			reg = <0 0x15110000 0 0x1000>;
- 			#clock-cells = <1>;
-+			#reset-cells = <1>;
- 		};
- 
- 		imgsys1_dip_nr: clock-controller@15130000 {
- 			compatible = "mediatek,mt8188-imgsys1-dip-nr";
- 			reg = <0 0x15130000 0 0x1000>;
- 			#clock-cells = <1>;
-+			#reset-cells = <1>;
- 		};
- 
- 		imgsys_wpe1: clock-controller@15220000 {
- 			compatible = "mediatek,mt8188-imgsys-wpe1";
- 			reg = <0 0x15220000 0 0x1000>;
- 			#clock-cells = <1>;
-+			#reset-cells = <1>;
- 		};
- 
- 		ipesys: clock-controller@15330000 {
- 			compatible = "mediatek,mt8188-ipesys";
- 			reg = <0 0x15330000 0 0x1000>;
- 			#clock-cells = <1>;
-+			#reset-cells = <1>;
- 		};
- 
- 		imgsys_wpe2: clock-controller@15520000 {
- 			compatible = "mediatek,mt8188-imgsys-wpe2";
- 			reg = <0 0x15520000 0 0x1000>;
- 			#clock-cells = <1>;
-+			#reset-cells = <1>;
- 		};
- 
- 		imgsys_wpe3: clock-controller@15620000 {
- 			compatible = "mediatek,mt8188-imgsys-wpe3";
- 			reg = <0 0x15620000 0 0x1000>;
- 			#clock-cells = <1>;
-+			#reset-cells = <1>;
- 		};
- 
- 		camsys: clock-controller@16000000 {
-@@ -2689,24 +2695,28 @@ camsys_rawa: clock-controller@1604f000 {
- 			compatible = "mediatek,mt8188-camsys-rawa";
- 			reg = <0 0x1604f000 0 0x1000>;
- 			#clock-cells = <1>;
-+			#reset-cells = <1>;
- 		};
- 
- 		camsys_yuva: clock-controller@1606f000 {
- 			compatible = "mediatek,mt8188-camsys-yuva";
- 			reg = <0 0x1606f000 0 0x1000>;
- 			#clock-cells = <1>;
-+			#reset-cells = <1>;
- 		};
- 
- 		camsys_rawb: clock-controller@1608f000 {
- 			compatible = "mediatek,mt8188-camsys-rawb";
- 			reg = <0 0x1608f000 0 0x1000>;
- 			#clock-cells = <1>;
-+			#reset-cells = <1>;
- 		};
- 
- 		camsys_yuvb: clock-controller@160af000 {
- 			compatible = "mediatek,mt8188-camsys-yuvb";
- 			reg = <0 0x160af000 0 0x1000>;
- 			#clock-cells = <1>;
-+			#reset-cells = <1>;
- 		};
- 
- 		ccusys: clock-controller@17200000 {
+Tested-by: Brett Mastbergen <bmastbergen@ciq.com>
 
--- 
-2.49.0
-
+Thanks,
+Brett
 
