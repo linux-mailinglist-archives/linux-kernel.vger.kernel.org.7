@@ -1,117 +1,110 @@
-Return-Path: <linux-kernel+bounces-648725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-648727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93F5EAB7AD7
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 03:10:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82AE0AB7ADB
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 03:10:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E5654C7C93
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 01:10:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 423A61BA6B54
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 01:11:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5A4B239E8A;
-	Thu, 15 May 2025 01:10:02 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42944269AE6;
+	Thu, 15 May 2025 01:10:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="nE+5GleE"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 871B7801
-	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 01:09:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5D8A269880;
+	Thu, 15 May 2025 01:10:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747271402; cv=none; b=m+2spRI33rb8y7Oq31pJFt4TvcCQTNYGiO1HeAfDRYJCIDPb8TDAGm3YzaBszwcLmN+Ig1mVSgnI4+WQKkUQ97AGT9a8epAqQ+IW9gGYNt+tqc7UXiO7aohgh93LrgVfDpKn63okHX4HhQCeY+Gqz7pex6UUu2CLBKgBA4vhXaw=
+	t=1747271439; cv=none; b=dF7Qp21hETz+aOH/gfXymCjeqFSnqNfBbUvNMdAr+f9qP87AoP3ZvV/aDK3QIrLVe5kN1IgxW0rc7GwL+g27AsD/bn0yqGSMzH+Dsx1FSUEZSBI9YldrGtAtsWXaP/uXcpkqHlWkKHOGWPMQT7e3X9EeZ3CtJAUvlJrttVkRzXU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747271402; c=relaxed/simple;
-	bh=aDjA6Rzbza+c88Sx3+XCpBplINzeHkIDfLCQJ3ubBZU=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=hDc9/MJgVAu0maA03/PRfdrhWty2aAPAJIncsE3PNjVafflF923yYu09oAGtGU4JWC23mFLFv+x2p3uNxTY90p/FvuJURtl+/5QMMj5QEDlUw94j1SPfrH3XzU0XRF0SgLwuDykMxvGaie50DRCfEpCcViu6B1b+jWRedrYs7qY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4ZyXF20ytSzKHLy2
-	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 09:09:58 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id BE6851A018D
-	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 09:09:56 +0800 (CST)
-Received: from [10.174.178.129] (unknown [10.174.178.129])
-	by APP4 (Coremail) with SMTP id gCh0CgDHKF3kPiVoN_TCMQ--.32358S2;
-	Thu, 15 May 2025 09:09:56 +0800 (CST)
-Subject: Re: [PATCH 4/5] mm: shmem: keep inode in swaplist when failed to
- allocate swap entry in shmem_writepage()
-To: Baolin Wang <baolin.wang@linux.alibaba.com>, hughd@google.com,
- akpm@linux-foundation.org
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <20250514165047.946884-1-shikemeng@huaweicloud.com>
- <20250514165047.946884-5-shikemeng@huaweicloud.com>
- <fe00c756-8c1c-4219-af16-8bb9f6300bbc@linux.alibaba.com>
-From: Kemeng Shi <shikemeng@huaweicloud.com>
-Message-ID: <17224d95-edd8-d426-1110-1332e329f746@huaweicloud.com>
-Date: Thu, 15 May 2025 09:09:55 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+	s=arc-20240116; t=1747271439; c=relaxed/simple;
+	bh=EA/SS/an8re5rk6oROj81WcuCzN+FTfX/QGAoBvCtTc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YS3QTS31vw4FvLj2Rqx2Rk0nuC8JDR5Jd6RVX4nnFwOZhtbExiuApJhzIh1roWosMkHtkvO76wQJ/+jm/2aFJp/+IeIeLwRUkF4iKiiClguA+H/d5I/SfWdBFiHDgEQu9bhrFDJLcUedzyUaxOaFLnfB91cVGq8ON93dYDJXeyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=nE+5GleE; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=Rgze/gk20gcMc5t1HLHy2uBvblNz3B5eJhJy+7TrjeQ=; b=nE+5GleEusC4oX5Y2MkFdKdCYH
+	/EM4+ydrgWChVXHmg84vCY1rG6uY25n6p53c+IhIq0E2Or94kZ45GNvQIkXBPg2ne4YpXZBE/uyhk
+	U61rEsohwGSEmsuBqA3UDukS/G9q/AzG7qwbBn7SScTFm8yWGSwrqumNVArLs//GCbok=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1uFN7A-00CcQf-1f; Thu, 15 May 2025 03:10:24 +0200
+Date: Thu, 15 May 2025 03:10:24 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Marek Pazdan <mpazdan@arista.com>
+Cc: aleksander.lobakin@intel.com, almasrymina@google.com,
+	andrew+netdev@lunn.ch, anthony.l.nguyen@intel.com,
+	daniel.zahka@gmail.com, davem@davemloft.net, ecree.xilinx@gmail.com,
+	edumazet@google.com, gal@nvidia.com, horms@kernel.org,
+	intel-wired-lan@lists.osuosl.org, jianbol@nvidia.com,
+	kory.maincent@bootlin.com, kuba@kernel.org,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	pabeni@redhat.com, przemyslaw.kitszel@intel.com, willemb@google.com
+Subject: Re: [PATCH net-next v2 1/2] ethtool: qsfp transceiver reset,
+ interrupt and presence pin control
+Message-ID: <c6c33e70-267f-4433-95ca-93efca0dfbe8@lunn.ch>
+References: <6f127b5b-77c6-4bd4-8124-8eea6a12ca61@lunn.ch>
+ <20250513224017.202236-1-mpazdan@arista.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <fe00c756-8c1c-4219-af16-8bb9f6300bbc@linux.alibaba.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgDHKF3kPiVoN_TCMQ--.32358S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Cr15uw1UJryDtFW8Kw4fAFb_yoW8GrWkpr
-	WkJ3s8GFWrZry8Crs7Xw4v9ryFgw48tw4UGF4SkF18ZFnIqwnY9FyjqFy0gr93ZrZ7Xr1j
-	qF1qgFnrZF4UtaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkEb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxk0xIA0c2IEe2xFo4CEbIxvr21lc7CjxVAaw2AF
-	wI0_JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1D
-	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
-	0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
-	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07UtR6
-	wUUUUU=
-X-CM-SenderInfo: 5vklyvpphqwq5kxd4v5lfo033gof0z/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250513224017.202236-1-mpazdan@arista.com>
 
+On Tue, May 13, 2025 at 10:40:00PM +0000, Marek Pazdan wrote:
+> Common Management Interface Specification defines
+> Management Signaling Layer (MSL) control and status signals. This change
+> provides API for following signals status reading:
+> - signal allowing the host to request module reset (Reset)
+> - signal allowing the host to detect module presence (Presence)
+> - signal allowing the host to detect module interrupt (Int)
 
+What is missing from here is the use cases you are trying to
+address. Why should user space want to reset the module? Why does user
+spare care if there is a module inserted or not. What is user space
+going to do with an interrupt?
 
-on 5/14/2025 5:31 PM, Baolin Wang wrote:
-> 
-> 
-> On 2025/5/15 00:50, Kemeng Shi wrote:
->> Even if we fail to allocate a swap entry, the inode might have previously
->> allocated entry and we might take inode containing swap entry off swaplist.
->> As a result, try_to_unuse() may enter a potential dead loop to repeatedly
->> look for inode and clean it's swap entry.
->> Address this by keeping inode in swaplist even if we fail to allocate
->> swap entry as it does not pose significant problem to keep inode without
->> swap entry in swaplist.
->>
->> Fixes: b487a2da3575b ("mm, swap: simplify folio swap allocation")
->> Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
->> ---
->>   mm/shmem.c | 2 --
->>   1 file changed, 2 deletions(-)
->>
->> diff --git a/mm/shmem.c b/mm/shmem.c
->> index 0fed94c2bc09..dfd2f730833c 100644
->> --- a/mm/shmem.c
->> +++ b/mm/shmem.c
->> @@ -1651,8 +1651,6 @@ static int shmem_writepage(struct page *page, struct writeback_control *wbc)
->>           BUG_ON(folio_mapped(folio));
->>           return swap_writepage(&folio->page, wbc);
->>       }
->> -
->> -    list_del_init(&info->swaplist);
-> 
-> If 'info->swapped' is 0, we can still remove it?
-> 
-Sure, both approaches are acceptable to me: either keep it in list unconditionlly as it was done in old
-behavior, or remove it if it's info->swapped is 0.
+> Additionally API allows for Reset signal assertion with
+> following constraints:
+> - reset cannot be asserted if firmware update is in progress
+> - if reset is asserted, firmware update cannot be started
+> - if reset is asserted, power mode cannot be get/set
+> In all above constraint cases -EBUSY error is returned.
 
+Seems like there should be one more condition. Reset cannot be
+asserted if the interface is admin up. I assume a reset is disruptive
+to the link, so you don't want it to happen when the link is in use.
+
+> +static int module_mgmt_get(struct net_device *dev,
+> +			   struct module_mgmt_reply_data *data,
+> +			   const struct genl_info *info)
+> +{
+> +	const struct ethtool_ops *ops = dev->ethtool_ops;
+> +	struct netlink_ext_ack *extack = info ? info->extack : NULL;
+> +
+> +	if (!ops->get_module_mgmt_signal)
+> +		return -EOPNOTSUPP;
+> +
+> +	return ops->get_module_mgmt_signal(dev, &data->mgmt, extack);
+
+Should there be a module_busy() check here? Can you get these
+parameters if the module is in reset?
+
+	Andrew
 
