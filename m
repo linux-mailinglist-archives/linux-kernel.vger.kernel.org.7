@@ -1,39 +1,81 @@
-Return-Path: <linux-kernel+bounces-649676-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-649679-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6ACD9AB8799
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 15:14:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CF35AB87A6
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 15:16:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F03594C48D1
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 13:14:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 367A14E33D6
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 13:16:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E33529A9E7;
-	Thu, 15 May 2025 13:14:30 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 532191BC4E;
-	Thu, 15 May 2025 13:14:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A421A25761;
+	Thu, 15 May 2025 13:16:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ekz6JbB7"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6244E2581;
+	Thu, 15 May 2025 13:16:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747314869; cv=none; b=D1wezY7J659P9W6T9uaO0K+0sNt/wow6MqDXpQydn5WsxflF8U+66Qpt5HZoNqFsium1ETXvdBhAAEldvZCZevhiGZKi/fQn4MnBJkh/6d/9xYh6PbKmB9wQsg46j+YOSWQAZlPBeTNRkOOr/EPHBAiQoWEn5n99N2891xL2TVg=
+	t=1747314978; cv=none; b=dbKIFz215gldemHYxoKqH2j4ntajPv2DTGO8ObD3iPA2id+9QQnMMR0armpC0pE2a3c9GD2d3A01KUnBI18EUGhCyfUl5vixjVocF7JZDFsApFRr68vh77Hc/pTfWoVIgqrLqT2ZaVVzMrEP+tEvkXdqyddihwSosJVkmPp8qTA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747314869; c=relaxed/simple;
-	bh=/hLA+6nCAyhMG0wsMlOqsGR2pq4/83HOduMcfHlrHlE=;
+	s=arc-20240116; t=1747314978; c=relaxed/simple;
+	bh=/foRtK30244Y6vx7qd0F0GOygInRY+jAMjfoJ/j1WrE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hOp21qmv/YuKbD85qo+d8juGiZe5sgUwW62YSPTqyjzL3z656VzXaN+A6SFib1OJyVgVBt5RwSCKeQiRKA+K2j7XgJY5Ak6r5HhTDWxZoE4al8bDeIkXo8ep7rsIr+AaXtCM+drpVZPZRBagJLXH+JYlYG9/lNCtzfB3WtF7iM8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C99E91595;
-	Thu, 15 May 2025 06:14:14 -0700 (PDT)
-Received: from [10.1.32.187] (XHFQ2J9959.cambridge.arm.com [10.1.32.187])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2A4AC3F5A1;
-	Thu, 15 May 2025 06:14:25 -0700 (PDT)
-Message-ID: <bfd07631-fece-48fe-90a3-778ce9abfbf1@arm.com>
-Date: Thu, 15 May 2025 14:14:23 +0100
+	 In-Reply-To:Content-Type; b=f5UMRCjhsBstSPbFltRH+EASMvj2ItS5m8eTD5N8P/joQDxCl43bd+0GHD8+c+TtHDDRTstiz2Ug2lV1uh0mYoVlBMeKQxWJAk/IJjOq6xtBghw8oi+X5lLVxlhGP4Cbu6qwaTf8UIvJKEurbRPT2ZmLKO/HacZQS1/TZqWfDq4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ekz6JbB7; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54FCgBGF004810;
+	Thu, 15 May 2025 13:15:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=K8eSWs
+	kk7y1WnwI4RQTrKWmfmUf+E2VpeXbQUkcUybc=; b=ekz6JbB7iUMeaJO8Zgm/xD
+	HiKuN5VxsRPhASWlfw3z9j/4ZXlKZHTlh0+qiPamAMwQzafpe5Shdj99iezgRgoz
+	mmQdzP1STPkxj9Kn028nFKNbe2JP9+8/DjUzKqLPqAAvSCQFUxqKnYrkDlwhMJtr
+	3OWwiCzuYfUad9CBOvc7mnDZVguFNN27n60vE6mMpkpvc8EEmkBI32maBTtpPqov
+	mTFJL4ZbDKXCO1gRAmJIfGMgYSpFSZqLqNwlAKR7tlxp7o6/ZjitC0SPHebcm/GS
+	+A/46xynLr6IwE+5rVrkJxxu+DRoMZUfb44AaF5FN5FvWZecQY2OGRLSWQkhDW0w
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46ndfjs5h4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 15 May 2025 13:15:58 +0000 (GMT)
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 54FD9JMO003541;
+	Thu, 15 May 2025 13:15:57 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46ndfjs5h2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 15 May 2025 13:15:57 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 54FAls4p026947;
+	Thu, 15 May 2025 13:15:57 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 46mbfpjavc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 15 May 2025 13:15:57 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 54FDFtfr33555120
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 15 May 2025 13:15:55 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 5FFF32006A;
+	Thu, 15 May 2025 13:15:55 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 0C0BC20067;
+	Thu, 15 May 2025 13:15:55 +0000 (GMT)
+Received: from [9.152.212.229] (unknown [9.152.212.229])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 15 May 2025 13:15:54 +0000 (GMT)
+Message-ID: <ec0827aa-0bae-4625-ad60-f1a1765a4811@linux.ibm.com>
+Date: Thu, 15 May 2025 15:15:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,148 +83,100 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: Check pxd_leaf() instead of !pxd_table() while
- tearing down page tables
-Content-Language: en-GB
-To: David Hildenbrand <david@redhat.com>, Dev Jain <dev.jain@arm.com>,
- catalin.marinas@arm.com, will@kernel.org
-Cc: anshuman.khandual@arm.com, mark.rutland@arm.com,
- yang@os.amperecomputing.com, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, stable@vger.kernel.org
-References: <20250515063450.86629-1-dev.jain@arm.com>
- <332ecda7-14c4-4dc3-aeff-26801b74ca04@redhat.com>
- <4904d02f-6595-4230-a321-23327596e085@arm.com>
- <6fe7848c-485e-4639-b65c-200ed6abe119@redhat.com>
- <35ef7691-7eac-4efa-838d-c504c88c042b@arm.com>
- <c06930f0-f98c-4089-aa33-6789b95fd08f@redhat.com>
- <bac0d8e2-6219-4eb2-b4c8-b82b208808b5@arm.com>
- <3aeb6b8e-040c-47ae-8b46-1ef66d5f11e4@redhat.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <3aeb6b8e-040c-47ae-8b46-1ef66d5f11e4@redhat.com>
+Subject: Re: [PATCH V2 06/15] s390/perf: Remove driver-specific throttle
+ support
+To: kan.liang@linux.intel.com, peterz@infradead.org, mingo@redhat.com,
+        namhyung@kernel.org, irogers@google.com, mark.rutland@arm.com,
+        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
+Cc: eranian@google.com, ctshao@google.com, linux-s390@vger.kernel.org
+References: <20250514151401.2547932-1-kan.liang@linux.intel.com>
+ <20250514151401.2547932-7-kan.liang@linux.intel.com>
+Content-Language: en-US
+From: Thomas Richter <tmricht@linux.ibm.com>
+Organization: IBM
+In-Reply-To: <20250514151401.2547932-7-kan.liang@linux.intel.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: TiGGmCsi-Q4CEQDqJeIsc5m_1DEQCo2c
+X-Authority-Analysis: v=2.4 cv=ecg9f6EH c=1 sm=1 tr=0 ts=6825e90e cx=c_pps a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=QyXUC8HyAAAA:8 a=VnNF1IyMAAAA:8 a=VwQbUJbxAAAA:8 a=3pcsZ_9yFVMwK54gUSUA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-Proofpoint-ORIG-GUID: _xFvpzNXaCvkt0etVGSLJ4aTiaHA05X6
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTE1MDEyOSBTYWx0ZWRfX00XKEgoWCOzp H3lB03YVH+jZWCa/UwtLfav8AUW+QPtdjmuVQ9mDElOouHi6fNfP5SCQ3xcxc8WEJs4GVRoxnQd ah8WwpSpfchkibE54oAicenS7Iev+pj0iuuUy7paXW8gkVcVzOr8VxKxSprloUi5PEmUdv51pfE
+ CcwHO16L/UWcfHsBfpFg8msOwx9/x85jDxF2WRky8/fQTC1h/JN59ygteY2CCkB62sSTCCslZYX p4vsBZLoSuopVeyskF82oq48AcwIvUGKKkbYY/YkfzXjivg9JiYv7Rw9En3MbFRknwaTB8Y/i3a 2Vp0CVrvDuUC7PPUI9bTsS+yl8Zpzu+LHB4CEvyvqXwmyeyJB7Pb1GxyafB+wHfVqfKcDube5lb
+ nrnvEtgxqQq4BSAbFv8Efql+sFlroIJ2HVilet9Mo5uWstIfRgZQCipLZZJe1fzEizSAy2YT
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-15_05,2025-05-14_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
+ impostorscore=0 spamscore=0 clxscore=1015 malwarescore=0 mlxscore=0
+ lowpriorityscore=0 priorityscore=1501 adultscore=0 bulkscore=0
+ suspectscore=0 phishscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505070000
+ definitions=main-2505150129
 
-On 15/05/2025 14:01, David Hildenbrand wrote:
-> On 15.05.25 12:07, Ryan Roberts wrote:
->> On 15/05/2025 09:53, David Hildenbrand wrote:
->>> On 15.05.25 10:47, Dev Jain wrote:
->>>>
->>>>
->>>> On 15/05/25 2:06 pm, David Hildenbrand wrote:
->>>>> On 15.05.25 10:22, Dev Jain wrote:
->>>>>>
->>>>>>
->>>>>> On 15/05/25 1:43 pm, David Hildenbrand wrote:
->>>>>>> On 15.05.25 08:34, Dev Jain wrote:
->>>>>>>> Commit 9c006972c3fe removes the pxd_present() checks because the caller
->>>>>>>> checks pxd_present(). But, in case of vmap_try_huge_pud(), the caller
->>>>>>>> only
->>>>>>>> checks pud_present(); pud_free_pmd_page() recurses on each pmd through
->>>>>>>> pmd_free_pte_page(), wherein the pmd may be none.
->>>>>>> The commit states: "The core code already has a check for pXd_none()",
->>>>>>> so I assume that assumption was not true in all cases?
->>>>>>>
->>>>>>> Should that one problematic caller then check for pmd_none() instead?
->>>>>>
->>>>>>     From what I could gather of Will's commit message, my interpretation is
->>>>>> that the concerned callers are vmap_try_huge_pud and vmap_try_huge_pmd.
->>>>>> These individually check for pxd_present():
->>>>>>
->>>>>> if (pmd_present(*pmd) && !pmd_free_pte_page(pmd, addr))
->>>>>>       return 0;
->>>>>>
->>>>>> The problem is that vmap_try_huge_pud will also iterate on pte entries.
->>>>>> So if the pud is present, then pud_free_pmd_page -> pmd_free_pte_page
->>>>>> may encounter a none pmd and trigger a WARN.
->>>>>
->>>>> Yeah, pud_free_pmd_page()->pmd_free_pte_page() looks shaky.
->>>>>
->>>>> I assume we should either have an explicit pmd_none() check in
->>>>> pud_free_pmd_page() before calling pmd_free_pte_page(), or one in
->>>>> pmd_free_pte_page().
->>>>>
->>>>> With your patch, we'd be calling pte_free_kernel() on a NULL pointer,
->>>>> which sounds wrong -- unless I am missing something important.
->>>>
->>>> Ah thanks, you seem to be right. We will be extracting table from a none
->>>> pmd. Perhaps we should still bail out for !pxd_present() but without the
->>>> warning, which the fix commit used to do.
->>>
->>> Right. We just make sure that all callers of pmd_free_pte_page() already check
->>> for it.
->>>
->>> I'd just do something like:
->>
->> I just reviewed the patch and had the same feedback as David. I agree with the
->> patch below, with some small mods...
->>
->>>
->>> diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
->>> index 8fcf59ba39db7..e98dd7af147d5 100644
->>> --- a/arch/arm64/mm/mmu.c
->>> +++ b/arch/arm64/mm/mmu.c
->>> @@ -1274,10 +1274,8 @@ int pmd_free_pte_page(pmd_t *pmdp, unsigned long addr)
->>>            pmd = READ_ONCE(*pmdp);
->>>   -       if (!pmd_table(pmd)) {
->>> -               VM_WARN_ON(1);
->>> -               return 1;
->>> -       }
->>> +       VM_WARN_ON(!pmd_present(pmd));
->>> +       VM_WARN_ON(!pmd_table(pmd));
->>
->> You don't need both of these warnings; pmd_table() is only true if the pmd is
->> present (well actually only if it's _valid_ which is more strict than present),
->> so the second one is sufficient on its own.
+On 5/14/25 17:13, kan.liang@linux.intel.com wrote:
+> From: Kan Liang <kan.liang@linux.intel.com>
 > 
-> Ah, right.
+> The throttle support has been added in the generic code. Remove
+> the driver-specific throttle support.
 > 
->>
->>>            table = pte_offset_kernel(pmdp, addr);
->>>          pmd_clear(pmdp);
->>> @@ -1305,7 +1303,8 @@ int pud_free_pmd_page(pud_t *pudp, unsigned long addr)
->>
->> Given you are removing the runtime check and early return in
->> pmd_free_pte_page(), I think you should modify this function to use the same
->> style too.
+> Besides the throttle, perf_event_overflow may return true because of
+> event_limit. It already does an inatomic event disable. The pmu->stop
+> is not required either.
 > 
-> BTW, the "return 1" is weird. But looking at x86, we seem to be making a private
-> copy of the page table first, to defer freeing the page tables after the TLB flush.
+> Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+> Cc: Thomas Richter <tmricht@linux.ibm.com>
+> Cc: linux-s390@vger.kernel.org
+> ---
+>  arch/s390/kernel/perf_cpum_cf.c | 2 --
+>  arch/s390/kernel/perf_cpum_sf.c | 5 +----
+>  2 files changed, 1 insertion(+), 6 deletions(-)
 > 
-> I wonder if there isn't a better way (e.g., clear PUDP + flush tlb, then walk
-> over the effectively-disconnected page table). But I'm sure there is a good
-> reason for that.
+> diff --git a/arch/s390/kernel/perf_cpum_cf.c b/arch/s390/kernel/perf_cpum_cf.c
+> index e657fad7e376..6a262e198e35 100644
+> --- a/arch/s390/kernel/perf_cpum_cf.c
+> +++ b/arch/s390/kernel/perf_cpum_cf.c
+> @@ -980,8 +980,6 @@ static int cfdiag_push_sample(struct perf_event *event,
+>  	}
+>  
+>  	overflow = perf_event_overflow(event, &data, &regs);
+> -	if (overflow)
+> -		event->pmu->stop(event, 0);
+>  
+>  	perf_event_update_userpage(event);
+>  	return overflow;
+> diff --git a/arch/s390/kernel/perf_cpum_sf.c b/arch/s390/kernel/perf_cpum_sf.c
+> index ad22799d8a7d..91469401f2c9 100644
+> --- a/arch/s390/kernel/perf_cpum_sf.c
+> +++ b/arch/s390/kernel/perf_cpum_sf.c
+> @@ -1072,10 +1072,7 @@ static int perf_push_sample(struct perf_event *event,
+>  	overflow = 0;
+>  	if (perf_event_exclude(event, &regs, sde_regs))
+>  		goto out;
+> -	if (perf_event_overflow(event, &data, &regs)) {
+> -		overflow = 1;
+> -		event->pmu->stop(event, 0);
+> -	}
+> +	overflow = perf_event_overflow(event, &data, &regs);
+>  	perf_event_update_userpage(event);
+>  out:
+>  	return overflow;
 
-As I understand it, the actual TLB entries should have been invalidated when the
-previous mappings we vfree'd. So the single page __flush_tlb_kernel_pgtable()
-calls here are to zap any table entries that may be in the walk cache. We could
-do an all-levels TLBI for the entire range, but for a system that doesn't
-support the tlbi-range operations, we would end up issuing a tlbi per page
-across the whole range which I think would be much slower than the one tlbi per
-pgtable we have here.
+I have installed patch 1 and 6 on top of the linux-next kernel today.
+The results look good, much better than before, but I still do not
+get both counter values in sync on each iteration all the time.
 
-Things could be rearranged a bit so that we issue all the tlbis with only a
-single set of barriers (currently each __flush_tlb_kernel_pgtable() issues it's
-own barriers), but I'm not sure how important that micro-optimization is given I
-guess we never even call pud_free_pmd_page() in practice given we have had no
-reports of the warning tripping.
+Tested-by: Thomas Richter <tmricht@linux.ibm.com>
 
-> 
->>
->>>          next = addr;
->>>          end = addr + PUD_SIZE;
->>>          do {
->>> -               pmd_free_pte_page(pmdp, next);
->>> +               if (pmd_present(*pmdp))
->>
->> question: I wonder if it is better to use !pmd_none() as the condition here? It
->> should either be none or a table at this point, so this allows the warning in
->> pmd_free_pte_page() to catch more error conditions. No strong opinion though.
-> 
-> Same here. The existing callers check pmd_present().
+-- 
+Thomas Richter, Dept 3303, IBM s390 Linux Development, Boeblingen, Germany
+--
+IBM Deutschland Research & Development GmbH
 
-Yeah fair let's be consistent and use pmd_present().
+Vorsitzender des Aufsichtsrats: Wolfgang Wendt
 
-Thanks,
-Ryan
+Geschäftsführung: David Faller
 
+Sitz der Gesellschaft: Böblingen / Registergericht: Amtsgericht Stuttgart, HRB 243294
 
