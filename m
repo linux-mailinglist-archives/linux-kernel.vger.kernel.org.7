@@ -1,114 +1,138 @@
-Return-Path: <linux-kernel+bounces-649195-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-649194-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1739FAB8148
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 10:48:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2198AB8151
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 10:49:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B7B5A4C11D3
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 08:48:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46A4818894A4
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 08:48:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7077428CF6B;
-	Thu, 15 May 2025 08:47:38 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 689B728CF61;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A345288C0B;
 	Thu, 15 May 2025 08:47:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EEIillir"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FD1928C2DE;
+	Thu, 15 May 2025 08:47:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747298858; cv=none; b=Sih5NXnnfb6l6iNz8bssMBDeYsv4yp4RfKIJsIF/MKl2WUaoHU/Xm59aY6oOqjIuT68E17c+8QVv4bDaDl375eKSKU+x19CBE+Dsj8puDvA6ff4/q6/hJ+l+xBJ53hRKT/HDonBoWVFPTvCod923BI7rRwfIHwlmoiMOSGV+UXU=
+	t=1747298854; cv=none; b=aD2CUo6PRCcJVe/mHIIZlU4+MSvMFbjGKDWYTlQaE9a4KJ448xT40zMzv8HFP9kEepwz9caqFpALT/hSx2RycTe0fgGTVhUine3rcxdHTwI/CNecCOuVQ3u3DpfrrsngJ8IQhuSrdOPxY/6mNQ0g6Eg1ldmxSzJ4KqFz6YiH57c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747298858; c=relaxed/simple;
-	bh=Bw4wosFmdzVjrqAaQ4HVzmHqwpE1UTT+LbWM5M1KXAM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=paBpqdFNdANzETSXN7w11TplIN3tiW5M6+4XTmSGb4MB3EXfGQYR+t+GRYs3eBZ//umwxMQDBhoQZ3PBHUtpEPiW8JAmKk5Kn71Fzd0mkK4dxeOkZ7a42XIBbw6ofALrTW12RcABeNvFuWDsO//AY+gIgkrBHQb1s3+58gH8VBY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CC1AC14BF;
-	Thu, 15 May 2025 01:47:21 -0700 (PDT)
-Received: from [10.162.40.26] (K4MQJ0H1H2.blr.arm.com [10.162.40.26])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 45DCD3F673;
-	Thu, 15 May 2025 01:47:30 -0700 (PDT)
-Message-ID: <35ef7691-7eac-4efa-838d-c504c88c042b@arm.com>
-Date: Thu, 15 May 2025 14:17:27 +0530
+	s=arc-20240116; t=1747298854; c=relaxed/simple;
+	bh=JQf0KUYpClVXmPjP/iEdYMIu0hxOkVfy6nTVgFHTH2I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c0IkgNQ5d/wZztxPhY472acOF4QigjMtNd2KbY4UMGJpT4xBoUcTK7URLKbbRwrhO8YYlXFrHcSEc9AheVuuB80if1b8O6dde2Mkm2GNyuUkCURQndGZk5h8/r2O9sFr/6p+6/KAQ5mxbI612QtxHOBhY2N+J8kbZRPtz0mLbDs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EEIillir; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1747298852; x=1778834852;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=JQf0KUYpClVXmPjP/iEdYMIu0hxOkVfy6nTVgFHTH2I=;
+  b=EEIillirghYcZrDSbXEty2vWNBCARAtO+Mo91TXK5CPT5TtqEEJtN306
+   nNaRHlRx5Uhe8663CnsJAWzeCHwDiKoTrc9odx3fmJj+NdOwPZqGzDErq
+   6j18kfhqr5KyEGY2/PpzLDLCK0U0OSd/R8ldBrZzqd4JT6iesC8i5dlRd
+   Z7bfNhdM4Jwc0bPSju/CZPefZbkpINvuFYa9mL3s6wthVsqIwywsZ31Uo
+   RUfRw7eAc+UXLPUURBJ9tc6fiY+0UgW3Pd1feKOwWmLyLnC+pnmIRuIN2
+   OJgYsjQcBHIM3aEilleBufJZhrAJcDeRDR1cTkAOKvLUU2vMlYefzxiUJ
+   g==;
+X-CSE-ConnectionGUID: 6oLsw2M2SzCiQ5eG+jxm5Q==
+X-CSE-MsgGUID: jMqX6Zu2QT2qTX4gASBwyg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11433"; a="49091930"
+X-IronPort-AV: E=Sophos;i="6.15,290,1739865600"; 
+   d="scan'208";a="49091930"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2025 01:47:31 -0700
+X-CSE-ConnectionGUID: mPH9vmttQH6yA7EjgzTlbA==
+X-CSE-MsgGUID: D06Ny8/XRlekEOeluAOCJA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,290,1739865600"; 
+   d="scan'208";a="169232332"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa002.jf.intel.com with ESMTP; 15 May 2025 01:47:29 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1001)
+	id 0CDBB23F; Thu, 15 May 2025 11:47:27 +0300 (EEST)
+Date: Thu, 15 May 2025 11:47:27 +0300
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-acpi@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>,
+	Mika Westerberg <westeri@kernel.org>,
+	Hans de Goede <hdegoede@redhat.com>
+Subject: Re: [PATCH v1 0/4] gpiolib: acpi: Split quirks to its own file
+Message-ID: <20250515084727.GU88033@black.fi.intel.com>
+References: <20250513100514.2492545-1-andriy.shevchenko@linux.intel.com>
+ <20250514155955.GS88033@black.fi.intel.com>
+ <aCWgBp4ZD5aesvRw@smile.fi.intel.com>
+ <20250515083451.GT88033@black.fi.intel.com>
+ <aCWo19FjcvZzP1H7@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: Check pxd_leaf() instead of !pxd_table() while
- tearing down page tables
-To: David Hildenbrand <david@redhat.com>, catalin.marinas@arm.com,
- will@kernel.org
-Cc: ryan.roberts@arm.com, anshuman.khandual@arm.com, mark.rutland@arm.com,
- yang@os.amperecomputing.com, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, stable@vger.kernel.org
-References: <20250515063450.86629-1-dev.jain@arm.com>
- <332ecda7-14c4-4dc3-aeff-26801b74ca04@redhat.com>
- <4904d02f-6595-4230-a321-23327596e085@arm.com>
- <6fe7848c-485e-4639-b65c-200ed6abe119@redhat.com>
-Content-Language: en-US
-From: Dev Jain <dev.jain@arm.com>
-In-Reply-To: <6fe7848c-485e-4639-b65c-200ed6abe119@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <aCWo19FjcvZzP1H7@smile.fi.intel.com>
 
+On Thu, May 15, 2025 at 11:41:59AM +0300, Andy Shevchenko wrote:
+> On Thu, May 15, 2025 at 11:34:51AM +0300, Mika Westerberg wrote:
+> > On Thu, May 15, 2025 at 11:04:22AM +0300, Andy Shevchenko wrote:
+> > > On Wed, May 14, 2025 at 06:59:55PM +0300, Mika Westerberg wrote:
+> > > > On Tue, May 13, 2025 at 01:00:30PM +0300, Andy Shevchenko wrote:
+> > > > > The GPIO ACPI helpers use a few quirks which consumes approximately 20%
+> > > > > of the file. Besides that the necessary bits are sparse and being directly
+> > > > > referred. Split them to a separate file. There is no functional change.
+> > > > > 
+> > > > > For the new file I used the Hans' authorship of Hans as he the author of
+> > > > > all those bits (expect very tiny changes made by this series).
+> > > > > 
+> > > > > Hans, please check if it's okay and confirm, or suggest better alternative.
+> > > > > 
+> > > > > Andy Shevchenko (4):
+> > > > >   gpiolib: acpi: Switch to use enum in acpi_gpio_in_ignore_list()
+> > > > >   gpiolib: acpi: Handle deferred list via new API
+> > > > >   gpiolib: acpi: Add acpi_gpio_need_run_edge_events_on_boot() getter
+> > > > >   gpiolib: acpi: Move quirks to a separate file
+> > > > > 
+> > > > >  drivers/gpio/Makefile                         |   1 +
+> > > > >  .../{gpiolib-acpi.c => gpiolib-acpi-core.c}   | 344 +----------------
+> > > > >  drivers/gpio/gpiolib-acpi-quirks.c            | 363 ++++++++++++++++++
+> > > > >  drivers/gpio/gpiolib-acpi.h                   |  15 +
+> > > > 
+> > > > All this -foo-core things look redundant to me. Why not just split it out
+> > > > and call it gpiolib-quirks.c and put there all the quirks not just ACPI? I
+> > > > Don't think we want to have gpiolib-of-quirks.c and gpiolog-swnode-quirks.c
+> > > > and so on.
+> > > 
+> > > That's might be the next step to have for all of them, but these are ACPI
+> > > specific. In any case they can't be put to gpiolib-quirks.c due to module
+> > > parameters. If we do that we will need a dirty hack to support old module
+> > > parameters (see 8250 how it's done there, and even author of that didn't like
+> > > the approach).
+> > 
+> > Hmm, how does it affect module paremeters? I thought they are
+> > gpiolib.something as all these object files are linked to it?
+> 
+> gpiolib_acpi.FOO because the object file is gpiolib-acpi.o.
 
+Ah okay.
 
-On 15/05/25 2:06 pm, David Hildenbrand wrote:
-> On 15.05.25 10:22, Dev Jain wrote:
->>
->>
->> On 15/05/25 1:43 pm, David Hildenbrand wrote:
->>> On 15.05.25 08:34, Dev Jain wrote:
->>>> Commit 9c006972c3fe removes the pxd_present() checks because the caller
->>>> checks pxd_present(). But, in case of vmap_try_huge_pud(), the caller
->>>> only
->>>> checks pud_present(); pud_free_pmd_page() recurses on each pmd through
->>>> pmd_free_pte_page(), wherein the pmd may be none.
->>> The commit states: "The core code already has a check for pXd_none()",
->>> so I assume that assumption was not true in all cases?
->>>
->>> Should that one problematic caller then check for pmd_none() instead?
->>
->>   From what I could gather of Will's commit message, my interpretation is
->> that the concerned callers are vmap_try_huge_pud and vmap_try_huge_pmd.
->> These individually check for pxd_present():
->>
->> if (pmd_present(*pmd) && !pmd_free_pte_page(pmd, addr))
->>     return 0;
->>
->> The problem is that vmap_try_huge_pud will also iterate on pte entries.
->> So if the pud is present, then pud_free_pmd_page -> pmd_free_pte_page
->> may encounter a none pmd and trigger a WARN.
+> > At least can we drop the gpiolib-acpi-core.c rename?
 > 
-> Yeah, pud_free_pmd_page()->pmd_free_pte_page() looks shaky.
-> 
-> I assume we should either have an explicit pmd_none() check in 
-> pud_free_pmd_page() before calling pmd_free_pte_page(), or one in 
-> pmd_free_pte_page().
-> 
-> With your patch, we'd be calling pte_free_kernel() on a NULL pointer, 
-> which sounds wrong -- unless I am missing something important.
+> Unfortunately no due to the above.
 
-Ah thanks, you seem to be right. We will be extracting table from a none 
-pmd. Perhaps we should still bail out for !pxd_present() but without the 
-warning, which the fix commit used to do.
+This does not work?
 
-> 
->>
->>>
->>> If you were able to trigger this WARN, it's always a good idea to
->>> include the splat in the commit.
->>
->> I wasn't able to, it is just an observation from code inspection.
-> 
-> That better be included in the patch description :)
-> 
-
+gpiolib-acpi-y                 := gpiolib-acpi.o gpiolib-acpi-quirks.o
 
