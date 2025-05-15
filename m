@@ -1,155 +1,123 @@
-Return-Path: <linux-kernel+bounces-649980-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-649982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BE60AB8BD7
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 18:06:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EE162AB8BDA
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 18:06:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 540C63B7C70
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 16:00:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 976A53AA42E
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 16:01:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C9FC21883F;
-	Thu, 15 May 2025 16:00:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE8E221CC46;
+	Thu, 15 May 2025 16:01:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=svenpeter.dev header.i=@svenpeter.dev header.b="ZTaDJrWO";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="OGG4gtgv"
-Received: from fout-a7-smtp.messagingengine.com (fout-a7-smtp.messagingengine.com [103.168.172.150])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W8O7/rwf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5556626ACB;
-	Thu, 15 May 2025 16:00:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52D7821C9F1;
+	Thu, 15 May 2025 16:01:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747324839; cv=none; b=U5u/SqB53qvjvGWx9qfXXr3rNt8QmJK4PGqlR/8grP0wH7aH8HVFL5m3gwZ1eg3iOtS0WdKy8oTTUu9PqG1BnCE/lYT7w5cGEfRJBLQfVAVPG1GbNPW3q7wTdlOX5UAg0Oa/7O6KQN59Q1uL/BfEQB7CcfSbt/3M4Tjd/3ZXbd0=
+	t=1747324877; cv=none; b=BGnZQgeNRWaPjIIJ4Ir4JxxxWn0qJ4PF7TsyHGe+GFelcpd8FNzETE2nqG5Evz6KCxq8UkS+EGNXrT+Qnz4dA0EFSnX71m3+d/NwNlHpqYaSxFKPyBwNT6uKwC7a4fnMOZyXl7TwcANl0u6+HzazxTFVt7dfepKXY5fIRv5BxcU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747324839; c=relaxed/simple;
-	bh=Ht8GrC1/WhiK6Zak+5S5UJso+Ncn4Dqne8cOnc7np9c=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=j7LkVQYEpZNhPoswFE0lW61lUzNy85bmUGrt1yKuEbEcf/udMM/Ppkg5zkhtRvYg1QOzUmoeT/XWNQdKS/II3ae0f/eveLkT3fU5sMnLShkd2qFrkiMgVlhpYlBXt2g1EtG0/Q57WFb+7b0tGmTHQcvCwv+4LELF396xVXnOlqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svenpeter.dev; spf=pass smtp.mailfrom=svenpeter.dev; dkim=pass (2048-bit key) header.d=svenpeter.dev header.i=@svenpeter.dev header.b=ZTaDJrWO; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=OGG4gtgv; arc=none smtp.client-ip=103.168.172.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svenpeter.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=svenpeter.dev
-Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
-	by mailfout.phl.internal (Postfix) with ESMTP id 5F56C1380241;
-	Thu, 15 May 2025 12:00:36 -0400 (EDT)
-Received: from phl-imap-12 ([10.202.2.86])
-  by phl-compute-04.internal (MEProxy); Thu, 15 May 2025 12:00:36 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=svenpeter.dev;
-	 h=cc:cc:content-transfer-encoding:content-type:content-type
-	:date:date:from:from:in-reply-to:in-reply-to:message-id
-	:mime-version:references:reply-to:subject:subject:to:to; s=fm1;
-	 t=1747324836; x=1747411236; bh=Ht8GrC1/WhiK6Zak+5S5UJso+Ncn4Dqn
-	e8cOnc7np9c=; b=ZTaDJrWO3GosTmJ4laSKWarSByuF+hIC183G9SiDMXMK5D01
-	TkpaalyNd/ifGOS392Mjk6FV92jCkEfjGQnS2wCAHouIdy9zs/CPhZlWuS2UeAZe
-	htioNGQJwKBHn7Z9biJEI89g39d7EDyqf541fakoygcecSi0TAZMBM9Z2tUCr1O8
-	KHguMbnMyMeSMgtlPNt6B1+byP67LtC/0t+treW5MWUNtMu/P2EicaMz4qUI+6QV
-	wOZhjHLoUlNveuS8R6R2ywM/21Da+PWrJKAmmXRg1r1VWk0YyCJXwLNqAlpZocBw
-	bICREuq9ZxfY208QeXkYuryNy3dhsEH9BERvjw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1747324836; x=
-	1747411236; bh=Ht8GrC1/WhiK6Zak+5S5UJso+Ncn4Dqne8cOnc7np9c=; b=O
-	GG4gtgvsg8QMgNK/JeA/j+Et2OBN8bbuCYugP1djZ7y5kwcW8FgWkxLukTPoJIRI
-	SIdqo4eJRWXOuKQC+yhtY4qDVpecs/lEx3H67sthOxdk/lZVUrjvl78Kl49jU3cC
-	gKAO4pylbEQcizzVHXGjfWPkGiVAOBuz2d1Hzclzq5aMyrfiAPkWGEcJeIEMAijy
-	g1Wp8DHhgPVRZlb2Kd82VKIKjbW9PY6hld2eieABDa6WPR8TZpiRxNo/GXzzNKhJ
-	0ML+hDe+T9XZnCL0+Z8QNXfP+Fdmvi264Ibj9VAUAxkX/UGq5Xa/OOwILIeHs9f7
-	ItitJRlJIcF7Q+HY3dP2A==
-X-ME-Sender: <xms:og8maDZwXPJh0JEZZ4U9e08ktN0ZBsSIzL59WRsOY7Dp_NMKtAHgQQ>
-    <xme:og8maCZn6stAOVhD0ckx_JCO5fX3j80FQJcT94WdeEp2WmSzPuZuHraxN_QbTRMJ0
-    RYXCuUpdpApTLrcZeg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdefuddtfedtucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtqhertder
-    tdejnecuhfhrohhmpedfufhvvghnucfrvghtvghrfdcuoehsvhgvnhesshhvvghnphgvth
-    gvrhdruggvvheqnecuggftrfgrthhtvghrnhepgeegheelffdujeduffevfefhieekgeef
-    fedukedtvdduhfffjeehleekfeehhfdtnecuvehluhhsthgvrhfuihiivgeptdenucfrrg
-    hrrghmpehmrghilhhfrhhomhepshhvvghnsehsvhgvnhhpvghtvghrrdguvghvpdhnsggp
-    rhgtphhtthhopeduledpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepvghrnhgvsh
-    htohestghorhgvlhhlihhumhdrtghomhdprhgtphhtthhopehslhgrvhgrseguuhgsvgih
-    khhordgtohhmpdhrtghpthhtohepvghthhgrnhesvghthhgrnhgtvggufigrrhgushdrtg
-    homhdprhgtphhtthhopegvrhhnvghsthhordhmnhgurdhfvghrnhgrnhguvgiisehgmhgr
-    ihhlrdgtohhmpdhrtghpthhtohepthhofihinhgthhgvnhhmihesghhmrghilhdrtghomh
-    dprhgtphhtthhopeifihhllhihsehinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohep
-    sghrrghunhgvrheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepuggrnhdrtggrrhhpvg
-    hnthgvrheslhhinhgrrhhordhorhhgpdhrtghpthhtohepghhrvghgkhhhsehlihhnuhig
-    fhhouhhnuggrthhiohhnrdhorhhg
-X-ME-Proxy: <xmx:og8maF9n4m0XTvV5oBne8_Mlbelgg9HJg7713LGn_XjUWfxnidu5oA>
-    <xmx:og8maJrJvCRzR2oMTs27U5UhJORvxz2NXb1pGrGlcV51GvulupGhcg>
-    <xmx:og8maOr2veNZQTrBVoasOxlaSD0n076nlVfcEbAvpq1ScFvRI1EfFw>
-    <xmx:og8maPT5VrAYpd58WuUFjF3oG_P_EwNsHs7Khn9RllclgT_McPJU-w>
-    <xmx:pA8maKaQ0w7CPG4bPr-Hjww9ejNSnaHyYfBuLjxAQIEAroHfoAGxPS_U>
-Feedback-ID: i51094778:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 65288106005E; Thu, 15 May 2025 12:00:34 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1747324877; c=relaxed/simple;
+	bh=ATrywjxspmQpMwG9e61oi4DTZo/y4M+lVUmbwwGtxrU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jutnd5Y41iUtoMC9N/39ZUnQK+aew3dPEx/wPnFgFcbFN97VKsdptZq7ocLbjs6sCeVUy0J6PJ12KeZJDWrVY2Vqdu6mGuOb24JXhuVgjN/nyjks0cqnb5ha69BIuMjdbc3I//hMvtPBcrgTqSH6yLPTxaWFcLXmzEgz+panPtU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W8O7/rwf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B919DC4CEEB;
+	Thu, 15 May 2025 16:01:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747324876;
+	bh=ATrywjxspmQpMwG9e61oi4DTZo/y4M+lVUmbwwGtxrU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=W8O7/rwfGZSlLBwQUFmu0Mt98qc7VIN9nNH+yhpEIjlsMMFqomqyMw4usn+NHVSY5
+	 lbcXGC1aS49c9FCZnMLVK3wXvicXJB+y6KVPkrCdU30jWcNM+3QACPg7Cqqi0Yb1ax
+	 Lk0TvBst4Hda3I91XCLee35+MOlWJRyguICPMYoa8MxYMs9KbbKPYm7sLMmugld3+D
+	 uXPp6h1tAVmyfOLabExqN1T7zqx1hHrTpk02OJicVpqVh4N8XTJljejRsDT8LV/WwE
+	 7kw00hgnC56cFFxN4Ki2T2xhviAzpAIVO1mCroMUCbTbkpHcgyJgB5Bqn/W31ZiH8o
+	 /EE2w35RilGqA==
+Date: Thu, 15 May 2025 18:01:12 +0200
+From: Ingo Molnar <mingo@kernel.org>
+To: Mario Limonciello <mario.limonciello@amd.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Dhananjay Ugwekar <dhananjay.ugwekar@amd.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: [PATCH] x86/msr: Add rdmsrl_on_cpu() compatibility wrapper
+Message-ID: <aCYPyJKLig5pzscp@gmail.com>
+References: <20250512145517.6e0666e3@canb.auug.org.au>
+ <20250512152326.3f2f0226@canb.auug.org.au>
+ <8c4ab851-1853-442e-90a9-225be16c804c@amd.com>
+ <aCYM-A_PYHK2kjSd@gmail.com>
+ <46e04d1c-dbc8-4a45-95d4-fecfdd943065@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: Tf135b851f6ecbaa4
-Date: Thu, 15 May 2025 18:00:34 +0200
-From: "Sven Peter" <sven@svenpeter.dev>
-To: "Nick Chan" <towinchenmi@gmail.com>,
- =?UTF-8?Q?Ernesto_A=2E_Fern=C3=A1ndez?= <ernesto.mnd.fernandez@gmail.com>
-Cc: "Yangtao Li" <frank.li@vivo.com>,
- "Ethan Carter Edwards" <ethan@ethancedwards.com>, asahi@lists.linux.dev,
- brauner@kernel.org, dan.carpenter@linaro.org,
- "ernesto@corellium.com" <ernesto@corellium.com>,
- "Aditya Garg" <gargaditya08@live.com>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>, jack@suse.cz,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-staging@lists.linux.dev, "Theodore Ts'o" <tytso@mit.edu>,
- viro@zeniv.linux.org.uk, willy@infradead.org, slava@dubeyko.com,
- glaubitz@physik.fu-berlin.de
-Message-Id: <47721ba1-2ffb-45df-aed0-ad0308f6d606@app.fastmail.com>
-In-Reply-To: <e6a5a737-ce64-4d31-aeea-2e6190da2ff5@gmail.com>
-References: <20250319-apfs-v2-0-475de2e25782@ethancedwards.com>
- <20250512101122.569476-1-frank.li@vivo.com> <20250512234024.GA19326@eaf>
- <63eb2228-dcec-40a6-ba02-b4f3a6e13809@gmail.com> <20250514201925.GA8597@eaf>
- <e6a5a737-ce64-4d31-aeea-2e6190da2ff5@gmail.com>
-Subject: Re: Subject: [RFC PATCH v2 0/8] staging: apfs: init APFS filesystem support
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, May 15, 2025, at 07:08, Nick Chan wrote:
-> Ernesto A. Fern=C3=A1ndez =E6=96=BC 2025/5/15 =E5=87=8C=E6=99=A84:19 =E5=
-=AF=AB=E9=81=93:
->> Hi Nick,
->>
->> On Tue, May 13, 2025 at 12:13:23PM +0800, Nick Chan wrote:
->>> 2. When running Linux on iPhone, iPad, iPod touch, Apple TV (current=
-ly there are Apple A7-A11 SoC support in
->>> upstream), resizing the main APFS volume is not feasible especially =
-on A11 due to shenanigans with the encrypted
->>> data volume. So the safe ish way to store a file system on the disk =
-becomes a using linux-apfs-rw on a (possibly
->>> fixed size) volume that only has one file and that file is used as a=
- loopback device.
->> That's very interesting. Fragmentation will be brutal after a while t=
-hough.
->> Unless you are patching away the copy-on-write somehow?'
-> On a fixed size (preallocated size =3D=3D max size) volume with only a=20
-> single non-sparse file on it,
-> copy-on-write should not happen. I believe the xART volume is also the=20
-> same case with only
-> one non-sparse file.
-
-Yeah, the gigalocker file on the xART volume (which is the only file we =
-care about
-for eventual Secure Enclave support on M1+ macs) is stored contiguously =
-without
-copy-on-write on the disk.
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <46e04d1c-dbc8-4a45-95d4-fecfdd943065@amd.com>
 
 
+* Mario Limonciello <mario.limonciello@amd.com> wrote:
 
-Sven
+> > If it's only about rdmsrl_on_cpu(), how about the simple 
+> > compatibility wrapper below instead, applied to the x86 tree?
+> > 
+> > Can merge it into -tip and tomorrow's -next would resolve this 
+> > without any changes or merges done to the PM tree.
+> 
+> Sounds good to me.
+
+Great - I've added the patch below to the x86 tree, tomorrow's -next 
+should have this resolved in theory.
+
+Thanks,
+
+	Ingo
+
+=======================>
+From: Ingo Molnar <mingo@kernel.org>
+Date: Thu, 15 May 2025 17:49:16 +0200
+Subject: [PATCH] x86/msr: Add rdmsrl_on_cpu() compatibility wrapper
+
+Add a simple rdmsrl_on_cpu() compatibility wrapper for
+rdmsrq_on_cpu(), to make life in -next easier, where
+the PM tree recently grew more uses of the old API.
+
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Acked-by: Mario Limonciello <mario.limonciello@amd.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Juergen Gross <jgross@suse.com>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Xin Li <xin@zytor.com>
+Link: https://lore.kernel.org/r/20250512145517.6e0666e3@canb.auug.org.au
+---
+ arch/x86/include/asm/msr.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/x86/include/asm/msr.h b/arch/x86/include/asm/msr.h
+index a9ce56fc8785..4096b8af4ba7 100644
+--- a/arch/x86/include/asm/msr.h
++++ b/arch/x86/include/asm/msr.h
+@@ -329,6 +329,7 @@ static inline int wrmsr_safe_regs_on_cpu(unsigned int cpu, u32 regs[8])
+ /* Compatibility wrappers: */
+ #define rdmsrl(msr, val) rdmsrq(msr, val)
+ #define wrmsrl(msr, val) wrmsrq(msr, val)
++#define rdmsrl_on_cpu(cpu, msr, q) rdmsrq_on_cpu(cpu, msr, q)
+ 
+ #endif /* __ASSEMBLER__ */
+ #endif /* _ASM_X86_MSR_H */
+
 
