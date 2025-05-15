@@ -1,62 +1,50 @@
-Return-Path: <linux-kernel+bounces-649012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-649015-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72982AB7ED0
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 09:29:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 221BBAB7ED9
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 09:32:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 99F3B16E948
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 07:29:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ECED21BA545E
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 07:33:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4B40221F0A;
-	Thu, 15 May 2025 07:29:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 894EE221F0A;
+	Thu, 15 May 2025 07:32:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mmoydwrd"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="tH+g9LS4"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2387310FD;
-	Thu, 15 May 2025 07:29:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE12B1A00ED;
+	Thu, 15 May 2025 07:32:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747294171; cv=none; b=Pkyd/MBg5JyBeqDrmVJot1bI3juIqlkzgOQAKXjKaZt5atau6+VoV6lN/qP66hWnz3UDtWb2BFdtSTiqjHaOUGoiDT3jao2o7sy9RD46QHkkYTd/vs45LGqW6kPeZFMsDvXqmaZPu9iINhIczNbgvj8pygBuLiE/Qk/1eFgYr1g=
+	t=1747294367; cv=none; b=nh8qLdEcTWxkAViDNkjPlqslVbC+ia+i65fuZk43ZxY+24CyIt3PQXXOnuAg3doRVSOIkX3ohr/ogN6PV6Zn+/mnV5oyDrEDj7lataWLvDrwY1MWtTevfi/4FU2KBC7j0/cCjI65wp1Q7XGrPy7LoD1Msq7ZOCle43FbXeeX7T0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747294171; c=relaxed/simple;
-	bh=8S4//SS94aP1NtYNL6eqkDynPtiXbxJWNGCHYzi1LBo=;
+	s=arc-20240116; t=1747294367; c=relaxed/simple;
+	bh=cybRQ+Wx91KXl/of7OapnUi16eL4POqwhKNkGSrkn1c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XaUEZ8OpJ4bUC7Qmfx+PsndbgXJL8gAZGU2+ueSzQLWiSDNhUg0UP7tYmVT1UR5erajPVT2+bpB0P1FqZ+t+0KpZKaQ4W0b1LOOpaROVFuVvFLofNdPkgX7HONZaesWW2LhFgxjGe7TMU+HgzSIORKMPyeOCEZbQDNVjLOSEe24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mmoydwrd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69B1DC4CEE7;
-	Thu, 15 May 2025 07:29:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747294170;
-	bh=8S4//SS94aP1NtYNL6eqkDynPtiXbxJWNGCHYzi1LBo=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=se/Lc2JbXvN6Ji/PpZqjlbz13/wpAR8CcetcrO4txUSJF/qZsT/q4/b9fMbsx9VAmKQsYRymW6iCNLwNeJH7J9+IRnYU10CBNuBl5zvDyiD6zNdVrmb4GSFeV5eOdttyKr1AiRxoffqWjE91EpnIPRttKMOQe07++MLt24Li5MU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=tH+g9LS4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE968C4CEE7;
+	Thu, 15 May 2025 07:32:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1747294367;
+	bh=cybRQ+Wx91KXl/of7OapnUi16eL4POqwhKNkGSrkn1c=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mmoydwrdXlPv2WN5WdafzZHAk03wcsQ7VRjT2fZP89+E7N0XZQ1WYr8+nLGeOvsyW
-	 SUIdLbAxZYTEK1wL7w/mI5kk+sMjBv8Sa7MnQUpsU+4sqVwM57Ym3w+OA8sqSGaIq2
-	 v5GzO789n5ZgZ01BsiIWlXfisnTCycHR4gP9NTOxZDW/GVu5mE8cMGYK/BOzwxKs3e
-	 KnzZ8Uosxkzw3UmRa0o/n7Zyi6ggCHZQDgjrwKSyxTkMvxRKQ6lPpnpo1vgxGZoFP0
-	 /yx5c3ZxcNJzPyLaqTC/oW1VPWDCbTnc3eiSESxOhiHvlhQzyYlNF3dj6c6UF0NMg0
-	 CAmL423Q79gzQ==
-Date: Thu, 15 May 2025 08:29:26 +0100
-From: Simon Horman <horms@kernel.org>
-To: Zak Kemble <zakkemble@gmail.com>
-Cc: Doug Berger <opendmb@gmail.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] net: bcmgenet: tidy up stats, expose more stats in
- ethtool
-Message-ID: <20250515072926.GP3339421@horms.kernel.org>
-References: <20250512101521.1350-1-zakkemble@gmail.com>
- <20250513094501.GX3339421@horms.kernel.org>
- <CAA+QEuT0tPd0Qxjy0LP2zXhRhAe_bRv5omFPaFdbHVzoBAO-Yw@mail.gmail.com>
+	b=tH+g9LS4UwdaxaMmWSEOBnroWcK5n2FjHOFkMaqgOGM/0FVplw/rjur3yX9DnRiLp
+	 LGRSihQPSs4wHwdaW3RGHL0BaGfpIFiqXBw94hVNy229zZ2doQRjkBZtVFMPm9cBgG
+	 GdAwz6rw2K05zv3cP/1VA2nT5gz4djUmMvUC27o8=
+Date: Thu, 15 May 2025 09:30:58 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Roy Luo <royluo@google.com>
+Cc: mathias.nyman@intel.com, quic_ugoswami@quicinc.com,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 1/2] xhci: Add a quirk for full reset on removal
+Message-ID: <2025051547-colossal-dismount-ee4d@gregkh>
+References: <20250515040207.1253690-1-royluo@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,14 +53,121 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAA+QEuT0tPd0Qxjy0LP2zXhRhAe_bRv5omFPaFdbHVzoBAO-Yw@mail.gmail.com>
+In-Reply-To: <20250515040207.1253690-1-royluo@google.com>
 
-On Tue, May 13, 2025 at 08:26:47PM +0100, Zak Kemble wrote:
-> Hey Simon, sorry I'm still figuring out mailing lists lol. This v2 was
-> submitted after the kernel test bot had replied about a warning, but
-> before anyone else had a chance to reply. Latest version is here
-> https://lore.kernel.org/all/20250513144107.1989-1-zakkemble@gmail.com/
+On Thu, May 15, 2025 at 04:02:07AM +0000, Roy Luo wrote:
+> Commit 6ccb83d6c497 ("usb: xhci: Implement xhci_handshake_check_state()
+> helper") introduced an optimization to xhci_reset() during xhci removal,
+> allowing it to bail out early without waiting for the reset to complete.
+> 
+> This behavior can cause issues on SNPS DWC3 USB controller with dual-role
+> capability. When the DWC3 controller exits host mode and removes xhci
+> while a reset is still in progress, and then tries to configure its
+> hardware for device mode, the ongoing reset leads to register access
+> issues; specifically, all register reads returns 0. These issues extend
+> beyond the xhci register space (which is expected during a reset) and
+> affect the entire DWC3 IP block, causing the DWC3 device mode to
+> malfunction.
+> 
+> To address this, introduce the `XHCI_FULL_RESET_ON_REMOVE` quirk. When this
+> quirk is set, xhci_reset() always completes its reset handshake, ensuring
+> the controller is in a fully reset state before proceeding.
+> 
+> Fixes: 6ccb83d6c497 ("usb: xhci: Implement xhci_handshake_check_state() helper")
+> Signed-off-by: Roy Luo <royluo@google.com>
+> ---
+>  drivers/usb/host/xhci-plat.c | 3 +++
+>  drivers/usb/host/xhci.c      | 8 +++++++-
+>  drivers/usb/host/xhci.h      | 1 +
+>  3 files changed, 11 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/usb/host/xhci-plat.c b/drivers/usb/host/xhci-plat.c
+> index 3155e3a842da..19c5c26a8e63 100644
+> --- a/drivers/usb/host/xhci-plat.c
+> +++ b/drivers/usb/host/xhci-plat.c
+> @@ -265,6 +265,9 @@ int xhci_plat_probe(struct platform_device *pdev, struct device *sysdev, const s
+>  		if (device_property_read_bool(tmpdev, "xhci-skip-phy-init-quirk"))
+>  			xhci->quirks |= XHCI_SKIP_PHY_INIT;
+>  
+> +		if (device_property_read_bool(tmpdev, "xhci-full-reset-on-remove-quirk"))
+> +			xhci->quirks |= XHCI_FULL_RESET_ON_REMOVE;
+> +
+>  		device_property_read_u32(tmpdev, "imod-interval-ns",
+>  					 &xhci->imod_interval);
+>  	}
+> diff --git a/drivers/usb/host/xhci.c b/drivers/usb/host/xhci.c
+> index 90eb491267b5..4f091d618c01 100644
+> --- a/drivers/usb/host/xhci.c
+> +++ b/drivers/usb/host/xhci.c
+> @@ -198,6 +198,7 @@ int xhci_reset(struct xhci_hcd *xhci, u64 timeout_us)
+>  	u32 command;
+>  	u32 state;
+>  	int ret;
+> +	unsigned int exit_state;
+>  
+>  	state = readl(&xhci->op_regs->status);
+>  
+> @@ -226,8 +227,13 @@ int xhci_reset(struct xhci_hcd *xhci, u64 timeout_us)
+>  	if (xhci->quirks & XHCI_INTEL_HOST)
+>  		udelay(1000);
+>  
+> +	if (xhci->quirks & XHCI_FULL_RESET_ON_REMOVE)
+> +		exit_state = 0;
+> +	else
+> +		exit_state = XHCI_STATE_REMOVING;
+> +
+>  	ret = xhci_handshake_check_state(xhci, &xhci->op_regs->command,
+> -				CMD_RESET, 0, timeout_us, XHCI_STATE_REMOVING);
+> +				CMD_RESET, 0, timeout_us, exit_state);
+>  	if (ret)
+>  		return ret;
+>  
+> diff --git a/drivers/usb/host/xhci.h b/drivers/usb/host/xhci.h
+> index 242ab9fbc8ae..ac65af788298 100644
+> --- a/drivers/usb/host/xhci.h
+> +++ b/drivers/usb/host/xhci.h
+> @@ -1637,6 +1637,7 @@ struct xhci_hcd {
+>  #define XHCI_WRITE_64_HI_LO	BIT_ULL(47)
+>  #define XHCI_CDNS_SCTX_QUIRK	BIT_ULL(48)
+>  #define XHCI_ETRON_HOST	BIT_ULL(49)
+> +#define XHCI_FULL_RESET_ON_REMOVE	BIT_ULL(50)
+>  
+>  	unsigned int		num_active_eps;
+>  	unsigned int		limit_active_eps;
+> 
+> base-commit: c94d59a126cb9a8d1f71e3e044363d654dcd7af8
+> -- 
+> 2.49.0.1045.g170613ef41-goog
+> 
+> 
 
-Thanks, and apologies for not realising that before I wrote
-my previous email.
+Hi,
+
+This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
+a patch that has triggered this response.  He used to manually respond
+to these common problems, but in order to save his sanity (he kept
+writing the same thing over and over, yet to different people), I was
+created.  Hopefully you will not take offence and will fix the problem
+in your patch and resubmit it so that it can be accepted into the Linux
+kernel tree.
+
+You are receiving this message because of the following common error(s)
+as indicated below:
+
+- You have marked a patch with a "Fixes:" tag for a commit that is in an
+  older released kernel, yet you do not have a cc: stable line in the
+  signed-off-by area at all, which means that the patch will not be
+  applied to any older kernel releases.  To properly fix this, please
+  follow the documented rules in the
+  Documentation/process/stable-kernel-rules.rst file for how to resolve
+  this.
+
+If you wish to discuss this problem further, or you have questions about
+how to resolve this issue, please feel free to respond to this email and
+Greg will reply once he has dug out from the pending patches received
+from other developers.
+
+thanks,
+
+greg k-h's patch email bot
 
