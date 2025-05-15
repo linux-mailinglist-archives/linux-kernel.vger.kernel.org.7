@@ -1,212 +1,863 @@
-Return-Path: <linux-kernel+bounces-649199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-649202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89E1AAB8157
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 10:49:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B219AB8166
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 10:51:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 24A7F4A6B95
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 08:49:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E05654C1227
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 08:50:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8382A28A3F3;
-	Thu, 15 May 2025 08:49:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE45D1F428C;
+	Thu, 15 May 2025 08:50:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bI5Sm1Sq"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="BcSHoCS1"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E7982882D7
-	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 08:49:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AEFD28CF41
+	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 08:50:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747298983; cv=none; b=Uy2cM91rq9vTJzK1AJQ3527cUHM5ysZO5m+1nkK4/KxcXWnMjBE6Qwt4MGbp1gxWO7Zi2np0LXbQ6v8ajGSLEhT7F3jahPK9wDKrlyUAyfdy5FllHFQ0ixr4Dt/EF6+uIswXirrWnhRwb0ADDjKtVFekxEinkBv5v0GFYAzJ+2g=
+	t=1747299050; cv=none; b=DCgnWOp7Q8a35fTdsFl1ejjR2qT7kPSqfREAILqhDUDpY+Ns6iUZCctwxIinyk0cG85WS8EV1KUu4sn/HCsQpwsFbIgw7yofb1VbqZZbrMTpX2rEL5/Ynv6kEpysxAJqAalHsdoGc0whLA5M+836L66m0v/CJevcb7Ssl/aNeHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747298983; c=relaxed/simple;
-	bh=kVKTp1u2T3K/2CbuM8jvK/+7c7/tfdpkS5Lf9BOkaqs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=c81cL/nFb4ZIrfYsXXsAEWNJNLtBCxB0iN6CFvfNVYBceMIyZv/bInhJViUkK0Axwo6FalrXhNkqtlYx2dD0zsFnvnaDx2i2B0EjmTHObUPdjLKLOMhhaCUSy/Fh+sPS8ua6lidn1lsVi7ATK0s3irNPi9vVeGlFofgl6D56MnQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bI5Sm1Sq; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1747298981;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=numVHUGG76UJqn6luDC1PvM4Gdk34C40sFiPEgPwpO8=;
-	b=bI5Sm1SqYSBqofzJdb29qn9AbWLCmyoVkTTjEpNaeoI7eh5pE4obUZaI/AeLkIr3rx40bM
-	vC3jhXv0Q8slsFGuWvk+lYVcUbxK9sL852Lqe65aNMFt14pTkdkTKLXMV7cMhcixhzDXJK
-	kr7MsKI5dzVhWE91ZFLcJuAJ6L5Qx4M=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-220-xJ7bqZI1MamLNu4gcnqLaA-1; Thu, 15 May 2025 04:49:39 -0400
-X-MC-Unique: xJ7bqZI1MamLNu4gcnqLaA-1
-X-Mimecast-MFC-AGG-ID: xJ7bqZI1MamLNu4gcnqLaA_1747298978
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-442f4a3851fso5980775e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 01:49:39 -0700 (PDT)
+	s=arc-20240116; t=1747299050; c=relaxed/simple;
+	bh=Izj5rhooVHmfI6szo6ejWtoCQIeyppNC3Sktbxv2hMY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rwIzWSajtK0Er2hyz82bc4Zjzceybq16KE0zYxXd23yfUFSEJZiDaNdaSvqr8LJJnRuI0lpYYkY7tQm4T0SmKrYwrIn5364yfAL53wTVD5Z8I7Taqdk2tEPXi8uqz+HsuHjqpERb9kg+lPf5r48yji/5vsVweOZiSXJ6ED2ZLx8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=BcSHoCS1; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-317f68d0dffso8221451fa.2
+        for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 01:50:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1747299045; x=1747903845; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ETrFcGOVn8dykq8Hlrt/nnQWW3UgbU4C9dLr5hFwX4s=;
+        b=BcSHoCS19OOBkF165mqAJvxo13wrOU6jPOuRtcFepeGZ2cIi3myx+WygTffMupaxkV
+         x888XlnRel+H7HD1lI2O2PG0FpboogfQjj9y3qG74yKuHj4QzwLKfpvcxkb576JqohsT
+         wTGtAqqGeOx7kBtHgYYTJ3lYVpy5zyx+vSJCU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747298978; x=1747903778;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=numVHUGG76UJqn6luDC1PvM4Gdk34C40sFiPEgPwpO8=;
-        b=O9ibif1OBK92aL04WqPscdJO6BVJp5VqN5yiYmmCcNlBjRvDapzFOY1XKCxMABpIqD
-         casOt2ir6hBwOpBfGg2qK9KzAHOae4CK/WWMpN16rMgRoor8Ug7H8kKZBQhVOeRwS05w
-         bi9RR/WoHuWg+FGKnAF/+4K9I4z6Gc8A0028wKsRHbics/Gh4pujLrKfsEWXjohAJlFx
-         dWVTBsClmDKXSAykO4QshsjhTX6/On7c1JXzVtci7dVBFwCST8mWPzPgBu3gJ2w9m732
-         CpM4AT7VChZOo0ntCDgghG0QHhlXB9FNrv1pEaTJbN2WjeQ1ab+J8PQjhNSFu3Auhwq5
-         4dHg==
-X-Forwarded-Encrypted: i=1; AJvYcCU2hkIu9FQedMNzkiK7bfmYAxgVYedh0Lt/6a6Bait9UL2JGOZDwdKENmb1UfUTOdM0TVaS+Ot5trwX12U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhBEn6v3eQRxh8/xhiLJQKexS9ifqMoNDAXtaPzRx7QFA3QsjD
-	OwkyN3Bh+ry73Thv3w56fzTO8gZ/aBuFLLdsFE/1YXRw4j5TpXvyx/yo5fDZhUG9BWnG5DBxE/e
-	DDoeX8vtvLyy/jRvHRzIIDJTMEBuAJI8z7rd4tY+AX7Raaa4e5MvPLSlLrTC4EQ==
-X-Gm-Gg: ASbGnctuMLh5BfzMi8of8g4j+yjwFdrMNigQ0WP+Nte9EFcJx+uyo4TYAERtBYEAmGq
-	mMCai60gmP50mJ53W14tza0OO0Axx1eoZ1yaan75Gjyqlbz/1PgSSrC2GZGJyejvtef1C8CB9dP
-	8qI2VXBbVt5rGRdGK+cWX3g/J+CYtApsbG6GFRhw7RTr0h28EmQ8k44Qt8uwzk6vBONsAj8jAmi
-	U4Qq7v+JCuNwK3bWWZCipY0lDszNBbbjCNoboNKW31GZI/Due+g9Z+p+zG1eEY378F2tUtZyHHS
-	qqo2pdG9phelxm9OVU+XOKoSzyy8Wc/NokxUaQroYDYvVralSQhZh8ive0FEPY/Y5bhJ0xHU22L
-	4s9ZeVp8b2Nvsb2Lggk0qsVrrmZ1BnQloS62AsuU=
-X-Received: by 2002:a05:600c:818d:b0:442:f8e7:25ef with SMTP id 5b1f17b1804b1-442f96e9395mr13742985e9.11.1747298978518;
-        Thu, 15 May 2025 01:49:38 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEF9Ljyx9InpG9QwACcNHvFcbbyugKq1zXFwEj77RI8E97AvX6NCU5d7dYmk90/DADgbbtlOg==
-X-Received: by 2002:a05:600c:818d:b0:442:f8e7:25ef with SMTP id 5b1f17b1804b1-442f96e9395mr13742725e9.11.1747298978121;
-        Thu, 15 May 2025 01:49:38 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f4a:8900:884a:b3af:e3c9:ec88? (p200300d82f4a8900884ab3afe3c9ec88.dip0.t-ipconnect.de. [2003:d8:2f4a:8900:884a:b3af:e3c9:ec88])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-442f396c093sm60263885e9.27.2025.05.15.01.49.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 15 May 2025 01:49:37 -0700 (PDT)
-Message-ID: <61da67fe-ba7a-4b9c-acb2-f1488f00a804@redhat.com>
-Date: Thu, 15 May 2025 10:49:36 +0200
+        d=1e100.net; s=20230601; t=1747299045; x=1747903845;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ETrFcGOVn8dykq8Hlrt/nnQWW3UgbU4C9dLr5hFwX4s=;
+        b=qKJV/Px4FJGeAqRR4jQmhnIiMnZnhDFDQYZb6QzS1Fw2gA8uXk7tIb8JmxDWAqzr23
+         J8iA+T6jka8wSE7o1rg/vJugPZkv+wZNdw2hdt6ca39UrfN1Dt4a5cHs8hQepBC0Wfq2
+         yAFTtMl+qsbWWv8fbNlGfdczxpVm43AerR+m0RPVMfA0qlxhysIO6lPCjV2gRbE0fM66
+         Pv1GUQY3NTTqri4YE925LOBVgkQJAnel+qiGlpsCivrYjG2WR80p7lpncTuAK39EjqrT
+         kfJoV2LGTZQJTnnjrCzp34ts+oVqE1X5+wldSuNZrUFi/2+sDvSatEJHjank69tvgkwL
+         25OQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUhiTJknt3xKfcMFunLZlAApraZcUOZ4e9wxLHsTP2wcyi/qLDXxjQ6e+ygM3E7gXxQjsaKfkN7Jjl+YXY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzoiAlD5kXY4khcWqqaEtctSSRzYnly91hy8FcNRqOCUY4PS0dk
+	CQo0k/d8PO5IX8LCl0wEOC+DcwGR3um+V3WOOsApBwpAzJklhN5C+QKZJonP/ePpGVIe9GJeCP1
+	SxqSVwDdx0gDDsSpWsN5DpYERPXJbF3nHMG53
+X-Gm-Gg: ASbGncuL29tKaU7jTEoE5H+EJuH3OkviC1jq9eLyKmd2rv+RyXrHzEftxwuiziMnrHq
+	kwt93j09ZdR/P8JOsG5wxb8NA+KmCYQ/H3QwQ6iJ5FKnmmYiZmXesAsMP1k9vinGkBh8F5xZqp1
+	XNejHEQvH9dCAN2Qof4idOLvw24UENzRtkvLZ1Tm5vwhVvK7HFbZm+xuKn1dA4XRKNdRZePHk=
+X-Google-Smtp-Source: AGHT+IGzT9GMa6sQ7RNbvosQ7bf2Z+POIjpLEsnFTR4dAzjK01dA8OBUGTdVUFMOEVcp4R1JF4TSLakLKPMn6UrjTSM=
+X-Received: by 2002:a2e:be89:0:b0:30b:d0d5:1fee with SMTP id
+ 38308e7fff4ca-327ecf64e3dmr27641981fa.0.1747299045162; Thu, 15 May 2025
+ 01:50:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: Check pxd_leaf() instead of !pxd_table() while
- tearing down page tables
-To: Dev Jain <dev.jain@arm.com>, catalin.marinas@arm.com, will@kernel.org
-Cc: ryan.roberts@arm.com, anshuman.khandual@arm.com, mark.rutland@arm.com,
- yang@os.amperecomputing.com, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, stable@vger.kernel.org
-References: <20250515063450.86629-1-dev.jain@arm.com>
- <332ecda7-14c4-4dc3-aeff-26801b74ca04@redhat.com>
- <4904d02f-6595-4230-a321-23327596e085@arm.com>
- <6fe7848c-485e-4639-b65c-200ed6abe119@redhat.com>
- <73a67d06-b497-40a2-8cb2-3b80c6ba59d1@arm.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <73a67d06-b497-40a2-8cb2-3b80c6ba59d1@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20250514081125.24475-1-darren.ye@mediatek.com>
+ <20250514081125.24475-4-darren.ye@mediatek.com> <be75ac83-5421-4bb0-a28a-57be639f427c@collabora.com>
+In-Reply-To: <be75ac83-5421-4bb0-a28a-57be639f427c@collabora.com>
+From: Chen-Yu Tsai <wenst@chromium.org>
+Date: Thu, 15 May 2025 16:50:33 +0800
+X-Gm-Features: AX0GCFt1NtIJu2CaoswanoVIEjAW2DWoyMP5-E8sJorz3919du7pKW8joKPFswo
+Message-ID: <CAGXv+5Hj358gOBomY=KdwYojgpwxFP-tiM38Z18b63ie=922mg@mail.gmail.com>
+Subject: Re: [PATCH v3 03/10] ASoC: mediatek: mt8196: support audio clock control
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	"Darren.Ye" <darren.ye@mediatek.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, linux-sound@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+	linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 15.05.25 10:40, Dev Jain wrote:
-> 
-> 
-> On 15/05/25 2:06 pm, David Hildenbrand wrote:
->> On 15.05.25 10:22, Dev Jain wrote:
->>>
->>>
->>> On 15/05/25 1:43 pm, David Hildenbrand wrote:
->>>> On 15.05.25 08:34, Dev Jain wrote:
->>>>> Commit 9c006972c3fe removes the pxd_present() checks because the caller
->>>>> checks pxd_present(). But, in case of vmap_try_huge_pud(), the caller
->>>>> only
->>>>> checks pud_present(); pud_free_pmd_page() recurses on each pmd through
->>>>> pmd_free_pte_page(), wherein the pmd may be none.
->>>> The commit states: "The core code already has a check for pXd_none()",
->>>> so I assume that assumption was not true in all cases?
->>>>
->>>> Should that one problematic caller then check for pmd_none() instead?
->>>
->>>    From what I could gather of Will's commit message, my interpretation is
->>> that the concerned callers are vmap_try_huge_pud and vmap_try_huge_pmd.
->>> These individually check for pxd_present():
->>>
->>> if (pmd_present(*pmd) && !pmd_free_pte_page(pmd, addr))
->>>      return 0;
->>>
->>> The problem is that vmap_try_huge_pud will also iterate on pte entries.
->>> So if the pud is present, then pud_free_pmd_page -> pmd_free_pte_page
->>> may encounter a none pmd and trigger a WARN.
->>
->> Yeah, pud_free_pmd_page()->pmd_free_pte_page() looks shaky.
->>
->> I assume we should either have an explicit pmd_none() check in
->> pud_free_pmd_page() before calling pmd_free_pte_page(), or one in
->> pmd_free_pte_page().
->>
->> With your patch, we'd be calling pte_free_kernel() on a NULL pointer,
->> which sounds wrong -- unless I am missing something important.
->>
->>>
->>>>
->>>> If you were able to trigger this WARN, it's always a good idea to
->>>> include the splat in the commit.
->>>
->>> I wasn't able to, it is just an observation from code inspection.
->>
->> That better be included in the patch description :)
-> 
-> I did, actually. My bad for not putting in spaces, I notice now that the
-> description looks horrible to the eye :)
+On Thu, May 15, 2025 at 4:40=E2=80=AFPM AngeloGioacchino Del Regno
+<angelogioacchino.delregno@collabora.com> wrote:
+>
+> Il 14/05/25 10:11, Darren.Ye ha scritto:
+> > From: Darren Ye <darren.ye@mediatek.com>
+> >
+> > Add audio clock wrapper and audio tuner control.
+> >
+> > Signed-off-by: Darren Ye <darren.ye@mediatek.com>
+> > ---
+> >   sound/soc/mediatek/mt8196/mt8196-afe-clk.c    | 723 +++++++++++++++++=
++
+> >   sound/soc/mediatek/mt8196/mt8196-afe-clk.h    | 142 ++++
+> >   sound/soc/mediatek/mt8196/mt8196-audsys-clk.c | 252 ++++++
+> >   sound/soc/mediatek/mt8196/mt8196-audsys-clk.h |  14 +
+> >   .../soc/mediatek/mt8196/mt8196-audsys-clkid.h |  78 ++
+> >   5 files changed, 1209 insertions(+)
+> >   create mode 100644 sound/soc/mediatek/mt8196/mt8196-afe-clk.c
+> >   create mode 100644 sound/soc/mediatek/mt8196/mt8196-afe-clk.h
+> >   create mode 100644 sound/soc/mediatek/mt8196/mt8196-audsys-clk.c
+> >   create mode 100644 sound/soc/mediatek/mt8196/mt8196-audsys-clk.h
+> >   create mode 100644 sound/soc/mediatek/mt8196/mt8196-audsys-clkid.h
+> >
+> > diff --git a/sound/soc/mediatek/mt8196/mt8196-afe-clk.c b/sound/soc/med=
+iatek/mt8196/mt8196-afe-clk.c
+> > new file mode 100644
+> > index 000000000000..83b5ee9d30ef
+> > --- /dev/null
+> > +++ b/sound/soc/mediatek/mt8196/mt8196-afe-clk.c
+> > @@ -0,0 +1,723 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + *  mt8196-afe-clk.c  --  Mediatek 8196 afe clock ctrl
+>
+> mt8196-afe-clk.c - MediaTek MT8196 AFE Clock Control
+>
+> > + *
+> > + *  Copyright (c) 2024 MediaTek Inc.
+> > + *  Author: Darren Ye <darren.ye@mediatek.com>
+> > + */
+> > +
+> > +#include <linux/clk.h>
+> > +#include <linux/regmap.h>
+> > +#include <linux/mfd/syscon.h>
+> > +#include "mt8196-afe-common.h"
+> > +#include "mt8196-audsys-clk.h"
+> > +#include "mt8196-afe-clk.h"
+> > +
+>
+> ..snip..
+>
+> > +
+> > +static int mt8196_afe_disable_apll(struct mtk_base_afe *afe)
+> > +{
+> > +     struct mt8196_afe_private *afe_priv =3D afe->platform_priv;
+> > +     int ret =3D 0;
+> > +
+> > +     ret =3D mt8196_afe_enable_clk(afe, afe_priv->clk[MT8196_CLK_VLP_M=
+UX_AUDIO_H]);
+> > +     if (ret)
+> > +             return ret;
+> > +
+> > +     ret =3D mt8196_afe_enable_clk(afe, afe_priv->clk[MT8196_CLK_TOP_M=
+UX_AUD_1]);
+> > +     if (ret)
+> > +             goto clk_ck_mux_aud1_err;
+> > +
+> > +     ret =3D mt8196_afe_set_clk_parent(afe, afe_priv->clk[MT8196_CLK_T=
+OP_MUX_AUD_1],
+> > +                                     afe_priv->clk[MT8196_CLK_TOP_CLK2=
+6M]);
+> > +     if (ret)
+> > +             goto clk_ck_mux_aud1_parent_err;
+> > +
+> > +     ret =3D mt8196_afe_enable_clk(afe, afe_priv->clk[MT8196_CLK_TOP_M=
+UX_AUD_2]);
+> > +     if (ret)
+> > +             goto clk_ck_mux_aud2_err;
+> > +
+> > +     ret =3D mt8196_afe_set_clk_parent(afe, afe_priv->clk[MT8196_CLK_T=
+OP_MUX_AUD_2],
+> > +                                     afe_priv->clk[MT8196_CLK_TOP_CLK2=
+6M]);
+> > +     if (ret)
+> > +             goto clk_ck_mux_aud2_parent_err;
+> > +
+> > +     mt8196_afe_disable_clk(afe, afe_priv->clk[MT8196_CLK_TOP_MUX_AUD_=
+1]);
+> > +     mt8196_afe_disable_clk(afe, afe_priv->clk[MT8196_CLK_TOP_MUX_AUD_=
+2]);
+> > +     mt8196_afe_set_clk_parent(afe, afe_priv->clk[MT8196_CLK_VLP_MUX_A=
+UDIO_H],
+> > +                               afe_priv->clk[MT8196_CLK_VLP_CLK26M]);
+> > +     mt8196_afe_disable_clk(afe, afe_priv->clk[MT8196_CLK_VLP_MUX_AUDI=
+O_H]);
+> > +     return 0;
+> > +
+> > +clk_ck_mux_aud2_parent_err:
+> > +     mt8196_afe_disable_clk(afe, afe_priv->clk[MT8196_CLK_TOP_MUX_AUD_=
+2]);
+> > +clk_ck_mux_aud2_err:
+> > +     mt8196_afe_set_clk_parent(afe, afe_priv->clk[MT8196_CLK_TOP_MUX_A=
+UD_1],
+> > +                               afe_priv->clk[MT8196_CLK_TOP_APLL1_CK])=
+;
+> > +clk_ck_mux_aud1_parent_err:
+> > +     mt8196_afe_disable_clk(afe, afe_priv->clk[MT8196_CLK_TOP_MUX_AUD_=
+1]);
+> > +clk_ck_mux_aud1_err:
+> > +     mt8196_afe_disable_clk(afe, afe_priv->clk[MT8196_CLK_VLP_MUX_AUDI=
+O_H]);
+> > +
+> > +     return ret;
+> > +}
+> > +
+> > +static void mt8196_afe_apll_init(struct mtk_base_afe *afe)
+> > +{
+> > +     struct mt8196_afe_private *afe_priv =3D afe->platform_priv;
+> > +
+>
+> if (!afe_priv->vlp_clk) {
+>         dev_warn...
+>         return;
+> }
+>
+> regmap_write......
+>
+> > +     if (afe_priv->vlp_ck) {
+> > +             regmap_write(afe_priv->vlp_ck, VLP_APLL1_TUNER_CON0, VLP_=
+APLL1_TUNER_CON0_VALUE);
+> > +             regmap_write(afe_priv->vlp_ck, VLP_APLL2_TUNER_CON0, VLP_=
+APLL2_TUNER_CON0_VALUE);
+> > +     } else {
+> > +             dev_warn(afe->dev, "vlp_ck regmap is null ptr\n");
+> > +     }
+> > +}
+> > +
+> > +int mt8196_apll1_enable(struct mtk_base_afe *afe)
+> > +{
+> > +     struct mt8196_afe_private *afe_priv =3D afe->platform_priv;
+> > +     int ret;
+> > +
+> > +     /* setting for APLL */
+> > +     apll1_mux_setting(afe, true);
+> > +
+> > +     ret =3D mt8196_afe_enable_clk(afe, afe_priv->clk[MT8196_CLK_AFE_A=
+PLL1]);
+> > +     if (ret)
+> > +             goto ERR_CLK_APLL1;
+> > +
+> > +     ret =3D mt8196_afe_enable_clk(afe, afe_priv->clk[MT8196_CLK_AFE_A=
+PLL_TUNER1]);
+> > +     if (ret)
+> > +             goto ERR_CLK_APLL1_TUNER;
+> > +
+> > +     /* sel 44.1kHz:1, apll_div:7, upper bound:3 */
+> > +     regmap_update_bits(afe->regmap, AFE_APLL1_TUNER_CFG,
+> > +                        XTAL_EN_128FS_SEL_MASK_SFT | APLL_DIV_MASK_SFT=
+ | UPPER_BOUND_MASK_SFT,
+> > +                        (0x1 << XTAL_EN_128FS_SEL_SFT) | (7 << APLL_DI=
+V_SFT) |
+> > +                        (3 << UPPER_BOUND_SFT));
+> > +
+> > +     /* apll1 freq tuner enable */
+> > +     regmap_update_bits(afe->regmap, AFE_APLL1_TUNER_CFG,
+> > +                        FREQ_TUNER_EN_MASK_SFT,
+> > +                        0x1 << FREQ_TUNER_EN_SFT);
+> > +
+> > +     /* audio apll1 on */
+> > +     mt8196_afe_enable_top_cg(afe, MT8196_AUDIO_APLL1_EN_ON);
+> > +
+> > +     return 0;
+> > +
+> > +ERR_CLK_APLL1_TUNER:
+>
+> lower case for labels please
+>
+> > +     mt8196_afe_disable_clk(afe, afe_priv->clk[MT8196_CLK_AFE_APLL_TUN=
+ER1]);
+> > +ERR_CLK_APLL1:
+>
+> ^^^^^^^^^
+>
+> > +     mt8196_afe_disable_clk(afe, afe_priv->clk[MT8196_CLK_AFE_APLL1]);
+> > +     return ret;
+> > +}
+> > +
+> > +void mt8196_apll1_disable(struct mtk_base_afe *afe)
+> > +{
+> > +     struct mt8196_afe_private *afe_priv =3D afe->platform_priv;
+> > +
+> > +     /* audio apll1 off */
+> > +     mt8196_afe_disable_top_cg(afe, MT8196_AUDIO_APLL1_EN_ON);
+> > +
+> > +     /* apll1 freq tuner disable */
+> > +     regmap_update_bits(afe->regmap, AFE_APLL1_TUNER_CFG,
+> > +                        FREQ_TUNER_EN_MASK_SFT,
+> > +                        0x0);
+> > +
+> > +     mt8196_afe_disable_clk(afe, afe_priv->clk[MT8196_CLK_AFE_APLL_TUN=
+ER1]);
+> > +     mt8196_afe_disable_clk(afe, afe_priv->clk[MT8196_CLK_AFE_APLL1]);
+> > +     apll1_mux_setting(afe, false);
+> > +}
+> > +
+> > +int mt8196_apll2_enable(struct mtk_base_afe *afe)
+> > +{
+> > +     struct mt8196_afe_private *afe_priv =3D afe->platform_priv;
+> > +     int ret;
+> > +
+> > +     /* setting for APLL */
+> > +     apll2_mux_setting(afe, true);
+> > +
+> > +     ret =3D mt8196_afe_enable_clk(afe, afe_priv->clk[MT8196_CLK_AFE_A=
+PLL2]);
+> > +     if (ret)
+> > +             goto ERR_CLK_APLL2;
+> > +
+> > +     ret =3D mt8196_afe_enable_clk(afe, afe_priv->clk[MT8196_CLK_AFE_A=
+PLL_TUNER2]);
+> > +     if (ret)
+> > +             goto ERR_CLK_APLL2_TUNER;
+> > +
+> > +     /* sel 48kHz: 2, apll_div: 7, upper bound: 3*/
+> > +     regmap_update_bits(afe->regmap, AFE_APLL2_TUNER_CFG,
+> > +                        XTAL_EN_128FS_SEL_MASK_SFT | APLL_DIV_MASK_SFT=
+ | UPPER_BOUND_MASK_SFT,
+> > +                        (0x2 << XTAL_EN_128FS_SEL_SFT) | (7 << APLL_DI=
+V_SFT) |
+> > +                        (3 << UPPER_BOUND_SFT));
+> > +
+> > +     /* apll2 freq tuner enable */
+> > +     regmap_update_bits(afe->regmap, AFE_APLL2_TUNER_CFG,
+> > +                        FREQ_TUNER_EN_MASK_SFT,
+> > +                        0x1 << FREQ_TUNER_EN_SFT);
+> > +
+> > +     /* audio apll2 on */
+> > +     mt8196_afe_enable_top_cg(afe, MT8196_AUDIO_APLL2_EN_ON);
+> > +     return 0;
+> > +
+> > +ERR_CLK_APLL2_TUNER:
+>
+> lower case for labels please
+>
+> > +     mt8196_afe_disable_clk(afe, afe_priv->clk[MT8196_CLK_AFE_APLL_TUN=
+ER2]);
+> > +ERR_CLK_APLL2:
+>
+> ditto
+>
+> > +     mt8196_afe_disable_clk(afe, afe_priv->clk[MT8196_CLK_AFE_APLL2]);
+> > +     return ret;
+> > +
+> > +     return 0;
+> > +}
+> > +
+> > +void mt8196_apll2_disable(struct mtk_base_afe *afe)
+> > +{
+> > +     struct mt8196_afe_private *afe_priv =3D afe->platform_priv;
+> > +
+> > +     /* audio apll2 off */
+> > +     mt8196_afe_disable_top_cg(afe, MT8196_AUDIO_APLL2_EN_ON);
+> > +
+> > +     /* apll2 freq tuner disable */
+> > +     regmap_update_bits(afe->regmap, AFE_APLL2_TUNER_CFG,
+> > +                        FREQ_TUNER_EN_MASK_SFT,
+> > +                        0x0);
+> > +
+> > +     mt8196_afe_disable_clk(afe, afe_priv->clk[MT8196_CLK_AFE_APLL_TUN=
+ER2]);
+> > +     mt8196_afe_disable_clk(afe, afe_priv->clk[MT8196_CLK_AFE_APLL2]);
+> > +     apll2_mux_setting(afe, false);
+> > +}
+> > +
+> > +int mt8196_get_apll_rate(struct mtk_base_afe *afe, int apll)
+> > +{
+> > +     struct mt8196_afe_private *afe_priv =3D afe->platform_priv;
+> > +     int clk_id =3D 0;
+> > +
+> > +     if (apll < MT8196_APLL1 || apll > MT8196_APLL2) {
+> > +             dev_warn(afe->dev, "invalid clk id\n");
+>
+> ("invalid clk id %d\n", clk_id)
+>
+> ...otherwise it makes no sense, as it gives no useful information.
+> Alternatively, just drop the print.
+>
+> > +             return 0;
+> > +     }
+> > +
+> > +     if (apll =3D=3D MT8196_APLL1)
+> > +             clk_id =3D MT8196_CLK_TOP_APLL1_CK;
+> > +     else
+> > +             clk_id =3D MT8196_CLK_TOP_APLL2_CK;
+> > +
+> > +     return clk_get_rate(afe_priv->clk[clk_id]);
+> > +}
+> > +
+> > +int mt8196_get_apll_by_rate(struct mtk_base_afe *afe, int rate)
+> > +{
+> > +     return ((rate % 8000) =3D=3D 0) ? MT8196_APLL2 : MT8196_APLL1;
+>
+>         return (rate % 8000) ? MT8196_APLL1 : MT8196_APLL2;
+>
+> > +}
+> > +
+> > +int mt8196_get_apll_by_name(struct mtk_base_afe *afe, const char *name=
+)
+> > +{
+> > +     if (strcmp(name, APLL1_W_NAME) =3D=3D 0)
+> > +             return MT8196_APLL1;
+> > +     else
+> > +             return MT8196_APLL2;
+>
+>         if (strcmp ....)
+>                 return MT8196_APLL1;
+>
+>         return MT8196_APLL2;
+>
+> > +}
+> > +
+> > +/* mck */
+> > +struct mt8196_mck_div {
+> > +     int m_sel_id;
+> > +     int div_clk_id;
+> > +};
+> > +
+> > +static const struct mt8196_mck_div mck_div[MT8196_MCK_NUM] =3D {
+> > +     [MT8196_I2SIN0_MCK] =3D {
+> > +             .m_sel_id =3D MT8196_CLK_TOP_I2SIN0_M_SEL,
+> > +             .div_clk_id =3D MT8196_CLK_TOP_APLL12_DIV_I2SIN0,
+> > +     },
+> > +     [MT8196_I2SIN1_MCK] =3D {
+> > +             .m_sel_id =3D MT8196_CLK_TOP_I2SIN1_M_SEL,
+> > +             .div_clk_id =3D MT8196_CLK_TOP_APLL12_DIV_I2SIN1,
+> > +     },
+> > +     [MT8196_FMI2S_MCK] =3D {
+> > +             .m_sel_id =3D MT8196_CLK_TOP_FMI2S_M_SEL,
+> > +             .div_clk_id =3D MT8196_CLK_TOP_APLL12_DIV_FMI2S,
+> > +     },
+> > +     [MT8196_TDMOUT_MCK] =3D {
+> > +             .m_sel_id =3D MT8196_CLK_TOP_TDMOUT_M_SEL,
+> > +             .div_clk_id =3D MT8196_CLK_TOP_APLL12_DIV_TDMOUT_M,
+> > +     },
+> > +     [MT8196_TDMOUT_BCK] =3D {
+> > +             .m_sel_id =3D -1,
+> > +             .div_clk_id =3D MT8196_CLK_TOP_APLL12_DIV_TDMOUT_B,
+> > +     },
+> > +};
+> > +
+> > +int mt8196_mck_enable(struct mtk_base_afe *afe, int mck_id, int rate)
+> > +{
+> > +     struct mt8196_afe_private *afe_priv =3D afe->platform_priv;
+> > +     int apll =3D mt8196_get_apll_by_rate(afe, rate);
+> > +     int apll_clk_id =3D apll =3D=3D MT8196_APLL1 ?
+> > +                       MT8196_CLK_TOP_MUX_AUD_1 : MT8196_CLK_TOP_MUX_A=
+UD_2;
+> > +     int m_sel_id =3D 0;
+> > +     int div_clk_id =3D 0;
+> > +     int ret =3D 0;
+>
+> this gives double initialzation of all m_sel_id, div_clk_id and ret as yo=
+u are
+> initializing the first two immediately after the mck_id check, and ret la=
+ter;
+> just go for
+>
+> int m_sel_id, div_clk_id, ret;
+>
+> or just
+>
+> int ret;
+>
+> > +
+> > +     dev_dbg(afe->dev, "mck_id: %d, rate: %d\n", mck_id, rate);
+> > +
+> > +     if (mck_id >=3D MT8196_MCK_NUM || mck_id < 0)
+> > +             return -EINVAL;
+> > +
+> > +     m_sel_id =3D mck_div[mck_id].m_sel_id;
+> > +     div_clk_id =3D mck_div[mck_id].div_clk_id;
+> > +
+> > +     /* select apll */
+> > +     if (m_sel_id >=3D 0) {
+>
+> ...because then I don't understand why don't you just use mck_div[mck_id]=
+ directly.
+>
+>         if (mck_div[mck_id].m_sel_id >=3D 0) {
+>
+> > +             ret =3D mt8196_afe_enable_clk(afe, afe_priv->clk[m_sel_id=
+]);
+> > +             if (ret)
+> > +                     return ret;
+> > +
+> > +             ret =3D mt8196_afe_set_clk_parent(afe, afe_priv->clk[m_se=
+l_id],
+> > +                                             afe_priv->clk[apll_clk_id=
+]);
+> > +             if (ret)
+> > +                     return ret;
+> > +     }
+> > +
+> > +     /* enable div, set rate */
+> > +     if (div_clk_id < 0) {
+>
+> if (mck_div[mck_id].div_clk_id =3D=3D MT8196_CLK_TOP_APLL12_DIV_TDMOUT_B)=
+ {
+>         rate ...
+> } else if (mck_div[mck_id].div_clk_id < 0) {
+>         ....
+> }
+>
+>
+> > +             dev_err(afe->dev, "invalid div_clk_id %d\n", div_clk_id);
+> > +             return -EINVAL;
+> > +     }
+> > +     if (div_clk_id =3D=3D MT8196_CLK_TOP_APLL12_DIV_TDMOUT_B)
+> > +             rate =3D rate * 16;
+> > +
+> > +     ret =3D mt8196_afe_enable_clk(afe, afe_priv->clk[div_clk_id]);
+> > +     if (ret)
+> > +             return ret;
+> > +
+> > +     ret =3D mt8196_afe_set_clk_rate(afe, afe_priv->clk[div_clk_id], r=
+ate);
+> > +     if (ret)
+> > +             return ret;
+> > +
+> > +     return 0;
+> > +}
+> > +
+> > +int mt8196_mck_disable(struct mtk_base_afe *afe, int mck_id)
+> > +{
+> > +     struct mt8196_afe_private *afe_priv =3D afe->platform_priv;
+> > +     int m_sel_id =3D 0;
+> > +     int div_clk_id =3D 0;
+>
+> Double init again....
+>
+> > +
+> > +     dev_dbg(afe->dev, "mck_id: %d.\n", mck_id);
+> > +
+> > +     if (mck_id < 0) {
+> > +             dev_err(afe->dev, "mck_id =3D %d < 0\n", mck_id);
+> > +             return -EINVAL;
+> > +     }
+> > +
+> > +     m_sel_id =3D mck_div[mck_id].m_sel_id;
+> > +     div_clk_id =3D mck_div[mck_id].div_clk_id;
+> > +
+> > +     if (div_clk_id < 0) {
+> > +             dev_err(afe->dev, "div_clk_id =3D %d < 0\n",
+> > +                     div_clk_id);
+> > +             return -EINVAL;
+> > +     }
+> > +
+> > +     mt8196_afe_disable_clk(afe, afe_priv->clk[div_clk_id]);
+> > +
+> > +     if (m_sel_id >=3D 0)
+> > +             mt8196_afe_disable_clk(afe, afe_priv->clk[m_sel_id]);
+> > +
+> > +     return 0;
+> > +}
+> > +
+> > +int mt8196_afe_enable_reg_rw_clk(struct mtk_base_afe *afe)
+> > +{
+> > +     struct mt8196_afe_private *afe_priv =3D afe->platform_priv;
+> > +
+> > +     /* bus clock for AFE external access, like DRAM */
+> > +     mt8196_afe_enable_clk(afe, afe_priv->clk[MT8196_CLK_TOP_ADSP_SEL]=
+);
+> > +
+> > +     /* bus clock for AFE internal access, like AFE SRAM */
+> > +     mt8196_afe_enable_clk(afe, afe_priv->clk[MT8196_CLK_VLP_MUX_AUDIO=
+INTBUS]);
+> > +     mt8196_afe_set_clk_parent(afe, afe_priv->clk[MT8196_CLK_VLP_MUX_A=
+UDIOINTBUS],
+> > +                               afe_priv->clk[MT8196_CLK_VLP_CLK26M]);
+> > +     /* enable audio vlp clock source */
+> > +     mt8196_afe_enable_clk(afe, afe_priv->clk[MT8196_CLK_VLP_MUX_AUDIO=
+_H]);
+> > +     mt8196_afe_set_clk_parent(afe, afe_priv->clk[MT8196_CLK_VLP_MUX_A=
+UDIO_H],
+> > +                               afe_priv->clk[MT8196_CLK_VLP_CLK26M]);
+> > +
+> > +     /* AFE hw clock */
+> > +     /* IPM2.0: USE HOPPING & 26M */
+> > +     mt8196_afe_enable_clk(afe, afe_priv->clk[MT8196_CLK_AFE_AUDIO_HOP=
+PING]);
+> > +     mt8196_afe_enable_clk(afe, afe_priv->clk[MT8196_CLK_AFE_AUDIO_F26=
+M]);
+> > +     return 0;
+> > +}
+> > +
+> > +int mt8196_afe_disable_reg_rw_clk(struct mtk_base_afe *afe)
+> > +{
+> > +     struct mt8196_afe_private *afe_priv =3D afe->platform_priv;
+> > +
+> > +     /* IPM2.0: Use HOPPING & 26M */
+> > +     mt8196_afe_disable_clk(afe, afe_priv->clk[MT8196_CLK_AFE_AUDIO_HO=
+PPING]);
+> > +     mt8196_afe_disable_clk(afe, afe_priv->clk[MT8196_CLK_AFE_AUDIO_F2=
+6M]);
+> > +     mt8196_afe_set_clk_parent(afe, afe_priv->clk[MT8196_CLK_VLP_MUX_A=
+UDIO_H],
+> > +                               afe_priv->clk[MT8196_CLK_VLP_CLK26M]);
+> > +
+> > +     mt8196_afe_disable_clk(afe, afe_priv->clk[MT8196_CLK_VLP_MUX_AUDI=
+O_H]);
+> > +     mt8196_afe_set_clk_parent(afe, afe_priv->clk[MT8196_CLK_VLP_MUX_A=
+UDIOINTBUS],
+> > +                               afe_priv->clk[MT8196_CLK_VLP_CLK26M]);
+> > +     mt8196_afe_disable_clk(afe, afe_priv->clk[MT8196_CLK_VLP_MUX_AUDI=
+OINTBUS]);
+> > +     mt8196_afe_disable_clk(afe, afe_priv->clk[MT8196_CLK_TOP_ADSP_SEL=
+]);
+> > +     return 0;
+> > +}
+> > +
+> > +int mt8196_afe_enable_main_clock(struct mtk_base_afe *afe)
+> > +{
+>
+> Just directly call
+>
+>         mt8196_afe_enable_top_cg(afe, MT8196_AUDIO_26M_EN_ON);
+>
+> ...and drop mt8196_afe_enable_afe_on()
+>
+> > +     mt8196_afe_enable_afe_on(afe);
+> > +     return 0;
+> > +}
+> > +
+> > +int mt8196_afe_disable_main_clock(struct mtk_base_afe *afe)
+> > +{
+> > +     mt8196_afe_disable_afe_on(afe);
+>
+> mt8196_afe_disable_top_cg(afe, MT8196_AUDIO_26M_EN_ON);
+>
+>
+> > +     return 0;
+> > +}
+> > +
+> > +int mt8196_init_clock(struct mtk_base_afe *afe)
+> > +{
+> > +     struct mt8196_afe_private *afe_priv =3D afe->platform_priv;
+> > +     int ret =3D 0;
+> > +     int i =3D 0;
+> > +
+> > +     ret =3D mt8196_audsys_clk_register(afe);
+> > +     if (ret) {
+> > +             dev_err(afe->dev, "register audsys clk fail %d\n", ret);
+> > +             return ret;
+> > +     }
+> > +
+> > +     afe_priv->clk =3D devm_kcalloc(afe->dev, MT8196_CLK_NUM, sizeof(*=
+afe_priv->clk),
+> > +                                  GFP_KERNEL);
+> > +     if (!afe_priv->clk)
+> > +             return -ENOMEM;
+> > +
+> > +     for (i =3D 0; i < MT8196_CLK_NUM; i++) {
+> > +             afe_priv->clk[i] =3D devm_clk_get(afe->dev, aud_clks[i]);
+> > +             if (IS_ERR(afe_priv->clk[i])) {
+> > +                     dev_err(afe->dev, "devm_clk_get %s fail\n", aud_c=
+lks[i]);
+> > +                     return PTR_ERR(afe_priv->clk[i]);
+> > +             }
+> > +     }
+> > +
+> > +     afe_priv->vlp_ck =3D syscon_regmap_lookup_by_phandle(afe->dev->of=
+_node,
+> > +                                                        "vlpcksys");
+> > +     if (IS_ERR(afe_priv->vlp_ck)) {
+> > +             dev_err(afe->dev, "Cannot find vlpcksys\n");
+> > +             return PTR_ERR(afe_priv->vlp_ck);
+> > +     }
+> > +
+> > +     mt8196_afe_apll_init(afe);
+> > +
+> > +     ret =3D mt8196_afe_disable_apll(afe);
+> > +     if (ret)
+> > +             return ret;
+> > +
+> > +     return 0;
+> > +}
+> > +
+> > diff --git a/sound/soc/mediatek/mt8196/mt8196-afe-clk.h b/sound/soc/med=
+iatek/mt8196/mt8196-afe-clk.h
+> > new file mode 100644
+> > index 000000000000..60f5e5a157d5
+> > --- /dev/null
+> > +++ b/sound/soc/mediatek/mt8196/mt8196-afe-clk.h
+> > @@ -0,0 +1,142 @@
+> > +/* SPDX-License-Identifier: GPL-2.0 */
+> > +/*
+> > + * mt8196-afe-clk.h  --  Mediatek 8196 afe clock ctrl definition
+>
+> mt8196-afe-clk.h - MediaTek MT8195 AFE Clock Control definitions
+>
+> > + *
+> > + * Copyright (c) 2024 MediaTek Inc.
+> > + *  Author: Darren Ye <darren.ye@mediatek.com>
+> > + */
+> > +
+>
+> ..snip..
+>
+> > diff --git a/sound/soc/mediatek/mt8196/mt8196-audsys-clk.c b/sound/soc/=
+mediatek/mt8196/mt8196-audsys-clk.c
+> > new file mode 100644
+> > index 000000000000..aa40f02698ac
+> > --- /dev/null
+> > +++ b/sound/soc/mediatek/mt8196/mt8196-audsys-clk.c
+> > @@ -0,0 +1,252 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * mt8196-audsys-clk.c  --  MediaTek 8196 audsys clock control
+> > + *
+> > + * Copyright (c) 2025 MediaTek Inc.
+> > + * Author: Darren Ye <darren.ye@mediatek.com>
+> > + */
+> > +
+> > +#include <linux/clk.h>
+> > +#include <linux/clk-provider.h>
+> > +#include <linux/clkdev.h>
+> > +#include "mt8196-afe-common.h"
+> > +#include "mt8196-audsys-clk.h"
+> > +#include "mt8196-audsys-clkid.h"
+> > +#include "mt8196-reg.h"
+> > +
+> ..snip..
+>
+>
+> > +};
+> > +
+> > +static void mt8196_audsys_clk_unregister(void *data)
+> > +{
+> > +     struct mtk_base_afe *afe =3D data;
+> > +     struct mt8196_afe_private *afe_priv =3D afe->platform_priv;
+> > +     struct clk *clk;
+> > +     struct clk_lookup *cl;
+> > +     int i;
+> > +
+> > +     if (!afe_priv)
+> > +             return;
+> > +
+> > +     for (i =3D 0; i < CLK_AFE_NR_CLK; i++) {
+> > +             cl =3D afe_priv->lookup[i];
+> > +             if (!cl)
+> > +                     continue;
+> > +
+> > +             clk =3D cl->clk;
+> > +             clk_unregister_gate(clk);
+> > +
+> > +             clkdev_drop(cl);
+> > +     }
+> > +}
+> > +
+> > +int mt8196_audsys_clk_register(struct mtk_base_afe *afe)
+> > +{
+> > +     struct mt8196_afe_private *afe_priv =3D afe->platform_priv;
+> > +     struct clk *clk;
+> > +     struct clk_lookup *cl;
+> > +     int i;
+> > +
+> > +     afe_priv->lookup =3D devm_kcalloc(afe->dev, CLK_AFE_NR_CLK,
+> > +                                     sizeof(*afe_priv->lookup),
+> > +                                     GFP_KERNEL);
+> > +
+> > +     if (!afe_priv->lookup)
+> > +             return -ENOMEM;
+> > +
+> > +     for (i =3D 0; i < ARRAY_SIZE(aud_clks); i++) {
+> > +             const struct afe_gate *gate =3D &aud_clks[i];
+> > +
+> > +             clk =3D clk_register_gate(afe->dev, gate->name, gate->par=
+ent_name,
+> > +                                     gate->flags, afe->base_addr + gat=
+e->reg,
+> > +                                     gate->bit, gate->cg_flags, NULL);
+> > +
+> > +             if (IS_ERR(clk)) {
+> > +                     dev_err(afe->dev, "Failed to register clk %s: %ld=
+\n",
+> > +                             gate->name, PTR_ERR(clk));
+> > +                     continue;
+> > +             }
+> > +
+>
+> All of the above, until...
+>
+> > +             /* add clk_lookup for devm_clk_get(SND_SOC_DAPM_CLOCK_SUP=
+PLY) */
+> > +             cl =3D kzalloc(sizeof(*cl), GFP_KERNEL);
+> > +             if (!cl)
+> > +                     return -ENOMEM;
+> > +
+> > +             cl->clk =3D clk;
+> > +             cl->con_id =3D gate->name;
+> > +             cl->dev_id =3D dev_name(afe->dev);
+> > +             cl->clk_hw =3D NULL;
+> > +             clkdev_add(cl);
+>
+>
+> ...here, can be simplified with a single call to
+>
+> clk_register_clkdev(clk, gate->name, dev_name(afe->dev))
+>
+> or alternatively, you could simplify it even more:
+>
+>
+> static void mt8196_audsys_clk_unregister(void *data)
+> {
+>         /* nothing to do here, remove this function */
+> }
+>
+> int mt8196_audsys_clk_register(struct mtk_base_afe *afe)
+> {
+>         struct mt8196_afe_private *afe_priv =3D afe->platform_priv;
+>         int i, ret;
+>
+>         for (i =3D 0; i < ARRAY_SIZE(aud_clks); i++) {
+>                 const struct afe_gate *gate =3D &aud_clks[i];
+>                 struct clk_hw *hw;
+>
+>                 hw =3D devm_clk_hw_register_gate(afe->dev, gate->name, ga=
+te->parent_name,
+>                                                gate->flags, afe->base_add=
+r + gate->reg,
+>                                                gate->bit, gate->cg_flags,=
+ NULL);
+>                 if (IS_ERR(clk)) {
+>                         dev_err(afe->dev, "Failed to register clk %s: %ld=
+\n",
+>                                 gate->name, PTR_ERR(clk));
+>                         continue;
+>                 }
+>
+>                 ret =3D devm_clk_hw_register_clkdev(afe->dev, hw, gate->n=
+ame, dev_name(afe->dev));
+>                 if (ret)
+>                         return ret;
+>         }
+>
+>         return 0;
+> }
 
-Ahh, there it is. Sorry :) Yeah, some empty lines won't hurt!
+There is no need to involve the clk subsystem. These are simply supply
+gates, be them for power or clks, one per bit. Simply model them as ASoC
+supply widgets, add appropriate routes for each so that the dependencies
+are correct, and ASoC will deal with them for you. No code is needed,
+just descriptions.
 
--- 
-Cheers,
+_That_ is why I asked for he audio clocks to be integrated into the
+AFE driver.
 
-David / dhildenb
+ChenYu
 
+> > +
+> > +             afe_priv->lookup[i] =3D cl;
+> > +     }
+> > +
+> > +     return devm_add_action_or_reset(afe->dev, mt8196_audsys_clk_unreg=
+ister, afe);
+> > +}
+>
+> Cheers,
+> Angelo
+>
 
