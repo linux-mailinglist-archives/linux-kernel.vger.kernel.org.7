@@ -1,124 +1,149 @@
-Return-Path: <linux-kernel+bounces-649856-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-649845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96180AB8A0B
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 16:57:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 19D12AB89F0
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 16:53:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55BDBA07F21
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 14:54:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF0BA9E1C48
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 14:52:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EE9515A864;
-	Thu, 15 May 2025 14:54:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF7231F8F09;
+	Thu, 15 May 2025 14:52:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ExprBEY4"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dBhyPu62"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2BE653363;
-	Thu, 15 May 2025 14:54:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C9481F873B
+	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 14:52:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747320862; cv=none; b=fC4d/9x7dzhpxEUorTRB12iQVTV5v1fmuojjmVgsP1r4+rjJ47GczhvtNQ2JMXq+koAHKUQMxQa4fkXwrt/z6hIkQzdUI+O0GwFGskbflKG/iabOmdNSlLinVCNeNDIH4H9uZs7RtE2SaVHYuj394+IBRqPAO+WBuP6Tr7Xcg4c=
+	t=1747320732; cv=none; b=f8r/2P2UytMQnUTm7NDHMeKXD7rlGEMdYapW8TabJneee5NEkGXnRWxHj5r0TvEjUrtLThKRDaoEBn5zqrtOk0nysRfi/50uTOel8pcbCXq8MDSGYcY7jPXDc6zqMM1aXYJCEa+idrCVWioZo/phqTxMiyx/NGZsoQSF1UfsHJA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747320862; c=relaxed/simple;
-	bh=dt+vTGfHYFKWmSNzmatAnrVxES49h0xgerKxeszNoEE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TWn4HDu5VTshy+eUvL225n061mrzw1wyobwmmsyQYLav5ALLzEajJGHyHGUIz/nKoUo/nZUgU4vLzaCU+A6NR2LDvuXDVuEnFu9MOy9L7qTOxCKslTc+3kIsYHyteKi/1Xwd5k/1A1u5ziyA3c46kGy3uktVOtqvYSHuSlPMNz8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ExprBEY4; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5fbdf6973e7so1332951a12.2;
-        Thu, 15 May 2025 07:54:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747320859; x=1747925659; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=AnZP8zYyxLfJR8Q5g++toUplHuGONRuvc6eCNUa3kD8=;
-        b=ExprBEY4G40GxJaLmHsNGbuerPxNKG4rrrN3ESl34xGATvj5izurs47/Csif8CTdLc
-         TU52O56UmqjfYxEjdfrXpDl9aWJpOjZW8nzw19HZjHbjXh/mg4UuVoZ30coRG1L8rmFS
-         MLVBIyVjsJOkg4ORt54k3re7uElf1ysSA10MlXF0fLaJ+pO7SoFgQHevbUKrfkBFgv5I
-         0DSZcSjModa7CMTJrkigRtEzLKjD3SbC+u2HGlkbiHFfZcSecP68xy8UlZZkhemHIgU2
-         OSFt6yQ06+UAqUHvyXJ4eRy4/Syd2b671t63aHt+4Dz9tmsboyLgeIcsqE8VyebhSQe/
-         pmVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747320859; x=1747925659;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=AnZP8zYyxLfJR8Q5g++toUplHuGONRuvc6eCNUa3kD8=;
-        b=Q8G9+iQC0ioUYqWOZOsxndgnJbx30PJCVYSCxwZ+NyLWh9pbRbhS9W/gKitq09EAJ+
-         x4nskKZGWRdO3qfsRozqkHGXATUHPANw7Zsu4CO+SlUM98c8ucJY+S4CwqABEOTDxpQs
-         h2vybFiwhpTDnmBRtKJL9q3R4toShCpKzLcDIUpLioRYudfT5BF6BvmJx44KZCmouwe6
-         gg8EPvbcNiIg08medqoiaiTo0EgzHYjO7Mue7RCjuhKXvnyhqOFgxV3BXxt6dXKAVLV8
-         nJKPzmh2s5tIqIDzy0/0Qh0yA3/jk/Xlv5rYCLsZv7wVjKU+hxv9V1Ez+pGVYC/K5OrA
-         /Cvg==
-X-Forwarded-Encrypted: i=1; AJvYcCWclpwLj9ezA8L5hXa8Zx9u7LVEXZWn1HdJnKt3N6hT7fu+dvBdrs8+eRqU468DaW7CnfTxOmT1wMLXY2s=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyi8Vp2UNo5hq1x5Whyf0DuvIHeaTC9+pcB2llM2ow/GHg+WoRN
-	zZnQaZCw4NY7cNXp78jq3CWkeolPPwDxapSo65S3Lc0pQFHUWSvBI69lHB8Y7ZHdeQ==
-X-Gm-Gg: ASbGncuIzjGxdxwXt/B9L5BxwyS8B/EjeczK4c8UKRreDRKgveOsBWvGcQqQpjNB0Tb
-	CLj/gmrTY+5P7VgwHwKCoGmvVo3AwEl7OJT1k35lqk67Ib2zcaNRu9JaiS6kwwprbTWWwftkavE
-	ANq6kaQgcK/bHIMXk4L4MGfK30Rk2W8asbGJKt5ETGUjF0LhJ4mZXkoxHE6qyi8G9aby1jM4OmU
-	KkRxZDq895bYMJr1YDPFr/+oo4MYz0+e0leiPs5L/KWUVhleegJaHPfqnA+TLlIY5bU1gdrISzr
-	nahr3hHSVoxyrjcP0zOSB5n9VIt1HbCvaEoPFN+HGLrPW3W1gDRM0vZSwoqcDw==
-X-Google-Smtp-Source: AGHT+IHyHUvPaBRGkNVp8odY45xlwAbsmexgkeI6ikJkzUPH8XilLTMjzxiK002IG5equ6vL2TEwzQ==
-X-Received: by 2002:a05:6402:1ecc:b0:5fb:1fbd:e3ad with SMTP id 4fb4d7f45d1cf-5ff988a5ecfmr6853430a12.13.1747320858961;
-        Thu, 15 May 2025 07:54:18 -0700 (PDT)
-Received: from avt74j0.fritz.box ([2a02:8109:8617:d700:2d36:8b46:22ae:7bde])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5fc9d710549sm10332681a12.76.2025.05.15.07.54.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 May 2025 07:54:18 -0700 (PDT)
-From: Martin Hecht <mhecht73@gmail.com>
-To: linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	mchehab@kernel.org,
-	hverkuil@xs4all.nl,
-	sakari.ailus@linux.intel.com
-Cc: laurent.pinchart@ideasonboard.com,
-	tomm.merciai@gmail.com,
-	martin.hecht@avnet.eu,
-	michael.roeder@avnet.eu,
-	Martin Hecht <mhecht73@gmail.com>
-Subject: [PATCH v3] MAINTAINERS: Update my email address to gmail.com
-Date: Thu, 15 May 2025 16:51:50 +0200
-Message-ID: <20250515145150.1419247-2-mhecht73@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1747320732; c=relaxed/simple;
+	bh=hZDYOdxvakc1x6FXmTGmDIipla/+VXcOKRnwGlndQ2A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KCUqTUx918K7Fr2k1PX8WDJM1yKwAllkylzEJ4P8oy1wzNI0Bhiy8X/L9umHvC84D2/cbX4cC7pcO9/v1/P4DQ5z5KOhhjWgKYywyL1PQqLphUe6NluxzLVZ2p9Ieb/ahKFjj6f912LWJEJEqiqL2rYkDsI8Z2ySkGm6pZhgiK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dBhyPu62; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCB25C4CEE7;
+	Thu, 15 May 2025 14:52:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747320730;
+	bh=hZDYOdxvakc1x6FXmTGmDIipla/+VXcOKRnwGlndQ2A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dBhyPu62roivi4KAZ4+eM+ZlxVoYrn38XVK0ALZqFsxIA1+wHzyTCs8UAwuqbn6f6
+	 BQs/BxUiDUKNSYChrXrXnFdSksdRa80m1m86xWbOO/MkBitMmiMVpd1bzVCaY51oq1
+	 2duykOu70MC6nOcgJYwj7KerCowVEjaRrcBmD+cXILcDi5qLcd07GqYWNRMbra2P5i
+	 eZRtsathUnZUSz8kqDgZyqAzqiJs8KlMLGZ33Wb1mPR8tZnqNaxIq2KVFb+qZdbltZ
+	 68WvrMZVPkzM0TwEfEaW7+3TO2uGthlWLzhkT6AKP34QIhubNd2dvD4Q1p7MCyAdim
+	 v+rIIHtCjUWpA==
+Date: Thu, 15 May 2025 16:52:06 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Dave Stevenson <dave.stevenson@raspberrypi.com>, 
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, Dmitry Baryshkov <lumag@kernel.org>, kernel@collabora.com, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 06/23] drm/connector: hdmi: Use YUV420 output format
+ as an RGB fallback
+Message-ID: <etqrbspmy2s75b7lxj3frcjxfnyciawzlxm7im4gvnj6t7z3fx@vx3dfsxitwdn>
+References: <7729efd6-fa88-4022-b8d8-b32fe49bf4aa@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="pjfx5ef52ycqbxy3"
+Content-Disposition: inline
+In-Reply-To: <7729efd6-fa88-4022-b8d8-b32fe49bf4aa@collabora.com>
 
-Replace my corporate email address by @gmail.com.
 
-Signed-off-by: Martin Hecht <mhecht73@gmail.com>
----
- Changes since v2:
-        Updated body and message format.
+--pjfx5ef52ycqbxy3
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v4 06/23] drm/connector: hdmi: Use YUV420 output format
+ as an RGB fallback
+MIME-Version: 1.0
 
- Changes since v1:
-        Remove whithespace in front of Signed-off-by.
+On Thu, May 15, 2025 at 03:44:18PM +0300, Cristian Ciocaltea wrote:
+> Hi Maxime,
+>=20
+> On 5/13/25 4:35 PM, Maxime Ripard wrote:
+> > Hi,
+> >=20
+> > On Fri, Apr 25, 2025 at 01:26:57PM +0300, Cristian Ciocaltea wrote:
+> >> Try to make use of YUV420 when computing the best output format and
+> >> RGB cannot be supported for any of the available color depths.
+> >>
+> >> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+> >> ---
+> >>  drivers/gpu/drm/display/drm_hdmi_state_helper.c | 22 ++++++++++++++++=
++-----
+> >>  1 file changed, 17 insertions(+), 5 deletions(-)
+> >>
+> >> diff --git a/drivers/gpu/drm/display/drm_hdmi_state_helper.c b/drivers=
+/gpu/drm/display/drm_hdmi_state_helper.c
+> >> index 9e0a468073acbb2477eff1abef1c09d63620afaa..1fba10b92a6baa49150b6f=
+f1e96bf2c2739bf269 100644
+> >> --- a/drivers/gpu/drm/display/drm_hdmi_state_helper.c
+> >> +++ b/drivers/gpu/drm/display/drm_hdmi_state_helper.c
+> >> @@ -648,14 +648,26 @@ hdmi_compute_config(const struct drm_connector *=
+connector,
+> >>  				       8, connector->max_bpc);
+> >>  	int ret;
+> >> =20
+> >> -	/*
+> >> -	 * TODO: Add support for YCbCr420 output for HDMI 2.0 capable
+> >> -	 * devices, for modes that only support YCbCr420.
+> >> -	 */
+> >>  	ret =3D hdmi_compute_format_bpc(connector, conn_state, mode, max_bpc,
+> >>  				      HDMI_COLORSPACE_RGB);
+> >> +	if (!ret)
+> >> +		return 0;
+> >=20
+> > Sorry, I missed it on the previous iteration, but this condition
+> > inversion compared to the rest of the function is throwing me off :)
+> >=20
+> > I believe something like
+> >=20
+> > If (ret) {
+> >    if (connector->ycbcr_420_allowed) {
+> >       hdmi_compute_format_bpc(..., HDMI_COLORSPACE_YUV420)
+> >    } else {
+> >      drm_dbg_kms("Can't use YUV420")
+> >    }
+> > }
+> >=20
+> > Would be more natural
+>=20
+> Yep, will do.
+>=20
+> Please let me know if I can start preparing v5, as I'm not sure if you
+> managed to also check the test-related patches.
 
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I haven't gotten through the whole series yet, sorry. I hope to finish
+it by ~ the middle of next week.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 5dee8459a614..e4a4f247d826 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -811,7 +811,7 @@ F:	drivers/media/platform/allegro-dvt/
- 
- ALLIED VISION ALVIUM CAMERA DRIVER
- M:	Tommaso Merciai <tomm.merciai@gmail.com>
--M:	Martin Hecht <martin.hecht@avnet.eu>
-+M:	Martin Hecht <mhecht73@gmail.com>
- L:	linux-media@vger.kernel.org
- S:	Maintained
- F:	Documentation/devicetree/bindings/media/i2c/alliedvision,alvium-csi2.yaml
--- 
-2.43.0
+Maxime
 
+--pjfx5ef52ycqbxy3
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaCX/lgAKCRAnX84Zoj2+
+dljkAX9k8e33BoB5CKna9kwtem7pAB+YOUyyEWaDIaS3EhQOa6oqmhEnRjMkkkOM
+yoUkb/ABgP0kalwCj+x/n4gfJrJGjX33tipO9CI7D/R95N22lK0gBgaRcnQrO2jG
+yFiwra4Ffw==
+=4wat
+-----END PGP SIGNATURE-----
+
+--pjfx5ef52ycqbxy3--
 
