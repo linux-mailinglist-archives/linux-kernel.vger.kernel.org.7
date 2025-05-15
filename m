@@ -1,170 +1,162 @@
-Return-Path: <linux-kernel+bounces-649877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-649880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F41A1AB8A4A
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 17:09:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A99DAB8A54
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 17:11:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3BD704E27FE
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 15:06:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB35416DB31
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 15:07:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A7482135A0;
-	Thu, 15 May 2025 15:06:41 +0000 (UTC)
-Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1513E211A0D;
+	Thu, 15 May 2025 15:07:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hxiXMnls"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0075F1F8BC6
-	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 15:06:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E06820A5D8;
+	Thu, 15 May 2025 15:07:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747321600; cv=none; b=nfiMPJ56CcefKK7rZ+Y2d2OB5zPlrhM4bBEFOO8u1nkYT//ogaCvDYIQKBl9O6rW03jriX5gc/BeEgXfIG2tIXnn7Sx9enHP8mqUZJu04U5AL2/Lmft9TOzkvs5v4KJmYmgmjI6IeRIjs8QTFXQ3Ijmg03M9JPn6xPRPU+3DLoU=
+	t=1747321650; cv=none; b=VsHHRJwCgzjS0xwAqAFK5wTMob1iYs2jdtAGQrZhmLM4J5QXMeOIdJsIP+BtMiT9/gWtMv6DuzW4H3ai4Ud1zMDpy1E2JAguz2+FznThm13U2/Ay0S8JcABtsmFLbzVpRh6e4lemt2oLfoV7ijsXJ3gUIDCiEU11Yz/SH5SzSFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747321600; c=relaxed/simple;
-	bh=DDEfGDPw064d8TIOtPIrX0kse9ua0SZ/cndNX98QQnY=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=gFfOzeus0vEPgZSoKAo/vyKpk5/ZRbC/IM4ArPkSetvyiKJNrNnoBNZqT5YNRvz6SNMgVrb+e7P9q/Vzmh0I1Q333MlyXM/IADz+QPngZF4UvevO/HBU8tuWGEGigDbtB9OaKmm09LWTp0TLtf1d/HcBuVueEz1Cvuom7VtUFxs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3da6fe3c8e7so12867105ab.3
-        for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 08:06:38 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747321598; x=1747926398;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=GdqUBxPxMGurCy9C3+4NLc4yoL33befp7d4Bh5bR8eo=;
-        b=gtnwkNlH/fHtODP+YLMea2BIeQJqtvCfeyKWZJTP4Dh+Nv0rFvuoo/NTcA809SwAFD
-         uit4De3r1W53jOG/9fprWur+XMDCeG6hKoP2r396EUGawMBVTh6oywpz1kgAgq8tbhME
-         eXT9lz8YRVpjYV0NAabE82gsxWjxpZPK8XMCjA9M63T/QVpzF9S+juU1s3qYuhabMLB+
-         +4JAD3/P2a0tQXY2FyvjGDYRxkxAx/bleBB0QTNQp+AwV018j2cTTfoQ8RksBIlwnsVL
-         qZJdkWGlxPnQzw8P3hU5gQlxYcK1ljBWd5NWeKu16MAY8UO5emL0WE5ZdhS8e3w2qrpj
-         zv9g==
-X-Forwarded-Encrypted: i=1; AJvYcCXKZMtWM7bJFB+a93Qfhz2NXAe5QyK6wVUOFx3pQoOOEmGKjFD5SD7akLrbRjQ1Nf48K+heG48/BmUJZdg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOp8UIQBVSFkTlhrCQ53DDD04tiWWUbSGbzz+syl43z62PP7Ar
-	dYH2YntQLh9PGluWDwliUqWjw2rwGknYmnfVlvuqsm7H4VFXlvY0sAcDNjz+sU1KGXGangj1SK9
-	fvo1MWVtpvScHRtQAqt5f8AcUnB5ILKEAhmntqy+z7GDLumeqJ5ZJaZnlXq8=
-X-Google-Smtp-Source: AGHT+IGVmkgxM/BHYmds//15NtrEZvxv8aFwrlsMsBe3q4X9HGpSd4L3Vc2qezoaYUvvh3wHgWzqzY4aNdheZSzDelJqt6uivYTN
+	s=arc-20240116; t=1747321650; c=relaxed/simple;
+	bh=NVnU3EXlKhcA1buxaPfe5O18xcLQiBuKx4mM07IagEE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HPXc8nn+2vEDPpSjr58jo6nRuiAdAPQhLnwWHl6w28p+eX1jxm6WVqsvqqjKlbbZTwmpbnin7+fPPAzhYK+3KAV5EiCa+2GNwYlw0bHs7ISxm5wd7/PQ/GKSykDH4BVkPMSug1rgv/oJKGXuP+IseLa/Hh4jkhP3JnGh2A/Nfi4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hxiXMnls; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC609C4CEE7;
+	Thu, 15 May 2025 15:07:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747321649;
+	bh=NVnU3EXlKhcA1buxaPfe5O18xcLQiBuKx4mM07IagEE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hxiXMnlsIBdlJpTna4XVl4yd+LIHBATurggzh1gAwCvCiEltU8DzI/Npq3OdlKRKZ
+	 GKZiKlUI18UwxeyRKxIAdkxLSPr8krEUTkXzgMEItGQKXCRWjw6qFGqImPKtWJhA9a
+	 iNQ/USp2IYiv9tYezwSsca83juoSQqrZZeuEWYJOQ1YFUULVHZEButC68OLzVG0sxv
+	 hJOmtcI0HPAh3G9VLQm4Wkprc3hlcPByga66I/CQ33bgULosMJ9XbDtZsaY6ekkSH4
+	 IFrtvwA4hik9gsdQtkpLtTJ7cKOxppxpc7kbsQOPDqWKYBJFLHQ+0ooqT4Wceqfh9v
+	 qMiPRpi/rqpKw==
+Date: Thu, 15 May 2025 16:07:25 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Manikandan Muralidharan <manikandan.m@microchip.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
+	claudiu.beznea@tuxon.dev, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ARM: dts: microchip: rename spi-cs-setup-ns property to
+ spi-cs-setup-delay-ns
+Message-ID: <20250515-laptop-unfixable-85dca20d1b57@spud>
+References: <20250515103251.210468-1-manikandan.m@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:17cc:b0:3db:7c22:303c with SMTP id
- e9e14a558f8ab-3db842ce2f3mr123805ab.8.1747321597922; Thu, 15 May 2025
- 08:06:37 -0700 (PDT)
-Date: Thu, 15 May 2025 08:06:37 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <682602fd.a00a0220.a2f23.01d0.GAE@google.com>
-Subject: [syzbot] [wireless?] WARNING in mac80211_hwsim_sta_rc_update
-From: syzbot <syzbot+c0472dd80bb8f668625f@syzkaller.appspotmail.com>
-To: johannes@sipsolutions.net, linux-kernel@vger.kernel.org, 
-	linux-wireless@vger.kernel.org, netdev@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-
-Hello,
-
-syzbot found the following issue on:
-
-HEAD commit:    6b466efc6365 dt-bindings: net: renesas-gbeth: Add support ..
-git tree:       net-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=1582e2f4580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=cc0c7bf6a7800c98
-dashboard link: https://syzkaller.appspot.com/bug?extid=c0472dd80bb8f668625f
-compiler:       Debian clang version 20.1.2 (++20250402124445+58df0ef89dd6-1~exp1~20250402004600.97), Debian LLD 20.1.2
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/0dc241e466cd/disk-6b466efc.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/5df43ce17ae4/vmlinux-6b466efc.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/7cb3cf08e099/bzImage-6b466efc.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+c0472dd80bb8f668625f@syzkaller.appspotmail.com
-
-netlink: 16 bytes leftover after parsing attributes in process `syz.0.682'.
-------------[ cut here ]------------
-intf 08:02:11:00:00:00 [link=0]: bad STA 08:02:11:00:00:01 bandwidth 20 MHz (0) > channel config 10 MHz (7)
-WARNING: CPU: 0 PID: 8246 at drivers/net/wireless/virtual/mac80211_hwsim.c:2653 mac80211_hwsim_sta_rc_update+0x6f5/0x860 drivers/net/wireless/virtual/mac80211_hwsim.c:2650
-Modules linked in:
-CPU: 0 UID: 0 PID: 8246 Comm: syz.0.682 Not tainted 6.15.0-rc5-syzkaller-01032-g6b466efc6365 #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
-RIP: 0010:mac80211_hwsim_sta_rc_update+0x6f5/0x860 drivers/net/wireless/virtual/mac80211_hwsim.c:2650
-Code: 71 17 00 00 48 c7 c7 60 f8 0b 8c 48 8b 74 24 28 89 ea 48 8b 4c 24 10 41 89 d8 45 89 f9 41 56 50 e8 90 48 9c fa 48 83 c4 10 90 <0f> 0b 90 90 e9 0c ff ff ff e8 2d ec d7 fa 90 0f 0b 90 e9 fe fe ff
-RSP: 0018:ffffc90005156fb0 EFLAGS: 00010282
-RAX: bdf3540220fb5200 RBX: 0000000000000014 RCX: 0000000000080000
-RDX: ffffc9000d50e000 RSI: 0000000000005821 RDI: 0000000000005822
-RBP: 0000000000000000 R08: 0000000000000003 R09: 0000000000000004
-R10: dffffc0000000000 R11: fffffbfff1bba4b4 R12: 0000000000000000
-R13: dffffc0000000000 R14: 0000000000000007 R15: 0000000000000000
-FS:  00007f21ea3676c0(0000) GS:ffff8881260c0000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fa1e8181000 CR3: 000000002ff00000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- mac80211_hwsim_sta_add+0xa3/0x310 drivers/net/wireless/virtual/mac80211_hwsim.c:2670
- drv_sta_add net/mac80211/driver-ops.h:466 [inline]
- drv_sta_state+0x8be/0x1840 net/mac80211/driver-ops.c:155
- sta_info_insert_drv_state net/mac80211/sta_info.c:775 [inline]
- sta_info_insert_finish net/mac80211/sta_info.c:883 [inline]
- sta_info_insert_rcu+0xd32/0x1940 net/mac80211/sta_info.c:960
- sta_info_insert+0x16/0xc0 net/mac80211/sta_info.c:965
- rdev_add_station+0x105/0x290 net/wireless/rdev-ops.h:201
- nl80211_new_station+0x1723/0x1b40 net/wireless/nl80211.c:7843
- genl_family_rcv_msg_doit+0x212/0x300 net/netlink/genetlink.c:1115
- genl_family_rcv_msg net/netlink/genetlink.c:1195 [inline]
- genl_rcv_msg+0x60e/0x790 net/netlink/genetlink.c:1210
- netlink_rcv_skb+0x219/0x490 net/netlink/af_netlink.c:2534
- genl_rcv+0x28/0x40 net/netlink/genetlink.c:1219
- netlink_unicast_kernel net/netlink/af_netlink.c:1313 [inline]
- netlink_unicast+0x758/0x8d0 net/netlink/af_netlink.c:1339
- netlink_sendmsg+0x805/0xb30 net/netlink/af_netlink.c:1883
- sock_sendmsg_nosec net/socket.c:712 [inline]
- __sock_sendmsg+0x219/0x270 net/socket.c:727
- ____sys_sendmsg+0x505/0x830 net/socket.c:2566
- ___sys_sendmsg+0x21f/0x2a0 net/socket.c:2620
- __sys_sendmsg net/socket.c:2652 [inline]
- __do_sys_sendmsg net/socket.c:2657 [inline]
- __se_sys_sendmsg net/socket.c:2655 [inline]
- __x64_sys_sendmsg+0x19b/0x260 net/socket.c:2655
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xf6/0x210 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f21e958e969
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f21ea367038 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 00007f21e97b6080 RCX: 00007f21e958e969
-RDX: 0200000000000000 RSI: 0000200000001080 RDI: 0000000000000009
-RBP: 00007f21e9610ab1 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007f21e97b6080 R15: 00007ffd3178ff18
- </TASK>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="YNVVBp6SZFwNB2lg"
+Content-Disposition: inline
+In-Reply-To: <20250515103251.210468-1-manikandan.m@microchip.com>
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+--YNVVBp6SZFwNB2lg
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+On Thu, May 15, 2025 at 04:02:51PM +0530, Manikandan Muralidharan wrote:
+> The naming scheme for delay properties includes "delay" in the name,
+> so renaming spi-cs-setup-ns property to spi-cs-setup-delay-ns to keep
+> that consistent.
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+"to keep that consistent" sounds like some nice cleanup, but these
+properties appear nowhere in kernel code and therefore just do not work?
+I think the wording should reflect that and there should be a Fixes tag
+to the broken commit.
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+>=20
+> Signed-off-by: Manikandan Muralidharan <manikandan.m@microchip.com>
+> ---
+>  arch/arm/boot/dts/microchip/at91-sam9x60ek.dts        | 2 +-
+>  arch/arm/boot/dts/microchip/at91-sama5d27_som1.dtsi   | 2 +-
+>  arch/arm/boot/dts/microchip/at91-sama5d27_wlsom1.dtsi | 2 +-
+>  arch/arm/boot/dts/microchip/at91-sama5d2_icp.dts      | 2 +-
+>  4 files changed, 4 insertions(+), 4 deletions(-)
+>=20
+> diff --git a/arch/arm/boot/dts/microchip/at91-sam9x60ek.dts b/arch/arm/bo=
+ot/dts/microchip/at91-sam9x60ek.dts
+> index cdc56b53299d..c1ff3248bd8f 100644
+> --- a/arch/arm/boot/dts/microchip/at91-sam9x60ek.dts
+> +++ b/arch/arm/boot/dts/microchip/at91-sam9x60ek.dts
+> @@ -609,7 +609,7 @@ flash@0 {
+>  		compatible =3D "jedec,spi-nor";
+>  		reg =3D <0>;
+>  		spi-max-frequency =3D <104000000>;
+> -		spi-cs-setup-ns =3D <7>;
+> +		spi-cs-setup-delay-ns =3D <7>;
+>  		spi-tx-bus-width =3D <4>;
+>  		spi-rx-bus-width =3D <4>;
+>  		m25p,fast-read;
+> diff --git a/arch/arm/boot/dts/microchip/at91-sama5d27_som1.dtsi b/arch/a=
+rm/boot/dts/microchip/at91-sama5d27_som1.dtsi
+> index 8ac85dac5a96..13c28e92b17e 100644
+> --- a/arch/arm/boot/dts/microchip/at91-sama5d27_som1.dtsi
+> +++ b/arch/arm/boot/dts/microchip/at91-sama5d27_som1.dtsi
+> @@ -44,7 +44,7 @@ flash@0 {
+>  					compatible =3D "jedec,spi-nor";
+>  					reg =3D <0>;
+>  					spi-max-frequency =3D <104000000>;
+> -					spi-cs-setup-ns =3D <7>;
+> +					spi-cs-setup-delay-ns =3D <7>;
+>  					spi-tx-bus-width =3D <4>;
+>  					spi-rx-bus-width =3D <4>;
+>  					m25p,fast-read;
+> diff --git a/arch/arm/boot/dts/microchip/at91-sama5d27_wlsom1.dtsi b/arch=
+/arm/boot/dts/microchip/at91-sama5d27_wlsom1.dtsi
+> index ef11606a82b3..9543214adc9f 100644
+> --- a/arch/arm/boot/dts/microchip/at91-sama5d27_wlsom1.dtsi
+> +++ b/arch/arm/boot/dts/microchip/at91-sama5d27_wlsom1.dtsi
+> @@ -234,7 +234,7 @@ qspi1_flash: flash@0 {
+>  		compatible =3D "jedec,spi-nor";
+>  		reg =3D <0>;
+>  		spi-max-frequency =3D <104000000>;
+> -		spi-cs-setup-ns =3D <7>;
+> +		spi-cs-setup-delay-ns =3D <7>;
+>  		spi-rx-bus-width =3D <4>;
+>  		spi-tx-bus-width =3D <4>;
+>  		m25p,fast-read;
+> diff --git a/arch/arm/boot/dts/microchip/at91-sama5d2_icp.dts b/arch/arm/=
+boot/dts/microchip/at91-sama5d2_icp.dts
+> index 9fa6f1395aa6..fbae6a9af6c3 100644
+> --- a/arch/arm/boot/dts/microchip/at91-sama5d2_icp.dts
+> +++ b/arch/arm/boot/dts/microchip/at91-sama5d2_icp.dts
+> @@ -714,7 +714,7 @@ flash@0 {
+>  		compatible =3D "jedec,spi-nor";
+>  		reg =3D <0>;
+>  		spi-max-frequency =3D <104000000>;
+> -		spi-cs-setup-ns =3D <7>;
+> +		spi-cs-setup-delay-ns =3D <7>;
+>  		spi-tx-bus-width =3D <4>;
+>  		spi-rx-bus-width =3D <4>;
+>  		m25p,fast-read;
+> --=20
+> 2.25.1
+>=20
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+--YNVVBp6SZFwNB2lg
+Content-Type: application/pgp-signature; name="signature.asc"
 
-If you want to undo deduplication, reply with:
-#syz undup
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaCYDLQAKCRB4tDGHoIJi
+0uu/AQCsh2Rrf0aLS5+M+Dn41EcWua9fjg/EU6tZYdeV5+YuvwD/cSVJLXH4dMCp
+Yo8NyZ3cszL9S8dlEsdTv2vQ6t1V3AU=
+=AvJj
+-----END PGP SIGNATURE-----
+
+--YNVVBp6SZFwNB2lg--
 
