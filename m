@@ -1,176 +1,202 @@
-Return-Path: <linux-kernel+bounces-649049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-649045-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94B86AB7F48
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 09:51:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F1F1EAB7F2C
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 09:49:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A20684E0744
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 07:51:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C67264A3FB4
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 07:49:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01FD42857EE;
-	Thu, 15 May 2025 07:50:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D2E627A461;
+	Thu, 15 May 2025 07:49:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="MRRE2jpO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u9UJxZya"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35B3F283FD9;
-	Thu, 15 May 2025 07:50:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDB8510FD;
+	Thu, 15 May 2025 07:49:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747295457; cv=none; b=DXmOYo71gDEwlQiga+wKrKzG5RAUh4CeTknD0vCwKotC4cBr7BHtXwVpoBdIt2C42SdEda/FI2V7NzLcSdqDo+wxntGh8KURxjOKP/67SE2RvHjkRSPk3OsDX9FaADSiTfSEvrBZrR/a9H7J+j4VW7P+kadycFiGVYEHxM2kM3c=
+	t=1747295385; cv=none; b=I1f9oWptH/kFAy1PT0l2XY7eiO64rUAM1eFLhYbRHVlkJ3uv/8OFyGp51S41AWzKv+ysUinr5A8qnrgS6nbvn7h/9AeIf1bAo762o/OjQiBL+7nG4l9D2gLjwkVx4SD3HiQonPKMU3l40tEazGGCa+lm+6HHFRk9Cq0UXPwIcbw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747295457; c=relaxed/simple;
-	bh=tpCTD5xGme/qPS7vcmDRv0oeU5Y1eIoub1iwPCyoqhU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GXcSODXCBv/33c2oHpUTXZ37hxijuwFPmy3Kl75O8CUtwjQQxbbtmoMqYw4x3/3SkCKslYk5V+eBl3cOHdGYll8W5WHlqeJwMEGvPvt16js+mnYDwkR2zFmWkTPql4s/P+HAr/aK5EbPTZ/djmBofzgKes4e9nL6eM+H/zMmzFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=MRRE2jpO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E490DC4CEED;
-	Thu, 15 May 2025 07:50:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1747295456;
-	bh=tpCTD5xGme/qPS7vcmDRv0oeU5Y1eIoub1iwPCyoqhU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MRRE2jpO51015SkZlpUH3dWOOmZ4ntJR8HlDtRS/JqOFD8nOw3UUPf2yukSld8ns4
-	 2ZCBTFaZ58lndbcxSgd+4XeTtMolz41FMjGHFB/OFyorz3NbHkWHYLNPV0bAO8gc4C
-	 VszQq7SNr0gaR0zgZmCoMWXesIZW/ZRWdPYkO2Js=
-Date: Thu, 15 May 2025 09:49:01 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Damien =?iso-8859-1?Q?Ri=E9gel?= <damien.riegel@silabs.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Silicon Labs Kernel Team <linux-devel@silabs.com>,
-	netdev@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Johan Hovold <johan@kernel.org>,
-	Alex Elder <elder@kernel.org>, greybus-dev@lists.linaro.org
-Subject: Re: [RFC net-next 00/15] Add support for Silicon Labs CPC
-Message-ID: <2025051551-rinsing-accurate-1852@gregkh>
-References: <20250512012748.79749-1-damien.riegel@silabs.com>
- <6fea7d17-8e08-42c7-a297-d4f5a3377661@lunn.ch>
- <D9VCEGBQWBW8.3MJCYYXOZHZNX@silabs.com>
- <f1a4ab5a-f2ce-4c94-91eb-ab81aea5b413@lunn.ch>
- <D9W93CSVNNM0.F14YDBPZP64O@silabs.com>
+	s=arc-20240116; t=1747295385; c=relaxed/simple;
+	bh=3jzzyKoPVNBte10yueh+3cKhOlijEv98gMIVxapULC4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=GmQS/+hVZSpmWGwzIxy39luWZYaQc0wwZbjqMueMNNH//sX8lYp1PfkrbhJJyv8tC6OjLyaQwZegI8539KyFx/Nw9a9IggQVEESNaDYSp4Q9T8dlyv8+WNbGYA+n2fwmkJYDP7wZCprWCr4NSdmtBuhdq5nyKGUvuVHFcjjyY1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u9UJxZya; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 745E7C4CEE7;
+	Thu, 15 May 2025 07:49:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747295384;
+	bh=3jzzyKoPVNBte10yueh+3cKhOlijEv98gMIVxapULC4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=u9UJxZya60202wNrLNq2xs/u/QwHHwiTkHlp3gKc65I8fZ8BLs0qZnQFGjnE2XL0q
+	 VjO9rk3erH8FhkyjehvKzB5xsZPiuu79VBd4aN1Fd8TagXuQ2G5q5Q19A1p9IFdvGF
+	 bgQD1G/3ZaIMvbd3aK6+Sk6Cs7mN6evcrn6ZkqkGlvzmUPLShlpr1BDmLaE1A4seL2
+	 pUf8X5Ur+4h0gNbhD9MLnGIO/lWq6ZOqiidr1P4pb4X9LqMh3oGIS99X9bcK/Y/ka5
+	 5tRayH7eHZFamv4QblXVj73hJs0RE8t/15UUbwR6L/7bTVI+hYU6CQmvULirHc4tKm
+	 J55KSWWq45kpw==
+Date: Thu, 15 May 2025 08:49:37 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Gyeyoung Baek <gye976@gmail.com>
+Cc: David Lechner <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?=
+ <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iio: trigger: Add validation to reject devices
+ requiring top half
+Message-ID: <20250515084937.432fd168@jic23-huawei>
+In-Reply-To: <CAKbEznuG6-+cKOOVSvyw30Qra_6yVruA0cvpcK5Gqp2_kcPHcw@mail.gmail.com>
+References: <20250503190044.32511-1-gye976@gmail.com>
+	<20250504152441.13772899@jic23-huawei>
+	<CAKbEznvZ3BHJK8TjGg7MR2dDMtWk+gZ5SewF_u_J0=Nw6c082Q@mail.gmail.com>
+	<20250507204026.11a260ef@jic23-huawei>
+	<CAKbEznuG6-+cKOOVSvyw30Qra_6yVruA0cvpcK5Gqp2_kcPHcw@mail.gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <D9W93CSVNNM0.F14YDBPZP64O@silabs.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, May 14, 2025 at 06:52:27PM -0400, Damien Riégel wrote:
-> On Tue May 13, 2025 at 5:53 PM EDT, Andrew Lunn wrote:
-> > On Tue, May 13, 2025 at 05:15:20PM -0400, Damien Riégel wrote:
-> >> On Mon May 12, 2025 at 1:07 PM EDT, Andrew Lunn wrote:
-> >> > On Sun, May 11, 2025 at 09:27:33PM -0400, Damien Riégel wrote:
-> >> >> Hi,
-> >> >>
-> >> >>
-> >> >> This patchset brings initial support for Silicon Labs CPC protocol,
-> >> >> standing for Co-Processor Communication. This protocol is used by the
-> >> >> EFR32 Series [1]. These devices offer a variety for radio protocols,
-> >> >> such as Bluetooth, Z-Wave, Zigbee [2].
-> >> >
-> >> > Before we get too deep into the details of the patches, please could
-> >> > you do a compare/contrast to Greybus.
-> >>
-> >> Thank you for the prompt feedback on the RFC. We took a look at Greybus
-> >> in the past and it didn't seem to fit our needs. One of the main use
-> >> case that drove the development of CPC was to support WiFi (in
-> >> coexistence with other radio stacks) over SDIO, and get the maximum
-> >> throughput possible. We concluded that to achieve this we would need
-> >> packet aggregation, as sending one frame at a time over SDIO is
-> >> wasteful, and managing Radio Co-Processor available buffers, as sending
-> >> frames that the RCP is not able to process would degrade performance.
-> >>
-> >> Greybus don't seem to offer these capabilities. It seems to be more
-> >> geared towards implementing RPC, where the host would send a command,
-> >> and then wait for the device to execute it and to respond. For Greybus'
-> >> protocols that implement some "streaming" features like audio or video
-> >> capture, the data streams go to an I2S or CSI interface, but it doesn't
-> >> seem to go through a CPort. So it seems to act as a backbone to connect
-> >> CPorts together, but high-throughput transfers happen on other types of
-> >> links. CPC is more about moving data over a physical link, guaranteeing
-> >> ordered delivery and avoiding unnecessary transmissions if remote
-> >> doesn't have the resources, it's much lower level than Greybus.
-> >
-> > As is said, i don't know Greybus too well. I hope its Maintainers can
-> > comment on this.
-> >
-> >> > Also, this patch adds Bluetooth, you talk about Z-Wave and Zigbee. But
-> >> > the EFR32 is a general purpose SoC, with I2C, SPI, PWM, UART. Greybus
-> >> > has support for these, although the code is current in staging. But
-> >> > for staging code, it is actually pretty good.
-> >>
-> >> I agree with you that the EFR32 is a general purpose SoC and exposing
-> >> all available peripherals would be great, but most customers buy it as
-> >> an RCP module with one or more radio stacks enabled, and that's the
-> >> situation we're trying to address. Maybe I introduced a framework with
-> >> custom bus, drivers and endpoints where it was unnecessary, the goal is
-> >> not to be super generic but only to support coexistence of our radio
-> >> stacks.
-> >
-> > This leads to my next problem.
-> >
-> > https://www.nordicsemi.com/-/media/Software-and-other-downloads/Product-Briefs/nRF5340-SoC-PB.pdf
-> > Nordic Semiconductor has what appears to be a similar device.
-> >
-> > https://www.microchip.com/en-us/products/wireless-connectivity/bluetooth-low-energy/microcontrollers
-> > Microchip has a similar device as well.
-> >
-> > https://www.ti.com/product/CC2674R10
-> > TI has a similar device.
-> >
-> > And maybe there are others?
-> >
-> > Are we going to get a Silabs CPC, a Nordic CPC, a Microchip CPC, a TI
-> > CPC, and an ACME CPC?
-> >
-> > How do we end up with one implementation?
-> >
-> > Maybe Greybus does not currently support your streaming use case too
-> > well, but it is at least vendor neutral. Can it be extended for
-> > streaming?
-> 
-> I get the sentiment that we don't want every single vendor to push their
-> own protocols that are ever so slightly different. To be honest, I don't
-> know if Greybus can be extended for that use case, or if it's something
-> they are interested in supporting. I've subscribed to greybus-dev so
-> hopefully my email will get through this time (previous one is pending
-> approval).
-> 
-> Unfortunately, we're deep down the CPC road, especially on the firmware
-> side. Blame on me for not sending the RFC sooner and getting feedback
-> earlier, but if we have to massively change our course of action we need
-> some degree of confidence that this is a viable alternative for
-> achieving high-throughput for WiFi over SDIO. I would really value any
-> input from the Greybus folks on this.
+On Mon, 12 May 2025 00:47:39 +0900
+Gyeyoung Baek <gye976@gmail.com> wrote:
 
-So what you are looking for is a standard way to "tunnel" SDIO over some
-other physical transport, right?  If so, then yes, please use Greybus as
-that is exactly what it was designed for.
+> Hello Jonathan,
+> I=E2=80=99ve referred to your previous comments and implemented the ideas.
+> Thank you for your earlier feedback.
+> I now have a few follow-up questions and would appreciate your
+> thoughts on the below points.
+>=20
+> On Thu, May 8, 2025 at 4:40=E2=80=AFAM Jonathan Cameron <jic23@kernel.org=
+> wrote:
+> >
+> > On Wed, 7 May 2025 00:55:27 +0900
+> > Gyeyoung Baek <gye976@gmail.com> wrote: =20
+>=20
+> > I'd take a different approach (slightly) though it's more effort.
+> >
+> > Step 1. Tidy up current situation.
+> >
+> > Patch to convert all existing calls to devm_iio_triggered_buffer_setup()
+> > and iio_triggered_buffer_setup() to not take a top half function but re=
+place
+> > that variable with a bool early_timestamp or something along those line=
+s.
+> > Replace the h in struct iio_poll_func with a similarly named bool.
+> > Bunch of plumbing to make that all get filled in correctly.
+> >
+> > Then in iio_trigger_attach_pollfunc() check that bool and if appropriate
+> > pass iio_pollfunc_store_time() it to request_threaded_irq() =20
+>=20
+> Now we have both the existing `devm_iio_triggered_buffer_setup()`,
+> and a new version with the additional arguments of that.
+> Should these two coexist for compatibility, or should the before one
+> be replaced by the new one?
 
-If there is a throughput issue with the sdio implementation on Greybus,
-we can address it by fixing up the code to go faster, I don't recall
-there ever being any real benchmarking happening for that protocol in
-the past as the physical layer that we were using for Greybus at the
-time (MIPI) was very fast, the bottleneck was usually either the host
-controller we were using for Greybus, OR on the firmware side in the
-device itself (i.e. turning Greybus packets into SDIO commands, as SDIO
-was pretty slow.)
+So the aim will be to replace the existing function.=20
+How to get there is indeed an excellent question.
 
-thanks,
+I'd want to do it in one go, but as it affects a lot of drivers a=20
+single patch is probably not appropriate.
 
-greg k-h
+So we'd introduce something like
+devm_iio_triggered_buffer_setup2() with new parameters
+
+Move everything over to that then a single patch to remove
+the old function and rename it all back to the original.
+
+Alternatively we could find a reasonable alternative name to avoid
+that 'rename all at the end' patch.
+
+devm_iio_triggered_buf_setup() perhaps? =20
+
+>=20
+> > Step 2. Make what you want work cleanly now we only have that one handl=
+er.
+> >
+> > In iio_trigger_poll_nested() we can't know if that flag is set and I'm =
+not
+> > really keen on trying to get to this from elsewhere. We have previously=
+ considered
+> > solving this case via whether the timestamp is set or not in the thread=
+ed
+> > handler. I've never like that much as in theory timestamp 0 is valid (w=
+as
+> > a while ago). The rpr0521 light sensor has handling for this. =20
+>=20
+> What I'm trying to do is a mechanism where device drivers can
+> automatically get timestamps without manually handling them =E2=80=94 sim=
+ply
+> by setting a argument to indicate whether to capture the timestamp in
+> the tophalf or bottomhalf.
+>=20
+> But there are cases like the rpr0521 where the driver sets the
+> timestamp manually within its own trigger.
+> Would it make sense to extend this to automatically set the timestamp
+> in cases where the driver uses its own trigger as well?
+> To that, I believe we would need a unified interface that can cover
+> all trigger types (e.g., interrupt, software trigger) that invoke
+> poll() or poll_nested().
+> Would it be the right direction?
+> Or would it be more appropriate to consider only the top/bottom of a
+> consumer device?
+
+I'd like to avoid grabbing the timestamp for particular drivers
+that never need it (as they want to grab it in the thread for
+reasons of how they work - typically the capture only starts
+when then write to the device).  Other than that I'm not against
+having it grabbed in drivers that 'sometimes' need it whether
+or not it turns out they do.
+
+The dance is that we can't see the right information in poll / poll_nested
+so the best we can do is see if someone already filled in the
+timestamp in the handler we are currently running.  For that we need
+a flag alongside the pollfunc timestamp.  Care will be needed to ensure
+there are no races though as we might clear that flag just after another
+top half interrupt has been taken on a different cpu core.
+
+I'm not sure yet exactly how this will work.  Needs some experimenting
+and thought.
+
+J
+>=20
+> > I wonder if the following would work.
+> >
+> > In iio_trigger_attach_poll_func() we have access to the trigger and
+> > the pollfunc.  So if the pollfunc flag for wanting an early timestamp i=
+s set and
+> > we know the trigger is going to use iio_poll_trigger_nested() then we c=
+ould
+> > wrap the registered handler in a local one that calls the iio_pollfunc_=
+store_time()
+> >
+> > The additional magic needed here is that today we don't know that about=
+ the trigger.
+> > So we'd need to add a bool to the struct iio_trig to indicate it and se=
+t that
+> > for all drivers that use iio_trigger_poll_nested()   bool nested; will =
+do.
+> >
+> > It's not perfect as there are driver that do iio_trigger_poll() and iio=
+_trigger_poll_nested()
+> > depending on path. To handle those we'd need a flag to say don't overwr=
+ite my timestamp.
+> > at91-sama5d2-adc.c is the first one I found. =20
+>=20
+> > There are ways to make even that work but lets skip that for now as the=
+y'd
+> > slightly complicate things. That driver won't call the timestamp captur=
+e in
+> > some paths but it doesn't today so we are no worse off. =20
+>=20
+> --
+> Regards,
+> Gyeyoung
 
