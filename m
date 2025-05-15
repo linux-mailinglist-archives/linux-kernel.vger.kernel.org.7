@@ -1,293 +1,99 @@
-Return-Path: <linux-kernel+bounces-649743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-649712-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDD75AB8880
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 15:50:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 118AAAB8812
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 15:34:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 290C41B63D04
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 13:50:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CFF2C1BC4045
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 13:34:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E5F51D799D;
-	Thu, 15 May 2025 13:48:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 450C37262D;
+	Thu, 15 May 2025 13:34:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OwzQP0I4"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DuMFj4hU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F59A1D5ADC
-	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 13:48:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5C8564A98
+	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 13:34:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747316926; cv=none; b=Lvt6iOrrGKclvn4TnC+msBgK9xf/OkoUqcYk3Q4BD0xL1E9fteN7Cz/n6Iwxe/uqFyqvjFqMZW6d+BNPRCJUq/UVGNB1rfgKkFQDIDtLVauozVInAKT5B74ECXe5K5BK9TDo5jREP1a/aJSIg69Gr7G1kCOw8nzfwmkH8iIEfZw=
+	t=1747316056; cv=none; b=V7oYyHsvHDHqorvhqL22jPRHMzTQgMxLW4vvWQmyEnMgAfHjeVqzTaw/n1DbgAKgWpIZSQxUHlXPYxA+4PPkyOWk4NgBLxVkAp3uTu2gZmtdUzz94bDLuspHkuAsp/IgKwiZuGwb7AAvY4mD7/ykqX1hrlK/CW9pk+GePVJl7k0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747316926; c=relaxed/simple;
-	bh=LJ2HDZgEz5i6+AG7w6DQbfs58vUkTdzP0X8ii4qnXiQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ozAojlij5e/aTyGAvbS6+wUmE6g71MjGF4yCIz5x2CoEc9PcaKx79SXnxJ9EKXh4aQbVEZXrLCoMEITXFnD0lmNdVfEu73ZVvImiwRExtm4PwEEZ9ZuSZCua+osDItfJUuMvbwVfneUb3/cZ9GQ7reHHJVp1wKt5ahJVcTSZTr0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OwzQP0I4; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1747316925; x=1778852925;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=LJ2HDZgEz5i6+AG7w6DQbfs58vUkTdzP0X8ii4qnXiQ=;
-  b=OwzQP0I4DwLBd8nnn/6o/RAimo6ZMPVWxVE/ArDmkygkGn007IhjF7zh
-   syHQOX4r3800FbLiKgHfVFTin6Fm4PwwCkejIZhY67SI1gkczQiUKJmZM
-   FU8uXcip6GI/g3PrxwRXbswI2T28gwcB8qWwciYRJCCHM9cGqJkJNNNmL
-   KpQF4O8S6UXuZsR3VgHePD2cWc6GEiWDEarO2UNTwB3iE7d8SQlBaeUou
-   i+XMyAjHzTCec6Xxx+tixUJ/8/NJPCgt+spgj48RgKbnPsXQe1fo96N/i
-   ePMq2++F8RXU7e4n2cbdz6k+S/yB55uS75PJhyDvh3gPH2e+g3ToMQlPr
-   w==;
-X-CSE-ConnectionGUID: raGEr9pZSpqiiP5JhThN6w==
-X-CSE-MsgGUID: p3P0z7/gTPWVXwRYrWt5kQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11434"; a="66660918"
-X-IronPort-AV: E=Sophos;i="6.15,291,1739865600"; 
-   d="scan'208";a="66660918"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2025 06:48:45 -0700
-X-CSE-ConnectionGUID: SvKDvQvlQpiL+vVHCLjysw==
-X-CSE-MsgGUID: eahkBH5yQ6GHGWH473PfqA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,291,1739865600"; 
-   d="scan'208";a="138428390"
-Received: from sannilnx-dsk.jer.intel.com ([10.12.231.107])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2025 06:48:38 -0700
-From: Alexander Usyskin <alexander.usyskin@intel.com>
-To: Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Lucas De Marchi <lucas.demarchi@intel.com>,
-	=?UTF-8?q?Thomas=20Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	Karthik Poosa <karthik.poosa@intel.com>,
-	Raag Jadav <raag.jadav@intel.com>
-Cc: Reuven Abliyev <reuven.abliyev@intel.com>,
-	Oren Weil <oren.jer.weil@intel.com>,
-	linux-mtd@lists.infradead.org,
-	intel-xe@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	intel-gfx@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Alexander Usyskin <alexander.usyskin@intel.com>
-Subject: [PATCH v10 10/10] drm/xe/nvm: add support for non-posted erase
-Date: Thu, 15 May 2025 16:33:45 +0300
-Message-ID: <20250515133345.2805031-11-alexander.usyskin@intel.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250515133345.2805031-1-alexander.usyskin@intel.com>
-References: <20250515133345.2805031-1-alexander.usyskin@intel.com>
+	s=arc-20240116; t=1747316056; c=relaxed/simple;
+	bh=tSlO1Z+hu7gWzQYRT9HZ/IB9CDo4FxVzADK+bIgnKp0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LOveLsKghzl0VVkFFf/i2/35AeS65MjqBf25rZxgJt/WZV+BfUTWLSXjv3T4+46ivT6Fil5k6jwWZCyns6h9fvB9brjj/yfkjVqXoUcX+70JCDNaSEmpSwhvTUNACNsoWr3DcXsRuuYOHNCxxmm7RCV997y7llpSF0AjaR+cWoo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DuMFj4hU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B37CC4CEEF
+	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 13:34:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747316056;
+	bh=tSlO1Z+hu7gWzQYRT9HZ/IB9CDo4FxVzADK+bIgnKp0=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=DuMFj4hUGcpegnNdSrF0dkavcSMRsNGTExpWAnhwe8i2i8gx6h3u59XvJircoSk+w
+	 pF0MogWbTZp8cIFLVPEsU2Qy6zK/6sawZKWA5tBvhWbX5RYcX/zl6BtGI4z8xOp1uP
+	 bnofdl8AJ+IIc7V0M2SKdpCWmVmNYSGgOjip1FtKG3qLfvwoPx/02BIoMXBBqW48Bt
+	 9KKqaCTFX44uk4gGaRRPJ1L9+iDWYBZvEYQTYWK8AbfeW83qjjzQGx9SVPumTVzYZB
+	 +SLh75/jXZEFz8D3NxSBP5lhsHeHZIX1/dQzW3P96Z6MP/J1wW7n+gOUfeh022emmI
+	 8c4bNLAPfADNQ==
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-54fd1650afdso1124388e87.3
+        for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 06:34:16 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWjcFH9QDY1RQ6P/wR5RT5FWP4ATc9E6EsmOztL/viMHXiJaY1XaAs6lDe4kLDbUCKEKlgkfZv+al2ZvuQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwRuHkVmO0pYvE6hmgZkpm6y/c52YP0w6zQ4IVcJNlT4zQRv/5h
+	wl9GYrHRPGvpcOmHWDF3iRmYxjWqF0pbPMy7kNzSc6wTN1U69oKj1XEfUFRJKMKFoGL8lURlq67
+	GKfGWmkzEaUW9ISxfgbk8II2n7qI=
+X-Google-Smtp-Source: AGHT+IFOdYRlVIcXgdsCTy+sBoTuZXcVP49hfaTg04j9ox3vBRBzELNrCi2obUDSug6XKgKJiOmEhjgvgfVZCSLwOPs=
+X-Received: by 2002:a05:651c:1106:b0:307:dc1f:e465 with SMTP id
+ 38308e7fff4ca-327fac11093mr8961471fa.22.1747316043479; Thu, 15 May 2025
+ 06:34:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250514104242.1275040-9-ardb+git@google.com> <20250514104242.1275040-10-ardb+git@google.com>
+ <20250515131120.GCaCXn-E8zQutUqKLn@fat_crate.local>
+In-Reply-To: <20250515131120.GCaCXn-E8zQutUqKLn@fat_crate.local>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Thu, 15 May 2025 14:33:50 +0100
+X-Gmail-Original-Message-ID: <CAMj1kXGY0VYLdKiveeznH7+8AVD7Uq4PGEhr=+pcT-Nw3WWvgg@mail.gmail.com>
+X-Gm-Features: AX0GCFun_tvTapFIplsyrDeJQ9YsjrXC5wLmrpwRJ2f-VzgNfqsMR_jm8QHHn1M
+Message-ID: <CAMj1kXGY0VYLdKiveeznH7+8AVD7Uq4PGEhr=+pcT-Nw3WWvgg@mail.gmail.com>
+Subject: Re: [PATCH v3 1/7] x86/cpu: Use a new feature flag for 5 level paging
+To: Borislav Petkov <bp@alien8.de>
+Cc: Ard Biesheuvel <ardb+git@google.com>, Shivank Garg <shivankg@amd.com>, linux-kernel@vger.kernel.org, 
+	x86@kernel.org, Ingo Molnar <mingo@kernel.org>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, Brian Gerst <brgerst@gmail.com>, 
+	"Rao, Bharata Bhasker" <bharata@amd.com>
+Content-Type: text/plain; charset="UTF-8"
 
-From: Reuven Abliyev <reuven.abliyev@intel.com>
+On Thu, 15 May 2025 at 14:11, Borislav Petkov <bp@alien8.de> wrote:
+>
+> On Wed, May 14, 2025 at 12:42:44PM +0200, Ard Biesheuvel wrote:
+> > From: Ard Biesheuvel <ardb@kernel.org>
+> >
+> > Currently, the LA57 CPU feature flag is taken to mean two different
+> > things at once:
+> > - whether the CPU implements the LA57 extension, and is therefore
+> >   capable of supporting 5 level paging;
+> > - whether 5 level paging is currently in use.
+>
+> Btw, that gunk:
+>
+> We had started simplifying the whole 5-level crap:
+>
+> https://lore.kernel.org/all/20240621164406.256314-1-kirill.shutemov@linux.intel.com/
+>
+> Shivank, I hear the performance issues got resolved in the meantime?
+>
 
-Erase command is slow on discrete graphics storage
-and may overshot PCI completion timeout.
-BMG introduces the ability to have non-posted erase.
-Add driver support for non-posted erase with polling
-for erase completion.
-
-Reviewed-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
-Acked-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
-Signed-off-by: Reuven Abliyev <reuven.abliyev@intel.com>
-Signed-off-by: Alexander Usyskin <alexander.usyskin@intel.com>
----
- drivers/gpu/drm/xe/xe_nvm.c        | 25 ++++++++++++++++++
- drivers/mtd/devices/mtd_intel_dg.c | 42 ++++++++++++++++++++++++++++--
- include/linux/intel_dg_nvm_aux.h   |  2 ++
- 3 files changed, 67 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpu/drm/xe/xe_nvm.c b/drivers/gpu/drm/xe/xe_nvm.c
-index 8aec20bc629a..dd91f2e37661 100644
---- a/drivers/gpu/drm/xe/xe_nvm.c
-+++ b/drivers/gpu/drm/xe/xe_nvm.c
-@@ -14,7 +14,15 @@
- #include "xe_sriov.h"
- 
- #define GEN12_GUNIT_NVM_BASE 0x00102040
-+#define GEN12_DEBUG_NVM_BASE 0x00101018
-+
-+#define GEN12_CNTL_PROTECTED_NVM_REG 0x0010100C
-+
- #define GEN12_GUNIT_NVM_SIZE 0x80
-+#define GEN12_DEBUG_NVM_SIZE 0x4
-+
-+#define NVM_NON_POSTED_ERASE_CHICKEN_BIT BIT(13)
-+
- #define HECI_FW_STATUS_2_NVM_ACCESS_MODE BIT(3)
- 
- static const struct intel_dg_nvm_region regions[INTEL_DG_NVM_REGIONS] = {
-@@ -28,6 +36,16 @@ static void xe_nvm_release_dev(struct device *dev)
- {
- }
- 
-+static bool xe_nvm_non_posted_erase(struct xe_device *xe)
-+{
-+	struct xe_gt *gt = xe_root_mmio_gt(xe);
-+
-+	if (xe->info.platform != XE_BATTLEMAGE)
-+		return false;
-+	return !(xe_mmio_read32(&gt->mmio, XE_REG(GEN12_CNTL_PROTECTED_NVM_REG)) &
-+		 NVM_NON_POSTED_ERASE_CHICKEN_BIT);
-+}
-+
- static bool xe_nvm_writable_override(struct xe_device *xe)
- {
- 	struct xe_gt *gt = xe_root_mmio_gt(xe);
-@@ -85,6 +103,7 @@ void xe_nvm_init(struct xe_device *xe)
- 	nvm = xe->nvm;
- 
- 	nvm->writable_override = xe_nvm_writable_override(xe);
-+	nvm->non_posted_erase = xe_nvm_non_posted_erase(xe);
- 	nvm->bar.parent = &pdev->resource[0];
- 	nvm->bar.start = GEN12_GUNIT_NVM_BASE + pdev->resource[0].start;
- 	nvm->bar.end = nvm->bar.start + GEN12_GUNIT_NVM_SIZE - 1;
-@@ -92,6 +111,12 @@ void xe_nvm_init(struct xe_device *xe)
- 	nvm->bar.desc = IORES_DESC_NONE;
- 	nvm->regions = regions;
- 
-+	nvm->bar2.parent = &pdev->resource[0];
-+	nvm->bar2.start = GEN12_DEBUG_NVM_BASE + pdev->resource[0].start;
-+	nvm->bar2.end = nvm->bar2.start + GEN12_DEBUG_NVM_SIZE - 1;
-+	nvm->bar2.flags = IORESOURCE_MEM;
-+	nvm->bar2.desc = IORES_DESC_NONE;
-+
- 	aux_dev = &nvm->aux_dev;
- 
- 	aux_dev->name = "nvm";
-diff --git a/drivers/mtd/devices/mtd_intel_dg.c b/drivers/mtd/devices/mtd_intel_dg.c
-index 2f32ed311ffd..4d96b1421148 100644
---- a/drivers/mtd/devices/mtd_intel_dg.c
-+++ b/drivers/mtd/devices/mtd_intel_dg.c
-@@ -25,6 +25,9 @@ struct intel_dg_nvm {
- 	struct mtd_info mtd;
- 	struct mutex lock; /* region access lock */
- 	void __iomem *base;
-+	void __iomem *base2;
-+	bool non_posted_erase;
-+
- 	size_t size;
- 	unsigned int nregions;
- 	struct {
-@@ -41,6 +44,7 @@ struct intel_dg_nvm {
- #define NVM_VALSIG_REG        0x00000010
- #define NVM_ADDRESS_REG       0x00000040
- #define NVM_REGION_ID_REG     0x00000044
-+#define NVM_DEBUG_REG         0x00000000
- /*
-  * [15:0]-Erase size = 0x0010 4K 0x0080 32K 0x0100 64K
-  * [23:16]-Reserved
-@@ -72,6 +76,9 @@ struct intel_dg_nvm {
- #define NVM_FREG_ADDR_SHIFT 12
- #define NVM_FREG_MIN_REGION_SIZE 0xFFF
- 
-+#define NVM_NON_POSTED_ERASE_DONE BIT(23)
-+#define NVM_NON_POSTED_ERASE_DONE_ITER 3000
-+
- static inline void idg_nvm_set_region_id(struct intel_dg_nvm *nvm, u8 region)
- {
- 	iowrite32((u32)region, nvm->base + NVM_REGION_ID_REG);
-@@ -375,11 +382,30 @@ idg_erase(struct intel_dg_nvm *nvm, u8 region, loff_t from, u64 len, u64 *fail_a
- {
- 	u64 i;
- 	const u32 block = 0x10;
-+	u32 reg;
-+	u32 iter = 0;
- 	void __iomem *base = nvm->base;
-+	void __iomem *base2 = nvm->base2;
- 
- 	for (i = 0; i < len; i += SZ_4K) {
- 		iowrite32(from + i, base + NVM_ADDRESS_REG);
- 		iowrite32(region << 24 | block, base + NVM_ERASE_REG);
-+		if (nvm->non_posted_erase) {
-+			/* Wait for Erase Done */
-+			reg = ioread32(base2 + NVM_DEBUG_REG);
-+			while (!(reg & NVM_NON_POSTED_ERASE_DONE) &&
-+			       ++iter < NVM_NON_POSTED_ERASE_DONE_ITER) {
-+				msleep(10);
-+				reg = ioread32(base2 + NVM_DEBUG_REG);
-+			}
-+			if (reg & NVM_NON_POSTED_ERASE_DONE) {
-+				/* Clear Erase Done */
-+				iowrite32(reg, base2 + NVM_DEBUG_REG);
-+			} else {
-+				*fail_addr = from + i;
-+				return -ETIME;
-+			}
-+		}
- 		/* Since the writes are via sguint
- 		 * we cannot do back to back erases.
- 		 */
-@@ -388,7 +414,8 @@ idg_erase(struct intel_dg_nvm *nvm, u8 region, loff_t from, u64 len, u64 *fail_a
- 	return len;
- }
- 
--static int intel_dg_nvm_init(struct intel_dg_nvm *nvm, struct device *device)
-+static int intel_dg_nvm_init(struct intel_dg_nvm *nvm, struct device *device,
-+			     bool non_posted_erase)
- {
- 	int ret;
- 	unsigned int i, n;
-@@ -448,7 +475,10 @@ static int intel_dg_nvm_init(struct intel_dg_nvm *nvm, struct device *device)
- 			n++;
- 	}
- 
-+	nvm->non_posted_erase = non_posted_erase;
-+
- 	dev_dbg(device, "Registered %d regions\n", n);
-+	dev_dbg(device, "Non posted erase %d\n", nvm->non_posted_erase);
- 
- 	/* Need to add 1 to the amount of memory
- 	 * so it is reported as an even block
-@@ -731,7 +761,15 @@ static int intel_dg_mtd_probe(struct auxiliary_device *aux_dev,
- 		goto err;
- 	}
- 
--	ret = intel_dg_nvm_init(nvm, device);
-+	if (invm->non_posted_erase) {
-+		nvm->base2 = devm_ioremap_resource(device, &invm->bar2);
-+		if (IS_ERR(nvm->base2)) {
-+			ret = PTR_ERR(nvm->base2);
-+			goto err;
-+		}
-+	}
-+
-+	ret = intel_dg_nvm_init(nvm, device, invm->non_posted_erase);
- 	if (ret < 0) {
- 		dev_err(device, "cannot initialize nvm %d\n", ret);
- 		goto err;
-diff --git a/include/linux/intel_dg_nvm_aux.h b/include/linux/intel_dg_nvm_aux.h
-index 53193fda55eb..efeefd96f9df 100644
---- a/include/linux/intel_dg_nvm_aux.h
-+++ b/include/linux/intel_dg_nvm_aux.h
-@@ -19,7 +19,9 @@ struct intel_dg_nvm_region {
- struct intel_dg_nvm_dev {
- 	struct auxiliary_device aux_dev;
- 	bool writable_override;
-+	bool non_posted_erase;
- 	struct resource bar;
-+	struct resource bar2;
- 	const struct intel_dg_nvm_region *regions;
- };
- 
--- 
-2.43.0
-
+It would be interesting to know whether CONFIG_X86_5LEVEL=n deviates
+from CONFIG_X86_5LEVEL=y with 'no5lvl' on the command line. If passing
+'no5lvl' makes up for the performance hit, then I don't think the
+performance issues should stop us from removing this Kconfig symbol.
 
