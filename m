@@ -1,147 +1,171 @@
-Return-Path: <linux-kernel+bounces-648942-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-648931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1364BAB7DEA
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 08:24:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C022AB7DBB
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 08:21:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 673919E06BA
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 06:23:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E128F865620
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 06:21:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 364FF29827A;
-	Thu, 15 May 2025 06:22:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DBD42868B2;
+	Thu, 15 May 2025 06:21:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FucVwOxB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="IDRM9pki";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="Ik/D1XMy"
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87DA329713F;
-	Thu, 15 May 2025 06:22:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E70291B6D11
+	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 06:21:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747290135; cv=none; b=Vr0nRu+sdWIMb8KS1hUHJqPc8KRxzNdnTho6JVEjE8a3Hr5DRHWiYtdAo91oGJGeEF/pBO1HJkfumnCEJSKAAIOwSwt1euln+bGVOd5ZmreFBv7iWBEhR6S1rOPa7kgVlgQuLdqep1d970aD0w86jSqN5g/X9I4NBSsnpQdwaP0=
+	t=1747290110; cv=none; b=mjm8F9K9ZBEKVMzP1zA7toDr9w58LwcXqbhCDr7VHky3YThSyfpaqWs+pMInb2mCBuRW4BIYM0eYfKeGA8ARk32UEho6Rq39ToflPCzWSiUT2w0DwRYdJZO8Kg98SYx4ar2yue4Iw5JdjUhOwNA5WqPylNhcMI+sBYLEybOKZis=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747290135; c=relaxed/simple;
-	bh=J5+XTddKYL+uGoeS6U5n3vqNTVoz33EZ6TLivaXUeOs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=bUJ0NKy5EaEirZqQw9P7AVcAKSSjVWT+Z5Vj7Y90d3RvsTPTaW1d7b6R9xiNy78WpRjVUTVoxVKZmxPLPdWGOXZ8Rufv//qpU4cDHSYiN/XT18gD/wxey1rt6aAUTvU54xh21/BhkwETcQsc+COUuDvURHkglqpGnyPNNvxiIMQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FucVwOxB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id BE5D0C4CEEF;
-	Thu, 15 May 2025 06:22:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747290134;
-	bh=J5+XTddKYL+uGoeS6U5n3vqNTVoz33EZ6TLivaXUeOs=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=FucVwOxBmZzmgCt80SOQ8pDki16kbikn7nFbn/39hegTVlG/tXe8ziBkxVJ6wk84b
-	 H2yQtCVxNXnGQLUhIw9ozxycgGEdMe14dEov+XRTS0glhSe77kQaT7LPTFGk22Bpbb
-	 WDXQ6ffTcsqlk4fq0HmeB09ZbM9JhyPU1Qw2UKUvFxggIa9dLDWkOl0CSaxYvSR+17
-	 dn33i4jszdBY0KdqD22941TVYkWpI6VlqYXjE0l51Ty8iTYOLYB9Tc0ysCRYEQQSVm
-	 2DOBUjLnQTDC0g+c/zC4pF1k5eTb2clc0qPynqd0w+7S7Rb4kcgMuyWz9pT9kuocV6
-	 +9e9OD7c4o0hA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B48E0C2D0CD;
-	Thu, 15 May 2025 06:22:14 +0000 (UTC)
-From: Sven Peter via B4 Relay <devnull+sven.svenpeter.dev@kernel.org>
-Date: Thu, 15 May 2025 06:21:22 +0000
-Subject: [PATCH v6 10/10] arm64: dts: apple: t600x: Add SMC node
+	s=arc-20240116; t=1747290110; c=relaxed/simple;
+	bh=gbtrw/D7gxH/6QMa/SyTc7C9lDva0Xx0PZks+pxDASA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=EW8QkxNsWyh/qhc8Y88RCv+iSOyCcjrUqd0nRDRqUFrEPCrta3Lg8wf6jpQ8ySRTAdzy+1+z6s/U6R48eoAsLoJb0gWHPhgtiLJsBI6SBZkowink0pKbIaOy7DO1Ip8xDbjfCFZ/lDVf0iCi2T2lNzNlfinvsxhY7rPQlzIlFDM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=IDRM9pki; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=Ik/D1XMy reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1747290107; x=1778826107;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=zvaqjaq2s2J7Vp+BItaHSMNz11n0rCofPVOKUb72ZdQ=;
+  b=IDRM9pkiteZ/U1fsjkefOsuaXgl+I2zTQWp+nFrpqlTqXSOkjn/VWKTD
+   LUuI0VDG6owKxYEx2eUszh7q1gc+dul9TWNWKTCfNMvrDkYoIDyjSyFeY
+   ZHQV1fEZoflQbsHJe+HB1rqJnqiwu6cqHmyK/oSEIMdw3bPsS/o7YNpEg
+   AJOBAaqsHdJRq12qhOlUKEa6UDfe5MQculs3XQtwV6EEXkIIvMxWBBD8d
+   AnHkQZZnIIv+5QeMkbZwWJYmPhShQXkN67zal7aDa2uXnY0fiG258xmbZ
+   wlZWiQ1ZM/dvaYh8MXVISM54oTluu5RIe7hanoVMSAmPCevT8UUcOQRFb
+   Q==;
+X-CSE-ConnectionGUID: ymgbScsyTImTixjB3tpFMw==
+X-CSE-MsgGUID: c47bUS/AQDirSUcuKPPxhg==
+X-IronPort-AV: E=Sophos;i="6.15,290,1739833200"; 
+   d="scan'208";a="44086124"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 15 May 2025 08:21:38 +0200
+X-CheckPoint: {682587F2-21-C7E25413-F4312D34}
+X-MAIL-CPID: 33C6A6DA3D81B7962B7B6E2E349BD329_4
+X-Control-Analysis: str=0001.0A006374.682587F0.0032,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 1B92916983A;
+	Thu, 15 May 2025 08:21:30 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1747290094;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zvaqjaq2s2J7Vp+BItaHSMNz11n0rCofPVOKUb72ZdQ=;
+	b=Ik/D1XMym9knRRj0CGwmE5kAGwr9f+K/FAQtrwwTlFfj5YDxt51d4kO2NqdcNocl5sYxXO
+	0YEsl1sOQx1GIzEgAdtZyX38QCiHA68YHmiQXMsMmV0OIbI5FyfesGC8+ZIKgpTkXefaOz
+	NTtIqXVD2Joop/2O8LPHU7OCK80qsUfYjq9iM1l3koCOPGQuin1OPDp88xbW0YplXlqcoA
+	50GDv7lAxylXeIXvcbj9EdxXiM5tok+PeX9QxgBVA+kTiajt5hdl54qkgb7iElw8OcS+qN
+	s7JUn/stDl1ObKxH1wRBCIqM2MuKBieCif2Z/XUyT37pO3iWclKWjOe+iH2R3A==
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org,
+ Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se, jernej.skrabec@gmail.com,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
+ airlied@gmail.com, simona@ffwll.ch, dri-devel@lists.freedesktop.org
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ kernel@pengutronix.de, Marco Felsch <m.felsch@pengutronix.de>
+Subject: Re: [PATCH 2/3] drm/bridge: fsl-ldb: make use of dev_err_probe
+Date: Thu, 15 May 2025 08:21:30 +0200
+Message-ID: <6179238.lOV4Wx5bFT@steina-w>
+Organization: TQ-Systems GmbH
+In-Reply-To: <20250514222453.440915-3-m.felsch@pengutronix.de>
+References:
+ <20250514222453.440915-1-m.felsch@pengutronix.de>
+ <20250514222453.440915-3-m.felsch@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250515-smc-6-15-v6-10-c47b1ef4b0ae@svenpeter.dev>
-References: <20250515-smc-6-15-v6-0-c47b1ef4b0ae@svenpeter.dev>
-In-Reply-To: <20250515-smc-6-15-v6-0-c47b1ef4b0ae@svenpeter.dev>
-To: Sven Peter <sven@svenpeter.dev>, Janne Grunau <j@jannau.net>, 
- Alyssa Rosenzweig <alyssa@rosenzweig.io>, Neal Gompa <neal@gompa.dev>, 
- Hector Martin <marcan@marcan.st>, Linus Walleij <linus.walleij@linaro.org>, 
- Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Sebastian Reichel <sre@kernel.org>, 
- Lee Jones <lee@kernel.org>, Marc Zyngier <maz@kernel.org>, 
- "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>
-Cc: asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
- linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1919; i=sven@svenpeter.dev;
- h=from:subject:message-id;
- bh=/N53oOOBzb58n/OPSPSRL49kg7S7jUG56OD40+fuzWc=;
- b=owGbwMvMwCHmIlirolUq95LxtFoSQ4Zqh3CXhsmiem4x9rY1d6VNMhvjfVeXXbrtwO7ydd33U
- 35ZW450lLIwiHEwyIopsmzfb2/65OEbwaWbLr2HmcPKBDKEgYtTACbSeJiRYbJzPne/QlhOR/27
- I+fZ9TJcsqZOPFUowPxCZ4XD0u2bGBgZjhWbPX1X4MR490rqgT2J+zf1zWtf8MRENWTViattEj9
- c+AA=
-X-Developer-Key: i=sven@svenpeter.dev; a=openpgp;
- fpr=A1E3E34A2B3C820DBC4955E5993B08092F131F93
-X-Endpoint-Received: by B4 Relay for sven@svenpeter.dev/default with
- auth_id=167
-X-Original-From: Sven Peter <sven@svenpeter.dev>
-Reply-To: sven@svenpeter.dev
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
+X-Last-TLS-Session-Version: TLSv1.3
 
-From: Hector Martin <marcan@marcan.st>
+Am Donnerstag, 15. Mai 2025, 00:24:52 CEST schrieb Marco Felsch:
+> Make use of dev_err_probe() to easily spot issues via the debugfs or
+> kernel log. No functional changes.
+>=20
+> Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
 
-Signed-off-by: Hector Martin <marcan@marcan.st>
-Reviewed-by: Alyssa Rosenzweig <alyssa@rosenzweig.io>
-Reviewed-by: Neal Gompa <neal@gompa.dev>
-Signed-off-by: Sven Peter <sven@svenpeter.dev>
----
- arch/arm64/boot/dts/apple/t600x-die0.dtsi | 35 +++++++++++++++++++++++++++++++
- 1 file changed, 35 insertions(+)
+Reviewed-by: Alexander Stein <alexander.stein@ew.tq-group.com>
 
-diff --git a/arch/arm64/boot/dts/apple/t600x-die0.dtsi b/arch/arm64/boot/dts/apple/t600x-die0.dtsi
-index 110bc6719512e334e04b496fb157cb4368679957..9eb9b0656bf9c570983c90e360795b7a7c71cf90 100644
---- a/arch/arm64/boot/dts/apple/t600x-die0.dtsi
-+++ b/arch/arm64/boot/dts/apple/t600x-die0.dtsi
-@@ -24,6 +24,41 @@ aic: interrupt-controller@28e100000 {
- 		power-domains = <&ps_aic>;
- 	};
- 
-+	smc: smc@290400000 {
-+		compatible = "apple,t6000-smc", "apple,smc";
-+		reg = <0x2 0x90400000 0x0 0x4000>,
-+			<0x2 0x91e00000 0x0 0x100000>;
-+		reg-names = "smc", "sram";
-+		mboxes = <&smc_mbox>;
-+
-+		smc_gpio: gpio {
-+			compatible = "apple,smc-gpio";
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+		};
-+
-+		smc_reboot: reboot {
-+			compatible = "apple,smc-reboot";
-+			nvmem-cells = <&shutdown_flag>, <&boot_stage>,
-+				<&boot_error_count>, <&panic_count>;
-+			nvmem-cell-names = "shutdown_flag", "boot_stage",
-+				"boot_error_count", "panic_count";
-+		};
-+	};
-+
-+	smc_mbox: mbox@290408000 {
-+		compatible = "apple,t6000-asc-mailbox", "apple,asc-mailbox-v4";
-+		reg = <0x2 0x90408000 0x0 0x4000>;
-+		interrupt-parent = <&aic>;
-+		interrupts = <AIC_IRQ 0 754 IRQ_TYPE_LEVEL_HIGH>,
-+			<AIC_IRQ 0 755 IRQ_TYPE_LEVEL_HIGH>,
-+			<AIC_IRQ 0 756 IRQ_TYPE_LEVEL_HIGH>,
-+			<AIC_IRQ 0 757 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-names = "send-empty", "send-not-empty",
-+			"recv-empty", "recv-not-empty";
-+		#mbox-cells = <0>;
-+	};
-+
- 	pinctrl_smc: pinctrl@290820000 {
- 		compatible = "apple,t6000-pinctrl", "apple,pinctrl";
- 		reg = <0x2 0x90820000 0x0 0x4000>;
+> ---
+>  drivers/gpu/drm/bridge/fsl-ldb.c | 19 ++++++++++---------
+>  1 file changed, 10 insertions(+), 9 deletions(-)
+>=20
+> diff --git a/drivers/gpu/drm/bridge/fsl-ldb.c b/drivers/gpu/drm/bridge/fs=
+l-ldb.c
+> index fa29f2bf4031..e0a229c91953 100644
+> --- a/drivers/gpu/drm/bridge/fsl-ldb.c
+> +++ b/drivers/gpu/drm/bridge/fsl-ldb.c
+> @@ -308,11 +308,13 @@ static int fsl_ldb_probe(struct platform_device *pd=
+ev)
+> =20
+>  	fsl_ldb->clk =3D devm_clk_get(dev, "ldb");
+>  	if (IS_ERR(fsl_ldb->clk))
+> -		return PTR_ERR(fsl_ldb->clk);
+> +		return dev_err_probe(dev, PTR_ERR(fsl_ldb->clk),
+> +				     "Failed to get ldb clk\n");
+> =20
+>  	fsl_ldb->regmap =3D syscon_node_to_regmap(dev->of_node->parent);
+>  	if (IS_ERR(fsl_ldb->regmap))
+> -		return PTR_ERR(fsl_ldb->regmap);
+> +		return dev_err_probe(dev, PTR_ERR(fsl_ldb->regmap),
+> +				     "Failed to get regmap\n");
+> =20
+>  	/* Locate the remote ports and the panel node */
+>  	remote1 =3D of_graph_get_remote_node(dev->of_node, 1, 0);
+> @@ -335,12 +337,12 @@ static int fsl_ldb_probe(struct platform_device *pd=
+ev)
+>  	panel =3D of_drm_find_panel(panel_node);
+>  	of_node_put(panel_node);
+>  	if (IS_ERR(panel))
+> -		return PTR_ERR(panel);
+> +		return dev_err_probe(dev, PTR_ERR(panel), "drm panel not found\n");
+> =20
+>  	fsl_ldb->panel_bridge =3D devm_drm_panel_bridge_add(dev, panel);
+>  	if (IS_ERR(fsl_ldb->panel_bridge))
+> -		return PTR_ERR(fsl_ldb->panel_bridge);
+> -
+> +		return dev_err_probe(dev, PTR_ERR(fsl_ldb->panel_bridge),
+> +				     "drm panel-bridge add failed\n");
+> =20
+>  	if (fsl_ldb_is_dual(fsl_ldb)) {
+>  		struct device_node *port1, *port2;
+> @@ -356,10 +358,9 @@ static int fsl_ldb_probe(struct platform_device *pde=
+v)
+>  					     "Error getting dual link configuration\n");
+> =20
+>  		/* Only DRM_LVDS_DUAL_LINK_ODD_EVEN_PIXELS is supported */
+> -		if (dual_link =3D=3D DRM_LVDS_DUAL_LINK_EVEN_ODD_PIXELS) {
+> -			dev_err(dev, "LVDS channel pixel swap not supported.\n");
+> -			return -EINVAL;
+> -		}
+> +		if (dual_link =3D=3D DRM_LVDS_DUAL_LINK_EVEN_ODD_PIXELS)
+> +			return dev_err_probe(dev, -EINVAL,
+> +					     "LVDS channel pixel swap not supported.\n");
+>  	}
+> =20
+>  	platform_set_drvdata(pdev, fsl_ldb);
+>=20
 
--- 
-2.34.1
+
+=2D-=20
+TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
+Amtsgericht M=FCnchen, HRB 105018
+Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
+http://www.tq-group.com/
 
 
 
