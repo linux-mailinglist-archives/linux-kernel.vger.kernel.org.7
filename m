@@ -1,108 +1,149 @@
-Return-Path: <linux-kernel+bounces-650307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-650334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B1CEAB8FA2
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 21:04:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6E9EAB8FEE
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 21:23:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC7164E24B7
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 19:04:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D5E31BC6161
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 19:23:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C04625B675;
-	Thu, 15 May 2025 19:04:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDADE25A646;
+	Thu, 15 May 2025 19:23:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="N/8GmiUT"
-Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="eQelwtN6"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C42D92980AB
-	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 19:04:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D65E194A44
+	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 19:22:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747335879; cv=none; b=sEiIiUHf8jMXnn1CgxKZBJL9M9SkQY76+kGf/KOHixqfgO1oKvbDC2XRCAjQ/WNrujf1ZXLs87arCT9zsgDCPqQ4sUb/ZmpPCFROk5Q3tduCnwOJ6OeB4cNl9kBfr8evS+YAB/N5WIVnp5WmELWjbOZ5Zgolx4T8PMdHmuOx6o4=
+	t=1747336980; cv=none; b=kZxNmx5FaJmNuDAsuy1xXb3D8tkV5IUGcmMYi0a3RKXEdhkNsQqqayiKgavZ2e1ASkOHxWTHadyRj19jQs2juKpiW5xc7fwdUUTd6YeBvq0pAbjML8+3QisvThSjVTWo61HttWYz6Zy120WIv7tSRah/rTuzfF6tkqUcjLPIEso=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747335879; c=relaxed/simple;
-	bh=2TFP4a/Qyyyjuub6ARU6zQrB5XmPSylzhP7ms0VvTec=;
-	h=MIME-Version:Date:Content-Type:From:Message-ID:Subject:To:Cc; b=Dky3PKqSDFgZblDIKBzf9+7cBdI5RF7Em0u3YDGvqX/n6lrMDdGgbl313BpJkf3/8MCCYyvjlt7cWobTgRqHudf9DSBXIy4V9kGMng+9WDCQkRdQaRD92KMtMvV511fKSgPAtZ+PzFtToKYBGl5XrMBYEcpFO8tn3QWTRwguhYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=N/8GmiUT; arc=none smtp.client-ip=95.215.58.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+	s=arc-20240116; t=1747336980; c=relaxed/simple;
+	bh=96N46iqOIStqCIhFVpc7U2TEDGtEL6hnmfMs56TVuk0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pdshqkWvXJAeout7gjLZyE8ryKYzlAvaBHgvRVmkDyET01g27Bkj9NgZxEH6+X6b6hTEGbmrKjZ/Udl9ssz4hePF38GO9riIafGqcqelzyj27QbTj7IbrDwGxTmMV/SqTzdCNs2xuYPT2BVBOyeo7PetLPrOhXt1qg4jYDhg3LA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=eQelwtN6; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-7423fb98cb1so1626000b3a.3
+        for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 12:22:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1747336976; x=1747941776; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=fyWm0rF9eCaDvUShSNc7s++hP2H/Glv+MtPcJ7Ax5f0=;
+        b=eQelwtN6xcwH2rQghkkeaj12hIAqXyv8M9NeiQZeO4eL947l4e5ddGG7KzLFavkZw/
+         oj/uEVfSCYXaDRymncHTSShDyQRDZJNBuMap4r7IMp+57Rzj0ZjtiOTqDvu2XO8RWQg0
+         hxJG2TX0vZXZRB1vV7z29+2Ao3ud3jfezDEpU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747336976; x=1747941776;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fyWm0rF9eCaDvUShSNc7s++hP2H/Glv+MtPcJ7Ax5f0=;
+        b=XlGHCrN+L7vATJuc66WVfEcweGJHI2CFQYTvO5REzWf6qcK8llbscbhPHyavo0SzQP
+         4WhYX14IPr+NJddNjFE8TusbwNUhKLSlbHKb/NbIrGiSRunnr7db50/yBePaGEnyd0of
+         CXNmBuMo40PAyq5PsoC8POUhEY0ShXpNx5GkipmBwkZBRgOM3px7QeYS8Yk+eLtfOolt
+         3uF3B3X4uojqbvmJ57iMoA/0/QSN65DVk2Jn7Gt9EYryedOAOqqrPDrwY4KACayeje5I
+         fKtHyORPI0Al8h+k3Z/fbXci9xbTbMBdJ/lNTrEZroRhjU74cxzGmpXoXxAXF46owTiA
+         ey9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXq15GloLbvrnyzQuz+OknUy8grHq3KG5xo12Yvp5BJJyUsBhtM2hVDwirsy+A7anx6mqZXrNx/fC1+JmA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHP53Hkj7yF6FlbZipFn6bghHAufdxjbPHtgn2C/hWZ3sy6Cyv
+	udq9BzhvFrvv2dmiuGjtXuT72VcbzygfNk6VKGOOQ1soJo38bvGHN8AguvuUESLonQ==
+X-Gm-Gg: ASbGnctmuhjfPDmEIbAT/6tw3e2OhDrs1tQLC5il2JpxQlgs0htkBgFz7f9H9Qsn+Lf
+	qwusa/Q6ksT53BRVOWiWeA7tiwDznyngoXn/3X78cyQb7WVPBu1KwCcT/X06SfSX+aOKnjszn71
+	iiNEwNzm2UgyVC/ZvInSgYTrPlpTy/A68nr9ecDqgCjHpgkDgehnduOIXqqFOZKyf4l7vnpijn1
+	VwaMBLNgeX1nMU8RDYT+wI/8vkRDTnIvIUPEN/0+iJNM/JJfw7SQccZWqnxjk8TtCYTXsAwRiIi
+	Gt8qJZ4c/TVbh4uicbCqM8RMOsQYSdiWmQ9NodMzr5EbrUaGdlAfpRlcebxx4hZ9lHzwMnL3TlX
+	U
+X-Google-Smtp-Source: AGHT+IGjWfUdXhgZL/hXJdI9mgEh2fOX9YaRz+9pHCBuN/jVr88KABTo2oYP+8cK+POae/uJK9WdVQ==
+X-Received: by 2002:a05:6a21:3289:b0:215:df3d:d56 with SMTP id adf61e73a8af0-21621902575mr851830637.21.1747336976503;
+        Thu, 15 May 2025 12:22:56 -0700 (PDT)
+Received: from ubuntu.. ([192.19.161.250])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b26eb0a0b19sm255222a12.74.2025.05.15.12.22.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 15 May 2025 12:22:55 -0700 (PDT)
+From: Ronak Doshi <ronak.doshi@broadcom.com>
+To: netdev@vger.kernel.org
+Cc: Ronak Doshi <ronak.doshi@broadcom.com>,
+	stable@vger.kernel.org,
+	Guolin Yang <guolin.yang@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Ronghua Zhang <ronghua@vmware.com>,
+	Shreyas Bhatewara <sbhatewara@vmware.com>,
+	Bhavesh Davda <bhavesh@vmware.com>,
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH net v2] vmxnet3: update MTU after device quiesce
+Date: Thu, 15 May 2025 19:04:56 +0000
+Message-ID: <20250515190457.8597-1-ronak.doshi@broadcom.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1747335864;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=3xVcqiJPyPsrTbmfK2bOp+gjw4dxsJLuhhBcDUWNfHE=;
-	b=N/8GmiUTbk9sX8xltdIbbU+mKNJ+liSq/cp0LIdoLtuVHg6bwYLfG7R4/6hLjwqlMfYd9C
-	b84lVzCCksnINi65Q1VCuLbbX///KEo/s4+SpkIuYGtDV1mhA33pawuFH30OzFW4Gwhs3u
-	vKmdoHqephCDU4xGI8ySbQhxDUCYgvk=
-Date: Thu, 15 May 2025 19:04:20 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: "Ihor Solodrai" <ihor.solodrai@linux.dev>
-Message-ID: <4f3768be36e0298be4ceebd4fdd3e96dd4fbdc04@linux.dev>
-TLS-Required: No
-Subject: [bug?] s390: kernel panic on specification exception: 0006
-To: linux-s390@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, bpf@vger.kernel.org
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
-Hi everyone.
+Currently, when device mtu is updated, vmxnet3 updates netdev mtu, quiesces
+the device and then reactivates it for the ESXi to know about the new mtu.
+So, technically the OS stack can start using the new mtu before ESXi knows
+about the new mtu.
 
-Stumbled on the following while testing unrelated changes to BPF CI scrip=
-ts:
+This can lead to issues for TSO packets which use mss as per the new mtu
+configured. This patch fixes this issue by moving the mtu write after
+device quiesce.
 
-    #353     select_reuseport:OK
-    specification exception: 0006 ilc:2 [#1]SMP
-    Modules linked in: bpf_testmod(OE) [last unloaded: bpf_test_modorder_=
-x(OE)]
-    CPU: 0 UID: 0 PID: 108 Comm: new_name Tainted: G           OE       6=
-.15.0-rc4-g169491540638-dirty #1 NONE
-    Tainted: [O]=3DOOT_MODULE, [E]=3DUNSIGNED_MODULE
-    Hardware name: IBM 8561 LT1 400 (KVM/Linux)
-    Krnl PSW : 0404e00180000000 000001e43ac595e4 (hrtimer_interrupt+0x4/0=
-x2a0)
-               R:0 T:1 IO:0 EX:0 Key:0 M:1 W:0 P:0 AS:3 CC:2 PM:0 RI:0 EA=
-:3
-    Krnl GPRS: 7fffffffffffffff 000001e43ac595e0 00000000fff8f200 000001e=
-43c52a0c0
-               00000164c50740d8 0000000000000000 0000000000000000 0000000=
-000000000
-               0000000000000000 0000000000000000 000001643afabe00 0000000=
-000000000
-               000003ff9fbadf98 000001e43b747550 000001e43ab12774 0000000=
-0fffdfe68
-    Krnl Code:#000001e43ac595e0: 67756573		mxd	%f7,1395(%r5,%r6)
-              >000001e43ac595e4: 743d696e		unknown
-               000001e43ac595e8: 73303031		unknown
-               000001e43ac595ec: 61652c64		unknown
-               000001e43ac595f0: 65627567		unknown
-               000001e43ac595f4: 2d74		ddr	%f7,%f4
-               000001e43ac595f6: 68726561		ld	%f7,1377(%r2,%r6)
-               000001e43ac595fa: 64733d6f		unknown
-    Call Trace:
-     [<000001e43ac595e4>] hrtimer_interrupt+0x4/0x2a0
-     [<000001e43ab128ca>] do_irq_async+0x5a/0x78
-     [<000001e43b65f694>] do_ext_irq+0xac/0x168
-     [<000001e43b66ae90>] ext_int_handler+0xc8/0xf8
-    Last Breaking-Event-Address:
-     [<000001e43ab08a9e>] clock_comparator_work+0x2e/0x30
-    Kernel panic - not syncing: Fatal exception in interrupt
+Cc: stable@vger.kernel.org
+Fixes: d1a890fa37f2 ("net: VMware virtual Ethernet NIC driver: vmxnet3")
+Signed-off-by: Ronak Doshi <ronak.doshi@broadcom.com>
+Acked-by: Guolin Yang <guolin.yang@broadcom.com>
+Changes v1-> v2:
+  Moved MTU write after destroy of rx rings
+---
+ drivers/net/vmxnet3/vmxnet3_drv.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-This is on the current tip of bpf-next (9325d53fe9ad).
+diff --git a/drivers/net/vmxnet3/vmxnet3_drv.c b/drivers/net/vmxnet3/vmxnet3_drv.c
+index 3df6aabc7e33..c676979c7ab9 100644
+--- a/drivers/net/vmxnet3/vmxnet3_drv.c
++++ b/drivers/net/vmxnet3/vmxnet3_drv.c
+@@ -3607,8 +3607,6 @@ vmxnet3_change_mtu(struct net_device *netdev, int new_mtu)
+ 	struct vmxnet3_adapter *adapter = netdev_priv(netdev);
+ 	int err = 0;
+ 
+-	WRITE_ONCE(netdev->mtu, new_mtu);
+-
+ 	/*
+ 	 * Reset_work may be in the middle of resetting the device, wait for its
+ 	 * completion.
+@@ -3622,6 +3620,7 @@ vmxnet3_change_mtu(struct net_device *netdev, int new_mtu)
+ 
+ 		/* we need to re-create the rx queue based on the new mtu */
+ 		vmxnet3_rq_destroy_all(adapter);
++		WRITE_ONCE(netdev->mtu, new_mtu);
+ 		vmxnet3_adjust_rx_ring_size(adapter);
+ 		err = vmxnet3_rq_create_all(adapter);
+ 		if (err) {
+@@ -3638,6 +3637,8 @@ vmxnet3_change_mtu(struct net_device *netdev, int new_mtu)
+ 				   "Closing it\n", err);
+ 			goto out;
+ 		}
++	} else {
++		WRITE_ONCE(netdev->mtu, new_mtu);
+ 	}
+ 
+ out:
+-- 
+2.45.2
 
-Job: https://github.com/kernel-patches/vmtest/actions/runs/15051985809/jo=
-b/42309244372
-You can download full logs from there.
-
-It only happened once so far, didn't repeat on restart.
 
