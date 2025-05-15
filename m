@@ -1,79 +1,64 @@
-Return-Path: <linux-kernel+bounces-648868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-648870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F623AB7CD3
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 07:08:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C4C6AB7CD6
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 07:09:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B844916C2DF
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 05:08:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F1828C1C6E
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 05:09:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D57BB28751E;
-	Thu, 15 May 2025 05:08:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 204CB28DB7C;
+	Thu, 15 May 2025 05:09:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tvct00RW"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="edYumvmE"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7E8C8C1F;
-	Thu, 15 May 2025 05:08:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 910A88C1F;
+	Thu, 15 May 2025 05:09:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747285707; cv=none; b=k6jk/egF9y8EEcg7qnlFkx90M27+8YH4afQ6l56BDLHAheyFu5j69Pb+FqJZOnjFpOeGv1YCixQS5NbnYhC7rNBWNmZhFCImz2/ye13IwFf7SFWyXk6ELUKMi52enMAvcaR+jnQu80G0I2FlTZKvz12SN2Kn8Ga3iu7QrGKs7VA=
+	t=1747285779; cv=none; b=ffHXLMo9iZKi+ss4NEBcWMyR+WonGSDTU3ANhRnjjXigVnnEs1AI2Tkq8PZw5p7JvhkxiewX/nlQQ0kBE/sY3IOIKfFwK2g+RJU45QjIqFClVKfbWFXMbFxszHIqCts0/m0BAGngS/Jir3HNqiamgx+XTHjipcXvayrJXgAlaME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747285707; c=relaxed/simple;
-	bh=DfKzu/2uN/ZhVEJNr+7vI8iANsRzWUhlIsxjCoy7V9A=;
+	s=arc-20240116; t=1747285779; c=relaxed/simple;
+	bh=uxbsQpMeKa8E2VkKT5+LTBbhyG22diHloapfLODy/p4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TxaXf5MLrbHIatLOwHy4Yzn161LKlwiPsgmm/ldpfKDoXt2WbrMnXU8vI324QixmclXPFIcgrugmoWCUolDvoFU/cvfFr58mEiE68/b4yuDN/wjAZ3E1kfNyC5qySFSbhRDL1y117VXSMCuoXMfgX6pGBULrVGraM4EwiClFJJs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Tvct00RW; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-7423fb98c5aso566837b3a.0;
-        Wed, 14 May 2025 22:08:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747285705; x=1747890505; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=DfKzu/2uN/ZhVEJNr+7vI8iANsRzWUhlIsxjCoy7V9A=;
-        b=Tvct00RWTHIXmreMPYqy3PVY/kyTGv6Dljrt4IfWdltakXQ0BkfJp45nh+pPC8zBnz
-         BKHnBsp4ozu0qezSWo0SYtLohSkvao++UjReCLaeAkv7vDzBXxaxpsubV3I6lmrdyHn+
-         4MrbhclV3+RnQ40mclmP9QzUEpmg/2skIlxA62+Hdpk6I/PTAtRFmnuuEXvrDBBLKDNU
-         S5D2sviW/WnExkP3aBTRVgIAwN74vd+h4KyP9wieTUOgHuPLhP1rJzLWdVMjCrEIibWL
-         EszBSNJqP6qVQeQvp1B6yGDrP6d5odeub85p5DP2kTqKxCpGY1r48k4ixqNVM6dOuS69
-         c0VA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747285705; x=1747890505;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DfKzu/2uN/ZhVEJNr+7vI8iANsRzWUhlIsxjCoy7V9A=;
-        b=vwkkCax+8o6zf1PSgwJCdMLKB8wontaBV1ky9L6JA0a9i86RI06dZ8UHtFLrAhukWv
-         Eul9zG/nINagThEgQeDXBKKjnn4O6mYUtfPDFa4XmgWzxBZGyBxP4wGMFtNC0MKi+IFY
-         GnScc0J2ui9Vv+1op6MyfTtWgd0VYVJ4KrHFcmBBkaLxMvKF0u5ZFiwnflkR5Rp6dZcB
-         veVxvf8N5ympmUK8aRPVBFAi/sORRD9RSnYjqY7dcD6Qbp8BFEB0AAu98H9s8SxKTV9E
-         ODLwTAwkOP/hRQnT069cWNm5IQ8Pz9fIk/rn6/T4rIHuxIPGajiUfq7CzTI5/FRJcXpz
-         bsmA==
-X-Forwarded-Encrypted: i=1; AJvYcCU2Ax5M4zBiW6ybC9zEjmDLJW54lT/9/SNpujfwcJd9XopliSwQaazASRGEjoeWTudLmTbL/YLIIqHz5muG@vger.kernel.org, AJvYcCUVhCmXB+BDKAuxvdt5l2Cs/jqWfzo9lDH6uJaa2QZSIplGXTwchDxLGYGbnnfbtL0vE7f5wgXSSeybJ5Cd@vger.kernel.org
-X-Gm-Message-State: AOJu0YziL15IisWXAKzj4LapPsuKU1xsnJikkUk7RSiWceruuIPR7eEi
-	NPXyuNl9l1gfBbR5vhuNPuOKR/jUG70MRvcJDt9INY3ACo64XTig
-X-Gm-Gg: ASbGnctgWqh8T9k9LgN/pn9jCAXEuiKNpsF8SRHfYsLSCGbztDx4rEsCIAOaV8C3d2S
-	J4kZ7ROaXPi0fviGxbcNaePXOQUNagM1/Pui9Pb7mFRyvnqHzMzquCXt7x3SWtrNel5zMqHI8U6
-	SAPA8JwLt8smKnNxmFkPrbxGQNypv9AhHr3hgB3Oilkj5Ix1bsrV8D7shxHspUWNlO0zTktkg/c
-	pO0oksJUA4wGGvjUYrhA/pGwDSyUNjJrJEZFLI8T3Snk6ByJxaGP5FIO3BR01iOqXliBJmRqxql
-	+dddKgC3Q5FxEj5E8Snqj6RxxMu/8zHtbLvfiIRf5Cpyi384asF+YUUo6ypLNm33myzEzbeZotI
-	=
-X-Google-Smtp-Source: AGHT+IH+z9/gvNAIgVdBiQEFnvWLdzvjUXhJQoW/YC8WK0Cl0SXJkOGyFoyiodBt7ZVwXDHT1gBPow==
-X-Received: by 2002:a05:6a20:6a20:b0:1f5:55b7:1bb4 with SMTP id adf61e73a8af0-215ff0f95efmr9042786637.11.1747285705060;
-        Wed, 14 May 2025 22:08:25 -0700 (PDT)
-Received: from [192.168.0.120] ([59.188.211.160])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-30e128c5a9dsm4077853a91.1.2025.05.14.22.08.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 14 May 2025 22:08:24 -0700 (PDT)
-Message-ID: <e6a5a737-ce64-4d31-aeea-2e6190da2ff5@gmail.com>
-Date: Thu, 15 May 2025 13:08:19 +0800
+	 In-Reply-To:Content-Type; b=mY9oeZurnay4eMMDbFUDYl4sTZAra0pUZK+9FvdUZYm3493+5T5JfIeE8ZtN1GPnSRNvOt3cpkrX4xIH2uOoK1ajkK/35dENz8v6KBdDbbtGJnZPLO+GVC5VK0QWy8ZuroEzXVM6uAVJI68j+uUGxlouItHo1XyIDSRAaGzXa6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=edYumvmE; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1747285778; x=1778821778;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=uxbsQpMeKa8E2VkKT5+LTBbhyG22diHloapfLODy/p4=;
+  b=edYumvmExLPHrbViDxuds7uI71ViY19Gc5BAWNN1mgQKRn+V8gTmqKL7
+   bXY+VuydXWnFswUlDA0vqlJPrigrfZtZiE1eTnxoQLCubM+Cb9GByhGiW
+   hDR9IOEePj8ItgHmY9aFl0beLMCyu0EPeJevjhVSgYDu4NwwzrvaTOO5t
+   iDiGDuX/8laDLWss5uKm0sbByVJMFiqIww4kBhQG/HQvXWPHZ7jIVBSEG
+   fc/OxxeyXwLQhYO9P4WwG0qoONe6IOsR4Z/EolKMMULdZrP6Q386ZHe8J
+   dIvM1+SldqFVZZlWcwdfCanJxCulMAL3Pkm6XgWyNNfypA6a55ke8IAG4
+   w==;
+X-CSE-ConnectionGUID: ft3ou1QtRamY6w70GkSGPg==
+X-CSE-MsgGUID: 2JgsQi4CTo2RefNwlifIcw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11433"; a="52878238"
+X-IronPort-AV: E=Sophos;i="6.15,290,1739865600"; 
+   d="scan'208";a="52878238"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 May 2025 22:09:37 -0700
+X-CSE-ConnectionGUID: ZmKsqzIERGOt+Pz6urd1sA==
+X-CSE-MsgGUID: AYK35yG+SxGBvZMuE7eoCw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,290,1739865600"; 
+   d="scan'208";a="137983579"
+Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.245.128]) ([10.124.245.128])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 May 2025 22:09:31 -0700
+Message-ID: <41821a66-8db1-42f1-85d6-fde67a8c072e@linux.intel.com>
+Date: Thu, 15 May 2025 13:09:28 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,43 +66,145 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: Subject: [RFC PATCH v2 0/8] staging: apfs: init APFS filesystem
- support
-To: =?UTF-8?Q?Ernesto_A=2E_Fern=C3=A1ndez?= <ernesto.mnd.fernandez@gmail.com>
-Cc: Yangtao Li <frank.li@vivo.com>, ethan@ethancedwards.com,
- asahi@lists.linux.dev, brauner@kernel.org, dan.carpenter@linaro.org,
- ernesto@corellium.com, gargaditya08@live.com, gregkh@linuxfoundation.org,
- jack@suse.cz, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-staging@lists.linux.dev, sven@svenpeter.dev, tytso@mit.edu,
- viro@zeniv.linux.org.uk, willy@infradead.org, slava@dubeyko.com,
- glaubitz@physik.fu-berlin.de
-References: <20250319-apfs-v2-0-475de2e25782@ethancedwards.com>
- <20250512101122.569476-1-frank.li@vivo.com> <20250512234024.GA19326@eaf>
- <63eb2228-dcec-40a6-ba02-b4f3a6e13809@gmail.com> <20250514201925.GA8597@eaf>
+Subject: Re: [PATCH v4 22/38] KVM: x86/pmu: Optimize intel/amd_pmu_refresh()
+ helpers
+To: Sean Christopherson <seanjc@google.com>,
+ Mingwei Zhang <mizhang@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Paolo Bonzini <pbonzini@redhat.com>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>, Liang@google.com,
+ Kan <kan.liang@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>,
+ linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kvm@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ Yongwei Ma <yongwei.ma@intel.com>,
+ Xiong Zhang <xiong.y.zhang@linux.intel.com>,
+ Jim Mattson <jmattson@google.com>, Sandipan Das <sandipan.das@amd.com>,
+ Zide Chen <zide.chen@intel.com>, Eranian Stephane <eranian@google.com>,
+ Shukla Manali <Manali.Shukla@amd.com>,
+ Nikunj Dadhania <nikunj.dadhania@amd.com>
+References: <20250324173121.1275209-1-mizhang@google.com>
+ <20250324173121.1275209-23-mizhang@google.com> <aCU3Ri0iz0aDBDup@google.com>
 Content-Language: en-US
-From: Nick Chan <towinchenmi@gmail.com>
-In-Reply-To: <20250514201925.GA8597@eaf>
+From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
+In-Reply-To: <aCU3Ri0iz0aDBDup@google.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
 
-Ernesto A. Fernández 於 2025/5/15 凌晨4:19 寫道:
-> Hi Nick,
+On 5/15/2025 8:37 AM, Sean Christopherson wrote:
+> This is not an optimization in any sane interpretation of that word.
+
+Yes, maybe clean up or bug fix is more accurate.
+
+
 >
-> On Tue, May 13, 2025 at 12:13:23PM +0800, Nick Chan wrote:
->> 2. When running Linux on iPhone, iPad, iPod touch, Apple TV (currently there are Apple A7-A11 SoC support in
->> upstream), resizing the main APFS volume is not feasible especially on A11 due to shenanigans with the encrypted
->> data volume. So the safe ish way to store a file system on the disk becomes a using linux-apfs-rw on a (possibly
->> fixed size) volume that only has one file and that file is used as a loopback device.
-> That's very interesting. Fragmentation will be brutal after a while though.
-> Unless you are patching away the copy-on-write somehow?'
-On a fixed size (preallocated size == max size) volume with only a single non-sparse file on it,
-copy-on-write should not happen. I believe the xART volume is also the same case with only
-one non-sparse file.
+> On Mon, Mar 24, 2025, Mingwei Zhang wrote:
+>> From: Dapeng Mi <dapeng1.mi@linux.intel.com>
+>>
+>> Currently pmu->global_ctrl is initialized in the common kvm_pmu_refresh()
+>> helper since both Intel and AMD CPUs set enable bits for all GP counters
+>> for PERF_GLOBAL_CTRL MSR. But it may be not the best place to initialize
+>> pmu->global_ctrl. Strictly speaking, pmu->global_ctrl is vendor specific
+> And?  There's mounds of KVM code that show it's very, very easy to manage
+> global_ctrl in common code.
+
+The original intention is to put all initialization code into a same place,
+which looks more easily to maintain. But if you don't like it. would drop
+the change.
 
 
-[...]
-> Ernesto
-Nick Chan
+>
+>> and there are lots of global_ctrl related processing in
+>> intel/amd_pmu_refresh() helpers, so better handle them in same place.
+>> Thus move pmu->global_ctrl initialization into intel/amd_pmu_refresh()
+>> helpers.
+>>
+>> Besides, intel_pmu_refresh() doesn't handle global_ctrl_rsvd and
+>> global_status_rsvd properly and fix it.
+> Really?  You mention a bug fix in passing, and squash it into an opinionated
+> refactoring that is advertised as "optimizations" without even stating what the
+> bug is?  C'mon.
 
+Sorry not clearly to describe the issue. global_ctrl_rsvd and
+global_status_rsvd should be updated only when pmu->verion >=2, but the
+original code doesn't.
+
+
+>
+>> Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
+>> Signed-off-by: Mingwei Zhang <mizhang@google.com>
+>> ---
+>>  arch/x86/kvm/pmu.c           | 10 -------
+>>  arch/x86/kvm/svm/pmu.c       | 14 +++++++--
+>>  arch/x86/kvm/vmx/pmu_intel.c | 55 ++++++++++++++++++------------------
+>>  3 files changed, 39 insertions(+), 40 deletions(-)
+>>
+>> diff --git a/arch/x86/kvm/pmu.c b/arch/x86/kvm/pmu.c
+>> index 4e8cefcce7ab..2ac4c039de8b 100644
+>> --- a/arch/x86/kvm/pmu.c
+>> +++ b/arch/x86/kvm/pmu.c
+>> @@ -843,16 +843,6 @@ void kvm_pmu_refresh(struct kvm_vcpu *vcpu)
+>>  		return;
+>>  
+>>  	kvm_pmu_call(refresh)(vcpu);
+>> -
+>> -	/*
+>> -	 * At RESET, both Intel and AMD CPUs set all enable bits for general
+>> -	 * purpose counters in IA32_PERF_GLOBAL_CTRL (so that software that
+>> -	 * was written for v1 PMUs don't unknowingly leave GP counters disabled
+>> -	 * in the global controls).  Emulate that behavior when refreshing the
+>> -	 * PMU so that userspace doesn't need to manually set PERF_GLOBAL_CTRL.
+>> -	 */
+>> -	if (kvm_pmu_has_perf_global_ctrl(pmu) && pmu->nr_arch_gp_counters)
+>> -		pmu->global_ctrl = GENMASK_ULL(pmu->nr_arch_gp_counters - 1, 0);
+> Absolutely not, this code stays where it is.
+
+Sure.
+
+
+>
+>>  }
+>>  
+>>  void kvm_pmu_init(struct kvm_vcpu *vcpu)
+>> diff --git a/arch/x86/kvm/svm/pmu.c b/arch/x86/kvm/svm/pmu.c
+>> index 153972e944eb..eba086ef5eca 100644
+>> --- a/arch/x86/kvm/svm/pmu.c
+>> +++ b/arch/x86/kvm/svm/pmu.c
+>> @@ -198,12 +198,20 @@ static void __amd_pmu_refresh(struct kvm_vcpu *vcpu)
+>>  	pmu->nr_arch_gp_counters = min_t(unsigned int, pmu->nr_arch_gp_counters,
+>>  					 kvm_pmu_cap.num_counters_gp);
+>>  
+>> -	if (pmu->version > 1) {
+>> -		pmu->global_ctrl_rsvd = ~((1ull << pmu->nr_arch_gp_counters) - 1);
+>> +	if (kvm_pmu_cap.version > 1) {
+> It's not just global_ctrl.  PEBS and the fixed counters also depend on v2+ (the
+> SDM contradicts itself; KVM's ABI is that they're v2+).
+>
+>> +		/*
+>> +		 * At RESET, AMD CPUs set all enable bits for general purpose counters in
+>> +		 * IA32_PERF_GLOBAL_CTRL (so that software that was written for v1 PMUs
+>> +		 * don't unknowingly leave GP counters disabled in the global controls).
+>> +		 * Emulate that behavior when refreshing the PMU so that userspace doesn't
+>> +		 * need to manually set PERF_GLOBAL_CTRL.
+>> +		 */
+>> +		pmu->global_ctrl = BIT_ULL(pmu->nr_arch_gp_counters) - 1;
+>> +		pmu->global_ctrl_rsvd = ~pmu->global_ctrl;
+>>  		pmu->global_status_rsvd = pmu->global_ctrl_rsvd;
+>>  	}
+>>  
+>> -	pmu->counter_bitmask[KVM_PMC_GP] = ((u64)1 << 48) - 1;
+>> +	pmu->counter_bitmask[KVM_PMC_GP] = BIT_ULL(48) - 1;
+> I like these cleanups, but they too belong in a separate patch.
+
+Sure.
+
+
+>
+>>  	pmu->reserved_bits = 0xfffffff000280000ull;
+>>  	pmu->raw_event_mask = AMD64_RAW_EVENT_MASK;
+>>  	/* not applicable to AMD; but clean them to prevent any fall out */
 
