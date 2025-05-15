@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-649232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-649233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73E37AB81BF
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 11:00:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D9E7AB81C7
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 11:01:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AEC01BC28A4
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 08:58:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D13B83A2267
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 08:58:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3635D29712A;
-	Thu, 15 May 2025 08:57:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 919D72980BD;
+	Thu, 15 May 2025 08:57:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D+RGnsfn"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ihJ/n4e6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 701052980A8
-	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 08:57:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F20052980B5
+	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 08:57:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747299465; cv=none; b=N2ROfpmK7Tzbklru+qqhFAy0U7jx40MT7ib/PqHIgMvfSw/RGdP2Bg09aUCwNcJl3c5X4rl9OYQ48nuMjjH4PrIBs9bpzEZDAT/Snn9HsIJ/qszFRl7KZkep8sXgkImwCLYLsyv0PTUsdgji4JwTgehSJYSGnPht9EdH08kfj+0=
+	t=1747299468; cv=none; b=SysAFbT08zjtYaXesObJDHdJjrcjQ7/WLhe36lT0fTP2cDou0NjPRiSJU5QEe+oEneTSS5GohEE1sy/Ne/yEI7Eyat+ZA26O6cTrrZ+c4yUliprFq9n/uVrsRVoW2BSgE6Br3rJhJjSRZKjZAbDg55zrPu9esCx6LQFwXv3LjgM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747299465; c=relaxed/simple;
-	bh=lFDDfd1Kvdh8/uWhFlBJABxYTqvqtwIqY1sADEFEtQU=;
+	s=arc-20240116; t=1747299468; c=relaxed/simple;
+	bh=5iShoFeNRgDVmEFMgRIhhGEkEjFE5sRIS9jH53sfYnY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qWLBFemuM2Nkr0pNryDHb3IJTdtnUNLCa/zMzYz5C00pLPq0OLz14Ed9KX1LD0MZvdFLhO/bCKq3WACXQPWy0rVNc/vXteF6lk+M1Q9g3jo0ghQZlKbn0MhqSr44fByBKiTldMPJw5HKudkWgV1LOA2X75tWszPUOC8ExahbjIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D+RGnsfn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3EA0C4CEF0;
-	Thu, 15 May 2025 08:57:39 +0000 (UTC)
+	 MIME-Version; b=kbNN24BGYLv+cxTuR+MH3q3Tx/xEbh8PxpQ6groYMNHU5/NmUPpKsWSWqWqPAZ6q//K7JmEoekmFXcrM23XG8w/xbWQmyDUS8PaT5xxC6bNGA5U7OMCsbfBNFp9MiSe5F2/ma04m0N8Ti1sePfsqYsRqIQTQWUhLTuHI1aqWIrM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ihJ/n4e6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63A25C4CEE7;
+	Thu, 15 May 2025 08:57:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747299462;
-	bh=lFDDfd1Kvdh8/uWhFlBJABxYTqvqtwIqY1sADEFEtQU=;
+	s=k20201202; t=1747299466;
+	bh=5iShoFeNRgDVmEFMgRIhhGEkEjFE5sRIS9jH53sfYnY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=D+RGnsfn2RS+Th3gZ4wJ86a5gY4AeO2mtfde7xPK3mKtqZBv+TgmHWeaXaGzfio3V
-	 t3NVCz0TkkE1yTf1HRIluKg5dEpTDO3IKO2NSANZP3zSno60/NUsPhxMq74hdSz0D2
-	 nET5O/uENFVgCaSTWVpghtbpw3CTNUeRb87QG8rCEW8v8l6kqxfpaPM7jD2INpdgTJ
-	 M5xgaTZAso20+GYPqx7t7vwO5dusM9ueIbjcHo0Ll15oDnfeT2DVl5PwvVIuTZs6Zf
-	 SS2ajlWqnjiVJHw2e5/tka/2wtvsJgWNBdagkMSJiBNG0fgWy1Y/QTJb9VaEHrp1Sz
-	 57z2NviTyyhjA==
+	b=ihJ/n4e6U/YFj/zGxO6jEG+XLoAaq8lhzKRlLv837tKiN8FBdESttHvsAOvSRXr2S
+	 Jg5qpY1rFgjWaKI+TL+3OtEAlLY0GgN7JiNJD+76Aum5XFtQK+chkG23wYn5BaUS6d
+	 N3ERjfhKczZchP7WweFkp4IfCfhxK0A971WK4eOMjuhwtfQAxboolwlLqaYUyQC8JF
+	 9fsRfrXXjP99Ys5egoBQ27+FCIzCQes1nh6FuyUbyKNRDyZcHQ/GqkWO7sV3pIUDSl
+	 PD1AfhVV4F5d5NPyu+2Xwq/LVj6+ae0coiJF/+dWnsm3pCYo+fyahrGIE94rez45A0
+	 jjth56mF4Yosg==
 From: Ingo Molnar <mingo@kernel.org>
 To: linux-kernel@vger.kernel.org
 Cc: Ingo Molnar <mingo@kernel.org>,
@@ -55,9 +55,9 @@ Cc: Ingo Molnar <mingo@kernel.org>,
 	Peter Zijlstra <peterz@infradead.org>,
 	Thomas Gleixner <tglx@linutronix.de>,
 	Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 08/15] x86/fpu: Remove MATH_EMULATION and related glue code
-Date: Thu, 15 May 2025 10:56:58 +0200
-Message-ID: <20250515085708.2510123-9-mingo@kernel.org>
+Subject: [PATCH 09/15] x86/fpu: Remove the 'no387' boot option
+Date: Thu, 15 May 2025 10:56:59 +0200
+Message-ID: <20250515085708.2510123-10-mingo@kernel.org>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20250515085708.2510123-1-mingo@kernel.org>
 References: <20250515085708.2510123-1-mingo@kernel.org>
@@ -69,6 +69,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
+Without math emulation there's no point to this option.
+
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Reviewed-by: Arnd Bergmann <arnd@arndb.de>
 Cc: Ahmed S . Darwish <darwi@linutronix.de>
@@ -78,169 +80,78 @@ Cc: H . Peter Anvin <hpa@zytor.com>
 Cc: John Ogness <john.ogness@linutronix.de>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Link: https://lore.kernel.org/r/20250425084216.3913608-9-mingo@kernel.org
+Link: https://lore.kernel.org/r/20250425084216.3913608-10-mingo@kernel.org
 ---
- arch/x86/Kconfig               | 27 ---------------------------
- arch/x86/Kconfig.cpufeatures   |  1 -
- arch/x86/Makefile              |  1 -
- arch/x86/include/asm/fpu/api.h |  6 ------
- arch/x86/kernel/fpu/core.c     |  5 -----
- arch/x86/kernel/fpu/init.c     |  9 +--------
- arch/x86/kernel/traps.c        | 14 --------------
- 7 files changed, 1 insertion(+), 62 deletions(-)
+ Documentation/admin-guide/kernel-parameters.txt |  4 ----
+ arch/x86/Kconfig                                | 20 +++++++++-----------
+ arch/x86/kernel/cpu/common.c                    |  7 -------
+ 3 files changed, 9 insertions(+), 22 deletions(-)
 
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 8f75ec177399..e380fff281a9 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -4067,10 +4067,6 @@
+ 			These settings can be accessed at runtime via
+ 			the nmi_watchdog and hardlockup_panic sysctls.
+ 
+-	no387		[BUGS=X86-32] Tells the kernel to use the 387 maths
+-			emulation library even if a 387 maths coprocessor
+-			is present.
+-
+ 	no4lvl		[RISCV,EARLY] Disable 4-level and 5-level paging modes.
+ 			Forces kernel to use 3-level paging instead.
+ 
 diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 1f29dc81018f..e983705a4fe3 100644
+index e983705a4fe3..be5f9be532a9 100644
 --- a/arch/x86/Kconfig
 +++ b/arch/x86/Kconfig
-@@ -1637,33 +1637,6 @@ config X86_BOOTPARAM_MEMORY_CORRUPTION_CHECK
- 	  Set whether the default state of memory_corruption_check is
- 	  on or off.
+@@ -2739,18 +2739,16 @@ menuconfig APM
+ 	  1) make sure that you have enough swap space and that it is
+ 	  enabled.
+ 	  2) pass the "idle=poll" option to the kernel
+-	  3) switch on floating point emulation in the kernel and pass
+-	  the "no387" option to the kernel
+-	  4) pass the "floppy=nodma" option to the kernel
+-	  5) pass the "mem=4M" option to the kernel (thereby disabling
++	  3) pass the "floppy=nodma" option to the kernel
++	  4) pass the "mem=4M" option to the kernel (thereby disabling
+ 	  all but the first 4 MB of RAM)
+-	  6) make sure that the CPU is not over clocked.
+-	  7) read the sig11 FAQ at <http://www.bitwizard.nl/sig11/>
+-	  8) disable the cache from your BIOS settings
+-	  9) install a fan for the video card or exchange video RAM
+-	  10) install a better fan for the CPU
+-	  11) exchange RAM chips
+-	  12) exchange the motherboard.
++	  5) make sure that the CPU is not over clocked.
++	  6) read the sig11 FAQ at <http://www.bitwizard.nl/sig11/>
++	  7) disable the cache from your BIOS settings
++	  8) install a fan for the video card or exchange video RAM
++	  9) install a better fan for the CPU
++	  10) exchange RAM chips
++	  11) exchange the motherboard.
  
--config MATH_EMULATION
--	bool
--	depends on MODIFY_LDT_SYSCALL
--	prompt "Math emulation" if X86_32 && (M486SX || MELAN)
--	help
--	  Linux can emulate a math coprocessor (used for floating point
--	  operations) if you don't have one. 486DX and Pentium processors have
--	  a math coprocessor built in, 486SX and 386 do not, unless you added
--	  a 487DX or 387, respectively. (The messages during boot time can
--	  give you some hints here ["man dmesg"].) Everyone needs either a
--	  coprocessor or this emulation.
--
--	  If you don't have a math coprocessor, you need to say Y here; if you
--	  say Y here even though you have a coprocessor, the coprocessor will
--	  be used nevertheless. (This behavior can be changed with the kernel
--	  command line option "no387", which comes handy if your coprocessor
--	  is broken. Try "man bootparam" or see the documentation of your boot
--	  loader (lilo or loadlin) about how to pass options to the kernel at
--	  boot time.) This means that it is a good idea to say Y here if you
--	  intend to use this kernel on different machines.
--
--	  More information about the internals of the Linux math coprocessor
--	  emulation can be found in <file:arch/x86/math-emu/README>.
--
--	  If you are not sure, say Y; apart from resulting in a 66 KB bigger
--	  kernel, it won't hurt.
--
- config MTRR
- 	def_bool y
- 	prompt "MTRR (Memory Type Range Register) support" if EXPERT
-diff --git a/arch/x86/Kconfig.cpufeatures b/arch/x86/Kconfig.cpufeatures
-index e12d5b7e39a2..cd551818f451 100644
---- a/arch/x86/Kconfig.cpufeatures
-+++ b/arch/x86/Kconfig.cpufeatures
-@@ -66,7 +66,6 @@ config X86_REQUIRED_FEATURE_UP
+ 	  To compile this driver as a module, choose M here: the
+ 	  module will be called apm.
+diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+index 114aaaf6ae8a..a996915f763f 100644
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -1655,13 +1655,6 @@ static void __init cpu_parse_early_param(void)
+ 	int arglen;
  
- config X86_REQUIRED_FEATURE_FPU
- 	def_bool y
--	depends on !MATH_EMULATION
- 
- config X86_REQUIRED_FEATURE_PAE
- 	def_bool y
-diff --git a/arch/x86/Makefile b/arch/x86/Makefile
-index 53daf4654f6c..84901c3acc94 100644
---- a/arch/x86/Makefile
-+++ b/arch/x86/Makefile
-@@ -285,7 +285,6 @@ core-y  += arch/x86/boot/startup/
- libs-y  += arch/x86/lib/
- 
- # drivers-y are linked after core-y
--drivers-$(CONFIG_MATH_EMULATION) += arch/x86/math-emu/
- drivers-$(CONFIG_PCI)            += arch/x86/pci/
- 
- # suspend and hibernation support
-diff --git a/arch/x86/include/asm/fpu/api.h b/arch/x86/include/asm/fpu/api.h
-index 8e6848f55dcd..87b794921070 100644
---- a/arch/x86/include/asm/fpu/api.h
-+++ b/arch/x86/include/asm/fpu/api.h
-@@ -119,12 +119,6 @@ extern void fpu__init_system(void);
- extern void fpu__init_check_bugs(void);
- extern void fpu__resume_cpu(void);
- 
+ #ifdef CONFIG_X86_32
+-	if (cmdline_find_option_bool(boot_command_line, "no387"))
 -#ifdef CONFIG_MATH_EMULATION
--extern void fpstate_init_soft(struct swregs_state *soft);
+-		setup_clear_cpu_cap(X86_FEATURE_FPU);
 -#else
--static inline void fpstate_init_soft(struct swregs_state *soft) {}
+-		pr_err("Option 'no387' required CONFIG_MATH_EMULATION enabled.\n");
 -#endif
 -
- /* State tracking */
- DECLARE_PER_CPU(struct fpu *, fpu_fpregs_owner_ctx);
- 
-diff --git a/arch/x86/kernel/fpu/core.c b/arch/x86/kernel/fpu/core.c
-index 948b4f5fad99..a39c0798c975 100644
---- a/arch/x86/kernel/fpu/core.c
-+++ b/arch/x86/kernel/fpu/core.c
-@@ -520,11 +520,6 @@ static inline void fpstate_init_fstate(struct fpstate *fpstate)
-  */
- void fpstate_init_user(struct fpstate *fpstate)
- {
--	if (!cpu_feature_enabled(X86_FEATURE_FPU)) {
--		fpstate_init_soft(&fpstate->regs.soft);
--		return;
--	}
--
- 	xstate_init_xcomp_bv(&fpstate->regs.xsave, fpstate->xfeatures);
- 
- 	if (cpu_feature_enabled(X86_FEATURE_FXSR))
-diff --git a/arch/x86/kernel/fpu/init.c b/arch/x86/kernel/fpu/init.c
-index 6bb3e35c40e2..20017fbfc16c 100644
---- a/arch/x86/kernel/fpu/init.c
-+++ b/arch/x86/kernel/fpu/init.c
-@@ -36,12 +36,7 @@ static void fpu__init_cpu_generic(void)
- 	write_cr0(cr0);
- 
- 	/* Flush out any pending x87 state: */
--#ifdef CONFIG_MATH_EMULATION
--	if (!boot_cpu_has(X86_FEATURE_FPU))
--		;
--	else
--#endif
--		asm volatile ("fninit");
-+	asm volatile ("fninit");
- }
- 
- /*
-@@ -83,13 +78,11 @@ static void __init fpu__init_system_early_generic(void)
- 			setup_clear_cpu_cap(X86_FEATURE_FPU);
- 	}
- 
--#ifndef CONFIG_MATH_EMULATION
- 	if (!test_cpu_cap(&boot_cpu_data, X86_FEATURE_FPU)) {
- 		pr_emerg("x86/fpu: Giving up, no FPU found and no math emulation present\n");
- 		for (;;)
- 			asm volatile("hlt");
- 	}
--#endif
- }
- 
- /*
-diff --git a/arch/x86/kernel/traps.c b/arch/x86/kernel/traps.c
-index 8d08c58b3fe2..6b2ffb86c46d 100644
---- a/arch/x86/kernel/traps.c
-+++ b/arch/x86/kernel/traps.c
-@@ -1414,20 +1414,6 @@ DEFINE_IDTENTRY(exc_device_not_available)
- 	if (handle_xfd_event(regs))
- 		return;
- 
--#ifdef CONFIG_MATH_EMULATION
--	if (!boot_cpu_has(X86_FEATURE_FPU) && (cr0 & X86_CR0_EM)) {
--		struct math_emu_info info = { };
--
--		cond_local_irq_enable(regs);
--
--		info.regs = regs;
--		math_emulate(&info);
--
--		cond_local_irq_disable(regs);
--		return;
--	}
--#endif
--
- 	/* This should not happen. */
- 	if (WARN(cr0 & X86_CR0_TS, "CR0.TS was set")) {
- 		/* Try to fix it up and carry on. */
+ 	if (cmdline_find_option_bool(boot_command_line, "nofxsr"))
+ 		setup_clear_cpu_cap(X86_FEATURE_FXSR);
+ #endif
 -- 
 2.45.2
 
