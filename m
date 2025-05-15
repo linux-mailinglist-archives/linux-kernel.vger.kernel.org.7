@@ -1,109 +1,150 @@
-Return-Path: <linux-kernel+bounces-649480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-649483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7321EAB855A
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 13:53:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31011AB8561
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 13:55:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2DA647AB145
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 11:51:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E52153BA46B
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 11:55:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A007B298271;
-	Thu, 15 May 2025 11:52:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCE33298C00;
+	Thu, 15 May 2025 11:55:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bg9ADbY5"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="P1Cv2Odx"
+Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B82620FA81;
-	Thu, 15 May 2025 11:52:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747309958; cv=none; b=XdnVoi8yAVTDTdFjxqcuOStNBzdpMj+xRqpD3EWBDH2DlVa4KsBAuXAaWqEmM6dxk/xyC9y3j+vmPTfmWAX8OT3uQAaB6rhD6wG3P2Rbt/QEge9qEiY34MCyvVWP9LsQTEEWiQSYjvc/UR0cwuoTBwzI5Z3PR3Eprshpkjg43Ws=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747309958; c=relaxed/simple;
-	bh=5n4gJIRJlJ40Aio9mAK8B0h/tvNUDSce7R7LVly6O/E=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=FWsU1hTpD9Qvahs95zFB6IYHe7EXEu7mXv3EoEwYrzUj1HCwR9NOMy7sOGM5BQ4EHWyDNKAg6dSKIlpNtb0aar3d5WYM2Fq79Xfq/qJY5qYcxt5+1DAjaZuBoU+oEfS/69OEI7q+uIsst0s02OLAOACO9Hyu85tZq8VPgyZIgY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bg9ADbY5; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1747309957; x=1778845957;
-  h=from:to:cc:in-reply-to:references:subject:message-id:
-   date:mime-version:content-transfer-encoding;
-  bh=5n4gJIRJlJ40Aio9mAK8B0h/tvNUDSce7R7LVly6O/E=;
-  b=bg9ADbY5dooGrTiRuimfbBRU1I7PhId1IS3quDd/caeVozhHHwWGd3Kt
-   XYu+xhyEbTOzIfTgSPYTBTyOz2tBoiBSgZegAYOeW2jKW6UjW0Im5tiJ+
-   a5Hyq+YtQmZ7uz1KrHHx7RMyC238+5SKIZEc1Uc1AtxVY0TLmBya1jhVI
-   zHQsm/ebN6h/jO5YZR4jKEeEqvDY7GE6y6/qTGBlejdguy/phH+w9LzF2
-   ZlaMbTPEz1jEj2eLa65yhc6M06Roi02itjBJPXfU3ykwZfGm8fumAg7rp
-   AR5eUfnB1dwJidOrDNDszmiZfaCzsNeRn39JTCkMe/w8qOPgviXvnbuAs
-   Q==;
-X-CSE-ConnectionGUID: wh8J+/n4TPu5hZxjZFJHUw==
-X-CSE-MsgGUID: ++5YLfesRA2G2VpRBKPrYQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11433"; a="53042146"
-X-IronPort-AV: E=Sophos;i="6.15,291,1739865600"; 
-   d="scan'208";a="53042146"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2025 04:52:35 -0700
-X-CSE-ConnectionGUID: qUyIqUZBTMa39d5PrzXJ3g==
-X-CSE-MsgGUID: EK7AgqdqQ0GfhOfahzTjdA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,291,1739865600"; 
-   d="scan'208";a="138847244"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.157])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2025 04:52:31 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To: Prasanth Ksr <prasanth.ksr@dell.com>, 
- Vladimir Moskovkin <Vladimir.Moskovkin@kaspersky.com>
-Cc: Hans de Goede <hdegoede@redhat.com>, 
- Mario Limonciello <mario.limonciello@dell.com>, 
- Divya Bharathi <divya.bharathi@dell.com>, Dell.Client.Kernel@dell.com, 
- platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org, 
- stable@vger.kernel.org, lvc-project@linuxtesting.org
-In-Reply-To: <39973642a4f24295b4a8fad9109c5b08@kaspersky.com>
-References: <39973642a4f24295b4a8fad9109c5b08@kaspersky.com>
-Subject: Re: [PATCH] platform/x86: dell-wmi-sysman: Avoid buffer overflow
- in current_password_store()
-Message-Id: <174730994725.2473.3936667480812297322.b4-ty@linux.intel.com>
-Date: Thu, 15 May 2025 14:52:27 +0300
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83ACF29899A;
+	Thu, 15 May 2025 11:55:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747310124; cv=pass; b=dz5sGrFvAmTy4d03GiGon/P2r5olIbs92dzmK0tpwTUl3YQJUxDVpDIWmH3Ys1sNM9EB/sjUMb1NIzM4TEVHuITKXMW0CLAzmw3nko26E51ItKY/emYovNolSZxJ4F4ONSD9ebpc6m006kKMKClezgqXrHKKtRqhYww7EJsswgE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747310124; c=relaxed/simple;
+	bh=jOjgSH42Zt+Lh/WxJYrlCQqxuKGHDd4OScgdbmzvKgE=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=fJAkHdlctnRv9hq2uKdvYGoEJY6fI4l3ECZ6I9Zrr1tPq63m06cBo5bk0vBqIghdNMxwLu0mVYcMsxWfAsolIju27wxqgVrMtPGkR2/OUqUWlF96Pzn/PNMcmpnW0FcfsXCLdgSWIbxujCChpPC8ffyHVrkefZtam70YhbCkQbI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=P1Cv2Odx; arc=pass smtp.client-ip=136.143.188.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1747310092; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=K67XT3xufeGY4zKjiDJAfMYIooP9iFCuBgyFeODoEUtUGTo/efkiGv+/JQJw4urkvO9rdMSkDAUzS3/WOqMA6JBRREn5RII/ad7mv+qQIT35VI33TgX5L5RcCA0bK+Fcq76kI8OWROwLxce2jFK+uiK3QZpZNc0AysIA5NJDbeU=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1747310092; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=X7bUNRfzuJO+T4PVgYRu8D54tQVKV9Q1fN0/yr8vrzU=; 
+	b=frNm/Wb2z2GhbucqMXdqtodp5HdTHgmrGKhiLfhPIeSaueeCrznW5vAq1mNEG1Kyt3Kh6L6tEPnGcusjeXBTyMrSsac0QCIW8uME87qllN87RJKeKddhFnkebiGFBiar6yUxAVtv0ZNPJt/bw0ibRq6YNhWVf2Ul9MrC1bAsdoM=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1747310092;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=X7bUNRfzuJO+T4PVgYRu8D54tQVKV9Q1fN0/yr8vrzU=;
+	b=P1Cv2OdxKXsvf44/wXgclSsrfiIW68rtMFhQSmOi9Pg0gWM6sobOt/FqBHIsAl1+
+	MtOKpfYUh8mRA/oRLiEK+bt+hTnNtcEQllZPIVThfyz9WoAan0nVuUFtRTGzSQXOIIl
+	5d7+xBME398fMdMNaSWT/FjCaLnRBrd3uBfrw7OA=
+Received: by mx.zohomail.com with SMTPS id 1747310090926796.9101269819287;
+	Thu, 15 May 2025 04:54:50 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.500.181.1.5\))
+Subject: Re: [PATCH v3 1/2] rust: irq: add support for request_irq()
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <aCUQ0VWgoxdmIUaS@pollux>
+Date: Thu, 15 May 2025 08:54:35 -0300
+Cc: Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <A7E3A124-AF77-4A4A-B4E2-AE7DDB1CE007@collabora.com>
+References: <20250514-topics-tyr-request_irq-v3-0-d6fcc2591a88@collabora.com>
+ <20250514-topics-tyr-request_irq-v3-1-d6fcc2591a88@collabora.com>
+ <aCUQ0VWgoxdmIUaS@pollux>
+To: Danilo Krummrich <dakr@kernel.org>
+X-Mailer: Apple Mail (2.3826.500.181.1.5)
+X-ZohoMailClient: External
 
-On Wed, 14 May 2025 12:12:55 +0000, Vladimir Moskovkin wrote:
+Hi Danilo,
 
-> If the 'buf' array received from the user contains an empty string, the
-> 'length' variable will be zero. Accessing the 'buf' array element with
-> index 'length - 1' will result in a buffer overflow.
-> 
-> Add a check for an empty string.
-> 
-> Found by Linux Verification Center (linuxtesting.org) with SVACE.
-> 
-> [...]
+> On 14 May 2025, at 18:53, Danilo Krummrich <dakr@kernel.org> wrote:
+>=20
+> On Wed, May 14, 2025 at 04:20:51PM -0300, Daniel Almeida wrote:
+>> +/// // This is running in process context.
+>> +/// fn register_irq(irq: u32, handler: Handler) -> =
+Result<Arc<Registration<Handler>>> {
+>> +///     let registration =3D Registration::register(irq, =
+flags::SHARED, c_str!("my-device"), handler);
+>> +///
+>> +///     // You can have as many references to the registration as =
+you want, so
+>> +///     // multiple parts of the driver can access it.
+>> +///     let registration =3D Arc::pin_init(registration, =
+GFP_KERNEL)?;
+>=20
+> This makes it possible to arbitrarily extend the lifetime of an IRQ
+> registration. However, we must guarantee that the IRQ is unregistered =
+when the
+> corresponding device is unbound. We can't allow drivers to hold on to =
+device
+> resources after the corresponding device has been unbound.
+>=20
+> Why does the data need to be part of the IRQ registration itself? Why =
+can't we
+> pass in an Arc<T> instance already when we register the IRQ?
+>=20
+> This way we'd never have a reason to ever access the Registration =
+instance
+> itself ever again and we can easily wrap it as =
+Devres<irq::Registration> -
+> analogously to devm_request_irq() on the C side - without any =
+penalties.
+>=20
+>> +///     // The handler may be called immediately after the function =
+above
+>> +///     // returns, possibly in a different CPU.
+>> +///
+>> +///     {
+>> +///         // The data can be accessed from the process context =
+too.
+>> +///         let mut data =3D registration.handler().0.lock();
+>> +///         *data =3D 42;
+>> +///     }
+>> +///
+>> +///     Ok(registration)
+>> +/// }
+>=20
 
+Up until this point, there was no need for the data to not be inline =
+with the
+registration. This new design would force an Arc, which, apart from the
+heap-allocation, is restrictive for users.
 
-Thank you for your contribution, it has been applied to my local
-review-ilpo-fixes branch. Note it will show up in the public
-platform-drivers-x86/review-ilpo-fixes branch only once I've pushed my
-local branch there, which might take a while.
+Can=E2=80=99t we use Devres with the current implementation?
 
-The list of commits applied:
-[1/1] platform/x86: dell-wmi-sysman: Avoid buffer overflow in current_password_store()
-      commit: 4e89a4077490f52cde652d17e32519b666abf3a6
+IIUC from a very cursory glance, all that would mean is that you'd have =
+to call
+try_access() on your handler, which should be fine?
 
---
- i.
-
+=E2=80=94 Daniel=
 
