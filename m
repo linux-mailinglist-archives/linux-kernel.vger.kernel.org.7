@@ -1,133 +1,77 @@
-Return-Path: <linux-kernel+bounces-649463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-649489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 424F0AB851C
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 13:44:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5CC0AB8573
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 13:59:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 096C31BA06A3
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 11:44:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5D143BA3F9
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 11:59:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 900F5298245;
-	Thu, 15 May 2025 11:43:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="OU2NTZIG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B1C22989BE;
+	Thu, 15 May 2025 11:59:39 +0000 (UTC)
+Received: from baidu.com (mx22.baidu.com [220.181.50.185])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3CBA819;
-	Thu, 15 May 2025 11:43:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6643E1FF7CD
+	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 11:59:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.181.50.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747309434; cv=none; b=gc2TU/oZZfZ7PCplj+VceDeV9Hlm2W0mDZ8KtSAJBGCabQYpkl23E90cnZ7vyMQ0ewWmh4rWERZYHGtTC8/jGWa9CAW7ic0SlKvKScim44JujGL4I4VMDWzOCvV0DuFcjcioc65wWv4GVWXva60WxJGFjNZVJmRkQiut/eEDeKk=
+	t=1747310379; cv=none; b=Esr+sXnUllTFOsWOeNnFROA9HEouW80xeivZGChQJpHUq3dZFWGiZqr4X5FSYCFb9gPO+j7m4tyVBbDxmQqsAEgGUJNSaQWWMxsB388TEWvyyidLKcmHyky5pshLVGV/XSAdR6AJc5yeAVnm31mRSp/cIQQ27nlxv7MpsLWgZuY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747309434; c=relaxed/simple;
-	bh=cqZmizesdV382UCWkAJvVk+InOvjAczf6ib7rBZjAsY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W1bo5Gw1Zl4+pYverix2sWsn7G0VQI0ZYrlgYL1w/mW2nQx9v4xW+Gahkb50ZViPht+PdYxyuQpnXTEyZdH8wBZxkeKaQGeOO5hqNmEWqzfovo2wITLTBmmMURHbJWAj9esJdG+zorYdnRLSzOtED4Qr/TycAM3Tq6mY516Nrk4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=OU2NTZIG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BA6FC4CEE7;
-	Thu, 15 May 2025 11:43:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1747309434;
-	bh=cqZmizesdV382UCWkAJvVk+InOvjAczf6ib7rBZjAsY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OU2NTZIGHmokuMikpj91WMhvhyCz0MgzU98cEhvJWzdS3i87rxoxK1kHrGWv97hRH
-	 3Xwj/nOWKMfnUpNvIkk9N660xcTSSR2DJx7FN+obqBpZNIxoQBwee5eJJ/ojcOy9Tt
-	 auz8T46jDdETzBwpst9dXqrt+XgvLAr7swC+PwD4=
-Date: Thu, 15 May 2025 13:42:05 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Alexandre Courbot <acourbot@nvidia.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>, linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH] rust: add basic ELF sections parser
-Message-ID: <2025051532-gentleman-reset-58f2@gregkh>
-References: <20250515-elf-v1-1-4b53745453c0@nvidia.com>
- <2025051543-override-rockiness-3ead@gregkh>
- <D9WLFTPRB9FJ.OL6I760HKALZ@nvidia.com>
- <D9WP3YU31199.Q8IEDBJZ87LU@nvidia.com>
+	s=arc-20240116; t=1747310379; c=relaxed/simple;
+	bh=W5tQpGezyACQ07x3k8e9Qln0LgPn+x2pDoFNSogLARM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Mv8533QlBUu1Ne3MCt69ugh1RKVJzKc1BYgkBSzvIbluIAEypm+4fsWZEiELT3066WOazlJf4/pPMIDvFDgSqfYdTEOOr1No7MKqtcEuTmms78jmmkjQSh+wPJdMENHydW+QHKZxyN4FZ2hyJ5zlN06EZBNvJ1auEtNl8fnRw7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com; spf=pass smtp.mailfrom=baidu.com; arc=none smtp.client-ip=220.181.50.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baidu.com
+From: Wenjie Xu <xuwenjie04@baidu.com>
+To: <muchun.song@linux.dev>, <osalvador@suse.de>, <akpm@linux-foundation.org>
+CC: <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>, Wenjie Xu
+	<xuwenjie04@baidu.com>, Li RongQing <lirongqing@baidu.com>
+Subject: [PATCH] hugetlb: Show nr_huge_pages in report_hugepages()
+Date: Thu, 15 May 2025 19:42:31 +0800
+Message-ID: <20250515114231.65824-1-xuwenjie04@baidu.com>
+X-Mailer: git-send-email 2.41.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <D9WP3YU31199.Q8IEDBJZ87LU@nvidia.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: BJHW-Mail-Ex13.internal.baidu.com (10.127.64.36) To
+ BJHW-MAIL-EX28.internal.baidu.com (10.127.64.43)
+X-Baidu-BdMsfe-DateCheck: 1_BJHW-Mail-Ex12_2025-05-15 19:42:40:672
+X-FEAS-Client-IP: 10.127.64.35
+X-FE-Policy-ID: 52:10:53:SYSTEM
 
-On Thu, May 15, 2025 at 08:25:33PM +0900, Alexandre Courbot wrote:
-> On Thu May 15, 2025 at 5:32 PM JST, Alexandre Courbot wrote:
-> > Hi Greg,
-> >
-> > On Thu May 15, 2025 at 4:38 PM JST, Greg KH wrote:
-> >> On Thu, May 15, 2025 at 03:03:51PM +0900, Alexandre Courbot wrote:
-> >>> Add a simple ELF sections parser for unpacking loaded binaries from
-> >>> user-space. This is not intended to become a fully-fledged ELF parser,
-> >>> just a helper to parse firmwares packaged in that format.
-> >>> 
-> >>> This parser is notably helpful for NVIDIA's GSP firmware, which is
-> >>> provided as an ELF binary using sections to separate the firmware code
-> >>> to its other components like chipset-specific signatures.
-> >>> 
-> >>> Since the data source is likely to be user-space, checked arithmetic
-> >>> operations and strict bound checking are used.
-> >>> 
-> >>> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
-> >>> ---
-> >>> This will soon be needed in order to load the GSP firmware in nova-core,
-> >>> so sending this early for separate review.
-> >>> ---
-> >>>  rust/kernel/elf.rs | 322 +++++++++++++++++++++++++++++++++++++++++++++++++++++
-> >>
-> >> Why is this not just done in userspace and then have userspace feed the
-> >> proper elf sections to the kernel through the firmware interface?
-> >> Having to parse elf seems crazy for the kernel to be forced to do here
-> >> as the kernel should NOT be touching anything in a firmware blob other
-> >> than passing it off to the firmware directly.
-> >
-> > FWIW, the GSP firmware in question is already in linux-firmware and
-> > loaded by e.g. Nouveau.
-> >
-> > I am not sure how userspace could feed the proper ELF sections otherwise
-> > than by splitting the ELF binary into as many files as there are
-> > sections. Is that what you imply, or is there another means that would
-> > preserve the current firmware format?
-> >
-> > Note also that in this particular case, the kernel cannot just pass the
-> > firmware without modifying it anyway since the signatures relevant to
-> > the chipset need to be patched into the right place before it is loaded.
-> 
-> Quick nit, as that last statement was not entirely correct: while we do
-> patch some loaded firmware with signatures, this is not the case for the
-> GSP (the one in ELF format). Not that it changes the point, but for the
-> sake of accuracy. :)
-> 
-> The point being that even without using ELF as a container format, we do
-> need to parse header structures in loaded firmware files anyway, so the
-> kernel cannot simply act as a dumb pipe for firmware. And since we need
-> to add structure, let's at least use a format that is simple, well
-> accepted and which layout is already in the kernel.
-> 
-> Or if ELF is the problem, I don't mind introducing a WAD loader. ;)
+The number of pre-allocated huge pages should be nr_huge_pages, not
+free_huge_pages, although they are same during booting stage
 
-The "problem" I'm not understanding is why does the kernel have to do
-any of this parsing at all?  What does it do with these segments that
-userspace can't do instead?  Why does patching have to be done within
-the kernel at all?  What prevents all of this from being done elsewhere?
+Signed-off-by: Wenjie Xu <xuwenjie04@baidu.com>
+Signed-off-by: Li RongQing <lirongqing@baidu.com>
+---
+ mm/hugetlb.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-And ELF parsing is "tricky" in places, and you aren't using the existing
-elf parser, as proof of needing a new parser in rust :)
+diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+index 6ea1be71aa42..2a4d4551749a 100644
+--- a/mm/hugetlb.c
++++ b/mm/hugetlb.c
+@@ -3740,7 +3740,7 @@ static void __init report_hugepages(void)
+ 
+ 		string_get_size(huge_page_size(h), 1, STRING_UNITS_2, buf, 32);
+ 		pr_info("HugeTLB: registered %s page size, pre-allocated %ld pages\n",
+-			buf, h->free_huge_pages);
++			buf, h->nr_huge_pages);
+ 		if (nrinvalid)
+ 			pr_info("HugeTLB: %s page size: %lu invalid page%s discarded\n",
+ 					buf, nrinvalid, nrinvalid > 1 ? "s" : "");
+-- 
+2.41.0
 
-thanks,
-
-greg k-h
 
