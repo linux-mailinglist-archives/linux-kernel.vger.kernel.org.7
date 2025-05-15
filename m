@@ -1,186 +1,130 @@
-Return-Path: <linux-kernel+bounces-648704-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-648708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4584AAB7AA6
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 02:37:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F3D2BAB7AB0
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 02:43:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5522C8C430F
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 00:37:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE5FA860154
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 00:42:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8572372606;
-	Thu, 15 May 2025 00:37:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DED3E72600;
+	Thu, 15 May 2025 00:43:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="urR8CUfh"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lvYn/i4W"
+Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com [209.85.222.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C2CD33E1
-	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 00:37:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBD808F66;
+	Thu, 15 May 2025 00:43:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747269449; cv=none; b=U0Wh1YPapImm6TL5TDFcutmo7sWgGMCyqsiO/TDBw6FfE/eNjvJfA+Zo5f5uEWduAFyQh8xNSvKU9e89T83mz2cGIQfwcuatHBp0LO7INvq85+P7sP8Yamw4DAh6ldOUSTkFPbdeLcNG/9erVZH2irrBBTxzVle3QKTdQ73s1DA=
+	t=1747269789; cv=none; b=SJmUURFhBO1WKbOlmXhMztPaFdBvLrk/Wts0Bcsa5wpx7b76QJmIFHJe4sa3gwG0EoCj29Y7+Q+xSg+p/2EW7661edD2evHCaU/irrR9KwZqg0H1nPZO9WllXu5taiPEKGSyNhS0K6zBl/Q3SBwTH1N5uyTLqw263i7o5dXUiCI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747269449; c=relaxed/simple;
-	bh=20JZZATn2xYn8yCBr4Nu5Nw8VR/pgtNNgy1qu7hFmHY=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=ZAGApQ+gEieS0wUgqJb5DUJ7KPUNcjVJztwuB9SNa/Kw5prf3cT2y/f1hEb4IylK4XAbTF5jK+QvhJSIVhTfH97KmAtYG+01YsjN8dIeD1IQNJpYCytEtcV9mV0NSy5y68BlcteV+nK1CpKR+i+MKFMvlmoLpFEEHuQB5aA4g+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=urR8CUfh; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-30ac9855e35so465878a91.2
-        for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 17:37:28 -0700 (PDT)
+	s=arc-20240116; t=1747269789; c=relaxed/simple;
+	bh=CaZ4C3YksYVpPo32yraBL2f0bTtgs+Duayou0LWapfY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZW2iUNkXG7uZjUqRlLyRxrCRPuhDCVtK09Zulorb9eWKLM33kPLe2MdWxdrU+DpQI+SmVds/jdZHgWSihjVwX0pBsZHqJ1Q9PCEc9wFUMWwomCnVlpXw4ddO1XqV4aDsNM3XoTt+shOsW0yGBrmy6NGXdmJ0vXsgliFxrsuVmMQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lvYn/i4W; arc=none smtp.client-ip=209.85.222.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f43.google.com with SMTP id a1e0cc1a2514c-879c44a1dc4so86297241.3;
+        Wed, 14 May 2025 17:43:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1747269447; x=1747874247; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=2QJBCuK1Gmwp843LF9HX9up42dO/Q8RSynscXuV78Hc=;
-        b=urR8CUfht/kxJEmiPUzudfpInfP0vDOH9AUkUO5PFtkjxO3REUOnYrD3RHzN1cNAsq
-         /lCA2oriXCJ6NBkMc9TvG7dlThoOYcTMdVvACUEpxQFQO9Oq5dfE04sLssjkOJNFSHmx
-         4CJjAqFxPAe6hMkgud535k67q+q3Letyv3bpPc4wibj4ZT8X6BBTSAK55Js6YGNNeKMB
-         qsmOEiDTq7ozhfcPdQY2lw2tusd1GBJiT0ZD0E8B3vmJLu5HmF5Wo3dIZcPSGG+MUztG
-         /XrSHt4ehJ/eG/3EznurxSGzCdcGJM+2odczdvY43OE3LjOGe4sZUQcxSCloWJDAdZSJ
-         fiGw==
+        d=gmail.com; s=20230601; t=1747269786; x=1747874586; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=cueXC2hlZsQuDhrii/uQD0jplPg4hNH073llC7Ktm+A=;
+        b=lvYn/i4WzfCA3U8fecyOhYOTzQXW2Otj5/d/nA7JP1s5v2dkHUwvpDCA7wKWJntx94
+         dI6VmnIWvWJyAAolJdga/rKXRy45kHv8sdLBpEzfzf/CuyrvOLbcBllvuYNmsMDKviPH
+         v6uuiqexM4iykGfICRMEXJfW9YO++ESmmqBQouJB+MFgILZSgw4TDZICOqAFURkdQrdr
+         +iUAae0xMpQiSF+fdr6XN8gvWB508p+9jsCZ9jC/7u+mlyO1nVfEZrruzzJqTrhNtd9X
+         VutqTco8HIx1+UlvqMlNk7XIOXasUrpkDHR5Eo2zEvyGFMRmGA0ajzzoRMnT+KFQQJ+S
+         Fouw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747269447; x=1747874247;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2QJBCuK1Gmwp843LF9HX9up42dO/Q8RSynscXuV78Hc=;
-        b=oJawzLBduWan6kdFwA3ylrFzby3qGnEW5RJkA/b/cp+JzFc70XyOkMOEKC3L6M8sjm
-         P6mcc6B/sBUqtN9NHpMS1+R2MHd4mgLfxWnLSC9wUvX4wNomiQbvQuAKVJFOsRT1YyaE
-         6BTZiKZ+H2ZUu/gWSix0vu9vzlKyVU8J9dSc+yLwVSiXUnzLYaEGSY+g3UwGAK4Jkz2w
-         DYRVDR9WQaZ/vqjjFDD44hxhpzqZiYIRRpXlW//tM4zB6daLPjHhShTH3iiJbHHWHrz/
-         J72Ik+kf9HAVhPvwTyyfFlUeb2I8Cf1WEbUA38UGL/+KDA/a7d5OPRzCYkVeUqCYAvN/
-         BlFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV6oKaoV3GgDlTl68OEPb0DRVA1fYcJA2m7ce/LCWuH4f3mzuJ5/mC3KvUnyhwlLgaiza1WMTUSunjN5v4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhFzUvMl05VgRma55zM4bkBYkhyamMtlMEn0OYePIvv0VQwlBI
-	d1rkMFYwblyrM//QqhW/PGD9GLghV+irYeKqYhvB+Ln2IZ26xO2Yng7MX70utncx88jwllfJZoC
-	P0w==
-X-Google-Smtp-Source: AGHT+IEwfm+Du4RUeKdC/ksRMikSeXOxPtIXncZ5f2NEIIJa2t/AKg6M6lFZyNG4z4xRSqoFUoMMpIdmjzY=
-X-Received: from pjbsk9.prod.google.com ([2002:a17:90b:2dc9:b0:308:64af:7bb9])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4c0a:b0:303:703f:7f8
- with SMTP id 98e67ed59e1d1-30e2e633642mr7091539a91.34.1747269447560; Wed, 14
- May 2025 17:37:27 -0700 (PDT)
-Date: Wed, 14 May 2025 17:37:26 -0700
-In-Reply-To: <20250324173121.1275209-23-mizhang@google.com>
+        d=1e100.net; s=20230601; t=1747269786; x=1747874586;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cueXC2hlZsQuDhrii/uQD0jplPg4hNH073llC7Ktm+A=;
+        b=fsDcRVCsZKpoOrZI7og8PLk1EJ3QWYMuVQ+dZP6j3xgTY1/p24jBiuD/1P40XGEjKr
+         X1XTaOoV9XwUoG1Ek518Uds50k0JVIDg44bbJLHxndzlFdYbC3LelF18Q1WnlqqwbeQd
+         7eQjbBBnVhuqWRhC36Dk20iaml8fi9fqIwW99hhUUU6RSI3tY0so42iiaKh5A+Bnpugl
+         KI83y/l24IQzyzkADVfocNsnLIt1Qh9dGuqQIJmO2/2lJ7a5B9OB8r5qcDvwm5awnp4K
+         OSvRKOHhJYWcOI2SL+cedVNMUvPDvGoFD2ZDeuuawifKAj33++jCo/E6d0joPuzkzXA+
+         a0Ag==
+X-Forwarded-Encrypted: i=1; AJvYcCUD7badEAns5F0lyPfNtORT7++D1NuLsILIEEVA7TrKkujGOXsiePGt+bAzZGwZmdySvcmKyOJkzxEI+4w=@vger.kernel.org, AJvYcCWfFo828+TY4Efj4vcvTK5zJ76/HE+hGZKTEC0pAiuisF9ZHEXRiLiVKs+gzGidguDiBN4GKsG9ldCPFau7IEY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9M2xCma1TJV6wVoXDbELn5E7up5rvo2sxSuGR09PkkAn0j9FO
+	iAX6kSGgt93HxvX+D4aGlw/hLLMxTOrreQTB1N1yvfxvYGFbU7Yd
+X-Gm-Gg: ASbGncsk0Mlp2dIGBl3s2V7LGf/98v6HfU6YIi00qjQttvb/ETb/Huiuybb7upX7Ipm
+	haxSVKQ+yqX1uCN6crXWUPioHykoa/Vnna6+Nrg364SKsFcy9aJpKna31q14sPEbNUXBEYgOWWO
+	hOoLZkQG789uAwQ6myGPFR4enzLb8hEnkcSMC5eSjOIRAIL4G3EzDVs6N+UfxzNKaEYQdiY6aZx
+	fU3JGRYZ+R+jZ1j6tyn9mt75VhSTvKr+ifVjI8aVXdsWgVWftCRSfQcSGb6/DdPL+ah5hdJH/R8
+	GsgxUcBySWlrqRaXx4GWUH4nLZoiM2Ptq19mVBkibfTtkBoY8Y8xvfWAqrAqgnJE/CHOjCYuWdU
+	=
+X-Google-Smtp-Source: AGHT+IGMCVTHaTAAEE9TyxMrC1UkOXyDv9xgn/r9jfFGP1Q8+03YjUg0MM1rRdEdZGDUJNxnohsoQA==
+X-Received: by 2002:a05:6102:4b82:b0:4c5:505a:c1f5 with SMTP id ada2fe7eead31-4df7de00c28mr6031983137.24.1747269786465;
+        Wed, 14 May 2025 17:43:06 -0700 (PDT)
+Received: from localhost.localdomain ([2804:14d:4c64:81ec:7409:107a:a63b:a3da])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-879f603551dsm9775065241.0.2025.05.14.17.43.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 May 2025 17:43:06 -0700 (PDT)
+From: Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>
+To: jjohnson@kernel.org
+Cc: ~lkcamp/patches@lists.sr.ht,
+	linux-wireless@vger.kernel.org,
+	ath11k@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] wifi: ath11k: clean-up during wrong ath11k_crypto_mode
+Date: Wed, 14 May 2025 21:40:54 -0300
+Message-ID: <20250515004258.87234-1-rodrigo.gobbi.7@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250324173121.1275209-1-mizhang@google.com> <20250324173121.1275209-23-mizhang@google.com>
-Message-ID: <aCU3Ri0iz0aDBDup@google.com>
-Subject: Re: [PATCH v4 22/38] KVM: x86/pmu: Optimize intel/amd_pmu_refresh() helpers
-From: Sean Christopherson <seanjc@google.com>
-To: Mingwei Zhang <mizhang@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Paolo Bonzini <pbonzini@redhat.com>, Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, Liang@google.com, 
-	Kan <kan.liang@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	Yongwei Ma <yongwei.ma@intel.com>, Xiong Zhang <xiong.y.zhang@linux.intel.com>, 
-	Dapeng Mi <dapeng1.mi@linux.intel.com>, Jim Mattson <jmattson@google.com>, 
-	Sandipan Das <sandipan.das@amd.com>, Zide Chen <zide.chen@intel.com>, 
-	Eranian Stephane <eranian@google.com>, Shukla Manali <Manali.Shukla@amd.com>, 
-	Nikunj Dadhania <nikunj.dadhania@amd.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-This is not an optimization in any sane interpretation of that word.
+if ath11k_crypto_mode is invalid (not ATH11K_CRYPT_MODE_SW/ATH11K_CRYPT_MODE_HW),
+ath11k_core_qmi_firmware_ready() will not undo some actions that was previously
+started/configured. It's reasonable to undo things during this condition, despite
+the value used at ath11k_crypto_mode not being valid in this case.
 
-On Mon, Mar 24, 2025, Mingwei Zhang wrote:
-> From: Dapeng Mi <dapeng1.mi@linux.intel.com>
-> 
-> Currently pmu->global_ctrl is initialized in the common kvm_pmu_refresh()
-> helper since both Intel and AMD CPUs set enable bits for all GP counters
-> for PERF_GLOBAL_CTRL MSR. But it may be not the best place to initialize
-> pmu->global_ctrl. Strictly speaking, pmu->global_ctrl is vendor specific
+Signed-off-by: Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>
+---
+Smatch got the following error:
 
-And?  There's mounds of KVM code that show it's very, very easy to manage
-global_ctrl in common code.
+drivers/net/wireless/ath/ath11k/core.c:2166 ath11k_core_qmi_firmware_ready() warn: missing unwind goto?
 
-> and there are lots of global_ctrl related processing in
-> intel/amd_pmu_refresh() helpers, so better handle them in same place.
-> Thus move pmu->global_ctrl initialization into intel/amd_pmu_refresh()
-> helpers.
-> 
-> Besides, intel_pmu_refresh() doesn't handle global_ctrl_rsvd and
-> global_status_rsvd properly and fix it.
+When the ath11k_crypto_mode, which is a module param, is not
+ATH11K_CRYPT_MODE_SW/HW, clean-up actions are not triggered. 
+Considering the whole ath11k_core_qmi_firmware_ready() function,
+during potential errors, those actions are properly triggered. 
+I'm suggesting a little change over the default case to clean things up.
+Tks and regards.
+---
+ drivers/net/wireless/ath/ath11k/core.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Really?  You mention a bug fix in passing, and squash it into an opinionated
-refactoring that is advertised as "optimizations" without even stating what the
-bug is?  C'mon.
+diff --git a/drivers/net/wireless/ath/ath11k/core.c b/drivers/net/wireless/ath/ath11k/core.c
+index 2e9f8a5e61e4..fd3017c444a4 100644
+--- a/drivers/net/wireless/ath/ath11k/core.c
++++ b/drivers/net/wireless/ath/ath11k/core.c
+@@ -2163,7 +2163,9 @@ int ath11k_core_qmi_firmware_ready(struct ath11k_base *ab)
+ 		break;
+ 	default:
+ 		ath11k_info(ab, "invalid crypto_mode: %d\n", ath11k_crypto_mode);
+-		return -EINVAL;
++		ret = -EINVAL;
++		ath11k_dp_free(ab);
++		goto err_firmware_stop;
+ 	}
+ 
+ 	if (ath11k_frame_mode == ATH11K_HW_TXRX_RAW)
+-- 
+2.49.0
 
-> Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
-> Signed-off-by: Mingwei Zhang <mizhang@google.com>
-> ---
->  arch/x86/kvm/pmu.c           | 10 -------
->  arch/x86/kvm/svm/pmu.c       | 14 +++++++--
->  arch/x86/kvm/vmx/pmu_intel.c | 55 ++++++++++++++++++------------------
->  3 files changed, 39 insertions(+), 40 deletions(-)
-> 
-> diff --git a/arch/x86/kvm/pmu.c b/arch/x86/kvm/pmu.c
-> index 4e8cefcce7ab..2ac4c039de8b 100644
-> --- a/arch/x86/kvm/pmu.c
-> +++ b/arch/x86/kvm/pmu.c
-> @@ -843,16 +843,6 @@ void kvm_pmu_refresh(struct kvm_vcpu *vcpu)
->  		return;
->  
->  	kvm_pmu_call(refresh)(vcpu);
-> -
-> -	/*
-> -	 * At RESET, both Intel and AMD CPUs set all enable bits for general
-> -	 * purpose counters in IA32_PERF_GLOBAL_CTRL (so that software that
-> -	 * was written for v1 PMUs don't unknowingly leave GP counters disabled
-> -	 * in the global controls).  Emulate that behavior when refreshing the
-> -	 * PMU so that userspace doesn't need to manually set PERF_GLOBAL_CTRL.
-> -	 */
-> -	if (kvm_pmu_has_perf_global_ctrl(pmu) && pmu->nr_arch_gp_counters)
-> -		pmu->global_ctrl = GENMASK_ULL(pmu->nr_arch_gp_counters - 1, 0);
-
-Absolutely not, this code stays where it is.
-
->  }
->  
->  void kvm_pmu_init(struct kvm_vcpu *vcpu)
-> diff --git a/arch/x86/kvm/svm/pmu.c b/arch/x86/kvm/svm/pmu.c
-> index 153972e944eb..eba086ef5eca 100644
-> --- a/arch/x86/kvm/svm/pmu.c
-> +++ b/arch/x86/kvm/svm/pmu.c
-> @@ -198,12 +198,20 @@ static void __amd_pmu_refresh(struct kvm_vcpu *vcpu)
->  	pmu->nr_arch_gp_counters = min_t(unsigned int, pmu->nr_arch_gp_counters,
->  					 kvm_pmu_cap.num_counters_gp);
->  
-> -	if (pmu->version > 1) {
-> -		pmu->global_ctrl_rsvd = ~((1ull << pmu->nr_arch_gp_counters) - 1);
-> +	if (kvm_pmu_cap.version > 1) {
-
-It's not just global_ctrl.  PEBS and the fixed counters also depend on v2+ (the
-SDM contradicts itself; KVM's ABI is that they're v2+).
-
-> +		/*
-> +		 * At RESET, AMD CPUs set all enable bits for general purpose counters in
-> +		 * IA32_PERF_GLOBAL_CTRL (so that software that was written for v1 PMUs
-> +		 * don't unknowingly leave GP counters disabled in the global controls).
-> +		 * Emulate that behavior when refreshing the PMU so that userspace doesn't
-> +		 * need to manually set PERF_GLOBAL_CTRL.
-> +		 */
-> +		pmu->global_ctrl = BIT_ULL(pmu->nr_arch_gp_counters) - 1;
-> +		pmu->global_ctrl_rsvd = ~pmu->global_ctrl;
->  		pmu->global_status_rsvd = pmu->global_ctrl_rsvd;
->  	}
->  
-> -	pmu->counter_bitmask[KVM_PMC_GP] = ((u64)1 << 48) - 1;
-> +	pmu->counter_bitmask[KVM_PMC_GP] = BIT_ULL(48) - 1;
-
-I like these cleanups, but they too belong in a separate patch.
-
->  	pmu->reserved_bits = 0xfffffff000280000ull;
->  	pmu->raw_event_mask = AMD64_RAW_EVENT_MASK;
->  	/* not applicable to AMD; but clean them to prevent any fall out */
 
