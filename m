@@ -1,112 +1,99 @@
-Return-Path: <linux-kernel+bounces-650057-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-650059-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9674AB8CD1
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 18:48:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C984AB8CD7
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 18:51:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3559F4C7461
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 16:48:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B32D1BC52D8
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 16:51:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5864253F00;
-	Thu, 15 May 2025 16:48:35 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 659B325395C;
-	Thu, 15 May 2025 16:48:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 747B6253F08;
+	Thu, 15 May 2025 16:51:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QfFRvaw8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C792B72638;
+	Thu, 15 May 2025 16:51:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747327715; cv=none; b=QkKrzU9+bN7C70Tls18k0X/76cYRO7AUTOSrQsfUChQgTlW6VnPZ3+C4K4KXabSC3pLcEOV+dyX7iUIsNSqzu5aDsjZ434yKWgPj4svPUYwSCPazC+8nCnXKGVZENP9pem52CIO2PZ1pT2dKFXLKFk/4SJi5RJL3+mnodq3ozEU=
+	t=1747327878; cv=none; b=LkPk3a7rPtGlT140SJMRMBF5RgzqmROK3Ao4m+3ycD3mH0V/VNn3MsqB4rcdrqOPEptzF+H2jDYim6xsCE1g30d6/mQSvT59cJFWR9HZFNvb9/ThjSLGeFliCDiVItWtnpVnWd2owYBVEvJp1WufVWrheeFZe8AWPNGm//ttnys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747327715; c=relaxed/simple;
-	bh=0ADnEgUksaRuN7xX8QNORj+pUqdmF0PSLqFRMgWLl/I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gIUeyvaoDM59W0yuc+JKsQC/FAUAmvUGW68sgPNc34/NrTWXkVz27rfBlbcSGVd6y4sfQjbI4oLiHAd+tQkP+1mJR647g/kmRTJxH+tno7ByF00HmkSJOzEAJ8/Qwb5Ia2iTlOjo6wtG43+g0aLO3UVlvpwk4IM7q1RoPMAMaQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D3B5A14BF;
-	Thu, 15 May 2025 09:48:20 -0700 (PDT)
-Received: from [10.1.196.46] (e134344.arm.com [10.1.196.46])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7B05A3F5A1;
-	Thu, 15 May 2025 09:48:31 -0700 (PDT)
-Message-ID: <89c75451-8a30-42c1-ba2a-a63b818a1a04@arm.com>
-Date: Thu, 15 May 2025 17:48:30 +0100
+	s=arc-20240116; t=1747327878; c=relaxed/simple;
+	bh=hhlOPM7z4HIlZKpReWFs9EedymGfWrq/M8vBY5bja1s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YjpS15jqzDLHw9rTJRouBOtWaSmWMNQJm63I7hKRWRsgn/u+xItyV7meFGXpthcAbOL80c7h0F/N6aGGoxnU/NdlSU9qMOxisSMtjZC576CUH+KVn6H1EeS4PEKSzmWDF4gh8q2biSahtXmdGfQaHnBf5WQYSqkdNKPAGUtMayE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QfFRvaw8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3914AC4CEE7;
+	Thu, 15 May 2025 16:51:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747327878;
+	bh=hhlOPM7z4HIlZKpReWFs9EedymGfWrq/M8vBY5bja1s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QfFRvaw8pSJ2bcnJ42P3i0JZeLvyG+YvmakQgap00p7KY8c0dorb3I0wczZX86LMp
+	 FCWpLVGBCyAOezr+FwpI8/r9F+O7Nar6XNh2/Mh7f0L1fFIkjlak+UJ8K6K4kHzxIA
+	 XNkmMFSgh0lsFElmtyRTolr3vz9RuaUFC2Hg5xjSSxBJNoBq2pDk4u938G9lGgmJYe
+	 5x+mfu96WBJap32k8lr2t/0Fr7xFyuOUtlTQYy/WWwAx7CAq0EYVSduMQfCfykyaNx
+	 JmNiVNotH7Vrhz7WSJIzrVyNYsTeDvhZLepCnspCYUwOia9xVFZiD0Bpk8+uLYwDP/
+	 j9tj1B4H9RIJA==
+Date: Thu, 15 May 2025 09:51:15 -0700
+From: Kees Cook <kees@kernel.org>
+To: Shung-Hsi Yu <shung-hsi.yu@suse.com>, bpf@vger.kernel.org,
+	linux-mm@kvack.org, Andrii Nakryiko <andrii@kernel.org>,
+	Ihor Solodrai <ihor.solodrai@linux.dev>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Michal Hocko <mhocko@suse.com>, Vlastimil Babka <vbabka@suse.cz>,
+	Uladzislau Rezki <urezki@gmail.com>, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org, regressions@lists.linux.dev,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+	Eduard Zingerman <eddyz87@gmail.com>
+Subject: Re: [REGRESSION] bpf verifier slowdown due to vrealloc() change
+ since 6.15-rc6
+Message-ID: <202505150911.1254C695D@keescook>
+References: <20250515-bpf-verifier-slowdown-vwo2meju4cgp2su5ckj@6gi6ssxbnfqg>
+ <C66C764E-C898-457D-93F0-A680983707F0@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/3] KVM: arm64: Allow vGICv4 configuration per VM
-To: Raghavendra Rao Ananta <rananta@google.com>
-Cc: Oliver Upton <oliver.upton@linux.dev>, Marc Zyngier <maz@kernel.org>,
- Mingwei Zhang <mizhang@google.com>, linux-arm-kernel@lists.infradead.org,
- kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-References: <20250514192159.1751538-1-rananta@google.com>
- <5d204cf7-c6a0-455c-8706-753e1fce3777@arm.com>
- <CAJHc60w1rYc9guoideuKpKaukuCyvxu3S7Fidoy3Lh94+_xDiw@mail.gmail.com>
-Content-Language: en-US
-From: Ben Horgan <ben.horgan@arm.com>
-In-Reply-To: <CAJHc60w1rYc9guoideuKpKaukuCyvxu3S7Fidoy3Lh94+_xDiw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <C66C764E-C898-457D-93F0-A680983707F0@kernel.org>
 
-Hi,
+On Thu, May 15, 2025 at 07:51:26AM -0700, Kees Cook wrote:
+> On May 15, 2025 6:12:25 AM PDT, Shung-Hsi Yu <shung-hsi.yu@suse.com> wrote:
+> >There is an observable slowdown when running BPF selftests on 6.15-rc6
+> >kernel[1] built with tools/testing/selftests/bpf/{config,config.x86_64}.
+> [...]
+> Where can I find the .config for the slow runs?
 
-On 5/15/25 16:55, Raghavendra Rao Ananta wrote:
-> On Thu, May 15, 2025 at 3:30 AM Ben Horgan <ben.horgan@arm.com> wrote:
->>
->> Hi,
->>
->> On 5/14/25 20:21, Raghavendra Rao Ananta wrote:
->>> Hello,
->>>
->>> When kvm-arm.vgic_v4_enable=1, KVM adds support for direct interrupt
->>> injection by default to all the VMs in the system, aka GICv4. A
->>> shortcoming of the GIC architecture is that there's an absolute limit on
->>> the number of vPEs that can be tracked by the ITS. It is possible that
->>> an operator is running a mix of VMs on a system, only wanting to provide
->>> a specific class of VMs with hardware interrupt injection support.
->>>
->>> To support this, introduce a GIC attribute, KVM_DEV_ARM_VGIC_CONFIG_GICV4,
->>> for the userspace to enable or disable vGICv4 for a given VM.
->>>
->>> The attribute allows the configuration only when vGICv4 is enabled in KVM,
->>> else it acts a read-only attribute returning
->>> KVM_DEV_ARM_VGIC_CONFIG_GICV4_UNAVAILABLE as the value.
->> What's the reason for the cmdline enable continuing to be absolute in
->> the disable case? I wonder if this is unnecessarily restrictive.
->>
->> Couldn't KVM_DEV_ARM_VGIC_CONFIG_GICV4_UNAVAILABLE be reserved for
->> hardware that doesn't support vgic_v4 and if kvm-arm.vgic_v4_enable=0,
->> or omitted, on supporting hardware then default to
->> KVM_DEV_ARM_VGIC_CONFIG_GICV4_DISABLE but allow it to be overridden? I
->> don't think this changes the behaviour when your new attribute is not used.
-> 
-> KVM_DEV_ARM_VGIC_CONFIG_GICV4_UNAVAILABLE is reserved for the exact
-> situation that you mentioned (no GICv4 h/w support  or if cmdline is
-> disabled/omitted).
-> Regarding defaulting to KVM_DEV_ARM_VGIC_CONFIG_GICV4_DISABLE,
-> wouldn't it change the existing expectations, i.e., vGICv4 is enabled
-> if available and set by cmdline?
-I was suggesting keeping the defaults the same when your new gic 
-attribute is untouched but in the same way that it overrides enable to 
-disable you could also allow it to override disable to enable.
+Oops, I can read. :) Doing a build now...
 
-Based on Marc's comments this does not seem desirable. As things are 
-now, and with your changes, setting kvm-arm.vgic_v4_enable=1 at boot 
-implies a promise that vgic_v4 works on the system. As there is broken 
-hardware we can't take this promise for granted.
-> 
-> Thank you.
-> Raghavendra
+> And how do I run the test myself directly?
 
-Thanks,
+I found:
+https://docs.kernel.org/bpf/bpf_devel_QA.html
 
-Ben
+But it doesn't seem to cover a bunch of stuff (no way to prebuild the
+tests, no info on building the test modules).
 
+This seems to be needed:
+
+make O=regression-bug -C tools/testing/selftests/bpf/test_kmods
+
+But then the booted kernel doesn't load it (missing signatures?)
+
+Anyway, I'll keep digging...
+
+-- 
+Kees Cook
 
