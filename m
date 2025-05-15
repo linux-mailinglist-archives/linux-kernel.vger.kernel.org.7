@@ -1,154 +1,155 @@
-Return-Path: <linux-kernel+bounces-650138-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-650140-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAFD4AB8D9B
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 19:22:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D005FAB8DA1
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 19:23:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77ED6163DE6
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 17:22:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56AD2166132
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 17:23:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 706BB259C9F;
-	Thu, 15 May 2025 17:22:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB223259C80;
+	Thu, 15 May 2025 17:23:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="I6BjP5Tq"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cNaRDQHJ"
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E96C2550D3
-	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 17:22:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E758B1DDD1;
+	Thu, 15 May 2025 17:23:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747329724; cv=none; b=NoaJkWXJmdW4tpHLxHK3zROXuJHL8LqUFw9pyXIiaS3gtMkZ5bUilRxV7d7pXUMr5x/5fRSa1iFK+Yfn90C/nmbvrE9EW45Z8oY9ttZ96fnkKkYX0ebdLkGK3ZdY+73qg2ruunpT+uB7SwBbRlae4ZaXKK99UJVYu4kG3brhs5Q=
+	t=1747329786; cv=none; b=To4Wi/EClFzPibPnt8aVzmTtY4sJpPNnr7hWjUnhX7Uk2t99nG5F9YSZP2uQf+0CnvrDRw4MtJ2qEz19v5vUT/qjP+weXV+Tu7K8bJaDvgiKmwZcdRsQcHeRcKdPgLrGpgqBUTqX0YRPkqPP2yL0IqpG6M9SGm2MUWPCWcDN2S0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747329724; c=relaxed/simple;
-	bh=mfCeoOfwRJ2IubXApVWQduxn7NdySIMTBa5CH/dXP+U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GuMkLxTH2HV/4vcSkAWh6tSFxZGs8DQqlvz7N7n9NQTkAjvPinrLiePvCCIYuoAsjqutS02Emh/QL+AhpkBpwbdfybe6YnBVtJCuoGKGGfX+0pWsmChna4kzwz5uZjT2tB6IXVmK2V6IyO/JEKoqZoO4m6i5xzMGtlZ6d6hhkFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=I6BjP5Tq; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-7410c18bb00so1822634b3a.3
-        for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 10:22:02 -0700 (PDT)
+	s=arc-20240116; t=1747329786; c=relaxed/simple;
+	bh=fOFezqkmxEnnFkyHkpcNC7nimpg8wel6A4pWdT4HtKo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JqoGgP2g6MQN56et2p823mfL3L3fnSRHHd7vTtS1fCCvYRTGZap0fr6Fmr+ZcyyARMPnVBAHfO+MKDFEYMIu8rFBSK6OIc+omLqv6Oy71XFdOFY+edmN0wzyHc0VRowDblwIZy9zaLr2aIrS6LOJfpES+FZXzzvNaeqAtec0Z6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cNaRDQHJ; arc=none smtp.client-ip=209.85.215.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-b0b2d1f2845so861520a12.3;
+        Thu, 15 May 2025 10:23:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1747329722; x=1747934522; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=AZkQs5Y9+0MeoeQo27zBlTtClsZ5pt01lNLAK9VkB3I=;
-        b=I6BjP5TqPJjHzJ3hNkLz89Bs9/WjHbbrHUa0o+uJKjiQ99vBT7bCn09LReAsd7Zk3u
-         f3ksnuR3Z1icM2L9C+nO/Y5cN8ghWIEvcJsyHOQPDeUO1ThToF9UZnvHLZsFtWl4vEgD
-         8rkDEX02CCOxgTd9oCRoOOE7yo9xKgNXPoScE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747329722; x=1747934522;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1747329784; x=1747934584; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=AZkQs5Y9+0MeoeQo27zBlTtClsZ5pt01lNLAK9VkB3I=;
-        b=XAmW++lXqgV3fNsT8USQNisN38igbXmxFSPQFDLlKOROS05yZOg3y/8LVsqs+VVDO5
-         B/nNEIvU/7LZY6JjKGSXb1jCVMX11zbEi+Ypk04jbFjlQ06iY79WrwTJm9+ULljB88U5
-         yMt8TyuYhg6oFuwFZqXMwdcS9qziNQLB+SGvXyFYNflMSR4J969bn/xMCinBCsF1qusu
-         jYUkvDWdxs0B+akV459gKhjWVeO2E3FdBFWwaivBIjGgECjmtB53jLfH8Czii57z201I
-         FhU8hRNXPXpniB8hvXsRtyEJ6i6oBgbgQr9nAD67LeNrBqBzY5hp0gxjWPvFp0OtSi9f
-         YXKw==
-X-Forwarded-Encrypted: i=1; AJvYcCW/Um1T/A5ZD8KdqpG4hIcoL7xbH4/bwHchWE/q8OltyD6nxR6d9mdYpppR1Mv6UzoTkhGepqoPXDwBwNo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyiozpH5doKAqHXBimEsbjcw8aF0YD33xr71GAHtFbzsgWDpwJe
-	UUXw/SLUnhPXKnm0K7wklAHugZwfOBWPysWGYCR1GpoEZeMZ+kJzJ1co1yVDCJntzQ==
-X-Gm-Gg: ASbGncsL8akg+e4FL+rm74bmaBrU3SBrFPFL5/kuA7e3OjNN1Z7OlHs/GESCQ++mzyk
-	nenIwIku9w7iWmQhyULlH5nXTbsTxr3OycbrpaxOuLMEgKH497qA+UA7kekn6QgImRSpCfH+BcQ
-	C5dhPwA0q0T33hkX9TMFksUfoYc0QBNfmASi9cecscKLfjzUY9SSeXlEXAgAFWqT/lBb7b466rA
-	jRUVvZoR6S5mYYLJd3h83RFp12y23So419GU9u7T9wt6n1t41AaDIMSCoaV81ICBvuBpRpmLqLt
-	UJ+aPRcWKBScWa84Xp2riGqwndfKdbvTBTjiWfz+4+uHAo5d9loxnay2MKlErsUvBgOYPCRJAvK
-	mFyEyC2pH3YxISw==
-X-Google-Smtp-Source: AGHT+IGoidqfL8uEq7VTSHRz9j2OBbBO6mNxzWcPuV572jAmJW70jDu4s7p58cVo+XRQEqjyzJkCSw==
-X-Received: by 2002:a05:6a00:1822:b0:740:a879:4f7b with SMTP id d2e1a72fcca58-742a98a0cc1mr245972b3a.18.1747329722449;
-        Thu, 15 May 2025 10:22:02 -0700 (PDT)
-Received: from localhost ([2a00:79e0:2e14:7:cd06:335b:936a:7dc1])
-        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-742a973a261sm69730b3a.84.2025.05.15.10.22.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 15 May 2025 10:22:01 -0700 (PDT)
-Date: Thu, 15 May 2025 10:21:59 -0700
-From: Brian Norris <briannorris@chromium.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Thomas Gleixner <tglx@linutronix.de>, llvm@lists.linux.dev,
-	oe-kbuild-all@lists.linux.dev,
-	Tsai Sung-Fu <danielsftsai@google.com>,
-	Douglas Anderson <dianders@chromium.org>,
-	linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH v2 2/2] genirq: Add kunit tests for depth counts
-Message-ID: <aCYit48N85WpjmiN@google.com>
-References: <20250514201353.3481400-3-briannorris@chromium.org>
- <202505152136.y04AHovS-lkp@intel.com>
+        bh=POmpsww8fxP51+rFGGUrmySpy0YfhbsPMfnLTURJaa8=;
+        b=cNaRDQHJbIhgvHiaYo6mfeEVa8T/Tzw4O02iDY1vZVQ6b7EOx6WnmE/+raNbqqNVGX
+         sbAGk5gTHrhYW25j8xpkoiDdMLPtelNxpQ+9yLy9CCrfP+9FT1j5gB/JYUwaXUfMlWfY
+         jNfnRZsOgF4BFrUj2qOXZ1tt0WZEe8q4iHcZdFAY19QNRasw6NfEO6tmotk0Pr1VlFEx
+         3fj3MUigf8emGBb14o3iLKM/feRpgj7kLAe8n4j+AERNaOt6G/uNM3k4lHmnEML3uL10
+         pRPBk+1ipgTwsdjm2CUzftsQ/QbIqxUrLDLieLYYgHctHYAMXyTgM0v38UdUteQ58+9W
+         Thgw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747329784; x=1747934584;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=POmpsww8fxP51+rFGGUrmySpy0YfhbsPMfnLTURJaa8=;
+        b=Ul4eZV7pvng1f+JESw1k1JUmutAUJnEXMKfjv7MHe5Sn0cbpWlq5QE71ZWJ0CbL+Fg
+         0XQ1xYQ5G8vmFGLEXrxOS/Vb06fWqkqJP74Nk1sqSJtXDwxfO+pM9rkRHm3Y9YN/CQke
+         j80d61pMlIOD2wGTuG2toPjxklymwUO6HJi7vq7taazjz9DVMqZnVzchNpp/gVmoc6Er
+         pSF+hPGKLppD5nYz5PH8j2CdWLnzHdq5LhJGsukdkcC8U5DhjA9H+P4dFYHgYpIrCGsH
+         2mfSbvMriDSC06tnlcA2uTm9tDcsFDtOsHzaNPG+nuaVUj1TM+yCgglVIPZ/8/jE2+U9
+         zlsQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUG7cznTTQGuI8H5gP/zBmHY/G3gjWpOlVy6xbBGiRSrdQzsWG6uobjUbpy+CmS1CakDqoyt6swXWzbuQ60mE3wENxB@vger.kernel.org, AJvYcCVSwsN1KYn6AaaqPetrCOf1K90h5tsgztSzPwFhFUtobP6TS6zEoJBkiGFlch9OpjI3EhlvEWGDpRcSIVpi@vger.kernel.org, AJvYcCWEo1M9Gs8tH12sH0MbPBEe0x1NWCncSfMaQo61XRR0Ui03kpk1k7wHonZzJDaq2Sialos=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxsvonfvCXjYYNxZKCFBpdwwXJ/8l1Rldh/Xc/+MT5AymrUoAoF
+	uGC6AHlO4NhBwTOvkYgh7fKhFUfANnhePduSv1ox49G6rA6XgjZf7z1wgiVNNhwucbs/WfdTx16
+	7t2AOwS64XhIgWffdxmNCjkFL/BJ4DuCUhlV7
+X-Gm-Gg: ASbGncst+VyXOCidTnIU2X2/pgmlnwgKxv1yI1MHt/1jM/m0nw6+kv6q2+LPIYZ8HmD
+	lwaUD8/LDgtmzSIsZVq68G96gWW3ELvNUmYYkrWsP99WkbgLyDwB/myjSltdszaFXVHsqhVoC4b
+	A81jKr/bUk6r2Edi6MlYPSGetYDS6TOYQJhDT7jdTXJZg7H8dSDqpy7uSxjk0=
+X-Google-Smtp-Source: AGHT+IHVykVjRMnBxJN+2i4pCXlgj1iHKicUGWbEr9t1tvrZiWCMZGYzwueQ0Lb5vWesMXQKdVHNYeUcFHKH6x1tlmk=
+X-Received: by 2002:a17:90a:d005:b0:2f8:34df:5652 with SMTP id
+ 98e67ed59e1d1-30e7d563768mr303365a91.21.1747329784151; Thu, 15 May 2025
+ 10:23:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <202505152136.y04AHovS-lkp@intel.com>
+References: <20250515121121.2332905-1-jolsa@kernel.org> <20250515121121.2332905-9-jolsa@kernel.org>
+In-Reply-To: <20250515121121.2332905-9-jolsa@kernel.org>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Thu, 15 May 2025 10:22:51 -0700
+X-Gm-Features: AX0GCFtMXjsJ5mA4xD0VBoPILnMrP3GRnTnUwkOVLt0FdeO-C1FkuEUxLuueMDk
+Message-ID: <CAEf4BzYbZ3f9E8mSwY+oppSwU-Luh=5=GBjLKetVA2TOFT+dWQ@mail.gmail.com>
+Subject: Re: [PATCHv2 perf/core 08/22] uprobes/x86: Add mapping for optimized
+ uprobe trampolines
+To: Jiri Olsa <jolsa@kernel.org>
+Cc: Oleg Nesterov <oleg@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, x86@kernel.org, 
+	Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>, 
+	John Fastabend <john.fastabend@gmail.com>, Hao Luo <haoluo@google.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Alan Maguire <alan.maguire@oracle.com>, David Laight <David.Laight@aculab.com>, 
+	=?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas@t-8ch.de>, 
+	Ingo Molnar <mingo@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Thomas,
+On Thu, May 15, 2025 at 5:13=E2=80=AFAM Jiri Olsa <jolsa@kernel.org> wrote:
+>
+> Adding support to add special mapping for user space trampoline with
+> following functions:
+>
+>   uprobe_trampoline_get - find or add uprobe_trampoline
+>   uprobe_trampoline_put - remove or destroy uprobe_trampoline
+>
+> The user space trampoline is exported as arch specific user space special
+> mapping through tramp_mapping, which is initialized in following changes
+> with new uprobe syscall.
+>
+> The uprobe trampoline needs to be callable/reachable from the probed addr=
+ess,
+> so while searching for available address we use is_reachable_by_call func=
+tion
+> to decide if the uprobe trampoline is callable from the probe address.
+>
+> All uprobe_trampoline objects are stored in uprobes_state object and are
+> cleaned up when the process mm_struct goes down. Adding new arch hooks
+> for that, because this change is x86_64 specific.
+>
+> Locking is provided by callers in following changes.
+>
+> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+> ---
+>  arch/x86/kernel/uprobes.c | 115 ++++++++++++++++++++++++++++++++++++++
+>  include/linux/uprobes.h   |   6 ++
+>  kernel/events/uprobes.c   |  10 ++++
+>  kernel/fork.c             |   1 +
+>  4 files changed, 132 insertions(+)
+>
 
-On Thu, May 15, 2025 at 10:01:18PM +0800, kernel test robot wrote:
-> patch link:    https://lore.kernel.org/r/20250514201353.3481400-3-briannorris%40chromium.org
-> patch subject: [PATCH v2 2/2] genirq: Add kunit tests for depth counts
+[...]
 
-First of all, thanks for the help, and for applying patch 1. I see that:
-1) this bot noticed a trivial problem with patch 2; and
-2) I received notification that patch 2 was applied to tip/irq/core, but
-3) I can't find it there any more.
+> +static unsigned long find_nearest_page(unsigned long vaddr)
+> +{
+> +       struct vm_unmapped_area_info info =3D {
+> +               .length     =3D PAGE_SIZE,
+> +               .align_mask =3D ~PAGE_MASK,
+> +               .flags      =3D VM_UNMAPPED_AREA_TOPDOWN,
+> +               .low_limit  =3D 0,
 
-I'm not sure if #3 is because you dropped it (e.g., due to #1's report)
-or some other reason, so I'm not sure what to do next. Possibilities:
+would this, technically, allow to allocate memory at NULL (0x0000)
+address? should this start at PAGE_SIZE?
 
-(a) send the trivial fix separately, as a fixup (against what tree?)
-(b) resend an improved patch 2 on its own, against tip/irq/core
-(c) just drop it, because you have deeper reasons to not want these
-    tests.
+> +               .high_limit =3D ULONG_MAX,
+> +       };
+> +       unsigned long limit, call_end =3D vaddr + 5;
+> +
+> +       if (!check_add_overflow(call_end, INT_MIN, &limit))
+> +               info.low_limit =3D limit;
+> +       if (!check_add_overflow(call_end, INT_MAX, &limit))
+> +               info.high_limit =3D limit;
+> +       return vm_unmapped_area(&info);
+> +}
 
-I'm fine with anything you'd like, although I do think there's value in
-providing unit tests for corner cases like this.
-
-See below for the trivial fix, for the record. I can send it separately
-if you'd like.
-
-> config: i386-buildonly-randconfig-004-20250515 (https://download.01.org/0day-ci/archive/20250515/202505152136.y04AHovS-lkp@intel.com/config)
-> compiler: clang version 20.1.2 (https://github.com/llvm/llvm-project 58df0ef89dd64126512e4ee27b4ac3fd8ddf6247)
-> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250515/202505152136.y04AHovS-lkp@intel.com/reproduce)
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202505152136.y04AHovS-lkp@intel.com/
-> 
-> All errors (new ones prefixed by >>, old ones prefixed by <<):
-> 
-> WARNING: modpost: missing MODULE_DESCRIPTION() in lib/ucs2_string.o
-> ERROR: modpost: "irq_domain_alloc_descs" [kernel/irq/irq_test.ko] undefined!
-> ERROR: modpost: "irq_to_desc" [kernel/irq/irq_test.ko] undefined!
-> ERROR: modpost: "irq_shutdown_and_deactivate" [kernel/irq/irq_test.ko] undefined!
-> >> ERROR: modpost: "irq_activate" [kernel/irq/irq_test.ko] undefined!
-> >> ERROR: modpost: "irq_startup_managed" [kernel/irq/irq_test.ko] undefined!
-
-The test Kconfig symbol should be bool, not tristate. Some of the
-functions required for the test are non-modular.
-
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202505152136.y04AHovS-lkp@intel.com/
-Signed-off-by: Brian Norris <briannorris@chromium.org>
-
---- a/kernel/irq/Kconfig
-+++ b/kernel/irq/Kconfig
-@@ -145,7 +145,7 @@ config GENERIC_IRQ_KEXEC_CLEAR_VM_FORWARD
- 	bool
- 
- config IRQ_KUNIT_TEST
--	tristate "KUnit tests for IRQ management APIs" if !KUNIT_ALL_TESTS
-+	bool "KUnit tests for IRQ management APIs" if !KUNIT_ALL_TESTS
- 	depends on KUNIT
- 	default KUNIT_ALL_TESTS
- 	imply SMP
+[...]
 
