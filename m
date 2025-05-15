@@ -1,130 +1,153 @@
-Return-Path: <linux-kernel+bounces-650488-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-650539-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD72FAB922E
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 00:07:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D750EAB92B5
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 01:14:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B97CB3B275A
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 22:06:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C56C07AC8AC
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 23:12:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC4A5289E3F;
-	Thu, 15 May 2025 22:07:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCC5B28F95B;
+	Thu, 15 May 2025 23:13:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="e8AmbK4j"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=stgolabs.net header.i=@stgolabs.net header.b="BpSzRLie"
+Received: from rusty.tulip.relay.mailchannels.net (rusty.tulip.relay.mailchannels.net [23.83.218.252])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A24902192EB
-	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 22:07:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747346823; cv=none; b=ePYf6RDpCgolomiIFGok6hUJUHT+U4+HBtyOtE6F4QY/t4QBbufdFiVJC7fEf1/CjCFsgW2tQa8AodXI0EI1PKIEgCsM7ggWg63edrZqEtjr5cbvBAZSrSjG82EBoi45CHPvdRdbFo/UeXDIGF67llv/32eD374UYXyIgrIj/+Y=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747346823; c=relaxed/simple;
-	bh=VOcjrs308B52KT52vs0HhqeVrWy1UWSL98594xsdx2A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jnHegwd+fPRVTCY0cvr1pzAxbwxD3BpPGlS+eaTjvOlj/EcuKcoOJmRHUgaPdZAp88G6piUWlbet1lqWKCLwl+oMFc+DQPq0PFznAlL2bOZwyGI5kXwG+b6T2BbnG9QKVc3e6BEp64VdNDnMO5QWAaLeNxA3UZ61CUj2zgFhAsw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=e8AmbK4j; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5fd0d383b32so2400268a12.3
-        for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 15:07:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1747346818; x=1747951618; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=qhGwuGRW61usYD00HViI9ouZ/RQSyG12rMjq3gQRknY=;
-        b=e8AmbK4jTG8yLMdRreaJLMRFzQQiW/sThiRUDyixI93VdOed/emfNZ4gJsGgWccDQR
-         xiR2aaGGHqq5zirbxq7FMYY2pexZgsuejdWI8vki1ShmfaaIQjVp0cdvPSzAtn0lc5ui
-         sN//8gJvhAj42tS3eUDUYUyfm28gYh1SfyjNg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747346818; x=1747951618;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qhGwuGRW61usYD00HViI9ouZ/RQSyG12rMjq3gQRknY=;
-        b=Y5u3MRq1TyF3OXx0RMPRA+7GfUXq3wtN4GcxkB89W8132AYB3TqPxBAgYDlF17zQXz
-         nv+Gm64elkwp6U6r7X8ipUGntWGv1uKwdiAEzlkJAxZ/aog1SHxI1yp5mlJNYogUTbkt
-         UnRv+Av35NVhPQHmauxGmjhreCO73dr6mZUYyv8zghBcxvEBSB9JxIvFNgy/RNccGLVi
-         u3gJbBy1TI5pRAmYLUyEX1Osq/prXWAxiAZT7tfa5RAKe5QSXNKEeSw1cf8DUiAEGn1S
-         9nOIfwoGS4ZhlyTuBX32b/V97gaQommOJedOAyFg9xOOyKE/SIwIGF8I67VWnSe+/Lj2
-         WHsg==
-X-Forwarded-Encrypted: i=1; AJvYcCWCEuwtK5HydXJg6w7+ZYhJ/QDBFluMBpKEOvR8FDIx2Azp+4cFIL3U4sAchGgVFu+nrBFEuAxjjpRs5hY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmkFhTN5U5UOfy3kNT8k4GQNX1ycih6P0DTCIVLRs/ncu7v1Hh
-	MG3x9AydksgSXNGzC3ruego9tT67dtZviLcdPFHxesL4b+tJC3e9Y3S144Sb95TFSRl4veStMKC
-	73rnojTs=
-X-Gm-Gg: ASbGncv6aOG95AoR9C/qxUpnmRBcM5DgQ1dp5/jmpflGEO+/MmGZefRKkKfaNVOF7sr
-	5D9bbQExNNy/K+QaoLenYhGISbe8r7jZ1p/MIzDPnRiqVcJz5kun59K3r7CjOCkVBwTSx1bu40w
-	Qc11eS35Kd5Tjsi2avgs0diJMrmqRLImDweXtU9Ru+MNzrc/8ds5dvy+c+muMMlyuuHiIluXXUN
-	C7/qngQ3xIkWUuyjec5AnNf12fOC6LEAV7ghqVzum4SCl2LuNugYK339IJubDTzpE2A/DLr7tmj
-	E0ehle3UNM6091E9c5BOEo7wLaERi61t/PWRJYMoHZi2hHKomqG+NllF3m2D9nkXvr4zk07PiYM
-	MgFTbDET2gsS/sOq54HvnvWbh/A==
-X-Google-Smtp-Source: AGHT+IFgoFKMfs7Fm1smak9uUz62lV2HvEu3d/CaQKBQy9F6qY9IndawmouRBHrbuCrpY1C6ls+9gQ==
-X-Received: by 2002:a05:6402:1d4c:b0:5ff:7175:a6f6 with SMTP id 4fb4d7f45d1cf-600900f54eamr819686a12.19.1747346818571;
-        Thu, 15 May 2025 15:06:58 -0700 (PDT)
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com. [209.85.208.42])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6004d502adbsm367705a12.27.2025.05.15.15.06.57
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 15 May 2025 15:06:57 -0700 (PDT)
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5fbfa0a7d2cso2383568a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 15:06:57 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU84CYwsMiWvyooMR7ZA6Dch2XNcUQQQ/07IS77gqLiVrUhQxMRyX7f9+htspOa/+cV5ZGhVaJpIirvD+0=@vger.kernel.org
-X-Received: by 2002:a05:6402:35d1:b0:5ff:b5f9:c646 with SMTP id
- 4fb4d7f45d1cf-600900a5281mr695948a12.1.1747346817439; Thu, 15 May 2025
- 15:06:57 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA9C619FA93;
+	Thu, 15 May 2025 23:13:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.218.252
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747350824; cv=pass; b=lbE2t972A9I5gGeLvmsZMXw+8/KXmJK4IxF1PBSWDhkT7DMr7SkzcVqUkOdny6geIdbB76wH3f9OH8PmgXfNqiqZdBBZw6hL2bzqwzieyPMFTypY9iiBY/q3oB0SGtgilBfwDhi1MsUmIMkvikX3ZDBblI+v/IrX9Fuz2tTewK8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747350824; c=relaxed/simple;
+	bh=ZCGkHhXwVQRnTOe+lNrHq7OfguE4bhlkiEfGU59hepA=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=myMP+Vv8Bd9qjJBmGuD2n3ij1KHlwV2AgahSwIelAPTGYSSPtQ7wpveevwLQNmLF83lVOGwlALqACOZrpXlxNjYQOJ8doLSzdHUPaKx0MqJ3WvZ1f696dNeVbO3OgLXeOc+uvdIbNWdNSVfjmtTeSuCZ5NhIF9ym73fLutD96Gc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net; spf=pass smtp.mailfrom=stgolabs.net; dkim=pass (2048-bit key) header.d=stgolabs.net header.i=@stgolabs.net header.b=BpSzRLie; arc=pass smtp.client-ip=23.83.218.252
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=stgolabs.net
+X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
+Received: from relay.mailchannels.net (localhost [127.0.0.1])
+	by relay.mailchannels.net (Postfix) with ESMTP id 7BF1823A22;
+	Thu, 15 May 2025 17:40:23 +0000 (UTC)
+Received: from pdx1-sub0-mail-a272.dreamhost.com (100-112-106-193.trex-nlb.outbound.svc.cluster.local [100.112.106.193])
+	(Authenticated sender: dreamhost)
+	by relay.mailchannels.net (Postfix) with ESMTPA id 1AF6A239CB;
+	Thu, 15 May 2025 17:40:23 +0000 (UTC)
+ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1747330823; a=rsa-sha256;
+	cv=none;
+	b=KGd2MQRzAc3Jw5QNi3ppX3rPip8yx1f4vyQZ4mR7SN1ugv3rN6yUB+8ugG7cIvMlJuyl3K
+	7mDXD5GjTABQP+V2wc8Mf8pp9RsdJ3vKQVrbS5Ly5v4LKVjrmj9OciKPAbS9J55oV07OVP
+	jKyvlZMNN5WaAvayv9Bz+EQlvX+i2s+w204ocx2JgSD22f28AfKs1NvSW/rVNKURh4b8/B
+	1ijfOWJlZxSF9tHOs+KEKzxnQXtx0c53YcMEF29q/rofuUXsT4jKxgJTViDgkkTu/lyVS8
+	tosLDsGSP5n96GZUDdvyJFmWQpvkVTGhvKhDoHxVnOBV8BB7J4iKH/8BBQoD2g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=mailchannels.net;
+	s=arc-2022; t=1747330823;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:dkim-signature;
+	bh=DiqDaihEdOkReJztOtQt4hmcT0IfYIVzd6AdHQkx+ic=;
+	b=4hUFnvOIvLNXA5/WSLRVRo21X5L8fspegmXcSgY5swKtG64c+2olcK+z1JTylUhBYIaPOl
+	tDvoMVcLusQI9CspzdT99szpeAfUG+MeClcF+hf8J7XFKxk5rk/mqR+wYBilKW1/X7AF1R
+	oGALbWD0Aa6AWeHTlZ50PRCEsYqleJxdnG2irIfc2r9lgmhhT28a1bXROEJ325AZKyynuo
+	44u296J+uk/1yta5lG4zqJ8CuKI4Iol3gjAlPbT+Oh3RITfU6qAYHBf76fS/k/3hxOKaLD
+	AvKlkisJqsoel0X1bZ8KGatSYsFvd2lMff7F2WE9Xd/uEIjd5KTiqBxsNtpESA==
+ARC-Authentication-Results: i=1;
+	rspamd-5dcf5fb4c6-72pgw;
+	auth=pass smtp.auth=dreamhost smtp.mailfrom=dave@stgolabs.net
+X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
+X-MC-Relay: Neutral
+X-MailChannels-SenderId: dreamhost|x-authsender|dave@stgolabs.net
+X-MailChannels-Auth-Id: dreamhost
+X-Tank-Illustrious: 1c6d0da64ed65452_1747330823378_3902456520
+X-MC-Loop-Signature: 1747330823378:4084077714
+X-MC-Ingress-Time: 1747330823378
+Received: from pdx1-sub0-mail-a272.dreamhost.com (pop.dreamhost.com
+ [64.90.62.162])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
+	by 100.112.106.193 (trex/7.0.3);
+	Thu, 15 May 2025 17:40:23 +0000
+Received: from localhost.localdomain (ip72-199-50-187.sd.sd.cox.net [72.199.50.187])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: dave@stgolabs.net)
+	by pdx1-sub0-mail-a272.dreamhost.com (Postfix) with ESMTPSA id 4ZyyCp2DbgzCS;
+	Thu, 15 May 2025 10:40:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=stgolabs.net;
+	s=dreamhost; t=1747330823;
+	bh=DiqDaihEdOkReJztOtQt4hmcT0IfYIVzd6AdHQkx+ic=;
+	h=From:To:Cc:Subject:Date:Content-Transfer-Encoding;
+	b=BpSzRLieZbbTctjSokCrpdQ/huoCytneFWSaI9x3FPrQVAcMNEhS86y8FUwKnTrWb
+	 8fkhdFwKCDJr8J5PXh6hsnMlMrIFK/gb4NTavXUmOsh5x70hAi7h8wwwLVU34XAEcw
+	 bMtNfXohGs/wC/Efqv3mr3gs5Zn1ufpuF9icpFpdigBt2Ixi7YvttoSOBIENLh6zph
+	 /7h/61Suk4pUWNWal2LhB6sKT8uHLzsl4vqB/e2SvctvHccsMiU9xvDIEu9K0/9PlS
+	 V35DA/g500EtYHauGLlzqOMfrNL5rLGbIIjA+2qSXprPUExndouoavDSpfXIAQZoIp
+	 WT0qH76MQ7/Sw==
+From: Davidlohr Bueso <dave@stgolabs.net>
+To: brauner@kernel.org
+Cc: jack@suse.cz,
+	viro@zeniv.linux.org.uk,
+	mcgrof@kernel.org,
+	dave@stgolabs.net,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 3/4] fs/buffer: remove superfluous statements
+Date: Thu, 15 May 2025 10:39:24 -0700
+Message-Id: <20250515173925.147823-4-dave@stgolabs.net>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250515173925.147823-1-dave@stgolabs.net>
+References: <20250515173925.147823-1-dave@stgolabs.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <feb98a0f-8d17-495c-b556-b4fe19446d5d@zytor.com>
- <CAHk-=wi7sLm+zHUkyFO8V6QNghLQn0yiWsHfm8WU=V15K7K07Q@mail.gmail.com> <425880dd-e694-4428-999e-a787a666de5f@zytor.com>
-In-Reply-To: <425880dd-e694-4428-999e-a787a666de5f@zytor.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Thu, 15 May 2025 15:06:40 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whivBr0xME3h1Po9aJK8FE-+EhmL11ojT6hSLioGr4okw@mail.gmail.com>
-X-Gm-Features: AX0GCFsqqthU2uUT1mopyAu0bi9uStWBYXDmLmZRvLj9PURyJOI3EnXwFtx9NyA
-Message-ID: <CAHk-=whivBr0xME3h1Po9aJK8FE-+EhmL11ojT6hSLioGr4okw@mail.gmail.com>
-Subject: Re: Metalanguage for the Linux UAPI
-To: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, LKML <linux-kernel@vger.kernel.org>, 
-	libc-alpha@sourceware.org, linux-arch@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Thu, 15 May 2025 at 14:42, H. Peter Anvin <hpa@zytor.com> wrote:
->
-> Building it on top of sparse might still very well be The Right Thing.
+Get rid of those unnecessary return statements.
 
-You can look at the 'ctags.c' file in the sparse code, it basically
-does a lot of this kind of thing: it parses the file, then walks
-through all the symbols and #defines that it found.
+Signed-off-by: Davidlohr Bueso <dave@stgolabs.net>
+---
+ fs/buffer.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-It then obviously prints out filenames and line numbers rather than
-converting the result into something else, so I'm not claiming it's
-useful as-is, but from a "how to parse a file and walk the symbols it
-declares" standpoint it does almost everything.
+diff --git a/fs/buffer.c b/fs/buffer.c
+index b02cced96529..210b43574a10 100644
+--- a/fs/buffer.c
++++ b/fs/buffer.c
+@@ -297,7 +297,6 @@ static void end_buffer_async_read(struct buffer_head *bh, int uptodate)
+ 
+ still_busy:
+ 	spin_unlock_irqrestore(&first->b_uptodate_lock, flags);
+-	return;
+ }
+ 
+ struct postprocess_bh_ctx {
+@@ -422,7 +421,6 @@ static void end_buffer_async_write(struct buffer_head *bh, int uptodate)
+ 
+ still_busy:
+ 	spin_unlock_irqrestore(&first->b_uptodate_lock, flags);
+-	return;
+ }
+ 
+ /*
+@@ -1684,7 +1682,6 @@ void block_invalidate_folio(struct folio *folio, size_t offset, size_t length)
+ 		filemap_release_folio(folio, 0);
+ out:
+ 	folio_clear_mappedtodisk(folio);
+-	return;
+ }
+ EXPORT_SYMBOL(block_invalidate_folio);
+ 
+-- 
+2.39.5
 
-I just tested, and it looks like it hates the kernel headers because
-it hasn't been updated to understand about the bitwise type and dies
-with a
-
-    builtin:0:0: error: unknown symbol __le16 namespace:0 type:13
-
-but when I just made it not die it seems to actually do its thing, and
-knows about how sparse considers preprocessor symbols to be symbols
-just like C symbols are, just in a different namespace.
-
-Obviously for things like ioctl numbers, you'd need to then make it
-also actually *evaluate* the #define etc after you list them. You
-could do that in sparse itself, or you could do it by just creating a
-list of #define's from within sparse, and then have a separate pass
-that evaluates their values. That 'ctags' thing doesn't do any of
-that, of course.
-
-              Linus
 
