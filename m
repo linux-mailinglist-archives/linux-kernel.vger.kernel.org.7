@@ -1,82 +1,85 @@
-Return-Path: <linux-kernel+bounces-649249-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-649247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E326AB81DD
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 11:03:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16C9DAB81F3
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 11:05:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C3EA18862AE
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 09:02:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CFAA3ACA3E
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 09:01:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C597D296FC0;
-	Thu, 15 May 2025 09:01:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8505E27A465;
+	Thu, 15 May 2025 09:00:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="mQREhR4+"
-Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gY5ja/xX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F12D1288C9A
-	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 09:01:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEB11298252;
+	Thu, 15 May 2025 09:00:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747299668; cv=none; b=UA5PhVumhQjeJToNWXnKIZY9GKOFtnc6SMcFUK2uLqbCdBJG9Pc3UvpKVmg+3XBRHaaqSiYQ7FcSfgUiUIu0SfvvuGGUy2LRzuAEa9ADXpl6gYu68bI9jHkB1Acil/SwZndHgvMPZdh25Gs0+FOAJdYE1KDjHO3Hz0qgHH45eYA=
+	t=1747299623; cv=none; b=qskWxqtNogMxaG2R/q0EYmI8FQUC/HxWVGCM7n2e4k6r3b+UU4d0JnrCPoV/npRejcfwrk3Hl2YUebP8Q1iGAg0MoKpAgWlyLqTRi6CIVLKHvGPiBfoDzWmr5zMnSmwii7uqxjFBBLIUHeURXZV5mM6NsbyXRT0ZXW8g8ZPCD4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747299668; c=relaxed/simple;
-	bh=qg2je0jGwPczjxr7UEmyEcBXhwDxjfTpDkAe2rcZ8Zw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KnnqdSZNfoWXyeCzykvTlRpFuPmMrzVdFffzWXEBaNQfWxprOucOcmKa8HhGVW23alRvvZQiY5/HgjYj8J6yUrs6tnIbKjBjGC+r7lvOz6N2iruLy+/jNK+89YJfJzM5GlR9r7E2F2JEmpu+4NhMt781e/J+Cf9P8jCUvyulABE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=mQREhR4+; arc=none smtp.client-ip=91.218.175.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <fca05051-56f1-495e-aaf0-997fa2150fcd@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1747299653;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+KnDKuPjMe2fUCcW1tV4lBlMzw+7EXjmMesGcn74GA4=;
-	b=mQREhR4+7ST03MmzWDJZ3MiA8ALnrMc17zUGVXVIIajCaxIhp6gbhYtojMSw1eH53Llacd
-	hzdqFzfqeRk165SZNv8dp4nR+TZ2jNWOaxEa6E9lOuUTHitGbOY61LHajBJgqhd2lAHZkF
-	oeGASFMsLnbDRS/egJ3/rYdPa+oTbTI=
-Date: Thu, 15 May 2025 11:00:01 +0200
+	s=arc-20240116; t=1747299623; c=relaxed/simple;
+	bh=P1m0+sTWHkC72E4lMEa+YpX9d051+utwMYEb3wj5BLo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mOV/CYyYmGSPFibVC6ApZpIMOqSDRx/SZk1q7Ba59fAt4ccY172bmnTkyWTKN3yHQc6a12g7tM2+N/5Zs7ogE42n2Fqi1X1Z++z5QxmSSO2E9xnLENo9Zy5+UdZDOeBZCDE6duSPXs4cjqx6WVngLfwNgfu41t4YfPyH+y1Covs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gY5ja/xX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA548C4CEE7;
+	Thu, 15 May 2025 09:00:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747299621;
+	bh=P1m0+sTWHkC72E4lMEa+YpX9d051+utwMYEb3wj5BLo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gY5ja/xXRSOUSOsykU5WDfq0Rwv9FETxU+qGxCPJvIOqIi5P3xwjTiKZ6MmJ2+3tn
+	 8yylaUdYb7S6589CGpUP+1NtDHutEY5Bpu6wsGKA1fhwP6BfjP/TMvKQjmN3YfxtgV
+	 eQ0Th4ZaXd78cMidIspyBZxn7EuDehh8Q2Kd+7lqEOC/QalolUpIyV7lduNRU+VtDv
+	 vxi8kAtYC8DAUZTJHGFnRvyMMTY9w+BzWfCv6odzFPAz2jnQqyAvIm2nnUrLxw7wsB
+	 g8IlqX2LQg+rlsLTOnUoPEHxQ3zWL7E4OXgSzik5nc+VdpLngQMxA7Jp2m3PrKAZTM
+	 7PIbCsOYexHIA==
+Date: Thu, 15 May 2025 11:00:16 +0200
+From: Danilo Krummrich <dakr@kernel.org>
+To: Rob Clark <robdclark@gmail.com>
+Cc: dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+	linux-arm-msm@vger.kernel.org, Connor Abbott <cwabbott0@gmail.com>,
+	Rob Clark <robdclark@chromium.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 02/40] drm/gpuvm: Allow VAs to hold soft reference to
+ BOs
+Message-ID: <aCWtINcOUWciwx8L@pollux>
+References: <20250514175527.42488-1-robdclark@gmail.com>
+ <20250514175527.42488-3-robdclark@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH 0/5] ASoC/SOF/PCI/Intel: add Wildcat Lake support
-To: Peter Ujfalusi <peter.ujfalusi@linux.intel.com>, lgirdwood@gmail.com,
- broonie@kernel.org
-Cc: linux-sound@vger.kernel.org, kai.vehmanen@linux.intel.com,
- ranjani.sridharan@linux.intel.com, yung-chuan.liao@linux.intel.com,
- guennadi.liakhovetski@linux.intel.com, bhelgaas@google.com,
- linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250508180240.11282-1-peter.ujfalusi@linux.intel.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>
-In-Reply-To: <20250508180240.11282-1-peter.ujfalusi@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250514175527.42488-3-robdclark@gmail.com>
 
-On 5/8/25 20:02, Peter Ujfalusi wrote:
-> Hi,
+On Wed, May 14, 2025 at 10:53:16AM -0700, Rob Clark wrote:
+> From: Rob Clark <robdclark@chromium.org>
 > 
-> The audio IP in Wildcat Lake (WCL) is largely identical to the one in
-> Panther Lake, the main difference is the number of DSP cores, memory
-> and clocking.
-> It is based on the same ACE3 architecture.
+> Eases migration for drivers where VAs don't hold hard references to
+> their associated BO, avoiding reference loops.
 > 
-> In SOF the PTL topologies can be re-used for WCL to reduce duplication
-> of code and topology files. 
+> In particular, msm uses soft references to optimistically keep around
+> mappings until the BO is distroyed.  Which obviously won't work if the
+> VA (the mapping) is holding a reference to the BO.
 
-The thread clarified that the statement above is for generic topologies. Using specific cores and/or a 3rd party module will force topology editors to provide device-specific configurations.
+Ick! This is all complicated enough. Allow drivers to bypass the proper
+reference counting for GEM objects in the context of VM_BO structures seems like
+an insane footgun.
 
-Reviewed-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>
-
+I don't understand why MSM would need weak references here. Why does msm need
+that, but nouveau, Xe, panthor, PowerVR do not?
 
