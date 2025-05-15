@@ -1,187 +1,113 @@
-Return-Path: <linux-kernel+bounces-650122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-650124-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D306AB8D6D
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 19:16:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E513AB8D70
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 19:17:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5C2B3A8642
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 17:16:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 069EF18951E2
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 17:17:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7FAB257430;
-	Thu, 15 May 2025 17:16:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B582E258CDF;
+	Thu, 15 May 2025 17:16:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="fKlAN+Te";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Co839R3z"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E3J0h3oa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 656861DDD1;
-	Thu, 15 May 2025 17:16:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23E461DF990
+	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 17:16:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747329386; cv=none; b=Kdkb6m0ZlrkzFVBeZ6jPoWgvgwnXYzKCG9AZlYvcAEygbTk0nadTQP8Ro/2tssBxOz40IzX9TFNAdmdQ8yjViToMeWgMUq+RMOns5pRl1gxC8sXsox0aABPJRCwLtyHK4BRfFGWWjGeJB7gA9O3leWPaUKyU3tK0KtpAiTDfyu4=
+	t=1747329406; cv=none; b=VPm2zEPye9BlIkxx5099rPr9MgmteMbzSpaX3e8/g8hOsGvL9X9mYPaHtfUeNQxtXHiamDz6pPN66IRH4uIKtVfGTzDQAS532iKhXmsFyp+zaDUBQK/AWY5KL8cDJtJC2L6lmC/1Z3wpY8mPY3ul6A91s4w9sHZvoyXfG+hah8U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747329386; c=relaxed/simple;
-	bh=Vw4WEkclDr1GGKoxm4vvIt6vwMIbQuuQMXPj+KoindA=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=C1gngxCWJHCNBWkG2SpYpgn+d0oEHdfzNYWhs1mT53cuIdLJqi9hBDztDgD9j8VnMlL9OIMAd3DJfB6mqPDIm/AjZ76HFD8kmfIjMy99jAc3wRfHKqv4zJSj9SmMo8B59TppS2GsZX2KjeH5mufLmZPzeqc61WF2b21cUnip5LY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=fKlAN+Te; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Co839R3z; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 15 May 2025 17:16:21 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1747329382;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=u30DGWx84jmgZeTyazFg+3FQdniCQfpgI//ck4i7XuY=;
-	b=fKlAN+Te57M9lwCsybgPc4jximkBWF2Tt9FtJBKivr/FWQiiJIyi4AEZ5uRGxAz0R6e3Pe
-	4oZsvTLlnr0Da9N9QFAuOuIgoLwllp/5tUDUmDIqN/MCwK7egPaWnOFEVM3Ai813BRty5d
-	225JtMguSHhqXNILE+kTfcwy6bJH28yW9DmZiTFlLfiS+IhgaoCaVsw/NTQSQF2X3jhmdJ
-	x6ysEsOEz1go5fG8+M+XLFFadV0TEauOKttNGUw1j5zwsA2gH7zEN0GT9G+1gfIh56hjc2
-	k/5NrqHC4G8lYzZng+hhuunk85xd+0ikX4FBoYosi5XrL+E9I1dQfbwA7qRKRQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1747329382;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=u30DGWx84jmgZeTyazFg+3FQdniCQfpgI//ck4i7XuY=;
-	b=Co839R3zCDxtrOISgMwmh9dwdJmPoDZQw4uogv64WQey8etNrR1PSNIUdSCa1vSvZ598Gt
-	00Nf0Q9GxW810qCg==
-From: "tip-bot2 for Adrian Hunter" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/urgent] perf/x86/intel: Fix segfault with PEBS-via-PT with
- sample_freq
-Cc: Adrian Hunter <adrian.hunter@intel.com>, Ingo Molnar <mingo@kernel.org>,
- Kan Liang <kan.liang@linux.intel.com>, Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@redhat.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
- linux-perf-users@vger.kernel.org, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250508134452.73960-1-adrian.hunter@intel.com>
-References: <20250508134452.73960-1-adrian.hunter@intel.com>
+	s=arc-20240116; t=1747329406; c=relaxed/simple;
+	bh=MvM60ZObbi/BQVbSgnG85/LiAIUeh4VIT7d3zsx/4vA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QiDIn/Gg4wFnUsBczNLOIcePPT2ROpYcFc1VHvc0evFjSR1E9uK0WO1FfUZi7xGlJ+AW2cOR/R9K8b6a8tbN35K975O3QSHNmS8J0ZmjYcHyMIHlJgNccsG+vP/kLIzHvW+D+v4YXvIUPb3IZfrqmLH61O4KPkZK8ytP3gECdVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E3J0h3oa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37654C4CEE7;
+	Thu, 15 May 2025 17:16:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747329405;
+	bh=MvM60ZObbi/BQVbSgnG85/LiAIUeh4VIT7d3zsx/4vA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=E3J0h3oaws/CHN4PmzdBqfzAuyTMX7bSoNjnAoQIuchPx9GRgltNMTyPHv6wvDeS8
+	 fq7/nikzGeZob5Y7/meLFo5EGoAQfG9/J267zK6f5rE8/hFHnW9xlYaB//oYEgzI/8
+	 gf5neSdCDOTamym3bkK9flQPT6TWlRPogAU3PJzPmehgit6S/+6IIiZwh/dVKZIlum
+	 ZVy9w51SmhBxoAGfYpsG7czHvh0nkXFf0AtxV5/z3XyYRYLnXwgzHzccN8pgF6HMHi
+	 LCw2XCAsT7KkIz1tr14KvoLsQ5rNQVqbQ5kVKFdAwHCtJ2HZobCwqb7T7fsVVwxZmf
+	 pu1+XcdYhPnKQ==
+From: Borislav Petkov <bp@kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: X86 ML <x86@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	"Borislav Petkov (AMD)" <bp@alien8.de>
+Subject: [PATCH] fitex: Fix kernel-doc comments
+Date: Thu, 15 May 2025 19:16:41 +0200
+Message-ID: <20250515171641.24073-1-bp@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174732938125.406.12231233963068767961.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-The following commit has been merged into the perf/urgent branch of tip:
+From: "Borislav Petkov (AMD)" <bp@alien8.de>
 
-Commit-ID:     99bcd91fabada0dbb1d5f0de44532d8008db93c6
-Gitweb:        https://git.kernel.org/tip/99bcd91fabada0dbb1d5f0de44532d8008db93c6
-Author:        Adrian Hunter <adrian.hunter@intel.com>
-AuthorDate:    Thu, 08 May 2025 16:44:52 +03:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Thu, 15 May 2025 18:15:54 +02:00
+Fix those:
 
-perf/x86/intel: Fix segfault with PEBS-via-PT with sample_freq
+  ./kernel/futex/futex.h:208: warning: Function parameter or struct member 'drop_hb_ref' not described in 'futex_q'
+  ./kernel/futex/waitwake.c:343: warning: expecting prototype for futex_wait_queue(). Prototype was for futex_do_wait() instead
+  ./kernel/futex/waitwake.c:594: warning: Function parameter or struct member 'task' not described in 'futex_wait_setup'
 
-Currently, using PEBS-via-PT with a sample frequency instead of a sample
-period, causes a segfault.  For example:
-
-    BUG: kernel NULL pointer dereference, address: 0000000000000195
-    <NMI>
-    ? __die_body.cold+0x19/0x27
-    ? page_fault_oops+0xca/0x290
-    ? exc_page_fault+0x7e/0x1b0
-    ? asm_exc_page_fault+0x26/0x30
-    ? intel_pmu_pebs_event_update_no_drain+0x40/0x60
-    ? intel_pmu_pebs_event_update_no_drain+0x32/0x60
-    intel_pmu_drain_pebs_icl+0x333/0x350
-    handle_pmi_common+0x272/0x3c0
-    intel_pmu_handle_irq+0x10a/0x2e0
-    perf_event_nmi_handler+0x2a/0x50
-
-That happens because intel_pmu_pebs_event_update_no_drain() assumes all the
-pebs_enabled bits represent counter indexes, which is not always the case.
-In this particular case, bits 60 and 61 are set for PEBS-via-PT purposes.
-
-The behaviour of PEBS-via-PT with sample frequency is questionable because
-although a PMI is generated (PEBS_PMI_AFTER_EACH_RECORD), the period is not
-adjusted anyway.
-
-Putting that aside, fix intel_pmu_pebs_event_update_no_drain() by passing
-the mask of counter bits instead of 'size'.  Note, prior to the Fixes
-commit, 'size' would be limited to the maximum counter index, so the issue
-was not hit.
-
-Fixes: 722e42e45c2f1 ("perf/x86: Support counter mask")
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Reviewed-by: Kan Liang <kan.liang@linux.intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Ian Rogers <irogers@google.com>
-Cc: linux-perf-users@vger.kernel.org
-Link: https://lore.kernel.org/r/20250508134452.73960-1-adrian.hunter@intel.com
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
 ---
- arch/x86/events/intel/ds.c |  9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ kernel/futex/futex.h    | 1 +
+ kernel/futex/waitwake.c | 5 ++---
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/arch/x86/events/intel/ds.c b/arch/x86/events/intel/ds.c
-index 9b20acc..8d86e91 100644
---- a/arch/x86/events/intel/ds.c
-+++ b/arch/x86/events/intel/ds.c
-@@ -2465,8 +2465,9 @@ static void intel_pmu_drain_pebs_core(struct pt_regs *iregs, struct perf_sample_
- 				setup_pebs_fixed_sample_data);
- }
+diff --git a/kernel/futex/futex.h b/kernel/futex/futex.h
+index 069fc2a83080..fcd1617212ee 100644
+--- a/kernel/futex/futex.h
++++ b/kernel/futex/futex.h
+@@ -175,6 +175,7 @@ typedef void (futex_wake_fn)(struct wake_q_head *wake_q, struct futex_q *q);
+  * @requeue_pi_key:	the requeue_pi target futex key
+  * @bitset:		bitset for the optional bitmasked wakeup
+  * @requeue_state:	State field for futex_requeue_pi()
++ * @drop_hb_ref:	Waiter should drop the extra hash bucket reference if true
+  * @requeue_wait:	RCU wait for futex_requeue_pi() (RT only)
+  *
+  * We use this hashed waitqueue, instead of a normal wait_queue_entry_t, so
+diff --git a/kernel/futex/waitwake.c b/kernel/futex/waitwake.c
+index bd8fef0f8d18..b3738fbe83c6 100644
+--- a/kernel/futex/waitwake.c
++++ b/kernel/futex/waitwake.c
+@@ -334,8 +334,7 @@ int futex_wake_op(u32 __user *uaddr1, unsigned int flags, u32 __user *uaddr2,
+ static long futex_wait_restart(struct restart_block *restart);
  
--static void intel_pmu_pebs_event_update_no_drain(struct cpu_hw_events *cpuc, int size)
-+static void intel_pmu_pebs_event_update_no_drain(struct cpu_hw_events *cpuc, u64 mask)
- {
-+	u64 pebs_enabled = cpuc->pebs_enabled & mask;
- 	struct perf_event *event;
- 	int bit;
- 
-@@ -2477,7 +2478,7 @@ static void intel_pmu_pebs_event_update_no_drain(struct cpu_hw_events *cpuc, int
- 	 * It needs to call intel_pmu_save_and_restart_reload() to
- 	 * update the event->count for this case.
- 	 */
--	for_each_set_bit(bit, (unsigned long *)&cpuc->pebs_enabled, size) {
-+	for_each_set_bit(bit, (unsigned long *)&pebs_enabled, X86_PMC_IDX_MAX) {
- 		event = cpuc->events[bit];
- 		if (event->hw.flags & PERF_X86_EVENT_AUTO_RELOAD)
- 			intel_pmu_save_and_restart_reload(event, 0);
-@@ -2512,7 +2513,7 @@ static void intel_pmu_drain_pebs_nhm(struct pt_regs *iregs, struct perf_sample_d
- 	}
- 
- 	if (unlikely(base >= top)) {
--		intel_pmu_pebs_event_update_no_drain(cpuc, size);
-+		intel_pmu_pebs_event_update_no_drain(cpuc, mask);
- 		return;
- 	}
- 
-@@ -2626,7 +2627,7 @@ static void intel_pmu_drain_pebs_icl(struct pt_regs *iregs, struct perf_sample_d
- 	       (hybrid(cpuc->pmu, fixed_cntr_mask64) << INTEL_PMC_IDX_FIXED);
- 
- 	if (unlikely(base >= top)) {
--		intel_pmu_pebs_event_update_no_drain(cpuc, X86_PMC_IDX_MAX);
-+		intel_pmu_pebs_event_update_no_drain(cpuc, mask);
- 		return;
- 	}
- 
+ /**
+- * futex_wait_queue() - futex_queue() and wait for wakeup, timeout, or signal
+- * @hb:		the futex hash bucket, must be locked by the caller
++ * futex_do_wait() - wait for wakeup, timeout, or signal
+  * @q:		the futex_q to queue up on
+  * @timeout:	the prepared hrtimer_sleeper, or null for no timeout
+  */
+@@ -578,7 +577,7 @@ int futex_wait_multiple(struct futex_vector *vs, unsigned int count,
+  * @flags:	futex flags (FLAGS_SHARED, etc.)
+  * @q:		the associated futex_q
+  * @key2:	the second futex_key if used for requeue PI
+- * task:	Task queueing this futex
++ * @task:	Task queueing this futex
+  *
+  * Setup the futex_q and locate the hash_bucket.  Get the futex value and
+  * compare it with the expected value.  Handle atomic faults internally.
+-- 
+2.43.0
+
 
