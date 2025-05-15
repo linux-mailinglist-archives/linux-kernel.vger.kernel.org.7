@@ -1,111 +1,185 @@
-Return-Path: <linux-kernel+bounces-650123-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-650114-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 393B9AB8D6E
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 19:16:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF972AB8D4B
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 19:13:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8CC56174B20
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 17:16:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 898201BC304B
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 17:13:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 689FB253F39;
-	Thu, 15 May 2025 17:16:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEB4625484B;
+	Thu, 15 May 2025 17:13:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tu3mGpa2"
-Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Y5GcOq9j"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 180A31DF990
-	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 17:16:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58E571B4242
+	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 17:13:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747329393; cv=none; b=nW97TogTJ7PHMcyVSTMZxI9Pud8T2BnFmHktGy2qodNtUC+epileBR/cSdrOFAgcw8fcDU08HYP6KFwO9cnHRpdL7kz1xpvvXqL1kOFfgV5hQAw1uAQxE3+tf1k/nVp75G03pb0W3DamsBddnQGNkEe0g9L5gIVQaQUNkLQBQ6M=
+	t=1747329204; cv=none; b=XfzIXPszT7za4Lb8O8TcPODR/5lypQXtl8cPp3jUtoG/mrtHR+nJzNr18Pmq5uJMCe+j+vv76BDPXzBQr0/eiocNnILVXU4lRWtm4lHujnsMXu89l/yanKOIX8InsxZeil6Hzga+w3WplsC7duBi/iK8wcjuVkx3kSZRY+Vo1OQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747329393; c=relaxed/simple;
-	bh=HAgq5TsL2J5W1qSWohscDi0sEpw741h+gH1OrIGfCW4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RRX5aYL/1STFlf5iYNCxiMfiVbNw85OJXdolUW9qZ/oR2Np0WEF/iIZp6rdwLoo8EscPFmDBHm+wR2Qy5s5tUKp4QzOprhDW0d5p8+oo1M47F3iiyDL9sspw+56AuNtbIvpaOhoKR3s1L3yjriLylvcDD1ULgNf8ZyrIAUa2Q88=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Tu3mGpa2; arc=none smtp.client-ip=209.85.222.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-7caeeef95d4so115228485a.2
-        for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 10:16:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747329390; x=1747934190; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=WodONXQd65P/c0ED7hKX8l21r+p4b/r4p9198gArTno=;
-        b=Tu3mGpa2qepzDTwwqZO/3dHzXyuroBI+Xmh9QXC30mrr/AnE4oIeXVceauXdGGpyLS
-         BesBcqHGMwFwBn1dUS+1W2teHe3j4A1K65p8uzxPE8Yziz6O7TZl+6KaRt9EYs/2KlnX
-         20U9NHbr8wQVkH9cG6BgnS+vQFmunQWRxb5A4VSW0DxNj1piznnEQZ2WOYaQKcBfvqd5
-         wS1SqqCFjfKqP2f4O6cCCgJNoJrDMlviQkqW+zxvdn55CJ/PPAbcDMJPPYWZkp+bs1nf
-         BHynwa9YfD9RPLj4SI2O10k8hHlKkGyKcbUDItOcfckJmMgfiUJoaWh/JMFqIoJRakmF
-         SAJw==
+	s=arc-20240116; t=1747329204; c=relaxed/simple;
+	bh=O63cXBs+Xx3OU/kGfCocj7yS4CxizcWT/oxTtnSxx3A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fxn6v1RlAIrIJ975e+5nd3slxeWxyJnuPF6gnhOZaP0H6uMHgPT+1MltMJYvqwDe69D9u3XEana5XRyFKbHK+QkS3X0N+b1g+vE5EWt+IFLlVtbc23Xh1MybsLk8/g7GnDj62PVJ5RQc+FEuiUxvinqyUtTTY1xfQJlsZR/Hev4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Y5GcOq9j; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54FEFPeg031652
+	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 17:13:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	yYY5LgPRLIrcdKBo4sFGaqpoE0nGNKtVE2RVccwfFlg=; b=Y5GcOq9jFeWOZVDD
+	Wp0cXL7yUw4LnTspT78KA03rujBHrF7cXUO/6KD3mzlgkEHiicB0Ytq2lQtoQad8
+	4N1SAwIhxX3Aa/Gc1l6xPR1ZVa6Vp8idrnEOYmgSDkv3HAWUZYbnuNF5z4voWMAP
+	hd1ei+t35uiJmG9EHY5U8Mqds8UbUKC6b7oGUpGjU8Kld0SbCP/qna4vc4jsApIP
+	vc85l6eaNVSYhHGxJcl3qDn5/lkIpNwKx8Op+w696lD4gX5ihJd+t4LKP4CjnwXm
+	oK20wWCxR7rVJgqVnKKMzTPBNC5eJ0hv3LGC205kIEfZTh1TjBjuQjiCePRfru+/
+	nAn7Lg==
+Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com [209.85.216.72])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46mbcr6v93-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 17:13:21 +0000 (GMT)
+Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-30e57a372dcso1104430a91.2
+        for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 10:13:20 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747329390; x=1747934190;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=WodONXQd65P/c0ED7hKX8l21r+p4b/r4p9198gArTno=;
-        b=q6JnESoXJAbP+zV24m2dI8RHVh8FfBTmAhW5bJhsGKoLl9dxjwFD+vlcULIL5Sfb3f
-         5V1XyLvsnsYpKt8+Wn7BuBbPBIxV0IiLraUIF/Qv1HYBtObPu8kBcHeoRSvqSSX6Ugoy
-         dHR+5HDbkSH8hfuWXVhfU//ow4fYs+PpZl9bjqe5+igcOm1BCh/sGxMF7EMwMKi4cY+M
-         RRUm5q+91DoN/CRqASmk0U1D3NVKPePa9I8/uQ/ph5IP061HLqWjJE5A+F3f1Jx5Ao1N
-         rZ96HBwjOpZ6juHqAXxcXfAQ4Vqu2W2qsIc7kmCq2ryKcme6VkTnWrMYjCCEbzGCt6GX
-         pOUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWj4AYvjFj1rRWviWb0yvw4S3a/yWUdWceruX5mEBivskI37TlOWtathQGZ+RYaRAWZAw2MiAObwGO+/hU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKQ7Uu/cxQvy2aZTk24Ko5S4Q1vnwBQNL1/bHoNVQx2dCZw1xC
-	C2f4HT9N2RPWYNtRDPnCcU6xByIfQe1BrDh1bEqx5pzVOZjTTmKVSo3Q
-X-Gm-Gg: ASbGncu+ag/Kl/WIO3kSM7oAkFwxKCLGnDM5GkbKx3whwVoVjBQ3ErGHaW3b2RyWPU7
-	1AAqMlEgMLriwPwCxsmm17gAuvpof/DCi0MfH4c2n+/R3mANyplamgoHS3ddGjAoMxTXWecG3+4
-	eeokWpFvvmpH4fHlidlIVCluglvio/PvSl5DoJzMRDMG+x+7XQR3BbRjMT606w4SQYcYsyqoNP9
-	etBPNvoQUBEZxNoPq7Bgt/cpFkup48gknbsPFcanqLm+A4oH3JEvO+nmtCyDv8jgxVDF80rFouc
-	A0smjPZVp43c2EPzfk9ns8wb8zdcIWvVgkiiDuLoNh+2UWNtGLHmf9KYsrxRri4w8cCTsFq6r6W
-	u+8YBDOqLRldoku9NbWp1hTJgo4F7
-X-Google-Smtp-Source: AGHT+IGBIt5ADRN2ko2Y/bSo2YzdOgjYQbooGlhBSnGM0XLl4mv1yIyOiDT13nx1ErQ3x4cJwuQPOg==
-X-Received: by 2002:a05:622a:5081:b0:494:a31b:c3ac with SMTP id d75a77b69052e-494ae33623bmr2581021cf.1.1747329388435;
-        Thu, 15 May 2025 10:16:28 -0700 (PDT)
-Received: from gmail.com (pool-173-48-161-18.bstnma.fios.verizon.net. [173.48.161.18])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-494ae3f89a9sm409611cf.20.2025.05.15.10.16.27
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Thu, 15 May 2025 10:16:28 -0700 (PDT)
-From: Tanav Chinthapatla <tanavc01@gmail.com>
-To: gregkh@linuxfoundation.org
-Cc: tanavc01@gmail.com,
-	linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] staging: rtl8723bs: fix spacing around '+' in rtw_cmd.c
-Date: Thu, 15 May 2025 13:11:48 -0400
-Message-ID: <20250515171148.22735-1-tanavc01@gmail.com>
-X-Mailer: git-send-email 2.49.0
+        d=1e100.net; s=20230601; t=1747329200; x=1747934000;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=yYY5LgPRLIrcdKBo4sFGaqpoE0nGNKtVE2RVccwfFlg=;
+        b=Nm3P/QXawE0P+ZASaJAD8gv2Ip5tlLlntKNtsQ4HUQNrXBB1paRghQV87ygAi8mv3f
+         2Q9obionS9QoMF1EGf/lqXgMkOk6YKXVH7LHY4lHP8nv/96vN3iiI5jyEjRY+NWe3Zdy
+         FJbR1/nbMcTyfQg9LNqFaLw2ooAGdnpPsr47j25U96Atq8pFCrczAcGIbenY16FukexQ
+         G4aeOuPFxBTHJAGT9GLgQRQokm6XyMKa5a69dE9vrlHxBIytY2LZIcbr5+afrWNafc9h
+         JQrkt2T9sKDIot/iKD3wb8wPMyrxB1k74GEyadBVg629rWD5cwRw3hPeLEOht1tSyEsb
+         fcaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVtvJGyYJqUk3TBkK4kfoM2yzt+gZh7QzlV03AQ4puZmjG5qH53v1ccFwSqT+kMil4IPl2a8LMfspirN4o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZ/4z65K/tBugBVmdOsEMo+vLNRznSTlZTdnAgtBdBEOu/QZJd
+	m6m9XAuDDASINk6iv5Ykj2PiXJw1RQsbEUzxtGsSHy2LRiws8SSRL0s6YFue2xehNNqUqhTjeCG
+	iWWqR1pZrN1v6biyhQbF+bgsFSqBWjQkniWzBFDv03ALGn18Az+aGbM7f+qLb68VWQK8=
+X-Gm-Gg: ASbGncvTXkZoMV92B6r0usX183aQsIv1OXQkceG4+vBihgy92uMDSSNhuVU1kpCD/RR
+	j/3+9//divUuGR0lUakQF74Das2cXmOclLWPG+DPQQM2cOOjG56aOzlQmSOWZKubZ0GPjqqWYJy
+	ngxNy01F+MNvp0Y5NKcAcFfCkbb4OzpmmEsXnNosrkPtVsidK0/xJ8dBKv5wRTkFnHdFVKnZ+rW
+	aopCly6B2C4LzYqjRN07jkwyDJ+SNyDHdsGcZwRG7RsPaCBAO7tCepldyiKZLNbnyRObVospkyM
+	/EMpVfeW4DAfPlQu/Nqc7A5pVhREG+IBgwLn6579ocZUjACQoCqAj7BYXvB5L9iurbkB3Q==
+X-Received: by 2002:a17:90b:33c2:b0:2ff:6608:78cd with SMTP id 98e67ed59e1d1-30e7d544fd4mr288087a91.9.1747329199743;
+        Thu, 15 May 2025 10:13:19 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFNDu7NvHwl9BxUYwJis4ASPQgBchI/AV8+LYPCkrCV2kofbKQRnSnmom5F9mPfzufGWwElaA==
+X-Received: by 2002:a17:90b:33c2:b0:2ff:6608:78cd with SMTP id 98e67ed59e1d1-30e7d544fd4mr288065a91.9.1747329199310;
+        Thu, 15 May 2025 10:13:19 -0700 (PDT)
+Received: from [10.134.71.99] (i-global254.qualcomm.com. [199.106.103.254])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-30e7d5918aesm64070a91.49.2025.05.15.10.13.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 15 May 2025 10:13:19 -0700 (PDT)
+Message-ID: <abc767ff-acb9-47c3-8b6e-6c6150f7b19e@oss.qualcomm.com>
+Date: Thu, 15 May 2025 10:13:17 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/5] drm/msm/dpu: Add max pingpong and dsc width to HW
+ catalog
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Abhinav Kumar <abhinav.kumar@oss.qualcomm.com>,
+        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20250514-max-mixer-width-v1-0-c8ba0d9bb858@oss.qualcomm.com>
+ <20250514-max-mixer-width-v1-2-c8ba0d9bb858@oss.qualcomm.com>
+ <txn2anohfbrymaseeo55slmzimstietsrmhx3mhigw4fcx3ow4@b42b3n53et6l>
+Content-Language: en-US
+From: Jessica Zhang <jessica.zhang@oss.qualcomm.com>
+In-Reply-To: <txn2anohfbrymaseeo55slmzimstietsrmhx3mhigw4fcx3ow4@b42b3n53et6l>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: coCgeV2aBgZgJIzWTKzeqMl0wb6LnSY0
+X-Authority-Analysis: v=2.4 cv=Auju3P9P c=1 sm=1 tr=0 ts=682620b1 cx=c_pps
+ a=RP+M6JBNLl+fLTcSJhASfg==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=EUspDBNiAAAA:8 a=_YleJFLcT2wxSgV-J2oA:9
+ a=QEXdDO2ut3YA:10 a=iS9zxrgQBfv6-_F4QbHw:22
+X-Proofpoint-GUID: coCgeV2aBgZgJIzWTKzeqMl0wb6LnSY0
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTE1MDE3MCBTYWx0ZWRfXzTitVOTFRn/4
+ mV1JpcqOBMvUdsnjFU8LmOJxbcYMHCKMY050dW1PYHpsBmhq/tx2FNz44VKHehBqzkb8LvDPNGB
+ EB0CXiSQjzol9RLCMCo9z2whnlYcHFO18Fnc/6OudbGLriVs41qXOA7n3nx7+mol8aXoOhfGaEO
+ d0Qw2Rgre4Mc2Q4UeXjC+hRjtlXkpWQXni9U77dTHvBytG8D+cpJw+RNib7rKWJi0EFLUK9KBG0
+ LcV1/RrYrm++EC89d3Zio6stUBehH90J0W5tNPzFILbW18EVaMm046el3gHYXPTPXFf4JT2nA9T
+ tG69t/Re71hFxkFmIsafWm8g0elSuxpQH9f4KUninwsssdOMHXN9jiHB4sBZ/+CS2NjuM6M58+9
+ 1Y1ELmiGTMnS5bWqpWbRuGC683UfVxPBkgbme+HlWB7jjbjPt4sjqDEmkmRn1zkTPuS8p6Xc
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-15_07,2025-05-15_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 clxscore=1015 spamscore=0 impostorscore=0 lowpriorityscore=0
+ malwarescore=0 mlxscore=0 adultscore=0 priorityscore=1501 mlxlogscore=999
+ phishscore=0 suspectscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505070000
+ definitions=main-2505150170
 
-Signed-off-by: Tanav Chinthapatla <tanavc01@gmail.com>
----
- drivers/staging/rtl8723bs/core/rtw_cmd.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/staging/rtl8723bs/core/rtw_cmd.c b/drivers/staging/rtl8723bs/core/rtw_cmd.c
-index 1c9e8b01d..98d89e836 100644
---- a/drivers/staging/rtl8723bs/core/rtw_cmd.c
-+++ b/drivers/staging/rtl8723bs/core/rtw_cmd.c
-@@ -1619,7 +1619,7 @@ static void rtw_btinfo_hdl(struct adapter *adapter, u8 *buf, u16 buf_len)
- 		buf[1] = 0;
- 	else if (cmd_idx == BTINFO_BT_AUTO_RPT)
- 		buf[1] = 2;
--	hal_btcoex_BtInfoNotify(adapter, len+1, &buf[1]);
-+	hal_btcoex_BtInfoNotify(adapter, len + 1, &buf[1]);
- }
- 
- u8 rtw_c2h_packet_wk_cmd(struct adapter *padapter, u8 *pbuf, u16 length)
--- 
-2.34.1
+
+On 5/14/2025 5:21 PM, Dmitry Baryshkov wrote:
+> On Wed, May 14, 2025 at 04:52:30PM -0700, Jessica Zhang wrote:
+>> Add max_dsc_encoder_width to dpu_caps struct and max_linewidth to
+>> dpu_pingpong_cfg for all chipsets within the HW catalog.
+>>
+>> Note: The max supported PINGPONG width was 4096 but increased to 5120
+>> after DPU 6.x. In addition, DPU 8.x+ increases the max supported width
+>> of PINGPONG_0 specifically to 8960.
+>>
+>> Signed-off-by: Jessica Zhang <jessica.zhang@oss.qualcomm.com>
+>> ---
+>>   drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_10_0_sm8650.h  | 11 +++++++++++
+>>   drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_1_14_msm8937.h |  2 ++
+>>   drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_1_15_msm8917.h |  1 +
+>>   drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_1_16_msm8953.h |  2 ++
+>>   drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_1_7_msm8996.h  |  4 ++++
+>>   drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_3_0_msm8998.h  |  4 ++++
+>>   drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_3_2_sdm660.h   |  4 ++++
+>>   drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_3_3_sdm630.h   |  2 ++
+>>   drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_4_0_sdm845.h   |  4 ++++
+>>   drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_0_sm8150.h   |  6 ++++++
+>>   drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_1_sc8180x.h  |  6 ++++++
+>>   drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_2_sm7150.h   |  4 ++++
+>>   drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_3_sm6150.h   |  3 +++
+>>   drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_4_sm6125.h   |  2 ++
+>>   drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_6_0_sm8250.h   |  6 ++++++
+>>   drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_6_2_sc7180.h   |  2 ++
+>>   drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_6_3_sm6115.h   |  1 +
+>>   drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_6_4_sm6350.h   |  2 ++
+>>   drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_6_5_qcm2290.h  |  1 +
+>>   drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_6_9_sm6375.h   |  1 +
+>>   drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_7_0_sm8350.h   |  7 +++++++
+>>   drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_7_2_sc7280.h   |  5 +++++
+>>   drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_8_0_sc8280xp.h |  7 +++++++
+>>   drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_8_1_sm8450.h   |  9 +++++++++
+>>   drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_8_4_sa8775p.h  |  9 +++++++++
+>>   drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_9_0_sm8550.h   |  9 +++++++++
+>>   drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_9_2_x1e80100.h |  9 +++++++++
+>>   drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h           | 10 ++++++++++
+> 
+> This needs to be rebased on top of linux-next, otherwise you've missed
+> dpu_9_1_sar2130p.h .
+
+Ah yes, forgot to update my local working branch.
+
+Thanks,
+
+Jessica Zhang
+
+> 
 
 
