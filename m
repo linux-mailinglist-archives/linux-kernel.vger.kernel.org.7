@@ -1,189 +1,126 @@
-Return-Path: <linux-kernel+bounces-649576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-649584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0220AB864C
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 14:26:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CD85AB8661
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 14:31:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E62F1BC7116
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 12:21:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 989143A1850
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 12:30:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7DBE29A9DE;
-	Thu, 15 May 2025 12:19:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62783298C0A;
+	Thu, 15 May 2025 12:31:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cclYx5Y5"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (1024-bit key) header.d=infotecs.ru header.i=@infotecs.ru header.b="Y9CvUaig"
+Received: from mx0.infotecs.ru (mx0.infotecs.ru [91.244.183.115])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50CA7225A2C
-	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 12:19:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE5A74A02;
+	Thu, 15 May 2025 12:31:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.244.183.115
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747311583; cv=none; b=MA/RA53caofImb1q6wkKjAcAr37ZGEMUFUhPt0yJx8B20OQl4fhyQg3Yy4AaHp4uK4XWBAp4+H6CYTQFkvDgny1Wclixfkd099s8/k2/dLj5WKyhCRGW90wumyzdde7YsJ0qX7rRQ2DtVHfc0ekjqIJsbSyXSqH3i+39LIHzH7k=
+	t=1747312270; cv=none; b=knBoQLl5tACZGf7SKd9x0RVQfUHTW7bFmRFtgCXw7F+7fYZJwuZ5P6LanFSpclJGxekxTalq/JCqkRxe7zO+rQQK9PM0IBcUdK30doMKwv4ciEoC1yL/ni1sNhig+6uzK9ZjcXRPYzYqxl3VxPiUZBZlGRiYkQjoBC6LqTlgnf4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747311583; c=relaxed/simple;
-	bh=wFAQ3NK4nPQd0IHrWUbmpnTo8qjx6xZhrLCMhXW/F14=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bwzyJzFs6NZ1pTn2icRXju4LpMNJi9eYudeS6HPsn0vKJk7/Amp8NksH4Op+TvcsymdhcJQrMnQMWv4zJ55Geck7m7POTfl2Y8iVKHfQLm4wmyEouZKgjZAre2d/SJYQtbcDUe749IiABL5OGQkxcNSIkGhIMqaHoNPYBz626O8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cclYx5Y5; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1747311581; x=1778847581;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=wFAQ3NK4nPQd0IHrWUbmpnTo8qjx6xZhrLCMhXW/F14=;
-  b=cclYx5Y5KL3wU4ZJ4t9xOurmgD8kEO9mw+rCCQHFWcKbh3zrAosfpwnR
-   pnY1nv7QNoh3PReuFehIuPD5jbNhQvXke3NaMCKw2twQ8fLRq3EXuDbAY
-   7bGuG6384dGAAoj3j/txAquT9AcMqP/Xwe92HZj5+40JIACjTxjYoya9x
-   vf55AUwjBY5V3mLOZsahzglsLPpHjEflZfq7wwkOx+85/ymSrc/7qvDCE
-   A2qEfIZCu4D/mowM93TRnlX9yePVb0oB5HPeSOlUUSCYZBNH2vxx9D5HA
-   QcwTjZHFQrNQul782BFylZHGfIGeUUYG6Xs/ADoe0uZ3YQmsqOl9INpJX
-   g==;
-X-CSE-ConnectionGUID: 8WoOCdIgRLOmdMFbMNx/ZQ==
-X-CSE-MsgGUID: raIIPn+pRHqIB7WA70zROg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11434"; a="49402658"
-X-IronPort-AV: E=Sophos;i="6.15,291,1739865600"; 
-   d="scan'208";a="49402658"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2025 05:19:40 -0700
-X-CSE-ConnectionGUID: yuRuvhS8TrOvZRAiYDej+Q==
-X-CSE-MsgGUID: TYMuvsbVQ/aKlzbvndqzBw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,291,1739865600"; 
-   d="scan'208";a="143553856"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2025 05:19:36 -0700
-Date: Thu, 15 May 2025 15:19:32 +0300
-From: Raag Jadav <raag.jadav@intel.com>
-To: "Usyskin, Alexander" <alexander.usyskin@intel.com>
-Cc: Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	"De Marchi, Lucas" <lucas.demarchi@intel.com>,
-	Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>,
-	"Vivi, Rodrigo" <rodrigo.vivi@intel.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	"Poosa, Karthik" <karthik.poosa@intel.com>,
-	"Abliyev, Reuven" <reuven.abliyev@intel.com>,
-	"Weil, Oren jer" <oren.jer.weil@intel.com>,
-	"linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-	"intel-xe@lists.freedesktop.org" <intel-xe@lists.freedesktop.org>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	"intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Tomas Winkler <tomasw@gmail.com>
-Subject: Re: [PATCH v9 03/12] mtd: intel-dg: implement region enumeration
-Message-ID: <aCXb1NjwGquN6vGN@black.fi.intel.com>
-References: <20250424132536.3043825-1-alexander.usyskin@intel.com>
- <20250424132536.3043825-4-alexander.usyskin@intel.com>
- <aBCfbaYs9CnXL2h1@black.fi.intel.com>
- <CY5PR11MB6366AACB5EA494893CA8D16DED90A@CY5PR11MB6366.namprd11.prod.outlook.com>
+	s=arc-20240116; t=1747312270; c=relaxed/simple;
+	bh=PpF+ZRQiOche5sGkaMp31I4/dN3ZsGItlD6ZgVdd9JI=;
+	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=OTT2SzQ7tvnu4iGmfLN+OKozMRFe+bnSRh0wxGwX5X/V61xzypzFmDvTPN+agOSqj0s1IO9xRKtC0HmvH9hBK1A21Tre6CdDcj9MBdgyTiESD1f16UvMi5TJmidASNVekwvu/8Dta0fdZP1lu5/tJ5wsRq1G57Jovun5CEuonHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=infotecs.ru; spf=pass smtp.mailfrom=infotecs.ru; dkim=pass (1024-bit key) header.d=infotecs.ru header.i=@infotecs.ru header.b=Y9CvUaig; arc=none smtp.client-ip=91.244.183.115
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=infotecs.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=infotecs.ru
+Received: from mx0.infotecs-nt (localhost [127.0.0.1])
+	by mx0.infotecs.ru (Postfix) with ESMTP id C32801024C4D;
+	Thu, 15 May 2025 15:20:15 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx0.infotecs.ru C32801024C4D
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=infotecs.ru; s=mx;
+	t=1747311616; bh=MW8t8FQMiTnmW662Mj4TKI/7+oWH12UvPlfRSrGQIbE=;
+	h=From:To:CC:Subject:Date:From;
+	b=Y9CvUaigTbD5Rmz/XZEpy5vu843MpD9IYnE+3iLpdgNB5rPNMRGDsUYPu+KQtvpzR
+	 UJ8lsbSBrrn58mFXYoMpzpMLQThY6tLpGUNs2AYBDlCnmDgBF83hhVhgQXoCznAUdj
+	 15/9yh4nKVqp0uvUHCDwRNHeR5WMiOw3YKB5COgM=
+Received: from msk-exch-01.infotecs-nt (msk-exch-01.infotecs-nt [10.0.7.191])
+	by mx0.infotecs-nt (Postfix) with ESMTP id BF608304A47E;
+	Thu, 15 May 2025 15:20:15 +0300 (MSK)
+From: Ilia Gavrilov <Ilia.Gavrilov@infotecs.ru>
+To: "David S. Miller" <davem@davemloft.net>
+CC: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, "Michal
+ Luczaj" <mhal@rbox.co>, Arnaldo Carvalho de Melo <acme@mandriva.com>,
+	"Stephen Hemminger" <stephen@networkplumber.org>, "netdev@vger.kernel.org"
+	<netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "lvc-project@linuxtesting.org"
+	<lvc-project@linuxtesting.org>, "stable@vger.kernel.org"
+	<stable@vger.kernel.org>
+Subject: [PATCH net] llc: fix data loss when reading from a socket in
+ llc_ui_recvmsg()
+Thread-Topic: [PATCH net] llc: fix data loss when reading from a socket in
+ llc_ui_recvmsg()
+Thread-Index: AQHbxZO2JTyyBukLE0GIAjqYe9um5g==
+Date: Thu, 15 May 2025 12:20:15 +0000
+Message-ID: <20250515122014.1475447-1-Ilia.Gavrilov@infotecs.ru>
+Accept-Language: ru-RU, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-exclaimer-md-config: 208ac3cd-1ed4-4982-a353-bdefac89ac0a
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CY5PR11MB6366AACB5EA494893CA8D16DED90A@CY5PR11MB6366.namprd11.prod.outlook.com>
+X-KLMS-Rule-ID: 5
+X-KLMS-Message-Action: clean
+X-KLMS-AntiSpam-Status: not scanned, disabled by settings
+X-KLMS-AntiSpam-Interceptor-Info: not scanned
+X-KLMS-AntiPhishing: Clean, bases: 2025/05/15 10:33:00
+X-KLMS-AntiVirus: Kaspersky Security for Linux Mail Server, version 8.0.3.30, bases: 2025/05/15 10:15:00 #27982467
+X-KLMS-AntiVirus-Status: Clean, skipped
 
-On Thu, May 15, 2025 at 04:53:38PM +0530, Usyskin, Alexander wrote:
-> > On Thu, Apr 24, 2025 at 04:25:27PM +0300, Alexander Usyskin wrote:
-> > > In intel-dg, there is no access to the spi controller,
-> > > the information is extracted from the descriptor region.
-> > 
-> > ...
-> > 
-> > > @@ -22,9 +24,199 @@ struct intel_dg_nvm {
-> > >  		u8 id;
-> > >  		u64 offset;
-> > >  		u64 size;
-> > > +		unsigned int is_readable:1;
-> > > +		unsigned int is_writable:1;
-> > >  	} regions[] __counted_by(nregions);
-> > >  };
-> > >
-> > > +#define NVM_TRIGGER_REG       0x00000000
-> > > +#define NVM_VALSIG_REG        0x00000010
-> > > +#define NVM_ADDRESS_REG       0x00000040
-> > > +#define NVM_REGION_ID_REG     0x00000044
-> > > +/*
-> > > + * [15:0]-Erase size = 0x0010 4K 0x0080 32K 0x0100 64K
-> > > + * [23:16]-Reserved
-> > > + * [31:24]-Erase MEM RegionID
-> > > + */
-> > > +#define NVM_ERASE_REG         0x00000048
-> > > +#define NVM_ACCESS_ERROR_REG  0x00000070
-> > > +#define NVM_ADDRESS_ERROR_REG 0x00000074
-> > > +
-> > > +/* Flash Valid Signature */
-> > > +#define NVM_FLVALSIG          0x0FF0A55A
-> > > +
-> > > +#define NVM_MAP_ADDR_MASK     GENMASK(7, 0)
-> > > +#define NVM_MAP_ADDR_SHIFT    0x00000004
-> > > +
-> > > +#define NVM_REGION_ID_DESCRIPTOR  0
-> > > +/* Flash Region Base Address */
-> > > +#define NVM_FRBA      0x40
-> > > +/* Flash Region __n - Flash Descriptor Record */
-> > > +#define NVM_FLREG(__n) (NVM_FRBA + ((__n) * 4))
-> > > +/*  Flash Map 1 Register */
-> > > +#define NVM_FLMAP1_REG  0x18
-> > > +#define NVM_FLMSTR4_OFFSET 0x00C
-> > > +
-> > > +#define NVM_ACCESS_ERROR_PCIE_MASK 0x7
-> > > +
-> > > +#define NVM_FREG_BASE_MASK GENMASK(15, 0)
-> > > +#define NVM_FREG_ADDR_MASK GENMASK(31, 16)
-> > > +#define NVM_FREG_ADDR_SHIFT 12
-> > > +#define NVM_FREG_MIN_REGION_SIZE 0xFFF
-> > 
-> > Should we move these to a header?
-> They are used only in this file, not shared to anyone, why to put in header?
+For SOCK_STREAM sockets, if user buffer size (len) is less
+than skb size (skb->len), the remaining data from skb
+will be lost after calling kfree_skb().
 
-If we know we won't be further expanding/splitting, sure.
+To fix this, move the statement for partial reading
+above skb deletion.
 
-...
+Found by InfoTeCS on behalf of Linux Verification Center (linuxtesting.org)
 
-> > > +static bool idg_nvm_region_readable(u32 access_map, u8 region)
-> > > +{
-> > > +	if (region < 12)
-> > 
-> > Anything special about 12? Should it have a macro def somewhere?
-> > 
-> 
-> The access bits are separated for first 12 regions and last 4.
-> My feeling that making below numbers #define will make
-> code less readable.
+Fixes: 30a584d944fb ("[LLX]: SOCK_DGRAM interface fixes")
+Cc: stable@vger.kernel.org
+Signed-off-by: Ilia Gavrilov <Ilia.Gavrilov@infotecs.ru>
+---
+ net/llc/af_llc.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-Then perhaps a small comment would be useful.
-
-> > > +		return access_map & BIT(region + 8); /* [19:8] */
-> > > +	else
-> > > +		return access_map & BIT(region - 12); /* [3:0] */
-> > > +}
-> > > +
-> > > +static bool idg_nvm_region_writable(u32 access_map, u8 region)
-> > > +{
-> > > +	if (region < 12)
-
-Ditto.
-
-> > > +		return access_map & BIT(region + 20); /* [31:20] */
-> > > +	else
-> > > +		return access_map & BIT(region - 8); /* [7:4] */
-> > > +}
-
-Raag
+diff --git a/net/llc/af_llc.c b/net/llc/af_llc.c
+index 0259cde394ba..cc77ec5769d8 100644
+--- a/net/llc/af_llc.c
++++ b/net/llc/af_llc.c
+@@ -887,15 +887,15 @@ static int llc_ui_recvmsg(struct socket *sock, struct=
+ msghdr *msg, size_t len,
+ 		if (sk->sk_type !=3D SOCK_STREAM)
+ 			goto copy_uaddr;
+=20
++		/* Partial read */
++		if (used + offset < skb_len)
++			continue;
++
+ 		if (!(flags & MSG_PEEK)) {
+ 			skb_unlink(skb, &sk->sk_receive_queue);
+ 			kfree_skb(skb);
+ 			*seq =3D 0;
+ 		}
+-
+-		/* Partial read */
+-		if (used + offset < skb_len)
+-			continue;
+ 	} while (len > 0);
+=20
+ out:
+--=20
+2.39.5
 
