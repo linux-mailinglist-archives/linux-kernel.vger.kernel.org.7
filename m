@@ -1,102 +1,197 @@
-Return-Path: <linux-kernel+bounces-649581-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-649583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D023AB8652
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 14:27:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A20B1AB865B
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 14:29:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3EFE27A594E
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 12:25:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 17AF31B633DD
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 12:28:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBA212989A0;
-	Thu, 15 May 2025 12:26:57 +0000 (UTC)
-Received: from bmailout1.hostsharing.net (bmailout1.hostsharing.net [83.223.95.100])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 809932989AF;
+	Thu, 15 May 2025 12:28:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="CSTl+sl+"
+Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88E661F0E20;
-	Thu, 15 May 2025 12:26:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.95.100
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747312017; cv=none; b=ry7DsHtw6V/oSpNgajpi9hKskLT4MmAWgRQTF7rfAV9LKXNRxLWhlk9pm4XzjWnFeDsrCxFLMbffTfm1t4drREH4ZQPaHVysXyfoknHXQ2rjRWSZGfxNecSLvEh0EKkoe1wU/mlInrU2GOby8+GlWY1KqxWInNwZC5TNuKBWvfU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747312017; c=relaxed/simple;
-	bh=6pAnn+UekFJZ8a8ublbvD3EYf+TORa8O6LbEZm5kWbw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nqNr7VMKntR8pxsTCX/fGKHI0tdWt5UkS5DqTMT2VKTYoooELWRyTP9+jkm+JeR+W29VMPBkHSsSvyi3MjZiP6Mi/2DWO8w7WEi13hsL6sJX2RQNJsHzctjYQDHmMHnGNEGAJE33vBo4UdVvb+k64UyZ1Dl/bLJRUuRT1iJW6iA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.95.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
-Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
-	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
-	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
-	by bmailout1.hostsharing.net (Postfix) with ESMTPS id 265132C00584;
-	Thu, 15 May 2025 14:26:19 +0200 (CEST)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-	id 11D3844E5A; Thu, 15 May 2025 14:26:53 +0200 (CEST)
-Date: Thu, 15 May 2025 14:26:53 +0200
-From: Lukas Wunner <lukas@wunner.de>
-To: Raag Jadav <raag.jadav@intel.com>
-Cc: Denis Benato <benato.denis96@gmail.com>,
-	Mario Limonciello <superm1@kernel.org>, rafael@kernel.org,
-	mahesh@linux.ibm.com, oohall@gmail.com, bhelgaas@google.com,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	ilpo.jarvinen@linux.intel.com, aravind.iddamsetty@linux.intel.com
-Subject: Re: [PATCH v3] PCI: Prevent power state transition of erroneous
- device
-Message-ID: <aCXdjWaKpHST79ZO@wunner.de>
-References: <20250504090444.3347952-1-raag.jadav@intel.com>
- <7dbb64ee-3683-4b47-b17d-288447da746e@gmail.com>
- <384a2c60-2f25-4a1d-b8a6-3ea4ea34e2c2@kernel.org>
- <350f35dd-757e-459f-81f7-666a4457e736@gmail.com>
- <aCXW4c-Ocly4t6yF@black.fi.intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 076352222CB;
+	Thu, 15 May 2025 12:28:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747312111; cv=pass; b=WUz6I9TGr/7eB8VAL2uaHMQshzos58BMTRSHRfwwOTLaFwpfOnj5uLeISxTNZnFcY1+cclN9Kf2/KXyYBZKrz7ex6YRqP50P8C/QtYgaA92TEz+rOBKwZ39QuU+G8WQDIif8cJ/FU5UifQ/9s5MB6Fp3yh74VT7G1eBjQxcmAro=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747312111; c=relaxed/simple;
+	bh=1KmjICqAPMW902hFnhxBalK1v+p498bQnPm22BLWGEA=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=RWkOVKFt9VwfW2jlj3/dOYxAKK6fxWbytTcBc0idHoPkO57+qv51E/ozPjy/D5LbyDxmAjpf/VJs0KDhg9QCWH0Rr5lwrjSDEbZF1r7kPfgMA1L9ZXYxueoBAjnqKL84oVwA2GtfiGPnXL9BB9gjvQcCgRv4DO9GNORnOfkACc0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=CSTl+sl+; arc=pass smtp.client-ip=136.143.188.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1747312088; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=hE5Ahuoe3liWlEt3Ayxmaghi/Hr2Qj9XuMC6VMi+Tz4gk8Ql4v62rGUaopNfb0rLiGnLFSJxjpGvsU4WEx2BYBtvxKnPHcwJzxdAL4f6cHoReJJrpUR8y6xTRJ2BqMgJpvufaxFldORC7rQ4S4NMykGtmVWKhfi0d6wJ8Zl+Rq0=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1747312088; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=pL7tEiHHFxsDRCPZMIVsmA66s8fZk8HT6WlwVxESBm0=; 
+	b=DyKuI//dykh19/JooaAa4gATHB76KhGYTN2rL7iWAjwDBPKLTXPvBNUB1Ar6CwcgYdKSWMonbrqvZfFB4iaPIJaSx+XlXyTF8voTxk7hAvHYMFNhI2vr5Gvguf9Vlem57jmOcBGWdpaMrfyE6P2gc42kBB103b0jefnHr1F28C0=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1747312088;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=pL7tEiHHFxsDRCPZMIVsmA66s8fZk8HT6WlwVxESBm0=;
+	b=CSTl+sl+Z03hAt+YSxSsu5EOkFiolwIldIjtRwcxPT244jSd3OUE+YtYvncYTgiC
+	LzG0uTph4z+EHiqg1xHhdfxaYhq45qu57zM33jbo3VW1qVbXR4HfGR3LKQWbf1O3Nuz
+	IaD+Y207lzkDwBeLzoiG9xKnLMo3y87/pxUUuPjQ=
+Received: by mx.zohomail.com with SMTPS id 1747312086918595.3368740394998;
+	Thu, 15 May 2025 05:28:06 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aCXW4c-Ocly4t6yF@black.fi.intel.com>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.500.181.1.5\))
+Subject: Re: [PATCH v3 1/2] rust: irq: add support for request_irq()
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <aCXYaCGvO_tI1OOh@pollux>
+Date: Thu, 15 May 2025 09:27:51 -0300
+Cc: Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <39C56E3E-07C6-44BB-B5F6-38090F037032@collabora.com>
+References: <20250514-topics-tyr-request_irq-v3-0-d6fcc2591a88@collabora.com>
+ <20250514-topics-tyr-request_irq-v3-1-d6fcc2591a88@collabora.com>
+ <aCUQ0VWgoxdmIUaS@pollux>
+ <A7E3A124-AF77-4A4A-B4E2-AE7DDB1CE007@collabora.com>
+ <aCXYaCGvO_tI1OOh@pollux>
+To: Danilo Krummrich <dakr@kernel.org>
+X-Mailer: Apple Mail (2.3826.500.181.1.5)
+X-ZohoMailClient: External
 
-On Thu, May 15, 2025 at 02:58:25PM +0300, Raag Jadav wrote:
-> On Wed, May 14, 2025 at 11:25:36PM +0200, Denis Benato wrote:
-> > I tested this patch on top of 6.14.6 and this patch comes with a nasty regression: s2idle resume breaks all my three GPUs, while for example the sound of a YT video resumes fine.
-> >
-> > You can see the dmesg here: https://pastebin.com/Um7bmdWi
-> 
-> Thanks for the report. From logs it looks like a hotplug event is triggered
-> for presence detect which is disabling the slot and in turn loosing the
-> device on resume. The cause of it is unclear though (assuming it is not
-> a manual intervention).
 
-When an Endpoint transitions to D3cold, the link to the Endpoint goes
-down.  If the Downstream Port above the Endpoint is hotplug-capable,
-it will see a Data Link Layer State Changed event as a side effect.
-If it doesn't support out-of-band presence detect, it will also see
-a Presence Detect Changed event as a side effect.
 
-As a workaround, graphics drivers invoke pci_ignore_hotplug() and that
-will cause pciehp and acpiphp to permanently ignore any hotplug events.
+> On 15 May 2025, at 09:04, Danilo Krummrich <dakr@kernel.org> wrote:
+>=20
+> On Thu, May 15, 2025 at 08:54:35AM -0300, Daniel Almeida wrote:
+>> Hi Danilo,
+>>=20
+>>> On 14 May 2025, at 18:53, Danilo Krummrich <dakr@kernel.org> wrote:
+>>>=20
+>>> On Wed, May 14, 2025 at 04:20:51PM -0300, Daniel Almeida wrote:
+>>>> +/// // This is running in process context.
+>>>> +/// fn register_irq(irq: u32, handler: Handler) -> =
+Result<Arc<Registration<Handler>>> {
+>>>> +///     let registration =3D Registration::register(irq, =
+flags::SHARED, c_str!("my-device"), handler);
+>>>> +///
+>>>> +///     // You can have as many references to the registration as =
+you want, so
+>>>> +///     // multiple parts of the driver can access it.
+>>>> +///     let registration =3D Arc::pin_init(registration, =
+GFP_KERNEL)?;
+>>>=20
+>>> This makes it possible to arbitrarily extend the lifetime of an IRQ
+>>> registration. However, we must guarantee that the IRQ is =
+unregistered when the
+>>> corresponding device is unbound. We can't allow drivers to hold on =
+to device
+>>> resources after the corresponding device has been unbound.
+>>>=20
+>>> Why does the data need to be part of the IRQ registration itself? =
+Why can't we
+>>> pass in an Arc<T> instance already when we register the IRQ?
+>>>=20
+>>> This way we'd never have a reason to ever access the Registration =
+instance
+>>> itself ever again and we can easily wrap it as =
+Devres<irq::Registration> -
+>>> analogously to devm_request_irq() on the C side - without any =
+penalties.
+>>>=20
+>>>> +///     // The handler may be called immediately after the =
+function above
+>>>> +///     // returns, possibly in a different CPU.
+>>>> +///
+>>>> +///     {
+>>>> +///         // The data can be accessed from the process context =
+too.
+>>>> +///         let mut data =3D registration.handler().0.lock();
+>>>> +///         *data =3D 42;
+>>>> +///     }
+>>>> +///
+>>>> +///     Ok(registration)
+>>>> +/// }
+>>>=20
+>>=20
+>> Up until this point, there was no need for the data to not be inline =
+with the
+>> registration. This new design would force an Arc, which, apart from =
+the
+>> heap-allocation, is restrictive for users.
+>=20
+> Does the current design not also imply a heap allocation heap =
+allocation? With
+> my proposal irq::Registration::new() can just return an =
+irq::Registration
+> instance, not an impl PinInit that you need to stuff into a Box or Arc =
+instead.
+> Hence, there shouldn't be a difference.
 
-In v6.16 there will be a new pci_hp_ignore_link_change() and
-pci_hp_unignore_link_change() API to tell PCI hotplug drivers that
-DLLSC and PDC events shall be ignored temporarily:
+Well, not really, because this impl PinInit can be assigned to something =
+larger
+that is already pinned, like drm::Device::Data for example, which is (or =
+was)
+already behind an Arc, or any other private data in other subsystems.
 
-https://git.kernel.org/pci/pci/c/2af781a9edc4
+IIUC what you proposed has yet another indirection. If we reuse the =
+example
+from above, that would be an Arc for the drm Data, and another Arc for =
+the
+handler itself?
 
-I intend to replace pci_ignore_hotplug() with this new approach,
-as explained here:
+I definitely see your point here, I am just trying to brainstorm another =
+way of
+doing this.
 
-https://lore.kernel.org/r/Z_nfuGrVh_CO7vbe@wunner.de
+>=20
+>> Can=E2=80=99t we use Devres with the current implementation?
+>>=20
+>> IIUC from a very cursory glance, all that would mean is that you'd =
+have to call
+>> try_access() on your handler, which should be fine?
+>=20
+> Well, that would work indeed.
+>=20
+> But people will - with good reason - be upset that every access to the =
+handler's
+> data needs to be guarded with the RCU read side critical section =
+implied by
+> Revocable and hence Devres.
 
-I'm not sure though if that will help with the issue at hand.
+True, I totally missed that.
 
-Thanks,
+>=20
+> We can easily avoid that in this case, hence we should do it.
 
-Lukas
+=E2=80=94 Daniel
+
 
