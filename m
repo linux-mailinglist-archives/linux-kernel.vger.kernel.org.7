@@ -1,181 +1,257 @@
-Return-Path: <linux-kernel+bounces-649887-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-649883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C754AB8A5F
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 17:15:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C20EFAB8A56
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 17:11:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A354166912
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 15:13:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6AB49188555D
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 15:11:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACEE820E306;
-	Thu, 15 May 2025 15:13:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DA7920D50C;
+	Thu, 15 May 2025 15:11:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="ZFVaJlbJ"
-Received: from smtpbgbr1.qq.com (smtpbgbr1.qq.com [54.207.19.206])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="O4hv2rgI";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="mt0eiv5x"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D49C20297C
-	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 15:13:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.207.19.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29F794B1E55;
+	Thu, 15 May 2025 15:11:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747322030; cv=none; b=sDRi0Q9FtEZDj0UK3/M+3PxPj/OtZd5ZsmN6BzKQgkDvAM0Juo10VCA1Yc0No7C8S1d82nbgAHziFiWntfN2WTcb+Gcp4koTLMT6QwRey9ZCrHuR/0Lu1IWYIIpk19FQSPnCtrr0yEz9HYudTTPGiQiFQTNYzkBH9vigqP8dV2o=
+	t=1747321875; cv=none; b=VBpVZbz1h08ub0kfXVrMi+wukQQjoFLvfUWeoFjeyiuIk2bRATKwh+SpEtahHGyn0UnEbV2t2iTew3OZGgG8LynY7ibR/Nvazp2gFDVDrWQg+JAcFMyPgEKRb6j3cVh/rEaD6LxWuuCoCOB2lH/dr4QXDM3q01oN9pOOxleRDfs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747322030; c=relaxed/simple;
-	bh=5MMJuVluFmfWh8yzeoLAFlerzf1UBspzoQLusknihCY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tMYgHn5SaKuqiV9iYbGGotw1sGR600skr70XHNc7L7LB3l1hT4eyZ8G5X0BPdz9ZPVf+x7d11SAzpuA3K4BdUQhrXgO//dyUHxpAaPXGU8KhwaF00inB0L5j7ZKwoerlt8yOf4kLtw8TBrSMZ1bsPlw6hzXE5IlExQqNFLnF1iw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=ZFVaJlbJ; arc=none smtp.client-ip=54.207.19.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1747321907;
-	bh=5MMJuVluFmfWh8yzeoLAFlerzf1UBspzoQLusknihCY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=ZFVaJlbJyy2UO/OW/ddgqTWM53yZGvElXXAEB91rAXcPzrB9hXEX+4t0Vo6z7O6jH
-	 zBkB4qmIudd7pXEy4jpADXyem+EWPCFAptxJODwYmSGIXNkDXRrPYgnpeLjhrzMOKb
-	 QDqY3WQs0NK1K0ioU1nmeNrz/M4ahn5Qk76GNFoc=
-X-QQ-mid: zesmtpip4t1747321869tf4fc534d
-X-QQ-Originating-IP: jWprH5ntMYNRrxPOyL7VxfVWxHkMrvwmaS4IlrjOn2A=
-Received: from [IPV6:240e:668:120a::212:232] ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Thu, 15 May 2025 23:11:07 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 6442505970655113230
-EX-QQ-RecipientCnt: 12
-Message-ID: <3E7C55B094E45D50+384fb80c-9d7d-408f-bef4-05d3f508c308@uniontech.com>
-Date: Thu, 15 May 2025 23:11:07 +0800
+	s=arc-20240116; t=1747321875; c=relaxed/simple;
+	bh=dNwNnQPh6bksZBqSL0axNCXhS6GnGNdb2tOH890+j38=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=GZkaMZEYII95PsHQjUqCebzkIolw2RlVyIugYYPl6PCC/EKm0J/NTtx/J9Cr02CqyKbPsvaH2WlXq7V2pXP+ToUZWLT0W/RNqdvMGE5diS6gIp4zNN2B0iZTZLejSyTOvAu2MkvPh3yw8jLDVB0S32C5B8nZoyOG7rfLbRY50Dw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=O4hv2rgI; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=mt0eiv5x; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 15 May 2025 15:11:09 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1747321870;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dW2ndhB+TxkJM4Zz5nTySCiW+h+/X4vFyxUVjLLxRJk=;
+	b=O4hv2rgI1NbO19VAAyMCJDfgcAG3JsDCt6L0XdSczwWclZJHQsAFJULRCNf7Eu5bqjB81F
+	l0NTp8EZZridEKwUfObbPCiC0wnJatQ+D/MNA5deMLbqoVZp07cxxV7QRG/MbvjKx+u3Z0
+	dUAZdp0YvIlwMenxvVobAm0YWZHwbNfaG3rOvub6PhqKcnZ4Sv0cuFnGf6G+2zGiQ8+3y+
+	cPG/J+abkMePEG8fCx+QSBGzWjYEoNDnp4EXMcYocnyfXc+ms7f/B6Fp41TybfcCZOMqzE
+	k3GJKZ1+TdWrPlT227zZBByMApy2scs5A044CtZMxvOIr82YepaUtv8mt2Kyxw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1747321870;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dW2ndhB+TxkJM4Zz5nTySCiW+h+/X4vFyxUVjLLxRJk=;
+	b=mt0eiv5xD2BeOsf3MGdNySzPdSZlp2dcVrryBpJLzaxxs1kKEbpWu3vOm4cWIGu1cIM4EH
+	ydEsCVwa8DXPEmAQ==
+From: "tip-bot2 for Shivank Garg" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/core] x86/mm: Fix kernel-doc descriptions of various
+ pgtable methods
+Cc: Shivank Garg <shivankg@amd.com>, Ingo Molnar <mingo@kernel.org>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ Andrew Cooper <andrew.cooper3@citrix.com>, Andy Lutomirski <luto@kernel.org>,
+ Brian Gerst <brgerst@gmail.com>, "H. Peter Anvin" <hpa@zytor.com>,
+ Juergen Gross <jgross@suse.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Peter Zijlstra <peterz@infradead.org>, Rik van Riel <riel@surriel.com>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250514062637.3287779-1-shivankg@amd.com>
+References: <20250514062637.3287779-1-shivankg@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm: vmscan: Avoid signedness error for GCC 5.4
-To: David Laight <david.laight.linux@gmail.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, yuzhao@google.com,
- stevensd@chromium.org, kaleshsingh@google.com, zhanjun@uniontech.com,
- niecheng1@uniontech.com, guanwentao@uniontech.com,
- Matthew Wilcox <willy@infradead.org>, Nathan Chancellor <nathan@kernel.org>
-References: <85050791B887DC13+20250506160238.799984-1-wangyuli@uniontech.com>
- <20250506162438.91fffc7ef924d9653ed0f503@linux-foundation.org>
- <74D5BC8AD7E5511A+13242b55-13e5-463a-9422-f863d58b6af6@uniontech.com>
- <20250510112419.749652a7@pumpkin>
-Content-Language: en-US
-From: WangYuli <wangyuli@uniontech.com>
-Autocrypt: addr=wangyuli@uniontech.com; keydata=
- xjMEZoEsiBYJKwYBBAHaRw8BAQdAyDPzcbPnchbIhweThfNK1tg1imM+5kgDBJSKP+nX39DN
- IVdhbmdZdWxpIDx3YW5neXVsaUB1bmlvbnRlY2guY29tPsKJBBMWCAAxFiEEa1GMzYeuKPkg
- qDuvxdofMEb0C+4FAmaBLIgCGwMECwkIBwUVCAkKCwUWAgMBAAAKCRDF2h8wRvQL7g0UAQCH
- 3mrGM0HzOaARhBeA/Q3AIVfhS010a0MZmPTRGVfPbwD/SrncJwwPAL4GiLPEC4XssV6FPUAY
- 0rA68eNNI9cJLArOOARmgSyJEgorBgEEAZdVAQUBAQdA88W4CTLDD9fKwW9PB5yurCNdWNS7
- VTL0dvPDofBTjFYDAQgHwngEGBYIACAWIQRrUYzNh64o+SCoO6/F2h8wRvQL7gUCZoEsiQIb
- DAAKCRDF2h8wRvQL7sKvAP4mBvm7Zn1OUjFViwkma8IGRGosXAvMUFyOHVcl1RTgFQEAuJkU
- o9ERi7qS/hbUdUgtitI89efbY0TVetgDsyeQiwU=
-In-Reply-To: <20250510112419.749652a7@pumpkin>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------b4tZn80DjacMEE6mZnoMOHqA"
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: M72q9RTiR0RXM2WODWc4MFdTJWG4JEmIwPmtKMaXKVmF/qh7eSmNaJRA
-	fUoRT0I6jrwYkFHDZsJc1d5Z1oNoHLTY0memQhAz0yrriWNvvSY/ojUUi6NR39udHS+0iDC
-	mhiSWXDFs+1k4tiFjanFSHkmVoTXoULHEpmLOlyfRU1Ck6RhmZX6JnEDq/0c8TnvIMJVaAl
-	GHIZlkfecYMV0Y1cz+ZcnZk/hXmDUEuJFvtOSuVJ7XPgzYCceGNfes3G1DKl3br6Lr1G1vW
-	6L6/o+eVjsjnqEjZr1wcenR+LM/TM6yUfu/pZYftmloLIqGlTFfOTd1YvwzvnXJkzjLFyF+
-	nsx14WB3OGZCnJJknZbyYqG0Q19jWDDESXi0zYoKC7Fq9rOLKnGPqXJdzYlkS49EdQCluOd
-	Io4ib5+6gmDFJtf5bnSycNef7x6nJqfYLvCxwkg9I+jPkKUtHui+HH2Pk83+pvmdeh7sYbK
-	FdbvRtMnHqzjba1cQ8264nTC3Oo7KRvQPgU+bW5TveqBXJ5/1QphsvfyvlwLF/s5s/iHrqv
-	1L/U7woVv2X5gmtcQpvcTpWOS8ujP4z144xB8tMUEVc3Waowm6yFSSU57DIL2uGbFGzfz5U
-	wbuupJg7nj3AFhISpc4Ecq61y019vpIPOP7diU6/OOik/ZzC5GOAUMbF0YKZ4d80yBH3sa9
-	bkp1u3ylrM2ISluYAfDZXsTNmmEOvO/8o/z97eSE5/LdXkEHpSeXDFOFpWFVe00p7e/5o5M
-	fuhf9ctNWXsVKo9aTP29zTeDt8D5wcfpOnkbRcIDJkw9cCe16oNPCROKOTLzAkQdoA1PbZJ
-	+m17gIOSEIIz+gS87PBpzyTO2WhF6hOXm58qDf3v2dciiVZgwJhauwDVN6EmfifTo1s0sTZ
-	OU447MPyjuGDPhR6tIAt786whyxq3k1rG435T+4zm2WwK/WgmIqOt1uAX4K7h6QKK9Cq4Ib
-	Aj7bkBmD82gKgew8k9FoTbmZGLcJqcucz2I9OlKs71B0IYtaUeJPVBn7KemK3WMxY0D7tnH
-	RL7VfnI5GxQ8TQNSTwVLTVA4Pn3SXGHyCjxxYyFKvt57x3U8aCVXVxsughd0IK5D7iJTSbi
-	1LtCMDGZOjcQV98E1RFH473TAL7JexzlD/vt8iEABmP8VwyUqhzvWE=
-X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
-X-QQ-RECHKSPAM: 0
+Message-ID: <174732186932.406.9535070697023965595.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------b4tZn80DjacMEE6mZnoMOHqA
-Content-Type: multipart/mixed; boundary="------------m4ETDRhQ4Wf0XTAfyPoUw0dA";
- protected-headers="v1"
-From: WangYuli <wangyuli@uniontech.com>
-To: David Laight <david.laight.linux@gmail.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, yuzhao@google.com,
- stevensd@chromium.org, kaleshsingh@google.com, zhanjun@uniontech.com,
- niecheng1@uniontech.com, guanwentao@uniontech.com,
- Matthew Wilcox <willy@infradead.org>, Nathan Chancellor <nathan@kernel.org>
-Message-ID: <384fb80c-9d7d-408f-bef4-05d3f508c308@uniontech.com>
-Subject: Re: [PATCH] mm: vmscan: Avoid signedness error for GCC 5.4
-References: <85050791B887DC13+20250506160238.799984-1-wangyuli@uniontech.com>
- <20250506162438.91fffc7ef924d9653ed0f503@linux-foundation.org>
- <74D5BC8AD7E5511A+13242b55-13e5-463a-9422-f863d58b6af6@uniontech.com>
- <20250510112419.749652a7@pumpkin>
-In-Reply-To: <20250510112419.749652a7@pumpkin>
+The following commit has been merged into the x86/core branch of tip:
 
---------------m4ETDRhQ4Wf0XTAfyPoUw0dA
-Content-Type: multipart/mixed; boundary="------------58xP3Dg6OuI4051EX5ej3BKg"
+Commit-ID:     1adf711919de7c9e1b281a4d9cd9e3a81f3a70f7
+Gitweb:        https://git.kernel.org/tip/1adf711919de7c9e1b281a4d9cd9e3a81f3a70f7
+Author:        Shivank Garg <shivankg@amd.com>
+AuthorDate:    Wed, 30 Apr 2025 11:29:59 
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Thu, 15 May 2025 17:04:36 +02:00
 
---------------58xP3Dg6OuI4051EX5ej3BKg
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
+x86/mm: Fix kernel-doc descriptions of various pgtable methods
 
-SGkgYWxsLA0KDQpBcG9sb2dpZXMgZm9yIHRoZSBkZWxheWVkIHJlc3BvbnNlLg0KDQpGaXJz
-dCwgdGhhbmsgeW91IGFsbCBmb3IgeW91ciByZW1pbmRlcnMgd2hpY2ggaGVscGVkIG1lIHVu
-ZGVyc3RhbmQgDQpleGFjdGx5IHdoYXQgY2F1c2VkIHRoZSBHQ0MgNS40IGNvbXBpbGUgZXJy
-b3IsIHRoZSBwcm9wZXIgZml4LCBhbmQgdGhlIA0KaXNzdWUgZGVzY3JpcHRpb24uDQoNCkhv
-d2V2ZXIsIHRoaXMgY2hhbmdlIG1pZ2h0IGJlIHVubmVjZXNzYXJ5IG5vdy4NCg0KVGhhbmtz
-IHRvIE5hdGhhbiBDaGFuY2VsbG9yJ3Mgbm90ZSBpbiBhbm90aGVyIGVtYWlsIHRoYXQgdGhl
-IG1pbmltdW0gDQp2ZXJzaW9uIG9mIEdDQyBpcyBiZWluZyBidW1wZWQgdG8gOC4xLlsxXQ0K
-DQpNeSB0ZXN0aW5nIGNvbmZpcm1zIHRoYXQgR0NDIDguMSBubyBsb25nZXIgZXhoaWJpdHMg
-dGhpcyBpc3N1ZS4NCg0KWzFdLiBodHRwczovL2xvcmUua2VybmVsLm9yZy9hbGwvMjAyNTA1
-MDgxNjMxMzguR0E4MzQzMzhAYXgxNjIvDQoNClRoYW5rcywNCi0tIA0KV2FuZ1l1bGkNCg==
+So 'make W=1' complains about a couple of kernel-doc descriptions
+in our MM primitives in pgtable.c:
 
---------------58xP3Dg6OuI4051EX5ej3BKg
-Content-Type: application/pgp-keys; name="OpenPGP_0xC5DA1F3046F40BEE.asc"
-Content-Disposition: attachment; filename="OpenPGP_0xC5DA1F3046F40BEE.asc"
-Content-Description: OpenPGP public key
-Content-Transfer-Encoding: quoted-printable
+  arch/x86/mm/pgtable.c:623: warning: Function parameter or struct member 'reserve' not described in 'reserve_top_address'
+  arch/x86/mm/pgtable.c:672: warning: Function parameter or struct member 'p4d' not described in 'p4d_set_huge'
+  arch/x86/mm/pgtable.c:672: warning: Function parameter or struct member 'addr' not described in 'p4d_set_huge'
+  ... so on
 
------BEGIN PGP PUBLIC KEY BLOCK-----
+Fix them all up, add missing parameter documentation, and fix various spelling
+inconsistencies while at it.
 
-xjMEZoEsiBYJKwYBBAHaRw8BAQdAyDPzcbPnchbIhweThfNK1tg1imM+5kgDBJSK
-P+nX39DNIVdhbmdZdWxpIDx3YW5neXVsaUB1bmlvbnRlY2guY29tPsKJBBMWCAAx
-FiEEa1GMzYeuKPkgqDuvxdofMEb0C+4FAmaBLIgCGwMECwkIBwUVCAkKCwUWAgMB
-AAAKCRDF2h8wRvQL7g0UAQCH3mrGM0HzOaARhBeA/Q3AIVfhS010a0MZmPTRGVfP
-bwD/SrncJwwPAL4GiLPEC4XssV6FPUAY0rA68eNNI9cJLArOOARmgSyJEgorBgEE
-AZdVAQUBAQdA88W4CTLDD9fKwW9PB5yurCNdWNS7VTL0dvPDofBTjFYDAQgHwngE
-GBYIACAWIQRrUYzNh64o+SCoO6/F2h8wRvQL7gUCZoEsiQIbDAAKCRDF2h8wRvQL
-7sKvAP4mBvm7Zn1OUjFViwkma8IGRGosXAvMUFyOHVcl1RTgFQEAuJkUo9ERi7qS
-/hbUdUgtitI89efbY0TVetgDsyeQiwU=3D
-=3DBlkq
------END PGP PUBLIC KEY BLOCK-----
+[ mingo: Harmonize kernel-doc annotations some more. ]
 
---------------58xP3Dg6OuI4051EX5ej3BKg--
+Signed-off-by: Shivank Garg <shivankg@amd.com>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Andrew Cooper <andrew.cooper3@citrix.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Brian Gerst <brgerst@gmail.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Juergen Gross <jgross@suse.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Rik van Riel <riel@surriel.com>
+Link: https://lore.kernel.org/r/20250514062637.3287779-1-shivankg@amd.com
+---
+ arch/x86/mm/pgtable.c | 50 ++++++++++++++++++++++++++----------------
+ 1 file changed, 31 insertions(+), 19 deletions(-)
 
---------------m4ETDRhQ4Wf0XTAfyPoUw0dA--
-
---------------b4tZn80DjacMEE6mZnoMOHqA
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-wnsEABYIACMWIQRrUYzNh64o+SCoO6/F2h8wRvQL7gUCaCYECwUDAAAAAAAKCRDF2h8wRvQL7qAT
-AQClN3rmnucFabXg6oSPzxu2515V1t0DMMbzLhYokJzrwAD/Z/5FyPS24iQhB3v6+tKXMKZ/gqn8
-Xbn3N4uRzmVmtgo=
-=O07e
------END PGP SIGNATURE-----
-
---------------b4tZn80DjacMEE6mZnoMOHqA--
+diff --git a/arch/x86/mm/pgtable.c b/arch/x86/mm/pgtable.c
+index 7c253de..59c42de 100644
+--- a/arch/x86/mm/pgtable.c
++++ b/arch/x86/mm/pgtable.c
+@@ -543,11 +543,11 @@ pud_t pudp_invalidate(struct vm_area_struct *vma, unsigned long address,
+ #endif
+ 
+ /**
+- * reserve_top_address - reserves a hole in the top of kernel address space
+- * @reserve - size of hole to reserve
++ * reserve_top_address - Reserve a hole in the top of the kernel address space
++ * @reserve: Size of hole to reserve
+  *
+  * Can be used to relocate the fixmap area and poke a hole in the top
+- * of kernel address space to make room for a hypervisor.
++ * of the kernel address space to make room for a hypervisor.
+  */
+ void __init reserve_top_address(unsigned long reserve)
+ {
+@@ -594,7 +594,10 @@ void native_set_fixmap(unsigned /* enum fixed_addresses */ idx,
+ #ifdef CONFIG_HAVE_ARCH_HUGE_VMAP
+ #ifdef CONFIG_X86_5LEVEL
+ /**
+- * p4d_set_huge - setup kernel P4D mapping
++ * p4d_set_huge - Set up kernel P4D mapping
++ * @p4d: Pointer to the P4D entry
++ * @addr: Virtual address associated with the P4D entry
++ * @prot: Protection bits to use
+  *
+  * No 512GB pages yet -- always return 0
+  */
+@@ -604,9 +607,10 @@ int p4d_set_huge(p4d_t *p4d, phys_addr_t addr, pgprot_t prot)
+ }
+ 
+ /**
+- * p4d_clear_huge - clear kernel P4D mapping when it is set
++ * p4d_clear_huge - Clear kernel P4D mapping when it is set
++ * @p4d: Pointer to the P4D entry to clear
+  *
+- * No 512GB pages yet -- always return 0
++ * No 512GB pages yet -- do nothing
+  */
+ void p4d_clear_huge(p4d_t *p4d)
+ {
+@@ -614,7 +618,10 @@ void p4d_clear_huge(p4d_t *p4d)
+ #endif
+ 
+ /**
+- * pud_set_huge - setup kernel PUD mapping
++ * pud_set_huge - Set up kernel PUD mapping
++ * @pud: Pointer to the PUD entry
++ * @addr: Virtual address associated with the PUD entry
++ * @prot: Protection bits to use
+  *
+  * MTRRs can override PAT memory types with 4KiB granularity. Therefore, this
+  * function sets up a huge page only if the complete range has the same MTRR
+@@ -645,7 +652,10 @@ int pud_set_huge(pud_t *pud, phys_addr_t addr, pgprot_t prot)
+ }
+ 
+ /**
+- * pmd_set_huge - setup kernel PMD mapping
++ * pmd_set_huge - Set up kernel PMD mapping
++ * @pmd: Pointer to the PMD entry
++ * @addr: Virtual address associated with the PMD entry
++ * @prot: Protection bits to use
+  *
+  * See text over pud_set_huge() above.
+  *
+@@ -674,7 +684,8 @@ int pmd_set_huge(pmd_t *pmd, phys_addr_t addr, pgprot_t prot)
+ }
+ 
+ /**
+- * pud_clear_huge - clear kernel PUD mapping when it is set
++ * pud_clear_huge - Clear kernel PUD mapping when it is set
++ * @pud: Pointer to the PUD entry to clear.
+  *
+  * Returns 1 on success and 0 on failure (no PUD map is found).
+  */
+@@ -689,7 +700,8 @@ int pud_clear_huge(pud_t *pud)
+ }
+ 
+ /**
+- * pmd_clear_huge - clear kernel PMD mapping when it is set
++ * pmd_clear_huge - Clear kernel PMD mapping when it is set
++ * @pmd: Pointer to the PMD entry to clear.
+  *
+  * Returns 1 on success and 0 on failure (no PMD map is found).
+  */
+@@ -705,11 +717,11 @@ int pmd_clear_huge(pmd_t *pmd)
+ 
+ #ifdef CONFIG_X86_64
+ /**
+- * pud_free_pmd_page - Clear pud entry and free pmd page.
+- * @pud: Pointer to a PUD.
+- * @addr: Virtual address associated with pud.
++ * pud_free_pmd_page - Clear PUD entry and free PMD page
++ * @pud: Pointer to a PUD
++ * @addr: Virtual address associated with PUD
+  *
+- * Context: The pud range has been unmapped and TLB purged.
++ * Context: The PUD range has been unmapped and TLB purged.
+  * Return: 1 if clearing the entry succeeded. 0 otherwise.
+  *
+  * NOTE: Callers must allow a single page allocation.
+@@ -752,11 +764,11 @@ int pud_free_pmd_page(pud_t *pud, unsigned long addr)
+ }
+ 
+ /**
+- * pmd_free_pte_page - Clear pmd entry and free pte page.
+- * @pmd: Pointer to a PMD.
+- * @addr: Virtual address associated with pmd.
++ * pmd_free_pte_page - Clear PMD entry and free PTE page.
++ * @pmd: Pointer to the PMD
++ * @addr: Virtual address associated with PMD
+  *
+- * Context: The pmd range has been unmapped and TLB purged.
++ * Context: The PMD range has been unmapped and TLB purged.
+  * Return: 1 if clearing the entry succeeded. 0 otherwise.
+  */
+ int pmd_free_pte_page(pmd_t *pmd, unsigned long addr)
+@@ -778,7 +790,7 @@ int pmd_free_pte_page(pmd_t *pmd, unsigned long addr)
+ 
+ /*
+  * Disable free page handling on x86-PAE. This assures that ioremap()
+- * does not update sync'd pmd entries. See vmalloc_sync_one().
++ * does not update sync'd PMD entries. See vmalloc_sync_one().
+  */
+ int pmd_free_pte_page(pmd_t *pmd, unsigned long addr)
+ {
 
