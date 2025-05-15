@@ -1,364 +1,88 @@
-Return-Path: <linux-kernel+bounces-649052-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-649055-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 412A1AB7F56
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 09:53:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8F32AB7F5B
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 09:54:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0730A4E0983
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 07:53:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B8D93AF861
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 07:54:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3992B2820D0;
-	Thu, 15 May 2025 07:52:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4086D27FD45;
+	Thu, 15 May 2025 07:54:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YhwdZu4/"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="CmEh/BHM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25B1A280304
-	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 07:52:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ABF528030E;
+	Thu, 15 May 2025 07:54:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747295577; cv=none; b=mugty1sXfu60Sdm7TvydqjMwpwRXZj4Ia10y9mb07K9i63jzTe0ufvN9sOsq+1K79DxLYR+4vXu1mbkhjexgNG/IMKfFVIt9z3crIVFN7cmO7i4WLGIQaLN5KYUCasNv3N0Zwf/U6FD/5WLOtTt0zSgGSkyiehHPHdrGc5CWDX8=
+	t=1747295659; cv=none; b=gT2pZ2erYi38MUY/oX3qlXBQO39ij8Q/oK4snGA86myU1a+AwoyAhLDdRD/D3OK5CNFCBSbvXoLP+X3ywkg0h+6UbrxtEMiOD/3M81HLvPcMiBM5ZxEzKl9eueywT2F+Y+sZ4me5mpfBqByR/h/KygLdHOKZhtlwdM0vKrYbNKs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747295577; c=relaxed/simple;
-	bh=eb+wlR6VhvXrZxjAcmXbXZfUEYlOr+TaIdA3h+BHceE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XvaPHgK+EuUPr0Ns+/ZURCmcnYLDoXDdsjSa7hfMWVocBOBAY6Zq3akJQApM7N6QjygTkcX9eTnK3QvJ0LW32yaxqU9WFBiLtDmCi1EzVckYmIcSjLlAPtFsSTrPDo+HSdfNMjGmnFz2dKtQAmC3Tv3+LWL3qK3v0TaNU3xwKLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YhwdZu4/; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1747295573;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eb+wlR6VhvXrZxjAcmXbXZfUEYlOr+TaIdA3h+BHceE=;
-	b=YhwdZu4/1qF5iy412CBwW36rUBrVdtMM+mCLXyQwyWPvBcQx6hUD0KIs56V2aHc3QqcnC9
-	bdu+s9M84Ha5LTwYaDUEsIXRRLbRUWdBheNjcCFJmIsVjFGSq+RicBzbOzCP5OgsmToUht
-	iu9N9Lg5pKunJe6lG7klkx6Rh20yFfI=
-Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
- [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-509-K8dRRdMiPEqAPSmdxY1TgA-1; Thu, 15 May 2025 03:52:51 -0400
-X-MC-Unique: K8dRRdMiPEqAPSmdxY1TgA-1
-X-Mimecast-MFC-AGG-ID: K8dRRdMiPEqAPSmdxY1TgA_1747295571
-Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-30c1c4a8274so768887a91.2
-        for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 00:52:51 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747295570; x=1747900370;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eb+wlR6VhvXrZxjAcmXbXZfUEYlOr+TaIdA3h+BHceE=;
-        b=bX3duJcElzwEejHgR/6c7Koaim5JAwuPXj6uOa9cScxvqdVUe2OyDN1Yc6+vN8v7JM
-         hIpMwfuQGkbmMbnAHQeYISqTvFqid4JQKkbAnsgw5BTh1sCSvGPoKscLO5wT22OYnZBi
-         snJLCQDfoHkx54Wz/0tlMkC3MGhiSQ6vxzzY9zX2bqnjt7f19kVgbrU3chpV6JzH3L+o
-         GJJTkxT/NX28XK1WWggf/KxIVzSKUPmurExxgevAFXvWlhEwMn7oHHWmWnKQXc7mZWdF
-         VuSefL8veF+1yqrHxVe7SMVANG5UOWTQX57yzr4xbEkX6zGJOQuphbd9rwIr/M0G/bol
-         EOMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUB5847OtVOkiUf4yFVh3WmsWqX06cXRqtpPxRgqM3IlSxZPN70Biw/f6bRCT+BJEgOPDYGdKYejVZzsPQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywl5en3BPzR2eZ6vm+/gzO0kC2kyJcVyX95AXMfCngNOVvNhtNM
-	JuhwOduwBljNuv21gF3MEPRJaMa+vYzcHZ2tYyWxs4DY+d1W8Rk4KkqFqb/7VlzRGc/3pEL/kw3
-	C6k4dP/fV5NTCZzgFT3+22gUImWxv3ScGIRs4JXnj9a7HpCoRiA9r5A7ZIY0FeXv9xgPUIQRxr2
-	orUxbUrc/dsRzLTYXhDBqYxs5V4XGVuqlEMygU
-X-Gm-Gg: ASbGncun5lNI765d0JrislprnXQqVqEiNW4/6bZ696kJuI9lxB4U9vsTCZkeKDkux8x
-	rl+0kuaI2S8ahP0XcBaAXaauJ6ksCosqRMOLnZi76m48O4XlJs2y1LQ7DDpSSEatZVrPj
-X-Received: by 2002:a17:90b:5748:b0:30e:5c7f:5d26 with SMTP id 98e67ed59e1d1-30e5c7f5e1cmr1092168a91.24.1747295570395;
-        Thu, 15 May 2025 00:52:50 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEPfseK+eDrNin6aeBitCZZLriHMOdldIb61D6rL2kRvicPYUO6lNTIgEIIN2iOKGqmJOl/hc7b+UCsh2aPCts=
-X-Received: by 2002:a17:90b:5748:b0:30e:5c7f:5d26 with SMTP id
- 98e67ed59e1d1-30e5c7f5e1cmr1092136a91.24.1747295569920; Thu, 15 May 2025
- 00:52:49 -0700 (PDT)
+	s=arc-20240116; t=1747295659; c=relaxed/simple;
+	bh=sxdO7aNfLSfO5lmZl2v3RLakD6ynfpy2GeysNMPD2ns=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mQ+mgKGDXxXG5zG869Drwyn9B/L+zOu3KSlOry1+KOTiyu/Cf1oMYvxquzT/4q4Ea/9goLfpNXClqWxBr4xo1KvcoTV/s1bjlX1fBo/12vq56jP/jMlFUGnl2+nLwUBoaknIlb/idzSj9WNFEeK+B0Hcid3i0G2FO0SoR7ov71Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=CmEh/BHM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 870C6C4CEE9;
+	Thu, 15 May 2025 07:54:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1747295658;
+	bh=sxdO7aNfLSfO5lmZl2v3RLakD6ynfpy2GeysNMPD2ns=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CmEh/BHMAicg6wnOnpRVmP+34GYGs6UYV01rIJggKEaIsQ63IWGRh03e6I5MZA+7d
+	 b6Hhcq4t87IyL4vnn1Iunszh98uV+gv7hzPZdO3rJYsYSD0nmhTK+rGh6/BAUewd4a
+	 hPUu6y97GohjyRZKhtXidic04erQglwvHK+yjfgw=
+Date: Thu, 15 May 2025 09:52:29 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Linux-Kernel <linux-kernel@vger.kernel.org>, devicetree@vger.kernel.org,
+	shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	goda <yusuke.goda.sx@renesas.com>,
+	Kurokawa <harunobu.kurokawa.dn@renesas.com>,
+	Kihara <takeshi.kihara.df@renesas.com>,
+	kazuya.mizuguchi.ks@renesas.com, takamitsu.honda.pv@renesas.com
+Subject: Re: Question about UIO vs DT
+Message-ID: <2025051549-flannels-lively-a46d@gregkh>
+References: <87o6vutrbw.wl-kuninori.morimoto.gx@renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250404145241.1125078-1-jon@nutanix.com> <CACGkMEsFc-URhXBCGZ1=CTMZKcWPf57pYy1TcyKLL=N65u+F0Q@mail.gmail.com>
- <B32E2C5D-25FB-427F-8567-701C152DFDE6@nutanix.com> <CACGkMEucg5mduA-xoyrTRK5nOkdHvUAkG9fH6KpO=HxMVPYONA@mail.gmail.com>
- <CAJaqyWdhLCNs_B0gcxXHut7xufw23HMR6PaO11mqAQFoGkdfXQ@mail.gmail.com>
- <92470838-2B98-4FC6-8E5B-A8AF14965D4C@nutanix.com> <A2A66437-60B2-491E-96F7-CD302E90452F@nutanix.com>
-In-Reply-To: <A2A66437-60B2-491E-96F7-CD302E90452F@nutanix.com>
-From: Eugenio Perez Martin <eperezma@redhat.com>
-Date: Thu, 15 May 2025 09:52:12 +0200
-X-Gm-Features: AX0GCFvxwoG_KF2kIsCofHB3OnMAdD648vC3tjuloR2Wyw6ADVoQtW7FrhQDNsw
-Message-ID: <CAJaqyWcNNFRnFmmkEHhOPGWAL05P1EO1ebMJY8+YUC0jxyq3hg@mail.gmail.com>
-Subject: Re: [PATCH] vhost/net: remove zerocopy support
-To: Jon Kohler <jon@nutanix.com>
-Cc: Jason Wang <jasowang@redhat.com>, "Michael S. Tsirkin" <mst@redhat.com>, 
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
-	"virtualization@lists.linux.dev" <virtualization@lists.linux.dev>, 
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Stefano Brivio <sbrivio@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87o6vutrbw.wl-kuninori.morimoto.gx@renesas.com>
 
-On Mon, May 12, 2025 at 5:21=E2=80=AFPM Jon Kohler <jon@nutanix.com> wrote:
->
->
->
-> > On Apr 30, 2025, at 9:21=E2=80=AFPM, Jon Kohler <jon@nutanix.com> wrote=
-:
-> >
-> >
-> >
-> >> On Apr 16, 2025, at 6:15=E2=80=AFAM, Eugenio Perez Martin <eperezma@re=
-dhat.com> wrote:
-> >>
-> >> !-------------------------------------------------------------------|
-> >> CAUTION: External Email
-> >>
-> >> |-------------------------------------------------------------------!
-> >>
-> >> On Tue, Apr 8, 2025 at 8:28=E2=80=AFAM Jason Wang <jasowang@redhat.com=
-> wrote:
-> >>>
-> >>> On Tue, Apr 8, 2025 at 9:18=E2=80=AFAM Jon Kohler <jon@nutanix.com> w=
-rote:
-> >>>>
-> >>>>
-> >>>>
-> >>>>> On Apr 6, 2025, at 7:14=E2=80=AFPM, Jason Wang <jasowang@redhat.com=
-> wrote:
-> >>>>>
-> >>>>> !------------------------------------------------------------------=
--|
-> >>>>> CAUTION: External Email
-> >>>>>
-> >>>>> |------------------------------------------------------------------=
--!
-> >>>>>
-> >>>>> On Fri, Apr 4, 2025 at 10:24=E2=80=AFPM Jon Kohler <jon@nutanix.com=
-> wrote:
-> >>>>>>
-> >>>>>> Commit 098eadce3c62 ("vhost_net: disable zerocopy by default") dis=
-abled
-> >>>>>> the module parameter for the handle_tx_zerocopy path back in 2019,
-> >>>>>> nothing that many downstream distributions (e.g., RHEL7 and later)=
- had
-> >>>>>> already done the same.
-> >>>>>>
-> >>>>>> Both upstream and downstream disablement suggest this path is rare=
-ly
-> >>>>>> used.
-> >>>>>>
-> >>>>>> Testing the module parameter shows that while the path allows pack=
-et
-> >>>>>> forwarding, the zerocopy functionality itself is broken. On outbou=
-nd
-> >>>>>> traffic (guest TX -> external), zerocopy SKBs are orphaned by eith=
-er
-> >>>>>> skb_orphan_frags_rx() (used with the tun driver via tun_net_xmit()=
-)
-> >>>>>
-> >>>>> This is by design to avoid DOS.
-> >>>>
-> >>>> I understand that, but it makes ZC non-functional in general, as ZC =
-fails
-> >>>> and immediately increments the error counters.
-> >>>
-> >>> The main issue is HOL, but zerocopy may still work in some setups tha=
-t
-> >>> don't need to care about HOL. One example the macvtap passthrough
-> >>> mode.
-> >>>
-> >>>>
-> >>>>>
-> >>>>>> or
-> >>>>>> skb_orphan_frags() elsewhere in the stack,
-> >>>>>
-> >>>>> Basically zerocopy is expected to work for guest -> remote case, so
-> >>>>> could we still hit skb_orphan_frags() in this case?
-> >>>>
-> >>>> Yes, you=E2=80=99d hit that in tun_net_xmit().
-> >>>
-> >>> Only for local VM to local VM communication.
-> >
-> > Sure, but the tricky bit here is that if you have a mix of VM-VM and VM=
--external
-> > traffic patterns, any time the error path is hit, the zc error counter =
-will go up.
-> >
-> > When that happens, ZC will get silently disabled anyhow, so it leads to=
- sporadic
-> > success / non-deterministic performance.
-> >
-> >>>
-> >>>> If you punch a hole in that *and* in the
-> >>>> zc error counter (such that failed ZC doesn=E2=80=99t disable ZC in =
-vhost), you get ZC
-> >>>> from vhost; however, the network interrupt handler under net_tx_acti=
-on and
-> >>>> eventually incurs the memcpy under dev_queue_xmit_nit().
-> >>>
-> >>> Well, yes, we need a copy if there's a packet socket. But if there's
-> >>> no network interface taps, we don't need to do the copy here.
-> >>>
-> >
-> > Agreed on the packet socket side. I recently fixed an issue in lldpd [1=
-] that prevented
-> > this specific case; however, there are still other trip wires spread ou=
-t across the
-> > stack that would need to be addressed.
-> >
-> > [1] https://github.com/lldpd/lldpd/commit/622a91144de4ae487ceebdb333863=
-e9f660e0717
-> >
-> >>
-> >> Hi!
-> >>
-> >> I need more time diving into the issues. As Jon mentioned, vhost ZC is
-> >> so little used I didn't have the chance to experiment with this until
-> >> now :). But yes, I expect to be able to overcome these for pasta, by
-> >> adapting buffer sizes or modifying code etc.
-> >
-> > Another tricky bit here is that it has been disabled both upstream and =
-downstream
-> > for so long, the code naturally has a bit of wrench-in-the-engine.
-> >
-> > RE Buffer sizes: I tried this as well, because I think on sufficiently =
-fast systems,
-> > zero copy gets especially interesting in GSO/TSO cases where you have m=
-ega
-> > payloads.
-> >
-> > I tried playing around with the good copy value such that ZC restricted=
- itself to
-> > only lets say 32K payloads and above, and while it *does* work (with en=
-ough
-> > holes punched in), absolute t-put doesn=E2=80=99t actually go up, its j=
-ust that CPU utilization
-> > goes down a pinch. Not a bad thing for certain, but still not great.
-> >
-> > In fact, I found that tput actually went down with this path, even with=
- ZC occurring
-> > successfully, as there was still a mix of ZC and non-ZC because you can=
- only
-> > have so many pending at any given time before the copy path kicks in ag=
-ain.
-> >
-> >
-> >>
-> >>>>
-> >>>> This is no more performant, and in fact is actually worse since the =
-time spent
-> >>>> waiting on that memcpy to resolve is longer.
-> >>>>
-> >>>>>
-> >>>>>> as vhost_net does not set
-> >>>>>> SKBFL_DONT_ORPHAN.
-> >>>
-> >>> Maybe we can try to set this as vhost-net can hornor ulimit now.
-> >
-> > Yea I tried that, and while it helps kick things further down the stack=
-, its not actually
-> > faster in any testing I=E2=80=99ve drummed up.
-> >
-> >>>
-> >>>>>>
-> >>>>>> Orphaning enforces a memcpy and triggers the completion callback, =
-which
-> >>>>>> increments the failed TX counter, effectively disabling zerocopy a=
-gain.
-> >>>>>>
-> >>>>>> Even after addressing these issues to prevent SKB orphaning and er=
-ror
-> >>>>>> counter increments, performance remains poor. By default, only 64
-> >>>>>> messages can be zerocopied, which is immediately exhausted by work=
-loads
-> >>>>>> like iperf, resulting in most messages being memcpy'd anyhow.
-> >>>>>>
-> >>>>>> Additionally, memcpy'd messages do not benefit from the XDP batchi=
-ng
-> >>>>>> optimizations present in the handle_tx_copy path.
-> >>>>>>
-> >>>>>> Given these limitations and the lack of any tangible benefits, rem=
-ove
-> >>>>>> zerocopy entirely to simplify the code base.
-> >>>>>>
-> >>>>>> Signed-off-by: Jon Kohler <jon@nutanix.com>
-> >>>>>
-> >>>>> Any chance we can fix those issues? Actually, we had a plan to make
-> >>>>> use of vhost-net and its tx zerocopy (or even implement the rx
-> >>>>> zerocopy) in pasta.
-> >>>>
-> >>>> Happy to take direction and ideas here, but I don=E2=80=99t see a cl=
-ear way to fix these
-> >>>> issues, without dealing with the assertions that skb_orphan_frags_rx=
- calls out.
-> >>>>
-> >>>> Said another way, I=E2=80=99d be interested in hearing if there is a=
- config where ZC in
-> >>>> current host-net implementation works, as I was driving myself crazy=
- trying to
-> >>>> reverse engineer.
-> >>>
-> >>> See above.
-> >>>
-> >>>>
-> >>>> Happy to collaborate if there is something we could do here.
-> >>>
-> >>> Great, we can start here by seeking a way to fix the known issues of
-> >>> the vhost-net zerocopy code.
-> >>>
-> >>
-> >> Happy to help here :).
-> >>
-> >> Jon, could you share more details about the orphan problem so I can
-> >> speed up the help? For example, can you describe the code changes and
-> >> the code path that would lead to that assertion of
-> >> skb_orphan_frags_rx?
-> >>
-> >> Thanks!
-> >>
-> >
-> > Sorry for the slow response, getting back from holiday and catching up.
-> >
-> > When running through tun.c, there are a handful of places where ZC turn=
-s into
-> > a full copy, whether that is in the tun code itself, or in the interrup=
-t handler when
-> > tun xmit is running.
-> >
-> > For example, tun_net_xmit mandatorily calls skb_orphan_frags_rx. Anythi=
-ng
-> > with frags will get this memcpy, which are of course the =E2=80=9Cjuicy=
-=E2=80=9D targets here as
-> > they would take up the most memory bandwidth in general. Nasty catch22 =
-:)
-> >
-> > There are also plenty of places that call normal skb_orphan_frags, whic=
-h
-> > triggers because vhost doesn=E2=80=99t set SKBFL_DONT_ORPHAN. That=E2=
-=80=99s an easy
-> > fix, but still something to think about.
-> >
-> > Then there is the issue of packet sockets, which throw a king sized wre=
-nch into
-> > this. Its slightly insidious, but it isn=E2=80=99t directly apparent th=
-at loading some user
-> > space app nukes zero copy, but it happens.
-> >
-> > See my previous comment about LLDPD, where a simply compiler snafu caus=
-ed
-> > one socket option to get silently break, and it then ripped out ZC capa=
-bility. Easy
-> > fix, but its an example of how this can fall over.
-> >
-> > Bottom line, I=E2=80=99d *love****** have ZC work, work well and so on.=
- I=E2=80=99m open to ideas
-> > here :) (up to and including both A) fixing it and B) deleting it)
->
-> Hey Eugenio - wondering if you had a chance to check out my notes on this=
-?
->
+On Thu, May 15, 2025 at 04:45:23AM +0000, Kuninori Morimoto wrote:
+> 
+> Hi Greg / UIO / DT
+> 
+> I would like to ask about UIO vs DT.
+> 
+> If my understanding was correct, current UIO can use 1 IRQ / 1 reg per 1 UIO,
+> but some device needs multi-IRQ/reg. In such case, we need to use
+> multi-UIO. But it is not good much to DT rule. For example in case of
+> the device which needs "2 regs 3 irqs". it will be
+> 
+> (A)	[1 reg, 1 IRQ] UIO
+> (B)	[1 reg, 1 IRQ] UIO
+> (C)	[0 reg, 1 IRQ] UIO
+> 
+> and (C) will be DT error. Is this known issue ? Do we have better solution ?
 
-Sorry I thought I was going to have the code ready by now :). I'll
-need more time to go through the items.
+Yes, write a real driver for the device as obviously it is a complex one
+and UIO shouldn't be used for it :)
 
+What type of device is this that requires this type of hardware control
+and why do you feel that UIO is the proper solution?
+
+thanks,
+
+greg k-h
 
