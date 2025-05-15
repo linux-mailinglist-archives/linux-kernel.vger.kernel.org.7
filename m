@@ -1,64 +1,74 @@
-Return-Path: <linux-kernel+bounces-649281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-649283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7956AB826F
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 11:23:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A441AB8278
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 11:25:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F7064C628E
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 09:23:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5184F7A9B63
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 09:24:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F805297119;
-	Thu, 15 May 2025 09:23:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACE6D297A7C;
+	Thu, 15 May 2025 09:25:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DlSg03m8"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Xj41abCA"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E2B6289E03;
-	Thu, 15 May 2025 09:23:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DA1D221296;
+	Thu, 15 May 2025 09:25:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747301025; cv=none; b=emluqKjMyMImP051FOTA4p0ZAkmQL2cLeHri2R8vtTW30ABBBp+DfsaaAKvO/5RbwCHyL0dO7lFY57j77BSlbybL1jth6HahUKHs2zMCsrbLAvwp1MeGNuyt2pcx81qUULU2jlcizkkTT+AHrtgnitv0K6zCF/fbAcJ0Ivx/Oyk=
+	t=1747301104; cv=none; b=S7JalAyoTHhr4FeJVeccJah2LexCF6kN44xpnEATMlh6zTNb8DXCNF4gsfrelg8vPLL+48VFjKGNzO89RSzAeOT1+yneggxSxlY6APZ91+6IhRZaQpUFrDKCMlwxtgHYlcxNMulFvHPbe+pbmgOtwOTKyYX5cICjUDCUmfv8zFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747301025; c=relaxed/simple;
-	bh=pmh0bU9D30ShKkm22QJjwQKrEY0tzBBAail+x8L+Wfg=;
+	s=arc-20240116; t=1747301104; c=relaxed/simple;
+	bh=FOB3K3pY+F4jlai+86UarnLpNHKWWIcm3T9iHIOsqi4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eh1rWGYHMjTB804HsQbOF639VQxl93wog57BS9XHHm0nAAIHW1Qw0DBw7cBuaUjGXek154O/9sJPtfCFTa0Df5v8KSaF8ZhUsICnrUbrPIj0qrNjlq+9mXxfwXtf7Nr+J9VvWvwir34As8JSEoZWp09E+IT094N4IGrATWaQfT0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DlSg03m8; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1747301024; x=1778837024;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=pmh0bU9D30ShKkm22QJjwQKrEY0tzBBAail+x8L+Wfg=;
-  b=DlSg03m8IylNEUUW6MTQCJbsnIW1G5ZqugPTa9crCmTTof/LzSwLVNwW
-   p6UUWLidHo1FWZhA7Hv46RNa5US39hUZLWtM6dOhCV5OyOhWjpPmiGO+W
-   Cs3rXQESMYyfwhw1ajKSf46uvlapHDeHn2NLjtdVwPsSgUZZoecF+7Z2g
-   bMevLfNCsfz6F6Td9j82XOEqObov4pislEOrrcba2I/7sTEDA7HhslZJo
-   JVsl5jzlzGABmr5uWYWtzndHtQ8NdLIitlyD+ZsSnB/7QwFVmzAV3wb3E
-   LfHScJLzNkXUSsXle79B0gwdH82PjRVvI8Z5rfvhroqimx82UlUJvigwg
-   Q==;
-X-CSE-ConnectionGUID: EXXIF+x5TYmRhL2w2cqnTQ==
-X-CSE-MsgGUID: /V05UTTsTuqqotMANPi2TA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11433"; a="60628654"
-X-IronPort-AV: E=Sophos;i="6.15,290,1739865600"; 
-   d="scan'208";a="60628654"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2025 02:23:42 -0700
-X-CSE-ConnectionGUID: Refl9nmdQnCSQuH4FV2QOA==
-X-CSE-MsgGUID: J3wJnCFwRly62bB+1zlDUA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,290,1739865600"; 
-   d="scan'208";a="138722753"
-Received: from sbockowx-mobl2.ger.corp.intel.com (HELO [10.94.8.84]) ([10.94.8.84])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2025 02:23:38 -0700
-Message-ID: <3470451d-6768-42d4-93db-2783ffd9cbab@linux.intel.com>
-Date: Thu, 15 May 2025 11:23:36 +0200
+	 In-Reply-To:Content-Type; b=P1E5fxUgrXTqkSQ60fYKbWkhctE2PCh0Gdag4FD6sIysA6oY/4Ik0p0KsquXsw00FPxqvh2UhmSAg3PTKf+bsRmOPmOk30KGCz66esdazbVairRlSxwkoAD3UmvWbSr+iXQbHZFYroa+/cXI46h9pW7azxdu/vEMLCNcvbi3l6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Xj41abCA; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54F6OCW7014537;
+	Thu, 15 May 2025 09:24:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=8h69w0
+	8A9QwkYhNAcKreTXG+qKfy8roG1DkTKo/70aI=; b=Xj41abCAvpx3NzcjYZxMR2
+	YFtsxFY+S0mBSGzTScOiXZArfp1+WQOXSyL2f9UVAC9FOSJtLGVu6RnTX9/wjaWj
+	foXGsaYnb8HYPonZ779p0muRhd8+S24mym0IpmyzXSzENWEJZ6oXzMl/xln8HtN4
+	+fpx/TGn1F3wqlX0PyqKCARWW0Lytz/BgCL3bnbMSwSCD3u+putGcfFSDiWBkwGt
+	IDwHs9Hq6NwbpRyYEC1fm/ClHw4HdWsks75TZd661KO/y8EuXj2ifnWFF0ytZ4aL
+	IIl6atmgXo05o9N7oa6U6cllP7WFxtFIxR6d7E0Jg4W57CblO38lstMSmrMXtjhg
+	==
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46n0v6kdj0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 15 May 2025 09:24:46 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 54F7F2u5021396;
+	Thu, 15 May 2025 09:24:46 GMT
+Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 46mbfrscer-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 15 May 2025 09:24:46 +0000
+Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
+	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 54F9Og7P55771644
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 15 May 2025 09:24:42 GMT
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id F127D2007B;
+	Thu, 15 May 2025 09:24:41 +0000 (GMT)
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 796392007A;
+	Thu, 15 May 2025 09:24:41 +0000 (GMT)
+Received: from [9.152.224.40] (unknown [9.152.224.40])
+	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 15 May 2025 09:24:41 +0000 (GMT)
+Message-ID: <acfad3e9-f4df-481a-8322-141c3579602b@linux.ibm.com>
+Date: Thu, 15 May 2025 11:24:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,71 +76,67 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ASoC: Intel: avs: rt274: Add null pointer check for
- snd_soc_card_get_codec_dai()
-To: Wentao Liang <vulab@iscas.ac.cn>, cezary.rojewski@intel.com,
- liam.r.girdwood@linux.intel.com, peter.ujfalusi@linux.intel.com,
- yung-chuan.liao@linux.intel.com, ranjani.sridharan@linux.intel.com,
- kai.vehmanen@linux.intel.com, pierre-louis.bossart@linux.dev,
- broonie@kernel.org, perex@perex.cz, tiwai@suse.com
-Cc: kuninori.morimoto.gx@renesas.com, linux-sound@vger.kernel.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <20250514141947.998-1-vulab@iscas.ac.cn>
+Subject: Re: [PATCH] KVM: s390: rename PROT_NONE to PROT_TYPE_DUMMY
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc: Ignacio Moreno Gonzalez <Ignacio.MorenoGonzalez@kuka.com>,
+        linux-mm@kvack.org, Yang Shi <yang@os.amperecomputing.com>,
+        Janosch Frank <frankja@linux.ibm.com>,
+        David Hildenbrand <david@redhat.com>,
+        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>, kvm@vger.kernel.org,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        pbonzini@redhat.com
+References: <20250514163530.119582-1-lorenzo.stoakes@oracle.com>
 Content-Language: en-US
-From: =?UTF-8?Q?Amadeusz_S=C5=82awi=C5=84ski?=
- <amadeuszx.slawinski@linux.intel.com>
-In-Reply-To: <20250514141947.998-1-vulab@iscas.ac.cn>
+From: Christian Borntraeger <borntraeger@linux.ibm.com>
+In-Reply-To: <20250514163530.119582-1-lorenzo.stoakes@oracle.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=IqAecK/g c=1 sm=1 tr=0 ts=6825b2df cx=c_pps a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=VwQbUJbxAAAA:8 a=QyXUC8HyAAAA:8 a=yPCof4ZbAAAA:8 a=TAZUD9gdAAAA:8 a=VnNF1IyMAAAA:8
+ a=6puILLhiXrOUVKTfem0A:9 a=QEXdDO2ut3YA:10 a=f1lSKsbWiCfrRWj5-Iac:22
+X-Proofpoint-ORIG-GUID: yZcsqEheSgMmMrQugs9qS4KVCkbgPcbu
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTE1MDA4OCBTYWx0ZWRfX9n/zFJb8L9f5 DKjXxvWP7VtulRdOLoorNI1YLivkoVzk0E+QGp5E/ONJ4Irj6yaVyQKsSnpyRwyDcY8BEa5o/IM 6SpGZvKvY/MgEao81ze72+Hwny/ODqBDcy2zzwaqNoIY2MrxYjKG9V2Tj0o7tU1CnaHwpW+u0D9
+ 1URwvRTeIqxd3UdKEynSKOsB/GFdceDPq0xTaMYAnF/3d31ZcEgbEuMNwERSjnUhWSYPJCCmG/G a01F/feD71JTquMhQbUSNmulT5LPz6AfQMwHPePO4ZveIC7DtRUcx7i1qYhXvFWGspP9tgKTBIB c+vPyIsS0gAr/Ibp70+/ykIbLQyrdRnA6rYUDmCRiO0YawgHOoi0JD+gBV/2BWriX3Y+oTRSOjW
+ 84IA61t/j5YsxaD/bt11UpeYNgGeRu2RG+mKbI7z5dTcKhOOvos+aBgux5Rqrxmk0GP8TMxP
+X-Proofpoint-GUID: yZcsqEheSgMmMrQugs9qS4KVCkbgPcbu
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-15_04,2025-05-14_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
+ adultscore=0 lowpriorityscore=0 phishscore=0 impostorscore=0
+ priorityscore=1501 clxscore=1015 spamscore=0 mlxlogscore=661 bulkscore=0
+ suspectscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505070000
+ definitions=main-2505150088
 
 
 
-On 2025-05-14 16:19, Wentao Liang wrote:
-> The avs_card_suspend_pre() and avs_card_resume_post() in rt274
-> calls the snd_soc_card_get_codec_dai(), but does not check its return
-> value which is a null pointer if the function fails. This can result
-> in a null pointer dereference. A proper implementation can be found
-> in acp5x_nau8821_hw_params() and card_suspend_pre().
+Am 14.05.25 um 18:35 schrieb Lorenzo Stoakes:
+> The enum type prot_type declared in arch/s390/kvm/gaccess.c declares an
+> unfortunate identifier within it - PROT_NONE.
 > 
-> Add a null pointer check for snd_soc_card_get_codec_dai() to avoid null
-> pointer dereference when the function fails.
+> This clashes with the protection bit define from the uapi for mmap()
+> declared in include/uapi/asm-generic/mman-common.h, which is indeed what
+> those casually reading this code would assume this to refer to.
 > 
-> Fixes: a08797afc1f9 ("ASoC: Intel: avs: rt274: Refactor jack handling")
-> Cc: stable@vger.kernel.org # v6.2
-> Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
-> ---
->   sound/soc/intel/avs/boards/rt274.c | 10 ++++++++++
->   1 file changed, 10 insertions(+)
+> This means that any changes which subsequently alter headers in any way
+> which results in the uapi header being imported here will cause build
+> errors.
 > 
-> diff --git a/sound/soc/intel/avs/boards/rt274.c b/sound/soc/intel/avs/boards/rt274.c
-> index 4b6c02a40204..7a8b6ee79f4c 100644
-> --- a/sound/soc/intel/avs/boards/rt274.c
-> +++ b/sound/soc/intel/avs/boards/rt274.c
-> @@ -194,6 +194,11 @@ static int avs_card_suspend_pre(struct snd_soc_card *card)
->   {
->   	struct snd_soc_dai *codec_dai = snd_soc_card_get_codec_dai(card, RT274_CODEC_DAI);
->   
-> +	if (!codec_dai) {
-> +		dev_err(card->dev, "Codec dai not found\n");
-> +		return -EINVAL;
-> +	}
-> +
->   	return snd_soc_component_set_jack(codec_dai->component, NULL, NULL);
->   }
->   
-> @@ -202,6 +207,11 @@ static int avs_card_resume_post(struct snd_soc_card *card)
->   	struct snd_soc_dai *codec_dai = snd_soc_card_get_codec_dai(card, RT274_CODEC_DAI);
->   	struct snd_soc_jack *jack = snd_soc_card_get_drvdata(card);
->   
-> +	if (!codec_dai) {
-> +		dev_err(card->dev, "Codec dai not found\n");
-> +		return -EINVAL;
-> +	}
-> +
->   	return snd_soc_component_set_jack(codec_dai->component, jack, NULL);
->   }
->   
+> Resolve the issue by renaming PROT_NONE to PROT_TYPE_DUMMY.
+> 
+> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> Suggested-by: Ignacio Moreno Gonzalez <Ignacio.MorenoGonzalez@kuka.com>
+> Fixes: b3cefd6bf16e ("KVM: s390: Pass initialized arg even if unused")
+> Cc: stable@vger.kernel.org
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202505140943.IgHDa9s7-lkp@intel.com/
 
-Same as in other case, where Cezary commented - this is not needed, once 
-card is loaded codec should exist.
+Acked-by: Christian Borntraeger <borntraeger@linux.ibm.com>
+I think its fine to go via mm tree.
+
+
 
