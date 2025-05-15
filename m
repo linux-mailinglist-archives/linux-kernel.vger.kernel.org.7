@@ -1,137 +1,106 @@
-Return-Path: <linux-kernel+bounces-649418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-649420-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A49BCAB8490
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 13:12:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EE96AB84A1
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 13:16:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3DF7B4619BB
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 11:12:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 922821BC2280
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 11:15:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 828B4298259;
-	Thu, 15 May 2025 11:12:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C42D29898E;
+	Thu, 15 May 2025 11:14:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jrE7mMQi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7DCE297B8F;
-	Thu, 15 May 2025 11:12:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="qJC4ZpqD"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B75C20297C;
+	Thu, 15 May 2025 11:14:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747307520; cv=none; b=CcQay3Of1uw5BayOQWBmZswRL6znbrmUXWm8C6l7PamYGkvhLBcWTgUMOUNsfAdbNhFfKODi0kM+kMQMABMF/koPn7UAyBNAC+HceTYQJBRWqIaiMFPyBwCCqOJDmadotolkSJzaRB9i2B+aaTBgNhF26qltCv7RU6yeQAmSgwU=
+	t=1747307696; cv=none; b=TTKzJkB21q3/HcfgySdss9nM7BLRFOsv3bVSjuhe53n7+1JUa/xcYHbEHmfTehC2oMQ048a3P0ucOyZV5NbqkJj6hey4IcyNqMlZq0fZKC98pjyoqbGyY4jk84LCXKPGGv/Otgi5llSdaI/pLCkoK1PwceUuHsENyhb6bJF/4rg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747307520; c=relaxed/simple;
-	bh=XPgp+L0xynTMhQdAzvCt1qZX2mlUrGAkjD9kQfYs8lQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Fq22bH9vzJCz8lUfc7BugI7aUKwMU4aUY8NZCMyZ5vDXOOJ6703CUtJ6Jfgdx5EHHrUd2hcOOPW3sAtw9tHQbKghHuGyTjEBPIRzgCxfsC5bxNiipIspyBNF3rG4Qgvn+FuRBuifOoCMAt3DEUyxRxaEkA5IsPRYo81NqspJGRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jrE7mMQi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A40CEC4CEE7;
-	Thu, 15 May 2025 11:11:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747307520;
-	bh=XPgp+L0xynTMhQdAzvCt1qZX2mlUrGAkjD9kQfYs8lQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=jrE7mMQifMc13Y+3ygYR6Ksx18KYg211bivTIiBnDb4Dq745anxWHzyhyG5eK8lYV
-	 4ZbaoTVzZQ8CYY9jqpashkR9z2Jmm67I0wF+PN/3ntuUbbD2OgUra3UD+vxQCCHdJ/
-	 Fr4BxbpIGmwUCf9Hxy+gc6ScMs+3zO0wNAnisOPsWnsPxJgZ/SPV//+j/lMTl8u7EX
-	 7/4g1PVfrifnQqPZ1XhDLpmL2VKoogXaEtZ7iOpFa91UrvjqxQFaztivEW9LY3o01b
-	 O9Dp0Kd8jACC3UOLApN8mIZ/RsJhAFTjuQ4DLZYL+p+l5pGTIKc+YPdc36bFEb+vLH
-	 c4eKN6dj0XcUg==
-Message-ID: <daf58379-ea55-468d-9174-8a04677550e2@kernel.org>
-Date: Thu, 15 May 2025 13:11:54 +0200
+	s=arc-20240116; t=1747307696; c=relaxed/simple;
+	bh=KAOGf5l3a1QUryljVuiJwl1E3W/RvEWQRQxTmy+qBjU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=DqryfyU7rNmQ4qt/tD66KLuNlfNxQI32A87hYLB6RipIZhBHT9ucyp+27hJ/ZQPZ7V2dJ0qp4woV9W0DF/6ub7OCn1wJIwRAVJmzRjGtY2r5o11xDhnigbq9nAWNuBkCOp7Is6pug5FEuTyRgMQZKL/7UAvWUjhboSvRX8e20mY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=qJC4ZpqD; arc=none smtp.client-ip=220.197.31.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=z/
+	DVrSVzhckFzlr5cf1y4a94mQlkYtE0DByz9JiadCU=; b=qJC4ZpqDS0Pyt0eGa4
+	ahQcJ2RC5HjLtImKssw6hzcu0RrvMcOIhGF0wn7f8lQ4v020vxsI3MNtbQ8MNTf4
+	KaYrOnDjdR7KpShQIwQNN9rFuUlLEwNKBlSKCPo7/R9Y+KNu5BlUmne+Jagr4Hrv
+	hUjEUCqo90d3PAhaEBG9j4bh4=
+Received: from localhost.localdomain (unknown [])
+	by gzga-smtp-mtada-g1-3 (Coremail) with SMTP id _____wC3lfSQzCVo+qkzBg--.11996S2;
+	Thu, 15 May 2025 19:14:24 +0800 (CST)
+From: chenchangcheng <ccc194101@163.com>
+To: laurent.pinchart@ideasonboard.com,
+	ribalda@chromium.org
+Cc: hdegoede@redhat.com,
+	mchehab@kernel.org,
+	linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	chenchangcheng <chenchangcheng@kylinos.cn>
+Subject: [PATCH v11] media: uvcvideo: Fix bandwidth issue for Alcor camera.
+Date: Thu, 15 May 2025 19:14:06 +0800
+Message-Id: <20250515111406.1470687-1-ccc194101@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 0/2] ESWIN EIC7700 pinctrl driver
-To: Yulin Lu <luyulin@eswincomputing.com>, linus.walleij@linaro.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, kees@kernel.org, gustavoars@kernel.org,
- brgl@bgdev.pl, linux-hardening@vger.kernel.org
-Cc: ningyu@eswincomputing.com, zhengyu@eswincomputing.com,
- linmin@eswincomputing.com, huangyifeng@eswincomputing.com,
- fenglin@eswincomputing.com, lianghujun@eswincomputing.com
-References: <20250515054524.390-1-luyulin@eswincomputing.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250515054524.390-1-luyulin@eswincomputing.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wC3lfSQzCVo+qkzBg--.11996S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7ZFWDKry5WFWfKF1xAr4UCFg_yoW8Wr1Upa
+	1ruayFyryUJrWFganrJa1rKa1rAanYyw4fKFW3W34kZr45JryxXFy3G340q3sFya1fAw1a
+	qr1qqrnru39YvrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jreOJUUUUU=
+X-CM-SenderInfo: 5fffimiurqiqqrwthudrp/1tbiTQZO3mglx4yKJAAAsz
 
-On 15/05/2025 07:45, Yulin Lu wrote:
->   Implements support for the Eswin eic7700 SoC pinctrl controller.
->   Provides API to manage pinctrl for the eic7700 SoC.
->   Integration with the Linux pinctrl subsystem for consistency and
->   scalability.
-> 
->   Supported chips:
->     Eswin eic7700 SoC.
-> 
->   Test:
->     Tested this patch on the Sifive HiFive Premier P550 (which uses
->     the EIC7700 SoC), including system boot, networking, EMMC, display,
->     and other peripherals. The drivers for these modules all use the
->     pinctrl module, so this verifies that this pinctrl driver
->     patch is working properly.
-> 
-> ---
-> Changes since V3:
-> - Added "Reviewed-by" tag of "Krzysztof Kozlowski"
-> - Corrected some incorrect spaces and blank lines in the YAML file.
-> - Link: https://lore.kernel.org/all/20250514080928.385-1-luyulin@eswincomputing.com/
+From: chenchangcheng <chenchangcheng@kylinos.cn>
 
-Start using b4 so you will not introduce such errors like here.
+Some broken device return wrong dwMaxPayloadTransferSize fields
+as follows:
+    [  218.632537] [pid:20427,cpu6,guvcview,8]uvcvideo: Device requested 2752512 B/frame bandwidth.
+    [  218.632598] [pid:20427,cpu6,guvcview,9]uvcvideo: No fast enough alt setting for requested bandwidth.
 
-Best regards,
-Krzysztof
+When dwMaxPayloadTransferSize is greater than maxpsize,
+it will prevent the camera from starting.
+So use the bandwidth of maxpsize.
+
+Signed-off-by: chenchangcheng <chenchangcheng@kylinos.cn>
+---
+ drivers/media/usb/uvc/uvc_video.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/drivers/media/usb/uvc/uvc_video.c b/drivers/media/usb/uvc/uvc_video.c
+index e3567aeb0007..11769a1832d2 100644
+--- a/drivers/media/usb/uvc/uvc_video.c
++++ b/drivers/media/usb/uvc/uvc_video.c
+@@ -262,6 +262,15 @@ static void uvc_fixup_video_ctrl(struct uvc_streaming *stream,
+ 
+ 		ctrl->dwMaxPayloadTransferSize = bandwidth;
+ 	}
++
++	if (stream->intf->num_altsetting > 1 &&
++	    ctrl->dwMaxPayloadTransferSize > stream->maxpsize) {
++		dev_warn_ratelimited(&stream->intf->dev,
++				     "UVC non compliance: the max payload transmission size (%u) exceeds the size of the ep max packet (%u). Using the max size.\n",
++				     ctrl->dwMaxPayloadTransferSize,
++				     stream->maxpsize);
++		ctrl->dwMaxPayloadTransferSize = stream->maxpsize;
++	}
+ }
+ 
+ static size_t uvc_video_ctrl_size(struct uvc_streaming *stream)
+
+base-commit: 9f35e33144ae5377d6a8de86dd3bd4d995c6ac65
+-- 
+2.25.1
+
 
