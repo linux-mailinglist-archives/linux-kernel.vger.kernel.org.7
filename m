@@ -1,78 +1,64 @@
-Return-Path: <linux-kernel+bounces-649075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-649071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02FB1AB7FBC
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 10:06:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 894B8AB7FAC
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 10:04:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4564D1B68EC2
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 08:05:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 652984C564B
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 08:04:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6508D1DB13E;
-	Thu, 15 May 2025 08:05:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7D3B2868A6;
+	Thu, 15 May 2025 08:04:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="QleRWDJ1"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eqxQEg+E"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36D2427CCF6
-	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 08:05:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AA2D2820D1;
+	Thu, 15 May 2025 08:04:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747296315; cv=none; b=H+MrkkG4yom8tm71n2xbSMnO7SZyiaCmVIOPWi7ZToFyZvt95veDerHsgM23WGv5pM+Op/fbKfGU7CfqXXFMcLrja1AKUQ9Ueyyx0dclG2M2u71mtfa2zpeUo/ICaiXVuEgqW4DpRhCzYMRznYp3/CAyDP+3Ct5MRxYJNxbvcy8=
+	t=1747296250; cv=none; b=VGJY5xc2pmzg3Emt8kzYlVcwUJ9ZO3qSeS7lnvxOZpQ8g1bM59poT2MzXYKKNhziqsULnEhwE5PQQPoJiWzACAYLSBF2mgQTKhTaM9KAznFkv51c9XI06vfffW2G2kIiR875eyC/2mvX++ZobbYJbkVFcE9c6CZoozwQ4GCiC5o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747296315; c=relaxed/simple;
-	bh=0tGKkkemugSf6qbz3gshaWCoVsCRbxCI+SQBbX3dIFY=;
+	s=arc-20240116; t=1747296250; c=relaxed/simple;
+	bh=THKJ2oXHLY+7wr2OH9ge9M0MBGGf76tWox5+99a7hYs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=COcuADjP9JN/tbu/pT0tqJ77Ds5lNh3ISzjaTc0zwlnyMKbxJ2XcFkyFvmM/KboGII4uPltDlLJSYVMwDQ8aHEUBaD1pJpta/uknxRlQYuZDcrFzVfH11M4DPD2PsVh/eMDy2sXa8zD2gnJuwNY1AW17QJYFb5liNh5bN0zKRbk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=QleRWDJ1; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3a064a3e143so264747f8f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 01:05:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1747296311; x=1747901111; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=edff1LhptN7FQ5Bq2oruaEckY3n2IP7/Je81wTRfspE=;
-        b=QleRWDJ1MjKGuTARD+JMrNkTAxf4HJRsTFLkXkCVtL9CbWW4H8867e4gRrYe6EwAgm
-         XPMtN/ccgxu1Iakt4TGULyjyPIWkeK++REj8S0mb+Lp0Y5BdRQJ1RgMKofZ+1rn3lsyW
-         bxi4phbRhYV5kVMHXtDrnLPMbUHaadKUFkpJh31Uhr5GNhzN3CoyH06OzrvpRMWIGd1p
-         lPNsa58+0OPS7jisV6aHdqQaXvnPOoiqqmJRmt4T6k338Xqel0OrIM7fT7Wlbtpc6I1K
-         tJpyOs9c9HSn4DpSUK56f70L5Bp4sMOeG4KS6HeQFC/D8fEHOlBzkrpRaFUFsy+XNvVH
-         FJ7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747296311; x=1747901111;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=edff1LhptN7FQ5Bq2oruaEckY3n2IP7/Je81wTRfspE=;
-        b=ggEXyymHcwsZoyO2UB0vdHVP1Rt0WNHZclfCyb9TuzXnouSH68sOUslhl05XcGxB5W
-         qiKef9i7gTR8XsTvNoTlJPpKY2KYvT7i2+rjUz5Quni0doZqUkhnPZK1DnrEMmvqRiq0
-         L34aX+w7pYkTxOkaYKZHPucgrb3Ri+SmFItn4QH/J7QNidh9jv1A9IVtZECt6fBjWtfN
-         1lF1aTHUE8OH5OuFCneZSuaOTUDgo7RbGB9rnJuKUQ178nBy6563IlAkQZR0gDqHfsy6
-         IwD15cWk4Zjr23eMUJTtHnfMggjzYQgTdlHlXNfpvMVWEBl6nWxkK2V8JbcSkZQ1cb+X
-         LIhA==
-X-Forwarded-Encrypted: i=1; AJvYcCX/Bgo5Jm0tCshbaaCbpR79ojY++2aNBnE7W1sH0Qeuzs76RGqXwtULQ7sPww+8atbvIrJmPnXDtS0VmPQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxeC7UKT1NaGlPBEiiKD8EjNWNr4TSsl5gW1YDnplCwH8haJiBt
-	7jreu4vJ3UPy4rpCDbPz8q2MpmzBzC5n86c60g+gw0tCBI8J7eIXM9khCXkihUY=
-X-Gm-Gg: ASbGncvOxXvgOa6P063DY2T9zpl+dBHAbZeQOfVLqn/5YtjCaLIHI4SmW0PLX4LbcT3
-	y0+eNy32qMnls1/3nSEtI6x2jKSTk5Zqi3NSJ6AB1EuyXi+H1Jlh5FtNSKMNrkJVtuAlSJ4BtsU
-	W6wKiNjM7i1X8sxq7rYIiMH/TAeg6hvnBWdkWUdK1Ol9Don8eGnVRd8iVbgKx+gpYueScCOuL6j
-	RugA2ybcy1frF8Rdpu23yNPtNFDLs6FosI1kmH41QRaPzA5rLraNI/e5qL3uRYmR+D1VSN/fYDr
-	84JoT9bYOBlEjF3beIrvYs8E9TdMp45ndiz296JqD3GxwdDQ6nDt8A==
-X-Google-Smtp-Source: AGHT+IGXvziHODCht+twr6uozgFfTyAclIKdnZuTVey4CsU1/XVbIcw96mTLNhe3rmJT4ESA13CsYg==
-X-Received: by 2002:a05:6000:2911:b0:39e:dbb0:310f with SMTP id ffacd0b85a97d-3a34992746amr5945525f8f.39.1747296311397;
-        Thu, 15 May 2025 01:05:11 -0700 (PDT)
-Received: from [10.100.51.48] ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4dea85df68fsm9441727137.18.2025.05.15.01.04.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 15 May 2025 01:05:10 -0700 (PDT)
-Message-ID: <e2ebf88d-46a2-4f38-a0c8-940c3d3bee49@suse.com>
-Date: Thu, 15 May 2025 10:04:53 +0200
+	 In-Reply-To:Content-Type; b=Y5b1XKfAOUMeOYN4Kek3NeJIb1xBBQk8zTqxPW4QLdXpyeaUprDgkuFF7AZJoWDogw8J1Ja54riZFXshXOsCEh2frBxaFKQzy4hMuVQNo0wPTVwQ7kM1zGLZGNPti8YaU4z+Y3Obx+FRms2Mp8vgUIl2/U1D1DHiwrDLdcOxqII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eqxQEg+E; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1747296249; x=1778832249;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=THKJ2oXHLY+7wr2OH9ge9M0MBGGf76tWox5+99a7hYs=;
+  b=eqxQEg+E2jwHl3hi+VpN/sKvua5PM7/+QBse4BC+tkTl9N2HcdbXZim0
+   yY3QRdUT2CG+EYhonew9kwJvSqOjCHQfETocoNX7NDu0SpLWmRMD2uZ21
+   1cBdIBT7ipsCzWnN2KjvUM5u8mkFm21Yp0+Ahluptgh51vhet8YkYFzoX
+   HrSXQxUJGtEVDbMwU47LNrGVuFn3Gv2BErhmlmhpWPLt0iGBD3pX2jgPr
+   uQkg5JlC9Zt0mGv1nh6UkcLDqKo/AM1nnNcNFnB2balTi22A1BBZVlpIC
+   VyETM38KhjMixpEPnh50mbO14PU+wsNhZFuqAmDorSeldCgF361Lxi7Hl
+   w==;
+X-CSE-ConnectionGUID: iWYo9YSHSBqGp5j2Wl1lvg==
+X-CSE-MsgGUID: Z8gv0nQdSKu1tRLXDXCelg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11433"; a="48905047"
+X-IronPort-AV: E=Sophos;i="6.15,290,1739865600"; 
+   d="scan'208";a="48905047"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2025 01:04:08 -0700
+X-CSE-ConnectionGUID: WdufQpgQSeOBqsZVRunKWw==
+X-CSE-MsgGUID: DYCyFVPESzuR+6Pf8INw1A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,290,1739865600"; 
+   d="scan'208";a="138191068"
+Received: from sschumil-mobl2.ger.corp.intel.com (HELO [10.245.246.202]) ([10.245.246.202])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2025 01:04:04 -0700
+Message-ID: <69a5dcdd-fa1f-41a8-ad6f-4c2f2c97128d@linux.intel.com>
+Date: Thu, 15 May 2025 11:05:17 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,108 +66,107 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 01/12] module: Move modprobe_path and modules_disabled
- ctl_tables into the module subsys
-To: Joel Granados <joel.granados@kernel.org>
-Cc: Luis Chamberlain <mcgrof@kernel.org>,
- Sami Tolvanen <samitolvanen@google.com>, Daniel Gomez
- <da.gomez@samsung.com>, Kees Cook <kees@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Will Deacon <will@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
- Waiman Long <longman@redhat.com>, "Paul E. McKenney" <paulmck@kernel.org>,
- Frederic Weisbecker <frederic@kernel.org>,
- Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
- Joel Fernandes <joel@joelfernandes.org>,
- Josh Triplett <josh@joshtriplett.org>, Uladzislau Rezki <urezki@gmail.com>,
- Steven Rostedt <rostedt@goodmis.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Lai Jiangshan <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
- Helge Deller <deller@gmx.de>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>,
- linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, rcu@vger.kernel.org, linux-mm@kvack.org,
- linux-parisc@vger.kernel.org, linux-serial@vger.kernel.org
-References: <20250509-jag-mv_ctltables_iter2-v1-0-d0ad83f5f4c3@kernel.org>
- <20250509-jag-mv_ctltables_iter2-v1-1-d0ad83f5f4c3@kernel.org>
+Subject: Re: [PATCH RESEND v2] ASoC: SOF: Intel: hda: Fix UAF when reloading
+ module
+To: Tavian Barnes <tavianator@tavianator.com>, linux-sound@vger.kernel.org
+Cc: Liam Girdwood <lgirdwood@gmail.com>,
+ Bard Liao <yung-chuan.liao@linux.intel.com>,
+ Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+ Daniel Baluta <daniel.baluta@nxp.com>,
+ Kai Vehmanen <kai.vehmanen@linux.intel.com>,
+ Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
+ Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+ Takashi Iwai <tiwai@suse.com>, Brent Lu <brent.lu@intel.com>,
+ Peter Zijlstra <peterz@infradead.org>, sound-open-firmware@alsa-project.org,
+ linux-kernel@vger.kernel.org
+References: <5aaee9fdfe8437ef2566b200bea45e4baaba3fcb.1745426811.git.tavianator@tavianator.com>
 Content-Language: en-US
-From: Petr Pavlu <petr.pavlu@suse.com>
-In-Reply-To: <20250509-jag-mv_ctltables_iter2-v1-1-d0ad83f5f4c3@kernel.org>
+From: =?UTF-8?Q?P=C3=A9ter_Ujfalusi?= <peter.ujfalusi@linux.intel.com>
+In-Reply-To: <5aaee9fdfe8437ef2566b200bea45e4baaba3fcb.1745426811.git.tavianator@tavianator.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 5/9/25 14:54, Joel Granados wrote:
-> Move module sysctl (modprobe_path and modules_disabled) out of sysctl.c
-> and into the modules subsystem. Make the modprobe_path variable static
-> as it no longer needs to be exported. Remove module.h from the includes
-> in sysctl as it no longer uses any module exported variables.
+
+
+On 06/05/2025 18:12, Tavian Barnes wrote:
+> hda_generic_machine_select() appends -idisp to the tplg filename by
+> allocating a new string with devm_kasprintf(), then stores the string
+> right back into the global variable snd_soc_acpi_intel_hda_machines.
+> When the module is unloaded, this memory is freed, resulting in a global
+> variable pointing to freed memory.  Reloading the modules then triggers
+> a use-after-free:
 > 
-> This is part of a greater effort to move ctl tables into their
-> respective subsystems which will reduce the merge conflicts in
-> kernel/sysctl.c.
+> BUG: KFENCE: use-after-free read in string+0x48/0xe0
 > 
-> Signed-off-by: Joel Granados <joel.granados@kernel.org>
-> [...]
-> --- a/kernel/module/kmod.c
-> +++ b/kernel/module/kmod.c
-> @@ -60,7 +60,7 @@ static DEFINE_SEMAPHORE(kmod_concurrent_max, MAX_KMOD_CONCURRENT);
->  /*
->  	modprobe_path is set via /proc/sys.
->  */
-> -char modprobe_path[KMOD_PATH_LEN] = CONFIG_MODPROBE_PATH;
-> +static char modprobe_path[KMOD_PATH_LEN] = CONFIG_MODPROBE_PATH;
+> Use-after-free read at 0x00000000967e0109 (in kfence-#99):
+>  string+0x48/0xe0
+>  vsnprintf+0x329/0x6e0
+>  devm_kvasprintf+0x54/0xb0
+>  devm_kasprintf+0x58/0x80
+>  hda_machine_select.cold+0x198/0x17a2 [snd_sof_intel_hda_generic]
+>  sof_probe_work+0x7f/0x600 [snd_sof]
+>  process_one_work+0x17b/0x330
+>  worker_thread+0x2ce/0x3f0
+>  kthread+0xcf/0x100
+>  ret_from_fork+0x31/0x50
+>  ret_from_fork_asm+0x1a/0x30
+> 
+> kfence-#99: 0x00000000198a940f-0x00000000ace47d9d, size=64, cache=kmalloc-64
+> 
+> allocated by task 333 on cpu 8 at 17.798069s (130.453553s ago):
+>  devm_kmalloc+0x52/0x120
+>  devm_kvasprintf+0x66/0xb0
+>  devm_kasprintf+0x58/0x80
+>  hda_machine_select.cold+0x198/0x17a2 [snd_sof_intel_hda_generic]
+>  sof_probe_work+0x7f/0x600 [snd_sof]
+>  process_one_work+0x17b/0x330
+>  worker_thread+0x2ce/0x3f0
+>  kthread+0xcf/0x100
+>  ret_from_fork+0x31/0x50
+>  ret_from_fork_asm+0x1a/0x30
+> 
+> freed by task 1543 on cpu 4 at 141.586686s (6.665010s ago):
+>  release_nodes+0x43/0xb0
+>  devres_release_all+0x90/0xf0
+>  device_unbind_cleanup+0xe/0x70
+>  device_release_driver_internal+0x1c1/0x200
+>  driver_detach+0x48/0x90
+>  bus_remove_driver+0x6d/0xf0
+>  pci_unregister_driver+0x42/0xb0
+>  __do_sys_delete_module+0x1d1/0x310
+>  do_syscall_64+0x82/0x190
+>  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> 
+> Fix it by saving the filename in pdata->tplg_filename instead, just like
+> every other code path that appends to the tplg filename.
+> 
+> Fixes: 5458411d7594 ("ASoC: SOF: Intel: hda: refactoring topology name fixup for HDA mach")
+> Signed-off-by: Tavian Barnes <tavianator@tavianator.com>
+> ---
+> v2: Fix typo
+> 
+>  sound/soc/sof/intel/hda.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/sound/soc/sof/intel/hda.c b/sound/soc/sof/intel/hda.c
+> index b34e5fdf10f1..1767977e7cff 100644
+> --- a/sound/soc/sof/intel/hda.c
+> +++ b/sound/soc/sof/intel/hda.c
+> @@ -1069,7 +1069,7 @@ static void hda_generic_machine_select(struct snd_sof_dev *sdev,
+>  				if (!tplg_filename)
+>  					return;
 >  
->  static void free_modprobe_argv(struct subprocess_info *info)
->  {
-> @@ -177,3 +177,33 @@ int __request_module(bool wait, const char *fmt, ...)
->  	return ret;
->  }
->  EXPORT_SYMBOL(__request_module);
-> +
-> +#ifdef CONFIG_MODULES
-> +static const struct ctl_table kmod_sysctl_table[] = {
-> +	{
-> +		.procname	= "modprobe",
-> +		.data		= &modprobe_path,
-> +		.maxlen		= KMOD_PATH_LEN,
-> +		.mode		= 0644,
-> +		.proc_handler	= proc_dostring,
-> +	},
-> +	{
-> +		.procname	= "modules_disabled",
-> +		.data		= &modules_disabled,
-> +		.maxlen		= sizeof(int),
-> +		.mode		= 0644,
-> +		/* only handle a transition from default "0" to "1" */
-> +		.proc_handler	= proc_dointvec_minmax,
-> +		.extra1		= SYSCTL_ONE,
-> +		.extra2		= SYSCTL_ONE,
-> +	},
+> -				hda_mach->sof_tplg_filename = tplg_filename;
+> +				pdata->tplg_filename = tplg_filename;
 
-This is minor.. but the file kernel/module/kmod.c contains the logic to
-request direct modprobe invocation by the kernel. Registering the
-modprobe_path sysctl here is appropriate. However, the modules_disabled
-setting affects the entire module loader so I don't think it's best to
-register it here.
+Did you sent this as a mistake? The v5 patch looks to be the correct
+one, this is not.
 
-I suggest keeping a single table for the module sysctl values but moving
-it to kernel/module/main.c. This means the variable modprobe_path must
-retain external linkage, on the other hand, modules_disabled can be made
-static.
+>  			}
+>  
+>  			if (codec_num == 2 ||
 
 -- 
-Thanks,
-Petr
+Péter
 
-> +};
-> +
-> +static int __init init_kmod_sysctl(void)
-> +{
-> +	register_sysctl_init("kernel", kmod_sysctl_table);
-> +	return 0;
-> +}
-> +
-> +subsys_initcall(init_kmod_sysctl);
-> +#endif
 
