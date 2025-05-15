@@ -1,189 +1,158 @@
-Return-Path: <linux-kernel+bounces-649765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-649767-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 541C0AB88E1
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 16:05:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0FACAB88E5
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 16:05:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F26A31BC3A93
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 14:05:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 087B23B4A87
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 14:05:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD60C19F489;
-	Thu, 15 May 2025 14:05:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 915CD19FA93;
+	Thu, 15 May 2025 14:05:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Z7pwWEil"
-Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com [209.85.210.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GpMB8QrS"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21F2E19CC0E
-	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 14:05:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59A8D664C6
+	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 14:05:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747317903; cv=none; b=HgUVNBihPBHk3Xod9CCw6R4qlXnEDHe/C2ou1Ip7JF/O22LNgBWErgtaJyD6vGXt9AhmRo4NsNvMRApZi0qHYb5uiSjHcvG4tMz4TsD3IBdhoY9zwCGwTe20E6ggyJLrPbj/bdCfKP6QUi7lsoVfkk/8HguhvL5Gsg1O4hA0Uss=
+	t=1747317954; cv=none; b=Vo8p2IENaUNsw5CuHWC27+Ay1S9NYF7DwyFAgtBXpjFK1sz+sjxqYUZdI8Jz/jhvJZCPlElKprkdxAAy6h8pN6F2JLDQDJTprmARG0Ct+QIpm1xD6DWwwog4gh/rQGWv+EEn7zmcuqAkzayu6Yu7n1KDBdOWmYsAsFiKJOoY0Vc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747317903; c=relaxed/simple;
-	bh=i8tlY/LbfI0ZDQSrDItL+NiokGBk6h8Vq0LsxV2KBrU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IDgIsZJLumKRdQHQBvaDKs4YiRnocTozHTkxp+lEk92hkBb+C41C2NW+QjAq+7Q+u8KRrwlQTfLEaKL8yIvhYM4Ljbm2dS4FVUg7KZHQlZmMkBwSgfo96SQBQ73x4dKvyd5v+ozbUhPwgl0wExcaIoo/Sd+PCmjXxgcAspVdgYo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Z7pwWEil; arc=none smtp.client-ip=209.85.210.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ot1-f46.google.com with SMTP id 46e09a7af769-72c172f1de1so754283a34.3
-        for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 07:05:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1747317900; x=1747922700; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=9K77ZU3+im9NvK6fucyyQ4XpbTRkWMjyw12HrfwTZqs=;
-        b=Z7pwWEiltQ7ovS77kfVNfs+mxU8th+aD84I2nMsFmNNtyX7Apij1J3/lT+X0Lry8ng
-         GkW3fq9HbaQAfJ4YnUL2puCafh88xDUAv0hEV1ALrx2Ql3mBXmGNwyFD6g9Ksajv+/4z
-         iKF1bHFe8BZzz7J70RpoOtQ55+jLc25bQdZDdPjC4lKLY4sbp1Sh8svOleLndqY2kPrs
-         /uKsJqwBNo0ZWkp9HVbC1q3OmFfDlVhSJmMK9831958aiQdc24q4kVzdGmI10xPysXrS
-         3gdwo+W8UJE+0e3Zlw0qXi1++zNiiRB1BL2Otq1UaYZfjSSOCsjZbCU9b8JsEB3KzYvl
-         Of5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747317900; x=1747922700;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9K77ZU3+im9NvK6fucyyQ4XpbTRkWMjyw12HrfwTZqs=;
-        b=fa5kvF1/mmvZ6lPh6g6V4v1RF3DU5FA2OOXJysb2BDmMUVUcvroJGHSy+E5a55YRB8
-         c4JmoayB7j+eqoBiPC0b0ee6ErwS6Q0PnQC+lz2JASNuN+BTl9THWvYQGtNg7qtGcFgH
-         IEY1jbS90bIPV1QlgmMzinh4P4csc0ZqNJwz6IqSI5ML7T809Rm6pzlCCKyjVk4XJZcc
-         uLZEUXXSvOlO3GMjXzVGzqSZp/16AFW11749sTHqpatYn8MwhMC5D/dvZWKt6Gl6yW/T
-         hhdZ0CaK4WTctISvtuND/B69Qo757FpqfEkLY7xa/eGi+/Scq+TJ1GIpZM65icJIG30F
-         l8Zg==
-X-Forwarded-Encrypted: i=1; AJvYcCUUh5dIKVMWjtX4VLIMLFw02RE9e9204DNorZKSeRULZMiPtGR3UBnkxv+RBn0oP0zqpH5BzMf4oasEwTI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzx6wcOpmqGG8bqZYpatqg5I0ZtfAk+dQUvulsr/fjgqAozcico
-	Ib343uAnO1TgWyxDUXwjqs21tQosSqC+u5X63sRToGe/NiPIAp9dV1oiv68Ti6M=
-X-Gm-Gg: ASbGncvBBE5MUB9w/C7hAqz2TgIZuzqZtSGFax76HKBdCuMi2/qO44m5eCflgCChkKQ
-	+bP4TTJzw5nYEELBAcYzPwHG/UoWGdtGAeS9UOXOPbF9rixu18XAjFchYWru076EhaImehQun9z
-	KGFWhQeC1vWwi9t0Ngnueqiq08Faev2k2tmSUdj/7zfK4KeAeS2trV+hT752oc2v9zTKaBYkZx6
-	STM/JeERkYaInPJfjC+6NvqD0ThZTLODdLEsVmSnxw37lhgFNfH2tg3rD6L6EOlppDjX0pAXpJ1
-	dIj/81D6z4/D+Wg+zWsHlmRRQVDNSqkReqUabYqxZh+V571+i3bc1XFJKVj8M8D7KrtORoNL/PB
-	bRBCfugC+EKVwSFlPJraFoXeE1NWX
-X-Google-Smtp-Source: AGHT+IE5zLtoEtrW+oFDBQ1zy1uWy5TOgC1cPAyin7uJmHiCiE/9u6LzX2kphTwBuNw2dfLO3Zn//g==
-X-Received: by 2002:a05:6830:4109:b0:731:cac7:3634 with SMTP id 46e09a7af769-734e13d0966mr4171455a34.3.1747317899864;
-        Thu, 15 May 2025 07:04:59 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:1d00:bb18:367a:73d3:5230? ([2600:8803:e7e4:1d00:bb18:367a:73d3:5230])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-732264d78fbsm2733023a34.32.2025.05.15.07.04.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 15 May 2025 07:04:59 -0700 (PDT)
-Message-ID: <81b2a499-1927-4fb3-b581-a533c64507a6@baylibre.com>
-Date: Thu, 15 May 2025 09:04:57 -0500
+	s=arc-20240116; t=1747317954; c=relaxed/simple;
+	bh=LPCxOaHHai025e+PzBDr85mz+e2mj1gb/bOANaKRI1w=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=m54KO4tPUDFB4BC07/MyAa/5+RO8CglnN5NvPoDKbuc0PHuM8GO58/VzB5Tuoa0wFORPYiM9xt/7jg+t9gx5x7C6dISbuvNac8fbgdOA4kKYOMyOrp19JVBF56yBip6z1MqJrn1+Dr/sJp74DQbpofidKzQdsU8z0jr+LhvKbTw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GpMB8QrS; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1747317952; x=1778853952;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=LPCxOaHHai025e+PzBDr85mz+e2mj1gb/bOANaKRI1w=;
+  b=GpMB8QrSprH3CqOHtKYYbRZpcmPNBDQoz5ZGjFKZcGsG6brmQHeZyK8R
+   98/3KIvBQQ6KLKY5/WwScxJTLDSrSycRa8iNE1OlQWqsEJTPiRMffH2a+
+   LAuflgyJmz2dVxm1FppmXmp0q41ABz9FAtmxKmMc7zsDYkxV5sAhWERxI
+   0pxVf3Cjh99Fg+I1nauwLcB5adYvgC7VKjB9jswbEfDwNdBkmfeLflEY1
+   Cyt+5yypoQ/B980zvMNjAc9YYtDhPB0T5EQQAOj/5YXIvdUAaZFZKOn6J
+   ycEnZcXDVAEQ1BJwPrLKm0CvX5PAAcibmsb1Pi6agH+6ljob+cRC8W700
+   A==;
+X-CSE-ConnectionGUID: DvDzmgSgRa6RbiF3QjuYPw==
+X-CSE-MsgGUID: mqm5MoaDTIG57phh+ya8dg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11434"; a="48943820"
+X-IronPort-AV: E=Sophos;i="6.15,291,1739865600"; 
+   d="scan'208";a="48943820"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2025 07:05:52 -0700
+X-CSE-ConnectionGUID: AIqKWV8IRDqZ6OR2Or1EAw==
+X-CSE-MsgGUID: Qw2Cbw4vRPGwBlf49eAy7w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,291,1739865600"; 
+   d="scan'208";a="138261404"
+Received: from igk-lkp-server01.igk.intel.com (HELO a1decbf9c5f9) ([10.211.3.150])
+  by fmviesa006.fm.intel.com with ESMTP; 15 May 2025 07:05:50 -0700
+Received: from kbuild by a1decbf9c5f9 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uFZDY-0000Fh-2N;
+	Thu, 15 May 2025 14:05:48 +0000
+Date: Thu, 15 May 2025 22:05:06 +0800
+From: kernel test robot <lkp@intel.com>
+To: "Mike Rapoport (IBM)" <rppt@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Luis Chamberlain <mcgrof@kernel.org>
+Subject: arch/sh/kernel/kprobes.c:412:24: warning: variable 'p' set but not
+ used
+Message-ID: <202505151341.EuRFR22l-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings:iio:gyroscope:invensense,itg3200: add binding
-To: Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, nuno.sa@analog.com, andy@kernel.org
-Cc: ~lkcamp/patches@lists.sr.ht, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250515002817.81863-1-rodrigo.gobbi.7@gmail.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <20250515002817.81863-1-rodrigo.gobbi.7@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 5/14/25 7:21 PM, Rodrigo Gobbi wrote:
-> There is no txt file for it, add yaml for invensense,itg3200 gyroscope.
-> 
-> Signed-off-by: Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>
-> ---
-> Added @Jonathan as the maintainer here due a suggestion in a
-> different thread for a different binding file.
-> Created this yaml using the driver probe and comparing with other gyro bindings.
-> Tks and regards.
-> ---
->  .../iio/gyroscope/invensense,itg3200.yaml     | 51 +++++++++++++++++++
->  1 file changed, 51 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/iio/gyroscope/invensense,itg3200.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/iio/gyroscope/invensense,itg3200.yaml b/Documentation/devicetree/bindings/iio/gyroscope/invensense,itg3200.yaml
-> new file mode 100644
-> index 000000000000..0656dbb58cf2
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/iio/gyroscope/invensense,itg3200.yaml
-> @@ -0,0 +1,51 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/iio/gyroscope/invensense,itg3200.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Invensense ITG-3200 Gyroscope
-> +
-> +maintainers:
-> +  - Jonathan Cameron <jic23@kernel.org>
-> +
-> +description: |
-> +  Triple-axis, digital output gyroscope with a three 16-bit analog-to-digital
-> +  converters (ADCs) for digitizing the gyro outputs, a user-selectable internal
-> +  low-pass filter bandwidth, and a Fast-Mode I2C . Datasheet can be found here:
-> +  https://invensense.tdk.com/wp-content/uploads/2015/02/ITG-3200-Register-Map.pdf
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   9f35e33144ae5377d6a8de86dd3bd4d995c6ac65
+commit: 7582b7be16d0ba90e3dbd9575a730cabd9eb852a kprobes: remove dependency on CONFIG_MODULES
+date:   1 year ago
+config: sh-randconfig-2003-20250513 (https://download.01.org/0day-ci/archive/20250515/202505151341.EuRFR22l-lkp@intel.com/config)
+compiler: sh4-linux-gcc (GCC) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250515/202505151341.EuRFR22l-lkp@intel.com/reproduce)
 
-This is only the register map, not a proper datasheet, so isn't useful
-for the devicetree bindings.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202505151341.EuRFR22l-lkp@intel.com/
 
-> +
-> +properties:
-> +  compatible:
-> +    const: invensense,itg3200
-> +
-> +  reg:
-> +    maxItems: 1
-> +
+All warnings (new ones prefixed by >>):
 
-Missing vdd-supply and vlogic-supply properties. These should be
-required.
+   arch/sh/kernel/kprobes.c:52:16: warning: no previous prototype for 'arch_copy_kprobe' [-Wmissing-prototypes]
+      52 | void __kprobes arch_copy_kprobe(struct kprobe *p)
+         |                ^~~~~~~~~~~~~~~~
+   arch/sh/kernel/kprobes.c:304:15: warning: no previous prototype for 'trampoline_probe_handler' [-Wmissing-prototypes]
+     304 | int __kprobes trampoline_probe_handler(struct kprobe *p, struct pt_regs *regs)
+         |               ^~~~~~~~~~~~~~~~~~~~~~~~
+   arch/sh/kernel/kprobes.c: In function 'kprobe_exceptions_notify':
+>> arch/sh/kernel/kprobes.c:412:24: warning: variable 'p' set but not used [-Wunused-but-set-variable]
+     412 |         struct kprobe *p = NULL;
+         |                        ^
 
-Missing clocks property for optional external clock.
 
-We always try to make the DT bindings as complete as possible
-even if the driver doesn't use all of it.
+vim +/p +412 arch/sh/kernel/kprobes.c
 
-> +  interrupts:
-> +    minItems: 1
-> +
-> +  mount-matrix:
-> +    description: an optional 3x3 mounting rotation matrix.
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +    i2c {
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +        itg3200@68 {
+d39f5450146ff3 Chris Smith      2008-09-05  405  
+d39f5450146ff3 Chris Smith      2008-09-05  406  /*
+d39f5450146ff3 Chris Smith      2008-09-05  407   * Wrapper routine to for handling exceptions.
+d39f5450146ff3 Chris Smith      2008-09-05  408   */
+d39f5450146ff3 Chris Smith      2008-09-05  409  int __kprobes kprobe_exceptions_notify(struct notifier_block *self,
+d39f5450146ff3 Chris Smith      2008-09-05  410  				       unsigned long val, void *data)
+d39f5450146ff3 Chris Smith      2008-09-05  411  {
+d39f5450146ff3 Chris Smith      2008-09-05 @412  	struct kprobe *p = NULL;
+d39f5450146ff3 Chris Smith      2008-09-05  413  	struct die_args *args = (struct die_args *)data;
+d39f5450146ff3 Chris Smith      2008-09-05  414  	int ret = NOTIFY_DONE;
+d39f5450146ff3 Chris Smith      2008-09-05  415  	kprobe_opcode_t *addr = NULL;
+d39f5450146ff3 Chris Smith      2008-09-05  416  	struct kprobe_ctlblk *kcb = get_kprobe_ctlblk();
+d39f5450146ff3 Chris Smith      2008-09-05  417  
+d39f5450146ff3 Chris Smith      2008-09-05  418  	addr = (kprobe_opcode_t *) (args->regs->pc);
+d3023897b4370b Michael Karcher  2019-06-12  419  	if (val == DIE_TRAP &&
+d3023897b4370b Michael Karcher  2019-06-12  420  	    args->trapnr == (BREAKPOINT_INSTRUCTION & 0xff)) {
+d39f5450146ff3 Chris Smith      2008-09-05  421  		if (!kprobe_running()) {
+d39f5450146ff3 Chris Smith      2008-09-05  422  			if (kprobe_handler(args->regs)) {
+d39f5450146ff3 Chris Smith      2008-09-05  423  				ret = NOTIFY_STOP;
+d39f5450146ff3 Chris Smith      2008-09-05  424  			} else {
+d39f5450146ff3 Chris Smith      2008-09-05  425  				/* Not a kprobe trap */
+ee386de77419f9 Paul Mundt       2008-09-08  426  				ret = NOTIFY_DONE;
+d39f5450146ff3 Chris Smith      2008-09-05  427  			}
+d39f5450146ff3 Chris Smith      2008-09-05  428  		} else {
+d39f5450146ff3 Chris Smith      2008-09-05  429  			p = get_kprobe(addr);
+d39f5450146ff3 Chris Smith      2008-09-05  430  			if ((kcb->kprobe_status == KPROBE_HIT_SS) ||
+d39f5450146ff3 Chris Smith      2008-09-05  431  			    (kcb->kprobe_status == KPROBE_REENTER)) {
+d39f5450146ff3 Chris Smith      2008-09-05  432  				if (post_kprobe_handler(args->regs))
+d39f5450146ff3 Chris Smith      2008-09-05  433  					ret = NOTIFY_STOP;
+d39f5450146ff3 Chris Smith      2008-09-05  434  			} else {
+fa5a24b16f9441 Masami Hiramatsu 2018-06-20  435  				if (kprobe_handler(args->regs))
+d39f5450146ff3 Chris Smith      2008-09-05  436  					ret = NOTIFY_STOP;
+d39f5450146ff3 Chris Smith      2008-09-05  437  			}
+d39f5450146ff3 Chris Smith      2008-09-05  438  		}
+d39f5450146ff3 Chris Smith      2008-09-05  439  	}
+d39f5450146ff3 Chris Smith      2008-09-05  440  
+d39f5450146ff3 Chris Smith      2008-09-05  441  	return ret;
+d39f5450146ff3 Chris Smith      2008-09-05  442  }
+d39f5450146ff3 Chris Smith      2008-09-05  443  
 
-           gyro@68
+:::::: The code at line 412 was first introduced by commit
+:::::: d39f5450146ff39f66cfde9d5184420627d0ac51 sh: Add kprobes support.
 
-Generic names are preferred.
+:::::: TO: Chris Smith <chris.smith@st.com>
+:::::: CC: Paul Mundt <lethal@linux-sh.org>
 
-> +            compatible = "invensense,itg3200";
-> +            reg = <0x68>;
-> +            pinctrl-names = "default";
-> +            pinctrl-0 = <&itg3200_pins>;
-
-Probably don't need pinctrl stuff in the example.
-
-> +            interrupt-parent = <&gpio2>;
-> +            interrupts = <24 IRQ_TYPE_EDGE_FALLING>;
-> +        };
-> +    };
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
