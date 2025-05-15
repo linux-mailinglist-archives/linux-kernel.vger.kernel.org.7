@@ -1,106 +1,117 @@
-Return-Path: <linux-kernel+bounces-649039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-649041-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B00ABAB7F17
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 09:44:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22056AB7F20
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 09:45:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5ACA28C1654
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 07:44:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E55F01BA6734
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 07:46:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EE0F280CCD;
-	Thu, 15 May 2025 07:44:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B8DD2153C1;
+	Thu, 15 May 2025 07:45:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="VknxU4lR"
-Received: from smtpbgjp3.qq.com (smtpbgjp3.qq.com [54.92.39.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QBpWSsL8"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D4412222CB;
-	Thu, 15 May 2025 07:44:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.92.39.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E99A417BD9;
+	Thu, 15 May 2025 07:45:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747295080; cv=none; b=d0kP/AAoFaMmZnlaSrzHMwXSDGxinpHdw2unOLsPM5EHZn/ix59oOzupJ3p3Z974PT/itDtPS99Ff/YRfahHNFwM0Ny2YxCMkoqnVicz/ejt9vwNVKeIMp1/wQK0aNij2Y/b/3tQVlHaJNfjjnO4KYRzng0HRxQJMSg5BDx5ZY0=
+	t=1747295145; cv=none; b=baoxgDmICqPWRWfNhf4KT2IW7lPhtmv9UlF+gpJkPaw4a2caZB0+uNXi/ewIW2BOJk1vYqzw4DJhm0LarRuVmjPz0UqDxhG2nFdm9DDrGj5KrZnxSSzQycuUUsZ6r5ISiTmClC1UaY8B7LcwGZUfQZd9nLh9jROJikLm7RtEDuQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747295080; c=relaxed/simple;
-	bh=IMQvQEXAbMtLn0avQkGWmOl1RBiTKKHsgdf86doIKHs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YqpcgFR+5n8nw6JvKnInnsoNR7eIOjO2nI8Zax3gp9x/T61rvliwnYLUUBo2PEpE+aHJmN0CGdkSiQc6FlRIRhyVmPorpgprgm504y3SOxmMZIMtokV0Bs91YSzIGQLuq1tCkkJXbkQRXvHy+sppPnBryoTX4NnwkdV7Mwr+Sm8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=VknxU4lR; arc=none smtp.client-ip=54.92.39.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1747295064;
-	bh=IMQvQEXAbMtLn0avQkGWmOl1RBiTKKHsgdf86doIKHs=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To;
-	b=VknxU4lRKTUZSDTSYPo8ThNP6vCJmwT19TdLNDUrrdPQGnOmDNUzmOg1g7Y14NOZh
-	 lbFPmDkoM+iHc7AEzxedI5OhEYA8r1mTf3moQXlKOkTrQZ6QhBOYMyjPlNrBA8DDBj
-	 OSsEv9GRMfz5MCWxObhKO/lXgUSp/a+obD1GNB44=
-X-QQ-mid: zesmtpsz2t1747295061t2e20bf15
-X-QQ-Originating-IP: EK7ysgycBQsENx9vhDyf+Up1nBtRX5iWp30Xu4CteuY=
-Received: from mail-yw1-f181.google.com ( [209.85.128.181])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Thu, 15 May 2025 15:44:19 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 15215953735421502448
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-70a2d8a8396so4966167b3.3;
-        Thu, 15 May 2025 00:44:20 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV7sTtKzgdqnPDs/huVf/ytapd4KOrwR1MK1Sd9YTc3EeQb9tYoDAkjtU48rDUrLmVFOAQughw9iwjv07X1dOb3@vger.kernel.org, AJvYcCVwFnqiRfh/XIWc2mPuV/nXwoanBfXDcU8NSxAQI2AECnA+xIcfVoespyYVMeddlJGDU0Ni/jUcyHfvcXSO@vger.kernel.org, AJvYcCWthG7yWDXtpL11jL8EmJfzeT4D2HVzOIdW8tq9KPBpnyhWS02qTSBFfbA3PIeC6X20P70xOTTd3uHXZhzt@vger.kernel.org
-X-Gm-Message-State: AOJu0YxRnusmp5grhUXQivZ3h2cNZWl3fTYyust69HXklN9WBNej65bh
-	+H5QW/txlpg+pf5Hee4+Uu4ITWD1O53bSuct+8Udkh4oNNDFLfwCACp1YXAfu7gRXVhmRA6YMKd
-	quSC4S8ElkXxY3hLdBc5LLjUky8s=
-X-Google-Smtp-Source: AGHT+IEGJTpkV3dekgtnpuOu+UZn7MT9MPI7RliMvzoXhDXsIktnB7RhQWpNvEpQfAzDRbW1xvIH/BO7II2CejNmFzE=
-X-Received: by 2002:a05:690c:6009:b0:702:591a:6958 with SMTP id
- 00721157ae682-70c7f13b8bfmr90605607b3.22.1747295059001; Thu, 15 May 2025
- 00:44:19 -0700 (PDT)
+	s=arc-20240116; t=1747295145; c=relaxed/simple;
+	bh=FUTGQUAOkm5bi73IlMsoeSedRcN4KCV84hEa6dEH/8U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=soaTtzs3dWlcm1uu2x96j2lHKmuwoMaGQgV3QTvJN++TZhgottajAsJO0OX55hoDj6A7Yd7hH0IdByq+ITkooWWoZLMv1nk5z9QNBcN91E/CT0psC4e9IDPEvcuM3hgBhLZ0YA25RfDMd8vZRbJKvZWsQmuNmkHUQ7o8BorhAIk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QBpWSsL8; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-43ce70f9afbso6446165e9.0;
+        Thu, 15 May 2025 00:45:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747295142; x=1747899942; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ji/KKSHoP7yY7aJyBCvNgq977Um77Yq/cN+M0anXeoY=;
+        b=QBpWSsL8ZxthIO6ryC4ulXaTHIYL5cCR0/mwSNZTLrVcz3APUQhYebWpq9j4dBW2/R
+         hReVbx0zNqesO+63Azk7maVM3oqiOKMqKGMuis0x+CAV/g0ckWQWWSOeJKMmg7pPGkgD
+         pDopgSSZ4wjGLcFjeA6YdG3WRg/1SbWD2Sy9fLFQB8Y3w/hbMXLhnNdbMNl+OSNnuzlv
+         vzG76vHA0vtr2X9NlmtTovNXv4JGYrxOMAq7k0XSwLhfVE+BKOWanx77UWrOLr4Rc3A6
+         h6stuQ9C7kqpSGWAQtboXs0BjA/t6YNLL/ew6surf+rbaignP22MzdM0VGZ87zWtBbiM
+         B4tg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747295142; x=1747899942;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ji/KKSHoP7yY7aJyBCvNgq977Um77Yq/cN+M0anXeoY=;
+        b=DDKkY0+yDwV7h0zY/6T/l2ipLCK06CO9xiU3HR6X+La1KERJiagwbwLhYGjOPz+5+N
+         0UyWf6W9TWhSoAB7cjIRmzjv6vxRTHuBZ1qZwJpOmFV0TiDUnynwwdutK9FlYYjeSY8u
+         Fc6MslXn291UepfYX//eEKcadHQcA+XfoG8i/qtrqpcMuqekiaIPLr6T9oFptZaDpLcN
+         JSOdGiZjgOsC1vyd6SfXVC24wdxizUMngJBCkeQSVbny8UbCYdMURgL5eSuNu5bQLEd4
+         daDB6B5GLwb7n+FP2uDiYsVxcjBRmEuhgYR7qklePYwvEo3/NoUK9KLSjtuOD/ak9rYz
+         1Vhw==
+X-Forwarded-Encrypted: i=1; AJvYcCV1AVQuJcsbp8ZHUgUEO7NfMai5vPECQ3zwr4EF3cD6ZjJ8p5pVklqDQAI2nf+uzXhYuPjhXvd4tMce@vger.kernel.org, AJvYcCV1XKVY/2HNCKVvTzmGvLFYB5WXJIsS8GrMWF4fCDQApMPgeqUlRkzZf7PECyaJWvjHfTU6M0VBrZ8tNl8/@vger.kernel.org, AJvYcCVqVkXNVH/asAZfS/I8o8aHEdhlVfA3thnns+1KE2I+yt4cpjrIQIAsRZFO7+TwDoqzZBLqls3J@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx7SaU9p506vHMdqvKuiwZ3v5C2WAOlCXRvp4uo2rFAJEyL0VlW
+	0YaixyyfObiEiEFjfoyFA3MGXcqVN8YbgtPRafPSTtic4KgLxpQF
+X-Gm-Gg: ASbGncvvks6ZN3vnqckAnJj4D6rS6ivgpLlkTstgw0A/rJghmdIuozNIcPs/+LAj+Gk
+	c9wee562PgTd/Mx2dxNtIeEnyUXiRWoyZt1RjD/LxCrOZjBg4QDfTkwoqc5fVqR+xYE0ghEZD7+
+	+Mkio7oGIfqIELfuapYc0EHROpiKCu+us52tEdxbkfGjYd2jC31jv3mcC/Vs514j6qAGpUZM5fF
+	cxw42QDvJqwK7Dm0ACkOVQBHiB7PkZg6fGY0vqbJixCLpflQCyaSBS8boHMGhmiiBeKNxjRoJVH
+	5Zd0z5kGn2SHP/UNb4ng+YyLFcJC48YFzHCTWO+3jjCZWkCgp7uI8wT9HEhB5VeDjDE3uSN1ifX
+	gZZzObarLChaPZaWw
+X-Google-Smtp-Source: AGHT+IEnXEKhyoqKyql7HmWJcCHO+Gr5r3eS6SUzYuWVl+B+RTKRMOQwn/WGYHQLnofQqru7Sv/AKw==
+X-Received: by 2002:a05:600c:3c85:b0:442:cab1:e092 with SMTP id 5b1f17b1804b1-442f20e5547mr55352885e9.11.1747295141986;
+        Thu, 15 May 2025 00:45:41 -0700 (PDT)
+Received: from [192.168.20.170] (5D59A51C.catv.pool.telekom.hu. [93.89.165.28])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-442f395060esm60261815e9.17.2025.05.15.00.45.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 15 May 2025 00:45:41 -0700 (PDT)
+Message-ID: <d5083f6a-e39b-46cb-8551-ca7a5f6f6bed@gmail.com>
+Date: Thu, 15 May 2025 09:45:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250515073449.346774-2-chenlinxuan@uniontech.com>
-In-Reply-To: <20250515073449.346774-2-chenlinxuan@uniontech.com>
-From: Chen Linxuan <chenlinxuan@uniontech.com>
-Date: Thu, 15 May 2025 15:44:08 +0800
-X-Gmail-Original-Message-ID: <02C56AF5B595EA64+CAC1kPDM5BtDUJm6PtFsbRBP9OOcXGxE+K-AZingxsCSD=V8i9A@mail.gmail.com>
-X-Gm-Features: AX0GCFsRC37eddsWjKPdqpayqyMPV9qQhsWOI3R-G6JP5Hccr-2BEYQQlQaVVfk
-Message-ID: <CAC1kPDM5BtDUJm6PtFsbRBP9OOcXGxE+K-AZingxsCSD=V8i9A@mail.gmail.com>
-Subject: Re: [PATCH] selftests: Add functional test for the abort file in fusectl
-To: Chen Linxuan <chenlinxuan@uniontech.com>
-Cc: Shuah Khan <shuah@kernel.org>, Miklos Szeredi <miklos@szeredi.hu>, zhanjun@uniontech.com, 
-	niecheng1@uniontech.com, wentao@uniontech.com, 
-	Amir Goldstein <amir73il@gmail.com>, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpsz:uniontech.com:qybglogicsvrgz:qybglogicsvrgz5a-1
-X-QQ-XMAILINFO: MQeLyr+N5AxPZM5DXzmSt1kdaM4CWy9W/TnUnIuSSayOIhcgj2pLpUxU
-	HSL4yoAs1AMJnPLf4WbFGNJhOwoaaGGGEKbRaEf0grNBDkqG3vD/kS2LCERFhgW5CzmvUAe
-	vUqFn8F/HMFCHYQCTy/U71JQwXpZVHlRAxkAxWxbfkc7QjX4/4o4GGdH4myn+MiVVXdJLaz
-	Mh29K68EFKUISVPUcItE0JXxsAYNMxVrf2u8EvNK3ZEjq68jGyP1Upho4+FipufkamHqmpR
-	VMClvBy6hLIo7FDSoBLIomgR3FJPvcUe1PLlisc8bIAxRQUYHFDme+D+Q16yUbudvS+rW+J
-	o0X3wPxpm8gH4hPOGI/6MqfPwi7u80XwW5+5EogN/4RBax4hTFg/CPQJokmsD3fxUEPV22L
-	t+s9V3EwzB2/LwxDNI9rfWFJF0HBqWLPMQsTr5VlujuCDrny64hmJdmJ6n1dUMDXfBc+ngd
-	bT/YEbAx2ik+A53Q79jcK7erciCWmTRj5MrjH+oL2tDDnUJfnYc4+N+5z8SVdTpFfd2XNVz
-	hPknW6wvKFKhIi7V1D6JyTTA4lyMTT1hgjHQReSx0wAfJqs6brhyqKoIJ92JV/aDeTh97fz
-	n76ECOePjCz13PPaoRHUzvJOUnUVWOuaiGQrb+rWYQzz+SDpf4/h2kxeFi9Urvkmx3T+nvf
-	7w0AJLvxEMBK1svQibupz8okPCj4GWxr3xOFvAoDOYceuP4PUgYvYJvoC5zFfG57UW4T9Qr
-	ReL5FmN3sCipsv4ObF2lNNuAZdrG/UQBXKE+HvONxy21cSGBTo/6lsQa8xOi8HEgMFPNNLK
-	QughoOYR0Q2xo7iannd+hp904nx1wjAPYYsklT/glN2+1DCeNrznbwwSj+VbeKi33jHf6kZ
-	J601LDD/XpYxpRy7tC+vE4bDcsrhIdjDwVAWHouv6Xmd9ziwUS5PMwogFjUfW7VCfy/zQpx
-	8XCLkQ4pouZHqhu3ntkSD+ElQ13RVQvolUUyTqQ5N5ipmQUN4iS72axCCK0ooJws/3dyr2n
-	EnIKevzaMq333C9QnMr+Fi60G6NEu49Tgc9I4pJQ==
-X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
-X-QQ-RECHKSPAM: 0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/7] pinctrl: armada-37xx: a couple of small fixes
+Content-Language: hu
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Andrew Lunn <andrew@lunn.ch>,
+ Gregory Clement <gregory.clement@bootlin.com>,
+ Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+ Bartosz Golaszewski <brgl@bgdev.pl>, Imre Kaloz <kaloz@openwrt.org>,
+ linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <20250514-pinctrl-a37xx-fixes-v2-0-07e9ac1ab737@gmail.com>
+ <CACRpkdb2Njam8GGuN5yeR+DYvi0xe11xbARaoDepoGk=gAK6GA@mail.gmail.com>
+From: Gabor Juhos <j4g8y7@gmail.com>
+In-Reply-To: <CACRpkdb2Njam8GGuN5yeR+DYvi0xe11xbARaoDepoGk=gAK6GA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, May 15, 2025 at 3:35=E2=80=AFPM Chen Linxuan <chenlinxuan@uniontech=
-.com> wrote:
+2025. 05. 15. 0:28 keltezéssel, Linus Walleij írta:
+> On Wed, May 14, 2025 at 9:18 PM Gabor Juhos <j4g8y7@gmail.com> wrote:
+> 
+>> The series contains several small patches to fix various
+>> issues in the pinctrl driver for Armada 3700.
+>>
+>> Signed-off-by: Gabor Juhos <j4g8y7@gmail.com>
+> 
+> Patches applied by applying to a separate immutable branch
+> and merging into my "devel" branch: we were clashing a bit
+> with Bartosz rewrites so I had to help git a bit.
+> 
+> Pushed to the autobuilders, check the result!
 
-> This patch add a simple functional test for the "about" file
+Checked, it is fine. Thanks!
 
-Sorry for the typo, it should be "abort".
+-Gabor
 
