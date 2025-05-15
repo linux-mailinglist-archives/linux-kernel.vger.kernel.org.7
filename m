@@ -1,113 +1,82 @@
-Return-Path: <linux-kernel+bounces-650158-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-650161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD9D9AB8DE8
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 19:36:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE4FBAB8DF2
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 19:37:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67F9317704A
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 17:36:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A00DA7B8B95
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 17:36:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77C64258CE8;
-	Thu, 15 May 2025 17:36:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dhpq4k+j"
-Received: from mail-io1-f41.google.com (mail-io1-f41.google.com [209.85.166.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6297625C6E8;
+	Thu, 15 May 2025 17:37:15 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89CC61F3FE3;
-	Thu, 15 May 2025 17:36:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6268B207DE2
+	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 17:37:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747330602; cv=none; b=T5rhSMiuQcIamYxlyX4u22re+kw2jTyBDDMMF9pFhcIteDGYBjeEOTwtWUI3lygTkml123xqQ+sFuicOOgVh7olyIlIMWt8G0Dzmu5h8p0wH1fBr0U2i29a8TPS2hZrH1MxyYe3BIbSKzk82y0vE8CR/sX+F88Lo6oe1bVgSNvY=
+	t=1747330635; cv=none; b=NzHbFxvC1Ol1sf4UPLlYcKKySaBUIrgXVXkm8CwL610rrPDGyE0BoGJmTX8pONUhF/9s68Fnzm+bLxPPvWO/fIjU0hEFf92VybNlbRPOa/lJ6cxjFsbfK+zz8XVCOxAkDm3d6CRbcxba8WL4caT5tMIxyH3t7Ow9OFg8qZKSpvI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747330602; c=relaxed/simple;
-	bh=xtrztwEb7iUTYXp2R8jlDxuNMUUZt1rKnrYArZGNvVA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Phca+mQEP8rLvsWZFL9kpgmWkZy7ydWeA/604wP7X3zrd785WityUDnHUcMAl9EYLYg/ESJMxrWVGq7u0wjjwkKZ+9lHce9J2joxr1rqb1gIPjMcYwdJ/lvB6ns59DgyyTAe+iX7Gf1/mkMTGBRaLaS6hbRWRcc25pQJAaaZr+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dhpq4k+j; arc=none smtp.client-ip=209.85.166.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f41.google.com with SMTP id ca18e2360f4ac-85db3475637so81193539f.1;
-        Thu, 15 May 2025 10:36:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747330600; x=1747935400; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vqHcNXrLgFH+FE/dQ/7Jqx//cnQWyh3PmPGZhUVuq2M=;
-        b=dhpq4k+jIFlUQVZexzbxYWDgnORQUTAYoCaEN+xuD0FCqJr8BF5ai5wWmkwRFTMmGR
-         pEoVk/fjcIbaNO4nQsHhwzYlFjOuNtZz0U7PvxR4xLt2cGHJAWnUnTsHBxnxhwG1xHNz
-         Vog3nnvQ5vtCn9nVLx7YhQr8vPWR6ZsfG1vJZQaN3LBjizlb6xgeZrE4cpQGbSyUvLJg
-         C1fypnHBYdzquXp9iym39zZDrAO5AunVRxsb3HSL44LhZ93lBXmmdhO2Go0GJkzyMpJD
-         vIGFaHBX12CN7ZvgCaV5X/nQHEzCargsX0UztxfYfPhJ+c7nny/i13W08AGT0VuHJdUC
-         IHmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747330600; x=1747935400;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vqHcNXrLgFH+FE/dQ/7Jqx//cnQWyh3PmPGZhUVuq2M=;
-        b=vyULIbWFGBvIFSkjmr0riOOjlDznfwkclIUmaRlumkDef8dSV1vKGmh7WS++u1Pf/6
-         PrO1+cNOSGzEgKMcvl2eSnODOTQEUy5lhW2+2u1lw/PVcWbOqryYnew+1stwPB4F5BCF
-         Oezoo5mVTqrj0eqyHfFSwVsB++BomdN+7tVFcHHkQqLimhY65CRiChqys61MWW8H1yOs
-         cpTfAwvg7pIYm4Gp7M6Gmv1yYtoleWZppQ3Hm+LA+rDv4LiEVXQrgoAi1sTgAb4O/MlS
-         0UwzNie5ft0XUi1orBM+fyRhP/D1I1IIrtxXnqVcNK2UBnVh0LX39Djkvb2op+9I805K
-         4pBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU2fgi4gx/xP90U+U/oK3oumKtNthDNo+ROJirwa9I5d8yPMwW6yb6uGJCAv/tBAlZ7t85no+dYLX1ztiYC@vger.kernel.org, AJvYcCVGJ1TudS4cr/2vfRMrC+UODatmTYYV1SUDRtiLM/q5pEFbvgBFCmfpRdpWEAd9UF3kkwfAyoTLOi70Z5AL@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6jtZ8v9SoOAxDDWZbaS/7bs3KFjYLUGJUNwEZJUJicz04w+3d
-	NNt/SqkQhgwcH2Ofh6ZXIu7wM64woZOF7QyH3P5IQPoKIAa5RVDfFMuEWhKMCgPUtgB4kIz/cmu
-	aYNQmnn5KhKlUZ+ovTnOOwgwhgvH+YGU=
-X-Gm-Gg: ASbGncunzkmKvxJlHsF2ivWzTKVfLKnurnkUqVzKr9I3GO9nChiUdU2JkI5Hhrfp8yG
-	FojdtS80wH/t/zsJhG87Gkro4MRgg4PJqmps13tp1IlxVMW+YZFshn/pYaUsNvPTCM0vE6vSeU+
-	YQhBDEuQneU5pZhp/sb2+t1FrRGg2GiB2M9zEcodn/AZ/SmrUF7XALPiUaYTHgSZ+6pY+DYr4Al
-	A==
-X-Google-Smtp-Source: AGHT+IFE+JBnt1NPTvRR6pHLKFY0JDRYFTVuXW5ZgFpZdNHczNUdwTdzRDEMxhVRO9gP3eWJ4OQwNuIlrSKjsez6h/k=
-X-Received: by 2002:a05:6e02:1c07:b0:3db:7434:a8cc with SMTP id
- e9e14a558f8ab-3db8490530amr2645855ab.8.1747330600475; Thu, 15 May 2025
- 10:36:40 -0700 (PDT)
+	s=arc-20240116; t=1747330635; c=relaxed/simple;
+	bh=6qMgjxdTCzXmZfwTSwN0iu9t85SHvq1aYnMUf0GnRBE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=C3XI+BuR+rWTlG9agufFH+CUfm+gBlCIVVFpna6RCTstiMJHcitYcMOWc3Ftt52B5rPVGyUK97nzKnQO5Mq6apizEphba1DCuBJtRKPABTIyqRitS72sMBpAVXI3u1nUpy/SgS6+HP7lj3wCG/x0PvMa4jW6/pYXn/w2sDGK+uE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from dude02.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::28])
+	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
+	(envelope-from <m.felsch@pengutronix.de>)
+	id 1uFcVk-0008Ry-Ck; Thu, 15 May 2025 19:36:48 +0200
+From: Marco Felsch <m.felsch@pengutronix.de>
+To: andrzej.hajda@intel.com,
+	neil.armstrong@linaro.org,
+	rfoss@kernel.org,
+	Laurent.pinchart@ideasonboard.com,
+	jonas@kwiboo.se,
+	jernej.skrabec@gmail.com,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	alexander.stein@ew.tq-group.com
+Cc: kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org,
+	dri-devel@lists.freedesktop.org
+Subject: [PATCH v2 0/2] i.MX fsl-ldb cleanups
+Date: Thu, 15 May 2025 19:36:41 +0200
+Message-Id: <20250515173643.2140748-1-m.felsch@pengutronix.de>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250514170118.40555-1-robdclark@gmail.com> <20250514170118.40555-5-robdclark@gmail.com>
- <51f87f358fa1b7ef8db8b67ee6cde38ae071fbe8.camel@mailbox.org>
- <CAJs_Fx771FFVDVFMn8YJkR9f9Ad-UQspJ9KKQw4u6Cu4TA7YPA@mail.gmail.com> <aCYi_mkv47ckB6ox@pollux>
-In-Reply-To: <aCYi_mkv47ckB6ox@pollux>
-From: Rob Clark <robdclark@gmail.com>
-Date: Thu, 15 May 2025 10:36:27 -0700
-X-Gm-Features: AX0GCFtCmghLHobPptzNOWUCvf5wIEoct66-fDcHcf80I6aFdxoL6tqmJhNttBg
-Message-ID: <CAF6AEGt8LXUwCiin5Z0Tab-9U66N22aZBVXM5aLFw8pjMXRgNQ@mail.gmail.com>
-Subject: Re: [PATCH v4 04/40] drm/sched: Add enqueue credit limit
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: Rob Clark <robdclark@chromium.org>, phasta@kernel.org, 
-	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
-	linux-arm-msm@vger.kernel.org, Connor Abbott <cwabbott0@gmail.com>, 
-	Matthew Brost <matthew.brost@intel.com>, 
-	=?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:1101:1d::28
+X-SA-Exim-Mail-From: m.felsch@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Thu, May 15, 2025 at 10:23=E2=80=AFAM Danilo Krummrich <dakr@kernel.org>=
- wrote:
->
-> On Thu, May 15, 2025 at 09:15:08AM -0700, Rob Clark wrote:
-> > Basically it is a way to throttle userspace to prevent it from OoM'ing
-> > itself.  (I suppose userspace could throttle itself, but it doesn't
-> > really know how much pre-allocation will need to be done for pgtable
-> > updates.)
->
-> I assume you mean prevent a single process from OOM'ing itself by queuing=
- up
-> VM_BIND requests much faster than they can be completed and hence
-> pre-allocations for page tables get out of control?
+Hi,
 
-Yes
+just a small series to cleanup the fsl-ldb lvds bridge driver a bit.
+
+Regards,
+Marco
+
+Marco Felsch (2):
+  drm/bridge: fsl-ldb: make use of dev_err_probe
+  drm/bridge: fsl-ldb: simplify device_node error handling
+
+ drivers/gpu/drm/bridge/fsl-ldb.c | 41 ++++++++++++++------------------
+ 1 file changed, 18 insertions(+), 23 deletions(-)
+
+-- 
+2.39.5
+
 
