@@ -1,447 +1,295 @@
-Return-Path: <linux-kernel+bounces-649737-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-649744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED7BDAB887B
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 15:49:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08E05AB8887
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 15:51:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2609161A13
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 13:49:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96328A0661E
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 13:50:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE2211DED5E;
-	Thu, 15 May 2025 13:48:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11ADB1D5ADC;
+	Thu, 15 May 2025 13:49:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="qWx7ZQLy"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2089.outbound.protection.outlook.com [40.107.236.89])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WKVeUohU"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F8331DE4C2
-	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 13:48:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.89
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C6E361FCE;
+	Thu, 15 May 2025 13:49:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.13
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747316893; cv=fail; b=sK+nVOGGD4BwB97M07JyTBL/M7cMx9DyMczyAt5qEe4YFz+Sc8ZWpkCZVfjmPlX5j42KxczExShfLinY58tXzdJUy0fAjweoS6TKQPLJX7icYVndrXYKRbzbUP6GJW1ooBMHqvPv7XCBtUhxSZUX5NUjJ02DzchkYN2ep/Gr1Tc=
+	t=1747316956; cv=fail; b=hycXNPUGqyK2J/y06AB4QLYhaUWssbmQ7gQmLKaXontz1o/10B3K72SGs8lxYoSfd/wvkOULoxde/1f0K4Gm7j4jqASuBnXYYP/HAW4WTIuP32SvmeavddLR1SPrZt373ooDPaGtgcS7lvSyIBE5nws1TIzeaJDyexfQPs3xvbk=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747316893; c=relaxed/simple;
-	bh=PsvLNCQCmGscS28zRBmAe5oIP6D65kXPe18M7K9118I=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=GESIh7MwRpYpu7iUKCq62jhjNKCZkzeRL9cQOxRf35oh5APDxQwVcG8KcfrMIzEEk858QIgkepHdYnd18rhria2tIPceB8smkSij8XK3wLyUOLvsswY1Lpn3kVzWTtyM8Vugd2oPXwtKSntyeMb1o9PY8891uXNq93HxfgFKT88=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=qWx7ZQLy; arc=fail smtp.client-ip=40.107.236.89
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	s=arc-20240116; t=1747316956; c=relaxed/simple;
+	bh=nqtlTzHOkGhV9nsCwrm4LtFS2pIgX2IMi7707iwqmLM=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=XbbwYh2nG6UDATrWh8JT/rCtgXVuqr6e7Gr+uaZdu2/0sDat94u09MCBJLTdrTqs3iFvdICuaSFeYPKNCmfdVAvlZwlOIiNmqmpeAif3OTmClt/2yfVE/5TP5xb1K8DjNKc4IeL62EpzlB3R9Y0Nkt1JSkUHyOQumh4/Z2ewLHY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WKVeUohU; arc=fail smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1747316955; x=1778852955;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=nqtlTzHOkGhV9nsCwrm4LtFS2pIgX2IMi7707iwqmLM=;
+  b=WKVeUohUEVPnzNtC2X9w0uZB2pGrQWo8Fq3x6cB0MXZwiJHYzqCgvRaz
+   mr7iIUzdjToElto2Xfaw3dQgsibMJE9JMBdmo3jszs0+s/ZqBBQTMGtAY
+   xfvZfCyD7he+ddIppnlv01erd+iPLoPDWv6ijgc1P6IDEBRkOFkLSbxJp
+   4mQShcsJm8t5M+M75Chzice2ppz1nzkZ/Djdv6vy+Zz8Ld1rg0yyd8DoB
+   SgvoOYwhF2/l8gG1u24FsVDgE5z5ouz+Q/AIsKHW3pR5WnsbpZNm9RSCs
+   KuX+Pedn00x3Mz4V/D3rt3vEZz1oMWAYPRo+HZg5eaUklpAiDCLdiqNtA
+   w==;
+X-CSE-ConnectionGUID: wPbapACNQmSp3GrhW7LliA==
+X-CSE-MsgGUID: 5N2nTjV2R9mIXAX9+81xzQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11434"; a="60268530"
+X-IronPort-AV: E=Sophos;i="6.15,291,1739865600"; 
+   d="scan'208";a="60268530"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2025 06:49:14 -0700
+X-CSE-ConnectionGUID: FQsc+nXlTAeec0KZnl4EZg==
+X-CSE-MsgGUID: BrMkT6twTtKxzWCigspwuQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,291,1739865600"; 
+   d="scan'208";a="139369356"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2025 06:49:11 -0700
+Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Thu, 15 May 2025 06:49:10 -0700
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14 via Frontend Transport; Thu, 15 May 2025 06:49:10 -0700
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (104.47.56.177)
+ by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.44; Thu, 15 May 2025 06:49:10 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=n2C1oYHsBVoROEaml+rRtPtr8a6EosvQ2QeoEMNguin240l3NcEnlo3/xy8TjXWgH5A2d2CCdz2XDwg/F7EJICm7RwVaCu+LaQxV3qj11OeY1KONOK/poqPifwsJaIZhH03M7CdelnjRA5v1dM5L1vgfbzmeMNtZ6lj6WTubcghaW+uTb8rMkYa3oYsCxl87GCIW6nnxhQyE5BXDxYyKNY5TLdhXbHxplKyfMyyCvrOusDidB38/N6zvGyaRKw3AvQa6NODIkvwOz0zuK1TkiD2GrkbsWPO+havp9xrSFOrDia30ROkc5zGL8qNbh1V+jd2igp9xRC8c00IQ9zZfsg==
+ b=ZnvAwvOUJbYGQj69AaKCJZOpAqtsctIgy/u51FiY8caROzQlnl6Vqv5hLz5I/vA8OeU8gN8CjODpINWewxeJ0J66kqJX+6f0obI4T51qAR7z81srzcjHrINwQeTxtmcKJgmL9l5rL5v1pFKneYjHwMPLjHOrzkk235HE0eBdsn8q4nQv3d4xZDmBSaJ1HE0Isu4SQuK/n+TFNJAfmxoo2QzOer2Oovx2FvUni+2cFOFvBtQIIgKBeJTsangFEZYdCs+t4ZMj04qkK/p93fDvSYva8R22ZcQgP0vTPZprtnDXfUURXV3R2sm8eNMGpz+j6XNEsw69ak1OqZiNo6SX3g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9HPpG+9zypFt/r08D4c4QB7/8/7lrcy6PxUMkv5I1ho=;
- b=aeqsIncvYCDjPsKNkSXTiaU/VrKKCT1tj+O3YqlrKth1c2jdrUqhwZqVZjQDdigNgvfpWJeowiyKrSJXxRgQ3U+cgp5EDHfgAcDELQfEyd5W/r1JfgeTAC5F+SHRrFNePoTS+wQ/T0HlVCNamRrvQjOSq2p8/c3VcvG20BstWrBCTiSIkGS9w2+ev3yZi/K+YABYjTKkaXi1XxQ7ZrdhKRIBulzGS5pzNdZ4m8r9ryjuabJCR2a8KUqWOPXExW8kp3EG+8cuggFceVLeGegMmRGtIkbB8piTZdxX4JfSHSYtyHHovPA06KxcFdCIzEV51HRYMRBuvjsmClb/UjGosg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=linutronix.de smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9HPpG+9zypFt/r08D4c4QB7/8/7lrcy6PxUMkv5I1ho=;
- b=qWx7ZQLywmd5s0k0xxWZRUhwOK54oJA9W0/ugAtzsvOF2P8k1qxJEvv4IQ+KbvVSHa7wsfIA45l8EuwKDSe0NTIt6AJfN2Ty1BhR2pIwWTi2p0IrKZ4I6qmtMHvmiHkZsYL3Sw5MfocOQNP3bPdZvrbTTTGu0YbEqO2nIH2hA2I=
-Received: from BN9PR03CA0858.namprd03.prod.outlook.com (2603:10b6:408:13d::23)
- by CY8PR12MB8410.namprd12.prod.outlook.com (2603:10b6:930:6d::10) with
+ bh=dgZj202aF2joKNLQ9HVKrg7V1/VcuY8r0voiVaaIEQw=;
+ b=yFryjRRV9mC8SffiEhYMwj/83UxxiHEiFCMMliJ+0PshWMCMTvaBqOjmgKnkZC1y1WFk2FE9pR7Noayw6c+V+802RHYWLf6es2nN24l2A+qKRVBjqJDj2v0fUr3OEgvW33NlN00wl5erj2N1mJYZNeufIk4NthuJtGA0r8IRrdMh1RWf43LkttSsBpSdnl+TstH7gmjvWOpwlJVAynoUjtY9Tz2D0m/4laFCWfOsK8LMalBMPQ9NNVeEZBBmqKPUB4xL16QN2pLcVzVi7JyeOCldm+aXo0cHssXsNI4Hln+of2jXyMka2TvqYu4WjPr7b8GN/w7wDIx0fhXQ+AT6Tw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SA1PR11MB6733.namprd11.prod.outlook.com (2603:10b6:806:25c::17)
+ by DM6PR11MB4628.namprd11.prod.outlook.com (2603:10b6:5:28f::16) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8722.29; Thu, 15 May
- 2025 13:48:06 +0000
-Received: from BN2PEPF00004FBD.namprd04.prod.outlook.com
- (2603:10b6:408:13d:cafe::d8) by BN9PR03CA0858.outlook.office365.com
- (2603:10b6:408:13d::23) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8699.29 via Frontend Transport; Thu,
- 15 May 2025 13:48:06 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- BN2PEPF00004FBD.mail.protection.outlook.com (10.167.243.183) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8722.18 via Frontend Transport; Thu, 15 May 2025 13:48:06 +0000
-Received: from tiny.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 15 May
- 2025 08:48:05 -0500
-From: David Kaplan <david.kaplan@amd.com>
-To: Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
-	Peter Zijlstra <peterz@infradead.org>, Josh Poimboeuf <jpoimboe@kernel.org>,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, Ingo Molnar
-	<mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>,
-	<x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>
-CC: <linux-kernel@vger.kernel.org>
-Subject: [PATCH] x86/bugs: Restructure ITS mitigation
-Date: Thu, 15 May 2025 08:47:56 -0500
-Message-ID: <20250515134756.93274-1-david.kaplan@amd.com>
-X-Mailer: git-send-email 2.34.1
+ 2025 13:49:07 +0000
+Received: from SA1PR11MB6733.namprd11.prod.outlook.com
+ ([fe80::cf7d:9363:38f4:8c57]) by SA1PR11MB6733.namprd11.prod.outlook.com
+ ([fe80::cf7d:9363:38f4:8c57%6]) with mapi id 15.20.8722.027; Thu, 15 May 2025
+ 13:49:07 +0000
+Date: Thu, 15 May 2025 08:49:39 -0500
+From: Ira Weiny <ira.weiny@intel.com>
+To: Ackerley Tng <ackerleytng@google.com>, <kvm@vger.kernel.org>,
+	<linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
+	<linux-fsdevel@vger.kernel.org>
+CC: <ackerleytng@google.com>, <aik@amd.com>, <ajones@ventanamicro.com>,
+	<akpm@linux-foundation.org>, <amoorthy@google.com>,
+	<anthony.yznaga@oracle.com>, <anup@brainfault.org>, <aou@eecs.berkeley.edu>,
+	<bfoster@redhat.com>, <binbin.wu@linux.intel.com>, <brauner@kernel.org>,
+	<catalin.marinas@arm.com>, <chao.p.peng@intel.com>, <chenhuacai@kernel.org>,
+	<dave.hansen@intel.com>, <david@redhat.com>, <dmatlack@google.com>,
+	<dwmw@amazon.co.uk>, <erdemaktas@google.com>, <fan.du@intel.com>,
+	<fvdl@google.com>, <graf@amazon.com>, <haibo1.xu@intel.com>,
+	<hch@infradead.org>, <hughd@google.com>, <ira.weiny@intel.com>,
+	<isaku.yamahata@intel.com>, <jack@suse.cz>, <james.morse@arm.com>,
+	<jarkko@kernel.org>, <jgg@ziepe.ca>, <jgowans@amazon.com>,
+	<jhubbard@nvidia.com>, <jroedel@suse.de>, <jthoughton@google.com>,
+	<jun.miao@intel.com>, <kai.huang@intel.com>, <keirf@google.com>,
+	<kent.overstreet@linux.dev>, <kirill.shutemov@intel.com>,
+	<liam.merwick@oracle.com>, <maciej.wieczor-retman@intel.com>,
+	<mail@maciej.szmigiero.name>, <maz@kernel.org>, <mic@digikod.net>,
+	<michael.roth@amd.com>, <mpe@ellerman.id.au>, <muchun.song@linux.dev>,
+	<nikunj@amd.com>, <nsaenz@amazon.es>, <oliver.upton@linux.dev>,
+	<palmer@dabbelt.com>, <pankaj.gupta@amd.com>, <paul.walmsley@sifive.com>,
+	<pbonzini@redhat.com>, <pdurrant@amazon.co.uk>, <peterx@redhat.com>,
+	<pgonda@google.com>, <pvorel@suse.cz>, <qperret@google.com>,
+	<quic_cvanscha@quicinc.com>, <quic_eberman@quicinc.com>,
+	<quic_mnalajal@quicinc.com>, <quic_pderrin@quicinc.com>,
+	<quic_pheragu@quicinc.com>, <quic_svaddagi@quicinc.com>,
+	<quic_tsoni@quicinc.com>, <richard.weiyang@gmail.com>,
+	<rick.p.edgecombe@intel.com>, <rientjes@google.com>, <roypat@amazon.co.uk>,
+	<rppt@kernel.org>, <seanjc@google.com>, <shuah@kernel.org>,
+	<steven.price@arm.com>, <steven.sistare@oracle.com>,
+	<suzuki.poulose@arm.com>, <tabba@google.com>, <thomas.lendacky@amd.com>,
+	<usama.arif@bytedance.com>, <vannapurve@google.com>, <vbabka@suse.cz>,
+	<viro@zeniv.linux.org.uk>, <vkuznets@redhat.com>, <wei.w.wang@intel.com>,
+	<will@kernel.org>, <willy@infradead.org>, <xiaoyao.li@intel.com>,
+	<yan.y.zhao@intel.com>, <yilun.xu@intel.com>, <yuzenghui@huawei.com>,
+	<zhiquan1.li@intel.com>
+Subject: Re: [RFC PATCH v2 03/51] KVM: selftests: Update guest_memfd_test for
+ INIT_PRIVATE flag
+Message-ID: <6825f0f3ac8a7_337c392942d@iweiny-mobl.notmuch>
+References: <cover.1747264138.git.ackerleytng@google.com>
+ <65afac3b13851c442c72652904db6d5755299615.1747264138.git.ackerleytng@google.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <65afac3b13851c442c72652904db6d5755299615.1747264138.git.ackerleytng@google.com>
+X-ClientProxiedBy: MW4P220CA0023.NAMP220.PROD.OUTLOOK.COM
+ (2603:10b6:303:115::28) To SA1PR11MB6733.namprd11.prod.outlook.com
+ (2603:10b6:806:25c::17)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN2PEPF00004FBD:EE_|CY8PR12MB8410:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6c67ed82-b036-427b-db14-08dd93b71f23
+X-MS-TrafficTypeDiagnostic: SA1PR11MB6733:EE_|DM6PR11MB4628:EE_
+X-MS-Office365-Filtering-Correlation-Id: f5f0df1a-f451-4a64-2397-08dd93b74313
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|1800799024|82310400026|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?cmPC5kDy4iNXGZLFSZgpkFp0gRMOvwg9vk6DcpwUQoVehLr/LeEpW2MmCf/p?=
- =?us-ascii?Q?8/U2eqUMGMRTRywIHOetN+627VNQxqQU/mx7nEpbLjZfLWcnCsCdC8rtx+Xj?=
- =?us-ascii?Q?qjzjeFIFrbelM8FHIkINW4Pj4Jv1vidVqUpQ8sHb30BVdz4Nvj9J5GIUkZyY?=
- =?us-ascii?Q?chOaA/bXcRPlt/lswYnus6jpNfSF21B7F40c9ER/XwgnP+W5ZfwtzypdwdZ3?=
- =?us-ascii?Q?KA/gSWUFIX90BBr7yUEd2N3AftHCTLdAjrZ7acDCj3JVmSgd3Ivpqb250WEY?=
- =?us-ascii?Q?uaMDPv/pv3C7Hcxyhrb3LMCtFkcmgJadQet5yD8TK+O+dO5AK4UD+zqVyu5O?=
- =?us-ascii?Q?VJY1k1JlNGwXxRNcudTz+ChTvRhUyHhOxt4oumT/iQSmsFgRcUH1QpcPClKH?=
- =?us-ascii?Q?qI1KbzqRPnUhvg4BPRxwkKChBvZi4dZEVo38TwFZo4BbUW6/HgUsd71iW44F?=
- =?us-ascii?Q?uvCKyJnV1nKkDNiB1uNT5u7y/XgjOuoc0T7adfhaelXtrHARvs4WZfzuBjal?=
- =?us-ascii?Q?9PrxDEqGgyCu0ucq7RZaC45H3eFpp0PC0Bwz7VyWX0BZDuLqzQalHyGiRXEG?=
- =?us-ascii?Q?jIbae0dH4W1ZKWel4M9UmCpvBjUEgo4kzxu6oy0tzg9OFHiFLdStVGjFt6AU?=
- =?us-ascii?Q?rv5pe2UJ+7Wl+NZcD62CIUK3kTKQUSDllC3E/93nQ6fuGpFh9BgcRKwqKvNV?=
- =?us-ascii?Q?MIxnoQHQvLK2bpoXZaUQmSKF73pJKpw8mRSMei93Qp8yIWtnjhLzDvdZ+mwU?=
- =?us-ascii?Q?btFl5Zii+3Uw6RBDXDK0D0GA/rsHjSm5SIV7Sgav2faoQFiwbh7CYwse42Hl?=
- =?us-ascii?Q?U2YXy+tU3rPReYDUjTIO3YcQvotPLB3XEfOQYxniy4kRcDn2LFtvsthinlu9?=
- =?us-ascii?Q?2q8iwK67ompRs97KFkPdIVYM4r1P62Upuh/05LIUZFB+caFfICyWiB3whP+q?=
- =?us-ascii?Q?mF5UJ1wdRlZrQ3qB0+UcuO/vtzJ7CEk45n13tM7ffmfIqEfxApvAVK2Z1GJV?=
- =?us-ascii?Q?rtCvTWsPTiubMQo5rQxZXwdM4ehPv5ao7QL6dul3TJ2LP1jmhl4GWSKMgxEJ?=
- =?us-ascii?Q?1m+qvgVQTjbzu4aUaWuhDGQ5jNvn2Go06HkYrgqOaHu2RSIhTQvMKnoUdrrE?=
- =?us-ascii?Q?wQXyeF4zOBzVcN61wbNVqKkjGh9zS8sKvetzsLcwpn3fzHtzyDiZE0AecGgu?=
- =?us-ascii?Q?SIizeT+5uitay/PpKCvWR0xzSCoMBuX6laJncCtkO7rldMZHxpPk9ztnE1Yv?=
- =?us-ascii?Q?WfQvcUwvD9IfAUZaJEDo1b3Ntajn9KkreAOmpxnoJmXG05dahF3SxbuZ/RNf?=
- =?us-ascii?Q?mgp+cTdxuF+pQQRA4wZcRonybCXD6Huy3pFY6GjhDkphTV5prnhwUHiOG+go?=
- =?us-ascii?Q?BfzQ7MKHKQi61+9qFQwH/G8L7THbDrzf0MRco0h1uHr3sXyaM5K3XnlnR4yK?=
- =?us-ascii?Q?NUET5KRpIxCHUCZlgVaxIAmfeG4rEZ9SblMbtSJr1Oe2W8LzPSHkVMvb/SdA?=
- =?us-ascii?Q?LFXg6AbGaPAOVucPxTmK+1DoO7o5QmlR3K3M?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(82310400026)(7416014)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 May 2025 13:48:06.6794
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016|7053199007;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?HvFigmNtoEpt9wRbnKAyGzrTZmsyHlJMcDw7TzH3PkA6wU8lHI3URx6MRYeT?=
+ =?us-ascii?Q?iaXxciNU83coeoPgd4XJjUmsDSjeB6PUEh6qdtuRmwfnZucy4td01pYkF7jM?=
+ =?us-ascii?Q?++TbubJJc0iJtftckv3F5lWbA/3BwspWTHgs3yU9XKnOOnqNKdn7Ev9dEynx?=
+ =?us-ascii?Q?PeY5SZDTmvGKFznI2ynRnlmMBb1us776SU/od5V1B5ex7w16VUoLli6eZAJ1?=
+ =?us-ascii?Q?GcJ0zeTrc7zAKqt9IHwMuMvhnkn7WNGDPILkvJYvLhix1CvFa9omOq0BoOpa?=
+ =?us-ascii?Q?HL6Nop3bTtcNzEQrKdYu72erz4nZrEHjCFmygQzisbH+FAPd8SJsgbCYQAay?=
+ =?us-ascii?Q?3iHOYYZU+eP0oTs5jFMi88taLfx8knCw6kRghy2JlmmDW2H22tiRwG3zdcPp?=
+ =?us-ascii?Q?H15AGgZes0JWoFfvbheidizqn+kLscF9tpcpRfAnSfiNLep/VcHKejO4iWBs?=
+ =?us-ascii?Q?Gti45hEQaDMl1chjf8P1YVGoYNufvJrYDAuzGRqGh+46rbDdeit5LIp1Yv3W?=
+ =?us-ascii?Q?bxpoL6KtAV8vILglO/eM7qX/yPU6uSNRR4XLfue8l9PKZ6kZj5OynG4S3UXB?=
+ =?us-ascii?Q?lZLz0aIbPb+iBQvOd4NBg6vhYKW2NTd0ns1j0PpHEZtHkXrCWSeH98OSj+sT?=
+ =?us-ascii?Q?13zhvITSonMLH0atu7lCaDQeKU+pRO0CrYt2998dxunJl0vYS4mA6c9frCx2?=
+ =?us-ascii?Q?PdUXWOUueuSaoui4on9Kosr3G8hljpXf07AZG0g5qGmA+Q/1PtUy14W5myM2?=
+ =?us-ascii?Q?h1uPv0rjoPTh6f9hlFrS5ilyvqV7rS6jIE3BZThfC5brgql5KJor6hUetBro?=
+ =?us-ascii?Q?YljxvO/I6S6HRBklg+HYCeablfVPcNzm54bbaByPAKQtA4J0mLawzXRixEf9?=
+ =?us-ascii?Q?I1326T4RFXMP/YK0W9vz193KhcuhgZNfNfcX7nC7308aIAZZ7O2WjarNWriz?=
+ =?us-ascii?Q?MrZch7cexQnat7uzm8gVwRya2Osavl5MLmb0fJQRAeWvKuXzf2FFf814IPPB?=
+ =?us-ascii?Q?MDxhEF+LD2yKQAtpGqXpdhyXZrylBzFM8+L2OeIyZL0bbOO1rIFwYqYQmdzO?=
+ =?us-ascii?Q?f4x8XwexhfwQD9Yk1ncYa0fHbnFFEBbUoFUFkFXa797nlDGudzxg66SNwtOj?=
+ =?us-ascii?Q?27q/IyIbfgTVX+xP+cQjt9uZixPjpuGOdZYgJUWNNd5XnuxkdYpEgqXkPTzu?=
+ =?us-ascii?Q?hO8XWd1eXoBbFVMlrXkajyIH7ZRFgMV5sis479CyvvSzg9mk3quXjfhRlz92?=
+ =?us-ascii?Q?QlMou1oDIrjxha3/SdBhhAWCwiUvAsll+nXmVFjgrYIEc5opiyN5+iZ/wcVt?=
+ =?us-ascii?Q?2qyLU7j5d+LGfvAfnH7IGe1DAfoovncc6kLC5H3VspIWftghPcnSmz2A34kj?=
+ =?us-ascii?Q?NKWcgVyH/dnQuhv4nDqw5ijZUBzqEG84bAUhNmC1/e5vmWvWmQ=3D=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR11MB6733.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?ytew5Zz4LrowHCX1q5V3usSKzRL5mQor/PdqhBXN3J6gTdxMaO9lwwoYkd5N?=
+ =?us-ascii?Q?6BWmpMKMzoCv617YsOXXXDvE0ywGfEjzACw3b2pedh9Bqe4oxWa7N+cc43g8?=
+ =?us-ascii?Q?DIIZ5CPYsdmJsF7fbq92u3HMZ4wZ4NSWzqOJI4p+cZeZnzbL+6E/wqlmqUWx?=
+ =?us-ascii?Q?DhRmB7URuKa3p+w+3B34+nY3wzbUCUbync4MB3ZVXumFsWjCRsWs5hhABhQA?=
+ =?us-ascii?Q?tuFGXYeRL+oJ0j8B1rRt85u/nrNZX2k9z1XwM95Dn/vAMzN8k5ysRj9RkwQk?=
+ =?us-ascii?Q?9BD8s44vrdWx78oI3u7qhZhrc7hPFdPJzWeyBqIT9a3HKYr6PVDbIMRj3k/S?=
+ =?us-ascii?Q?CpiOZ3Y+5n/Fb9GWqDOYfiKdDubSlEZDdbAxjnnVUtrvtdx1sqtoFfO1D6sP?=
+ =?us-ascii?Q?AJCytcTlRk+qFjqQCqXmMGXhLIoGR18avuNtf4rsEZ5zXXLNwV1a9jzDoUma?=
+ =?us-ascii?Q?rAJyRan1soSQdO2TVmZVKRzvt/c3PXbs14wKxrqhQZOD1mTnWEOtMqp0LFny?=
+ =?us-ascii?Q?jhq1qmFxFTYZsVZ9aFWoyq6Zw4mPIsFqno4PSNH/+IfaTGJv+5+85dL5Toph?=
+ =?us-ascii?Q?hUZSH0CKdV/gkpk+Gd9l6igMu6GUbECKoCvjEWAwHPcnFSFZ1qfZb8rpIq3m?=
+ =?us-ascii?Q?VwfW04pzJq9JXxyYmNjbkaRDp/lQKOogM+MruqfMaOayCgbac4x/GND5cpQ7?=
+ =?us-ascii?Q?9YEUBH8WDlmMmQ7RRUKj/sqdMiyv8FwHTw05I8Mx2osOcKMTwMDJCQR3vZna?=
+ =?us-ascii?Q?F/zZ7UETHht30Dn6i5uL63weNLyqlP2bf6lTMoGPh64SE+U+hzyaeRywgqiE?=
+ =?us-ascii?Q?ryGPM8Ckjna3Me1p9QWXK1YEy0xBFYgUN8o44ytxprPF8dYLpNgmtlPkT6Pt?=
+ =?us-ascii?Q?dF+EbIUEXqanVI6Y9dX4/awvQH9kBTmGlszVrUeSppK6HZNmUP5awkvPeZzO?=
+ =?us-ascii?Q?h1ru3AdrV4DkKx8cmSPBnpy8fAgbSPHCcfjXY3jI2ysp9fs65XH6k27KjQ7B?=
+ =?us-ascii?Q?syS6SJ4naEM4F8PbLAxXB2SCNKPOOpCVNBuScYRDhFNdHueJAZ8yatP8FXaP?=
+ =?us-ascii?Q?hXwfE/v2K9lb2gXMb/ztUc0u8Wdy6cpJ4qT8GA9wnR/OKDaAOrGZQCqwZ49q?=
+ =?us-ascii?Q?ZvgmZiTNGlbXiO4rOJ0C4WtW+xpc8FJFfRHde1P7uN1AHwi4zeK6bgcCQimz?=
+ =?us-ascii?Q?9E6nHda/CzI6D9CMhKq2oCGrH+UMmPqNzkxlaruoCQxQhhnA1RH6+LgZ3ngj?=
+ =?us-ascii?Q?J6RHAO818fAooRPD6xL/Yie5JKST0/ZrQfkQ5y3pw3ywsgFaXh9Vv8d9gSun?=
+ =?us-ascii?Q?r80a2MyRz2S5vSxNRhYWKB4GcIpht/rBc6tplfS/uRBLg/vMnejxzhYh2hFU?=
+ =?us-ascii?Q?5NvCCHEfOmCahV8TZw3oWf9KT5ZSTDx5pCPnCYxGv2444vX22ZI+qgHG9bS9?=
+ =?us-ascii?Q?hriS42/jls4uwu7a9bhHFAagGpbjQMlAx404PHd8A+89yImHKyNTStujyiqj?=
+ =?us-ascii?Q?ijr6IyjMpIVAKirUhFkRbWi9dzD9O0N/TJpQzgv3VG8vmwltbam7JuyCrx6m?=
+ =?us-ascii?Q?ACt/BVJFdbpZVXnu/Cwb8ghMItLtrFzwd+CV5vOH?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: f5f0df1a-f451-4a64-2397-08dd93b74313
+X-MS-Exchange-CrossTenant-AuthSource: SA1PR11MB6733.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 May 2025 13:49:07.2328
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6c67ed82-b036-427b-db14-08dd93b71f23
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BN2PEPF00004FBD.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB8410
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: DeGbuYXWfkbp6QoqA50IFpqge8o4AyXvJu8yMdZUG9PyKJ3DTbPO8yYmBx7sVz9TARHqt/4Ls5n1RbItP/1vSg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR11MB4628
+X-OriginatorOrg: intel.com
 
-Restructure the ITS mitigation to use select/update/apply functions like
-the other mitigations.
+Ackerley Tng wrote:
+> Test that GUEST_MEMFD_FLAG_INIT_PRIVATE is only valid when
+> GUEST_MEMFD_FLAG_SUPPORT_SHARED is set.
+> 
+> Change-Id: I506e236a232047cfaee17bcaed02ee14c8d25bbb
+> Signed-off-by: Ackerley Tng <ackerleytng@google.com>
+> ---
+>  .../testing/selftests/kvm/guest_memfd_test.c  | 36 ++++++++++++-------
+>  1 file changed, 24 insertions(+), 12 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/kvm/guest_memfd_test.c b/tools/testing/selftests/kvm/guest_memfd_test.c
+> index 60aaba5808a5..bf2876cbd711 100644
+> --- a/tools/testing/selftests/kvm/guest_memfd_test.c
+> +++ b/tools/testing/selftests/kvm/guest_memfd_test.c
+> @@ -401,13 +401,31 @@ static void test_with_type(unsigned long vm_type, uint64_t guest_memfd_flags,
+>  	kvm_vm_release(vm);
+>  }
+>  
+> +static void test_vm_with_gmem_flag(struct kvm_vm *vm, uint64_t flag,
+> +				   bool expect_valid)
+> +{
+> +	size_t page_size = getpagesize();
+> +	int fd;
+> +
+> +	fd = __vm_create_guest_memfd(vm, page_size, flag);
+> +
+> +	if (expect_valid) {
+> +		TEST_ASSERT(fd > 0,
+> +			    "guest_memfd() with flag '0x%lx' should be valid",
+> +			    flag);
+> +		close(fd);
+> +	} else {
+> +		TEST_ASSERT(fd == -1 && errno == EINVAL,
+> +			    "guest_memfd() with flag '0x%lx' should fail with EINVAL",
+> +			    flag);
+> +	}
+> +}
+> +
+>  static void test_vm_type_gmem_flag_validity(unsigned long vm_type,
+>  					    uint64_t expected_valid_flags)
+>  {
+> -	size_t page_size = getpagesize();
+>  	struct kvm_vm *vm;
+>  	uint64_t flag = 0;
+> -	int fd;
+>  
+>  	if (!(kvm_check_cap(KVM_CAP_VM_TYPES) & BIT(vm_type)))
+>  		return;
+> @@ -415,17 +433,11 @@ static void test_vm_type_gmem_flag_validity(unsigned long vm_type,
+>  	vm = vm_create_barebones_type(vm_type);
+>  
+>  	for (flag = BIT(0); flag; flag <<= 1) {
+> -		fd = __vm_create_guest_memfd(vm, page_size, flag);
+> +		test_vm_with_gmem_flag(vm, flag, flag & expected_valid_flags);
+>  
+> -		if (flag & expected_valid_flags) {
+> -			TEST_ASSERT(fd > 0,
+> -				    "guest_memfd() with flag '0x%lx' should be valid",
+> -				    flag);
+> -			close(fd);
+> -		} else {
+> -			TEST_ASSERT(fd == -1 && errno == EINVAL,
+> -				    "guest_memfd() with flag '0x%lx' should fail with EINVAL",
+> -				    flag);
+> +		if (flag == GUEST_MEMFD_FLAG_SUPPORT_SHARED) {
+> +			test_vm_with_gmem_flag(
+> +				vm, flag | GUEST_MEMFD_FLAG_INIT_PRIVATE, true);
 
-There is a particularly complex interaction between ITS and Retbleed as CDT
-(Call Depth Tracking) is a mitigation for both, and either its=stuff or
-retbleed=stuff will attempt to enable CDT.
+I don't understand the point of this check.  In 2/51 we set 
+GUEST_MEMFD_FLAG_INIT_PRIVATE when GUEST_MEMFD_FLAG_SUPPORT_SHARED is set.
 
-retbleed_update_mitigation() runs first and will check the necessary
-pre-conditions for CDT if either ITS or Retbleed stuffing is selected.  If
-checks pass and ITS stuffing is selected, it will select stuffing for
-Retbleed as well.
+When can this check ever fail?
 
-its_update_mitigation() runs after and will either select stuffing if
-retbleed stuffing was enabled, or fall back to the default (aligned thunks)
-if stuffing could not be enabled.
-
-Enablement of CDT is done exclusively in retbleed_apply_mitigation().
-its_apply_mitigation() is only used to enable aligned thunks.
-
-Signed-off-by: David Kaplan <david.kaplan@amd.com>
----
- arch/x86/kernel/cpu/bugs.c | 167 ++++++++++++++++++++-----------------
- 1 file changed, 90 insertions(+), 77 deletions(-)
-
-diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index dd8b50b4ceaa..db26fb5a0a13 100644
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -92,6 +92,8 @@ static void __init bhi_select_mitigation(void);
- static void __init bhi_update_mitigation(void);
- static void __init bhi_apply_mitigation(void);
- static void __init its_select_mitigation(void);
-+static void __init its_update_mitigation(void);
-+static void __init its_apply_mitigation(void);
- 
- /* The base value of the SPEC_CTRL MSR without task-specific bits set */
- u64 x86_spec_ctrl_base;
-@@ -235,6 +237,11 @@ void __init cpu_select_mitigations(void)
- 	 * spectre_v2=ibrs.
- 	 */
- 	retbleed_update_mitigation();
-+	/*
-+	 * its_update_mitigation() depends on spectre_v2_update_mitigation()
-+	 * and retbleed_update_mitigation().
-+	 */
-+	its_update_mitigation();
- 
- 	/*
- 	 * spectre_v2_user_update_mitigation() depends on
-@@ -263,6 +270,7 @@ void __init cpu_select_mitigations(void)
- 	srbds_apply_mitigation();
- 	srso_apply_mitigation();
- 	gds_apply_mitigation();
-+	its_apply_mitigation();
- 	bhi_apply_mitigation();
- }
- 
-@@ -1125,6 +1133,14 @@ enum retbleed_mitigation {
- 	RETBLEED_MITIGATION_STUFF,
- };
- 
-+enum its_mitigation {
-+	ITS_MITIGATION_OFF,
-+	ITS_MITIGATION_AUTO,
-+	ITS_MITIGATION_VMEXIT_ONLY,
-+	ITS_MITIGATION_ALIGNED_THUNKS,
-+	ITS_MITIGATION_RETPOLINE_STUFF,
-+};
-+
- static const char * const retbleed_strings[] = {
- 	[RETBLEED_MITIGATION_NONE]	= "Vulnerable",
- 	[RETBLEED_MITIGATION_UNRET]	= "Mitigation: untrained return thunk",
-@@ -1137,6 +1153,9 @@ static const char * const retbleed_strings[] = {
- static enum retbleed_mitigation retbleed_mitigation __ro_after_init =
- 	IS_ENABLED(CONFIG_MITIGATION_RETBLEED) ? RETBLEED_MITIGATION_AUTO : RETBLEED_MITIGATION_NONE;
- 
-+static enum its_mitigation its_mitigation __ro_after_init =
-+	IS_ENABLED(CONFIG_MITIGATION_ITS) ? ITS_MITIGATION_AUTO : ITS_MITIGATION_OFF;
-+
- static int __ro_after_init retbleed_nosmt = false;
- 
- static int __init retbleed_parse_cmdline(char *str)
-@@ -1242,11 +1261,19 @@ static void __init retbleed_update_mitigation(void)
- 	/*
- 	 * retbleed=stuff is only allowed on Intel.  If stuffing can't be used
- 	 * then a different mitigation will be selected below.
-+	 *
-+	 * its=stuff will also attempt to enable stuffing.
- 	 */
--	if (retbleed_mitigation == RETBLEED_MITIGATION_STUFF) {
-+	if (retbleed_mitigation == RETBLEED_MITIGATION_STUFF ||
-+	    its_mitigation == ITS_MITIGATION_RETPOLINE_STUFF) {
- 		if (spectre_v2_enabled != SPECTRE_V2_RETPOLINE) {
- 			pr_err("WARNING: retbleed=stuff depends on spectre_v2=retpoline\n");
- 			retbleed_mitigation = RETBLEED_MITIGATION_AUTO;
-+		} else {
-+			if (retbleed_mitigation != RETBLEED_MITIGATION_STUFF)
-+				pr_info("Retbleed mitigation updated to stuffing\n");
-+
-+			retbleed_mitigation = RETBLEED_MITIGATION_STUFF;
- 		}
- 	}
- 	/*
-@@ -1338,20 +1365,6 @@ static void __init retbleed_apply_mitigation(void)
- #undef pr_fmt
- #define pr_fmt(fmt)     "ITS: " fmt
- 
--enum its_mitigation_cmd {
--	ITS_CMD_OFF,
--	ITS_CMD_ON,
--	ITS_CMD_VMEXIT,
--	ITS_CMD_RSB_STUFF,
--};
--
--enum its_mitigation {
--	ITS_MITIGATION_OFF,
--	ITS_MITIGATION_VMEXIT_ONLY,
--	ITS_MITIGATION_ALIGNED_THUNKS,
--	ITS_MITIGATION_RETPOLINE_STUFF,
--};
--
- static const char * const its_strings[] = {
- 	[ITS_MITIGATION_OFF]			= "Vulnerable",
- 	[ITS_MITIGATION_VMEXIT_ONLY]		= "Mitigation: Vulnerable, KVM: Not affected",
-@@ -1359,11 +1372,6 @@ static const char * const its_strings[] = {
- 	[ITS_MITIGATION_RETPOLINE_STUFF]	= "Mitigation: Retpolines, Stuffing RSB",
- };
- 
--static enum its_mitigation its_mitigation __ro_after_init = ITS_MITIGATION_ALIGNED_THUNKS;
--
--static enum its_mitigation_cmd its_cmd __ro_after_init =
--	IS_ENABLED(CONFIG_MITIGATION_ITS) ? ITS_CMD_ON : ITS_CMD_OFF;
--
- static int __init its_parse_cmdline(char *str)
- {
- 	if (!str)
-@@ -1375,16 +1383,16 @@ static int __init its_parse_cmdline(char *str)
- 	}
- 
- 	if (!strcmp(str, "off")) {
--		its_cmd = ITS_CMD_OFF;
-+		its_mitigation = ITS_MITIGATION_OFF;
- 	} else if (!strcmp(str, "on")) {
--		its_cmd = ITS_CMD_ON;
-+		its_mitigation = ITS_MITIGATION_ALIGNED_THUNKS;
- 	} else if (!strcmp(str, "force")) {
--		its_cmd = ITS_CMD_ON;
-+		its_mitigation = ITS_MITIGATION_ALIGNED_THUNKS;
- 		setup_force_cpu_bug(X86_BUG_ITS);
- 	} else if (!strcmp(str, "vmexit")) {
--		its_cmd = ITS_CMD_VMEXIT;
-+		its_mitigation = ITS_MITIGATION_VMEXIT_ONLY;
- 	} else if (!strcmp(str, "stuff")) {
--		its_cmd = ITS_CMD_RSB_STUFF;
-+		its_mitigation = ITS_MITIGATION_RETPOLINE_STUFF;
- 	} else {
- 		pr_err("Ignoring unknown indirect_target_selection option (%s).", str);
- 	}
-@@ -1395,85 +1403,90 @@ early_param("indirect_target_selection", its_parse_cmdline);
- 
- static void __init its_select_mitigation(void)
- {
--	enum its_mitigation_cmd cmd = its_cmd;
--
- 	if (!boot_cpu_has_bug(X86_BUG_ITS) || cpu_mitigations_off()) {
- 		its_mitigation = ITS_MITIGATION_OFF;
- 		return;
- 	}
- 
--	/* Retpoline+CDT mitigates ITS, bail out */
--	if (boot_cpu_has(X86_FEATURE_RETPOLINE) &&
--	    boot_cpu_has(X86_FEATURE_CALL_DEPTH)) {
--		its_mitigation = ITS_MITIGATION_RETPOLINE_STUFF;
--		goto out;
--	}
-+	if (its_mitigation == ITS_MITIGATION_AUTO)
-+		its_mitigation = ITS_MITIGATION_ALIGNED_THUNKS;
-+
-+	if (its_mitigation == ITS_MITIGATION_OFF)
-+		return;
- 
--	/* Exit early to avoid irrelevant warnings */
--	if (cmd == ITS_CMD_OFF) {
--		its_mitigation = ITS_MITIGATION_OFF;
--		goto out;
--	}
--	if (spectre_v2_enabled == SPECTRE_V2_NONE) {
--		pr_err("WARNING: Spectre-v2 mitigation is off, disabling ITS\n");
--		its_mitigation = ITS_MITIGATION_OFF;
--		goto out;
--	}
- 	if (!IS_ENABLED(CONFIG_MITIGATION_RETPOLINE) ||
- 	    !IS_ENABLED(CONFIG_MITIGATION_RETHUNK)) {
- 		pr_err("WARNING: ITS mitigation depends on retpoline and rethunk support\n");
- 		its_mitigation = ITS_MITIGATION_OFF;
--		goto out;
-+		return;
- 	}
-+
- 	if (IS_ENABLED(CONFIG_DEBUG_FORCE_FUNCTION_ALIGN_64B)) {
- 		pr_err("WARNING: ITS mitigation is not compatible with CONFIG_DEBUG_FORCE_FUNCTION_ALIGN_64B\n");
- 		its_mitigation = ITS_MITIGATION_OFF;
--		goto out;
--	}
--	if (boot_cpu_has(X86_FEATURE_RETPOLINE_LFENCE)) {
--		pr_err("WARNING: ITS mitigation is not compatible with lfence mitigation\n");
--		its_mitigation = ITS_MITIGATION_OFF;
--		goto out;
-+		return;
- 	}
- 
--	if (cmd == ITS_CMD_RSB_STUFF &&
--	    (!boot_cpu_has(X86_FEATURE_RETPOLINE) || !IS_ENABLED(CONFIG_MITIGATION_CALL_DEPTH_TRACKING))) {
-+	if (its_mitigation == ITS_MITIGATION_RETPOLINE_STUFF &&
-+	    !IS_ENABLED(CONFIG_MITIGATION_CALL_DEPTH_TRACKING)) {
- 		pr_err("RSB stuff mitigation not supported, using default\n");
--		cmd = ITS_CMD_ON;
-+		its_mitigation = ITS_MITIGATION_ALIGNED_THUNKS;
- 	}
- 
--	switch (cmd) {
--	case ITS_CMD_OFF:
-+	if (its_mitigation == ITS_MITIGATION_VMEXIT_ONLY &&
-+	    !boot_cpu_has_bug(X86_BUG_ITS_NATIVE_ONLY))
-+		its_mitigation = ITS_MITIGATION_ALIGNED_THUNKS;
-+}
-+
-+static void __init its_update_mitigation(void)
-+{
-+	if (!boot_cpu_has_bug(X86_BUG_ITS) || cpu_mitigations_off())
-+		return;
-+
-+	switch (spectre_v2_enabled) {
-+	case SPECTRE_V2_NONE:
-+		pr_err("WARNING: Spectre-v2 mitigation is off, disabling ITS\n");
- 		its_mitigation = ITS_MITIGATION_OFF;
- 		break;
--	case ITS_CMD_VMEXIT:
--		if (boot_cpu_has_bug(X86_BUG_ITS_NATIVE_ONLY)) {
--			its_mitigation = ITS_MITIGATION_VMEXIT_ONLY;
--			goto out;
--		}
--		fallthrough;
--	case ITS_CMD_ON:
--		its_mitigation = ITS_MITIGATION_ALIGNED_THUNKS;
--		if (!boot_cpu_has(X86_FEATURE_RETPOLINE))
--			setup_force_cpu_cap(X86_FEATURE_INDIRECT_THUNK_ITS);
--		setup_force_cpu_cap(X86_FEATURE_RETHUNK);
--		set_return_thunk(its_return_thunk);
-+	case SPECTRE_V2_RETPOLINE:
-+		/* Retpoline+CDT mitigates ITS */
-+		if (retbleed_mitigation == RETBLEED_MITIGATION_STUFF)
-+			its_mitigation = ITS_MITIGATION_RETPOLINE_STUFF;
- 		break;
--	case ITS_CMD_RSB_STUFF:
--		its_mitigation = ITS_MITIGATION_RETPOLINE_STUFF;
--		setup_force_cpu_cap(X86_FEATURE_RETHUNK);
--		setup_force_cpu_cap(X86_FEATURE_CALL_DEPTH);
--		set_return_thunk(call_depth_return_thunk);
--		if (retbleed_mitigation == RETBLEED_MITIGATION_NONE) {
--			retbleed_mitigation = RETBLEED_MITIGATION_STUFF;
--			pr_info("Retbleed mitigation updated to stuffing\n");
--		}
-+	case SPECTRE_V2_LFENCE:
-+	case SPECTRE_V2_EIBRS_LFENCE:
-+		pr_err("WARNING: ITS mitigation is not compatible with lfence mitigation\n");
-+		its_mitigation = ITS_MITIGATION_OFF;
-+		break;
-+	default:
- 		break;
- 	}
--out:
-+
-+	/*
-+	 * retbleed_update_mitigation() will try to do stuffing if its=stuff.
-+	 * If it can't, such as if spectre_v2!=retpoline, then fall back to
-+	 * aligned thunks.
-+	 */
-+	if (its_mitigation == ITS_MITIGATION_RETPOLINE_STUFF &&
-+	    retbleed_mitigation != RETBLEED_MITIGATION_STUFF)
-+		its_mitigation = ITS_MITIGATION_ALIGNED_THUNKS;
-+
- 	pr_info("%s\n", its_strings[its_mitigation]);
- }
- 
-+static void __init its_apply_mitigation(void)
-+{
-+	/* its=stuff forces retbleed stuffing and is enabled there. */
-+	if (its_mitigation != ITS_MITIGATION_ALIGNED_THUNKS)
-+		return;
-+
-+	if (!boot_cpu_has(X86_FEATURE_RETPOLINE))
-+		setup_force_cpu_cap(X86_FEATURE_INDIRECT_THUNK_ITS);
-+
-+	setup_force_cpu_cap(X86_FEATURE_RETHUNK);
-+	set_return_thunk(its_return_thunk);
-+}
-+
- #undef pr_fmt
- #define pr_fmt(fmt)     "Spectre V2 : " fmt
- 
-
-base-commit: 04bdd560124ec4d02d1d11ee3abc88d51954d7b8
--- 
-2.34.1
-
+Ira
 
