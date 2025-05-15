@@ -1,126 +1,168 @@
-Return-Path: <linux-kernel+bounces-649711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-649714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E18AAB880F
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 15:33:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41594AB8818
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 15:35:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8067E3BEA50
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 13:33:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DFAA31BC3FE7
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 13:35:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57D25664C6;
-	Thu, 15 May 2025 13:33:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD5A572634;
+	Thu, 15 May 2025 13:35:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="axIJY2qZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nj9Xjb7D"
+Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE297481C4;
-	Thu, 15 May 2025 13:33:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95C684B1E52;
+	Thu, 15 May 2025 13:35:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747315999; cv=none; b=SLpbSRM/1/bziRzKTg5v36u+uYP7nuSpQZTNHCKFrs7jlwSRtM1WkgiKqRh0kS0Fv3CiZc3Q5Vers8iakYQEBoo/fLgaubMX5DLRLHRiS2WHQQsDLT8Vxha71wDsRgPj/SlsI3iU+mkKiQfNq3zxXj1yrBkIr0RyZz+Q4fE8w44=
+	t=1747316125; cv=none; b=oVev8sw4Q8E01Dex44PXj2estDEdS/UKtluFuc5C5LZUrDQfF/GXUBEd2O++Jzcte/3FSUFUjd65cLWOEW82kQBqTZ6qaHQqK45dBr/HCsQsVooJAIXEmIPRgnJnSm8j2ftiG0FUENdQ/tLVWMYpeclZ6/6oUqUA+chKazJ4G0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747315999; c=relaxed/simple;
-	bh=wQzWtzFVbRLSyT1kOVfalNa0l6P3QoYKfG6IeKaYSd4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=htRNJxvyOCsu6kbVtP3ZlDyUEFMbOMZa8QpEqX1NhsKKHI2Ykh9z2d9Ss05QUPhUKlJw5tf+n8JfNeo/1gQ1qgd4xoyw5AZEGP00OfTwoeqnrs+lszIrnDfNzljHWyaKjqBK/6EtbSYdIJ+d/HURfnwjTJdP0EFu9Ptd85+gMQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=axIJY2qZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 403C6C4CEE7;
-	Thu, 15 May 2025 13:33:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747315998;
-	bh=wQzWtzFVbRLSyT1kOVfalNa0l6P3QoYKfG6IeKaYSd4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=axIJY2qZ51keUz71syARwcRIoH8q/2hvAUPBST+E9n8yHtI92gFEc7bsA/4AS7nEJ
-	 RhYobVI1Efx2MUouRhi5JQ8XvIgckDgPkkqqIzIwUfWw0IzWPcNk1D3SmGZIS/nYd7
-	 7/TwwNn/sKQuJG82uyE6Kq2bPfIj1dR4Mr8dYgpQRocOnWGbdEAp5PIv537ySnASNe
-	 2PsRy/A7Lx2S04HyQh1ULH3pgMEFRkMXU9u5Fve3YutlE/E56t+fE5WeAw3QIVD+fG
-	 mR4teecHQGRoP1kfoDy0Jtf2Nsmt8mO0gjCJtOgj4s+RAL/LU2GbAYEd3vOfQ0CcqR
-	 bi0JioNvo9Y9Q==
-Date: Thu, 15 May 2025 15:33:13 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-Cc: linux-kernel@vger.kernel.org,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Peter Zijlstra <peterz@infradead.org>, linux-arch@vger.kernel.org,
-	Yoshinori Sato <ysato@users.sourceforge.jp>,
-	Rich Felker <dalias@libc.org>, linux-sh@vger.kernel.org
-Subject: Re: [PATCH 14/15] bugs/sh: Concatenate 'cond_str' with '__FILE__' in
- __WARN_FLAGS(), to extend WARN_ON/BUG_ON output
-Message-ID: <aCXtGRr5pSLKoKg8@gmail.com>
-References: <20250515124644.2958810-1-mingo@kernel.org>
- <20250515124644.2958810-15-mingo@kernel.org>
- <ba1e1ae6824f47bcb49387ae4f2c70dfd45209bc.camel@physik.fu-berlin.de>
+	s=arc-20240116; t=1747316125; c=relaxed/simple;
+	bh=N6hUe1JahVV3NodwigUCoPGFJb+vT+7cGyun41pvr78=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=L8iDmuMqAcPmf3QokJcyygvLZ6sRQJL/CrdoiiWwfcHW4H0lWaAqeL6OMurt63GW3o9txfruVCiPqRquN3H9ch06LFcr53YQbV1BtnrvCdVnvbQ4m4gdn1OvwznpPQEATsYmFjPecdpER6gvf7131nwcvdPhD0973YnVc9K0Pfs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nj9Xjb7D; arc=none smtp.client-ip=209.85.222.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-7cadc92771dso89082885a.1;
+        Thu, 15 May 2025 06:35:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747316122; x=1747920922; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=HVK7+XeCrE0vaAK5daWU0mfxJLR/TlZDvlGnpbE/bhg=;
+        b=nj9Xjb7DRAbYmaxeodZntyXM8QaHUBWndS3zkEIK9Y5vKmfG8RWIYN7dAM3r7vQ5w4
+         K8fLywKuc+NLYDyG33UHJBnrI73oCrysH90bN6P58AcVWBXIw9GiPJpXIdCQb2ZumIu5
+         A3c5c47u0eHIJDIbtUyCBmZ9LcCEeQfymUEGbPL+TLVP5WrMGk5GekUGnS6uRauSW+mt
+         t/5vHF9PBq/bUCjGwk1NsXEd/9tA1vs5tY+Bbk+mUdGAA0trZTcZL1Y/dqry/Ao1mJp5
+         sVYMdx6SCB5BLmDyhHeJHCq/e3d3GpKyPi/UCZM24GEzJgddK2TbOSH5fqWONKG9hG1x
+         xcbQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747316122; x=1747920922;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HVK7+XeCrE0vaAK5daWU0mfxJLR/TlZDvlGnpbE/bhg=;
+        b=QIYUcUa5QiUK5w/35q26tDSY/WXWflsVabTkrbZPUXQy/rp/AGlZH6gF8DNVDEuFr5
+         foczmSq6zuo8o61aQsYWcRW2Xt06m76/QofW+KaIAZQ36aP2nZiT1WxJG9xBAVQEQeJl
+         xgWBdCksymrjVAEzw3OEJmUJme0h6BdpN8nFRPdPdDi+CE5ZOA+NKrMdUXSg6HRsmtqk
+         YEhXebITjdPl0+iftWWSs0H9H9mgMtU7PV2/EjTo9EF8kUbLOZX+6P+1zMgubxTRtoEw
+         TrJcXJeUEPoDRewQ2mXSZlJrm3DhFg0LQSt/CyPTN0Fc99ztFoWMKzrfbNiOxhUtqaXq
+         sdjg==
+X-Forwarded-Encrypted: i=1; AJvYcCW0/aS/vmOKRJuK68HchFAjBaqZQ1sIVioLS/BTm83fFCt6LEIgJRFHf272EJkx/GjK08+2jMCGBovfk2g0@vger.kernel.org, AJvYcCWVE/eW/QozxKJybaF0wdwVDpHmqws275bmBXLoWeDenvQvHBKBGq4YXU9meZ/BdqXueaFor76JLW4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzd8SKCvRg5frlsxgjXfDV6McWniK4MgN6AD7RNUVoSp+oa6Rgz
+	ckZdx1UeM/Cs861fijX3wnqJPDSJJPE+TKMe+2to3YMRqhBwPzj3
+X-Gm-Gg: ASbGnctbT+cxu5x4fdY5fCBOUd5Zwp2ockWaf+t7hvDa0sWNkH0VTnPMxy/ewJ0XRyF
+	xQmxw4jDF7qYrQrwdcYfUk7+hCBtlYmbeLyEA3q88swI2ICPPrV9fQInLQofY3o2hO/DeVt4EgI
+	bzYNvuAEy7fAa5iqpe0W9imfXk1Jm80jEJsEsuZhIn404JnDQt+ljC25negss49MylANzMqFp7o
+	0DsXNaILPse/MsJEomF1O0FU0EqcuINrV4qzN4ythVrMY1j19Ato3sS1SpHRcEWO44kl8hFioFh
+	PuljkpQHCh8Ng9Q5m/csw1yeULd75fl3HY20EFx3WR03jTWN
+X-Google-Smtp-Source: AGHT+IE3uLRPVmAMx8aqjehSeTosSaDm95ed9rhjS7Cdm74U2OOvVDir0FUQPoeM6h3tWC5rx1PFLw==
+X-Received: by 2002:a05:620a:414f:b0:7cc:fd84:cf8a with SMTP id af79cd13be357-7cd287133a3mr951646585a.0.1747316122447;
+        Thu, 15 May 2025 06:35:22 -0700 (PDT)
+Received: from localhost ([2a03:2880:20ff:6::])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7cd00f64230sm985676585a.28.2025.05.15.06.35.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 15 May 2025 06:35:22 -0700 (PDT)
+From: Usama Arif <usamaarif642@gmail.com>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	david@redhat.com,
+	linux-mm@kvack.org
+Cc: hannes@cmpxchg.org,
+	shakeel.butt@linux.dev,
+	riel@surriel.com,
+	ziy@nvidia.com,
+	laoar.shao@gmail.com,
+	baolin.wang@linux.alibaba.com,
+	lorenzo.stoakes@oracle.com,
+	Liam.Howlett@oracle.com,
+	npache@redhat.com,
+	ryan.roberts@arm.com,
+	linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	kernel-team@meta.com,
+	Usama Arif <usamaarif642@gmail.com>
+Subject: [PATCH 0/6] prctl: introduce PR_SET/GET_THP_POLICY
+Date: Thu, 15 May 2025 14:33:29 +0100
+Message-ID: <20250515133519.2779639-1-usamaarif642@gmail.com>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ba1e1ae6824f47bcb49387ae4f2c70dfd45209bc.camel@physik.fu-berlin.de>
+Content-Transfer-Encoding: 8bit
 
+This allows to change the THP policy of a process, according to the value
+set in arg2, all of which will be inherited during fork+exec:
+- PR_THP_POLICY_DEFAULT_HUGE: This will set the MMF2_THP_VMA_DEFAULT_HUGE
+  process flag which changes the default of new VMAs to be VM_HUGEPAGE. The
+  call also modifies all existing VMAs that are not VM_NOHUGEPAGE
+  to be VM_HUGEPAGE.
+  This allows systems where the global policy is set to "madvise"
+  to effectively have THPs always for the process. In an environment
+  where different types of workloads are stacked on the same machine
+  whose global policy is set to "madvise", this will allow workloads
+  that benefit from always having hugepages to do so, without regressing
+  those that don't.
+- PR_THP_POLICY_DEFAULT_NOHUGE: This will set the MMF2_THP_VMA_DEFAULT_NOHUGE
+  process flag which changes the default of new VMAs to be VM_NOHUGEPAGE.
+  The call also modifies all existing VMAs that are not VM_HUGEPAGE
+  to be VM_NOHUGEPAGE.
+  This allows systems where the global policy is set to "always"
+  to effectively have THPs on madvise only for the process. In an
+  environment where different types of workloads are stacked on the
+  same machine whose global policy is set to "always", this will allow
+  workloads that benefit from having hugepages on an madvise basis only
+  to do so, without regressing those that benefit from having hugepages
+  always.
+- PR_THP_POLICY_DEFAULT_SYSTEM: This will clear the MMF2_THP_VMA_DEFAULT_HUGE
+  and MMF2_THP_VMA_DEFAULT_NOHUGE process flags.
 
-* John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de> wrote:
+These patches are required in rolling out hugepages in hyperscaler
+configurations for workloads that benefit from them, where workloads are
+stacked anda single THP global policy is likely to be used across the entire
+fleet, and prctl will help override it.
 
-> Hi Ingo,
-> 
-> On Thu, 2025-05-15 at 14:46 +0200, Ingo Molnar wrote:
-> > Extend WARN_ON and BUG_ON style output from:
-> > 
-> >   WARNING: CPU: 0 PID: 0 at kernel/sched/core.c:8511 sched_init+0x20/0x410
-> > 
-> > to:
-> > 
-> >   WARNING: CPU: 0 PID: 0 at [idx < 0 && ptr] kernel/sched/core.c:8511 sched_init+0x20/0x410
-> > 
-> > Note that the output will be further reorganized later in this series.
-> > 
-> > Signed-off-by: Ingo Molnar <mingo@kernel.org>
-> > Cc: Yoshinori Sato <ysato@users.sourceforge.jp>
-> > Cc: Rich Felker <dalias@libc.org>
-> > Cc: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-> > Cc: linux-sh@vger.kernel.org
-> > Cc: <linux-arch@vger.kernel.org>
-> > ---
-> >  arch/sh/include/asm/bug.h | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/arch/sh/include/asm/bug.h b/arch/sh/include/asm/bug.h
-> > index 834c621ab249..891276687355 100644
-> > --- a/arch/sh/include/asm/bug.h
-> > +++ b/arch/sh/include/asm/bug.h
-> > @@ -59,7 +59,7 @@ do {							\
-> >  		 _EMIT_BUG_ENTRY			\
-> >  		 :					\
-> >  		 : "n" (TRAPA_BUG_OPCODE),		\
-> > -		   "i" (__FILE__),			\
-> > +		   "i" (WARN_CONDITION_STR(cond_str) __FILE__),	\
-> >  		   "i" (__LINE__),			\
-> >  		   "i" (BUGFLAG_WARNING|(flags)),	\
-> >  		   "i" (sizeof(struct bug_entry)));	\
-> 
-> Looks good to me, however I'm not happy with the summary line.
-> 
-> It's too long and the prefix "bugs/sh:" is very confusing. I usually just
-> use "sh:" to mark anything that affects arch/sh.
+v1->v2:
+- change from modifying the THP decision making for the process, to modifying
+  VMA flags only. This prevents further complicating the logic used to
+  determine THP order (Thanks David!)
+- change from using a prctl per policy change to just using PR_SET_THP_POLICY
+  and arg2 to set the policy. (Zi Yan)
+- Introduce PR_THP_POLICY_DEFAULT_NOHUGE and PR_THP_POLICY_DEFAULT_SYSTEM
+- Add selftests and documentation.
 
-Fair enough, I've changed the title to and pushed out the new tree:
+Usama Arif (6):
+  prctl: introduce PR_THP_POLICY_DEFAULT_HUGE for the process
+  prctl: introduce PR_THP_POLICY_DEFAULT_NOHUGE for the process
+  prctl: introduce PR_THP_POLICY_SYSTEM for the process
+  selftests: prctl: introduce tests for PR_THP_POLICY_DEFAULT_NOHUGE
+  selftests: prctl: introduce tests for PR_THP_POLICY_DEFAULT_HUGE
+  docs: transhuge: document process level THP controls
 
-  sh: Concatenate 'cond_str' with '__FILE__' in __WARN_FLAGS(), to extend WARN_ON/BUG_ON output
+ Documentation/admin-guide/mm/transhuge.rst    |  40 +++
+ include/linux/huge_mm.h                       |   4 +
+ include/linux/mm_types.h                      |  14 +
+ include/uapi/linux/prctl.h                    |   6 +
+ kernel/fork.c                                 |   1 +
+ kernel/sys.c                                  |  35 +++
+ mm/huge_memory.c                              |  56 ++++
+ mm/vma.c                                      |   2 +
+ tools/include/uapi/linux/prctl.h              |   6 +
+ .../trace/beauty/include/uapi/linux/prctl.h   |   6 +
+ tools/testing/selftests/prctl/Makefile        |   2 +-
+ tools/testing/selftests/prctl/thp_policy.c    | 286 ++++++++++++++++++
+ 12 files changed, 457 insertions(+), 1 deletion(-)
+ create mode 100644 tools/testing/selftests/prctl/thp_policy.c
 
-> Can I pick this patch for my sh-linux tree?
+-- 
+2.47.1
 
-So since it depends on the previous patches, in isolation this would 
-break the build.
-
-Can I add your Reviewed-by or Acked-by?
-
-Thanks,
-
-	Ingo
 
