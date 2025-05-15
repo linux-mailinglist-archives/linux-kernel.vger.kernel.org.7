@@ -1,141 +1,231 @@
-Return-Path: <linux-kernel+bounces-649243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-649244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DD9DAB81D3
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 11:02:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 41379AB81D6
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 11:02:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 346C4188BD0E
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 09:01:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E401C1897125
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 09:01:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A48B29713D;
-	Thu, 15 May 2025 08:59:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1555128E576;
+	Thu, 15 May 2025 08:59:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="XoovOdPm"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Pnphta3p";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="NmIXdFnU";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Pnphta3p";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="NmIXdFnU"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CE89295DB5;
-	Thu, 15 May 2025 08:58:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9487B293B44
+	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 08:59:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747299540; cv=none; b=ktAdOnVnlWpY4BfeFL08egQIUaggK+8+9fIkpw0cpfrlR/+5XQsBXZlRvuQ2RYva63tbAd9sWYK0wPm8DzsjyZo3BEKbIxievYeppT54l/YPjt4pdYZvAWAuLhicNb7p32CKe6tvVOXqRL+Sz+p3woyt1Z90Ikdw1fLTEFvmoEA=
+	t=1747299558; cv=none; b=dnSj2q+Zmgd5fsguiwpA+oIAADL1akIqjCsm2H/JdggUMnebfHQ+Vk10SJqpuP4RI04SLUQn4YNP1OWAAXK32nVYvJliUoZDOAOtA7QCnvbelF2Ja7NgJXp7kSFivTOwEtZ7gbiIGboDWb7Wa3+X0YIZINzWqK/Yq0uqGR40IfM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747299540; c=relaxed/simple;
-	bh=WKED9sw9AaRYnOXYd8MFwqseZ6zJJk0qej3Fm79ffHY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=owF01NJDP4X7OCOE1gwZO+B/2mjZyAceupwVMSEVj9CDGepMPzWeHSETaK6L0E+xqyG8yjMhQsUJ2Pt4gUZscZL6j57ADWSaRlaw2Xvvn8rsXTy4rzCzy54l7jXQ0xFGEJtzzOXYEZ6K9017MbfZbvYc/6rQnPN8HEY1JR3dJKg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=XoovOdPm; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (85-76-100-138-nat.elisa-mobile.fi [85.76.100.138])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id E6F63836;
-	Thu, 15 May 2025 10:58:38 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1747299519;
-	bh=WKED9sw9AaRYnOXYd8MFwqseZ6zJJk0qej3Fm79ffHY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XoovOdPmyr7EB445fvejvr2nyZaScEJvqwiKsjwNym3vmDqJOIzk/MfyDdOaW+oFz
-	 emds7U4TpJy29QfZsIQkKa1/MsUvu35Rd4aQCilY7ATdXI06m7rKE1oQmZt4FTjukU
-	 SVpZR+o5hknWEWFHUFNF1KpL/tCl+BOZFkGyF2+8=
-Date: Thu, 15 May 2025 10:58:46 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: git@apitzsch.eu, Ricardo Ribalda <ribalda@kernel.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 4/4] media: i2c: imx214: Remove hard-coded external
- clock frequency
-Message-ID: <20250515085846.GR23592@pendragon.ideasonboard.com>
-References: <20250505-imx214_ccs_pll-v2-0-f50452061ff1@apitzsch.eu>
- <20250505-imx214_ccs_pll-v2-4-f50452061ff1@apitzsch.eu>
- <aBnHI1APgjfcj2xG@kekkonen.localdomain>
+	s=arc-20240116; t=1747299558; c=relaxed/simple;
+	bh=3NDHBRjrO56wPFSmrP/tqbVPNtVqcsNX3LEYFCznarY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XWpNMdTEx8P+1pmUYqtYMxWZKrVDBgVjzFUXG7tnB5mEC9FgVSkebtftSPmMjKykGEdxjsel/usLYe7hDT8h85KuIzmiMQF7dnBrAWk6hxqOS6wg4pQfTT/yS7Y9Xt868PzeF6Y3E0P7LdY0PnesTf9CFb0qTs6+3PtcWXL6ezo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Pnphta3p; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=NmIXdFnU; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Pnphta3p; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=NmIXdFnU; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id B45651F391;
+	Thu, 15 May 2025 08:59:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1747299554; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QFkGUgAQs5DlUjM0ydlG9GUUFq/7KcW6NX7M7pmvjeQ=;
+	b=Pnphta3pj/hPd36vEObXKs7oZ0yRXLXPve+d4n7PRI8BWxbpSlvygZrWnAcKZ3FH9Xl2c1
+	Be8QO7NDCZVnPH+8GY5eKp+0IXQbjQVeZqJw169CCHTYPbe+EqedilZ9Qqzsq/lb3ybn3C
+	LZkD6mMSDDZZ+dUG0KyyHODqR+TR9VI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1747299554;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QFkGUgAQs5DlUjM0ydlG9GUUFq/7KcW6NX7M7pmvjeQ=;
+	b=NmIXdFnUXuSNu01AoL3nca3Ijs1g4XLQ1IEDXnBpVbRnnWbWWz48AeD2HD4wmnz+mbOu+O
+	5dBO7cFrMvmfO4Cw==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=Pnphta3p;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=NmIXdFnU
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1747299554; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QFkGUgAQs5DlUjM0ydlG9GUUFq/7KcW6NX7M7pmvjeQ=;
+	b=Pnphta3pj/hPd36vEObXKs7oZ0yRXLXPve+d4n7PRI8BWxbpSlvygZrWnAcKZ3FH9Xl2c1
+	Be8QO7NDCZVnPH+8GY5eKp+0IXQbjQVeZqJw169CCHTYPbe+EqedilZ9Qqzsq/lb3ybn3C
+	LZkD6mMSDDZZ+dUG0KyyHODqR+TR9VI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1747299554;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QFkGUgAQs5DlUjM0ydlG9GUUFq/7KcW6NX7M7pmvjeQ=;
+	b=NmIXdFnUXuSNu01AoL3nca3Ijs1g4XLQ1IEDXnBpVbRnnWbWWz48AeD2HD4wmnz+mbOu+O
+	5dBO7cFrMvmfO4Cw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9DBEB139D0;
+	Thu, 15 May 2025 08:59:14 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id D5A2JuKsJWgTRAAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Thu, 15 May 2025 08:59:14 +0000
+Message-ID: <938fa0c7-86c3-44d4-b583-0612458aed98@suse.cz>
+Date: Thu, 15 May 2025 10:59:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aBnHI1APgjfcj2xG@kekkonen.localdomain>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 9/9] mm, slub: skip percpu sheaves for remote object
+ freeing
+Content-Language: en-US
+To: Harry Yoo <harry.yoo@oracle.com>
+Cc: Suren Baghdasaryan <surenb@google.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Christoph Lameter
+ <cl@linux.com>, David Rientjes <rientjes@google.com>,
+ Roman Gushchin <roman.gushchin@linux.dev>,
+ Uladzislau Rezki <urezki@gmail.com>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, rcu@vger.kernel.org,
+ maple-tree@lists.infradead.org
+References: <20250425-slub-percpu-caches-v4-0-8a636982b4a4@suse.cz>
+ <20250425-slub-percpu-caches-v4-9-8a636982b4a4@suse.cz>
+ <aBs4WvzJb4X50Sr2@harry>
+From: Vlastimil Babka <vbabka@suse.cz>
+In-Reply-To: <aBs4WvzJb4X50Sr2@harry>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Rspamd-Queue-Id: B45651F391
+X-Spam-Flag: NO
+X-Spam-Score: -4.51
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_CC(0.00)[google.com,oracle.com,linux.com,linux.dev,gmail.com,kvack.org,vger.kernel.org,lists.infradead.org];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_COUNT_TWO(0.00)[2];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.cz:email,suse.cz:dkim,suse.cz:mid]
+X-Rspamd-Action: no action
 
-Hi Sakari,
-
-On Tue, May 06, 2025 at 08:24:03AM +0000, Sakari Ailus wrote:
-> On Mon, May 05, 2025 at 11:05:56PM +0200, André Apitzsch via B4 Relay wrote:
-> > From: André Apitzsch <git@apitzsch.eu>
-> > 
-> > Instead rely on the rate set on the clock (using assigned-clock-rates
-> > etc.)
-> > 
-> > Signed-off-by: André Apitzsch <git@apitzsch.eu>
-> > ---
-> >  drivers/media/i2c/imx214.c | 6 ------
-> >  1 file changed, 6 deletions(-)
-> > 
-> > diff --git a/drivers/media/i2c/imx214.c b/drivers/media/i2c/imx214.c
-> > index 9e9be47394ec768a5b34d44b06b5bbb0988da5a1..c12996e294dccebb18c608254f1e0d14dc064423 100644
-> > --- a/drivers/media/i2c/imx214.c
-> > +++ b/drivers/media/i2c/imx214.c
-> > @@ -32,7 +32,6 @@
-> >  
-> >  #define IMX214_REG_FAST_STANDBY_CTRL	CCI_REG8(0x0106)
-> >  
-> > -#define IMX214_DEFAULT_CLK_FREQ	24000000
-> >  #define IMX214_DEFAULT_LINK_FREQ	600000000
-> >  /* Keep wrong link frequency for backward compatibility */
-> >  #define IMX214_DEFAULT_LINK_FREQ_LEGACY	480000000
-> > @@ -1405,11 +1404,6 @@ static int imx214_probe(struct i2c_client *client)
-> >  		return dev_err_probe(dev, PTR_ERR(imx214->xclk),
-> >  				     "failed to get xclk\n");
-> >  
-> > -	ret = clk_set_rate(imx214->xclk, IMX214_DEFAULT_CLK_FREQ);
-> > -	if (ret)
-> > -		return dev_err_probe(dev, ret,
-> > -				     "failed to set xclk frequency\n");
-> > -
+On 5/7/25 12:39, Harry Yoo wrote:
+> On Fri, Apr 25, 2025 at 10:27:29AM +0200, Vlastimil Babka wrote:
+>> Since we don't control the NUMA locality of objects in percpu sheaves,
+>> allocations with node restrictions bypass them. Allocations without
+>> restrictions may however still expect to get local objects with high
+>> probability, and the introduction of sheaves can decrease it due to
+>> freed object from a remote node ending up in percpu sheaves.
+>> 
+>> The fraction of such remote frees seems low (5% on an 8-node machine)
+>> but it can be expected that some cache or workload specific corner cases
+>> exist. We can either conclude that this is not a problem due to the low
+>> fraction, or we can make remote frees bypass percpu sheaves and go
+>> directly to their slabs. This will make the remote frees more expensive,
+>> but if if's only a small fraction, most frees will still benefit from
+>> the lower overhead of percpu sheaves.
+>> 
+>> This patch thus makes remote object freeing bypass percpu sheaves,
+>> including bulk freeing, and kfree_rcu() via the rcu_free sheaf. However
+>> it's not intended to be 100% guarantee that percpu sheaves will only
+>> contain local objects. The refill from slabs does not provide that
+>> guarantee in the first place, and there might be cpu migrations
+>> happening when we need to unlock the local_lock. Avoiding all that could
+>> be possible but complicated so we can leave it for later investigation
+>> whether it would be worth it. It can be expected that the more selective
+>> freeing will itself prevent accumulation of remote objects in percpu
+>> sheaves so any such violations would have only short-term effects.
+>> 
+>> Another possible optimization to investigate is whether it would be
+>> beneficial for node-restricted or strict_numa allocations to attempt to
+>> obtain an object from percpu sheaves if the node or mempolicy (i.e.
+>> MPOL_LOCAL) happens to want the local node of the allocating cpu. Right
+>> now such allocations bypass sheaves, but they could probably look first
+>> whether the first available object in percpu sheaves is local, and with
+>> high probability succeed - and only bypass the sheaves in cases it's
+>> not local.
+>> 
+>> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+>> ---
+>>  mm/slab_common.c |  7 +++++--
+>>  mm/slub.c        | 43 +++++++++++++++++++++++++++++++++++++------
+>>  2 files changed, 42 insertions(+), 8 deletions(-)
+>> 
+>> diff --git a/mm/slub.c b/mm/slub.c
+>> index cc273cc45f632e16644355831132cdc391219cec..2bf83e2b85b23f4db2b311edaded4bef6b7d01de 100644
+>> --- a/mm/slub.c
+>> +++ b/mm/slub.c
+>> @@ -5924,8 +5948,15 @@ void slab_free(struct kmem_cache *s, struct slab *slab, void *object,
+>>  	if (unlikely(!slab_free_hook(s, object, slab_want_init_on_free(s), false)))
+>>  		return;
+>>  
+>> -	if (!s->cpu_sheaves || !free_to_pcs(s, object))
+>> -		do_slab_free(s, slab, object, object, 1, addr);
+>> +	if (s->cpu_sheaves) {
+>> +		if (likely(!IS_ENABLED(CONFIG_NUMA) ||
+>> +			   slab_nid(slab) == numa_node_id())) {
+>> +			free_to_pcs(s, object);
 > 
-> Oops. I missed this is what the driver was doing already. Indeed, this is
-> one of the historic sensor drivers that do set the frequency in DT systems.
-> 
-> The driver never used the clock-frequency property and instead used a fixed
-> frequency. Changing the behaviour now could be problematic.
-> 
-> There are options here that I think we could do:
-> 
-> 1) use your v1 patch (4) which uses "clock-frequency" if it exists and
-> otherwise uses the default, fixed frequency or
-> 
-> 2) set the frequency only if the "clock-frequency" property exists. The DT
-> currently requires clock-frequency and the YAML conversion was done in 2020
-> whereas the driver is from 2018. If we do this, the clock-frequency should
-> be deprecated (or even removed from bingings).
-> 
-> I wonder what others think. Cc'd Laurent in any case.
+> Shouldn't it call do_slab_free() when free_to_pcs() failed?
 
-Maybe I'm missing something, but I don't really see the issue here. The
-clock-frequency DT property is currently ignored, and this patch doesn't
-change that situation, does it ?
+Oops yes, thanks!
 
-The change of behaviour here is related to the assigned-clock-rates
-property. If that property is specified today, it will set the clock
-rate, and the driver will override it to 24MHz right after. With this
-patch, the clock rate won't be overridden. I think the risk of
-regression is very low here, as I don't expect systems to set
-assigned-clock-rates in DT to a value different than 24MHz and expect
-the driver to override it.
+> 
+>> +			return;
+>> +		}
+>> +	}
+>> +
+>> +	do_slab_free(s, slab, object, object, 1, addr);
+>>  }
+>>  
+>>  #ifdef CONFIG_MEMCG
+>> 
+>> -- 
+>> 2.49.0
+>> 
+>> 
+> 
 
-> >  	ret = imx214_get_regulators(dev, imx214);
-> >  	if (ret < 0)
-> >  		return dev_err_probe(dev, ret, "failed to get regulators\n");
-
--- 
-Regards,
-
-Laurent Pinchart
 
