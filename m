@@ -1,265 +1,201 @@
-Return-Path: <linux-kernel+bounces-648902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-648904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63FB3AB7D2F
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 07:47:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55BFCAB7D34
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 07:47:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CDA114E07FC
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 05:47:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E187C4E086C
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 05:47:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEA152951B7;
-	Thu, 15 May 2025 05:47:00 +0000 (UTC)
-Received: from zg8tmja2lje4os43os4xodqa.icoremail.net (zg8tmja2lje4os43os4xodqa.icoremail.net [206.189.79.184])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B52A51D79A0;
-	Thu, 15 May 2025 05:46:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=206.189.79.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 728AF293759;
+	Thu, 15 May 2025 05:47:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dg0P9IZo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7E5C27A92A;
+	Thu, 15 May 2025 05:47:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747288020; cv=none; b=hv8U3p8sas57YdBDkz4TCQzXvECIVZsZVjaJw8QHkeynTJHiMMrVXXvVnp0rN3VZVU8UdfdPR7nZY9OL66DGQK4M60rjx94OPJJQ5vpWUzHVz45W+YBja7Asg+ldoVc/6Y7SMU2+ekSgM53ecNbLwbZ6VpiNkJCVav/kW/U8aq0=
+	t=1747288056; cv=none; b=crdRUbJd3N9QAaI/gpYL+s0amhJUvVcKbo88O32/icIT1r4a9DYIdZL+W/KXMbHA+c/GL4oJbujYMspB9KxsCqRT5NrFtgfL+W2zi9wvxAtKutQp2G/eeyFzj6R/B+4lZ4j1g+d4+0ASor2IrPSJAK/qaazQG3XSOu1utV2e4po=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747288020; c=relaxed/simple;
-	bh=E++j0VEKWl4vXpOMr+jNQnxTUhTcRw3k4Jgt5LDWoPA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=QcSkSe/ljv5HvDrFAqBW807D5Mu/omJX/aaynOqjTvUXFSEPNWirbWuyCwDkONYJZgrsBHwDKyhM0nRuxRZb8xzp+vCHPodQaRWntKYWMw6cJz2ygZZ8qPcyjzxCFvQuEp5lIrVJu6EVLNUc2wPGU5BDEobQXpBthyavsYZHYrU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=206.189.79.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
-Received: from E0006800LT.eswin.cn (unknown [10.12.96.77])
-	by app1 (Coremail) with SMTP id TAJkCgAXOxHDfyVo7wB8AA--.55102S2;
-	Thu, 15 May 2025 13:46:44 +0800 (CST)
-From: Yulin Lu <luyulin@eswincomputing.com>
-To: linus.walleij@linaro.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kees@kernel.org,
-	gustavoars@kernel.org,
-	brgl@bgdev.pl,
-	linux-hardening@vger.kernel.org
-Cc: ningyu@eswincomputing.com,
-	zhengyu@eswincomputing.com,
-	linmin@eswincomputing.com,
-	huangyifeng@eswincomputing.com,
-	fenglin@eswincomputing.com,
-	lianghujun@eswincomputing.com,
-	Yulin Lu <luyulin@eswincomputing.com>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v4 1/2] dt-bindings: pinctrl: eswin: Document for EIC7700 SoC
-Date: Thu, 15 May 2025 13:46:41 +0800
-Message-Id: <20250515054641.695-1-luyulin@eswincomputing.com>
-X-Mailer: git-send-email 2.31.1.windows.1
-In-Reply-To: <20250515054524.390-1-luyulin@eswincomputing.com>
-References: <20250515054524.390-1-luyulin@eswincomputing.com>
+	s=arc-20240116; t=1747288056; c=relaxed/simple;
+	bh=mPSugO2MQ4257tOOxucXfYZ9bpc1uJ+Z7jwQuj9xJ2A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Fl3XtxfxXvWsAHwm3m12NFFhH+mt9iEUtc4egxgCSTkmql9OQ3mgbzuMG6n/EZQ9EeliUsLCRIJeaGhJ1CfIuUiZEjYhwzyzsxJXezfbgbtrXAZ39JYacpddsMFZi9UJaw14/OuhUuyoaZW9bQBQyQPvNFheP4xjwQ0ZMOhGgKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dg0P9IZo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C60EC4CEE7;
+	Thu, 15 May 2025 05:47:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747288056;
+	bh=mPSugO2MQ4257tOOxucXfYZ9bpc1uJ+Z7jwQuj9xJ2A=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=dg0P9IZoIuVOUN6i9BfNv5KhTKa1Qq6tTgAPNj704URAg8ZZGzzehXTGCpYHl/SiG
+	 qnnFnR002DxRX+lGasySthYtntfmxqAFATflZ02jXjVyqXHvNT4hfXh77r4AG2DoUs
+	 OGeYDJIXK8MGbKk/ve3yqBd9KmoOubgyn8Ej+6G2x8wR6bdFx95P6ujICEtf2a9nlf
+	 9xoXjmxD5heXPnUbc9sSq3fSkfI0RzsVJ1qiJ0t2CoHOO8SHyZdrXpxJa64PpOn2fP
+	 LtuKSeFGBZ0fvQzNgIPWD7R4aOVfpn4CfIMmNpnWEfUzwXV1Q/DHiHC5OUA2AsWp3E
+	 reLznu3fW/bjA==
+Message-ID: <8fb2c16f-0e9b-402d-a7f2-4881de8c7bd9@kernel.org>
+Date: Thu, 15 May 2025 07:47:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:TAJkCgAXOxHDfyVo7wB8AA--.55102S2
-X-Coremail-Antispam: 1UD129KBjvJXoW3XFW8KrWDGw45GryUZry7ZFb_yoW7Kr1xpF
-	43W34fJF1qqr1xGa9Ivw109F1fJan7AF9xAFyjyry3Xw1Yq3WSyr4ayr45WFWUWr4kJ343
-	Xayjqa4jqF4UCrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9G14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
-	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_GFv_Wrylc2xSY4AK6svPMxAIw28IcxkI7VAKI48JMx
-	C20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAF
-	wI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20x
-	vE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v2
-	0xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxV
-	W8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7sRRKZX5UUUUU==
-X-CM-SenderInfo: pox13z1lq6v25zlqu0xpsx3x1qjou0bp/
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] vt: add VT_GETCONSIZECSRPOS to retrieve console
+ size and cursor position
+To: Nicolas Pitre <nico@fluxnic.net>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Nicolas Pitre <npitre@baylibre.com>, linux-serial@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250514194710.6709-1-nico@fluxnic.net>
+ <20250514194710.6709-3-nico@fluxnic.net>
+Content-Language: en-US
+From: Jiri Slaby <jirislaby@kernel.org>
+Autocrypt: addr=jirislaby@kernel.org; keydata=
+ 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
+In-Reply-To: <20250514194710.6709-3-nico@fluxnic.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Add EIC7700 pinctrl device for all configurable pins.
-For the EIC7700 pinctrl registers, each register (32 bits)
-controls the characteristics of a single pin.
-It supports setting function multiplexing, Schmitt trigger,
-drive strength, pull-up/pull-down, and input enable.
+On 14. 05. 25, 21:42, Nicolas Pitre wrote:
+> From: Nicolas Pitre <npitre@baylibre.com>
+> 
+> The console dimension and cursor position are available through the
+> /dev/vcsa interface already. However the /dev/vcsa header format uses
+> single-byte fields therefore those values are clamped to 255.
+> 
+> As surprizing as this may seem, some people do use 240-column 67-row
+> screens (a 1920x1080 monitor with 8x16 pixel fonts) which is getting
+> close to the limit. Monitors with higher resolution are not uncommon
+> these days (3840x2160 producing a 480x135 character display) and it is
+> just a matter of time before someone with, say, a braille display using
+> the Linux VT console and BRLTTY on such a screen reports a bug about
+> missing and oddly misaligned screen content.
+> 
+> Let's add VT_GETCONSIZECSRPOS for the retrieval of console size and cursor
+> position without byte-sized limitations. The actual console size limit as
+> encoded in vt.c is 32767x32767 so using a short here is appropriate. Then
+> this can be used to get the cursor position when /dev/vcsa reports 255.
+> 
+> The screen dimension may already be obtained using TIOCGWINSZ and adding
+> the same information to VT_GETCONSIZECSRPOS might be redundant. However
+> applications that care about cursor position also care about display
+> size and having 2 separate system calls to obtain them separately is
+> wasteful. Also, the cursor position can be queried by writing "\e[6n" to
+> a tty and reading back the result but that may be done only by the actual
+> application using that tty and not a sideline observer.
+> 
+> Signed-off-by: Nicolas Pitre <npitre@baylibre.com>
+> ---
+>   drivers/tty/vt/vt_ioctl.c | 16 ++++++++++++++++
+>   include/uapi/linux/vt.h   |  9 +++++++++
+>   2 files changed, 25 insertions(+)
+> 
+> diff --git a/drivers/tty/vt/vt_ioctl.c b/drivers/tty/vt/vt_ioctl.c
+> index 4b91072f3a4e..83a3d49535e5 100644
+> --- a/drivers/tty/vt/vt_ioctl.c
+> +++ b/drivers/tty/vt/vt_ioctl.c
+> @@ -951,6 +951,22 @@ int vt_ioctl(struct tty_struct *tty,
+>   					(unsigned short __user *)arg);
+>   	case VT_WAITEVENT:
+>   		return vt_event_wait_ioctl((struct vt_event __user *)arg);
+> +
+> +	case VT_GETCONSIZECSRPOS:
+> +	{
+> +		struct vt_consizecsrpos concsr;
+> +
+> +		console_lock();
+> +		concsr.con_cols = vc->vc_cols;
+> +		concsr.con_rows = vc->vc_rows;
+> +		concsr.csr_col = vc->state.x;
+> +		concsr.csr_row = vc->state.y;
+> +		console_unlock();
 
-Co-developed-by: Samuel Holland <samuel.holland@sifive.com>
-Signed-off-by: Samuel Holland <samuel.holland@sifive.com>
-Signed-off-by: Yulin Lu <luyulin@eswincomputing.com>
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- .../pinctrl/eswin,eic7700-pinctrl.yaml        | 156 ++++++++++++++++++
- 1 file changed, 156 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pinctrl/eswin,eic7700-pinctrl.yaml
+Makes a lot of sense!
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/eswin,eic7700-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/eswin,eic7700-pinctrl.yaml
-new file mode 100644
-index 000000000000..d46e7ee6372d
---- /dev/null
-+++ b/Documentation/devicetree/bindings/pinctrl/eswin,eic7700-pinctrl.yaml
-@@ -0,0 +1,156 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/pinctrl/eswin,eic7700-pinctrl.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Eswin Eic7700 Pinctrl
-+
-+maintainers:
-+  - Yulin Lu <luyulin@eswincomputing.com>
-+
-+allOf:
-+  - $ref: pinctrl.yaml#
-+
-+description: |
-+  eic7700 pin configuration nodes act as a container for an arbitrary number of
-+  subnodes. Each of these subnodes represents some desired configuration for one or
-+  more pins. This configuration can include the mux function to select on those pin(s),
-+  and various pin configuration parameters, such as input-enable, pull-up, etc.
-+
-+properties:
-+  compatible:
-+    const: eswin,eic7700-pinctrl
-+
-+  reg:
-+    maxItems: 1
-+
-+  vrgmii-supply:
-+    description:
-+      Regulator supply for the RGMII interface IO power domain.
-+      This property should reference a regulator that provides either 1.8V or 3.3V,
-+      depending on the board-level voltage configuration required by the RGMII interface.
-+
-+patternProperties:
-+  '-grp$':
-+    type: object
-+    additionalProperties: false
-+
-+    patternProperties:
-+      '-pins$':
-+        type: object
-+
-+        properties:
-+          pins:
-+            description:
-+              For eic7700, specifies the name(s) of one or more pins to be configured by
-+              this node.
-+            items:
-+              enum: [ chip_mode, mode_set0, mode_set1, mode_set2, mode_set3, xin,
-+                      rst_out_n, key_reset_n, gpio0, por_sel, jtag0_tck, jtag0_tms,
-+                      jtag0_tdi, jtag0_tdo, gpio5, spi2_cs0_n, jtag1_tck, jtag1_tms,
-+                      jtag1_tdi, jtag1_tdo, gpio11, spi2_cs1_n, pcie_clkreq_n,
-+                      pcie_wake_n, pcie_perst_n, hdmi_scl, hdmi_sda, hdmi_cec,
-+                      jtag2_trst, rgmii0_clk_125, rgmii0_txen, rgmii0_txclk,
-+                      rgmii0_txd0, rgmii0_txd1, rgmii0_txd2, rgmii0_txd3, i2s0_bclk,
-+                      i2s0_wclk, i2s0_sdi, i2s0_sdo, i2s_mclk, rgmii0_rxclk,
-+                      rgmii0_rxdv, rgmii0_rxd0, rgmii0_rxd1, rgmii0_rxd2, rgmii0_rxd3,
-+                      i2s2_bclk, i2s2_wclk, i2s2_sdi, i2s2_sdo, gpio27, gpio28, gpio29,
-+                      rgmii0_mdc, rgmii0_mdio, rgmii0_intb, rgmii1_clk_125, rgmii1_txen,
-+                      rgmii1_txclk, rgmii1_txd0, rgmii1_txd1, rgmii1_txd2, rgmii1_txd3,
-+                      i2s1_bclk, i2s1_wclk, i2s1_sdi, i2s1_sdo, gpio34, rgmii1_rxclk,
-+                      rgmii1_rxdv, rgmii1_rxd0, rgmii1_rxd1, rgmii1_rxd2, rgmii1_rxd3,
-+                      spi1_cs0_n, spi1_clk, spi1_d0, spi1_d1, spi1_d2, spi1_d3, spi1_cs1_n,
-+                      rgmii1_mdc, rgmii1_mdio, rgmii1_intb, usb0_pwren, usb1_pwren,
-+                      i2c0_scl, i2c0_sda, i2c1_scl, i2c1_sda, i2c2_scl, i2c2_sda,
-+                      i2c3_scl, i2c3_sda, i2c4_scl, i2c4_sda, i2c5_scl, i2c5_sda,
-+                      uart0_tx, uart0_rx, uart1_tx, uart1_rx, uart1_cts, uart1_rts,
-+                      uart2_tx, uart2_rx, jtag2_tck, jtag2_tms, jtag2_tdi, jtag2_tdo,
-+                      fan_pwm, fan_tach, mipi_csi0_xvs, mipi_csi0_xhs, mipi_csi0_mclk,
-+                      mipi_csi1_xvs, mipi_csi1_xhs, mipi_csi1_mclk, mipi_csi2_xvs,
-+                      mipi_csi2_xhs, mipi_csi2_mclk, mipi_csi3_xvs, mipi_csi3_xhs,
-+                      mipi_csi3_mclk, mipi_csi4_xvs, mipi_csi4_xhs, mipi_csi4_mclk,
-+                      mipi_csi5_xvs, mipi_csi5_xhs, mipi_csi5_mclk, spi3_cs_n, spi3_clk,
-+                      spi3_di, spi3_do, gpio92, gpio93, s_mode, gpio95, spi0_cs_n,
-+                      spi0_clk, spi0_d0, spi0_d1, spi0_d2, spi0_d3, i2c10_scl,
-+                      i2c10_sda, i2c11_scl, i2c11_sda, gpio106, boot_sel0, boot_sel1,
-+                      boot_sel2, boot_sel3, gpio111, lpddr_ref_clk ]
-+
-+          function:
-+            description:
-+              Specify the alternative function to be configured for the
-+              given pins.
-+            enum: [ disabled, boot_sel, chip_mode, emmc, fan_tach,
-+                    gpio, hdmi, i2c, i2s, jtag, ddr_ref_clk_sel,
-+                    lpddr_ref_clk, mipi_csi, osc, pcie, pwm,
-+                    rgmii, reset, sata, sdio, spi, s_mode, uart, usb ]
-+
-+          input-schmitt-enable: true
-+
-+          input-schmitt-disable: true
-+
-+          bias-disable: true
-+
-+          bias-pull-down: true
-+
-+          bias-pull-up: true
-+
-+          input-enable: true
-+
-+          input-disable: true
-+
-+          drive-strength-microamp: true
-+
-+        required:
-+          - pins
-+
-+        additionalProperties: false
-+
-+        allOf:
-+          - $ref: pincfg-node.yaml#
-+          - $ref: pinmux-node.yaml#
-+
-+          - if:
-+              properties:
-+                pins:
-+                  anyOf:
-+                    - pattern: '^rgmii'
-+                    - const: lpddr_ref_clk
-+            then:
-+              properties:
-+                drive-strength-microamp:
-+                  enum: [3000, 6000, 9000, 12000, 15000, 18000, 21000, 24000]
-+            else:
-+              properties:
-+                drive-strength-microamp:
-+                  enum: [6000, 9000, 12000, 15000, 18000, 21000, 24000, 27000]
-+
-+required:
-+  - compatible
-+  - reg
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    pinctrl@51600080 {
-+      compatible = "eswin,eic7700-pinctrl";
-+      reg = <0x51600080 0x1fff80>;
-+      vrgmii-supply = <&vcc_1v8>;
-+
-+      dev-active-grp {
-+        /* group node defining 1 standard pin */
-+        gpio10-pins {
-+          pins = "jtag1_tdo";
-+          function = "gpio";
-+          input-enable;
-+          bias-pull-up;
-+        };
-+
-+        /* group node defining 2 I2C pins */
-+        i2c6-pins {
-+          pins = "uart1_cts", "uart1_rts";
-+          function = "i2c";
-+        };
-+      };
-+    };
+> +		if (copy_to_user(up, &concsr, sizeof(concsr)))
+> +			return -EFAULT;
+> +		return 0;
+> +	}
+> +
+>   	default:
+>   		return -ENOIOCTLCMD;
+>   	}
+> diff --git a/include/uapi/linux/vt.h b/include/uapi/linux/vt.h
+> index e9d39c48520a..e93c8910133b 100644
+> --- a/include/uapi/linux/vt.h
+> +++ b/include/uapi/linux/vt.h
+> @@ -84,4 +84,13 @@ struct vt_setactivate {
+>   
+>   #define VT_SETACTIVATE	0x560F	/* Activate and set the mode of a console */
+>   
+> +struct vt_consizecsrpos {
+> +	unsigned short con_rows;	/* number of console rows */
+> +	unsigned short con_cols;	/* number of console columns */
+> +	unsigned short csr_row;		/* current cursor's row */
+> +	unsigned short csr_col;		/* current cursor's column */
+
+Use __u16 pls.
+
+> +};
+> +
+> +#define VT_GETCONSIZECSRPOS 0x5610  /* get console size and cursor position */
+
+Can we define that properly as
+   _IOR(0x56, 0x10, struct vt_consizecsrpos)
+? Note this would still differ from "conflicting":
+#define VIDIOC_G_FBUF            _IOR('V', 10, struct v4l2_framebuffer)
+
+thanks,
 -- 
-2.25.1
-
+js
+suse labs
 
