@@ -1,157 +1,143 @@
-Return-Path: <linux-kernel+bounces-649162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-649164-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F222AB80E9
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 10:38:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA42FAB80F6
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 10:40:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D9DA24E3196
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 08:36:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC75618846F1
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 08:37:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ABE0288CAA;
-	Thu, 15 May 2025 08:33:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AE5528B3E4;
+	Thu, 15 May 2025 08:34:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XNrkfwIW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="L40qgghT"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A31662882AC;
-	Thu, 15 May 2025 08:33:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4352828A718
+	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 08:34:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747298006; cv=none; b=AvOv8SMYnsxlARHv5VDoZcdEqIjmz59FxzWXSRSAwG4X/JDBwfjXkAAUTYoSiCu7sW6/9mTYmQfXdPUMSjK/DDt2rrHXCLIwQ5YYCqXWdGbS36qp1IjCEtV4MoZ/xCcNBADHTvSXSRl3/4F522qpfc2SEVZL6UHGLPJI+yTtgck=
+	t=1747298086; cv=none; b=BpIIpOezzcmF6nCWuIan6nHeYWziMFtIIimEVav9UI5dLSdNU7Zpk6+RVMLnApxYUUQF6dEdYbR6ca7W6+3ywvRp5w6TfTH+XjiClEsCJfhdWKe/mGP993JaV6R4ZOOAGu9u9EVNZVNGdcybq+lSFjSQPS4cDjzyRKqKxmw0DSs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747298006; c=relaxed/simple;
-	bh=MYaOkdMz5hv3neikPI2nXVOxPya68wJ9/1C8V/e7NmQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lkgo5I4UZuLMrZ1DoJV4Nk9+Wyx0VKP2CXMcF9moTBT42aXQnETJ8uaCGoyLjL9ryeb/r4w3O9x7cpSm+zhRyavEtjYOXdMyJnGeCbs1DIZBwn7goEM7tLFIqcpTlOz94VAXgy+Wbjl0DT2pGlCFrG8ryFLtPuApW1U5cn64jzg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XNrkfwIW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12C3EC4CEE7;
-	Thu, 15 May 2025 08:33:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747298006;
-	bh=MYaOkdMz5hv3neikPI2nXVOxPya68wJ9/1C8V/e7NmQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=XNrkfwIWNmsVE4SxZa66HbhRXvupwMEpAU0Nj80mM4QIUjwBh/k/GPARlIeSBOe3z
-	 O4YDHnLHTtATKGdOl3QzG/I0NEldFowwI9CgkGGe8PaGFilUXXZ12hGcj7uOiiI02o
-	 vlL4cil1f4zLQOinOmdwD4skB4874qaHNkDAY2QGqW1wykP3h6EI5upg8diYMSHXC2
-	 o8SF5kRznXmVLFHMrXxubYMUU35CJTTeMuz0Ys6x6H/Q/IzCO1QS1wEWpd3ZjLwP0l
-	 Neq5eKvicPG7UTRobb/bKs+4krFtqahSPWs+WzbA7QEXd7McjtONI0RBd9PwdJ3/P7
-	 dz5xilOa2nmVg==
-Message-ID: <184449a6-f2db-4307-8351-66b617a3839b@kernel.org>
-Date: Thu, 15 May 2025 10:33:23 +0200
+	s=arc-20240116; t=1747298086; c=relaxed/simple;
+	bh=5Cb6EQdZSJNvGfptwnny4AQlzpNOIDRdpBW0ds+Z9XI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=r9+qSCGcgXTL8NDRTi5wUTMv+DWSTK6eBG6LgaWphUgU+KuwyoNW45RrCtRCGB1J51rAzvcAR7YIrlIWPdk/oZA4tRCg9X3I6tw0iZu6QntfridcdPgL5mgyKiH8ou9pRk0t1bEw0+hHsmoMX+38k2mqNRC+1MXoYrVjrnBDE0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=L40qgghT; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43cfa7e7f54so4728485e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 01:34:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1747298082; x=1747902882; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=NTNydlf5rwZIjCPw7zUm7fKdllwCFJguNUgD96Q4Uu8=;
+        b=L40qgghTU4C9HPRMXR0dQucVc4OCWdwSPFboKBszqDGafcoxYr5Btcf4udpSNyL4FQ
+         XSTLmv/wscKxS7H3zBRMRjOh6bt8vvDPuYzsSye7dOUUKGIlqAL0RDizWytPa98ZkiOj
+         9bb9WPAsUzrbrdjH45Vk9MmKEYAU9jmiivK2onHnI535MNOtCzIPtv1NO413TKO8pyC6
+         wbR3KDKHP2rUVCkTkAWfOFGAWCTxqsdZ2yo2lTsJxm2PbyUZcx4Lz43qJxfQyIybKUT6
+         PEPIscv9DzLxXdYSTpwnBcWaveb2+z/AfWzTEsB/eWH8zmMLQVEjS2K8y4jjxtvRoAt7
+         jbhw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747298082; x=1747902882;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NTNydlf5rwZIjCPw7zUm7fKdllwCFJguNUgD96Q4Uu8=;
+        b=ScFwPxvqfi+0hp/N3u37Mey39UmiMUpi9gbUOsqsemNFHbXD4VKzFxXBNuxTCOr6CH
+         DgM3W9C/M8aNQj8ri2HtfxikLkZbVdSCJuQWe35AFLRn+p2qLRKxiS06X0hVVEmp8z4+
+         kFZjCv0EfmhtwcG5nFmTNSklFjbmoAULvPEFyXdGfj1uB8ljlHPCcvhzdgEYeGgfkJXv
+         9DEED/x/4cc/QD0xup8lPdpM6M3uQ/2B3zA/8iSvroUJdqTtmUEcrJX9fnFsZf2ujB3K
+         wzz3D9udJXLZfmp6pplZRfJH26FxkDeJNI8mqlFqSpEuOxjIy1+tno/BpF2iXHqVN5L0
+         PhkQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWPkKocRBitdr7LOF6zmJ0REGwafVTt88VhatG4cI5kXNcpeM9+YXyA77jxXj+cfDYLbxhvEyfK5Q2mdlE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyfzXuu1aVR4zfDmdQERt+aWurWpxrKOmcOvtzj1/Q2xrCsjZ1a
+	CFDQmb4Ki9rXihtFXKL/kwF0/eVLz/m/l2PW2kT3JjV/tB4r394Z1zBb7y8p7LZ6AbQ=
+X-Gm-Gg: ASbGncsNjjdhWBXvt+fk5Au08reocu4VSroGEizBfKOuLEU3lKPzxX5lvmBLa/RX3FJ
+	GL5kW3WLsOtdupXFmfzKvPIN8EzDZs1Y3ypx5NFcsYgtQVpsTHzxnu/LYPhODzKApsIkvAQf0l5
+	A/M2dV6uisG3GSDE4hfL8t0hesAYuQUmGUiGlrsSaJHj/mzhltfzMOwig0unFIXXj0LsK6Q9E82
+	ZXDSBw1n7uqpi0pmmTLvASXY28OUrUfqvo7ZwsuYXVJEFLeU+N8G0GIdHWZBNuBgdw2aTuV8ZMy
+	ZAFUTr/UXCzpbyrkPZ7kj/FkORyIl26+97GEOphRv1pMYduEpqXyo6hz1zVNuszoJl14EJ9F0Ue
+	gUUw2xQvGVdJtJQ==
+X-Google-Smtp-Source: AGHT+IG2bIbDRbPIb0zDXbKIFTjTwG3dmfj81Y0Pa+mphZgCx6Es+dFTY7SfBNrnVwGtvcAMyRjyQA==
+X-Received: by 2002:a05:600c:3d0d:b0:442:ea3b:9d72 with SMTP id 5b1f17b1804b1-442f84ca3ecmr23841765e9.5.1747298082371;
+        Thu, 15 May 2025 01:34:42 -0700 (PDT)
+Received: from mai.linaro.org (146725694.box.freepro.com. [130.180.211.218])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-442f39794cdsm61538495e9.38.2025.05.15.01.34.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 15 May 2025 01:34:41 -0700 (PDT)
+Date: Thu, 15 May 2025 10:34:40 +0200
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+	Gregory Clement <gregory.clement@bootlin.com>,
+	oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: timer: Convert marvell,armada-370-timer to
+ DT schema
+Message-ID: <aCWnIBAPBVqBHGHJ@mai.linaro.org>
+References: <20250506022301.2588282-1-robh@kernel.org>
+ <202505082358.dnIeqrs0-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re:
-To: Nicolas Pitre <nico@fluxnic.net>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: npitre@baylibre.com, linux-serial@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <62s32907-1954-862o-5p1r-967n6873sp2n@syhkavp.arg>
-Content-Language: en-US
-From: Jiri Slaby <jirislaby@kernel.org>
-Autocrypt: addr=jirislaby@kernel.org; keydata=
- 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
-In-Reply-To: <62s32907-1954-862o-5p1r-967n6873sp2n@syhkavp.arg>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <202505082358.dnIeqrs0-lkp@intel.com>
 
-On 14. 05. 25, 22:21, Nicolas Pitre wrote:
->  From 28043dec8352fd857c6878c2ee568620a124b855 Mon Sep 17 00:00:00 2001
-> From: Nicolas Pitre <nico@fluxnic.net>
-> Date: Wed, 14 May 2025 15:58:22 -0400
-> Subject: [PATCH] vt: remove VT_RESIZE and VT_RESIZEX from vt_compat_ioctl()
-> From: Nicolas Pitre <npitre@baylibre.com>
+On Thu, May 08, 2025 at 11:42:26PM +0800, kernel test robot wrote:
+
+Hi Rob,
+
+> Hi Rob,
 > 
-> They are listed amon those cmd values that "treat 'arg' as an integer"
-> which is wrong. They should instead fall into the default case. Probably
-> nobody ever exercized that code since 2009 but still.
+> kernel test robot noticed the following build warnings:
+> 
+> [auto build test WARNING on tip/timers/core]
+> [also build test WARNING on linus/master v6.15-rc5 next-20250508]
+> [If your patch is applied to the wrong git tree, kindly drop us a note.
+> And when submitting patch, we suggest to use '--base' as documented in
+> https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> 
+> url:    https://github.com/intel-lab-lkp/linux/commits/Rob-Herring-Arm/dt-bindings-timer-Convert-marvell-armada-370-timer-to-DT-schema/20250506-144131
+> base:   tip/timers/core
+> patch link:    https://lore.kernel.org/r/20250506022301.2588282-1-robh%40kernel.org
+> patch subject: [PATCH] dt-bindings: timer: Convert marvell,armada-370-timer to DT schema
+> reproduce: (https://download.01.org/0day-ci/archive/20250508/202505082358.dnIeqrs0-lkp@intel.com/reproduce)
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202505082358.dnIeqrs0-lkp@intel.com/
+> 
+> All warnings (new ones prefixed by >>):
+> 
+>    Warning: Documentation/translations/zh_CN/admin-guide/README.rst references a file that doesn't exist: Documentation/dev-tools/kgdb.rst
+>    Warning: Documentation/translations/zh_CN/dev-tools/gdb-kernel-debugging.rst references a file that doesn't exist: Documentation/dev-tools/gdb-kernel-debugging.rst
+>    Warning: Documentation/translations/zh_TW/admin-guide/README.rst references a file that doesn't exist: Documentation/dev-tools/kgdb.rst
+>    Warning: Documentation/translations/zh_TW/dev-tools/gdb-kernel-debugging.rst references a file that doesn't exist: Documentation/dev-tools/gdb-kernel-debugging.rst
+>    Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/leds/backlight/ti,lp8864.yaml
+> >> Warning: drivers/clocksource/timer-armada-370-xp.c references a file that doesn't exist: Documentation/devicetree/bindings/timer/marvell,armada-370-xp-timer.txt
 
-AFAICS in the debian code search, exactly noone (except sanitizers, 
-strace, fuzzers, valgrind, ...) uses VT_RESIZEX.
-
-VT_RESIZE is used by kbd's resizecons -- and there it's the sole purpose 
-to call this ioctl. I wonder how comes noone using 32bit of resizecons 
-on 64bit noticed?
-
-Thinking...
-
-Actually, on x86, it doesn't matter if it takes arg (case VT_RESIZE) or 
-compat_ptr() (default label) path as both are given the same user pointer...
-
-It matters on s390x, but noone cares about the 32--64bit mix in there, 
-apparently.
-
-> Signed-off-by: Nicolas Pitre <npitre@baylibre.com>
-> Fixes: e92166517e3c ("tty: handle VT specific compat ioctls in vt driver")
-
-FWIW, the e-mail's Subject is empty.
-
-Reviewed-by: Jiri Slaby <jirislaby@kernel.org>
-
-> diff --git a/drivers/tty/vt/vt_ioctl.c b/drivers/tty/vt/vt_ioctl.c
-> index 83a3d49535e5..61342e06970a 100644
-> --- a/drivers/tty/vt/vt_ioctl.c
-> +++ b/drivers/tty/vt/vt_ioctl.c
-> @@ -1119,8 +1119,6 @@ long vt_compat_ioctl(struct tty_struct *tty,
->   	case VT_WAITACTIVE:
->   	case VT_RELDISP:
->   	case VT_DISALLOCATE:
-> -	case VT_RESIZE:
-> -	case VT_RESIZEX:
->   		return vt_ioctl(tty, cmd, arg);
->   
->   	/*
-
+Will you send a separate to fix the reference in the driver ?
 
 -- 
-js
-suse labs
+
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
