@@ -1,93 +1,101 @@
-Return-Path: <linux-kernel+bounces-648826-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-648831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F26F0AB7C41
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 05:25:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1004EAB7C4B
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 05:26:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 122E29E015D
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 03:24:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 219BE9E03C6
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 03:25:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C13A2295529;
-	Thu, 15 May 2025 03:24:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="TPX8JyRh"
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE5A82918FF;
+	Thu, 15 May 2025 03:25:57 +0000 (UTC)
+Received: from Atcsqr.andestech.com (60-248-80-70.hinet-ip.hinet.net [60.248.80.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55FD428F53B
-	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 03:24:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 680BD2949EF
+	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 03:25:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.248.80.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747279492; cv=none; b=KLL3rOUs5Bif7LvbbcuXn2S02sozrfNbgBJuujmzo9R9jEZVqhEVlXFsZ5yQWmOmG26iHVePFJo3iaZ5gFXDIEbJ+v6OZT3+46lZO3V5piGNlq4o/Egm8Vf0X6bo8dywTN7XCTsy+zoBGGIRc89CaPzK+HCd8Yy82mHJoZTzsZ4=
+	t=1747279557; cv=none; b=lSJKGEs0KE5snl66/jyoSgxJdWWkQoAHsTcXz978W2VWFDg1u/r2JD1MeehwKgk5OsagoAtl73BrbFVJAR36aiDtp+lYlyQjUEs2jk+SKCmeaeVZ5PQZssiDjIkVFuzQEUXg6key2SPFuCn0NQFJb+KbxhdcTc9TV8jzRGiypMw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747279492; c=relaxed/simple;
-	bh=oX05t+xRsWZEqJMmUDVQLVF5e7rsaSv9sjtjrv9MTno=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rlyQsF7kK/uoU2EZywfU3Zz2oQdLI+HPfFqlN1EYbC8XK03hOMqYjKgq/xQsJbZbSx9qE+w3wz0iCH1wl3eAMyCBK9JN+S8le0osYDWuoyqzFk7GgALeeSUZv9VSouNLcrXFlL0q8fDOp5ZuShEARmnBK+oR8izf7qO4P4/HXY8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=TPX8JyRh; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=7R6K/ai1nrk//L6Z8X0cid/jGJ8XHuu3DWVDwEsYrjI=; b=TPX8JyRhccw1Yck8Khwaqz42LI
-	p0+ff/qqlhvHdjU0Nor6TZ7qNL5JaKMRIoOCLL9ASTCQhME02GtH2nrhsJUv8m1Kuf9S2X/7GYRpP
-	AYRbzYDFxJaYXJbgu2m72rpctDlRioxONAIJSWmLGoFW8YqDKtCAz4zsjPShxQsYSNQlwWxgq8y+g
-	J8qD11tLAlbUOfJKZQ1yoXw1zJIMaHdVwgpl6XoGCYQlTCap6SKDQXhdaxvBG0QmwvqBE/8LloExM
-	UoYapu3Q/vt9CHezo72Xb3GRU2SZUijxSMaeqZCFfWYpP94IPnkRUgqel3cbqAbvYfgEb6PBX25/f
-	8BhVe8Uw==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1uFPD7-006DL4-2e;
-	Thu, 15 May 2025 11:24:42 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Thu, 15 May 2025 11:24:41 +0800
-Date: Thu, 15 May 2025 11:24:41 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Sergey Senozhatsky <senozhatsky@chromium.org>
-Cc: Zaslonko Mikhail <zaslonko@linux.ibm.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Minchan Kim <minchan@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, Heiko Carstens <hca@linux.ibm.com>,
-	Ilya Leoshkevich <iii@linux.ibm.com>
-Subject: Re: [PATCH 2/2] zram: support deflate-specific params
-Message-ID: <aCVeeWCawIETqkfG@gondor.apana.org.au>
-References: <20250514024825.1745489-1-senozhatsky@chromium.org>
- <20250514024825.1745489-3-senozhatsky@chromium.org>
- <bec7391c-e40d-4633-a2d0-881eb6d18f19@linux.ibm.com>
- <ystv6cvrdllh64eqkislh47a3bnx5d2lk42ox4eiuuubioin6u@gmt5pwbkwiz3>
- <aCVcsB-M9cKdq8d4@gondor.apana.org.au>
- <2bnnkkwhqor73ls7dvsxlt57tp2u3xf2o27opkveuqwgh3xf2j@5kzgq4eej3cw>
+	s=arc-20240116; t=1747279557; c=relaxed/simple;
+	bh=c9FOqSmy+dz5v5MPKHqrj/nnkAEXt32yKE4f9nKCPeA=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=j9xAVjqG1s8IYCwDreFX6uUtDkywkB5e73q8GnadQQA8qJAtd4USdRICVg/8zJjTAOYOd9rlQzADKaeyQv4YRWqAsGS7yxnAPSYMfWpwapj4JXatAS9Xm4AWAbYkV6iF9x3HsZlPIDxjFUUdS0qGzgJb2D/px+JgkpYCtjSpcYU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=andestech.com; spf=pass smtp.mailfrom=andestech.com; arc=none smtp.client-ip=60.248.80.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=andestech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=andestech.com
+Received: from mail.andestech.com (ATCPCS34.andestech.com [10.0.1.134])
+	by Atcsqr.andestech.com with ESMTPS id 54F3PIfo056447
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=OK);
+	Thu, 15 May 2025 11:25:18 +0800 (+08)
+	(envelope-from ben717@andestech.com)
+Received: from atctrx.andestech.com (10.0.15.173) by ATCPCS34.andestech.com
+ (10.0.1.134) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 15 May
+ 2025 11:25:18 +0800
+Date: Thu, 15 May 2025 11:25:18 +0800
+From: Ben Zong-You Xie <ben717@andestech.com>
+To: Rob Herring <robh@kernel.org>
+CC: <krzk+dt@kernel.org>, <tglx@linutronix.de>, <magnus.damm@gmail.com>,
+        <prabhakar.mahadev-lad.rj@bp.renesas.com>, <paul.walmsley@sifive.com>,
+        <alex@ghiti.fr>, <daniel.lezcano@linaro.org>, <conor+dt@kernel.org>,
+        <aou@eecs.berkeley.edu>, <devicetree@vger.kernel.org>,
+        <tim609@andestech.com>, <linux-kernel@vger.kernel.org>,
+        <geert+renesas@glider.be>, <palmer@dabbelt.com>,
+        <linux-riscv@lists.infradead.org>
+Subject: Re: [PATCH v4 3/9] dt-bindings: interrupt-controller: add Andes
+ QiLai PLIC
+Message-ID: <aCVenXTis5Hq5Uek@atctrx.andestech.com>
+References: <20250514095350.3765716-1-ben717@andestech.com>
+ <20250514095350.3765716-4-ben717@andestech.com>
+ <174723438154.2170160.6461910184012543621.robh@kernel.org>
+ <20250514150134.GB2180131-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <2bnnkkwhqor73ls7dvsxlt57tp2u3xf2o27opkveuqwgh3xf2j@5kzgq4eej3cw>
+In-Reply-To: <20250514150134.GB2180131-robh@kernel.org>
+User-Agent: Mutt/2.1.4 (2021-12-11)
+X-ClientProxiedBy: ATCPCS33.andestech.com (10.0.1.100) To
+ ATCPCS34.andestech.com (10.0.1.134)
+X-DKIM-Results: atcpcs34.andestech.com; dkim=none;
+X-DNSRBL: 
+X-SPAM-SOURCE-CHECK: pass
+X-MAIL:Atcsqr.andestech.com 54F3PIfo056447
 
-On Thu, May 15, 2025 at 12:19:25PM +0900, Sergey Senozhatsky wrote:
->
-> OK, so do we want to limit user-space and permit only "raw deflate"
-> winbits values. that is only negative ones (either explicitly or
-> implicitly (by negating the value before zlib API calls))?
+On Wed, May 14, 2025 at 10:01:34AM -0500, Rob Herring wrote:
+> [EXTERNAL MAIL]
+> 
+> On Wed, May 14, 2025 at 09:53:08AM -0500, Rob Herring (Arm) wrote:
+> >
+> > On Wed, 14 May 2025 17:53:44 +0800, Ben Zong-You Xie wrote:
+> > > Add a new compatible string for Andes QiLai PLIC.
+> > >
+> > > Acked-by: Rob Herring (Arm) <robh@kernel.org>
+> > > Signed-off-by: Ben Zong-You Xie <ben717@andestech.com>
+> > > ---
+> > >  .../bindings/interrupt-controller/sifive,plic-1.0.0.yaml         | 1 +
+> > >  1 file changed, 1 insertion(+)
+> > >
+> >
+> > Applied, thanks!
+> 
+> And now dropped.
+> 
+> Rob
 
-I would suggest that we stick with the zlib values, but filter
-out the ones that we don't support/use currently.  If you've already
-exported this to user-space then obviously you'll need to decide
-on how to maintain compatibility but that should be specific to
-zram.
+This patch was applied but has now been dropped. Could you please clarify
+the reason for dropping it?
 
-Cheers,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Thanks,
+Ben
+
 
