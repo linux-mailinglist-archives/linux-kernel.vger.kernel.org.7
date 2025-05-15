@@ -1,113 +1,132 @@
-Return-Path: <linux-kernel+bounces-649037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-649040-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38844AB7F0F
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 09:43:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83438AB7F1B
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 09:45:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C3B4C4C4C7D
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 07:43:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4791C867B3E
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 07:45:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 031E427E7D1;
-	Thu, 15 May 2025 07:43:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AE7C1F0E50;
+	Thu, 15 May 2025 07:45:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K+Jk8h+d"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="qDv9fMGz"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CA282222CB;
-	Thu, 15 May 2025 07:43:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 915834B1E51;
+	Thu, 15 May 2025 07:45:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747295000; cv=none; b=uHbB1b5yC3SOvi6wE/mOsekPPRIcAHIzcnOOyKZhQ1D6du4ZmpquRSnJ+10xj70wi6WTQG1BRL1sF/WUYEloGQkwCtdwmADvUdaxzQw7mq1bU8JNQGAwfCDGU0AwW98c4uAaYOrcuTt+5iDyC/14/U1zsX2Jt92WzNgPNJdfN/A=
+	t=1747295119; cv=none; b=Mhbf5kfKbkpVOjkrMdG/9lVmBDXxLiJaUYMzXXzokJVaGngxgbzgfmHukmYJE5+h0/AxHfoZeMAuudYLm6Fv3vFdGYXIZCOS4gdV9eEMwTR3blU47YLQHj0NYc31mCDbGjkeSiyuw7HBLHGeFh+/gTh5tUbZqgFPBq1XujM9KiY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747295000; c=relaxed/simple;
-	bh=h1lP/XXLGAF1oDoLpaZY+0OrHUGsOnllqHLKbDeAURg=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=egNDjJKporwJbHDCtArrXb/EcYTfJ2dkjgaOdOT0tP+PkryzsLd4N9Ff/in2LBN5C5ddgz53yBTT5jqlPuHzw8KY/Jq1Ju5graxGVJFxIuF+l47HTO+OEN/rP9JIWWQK3YctXCJH3bBZihfEXoJ8GJE4UX8Z//xT2fUeqB+/cb8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K+Jk8h+d; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67F06C4CEE7;
-	Thu, 15 May 2025 07:43:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747294997;
-	bh=h1lP/XXLGAF1oDoLpaZY+0OrHUGsOnllqHLKbDeAURg=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=K+Jk8h+dtlENycXrCf9xiGgBIODRP64nCCyfmd5mwwfFiuecBzNt+8y17DbOE/Xgd
-	 WFXCvPM75xcNZQ0kk7VgG2G4G5SFydPF305XY7Z4Ox8eUI7gvz4o8JPsuRdz8iyzy/
-	 HfjxbEchRRi1LpfvbNkjZguOlrlGf+bYUzR69nbCal7J2DV5h+SqEZDN15n2iFy0PF
-	 NQ5v2LSL0DAO1d8yw2Bzh8wyUMnllANDiMc+IQ4WwVhkvzcKYctr9suI2rKjCnXhGz
-	 2P3Pa3QDBNrDFkgpnuiSfo9Htlo8zTHTmiN3BWLsN1Rt8smb1LhsGrhW8+6RpDc+4K
-	 ef6n8aMEtKYvA==
-From: Mark Brown <broonie@kernel.org>
-To: Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Chen Zhong <chen.zhong@mediatek.com>, 
- Fabien Parent <fabien.parent@linaro.org>, 
- Alexandre Mergnat <amergnat@baylibre.com>, 
- =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
-Cc: kernel@collabora.com, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-mediatek@lists.infradead.org
-In-Reply-To: <20250514-mt6357-regulator-fixed-compatibles-removal-bindings-v1-1-2421e9cc6cc7@collabora.com>
-References: <20250514-mt6357-regulator-fixed-compatibles-removal-bindings-v1-1-2421e9cc6cc7@collabora.com>
-Subject: Re: [PATCH] regulator: dt-bindings: mt6357: Drop fixed compatible
- requirement
-Message-Id: <174729499095.280025.830867783307923858.b4-ty@kernel.org>
-Date: Thu, 15 May 2025 09:43:10 +0200
+	s=arc-20240116; t=1747295119; c=relaxed/simple;
+	bh=Mwfoa7pfou8cfJ+qwk62V37KTgsEWtdPzhvEfUlY/Uc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bUiNXqKG3fyl3yERjwsQx1i9q5Cigyl9Ig1eZAcDXpuLY4ZP8H/q6R49E2t/jEDBrWMn29WhbKZmAQMs7ej6eVh0/xf/Ot4E2Ta4x5pRn8ygA033JC18+j7CYpGCBVSErETBDFb/VEZ6tO83lkPxCC9wSU+QJfyV+aFXcaz+6Ho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=qDv9fMGz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47109C4CEE9;
+	Thu, 15 May 2025 07:45:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1747295119;
+	bh=Mwfoa7pfou8cfJ+qwk62V37KTgsEWtdPzhvEfUlY/Uc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qDv9fMGzsx9fPQslRlieJe7hWbVdtoh0zhfZ2SgMN0q9iQPgRNoeqzEhbAkVIpMh7
+	 GZ9N438yDg3iIeKlMK9sctvzn06ylEZbUOL6immLnjvrgx4tMEYnoq9a5x17qUg787
+	 hr9Bmo0BLnnh6ZjCju8jYtW4QrDQoLUqSN1yyJGA=
+Date: Thu, 15 May 2025 09:43:30 +0200
+From: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+To: Matthew Maurer <mmaurer@google.com>
+Cc: Timur Tabi <ttabi@nvidia.com>, "dakr@kernel.org" <dakr@kernel.org>,
+	"tmgross@umich.edu" <tmgross@umich.edu>,
+	"benno.lossin@proton.me" <benno.lossin@proton.me>,
+	"gary@garyguo.net" <gary@garyguo.net>,
+	"a.hindborg@kernel.org" <a.hindborg@kernel.org>,
+	"lossin@kernel.org" <lossin@kernel.org>,
+	"bjorn3_gh@protonmail.com" <bjorn3_gh@protonmail.com>,
+	"boqun.feng@gmail.com" <boqun.feng@gmail.com>,
+	"rafael@kernel.org" <rafael@kernel.org>,
+	"alex.gaynor@gmail.com" <alex.gaynor@gmail.com>,
+	"aliceryhl@google.com" <aliceryhl@google.com>,
+	"ojeda@kernel.org" <ojeda@kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"samitolvanen@google.com" <samitolvanen@google.com>,
+	"rust-for-linux@vger.kernel.org" <rust-for-linux@vger.kernel.org>
+Subject: Re: [PATCH v5 4/4] rust: samples: Add debugfs sample
+Message-ID: <2025051540-snowsuit-manhole-7858@gregkh>
+References: <20250505-debugfs-rust-v5-4-3e93ce7bb76e@google.com>
+ <D9VPA1M45WBK.1TB4KOUXD24BD@kernel.org>
+ <aCRdNJ2oq-REBotd@pollux>
+ <D9VSJTPCSNXV.1LCXKGKVDGP96@kernel.org>
+ <CAGSQo00Pj0qF90712K7xACNEvr2e0q=98b8-0VUcXLD5V+oDhg@mail.gmail.com>
+ <aCUVuXO_jORqlxwr@pollux>
+ <CAGSQo02nP8MT8q-_gQwjUGFNSyiW2AKOQ3V4yy9jofDzjc0SpA@mail.gmail.com>
+ <CAGSQo017FgGmStYxLX7JeqV+AcMUMjmnxF6KBesFhc31BieBbw@mail.gmail.com>
+ <d61e11e2d99659cf13d0e20f56afe319720d03b7.camel@nvidia.com>
+ <CAGSQo02-vYG-hkP2VXBVX9Lp8+=gxkyKh7TAYkAYhpiz6gj54w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.15-dev-c25d1
+In-Reply-To: <CAGSQo02-vYG-hkP2VXBVX9Lp8+=gxkyKh7TAYkAYhpiz6gj54w@mail.gmail.com>
 
-On Wed, 14 May 2025 08:36:06 -0400, Nícolas F. R. A. Prado wrote:
-> Some of the regulators on the MT6357 PMIC currently reference the
-> fixed-regulator dt-binding, which enforces the presence of a
-> regulator-fixed compatible. However since all regulators on the MT6357
-> PMIC are handled by a single mt6357-regulator driver, probed through
-> MFD, the compatibles don't serve any purpose. In fact they cause
-> failures in the DT kselftest since they aren't probed by the fixed
-> regulator driver as would be expected. Furthermore this is the only
-> dt-binding in this family like this: mt6359-regulator and
-> mt6358-regulator don't require those compatibles.
+On Wed, May 14, 2025 at 03:42:46PM -0700, Matthew Maurer wrote:
+> On Wed, May 14, 2025 at 3:40 PM Timur Tabi <ttabi@nvidia.com> wrote:
+> >
+> > On Wed, 2025-05-14 at 15:32 -0700, Matthew Maurer wrote:
+> > > One further possibility here, which we'd need Greg to weigh in on - we
+> > > could add a method to the debugfs API intended for Rust usage which
+> > > specifically releases a directory or file *without* releasing any
+> > > nested elements. This would mean we could get rid of all the lifetimes
+> > > on directory and file handles.
+> >
+> > I had a conversation with Greg about this topic just the other week.
+> >
+> > https://lore.kernel.org/linux-doc/20250429173958.3973958-1-ttabi@nvidia.com/
+> >
+> > There are two versions of debugfs_remove:
+> >
+> > void debugfs_remove(struct dentry *dentry);
+> > #define debugfs_remove_recursive debugfs_remove
+> >
+> > Unfortunately, the direction that we've been going is to get rid of debugfs_remove_recursive() and
+> > have drivers only call debugfs_remove().
+> >
+> > What would solve your problem is doing the opposite: making debugfs_remove() be non-recursive and
+> > require drivers to call debugfs_remove_recursive() if that's what they really want.
+> >
+> > Maybe we need debugfs_remove_single()?
+> >
 > 
-> [...]
+> Yes, having access to `debugfs_remove_single()`, if it has the
+> properties I would expect (namely that the kernel objects for
+> inaccessible directories continue to exist, they're just not reachable
+> through the VFS) would allow this design. It's not obvious to me if
+> it's the design we want, but it would enable that design.
 
-Applied to
+Ick, no, we got rid of debugfs_remove() only removing a single dentry a
+while ago as it was causing problems.  Let's not go back to that at all.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
+This shouldn't be all that complex, it's supposed to be simple to use
+and reason about.  If you create a directory, you can "own" it until you
+drop the reference and then it, and all files/subdirs will then be
+removed.  I like that logic much better than what we are stuck with in C
+where we can create a directory but then be forced to remember to look
+it up later to remove it when finished.
 
-Thanks!
+Ideally we can migrate the C code to be more like the rust api in the
+future as that should be easier to deal with over time by driver
+authors.
 
-[1/1] regulator: dt-bindings: mt6357: Drop fixed compatible requirement
-      commit: 9cfdd7752ba5f8cc9b8191e8c9aeeec246241fa4
+thanks,
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+greg k-h
 
