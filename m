@@ -1,104 +1,248 @@
-Return-Path: <linux-kernel+bounces-648978-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-649076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABB42AB7E54
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 08:54:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9737CAB7FCA
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 10:07:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 775021B66CD4
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 06:54:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8A163AEE70
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 08:07:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 209F5297B61;
-	Thu, 15 May 2025 06:53:58 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D192927CCF6;
+	Thu, 15 May 2025 08:07:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="bInDEViw";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="QltwRtct"
+Received: from fhigh-b8-smtp.messagingengine.com (fhigh-b8-smtp.messagingengine.com [202.12.124.159])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 046BF296FB2
-	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 06:53:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D9182206B2
+	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 08:07:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747292037; cv=none; b=fdHtcl4I2+cYr1KxLDJW6w04YyQ/iNnY/WLwgyHYjZXfopc+vW4eq9QsQsG0307wpWedQrvQjLAG9nkUrd5vJbZCF0kesnnepPQIJnWeNnNFwoJi2m8J2KA12Oti6kVrm7lzwAf5d9YzZ4k2Vw4Eu8482ZGGWcEVHy8GayzIoHc=
+	t=1747296434; cv=none; b=kqYNq0c7k6dAENHLw0BKBGOABqzCTMD4puvVN8Us8OPCxVqsCAbeohQ6M+OXA+fTVIzTZLDl6xxCeRIiwqmq2vBU5ZCtK8ZqFYHvEPeU/WgKnvkhcMVXt3rf3k5Ysy4DvhM/HaMlq4KLLOShRXHz6S4PMABVgnNmo7vcirveid8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747292037; c=relaxed/simple;
-	bh=DGgY3PsCEFXbz5sTap0X8MmZmUtGg6pc/mORDbTSaQk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=JFxoKnu/ukbmksO2J1IsJ9OKZ28x3DJJJIqonlt8Yyy44VN6iVs9azgNBy8lRMIESxob/XljuPMT2Cv95McT43bbiHZPWTMvTy8May6yx3X6LeKmTufRIdzP1rI1HuMzdrH1M3b0MFi7Pb/zRdHNvDHU9QNBbcvAuhfUG4HhhEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4ZygsM3M3qz4f3jYl
-	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 14:53:27 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 161B21A0359
-	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 14:53:47 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.101.6])
-	by APP4 (Coremail) with SMTP id gCh0CgAHbGB3jyVoyDnbMQ--.29023S7;
-	Thu, 15 May 2025 14:53:46 +0800 (CST)
-From: Kemeng Shi <shikemeng@huaweicloud.com>
-To: hughd@google.com,
-	baolin.wang@linux.alibaba.com,
-	akpm@linux-foundation.org
-Cc: linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 5/5] mm/shmem: remove unneeded xa_is_value() check in shmem_unuse_swap_entries()
-Date: Thu, 15 May 2025 23:47:58 +0800
-Message-Id: <20250515154758.956521-6-shikemeng@huaweicloud.com>
-X-Mailer: git-send-email 2.30.0
-In-Reply-To: <20250515154758.956521-1-shikemeng@huaweicloud.com>
-References: <20250515154758.956521-1-shikemeng@huaweicloud.com>
+	s=arc-20240116; t=1747296434; c=relaxed/simple;
+	bh=AVh4CRmVLAEOlwBiX8XsDRDG0cjEQBjTcgjz0+0PEDQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PiyFIBy1d50Y/detaacSRyO29e7qEqKUNegkpJWpAMGutpNofIlRp4mCN+ctl0jw9JcXRFBYIwmXUdWNfH5GwvpOGue1msURS3fa5iCWQNq7/ZMpwiJs9yBw4Y746R1BBlcwSbiFlydmPGPAHOx/7rB0K6ZFfwUhU4GCF9bNKsM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=bInDEViw; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=QltwRtct; arc=none smtp.client-ip=202.12.124.159
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
+Received: from phl-compute-11.internal (phl-compute-11.phl.internal [10.202.2.51])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 47A70254013D;
+	Thu, 15 May 2025 04:07:11 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-11.internal (MEProxy); Thu, 15 May 2025 04:07:11 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
+	 h=cc:cc:content-transfer-encoding:content-type:content-type
+	:date:date:from:from:in-reply-to:in-reply-to:message-id
+	:mime-version:references:reply-to:subject:subject:to:to; s=fm2;
+	 t=1747296431; x=1747382831; bh=/UcFtr5DBxpnnH+4Q9HZjqQX+lwlssGD
+	1SJrKtbwOZo=; b=bInDEViwqiesZBhXxWXtTjTKiNWcrH27TQjV0+lb0CXcHzq1
+	uMoBLPGUTXyKorj9bFVM8HHVrhKgJ3ONqKJZjHqg4R74vIKzPJCRHDaT9f5P2b2O
+	oqNwma196qHPNZxeITA0eEDV/eeDMjhUTlcnk0VVXk5Ob4I05inc4fq7mc2Sym/9
+	IovE8AGyB6VjCjiU9HVN3pvp0ok6COmc5oS1he73ZlEEbSrmxw1AGRok8xpp68fH
+	bk2dMd0ZKKV/a0qn3cTCL2SD6u7srQj48Ejpn4OaO/2ksKcg+5fTHP9vFs2N0OKj
+	vy/c8UDoSRgQ1/JU8evjwDLaFE2Z0eM5v8L2FA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1747296431; x=
+	1747382831; bh=/UcFtr5DBxpnnH+4Q9HZjqQX+lwlssGD1SJrKtbwOZo=; b=Q
+	ltwRtctiG+56HAT2q4t77B2/J/oSVz2w4A2QYSH3Nldc1C70kDi4G5rQitfsgtAq
+	lVTVWexh1ineeuk45/NtlEjPY8Qvk1gnisEYWiStN0UEwPJfxKfez9PDgvbT4Gn0
+	fW9D1zhciyfhQEEuH2t59S6RCTUiKPZiVWNxc9gP3x1JQHWxRhVhAEioqWRThNKr
+	C5DN11OHcvYDUnulEPL9LiFf9QD3eUrp5p2WgbSwFSd9LSQzzCkFt5mO2rVIcv5A
+	xlXFtysc7bUN68uDMS8DHjHBVXv5uFPSgIYY+8zKiJu+4em/EGI38tExymfqZYDd
+	oAVqBfu+DUnDhiQGMAV8A==
+X-ME-Sender: <xms:rqAlaMBu6KBmcsgeCxUF_DRkffZyOQXE8w3t0jjKKNjo58mmUChKjg>
+    <xme:rqAlaOjDbTccOoM1l4QU-2YZpkHAlQa6bsSXlRWyS93SS-e8C866-H9DaZeTa_BIu
+    YOHdqv2dPNkwNZyPAE>
+X-ME-Received: <xmr:rqAlaPkx__iOTZqkzdnVh860ofT78v2n9Hxrcuv6Jgi5HTDuxTntRM8ALpLKfgUvp8PrPQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeftdelfeehucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggugfgjsehtkefstddt
+    tdejnecuhfhrohhmpedfmfhirhhilhhlucetrdcuufhhuhhtvghmohhvfdcuoehkihhrih
+    hllhesshhhuhhtvghmohhvrdhnrghmvgeqnecuggftrfgrthhtvghrnhepudeffeetffeg
+    teefjeetvdekgeelveeiheeiffeltddtgeeuffevvdehveevheffnecuvehluhhsthgvrh
+    fuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepkhhirhhilhhlsehshhhuthgv
+    mhhovhdrnhgrmhgvpdhnsggprhgtphhtthhopeejpdhmohguvgepshhmthhpohhuthdprh
+    gtphhtthhopehmihhnghhosehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrrhgusgdo
+    ghhithesghhoohhglhgvrdgtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlse
+    hvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepgiekieeskhgvrhhnvghlrdho
+    rhhgpdhrtghpthhtoheprghruggssehkvghrnhgvlhdrohhrghdprhgtphhtthhopehtoh
+    hrvhgrlhgusheslhhinhhugidqfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtohep
+    sghrghgvrhhsthesghhmrghilhdrtghomh
+X-ME-Proxy: <xmx:rqAlaCxp_Y8KLYnF6cMGbCHCDk02U1hKbsg1KEsOMFUXfK_8VCtw8w>
+    <xmx:rqAlaBQUN1SNaGWlFXGpNq0cHpUSIvbCLirQ9oahl76_QiX93SH4Dw>
+    <xmx:rqAlaNYg1LLnWJUfD0fN460P7inO-mZKG3HQTFE_ZJSqSwbu__fI5Q>
+    <xmx:rqAlaKTQtwWFEnLbgSkcYeZklJPeZ0kPSLeWsWd2x96Td3sO7ekBkw>
+    <xmx:r6AlaF4h7s0uk1J6QHhaLMpyPfFSHByR5qR0lOZ4ARxHkuNbC_elFerS>
+Feedback-ID: ie3994620:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 15 May 2025 04:07:07 -0400 (EDT)
+Date: Thu, 15 May 2025 11:07:04 +0300
+From: "Kirill A. Shutemov" <kirill@shutemov.name>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Ard Biesheuvel <ardb+git@google.com>, linux-kernel@vger.kernel.org, 
+	x86@kernel.org, Ard Biesheuvel <ardb@kernel.org>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, Brian Gerst <brgerst@gmail.com>
+Subject: Re: [PATCH v3 1/7] x86/cpu: Use a new feature flag for 5 level paging
+Message-ID: <ct3z5lyozftd2tkzfksc6ylbh7ubeonuww2t77voymuy5egyo2@ocqfhd6gnbti>
+References: <20250514104242.1275040-9-ardb+git@google.com>
+ <20250514104242.1275040-10-ardb+git@google.com>
+ <aCWbsM1qaMsKNkMj@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgAHbGB3jyVoyDnbMQ--.29023S7
-X-Coremail-Antispam: 1UD129KBjvdXoW7XrWkWrWDtF1kCF18AF1UJrb_yoW3urc_uF
-	y8t3WkWrWrZr4xWFnIkFWfWFZYg39Y9rWDZa10yFyayryDtFs5G3ykJrsxAry7uF4qqFs0
-	yF1xZrsIkrnrWjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbqkYFVCjjxCrM7AC8VAFwI0_Wr0E3s1l1xkIjI8I6I8E6xAIw20E
-	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l87I20VAvwVAaII0Ic2I_JFv_Gryl82
-	xGYIkIc2x26280x7IE14v26r126s0DM28IrcIa0xkI8VCY1x0267AKxVW5JVCq3wA2ocxC
-	64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM2
-	8EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4UJVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq
-	3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8w
-	Aqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE
-	14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwCY1x0262kKe7
-	AKxVWUAVWUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02
-	F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw
-	1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUCVW8JwCI42IY6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r
-	1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07ja
-	g4hUUUUU=
-X-CM-SenderInfo: 5vklyvpphqwq5kxd4v5lfo033gof0z/
+In-Reply-To: <aCWbsM1qaMsKNkMj@gmail.com>
 
-As only value entry will be added to fbatch in shmem_find_swap_entries(),
-there is no need to do xa_is_value() check in shmem_unuse_swap_entries().
+On Thu, May 15, 2025 at 09:45:52AM +0200, Ingo Molnar wrote:
+> 
+> * Ard Biesheuvel <ardb+git@google.com> wrote:
+> 
+> > From: Ard Biesheuvel <ardb@kernel.org>
+> > 
+> > Currently, the LA57 CPU feature flag is taken to mean two different
+> > things at once:
+> > - whether the CPU implements the LA57 extension, and is therefore
+> >   capable of supporting 5 level paging;
+> > - whether 5 level paging is currently in use.
+> > 
+> > This means the LA57 capability of the hardware is hidden when a LA57
+> > capable CPU is forced to run with 4 levels of paging. It also means the
+> > the ordinary CPU capability detection code will happily set the LA57
+> > capability and it needs to be cleared explicitly afterwards to avoid
+> > inconsistencies.
+> > 
+> > Separate the two so that the CPU hardware capability can be identified
+> > unambigously in all cases.
+> > 
+> > To avoid breaking existing users that might assume that 5 level paging
+> > is being used when the "la57" string is visible in /proc/cpuinfo,
+> > repurpose that string to mean that 5-level paging is in use, and add a
+> > new string la57_capable to indicate that the CPU feature is implemented
+> > by the hardware.
+> > 
+> > Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+> > ---
+> >  arch/x86/include/asm/cpufeatures.h               |  3 ++-
+> >  arch/x86/include/asm/page_64.h                   |  2 +-
+> >  arch/x86/include/asm/pgtable_64_types.h          |  2 +-
+> >  arch/x86/kernel/cpu/common.c                     | 16 ++--------------
+> >  arch/x86/kvm/x86.h                               |  4 ++--
+> >  drivers/iommu/amd/init.c                         |  4 ++--
+> >  drivers/iommu/intel/svm.c                        |  4 ++--
+> >  tools/testing/selftests/kvm/x86/set_sregs_test.c |  2 +-
+> >  8 files changed, 13 insertions(+), 24 deletions(-)
+> > 
+> > diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
+> > index f67a93fc9391..d59bee5907e7 100644
+> > --- a/arch/x86/include/asm/cpufeatures.h
+> > +++ b/arch/x86/include/asm/cpufeatures.h
+> > @@ -395,7 +395,7 @@
+> >  #define X86_FEATURE_AVX512_BITALG	(16*32+12) /* "avx512_bitalg" Support for VPOPCNT[B,W] and VPSHUF-BITQMB instructions */
+> >  #define X86_FEATURE_TME			(16*32+13) /* "tme" Intel Total Memory Encryption */
+> >  #define X86_FEATURE_AVX512_VPOPCNTDQ	(16*32+14) /* "avx512_vpopcntdq" POPCNT for vectors of DW/QW */
+> > -#define X86_FEATURE_LA57		(16*32+16) /* "la57" 5-level page tables */
+> > +#define X86_FEATURE_LA57		(16*32+16) /* "la57_hw" 5-level page tables */
+> >  #define X86_FEATURE_RDPID		(16*32+22) /* "rdpid" RDPID instruction */
+> >  #define X86_FEATURE_BUS_LOCK_DETECT	(16*32+24) /* "bus_lock_detect" Bus Lock detect */
+> >  #define X86_FEATURE_CLDEMOTE		(16*32+25) /* "cldemote" CLDEMOTE instruction */
+> > @@ -483,6 +483,7 @@
+> >  #define X86_FEATURE_PREFER_YMM		(21*32+ 8) /* Avoid ZMM registers due to downclocking */
+> >  #define X86_FEATURE_APX			(21*32+ 9) /* Advanced Performance Extensions */
+> >  #define X86_FEATURE_INDIRECT_THUNK_ITS	(21*32+10) /* Use thunk for indirect branches in lower half of cacheline */
+> > +#define X86_FEATURE_5LEVEL_PAGING	(21*32+11) /* "la57" Whether 5 levels of page tables are in use */
+> 
+> So there's a new complication here, KVM doesn't like the use of 
+> synthethic CPU flags, for understandable reasons:
+> 
+>   inlined from ‘intel_pmu_set_msr’ at arch/x86/kvm/vmx/pmu_intel.c:369:7:
+>   ...
+>   ./arch/x86/kvm/reverse_cpuid.h:102:9: note: in expansion of macro ‘BUILD_BUG_ON’
+>     102 |         BUILD_BUG_ON(x86_leaf == CPUID_LNX_5);
+>         |         ^~~~~~~~~~~~
+> 
+> (See x86-64 allmodconfig)
+> 
+> Even though previously X86_FEATURE_LA57 was effectively a synthethic 
+> CPU flag (it got artificially turned off by the Linux kernel if 5-level 
+> paging was disabled) ...
+> 
+> So I think the most straightforward solution would be to do the change 
+> below, and pass through LA57 flag if 5-level paging is enabled in the 
+> host kernel. This is similar to as if the firmware turned off LA57, and 
+> it doesn't bring in all the early-boot complications bare metal has. It 
+> should also match the previous behavior I think.
+> 
+> Thoughts?
+> 
+> Thanks,
+> 
+> 	Ingo
+> 
+> =================>
+> 
+>  arch/x86/kvm/cpuid.c | 6 ++++++
+>  arch/x86/kvm/x86.h   | 4 ++--
+>  2 files changed, 8 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
+> index 571c906ffcbf..d951d71aea3b 100644
+> --- a/arch/x86/kvm/cpuid.c
+> +++ b/arch/x86/kvm/cpuid.c
+> @@ -1221,6 +1221,12 @@ void kvm_set_cpu_caps(void)
+>  		kvm_cpu_cap_clear(X86_FEATURE_RDTSCP);
+>  		kvm_cpu_cap_clear(X86_FEATURE_RDPID);
+>  	}
+> +	/*
+> +	 * Clear the LA57 flag in the guest if the host kernel
+> +	 * does not have 5-level paging support:
+> +	 */
+> +	if (kvm_cpu_cap_has(X86_FEATURE_LA57) && !pgtable_l5_enabled())
 
-Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
-Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
----
- mm/shmem.c | 2 --
- 1 file changed, 2 deletions(-)
+X86_FEATURE_LA57 check seems redundant.
 
-diff --git a/mm/shmem.c b/mm/shmem.c
-index 07b8e1400c67..4b42419ce6b2 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -1446,8 +1446,6 @@ static int shmem_unuse_swap_entries(struct inode *inode,
- 	for (i = 0; i < folio_batch_count(fbatch); i++) {
- 		struct folio *folio = fbatch->folios[i];
- 
--		if (!xa_is_value(folio))
--			continue;
- 		error = shmem_swapin_folio(inode, indices[i], &folio, SGP_CACHE,
- 					mapping_gfp_mask(mapping), NULL, NULL);
- 		if (error == 0) {
+> +		kvm_cpu_cap_clear(X86_FEATURE_LA57);
+>  }
+>  EXPORT_SYMBOL_GPL(kvm_set_cpu_caps);
+>  
+> diff --git a/arch/x86/kvm/x86.h b/arch/x86/kvm/x86.h
+> index d2c093f17ae5..9dc32a409076 100644
+> --- a/arch/x86/kvm/x86.h
+> +++ b/arch/x86/kvm/x86.h
+> @@ -243,7 +243,7 @@ static inline u8 vcpu_virt_addr_bits(struct kvm_vcpu *vcpu)
+>  
+>  static inline u8 max_host_virt_addr_bits(void)
+>  {
+> -	return kvm_cpu_cap_has(X86_FEATURE_5LEVEL_PAGING) ? 57 : 48;
+> +	return kvm_cpu_cap_has(X86_FEATURE_LA57) ? 57 : 48;
+>  }
+>  
+>  /*
+> @@ -603,7 +603,7 @@ static inline bool __kvm_is_valid_cr4(struct kvm_vcpu *vcpu, unsigned long cr4)
+>  		__reserved_bits |= X86_CR4_FSGSBASE;    \
+>  	if (!__cpu_has(__c, X86_FEATURE_PKU))           \
+>  		__reserved_bits |= X86_CR4_PKE;         \
+> -	if (!__cpu_has(__c, X86_FEATURE_5LEVEL_PAGING))          \
+> +	if (!__cpu_has(__c, X86_FEATURE_LA57))          \
+>  		__reserved_bits |= X86_CR4_LA57;        \
+>  	if (!__cpu_has(__c, X86_FEATURE_UMIP))          \
+>  		__reserved_bits |= X86_CR4_UMIP;        \
+
 -- 
-2.30.0
-
+  Kiryl Shutsemau / Kirill A. Shutemov
 
