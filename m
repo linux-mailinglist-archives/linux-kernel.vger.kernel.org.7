@@ -1,149 +1,93 @@
-Return-Path: <linux-kernel+bounces-649845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-649849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19D12AB89F0
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 16:53:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E23C0AB89F4
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 16:54:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF0BA9E1C48
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 14:52:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 97DBA501043
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 14:53:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF7231F8F09;
-	Thu, 15 May 2025 14:52:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0243C217666;
+	Thu, 15 May 2025 14:52:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dBhyPu62"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="R4rW7++c"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C9481F873B
-	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 14:52:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CD9A1F8F09;
+	Thu, 15 May 2025 14:52:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747320732; cv=none; b=f8r/2P2UytMQnUTm7NDHMeKXD7rlGEMdYapW8TabJneee5NEkGXnRWxHj5r0TvEjUrtLThKRDaoEBn5zqrtOk0nysRfi/50uTOel8pcbCXq8MDSGYcY7jPXDc6zqMM1aXYJCEa+idrCVWioZo/phqTxMiyx/NGZsoQSF1UfsHJA=
+	t=1747320753; cv=none; b=vB2a/kKvUBfudMAG87BnN33za2pJueQPFXMTMka1ZqUDJdNHyJG0vHXMN7UskQDT4A7yqKN68Fy7T3nCdfbtbXV82vEGN0Sf1ggfokabwkxv7DcPOXhGjljRBxUpPnReS3+F+J4HGGD8Zw4cdHn1M1UZq6jwHnKhunIHTxrWRfA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747320732; c=relaxed/simple;
-	bh=hZDYOdxvakc1x6FXmTGmDIipla/+VXcOKRnwGlndQ2A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KCUqTUx918K7Fr2k1PX8WDJM1yKwAllkylzEJ4P8oy1wzNI0Bhiy8X/L9umHvC84D2/cbX4cC7pcO9/v1/P4DQ5z5KOhhjWgKYywyL1PQqLphUe6NluxzLVZ2p9Ieb/ahKFjj6f912LWJEJEqiqL2rYkDsI8Z2ySkGm6pZhgiK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dBhyPu62; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCB25C4CEE7;
-	Thu, 15 May 2025 14:52:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747320730;
-	bh=hZDYOdxvakc1x6FXmTGmDIipla/+VXcOKRnwGlndQ2A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dBhyPu62roivi4KAZ4+eM+ZlxVoYrn38XVK0ALZqFsxIA1+wHzyTCs8UAwuqbn6f6
-	 BQs/BxUiDUKNSYChrXrXnFdSksdRa80m1m86xWbOO/MkBitMmiMVpd1bzVCaY51oq1
-	 2duykOu70MC6nOcgJYwj7KerCowVEjaRrcBmD+cXILcDi5qLcd07GqYWNRMbra2P5i
-	 eZRtsathUnZUSz8kqDgZyqAzqiJs8KlMLGZ33Wb1mPR8tZnqNaxIq2KVFb+qZdbltZ
-	 68WvrMZVPkzM0TwEfEaW7+3TO2uGthlWLzhkT6AKP34QIhubNd2dvD4Q1p7MCyAdim
-	 v+rIIHtCjUWpA==
-Date: Thu, 15 May 2025 16:52:06 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Dave Stevenson <dave.stevenson@raspberrypi.com>, 
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, Dmitry Baryshkov <lumag@kernel.org>, kernel@collabora.com, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 06/23] drm/connector: hdmi: Use YUV420 output format
- as an RGB fallback
-Message-ID: <etqrbspmy2s75b7lxj3frcjxfnyciawzlxm7im4gvnj6t7z3fx@vx3dfsxitwdn>
-References: <7729efd6-fa88-4022-b8d8-b32fe49bf4aa@collabora.com>
+	s=arc-20240116; t=1747320753; c=relaxed/simple;
+	bh=F5SNJrqSpwmsGkyY6xl7s4ci6DCAjBHoLSPwiIEcVm8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Fe7s+etspBWBKP3QsxyHMLJZnJLyT7EWmBVex/2mQn/zsjhlcfqdCDoInLG/XfXwDT0DUGBSE3IQUKluzlOeKvGLlPzqgX8zzdO7RQEQXeOtVW6BtGEwfTXDZwCkxly4M5tn/s2LCodLmJQH+LxVH65fCZbkYjazYM+G79lTx1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=R4rW7++c; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1747320749;
+	bh=F5SNJrqSpwmsGkyY6xl7s4ci6DCAjBHoLSPwiIEcVm8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=R4rW7++cWu4sO17Y7TZzoZA95tSmHEFWWIOygJXR3/vQSsIk6TljdeQCWzdRsZvgP
+	 WGniK6+fgU3Djaj8LtZR1E34pA23ONj2Q5MNN4vFfzezDGdIhlSCzh+4rhNCoSj8mL
+	 sa4OCADNPFp3DUHQ+g0gZXcZVBFjvbpvhUmb2kVkCEayXjxLVT26cOPYEA5fiHBBOj
+	 sz4+wc0j/cn5izGI+c+CApAZ67GdEG4v0JirqDiwn8Kkdyp1Ut333IHdFKp1CmC4uj
+	 ShpEo9yher2JWml+lIQjH7nTsAHXu9s+7NKWnHubTQSq1IzTYltMNsLi9ohxLXAm7Z
+	 7TW+7zxvexj6w==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 6DC3C17E0062;
+	Thu, 15 May 2025 16:52:28 +0200 (CEST)
+Message-ID: <89234201-9315-41f5-ab13-68272f62c53d@collabora.com>
+Date: Thu, 15 May 2025 16:52:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="pjfx5ef52ycqbxy3"
-Content-Disposition: inline
-In-Reply-To: <7729efd6-fa88-4022-b8d8-b32fe49bf4aa@collabora.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/3] arm64: dts: mediatek: mt8188: gce: add missing
+ 'clock-names'
+To: Julien Massot <julien.massot@collabora.com>, kernel@collabora.com,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+ Garmin Chang <garmin.chang@mediatek.com>,
+ Friday Yang <friday.yang@mediatek.com>
+Cc: Conor Dooley <conor.dooley@microchip.com>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+References: <20250515-dtb-check-mt8188-v1-0-cda383cbeb4f@collabora.com>
+ <20250515-dtb-check-mt8188-v1-3-cda383cbeb4f@collabora.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20250515-dtb-check-mt8188-v1-3-cda383cbeb4f@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+
+Il 15/05/25 15:31, Julien Massot ha scritto:
+> The 'clock-names' property is required by the dt binding.
+> 
+
+I just remembered something....
 
 
---pjfx5ef52ycqbxy3
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v4 06/23] drm/connector: hdmi: Use YUV420 output format
- as an RGB fallback
-MIME-Version: 1.0
+...care to respin this patch instead?
+https://lore.kernel.org/all/20240911104327.123602-1-angelogioacchino.delregno@collabora.com/
 
-On Thu, May 15, 2025 at 03:44:18PM +0300, Cristian Ciocaltea wrote:
-> Hi Maxime,
->=20
-> On 5/13/25 4:35 PM, Maxime Ripard wrote:
-> > Hi,
-> >=20
-> > On Fri, Apr 25, 2025 at 01:26:57PM +0300, Cristian Ciocaltea wrote:
-> >> Try to make use of YUV420 when computing the best output format and
-> >> RGB cannot be supported for any of the available color depths.
-> >>
-> >> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-> >> ---
-> >>  drivers/gpu/drm/display/drm_hdmi_state_helper.c | 22 ++++++++++++++++=
-+-----
-> >>  1 file changed, 17 insertions(+), 5 deletions(-)
-> >>
-> >> diff --git a/drivers/gpu/drm/display/drm_hdmi_state_helper.c b/drivers=
-/gpu/drm/display/drm_hdmi_state_helper.c
-> >> index 9e0a468073acbb2477eff1abef1c09d63620afaa..1fba10b92a6baa49150b6f=
-f1e96bf2c2739bf269 100644
-> >> --- a/drivers/gpu/drm/display/drm_hdmi_state_helper.c
-> >> +++ b/drivers/gpu/drm/display/drm_hdmi_state_helper.c
-> >> @@ -648,14 +648,26 @@ hdmi_compute_config(const struct drm_connector *=
-connector,
-> >>  				       8, connector->max_bpc);
-> >>  	int ret;
-> >> =20
-> >> -	/*
-> >> -	 * TODO: Add support for YCbCr420 output for HDMI 2.0 capable
-> >> -	 * devices, for modes that only support YCbCr420.
-> >> -	 */
-> >>  	ret =3D hdmi_compute_format_bpc(connector, conn_state, mode, max_bpc,
-> >>  				      HDMI_COLORSPACE_RGB);
-> >> +	if (!ret)
-> >> +		return 0;
-> >=20
-> > Sorry, I missed it on the previous iteration, but this condition
-> > inversion compared to the rest of the function is throwing me off :)
-> >=20
-> > I believe something like
-> >=20
-> > If (ret) {
-> >    if (connector->ycbcr_420_allowed) {
-> >       hdmi_compute_format_bpc(..., HDMI_COLORSPACE_YUV420)
-> >    } else {
-> >      drm_dbg_kms("Can't use YUV420")
-> >    }
-> > }
-> >=20
-> > Would be more natural
->=20
-> Yep, will do.
->=20
-> Please let me know if I can start preparing v5, as I'm not sure if you
-> managed to also check the test-related patches.
+Cheers,
+Angelo
 
-I haven't gotten through the whole series yet, sorry. I hope to finish
-it by ~ the middle of next week.
 
-Maxime
-
---pjfx5ef52ycqbxy3
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaCX/lgAKCRAnX84Zoj2+
-dljkAX9k8e33BoB5CKna9kwtem7pAB+YOUyyEWaDIaS3EhQOa6oqmhEnRjMkkkOM
-yoUkb/ABgP0kalwCj+x/n4gfJrJGjX33tipO9CI7D/R95N22lK0gBgaRcnQrO2jG
-yFiwra4Ffw==
-=4wat
------END PGP SIGNATURE-----
-
---pjfx5ef52ycqbxy3--
 
