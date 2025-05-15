@@ -1,138 +1,169 @@
-Return-Path: <linux-kernel+bounces-649194-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-649196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2198AB8151
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 10:49:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BD5CAB814E
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 10:48:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46A4818894A4
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 08:48:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C0CCC4C07C9
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 08:48:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A345288C0B;
-	Thu, 15 May 2025 08:47:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E516328CF6B;
+	Thu, 15 May 2025 08:48:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EEIillir"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="I+o+mqOr"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FD1928C2DE;
-	Thu, 15 May 2025 08:47:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CDA5288C80
+	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 08:48:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747298854; cv=none; b=aD2CUo6PRCcJVe/mHIIZlU4+MSvMFbjGKDWYTlQaE9a4KJ448xT40zMzv8HFP9kEepwz9caqFpALT/hSx2RycTe0fgGTVhUine3rcxdHTwI/CNecCOuVQ3u3DpfrrsngJ8IQhuSrdOPxY/6mNQ0g6Eg1ldmxSzJ4KqFz6YiH57c=
+	t=1747298920; cv=none; b=XG4twYTr/3cGtMTo1bYjvaDxLaRCOVqEsbOjVEdVqOuJ7UMK87ii2R/PhAXVnkujL7Yjshsz9J1dW0jk6MlfCjfAHMmAqlXiINYEVLcYTZ8sxh42m14R3WjB3SsjWcBDm+9GqUqKjoqHAcEUIyLlLp0X+EDDmE6XTt8PpQC6IMA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747298854; c=relaxed/simple;
-	bh=JQf0KUYpClVXmPjP/iEdYMIu0hxOkVfy6nTVgFHTH2I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c0IkgNQ5d/wZztxPhY472acOF4QigjMtNd2KbY4UMGJpT4xBoUcTK7URLKbbRwrhO8YYlXFrHcSEc9AheVuuB80if1b8O6dde2Mkm2GNyuUkCURQndGZk5h8/r2O9sFr/6p+6/KAQ5mxbI612QtxHOBhY2N+J8kbZRPtz0mLbDs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EEIillir; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1747298852; x=1778834852;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=JQf0KUYpClVXmPjP/iEdYMIu0hxOkVfy6nTVgFHTH2I=;
-  b=EEIillirghYcZrDSbXEty2vWNBCARAtO+Mo91TXK5CPT5TtqEEJtN306
-   nNaRHlRx5Uhe8663CnsJAWzeCHwDiKoTrc9odx3fmJj+NdOwPZqGzDErq
-   6j18kfhqr5KyEGY2/PpzLDLCK0U0OSd/R8ldBrZzqd4JT6iesC8i5dlRd
-   Z7bfNhdM4Jwc0bPSju/CZPefZbkpINvuFYa9mL3s6wthVsqIwywsZ31Uo
-   RUfRw7eAc+UXLPUURBJ9tc6fiY+0UgW3Pd1feKOwWmLyLnC+pnmIRuIN2
-   OJgYsjQcBHIM3aEilleBufJZhrAJcDeRDR1cTkAOKvLUU2vMlYefzxiUJ
-   g==;
-X-CSE-ConnectionGUID: 6oLsw2M2SzCiQ5eG+jxm5Q==
-X-CSE-MsgGUID: jMqX6Zu2QT2qTX4gASBwyg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11433"; a="49091930"
-X-IronPort-AV: E=Sophos;i="6.15,290,1739865600"; 
-   d="scan'208";a="49091930"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2025 01:47:31 -0700
-X-CSE-ConnectionGUID: mPH9vmttQH6yA7EjgzTlbA==
-X-CSE-MsgGUID: D06Ny8/XRlekEOeluAOCJA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,290,1739865600"; 
-   d="scan'208";a="169232332"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa002.jf.intel.com with ESMTP; 15 May 2025 01:47:29 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1001)
-	id 0CDBB23F; Thu, 15 May 2025 11:47:27 +0300 (EEST)
-Date: Thu, 15 May 2025 11:47:27 +0300
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-acpi@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>,
-	Mika Westerberg <westeri@kernel.org>,
-	Hans de Goede <hdegoede@redhat.com>
-Subject: Re: [PATCH v1 0/4] gpiolib: acpi: Split quirks to its own file
-Message-ID: <20250515084727.GU88033@black.fi.intel.com>
-References: <20250513100514.2492545-1-andriy.shevchenko@linux.intel.com>
- <20250514155955.GS88033@black.fi.intel.com>
- <aCWgBp4ZD5aesvRw@smile.fi.intel.com>
- <20250515083451.GT88033@black.fi.intel.com>
- <aCWo19FjcvZzP1H7@smile.fi.intel.com>
+	s=arc-20240116; t=1747298920; c=relaxed/simple;
+	bh=uafTKsLt5Y6vI+2YJVWbCoVLU1+w6d1TN41/6GcJe8w=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=PuqnDwql+kJs77QHgkm/I+tsLUSclujk9gGX+Q3Y5i4Xdt5c51TX0KISpjslwQb42VQVLOTLGXBiAZrnVhV58W2iuywhyfUCY05nJNsxwZXIaRtFfVahm/zkaB1aswUbsemRIG/OQ3iSFngDmzJD2j0cVW9ihZywo3dIj4vRIPo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=I+o+mqOr; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3a0b4907a28so89429f8f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 01:48:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1747298916; x=1747903716; darn=vger.kernel.org;
+        h=in-reply-to:references:from:to:cc:subject:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bdVLI+IKJQCwIaBP/4ipGt86DAIuj3sOKMK9lc4aqFc=;
+        b=I+o+mqOrLwb6wAy3fZ6S3zjKPSqaM3CwDCRIeUdIay3/UdKVnn2nqClHp2i280eIJo
+         tZyO0jy8xMq7nzDk/AqEDzGLQA6Av8h5IUIrV+E9571R5E2Zid8XpZXo6RayFQu3J9Et
+         F/GBqCB1+3SvxUlFk0JZ8KNMo3Pt8iiTg8MJGPAZ2Y7gQJZL9F5OGqKptUTpV1kwK24L
+         EOlzSCCEVIi2oevOVj9yLa8GrSIWcCDBU4NLrVldY0U3XkdWSWI2ytaUJ8Sq3ZQqb4cs
+         u1f0G8OtL1VTWuMsykX7Bwk74nyGnyworNNU6w3awX+4DK4SlJeRIYuANTsjnT//Pq4q
+         lnrA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747298916; x=1747903716;
+        h=in-reply-to:references:from:to:cc:subject:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=bdVLI+IKJQCwIaBP/4ipGt86DAIuj3sOKMK9lc4aqFc=;
+        b=o03GV143v8n/QlzXyHZAZvxTJapS7KA7a70v6s7YcWZlN2xe8srYKoQAjaS0FdVdPX
+         US1+XSw120lHCg6hNgAC8R+8WAjcleH9nUeGhDVmYgI5B+fxxAnu7PIUuIAYY9THa7J7
+         oWT8yeNr5rueb+03BSymvE3ppnxOKVkPyc8sUw85wG3tYEMt7LzAgdevzxI6KrKW9AGm
+         zXROls0Vddn3RZbMPQqZgiHUUOsnoLO0+6QjSRhUjen69LHnm7wYKwsd7FLIWiU9s5xt
+         etijEFDRm8Fy6HbQYYXYCO8yo2NzD/Y3Ti0C4BPLk73nbBaOKMM3H0CfXcbxKbl3IMHQ
+         F2+w==
+X-Gm-Message-State: AOJu0YyKckhUiujnvM6eWWYR0yh3XwNrcCiF4q78AELymgEFv/efsuow
+	7USP6MQHJyM2uD+V34iYFLkX3RKlp1hCOqSr7Ht/NYQwTALxiQqDmGLMoPjsMFU=
+X-Gm-Gg: ASbGncuzTj1fesDp5gINPKoeCcKAFlwm892SQf33fiux4VkUBcCs2DxpnlYAzHYujXZ
+	QxRCAFrVpqat5AHDdbxjesDYpwNP1jtbuKWUS91au2ETg5kS/ZyreofH1GtGiGhvVXXUCn2udeR
+	BDyLjGWhFaUPxeb5DXbm9IVwbKPi6k+cZWij2P/G2EJZiCov81w+4krADPruyv5cSxJAowqrUT8
+	LRxEHd8Vyt3f4guRMM0qfRifj0bG5RbsnvK2Ca+NM5GsXS+EUg0MIlGDycfQhsgBLT6ODipCqWY
+	iExI47OR32rZ9ZP1q1AEZ+2zlMjJSmbGHwMHJoTSdfGqAga3woo/U6OrUqmtnB8KITruHN3V/Yu
+	elKaOUW6uI0U=
+X-Google-Smtp-Source: AGHT+IFl5ofT8H2ymocVMBID7uffI6yQBoHWwntFgE3AOdsNMnKtMdzBwHwHlEbKzThnIcYnf09dKg==
+X-Received: by 2002:a5d:4311:0:b0:3a3:55b4:1abb with SMTP id ffacd0b85a97d-3a355b41b8emr294033f8f.12.1747298916300;
+        Thu, 15 May 2025 01:48:36 -0700 (PDT)
+Received: from localhost (ip-89-103-73-235.bb.vodafone.cz. [89.103.73.235])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a1f5a2cf2bsm21822557f8f.80.2025.05.15.01.48.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 15 May 2025 01:48:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <aCWo19FjcvZzP1H7@smile.fi.intel.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 15 May 2025 10:48:35 +0200
+Message-Id: <D9WLRSAB63M5.3DZD4ND3WVZ6F@ventanamicro.com>
+Subject: Re: [PATCH v15 05/27] riscv: usercfi state for task and
+ save/restore of CSR_SSP on trap entry/exit
+Cc: <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+ <linux-mm@kvack.org>, <linux-riscv@lists.infradead.org>,
+ <devicetree@vger.kernel.org>, <linux-arch@vger.kernel.org>,
+ <linux-doc@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
+ <alistair.francis@wdc.com>, <richard.henderson@linaro.org>,
+ <jim.shu@sifive.com>, <andybnac@gmail.com>, <kito.cheng@sifive.com>,
+ <charlie@rivosinc.com>, <atishp@rivosinc.com>, <evan@rivosinc.com>,
+ <cleger@rivosinc.com>, <alexghiti@rivosinc.com>, <samitolvanen@google.com>,
+ <broonie@kernel.org>, <rick.p.edgecombe@intel.com>,
+ <rust-for-linux@vger.kernel.org>, "Zong Li" <zong.li@sifive.com>,
+ "linux-riscv" <linux-riscv-bounces@lists.infradead.org>
+To: "Alexandre Ghiti" <alex@ghiti.fr>, "Deepak Gupta" <debug@rivosinc.com>,
+ "Thomas Gleixner" <tglx@linutronix.de>, "Ingo Molnar" <mingo@redhat.com>,
+ "Borislav Petkov" <bp@alien8.de>, "Dave Hansen"
+ <dave.hansen@linux.intel.com>, <x86@kernel.org>, "H. Peter Anvin"
+ <hpa@zytor.com>, "Andrew Morton" <akpm@linux-foundation.org>, "Liam R.
+ Howlett" <Liam.Howlett@oracle.com>, "Vlastimil Babka" <vbabka@suse.cz>,
+ "Lorenzo Stoakes" <lorenzo.stoakes@oracle.com>, "Paul Walmsley"
+ <paul.walmsley@sifive.com>, "Palmer Dabbelt" <palmer@dabbelt.com>, "Albert
+ Ou" <aou@eecs.berkeley.edu>, "Conor Dooley" <conor@kernel.org>, "Rob
+ Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+ "Arnd Bergmann" <arnd@arndb.de>, "Christian Brauner" <brauner@kernel.org>,
+ "Peter Zijlstra" <peterz@infradead.org>, "Oleg Nesterov" <oleg@redhat.com>,
+ "Eric Biederman" <ebiederm@xmission.com>, "Kees Cook" <kees@kernel.org>,
+ "Jonathan Corbet" <corbet@lwn.net>, "Shuah Khan" <shuah@kernel.org>, "Jann
+ Horn" <jannh@google.com>, "Conor Dooley" <conor+dt@kernel.org>, "Miguel
+ Ojeda" <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun
+ Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Benno Lossin"
+ <benno.lossin@proton.me>, "Andreas Hindborg" <a.hindborg@kernel.org>,
+ "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>
+From: =?utf-8?q?Radim_Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@ventanamicro.com>
+References: <20250502-v5_user_cfi_series-v15-0-914966471885@rivosinc.com>
+ <20250502-v5_user_cfi_series-v15-5-914966471885@rivosinc.com>
+ <D9OZVNOGLU4T.2XOUPX27HN0W8@ventanamicro.com>
+ <122fc6cd-2e21-4fca-979d-bcf558107b81@ghiti.fr>
+In-Reply-To: <122fc6cd-2e21-4fca-979d-bcf558107b81@ghiti.fr>
 
-On Thu, May 15, 2025 at 11:41:59AM +0300, Andy Shevchenko wrote:
-> On Thu, May 15, 2025 at 11:34:51AM +0300, Mika Westerberg wrote:
-> > On Thu, May 15, 2025 at 11:04:22AM +0300, Andy Shevchenko wrote:
-> > > On Wed, May 14, 2025 at 06:59:55PM +0300, Mika Westerberg wrote:
-> > > > On Tue, May 13, 2025 at 01:00:30PM +0300, Andy Shevchenko wrote:
-> > > > > The GPIO ACPI helpers use a few quirks which consumes approximately 20%
-> > > > > of the file. Besides that the necessary bits are sparse and being directly
-> > > > > referred. Split them to a separate file. There is no functional change.
-> > > > > 
-> > > > > For the new file I used the Hans' authorship of Hans as he the author of
-> > > > > all those bits (expect very tiny changes made by this series).
-> > > > > 
-> > > > > Hans, please check if it's okay and confirm, or suggest better alternative.
-> > > > > 
-> > > > > Andy Shevchenko (4):
-> > > > >   gpiolib: acpi: Switch to use enum in acpi_gpio_in_ignore_list()
-> > > > >   gpiolib: acpi: Handle deferred list via new API
-> > > > >   gpiolib: acpi: Add acpi_gpio_need_run_edge_events_on_boot() getter
-> > > > >   gpiolib: acpi: Move quirks to a separate file
-> > > > > 
-> > > > >  drivers/gpio/Makefile                         |   1 +
-> > > > >  .../{gpiolib-acpi.c => gpiolib-acpi-core.c}   | 344 +----------------
-> > > > >  drivers/gpio/gpiolib-acpi-quirks.c            | 363 ++++++++++++++++++
-> > > > >  drivers/gpio/gpiolib-acpi.h                   |  15 +
-> > > > 
-> > > > All this -foo-core things look redundant to me. Why not just split it out
-> > > > and call it gpiolib-quirks.c and put there all the quirks not just ACPI? I
-> > > > Don't think we want to have gpiolib-of-quirks.c and gpiolog-swnode-quirks.c
-> > > > and so on.
-> > > 
-> > > That's might be the next step to have for all of them, but these are ACPI
-> > > specific. In any case they can't be put to gpiolib-quirks.c due to module
-> > > parameters. If we do that we will need a dirty hack to support old module
-> > > parameters (see 8250 how it's done there, and even author of that didn't like
-> > > the approach).
-> > 
-> > Hmm, how does it affect module paremeters? I thought they are
-> > gpiolib.something as all these object files are linked to it?
-> 
-> gpiolib_acpi.FOO because the object file is gpiolib-acpi.o.
+2025-05-15T09:28:25+02:00, Alexandre Ghiti <alex@ghiti.fr>:
+> On 06/05/2025 12:10, Radim Kr=C4=8Dm=C3=A1=C5=99 wrote:
+>> 2025-05-02T16:30:36-07:00, Deepak Gupta <debug@rivosinc.com>:
+>>> diff --git a/arch/riscv/kernel/entry.S b/arch/riscv/kernel/entry.S
+>>> @@ -91,6 +91,32 @@
+>>> +.macro restore_userssp tmp
+>>> +	ALTERNATIVE("nops(2)",
+>>> +		__stringify(				\
+>>> +		REG_L \tmp, TASK_TI_USER_SSP(tp);	\
+>>> +		csrw CSR_SSP, \tmp),
+>>> +		0,
+>>> +		RISCV_ISA_EXT_ZICFISS,
+>>> +		CONFIG_RISCV_USER_CFI)
+>>> +.endm
+>> Do we need to emit the nops when CONFIG_RISCV_USER_CFI isn't selected?
+>>
+>> (Why not put #ifdef CONFIG_RISCV_USER_CFI around the ALTERNATIVES?)
+>
+> The alternatives are used to create a generic kernel that contains the=20
+> code for a large number of extensions and only enable it at runtime=20
+> depending on the platform capabilities. This way distros can ship a=20
+> single kernel that works on all platforms.
 
-Ah okay.
+Yup, and if a kernel is compiled without CONFIG_RISCV_USER_CFI, the nops
+will only enlarge the binary and potentially slow down execution.
+In other words, why we don't do something like this
 
-> > At least can we drop the gpiolib-acpi-core.c rename?
-> 
-> Unfortunately no due to the above.
+ (!CONFIG_RISCV_USER_CFI ? "" :
+   (RISCV_ISA_EXT_ZICFISS ? __stringify(...) : "nops(x)"))
 
-This does not work?
+instead of the current
 
-gpiolib-acpi-y                 := gpiolib-acpi.o gpiolib-acpi-quirks.o
+ (CONFIG_RISCV_USER_CFI &&
+    RISCV_ISA_EXT_ZICFISS ? __stringify(...) : "nops(x)")
+
+It could be a new preprocessor macro in case we wanted to make it nice,
+but it's probably not a common case, so an ifdef could work as well.
+
+Do we just generally not care about such minor optimizations?
+
+(If we wanted to go an extra mile, we could also keep the nops when both
+ CONFIG_RISCV_USER_CFI and RISCV_ISA_EXT_ZICFISS are present, but
+ command line riscv_nousercfi disabled backward cfi.)
+
+Thanks.
 
