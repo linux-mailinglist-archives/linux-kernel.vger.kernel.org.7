@@ -1,139 +1,149 @@
-Return-Path: <linux-kernel+bounces-650440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-650442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF36FAB917D
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 23:17:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39280AB9185
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 23:20:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 18516171D44
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 21:17:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E4C9A04915
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 21:20:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CC78B664;
-	Thu, 15 May 2025 21:17:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 750FF288C80;
+	Thu, 15 May 2025 21:19:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kjF51K1E"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jl0odddf"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C047B19CCEA;
-	Thu, 15 May 2025 21:16:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C091A2882D7;
+	Thu, 15 May 2025 21:19:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747343819; cv=none; b=l6GDut99oyQ7AM3R4mIKWlYo995hXW8NZ5klf7tSOWWBr+jl6cIbtvaHWtDIaCiXkj2MnZGQSOENjbnVynbCKQUul7XMS216SEpk0d7rG1tO8DmugMCsCUZAsRaJhz1ul26UOlE2ac90HU2F0R3TyrzAaSSnO69kzxoas9Li2H8=
+	t=1747343998; cv=none; b=dPcG7ITFGDxG46+HfCJktKg3yTnxiXhUPZE/xe8Eyqd50gnGox0DxVDaCZ+V32xDYUDXqfoZ2n0ZF1p+bLnKtW/IOkwPilejupmJHG3Cl5SVGkIV6MlNopywsEJ79MJxVR2aa+CpT1FGjsCPUqc3BzNB6Ilwi8uQiiJsdRwcOLM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747343819; c=relaxed/simple;
-	bh=0fDHksalYNZrl+B7FMp5wCiwKEDzwGLwVf4fzJoGC28=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OAOdungsDGsVFwTE1LQiC1HQqjq6bVpyAmucikJE2o/4qUjVWbpVMdJjOLDLPKU7QanS/CcCy1FPg0ILJEGCQcigBDeboG71FMj5MtMvH8Pg89NW835JOwFYaxTgPmxIn+m94lWmPLS1hgOp4DLrzHWRn00h3ukTVoETtt2ef5Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kjF51K1E; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8C4DC4CEE7;
-	Thu, 15 May 2025 21:16:58 +0000 (UTC)
+	s=arc-20240116; t=1747343998; c=relaxed/simple;
+	bh=fHVC1J1XphBXTDfiK/wyvSeNKYjXfXohLeLwr7PRBI0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=QvjzM/6HpVnkCzIsd0GljKuNJ+vI0/9dVALxD7YsFZ3JE8hm6yXPRn1HHjDsupaHMVb7xwkPAopsAiN0H9Mh10u3C+d6x7Lc28GcZH9yzKH5gdyPXsvq8Geepx9OG7xwMuotQ0EX6jAI22ZpaBqpM6PmB7E+O4zply+ip7ABcO8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jl0odddf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5444C4CEE7;
+	Thu, 15 May 2025 21:19:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747343819;
-	bh=0fDHksalYNZrl+B7FMp5wCiwKEDzwGLwVf4fzJoGC28=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kjF51K1EgtuYR8HJm9urywpBzMwwkQvuEdKPydwn1A4Y7b7jzktOUJ+jCqIAC4MAc
-	 gNh78FbUVk0RcH4PFxVMc/LvzUIrDjxoGLa1Z8rU8xH0Sr6S7eFJnsTdNlgd2a+CWo
-	 tHo2pLoSxCpWwOutmKQLVKJpMK5efRZasD+ymKgAkLIC0VxRRBnY372MZ6oXt1kxKU
-	 IUXzWxQ4p1QKxXUNOsMqjsweKBVNYC+6qSJEK2R7pTaoKOff7btzUUTnriec44DK5c
-	 bGh/sgQoRn+ZgZ8Ebf1bau5dRq1Gi+Z29B0/rxd8AdD1lvfM6nLqtmnMV9YZoQwNIL
-	 +3hZnBiYjlikw==
-Date: Thu, 15 May 2025 23:16:56 +0200
-From: Lorenzo Bianconi <lorenzo@kernel.org>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, netdev@vger.kernel.org
-Subject: Re: [PATCH v3 1/4] net: airoha: Fix an error handling path in
- airoha_alloc_gdm_port()
-Message-ID: <aCZZyDvp-TZ7AFwS@lore-desk>
-References: <5c94b9b345017f29ed653e2f05d25620d128c3f0.1746715755.git.christophe.jaillet@wanadoo.fr>
+	s=k20201202; t=1747343998;
+	bh=fHVC1J1XphBXTDfiK/wyvSeNKYjXfXohLeLwr7PRBI0=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Jl0odddf4S9BcnMvEGD0jYot9ToZJL2PvRdNxqn6pXJOON5RZu8O1jKx8FyhFy/ov
+	 +5/YmcYTT4euR3p9sKIc274NlT4D/gHbR+Qu25LvdVLE/ZiGtZ3AcZezKDMIPs30xU
+	 Fq99NpL2cxYWEDl+Lecw6vaYLGCYr0VOqRJFbyUiWjBP7dNCdnbwEiWmyrW1hN3YVw
+	 QFkvFQzizFkjADwZnI6UMDpGr6kmNCZPBvKbc/ao0ia5dJoORS81X1m5HVSzrg3Zn8
+	 vTzAD2YfML+VlrNH0ify2hFwmwMoGtSW4+eeBWq8lupnBgm0IIzDzYrmTR2x5CQStC
+	 /DZhEP49hfMrg==
+From: Mario Limonciello <superm1@kernel.org>
+To: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: Mario Limonciello <mario.limonciello@amd.com>,
+	Perry Yuan <perry.yuan@amd.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org (maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)),
+	"H . Peter Anvin" <hpa@zytor.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Huang Rui <ray.huang@amd.com>,
+	"Gautham R . Shenoy" <gautham.shenoy@amd.com>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	platform-driver-x86@vger.kernel.org (open list:AMD HETERO CORE HARDWARE FEEDBACK DRIVER),
+	linux-kernel@vger.kernel.org (open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)),
+	linux-doc@vger.kernel.org (open list:DOCUMENTATION),
+	linux-pm@vger.kernel.org (open list:AMD PSTATE DRIVER)
+Subject: [PATCH v10 00/13] Add support for AMD hardware feedback interface
+Date: Thu, 15 May 2025 16:19:37 -0500
+Message-ID: <20250515211950.3102922-1-superm1@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="Y6AU6u8oigfJDbdP"
-Content-Disposition: inline
-In-Reply-To: <5c94b9b345017f29ed653e2f05d25620d128c3f0.1746715755.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+From: Mario Limonciello <mario.limonciello@amd.com>
+
+The AMD Heterogeneous core design and Hardware Feedback Interface (HFI)
+provide behavioral classification of tasks.
+
+Threads are classified during runtime into enumerated classes.
+Currently, the driver supports 3 classes (0 through 2). These classes
+represent thread performance/power characteristics that may benefit from
+special scheduling behaviors. The real-time thread classification is
+consumed by the operating system and is intended to be used to inform the scheduler
+of where the thread should be placed for optimal performance or energy efficiency.
+
+The thread classification can be used to helps to select CPU from a ranking table
+that describes an efficiency and performance ranking for each classification from
+two dimensions. This is not currently done in this series, but is intended for future
+follow ups after the plumbing is laid down.
+
+The ranking data provided by the ranking table are numbers ranging from 0 to 255,
+where a higher performance value indicates higher performance capability and a higher
+efficiency value indicates greater efficiency. All the CPU cores are ranked into
+different class IDs. Within each class ranking, the cores may have different ranking
+values. Therefore, picking from each classification ID will later allow the scheduler
+to select the best core while threads are classified into the specified workload class.
+
+This series was originally submitted by Perry Yuan [1] but he is now doing a different
+role and he asked me to take over.
+
+Link: https://lore.kernel.org/all/cover.1724748733.git.perry.yuan@amd.com/
+
+v9->v10:
+ * Rebase on tip/master
+ * Clarify in cover letter that this series lays plumbing; scheduler changes are not
+   part of first layer of plumbing.
+
+Mario Limonciello (5):
+  MAINTAINERS: Add maintainer entry for AMD Hardware Feedback Driver
+  cpufreq/amd-pstate: Disable preferred cores on designs with workload
+    classification
+  platform/x86/amd: hfi: Set ITMT priority from ranking data
+  platform/x86/amd: hfi: Add debugfs support
+  x86/itmt: Add debugfs file to show core priorities
+
+Perry Yuan (8):
+  Documentation: x86: Add AMD Hardware Feedback Interface documentation
+  x86/msr-index: define AMD heterogeneous CPU related MSR
+  platform/x86: hfi: Introduce AMD Hardware Feedback Interface Driver
+  platform/x86: hfi: parse CPU core ranking data from shared memory
+  platform/x86: hfi: init per-cpu scores for each class
+  platform/x86: hfi: add online and offline callback support
+  platform/x86: hfi: add power management callback
+  x86/process: Clear hardware feedback history for AMD processors
+
+ Documentation/arch/x86/amd-hfi.rst    | 133 +++++++
+ Documentation/arch/x86/index.rst      |   1 +
+ MAINTAINERS                           |   9 +
+ arch/x86/include/asm/msr-index.h      |   5 +
+ arch/x86/kernel/itmt.c                |  23 ++
+ arch/x86/kernel/process_64.c          |   4 +
+ drivers/cpufreq/amd-pstate.c          |   6 +
+ drivers/platform/x86/amd/Kconfig      |   1 +
+ drivers/platform/x86/amd/Makefile     |   1 +
+ drivers/platform/x86/amd/hfi/Kconfig  |  18 +
+ drivers/platform/x86/amd/hfi/Makefile |   7 +
+ drivers/platform/x86/amd/hfi/hfi.c    | 550 ++++++++++++++++++++++++++
+ 12 files changed, 758 insertions(+)
+ create mode 100644 Documentation/arch/x86/amd-hfi.rst
+ create mode 100644 drivers/platform/x86/amd/hfi/Kconfig
+ create mode 100644 drivers/platform/x86/amd/hfi/Makefile
+ create mode 100644 drivers/platform/x86/amd/hfi/hfi.c
 
 
---Y6AU6u8oigfJDbdP
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+base-commit: 9cb2eed7986ef6fb197b75bc7e559d300dd9f04a
+-- 
+2.43.0
 
-> If register_netdev() fails, the error handling path of the probe will not
-> free the memory allocated by the previous airoha_metadata_dst_alloc() call
-> because port->dev->reg_state will not be NETREG_REGISTERED.
->=20
-> So, an explicit airoha_metadata_dst_free() call is needed in this case to
-> avoid a memory leak.
->=20
-> Fixes: af3cf757d5c9 ("net: airoha: Move DSA tag in DMA descriptor")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-
-Acked-by: Lorenzo Bianconi <lorenzo@kernel.org>
-
-> ---
-> Changes in v3:
->   - None
->=20
-> Changes in v2:
->   - New patch
-> v2: https://lore.kernel.org/all/5c94b9b3850f7f29ed653e2205325620df28c3ff.=
-1746715755.git.christophe.jaillet@wanadoo.fr/
->=20
-> Compile tested only.
-> ---
->  drivers/net/ethernet/airoha/airoha_eth.c | 10 +++++++++-
->  1 file changed, 9 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/net/ethernet/airoha/airoha_eth.c b/drivers/net/ether=
-net/airoha/airoha_eth.c
-> index 16c7896f931f..af8c4015938c 100644
-> --- a/drivers/net/ethernet/airoha/airoha_eth.c
-> +++ b/drivers/net/ethernet/airoha/airoha_eth.c
-> @@ -2873,7 +2873,15 @@ static int airoha_alloc_gdm_port(struct airoha_eth=
- *eth,
->  	if (err)
->  		return err;
-> =20
-> -	return register_netdev(dev);
-> +	err =3D register_netdev(dev);
-> +	if (err)
-> +		goto free_metadata_dst;
-> +
-> +	return 0;
-> +
-> +free_metadata_dst:
-> +	airoha_metadata_dst_free(port);
-> +	return err;
->  }
-> =20
->  static int airoha_probe(struct platform_device *pdev)
-> --=20
-> 2.49.0
->=20
-
---Y6AU6u8oigfJDbdP
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQTquNwa3Txd3rGGn7Y6cBh0uS2trAUCaCZZyAAKCRA6cBh0uS2t
-rBnoAP9FaVPF2CbBdrO+fj0pthqLp8g0i6A/AjxSkyZWruuaHwEA5btpiFBZ5imz
-5SRZgTQ7PDqOijkGIb8OCvuDLpbXWQo=
-=XFmd
------END PGP SIGNATURE-----
-
---Y6AU6u8oigfJDbdP--
 
