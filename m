@@ -1,133 +1,160 @@
-Return-Path: <linux-kernel+bounces-649620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-649612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EA17AB86D5
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 14:49:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CB9EAB86B9
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 14:47:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61FAB1B64004
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 12:49:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 257277AE256
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 12:46:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8561B29AB00;
-	Thu, 15 May 2025 12:46:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CD49299A95;
+	Thu, 15 May 2025 12:46:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o3h6LnSu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="GK29OhNb";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="hunZINYK";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="cFgi9d4b";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Dy0J38kS"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DECB4297B93;
-	Thu, 15 May 2025 12:46:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F101821FF46
+	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 12:46:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747313201; cv=none; b=Q//oYycUYo3rZr4J1sY0oojbzEOghYXKb43VVsk/tuvsR8eGPJhxD2Ct5473CkFyrChe1LPnF40PJgsYMxgMk6Mye9QTuQ34WfHxKkRmnf84/04F7MmmUpMmloCn/IbAgbEDszwF0SLFh5drCnf1Vo6qP3nr5CAAYaEJksChfQM=
+	t=1747313176; cv=none; b=UIv40vltIdlFbZAPLYsPuQIAn878ovWK9HdMkhZX9kpSPn+VSw8EzY1ZRA8Cs8D0g+Tlp/T0iUhUXoRVp0Ml+I8NPgWpPqKixsggcr5hJ5XA7fn+IMUbnEalZbWbPowP/lUTAbOvQIJk0/6GgT/MqUo8I+Qe5hNjH9jP1Sbyejo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747313201; c=relaxed/simple;
-	bh=3A8EuqIeubhMNr0yMrCc9pby4qqj5GfRmkTNS440bZU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=EUp8Vs7RDm95KIItaYaOHkDvsMtWvDJukeTNq1XTJh9Dhnnt+urNO4SYZlvefQ3wjjcEfnp9Bs3TkKckdQrOYN3ocpA2UTxfgsWGYE/0MhfPdi1xpglVn0uil7ayzJ7sedG6IOEnEdOrlEncWWJQcLfpnFCY2//BwtwHewtkI6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o3h6LnSu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D89DBC4CEF2;
-	Thu, 15 May 2025 12:46:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747313200;
-	bh=3A8EuqIeubhMNr0yMrCc9pby4qqj5GfRmkTNS440bZU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=o3h6LnSub8Npdypg0UH49iz7E2CHzvr522D3g6w5Bswc3BlqQOneZbo93lZu30200
-	 FGCSED0gXyZ/ypj2T4zCcaQ1+Uaag8ypJ577VMyhfQCjyWQLIXdYHGdpHMLgtaq5gL
-	 zBjGAFw7qcDr66/IKDFmg1+0WlngTN+auIJI9bsvJag5/f2+DKqsmfzs+6IQBu5DCX
-	 dyLLLX1tZlUiXc1xnOglKGLnXzj0VaH55vUtXCTQHmBgM4WSEe0yTtxU6e/UNwdacP
-	 NlKn8TvIhFzjy3hAYR5C4v+A5VAWDdqnqyVKJF2WnrKhnt2DWqd88ZMSL/m/x3ch75
-	 FMGo5Yd45lGWg==
-From: Philipp Stanner <phasta@kernel.org>
-To: Jonathan Corbet <corbet@lwn.net>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Philipp Stanner <phasta@kernel.org>,
-	Mark Brown <broonie@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Zijun Hu <quic_zijuhu@quicinc.com>,
-	Yang Yingliang <yangyingliang@huawei.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org
-Subject: [PATCH 7/7] PCI: Remove hybrid-devres hazzard warnings from doc
-Date: Thu, 15 May 2025 14:46:05 +0200
-Message-ID: <20250515124604.184313-9-phasta@kernel.org>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250515124604.184313-2-phasta@kernel.org>
-References: <20250515124604.184313-2-phasta@kernel.org>
+	s=arc-20240116; t=1747313176; c=relaxed/simple;
+	bh=XW7PBHOKBmG5yJC+Rl2iAib7QxCqoJW99UU7ERZwn34=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UNb/ZpaevAAaKtScPkfeAdXpXiFbcvNXBb5mv5nfmhOrSyEvWPMY2va06x+mggCN1HfUha4ncVHqZomvlB9aUY2mIvUal158SgLWiGBsV5sS0GLqyeZK6UtmR9nbzk+CUU4c91mOIz0lZ2koHI3XTKvEn0640EbdrrDKJ4OYEBI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=GK29OhNb; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=hunZINYK; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=cFgi9d4b; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Dy0J38kS; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id E42C721172;
+	Thu, 15 May 2025 12:46:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1747313173; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BsKlAkmZ3syr3tHGBds0epgCENVPz/kzS4L9nJzEOyI=;
+	b=GK29OhNbIIa7azCMPoOtjO5YGw/ZMFyhZwXtPguFLXr9lpRs98web3/lmqBbKB3ebJ/x16
+	Mj1uGIYM5sPS1EHJa+j1UmGyLqMxjBdyTu/mFgNqLJ07+onfXTUz9cuhRsZ1Fn5Qzp3t6r
+	BT9jiOmJ/5RcvE8jNVN2noXb82yzH7s=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1747313173;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BsKlAkmZ3syr3tHGBds0epgCENVPz/kzS4L9nJzEOyI=;
+	b=hunZINYK7D505Um/vk4LzjLvqlG8Gbdyba6+IpEMcKVDXPwFA42ppvvhh5xFXFCqGTQ0sk
+	R4HpQ1jFbARZb0Cg==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=cFgi9d4b;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=Dy0J38kS
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1747313172; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BsKlAkmZ3syr3tHGBds0epgCENVPz/kzS4L9nJzEOyI=;
+	b=cFgi9d4bTa8gcJ9S/0KtR7qxk/kEhUnvtaBotInkpOmsXnQmQBoybZ3NpsU1u9Kvqa6RIc
+	BU5crVfvjFOZhG+0CGG91vlk+rCpLA+B8TiaGb9Mvt5XWDaMPlf40bRE0qCv4pCb3tkTHU
+	LnsQakG61rr+WtZG+CgGMxRVvg4Buwc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1747313172;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BsKlAkmZ3syr3tHGBds0epgCENVPz/kzS4L9nJzEOyI=;
+	b=Dy0J38kSFN2SXRR4mSd6mp2EU+OXx+Z8xIn6ipsQjk2EpJKOYkgAEAcTT5LiDBtUr3QXIc
+	gF/CWCGOlfIuNMBg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CA677137E8;
+	Thu, 15 May 2025 12:46:12 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id EoEKMRTiJWjNDwAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Thu, 15 May 2025 12:46:12 +0000
+Message-ID: <266cb5e2-f946-414a-bc08-193c7e6e5f19@suse.cz>
+Date: Thu, 15 May 2025 14:46:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 0/9] SLUB percpu sheaves
+Content-Language: en-US
+To: Suren Baghdasaryan <surenb@google.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Christoph Lameter
+ <cl@linux.com>, David Rientjes <rientjes@google.com>
+Cc: Roman Gushchin <roman.gushchin@linux.dev>,
+ Harry Yoo <harry.yoo@oracle.com>, Uladzislau Rezki <urezki@gmail.com>,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org, rcu@vger.kernel.org,
+ maple-tree@lists.infradead.org
+References: <20250425-slub-percpu-caches-v4-0-8a636982b4a4@suse.cz>
+From: Vlastimil Babka <vbabka@suse.cz>
+In-Reply-To: <20250425-slub-percpu-caches-v4-0-8a636982b4a4@suse.cz>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: E42C721172
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_TLS_ALL(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[linux.dev,oracle.com,gmail.com,kvack.org,vger.kernel.org,lists.infradead.org];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
+	URIBL_BLOCKED(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:mid,suse.cz:dkim];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Spam-Score: -4.51
 
-pci/iomap.c still contains warnings about those functions not behaving
-in a managed manner if pcim_enable_device() was called. Since all hybrid
-behavior that users could know about has been removed by now, those
-explicit warnings are no longer necessary.
+On 4/25/25 10:27, Vlastimil Babka wrote:
+> Hi,
+> 
+> This is the v4 and first non-RFC series to add an opt-in percpu
+> array-based caching layer to SLUB, following the LSF/MM discussions.
+> Since v3 I've also made changes to achieve full compatibility with
+> slub_debug, and IRC discussions led to the last patch intended to
+> improve NUMA locality (the patch remains separate for evaluation
+> purposes).
 
-Remove the hybrid-devres warnings from the docstrings.
+I've pushed the changes based on the feedback here:
+https://git.kernel.org/pub/scm/linux/kernel/git/vbabka/linux.git/log/?h=b4/slub-percpu-sheaves
 
-Signed-off-by: Philipp Stanner <phasta@kernel.org>
----
- drivers/pci/iomap.c | 16 ----------------
- 1 file changed, 16 deletions(-)
-
-diff --git a/drivers/pci/iomap.c b/drivers/pci/iomap.c
-index fe706ed946df..ea86c282a386 100644
---- a/drivers/pci/iomap.c
-+++ b/drivers/pci/iomap.c
-@@ -25,10 +25,6 @@
-  *
-  * @maxlen specifies the maximum length to map. If you want to get access to
-  * the complete BAR from offset to the end, pass %0 here.
-- *
-- * NOTE:
-- * This function is never managed, even if you initialized with
-- * pcim_enable_device().
-  * */
- void __iomem *pci_iomap_range(struct pci_dev *dev,
- 			      int bar,
-@@ -76,10 +72,6 @@ EXPORT_SYMBOL(pci_iomap_range);
-  *
-  * @maxlen specifies the maximum length to map. If you want to get access to
-  * the complete BAR from offset to the end, pass %0 here.
-- *
-- * NOTE:
-- * This function is never managed, even if you initialized with
-- * pcim_enable_device().
-  * */
- void __iomem *pci_iomap_wc_range(struct pci_dev *dev,
- 				 int bar,
-@@ -127,10 +119,6 @@ EXPORT_SYMBOL_GPL(pci_iomap_wc_range);
-  *
-  * @maxlen specifies the maximum length to map. If you want to get access to
-  * the complete BAR without checking for its length first, pass %0 here.
-- *
-- * NOTE:
-- * This function is never managed, even if you initialized with
-- * pcim_enable_device(). If you need automatic cleanup, use pcim_iomap().
-  * */
- void __iomem *pci_iomap(struct pci_dev *dev, int bar, unsigned long maxlen)
- {
-@@ -152,10 +140,6 @@ EXPORT_SYMBOL(pci_iomap);
-  *
-  * @maxlen specifies the maximum length to map. If you want to get access to
-  * the complete BAR without checking for its length first, pass %0 here.
-- *
-- * NOTE:
-- * This function is never managed, even if you initialized with
-- * pcim_enable_device().
-  * */
- void __iomem *pci_iomap_wc(struct pci_dev *dev, int bar, unsigned long maxlen)
- {
--- 
-2.49.0
-
+You can use that for testing/benchmarking. Thanks!
 
