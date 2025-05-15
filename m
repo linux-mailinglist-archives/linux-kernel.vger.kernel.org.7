@@ -1,66 +1,54 @@
-Return-Path: <linux-kernel+bounces-649241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-649234-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43D46AB81D8
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 11:02:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D8AAAB81C9
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 11:01:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 747CF9E57EA
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 08:59:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A0AD3BB8E9
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 08:58:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79F3B297B6D;
-	Thu, 15 May 2025 08:58:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FKFT4kZ4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D84B42989BB
-	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 08:58:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1528D2980D3;
+	Thu, 15 May 2025 08:57:49 +0000 (UTC)
+Received: from zg8tmja2lje4os43os4xodqa.icoremail.net (zg8tmja2lje4os43os4xodqa.icoremail.net [206.189.79.184])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C735F297B80;
+	Thu, 15 May 2025 08:57:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=206.189.79.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747299488; cv=none; b=BdH5rADGIuOAb9Ae6u6bIQ+xxCizeYDJHppWj1244zUrLZi2t28R22aR9828uKcGsMW07GiAhiIBUJQh1RH+0Ih1ns+D+kEW356dz3PnPcnbWoKHXxQmUg65rcqhzpfTxRP0Aa362uBSlLnmb3/+2GrcUwR/nvDtB/ez8h5VQfk=
+	t=1747299468; cv=none; b=SwE7ePcjrfrXhUfbcdMQuS/yIrDe53ODiwMg5z0iGOyUmgheXMKqY6GGezEM8MLhWu6M75xsr3cgDof9ILdXPGm0kciFK9zhGtOyUpL+2vx2AIyRvVa9wM4xoqYVO3soHnya0fWrrhvdtVY8DK3oiMS2Lo3cTI7Qdb4RZOLm7pM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747299488; c=relaxed/simple;
-	bh=gYDGA0xaefmc2y/RBqUcQXigAUipGLSgbAnA6gAXO9U=;
+	s=arc-20240116; t=1747299468; c=relaxed/simple;
+	bh=Uacy/T85NjrYqwsVAcBXza0n7x8SpTrfY2clvu2Ph4c=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=SVOqzpRmEY6urC2eFGWS5ZNJFoSl3NPDJwo9YxvwCGEyRSEHcHDZk5x/xFqkWnWvXnEG4T//iGi8B0KVuT/ZVICSYjzd52XoFW7QC3T1DSucuMFE75L191jSN0njudcOI0r0CEKeNEh6ZcNPIEJRjgcBAXBzI6dnjOxy5u7Vl5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FKFT4kZ4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44BB0C4CEE7;
-	Thu, 15 May 2025 08:58:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747299488;
-	bh=gYDGA0xaefmc2y/RBqUcQXigAUipGLSgbAnA6gAXO9U=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=FKFT4kZ4FNGH3gu04Li43VdZJBabqgAz2flT9/jvuuqLuSAYIF+7NaKyQe+QXfnlp
-	 DyQ5TNZ0MTiM6Et2ZO2DOh9gdfUMwJkqvw3jZCaTm+nGhvD/N5i3+8pdEx2gHOb3PB
-	 hg0aqKUorsctqRCrpgBYWo1X4dk8YMwDpXADBm/0Mprju0SdMV3uz3h9vNn5lYnhIX
-	 UvUeKlYPxinnqugTixHw6lK2nvAJ0vdLhuWEVhEbbSvnpfqamcZCO3tl+3ASVZO6jK
-	 MNEHfdpY2GbEZnQ+53pS6K2oI5eBpROHDbPYcvTQxE6z74fRYDSKL4o6yiG8qGX8Kn
-	 AezBzP0KjBHFg==
-From: Ingo Molnar <mingo@kernel.org>
-To: linux-kernel@vger.kernel.org
-Cc: Ingo Molnar <mingo@kernel.org>,
-	"Ahmed S . Darwish" <darwi@linutronix.de>,
-	Andrew Cooper <andrew.cooper3@citrix.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Arnd Bergmann <arnd@kernel.org>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	John Ogness <john.ogness@linutronix.de>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Uros Bizjak <ubizjak@gmail.com>
-Subject: [PATCH 15/15] x86/percpu: Remove !CONFIG_X86_CX8 methods
-Date: Thu, 15 May 2025 10:57:05 +0200
-Message-ID: <20250515085708.2510123-16-mingo@kernel.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250515085708.2510123-1-mingo@kernel.org>
-References: <20250515085708.2510123-1-mingo@kernel.org>
+	 MIME-Version; b=YQIFdpIJJRPOPeLse3h7RU3XQGYWx0LRbQQXMgQH+ygJiyHZS/RXd0pPT7biBAh+gi12Bt6bDoCV98Iy8MEke64hiDpQcm96B1ccfwMBn/+aMUEoUnJ8t6gq/Xwvai94RB/3rJ9aGgo8YWjsNqDPHlGZWjsOAsgZnzo3sHi0cL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=206.189.79.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
+Received: from E0005154LT.eswin.cn (unknown [10.12.96.103])
+	by app1 (Coremail) with SMTP id TAJkCgAXOxF3rCVoMDV8AA--.55791S2;
+	Thu, 15 May 2025 16:57:29 +0800 (CST)
+From: hehuan1@eswincomputing.com
+To: dlemoal@kernel.org,
+	cassel@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	linux-ide@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	p.zabel@pengutronix.de
+Cc: ningyu@eswincomputing.com,
+	linmin@eswincomputing.com,
+	luyulin@eswincomputing.com,
+	Huan He <hehuan1@eswincomputing.com>
+Subject: [PATCH v1 1/2] dt-bindings: sata: eswin: Document for EIC7700 SoC
+Date: Thu, 15 May 2025 16:57:23 +0800
+Message-ID: <20250515085723.1706-1-hehuan1@eswincomputing.com>
+X-Mailer: git-send-email 2.49.0.windows.1
+In-Reply-To: <20250515085114.1692-1-hehuan1@eswincomputing.com>
+References: <20250515085114.1692-1-hehuan1@eswincomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,73 +56,127 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:TAJkCgAXOxF3rCVoMDV8AA--.55791S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxGw4UuF1DWF1UCw4fXF4rGrg_yoW5Xw13pF
+	4kGryDJF4fXr17Wa17XF10kF13Xan7uF1Ykrn2qF15twn0ga4Yqw4akF15Ca4UCr1xXa43
+	WF4Fg343Aw47AaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBv14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lw4CEc2x0rVAKj4xxMxkF7I0En4kS14v26r1q6r43MxkIecxEwVCm-wCF04
+	k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18
+	MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr4
+	1lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1l
+	IxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4
+	A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUXJ5wUUUUU=
+X-CM-SenderInfo: 5khk3tzqr6v25zlqu0xpsx3x1qjou0bp/
 
-From: Uros Bizjak <ubizjak@gmail.com>
+From: Huan He <hehuan1@eswincomputing.com>
 
-Adjust the constraints to the non-alternatives asm() statement.
+Add eic7700 AHCI SATA controller device with single port support.
+For the eic7700 SATA registers, it supports AHCI standard interface,
+interrupt modes (INTx/MSI/PME), APB reset control,
+and HSP_SP_CSR register configuration.
 
-Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Cc: "Ahmed S . Darwish" <darwi@linutronix.de>
-Cc: Andrew Cooper <andrew.cooper3@citrix.com>
-Cc: Ard Biesheuvel <ardb@kernel.org>
-Cc: Arnd Bergmann <arnd@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: "H . Peter Anvin" <hpa@zytor.com>
-Cc: John Ogness <john.ogness@linutronix.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/r/15696bb3-126b-ef71-f838-80e1e1c1b0aa@gmail.com
+Co-developed-by: Yulin Lu <luyulin@eswincomputing.com>
+Signed-off-by: Yulin Lu <luyulin@eswincomputing.com>
+Signed-off-by: Huan He <hehuan1@eswincomputing.com>
 ---
- arch/x86/include/asm/percpu.h | 24 +++++++++---------------
- 1 file changed, 9 insertions(+), 15 deletions(-)
+ .../bindings/ata/eswin,eic7700-sata.yaml      | 80 +++++++++++++++++++
+ 1 file changed, 80 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/ata/eswin,eic7700-sata.yaml
 
-diff --git a/arch/x86/include/asm/percpu.h b/arch/x86/include/asm/percpu.h
-index b0d03b6c279b..64c2e715af63 100644
---- a/arch/x86/include/asm/percpu.h
-+++ b/arch/x86/include/asm/percpu.h
-@@ -335,13 +335,10 @@ do {									\
- 	old__.var = _oval;						\
- 	new__.var = _nval;						\
- 									\
--	asm_inline qual (						\
--		ALTERNATIVE("call this_cpu_cmpxchg8b_emu",		\
--			    "cmpxchg8b " __percpu_arg([var]), X86_FEATURE_CX8) \
--		: ALT_OUTPUT_SP([var] "+m" (__my_cpu_var(_var)),	\
--				"+a" (old__.low), "+d" (old__.high))	\
--		: "b" (new__.low), "c" (new__.high),			\
--		  "S" (&(_var))						\
-+	asm qual ("cmpxchg8b " __percpu_arg([var])			\
-+		: "+m" (__my_cpu_var(_var)),				\
-+		  "+a" (old__.low), "+d" (old__.high)			\
-+		: "b" (new__.low), "c" (new__.high)			\
- 		: "memory");						\
- 									\
- 	old__.var;							\
-@@ -364,15 +361,12 @@ do {									\
- 	old__.var = *_oval;						\
- 	new__.var = _nval;						\
- 									\
--	asm_inline qual (						\
--		ALTERNATIVE("call this_cpu_cmpxchg8b_emu",		\
--			    "cmpxchg8b " __percpu_arg([var]), X86_FEATURE_CX8) \
-+	asm qual ("cmpxchg8b " __percpu_arg([var])			\
- 		CC_SET(z)						\
--		: ALT_OUTPUT_SP(CC_OUT(z) (success),			\
--				[var] "+m" (__my_cpu_var(_var)),	\
--				"+a" (old__.low), "+d" (old__.high))	\
--		: "b" (new__.low), "c" (new__.high),			\
--		  "S" (&(_var))						\
-+		: CC_OUT(z) (success),					\
-+		  [var] "+m" (__my_cpu_var(_var)),			\
-+		  "+a" (old__.low), "+d" (old__.high)			\
-+		: "b" (new__.low), "c" (new__.high)			\
- 		: "memory");						\
- 	if (unlikely(!success))						\
- 		*_oval = old__.var;					\
+diff --git a/Documentation/devicetree/bindings/ata/eswin,eic7700-sata.yaml b/Documentation/devicetree/bindings/ata/eswin,eic7700-sata.yaml
+new file mode 100644
+index 000000000000..71e1b865ed2a
+--- /dev/null
++++ b/Documentation/devicetree/bindings/ata/eswin,eic7700-sata.yaml
+@@ -0,0 +1,80 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/ata/eswin,eic7700-sata.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Eswin EIC7700 SoC SATA Controller
++
++maintainers:
++  - Yulin Lu <luyulin@eswincomputing.com>
++  - Huan He <hehuan1@eswincomputing.com>
++
++description: |
++  This binding describes the SATA controller integrated in the Eswin EIC7700 SoC.
++  The controller is compatible with the AHCI (Advanced Host Controller Interface)
++  specification and supports up to 1 port.
++
++properties:
++  compatible:
++    const: eswin,eic7700-ahci
++
++  reg:
++    maxItems: 1
++    description: Address range of the SATA registers
++
++  interrupt-names:
++    items:
++      - const: intrq
++      - const: msi
++      - const: pme
++
++  interrupts:
++    maxItems: 3
++    description: The SATA interrupt numbers
++
++  ports-implemented:
++    maximum: 0x1
++
++  resets:
++    maxItems: 1
++    description: resets to be used by the controller.
++
++  reset-names:
++    const: apb
++
++  '#address-cells':
++    const: 2
++
++  '#size-cells':
++    const: 2
++
++  eswin,hsp_sp_csr:
++    $ref: /schemas/types.yaml#/definitions/phandle-array
++    description: hsp_sp_csr regs to be used by the controller.
++
++required:
++  - compatible
++  - reg
++  - interrupt-names
++  - interrupts
++  - resets
++  - reset-names
++  - eswin,hsp_sp_csr
++
++additionalProperties: false
++
++examples:
++  - |
++    sata: sata@50420000 {
++      compatible = "eswin,eic7700-ahci";
++      reg = <0x50420000 0x10000>;
++      interrupt-parent = <&plic>;
++      interrupt-names = "intrq", "msi", "pme";
++      interrupts = <58>, <59>, <60>;
++      ports-implemented = <0x1>;
++      resets = <&reset 7 (1 << 27)>;
++      reset-names = "apb";
++      #size-cells = <2>;
++      eswin,hsp_sp_csr = <&hsp_sp_csr 0x1050>;
++    };
 -- 
-2.45.2
+2.25.1
 
 
