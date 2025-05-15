@@ -1,136 +1,223 @@
-Return-Path: <linux-kernel+bounces-649443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-649445-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41E57AB84EF
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 13:31:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70B11AB84F1
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 13:31:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F10B4E2617
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 11:31:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2DAB94E2010
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 11:31:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7E4B298C0A;
-	Thu, 15 May 2025 11:28:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1004729B760;
+	Thu, 15 May 2025 11:28:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S/Jd2wzm"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gQOoAfcT"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FC042989AB;
-	Thu, 15 May 2025 11:28:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71E6729B227
+	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 11:28:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747308502; cv=none; b=XuhkdEQA6MBAq20YFb6R7ZRlCdVNkFFjgEeJ/yioBa6yEVEQu0bNfkWEYMxP7n29oDh50Xk0kSRDiSU+L+Rw/2GloXugl+i4g8/4E+UWkvZARBYQsLpwlpykEqs+BpL0kIHkRiZ3j6Ec+BUNvSEKTHD8Hqt+tDq3NDzF/9yM4hg=
+	t=1747308506; cv=none; b=ccufyn/YCMlxFNJbaVlq5lqJ9bUjubMJDsA5FLLbk2quKlfup5sPe/Za7y193jV4tNG1zzK+xGSvd8/A0GaExg/n8xfHhxdNzJvTHp3QraN6sjzjVBAf/0PgKzYicD9NS5JwcwCbc1XCyLGFY7UcGyl2Y9xcwdAdqSWDAnz/TmM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747308502; c=relaxed/simple;
-	bh=4MT/DLTi7niUGZGCsKqI5kYWYDZiwVQCm5tQvlHebZg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OGtSuzjjN/2AAOiBSUzsMIjfBfr2YSBRb5VduATFILJuURM45E1BkrO/J7EcV+g79fJU/NuufUpcVhOZhYEyE4+ol7g+uF/l8nSMt0oOd7QN9ujOc64tema1Qap6ujkpOgfWFWE0v1O53rIuEjm8VbWPckw8CNNhk4Ah9q9MwkE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S/Jd2wzm; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5fbdf6973e7so999303a12.2;
-        Thu, 15 May 2025 04:28:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747308498; x=1747913298; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=WJL0KPlMp6DZzpx4wyF8HL/lXswTHi9cEl/RHcvMRDg=;
-        b=S/Jd2wzmHALJtwX/6XRTk312otdP4f5Rvzgk0e1LIdSt0rB6t8T8td9MyM4/E1XjKV
-         bZYLgHUBysKaU9xDmQAvKlhPVhoFBeP+rGWHBRYXSndjiZGYsnP9khYLHn3+jGMsLJF7
-         DngEbigABuMC8cpsPO4ObIC+zbAbq/5WsAa6fIOdHA6YnECxhWg7cA9UEuS3wOukV9A/
-         14dGF50RjM3P/9jmzBLbq+rX8yFLQvVTNHDzzMjZSjTxHMh1z/ReDd+1aZ/zqAMQarbG
-         g4m9A1Q0lq7urrZCuCccgiBHq6d8L4mSrUV1+XoywDAV05ddAMhUXcziOtQUuAs8Xh1l
-         gKmQ==
+	s=arc-20240116; t=1747308506; c=relaxed/simple;
+	bh=pejymE+5J/JOUZp5QCro2lHDDLB60GHjyo2G/ySAD84=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VLIwoGPm9OTOdn5vc/4PzOMUwPs+szR8dDmc2Mbm5fF4Mpk9citrCJ9a8wMz3mGpdJWRCMRStLY83pBBRgPT4v+Wr/Dsnj1DTHI/n6CaPm4VVIfT7bACRlx5yVe0lVpeOK9nWHVvKe6F3fkaIE+LC2TBusAc11/iRCGSruH5tYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gQOoAfcT; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1747308503;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xbhS3Ju7G0RU72yLnv7dx3n2u6YB6c2WXxN8h+PvWbc=;
+	b=gQOoAfcT+LJwOySXiV8dleERc83+ec0ZU9tv34fbM4YqRzglYBLzWJ9usf1ySaqOhXyskf
+	6weid57k3Xn4onNr0YsDHZmMRMwqC29rlKmYswXpT9+Crb9k5tq/6dWZZRQ00xI4xr70IP
+	dcMnlCpewbnXqd7aOEQDvxxiLUsKh4Q=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-338-5_zfOiLkOLiFXVgO5hckMA-1; Thu, 15 May 2025 07:28:22 -0400
+X-MC-Unique: 5_zfOiLkOLiFXVgO5hckMA-1
+X-Mimecast-MFC-AGG-ID: 5_zfOiLkOLiFXVgO5hckMA_1747308501
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3a2046b5e75so382853f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 04:28:21 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747308498; x=1747913298;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1747308501; x=1747913301;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WJL0KPlMp6DZzpx4wyF8HL/lXswTHi9cEl/RHcvMRDg=;
-        b=j2w0n19bizaI+FTmdNQGrXcbMaS4UpzwL+8OAxOqMXSdOGM129e4h/chldjWRz+QVx
-         2wE2U6N8Lw2/H+nkiYpkXO/udLf6zIVEL8OGyh7svtziKkF98p2cME6ktmrXRuHQvojo
-         fWKnuflnwpEAaAcsYqjViAmgFnfihPuBkBQ7nS2qL/WgdjdKhFZKzEeUpZepQ/PnJye5
-         G2LmUp5kINcQ9ufxAAA6eHa0X26PuoO1JG+1McgEVVCBn4TJwbtE+KUYfDsL2yqrl2fg
-         SuY/R+gOBw2dp3X5zHd/Q7KgWWS3Yfa3TXsiaRld+TRK1p+PfpUWKY/6QzyZPdhw/6l3
-         US+A==
-X-Forwarded-Encrypted: i=1; AJvYcCVtneUiexKtG2IylVa9eTV8HEYlHCsyiI/vQhjHV03YOm7W6A052+G350CVItkXTautovpDm2sY/RTh@vger.kernel.org, AJvYcCWEjPafRxSQrXBPKTnbTbWpFLuC75xti1l6dtXtwr0Vdz8/Qrx6KEzEUS/D3HrImA2XkujI+fh/TG6nkbHN@vger.kernel.org
-X-Gm-Message-State: AOJu0YxMrfd1saNS/Ohf/VFpsmw8Xu3K4mvV1WnB5Onqhek7ILf/+mnv
-	N7193MjWettf9OKOhB0fLJdJ6hmfaTZ1AZ15+yYnQ3ARtDs/n4AZ
-X-Gm-Gg: ASbGncsuVX+Q/Uld7C5i6cZKOGRDTBuvCY8k7R0DNQkN5ZTY/lDJ6zuaKUrKjWynwjz
-	g/hkhu8TKcj8Uos0zDIZ9GBbE54PJkG2OvHGulpU3kK0oE3uaHvIxATzkaw6WWRtB05AkpRvizC
-	hSyJwIr5AWR/L1eJiFMALlseF0c9ZZf1xa4mcP4ukps+cfpPWrH/yxL2LJx9RerxW0cGCob3JqP
-	Lm3Oivlkza5/TEl/BmNGTCLp0Jrj5CrwdORA9Po9KWyIXmmavsUOsOVb8LueoFEgMaLDgbTtZcv
-	q8rC6t7E10rI8lsRKofetAauOyZZePNyHSGehDqVlM23x/JnVMsjhrqoKvggk26V4cQYBEU8TVI
-	cENixFDIxGBJd/rdpoHcu/hkE5A==
-X-Google-Smtp-Source: AGHT+IFhJS8thqNyc4H03aabnDsTjQOnAfvBj670xwICkIM30ExHIQVJjpRwvQeCLIt5Heh5jZmXuQ==
-X-Received: by 2002:a17:906:99cd:b0:ad5:2907:eeb6 with SMTP id a640c23a62f3a-ad529080dd0mr2896966b.38.1747308497559;
-        Thu, 15 May 2025 04:28:17 -0700 (PDT)
-Received: from [192.168.50.244] (83.11.178.15.ipv4.supernova.orange.pl. [83.11.178.15])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad23ad2b386sm909023366b.104.2025.05.15.04.28.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 15 May 2025 04:28:17 -0700 (PDT)
-Message-ID: <8beeddcf-1dc7-4af8-b287-4c896852b258@gmail.com>
-Date: Thu, 15 May 2025 13:28:15 +0200
+        bh=xbhS3Ju7G0RU72yLnv7dx3n2u6YB6c2WXxN8h+PvWbc=;
+        b=o2EAHZsYKmlXrJwkrjloRMrw13eZsyQxk6wIi9VURwCkx5VzOsPeD8caOlQ+cAtSPF
+         zUJJxz0JebdWUDQ1uhmg+Kt9L/oByovK01RLSUqqZVSr5aKPKeomPsEvXaztm9RXwwTM
+         zB0IzxFsTaY2qP1DRMcLG6wOF0M47zba1wQLH3xu5T4qlut35d6gonmRP27W8jVfoCIu
+         2z0NxtP5GbZE5cZFfo/9gL+1IF6kwIjURAzeZmUdUNA1PLmbcqCNDDRkdgMf0hnvPEMy
+         dYMGxBNT/rrvd3mf39lDNi5fISUX8Id3M0VcVefTdjGPExSwxte1j67n6xT2pSxoq5q5
+         Q/Kg==
+X-Forwarded-Encrypted: i=1; AJvYcCVSsutK6s+mM6mKUvtvWcQszGM4rf2ZlcZ45t3TAfczklAC9dU2LQD2QDWLqbx2jx4p/ifH8w3IDfW4xZo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxO5fJ9f5tIOCJhEePU+ieYxSJ/CN9KuVjc5UNNqsjStFIGIkI2
+	bAkssb+DxB4G4DOuQJC7jkSMQguSqDPkbV7m4/WFDrKvX4Gg6ttPyKtLB3hLCoNv9Zd/01M9G11
+	aru66J6uaxmb7J0F+zdXJdsbckQqd3EcpKWWlxJVIbViux3dUSYPE68NesfuNQQ==
+X-Gm-Gg: ASbGncvg7ave3ANVpcILOubrnAZ4R3m0cKfIwqZ023j3ta3mKQCZRRPL13oIifG8AM8
+	rv2XnWHbpxj1sK/XlnVfaM1GtT1GvwufNtfCnfYKH7gxgSAj2F84YvnEKZ2meWdHtjnbPXdvK14
+	i8Dz+mVat3Vu4yGbqH+1V8Dfm4J+OQBscMOn9HmsQ5upWDPR4zHiDJDVtK3cFOdlxu6apozWRx7
+	jusp3JQdRJykVvDlEhi/pi7UMRCc59AKPJrmAMSwYNXrCiK4hmQzug3aqJgvJWPeouul3BCo+XK
+	9C2Yjw==
+X-Received: by 2002:a5d:584c:0:b0:3a3:2aa5:11bc with SMTP id ffacd0b85a97d-3a3537b4adcmr1827398f8f.54.1747308500773;
+        Thu, 15 May 2025 04:28:20 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEyuhNAhTeV4lZLHtOAJbLtrrq5ZwPIS8k0LNXoYdTkHuAU/c8m5k5qzWyEnDIz37vXRY5wsg==
+X-Received: by 2002:a5d:584c:0:b0:3a3:2aa5:11bc with SMTP id ffacd0b85a97d-3a3537b4adcmr1827376f8f.54.1747308500344;
+        Thu, 15 May 2025 04:28:20 -0700 (PDT)
+Received: from redhat.com ([2a0d:6fc0:1517:1000:ea83:8e5f:3302:3575])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a1f5a4c7a5sm22723419f8f.98.2025.05.15.04.28.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 15 May 2025 04:28:19 -0700 (PDT)
+Date: Thu, 15 May 2025 07:28:16 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: phasta@kernel.org
+Cc: schalla@marvell.com, vattunuru@marvell.com,
+	Jason Wang <jasowang@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
+	Shijith Thotton <sthotton@marvell.com>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Satha Rao <skoteshwar@marvell.com>, virtualization@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4] vdpa/octeon_ep: Control PCI dev enabling manually
+Message-ID: <20250515072724-mutt-send-email-mst@kernel.org>
+References: <20250508085134.24084-2-phasta@kernel.org>
+ <f6e5e4c0f32f8ecb3be71181042082d2d8a9533b.camel@mailbox.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 4/9] mfd: bcm590xx: Add support for multiple device
- types + BCM59054 compatible
-To: Mark Brown <broonie@kernel.org>, Lee Jones <lee@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
- Florian Fainelli <florian.fainelli@broadcom.com>, Ray Jui
- <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>,
- Stanislav Jakubek <stano.jakubek@gmail.com>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- ~postmarketos/upstreaming@lists.sr.ht
-References: <20250430-bcm59054-v8-0-e4cf638169a4@gmail.com>
- <20250430-bcm59054-v8-4-e4cf638169a4@gmail.com>
- <20250509140957.GD2492385@google.com>
- <aCRZzwW0w8oVWLUp@finisterre.sirena.org.uk>
- <20250515071357.GD2936510@google.com>
- <aCWfre2-n_PSuhxR@finisterre.sirena.org.uk>
- <20250515092000.GF2936510@google.com>
- <aCW0822BVpfKV2NL@finisterre.sirena.org.uk>
-Content-Language: en-US
-From: Artur Weber <aweber.kernel@gmail.com>
-In-Reply-To: <aCW0822BVpfKV2NL@finisterre.sirena.org.uk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <f6e5e4c0f32f8ecb3be71181042082d2d8a9533b.camel@mailbox.org>
 
-On 5/15/25 11:33, Mark Brown wrote:
-> On Thu, May 15, 2025 at 10:20:00AM +0100, Lee Jones wrote:
->> On Thu, 15 May 2025, Mark Brown wrote:
+On Thu, May 15, 2025 at 09:14:22AM +0200, Philipp Stanner wrote:
+> On Thu, 2025-05-08 at 10:51 +0200, Philipp Stanner wrote:
+> > PCI region request functions such as pci_request_region() currently
+> > have
+> > the problem of becoming sometimes managed functions, if
+> > pcim_enable_device() instead of pci_enable_device() was called. The
+> > PCI
+> > subsystem wants to remove this deprecated behavior from its
+> > interfaces.
+> > 
+> > octeopn_ep enables its device with pcim_enable_device() (for VF. PF
+> > uses
+> > manual management), but does so only to get automatic disablement.
+> > The
+> > driver wants to manage its PCI resources for VF manually, without
+> > devres.
+> > 
+> > The easiest way not to use automatic resource management at all is by
+> > also handling device enable- and disablement manually.
+> > 
+> > Replace pcim_enable_device() with pci_enable_device(). Add the
+> > necessary
+> > calls to pci_disable_device().
+> > 
+> > Signed-off-by: Philipp Stanner <phasta@kernel.org>
+> > Acked-by: Vamsi Attunuru <vattunuru@marvell.com>
 > 
->>> Well, you choose 3 - I do think it'd be a lot easier to go with option
->>> 2, or with applying the rest to your tree as acks come in.  There seemed
->>> to still be a reasonable amount of discussion on the MFD bits (eg,
->>> there's some formatting comments still) so I was expecting this series
->>> to churn some more and was waiting for a resend.
+> Hi again,
 > 
->> Yes, I expected to apply v9 with your Ack.
+> this is the last of 12 drivers blocking me from removing a few hundred
+> lines of broken code from PCI. Would be great if it could be sent to
+> Linus next merge window.
 > 
-> OK, that's about where I was expecting - at least one more respin before
-> the MFD bits are stable.
+> Can someone take this patch in?
 > 
->> I can go with 2 in this case.  Applying in dribs-and-drabs as Acks come
->> in would be sub-optimal and would likely end up in a mess.
-> 
-> Well, then just going a head and applying them on a branch with a tag
-> seems easier than delaying then.
+> Thx
+> P.
 
-I can split the patchset into two parts (one for MFD, one for regulator)
-if it helps.
+I intend to, working on packing things up for -next as we speak.
 
-Best regards
-Artur
+> > ---
+> > Changes in v4:
+> >   - s/AF/PF
+> >   - Add Vamsi's AB
+> > 
+> > Changes in v3:
+> >   - Only call pci_disable_device() for the PF version. For AF it
+> > would
+> >     cause a WARN_ON because pcim_enable_device()'s callback will also
+> >     try to disable.
+> > ---
+> >  drivers/vdpa/octeon_ep/octep_vdpa_main.c | 17 ++++++++++++-----
+> >  1 file changed, 12 insertions(+), 5 deletions(-)
+> > 
+> > diff --git a/drivers/vdpa/octeon_ep/octep_vdpa_main.c
+> > b/drivers/vdpa/octeon_ep/octep_vdpa_main.c
+> > index f3d4dda4e04c..9b49efd24391 100644
+> > --- a/drivers/vdpa/octeon_ep/octep_vdpa_main.c
+> > +++ b/drivers/vdpa/octeon_ep/octep_vdpa_main.c
+> > @@ -454,6 +454,9 @@ static void octep_vdpa_remove_pf(struct pci_dev
+> > *pdev)
+> >  		octep_iounmap_region(pdev, octpf->base,
+> > OCTEP_HW_MBOX_BAR);
+> >  
+> >  	octep_vdpa_pf_bar_expand(octpf);
+> > +
+> > +	/* The pf version does not use managed PCI. */
+> > +	pci_disable_device(pdev);
+> >  }
+> >  
+> >  static void octep_vdpa_vf_bar_shrink(struct pci_dev *pdev)
+> > @@ -825,7 +828,7 @@ static int octep_vdpa_probe_pf(struct pci_dev
+> > *pdev)
+> >  	struct octep_pf *octpf;
+> >  	int ret;
+> >  
+> > -	ret = pcim_enable_device(pdev);
+> > +	ret = pci_enable_device(pdev);
+> >  	if (ret) {
+> >  		dev_err(dev, "Failed to enable device\n");
+> >  		return ret;
+> > @@ -834,15 +837,17 @@ static int octep_vdpa_probe_pf(struct pci_dev
+> > *pdev)
+> >  	ret = dma_set_mask_and_coherent(dev, DMA_BIT_MASK(64));
+> >  	if (ret) {
+> >  		dev_err(dev, "No usable DMA configuration\n");
+> > -		return ret;
+> > +		goto disable_pci;
+> >  	}
+> >  	octpf = devm_kzalloc(dev, sizeof(*octpf), GFP_KERNEL);
+> > -	if (!octpf)
+> > -		return -ENOMEM;
+> > +	if (!octpf) {
+> > +		ret = -ENOMEM;
+> > +		goto disable_pci;
+> > +	}
+> >  
+> >  	ret = octep_iomap_region(pdev, octpf->base,
+> > OCTEP_HW_MBOX_BAR);
+> >  	if (ret)
+> > -		return ret;
+> > +		goto disable_pci;
+> >  
+> >  	pci_set_master(pdev);
+> >  	pci_set_drvdata(pdev, octpf);
+> > @@ -856,6 +861,8 @@ static int octep_vdpa_probe_pf(struct pci_dev
+> > *pdev)
+> >  
+> >  unmap_region:
+> >  	octep_iounmap_region(pdev, octpf->base, OCTEP_HW_MBOX_BAR);
+> > +disable_pci:
+> > +	pci_disable_device(pdev);
+> >  	return ret;
+> >  }
+> >  
+
 
