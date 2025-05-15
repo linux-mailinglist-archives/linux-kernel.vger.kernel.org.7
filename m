@@ -1,111 +1,120 @@
-Return-Path: <linux-kernel+bounces-649388-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-649390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEEA5AB8423
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 12:39:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41999AB8430
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 12:40:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7CCE817E357
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 10:39:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C272517FD14
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 10:40:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 728D1297B8E;
-	Thu, 15 May 2025 10:39:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1F942980B8;
+	Thu, 15 May 2025 10:40:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="bBUYjEYa"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="keshLTyi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF38F1CAA98
-	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 10:39:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09ADD1CAA98;
+	Thu, 15 May 2025 10:40:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747305566; cv=none; b=dilGBrzS6XpuEDMXv+aLOm5j/cFVqRCzcOB+LGZPTt/A1N1680WZjnsDfG8K69MlFXJSLPBUePLkJF1jY/B7J3ksQDIMLJzR9jjajGmRzxu2a06zs8CpgPgSPzH9UBpdg9hB4tb3BZd7rktI0TgqUVNMZJm5VYtAhoKwHb3u+44=
+	t=1747305636; cv=none; b=gVXkJQ6RB0NkplEE7PyhXYOG3STcB45MEqCUnTkCYmg0bl3VqRGI/R0aQaqW7saOFPazyig1xuguK8vgyepQRZhYg2lBN22HnvCvBGCbvucMT6z/QI5bcQQ5BwrJqMN2sZfmAo3mC7QJjXahr2tqqI5EHZYdpBFFNgqHAxx1RVY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747305566; c=relaxed/simple;
-	bh=r+J64JoV4vdCGlNFfhDU7QfVANDDANZX+x8JjWFoess=;
+	s=arc-20240116; t=1747305636; c=relaxed/simple;
+	bh=C7BeG1l8PBNf2eJXA3PIC6BMI5imJHZFw1LpZu9SI4c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lWQJMrr2YE0LLccly+rRo9lAbs6Kvz87diJUhZVaNFUhAA/S3oQEnOuio8m7HNn8VUw6SOmDDIbBvVfccUJJHBpaVKzkRmvaX9MkzN+BxyDqpTYCipsf/ec3NOpSiCcvpeGKSV4X3MmgyiV2pVuK7TmYwTsAe1h/YSm2d+I4IBA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=bBUYjEYa; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id A3D1740E0196;
-	Thu, 15 May 2025 10:39:22 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id vnqJM8Q6iN7O; Thu, 15 May 2025 10:39:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1747305558; bh=KWlT5NkGTmjMlmW05urL+g81BXn1Wq0zoOAMk0rjW0M=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=WI0N0GpLxSCOlN1E3EEU9AoNv383mwUiM+YUMC5rB0tWkyZUbowVILzxuflvpxcIVIIOzsbNzOyMK1PO7djCuEDtKKQq6+jVnGXt21OHgJ5QDzIx+j+alayKdU3ChdlQzIF72IUobeu3DW7ch9kK/UoYBCk+876lFVED2kJ8w2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=keshLTyi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51FAAC4CEE7;
+	Thu, 15 May 2025 10:40:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747305634;
+	bh=C7BeG1l8PBNf2eJXA3PIC6BMI5imJHZFw1LpZu9SI4c=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bBUYjEYakB3P+5kGwbYjUcSBzBIasg8dSkFejMMwlO8wLex0ljvL2Gh2Bf2/YwxjK
-	 raw8LfBPvgujoNhjrPRNl9bs6b9/kGsm5IkBbF0t61EjCJ7t2jIgsyt3Q1JjHUMb2U
-	 4LjzNvhAtRxOi4jral4DjL2BNwWR4BrdqwUipOKY3n4vQj4GvIYOVb41qYUdqgSCUr
-	 WuY3VOJizVj3e3YMJgVBvxxC2E5tsSJaadOoud2w0kgrAczvJrsKwfZNlR2DssxcO/
-	 K9essWZ33uNp8UnIB63rHxBXBsgKg3aLV/AdmJ8gAiQgFsPnPEm5vpJphqvsSjIO0N
-	 1yjHAzhNfQAmrhfhsy/umBSJsiNN8kK/3SXP1E8D9c5S5WBBEoNZGRMNYAqh0hwxlS
-	 SHQZK9t0OpbYYS0e5mRaTWZz5ZOm3JClwiNTxmWqvcsTgyOi6bixJK/Rbdby33MaIW
-	 cDUOE9TUZGwg1r5EvrucZlBFwDLLroUBBlzMmIiS734RGSsNipQOQ3nIxOj5VyScnk
-	 b55miYoXJZ/TfJrQh3HZFwEgPXB1qhPNvyHa4L2jSc2oyCGwJ9m5FhRW+NIO1cykVA
-	 8mXvpMl18RURYhcw4G3rzC+JI5GGGrjp4WLjKE8CcqVLQObMFTkyPx2a3GNvhvYYyw
-	 hIOqN2cDLHKyzhg5RvIA1vHI=
-Received: from zn.tnic (p579690ee.dip0.t-ipconnect.de [87.150.144.238])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 90C8B40E0222;
-	Thu, 15 May 2025 10:39:11 +0000 (UTC)
-Date: Thu, 15 May 2025 12:39:06 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: Ard Biesheuvel <ardb+git@google.com>, linux-kernel@vger.kernel.org,
-	x86@kernel.org, Ingo Molnar <mingo@kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Brian Gerst <brgerst@gmail.com>
-Subject: Re: [PATCH v3 1/7] x86/cpu: Use a new feature flag for 5 level paging
-Message-ID: <20250515103906.GEaCXESqcyPcQn6xlc@fat_crate.local>
-References: <20250514104242.1275040-9-ardb+git@google.com>
- <20250514104242.1275040-10-ardb+git@google.com>
- <20250515095157.GCaCW5PRk1CTPjEtzJ@fat_crate.local>
- <CAMj1kXE0Ak9EgbQRCn+hCoO=Va-fpVrVEP=Bur_tUEthy+fs8A@mail.gmail.com>
+	b=keshLTyiFMWJLwrK5XlQdStpo7/2rsDOuzqXdPMMKExvjpJCjmJSmu+hFzuT+am7u
+	 QbZrD2UKeNs9RXn4d9T+bWqlACMcifE86fz7RaZP1mewTqKkLVCRAHW9/W1u+NLlq3
+	 dQbqlEwlNS0tN/sCTH8uHGfD5OTTK7dN6xHVuykmwZX0g6L2oJfjecKJWGglzf3KCM
+	 HUNOXYDM+mUY+sQhxuHKTQ4wC13OtB9LnwsO+no9D2eMlgexPz+0ZjoTnGkpj0EDL/
+	 KK4/7Bga2Ip59ZGcspTDakK3W7W2DZONRYL4EoutUbh6DsxKLRUmYOQEl+RTJkPT52
+	 USKpbq4sYY/dw==
+Date: Thu, 15 May 2025 11:40:28 +0100
+From: Simon Horman <horms@kernel.org>
+To: Michael Kelley <mhklinux@outlook.com>
+Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
+	decui@microsoft.com, andrew+netdev@lunn.ch, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	James.Bottomley@hansenpartnership.com, martin.petersen@oracle.com,
+	linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, linux-scsi@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH net 3/5] hv_netvsc: Preserve contiguous PFN grouping in
+ the page buffer array
+Message-ID: <20250515104028.GQ3339421@horms.kernel.org>
+References: <20250513000604.1396-1-mhklinux@outlook.com>
+ <20250513000604.1396-4-mhklinux@outlook.com>
+ <20250514093435.GE3339421@horms.kernel.org>
+ <SN6PR02MB41573F3B4A06DA86758F59F0D491A@SN6PR02MB4157.namprd02.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAMj1kXE0Ak9EgbQRCn+hCoO=Va-fpVrVEP=Bur_tUEthy+fs8A@mail.gmail.com>
+In-Reply-To: <SN6PR02MB41573F3B4A06DA86758F59F0D491A@SN6PR02MB4157.namprd02.prod.outlook.com>
 
-On Thu, May 15, 2025 at 11:17:47AM +0100, Ard Biesheuvel wrote:
-> I'd lean towards not lying about whether the CPU is la57 capable in
-> /proc/cpuinfo if we don't have to - this flag directly reflects the
-> CPUID leaf.
+On Wed, May 14, 2025 at 03:42:19PM +0000, Michael Kelley wrote:
+> From: Simon Horman <horms@kernel.org> Sent: Wednesday, May 14, 2025 2:35 AM
+> > 
+> > On Mon, May 12, 2025 at 05:06:02PM -0700, mhkelley58@gmail.com wrote:
+> > > From: Michael Kelley <mhklinux@outlook.com>
 
-We have a whole documentation about that whole "not lying" thing: short
-version - use kcpuid or some other cpuid tool:
+...
 
-Documentation/arch/x86/cpuinfo.rst
+> > >  	for (i = 0; i < frags; i++) {
+> > >  		skb_frag_t *frag = skb_shinfo(skb)->frags + i;
+> > > +		struct hv_page_buffer *cur_pb = &pb[i + 2];
+> > 
+> > Hi Michael,
+> > 
+> > If I got things right then then pb is allocated on the stack
+> > in netvsc_xmit and has MAX_DATA_RANGES elements.
+> 
+> Correct.
+> 
+> > 
+> > If MAX_SKB_FRAGS is largs and MAX_DATA_RANGES has been limited to
+> > MAX_DATA_RANGES. And frags is large. Is is possible to overrun pb here?
+> 
+> I don't think it's possible. Near the top of netvsc_xmit() there's a call
+> to netvsc_get_slots(), along with code ensuring that all the data in the skb
+> (and its frags) exists on no more than MAX_PAGE_BUFFER_COUNT (i.e., 32)
+> pages. There can't be more frags than pages, so it should not be possible to
+> overrun the pb array even if the frag count is large.
+> 
+> If the kernel is built with CONFIG_MAX_SKB_FRAGS greater than 30, and
+> there are more than 30 frags in the skb (allowing for 2 pages for the rndis
+> header), netvsc_xmit() tries to linearize the skb to reduce the frag count.
+> But if that doesn't work, netvsc_xmit() drops the xmit request, which isn't
+> a great outcome. But that's a limitation of the existing code, and this patch
+> set doesn't change that limitation.
 
-> This is arguably the important one: as long as "la57" does not change
-> meaning, we should be fine from compatibility pov.
+Hi Michael,
 
-Yes, those flags in /proc/cpuinfo should show that something is enabled and in
-use. And it makes sense here. And you can't change that string anyway anymore.
+Thanks for addressing my concern. I do now see that the check
+in netvsc_xmit() prevents an overrun.
 
-Whether the hw is capable is not important for userspace and there are a lot
-better means for it.
+And I agree that while not ideal dropping oversize packets is not
+strictly related to this patch-set (and is indeed much better than
+an overrun).
 
-Thx.
+With the above in mind I'm now happy with this patch.
 
--- 
-Regards/Gruss,
-    Boris.
+Reviewed-by: Simon Horman <horms@kernel.org>
 
-https://people.kernel.org/tglx/notes-about-netiquette
+...
 
