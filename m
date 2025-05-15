@@ -1,318 +1,379 @@
-Return-Path: <linux-kernel+bounces-649590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-649587-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9CE6AB8677
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 14:35:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 70877AB8670
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 14:33:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C92103B452B
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 12:35:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C96B9E56B9
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 12:33:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB1F22989BD;
-	Thu, 15 May 2025 12:35:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40B72298CB7;
+	Thu, 15 May 2025 12:33:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nrQfgSNz"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cKyllz0k"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0164F205AA8
-	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 12:35:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51A482989A8;
+	Thu, 15 May 2025 12:33:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747312542; cv=none; b=ihMDl20UUMnB+VR4jV/CyteJtkROE47vZvQr3e7NFr8kG8jSOBa3gDSENP4cQtnmuNzmi/8jWY4gexeOsFE3RaIULBSmDPb3gy0vLcNJ+L+vVBrnIUepHG7sUIwteirK6psKn6RPEdTiJD3pj5PSikUIaWz//7CvOzoNPVCLRlo=
+	t=1747312421; cv=none; b=PIln5NhYHUNECg2jbSEZ+VT547XZMyvoqScIVdniEhXKZuRhC2F3mNcHka2EzssORlXuthFZGE9oZvLbYl9TQg4bfX2QVKU70hZSQe22ELnAh4x89is19dzOAtkHa9BGTspgQTwbQ1Dw7rwu7pohDXY5fuGJsR9HKvn4RxsGAkw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747312542; c=relaxed/simple;
-	bh=GWcGuuFDNA5MgqqnhfuCg3fr+KdbJbT8D1u9ax7J0Kw=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=gYimdcu9EFreExE+j4j0ex6FpsWH8swNWHwVUMe8kQI+d5KnpMOn53G4OfrlrehCkej0S7AuO3TLzett1Bw2x+4gOFt52ar4RpO3RyxbkDrLAUHgmUbWDuD31JUTjjpHUVDlxsV8JxBgw3mG6Aht31CVx31dJgTKd6UB58a3x0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nrQfgSNz; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1747312541; x=1778848541;
-  h=date:from:to:cc:subject:message-id;
-  bh=GWcGuuFDNA5MgqqnhfuCg3fr+KdbJbT8D1u9ax7J0Kw=;
-  b=nrQfgSNzoeNETnRm38lkaYJ2HPXYPPGZ6LjReQ6ZsejyBJDxhaBCpcyd
-   9Xuvr3pGqjPem9K3yIg623gyTP1+RpALP41+cJ6IOstyDWhDXAET8tMt9
-   fktjKX2hj/vJZzKGNu/umGjrxR6kfy/wx8WEOuHrPNRx5MzSUIBBkiIUS
-   OBsYRtHcWFgieuXvmtbbmvyaI/r5LaH8UvyiQefWtASBZZJCPTBw75e6o
-   PRDPdkbjjsBRsdTPpbwOoQLrqAmdzQLmPRVLVBF9Mwd3VQwPfsZ+X6oc4
-   OJaTN0HN/T1HseITCihIGsjWmi4ll1rXhXXt3bONszjfjLTMTvnmQDFqY
-   Q==;
-X-CSE-ConnectionGUID: mr6hVxjUSYSSbNpvzwRXJw==
-X-CSE-MsgGUID: iMps9WN7T+yQvUZYdozo+g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11434"; a="49405357"
-X-IronPort-AV: E=Sophos;i="6.15,291,1739865600"; 
-   d="scan'208";a="49405357"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2025 05:33:39 -0700
-X-CSE-ConnectionGUID: BTGdWW7pRW+bwZBoBB07ZQ==
-X-CSE-MsgGUID: RxC7QKyeQgewy+BxaWjlFg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,291,1739865600"; 
-   d="scan'208";a="143557235"
-Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
-  by fmviesa004.fm.intel.com with ESMTP; 15 May 2025 05:33:38 -0700
-Received: from kbuild by 1992f890471c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uFXmJ-000INE-0g;
-	Thu, 15 May 2025 12:33:35 +0000
-Date: Thu, 15 May 2025 20:33:17 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:objtool/core] BUILD SUCCESS
- 4ed9d82bf5b21d65e2f18249eec89a6a84df8f23
-Message-ID: <202505152008.6WUAGwDU-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1747312421; c=relaxed/simple;
+	bh=NZbDm6oKwxvb56qxwgfd2yxt9f0BrfJ12RFFjIbb7RY=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=uK7Q50s9csj9P2ksxpVGPMwCc4aVwiXjBjS5ToPUc3tn61X1BzbVsxOWFrp5/fPkKT9/U8VYGH9ocXrKAfe/nHCVfHUQt7VVXaajYADf/CwP/cq+waDNTu5sBHk4n2ySYGRzxtbPtESGseT75CuLZFGNZqzE81fwxcIu2/E3gxk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cKyllz0k; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91C5DC4CEF0;
+	Thu, 15 May 2025 12:33:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747312420;
+	bh=NZbDm6oKwxvb56qxwgfd2yxt9f0BrfJ12RFFjIbb7RY=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=cKyllz0kah8+nLH/VTLW2tMROQ/8gf8qM7t1LKNAeba1mDP+kv6HPIGw0zifZRqwn
+	 50EhB0xUpWbgVT/6x8nytWZUIQ4EdLYBHeRxrYRHqkR6GXBVnYVswy/sOgFLtOEVLf
+	 PyWxKX25yP5W4WXnybxYHp/1YfAS3Z8Ldf+hiDY5AhVollbekCSc0YHfht8d+0qas5
+	 11xuZJqW0o0SSoc5mKYy3gbrq0w7N/mBxOjFTPrT4eI0U52tmZ1r641cEkiZ16Uehe
+	 n9T6Yxbsw8kr2R7JiVsuyYyslI81/G9zEJNb4rtXhDexUpaIBqV4ULB9+7eZNBACvI
+	 NGSmGGOOeNqSw==
+Date: Thu, 15 May 2025 07:33:38 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
+ Steve deRosier <derosier@cal-sierra.com>, devicetree@vger.kernel.org, 
+ Heiko Stuebner <heiko@sntech.de>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ linux-rockchip@lists.infradead.org
+To: Joseph Kogut <joseph.kogut@gmail.com>
+In-Reply-To: <20250514173856.3677454-1-joseph.kogut@gmail.com>
+References: <20250514173856.3677454-1-joseph.kogut@gmail.com>
+Message-Id: <174731113340.409185.748543902950099048.robh@kernel.org>
+Subject: Re: [RFC PATCH 1/1] arm64: dts: rockchip: add Radxa CM5 and IO
+ board
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git objtool/core
-branch HEAD: 4ed9d82bf5b21d65e2f18249eec89a6a84df8f23  objtool: Speed up SHT_GROUP reindexing
 
-elapsed time: 1453m
+On Wed, 14 May 2025 10:38:56 -0700, Joseph Kogut wrote:
+> Add initial support for the Radxa CM5 and the accompanying IO board,
+> including ethernet, USB 2.0/3.0, PCIe 2.0, HDMI output, UART2 console,
+> SD/eMMC, PMIC.
+> 
+> Signed-off-by: Joseph Kogut <joseph.kogut@gmail.com>
+> Reviewed-by: Steve deRosier <derosier@cal-sierra.com>
+> ---
+> This is my first attempt at submitting a new device tree upstream.
+> Feedback is welcome on DT conventions, naming, or anything I may have
+> missed.
+> 
+> This is largely reversed from the Radxa kernel sources as a reference.
+> 
+>  arch/arm64/boot/dts/rockchip/Makefile         |   1 +
+>  .../dts/rockchip/rk3588s-radxa-cm5-io.dts     | 448 ++++++++++++++++++
+>  .../boot/dts/rockchip/rk3588s-radxa-cm5.dtsi  | 151 ++++++
+>  3 files changed, 600 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/rockchip/rk3588s-radxa-cm5-io.dts
+>  create mode 100644 arch/arm64/boot/dts/rockchip/rk3588s-radxa-cm5.dtsi
+> 
 
-configs tested: 226
-configs skipped: 5
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
 
-tested configs:
-alpha                             allnoconfig    gcc-14.2.0
-alpha                            allyesconfig    clang-19
-alpha                            allyesconfig    gcc-14.2.0
-alpha                               defconfig    gcc-14.2.0
-arc                              alldefconfig    gcc-14.2.0
-arc                              allmodconfig    clang-19
-arc                              allmodconfig    gcc-14.2.0
-arc                               allnoconfig    gcc-14.2.0
-arc                              allyesconfig    clang-19
-arc                              allyesconfig    gcc-14.2.0
-arc                                 defconfig    gcc-14.2.0
-arc                   randconfig-001-20250514    gcc-13.3.0
-arc                   randconfig-001-20250515    gcc-6.5.0
-arc                   randconfig-002-20250514    gcc-14.2.0
-arc                   randconfig-002-20250515    gcc-6.5.0
-arm                              allmodconfig    clang-19
-arm                               allnoconfig    gcc-14.2.0
-arm                              allyesconfig    clang-19
-arm                              allyesconfig    gcc-14.2.0
-arm                                 defconfig    gcc-14.2.0
-arm                   randconfig-001-20250514    clang-21
-arm                   randconfig-001-20250515    gcc-6.5.0
-arm                   randconfig-002-20250514    clang-21
-arm                   randconfig-002-20250515    gcc-6.5.0
-arm                   randconfig-003-20250514    gcc-7.5.0
-arm                   randconfig-003-20250515    gcc-6.5.0
-arm                   randconfig-004-20250514    gcc-7.5.0
-arm                   randconfig-004-20250515    gcc-6.5.0
-arm                         vf610m4_defconfig    gcc-14.2.0
-arm64                            allmodconfig    clang-19
-arm64                             allnoconfig    gcc-14.2.0
-arm64                               defconfig    gcc-14.2.0
-arm64                 randconfig-001-20250514    clang-17
-arm64                 randconfig-001-20250515    gcc-6.5.0
-arm64                 randconfig-002-20250514    gcc-5.5.0
-arm64                 randconfig-002-20250515    gcc-6.5.0
-arm64                 randconfig-003-20250514    gcc-5.5.0
-arm64                 randconfig-003-20250515    gcc-6.5.0
-arm64                 randconfig-004-20250514    clang-21
-arm64                 randconfig-004-20250515    gcc-6.5.0
-csky                              allnoconfig    gcc-14.2.0
-csky                                defconfig    gcc-14.2.0
-csky                  randconfig-001-20250514    gcc-13.3.0
-csky                  randconfig-001-20250515    clang-21
-csky                  randconfig-002-20250514    gcc-14.2.0
-csky                  randconfig-002-20250515    clang-21
-hexagon                          allmodconfig    clang-17
-hexagon                          allmodconfig    clang-19
-hexagon                           allnoconfig    gcc-14.2.0
-hexagon                          allyesconfig    clang-19
-hexagon                          allyesconfig    clang-21
-hexagon                             defconfig    gcc-14.2.0
-hexagon               randconfig-001-20250514    clang-21
-hexagon               randconfig-001-20250515    clang-21
-hexagon               randconfig-002-20250514    clang-21
-hexagon               randconfig-002-20250515    clang-21
-i386                             allmodconfig    clang-20
-i386                             allmodconfig    gcc-12
-i386                              allnoconfig    clang-20
-i386                              allnoconfig    gcc-12
-i386                             allyesconfig    clang-20
-i386                             allyesconfig    gcc-12
-i386        buildonly-randconfig-001-20250514    clang-20
-i386        buildonly-randconfig-001-20250515    gcc-11
-i386        buildonly-randconfig-002-20250514    gcc-12
-i386        buildonly-randconfig-002-20250515    gcc-11
-i386        buildonly-randconfig-003-20250514    clang-20
-i386        buildonly-randconfig-003-20250515    gcc-11
-i386        buildonly-randconfig-004-20250514    clang-20
-i386        buildonly-randconfig-004-20250515    gcc-11
-i386        buildonly-randconfig-005-20250514    gcc-12
-i386        buildonly-randconfig-005-20250515    gcc-11
-i386        buildonly-randconfig-006-20250514    gcc-12
-i386        buildonly-randconfig-006-20250515    gcc-11
-i386                                defconfig    clang-20
-i386                  randconfig-001-20250515    clang-20
-i386                  randconfig-002-20250515    clang-20
-i386                  randconfig-003-20250515    clang-20
-i386                  randconfig-004-20250515    clang-20
-i386                  randconfig-005-20250515    clang-20
-i386                  randconfig-006-20250515    clang-20
-i386                  randconfig-007-20250515    clang-20
-i386                  randconfig-011-20250515    gcc-12
-i386                  randconfig-012-20250515    gcc-12
-i386                  randconfig-013-20250515    gcc-12
-i386                  randconfig-014-20250515    gcc-12
-i386                  randconfig-015-20250515    gcc-12
-i386                  randconfig-016-20250515    gcc-12
-i386                  randconfig-017-20250515    gcc-12
-loongarch                        allmodconfig    gcc-14.2.0
-loongarch                         allnoconfig    gcc-14.2.0
-loongarch                           defconfig    gcc-14.2.0
-loongarch             randconfig-001-20250514    gcc-14.2.0
-loongarch             randconfig-001-20250515    clang-21
-loongarch             randconfig-002-20250514    gcc-14.2.0
-loongarch             randconfig-002-20250515    clang-21
-m68k                             allmodconfig    gcc-14.2.0
-m68k                              allnoconfig    gcc-14.2.0
-m68k                             allyesconfig    gcc-14.2.0
-m68k                         amcore_defconfig    gcc-14.2.0
-m68k                                defconfig    gcc-14.2.0
-microblaze                       allmodconfig    gcc-14.2.0
-microblaze                        allnoconfig    gcc-14.2.0
-microblaze                       allyesconfig    gcc-14.2.0
-microblaze                          defconfig    gcc-14.2.0
-mips                              allnoconfig    gcc-14.2.0
-mips                   sb1250_swarm_defconfig    gcc-14.2.0
-nios2                             allnoconfig    gcc-14.2.0
-nios2                               defconfig    gcc-14.2.0
-nios2                 randconfig-001-20250514    gcc-7.5.0
-nios2                 randconfig-001-20250515    clang-21
-nios2                 randconfig-002-20250514    gcc-11.5.0
-nios2                 randconfig-002-20250515    clang-21
-openrisc                          allnoconfig    clang-21
-openrisc                         allyesconfig    gcc-14.2.0
-openrisc                            defconfig    gcc-12
-openrisc                 simple_smp_defconfig    gcc-14.2.0
-parisc                           allmodconfig    gcc-14.2.0
-parisc                            allnoconfig    clang-21
-parisc                           allyesconfig    gcc-14.2.0
-parisc                              defconfig    gcc-12
-parisc                randconfig-001-20250514    gcc-12.4.0
-parisc                randconfig-001-20250515    clang-21
-parisc                randconfig-002-20250514    gcc-10.5.0
-parisc                randconfig-002-20250515    clang-21
-parisc64                            defconfig    gcc-14.2.0
-powerpc                    adder875_defconfig    gcc-14.2.0
-powerpc                          allmodconfig    gcc-14.2.0
-powerpc                           allnoconfig    clang-21
-powerpc                          allyesconfig    gcc-14.2.0
-powerpc                      katmai_defconfig    gcc-14.2.0
-powerpc                 mpc8313_rdb_defconfig    gcc-14.2.0
-powerpc                      pcm030_defconfig    gcc-14.2.0
-powerpc               randconfig-001-20250514    clang-17
-powerpc               randconfig-001-20250515    clang-21
-powerpc               randconfig-002-20250514    gcc-5.5.0
-powerpc               randconfig-002-20250515    clang-21
-powerpc               randconfig-003-20250514    gcc-7.5.0
-powerpc               randconfig-003-20250515    clang-21
-powerpc64             randconfig-001-20250514    gcc-10.5.0
-powerpc64             randconfig-001-20250515    clang-21
-powerpc64             randconfig-002-20250514    clang-19
-powerpc64             randconfig-002-20250515    clang-21
-powerpc64             randconfig-003-20250514    gcc-5.5.0
-powerpc64             randconfig-003-20250515    clang-21
-riscv                            allmodconfig    gcc-14.2.0
-riscv                             allnoconfig    clang-21
-riscv                            allyesconfig    gcc-14.2.0
-riscv                               defconfig    gcc-12
-riscv                    nommu_k210_defconfig    gcc-14.2.0
-riscv                 randconfig-001-20250515    gcc-8.5.0
-riscv                 randconfig-002-20250515    gcc-14.2.0
-s390                             allmodconfig    clang-18
-s390                             allmodconfig    gcc-14.2.0
-s390                              allnoconfig    clang-21
-s390                             allyesconfig    gcc-14.2.0
-s390                                defconfig    gcc-12
-s390                  randconfig-001-20250515    clang-21
-s390                  randconfig-002-20250515    gcc-9.3.0
-sh                               allmodconfig    gcc-14.2.0
-sh                                allnoconfig    gcc-14.2.0
-sh                               allyesconfig    gcc-14.2.0
-sh                        apsh4ad0a_defconfig    gcc-14.2.0
-sh                                  defconfig    gcc-12
-sh                    randconfig-001-20250515    gcc-14.2.0
-sh                    randconfig-002-20250515    gcc-10.5.0
-sh                              ul2_defconfig    gcc-14.2.0
-sparc                            allmodconfig    gcc-14.2.0
-sparc                             allnoconfig    gcc-14.2.0
-sparc                 randconfig-001-20250515    gcc-6.5.0
-sparc                 randconfig-002-20250515    gcc-10.3.0
-sparc64                             defconfig    gcc-12
-sparc64               randconfig-001-20250515    gcc-9.3.0
-sparc64               randconfig-002-20250515    gcc-9.3.0
-um                               allmodconfig    clang-19
-um                                allnoconfig    clang-21
-um                               allyesconfig    clang-19
-um                               allyesconfig    gcc-12
-um                                  defconfig    gcc-12
-um                             i386_defconfig    gcc-12
-um                    randconfig-001-20250515    gcc-12
-um                    randconfig-002-20250515    clang-21
-um                           x86_64_defconfig    gcc-12
-x86_64                            allnoconfig    clang-20
-x86_64                           allyesconfig    clang-20
-x86_64      buildonly-randconfig-001-20250514    clang-20
-x86_64      buildonly-randconfig-001-20250515    gcc-12
-x86_64      buildonly-randconfig-002-20250514    gcc-12
-x86_64      buildonly-randconfig-002-20250515    gcc-12
-x86_64      buildonly-randconfig-003-20250514    gcc-12
-x86_64      buildonly-randconfig-003-20250515    gcc-12
-x86_64      buildonly-randconfig-004-20250514    gcc-12
-x86_64      buildonly-randconfig-004-20250515    gcc-12
-x86_64      buildonly-randconfig-005-20250514    clang-20
-x86_64      buildonly-randconfig-005-20250515    gcc-12
-x86_64      buildonly-randconfig-006-20250514    gcc-12
-x86_64      buildonly-randconfig-006-20250515    gcc-12
-x86_64                              defconfig    clang-20
-x86_64                              defconfig    gcc-11
-x86_64                                  kexec    clang-20
-x86_64                randconfig-001-20250515    gcc-12
-x86_64                randconfig-002-20250515    gcc-12
-x86_64                randconfig-003-20250515    gcc-12
-x86_64                randconfig-004-20250515    gcc-12
-x86_64                randconfig-005-20250515    gcc-12
-x86_64                randconfig-006-20250515    gcc-12
-x86_64                randconfig-007-20250515    gcc-12
-x86_64                randconfig-008-20250515    gcc-12
-x86_64                randconfig-071-20250515    clang-20
-x86_64                randconfig-072-20250515    clang-20
-x86_64                randconfig-073-20250515    clang-20
-x86_64                randconfig-074-20250515    clang-20
-x86_64                randconfig-075-20250515    clang-20
-x86_64                randconfig-076-20250515    clang-20
-x86_64                randconfig-077-20250515    clang-20
-x86_64                randconfig-078-20250515    clang-20
-x86_64                               rhel-9.4    clang-20
-x86_64                           rhel-9.4-bpf    gcc-12
-x86_64                         rhel-9.4-kunit    gcc-12
-x86_64                           rhel-9.4-ltp    gcc-12
-x86_64                          rhel-9.4-rust    clang-18
-x86_64                          rhel-9.4-rust    clang-20
-xtensa                            allnoconfig    gcc-14.2.0
-xtensa                randconfig-001-20250515    gcc-14.2.0
-xtensa                randconfig-002-20250515    gcc-13.3.0
-xtensa                    xip_kc705_defconfig    gcc-14.2.0
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
+
+  pip3 install dtschema --upgrade
+
+
+This patch series was applied (using b4) to base:
+ Base: attempting to guess base-commit...
+ Base: tags/v6.15-rc5-760-g9934ab180511 (exact match)
+
+If this is not the correct base, please add 'base-commit' tag
+(or use b4 which does this automatically)
+
+New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/rockchip/' for 20250514173856.3677454-1-joseph.kogut@gmail.com:
+
+arch/arm64/boot/dts/rockchip/rk3588s-radxa-cm5-io.dtb: / (radxa,cm5-io): compatible: 'oneOf' conditional failed, one must be fixed:
+	['radxa,cm5-io', 'radxa,cm5', 'rockchip,rk3588s'] is too long
+	['radxa,cm5-io', 'radxa,cm5', 'rockchip,rk3588s'] is too short
+	'vamrs,ficus' was expected
+	'vamrs,rock960' was expected
+	'amarula,vyasa-rk3288' was expected
+	'radxa,cm5-io' is not one of ['anbernic,rg351m', 'anbernic,rg351v']
+	'radxa,cm5-io' is not one of ['anbernic,rg353p', 'anbernic,rg353ps', 'anbernic,rg353v', 'anbernic,rg353vs', 'anbernic,rg503', 'anbernic,rg-arc-d', 'anbernic,rg-arc-s']
+	'ariaboard,photonicat' was expected
+	'armsom,sige5' was expected
+	'armsom,sige7' was expected
+	'radxa,cm5-io' is not one of ['armsom,w3']
+	'asus,rk3288-tinker' was expected
+	'asus,rk3288-tinker-s' was expected
+	'azw,beelink-a1' was expected
+	'bigtreetech,cb2-manta' was expected
+	'bigtreetech,pi2' was expected
+	'mundoreader,bq-curie2' was expected
+	'mundoreader,bq-edison2qc' was expected
+	'chipspark,popmetal-rk3288' was expected
+	'chipspark,rayeager-px2' was expected
+	'radxa,cm5-io' is not one of ['coolpi,pi-cm5-evb']
+	'radxa,cm5-io' is not one of ['coolpi,pi-cm5-genbook']
+	'coolpi,pi-4b' was expected
+	'edgeble,neural-compute-module-2-io' was expected
+	'edgeble,neural-compute-module-6a-io' was expected
+	'elgin,rv1108-r1' was expected
+	'embedfire,lubancat-1' was expected
+	'embedfire,lubancat-2' was expected
+	'engicam,px30-core-ctouch2' was expected
+	'engicam,px30-core-ctouch2-of10' was expected
+	'engicam,px30-core-edimm2.2' was expected
+	'radxa,cm5-io' is not one of ['mntre,reform2-rcore']
+	'radxa,cm5-io' is not one of ['firefly,itx-3588j']
+	'firefly,px30-jd4-core-mb' was expected
+	'radxa,cm5-io' is not one of ['firefly,firefly-rk3288', 'firefly,firefly-rk3288-beta']
+	'firefly,firefly-rk3288-reload' was expected
+	'firefly,firefly-rk3399' was expected
+	'firefly,roc-rk3308-cc' was expected
+	'firefly,roc-rk3328-cc' was expected
+	'firefly,roc-rk3328-pc' was expected
+	'radxa,cm5-io' is not one of ['firefly,roc-rk3399-pc', 'firefly,roc-rk3399-pc-mezzanine']
+	'radxa,cm5-io' is not one of ['firefly,roc-rk3399-pc-plus']
+	'firefly,roc-rk3576-pc' was expected
+	'firefly,rk3566-roc-pc' was expected
+	'firefly,rk3568-roc-pc' was expected
+	'radxa,cm5-io' is not one of ['forlinx,ok3588-c']
+	'radxa,cm5-io' is not one of ['friendlyarm,nanopi-r2c', 'friendlyarm,nanopi-r2c-plus', 'friendlyarm,nanopi-r2s', 'friendlyarm,nanopi-r2s-plus']
+	'friendlyarm,nanopi-r3s' was expected
+	'radxa,cm5-io' is not one of ['friendlyarm,nanopc-t4', 'friendlyarm,nanopi-m4', 'friendlyarm,nanopi-m4b', 'friendlyarm,nanopi-neo4', 'friendlyarm,nanopi-r4s', 'friendlyarm,nanopi-r4s-enterprise']
+	'radxa,cm5-io' is not one of ['friendlyarm,nanopi-r5c', 'friendlyarm,nanopi-r5s']
+	'radxa,cm5-io' is not one of ['friendlyarm,nanopi-r6c', 'friendlyarm,nanopi-r6s']
+	'radxa,cm5-io' is not one of ['friendlyarm,nanopc-t6', 'friendlyarm,nanopc-t6-lts']
+	'radxa,cm5-io' is not one of ['friendlyarm,cm3588-nas']
+	'gameforce,ace' was expected
+	'gameforce,chi' was expected
+	'geekbuying,geekbox' was expected
+	'geniatech,xpi-3128' was expected
+	'google,bob-rev13' was expected
+	'google,veyron-brain-rev0' was expected
+	'google,veyron-fievel-rev8' was expected
+	'google,gru-rev15' was expected
+	'google,veyron-jaq-rev5' was expected
+	'google,veyron-jerry-rev15' was expected
+	'google,kevin-rev15' was expected
+	'google,veyron-mickey-rev8' was expected
+	'google,veyron-mighty-rev5' was expected
+	'google,veyron-minnie-rev4' was expected
+	'google,veyron-pinky-rev2' was expected
+	'google,scarlet-rev15-sku0' was expected
+	'google,scarlet-rev15-sku7' was expected
+	'google,scarlet-rev15-sku2' was expected
+	'google,veyron-speedy-rev9' was expected
+	'google,veyron-tiger-rev8' was expected
+	'haochuangyi,h96-max-v58' was expected
+	'haoyu,marsboard-rk3066' was expected
+	'hardkernel,rk3326-odroid-go2' was expected
+	'hardkernel,rk3326-odroid-go2-v11' was expected
+	'hardkernel,rk3326-odroid-go3' was expected
+	'hardkernel,odroid-m1' was expected
+	'hardkernel,odroid-m1s' was expected
+	'hardkernel,odroid-m2' was expected
+	'hugsun,x99' was expected
+	'indiedroid,nova' was expected
+	'radxa,cm5-io' is not one of ['khadas,edge', 'khadas,edge-captain', 'khadas,edge-v']
+	'khadas,edge2' was expected
+	'kobol,helios64' was expected
+	'mecer,xms6' was expected
+	'leez,p710' was expected
+	'lckfb,tspi-rk3566' was expected
+	'radxa,cm5-io' is not one of ['lunzn,fastrhino-r66s', 'lunzn,fastrhino-r68s']
+	'mqmaker,miqi' was expected
+	'neardi,lba3368' was expected
+	'netxeon,r89' was expected
+	'openailab,eaidk-610' was expected
+	'xunlong,rk3399-orangepi' was expected
+	'phytec,rk3288-pcm-947' was expected
+	'pine64,pinebook-pro' was expected
+	'radxa,cm5-io' is not one of ['pine64,pinenote-v1.1', 'pine64,pinenote-v1.2']
+	'pine64,pinephone-pro' was expected
+	'radxa,cm5-io' is not one of ['pine64,pinetab2-v0.1', 'pine64,pinetab2-v2.0']
+	'pine64,rock64' was expected
+	'radxa,cm5-io' is not one of ['pine64,rockpro64-v2.1', 'pine64,rockpro64-v2.0']
+	'radxa,cm5-io' is not one of ['pine64,quartz64-a', 'pine64,quartz64-b']
+	'pine64,quartzpro64' was expected
+	'radxa,cm5-io' is not one of ['pine64,soquartz-blade', 'pine64,soquartz-cm4io', 'pine64,soquartz-model-a']
+	'radxa,cm5-io' is not one of ['powkiddy,rgb10max3', 'powkiddy,rgb20sx', 'powkiddy,rgb30', 'powkiddy,rk2023', 'powkiddy,x55']
+	'prt,mecsbc' was expected
+	'qnap,ts433' was expected
+	'radxa,cm5-io' is not one of ['radxa,cm3-io']
+	'radxa,cm5-io' is not one of ['radxa,e25']
+	'radxa,e20c' was expected
+	'radxa,e52c' was expected
+	'radxa,rock' was expected
+	'radxa,cm5-io' is not one of ['radxa,rockpi4a', 'radxa,rockpi4a-plus', 'radxa,rockpi4b', 'radxa,rockpi4b-plus', 'radxa,rockpi4c']
+	'radxa,rock-4c-plus' was expected
+	'radxa,rock-4d' was expected
+	'radxa,rock-4se' was expected
+	'radxa,rockpi-e' was expected
+	'radxa,rockpi-n8' was expected
+	'radxa,rockpi-n10' was expected
+	'radxa,rockpis' was expected
+	'radxa,rock2-square' was expected
+	'radxa,rock3a' was expected
+	'radxa,rock-3b' was expected
+	'radxa,rock-3c' was expected
+	'radxa,rock-5-itx' was expected
+	'radxa,rock-5a' was expected
+	'radxa,rock-5b' was expected
+	'radxa,rock-5c' was expected
+	'radxa,rock-s0' was expected
+	'radxa,cm5-io' is not one of ['radxa,zero-3e', 'radxa,zero-3w']
+	'relfor,saib' was expected
+	'rikomagic,mk808' was expected
+	'rockchip,rk3036-kylin' was expected
+	'rockchip,px3-evb' was expected
+	'rockchip,px30-evb' was expected
+	'rockchip,px5-evb' was expected
+	'rockchip,r88' was expected
+	'rockchip,rk3036-evb' was expected
+	'rockchip,rk3128-evb' was expected
+	'rockchip,rk3228-evb' was expected
+	'rockchip,rk3229-evb' was expected
+	'radxa,cm5-io' is not one of ['rockchip,rk3288-evb-act8846', 'rockchip,rk3288-evb-rk808']
+	'rockchip,rk3308-evb' was expected
+	'rockchip,rk3328-evb' was expected
+	'rockchip,rk3368-evb-act8846' was expected
+	'rockchip,rk3399-evb' was expected
+	'rockchip,rk3399-sapphire' was expected
+	'rockchip,rk3399-sapphire-excavator' was expected
+	'rockchip,rk3566-box-demo' was expected
+	'rockchip,rk3568-evb1-v10' was expected
+	'rockchip,rk3576-evb1-v10' was expected
+	'rockchip,rk3588-evb1-v10' was expected
+	'rockchip,rk3588s-evb1-v10' was expected
+	'rockchip,rv1108-evb' was expected
+	'rockchip,rk3588-toybrick-x0' was expected
+	'sinovoip,rk3308-bpi-p2pro' was expected
+	'sinovoip,rk3568-bpi-r2pro' was expected
+	'itead,sonoff-ihost' was expected
+	'tsd,px30-ringneck-haikou' was expected
+	'tsd,rk3368-lion-haikou' was expected
+	'tsd,rk3399-puma-haikou' was expected
+	'tsd,rk3588-jaguar' was expected
+	'tsd,rk3588-tiger-haikou' was expected
+	'tronsmart,orion-r68-meta' was expected
+	'turing,rk1' was expected
+	'wolfvision,rk3568-pf5' was expected
+	'radxa,cm5-io' is not one of ['xunlong,orangepi-3b-v1.1', 'xunlong,orangepi-3b-v2.1']
+	'radxa,cm5-io' is not one of ['xunlong,orangepi-5-max', 'xunlong,orangepi-5-plus', 'xunlong,orangepi-5-ultra']
+	'radxa,cm5-io' is not one of ['xunlong,orangepi-r1-plus', 'xunlong,orangepi-r1-plus-lts']
+	'radxa,cm5-io' is not one of ['xunlong,orangepi-5', 'xunlong,orangepi-5b']
+	'zkmagic,a95x-z2' was expected
+	'rockchip,rk3399' was expected
+	'rockchip,rk3288' was expected
+	'rockchip,rk3326' was expected
+	'rockchip,rk3566' was expected
+	'rockchip,rk3568' was expected
+	'rockchip,rk3576' was expected
+	'rockchip,rk3588' was expected
+	'armsom,lm7' was expected
+	'rockchip,rk3328' was expected
+	'bigtreetech,cb2' was expected
+	'rockchip,rk3066a' was expected
+	'rockchip,rk3188' was expected
+	'coolpi,pi-cm5' was expected
+	'rockchip,rk3588s' was expected
+	'edgeble,neural-compute-module-2' was expected
+	'radxa,cm5' is not one of ['edgeble,neural-compute-module-6a', 'edgeble,neural-compute-module-6b']
+	'rockchip,rv1108' was expected
+	'engicam,px30-core' was expected
+	'firefly,icore-3588q' was expected
+	'firefly,core-3588j' was expected
+	'firefly,px30-jd4-core' was expected
+	'rockchip,rk3308' was expected
+	'forlinx,fet3588-c' was expected
+	'friendlyarm,cm3588' was expected
+	'rockchip,rk3368' was expected
+	'rockchip,rk3128' was expected
+	'google,bob-rev12' was expected
+	'google,veyron-brain' was expected
+	'google,veyron-fievel-rev7' was expected
+	'google,gru-rev14' was expected
+	'google,veyron-jaq-rev4' was expected
+	'google,veyron-jerry-rev14' was expected
+	'google,kevin-rev14' was expected
+	'google,veyron-mickey-rev7' was expected
+	'google,veyron-mighty-rev4' was expected
+	'google,veyron-minnie-rev3' was expected
+	'google,veyron-pinky' was expected
+	'google,scarlet-rev15' was expected
+	'google,scarlet-rev15-sku4' was expected
+	'google,veyron-speedy-rev8' was expected
+	'google,veyron-tiger-rev7' was expected
+	'rockchip,rk3229' was expected
+	'phytec,rk3288-phycore-som' was expected
+	'pine64,pinenote' was expected
+	'pine64,pinetab2' was expected
+	'pine64,rockpro64' was expected
+	'pine64,soquartz' was expected
+	'radxa,cm3' was expected
+	'radxa,cm3i' was expected
+	'rockchip,rk3528' was expected
+	'rockchip,rk3582' was expected
+	'radxa,rockpi4' was expected
+	'vamrs,rk3288-vmarc-som' was expected
+	'vamrs,rk3399pro-vmarc-som' was expected
+	'rockchip,rv1109' was expected
+	'rockchip,rk3036' was expected
+	'rockchip,px3' was expected
+	'rockchip,px30' was expected
+	'rockchip,px5' was expected
+	'rockchip,rk3228' was expected
+	'radxa,cm5' is not one of ['rockchip,rv1126', 'rockchip,rv1109']
+	'tsd,rk3588-tiger' was expected
+	'xunlong,orangepi-3b' was expected
+	'rockchip,rk3318' was expected
+	'rockchip,rv1126' was expected
+	'google,bob-rev11' was expected
+	'google,veyron' was expected
+	'google,veyron-fievel-rev6' was expected
+	'google,gru-rev13' was expected
+	'google,veyron-jaq-rev3' was expected
+	'google,veyron-jerry-rev13' was expected
+	'google,kevin-rev13' was expected
+	'google,veyron-mickey-rev6' was expected
+	'google,veyron-mighty-rev3' was expected
+	'google,veyron-minnie-rev2' was expected
+	'google,scarlet-rev14-sku0' was expected
+	'google,scarlet-rev14-sku7' was expected
+	'google,scarlet-rev15-sku6' was expected
+	'google,veyron-speedy-rev7' was expected
+	'google,veyron-tiger-rev6' was expected
+	'rockchip,rk3399pro' was expected
+	from schema $id: http://devicetree.org/schemas/arm/rockchip.yaml#
+arch/arm64/boot/dts/rockchip/rk3588s-radxa-cm5-io.dtb: /: failed to match any schema with compatible: ['radxa,cm5-io', 'radxa,cm5', 'rockchip,rk3588s']
+arch/arm64/boot/dts/rockchip/rk3588s-radxa-cm5-io.dtb: /: failed to match any schema with compatible: ['radxa,cm5-io', 'radxa,cm5', 'rockchip,rk3588s']
+arch/arm64/boot/dts/rockchip/rk3588s-radxa-cm5-io.dtb: syscon@fd5d0000 (rockchip,rk3588-usb2phy-grf): usb2phy@0:otg-port: 'rockchip,typec-vbus-det' does not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/soc/rockchip/grf.yaml#
+arch/arm64/boot/dts/rockchip/rk3588s-radxa-cm5-io.dtb: usb2phy@0 (rockchip,rk3588-usb2phy): otg-port: 'rockchip,typec-vbus-det' does not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/phy/rockchip,inno-usb2phy.yaml#
+arch/arm64/boot/dts/rockchip/rk3588s-radxa-cm5-io.dtb: leds (gpio-leds): 'pinctrl-0' is a dependency of 'pinctrl-names'
+	from schema $id: http://devicetree.org/schemas/pinctrl/pinctrl-consumer.yaml#
+
+
+
+
+
 
