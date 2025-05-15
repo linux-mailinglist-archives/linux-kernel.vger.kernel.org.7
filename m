@@ -1,251 +1,193 @@
-Return-Path: <linux-kernel+bounces-648986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-648916-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5FCEAB7E6C
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 08:59:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6395AAB7D8A
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 08:06:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 493781BA388A
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 06:59:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1270F1BA73E0
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 06:06:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F1BB29712C;
-	Thu, 15 May 2025 06:59:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D1EF280A57;
+	Thu, 15 May 2025 06:06:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="NUSHZHNn"
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CiuQP/5r"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFFC5223DD3
-	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 06:59:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 666701A5B95
+	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 06:06:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747292355; cv=none; b=s33+vq3PqQHMEY243ibJz7m71s/rEgtB1ygwieQdcYniaKY9CUYkAHv9NZkGc9IF3yVQPeoxktyzkWiZ0uDVtuRDwhVCA8kU+YmBEp8XCjx4bJI4MOTwqRZSbcBT3deILZ6aNS/Rqri0fOEU0k96A9HTskB8xv5wekDyfoGzJIs=
+	t=1747289180; cv=none; b=ZxdWtor3mNAoLUV2jr34QbLd5vHRaRV5DxpvKEvOdvbmwu3J6vk+PduY2XEHjlizK4kJthxW3qSbxkcacTlYmw1UQn5VH+A+iiPly2mjoMkFlVK6MuSiSce4EMQ617BxLERkGYk0fYzOLbDhKb+tZjsqG+OHkXv3vbIxDYjwuz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747292355; c=relaxed/simple;
-	bh=VzHZDzeGcAsxMELQfK+UwdZld386ICntUsLleK7v4Uw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=j+NqsW1VxXa3XatmOTvZugV6G8CgOhsHuuAnOnOErOO7scI0tMbwzyJjDn4nkf8KVuF2NXgzA5FRsZc93UbmVGuTPgKkMp8p/oRuPMGUQMg/2Ez1ZBGFX3hCXdoBXP0IVHNwMz1BobvAIQEALJfTM/HN1KYRtbwbgwFTAnNSnLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=NUSHZHNn; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250515065911epoutp04ea8f881d3bf1f0c83286f09d54977e85~-oSL3RKzr1814718147epoutp04f
-	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 06:59:11 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250515065911epoutp04ea8f881d3bf1f0c83286f09d54977e85~-oSL3RKzr1814718147epoutp04f
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1747292352;
-	bh=nWQ9RbDTr3QMZkhm5WS2CLAMcWq0hIzn+BFwoQi0ZFY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=NUSHZHNn0UfU+uauxVsFHBlO30U2nXa43Ta9wgRyrTovrukJrikapiLJxxyBTzXYT
-	 HEe1drXetLTkCPkSunVB5C6XaFbgl/R2+5TIDPq17KETQ241Q67oQTaIUayDeN22jm
-	 0N1AYF+o03qu3/GtPWDhBT2IysVzW9HMQpnkWSJw=
-Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPS id
-	20250515065911epcas5p41bcb1de9e7512ca25c97cd03b5c83acc~-oSLQfaaI0776807768epcas5p4f;
-	Thu, 15 May 2025 06:59:11 +0000 (GMT)
-Received: from epcas5p1.samsung.com (unknown [182.195.38.180]) by
-	epsnrtp01.localdomain (Postfix) with ESMTP id 4Zygzy0944z6B9m4; Thu, 15 May
-	2025 06:59:10 +0000 (GMT)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-	20250514133847epcas5p41a1c413aecefa2fab32357c6c69e999c~-aFyjmUrV2287522875epcas5p4L;
-	Wed, 14 May 2025 13:38:47 +0000 (GMT)
-Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20250514133847epsmtrp1b613b8402e1c69fca9dc0a3110e1fa28~-aFybYbdn2249722497epsmtrp1z;
-	Wed, 14 May 2025 13:38:47 +0000 (GMT)
-X-AuditID: b6c32a52-41dfa70000004c16-f9-68249ce7dbf3
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	69.C5.19478.7EC94286; Wed, 14 May 2025 22:38:47 +0900 (KST)
-Received: from bose.samsungds.net (unknown [107.108.83.9]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20250514133844epsmtip2f6b992b0d8003f6c607207d2258a7f39~-aFvlXfuT2568925689epsmtip2C;
-	Wed, 14 May 2025 13:38:44 +0000 (GMT)
-From: Pritam Manohar Sutar <pritam.sutar@samsung.com>
-To: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, alim.akhtar@samsung.com,
-	andre.draszik@linaro.org, peter.griffin@linaro.org, kauschluss@disroot.org,
-	m.szyprowski@samsung.com, s.nawrocki@samsung.com
-Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, rosa.pila@samsung.com,
-	dev.tailor@samsung.com, faraz.ata@samsung.com, muhammed.ali@samsung.com,
-	selvarasu.g@samsung.com, Pritam Manohar Sutar <pritam.sutar@samsung.com>
-Subject: [PATCH 2/2] phy: exyons5-usbdrd: support HS phy for ExynosAutov920
-Date: Wed, 14 May 2025 19:18:13 +0530
-Message-Id: <20250514134813.380807-3-pritam.sutar@samsung.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250514134813.380807-1-pritam.sutar@samsung.com>
+	s=arc-20240116; t=1747289180; c=relaxed/simple;
+	bh=KgjVcgr/14LclEpcLsxeXxOySrceHDQLswBb2FensOs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=O0u7AdJyHRqAR7y61HftGJb3DxUT53zkhDDr/x0yX3w1YbPYgUnCbsyS9VmQm6j3bp1V20c9ZEJ7IdgErhmr7+T43i77P9aC6IyLJFTWyYM3emKqW6/rOip0z32y/B7JPe0NxPJOSCxqPPcK3kLWLJ2Dt+RhYtSCSOUJqp3WqZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CiuQP/5r; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1747289177;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KgjVcgr/14LclEpcLsxeXxOySrceHDQLswBb2FensOs=;
+	b=CiuQP/5rj0Xq4u/c2uBBd54Y7tCEXOerKGd5Fii5z0fnV9bQFH3oM4OxGIqMstksOzV0Ox
+	pjFMTVWuoqPoSU6gB5wN/bBqZgSmIcAk8SM5K6UTYfklFYy8ZthztaYTC/7xryU1rEojHK
+	1AjEoaCXuhKwOudmQASqF4gqXQw+M1Q=
+Received: from mail-vk1-f198.google.com (mail-vk1-f198.google.com
+ [209.85.221.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-185-QdfkqsG9NyWWEyANq0HZrA-1; Thu, 15 May 2025 02:06:15 -0400
+X-MC-Unique: QdfkqsG9NyWWEyANq0HZrA-1
+X-Mimecast-MFC-AGG-ID: QdfkqsG9NyWWEyANq0HZrA_1747289175
+Received: by mail-vk1-f198.google.com with SMTP id 71dfb90a1353d-52c63f61c53so156591e0c.3
+        for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 23:06:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747289175; x=1747893975;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KgjVcgr/14LclEpcLsxeXxOySrceHDQLswBb2FensOs=;
+        b=tOfdi+Y/t04Bm76MWR70yx6q01OE8nExsT4kgFjYGtec3styPx8xTYmQNFbrn1BCjM
+         IQUYcnnXZIWosKGKBF9d+U/+ZQGkeKX4BiNdAeqZAvaAocgabC44mzz4gMBt/hf+DShI
+         DZ7CPHR49eGXOW57q4pMdilIPD5REu3SlQhgEsjagNNI5GAetYSEAXbHcoqbsS2fuv8H
+         BGwNP8ufDP7EZkhBUI3a4WxfwRJUhxc++gzTIgu92+ZA02BM1syzMFhDmIyDZLJ3wLSj
+         M2JE3+mFcZbMc4eNzNo48r9MUTelrUlaWn2wInDHjXKxRrYxYXWW3aRv1eeNhq60VmyG
+         csFA==
+X-Forwarded-Encrypted: i=1; AJvYcCVUnNq8aq/76Ec15FBYryaKZ1PAIxFzZbSKOa2iM1qL8B5zEnyM78Ge7ltVUyzceUOiq0aCp9kvn/sNaYI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6hhpAXP8ckPjat+zYteM/TY8JRTrUBPDlXwoI4wl5gsYJkMgU
+	vS4FrQZg3PPWTTOUJFlnQ9yyen/L7GM9keyUu+/GiczesZ/EPy4GykGuHgurqLXDhNtXC4MdGkt
+	0VYS3zBjHiYakhVhfd7VT24ew/AhpkjeI/ZkAD7zGzsOIRFtG41NDgSM1pgP7JeXzvWvlhp51yU
+	xDZ1+hD0jbbzvWQyyH+t8yj1puDuDuSH6P1gyX
+X-Gm-Gg: ASbGncveW84PMPpRGyZA1i0W85c1H4dXv3ZHrwV8/X/u4c3BKcT5GaLJrLdnn9XnJbm
+	au7aGzWICCwYdWvl/0C39wPIhsocGS53VdYdn9qpegBgWuOQxCsC1yboVbbMKjO2J+GdmpA==
+X-Received: by 2002:a05:6102:3e26:b0:4d7:11d1:c24e with SMTP id ada2fe7eead31-4df7ddd4266mr6046455137.21.1747289174763;
+        Wed, 14 May 2025 23:06:14 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEIP+CRMt7SY3lS0FZeE06/dgVCIbatM2gkAuNCY5+ReAryTvEEPpoJydTxKcT2SH/Us6iz+8kk5C0x0X/14DY=
+X-Received: by 2002:a05:6102:3e26:b0:4d7:11d1:c24e with SMTP id
+ ada2fe7eead31-4df7ddd4266mr6046447137.21.1747289174433; Wed, 14 May 2025
+ 23:06:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprAIsWRmVeSWpSXmKPExsWy7bCSvO7zOSoZBjuXilg8mLeNzWLLq80s
-	Fmv2nmOyuLdjGbvF/CPnWC2u3VjIbvHn33k2i6Ot/5ktXs66x2ax6fE1VovLu+awWUxY9Y3F
-	Ysb5fUwWa4/cZbc4/6KL1WLDjH8sFs/urWCz+L9nB7vFl58PmC0Ov2lntTiy/COTxc47J5gd
-	xDxOrtvM5LFpVSebx51re9g8Ni+p9+jbsorR4/MmuQC2KC6blNSczLLUIn27BK6M/6svsRTc
-	VKy4ei61gXGpTBcjJ4eEgInE8j9rmboYuTiEBLYzSmx9fJMJIiEj8WjaRlYIW1hi5b/n7BBF
-	bxklTm/YwdzFyMHBJmAqMXFPAkhcRKCHSeLp1R9sIA6zwCMmiQNbvoB1Cwt4S5yc+JsRpIFF
-	QFWisyMVxOQVsJN4cEQdYr68xP6DZ5lBbE4Be4nuR//AbhACKnl09Ak7iM0rIChxcuYTFhCb
-	Gai+eets5gmMArOQpGYhSS1gZFrFKJpaUJybnptcYKhXnJhbXJqXrpecn7uJERxpWkE7GJet
-	/6t3iJGJg/EQowQHs5II7/Us5Qwh3pTEyqrUovz4otKc1OJDjNIcLErivMo5nSlCAumJJanZ
-	qakFqUUwWSYOTqkGJn6BCe3vu/+u/cR4e8653NNzWKJO5dXrb9njcVbjjOBk47e3dkuYhLBW
-	fHy9wfaBTPmZtHvSIUbTj1uUlmbrPFryf4rh3JmdH+YHrzv5f+kuR60OI78apw8rzxQ9t+af
-	J6/ydsYBG/NbR+bfbdzqXLjvdr3K9NZ3mud0GvoKDqw+u3Npn6WuV5rchwsfOg3tXqx79/Tb
-	L7viDblnQgVU63PSm9lyhZ+tvP0rfnLmxB0Wz2z7bI6fbbt5yIHLxOzq3AOJJ58lnPsiLn/+
-	AJcA9/lU8xIX48n1Z8/bH/SK4VWzc38X5hUS5Dizg/nAnDUPo2+4FF7ec61G6YmQX9bjp4U3
-	7oo8/31imeNZ3/ttT/qUWIozEg21mIuKEwEf6NV8IwMAAA==
-X-CMS-MailID: 20250514133847epcas5p41a1c413aecefa2fab32357c6c69e999c
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-542,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250514133847epcas5p41a1c413aecefa2fab32357c6c69e999c
-References: <20250514134813.380807-1-pritam.sutar@samsung.com>
-	<CGME20250514133847epcas5p41a1c413aecefa2fab32357c6c69e999c@epcas5p4.samsung.com>
+References: <20250421024457.112163-1-lulu@redhat.com> <20250421024457.112163-5-lulu@redhat.com>
+ <CACGkMEt-ewTqeHDMq847WDEGiW+x-TEPG6GTDDUbayVmuiVvzg@mail.gmail.com>
+ <CACGkMEte6Lobr+tFM9ZmrDWYOpMtN6Xy=rzvTy=YxSPkHaVdPA@mail.gmail.com>
+ <CACGkMEstbCKdHahYE6cXXu1kvFxiVGoBw3sr4aGs4=MiDE4azg@mail.gmail.com>
+ <20250429065044-mutt-send-email-mst@kernel.org> <CACGkMEteBReoezvqp0za98z7W3k_gHOeSpALBxRMhjvj_oXcOw@mail.gmail.com>
+ <20250430052424-mutt-send-email-mst@kernel.org> <CACGkMEub28qBCe4Mw13Q5r-VX4771tBZ1zG=YVuty0VBi2UeWg@mail.gmail.com>
+ <20250513030744-mutt-send-email-mst@kernel.org> <CACGkMEtm75uu0SyEdhRjUGfbhGF4o=X1VT7t7_SK+uge=CzkFQ@mail.gmail.com>
+In-Reply-To: <CACGkMEtm75uu0SyEdhRjUGfbhGF4o=X1VT7t7_SK+uge=CzkFQ@mail.gmail.com>
+From: Cindy Lu <lulu@redhat.com>
+Date: Thu, 15 May 2025 14:05:37 +0800
+X-Gm-Features: AX0GCFsXKSChOXDfZIrQa40yvOWdPl0wYiICvr05EheIP_f5Oktdl93IFH2XEdk
+Message-ID: <CACLfguVGmQ3FzhheCfe55m+SG-kvNXsJ-YopkiBAyLCvkp81dw@mail.gmail.com>
+Subject: Re: [PATCH v9 4/4] vhost: Add a KConfig knob to enable IOCTL VHOST_FORK_FROM_OWNER
+To: Jason Wang <jasowang@redhat.com>
+Cc: "Michael S. Tsirkin" <mst@redhat.com>, michael.christie@oracle.com, sgarzare@redhat.com, 
+	linux-kernel@vger.kernel.org, virtualization@lists.linux-foundation.org, 
+	netdev@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This SoC has a single USB 3.1 DRD combo phy and three USB2.0
-DRD HS phy controllers those only support the UTMI+ interface.
+Thank you for the comments; I will prepare a new patch version.
 
-Support only UTMI+ for this SoC which is very similar to what
-the existing Exynos850 supports.
+Thanks,
+Cindy
 
-The combo phy supports both UTMI+ (HS) and PIPE3 (SS) and is
-out of scope of this commit.
 
-Add required change in phy driver to support HS phy for this SoC.
-
-Signed-off-by: Pritam Manohar Sutar <pritam.sutar@samsung.com>
----
- drivers/phy/samsung/phy-exynos5-usbdrd.c | 85 ++++++++++++++++++++++++
- 1 file changed, 85 insertions(+)
-
-diff --git a/drivers/phy/samsung/phy-exynos5-usbdrd.c b/drivers/phy/samsung/phy-exynos5-usbdrd.c
-index 634c4310c660..7b4b80319c5c 100644
---- a/drivers/phy/samsung/phy-exynos5-usbdrd.c
-+++ b/drivers/phy/samsung/phy-exynos5-usbdrd.c
-@@ -177,6 +177,9 @@
- #define HSPHYPLLTUNE_PLL_P_TUNE			GENMASK(3, 0)
- 
- /* Exynos850: USB DRD PHY registers */
-+#define EXYNOSAUTOv920_DRD_CTRL_VER		0x00
-+#define GET_CTRL_MAJOR_VERSION(_x)		(((_x) >> 24) & 0xff)
-+
- #define EXYNOS850_DRD_LINKCTRL			0x04
- #define LINKCTRL_FORCE_RXELECIDLE		BIT(18)
- #define LINKCTRL_FORCE_PHYSTATUS		BIT(17)
-@@ -1772,6 +1775,10 @@ static const char * const exynos5_regulator_names[] = {
- 	"vbus", "vbus-boost",
- };
- 
-+static const char * const exynosautov920_clk_names[] = {
-+	"ext_xtal",
-+};
-+
- static const struct exynos5_usbdrd_phy_drvdata exynos5420_usbdrd_phy = {
- 	.phy_cfg		= phy_cfg_exynos5,
- 	.phy_ops		= &exynos5_usbdrd_phy_ops,
-@@ -1847,6 +1854,81 @@ static const struct exynos5_usbdrd_phy_drvdata exynos850_usbdrd_phy = {
- 	.n_regulators		= ARRAY_SIZE(exynos5_regulator_names),
- };
- 
-+static void exynosautov920_usbdrd_utmi_init(struct exynos5_usbdrd_phy *phy_drd)
-+{
-+	u32 version;
-+
-+	version = readl(phy_drd->reg_phy + EXYNOSAUTOv920_DRD_CTRL_VER);
-+	dev_info(phy_drd->dev, "usbphy: version:0x%x\n", version);
-+
-+	if (GET_CTRL_MAJOR_VERSION(version) == 0x3)
-+		/* utmi init for exynosautov920 HS phy */
-+		exynos850_usbdrd_utmi_init(phy_drd);
-+}
-+
-+static int exynosautov920_usbdrd_phy_init(struct phy *phy)
-+{
-+	struct phy_usb_instance *inst = phy_get_drvdata(phy);
-+	struct exynos5_usbdrd_phy *phy_drd = to_usbdrd_phy(inst);
-+	int ret = 0;
-+
-+	ret = clk_bulk_prepare_enable(phy_drd->drv_data->n_clks, phy_drd->clks);
-+	if (ret)
-+		return ret;
-+
-+	/* UTMI or PIPE3 specific init */
-+	inst->phy_cfg->phy_init(phy_drd);
-+
-+	clk_bulk_disable_unprepare(phy_drd->drv_data->n_clks, phy_drd->clks);
-+
-+	return 0;
-+}
-+
-+static void exynosautov920_v3p1_phy_dis(struct phy *phy)
-+{
-+	struct phy_usb_instance *inst = phy_get_drvdata(phy);
-+	struct exynos5_usbdrd_phy *phy_drd = to_usbdrd_phy(inst);
-+	void __iomem *reg_phy = phy_drd->reg_phy;
-+	u32 version;
-+
-+	version = readl(reg_phy + EXYNOSAUTOv920_DRD_CTRL_VER);
-+
-+	if (GET_CTRL_MAJOR_VERSION(version) == 0x3)
-+		exynos850_usbdrd_phy_exit(phy);
-+}
-+
-+static int exynosautov920_usbdrd_phy_exit(struct phy *phy)
-+{
-+	struct phy_usb_instance *inst = phy_get_drvdata(phy);
-+
-+	if (inst->phy_cfg->id == EXYNOS5_DRDPHY_UTMI)
-+		exynosautov920_v3p1_phy_dis(phy);
-+
-+	return 0;
-+}
-+
-+static const struct phy_ops exynosautov920_usbdrd_phy_ops = {
-+	.init		= exynosautov920_usbdrd_phy_init,
-+	.exit		= exynosautov920_usbdrd_phy_exit,
-+	.owner		= THIS_MODULE,
-+};
-+
-+static const struct exynos5_usbdrd_phy_config phy_cfg_exynosautov920[] = {
-+	{
-+		.id		= EXYNOS5_DRDPHY_UTMI,
-+		.phy_init	= exynosautov920_usbdrd_utmi_init,
-+	},
-+};
-+
-+static const struct exynos5_usbdrd_phy_drvdata exynosautov920_usb31drd_phy = {
-+	.phy_cfg		= phy_cfg_exynosautov920,
-+	.phy_ops		= &exynosautov920_usbdrd_phy_ops,
-+	.clk_names		= exynosautov920_clk_names,
-+	.n_clks			= ARRAY_SIZE(exynosautov920_clk_names),
-+	.core_clk_names		= exynos5_core_clk_names,
-+	.n_core_clks		= ARRAY_SIZE(exynos5_core_clk_names),
-+};
-+
- static const struct exynos5_usbdrd_phy_config phy_cfg_gs101[] = {
- 	{
- 		.id		= EXYNOS5_DRDPHY_UTMI,
-@@ -2047,6 +2129,9 @@ static const struct of_device_id exynos5_usbdrd_phy_of_match[] = {
- 	}, {
- 		.compatible = "samsung,exynos850-usbdrd-phy",
- 		.data = &exynos850_usbdrd_phy
-+	}, {
-+		.compatible = "samsung,exynosautov920-usb31drd-phy",
-+		.data = &exynosautov920_usb31drd_phy
- 	},
- 	{ },
- };
--- 
-2.34.1
+On Wed, May 14, 2025 at 10:53=E2=80=AFAM Jason Wang <jasowang@redhat.com> w=
+rote:
+>
+> On Tue, May 13, 2025 at 3:09=E2=80=AFPM Michael S. Tsirkin <mst@redhat.co=
+m> wrote:
+> >
+> > On Tue, May 13, 2025 at 12:08:51PM +0800, Jason Wang wrote:
+> > > On Wed, Apr 30, 2025 at 5:27=E2=80=AFPM Michael S. Tsirkin <mst@redha=
+t.com> wrote:
+> > > >
+> > > > On Wed, Apr 30, 2025 at 11:34:49AM +0800, Jason Wang wrote:
+> > > > > On Tue, Apr 29, 2025 at 6:56=E2=80=AFPM Michael S. Tsirkin <mst@r=
+edhat.com> wrote:
+> > > > > >
+> > > > > > On Tue, Apr 29, 2025 at 11:39:37AM +0800, Jason Wang wrote:
+> > > > > > > On Mon, Apr 21, 2025 at 11:46=E2=80=AFAM Jason Wang <jasowang=
+@redhat.com> wrote:
+> > > > > > > >
+> > > > > > > > On Mon, Apr 21, 2025 at 11:45=E2=80=AFAM Jason Wang <jasowa=
+ng@redhat.com> wrote:
+> > > > > > > > >
+> > > > > > > > > On Mon, Apr 21, 2025 at 10:45=E2=80=AFAM Cindy Lu <lulu@r=
+edhat.com> wrote:
+> > > > > > > > > >
+> > > > > > > > > > Introduce a new config knob `CONFIG_VHOST_ENABLE_FORK_O=
+WNER_IOCTL`,
+> > > > > > > > > > to control the availability of the `VHOST_FORK_FROM_OWN=
+ER` ioctl.
+> > > > > > > > > > When CONFIG_VHOST_ENABLE_FORK_OWNER_IOCTL is set to n, =
+the ioctl
+> > > > > > > > > > is disabled, and any attempt to use it will result in f=
+ailure.
+> > > > > > > > >
+> > > > > > > > > I think we need to describe why the default value was cho=
+sen to be false.
+> > > > > > > > >
+> > > > > > > > > What's more, should we document the implications here?
+> > > > > > > > >
+> > > > > > > > > inherit_owner was set to false: this means "legacy" users=
+pace may
+> > > > > > > >
+> > > > > > > > I meant "true" actually.
+> > > > > > >
+> > > > > > > MIchael, I'd expect inherit_owner to be false. Otherwise lega=
+cy
+> > > > > > > applications need to be modified in order to get the behaviou=
+r
+> > > > > > > recovered which is an impossible taks.
+> > > > > > >
+> > > > > > > Any idea on this?
+> > > > > > >
+> > > > > > > Thanks
+> > > >
+> > > > So, let's say we had a modparam? Enough for this customer?
+> > > > WDYT?
+> > >
+> > > Just to make sure I understand the proposal.
+> > >
+> > > Did you mean a module parameter like "inherit_owner_by_default"? I
+> > > think it would be fine if we make it false by default.
+> > >
+> > > Thanks
+> >
+> > I think we should keep it true by default, changing the default
+> > risks regressing what we already fixes.
+>
+> I think it's not a regression since it comes since the day vhost is
+> introduced. To my understanding the real regression is the user space
+> noticeable behaviour changes introduced by vhost thread.
+>
+> > The specific customer can
+> > flip the modparam and be happy.
+>
+> If you stick to the false as default, I'm fine.
+>
+> Thanks
+>
+> >
+> > > >
+> > > > --
+> > > > MST
+> > > >
+> >
+>
 
 
