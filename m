@@ -1,67 +1,67 @@
-Return-Path: <linux-kernel+bounces-649977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-649979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44FD8AB8BD1
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 18:04:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E89D9AB8BC0
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 18:01:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72EC4A05137
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 15:58:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3A00D7B96F7
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 15:58:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5FD221B91F;
-	Thu, 15 May 2025 15:58:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A48120E71C;
+	Thu, 15 May 2025 15:58:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="oSm1j8ED"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="q2hewEgT"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94A1721B910
-	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 15:58:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18B57215198
+	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 15:58:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747324710; cv=none; b=eDEneR5khmD/av1eKY1g4H3ylAc2uWD8yHLQReDhGoU35emIrFIFoP+QvEMFzW13CE63MFNaEroKQny89rNOESQH9qkQXquwQKVvnAUBowD0bL2AhM0Fp8K4sVJezZp6PQagMpO5fzLdndWb1YyDKpqtpcrb3uFsn2/D2x4Se/M=
+	t=1747324726; cv=none; b=sRzoFu3Y1yovr1ncF02fLFVr20FAs7HNzdtyYmu0CBlLr8tJ0nzCDNDAf1Lw7EhDTKiXst1Pp86mAIvx9yzcYgYWhbUkOeRuuz4PweXlFb676OaW0yk8j+Jjx9z/3QG+vcDsys7F9PIYXiArnyckKoffdva+v+/rYq0DjqHFbis=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747324710; c=relaxed/simple;
-	bh=kSKMm/FXtlzTRSCHJVngzV2OL0Pc+dDJL7txRsufWog=;
+	s=arc-20240116; t=1747324726; c=relaxed/simple;
+	bh=5CHoizMumOdskfRaR8+rWOrOUJnCoJGJXmzAc9In1v8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=reeoDgg2TF/24xjXp9JHA5Mi7tXbVagNfssiavt/ZGFds/aAnNjd5VsDeJCghXzH6NU5eJ1bzk6xph+QfFQE6Ox8MNNYIoE5XrUFl+Yp4tONceIVEZyEtO2O2PkQD3NE9m485zLZoanZZSzUO/+rOAAwYFtD+O6wp97WNJzA0/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=oSm1j8ED; arc=none smtp.client-ip=148.163.158.5
+	 MIME-Version; b=VrKbBJzc0EBeJ+DkH117IKqstkyjp6ya+j3XqRDAbHt9eKMHji2ZNvQjmAlxMUSrBdsCeFbHaSKwj66nAyb/Q6Rc4RCauK/5iUONVZeWp9MEqIaiP6K2227i6AYf1BgT/w2sVRuBkcmOzJMiC3d4Z7Ag7/36+0OE/zVGbAl7udA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=q2hewEgT; arc=none smtp.client-ip=148.163.156.1
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54FDnB0g032364;
-	Thu, 15 May 2025 15:58:23 GMT
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54FCg08s016376;
+	Thu, 15 May 2025 15:58:25 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
 	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=pp1; bh=5pmcKHTdpYl4PuFpd
-	P3fj1feUngFXB25e/AW53SWL6I=; b=oSm1j8EDhZEHtGzNqYbjttKqnrqEqJM1x
-	Vmd923fvECedo4cpviWDBHa0BRCqBgX5n0XocwvgH6SqykcDG1GEQoQ6GSjy62Mz
-	p0wYOGWfoLF4q44vZPG9yCU/Hx9nQR/xkCmKPe6uXxGGb+3viEDwKEYygjMtfgwW
-	+5FHq/6e0MaovdZGAw1pkuzGNOVueZZiI9CVmaTcyrarEM3TPCMNgxgp8yCppxFc
-	MIscPa1DpCrqnrGUVGZFuT1JF4EUjOPN80GQPLkiwj+Volu2QjaqbSdw6fCdkcrm
-	yxXM97A0efdmYHJHZ21VTIeEKzOD7hfGtcMxTLxj8HcegSDN2HI6g==
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46nhg30qdx-1
+	:mime-version:references:subject:to; s=pp1; bh=dNygolg3EASfG78a7
+	N6xl4X4pbzgFYRxyhCa8HZzzrM=; b=q2hewEgTk3NrfILYmINXSomjf34Ksn0mW
+	FSet/6TJDiBw/SkjJT87NhCNQLl2FCz7ki6IDNnEl/C3gP7oe2VSW95aDso4ZQDE
+	vfA3ttfn4Qzf8x9ENHZNa0Dw0j+NDuH9+GRGgrGxF4dqyMVZ1k5xBkQr6tIwIRYa
+	hHKxO2vO3nIwPt7Q7JSN+cQhnSajPFHL5wIXvT5eFecxUOaVsz9qWOVd+YKgDUQ+
+	g5p91N9HD6FNOUsJzlm9YPfi1vpNDYENs2X6hP1nqY4fUtZxMmZQN1WlEnUEicPR
+	G5m9Ynrw1BbkHhFXeOlSHasmp5nYfogZSgK6f//SiANuIkfz6TveQ==
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46nd4gt8t4-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 15 May 2025 15:58:23 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 54FEKaE0015498;
-	Thu, 15 May 2025 15:58:22 GMT
+	Thu, 15 May 2025 15:58:24 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 54FE0POe024288;
+	Thu, 15 May 2025 15:58:23 GMT
 Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 46mbfq326u-1
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 46mbfsb34e-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 15 May 2025 15:58:22 +0000
+	Thu, 15 May 2025 15:58:23 +0000
 Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 54FFwIP941222638
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 54FFwJk057934096
 	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
 	Thu, 15 May 2025 15:58:19 GMT
 Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id D203120073;
-	Thu, 15 May 2025 15:58:18 +0000 (GMT)
+	by IMSVA (Postfix) with ESMTP id 6E67720071;
+	Thu, 15 May 2025 15:58:19 +0000 (GMT)
 Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 574742006A;
+	by IMSVA (Postfix) with ESMTP id E907E2006A;
 	Thu, 15 May 2025 15:58:18 +0000 (GMT)
 Received: from heavy.ibm.com (unknown [9.111.40.6])
 	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
@@ -73,9 +73,9 @@ Cc: linux-kernel@vger.kernel.org, Heiko Carstens <hca@linux.ibm.com>,
         Vasily Gorbik <gor@linux.ibm.com>,
         Alexander Gordeev <agordeev@linux.ibm.com>,
         Ilya Leoshkevich <iii@linux.ibm.com>
-Subject: [PATCH 2/3] scripts/gdb/symbols: factor out pagination_off()
-Date: Thu, 15 May 2025 17:52:12 +0200
-Message-ID: <20250515155811.114392-3-iii@linux.ibm.com>
+Subject: [PATCH 3/3] scripts/gdb/symbols: determine KASLR offset on s390 during early boot
+Date: Thu, 15 May 2025 17:52:13 +0200
+Message-ID: <20250515155811.114392-4-iii@linux.ibm.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250515155811.114392-1-iii@linux.ibm.com>
 References: <20250515155811.114392-1-iii@linux.ibm.com>
@@ -87,82 +87,63 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=Cf0I5Krl c=1 sm=1 tr=0 ts=68260f1f cx=c_pps a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17 a=dt9VzEwgFbYA:10 a=VnNF1IyMAAAA:8 a=CQlH1tSRAcpKiUbNx1MA:9
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTE1MDE1NSBTYWx0ZWRfX6KrQnU9flpzT Yc0voG6r8Oo0/Pxg9ULk/jIOucJ8QnpF+aPWQ6Mx55/NzwoBm0F2XJtl0o9rirl8WxNPAqX4m5s NW9PWyYK8A1oTwTtalWe/7/3gSRt4cPR8nM4GF6Hf17ZqQgu/YwhK3M5w5YjJU+7bd7mlAm/Jw/
- /m8SrCrmYJuf64020gyi9seI5uc5e9rtjIzI8/45IVoswHkemNs9QuFCvR6OS2IZPsSkAN5nY8l AUEHUiCUSgU02qlSClvAzgCyOVcezbkMigoMfBes4+5RXBhrWl1U4sOWXMalk50LRhb0Ied2f9K zmERXeooOS9dx40tFCNJXdTlipVhm6njCWDS4O/dJn66rMpnINqQXKnfYvsqmG7KB5ml666BQDw
- bVLI8O1aikgCshEuSEpjcaVOV1OAt0jzp8701/odvjbTur9DzoN0lK5Sy01MqrLnRrDJcQ+3
-X-Proofpoint-GUID: rhyJD-s3I1hpssDGwGvB5-lpWUxTpv0J
-X-Proofpoint-ORIG-GUID: rhyJD-s3I1hpssDGwGvB5-lpWUxTpv0J
+X-Proofpoint-GUID: JxVtF6MuqiyAsiF86_jXQtSuV93jDlsl
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTE1MDE1NSBTYWx0ZWRfXxQ3J+KpYAcBU e9aymZsSwaPXTxMC01Xw5QgC41POeHPPyAPKW8cvGaSRO45B4EDIQDbf86mOiTrUoiRH4Rj5jo8 HXofRsiGmN8hk9cWHb+ui/9XIpEZyVJjteCIEWRcPHoWffZCLUca+fzy1rLQX1IbEBR3Sfl3cFU
+ Gee5i8/kQ7Mj2K0z+2Vl6gSGHPCYe7p81PfCq16EFfpJM763H9HFQqX6oEztIxlgiuY3mUE51TB mbldYS4W/diXW8TGTji5lUeuIlcB2IIDLIb9vHDqckek8JrLT7zMEGzmufwYrc/Bf2TSICEJyvV 5eTwVyhOevNL1oyWbHPG06cx5Ae/0yxKg5GdaJDj5OkG3VGmQ+zmSxME6mATGJTbqg1Y7iKNrwd
+ 1ZRKqmLqiXbQJB3JpMVyft3ERhKNq09dtyeApBCPsGUt7gbrGtOlzzJlPJJO8YX1hRgl8sHR
+X-Proofpoint-ORIG-GUID: JxVtF6MuqiyAsiF86_jXQtSuV93jDlsl
+X-Authority-Analysis: v=2.4 cv=OsNPyz/t c=1 sm=1 tr=0 ts=68260f20 cx=c_pps a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17 a=dt9VzEwgFbYA:10 a=VnNF1IyMAAAA:8 a=Y1BJ8SPxlSKVlgg0ul0A:9
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
  definitions=2025-05-15_06,2025-05-15_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 suspectscore=0
- spamscore=0 malwarescore=0 lowpriorityscore=0 mlxlogscore=758
- impostorscore=0 phishscore=0 priorityscore=1501 mlxscore=0 bulkscore=0
- adultscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ suspectscore=0 malwarescore=0 spamscore=0 lowpriorityscore=0 clxscore=1015
+ impostorscore=0 mlxlogscore=999 mlxscore=0 adultscore=0 bulkscore=0
+ phishscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
  adjust=0 reason=mlx scancount=1 engine=8.19.0-2505070000
  definitions=main-2505150155
 
-Move the code that turns off pagination into a separate function. It
-will be useful later in order to prevent hangs when loading symbols for
-kernel image in physical memory during s390 early boot.
+Using lx-symbols during s390 early boot fails with:
+
+    Error occurred in Python: 'utf-8' codec can't decode byte 0xcb in position 0: invalid continuation byte
+
+The reason is that s390 decompressor's startup_kernel() does not create
+vmcoreinfo note, and sets vmcore_info to kernel's physical base. This
+confuses get_vmcore_s390().
+
+Fix by handling this special case. Extract vm_layout.kaslr_offset from
+the kernel image in physical memory, which is placed there by the
+decompressor using the __bootdata_preserved mechanism, and generate
+a synthetic vmcoreinfo note from it.
 
 Signed-off-by: Ilya Leoshkevich <iii@linux.ibm.com>
 ---
- scripts/gdb/linux/symbols.py | 20 +++++++-------------
- scripts/gdb/linux/utils.py   | 11 +++++++++++
- 2 files changed, 18 insertions(+), 13 deletions(-)
+ scripts/gdb/linux/symbols.py | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
 diff --git a/scripts/gdb/linux/symbols.py b/scripts/gdb/linux/symbols.py
-index 25c4627c60e5..0c7af712c44c 100644
+index 0c7af712c44c..2332bd8eddf1 100644
 --- a/scripts/gdb/linux/symbols.py
 +++ b/scripts/gdb/linux/symbols.py
-@@ -38,19 +38,13 @@ if hasattr(gdb, 'Breakpoint'):
-             # Disable pagination while reporting symbol (re-)loading.
-             # The console input is blocked in this context so that we would
-             # get stuck waiting for the user to acknowledge paged output.
--            show_pagination = gdb.execute("show pagination", to_string=True)
--            pagination = show_pagination.endswith("on.\n")
--            gdb.execute("set pagination off")
--
--            if module_name in cmd.loaded_modules:
--                gdb.write("refreshing all symbols to reload module "
--                          "'{0}'\n".format(module_name))
--                cmd.load_all_symbols()
--            else:
--                cmd.load_module_symbols(module)
--
--            # restore pagination state
--            gdb.execute("set pagination %s" % ("on" if pagination else "off"))
+@@ -54,6 +54,18 @@ def get_vmcore_s390():
+         vmcore_info = 0x0e0c
+         paddr_vmcoreinfo_note = gdb.parse_and_eval("*(unsigned long long *)" +
+                                                    hex(vmcore_info))
++        if paddr_vmcoreinfo_note == 0 or paddr_vmcoreinfo_note & 1:
++            # In the early boot case, extract vm_layout.kaslr_offset from the
++            # vmlinux image in physical memory.
++            if paddr_vmcoreinfo_note == 0:
++                kaslr_offset_phys = 0
++            else:
++                kaslr_offset_phys = paddr_vmcoreinfo_note - 1
 +            with utils.pagination_off():
-+                if module_name in cmd.loaded_modules:
-+                    gdb.write("refreshing all symbols to reload module "
-+                              "'{0}'\n".format(module_name))
-+                    cmd.load_all_symbols()
-+                else:
-+                    cmd.load_module_symbols(module)
- 
-             return False
- 
-diff --git a/scripts/gdb/linux/utils.py b/scripts/gdb/linux/utils.py
-index fc94ff6a6d72..dc379ab11af0 100644
---- a/scripts/gdb/linux/utils.py
-+++ b/scripts/gdb/linux/utils.py
-@@ -260,3 +260,14 @@ def get_vmlinux():
-             obj.filename.endswith('vmlinux.debug')):
-             vmlinux = obj.filename
-     return vmlinux
-+
-+
-+@contextlib.contextmanager
-+def pagination_off():
-+    show_pagination = gdb.execute("show pagination", to_string=True)
-+    pagination = show_pagination.endswith("on.\n")
-+    gdb.execute("set pagination off")
-+    try:
-+        yield
-+    finally:
-+        gdb.execute("set pagination %s" % ("on" if pagination else "off"))
++                gdb.execute("symbol-file {0} -o {1}".format(
++                    utils.get_vmlinux(), hex(kaslr_offset_phys)))
++            kaslr_offset = gdb.parse_and_eval("vm_layout.kaslr_offset")
++            return "KERNELOFFSET=" + hex(kaslr_offset)[2:]
+         inferior = gdb.selected_inferior()
+         elf_note = inferior.read_memory(paddr_vmcoreinfo_note, 12)
+         n_namesz, n_descsz, n_type = struct.unpack(">III", elf_note)
 -- 
 2.49.0
 
