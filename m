@@ -1,87 +1,132 @@
-Return-Path: <linux-kernel+bounces-650181-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-650183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1F76AB8E32
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 19:54:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C803CAB8E3F
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 19:55:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6404B1BC666C
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 17:54:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 322F8502C5B
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 17:55:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 212C025A2AA;
-	Thu, 15 May 2025 17:54:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D56F25A2C5;
+	Thu, 15 May 2025 17:55:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="R+kuwNEm"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="Pci5Cm4A"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C53731F0E4B;
-	Thu, 15 May 2025 17:54:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7F5435971;
+	Thu, 15 May 2025 17:55:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747331664; cv=none; b=W6IKZEFu08uQ6W+kVCnJ+YElh++EIokp50DuLedKrZ5fYk1MyTofr308kxRapO5IA+CHxPXdLgBTz8PIkVNQ2L3s+b9lHWxH9NTpzdGMzHItacvYtVeDFFg9+QQGZ+xJoHZLHt2O9I8RyL5QBrbZdWp0xLk++S3UDaW6LJ/fujs=
+	t=1747331732; cv=none; b=JMlYSRSh1mg303Rweg79t3zZ+9UrtcWAwuQTsGcLwNojKpiVIV+AaN/939SacHUa1+7yBBSCY7wvW2Prf9sQeqPc+eOzQT46fYc5w+e6V6KQ0nlgazxWNQkaU7e6moVmzsxSD31u2Z2bR27jwjWPuH/+CVfurp5F6mEZx4bYi2M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747331664; c=relaxed/simple;
-	bh=JLxg1oheMn051dMKnaAnZ83gN3e5c07HHF1K/TwVfFg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=slJoHgH1POCuaSO3ORti4W/6shOiVsLpjGq7BXNfT6/vvoSGpshV4WkBB1OE0wb9xpMw0jt9VP6H5wKagnVhjBgzKS/wHVLTk/2faxbqXw0FrxW4wsEfhweSRrAlVVmymEA+oFU7A4EgJ2z68zPdHHOxYkcRYIXaNg2xbA81204=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=R+kuwNEm; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=+rtEL9ES9E/vaBtQVIRks4g8yUpYEnjeXDkfQGUAcrQ=; b=R+kuwNEmMe5d+6jnjjotCXTn7T
-	rMx2Od8O4jeKgt/IIUYBqM4UBDJ78FtSXx2cMLFh1W7uokrysvl+pK6X+VT9tpxcVHsFb+anhxgIH
-	W8FWdcDY+HVLs98m2T2Ehye5dGdMIxv3gG0W5XtfAPP60YWWORKPDj9Ok9/W4PEYEmQg=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1uFcmg-00Cgpd-QP; Thu, 15 May 2025 19:54:18 +0200
-Date: Thu, 15 May 2025 19:54:18 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Stefano Radaelli <stefano.radaelli21@gmail.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Xu Liang <lxu@maxlinear.com>
-Subject: Re: [PATCH] net: phy: add driver for MaxLinear MxL86110 PHY
-Message-ID: <4a6a692f-c6dc-4736-b4b6-b329715d5b96@lunn.ch>
-References: <20250515152432.77835-1-stefano.radaelli21@gmail.com>
- <2b2ef0bd-6491-41a0-b2e1-81e2b83167ef@lunn.ch>
- <CAK+owogXdnvoiVNBn_6uBZgqoHrkiQmVU58ip1Wqd6v8VX5f6A@mail.gmail.com>
+	s=arc-20240116; t=1747331732; c=relaxed/simple;
+	bh=FE108NgcBtS22vyKRaCgUWA1SHvN7NTzmtBpjsEDbVM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CbGbR/+kGkbK/pIF2MRK+UFQl4WM0ek89cY+aYzH65lJGDyoeMXti37HuKMsI2HS4pA2DIviNkqLhDZ4togfaXSuXojxpj13VWqo1IS+1fkmiTSSEM6Jng2fHuThDqt60Xi/9517jzbqWCqm0JNSxOmclN5RZjOcnxRRUy3HCaY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=Pci5Cm4A; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [192.168.7.202] ([71.202.166.45])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 54FHsVpw3601639
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Thu, 15 May 2025 10:54:31 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 54FHsVpw3601639
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025042001; t=1747331672;
+	bh=G7ieaLLHFbx+QEHyWYMyrA/SFOLf3DqlbM1dcfxnafw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Pci5Cm4AkZKrjtNgbD9kIEvofugHGu9rQStIB8I6HlP0P5GmfcK8dxy26SYPqu53l
+	 iUM4QoaUoo5QxDSCvgasxn5a9QUGr0D1Ql8K0jbLDLd6g03vlF4gw+h31ZHoeUtVay
+	 nLaR3PRAokolM4ZGUQbkNlu38pWzS8eCeMWnDvWNDSy7m9+87WxIlRTiVMXpmSFy5T
+	 7VtfMfoWjJQ/T85JinrErAMrTP4HXKdE71rn54Q+Ov9SzSwCPPZ64mi3rjtV8dMYPF
+	 5UOeboDxuVCnoqosEg4VSZBW7Cg1EJT2ZfxCtgvATt/5g83VQycjJC3x7Yge2GFBwO
+	 NtO5Ryz7YKzsA==
+Message-ID: <68dba45c-a677-4f6d-b7ec-e896aef3d27b@zytor.com>
+Date: Thu, 15 May 2025 10:54:31 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAK+owogXdnvoiVNBn_6uBZgqoHrkiQmVU58ip1Wqd6v8VX5f6A@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 3/3] x86/msr: Convert a native_wrmsr() use to
+ native_wrmsrq()
+To: Ingo Molnar <mingo@kernel.org>
+Cc: linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
+        linux-acpi@vger.kernel.org, tglx@linutronix.de, bp@alien8.de,
+        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+        peterz@infradead.org, jgross@suse.com, boris.ostrovsky@oracle.com,
+        rafael@kernel.org, lenb@kernel.org
+References: <20250512084552.1586883-1-xin@zytor.com>
+ <20250512084552.1586883-4-xin@zytor.com> <aCYH0UQzO_Ek27js@gmail.com>
+Content-Language: en-US
+From: Xin Li <xin@zytor.com>
+Autocrypt: addr=xin@zytor.com; keydata=
+ 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
+ l75w1xInsg==
+In-Reply-To: <aCYH0UQzO_Ek27js@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-> > So does the value 1 here mean 8ns? 0 would be 2ns?
+On 5/15/2025 8:27 AM, Ingo Molnar wrote:
 > 
-> Setting RXDLY_ENABLE = 1 enables the internal fixed RX_CLK delay
-> provided by the PHY, but the actual delay value depends on the
-> RX clock frequency: approximately 2 ns at 125 MHz, and ~8 ns at 25 or 2.5 MHz.
-> I'm not explicitly selecting 2 or 8 ns, it's applied automatically by the PHY
-> based on clock rate.
+> * Xin Li (Intel) <xin@zytor.com> wrote:
 > 
-> Since this delay is additive with the configurable digital RX delay
-> set in `CFG1_REG`, I only configure 150 ps in the digital field to
-> avoid over-delaying.
-> That said, if you prefer, I can disable `RXDLY_ENABLE` and set to 1950 ps
-> directly in the digital delay field. Just let me know what you'd prefer here.
+>> Convert a native_wrmsr() use to native_wrmsrq() to zap meaningless type
+>> conversions when a u64 MSR value is splitted into two u32.
+>>
+> 
+> BTW., at this point we should probably just replace
+> sev_es_wr_ghcb_msr() calls with direct calls to:
+> 
+> 	native_wrmsrq(MSR_AMD64_SEV_ES_GHCB, ...);
+> 
+> as sev_es_wr_ghcb_msr() is now basically an open-coded native_wrmsrq().
+> 
 
-Setting only the explicit 1950ps is much easier to understand. Please
-do that.
+I thought about it, however it looks to me that current code prefers not
+to spread MSR_AMD64_SEV_ES_GHCB in 17 callsites.  And anyway it's a 
+__always_inline function.
 
-	Andrew
+But as you have asked, I will make the change unless someone objects.
+
+Thanks!
+     Xin
 
