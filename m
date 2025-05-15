@@ -1,158 +1,169 @@
-Return-Path: <linux-kernel+bounces-649400-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-649402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA48DAB8455
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 12:50:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EB36AB845E
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 12:51:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F32884E174B
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 10:50:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 020F21BA8387
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 10:51:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52B202980D0;
-	Thu, 15 May 2025 10:50:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB327298271;
+	Thu, 15 May 2025 10:51:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E/WWEWg9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="S1ZXJC8j"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CC3B2101AE;
-	Thu, 15 May 2025 10:50:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 620292980D2
+	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 10:51:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747306239; cv=none; b=U7i1J8l1nzF4WdqLXH1XwOVcubcASGA0v1S8LRYw6l34dMjPV7VldnAevEWYOJK7MxQC3RjJyCfGFWGSv+62M0paaelEyd7MbofODskyTfUgBs5d0myiWkvqRnMPQOFzmk1Sj59V+99i4Ft5+/798Ey9o9JvqKAgR5Scrv+4O8k=
+	t=1747306281; cv=none; b=hbJcp7facYshAy2P++il2+vfj1Z3JzDDLy3uK9swq5MEdAIYpvY741oxveli/ZjrjbTV3sgGCrF3NATstOWa/bOopq6gc/8MTiyR+d55i1N8IShKofTx0P/ThKpUpWffdWUsrmRzA2m/FDjkEeUF5GwFNW8mlBQKRvgwI/FTlEY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747306239; c=relaxed/simple;
-	bh=wT+u7zaXSan0nDn3kznsFYtD2+9D/7UMrhifMQAMXoo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d16Q381lO5AmcNVpSY5nr4YaKHMqUK72i399Z5Pml6ZtPJmkF4uzK7K5t/NyFqQOTVYDtmP4bEmVfS9OKiXiKTp53u1sF5aK5JPRke1skwKGoSg32EB+mXpOo/j5pzSqG7EARSChaKYoULgEKL5Ckxu+nJGIYiuwoOYL6zceuNQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E/WWEWg9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9E4DC4CEED;
-	Thu, 15 May 2025 10:50:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747306239;
-	bh=wT+u7zaXSan0nDn3kznsFYtD2+9D/7UMrhifMQAMXoo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=E/WWEWg9UqxrG4dLl6a9cMJc4KKG036GhZZ58EHkipbDPnK77JYFgmkr0kdiU9MRi
-	 X/igkxjvUBwl1xl04pAKU9OlDiRnR55gwXmD8esvmhNLq0tXzmNbOF3zO444jXSX5d
-	 l8ZbPt9HwBNIvb7zLIaPVZ5+FCuFf+AWqIoIUNPmXVcFOCBnkhxczulcduE3KaOCTF
-	 ozolgJgDcEgzfjHjdkGwIgkxA8QQYF/+TejWC738WBLdMu/cf2HIHBS83ZeVne0/5/
-	 KQgHXkgPnD+DmCtNzbG+0Axgo0aiMvpCjfUe5u3DcrmyjsGgz1pj5+6Vi26ePQI/X4
-	 DMkFSyg0Ri/Rw==
-Date: Thu, 15 May 2025 11:50:33 +0100
-From: Simon Horman <horms@kernel.org>
-To: Michael Kelley <mhklinux@outlook.com>
-Cc: "kys@microsoft.com" <kys@microsoft.com>,
-	"haiyangz@microsoft.com" <haiyangz@microsoft.com>,
-	"wei.liu@kernel.org" <wei.liu@kernel.org>,
-	"decui@microsoft.com" <decui@microsoft.com>,
-	"andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>,
-	"davem@davemloft.net" <davem@davemloft.net>,
-	"edumazet@google.com" <edumazet@google.com>,
-	"kuba@kernel.org" <kuba@kernel.org>,
-	"pabeni@redhat.com" <pabeni@redhat.com>,
-	"James.Bottomley@hansenpartnership.com" <James.Bottomley@hansenpartnership.com>,
-	"martin.petersen@oracle.com" <martin.petersen@oracle.com>,
-	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-	"stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: Re: [PATCH net 2/5] hv_netvsc: Use vmbus_sendpacket_mpb_desc() to
- send VMBus messages
-Message-ID: <20250515105033.GR3339421@horms.kernel.org>
-References: <20250513000604.1396-1-mhklinux@outlook.com>
- <20250513000604.1396-3-mhklinux@outlook.com>
- <20250514093751.GF3339421@horms.kernel.org>
- <SN6PR02MB4157C9EC51BEC1EBCB2B7DC5D491A@SN6PR02MB4157.namprd02.prod.outlook.com>
+	s=arc-20240116; t=1747306281; c=relaxed/simple;
+	bh=AnnU3LMpl5hAn3J5YKjudejZV9W0hvWD+BxGwylCrSY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=h6zbYpbD7AEXTN8nGXGm5KZRDWQY2ED0BOrNYBaBsXx1vAxrrVswt23grRQr1xesv+2r8Gj1DRxRu3K6NwhRkyUc/6vhK0HEmBGYMvpFqrOdWsNN3Bx3YwHeRqQykpXDSQPkGaAAXfB4IzvdNG8OCfj0C3uEO8NrTPJKEuIxBCk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=S1ZXJC8j; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1747306277;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=AnnU3LMpl5hAn3J5YKjudejZV9W0hvWD+BxGwylCrSY=;
+	b=S1ZXJC8j4ZYMEATj6EwztLELr4LKay5f6Tt1wMg4fUIR2DKyiboi3Krp7MTEuD19Douej2
+	aCOXVJhwslonQe7/GpjEAwoSO8rKnP6L7KGU1folXpvKEmSGyk4nuI3Mxy5azY5CvO0mRK
+	MBBwOlFMohuLKh44JHGnSx4cfcAbLg4=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-623-Il0-daBUO7SJu1uC6xnmhw-1; Thu, 15 May 2025 06:51:15 -0400
+X-MC-Unique: Il0-daBUO7SJu1uC6xnmhw-1
+X-Mimecast-MFC-AGG-ID: Il0-daBUO7SJu1uC6xnmhw_1747306275
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3a35bf8377fso90727f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 03:51:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747306275; x=1747911075;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=AnnU3LMpl5hAn3J5YKjudejZV9W0hvWD+BxGwylCrSY=;
+        b=hYgz3LVZ2drWDFG+1T/d5/PIqZTt6LV5iBeGpHA9ojJ3DjeH/480jpoUsOU9VGX/dQ
+         epjLOV7/vWZgCvzTt4jUL/bwkSClhJoZiDx+8zpjKQqSongVMWzEZAwylhGylLzlQ+83
+         loZR6oW5jT2CgFNwuCEWae0XEgIQJGWslQV902yQC9YX3JoRkKx0tmCM02FXW0/kz9Em
+         hGBPTPvzC6CCF2SmWu3QMEEmdXJFlrWO0ND1vnjS+yeis6mg1gwrt5ejgkpB27mRFLAB
+         H6bGz2bdkYTmWwJUeKjY39oDJ0nltzjyT7nPNnK/Q+dqMDLY4/Nyz2dK9sJUVTTVKZe8
+         3FtQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUEpF9b73g4FmtVz1cMPo6HykwhswdxGBx397HPxsPyKbLY2uCSxuxRtQEGp6er3CuFF0i4udHyg9u363Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFmf3dn1ZV/Cgqm8jl4yLZDAod5J1l9m8Qv0+wFUsoatq6cyeC
+	9CzRz4vzdXhthUZktfqAbJYmzhRoJ9mdIROgG3rv663zs73nOpbLAqtatr1SbDrH3IuLXuWtQOR
+	6AZ6sKLojm5e/fKnoy/8w612iwTDt6uNC6T+nbwd76kWfbmuYfuo4rP/u5kT81mDKAcE044EOlr
+	ZPV08MZXwqOPE2J3Ct/IKeclzs3GFKuInmGqrJ
+X-Gm-Gg: ASbGncvvJrTC+XMczu8pwi0xBuC1sjnlcjNYPnNGkzRAg5J+apxA5yLgr0E2NvgoC4E
+	UJk29y4RP4qj/77nnQBWmTchA+KvjsMSUe+1sPaQo7K97CjJEkPKgrD2kgePfXK9mBG52Lw==
+X-Received: by 2002:a5d:4e8a:0:b0:3a3:592d:21b6 with SMTP id ffacd0b85a97d-3a3592d2310mr955263f8f.15.1747306274684;
+        Thu, 15 May 2025 03:51:14 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG2JuuaqLPcVrNMU2tKqzE3FnfEFbJyyrBqjO7QtZCsTyzkpYvx/DeqzxIsGQwmYUSuVIl1ksSfIrz86qaed68=
+X-Received: by 2002:a5d:4e8a:0:b0:3a3:592d:21b6 with SMTP id
+ ffacd0b85a97d-3a3592d2310mr955248f8f.15.1747306274267; Thu, 15 May 2025
+ 03:51:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <SN6PR02MB4157C9EC51BEC1EBCB2B7DC5D491A@SN6PR02MB4157.namprd02.prod.outlook.com>
+References: <20250429165018.112999-1-kwolf@redhat.com> <47dd225b433b0df585a25084a2e793344eeda239.camel@suse.com>
+ <aCIRUwt5BueQmlMZ@redhat.com> <aCLe5UT2kfzI96TQ@infradead.org>
+ <aCMQ5S-gI6vZJxmq@redhat.com> <aCQiz88HksKg791Z@infradead.org>
+ <aCTDiHMuMncwdp_X@redhat.com> <50beb356b4dc000446fd186ab754c87f386eaeae.camel@suse.com>
+ <CABgObfaEiMN=YANk02EWini+jAXU1MxSvo8_jYWaMiu3ds7hgQ@mail.gmail.com> <2f0fc8ef7d04c590893bd6d54a6c0c842c4b21d7.camel@suse.com>
+In-Reply-To: <2f0fc8ef7d04c590893bd6d54a6c0c842c4b21d7.camel@suse.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Date: Thu, 15 May 2025 12:51:00 +0200
+X-Gm-Features: AX0GCFvGwWrUeVYJp0osm4NobblV0XdonG1jUigrUVjlVR-98uQyDG2aNENpGNw
+Message-ID: <CABgObfZVbKcAua_=+C_0eC5Ec2ZDY4Bsz_b1memF1KifVGhoQw@mail.gmail.com>
+Subject: Re: [PATCH 0/2] dm mpath: Interface for explicit probing of active paths
+To: Martin Wilck <mwilck@suse.com>
+Cc: Benjamin Marzinski <bmarzins@redhat.com>, Christoph Hellwig <hch@infradead.org>, 
+	Kevin Wolf <kwolf@redhat.com>, dm-devel@lists.linux.dev, 
+	Hanna Czenczek <hreitz@redhat.com>, Mikulas Patocka <mpatocka@redhat.com>, snitzer@kernel.org, 
+	"Kernel Mailing List, Linux" <linux-kernel@vger.kernel.org>, Hannes Reinecke <hare@suse.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, May 14, 2025 at 03:44:35PM +0000, Michael Kelley wrote:
-> From: Simon Horman <horms@kernel.org> Sent: Wednesday, May 14, 2025 2:38 AM
-> > 
-> > On Mon, May 12, 2025 at 05:06:01PM -0700, mhkelley58@gmail.com wrote:
-> > > From: Michael Kelley <mhklinux@outlook.com>
-> > >
-> > > netvsc currently uses vmbus_sendpacket_pagebuffer() to send VMBus
-> > > messages. This function creates a series of GPA ranges, each of which
-> > > contains a single PFN. However, if the rndis header in the VMBus
-> > > message crosses a page boundary, the netvsc protocol with the host
-> > > requires that both PFNs for the rndis header must be in a single "GPA
-> > > range" data structure, which isn't possible with
-> > > vmbus_sendpacket_pagebuffer(). As the first step in fixing this, add a
-> > > new function netvsc_build_mpb_array() to build a VMBus message with
-> > > multiple GPA ranges, each of which may contain multiple PFNs. Use
-> > > vmbus_sendpacket_mpb_desc() to send this VMBus message to the host.
-> > >
-> > > There's no functional change since higher levels of netvsc don't
-> > > maintain or propagate knowledge of contiguous PFNs. Based on its
-> > > input, netvsc_build_mpb_array() still produces a separate GPA range
-> > > for each PFN and the behavior is the same as with
-> > > vmbus_sendpacket_pagebuffer(). But the groundwork is laid for a
-> > > subsequent patch to provide the necessary grouping.
-> > >
-> > > Cc: <stable@vger.kernel.org> # 6.1.x
-> > > Signed-off-by: Michael Kelley <mhklinux@outlook.com>
-> > > ---
-> > >  drivers/net/hyperv/netvsc.c | 50 +++++++++++++++++++++++++++++++++----
-> > >  1 file changed, 45 insertions(+), 5 deletions(-)
-> > >
-> > > diff --git a/drivers/net/hyperv/netvsc.c b/drivers/net/hyperv/netvsc.c
-> > > index d6f5b9ea3109..6d1705f87682 100644
-> > > --- a/drivers/net/hyperv/netvsc.c
-> > > +++ b/drivers/net/hyperv/netvsc.c
-> > > @@ -1055,6 +1055,42 @@ static int netvsc_dma_map(struct hv_device *hv_dev,
-> > >  	return 0;
-> > >  }
-> > >
-> > > +/* Build an "array" of mpb entries describing the data to be transferred
-> > > + * over VMBus. After the desc header fields, each "array" entry is variable
-> > > + * size, and each entry starts after the end of the previous entry. The
-> > > + * "offset" and "len" fields for each entry imply the size of the entry.
-> > > + *
-> > > + * The pfns are in HV_HYP_PAGE_SIZE, because all communication with Hyper-V
-> > > + * uses that granularity, even if the system page size of the guest is larger.
-> > > + * Each entry in the input "pb" array must describe a contiguous range of
-> > > + * guest physical memory so that the pfns are sequential if the range crosses
-> > > + * a page boundary. The offset field must be < HV_HYP_PAGE_SIZE.
-> > 
-> > Hi Michael,
-> > 
-> > Is there a guarantee that this constraint is met. And moreover, is there a
-> > guarantee that all of the entries will fit in desc? I am slightly concerned
-> > that there may be an overrun lurking here.
-> > 
-> 
-> It is indeed up to the caller to ensure that the pb array is properly
-> constructed. netvsc_build_mpb_array() doesn't do additional validation.
-> There are only two sources of the pb array, both of which do the right
-> thing, so additional validation seemed redundant.
-> 
-> An overrun is a concern, but again the callers do the right thing. As
-> described in my response to Patch 3 of the series, netvsc_xmit()
-> counts the number of pages ahead of time, and makes sure the count is
-> within the limit of the amount space allocated in the "desc" argument
-> to netvsc_build_mpb_array().
+On Thu, May 15, 2025 at 12:34=E2=80=AFPM Martin Wilck <mwilck@suse.com> wro=
+te:
+> On Thu, 2025-05-15 at 04:53 +0200, Paolo Bonzini wrote:
+> > Il mer 14 mag 2025, 13:37 Martin Wilck <mwilck@suse.com> ha scritto:
+> > Yes, as usual things are a bit more complicated. First, a handful of
+> > commands are special (REQUEST SENSE would be for HBAs that don't use
+> > auto sense, but that is fortunately not something you encounter).
+> > Second, there's already a filter in the kernel in
+> > drivers/scsi/scsi_ioctl.c for commands that are allowed without
+> > CAP_SYS_RAWIO. QEMU is subject to that so the commands you'll see are
+> > mostly I/O, INQUIRY, TUR, MODE SENSE/SELECT and that's it.
+>
+> Thanks for mentioning this. However, I suppose that depends on the
+> permissions with which the qemu process is started, no? Wouldn't
+> qemu need CAP_SYS_RAWIO for PCI passthrough as well?
 
-Thanks Michael,
+Generally you want to assume that the VM is hostile and run QEMU with
+as few privileges as possible (not just capabilities, but also in
+separate namespaces and with restrictions from device cgroups,
+SELinux, etc.). PCI passthrough is not an issue, it only needs access
+to the VFIO inodes and you can do it by setting the appropriate file
+permissions without extra capabilities. The actual privileged part is
+binding the device to VFIO, which is done outside QEMU anyway.
 
-I agree that is entirely reasonable for callers to be responsible
-correctly constructing the pb array. And that it's not necessary
-to add validation to netvsc_build_mpb_array().
+> I admit that I'm confused by the many indirections in qemu's scsi-block
+> code flow. AFAICS qemu forwards everything except PRIN/PROUT to the
+> kernel block device in "scsi-block" mode. Correct me if I'm wrong.
 
-Also, based on the above, I'm satisfied that the callers are correctly
-constructing the pb array.
+Yes, that's correct. The code for PRIN/PROUT calls out to a separate
+privileged process (in scsi/qemu-pr-helper.c if you're curious) which
+is aware of multipath and can be extended if needed.
 
-With the above clarified in my mind I'm now happy with this patch.
+> Anwyway, let's not forget that we're talking about the kernel here.
+> While qemu is the main target application for this feature is created,
+> any application can use it, and it may or may not run with
+> CAP_SYS_RAWIO.
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+Yes, but once you have CAP_SYS_RAWIO all bets for sanity are off... it
+even lets you do SG_IO on partitions.
+
+> > .Of the ones that aren't simple I/O, mode parameters and TUR are the
+> > important cases. A TUR failure would be handled by the ioctl that
+> > Kevin proposed here by forcing a path switch. Mode parameters might
+> > not be shared(*) and would need to be sent down all the paths in that
+> > case; that can be fixed in userspace if necessary.
+>
+> Passing TUR from a multipath device to a random member doesn't make
+> much sense to me. qemu would need to implement some logic to determine
+> whether the map has any usable paths.
+
+As long as one path replies to a TUR and the host is able to
+(eventually, somehow) steer I/O transparently to that path, that
+should be good enough. If the one path that the kernel tries is down,
+QEMU can probe which paths are up and retry. That seems consistent
+with what you want from TUR but maybe I'm missing something.
+
+> > Yes, the kernel filter is a PITA in the normal single path case but
+> > here it helps not doing something overly wrong.
+>
+> This seems coincidental to me. Filtering by permissions and filtering
+> for commands that make sense on multipath devices are orthogonal
+> problems.
+
+I agree (it helps, it doesn't solve the problem), however there is a
+large overlap between the two.
+
+Paolo
+
 
