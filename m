@@ -1,145 +1,179 @@
-Return-Path: <linux-kernel+bounces-650427-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-650429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C020DAB9145
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 23:13:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51C96AB914B
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 23:13:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF6584E8751
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 21:13:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73CAA4E8707
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 21:13:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17D4529B8D5;
-	Thu, 15 May 2025 21:12:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A01329B78E;
+	Thu, 15 May 2025 21:13:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F+6nMkEf"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="q+InAbB+"
+Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD13229B79F;
-	Thu, 15 May 2025 21:12:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6506629B237;
+	Thu, 15 May 2025 21:13:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747343572; cv=none; b=GhMUR//l2zYw3998G5z4uDWsakAgrkBbKaFHbMLrUFcQ3rIyGp3QPoFM3XbWGyfFlL1QUyru2eNw9df01QGkbptRunUoF0bkMcmxQyU7bqOWAM/mZqzVpGFf7Pc8uj/DjdFvhI8vSLhxL0sPJOWaI5bF9KE2gfrl1+kL2vLIa14=
+	t=1747343598; cv=none; b=NDRN7riUPVrXGHhKv8zfLYj/IDjw1h4kIXbRQl9sPdTpOtaNxEG8LQcRgLL1C6npK85vMEdIrRkD3P2SgeKa3QJUVtJP9bQDJCtjRDu7rO0sTFWyfnLYAAzRduM2RFzPzw9XWNIPVFFBJdczDnEuocXP2fxShnfNErLLGlbAZXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747343572; c=relaxed/simple;
-	bh=q3PDrZM6G8zDDRhj4QwvJtG8rSqiKqS/I3flXIXrZeU=;
-	h=From:In-Reply-To:References:MIME-Version:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=riXmeNEbzADRhWQ8fE1Nju9DWtcMUczRsE/Hn59g526yPPRjlbDOCMarotghDWf8SKezLVrvC0pZnukGRvzvMF10XrD4tVUyol4PIRJTxCt9WcK1k6FRrNqdEGZ+xLU3yhY/3zEJAHNLg1egcdA6Ha59OB5aLZsgee5HJq7jaMA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F+6nMkEf; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3a0b933f214so915869f8f.0;
-        Thu, 15 May 2025 14:12:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747343569; x=1747948369; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:mime-version:references:in-reply-to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=opuvm8FKWBIYNRf90PxXi7sMcW0qx9YAX9FlKAsACPA=;
-        b=F+6nMkEfOeVKIEfWFWzsSAyNOLPH2amXneoP/icZ/EbVRUCme1GMOwZ9KvNLr4Bhj5
-         8/NF4m+wWTYk/7cDuO8EUEpWsMDqUv3j2/hPTGP4yEvyRYIMY14Fv7vmHxfgnBuS9qn7
-         HaXOk1Bm8b2DlFs/xLJ6/Vv9Q5443jmOL+JI+0f1PxTAadvTakvPVOLVvPOUiP5Wy6eV
-         bgjikKyM5tB/qIg99AKkXGQTVKrAx684BNFaF2xeffa6Erh1QoCdjhi9Ze/RxvXgmnDZ
-         vFYA77xU/ijNPy3pT3IQUg1JvT4w3iHTUnMWD2i5AXN4TDJ4GzkzyULkjFQ47mccOX3D
-         eh9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747343569; x=1747948369;
-        h=cc:to:subject:message-id:date:mime-version:references:in-reply-to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=opuvm8FKWBIYNRf90PxXi7sMcW0qx9YAX9FlKAsACPA=;
-        b=JtFUVsh1QRlCW32Qu9ENZ9KA8U8qNL8siq+cJ4hfkYHq3DMI2u/sEUt/TY2029azl0
-         OiYM9kTptoyM2mNTLY0VTEn4mC9P9wxDruKigZ0IZT7aJ2paZi8FIWR3a5NIDzF28lt5
-         5Qs/W7fRs1gSRsYZTHl5vyizO4Jo+sHkPUl0TicDJLQrfSYVbJPtHMugwS0Gyc3EQGK6
-         IZnuVQl1+do2ESITYUN9M4hyeyTQonoSqDSAjgTKxIc62C4gAa3FzDFLaU9Y3Zo8IvCV
-         6yrLP0uipKICuj8RS3L6mB4J5rNCvw1j1TDx54Qhq1m1wjDiw+DDkf8hQuIJKwYMpOls
-         yYDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU0xPimJXvZsFqKaBIc/AwnyiFTUyFOw4s+YaJUh2w/152ZQZNNFur6WX8QL+vUDjgYebXJPi7YgCNgU04=@vger.kernel.org, AJvYcCUXu6DL0q/H//BaV3BnLxvfeXuZDRThSruCAxmH1pi67/GEd6GD+fsse+KpRl5wwWnVXAz+bcgN@vger.kernel.org, AJvYcCWYzzXJt0JdldMtoShEQG9XNGAPCLWF90KJ2l9a5550pEAYuOfdB/kXG5QX7Q4zrWImAA/WXFFc7tyDOeI8gz0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxpgFik2ET216dOpRMKunfAG3BftN7GdMkMbIe/zQKa1GLUVx/O
-	DACxnqA1023iuQ1NjUNJL5DDakhuM0CEfskQmqeZDVD5NNUqXMwvoXx1emUUBuWPOlWPQ1lf1nj
-	ZcIRZgXKsaZvLxTDf1epk99GwLTlmstU=
-X-Gm-Gg: ASbGnctQxtDJel2k53CGujOnUM3y7W+yHr0X2iP7jYFkMKUhvinCfPpXpcy4xxONnOh
-	yrN7ZfYO6++GExptyzIrMPLlfXOjpMgUV9atCeQdEkKb8Jx3BOuOuzv7keygU5Gzy54qEroNVPa
-	2jozMjtrlQzf/9KX2p7Cb7wcEl21hQbNyC9g==
-X-Google-Smtp-Source: AGHT+IEYoK6f7wP0SPm/gfKqdWjWZ4HX90FKs87O0UBgxajWhbvIOpj9PHkIZ8r7babBAps9G/Ln4njRTceq0nIyQp0=
-X-Received: by 2002:a5d:5c84:0:b0:3a2:12a:e637 with SMTP id
- ffacd0b85a97d-3a35c8542a6mr1195017f8f.56.1747343568560; Thu, 15 May 2025
- 14:12:48 -0700 (PDT)
-Received: from 753933720722 named unknown by gmailapi.google.com with
- HTTPREST; Thu, 15 May 2025 14:12:48 -0700
-Received: from 753933720722 named unknown by gmailapi.google.com with
- HTTPREST; Thu, 15 May 2025 14:12:48 -0700
-From: Kane York <kanepyork@gmail.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <097a4926cebc9030469d42cc7a3392b39dfd703d.camel@nvidia.com>
-References: <097a4926cebc9030469d42cc7a3392b39dfd703d.camel@nvidia.com>
+	s=arc-20240116; t=1747343598; c=relaxed/simple;
+	bh=rrY4/ZuAxAKnqOHH1ZYX33oXVnLQ0B/KzUCAgon+Res=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=sqHKd5E0jzh4CbcKqzjO6ACq8YfGygWfTqeuZ2elQ5OZOSeGK29LkfBZd8bba8pCmdzGKxlERMEZNC4Cte7GQHHfz+bvbwfzTtaTFX2S4WSMADK5+Ec9znsC3Dl9fsiOd0FrV4VxqHqT085eQCOV7OJCyT43TGdSeuW0xban94o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=q+InAbB+; arc=none smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
+Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
+	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54FGltBh009246;
+	Thu, 15 May 2025 17:13:11 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=DKIM; bh=/Jfdn
+	jTWmPNrevemoKygtrATmLTNG7adNXwP0Ei1Fxc=; b=q+InAbB+3l7CitN7x1W7E
+	OxzPgk2FIj9Luv1Qf/NYpmU3KPVWsAuMx9JGEkXKe5OZSsaYA5R7vNKDESccVwim
+	gZM5ZhnI+aYj07i1JI3X/FnxicR1knrphxRRTGGsyWZsFQY5r2+JB1hYRC4gV60o
+	ubrrTcRLzLNvKhbTy77iinS6Sfir47f9AQp83XpdQer/TL3qSulQnZ06KYPGzQf5
+	s/r5q21uOScJVwPXxyHhNAah1GGN8fvdjOUIemgM0w660YddUqCBT6OHbyPKCLSw
+	bYUfN2OttNnzRXo0Cq57/6RH3tLdgkgHIdedqtYrQpDxQ3EckO0VrbzUj5pzqd6z
+	g==
+Received: from nwd2mta3.analog.com ([137.71.173.56])
+	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 46ngknj9ue-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 15 May 2025 17:13:11 -0400 (EDT)
+Received: from ASHBMBX8.ad.analog.com (ASHBMBX8.ad.analog.com [10.64.17.5])
+	by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 54FLDA0X025016
+	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 15 May 2025 17:13:10 -0400
+Received: from ASHBMBX9.ad.analog.com (10.64.17.10) by ASHBMBX8.ad.analog.com
+ (10.64.17.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.14; Thu, 15 May
+ 2025 17:13:10 -0400
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx9.ad.analog.com
+ (10.64.17.10) with Microsoft SMTP Server id 15.2.986.14 via Frontend
+ Transport; Thu, 15 May 2025 17:13:10 -0400
+Received: from JSANTO12-L01.ad.analog.com ([10.65.60.206])
+	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 54FLCpUi018847;
+	Thu, 15 May 2025 17:12:54 -0400
+From: Jonathan Santos <Jonathan.Santos@analog.com>
+To: <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>
+CC: Jonathan Santos <Jonathan.Santos@analog.com>, <andy@kernel.org>,
+        <nuno.sa@analog.com>, <Michael.Hennerich@analog.com>,
+        <marcelo.schmitt@analog.com>, <jic23@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <marcelo.schmitt1@gmail.com>, <linus.walleij@linaro.org>,
+        <brgl@bgdev.pl>, <lgirdwood@gmail.com>, <broonie@kernel.org>,
+        <jonath4nns@gmail.com>, <dlechner@baylibre.com>,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [PATCH v8 03/11] dt-bindings: iio: adc: ad7768-1: Document GPIO controller
+Date: Thu, 15 May 2025 18:12:49 -0300
+Message-ID: <6487b47ad80330819d21ba9b8b6f976ca3df0dee.1747175187.git.Jonathan.Santos@analog.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <cover.1747175187.git.Jonathan.Santos@analog.com>
+References: <cover.1747175187.git.Jonathan.Santos@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Thu, 15 May 2025 14:12:48 -0700
-X-Gm-Features: AX0GCFslEILHetAnpjY2QFEJ9SocrJkFvcA9OUfU-AXwwAPQyRsjmsYuQT8ABk4
-Message-ID: <CABeNrKVfCHww2k_W-0s4GQE=2bA+wjje=FEH=gL8FhNbFB1tOw@mail.gmail.com>
-Subject: Re: [PATCH 1/5] objtool/rust: add one more `noreturn` Rust function
- for Rust 1.87.0
-To: ttabi@nvidia.com
-Cc: a.hindborg@kernel.org, acourbot@nvidia.com, alex.gaynor@gmail.com, 
-	aliceryhl@google.com, apopple@nvidia.com, benno.lossin@proton.me, 
-	bjorn3_gh@protonmail.com, boqun.feng@gmail.com, dakr@kernel.org, 
-	gary@garyguo.net, jhubbard@nvidia.com, joelagnelf@nvidia.com, 
-	jpoimboe@kernel.org, linux-kernel@vger.kernel.org, ojeda@kernel.org, 
-	patches@lists.linux.dev, peterz@infradead.org, rust-for-linux@vger.kernel.org, 
-	stable@vger.kernel.org, tmgross@umich.edu
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTE1MDIwNyBTYWx0ZWRfXyQdYGjHWyVMd
+ H2S4LjsHX424EJecBCHpm49H9JHKVeWh82PNFozWUSSGedvvLQR6R7V/55Fj5qlKpHiUnctjmNU
+ JCmcKPzYkSAmwRU4qrCB8eJ79WfRDa0baOVyVPRMQPQdcaDRH+9S9EH9lmv1s762Q0UWUuA0dNp
+ /AvsbNxNLYQvzaM/Qq5z6yLIfNQeg0jHj7XKbxa5Hk76K2hC4VgVCf1oamKi0in4XY2foj7jX6B
+ ZyjCXelRgKwHDOzi4TnBYoWbVL3Zy2Sbwc/7CGYdieF71UqtXiJPyT8rx22u4q3m/gZ09fPHxeQ
+ fxuoorJ7S8dzV4pNAvSTSen3VcySezBJg0Lps/byPJesR81JeZlCuByERHGaga+CXZKA3Hz0jV7
+ WvEHY/Ee5pPuQJv/GV9t7t51HvJDQZK2B/8hVF2xRy+fd4Txvu2kIRS11pNPK8ywwGIdseCY
+X-Authority-Analysis: v=2.4 cv=B5u50PtM c=1 sm=1 tr=0 ts=682658e7 cx=c_pps
+ a=PpDZqlmH/M8setHirZLBMw==:117 a=PpDZqlmH/M8setHirZLBMw==:17
+ a=dt9VzEwgFbYA:10 a=KKAkSRfTAAAA:8 a=VwQbUJbxAAAA:8 a=gAnH3GRIAAAA:8
+ a=FDCdkw0c5cjSjuxHnEwA:9 a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-GUID: ME6HRJBH0wF_A4EU2ygWiIcSBXqcJ5Qn
+X-Proofpoint-ORIG-GUID: ME6HRJBH0wF_A4EU2ygWiIcSBXqcJ5Qn
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-15_09,2025-05-15_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 adultscore=0 clxscore=1015 priorityscore=1501 spamscore=0
+ mlxlogscore=999 suspectscore=0 mlxscore=0 malwarescore=0 phishscore=0
+ lowpriorityscore=0 bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505070000
+ definitions=main-2505150207
 
-On Thu, 15 May 2025 19:06:10 +0000, Timur Tabi <ttabi@nvidia.com> wrote:
-> On Thu, 2025-05-15 at 09:18 -0700, Josh Poimboeuf wrote:
-> > > Since I build with LLVM=1, I'm assuming the answer is 18.1.3
-> >
-> > I'm not able to recreate, can you run with OBJTOOL_VERBOSE=1 and paste
-> > the output?
->
-> You probably can't repro because it includes code that hasn't been merged upstream yet.  Try this:
->
-> https://github.com/ttabi/linux/commits/alex
->
->   CHK     kernel/kheaders_data.tar.xz
-> drivers/gpu/nova-core/nova_core.o: warning: objtool:
-> _RNvXsa_NtCs8S3917Wilyo_9nova_core5vbiosNtB5_14PciAtBiosImageINtNtCsgK88DPai1lC_4core7convert7TryFro
-> mNtB5_13BiosImageBaseE8try_from() falls through to next function
+The AD7768-1 ADC exports four bidirectional GPIOs accessible
+via register map.
 
-...
+Document GPIO properties necessary to enable GPIO controller for this
+device.
 
-> 011b     634b:	e8 00 00 00 00       	call   6350 <.Ltmp38>	634c:
-> R_X86_64_PLT32
-> _RNvNtNtCsgK88DPai1lC_4core5slice5index26slice_start_index_len_fail-0x4
+Acked-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Signed-off-by: Jonathan Santos <Jonathan.Santos@analog.com>
+---
+v8 Changes:
+* none.
 
-Yup, that's an unrecognized noreturn function.
+v7 Changes:
+* none.
 
-src/core/slice/index.rs:
-> #[cfg_attr(not(feature = "panic_immediate_abort"), inline(never), cold)]
-> #[cfg_attr(feature = "panic_immediate_abort", inline)]
-> #[track_caller]
-> #[rustc_const_unstable(feature = "const_slice_index", issue = "none")]
-> const fn slice_start_index_len_fail(index: usize, len: usize) -> ! {
->     // SAFETY: we are just panicking here
->     unsafe {
->         const_eval_select(
->             (index, len),
->             slice_start_index_len_fail_ct,
->             slice_start_index_len_fail_rt,
->         )
->     }
-> }
->
-> // FIXME const-hack
-> #[inline]
-> #[track_caller]
-> fn slice_start_index_len_fail_rt(index: usize, len: usize) -> ! {
->     panic!("range start index {index} out of range for slice of length {len}");
-> }
+v6 Changes:
+* none.
 
-The return is at offset 0093 (x62c3) with a jump to __x86_return_thunk.
+v5 Changes:
+* none.
+
+v4 Changes:
+* none.
+
+v3 Changes:
+* none.
+
+v2 Changes:
+* New
+---
+ .../devicetree/bindings/iio/adc/adi,ad7768-1.yaml      | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7768-1.yaml b/Documentation/devicetree/bindings/iio/adc/adi,ad7768-1.yaml
+index 9a6df931edc3..18f93586fcdf 100644
+--- a/Documentation/devicetree/bindings/iio/adc/adi,ad7768-1.yaml
++++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7768-1.yaml
+@@ -85,6 +85,14 @@ properties:
+       dt-bindings/iio/adc/adi,ad7768-1.h.
+     const: 1
+ 
++  gpio-controller: true
++
++  "#gpio-cells":
++    const: 2
++    description: |
++      The first cell is for the GPIO number: 0 to 3.
++      The second cell takes standard GPIO flags.
++
+ required:
+   - compatible
+   - reg
+@@ -142,6 +150,8 @@ examples:
+             spi-max-frequency = <2000000>;
+             spi-cpol;
+             spi-cpha;
++            gpio-controller;
++            #gpio-cells = <2>;
+             vref-supply = <&adc_vref>;
+             interrupts = <25 IRQ_TYPE_EDGE_RISING>;
+             interrupt-parent = <&gpio>;
+-- 
+2.34.1
+
 
