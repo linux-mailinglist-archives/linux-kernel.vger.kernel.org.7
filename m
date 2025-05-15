@@ -1,150 +1,118 @@
-Return-Path: <linux-kernel+bounces-649483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-649481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31011AB8561
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 13:55:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12F7DAB855E
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 13:55:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E52153BA46B
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 11:55:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4C5AF7AA490
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 11:53:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCE33298C00;
-	Thu, 15 May 2025 11:55:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3EF02989BF;
+	Thu, 15 May 2025 11:54:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="P1Cv2Odx"
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="T/TOaeMC"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83ACF29899A;
-	Thu, 15 May 2025 11:55:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747310124; cv=pass; b=dz5sGrFvAmTy4d03GiGon/P2r5olIbs92dzmK0tpwTUl3YQJUxDVpDIWmH3Ys1sNM9EB/sjUMb1NIzM4TEVHuITKXMW0CLAzmw3nko26E51ItKY/emYovNolSZxJ4F4ONSD9ebpc6m006kKMKClezgqXrHKKtRqhYww7EJsswgE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747310124; c=relaxed/simple;
-	bh=jOjgSH42Zt+Lh/WxJYrlCQqxuKGHDd4OScgdbmzvKgE=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=fJAkHdlctnRv9hq2uKdvYGoEJY6fI4l3ECZ6I9Zrr1tPq63m06cBo5bk0vBqIghdNMxwLu0mVYcMsxWfAsolIju27wxqgVrMtPGkR2/OUqUWlF96Pzn/PNMcmpnW0FcfsXCLdgSWIbxujCChpPC8ffyHVrkefZtam70YhbCkQbI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=P1Cv2Odx; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1747310092; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=K67XT3xufeGY4zKjiDJAfMYIooP9iFCuBgyFeODoEUtUGTo/efkiGv+/JQJw4urkvO9rdMSkDAUzS3/WOqMA6JBRREn5RII/ad7mv+qQIT35VI33TgX5L5RcCA0bK+Fcq76kI8OWROwLxce2jFK+uiK3QZpZNc0AysIA5NJDbeU=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1747310092; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=X7bUNRfzuJO+T4PVgYRu8D54tQVKV9Q1fN0/yr8vrzU=; 
-	b=frNm/Wb2z2GhbucqMXdqtodp5HdTHgmrGKhiLfhPIeSaueeCrznW5vAq1mNEG1Kyt3Kh6L6tEPnGcusjeXBTyMrSsac0QCIW8uME87qllN87RJKeKddhFnkebiGFBiar6yUxAVtv0ZNPJt/bw0ibRq6YNhWVf2Ul9MrC1bAsdoM=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1747310092;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=X7bUNRfzuJO+T4PVgYRu8D54tQVKV9Q1fN0/yr8vrzU=;
-	b=P1Cv2OdxKXsvf44/wXgclSsrfiIW68rtMFhQSmOi9Pg0gWM6sobOt/FqBHIsAl1+
-	MtOKpfYUh8mRA/oRLiEK+bt+hTnNtcEQllZPIVThfyz9WoAan0nVuUFtRTGzSQXOIIl
-	5d7+xBME398fMdMNaSWT/FjCaLnRBrd3uBfrw7OA=
-Received: by mx.zohomail.com with SMTPS id 1747310090926796.9101269819287;
-	Thu, 15 May 2025 04:54:50 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9246A202C5D
+	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 11:54:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747310086; cv=none; b=XU1nkzkc2njkk9HqLbN2S5IvGYwtYxpw2aK1ZmSiBivdhEciM1K1nADaJmSrGyk+tOhej1MGxtUCc2P1+AJVfrvSosP1BOiYxPp6unbzpczH7jCBqOvvsr8tt/gEYQQ3jZvzWi9XFHI49ZmBa3VZAdVkyRZ7tSgwVNXSKxZlp/s=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747310086; c=relaxed/simple;
+	bh=epsWvjWHu9kmVNTaRRd+qtpyAjbj5OYYAn55OL3IWmE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Yn9w/9cEIXUsraZ13NDTLuwJf5tphU4YFgcVJBEmRmhQC/qqHLx25Staj2w8bFbZ5rsYPFxfPomkIGq26d3h3Smq3FlLD6fYFoBYyVHD1AQ1k+/kxj9QOTEFs3I6hd2ZP+EM8Mwl3tVzFHVY1C0inVjKTzq9+WleUIh4C3W8m7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=T/TOaeMC; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1747310083;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=epsWvjWHu9kmVNTaRRd+qtpyAjbj5OYYAn55OL3IWmE=;
+	b=T/TOaeMCrvwW1KNA9hYC0Upw+XBlGV4amypHiHgzBRyKmnNiFIMy8kDxpkG3e9qDvihWx8
+	jNtJJljcY8uYNd6oFxvhzID8EFBQsk+Wp85TYpVygcYgYgeIUIudD3m98vVnMJHJ8+yoY4
+	cdtNZ3oBQFP0DGHstGm8x1zOHo9/fAU=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-157-9z3m76s7Op2uHj9zljrFzg-1; Thu, 15 May 2025 07:54:42 -0400
+X-MC-Unique: 9z3m76s7Op2uHj9zljrFzg-1
+X-Mimecast-MFC-AGG-ID: 9z3m76s7Op2uHj9zljrFzg_1747310081
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-43ea256f039so6929145e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 04:54:42 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747310081; x=1747914881;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=epsWvjWHu9kmVNTaRRd+qtpyAjbj5OYYAn55OL3IWmE=;
+        b=E6oK07EANENTPKlpjd7pYer5aj0ZM3g01XC8tWpYyp9JPkrettgosjFgUk18ohZfry
+         0t4VMU6veoM/4w6UH3l0/d9Y1FlkZYc2sxnSKC8H+gw0lRHk3IghFKzGUvjMqT4X5VHm
+         xxaXk09WcgkuzDZ87EjkhSonSqsmlrw1Cofqs3AM5Zxb91MDUZFNrsanH06q2Ub08fnX
+         b2gsnN1wBsTR0jL0HagcmxY4R0eHXqHDxxRb9O4XOBRwep4XXW3f98DD7HS6ddLlE4OX
+         6e0T6To00jjHC1RYsqWz3H0xpCGR9PwMH+D5S9Al3oaQUUX7C4jGrk6m7EmflWkifUBR
+         Rnlw==
+X-Forwarded-Encrypted: i=1; AJvYcCVEWvp1019mGsrmUWqwFeMeV6D4QYd+OzSwOL0qmfciaEQHc1Q+Un/wxOX0y+B7IWgiKd9fpxt05Alwd8g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzFwkL+6y4wcSsyGIXvmnA9IrBDnSJDt86QIxvTThZ6sY2kExyf
+	Rusnoiy1k3pA/SIJdfzASbxTqLtKyLO047vaIR2c/AzoXx3pPiI3GHsRojUfq21as0bgtSOMhYl
+	yIUP6Stl9YZbveoFxfdUz4zgQbmGfzxH9PY1XePR7ENSnj4eKMDB0tgW+6Xhk2Q==
+X-Gm-Gg: ASbGncvDrKxg9dZoGJokMHcgfw9mCECeSPxujPm26r2mKex2kI3k47n6FxKPEYWgpyy
+	R/DxoC4wEaUAA16wb8/dHE3zWLMfnkb9W2g1BQX4gN8zs8zjLaxxZcYNvjeeGsyOqPa3o+n1Pmq
+	0WZDe0Fi1gKfW43r3rKbsFArPqvJbgEipS8gmLH/8yNf9+CY5+rQnpOlr5JcwPGjes7CiLnRLM+
+	XtB1xbdxXhUAu6Zvbd2fjfJdTPc89qQKrQM/n0r6NHYS/haJ8Tf4c8AJAg7wIJklL6uo0I5tfW2
+	sCOiy2+D4bAM2vIG0XmiuTFFYlu++PiVeI7tsnyUmLeEXgLYA4mViYXZvmE=
+X-Received: by 2002:a05:600c:c059:20b0:43c:f44c:72a6 with SMTP id 5b1f17b1804b1-442f285da04mr40196565e9.2.1747310081300;
+        Thu, 15 May 2025 04:54:41 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF94kl59CRKh8KcTSkw1SAiKI6cImxvIQTZSHoUW1IK/I8r2VxJB89xu8sNKWWPqxAdRF3Xqw==
+X-Received: by 2002:a05:600c:c059:20b0:43c:f44c:72a6 with SMTP id 5b1f17b1804b1-442f285da04mr40196275e9.2.1747310080913;
+        Thu, 15 May 2025 04:54:40 -0700 (PDT)
+Received: from ?IPV6:2a0d:3344:2440:8010:8dec:ae04:7daa:497f? ([2a0d:3344:2440:8010:8dec:ae04:7daa:497f])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-442f3368e3fsm67978805e9.2.2025.05.15.04.54.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 15 May 2025 04:54:40 -0700 (PDT)
+Message-ID: <1b1f8131-80e6-4671-b4f2-4cadf426d4fd@redhat.com>
+Date: Thu, 15 May 2025 13:54:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.500.181.1.5\))
-Subject: Re: [PATCH v3 1/2] rust: irq: add support for request_irq()
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <aCUQ0VWgoxdmIUaS@pollux>
-Date: Thu, 15 May 2025 08:54:35 -0300
-Cc: Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>,
- linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <A7E3A124-AF77-4A4A-B4E2-AE7DDB1CE007@collabora.com>
-References: <20250514-topics-tyr-request_irq-v3-0-d6fcc2591a88@collabora.com>
- <20250514-topics-tyr-request_irq-v3-1-d6fcc2591a88@collabora.com>
- <aCUQ0VWgoxdmIUaS@pollux>
-To: Danilo Krummrich <dakr@kernel.org>
-X-Mailer: Apple Mail (2.3826.500.181.1.5)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v5 0/5] eth: fbnic: Add devlink dev flash support
+To: Lee Trager <lee@trager.us>, Alexander Duyck <alexanderduyck@fb.com>,
+ Jakub Kicinski <kuba@kernel.org>, kernel-team@meta.com,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Simon Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, Jacob Keller
+ <jacob.e.keller@intel.com>, Mohsin Bashir <mohsin.bashr@gmail.com>,
+ Sanman Pradhan <sanman.p211993@gmail.com>, Su Hui <suhui@nfschina.com>,
+ Al Viro <viro@zeniv.linux.org.uk>
+Cc: Andrew Lunn <andrew@lunn.ch>, netdev@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250512190109.2475614-1-lee@trager.us>
+Content-Language: en-US
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <20250512190109.2475614-1-lee@trager.us>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Danilo,
+On 5/12/25 8:53 PM, Lee Trager wrote:
+> fbnic supports updating firmware using signed PLDM images. PLDM images are
+> written into the flash. Flashing does not interrupt the operation of the
+> device.
 
-> On 14 May 2025, at 18:53, Danilo Krummrich <dakr@kernel.org> wrote:
->=20
-> On Wed, May 14, 2025 at 04:20:51PM -0300, Daniel Almeida wrote:
->> +/// // This is running in process context.
->> +/// fn register_irq(irq: u32, handler: Handler) -> =
-Result<Arc<Registration<Handler>>> {
->> +///     let registration =3D Registration::register(irq, =
-flags::SHARED, c_str!("my-device"), handler);
->> +///
->> +///     // You can have as many references to the registration as =
-you want, so
->> +///     // multiple parts of the driver can access it.
->> +///     let registration =3D Arc::pin_init(registration, =
-GFP_KERNEL)?;
->=20
-> This makes it possible to arbitrarily extend the lifetime of an IRQ
-> registration. However, we must guarantee that the IRQ is unregistered =
-when the
-> corresponding device is unbound. We can't allow drivers to hold on to =
-device
-> resources after the corresponding device has been unbound.
->=20
-> Why does the data need to be part of the IRQ registration itself? Why =
-can't we
-> pass in an Arc<T> instance already when we register the IRQ?
->=20
-> This way we'd never have a reason to ever access the Registration =
-instance
-> itself ever again and we can easily wrap it as =
-Devres<irq::Registration> -
-> analogously to devm_request_irq() on the C side - without any =
-penalties.
->=20
->> +///     // The handler may be called immediately after the function =
-above
->> +///     // returns, possibly in a different CPU.
->> +///
->> +///     {
->> +///         // The data can be accessed from the process context =
-too.
->> +///         let mut data =3D registration.handler().0.lock();
->> +///         *data =3D 42;
->> +///     }
->> +///
->> +///     Ok(registration)
->> +/// }
->=20
+Apparently the bot did not notice, but I applied the series a little
+time ago, thanks!
 
-Up until this point, there was no need for the data to not be inline =
-with the
-registration. This new design would force an Arc, which, apart from the
-heap-allocation, is restrictive for users.
+Paolo
 
-Can=E2=80=99t we use Devres with the current implementation?
-
-IIUC from a very cursory glance, all that would mean is that you'd have =
-to call
-try_access() on your handler, which should be fine?
-
-=E2=80=94 Daniel=
 
