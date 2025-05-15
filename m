@@ -1,164 +1,201 @@
-Return-Path: <linux-kernel+bounces-649168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-649170-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3254CAB810C
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 10:42:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FEBBAB8107
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 10:41:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20D6B3B8EC8
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 08:37:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B5FC1886152
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 08:38:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D3462882CE;
-	Thu, 15 May 2025 08:36:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1316D289E35;
+	Thu, 15 May 2025 08:37:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="aqC1eiDN";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="J/xY8Bkn";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="aqC1eiDN";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="J/xY8Bkn"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OoK9atSg"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50870482FF
-	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 08:36:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC9E5288522
+	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 08:37:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747298212; cv=none; b=iQ1cI8SixoJeFU92jYwLCSMef9ufmW3xLYDY3SkNQ4jz7I6cjjqVcuCiaX5+01hPFskFoR9g8s+OO0w54crg+YR8UJteGgxzkXy+W1g/ESvOcbPkIgmHwlk/shuLfLexKb1Wupb60xDACdqh6et57rXaPwjTAPQ5dKcUOUUacmE=
+	t=1747298242; cv=none; b=CYerOjGZHU6egdP3LuxVRkADwalnh7+jeDEE8MVPXVR1Br4+Qgp/2GHWkDzsse719a2EnYz/90rdzoD0G0KnNdlBmZMlCN2n9BASh+t8kVzUlDN5xU9ntZg0/OcPQ3p5xZ66Q2ImfcVu2+G/W6u5VmLwhMplVf4owdqpLqe0ZJs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747298212; c=relaxed/simple;
-	bh=+c9NGYmiEkqdCnm5003uXEFhtfdeTB7uo/kvDiYpTHE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YiIrBthklsRSbGSaQbQC9zH4RlddMYjA6JTx1h7Dub+WebP3rHwa1prUsQFbZc/7/rZlgmdJbjioYIMGNBRNs+BZZ9cw+eNkJXMOjSoOrJulX39bF98uaf/L0hlFBsVZYEbY+qJo8kuD+BAtVCXHMj5rSFHbLh5I9brsG4uWiyE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=aqC1eiDN; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=J/xY8Bkn; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=aqC1eiDN; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=J/xY8Bkn; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 709EE211B5;
-	Thu, 15 May 2025 08:36:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1747298209; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Kvzf/cT7kFTGGu4qe+BKuApOCbvOUKO36BdytQuX9bg=;
-	b=aqC1eiDNM7x3s6EozlAR5OWCQviVaAtCIVVgIiVqcB5WImfCQcQSz6EKUql/QHKN5ac2ld
-	bqwy15BWMFuXP6q/FvItc1ldfOdTVkAafcpVQ2xzORslHnbLpp4moQX3Z7VPcHwnkoO917
-	WandeC9N+tQ+ikWVdzmqhgEDCjiAF7I=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1747298209;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Kvzf/cT7kFTGGu4qe+BKuApOCbvOUKO36BdytQuX9bg=;
-	b=J/xY8BknbdxEFblaXLWVlGBNQFfjNKxZQlySvLAf7Ew69O48nQxw0BiCJEwyMZTGwEUpIE
-	S+1f4MolWlZmm2Cg==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=aqC1eiDN;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b="J/xY8Bkn"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1747298209; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Kvzf/cT7kFTGGu4qe+BKuApOCbvOUKO36BdytQuX9bg=;
-	b=aqC1eiDNM7x3s6EozlAR5OWCQviVaAtCIVVgIiVqcB5WImfCQcQSz6EKUql/QHKN5ac2ld
-	bqwy15BWMFuXP6q/FvItc1ldfOdTVkAafcpVQ2xzORslHnbLpp4moQX3Z7VPcHwnkoO917
-	WandeC9N+tQ+ikWVdzmqhgEDCjiAF7I=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1747298209;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Kvzf/cT7kFTGGu4qe+BKuApOCbvOUKO36BdytQuX9bg=;
-	b=J/xY8BknbdxEFblaXLWVlGBNQFfjNKxZQlySvLAf7Ew69O48nQxw0BiCJEwyMZTGwEUpIE
-	S+1f4MolWlZmm2Cg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4A0B6137E8;
-	Thu, 15 May 2025 08:36:49 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id uh33EKGnJWgzPAAAD6G6ig
-	(envelope-from <dwagner@suse.de>); Thu, 15 May 2025 08:36:49 +0000
-Date: Thu, 15 May 2025 10:36:40 +0200
-From: Daniel Wagner <dwagner@suse.de>
-To: Ming Lei <ming.lei@redhat.com>
-Cc: Daniel Wagner <wagi@kernel.org>, Jens Axboe <axboe@kernel.dk>, 
-	Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>, 
-	"Michael S. Tsirkin" <mst@redhat.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Costa Shulyupin <costa.shul@redhat.com>, 
-	Juri Lelli <juri.lelli@redhat.com>, Valentin Schneider <vschneid@redhat.com>, 
-	Waiman Long <llong@redhat.com>, Frederic Weisbecker <frederic@kernel.org>, 
-	Mel Gorman <mgorman@suse.de>, Hannes Reinecke <hare@suse.de>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, linux-kernel@vger.kernel.org, linux-block@vger.kernel.org, 
-	linux-nvme@lists.infradead.org, megaraidlinux.pdl@broadcom.com, linux-scsi@vger.kernel.org, 
-	storagedev@microchip.com, virtualization@lists.linux.dev, 
-	GR-QLogic-Storage-Upstream@marvell.com
-Subject: Re: [PATCH v6 8/9] blk-mq: use hk cpus only when isolcpus=io_queue
- is enabled
-Message-ID: <8c162a99-05f5-408c-b513-4005690d56a2@flourine.local>
-References: <20250424-isolcpus-io-queues-v6-0-9a53a870ca1f@kernel.org>
- <20250424-isolcpus-io-queues-v6-8-9a53a870ca1f@kernel.org>
- <aB1qqNDEnHMlpMH_@fedora>
+	s=arc-20240116; t=1747298242; c=relaxed/simple;
+	bh=/PUpKrpWMkQZQ19od7e5TyLzkRIF9+XGNEG2vYdwB3s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BQDJK336c3AGfeyxBCmLZ2aH3k9thdP48b4IfyV/r7G80BPQYqmL+qXw0xJEmMN+rjMJDeEEwMYTP1YACF0pyzkWcMTKy7dxT4T0028EVXaCO8VCB+GEpLOPkr3+nwb6F9oAvG36RYIp2AvCI01579F7Mdn4oiAm5RXrJ20lC8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OoK9atSg; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1747298237;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=618HshYbodIV5qWiJvlchUNmtxsm6SENYo90P5AmmK8=;
+	b=OoK9atSgZqsM+XkMK7lsDLsn3wN1tEEGSaMzZPpBE4GfWQ0czrcjbNyzGncTxw9MRKyMe2
+	nqopmKv63MrZPSUbA5H/a/u0pJDzvsQ/8Fy5vBve9pYJWjVkk7MyUwwBpr9MCHBRrmJh7M
+	DXajzfKmTJsIw6mtBl1TdYNT89q/acQ=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-530-ole786ixNs28ummQKn3AUA-1; Thu, 15 May 2025 04:37:00 -0400
+X-MC-Unique: ole786ixNs28ummQKn3AUA-1
+X-Mimecast-MFC-AGG-ID: ole786ixNs28ummQKn3AUA_1747298219
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-43d4d15058dso5906625e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 01:36:59 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747298219; x=1747903019;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=618HshYbodIV5qWiJvlchUNmtxsm6SENYo90P5AmmK8=;
+        b=pewGOdjJ0lwvg3Zc6K8MMCciGlWB+vJOVYs12vV9TKkjcPSQpHJyutNfehPFCQEX4L
+         5/1hRwSkMfMTU4vHwZNoSvkJN2vvK3c5pJYQpkMITXaNBapOk5H+6Rb/qfgugdk42qLI
+         439YsGh6506eoPUlhcE3nPUic7q0zclQwm2ZCfis0Sjazy8TeddUsym9FYTnJJjMw/5S
+         al2VUYKLkgIj62O3vRwkt/HV8DCCSuOT/0zuktVHm3+fsyE6BBv36aolgQovbuDqOkHg
+         WLb3FKwQwK2tclqqb23YGbpqRg6aRmi2/QKgEaQgcelenY7fJ3IQqdU6Xy1O1WqFY+Tt
+         /SMw==
+X-Forwarded-Encrypted: i=1; AJvYcCW12mizwaMrjPgUfapa9VIvYM91mfJunVFlG9b6saJy/Bcjdk46tO6GLsxVBDNqPrM1jm2qguUgpnYozm0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWJmYzhw+Y7GhY593r/D05dV3WipbKrqjKiaMAMUScJpP02PuZ
+	jEhyUjQbQtSrZeeFr4pmaSVTPoXCI+jyaIlXcoS1ocuvj1JsXjOsYw2i790JEHyUc9A3j63zD/c
+	JAZ9cT7684L4dzvM5jcjtPYY4eHV64W2QhqB9n8d97ts5yznWG+lsSk8E2SE5IA==
+X-Gm-Gg: ASbGncsjTBUunuY9BgJquDJzbjGmcj9sZ0id2bURifYec639dnzjNa9Q0WFlmwUG3uq
+	f0RCtzGRwzyiSEJiErP/HnlKHcyrLaBClioyEezuuVIdDJT9kvREwlRpE7q55smFPran7+z2+gI
+	3VGteB8XCOfg12YgpU45mqglWDFvPrBntK6No30jWZZmrhVmLfv0gL8v1tfJ5/kQKTNkE+lxmvO
+	gW1gtkI/DOJ/JyUVtjwgB5As/iE2PdSgyToymj1TnmEIMTwCkPiiUQG717crLFcTwE0bJLnp0+3
+	vLbEvujfAf43IKEdd0Qo5LgBsvK4q4Ga+QLs0LrPKzf4q70m6pxj7zZME1vk49gVg2sE1H3uBAz
+	MP7YFLOPUyK+aoBa2lZPDKIXGYzb9wj3XN6dSJNM=
+X-Received: by 2002:a05:600c:1986:b0:43d:7588:6688 with SMTP id 5b1f17b1804b1-442f4735b63mr54880325e9.12.1747298218727;
+        Thu, 15 May 2025 01:36:58 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEmaKDEjwq5sTQJSB4Qv+uAiPvjMdnBVhhZCqftFPzP7fxRKG6QQImZy6DegzORYPxqNFoxtg==
+X-Received: by 2002:a05:600c:1986:b0:43d:7588:6688 with SMTP id 5b1f17b1804b1-442f4735b63mr54879905e9.12.1747298218222;
+        Thu, 15 May 2025 01:36:58 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f4a:8900:884a:b3af:e3c9:ec88? (p200300d82f4a8900884ab3afe3c9ec88.dip0.t-ipconnect.de. [2003:d8:2f4a:8900:884a:b3af:e3c9:ec88])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-442f4a9bed3sm54122425e9.21.2025.05.15.01.36.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 15 May 2025 01:36:57 -0700 (PDT)
+Message-ID: <6fe7848c-485e-4639-b65c-200ed6abe119@redhat.com>
+Date: Thu, 15 May 2025 10:36:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aB1qqNDEnHMlpMH_@fedora>
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Rspamd-Queue-Id: 709EE211B5
-X-Spam-Flag: NO
-X-Spam-Score: -4.51
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_TWELVE(0.00)[25];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Action: no action
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: Check pxd_leaf() instead of !pxd_table() while
+ tearing down page tables
+To: Dev Jain <dev.jain@arm.com>, catalin.marinas@arm.com, will@kernel.org
+Cc: ryan.roberts@arm.com, anshuman.khandual@arm.com, mark.rutland@arm.com,
+ yang@os.amperecomputing.com, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, stable@vger.kernel.org
+References: <20250515063450.86629-1-dev.jain@arm.com>
+ <332ecda7-14c4-4dc3-aeff-26801b74ca04@redhat.com>
+ <4904d02f-6595-4230-a321-23327596e085@arm.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <4904d02f-6595-4230-a321-23327596e085@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, May 09, 2025 at 10:38:32AM +0800, Ming Lei wrote:
-> > +static bool blk_mq_map_hk_queues(struct blk_mq_queue_map *qmap)
-> > +{
-> > +	struct cpumask *hk_masks;
-> > +	cpumask_var_t isol_mask;
-> > +	unsigned int queue, cpu, nr_masks;
-> > +
-> > +	if (!housekeeping_enabled(HK_TYPE_IO_QUEUE))
-> > +		return false;
+On 15.05.25 10:22, Dev Jain wrote:
 > 
-> It could be more readable to move the above check to the caller.
+> 
+> On 15/05/25 1:43 pm, David Hildenbrand wrote:
+>> On 15.05.25 08:34, Dev Jain wrote:
+>>> Commit 9c006972c3fe removes the pxd_present() checks because the caller
+>>> checks pxd_present(). But, in case of vmap_try_huge_pud(), the caller
+>>> only
+>>> checks pud_present(); pud_free_pmd_page() recurses on each pmd through
+>>> pmd_free_pte_page(), wherein the pmd may be none.
+>> The commit states: "The core code already has a check for pXd_none()",
+>> so I assume that assumption was not true in all cases?
+>>
+>> Should that one problematic caller then check for pmd_none() instead?
+> 
+>   From what I could gather of Will's commit message, my interpretation is
+> that the concerned callers are vmap_try_huge_pud and vmap_try_huge_pmd.
+> These individually check for pxd_present():
+> 
+> if (pmd_present(*pmd) && !pmd_free_pte_page(pmd, addr))
+> 	return 0;
+> 
+> The problem is that vmap_try_huge_pud will also iterate on pte entries.
+> So if the pud is present, then pud_free_pmd_page -> pmd_free_pte_page
+> may encounter a none pmd and trigger a WARN.
 
-I wanted to avoid checking if housekeeping is enabled twice in a row.
-I'll post the next version with your suggestion and see if this approach
-is better.
+Yeah, pud_free_pmd_page()->pmd_free_pte_page() looks shaky.
+
+I assume we should either have an explicit pmd_none() check in 
+pud_free_pmd_page() before calling pmd_free_pte_page(), or one in 
+pmd_free_pte_page().
+
+With your patch, we'd be calling pte_free_kernel() on a NULL pointer, 
+which sounds wrong -- unless I am missing something important.
+
+> 
+>>
+>> If you were able to trigger this WARN, it's always a good idea to
+>> include the splat in the commit.
+> 
+> I wasn't able to, it is just an observation from code inspection.
+
+That better be included in the patch description :)
+
+-- 
+Cheers,
+
+David / dhildenb
+
 
