@@ -1,117 +1,158 @@
-Return-Path: <linux-kernel+bounces-649937-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-649939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B350FAB8B39
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 17:47:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41479AB8B03
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 17:41:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D898A3B887B
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 15:40:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F06A81BA4961
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 15:41:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F091A218ACC;
-	Thu, 15 May 2025 15:40:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78419219A9B;
+	Thu, 15 May 2025 15:41:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nPUhYzjf"
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="nY1mWB4k"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CEC5211A0D;
-	Thu, 15 May 2025 15:40:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43B3F21773D
+	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 15:41:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747323650; cv=none; b=mG8nTcDetyR4GUNk/MK/PrLfTH4bKmzbXgXImnHDDKEf3Vv2Z0vMU2/JNiBciW7tSSnMO/phpvQ7VyA2Mu9Y3nrB2w/iuK6T45AfDDUuUAbVU9kG17eLw5L1zbluruf/LpU2TGCbeWypHl2NF0woMovqjtajUPb5/icr+OD0ysY=
+	t=1747323663; cv=none; b=JnzNcSdTCyBAYv4c3Ws7oXHBog4c1qlnknc19LAdKv3PMOHlgl5IGYFT6AoBtb4k3Y+9/j8ZgLynqcPfhE7k+O9UCpiJt2sQzhRxzwB6MLKiRkUYKg4sQGEiFZRUuhpnDC2O4wCSjspLvwE3j0X9mUNCCQVA5LDtJMy3vKPqtkk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747323650; c=relaxed/simple;
-	bh=isnxA1U3Y80dnzjuWHMdDuK8gT472yylgVk3Nz9soZM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eOakhuOUVevR9SUFBxDgX+4MhnPO3Q840qvQn0MZdh5dnWSs2lppKVJsN6E7ao9HzpDHa4O6aM5M8gpXMYmzKuo6R7rp6clW0c0fEZITMuOYtjQdcxonCqE8MCgmSmpm2NYoqRryAn8XN+2t8rnlxs7IAsEC82+EwZUDkhMthU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nPUhYzjf; arc=none smtp.client-ip=209.85.215.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-b239763eeddso892970a12.1;
-        Thu, 15 May 2025 08:40:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747323648; x=1747928448; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=gmddZo5hbgODLBcL9749K2U4oLVLG2d3XqRGsTj6JdE=;
-        b=nPUhYzjfW+w+1/mQ9Hmcl+zLj5SxOdEL25rPb8J8YU/LHE/9WQhTagA4AXtbM0rRTM
-         980ycZ4AtjDm6WSzm2p7+KHOoWOXkQkFsMKKEvQtIS53cst0dczw7dNSwdTq4p912pxs
-         HWzpcnQJjeW4cil1Fz+foZ+nSnTMPoo0Orxe9mJUdzrPx0Is3e8w252YOTXE+g/Ct8bC
-         LB3mFnfOLa3RQM6L1dbrRadnmjXSo41YvI0FQ0NbS7POzdP8FGXBZDpZhMp+0sCKFJSu
-         8IxJ6gSoYOJFAGsnNy2pp+5cVNJsF8hAlThLC0GmejeX+qCOm+gzjdpYYVsUIO7B0QED
-         rS3g==
+	s=arc-20240116; t=1747323663; c=relaxed/simple;
+	bh=r8Rz9y5mBO826o6HxT9wcmQ+Cgxb+4L1qYpw84sCd1o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bGr/S66X0SbcH/w2KKAm4/qnTwUVJAAxdDNh/1/T9VKmwCHAjhWLwwFt2U9Kdq7RBctcFSZMhWzSSfmcy7KXDpHtPiYw7SpvMOEcakWhyhhUn0KokByDYNy4w1ZZ700OplojYj7ZsncVb2utUzIefv4RJbjC0DDNSIQNbtO534A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=nY1mWB4k; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54FEFBaO016654
+	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 15:41:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	hDP2BOABWrcdmtprDmarKLv3ZXSLVag50oTBIKB6RbY=; b=nY1mWB4kDphGytYu
+	iWSFS+6yKBWXV3C0FVD+NKWS+voV4MwFhjezUbgnJtHOjcK5kMa74wx+L4/T3aKg
+	WmHyNsU8CZYGq6LTEeTzoRMfEnpNOEwPcJamrLFeIpegOoxG22cHmVrcQoSXN87f
+	G5yCWm3Vm1zWmv5gREHlwDCC42wEwL1uCKJqNHByG0GpHEnHdCe3FVUYeSc524+e
+	6vmS7DjMTzON7w+MdvePKkO7m4gooqd9I7dFyoEoYcl/sfuHyNCBDOg1yni+AIVh
+	Mt7EEwwbGSc9ngXmDgSYKmIELS4AatMXMfAQTO8z7jl9hpa/e45OOI2/KhPIvd2H
+	KxPVfw==
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46mbcmpt68-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 15:41:01 +0000 (GMT)
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7c5466ca3e9so24558185a.2
+        for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 08:41:01 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747323648; x=1747928448;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gmddZo5hbgODLBcL9749K2U4oLVLG2d3XqRGsTj6JdE=;
-        b=gun5G05cQoW2b4j/C1xRXfWyzznfaR3klvj+iMLCGQx/6LC/I7s5su5f6cbMnuxAC9
-         y31pK/k+aB+EiVMqxEC02YYw0Z8Cxu3MVRX0pw9C2qKOWPUWN8HUd08MjeJqnk0os3ub
-         arVLxHLr8qxr9j61Di8Er2IOIvgikIufjubTMnueJ0tcJIfBAEfBJwJioAUwtBxMEmyL
-         m6SimyoOu+D6IwFPP5lNRWAPQMfCNrspGwHrQX6Ehbz5Zp9tj+B0nyV2JjjTRS0Fxbwb
-         Wb4apMlP530Dne1/puv6HLPaIPJ0egyCzPVHRkkMj+DN49gRHwQ7yVocZrhZ/fy9hiQg
-         jDLg==
-X-Forwarded-Encrypted: i=1; AJvYcCX7c73/dNBYxoMns3ELlM7gID9MuC3PbhxpekHtbwKDInKX7Ln9mt31BiQoEOyDRTvoN9JS8JD64KTYGnI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/WaHZmh3jI+UfjlVgC+B6SVxUSQbQ4kB7RaPzcmBr0orr3iJC
-	BR0bNyNCzaBoV31hNkJh1cP1GHd6nXqCI+iKdc16w3rY8uikHWI=
-X-Gm-Gg: ASbGncsue7O9upnCOmQnVopVF31CLHw9te7dYEHmC+YUzFP7/4l010tvWsq4AKiBAOq
-	uprvYEwZxNrc5h8PurFNwnpGFsitJXYL+IrqO+oV6zH0YWgt8f1D+f4aXFGtCHt2qFTwm2OAOH8
-	P+Cs5IJdN4gQwXohhENMDl7rjjvBrJcQ7lu/gTiTC6gJ5upQaPg4uLLMtgjZKRtv4+aWBzhRAWS
-	j1q9tTI7lZVofgSvpxoeQSHIjDtW1f2ggbI7jfGp8c8uXS2Q+0sR/Xj55g3HyWxFeMdPKgMMSAZ
-	mwR8TC5K6VPtaT0nT748sxOxuRm7PTHGHXB6GjBB3qck2xnBtAppNwFZlfrOuV91rfIk6gfoHXi
-	APZoOKAPS4I3t
-X-Google-Smtp-Source: AGHT+IGDgwKqaGt4wIfWcyuMH9A7tr3fIlzPfW/V/Q670JgUBuyMgkn7D4fVvu0QbFyWupBvw0XnAA==
-X-Received: by 2002:a17:902:d4d1:b0:224:584:6eef with SMTP id d9443c01a7336-231b601cb46mr42528955ad.41.1747323648179;
-        Thu, 15 May 2025 08:40:48 -0700 (PDT)
-Received: from localhost (c-73-158-218-242.hsd1.ca.comcast.net. [73.158.218.242])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-22fc773edcesm118706505ad.71.2025.05.15.08.40.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 May 2025 08:40:47 -0700 (PDT)
-Date: Thu, 15 May 2025 08:40:46 -0700
-From: Stanislav Fomichev <stfomichev@gmail.com>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
-	pabeni@redhat.com, jiri@resnulli.us, andrew+netdev@lunn.ch,
-	sdf@fomichev.me, linux-kernel@vger.kernel.org,
-	syzbot+53485086a41dbb43270a@syzkaller.appspotmail.com
-Subject: Re: [PATCH net] team: grab team lock during team_change_rx_flags
-Message-ID: <aCYK_rVZ7Tl7uIbc@mini-arch>
-References: <20250514220319.3505158-1-stfomichev@gmail.com>
- <20250515075626.43fbd0e0@kernel.org>
+        d=1e100.net; s=20230601; t=1747323660; x=1747928460;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hDP2BOABWrcdmtprDmarKLv3ZXSLVag50oTBIKB6RbY=;
+        b=J7Nxqhaikhlks0gF0+RmVCz9h6K7iblhAMfZTfzf7wX4NoD+1xasCFghq/KjEacmQZ
+         IkzgS2yyK/JZV/FyTetbTFBe4IYdHKFExBhYAuJYksu83Tb40DQ+IRBB0n5aLuIUAQ5E
+         nGfk4aNfnLTSKXMgXBy7bjr4LZpPz23LK+9W9N1fdhN5+6Xrp0lSWang5UlEOx6NRnRF
+         fE8Wv6hL5WzeRAgXqNREYkiPJLwB6wkxUzVhu+ijnDwvGilS0Mrk7/LQhPnjDKL7d4sH
+         iQCKQfwhHBzQPdVMLn/dFPwbY997omfUHoxx3R1I2NTCYziLt7M++B0ILLx/gINH6s6v
+         BrUg==
+X-Forwarded-Encrypted: i=1; AJvYcCX9vyON4hqUXTyD0zcvaZXSseJxBUTsRpnx8/Hg7PU6jALPMxQjKLTGvcvDvG67ptBzqNtP3e9BzP3aFoE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YySe2zj1JafzzC5pAN976RNfS8Fkc/Lsu7Fk/rktfEoskU4xRDE
+	0OJ0SNFw/OjU84eHGFAMmAwTnQ3x7iSyXHS1LcfadUUFZ0Aplz44uxnk996VF68wJYdoSBMuAA3
+	ZDwj+oAZ/g8ZRRWKsJT5Oder6aJH8ripwp2RGio50kJ3Nl2JCsvclGe4W8MIQdXE=
+X-Gm-Gg: ASbGnctwcZR91YaKAacPEicD0F3Btlt70fWlrJD9kGsrjwQO3UMO1fjEITpK6+YG91c
+	ZRiLnuWkTBBHDviO6eEWaCrGVWg4UU1cxxr3II6KTgbUumxZ0EMWoQxYfBNhWN4ijAz6jjmFI93
+	hbigOk/XZj5m/SlPzUZtkZZy8WwXe9pZ0ODTeomKwQS1VD1PBv6tecskhLyjj7ErrpmTmIsoos6
+	AjHGpTJamDpL6BDZdRpZIVocesisaN2XuXanqxCkM1/3yDOY3JOtn8XxSQsV0RLTJlTENH9xfv+
+	tN93R8jXQXwsBSqxLTCpS0A/Xxfl0G7Lw18P0xLX6DI13+nuE55aFGbrCgaS9DC5UQ==
+X-Received: by 2002:a05:620a:2696:b0:7c3:d266:3342 with SMTP id af79cd13be357-7cd28817e46mr483161785a.5.1747323659959;
+        Thu, 15 May 2025 08:40:59 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHkD/kSx20+qw6EEF+iZGvVJtXA5uOZxo7BEHt8EbD6OzUqzYurpQEx+s5agdussKHsTUcOVA==
+X-Received: by 2002:a05:620a:2696:b0:7c3:d266:3342 with SMTP id af79cd13be357-7cd28817e46mr483158285a.5.1747323659432;
+        Thu, 15 May 2025 08:40:59 -0700 (PDT)
+Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad52d497a0fsm5132866b.140.2025.05.15.08.40.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 15 May 2025 08:40:59 -0700 (PDT)
+Message-ID: <764e3582-6e09-4252-8e5c-12a7c5ba58f3@oss.qualcomm.com>
+Date: Thu, 15 May 2025 17:40:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250515075626.43fbd0e0@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 10/18] clk: qcom: camcc-sm8550: Move PLL & clk
+ configuration to really probe
+To: Jagadeesh Kona <quic_jkona@quicinc.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+        Dmitry Baryshkov <lumag@kernel.org>
+Cc: Ajit Pandey <quic_ajipan@quicinc.com>,
+        Imran Shaik <quic_imrashai@quicinc.com>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+References: <20250515-videocc-pll-multi-pd-voting-v4-0-571c63297d01@quicinc.com>
+ <20250515-videocc-pll-multi-pd-voting-v4-10-571c63297d01@quicinc.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250515-videocc-pll-multi-pd-voting-v4-10-571c63297d01@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTE1MDE1NSBTYWx0ZWRfXw0Ew1MHdrhGE
+ LYZP2R0qLKQ9D8XEGbbIu9apN/FNM5gtR8/5qaK34J+bOu9h+gjsy0lK1gnQC54UZL+7KoRhQ/S
+ 1xlOKOSysaqolG8pmyUp/s9Rkld3KrFLShUz5gYHK8vvKiODtzEi8wKwU+0JWM4QmytafPmr6DE
+ sGSTI3qcGeKsa5SHGscqWlvU7mZqDFlMNgEcNYnJ2G/pqMymC8Cve54dsV4bOGRRwXACR9qcvd1
+ jgzFLHp2auxQcZuxt9cAlYtkzFl4DyuXQtnJNvjW4pCLMbbCdseFyKnmWgKv+W1HrYUvJRTeSgw
+ 05xIGtoWwZYDmseYmapptCEBlqv+4bjEdHQTfynCPUqe7JL2LNTRyJnSEwPl8Xdn9wVGGaNndIr
+ Svl6taj5nFirAcM3d4cJQ50smcntiGjzYINriNqL2cyRh7nU+d9U4p5570bna6gGmYbKNuBb
+X-Authority-Analysis: v=2.4 cv=G5scE8k5 c=1 sm=1 tr=0 ts=68260b0d cx=c_pps
+ a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=EUspDBNiAAAA:8 a=COk6AnOGAAAA:8
+ a=OU1JASuMovj745rkUKUA:9 a=QEXdDO2ut3YA:10 a=PEH46H7Ffwr30OY-TuGO:22
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: ONemEk-p8PvsfsWsmXev1bzUzOBM8gQG
+X-Proofpoint-ORIG-GUID: ONemEk-p8PvsfsWsmXev1bzUzOBM8gQG
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-15_06,2025-05-15_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 mlxlogscore=999 clxscore=1015 phishscore=0 bulkscore=0
+ suspectscore=0 spamscore=0 impostorscore=0 lowpriorityscore=0 mlxscore=0
+ malwarescore=0 adultscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505070000
+ definitions=main-2505150155
 
-On 05/15, Jakub Kicinski wrote:
-> On Wed, 14 May 2025 15:03:19 -0700 Stanislav Fomichev wrote:
-> > --- a/drivers/net/team/team_core.c
-> > +++ b/drivers/net/team/team_core.c
-> > @@ -1778,8 +1778,8 @@ static void team_change_rx_flags(struct net_device *dev, int change)
-> >  	struct team_port *port;
-> >  	int inc;
-> >  
-> > -	rcu_read_lock();
-> > -	list_for_each_entry_rcu(port, &team->port_list, list) {
-> > +	mutex_lock(&team->lock);
-> > +	list_for_each_entry(port, &team->port_list, list) {
+On 5/14/25 9:08 PM, Jagadeesh Kona wrote:
+> Camera PLLs on SM8550 require both MMCX and MXC rails to be kept ON to
+> configure the PLLs properly. Hence move runtime power management, PLL
+> configuration and enabling critical clocks to qcom_cc_really_probe() which
+> ensures all required power domains are in enabled state before configuring
+> the PLLs or enabling the clocks.
 > 
-> I'm not sure if change_rx_flags is allowed to sleep.
-> Could you try to test it on a bond with a child without IFF_UNICAST_FLT,
-> add an extra unicast address to the bond and remove it?
-> That should flip promisc on and off IIUC.
+> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
+> ---
 
-I see, looks like you're concerned about addr_list_lock spin lock in
-dev_set_rx_mode? (or other callers of __dev_set_rx_mode) Let me try
-to reproduce with your example, but seems like it's an issue, yes
-and we have a lot of ndo_change_rx_flags callbacks that are sleepable :-(
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+
+Konrad
 
