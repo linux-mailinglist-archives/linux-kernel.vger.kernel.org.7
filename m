@@ -1,158 +1,119 @@
-Return-Path: <linux-kernel+bounces-649841-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-649844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12419AB89E6
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 16:52:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC1B4AB89EC
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 16:53:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 730B6175F7C
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 14:51:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0897E3BB85C
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 14:51:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01D741FC0FC;
-	Thu, 15 May 2025 14:51:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48B6D1F3FEB;
+	Thu, 15 May 2025 14:52:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mXebSOmW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ChR98yrx"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EF901F3FEB;
-	Thu, 15 May 2025 14:51:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 053DD34CF9;
+	Thu, 15 May 2025 14:52:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747320693; cv=none; b=EFUPVw5J8j1uPgw6OdJl/BVtXDrgXlx5n+UrnWRxWq6K2ZJuyVTH6kN1k+OhgB+82wbvOULOTgHQP0smwe08YOXizPdiWDhMGH6dzg2rR7SPWP69LP2IU+XRSXOCOXlbu99Uq3Ntodwwj0ETMAiyUFli1wv8O1jhtQvzfBHvVHs=
+	t=1747320727; cv=none; b=g3rov/KgORdpXRMPQ5nVkhaU19uHIXgNXp/9xLaUjjd9f96lteG+0iSbQJZ1732t3Y/M+ptaYPcjaF3zdEE9R6tQA/5zxDEXj86/TyEjQIdlAG6SSsF1jtNhZDgCSrbh0U6eeFYo9je5myn28Se3Exij5gfr4nlxEi3XnFSCeVo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747320693; c=relaxed/simple;
-	bh=gPLoJgRnkayVWLQlz1ZTjudKv0fME3HsKweEpIKKq+E=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=pocHM090JZpyN2+rN1XLLO5SOJx1G1ehk8pFsFgbmq5yqzRwQ6RiD3PEmo+arI4vjxykXsfdPmJhSYZsxQXDyppaVwLqjhmMV+DFp+fzCZBtPojG/u0ygc+2+bsx6Z+SCfk8Q/qMPc40r+q3Juaqiq8AQYjl5XU+IGsO9jPjHY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mXebSOmW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3A81C4CEE7;
-	Thu, 15 May 2025 14:51:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747320690;
-	bh=gPLoJgRnkayVWLQlz1ZTjudKv0fME3HsKweEpIKKq+E=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=mXebSOmWp+w4si2qesd00c6VxgzaTwS28nVOHCxpHOew/rDrZDXTVj4zjCXPg2a5h
-	 yyU2lhydPthHrsQrVhj7ABbLHsEKOI06C56xmACTztVlZ+Reu/wF/ybUIm+1c20TRp
-	 P1RAOIM/LI/udJwOZOhu325yh4a3wby3cua0rRfglWiu5yjtfdwXS5X5jqxAVn+iHU
-	 D5/6ksrat5XfdtSt9sgf4V0ChWEhs40iXxF/pICpcnqFUmPupQQccRoFKAY0tFlqkx
-	 JBOSd9lhxNQEMgBubTFaXYhIbp4RkiZKNV2j+1EyX3y/cuIf3vu2U835HQ8leEQ4XI
-	 4S5OHz0rtQtFA==
-Date: Thu, 15 May 2025 07:51:26 -0700
-From: Kees Cook <kees@kernel.org>
-To: Shung-Hsi Yu <shung-hsi.yu@suse.com>, bpf@vger.kernel.org, linux-mm@kvack.org,
- Andrii Nakryiko <andrii@kernel.org>, Ihor Solodrai <ihor.solodrai@linux.dev>
-CC: Andrew Morton <akpm@linux-foundation.org>, Michal Hocko <mhocko@suse.com>,
- Vlastimil Babka <vbabka@suse.cz>, Uladzislau Rezki <urezki@gmail.com>,
- linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
- regressions@lists.linux.dev, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
- Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
- Eduard Zingerman <eddyz87@gmail.com>
-Subject: =?US-ASCII?Q?Re=3A_=5BREGRESSION=5D_bpf_verifier_slowdown_?=
- =?US-ASCII?Q?due_to_vrealloc=28=29_change_since_6=2E15-rc6?=
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20250515-bpf-verifier-slowdown-vwo2meju4cgp2su5ckj@6gi6ssxbnfqg>
-References: <20250515-bpf-verifier-slowdown-vwo2meju4cgp2su5ckj@6gi6ssxbnfqg>
-Message-ID: <C66C764E-C898-457D-93F0-A680983707F0@kernel.org>
+	s=arc-20240116; t=1747320727; c=relaxed/simple;
+	bh=NmoY497PnjzJmvhyLUTzuh03sgxv+SnIeoHnCzkIZYI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=NSavZLxNlXh2Jjy/NmgW75dnqPIZ94kgeycVp8eAsapKYXrbJzsk+wcgCYJ5ElJEktSDm+wdDRxEPkuefKxFXiBIC4BrLd+2sKon8YLvVNxdlgeJtoehXKNd/Tl54ij3bHRpo9vXzGYuvABLtpOuZoxKWqyw8fjcL4S5EQwwKBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ChR98yrx; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5fcf1dc8737so1993881a12.1;
+        Thu, 15 May 2025 07:52:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747320723; x=1747925523; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=R3rYtHGI7f2bS5Wz8y1R8kta8HvN8vcDb4XhTNw0Ufw=;
+        b=ChR98yrxzbkJ3jwU42GsmADFb7j9V0MWNqHm33H1DtyRipHOgfTZHJzOKmvD3GSV8+
+         y/ATCiZIcMqREEhnfa29lhx9PdL1y/0woCwis8jXjjyxEHyclalCIbaeYNdUPh1k/EBa
+         e5zSzrfkGKt/pGYGfVINSeWBFjvhPKuOrswtM584Wtut58VQkCxnyXce0WoT7eI2o3Va
+         w98dw6KA69lrxMksn12GO35y8EjpFH7a+ATROA4z52VydVlZfaPaLn2JspmGnEnuTOXY
+         ZSQH6+ijG2rGfaRl8WlpXO9kopaLohccGouQwbCxZYE6/c8+Ymw1p9rDo14XFy10bfM8
+         VFWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747320723; x=1747925523;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=R3rYtHGI7f2bS5Wz8y1R8kta8HvN8vcDb4XhTNw0Ufw=;
+        b=UqUl5bv/F2eVf1SjdpeZAlBna0+aUV6B8rhIAsdfvEQ1XwFp54IrspgtfxRTahqoMn
+         vXf6lUpecIeD0dAMa+H8HO7BcRo+dJBhQ6VLdPr5dX2oFJZYZSXaMYMqsxV1zIS+axRL
+         hxyWqLSkQG9+v3PtUo+m9tlZWJEAsRHt6UJSTwS2IMcrMJcXdG7OE31agDfwcS/ruftn
+         M6a4478iTU+ZdY9Js24qv0E7ra9K7bWswLuHpBTh0uiBmCN1oo4N8+MEgDdqGmM5VQFk
+         cAYXCdYsfHk+cd57VFCBhEFx43xKrmDFnYoA61eXZPPgFDZhwxapjuBEGEFwMEshlcC5
+         5raQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVhXeTctkQczYLwBgtMEYXtZASKkbrQD6euXATGiHWrujNHsT055XhZnhA4ycA6kryH13SWjcqm9Hh3mio=@vger.kernel.org, AJvYcCVo3qX1iqk71fcG13heLgDLe71gGfGsKzC6rhQ/adOEJWfidg9/CAyVwf6hGda4Yf0WIW6H3KH4@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSGJ5nKJRrddrQ6yV/5ONmoFQaGR1HU0a5hFJ8+mMWz1Hbz8Oh
+	pd1cscjBBAf6Gl2GOV5e+VXcABj9ZPoa984pRkceXoWaggsTBwmp
+X-Gm-Gg: ASbGncvJCQmePnjG2ct0PZV7zvXvICuW8F6S4ynE52Zneml0nKStABRKvYjbk8TuiGf
+	E2AErcCJndcAwBUbCIMH9O8NJmvbH51vXBTOdXwIrWomf4l3pmUUxh1WHin9tjK3qLPxYtDx+Nf
+	KHxIYn7XqkZ+4KTFohTpJ8pc4cboYrcGJF18TB9z2n69AvmQS7XDTzNEJuLGAVtxbE58YKs/Ql3
+	+2JwKmi2B9GA9DrGojGRd9arE2giIRSBYx2Mbv/Y2nzVbN5Wfb0his17xrXLn5yyIHhNJcL2fWw
+	7iRJK6WglcoWYvILG1vU2FyAU5kk+PFaq1bGUxFwz6GqBTbIcikicDmRhaI6QQ==
+X-Google-Smtp-Source: AGHT+IFnbQsmJ28PMwm6ZpW/qqXkzMbIj8mfZUAcTRDZys7wkjr4Qrwaxu7LwCnZ1+NttJvuk113ng==
+X-Received: by 2002:a17:907:9448:b0:ad2:2c89:7a8 with SMTP id a640c23a62f3a-ad51612af30mr268227366b.51.1747320722901;
+        Thu, 15 May 2025 07:52:02 -0700 (PDT)
+Received: from debian-vm.localnet ([2a01:4b00:d20c:cddd:20c:29ff:fe56:c86])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad52d275d9fsm871366b.74.2025.05.15.07.52.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 15 May 2025 07:52:02 -0700 (PDT)
+From: Zak Kemble <zakkemble@gmail.com>
+To: Doug Berger <opendmb@gmail.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Zak Kemble <zakkemble@gmail.com>
+Subject: [PATCH v2 0/3] net: bcmgenet: 64bit stats and expose more stats in ethtool
+Date: Thu, 15 May 2025 15:51:39 +0100
+Message-Id: <20250515145142.1415-1-zakkemble@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
+Hi, this patchset updates the bcmgenet driver with new 64bit statistics via
+ndo_get_stats64 and rtnl_link_stats64, now reports hardware discarded
+packets in the rx_missed_errors stat and exposes more stats in ethtool.
 
+v1:
+https://lore.kernel.org/all/20250513144107.1989-1-zakkemble@gmail.com
 
-On May 15, 2025 6:12:25 AM PDT, Shung-Hsi Yu <shung-hsi=2Eyu@suse=2Ecom> w=
-rote:
->Hi,
->
->There is an observable slowdown when running BPF selftests on 6=2E15-rc6
->kernel[1] built with tools/testing/selftests/bpf/{config,config=2Ex86_64}=
-=2E
->Overall the BPF selftests now takes 2x time to run (from ~25m to ~50m),
->and for the verif_scale_loop3_fail it went from single digit seconds to
->6 minutes=2E
->
->Bisect was done by Pawan and got to commit a0309faf1cb0 "mm: vmalloc:
->support more granular vrealloc() sizing"[2]=2E To further zoom in the
->issue, I tried removing the only kvrealloc() call in kernel/bpf/ by
->reverting commit 96a30e469ca1 "bpf: use common instruction history
->across all states", so _krealloc()_ was used instead of kvrealloc(), and
->observe that there is _no_ slowdown[3]=2E While the bisect and the revert
->is done on 6=2E14=2E7-rc2, I think it should stll be pretty representitiv=
-e=2E
->
->In short, the follow were tested:
->- 6=2E15-rc6 (has a0309faf1cb0) -> slowdown
->- 6=2E14=2E7-rc2 (has a0309faf1cb0) -> slowdown
->- 6=2E14=2E7-rc2 (has a0309faf1cb0, call to kvrealloc in
->  kernel/bpf/verifier=2Ec replaced with krealloc) -> _no_ slowdown
->
->And the vrealloc() change is causing slowdown in kvrealloc() call within
->push_insn_history()=2E
+v2:
+- Hopefully better readability
+- Fold singular stat updates
 
-This is very strange! The vrealloc change should make things faster -- it =
-removes potentially unneeded vmalloc and full object copies when it isn't n=
-eeded=2E
+Zak Kemble (3):
+  net: bcmgenet: switch to use 64bit statistics
+  net: bcmgenet: count hw discarded packets in missed stat
+  net: bcmgenet: expose more stats in ethtool
 
-Where can I find the =2Econfig for the slow runs?
+ .../net/ethernet/broadcom/genet/bcmgenet.c    | 279 +++++++++++++-----
+ .../net/ethernet/broadcom/genet/bcmgenet.h    |  32 +-
+ 2 files changed, 223 insertions(+), 88 deletions(-)
 
-And how do I run the test myself directly?
+-- 
+2.39.5
 
--Kees
-
->
->  /* for any branch, call, exit record the history of jmps in the given s=
-tate */
->  static int push_insn_history(struct bpf_verifier_env *env, struct bpf_v=
-erifier_state *cur,
->  			     int insn_flags, u64 linked_regs)
->  {
->  	struct bpf_insn_hist_entry *p;
->  	size_t alloc_size;
->  	=2E=2E=2E
->  	if (cur->insn_hist_end + 1 > env->insn_hist_cap) {
->  		alloc_size =3D size_mul(cur->insn_hist_end + 1, sizeof(*p));
->  		p =3D kvrealloc(env->insn_hist, alloc_size, GFP_USER);
->  		if (!p)
->  			return -ENOMEM;
->  		env->insn_hist =3D p;
->  		env->insn_hist_cap =3D alloc_size / sizeof(*p);
->  	}
-> =20
->  	p =3D &env->insn_hist[cur->insn_hist_end];
->  	p->idx =3D env->insn_idx;
->  	p->prev_idx =3D env->prev_insn_idx;
->  	p->flags =3D insn_flags;
->  	p->linked_regs =3D linked_regs;
-> =20
->  	cur->insn_hist_end++;
->  	env->cur_hist_ent =3D p;
-> =20
->  	return 0;
->  }
->
->BPF CI probably hasn't hit this yet because bpf-next have only got to
->6=2E15-rc4=2E
->
->Shung-Hsi
->
->#regzbot introduced: a0309faf1cb0622cac7c820150b7abf2024acff5
->
->1: https://github=2Ecom/shunghsiyu/libbpf/actions/runs/15038992168/job/42=
-266125686
->2: https://lore=2Ekernel=2Eorg/stable/20250515041659=2Esmhllyarxdwp7cav@d=
-esk/
->3: https://github=2Ecom/shunghsiyu/libbpf/actions/runs/15043433548/job/42=
-280277024
-
---=20
-Kees Cook
 
