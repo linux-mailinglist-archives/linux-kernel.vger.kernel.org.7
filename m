@@ -1,551 +1,447 @@
-Return-Path: <linux-kernel+bounces-649731-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-649737-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF67EAB886A
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 15:48:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED7BDAB887B
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 15:49:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 457A99E5F92
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 13:47:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2609161A13
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 13:49:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61BA719AD8B;
-	Thu, 15 May 2025 13:47:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE2211DED5E;
+	Thu, 15 May 2025 13:48:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mihalicyn.com header.i=@mihalicyn.com header.b="HQWE75zO"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="qWx7ZQLy"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2089.outbound.protection.outlook.com [40.107.236.89])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A176C2C9
-	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 13:47:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747316870; cv=none; b=ZukdmnGyiLlJ+Otbyi1Vf/HQLpkctTtpoMWFvAE/9wK1ohdaGwy4LPPqhKDSEe+qyfQCS1yoGIu74T8sUMfcPTWzuZBs0MxpCQFgOcRNGqrpEDYgJT74/6jiHtCkGPFCOcK79h1WZAkHoWSP7LJdW9AUIpXYXfFpunkXja5fteA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747316870; c=relaxed/simple;
-	bh=CENKOmRjlzd6I/2MrPs+MPqBRVyyz6X57opYeSC9jo0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UZGgPLHid7BgLdGukDn/VRpOM+bxoAO4DpxMlq9Rouj/Qvbh7xAJQGk1yib+LPOnKf/ZhdVyFzWkrH622MNLM1h7vdzK9tb4bnodcLB4bxRc0zSZpjDLlfp4chNb25+titfY5R0S9DBLvTDe6TYPRVcAZzMy3svbbeyMTq7iNDo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mihalicyn.com; spf=pass smtp.mailfrom=mihalicyn.com; dkim=pass (1024-bit key) header.d=mihalicyn.com header.i=@mihalicyn.com header.b=HQWE75zO; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mihalicyn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mihalicyn.com
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-549b116321aso1046536e87.3
-        for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 06:47:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mihalicyn.com; s=mihalicyn; t=1747316864; x=1747921664; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=YjaxJPw0BOdOdNwVOBVaNYd2qjvrgaSuCkX3rEcpmMI=;
-        b=HQWE75zOpn8j6emS91lA//SjgTauPWU2mOd7jT+TGiqS2cAEVI8CVN6bQhp2bxnn+n
-         Q084fuZ6sWLtYa0EkGY50RbNybeooHjvQRliew64SQoM7KWfMlU8QPHKbue0t+CgvfAG
-         h6WQEek4+rGqXOkO+sF4RPl18OCFdNtEwxONU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747316864; x=1747921664;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=YjaxJPw0BOdOdNwVOBVaNYd2qjvrgaSuCkX3rEcpmMI=;
-        b=R/FnoyfeZH0kHJmxR+0daMdFaeW8wi3JXCOi/TeaYRZ20eQJuUJhFK2SgRklL5jyEB
-         FGOdE8R+PrSSYPLC3nN7iYuwnS1tubWQ6/MJuVVaK2zqTRCobIh1hYqr9Tw7e2NRauFJ
-         uglgrwU/2H295ml7xIBxR8PEJWQ4kmh8BCYFh9boyPPBUhU6H2T74OiBGSP8o3diy/5w
-         iTl7JEdWkP6JDVKXY2eS5+bk84y8+gZCn8eH8bXpv6S5pH/O9aajEUyTp7ugmbfoNlxk
-         nwhvx+kINmX1wWHTR5Jgg9kHMzkqLzm5BiM8LwL3Y8NLBScs+SDjGB2aaK6450AnDHYT
-         rkcw==
-X-Forwarded-Encrypted: i=1; AJvYcCVqSzm2BPoenXM7+ICY9A76wQUrsXWsjwK4fhYRccLiSCmMP+4xdrGtpw2T+BpE8tXcMmRHHqeKbrZ3YWg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxSgmUoVcC7j4+n9oY8x8m1w9E9JhqeecKSH2UKs8tjfPZonEow
-	gs4T+/SDsR2RaUpVeEh2NuLQKcPWjGh7qRAxm+KN7VdCOwInC1/n9UoLDB1p/zUpCHxBdIbuAG2
-	aCPNnupnPHGTKtRr6iuZbFnsgkTgCs26ionmPzA==
-X-Gm-Gg: ASbGnctBPfr0dqchM7s/7TpJwlRvYN6YzKrYsT7uoZ2JKSDueJJULJZ22STpSZxPorm
-	hfKv53dL2YnpBo5oE7ZSo7IxXyNvP1w4Al1KTxz5LUV97Gf4MQs2Vlg/Qhi5SbanzqPUOzI6bNW
-	KpdCsVCNMGA2Eo5ldczoyA/4RrLf2sOc+E2A==
-X-Google-Smtp-Source: AGHT+IGexIizrpkPTGPz9fbvYCAjjyE4vNlWRB2R7pAZBLtJ1qT3krHw862xytLvuJ3oDD1H7B5meswZCHCmz5lQPL8=
-X-Received: by 2002:a05:6512:3b93:b0:54d:65e8:31e0 with SMTP id
- 2adb3069b0e04-550dcffc1e5mr919619e87.5.1747316864146; Thu, 15 May 2025
- 06:47:44 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F8331DE4C2
+	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 13:48:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.89
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747316893; cv=fail; b=sK+nVOGGD4BwB97M07JyTBL/M7cMx9DyMczyAt5qEe4YFz+Sc8ZWpkCZVfjmPlX5j42KxczExShfLinY58tXzdJUy0fAjweoS6TKQPLJX7icYVndrXYKRbzbUP6GJW1ooBMHqvPv7XCBtUhxSZUX5NUjJ02DzchkYN2ep/Gr1Tc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747316893; c=relaxed/simple;
+	bh=PsvLNCQCmGscS28zRBmAe5oIP6D65kXPe18M7K9118I=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=GESIh7MwRpYpu7iUKCq62jhjNKCZkzeRL9cQOxRf35oh5APDxQwVcG8KcfrMIzEEk858QIgkepHdYnd18rhria2tIPceB8smkSij8XK3wLyUOLvsswY1Lpn3kVzWTtyM8Vugd2oPXwtKSntyeMb1o9PY8891uXNq93HxfgFKT88=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=qWx7ZQLy; arc=fail smtp.client-ip=40.107.236.89
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=n2C1oYHsBVoROEaml+rRtPtr8a6EosvQ2QeoEMNguin240l3NcEnlo3/xy8TjXWgH5A2d2CCdz2XDwg/F7EJICm7RwVaCu+LaQxV3qj11OeY1KONOK/poqPifwsJaIZhH03M7CdelnjRA5v1dM5L1vgfbzmeMNtZ6lj6WTubcghaW+uTb8rMkYa3oYsCxl87GCIW6nnxhQyE5BXDxYyKNY5TLdhXbHxplKyfMyyCvrOusDidB38/N6zvGyaRKw3AvQa6NODIkvwOz0zuK1TkiD2GrkbsWPO+havp9xrSFOrDia30ROkc5zGL8qNbh1V+jd2igp9xRC8c00IQ9zZfsg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=9HPpG+9zypFt/r08D4c4QB7/8/7lrcy6PxUMkv5I1ho=;
+ b=aeqsIncvYCDjPsKNkSXTiaU/VrKKCT1tj+O3YqlrKth1c2jdrUqhwZqVZjQDdigNgvfpWJeowiyKrSJXxRgQ3U+cgp5EDHfgAcDELQfEyd5W/r1JfgeTAC5F+SHRrFNePoTS+wQ/T0HlVCNamRrvQjOSq2p8/c3VcvG20BstWrBCTiSIkGS9w2+ev3yZi/K+YABYjTKkaXi1XxQ7ZrdhKRIBulzGS5pzNdZ4m8r9ryjuabJCR2a8KUqWOPXExW8kp3EG+8cuggFceVLeGegMmRGtIkbB8piTZdxX4JfSHSYtyHHovPA06KxcFdCIzEV51HRYMRBuvjsmClb/UjGosg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=linutronix.de smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=9HPpG+9zypFt/r08D4c4QB7/8/7lrcy6PxUMkv5I1ho=;
+ b=qWx7ZQLywmd5s0k0xxWZRUhwOK54oJA9W0/ugAtzsvOF2P8k1qxJEvv4IQ+KbvVSHa7wsfIA45l8EuwKDSe0NTIt6AJfN2Ty1BhR2pIwWTi2p0IrKZ4I6qmtMHvmiHkZsYL3Sw5MfocOQNP3bPdZvrbTTTGu0YbEqO2nIH2hA2I=
+Received: from BN9PR03CA0858.namprd03.prod.outlook.com (2603:10b6:408:13d::23)
+ by CY8PR12MB8410.namprd12.prod.outlook.com (2603:10b6:930:6d::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8722.29; Thu, 15 May
+ 2025 13:48:06 +0000
+Received: from BN2PEPF00004FBD.namprd04.prod.outlook.com
+ (2603:10b6:408:13d:cafe::d8) by BN9PR03CA0858.outlook.office365.com
+ (2603:10b6:408:13d::23) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8699.29 via Frontend Transport; Thu,
+ 15 May 2025 13:48:06 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ BN2PEPF00004FBD.mail.protection.outlook.com (10.167.243.183) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8722.18 via Frontend Transport; Thu, 15 May 2025 13:48:06 +0000
+Received: from tiny.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 15 May
+ 2025 08:48:05 -0500
+From: David Kaplan <david.kaplan@amd.com>
+To: Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
+	Peter Zijlstra <peterz@infradead.org>, Josh Poimboeuf <jpoimboe@kernel.org>,
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, Ingo Molnar
+	<mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>,
+	<x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>
+CC: <linux-kernel@vger.kernel.org>
+Subject: [PATCH] x86/bugs: Restructure ITS mitigation
+Date: Thu, 15 May 2025 08:47:56 -0500
+Message-ID: <20250515134756.93274-1-david.kaplan@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250515-work-coredump-socket-v7-0-0a1329496c31@kernel.org> <20250515-work-coredump-socket-v7-4-0a1329496c31@kernel.org>
-In-Reply-To: <20250515-work-coredump-socket-v7-4-0a1329496c31@kernel.org>
-From: Alexander Mikhalitsyn <alexander@mihalicyn.com>
-Date: Thu, 15 May 2025 15:47:33 +0200
-X-Gm-Features: AX0GCFvj-0_yZdeYNXlu16XFBZZ0Xftqg5icobXb3Vrb1SEvUAMc6oohONw7g7Q
-Message-ID: <CAJqdLrpjoUQERfbRfxUNC=WN8iQQySPNBUAvvTiub=8p_iJTuA@mail.gmail.com>
-Subject: Re: [PATCH v7 4/9] coredump: add coredump socket
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, Jann Horn <jannh@google.com>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Kuniyuki Iwashima <kuniyu@amazon.com>, 
-	Eric Dumazet <edumazet@google.com>, Oleg Nesterov <oleg@redhat.com>, 
-	"David S. Miller" <davem@davemloft.net>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Daan De Meyer <daan.j.demeyer@gmail.com>, David Rheinsberg <david@readahead.eu>, 
-	Jakub Kicinski <kuba@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Lennart Poettering <lennart@poettering.net>, Luca Boccassi <bluca@debian.org>, Mike Yuan <me@yhndnzj.com>, 
-	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	=?UTF-8?Q?Zbigniew_J=C4=99drzejewski=2DSzmek?= <zbyszek@in.waw.pl>, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN2PEPF00004FBD:EE_|CY8PR12MB8410:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6c67ed82-b036-427b-db14-08dd93b71f23
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|1800799024|82310400026|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?cmPC5kDy4iNXGZLFSZgpkFp0gRMOvwg9vk6DcpwUQoVehLr/LeEpW2MmCf/p?=
+ =?us-ascii?Q?8/U2eqUMGMRTRywIHOetN+627VNQxqQU/mx7nEpbLjZfLWcnCsCdC8rtx+Xj?=
+ =?us-ascii?Q?qjzjeFIFrbelM8FHIkINW4Pj4Jv1vidVqUpQ8sHb30BVdz4Nvj9J5GIUkZyY?=
+ =?us-ascii?Q?chOaA/bXcRPlt/lswYnus6jpNfSF21B7F40c9ER/XwgnP+W5ZfwtzypdwdZ3?=
+ =?us-ascii?Q?KA/gSWUFIX90BBr7yUEd2N3AftHCTLdAjrZ7acDCj3JVmSgd3Ivpqb250WEY?=
+ =?us-ascii?Q?uaMDPv/pv3C7Hcxyhrb3LMCtFkcmgJadQet5yD8TK+O+dO5AK4UD+zqVyu5O?=
+ =?us-ascii?Q?VJY1k1JlNGwXxRNcudTz+ChTvRhUyHhOxt4oumT/iQSmsFgRcUH1QpcPClKH?=
+ =?us-ascii?Q?qI1KbzqRPnUhvg4BPRxwkKChBvZi4dZEVo38TwFZo4BbUW6/HgUsd71iW44F?=
+ =?us-ascii?Q?uvCKyJnV1nKkDNiB1uNT5u7y/XgjOuoc0T7adfhaelXtrHARvs4WZfzuBjal?=
+ =?us-ascii?Q?9PrxDEqGgyCu0ucq7RZaC45H3eFpp0PC0Bwz7VyWX0BZDuLqzQalHyGiRXEG?=
+ =?us-ascii?Q?jIbae0dH4W1ZKWel4M9UmCpvBjUEgo4kzxu6oy0tzg9OFHiFLdStVGjFt6AU?=
+ =?us-ascii?Q?rv5pe2UJ+7Wl+NZcD62CIUK3kTKQUSDllC3E/93nQ6fuGpFh9BgcRKwqKvNV?=
+ =?us-ascii?Q?MIxnoQHQvLK2bpoXZaUQmSKF73pJKpw8mRSMei93Qp8yIWtnjhLzDvdZ+mwU?=
+ =?us-ascii?Q?btFl5Zii+3Uw6RBDXDK0D0GA/rsHjSm5SIV7Sgav2faoQFiwbh7CYwse42Hl?=
+ =?us-ascii?Q?U2YXy+tU3rPReYDUjTIO3YcQvotPLB3XEfOQYxniy4kRcDn2LFtvsthinlu9?=
+ =?us-ascii?Q?2q8iwK67ompRs97KFkPdIVYM4r1P62Upuh/05LIUZFB+caFfICyWiB3whP+q?=
+ =?us-ascii?Q?mF5UJ1wdRlZrQ3qB0+UcuO/vtzJ7CEk45n13tM7ffmfIqEfxApvAVK2Z1GJV?=
+ =?us-ascii?Q?rtCvTWsPTiubMQo5rQxZXwdM4ehPv5ao7QL6dul3TJ2LP1jmhl4GWSKMgxEJ?=
+ =?us-ascii?Q?1m+qvgVQTjbzu4aUaWuhDGQ5jNvn2Go06HkYrgqOaHu2RSIhTQvMKnoUdrrE?=
+ =?us-ascii?Q?wQXyeF4zOBzVcN61wbNVqKkjGh9zS8sKvetzsLcwpn3fzHtzyDiZE0AecGgu?=
+ =?us-ascii?Q?SIizeT+5uitay/PpKCvWR0xzSCoMBuX6laJncCtkO7rldMZHxpPk9ztnE1Yv?=
+ =?us-ascii?Q?WfQvcUwvD9IfAUZaJEDo1b3Ntajn9KkreAOmpxnoJmXG05dahF3SxbuZ/RNf?=
+ =?us-ascii?Q?mgp+cTdxuF+pQQRA4wZcRonybCXD6Huy3pFY6GjhDkphTV5prnhwUHiOG+go?=
+ =?us-ascii?Q?BfzQ7MKHKQi61+9qFQwH/G8L7THbDrzf0MRco0h1uHr3sXyaM5K3XnlnR4yK?=
+ =?us-ascii?Q?NUET5KRpIxCHUCZlgVaxIAmfeG4rEZ9SblMbtSJr1Oe2W8LzPSHkVMvb/SdA?=
+ =?us-ascii?Q?LFXg6AbGaPAOVucPxTmK+1DoO7o5QmlR3K3M?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(82310400026)(7416014)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 May 2025 13:48:06.6794
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6c67ed82-b036-427b-db14-08dd93b71f23
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN2PEPF00004FBD.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB8410
 
-Am Do., 15. Mai 2025 um 00:04 Uhr schrieb Christian Brauner
-<brauner@kernel.org>:
->
-> Coredumping currently supports two modes:
->
-> (1) Dumping directly into a file somewhere on the filesystem.
-> (2) Dumping into a pipe connected to a usermode helper process
->     spawned as a child of the system_unbound_wq or kthreadd.
->
-> For simplicity I'm mostly ignoring (1). There's probably still some
-> users of (1) out there but processing coredumps in this way can be
-> considered adventurous especially in the face of set*id binaries.
->
-> The most common option should be (2) by now. It works by allowing
-> userspace to put a string into /proc/sys/kernel/core_pattern like:
->
->         |/usr/lib/systemd/systemd-coredump %P %u %g %s %t %c %h
->
-> The "|" at the beginning indicates to the kernel that a pipe must be
-> used. The path following the pipe indicator is a path to a binary that
-> will be spawned as a usermode helper process. Any additional parameters
-> pass information about the task that is generating the coredump to the
-> binary that processes the coredump.
->
-> In the example core_pattern shown above systemd-coredump is spawned as a
-> usermode helper. There's various conceptual consequences of this
-> (non-exhaustive list):
->
-> - systemd-coredump is spawned with file descriptor number 0 (stdin)
->   connected to the read-end of the pipe. All other file descriptors are
->   closed. That specifically includes 1 (stdout) and 2 (stderr). This has
->   already caused bugs because userspace assumed that this cannot happen
->   (Whether or not this is a sane assumption is irrelevant.).
->
-> - systemd-coredump will be spawned as a child of system_unbound_wq. So
->   it is not a child of any userspace process and specifically not a
->   child of PID 1. It cannot be waited upon and is in a weird hybrid
->   upcall which are difficult for userspace to control correctly.
->
-> - systemd-coredump is spawned with full kernel privileges. This
->   necessitates all kinds of weird privilege dropping excercises in
->   userspace to make this safe.
->
-> - A new usermode helper has to be spawned for each crashing process.
->
-> This series adds a new mode:
->
-> (3) Dumping into an AF_UNIX socket.
->
-> Userspace can set /proc/sys/kernel/core_pattern to:
->
->         @/path/to/coredump.socket
->
-> The "@" at the beginning indicates to the kernel that an AF_UNIX
-> coredump socket will be used to process coredumps.
->
-> The coredump socket must be located in the initial mount namespace.
-> When a task coredumps it opens a client socket in the initial network
-> namespace and connects to the coredump socket.
->
-> - The coredump server uses SO_PEERPIDFD to get a stable handle on the
->   connected crashing task. The retrieved pidfd will provide a stable
->   reference even if the crashing task gets SIGKILLed while generating
->   the coredump.
->
-> - By setting core_pipe_limit non-zero userspace can guarantee that the
->   crashing task cannot be reaped behind it's back and thus process all
->   necessary information in /proc/<pid>. The SO_PEERPIDFD can be used to
->   detect whether /proc/<pid> still refers to the same process.
->
->   The core_pipe_limit isn't used to rate-limit connections to the
->   socket. This can simply be done via AF_UNIX sockets directly.
->
-> - The pidfd for the crashing task will grow new information how the task
->   coredumps.
->
-> - The coredump server should mark itself as non-dumpable.
->
-> - A container coredump server in a separate network namespace can simply
->   bind to another well-know address and systemd-coredump fowards
->   coredumps to the container.
->
-> - Coredumps could in the future also be handled via per-user/session
->   coredump servers that run only with that users privileges.
->
->   The coredump server listens on the coredump socket and accepts a
->   new coredump connection. It then retrieves SO_PEERPIDFD for the
->   client, inspects uid/gid and hands the accepted client to the users
->   own coredump handler which runs with the users privileges only
->   (It must of coure pay close attention to not forward crashing suid
->   binaries.).
->
-> The new coredump socket will allow userspace to not have to rely on
-> usermode helpers for processing coredumps and provides a safer way to
-> handle them instead of relying on super privileged coredumping helpers
-> that have and continue to cause significant CVEs.
->
-> This will also be significantly more lightweight since no fork()+exec()
-> for the usermodehelper is required for each crashing process. The
-> coredump server in userspace can e.g., just keep a worker pool.
->
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
+Restructure the ITS mitigation to use select/update/apply functions like
+the other mitigations.
 
-Reviewed-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+There is a particularly complex interaction between ITS and Retbleed as CDT
+(Call Depth Tracking) is a mitigation for both, and either its=stuff or
+retbleed=stuff will attempt to enable CDT.
 
-> ---
->  fs/coredump.c       | 133 ++++++++++++++++++++++++++++++++++++++++++++++++----
->  include/linux/net.h |   1 +
->  net/unix/af_unix.c  |  53 ++++++++++++++++-----
->  3 files changed, 166 insertions(+), 21 deletions(-)
->
-> diff --git a/fs/coredump.c b/fs/coredump.c
-> index a70929c3585b..e1256ebb89c1 100644
-> --- a/fs/coredump.c
-> +++ b/fs/coredump.c
-> @@ -44,7 +44,11 @@
->  #include <linux/sysctl.h>
->  #include <linux/elf.h>
->  #include <linux/pidfs.h>
-> +#include <linux/net.h>
-> +#include <linux/socket.h>
-> +#include <net/net_namespace.h>
->  #include <uapi/linux/pidfd.h>
-> +#include <uapi/linux/un.h>
->
->  #include <linux/uaccess.h>
->  #include <asm/mmu_context.h>
-> @@ -79,6 +83,7 @@ unsigned int core_file_note_size_limit = CORE_FILE_NOTE_SIZE_DEFAULT;
->  enum coredump_type_t {
->         COREDUMP_FILE = 1,
->         COREDUMP_PIPE = 2,
-> +       COREDUMP_SOCK = 3,
->  };
->
->  struct core_name {
-> @@ -232,13 +237,16 @@ static int format_corename(struct core_name *cn, struct coredump_params *cprm,
->         cn->corename = NULL;
->         if (*pat_ptr == '|')
->                 cn->core_type = COREDUMP_PIPE;
-> +       else if (*pat_ptr == '@')
-> +               cn->core_type = COREDUMP_SOCK;
->         else
->                 cn->core_type = COREDUMP_FILE;
->         if (expand_corename(cn, core_name_size))
->                 return -ENOMEM;
->         cn->corename[0] = '\0';
->
-> -       if (cn->core_type == COREDUMP_PIPE) {
-> +       switch (cn->core_type) {
-> +       case COREDUMP_PIPE: {
->                 int argvs = sizeof(core_pattern) / 2;
->                 (*argv) = kmalloc_array(argvs, sizeof(**argv), GFP_KERNEL);
->                 if (!(*argv))
-> @@ -247,6 +255,33 @@ static int format_corename(struct core_name *cn, struct coredump_params *cprm,
->                 ++pat_ptr;
->                 if (!(*pat_ptr))
->                         return -ENOMEM;
-> +               break;
-> +       }
-> +       case COREDUMP_SOCK: {
-> +               /* skip the @ */
-> +               pat_ptr++;
+retbleed_update_mitigation() runs first and will check the necessary
+pre-conditions for CDT if either ITS or Retbleed stuffing is selected.  If
+checks pass and ITS stuffing is selected, it will select stuffing for
+Retbleed as well.
 
-nit: I would do
-if (!(*pat_ptr))
-   return -ENOMEM;
-as we do for the COREDUMP_PIPE case above.
-just in case if something will change in cn_printf() to eliminate any
-chance of crashes in there.
+its_update_mitigation() runs after and will either select stuffing if
+retbleed stuffing was enabled, or fall back to the default (aligned thunks)
+if stuffing could not be enabled.
 
-> +               err = cn_printf(cn, "%s", pat_ptr);
-> +               if (err)
-> +                       return err;
-> +
-> +               /* Require absolute paths. */
-> +               if (cn->corename[0] != '/')
-> +                       return -EINVAL;
-> +
-> +               /*
-> +                * Currently no need to parse any other options.
-> +                * Relevant information can be retrieved from the peer
-> +                * pidfd retrievable via SO_PEERPIDFD by the receiver or
-> +                * via /proc/<pid>, using the SO_PEERPIDFD to guard
-> +                * against pid recycling when opening /proc/<pid>.
-> +                */
-> +               return 0;
-> +       }
-> +       case COREDUMP_FILE:
-> +               break;
-> +       default:
-> +               WARN_ON_ONCE(true);
-> +               return -EINVAL;
->         }
->
->         /* Repeat as long as we have more pattern to process and more output
-> @@ -393,11 +428,20 @@ static int format_corename(struct core_name *cn, struct coredump_params *cprm,
->          * If core_pattern does not include a %p (as is the default)
->          * and core_uses_pid is set, then .%pid will be appended to
->          * the filename. Do not do this for piped commands. */
-> -       if (!(cn->core_type == COREDUMP_PIPE) && !pid_in_pattern && core_uses_pid) {
-> -               err = cn_printf(cn, ".%d", task_tgid_vnr(current));
-> -               if (err)
-> -                       return err;
-> +       if (!pid_in_pattern && core_uses_pid) {
-> +               switch (cn->core_type) {
-> +               case COREDUMP_FILE:
-> +                       return cn_printf(cn, ".%d", task_tgid_vnr(current));
-> +               case COREDUMP_PIPE:
-> +                       break;
-> +               case COREDUMP_SOCK:
-> +                       break;
-> +               default:
-> +                       WARN_ON_ONCE(true);
-> +                       return -EINVAL;
-> +               }
->         }
-> +
->         return 0;
->  }
->
-> @@ -801,6 +845,55 @@ void do_coredump(const kernel_siginfo_t *siginfo)
->                 }
->                 break;
->         }
-> +       case COREDUMP_SOCK: {
-> +#ifdef CONFIG_UNIX
-> +               struct file *file __free(fput) = NULL;
-> +               struct sockaddr_un addr = {
-> +                       .sun_family = AF_UNIX,
-> +               };
-> +               ssize_t addr_len;
-> +               struct socket *socket;
-> +
-> +               retval = strscpy(addr.sun_path, cn.corename, sizeof(addr.sun_path));
-> +               if (retval < 0)
-> +                       goto close_fail;
-> +               addr_len = offsetof(struct sockaddr_un, sun_path) + retval + 1;
-> +
-> +               /*
-> +                * It is possible that the userspace process which is
-> +                * supposed to handle the coredump and is listening on
-> +                * the AF_UNIX socket coredumps. Userspace should just
-> +                * mark itself non dumpable.
-> +                */
-> +
-> +               retval = sock_create_kern(&init_net, AF_UNIX, SOCK_STREAM, 0, &socket);
-> +               if (retval < 0)
-> +                       goto close_fail;
-> +
-> +               file = sock_alloc_file(socket, 0, NULL);
-> +               if (IS_ERR(file)) {
-> +                       sock_release(socket);
-> +                       goto close_fail;
-> +               }
-> +
-> +               retval = kernel_connect(socket, (struct sockaddr *)(&addr),
-> +                                       addr_len, O_NONBLOCK | SOCK_COREDUMP);
-> +               if (retval) {
-> +                       if (retval == -EAGAIN)
-> +                               coredump_report_failure("Coredump socket %s receive queue full", addr.sun_path);
-> +                       else
-> +                               coredump_report_failure("Coredump socket connection %s failed %d", addr.sun_path, retval);
-> +                       goto close_fail;
-> +               }
-> +
-> +               cprm.limit = RLIM_INFINITY;
-> +               cprm.file = no_free_ptr(file);
-> +#else
-> +               coredump_report_failure("Core dump socket support %s disabled", cn.corename);
-> +               goto close_fail;
-> +#endif
-> +               break;
-> +       }
->         default:
->                 WARN_ON_ONCE(true);
->                 goto close_fail;
-> @@ -838,8 +931,32 @@ void do_coredump(const kernel_siginfo_t *siginfo)
->                 file_end_write(cprm.file);
->                 free_vma_snapshot(&cprm);
->         }
-> -       if ((cn.core_type == COREDUMP_PIPE) && core_pipe_limit)
-> -               wait_for_dump_helpers(cprm.file);
-> +
-> +       /*
-> +        * When core_pipe_limit is set we wait for the coredump server
-> +        * or usermodehelper to finish before exiting so it can e.g.,
-> +        * inspect /proc/<pid>.
-> +        */
-> +       if (core_pipe_limit) {
-> +               switch (cn.core_type) {
-> +               case COREDUMP_PIPE:
-> +                       wait_for_dump_helpers(cprm.file);
-> +                       break;
-> +               case COREDUMP_SOCK: {
-> +                       /*
-> +                        * We use a simple read to wait for the coredump
-> +                        * processing to finish. Either the socket is
-> +                        * closed or we get sent unexpected data. In
-> +                        * both cases, we're done.
-> +                        */
-> +                       __kernel_read(cprm.file, &(char){ 0 }, 1, NULL);
-> +                       break;
-> +               }
-> +               default:
-> +                       break;
-> +               }
-> +       }
-> +
->  close_fail:
->         if (cprm.file)
->                 filp_close(cprm.file, NULL);
-> @@ -1069,7 +1186,7 @@ EXPORT_SYMBOL(dump_align);
->  void validate_coredump_safety(void)
->  {
->         if (suid_dumpable == SUID_DUMP_ROOT &&
-> -           core_pattern[0] != '/' && core_pattern[0] != '|') {
-> +           core_pattern[0] != '/' && core_pattern[0] != '|' && core_pattern[0] != '@') {
->
->                 coredump_report_failure("Unsafe core_pattern used with fs.suid_dumpable=2: "
->                         "pipe handler or fully qualified core dump path required. "
-> diff --git a/include/linux/net.h b/include/linux/net.h
-> index 0ff950eecc6b..139c85d0f2ea 100644
-> --- a/include/linux/net.h
-> +++ b/include/linux/net.h
-> @@ -81,6 +81,7 @@ enum sock_type {
->  #ifndef SOCK_NONBLOCK
->  #define SOCK_NONBLOCK  O_NONBLOCK
->  #endif
-> +#define SOCK_COREDUMP  O_NOCTTY
->
->  #endif /* ARCH_HAS_SOCKET_TYPES */
->
-> diff --git a/net/unix/af_unix.c b/net/unix/af_unix.c
-> index 472f8aa9ea15..a9d1c9ba2961 100644
-> --- a/net/unix/af_unix.c
-> +++ b/net/unix/af_unix.c
-> @@ -85,10 +85,13 @@
->  #include <linux/file.h>
->  #include <linux/filter.h>
->  #include <linux/fs.h>
-> +#include <linux/fs_struct.h>
->  #include <linux/init.h>
->  #include <linux/kernel.h>
->  #include <linux/mount.h>
->  #include <linux/namei.h>
-> +#include <linux/net.h>
-> +#include <linux/pidfs.h>
->  #include <linux/poll.h>
->  #include <linux/proc_fs.h>
->  #include <linux/sched/signal.h>
-> @@ -100,7 +103,6 @@
->  #include <linux/splice.h>
->  #include <linux/string.h>
->  #include <linux/uaccess.h>
-> -#include <linux/pidfs.h>
->  #include <net/af_unix.h>
->  #include <net/net_namespace.h>
->  #include <net/scm.h>
-> @@ -1146,7 +1148,7 @@ static int unix_release(struct socket *sock)
->  }
->
->  static struct sock *unix_find_bsd(struct sockaddr_un *sunaddr, int addr_len,
-> -                                 int type)
-> +                                 int type, unsigned int flags)
->  {
->         struct inode *inode;
->         struct path path;
-> @@ -1154,13 +1156,38 @@ static struct sock *unix_find_bsd(struct sockaddr_un *sunaddr, int addr_len,
->         int err;
->
->         unix_mkname_bsd(sunaddr, addr_len);
-> -       err = kern_path(sunaddr->sun_path, LOOKUP_FOLLOW, &path);
-> -       if (err)
-> -               goto fail;
->
-> -       err = path_permission(&path, MAY_WRITE);
-> -       if (err)
-> -               goto path_put;
-> +       if (flags & SOCK_COREDUMP) {
-> +               struct path root;
-> +               struct cred *kcred;
-> +               const struct cred *cred;
-> +
-> +               err = -ENOMEM;
-> +               kcred = prepare_kernel_cred(&init_task);
-> +               if (!kcred)
-> +                       goto fail;
-> +
-> +               task_lock(&init_task);
-> +               get_fs_root(init_task.fs, &root);
-> +               task_unlock(&init_task);
-> +
-> +               cred = override_creds(kcred);
-> +               err = vfs_path_lookup(root.dentry, root.mnt, sunaddr->sun_path,
-> +                                     LOOKUP_BENEATH | LOOKUP_NO_SYMLINKS |
-> +                                     LOOKUP_NO_MAGICLINKS, &path);
-> +               put_cred(revert_creds(cred));
-> +               path_put(&root);
-> +               if (err)
-> +                       goto fail;
-> +       } else {
-> +               err = kern_path(sunaddr->sun_path, LOOKUP_FOLLOW, &path);
-> +               if (err)
-> +                       goto fail;
-> +
-> +               err = path_permission(&path, MAY_WRITE);
-> +               if (err)
-> +                       goto path_put;
-> +       }
->
->         err = -ECONNREFUSED;
->         inode = d_backing_inode(path.dentry);
-> @@ -1210,12 +1237,12 @@ static struct sock *unix_find_abstract(struct net *net,
->
->  static struct sock *unix_find_other(struct net *net,
->                                     struct sockaddr_un *sunaddr,
-> -                                   int addr_len, int type)
-> +                                   int addr_len, int type, int flags)
->  {
->         struct sock *sk;
->
->         if (sunaddr->sun_path[0])
-> -               sk = unix_find_bsd(sunaddr, addr_len, type);
-> +               sk = unix_find_bsd(sunaddr, addr_len, type, flags);
->         else
->                 sk = unix_find_abstract(net, sunaddr, addr_len, type);
->
-> @@ -1473,7 +1500,7 @@ static int unix_dgram_connect(struct socket *sock, struct sockaddr *addr,
->                 }
->
->  restart:
-> -               other = unix_find_other(sock_net(sk), sunaddr, alen, sock->type);
-> +               other = unix_find_other(sock_net(sk), sunaddr, alen, sock->type, 0);
->                 if (IS_ERR(other)) {
->                         err = PTR_ERR(other);
->                         goto out;
-> @@ -1620,7 +1647,7 @@ static int unix_stream_connect(struct socket *sock, struct sockaddr *uaddr,
->
->  restart:
->         /*  Find listening sock. */
-> -       other = unix_find_other(net, sunaddr, addr_len, sk->sk_type);
-> +       other = unix_find_other(net, sunaddr, addr_len, sk->sk_type, flags);
->         if (IS_ERR(other)) {
->                 err = PTR_ERR(other);
->                 goto out_free_skb;
-> @@ -2089,7 +2116,7 @@ static int unix_dgram_sendmsg(struct socket *sock, struct msghdr *msg,
->         if (msg->msg_namelen) {
->  lookup:
->                 other = unix_find_other(sock_net(sk), msg->msg_name,
-> -                                       msg->msg_namelen, sk->sk_type);
-> +                                       msg->msg_namelen, sk->sk_type, 0);
->                 if (IS_ERR(other)) {
->                         err = PTR_ERR(other);
->                         goto out_free;
->
-> --
-> 2.47.2
->
+Enablement of CDT is done exclusively in retbleed_apply_mitigation().
+its_apply_mitigation() is only used to enable aligned thunks.
+
+Signed-off-by: David Kaplan <david.kaplan@amd.com>
+---
+ arch/x86/kernel/cpu/bugs.c | 167 ++++++++++++++++++++-----------------
+ 1 file changed, 90 insertions(+), 77 deletions(-)
+
+diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+index dd8b50b4ceaa..db26fb5a0a13 100644
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -92,6 +92,8 @@ static void __init bhi_select_mitigation(void);
+ static void __init bhi_update_mitigation(void);
+ static void __init bhi_apply_mitigation(void);
+ static void __init its_select_mitigation(void);
++static void __init its_update_mitigation(void);
++static void __init its_apply_mitigation(void);
+ 
+ /* The base value of the SPEC_CTRL MSR without task-specific bits set */
+ u64 x86_spec_ctrl_base;
+@@ -235,6 +237,11 @@ void __init cpu_select_mitigations(void)
+ 	 * spectre_v2=ibrs.
+ 	 */
+ 	retbleed_update_mitigation();
++	/*
++	 * its_update_mitigation() depends on spectre_v2_update_mitigation()
++	 * and retbleed_update_mitigation().
++	 */
++	its_update_mitigation();
+ 
+ 	/*
+ 	 * spectre_v2_user_update_mitigation() depends on
+@@ -263,6 +270,7 @@ void __init cpu_select_mitigations(void)
+ 	srbds_apply_mitigation();
+ 	srso_apply_mitigation();
+ 	gds_apply_mitigation();
++	its_apply_mitigation();
+ 	bhi_apply_mitigation();
+ }
+ 
+@@ -1125,6 +1133,14 @@ enum retbleed_mitigation {
+ 	RETBLEED_MITIGATION_STUFF,
+ };
+ 
++enum its_mitigation {
++	ITS_MITIGATION_OFF,
++	ITS_MITIGATION_AUTO,
++	ITS_MITIGATION_VMEXIT_ONLY,
++	ITS_MITIGATION_ALIGNED_THUNKS,
++	ITS_MITIGATION_RETPOLINE_STUFF,
++};
++
+ static const char * const retbleed_strings[] = {
+ 	[RETBLEED_MITIGATION_NONE]	= "Vulnerable",
+ 	[RETBLEED_MITIGATION_UNRET]	= "Mitigation: untrained return thunk",
+@@ -1137,6 +1153,9 @@ static const char * const retbleed_strings[] = {
+ static enum retbleed_mitigation retbleed_mitigation __ro_after_init =
+ 	IS_ENABLED(CONFIG_MITIGATION_RETBLEED) ? RETBLEED_MITIGATION_AUTO : RETBLEED_MITIGATION_NONE;
+ 
++static enum its_mitigation its_mitigation __ro_after_init =
++	IS_ENABLED(CONFIG_MITIGATION_ITS) ? ITS_MITIGATION_AUTO : ITS_MITIGATION_OFF;
++
+ static int __ro_after_init retbleed_nosmt = false;
+ 
+ static int __init retbleed_parse_cmdline(char *str)
+@@ -1242,11 +1261,19 @@ static void __init retbleed_update_mitigation(void)
+ 	/*
+ 	 * retbleed=stuff is only allowed on Intel.  If stuffing can't be used
+ 	 * then a different mitigation will be selected below.
++	 *
++	 * its=stuff will also attempt to enable stuffing.
+ 	 */
+-	if (retbleed_mitigation == RETBLEED_MITIGATION_STUFF) {
++	if (retbleed_mitigation == RETBLEED_MITIGATION_STUFF ||
++	    its_mitigation == ITS_MITIGATION_RETPOLINE_STUFF) {
+ 		if (spectre_v2_enabled != SPECTRE_V2_RETPOLINE) {
+ 			pr_err("WARNING: retbleed=stuff depends on spectre_v2=retpoline\n");
+ 			retbleed_mitigation = RETBLEED_MITIGATION_AUTO;
++		} else {
++			if (retbleed_mitigation != RETBLEED_MITIGATION_STUFF)
++				pr_info("Retbleed mitigation updated to stuffing\n");
++
++			retbleed_mitigation = RETBLEED_MITIGATION_STUFF;
+ 		}
+ 	}
+ 	/*
+@@ -1338,20 +1365,6 @@ static void __init retbleed_apply_mitigation(void)
+ #undef pr_fmt
+ #define pr_fmt(fmt)     "ITS: " fmt
+ 
+-enum its_mitigation_cmd {
+-	ITS_CMD_OFF,
+-	ITS_CMD_ON,
+-	ITS_CMD_VMEXIT,
+-	ITS_CMD_RSB_STUFF,
+-};
+-
+-enum its_mitigation {
+-	ITS_MITIGATION_OFF,
+-	ITS_MITIGATION_VMEXIT_ONLY,
+-	ITS_MITIGATION_ALIGNED_THUNKS,
+-	ITS_MITIGATION_RETPOLINE_STUFF,
+-};
+-
+ static const char * const its_strings[] = {
+ 	[ITS_MITIGATION_OFF]			= "Vulnerable",
+ 	[ITS_MITIGATION_VMEXIT_ONLY]		= "Mitigation: Vulnerable, KVM: Not affected",
+@@ -1359,11 +1372,6 @@ static const char * const its_strings[] = {
+ 	[ITS_MITIGATION_RETPOLINE_STUFF]	= "Mitigation: Retpolines, Stuffing RSB",
+ };
+ 
+-static enum its_mitigation its_mitigation __ro_after_init = ITS_MITIGATION_ALIGNED_THUNKS;
+-
+-static enum its_mitigation_cmd its_cmd __ro_after_init =
+-	IS_ENABLED(CONFIG_MITIGATION_ITS) ? ITS_CMD_ON : ITS_CMD_OFF;
+-
+ static int __init its_parse_cmdline(char *str)
+ {
+ 	if (!str)
+@@ -1375,16 +1383,16 @@ static int __init its_parse_cmdline(char *str)
+ 	}
+ 
+ 	if (!strcmp(str, "off")) {
+-		its_cmd = ITS_CMD_OFF;
++		its_mitigation = ITS_MITIGATION_OFF;
+ 	} else if (!strcmp(str, "on")) {
+-		its_cmd = ITS_CMD_ON;
++		its_mitigation = ITS_MITIGATION_ALIGNED_THUNKS;
+ 	} else if (!strcmp(str, "force")) {
+-		its_cmd = ITS_CMD_ON;
++		its_mitigation = ITS_MITIGATION_ALIGNED_THUNKS;
+ 		setup_force_cpu_bug(X86_BUG_ITS);
+ 	} else if (!strcmp(str, "vmexit")) {
+-		its_cmd = ITS_CMD_VMEXIT;
++		its_mitigation = ITS_MITIGATION_VMEXIT_ONLY;
+ 	} else if (!strcmp(str, "stuff")) {
+-		its_cmd = ITS_CMD_RSB_STUFF;
++		its_mitigation = ITS_MITIGATION_RETPOLINE_STUFF;
+ 	} else {
+ 		pr_err("Ignoring unknown indirect_target_selection option (%s).", str);
+ 	}
+@@ -1395,85 +1403,90 @@ early_param("indirect_target_selection", its_parse_cmdline);
+ 
+ static void __init its_select_mitigation(void)
+ {
+-	enum its_mitigation_cmd cmd = its_cmd;
+-
+ 	if (!boot_cpu_has_bug(X86_BUG_ITS) || cpu_mitigations_off()) {
+ 		its_mitigation = ITS_MITIGATION_OFF;
+ 		return;
+ 	}
+ 
+-	/* Retpoline+CDT mitigates ITS, bail out */
+-	if (boot_cpu_has(X86_FEATURE_RETPOLINE) &&
+-	    boot_cpu_has(X86_FEATURE_CALL_DEPTH)) {
+-		its_mitigation = ITS_MITIGATION_RETPOLINE_STUFF;
+-		goto out;
+-	}
++	if (its_mitigation == ITS_MITIGATION_AUTO)
++		its_mitigation = ITS_MITIGATION_ALIGNED_THUNKS;
++
++	if (its_mitigation == ITS_MITIGATION_OFF)
++		return;
+ 
+-	/* Exit early to avoid irrelevant warnings */
+-	if (cmd == ITS_CMD_OFF) {
+-		its_mitigation = ITS_MITIGATION_OFF;
+-		goto out;
+-	}
+-	if (spectre_v2_enabled == SPECTRE_V2_NONE) {
+-		pr_err("WARNING: Spectre-v2 mitigation is off, disabling ITS\n");
+-		its_mitigation = ITS_MITIGATION_OFF;
+-		goto out;
+-	}
+ 	if (!IS_ENABLED(CONFIG_MITIGATION_RETPOLINE) ||
+ 	    !IS_ENABLED(CONFIG_MITIGATION_RETHUNK)) {
+ 		pr_err("WARNING: ITS mitigation depends on retpoline and rethunk support\n");
+ 		its_mitigation = ITS_MITIGATION_OFF;
+-		goto out;
++		return;
+ 	}
++
+ 	if (IS_ENABLED(CONFIG_DEBUG_FORCE_FUNCTION_ALIGN_64B)) {
+ 		pr_err("WARNING: ITS mitigation is not compatible with CONFIG_DEBUG_FORCE_FUNCTION_ALIGN_64B\n");
+ 		its_mitigation = ITS_MITIGATION_OFF;
+-		goto out;
+-	}
+-	if (boot_cpu_has(X86_FEATURE_RETPOLINE_LFENCE)) {
+-		pr_err("WARNING: ITS mitigation is not compatible with lfence mitigation\n");
+-		its_mitigation = ITS_MITIGATION_OFF;
+-		goto out;
++		return;
+ 	}
+ 
+-	if (cmd == ITS_CMD_RSB_STUFF &&
+-	    (!boot_cpu_has(X86_FEATURE_RETPOLINE) || !IS_ENABLED(CONFIG_MITIGATION_CALL_DEPTH_TRACKING))) {
++	if (its_mitigation == ITS_MITIGATION_RETPOLINE_STUFF &&
++	    !IS_ENABLED(CONFIG_MITIGATION_CALL_DEPTH_TRACKING)) {
+ 		pr_err("RSB stuff mitigation not supported, using default\n");
+-		cmd = ITS_CMD_ON;
++		its_mitigation = ITS_MITIGATION_ALIGNED_THUNKS;
+ 	}
+ 
+-	switch (cmd) {
+-	case ITS_CMD_OFF:
++	if (its_mitigation == ITS_MITIGATION_VMEXIT_ONLY &&
++	    !boot_cpu_has_bug(X86_BUG_ITS_NATIVE_ONLY))
++		its_mitigation = ITS_MITIGATION_ALIGNED_THUNKS;
++}
++
++static void __init its_update_mitigation(void)
++{
++	if (!boot_cpu_has_bug(X86_BUG_ITS) || cpu_mitigations_off())
++		return;
++
++	switch (spectre_v2_enabled) {
++	case SPECTRE_V2_NONE:
++		pr_err("WARNING: Spectre-v2 mitigation is off, disabling ITS\n");
+ 		its_mitigation = ITS_MITIGATION_OFF;
+ 		break;
+-	case ITS_CMD_VMEXIT:
+-		if (boot_cpu_has_bug(X86_BUG_ITS_NATIVE_ONLY)) {
+-			its_mitigation = ITS_MITIGATION_VMEXIT_ONLY;
+-			goto out;
+-		}
+-		fallthrough;
+-	case ITS_CMD_ON:
+-		its_mitigation = ITS_MITIGATION_ALIGNED_THUNKS;
+-		if (!boot_cpu_has(X86_FEATURE_RETPOLINE))
+-			setup_force_cpu_cap(X86_FEATURE_INDIRECT_THUNK_ITS);
+-		setup_force_cpu_cap(X86_FEATURE_RETHUNK);
+-		set_return_thunk(its_return_thunk);
++	case SPECTRE_V2_RETPOLINE:
++		/* Retpoline+CDT mitigates ITS */
++		if (retbleed_mitigation == RETBLEED_MITIGATION_STUFF)
++			its_mitigation = ITS_MITIGATION_RETPOLINE_STUFF;
+ 		break;
+-	case ITS_CMD_RSB_STUFF:
+-		its_mitigation = ITS_MITIGATION_RETPOLINE_STUFF;
+-		setup_force_cpu_cap(X86_FEATURE_RETHUNK);
+-		setup_force_cpu_cap(X86_FEATURE_CALL_DEPTH);
+-		set_return_thunk(call_depth_return_thunk);
+-		if (retbleed_mitigation == RETBLEED_MITIGATION_NONE) {
+-			retbleed_mitigation = RETBLEED_MITIGATION_STUFF;
+-			pr_info("Retbleed mitigation updated to stuffing\n");
+-		}
++	case SPECTRE_V2_LFENCE:
++	case SPECTRE_V2_EIBRS_LFENCE:
++		pr_err("WARNING: ITS mitigation is not compatible with lfence mitigation\n");
++		its_mitigation = ITS_MITIGATION_OFF;
++		break;
++	default:
+ 		break;
+ 	}
+-out:
++
++	/*
++	 * retbleed_update_mitigation() will try to do stuffing if its=stuff.
++	 * If it can't, such as if spectre_v2!=retpoline, then fall back to
++	 * aligned thunks.
++	 */
++	if (its_mitigation == ITS_MITIGATION_RETPOLINE_STUFF &&
++	    retbleed_mitigation != RETBLEED_MITIGATION_STUFF)
++		its_mitigation = ITS_MITIGATION_ALIGNED_THUNKS;
++
+ 	pr_info("%s\n", its_strings[its_mitigation]);
+ }
+ 
++static void __init its_apply_mitigation(void)
++{
++	/* its=stuff forces retbleed stuffing and is enabled there. */
++	if (its_mitigation != ITS_MITIGATION_ALIGNED_THUNKS)
++		return;
++
++	if (!boot_cpu_has(X86_FEATURE_RETPOLINE))
++		setup_force_cpu_cap(X86_FEATURE_INDIRECT_THUNK_ITS);
++
++	setup_force_cpu_cap(X86_FEATURE_RETHUNK);
++	set_return_thunk(its_return_thunk);
++}
++
+ #undef pr_fmt
+ #define pr_fmt(fmt)     "Spectre V2 : " fmt
+ 
+
+base-commit: 04bdd560124ec4d02d1d11ee3abc88d51954d7b8
+-- 
+2.34.1
+
 
