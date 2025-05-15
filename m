@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-649642-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-649644-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24E6EAB8702
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 14:54:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACAEEAB8715
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 14:56:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C05924E772F
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 12:53:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D32E3A6385
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 12:53:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2B9E29ACE3;
-	Thu, 15 May 2025 12:51:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2539629B23A;
+	Thu, 15 May 2025 12:51:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="TjRmRqag"
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="lQdljp3l"
 Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59BD329AB04;
-	Thu, 15 May 2025 12:51:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14D2529ACEE;
+	Thu, 15 May 2025 12:51:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747313465; cv=none; b=GMRTY8o0ZJ/nmyKedBNrVtWrWkzbprdnrz78L8YdQgXPCvISCAqPhbAtMl+fPlBLhk9E9aGmpWaU4eaVCk3KDnyl4HynMhplKtxhNKuD3A84ItperjEx2q0Sc44EgJ0HJcrVGY0k4VaRGJiwyEy4pOuZvc3dCPC91aHKVWfmGvw=
+	t=1747313467; cv=none; b=uPVpsmgPK4xaSoiDxExvzIrZgYAzhLtznQ9KoEe6a9WYCuU7djtw0dNt49wVCsLsm8eJ4T7iQrmxN9eItCo26vTpX3fAVeUkiv4a82+HB83SISZHaw9vwXQinY8E4jLG4wrGI6SJ9WwGfkNpAbTD2XTjr3Mx/zqU13Rn+7EWCdA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747313465; c=relaxed/simple;
-	bh=JTzq3Vmf4gscMebiu/HYcXiL++gX3a7M3+Fmkrk/lDw=;
+	s=arc-20240116; t=1747313467; c=relaxed/simple;
+	bh=3QC4ffM1Aa1pxu9uvJFwWx/DFJiMYK2jTahWSrSwVns=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RBUEMBpzWV7isgmE1+UJSMHn8tv3q4Nj5goBY707BjivD5MxVn21GClQCSApvnSDt15s5do+FVI1btWE0roqVtBHhEU+PqXvGUXKr3dQyPy8+bsY4tMR7jDXfBmEpGscEZCl56EOLzjUq12Fgib6awjWbxsxCLEvQ/q/+w/xQEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=TjRmRqag; arc=none smtp.client-ip=185.11.138.130
+	 MIME-Version:Content-Type; b=eHZApsHIM8ylfhOKykrlHqe9tZSbymba9kWGDzZ/bAh6Mv6YxZ3aVHHeBEpa7OQuFU61bSpPgSCDhW87ECujWX+eIhno98C+FJngIe6pbuWJskaDV+JFmD4vkq1t9yqxOAdwW1qVhjLrdBp7OGDXn7obtvyB4/5jSi5DuvbgvU4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=lQdljp3l; arc=none smtp.client-ip=185.11.138.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
@@ -35,33 +35,40 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
 	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
 	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
 	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=M4rwDJq3pbg55Yo2g2267mrIWdXYEpDyoX3ONJqyKdA=; b=TjRmRqag+mIisO5kJBdgCmE6K0
-	r13pxMuEsOR7Ckq4gKYUV6vxh11ScjFRAQo635hxe+soIxmLYQ4q+v2OYmMN6BEEOWUZW+/lPDnXQ
-	gODEfplZWGFjUFmMuXW+t6YGQNAj8L/dqSsMWBzRXQplTtuVQTW/WteXuEGojZV4mGiI+GVKwuOPK
-	duPBZlUIIlhp/vefZSnGOcRjYccYdPjQGGi181AJcDto6ADt2LhOcgQPPqN0pKWp1fnXwtNuKUfm6
-	nu/oZJb6T88bLXJfi0yHZAVRSTA1H7htxjlY2Gkz5hT8wnnv21GymCV1mji8kLkF/IwUSmz4mUZQV
-	L20bYLXw==;
+	bh=2dhwvLZ3lMVhmKEnca5rP7c57gf2pJHeBmKdCsIIeL0=; b=lQdljp3lEee35nVJq5VsP15Ac0
+	G3TV1N3nN47hq4ycpzthNv2Y4tRkox9fkOdp6bOQY2CT728MLhVqQ8ALawdPWo3zPOhO0XO42KSUm
+	u0Riq4EB4PdDqO/6oTdXb2W3TjmhWZBJFRHSvhgqrCzn7wvC8bwBl2NWXDHAm7jzX9IZyqrvUpVJE
+	IUxjNlLkgeGgWQHyM6lalXF0QKD3i098rkQ2mbjAytZ1/eSwkuKC+aJzeMBzKQi0fwYxbSQYXozwM
+	C2EY9zh7h9BMdHlQcxj8rDlfIBCz/yntxH9AKv6tinjh1F+NsRfbKbZSCvoErHVZLA1e3rzo9LekK
+	TvpW1NZQ==;
 Received: from i53875a50.versanet.de ([83.135.90.80] helo=localhost.localdomain)
 	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.94.2)
 	(envelope-from <heiko@sntech.de>)
-	id 1uFY38-0004ph-Mr; Thu, 15 May 2025 14:50:58 +0200
+	id 1uFY39-0004ph-BC; Thu, 15 May 2025 14:50:59 +0200
 From: Heiko Stuebner <heiko@sntech.de>
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: quentin.schulz@cherry.de,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
+To: Matthias Kaehlcke <mka@chromium.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Benjamin Bara <benjamin.bara@skidata.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Klaus Goger <klaus.goger@theobroma-systems.com>,
+	Lukasz Czechowski <lukasz.czechowski@thaumatec.com>
+Cc: Heiko Stuebner <heiko@sntech.de>,
+	linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 0/6] Add two board-families from Theobroma-Systems
-Date: Thu, 15 May 2025 14:50:44 +0200
-Message-ID: <174731343062.2524804.6752535988560416961.b4-ty@sntech.de>
+	stable@vger.kernel.org,
+	Quentin Schulz <quentin.schulz@cherry.de>
+Subject: Re: (subset) [PATCH v2 0/5] Fix onboard USB hub instability on RK3399 Puma SoM
+Date: Thu, 15 May 2025 14:50:45 +0200
+Message-ID: <174731343062.2524804.11565347943974455778.b4-ty@sntech.de>
 X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250514150745.2437804-1-heiko@sntech.de>
-References: <20250514150745.2437804-1-heiko@sntech.de>
+In-Reply-To: <20250425-onboard_usb_dev-v2-0-4a76a474a010@thaumatec.com>
+References: <20250425-onboard_usb_dev-v2-0-4a76a474a010@thaumatec.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,30 +79,27 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Wed, 14 May 2025 17:07:39 +0200, Heiko Stuebner wrote:
-> Both the Cobra and PP1516 boards are based around the PX30 SoC and can be
-> found with a variety of display options.
-> 
-> As new boards should not use the deprecated snps,reset-* properties
-> in the gmac node, I also added a core mdio-node for the gmac and
-> converted the Theobroma Ringneck board over.
+On Fri, 25 Apr 2025 17:18:05 +0200, Lukasz Czechowski wrote:
+> The RK3399 Puma SoM contains the internal Cypress CYUSB3304 USB
+> hub, that shows instability due to improper reset pin configuration.
+> Currently reset pin is modeled as a vcc5v0_host regulator, that
+> might result in too short reset pulse duration.
+> Starting with the v6.6, the Onboard USB hub driver (later renamed
+> to Onboard USB dev) contains support for Cypress HX3 hub family.
+> It can be now used to correctly model the RK3399 Puma SoM hardware.
 > 
 > [...]
 
 Applied, thanks!
 
-[1/6] arm64: dts: rockchip: add basic mdio node to px30
-      commit: ede4837a504ca7e5811217060aa8300b8d0cf7f2
-[2/6] arm64: dts: rockchip: move reset to dedicated eth-phy node on ringneck
-      commit: e463625af7f92c4a9f097f7fb87f6baaad6e762a
-[3/6] dt-bindings: arm: rockchip: add PX30-Cobra boards from Theobroma Systems
-      commit: e2a6b301ca6054fc72905810d084690ec0ee1aed
-[4/6] arm64: dts: rockchip: add px30-cobra base dtsi and board variants
-      commit: bb510ddc9d3eda3d6e1276d301e923e7021e9972
-[5/6] dt-bindings: arm: rockchip: add PX30-PP1516 boards from Theobroma Systems
-      commit: b8310e4d391ad123048de738ac023ef8b7ebdbfc
-[6/6] arm64: dts: rockchip: add px30-pp1516 base dtsi and board variants
-      commit: 56198acdbf0d57200e49311e16d6bf16498128f7
+[2/5] dt-bindings: usb: cypress,hx3: Add support for all variants
+      commit: 1ad4b5a7de16806afc1aeaf012337e62af04e001
+[3/5] arm64: dts: rockchip: fix internal USB hub instability on RK3399 Puma
+      commit: d7cc532df95f7f159e40595440e4e4b99481457b
+[4/5] arm64: dts: rockchip: disable unrouted USB controllers and PHY on RK3399 Puma
+      commit: 3373af1d76bacd054b37f3e10266dd335ce425f8
+[5/5] arm64: dts: rockchip: disable unrouted USB controllers and PHY on RK3399 Puma with Haikou
+      commit: febd8c6ab52c683b447fe22fc740918c86feae43
 
 Best regards,
 -- 
