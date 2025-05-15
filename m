@@ -1,149 +1,92 @@
-Return-Path: <linux-kernel+bounces-648967-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-648965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED44BAB7E38
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 08:43:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67458AB7E30
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 08:42:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 008D58C3316
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 06:42:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 335271B61C14
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 06:42:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43B7C296D2C;
-	Thu, 15 May 2025 06:42:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="HLnpRHs3"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EF21296FD0;
+	Thu, 15 May 2025 06:42:02 +0000 (UTC)
+Received: from smtp2-g21.free.fr (smtp2-g21.free.fr [212.27.42.2])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06CCD29673D;
-	Thu, 15 May 2025 06:42:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECBB2296FB2
+	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 06:41:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.27.42.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747291345; cv=none; b=WRM75N+HO0060RAzpCHgR6czOfk4julcM3PKGDKbWC+FxMJ3kQMd4N6v6RqUEiP1x894Hl1jSBny1xyuiFiEadWk6i0OBlM8pbiMllQS4q9MfdvNmgd4ADKxrbk06ntEMZeFihybQZk/kCDyEFAcyhLDaa5u2DmpGZ8QvDY7QUA=
+	t=1747291322; cv=none; b=hjT3Gnd2+NFvCr476WsmUXW1h4NAO9UhtsGDaRBWZ/gjad+q6HbyjOKedmF6skYuIdvgbHfLJpYpjN7IcNpC9Tu6Jfu2u04+GDM7MB8ILd8pmj7sBTKXsbJfyWROTVb43RDK8P+I5BnciLn0jctx2hkcuDfI74EeYPh0N8gMTkY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747291345; c=relaxed/simple;
-	bh=69uQGetP4cHphm++LEFmfNFCPk+Rz2LhIoWgX09q16A=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=nxNrnm6dr0CEv6k2+Ofe9IvrkehNOEqDBtwkdNPYjL+Wa9KZrn1o4uX5jzbkdrtRVzydmI107fvBbrRg5GQKCS4xIP5Dp7XR/cbqAbdpi9W8aQgyu0cf8gtATqGFcs1UIXzEOZVqbjCvNtLcatnLUBfjc6tryFh2lpbDqTcH3w4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=HLnpRHs3; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54EIeSxL002748;
-	Thu, 15 May 2025 06:42:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=9r5OcaVRJunHiRxyKY7Nrf
-	v+T7msSpQEsmsSgben/yk=; b=HLnpRHs3nbku2sv/Ij1oh9E3xp9ih3SeUG6t57
-	2QP5w97VpQ+FF7Ib1dpGhPQK8cAkXcsga4SO5s2MIluDd1n+C8oqSGpGRyZsCMW2
-	ybmjcogSFnzjrdLdqDA2Sohh82a5Xqhp6MNVqO4XL4OflV3zlEsjSEpPyR00rp57
-	IegPgZaXPMYtKu+w9E6F6AlBqVzTlc7Rmfj9+zU/iXf3bPbv3FqgJIGH6raI7cQu
-	HGegE+pMPQ929tGRnYbCkjqJvmR7kCVe+KbX09ggC2Lr+O2htGnJUFPXp1iKruBw
-	+NKa5AicEu4fjpWvcFs6YQnBwHRoAztOQmALzwcj33b/yE/w==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46mbcpd6vd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 15 May 2025 06:42:19 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 54F6gI42028639
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 15 May 2025 06:42:18 GMT
-Received: from hu-charante-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 14 May 2025 23:42:15 -0700
-From: Charan Teja Kalla <quic_charante@quicinc.com>
-To: <rafael@kernel.org>, <len.brown@intel.com>, <pavel@kernel.org>,
-        <gregkh@linuxfoundation.org>, <dakr@kernel.org>
-CC: <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        "Charan Teja
- Kalla" <quic_charante@quicinc.com>,
-        Patrick Daly <quic_pdaly@quicinc.com>
-Subject: [PATCH] PM-runtime: fix denying of auto suspend in pm_suspend_timer_fn
-Date: Thu, 15 May 2025 12:11:25 +0530
-Message-ID: <20250515064125.1211561-1-quic_charante@quicinc.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1747291322; c=relaxed/simple;
+	bh=dOdu2Ci6ROPLjf8PLzJmQYNLL9AUR9xNrQR8OsJrFJo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aa0whwFfMCNk6OzPP1ErFsK6AN4zZCqMAEwWTDsEqz8PtCkSDiNFUtIhapY7XqJY3Lran6T2PwvE9ToPm9tV333MqI6z8WGZFrEvrfGS4/G76v4vd25sEnHLQs6FIf7uygeK6MTthSCHKjNBlf1Y1/ZMu0OetnZyG16yV3yLTas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=free.fr; spf=pass smtp.mailfrom=free.fr; arc=none smtp.client-ip=212.27.42.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=free.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=free.fr
+Received: from localhost (unknown [82.64.135.138])
+	by smtp2-g21.free.fr (Postfix) with ESMTP id EE3E32003E3;
+	Thu, 15 May 2025 08:41:48 +0200 (CEST)
+Received: by localhost (Postfix, from userid 1502)
+	id 84740C4D1; Thu, 15 May 2025 06:41:48 +0000 (GMT)
+Date: Thu, 15 May 2025 06:41:48 +0000
+From: Etienne Buira <etienne.buira@free.fr>
+To: Stefan Wahren <wahrenst@gmx.net>
+Cc: Florian Fainelli <florian.fainelli@broadcom.com>,
+	bcm-kernel-feedback-list@broadcom.com,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+	Etienne Buira <etienne.buira@free.fr>,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] firmware/raspberrypi: raise timeout to 3s
+Message-ID: <aCWMrJcldfrsNTQq@Z926fQmE5jqhFMgp6>
+Mail-Followup-To: Stefan Wahren <wahrenst@gmx.net>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	bcm-kernel-feedback-list@broadcom.com,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+	Etienne Buira <etienne.buira@free.fr>,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <aCIiEp3CXD2o9dTw@Z926fQmE5jqhFMgp6>
+ <048fd6c5-9f09-4c06-9a23-e5821dc291d5@gmx.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: fhHlrlFSvDfN-PrL4bamuMWqKoVO2whb
-X-Proofpoint-ORIG-GUID: fhHlrlFSvDfN-PrL4bamuMWqKoVO2whb
-X-Authority-Analysis: v=2.4 cv=cO7gskeN c=1 sm=1 tr=0 ts=68258ccb cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=dt9VzEwgFbYA:10 a=COk6AnOGAAAA:8 a=H9JB4yF801-ZaJQK_joA:9
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTE1MDA2NCBTYWx0ZWRfX8L/1cc0T8Wyp
- KxZuPHxfR4l0sSwwQR5232zXjQ0ByFU2Ha+jNmk2Jo5g3RaK4hgA5EmO6UGWyNvhhTwGYBewCur
- 81iqPN0UFSgO+fU9ojGGggI73WrVbykIlH714Eyo9v6laRIxVsnc18ZefvnA2lyPj0QnSb1ZrVW
- JDDe5rrtvpsmp2D6RFj5ArwSFeSWGG8zrA/E8GOMunwdm/zWvInxVz0+M2qlS6WojRdfeiHIkuo
- lv0AIRTN1d3FopVMrLmDEAGy3FkNfiChntDTKMD+Mjlo0mFz5AuMVgD7Xcbh28HPWxHzkl47pcR
- VGRCMs7tDyEb3mdYqqHE9oGXpMvNqvYvfWTx5Dc0SSMXRTA06o3iU2KRYKLEbkDdGSkwxakYxI2
- TmQVHgGd0/aCrYPdP9Y2uXBz68LOPNIP+KFlYvt+6IXUsFNdr30euZKPiogeCVPTSFJ5MOAt
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-15_02,2025-05-14_03,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- mlxlogscore=999 spamscore=0 suspectscore=0 phishscore=0 lowpriorityscore=0
- adultscore=0 bulkscore=0 malwarescore=0 impostorscore=0 clxscore=1011
- priorityscore=1501 mlxscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505070000
- definitions=main-2505150064
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <048fd6c5-9f09-4c06-9a23-e5821dc291d5@gmx.net>
 
-pm_runtime_put_autosuspend() schedules a hrtimer to expire at
-"dev->power.timer_expires". If the hrtimer's callback -
-pm_suspend_timer_fn - observes that the current time equals
-"dev->power.timer_expires", it unexpectedly bails out instead of
-proceeding with runtime suspend.
+On Wed, May 14, 2025 at 06:20:32PM +0200, Stefan Wahren wrote:
+> Hi Etienne,
+> 
+> Am 12.05.25 um 18:30 schrieb Etienne Buira:
+../..
+> Out of curiosity and because i never saw this issue, could you please 
+> provide more details?
+> There is nothing connected to HDMI 0 & 1 ?
+> Which firmware version are you running?
+> Do you use a special configuration?
 
-pm_suspend_timer_fn():
-if (expires > 0 && expires < ktime_get_mono_fast_ns()) {
-	dev->power.timer_expires = 0;
-	rpm_suspend(..)
-}
+Hi Stefan
 
-Additionally, as ->timer_expires is not cleared, all the future auto
-suspend requests will not schedule hrtimer to perform auto suspend.
+There is nothing very special, hdmi0 is connected to a monitor, there's
+a (independantly powered) hdd on usb3, keyboard/mouse on usb2 ports, a
+Gb network wire, UART, and nothing else.
 
-rpm_suspend():
-if ((rpmflags & RPM_AUTO) &&...) {
-     if (!(dev->power.timer_expires && ...) { <-- this will fail.
-	hrtimer_start_range_ns(&dev->power.suspend_timer,...);
-  }
-}
+The afore-mentioned next failure is also about graphic stack (hdmi
+signal is lost as soon as VC4 driver loads), i seeked for help here:
+https://lists.freedesktop.org/archives/dri-devel/2025-May/505475.html
+(btw, if you have a hint...).
 
-Fix this by aswell checking if current time reaches the set expiration.
-
-Co-developed-by: Patrick Daly <quic_pdaly@quicinc.com>
-Signed-off-by: Patrick Daly <quic_pdaly@quicinc.com>
-Signed-off-by: Charan Teja Kalla <quic_charante@quicinc.com>
----
- drivers/base/power/runtime.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/base/power/runtime.c b/drivers/base/power/runtime.c
-index 205a4f8828b0..c55a7c70bc1a 100644
---- a/drivers/base/power/runtime.c
-+++ b/drivers/base/power/runtime.c
-@@ -1011,7 +1011,7 @@ static enum hrtimer_restart  pm_suspend_timer_fn(struct hrtimer *timer)
- 	 * If 'expires' is after the current time, we've been called
- 	 * too early.
- 	 */
--	if (expires > 0 && expires < ktime_get_mono_fast_ns()) {
-+	if (expires > 0 && expires <= ktime_get_mono_fast_ns()) {
- 		dev->power.timer_expires = 0;
- 		rpm_suspend(dev, dev->power.timer_autosuspends ?
- 		    (RPM_ASYNC | RPM_AUTO) : RPM_ASYNC);
--- 
-2.34.1
+Regards.
 
 
