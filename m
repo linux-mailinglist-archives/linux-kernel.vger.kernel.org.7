@@ -1,109 +1,96 @@
-Return-Path: <linux-kernel+bounces-650096-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-650078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F49FAB8D20
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 19:05:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9F58AB8D0E
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 19:01:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C41250155C
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 17:03:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 076B2A21134
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 17:00:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66FC02566FE;
-	Thu, 15 May 2025 17:00:50 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 746D925394A
-	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 17:00:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E9B3254AF4;
+	Thu, 15 May 2025 16:59:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DcNyxHhr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FAB7255F4D;
+	Thu, 15 May 2025 16:59:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747328450; cv=none; b=ORAvD9OwRCaOe9EL2X49ksbffh6GG1rUOP+7xo9gsLvKHWKE90+VhbZTnIpXMJiXRpBLxf71qeI1yt2sXH5WWIAqf8fmRINvgwsgF9kiTo+JgH+FhygbwxSBr/ZdFAYSXY21g/zJzFxRhDlZD2Z+T7J4wLqTiEMqkXV4wjpSyzw=
+	t=1747328383; cv=none; b=p8HqsiuWyvSgJnQ+vBrSc1Cxazo+kblQCB9JmbXddlA8vuNehONHISIPLEpc+vuBMzS8bSXinB8ZfdL8BVbHj1C+L6tyF0YGD7h7eGMsyaNejE6WVX7xeyvb/aFAEFBEzzfDgKaV1hSw7WKBkJWxbzWo1tC12bPjWR1/TpAOTF4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747328450; c=relaxed/simple;
-	bh=TD9xugOi9VlLfIM7a8JmLsAf3d3clKh4YDmEMuT0zDI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=B58RmilXPxPGkgPO/AUIv3b2QXWy1e8C8R+bJynLeq9FeoY/Rwg2e7u9hki1xAC88dHlTPuUloPkvbvtyqSeYGIybfpx3i8CAXrkmGPIbCH8zT1l+4Q2ay/pjJpVzwsIDb+bcwJp1Cb96Yk9eldtcAiFAEPMe7hDn42P6+QHOZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 28C0A2BC2;
-	Thu, 15 May 2025 10:00:35 -0700 (PDT)
-Received: from merodach.members.linode.com (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 834AB3F63F;
-	Thu, 15 May 2025 10:00:43 -0700 (PDT)
-From: James Morse <james.morse@arm.com>
-To: x86@kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Reinette Chatre <reinette.chatre@intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	H Peter Anvin <hpa@zytor.com>,
-	Babu Moger <Babu.Moger@amd.com>,
-	James Morse <james.morse@arm.com>,
-	shameerali.kolothum.thodi@huawei.com,
-	D Scott Phillips OS <scott@os.amperecomputing.com>,
-	carl@os.amperecomputing.com,
-	lcherian@marvell.com,
-	bobo.shaobowang@huawei.com,
-	tan.shaopeng@fujitsu.com,
-	baolin.wang@linux.alibaba.com,
-	Jamie Iles <quic_jiles@quicinc.com>,
-	Xin Hao <xhao@linux.alibaba.com>,
-	peternewman@google.com,
-	dfustini@baylibre.com,
-	amitsinght@marvell.com,
-	David Hildenbrand <david@redhat.com>,
-	Rex Nie <rex.nie@jaguarmicro.com>,
-	Dave Martin <dave.martin@arm.com>,
-	Koba Ko <kobak@nvidia.com>,
-	Shanker Donthineni <sdonthineni@nvidia.com>,
-	fenghuay@nvidia.com,
-	Tony Luck <tony.luck@intel.com>,
-	Dave Martin <Dave.Martin@arm.com>
-Subject: [PATCH v12 25/25] MAINTAINERS: Add reviewers for fs/resctrl
-Date: Thu, 15 May 2025 16:58:55 +0000
-Message-Id: <20250515165855.31452-26-james.morse@arm.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20250515165855.31452-1-james.morse@arm.com>
-References: <20250515165855.31452-1-james.morse@arm.com>
+	s=arc-20240116; t=1747328383; c=relaxed/simple;
+	bh=QqeJinLNjCwHI9lqJ7eAgQPajUYOTAGrRLDu2R8Nv6w=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=gZkMfMVjdaDCgjTvnMa/4ZuTbidS3iPL5vnldwjefwOqap7CoSyFEvA/YXi3reTlj7NNx3p49ANI6lCnIYAGwy36HrYmJJG03hB1K4XUG9hWIil7lavwhb6eav3Qqpm72Ojkh+7X2n0qkXQ7gmhe0wTA/FsBzJR7R7EnbPi6TY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DcNyxHhr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24676C4CEE7;
+	Thu, 15 May 2025 16:59:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747328382;
+	bh=QqeJinLNjCwHI9lqJ7eAgQPajUYOTAGrRLDu2R8Nv6w=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=DcNyxHhr0HKBMn832YhjDOEyfRW+iX/YdN8GrCUxqSOaVQk+7MQzhL6octYhPY+ZM
+	 68dk8cjfKozt/gPurguAhIqJQ3e/St4ZK6XwKNyZjqChxt2IxMHyva4FEXeYGORSZj
+	 Hz3lqYAMSy7h6S/sEyQgznHyIkFAsdCKGP5/0UAir2SCBc/8iwTts1LRSaIJvtZ//z
+	 MGpg9/g0NkJE1o7Ab0nGct4Sf20MVPdpbGs61KIk7vcp1DSdyFe8UsUMWqifTcT2wq
+	 t9LTS+h18Jfkf9uVTKSWXH+uUBDS1b7LfhXDwIfdx44COuWuICZIg6EBjPWPvJ38Kv
+	 mQcMtnINN5aWQ==
+Date: Thu, 15 May 2025 17:59:32 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Eason Yang <j2anfernee@gmail.com>, lars@metafoo.de, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, dlechner@baylibre.com,
+ nuno.sa@analog.com, javier.carrasco.cruz@gmail.com, alisadariana@gmail.com,
+ gstols@baylibre.com, olivier.moysan@foss.st.com, tgamblin@baylibre.com,
+ antoniu.miclaus@analog.com, eblanc@baylibre.com, stefan.popa@analog.com,
+ angelogioacchino.delregno@collabora.com, marcelo.schmitt@analog.com,
+ tobias.sperling@softing.com, chanh@os.amperecomputing.com,
+ KWLIU@nuvoton.com, yhyang2@nuvoton.com, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v10 2/2] iio: adc: add support for Nuvoton NCT7201
+Message-ID: <20250515175932.3ad4bbe0@jic23-huawei>
+In-Reply-To: <aCG2yfmg-tSq95ur@smile.fi.intel.com>
+References: <20250512083156.3300006-1-j2anfernee@gmail.com>
+	<20250512083156.3300006-3-j2anfernee@gmail.com>
+	<aCG2yfmg-tSq95ur@smile.fi.intel.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-resctrl has existed for quite a while as a filesystem interface private to
-arch/x86. To allow other architectures to support the same user interface
-for similar hardware features, it has been moved to /fs/.
+On Mon, 12 May 2025 11:52:25 +0300
+Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
 
-Add those with a vested interest in the common code as reviewers.
+> On Mon, May 12, 2025 at 04:31:56PM +0800, Eason Yang wrote:
+> > Add Nuvoton NCT7201/NCT7202 system voltage monitor 12-bit ADC driver
+> > 
+> > NCT7201/NCT7202 supports up to 12 analog voltage monitor inputs and up
+> > to 4 SMBus addresses by ADDR pin. Meanwhile, ALERT# hardware event pins
+> > for independent alarm signals, and all the threshold values could be set
+> > for system protection without any timing delay. It also supports reset
+> > input RSTIN# to recover system from a fault condition.
+> > 
+> > Currently, only single-edge mode conversion and threshold events are
+> > supported.  
+> 
+> LGTM,
+> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> 
+Series applied to the testing branch of iio.git.
+I'll push out as togreg once it's had some basic build testing.
 
-Signed-off-by: James Morse <james.morse@arm.com>
-Tested-by: Tony Luck <tony.luck@intel.com>
-Acked-by: Reinette Chatre <reinette.chatre@intel.com>
-Acked-by: Dave Martin <Dave.Martin@arm.com>
----
- MAINTAINERS | 2 ++
- 1 file changed, 2 insertions(+)
+thanks,
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index e54b9019e942..9584c0d493a8 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -20363,6 +20363,8 @@ F:	tools/testing/selftests/net/rds/
- RDT - RESOURCE ALLOCATION
- M:	Tony Luck <tony.luck@intel.com>
- M:	Reinette Chatre <reinette.chatre@intel.com>
-+R:	Dave Martin <Dave.Martin@arm.com>
-+R:	James Morse <james.morse@arm.com>
- L:	linux-kernel@vger.kernel.org
- S:	Supported
- F:	Documentation/filesystems/resctrl.rst
--- 
-2.39.5
+Jonathan
 
 
