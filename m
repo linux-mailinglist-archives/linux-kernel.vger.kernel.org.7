@@ -1,77 +1,54 @@
-Return-Path: <linux-kernel+bounces-649889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-649891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC72AAB8A69
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 17:17:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F7ABAB8A81
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 17:23:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13B0346293F
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 15:16:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27F7D3B27DF
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 15:16:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57CF420B7FE;
-	Thu, 15 May 2025 15:16:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86B682135DE;
+	Thu, 15 May 2025 15:16:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="lSw2baZ5"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="dDUDT9Zz"
+Received: from mail-0201.mail-europe.com (mail-0201.mail-europe.com [51.77.79.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E099D42A82
-	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 15:16:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B89F21F3B9E
+	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 15:16:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.77.79.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747322181; cv=none; b=i9XyrQwzEC/06WFiCtuYAW9WGiLILhDM0uHEJB0o6mQLeIMIkRo52FRkLJX+J2FBIii78cdBjMSc3jcMeVD2qIs1+wOCNE5giAd3eLvHIEUB7VdM6Vni6kTz+/TSYzg4PDiS2GmErenTJ8dTlT2j18asHnS5LUOGbgAY2hmpuSg=
+	t=1747322217; cv=none; b=IeI1Ai3PIYZN7VXuBoZwQe193suN9mr/aBxId6vFZRX1Yu6DZ6McruH2/AobKizy9AR92YDWYpQ5Fnxzn2ADqFE2ROhuzWibL5yvLuxsZ4AAqEn8TkM+M5XMeKj2bs2R9+/bQSVwFLwpFSHydCZCuj0laHVRWT5U+L2CCnju7fc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747322181; c=relaxed/simple;
-	bh=sPyAVycxcJ0D1C/UAD2TstnPXUFKGB6F6fjmwgb+N4U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WtUVQ8yZpUTitDsYmaY6P8pRZ87otEo3TroOHs1iZJi+1BRiMtg6lQQKHMw3g95PwQvcC4PRvi26Yo2QRez6sbnTraO0ccEVdwh/OFmkW9+wVEUsKr2u5zjWQe7S0F4/CBF7HxQCBHmyMwko63JRl/CeWYGnwtrZUj9W9fK/yig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=lSw2baZ5; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 5F74A40E0222;
-	Thu, 15 May 2025 15:16:16 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id qDhr6EV5YsTV; Thu, 15 May 2025 15:16:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1747322173; bh=lzbgCcnq7yzl/KudcdPAeH53uYqWbFn4WHR1nkY/0zM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lSw2baZ5BWEuGQe+deamInwfX1pxlIOXahSUMcWjWEXwYbR1l3Zv6pIcFjUBhaNae
-	 OkCgaoDXi/7wCQyfFZl8l6ExSCuky6tNqfqI/m7PM7AMeecerAQ0I8HpimN5LxW6vI
-	 xi/xq4RFBkxaBjtu423GuVQOVN0vGRjwraPbN7OPC7xcxORGbJXBgMAKbhnm4lmFlH
-	 kJSajgIV3V978kOtArowzbhBbmHBEeVwJcwNLo3PMfc8wzfMQNLDqE5cFliyTvUICA
-	 ccDKsmg0ZRVNH89aXLuze3T191M3pfIg42e7SRtc+gEVHYjRhLsekcTw3RMzHkMp3H
-	 QmywFVKVdUJHX/i1umcp/K0ZzceIGvwj2sC3LvQtBX60ZdZDl6oWMUHH88KNC98KGf
-	 TBLrqzvMvitdu6m1crseHlq0xEQ+cEoY41eiOK9+T2OoiwGi9mC8t49I0Lq9OR3M24
-	 WnJTD2hmjnhygkfllHjlC+28Ec+pyKpPPdw+PIm0yPP3bwXefU33i+p18LB2DpH/tY
-	 CopBXk+SvVw6/5PzYYEwMr+1bvW69E0bObgPKcJ9ohOoqR4Oc5xbtjrplTnLyLcCCL
-	 ikm/+Jn1xiUGfDZU2dIHug1dHfTt8c/OmDUqPlDidWCHLWHk4DMUom9d8PGpkQ28f1
-	 hrXjh/bHVCnaOVqSd1bES6B8=
-Received: from zn.tnic (p579690ee.dip0.t-ipconnect.de [87.150.144.238])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id C0D6A40E0196;
-	Thu, 15 May 2025 15:16:02 +0000 (UTC)
-Date: Thu, 15 May 2025 17:16:01 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: David Kaplan <david.kaplan@amd.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] x86/bugs: Restructure ITS mitigation
-Message-ID: <20250515151601.GHaCYFMdcyIUmFgCNx@fat_crate.local>
-References: <20250515134756.93274-1-david.kaplan@amd.com>
+	s=arc-20240116; t=1747322217; c=relaxed/simple;
+	bh=GHWe8HrCUTkENXllcuiybMX839dSZ6xNSewH9/FXAWc=;
+	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=ZIldz0Ehkxk9Tf4RRH3oa0AChuMzw4En5zRgjGKokUWbkyQSmjmdWxp/GMveGEg+6GdFgQ8zhYqj6N+OH/0Kl/ZNRi9+HOKg3OyG42AvVkP76kVec4lTc/9FuWSPbaLi0OPSd8wZbooBchVlWlMaHx706iv0rzfajXajEWNeNII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=dDUDT9Zz; arc=none smtp.client-ip=51.77.79.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+	s=protonmail3; t=1747322200; x=1747581400;
+	bh=GHWe8HrCUTkENXllcuiybMX839dSZ6xNSewH9/FXAWc=;
+	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector:
+	 List-Unsubscribe:List-Unsubscribe-Post;
+	b=dDUDT9ZzT5RGl7utzSarEOFf2GHDygB7IzC5rV50Hp2vryhw6lOj6l/gbbVayfAB2
+	 5BKaCGmrA//bqdcavfNE647WG8xo9aILhFni/tqHnHJNDiEcFkiVHTKcwXpi5VNfpd
+	 bep8DIvTT3WEPjpVqjFo4d6ZHmyMq2xE2uflVgC0VK+7ZoaP52CXy5jJVSw1Slaiwk
+	 2GtWaRuS9YuNPKgP0DW5CL0jfK8/gye+DeAKI9ym5QwkDhjkBHZkgWx13mEvsCgCKS
+	 PcvVvvnOZvJadWZOA/1Aw6xPyLR9SZeREF/Fr3r5vQmlHQmF7cCshcSqo3v/ZfyD17
+	 4JYYXZKRABNmQ==
+Date: Thu, 15 May 2025 15:16:35 +0000
+To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+From: Turritopsis Dohrnii Teo En Ming <teo.en.ming@protonmail.com>
+Cc: "ceo@teo-en-ming-corp.com" <ceo@teo-en-ming-corp.com>
+Subject: =?utf-8?Q?CVE-2025=E2=80=9321756:_A_Critical_Linux_Kernel_Flaw_That_Lets_Attackers_Become_Root?=
+Message-ID: <JvToHMIDW4vhYEp7DaK_-ULuOCY-b7sFs91GUFxvXZeZyusQqj7-NVIOp_f759VmtFu3V1elN30L4_jLyPMh_iZz0Ib45mEIx55fVxM8-Pw=@protonmail.com>
+Feedback-ID: 39510961:user:proton
+X-Pm-Message-ID: 334bd51d6f9e524b686f3b45ee6dd37508d39e7a
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,36 +56,31 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250515134756.93274-1-david.kaplan@amd.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, May 15, 2025 at 08:47:56AM -0500, David Kaplan wrote:
-> @@ -1242,11 +1261,19 @@ static void __init retbleed_update_mitigation(void)
->  	/*
->  	 * retbleed=stuff is only allowed on Intel.  If stuffing can't be used
->  	 * then a different mitigation will be selected below.
-> +	 *
-> +	 * its=stuff will also attempt to enable stuffing.
->  	 */
-> -	if (retbleed_mitigation == RETBLEED_MITIGATION_STUFF) {
-> +	if (retbleed_mitigation == RETBLEED_MITIGATION_STUFF ||
-> +	    its_mitigation == ITS_MITIGATION_RETPOLINE_STUFF) {
->  		if (spectre_v2_enabled != SPECTRE_V2_RETPOLINE) {
->  			pr_err("WARNING: retbleed=stuff depends on spectre_v2=retpoline\n");
->  			retbleed_mitigation = RETBLEED_MITIGATION_AUTO;
-> +		} else {
-> +			if (retbleed_mitigation != RETBLEED_MITIGATION_STUFF)
-> +				pr_info("Retbleed mitigation updated to stuffing\n");
+Subject: CVE-2025=E2=80=9321756: A Critical Linux Kernel Flaw That Lets Att=
+ackers Become Root
 
-I've seen this patch offlist already so only one thing about this here above
-which is already there in the current tree.
+Good day from Singapore,
 
-Let's zap it. One can see to what the retbleed mitigation was updated by other
-means. No need to add more spaghetti to the code.
+I have just come across this article, which was published on 2 May 2025.
 
--- 
-Regards/Gruss,
-    Boris.
+The link to the article is as follows:
 
-https://people.kernel.org/tglx/notes-about-netiquette
+https://levelup.gitconnected.com/cve-2025-21756-a-critical-linux-kernel-fla=
+w-that-lets-attackers-become-root-28ba9780bdfb
+
+It is a 4-minute read.
+
+Regards,
+
+Mr. Turritopsis Dohrnii Teo En Ming
+Targeted Individuals in Singapore
+GIMP =3D Government-Induced Medical Problems
+15 May 2025 Thursday 11.16 PM
+
+
+
+
+
 
