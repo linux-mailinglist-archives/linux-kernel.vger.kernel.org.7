@@ -1,93 +1,89 @@
-Return-Path: <linux-kernel+bounces-649768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-649809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2F48AB88E8
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 16:06:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 288A7AB8967
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 16:27:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3EB881BC3C5A
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 14:06:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2CE19E1814
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 14:25:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96B011AA79C;
-	Thu, 15 May 2025 14:06:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E1B51DED64;
+	Thu, 15 May 2025 14:25:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JjNtrIlU"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="WmU5zAaU"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20B4F19D08F
-	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 14:06:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AC6117B4EC;
+	Thu, 15 May 2025 14:25:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747317969; cv=none; b=F9qcIpbGqkNkVvyaG+fQHP4FYaHWv6oYzSxzFl8VMWS9hO90OZsBFZVIA28uq71skHvGlSit5zp8deFqSoXMEl0A59P79FmnciMEr3DB3PBLwJkEYIJFMUPvvlWzPbb+e/njgP5mlPpbnWaQD8HPnqM1X5MJTh95IlXNxnz3pWg=
+	t=1747319148; cv=none; b=tdivBMCCQ7V3ksIQkN+zJs0gjCtN6zdPzkuAz9h3gwP5ACHnp1Jx64AGPOzrsMEMW097K69NFLpDmXk6F+qNvSfKNkggPMlhheSiWGM3VjF9lJ3nSsEuk42LpWWgNP3qGrV7m3SNHHDH3rcCldnjnEVpOg3HXHjXbwmbmE74LnU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747317969; c=relaxed/simple;
-	bh=ZX0b7+q/WHABStHBVU2DZikmc1ff9AvZgSAY2t2c/Js=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Xhhq/Gd0K7ZLWVicqkemNJC6DdULdqLsW3lPy/qDD/cPwhDeZ40hmG+p9vsbA0swB0P0WvoMAYgiBZv+0lSA1/LeFykh4MiwUPCaEduVNC2Rm1ZzPopEVSZhrtjhoiymKKSGTFJrfehpc9oEHvSOjVq3lI9hzZ/2RnAGGPvf0C8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JjNtrIlU; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3a0b28d9251so148324f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 07:06:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1747317965; x=1747922765; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=+TIgkAbsJjkBmPmDqXYIo5M6rm+d2Bew/nDM+VokxXo=;
-        b=JjNtrIlU1pZ6D68eA95fvaW9xhtPFb4tDSOltWovIAR8kqw2S9FY6BFnoV25DBoXFv
-         T23vUap+jwvsavpgbZ3W/WnPvaQ0kQMd4SN0IKc0/PZx359IgFbNS9xNXuoJ4frbUaCo
-         J3oZxsaw6PZeb2WLtMetrLXfI9EXVIBfPSYScn79/bNRkwqf7aeKHfWVbRYmwRZz4LN/
-         atJorZybH0aU/7y5YpQhWN7LmzaAeOOVjJ/8nufSpdLmYVNcsf11ltttXDBIXRbI9lSt
-         n3+J9rlMwzN1b6QMAq9sP3nun4jEdzBkoZ+oZFbSZHEGNub25QML4zEsKe/sEHDHhNPZ
-         PMSA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747317965; x=1747922765;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+TIgkAbsJjkBmPmDqXYIo5M6rm+d2Bew/nDM+VokxXo=;
-        b=rPND+70ReMEo74SK6DDAvx+8PvIM+dNuRHYqOaVXhaEjphf+GEN1cxTtGGAXV2WNyC
-         Cu0D/MBeKV6ySwqnn2Xk98DmzWr0+i04clgO6azSpbHZuvfOXKkchO2W7OxdkV8HorsH
-         1BM2UbVkJ02DTt+N9yHyPZyO/I6AWqszp52oglnKM+cyvHbqfm/T9wqkQ92aXfBJgXMM
-         gcPQprDZchbONBaNeXmSvNVhe9p63AOLAJVr+Vz66Oln4zYxHUWw6q98x9nS2wCQiJQ4
-         pE2dfnk2Y+dtNwPYtoiWL7mPHmnz3WjVtx8tzMYTYdqUyRkTaMgZGBoMi+JKaxVtu+AM
-         WUJg==
-X-Forwarded-Encrypted: i=1; AJvYcCUbD7g4NQ3Io825slEghstcVIiOiumh/cU/t5cLQkIxO2NnjemsDIhIbu98iPbc83QBthG571qLyhrj69g=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9nkLWUKl1hNc0+uEf9Y0sCbRKyTz98mlGfX+x+hDMAqbV8gMZ
-	dD9XjAbpKENESP9UoUEwGpEyjwxlrv3lwcz037IgtTEsvZeqyNk1UBkyCbsCt/o=
-X-Gm-Gg: ASbGncvWKDDPlPE+psuEPpGr8YIRKmX4OTXHBJgN7Oq6NMnQrFQLzrPxbkXXRlWSv2f
-	NvhtyGJL1AjaPj9B8pw5/UqVmFVrUVzip9zzRowPywgWO190ObD3+tsNISHdZzwAr2Um0f49X/t
-	Po/mTq4yl3ovJswSNV4fV4zWbxs/1JDkBIFWyS9cfYKE9jW8szQnSAxV+mFyMVkeS35F0qQ71ot
-	0BGVacSCT4hrk2A0cBaRXFx5L0tKU4muKjeQwhDiNAvAdl1y6fCtE4HPNxXzG/8pALtfHi3ddxv
-	pfeDgZabjOiH70dy5BjJfdR4LLogt0qQpN/XxuSxoeADhoupEsygghdmyz/fUrQ0Eom2khVofpD
-	AzrPH6iU45J8gsrYKXiIeeqO8/Jap25aULZ4gJbdeFpTxOwIaXA==
-X-Google-Smtp-Source: AGHT+IGmNKfHbbVSEmUusIJS8WAr9eTgCDfqm5Zo/ICFklsk2Vg4Y/cB3sTKH0S53Bfr8a/oTyQc9A==
-X-Received: by 2002:a05:6000:4312:b0:39c:1401:6ede with SMTP id ffacd0b85a97d-3a34969a540mr2019499f8f.3.1747317965090;
-        Thu, 15 May 2025 07:06:05 -0700 (PDT)
-Received: from kuoka.c.hoisthospitality.com (110.8.30.213.rev.vodafone.pt. [213.30.8.110])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a1f5a4cc39sm22467224f8f.100.2025.05.15.07.06.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 May 2025 07:06:04 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Peter Rosin <peda@axentia.se>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Andrew Davis <afd@ti.com>,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org
-Cc: kernel test robot <lkp@intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Samuel Holland <samuel@sholland.org>,
-	Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH] mux: mmio: Fix missing CONFIG_REGMAP_MMIO
-Date: Thu, 15 May 2025 16:05:56 +0200
-Message-ID: <20250515140555.325601-2-krzysztof.kozlowski@linaro.org>
+	s=arc-20240116; t=1747319148; c=relaxed/simple;
+	bh=7Gfdv02jJ3Il4Aj2m1lINDWNyCUGAIAdcHZ7i+nnBIk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RDpO+E6jvuMutO1hr46J0+QhNDfNPcNsr2CV+uglNlGFY0ExPpsZYh/VVe3th1LRSKxAMaRbsbtX2zBQ7OM43jifDJcWbok2M3q0xtrECXjivd7ZAHtsdOJvO3liO3m7K8aA7uth+lYl9FZy1paYvu8GuR2z2fSO4S0K+rlLCrI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=WmU5zAaU; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54FCg8sJ002405;
+	Thu, 15 May 2025 14:25:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=VEW6q6K77hbBMnPiQrFGgC+mDti52fcTnsB0C6Qja
+	AM=; b=WmU5zAaUQrdWJdpRaPCcy/LYfjw7QzqX5ASFIerHXR+wy+3xWMz3ENYki
+	Mj6fpwBtqp81E35Yfx4onLXQwoKaHkhEQCvFAGUN7wynLb1cRTrdjAA4dIgH/pfA
+	SOqbw0tkgjhV9RkfbQlXHyqQkYTYw7R+gNEf6/zZGOeBrhCthdS/BR24TuciPHxr
+	JfW88piu802UJTWqOQ5H524fbW4T89VrYbzr+dBAFOha7gX0SCkbMw4IjB4Bbp01
+	HB8ikUaSrSECyHtYUEqPHLgDYwe1zwwJ5ugA9neb2BUT7ZlOKcMTfjBIA8Yp579l
+	ZmrYhWW7TAu6sOWYFYiX8cODr8r3g==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46n0v6mxmq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 15 May 2025 14:25:38 +0000 (GMT)
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 54FEPbQJ021983;
+	Thu, 15 May 2025 14:25:37 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46n0v6mxme-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 15 May 2025 14:25:37 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 54FEL9Vm021574;
+	Thu, 15 May 2025 14:25:37 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 46mbfrtmt6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 15 May 2025 14:25:36 +0000
+Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 54FEPYUv54591780
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 15 May 2025 14:25:35 GMT
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 2E3CB2004B;
+	Thu, 15 May 2025 13:55:39 +0000 (GMT)
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 1B6E520040;
+	Thu, 15 May 2025 13:55:39 +0000 (GMT)
+Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
+	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Thu, 15 May 2025 13:55:39 +0000 (GMT)
+Received: by tuxmaker.boeblingen.de.ibm.com (Postfix, from userid 55669)
+	id CFB7AE0697; Thu, 15 May 2025 15:55:38 +0200 (CEST)
+From: Alexander Gordeev <agordeev@linux.ibm.com>
+To: Andrew Morton <akpm@linux-foundation.org>,
+        Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+        Daniel Axtens <dja@axtens.net>, Harry Yoo <harry.yoo@oracle.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        kasan-dev@googlegroups.com, linux-s390@vger.kernel.org,
+        stable@vger.kernel.org
+Subject: [PATCH v9 0/1] kasan: Avoid sleepable page allocation from atomic context
+Date: Thu, 15 May 2025 15:55:37 +0200
+Message-ID: <cover.1747316918.git.agordeev@linux.ibm.com>
 X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -95,87 +91,61 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2480; i=krzysztof.kozlowski@linaro.org;
- h=from:subject; bh=ZX0b7+q/WHABStHBVU2DZikmc1ff9AvZgSAY2t2c/Js=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBoJfTD9kKlTS8CAmlyX+fKZbqZ9Zq1tIycMjxZs
- vjcWGu58G6JAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaCX0wwAKCRDBN2bmhouD
- 16JxD/9yafFSZ57/7CQ7fwg1SktQ8velRNocwh/6keD92+jYLMP8TMMAbSmo6Rkm4HU3NlJXxvr
- R3+He+hbKcvadaAlHjoJDEcEZJYDRQGsJAPNYBA98+Pq1TAV3mTCMCKabBVA8OUQcTod6YgeFCu
- bAgU5+jDiFUp72fKo13bBcnJezSvZutht/AQTcQpc7dUbX2xnOEZ/FGaqJDzvsNALGnmSZGN7Qn
- mO44h3zirGdqvjiNjKvXR2HqJiRIcjNvAUColXZ/hqtQa6DABRPx0PL0ZZDq/baRnkD3HWNMyvq
- NULJVPomtXBacEHDMSOzoErScbWm6PCRCnO7vAkwq1FqUYgpghUZXENWvm6ZN18TGCg20qr7nMX
- PBhNv4loN3d5xzIUOocZdjVy0/LGpw512RPwXiLazXZSiztq3bXGzFmlQSPxxVIbj1DKVUjZHVM
- SURHkbokvyebwCgFJP0snNf3H2s1Q+HfGoUg1YMmm9dNo949EcrMZrOKWPraZvm03QjdpyNZoY5
- p6VramH779mQPZ91xQz2G6eb4QzedSIpHt2g+1mNucf3hfb7IGTRonmqNSzfGTTUsoqbp1A1//N
- 8CPiNBKrJaD5tn2CqcLPlK96Rm0DN6Dlg3NGE9CKRTHqOaNtAB4DBMeMgXKwYSyyjhggoKsjai8 x21+ePNhk/B6+jQ==
-X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=IqAecK/g c=1 sm=1 tr=0 ts=6825f962 cx=c_pps a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17 a=dt9VzEwgFbYA:10 a=M4n5Zv9w_bjhLjlc4U8A:9 a=zZCYzV9kfG8A:10
+X-Proofpoint-ORIG-GUID: gsjWp-Ng0dC36Dn2cBR5PS3eptApZOz5
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTE1MDEzOSBTYWx0ZWRfXxmHO/rxvOS6Z 3fEjEqJhV3MG0Cl4RIn0X+tlTvzgH63kEaBU7Pf6gPK3R7u6sHrFJaENBG6tOAKgxduSdeiEMVq Mi/mFGc8J4pov1w/K5o3hWHd2YHZ4kbxtGvZLV+jK0COKPnCmK1J5oUJGiuqapxWqBy63x38TPk
+ F5itjgMCxz21A0joByb3ds2Mak4sk6O8MjzIeJVqRwTKy2VfcXTgCw8OSS6Hi3/qxZarlSX7P3E wx2WamWYFoce12j03HoPx0FMPaLNKLhwWvEkllkaSI3H/Elr1A9IcQxsICkLwdBpSm6ObbAqTIh 7ftPBMdouk3FdIJAN779vddxznFJg4K7m8DlTUwaAzNKN9tMFGMTe41togkHfQ7T39WUb0GVdYF
+ nRdwdoZdkpyIQ4rwX6c3jJy+Pwc2yH0nAC4oObHuF6Ecy6mxm7ow1jIEb82fy74/3wkRhW7r
+X-Proofpoint-GUID: Hz4sHBe_8I6zp0zDv4Z_aaQ_3JO_OM53
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-15_06,2025-05-14_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
+ adultscore=0 lowpriorityscore=0 phishscore=0 impostorscore=0
+ priorityscore=1501 clxscore=1015 spamscore=0 mlxlogscore=735 bulkscore=0
+ suspectscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505070000
+ definitions=main-2505150139
 
-MMIO mux uses now regmap_init_mmio(), so one way or another
-CONFIG_REGMAP_MMIO should be enabled, because there are no stubs for
-!REGMAP_MMIO case:
+Hi All,
 
-  ERROR: modpost: "__regmap_init_mmio_clk" [drivers/mux/mux-mmio.ko] undefined!
+I dropped Harry Yoo's Reviewed-by from this version.
 
-REGMAP_MMIO should be, because it is a non-visible symbol, but this
-causes a circular dependency:
+Chages since v8:
+- fixed page_owner=on issue preventing bulk allocations on x86 
 
-  error: recursive dependency detected!
-  symbol IRQ_DOMAIN is selected by REGMAP
-  symbol REGMAP default is visible depending on REGMAP_MMIO
-  symbol REGMAP_MMIO is selected by MUX_MMIO
-  symbol MUX_MMIO depends on MULTIPLEXER
-  symbol MULTIPLEXER is selected by MDIO_BUS_MUX_MULTIPLEXER
-  symbol MDIO_BUS_MUX_MULTIPLEXER depends on MDIO_DEVICE
-  symbol MDIO_DEVICE is selected by PHYLIB
-  symbol PHYLIB is selected by ARC_EMAC_CORE
-  symbol ARC_EMAC_CORE is selected by EMAC_ROCKCHIP
-  symbol EMAC_ROCKCHIP depends on OF_IRQ
-  symbol OF_IRQ depends on IRQ_DOMAIN
+Chages since v7:
+- drop "unnecessary free pages" optimization
+- fix error path page leak
 
-... which we can break by changing dependency in EMAC_ROCKCHIP from
-OF_IRQ to OF.
+Chages since v6:
+- do not unnecessary free pages across iterations
 
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202505150312.dYbBqUhG-lkp@intel.com/
-Fixes: 61de83fd8256 ("mux: mmio: Do not use syscon helper to build regmap")
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Chages since v5:
+- full error message included into commit description
 
----
+Chages since v4:
+- unused pages leak is avoided
 
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Samuel Holland <samuel@sholland.org>
-Cc: Arnd Bergmann <arnd@arndb.de>
----
- drivers/mux/Kconfig              | 1 +
- drivers/net/ethernet/arc/Kconfig | 2 +-
- 2 files changed, 2 insertions(+), 1 deletion(-)
+Chages since v3:
+- pfn_to_virt() changed to page_to_virt() due to compile error
 
-diff --git a/drivers/mux/Kconfig b/drivers/mux/Kconfig
-index 80f015cf6e54..c68132e38138 100644
---- a/drivers/mux/Kconfig
-+++ b/drivers/mux/Kconfig
-@@ -48,6 +48,7 @@ config MUX_GPIO
- config MUX_MMIO
- 	tristate "MMIO/Regmap register bitfield-controlled Multiplexer"
- 	depends on OF
-+	select REGMAP_MMIO
- 	help
- 	  MMIO/Regmap register bitfield-controlled Multiplexer controller.
- 
-diff --git a/drivers/net/ethernet/arc/Kconfig b/drivers/net/ethernet/arc/Kconfig
-index 0d400a7d8d91..8ccedece5339 100644
---- a/drivers/net/ethernet/arc/Kconfig
-+++ b/drivers/net/ethernet/arc/Kconfig
-@@ -26,7 +26,7 @@ config ARC_EMAC_CORE
- config EMAC_ROCKCHIP
- 	tristate "Rockchip EMAC support"
- 	select ARC_EMAC_CORE
--	depends on OF_IRQ && REGULATOR
-+	depends on OF && REGULATOR
- 	depends on ARCH_ROCKCHIP || COMPILE_TEST
- 	help
- 	  Support for Rockchip RK3036/RK3066/RK3188 EMAC ethernet controllers.
+Chages since v2:
+- page allocation moved out of the atomic context
+
+Chages since v1:
+- Fixes: and -stable tags added to the patch description
+
+Thanks!
+
+Alexander Gordeev (1):
+  kasan: Avoid sleepable page allocation from atomic context
+
+ mm/kasan/shadow.c | 92 +++++++++++++++++++++++++++++++++++++++--------
+ 1 file changed, 78 insertions(+), 14 deletions(-)
+
 -- 
 2.45.2
 
