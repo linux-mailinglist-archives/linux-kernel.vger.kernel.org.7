@@ -1,122 +1,148 @@
-Return-Path: <linux-kernel+bounces-649868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-649870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FB4BAB8A2B
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 17:03:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A519AB8A31
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 17:04:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C562E1710DC
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 15:02:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 467EE4E0C48
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 15:03:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 566E220FA81;
-	Thu, 15 May 2025 15:02:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9127A1F4C97;
+	Thu, 15 May 2025 15:03:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o+v3vbtC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="pe8X5LfK"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A91681624C3;
-	Thu, 15 May 2025 15:02:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5529E1F8BC6
+	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 15:03:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747321327; cv=none; b=ZfmK5pXHRR1y7AGUauB32LrIAackRSMB+UkihXaeQPvwJzUxkPcUMEqMx4/BVuSkp+II44aTEriGwbahqJ07+S5IzfyOxqAiQWoDPsI15D7FlCqdnsyXMGGQgp5+99+Ng0SK+I/ByXLpSyJDIUOB6H5e091eoxD4NZBzadhnuG8=
+	t=1747321383; cv=none; b=e6zX7pNUZUB6ioeTrXitvCphLFpshHKzoCmGFUHX24Y9qDcMvTggEvyrBFXXtooZd+ErpYNQHPxSUfqkJ32+5TRB+tRWT9H8SAa+0OA6YPPcX7048L95qwEo4cbKPbJecZZr+2Al3yEn5iuCuwMBvpxcUld3vQrFsbcf4IugeOE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747321327; c=relaxed/simple;
-	bh=SZnCydp1A31hBatr3Nonpw18aHRM7c7uibePd61W98A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Op9YLeU/vaS5kLYoO6BtB0S2p0+hRpysop1fIrTbuJBNF+0MJcdjkK1Xt3cKDwWA4Cc+hPgvekaTFrW1rdBRbcc5wPwbyQVufL8+Wvp2s22s9Yi4BxF8xCRr4tVzW0j+MPmLLZpsT3rySP4XSuT/SVOjv+ZDFSppZN1rgYuO7NU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o+v3vbtC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0D3EC4CEEF;
-	Thu, 15 May 2025 15:02:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747321327;
-	bh=SZnCydp1A31hBatr3Nonpw18aHRM7c7uibePd61W98A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=o+v3vbtCiHJ9v8HsFsJ5TmBJo9cKGOzsl4Z/I9skCj6oRDGVpRnlQkQuduIW701hW
-	 Ce2riw7Di48VwpWs+Pfw5aH5+hUI82QxQCYOVPZwfuy6gFvb8HHgP3Psa7qjaEIKdG
-	 H/QPdAjbn5awK/cwwzb0GheJODGIXbRwlQ5+Fi8VB4n5z4MLQw8/S7Op/qk4su+rpd
-	 CLx46VleJ3QMQdccxzQIymoqUNP82pj80/s7QubTVgzwqZhfraEQrF6njet6AMFVMw
-	 FKn+BnBV2qlIn9eTIpUX6Hzfa6Use4mKSnBcOA7xPqRlNOxafFJ7glgr1oCzdZ+7f6
-	 KlNo73RAjqwWg==
-Date: Thu, 15 May 2025 16:02:03 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Alejandro Enrique <alejandroe1@geotab.com>
-Cc: Johan Hovold <johan@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] riscv: dts: sophgo: add zfh for sg2042
-Message-ID: <20250515-varying-swan-31ca63615b43@spud>
-References: <20250514-ubx-m9-v1-0-193973a4f3ca@geotab.com>
- <20250514-ubx-m9-v1-1-193973a4f3ca@geotab.com>
- <20250514-saggy-shifter-e4ac7152f823@spud>
- <CAN=L63qsjEAvfocgP0tGrpe-x6Rx1gvTAkPE9i99Ai2zJj6ssA@mail.gmail.com>
+	s=arc-20240116; t=1747321383; c=relaxed/simple;
+	bh=RjN4yIlj0arsZ7ZteAOHwkzgOTyLc93krkDfvT8tzcs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ur3ZbfTQCx+L2WOlJYFK7L5ap/3zv6LI5sK6/hk3OPnw1JB4uniL6EjD4hYKtRqO3fE0JWA5nda6PdL5o0IguzIvC6GOvLyMjAjbsGg0kbM1qX80/VlFLa2YXkxpSQVTKa/IHYI8F5XGc/OR7nxBk1RRLjGLC48v36g1VX4/6No=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=pe8X5LfK; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43cfdc2c8c9so5708305e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 08:03:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1747321379; x=1747926179; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yxsp6oGjuNOX+xuFU08PlzO35fGhJ/ry3v7K7kSTtzM=;
+        b=pe8X5LfK9+vs1FlWyAThGSvNpSUAiayXY5s30jZX1C+C1Lx5vleD+8OGbRZIALmkTm
+         0GEDg3Jb05sXdkRg604pPnn09RP1exc5N9PhWjdWY+Rer+SXbNPHN4qKOG1Mi4Jhqed3
+         1RxAZeqkXMthUXwM5eHdjKNwIPa2FpDzjaghIbC9XjU80MQNhUmKEi7noCd4TUYyQNAS
+         CRtGpvUDJeNx32oGEuwG1ssLYyQKivMAZUmPj/95kPVY7rUyYM8crj7RZbTMqIxlzaoC
+         +l2yaiVCE/Cqg+QO10sx+uGKheAP0a5fCGbtMSkl16NKgcuvHNV9TMFPtCHezdH+hOgq
+         Yg6g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747321379; x=1747926179;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yxsp6oGjuNOX+xuFU08PlzO35fGhJ/ry3v7K7kSTtzM=;
+        b=uvEgJpPe8ichDtui/6qKpoEoEnP6poEeL8Ij4c8VVu16HVfxA0FKlfYZE/b4sTUKzR
+         SaQzr6x7q7fcE8AGAVT1q9aCWDgpUsbzaCBrPaO7YqMnrCZRSmuXNEYpiz0i2FrA7ZeE
+         SLAAbyzKy3PyHmfIvLilmm9AtMbMXjOnlI0jK/vAgWfiKywudn5jqAh2W3vaEVzNsU0m
+         bYF6+qHOi3xSxYIMoNc3PQSPHJW7g0C6C4fnfwVWLqc/teLdS1+rMFIshPb/MZclNyXi
+         bRcpp3bqoyJYrKGb+Apz4Qp4ckcH08fSRf5+19GisaOO0YZmUZO9KzKDttuRVrOY7MY+
+         g04g==
+X-Forwarded-Encrypted: i=1; AJvYcCW0Ec9F9BCfA62T5+0H3MCFqnUrrPy8J3dyiXae8kz2IgFOCyBgTTE8lYR3wiWWtlfJDZuZgNoyZxxISwE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YynwZ1QIECMwVuQoj0MxMx/ZQP79PNas9OzpCkU/XW4LQNjPVNK
+	SzEXGyoh0eSz4ICbAP/EujUDb1zCYwe1+/Bw6cSsBXEu2VVYlhHhqwkojjzJsi8=
+X-Gm-Gg: ASbGnctppqYtlOos1NngQ3Pj92hVyPNio3vHAwgETDgob0JtWQRU5ggtqUsujBwK2vM
+	MXhc+x9XANa6j56WBrIJ8fJEKsBVSSF5Ti7u8EUH8dD3QL2ixp5WapD9SO/e54NIsoCxrNB7YWO
+	27JwbQhg/foLqCzrU1CUf2QW330fVi4M3Q+VgBa6LZMXp0Jd84XFy3SkGeZw95cv+lKIcpA9MqH
+	9/Sm8m5SlFBLKIZuZB9gamdPrIHhRxGR8z5Qh/x0lqDR3oW1jrRsdIHq3Bp703I/lASD49HG1Si
+	VBQb22RIVBNs7QoyFnscsOOPSKJtziYvgwWI9tyyU+MndROyukvySydOXIUWnZk9rISM2IjFi48
+	jbgmpOOc+FPCH1TVwgSHYPoGA
+X-Google-Smtp-Source: AGHT+IGdEWIBywfQs4PZp4JdP7brwhiYv1KCdKAMM4y/BZUvPvXwZEzy3DFDz/jA4oHanSe7ld+P5Q==
+X-Received: by 2002:a05:600c:358b:b0:43d:42b:e186 with SMTP id 5b1f17b1804b1-442f20e8141mr72625715e9.8.1747321378848;
+        Thu, 15 May 2025 08:02:58 -0700 (PDT)
+Received: from brgl-uxlite.c.hoisthospitality.com (110.8.30.213.rev.vodafone.pt. [213.30.8.110])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-442f3368e3fsm74756025e9.2.2025.05.15.08.02.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 15 May 2025 08:02:58 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Ray Jui <rjui@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	Vladimir Zapolskiy <vz@mleia.com>,
+	Keerthy <j-keerthy@ti.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	"Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH RFC 0/9] gpio: make irq_chip immutable
+Date: Thu, 15 May 2025 17:02:53 +0200
+Message-ID: <174732137152.17517.12381683522631139304.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20250509-gpio-v1-0-639377c98288@nxp.com>
+References: <20250509-gpio-v1-0-639377c98288@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="ADqPJoTY7rgGJ5s6"
-Content-Disposition: inline
-In-Reply-To: <CAN=L63qsjEAvfocgP0tGrpe-x6Rx1gvTAkPE9i99Ai2zJj6ssA@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
 
---ADqPJoTY7rgGJ5s6
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Fri, 09 May 2025 12:45:31 +0800, Peng Fan (OSS) wrote:
+> This might be a bit late to post this patchset, since it is almost rc6,
+> but no rush here. Not expect this patchset be in 6.16.
+> 
+> This is an effort to make irq_chip immutable to elimnate the kernel
+> warning "not an immutable chip, please consider fixing!"
+> 
+> The major changes
+> - add "gpiochip_disable_irq(gc, hwirq)" to end of mask hook
+> - add "gpiochip_enable_irq(gc, hwirq)" to start of unmask hook
+> - add IMMUTABLE flag
+> - add GPIOCHIP_IRQ_RESOURCE_HELPERS
+> 
+> [...]
 
-On Wed, May 14, 2025 at 06:53:25PM +0200, Alejandro Enrique wrote:
-> On Wed, May 14, 2025 at 5:49=E2=80=AFPM Conor Dooley <conor@kernel.org> w=
-rote:
->=20
-> > On Wed, May 14, 2025 at 01:55:54PM +0200, Alejandro Enrique via B4 Relay
-> > wrote:
-> > > From: Alejandro Enrique <alejandroe1@geotab.com>
-> > >
-> > > Add compatible for u-blox NEO-9M GPS module.
-> > >
-> > > Signed-off-by: Alejandro Enrique <alejandroe1@geotab.com>
-> > > ---
-> > >  Documentation/devicetree/bindings/gnss/u-blox,neo-6m.yaml | 1 +
-> > >  1 file changed, 1 insertion(+)
-> > >
-> > > diff --git a/Documentation/devicetree/bindings/gnss/u-blox,neo-6m.yaml
-> > b/Documentation/devicetree/bindings/gnss/u-blox,neo-6m.yaml
-> > > index
-> > 7d4b6d49e5eea2201ac05ba6d54b1c1721172f26..cf5ff051b9ab03e5bfed8156a7217=
-0965929bb7e
-> > 100644
-> > > --- a/Documentation/devicetree/bindings/gnss/u-blox,neo-6m.yaml
-> > > +++ b/Documentation/devicetree/bindings/gnss/u-blox,neo-6m.yaml
-> > > @@ -22,6 +22,7 @@ properties:
-> > >        - u-blox,neo-6m
-> > >        - u-blox,neo-8
-> > >        - u-blox,neo-m8
-> > > +      - u-blox,neo-m9
-> >
-> > No match data in the driver, why is a fallback not sufficient?
-> >
->=20
-> I added the match data in the driver in the PATCH 2/2 of this series
-> in the same fashion as previously supported modules.
+Applied, thanks!
 
-Did you? When I looked, there was just a compatible and no match data.
+[1/9] gpio: bcm-kona: make irq_chip immutable
+      https://git.kernel.org/brgl/linux/c/7b04f98027afd2cc329d00191dfc8284b382565d
+[2/9] gpio: grgpio: Make irq_chip immutable
+      https://git.kernel.org/brgl/linux/c/a30be40bf1d4437646b6885e7e4e71530e6f82c1
+[3/9] gpio: lpc18xx: Make irq_chip immutable
+      https://git.kernel.org/brgl/linux/c/289e42df1358abf85e49a140f7224c2abd170b2e
+[4/9] gpio: mpc8xxx: Make irq_chip immutable
+      https://git.kernel.org/brgl/linux/c/7688a54d5b53f2e3160c00f19b00bc601fa3ec98
+[5/9] gpio: davinci: Update irq chip data
+      https://git.kernel.org/brgl/linux/c/62be72bdb00ef52a0d0f02ce077e36b1f48ef0ae
+[6/9] gpio: davinci: Make irq_chip immutable
+      https://git.kernel.org/brgl/linux/c/3f50bb3124d76653de0bcfe251faa357711e3ae6
+[7/9] gpio: xgene-sb: Make irq_chip immutable
+      https://git.kernel.org/brgl/linux/c/580b3264cb252cae00fa62d58443af09c25f7d61
+[8/9] gpio: timberdale: Make irq_chip immutable
+      https://git.kernel.org/brgl/linux/c/2993d2dd8ff4e8257a88d4d3f8ffc6df95928b94
+[9/9] gpio: pxa: Make irq_chip immutable
+      https://git.kernel.org/brgl/linux/c/20117cf426b677e7aced4e7a1b2b37f6080a46dc
 
---ADqPJoTY7rgGJ5s6
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaCYB6wAKCRB4tDGHoIJi
-0ht3AP4i1y7a4jdKMYHckQoYqhAkkIguUPpT4ySpEmIWTQksiwD9EQqjURjQVnIn
-rdJwfldmxQJhtSAPgz24ifGAHsJ37wg=
-=GNA8
------END PGP SIGNATURE-----
-
---ADqPJoTY7rgGJ5s6--
+Best regards,
+-- 
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
