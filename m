@@ -1,158 +1,115 @@
-Return-Path: <linux-kernel+bounces-649674-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-649678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D63CAB8792
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 15:13:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DA0EAB879C
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 15:14:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BA99F7B6DE7
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 13:11:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC3241BA2ABF
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 13:15:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 987AE29A9F2;
-	Thu, 15 May 2025 13:12:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EE0729AB05;
+	Thu, 15 May 2025 13:14:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="fX8Rd8kv"
-Received: from mail-wr1-f65.google.com (mail-wr1-f65.google.com [209.85.221.65])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="8JIIaksp"
+Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37F4A29A9E6
-	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 13:12:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2883D1F8EFF;
+	Thu, 15 May 2025 13:14:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747314764; cv=none; b=rE3a2hGPxAyGopwCsbGAUomnqmIWUgAXHL5L92A2tSxekC2cZgNljasegrtPnXjf7Y0AMkQv11cs4LLYASbgOx/+qt8ThVPwcskZrK8d71JyKbUwWG27yPcNonRHQkOrdnJrh9lsxRiLCp1ZsfGOnVwsL3Vs+SddfcxauPNUSZc=
+	t=1747314870; cv=none; b=P0a0r2hqBCkstP95oMHTlYZ2Mb/Au+CBWSG9yIdSmWCrzwFkzmNKfGADqx4cGqx2i6hX+en7KhBRAqCHlcqNL7wLPg0N4EqtPkZ7UKr6RdUz4MojfoUegrMLz7nj+4IkUESrMcBCWSOsF4XBL8ZZtAmEPtvlKh//QMoT09Ors+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747314764; c=relaxed/simple;
-	bh=h3rS68HIKc08d7AKcI8nLqC7n+gNjlA+jVgKmtRSPnk=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=uq6UjkjAQTgPYTmwUWNQy7JJKXRwsRi9BkqwFOGSxyw4p8rx/X7Vdsx7ghvrQ7L+7AQKUDlioUI3nybdsp/gNTxCxkOoJYfIojBbIInpcyrXATXWd+AlNyTIWFDz/GXZuBHAZPVhH/hQWYlsei5OAaCLUbYbjwwwSpocD8KuBZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=fX8Rd8kv; arc=none smtp.client-ip=209.85.221.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f65.google.com with SMTP id ffacd0b85a97d-3a0bd7f4cd5so781630f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 06:12:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1747314759; x=1747919559; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=9Sc7s4zPug7QCBZMgJvj3UJe25bWXU+WVGJNmLlNHLU=;
-        b=fX8Rd8kvBp/aYEpGo5D+4unY4mId/c6f4kgKXShbBknXl/DCRY18f8EnDB5juDMaD/
-         SyEKXtJizYTfpq4e8MMUZzCDmhsYOEuyijMK3Cn0BOClkXCrjv+FjwvWwi77qk1DiCMI
-         i3fVO1DiV1JCf/QTOfOE5a7zVHlqwBFjItAw8ghsFjrDv47QexJzq3fpnzK50isFqddn
-         5ksDi5W2WZWGWty6Za5dndkxh1paNdC2ESxDm57AKjNTTqo8rsOTgehqjr3F3oiM3LSm
-         S3zj+NCAoues5SEPFGV13mxwoE4E2uwbEsQIXxlsuy85Xe+/zWxrvjAKPADd4VIZsB0S
-         PdpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747314759; x=1747919559;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9Sc7s4zPug7QCBZMgJvj3UJe25bWXU+WVGJNmLlNHLU=;
-        b=Birb1C7r6DvD92PqhfrUjrSEvg/lm7+x62cNvUBaj13OAA7gXh2VAs2YGvR/QmIfPv
-         sO84L8ONEypc3IAdmey0XIfen9W4Ji6lJDtmJKtjrZzkdU6aiIchDfisbbuGVY0IHiIk
-         PFZFwJavcwEDheOY+xJHVApqKq1B+KwNQQr8+TEVu9q8xpsUMEBkqvpCfE3aPdQL9tjf
-         iKTnkHNeSu66LuIevvYeIdVm5Xnv0yWBNYyqeGjYXqk3wDeC6EdZ2zThmkH2TN2DTJEq
-         mK83YamDgWXVxpaPgW1jMTHIhnidU5MZwXF5mmrA76uRYjGglxZXfqcNyWyEwbTwRqe4
-         83MA==
-X-Forwarded-Encrypted: i=1; AJvYcCUFgmz1lFh33gEdrjxr3CwHaOkx48u/BjZqsbVwgEZkoV+1JBLAQePH9teVnO23v3vldgYEDlgCzv8M6B4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNJyCwlXW2OSNybVB5JMeJ71szClk/9U+CBlbxStmsf/bnSqI3
-	tSQNJxwsUGkXa6q1BhT6A3T0Gjp75KuFc8wNQ/JSmzLrzLpUIA9uQdVmYXy9Wzk=
-X-Gm-Gg: ASbGncsDm/xUMMIiouDtc77jKA+ypWX8v+thwjeO0j8ESucXVNrMRUD2jOVhZe+XkP/
-	D+ib9ofNk4VifaBwSVyC4p2k8tyYtmT3diqUT5IoUpxpBisiQqzJXsfNUEY+Ot9e/Hm+AaG10M3
-	nAaONTF5YKEu7FnOLUYYfo2ThdJrZHHg+kQhH1cLVh1Dz1GhfkCU5NN33N9PlGNf78nxRRljISA
-	KpABkdvgoIkYI0KHZ6BMP28oZhd3wmGv7wjmLBmlJ634tSeHxBs5X5cZLO9H7HS5WjfqToPqDVs
-	629H5VPLtgavZ2mnkalmEae7PqMzTxzxd3G9WG9ygmI94cPPILJkWjUQp0AG3HxvvEqzePCQ2D8
-	=
-X-Google-Smtp-Source: AGHT+IGU57xOouQYJOoHXSv7L1CzbOeG1YaSFTyHO9EqbI2SUzbIwPqP+E+vwOTbyIhTtUlFo0TsXw==
-X-Received: by 2002:a05:6000:2506:b0:3a0:8c45:d41b with SMTP id ffacd0b85a97d-3a3496a71b3mr6559388f8f.20.1747314759305;
-        Thu, 15 May 2025 06:12:39 -0700 (PDT)
-Received: from u94a (1-174-3-124.dynamic-ip.hinet.net. [1.174.3.124])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4df8299e6dbsm2404387137.14.2025.05.15.06.12.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 May 2025 06:12:38 -0700 (PDT)
-Date: Thu, 15 May 2025 21:12:25 +0800
-From: Shung-Hsi Yu <shung-hsi.yu@suse.com>
-To: bpf@vger.kernel.org, linux-mm@kvack.org, Kees Cook <kees@kernel.org>, 
-	Andrii Nakryiko <andrii@kernel.org>, Ihor Solodrai <ihor.solodrai@linux.dev>
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
-	Michal Hocko <mhocko@suse.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Uladzislau Rezki <urezki@gmail.com>, linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, 
-	regressions@lists.linux.dev, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, Eduard Zingerman <eddyz87@gmail.com>
-Subject: [REGRESSION] bpf verifier slowdown due to vrealloc() change since
- 6.15-rc6
-Message-ID: <20250515-bpf-verifier-slowdown-vwo2meju4cgp2su5ckj@6gi6ssxbnfqg>
+	s=arc-20240116; t=1747314870; c=relaxed/simple;
+	bh=P6Rsl+u4+L2cyHPJnCdS27n5s/M4XNhV8Dla3xUPC0s=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=C7fxzHJ0sG+0IsqEcLZhAPFFTiuVvfA+fWNEYTJGySjDT6ar+EuECmoXi777EnG/Xbhi7WG949F1SbKSMrMyh8U6kzwbBsyi9rlOK/WJJ3i7vlc53BZojZ7/tbnCFv/G7ks807in9wr3GHOppOkuIMuxo/rliFmgKdeGz0ADPlM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=8JIIaksp; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54FD6Ohv014139;
+	Thu, 15 May 2025 15:14:15 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=selector1; bh=pLQZAQx7JWYvk7JPinwxnP
+	wYo7F6pB4GfYvlOtuM8X8=; b=8JIIaksp9OUdgBZRqHR9/yAioPTzkUg2dWGRQW
+	rNFzMWqAeUiwD7CojkXQlE+rENf1XgdOnQLh5P3d3kHsODrk+cTcgXUZEe2DhFEC
+	qIPqqPHVT671YsEifYI8wuCVg2hUtGFVmwK/0hWCtFPF46lJ3k/ASRG8ij0wTfyj
+	+Cm8q5JD3g9tKQfKoQ4MWidpCr2chf58qzGfN02fd9vtTVVzvdoeYLst1UM/z1RM
+	u1/FHQVXDM/RW5KqNyBC6jmnz1bezydXg3UdjIfyUq+JkoSra73TCpI5xHYObnnh
+	vo/lVEusH9XnWB8mhG9JMWGSFjSu0Xzw8zM4xfMdtJ8/1nHw==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 46mbdw8t72-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 15 May 2025 15:14:15 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 2018B4005D;
+	Thu, 15 May 2025 15:13:20 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 3D28BB3B14D;
+	Thu, 15 May 2025 15:12:43 +0200 (CEST)
+Received: from localhost (10.48.86.182) by SHFDAG1NODE3.st.com (10.75.129.71)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 15 May
+ 2025 15:12:42 +0200
+From: Patrick Delaunay <patrick.delaunay@foss.st.com>
+To: Alexandre TORGUE <alexandre.torgue@foss.st.com>,
+        Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>
+CC: Patrick Delaunay <patrick.delaunay@foss.st.com>,
+        Marc Zyngier
+	<marc.zyngier@arm.com>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>
+Subject: [PATCH 1/2] arm64: dts: st: fix timer used for ticks
+Date: Thu, 15 May 2025 15:12:39 +0200
+Message-ID: <20250515151238.1.I85271ddb811a7cf73532fec90de7281cb24ce260@changeid>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE3.st.com
+ (10.75.129.71)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-15_05,2025-05-14_03,2025-03-28_01
 
-Hi,
+Remove always-on on generic ARM timer as the clock source provided by
+STGEN is deactivated in low power mode, STOP1 by example.
 
-There is an observable slowdown when running BPF selftests on 6.15-rc6
-kernel[1] built with tools/testing/selftests/bpf/{config,config.x86_64}.
-Overall the BPF selftests now takes 2x time to run (from ~25m to ~50m),
-and for the verif_scale_loop3_fail it went from single digit seconds to
-6 minutes.
+Fixes: 5d30d03aaf78 ("arm64: dts: st: introduce stm32mp25 SoCs family")
+Signed-off-by: Patrick Delaunay <patrick.delaunay@foss.st.com>
+---
 
-Bisect was done by Pawan and got to commit a0309faf1cb0 "mm: vmalloc:
-support more granular vrealloc() sizing"[2]. To further zoom in the
-issue, I tried removing the only kvrealloc() call in kernel/bpf/ by
-reverting commit 96a30e469ca1 "bpf: use common instruction history
-across all states", so _krealloc()_ was used instead of kvrealloc(), and
-observe that there is _no_ slowdown[3]. While the bisect and the revert
-is done on 6.14.7-rc2, I think it should stll be pretty representitive.
+ arch/arm64/boot/dts/st/stm32mp251.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-In short, the follow were tested:
-- 6.15-rc6 (has a0309faf1cb0) -> slowdown
-- 6.14.7-rc2 (has a0309faf1cb0) -> slowdown
-- 6.14.7-rc2 (has a0309faf1cb0, call to kvrealloc in
-  kernel/bpf/verifier.c replaced with krealloc) -> _no_ slowdown
+diff --git a/arch/arm64/boot/dts/st/stm32mp251.dtsi b/arch/arm64/boot/dts/st/stm32mp251.dtsi
+index 8d87865850a7..74c5f85b800f 100644
+--- a/arch/arm64/boot/dts/st/stm32mp251.dtsi
++++ b/arch/arm64/boot/dts/st/stm32mp251.dtsi
+@@ -150,7 +150,7 @@ timer {
+ 			     <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
+ 			     <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
+ 			     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>;
+-		always-on;
++		arm,no-tick-in-suspend;
+ 	};
+ 
+ 	soc@0 {
+-- 
+2.25.1
 
-And the vrealloc() change is causing slowdown in kvrealloc() call within
-push_insn_history().
-
-  /* for any branch, call, exit record the history of jmps in the given state */
-  static int push_insn_history(struct bpf_verifier_env *env, struct bpf_verifier_state *cur,
-  			     int insn_flags, u64 linked_regs)
-  {
-  	struct bpf_insn_hist_entry *p;
-  	size_t alloc_size;
-  	...
-  	if (cur->insn_hist_end + 1 > env->insn_hist_cap) {
-  		alloc_size = size_mul(cur->insn_hist_end + 1, sizeof(*p));
-  		p = kvrealloc(env->insn_hist, alloc_size, GFP_USER);
-  		if (!p)
-  			return -ENOMEM;
-  		env->insn_hist = p;
-  		env->insn_hist_cap = alloc_size / sizeof(*p);
-  	}
-  
-  	p = &env->insn_hist[cur->insn_hist_end];
-  	p->idx = env->insn_idx;
-  	p->prev_idx = env->prev_insn_idx;
-  	p->flags = insn_flags;
-  	p->linked_regs = linked_regs;
-  
-  	cur->insn_hist_end++;
-  	env->cur_hist_ent = p;
-  
-  	return 0;
-  }
-
-BPF CI probably hasn't hit this yet because bpf-next have only got to
-6.15-rc4.
-
-Shung-Hsi
-
-#regzbot introduced: a0309faf1cb0622cac7c820150b7abf2024acff5
-
-1: https://github.com/shunghsiyu/libbpf/actions/runs/15038992168/job/42266125686
-2: https://lore.kernel.org/stable/20250515041659.smhllyarxdwp7cav@desk/
-3: https://github.com/shunghsiyu/libbpf/actions/runs/15043433548/job/42280277024
 
