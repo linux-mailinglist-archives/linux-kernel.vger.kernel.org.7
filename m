@@ -1,205 +1,171 @@
-Return-Path: <linux-kernel+bounces-649842-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-649848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7340AB89E8
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 16:52:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 79D94AB89F2
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 16:54:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2BE9A500A60
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 14:51:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BBF1016D6D6
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 14:53:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CE4A1FAC4D;
-	Thu, 15 May 2025 14:51:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A42A13B7A3;
+	Thu, 15 May 2025 14:52:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="WtM4XZ8g";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="35dbUjf3"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="drY2wyQ9"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAF6434CF9;
-	Thu, 15 May 2025 14:51:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16F2C1F8F09;
+	Thu, 15 May 2025 14:52:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747320707; cv=none; b=NBnn6PUhJSh6Dodq4S1CJsp7l87/avfuUs0z7/4YeqnvVH69EjyM8H9kuBqyiNau/EEr8GexsFqC6NOKHtXEqLm4TT8h4vk4Zzt+FV3vWz7PLEU0uNaY7i5XncShlaDjRyR3OzrX8To3npwyKNlWJxOMy1CSmHDxnAL1U+wj+R0=
+	t=1747320746; cv=none; b=i3gFXocJfeMOnilMnRKSIduxkQJDIjlIcXwUfOVcYrIQHk2MYswV4rKzfOjp8Y9xCMGIC/F/Zq/cAM0dH3ybd5E99rYKsY8Np+MLye3iUpxSdwewQ7Rb/6GCRjmW0dFcXq6xeNBtStA6eC+OmmicjikSmBErPskpXioys9DAiS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747320707; c=relaxed/simple;
-	bh=46qP591hUZ1F/7waKJZm7/juT8PjsGzd0r+2kBfe5eI=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=jdkhrGzC+I8Pnk0etrFndujtmo80Uhhk4TDsrTo8bXRSnFCxNcE9F0Xefqx3f4Bj2xPJ8/EdLF1h21CNfqwVwK4ApTllQMa9FlX0xlaQ7qp9O6RmCrhxn0ToO5l/2Qd87ThE0i4hl+hfyFWtnLK8EE5KNx8sRa0bZ3iB+U3QCoo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=WtM4XZ8g; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=35dbUjf3; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 15 May 2025 14:51:42 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1747320703;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GinOpFlC91u2NxzD9w3EoFnZRayWWyDQFgi9M/Ggz2g=;
-	b=WtM4XZ8g+rFS3FX73lxQuf7rbp2JUlkytXZeZquPRF9P2PmAXdpOIswwleYhDs/WJ7ETvG
-	dT0LofyNXmHx1pIP7VTaJaUvZk8cQ8APeRyrNZbjmD6eLYW4QQb8xRMwd50Cfd8KGu6NZY
-	nYKoUhpjfIN+3y/1DybIhydwZHd1834vjVI+HFTDTFW678EpRzz23dq90TArdumcBOFPXD
-	w0S3Uf28FNowtUNftZGHZ7oOPUnR0ECj19F1BLbX8cKzAmy2is+RntgL60YaJvTuZbzLLB
-	zDL5PSjvVZ1+WKYuTQkP3XVJUstvgf1rv4txwa9rfUCNiUC7vxTbrJFrlQiI3Q==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1747320703;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GinOpFlC91u2NxzD9w3EoFnZRayWWyDQFgi9M/Ggz2g=;
-	b=35dbUjf3s3NhLdyNzbvQE8fqCz6pJOCs00kF7E13XOwQsgm26WeqYLzsYVEoBSIhuoB9vg
-	aH/+OVaLsYbgOzAQ==
-From: "tip-bot2 for Brian Norris" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/core] genirq: Retain disable depth for managed interrupts
- across CPU hotplug
-Cc: Thomas Gleixner <tglx@linutronix.de>,
- Brian Norris <briannorris@chromium.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org, maz@kernel.org
-In-Reply-To: <20250514201353.3481400-2-briannorris@chromium.org>
-References: <20250514201353.3481400-2-briannorris@chromium.org>
+	s=arc-20240116; t=1747320746; c=relaxed/simple;
+	bh=mr5eN8kDDujcymHMecpSJ6P6WIBjSLa0r0ZCXb+95X0=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=s6Xe1MmMR4yw/FscSe0HLUSqWDGnAIZ2rOC4MgP0cQjD5IYUPFT4k0ldW9t/NoRQJS8m9wPx3ihevTtTfmxKNuPErhVgao6lUd71Bvo+g7AfI0GsFxzhMB50U7jqiH7xuZ9Sx9q7PCcBw2AWxfSDRhcL3Rf86rmlN9k5Xhhe4RM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=drY2wyQ9; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-ad238c68b35so193928066b.1;
+        Thu, 15 May 2025 07:52:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747320743; x=1747925543; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qqWQ4T2nQ1xuhm/I08cl/zAkrwJKQvzmwnNYg7uixA0=;
+        b=drY2wyQ9Wqkv7jDNxAsRsFsVqcB0FWm2vm2h6MSj2BD0Ut0IF8WyBiyTgxh/831nMZ
+         u8Tp5+1I80rwo+Xl1CIvF2Dw1ELLO4LKFLGenB2NHyL4gXm3zd9WOyCja4f39edelzXI
+         3/XHVWrkfDYJZRXDMw4RXaneXJzmatSeFFBp/tN33TZio/4fSEL8UUR8Nb6G2l6LBHsK
+         BvUbkm7giqJtfkx0XyBJ5cxxnW5Y81ORSCMcdR/9OQHuaP5nXZvegkKxJOCzYeL4ilgf
+         wvjRJLRcEvaWSCnu2CxGU9O5aCSeyq5AiaYghQXxYSpsaYjdG2rtn3QIisZG2nExw8gJ
+         d2wg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747320743; x=1747925543;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qqWQ4T2nQ1xuhm/I08cl/zAkrwJKQvzmwnNYg7uixA0=;
+        b=aEsfCTFyq7HDXRoyx2YMnGbSlPEu3Il3ONUnoXbEA6hK/cAvWU2uLqeYcG9Wq6FU/C
+         MC2Cfjdn2+2B99WsDFrZHcoOW0vU+h377e6QG3V6QKwBjhSIA4rIeDhbbXQnn00ToQg+
+         +kR6/eqIXcSE7SW0Cykz9Y9/fxabqiOPmbHq6MtifNZtsFTakzg7mUk87c96aBTdYCQp
+         Cv6vtr50O+TwEw/h7IkUdWZ4EAyRJUCakmJniKLdBL7OZPgZjUb3ylqVPbPQQGy7oOon
+         7T2n1QV776dfRvUfFLbjsdmc9PMDwnz/clvSD436oDhMoTwDHwup2GHPo7cmnYJGWwa1
+         Ov+w==
+X-Forwarded-Encrypted: i=1; AJvYcCVBr6e90N4gXmmT0Szq0rNB2eoUn5/fu8DCJhGHnGroKSQpX+Vhe019LcY+gOyYXwgbDxeZgL15BLGQwec=@vger.kernel.org, AJvYcCX9xFt7ip5DluG49Ffvf6KoRBGmDItkT/nl74/O2ta0DRrc6UfZJIfqgaH0s2VhCIf+PhV0aZSY@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6GgLVQANNF8IfZgkRJ8mo8yTF/G8tk4qtuGLGupQg3mJE8oEw
+	pbck3diloFF4FnLU88pgdhuqPcywjUFbhePeF6xSj0+debCw8odr
+X-Gm-Gg: ASbGncuPO+qGMlgRDFBk7ZihHyyKqvbyaZm0z/G7UZ0FAX/kazPW0rOmfe2beBLkuP8
+	f/AJYF0l1VRAtqNoqsMpY3gXtdRPey1DUPJ8CMxvofhCMikp13SFyKeRRa010FrpajXKQP349s1
+	eNehlYI/mhn8aJ2/mkKpG4d/NKt9OZA270QH5gl4VvyByeYskPvtbzK7s9Fjg5ECN/yjJR7374d
+	05EFRHRsDSnfA0D7J3OPapUdIqbFqzlrCfbTfGLu6EZ+fHliXXod1rVM7/utu1cqp0NBr0lhUie
+	bx2rqCnwIkdU6ddIGzUOfHOBn0oLmRNW1FTz8cR+Ptmk1knTn0uzBl0YazF+CQ==
+X-Google-Smtp-Source: AGHT+IEfE3FRqZ+5JKYy1hLeEyiCcglI8CUTeWPDh897m7vydljAH740Y/LC1+zq3IhEF93yuoKWXA==
+X-Received: by 2002:a17:907:c409:b0:ace:5461:81dd with SMTP id a640c23a62f3a-ad515d7a850mr247977366b.3.1747320743060;
+        Thu, 15 May 2025 07:52:23 -0700 (PDT)
+Received: from debian-vm.localnet ([2a01:4b00:d20c:cddd:20c:29ff:fe56:c86])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad52d275d9fsm871366b.74.2025.05.15.07.52.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 15 May 2025 07:52:22 -0700 (PDT)
+From: Zak Kemble <zakkemble@gmail.com>
+To: Doug Berger <opendmb@gmail.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Zak Kemble <zakkemble@gmail.com>
+Subject: [PATCH v2 3/3] net: bcmgenet: expose more stats in ethtool
+Date: Thu, 15 May 2025 15:51:42 +0100
+Message-Id: <20250515145142.1415-4-zakkemble@gmail.com>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250515145142.1415-1-zakkemble@gmail.com>
+References: <20250515145142.1415-1-zakkemble@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174732070271.406.3712146055779909597.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-The following commit has been merged into the irq/core branch of tip:
+Expose more per-queue and overall stats in ethtool
 
-Commit-ID:     788019eb559fd0b365f501467ceafce540e377cc
-Gitweb:        https://git.kernel.org/tip/788019eb559fd0b365f501467ceafce540e377cc
-Author:        Brian Norris <briannorris@chromium.org>
-AuthorDate:    Wed, 14 May 2025 13:13:16 -07:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Thu, 15 May 2025 16:44:25 +02:00
-
-genirq: Retain disable depth for managed interrupts across CPU hotplug
-
-Affinity-managed interrupts can be shut down and restarted during CPU
-hotunplug/plug. Thereby the interrupt may be left in an unexpected state.
-Specifically:
-
- 1. Interrupt is affine to CPU N
- 2. disable_irq() -> depth is 1
- 3. CPU N goes offline
- 4. irq_shutdown() -> depth is set to 1 (again)
- 5. CPU N goes online
- 6. irq_startup() -> depth is set to 0 (BUG! driver expects that the interrupt
-    		     	      	        still disabled)
- 7. enable_irq() -> depth underflow / unbalanced enable_irq() warning
-
-This is only a problem for managed interrupts and CPU hotplug, all other
-cases like request()/free()/request() truly needs to reset a possibly stale
-disable depth value.
-
-Provide a startup function, which takes the disable depth into account, and
-invoked it for the managed interrupts in the CPU hotplug path.
-
-This requires to change irq_shutdown() to do a depth increment instead of
-setting it to 1, which allows to retain the disable depth, but is harmless
-for the other code paths using irq_startup(), which will still reset the
-disable depth unconditionally to keep the original correct behaviour.
-
-A kunit tests will be added separately to cover some of these aspects.
-
-[ tglx: Massaged changelog ]
-
-Suggested-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Brian Norris <briannorris@chromium.org>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/all/20250514201353.3481400-2-briannorris@chromium.org
+Signed-off-by: Zak Kemble <zakkemble@gmail.com>
 ---
- kernel/irq/chip.c       | 22 +++++++++++++++++++++-
- kernel/irq/cpuhotplug.c |  2 +-
- kernel/irq/internals.h  |  1 +
- 3 files changed, 23 insertions(+), 2 deletions(-)
+ .../net/ethernet/broadcom/genet/bcmgenet.c    | 29 ++++++++++++++++++-
+ 1 file changed, 28 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/irq/chip.c b/kernel/irq/chip.c
-index 1d45c84..b0e0a73 100644
---- a/kernel/irq/chip.c
-+++ b/kernel/irq/chip.c
-@@ -202,6 +202,19 @@ __irq_startup_managed(struct irq_desc *desc, const struct cpumask *aff,
- 		return IRQ_STARTUP_ABORT;
- 	return IRQ_STARTUP_MANAGED;
- }
-+
-+void irq_startup_managed(struct irq_desc *desc)
-+{
-+	/*
-+	 * Only start it up when the disable depth is 1, so that a disable,
-+	 * hotunplug, hotplug sequence does not end up enabling it during
-+	 * hotplug unconditionally.
-+	 */
-+	desc->depth--;
-+	if (!desc->depth)
-+		irq_startup(desc, IRQ_RESEND, IRQ_START_COND);
-+}
-+
- #else
- static __always_inline int
- __irq_startup_managed(struct irq_desc *desc, const struct cpumask *aff,
-@@ -269,6 +282,7 @@ int irq_startup(struct irq_desc *desc, bool resend, bool force)
- 			ret = __irq_startup(desc);
- 			break;
- 		case IRQ_STARTUP_ABORT:
-+			desc->depth = 1;
- 			irqd_set_managed_shutdown(d);
- 			return 0;
- 		}
-@@ -301,7 +315,13 @@ void irq_shutdown(struct irq_desc *desc)
- {
- 	if (irqd_is_started(&desc->irq_data)) {
- 		clear_irq_resend(desc);
--		desc->depth = 1;
-+		/*
-+		 * Increment disable depth, so that a managed shutdown on
-+		 * CPU hotunplug preserves the actual disabled state when the
-+		 * CPU comes back online. See irq_startup_managed().
-+		 */
-+		desc->depth++;
-+
- 		if (desc->irq_data.chip->irq_shutdown) {
- 			desc->irq_data.chip->irq_shutdown(&desc->irq_data);
- 			irq_state_set_disabled(desc);
-diff --git a/kernel/irq/cpuhotplug.c b/kernel/irq/cpuhotplug.c
-index e77ca6d..f07529a 100644
---- a/kernel/irq/cpuhotplug.c
-+++ b/kernel/irq/cpuhotplug.c
-@@ -218,7 +218,7 @@ static void irq_restore_affinity_of_irq(struct irq_desc *desc, unsigned int cpu)
- 		return;
+diff --git a/drivers/net/ethernet/broadcom/genet/bcmgenet.c b/drivers/net/ethernet/broadcom/genet/bcmgenet.c
+index d0c6b5d4c..5f227bf2a 100644
+--- a/drivers/net/ethernet/broadcom/genet/bcmgenet.c
++++ b/drivers/net/ethernet/broadcom/genet/bcmgenet.c
+@@ -1029,6 +1029,10 @@ struct bcmgenet_stats {
+ 			tx_rings[num].stats64, packets), \
+ 	STAT_GENET_SOFT_MIB64("txq" __stringify(num) "_bytes", \
+ 			tx_rings[num].stats64, bytes), \
++	STAT_GENET_SOFT_MIB64("txq" __stringify(num) "_errors", \
++			tx_rings[num].stats64, errors), \
++	STAT_GENET_SOFT_MIB64("txq" __stringify(num) "_dropped", \
++			tx_rings[num].stats64, dropped), \
+ 	STAT_GENET_SOFT_MIB64("rxq" __stringify(num) "_bytes", \
+ 			rx_rings[num].stats64, bytes),	 \
+ 	STAT_GENET_SOFT_MIB64("rxq" __stringify(num) "_packets", \
+@@ -1036,7 +1040,23 @@ struct bcmgenet_stats {
+ 	STAT_GENET_SOFT_MIB64("rxq" __stringify(num) "_errors", \
+ 			rx_rings[num].stats64, errors), \
+ 	STAT_GENET_SOFT_MIB64("rxq" __stringify(num) "_dropped", \
+-			rx_rings[num].stats64, dropped)
++			rx_rings[num].stats64, dropped), \
++	STAT_GENET_SOFT_MIB64("rxq" __stringify(num) "_multicast", \
++			rx_rings[num].stats64, multicast), \
++	STAT_GENET_SOFT_MIB64("rxq" __stringify(num) "_missed", \
++			rx_rings[num].stats64, missed), \
++	STAT_GENET_SOFT_MIB64("rxq" __stringify(num) "_length_errors", \
++			rx_rings[num].stats64, length_errors), \
++	STAT_GENET_SOFT_MIB64("rxq" __stringify(num) "_over_errors", \
++			rx_rings[num].stats64, over_errors), \
++	STAT_GENET_SOFT_MIB64("rxq" __stringify(num) "_crc_errors", \
++			rx_rings[num].stats64, crc_errors), \
++	STAT_GENET_SOFT_MIB64("rxq" __stringify(num) "_frame_errors", \
++			rx_rings[num].stats64, frame_errors), \
++	STAT_GENET_SOFT_MIB64("rxq" __stringify(num) "_fragmented_errors", \
++			rx_rings[num].stats64, fragmented_errors), \
++	STAT_GENET_SOFT_MIB64("rxq" __stringify(num) "_broadcast", \
++			rx_rings[num].stats64, broadcast)
  
- 	if (irqd_is_managed_and_shutdown(data))
--		irq_startup(desc, IRQ_RESEND, IRQ_START_COND);
-+		irq_startup_managed(desc);
+ /* There is a 0xC gap between the end of RX and beginning of TX stats and then
+  * between the end of TX stats and the beginning of the RX RUNT
+@@ -1057,6 +1077,11 @@ static const struct bcmgenet_stats bcmgenet_gstrings_stats[] = {
+ 	STAT_RTNL(rx_dropped),
+ 	STAT_RTNL(tx_dropped),
+ 	STAT_RTNL(multicast),
++	STAT_RTNL(rx_missed_errors),
++	STAT_RTNL(rx_length_errors),
++	STAT_RTNL(rx_over_errors),
++	STAT_RTNL(rx_crc_errors),
++	STAT_RTNL(rx_frame_errors),
+ 	/* UniMAC RSV counters */
+ 	STAT_GENET_MIB_RX("rx_64_octets", mib.rx.pkt_cnt.cnt_64),
+ 	STAT_GENET_MIB_RX("rx_65_127_oct", mib.rx.pkt_cnt.cnt_127),
+@@ -2412,6 +2437,8 @@ static unsigned int bcmgenet_desc_rx(struct bcmgenet_rx_ring *ring,
+ 		u64_stats_add(&stats->bytes, len);
+ 		if (dma_flag & DMA_RX_MULT)
+ 			u64_stats_inc(&stats->multicast);
++		else if (dma_flag & DMA_RX_BRDCAST)
++			u64_stats_inc(&stats->broadcast);
+ 		u64_stats_update_end(&stats->syncp);
  
- 	/*
- 	 * If the interrupt can only be directed to a single target
-diff --git a/kernel/irq/internals.h b/kernel/irq/internals.h
-index 476a20f..aebfe22 100644
---- a/kernel/irq/internals.h
-+++ b/kernel/irq/internals.h
-@@ -87,6 +87,7 @@ extern void __enable_irq(struct irq_desc *desc);
- extern int irq_activate(struct irq_desc *desc);
- extern int irq_activate_and_startup(struct irq_desc *desc, bool resend);
- extern int irq_startup(struct irq_desc *desc, bool resend, bool force);
-+extern void irq_startup_managed(struct irq_desc *desc);
- 
- extern void irq_shutdown(struct irq_desc *desc);
- extern void irq_shutdown_and_deactivate(struct irq_desc *desc);
+ 		/* Notify kernel */
+-- 
+2.39.5
+
 
