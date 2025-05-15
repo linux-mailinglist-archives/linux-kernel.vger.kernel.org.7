@@ -1,173 +1,146 @@
-Return-Path: <linux-kernel+bounces-650048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-650069-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A282AB8CA9
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 18:39:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0042AB8D03
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 18:59:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 86ED44E65C2
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 16:39:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 216754A0E7A
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 16:59:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55964221728;
-	Thu, 15 May 2025 16:39:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=jvosburgh.net header.i=@jvosburgh.net header.b="mXHa/0sO";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Kg2V8KH6"
-Received: from fhigh-a2-smtp.messagingengine.com (fhigh-a2-smtp.messagingengine.com [103.168.172.153])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13094253F27;
+	Thu, 15 May 2025 16:59:00 +0000 (UTC)
+Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25D141A23A0;
-	Thu, 15 May 2025 16:39:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F239719D07E;
+	Thu, 15 May 2025 16:58:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747327165; cv=none; b=pVdUKJBIy3P5zDqyWxY5JUayuQ+aV6iX45M0vA53yFbrNBy5tO+VIiA18Cuq5+OfHoscos4O/rsbDBbOdspwmW0VMG49xaj979G1mtwqaJdFMHaSds/PStLVCQ0JwCkLtiqk2tag4+mVNiwW/kIjEtYMbiiHap3Lt7KgBiCC/74=
+	t=1747328339; cv=none; b=t9NPouoxBnruAKBMSVLeNlE8ZzUrLBd4PKbWcPUGP/2wjbvw4DRkMRxtRrUr0Yao5kMV5hzT/9hvbklTVnehFSNiEUq8KY3iDCR+hNdnU4NKQ1196B5fxjuJBwl1n4qIelo1aO5yd6TQAf63i/gCFin1dcRWJUD/VwqfUt5D86s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747327165; c=relaxed/simple;
-	bh=bf/5eNWWqxpBTtP5CmsZ7uYW0SswgtURauqtQUncWYg=;
-	h=From:To:cc:Subject:In-reply-to:References:MIME-Version:
-	 Content-Type:Date:Message-ID; b=IfBMmyiZpzuDxIcy3c9Rw73oT6yesP/tnBDxMh7e05rGEBLFqk4AmlSbS1z83UGRGQAGs5Rv+Na3e7PjnIJ0+Vv4RBg1HzErz2zo5UqOjtExb2npiFWRI3n+hADaUIaRCJknVHbLcoonCIfLkq8EEdT5DB60W1JzDYJf+wCVhxo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jvosburgh.net; spf=pass smtp.mailfrom=jvosburgh.net; dkim=pass (2048-bit key) header.d=jvosburgh.net header.i=@jvosburgh.net header.b=mXHa/0sO; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Kg2V8KH6; arc=none smtp.client-ip=103.168.172.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jvosburgh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jvosburgh.net
-Received: from phl-compute-02.internal (phl-compute-02.phl.internal [10.202.2.42])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 07B1411400D6;
-	Thu, 15 May 2025 12:39:21 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-02.internal (MEProxy); Thu, 15 May 2025 12:39:21 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jvosburgh.net;
-	 h=cc:cc:content-id:content-transfer-encoding:content-type
-	:content-type:date:date:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to; s=fm2; t=1747327161; x=1747413561; bh=9MZRsCtbfmSZvgu05QhQU
-	f8J6+oYqfPBShdTaMmsLD8=; b=mXHa/0sO94qp7UlCzWCKd7lhj7w6pNZbbC1oB
-	ahY7+bqdJtFVRFvSqbSljDXPWZ8/+npabHgjnQvQc/HwQYH72EZPXbGye3FujXFc
-	sM8F/Ty3ZeG86AvZQgGVGNFlTmFqQIB5Fzk6j/EyI74vStJFPSS4j+vZL/TAspBl
-	1ftSNHZkDfV1vAxbEMH8qCNU+6kwQQOz8NvWwDYLK31KLHBjahYWFKJVsFv3Egsm
-	sAHDryFLtzgQuRE/9YWwh8ljUEup61yZG1pbxkR/zX0e02RdlgY3JlvozfN9QjDO
-	ZML/Q2w8nHraZFJ81BrrOF+baTi1oBy6gl5MUIojbQfBWncvA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-id
-	:content-transfer-encoding:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-	1747327161; x=1747413561; bh=9MZRsCtbfmSZvgu05QhQUf8J6+oYqfPBShd
-	TaMmsLD8=; b=Kg2V8KH6f8hiS2JFZCLgqEDlo7WhLuPmfdrHA04gKqYN9Vm7epJ
-	WjmMph8T7c7DonVxr7aHCJxVBclUA/LouJJK7CaqdJAKNg5ZEl9vRSoDOdytXVhb
-	YrMGbYA/i09h9rvnhCaVdLkKnMmi9CFCVIHI+zo9Hbx7LaneIgO3FNBVEcIlRk3k
-	Ds4g4adOHrYKAHNaX2o7fEXjL+jxtsJ6r4bVWzUJjmZEh6WIiKcnw4Vp7Q5XcdT2
-	ypHRcOL2hEUccpi3sO0g6rzFooDRDv1TE1WnsQ6H01ynrxBSIJTeq84qhm+DuKoF
-	ll1Q4DUTUEb1ZsiRhk6OOJ0dFc9h8W2prdQ==
-X-ME-Sender: <xms:uBgmaFY0i-nk9-q0xEVguiWCEAIV7TPkGnZIIJgroG5WNhbbisEsAA>
-    <xme:uBgmaMaoiJy5GAqXhjbe_nKTNjwYnlKJOKtaEsIIzrFgdy4fDRlMNzO6q5qKpesTl
-    i8KbF50mmwzFUNfV8w>
-X-ME-Received: <xmr:uBgmaH8Yuq-D0ac_fjI_WRDqx4HdvSpd7mXeOoqjIW55W51PK1h9Tb4gGegRFKydGGXLHmUr>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdefuddtfeejucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhephffvvefujghfofggtgfgfffksehtqhertder
-    tddvnecuhfhrohhmpeflrgihucggohhssghurhhghhcuoehjvhesjhhvohhssghurhhghh
-    drnhgvtheqnecuggftrfgrthhtvghrnhepieefvdelfeeljeevtefhfeeiudeuiedvfeei
-    veelffduvdevfedtheffffetfeffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
-    hmpehmrghilhhfrhhomhepjhhvsehjvhhoshgsuhhrghhhrdhnvghtpdhnsggprhgtphht
-    thhopeduuddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepuggrvhgvmhesuggrvh
-    gvmhhlohhfthdrnhgvthdprhgtphhtthhopehsughfsehfohhmihgthhgvvhdrmhgvpdhr
-    tghpthhtohepshhtfhhomhhitghhvghvsehgmhgrihhlrdgtohhmpdhrtghpthhtohepvg
-    guuhhmrgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehkuhgsrgeskhgvrhhn
-    vghlrdhorhhgpdhrtghpthhtoheprghnughrvgifodhnvghtuggvvheslhhunhhnrdgthh
-    dprhgtphhtthhopehprggsvghnihesrhgvughhrghtrdgtohhmpdhrtghpthhtohepjhhi
-    rhhisehrvghsnhhulhhlihdruhhspdhrtghpthhtohepshihiigsohhtodehfeegkeehtd
-    ekiegrgeduuggssgegfedvjedtrgesshihiihkrghllhgvrhdrrghpphhsphhothhmrghi
-    lhdrtghomh
-X-ME-Proxy: <xmx:uBgmaDr0NQDd5yW2BZ5BZopmH7_oMaygUn_Yr5XmV9DYf8_yXFaUTQ>
-    <xmx:uBgmaArdID4fHb3R0zrjwFPVdIJej6hL1YVuP653z7nhYotTWgxPFw>
-    <xmx:uBgmaJS1s-zeLB-Ea2vOpjoF7g1u5rBu98KfCLd5DJslghfrgTr6hg>
-    <xmx:uBgmaIrZtGyoo3KrPqGVY0OW97QywT4x7BsBQuxyLpDt_43TEpQ63g>
-    <xmx:uRgmaC3kBFt1JukR3LdbnTNTaV00I6G9YvIupMhTe7P5uxYS9lI-YNUe>
-Feedback-ID: i53714940:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 15 May 2025 12:39:19 -0400 (EDT)
-Received: by vermin.localdomain (Postfix, from userid 1000)
-	id 74E2B1C038F; Thu, 15 May 2025 18:39:17 +0200 (CEST)
-Received: from vermin (localhost [127.0.0.1])
-	by vermin.localdomain (Postfix) with ESMTP id 72E531C0349;
-	Thu, 15 May 2025 18:39:17 +0200 (CEST)
-From: Jay Vosburgh <jv@jvosburgh.net>
-To: Stanislav Fomichev <stfomichev@gmail.com>
-cc: Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
-    davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
-    jiri@resnulli.us, andrew+netdev@lunn.ch, sdf@fomichev.me,
-    linux-kernel@vger.kernel.org,
-    syzbot+53485086a41dbb43270a@syzkaller.appspotmail.com
-Subject: Re: [PATCH net] team: grab team lock during team_change_rx_flags
-In-reply-to: <aCYUezCpbcadrQfu@mini-arch>
-References: <20250514220319.3505158-1-stfomichev@gmail.com> <20250515075626.43fbd0e0@kernel.org> <aCYK_rVZ7Tl7uIbc@mini-arch> <aCYUezCpbcadrQfu@mini-arch>
-Comments: In-reply-to Stanislav Fomichev <stfomichev@gmail.com>
-   message dated "Thu, 15 May 2025 09:21:15 -0700."
-X-Mailer: MH-E 8.6+git; nmh 1.7+dev; Emacs 29.0.50
+	s=arc-20240116; t=1747328339; c=relaxed/simple;
+	bh=iAtQvWTdSGZneEP+K3adQdKa73rxxVoUasNSZAfZMFQ=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=DlAhte4kDOGdmBg70RqVuff0mDvLUhTmzirVseXjodaKBPIsQdr8cDZ5+AzCdtzNHqHWeZEgOLhue+x8xqKpd7fLkkdB9E7BEoOFnoEPGNQRwoDsLchmnSe2DmkIx95fMxww9+YYoo3euk4YjRNucd1uqehv4kpQQrYLT85ir9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.29])
+	by frasgout11.his.huawei.com (SkyGuard) with ESMTPS id 4ZywsR1kfBz1HCN7;
+	Fri, 16 May 2025 00:39:23 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.47])
+	by mail.maildlp.com (Postfix) with ESMTP id 5796F1402E0;
+	Fri, 16 May 2025 00:40:02 +0800 (CST)
+Received: from [127.0.0.1] (unknown [10.204.63.22])
+	by APP1 (Coremail) with SMTP id LxC2BwB3_kzYGCZoyALvBw--.63654S2;
+	Thu, 15 May 2025 17:40:01 +0100 (CET)
+Message-ID: <2993afd1b2b1553a75d1016ec2d06b6fb8e78e57.camel@huaweicloud.com>
+Subject: Re: [syzbot] [lsm?] [integrity?] KMSAN: uninit-value in
+ ima_add_template_entry (3)
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: syzbot <syzbot+3f0b3970f154dfc95e6e@syzkaller.appspotmail.com>, 
+ dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com, jmorris@namei.org, 
+ linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-security-module@vger.kernel.org, paul@paul-moore.com, 
+ roberto.sassu@huawei.com, serge@hallyn.com,
+ syzkaller-bugs@googlegroups.com,  zohar@linux.ibm.com,
+ linux-bcachefs@vger.kernel.org
+Date: Thu, 15 May 2025 18:39:48 +0200
+In-Reply-To: <l7xs6ea7takb5yvyvobxoce3mudbgen5d7s47onksm4ujpdkib@tvstwbdpvm4o>
+References: <6824aea8.a00a0220.104b28.0011.GAE@google.com>
+	 <38c28bd4dc40b2e992c13a6fdba820a667861d8c.camel@huaweicloud.com>
+	 <rbab6axciiuomrann3uwvpks2zogx3xfntk7w4p2betq3morlf@5xnl5guhnaxj>
+	 <576e10238d83f725fbe23c4af63be6e83de9ce48.camel@huaweicloud.com>
+	 <l7xs6ea7takb5yvyvobxoce3mudbgen5d7s47onksm4ujpdkib@tvstwbdpvm4o>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <47314.1747327157.1@vermin>
-Content-Transfer-Encoding: quoted-printable
-Date: Thu, 15 May 2025 18:39:17 +0200
-Message-ID: <47315.1747327157@vermin>
+X-CM-TRANSID:LxC2BwB3_kzYGCZoyALvBw--.63654S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7uw4DKF45tw1kuw13WF4xXrb_yoW8tFW3pa
+	42gF1UK3yvgFy7CrW2y3WYyFyFkrW8ta43W3yrXr92kF98XFn09FySkr4YgrnxWr1Fyw12
+	kr1vq343A3WDtFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
+	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
+	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUF1
+	v3UUUUU
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAJBGglkmQHswAAsD
 
-Stanislav Fomichev <stfomichev@gmail.com> wrote:
+On Thu, 2025-05-15 at 12:37 -0400, Kent Overstreet wrote:
+> On Thu, May 15, 2025 at 04:30:09PM +0200, Roberto Sassu wrote:
+> > On Thu, 2025-05-15 at 10:18 -0400, Kent Overstreet wrote:
+> > > On Thu, May 15, 2025 at 04:06:02PM +0200, Roberto Sassu wrote:
+> > > > On Wed, 2025-05-14 at 07:54 -0700, syzbot wrote:
+> > > > > Hello,
+> > > >=20
+> > > > + Kent, bcachefs mailing list
+> > > >=20
+> > > > I have the feeling that this was recently fixed in one of the lates=
+t
+> > > > pull requests in bcachefs. I don't see it occurring anymore, and th=
+ere
+> > > > are more commits after the one reported by syzbot.
+> > >=20
+> > > I have no idea how any of the ima stuff works or even what it does, I=
+'m
+> > > not even sure where I'd start...
+> >=20
+> > Basically, I got a clue that bcachefs would be the cause from the
+> > bottom of the report:
+> >=20
+> >  page_cache_sync_ra+0x108a/0x13e0 mm/readahead.c:621
+> >  filemap_get_pages+0xfb3/0x3a70 mm/filemap.c:2591
+> >  filemap_read+0x5c6/0x2190 mm/filemap.c:2702
+> >  bch2_read_iter+0x559/0x21c0 fs/bcachefs/fs-io-direct.c:221
+> >  __kernel_read+0x750/0xda0 fs/read_write.c:528
+> >  integrity_kernel_read+0x77/0x90 security/integrity/iint.c:28
+> >=20
+> > This means that IMA is reading a file and calculating a digest over it:
+> >=20
+> >  ima_calc_file_hash_tfm security/integrity/ima/ima_crypto.c:498 [inline=
+]
+> >  ima_calc_file_shash security/integrity/ima/ima_crypto.c:511 [inline]
+> >  ima_calc_file_hash+0x240a/0x3fd0 security/integrity/ima/ima_crypto.c:5=
+68
+> >  ima_collect_measurement+0x45d/0xe60 security/integrity/ima/ima_api.c:2=
+93
+> >  process_measurement+0x2d1a/0x40e0 security/integrity/ima/ima_main.c:38=
+5
+> >  ima_file_check+0x8e/0xd0 security/integrity/ima/ima_main.c:613
+> >=20
+> > syzbot is complaining that the data the digest was calculated from was
+> > not initialized (e.g. zeroed).
+> >=20
+> > There is a reproducer, we would be probably able to do a bisection and
+> > find the commit that caused it (and maybe the one that fixed it).
+>=20
+> Ok, that would be fixed by the - multiple - KMSAN fixes, most of those
+> were spurious but code was lacking annotations. Probably this one:
+>=20
+> 9c3a2c9b471a bcachefs: Disable asm memcpys when kmsan enabled
 
->On 05/15, Stanislav Fomichev wrote:
->> On 05/15, Jakub Kicinski wrote:
->> > On Wed, 14 May 2025 15:03:19 -0700 Stanislav Fomichev wrote:
->> > > --- a/drivers/net/team/team_core.c
->> > > +++ b/drivers/net/team/team_core.c
->> > > @@ -1778,8 +1778,8 @@ static void team_change_rx_flags(struct net_d=
-evice *dev, int change)
->> > >  	struct team_port *port;
->> > >  	int inc;
->> > >  =
+Perfect, thanks a lot!
 
->> > > -	rcu_read_lock();
->> > > -	list_for_each_entry_rcu(port, &team->port_list, list) {
->> > > +	mutex_lock(&team->lock);
->> > > +	list_for_each_entry(port, &team->port_list, list) {
->> > =
+Will check it and mark this report as fixed.
 
->> > I'm not sure if change_rx_flags is allowed to sleep.
->> > Could you try to test it on a bond with a child without IFF_UNICAST_F=
-LT,
->> > add an extra unicast address to the bond and remove it?
->> > That should flip promisc on and off IIUC.
->> =
+Roberto
 
->> I see, looks like you're concerned about addr_list_lock spin lock in
->> dev_set_rx_mode? (or other callers of __dev_set_rx_mode) Let me try
->> to reproduce with your example, but seems like it's an issue, yes
->> and we have a lot of ndo_change_rx_flags callbacks that are sleepable :=
--(
->
->Hmm, both bond and team set IFF_UNICAST_FLT, so it seems adding/removing =
-uc
->address on the bonding device should not flip promisc. But still will
->verify for real.
-
-	I think Jakub is saying that adding a unicast address to the
-bond would change promisc on the underlying device that's part of the
-bond (a not-IFF_UNICAST_FLT interface), not on the bond itself.  The
-question is whether that change of promisc in turn generates a sleeping
-function warning.
-
-	FWIW, I think an easy way to add a unicast MAC to a bond is to
-configure a VLAN above the bond, then change the MAC address of the VLAN
-interface (so it doesn't match the bond's).
-
-	-J
-
----
-	-Jay Vosburgh, jv@jvosburgh.net
 
