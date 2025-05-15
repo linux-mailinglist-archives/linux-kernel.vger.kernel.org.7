@@ -1,136 +1,128 @@
-Return-Path: <linux-kernel+bounces-649652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-649654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76BD9AB8726
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 14:58:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B64CAB871E
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 14:57:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05A003AA43E
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 12:56:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A87B1164A6A
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 12:57:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0632A298275;
-	Thu, 15 May 2025 12:56:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EABC3298253;
+	Thu, 15 May 2025 12:57:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="NKbjC4UT"
-Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mxPVOsPZ"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31893295DB8;
-	Thu, 15 May 2025 12:56:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 010E627A935;
+	Thu, 15 May 2025 12:57:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747313795; cv=none; b=lWOGM9+n+mL/SDunT8K4ukQsYCWJ1lmA1SJAE7E+6BY0RrCWj6+2EBO1FUX9DM2tyPhmrji/VhKQa+HBAK81HpgJt8WJVSF7EFJpFjYkRbTv8lyAWeoQgQ2rtbl7YLZWzE6bqRR7Cdj4WdVLfk3jclMxSdEblpa49bgIi3eKeO0=
+	t=1747313857; cv=none; b=sOCy7xCy/QD70SvCd8xvubKm3ohsorxDZRJ7m3LNdDoNG5Jro/MsnnVfsdwYKSWi9ZMzVWk3XYAI4nk4S+Tw1T0nnjHk42A1IiVI2v8+/vx4ORFNuFjDOgbPeVPjOal3fk5HisQrsfb7rzXLq9CtyBm5PMLYyTdTvqsaiFR9iyw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747313795; c=relaxed/simple;
-	bh=JQQmCigDTGGR3Yhow6axIFhvc3Eoa8D0gOt7/pasBOE=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=VH9PPxQqW9o9or2MpFGrLdjazoBrgJ1MiMwf31H0yOANul4LYmB31AlgNKY03zfInzDhhzU12xeZ7glyvRZMMalh8R9UaxUYo+RJwuCscwpQnojDzCmLTE1kJ3xvfj4VH39cOJeKcioCV2HpxKPcptmGnqswcM/FErUEWEJz2no=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=NKbjC4UT; arc=none smtp.client-ip=130.133.4.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=n4nOOBXE7v6odPR/BwwmCDAbwuJ53Fu89h6EfppGY7A=; t=1747313792; x=1747918592; 
-	b=NKbjC4UTCSNu7sntJ7D8MuFHWwWLPr4AoyEE85HRbgXyp21Utqp+6HMezmZBbWjc8zcTnWf1vG5
-	t/EUIRq/jiD7dvmzv42TxSFDF0dppptlDzAorEdk0P8R4V+JK8iwQwddIMEoYBRACxjX+QPCZmGf8
-	VW6P64aK62IMDJFiPS/k/KaE9ACerkiLN5FcLAaeTV8b4MiOKUsLXFPj+yfz9Po9apFYV7dBznAu/
-	SPvveyDif8JADCmc2V9z3d5w3xvYuhYTsvrncxVSqH5k0hPcYp1y4eF5J5FT90l77AF+raJeL6mqI
-	e9FVfT4yxgs1ppwNGwKNSofifUykOXy4e4CA==;
-Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
-          by outpost.zedat.fu-berlin.de (Exim 4.98)
-          with esmtps (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@zedat.fu-berlin.de>)
-          id 1uFY8S-00000002b5K-2MpM; Thu, 15 May 2025 14:56:28 +0200
-Received: from p5b13afe4.dip0.t-ipconnect.de ([91.19.175.228] helo=[192.168.178.61])
-          by inpost2.zedat.fu-berlin.de (Exim 4.98)
-          with esmtpsa (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@physik.fu-berlin.de>)
-          id 1uFY8S-00000000y68-1RYs; Thu, 15 May 2025 14:56:28 +0200
-Message-ID: <ba1e1ae6824f47bcb49387ae4f2c70dfd45209bc.camel@physik.fu-berlin.de>
-Subject: Re: [PATCH 14/15] bugs/sh: Concatenate 'cond_str' with '__FILE__'
- in __WARN_FLAGS(), to extend WARN_ON/BUG_ON output
-From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-To: Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Peter Zijlstra
-	 <peterz@infradead.org>, linux-arch@vger.kernel.org, Yoshinori Sato
-	 <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>, 
-	linux-sh@vger.kernel.org
-Date: Thu, 15 May 2025 14:56:27 +0200
-In-Reply-To: <20250515124644.2958810-15-mingo@kernel.org>
-References: <20250515124644.2958810-1-mingo@kernel.org>
-	 <20250515124644.2958810-15-mingo@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.1 
+	s=arc-20240116; t=1747313857; c=relaxed/simple;
+	bh=XaKFKX1wryyv9mD5ofnIQ8ARck2qdPeXVeiAwmGRNzc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZXAYADAdbzdbysXQuShVF1zRZy1C0RZkp2H0lQleoLmHyFOa6js/DCfH9zXkHKJ41kBQcEmtyFLN5a1hoGtSlwPqMz7M0p24xt2VctVoTuOWoh6Vk8wLEodsgzoVjsSubWg3D1c1akDAHqupXWoEkNhMIMX3kgD7423FWwOnhIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mxPVOsPZ; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-73c17c770a7so1078884b3a.2;
+        Thu, 15 May 2025 05:57:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747313855; x=1747918655; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=T1VJIKQzn3Eg+DR16k2/eGqGBeABAciO/xNJ6ACvdIA=;
+        b=mxPVOsPZ3nNHgTVYTDfvirZe0MyzMER+cjv0xm0y78aQPpdBNfp6GIwTKx9NbwYfSK
+         QlEhonLNP++/CW31GZ54BBToEsofb2YVOczB2cOntDwjxDSoUjEdbwvY97dhKgvonG09
+         OVC2O8aEbrL6/QY0KHCTGrpHKGvDtBLd66ATFMxe8gAsS9KShzInUt82yhSr4eKUYceq
+         f6ulD3B+U0YYZ641+W2NiBx9wFutAZ2wL3a5UMhvRWwwdPDEYfSGrEwQVGWFlpMjtOEx
+         JFaVXaqQsmELSjeE0ujEp0McBtgovx3VHRNY5FrJ58rL+hFmPTByfO8gcRerHye18Z/j
+         h1uQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747313855; x=1747918655;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=T1VJIKQzn3Eg+DR16k2/eGqGBeABAciO/xNJ6ACvdIA=;
+        b=Z31SOd1B4/S/6byKH1CQzp2qfgykWb+2l4svutbWqXaLfBen5RmTPSf2Vqc7C2a2Db
+         o79Xgaxp3Nz6eOCFu20zdXCivMeQmvKnNzfk79bP0XaQcFe3QfGjaNuFKULmRyAFvLrD
+         pD7alBQv1+ApKPcmNCzwmv9DhkCsRAeOrl8uxsK3zc29u8lOBTLBefl+JTy9XmVEGIU8
+         SDS82G/tkfep6aAvqd/jBjV4gaNQa7HcgrV0RHbgiNx8XMui+2oXxrvqMHAeVgQD5yRY
+         gM3lE+tK03Rh8ZgQSLJM7dsVQMf50s0JxNZRAZz9Y0gHCM6O24jI69QkgKsSujt4ZWri
+         8g9g==
+X-Forwarded-Encrypted: i=1; AJvYcCVpVE1oj7DQ6L45sTBTDSXuoeA3+VBpT5MQrKBkFNdj9q0X/gNpp1YXBJz4Ipqfj4TV4GZngke/0E6FQbI=@vger.kernel.org, AJvYcCXgWmExG5F7bG16/3MtSTTpcZ+PsYzpvay8ph+ZHfM0uTHYGF6lMjtZc1qU8ze/C2Iqhlmf+u1v5FIAz7TX@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1HqsYVjoKiRZ3J3vrkB5P4ausD5oS+zb8YM2HxLJPryZWpcHY
+	uIu18iGFNLLDOV2j92PdYfJ9qKHHYBzbnSHdm/CZJj+wHDZuctDU8Hg7LWpkde9gcqnD4IxOSxQ
+	f5pFEBSm2RHxf03o+ZarsYyvKqII=
+X-Gm-Gg: ASbGncuU+8Iu6Mx4Mt5SdhdjhbyQN6KympJldMYsry7DisTxb9f9BnchrrsmxJoCz/O
+	avqYtGT5zlIzJIjmdHjFpnhPPaRV3sZzM98Ue7WinCafln4zRb/4tTVj1wRlsvcyNMVWFz7NABH
+	kxOHai8Nc9ryuRs4hWPlGcDWsQIxMUCO2L67pcWsv8FtaXjDow9oA=
+X-Google-Smtp-Source: AGHT+IFF0P1onBZ/hyhfFLv6g0B78R2i66luVTvTXL1v7kzBsCt3CfDJxhT1b6SXjzCdc+9iL4Nlc1feiRZw+OLLGpg=
+X-Received: by 2002:a17:902:d50d:b0:224:13a4:d61e with SMTP id
+ d9443c01a7336-231983cefacmr95730245ad.51.1747313855162; Thu, 15 May 2025
+ 05:57:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Original-Sender: glaubitz@physik.fu-berlin.de
-X-ZEDAT-Hint: PO
+References: <20250506130712.156583-1-ltykernel@gmail.com> <20250506130712.156583-2-ltykernel@gmail.com>
+ <SN6PR02MB4157A5928B486CF5D43C50F8D491A@SN6PR02MB4157.namprd02.prod.outlook.com>
+In-Reply-To: <SN6PR02MB4157A5928B486CF5D43C50F8D491A@SN6PR02MB4157.namprd02.prod.outlook.com>
+From: Tianyu Lan <ltykernel@gmail.com>
+Date: Thu, 15 May 2025 20:56:58 +0800
+X-Gm-Features: AX0GCFugkEn3wtw4pmWDuOVpd7HhwrjuqmM_GwKvfoPaTH4qC8ia1Y50QUr2014
+Message-ID: <CAMvTesBnO2crBYRbZQS=2RWta-M1azvsv7Q9RR1-he+iR-4jOA@mail.gmail.com>
+Subject: Re: [RFC PATCH 1/6] x86/Hyper-V: Not use hv apic driver when Secure
+ AVIC is available
+To: Michael Kelley <mhklinux@outlook.com>
+Cc: "kys@microsoft.com" <kys@microsoft.com>, "haiyangz@microsoft.com" <haiyangz@microsoft.com>, 
+	"wei.liu@kernel.org" <wei.liu@kernel.org>, "decui@microsoft.com" <decui@microsoft.com>, 
+	"tglx@linutronix.de" <tglx@linutronix.de>, "mingo@redhat.com" <mingo@redhat.com>, "bp@alien8.de" <bp@alien8.de>, 
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, "x86@kernel.org" <x86@kernel.org>, 
+	"hpa@zytor.com" <hpa@zytor.com>, "Neeraj.Upadhyay@amd.com" <Neeraj.Upadhyay@amd.com>, 
+	"yuehaibing@huawei.com" <yuehaibing@huawei.com>, "kvijayab@amd.com" <kvijayab@amd.com>, 
+	"jacob.jun.pan@linux.intel.com" <jacob.jun.pan@linux.intel.com>, "jpoimboe@kernel.org" <jpoimboe@kernel.org>, 
+	"tiala@microsoft.com" <tiala@microsoft.com>, 
+	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Ingo,
+On Thu, May 15, 2025 at 12:54=E2=80=AFAM Michael Kelley <mhklinux@outlook.c=
+om> wrote:
+>
+> From: Tianyu Lan <ltykernel@gmail.com> Sent: Tuesday, May 6, 2025 6:07 AM
+> >
+> >  void __init hv_apic_init(void)
+> >  {
+> > +     if (cc_platform_has(CC_ATTR_SNP_SECURE_AVIC))
+> > +             return;
+> > +
+> >       if (ms_hyperv.hints & HV_X64_CLUSTER_IPI_RECOMMENDED) {
+> >               pr_info("Hyper-V: Using IPI hypercalls\n");
+> >               /*
+>
+> It seems like this patch will cause a bisect problem if a bisect includes
+> this patch but none of the subsequent patches in this series. The
+> Hyper-V guest VM could see Secure AVIC is enabled, but the VM
+> wouldn't boot because the code to allow Hyper-V to inject an interrupt
+> haven't been added yet.
+>
+> This patch probably should come later in the patch series after Secure
+> AVIC can be functional in a Hyper-V guest.
+>
 
-On Thu, 2025-05-15 at 14:46 +0200, Ingo Molnar wrote:
-> Extend WARN_ON and BUG_ON style output from:
->=20
->   WARNING: CPU: 0 PID: 0 at kernel/sched/core.c:8511 sched_init+0x20/0x41=
-0
->=20
-> to:
->=20
->   WARNING: CPU: 0 PID: 0 at [idx < 0 && ptr] kernel/sched/core.c:8511 sch=
-ed_init+0x20/0x410
->=20
-> Note that the output will be further reorganized later in this series.
->=20
-> Signed-off-by: Ingo Molnar <mingo@kernel.org>
-> Cc: Yoshinori Sato <ysato@users.sourceforge.jp>
-> Cc: Rich Felker <dalias@libc.org>
-> Cc: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-> Cc: linux-sh@vger.kernel.org
-> Cc: <linux-arch@vger.kernel.org>
-> ---
->  arch/sh/include/asm/bug.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/arch/sh/include/asm/bug.h b/arch/sh/include/asm/bug.h
-> index 834c621ab249..891276687355 100644
-> --- a/arch/sh/include/asm/bug.h
-> +++ b/arch/sh/include/asm/bug.h
-> @@ -59,7 +59,7 @@ do {							\
->  		 _EMIT_BUG_ENTRY			\
->  		 :					\
->  		 : "n" (TRAPA_BUG_OPCODE),		\
-> -		   "i" (__FILE__),			\
-> +		   "i" (WARN_CONDITION_STR(cond_str) __FILE__),	\
->  		   "i" (__LINE__),			\
->  		   "i" (BUGFLAG_WARNING|(flags)),	\
->  		   "i" (sizeof(struct bug_entry)));	\
-
-Looks good to me, however I'm not happy with the summary line.
-
-It's too long and the prefix "bugs/sh:" is very confusing. I usually just
-use "sh:" to mark anything that affects arch/sh.
-
-Can I pick this patch for my sh-linux tree?
-
-Thanks,
-Adrian
+Good idea! Will rework patch order.
 
 --=20
- .''`.  John Paul Adrian Glaubitz
-: :' :  Debian Developer
-`. `'   Physicist
-  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
+Thanks
+Tianyu Lan
 
