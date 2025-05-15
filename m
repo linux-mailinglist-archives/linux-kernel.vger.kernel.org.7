@@ -1,84 +1,115 @@
-Return-Path: <linux-kernel+bounces-649285-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-649286-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07932AB8284
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 11:27:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1FC9AB828B
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 11:27:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ABB9C1886662
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 09:27:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF1B41BA10F9
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 09:27:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 850A8297B66;
-	Thu, 15 May 2025 09:26:28 +0000 (UTC)
-Received: from gardel.0pointer.net (gardel.0pointer.net [85.214.157.71])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7389C297A4C;
+	Thu, 15 May 2025 09:27:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="pLkczEHj"
+Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF660296FC8;
-	Thu, 15 May 2025 09:26:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.157.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9536F29672F;
+	Thu, 15 May 2025 09:27:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747301188; cv=none; b=QrU6CmctrVBism+T1SMMGRxSI3hLgzLlV+ENDp5g1nPDhNthgmyJGNTou3ccIt+42bk4qTa5VdBiH11cvCTB2FFp7ySd9xkGPFV8DZIpGX9MSWKKTvrKsPNvsftqLZTBxjnYzm2JQQNx15A0Wsy8sn3m2x7hPvEn+ZqumFyWclU=
+	t=1747301222; cv=none; b=fWzXWIWHU02EBmh9b26xDbfCce6WnxZpdDe9ttmV77hmAQ1ozCkcGoB/AaNIPs6JZWxiHKeyc2TNKl4IVB+7zhCQkCb/Q6q3HD+niJru0WxsBAjMLVdKGya5m0EQu9Sn2YGBlb5iNjNb+RQC56sLiiuwBQhKZkREXkGjdUmVqV4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747301188; c=relaxed/simple;
-	bh=+yvk+y/BFJBzQOBxJ2/jSQOkaomv38brdxHq6fz2wUg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mh9DrBAgrjS/YRDNMNOkTBvtqRLCb2Mwddt61xt0XzR7LI9Hq1JuDfetLYPVXpO28s2rQijmTN7Rqoe0l/uIiJDxCKr9+782XpkoErOuTVO6S9t95cgBifar50AJIV9dvamSE/j/PmnWX/LOKjApgAolsqFTiuxKTqdB4viC08M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=0pointer.de; spf=pass smtp.mailfrom=0pointer.de; arc=none smtp.client-ip=85.214.157.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=0pointer.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=0pointer.de
-Received: from gardel-login.0pointer.net (gardel-mail [85.214.157.71])
-	by gardel.0pointer.net (Postfix) with ESMTP id 4AD78E803E2;
-	Thu, 15 May 2025 11:26:16 +0200 (CEST)
-Received: by gardel-login.0pointer.net (Postfix, from userid 1000)
-	id 5CD7A16005E; Thu, 15 May 2025 11:26:14 +0200 (CEST)
-Date: Thu, 15 May 2025 11:26:14 +0200
-From: Lennart Poettering <mzxreary@0pointer.de>
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, Jann Horn <jannh@google.com>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Kuniyuki Iwashima <kuniyu@amazon.com>,
-	Eric Dumazet <edumazet@google.com>, Oleg Nesterov <oleg@redhat.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Daan De Meyer <daan.j.demeyer@gmail.com>,
-	David Rheinsberg <david@readahead.eu>,
-	Jakub Kicinski <kuba@kernel.org>, Jan Kara <jack@suse.cz>,
-	Luca Boccassi <bluca@debian.org>, Mike Yuan <me@yhndnzj.com>,
-	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
-	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	Alexander Mikhalitsyn <alexander@mihalicyn.com>
-Subject: Re: [PATCH v7 0/9] coredump: add coredump socket
-Message-ID: <aCWzNrAwTK4YvOcv@gardel-login>
-References: <20250515-work-coredump-socket-v7-0-0a1329496c31@kernel.org>
+	s=arc-20240116; t=1747301222; c=relaxed/simple;
+	bh=S6zEEqZ7XzVr8Ft6SXafxnt9X1JbkToWYQSIGNNYSq0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=TJ9vcCBGgGa4wQHj6e2GN/F9XpyPXVsf7xvXYseGam5WkkgeztN166/tZvVvdAAAhhukePaDLiKNStsckL8DJdt1MGrLZj3XV/MfRJyAX2w2B2Gshxdb3kPhigsb9s3Xe1mHJ5E7iyrDkH+yu1xowCUWDtzwWAeg7nz2Uaub9Ng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=pLkczEHj; arc=none smtp.client-ip=193.68.50.107
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
+Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
+	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id 780BCA0149;
+	Thu, 15 May 2025 11:26:58 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:from:from:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=mail; bh=ubCfZqnUCO4PP/bK7tVa
+	PooeXZwMddulOK5iV2CA9+w=; b=pLkczEHjHfzoDsoFPgNwkuAKJL+9PunTHLhx
+	tgUiuREirMWir6ZXaPHUPerKZST1XdJLonM2kdiuvzyaREXhUSl+whgNGA7C6crB
+	S6F5iFaPVvnU+2TEfYpgbXYmh38WdDpKb7JxweaJusQ35Mi2dIwU7ibb3uI0J+KR
+	k4mfqfl4q18OzECYimwK9zWgRTWQYruap8fcRYnhyO7aUKtiCPIUrD+oRyenU8+K
+	n/CcICixGzzaz9Gdfejusx/JrcjyIEYvd1HVCoHUpvrRSDa5mJsadMWogpO3Zlbk
+	2f8ZrDGnz8riHlG86Prpd/Um0+xe+eS+i2R1xYNsUAwHuEoWSi9Y2LlJfJ5I6nZ3
+	a7b0helHriLNUldNahETbvZCgCfLNJJMSsHaLRleW8n2yK7WrUHD3LEXsMkKDA/N
+	bmGq/Pr1XRDQSUI/sVlex1QhfLsbMLqJ3RFNjq28WbELXB7isS9RgLVgxrY83Ks+
+	vEK4cUYgOKK59B4jNHN5dzzOrePbCjGp+APfAl6TVBk4SEj+qYJWuAqtSG0Vo6vI
+	Gs9XmmzC2sae83NjO8VwEsjfimmavGYdZkmChEfwYSCGVxaQEyRNO1ZFXFW2qlo0
+	hNbvndPXTXVflP4bsDVXcaLuz5pnWkIYLPSuR9NFgBx3cU/sPOJQv6wtOL7UROuK
+	U6YQat8=
+Message-ID: <9d384301-3f73-4120-a82b-580eb5f1a4ed@prolan.hu>
+Date: Thu, 15 May 2025 11:26:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250515-work-coredump-socket-v7-0-0a1329496c31@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 0/2] Add `devm_dma_request_chan()` to simplify probe
+ path in atmel-quadspi.c
+To: Mark Brown <broonie@kernel.org>
+CC: <dmaengine@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-spi@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>, "Vinod
+ Koul" <vkoul@kernel.org>, Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea
+	<claudiu.beznea@tuxon.dev>, "Rafael J. Wysocki" <rafael@kernel.org>, "Tudor
+ Ambarus" <tudor.ambarus@linaro.org>
+References: <20250515083132.255410-1-csokas.bence@prolan.hu>
+ <aCWpjplhAXUvr9fj@finisterre.sirena.org.uk>
+ <e4e6c7a9-9b7a-4012-8bda-75804229ec95@prolan.hu>
+ <aCWyXsJ2iRXRUmOi@finisterre.sirena.org.uk>
+Content-Language: en-US
+From: =?UTF-8?B?Q3PDs2vDoXMgQmVuY2U=?= <csokas.bence@prolan.hu>
+In-Reply-To: <aCWyXsJ2iRXRUmOi@finisterre.sirena.org.uk>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: sinope.intranet.prolan.hu (10.254.0.237) To
+ ATLAS.intranet.prolan.hu (10.254.0.229)
+X-EsetResult: clean, is OK
+X-EsetId: 37303A296767155D617062
 
-On Do, 15.05.25 00:03, Christian Brauner (brauner@kernel.org) wrote:
+Hi,
 
-> Coredumping currently supports two modes:
+On 2025. 05. 15. 11:22, Mark Brown wrote:
+> On Thu, May 15, 2025 at 11:14:22AM +0200, Csókás Bence wrote:
+>> On 2025. 05. 15. 10:45, Mark Brown wrote:
+> 
+>>> I can't tell what the plan is here, or what the status is for the first
+>>> patch (since I'm not CCed).  The second patch depends on a new API
+>>> introduced in the first patch so it can't be merged independently.
+> 
+>> Yes, the situation is a bit convoluted. Obviously 2/2 will be applied after
+>> 1/2, in a similar vein than the former PM series.
+> 
+>> So what I was trying to say: Vinod should be able to apply 1/2 to his branch
+>> (dma/next) right now, which can then be merged to spi/for-next. This merged
+>> branch should be able to then cleanly apply 2/2.
+> 
+> I wouldn't expect to pull the whole DMA tree in, that'll have a huge
+> amount of extra stuff in it - if I was going to pull something I'd
+> expect a topic branch. 
 
-[...]
-> ---
-> base-commit: 4dd6566b5a8ca1e8c9ff2652c2249715d6c64217
-> change-id: 20250429-work-coredump-socket-87cc0f17729c
+Fair point.
 
-Looks lovely, thank you!
+> Wouldn't it be simpler for me to just apply both
+> patches at this point if there's no conflicts with the DMA tree?  We're
+> at -rc6 now...
 
-Looking forward to hooking this up with systemd-coredump!
+That also works for me. I should send 1/2 to you as well, correct?
 
-Lennart
+Bence
 
---
-Lennart Poettering, Berlin
 
