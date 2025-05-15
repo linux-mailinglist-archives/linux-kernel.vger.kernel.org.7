@@ -1,81 +1,181 @@
-Return-Path: <linux-kernel+bounces-649994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-649997-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CCB6AB8BE8
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 18:08:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6B95AB8BF8
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 18:10:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 60E7B7B814F
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 16:07:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A24C1BC47FC
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 16:11:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C5BD21B9D8;
-	Thu, 15 May 2025 16:08:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA02221B91F;
+	Thu, 15 May 2025 16:10:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="khmyb+fv"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UYUZEKxl"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F13B1581F0;
-	Thu, 15 May 2025 16:08:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70A1C2192FD;
+	Thu, 15 May 2025 16:10:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747325315; cv=none; b=JWxd+JXMOMHU71LldyrgL9w0d9nn31j/GwU4yehIR+yRCRW1EYuWFNFkY/myxw3qGzt15W0Ixjx27mWie/0LHeMoqKDOc9HlEoKm6i/lzQsP0B453/nQjtxJefLQYaaiocB1KbFqyWSnXXsyc33Sj61a18/Xd9q0huJFdEYPuoY=
+	t=1747325449; cv=none; b=LeTxEe7NuQ47X6nA6d6Sg2Jv5bIghk5d3RyHrQUDoH2t623NAL8/+LPfdBPqbs34JkxLvnqSKeS0d3e7CZ4GGdVBKsWBZaJJZf8PmOucaxFn9O39wVv9Wd6rPTYjUSVCvhmiYk1/JdZfNN4CjZA4Ki++uNokANoi+yxLNnULYns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747325315; c=relaxed/simple;
-	bh=ihNBIIaVq7O7L+j9lqrsuzd9GbpGRcK2ar0rdaYI5jA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=djiVoqtQy3Z8ytP1Wgjjh9bHN/ezwADnGcuFCWk8r9uZxMvYlnmE3OE4fw4CqJoITLU9Mbqy67WORxjcbu4r6wDnO4FVgfRMINTUPkfs3x52WQuzABaa32Dr7VDs5q0jLHC6XB4JCjLk27g+Q0vbB6XuvWmXRClcW1OFCXkb7Rk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=khmyb+fv; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=e+FLArCqXFn3Ftq31cZjyilXSyboyv1Dhh+Q+KuXWhw=; b=khmyb+fvbbkFB3qv00L7b0Iv2J
-	WjxQjXjLjcybrVnLeaG4t1QJQbpCOPBhjEHGrUE6tue9sDcZ/FpyTZzpXK2Ypm4NyDlfy++0if/Ib
-	0ddchvl8B1gPwCkG2CfJFRh2J0jdSnbiE9qKgcbp+/p9CmRXcnklLBknsQ1dRCMDMy1I=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1uFb88-00CgLR-30; Thu, 15 May 2025 18:08:20 +0200
-Date: Thu, 15 May 2025 18:08:20 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Wentao Liang <vulab@iscas.ac.cn>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, ste3ls@gmail.com,
-	hayeswang@realtek.com, dianders@chromium.org, gmazyland@gmail.com,
-	linux-usb@vger.kernel.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] r8152: Add wake up function for RTL8153
-Message-ID: <d1308504-cb6c-4085-a1b6-fb30e145ff25@lunn.ch>
-References: <20250515151130.1401-1-vulab@iscas.ac.cn>
+	s=arc-20240116; t=1747325449; c=relaxed/simple;
+	bh=af9vxyEjUFLXkXblE0fNKzVVCZxvU4UnA/BPCTRi0Ag=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mPgQB7shBwHo0WmOC7pfs5DaqQLxBF0waBxj+d7/vrDH02An3u3AorLYQImLfMDfK1Jba2+FwkEp96T7Za0xQdx7x23oCAFdn34ij0ckTknzL8Lpas+0yOwd9S4IbNZ+Cqt5eANU/maOD486mfLTor5DHTGNAM9LsdpKIk/IdnA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UYUZEKxl; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-442ed8a275fso12831935e9.2;
+        Thu, 15 May 2025 09:10:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747325446; x=1747930246; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=K2RUuqM7j77YiC7O2/E2sWiPYfT3vLPzw6aLspbrJ9A=;
+        b=UYUZEKxlSm7LXl+NH3YnZXh3xsPxeboKDDPXMBuwny5F2LMEwcERDhEhOY5ahnjn/a
+         J0LPWMJjGmfZ7G6JptCIu/Rpar4Meqdktyt3boOUJooqRtRfCW2upAJxl88vdy2sV44p
+         5IHHbmH9Nso+ykZfX6x6tyGafX4QGEBmSjs1pGpPPU5NFB5vnudkgUj1guo+GT44u/oS
+         xEgT16HzaEiiS4NyJU9QX000nMO4qHDRHgxxK89dSUZdXyR9ZclK6683aE6dEZnuCbwL
+         /5hz1L1Icn30qC79aaApfZD6tfSDGGLr+3HP3IPpXsx8H0ADu99v6A8QtpywaGNbREUe
+         /Jxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747325446; x=1747930246;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=K2RUuqM7j77YiC7O2/E2sWiPYfT3vLPzw6aLspbrJ9A=;
+        b=wXc7g98dnVPQpRrLM0h+Hd4zemrTEN9l4mIp32w/HR+CAO1hQuFOJ0mHZ9tcUvx/Ni
+         n9zT749Xo6kBFnFaEb0caiAplxBlNX5+x69MAdD8XyC5YNCPujlMCgupZU6f5BbabkSl
+         0xIyxQUeuTD/gC+kSvmMmOI+hALKheJYHu369wDcjkF9eUTJHcgHD2Yn6bkZ9aNOfRCJ
+         T4YMAg5WERpO2+YNIyiJ7UktIvPxwmMgaspCqj7UBTG7aGU4GqYHLAdeyGaB8pGmOsW4
+         IgVc6fxf/PaIbpbkXrKJFwa+cUFUsKkUsnKBsEEUv5YXIw57Mzz4QH+Drn8R5hURviDw
+         e40Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVXPo6RuCWJ1lpgRmbcH6F1JC6MnzQo3NfI/s/TzEJE0GOBD6Sn5qK5IXInKPuG4N81ZtLB30ebAGhjrzj48e/TC0o=@vger.kernel.org, AJvYcCXDVn9TjXBIwGkLHP1AocUnc8btfbXH9saOzTJ2X7N/Dnxd3hZKF9QPXOyU5pZ/emP8uAu6AJkvbSxB@vger.kernel.org, AJvYcCXW4/H65ZSlVWriCFNRBCjbY34cuwnKijHeTk/qpSfPrbGGTfqVJPrvitTwTiE5pYkVZTq49gpxFMYukgDr@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywej/gs+2gj40OssxDG2fxLiH6brrry3okQLSjOIoy/taPZlfFC
+	dRj74o+r9fr+P+r9fpnL3/152AfNVWVqYUd8wNjgDSIAG890Vb6UjxpqEJ4fvIxqaXAzgsKehW5
+	Uyr2j6mxqShP88rGMWCneRSeUBh3HF/w=
+X-Gm-Gg: ASbGncuvA43aTWSPWY2PfD/xZ/K4A0z73XUhlOzs3MKqeNmidaX7VFB8QT8fCRMJrSG
+	9fjJ35T6/Z0BcdqBpKAXGdMnnWz8DfgPLDvwukuFvFrxb39OqBtqX07VLjL6RgmcbXaYG/r7aLJ
+	qtRn0OHV4D+1WBC703PkzhwC2jSISiVdo=
+X-Google-Smtp-Source: AGHT+IFZbUVdPwHyT0Clm2bKqbykU6Hoz0divy6kyYfkhV2fc4IbIeu9yY9VFI6isbO+t3Jgv72E5GlEP9c/n5Vmv4I=
+X-Received: by 2002:a05:6000:2dc8:b0:3a0:8325:8090 with SMTP id
+ ffacd0b85a97d-3a35c825b99mr373886f8f.18.1747325445358; Thu, 15 May 2025
+ 09:10:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250515151130.1401-1-vulab@iscas.ac.cn>
+References: <20250506103152.109525-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <202505151255.rCHp8Bvu-lkp@intel.com> <CAMuHMdUh3oXniR3b_g+SuqXXeB=3YRFSVOONOth7XRNpHC=a8A@mail.gmail.com>
+In-Reply-To: <CAMuHMdUh3oXniR3b_g+SuqXXeB=3YRFSVOONOth7XRNpHC=a8A@mail.gmail.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Thu, 15 May 2025 17:10:19 +0100
+X-Gm-Features: AX0GCFutHTsXdF6X-UzPCdROzCLoI3M2MdWC6VhMZtfwaAYxbEp32opOSVRegW4
+Message-ID: <CA+V-a8vrLyWDprGMcnbPQ5Skt=+zcRA6nJ6APOQ2V0d17pfMog@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] clocksource/drivers/renesas-ostm: Unconditionally
+ enable reprobe support
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: kernel test robot <lkp@intel.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	Chris Brandt <chris.brandt@renesas.com>, llvm@lists.linux.dev, 
+	oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
+	linux-arm-kernel@lists.infradead.org, linux-renesas-soc@vger.kernel.org, 
+	Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, May 15, 2025 at 11:11:30PM +0800, Wentao Liang wrote:
-> In rtl8153_runtime_enable(), the runtime enable/disable logic for RTL8153
-> devices was incomplete, missing r8153_queue_wake() to enable or disable
-> the automatic wake-up function. A proper implementation can be found in
-> rtl8156_runtime_enable().
-> 
-> Add r8153_queue_wake(tp, true) if enable flag is set true, and add
-> r8153_queue_wake(tp, false) otherwise.
-> 
-> Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
+Hi Geert,
 
-Is this for stable? Should it have a Fixes: tag?
+On Thu, May 15, 2025 at 6:59=E2=80=AFAM Geert Uytterhoeven <geert@linux-m68=
+k.org> wrote:
+>
+> On Thu, 15 May 2025 at 07:04, kernel test robot <lkp@intel.com> wrote:
+> > kernel test robot noticed the following build warnings:
+> >
+> > [auto build test WARNING on tip/timers/core]
+> > [also build test WARNING on robh/for-next linus/master v6.15-rc6 next-2=
+0250514]
+> > [cannot apply to daniel-lezcano/clockevents/next]
+> > [If your patch is applied to the wrong git tree, kindly drop us a note.
+> > And when submitting patch, we suggest to use '--base' as documented in
+> > https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> >
+> > url:    https://github.com/intel-lab-lkp/linux/commits/Prabhakar/dt-bin=
+dings-timer-renesas-ostm-Document-RZ-V2N-R9A09G056-support/20250506-223636
+> > base:   tip/timers/core
+> > patch link:    https://lore.kernel.org/r/20250506103152.109525-3-prabha=
+kar.mahadev-lad.rj%40bp.renesas.com
+> > patch subject: [PATCH v3 2/2] clocksource/drivers/renesas-ostm: Uncondi=
+tionally enable reprobe support
+> > config: hexagon-randconfig-001-20250513 (https://download.01.org/0day-c=
+i/archive/20250515/202505151255.rCHp8Bvu-lkp@intel.com/config)
+> > compiler: clang version 21.0.0git (https://github.com/llvm/llvm-project=
+ f819f46284f2a79790038e1f6649172789734ae8)
+> > reproduce (this is a W=3D1 build): (https://download.01.org/0day-ci/arc=
+hive/20250515/202505151255.rCHp8Bvu-lkp@intel.com/reproduce)
+> >
+> > If you fix the issue in a separate patch/commit (i.e. not just a new ve=
+rsion of
+> > the same patch/commit), kindly add following tags
+> > | Reported-by: kernel test robot <lkp@intel.com>
+> > | Closes: https://lore.kernel.org/oe-kbuild-all/202505151255.rCHp8Bvu-l=
+kp@intel.com/
+> >
+> > All warnings (new ones prefixed by >>):
+> >
+> > >> drivers/clocksource/renesas-ostm.c:235:34: warning: unused variable =
+'ostm_of_table' [-Wunused-const-variable]
+> >      235 | static const struct of_device_id ostm_of_table[] =3D {
+> >          |                                  ^~~~~~~~~~~~~
+> >    1 warning generated.
+> >
+> >
+> > vim +/ostm_of_table +235 drivers/clocksource/renesas-ostm.c
+> >
+> > 3a3e9f23c2cae9 Biju Das 2021-11-12  234
+> > 3a3e9f23c2cae9 Biju Das 2021-11-12 @235  static const struct of_device_=
+id ostm_of_table[] =3D {
+> > 3a3e9f23c2cae9 Biju Das 2021-11-12  236         { .compatible =3D "rene=
+sas,ostm", },
+> > 3a3e9f23c2cae9 Biju Das 2021-11-12  237         { /* sentinel */ }
+> > 3a3e9f23c2cae9 Biju Das 2021-11-12  238  };
+> > 3a3e9f23c2cae9 Biju Das 2021-11-12  239
+>
+> The table is unused if CONFIG_OF=3Dn due to
+>
+>                 .of_match_table =3D of_match_ptr(ostm_of_table),
+>
+Thanks for the pointer, I'll add a __maybe_unused compiler attribute
+and send a new version.
 
-https://www.kernel.org/doc/html/latest/process/maintainer-netdev.html
+Cheers,
+Prabhakar
 
-	Andrew
+> Gr{oetje,eeting}s,
+>
+>                         Geert
+>
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m6=
+8k.org
+>
+> In personal conversations with technical people, I call myself a hacker. =
+But
+> when I'm talking to journalists I just say "programmer" or something like=
+ that.
+>                                 -- Linus Torvalds
 
