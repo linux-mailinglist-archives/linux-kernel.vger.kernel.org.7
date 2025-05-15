@@ -1,67 +1,58 @@
-Return-Path: <linux-kernel+bounces-649063-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-649070-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E4ADAB7F92
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 10:03:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E621AB7FAB
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 10:04:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F03324C510C
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 08:03:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D85A3B45E1
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 08:03:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3395527BF76;
-	Thu, 15 May 2025 08:03:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A954227BF76;
+	Thu, 15 May 2025 08:04:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ECdt2NVr"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gBm9Byqx"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D8D912CD96;
-	Thu, 15 May 2025 08:02:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A4DC12CD96;
+	Thu, 15 May 2025 08:04:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747296179; cv=none; b=T41DybavB5v3np6i/BiQ55/olTltu26Krdi42il4PZW7QhOoLaKvsi1OgGmPeV21Q7FHiPmXPc3LFiQSvtBzdgEWmChBoC4OlvsQJnxNvOhZrlc0z5ZvlyPe2OStpTmq0FVJ1xqquZKDuIafNDm0N2QCqQh6CbI5JhRCMUHJeZk=
+	t=1747296244; cv=none; b=YI4ZEPHdRxczdW1IMk20x3MgWn9FwX+XUaMiZTwSq4X3hkLHjkN6oEGKD257LRA91CL9qUrZvnGmlLmjkoJHqAG/s5+qZu2jMZAdkKcp2UYwdB2ha10MHHMmKReJ8dbihwsZXHoEpIQf54qCXORQH8T5aaH5quMGhK4gt3BMBqg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747296179; c=relaxed/simple;
-	bh=bDjuUuhDO1eKs8zJQ8OSPWNjfdrBghRphQ/ti3Qq3yw=;
+	s=arc-20240116; t=1747296244; c=relaxed/simple;
+	bh=WmqB1+cthIKwEpGtMECz8g5q4Pu16sIckWCMguzEaTk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IV3AukY6k1rmF7Ujyjq0Cvt2ykn3A6a8f6p/cJ1Ekq7P/AA1ubIckpU1IM1MHFt3V8Scpj7Dr9xmH7CRlWjT8ZGVyNtAoi2oZgk+NdhlQx5v9Af5b6ZEBS1VdymrAvZJIZqZgjVXKhcfqvhDpehDdaS1VtF9i8FvgnOtBbZSnW4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ECdt2NVr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB71EC4CEE7;
-	Thu, 15 May 2025 08:02:57 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=MlK0hyOZc15NeRI9hn8PUmxIO4lHEbUT/12gsY2eX/MxN5e/dIp4VNdeMescafXo5xZJyKevmBnUSyYk7wQOEHHnBGJ7K77lmbUiUnFOsvfSjrHvbvNh2QOKeNvKl447RYn8I/iePy6yuomee3Wa0A7v4pi8b1HemKEn9V4eYZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gBm9Byqx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87913C4CEED;
+	Thu, 15 May 2025 08:04:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747296179;
-	bh=bDjuUuhDO1eKs8zJQ8OSPWNjfdrBghRphQ/ti3Qq3yw=;
+	s=k20201202; t=1747296243;
+	bh=WmqB1+cthIKwEpGtMECz8g5q4Pu16sIckWCMguzEaTk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ECdt2NVrLK4F2ha+dMk5ZykvFmtwjx+CpHviKSOzucKfOyBZJSN50/VtCRIdom59g
-	 tOMkWWi4eTJUQLB16cn1bigliKv9vH10OUDFhFXT9gEfQQNaiG91DDONVViomJEIee
-	 8LxUMfJI0ZYf3vxD1BuOn3M893502sFR5TU++erM+j+ypxqaKe13hJcP4AhfRJ8T+I
-	 yrQVKUVaKdvYtDwX6rD3DzEcxPyCMjwVpTsMmdw2u5u0iGP+ifCNlN4oNEHAHVwkAm
-	 CWdfxDCbAiX1snrVLsyUcOLxRL+4OPRCVxYOesWMoyh/K3bdcsKeo55cMQIl8WLslD
-	 V2tYibkVzlX3Q==
-Date: Thu, 15 May 2025 10:02:53 +0200
+	b=gBm9Byqx8+B1s6DylV7uj6qPgIpAf6a5OggRfCkyBWZVqDQ2p5WyONmwmyUz6QE9v
+	 namUu1Q7xzh97Rd425+S46wSQLov32S+AVY6SBbXh3lYG3oD68HeZxdYLD4Wl2yUMG
+	 cTmeVXZRpDn20mf4zgcBrEDC858HGzF68RGNPaI9wj90+SXTT+FF/VFBxH+C6fogjY
+	 71eJjDyIrIRlqqun4RUp1yUKiuOAn9fOt0abXhIlaOXnKjcFQbwL5Fvi8jibtmZ8OI
+	 mTRfKLbl7BB3Z3m0dnv6Hpqu5T0TSGyNiN3zRKQlqtHxsEwhAApDmqmA7oowiGppbz
+	 Ov8y/pbksE1MA==
+Date: Thu, 15 May 2025 10:03:58 +0200
 From: Mark Brown <broonie@kernel.org>
-To: Lee Jones <lee@kernel.org>
-Cc: Artur Weber <aweber.kernel@gmail.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Stanislav Jakubek <stano.jakubek@gmail.com>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	~postmarketos/upstreaming@lists.sr.ht
-Subject: Re: [PATCH v8 4/9] mfd: bcm590xx: Add support for multiple device
- types + BCM59054 compatible
-Message-ID: <aCWfre2-n_PSuhxR@finisterre.sirena.org.uk>
-References: <20250430-bcm59054-v8-0-e4cf638169a4@gmail.com>
- <20250430-bcm59054-v8-4-e4cf638169a4@gmail.com>
- <20250509140957.GD2492385@google.com>
- <aCRZzwW0w8oVWLUp@finisterre.sirena.org.uk>
- <20250515071357.GD2936510@google.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, hargar@microsoft.com
+Subject: Re: [PATCH 6.6 000/113] 6.6.91-rc2 review
+Message-ID: <aCWf7r4ZNqXw0Mzu@finisterre.sirena.org.uk>
+References: <20250514125617.240903002@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,52 +60,38 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="3+iDnWdstEN1hguV"
+	protocol="application/pgp-signature"; boundary="aMyE9AdpZuxFQRjJ"
 Content-Disposition: inline
-In-Reply-To: <20250515071357.GD2936510@google.com>
+In-Reply-To: <20250514125617.240903002@linuxfoundation.org>
 X-Cookie: Well begun is half done.
 
 
---3+iDnWdstEN1hguV
+--aMyE9AdpZuxFQRjJ
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Thu, May 15, 2025 at 08:13:57AM +0100, Lee Jones wrote:
-> On Wed, 14 May 2025, Mark Brown wrote:
+On Wed, May 14, 2025 at 03:04:06PM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.6.91 release.
+> There are 113 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-> > Could you be more explicit what you're looking for here, the diffstat is
-> > entirely MFD?
+Tested-by: Mark Brown <broonie@kernel.org>
 
-> Okay, more explicitly, I can merge this and MFD will have no issue.
-> However, the Regulator commits make use of 'pmu_id' introduced in this
-> change and would therefore cause a compile break.  So we could:
-
->   1. Apply this now and merge the dependents next cycle
->   2. Apply this now and provide an IB
->   3. Wait for all Acks and apply as a unified set
-
-> We usually choose 3, hence my assumptions above.
-
-Well, you choose 3 - I do think it'd be a lot easier to go with option
-2, or with applying the rest to your tree as acks come in.  There seemed
-to still be a reasonable amount of discussion on the MFD bits (eg,
-there's some formatting comments still) so I was expecting this series
-to churn some more and was waiting for a resend.
-
---3+iDnWdstEN1hguV
+--aMyE9AdpZuxFQRjJ
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmgln6wACgkQJNaLcl1U
-h9Ccawf/eQQDUsNgS0TKYfGdBLq2g0QMIhInBoBlUy7l3xZbRm5WP2U9ZBbH5/2f
-dxkSlwAkqIR29ii+atAZqTqbxdZxBMrcEkt4VergJxL0bXFZtmGxpRWq6vJ2w8gh
-d5RBAd+2TKRlb/Augai+XkjI9sFVe4pt3Xpj4CiIx7zUHI31ZH0UJ7dGiCyvE4On
-OWtn0GQ30jDyPKEfnFdMnkEM6WBFq+5GRvXcGba8qa6xTlwWYB/nQ30czLuz4yxA
-PvvKw5KMT8aj9STkWj/Nqbbc6RyojjiPK6XrnPzkK/QaF6Pv1Lmo6D1Fim1ri82N
-7mGSZ21WJB9/+4JRRFc6NBONqJvzKw==
-=0NJf
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmgln+4ACgkQJNaLcl1U
+h9CZ+Af9FPdXvM9w91FTbsCUW58ywAahUY/4rCcjlEOrWrSx4QzItz1mdX+7lNUh
+B8182vS1F1hLw692Vzccr3vPEuWqd4Fg6uAQEDU3TNq483bWKv23JxXiGvvta+1b
+50LwDaTpf50ci5yRyNwqtZ2fL8FfSIKxivPIYFsuHE9HG2tnw/wXA9ghR6/ob2FY
+3JBJOXainddqNBedmModojIeN8YIF5oCQhoNIJwWRpjJnRTa7E4sCZj1B73RrH+1
+YJsYxvzkbMkTbSCWBNdwpneMrrfCgyVy9IJVywh7ArdUzGRGXhDQT3i7feIxU8gh
+2HzHq+63rTbcPXbtKDWFUAzQEErsQg==
+=uwlm
 -----END PGP SIGNATURE-----
 
---3+iDnWdstEN1hguV--
+--aMyE9AdpZuxFQRjJ--
 
