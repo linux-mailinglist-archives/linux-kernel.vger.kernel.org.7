@@ -1,169 +1,240 @@
-Return-Path: <linux-kernel+bounces-649422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-649424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE979AB84A5
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 13:17:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FB4EAB84A8
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 13:20:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDF441BC09E7
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 11:17:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3828A1BC08EA
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 11:20:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7110297A57;
-	Thu, 15 May 2025 11:17:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47579296D27;
+	Thu, 15 May 2025 11:20:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o1qjyxye"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Nqtt4Ktc"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C54DC2C9;
-	Thu, 15 May 2025 11:17:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96136C2C9
+	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 11:19:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747307824; cv=none; b=rU/CoMyR5snzX+baicudmjnLw1TtXpKYxcTURA8RxGgKMSSY+4wjTvyewqxFZbTJ/m0OC6WU09uLt1hiLaU+JqYy3XyFL401+mYxkRrF67vtZOyTjNzIjXwdzHkBn3XxUF1I0twV0S1TwdleSVcFDvHiA+GH1RJMSzTkLkNy9qE=
+	t=1747307999; cv=none; b=i5Xt7slZXieqEfYhPtXGtYyVO1nY2FHmz8UXWLpltpMqzxppj+j/8mC5xr4T1Uwe6afKhjf/4nYa7k3nN/SRzuXnVYHcfSEl1shOLb3q4kqDBoUR7MsqBkdp1dYF/du2jE+LUDfHyp+SlQMGcqLrNoEMl+Qwgw/VmcQa5TPiqck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747307824; c=relaxed/simple;
-	bh=BMe/f2YXmynuK/sxauGntRWDm3isebQoPkXwug7na7Y=;
+	s=arc-20240116; t=1747307999; c=relaxed/simple;
+	bh=O3ux7LFqWgocIOQ/x88a4TtGo6sbuiXHxUjl7ljgYWc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XIQs894oHOMTNmPHsGJm064iZv2ZH/yCO6pm8nCDu2EudVHuY32Kn3Q0TZs+keX/8542Q9g3/olJBJ5mCpsKjE1mqSA5C9RY2psq5BGatZaE89LZ8ml68gc9hcm82Aeaxx834eP0cnnka/JMnnXnl5VxQOWCERuqq7ZkmLCllHw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o1qjyxye; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6CC10C4CEE9;
-	Thu, 15 May 2025 11:17:03 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=fL5mk/XD271D2zh0uWfDUEgSz7sEkZRtqQwibZlXWxTvKyvORe0/5g9pEqW+yImEJoAsf+zgUHcbCWfB33SG5y+js4XVjxutX6kaGH2CtsKO4XjH7eri8KzsWyqrTNpYEa5TSLnDsq0BW3QS3gZtOUub6ZbVf5gCwt9Y4kZLvFM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Nqtt4Ktc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F063C4CEE7;
+	Thu, 15 May 2025 11:19:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747307823;
-	bh=BMe/f2YXmynuK/sxauGntRWDm3isebQoPkXwug7na7Y=;
+	s=k20201202; t=1747307999;
+	bh=O3ux7LFqWgocIOQ/x88a4TtGo6sbuiXHxUjl7ljgYWc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=o1qjyxyeBKFKZ4hsvcobBUxGXk52qrmvsDj91GY5ejSMExXSTUtHlNpRxqVlrZmEn
-	 lfxcbOhfhUeOp0Yk2ttuuDgVQF2Hr5F23fDcnEmCJiUNF4jlweQtmKmY9io4DDDanX
-	 P8tLSC0YL0CG1D5rPNYh+1inV7bFhWqt7xjal2VnZgKowsjfzjlFxYdQcqwlIHwo1Z
-	 o8B51tWuhfb67ye7dmMc/SEzn/14Seag2I6wgahcZxv1MVP/vufQf9/6aW/+bp7s4s
-	 IHfR3Xx5BdAHV/kTURgXyy6SKcEbsW1zEcKo8Am7WfSWFzkvETOInrDNr5HKmZQIB0
-	 3G159QdvSBTJg==
-Date: Thu, 15 May 2025 14:17:00 +0300
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Michal =?iso-8859-1?Q?Such=E1nek?= <msuchanek@suse.de>,
-	Sasha Levin <sashal@kernel.org>
-Cc: Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Jonathan McDowell <noodles@earth.li>,
-	Paul Menzel <pmenzel@molgen.mpg.de>
-Subject: Re: [PATCH v3] tpm: tis: Double the timeout B to 4s
-Message-ID: <aCXNLIGWRjMdd5vy@kernel.org>
-References: <4e4640bd-0313-4594-9667-82340ed9368a@molgen.mpg.de>
- <20250404082325.13876-1-msuchanek@suse.de>
- <Z--d7Obw2UEk8Pve@kernel.org>
- <aCSIRS1fq_b9sByn@kitsune.suse.cz>
- <aCVGW7T5Gy5zVkJ-@kernel.org>
+	b=Nqtt4Ktc+D0NFrJNC6RMvhe0LgP35Sn2gEyFSe0PkOIkvuwQxv57JQYNXv5MyDNK9
+	 Hk0v3k0nxcOwH/T71WqOasAXT5+dQdVhTA6BGG80vFsG26qJdclDt5gSikHQV3+z4w
+	 RroPraNcqxzyteHe7ki2vl+St1qnWq9MGs4HEI/QrBOdqei8A/lSza7Jfclp1tjkeE
+	 FmY1RQ7a6KUi023Mgv1bnvoPlC8duxxqB325fx/QnWA+qXWVJ8PFbrOq+1bcmOe3wN
+	 Lku2WG3expolbFGXoQIoBNDqQ+kqRuuj71u9vowwt2Q1uRyovm7m/W4UTaUTMFqVvU
+	 d0wGkUYdnII9A==
+Date: Thu, 15 May 2025 13:19:54 +0200
+From: Ingo Molnar <mingo@kernel.org>
+To: Mike Rapoport <rppt@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Andy Shevchenko <andy@kernel.org>,
+	Arnd Bergmann <arnd@kernel.org>, Borislav Petkov <bp@alien8.de>,
+	Juergen Gross <jgross@suse.com>, "H . Peter Anvin" <hpa@zytor.com>,
+	Kees Cook <keescook@chromium.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Paul Menzel <pmenzel@molgen.mpg.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	David Woodhouse <dwmw@amazon.co.uk>
+Subject: [PATCH 30/29] x86/boot/e820: Unify e820_print_type() and
+ e820_type_to_string()
+Message-ID: <aCXN2mcspYiXJIu0@gmail.com>
+References: <20250421185210.3372306-1-mingo@kernel.org>
+ <20250421185210.3372306-9-mingo@kernel.org>
+ <aAc_7Zm1PqeRmKMW@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aCVGW7T5Gy5zVkJ-@kernel.org>
+In-Reply-To: <aAc_7Zm1PqeRmKMW@kernel.org>
 
-On Thu, May 15, 2025 at 04:41:52AM +0300, Jarkko Sakkinen wrote:
-> On Wed, May 14, 2025 at 02:10:45PM +0200, Michal Suchánek wrote:
-> > Hello,
+
+* Mike Rapoport <rppt@kernel.org> wrote:
+
+> On Mon, Apr 21, 2025 at 08:51:48PM +0200, Ingo Molnar wrote:
+> > So it is a bit weird that the actual RAM entries of the E820 table
+> > are not actually called RAM, but 'usable':
 > > 
-> > On Fri, Apr 04, 2025 at 11:53:00AM +0300, Jarkko Sakkinen wrote:
-> > > On Fri, Apr 04, 2025 at 10:23:14AM +0200, Michal Suchanek wrote:
-> > > > With some Infineon chips the timeouts in tpm_tis_send_data (both B and
-> > > > C) can reach up to about 2250 ms.
-> > > > 
-> > > > Timeout C is retried since
-> > > > commit de9e33df7762 ("tpm, tpm_tis: Workaround failed command reception on Infineon devices")
-> > > > 
-> > > > Timeout B still needs to be extended.
-> > > > 
-> > > > The problem is most commonly encountered with context related operation
-> > > > such as load context/save context. These are issued directly by the
-> > > > kernel, and there is no retry logic for them.
-> > > > 
-> > > > When a filesystem is set up to use the TPM for unlocking the boot fails,
-> > > > and restarting the userspace service is ineffective. This is likely
-> > > > because ignoring a load context/save context result puts the real TPM
-> > > > state and the TPM state expected by the kernel out of sync.
-> > > > 
-> > > > Chips known to be affected:
-> > > > tpm_tis IFX1522:00: 2.0 TPM (device-id 0x1D, rev-id 54)
-> > > > Description: SLB9672
-> > > > Firmware Revision: 15.22
-> > > > 
-> > > > tpm_tis MSFT0101:00: 2.0 TPM (device-id 0x1B, rev-id 22)
-> > > > Firmware Revision: 7.83
-> > > > 
-> > > > tpm_tis MSFT0101:00: 2.0 TPM (device-id 0x1A, rev-id 16)
-> > > > Firmware Revision: 5.63
-> > > > 
-> > > > Link: https://lore.kernel.org/linux-integrity/Z5pI07m0Muapyu9w@kitsune.suse.cz/
-> > > > Signed-off-by: Michal Suchanek <msuchanek@suse.de>
-> > > > ---
-> > > > v2: Only extend timeout B
-> > > > v3: Update commit message
-> > > > ---
-> > > >  drivers/char/tpm/tpm_tis_core.h | 2 +-
-> > > >  include/linux/tpm.h             | 2 +-
-> > > >  2 files changed, 2 insertions(+), 2 deletions(-)
-> > > > 
-> > > > diff --git a/drivers/char/tpm/tpm_tis_core.h b/drivers/char/tpm/tpm_tis_core.h
-> > > > index 970d02c337c7..6c3aa480396b 100644
-> > > > --- a/drivers/char/tpm/tpm_tis_core.h
-> > > > +++ b/drivers/char/tpm/tpm_tis_core.h
-> > > > @@ -54,7 +54,7 @@ enum tis_int_flags {
-> > > >  enum tis_defaults {
-> > > >  	TIS_MEM_LEN = 0x5000,
-> > > >  	TIS_SHORT_TIMEOUT = 750,	/* ms */
-> > > > -	TIS_LONG_TIMEOUT = 2000,	/* 2 sec */
-> > > > +	TIS_LONG_TIMEOUT = 4000,	/* 4 secs */
-> > > >  	TIS_TIMEOUT_MIN_ATML = 14700,	/* usecs */
-> > > >  	TIS_TIMEOUT_MAX_ATML = 15000,	/* usecs */
-> > > >  };
-> > > > diff --git a/include/linux/tpm.h b/include/linux/tpm.h
-> > > > index 6c3125300c00..3db0b6a87d45 100644
-> > > > --- a/include/linux/tpm.h
-> > > > +++ b/include/linux/tpm.h
-> > > > @@ -224,7 +224,7 @@ enum tpm2_const {
-> > > >  
-> > > >  enum tpm2_timeouts {
-> > > >  	TPM2_TIMEOUT_A          =    750,
-> > > > -	TPM2_TIMEOUT_B          =   2000,
-> > > > +	TPM2_TIMEOUT_B          =   4000,
-> > > >  	TPM2_TIMEOUT_C          =    200,
-> > > >  	TPM2_TIMEOUT_D          =     30,
-> > > >  	TPM2_DURATION_SHORT     =     20,
-> > > > -- 
-> > > > 2.47.1
-> > > > 
-> > > > 
-> > > 
-> > > Cc: stable@vger.kernel.org # v6.1+
-> > > 
-> > > Probably best that I'll piggyback a patch set for stable with the two
-> > > fixes, in order to cause least noise. I need to do this *after* an
-> > > ack'd PR to -rc2.
+> > 	BIOS-e820: [mem 0x0000000000100000-0x000000007ffdbfff]    1.9 GB usable
 > > 
-> > While there is talk about stable this does not seem to be applied
-> > anywhere I could find. Is that expected?
+> > 'usable' is pretty passive-aggressive in that context and ambiguous,
+> > most E820 entries denote 'usable' address ranges - reserved ranges
+> > may be used by devices, or the platform.
+> > 
+> > Clarify and disambiguate this by making the boot log entry
+> > explicitly say 'kernel usable RAM':
+> > 
+> > 	BIOS-e820: [mem 0x0000000000100000-0x000000007ffdbfff]    1.9 GB kernel usable RAM
+> > 
+> > Signed-off-by: Ingo Molnar <mingo@kernel.org>
+> > Cc: Andy Shevchenko <andy@kernel.org>
+> > Cc: Arnd Bergmann <arnd@kernel.org>
+> > Cc: David Woodhouse <dwmw@amazon.co.uk>
+> > Cc: H. Peter Anvin <hpa@zytor.com>
+> > Cc: Kees Cook <keescook@chromium.org>
+> > Cc: Linus Torvalds <torvalds@linux-foundation.org>
+> > Cc: Mike Rapoport (Microsoft) <rppt@kernel.org>
+> > ---
+> >  arch/x86/kernel/e820.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/arch/x86/kernel/e820.c b/arch/x86/kernel/e820.c
+> > index 8ee89962fcbf..99f997ae88dc 100644
+> > --- a/arch/x86/kernel/e820.c
+> > +++ b/arch/x86/kernel/e820.c
+> > @@ -187,7 +187,7 @@ void __init e820__range_add(u64 start, u64 size, enum e820_type type)
+> >  static void __init e820_print_type(enum e820_type type)
+> >  {
+> >  	switch (type) {
+> > -	case E820_TYPE_RAM:		pr_cont(" usable");			break;
+> > +	case E820_TYPE_RAM:		pr_cont(" kernel usable RAM");		break;
+> >  	case E820_TYPE_RESERVED:	pr_cont(" reserved");			break;
+> >  	case E820_TYPE_SOFT_RESERVED:	pr_cont(" soft reserved");		break;
+> >  	case E820_TYPE_ACPI:		pr_cont(" ACPI data");			break;
 > 
-> Definitely not. I got shifted away with other work early April and
-> this was left to my TODO folder, apologies.
+> We have e820_type_to_string(), IMO the whole switch here can be replaced by
 > 
-> Sasha, can you also auto-select this to v6.1+? It is in my next
-> branch now (should be soon'ish mirrored to linux-next).
+> 	pr_cont(" %s", e820_type_to_string(type));
 
-I got shifted away at work for a while and since it has been a while,
-and the thread is a bit messy, can you check if there was still
-something else I ought to pick up:
+Yeah, agreed, but there's a few additional details:
 
-https://lore.kernel.org/linux-integrity/D9WD3016M557.1ZXO3GLKGUIIF@kernel.org/
+ - Your suggestion doesn't work as-is, because e820_type_to_string() 
+   takes an 'entry' parameter, not 'type'.
 
-Now "tpm: tis: Double the timeout B to 4s" has a legit commit ID at
-least, and will land to 6.15.
+ - There's some difference in the messages, so I think this should be a 
+   separate patch.
 
-BR, Jarkko
+ - Also, I think unified messages with the best of both sets of 
+   messages is the best outcome, instead of just picking one side.
+
+See these commits in the WIP.x86/e820 tree:
+
+   x86/boot/e820: Change e820_type_to_string() to take a 'type' parameter
+   x86/boot/e820: Unify e820_print_type() and e820_type_to_string()
+
+With the more interesting one attached below.
+
+Thanks,
+
+	Ingo
+
+=================================>
+From: Ingo Molnar <mingo@kernel.org>
+Date: Thu, 15 May 2025 13:17:45 +0200
+Subject: [PATCH] x86/boot/e820: Unify e820_print_type() and e820_type_to_string()
+
+Use e820_type_to_string() to derive e820_print_type(),
+and unify the messages:
+
+ - Don't Capitalize Words Within Sentences Randomly
+
+ - Use 'Device reserved' instead of 'Reserved'
+
+Suggested-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: Andy Shevchenko <andy@kernel.org>
+Cc: Arnd Bergmann <arnd@kernel.org>
+Cc: David Woodhouse <dwmw@amazon.co.uk>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+---
+ arch/x86/kernel/e820.c | 50 ++++++++++++++++++++------------------------------
+ 1 file changed, 20 insertions(+), 30 deletions(-)
+
+diff --git a/arch/x86/kernel/e820.c b/arch/x86/kernel/e820.c
+index 3a86216ee05f..aadc46f3d074 100644
+--- a/arch/x86/kernel/e820.c
++++ b/arch/x86/kernel/e820.c
+@@ -68,6 +68,26 @@ unsigned long pci_mem_start = 0xaeedbabe;
+ EXPORT_SYMBOL(pci_mem_start);
+ #endif
+ 
++__init static const char * e820_type_to_string(enum e820_type type)
++{
++	switch (type) {
++	case E820_TYPE_RAM:		return "System RAM";
++	case E820_TYPE_ACPI:		return "ACPI tables";
++	case E820_TYPE_NVS:		return "ACPI non-volatile storage";
++	case E820_TYPE_UNUSABLE:	return "Unusable memory";
++	case E820_TYPE_PRAM:		return "Persistent memory (legacy)";
++	case E820_TYPE_PMEM:		return "Persistent memory";
++	case E820_TYPE_RESERVED:	return "Device reserved";
++	case E820_TYPE_13:		return "Type 13";
++	default:			return "Unknown E820 type";
++	}
++}
++
++__init static void e820_print_type(enum e820_type type)
++{
++	pr_cont(" %s", e820_type_to_string(type));
++}
++
+ /*
+  * This function checks if any part of the range <start,end> is mapped
+  * with type.
+@@ -186,21 +206,6 @@ __init void e820__range_add(u64 start, u64 size, enum e820_type type)
+ 	__e820__range_add(e820_table, start, size, type);
+ }
+ 
+-__init static void e820_print_type(enum e820_type type)
+-{
+-	switch (type) {
+-	case E820_TYPE_RAM:		pr_cont(" System RAM");				break;
+-	case E820_TYPE_RESERVED:	pr_cont(" device reserved");			break;
+-	case E820_TYPE_SOFT_RESERVED:	pr_cont(" soft reserved");			break;
+-	case E820_TYPE_ACPI:		pr_cont(" ACPI data");				break;
+-	case E820_TYPE_NVS:		pr_cont(" ACPI NVS");				break;
+-	case E820_TYPE_UNUSABLE:	pr_cont(" unusable");				break;
+-	case E820_TYPE_PMEM:		/* Fall through: */
+-	case E820_TYPE_PRAM:		pr_cont(" persistent RAM (type %u)", type);	break;
+-	default:			pr_cont(" type %u", type);			break;
+-	}
+-}
+-
+ /*
+  * Print out the size of a E820 region, in human-readable
+  * fashion, going from KB, MB, GB to TB units.
+@@ -1065,21 +1070,6 @@ __init void e820__finish_early_params(void)
+ 	}
+ }
+ 
+-__init static const char * e820_type_to_string(enum e820_type type)
+-{
+-	switch (type) {
+-	case E820_TYPE_RAM:		return "System RAM";
+-	case E820_TYPE_ACPI:		return "ACPI Tables";
+-	case E820_TYPE_NVS:		return "ACPI Non-volatile Storage";
+-	case E820_TYPE_UNUSABLE:	return "Unusable memory";
+-	case E820_TYPE_PRAM:		return "Persistent Memory (legacy)";
+-	case E820_TYPE_PMEM:		return "Persistent Memory";
+-	case E820_TYPE_RESERVED:	return "Reserved";
+-	case E820_TYPE_13:		return "Type 13";
+-	default:			return "Unknown E820 type";
+-	}
+-}
+-
+ __init static unsigned long e820_type_to_iomem_type(struct e820_entry *entry)
+ {
+ 	switch (entry->type) {
 
