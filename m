@@ -1,84 +1,82 @@
-Return-Path: <linux-kernel+bounces-649589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-649591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70321AB8675
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 14:35:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FB2CAB867A
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 14:36:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 093814C2846
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 12:35:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F2224C2BF4
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 12:36:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 000092989BD;
-	Thu, 15 May 2025 12:35:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FCAC298C23;
+	Thu, 15 May 2025 12:35:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dAZyOyNm"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GrENt0xG"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FC7D205AA8
-	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 12:35:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 625D42253EB;
+	Thu, 15 May 2025 12:35:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747312520; cv=none; b=MAhCEJ1OsJFFvfjxUR26YpvTM2oTKO7+al8WO/6PEt2dLkHa4sA9wGCLFg8HR8sybjmE2xvVuBUYpUbuzoLRwBJVmHPpO/m3ub3U1Avv14mex8qW7i+Kv4ruH0BOO9Krf1Ev4bYOJr9NeEQPolpn8rk9pyYZhQ8hXmEkXn5Kcq4=
+	t=1747312557; cv=none; b=CP3Q5SvNgnbf6E5FEYb7zjKweQRz3geX1CxQbdw3bu30XCX36UGDvj2lWQ895Ld8cn+z0ZBYZ6aNvK8y3wFhItqg9AiHHxpvsp1PU/75hqCvHQGL21mbPWP8f0+JwAVmzznicecPJw0p36z/qUEvQM2uVenWSzmyv/rHwEpHDZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747312520; c=relaxed/simple;
-	bh=MUbCZqUB5rrdAciYkNl9Iv4mPTHwH2AJxr1lqvATqwI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kfBFKmcS1jJJwBUXzSJgNU6JJEQIKSPaLG4kecOWVwudWWTZlz7LCrm81vUxw9wTGqQyuFL3Ejo+3Fs6fvdoNFSQP1OKaBkODqNUuA5S2klj+2GSMuXaSAz56ivk87Ljq0VkfiiME3tPgzOnPVdRlirwu8r8SJpYrM8vLUPChz8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dAZyOyNm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA8F0C4CEE7;
-	Thu, 15 May 2025 12:35:18 +0000 (UTC)
+	s=arc-20240116; t=1747312557; c=relaxed/simple;
+	bh=2spys5TtRm0Ewp6y0mpAM1/gMoBUOmnHaV6fLn8rsRU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fGj1M7mSXKcViNWo3/I1BR39EtEeS6ctQvtllFUiJJbgb98gv5KcAvh4QVrrfsVHHh0EY1wl6gLOQ9xCLYDk0sr0BzjKbdGOMIUlL2K7d9jqN5EdVKEVwjEYHuQJU4fRxZF2l1HRabYeuP8JZtS2y1ppOFxwcjaA4em8hcUYVjs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GrENt0xG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC341C4CEF0;
+	Thu, 15 May 2025 12:35:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747312519;
-	bh=MUbCZqUB5rrdAciYkNl9Iv4mPTHwH2AJxr1lqvATqwI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dAZyOyNmBp6zLtkVqHEwsbmysP6S4n9FQKiOc0uldgc+HWSUgMnlZcKckfQoLKJmC
-	 NMGxM1qTfU8z5r0/Yivq37BDpbU19C1oJPjZsyruhdJUfOL94SRKf3MlStgNNvtYHs
-	 c45lDxQJPsZ+BPVJaYPu2ertTWGcrsnEnStvOjB30s0bQG+RExi09IHxU9jeMEO130
-	 R5E6b8cCr5FpLQJ+Pln0Sw3idS2j5lvN8xi+JFTETMAaz+noW9jAyXQGOgPfict4PH
-	 eUnGeIddFCRh/czc/jasSxpntHB+vk88by3t9Ng2BFz8zher77a6CfJIGUEnfDgtk6
-	 /jeXrd9BTvJLA==
-Date: Thu, 15 May 2025 14:35:16 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH 13/14] bugs/sh: Concatenate 'cond_str' with '__FILE__' in
- __WARN_FLAGS(), to extend WARN_ON/BUG_ON output
-Message-ID: <aCXfhFOclFTQ6fEs@gmail.com>
-References: <20250327102953.813608-1-mingo@kernel.org>
- <20250327102953.813608-14-mingo@kernel.org>
- <CAHk-=wihuzRytaFKr6b_pbi209JW+GWiNMtb9x-XhQdstxPuMw@mail.gmail.com>
+	s=k20201202; t=1747312556;
+	bh=2spys5TtRm0Ewp6y0mpAM1/gMoBUOmnHaV6fLn8rsRU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=GrENt0xG8woAl5yoGsX3awmEUvCnPgXy+IDiTQygNNdyPfVxmgObTuWIlnSBgUrF+
+	 Chf8VMAR59D8WeyZ+ypvMafzDOI71286xZFTjrDAh/ejkhz/Z11ayF3yjQV1sC/qqz
+	 8ge3vPGh6izvhntJxTqX/kPP1RndXod6zbnf7tHErq4cHAZJSc4n9fkJ+bB4gSC/Ha
+	 BCZ16CSlTTw5UkoBR1g6u8PmavHHBFYjhX8a3EnyTuaCWeBy/jjiE9wJ0on4LZJuGA
+	 6MTOKkT6Rbv962yJIpG0qseoBQK6a02bMax9IFcPRc+i31ythq2hhvHihZBwOWIhzT
+	 v/oYbcRCCZnGQ==
+Message-ID: <21b60af5-a9f9-49b0-81b1-94f8776636da@kernel.org>
+Date: Thu, 15 May 2025 14:35:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wihuzRytaFKr6b_pbi209JW+GWiNMtb9x-XhQdstxPuMw@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dt-bindings: ata: Convert st,ahci to DT schema
+To: "Rob Herring (Arm)" <robh@kernel.org>, Niklas Cassel <cassel@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Patrice Chotard <patrice.chotard@foss.st.com>
+Cc: linux-ide@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250512215724.4178359-1-robh@kernel.org>
+Content-Language: en-US
+From: Damien Le Moal <dlemoal@kernel.org>
+Organization: Western Digital Research
+In-Reply-To: <20250512215724.4178359-1-robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+On 5/12/25 23:57, Rob Herring (Arm) wrote:
+> Convert the ST AHCI SATA Controller to DT schema format.
+> 
+> The phy-names changes from "ahci_phy" to "sata-phy" with the inclusion
+> of ahci-common.yaml. That's an ABI change, but the Linux driver at least
+> ignores the names. The binding uses "ports-implemented" property, so
+> including ahci-common.yaml is required.
+> 
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+
+Applied to for-6.16. Thanks !
 
 
-* Linus Torvalds <torvalds@linux-foundation.org> wrote:
-
-> The patches look fine to me, fwiw.
-
-So I've changed the series slightly to add a new Kconfig option to 
-trigger these extra strings:
-
-	CONFIG_DEBUG_BUGVERBOSE_DETAILED=y
-
-Disabled by default.
-
-This should address concerns over the +100K kernel size increase that 
-some have raised.
-
-I'll send out a -v2 series, which should have the Cc: problems fixed as 
-well, so that all architecture people see it too.
-
-Thanks,
-
-	Ingo
+-- 
+Damien Le Moal
+Western Digital Research
 
