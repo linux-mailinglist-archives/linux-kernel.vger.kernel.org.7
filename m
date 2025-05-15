@@ -1,81 +1,112 @@
-Return-Path: <linux-kernel+bounces-650141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-650143-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EADEAB8DA5
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 19:23:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F5AAAB8DAA
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 19:24:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B53C73B09E9
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 17:23:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11F713AC6D1
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 17:23:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75C29258CF5;
-	Thu, 15 May 2025 17:23:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DCE925A33D;
+	Thu, 15 May 2025 17:23:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M//QyOR+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YY3f7zrZ"
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1BC51DDD1;
-	Thu, 15 May 2025 17:23:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5661425A2C0;
+	Thu, 15 May 2025 17:23:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747329796; cv=none; b=VTNIPtzCBPHrJwp54vyp5z2t0IXJP1WNp8i4RuOA6oVPtsyhE8n/fEYSiLqSS2bO8jrR+L62GaqPz4vcKjP3dDmk+p75cki8kUD9cv4vvjje4F6EtICdIJ3+XPw8qvunf0x64Vljl70VhljrA8E9MaoPT7eNAu/Nn/wEMAkgrNA=
+	t=1747329836; cv=none; b=szNZx/sdcx7snNPy4I3SPbW/M1nQmp79vxYpOsOFvA6z8ndSgRxOeh5TO+jCMXxRdItCr0Y1nFpo1vnLPC5TLLv3q6CnTek0xX6ZbQ6UypsxFNPr/YgqhlbI56xVSgaKD5naYj4jvVm9hC1TSl2WJbJifhX8FLPcaXMhtgWaxoA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747329796; c=relaxed/simple;
-	bh=RvmHfZZ1f0AzI8waiCOB+v4pZfKLdBr4L5DOr1Kq/kE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QZ/a/R2GcbazAYmgD8dw0Q0leHFItIQC7f7bOQuNsBTXnV4DQ1FeY6oLhqU9+m9r2om5I6s2iTK+nFY1APJCH2ULwxd7Y7wmlikKBBejWpO4aNz5ufXthaMsjeFYEp5A/YqJgwTsN4w+YU9PMkKf/MuPZc7vHRCXUZTKa2/eAnM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M//QyOR+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F3C3C4CEE7;
-	Thu, 15 May 2025 17:23:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747329796;
-	bh=RvmHfZZ1f0AzI8waiCOB+v4pZfKLdBr4L5DOr1Kq/kE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=M//QyOR+F8Sa79Y916HbAENQvxd6ibec3oKeleXrm5HLvgWMiCGxH0vs74+Y4K+rw
-	 Gb02RgIQ94HfIkYL+eSVzZvAILbxpO5GtsWev2RoegYcrUkxCu14rxRB/g4THAYjjp
-	 4nLvZ7nQw9bNYafm0fyEs6RRk5OFnu8hsEn35xRPtzUqIT+lYoIJlctSoK1GPZTWRP
-	 kr9tCpJq0UjoQ+JO+DdBT0V1yuCQAG7JN7Flw/e22c2nAN4pU7jeGbm+Voa4ZGkl48
-	 O/xVkyWCUhl7kRKC7flJhOF5ZZZjE8vLYQQO5+ZQ2NSBnsf4Pk3bOtk/FqRGFNJQff
-	 LSH5KIyi1wzhA==
-Date: Thu, 15 May 2025 19:23:10 +0200
-From: Danilo Krummrich <dakr@kernel.org>
-To: Rob Clark <robdclark@chromium.org>
-Cc: phasta@kernel.org, Rob Clark <robdclark@gmail.com>,
-	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-	linux-arm-msm@vger.kernel.org, Connor Abbott <cwabbott0@gmail.com>,
-	Matthew Brost <matthew.brost@intel.com>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <ckoenig.leichtzumerken@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 04/40] drm/sched: Add enqueue credit limit
-Message-ID: <aCYi_mkv47ckB6ox@pollux>
-References: <20250514170118.40555-1-robdclark@gmail.com>
- <20250514170118.40555-5-robdclark@gmail.com>
- <51f87f358fa1b7ef8db8b67ee6cde38ae071fbe8.camel@mailbox.org>
- <CAJs_Fx771FFVDVFMn8YJkR9f9Ad-UQspJ9KKQw4u6Cu4TA7YPA@mail.gmail.com>
+	s=arc-20240116; t=1747329836; c=relaxed/simple;
+	bh=Vvo1U7ZYT/daKTt8DjPAQDotWCOV+WFddjhL4Nt1dv4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=crrIsmYNwpShqXIO8398fG3ayuRVF8FfHf7JsNtXkhcFGBf/MGpUaxzPgj2AUgLmYMSpiVO0kaEIyiiDvigiR7p8MIiE/v5Asw7l1Ra2aTKsWtpb1IkXDsOK5qbBWiY0N/YGONAPvWFtE505XkQGcjM3qYZxBhMe/53XF/JJ9Ug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YY3f7zrZ; arc=none smtp.client-ip=209.85.215.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-b1396171fb1so670552a12.2;
+        Thu, 15 May 2025 10:23:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747329834; x=1747934634; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Gh0S+6m9cMD+k8B9Y4/TUOEGe6CgAna/tacJfPKX/q4=;
+        b=YY3f7zrZa/ctJSdsaNo+BY+qRdKuB25xD/9Q4BeJXWQHgSCnDbVYkAR3A8jatzeuF4
+         l82LEVaXc7e1B6RTVrgCnQlnHnVmy8wSmS+jFWUyOtZxLUyQve7Oh1B7ZQJl8KAvMltb
+         MFr2Sxl69jl/TKdyCSvhE0rh6g6oQZF2XSs7TxXnbPBtHd+9g7Wu4mmnRZF6VSuay1YS
+         Dbvvg0JysH3mpE9NoM/RTqR78odUWH2RsjVdgECNGLtlEom/JSDnU8DXvetqtS0D5cdw
+         UfI8yX6p2iwCyIkC4gAu+UIvYfMrqQ0GA7lokuJUSHeAOWrBwMJUr/pW9ObPhZbo0zAB
+         AA/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747329834; x=1747934634;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Gh0S+6m9cMD+k8B9Y4/TUOEGe6CgAna/tacJfPKX/q4=;
+        b=Os1tD1TN2t3foUZYPl6OdIOMR/WI8GCs1y8hZEea8SCGQCclOrk5W4j1dTtXWT3DpZ
+         5YmSOJQfgMSgqO8zLZKVOTmOa89UPxcx50dDd7IttZibdxTWmTYxox296Xt8OSlpq85L
+         5TRG6EBnXFIc/Zf58rKrTKKEjNqTFCQ7vr2/FK3ru5TKqrrunTVuFcm2M2smXYVycUyQ
+         eC/UMlfB1d5VN234P9hnRGhsDLf/uvlxAV5rPCJ/JhjyaqgbkXHPdChFUiR4NFm4tzBv
+         12u/A3X2ST7md+DzZ9cLoloQ4Z3wf3luqtiEqW7r6YPjYh9pnHN2pVMW6NR6hrHvZPgS
+         FnGw==
+X-Forwarded-Encrypted: i=1; AJvYcCV3myr4iLYcKwKybiiyF4wGjoXnYh47oFCoxxdfWFf1KzER7a7Ryng7cJgX8QPsJU8l6+39pSdoQW5wK6x3@vger.kernel.org, AJvYcCWkBQctLP8l0je0pWkPCwclu0mNWAUZHY/mRqUhs937lWK6jQKVf97smfH3rqHwaE6K3Jw=@vger.kernel.org, AJvYcCX6/tklpUzr8Nm3WI4ce5ObXK6mcyY5GfoLlvvXamadOCZ4lR2FoIlqVCBTyb/K3q0Tzu87n4p0w6Ib9FNr3MYrylid@vger.kernel.org
+X-Gm-Message-State: AOJu0YwV2MvPs/g/Kmea97sWyFObmAt9pt5uLeHpgu5PGydyhUQu8sIq
+	LFMW8/YjayGMrcaXZrgPjGdOAIMNqzmqrbbgD5Hyf9FpchIl6zIwUVjn77WF0b9dM4/oFZr6UqU
+	CH0Yof00Dsmq/B7NpvuTqylusicZqYhQ=
+X-Gm-Gg: ASbGncvskfl2L5UEoSxFxpmp3cMkarYPi/+2sx1qLBFr0Ua6EwTHKQoM0RChZQ704He
+	oqK/GVb/OZVNqSpOGnetzt8E48TBJSkoiJAum0jor0d7SaOMuK4y96uvzQZ5Vm3H2fD2xXhtBwK
+	V7naxZ6YoJpWSH85GEhRijf5sreTb4kpy01SUePBxE1x4viZCH
+X-Google-Smtp-Source: AGHT+IGjYah1/SPXx6SvyDN8o1y2ePsxsv6DqsRa6TTynY1tgHRXx50j1GQA3eXaMKW6GBvkqZrRlXXahJP3aUZaLb0=
+X-Received: by 2002:a17:90b:1d48:b0:2ef:114d:7bf8 with SMTP id
+ 98e67ed59e1d1-30e7d507e33mr346708a91.6.1747329834378; Thu, 15 May 2025
+ 10:23:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJs_Fx771FFVDVFMn8YJkR9f9Ad-UQspJ9KKQw4u6Cu4TA7YPA@mail.gmail.com>
+References: <20250515121121.2332905-1-jolsa@kernel.org> <20250515121121.2332905-12-jolsa@kernel.org>
+In-Reply-To: <20250515121121.2332905-12-jolsa@kernel.org>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Thu, 15 May 2025 10:23:41 -0700
+X-Gm-Features: AX0GCFvOzYZGcJMq-FRiyVWwx2RCzFA_BSjewcyS6sZ2xrCVPeVk9qGOofZvUKk
+Message-ID: <CAEf4Bzb0SMmKUXJic9Tqi9kLLRCwHPvd4f_9zCY26-5wC1vVng@mail.gmail.com>
+Subject: Re: [PATCHv2 perf/core 11/22] selftests/bpf: Import usdt.h from
+ libbpf/usdt project
+To: Jiri Olsa <jolsa@kernel.org>
+Cc: Oleg Nesterov <oleg@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, x86@kernel.org, 
+	Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>, 
+	John Fastabend <john.fastabend@gmail.com>, Hao Luo <haoluo@google.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Alan Maguire <alan.maguire@oracle.com>, David Laight <David.Laight@aculab.com>, 
+	=?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas@t-8ch.de>, 
+	Ingo Molnar <mingo@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, May 15, 2025 at 09:15:08AM -0700, Rob Clark wrote:
-> Basically it is a way to throttle userspace to prevent it from OoM'ing
-> itself.  (I suppose userspace could throttle itself, but it doesn't
-> really know how much pre-allocation will need to be done for pgtable
-> updates.)
+On Thu, May 15, 2025 at 5:14=E2=80=AFAM Jiri Olsa <jolsa@kernel.org> wrote:
+>
+> Importing usdt.h from libbpf/usdt project.
+>
+> Suggested-by: Andrii Nakryiko <andrii@kernel.org>
+> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+> ---
+>  tools/testing/selftests/bpf/usdt.h | 545 +++++++++++++++++++++++++++++
+>  1 file changed, 545 insertions(+)
+>  create mode 100644 tools/testing/selftests/bpf/usdt.h
+>
 
-I assume you mean prevent a single process from OOM'ing itself by queuing up
-VM_BIND requests much faster than they can be completed and hence
-pre-allocations for page tables get out of control?
+Acked-by: Andrii Nakryiko <andrii@kernel.org>
+
+[...]
 
