@@ -1,141 +1,193 @@
-Return-Path: <linux-kernel+bounces-649447-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-649444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BF06AB8500
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 13:33:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60792AB84EC
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 13:31:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E0F53AC849
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 11:31:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B89A11BC1CBA
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 11:31:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 711CB298CC8;
-	Thu, 15 May 2025 11:29:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26FC9298C1C;
+	Thu, 15 May 2025 11:28:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ICsdN3L3"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Aiw731cV";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ykBfxu2I";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Aiw731cV";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ykBfxu2I"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 168A6297B83
-	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 11:29:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0033B2989A5
+	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 11:28:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747308567; cv=none; b=ddaI5C0mJV2uriMDodBkvWQJKEYHj+i6+/9cbGpvNay9zxI4SiaV8AbGJtq0TkJKI4CXfjPYMeVwilSyX6oEBB83yCcu+N88UV98ut6OHS2XHy4EtC5tinX8ap0/OII4SE3Y7VD723LuxBJ7OahqsMbBGwGAEr3U+pdXRHI9N6U=
+	t=1747308502; cv=none; b=DsfDeCFuvpNfCGJqpdovcarDQc8XVXdnsNewV4sJPRrs3uKJa8JLr4gBEJchrN7RJ4ClJbsrkthCwpsm05Vg5ABD3C3w3Bekvnpyd6krTpoaGAO9BXcKnWvT5aco+Y3+94tJhintH/3juoa3BngIKtE79hXO830ueMx5RnXZ9ug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747308567; c=relaxed/simple;
-	bh=3oRgJw3evCQ0RL3v3GCElsf+gGhnQ22AKjk2UoQk2F8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mz3u1ynvjTuAKhYvpUX1GvJnlwD1zzVFC9LevhmYLxX9JGOzen/kGbT3E0lGefhKB6Xqz/xP9iqTEltaJq7RYQw3nd0xXX0ZiLtDdy5FgUsVZg0Cc++QFT+KH0jkrOG1p3DMik7gkAmXJqPwf7WCtYKbO0IbAGxkO/ZDmvcioaE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ICsdN3L3; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5f438523d6fso6472a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 04:29:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1747308564; x=1747913364; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QzRBye7mYNx2WfqoxFyVvS6OH01y5FZb2FkpmaNP4/E=;
-        b=ICsdN3L3vgZ4XBd1fV90DXkG1EkHqxBmcYAW+izEluvrVTnFv7iYtSsnda1pjjv3zl
-         uP59dWV3+CGq4DJ0vTyrw0D7bhhroXoO6+DJoqY4g1/kFfwCHvMdNTUyQhNs9RWPJv4I
-         h6JI+LzPsnxh76zCDRa3zDGbQZ7Kz6W0QQ/zdSlZ3I/YQ8xo35pRk9ICk4YDVpEZjDaC
-         zGQOdeVxyzaqgcSCCEMVRLOi9Z4kowLHU5JQmiT/NP/dBYam6Ccg6kNKQvNj1Hfowm+Q
-         4uvs5QpiTI0cINTxx+GD/vOf74srAdJzg5cVNKLE//FtHJaKOmBtkAgCp2eMHLAlPwz/
-         GoUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747308564; x=1747913364;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QzRBye7mYNx2WfqoxFyVvS6OH01y5FZb2FkpmaNP4/E=;
-        b=mt22QrYdSYAYA/s8av3UcDEB5pxPOhqaYjqp3TD/3fa2LTUy9RFtVn1WnQodICRIMS
-         HGFx1pqKR1P14wra/GmoxDdhoxw0gpgsY3tOEnFZPpkQ/j0NQbo7ue227mPj2UVaJK7x
-         8wdFgIHNQWTzgHb1DfXCoxZEzVtw3YEOC+GTm4Vnl39zjX8IlP6gRHNydSCsPXnwAsve
-         C1xadNee7zTkqihq6OQ37vh+nXP0WGjiRamtri94wIZ3acNTHgSJlx3DnxYGiEptw24A
-         OnLGH3zCFw+vN244qKH2kAd+h6jC/xQ9t8j9Y/Viv7Tk0XK8jA4orKlK2d+uyBBJgGqp
-         ZwWw==
-X-Forwarded-Encrypted: i=1; AJvYcCVru/JreADVt2aHqPtdd6W0YVhnkavfVvi2h4l9bTRz7VPAxh48UApFM58ufC5TEBGlKXTGbXVyk+I5yD0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyN1VCNe6SmkHgvDtoLaWbkw9vvZ6cWJGCIxmHysPN+vSzo/3NJ
-	nfj9KZz25ekyk980SycGnyAzzbLzuIlLjfROY7sEDPTunFQu4VYoKk7fDPySv/ANdlMcEzdjay6
-	v226D2zWLEq+JywQtROccUF5n+fUMX0pqscPe+ET2
-X-Gm-Gg: ASbGncsUK/MdKNFA3zeejYpFchVFL1k/7zy48/uGOzan4hacSa8YiCNw8PlkSeQgfvz
-	1pfghCfU+FzNK8Cpv7DqoOqPD3o6Ud8vJUKJ1Qh7XsJCwCR9o3HrKN7anlHJme+DYniOJboGH3d
-	rF5l6tJH9j8bEXVs6dLRWqSplyEc8A9X9/34bHOpzPj0Bjfcoz6oXUosztceCltHy9h3dEexU=
-X-Google-Smtp-Source: AGHT+IHVy/ik0Nx/Ftwe5i9orvHk49YRQhzFLLv+FVTpZQYefrx20dw09KlgkolIzPgb71jbGRhF3cI3fChWmszAhVs=
-X-Received: by 2002:a50:f69a:0:b0:5fb:eab6:cdb0 with SMTP id
- 4fb4d7f45d1cf-5ffc9db061dmr101970a12.4.1747308564180; Thu, 15 May 2025
- 04:29:24 -0700 (PDT)
+	s=arc-20240116; t=1747308502; c=relaxed/simple;
+	bh=gQvPujqngghj0Dq05iVIVhZF6wDE0w5nwGYupzIkA64=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YVow70QsYIfup42xLVO7QOzV8Qf9ItAd5bbxzI4aFPTnEkWYCRWDq5XlGYiDgQxCSzQ3bMzcHTJANywnr7iL4bSHceTnYsMFV/iyw29A5njOoaDU6Erjm1XOgLQvVGzj3W7yF17c/gOzhWWAJfBcJvoSsQ0a1qZ0+pX7FcAJEcE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Aiw731cV; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ykBfxu2I; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Aiw731cV; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ykBfxu2I; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 29B53211A5;
+	Thu, 15 May 2025 11:28:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1747308499; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Up2hJiI9AuEDVzLuKqKUlIrqcsteVNokAO6UxOmyZYs=;
+	b=Aiw731cV/YzwTnFIRYjcUSTGMSidJSBw4OZ+7RjjLakkw2lWyNvZrPLXtQOGn40+jHWHB3
+	69/0qfTLFvc9p1w9MML6ONFGEj5t+qXHW0ZbT3B+2frgIMPzcDuj0Ns0aG8p0ZYXZr87RK
+	3i7jUTsKwPGxzqt3nMySTQ0fU18DEWY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1747308499;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Up2hJiI9AuEDVzLuKqKUlIrqcsteVNokAO6UxOmyZYs=;
+	b=ykBfxu2IEiy4ptpcz0ZdIdVIm6qk8b/ON/gWYzNSfF+5QdBE9HGKCh+fa+c4Vj0R80kHgF
+	BSBv7AC5OEf/wpDQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1747308499; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Up2hJiI9AuEDVzLuKqKUlIrqcsteVNokAO6UxOmyZYs=;
+	b=Aiw731cV/YzwTnFIRYjcUSTGMSidJSBw4OZ+7RjjLakkw2lWyNvZrPLXtQOGn40+jHWHB3
+	69/0qfTLFvc9p1w9MML6ONFGEj5t+qXHW0ZbT3B+2frgIMPzcDuj0Ns0aG8p0ZYXZr87RK
+	3i7jUTsKwPGxzqt3nMySTQ0fU18DEWY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1747308499;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Up2hJiI9AuEDVzLuKqKUlIrqcsteVNokAO6UxOmyZYs=;
+	b=ykBfxu2IEiy4ptpcz0ZdIdVIm6qk8b/ON/gWYzNSfF+5QdBE9HGKCh+fa+c4Vj0R80kHgF
+	BSBv7AC5OEf/wpDQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id EA34B139D0;
+	Thu, 15 May 2025 11:28:18 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id W2AqOdLPJWjPcwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 15 May 2025 11:28:18 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id B8829A08CF; Thu, 15 May 2025 13:28:13 +0200 (CEST)
+Date: Thu, 15 May 2025 13:28:13 +0200
+From: Jan Kara <jack@suse.cz>
+To: Max Kellermann <max.kellermann@ionos.com>
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/4] fs/open: make chmod_common() and chown_common()
+ killable
+Message-ID: <2jll2ujfh2r2x54imkto3suaoe7h76ypokeaybrqdvwo2sromb@a7ep7dnpmfi3>
+References: <20250513150327.1373061-1-max.kellermann@ionos.com>
+ <20250513150327.1373061-2-max.kellermann@ionos.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250416144917.16822-1-guanyulin@google.com> <20250416144917.16822-4-guanyulin@google.com>
- <2025042518-shoplift-garnish-3a69@gregkh>
-In-Reply-To: <2025042518-shoplift-garnish-3a69@gregkh>
-From: Guan-Yu Lin <guanyulin@google.com>
-Date: Thu, 15 May 2025 19:28:00 +0800
-X-Gm-Features: AX0GCFsv2GU_vLXxmUUrchnxLmrX8mWeu2FTRQWhqt42cQtyn9lmqGje1gCTT-Y
-Message-ID: <CAOuDEK3k6Xnev_QUihv+XDMd4YDY5fz+6U7qewo=DSyE7duf_w@mail.gmail.com>
-Subject: Re: [PATCH v12 3/4] xhci: sideband: add api to trace sideband usage
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: mathias.nyman@intel.com, stern@rowland.harvard.edu, sumit.garg@kernel.org, 
-	gargaditya08@live.com, kekrby@gmail.com, jeff.johnson@oss.qualcomm.com, 
-	quic_zijuhu@quicinc.com, andriy.shevchenko@linux.intel.com, 
-	ben@decadent.org.uk, broonie@kernel.org, quic_wcheng@quicinc.com, 
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250513150327.1373061-2-max.kellermann@ionos.com>
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_COUNT_THREE(0.00)[3];
+	FROM_HAS_DN(0.00)[];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.cz:email,suse.com:email]
+X-Spam-Score: -3.80
 
-On Fri, Apr 25, 2025 at 7:14=E2=80=AFPM Greg KH <gregkh@linuxfoundation.org=
-> wrote:
->
-> On Wed, Apr 16, 2025 at 02:43:03PM +0000, Guan-Yu Lin wrote:
-> > +bool xhci_sideband_check(struct usb_hcd *hcd)
-> > +{
-> > +     struct usb_device *udev =3D hcd->self.root_hub;
-> > +     bool active;
-> > +
-> > +     device_lock(&udev->dev);
-> > +     active =3D usb_offload_check(udev);
-> > +     device_unlock(&udev->dev);
-> > +
-> > +     return active;
->
-> What happens if the value changes right after reading it?  What are you
-> going to do with the value?
->
+On Tue 13-05-25 17:03:25, Max Kellermann wrote:
+> Allows killing processes that are waiting for the inode lock.
+> 
+> Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
 
-Currently xhci_sideband_check() is only called when the xhci platform
-device is going to suspend. Given that the usb devices should be
-either already suspended or being marked as "offload_at_suspend" right
-now, it should be safe if we ensure that "offload_usage" doesn't
-change at this moment. Let me update
-usb_offload_get()/usb_offload_put() to achieve this.
+Looks good. Feel free to add:
 
-> >
-> > +     udev =3D sb->vdev->udev;
-> > +     device_lock(&udev->dev);
-> > +     ret =3D usb_offload_get(udev);
-> > +     device_unlock(&udev->dev);
->
-> A "raw" call to device_lock/unlock feels rough, and harsh, why doesn't
-> the function do that itself?
->
-> thanks,
->
-> greg k-h
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-The design is to align with usb_offload_put(). For usb_offload_put(), we
-don't need to lock the device when the device state is
-USB_STATE_NOTATTACHED. Hence, we put the device_lock()/device_unlock()
-outside of usb_offload_get()/usb_offload_put(). Let me also change the
-functions to usb_lock_device()/usb_unlock_device() for better coding
-style.
+								Honza
 
-Regards,
-Guan-Yu
+> ---
+> v2: split into separate patches
+> 
+> This part was reviewed by Christian Brauner here:
+>  https://lore.kernel.org/linux-fsdevel/20250512-unrat-kapital-2122d3777c5d@brauner/
+> 
+> Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
+> ---
+>  fs/open.c | 9 +++++++--
+>  1 file changed, 7 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/open.c b/fs/open.c
+> index a9063cca9911..d2f2df52c458 100644
+> --- a/fs/open.c
+> +++ b/fs/open.c
+> @@ -635,7 +635,9 @@ int chmod_common(const struct path *path, umode_t mode)
+>  	if (error)
+>  		return error;
+>  retry_deleg:
+> -	inode_lock(inode);
+> +	error = inode_lock_killable(inode);
+> +	if (error)
+> +		goto out_mnt_unlock;
+>  	error = security_path_chmod(path, mode);
+>  	if (error)
+>  		goto out_unlock;
+> @@ -650,6 +652,7 @@ int chmod_common(const struct path *path, umode_t mode)
+>  		if (!error)
+>  			goto retry_deleg;
+>  	}
+> +out_mnt_unlock:
+>  	mnt_drop_write(path->mnt);
+>  	return error;
+>  }
+> @@ -769,7 +772,9 @@ int chown_common(const struct path *path, uid_t user, gid_t group)
+>  		return -EINVAL;
+>  	if ((group != (gid_t)-1) && !setattr_vfsgid(&newattrs, gid))
+>  		return -EINVAL;
+> -	inode_lock(inode);
+> +	error = inode_lock_killable(inode);
+> +	if (error)
+> +		return error;
+>  	if (!S_ISDIR(inode->i_mode))
+>  		newattrs.ia_valid |= ATTR_KILL_SUID | ATTR_KILL_PRIV |
+>  				     setattr_should_drop_sgid(idmap, inode);
+> -- 
+> 2.47.2
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
