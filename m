@@ -1,114 +1,103 @@
-Return-Path: <linux-kernel+bounces-649471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-649477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CB6FAB8534
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 13:49:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 57BF2AB854A
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 13:51:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF4CA18977DD
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 11:49:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 314C41BA22F4
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 11:51:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C299D298271;
-	Thu, 15 May 2025 11:49:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED473298C32;
+	Thu, 15 May 2025 11:51:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WWFhqUFf"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="BCqr3+JK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1FD818DB37;
-	Thu, 15 May 2025 11:49:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F39C329899E;
+	Thu, 15 May 2025 11:51:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747309742; cv=none; b=iw7uWMjSQcBzPc7fXlbZG9WV7zVTizPcF8kVZ6vw40anTry6xatF6E7OQyXx3e5tRosySQGU+FBSwuNqtsPHELUIusqdb2XmuYmNP3gBJd6CrSvodegYT1yAk1CQDT9/rVJHueRRXoM9vmFdKBYVJQSrR/WDUS/x9J4XowiBUzY=
+	t=1747309868; cv=none; b=GcN5aDAZwLkonaukOUDNtjqNQmeQZihXzNkB7m895MU2HTCZo3ZCnnnwXk3Z4s8LWSy+pTUPZ2hwFAcLQed5IPWOj21OsryG3N4qQ/Xka76OulRm/W1hpyxuiuESyaua0nIhjlrisI8zPqowEfolZZmeQ09SRRATwrrkU9y6vII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747309742; c=relaxed/simple;
-	bh=+UrfJA0kWpQhsXymgUbijz4kmy6evjIkw5lKxUYPVSk=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=ERCF66gNAqwql4vViH/Cmr6ni6sPBhMDqHK11Umfu9xJ70E49oUd4MLHKoKuVzKbMBkykOEIfwgMt/kNeOx0QuvO3EKAQHoaIhtzu44fdmR8AfbosN9mt2ZgG87PNewNgozQ5wmjBP7Tmdw2yBFSREXTC1dxREK8nNfx0IVvYiQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WWFhqUFf; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1747309741; x=1778845741;
-  h=from:to:cc:in-reply-to:references:subject:message-id:
-   date:mime-version:content-transfer-encoding;
-  bh=+UrfJA0kWpQhsXymgUbijz4kmy6evjIkw5lKxUYPVSk=;
-  b=WWFhqUFfnDK+jf4mk613KkIQJBet3aI66ZDASCmDiwgAhNntJETgKcGi
-   9Eivr05oJo9sGxEMWBB8hoQwRqXLUXpxB6+N1hzk4fDoBOIz2oRQe/WYR
-   HwOi0ECBa7Pg/y5iEVLmTpG5q1ha4dwu3MfjtY9uOLoPymyohmtPLv5PG
-   secSvtf62ZC5VoOh1xkqZjoHFeguZPdkuD03JBLawIsJ5l4ucs8suQOiy
-   bS652cFH3gsL7jlZsYrlTrTXJ94EONy5Bvb1IG5ktRPDUPUO95cUG1Dko
-   pItrF5B94gR761r+IF8kSRYQkIjjmYDydEvxp4yVmAbyNRuZyhpDcc/Tl
-   g==;
-X-CSE-ConnectionGUID: Nt+DQEdiRcqIkV/mmv1jEw==
-X-CSE-MsgGUID: oZJHM1kYSMK+MMy0Rfyivw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11433"; a="71750349"
-X-IronPort-AV: E=Sophos;i="6.15,291,1739865600"; 
-   d="scan'208";a="71750349"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2025 04:48:59 -0700
-X-CSE-ConnectionGUID: P1TP7DtjS2ep0rddaKbbwg==
-X-CSE-MsgGUID: t4Bo2VtESbKcexAMVdiBQA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,291,1739865600"; 
-   d="scan'208";a="143452561"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.157])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2025 04:48:57 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To: hdegoede@redhat.com, 
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Cc: platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250508230250.1186619-1-srinivas.pandruvada@linux.intel.com>
-References: <20250508230250.1186619-1-srinivas.pandruvada@linux.intel.com>
-Subject: Re: [PATCH v3 0/5] intel-uncore-freq: Add agent_types and die_id
- attributes
-Message-Id: <174730973209.2036.3411257270314629381.b4-ty@linux.intel.com>
-Date: Thu, 15 May 2025 14:48:52 +0300
+	s=arc-20240116; t=1747309868; c=relaxed/simple;
+	bh=uzV7iVarlKgq0MA+9EScPwftRklHr0wRg/TqVeBJYIw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gJe9uA5I9dmdmGrWOg/inh10N3PIOiM8etwXU+u9D3bqrLVqoBIYmkW3Rpw7m9H6SqI9hHWIgOOzVhmr2EsICFsY3uz8UDhWYi+K0aLQQ2PVKQu5yezdXpGwuaYqQLuAYrqInfK4UoD+kD4pNElHE9K+TyOEI93bIkiC87ZwORw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=BCqr3+JK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A541C4CEE7;
+	Thu, 15 May 2025 11:51:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1747309867;
+	bh=uzV7iVarlKgq0MA+9EScPwftRklHr0wRg/TqVeBJYIw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BCqr3+JKZNTQ2riFaJ5zZXWDSukWex3bIPuBaHTXfXsaS7uFIkp4EQyfgJSZjwF7F
+	 IeQZ5Rb4WlvNX5MeciFZ+5UAiXJRRTex8f8Ep8M9RkRP2BKWr1pEJj3z+g4I3VaJEO
+	 4oCgzwZNT2j5zxgEE/gmAizsxkTatohbU+GYPKxo=
+Date: Thu, 15 May 2025 13:49:19 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+Cc: Matthias Kaehlcke <mka@chromium.org>,
+	Benjamin Bara <benjamin.bara@skidata.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Klaus Goger <klaus.goger@theobroma-systems.com>,
+	Lukasz Czechowski <lukasz.czechowski@thaumatec.com>,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, stable@vger.kernel.org
+Subject: Re: [PATCH v2 2/5] dt-bindings: usb: cypress,hx3: Add support for
+ all variants
+Message-ID: <2025051550-polish-prude-ed56@gregkh>
+References: <20250425-onboard_usb_dev-v2-0-4a76a474a010@thaumatec.com>
+ <20250425-onboard_usb_dev-v2-2-4a76a474a010@thaumatec.com>
+ <3784948.RUnXabflUD@diego>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <3784948.RUnXabflUD@diego>
 
-On Thu, 08 May 2025 16:02:37 -0700, Srinivas Pandruvada wrote:
-
-> Add two new attributes, so that orchestration software like Kubernetes can
-> target specific dies and agents for uncore frequency control.
+On Thu, May 15, 2025 at 01:43:59PM +0200, Heiko Stübner wrote:
+> Am Freitag, 25. April 2025, 17:18:07 Mitteleuropäische Sommerzeit schrieb Lukasz Czechowski:
+> > The Cypress HX3 hubs use different default PID value depending
+> > on the variant. Update compatibles list.
+> > Becasuse all hub variants use the same driver data, allow the
+> > dt node to have two compatibles: leftmost which matches the HW
+> > exactly, and the second one as fallback.
+> > 
+> > Fixes: 1eca51f58a10 ("dt-bindings: usb: Add binding for Cypress HX3 USB 3.0 family")
+> > Cc: stable@vger.kernel.org # 6.6
+> > Cc: stable@vger.kernel.org # Backport of the patch ("dt-bindings: usb: usb-device: relax compatible pattern to a contains") from list: https://lore.kernel.org/linux-usb/20250418-dt-binding-usb-device-compatibles-v2-1-b3029f14e800@cherry.de/
+> > Cc: stable@vger.kernel.org # Backport of the patch in this series fixing product ID in onboard_dev_id_table in drivers/usb/misc/onboard_usb_dev.c driver
+> > Signed-off-by: Lukasz Czechowski <lukasz.czechowski@thaumatec.com>
 > 
-> v3:
-> Patch 1/5 has changes to change to loops
+> Looking at linux-next, it seems like patch1 of this series was applied [0].
+
+It is in 6.15-rc6, not "just" linux-next
+
+> The general convention would be for the binding (this patch) also going
+> through a driver tree.
 > 
-> v2:
-> In patch 5/5 fix grammar as reported by Alok Tiwari
+> I guess I _could_ apply it together with the board-level patches, but
+> for that would need an Ack from Greg .
 > 
-> [...]
+> @Greg, do you want to merge this patch ?
 
+I thought a new series was going to be sent for some reason, which would
+make this a lot easier.  But if you want to just take this one now,
+that's fine with me as it's not in my queue.
 
-Thank you for your contribution, it has been applied to my local
-review-ilpo-next branch. Note it will show up in the public
-platform-drivers-x86/review-ilpo-next branch only once I've pushed my
-local branch there, which might take a while.
+thanks,
 
-The list of commits applied:
-[1/5] platform/x86/intel-uncore-freq: Add attributes to show agent types
-      commit: b98fa870fce2335433f20b2213e526b8d99e15dc
-[2/5] Documentation: admin-guide: pm: Add documentation for agent_types
-      commit: bfbe7729d6dd2e2c8ef44f9179ad11ab766150e6
-[3/5] platform/x86/intel: power-domains: Add interface to get Linux die ID
-      commit: e37be5d85c602e07c1e2930c2cc98ebd46f9ecf7
-[4/5] platform/x86/intel-uncore-freq: Add attributes to show die_id
-      commit: 247b43fcd8722914282fbd432e9cc41cd3971e31
-[5/5] Documentation: admin-guide: pm: Add documentation for die_id
-      commit: e636e3f7421b2ff8e706a835f78f071cb0d8e197
-
---
- i.
-
+greg k-h
 
