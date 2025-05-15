@@ -1,335 +1,148 @@
-Return-Path: <linux-kernel+bounces-650384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-650386-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54C01AB90C3
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 22:24:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A55BAB90C7
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 22:25:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D59AC176898
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 20:24:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD1AB1BC4C0E
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 20:25:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABD0929B229;
-	Thu, 15 May 2025 20:24:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B73F529B237;
+	Thu, 15 May 2025 20:25:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vR31NpxZ"
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="gJKDU4Mf"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6D25299933
-	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 20:24:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 903B01F5827
+	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 20:25:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747340649; cv=none; b=KLhjz8M4ikCAAvRk1kH92Se2cHElj2UYPSjtdqVURzwUlKPgVNX4Ttajn3lDBMS7X7TDlmaDo0DbLTu/XdG1LkZM66k1/WIs2WrIDdR2gIeOpGmd766dL7kvuu1eWBoeRUErHJNqezG3/9qyhGhYzwqGge8As6neAheO6ubvbC8=
+	t=1747340729; cv=none; b=RUjKTg+60p4bJRgTQPixE/ztWJFtsmP/caN3/GPliXMqVgQPa3pYze/NVQ9lXez4BHkbBzhNEeZPcAv7yMpc+iJYxsqZaZt111eqG0HRm7/c9CmFscOLPstZLJIP1a1KExS6kjhIxGbku8bb0OvSANeRi0y+ZpR0xphkDrx+xuE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747340649; c=relaxed/simple;
-	bh=+kMqPl0JDQX7QaGiLL+7LffY8No4gEZI/PY3gX1O+3M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rRwoHK8QkYTmrT8fg7fCPPDkwcVF+b8ACx07C1ZD9fvLdPRtfspKB3Cl3WkeIbgdeQWyjL/bRMe4aF/xsF/gVX8O5JO0N6abCWfEScE7dRqJJjvPQcxGSXEKdAsbPwwoHlh+GqmRAhaWQ9ytTMA9peeF6GUKXV58rZUbAsa1rko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vR31NpxZ; arc=none smtp.client-ip=209.85.216.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-30e7bfef27dso295043a91.0
-        for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 13:24:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1747340647; x=1747945447; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=V2VSQyhTZNV0jvE/2WckSMtS0BAnsxh057td4KI4roM=;
-        b=vR31NpxZu4LV64sFMxPKBqLZ+9y+SSKZxWVxHeusVkHcDu5dT10QZKZx1+vaGlngZg
-         UXCFikaqCNIg1M8GsfRWXZj9MmZBVH1NbMSLE54OdXehyoATD15boYIb/ZelZwrtNK8m
-         7r+TOWfE0CqOd0jJ5+O1qKxshvBa/hYDzZENc66sp9orB6eBT1M7qG3xjVDtifADklFe
-         8opgwi1+XkdSbc/RvtcKNYE5+AXBtZ1CzpIuKhoI1q6zkAhZXZApzbkTRggdR384bRhF
-         l4ita13wBQrJ6Byo4UqWMI0FShyhfc4GzKIM8RWFrnDw6c6E8Kzs2Uchs92+rzMxhTGS
-         +orA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747340647; x=1747945447;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=V2VSQyhTZNV0jvE/2WckSMtS0BAnsxh057td4KI4roM=;
-        b=nY3DHkHfWtBwqweSiPXUeRLOtHHk1LevbcHNTd1zKy23I0LAowULUPv6VbZWpnkFi/
-         5KmtpD3jcua4sqr12TcoE85fPcEikbHqsuoXdnvB8QbcFswoi1NGGC3dLZzybyW7Dzmn
-         Y0UitsRClsdpp6hN3TFmpS6xURDHR8opjflohu3/IdljUvd7R6aidQ35RDUn47zJGLCX
-         pkI2UTRYaQb4ishxILUOI/C/q/y+uRZcrpX0dzlt6Ho0s+T9ghlLmXeuZGwvL5TFl0ys
-         IN1KHcKEr3Gj/i9QzZffIJs844R7D4UuhSZhS7fO4IkDGYLuAKA2lJ+qYTTJPlYP+zpe
-         ocaw==
-X-Forwarded-Encrypted: i=1; AJvYcCUz+SHqmDd80sMMaCoaJnWw5ReWqkx48NnFVDIE1y8t7jpXCsdKt8iEaqhWvJuOOQ61PK4RRVNb5jUcPdw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzL1P/td4WpisLZPBKrF/bJQSc7fYSe4JOjF03YQ4hs3eUtGHvE
-	Nwcg5GiVfYO/hyfKGIQVXQ9T/SQCfB9XI0t6Z1lPir4tRG0uM6fS3VghVUSLFqkiQfk=
-X-Gm-Gg: ASbGnct2izD1+9VdhkuNpowBrEdy42w9ljAHKQ+8OYB3euyS4ktJDU6Gkd2PsUArJE4
-	ixZ5NEjRRvocqWFRvpN9kgB8eiNVZH2B6BEAikeGdoN3hlY+7kAmfLV/QBf9E0ydq+WFzZOUE/o
-	YkpswZrJNGL+5aP62MPG6xN6ZwiKwwfGTYnZiEaWfW/hZhdfz7hQsAHP5o/4xZbLKSP9BKdxTNE
-	cRecCUV4LlHyfVVMUjxABp+BCetCS3TxW9dCUsFN9FREPm7n8+V1bAtJ4YTwIceKu0gds/JQbq+
-	k5ugC5CdXqgdXHrro7zM40z6H6CJOoNMIDrQM9EsvIQCUpGiFvvf8evnR5Et025hYQ==
-X-Google-Smtp-Source: AGHT+IEUFKVx7oIa2XqCPU17O56pYWL4lei0a4c8lfjHEvBMewyutxU8qjTgh8IMG0LEf2+RATTOXg==
-X-Received: by 2002:a17:90b:3a88:b0:30e:7b3b:b901 with SMTP id 98e67ed59e1d1-30e7d558c1emr1000521a91.18.1747340646700;
-        Thu, 15 May 2025 13:24:06 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:1d7a:b4f2:fe56:fa4e])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-30e334fb0d0sm3879347a91.41.2025.05.15.13.24.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 May 2025 13:24:06 -0700 (PDT)
-Date: Thu, 15 May 2025 14:24:04 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Dawei Li <dawei.li@linux.dev>
-Cc: andersson@kernel.org, linux-remoteproc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, set_pte_at@outlook.com
-Subject: Re: [PATCH v2 1/3] rpmsg: char: Reuse eptdev logic for anon device
-Message-ID: <aCZNZPkb5oPZiz9G@p14s>
-References: <20250509155927.109258-1-dawei.li@linux.dev>
- <20250509155927.109258-2-dawei.li@linux.dev>
+	s=arc-20240116; t=1747340729; c=relaxed/simple;
+	bh=UByHk4M1G+jCLtezPz26iijhvUskQ3D9UHUSD+CWFP8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RPAVgNkP9RJYoJOlq+xgmof/VAtB1OQxHnVcoXViLjmOG3oNrzfNjp50NPQsHwD5ntR3Iqta+iPLhimtIDPVpxfcfGGYZwR6NmB0GWDWSmpQFKYVqDcqyqThxpJNo/3hfs92lL01xEEy3LLLa0AeOW6n+5qNDuuy71MQ5QzHSqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=gJKDU4Mf; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [172.27.3.244] ([76.133.66.138])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 54FKOiar3684076
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Thu, 15 May 2025 13:24:45 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 54FKOiar3684076
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025042001; t=1747340686;
+	bh=wKRRKSoScdWzuK4LlPzka9ZNoM1J1rtc/6+sJ4Fs1a4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=gJKDU4MfBzkQmOtQ+brwkqwBjCxpL4Aoh5vuHM2zX07AMP1wouqPEkZ8t8Zginx95
+	 wrmSUhstmpIg3W+8NMVN1RGPGaCkTLgFMExrIr20QNTYQRF46w1HKoY9N6cJgNIhyK
+	 YfMXFT27hXu6tuIYlmOvWObaWramdivO/S6ueWlBtJVzLXf7gEn2jGGveuRTSOLWRj
+	 ITIda0Xuqsd0g1cIxraDOX6VAsxa53a1lW4KgwnGcozRFvWOR9nw+SD9cjfC3VTvtl
+	 a476jFIreR9+e7oW2CgniF1eXFe20zxaA95VXTbYl8aUxx0lJ3rvMXY0vwewtm9KAu
+	 aiJHfA6ipWCUA==
+Message-ID: <8d61e7a2-5eba-43c8-a38d-ca6ae59172b5@zytor.com>
+Date: Thu, 15 May 2025 13:24:44 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250509155927.109258-2-dawei.li@linux.dev>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5/6] x86/paravirt: Switch MSR access pv_ops functions to
+ instruction interfaces
+To: Xin Li <xin@zytor.com>,
+        =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?=
+ <jgross@suse.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org,
+        virtualization@lists.linux.dev, Peter Zijlstra <peterz@infradead.org>
+Cc: Ajay Kaher <ajay.kaher@broadcom.com>,
+        Alexey Makhalov <alexey.amakhalov@broadcom.com>,
+        Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>,
+        Thomas Gleixner
+ <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        xen-devel@lists.xenproject.org
+References: <20250506092015.1849-1-jgross@suse.com>
+ <20250506092015.1849-6-jgross@suse.com>
+ <722f5b30-20e9-4540-98e4-d211d7c44cbe@zytor.com>
+ <9f4e33d5-9cb3-4079-b764-87a15265fd52@suse.com>
+ <ff567466-a46a-4f66-935a-8fae1140c1a2@suse.com>
+ <eb077393-ea95-4ac0-9479-980e227f7bff@zytor.com>
+ <6cc20ef6-d8e5-4c74-89d9-6a949c84b397@suse.com>
+ <DDA7C560-1BD9-40A6-8B93-28D5AC10EBB2@zytor.com>
+ <652dfd63-e41c-4d7a-8fea-40509e8191ef@zytor.com>
+Content-Language: en-US
+From: "H. Peter Anvin" <hpa@zytor.com>
+In-Reply-To: <652dfd63-e41c-4d7a-8fea-40509e8191ef@zytor.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi,
+On 5/15/25 00:32, Xin Li wrote:
+> 
+> Hi Juergen,
+> 
+> I have some update on this thread while working on it.
+> 
+> If we continue down the path of maintaining pvops MSR APIs as this patch
+> series does, it seems we’ll need to duplicate the ALTERNATIVE code in
+> three different places.
+> 
+> 1) The MSR access primitives defined in <asm/msr.h>, which is used when
+>     CONFIG_PARAVIRT=n.
+> 
+> 2) The pvops native MSR functions pv_native_{rd,wr}msr{,_safe}() defined
+>     in arch/x86/kernel/paravirt.c, used when CONFIG_PARAVIRT=y on bare
+>     metal.
+> 
+> 3) The pvops Xen MSR functions paravirt_{read,write}_msr{,_safe}()
+>     defined in <asm/paravirt.h>, used when CONFIG_PARAVIRT_XXL=y.
+> 
+> hpa had mentioned to me earlier that this would be a maintenance burden
+> — something I only truly realized once I got hands-on with it.
+> 
+> Maybe you have something in mind to address it?
+> 
+> Also add PeterZ to the To list because he cares it.
+> 
 
-On Fri, May 09, 2025 at 11:59:25PM +0800, Dawei Li wrote:
-> Current uAPI implementation for rpmsg ctrl & char device manipulation is
-> abstracted in procedures below:
-> 
-> Current uAPI implementation for rpmsg ctrl & char device manipulation is
-> abstracted in procedures below:
-> - fd = open("/dev/rpmsg_ctrlX")
-> - ioctl(fd, RPMSG_CREATE_EPT_IOCTL, &info); /dev/rpmsgY devnode is
->   generated.
-> - fd_ep = open("/dev/rpmsgY", O_RDWR)
-> - operations on fd_ep(write, read, poll ioctl)
-> - ioctl(fd_ep, RPMSG_DESTROY_EPT_IOCTL)
-> - close(fd_ep)
-> - close(fd)
-> 
-> This /dev/rpmsgY abstraction is less favorable for:
-> - Performance issue: It's time consuming for some operations are
-> invovled:
->   - Device node creation.
->     Depends on specific config, especially CONFIG_DEVTMPFS, the overall
->     overhead is based on coordination between DEVTMPFS and userspace
->     tools such as udev and mdev.
-> 
->   - Extra kernel-space switch cost.
-> 
->   - Other major costs brought by heavy-weight logic like device_add().
-> 
-> - /dev/rpmsgY node can be opened only once. It doesn't make much sense
->     that a dynamically created device node can be opened only once.
-> 
-> - For some container application such as docker, a client can't access
->   host's dev unless specified explicitly. But in case of /dev/rpmsgY, which
->   is generated dynamically and whose existence is unknown for clients in
->   advance, this uAPI based on device node doesn't fit well.
-> 
-> An anon inode based approach is introduced to address the issues above.
-> Rather than generating device node and opening it, rpmsg code just make
-> a anon inode representing eptdev and return the fd to userspace.
+Having the code being duplicated is definitely not a good thing; 
+although I'm not one of the x86 maintainers anymore, I would consider it 
+a strong reason to NAK such a patchset.
 
-Please change occurences of "anon" for "anonyous".  "Anon" was used to avoid
-writing "anonymous" all the time in the code, but description should not use the
-shorthand.  In the title, this patch and all other patches.
+At one point I was considering augmenting the alternatives framework to 
+be able to call an ad hoc subroutine to generate the code. It would be 
+useful in cases like this, where if PV is enabled it can make a callout 
+to the currently-active PV code to query the desired code to be output.
 
-> 
-> The legacy abstraction based on struct dev and struct cdev is honored
-> for:
-> - Avoid legacy uAPI break(RPMSG_CREATE_EPT_IOCTL)
-> - Reuse existing logic:
->   -- dev_err() and friends.
->   -- Life cycle management of struct device.
-> 
-> Signed-off-by: Dawei Li <dawei.li@linux.dev>
-> ---
->  drivers/rpmsg/rpmsg_char.c | 80 ++++++++++++++++++++++++++------------
->  1 file changed, 56 insertions(+), 24 deletions(-)
-> 
-> diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
-> index eec7642d2686..5b2a883d6236 100644
-> --- a/drivers/rpmsg/rpmsg_char.c
-> +++ b/drivers/rpmsg/rpmsg_char.c
-> @@ -91,7 +91,8 @@ int rpmsg_chrdev_eptdev_destroy(struct device *dev, void *data)
->  	/* wake up any blocked readers */
->  	wake_up_interruptible(&eptdev->readq);
->  
-> -	cdev_device_del(&eptdev->cdev, &eptdev->dev);
-> +	if (eptdev->dev.devt)
-> +		cdev_device_del(&eptdev->cdev, &eptdev->dev);
->  	put_device(&eptdev->dev);
->  
->  	return 0;
-> @@ -132,21 +133,17 @@ static int rpmsg_ept_flow_cb(struct rpmsg_device *rpdev, void *priv, bool enable
->  	return 0;
->  }
->  
-> -static int rpmsg_eptdev_open(struct inode *inode, struct file *filp)
-> +static int __rpmsg_eptdev_open(struct rpmsg_eptdev *eptdev)
->  {
-> -	struct rpmsg_eptdev *eptdev = cdev_to_eptdev(inode->i_cdev);
->  	struct rpmsg_endpoint *ept;
->  	struct rpmsg_device *rpdev = eptdev->rpdev;
->  	struct device *dev = &eptdev->dev;
->  
-> -	mutex_lock(&eptdev->ept_lock);
->  	if (eptdev->ept) {
-> -		mutex_unlock(&eptdev->ept_lock);
->  		return -EBUSY;
->  	}
->  
->  	if (!eptdev->rpdev) {
-> -		mutex_unlock(&eptdev->ept_lock);
->  		return -ENETRESET;
->  	}
->  
-> @@ -164,21 +161,32 @@ static int rpmsg_eptdev_open(struct inode *inode, struct file *filp)
->  	if (!ept) {
->  		dev_err(dev, "failed to open %s\n", eptdev->chinfo.name);
->  		put_device(dev);
-> -		mutex_unlock(&eptdev->ept_lock);
->  		return -EINVAL;
->  	}
->  
->  	ept->flow_cb = rpmsg_ept_flow_cb;
->  	eptdev->ept = ept;
-> -	filp->private_data = eptdev;
-> -	mutex_unlock(&eptdev->ept_lock);
->  
->  	return 0;
->  }
->  
-> -static int rpmsg_eptdev_release(struct inode *inode, struct file *filp)
-> +static int rpmsg_eptdev_open(struct inode *inode, struct file *filp)
->  {
->  	struct rpmsg_eptdev *eptdev = cdev_to_eptdev(inode->i_cdev);
-> +	int ret;
-> +
-> +	mutex_lock(&eptdev->ept_lock);
-> +	ret = __rpmsg_eptdev_open(eptdev);
-> +	if (!ret)
-> +		filp->private_data = eptdev;
-> +	mutex_unlock(&eptdev->ept_lock);
-> +
-> +	return ret;
-> +}
-> +
-> +static int rpmsg_eptdev_release(struct inode *inode, struct file *filp)
-> +{
-> +	struct rpmsg_eptdev *eptdev = filp->private_data;
->  	struct device *dev = &eptdev->dev;
->  
->  	/* Close the endpoint, if it's not already destroyed by the parent */
-> @@ -400,12 +408,13 @@ static void rpmsg_eptdev_release_device(struct device *dev)
->  	struct rpmsg_eptdev *eptdev = dev_to_eptdev(dev);
->  
->  	ida_free(&rpmsg_ept_ida, dev->id);
-> -	ida_free(&rpmsg_minor_ida, MINOR(eptdev->dev.devt));
-> +	if (eptdev->dev.devt)
-> +		ida_free(&rpmsg_minor_ida, MINOR(eptdev->dev.devt));
->  	kfree(eptdev);
->  }
->  
-> -static struct rpmsg_eptdev *rpmsg_chrdev_eptdev_alloc(struct rpmsg_device *rpdev,
-> -						      struct device *parent)
-> +static struct rpmsg_eptdev *__rpmsg_chrdev_eptdev_alloc(struct rpmsg_device *rpdev,
-> +							struct device *parent, bool cdev)
+There are 16 unused bits in the alternatives table (not counting the 14 
+unused flag bits), which could be used for an enumeration of such 
+subroutines, optionally split into 8 bits of function enumeration and 8 
+bits of private data. In this case, the "replacement" pointer becomes 
+available as a private pointer; possibly to a metadata structure used by 
+the subroutine.
 
+This could also be used to significantly enhance the static-immediate 
+framework, by being able to have explicit code which handles the 
+transformations instead of needing to rely on assembly hacks. That way 
+we might even be able to do that kind of transformations for any 
+ro_after_init value.
 
-I would simply rename this rpmsg_eptdev_alloc() and then use is in
-rpmsg_chrdev_eptdev_alloc() and rpmsg_anonynous_eptdev_alloc()
+I think the biggest concern is how this would affect objtool, since 
+objtool would now not have any kind of direct visibility into the 
+possibly generated code. How to best feed the information objtool needs 
+to it would be my biggest question (in part because I don't know what 
+objtool would actually need.)
 
->  {
->  	struct rpmsg_eptdev *eptdev;
->  	struct device *dev;
-> @@ -428,33 +437,50 @@ static struct rpmsg_eptdev *rpmsg_chrdev_eptdev_alloc(struct rpmsg_device *rpdev
->  	dev->groups = rpmsg_eptdev_groups;
->  	dev_set_drvdata(dev, eptdev);
->  
-> -	cdev_init(&eptdev->cdev, &rpmsg_eptdev_fops);
-> -	eptdev->cdev.owner = THIS_MODULE;
-> +	if (cdev) {
-> +		cdev_init(&eptdev->cdev, &rpmsg_eptdev_fops);
-> +		eptdev->cdev.owner = THIS_MODULE;
-> +	}
->  
->  	return eptdev;
->  }
->  
-> -static int rpmsg_chrdev_eptdev_add(struct rpmsg_eptdev *eptdev, struct rpmsg_channel_info chinfo)
-> +static struct rpmsg_eptdev *rpmsg_chrdev_eptdev_alloc(struct rpmsg_device *rpdev,
-> +						      struct device *parent)
-> +{
-> +	return __rpmsg_chrdev_eptdev_alloc(rpdev, parent, true);
-> +}
-> +
-> +static int __rpmsg_chrdev_eptdev_add(struct rpmsg_eptdev *eptdev,
-> +				     struct rpmsg_channel_info chinfo, bool cdev)
+	-hpa
 
-Same here, rpmsg_eptdev_add()
-
->  {
->  	struct device *dev = &eptdev->dev;
->  	int ret;
->  
->  	eptdev->chinfo = chinfo;
->  
-> -	ret = ida_alloc_max(&rpmsg_minor_ida, RPMSG_DEV_MAX - 1, GFP_KERNEL);
-> -	if (ret < 0)
-> -		goto free_eptdev;
-> -	dev->devt = MKDEV(MAJOR(rpmsg_major), ret);
-> +	if (cdev) {
-> +		ret = ida_alloc_max(&rpmsg_minor_ida, RPMSG_DEV_MAX - 1, GFP_KERNEL);
-> +		if (ret < 0)
-> +			goto free_eptdev;
->  
-> +		dev->devt = MKDEV(MAJOR(rpmsg_major), ret);
-> +	}
-> +
-> +	/* Anon inode device still need dev name for dev_err() and friends */
->  	ret = ida_alloc(&rpmsg_ept_ida, GFP_KERNEL);
->  	if (ret < 0)
->  		goto free_minor_ida;
->  	dev->id = ret;
->  	dev_set_name(dev, "rpmsg%d", ret);
->  
-> -	ret = cdev_device_add(&eptdev->cdev, &eptdev->dev);
-> -	if (ret)
-> -		goto free_ept_ida;
-> +	ret = 0;
-> +
-> +	if (cdev) {
-> +		ret = cdev_device_add(&eptdev->cdev, &eptdev->dev);
-> +		if (ret)
-> +			goto free_ept_ida;
-> +	}
->  
->  	/* We can now rely on the release function for cleanup */
->  	dev->release = rpmsg_eptdev_release_device;
-> @@ -464,7 +490,8 @@ static int rpmsg_chrdev_eptdev_add(struct rpmsg_eptdev *eptdev, struct rpmsg_cha
->  free_ept_ida:
->  	ida_free(&rpmsg_ept_ida, dev->id);
->  free_minor_ida:
-> -	ida_free(&rpmsg_minor_ida, MINOR(dev->devt));
-> +	if (cdev)
-> +		ida_free(&rpmsg_minor_ida, MINOR(dev->devt));
->  free_eptdev:
->  	put_device(dev);
->  	kfree(eptdev);
-> @@ -472,6 +499,11 @@ static int rpmsg_chrdev_eptdev_add(struct rpmsg_eptdev *eptdev, struct rpmsg_cha
->  	return ret;
->  }
->  
-> +static int rpmsg_chrdev_eptdev_add(struct rpmsg_eptdev *eptdev, struct rpmsg_channel_info chinfo)
-> +{
-> +	return __rpmsg_chrdev_eptdev_add(eptdev, chinfo, true);
-> +}
-> +
->  int rpmsg_chrdev_eptdev_create(struct rpmsg_device *rpdev, struct device *parent,
->  			       struct rpmsg_channel_info chinfo)
->  {
-> -- 
-> 2.25.1
-> 
 
