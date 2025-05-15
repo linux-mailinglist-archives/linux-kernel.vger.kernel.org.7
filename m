@@ -1,238 +1,162 @@
-Return-Path: <linux-kernel+bounces-648707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-648709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78650AB7AAE
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 02:42:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC942AB7AB3
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 02:43:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14CD34C73F5
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 00:42:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A48F8C472C
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 00:43:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5370C7260D;
-	Thu, 15 May 2025 00:42:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 362BE72623;
+	Thu, 15 May 2025 00:43:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Srbfwyos"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WtR2M5CK"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C9908F66;
-	Thu, 15 May 2025 00:42:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FAEF1DDE9
+	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 00:43:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747269754; cv=none; b=csRAkAZ+iCX6h57LM468nnGQfn1Ao2EKlwa6ukb8COldktrGmmMTbtIWtMQfe6rNIT0IqoWH6M2gYYWwvoEc2ToN23BXRVvuwuMui/55rq2rU5/b+p1nwwL1gLztVKCdbY92oQllcjh7Qf1NDUdKu+rNs45F85DI5Kprz/BrhYk=
+	t=1747269804; cv=none; b=ZrwgJr5WzHerG+4WZgaiPQhLMWyr70nsKAoT4Qsp9Djh3cxTJb5+azwhl2e5royUB2iyDKrP8OIjjpOIX+E+7uBJf7I0lFx01s3qVQ2K8npUpabUsAQmoQJZxj2gFWlhX32Zo81CeOLIrdTPEqA806ZyGt/I9b5Zrd+nB/KHsas=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747269754; c=relaxed/simple;
-	bh=Jj9rZa3izoGXcM992ohp3v3M45235wdqTvdJRYPXBm8=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=YjTrlPwK940WueCBuOznWOvE8fQQEdjtCCAAJ31ZoMcDvVTsp30xG0zlasQ7BaTEBmoIF68eIAxZx4D44I1ENcZHF6BnKSva71dxN8PhPcy0rgtW7dwy2sryFY8Ajl7wq1Qdx5EOFq5FNMHRTcZrezbbspsf4J4cYsDHlIeQzu8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Srbfwyos; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 628DAC4CEE3;
-	Thu, 15 May 2025 00:42:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747269754;
-	bh=Jj9rZa3izoGXcM992ohp3v3M45235wdqTvdJRYPXBm8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Srbfwyos5e2kIDRWuI3DZ/j4W49UbwYtkFzssehg+9B8+Mu3CYSiXwPhGmddd65HU
-	 zLXCaXCkP/hpy0ItDRgYyP81COjgeYSaUo6IeeQzTNnccIZsQFl5PD9xRnP/5roHVs
-	 3ebgLaWqpRtg3uFsqm3Xe5VFchXmMLMwb13VSmHZ1bKc6Mz11RZOxOTCmvBs83Xm1L
-	 0zAmlsVFudy1FiKo+V3rU5ew57rTkLvc8nIL1ZmDDkxmsje2CiYrhK5Bv+a9OHVWiS
-	 O047PGlVUcWXZkZ+UA5WpT6oBIj0ypnFV8Fkzun3uQM7qqPxK4n78HWXPf2aCr7I7E
-	 GX7UQHgs4O5EA==
-Date: Thu, 15 May 2025 09:42:30 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH] tracing: ring_buffer: Rewind persistent ring buffer
- when reboot
-Message-Id: <20250515094230.5c84ca613bd3ebdc9063e13e@kernel.org>
-In-Reply-To: <20250514090050.52db97ed@batman.local.home>
-References: <174709742769.1964496.18203163435305117893.stgit@mhiramat.tok.corp.google.com>
-	<20250513203237.0e7ff662@gandalf.local.home>
-	<20250514150059.6edf09bd72862ca175b64c98@kernel.org>
-	<20250514090050.52db97ed@batman.local.home>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1747269804; c=relaxed/simple;
+	bh=sh3HU8ZTmV1xK08ux3gq1GamRBC3N2HLZmWvZ+uSV+c=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=DGknJT/cB7VmbGHFF4jKCt4NCUzEWoa84TzWv1n1ed6j2peDoNTjljk8gx/u4JZ9eXFU2kS7m2HrtuL5/7rNAwowQCUBAEd1q+vJt+Fi9ttb9vgd+QH9hqkBlJc27e67bHBrYESUxIbdLKSXSif3TpnlXiSz8WFzLQw5EHDOS2A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WtR2M5CK; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-30c50f130d9so357760a91.1
+        for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 17:43:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1747269802; x=1747874602; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=qi9rXvGS+iuUqtWdNSRUfqShbIMa2mNBIlT2w7H0VXw=;
+        b=WtR2M5CKMjkgGJ4SKGK+yCNMe0Wchq/D2uZw4ojjOmLAmbmXBi/Nn53Q0WNbg1OvRW
+         +ZbwAVx0fl4W8uTvhAt+xW3Zsc54gEheCN9rzsrc4iFeteIGHuqJEu7a5cpOvL1jRRkY
+         N22ISRp7gZQoUNfNPUFiTtYLVqCqK8LUHHMgVVuXkFHwX8aWvQ+4gYfTaGbqgZws70EI
+         +4BVMUpfBW7vtrn+DSC/aVEJ4NmgqMfRTZBuxV9ccYS0Pivd3oCK3YRnKLCRFOJnbKUc
+         tH+DifyV/7yUfZ+3+1kLYI8Dfnd52TBcA67lkve1NO9/rO8SGHvjqtDIhzjUpkn4+QkH
+         TS4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747269802; x=1747874602;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qi9rXvGS+iuUqtWdNSRUfqShbIMa2mNBIlT2w7H0VXw=;
+        b=PuPol5WHIhFNFBHwZyW0r9OhmXo2Hdv2J2FT6GXUpLgFqvBbfnLnBcQEKPjZFuXQxi
+         5VhnR7+coxTzyNLflwwJB06/+qWR8gdA04Qi6AgwV0JDBEdQEr63sG3NqbWSQKFlQfcP
+         LR73/4rJAdYZZ0zvjlcXis46yznh1XDwIielEKjfy+YVGcQN9jGQknrSIbCSKqW/jGSC
+         g+jaWloCwraCdXv72QagkFH9makE0WD76VIKPwOkl4pJZC76ugKi2sBhJApbau3UTHVM
+         U8XQlbwk0/al5pL8mjq2XLtDmeG4fGeB23F2B21iVcGx1lDslpVM9cnzSd9JMjZ9piUb
+         82aQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUgcihi5BlZ0nah0ZozYmDmaDi2gwwlwPDzVuey9c1Fw6+u+nWa1g68O3GOVW2LErSFXo+GD0W+cAzEEPg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMe30aWyPTRMgePT8Crv8oFZKr+stVvhb/I7+EdPf/2SjqjaLs
+	jAhBBGs10qne7zgXt9WkFJa5o8VzNiIZtppmjIS0hCa61WNG8vc0Xz3231G2YDGdYMCXBUbZ1fI
+	kEQ==
+X-Google-Smtp-Source: AGHT+IFzn6XtXG9DycxGfH/GbFRwVV8EVW6xOATWhl7aoIWCLbu6lw861vOtGGbJ05KZULEzBclxkjJPHDY=
+X-Received: from pjbsr12.prod.google.com ([2002:a17:90b:4e8c:b0:30a:2020:e2bd])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:2d84:b0:2ee:e518:c1cb
+ with SMTP id 98e67ed59e1d1-30e5156edcbmr1131216a91.7.1747269801886; Wed, 14
+ May 2025 17:43:21 -0700 (PDT)
+Date: Wed, 14 May 2025 17:43:20 -0700
+In-Reply-To: <20250324173121.1275209-28-mizhang@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20250324173121.1275209-1-mizhang@google.com> <20250324173121.1275209-28-mizhang@google.com>
+Message-ID: <aCU4qAjgUCUa5Mgz@google.com>
+Subject: Re: [PATCH v4 27/38] KVM: x86/pmu: Handle PMU MSRs interception and
+ event filtering
+From: Sean Christopherson <seanjc@google.com>
+To: Mingwei Zhang <mizhang@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Paolo Bonzini <pbonzini@redhat.com>, Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, Liang@google.com, 
+	Kan <kan.liang@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	Yongwei Ma <yongwei.ma@intel.com>, Xiong Zhang <xiong.y.zhang@linux.intel.com>, 
+	Dapeng Mi <dapeng1.mi@linux.intel.com>, Jim Mattson <jmattson@google.com>, 
+	Sandipan Das <sandipan.das@amd.com>, Zide Chen <zide.chen@intel.com>, 
+	Eranian Stephane <eranian@google.com>, Shukla Manali <Manali.Shukla@amd.com>, 
+	Nikunj Dadhania <nikunj.dadhania@amd.com>
+Content-Type: text/plain; charset="us-ascii"
 
-On Wed, 14 May 2025 09:00:50 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
+Again, be more precise.
 
-> On Wed, 14 May 2025 15:00:59 +0900
-> Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
-> > > 
-> > > Is that a problem? I'm thinking that the data in the buffer should not be
-> > > used.  
-> > 
-> > Yes, even if we read (dump) the previous boot data, the data is
-> > in the buffer. Thus the kernel rebooted before reusing the buffer
-> > the dumped pages are recovered again. Unless comparing with the
-> > previous dump data, we can not know this data is older boot or not.
-> > Anyway, user can avoid this issue by clearing the trace buffer
-> > explicitly.
+On Mon, Mar 24, 2025, Mingwei Zhang wrote:
+> From: Dapeng Mi <dapeng1.mi@linux.intel.com>
 > 
-> What we could do, and I don't think this would be too hard, is once the
-> buffer is empty and it's still LAST_BOOT buffer, we simply clear it in
-> the kernel.
+> Mediated vPMU needs to intercept EVENTSELx and FIXED_CNTR_CTRL MSRs to
+> filter out guest malicious perf events. Either writing these MSRs or
+> updating event filters would call reprogram_counter() eventually. Thus
+> check if the guest event should be filtered out in reprogram_counter().
+> If so, clear corresponding EVENTSELx MSR or FIXED_CNTR_CTRL field to
+> ensure the guest event won't be really enabled at vm-entry.
+> 
+> Besides, mediated vPMU intercepts the MSRs of these guest not owned
+> counters and it just needs simply to read/write from/to pmc->counter.
+> 
+> Suggested-by: Sean Christopherson <seanjc@google.com>
+> Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
+> Co-developed-by: Mingwei Zhang <mizhang@google.com>
+> Signed-off-by: Mingwei Zhang <mizhang@google.com>
+> ---
+>  arch/x86/kvm/pmu.c | 27 +++++++++++++++++++++++++++
+>  arch/x86/kvm/pmu.h |  3 +++
+>  2 files changed, 30 insertions(+)
+> 
+> diff --git a/arch/x86/kvm/pmu.c b/arch/x86/kvm/pmu.c
+> index 63143eeb5c44..e9100dc49fdc 100644
+> --- a/arch/x86/kvm/pmu.c
+> +++ b/arch/x86/kvm/pmu.c
+> @@ -305,6 +305,11 @@ static void pmc_update_sample_period(struct kvm_pmc *pmc)
+>  
+>  void pmc_write_counter(struct kvm_pmc *pmc, u64 val)
+>  {
+> +	if (kvm_mediated_pmu_enabled(pmc->vcpu)) {
+> +		pmc->counter = val & pmc_bitmask(pmc);
+> +		return;
+> +	}
+> +
+>  	/*
+>  	 * Drop any unconsumed accumulated counts, the WRMSR is a write, not a
+>  	 * read-modify-write.  Adjust the counter value so that its value is
+> @@ -455,6 +460,28 @@ static int reprogram_counter(struct kvm_pmc *pmc)
+>  	bool emulate_overflow;
+>  	u8 fixed_ctr_ctrl;
+>  
+> +	if (kvm_mediated_pmu_enabled(pmu_to_vcpu(pmu))) {
+> +		bool allowed = check_pmu_event_filter(pmc);
+> +
+> +		if (pmc_is_gp(pmc)) {
+> +			if (allowed)
+> +				pmc->eventsel_hw |= pmc->eventsel &
+> +						    ARCH_PERFMON_EVENTSEL_ENABLE;
+> +			else
+> +				pmc->eventsel_hw &= ~ARCH_PERFMON_EVENTSEL_ENABLE;
+> +		} else {
+> +			int idx = pmc->idx - KVM_FIXED_PMC_BASE_IDX;
+> +
+> +			if (allowed)
+> +				pmu->fixed_ctr_ctrl_hw = pmu->fixed_ctr_ctrl;
+> +			else
+> +				pmu->fixed_ctr_ctrl_hw &=
+> +					~intel_fixed_bits_by_idx(idx, 0xf);
+> +		}
+> +
+> +		return 0;
 
-Ah, that sounds good :-D
-
-> 
-> That way after a reboot, a read of trace_pipe that reads the entire
-> buffer will end up resetting the buffer, and I think that will solve
-> this problem.
-> 
-> 
-> 
-> > > +
-> > > +		/* Stop rewind if the page is invalid. */
-> > > +		ret = rb_validate_buffer(head_page->page, cpu_buffer->cpu);
-> > > +		if (ret < 0)
-> > > +			break;
-> > > +
-> > > +		/* Recover the number of entries. */
-> > > +		local_set(&head_page->entries, ret);
-> > > +		if (ret)
-> > > +			local_inc(&cpu_buffer->pages_touched);
-> > > +		entries += ret;
-> > > +		entry_bytes += rb_page_commit(head_page);  
-> > 
-> > If we validate the pages again later (because fixing head_page),
-> > we can skip this part.
-> 
-> The validator takes a bit of time. I would rather not do another loop
-> if we don't have to. If this is duplicate code, lets just make a static
-> inline helper function that does it and use that in both places.
-
-OK, I think we can just restart validating unread part from
-orig_head.
-
-> 
-> > 
-> > > +	}
-> > > +
-> > > +	/* The last rewind page must be skipped. */
-> > > +	if (head_page != orig_head)
-> > > +		rb_inc_page(&head_page);
-> > > +
-> > > +	if (head_page != orig_head) {  
-> > 
-> > Ah, I forgot this part (setup new reader_page)
-> > 
-> > > +		struct buffer_page *bpage = orig_head;
-> > > +
-> > > +		rb_dec_page(&bpage);
-> > > +		/*
-> > > +		 * Move the reader page between the orig_head and the page
-> > > +		 * before it.
-> > > +		 */  
-> > -----
-> > > +		cpu_buffer->reader_page->list.next = &orig_head->list;
-> > > +		cpu_buffer->reader_page->list.prev = orig_head->list.prev;
-> > > +		orig_head->list.prev = &cpu_buffer->reader_page->list;
-> > > +
-> > > +		bpage->list.next = &cpu_buffer->reader_page->list;  
-> > -----
-> > These seems the same as (because head_page->list.prev->next encodes
-> > flags, but we don't read that pointer.);
-> > 
-> > 		list_insert(&orig_head->list, &cpu_buffer->reader_page->list);
-> 
-> I thought about this, but because the pointers are used to encode
-> flags, I try to avoid using the list_*() functions all together on
-> these. Just to remind everyone that these are "special" lists.
-> 
-> I prefer it open coded because that way I can see exactly what it is
-> doing. Note, this is not just assigning pointers, it is also clearing
-> flags in the process.
-
-OK. And I found list_insert() is not in the kernel.
-(tools/firmware/list.h has that)
-
-> 
-> We could add a comment that states something like:
-> 
-> 	/*
-> 	 * This is the same as:
-> 	 *   list_insert(&orig_head->list, &cpu_buffer->read_page->list);
-> 	 * but as it is also clearing flags, its open coded so that
-> 	 * there's no chance that list_insert() gets optimized where
-> 	 * it doesn't do the extra work that this is doing.
-> 	 */
-> 
-> ?
-
-Yeah, anyway I will leave a comment.
-
-Thank you,
-
-> 
-> -- Steve
-> 
-> 
-> > 
-> > > +
-> > > +		/* Make the head_page the new reader page */
-> > > +		cpu_buffer->reader_page = head_page;
-> > > +		bpage = head_page;
-> > > +		rb_inc_page(&head_page);
-> > > +		head_page->list.prev = bpage->list.prev;
-> > > +		rb_dec_page(&bpage);
-> > > +		bpage->list.next = &head_page->list;
-> > > +		rb_set_list_to_head(&bpage->list);
-> > > +
-> > > +		cpu_buffer->head_page = head_page;
-> > > +		meta->head_buffer = (unsigned long)head_page->page;
-> > > +
-> > > +		/* Reset all the indexes */
-> > > +		bpage = cpu_buffer->reader_page;
-> > > +		meta->buffers[0] = rb_meta_subbuf_idx(meta, bpage->page);
-> > > +		bpage->id = 0;
-> > > +
-> > > +		for (i = 0, bpage = head_page; i < meta->nr_subbufs;
-> > > +		     i++, rb_inc_page(&bpage)) {
-> > > +			meta->buffers[i + 1] = rb_meta_subbuf_idx(meta, bpage->page);
-> > > +			bpage->id = i + 1;
-> > > +		}
-> > > +		head_page = orig_head;
-> > > +	}
-> > > +
-> > >  	/* Iterate until finding the commit page */
-> > >  	for (i = 0; i < meta->nr_subbufs + 1; i++, rb_inc_page(&head_page)) {
-> > >  
-> > > @@ -5348,7 +5439,6 @@ rb_get_reader_page(struct ring_buffer_per_cpu *cpu_buffer)
-> > >  	 */
-> > >  	local_set(&cpu_buffer->reader_page->write, 0);
-> > >  	local_set(&cpu_buffer->reader_page->entries, 0);
-> > > -	local_set(&cpu_buffer->reader_page->page->commit, 0);
-> > >  	cpu_buffer->reader_page->real_end = 0;
-> > >  
-> > >   spin:
-> > > @@ -6642,7 +6732,7 @@ int ring_buffer_read_page(struct trace_buffer *buffer,
-> > >  		cpu_buffer->read_bytes += rb_page_size(reader);
-> > >  
-> > >  		/* swap the pages */
-> > > -		rb_init_page(bpage);
-> > > +//		rb_init_page(bpage);
-> > >  		bpage = reader->page;
-> > >  		reader->page = data_page->data;
-> > >  		local_set(&reader->write, 0);  
-> > 
-> > Thank you,
-> > 
-> > 
-> > 
-> 
-
-
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+I think it's worth adding a helper for this, as it makes things a bit more
+self-documenting in terms of when KVM needs to "reprogram" mediated PMU PMCs.
 
