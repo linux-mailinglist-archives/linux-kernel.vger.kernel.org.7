@@ -1,101 +1,132 @@
-Return-Path: <linux-kernel+bounces-649820-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-649822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0E9AAB8988
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 16:36:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94359AB8990
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 16:37:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5450017BB11
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 14:36:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A083EA0077E
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 14:37:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA3C11E5B9A;
-	Thu, 15 May 2025 14:36:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 868091DFDAB;
+	Thu, 15 May 2025 14:37:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fw+4GbqY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QCBwCh22"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F373234CF9;
-	Thu, 15 May 2025 14:36:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A7F01A0B08
+	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 14:37:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747319767; cv=none; b=Ta19SQri9lWOrmfnP2U8SZxc9VmFPWqN5P8NktKDeKYaDYdDR7kDYPDId9AEmjMBFapqorVRGDmmVC4i3Xwg3Y2Mze6Rpv36uBRJRGhSGcVya7TNeMiw41EQgsBbF9koGFxKzkgFMTUFlrCcUBx4TN6QoGt4jW+GpCA3HAXQFRY=
+	t=1747319853; cv=none; b=uOWC1FG+G6ebr/vsL1HPpSh9cjqF8Mlk0lBa6bw4Pcz5Gmhw56lJ/jsdZ/g+ILRK9AWRMmaqpkGQZ1pxW6+RjaiRNiIlFE2oR6mb67uonnycixFbwS7xvsK/MaOOocSmJByRPwVnt8Pl0wDOK8hEaMHdcSbfr362LkL6PlyWxQI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747319767; c=relaxed/simple;
-	bh=3Cf88rjCTOty5cvepo7/cysSSiqOnFTy6g8DckcCqCU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uo85J2Qw00vhDuNWPB6UU8piiJpA/1Fnn+llkzx5b3YBm5S2OTAS0JVlT3g7qngjK2Xf0GmHHpiWi05NOVwbDPf2c/JqjQ2llr5ZCeH3/5Y4k0lzttXP/iM9urh52sdbA63BbSUOZum8fTmkeI4Kh7s/QaNhQ1N17/iQpfaLv7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fw+4GbqY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D214C4CEE7;
-	Thu, 15 May 2025 14:36:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747319766;
-	bh=3Cf88rjCTOty5cvepo7/cysSSiqOnFTy6g8DckcCqCU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Fw+4GbqYJZodcAcgtdrenBcRdqmP/OPhmmvbHPpQF9CVtK4NXmyOYGT8UGkrinMfi
-	 EC2vSnQRPJbz6Xv9COkAnLqRc+Bg+HaXGAEy1X1bhWSaqR0reG7U62AAuKjSe30ASc
-	 +sNtie9FPvd/ovSuX276CxEscPRTzzlB7GYD6QTPEEneqwy1wyZKWV8gMU0g0AuiG0
-	 h79/6A9BZKsVlcu/Aw1RVu1e49NeaC7iBkWMATtzK7dLW3k0lmRb9ryGunHyOs/WYN
-	 x9R7AXgbEtnQc1Y86cpBhtsDXPqc/tXV7vH/MOEC/UT914lkaZGbXXI3ZxcdPKUPti
-	 C9Wl1Flu+AITw==
-Date: Thu, 15 May 2025 15:36:02 +0100
-From: Will Deacon <will@kernel.org>
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Daniel Mentz <danielmentz@google.com>, iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org, Mostafa Saleh <smostafa@google.com>,
-	Pranjal Shrivastava <praan@google.com>, robin.murphy@arm.com
-Subject: Re: [PATCH] iommu/io-pgtable-arm: Support contiguous bit in
- translation tables
-Message-ID: <20250515143600.GB12165@willie-the-truck>
-References: <20250430231924.1481493-1-danielmentz@google.com>
- <20250506154014.GM2260621@ziepe.ca>
+	s=arc-20240116; t=1747319853; c=relaxed/simple;
+	bh=SQgbBL5RYcSAsngaHeGJNNqtuXZsSXNQ+yscYHWqeM8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BKkEvGLfuhZVg5SOL/idnhnAWqfpJJh6hMRwhTr+5LOLkPxoqztSmYf4+Fj+DmnQKaDGdjnlfH/smcCl3cAJ3MyJNEwPFyu4vexmZMRxfCFI8ivhUsnZKjPWXz9Q1A+dfdZ+4HnPjyvZiObP/vrliufyV4HZ4gLbNBjuuIoCpx0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QCBwCh22; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-22eed3b3cabso1357145ad.2
+        for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 07:37:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747319851; x=1747924651; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Yhx/trwlq7m4oFPBZzH0TmWWvywnM8oewCNJl0cBG00=;
+        b=QCBwCh22qKP/aGJ9UceJ4RqAAZqOXP6bokF46246yLohQkdZFFMjd3osANISj5qMY+
+         5bqWc60AsmSQuw9kWlnbhEStCQnWrbUlcZVGNNlT2dCihl95gYN1KJUISVK2a6ybq3vS
+         d/0HEOr3BizDGYUX2ViXjKObNvvvNhdZjHPjQzaqyoP844cGW3cq6xHKX2WRs4FADF9d
+         8aPVdhXxtE5N6lb78WJ1/P5OFX1wQ7clD7oQH15GCW+HdzzwHyBPR6EqpBkOE1B6/KDv
+         2HMIJqVPfcLLJlUYk0JiAMkez8TaqaOOgG8uWByO0oga+P8PIEvr2ieoJhRS5xjfLmj7
+         DTLQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747319851; x=1747924651;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Yhx/trwlq7m4oFPBZzH0TmWWvywnM8oewCNJl0cBG00=;
+        b=e9OkJAwl27Vc5jFgN/ZyPYC81aCHbG1Kd6/T56jDdE+k6q/9ZW16wGVmnTRrEtRl0m
+         BY+Ke4fnKu6zEr0W09ckW1zlh/GxB/9zkHAtNcrAdjWThVEy41wsVl+NVT9PRwYOQ8eZ
+         yuJC5cXP6/DicXWYOMkB9MDFt/8YLl3DuJaogTszl0sJfKaU41gI05GjeNXIakSf+KFb
+         odudskJ/ao1IIvX20E0186DxVJLvQahh+c3LG5MQDjPskZeWZb8tgmWKMvxIGAk7wVnD
+         UIRFS51nQKCKZ3H9alImhe6H4lNxbvDlnFmAvRLYTL/4lhqSn2eoCW+3to/br2QpITFu
+         RXjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUIHIKqqoa31wE2WyI4CaJxia4raRbvJE6mCHGLgJVJY6FKf1UlTvj5pGvHz5S+VfvqQm8mU/8jsazbCr0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0+VZhgmK7EMH/ZA5rXhWQ5CumevSQ48SYwRF4VNYbq+VCMz1E
+	0WQoe2w4p/wwP8AztIqec4sI30JtPtnk939JF4sfhnXb3SFJx1iv41fl0Pks9tU4Btk14wOVWiM
+	ptJYKcbAF4KTjBCiqxi5MSCi9/L4=
+X-Gm-Gg: ASbGncvCxMRcHHGSm/vJixkccAKvY6l5gdhxrKpRVmtr1FtflcxAT3ht9gArCmobaDZ
+	kZ/Gqh75wgtBLzO7VgtyF6FyCW+PClbyDTehA+hwecFXqlSQb7RaJMNaQb0KXwo4RAhPZ+PK4z9
+	WSf9HJaPUcOmqOG0ittfzbOv3HuS+IQ9H9tg==
+X-Google-Smtp-Source: AGHT+IE6YzckvATVsA8ojqUKzTuHbFQEbdpn6dyEbZwwrvVfuh9yZqbs6GMEM12xPFjFO+94qbP7aQBl2ClYYnEZHX0=
+X-Received: by 2002:a17:902:dac9:b0:22f:a1b6:4495 with SMTP id
+ d9443c01a7336-231980e4054mr41337035ad.5.1747319850679; Thu, 15 May 2025
+ 07:37:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250506154014.GM2260621@ziepe.ca>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20250514213511.380890-1-rk0006818@gmail.com>
+In-Reply-To: <20250514213511.380890-1-rk0006818@gmail.com>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Thu, 15 May 2025 10:37:19 -0400
+X-Gm-Features: AX0GCFsggvZBkjWGjCTAgk5MrozCZH-a5UHDUJm9gsAKzfN3QltHqMR6QfX5QOI
+Message-ID: <CADnq5_NNRfTM-Cb_bvtEQcLRE4LXh7Uf1Pp1+chCtfRmee0aug@mail.gmail.com>
+Subject: Re: [PATCH] docs: fix doc warning for DC_HDCP_LC_ENABLE_SW_FALLBACK
+ in amd_shared.h
+To: Rahul Kumar <rk0006818@gmail.com>
+Cc: alexander.deucher@amd.com, christian.koenig@amd.com, airlied@gmail.com, 
+	simona@ffwll.ch, skhan@linuxfoundation.org, amd-gfx@lists.freedesktop.org, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	linux-kernel-mentees@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-[+Robin]
+On Thu, May 15, 2025 at 3:09=E2=80=AFAM Rahul Kumar <rk0006818@gmail.com> w=
+rote:
+>
+> Fixes a kernel-doc warning by correctly documenting the enum value
+> `DC_HDCP_LC_ENABLE_SW_FALLBACK` in the DC_DEBUG_MASK enum.
+>
+> The previous documentation was incorrectly formatted and incomplete.
+> Updated to follow proper kernel-doc syntax with a full description.
+>
+> Verified fix using `make htmldocs`, and the warning is no longer present.
+>
+> Signed-off-by: Rahul Kumar <rk0006818@gmail.com>
 
-On Tue, May 06, 2025 at 12:40:14PM -0300, Jason Gunthorpe wrote:
-> On Wed, Apr 30, 2025 at 11:19:24PM +0000, Daniel Mentz wrote:
-> > The contiguous bit in translation table entries can be used as a hint to
-> > SMMU that a group of adjacent translation table entries have consistent
-> > attributes and point to a contiguous and properly aligned output address
-> > range. This enables SMMU to predict the properties of the remaining
-> > translation table entries in the same group without accessing them. It
-> > also allows an SMMU implementation to make more efficient use of its TLB
-> > by using a single TLB entry to cover all translation table entries in
-> > the same group.
-> > 
-> > In the case of 4KB granule size, there are 16 translation table entries
-> > in one group.
-> > 
-> > This change sets the contiguous bit for such groups of entries that are
-> > completely covered by a single call to map_pages. As it stands, the code
-> > wouldn't set the contiguous bit if a group of adjacent descriptors is
-> > completed by separate calls to map_pages.
-> 
-> Nor should it
-> 
-> This seems like a pretty hacky implementation, it doesn't set the
-> pgsize bitmap to indicate support and it doesn't have a safety check
-> on unmap to protect against partial unmap of a huge page.
-> 
-> Wouldn't it be better to use the pgsize bit map and rely on the core
-> code to tell a contig page size is being used and then it can
-> trivially set the PTE bit without having to do all this extra work?
+Thanks for the patch.  This is already fixed.
 
-That sounds like it would be quite a bit cleaner and I think it aligns
-with the "Large page" support in io-pgtable-arm-v7s.c which is doing
-something extremely similar.
+Alex
 
-Will
+> ---
+>  drivers/gpu/drm/amd/include/amd_shared.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/amd/include/amd_shared.h b/drivers/gpu/drm/a=
+md/include/amd_shared.h
+> index 4c95b885d1d0..ebe0caf1fda4 100644
+> --- a/drivers/gpu/drm/amd/include/amd_shared.h
+> +++ b/drivers/gpu/drm/amd/include/amd_shared.h
+> @@ -366,7 +366,7 @@ enum DC_DEBUG_MASK {
+>         DC_HDCP_LC_FORCE_FW_ENABLE =3D 0x80000,
+>
+>         /**
+> -        * @DC_HDCP_LC_ENABLE_SW_FALLBACK If set, upon HDCP Locality Chec=
+k FW
+> +        * @DC_HDCP_LC_ENABLE_SW_FALLBACK: Enables software fallback for =
+HDCP locality check if the firmware fails.
+>          * path failure, retry using legacy SW path.
+>          */
+>         DC_HDCP_LC_ENABLE_SW_FALLBACK =3D 0x100000,
+> --
+> 2.43.0
+>
 
