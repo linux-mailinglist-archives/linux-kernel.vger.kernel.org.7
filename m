@@ -1,125 +1,106 @@
-Return-Path: <linux-kernel+bounces-649208-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-649209-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CF90AB8170
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 10:51:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4F95AB818D
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 10:55:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7175F4C0F85
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 08:51:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E341E3B9550
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 08:52:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E756297129;
-	Thu, 15 May 2025 08:50:59 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A9E9296725
-	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 08:50:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25E40293745;
+	Thu, 15 May 2025 08:51:54 +0000 (UTC)
+Received: from zg8tmja2lje4os4yms4ymjma.icoremail.net (zg8tmja2lje4os4yms4ymjma.icoremail.net [206.189.21.223])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3596E1F428C;
+	Thu, 15 May 2025 08:51:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=206.189.21.223
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747299058; cv=none; b=n/PuNUkEWvCBex3Wem/OFVlgQdh85hnTarNemBksvKx2FN+bVAaE8Et6gQHVFGmNzCKaa4fCq503jywiSNkrs33zODTowzsVilKEyNIjwuK3gwYPcC3jB618rbNbgWE0SJLwrahmjT/+qeDQpxc1DEDc/HsTZveLshfAZ8om84s=
+	t=1747299113; cv=none; b=g25EA8+3RfVjv0eJSIq010FuzIqfqUGDaZVnjDN0mrzwuk8hNRmtXZljqNK5zbKKBy2HcHKZbbVuFdLkaEs86C1RDjAldkaNeAcKO8k2mrK/l8ruuPUk5zZ9dfG29IKgi0Co9veXC7LSJy9IiOh4TcvnwHGVKiRDraewdoE91Bs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747299058; c=relaxed/simple;
-	bh=3KvYVQA/G6RjGW/wcg6G38bPG9+xfSCTrZaKaWFuz4w=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=hFTe0B2IBfODcmaQqqRoY/8kXTAncNPQ+QkmGJuOEuObCfAifRJCHo37EV/j9NdqvsmAg6rgrY5TP0xjUJ8Zg3cShoeriJdtYW10p0+p1RMuZOkgixA9nOSygxVwUOchE45PQBbruQ3N2EYeVnHw8bKjmMCvIjDi6U0Q5TiSh08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BC70C4CEF5;
-	Thu, 15 May 2025 08:50:58 +0000 (UTC)
-Received: from rostedt by gandalf with local (Exim 4.98.2)
-	(envelope-from <rostedt@goodmis.org>)
-	id 1uFUJL-00000005Xbg-2q29;
-	Thu, 15 May 2025 04:51:27 -0400
-Message-ID: <20250515085127.524121555@goodmis.org>
-User-Agent: quilt/0.68
-Date: Thu, 15 May 2025 04:51:13 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: linux-kernel@vger.kernel.org
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Subject: [for-next][PATCH 4/4] tracing: Record trace_clock and recover when reboot
-References: <20250515085109.352233527@goodmis.org>
+	s=arc-20240116; t=1747299113; c=relaxed/simple;
+	bh=SeDdOef3yDkOgcGIcb3LONYBgYdCqryApP+EmNYzoxw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TBgACT1Yg4ey++H2tsj8khaKiIFaNWcZngaLBAzEMzAuKzoGAHBByHdFZUNjnu9AEVAZ1yzCnvdoUE0/ClWwsqLDtkCUNaUIJHvkmVSnpQS8Ky9LSa/oE29wAZWIPHAlJj6pwBzmFiA8UjoC9IpT/F7yhhUBAJjE9pV22S//MtQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=206.189.21.223
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
+Received: from E0005154LT.eswin.cn (unknown [10.12.96.103])
+	by app2 (Coremail) with SMTP id TQJkCgAnuZINqyVotTx8AA--.47783S2;
+	Thu, 15 May 2025 16:51:29 +0800 (CST)
+From: hehuan1@eswincomputing.com
+To: dlemoal@kernel.org,
+	cassel@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	linux-ide@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	p.zabel@pengutronix.de
+Cc: ningyu@eswincomputing.com,
+	linmin@eswincomputing.com,
+	luyulin@eswincomputing.com,
+	Huan He <hehuan1@eswincomputing.com>
+Subject: [PATCH v1 0/2] ESWIN EIC7700 sata driver
+Date: Thu, 15 May 2025 16:51:14 +0800
+Message-ID: <20250515085114.1692-1-hehuan1@eswincomputing.com>
+X-Mailer: git-send-email 2.49.0.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:TQJkCgAnuZINqyVotTx8AA--.47783S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrZF47Wr1fJF1xZF4rurW3KFg_yoWkXwc_Cr
+	yxZayDG345uFZ0y3WjyrZ7uFyYka1rAF92vF4UtFn8Kryvq3y3JFyqyasrZFn7tFWrXr9x
+	CrnYyr1rCFy3ujkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbhxFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
+	6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628v
+	n2kIc2xKxwAKzVCY07xG64k0F24lc7CjxVAaw2AFwI0_Jw0_GFylc2xSY4AK6svPMxAIw2
+	8IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4l
+	x2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrw
+	CI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI
+	42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z2
+	80aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUbknY7UUUUU==
+X-CM-SenderInfo: 5khk3tzqr6v25zlqu0xpsx3x1qjou0bp/
 
-From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+From: Huan He <hehuan1@eswincomputing.com>
 
-Record trace_clock information in the trace_scratch area and recover
-the trace_clock when boot, so that reader can docode the timestamp
-correctly.
-Note that since most trace_clocks records the timestamp in nano-
-seconds, this is not a bug. But some trace_clock, like counter and
-tsc will record the counter value. Only for those trace_clock user
-needs this information.
+  Implements support for the Eswin eic7700 SoC sata controller.
+  Provides basic functionality to initialize and manage the sata
+  controller  for the eic7700 SoC. Integrates with the Linux AHCI subsystem
+  for standardized SATA host control and scalability.
 
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Link: https://lore.kernel.org/174720625803.1925039.1815089037443798944.stgit@mhiramat.tok.corp.google.com
-Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
----
- kernel/trace/trace.c | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+  Supported chips:
+    Eswin eic7700 SoC.
 
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index cf51c30b137f..2c1764ed87b0 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -6066,6 +6066,7 @@ struct trace_mod_entry {
- };
- 
- struct trace_scratch {
-+	unsigned int		clock_id;
- 	unsigned long		text_addr;
- 	unsigned long		nr_entries;
- 	struct trace_mod_entry	entries[];
-@@ -6181,6 +6182,7 @@ static void update_last_data(struct trace_array *tr)
- 	if (tr->scratch) {
- 		struct trace_scratch *tscratch = tr->scratch;
- 
-+		tscratch->clock_id = tr->clock_id;
- 		memset(tscratch->entries, 0,
- 		       flex_array_size(tscratch, entries, tscratch->nr_entries));
- 		tscratch->nr_entries = 0;
-@@ -7403,6 +7405,12 @@ int tracing_set_clock(struct trace_array *tr, const char *clockstr)
- 	tracing_reset_online_cpus(&tr->max_buffer);
- #endif
- 
-+	if (tr->scratch && !(tr->flags & TRACE_ARRAY_FL_LAST_BOOT)) {
-+		struct trace_scratch *tscratch = tr->scratch;
-+
-+		tscratch->clock_id = i;
-+	}
-+
- 	mutex_unlock(&trace_types_lock);
- 
- 	return 0;
-@@ -9628,6 +9636,15 @@ static void setup_trace_scratch(struct trace_array *tr,
- 
- 	/* Scan modules to make text delta for modules. */
- 	module_for_each_mod(make_mod_delta, tr);
-+
-+	/* Set trace_clock as the same of the previous boot. */
-+	if (tscratch->clock_id != tr->clock_id) {
-+		if (tscratch->clock_id >= ARRAY_SIZE(trace_clocks) ||
-+		    tracing_set_clock(tr, trace_clocks[tscratch->clock_id].name) < 0) {
-+			pr_info("the previous trace_clock info is not valid.");
-+			goto reset;
-+		}
-+	}
- 	return;
-  reset:
- 	/* Invalid trace modules */
+  Test:
+    I tested this patch on the Sifive HiFive Premier P550 (which uses the EIC7700 SoC),
+    Ensure the hard drive is properly connected via the SATA interface on the hardware,
+    and confirm that the SATA controller within the chip can read/write to the hard drive
+    normally. The SATA driver patch is working properly.
+
+Huan He (2):
+  dt-bindings: sata: eswin: Document for EIC7700 SoC
+  sata: eswin: Add eic7700 sata driver
+
+ .../bindings/ata/eswin,eic7700-sata.yaml      |  80 ++++++
+ drivers/ata/Kconfig                           |  12 +
+ drivers/ata/Makefile                          |   1 +
+ drivers/ata/ahci_eic7700.c                    | 248 ++++++++++++++++++
+ 4 files changed, 341 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/ata/eswin,eic7700-sata.yaml
+ create mode 100644 drivers/ata/ahci_eic7700.c
+
 -- 
-2.47.2
-
+2.25.1
 
 
