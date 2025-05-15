@@ -1,94 +1,137 @@
-Return-Path: <linux-kernel+bounces-650420-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-650422-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59A03AB9131
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 23:08:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB21BAB9138
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 23:11:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E88274A0BFA
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 21:08:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3BF381BA8311
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 21:11:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD05A29B8D5;
-	Thu, 15 May 2025 21:08:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CC0F288512;
+	Thu, 15 May 2025 21:11:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uyxZjUvw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cuDo8UOe"
+Received: from mail-ot1-f47.google.com (mail-ot1-f47.google.com [209.85.210.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25A271E7C03;
-	Thu, 15 May 2025 21:08:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6997329B791;
+	Thu, 15 May 2025 21:11:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747343296; cv=none; b=B65NtC/R1ueofqtv3DV8ghsnpcwDZjPgAc0ZMxWg0jBzt7gsGsLRf4wWtyaa36VNz0EIUXcoeUXJjqwk3UtgPUtYSSP6v+Zx2DhY5IC/tYJ5IF/ph10YjonTHaretOAmqU/ZDj6FcOVbUTCVHStxAhqIJU934aaL8ssWAxBynvw=
+	t=1747343485; cv=none; b=urlYVbOiPxl8vZ8L4BhwiHDaWGkYqD3WERa/xWphcR/6AP5ypx4wYwGHXWlEP0yE8CzjFrGjse7U7hY3ooXps62JVokQO604/LxAUiDNTJlL0sYFy3FlfElkp/HCyKL9x2TVF6vxz98HJwO6SCwHNG+4/V4dzA3dmbM4qDSiH5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747343296; c=relaxed/simple;
-	bh=kOIuaXYXacOb8Nlq4Aidqtnio6EeKovLJb4GwnhdDkg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XIV+3sW4yCIEgBr5+KRkdom3Jqrth0eYSHpVMkUseiDYEGUzYD4tsGhFbjxlN0daQneMvEokdl9vxfozyI/1H2skchuPeIVGz8n1s/Ik5XNm2x0RQSwkuS+ZlmVzKzzPfV9XFscU55YtbZ+iSuKmy7Q9H0za9PSbSon29jbdO9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uyxZjUvw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67E78C4CEED;
-	Thu, 15 May 2025 21:08:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747343296;
-	bh=kOIuaXYXacOb8Nlq4Aidqtnio6EeKovLJb4GwnhdDkg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=uyxZjUvw+s8+cf9Hp4pJCB5EmT5FhFo4CQp7qZcrf5bl55P8ip45XmUK+Vfaz7aaL
-	 uGAKdMKnrRvt0lRlVZiaDXOHpXw5itSfgO5SVDXUYYyUc9lpN1jw/wwIWFwMwo1lJA
-	 wzAYbQGmr1C9fakKoTNKYYJCEr+cAdKWZmRskPNTR+qmzDl8bU7p5C1ll3HhTI9xdP
-	 rq1L/hn4g0jOYheoM/FSSRCaCY7SaGn0HZsEgT21bakaIx3NTyRlmKXZcCmphAOSgf
-	 YIoXYLYgAYGFYGrvchtjp50IfOMGcskT+98IXeWDmXkxElb04SM0gxHZRMei0CdJte
-	 Xi5we58V3Kzew==
-From: Conor Dooley <conor@kernel.org>
-To: Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Alexandre Ghiti <alex@ghiti.fr>,
-	E Shattow <e@freeshell.de>,
-	Emil Renner Berthing <kernel@esmil.dk>,
-	Conor Dooley <conor@kernel.org>,
-	Icenowy Zheng <uwu@icenowy.me>
-Cc: Conor Dooley <conor.dooley@microchip.com>,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>
-Subject: Re: [PATCH] riscv: dts: starfive: jh7110-common: use macros for MMC0 pins
-Date: Thu, 15 May 2025 22:08:02 +0100
-Message-ID: <20250515-crank-tattle-746b52ee5821@spud>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250424060605.638678-1-uwu@icenowy.me>
-References: <20250424060605.638678-1-uwu@icenowy.me>
+	s=arc-20240116; t=1747343485; c=relaxed/simple;
+	bh=yxw7XY5YZWxuopjnhj9nRwMOfXcahZ26siXv4dTTPCs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=o1z8OBrAEchNa5CGBrTHYTyEmA2HKgrkh77NsYy3pu2bF6ZcfCTWrQtWMMJ69lpDbBTuA5kijzEDOpwRuP4RRCSsheno4B8uQCyPZI5vzvuUsNUcxpopXEboK6wZRfYzdGeA4/U2y12stb4iMLaLtO2W3HKH+MUkDE231Z4vt4w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cuDo8UOe; arc=none smtp.client-ip=209.85.210.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f47.google.com with SMTP id 46e09a7af769-7300069c447so1310622a34.2;
+        Thu, 15 May 2025 14:11:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747343483; x=1747948283; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=zsrbCQbXdTBMHnkFh4svvgR8i1h1hl4ZIoZzKn+642g=;
+        b=cuDo8UOeEKYIHsBySOYBnMt3cs6USNLb+fSwdCJvmNcvljyf6OzP4apwQYZLluO0TU
+         O9nxHNsui7hQxDN9RIm7yUgP6A9r/pADQG1soYRV5QdmNUpax8MBQCQC5hJB0B/1zYaE
+         eQzZ07SRA49hDBSZ9IUofxZS5VtSl5sEHs81APbL5VHHD+AFi5Gu36pKYDCAnmMP/MMr
+         qIulcMOAYSvi1YZQCSzpOiaz88nUkXlkh+rhRZ7/Vvj/MGdRz+9RSNW/NInea83mc5Dj
+         th0+LOKVngcK+KyvTI0XlPoHlV1gYTCMGhKs8dQyY2v8WzAbENx/3maE7OAvFjT0tVlI
+         Ex+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747343483; x=1747948283;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zsrbCQbXdTBMHnkFh4svvgR8i1h1hl4ZIoZzKn+642g=;
+        b=PBJY5IQtvdiGzNsqQZNMvbR4ib/dwAmUXq2+Xz9UUIzOUhHXE+8mmE/ZqxQuimsaeB
+         TQwUQbTdQY4jXlh58PUTLY14MOszk5P7tqueLQ1vgn5Qgbdj6e7rbOJBK6o/PnEzw0Dx
+         KJxiPpE27oeWfY9fX2ZyQVUNWUsPJT+baUthlz3IiXnM2ZX420KmZoKowoxgMCcG9BMy
+         Mye7FsB2/fLr2K4Zz98s4jtfLmAGBWI9/b/loA6CQnUxgMYBQj8Y8ESRtRDFktmOG0fC
+         Sy+5W2I1IyhX7jzPt9oWtiijeoGEJzZf3bszvbfAYK2EhlF5VvYrmB6y8L5lXc30OE9t
+         Rxrg==
+X-Forwarded-Encrypted: i=1; AJvYcCWOfKg5ies0TLUGNnLC9wa5Z35xLwxFxUCd6Wzpi39n23fx1BwAVL5DFHSHomd1xn5aJOu0cyhkP531u/4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxhCEBPAWWhxqeMGEE5MLoYbgi0aHyByjmuhfWZlIkUIuXZpjy0
+	whLYp4dX/1RZ18Acj2OPJgkuf/VyX3rV/fs2DeZC5WOBjvhG75OsMkSSTl+Blw==
+X-Gm-Gg: ASbGncv2y8cEdYGmTnknKFcX/Mqa+EqRANHX3tM7xWcdRcsWzh5LQaW4gPD8jBheMhO
+	zcaEe3j44umXRnx1FqzPvaT03R83aiboVJcjfyE7nM7YVVTER1pGz/eqoUP0frSgjXfUanuz9U+
+	y08hw41L1Hnv3gO1MhQgKsVsmJp/J6beiYRDseebRPqkBK3htIEHLrnFd8oPsMKnmptlowtQyCz
+	J4itPzO9lnUNmSpJKwPb4Xp6xzRx/QXgOLtfTPVVyfVzTSNamkx0dZL+6YYXFZZkjw2x+Xo2fWp
+	4TUUvTwdc0q9trmrnzws5yYStZJfT3NqNnjbY3RM2sphyLsx9TBs08owqbms2c2Z8Gaa3IbNLyI
+	xka8utTpzYePlLP4UOLhDjL/7ew==
+X-Google-Smtp-Source: AGHT+IGXAwZ1lMKkYKPVqm106lsiF8QexIHxQXcdvdh4KcFq2Lq7wgLaksOTSGOb37VGrFzEV43asw==
+X-Received: by 2002:a17:90b:1c05:b0:301:6343:1626 with SMTP id 98e67ed59e1d1-30e7d4f91ccmr1021115a91.1.1747343472751;
+        Thu, 15 May 2025 14:11:12 -0700 (PDT)
+Received: from localhost ([2a00:79e0:3e00:2601:3afc:446b:f0df:eadc])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-30e7d4892a1sm261094a91.14.2025.05.15.14.11.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 15 May 2025 14:11:12 -0700 (PDT)
+From: Rob Clark <robdclark@gmail.com>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-arm-msm@vger.kernel.org,
+	Rob Clark <robdclark@chromium.org>,
+	Douglas Anderson <dianders@chromium.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Jessica Zhang <quic_jesszhan@quicinc.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] drm/panel-edp: Add BOE NV133WUM-N61 panel entry
+Date: Thu, 15 May 2025 14:11:10 -0700
+Message-ID: <20250515211110.8806-1-robdclark@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=481; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=tvYL9sBfhLGwtirpWTpefPjcI+3N6MPtjEqajh06cuU=; b=owGbwMvMwCFWscWwfUFT0iXG02pJDBlq4Rv/7l5QdIPpR+dSk/cP5iw2F9G0+5+1/w3nGv63+ szrM8LYOkpZGMQ4GGTFFFkSb/e1SK3/47LDuectzBxWJpAhDFycAjCRG3sZGTa++HfbPfX571XF PM/XKJla+ylYXdaSCZbcVOdbKHPrhD8jw7VD4lcjzxucMRLfn9uSu3t/oaCRbP/Jr9r172q9JT8 9ZQEA
-X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
 Content-Transfer-Encoding: 8bit
 
-From: Conor Dooley <conor.dooley@microchip.com>
+From: Rob Clark <robdclark@chromium.org>
 
-On Thu, 24 Apr 2025 14:06:05 +0800, Icenowy Zheng wrote:
-> The pin names of MMC0 pinmux is defined in the pinctrl dt binding header
-> associated with starfive,jh7110-pinctrl .
-> 
-> Include the header file and use these names instead of raw numbers for
-> defining MMC0 pinmux.
-> 
-> 
-> [...]
+Add an eDP panel for BOE NV133WUM-N61, which appears to be a 3rd panel
+option on the lenevo x13s laptop.
 
-Applied to riscv-dt-for-next, thanks!
+edid:
+00 ff ff ff ff ff ff 00 09 e5 64 09 00 00 00 00
+16 1e 01 04 a5 1d 12 78 03 55 8e a7 51 4c 9c 26
+0f 52 53 00 00 00 01 01 01 01 01 01 01 01 01 01
+01 01 01 01 01 01 74 3c 80 a0 70 b0 28 40 30 20
+36 00 1e b3 10 00 00 1a 5d 30 80 a0 70 b0 28 40
+30 20 36 00 1e b3 10 00 00 1a 00 00 00 fe 00 42
+4f 45 20 48 46 0a 20 20 20 20 20 20 00 00 00 fe
+00 4e 56 31 33 33 57 55 4d 2d 4e 36 31 0a 00 7d
 
-[1/1] riscv: dts: starfive: jh7110-common: use macros for MMC0 pins
-      https://git.kernel.org/conor/c/71385a893cea
+datasheet: https://datasheet4u.com/pdf-down/N/V/1/NV133WUM-N61-BOE.pdf
 
-Thanks,
-Conor.
+v2: Actually get the panel name correct in the table
+
+Signed-off-by: Rob Clark <robdclark@chromium.org>
+---
+ drivers/gpu/drm/panel/panel-edp.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/gpu/drm/panel/panel-edp.c b/drivers/gpu/drm/panel/panel-edp.c
+index 52028c8f8988..28c38672c898 100644
+--- a/drivers/gpu/drm/panel/panel-edp.c
++++ b/drivers/gpu/drm/panel/panel-edp.c
+@@ -1916,6 +1916,7 @@ static const struct edp_panel_entry edp_panels[] = {
+ 	EDP_PANEL_ENTRY('B', 'O', 'E', 0x094b, &delay_200_500_e50, "NT116WHM-N21"),
+ 	EDP_PANEL_ENTRY('B', 'O', 'E', 0x0951, &delay_200_500_e80, "NV116WHM-N47"),
+ 	EDP_PANEL_ENTRY('B', 'O', 'E', 0x095f, &delay_200_500_e50, "NE135FBM-N41 v8.1"),
++	EDP_PANEL_ENTRY('B', 'O', 'E', 0x0964, &delay_200_500_e50, "NV133WUM-N61"),
+ 	EDP_PANEL_ENTRY('B', 'O', 'E', 0x096e, &delay_200_500_e50_po2e200, "NV116WHM-T07 V8.0"),
+ 	EDP_PANEL_ENTRY('B', 'O', 'E', 0x0979, &delay_200_500_e50, "NV116WHM-N49 V8.0"),
+ 	EDP_PANEL_ENTRY('B', 'O', 'E', 0x098d, &boe_nv110wtm_n61.delay, "NV110WTM-N61"),
+-- 
+2.49.0
+
 
