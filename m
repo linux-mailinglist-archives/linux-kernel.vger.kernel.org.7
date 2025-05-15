@@ -1,76 +1,77 @@
-Return-Path: <linux-kernel+bounces-649118-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-649193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0582AB8071
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 10:26:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7AB2AB815B
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 10:50:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1E293A1F54
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 08:25:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 222263B875B
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 08:47:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57BEF293B44;
-	Thu, 15 May 2025 08:23:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33D1228A1DE;
+	Thu, 15 May 2025 08:47:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="nK0y0Cee"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="KgS6AzuS"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 457D128D840
-	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 08:23:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E094C28C2D2
+	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 08:47:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747297434; cv=none; b=qh1nzGjzZldbwNlhnyHmpGOIeEC8JKO2/xBmjlKcdMC2MT6sulHOmXj1EhLrAoXkcHrqHetnRrkqCBaGRelqOCmEcbPFxvemxcDtzySI6FDxXNN/rQkdfOXcKs+Eou6GrLYGuVOk5imbLVRHx+R8rSv8KqyD9t4y2oF/1x5+P7c=
+	t=1747298853; cv=none; b=kIUTExMlCZNwCDh3gfRZLIuObt6Svg4DK5zq7ahSRMOljNL7pHAec3n+L/yzYzt4pFgPD4fEM7YRWRtWAagreTOabQMdv0l9F2Af9yfzeafXAz7RuIUrMWRZsx94nc4GEs7TW1mA4YwFbIIehi2bvNBOGqD9G26sn6u0wmT5t5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747297434; c=relaxed/simple;
-	bh=c4f/odBe1fiDkTMfaR/fNuZlpsRWRZtD8/pJ3r41/Zs=;
+	s=arc-20240116; t=1747298853; c=relaxed/simple;
+	bh=PGXvcUd7AEZN3/JlvOlbni86hFgiQ4HPyrDarRZ8hOI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Z0KrQtQ0EnTXVUyX7inEnMkxzfkLH/60daiff2OY6KpjgmZN8t8Oo3NSy3mwgq2KaJx6o+XJCFAsfKEltFUUW5xY3XDu7E54jEK23gw2fWQ0ni6UGuducUNX6YOeN0n6YYQfT4SeLbjn3nu24UmTyku9GTIuoYIBgMbyA2RqgP0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=nK0y0Cee; arc=none smtp.client-ip=209.85.128.50
+	 MIME-Version:Content-Type; b=P5JJvo3Y6kZKfzcoTlionGg40xXRWUxg25tXLtvrdwibbHFWMNq6SHsUsj3act9DeP8dpRTbRVPFjL9cP7GYW3mcIRaoSury+kxbQOYnUyXYMRufRbizqy08FGGcM1hGhrBeZ0AeO1swvI5tf6JdhcXtspU8riURNRca+EeG8fk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=KgS6AzuS; arc=none smtp.client-ip=209.85.167.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-442ed8a275fso7112195e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 01:23:52 -0700 (PDT)
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-54fcffd6b9dso718195e87.1
+        for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 01:47:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1747297430; x=1747902230; darn=vger.kernel.org;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1747298849; x=1747903649; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=zKzeirrOKR4aa1/jaJ0+BQzqdgTSTiQsfjIovf/XYis=;
-        b=nK0y0Cee/rnnhvO27+PYyKapRS97jXMC80m8bOAj9nIkHz1Y1tG93OV4LlJS1MTeV+
-         kw7IrJ8Xp9zF8Ry6RQYtiHYSzmHaYvP1Y08TqSHBQumOEgln2np97XDDr+YHxN0+ocKq
-         hlxkvcOVpp6qg2+NcxI5NDVfV41i+zPal65QfGVlTPgdnATYn6djGZDv0sCbxdtzIMBo
-         yaf49SnPAVPns1LmI6ec/LSjDaikw3kMn6ijGAwMukhIEf6p8w0LRkcp/zmg5a3cNUn7
-         ZT7VJNqMqWHHYDTguU5d0TIXLZZFbWFALQ+VTPeDOXe1x+J1u0ExJ4SwPkf8241zl/g6
-         RJIQ==
+        bh=IhYYFU/0gd4i6u7YSldc/A6P4zLJhDJyiOeiCd5c27I=;
+        b=KgS6AzuSOj+ExGajtNBCwXnQXzgh86OkKvO/PiSHNp5I6DCWr18z1NY3WceF3Yl9T+
+         zqLScMhCcePhbr5Tg42h4pZThpMTo6IzFW6nFm0nTqj+Z6ZSuN76OAySMd0AC1tIuqpR
+         WCcizBdFY90Mjzg4kpgx9CymCHrGh6zXf4rcYJRbz1WGtAO/y/9tVPeRa7D7rIix2YAQ
+         lJ9K8MAMPLb/76THwjQIzexYuRxtbiBM6y76G4QFLi27JHk+dQAIxl+9V8WkW5fbXUpD
+         rbEzVz8z4MVcehyg2icKD11Ztr2J3ITye5OEbAb9n+QxRxaAxIUQNFS84n8r0dZI35YB
+         Vjcw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747297431; x=1747902231;
+        d=1e100.net; s=20230601; t=1747298849; x=1747903649;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=zKzeirrOKR4aa1/jaJ0+BQzqdgTSTiQsfjIovf/XYis=;
-        b=TB+PWIiUeZL1ENsLoRPD0rfO486BQ7vBjcSnHxtLcUxQ46TgwTsHn42KDlr5MAqRAl
-         vgtrDn5/nYJoemvQJog+ZECPv0J95gxao8IdTruJwQMPYSWW1O7xiKmzRS1xJ81nCjdI
-         29dVTccmkMOe9VuVyUGkr6nLQkSZqKvVTf/4xSOVROQlQpmvaOlTPiKT33FFSrFnSuTW
-         PLI/n5CX9kVaPY2/pzds0B3FWz9j0EaZS07lmUR1bNw/X2QHo8KAh968cGcLE64dX9ae
-         tnGgm8E8ycczf1kpZp80N7QGaQgsUDgzWWbHIyuTZBt8s2p2uI1Y7sWY5I7sWybUXpmT
-         H3cw==
-X-Forwarded-Encrypted: i=1; AJvYcCW6Uy2xZQ64KVgXBOKtaRHa43EaxD+VxRUrbajQ4ahDMyqHInOg0rfIbwrvGah33RgSeKFgwTSMjQ7K3Yg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw774wFrJ0/4NcZvexH69uy+itTNAtRHxKk4dlzBCmrUVF6VL0m
-	jZ6YK3i/Izuca77DkMXOVkYEAytgXZGNawUi7hQQk4LWXfLrWx2642C/g0Suk+g=
-X-Gm-Gg: ASbGncuezyXgFH/ty5SWKyQ5g6K4U+U+4vC5fQfiH9Tbq6qu1xf7XpmLLaxdiPKj96+
-	I4tOAptf61A3/gTF5ockoG+5WdKYW7fY+fgxGq4e/PZPe7OE3X1xySgYwQbBI9CqndQwbr32JYu
-	mk969pl2hgkmMSivIQhXxlk8+92OZ07EVvV+aU23Wnr0Po+VelwWT7T4CKhkBMl+n08r1Pk+pzn
-	euVFfOyWlwYqEveMWbYY16LX1+mS9VKrTWEVzcYgK7SLtbMiDmrizQ+4oCiGgvPftQEGmIrAwxF
-	n6mbLVYA8o7p5saw2O/hA9o4iWfWy7KGTE9oOo8LBOyVaETXrSk=
-X-Google-Smtp-Source: AGHT+IHo18Wz0xfwowIAkjj7FGe8ulZGDuitOfmnOSRcK7rM7RV/Qat3DxuhXQ8uvVsICI2vUu48rQ==
-X-Received: by 2002:a05:600c:8411:b0:442:faa3:fadb with SMTP id 5b1f17b1804b1-442faa3fbb1mr9904825e9.2.1747297430595;
-        Thu, 15 May 2025 01:23:50 -0700 (PDT)
+        bh=IhYYFU/0gd4i6u7YSldc/A6P4zLJhDJyiOeiCd5c27I=;
+        b=eiaS+6LAHy7VsMvyeFkQCv521GBa1DBztsGCp8QQI27bZ86beUzIoCIuhKaeHv62Q5
+         8ByM8I2Lmp8U2fWLjDTnjKSdzovR9ggUMiefunvGy7+dJKIJA49ZnC2yPBZEVpy1wnl7
+         aI1zoWCFOBGgTS6vKATyZ0N8UROrqXWle4i0gtiysF/XW2KOeXMXSDWSoG/bDZiRpzK/
+         LWZau5Abx2laisGFyL22l7PPspfZwpe71TNpGVSR3sxs46mrxCDpOgV5EFcud+0GCRMZ
+         ufHCDtqVirt4KiDjVHRNe7NMcfMGdF3iox3H+7zzPJGIBmw9ERct+4IkYrJ7PsFT7fld
+         apyQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXGOHSM8wrJL1Cf1xytEGsuTLgzmapkJ1NPcgVS9SafJwctN3QxnuVyvHBQHnOpYPMllrabrHFSjDZPL8c=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywgjt9rJDMKHklCMar3uOOsWnuhYik4WRoLdUUz6dDV5NGWSvyF
+	GNnUMgTH/eELQjF+5AcV+76WBQ0xpoLGooODbjL1Uw5mvWNja04RR8N023nNd/ilFBB2CEmhN9J
+	o
+X-Gm-Gg: ASbGncvqf0Gku5s7Z7fyfy0w5OXRCjIeIT3ofUgPMztAZYA7WOkRQXktOQvTbUZNeLb
+	591FKd6IcLZYMe104ITuGcYaVCQCSMVITEASm+x0HQVNVRJA8UKIayGnRfwgqNY70EpjRx42snY
+	AsnrCxscESj3TBFca2JHzUeFEayZJ1vvp64uRNhD9JtG8U+6rW7BxZIvfzF+jyjMvlmqfcQUqbb
+	748rp1+ShSsDYHxaxTDowP7/v/xxQ/XJOCT0UrCFRMX4cODMILIpKtKZBAdmQGTGDuRwoeRDzx0
+	d5JqBBrBMfl8r/WiQd4KvFEvtb5rA+NOL0+A56tdx4Wa0ba4jjc=
+X-Google-Smtp-Source: AGHT+IGnVdWt5OD2bKCz++KFVpJxcO50pC03iTHgGj6sIJhut7VYuKCl9xAAlL4aqjVD7tiXjB6LOw==
+X-Received: by 2002:a05:600c:c0d2:20b0:442:f482:c421 with SMTP id 5b1f17b1804b1-442f482c78emr24654775e9.22.1747297431669;
+        Thu, 15 May 2025 01:23:51 -0700 (PDT)
 Received: from carbon-x1.. ([91.197.138.148])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-442f395166fsm59310785e9.18.2025.05.15.01.23.49
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-442f395166fsm59310785e9.18.2025.05.15.01.23.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 May 2025 01:23:49 -0700 (PDT)
+        Thu, 15 May 2025 01:23:50 -0700 (PDT)
 From: =?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <cleger@rivosinc.com>
 To: Paul Walmsley <paul.walmsley@sifive.com>,
 	Palmer Dabbelt <palmer@dabbelt.com>,
@@ -87,11 +88,10 @@ To: Paul Walmsley <paul.walmsley@sifive.com>,
 Cc: =?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <cleger@rivosinc.com>,
 	Samuel Holland <samuel.holland@sifive.com>,
 	Andrew Jones <ajones@ventanamicro.com>,
-	Deepak Gupta <debug@rivosinc.com>,
-	Atish Patra <atishp@rivosinc.com>
-Subject: [PATCH v7 05/14] riscv: sbi: add SBI FWFT extension calls
-Date: Thu, 15 May 2025 10:22:06 +0200
-Message-ID: <20250515082217.433227-6-cleger@rivosinc.com>
+	Deepak Gupta <debug@rivosinc.com>
+Subject: [PATCH v7 06/14] riscv: misaligned: request misaligned exception from SBI
+Date: Thu, 15 May 2025 10:22:07 +0200
+Message-ID: <20250515082217.433227-7-cleger@rivosinc.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250515082217.433227-1-cleger@rivosinc.com>
 References: <20250515082217.433227-1-cleger@rivosinc.com>
@@ -104,68 +104,175 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Add FWFT extension calls. This will be ratified in SBI V3.0 hence, it is
-provided as a separate commit that can be left out if needed.
+Now that the kernel can handle misaligned accesses in S-mode, request
+misaligned access exception delegation from SBI. This uses the FWFT SBI
+extension defined in SBI version 3.0.
 
 Signed-off-by: Clément Léger <cleger@rivosinc.com>
 Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
-Reviewed-by: Atish Patra <atishp@rivosinc.com>
 ---
- arch/riscv/kernel/sbi.c | 20 +++++++++++++++++++-
- 1 file changed, 19 insertions(+), 1 deletion(-)
+ arch/riscv/include/asm/cpufeature.h        |  3 +-
+ arch/riscv/kernel/traps_misaligned.c       | 71 +++++++++++++++++++++-
+ arch/riscv/kernel/unaligned_access_speed.c |  8 ++-
+ 3 files changed, 77 insertions(+), 5 deletions(-)
 
-diff --git a/arch/riscv/kernel/sbi.c b/arch/riscv/kernel/sbi.c
-index 818efafdc8e9..53836a9235e3 100644
---- a/arch/riscv/kernel/sbi.c
-+++ b/arch/riscv/kernel/sbi.c
-@@ -299,6 +299,8 @@ static int __sbi_rfence_v02(int fid, const struct cpumask *cpu_mask,
- 	return 0;
- }
+diff --git a/arch/riscv/include/asm/cpufeature.h b/arch/riscv/include/asm/cpufeature.h
+index f56b409361fb..dbe5970d4fe6 100644
+--- a/arch/riscv/include/asm/cpufeature.h
++++ b/arch/riscv/include/asm/cpufeature.h
+@@ -67,8 +67,9 @@ void __init riscv_user_isa_enable(void);
+ 	_RISCV_ISA_EXT_DATA(_name, _id, _sub_exts, ARRAY_SIZE(_sub_exts), _validate)
  
-+static bool sbi_fwft_supported;
-+
- struct fwft_set_req {
- 	u32 feature;
- 	unsigned long value;
-@@ -326,7 +328,15 @@ static void cpu_sbi_fwft_set(void *arg)
-  */
- int sbi_fwft_set(u32 feature, unsigned long value, unsigned long flags)
+ bool __init check_unaligned_access_emulated_all_cpus(void);
++void unaligned_access_init(void);
++int cpu_online_unaligned_access_init(unsigned int cpu);
+ #if defined(CONFIG_RISCV_SCALAR_MISALIGNED)
+-void check_unaligned_access_emulated(struct work_struct *work __always_unused);
+ void unaligned_emulation_finish(void);
+ bool unaligned_ctl_available(void);
+ DECLARE_PER_CPU(long, misaligned_access_speed);
+diff --git a/arch/riscv/kernel/traps_misaligned.c b/arch/riscv/kernel/traps_misaligned.c
+index 77c788660223..592b1a28e897 100644
+--- a/arch/riscv/kernel/traps_misaligned.c
++++ b/arch/riscv/kernel/traps_misaligned.c
+@@ -16,6 +16,7 @@
+ #include <asm/entry-common.h>
+ #include <asm/hwprobe.h>
+ #include <asm/cpufeature.h>
++#include <asm/sbi.h>
+ #include <asm/vector.h>
+ 
+ #define INSN_MATCH_LB			0x3
+@@ -646,7 +647,7 @@ bool __init check_vector_unaligned_access_emulated_all_cpus(void)
+ 
+ static bool unaligned_ctl __read_mostly;
+ 
+-void check_unaligned_access_emulated(struct work_struct *work __always_unused)
++static void check_unaligned_access_emulated(struct work_struct *work __always_unused)
  {
--	return -EOPNOTSUPP;
-+	struct sbiret ret;
+ 	int cpu = smp_processor_id();
+ 	long *mas_ptr = per_cpu_ptr(&misaligned_access_speed, cpu);
+@@ -657,6 +658,13 @@ void check_unaligned_access_emulated(struct work_struct *work __always_unused)
+ 	__asm__ __volatile__ (
+ 		"       "REG_L" %[tmp], 1(%[ptr])\n"
+ 		: [tmp] "=r" (tmp_val) : [ptr] "r" (&tmp_var) : "memory");
++}
 +
-+	if (!sbi_fwft_supported)
-+		return -EOPNOTSUPP;
++static int cpu_online_check_unaligned_access_emulated(unsigned int cpu)
++{
++	long *mas_ptr = per_cpu_ptr(&misaligned_access_speed, cpu);
 +
-+	ret = sbi_ecall(SBI_EXT_FWFT, SBI_EXT_FWFT_SET,
-+			feature, value, flags, 0, 0, 0);
++	check_unaligned_access_emulated(NULL);
+ 
+ 	/*
+ 	 * If unaligned_ctl is already set, this means that we detected that all
+@@ -665,9 +673,10 @@ void check_unaligned_access_emulated(struct work_struct *work __always_unused)
+ 	 */
+ 	if (unlikely(unaligned_ctl && (*mas_ptr != RISCV_HWPROBE_MISALIGNED_SCALAR_EMULATED))) {
+ 		pr_crit("CPU misaligned accesses non homogeneous (expected all emulated)\n");
+-		while (true)
+-			cpu_relax();
++		return -EINVAL;
+ 	}
 +
-+	return sbi_err_map_linux_errno(ret.error);
++	return 0;
  }
  
- /**
-@@ -348,6 +358,9 @@ int sbi_fwft_set_cpumask(const cpumask_t *mask, u32 feature,
- 		.error = ATOMIC_INIT(0),
- 	};
- 
-+	if (!sbi_fwft_supported)
-+		return -EOPNOTSUPP;
+ bool __init check_unaligned_access_emulated_all_cpus(void)
+@@ -699,4 +708,60 @@ bool __init check_unaligned_access_emulated_all_cpus(void)
+ {
+ 	return false;
+ }
++static int cpu_online_check_unaligned_access_emulated(unsigned int cpu)
++{
++	return 0;
++}
++#endif
 +
- 	if (feature & SBI_FWFT_GLOBAL_FEATURE_BIT)
- 		return -EINVAL;
++#ifdef CONFIG_RISCV_SBI
++
++static bool misaligned_traps_delegated;
++
++static int cpu_online_sbi_unaligned_setup(unsigned int cpu)
++{
++	if (sbi_fwft_set(SBI_FWFT_MISALIGNED_EXC_DELEG, 1, 0) &&
++	    misaligned_traps_delegated) {
++		pr_crit("Misaligned trap delegation non homogeneous (expected delegated)");
++		return -EINVAL;
++	}
++
++	return 0;
++}
++
++void __init unaligned_access_init(void)
++{
++	int ret;
++
++	ret = sbi_fwft_set_online_cpus(SBI_FWFT_MISALIGNED_EXC_DELEG, 1, 0);
++	if (ret)
++		return;
++
++	misaligned_traps_delegated = true;
++	pr_info("SBI misaligned access exception delegation ok\n");
++	/*
++	 * Note that we don't have to take any specific action here, if
++	 * the delegation is successful, then
++	 * check_unaligned_access_emulated() will verify that indeed the
++	 * platform traps on misaligned accesses.
++	 */
++}
++#else
++void __init unaligned_access_init(void) {}
++
++static int cpu_online_sbi_unaligned_setup(unsigned int cpu __always_unused)
++{
++	return 0;
++}
+ #endif
++
++int cpu_online_unaligned_access_init(unsigned int cpu)
++{
++	int ret;
++
++	ret = cpu_online_sbi_unaligned_setup(cpu);
++	if (ret)
++		return ret;
++
++	return cpu_online_check_unaligned_access_emulated(cpu);
++}
+diff --git a/arch/riscv/kernel/unaligned_access_speed.c b/arch/riscv/kernel/unaligned_access_speed.c
+index b8ba13819d05..ae2068425fbc 100644
+--- a/arch/riscv/kernel/unaligned_access_speed.c
++++ b/arch/riscv/kernel/unaligned_access_speed.c
+@@ -236,6 +236,11 @@ arch_initcall_sync(lock_and_set_unaligned_access_static_branch);
  
-@@ -679,6 +692,11 @@ void __init sbi_init(void)
- 			pr_info("SBI DBCN extension detected\n");
- 			sbi_debug_console_available = true;
- 		}
-+		if (sbi_spec_version >= sbi_mk_version(3, 0) &&
-+		    sbi_probe_extension(SBI_EXT_FWFT)) {
-+			pr_info("SBI FWFT extension detected\n");
-+			sbi_fwft_supported = true;
-+		}
- 	} else {
- 		__sbi_set_timer = __sbi_set_timer_v01;
- 		__sbi_send_ipi	= __sbi_send_ipi_v01;
+ static int riscv_online_cpu(unsigned int cpu)
+ {
++	int ret = cpu_online_unaligned_access_init(cpu);
++
++	if (ret)
++		return ret;
++
+ 	/* We are already set since the last check */
+ 	if (per_cpu(misaligned_access_speed, cpu) != RISCV_HWPROBE_MISALIGNED_SCALAR_UNKNOWN) {
+ 		goto exit;
+@@ -248,7 +253,6 @@ static int riscv_online_cpu(unsigned int cpu)
+ 	{
+ 		static struct page *buf;
+ 
+-		check_unaligned_access_emulated(NULL);
+ 		buf = alloc_pages(GFP_KERNEL, MISALIGNED_BUFFER_ORDER);
+ 		if (!buf) {
+ 			pr_warn("Allocation failure, not measuring misaligned performance\n");
+@@ -439,6 +443,8 @@ static int __init check_unaligned_access_all_cpus(void)
+ {
+ 	int cpu;
+ 
++	unaligned_access_init();
++
+ 	if (unaligned_scalar_speed_param != RISCV_HWPROBE_MISALIGNED_SCALAR_UNKNOWN) {
+ 		pr_info("scalar unaligned access speed set to '%s' (%lu) by command line\n",
+ 			speed_str[unaligned_scalar_speed_param], unaligned_scalar_speed_param);
 -- 
 2.49.0
 
