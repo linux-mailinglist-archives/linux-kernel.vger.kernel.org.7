@@ -1,153 +1,129 @@
-Return-Path: <linux-kernel+bounces-649088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-649105-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0856DAB8001
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 10:14:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51A60AB8048
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 10:22:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1EB543AF0EF
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 08:14:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F0501887B4D
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 08:23:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACDFC28640E;
-	Thu, 15 May 2025 08:14:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C3D82874F6;
+	Thu, 15 May 2025 08:22:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="F5AEXmFx"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=inventec.com header.i=@inventec.com header.b="fRYIDk/5"
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFD521E0E08;
-	Thu, 15 May 2025 08:14:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B411F283FF7
+	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 08:22:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747296863; cv=none; b=aCsIvU5FNOYpZh8ZtHpmDuVSisqOLl9x6rltckzMQ8S5L3ZenzG6YbTK2IbJILkRu7p2XgsmxRrJKDwZ/Id2ScZKYqawjkH6eWiI6mvA6hjt+7DNb29gCifQdN+RnaGSIZRouVMjNoRafxaTYcK9bzWnz1HtVxRMdhYq57JoZPg=
+	t=1747297361; cv=none; b=t5vkJFMfepXVTUGqqPZB5aK4wqUFhQ5UXI+E1zF1ZU/7rcIm3qjJIocHRH+mLtD/f1qEZGwucFXEOw44RxwIGnhPJuW/gqoMXsIDVv3Ae97RGRPw2+R5+eNWmFhTBjxdXuU+phoOKKleEPznURYcZHQF0QDc/CtXK6McZs2B+8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747296863; c=relaxed/simple;
-	bh=XM1eqMpcg+t2ZtQwuWYYjSlAcLCEY9gs2OBdffgmX74=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=ME3onp+duzt2urYmcO7TnRxarcF7Y39QJ+UpDqLI9DqOF1/J+oOLRQqFqrehEAoXw/pKuvlvqTA1wtEtiLb9HacrLR8+IjQDYy9hdyKdDWfmwco8n8qVqhbx4AcElyPeTvhLf9qUCvPuqkf6mpT7p6yu8i9ZtBJNFmclT3NjMVc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=F5AEXmFx; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1747296856;
-	bh=Usb534oc0GkUVSDJGUUCLoGE2h4LZ1RiACjkJpJzRcY=;
-	h=Date:From:To:Cc:Subject:From;
-	b=F5AEXmFxj9x+3Md5/yxuxrosRSGdFNG0GGWp8enb+T1I/Pfxy9d07XNAgrIDKUFhz
-	 epc5ivZjP0yQdrKozpKe88P20OmpSkQY37wbXyFc1JJjwfO7bdw1VJjer8dDTp1tEf
-	 OeN11FjIoSMZkrDX//9D2sc2iNTtBfnAUTOKzUEhKh0WMlS04We3oixEByeIIsVstJ
-	 sfaAw3MKVr4COKFutoGzp1xSTA9/eE5/yPz76RSnDBIzVvLP3W21mzDa548+JYGGjH
-	 gJRzkAm5aveL8TjTrDZrG2oXGv5lNyQpB8/5gN789c/u3jjfwQSTEsaJsCXbwHLR6T
-	 cHBsqgbE8X9+w==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Zyjfb0wf2z4wcn;
-	Thu, 15 May 2025 18:14:15 +1000 (AEST)
-Date: Thu, 15 May 2025 18:14:14 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Wei Liu <wei.liu@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo
- Molnar <mingo@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra
- <peterz@infradead.org>
-Cc: Ashish Kalra <ashish.kalra@amd.com>, "Borislav Petkov (AMD)"
- <bp@alien8.de>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Next Mailing List <linux-next@vger.kernel.org>, Roman Kisel
- <romank@linux.microsoft.com>
-Subject: linux-next: manual merge of the hyperv tree with the tip-fixes tree
-Message-ID: <20250515181414.354d8ef7@canb.auug.org.au>
+	s=arc-20240116; t=1747297361; c=relaxed/simple;
+	bh=zMrdY85vTW7AjrdO/rgWi/3gl5aBB4d3jxsiKmIX+C0=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=jV4csuTeP/dAuH/ui7v/ggO7rXe2aoIVUNTZpRR3Rps0V81VSHAXlgk0Z/UlpqzsZkZeIADs+goSPVRRbfs27rqDsrA4l+g3salHbNL7gkYvYsFzeOdaVG1GM/FygZOV/kF6QAHyW9Z7caKoIe3l8ZTEXA5OVBeAHbaF0UMaxnc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=inventec.com; spf=pass smtp.mailfrom=inventec.com; dkim=pass (2048-bit key) header.d=inventec.com header.i=@inventec.com header.b=fRYIDk/5; arc=none smtp.client-ip=209.85.216.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=inventec.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inventec.com
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-30a99e2bdd4so599617a91.0
+        for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 01:22:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=inventec.com; s=google; t=1747297357; x=1747902157; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RjF4WIlhUumHwR0LyuhyQYbCxkjlUl+il1BderSLi1Q=;
+        b=fRYIDk/5jBjKZ9akqevwnDrwdnanqkHi6W4KiH2Kmg+Qg4Q6aqaT4g7M74PGZh+Uws
+         DNYGElEZyP6HPRTxpPeT8/Fqq0a5/s1gjVM1OW8/YqmsDdFB1zThpkwG8TC+aJmO86ic
+         voY30NZFNjS+8xxum0A3DuAMW4a9U/qD12y4bb9B5H3Hf7XLNbsN8PLriEO8a52mItoV
+         z+zEiFq/Fur9kzFLO6dRTEf+PyFBN9hbcqp4gB5dBHNCnM+MWntgGue5DrG/+EXUNgGP
+         mugpFeS7bvXdoXRX9tl1KX2SqUV8OCapYusZow2JzC8nyHHfZ2dI3m71ddM6VruHgsUK
+         VbZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747297357; x=1747902157;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RjF4WIlhUumHwR0LyuhyQYbCxkjlUl+il1BderSLi1Q=;
+        b=sBL3NJ0pgDbYVd6OtPwVx7qU+45H6PCQaRy/ihoSvKTVjz/JJ+prm41wHmPdjSFn+Q
+         aSyVVmzJZNJ81lg2Xc+gAzBOrGXLqFFZFKEOd9dCxXUPtorOt06+YhifUq0MzQJoWIRp
+         U/2y1PrOxkFqzC4DpjC5K7lPvil3FySs9eSinPhSH6O5wZC1pWHtzLaFtMHF+IJYq0n0
+         9vzl6KteddNbvLhwSGlz6fL9DnK4afhgU5LPMkpsWeY+IIzteGjuestX9NKAOMdj/Yo4
+         jnamwJyCkjMtFAeOdw9B10S0r7y4qSykqI8AxXtjwYBP9ZpUQnwhDwJ6KpbV0Sy7nCAZ
+         C1SA==
+X-Forwarded-Encrypted: i=1; AJvYcCVP8UBTfbvlehFe/xNTCe4WX5BnVUkzMli9abe7WVX/l9FPEmHMqVICv2KkV57WA4TfPQllilfGmxbRoL8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwPjSCVBISBJiMBJ6G6LznudPuwKV5Iim2hatd1haGOZ4lcIRpQ
+	V+W4ldcZA6hXGMJbI9Zt4pG7rAgxYlUkXWGM/kkKK+VjLDcVz9tWhdZJLi4Jzt0=
+X-Gm-Gg: ASbGncuQcBQpd+VerdAb3+dyKFZsR0uqsre8z2sIPi8iTFgj0ndliP1Ab0VQlE/KEW0
+	Fq6Lity26qAh5Uv+eD1HIw4VoyX+A5jOqThcvVy/8Pio98pbo4ftveL9khDQYugpdICwCThthIt
+	lH5UFjjmXRLbo78DDxIJHBAWBFz/IFnf47exg188/lqNalpa+OXH3dk32/61PV3I2amZe3+m/mo
+	ftE5cAomkzyci14i1doAgj9megwhb0STrJ3OEKEtA24WdxxWijmle+syy6CfXm0U/FWsuxc63eW
+	H5JmimtZOOas+vyXaxgfTDFL39iMMz10ygBTFpDRw0AGDuZUFZPlI47sjYlpwWNowOXNpwTH2OQ
+	MgXAlgYep/92V0jKpn49oARic1eDeAFK7
+X-Google-Smtp-Source: AGHT+IHOxDStraajciuLyI4J7kcSxLAVxYjblykyEsVhvb9CDyVTj6T8upo7h85qFEQd+SEWUbif/w==
+X-Received: by 2002:a17:90b:3c4a:b0:30a:255c:9d10 with SMTP id 98e67ed59e1d1-30e51586fdcmr2384038a91.8.1747297356694;
+        Thu, 15 May 2025 01:22:36 -0700 (PDT)
+Received: from localhost.localdomain (59-120-179-172.hinet-ip.hinet.net. [59.120.179.172])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-30e33451e97sm2909715a91.25.2025.05.15.01.22.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 15 May 2025 01:22:36 -0700 (PDT)
+From: Chiang Brian <chiang.brian@inventec.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: Chiang Brian <chiang.brian@inventec.com>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3 1/2] dt-bindings: trivial: Add tps53685 support
+Date: Thu, 15 May 2025 16:14:38 +0800
+Message-Id: <20250515081449.1433772-2-chiang.brian@inventec.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20250515081449.1433772-1-chiang.brian@inventec.com>
+References: <20250515081449.1433772-1-chiang.brian@inventec.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/1li4/kuB_8W7c6j+4YPYNJ7";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
 
---Sig_/1li4/kuB_8W7c6j+4YPYNJ7
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Add device type support for tps53685
 
-Hi all,
+Signed-off-by: Chiang Brian <chiang.brian@inventec.com>
+---
 
-Today's linux-next merge of the hyperv tree got a conflict in:
+v2 -> v3:
+	1. Fix the order of patches
+	- Link to v2: https://lore.kernel.org/all/20250424132538.2004510-3-chiang.brian@inventec.corp-partner.google.com/
 
-  arch/x86/coco/sev/core.c
+v1 -> v2:
+	1. Correct the subject and commit message
+	- Link to v1: https://lore.kernel.org/all/20250314032802.3187097-1-chiang.brian@inventec.com/
 
-between commit:
 
-  d2062cc1b1c3 ("x86/sev: Do not touch VMSA pages during SNP guest memory k=
-dump")
+ Documentation/devicetree/bindings/trivial-devices.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
 
-from the tip-fixes tree and commit:
+diff --git a/Documentation/devicetree/bindings/trivial-devices.yaml b/Documentation/devicetree/bindings/trivial-devices.yaml
+index 8da408107e55..e0017ba594dd 100644
+--- a/Documentation/devicetree/bindings/trivial-devices.yaml
++++ b/Documentation/devicetree/bindings/trivial-devices.yaml
+@@ -392,6 +392,8 @@ properties:
+           - ti,tps53679
+             # TI Dual channel DCAP+ multiphase controller TPS53681
+           - ti,tps53681
++            # TI Dual channel DCAP+ multiphase controller TPS53685 with AMD-SVI3
++          - ti,tps53685
+             # TI Dual channel DCAP+ multiphase controller TPS53688
+           - ti,tps53688
+             # TI DC-DC converters on PMBus
+-- 
+2.43.0
 
-  266a5698a408 ("arch/x86: Provide the CPU number in the wakeup AP callback=
-")
-
-from the hyperv tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc arch/x86/coco/sev/core.c
-index fae73ae5a486,7780d55d1833..000000000000
---- a/arch/x86/coco/sev/core.c
-+++ b/arch/x86/coco/sev/core.c
-@@@ -869,12 -1166,26 +869,12 @@@ static void *snp_alloc_vmsa_page(int cp
-  	return page_address(p + 1);
-  }
- =20
-- static int wakeup_cpu_via_vmgexit(u32 apic_id, unsigned long start_ip)
- -static void snp_cleanup_vmsa(struct sev_es_save_area *vmsa, int apic_id)
- -{
- -	int err;
- -
- -	err =3D snp_set_vmsa(vmsa, NULL, apic_id, false);
- -	if (err)
- -		pr_err("clear VMSA page failed (%u), leaking page\n", err);
- -	else
- -		free_page((unsigned long)vmsa);
- -}
- -
-+ static int wakeup_cpu_via_vmgexit(u32 apic_id, unsigned long start_ip, un=
-signed int cpu)
-  {
-  	struct sev_es_save_area *cur_vmsa, *vmsa;
- -	struct ghcb_state state;
-  	struct svsm_ca *caa;
- -	unsigned long flags;
- -	struct ghcb *ghcb;
-  	u8 sipi_vector;
-- 	int cpu, ret;
-+ 	int ret;
-  	u64 cr4;
- =20
-  	/*
-
---Sig_/1li4/kuB_8W7c6j+4YPYNJ7
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmglolYACgkQAVBC80lX
-0GzUwwf/QFrrv7GG5ZzvxQBf6XLjQ9pVqV1IUwihbAmX+3AkiFpcC3eg9CKEOviN
-/PGn47/RnGt0QIFVOenIrslN78gXSpkIR05TABveEF0B2Bt7Lj9LPHsKXbcCAlnS
-IMwhFg+dpfZpNpXfJQcZronGNDc+PdCmd9rDFVdUDKkwqA3uTDgQCRpl4/h6Hs1T
-uxtacQzZELSn+bVcznwcnGcXgbUK/SllXkDoSuhRtRcCTESckZT40tkrlQwi2AKu
-kMEuRp1S75WLtEPcav8lb3BxaP8GPGTDquYzAXmPnGjlCRuVQZs4Hv5KYF2X14lt
-1m3AUyKrzPc+3DQ3ZhmVUgW6HxAjlA==
-=WFb0
------END PGP SIGNATURE-----
-
---Sig_/1li4/kuB_8W7c6j+4YPYNJ7--
 
