@@ -1,247 +1,550 @@
-Return-Path: <linux-kernel+bounces-648913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-648915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B6C2AB7D78
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 07:59:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1B9DAB7D86
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 08:04:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A30851BA73D8
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 05:59:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 622278682B7
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 06:04:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57361296709;
-	Thu, 15 May 2025 05:59:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6115829550B;
+	Thu, 15 May 2025 06:04:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VqEwgolP"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="rlKF5HA5"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2044.outbound.protection.outlook.com [40.107.223.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C608C10E5;
-	Thu, 15 May 2025 05:58:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20EAF25B1CE;
+	Thu, 15 May 2025 06:04:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.44
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747288741; cv=fail; b=toA1JSrneTAJd3Og0CQ4Chxij2XDFUitXiKBuHBUvpdOptDKJW1Q1yi14LBVgZ8n1F6g++uM8EVHIss1UEFAB6IadJSXJ3hx7o1jyKtWSArZQ5OjKKi0gmh0TAUnMM4xtAwOSTHQP0fRsuNyTuEgbqMqW+ioiWR783phzz8+6a0=
+	t=1747289072; cv=fail; b=Yjwc2n1jTYvHxwVRKmLwurLFwKF6s5l91BmeDnkH2HT2LLoOkwrCKmW1fZPt4K1ERUIsZ0p6CjZ2UYcTvv45b3r3Rjsz665qCZvXGak/bhGGstD88m4xPYyQNR1VjTU7j4xaN0CSUCFTqaB9B1+kYP3iO4kUXy6kFzrkrMXnQAc=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747288741; c=relaxed/simple;
-	bh=qHbKNtRUneS/fEByz+5cFVgWpQwIjUpO/X0KmdyON0Y=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=P8FHk7UJaX3MOtPHi1XX+JQ1tUGGY1El5moeGOrk8s5G4G7K63erMy1q7x8s8Qf3vGXuc9onInzZjW9oR+xmzN9LPED9yqcfKwEkPHDRyaUQxVL6qAm/OIRLht9B668rSy8uC3ubSxBlVg04Oe/GUbEpBMoAbLW2gmiLJ7xUcsc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VqEwgolP; arc=fail smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1747288740; x=1778824740;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=qHbKNtRUneS/fEByz+5cFVgWpQwIjUpO/X0KmdyON0Y=;
-  b=VqEwgolPynkzC2sxBl5ipYxQDZlD6FiYwda22209RgD5JqbyWbxLWyUb
-   zZGvBeQllnv3PMMnd6LYi21Cmhz6JwdsMvPaq73ay/f+JJAyN2WcTGk1m
-   nRVPa4xIGXSVgfw+UlDfHAlP7v4PtQfSnwKelfLvYzDqoZYy4n0JBQH2y
-   UzfzToR7O7Fh3ORYN3sZUJ4zh29nnFbkFK6uNxXSfTApTmJd/DJDvyA66
-   5xV98kgJmjMlzOPDdRnhml3hdPzOMMD1GgGrvGHZSENBa4UDMTeT6g/NN
-   EYD4NafupSFMGMbvJylZfzari9sbwpLxT8duFNWO4gXuUWdDh4DoGevrc
-   Q==;
-X-CSE-ConnectionGUID: jPZLXKyJREiIDfKo0y8h6Q==
-X-CSE-MsgGUID: b0ZoGmLOQfuMK3qEk4xkCQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11433"; a="60545824"
-X-IronPort-AV: E=Sophos;i="6.15,290,1739865600"; 
-   d="scan'208";a="60545824"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 May 2025 22:58:59 -0700
-X-CSE-ConnectionGUID: 03UHA1DiTdS9vz9aPMcnOg==
-X-CSE-MsgGUID: wTaM32C/RvyRmr/sfjXNww==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,290,1739865600"; 
-   d="scan'208";a="143029344"
-Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
-  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 May 2025 22:58:58 -0700
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14; Wed, 14 May 2025 22:58:57 -0700
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14 via Frontend Transport; Wed, 14 May 2025 22:58:57 -0700
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (104.47.57.47) by
- edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.44; Wed, 14 May 2025 22:58:57 -0700
+	s=arc-20240116; t=1747289072; c=relaxed/simple;
+	bh=7iM8CKB2RgVAMfy/LW+g+lPLVgk3rb9VmP3dLmevQzs=;
+	h=From:Date:Subject:Content-Type:Message-Id:To:Cc:MIME-Version; b=ogat1FVIDZIMlDezCz+hyGeA08khGeAsM1YnfnLgOAyMAc7wPXk+qkXzvo0JjqT92RnHV+brij43hZbh74rtx5rfprY/KzToxHqUYkv7oNsdd1eT/2vw3GRFNd05OcNcVj1mC9yudVsnc33Vjh26+WLpNd4WIf8dnvnjUrekDvk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=rlKF5HA5; arc=fail smtp.client-ip=40.107.223.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=icvYWQmekxiFsXItMMuFuQF/y8bAjKBGkUrvpPEhlwfM2u9nb1BMznAh12Mg5bpFKBQpqVxFe6lteuAkrY883C9Iz4QDUcaEK+Yb0NOmVMRQj5/aiKRGcCox7YfvAY1svJMUo8rPOwDOCOPL194aFr1hD+MGW+/hIo6gtgcHTsE1DCeJt3MRHmKhgglljSjZ5GtH+r80oTbbRnNxHfKPepwPzmJs4Ol5LHCM7nCGq1GNtJrjUbWrj44iB4kfo1cClfm5psojHxZyp2tjzGAq4rGmOR6ifJT4hDPiO5Hm5PJZrg32oKwwDAPZ/960EXUkfqeRiK2LMSiLwhg00G5wTg==
+ b=de7v7pjTiZsm5YNuStnJbIF87oyNwoDPTKKRhRbUi/SDTGBD0t7+GJ/a6zw+GjQ4S6a3KkZNkDBWatN3lDG+LmmPLinIsdmoGgUxeOg83ujsAVSthgCtdq7kAit+xvJTisksMXh6FK3edX04KRaW8hz5PU1VNlMSWlbsHEAZltq955Bx+nF6ieI8WxHVpPq8RlR5fFEYfw//RhxmsXn9qRdRmiQGVwIh1PYbG8eweVwPmYYW3fWyPwqB017dKWKIanC39uSpdLeTXjjkKOAIM4UsjI1Pdj6m2VLKiPmpLKmGaUdKarS6E9LVpog1iQuNrzuFA3yleQQJJFwWirtYSg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zzb3+Jh/Gy82FtOV9pcY3Eg0A13wh/bsKzezd96agJA=;
- b=PVZwvnyd+Z7/liNFU6jTWlz+qCyhjLSHI+k/cVa2VhgzproE+kPBlYSIZfUATkv4YJtGgtulKeKQRqUTuzoyTDONUEFF0yAz/qJWKEOwLT1yGbL2jUTYGcE4xznwp5WksBbhG0KVxuptGwa8J0apYCbJzSf6XLwtP8F6/BhArm0texk9wndRuh/28MLWz5hJCalyu1rKRimlBQ/L0+6PovnAqpPmBOBEnbceVvkvNnbmMWrAC56+RLIfltq0dOzGUY2xbtssF/GO5JTOC3dDvid6PGuiFAnnTIKJcvLse6gRtr7g9fAxnxLW8SL0QM4+DiCoZfVeUg2KOqkxSPBwWw==
+ bh=945ErUxVYzTvd6wXLkqZdXYyXIvX/fjzKrVIKiGoroY=;
+ b=gZaYX3y8dUoHC4EZXJm8lWdleCoqsE3vDdGrNaDXC9lMcd2AtQRcNUBD4Gjh6c0FS2MzXlsw73K+ZN4CNyu+LcuW7rT5mV2YhNaG7JvcRmDI4Pu0ArMuZRJKSJX8t1paiMhRJ0Bc5qmGaRuqK14opQQ3RZJGEYnR+mYFBh+SZp0IZwDZUQRYLUIqK29y05f6ve03U0RoO8qGn5c2Y7iPbVNsZBjjOmbTEz++jH8COYaUsqX7KuAyInpuxckIBZ9QUnTJnQKYHAZseW6P8U69LoYX2lMepAuny4tCXzPDtAYAXnhzVA7fDkNV/omSRYm/girq6OFvs5UhYWG2wigEWg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from BN9PR11MB5276.namprd11.prod.outlook.com (2603:10b6:408:135::18)
- by PH8PR11MB8258.namprd11.prod.outlook.com (2603:10b6:510:1c1::5) with
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=945ErUxVYzTvd6wXLkqZdXYyXIvX/fjzKrVIKiGoroY=;
+ b=rlKF5HA5QAz8hPIoEby1mz0Y3YIWOJ9vDMWeAKWuPQkn6kYWOp7R7TGshmf2ljWfGfcGupqAZBPHC/ECXBmrbupHp2U/1jj9oCRg2KwZS23jq/Lk7256TAdRb6y3Je3wihswttqtfWW2nL5FLtCQDGav1RutXFuBarz1rx4XpSat2FhYOy1t+pN58BlaJmr1QYpdf3cixQCJih/GzjyyDku82NcDS0uCeApkufoy59oQx2ePomyziVhKaOVXu/sidBWv/Riycs0mp0DJfQWm61LQtwQFbmITztg/6SfqsmvEYjE++C0US+x5ujmGnNL01f5M/xmHPfK5XIocovyjtA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
+ by PH8PR12MB6937.namprd12.prod.outlook.com (2603:10b6:510:1bc::15) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8722.29; Thu, 15 May
- 2025 05:58:41 +0000
-Received: from BN9PR11MB5276.namprd11.prod.outlook.com
- ([fe80::b576:d3bd:c8e0:4bc1]) by BN9PR11MB5276.namprd11.prod.outlook.com
- ([fe80::b576:d3bd:c8e0:4bc1%4]) with mapi id 15.20.8722.031; Thu, 15 May 2025
- 05:58:41 +0000
-From: "Tian, Kevin" <kevin.tian@intel.com>
-To: Nicolin Chen <nicolinc@nvidia.com>, "jgg@nvidia.com" <jgg@nvidia.com>,
-	"corbet@lwn.net" <corbet@lwn.net>, "will@kernel.org" <will@kernel.org>
-CC: "bagasdotme@gmail.com" <bagasdotme@gmail.com>, "robin.murphy@arm.com"
-	<robin.murphy@arm.com>, "joro@8bytes.org" <joro@8bytes.org>,
-	"thierry.reding@gmail.com" <thierry.reding@gmail.com>, "vdumpa@nvidia.com"
-	<vdumpa@nvidia.com>, "jonathanh@nvidia.com" <jonathanh@nvidia.com>,
-	"shuah@kernel.org" <shuah@kernel.org>, "jsnitsel@redhat.com"
-	<jsnitsel@redhat.com>, "nathan@kernel.org" <nathan@kernel.org>,
-	"peterz@infradead.org" <peterz@infradead.org>, "Liu, Yi L"
-	<yi.l.liu@intel.com>, "mshavit@google.com" <mshavit@google.com>,
-	"praan@google.com" <praan@google.com>, "zhangzekun11@huawei.com"
-	<zhangzekun11@huawei.com>, "iommu@lists.linux.dev" <iommu@lists.linux.dev>,
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org"
-	<linux-tegra@vger.kernel.org>, "linux-kselftest@vger.kernel.org"
-	<linux-kselftest@vger.kernel.org>, "patches@lists.linux.dev"
-	<patches@lists.linux.dev>, "mochs@nvidia.com" <mochs@nvidia.com>,
-	"alok.a.tiwari@oracle.com" <alok.a.tiwari@oracle.com>, "vasant.hegde@amd.com"
-	<vasant.hegde@amd.com>
-Subject: RE: [PATCH v4 10/23] iommufd/viommu: Introduce IOMMUFD_OBJ_HW_QUEUE
- and its related struct
-Thread-Topic: [PATCH v4 10/23] iommufd/viommu: Introduce IOMMUFD_OBJ_HW_QUEUE
- and its related struct
-Thread-Index: AQHbwI7/mLHDYSSXzEqugYzPZImI3bPTOyUw
-Date: Thu, 15 May 2025 05:58:41 +0000
-Message-ID: <BN9PR11MB52765915FACBF590E09EC46E8C90A@BN9PR11MB5276.namprd11.prod.outlook.com>
-References: <cover.1746757630.git.nicolinc@nvidia.com>
- <bedd9de4e24bb89f18f4b13b52c5fdb6db6bd889.1746757630.git.nicolinc@nvidia.com>
-In-Reply-To: <bedd9de4e24bb89f18f4b13b52c5fdb6db6bd889.1746757630.git.nicolinc@nvidia.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: BN9PR11MB5276:EE_|PH8PR11MB8258:EE_
-x-ms-office365-filtering-correlation-id: def743c4-8849-4579-277d-08dd93758b1d
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|7416014|366016|1800799024|376014|38070700018;
-x-microsoft-antispam-message-info: =?us-ascii?Q?PCHvY/svDUcrI9Feip8HNp6N4KPV8oDoe/Iw4+2C5AV5acAwCci+EkBqx+Vk?=
- =?us-ascii?Q?eY5MoPBehoCcv0KUV/YjpuiMRHFdWBiK+0RUtTxQaGx++1snkFs6McUZZCmz?=
- =?us-ascii?Q?FYeV0QEL5iqijxsAl8w1KMC+OllYKb1cgRWWtXULMu7oEds0kqlFt/uEmK4d?=
- =?us-ascii?Q?6xEqbLFkLw3Xto/XDivLy17pbm9edOU55AI47UsFpTJRES91SJmIrN9X4Dqr?=
- =?us-ascii?Q?eUB9JLZI0qfSqIO1cLWsbDXcH8yieq/ZWoab8yqvoOSn5/y4HQ1jzxEnm0OM?=
- =?us-ascii?Q?lUtLy8i0GHArGRDK2q6Se4l3xxreUOKRo1Srlknh2ITqnUkjvVRbrb0bZ7Cq?=
- =?us-ascii?Q?yg0CB259yFg/neoGwtwLCXYgHHjiedrLZ4SdjYDuhCe8QKSOcWKQKndsnqlM?=
- =?us-ascii?Q?IDlzT8/TQbwrgJSKYJdlnokC3Vd6bUQCR21aJCEVKAYFpKXovMMPbTDshEAI?=
- =?us-ascii?Q?PFb/QWRGd+Z9T36CE19HWW/FCj/e0pGJ35SSq7Hf+wGU0OugUoxWFilGgr6v?=
- =?us-ascii?Q?k0dzZg3YO+bcPTIDyj1Vyf0lRb68AOx6tVnlynrkMQlTRJuPIGs12hAOj7gp?=
- =?us-ascii?Q?glzdiVmFTXOCZrogORuWDX3fynL00JOLfX54Pbu8h8EihhULwzJWE7fgAXcp?=
- =?us-ascii?Q?JWl4I/Z+FLXhFguWNnGsKkIYD/F2MKHmaHbHGwOoq6SrZrKZgbxoq13nTJ26?=
- =?us-ascii?Q?tXS0sy5QrRZVCgjOsP7Rubp9YBKWwDWhgMZ93M5v9JSmBxro7r1nhdNS6udH?=
- =?us-ascii?Q?SKrfJ9EFb6Y4nchL8/DM72oo1LTwU7VG/+a9eR7Pi3aGNMCF9Wz+/DhrIpBN?=
- =?us-ascii?Q?EnZfi+aNigx7gCUXArGi/ygGWx7lL0uNalCh9vVxrgBfcK6/EwUCKp2e4Dg1?=
- =?us-ascii?Q?+JEyYCFTNJssxeSNl7OfbzNK4aWFBfhYEtpWxsuraDy0TMOmN6jSDHDFNnfo?=
- =?us-ascii?Q?whOEtoZ+/wHw8ejZVBE8H6V+EETOfGhc1puCiekjRBuELaI26XyHbtZXW/si?=
- =?us-ascii?Q?43X0ONM0u8lv4fVW4UQ2IV3nFpJLJHaA3rYrKHHdAtmhcY0N7jYMX7mgzsWL?=
- =?us-ascii?Q?c1YjW1VYS8GCDikVWTNqePujp9aooZb5TeosIZubxetYdSSo+I3GfpZ1DotX?=
- =?us-ascii?Q?LglncrALcP7xbw0UMU7iVgTG4YproSFjw5AmBL52phx6KyhCE483o4ybP3Ie?=
- =?us-ascii?Q?qA0PSzlPqpycOoTjsrsqN2y5JLjfIufMftmMpbC+/n1Ewyvs4ChOcPInDtQf?=
- =?us-ascii?Q?xfRi9ls/sxz5Qtq0/zBLSpBlRNMUsGtybFE2bq34aUB+jYBvsB8ZTiMoyhwg?=
- =?us-ascii?Q?7+kZJGFVaw6fFGrsBAA3NuGIj47Je9keT92gYQ4yfBNygk1EBsqndJdWCRvk?=
- =?us-ascii?Q?JXz9vX6J+gEAlS3OEzDwnydtp8jHoozGQjs8Oro9OmTxIKPffQrsSIzbZgVH?=
- =?us-ascii?Q?+84X1rZ4dnszvf3Ysb1PXV81miw/GgvEUf7AL6G+jQPNIqv3utWicyFntFdy?=
- =?us-ascii?Q?sDuS4F9rCW/SD3s=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN9PR11MB5276.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(366016)(1800799024)(376014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?Kq1khJb+krtZv8P/pM8B6aQHlR3mzFa5IkigxQ4jxVCW+R+llLGfQctuwMGZ?=
- =?us-ascii?Q?pHlVQNn3EK/QaVvBPZxNgZhWXeimXnBvDIN3ZIW3nEH9oOmrtX6VKVjM5s7Q?=
- =?us-ascii?Q?TgBDKE/WSBs/5QhbgTHn0XjDwiCppdNLjcfROXWoUZEJ8EnnZt6Y+1s9rgUW?=
- =?us-ascii?Q?i+1AMcC2An9KowfCFSy/lSiaVUrdjwyyZRyyYyRoYSayzJlSqQM+LobYYj/J?=
- =?us-ascii?Q?mv9MDNBFJHV8IypMs0w354oDbRcJIhuAWIKtYh3gwQZ/JUyfexD6AG3yY4Uw?=
- =?us-ascii?Q?XI9nlWK61Sr6CQ0AfjuHjJ6SMd4n+x7qb4K7w52UL/DKB992H/e0NUICkvUA?=
- =?us-ascii?Q?HpXbRA0ukaoMw6OAAmE8SJsIees5oiz8n8rEKktSN7yAW6FY0iQU5hq+rUY+?=
- =?us-ascii?Q?M7hf0s+Q+pIhjQrkS+aU/+hiGoX0xb74fIMW+oizraLhBp0nE2tNkzLYEnle?=
- =?us-ascii?Q?Jm5ke1zk+3odVYGMWbe5q1CNFoYHYG6A5H89spx4Hl/D5RlK3gl/e0OaZv2o?=
- =?us-ascii?Q?cQqJr4CcvBu098bckOmGFeMUChznWOA8cyJtBH3Xm16EsBhQcQu3XtcivvFo?=
- =?us-ascii?Q?i260zYZuDkhV9z58FozrrvTmzrnubXBV+kjFbPhUd6uztRfGeSIjZ9Y9BAvJ?=
- =?us-ascii?Q?CDJGWFAvXl64dEAK+Y57bDcAhmOmflcFGT1eD0Ott8siR2blNY+M6dpKl+Mi?=
- =?us-ascii?Q?fZJ6EYCExDPqGvliK0trwQR7Esrr20TSfpJeiKTVvjKnLAuQmSS2LDceM8Pc?=
- =?us-ascii?Q?rEvhqtB/a8OthkmfyhecAXfxcgn10uPAjn7V/kRU+rlfFKU1fYEKJJU0dDAd?=
- =?us-ascii?Q?M2mEhgsYkE349VzjGEHaAaamey95JTRvc/o1IepSquxJ/Kqp36qrjeReSP4i?=
- =?us-ascii?Q?UQznYuafGKUDViYmq9dypNDvlZr/6iHzBpHQWTal0kSOrXU0kRs5G2ANLOmZ?=
- =?us-ascii?Q?vO3wHPUvs1sAl/TC2yfhgZCiF7nM3rfKhCjOVZuBwsxdLmsjE73UtxxRqn/S?=
- =?us-ascii?Q?LI08oMaytgiR0x9HRMpys6M94PAQrRORp1XYb52t3vRLvbo0VIJrKo90kulZ?=
- =?us-ascii?Q?zzb0XzDjEJPgUtN8agZavpIDI1D4+uQ8JX002EvfYA7qFnJ2S3LSkVDsRsF1?=
- =?us-ascii?Q?QXtTBSl3RGXsepy5AqIAIHFUF1MoYTci5/xXj2uVaa8sYS9Z9kkujc+SWoEv?=
- =?us-ascii?Q?QWBCq6ZdrVlGE7ashOQdzR4yA7NIVspntXBsBMRLYQjgIoOBAZgrGt4gka8T?=
- =?us-ascii?Q?JLgPm1FcCx+tmXbeipY7k4yxvHajcWEUPQUTN0aSj/Zxp3FRVCur2QHD4a7+?=
- =?us-ascii?Q?HnmgBcUF7OL1WzFFZTKanQ796EagVS6fvYPt08y6KOkJsnNUvneE+w8ttgYS?=
- =?us-ascii?Q?RqunPPhRO0pRb7umDi1k6bPouK8wmmorVGSEWZO5+qEnmC6swofuwJYFRlCF?=
- =?us-ascii?Q?xVCgOVtXQEvNc/CgmKrFSszzQ+NptpEHAl0PwO+VCUlJ1yr8JoZS67QTR3L8?=
- =?us-ascii?Q?XLSPTl7A2H84lV1OYUXcXGpkBro2+6TritNivfBovyMGxKVvo0pWVoz2eCde?=
- =?us-ascii?Q?8WYKkh8QK8HoFQ3vJv/IneLmPd3VQQF68O2iGDe5?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8722.24; Thu, 15 May
+ 2025 06:04:24 +0000
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::6e37:569f:82ee:3f99]) by CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::6e37:569f:82ee:3f99%5]) with mapi id 15.20.8722.027; Thu, 15 May 2025
+ 06:04:17 +0000
+From: Alexandre Courbot <acourbot@nvidia.com>
+Date: Thu, 15 May 2025 15:03:51 +0900
+Subject: [PATCH] rust: add basic ELF sections parser
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250515-elf-v1-1-4b53745453c0@nvidia.com>
+X-B4-Tracking: v=1; b=H4sIAMaDJWgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDU0MT3dScNN0kyyRDszRTs5QUC0sloMqCotS0zAqwKdGxtbUAwxSb6VU
+ AAAA=
+X-Change-ID: 20250514-elf-b9b16f56dd89
+To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+ Benno Lossin <benno.lossin@proton.me>, 
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+ Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>
+Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+ Alexandre Courbot <acourbot@nvidia.com>
+X-Mailer: b4 0.14.2
+X-ClientProxiedBy: TYWP286CA0013.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:178::9) To CH2PR12MB3990.namprd12.prod.outlook.com
+ (2603:10b6:610:28::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|PH8PR12MB6937:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7d0a6d55-57ea-4096-898c-08dd93765356
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|10070799003|366016|376014|1800799024|7416014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?aXZPTmJueWVhR1BTZndrbU9NT3Facldzc0Q3a0dUczNqZTlIS21RRnBBY2Jr?=
+ =?utf-8?B?TEsyemJDVkxjZ0dyZ0ZxbmgrQVkxdG03Rko3QnQ3WDNjaklSVXlOb04xU2kw?=
+ =?utf-8?B?K3c2d09GMG4vcXpSVFVDTGJDL0dxM1VnS1ZHbm5xQ1hQUGl3MDVEYStLSWtG?=
+ =?utf-8?B?M1UrNGtYQmlNMTFYWXgvZWRSd2ZyeU1JZzdpOHBxOVpOUEFQNytjbjhYNDdI?=
+ =?utf-8?B?VS9JYzcvc3dWclhDVzR6bVl2U1N1b0dlWUtBL0RnWG5vS0FGVXgvWUo5NUZD?=
+ =?utf-8?B?STJIYndreWF5akZBM2RmYnpiWGJkY3VZQjdab3NTMDMxZXIrMFhiV3FidDda?=
+ =?utf-8?B?TEdSUEdOa3l2S0ZlZUlPVE50Q01FNnVzeHRsaXNJblpyU0p2WEJvNFVmZlBT?=
+ =?utf-8?B?N2N0Y1dRRXg3R0lJc1lVQXNTblRnbXhxQ3VKUVJmU2pscFBsc013NThTQ2Y4?=
+ =?utf-8?B?MS9oUjJKUFFTREZxY0dDM2R2VnozeGx5VFVseHlkR3V6SmxyRzBhWlI5aU8v?=
+ =?utf-8?B?eUtJUHNXaXdyRGJXajhBZ2lPaXB6RzBZY21lWm1UQ2oxZkFMTzZZdWRzbUhs?=
+ =?utf-8?B?eEpPOUJuZjZzdU5vK0luamlabHRQWlpnOWFNc1JHd2tIaTBjclp3U0ppek9Q?=
+ =?utf-8?B?V3BsSklmQUR5d2F5ZmJVOTEvWjJOOFhUSmV6ZmlzMnhzTDRPUU1VbVRLMFJC?=
+ =?utf-8?B?UTgxZ2pqZ2VoV3dkaEJvWUVGTFNDcHdlRlk4blgvVC9pVWZ6TTMvWGJEQzJL?=
+ =?utf-8?B?UUE2S2MyOTFraGhzZThJVVdVMnhkZGJrYU5ncFZZWEUvNE92K3dPYitXaVNP?=
+ =?utf-8?B?ZmY1UnBreXU3eUZBSnZmWlYrc0RCU1VPUmE0amhDcCt2cjBzcWxVMXZKMVVz?=
+ =?utf-8?B?dzQ1eGxRWS9ueEUxMTlmY3FxbSt5WENWRXI0TXlXbnpMN0ttSXcwVUQ4NERo?=
+ =?utf-8?B?QVJpc1lnNHBReHo4RHhtb0hlQ01pbjlGM1E3SytKamg0MUl3K3hqSk1vK0ZD?=
+ =?utf-8?B?TVdhQklpSm5xTTR0ZjRvKzhYcEs5TG5LVGNvWWI4d21BRmJNTlEyV0p1SDcw?=
+ =?utf-8?B?UitrdFVkcStZTStsVzV2Mnh4SlB3akR6akI5VEdyTUlqczJrNjZscUc5NFE2?=
+ =?utf-8?B?K25ML2xwTTZNRDNVeFpGdDhhSm1qZ0FycDdhcVFFV1duTVM3d01MLzFrVzlU?=
+ =?utf-8?B?bCtDYjJEcUI0OUNmM0RYYnRRdjFHaTM3TTQ4cXpTSnJ6LzAwMS93Yzc0WERu?=
+ =?utf-8?B?Um9oSEVQNHBuVmxuU3k4dzBQeE9YVlZpdjBkRGcySmxFalVDZkVCUnhVRnN0?=
+ =?utf-8?B?dHJwbXBKamxaWVRnZXU0Lzk0cldNZk4rTUZHd1BCZDZKbSt5K1orVVhndVRw?=
+ =?utf-8?B?RjA5aEhVT3BRd2Qzdmd0bUFUbTQvaXJXbUdteW9YQkNkYmxYUVlWOTI3Q2pm?=
+ =?utf-8?B?cXlsMkxBNXFZbnRaZzIxa0ZnVFVNUCt3MWlSdmhybHpLOXc3VFNZOXpvT2dG?=
+ =?utf-8?B?UnQ2RFAvZkNKUWo2eE9rdFF1WTJaWHQvZmtpazVUV0dUUXFrQnVPVk5PRTBT?=
+ =?utf-8?B?UGdCTVpLajc0MkY0MCtXNGdmNDdDK2tsUis3bDlDYmxKR2hLMVZvNlNVRDgx?=
+ =?utf-8?B?ZitHMU5raEVueFdhcHNWWFdPbmpBT1IyRjBWK1B1WDhRSWVDWlo3OUVVMFdQ?=
+ =?utf-8?B?c0ZaNThId0UzMkZ3VXZDK3k2NjRCZHNBVUlkaGtodGtFNXJFWkVkS3Y4QlBP?=
+ =?utf-8?B?M0FhRDZRbW5RWG1OK1hyb0x6YU54VkZaU1pYQSt4Q2lFek5aNmV0S3Q5Kzlk?=
+ =?utf-8?B?Z1pKTlUwYjNWdExiUFRDc01YTkdWMEthWmJ0VEt5L3BubDVqVWVjWW12VUlX?=
+ =?utf-8?B?TmVvdkkyQ29qZHR5L0h4Yi9FL09ramJrZ25DSU5DaWg0OGkvNDExZWRPSkxG?=
+ =?utf-8?B?YnBwVERJTlJSSmY3UWQvOUVHelVwQ2ZIVWdQcHNTaFJCbko0cmx4VlRESEN2?=
+ =?utf-8?B?ZFNSV2p6Nkt3PT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(366016)(376014)(1800799024)(7416014)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?TkJqcUl4VlByVGNQcjc1dHp2aVM0ck9ickhmazA3cG8vM0liNzFreWFRUnpi?=
+ =?utf-8?B?S0FUVm15aFhGYjVPbitzckFBbjJoaDFGdGFQTks3Q1VCWU03ekRnT0tvNVlB?=
+ =?utf-8?B?blFDb0xrOWs5UkFBL0R3MFpyVjlTeCs3bm11RU05Mkppb3lBa1JyMzJ1V2VE?=
+ =?utf-8?B?RkhwZDRLTW53Q1dEdzUwRmdqWUlIWE1hSDhBNS9HTWlMNjVURjRaM3dlSjkv?=
+ =?utf-8?B?WFN1VWRBd0tTbnlPdWd1aVhIUnJoYk43S05xM3NTRThzTUhaTEwyWXc5ajZt?=
+ =?utf-8?B?T3dvdFJsRHhGTlRrVXQ5YUs2RGRaNFZDbzRIUVZXMVBLT2dpZnU4ZEpZVlFh?=
+ =?utf-8?B?bVZTSlhzRjE1QVVFVkp2TFlENWFjRU50djNLTXgwSW9aREpsazJFdnE4WW1q?=
+ =?utf-8?B?dlBiWFNrUjRFQnNVRHZ0Z21qUFhIN3J1QnlPazIrMEJabXJRS0VieGZ6bVhv?=
+ =?utf-8?B?enVjTHdsL2d4dE9CbmpvWmF4VmdXd2Iwb2lCUlZGeFlaKzIrYXAzMTVIVjU0?=
+ =?utf-8?B?dXg3SHZCV0lJcitxdVJFUUtLVXhzOXdRNEhCKy9UREtVUWJMekt6enArdHNw?=
+ =?utf-8?B?SzVXT0srb0k3VlBqMmovK2c2by9FSVJsc0hEOGpDQTc0dmRxQTNZN3Q2ZDhq?=
+ =?utf-8?B?c1N2NDdTVzBINlFlNEFKSTYvNHRwZjZWNHhsbnE0Y1g5bi9aT3NFSG1nK0hL?=
+ =?utf-8?B?Nk03MEZ4eXhLeVZkZXFvckxBa3RoVlMrdUd5U29FL1d2UWRtQkJCdmpzbGtp?=
+ =?utf-8?B?QVdwUGJpNmdPOTdOUUM0bVg1eW5ES0dDUzE1Y2VwcjZaQWVXWm5sL1kyNkds?=
+ =?utf-8?B?angyc2Q2bVZLK0lJanhBcVJLWTUza3VhMEJtUzhSb1dzMmdRMkh0QlNEK0RZ?=
+ =?utf-8?B?ZTR0VHlwdGVvVkFHbmJOQ3dZVTE0UHVvQ05WZWFFZVNlcjFuaUVFYWhzR3VE?=
+ =?utf-8?B?by93WFZ2MDI5Tnh4TnRJbmZDL2tzUFJPd2lnV3k1UVdPMForeFVneUprS0gv?=
+ =?utf-8?B?cHJmdUxoWFMwQnUxc2JSZlNsbUJ2aVlWWFlWRXo0TEtwWlN6T2dyTWVmR3B5?=
+ =?utf-8?B?d25yeWtYNWl6R013UGFsNXVwNE1Qcm5GclI4YWl5K1pwdjNMSlpoOXo3Tktl?=
+ =?utf-8?B?SERIcFdDL2xnckkwKzZGdEk3djlOOEJIV2JFVGF6QUxMUEVyRHY1Vm9SRURW?=
+ =?utf-8?B?VzFhZW9hQllBbHY3OGNqOXZOZ25FVDd1OWxva21HKzNlK01HNnhFQ1FWVG9X?=
+ =?utf-8?B?bmJDQXZFdXp6a0V3L3B2SU9wMStFMkQrblZQSDhNTzZxTU9MY2U3RkJDSG1O?=
+ =?utf-8?B?TjVjWlpiZWgxNEdONWpJd0VjV3NpUnFSc3ppckErRGxpUndEQklZd0Ztb2Rn?=
+ =?utf-8?B?YklyM2JsSjBmR3lXMzNiRG05OHJGK0wxTDVwcG9uU2cxMEJiV0lYKzkyRHVm?=
+ =?utf-8?B?TlZHeXVHNERHK2dSZWl5RDlJVm9aVTFza3ZOTXBZRHJzeWNybWlzeVdRWWpE?=
+ =?utf-8?B?Z1gzVW9ROVVWRWlKS2FZSGc5UXJ2TG5ldGd3T0NlRGtFV3RrVDhvWU16UEE5?=
+ =?utf-8?B?bWl3U2s4TCtkYTk3UE9jNjlpVWlXZUd6U1UxRTZSSGdIdDlnUnlvRW9OQ2hC?=
+ =?utf-8?B?UXkzTFpQYit1ZVhiaEx5cUl1b0tUaFAxYmZzRFY1aU44NVd4UzR4Sk9EZFB4?=
+ =?utf-8?B?SzQ1Mk5wdEp6aTJMRGltK3JncE1JQ1hheVZQY0o0U3BRbzM1OVNxNUFBNS9i?=
+ =?utf-8?B?NVN4U0psUGg1a284eVpCejFLWGMxSnB5a1ZNSGtGZDlkYWZtL2VyNmpuekd4?=
+ =?utf-8?B?RlJERG9xRFhoS08wRFFKVTFvUmJzek9lUThwM0lWL1FmTDJDYXBRNEREUDFo?=
+ =?utf-8?B?SWhGdHd6VTJoUjQ0dHNsSXhOa0pVUk5HOHRxVmtNZFAxYmZQeDc2Zlh3K3ZR?=
+ =?utf-8?B?WmdWRmFtWkpPWEVGc3l2N2NscE56SlBJY0tPWWZ2RmtldS93czR1NzhZVUxx?=
+ =?utf-8?B?KytDN291cTFYbDRYUWZMek9ySjZ3N1ZPU245c2w5TVRHVTYrNGV5Q0xoSmdW?=
+ =?utf-8?B?eUQ0WGlVT0I5T2p6OE9tbHN3WUd6QXdOVnQ5TXZYaWV0N1RDaWZ1d2R0d1dT?=
+ =?utf-8?B?eUpVdVQ2V1IyMmdKT0Y0ZlJ3eDZLcW9tN3JiRjdIOXpmaWR0Vi9CSTZTb0pp?=
+ =?utf-8?Q?mceWlnqPmDTii2WpFfpZlc0zZgKgF8yZxaV9lv+QoCIc?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7d0a6d55-57ea-4096-898c-08dd93765356
+X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BN9PR11MB5276.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: def743c4-8849-4579-277d-08dd93758b1d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 May 2025 05:58:41.0476
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 May 2025 06:04:17.2936
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: nVm6MRbwNk3nzDnxd05tsmrlLXN4r1KeUP5NQtEukYajIjrIkt0auX2f6XxWEYsmzviDMdct/zCPY8Ox0Fm69w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR11MB8258
-X-OriginatorOrg: intel.com
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: raCJliqAC0YdhJITabIUzUgmtWK7hAapcaS8GAMlfMO1dY/sR119MWhsXbmMn8wuBfI46AcSgVAIcRwRhsgAgA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB6937
 
-> From: Nicolin Chen <nicolinc@nvidia.com>
-> Sent: Friday, May 9, 2025 11:03 AM
->=20
-> Add IOMMUFD_OBJ_HW_QUEUE with an iommufd_hw_queue structure,
-> representing
-> a HW-accelerated queue type of IOMMU's physical queue that can be passed
-> through to a user space VM for direct hardware control, such as:
->  - NVIDIA's Virtual Command Queue
->  - AMD vIOMMU's Command Buffer, Event Log Buffer, and PPR Log Buffer
->=20
-> Introduce an allocator iommufd_hw_queue_alloc(). And add a pair of
-> viommu
-> ops for iommufd to forward user space ioctls to IOMMU drivers.
->=20
-> Given that the first user of this HW QUEUE (tegra241-cmdqv) will need to
-> ensure the queue memory to be physically contiguous, add a flag property
-> in iommufd_viommu_ops and
-> IOMMUFD_VIOMMU_FLAG_HW_QUEUE_READS_PA to allow
-> driver to flag it so that the core will validate the physical pages of a
-> given guest queue.
+Add a simple ELF sections parser for unpacking loaded binaries from
+user-space. This is not intended to become a fully-fledged ELF parser,
+just a helper to parse firmwares packaged in that format.
 
-'READS' is confusing here. What about xxx_CONTIG_PAS?
+This parser is notably helpful for NVIDIA's GSP firmware, which is
+provided as an ELF binary using sections to separate the firmware code
+to its other components like chipset-specific signatures.
 
-> + * @hw_queue_alloc: Allocate a HW QUEUE object for a HW-accelerated
-> queue given
-> + *                  the @type (must be defined in include/uapi/linux/iom=
-mufd.h)
-> + *                  for the @viommu. @index carries the logical HW QUEUE=
- ID per
-> + *                  @viommu in a guest VM, for a multi-queue case; @addr=
- carries
-> + *                  the guest physical base address of the queue memory;=
-=20
+Since the data source is likely to be user-space, checked arithmetic
+operations and strict bound checking are used.
 
-s/@addr/@base_addr/
+Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+---
+This will soon be needed in order to load the GSP firmware in nova-core,
+so sending this early for separate review.
+---
+ rust/kernel/elf.rs | 322 +++++++++++++++++++++++++++++++++++++++++++++++++++++
+ rust/kernel/lib.rs |   1 +
+ 2 files changed, 323 insertions(+)
 
-Reviewed-by: Kevin Tian <kevin.tian@intel.com>
+diff --git a/rust/kernel/elf.rs b/rust/kernel/elf.rs
+new file mode 100644
+index 0000000000000000000000000000000000000000..c6af2f23a360a76992546532214fdc093522c797
+--- /dev/null
++++ b/rust/kernel/elf.rs
+@@ -0,0 +1,322 @@
++// SPDX-License-Identifier: GPL-2.0
++
++//! Simple ELF parser, useful for e.g. extracting relevant sections from loaded firmware.
++//!
++//! C headers: [`include/uapi/linux/elf.h`](srctree/include/uapi/linux/elf.h)
++
++use core::ops::Deref;
++
++use crate::bindings;
++use crate::prelude::*;
++use crate::transmute::FromBytes;
++
++/// Class of the ELF binary, i.e. 32 or 64 bits.
++#[derive(Debug, Clone, Copy, Eq, PartialEq)]
++#[repr(u32)]
++enum ElfClass {
++    Class32 = bindings::ELFCLASS32,
++    Class64 = bindings::ELFCLASS64,
++}
++
++impl ElfClass {
++    /// Validate and convert an `ELFCLASS*` u8 value.
++    fn from_u8(value: u8) -> Option<Self> {
++        match value as u32 {
++            bindings::ELFCLASS32 => Some(Self::Class32),
++            bindings::ELFCLASS64 => Some(Self::Class64),
++            _ => None,
++        }
++    }
++}
++
++/// ELF magic header.
++const ELF_MAGIC: [u8; 4] = [
++    bindings::ELFMAG0 as u8,
++    bindings::ELFMAG1,
++    bindings::ELFMAG2,
++    bindings::ELFMAG3,
++];
++
++/// Wraps the passed `inner` type into an `outer` newtype structure that implements [`FromBytes`]
++/// and derefs into its inner type.
++///
++/// This is intended for local use with ELF structures for which any byte stream is valid.
++///
++/// # Safety
++///
++/// `inner` must be a type that would implement [`FromBytes`] if the implementation rules allowed
++/// us to.
++///
++/// TODO: replace with FromBytes' own transmute method once it is available.
++macro_rules! frombytes_wrapper {
++    ($(struct $outer:ident{$inner:ty};)*) => {
++    $(
++        #[repr(transparent)]
++        #[derive(Clone, Copy)]
++        struct $outer($inner);
++        /// SAFETY: any set of values is a valid representation for this type.
++        unsafe impl FromBytes for $outer {}
++        impl Deref for $outer {
++            type Target = $inner;
++
++            fn deref(&self) -> &Self::Target {
++                &self.0
++            }
++        }
++    )*
++    };
++}
++
++frombytes_wrapper!(
++    struct Elf32Ehdr { bindings::Elf32_Ehdr };
++    struct Elf64Ehdr { bindings::Elf64_Ehdr };
++    struct Elf32Shdr { bindings::Elf32_Shdr };
++    struct Elf64Shdr { bindings::Elf64_Shdr };
++);
++
++/// Reinterprets a byte slice as a structure `T` and return a copy after validating its length.
++///
++/// TODO: replace with FromBytes' own transmute method once it is available.
++fn read_from_bytes<T: Copy + FromBytes>(data: &[u8]) -> Result<T> {
++    if core::mem::size_of::<T>() > data.len() {
++        Err(EINVAL)
++    } else {
++        // SAFETY: `data` is valid for reads and long enough to contain an instance of `T`.
++        Ok(unsafe { core::ptr::read_unaligned(data.as_ptr() as *const T) })
++    }
++}
++
++/// Converts a 32-bit section header to its 64-bit equivalent.
++impl From<Elf32Shdr> for Elf64Shdr {
++    fn from(shdr32: Elf32Shdr) -> Self {
++        Elf64Shdr(bindings::Elf64_Shdr {
++            sh_name: shdr32.sh_name,
++            sh_type: shdr32.sh_type,
++            sh_flags: shdr32.sh_flags as _,
++            sh_addr: shdr32.sh_addr as _,
++            sh_offset: shdr32.sh_offset as _,
++            sh_size: shdr32.sh_size as _,
++            sh_link: shdr32.sh_link,
++            sh_info: shdr32.sh_info,
++            sh_addralign: shdr32.sh_addralign as _,
++            sh_entsize: shdr32.sh_entsize as _,
++        })
++    }
++}
++
++/// Safely obtain a sub-slice from `data`.
++fn get_slice(data: &[u8], offset: usize, size: usize) -> Result<&[u8]> {
++    offset
++        .checked_add(size)
++        .and_then(|end| data.get(offset..end))
++        .ok_or(EOVERFLOW)
++}
++
++/// A sections Parser for an ELF binary presented as a bytes slice.
++///
++/// # Examples
++///
++/// ```no_run
++/// # fn no_run() -> Result<(), Error> {
++/// # let fw: [u8; 0] = [];
++/// use kernel::elf;
++///
++/// // Obtain the data from the `.fwimage` section:
++/// let parser = elf::Parser::new(&fw)?;
++/// let fwimage = parser.sections_iter()?
++///     .filter_map(Result::ok)
++///     .find(|section| section.name == ".fwimage")
++///     .map(|section| section.data)
++///     .ok_or(EINVAL)?;
++///
++/// # Ok(())
++/// # }
++/// ```
++pub struct Parser<'a> {
++    /// Content of the ELF binary.
++    data: &'a [u8],
++    /// Class of the ELF data (32 or 64 bits).
++    class: ElfClass,
++    /// Offset of the section header table.
++    shoff: u64,
++    /// Size in bytes of a section header table entry.
++    shentsize: u16,
++    /// Number of entries in the section header table.
++    shnum: u16,
++    /// Section header table index of the entry containing the section name string table.
++    shstrndx: u16,
++}
++
++impl<'a> Parser<'a> {
++    /// Creates a new parser from a bytes array containing an ELF file.
++    pub fn new(data: &'a [u8]) -> Result<Self> {
++        // Validate ELF magic number and class.
++        let class = data
++            .get(0..bindings::EI_NIDENT as usize)
++            .filter(|ident| {
++                ident[bindings::EI_MAG0 as usize..=bindings::EI_MAG3 as usize] == ELF_MAGIC
++            })
++            .and_then(|ident| ElfClass::from_u8(ident[bindings::EI_CLASS as usize]))
++            .ok_or(EINVAL)?;
++
++        // Read the appropriate ELF header (32 or 64 bit).
++        let (shoff, shnum, shentsize, shstrndx) = match class {
++            ElfClass::Class64 => {
++                let header = read_from_bytes::<Elf64Ehdr>(data)?;
++                (
++                    header.e_shoff,
++                    header.e_shnum,
++                    header.e_shentsize,
++                    header.e_shstrndx,
++                )
++            }
++            ElfClass::Class32 => {
++                let header = read_from_bytes::<Elf32Ehdr>(data)?;
++                (
++                    header.e_shoff as u64,
++                    header.e_shnum,
++                    header.e_shentsize,
++                    header.e_shstrndx,
++                )
++            }
++        };
++
++        Ok(Self {
++            data,
++            class,
++            shoff,
++            shentsize,
++            shnum,
++            shstrndx,
++        })
++    }
++
++    /// Returns the section header at `index`, normalized as a 64-bit header.
++    fn section_header(&self, index: u16) -> Result<Elf64Shdr> {
++        if index >= self.shnum {
++            return Err(EINVAL);
++        }
++
++        let offset = (index as u64)
++            .checked_mul(self.shentsize as u64)
++            .and_then(|r| r.checked_add(self.shoff))
++            .ok_or(EOVERFLOW)
++            .and_then(|offset| usize::try_from(offset).map_err(|_| EOVERFLOW))?;
++
++        let header_slice = self.data.get(offset..).ok_or(EINVAL)?;
++
++        match self.class {
++            ElfClass::Class64 => read_from_bytes::<Elf64Shdr>(header_slice),
++            ElfClass::Class32 => read_from_bytes::<Elf32Shdr>(header_slice).map(Into::into),
++        }
++    }
++
++    /// Retrieves the raw byte data of the section header string table.
++    fn string_table_data(&self) -> Result<&'a [u8]> {
++        let strtab_header = self.section_header(self.shstrndx)?;
++        if strtab_header.sh_type != bindings::SHT_STRTAB {
++            return Err(EINVAL);
++        }
++
++        let offset = usize::try_from(strtab_header.sh_offset).map_err(|_| EOVERFLOW)?;
++        let size = usize::try_from(strtab_header.sh_size).map_err(|_| EOVERFLOW)?;
++        get_slice(self.data, offset, size)
++    }
++
++    /// Looks up a section name in the string table.
++    fn section_name(&self, strtab: &'a [u8], name_offset: u32) -> Result<&'a str> {
++        let name_bytes_with_suffix = strtab.get(name_offset as usize..).ok_or(EINVAL)?;
++        let name_bytes = name_bytes_with_suffix
++            .split(|&c| c == 0)
++            .next()
++            .unwrap_or(&[]);
++        core::str::from_utf8(name_bytes).map_err(|_| EINVAL)
++    }
++
++    /// Returns an iterator over the sections.
++    pub fn sections_iter(&'a self) -> Result<SectionsIterator<'a>> {
++        let strtab_data = self.string_table_data()?;
++        Ok(SectionsIterator {
++            parser: self,
++            strtab_data,
++            current_index: 0,
++        })
++    }
++}
++
++/// Describes a single ELF section.
++pub struct Section<'a> {
++    /// Name of the section.
++    pub name: &'a str,
++    /// Type of the section (e.g., `SHT_PROGBITS`, `SHT_STRTAB`).
++    pub type_: u32,
++    /// Section flags (e.g., `SHF_ALLOC`, `SHF_EXECINSTR`).
++    pub flags: u64,
++    /// Virtual address of the section in memory.
++    pub addr: u64,
++    /// Byte slice containing the raw data of the section from the file.
++    pub data: &'a [u8],
++}
++
++/// An iterator over the sections of an ELF file.
++///
++/// Note that the [`Iterator::next`] method returns a [`Result`]. This is because a section header
++/// could be invalid, but the user still want to keep parsing the next sections.
++pub struct SectionsIterator<'a> {
++    parser: &'a Parser<'a>,
++    /// Slice to the string table data.
++    strtab_data: &'a [u8],
++    /// Index of the next section to be returned by the iterator.
++    current_index: u16,
++}
++
++impl<'a> Iterator for SectionsIterator<'a> {
++    type Item = Result<Section<'a>>;
++
++    fn next(&mut self) -> Option<Self::Item> {
++        if self.current_index >= self.parser.shnum {
++            return None;
++        }
++
++        let index = self.current_index;
++        // This cannot overflow because we would have returned if `current_index` was equal to
++        // `shnum`, which is a representable `u16`,
++        self.current_index += 1;
++
++        // Skip the NULL section header (index 0).
++        if index == 0 {
++            return self.next();
++        }
++
++        let header = match self.parser.section_header(index) {
++            Ok(header) => header,
++            Err(e) => return Some(Err(e)),
++        };
++
++        let section_name = match self.parser.section_name(self.strtab_data, header.sh_name) {
++            Ok(name) => name,
++            Err(e) => return Some(Err(e)),
++        };
++
++        let section_data = if header.sh_type == bindings::SHT_NOBITS {
++            &self.parser.data[0..0]
++        } else {
++            match get_slice(
++                self.parser.data,
++                header.sh_offset as usize,
++                header.sh_size as usize,
++            ) {
++                Ok(slice) => slice,
++                Err(e) => return Some(Err(e)),
++            }
++        };
++
++        Some(Ok(Section {
++            name: section_name,
++            type_: header.sh_type,
++            flags: header.sh_flags,
++            addr: header.sh_addr,
++            data: section_data,
++        }))
++    }
++}
+diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
+index ab0286857061d2de1be0279cbd2cd3490e5a48c3..5a9a780073b23d46e1ca70dd944826ee1c902bca 100644
+--- a/rust/kernel/lib.rs
++++ b/rust/kernel/lib.rs
+@@ -52,6 +52,7 @@
+ pub mod driver;
+ #[cfg(CONFIG_DRM = "y")]
+ pub mod drm;
++pub mod elf;
+ pub mod error;
+ pub mod faux;
+ #[cfg(CONFIG_RUST_FW_LOADER_ABSTRACTIONS)]
+
+---
+base-commit: 61479ae38cb7bf6083de302598b7d491ec54168a
+change-id: 20250514-elf-b9b16f56dd89
+
+Best regards,
+-- 
+Alexandre Courbot <acourbot@nvidia.com>
+
 
