@@ -1,257 +1,238 @@
-Return-Path: <linux-kernel+bounces-649429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-649431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1E69AB84B3
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 13:24:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9AC0AB84B9
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 13:26:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C34F69E6741
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 11:24:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 511471B66421
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 11:26:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39570297A73;
-	Thu, 15 May 2025 11:24:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 855F429898C;
+	Thu, 15 May 2025 11:25:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="b9xzFHwd"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="MR/fvmXb"
+Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2076.outbound.protection.outlook.com [40.107.101.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DD5C296D27
-	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 11:24:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747308270; cv=none; b=P+QVpkJ2q7JMIgaZ26nAP6+bvEGRWRGyMevtI8/+/xUIMwDyTW6zkzjawgcIlGJ5IDq3VRf3Z0TCg/dEE0fXo8i8L/vuEINs2jQ8cTWU3euLicwFT48tnCHWX/O7r778Z9/Nh1hEZfClnyOCB7LogrHKfA5Jd6aOanJ9/LeyfEE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747308270; c=relaxed/simple;
-	bh=ImtyEelXTfk5GFXydBAucagBXjdcQTTFKMCCmtAc0PY=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=onO3yeU3wptGdfNZYk5pcabac3MMkVkvG895IRsUP3cp492yaoH9A1wovr0xVgqhtwLoU+ifxKU8rdyTPMOnkNYZIHXWGyXGUfAylzdtE0LVvX8Z8dKAAChNOD7QGOl51A+kS3iHVVvFxOSIRVKCisb9b5E7Lu94ZbbyleZG+jE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=b9xzFHwd; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-441d1ed82dbso8245595e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 04:24:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1747308266; x=1747913066; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Oq3luUbNQrh4sO37NnuDYHxjHPc8/KBLQt1bSPbX55c=;
-        b=b9xzFHwdS+cqvBRrtbDl7d9CEMiaj9Z2oze/nL/Lax8YgcMjbZOQ1sevfOqL+5aqAf
-         fKV7KIzkT1l3ezSGZVKRS5kEjYhkrlJcs5O3QfiqFLdsFagTqbCSAmzvuMQAzW+uiivr
-         df4SidGUbehEi7+j4PPH39S4bioEtBeHA0CC/fAfPpQqt7wInLPVvhj3GmoVTHwVGynd
-         MZ1pBXw0CPNgcy2+0B+m+rU6UhyyoUgjNJxq5kJp36YuYco7cqQjLovCyX9Q09XTcUVy
-         XwBqlanTDplsue7KiSEMbSjrDtopGypaA4JLXEm6CVMW/6wxQD3yCuUby8LQjaGC4jUB
-         qXJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747308266; x=1747913066;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Oq3luUbNQrh4sO37NnuDYHxjHPc8/KBLQt1bSPbX55c=;
-        b=CN8nLvppFGlsYozkQlMqZsn+0WQyejxXBmwJkxtM5CFqaLyCBRrmMD+S8yvV5tfJJO
-         1clGnyW+XNFwMYToDWvejWzyfJnk227d4v+c9FVhqAKNnTYH+I6ZCO/OI5yCbZ/Xs8Mi
-         t0ypLKwTBWxzsEDwahwti1rImYXuphCpqTeAMVOarlPAy0sAZ3HddPYzVEeUMOov1vm3
-         Tdxak6CFMf8NtHNxAp7k3RHeU/X1fyqRglG/+FuMJowC3KFGrNDBefVyDaP7JIB9Xdwi
-         yi8Ij8uyj5zcbeT3yYNhycKxhJzW7EMGGRVi3Pa99+ERYIvuQmrrBEnagTjnLPt+qEiF
-         ChLA==
-X-Forwarded-Encrypted: i=1; AJvYcCWRyUZU59bl0mcksvnvY9xYMeo6/TDzw+O9LbyhxuhKafvkQmpSL3Jq90es33auHmqZSE7p3F2BUtYU9HE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+77TkAbcqQ9JdT2az1OIQkVFTbmSO0NLbexeouszgekdWkfOT
-	SjD0pXQoOQ/o+toD1ymOUv5yIVeFgpA3NlLHFJrg6kiof/h1n/tU9Ch43i4hA58=
-X-Gm-Gg: ASbGncutdZrFKO5xzEy7DiSVPU4p9rdXKp7pNch1Dvf/bmKl9f4KkYYdM2orddC8rGQ
-	8OdU4wLtg4QItPSfyoZ7cA/ZTMrdTfr4mflFwWVcXII7aPx2tD7lhYMVLC243vfot4rDR+O6Fuz
-	NzgRsJri7PVoFhgY37eXeKe2FagFKhkOKMqJR/+esKDeqiixvS6kCibyX0v3vlFE0WV9rkrtUXB
-	vyTSm9OJc0FkuDVjjRkQqMb92LGk3c3rXJLghkuDg0rPLJLjMKpgaCRRQFB5pSiYdBB8CqTo70A
-	TkRy9sqRoLFkf6oJ7yN1XaD3TGDpq8i+kK4c3cCXnWLg/kbjgKQxUyW5lZKA3lBqkmWDzek+I0Q
-	0PWyq3R3iL1GZ92AOXx9U
-X-Google-Smtp-Source: AGHT+IHewJ1yK2km4hF4XJnukjwH9B+t5DFAbmZFcOJDYUefiqQ+fuKodfexjRPHQzwg8kOClUt6eg==
-X-Received: by 2002:a05:600c:4691:b0:43d:40b0:5b with SMTP id 5b1f17b1804b1-442f2168cc3mr58378255e9.25.1747308265655;
-        Thu, 15 May 2025 04:24:25 -0700 (PDT)
-Received: from [10.61.0.59] (110.8.30.213.rev.vodafone.pt. [213.30.8.110])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-442ebd47d39sm62595095e9.1.2025.05.15.04.24.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 May 2025 04:24:25 -0700 (PDT)
-Message-ID: <7cb062aefa6f8287b30c95bb12274c83ff6df34e.camel@linaro.org>
-Subject: Re: [PATCH 2/2] phy: exyons5-usbdrd: support HS phy for
- ExynosAutov920
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Pritam Manohar Sutar <pritam.sutar@samsung.com>, vkoul@kernel.org, 
-	kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, 	alim.akhtar@samsung.com, peter.griffin@linaro.org,
- kauschluss@disroot.org, 	m.szyprowski@samsung.com, s.nawrocki@samsung.com
-Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, rosa.pila@samsung.com,
- dev.tailor@samsung.com, 	faraz.ata@samsung.com, muhammed.ali@samsung.com,
- selvarasu.g@samsung.com
-Date: Thu, 15 May 2025 12:24:23 +0100
-In-Reply-To: <20250514134813.380807-3-pritam.sutar@samsung.com>
-References: <20250514134813.380807-1-pritam.sutar@samsung.com>
-		<CGME20250514133847epcas5p41a1c413aecefa2fab32357c6c69e999c@epcas5p4.samsung.com>
-	 <20250514134813.380807-3-pritam.sutar@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B27B8C2C9;
+	Thu, 15 May 2025 11:25:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.76
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747308347; cv=fail; b=Nm8P7LFWp2VE1bGLimPLZxuCzpSafJzi8SnKQAihw/D8PONmq8W+HcdTP4wtkmcB8TzVA9v/8Nvfm/qLhvo9djCrSukM3eljKrXsBxRnX2Cl2peigsUW9XeaFS9UMcS8BtNmSIa1L5OzKru3xmlhG8Ac72deJZE8VMFQ47Iks4g=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747308347; c=relaxed/simple;
+	bh=UZ6uMa76tgQcLMLWnVCy2aQZvGW5wKMX5olIfQkNnJg=;
+	h=Content-Type:Date:Message-Id:Cc:Subject:From:To:References:
+	 In-Reply-To:MIME-Version; b=AIA7YUjVzWdnHPLVXa0gJq7utn3TBaO3suhYp0N6tDVsmkgbSGTxmcCfM8mQXlHzUomY2bGB9DrFwC6LN1IEzlqmbw/dFDVghbFwm6vciyFHIeqYj9iyHAQ5LZofDEqUYpo8p8AwC8tCHq6tBZDBBzDvSE9JPpbrFw0aWYEHgIA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=MR/fvmXb; arc=fail smtp.client-ip=40.107.101.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=SOIjrw0t8oQW5UABFujrRZXe+JcIwhfK9y2me//vv7ZDDJfoeRolBjAA4Lk1Ccc3Pd9Y4EKKxBx66VGMvH2J40tcQAvfTWzMoWDIVDDZ7FvNpwl0liywWFDv8YqcT6srQYEv2wseA0khJHG4b8BKxQpEoFFvd96XjZxM7g7bTyjZQMseNzlcSrUUV1qyY0gTOYux1NboVfQeuBKVsUMBnh0AvP96dY75Z7IDD5Va/wt6impF+Hd+7KXLmAf5txQyaazdZtjETe6cRrW6W404ItQyfRlRNwsTzw9pRtP6cbj0nI9UN0oPXBSw4TnNlPXCkQ42WmbJp6UpVnOxMw1fxg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=8kXt16iAHtXq/2Tp0GpG+cLiromO6Wbh4FeyIs8Yh+w=;
+ b=D28jbk1BbKQQESS5gFPePcv6qLBi2ciR2YHp59MLuG8/e2nIiKtssj/pCYGqmUdHN84xlu/8FMl5tlVJKuLLRCCv9d9edFIBLCIIZ/J7UulXB8lTC14dFaxs932YMXGn9h0qvLU3Uc+IsJpcYAMzj5PACIR6A94hlHlZEsA6AhCV6Fo3yuTSbH6aMuEdjfHNkUYny2LwTsRq/4OCkLRke9GE8wG1+iKgx7pCx2VRXNEzbYgl+FNlB1AVRjqLeNdXT0nLi6rfQ6/Is3o/H0UWae6VHoVOLugt/Lws3WlbqT+HyTcXaH5QCoj2NoL2rD5g3yaITNH2MQEk1x2nbEwxyw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=8kXt16iAHtXq/2Tp0GpG+cLiromO6Wbh4FeyIs8Yh+w=;
+ b=MR/fvmXbk6mrdjZsrrDu4yg9TqHJaziJDX8cOfPZertSKeanThbGZ6S/8Xf/AIA7PotFwFO+u50lOXZgt/n69WsDeDLsV4OIzbFE+eCmbbxtecDM82TV7sdkNjU/Mi6zlVL9jps1fSJ5rPN5daUzR53nPUidLjoQ1jF7tKRRJ2+QHFvnMc3229xwldr2TFnNoHoqiBSKMA3HAeLNxBqX03CfevhZw2+L6pOi+6EpaTYIGkKy0ZSRhH77okynMOwEEyuart/7IgZMKVeYydhZcckxP6WG/2GkfM6Tn42Gl6Y28AnFSa6EjfidX++yTnzODHlDqDeVxe7ycDyN7Fqa4g==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
+ by SJ2PR12MB8784.namprd12.prod.outlook.com (2603:10b6:a03:4d0::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8722.29; Thu, 15 May
+ 2025 11:25:42 +0000
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::6e37:569f:82ee:3f99]) by CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::6e37:569f:82ee:3f99%5]) with mapi id 15.20.8722.027; Thu, 15 May 2025
+ 11:25:39 +0000
 Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.55.2-1 
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 15 May 2025 20:25:33 +0900
+Message-Id: <D9WP3YU31199.Q8IEDBJZ87LU@nvidia.com>
+Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
+ <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
+ <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Benno Lossin" <benno.lossin@proton.me>,
+ "Andreas Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl"
+ <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>, "Danilo
+ Krummrich" <dakr@kernel.org>, <linux-kernel@vger.kernel.org>,
+ <rust-for-linux@vger.kernel.org>
+Subject: Re: [PATCH] rust: add basic ELF sections parser
+From: "Alexandre Courbot" <acourbot@nvidia.com>
+To: "Alexandre Courbot" <acourbot@nvidia.com>, "Greg KH"
+ <gregkh@linuxfoundation.org>
+X-Mailer: aerc 0.20.1-0-g2ecb8770224a
+References: <20250515-elf-v1-1-4b53745453c0@nvidia.com>
+ <2025051543-override-rockiness-3ead@gregkh>
+ <D9WLFTPRB9FJ.OL6I760HKALZ@nvidia.com>
+In-Reply-To: <D9WLFTPRB9FJ.OL6I760HKALZ@nvidia.com>
+X-ClientProxiedBy: TYCP286CA0068.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:31a::8) To CH2PR12MB3990.namprd12.prod.outlook.com
+ (2603:10b6:610:28::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|SJ2PR12MB8784:EE_
+X-MS-Office365-Filtering-Correlation-Id: ad6eb74a-b72d-402b-c6e9-08dd93a33795
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|7416014|376014|10070799003|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Wk41TG1GejNOejl2dldHb0dJeTVFRVVvcGNyOXZCR0wydGxCYU93c2hYN000?=
+ =?utf-8?B?NWlyQ2tlVmJOa1p0TkRoaXhOM0YyV2U4UjhCOXV2aGIvNUI1MzZ6aVM2V0hi?=
+ =?utf-8?B?d3V0QzRkd0xDbUlxK3NBTXNKeHhaWEZ3WmtZUkZIKzcvU3ZWc1FVb0JHTGg1?=
+ =?utf-8?B?Z3RTYWVzU0pMb2dmR3lzL29zaHgrMFJGNEtwci9MdGtLN3ZhSzJZVEJ0ZFF5?=
+ =?utf-8?B?bm51d2J3YmFYMFFnMDZRdHlkY2lRWVVzSUFjQzZYZnA0WUNWOGpDa21HNzBJ?=
+ =?utf-8?B?cEtkNWY5VW5tQ1diTEZFTzdBdmQrcFZJYW1GVE5kMmNTdTRBMVMrcjRkWnBC?=
+ =?utf-8?B?V2JnSUM3SUxlQytPMnhpY1V1M1lYekVIa1RwSndSdDN3bCttRTA4M1FPZVlS?=
+ =?utf-8?B?RGF6QkRnR0J4QmlINFlmZ2lhSlYzb2NnTDRwTEtSQjlIMk1zQUdJMU9mSFZl?=
+ =?utf-8?B?Yk5MUGhHUmZoOGZjVDNzTkowaExudzlKMXFhVWVReUxQRVBXbERkajVNbWJK?=
+ =?utf-8?B?QmFzcDZzb3E3bHNHY1FnalU4cDN5ek13UzVLUWNyMWVuWDROeXJQc1poSVd2?=
+ =?utf-8?B?aTBRM1dtcTNhZTJjemp2a3ZybWFrNGYwZEtIc0VhVXBkc2ZQb21reGRDMmcv?=
+ =?utf-8?B?aFRWN0FPc2ptZkxEYmZBV1h4aVhTMWVwYnhmd2t0cnpxdDNvQnluUjk5Z0xF?=
+ =?utf-8?B?S3EzNXBmT2VUOTFzL2drRU52OTlwOWg3VmxzekVDVkNFNDdUa2VYbUxiTk9H?=
+ =?utf-8?B?UmpiQTJsK0tMam82d3lSV1hTdVFYYzJuOHEzVUFBcGxCRFljQmNkVCtWRFBh?=
+ =?utf-8?B?Z09OZXZOdXlUTGpoWGt1QytTUDlQS2dFU3ZLZXltcmR1MjVpeVRvWEw4aDNy?=
+ =?utf-8?B?TWFBb29iOC8ydStaQVJucmtFMXdhUXRkMnNRSGM4cDNMVGFXbEZac3NRekYx?=
+ =?utf-8?B?SUhWQTF6U1dCMk1XUW42cndJUkxTVitZWkZZSEJmdVNLa005cEFyd2FFSC9Z?=
+ =?utf-8?B?TVgzK1lGcjYxTWtoY3N3aGtjbVlDU0hHcUUzdUtXUHV5THIya01QZXVkUCtQ?=
+ =?utf-8?B?L2xkT2k3MndwZ0xYa3k5VzF2WWx2aGsxdWJKMHlEeDY1YXlseXA0VTh1d3RI?=
+ =?utf-8?B?cDYveDE1QnNsZWxzaTN2N2trb3RzbGY4TnRUWnE2VlZmU0htTU1FeUdkRUN4?=
+ =?utf-8?B?NzVjcDNRYmFMMFprSXdFT1pmdG1CcWI0cHd4VDd2THNpNW02NTdZNENmb1Fy?=
+ =?utf-8?B?clBFWmx3bEc3STQyNUphMDVrZ0NQL1hVU3JiZ1p3aWdwOXM3dW5qY0p4SWp0?=
+ =?utf-8?B?WEhPT1JmMDdxcmY4alZQTFcyT3lVUDk0VElPYnF3b1ZNdXJuMXN4eENYR0dG?=
+ =?utf-8?B?VHFMVE5YMzV5RXozK2d4dlp3Sk5LOTRRUWtaWU13VTRENlFGV3pJRCtWQU5R?=
+ =?utf-8?B?TDNQRktJRVN4Z1NJUnh1STZHaE5YS2FIZUZTeVUyOWV2Tm9ob2Q2YWRzZlRT?=
+ =?utf-8?B?Qk9iZnQrTXgyb0xPWWVpV1ljeUhmSFl6bFZhbDJjUVl5NkpGbldMTE5paXpk?=
+ =?utf-8?B?TkVweWxMMjczYVlSTVVzMkF4SllXK1RpMWZhN2RLR0pod3hKN3lMbDdMZU9K?=
+ =?utf-8?B?cmxVRlJmcVBmSmpESEtJWWRISlVUVFZuWFdsYTU3MHhhR29Vemx0NlNnaUdM?=
+ =?utf-8?B?aDBDNUhTajVEY0JyRDVlY0JaNW11YXFKOGpYbWxjUUhFTy9wTjF0akZOT1Ns?=
+ =?utf-8?B?U0NubFlUQXhzVFNtSGRwOUpJU2dzVTBoZ21EZ0Z1bWpLRkNoUVdjbHhuM0hq?=
+ =?utf-8?B?YUJnZGs2Sk1hWlJyamlkWjdrbVNnMDdoY3B1a1lXYzErUnR3cUR6OG9kRXV3?=
+ =?utf-8?B?UEJncGR4NmpZTWtSdFVhQU1XUU1OT2lJeEcrb2gzcExyT1J0QnloZDcrRzFa?=
+ =?utf-8?Q?86vAgsWrzX0=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(10070799003)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?QTByK0pqdzluR05iVGNydHFNMUEwSGlhYjNsTnBxQWhGSUt2M29qM2tseVNE?=
+ =?utf-8?B?ZW42ZlJjZllBRVhWc2FTUWNGMk9oZWpUOXZvUDJ2S0t0Y2ZBM3VEd0t6c01x?=
+ =?utf-8?B?TVZBOTBNZXZWc2s1TWs4RldEV2ZhVFoxOUV5RlhXSXRFeG90TEhLb3JYRk43?=
+ =?utf-8?B?VXJpQ3dlQ2FUT0J1QytILzB6aTBuaUxhdDkwL296ZmdadlQxYVJWcFpqZlZT?=
+ =?utf-8?B?N2crNktRSFFRMndYTlVLY2xRVzBEaXplTWRaQndIMktXWTE2SjFBSHgwMTlO?=
+ =?utf-8?B?aS9MTWFmcUdpZWQ4USswU2Z1ZHhmRGxYdUVMVVZlSmp4SzV0V2ZlMDNPdFdq?=
+ =?utf-8?B?YUtRemhybWR2RWhnTWp3aWw1UnB0eTNRbXFQdGJZZ2VibnRHZ2ZwKzZjRk1r?=
+ =?utf-8?B?STNXTTVDQzEwOXlPRkNVTEtrUmxYMlh2L0xaS2FkdVhld3pMVlZwcmVUekd0?=
+ =?utf-8?B?bFZZeWRNS2dpWG5sQ0RsS21UcHhZc2pKR0x1amVIQjFOcENBWHJkRm5YS29X?=
+ =?utf-8?B?R3FWcmVobU9sODZ0YVFGUkRxUWRzZ0d0RTdRY3BNRUdSRTZhLy9VM3JLQUIw?=
+ =?utf-8?B?VVBCb3IxZzFXYlhJdFlFLytIZ0pHRm52UjRxVTdQbm8yeTJaTlVvUnl1WUpV?=
+ =?utf-8?B?SmxXdklrNG0vUmdzWkJxSFloUTd4QXlHMmtrOWlkSFNZT3BaOXNNUDdQK3Fk?=
+ =?utf-8?B?Qy9NYmtGRHpVaGJyM29MSnc2bDhSS3hYMFdqRFc5SzFjT0lsOHpaOXgvV2pQ?=
+ =?utf-8?B?cTJZSm9jQ2JVSUVZZUpIcDcyVHJTVk91cHcxQjNNdERIOFh2cjdhTXpRQUll?=
+ =?utf-8?B?V0hFNWZTQjd5WU5PeGNHVDQ2YTZTWVkrbUk5ZzlYMXFQR2JSWk1QKzRndGVr?=
+ =?utf-8?B?OGZhay91SUpUTXU4R0sybGlsWVZkQzUxaFVmbTBlTVFHeWFBMFdJN2hpa2Rv?=
+ =?utf-8?B?Z0RVOTI4RXN0Q2czdzVHQ0pQVTJmQktVQTBqRG4vaDlXVlp5aWRqNjYyNkl3?=
+ =?utf-8?B?NGZ6RnEzQ3ZDVmVhVk5HNkI2bkxCbDdZYURGVVhFbTN1Skd0OTEyRUFSLzN1?=
+ =?utf-8?B?YWQ1YzllNXZSVGFydC9keSt5Z2VWRnV4d1FpSW9taitFMTlZU0dEZXFxNktt?=
+ =?utf-8?B?SG1hU0ptQ1Q1a2krbEdiMk9TTDJ3UXNNVFh5RjFyRFVhVVdCNThJdjZ0cE9M?=
+ =?utf-8?B?aHlTUG8zK1F0a1BROFdhM3B1NmxGcSs1QkN5bU9RZmE1NUFEaTZLWktDdy9v?=
+ =?utf-8?B?VzZqdlErblBlZk8rVkpuQmFVUStFVHdlQS9mMktFZk5qMFRVY0dObWlsRjJl?=
+ =?utf-8?B?UTZOTGNqU3JMeWNGUm9Hd1pFWkJZZkxnLzNLSkFLUlNhWUMzMEpWSW5KNmpI?=
+ =?utf-8?B?RTZRK3doMjl3QkxLVW14cjdBSjNEMGtza2ttazJTSEl3WXZlNXFPVThEOGg0?=
+ =?utf-8?B?Z3g0cGhOajFRd3lnM2Z5cEZIQUdaVEo1dGVhMzRLejdSdDZHWW0rWEZMSkdi?=
+ =?utf-8?B?VktUbmlJUkFqckhVZ0pBUzRxeStHOTFXS09PWE9YbUJaTHJucCtvL3l4SnVq?=
+ =?utf-8?B?R2RJdU8zR3NDaUtMRVZDUHJ4QUFnUzFzUjJUQTRDaHRpMjIwUXBQRjlxdTFT?=
+ =?utf-8?B?dndjNGZ5bWRNM283VllGN0NiUlF0NEZhODhZeWFJY3ZmUjRhaU9xd1VSd3Ry?=
+ =?utf-8?B?ZC9XQm4yUld2Vkc1dExLKzJzZVVXSnZBYmNNVVZiRU9PUFRhR2MwWm9XNW83?=
+ =?utf-8?B?WkdkMW03bkNnQlp2bVpUM0VhN29SREx5UTY1SkdlQVpBQUtGWFVjZElQSkNV?=
+ =?utf-8?B?Rlk1WXhwRktTeEpKMnFWMmp4aEg2WnRuTWlHd3dSZzladTlWaUIxTUZaWVJL?=
+ =?utf-8?B?YkcvSmlGNUl0QllEZDVWcTlIb0oyOEpzS0VkVjZPTVcvTjR5T1pjR2NSMk5U?=
+ =?utf-8?B?RE1YcHg4bnRWVEZvVzVlU2c2czZjb1dXcDQ5dVRROE52Tjk5WnJ1MC8vNk1w?=
+ =?utf-8?B?S0RZamZNZExyRndjTDhxU2psZk5QcVZjNzlzbTNqZ2MvOFV3cVFVaHMwNE9z?=
+ =?utf-8?B?TWlBaDhucjZINFJnajVsWmxUVVFESjlmVEtlZWhiR3h5UjgvcjJtRXlrd1dZ?=
+ =?utf-8?B?UmQ5WElET3YrMW1ucEhDNTNQaEZNRlVmUUtRaHk5cVJpK3ZzWXZWc0llaktr?=
+ =?utf-8?Q?69i9aqjzcz2JzI0czdJqodaFCwj4whkXBrBYR13kJmej?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ad6eb74a-b72d-402b-c6e9-08dd93a33795
+X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 May 2025 11:25:39.1106
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: dzn6nbULZPKYhhu3yCS9qNTFPJhWKadz5OhBD46vPFR09p3GO7Yw1OeGiCyubGVbg1FZlV7IXabboO2aT4ExjA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB8784
 
-Hi,
+On Thu May 15, 2025 at 5:32 PM JST, Alexandre Courbot wrote:
+> Hi Greg,
+>
+> On Thu May 15, 2025 at 4:38 PM JST, Greg KH wrote:
+>> On Thu, May 15, 2025 at 03:03:51PM +0900, Alexandre Courbot wrote:
+>>> Add a simple ELF sections parser for unpacking loaded binaries from
+>>> user-space. This is not intended to become a fully-fledged ELF parser,
+>>> just a helper to parse firmwares packaged in that format.
+>>>=20
+>>> This parser is notably helpful for NVIDIA's GSP firmware, which is
+>>> provided as an ELF binary using sections to separate the firmware code
+>>> to its other components like chipset-specific signatures.
+>>>=20
+>>> Since the data source is likely to be user-space, checked arithmetic
+>>> operations and strict bound checking are used.
+>>>=20
+>>> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+>>> ---
+>>> This will soon be needed in order to load the GSP firmware in nova-core=
+,
+>>> so sending this early for separate review.
+>>> ---
+>>>  rust/kernel/elf.rs | 322 +++++++++++++++++++++++++++++++++++++++++++++=
+++++++++
+>>
+>> Why is this not just done in userspace and then have userspace feed the
+>> proper elf sections to the kernel through the firmware interface?
+>> Having to parse elf seems crazy for the kernel to be forced to do here
+>> as the kernel should NOT be touching anything in a firmware blob other
+>> than passing it off to the firmware directly.
+>
+> FWIW, the GSP firmware in question is already in linux-firmware and
+> loaded by e.g. Nouveau.
+>
+> I am not sure how userspace could feed the proper ELF sections otherwise
+> than by splitting the ELF binary into as many files as there are
+> sections. Is that what you imply, or is there another means that would
+> preserve the current firmware format?
+>
+> Note also that in this particular case, the kernel cannot just pass the
+> firmware without modifying it anyway since the signatures relevant to
+> the chipset need to be patched into the right place before it is loaded.
 
-On Wed, 2025-05-14 at 19:18 +0530, Pritam Manohar Sutar wrote:
-> This SoC has a single USB 3.1 DRD combo phy and three USB2.0
-> DRD HS phy controllers those only support the UTMI+ interface.
->=20
-> Support only UTMI+ for this SoC which is very similar to what
-> the existing Exynos850 supports.
->=20
-> The combo phy supports both UTMI+ (HS) and PIPE3 (SS) and is
-> out of scope of this commit.
->=20
-> Add required change in phy driver to support HS phy for this SoC.
->=20
-> Signed-off-by: Pritam Manohar Sutar <pritam.sutar@samsung.com>
-> ---
-> =C2=A0drivers/phy/samsung/phy-exynos5-usbdrd.c | 85 +++++++++++++++++++++=
-+++
-> =C2=A01 file changed, 85 insertions(+)
->=20
-> diff --git a/drivers/phy/samsung/phy-exynos5-usbdrd.c b/drivers/phy/samsu=
-ng/phy-exynos5-usbdrd.c
-> index 634c4310c660..7b4b80319c5c 100644
-> --- a/drivers/phy/samsung/phy-exynos5-usbdrd.c
-> +++ b/drivers/phy/samsung/phy-exynos5-usbdrd.c
-> @@ -177,6 +177,9 @@
-> =C2=A0#define HSPHYPLLTUNE_PLL_P_TUNE			GENMASK(3, 0)
-> =C2=A0
-> =C2=A0/* Exynos850: USB DRD PHY registers */
-> +#define EXYNOSAUTOv920_DRD_CTRL_VER		0x00
-> +#define GET_CTRL_MAJOR_VERSION(_x)		(((_x) >> 24) & 0xff)
+Quick nit, as that last statement was not entirely correct: while we do
+patch some loaded firmware with signatures, this is not the case for the
+GSP (the one in ELF format). Not that it changes the point, but for the
+sake of accuracy. :)
 
-I suggest using standard GENMASK() and FIELD_GET() for the version bits ins=
-tead.
+The point being that even without using ELF as a container format, we do
+need to parse header structures in loaded firmware files anyway, so the
+kernel cannot simply act as a dumb pipe for firmware. And since we need
+to add structure, let's at least use a format that is simple, well
+accepted and which layout is already in the kernel.
 
-Cheers,
-A.
-
-> +
-> =C2=A0#define EXYNOS850_DRD_LINKCTRL			0x04
-> =C2=A0#define LINKCTRL_FORCE_RXELECIDLE		BIT(18)
-> =C2=A0#define LINKCTRL_FORCE_PHYSTATUS		BIT(17)
-> @@ -1772,6 +1775,10 @@ static const char * const exynos5_regulator_names[=
-] =3D {
-> =C2=A0	"vbus", "vbus-boost",
-> =C2=A0};
-> =C2=A0
-> +static const char * const exynosautov920_clk_names[] =3D {
-> +	"ext_xtal",
-> +};
-> +
-> =C2=A0static const struct exynos5_usbdrd_phy_drvdata exynos5420_usbdrd_ph=
-y =3D {
-> =C2=A0	.phy_cfg		=3D phy_cfg_exynos5,
-> =C2=A0	.phy_ops		=3D &exynos5_usbdrd_phy_ops,
-> @@ -1847,6 +1854,81 @@ static const struct exynos5_usbdrd_phy_drvdata exy=
-nos850_usbdrd_phy =3D {
-> =C2=A0	.n_regulators		=3D ARRAY_SIZE(exynos5_regulator_names),
-> =C2=A0};
-> =C2=A0
-> +static void exynosautov920_usbdrd_utmi_init(struct exynos5_usbdrd_phy *p=
-hy_drd)
-> +{
-> +	u32 version;
-> +
-> +	version =3D readl(phy_drd->reg_phy + EXYNOSAUTOv920_DRD_CTRL_VER);
-> +	dev_info(phy_drd->dev, "usbphy: version:0x%x\n", version);
-> +
-> +	if (GET_CTRL_MAJOR_VERSION(version) =3D=3D 0x3)
-> +		/* utmi init for exynosautov920 HS phy */
-> +		exynos850_usbdrd_utmi_init(phy_drd);
-> +}
-> +
-> +static int exynosautov920_usbdrd_phy_init(struct phy *phy)
-> +{
-> +	struct phy_usb_instance *inst =3D phy_get_drvdata(phy);
-> +	struct exynos5_usbdrd_phy *phy_drd =3D to_usbdrd_phy(inst);
-> +	int ret =3D 0;
-> +
-> +	ret =3D clk_bulk_prepare_enable(phy_drd->drv_data->n_clks, phy_drd->clk=
-s);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* UTMI or PIPE3 specific init */
-> +	inst->phy_cfg->phy_init(phy_drd);
-> +
-> +	clk_bulk_disable_unprepare(phy_drd->drv_data->n_clks, phy_drd->clks);
-> +
-> +	return 0;
-> +}
-> +
-> +static void exynosautov920_v3p1_phy_dis(struct phy *phy)
-> +{
-> +	struct phy_usb_instance *inst =3D phy_get_drvdata(phy);
-> +	struct exynos5_usbdrd_phy *phy_drd =3D to_usbdrd_phy(inst);
-> +	void __iomem *reg_phy =3D phy_drd->reg_phy;
-> +	u32 version;
-> +
-> +	version =3D readl(reg_phy + EXYNOSAUTOv920_DRD_CTRL_VER);
-> +
-> +	if (GET_CTRL_MAJOR_VERSION(version) =3D=3D 0x3)
-> +		exynos850_usbdrd_phy_exit(phy);
-> +}
-> +
-> +static int exynosautov920_usbdrd_phy_exit(struct phy *phy)
-> +{
-> +	struct phy_usb_instance *inst =3D phy_get_drvdata(phy);
-> +
-> +	if (inst->phy_cfg->id =3D=3D EXYNOS5_DRDPHY_UTMI)
-> +		exynosautov920_v3p1_phy_dis(phy);
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct phy_ops exynosautov920_usbdrd_phy_ops =3D {
-> +	.init		=3D exynosautov920_usbdrd_phy_init,
-> +	.exit		=3D exynosautov920_usbdrd_phy_exit,
-> +	.owner		=3D THIS_MODULE,
-> +};
-> +
-> +static const struct exynos5_usbdrd_phy_config phy_cfg_exynosautov920[] =
-=3D {
-> +	{
-> +		.id		=3D EXYNOS5_DRDPHY_UTMI,
-> +		.phy_init	=3D exynosautov920_usbdrd_utmi_init,
-> +	},
-> +};
-> +
-> +static const struct exynos5_usbdrd_phy_drvdata exynosautov920_usb31drd_p=
-hy =3D {
-> +	.phy_cfg		=3D phy_cfg_exynosautov920,
-> +	.phy_ops		=3D &exynosautov920_usbdrd_phy_ops,
-> +	.clk_names		=3D exynosautov920_clk_names,
-> +	.n_clks			=3D ARRAY_SIZE(exynosautov920_clk_names),
-> +	.core_clk_names		=3D exynos5_core_clk_names,
-> +	.n_core_clks		=3D ARRAY_SIZE(exynos5_core_clk_names),
-> +};
-> +
-> =C2=A0static const struct exynos5_usbdrd_phy_config phy_cfg_gs101[] =3D {
-> =C2=A0	{
-> =C2=A0		.id		=3D EXYNOS5_DRDPHY_UTMI,
-> @@ -2047,6 +2129,9 @@ static const struct of_device_id exynos5_usbdrd_phy=
-_of_match[] =3D {
-> =C2=A0	}, {
-> =C2=A0		.compatible =3D "samsung,exynos850-usbdrd-phy",
-> =C2=A0		.data =3D &exynos850_usbdrd_phy
-> +	}, {
-> +		.compatible =3D "samsung,exynosautov920-usb31drd-phy",
-> +		.data =3D &exynosautov920_usb31drd_phy
-> =C2=A0	},
-> =C2=A0	{ },
-> =C2=A0};
-
+Or if ELF is the problem, I don't mind introducing a WAD loader. ;)
 
