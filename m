@@ -1,108 +1,134 @@
-Return-Path: <linux-kernel+bounces-649876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-649879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E24CAAB8A58
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 17:11:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76EF4AB8A48
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 17:09:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 335F03AA0EB
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 15:06:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0AF51899C5B
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 15:07:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A754420C023;
-	Thu, 15 May 2025 15:06:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEFBA21883F;
+	Thu, 15 May 2025 15:06:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fa2XDMuI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="COsK1glW"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7E4718B47D;
-	Thu, 15 May 2025 15:06:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 519D220B80D;
+	Thu, 15 May 2025 15:06:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747321599; cv=none; b=tp01gozppDlHaSsPxpMRS7p2fs51Ny3O0Y/REFIyk537RNQGZkvunK7I7ZtRNmHD92hfkcq8jSSdgLOTABT+RAs9DOYO7mbmXKH8ggtHvG8hVGAXjsj9EK5rtzP/ooglDB5fjPguZVGqYXgeWqw7SRx6bltATgc6MltPWhukTDc=
+	t=1747321608; cv=none; b=dcIYZArl9QLh4mmAEYRUBP49WvIWvmK9mC3004CTlVmKzCAQ18CIN3/tMOaEjqCOtYINZ77c6A7np3S8XEa1Oc9zDDI9X2CtzGCF3jGoFv0ERng+HqT7hQEXCwW6VLNdZdMyadEv1dUtVD38skHAFhyxW1c7FpxnPGmYvNkiC/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747321599; c=relaxed/simple;
-	bh=urKXtVF+8OQ4aIsSMiNubACGLVMonPp+yOm8unTAuRk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DHFRhy+Wklw3U+p7cHrvvHz0sqQXfFDp/sLcxE0bltuCpgFn7ATNn0aTWoyfzZAYux3eHX8U9tbyeDN4vxDOl5wZXmnXXWGfl0TOEFevlSIfu2fCqYTKay9e9/u0Gbyhcjh6mvN6EuJby0TCNSOrG0U2hM+yNJzbjo0ol14jPZw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fa2XDMuI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53B3DC4CEE7;
-	Thu, 15 May 2025 15:06:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747321598;
-	bh=urKXtVF+8OQ4aIsSMiNubACGLVMonPp+yOm8unTAuRk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fa2XDMuI4w/GYS2stX9qIHl+35V28XFvu7nOBJp9mxJXYV1AFJiYvOrFcpP9SV+HF
-	 FDlr+DdlQ9RYF/jAKrmEoWinAR3oY5m9uAE60GqvjJiXPQkjB0WB03wkuBin1KolUx
-	 EmhBA2plJeO7bBikqw3fC3X9oSywbdpR4X3xPSM1VJUZyr8W/tzyBWnI+aIb+ZVmV4
-	 bgb8Y160ka65deKyfWq+OGRAYUAFyGOx2j9SmLjPrgCnn5NTPx38OpurquG5mYWI+c
-	 nUG4NAdUdncQtsRq0Az8JqiEGU5+wk5tABnHUasE+b9g8UvurDNIktXOxTk9b2N497
-	 rQDgsbTwsksAw==
-Date: Thu, 15 May 2025 16:06:32 +0100
-From: Will Deacon <will@kernel.org>
-To: Nicolin Chen <nicolinc@nvidia.com>
-Cc: robin.murphy@arm.com, jgg@nvidia.com, joro@8bytes.org,
-	kevin.tian@intel.com, praan@google.com, nathan@kernel.org,
-	yi.l.liu@intel.com, peterz@infradead.org, mshavit@google.com,
-	jsnitsel@redhat.com, smostafa@google.com,
-	jeff.johnson@oss.qualcomm.com, zhangzekun11@huawei.com,
-	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org, shameerali.kolothum.thodi@huawei.com
-Subject: Re: [PATCH v2 02/11] iommu/arm-smmu-v3: Pass in smmu/iommu_domain to
- __arm_smmu_tlb_inv_range()
-Message-ID: <20250515150629.GD12165@willie-the-truck>
-References: <cover.1744692494.git.nicolinc@nvidia.com>
- <ed8b2837e5ea63f6ee98663761d4f1ebe66a6d41.1744692494.git.nicolinc@nvidia.com>
+	s=arc-20240116; t=1747321608; c=relaxed/simple;
+	bh=oEnth8bjUONr3DIKUUQwEbQ+/XvAP1CP6xRsYJyF4aI=;
+	h=Content-Type:MIME-Version:Content-Disposition:In-Reply-To:
+	 References:Subject:From:Cc:To:Date:Message-ID; b=aJPFahczWkWxFPscSgMB6bDsDT/ULT+mGin/tFy3re1VhDNBk4BSvnEBMwEv28/o1X4iU01A1waKbNflqy7SPgNSrEjG4y7SF7MRPrjBy07EDZaacnOZidccytbtq1QwAztPbtyFXI50f6mlB7SUnmDOz9whdzM8VP8edfeXzpw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=COsK1glW; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from mail.ideasonboard.com (unknown [IPv6:2401:4900:7a1b:96fc:ca34:4316:6e64:be11])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 3D202886;
+	Thu, 15 May 2025 17:06:25 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1747321587;
+	bh=oEnth8bjUONr3DIKUUQwEbQ+/XvAP1CP6xRsYJyF4aI=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=COsK1glWWlt55c4C4BhybNEkGbuISlUEnvHf0PiyVijfHRhYXbS0W1vEO++QsQ+Wq
+	 en5x2MN0KhEtwZNZqG6HcSeHSQVm1SWoQq6WQZKwfU9+fBWz9c7XTW0VOZcXieBWaB
+	 7R2AEJA1Fh4SnpGkxk08Fk3BowLjcvxAl2bh2k7s=
+Content-Type: multipart/signed; micalg="pgp-sha512"; protocol="application/pgp-signature"; boundary="===============7026641472008806453=="
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ed8b2837e5ea63f6ee98663761d4f1ebe66a6d41.1744692494.git.nicolinc@nvidia.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20250515142945.1348722-1-alexander.stein@ew.tq-group.com>
+References: <20250515142945.1348722-1-alexander.stein@ew.tq-group.com>
+Subject: Re: [PATCH 1/1] media: dt-bindings: sony,imx219: Allow props from video-interface-devices
+From: Jai Luthra <jai.luthra@ideasonboard.com>
+Cc: Alexander Stein <alexander.stein@ew.tq-group.com>, linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Alexander Stein <alexander.stein@ew.tq-group.com>, Conor Dooley <conor+dt@kernel.org>, Dave Stevenson <dave.stevenson@raspberrypi.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>
+Date: Thu, 15 May 2025 17:06:35 +0200
+Message-ID: <174732159526.2108882.8905658469049267620@selene>
+User-Agent: alot/0.12.dev11+g1dd20f1f
 
-On Mon, Apr 14, 2025 at 09:57:37PM -0700, Nicolin Chen wrote:
-> What __arm_smmu_tlb_inv_range() really needs is the smmu and iommu_domain
-> pointers from the smmu_domain.
-> 
-> For a nest_parent smmu_domain, it will no longer store an smmu pointer as
-> it can be shared across vSMMU instances. A vSMMU structure sharing the S2
-> smmu_domain instead would hold the smmu pointer.
-> 
-> Pass them in explicitly to fit both !nest_parent and nest_parent cases.
-> 
-> While changing it, share it in the header with arm-smmu-v3-iommmufd that
-> will call it too.
-> 
-> Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
+--===============7026641472008806453==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+
+Quoting Alexander Stein (2025-05-15 16:29:42)
+> Allow properties from video-interface-devices. The change is identical to
+> commit b6339ecfd0865 ("media: dt-bindings: sony,imx290: Allow props from
+> video-interface-devices")
+>=20
+> Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+
+Reviewed-by: Jai Luthra <jai.luthra@ideasonboard.com>
+
+Are there any driver changes coming for the new properties?
+
 > ---
->  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h |  4 ++++
->  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c | 17 +++++++++--------
->  2 files changed, 13 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
-> index d4837a33fb81..5dbdc61558a9 100644
-> --- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
-> +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
-> @@ -955,6 +955,10 @@ void arm_smmu_tlb_inv_range_asid(unsigned long iova, size_t size, int asid,
->  				 struct arm_smmu_domain *smmu_domain);
->  int arm_smmu_atc_inv_domain(struct arm_smmu_domain *smmu_domain,
->  			    unsigned long iova, size_t size);
-> +void __arm_smmu_tlb_inv_range(struct arm_smmu_device *smmu,
-> +			      struct arm_smmu_cmdq_ent *cmd, unsigned long iova,
-> +			      size_t size, size_t granule,
-> +			      struct iommu_domain *domain);
+>  Documentation/devicetree/bindings/media/i2c/sony,imx219.yaml | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/media/i2c/sony,imx219.yaml=
+ b/Documentation/devicetree/bindings/media/i2c/sony,imx219.yaml
+> index 8b23e5fc6a24f..38c3759bcd9f5 100644
+> --- a/Documentation/devicetree/bindings/media/i2c/sony,imx219.yaml
+> +++ b/Documentation/devicetree/bindings/media/i2c/sony,imx219.yaml
+> @@ -16,6 +16,9 @@ description: |-
+>    Image data is sent through MIPI CSI-2, which is configured as either 2=
+ or
+>    4 data lanes.
+> =20
+> +allOf:
+> +  - $ref: /schemas/media/video-interface-devices.yaml#
+> +
+>  properties:
+>    compatible:
+>      const: sony,imx219
+> @@ -79,7 +82,7 @@ required:
+>    - VDDL-supply
+>    - port
+> =20
+> -additionalProperties: false
+> +unevaluatedProperties: false
+> =20
+>  examples:
+>    - |
+> --=20
+> 2.43.0
+>=20
+>
+--===============7026641472008806453==
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Description: signature
+Content-Type: application/pgp-signature; name="signature.asc"; charset="us-ascii"
 
-I don't think this function makes a particularly good "public" API --
-the caller even sets the cmd opcode!
+-----BEGIN PGP SIGNATURE-----
 
-Can we expose some TLB invalidation helpers instead rather than the
-low-level helpers?
+iQIzBAABCgAdFiEETeDYGOXVdejUWq/FQ96R+SSacUUFAmgmAvoACgkQQ96R+SSa
+cUWmdg/+O//yk9DsUF6kBlI/j3zM9DieGhBLoptflIfGtB7CLBh92lZhHBzvBOJ2
++7iYLGiifh1J81hdFMPq04e5/iGTlefuv2P8l9XpKu25eCGyTJyjJG6RWZ7SZJUh
+TqGdxxyAZCdiuTRHoLpp5goTl4mIFcm1wGuF2n8lpxpUV02h40XCbYqwSrMSVeGP
+teDAn4jbUFgQsoF4IE2kq9v3ah4PsMbG1omdomAYrWrkc9Dzcenl2JLCGBSeMMvD
+unlQ/+ybbh6ytTIEDhc6uXpI7O25Oi5n+jasxUawqFZikowy8npXgBRPYUqQ5D2W
+V0aK1DlA9u44aJZbs5r5ortYdI2y+cOY1tdvBwbp2H+7VrjLLUpeW56g9wSyrKrZ
+y+EYtFoAaHyuZEsaMfdmbAB+0MepcebIo9QNtYCsgpVtwIi8YccTROsyFkn39PTl
+d8RcacHkwwlnSafMUWv73Iw4mFXaeQwI0h8U4L8ckYIT8+aWiFlSwNj34BCD+Ycw
+UgkcsCz3Y0KIblRld3XbE1qvzBrM0hgbiynayLA5Is4qlqv5I14EP1UUWUZ0kqCL
+JqkYLzo57pTfA332ucgD0of26zp1/tD4Xwah9kJXSCb2YjEagpBHSNfQbZ4svk/N
+ZHoZist6wjNWh86LLr3BUx9SrsLxvlCd0K8u+hujP0B854GqjIw=
+=+Wns
+-----END PGP SIGNATURE-----
 
-Will
+--===============7026641472008806453==--
 
