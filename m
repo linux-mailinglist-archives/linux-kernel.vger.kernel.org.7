@@ -1,161 +1,91 @@
-Return-Path: <linux-kernel+bounces-649482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-649484-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E1A7AB855F
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 13:55:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B6C0AB8565
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 13:56:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F5AB188FA9F
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 11:55:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8ED5C3ADD16
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 11:56:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDDE6298C08;
-	Thu, 15 May 2025 11:55:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17C5F2989AE;
+	Thu, 15 May 2025 11:56:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PSen6O3u"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U3HuU10B"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B33F4298271;
-	Thu, 15 May 2025 11:55:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79327298271
+	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 11:56:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747310104; cv=none; b=eghalXlaoH3uhEUdNsCsGtEMfmjpYz0QdFFIb4paERUCWNSmStPgFeoRBtwyFI8Y5KGvsyH2dE/tsOn1l2W9ZSyvsiMBBh2ajgqfl9LW14HfCMyiD+BybqmK4YEJ1tvJqIFBNK7DUrPRL/E17lEXJUbaNgM2KlywI56OglgWREg=
+	t=1747310183; cv=none; b=jeZaFunI4oIx8RYbiqHLlTkyJuHUJzBdxghoKANeOiaIqvck0/+KtRjxr57V5EOpLlMmD4qSil9tDRJV+5Rg19vCj5F0ZJ0hcIrmfDDu+4QsEXwlbXKlIzjzhdl2L/oNriZ6j5wrSbW1tbsA/a1C3JPqfgYVGGJMtzuNbOzfh+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747310104; c=relaxed/simple;
-	bh=darqkpwsQQkX0Z8eO2+7h0SOrywhnSb4/n44KEKi+9E=;
+	s=arc-20240116; t=1747310183; c=relaxed/simple;
+	bh=Q800e4xY45B3/g+8yBWnD99v8G99LICrKs79zwHLJNw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kNng8iUMUNSJG7AjDgavkjApq3/T9+XJ3xXbBXLceComPcRxZ/Ri0FJPHiW6pg+aLUlyzVw763i13qtTzQnE8os5Jxw2MaZpRceT8wqkWbpw5Jqb/SZJXCsTfGRXmCfuA5SRkd9oyH2849BQLPqTZIpwp32f5XtxKhDWswr3vV0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PSen6O3u; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1747310103; x=1778846103;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=darqkpwsQQkX0Z8eO2+7h0SOrywhnSb4/n44KEKi+9E=;
-  b=PSen6O3uM9+WQ2tcmO84K53RQR9Qkdm5bfyW5YL9hEJzwPXxZhL/VmOK
-   +ssqKzHFBO6Okndo+ibyFNcZMsUcUo81E6lODL49gOp0D5IHWYs1NEtxu
-   ar81lFuI6hl9c3FtNev/xu53WIh/a8fT5+R7SdITwsSH03I9BpxN5KAbw
-   9km8jJw5HIAhaoexi0GYPSnpcjFMlSwlH+mpBTNIAs0cvqCtyaL0sA9Q+
-   822vS4Z8t9DRnv1XX39Lx0O9+hyztTUSxxuhlTA6fFmXVgdDHwowqdQOP
-   ux9sjJgPK24l4Je7qUn+OJsjVBoX+o8pMgKfy4OQXL/zq8TpG8FkhpIap
-   w==;
-X-CSE-ConnectionGUID: fxXi+EAcTSa5xakEuwMxyA==
-X-CSE-MsgGUID: 7/ClBFLWQ0O8v8azB1tR+w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11434"; a="49400534"
-X-IronPort-AV: E=Sophos;i="6.15,291,1739865600"; 
-   d="scan'208";a="49400534"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2025 04:55:03 -0700
-X-CSE-ConnectionGUID: gmIRgYz3Q0iHz8sQS5qfvw==
-X-CSE-MsgGUID: 219S3fH+RJ+HXMRnH0JUvw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,291,1739865600"; 
-   d="scan'208";a="143112925"
-Received: from sschumil-mobl2.ger.corp.intel.com (HELO svinhufvud) ([10.245.244.230])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2025 04:54:57 -0700
-Date: Thu, 15 May 2025 14:54:54 +0300
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: git@apitzsch.eu, Ricardo Ribalda <ribalda@kernel.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 4/4] media: i2c: imx214: Remove hard-coded external
- clock frequency
-Message-ID: <aCXWDnZhffjlt+8i@svinhufvud>
-References: <20250505-imx214_ccs_pll-v2-0-f50452061ff1@apitzsch.eu>
- <20250505-imx214_ccs_pll-v2-4-f50452061ff1@apitzsch.eu>
- <aBnHI1APgjfcj2xG@kekkonen.localdomain>
- <20250515085846.GR23592@pendragon.ideasonboard.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=nUhYNUSiDUZGOsnjCWfcsVEk23+3BjcqpMcmVSXiH/CBHZYlpSR+6kP3HC5lvWJRCgLN05I1uOw77O5j55+NU87jMytpVEnb5i07lszBJpI0iBrcvYwfx3xDHcIVM5Ll725ldT9ywN4STh4wnIOtkK7POq2leh0cEaciYayZW94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U3HuU10B; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E139C4CEE7;
+	Thu, 15 May 2025 11:56:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747310182;
+	bh=Q800e4xY45B3/g+8yBWnD99v8G99LICrKs79zwHLJNw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=U3HuU10Blh7y15uDlVUQE0Rrr94/hs9ePqvUAYX7B9Z5frKh1zQKwo4WEU26grCuN
+	 m1IxaL1feiioIiwnEUXKGGsqm2fO5B1uqzMiLt/VeW6Uqw6+uUBzp4yvawOfknBS8L
+	 DSS67yJWllVArHcc43VVOux73UmMPoZSpyKC3k9ZDd9Cd5hc81bMJe0GPBd2witGks
+	 3a80FG3ndjY6Wr1MedgVshZV+X14h2yVy1IiL5n3P+Bn8TaxjgRY1Jqy107OjGw2vT
+	 hXg5CEv3q3Io0ncI+hC2bj+uVY8NjJMnXSDfd1z42tFeqcOMKJxkuvDbl7EmI8x0Ar
+	 Wjc9sagITjH9Q==
+Date: Thu, 15 May 2025 13:56:17 +0200
+From: Ingo Molnar <mingo@kernel.org>
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Andy Shevchenko <andy@kernel.org>,
+	Borislav Petkov <bp@alien8.de>, Juergen Gross <jgross@suse.com>,
+	"H. Peter Anvin" <hpa@zytor.com>, Kees Cook <keescook@chromium.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Mike Rapoport <rppt@kernel.org>,
+	Paul Menzel <pmenzel@molgen.mpg.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH 00/29] x86/boot/e820: Assorted E820 table handling
+ features and cleanups
+Message-ID: <aCXWYUQ3is0UZSFp@gmail.com>
+References: <20250421185210.3372306-1-mingo@kernel.org>
+ <f647bbd0-254f-42b7-be2a-54ddfa5679db@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250515085846.GR23592@pendragon.ideasonboard.com>
+In-Reply-To: <f647bbd0-254f-42b7-be2a-54ddfa5679db@app.fastmail.com>
 
-Hi Laurent,
 
-On Thu, May 15, 2025 at 10:58:46AM +0200, Laurent Pinchart wrote:
-> Hi Sakari,
+* Arnd Bergmann <arnd@kernel.org> wrote:
+
+> On Mon, Apr 21, 2025, at 20:51, Ingo Molnar wrote:
+> >
+> >  - Assorted cleanups: type cleanups, simplifications, standardization
+> >    of coding patterns, etc.
 > 
-> On Tue, May 06, 2025 at 08:24:03AM +0000, Sakari Ailus wrote:
-> > On Mon, May 05, 2025 at 11:05:56PM +0200, André Apitzsch via B4 Relay wrote:
-> > > From: André Apitzsch <git@apitzsch.eu>
-> > > 
-> > > Instead rely on the rate set on the clock (using assigned-clock-rates
-> > > etc.)
-> > > 
-> > > Signed-off-by: André Apitzsch <git@apitzsch.eu>
-> > > ---
-> > >  drivers/media/i2c/imx214.c | 6 ------
-> > >  1 file changed, 6 deletions(-)
-> > > 
-> > > diff --git a/drivers/media/i2c/imx214.c b/drivers/media/i2c/imx214.c
-> > > index 9e9be47394ec768a5b34d44b06b5bbb0988da5a1..c12996e294dccebb18c608254f1e0d14dc064423 100644
-> > > --- a/drivers/media/i2c/imx214.c
-> > > +++ b/drivers/media/i2c/imx214.c
-> > > @@ -32,7 +32,6 @@
-> > >  
-> > >  #define IMX214_REG_FAST_STANDBY_CTRL	CCI_REG8(0x0106)
-> > >  
-> > > -#define IMX214_DEFAULT_CLK_FREQ	24000000
-> > >  #define IMX214_DEFAULT_LINK_FREQ	600000000
-> > >  /* Keep wrong link frequency for backward compatibility */
-> > >  #define IMX214_DEFAULT_LINK_FREQ_LEGACY	480000000
-> > > @@ -1405,11 +1404,6 @@ static int imx214_probe(struct i2c_client *client)
-> > >  		return dev_err_probe(dev, PTR_ERR(imx214->xclk),
-> > >  				     "failed to get xclk\n");
-> > >  
-> > > -	ret = clk_set_rate(imx214->xclk, IMX214_DEFAULT_CLK_FREQ);
-> > > -	if (ret)
-> > > -		return dev_err_probe(dev, ret,
-> > > -				     "failed to set xclk frequency\n");
-> > > -
-> > 
-> > Oops. I missed this is what the driver was doing already. Indeed, this is
-> > one of the historic sensor drivers that do set the frequency in DT systems.
-> > 
-> > The driver never used the clock-frequency property and instead used a fixed
-> > frequency. Changing the behaviour now could be problematic.
-> > 
-> > There are options here that I think we could do:
-> > 
-> > 1) use your v1 patch (4) which uses "clock-frequency" if it exists and
-> > otherwise uses the default, fixed frequency or
-> > 
-> > 2) set the frequency only if the "clock-frequency" property exists. The DT
-> > currently requires clock-frequency and the YAML conversion was done in 2020
-> > whereas the driver is from 2018. If we do this, the clock-frequency should
-> > be deprecated (or even removed from bingings).
-> > 
-> > I wonder what others think. Cc'd Laurent in any case.
-> 
-> Maybe I'm missing something, but I don't really see the issue here. The
-> clock-frequency DT property is currently ignored, and this patch doesn't
-> change that situation, does it ?
-> 
-> The change of behaviour here is related to the assigned-clock-rates
-> property. If that property is specified today, it will set the clock
-> rate, and the driver will override it to 24MHz right after. With this
-> patch, the clock rate won't be overridden. I think the risk of
-> regression is very low here, as I don't expect systems to set
-> assigned-clock-rates in DT to a value different than 24MHz and expect
-> the driver to override it.
+> Since you are already looking at cleaning up the types and testing
+> a lot, I wonder if you could make sure this also works for a 32-bit
+> phys_addr_t when booting a 32-bit kernel with and without
+> CONFIG_X86_PAE. In my recent cleanup series I originally
+> changed phys_addr_t to 32 bit after removing CONFIG_HIGHMEM_64G,
+> but this caused regressions, so it's still left as u64 even
+> though it should not be needed any more.
 
-If the DTS had assigned-clock-rates set correctly, then yes. How much can
-we trust the older DTS did have that?
+Yeah, this series does boot fine with and without PAE+HIGHMEM4G in my 
+testing.
 
--- 
-Regards,
+Thanks,
 
-Sakari Ailus
+	Ingo
 
