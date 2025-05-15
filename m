@@ -1,175 +1,235 @@
-Return-Path: <linux-kernel+bounces-649212-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-649215-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 609CAAB817C
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 10:53:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1E8AAB81A6
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 10:56:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F1A14C6B24
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 08:53:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3CCEA3A8956
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 08:53:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 449902951C8;
-	Thu, 15 May 2025 08:52:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7EAF1FE46D;
+	Thu, 15 May 2025 08:53:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="pvZyz1WA"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Fw0bV684"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A99A28EA46
-	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 08:52:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EECAF2951C4
+	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 08:53:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747299174; cv=none; b=t0Jh1jK1vSfdaPfmyjSlxW/KHQDT/3jIlDjhmUB/ReHTE5hZy9yVkXzG2wwK6YfPOxFt/hK1GduXXQW1w/eMcMLKnH9nAsKRRzKPrcoP7u6JF5ZXGpf7SAeaJcejjfbNDOXHUqhq1W3Gi7ehLDqhwMGnSgtfG5BQY0uPnIeIQ/4=
+	t=1747299211; cv=none; b=X81YEguo4/z6vBMn+Z5x3paMQIZO0XYifHM54hjO7k5ZLRSLwAFmhqB5TepljlZxUnRmWBUqBTwZQSTH1TBx0HKJoxpAdsGMTECRGqKGmIaB0+c+X6UQhsWc37lOZ99o5Qj+84JLT9XJ0uNVoAc6vcRHCdLOh3zDdtj5HcB+TUg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747299174; c=relaxed/simple;
-	bh=FI7sGTrB08Zo/oscENddwqf8I3VuN6qo18yWXr+NkPw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jxcbaq+hgWeIJjghK/jMpi+cB7iPcbAMjTU2adSPVhsVAlih2z/gyKEVukwbPtj00fEEkedCzN9iZuvA9fBUM/YAMru+XWNJ/WW0jqNWRz3Yvs3Q+Dp6uiYrRK23feVOvmY1PTsXxiK8x7foZCvxi91/in0XMhPef52tevAZn0k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=pvZyz1WA; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54EL4NVA025420
-	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 08:52:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=hwaZDQYsVUdsi74SztNN08gE
-	i0Qf+CiwpH9GUcd8v0w=; b=pvZyz1WABqrH3iWFcaH6vQ1u/BofwUf+zlSTmbca
-	/dtZ75XMShxjLA7z3o2km1eX32eTFN3vj7WWo64gD97nTJc5Iq5VrS9M1fKNeqnV
-	L6aaBdTaCEvItdmB3GwXe2Ko9erqm3IasMhQOE+BBz6v9GC+TCRcYSs1OFL22qfx
-	sEIXlO/YIHA27Zrt/wlS0uRU011F2tM8BKF9AvgnG30bRL2s2pbM15YYTP/dajJQ
-	ekTECu0A/5rS8GyIb8H5UrnAVWTkdx9V5j9i/64Uls0XU8Fysev5EBPC+k6F+6Rn
-	IC7iaOxArCCBDLRUCsQ46y2SOYLHldXTjTK1MZS0/eJr9w==
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46mbew5emj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 08:52:51 +0000 (GMT)
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7c5c9abdbd3so67198185a.1
-        for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 01:52:51 -0700 (PDT)
+	s=arc-20240116; t=1747299211; c=relaxed/simple;
+	bh=gP5bYnarlJgPCAcYhBxdJqiGMfS3ZlaEJF4D8OrewcI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VKl/ra6DiNpXDrnJDbuHIEYlPD6X463ONqh/IljU2ox8evddBWnayx+Xrohh8de7RynagAEDwPhD6mVMj3VMzh6vwteDISjpwTQVie0a7sQKuJHZvdlynEOBgyT5zOI7+d4EIpAT8bwhAWGWXpf0WY77QMSGtgU7Z6fDN/fb6WQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Fw0bV684; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1747299208;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=mxFMYaptLLUT//IK4P864ymdu1SsueZ98Tp1MNq3RV4=;
+	b=Fw0bV684IX7idkVlpRr0+x2vcnBQC3K1w2+2OLIs5k0D/0tLNDIw4QGm5w2jt4796Tm8z2
+	zH2krEuFNBopjNGpaFdQFd6udHXKKb0IA3eS3VWvibUwQdhFB1cOr86J59E9rWluVQXnjQ
+	813c9z9shbvPBTYR7oUkMi9bq9n7kaQ=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-22-4LiRdBWCNGCZMR-SDMFrpA-1; Thu, 15 May 2025 04:53:27 -0400
+X-MC-Unique: 4LiRdBWCNGCZMR-SDMFrpA-1
+X-Mimecast-MFC-AGG-ID: 4LiRdBWCNGCZMR-SDMFrpA_1747299206
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3a206f05150so456209f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 01:53:27 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747299171; x=1747903971;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hwaZDQYsVUdsi74SztNN08gEi0Qf+CiwpH9GUcd8v0w=;
-        b=BLeFqJzEoO2psqCdqyiCg0u2purFi1GD7kJTEftL+M/xoEK9gdExQXkCkBXknhyBgJ
-         XHhTYQdwVaQcO+78A8HwEDagJN+tL8jloX4qdyDuP4G7N5+YnASv6/i/Y6hld/aHWHne
-         bo05pvcadKlmPXfgKhfiuhENKdq5qvOD72HIu5nqIOd6z1+mPUjNVpJi2qtcR0z6MU7o
-         X6LCk2EC2rZMo29q1GWyXWUilLPGWNs6f9P2KB5KKxQjC7BzkMaUF+sdBNhg6wOnjSiu
-         JusB3rGlJg7Vd/TyZoWO6Z29kGoB3mWducs+o0tjetNwzUl9Ng+ULdqU+iFA07xKqLB2
-         B60Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWEFJJTCYBptIffebRqYHcKmfH/8ZViJhZBpTfURf01Yl/AXxL+9jyz+XUjMN0MPS0KoRHOBqZzt0ehMi8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQlmz2o5IFGVrPG+pDM/PeFuDE/d77mH99lonR+PdCP4MFTr9e
-	NlqlWOAhdlcIMyrh/he/iiyfH9SqSnj8LpEuWIBDzEDqtbJkn9njF+j/HFmTa/t6ishMzKtM05U
-	yowwC/UWvq6G2+jtbzaBYpW7uuorNdx7p8GNhYxdmZYj3vZ+wiT2J+F4iLK2sIpM=
-X-Gm-Gg: ASbGncv/G02e+5rsM2GcWetS6t3Ywb9Pg2QkkU0epi9Uc34lnFhIfGq04V3XaA39X/a
-	BBI6KL688lugGDNhgidE4Faz2P/AdXkrZlsZonnNJu1cfTrAtVICBBzvdlQ9WrlGq812GZN+9Oa
-	jJ8J/G/AKRI30fJ+6Y+78J+qPkfksFAkD5rmTEIzyNzT+KeBO4RU3PfhA7rYgrUnY/LHxFkk7fO
-	0YJHkgtThPcvgRDeY4WaDCFM6Vpyd9OXgmwWBKrtejx05sF0akLcQe5C9IHRrCYFR+VM+GCSEdY
-	7ZvCbybdZCqoEnphQ7/CCqVjMDAkpXZZenNmVU+WBMk5aapORvFcpsHTaFzNclt9J3yxtU+3x9o
-	=
-X-Received: by 2002:a05:620a:c52:b0:7c5:464b:6718 with SMTP id af79cd13be357-7cd2888faf1mr1253264085a.54.1747299170893;
-        Thu, 15 May 2025 01:52:50 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGQ+BiR4gB9vfsEDZ2lofj7FH/2yViqW+rJhsM6lLhCtfcarFZ22RLGIEcYHdLuh4PfJ1Riig==
-X-Received: by 2002:a05:620a:c52:b0:7c5:464b:6718 with SMTP id af79cd13be357-7cd2888faf1mr1253260385a.54.1747299170523;
-        Thu, 15 May 2025 01:52:50 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54fc64504c1sm2555886e87.52.2025.05.15.01.52.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 May 2025 01:52:49 -0700 (PDT)
-Date: Thu, 15 May 2025 11:52:48 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Sarthak Garg <quic_sartgarg@quicinc.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>,
-        Adrian Hunter <adrian.hunter@intel.com>, linux-mmc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        quic_cang@quicinc.com, quic_nguyenb@quicinc.com,
-        quic_rampraka@quicinc.com, quic_pragalla@quicinc.com,
-        quic_sayalil@quicinc.com, quic_nitirawa@quicinc.com,
-        quic_bhaskarv@quicinc.com
-Subject: Re: [PATCH V2 1/2] mmc: core: Introduce new flag to force hardware
- reset
-Message-ID: <rkmqeiyha2wldtm64ndcs7hssqvwsrqr66kwh6w3exbsyc6c6n@xhqdh65af7hx>
-References: <20250514111155.10896-1-quic_sartgarg@quicinc.com>
- <20250514111155.10896-2-quic_sartgarg@quicinc.com>
+        d=1e100.net; s=20230601; t=1747299206; x=1747904006;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=mxFMYaptLLUT//IK4P864ymdu1SsueZ98Tp1MNq3RV4=;
+        b=YXZpaHTxFvzyZaI5jddCnH/6KEGUS+FUEvkQUJutCu+rmnSFwb0HK01ec+vvR4wUjr
+         Gm+xKGuBc6cGxrYPWxhxjyFfSmasANkknOWN5dXiUbjcB/gDqFuf5UygGXmEfPoMF282
+         hLpYqcnrSnjSgn1d4ApbDC0TLiTx4BYgmyfCL3QDd+cJ4vB5RuVzJMpxRBKhGDixVmFQ
+         2Y0NK6wOVpjBMDjaUtdC1fqF+z2peVTqILCvUsWkTbbyxf8VD3WW3n2w4q5Lut/PBCdu
+         NwB76EoNha4eXuZle58FWPhxkqBbzVmeKtTiEQah+HCD1d50kkG996INaQFNHq9oHhnn
+         /6Wg==
+X-Forwarded-Encrypted: i=1; AJvYcCWxuic7bQfSouiUFSdPmod0cL4Ie7FG1rE2mQ93lAZOB0p/wJVOCT7iiqUTlCWc/BwmfXZkgYlIUDgYt2o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxW6v9AeYvEx1cvG1FGfuj6mb/b60vYh1npb2sBAlA3VKH1OY5U
+	Y/f1Ev5i9TYbxSLtkV0bOlEZJFDawe/0IdD9Qt1fw8QQMP/7ZHTij0+kqN5ovux6vaLYDDidhml
+	VbrSl6gp/vkUOrWr6fnt0Y6uPvNWivPqU2p1T8rCcEtTCIqxCqwMrWO3F62zgMQ==
+X-Gm-Gg: ASbGnct3HkP7puvpPSEL8EVhbljQnpAIPhYb+XaIsqZ37AKwlWhfx64UpojXZRAZ2E1
+	XjkBYX4M7Zf9aWszgTH8LReBCUv1pBfzrPX29wn+kZVNB1bHwwOSAZAvbyS5wJt7Of5ozHGaORx
+	Xg9LMA0CatrKTC6S+CNUZY6e15yvJUb2of2nm5iQWAxFSZ2BeEkk7Q5DWG9dntRrGWbGk4HJv6I
+	FSQP2xMK76wY3UPJVr/RBL3uwN32VPShwHl0JuL3J2Lfz420VmOOAULIMAcqJmG+75M68BnwX9K
+	7WRk67UTiiWJXpIFRkBMV15jNQXeENvw3jQrmeirQ00crsrkODUV8HjLs1nPV1XQ8HjY8uWl4aH
+	VMUAU+TTV/6u9dkcz1SrUBV3LZDdf5dPXxZVeX1M=
+X-Received: by 2002:a5d:588b:0:b0:3a0:b635:ea43 with SMTP id ffacd0b85a97d-3a35374176dmr1365846f8f.33.1747299206221;
+        Thu, 15 May 2025 01:53:26 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEEsJz5zNV7+Zfbrzpouk886RkGlZnICJAg6K6r7C6mHK9QfUY97jHM/U62zf/Yv0DULdBX7w==
+X-Received: by 2002:a5d:588b:0:b0:3a0:b635:ea43 with SMTP id ffacd0b85a97d-3a35374176dmr1365828f8f.33.1747299205872;
+        Thu, 15 May 2025 01:53:25 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f4a:8900:884a:b3af:e3c9:ec88? (p200300d82f4a8900884ab3afe3c9ec88.dip0.t-ipconnect.de. [2003:d8:2f4a:8900:884a:b3af:e3c9:ec88])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a1f5a4c599sm22499647f8f.94.2025.05.15.01.53.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 15 May 2025 01:53:25 -0700 (PDT)
+Message-ID: <c06930f0-f98c-4089-aa33-6789b95fd08f@redhat.com>
+Date: Thu, 15 May 2025 10:53:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250514111155.10896-2-quic_sartgarg@quicinc.com>
-X-Proofpoint-GUID: MNJQGFTrjjGZmLxSuUFj_PIFMIAQEdoo
-X-Proofpoint-ORIG-GUID: MNJQGFTrjjGZmLxSuUFj_PIFMIAQEdoo
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTE1MDA4NiBTYWx0ZWRfX6HXllDN+1L9i
- K6XZydBGYtGtyGM4wOBS0bQTjQoi8P+x41GcPIvqY9T7Kfhw2APQ7X5Bfd3/byYgK+ykVgRwiaa
- nRjHdBylt9KE2Ddutg6FxrBFwtJSzxgMk3STJTzFyzaC6eFbzJ0Kei+yHbVw8maJwOIsdsGhRnD
- BJUC7kvIgCPvauFNv5gwE9K6edlAJgnOnL505d0HndladpyTNoaARn60wQll69BtkVAW2ewvN30
- tPiK+dfeD5iQ08o2b+b9gGYpc0rNoXXufUJP9TdoU32aypc29DQ4EESo7LVbkxP+q9QF++8oeC7
- zULz4mDkVSlyZ1fxtvjeBWxqpDufxC2wmGxXNejH3CZODRTCZtFLcqAngb7ba1jrYI07Nng1ZQN
- gw9AwC1kfBA7VY5Y4ySJpC9jOLet+Ak2htTsVMzoKAp2qm1Zs6IGqQ7rWav66876/IT5FJ3Z
-X-Authority-Analysis: v=2.4 cv=LOFmQIW9 c=1 sm=1 tr=0 ts=6825ab63 cx=c_pps
- a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=dt9VzEwgFbYA:10 a=COk6AnOGAAAA:8 a=QyXUC8HyAAAA:8 a=Dw_yFD_fkBKW1skOv8gA:9
- a=CjuIK1q_8ugA:10 a=PEH46H7Ffwr30OY-TuGO:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-15_03,2025-05-14_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 spamscore=0 adultscore=0 priorityscore=1501 suspectscore=0
- mlxscore=0 malwarescore=0 mlxlogscore=999 impostorscore=0 bulkscore=0
- clxscore=1015 phishscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505070000
- definitions=main-2505150086
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: Check pxd_leaf() instead of !pxd_table() while
+ tearing down page tables
+To: Dev Jain <dev.jain@arm.com>, catalin.marinas@arm.com, will@kernel.org
+Cc: ryan.roberts@arm.com, anshuman.khandual@arm.com, mark.rutland@arm.com,
+ yang@os.amperecomputing.com, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, stable@vger.kernel.org
+References: <20250515063450.86629-1-dev.jain@arm.com>
+ <332ecda7-14c4-4dc3-aeff-26801b74ca04@redhat.com>
+ <4904d02f-6595-4230-a321-23327596e085@arm.com>
+ <6fe7848c-485e-4639-b65c-200ed6abe119@redhat.com>
+ <35ef7691-7eac-4efa-838d-c504c88c042b@arm.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
+ dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
+ QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
+ XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
+ Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
+ PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
+ WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
+ UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
+ jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
+ B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
+ ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZgEEwEIAEICGwMGCwkIBwMCBhUIAgkKCwQW
+ AgMBAh4BAheAAhkBFiEEG9nKrXNcTDpGDfzKTd4Q9wD/g1oFAl8Ox4kFCRKpKXgACgkQTd4Q
+ 9wD/g1oHcA//a6Tj7SBNjFNM1iNhWUo1lxAja0lpSodSnB2g4FCZ4R61SBR4l/psBL73xktp
+ rDHrx4aSpwkRP6Epu6mLvhlfjmkRG4OynJ5HG1gfv7RJJfnUdUM1z5kdS8JBrOhMJS2c/gPf
+ wv1TGRq2XdMPnfY2o0CxRqpcLkx4vBODvJGl2mQyJF/gPepdDfcT8/PY9BJ7FL6Hrq1gnAo4
+ 3Iv9qV0JiT2wmZciNyYQhmA1V6dyTRiQ4YAc31zOo2IM+xisPzeSHgw3ONY/XhYvfZ9r7W1l
+ pNQdc2G+o4Di9NPFHQQhDw3YTRR1opJaTlRDzxYxzU6ZnUUBghxt9cwUWTpfCktkMZiPSDGd
+ KgQBjnweV2jw9UOTxjb4LXqDjmSNkjDdQUOU69jGMUXgihvo4zhYcMX8F5gWdRtMR7DzW/YE
+ BgVcyxNkMIXoY1aYj6npHYiNQesQlqjU6azjbH70/SXKM5tNRplgW8TNprMDuntdvV9wNkFs
+ 9TyM02V5aWxFfI42+aivc4KEw69SE9KXwC7FSf5wXzuTot97N9Phj/Z3+jx443jo2NR34XgF
+ 89cct7wJMjOF7bBefo0fPPZQuIma0Zym71cP61OP/i11ahNye6HGKfxGCOcs5wW9kRQEk8P9
+ M/k2wt3mt/fCQnuP/mWutNPt95w9wSsUyATLmtNrwccz63XOwU0EVcufkQEQAOfX3n0g0fZz
+ Bgm/S2zF/kxQKCEKP8ID+Vz8sy2GpDvveBq4H2Y34XWsT1zLJdvqPI4af4ZSMxuerWjXbVWb
+ T6d4odQIG0fKx4F8NccDqbgHeZRNajXeeJ3R7gAzvWvQNLz4piHrO/B4tf8svmRBL0ZB5P5A
+ 2uhdwLU3NZuK22zpNn4is87BPWF8HhY0L5fafgDMOqnf4guJVJPYNPhUFzXUbPqOKOkL8ojk
+ CXxkOFHAbjstSK5Ca3fKquY3rdX3DNo+EL7FvAiw1mUtS+5GeYE+RMnDCsVFm/C7kY8c2d0G
+ NWkB9pJM5+mnIoFNxy7YBcldYATVeOHoY4LyaUWNnAvFYWp08dHWfZo9WCiJMuTfgtH9tc75
+ 7QanMVdPt6fDK8UUXIBLQ2TWr/sQKE9xtFuEmoQGlE1l6bGaDnnMLcYu+Asp3kDT0w4zYGsx
+ 5r6XQVRH4+5N6eHZiaeYtFOujp5n+pjBaQK7wUUjDilPQ5QMzIuCL4YjVoylWiBNknvQWBXS
+ lQCWmavOT9sttGQXdPCC5ynI+1ymZC1ORZKANLnRAb0NH/UCzcsstw2TAkFnMEbo9Zu9w7Kv
+ AxBQXWeXhJI9XQssfrf4Gusdqx8nPEpfOqCtbbwJMATbHyqLt7/oz/5deGuwxgb65pWIzufa
+ N7eop7uh+6bezi+rugUI+w6DABEBAAHCwXwEGAEIACYCGwwWIQQb2cqtc1xMOkYN/MpN3hD3
+ AP+DWgUCXw7HsgUJEqkpoQAKCRBN3hD3AP+DWrrpD/4qS3dyVRxDcDHIlmguXjC1Q5tZTwNB
+ boaBTPHSy/Nksu0eY7x6HfQJ3xajVH32Ms6t1trDQmPx2iP5+7iDsb7OKAb5eOS8h+BEBDeq
+ 3ecsQDv0fFJOA9ag5O3LLNk+3x3q7e0uo06XMaY7UHS341ozXUUI7wC7iKfoUTv03iO9El5f
+ XpNMx/YrIMduZ2+nd9Di7o5+KIwlb2mAB9sTNHdMrXesX8eBL6T9b+MZJk+mZuPxKNVfEQMQ
+ a5SxUEADIPQTPNvBewdeI80yeOCrN+Zzwy/Mrx9EPeu59Y5vSJOx/z6OUImD/GhX7Xvkt3kq
+ Er5KTrJz3++B6SH9pum9PuoE/k+nntJkNMmQpR4MCBaV/J9gIOPGodDKnjdng+mXliF3Ptu6
+ 3oxc2RCyGzTlxyMwuc2U5Q7KtUNTdDe8T0uE+9b8BLMVQDDfJjqY0VVqSUwImzTDLX9S4g/8
+ kC4HRcclk8hpyhY2jKGluZO0awwTIMgVEzmTyBphDg/Gx7dZU1Xf8HFuE+UZ5UDHDTnwgv7E
+ th6RC9+WrhDNspZ9fJjKWRbveQgUFCpe1sa77LAw+XFrKmBHXp9ZVIe90RMe2tRL06BGiRZr
+ jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <35ef7691-7eac-4efa-838d-c504c88c042b@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, May 14, 2025 at 04:41:54PM +0530, Sarthak Garg wrote:
-> Introduce new flag cqe_recovery_reset_always to allow vendors to force
-> hardware reset during cqe recovery.
+On 15.05.25 10:47, Dev Jain wrote:
+> 
+> 
+> On 15/05/25 2:06 pm, David Hildenbrand wrote:
+>> On 15.05.25 10:22, Dev Jain wrote:
+>>>
+>>>
+>>> On 15/05/25 1:43 pm, David Hildenbrand wrote:
+>>>> On 15.05.25 08:34, Dev Jain wrote:
+>>>>> Commit 9c006972c3fe removes the pxd_present() checks because the caller
+>>>>> checks pxd_present(). But, in case of vmap_try_huge_pud(), the caller
+>>>>> only
+>>>>> checks pud_present(); pud_free_pmd_page() recurses on each pmd through
+>>>>> pmd_free_pte_page(), wherein the pmd may be none.
+>>>> The commit states: "The core code already has a check for pXd_none()",
+>>>> so I assume that assumption was not true in all cases?
+>>>>
+>>>> Should that one problematic caller then check for pmd_none() instead?
+>>>
+>>>    From what I could gather of Will's commit message, my interpretation is
+>>> that the concerned callers are vmap_try_huge_pud and vmap_try_huge_pmd.
+>>> These individually check for pxd_present():
+>>>
+>>> if (pmd_present(*pmd) && !pmd_free_pte_page(pmd, addr))
+>>>      return 0;
+>>>
+>>> The problem is that vmap_try_huge_pud will also iterate on pte entries.
+>>> So if the pud is present, then pud_free_pmd_page -> pmd_free_pte_page
+>>> may encounter a none pmd and trigger a WARN.
+>>
+>> Yeah, pud_free_pmd_page()->pmd_free_pte_page() looks shaky.
+>>
+>> I assume we should either have an explicit pmd_none() check in
+>> pud_free_pmd_page() before calling pmd_free_pte_page(), or one in
+>> pmd_free_pte_page().
+>>
+>> With your patch, we'd be calling pte_free_kernel() on a NULL pointer,
+>> which sounds wrong -- unless I am missing something important.
+> 
+> Ah thanks, you seem to be right. We will be extracting table from a none
+> pmd. Perhaps we should still bail out for !pxd_present() but without the
+> warning, which the fix commit used to do.
 
-Nit: CQE
+Right. We just make sure that all callers of pmd_free_pte_page() already check for it.
 
-> 
-> Signed-off-by: Sarthak Garg <quic_sartgarg@quicinc.com>
-> Acked-by: Adrian Hunter <adrian.hunter@intel.com>
-> ---
->  drivers/mmc/core/block.c | 2 +-
->  include/linux/mmc/host.h | 1 +
->  2 files changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/mmc/core/block.c b/drivers/mmc/core/block.c
-> index 585c2b274d98..dce2fb762260 100644
-> --- a/drivers/mmc/core/block.c
-> +++ b/drivers/mmc/core/block.c
-> @@ -1622,7 +1622,7 @@ void mmc_blk_cqe_recovery(struct mmc_queue *mq)
->  	pr_debug("%s: CQE recovery start\n", mmc_hostname(host));
->  
->  	err = mmc_cqe_recovery(host);
-> -	if (err)
-> +	if (err || host->cqe_recovery_reset_always)
->  		mmc_blk_reset(mq->blkdata, host, MMC_BLK_CQE_RECOVERY);
->  	mmc_blk_reset_success(mq->blkdata, MMC_BLK_CQE_RECOVERY);
->  
-> diff --git a/include/linux/mmc/host.h b/include/linux/mmc/host.h
-> index 68f09a955a90..d686adf75293 100644
-> --- a/include/linux/mmc/host.h
-> +++ b/include/linux/mmc/host.h
-> @@ -554,6 +554,7 @@ struct mmc_host {
->  	int			cqe_qdepth;
->  	bool			cqe_enabled;
->  	bool			cqe_on;
-> +	bool			cqe_recovery_reset_always;
->  
->  	/* Inline encryption support */
->  #ifdef CONFIG_MMC_CRYPTO
-> -- 
-> 2.17.1
-> 
+I'd just do something like:
+
+diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
+index 8fcf59ba39db7..e98dd7af147d5 100644
+--- a/arch/arm64/mm/mmu.c
++++ b/arch/arm64/mm/mmu.c
+@@ -1274,10 +1274,8 @@ int pmd_free_pte_page(pmd_t *pmdp, unsigned long addr)
+  
+         pmd = READ_ONCE(*pmdp);
+  
+-       if (!pmd_table(pmd)) {
+-               VM_WARN_ON(1);
+-               return 1;
+-       }
++       VM_WARN_ON(!pmd_present(pmd));
++       VM_WARN_ON(!pmd_table(pmd));
+  
+         table = pte_offset_kernel(pmdp, addr);
+         pmd_clear(pmdp);
+@@ -1305,7 +1303,8 @@ int pud_free_pmd_page(pud_t *pudp, unsigned long addr)
+         next = addr;
+         end = addr + PUD_SIZE;
+         do {
+-               pmd_free_pte_page(pmdp, next);
++               if (pmd_present(*pmdp))
++                       pmd_free_pte_page(pmdp, next);
+         } while (pmdp++, next += PMD_SIZE, next != end);
+  
+         pud_clear(pudp);
+
 
 -- 
-With best wishes
-Dmitry
+Cheers,
+
+David / dhildenb
+
 
