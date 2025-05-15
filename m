@@ -1,107 +1,118 @@
-Return-Path: <linux-kernel+bounces-649024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-649027-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4770FAB7EEE
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 09:36:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 636E4AB7EEF
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 09:36:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CCA68669FD
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 07:35:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9EE4C1BA6B69
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 07:36:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FCB82798EC;
-	Thu, 15 May 2025 07:35:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CD1927C15A;
+	Thu, 15 May 2025 07:36:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bRoFcG1S"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UQC2ylE/"
+Received: from mail-yb1-f193.google.com (mail-yb1-f193.google.com [209.85.219.193])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F05262797BB;
-	Thu, 15 May 2025 07:35:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC21C221F0A
+	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 07:36:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747294544; cv=none; b=ExwzDXv7HEsIlYJ9LLKlCxn3v13Bb1xrLi8BthHcKUyg+hRcPxgPI2j8LLMoft7nBcizyJeXG9eEUdww34fluIuCFyHI4aDxHhVO92d5LoyTRjZFWw3v0rz78O7nlJ91Sa95tS+lJmFYutWZ6SCXTuJihFCG76FDnw41u2qY53A=
+	t=1747294578; cv=none; b=WDv6zixXSpA/Acsp3DNvTGyVuP7U5kBhZddCqEHxns/DGdPZP+CFEhkWrDkh/qavQBssDhQeLva1zk9TCSY6tjgoOjAMTRiY1t1s27Qy7Dl/TEQatl86/T2JD1WhyswNCbM5ueufdR/2x9lLt4N9iA+ko7SQDRxJpGYwV7TK5BE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747294544; c=relaxed/simple;
-	bh=ZGqhlVU+6Emh7nm8gXe/l4szD7AQKdUsT7UjppTo/Hc=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=gQlu+izxfd1VhGZs0KyACn+jKZlTxTVw2JAJGK4DhKjZQP+KECetyMYhZBFNaklMo9tQyP4bIae2ePtJjNhDmSsy2+BbbfYpdjAUsi8M/xMhz+WOM5vWbhBE2hZcNXUnidIfeqekNvgSmynpUPwVI6ZFvSWQtYdotVLeMeMxcjE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bRoFcG1S; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A7B9C4CEE7;
-	Thu, 15 May 2025 07:35:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747294543;
-	bh=ZGqhlVU+6Emh7nm8gXe/l4szD7AQKdUsT7UjppTo/Hc=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=bRoFcG1SGszUdhO8yF6/iWM2ASI88v+yD+FMjtga4NajMtvxYMmKnhSadVU6m6YZB
-	 fMJP7UuJNH3o2CWQx59nSf7vHBEJhe+ra1CRbL+0vg4zOdBYXibpiwSbN9eu/m8GQ3
-	 jrECyqJ5tNOesY5uVqwc2IPM6hRTOyRhmsxe85VyqnbjOO9O5EKPtva5SMvo5iZwmG
-	 1WPp3WyeNmvuJzgrYpEv79LXOX2Nxrm5NaTs3rnkWqe5O/LKvWdDgFywLzlo45kpA0
-	 rGOgT88iJCt6yT5Nn0qtfk4t58bFfikBKx2RMlIqQTHmGsGakldAQzdSGYZrQiqLgp
-	 LMbP/Y8oUeyXQ==
-From: Mark Brown <broonie@kernel.org>
-To: Varadarajan Narayanan <quic_varada@quicinc.com>, 
- Md Sadre Alam <quic_mdalam@quicinc.com>, 
- Sricharan Ramabadhran <quic_srichara@quicinc.com>, 
- Gabor Juhos <j4g8y7@gmail.com>
-Cc: linux-spi@vger.kernel.org, linux-mtd@lists.infradead.org, 
- linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250501-qpic-snand-validate-ecc-v1-1-532776581a66@gmail.com>
-References: <20250501-qpic-snand-validate-ecc-v1-1-532776581a66@gmail.com>
-Subject: Re: [PATCH next] spi: spi-qpic-snand: validate user/chip specific
- ECC properties
-Message-Id: <174729453999.272648.10698524382095396308.b4-ty@kernel.org>
-Date: Thu, 15 May 2025 09:35:39 +0200
+	s=arc-20240116; t=1747294578; c=relaxed/simple;
+	bh=szsR6cUA/KBk1A+1+MXOmIwq7e5nLTeC1bHAQuEP98Q=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=sETyuI6tNwjyv/gCD+eCtxdZKdFdNBynvdQaWruMNWCaivvnWkztab5WfgAj3NkOafOliyWKQ/o4btyxbH7XhpCCSMZAeNOj700PD2yOUhFytTHTi+gJ+rWTpXQ50+2oSl8r9W/+GR2rn7tvV1016WBjAHT1fFxBESqhr1CpMk0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UQC2ylE/; arc=none smtp.client-ip=209.85.219.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f193.google.com with SMTP id 3f1490d57ef6-e7ab544d5efso566487276.3
+        for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 00:36:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747294575; x=1747899375; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=szsR6cUA/KBk1A+1+MXOmIwq7e5nLTeC1bHAQuEP98Q=;
+        b=UQC2ylE/xhcdBiKK6rDtwypkF7vcrbccfBZ6ascfZ3HCdnvQQtJiOkkQc5d+DJmv8h
+         YyQJgfQtUl1eelbYKu/NTfG4wzRrWfjjgy09i/zqS5GH1Lo/mlE+WLexP/GijLLzCGbi
+         iKwnKJawy65vaqWCKUt1RyJVCG2nS8b+ooHN3bZGDG6sQnkSfL+RTwrR30qxbH8To80M
+         /+QbiDRb9C3sXw14v5RQ/WWZHEk5DkHYDFNAyGI3UgtoDIWBISC8AFLtzkO1o7zid213
+         /aTyAzE2LcjxgWe/zlQfPx+dJBupA6tmkBpahw3usOXzvO3LB+YXyiO2SGdM6emiEBPi
+         d5sQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747294575; x=1747899375;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=szsR6cUA/KBk1A+1+MXOmIwq7e5nLTeC1bHAQuEP98Q=;
+        b=bjO2Uu79lPb8IvMtHSdAEoJdjFhnL5ITsP0xfMqkTbgqpqdxLGcteEvgw1wrwcDGdI
+         1d4RFva3R+iJAWo2xd90bXFnL/JjwqoNB7UnKMl2rhRentjtWkzc8mLtJxE18SO14GwU
+         vX7Iwmbq1OAv63UzR0UnwC0h0acTYuvu3VvktQgMMxqFbsFcA9mVn7buoGQjfc3OH7QT
+         vkwiFuMT9/izG94p/R5A+huNHilzKSogRK1bAAs+tShwuqZwUeHarj9cqloe083bcPFl
+         ucKt380anahhquZkphnYcTsIccQ6VKjcJqOxU0h3jrCRvGVG4n9dtD/7t92ia2FmatT/
+         2k4g==
+X-Forwarded-Encrypted: i=1; AJvYcCWKkfXiCPKt5u99G9uKs4oI8WEbuKZ40y+pkNsCo8O2QdzCy2BDqzQhWm3WmefPITHZpedpPRY1TdMy3xY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxmp2Q1Vr5ruPZzLKCGizvCfgYlS8eVvoB2N+ycpKbB0ckpNsOn
+	eK3kOEMxUm3r+Te5OuwFkDYVriHQHNEYQXMmajvoTbcG7aPCD5C9uSKSQh9XnMTO+pH2mTGmO93
+	LVTLyBsS6WYgCCAjoOm2HQZtC77M=
+X-Gm-Gg: ASbGnct3XwT9L39/nAVJhQmCfHQTeDsm6UJFRk3nQR++lDbjS0bWVF68CJlOi/zQYz+
+	QBAkkooGTEZS3Yr8/ySJO5GllMrTLMpswi/LEUnv0hNivDelH+yNNNE0hRJFKLwea25krtc7HLr
+	sOYWINYP1G3lc2HFSfYQon7AmBPOqi4dMhoZBn0bmVkTo=
+X-Google-Smtp-Source: AGHT+IG8opHlVFnveV6TiQeURD6a+n3enll8lWBn546ETe3NrD2IJ5PQV2MZ9ReruHPc7XhuXvimqgjVj7A1AZfCbXA=
+X-Received: by 2002:a05:6902:2483:b0:e72:9612:f78c with SMTP id
+ 3f1490d57ef6-e7b3d5ecb32mr7878678276.40.1747294574780; Thu, 15 May 2025
+ 00:36:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-c25d1
+From: Guoyu Yin <y04609127@gmail.com>
+Date: Thu, 15 May 2025 15:36:04 +0800
+X-Gm-Features: AX0GCFt2pwByeaCyYPSlsoCOUmmtgbUEuL0FPS9I2GL2H_SPAs4BqIugp1TYGtQ
+Message-ID: <CAJNGr6uG6h=dBLjfB5ajZjv4qdf8-LjcW-i8L3_oqhbvBosSuA@mail.gmail.com>
+Subject: [BUG] INFO: rcu_tasks_trace detected stalls? (Late IPI?)
+To: ericvh@kernel.org
+Cc: lucho@ionkov.net, asmadeus@codewreck.org, linux_oss@crudebyte.com, 
+	v9fs@lists.linux.dev, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 01 May 2025 18:19:16 +0200, Gabor Juhos wrote:
-> The driver only supports 512 bytes ECC step size and 4 bit ECC strength
-> at the moment, however it does not reject unsupported step/strength
-> configurations. Due to this, whenever the driver is used with a flash
-> chip which needs stronger ECC protection, the following warning is shown
-> in the kernel log:
-> 
->   [    0.574648] spi-nand spi0.0: GigaDevice SPI NAND was found.
->   [    0.635748] spi-nand spi0.0: 256 MiB, block size: 128 KiB, page size: 2048, OOB size: 128
->   [    0.649079] nand: WARNING: (null): the ECC used on your system is too weak compared to the one required by the NAND chip
-> 
-> [...]
+Hi,
 
-Applied to
+I discovered a kernel crash with the description "INFO:
+rcu_tasks_trace detected stalls? (Late IPI?)". Analysis of the logs
+suggests that the issue may be related to numerous 9P network file
+system connection failures and high system load.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+Specifically, the p9_fd_create_tcp function repeatedly fails when
+attempting to connect to 127.0.0.1, with the error "problem connecting
+socket to 127.0.0.1". This could lead to resource exhaustion,
+affecting CPU scheduling and interrupt handling, ultimately triggering
+the RCU stall. The logs also show EXT4 file system errors (e.g., block
+bitmap inconsistencies and delayed block allocation failures), likely
+a side effect of Syzkaller testing.
 
-Thanks!
+I recommend investigating the 9P network file system=E2=80=99s connection
+logic (particularly the socket connection part in p9_fd_create_tcp)
+and system resource usage to pinpoint the root cause of the connection
+failures and high load.
 
-[1/1] spi: spi-qpic-snand: validate user/chip specific ECC properties
-      commit: 65cb56d49f6edea409600a3c61effc70ee5d43d8
+This can be reproduced on:
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+HEAD commit:
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+38fec10eb60d687e30c8c6b5420d86e8149f7557
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+report: https://pastebin.com/raw/0LB0VhWw
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+console output : https://pastebin.com/raw/EtnaHBBq
 
-Thanks,
-Mark
+kernel config : https://pastebin.com/raw/u0Efyj5P
 
+C reproducer : https://pastebin.com/raw/WzZ023uX
 
