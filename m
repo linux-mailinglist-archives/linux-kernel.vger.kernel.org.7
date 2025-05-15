@@ -1,210 +1,269 @@
-Return-Path: <linux-kernel+bounces-649267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-649269-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A96AAB8249
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 11:17:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1C71AB8250
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 11:17:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D7D674C2BE5
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 09:17:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C7A64C5664
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 09:18:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3452029373E;
-	Thu, 15 May 2025 09:17:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D55B29614F;
+	Thu, 15 May 2025 09:17:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KdzhbpG3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kUZiF7wh"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8098C1F09AD;
-	Thu, 15 May 2025 09:17:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B30B928F946;
+	Thu, 15 May 2025 09:17:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747300629; cv=none; b=MnzbQKc7HQ6S4HCUeSbHzkFp1JpIOa+9hLW9Um9Gqx9tM2zfeoYExXU9ZuBSbY3y2yjxsgVKg2SwDZsQ0sKifZFa9ytC5A0GILnn4cl9STzDoF3wULqQ0Hh2kbxdYFnMCvziqIXLj1b6ZNAm5eepo88epzINPtMlzZI66v2+9fE=
+	t=1747300670; cv=none; b=tntH8WQecrl121pDZrWjgOuKNU9yjgs8T3ffW4q0RKyFagumQDZHlv+AUR8+Y7Qnvths+IR+xKw5ckHaB9U94Vvpzm/bWcy169D6OS5HGCTIvrIRHI0veEQ7hk+DCiTbdgTW/dxdPHaYKhkPxCzrTj50Xk6SN4J3/RBajb8R4G0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747300629; c=relaxed/simple;
-	bh=QVKOlT5ufDwX7I65S3zH6n+hABL8lXqI6aFRrHvjK7k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jZd2STN6IzOO0DuV2z5yc1hw5PKSWAdVC8s4cxuQcu1fdytOzzteZaxSjXrjV5YvICoE8RLhd+DzSK9Zk7K9OhrqBPsX47bszi7paYONv8eTBuEizdaVnGlkeb8V/yDMa+lXbKSFgT/lQgCnqOf1+6TNQxSsFWjpQcOn62bA6sw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KdzhbpG3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AFC5BC4CEE9;
-	Thu, 15 May 2025 09:17:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747300629;
-	bh=QVKOlT5ufDwX7I65S3zH6n+hABL8lXqI6aFRrHvjK7k=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=KdzhbpG3zkVRx5Lyuw4wjB54O3iU36v1AdIu5FCTbZ6GO90HOSOUaEOkbY0ENXYLK
-	 u0YzV4pdXreYzzHNek1rZbTmse/RAJv9pRglfVY1+UPacLDTiW11ot5QH7he3810QV
-	 HsSjiwGzJ9/h7lgTxsPOve0zeWqaOsBujQzeHEhhdazyh33zHJAcQX1J/I9Xp4dW3F
-	 HMG3e96Y2uyZgUtlHhgUSH3FY5TaS91vq44gLDL4jSrTgHKnaIuLN9HsdfqlUA6xzG
-	 /tt3ZLiUsjzycxVZ8UgU0Cb5FGY3vNqA2k75m/1v/uLoRV+QYrFtgVAizbP8DebhVO
-	 mcuG4UKigfNSA==
-Message-ID: <d4e30634-b64e-47c7-9089-a37d20e29d2f@kernel.org>
-Date: Thu, 15 May 2025 10:17:05 +0100
+	s=arc-20240116; t=1747300670; c=relaxed/simple;
+	bh=VoBuvvaTggt88pD7cLcxjXVZ1+vn0MjJRMAsFFfswOs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PndH7MBFLUZGaKBomJaAp8NQCnBLZQMYiNlCzsihxvdXPP4eKF+o63qcU47qhxBQ4XN6iuWrJLzUIS2fhGxnLKA/z+2HIEP1d075LNqY0w011zVGJdUbXTxVr33WDAqr2ETOWW4uwF7yoFkerd+MaCZj0J7q0+MGWtvXQMgiH7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kUZiF7wh; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1747300669; x=1778836669;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=VoBuvvaTggt88pD7cLcxjXVZ1+vn0MjJRMAsFFfswOs=;
+  b=kUZiF7wheL2RqPSjS/sAxw2Iss9+tf/a5Ygs5wJekd+JsmgyR0+/5Ti9
+   IGKAhyn54B1WIPLHzlq8746f9IbQToqrpjBRZI+VcnKIlBGAw9KM5NNL5
+   +n5x/Mpy+X4ugEq1GbKywJdY4v2QqAI4HJ6M0F8B4ggcabT0W3+5w7ALX
+   +a2UdgBfyHIw0NRb8qBch1UnlYYo8Lp6QEOXdkDmP3lacrWTpfV3reduv
+   PqnzqS8S3Y3sl/OfYFt67fx3YbK6u6synf3c9tcwBSuzKXfQAhja3ehjh
+   dyURpC+UfKcUFoFk2c/XMZ2yOM1giXy17XH+wmRlOQHa9uaRWIPuGAVNt
+   g==;
+X-CSE-ConnectionGUID: 78hNJraSSP6cR28byC+v5Q==
+X-CSE-MsgGUID: vMUnyG//RZW30tL5zSw2+w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11433"; a="48477377"
+X-IronPort-AV: E=Sophos;i="6.15,290,1739865600"; 
+   d="scan'208";a="48477377"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2025 02:17:48 -0700
+X-CSE-ConnectionGUID: q9JTUy0kTPqTg+cAcpx97g==
+X-CSE-MsgGUID: BqZ2l4BkRA+EEqzfRq836A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,290,1739865600"; 
+   d="scan'208";a="138193263"
+Received: from pgcooper-mobl3.ger.corp.intel.com (HELO mdjait-mobl) ([10.245.244.201])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2025 02:17:44 -0700
+Date: Thu, 15 May 2025 11:17:37 +0200
+From: Mehdi Djait <mehdi.djait@linux.intel.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Hans de Goede <hdegoede@redhat.com>, sakari.ailus@linux.intel.com, 
+	tomi.valkeinen@ideasonboard.com, jacopo.mondi@ideasonboard.com, hverkuil@xs4all.nl, 
+	kieran.bingham@ideasonboard.com, naush@raspberrypi.com, mchehab@kernel.org, 
+	dave.stevenson@raspberrypi.com, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v4] media: v4l2-common: Add a helper for obtaining
+ the clock producer
+Message-ID: <id2ikiio23ahslghpx56niwxrvaqdgmrgk3k647i3u27cptqgz@hwqrkdvljd3b>
+References: <20250321130329.342236-1-mehdi.djait@linux.intel.com>
+ <f467e4a8-fcb2-4345-b8f7-7557c1a7552b@redhat.com>
+ <20250515084403.GQ23592@pendragon.ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH bpf-next v2] bpftool: Add support for custom BTF path in
- prog load/loadall
-To: Jiayuan Chen <jiayuan.chen@linux.dev>, bpf@vger.kernel.org
-Cc: Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
- Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
- <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, Daniel Xu <dxu@dxuuu.xyz>,
- Mykyta Yatsenko <yatsenko@meta.com>, Tao Chen <chen.dylane@gmail.com>,
- linux-kernel@vger.kernel.org
-References: <20250515065018.240188-1-jiayuan.chen@linux.dev>
-From: Quentin Monnet <qmo@kernel.org>
-Content-Language: en-GB
-In-Reply-To: <20250515065018.240188-1-jiayuan.chen@linux.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250515084403.GQ23592@pendragon.ideasonboard.com>
 
-2025-05-15 14:50 UTC+0800 ~ Jiayuan Chen <jiayuan.chen@linux.dev>
-> This patch exposes the btf_custom_path feature to bpftool, allowing users
-> to specify a custom BTF file when loading BPF programs using prog load or
-> prog loadall commands.
+Hi Laurent,
+
+On Thu, May 15, 2025 at 10:44:03AM +0200, Laurent Pinchart wrote:
+> Hi Hans,
 > 
-> The argument 'btf_custom_path' in libbpf is used for those kernes that
-
-
-Typo: "kernes"
-
-
-> don't have CONFIG_DEBUG_INFO_BTF enabled but still want to perform CO-RE
-> relocations.
+> On Sat, May 10, 2025 at 04:21:09PM +0200, Hans de Goede wrote:
+> > On 21-Mar-25 2:03 PM, Mehdi Djait wrote:
+> > > Introduce a helper for v4l2 sensor drivers on both DT- and ACPI-based
+> > > platforms to retrieve a reference to the clock producer from firmware.
+> > > 
+> > > This helper behaves the same as clk_get_optional() except where there is
+> > > no clock producer like in ACPI-based platforms.
+> > > 
+> > > For ACPI-based platforms the function will read the "clock-frequency"
+> > > ACPI _DSD property and register a fixed frequency clock with the frequency
+> > > indicated in the property.
+> > > 
+> > > Signed-off-by: Mehdi Djait <mehdi.djait@linux.intel.com>
+> > 
+> > This certainly looks quite useful, thank you for working
+> > on this.
+> > 
+> > Note on some IPU3 platforms where the clk is provided by
+> > a clk-generator which is part of a special sensor-PMIC
+> > the situation is a bit more complicated.
+> > 
+> > Basically if there is both a clk provider and a clock-frequency
+> > property then the clock-frequency value should be set as freq
+> > to the clk-provider, see:
+> > 
+> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/media/i2c/ov8865.c#n3020
+> > 
+> > for an example of a driver which handles this case.
 > 
-> Signed-off-by: Jiayuan Chen <jiayuan.chen@linux.dev>
-> ---
->  tools/bpf/bpftool/Documentation/bpftool-prog.rst |  7 ++++++-
->  tools/bpf/bpftool/bash-completion/bpftool        |  2 +-
->  tools/bpf/bpftool/prog.c                         | 12 +++++++++++-
->  3 files changed, 18 insertions(+), 3 deletions(-)
+> On a side note, the DT bindings for the OV8865 doesn't specify the
+> clock-frequency property...
 > 
-> diff --git a/tools/bpf/bpftool/Documentation/bpftool-prog.rst b/tools/bpf/bpftool/Documentation/bpftool-prog.rst
-> index d6304e01afe0..e60a829ab8d0 100644
-> --- a/tools/bpf/bpftool/Documentation/bpftool-prog.rst
-> +++ b/tools/bpf/bpftool/Documentation/bpftool-prog.rst
-> @@ -127,7 +127,7 @@ bpftool prog pin *PROG* *FILE*
->      Note: *FILE* must be located in *bpffs* mount. It must not contain a dot
->      character ('.'), which is reserved for future extensions of *bpffs*.
->  
-> -bpftool prog { load | loadall } *OBJ* *PATH* [type *TYPE*] [map { idx *IDX* | name *NAME* } *MAP*] [{ offload_dev | xdpmeta_dev } *NAME*] [pinmaps *MAP_DIR*] [autoattach]
-> +bpftool prog { load | loadall } *OBJ* *PATH* [type *TYPE*] [map { idx *IDX* | name *NAME* } *MAP*] [{ offload_dev | xdpmeta_dev } *NAME*] [pinmaps *MAP_DIR*] [autoattach] [kernel_btf *BTF_DIR*]
->      Load bpf program(s) from binary *OBJ* and pin as *PATH*. **bpftool prog
->      load** pins only the first program from the *OBJ* as *PATH*. **bpftool prog
->      loadall** pins all programs from the *OBJ* under *PATH* directory. **type**
-> @@ -153,6 +153,11 @@ bpftool prog { load | loadall } *OBJ* *PATH* [type *TYPE*] [map { idx *IDX* | na
->      program does not support autoattach, bpftool falls back to regular pinning
->      for that program instead.
->  
-> +    The **kernel_btf** option allows specifying an external BTF file to replace
-> +    the system's own vmlinux BTF file for CO-RE relocations. NOTE that any
-> +    other feature (e.g., fentry/fexit programs, struct_ops, etc) will require
 
+Is this wrong ?
 
-Nit: No need for both "e.g." and "etc", they're redundant.
+The OV8865 driver was introduced for DT-based systems, where you will
+get a reference to the "struct clk corresponding to the clock producer"
+and then get the clock-rate/frequency with a call to:
 
+	rate = clk_get_rate(sensor->extclk);
 
-> +    actual kernel BTF like /sys/kernel/btf/vmlinux.
-> +
+The patch "73dcffeb2ff9 media: i2c: Support 19.2MHz input clock in ov8865"
+adding support for clock-frequency came later to support ACPI-based
+systems (IPU3 here)
 
+> > IMHO it would be good if the generic helper would handle
+> > this case too and if there is both a clk-provider and
+> > a clock-frequency property then try to set the clock-frequency
+> > value with clk_set_rate(), arguably you could just warn on
+> > a failure to set the rate though, instead of the error
+> > the ov8865 driver currently throws.
+> > 
+> > Sakari, Laurent any opinions on adding handling this case
+> > to the generic helper ?
+> 
+> We really need to standardize the clock-frequency property, and document
+> it accordingly. Some drivers use it to set the external clock rate,
+> while others use it to inform themselves about the clock rate, without
+> changing it, for platforms that have no CCF clock providers. Some
+> drivers also set the clock rate to a fixed value, or to a value that
+> depends on the link frequency selected by userspace. I don't like this
+> situation much.
+> 
+> > > ---
+> > > v1 -> v2:
+> > > Suggested by Sakari:
+> > >     - removed clk_name
+> > >     - removed the IS_ERR() check
+> > >     - improved the kernel-doc comment and commit msg
+> > > Link v1: https://lore.kernel.org/linux-media/20250227092643.113939-1-mehdi.djait@linux.intel.com
+> > > 
+> > > v2 -> v3:
+> > > - Added #ifdef CONFIG_COMMON_CLK for the ACPI case
+> > > Link v2: https://lore.kernel.org/linux-media/20250310122305.209534-1-mehdi.djait@linux.intel.com/
+> > > 
+> > > v3 -> v4:
+> > > Suggested by Laurent:
+> > > 	- removed the #ifdef to use IS_REACHABLE(CONFIG_COMMON_CLK)
+> > > 	- changed to kasprintf() to allocate the clk name when id is NULL and
+> > > 	  used the __free(kfree) scope-based cleanup helper when
+> > > 	  defining the variable to hold the allocated name
+> > > Link v3: https://lore.kernel.org/linux-media/20250321093814.18159-1-mehdi.djait@linux.intel.com/
+> > > 
+> > > 
+> > >  drivers/media/v4l2-core/v4l2-common.c | 40 +++++++++++++++++++++++++++
+> > >  include/media/v4l2-common.h           | 18 ++++++++++++
+> > >  2 files changed, 58 insertions(+)
+> > > 
+> > > diff --git a/drivers/media/v4l2-core/v4l2-common.c b/drivers/media/v4l2-core/v4l2-common.c
+> > > index 0a2f4f0d0a07..b33152e2c3af 100644
+> > > --- a/drivers/media/v4l2-core/v4l2-common.c
+> > > +++ b/drivers/media/v4l2-core/v4l2-common.c
+> > > @@ -34,6 +34,9 @@
+> > >   * Added Gerd Knorrs v4l1 enhancements (Justin Schoeman)
+> > >   */
+> > >  
+> > > +#include <linux/clk.h>
+> > > +#include <linux/clkdev.h>
+> > > +#include <linux/clk-provider.h>
+> > >  #include <linux/module.h>
+> > >  #include <linux/types.h>
+> > >  #include <linux/kernel.h>
+> > > @@ -636,3 +639,40 @@ int v4l2_link_freq_to_bitmap(struct device *dev, const u64 *fw_link_freqs,
+> > >  	return 0;
+> > >  }
+> > >  EXPORT_SYMBOL_GPL(v4l2_link_freq_to_bitmap);
+> > > +
+> > > +struct clk *devm_v4l2_sensor_clk_get(struct device *dev, const char *id)
+> > > +{
+> > > +	const char *clk_id __free(kfree) = NULL;
+> > > +	struct clk_hw *clk_hw;
+> > > +	struct clk *clk;
+> > > +	u32 rate;
+> > > +	int ret;
+> > > +
+> > > +	clk = devm_clk_get_optional(dev, id);
+> > > +	if (clk)
+> > > +		return clk;
+> > > +
+> > > +	if (!IS_REACHABLE(CONFIG_COMMON_CLK))
+> > > +		return ERR_PTR(-ENOENT);
+> > > +
+> > > +	if (!is_acpi_node(dev_fwnode(dev)))
+> > > +		return ERR_PTR(-ENOENT);
+> > > +
+> > > +	ret = device_property_read_u32(dev, "clock-frequency", &rate);
+> > > +	if (ret)
+> > > +		return ERR_PTR(ret);
+> > > +
+> > > +	if (!id) {
+> > > +		clk_id = kasprintf(GFP_KERNEL, "clk-%s", dev_name(dev));
+> > > +		if (!clk_id)
+> > > +			return ERR_PTR(-ENOMEM);
+> > > +		id = clk_id;
+> > > +	}
+> > > +
+> > > +	clk_hw = devm_clk_hw_register_fixed_rate(dev, id, NULL, 0, rate);
+> > > +	if (IS_ERR(clk_hw))
+> > > +		return ERR_CAST(clk_hw);
+> > > +
+> > > +	return clk_hw->clk;
+> > > +}
+> > > +EXPORT_SYMBOL_GPL(devm_v4l2_sensor_clk_get);
+> > > diff --git a/include/media/v4l2-common.h b/include/media/v4l2-common.h
+> > > index 63ad36f04f72..35b9ac698e8a 100644
+> > > --- a/include/media/v4l2-common.h
+> > > +++ b/include/media/v4l2-common.h
+> > > @@ -573,6 +573,24 @@ int v4l2_link_freq_to_bitmap(struct device *dev, const u64 *fw_link_freqs,
+> > >  			     unsigned int num_of_driver_link_freqs,
+> > >  			     unsigned long *bitmap);
+> > >  
+> > > +/**
+> > > + * devm_v4l2_sensor_clk_get - lookup and obtain a reference to an optional clock
+> > > + *			      producer for a camera sensor.
+> > > + *
+> > > + * @dev: device for v4l2 sensor clock "consumer"
+> > > + * @id: clock consumer ID
+> > > + *
+> > > + * This function behaves the same way as clk_get_optional() except where there
+> > > + * is no clock producer like in ACPI-based platforms.
+> > > + * For ACPI-based platforms, the function will read the "clock-frequency"
+> > > + * ACPI _DSD property and register a fixed-clock with the frequency indicated
+> > > + * in the property.
+> > > + *
+> > > + * Return:
+> > > + * * pointer to a struct clk on success or an error code on failure.
+> > > + */
+> > > +struct clk *devm_v4l2_sensor_clk_get(struct device *dev, const char *id);
+> > > +
+> > >  static inline u64 v4l2_buffer_get_timestamp(const struct v4l2_buffer *buf)
+> > >  {
+> > >  	/*
+> 
+> -- 
+> Regards,
+> 
+> Laurent Pinchart
 
-Can we rephrase the second part of the paragraph a little bit please?
-“Any other feature” could be clearer, how about:
-
-	Note that any other feature relying on BTF (such as fentry/fexit
-	programs, struct_ops) requires the BTF file for the actual
-	kernel running on the host, often exposed at
-	/sys/kernel/btf/vmlinux.
-
-
->      Note: *PATH* must be located in *bpffs* mount. It must not contain a dot
->      character ('.'), which is reserved for future extensions of *bpffs*.
->  
-> diff --git a/tools/bpf/bpftool/bash-completion/bpftool b/tools/bpf/bpftool/bash-completion/bpftool
-> index 1ce409a6cbd9..609938c287b7 100644
-> --- a/tools/bpf/bpftool/bash-completion/bpftool
-> +++ b/tools/bpf/bpftool/bash-completion/bpftool
-> @@ -511,7 +511,7 @@ _bpftool()
->                              ;;
->                          *)
->                              COMPREPLY=( $( compgen -W "map" -- "$cur" ) )
-> -                            _bpftool_once_attr 'type pinmaps autoattach'
-> +                            _bpftool_once_attr 'type pinmaps autoattach kernel_btf'
->                              _bpftool_one_of_list 'offload_dev xdpmeta_dev'
->                              return 0
->                              ;;
-
-
-Correct, but right before this could you also add the following, please:
-
-	@@ -505,13 +505,13 @@ _bpftool()
-	                             _bpftool_get_map_names
-	                             return 0
-	                             ;;
-	-                        pinned|pinmaps)
-	+                        pinned|pinmaps|kernel_btf)
-	                             _filedir
-	                             return 0
-	                             ;;
-	                         *)
-
-This will make the completion offer file names after the user has typed
-"kernel_btf".
-
-
-> diff --git a/tools/bpf/bpftool/prog.c b/tools/bpf/bpftool/prog.c
-> index f010295350be..3b6a361dd0f8 100644
-> --- a/tools/bpf/bpftool/prog.c
-> +++ b/tools/bpf/bpftool/prog.c
-> @@ -1681,8 +1681,17 @@ static int load_with_options(int argc, char **argv, bool first_prog_only)
->  		} else if (is_prefix(*argv, "autoattach")) {
->  			auto_attach = true;
->  			NEXT_ARG();
-> +		} else if (is_prefix(*argv, "kernel_btf")) {
-> +			NEXT_ARG();
-> +
-> +			if (!REQ_ARGS(1))
-> +				goto err_free_reuse_maps;
-> +
-> +			open_opts.btf_custom_path = GET_ARG();
->  		} else {
-> -			p_err("expected no more arguments, 'type', 'map' or 'dev', got: '%s'?",
-> +			p_err("expected no more arguments, "
-> +			      "'type', 'map', 'dev', 'offload_dev', 'xdpmeta_dev', 'pinmaps', "
-> +			      "'autoattach', or 'kernel_btf', got: '%s'?",
-
-
-Some of them were missing, thanks for this! Can you remove "dev" from
-the list, please? It's been deprecated in favour of "offload_dev", to
-avoid confusion with "xdpmeta_dev".
-
-pw-bot: cr
-
-
->  			      *argv);
->  			goto err_free_reuse_maps;
->  		}
-> @@ -2474,6 +2483,7 @@ static int do_help(int argc, char **argv)
->  		"                         [map { idx IDX | name NAME } MAP]\\\n"
->  		"                         [pinmaps MAP_DIR]\n"
->  		"                         [autoattach]\n"
-> +		"                         [kernel_btf BTF_DIR]\n"
->  		"       %1$s %2$s attach PROG ATTACH_TYPE [MAP]\n"
->  		"       %1$s %2$s detach PROG ATTACH_TYPE [MAP]\n"
->  		"       %1$s %2$s run PROG \\\n"
-
-
-Thanks,
-Quentin
+--
+Kind Regards
+Mehdi Djait
 
