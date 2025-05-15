@@ -1,111 +1,258 @@
-Return-Path: <linux-kernel+bounces-649541-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-649544-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 153EFAB8601
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 14:15:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAAEEAB8606
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 14:16:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E6E631BC401E
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 12:14:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E66E516C10C
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 12:14:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6692F2980AB;
-	Thu, 15 May 2025 12:10:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8678E29B216;
+	Thu, 15 May 2025 12:11:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="cNxfbw7T"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jfqMeAjb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3228298C36;
-	Thu, 15 May 2025 12:10:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96057298CCA;
+	Thu, 15 May 2025 12:11:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747311051; cv=none; b=hHhPDTHz2CtfWzOwqzHSYRMxVFqlAal3L1qg/oc3wTl3KEOFCTSLEFuPuDpwWzXifHl4PdBRJEX/1Dp/LL50DZ/GCI7urODrLYHppIQfQliFn7/5iECOFKpboai23TOT4VHd8vAKVEff2gyWevQs3h1kybZpG1vh8hVyX4kCQgE=
+	t=1747311092; cv=none; b=lH2dTZNcstAfikYc6LNJyiNkDz0mNrRkcMkXnah4HrQ1fvK3rHYDyL/HbXDmEbqFJknPikfyiXYk+X2+fl+FO1ogH6DzDvHwENVZf7UnuwO0mfKbT6Zb6LSHMNHqUquRGokSO/BhTFBhwO5wwglOl61DT+4TWEbcvtcZctjwa/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747311051; c=relaxed/simple;
-	bh=N6rMoCx2aOj/7ScMu7wI/CvU9gkdt/FPtQ4XvrgHyNQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=U0TqPXL3BqJ4gBsdrCqFz93WzszzaqsOb5K+U/qcxSnoyubJYSKlc/paUxeV/Ms7yOHlz732QJTxccm1miNIbArGsW6kvDOYxdPVvcBZ6q3akqc+FiIOX1xadpgljFcaoaB4bTgOcRc1/JVyAcn8Ah288SIfDJBqJqZysr+0d2E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=cNxfbw7T; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1747311043;
-	bh=N6rMoCx2aOj/7ScMu7wI/CvU9gkdt/FPtQ4XvrgHyNQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=cNxfbw7TKopOr76pqBt1IlHgj3jY6tDdQWO2HqbGadj/8zLsjU3p1kN0C5XMmqrpQ
-	 cBO/TMMAVMLnYHSgW7ZONwrpDg+4B7HkYAT4GLzoTokYBBgYNcS05IPGU00zRmk2uq
-	 FHhrGHSOd7iV/mQvPGlPiLEURUBIg/tchLc6edM+xg8/8I7PmeH1os2ltkZCCJc9JE
-	 +MrWvd8d3NvmLUxKgD+TIMsqf7dnpInOyNIfx4gblDDEqLcn8kznJ5AkpnmhXJhXjr
-	 IZNI0KVj6uM9X+B6MIVlDm/SCKcPYm1aRAvW+R6orUEVvYWmSkN0t9Sq088IEPRPiE
-	 U/onZH8FHZeuQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZypvR1dTxz4wvg;
-	Thu, 15 May 2025 22:10:43 +1000 (AEST)
-Date: Thu, 15 May 2025 22:10:42 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: error trying to fetch the clockevents tree
-Message-ID: <20250515221042.7471ffc9@canb.auug.org.au>
-In-Reply-To: <ba3ff719-ce60-4c0f-a215-fa332b614b82@linaro.org>
-References: <20250429082047.4af75695@canb.auug.org.au>
-	<db7fce1c-c051-41d9-9cf1-ef015b0f7fb4@linaro.org>
-	<ba3ff719-ce60-4c0f-a215-fa332b614b82@linaro.org>
+	s=arc-20240116; t=1747311092; c=relaxed/simple;
+	bh=E0HUY4FDne8Z+esO87t2NcbCp36R0DEPWwniB8EtWtk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=CpCAga39z49NJoc0YpRQKC8ZN/PsaJNdPTkJrtDaOzMkbl3maE4nFcwVH37Bx9/lngU3V5OxUw9dIKfcucT9d50yPscm8fCkSUzBm1v3cUpQGasOPlKYtGMKTC0z1S8aXlXnTfLdg0BBCj7I4szCu6tzSEgcjHXHhncegpivmmY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jfqMeAjb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03197C4CEE9;
+	Thu, 15 May 2025 12:11:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747311091;
+	bh=E0HUY4FDne8Z+esO87t2NcbCp36R0DEPWwniB8EtWtk=;
+	h=From:To:Cc:Subject:Date:From;
+	b=jfqMeAjbttWHJSJTloJS3UmgGEbV+alxaFoR6eK9lMKoHre7t2Qod1jBXrHCwiaFB
+	 ngpzpUd+J4Shto9Mocr7JDpFtgQ4FJPjkL+RmnNH85p8qeLE21kozqnh/tY2fZfbR8
+	 tB68q9ZBLYYywwZwR2XAJOYs1D4ob6KcFFzks6BRLu4OFKqNttYrebSfC1k+powMzK
+	 JCyxfgApAjUHMeO7Aw8tDqWZfyuLlHXbXJ0sBjgKnKovpMl3vjtpBIpIG/J0riJbOk
+	 tx5f/17Udvjz+nmii+T31XLwKIjojpf37X5I+vUDpqWyA7YSqq15o1R6wHhn85URZR
+	 4/tV4AfA85FiQ==
+From: Jiri Olsa <jolsa@kernel.org>
+To: Oleg Nesterov <oleg@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Andrii Nakryiko <andrii@kernel.org>
+Cc: Alejandro Colomar <alx@kernel.org>,
+	Eyal Birger <eyal.birger@gmail.com>,
+	kees@kernel.org,
+	bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	x86@kernel.org,
+	Song Liu <songliubraving@fb.com>,
+	Yonghong Song <yhs@fb.com>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Hao Luo <haoluo@google.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Alan Maguire <alan.maguire@oracle.com>,
+	David Laight <David.Laight@ACULAB.COM>,
+	=?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <thomas@t-8ch.de>,
+	Ingo Molnar <mingo@kernel.org>
+Subject: [PATCHv2 perf/core 00/22] uprobes: Add support to optimize usdt probes on x86_64
+Date: Thu, 15 May 2025 14:10:57 +0200
+Message-ID: <20250515121121.2332905-1-jolsa@kernel.org>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/ub16.dQMbCW7_llv1o7P1SF";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
---Sig_/ub16.dQMbCW7_llv1o7P1SF
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+hi,
+this patchset adds support to optimize usdt probes on top of 5-byte
+nop instruction.
 
-Hi Daniel,
+The generic approach (optimize all uprobes) is hard due to emulating
+possible multiple original instructions and its related issues. The
+usdt case, which stores 5-byte nop seems much easier, so starting
+with that.
 
-On Thu, 15 May 2025 11:20:01 +0200 Daniel Lezcano <daniel.lezcano@linaro.or=
-g> wrote:
->
-> I had no time yet to migrate the git tree to kernel.org but the
-> servers seem to work correctly now.
->=20
-> Is it possible to enable back the tree so its content gets some round
-> in linux-next before the PR ?
+The basic idea is to replace breakpoint exception with syscall which
+is faster on x86_64. For more details please see changelog of patch 8.
 
-Restored from tomorrow.
+The run_bench_uprobes.sh benchmark triggers uprobe (on top of different
+original instructions) in a loop and counts how many of those happened
+per second (the unit below is million loops).
 
-Just to make sure - this is still
+There's big speed up if you consider current usdt implementation
+(uprobe-nop) compared to proposed usdt (uprobe-nop5):
 
-https://git.linaro.org/people/daniel.lezcano/linux.git#timers/drivers/next
+current:
+        usermode-count :  152.501 ± 0.012M/s
+        syscall-count  :   14.463 ± 0.062M/s
+-->     uprobe-nop     :    3.160 ± 0.005M/s
+        uprobe-push    :    3.003 ± 0.003M/s
+        uprobe-ret     :    1.100 ± 0.003M/s
+        uprobe-nop5    :    3.132 ± 0.012M/s
+        uretprobe-nop  :    2.103 ± 0.002M/s
+        uretprobe-push :    2.027 ± 0.004M/s
+        uretprobe-ret  :    0.914 ± 0.002M/s
+        uretprobe-nop5 :    2.115 ± 0.002M/s
 
---=20
-Cheers,
-Stephen Rothwell
+after the change:
+        usermode-count :  152.343 ± 0.400M/s
+        syscall-count  :   14.851 ± 0.033M/s
+        uprobe-nop     :    3.204 ± 0.005M/s
+        uprobe-push    :    3.040 ± 0.005M/s
+        uprobe-ret     :    1.098 ± 0.003M/s
+-->     uprobe-nop5    :    7.286 ± 0.017M/s
+        uretprobe-nop  :    2.144 ± 0.001M/s
+        uretprobe-push :    2.069 ± 0.002M/s
+        uretprobe-ret  :    0.922 ± 0.000M/s
+        uretprobe-nop5 :    3.487 ± 0.001M/s
 
---Sig_/ub16.dQMbCW7_llv1o7P1SF
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+I see bit more speed up on Intel (above) compared to AMD. The big nop5
+speed up is partly due to emulating nop5 and partly due to optimization.
 
------BEGIN PGP SIGNATURE-----
+The key speed up we do this for is the USDT switch from nop to nop5:
+	uprobe-nop     :    3.160 ± 0.005M/s
+	uprobe-nop5    :    7.286 ± 0.017M/s
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmgl2cIACgkQAVBC80lX
-0Gxscgf/azHtkJZK1c89SBx4lYCiPZV6uj6t5kgzKjXJV5qMg1bpvPbH7o3bfXA2
-B2d13bBIyCZ8vyvJdfsfUg22QrAD1c1bUWcvhiHxpNkI2Kle0kyH4rZ9kMIxLxDw
-Yu6aAxTzqh7XKjpHXOyopDoDVHlsU0ZzVsPW1Syevr+QZzCgplex/PMs/CIrbtph
-4hEWz4JbWuV6tx36zfJTDq+mwLYrr7EpPnGTxvINfP0wB5HoiFvtFA1MlN8KjOwx
-5kjEgZpbbTpYNkHGc55Tk4fNb4eMN9VNdo8ojiM38LM9hryPHKdbIQfAnP+fn9+U
-cP/A3L7sIj0ekE88PeDAPqHvryVuSQ==
-=3CMP
------END PGP SIGNATURE-----
 
---Sig_/ub16.dQMbCW7_llv1o7P1SF--
+Changes from v1:
+- rebased on top of tip/master + mm/mm-stable + 1 extra change [1]
+- keep the refcrf offset update inside write_insn and enabling it
+  via function argument
+- fixed locking comment for uprobe_write_opcode, but skiped suggested
+  comment on register_for_each_vma, need more thinking on that [Oleg]
+- added acks
+- removed refctr from uprobe_trampoline object [Oleg]
+- change find_nearest_page to use vm_unmapped_area [Oleg]
+- re-structured x86 set_swbp [Andrii]
+- use -EINVAL in __arch_uprobe_optimize [Andrii]
+- added usdt.h from libbpf/usdt project [Andrii]
+- several minor test code changes [Andrii]
+- man page updates [Alejandro]
+
+
+This patchset is adding new syscall, here are notes to check list items
+in Documentation/process/adding-syscalls.rst:
+
+- System Call Alternatives
+  New syscall seems like the best way in here, because we need
+  just to quickly enter kernel with no extra arguments processing,
+  which we'd need to do if we decided to use another syscall.
+
+- Designing the API: Planning for Extension
+  The uprobe syscall is very specific and most likely won't be
+  extended in the future.
+
+- Designing the API: Other Considerations
+  N/A because uprobe syscall does not return reference to kernel
+  object.
+
+- Proposing the API
+  Wiring up of the uprobe system call is in separate change,
+  selftests and man page changes are part of the patchset.
+
+- Generic System Call Implementation
+  There's no CONFIG option for the new functionality because it
+  keeps the same behaviour from the user POV.
+
+- x86 System Call Implementation
+  It's 64-bit syscall only.
+
+- Compatibility System Calls (Generic)
+  N/A uprobe syscall has no arguments and is not supported
+  for compat processes.
+
+- Compatibility System Calls (x86)
+  N/A uprobe syscall is not supported for compat processes.
+
+- System Calls Returning Elsewhere
+  N/A.
+
+- Other Details
+  N/A.
+
+- Testing
+  Adding new bpf selftests.
+
+- Man Page
+  Attached.
+
+- Do not call System Calls in the Kernel
+  N/A
+
+pending todo (or follow ups):
+- use PROCMAP_QUERY in tests
+- alloc 'struct uprobes_state' for mm_struct only when needed [Andrii]
+- use mm_cpumask(vma->vm_mm) in text_poke_sync
+
+thanks,
+jirka
+
+
+Cc: Alejandro Colomar <alx@kernel.org>
+Cc: Eyal Birger <eyal.birger@gmail.com>
+Cc: kees@kernel.org
+
+[1] https://lore.kernel.org/linux-trace-kernel/20250514101809.2010193-1-jolsa@kernel.org/T/#u
+---
+Jiri Olsa (21):
+      uprobes: Remove breakpoint in unapply_uprobe under mmap_write_lock
+      uprobes: Rename arch_uretprobe_trampoline function
+      uprobes: Make copy_from_page global
+      uprobes: Add uprobe_write function
+      uprobes: Add nbytes argument to uprobe_write
+      uprobes: Add is_register argument to uprobe_write and uprobe_write_opcode
+      uprobes: Add do_ref_ctr argument to uprobe_write function
+      uprobes/x86: Add mapping for optimized uprobe trampolines
+      uprobes/x86: Add uprobe syscall to speed up uprobe
+      uprobes/x86: Add support to optimize uprobes
+      selftests/bpf: Import usdt.h from libbpf/usdt project
+      selftests/bpf: Reorg the uprobe_syscall test function
+      selftests/bpf: Rename uprobe_syscall_executed prog to test_uretprobe_multi
+      selftests/bpf: Add uprobe/usdt syscall tests
+      selftests/bpf: Add hit/attach/detach race optimized uprobe test
+      selftests/bpf: Add uprobe syscall sigill signal test
+      selftests/bpf: Add optimized usdt variant for basic usdt test
+      selftests/bpf: Add uprobe_regs_equal test
+      selftests/bpf: Change test_uretprobe_regs_change for uprobe and uretprobe
+      seccomp: passthrough uprobe systemcall without filtering
+      selftests/seccomp: validate uprobe syscall passes through seccomp
+
+ arch/arm/probes/uprobes/core.c                              |   2 +-
+ arch/x86/entry/syscalls/syscall_64.tbl                      |   1 +
+ arch/x86/include/asm/uprobes.h                              |   7 ++
+ arch/x86/kernel/uprobes.c                                   | 525 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-
+ include/linux/syscalls.h                                    |   2 +
+ include/linux/uprobes.h                                     |  20 +++-
+ kernel/events/uprobes.c                                     | 100 ++++++++++++-----
+ kernel/fork.c                                               |   1 +
+ kernel/seccomp.c                                            |  32 ++++--
+ kernel/sys_ni.c                                             |   1 +
+ tools/testing/selftests/bpf/prog_tests/uprobe_syscall.c     | 511 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++------
+ tools/testing/selftests/bpf/prog_tests/usdt.c               |  38 ++++---
+ tools/testing/selftests/bpf/progs/uprobe_syscall.c          |   4 +-
+ tools/testing/selftests/bpf/progs/uprobe_syscall_executed.c |  45 +++++++-
+ tools/testing/selftests/bpf/test_kmods/bpf_testmod.c        |  11 +-
+ tools/testing/selftests/bpf/usdt.h                          | 545 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ tools/testing/selftests/seccomp/seccomp_bpf.c               | 107 ++++++++++++++----
+ 17 files changed, 1838 insertions(+), 114 deletions(-)
+ create mode 100644 tools/testing/selftests/bpf/usdt.h
+
+
+Jiri Olsa (1):
+      man2: Add uprobe syscall page
+
+ man/man2/uprobe.2    |  1 +
+ man/man2/uretprobe.2 | 36 ++++++++++++++++++++++++------------
+ 2 files changed, 25 insertions(+), 12 deletions(-)
+ create mode 100644 man/man2/uprobe.2
 
