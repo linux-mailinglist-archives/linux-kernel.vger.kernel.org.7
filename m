@@ -1,64 +1,78 @@
-Return-Path: <linux-kernel+bounces-649472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-649474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 402D1AB8539
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 13:49:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFA77AB853E
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 13:50:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0EA78189801E
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 11:50:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4191F4C5DF7
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 11:50:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEBEE29826D;
-	Thu, 15 May 2025 11:49:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A17F298994;
+	Thu, 15 May 2025 11:50:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GMUt5AwH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kXwE8PwB"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20C891C36
-	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 11:49:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F852298259;
+	Thu, 15 May 2025 11:50:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747309786; cv=none; b=ktFw5vBx4EFfbj793YBysOmsqG8DFN8dAH5YmHQlY5kMqIf628+970sg24ir/bFoU0zFJh/ooXnWbpsNlBchNkIw2KLvySyszSilwd3LbA5EaDD1CLiLGq6sC3fyAmYrWZCUxqZwrc6KmQTh2GdBv0wtvXXJeqYojrytbJgTvE4=
+	t=1747309805; cv=none; b=e++xs/E22VpZaO2ypP3FIqOQIYTP/ajOuKj0bbdyYcT630NDy3mespdz3WcHHzGPnzI7D+ZTThtDt9mDvzTI13RYs5oycg8oAF0Lwxk4Koem2YLkfBfykiQwo4k0n4pss/PerKOg3gpGNFCye6jGAuLB0gjp4ky032KDuwfd4F8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747309786; c=relaxed/simple;
-	bh=2UioyTc8dUnRDQy4y/PoFMrKb3eS/YJs/jLmCdfoC3M=;
+	s=arc-20240116; t=1747309805; c=relaxed/simple;
+	bh=X4IxOhtFNiuzqX5KQQTxFgGZxeDwNf5OJrUwzLAdiMc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RdyjCUSUvydJbx5xno8UEKxd69m4/mer/ExuwkaP/2ralA/aEjjZHCoSmOGKEpmnbYFDCpGKXt8EBi/Hzv/+SIF5U3iysMcfcay6El8+Hk8uAnmhSKwuv5OE6ba0hqCCD+NOYYtjAvHVAwWNEmxy2qcbg2UTL/TQ5kFxSWgFWqM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GMUt5AwH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC4AEC4CEE7;
-	Thu, 15 May 2025 11:49:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747309784;
-	bh=2UioyTc8dUnRDQy4y/PoFMrKb3eS/YJs/jLmCdfoC3M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GMUt5AwHoreHw3uG2k4wEl0NwDDIdXF/3W/epdFZNo7ug92MP3V63y8IyLbKRiQf3
-	 YCaoCjKfwoWQJZcyxaFm1RM0J1lfNYR5Nj9KZCocVT0MhOPe0oCx9nj+bEqVcKdKwZ
-	 XDrz+SO4dR33NqEiTG9DqIjHtiHmO8EvtrswvL9+e8PNgYoSIcOneKs0Q7O9Ljezpe
-	 IxT071IaIG1Hr7YpPeVzAcvcvs1g4xb6W75G+T+kVO9B2o2Htkgqu7MCpi0SirJHtT
-	 UsdLZp/tNiQ20190LmXcTbalgnln5fJx9JjXsJcfdNhLNXYQZL7o/q4yqocxhUR26F
-	 dUPTqsAxkzRGg==
-Date: Thu, 15 May 2025 13:49:39 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Andy Shevchenko <andy@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@kernel.org>,
-	Borislav Petkov <bp@alien8.de>, Juergen Gross <jgross@suse.com>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Kees Cook <keescook@chromium.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Mike Rapoport <rppt@kernel.org>,
-	Paul Menzel <pmenzel@molgen.mpg.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	David Woodhouse <dwmw@amazon.co.uk>
-Subject: Re: [PATCH 27/29] x86/boot/e820: Simplify the e820__range_remove()
- API
-Message-ID: <aCXU0x6lqJ0J7W5D@gmail.com>
-References: <20250421185210.3372306-1-mingo@kernel.org>
- <20250421185210.3372306-28-mingo@kernel.org>
- <aAfG0fSVFVNciAqi@smile.fi.intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=eModZnrkiy1WD+sEdYlnLeymYDCDoaByeIHdkAcJQIK/E+cA2qgpntL7ycQfoaLboOumHYr3iVvqM+Y5Y0Wcbb40w1b67JcRh0E8OXYo05h5d/aI7VBGUQ0oI4RTnxq/8IO4uAfwbxZjeY1Kc+W9CgnbKWO8L7n7jLSgLkPFxms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kXwE8PwB; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1747309804; x=1778845804;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=X4IxOhtFNiuzqX5KQQTxFgGZxeDwNf5OJrUwzLAdiMc=;
+  b=kXwE8PwBdm8bnqxS/ouanGilSyAzdSvO9GUZzdtUCLkyOtx3uUScs7RY
+   DteAj3CWxxuVYs8+SlJcig4bwA7G95ff7E19ox1tp0D1TOP3U2Dxcw4Ul
+   DMcGZXdSKxdoWDFVpp9JT4EjaD9APafyEuTjy0+FsFsJWcl7OC63a8c+D
+   rdgUzdZNble2G1UStiHjZM2ujLFvWqQDWaHopyjnRbX89gyyMeGPhQp10
+   uwfHvvdpl8kiliU3G6PHnbfe9lsBMlUXU22hGesLrPdkqf65Pkvghd0uf
+   EGNaPmfE44gaT2sdjEXCTU+y6vrYeBRYhGlVYdlAVrQ5wwpMtjNyBEv8U
+   Q==;
+X-CSE-ConnectionGUID: Jn+mlHg3T5OriMWVl8iSjw==
+X-CSE-MsgGUID: GELeQEBFStq46wJnvhG+Pg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11433"; a="48491209"
+X-IronPort-AV: E=Sophos;i="6.15,291,1739865600"; 
+   d="scan'208";a="48491209"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2025 04:50:03 -0700
+X-CSE-ConnectionGUID: X/6xKPFiS/KhLyuU2i6Zgg==
+X-CSE-MsgGUID: U+Xh/hiuR3KDsn8CJHBDHQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,291,1739865600"; 
+   d="scan'208";a="138398884"
+Received: from sschumil-mobl2.ger.corp.intel.com (HELO svinhufvud) ([10.245.244.230])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2025 04:49:58 -0700
+Date: Thu, 15 May 2025 14:49:54 +0300
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Hans de Goede <hdegoede@redhat.com>,
+	Mehdi Djait <mehdi.djait@linux.intel.com>,
+	tomi.valkeinen@ideasonboard.com, jacopo.mondi@ideasonboard.com,
+	hverkuil@xs4all.nl, kieran.bingham@ideasonboard.com,
+	naush@raspberrypi.com, mchehab@kernel.org,
+	dave.stevenson@raspberrypi.com, linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v4] media: v4l2-common: Add a helper for obtaining
+ the clock producer
+Message-ID: <aCXU4rfcbBpg6p7Y@svinhufvud>
+References: <20250321130329.342236-1-mehdi.djait@linux.intel.com>
+ <f467e4a8-fcb2-4345-b8f7-7557c1a7552b@redhat.com>
+ <20250515084403.GQ23592@pendragon.ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,83 +81,84 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aAfG0fSVFVNciAqi@smile.fi.intel.com>
+In-Reply-To: <20250515084403.GQ23592@pendragon.ideasonboard.com>
 
+Hi Laurent,
 
-* Andy Shevchenko <andy@kernel.org> wrote:
-
-> On Mon, Apr 21, 2025 at 08:52:07PM +0200, Ingo Molnar wrote:
-> > Right now e820__range_remove() has two parameters to control the
-> > E820 type of the range removed:
-> > 
-> > 	extern void e820__range_remove(u64 start, u64 size, enum e820_type old_type, bool check_type);
-> > 
-> > Since E820 types start at 1, zero has a natural meaning of 'no type.
-> > 
-> > Consolidate the (old_type,check_type) parameters into a single (filter_type)
-> > parameter:
-> > 
-> > 	extern void e820__range_remove(u64 start, u64 size, enum e820_type filter_type);
-> > 
-> > Note that both e820__mapped_raw_any() and e820__mapped_any()
-> > already have such semantics for their 'type' parameter, although
-> > it's currently not used with '0' by in-kernel code.
-> > 
-> > Also, the __e820__mapped_all() internal helper already has such
-> > semantics implemented as well, and the e820__get_entry_type() API
-> > uses the '0' type to such effect.
-> > 
-> > This simplifies not just e820__range_remove(), and synchronizes its
-> > use of type filters with other E820 API functions, but simplifies
-> > usage sites as well, such as parse_memmap_one(), beyond the reduction
-> > of the number of parameters:
-> > 
-> >   -               else if (from)
-> >   -                       e820__range_remove(start_at, mem_size, from, 1);
-> >                   else
-> >   -                       e820__range_remove(start_at, mem_size, 0, 0);
-> >   +                       e820__range_remove(start_at, mem_size, from);
-> > 
-> > The generated code gets smaller as well:
-> > 
-> > 	add/remove: 0/0 grow/shrink: 0/5 up/down: 0/-66 (-66)
-> > 
-> > 	Function                                     old     new   delta
-> > 	parse_memopt                                 112     107      -5
-> > 	efi_init                                    1048    1039      -9
-> > 	setup_arch                                  2719    2709     -10
-> > 	e820__range_remove                           283     273     -10
-> > 	parse_memmap_opt                             559     527     -32
-> > 
-> > 	Total: Before=22,675,600, After=22,675,534, chg -0.00%
+On Thu, May 15, 2025 at 10:44:03AM +0200, Laurent Pinchart wrote:
+> Hi Hans,
 > 
-> >  extern void e820__range_add   (u64 start, u64 size, enum e820_type type);
-> >  extern u64  e820__range_update(u64 start, u64 size, enum e820_type old_type, enum e820_type new_type);
-> > -extern void e820__range_remove(u64 start, u64 size, enum e820_type old_type, bool check_type);
-> > +extern void e820__range_remove(u64 start, u64 size, enum e820_type filter_type);
-> >  extern u64  e820__range_update_table(struct e820_table *t, u64 start, u64 size, enum e820_type old_type, enum e820_type new_type);
-> >  
-> >  extern int  e820__update_table(struct e820_table *table);
+> On Sat, May 10, 2025 at 04:21:09PM +0200, Hans de Goede wrote:
+> > On 21-Mar-25 2:03 PM, Mehdi Djait wrote:
+> > > Introduce a helper for v4l2 sensor drivers on both DT- and ACPI-based
+> > > platforms to retrieve a reference to the clock producer from firmware.
+> > > 
+> > > This helper behaves the same as clk_get_optional() except where there is
+> > > no clock producer like in ACPI-based platforms.
+> > > 
+> > > For ACPI-based platforms the function will read the "clock-frequency"
+> > > ACPI _DSD property and register a fixed frequency clock with the frequency
+> > > indicated in the property.
+> > > 
+> > > Signed-off-by: Mehdi Djait <mehdi.djait@linux.intel.com>
+> > 
+> > This certainly looks quite useful, thank you for working
+> > on this.
+> > 
+> > Note on some IPU3 platforms where the clk is provided by
+> > a clk-generator which is part of a special sensor-PMIC
+> > the situation is a bit more complicated.
+> > 
+> > Basically if there is both a clk provider and a clock-frequency
+> > property then the clock-frequency value should be set as freq
+> > to the clk-provider, see:
+> > 
+> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/media/i2c/ov8865.c#n3020
+> > 
+> > for an example of a driver which handles this case.
 > 
-> Wondering if are going to get rid of 'extern' for the functions...
+> On a side note, the DT bindings for the OV8865 doesn't specify the
+> clock-frequency property...
 
-Symmetrical use of storage classes provide useful documentation:
+And they should not.
 
- - I kinda like the immediate visual reminder of 'extern' that these 
-   are exported API functions and not a function definition or 
-   something else.
+This property is used on ACPI systems (via software nodes or otherwise) to
+convey the frequency. No standard API exist for frequency control so
+effectively drivers are informed of the frequency instead. Older bindings
+on DT specify "clock-frequency", too, for sensors.
 
- - Just like 'static void ...' is an immediate visual reminder that the 
-   following function definition is local scope, or 'static inline' in 
-   a header is an immediate reminder that it's an inline API.
+We could do this on ACPI only, that should be fine. Why I haven't
+suggested it is because on DT you won't get as far since you always have a
+clock.
 
-We use such symmetric taggint in other places: we don't write 
-'unsigned' instead of 'unsigned int', just because we can.
+> 
+> > IMHO it would be good if the generic helper would handle
+> > this case too and if there is both a clk-provider and
+> > a clock-frequency property then try to set the clock-frequency
+> > value with clk_set_rate(), arguably you could just warn on
+> > a failure to set the rate though, instead of the error
+> > the ov8865 driver currently throws.
+> > 
+> > Sakari, Laurent any opinions on adding handling this case
+> > to the generic helper ?
+> 
+> We really need to standardize the clock-frequency property, and document
+> it accordingly. Some drivers use it to set the external clock rate,
+> while others use it to inform themselves about the clock rate, without
+> changing it, for platforms that have no CCF clock providers. Some
+> drivers also set the clock rate to a fixed value, or to a value that
+> depends on the link frequency selected by userspace. I don't like this
+> situation much.
 
-But no strong feelings either way, as long as it's consistent within 
-the subsystem. The wider kernel is certainly using both approaches.
+I'd rather drop the clock-frequency in bindings where it's not really
+needed. Drivers that have (or had) it in DT bindings need to continue to
+respect it, though, but they probably won't be using this helper. There
+aren't very many of these drivers and there won't be any new ones. This is
+implicitly documented in driver documentation, but we could add an
+explicit note to the documentation of this helper.
 
-Thanks,
+-- 
+Regards,
 
-	Ingo
+Sakari Ailus
 
