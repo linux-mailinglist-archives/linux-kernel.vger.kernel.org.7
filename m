@@ -1,446 +1,178 @@
-Return-Path: <linux-kernel+bounces-649963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-649965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23E2BAB8B9B
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 17:54:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67F00AB8BA8
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 17:56:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C36E21BC23C5
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 15:55:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 64B9F7B71F8
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 15:55:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFC8E21A452;
-	Thu, 15 May 2025 15:54:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 921E621C163;
+	Thu, 15 May 2025 15:56:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GMkK+K6K"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WQeaK4v2"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A43C1F4CAC;
-	Thu, 15 May 2025 15:54:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F31C2063FD;
+	Thu, 15 May 2025 15:56:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747324486; cv=none; b=UGtOxUKFShvg3E8nicwLgm3LFFjK/O3VpaN2g0480S/+V394cX8IGK7xR2J5bhttqejgXXzIXaG+RFjkZxqQKPbAO9RUfJ6vMlmTKMhhjpUti1zHvhI3BgzGo3NLGvXP50wfbEV5UgEy+w9lIJvBIYeL7gfBB4WyNtsqmT7AzzI=
+	t=1747324561; cv=none; b=Vc0Vq81LPtA+U/XMBY2lSFCdZAq1qBvPGNv0e3nQh55xYuy0R9kbgOWzOc4zPS1jMSKWqj3IN8PVAfbf2wthkWivhQnLM/gHnGocGYAsBjE7oCBRufFW9G/aycvgzVXPwtTrcVH/Jkda7Lx9EYHqFiyQ0NX/VDR+eW1u8jbjBT8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747324486; c=relaxed/simple;
-	bh=OEwbex4P1f0qPb8f+HVQXMr/nLkBccC6zV4riaLOphU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tsjIWjr4WsRT8M9M981Mc3Zc/9t8CGePKoax9ns01tzxL80T5ceb2hDqPSmbWehhk2MlD8Jf8/5CiApeQB6GzfuuzfA9nwhF6HlX3dD7yTnQQSOrwpQllZuClpmUstTxxQhTCXk/qHSRHg8G4uPbCa7+01nFg1Qy2l88AqBKGJs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GMkK+K6K; arc=none smtp.client-ip=209.85.221.43
+	s=arc-20240116; t=1747324561; c=relaxed/simple;
+	bh=O55uhgQpQzLsyENNHRRz6x1XHa1JD1E17OSbBXJLGic=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=f9ksQn0dsW5UMoUyCNdeJ1qn82HNjG2i+ALyigNKe6dOK03LP4n9xK/9l6feilPPhB06RhBP3j7BazWGb0Co2Wbplq6zK3IdLuRYZWX7vXrT+JCD8aCfNL2j4Dy3HrlC7OzXVVb0GeaK8BZq1MrXffBu14buMH6ikGeIPTb6Hqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WQeaK4v2; arc=none smtp.client-ip=209.85.210.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3a108684f90so732463f8f.1;
-        Thu, 15 May 2025 08:54:43 -0700 (PDT)
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-742596d8b95so1577506b3a.1;
+        Thu, 15 May 2025 08:56:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747324482; x=1747929282; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=YqGwytIKGGFw4F/Ptebu/zaf1C8GiOkuTgkNzw3NWj0=;
-        b=GMkK+K6K1mD3/wXEXWnjOECnzAB4QwZhfHSRJwFdbcmtAyMgVeZtTpipQlHNVXAjJt
-         VR+329scmv3f9isQzna0Ky7isScKEsbatQt1hhdkKQtOinpTDVenZGzB1CJAkxN1R5Ev
-         dNKeSMXNt/is1zUySUusSjIzClkBKRRDSZ2CRk7kzh4imN4gSd8fKDEaYvElSJVxomhF
-         JTDXxlQ0iUhjibzJ2AWWpa7Fvd7NTmoY2UDDfoE3rI8SpzBlZrjdqk9fMcHJXBxhgjlY
-         EMA5XDz4ndoWIA25cpBxsCvTimxIW6M7pw9E5P7jP7ssZwFUKS+P4NaBKZpuBN7zVvkz
-         +FAQ==
+        d=gmail.com; s=20230601; t=1747324559; x=1747929359; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vwSFGwblpcsKCcrB2EaJfjOE897XBCx90z+dK4NApfc=;
+        b=WQeaK4v2r5dcEJQWmlS3kftGDNLpV6exTwTmY8L9iErYBh3i9NOHhYzzZurFlV14jt
+         rAMNep5x4aNJXjp4lIVLJRQAuW5Bnbd5L6+4YAytvKI4xn1TpuVDsbJO+LUj4mAyAhqw
+         FkRm2iVVjr0NABmbXIwaDIAqh2JB7rmIbSUZ3h7KbDbN0BJpQGeibOjRnkNPy5aqMhjI
+         P4Ro6Rpt4F98EttNxFSOokE7CLc3rmpdiYyWl8JcZnBOudPjZGvJmvKXNL8XxHBws+tT
+         BBAhBgxbPcWewp89rh8hECo7tFh/MugfED8AEd853MV0tGJ7SATwfKoQ7dhklApRxf4U
+         6E3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747324482; x=1747929282;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YqGwytIKGGFw4F/Ptebu/zaf1C8GiOkuTgkNzw3NWj0=;
-        b=TtQZ7YRRvfXHcDXgyCHTqNd7e9bRItFamwqzkqp2djqFoEItabCbgZs43M0DkGg9m0
-         kSviLcSAzjlpGFLIroMOBskkDFpEWF0SU/NyfkKemdrcCnNig40PCyJXzAKtG8MGHeRs
-         orpwPrQFE69gnQrOyJG9FAocxO4YUVNCgD3qQroHU9VO0wscOhmn+8MHsXy/pI8OVKqq
-         cpst+Sjn+TcZ26/+RrBfx13G3jBbsePtfPPO5eD3voGMBDX3IZ7qMAz+GVvnC18eDxZJ
-         3JaoNbZ56NSmvsKVJfSIEOgY7iVO0gpPMWh+DNc6pYK8+VXbBC0fWmwyVtJ1dYEe0vQp
-         gu8g==
-X-Forwarded-Encrypted: i=1; AJvYcCUhd9dziffRDfsKHuFmzCRYrruUPxzqRHXlyWxwsdmse5Q3imuoUv1wnEraj8CJFozJpoaia/Hy2NE=@vger.kernel.org, AJvYcCWZlYU/mpAPe+nlmp4dku2p+A2qkD3Cs9FtbuDX/6j0SNDmjsM/RE4NEKmhG4xrEEZRpI11cPuqi0H02sZ/@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCPoO9eKYGyN4gvsObtr/ln3qO8Tc9s7gvJ57GghU2NbXpdcLq
-	P8cBrz7MejXgsxITchB8EznaDmo5i8JGqyxSCNGYFo1PF60ufWk1VITq
-X-Gm-Gg: ASbGncsvuynV4C3cqQ8RvvrY2K8eu2Vgz0Z5OBUC5fl1MXw89F0yLKE0kHz0h5COZYG
-	5O31eVIi3VT/oWzJL+TGfN3PGMwk1UxH9tvhxZNSGyQ9o8CrsOki/WZnTpWvtXAq6d9lDoEMHT1
-	x+Ct/sGI537+LI5zdo6PfA7HzlA7iIOaCrZcUVHyedDaQ/cUinsH9fyfZyN0e2aCsof5dyRSbNH
-	Af44111V68KSgU/KhzsBBwiDHKlv4t3JYT5NXjozAdzuoLVz+/o+suHQj6LKOH9tRO/NxuNPj1S
-	n1195RoXjZFU/imYj23ZJuAQ6p4PFvAX9qt1XJrlz2D1dUCoflfH9XYEiCnwSQg/UsXmD6ZapZH
-	HDKysM5WXuuRZmawFE28x3BQ1dDFk81gH0aFU57M4znJc8qc=
-X-Google-Smtp-Source: AGHT+IESAoLieylo0dTRqovlru1XqKC+yKIafAefBwyIVhVUE0tbBFMijuC2ez+sboZHSSkONH7yUw==
-X-Received: by 2002:a05:6000:430a:b0:3a1:f537:94d0 with SMTP id ffacd0b85a97d-3a35c853129mr221714f8f.41.1747324481186;
-        Thu, 15 May 2025 08:54:41 -0700 (PDT)
-Received: from ?IPV6:2a01:4b00:b211:ad00:1096:2c00:b223:9747? ([2a01:4b00:b211:ad00:1096:2c00:b223:9747])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a1f5a2d961sm23551020f8f.62.2025.05.15.08.54.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 15 May 2025 08:54:40 -0700 (PDT)
-Message-ID: <ef6c91e8-19e5-4e86-be1d-dd066a141ec6@gmail.com>
-Date: Thu, 15 May 2025 16:54:40 +0100
+        d=1e100.net; s=20230601; t=1747324559; x=1747929359;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vwSFGwblpcsKCcrB2EaJfjOE897XBCx90z+dK4NApfc=;
+        b=Nm2YNABiWIp0PyClytBzGCF+hSI8wHvoKsEh9UvLrTMZkXHXv2dLlb2xNgiT+/ksi0
+         LFUuUp00yElPZOT1fS68DDD3FDb2F7adlwjxIDJGgcKFshGL2ix+6Yk0Nmk/zePmRing
+         YN3W4nnyPd8Ufn+MKEvGBQPZ+6NHjfvf1WmjFyXWOCTQdoReDYjB16JLOPQIRs63WrDl
+         XauLraqFJjaqUCOYdOhJScRcrEKy5M6oMs1SwyuuXKSReyInsnaZPvFBydMGhAzv3nlN
+         aDvIsm5B70Rb9xDk7ZbfGTvi1qiuuCyHCykTJ8gOZb2SKxVazDj5f2CPT1OVTbojsx7M
+         pVOw==
+X-Forwarded-Encrypted: i=1; AJvYcCVQZrxop4b1ZufdW1sg6vtX3kL9VTQHuneJ3J8q24c8EytkrNRCaMndoFUs467Fty3QVOxmfAr0/2MZ0oWw@vger.kernel.org, AJvYcCWUbED+IVKvRIJnGB2NPkzrolbJNDNUVhHOT66igJT2Pj0O1KUlWDO1PSlKPb8HG/FQSds=@vger.kernel.org, AJvYcCXSLqE0bnPghapQ0xRfxfRKmQVHq/sul2mcmJE5xqt1Y01M2PNLgqkXDWvfIIbAhE61SuBuDG+oblvm62391jnJ@vger.kernel.org
+X-Gm-Message-State: AOJu0YyA8GrPdLAVi/NiD+USTt6hJpWffpZRsNAB2PrfXU5fNcH0E7z/
+	NHDb/7TqsbE1dtHU1lNo2vX/gHVFdtLV1uIMR80uDB824T5oEpGbVoYQzZI8WxmjeOFqG/0svRR
+	9gSTIMqhWDJ0APYgmJcmQnCoB/wc=
+X-Gm-Gg: ASbGncvUohw6ilU6C9GK/9Lg7lslQ/8+UNhpmfKq+hFXk80A/YffQYw1Tui1Z214V4j
+	4bw0KmKRcxA4NH3ntahXg+w7pT9Dv/+kGKDRm71Ag45wpp+abu7GYZXPK7qsemHEXfJeUf8TYdM
+	NjBJPx6yGSMa4LOYWkAXg7XcGj1nm1KSd3XOkT6QgZ6J1Y2ZZh
+X-Google-Smtp-Source: AGHT+IGPRrFhMchsBX4IRYFKA90fZIR29juTVsQz3ECzVcxmLv3gFJTu0IYlEsPOUVwab+bsFo7Aben+HpCoDAX2kxE=
+X-Received: by 2002:a05:6a00:98b:b0:73e:23bd:fb9c with SMTP id
+ d2e1a72fcca58-742893623a3mr11801798b3a.23.1747324559490; Thu, 15 May 2025
+ 08:55:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/6] prctl: introduce PR_SET/GET_THP_POLICY
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, david@redhat.com,
- linux-mm@kvack.org, hannes@cmpxchg.org, shakeel.butt@linux.dev,
- riel@surriel.com, ziy@nvidia.com, laoar.shao@gmail.com,
- baolin.wang@linux.alibaba.com, Liam.Howlett@oracle.com, npache@redhat.com,
- ryan.roberts@arm.com, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, kernel-team@meta.com
-References: <20250515133519.2779639-1-usamaarif642@gmail.com>
- <6502bbb7-e8b3-4520-9547-823207119061@lucifer.local>
- <5e4c107f-9db8-4212-99b6-a490406fec77@gmail.com>
- <e3efdfb7-d309-43c8-be39-c02d886c5b45@lucifer.local>
-Content-Language: en-US
-From: Usama Arif <usamaarif642@gmail.com>
-In-Reply-To: <e3efdfb7-d309-43c8-be39-c02d886c5b45@lucifer.local>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250515-bpf-verifier-slowdown-vwo2meju4cgp2su5ckj@6gi6ssxbnfqg>
+ <202505150845.0F9E154@keescook> <202505150850.6F3E261D67@keescook>
+In-Reply-To: <202505150850.6F3E261D67@keescook>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Thu, 15 May 2025 08:55:47 -0700
+X-Gm-Features: AX0GCFvq9CisTH8nZcYpH-mCimU9toiO7n-whCQ1cjhCwfk1tPJQRG6tXDh3K98
+Message-ID: <CAEf4BzZbPMKwu49UDizqT_3ZuDPsNXvTa+Tp6pae0P_YkUT7JQ@mail.gmail.com>
+Subject: Re: [REGRESSION] bpf verifier slowdown due to vrealloc() change since 6.15-rc6
+To: Kees Cook <kees@kernel.org>
+Cc: Shung-Hsi Yu <shung-hsi.yu@suse.com>, bpf@vger.kernel.org, linux-mm@kvack.org, 
+	Andrii Nakryiko <andrii@kernel.org>, Ihor Solodrai <ihor.solodrai@linux.dev>, 
+	Andrew Morton <akpm@linux-foundation.org>, Michal Hocko <mhocko@suse.com>, 
+	Vlastimil Babka <vbabka@suse.cz>, Uladzislau Rezki <urezki@gmail.com>, linux-kernel@vger.kernel.org, 
+	linux-hardening@vger.kernel.org, regressions@lists.linux.dev, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, 
+	Eduard Zingerman <eddyz87@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, May 15, 2025 at 8:53=E2=80=AFAM Kees Cook <kees@kernel.org> wrote:
+>
+> On Thu, May 15, 2025 at 08:47:47AM -0700, Kees Cook wrote:
+> > On Thu, May 15, 2025 at 09:12:25PM +0800, Shung-Hsi Yu wrote:
+> > > Bisect was done by Pawan and got to commit a0309faf1cb0 "mm: vmalloc:
+> > > support more granular vrealloc() sizing"[2]. To further zoom in the
+> >
+> > Can you try this patch? It's a clear bug fix, but if it doesn't improve
+> > things, I have another idea to rearrange the memset.
+>
+> Here's the patch (on top of the prior one) that relocates the memset:
+>
+>
+> From 0bc71b78603500705aca77f82de8ed1fc595c4c3 Mon Sep 17 00:00:00 2001
+> From: Kees Cook <kees@kernel.org>
+> Date: Thu, 15 May 2025 08:48:24 -0700
+> Subject: [PATCH] mm: vmalloc: Only zero-init on vrealloc shrink
+>
+> The common case is to grow reallocations, and since init_on_alloc will
+> have already zeroed the whole allocation, we only need to zero when
+> shrinking the allocation.
+>
+> Fixes: a0309faf1cb0 ("mm: vmalloc: support more granular vrealloc() sizin=
+g")
+> Signed-off-by: Kees Cook <kees@kernel.org>
+> ---
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Uladzislau Rezki <urezki@gmail.com>
+> Cc: <linux-mm@kvack.org>
+> ---
+>  mm/vmalloc.c | 12 +++++++-----
+>  1 file changed, 7 insertions(+), 5 deletions(-)
+>
+> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+> index 74bd00fd734d..83bedb1559ac 100644
+> --- a/mm/vmalloc.c
+> +++ b/mm/vmalloc.c
+> @@ -4093,8 +4093,8 @@ void *vrealloc_noprof(const void *p, size_t size, g=
+fp_t flags)
+>          * would be a good heuristic for when to shrink the vm_area?
+>          */
+>         if (size <=3D old_size) {
+> -               /* Zero out "freed" memory. */
+> -               if (want_init_on_free())
+> +               /* Zero out "freed" memory, potentially for future reallo=
+c. */
+> +               if (want_init_on_free() || want_init_on_alloc(flags))
+>                         memset((void *)p + size, 0, old_size - size);
+>                 vm->requested_size =3D size;
+>                 kasan_poison_vmalloc(p + size, old_size - size);
+> @@ -4107,9 +4107,11 @@ void *vrealloc_noprof(const void *p, size_t size, =
+gfp_t flags)
+>         if (size <=3D alloced_size) {
+>                 kasan_unpoison_vmalloc(p + old_size, size - old_size,
+>                                        KASAN_VMALLOC_PROT_NORMAL);
+> -               /* Zero out "alloced" memory. */
+> -               if (want_init_on_alloc(flags))
+> -                       memset((void *)p + old_size, 0, size - old_size);
+> +               /*
+> +                * No need to zero memory here, as unused memory will hav=
+e
+> +                * already been zeroed at initial allocation time or duri=
+ng
+> +                * realloc shrink time.
+> +                */
+>                 vm->requested_size =3D size;
 
+This vm->requested_size change you are adding should also fix the
+kasan issue reported by syzbot ([0]).
 
-On 15/05/2025 16:15, Lorenzo Stoakes wrote:
-> Thanks for coming back to me so quickly, appreciated :)
-> 
-> I am reacting in a 'WTF' way here, but it's in proportion to the (at least
-> perceived) magnitude of this change. We really need to be sure this is
-> right.
-> 
+  [0] https://lore.kernel.org/bpf/68213ddf.050a0220.f2294.0045.GAE@google.c=
+om/
 
-Lol I had to rewrite my replies a few times to tone them down.
-Hopefully I don't come across as aggressive :)
-
-
-> On Thu, May 15, 2025 at 03:50:47PM +0100, Usama Arif wrote:
->>
->>
->> On 15/05/2025 14:55, Lorenzo Stoakes wrote:
->>> On Thu, May 15, 2025 at 02:33:29PM +0100, Usama Arif wrote:
->>>> This allows to change the THP policy of a process, according to the value
->>>> set in arg2, all of which will be inherited during fork+exec:
->>>
->>> This is pretty confusing.
->>>
->>> It should be something like 'add a new prctl() option that allows...' etc.
->>>
->>>> - PR_THP_POLICY_DEFAULT_HUGE: This will set the MMF2_THP_VMA_DEFAULT_HUGE
->>>>   process flag which changes the default of new VMAs to be VM_HUGEPAGE. The
->>>>   call also modifies all existing VMAs that are not VM_NOHUGEPAGE
->>>>   to be VM_HUGEPAGE.
->>>
->>> This is referring to implementation detail that doesn't matter for an overview,
->>> just add a summary here e.g.
->>>
->>> PR_THP_POLICY_DEFAULT_HUGE - set VM_HUGEPAGE flag in all VMAs by default,
->>> including after fork/exec, ignoring global policy.
->>>
->>> PR_THP_POLICY_DEFAULT_NOHUGE - clear VM_HUGEPAGE flag in all VMAs by default,
->>> including after fork/exec, ignoring global policy.
->>>
->>> PR_THP_POLICY_DEFAULT_SYSTEM - Eliminate any policy set above.
->>
->> Hi Lorenzo,
->>
->> Thanks for the review. I will make the cover letter clearer in the next revision.
-> 
-> The next version should emphatically be an RFC also, please. Your cover letter
-> should mention you're fundamentally changing mm_struct and VMA logic, and
-> explain why your use cae is so important that that is justified.
-> 
-
-Thanks, will make it RFC and add that I am making changes to mm_struct and VMA logic.
-
->>
->>>
->>>>   This allows systems where the global policy is set to "madvise"
->>>>   to effectively have THPs always for the process. In an environment
->>>>   where different types of workloads are stacked on the same machine
->>>>   whose global policy is set to "madvise", this will allow workloads
->>>>   that benefit from always having hugepages to do so, without regressing
->>>>   those that don't.
->>>
->>> So does this just ignore and override the global policy? I'm not sure I'm
->>> comfortable with that.
->>
->> No. The decision making of when and what order THPs are allowed is not
->> changed, i.e. there are no changes in __thp_vma_allowable_orders and
->> thp_vma_allowable_orders. David has the same concern as you and this
->> current series is implementing what David suggested in
->> https://lore.kernel.org/all/3f7ba97d-04d5-4ea4-9f08-6ec3584e0d4c@redhat.com/
->>
->> It will change the existing VMA (NO)HUGE flags according to
->> the prctl. For e.g. doing PR_THP_POLICY_DEFAULT_HUGE will not give
->> a THP when global policy is never.
-> 
-> Umm...
-> 
-> +       case PR_SET_THP_POLICY:
-> +               if (arg3 || arg4 || arg5)
-> +                       return -EINVAL;
-> +               if (mmap_write_lock_killable(me->mm))
-> +                       return -EINTR;
-> +               switch (arg2) {
-> +               case PR_THP_POLICY_DEFAULT_HUGE:
-> +                       set_bit(MMF2_THP_VMA_DEFAULT_HUGE, &me->mm->flags2);
-> +                       process_vmas_thp_default_huge(me->mm);
-> +                       break;
-> +               default:
-> 
-> 
-> Where's the check against never? You're unconditionally setting VM_HUGEPAGE?
-
-So this was from the discussion with David. My initial implementation in v1,
-messed with the policy evaluation in thp_vma_allowable_orders and __thp_vma_allowable_orders.
-
-The whole point of doing it this way is that you dont mess with the policy evaluation.
-
-hugepage_global_always and hugepage_global_enabled will still evaluate to false
-when never is set and you will not get a hugepage. But more on it below.
-
-> 
-> You're relying on VM_HUGEPAGE being ignored in this instance? But you're still:
-> 
-> 1. Setting VM_HUGEPAGE everywhere (and breaking VMA merging everywhere).
-> 
-> 2. Setting MMF2_THP_VMA_DEFAULT_HUGE and making it so PR_GET_THP_POLICY says it
->    has a policy of default huge even if policy is set to never?
-> 
-> I'm not ok with that. I'd much rather we do the never check here...
-> 
-
-I am ok with that. I can add a check over here that wraps this in:
-if (hugepage_global_enabled())
-	...
-
-> Also see hugepage_madvise(). There's arch-specific code that overrides
-> that, and you're now bypassing that (yes it's for one arch of course but
-> it's still a thing)
-> 
-
-Thanks, I will put 
-		if (mm_has_pgste(vma->vm_mm))
-			return 0;
-at the start.
-
->>
->>>
->>> What about if the the policy is 'never'? Does this override that? That seems
->>> completely wrong.
->>
->> No, it won't override it. hugepage_global_always and hugepage_global_enabled
->> will still evaluate to false and you wont get a hugepage no matter what prctl
->> is set.
-> 
-> Ack ok I see as above, you're relying on VM_HUGEPAGE enforcing htis.
-> 
-> You really need to put stuff like this in the cover letter though!!
-> 
-
-Sure will do in the next revision, Thanks.
->>
->>>
->>>> - PR_THP_POLICY_DEFAULT_NOHUGE: This will set the MMF2_THP_VMA_DEFAULT_NOHUGE
->>>>   process flag which changes the default of new VMAs to be VM_NOHUGEPAGE.
->>>>   The call also modifies all existing VMAs that are not VM_HUGEPAGE
->>>>   to be VM_NOHUGEPAGE.
->>>>   This allows systems where the global policy is set to "always"
->>>>   to effectively have THPs on madvise only for the process. In an
->>>>   environment where different types of workloads are stacked on the
->>>>   same machine whose global policy is set to "always", this will allow
->>>>   workloads that benefit from having hugepages on an madvise basis only
->>>>   to do so, without regressing those that benefit from having hugepages
->>>>   always.
->>>
->>> Wait, so 'no huge' means 'madvise'? What? This is confusing.
->>
->>
->> I probably made the cover letter confusing :) or maybe need to rename the flags.
->>
->> This flag work as follows:
->>
->> a) Changes the default flag of new VMAs to be VM_NOHUGEPAGE
->>
->> b) Modifies all existing VMAs that are not VM_HUGEPAGE to be VM_NOHUGEPAGE
->>
->> c) Is inherited during fork+exec
->>
->> I think maybe I should add VMA to the flag names and rename the flags to
->> PR_THP_POLICY_DEFAULT_VMA_(NO)HUGE ??
-> 
-> Please no :) 'VMA' is implicit re: mappings. If you're touching memory
-> mappings you're necessarily touching VMAs.
-> 
-> I know some prctl() (a pathway to many abilities some consider to be
-> unnatural) uses 'VMA' in some of the endpoints but generally when referring
-> to specific VMAs no?
-> 
-> These namesa are already kinda horrible (yes naming is hard, for everyone,
-> ask me about MADV_POISON/REMEDY) but I think something like:
-> 
-> PR_DEFAULT_MADV_HUGEPAGE
-> PR_DEFAULT_MADV_NOHUGEPAGE
-> 
-> -ish :)
-> 
-
-Sure, happy with that, Thanks.
->>
->>>
->>>> - PR_THP_POLICY_DEFAULT_SYSTEM: This will clear the MMF2_THP_VMA_DEFAULT_HUGE
->>>>   and MMF2_THP_VMA_DEFAULT_NOHUGE process flags.
->>>>
->>>> These patches are required in rolling out hugepages in hyperscaler
->>>> configurations for workloads that benefit from them, where workloads are
->>>> stacked anda single THP global policy is likely to be used across the entire
->>>> fleet, and prctl will help override it.
->>>
->>> I don't understand this justification whatsoever. What does 'stacked' mean? And
->>> you're not justifying why you'd override the policy?
->>
->> By stacked I just meant different types of workloads running on the same machine.
->> Lets say we have a single server whose global policy is set to madvise.
->> You can have a container on that server running some database workload that best
->> works with madvise.
->> You can have another container on that same server running some AI workload that would
->> benefit from having VM_HUGEPAGE set on all new VMAs. We can use prctl
->> PR_THP_POLICY_DEFAULT_HUGE to get VM_HUGEPAGE set by default on all new VMAs for that
->> container.
->>
->>>
->>> This series has no actual justificaiton here at all? You really need to provide one.
->>>
->>
->> There was a discussion on the usecases in
->> https://lore.kernel.org/all/13b68fa0-8755-43d8-8504-d181c2d46134@gmail.com/
->>
->> I tried (and I guess failed :)) to summarize the justification from that thread.
-> 
-> It's fine, I have most definitely not been as clear as I could be in series
-> too :>) just need to add a bigger summary.
-> 
-> Don't afraid to waffle on... (I know I am not... ;)
-> 
->>
->> I will try and rephrase it here.
->>
->> In hyperscalers, we have a single THP policy for the entire fleet.
->> We have different types of workloads (e.g. AI/compute/databases/etc)
->> running on a single server (this is what I meant by 'stacked').
->> Some of these workloads will benefit from always getting THP at fault (or collapsed
->> by khugepaged), some of them will benefit by only getting them at madvise.
->>
->> This series is useful for 2 usecases:
->>
->> 1) global system policy = madvise, while we want some workloads to get THPs
->> at fault and by khugepaged :- some processes (e.g. AI workloads) benefits from getting
->> THPs at fault (and collapsed by khugepaged). Other workloads like databases will incur
->> regression (either a performance regression or they are completely memory bound and
->> even a very slight increase in memory will cause them to OOM). So what these patches
->> will do is allow setting prctl(PR_THP_POLICY_DEFAULT_HUGE) on the AI workloads,
->> (This is how workloads are deployed in our (Meta's/Facebook) fleet at this moment).
->>
->> 2) global system policy = always, while we want some workloads to get THPs
->> only on madvise basis :- Same reason as 1). What these patches
->> will do is allow setting prctl(PR_THP_POLICY_DEFAULT_NOHUGE) on the database
->> workloads.
->> (We hope this is us (Meta) in the near future, if a majority of workloads show that they
->> benefit from always, we flip the default host setting to "always" across the fleet and
->> workloads that regress can opt-out and be "madvise".
->> New services developed will then be tested with always by default. "always" is also the
->> default defconfig option upstream, so I would imagine this is faced by others as well.)
-> 
-> Right, but I'm not sure you're explaining why prctl(), one of the most cursed,
-> neglected and frankly evil (maybe exaggerating :P) APIs in the kernel is the way
-> to do this?
-> 
-> You do need to summarise why the suggested idea re: BPF, or cgroups, or whatnot
-> is _totally unworkable_.
-> 
-> And why not process_madvise() with MADV_HUGEPAGE?
-> 
-> I'm also not sure fork/exec is a great situation to have, because are you sure
-> the workloads stay the same across all fork/execs that you're now propagating?
-> 
-> It feels like this should be a cgroup thing, really.
-> 
-
-So I actually dont mind the cgroup implementation (that was actually my first
-prototype and after that I saw there was someone who had posted it earlier).
-It was shot down because it wont be hierarchical and doesnt solve it when
-its not being done in a cgroup.
-
-A large proportion of the thread in v1 was discussion with David, Johannes, Zi and
-Yafang (the bpf THP policy author) on different ways of doing this.
-
->>
->> Hope this makes the justification for the patches clearer :)
-> 
-> Sure, please add this kind of thing to the cover letter to get fewer 'wtf'
-> reactions :)
-> 
-> You're doing something really _big_ and _opinonated_ here though, that's
-> basically fundamentally changing core stuff, so an extended discussion of why
-> you feel it's so important, why other approaches are not workable, why the
-> Sauron-spawned Mordor dwelling prctl() API is the way to go, etc.
-> 
->>
->>>>
->>>> v1->v2:
->>>
->>> Where was the v1? Is it [0]?
->>>
->>> This seems like a massive change compared to that series?
->>>
->>> You've renamed it and not referenced the old series, please make sure you link
->>> it or somehow let somebody see what this is against, because it makes review
->>> difficult.
->>>
->>
->> Yes its the patch you linked below. Sorry should have linked it in this series.
->> Its a big change, but it was basically incorporating all feedback from David,
->> while trying to achieve a similar goal. Will link it in future series.
-> 
-> Yeah, again, this should have been an RFC on that basis :)
-> 
->>
->>> [0]: https://lore.kernel.org/linux-mm/20250507141132.2773275-1-usamaarif642@gmail.com/
->>>
->>>> - change from modifying the THP decision making for the process, to modifying
->>>>   VMA flags only. This prevents further complicating the logic used to
->>>>   determine THP order (Thanks David!)
->>>> - change from using a prctl per policy change to just using PR_SET_THP_POLICY
->>>>   and arg2 to set the policy. (Zi Yan)
->>>> - Introduce PR_THP_POLICY_DEFAULT_NOHUGE and PR_THP_POLICY_DEFAULT_SYSTEM
->>>> - Add selftests and documentation.
->>>>
->>>> Usama Arif (6):
->>>>   prctl: introduce PR_THP_POLICY_DEFAULT_HUGE for the process
->>>>   prctl: introduce PR_THP_POLICY_DEFAULT_NOHUGE for the process
->>>>   prctl: introduce PR_THP_POLICY_SYSTEM for the process
->>>>   selftests: prctl: introduce tests for PR_THP_POLICY_DEFAULT_NOHUGE
->>>>   selftests: prctl: introduce tests for PR_THP_POLICY_DEFAULT_HUGE
->>>>   docs: transhuge: document process level THP controls
->>>>
->>>>  Documentation/admin-guide/mm/transhuge.rst    |  40 +++
->>>>  include/linux/huge_mm.h                       |   4 +
->>>>  include/linux/mm_types.h                      |  14 +
->>>>  include/uapi/linux/prctl.h                    |   6 +
->>>>  kernel/fork.c                                 |   1 +
->>>>  kernel/sys.c                                  |  35 +++
->>>>  mm/huge_memory.c                              |  56 ++++
->>>>  mm/vma.c                                      |   2 +
->>>>  tools/include/uapi/linux/prctl.h              |   6 +
->>>>  .../trace/beauty/include/uapi/linux/prctl.h   |   6 +
->>>>  tools/testing/selftests/prctl/Makefile        |   2 +-
->>>>  tools/testing/selftests/prctl/thp_policy.c    | 286 ++++++++++++++++++
->>>>  12 files changed, 457 insertions(+), 1 deletion(-)
->>>>  create mode 100644 tools/testing/selftests/prctl/thp_policy.c
->>>>
->>>> --
->>>> 2.47.1
->>>>
->>
-
+>                 return (void *)p;
+>         }
+> --
+> 2.34.1
+>
+>
+>
+> --
+> Kees Cook
 
