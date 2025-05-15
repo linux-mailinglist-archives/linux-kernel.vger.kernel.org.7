@@ -1,64 +1,81 @@
-Return-Path: <linux-kernel+bounces-649653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-649655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A663CAB871A
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 14:57:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDE3DAB8731
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 15:00:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4593016470D
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 12:57:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4944D188D2AD
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 12:58:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BE0D298CB2;
-	Thu, 15 May 2025 12:57:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59715297B93;
+	Thu, 15 May 2025 12:58:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bk8AiuVL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XsyCy0GS"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD05E298253;
-	Thu, 15 May 2025 12:57:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54163299935;
+	Thu, 15 May 2025 12:58:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747313832; cv=none; b=i/e6sIUficU7RS55YauPJf2GFFSyIQRTQIoTWVsm/WIC8zIUfOBl870VZ8DZVmclrjUiEAW/agIG+M+6sffa8jGyM06VBmq9vpsaI57JUQT69evAoLdQJTe37jWH2kgfX4RSdYiom8KiUuUcYAMeHYYH3ajS5adEPRQwlBLdZ9o=
+	t=1747313889; cv=none; b=lGfUrgDvAJlhPId88H2IdWWqc3+LqFdOsl25P/6+r+bEM+4eSbk6y/gQg+oT5esbZVTdeimvSVqp61G+ca/vSEadW+RYK2ZWnpIJ/iushe6FH7Lhshv8rCH+Hpl9zKJZGeAUO8JS19eiozqnshJQz9e0sEgzaGXMwO6yyOmUiNE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747313832; c=relaxed/simple;
-	bh=fVLeIiShoZEc+SqiPjggCktfijxjcJLo864O5Nu5zfA=;
+	s=arc-20240116; t=1747313889; c=relaxed/simple;
+	bh=YvH7l4ehAhfE5INGzdDxqi8DIwYZ/l9vZTFBUZEEEYw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fukn17E7utMOCZ8WkIADPI4tfso9OmY5JuE2OqAIdKNeovoN51RUhtnuLdX/5MvPnZTgTikNKNQppShUXqcrqD1wP4Ya5r36Ly6932/I0roZGSWR2LPwBMKeiH9iyOyv+QYbUGs3fQJAvEHDyHk7jN31bNbxIIduYNJQLQLyvWA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bk8AiuVL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93EB1C4CEE7;
-	Thu, 15 May 2025 12:57:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747313831;
-	bh=fVLeIiShoZEc+SqiPjggCktfijxjcJLo864O5Nu5zfA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bk8AiuVLhEvg+nPmjMTIabWgdtDwvh7KdDxmgj6r7wEHzI6S9QvodH0QwoQSLHRno
-	 reMmeVD9wni2TPkkApOyvuOENFR6k/o9wGnGvF+6y2jTsR1MukhZFd4q+MUE1zVc0/
-	 eoNZCkT3KaZqVV7VuYj6eSc7+o982ecTnePCa/17jdOjGs8rkUYrvx5T29j83IM9e0
-	 zaSGlqQWyQjDIE49Vwny/LfqiiIFYoYocl0al4/Wsfn+GMJhfEu2xCKxaRs/j2Qmbm
-	 mZSUNprN/Zbjjp/be8vYjmG60ifyZ1K+hDI0X5kHBbexOvNJuXu2BOypNMvZcUpgVF
-	 6Y48HnhqcWdRg==
-Date: Thu, 15 May 2025 14:57:05 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	PDx86 ML <platform-driver-x86@vger.kernel.org>,
-	Suma Hegde <suma.hegde@amd.com>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Mark Gross <markgross@kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	x86@kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>
-Subject: Re: linux-next: build failure after merge of the drivers-x86 tree
-Message-ID: <aCXkofMlUGxEmzMN@gmail.com>
-References: <20250515164620.071d70e3@canb.auug.org.au>
- <bce51c8f-56c2-3a44-b590-149627398b7a@linux.intel.com>
- <aCWyatvDQEG5l6NV@gmail.com>
- <20250515221929.3d646dab@canb.auug.org.au>
+	 Content-Type:Content-Disposition:In-Reply-To; b=FDwV8cUBbZskMaXEReSuw5yRSrAp0dnvg20XMIqQUfkZVSpJkiWgkAKtFjMl4wdftllzBb6IZIk7n24XcIErhHFdjQ1E9kEw2mm+4nAAsEUYimeIqMXOlaFL729izL0ePkDtAdqhfpqQQzxsMnGON/QMHseiCrkuam151za7yCA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XsyCy0GS; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1747313889; x=1778849889;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=YvH7l4ehAhfE5INGzdDxqi8DIwYZ/l9vZTFBUZEEEYw=;
+  b=XsyCy0GSFFpnO/sxAEQtkLZIkUhYBaWfGXN0NbWGwRvku1s6NrB2VU8g
+   PaLTSaawsB0gyUhjtSppf4VilaCd/nPOKsckY5IgHtkAgGZG6MgzJOtBV
+   sOsCGwDiyyJejxmnPPnSgNQ1JRCDjoAVeDHRC1ZGci1sOsCEsImW5I29L
+   gu7Cf8cknLI3OcNQUzlVw8+oCv6Ev3vclTqHa8ogLxO2dLf5WcihGIwzl
+   aUJipErIJi0+DCMkZbsv0Fcpu0/IzaJz5J8fyAJdeesRPtPXjWdQa4sAT
+   xWKa8ejBDV5nJEmo1nUzdAwYGtz9M58T1MabOaJH9J0jztNA39g1u3WeW
+   A==;
+X-CSE-ConnectionGUID: +ZmkQ+QUTziPcn4yhfq3ag==
+X-CSE-MsgGUID: bDmbRnJIR8qszmUKVCbbFA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11434"; a="51883568"
+X-IronPort-AV: E=Sophos;i="6.15,291,1739865600"; 
+   d="scan'208";a="51883568"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2025 05:58:08 -0700
+X-CSE-ConnectionGUID: 6ZGSrmLaQ4us4bwc/Y0FKA==
+X-CSE-MsgGUID: KCsBCjOmTOuxzrM5KV2Dzw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,291,1739865600"; 
+   d="scan'208";a="138863125"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2025 05:58:05 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1uFY9y-00000001qer-0rjK;
+	Thu, 15 May 2025 15:58:02 +0300
+Date: Thu, 15 May 2025 15:58:01 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Philipp Stanner <phasta@kernel.org>
+Cc: Jonathan Corbet <corbet@lwn.net>, Bjorn Helgaas <bhelgaas@google.com>,
+	Mark Brown <broonie@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Zijun Hu <quic_zijuhu@quicinc.com>,
+	Yang Yingliang <yangyingliang@huawei.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org
+Subject: Re: [PATCH 2/7] Docu: PCI: Update pcim_enable_device()
+Message-ID: <aCXk2eDUJF2UbQ47@smile.fi.intel.com>
+References: <20250515124604.184313-2-phasta@kernel.org>
+ <20250515124604.184313-4-phasta@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,26 +84,21 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250515221929.3d646dab@canb.auug.org.au>
+In-Reply-To: <20250515124604.184313-4-phasta@kernel.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-
-* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-
-> Hi Ingo,
+On Thu, May 15, 2025 at 02:46:00PM +0200, Philipp Stanner wrote:
+> pcim_enable_device() is not related anymore to switching the mode of
+> operation of any functions. It merely sets up a devres callback for
+> automatically disabling the PCI device on driver detach.
 > 
-> On Thu, 15 May 2025 11:22:50 +0200 Ingo Molnar <mingo@kernel.org> wrote:
-> >
-> > I'm not sure that's needed, the above build failure is not really a 
-> > build failure caused by the platform-drivers-x86.git tree, it is a 
-> > semantic merge conflict that should be resolved at the linux-next level 
-> > I think. (And which conflict should be mentioned to Linus by whoever 
-> > sends their tree second.)
-> > 
-> > Stephen, could you apply the patch below perhaps?
-> 
-> Thanks for the fix.  Applied from tomorrow.
+> Adjust the function's documentation.
 
-Thank you Stephen!!
+Is the "Docu" prefix in thew Subject aligned with the git history of this file?
 
-	Ingo
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
