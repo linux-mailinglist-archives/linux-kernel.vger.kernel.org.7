@@ -1,136 +1,112 @@
-Return-Path: <linux-kernel+bounces-648980-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-648982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5378AB7E57
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 08:55:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FF5AAB7E59
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 08:55:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B06E41B66D97
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 06:55:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C13241B67E2E
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 06:55:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3150629710C;
-	Thu, 15 May 2025 06:54:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67895297B73;
+	Thu, 15 May 2025 06:54:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gq/pCxjf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YykKjdvd"
+Received: from mail-yb1-f195.google.com (mail-yb1-f195.google.com [209.85.219.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 835A6295D89;
-	Thu, 15 May 2025 06:54:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33404297A75;
+	Thu, 15 May 2025 06:54:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747292079; cv=none; b=TFvH3PS69wT720Jhd2IPn2FaoWxZzHJ0q9tBVDlhGmo5PdcxyTs3FG+Z1xCrtXD862oQwKse9MY6iqa2GIIhyb7SUklPBFndA6MinuabL8jCJwIpaIanMN3QTfGcq0mC7dHNdnk/exlnPBvWDcCcg+Om2qGwEcCO4u6+UgCfsQM=
+	t=1747292095; cv=none; b=MoAfyCPmkY/RXCtF7swr9bJHVW0ISYJe18BKvKLuBJTieZxk4SHNcoIlhkJaHBbcWmSimSFlGiwO7DtVjnRghiIQdFA6CvrDQeBymVaShRa4tnhjlH2jgI2lwKv+aS7DTkI4eId8TeVi0A/9Q7Sq56e/JHegqc+vUiqk5jVp2o4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747292079; c=relaxed/simple;
-	bh=2W8v5Gdhm+xnSWlzDaIimqr2v2xWvhPz810ej4BlwHE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JECi3w5062j6tfRTIcU/KdrPgZ8V/KD5svpfcnNJsTkQgdlIc32K+d3QoPSepH5jaSfJUO9KzYGhBZiZCLkJMJ5fY8MleM5ILJnRXSO/Vwytm4I1v17fMicWgHWvEGKbo5IL+YQLJ7LSbHt20qxj8Xahqtxy49T7Z88DT0vI6nk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gq/pCxjf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 347FFC4CEE7;
-	Thu, 15 May 2025 06:54:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747292079;
-	bh=2W8v5Gdhm+xnSWlzDaIimqr2v2xWvhPz810ej4BlwHE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Gq/pCxjfX6mGmuXzyMRIfxOX4elFRSCNmBy7cdeJgUJ33gGLHj1HwHR82HMFdDPaF
-	 Itmn53oheVwh+KYS3jmmOAQe4tsr6+h1uQLF4DBAHe1gDFuThYW0tyTJHvDakrheX8
-	 8EsZ5REZ4rDo8+xFxQ564SyoLpowEL2ap8g068TTp6Mf998kOiDttJYhXPwVlfj+LP
-	 W7OPLjs6C5TAveGNsNU0GDNFKdbrFv2WUpRuAf42hUEbnNQ5lUEwiL5N1DFqdEopR8
-	 5p2lQLExDhfwP+m1+o2nWxFCyC10Dr9GqeARwrvDI75rx5x2bG02m5r618oEI5osiz
-	 WYW52mzq9Oe+w==
-Date: Thu, 15 May 2025 08:54:31 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Shivank Garg <shivankg@amd.com>
-Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-	luto@kernel.org, peterz@infradead.org, rafael@kernel.org,
-	pavel@kernel.org, akpm@linux-foundation.org,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	sohil.mehta@intel.com, rui.zhang@intel.com, yuntao.wang@linux.dev,
-	kai.huang@intel.com, xiaoyao.li@intel.com, peterx@redhat.com,
-	sandipan.das@amd.com, ak@linux.intel.com, rostedt@goodmis.org
-Subject: Re: [PATCH RESEND 1/4] x86/mm: pgtable: Fix W=1 build kernel-doc
- warnings
-Message-ID: <aCWPp4wYwauSuTed@gmail.com>
-References: <20250514062637.3287779-1-shivankg@amd.com>
- <aCRMT0TlpFvpRGYk@gmail.com>
- <6c4b227e-abdd-4e7f-8abd-d85cae0f0ec3@amd.com>
- <aCRgRxmO6rsR-0k3@gmail.com>
- <c5ad88e9-434a-4399-8e21-3c41e9295e93@amd.com>
+	s=arc-20240116; t=1747292095; c=relaxed/simple;
+	bh=t1cmxPP2lIC19qYJZZVCtSyQ5R5NNKHU/xitTTP2MSI=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=cNGM1661KZMz6OYRp6QRHD39ZCacYVd9XnlbrW2F70b0Fo7IhOFecJpHrF4kX7gX4gtDE3YTXOhTdnFwdAVv6y9ho9vQ3o0U+KqI+NmffRLM77sECT4wd6KAUlN2zaOcRdR/yYH1byHu/QQuVesEfInJY4OPph6H+Djgy/r3pz0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YykKjdvd; arc=none smtp.client-ip=209.85.219.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f195.google.com with SMTP id 3f1490d57ef6-e72a786b1b8so578411276.1;
+        Wed, 14 May 2025 23:54:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747292093; x=1747896893; darn=vger.kernel.org;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=t1cmxPP2lIC19qYJZZVCtSyQ5R5NNKHU/xitTTP2MSI=;
+        b=YykKjdvdVIdsPwaaAia73dhZ0e4ZidC2MnbeFnfnFvyOoJw9phM/XBVOAgQ6kBDTrG
+         nkFy8nkM/wCh6zn7C3BhevTDPh9YSU9d3TC6hjD9BVhJ1EIehVx3oPPa6uL06M8x2+WY
+         MVL/Jc+CkiaQ9I+WsMCjO1SLiOdkX3VmYU8GjWABO4id0eD7Mrtf8Qe4aQppKOqD3n9E
+         0JVqKH+94uAn0fNcuWWyq6N9sZlxJMDPu0IiITu5mfQjpqQt7B/Rf9XHZO1NpwK5QIOU
+         VZIp1c9kErmtiT0Jr5cxu8JCSsQJJuC6nqeg5nD0hUq01U+rg7ZA3WkghvJDvDAiD+4l
+         MxBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747292093; x=1747896893;
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=t1cmxPP2lIC19qYJZZVCtSyQ5R5NNKHU/xitTTP2MSI=;
+        b=VUOMC3NwjfxpsdPUlFjzI1bZoESU6B9+oljOI7i7HFA3oIIdoxvKrs/2yCy5blwShX
+         8RwqrCZfqBBUjDYq7i2uDLRzUPcEr6OutRvjOwaQeKIoeBefbCYzeBf9HVkFh///xKei
+         M+hHMwFPB3vD/YDXIso3zGJ10nEBh0bxGSM0DMRsz6cJBlCBh9sOD6d8C2POVYTmpVUo
+         n6HtcEVqX32TZ2+lIYjhxNO282+b5+P1Dst8P9w/GQ1RthbM1jjUngQZ9So1WvOTlJIQ
+         ox6TpuLzUw8LqWcrSP4zlXYWPAVcwz4PQ+U4ZTNdmYqlhz+m1xWxoqXgFRr0/aUGocAK
+         aHTA==
+X-Forwarded-Encrypted: i=1; AJvYcCW/vbM5WeT3FQ1sMYRyO4h8VUkcDpBY+6xyaG0gT3x7v3X98mDISJirgeOyk/fxC9HGbeFHRdAO4qgs@vger.kernel.org, AJvYcCXaJCpmlA+6YqQKzy38LVcxZq0gmqApPJj49/lgI8Dfk48dKOs2X1Uu9UvlyKCpJ1S91Tgguaejl7Q26C2u@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0UF1RatGGF8bFxevfS8jowRO1/0wCsoruDmXsst/zzmXFtpPX
+	kmGEXXGoXXVFnFUu38EW05h3CnWDKEAv88bA1kGgdpjqZarO797YoBWexmDrdhMODCNd5YW1tKp
+	91qptvZqaR6v/V4JhvPCoeAb9X16lO1GD+/ssV/Z3nGGi
+X-Gm-Gg: ASbGncuJzecJ/wckCn85NoNQhICRF54SzIOdFGVKqB9ghperOz4XGTB9Ax7SZ98aTC9
+	Q786lEWmlkbI9GbcNZ4ExYZtdTtSGTJSnsef15tJPjcMupIb7HNUpuSyH4P3e0FquvgxLG1Dqn2
+	TuE2EZQ1qhr7PuegO3+BRntJJ+rOyQsmq5
+X-Google-Smtp-Source: AGHT+IFzNiJ+zUyWkZFPg4RNuORDWffWYwQyIa09PVZx9ngM+x8SyPMp78/380FkRNmPOgMgyItWbe+VIAUEsW4BcAc=
+X-Received: by 2002:a05:6902:c02:b0:e7a:3d4f:6355 with SMTP id
+ 3f1490d57ef6-e7b4f87732emr3222858276.19.1747292093056; Wed, 14 May 2025
+ 23:54:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c5ad88e9-434a-4399-8e21-3c41e9295e93@amd.com>
+From: Guoyu Yin <y04609127@gmail.com>
+Date: Thu, 15 May 2025 14:54:43 +0800
+X-Gm-Features: AX0GCFvmW-oCLyE_tglm61LLo5PTqhIE_ahHf0u84RbTzumcEHtp48MSObXmNfI
+Message-ID: <CAJNGr6uGfUpvHkPdE-OrWL4_cqd+_AG9Z4ZS9DB1KfYm3CzQAA@mail.gmail.com>
+Subject: [BUG] INFO: rcu_tasks_trace detected stalls on tasks:
+To: tytso@mit.edu, adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+Hi,
 
-* Shivank Garg <shivankg@amd.com> wrote:
+This crash can be triggered by repeatedly executing a syzkaller test
+case that stresses the signal handling path and EXT4 filesystem
+operations. The reproducer causes the kernel to process signals (e.g.,
+via do_group_exit) while performing delayed block allocation on a
+corrupted EXT4 filesystem.
 
-> 
-> 
-> On 5/14/2025 2:50 PM, Ingo Molnar wrote:
-> > 
-> > * Shivank Garg <shivankg@amd.com> wrote:
-> > 
-> >>>> @@ -665,6 +665,9 @@ void native_set_fixmap(unsigned /* enum fixed_addresses */ idx,
-> >>>>  #ifdef CONFIG_X86_5LEVEL
-> >>>>  /**
-> >>>>   * p4d_set_huge - setup kernel P4D mapping
-> >>>> + * @p4d: Pointer to a p4d entry.
-> >>>> + * @addr: Virtual Address associated with p4d.
-> >>>> + * @prot: Protection bits to use.
-> >>>
-> >>> How about using the same capitalization you already see in this 
-> >>> description?
-> > 
-> >> Please review the revised patch with suggested changes.
-> > 
-> > I think you misunderstood: why are you using 'p4d', while a line before 
-> > it's 'P4D'? It's an acronym, and only used lowercase when it's a local 
-> > variable. 'p4d is a pointer to a p4d entry' is doubly confusing in that 
-> > regard ...
-> > 
-> > Same for PMD/PUD etc.
-> > 
-> 
-> Thank you for the clarification. I understand it now.
-> I hope the attached patch looks good now.
+The call trace shows the task is stuck in get_signal
+(kernel/signal.c:3036) and exit_to_user_mode_prepare
+(include/linux/entry-common.h:329) while handling signals.I think the
+key failure occurs in ext4_validate_block_bitmap due to inconsistent
+block bitmap padding, combined with an ENOSPC error during delayed
+allocation. This leads to RCU stalls when the task (syz-executor.4)
+fails to exit the RCU read-side critical section during resource
+cleanup.
 
-No. Please re-read your patches and see whether you caught everything, 
-not just the things I pointed out ...
+Maybe we can add sanity checks for block bitmap padding in
+ext4_validate_block_bitmap?
 
->  /**
->   * reserve_top_address - reserves a hole in the top of kernel address space
-> - * @reserve - size of hole to reserve
-> + * @reserve: size of hole to reserve.
+This can be reproduced on:
+HEAD commit: 38fec10eb60d687e30c8c6b5420d86e8149f7557
 
-And here the original capitalization in your -v1 patch was better.
+report: https://pastebin.com/raw/A7yVpRQJ
 
->   * p4d_set_huge - setup kernel P4D mapping
-> + * @p4d: pointer to a P4D entry.
-> + * @addr: virtual Address associated with p4d.
-> + * @prot: protection bits to use.
+console output : https://pastebin.com/raw/Me02WbSY
 
-Why is 'address' capitalized here?
+kernel config : https://pastebin.com/raw/u0Efyj5P
 
->  /**
->   * pud_set_huge - setup kernel PUD mapping
-> + * @pud: pointer to a PUD entry.
-> + * @addr: virtual Address associated with pud.
-> + * @prot: protection bits to use.
-
-s/pud
- /the PUD entry
-
-Also, similar errors are elsewhere as well.
-
-Thanks,
-
-	Ingo
+C reproducer : https://pastebin.com/raw/TLx7rz0Q
 
