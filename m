@@ -1,87 +1,79 @@
-Return-Path: <linux-kernel+bounces-649054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-649064-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4B47AB7F59
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 09:54:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 512B6AB7F94
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 10:03:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A06F1BA5ADC
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 07:54:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 249DD4C52F0
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 08:03:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AFD928001E;
-	Thu, 15 May 2025 07:53:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C80127CCF6;
+	Thu, 15 May 2025 08:03:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ffUnYvzQ"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Ke6AX+6F"
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B729280304;
-	Thu, 15 May 2025 07:53:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09B8421ADB7
+	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 08:03:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747295632; cv=none; b=K66kjV0KqzmIs3E7FMvcEBh5KjlikxUZnsiInNYkPfVcL4R0vsQmpHSWAnNxCKdTWjx2SrQH+QFAjQGlvJ4Rf8cmYz1k065sTt/fm/OHFUOREntBPMHCNGAZS0TzSUvQS9QVL3W5lHVFEyPgHqav1yF6qdO6FLdE97NjIIjBrDA=
+	t=1747296190; cv=none; b=IfeDc6fhmg636uJ+e5mFDi0Cne1ZzokBEHmKiLjZQS0gTW5wP+PAV5/TCfsw+mQIYYXv4qaNVetjO9JVgcLZ/neDLM9h5BqcImfNyd/re2JRPgA6bBytVUmFVjD/EIAUFL60ApHKbHKf9nprsxD6JxXobgpbZth5hXlr7uYHS2w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747295632; c=relaxed/simple;
-	bh=wUEqgSTV2QgtgOIjx6bsDxFv4ShMZp2fM80qbS8rSiw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=X+phS23JiyXYHmilmlME1YnLVFEcOfSldRI0S5calzzIGbLf8eY1ZJpZ0oHVqbncK5YkXRyBB5aMvFI3RjLjOcd8skm4MrkK2UgAI4tZL6RXVugPO4nRFpeaJzmVuSo5DNB9pMW+sjimAa1cw6D3qHfm/D8v64gR2MXgLoIOzaw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ffUnYvzQ; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-7423fb98cb1so680306b3a.3;
-        Thu, 15 May 2025 00:53:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747295630; x=1747900430; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=d6+1l6psSc4ieMT2IvTyMfmvtZ8uQROzlTdXH4Fr4sA=;
-        b=ffUnYvzQ7XbzhYHIZhYhgBh6xzgkhlErhKH+0SHUy/cdhk0ggapLBYzO8t7rtiumo2
-         1PMuugL+cvSq1Oc1TVzk7Zy3Lw0UpuTdXe1+2nDd3c0+8Iqe3JB553WV4CUQx7MQpbQN
-         1+tk2zDnzfJGlqOBREoVhUJ7myX21SCYjg2+QVYWSlvXZDruP9NP9Cd1Pya7OtGyqphO
-         ohhqjXPOpMOoUV9sf7TJ5t2HfHsb/w4bf5MDifKEEqEJqrkLBrs3xmdYbI+oCX+CNhZI
-         zvk4uSATdF3kp/U2tbbMH9q/q0ZUh3na47esX00GvJG0+dXMT2FjslDmdQC2BlfcoWfK
-         HhfA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747295630; x=1747900430;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=d6+1l6psSc4ieMT2IvTyMfmvtZ8uQROzlTdXH4Fr4sA=;
-        b=g08R7NHOTHobFExgrmznHl00taj/R0IgIMTlgq+RoMZKDlK3WferWyi9b+gZF0EwuL
-         8k3n9rciJmC64KdYogsuyx7I76zS24aLerpgUPlu1SEkFJ3iEixLEKP8uhLXDI7N+Ckd
-         e10mzR6qL/krhUNp3HH8rr8fzVywK+M+LvHRzQbkWOufeC1FwnP1adDoXQEBHpQUFqVK
-         FspemQ2AQOOfMfLz13TgK7i9j7+BJO2lEK3l3r/zKXRHtbVwciMUx3G5cT+Rn+n1FpBa
-         oLA4IlTg+jHU8gaLw2BZOD4QWzGqAFVF71gunC3x4gew0Ze/2UfOzO/tnMHCsrrsnk8w
-         YlVg==
-X-Forwarded-Encrypted: i=1; AJvYcCU1CaZSk25A5mrLeOkEkFF6d4dB9auQp1kz/0TLghtG7JpyJ7iopJSlvWws0Exji3kmkGtj+OTO@vger.kernel.org, AJvYcCXHHWfOPL7Q99SF8naafDRrRNPocsh/5VVrO5xXePYe9z6XqoI8ZgBqYePjw6fx9PPLpqG0OogU5eMBIoY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyrVirB+wqsHXMsHdsolt8m0cB5p6WefMA3H6e6i1X5ZwnKGrTH
-	RpDbRMIXzpFP8uDFXp3nYeOsft/FB3uxPvgX2u5JQT+od4H9dghV
-X-Gm-Gg: ASbGncukODwTfmMrlijJK3/lBEUIi/bGXtWR0Yoa1o6z+1ta7DVgM18+ssBNlgo9Z9Q
-	dTdYV/tU2IwRy5RgI/ZnQ849c9h7rCDZJVF3sJxW9HE5NpVk1qq9P0G6e59az2+Vw4CIr8AB84e
-	+VGVQR9Oen5opW4w1KhR15AXDcGAmPtuWEQC83zHoG+zhnJm4P6A7eFdl2BOskQenK05oe9W9ql
-	3INMEB2Cx4hiIbX2l5Nw4LgVWQpJu/DWf4VRal2nPUoXA/IAE35OHdmJ9WhEuiEmounrweCenIM
-	sAncR29jSmtbrOK8/eC7gNBS3JDkfHDpiRAviiL3AN5bRQ50r+cm
-X-Google-Smtp-Source: AGHT+IHKeW/lRf4A736uiyEk8pb1EFNbX4MNRx95s1GbRRKiftyq5dFJydREqeAw1RiiX8blRyYUDg==
-X-Received: by 2002:a05:6a00:2987:b0:736:a8db:93bb with SMTP id d2e1a72fcca58-742892680f5mr7842964b3a.5.1747295630226;
-        Thu, 15 May 2025 00:53:50 -0700 (PDT)
-Received: from mythos-cloud.. ([125.138.201.7])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74237704dc0sm10666148b3a.7.2025.05.15.00.53.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 May 2025 00:53:49 -0700 (PDT)
-From: Moon Yeounsu <yyyynoom@gmail.com>
-To: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: Moon Yeounsu <yyyynoom@gmail.com>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next v3] net: dlink: add synchronization for stats update
-Date: Thu, 15 May 2025 16:53:31 +0900
-Message-ID: <20250515075333.48290-1-yyyynoom@gmail.com>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1747296190; c=relaxed/simple;
+	bh=o7Y3W/7zwjj5feV9nkhTLXpN7Ra7s9ZuvEM38A1p3Z4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=X+Tk/3xoPqN9+2ar344y2oMMr69VqnM+/IvHLGGxVcJPwUSRcMVmEZuNw/1fVbTfNTdcAcD9pEG2pDhJFXdZQhM+xuoZm6x/vJtqusm1Fi96hEqlOjHkMpBgH/CRMpQ14dDBozg5xvOJFjueLcdl0QPGDOdp2afhaANftHiuNIk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Ke6AX+6F; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas2p1.samsung.com (unknown [182.195.41.53])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250515080305epoutp01287a9bcf0cc99ff548089ca511013560~-pJ_bKsuQ0979809798epoutp01L
+	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 08:03:05 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250515080305epoutp01287a9bcf0cc99ff548089ca511013560~-pJ_bKsuQ0979809798epoutp01L
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1747296185;
+	bh=35gJfKFe+Cplq2SjrXZ8S17x/oDX+LF58z/wi/8ca+w=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=Ke6AX+6FvXX4em+PRyVV2VfiE+kl6zcH+sh5SkyZ8neYTUeygk8QTTUWLFz/nyDjS
+	 XyNG6sI/hIBTBpZhZP1xZT5hHz2j8Oi2tgnDKQNn/v0hRY45Lj4wd+3lwVimY+ihJI
+	 GOVd9J64Pk7eID5je0AlfHs9QXIOgKo4soIcXU3U=
+Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
+	epcas2p2.samsung.com (KnoxPortal) with ESMTPS id
+	20250515080305epcas2p29f72dfaf098895c5fa564e56c0d55b75~-pJ_AZDwv0336503365epcas2p2z;
+	Thu, 15 May 2025 08:03:05 +0000 (GMT)
+Received: from epcas2p4.samsung.com (unknown [182.195.36.100]) by
+	epsnrtp04.localdomain (Postfix) with ESMTP id 4ZyjPh5qCRz6B9mL; Thu, 15 May
+	2025 08:03:04 +0000 (GMT)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas2p4.samsung.com (KnoxPortal) with ESMTPA id
+	20250515080303epcas2p47347b0169ae8caf3e149c57d94ca2c89~-pJ8PQuti2279222792epcas2p4g;
+	Thu, 15 May 2025 08:03:03 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20250515080303epsmtrp163eac1376ee8406670752a673fb6cc50~-pJ8Nn84I2250922509epsmtrp1Z;
+	Thu, 15 May 2025 08:03:03 +0000 (GMT)
+X-AuditID: b6c32a29-566fe7000000223e-94-68259fb79fe9
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	C4.1E.08766.7BF95286; Thu, 15 May 2025 17:03:03 +0900 (KST)
+Received: from localhost.localdomain (unknown [10.229.9.126]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250515080303epsmtip245bbc62747fe82bd4d4886b29b3977b4~-pJ8EUC2e1291312913epsmtip2i;
+	Thu, 15 May 2025 08:03:03 +0000 (GMT)
+From: Sangwook Shin <sw617.shin@samsung.com>
+To: krzk@kernel.org, alim.akhtar@samsung.com, wim@linux-watchdog.org,
+	linux@roeck-us.net
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+	linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org, Sangwook Shin
+	<sw617.shin@samsung.com>
+Subject: [PATCH v3 0/5] Increase max timeout value of s3c2410 watchdog
+Date: Thu, 15 May 2025 16:53:45 +0900
+Message-Id: <20250515075350.3368635-1-sw617.shin@samsung.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,103 +81,62 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrDLMWRmVeSWpSXmKPExsWy7bCSvO72+aoZBh0HpCwezNvGZnH+/AZ2
+	i02Pr7FaXN41h81ixvl9TBY31u1jt3iy8AyTxYzFJ9ksHr/8x+zA6bFpVSebx8o1a1g9Ni+p
+	99j5vYHdo2/LKkaPz5vkAtiiuGxSUnMyy1KL9O0SuDL+tdoUTOSuuDethb2BcSFnFyMnh4SA
+	icTF5++Zuxi5OIQEdjNKrPqxn62LkQMoISXx7pklRI2wxP2WI6wQNR8YJTZcXMsCkmAT0JGY
+	/u82mC0iECdxrH0z2CBmgZ2MEi3TfzODJIQF3CRaGl4xgtgsAqoSm6+tAWvgFbCV2H9qDjPE
+	BnmJmZe+s0PEBSVOznwCVsMMFG/eOpt5AiPfLCSpWUhSCxiZVjFKphYU56bnFhsWGOallusV
+	J+YWl+al6yXn525iBAewluYOxu2rPugdYmTiYDzEKMHBrCTCez1LOUOINyWxsiq1KD++qDQn
+	tfgQozQHi5I4r/iL3hQhgfTEktTs1NSC1CKYLBMHp1QDk61if9/LDv8Lx0r1JzFGX+zdr/g/
+	7FrctfglXw7vYn5y7uPVG1+rJSs6Cv3LMk7zeE+0m2zfbLvgSWrxXLf7Qtv4N5R//T1FUes9
+	Y0mJtep1foXbbX5vFEPub9J73t1yx4yTLcTd5XySXdqrG82nHC9d3mUrKcn4aNKS3/FH7G5c
+	+3fp5lHzVXf/NfdbvO46HrFq34raxStMeS8tO73SO2OhdxjftFI3yXNfuBnj9Fl/v23af+h6
+	v5s9r2HcswcT30oF2b3Urj43sejvz422XiuKllh+P6W49eJ6+SThe2rLY0W5uI8vOr5567Er
+	NyObjF85qmjdi3/x51RYzOtHuzSiGTiOyus+mWy1iyFf5oISS3FGoqEWc1FxIgA1cqWhzwIA
+	AA==
+X-CMS-MailID: 20250515080303epcas2p47347b0169ae8caf3e149c57d94ca2c89
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+cpgsPolicy: CPGSC10-234,N
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250515080303epcas2p47347b0169ae8caf3e149c57d94ca2c89
+References: <CGME20250515080303epcas2p47347b0169ae8caf3e149c57d94ca2c89@epcas2p4.samsung.com>
 
-This patch synchronizes code that accesses from both user-space
-and IRQ contexts. The `get_stats()` function can be called from both
-context.
+The ExynosAutoV9 and ExynosAutoV920 SoCs have a 32-bit counter register,
+but due to code constraints, only 16-bit values could be used.
+This series enables these SoCs to use the 32-bit counter.
+Additionally, it addresses the issue where the ExynosAutoV9 SoC supports
+the DBGACK bit but it was not set.
 
-`dev->stats.tx_errors` and `dev->stats.collisions` are also updated
-in the `tx_errors()` function. Therefore, these fields must also be
-protected by synchronized.
+V2->V3:
+  - Correct the incorrect tag information.
+  - Link to v2:
+    https://lore.kernel.org/linux-watchdog/20250514094220.1561378-1-sw617.shin@samsung.com/
 
-There is no code that accessses `dev->stats.tx_errors` between the
-previous and updated lines, so the updating point can be moved.
+V1->V2:
+  - Modify the max_timeout calculation considering overflow
+  - Separate tha max_timeout calculation into a separate patch
+  - Add max_cnt in struct s3c2410_wdt
+  - Set max_cnt once in probe function
+  - Add patch that uses S3C2410_WTCON_PRESCALE_MAX instead of hardcoded one
+  - Remove unnecessary inner parentheses
+  - Link to v1:
+    https://lore.kernel.org/linux-watchdog/20250513094711.2691059-1-sw617.shin@samsung.com/
 
-Signed-off-by: Moon Yeounsu <yyyynoom@gmail.com>
----
-Changelog:
-v1: https://lore.kernel.org/netdev/20250421191645.43526-2-yyyynoom@gmail.com/
-v2: https://lore.kernel.org/netdev/20250425231352.102535-2-yyyynoom@gmail.com/
-- fix incorrect method of updating `dev->stats.tx_errors` and
-  `dev->stats.collisions`
-v3:
-- fix incorrect locking method
----
- drivers/net/ethernet/dlink/dl2k.c | 14 +++++++++++++-
- drivers/net/ethernet/dlink/dl2k.h |  2 ++
- 2 files changed, 15 insertions(+), 1 deletion(-)
+Sangwook Shin (5):
+  watchdog: s3c2410_wdt: Replace hardcoded values with macro definitions
+  watchdog: s3c2410_wdt: Fix max_timeout being calculated larger
+  watchdog: s3c2410_wdt: Increase max timeout value of watchdog
+  watchdog: s3c2410_wdt: exynosautov920: Enable QUIRK_HAS_32BIT_MAXCNT
+  watchdog: s3c2410_wdt: exynosautov9: Enable supported features
 
-diff --git a/drivers/net/ethernet/dlink/dl2k.c b/drivers/net/ethernet/dlink/dl2k.c
-index 232e839a9d07..038a0400c1f9 100644
---- a/drivers/net/ethernet/dlink/dl2k.c
-+++ b/drivers/net/ethernet/dlink/dl2k.c
-@@ -146,6 +146,8 @@ rio_probe1 (struct pci_dev *pdev, const struct pci_device_id *ent)
- 	np->ioaddr = ioaddr;
- 	np->chip_id = chip_idx;
- 	np->pdev = pdev;
-+
-+	spin_lock_init(&np->stats_lock);
- 	spin_lock_init (&np->tx_lock);
- 	spin_lock_init (&np->rx_lock);
- 
-@@ -865,7 +867,6 @@ tx_error (struct net_device *dev, int tx_status)
- 	frame_id = (tx_status & 0xffff0000);
- 	printk (KERN_ERR "%s: Transmit error, TxStatus %4.4x, FrameId %d.\n",
- 		dev->name, tx_status, frame_id);
--	dev->stats.tx_errors++;
- 	/* Ttransmit Underrun */
- 	if (tx_status & 0x10) {
- 		dev->stats.tx_fifo_errors++;
-@@ -902,9 +903,15 @@ tx_error (struct net_device *dev, int tx_status)
- 		rio_set_led_mode(dev);
- 		/* Let TxStartThresh stay default value */
- 	}
-+
-+	spin_lock(&np->stats_lock);
- 	/* Maximum Collisions */
- 	if (tx_status & 0x08)
- 		dev->stats.collisions++;
-+
-+	dev->stats.tx_errors++;
-+	spin_unlock(&np->stats_lock);
-+
- 	/* Restart the Tx */
- 	dw32(MACCtrl, dr16(MACCtrl) | TxEnable);
- }
-@@ -1073,7 +1080,9 @@ get_stats (struct net_device *dev)
- 	int i;
- #endif
- 	unsigned int stat_reg;
-+	unsigned long flags;
- 
-+	spin_lock_irqsave(&np->stats_lock, flags);
- 	/* All statistics registers need to be acknowledged,
- 	   else statistic overflow could cause problems */
- 
-@@ -1123,6 +1132,9 @@ get_stats (struct net_device *dev)
- 	dr16(TCPCheckSumErrors);
- 	dr16(UDPCheckSumErrors);
- 	dr16(IPCheckSumErrors);
-+
-+	spin_unlock_irqrestore(&np->stats_lock, flags);
-+
- 	return &dev->stats;
- }
- 
-diff --git a/drivers/net/ethernet/dlink/dl2k.h b/drivers/net/ethernet/dlink/dl2k.h
-index 0e33e2eaae96..56aff2f0bdbf 100644
---- a/drivers/net/ethernet/dlink/dl2k.h
-+++ b/drivers/net/ethernet/dlink/dl2k.h
-@@ -372,6 +372,8 @@ struct netdev_private {
- 	struct pci_dev *pdev;
- 	void __iomem *ioaddr;
- 	void __iomem *eeprom_addr;
-+	// To ensure synchronization when stats are updated.
-+	spinlock_t stats_lock;
- 	spinlock_t tx_lock;
- 	spinlock_t rx_lock;
- 	unsigned int rx_buf_sz;		/* Based on MTU+slack. */
+ drivers/watchdog/s3c2410_wdt.c | 37 +++++++++++++++++++++++-----------
+ 1 file changed, 25 insertions(+), 12 deletions(-)
+
 -- 
-2.49.0
+2.40.1
 
 
