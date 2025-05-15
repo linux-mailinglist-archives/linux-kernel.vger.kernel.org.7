@@ -1,207 +1,210 @@
-Return-Path: <linux-kernel+bounces-648852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-648854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA559AB7C8E
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 06:05:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21728AB7C9F
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 06:18:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3BBA8C27B8
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 04:05:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 336DB8C7FBE
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 04:17:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B52054B1E4F;
-	Thu, 15 May 2025 04:05:30 +0000 (UTC)
-Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0849F238C2A;
+	Thu, 15 May 2025 04:17:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZutQC7pC"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82242E55B
-	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 04:05:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 546D672605;
+	Thu, 15 May 2025 04:17:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747281930; cv=none; b=Xe6jJz7VeNm172Ciw2rSS2/pXbak9wBFbOrMcC2FdFah4D7tbSDXNa/GlEyKH6/5jNRxlgE1NQ19IT1xR5DesxXW6uICmzM9+VcMrmEI8iH/cqwpN1M1hZBWqNoaljyWI3SgRQKi64WZDW5eoxRUQtd2hdd0HhSZoXTuDYUyuiE=
+	t=1747282678; cv=none; b=AUxP9DMJUpJeDSS2Q2gTreEhvtavO3nKlkmWpeDft8vfvU3gWbIdNn53O6MbJCUnV97wiblYkwerdw8rHisxQFKTq7kmtcYx8HICKOD/PH/mH5D3+2UDbYD7rqn78zBbtz8GhCwthzk75AyO+tzptaxmt/06eRSjoeDjdwTKQrk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747281930; c=relaxed/simple;
-	bh=WbaOjFqUgJEb48qtEbQ5iH6fpJ6aQ4/fjv+Msg5IOg4=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Jm6y9YH3xeMZEebDK3c+WWvfOtWUJ7oNHM/kSgmFGJV9bUes//7GL1U8Ce5/RssHWX+NmjHLjimrvw3FGMKA7bW8gsCQgQpLzdLyZZo8k4wPpZ2KCIF/sfybRtYqq3afETuHSxZG6dsuu0PGYsB0UjPhZG5QC6n8CJBSaKyTwnQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3db6dc76193so10086355ab.2
-        for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 21:05:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747281927; x=1747886727;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+0bvqXSA1MWlQ0Tx3Jf5kQuYB868wAHWrRS3Kaz/YCg=;
-        b=TeVZHd+Br9FYlvug/YWS62JaZ29sO/oNA905jHn8aAA7OxI29vzsQ3L7DDT2kFDGiA
-         7EiOQV2k3EwrinZkO9rZ8a3AwUzXej7iOO4OXN2kgp6ORbPFP3jjqoYAqpH9EF9e2g2k
-         otIup36chjywUdbuZDyR3is3ec42I5Zll33cIVlQcOVXU79ZWgfWl8X6THpO53nWuOhY
-         vquFztoqn0vJQ6aPTFwxslr/PDlKg0c55F9VELYvF/w5TqaSUgvhiEkmHfVQA4/SI/nj
-         buEGN88ryAOoucZph69JDHhF9rDrqakiHUbYSjKI8clZS6wNf8hBlORk5/xNh+Rzr0CU
-         H6fQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUyMLxt0amT8O6E0a7CAt7WdIFnF9J8m7IAEOIJQGYT7XxeFM1LVvQMBiamGxsVM8AXFZVjT8LMZiRcFPk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCL3JzLvVI4CJ8dUHaN3/+pK1bThuY7CiMmWYk+UKfFt1BgPwo
-	8C3qsVkNOKEpdCuXCpFSXIIkE78Z+F1tNBPMC9JD8CAEFIGxllGdMDtVPFqy3fR7b+gKTP/gbZf
-	kN0VI7qUwJuiHGjZOwW2kRo06OjrqHIWTsDbDBY44jAeSLUMP6r8Tv1k=
-X-Google-Smtp-Source: AGHT+IEQomtYcnnBJIZkcRc9OIMIxUoG7c54+xqdEXfZ+RPlMV4LGkSmmNCctNYX0JZdKfesrvteFQdXHiDOkXiemRU4yb1kLGJm
+	s=arc-20240116; t=1747282678; c=relaxed/simple;
+	bh=oYorAIMsBDyyCSG+trKuqWYvEHEl39Ax0nS9WpLJvGg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cUjuK8PFQjOdHkcWVLU+W2e67ECj/xt2m2b1vcLwzWgyb3Ak8CIHgpBZud69lYOZGrrdMsIvmcDua4vFzZ+kmijEhWOGCM8S0SQ2NurBL2cU5XJdrHdnWwr5jYJTUQ5W72slGkmX6KZ6hbdXhKGPxIP2K+C9kNHfIO6Hc1G1v70=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZutQC7pC; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1747282677; x=1778818677;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=oYorAIMsBDyyCSG+trKuqWYvEHEl39Ax0nS9WpLJvGg=;
+  b=ZutQC7pCIDjvJL2OF2K4Y2yWkGjJemWDy9e0V7j2Tl/3jcLVGH5Zzord
+   0Zn/qnj8kJBroVmv5FSitojAx6G1hcD1wp3K+VsT/NkiTgBIzIk4M1Q+k
+   ZldVVbaEsWil5yxh9SJko7cvyQmXHbTDXWEM7pLutS3vOj0u1LGusICov
+   hMVSqY052S/SsyP7TD37o4ENVqErIRiYocyCQlcmN2co5fA8P+IwBBdhI
+   N378yLy3f+kkc4406XpMBEbfX985nVHeiPS0hc4XWTXylX/RfJuEo2dq8
+   1XsgxkYy1GOLkxjIbgXwyJemLSBF7DiuftqJs6FYSU6qrC904XSk1k3l1
+   g==;
+X-CSE-ConnectionGUID: tf8BtYonS1aL2ISurWEjUw==
+X-CSE-MsgGUID: T2fFfzIGSuWTiKew7xnEiw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11433"; a="48888925"
+X-IronPort-AV: E=Sophos;i="6.15,290,1739865600"; 
+   d="scan'208";a="48888925"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 May 2025 21:17:56 -0700
+X-CSE-ConnectionGUID: lgV6WdT2TR2+c0kFV7wCrA==
+X-CSE-MsgGUID: +/WX806LRQOc0jxdd26R1Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,290,1739865600"; 
+   d="scan'208";a="143003801"
+Received: from mfrick-mobl2.amr.corp.intel.com (HELO desk) ([10.125.146.12])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 May 2025 21:17:55 -0700
+Date: Wed, 14 May 2025 21:17:45 -0700
+From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+To: Shung-Hsi Yu <shung-hsi.yu@suse.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>, stable@vger.kernel.org,
+	patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+	torvalds@linux-foundation.org, akpm@linux-foundation.org,
+	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+	f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
+	hargar@microsoft.com, broonie@kernel.org,
+	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
+	Ihor Solodrai <ihor.solodrai@linux.dev>,
+	Kees Cook <kees@kernel.org>,
+	Dave Hansen <dave.hansen@linux.intel.com>
+Subject: Re: [PATCH 6.14 000/197] 6.14.7-rc1 review
+Message-ID: <20250515041659.smhllyarxdwp7cav@desk>
+References: <20250512172044.326436266@linuxfoundation.org>
+ <g4fpslyse2s6hnprgkbp23ykxn67q5wabbkpivuc3rro5bivo4@sj2o3nd5vwwm>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:3e8d:b0:3d0:4e0c:2c96 with SMTP id
- e9e14a558f8ab-3db6f79a2demr72468195ab.2.1747281927482; Wed, 14 May 2025
- 21:05:27 -0700 (PDT)
-Date: Wed, 14 May 2025 21:05:27 -0700
-In-Reply-To: <00000000000035b2ce06197bd027@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68256807.a00a0220.104b28.0018.GAE@google.com>
-Subject: Re: [syzbot] [block?] INFO: task hung in bdev_open
-From: syzbot <syzbot+5c6179f2c4f1e111df11@syzkaller.appspotmail.com>
-To: axboe@kernel.dk, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <g4fpslyse2s6hnprgkbp23ykxn67q5wabbkpivuc3rro5bivo4@sj2o3nd5vwwm>
 
-syzbot has found a reproducer for the following issue on:
+On Wed, May 14, 2025 at 07:49:29PM +0800, Shung-Hsi Yu wrote:
+> On Mon, May 12, 2025 at 07:37:30PM +0200, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 6.14.7 release.
+> > There are 197 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> 
+> Running included BPF selftests with a BPF CI fork (i.e. running on
+> GitHub Action x86-64 machines), I observe that that running the BPF
+> selftests now takes about 2x the time (from ~25m to ~50m), and
+> verif_scale_loop3_fail is timing out, taking more than 6 minutes to run
+> compare to the usual single digit second runtime. See [1] for the log.
+> 
+>   07:59:38.2908767Z #449     verif_scale_loop2:OK
+>   07:59:48.2920046Z WATCHDOG: test case verif_scale_loop3_fail executes for 10 seconds...
+>   08:01:38.2921924Z WATCHDOG: test case verif_scale_loop3_fail executes for 120 seconds, terminating with SIGSEGV
+>   08:01:38.2973073Z #450     verif_scale_loop3_fail:FAIL
+>   08:01:38.2973500Z Caught signal #11!
+>   08:01:38.2973808Z Stack trace:
+>   08:01:38.2974148Z ./test_progs(crash_handler+0x38)[0x564524d62f5c]
+>   08:01:38.2974682Z /lib/x86_64-linux-gnu/libc.so.6(+0x45330)[0x7f696f47d330]
+>   08:01:38.2975847Z /lib/x86_64-linux-gnu/libc.so.6(syscall+0x1d)[0x7f696f55f25d]
+>   08:01:38.2976387Z ./test_progs(+0x41a7cd)[0x564524d9d7cd]
+>   08:01:38.2976822Z ./test_progs(+0x41a7f5)[0x564524d9d7f5]
+>   08:01:38.2977236Z ./test_progs(+0x41a82e)[0x564524d9d82e]
+>   08:01:38.2980004Z ./test_progs(bpf_prog_load+0x681)[0x564524d9e555]
+>   08:01:38.2980570Z ./test_progs(+0x408ccc)[0x564524d8bccc]
+>   08:01:38.2980969Z ./test_progs(+0x409b89)[0x564524d8cb89]
+>   08:01:38.2981337Z ./test_progs(+0x40b87a)[0x564524d8e87a]
+>   08:01:38.2981674Z ./test_progs(bpf_object__load+0x26)[0x564524d8eb24]
+>   08:01:38.2981943Z ./test_progs(+0x8c160)[0x564524a0f160]
+>   08:01:38.2982173Z ./test_progs(+0x8c1c8)[0x564524a0f1c8]
+>   08:01:38.2982467Z ./test_progs(test_verif_scale_loop3_fail+0x21)[0x564524a0f59b]
+>   08:01:38.2982752Z ./test_progs(+0x3e0500)[0x564524d63500]
+>   08:01:38.2982983Z ./test_progs(main+0x5cd)[0x564524d65248]
+>   08:01:38.2983261Z /lib/x86_64-linux-gnu/libc.so.6(+0x2a1ca)[0x7f696f4621ca]
+>   08:01:38.2983651Z /lib/x86_64-linux-gnu/libc.so.6(__libc_start_main+0x8b)[0x7f696f46228b]
+>   08:01:38.2983998Z ./test_progs(_start+0x25)[0x5645249ba4a5]
+>   08:08:01.6898496Z libbpf: prog 'while_true': BPF program load failed: -E2BIG
+>   08:08:01.6898956Z libbpf: prog 'while_true': -- BEGIN PROG LOAD LOG --
+>   08:08:01.6899443Z BPF program is too large. Processed 1000001 insn
+>   08:08:01.6899823Z verification time 383390707 usec
+>   08:08:01.6900045Z stack depth 16
+>   08:08:01.6900621Z processed 1000001 insns (limit 1000000) max_states_per_insn 4 total_states 12347 peak_states 12347 mark_read 1
+>   08:08:01.6901359Z -- END PROG LOAD LOG --
+>   08:08:01.6901824Z libbpf: prog 'while_true': failed to load: -E2BIG
+>   08:08:01.6902368Z libbpf: failed to load object 'loop3.bpf.o'
+>   08:08:01.6902858Z scale_test:PASS:expect_error 0 nsec
+>   08:08:01.6903248Z #450     verif_scale_loop3_fail:FAIL
+> 
+> Compare to a day before when such behavior wasn't observed[2], the main
+> difference being these additional patches:
+> 
+>   input-cyttsp5-ensure-minimum-reset-pulse-width.patch
+>   input-cyttsp5-fix-power-control-issue-on-wakeup.patch
+>   input-mtk-pmic-keys-fix-possible-null-pointer-dereference.patch
+>   input-xpad-fix-share-button-on-xbox-one-controllers.patch
+>   input-xpad-add-support-for-8bitdo-ultimate-2-wireless-controller.patch
+>   input-xpad-fix-two-controller-table-values.patch
+>   input-synaptics-enable-intertouch-on-dynabook-portege-x30-d.patch
+>   input-synaptics-enable-intertouch-on-dynabook-portege-x30l-g.patch
+>   input-synaptics-enable-intertouch-on-dell-precision-m3800.patch
+>   input-synaptics-enable-smbus-for-hp-elitebook-850-g1.patch
+>   input-synaptics-enable-intertouch-on-tuxedo-infinitybook-pro-14-v5.patch
+>   rust-clean-rust-1.88.0-s-unnecessary_transmutes-lint.patch
+>   objtool-rust-add-one-more-noreturn-rust-function-for-rust-1.87.0.patch
+>   rust-clean-rust-1.88.0-s-warning-about-clippy-disallowed_macros-configuration.patch
+>   uio_hv_generic-fix-sysfs-creation-path-for-ring-buffer.patch
+>   staging-iio-adc-ad7816-correct-conditional-logic-for-store-mode.patch
+>   staging-bcm2835-camera-initialise-dev-in-v4l2_dev.patch
+>   staging-axis-fifo-remove-hardware-resets-for-user-errors.patch
+>   staging-axis-fifo-correct-handling-of-tx_fifo_depth-for-size-validation.patch
+>   x86-mm-eliminate-window-where-tlb-flushes-may-be-inadvertently-skipped.patch
+>   mm-fix-folio_pte_batch-on-xen-pv.patch
+>   mm-vmalloc-support-more-granular-vrealloc-sizing.patch
 
-HEAD commit:    9f35e33144ae x86/its: Fix build errors when CONFIG_MODULES=n
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=10639af4580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=bc44e21a0b824ef8
-dashboard link: https://syzkaller.appspot.com/bug?extid=5c6179f2c4f1e111df11
-compiler:       Debian clang version 20.1.2 (++20250402124445+58df0ef89dd6-1~exp1~20250402004600.97), Debian LLD 20.1.2
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=115c4e70580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=166c2f68580000
+Not sure why but this commit seems to related to the failure.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/0143554b1db5/disk-9f35e331.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/ccf3a30abae2/vmlinux-9f35e331.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/6e205d989271/bzImage-9f35e331.xz
+Below is log of bisecting v6.14.6 and v6.14.7-rc2 with the test:
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+5c6179f2c4f1e111df11@syzkaller.appspotmail.com
+  ./tools/testing/selftests/bpf/vmtest.sh -i -- timeout 20 ./test_progs -t verif_scale_loop3_fail
 
-INFO: task udevd:5194 blocked for more than 143 seconds.
-      Not tainted 6.15.0-rc6-syzkaller-00052-g9f35e33144ae #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:udevd           state:D stack:24824 pid:5194  tgid:5194  ppid:1      task_flags:0x400140 flags:0x00000002
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5382 [inline]
- __schedule+0x16e2/0x4cd0 kernel/sched/core.c:6767
- __schedule_loop kernel/sched/core.c:6845 [inline]
- schedule+0x165/0x360 kernel/sched/core.c:6860
- schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6917
- __mutex_lock_common kernel/locking/mutex.c:678 [inline]
- __mutex_lock+0x724/0xe80 kernel/locking/mutex.c:746
- bdev_open+0xe0/0xd30 block/bdev.c:945
- blkdev_open+0x3a8/0x510 block/fops.c:652
- do_dentry_open+0xdf3/0x1970 fs/open.c:956
- vfs_open+0x3b/0x340 fs/open.c:1086
- do_open fs/namei.c:3880 [inline]
- path_openat+0x2ee5/0x3830 fs/namei.c:4039
- do_filp_open+0x1fa/0x410 fs/namei.c:4066
- do_sys_openat2+0x121/0x1c0 fs/open.c:1429
- do_sys_open fs/open.c:1444 [inline]
- __do_sys_openat fs/open.c:1460 [inline]
- __se_sys_openat fs/open.c:1455 [inline]
- __x64_sys_openat+0x138/0x170 fs/open.c:1455
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xf6/0x210 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fdfe28a7407
-RSP: 002b:00007ffefe105d00 EFLAGS: 00000202 ORIG_RAX: 0000000000000101
-RAX: ffffffffffffffda RBX: 00007fdfe2f55880 RCX: 00007fdfe28a7407
-RDX: 00000000000a0800 RSI: 000056326f6fe3e0 RDI: ffffffffffffff9c
-RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000202 R12: 0000000000000000
-R13: 000056324ea0e100 R14: 0000000000000000 R15: 00007ffefe105f90
- </TASK>
-INFO: task syz-executor268:5876 blocked for more than 143 seconds.
-      Not tainted 6.15.0-rc6-syzkaller-00052-g9f35e33144ae #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz-executor268 state:D stack:27096 pid:5876  tgid:5872  ppid:5852   task_flags:0x400140 flags:0x00004006
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5382 [inline]
- __schedule+0x16e2/0x4cd0 kernel/sched/core.c:6767
- __schedule_loop kernel/sched/core.c:6845 [inline]
- schedule+0x165/0x360 kernel/sched/core.c:6860
- schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6917
- __mutex_lock_common kernel/locking/mutex.c:678 [inline]
- __mutex_lock+0x724/0xe80 kernel/locking/mutex.c:746
- bdev_release+0x1a9/0x650 block/bdev.c:1128
- blkdev_release+0x15/0x20 block/fops.c:660
- __fput+0x44c/0xa70 fs/file_table.c:465
- task_work_run+0x1d4/0x260 kernel/task_work.c:227
- ptrace_notify+0x281/0x2c0 kernel/signal.c:2520
- ptrace_report_syscall include/linux/ptrace.h:415 [inline]
- ptrace_report_syscall_exit include/linux/ptrace.h:477 [inline]
- syscall_exit_work+0xc2/0x1d0 kernel/entry/common.c:173
- syscall_exit_to_user_mode_prepare+0x6f/0xe0 kernel/entry/common.c:200
- __syscall_exit_to_user_mode_work kernel/entry/common.c:205 [inline]
- syscall_exit_to_user_mode+0x12/0x120 kernel/entry/common.c:218
- do_syscall_64+0x103/0x210 arch/x86/entry/syscall_64.c:100
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f4f6252f929
-RSP: 002b:00007f4f624e5218 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: 0000000000000000 RBX: 00007f4f625b7328 RCX: 00007f4f6252f929
-RDX: 0000000000000000 RSI: 000000000000ab03 RDI: 0000000000000003
-RBP: 00007f4f625b7320 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007f4f6258435c
-R13: 64626e2f7665642f R14: 0000200000000040 R15: 0000000080000000
- </TASK>
+# good: [e2d3e1fdb530198317501eb7ded4f3a5fb6c881c] Linux 6.14.6
+git bisect good e2d3e1fdb530198317501eb7ded4f3a5fb6c881c
+# status: waiting for bad commit, 1 good commit known
+# bad: [6f7a299729d3dff3ffade04ad8fbddb3b172d637] Linux 6.14.7-rc2
+git bisect bad 6f7a299729d3dff3ffade04ad8fbddb3b172d637
+# bad: [572ca62a1e819e1ebd317e7c0e35cf7ff382aec6] iio: light: opt3001: fix deadlock due to concurrent flag access
+git bisect bad 572ca62a1e819e1ebd317e7c0e35cf7ff382aec6
+# good: [5b1202a1e881c45d4500afa3f1f67f2fc3cbae10] fbnic: Improve responsiveness of fbnic_mbx_poll_tx_ready
+git bisect good 5b1202a1e881c45d4500afa3f1f67f2fc3cbae10
+# good: [3eabb5db037e216e2e9a67a36e989c5f13ae7170] mm: fix folio_pte_batch() on XEN PV
+git bisect good 3eabb5db037e216e2e9a67a36e989c5f13ae7170
+# bad: [93511db927bafab3499f6fb61061779ddd68f20f] iio: adc: ad7768-1: Fix insufficient alignment of timestamp.
+git bisect bad 93511db927bafab3499f6fb61061779ddd68f20f
+# bad: [569b32a0099bc2b2a8c827b2238bf785f2632fa7] selftests/mm: fix build break when compiling pkey_util.c
+git bisect bad 569b32a0099bc2b2a8c827b2238bf785f2632fa7
+# bad: [3d5ccf6020b22773d265ecd6f905d19498af9a4e] mm/userfaultfd: fix uninitialized output field for -EAGAIN race
+git bisect bad 3d5ccf6020b22773d265ecd6f905d19498af9a4e
+# bad: [336f780075f36e0d1181ce44d6d4197e4a22babc] mm/huge_memory: fix dereferencing invalid pmd migration entry
+git bisect bad 336f780075f36e0d1181ce44d6d4197e4a22babc
+# bad: [665f26e5de2325e3bca107b632bc2ccac1b9806a] mm: vmalloc: support more granular vrealloc() sizing
+git bisect bad 665f26e5de2325e3bca107b632bc2ccac1b9806a
+# first bad commit: [665f26e5de2325e3bca107b632bc2ccac1b9806a] mm: vmalloc: support more granular vrealloc() sizing
 
-Showing all locks held in the system:
-1 lock held by khungtaskd/31:
- #0: ffffffff8df3dce0 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
- #0: ffffffff8df3dce0 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:841 [inline]
- #0: ffffffff8df3dce0 (rcu_read_lock){....}-{1:3}, at: debug_show_all_locks+0x2e/0x180 kernel/locking/lockdep.c:6764
-2 locks held by kworker/u8:3/53:
- #0: ffff8880b8839b58 (&rq->__lock){-.-.}-{2:2}, at: raw_spin_rq_lock_nested+0x2a/0x140 kernel/sched/core.c:605
- #1: ffff8880b8823b08 (&per_cpu_ptr(group->pcpu, cpu)->seq){-.-.}-{0:0}, at: psi_task_switch+0x318/0x6d0 kernel/sched/psi.c:975
-1 lock held by udevd/5194:
- #0: ffff888024977358 (&disk->open_mutex){+.+.}-{4:4}, at: bdev_open+0xe0/0xd30 block/bdev.c:945
-2 locks held by getty/5587:
- #0: ffff8880303d60a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:243
- #1: ffffc90002ffe2f0 (&ldata->atomic_read_lock){+.+.}-{4:4}, at: n_tty_read+0x43e/0x1400 drivers/tty/n_tty.c:2222
-1 lock held by udevd/5861:
- #0: ffff888024977358 (&disk->open_mutex){+.+.}-{4:4}, at: bdev_open+0xe0/0xd30 block/bdev.c:945
-1 lock held by syz-executor268/5876:
- #0: ffff888024977358 (&disk->open_mutex){+.+.}-{4:4}, at: bdev_release+0x1a9/0x650 block/bdev.c:1128
+...
+> No patches touch BPF's core component, and while the
+> verif_scale_loop3_fail test did time out, the verifier is still
+> correctly rejecting it, so shouldn't have anything to do with
+> kernel/bpf/. The x86/arm64 BPF patches only affect JIT output, and only
+> for cBPF.
+> 
+> In comparison, with 6.12.29-rc1 I don't observe any timeout or increase
+> in runtime[3]. Below is a diff comparing the applied patches in
+> 6.12.29-rc1 and 6.14.7-rc1. Seems like 6.14.7-rc1 does not have the
+> CALL_NOSPEC patches, but I cannot tell whether that is what makes the
+> difference.
 
-=============================================
-
-NMI backtrace for cpu 1
-CPU: 1 UID: 0 PID: 31 Comm: khungtaskd Not tainted 6.15.0-rc6-syzkaller-00052-g9f35e33144ae #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
-Call Trace:
- <TASK>
- dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
- nmi_cpu_backtrace+0x39e/0x3d0 lib/nmi_backtrace.c:113
- nmi_trigger_cpumask_backtrace+0x17a/0x300 lib/nmi_backtrace.c:62
- trigger_all_cpu_backtrace include/linux/nmi.h:158 [inline]
- check_hung_uninterruptible_tasks kernel/hung_task.c:274 [inline]
- watchdog+0xfee/0x1030 kernel/hung_task.c:437
- kthread+0x711/0x8a0 kernel/kthread.c:464
- ret_from_fork+0x4e/0x80 arch/x86/kernel/process.c:153
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
-Sending NMI from CPU 1 to CPUs 0:
-NMI backtrace for cpu 0 skipped: idling at constant_test_bit arch/x86/include/asm/bitops.h:206 [inline]
-NMI backtrace for cpu 0 skipped: idling at arch_test_bit arch/x86/include/asm/bitops.h:238 [inline]
-NMI backtrace for cpu 0 skipped: idling at tif_test_bit include/linux/thread_info.h:192 [inline]
-NMI backtrace for cpu 0 skipped: idling at tif_need_resched include/linux/thread_info.h:208 [inline]
-NMI backtrace for cpu 0 skipped: idling at current_clr_polling_and_test include/linux/sched/idle.h:79 [inline]
-NMI backtrace for cpu 0 skipped: idling at default_idle_call+0x1b/0xb0 kernel/sched/idle.c:111
-
-
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+Thats because CALL_NOSPEC patches were already part of v6.14.
 
