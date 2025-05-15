@@ -1,72 +1,66 @@
-Return-Path: <linux-kernel+bounces-649684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-649686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08896AB87B6
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 15:19:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FABEAB87CC
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 15:21:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 947D94A8457
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 13:19:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 91C667AFC32
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 13:20:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9185525761;
-	Thu, 15 May 2025 13:19:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 986DB53363;
+	Thu, 15 May 2025 13:21:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gw+leEDe"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ULXEX8Kv"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB70C4C6D
-	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 13:19:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E100221348;
+	Thu, 15 May 2025 13:21:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747315177; cv=none; b=L0/h3pTiouX2GT6eTVjpQDQbM5PaKQuKAPn/fnTKVevAQ40IvayhTFLnxN1q/I+CTM3ALMpx7lwzSWajKzrORHDUeA6vKhDTCJrxY76bOC7+a3goBQjKicR1Mdaz3NJDLmb1GPE+eVYDs2WOExGQYq2npqYA56fLZpG3TdvDPtA=
+	t=1747315267; cv=none; b=D0UwC92HgP64VEQeN4kpLR7zxLTyoG5TlQISgZOgXcEscexWYC8yVzZA9YFrmec9HdH+b322ydgX71hWNwsATYb9o3N5oK/XN0hm948fxksH43Gd2Y32NtbZb50/h3ve+7f+Bh/UhDtenAshva7fTyt31Vx76mUDWXZheV7KcFc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747315177; c=relaxed/simple;
-	bh=mASmfpvqEEgxTgNHtk9zOGjZv+n17h6fKj6B2DBsz60=;
+	s=arc-20240116; t=1747315267; c=relaxed/simple;
+	bh=JPkYbeCC/0+2C7oAcLkVgxvwJCw1QU+wPgbrczN6A7U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a5I4QYz/1pNOGbvHxVdrIErnxsrLuzBUHUEMJdDkonna6ED4lHEkb0X8auv0AKprVR0PtYkPhvdT32OPAwa9B8TM0axPDqnKKsk2nPZ8xQQB2F7aogxzYyCWvSsnMSHAfJkU2R94s1T0+WrY8wvlCJHkMFygSNxjCj3dzt54ZUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gw+leEDe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E41B2C4CEE7;
-	Thu, 15 May 2025 13:19:31 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=NXbELUT4/K71cMjdb+ZSj333H0bxoYO1lquNBuhQdSzTyCsgHxlt0i41FhitytDYJYnp7hAWWBbxUPD/K0ghDynOhQh8YmO8d+Bb/RxN99wDtTxJev634q1bemwSxAXcrf/+coQkQZYvLLu9VyyN+cfs+zo1yQdj495qtciSFi0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ULXEX8Kv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9334CC4CEEF;
+	Thu, 15 May 2025 13:21:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747315176;
-	bh=mASmfpvqEEgxTgNHtk9zOGjZv+n17h6fKj6B2DBsz60=;
+	s=k20201202; t=1747315266;
+	bh=JPkYbeCC/0+2C7oAcLkVgxvwJCw1QU+wPgbrczN6A7U=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Gw+leEDezrBzbGEhWulZzpr+IxZpH2+TQjKc8to1+STsa0hleBIXMdyc9W+axjQTK
-	 FnlIe71EpHmOYCmd6yz/rkmTMc8gmYPd5g3UWJR44jYgOx4laBLdeDAC8HS8xjfOCF
-	 4920tmUVGq3VkDBMSJyV7z+ligB4eIevYqXiyf5w9LoR5eA5G8xgMn75hFMUQ6uO6K
-	 iRd/P+74HW+3c4CyT/mlLQoV1DOqaV1s4y/14ovehjfbx0tPkkbtll/Zqsb+/tq4jt
-	 CimcGWAiFKrxWsfNZR8wpnvjBLEUWwAe0xhGd4WNIfBkEhIv0bh72XFH5wryVWvzXa
-	 wRv9ZuOWRShzw==
-Date: Thu, 15 May 2025 15:19:28 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: =?iso-8859-1?Q?J=FCrgen_Gro=DF?= <jgross@suse.com>
-Cc: linux-kernel@vger.kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Borislav Petkov <bp@alien8.de>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Vitaly Kuznetsov <vkuznets@redhat.com>,
-	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-	Ard Biesheuvel <ardb@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	Carlos Bilbao <carlos.bilbao@kernel.org>,
-	David Woodhouse <dwmw@amazon.co.uk>,
-	Elena Reshetova <elena.reshetova@intel.com>,
-	Fei Li <fei1.li@intel.com>, Jan Kiszka <jan.kiszka@siemens.com>,
-	Masahiro Yamada <yamada.masahiro@socionext.com>,
-	Michal Marek <michal.lkml@markovi.net>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Sean Christopherson <seanjc@google.com>,
-	Stefano Stabellini <sstabellini@kernel.org>
-Subject: Re: [PATCH 09/15] x86/kconfig/64: Enable more virtualization guest
- options in the defconfig: enable Xen, Xen_PVH, Jailhouse, ACRN, Intel TDX
- and Hyper-V
-Message-ID: <aCXp4FiECnz5f4Nr@gmail.com>
-References: <20250506170924.3513161-1-mingo@kernel.org>
- <20250506170924.3513161-10-mingo@kernel.org>
- <26c14b81-5eaa-48c2-9b28-518687fe9ea3@suse.com>
+	b=ULXEX8KvfmKzhiJTB9Hd7eAwANfC1BZlgWUM6t1hJ0bRn630MAm6VurvIy9r8jpMv
+	 P8420bwYR5nxut2GfVXVQDFMKw37eb5L9zAC+Lvc2MjADIccHILfOZidJCg4zVrg9d
+	 ztlRyJp81Y8h9GJBQ8F7MtMW/l5FFlq2R6LHEytAK8hJO4D52qmjNYozDkFgO5xZTU
+	 7XpeOkZCSYTjUvUkUIch2iogvEw/HV/kp2nPW8sWvO38mtWsKti/L661hX7Bdi/18x
+	 p0vUB79T0gzxVtl8orIGPgtsS0rbb95U71ta/kVU9w0UWbwMMSBU2H25ROQ1jxHDHR
+	 GX1Ig7sE95TZw==
+Date: Thu, 15 May 2025 14:21:01 +0100
+From: Will Deacon <will@kernel.org>
+To: David Hildenbrand <david@redhat.com>
+Cc: Dev Jain <dev.jain@arm.com>, catalin.marinas@arm.com,
+	ryan.roberts@arm.com, anshuman.khandual@arm.com,
+	mark.rutland@arm.com, yang@os.amperecomputing.com,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] arm64: Check pxd_leaf() instead of !pxd_table() while
+ tearing down page tables
+Message-ID: <20250515132059.GA12038@willie-the-truck>
+References: <20250515063450.86629-1-dev.jain@arm.com>
+ <332ecda7-14c4-4dc3-aeff-26801b74ca04@redhat.com>
+ <4904d02f-6595-4230-a321-23327596e085@arm.com>
+ <6fe7848c-485e-4639-b65c-200ed6abe119@redhat.com>
+ <35ef7691-7eac-4efa-838d-c504c88c042b@arm.com>
+ <c06930f0-f98c-4089-aa33-6789b95fd08f@redhat.com>
+ <91fc96c3-4931-4f07-a0a9-507ac7b5ae6d@arm.com>
+ <a005b0c3-861f-4e73-a747-91e0a15c85de@redhat.com>
+ <20250515125606.GA11878@willie-the-truck>
+ <23042cdf-e0fc-4b3a-92f6-688689728cc7@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,42 +70,105 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <26c14b81-5eaa-48c2-9b28-518687fe9ea3@suse.com>
+In-Reply-To: <23042cdf-e0fc-4b3a-92f6-688689728cc7@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-
-* Jürgen Groß <jgross@suse.com> wrote:
-
-> On 06.05.25 19:09, Ingo Molnar wrote:
-> > Since the x86 defconfig aims to be a distro kernel work-alike with
-> > fewer drivers and a shorter build time, refresh all the virtualization
-> > guest Kconfig features, enabling paravirt spinlocks, and
-> > enabling the guest support code for the following guests:
+On Thu, May 15, 2025 at 03:04:50PM +0200, David Hildenbrand wrote:
+> On 15.05.25 14:56, Will Deacon wrote:
+> > On Thu, May 15, 2025 at 11:32:22AM +0200, David Hildenbrand wrote:
+> > > On 15.05.25 11:27, Dev Jain wrote:
+> > > > 
+> > > > 
+> > > > On 15/05/25 2:23 pm, David Hildenbrand wrote:
+> > > > > On 15.05.25 10:47, Dev Jain wrote:
+> > > > > > 
+> > > > > > 
+> > > > > > On 15/05/25 2:06 pm, David Hildenbrand wrote:
+> > > > > > > On 15.05.25 10:22, Dev Jain wrote:
+> > > > > > > > 
+> > > > > > > > 
+> > > > > > > > On 15/05/25 1:43 pm, David Hildenbrand wrote:
+> > > > > > > > > On 15.05.25 08:34, Dev Jain wrote:
+> > > > > > > > > > Commit 9c006972c3fe removes the pxd_present() checks because the
+> > > > > > > > > > caller
+> > > > > > > > > > checks pxd_present(). But, in case of vmap_try_huge_pud(), the caller
+> > > > > > > > > > only
+> > > > > > > > > > checks pud_present(); pud_free_pmd_page() recurses on each pmd
+> > > > > > > > > > through
+> > > > > > > > > > pmd_free_pte_page(), wherein the pmd may be none.
+> > > > > > > > > The commit states: "The core code already has a check for pXd_none()",
+> > > > > > > > > so I assume that assumption was not true in all cases?
+> > > > > > > > > 
+> > > > > > > > > Should that one problematic caller then check for pmd_none() instead?
+> > > > > > > > 
+> > > > > > > >      From what I could gather of Will's commit message, my
+> > > > > > > > interpretation is
+> > > > > > > > that the concerned callers are vmap_try_huge_pud and vmap_try_huge_pmd.
+> > > > > > > > These individually check for pxd_present():
+> > > > > > > > 
+> > > > > > > > if (pmd_present(*pmd) && !pmd_free_pte_page(pmd, addr))
+> > > > > > > >        return 0;
+> > > > > > > > 
+> > > > > > > > The problem is that vmap_try_huge_pud will also iterate on pte entries.
+> > > > > > > > So if the pud is present, then pud_free_pmd_page -> pmd_free_pte_page
+> > > > > > > > may encounter a none pmd and trigger a WARN.
+> > > > > > > 
+> > > > > > > Yeah, pud_free_pmd_page()->pmd_free_pte_page() looks shaky.
+> > > > > > > 
+> > > > > > > I assume we should either have an explicit pmd_none() check in
+> > > > > > > pud_free_pmd_page() before calling pmd_free_pte_page(), or one in
+> > > > > > > pmd_free_pte_page().
+> > > > > > > 
+> > > > > > > With your patch, we'd be calling pte_free_kernel() on a NULL pointer,
+> > > > > > > which sounds wrong -- unless I am missing something important.
+> > > > > > 
+> > > > > > Ah thanks, you seem to be right. We will be extracting table from a none
+> > > > > > pmd. Perhaps we should still bail out for !pxd_present() but without the
+> > > > > > warning, which the fix commit used to do.
+> > > > > 
+> > > > > Right. We just make sure that all callers of pmd_free_pte_page() already
+> > > > > check for it.
+> > > > > 
+> > > > > I'd just do something like:
+> > > > > 
+> > > > > diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
+> > > > > index 8fcf59ba39db7..e98dd7af147d5 100644
+> > > > > --- a/arch/arm64/mm/mmu.c
+> > > > > +++ b/arch/arm64/mm/mmu.c
+> > > > > @@ -1274,10 +1274,8 @@ int pmd_free_pte_page(pmd_t *pmdp, unsigned long
+> > > > > addr)
+> > > > > 
+> > > > >            pmd = READ_ONCE(*pmdp);
+> > > > > 
+> > > > > -       if (!pmd_table(pmd)) {
+> > > > > -               VM_WARN_ON(1);
+> > > > > -               return 1;
+> > > > > -       }
+> > > > > +       VM_WARN_ON(!pmd_present(pmd));
+> > > > > +       VM_WARN_ON(!pmd_table(pmd));
+> > > > 
+> > > > And also return 1?
+> > > 
+> > > I'll leave that to Catalin + Will.
+> > > 
+> > > I'm not a friend for adding runtime-overhead for soemthing that should not
+> > > happen and be caught early during testing -> VM_WARN_ON_ONCE().
 > > 
-> >   - Xen
-> >   - Xen_PVH
+> > I definitely think we should return early if the pmd isn't a table.
+> > Otherwise, we could end up descending into God-knows-what!
 > 
-> With those it might be a good idea to add:
-> 
-> CONFIG_XEN_BLKDEV_FRONTEND=m
-> CONFIG_XEN_NETDEV_FRONTEND=m
-> CONFIG_HVC_XEN=y
-> CONFIG_XEN_BALLOON=y
+> The question is: how did something that is not a table end up here, and why
+> is it valid to check exactly that at runtime. Not strong opinion, it just
+> feels a bit arbitrary to test for exactly that at runtime if it is
+> completely unexpected.
 
-Yeah, and these already get enabled automatically, due to their 
-defaults:
+I see it a little bit like type-checking: we could see an invalid entry,
+a leaf entry or a table entry and we should only ever dereference the
+latter. If the VM_WARN_ON() is justified, then I find it jarring to go
+ahead with the dereference regardless of the type.
 
- starship:~/mingo.tip.git> grep -E 'CONFIG_XEN_BLKDEV_FRONTEND|CONFIG_XEN_NETDEV_FRONTEND|CONFIG_HVC_XEN|CONFIG_XEN_BALLOON' .config
- CONFIG_XEN_BLKDEV_FRONTEND=y
- CONFIG_XEN_NETDEV_FRONTEND=y
- CONFIG_HVC_XEN=y
- CONFIG_HVC_XEN_FRONTEND=y
- CONFIG_XEN_BALLOON=y
+That said, maybe the VM_WARN_ON() should either be deleted or moved out
+to the callers in mm/vmalloc.c?
 
-defconfig files do not include entries that get enabled anyway - this 
-compresses defconfig files substantially.
-
-Thanks,
-
-	Ingo
-
+Will
 
