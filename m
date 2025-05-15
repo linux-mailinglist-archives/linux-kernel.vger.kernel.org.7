@@ -1,129 +1,159 @@
-Return-Path: <linux-kernel+bounces-649335-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-649333-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3FEBAB831A
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 11:44:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18E77AB8317
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 11:43:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D00664A3E08
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 09:44:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A62A816EE85
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 09:43:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9074297B6D;
-	Thu, 15 May 2025 09:44:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83F1629712E;
+	Thu, 15 May 2025 09:43:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="ABhYLL+G"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rgZv1MMz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63E0B29712E
-	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 09:44:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF2FE1B043A
+	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 09:43:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747302253; cv=none; b=q2VA53p3/f/Kz87JGVgxubPjJhDue/ezcrQ+Ocy7+cqOC1wtssjmBHBfdnlff6a4zLKKL7HfDxUVj6eReoxpXkhYNPpqrr/MMIP4GQHxNn05hJXrRGnQETdsh1dqXBTACuU1qZL5yQW3a6r5Aqv0ngOKOlqSOj82LFVsIUbEzCI=
+	t=1747302224; cv=none; b=YmkLmGOgWT1X/9yhbhtaPMp/vHE/TLh2M6mGMbftkQxOGsga04R0Eg4gg4bF4nGnItaP+R9ezc+9vD4/cceijPqqnwKLC+bx231CLBS+ovFu378nkR1D9fiM3eWt2/pCiXteggdPFHXvpUw0CBQVV40MDy8flmx/kRBc16InsLU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747302253; c=relaxed/simple;
-	bh=9GNL33PY49lW6OGb3bRrDrd7fcNA7Gh2hmvPnbryDDo=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=F9XeRi/cvYlY/zUccVX4Od/7QIvUFZq5N6l/00AS7zSKyojoM/c8cloZQFIexpK5S0AhsNmK5gULalYGciK/6YGldydYvzuZ8XOM1GKoVesGLG0Rynjj8jZNLkthBOg/ESjHr8f2nbxsHMF3yqGRysL1Ghldy1DyCjwabutxq8g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=ABhYLL+G; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-74264d1832eso925877b3a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 02:44:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1747302250; x=1747907050; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=n6FV+5tXVPlvC+Cy3Z2x3GFn7teypKn9hvM6n9ipgsE=;
-        b=ABhYLL+GiGq2PR/nvcerzw3z+vmBmjVmML2EpWI6MTHr1Xqcuhmi60fRJHcKDkj1PV
-         qT29CUH5ygb2imSZhRymqeZXqz2c1aH3SIsW/RSxmqn7Qjt3dWpMmhWuu1IC1UYfQ/RN
-         SdSL0/YQPKftP6VJP//nGSVQx9D3/vMOEd4ndinGtw09awh8VoZ4lqLWA7mGpM0XyV2Z
-         QP7/+HZedidil0mIQftTyGxOQ6/QvBCVeVi6i+HfzwYq0CqX6x/uLqMk255keT+dADT6
-         grGkG1BPwiXbME7IMkREBwYe93FjEEqwZDTKrnZotL+lS9qjonmDQPQYy9aknIKq7Tu1
-         Mh6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747302250; x=1747907050;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=n6FV+5tXVPlvC+Cy3Z2x3GFn7teypKn9hvM6n9ipgsE=;
-        b=MKdccb51cvnBbUyaQHiqoelPIdJNRZt7KzE3H+qzik+OUXjpvDda+Xne6Znoxma257
-         PEvjrkUG2ybnvaLFtccABDW22pUGZQYucQMyS6BZeyP3Ea5EFXIIi7xxAi6Obq2PWzM+
-         71y5M5mLsWRRMVReHA977fNvWjO2/SgsaYZ5bD2BhoyvjWXuU1TmqGsTIQaTrvt/d2Gp
-         pEp87vYVs/cvDoJXMK0iGLboxTdNg44uS/SCpVRD8A8p4h7HagWPY771/JfzGrtDShRj
-         pYr8SEi9HuHms0T3570ywK98QTvus58Aeax90xjoCb6/VV55UrXzk6i1lSiHC3p5IEEW
-         rdGA==
-X-Forwarded-Encrypted: i=1; AJvYcCX2uZpxkFQ2H+FN5lz+EkerbSku1gtYEEdTzCVhFPTZt4kBy1vjuJaUKM3Die+Y9GqC6MteC3/YABZuGMY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZkLgqML1OHKq9XkmR12uiJU+wg8rSJuI3zZvVD65RQBecVG26
-	BvZ4/L7jVXRGuzKbQ7/LtjjvRaJmEdRZ+LzRM5P3+iEonzxNppaThM6E+iXpkzw=
-X-Gm-Gg: ASbGnctXbHg/ASlVoGrx3DCBAJ6ZU4S5MtFYP7+bGvxTWJB9DwnclM1yr0MeoXv7/hf
-	nKukJWCtYaZPokV2guwh6cXQMvYCdUGul+8UFdMIvWVSivrh9GNGAclu+r22PKbIqZHPCQunaPS
-	+Lx23npecfTtgsoXcvTfoZ2NcF9j1lf2FwV+760q/PFg67id5yURHrDIMJvRzl7bXqNHpro+ufh
-	nV0uKu+XYX00ASw0K3hZrWUHVnW2xKiRG+WCy21QTCWHXtK/ANZH99TKXd3mj4nJi4RnAqI8lpn
-	f/5RYZfi970EYWBQKb1UEfwp/1QUtcGMYSEEJxZWmrJWF3FjZ0nrz5FRr27iGPr7BNJIxsW+/qN
-	vOJuInqhrZCo1FFgm
-X-Google-Smtp-Source: AGHT+IEh2dxMPj7kTH/MLpVyfxHPA3w9CgIogon2Q5H7XcXm3dZOwAfa/YfCslxFD2QlnH7LR4V86w==
-X-Received: by 2002:a05:6a20:559c:b0:216:1476:f6c with SMTP id adf61e73a8af0-21614761195mr1115182637.13.1747302250378;
-        Thu, 15 May 2025 02:44:10 -0700 (PDT)
-Received: from L6YN4KR4K9.bytedance.net ([61.213.176.9])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b234941b886sm10299693a12.2.2025.05.15.02.44.07
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Thu, 15 May 2025 02:44:10 -0700 (PDT)
-From: Yunhui Cui <cuiyunhui@bytedance.com>
-To: sunilvl@ventanamicro.com,
-	rafael@kernel.org,
-	lenb@kernel.org,
-	paul.walmsley@sifive.com,
-	palmer@dabbelt.com,
-	aou@eecs.berkeley.edu,
-	alex@ghiti.fr,
-	linux-acpi@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: Yunhui Cui <cuiyunhui@bytedance.com>
-Subject: [PATCH] ACPI: RISC-V: CPPC: Add CSR_CYCLE for CPPC FFH
-Date: Thu, 15 May 2025 17:43:01 +0800
-Message-Id: <20250515094301.40016-1-cuiyunhui@bytedance.com>
-X-Mailer: git-send-email 2.39.2 (Apple Git-143)
+	s=arc-20240116; t=1747302224; c=relaxed/simple;
+	bh=QsX2PdNg8RwcnA75UChZOVeuwinCogeZNpjMJzayegg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DLUBkMleb69mpJHGJx3vrJvQGDrH4fcPJgkP3+SoNLJeUz0MLxxjYx6WNxeq+uknP/HF3x7PxzSS2AAALWru4LtjrdwA4v9XQkqsj9mwb35u608Diymz4Y6MC5ea1eBC6KSbFwQWM+tMvhtHxOUeLNjZ5qAdvtb4oTyU//OmJLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rgZv1MMz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50C51C4AF0B
+	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 09:43:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747302221;
+	bh=QsX2PdNg8RwcnA75UChZOVeuwinCogeZNpjMJzayegg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=rgZv1MMzsffCohjzOSX+KY7DM2y7WGjaIs8RwCYGxIQNHhnqHuFEveAB3eVkhLvG5
+	 KYkDNrSsZO1dNPthM2bcC8vFRGMdxWBnwmuEPmgi2fFEmZuzYaCN4IquEfh8AQe4NE
+	 C2oGp+NcHgnXIdpUXQzmLIhaUyWlgkd2c5vLBoFRNmA8mWv5yi46bkODmuW+KTRJRU
+	 VK4CZ0Ux4u3Z3MBc96Lk7ujlDCzlvrFLn/viKmULsQ8Q/eEi9swnYyb8kNQmKIm+OP
+	 /c4RtlgdGUiK99/juz522QNo43SJRoxwH4nOzuecVlkWZjZ8tm+YnC3/PRcBethaXm
+	 SAqIRzEo1oKhA==
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-326c1f3655eso6573031fa.1
+        for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 02:43:41 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWpZMimOTJv2j6diot1m1+ngnQprTHH2gun1+VK2Q+rc3x8NfIrq4pKU0mOaH0H3dkL+vS/9zMYJQ+/uuI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwzVqxqybTcKX1DO8Kt3FpY+Tt9NJWj5QRGTi8NlnSYP5fgWLIu
+	6SfT2/hogvU81sqd1zi7xvY/Kd6knDCm1lVRmzSPC1pMCX2DUESqyozODa8YBawvfL/eyrOQo7z
+	tQBD5S+VSq1bq+oEqty2tOTMpM3g=
+X-Google-Smtp-Source: AGHT+IHCx29c+ufx3QhiIasO774jMIENEARapg/bnNAHLarfAANPyapXcEpo/MJmZz5LoCElWAqOG/rrns4KRfN08ZM=
+X-Received: by 2002:a05:651c:1544:b0:30c:50fc:fb98 with SMTP id
+ 38308e7fff4ca-327fabdca52mr6000631fa.13.1747302219662; Thu, 15 May 2025
+ 02:43:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250514104242.1275040-9-ardb+git@google.com> <20250514104242.1275040-13-ardb+git@google.com>
+ <loshl2p4k2p7pvgwsympb3f5jisv4cnt5eh4gqabd3cdaifoeu@bahujxd4qvrl>
+In-Reply-To: <loshl2p4k2p7pvgwsympb3f5jisv4cnt5eh4gqabd3cdaifoeu@bahujxd4qvrl>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Thu, 15 May 2025 10:43:27 +0100
+X-Gmail-Original-Message-ID: <CAMj1kXGUmmBuho7PM3iQAjY33kjxT2qwM7jNoNvLHf6rmTdDYg@mail.gmail.com>
+X-Gm-Features: AX0GCFtA3C8Bwxw2Srf738gsbWzhgvu4OOW6JT6BkbBe9TYst_RiKECVzEEB2wM
+Message-ID: <CAMj1kXGUmmBuho7PM3iQAjY33kjxT2qwM7jNoNvLHf6rmTdDYg@mail.gmail.com>
+Subject: Re: [PATCH v3 4/7] x86/boot: Set 5-level paging CPU cap before
+ entering C code
+To: "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc: Ard Biesheuvel <ardb+git@google.com>, linux-kernel@vger.kernel.org, x86@kernel.org, 
+	Ingo Molnar <mingo@kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	Brian Gerst <brgerst@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Add the read of CSR_CYCLE to cppc_ffh_csr_read() to fix the
-warning message: "CPPC Cpufreq: cppc_scale_freq_wokrfn: failed
-to read perf counters".
+On Thu, 15 May 2025 at 09:00, Kirill A. Shutemov <kirill@shutemov.name> wrote:
+>
+> On Wed, May 14, 2025 at 12:42:47PM +0200, Ard Biesheuvel wrote:
+> > From: Ard Biesheuvel <ardb@kernel.org>
+> >
+> > In order for pgtable_l5_enabled() to be reliable wherever it is used and
+> > however early, set the associated CPU capability from asm code before
+> > entering the startup C code.
+> >
+> > Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+> > ---
+> >  arch/x86/include/asm/cpufeature.h | 12 +++++++++---
+> >  arch/x86/kernel/cpu/common.c      |  3 ---
+> >  arch/x86/kernel/head_64.S         | 15 +++++++++++++++
+> >  3 files changed, 24 insertions(+), 6 deletions(-)
+> >
+> > diff --git a/arch/x86/include/asm/cpufeature.h b/arch/x86/include/asm/cpufeature.h
+> > index 893cbca37fe9..1b5de40e7bf7 100644
+> > --- a/arch/x86/include/asm/cpufeature.h
+> > +++ b/arch/x86/include/asm/cpufeature.h
+> > @@ -2,10 +2,10 @@
+> >  #ifndef _ASM_X86_CPUFEATURE_H
+> >  #define _ASM_X86_CPUFEATURE_H
+> >
+> > +#ifdef __KERNEL__
+> > +#ifndef __ASSEMBLER__
+> >  #include <asm/processor.h>
+> >
+> > -#if defined(__KERNEL__) && !defined(__ASSEMBLER__)
+> > -
+> >  #include <asm/asm.h>
+> >  #include <linux/bitops.h>
+> >  #include <asm/alternative.h>
+> > @@ -137,5 +137,11 @@ static __always_inline bool _static_cpu_has(u16 bit)
+> >  #define CPU_FEATURE_TYPEVAL          boot_cpu_data.x86_vendor, boot_cpu_data.x86, \
+> >                                       boot_cpu_data.x86_model
+> >
+> > -#endif /* defined(__KERNEL__) && !defined(__ASSEMBLER__) */
+> > +#else /* !defined(__ASSEMBLER__) */
+> > +     .macro  setup_force_cpu_cap, cap:req
+> > +     btsl    $\cap % 32, boot_cpu_data+CPUINFO_x86_capability+4*(\cap / 32)(%rip)
+> > +     btsl    $\cap % 32, cpu_caps_set+4*(\cap / 32)(%rip)
+> > +     .endm
+> > +#endif /* !defined(__ASSEMBLER__) */
+> > +#endif /* defined(__KERNEL__) */
+> >  #endif /* _ASM_X86_CPUFEATURE_H */
+> > diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+> > index f6f206743d6a..c8954dc2fb26 100644
+> > --- a/arch/x86/kernel/cpu/common.c
+> > +++ b/arch/x86/kernel/cpu/common.c
+> > @@ -1752,9 +1752,6 @@ static void __init early_identify_cpu(struct cpuinfo_x86 *c)
+> >       setup_clear_cpu_cap(X86_FEATURE_PCID);
+> >  #endif
+> >
+> > -     if (IS_ENABLED(CONFIG_X86_5LEVEL) && (native_read_cr4() & X86_CR4_LA57))
+> > -             setup_force_cpu_cap(X86_FEATURE_5LEVEL_PAGING);
+> > -
+> >       detect_nopl();
+> >  }
+> >
+> > diff --git a/arch/x86/kernel/head_64.S b/arch/x86/kernel/head_64.S
+> > index 069420853304..191d5947a762 100644
+> > --- a/arch/x86/kernel/head_64.S
+> > +++ b/arch/x86/kernel/head_64.S
+> > @@ -27,6 +27,7 @@
+> >  #include <asm/fixmap.h>
+> >  #include <asm/smp.h>
+> >  #include <asm/thread_info.h>
+> > +#include <asm/cpufeature.h>
+> >
+> >  /*
+> >   * We are not able to switch in one step to the final KERNEL ADDRESS SPACE
+> > @@ -58,6 +59,20 @@ SYM_CODE_START_NOALIGN(startup_64)
+> >        */
+> >       mov     %rsi, %r15
+> >
+> > +#ifdef CONFIG_X86_5LEVEL
+>
+> Is #ifdef really needed?
+>
 
-Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
----
- drivers/acpi/riscv/cppc.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/acpi/riscv/cppc.c b/drivers/acpi/riscv/cppc.c
-index 4cdff387deff6..c1acaeb18eac3 100644
---- a/drivers/acpi/riscv/cppc.c
-+++ b/drivers/acpi/riscv/cppc.c
-@@ -69,11 +69,14 @@ static void cppc_ffh_csr_read(void *read_data)
- 	struct sbi_cppc_data *data = (struct sbi_cppc_data *)read_data;
- 
- 	switch (data->reg) {
--	/* Support only TIME CSR for now */
- 	case CSR_TIME:
- 		data->ret.value = csr_read(CSR_TIME);
- 		data->ret.error = 0;
- 		break;
-+	case CSR_CYCLE:
-+		data->ret.value = csr_read(CSR_CYCLE);
-+		data->ret.error = 0;
-+		break;
- 	default:
- 		data->ret.error = -EINVAL;
- 		break;
--- 
-2.39.2
-
+'Really needed' no but setting this capability is semantically murky
+if the kernel is not configured to support it. But you wouldn't get
+far in that case, so it doesn't matter much in practice.
 
