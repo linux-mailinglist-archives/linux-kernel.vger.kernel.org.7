@@ -1,70 +1,71 @@
-Return-Path: <linux-kernel+bounces-649976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-649978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 078ADAB8BCF
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 18:04:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36326AB8BBE
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 18:00:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F75C9E54C2
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 15:58:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1916C16A78E
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 15:59:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CEB421CC7C;
-	Thu, 15 May 2025 15:58:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68EF521ADA4;
+	Thu, 15 May 2025 15:58:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="FXIKnxBn"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="tGb0Gmhg"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A3CC33DF
-	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 15:58:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FE6B219E93
+	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 15:58:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747324708; cv=none; b=VLkwOIGC7PAD7D/0zg6qsKkchxp2jJG0xeoQuU5Dgz2jlpRXBrD97jp/qps9J+FV6Ekx1XrbH8bnCTt5iu3CqnmxofbmkkuurOG8HtonOZhHSEiV1Xznlx/l97Q03Uvof2IoaQHVuAgxEE0DOcTu37nzDWmDkgaOxfNQ2XRY99c=
+	t=1747324716; cv=none; b=HkVbAVu6Cnob1O4su1ZeDK9tYVoJnJQbYprpDc6NSJEeRIf9ZlcRV4+sg+74MKz1EAHux7f4gDswVAYsZVbqrIcbDiSZ1fn89Bq85l8zrFHZ9hiqfA/Wvw3wLf+LoQKGhU2EK/HnOOQ9kNz1gi1vpBQB5qAhdasFikd66jFRSew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747324708; c=relaxed/simple;
-	bh=exMlTQDf4RFiKIrwMeObZiiPO086hHB7Q5aZrXd0N24=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DNYnM5nY7e6aRC+v0dQfG0EDaIaG5tt+YtqzQdUib0JcSg0XvNW/iWzPyFiEZ/n1GlC9q9JUW6Owl0IfaW1Eu1pVlJ7EbUlECztXnniy/oMcS/OlAjj7OHGiwsDM5BDWokq3pMpj9hQKSNV8TklU+C5LFWo2Gs5LOypQ0qxLoQk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=FXIKnxBn; arc=none smtp.client-ip=148.163.158.5
+	s=arc-20240116; t=1747324716; c=relaxed/simple;
+	bh=S5g6mdPPiEjNLTg64c71ov/RAjI93cjjD5LZ25Od4KA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=mtlSs1yx819mS/9TvsryGiuZTqNHO3pVTN9SvwcqZlOsZjvl/WiTTOcdf/Jyk5YJ3QySRN2fZR/HiT5RCdoFYhcso2/d/Pz/1MKCs9c++AuPL7OPz4uSjSnofjTuH9YAm5RWhg/BkbOZLWc+JdSTdAnLD+vcsJNqzUKLpOtbHBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=tGb0Gmhg; arc=none smtp.client-ip=148.163.156.1
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54FCg4ne002178;
-	Thu, 15 May 2025 15:58:22 GMT
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54FCg1gG016398;
+	Thu, 15 May 2025 15:58:23 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=pp1; bh=P7Ukf0SpztiKCIQuQ/Rf5Gjf58clWg8hNr2QqBBgX
-	GE=; b=FXIKnxBnpUbMXTfhwzrISjz5mqlDN/ky5pc4n+7dfd3cw52QO2PvJV+XR
-	0E2kXFh2LW/A1Bh/myTRVDcdaSgcpx9hSMOqkul3rj+ayShSMk06pQXJe9JY7dKf
-	JtEtrP/jXtQ8wVPTiEMeXU+y8g33pBzhQOd4Tlz45lp59hIk3fMI8fLfn0n/6y1t
-	33hBW2pnHrlWaowCl6V0nFz0H9K8KIhvD2iQ9dODdRS6/zjBegqqURU+gHobDMtG
-	VItq73fSHB1M61/t5drZkpTt79KCoAdzq5JLQ/x4yUMq0aTwfH7QtAZeL/5VxkAl
-	TiOw69MOJyXAhr2hdRJiW/x6AvdJA==
+	:content-transfer-encoding:date:from:in-reply-to:message-id
+	:mime-version:references:subject:to; s=pp1; bh=cXG8eCF5r/sXPTCsv
+	liDu8dy3K68BqnjQtx1eybwJTE=; b=tGb0GmhghVxT3dTgXMhDrg03uS2OyVV4J
+	svwZBpmH1nMgS5SdRkywTso7Z2RqwEHiw8fcd99zJ5gKNx7p7RFGF0njFbkGSNtY
+	lwu0WAoVkXCN/dvsrPJs2mjUAMUWsDBIasaQxEN406EhZOHqhV5w6la/CsI+QfGd
+	b669Nh+6/c7HGPF9mP0T+waoTUTXIJ3U5vN5k0hFSWz0D52JVH8CcqT7b2IgIZks
+	Qj9AHVYttnBgVVczyGYnMU+/eugD8yhFkEloqEYPy4Xa1DMdChlSdT+U9iAO6D1n
+	2/D9PPUhmcXIuJijyyhLAeEgEGIdIytMxl+37SKZlT36YNbL6tNnw==
 Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46n0v6nfv2-1
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46nd4gt8t1-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
 	Thu, 15 May 2025 15:58:22 +0000 (GMT)
 Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 54FE87KP026911;
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 54FE7at0026947;
 	Thu, 15 May 2025 15:58:21 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 46mbfpk2nn-1
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 46mbfpk2nr-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
 	Thu, 15 May 2025 15:58:21 +0000
 Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 54FFwH4n20513180
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 54FFwIdl41222636
 	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 15 May 2025 15:58:17 GMT
+	Thu, 15 May 2025 15:58:18 GMT
 Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 9303F20071;
+	by IMSVA (Postfix) with ESMTP id 4006220071;
+	Thu, 15 May 2025 15:58:18 +0000 (GMT)
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id AA7842006A;
 	Thu, 15 May 2025 15:58:17 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id E4F412006A;
-	Thu, 15 May 2025 15:58:16 +0000 (GMT)
 Received: from heavy.ibm.com (unknown [9.111.40.6])
 	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 15 May 2025 15:58:16 +0000 (GMT)
+	Thu, 15 May 2025 15:58:17 +0000 (GMT)
 From: Ilya Leoshkevich <iii@linux.ibm.com>
 To: Jan Kiszka <jan.kiszka@siemens.com>, Kieran Bingham <kbingham@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>
@@ -72,10 +73,12 @@ Cc: linux-kernel@vger.kernel.org, Heiko Carstens <hca@linux.ibm.com>,
         Vasily Gorbik <gor@linux.ibm.com>,
         Alexander Gordeev <agordeev@linux.ibm.com>,
         Ilya Leoshkevich <iii@linux.ibm.com>
-Subject: [PATCH 0/3] scripts/gdb/symbols: determine KASLR offset on s390 during early boot
-Date: Thu, 15 May 2025 17:52:10 +0200
-Message-ID: <20250515155811.114392-1-iii@linux.ibm.com>
+Subject: [PATCH 1/3] scripts/gdb/symbols: factor out get_vmlinux()
+Date: Thu, 15 May 2025 17:52:11 +0200
+Message-ID: <20250515155811.114392-2-iii@linux.ibm.com>
 X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250515155811.114392-1-iii@linux.ibm.com>
+References: <20250515155811.114392-1-iii@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,45 +87,66 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=IqAecK/g c=1 sm=1 tr=0 ts=68260f1e cx=c_pps a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17 a=dt9VzEwgFbYA:10 a=CljUL56kBcwxVqJzvYQA:9
-X-Proofpoint-ORIG-GUID: ZXYUdZx0lIv4Ll6WpMYUtlOdftN_QIeu
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTE1MDE1NSBTYWx0ZWRfXzllPhZ4/k9H1 Esv/gf/cLon6z444rj3x/VFhhAas3ioPphtDeGd6+QcQ2/Tb2ccLS16dSahZt/ehor33K4GD8U1 7WNUGzfmd41wBSlFvDkWwXI0GU19WZvd3R7HkLcb51i+MD70m0d4Ip28L+t01AwVW3ymIv2pYpi
- BCeYGiVUN1DuIfysktY5gmaiC2MDHTw2cSAb+TwMcoDECLcxb6r/FldP6OyTyd3frG9UhziwKPZ cQ7geg/GUDmBc7ZDfbjFIepIbOIEwavsGMb+ew0VJdWk7aRzbeUm+OXVMBahoATM3YgIRjaqZzm ps78y6Dhv9UTc/QqJeNSp8nO5BB8E4Al09HcWu0XauUnEFoM/oNWAQQWG5wsjiAqif1bRbxplHg
- QnOl3jyjOejdJsnmQWpauV4OCQdFpfmisTrGcwUIRxH8FhHIJsDGqhZZcdRaL7gzA7tnIGTE
-X-Proofpoint-GUID: ZXYUdZx0lIv4Ll6WpMYUtlOdftN_QIeu
+X-Proofpoint-GUID: b0u8MmdQJrspvg4Y_OhhX0acYHw8IFn1
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTE1MDE1NSBTYWx0ZWRfX9RFs29gjx2LM e0Tyu34RdUmm/jA07VBDewphbyhHIAT9RnAeva0vns6PFTkMdYey1/7OhTrUHhJ175RSxcqYr2I ffCFEwIbHGrui2j+DAqPS8m3i/2CkQ+5zDSRpeBI0Ru3pOy5niR8whZReDouAKfw6pgXapXp+P4
+ gEErFreRTXZ6BSZrSKQ/4qZ7IS5W9QRzzGzKHxRfoa7UqerlrTYTnkm1L6bMreCaw4oRApc8o0k WTim4p06H2XySOcGA0c6ulp5uKzBgcOkXeI+u2Vs9i/BJHRu0h8DH28/Jx7C/0C8EcSzS+GYqpW POPi8gS0meVclXTcKbPEVPqXeLCbvYhcNhDfr9uMCpZA/m97+ZSXvo9ZjfoZl5dknpSLVEp5Qcm
+ 9HEmALASkRBEOFAx+yTfgatIyhokSLnxOs5I3oSRuOg8G7UTHdi4GO9Egha32V/2EpFt9n1Q
+X-Proofpoint-ORIG-GUID: b0u8MmdQJrspvg4Y_OhhX0acYHw8IFn1
+X-Authority-Analysis: v=2.4 cv=OsNPyz/t c=1 sm=1 tr=0 ts=68260f1e cx=c_pps a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17 a=dt9VzEwgFbYA:10 a=VnNF1IyMAAAA:8 a=hEpxwc8ILFXnKlI9gXIA:9
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
  definitions=2025-05-15_06,2025-05-15_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
- adultscore=0 lowpriorityscore=0 phishscore=0 impostorscore=0
- priorityscore=1501 clxscore=1011 spamscore=0 mlxlogscore=764 bulkscore=0
- suspectscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505070000
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ suspectscore=0 malwarescore=0 spamscore=0 lowpriorityscore=0 clxscore=1011
+ impostorscore=0 mlxlogscore=898 mlxscore=0 adultscore=0 bulkscore=0
+ phishscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2505070000
  definitions=main-2505150155
 
-Hi,
+Move the code that determines the current vmlinux file into a separate
+function. It will be useful later in order to analyze the kernel image
+in physical memory during s390 early boot.
 
-I noticed that debugging s390 early boot using the support I introduced
-in commit 28939c3e9925 ("scripts/gdb/symbols: determine KASLR offset on
-s390") does not work.
+Signed-off-by: Ilya Leoshkevich <iii@linux.ibm.com>
+---
+ scripts/gdb/linux/symbols.py | 6 +-----
+ scripts/gdb/linux/utils.py   | 9 +++++++++
+ 2 files changed, 10 insertions(+), 5 deletions(-)
 
-The reason is that decompressor does not provide the vmcoreinfo note,
-so KASLR offset needs to be extracted in a different way, which this
-series implements. Patches 1-2 are trivial refactorings, and patch 3 is
-the implementation.
-
-Best regards,
-Ilya
-
-Ilya Leoshkevich (3):
-  scripts/gdb/symbols: factor out get_vmlinux()
-  scripts/gdb/symbols: factor out pagination_off()
-  scripts/gdb/symbols: determine KASLR offset on s390 during early boot
-
- scripts/gdb/linux/symbols.py | 38 +++++++++++++++++++-----------------
- scripts/gdb/linux/utils.py   | 20 +++++++++++++++++++
- 2 files changed, 40 insertions(+), 18 deletions(-)
-
+diff --git a/scripts/gdb/linux/symbols.py b/scripts/gdb/linux/symbols.py
+index b255177301e9..25c4627c60e5 100644
+--- a/scripts/gdb/linux/symbols.py
++++ b/scripts/gdb/linux/symbols.py
+@@ -178,11 +178,7 @@ lx-symbols command."""
+                 saved_states.append({'breakpoint': bp, 'enabled': bp.enabled})
+ 
+         # drop all current symbols and reload vmlinux
+-        orig_vmlinux = 'vmlinux'
+-        for obj in gdb.objfiles():
+-            if (obj.filename.endswith('vmlinux') or
+-                obj.filename.endswith('vmlinux.debug')):
+-                orig_vmlinux = obj.filename
++        orig_vmlinux = utils.get_vmlinux()
+         gdb.execute("symbol-file", to_string=True)
+         kerneloffset = get_kerneloffset()
+         if kerneloffset is None:
+diff --git a/scripts/gdb/linux/utils.py b/scripts/gdb/linux/utils.py
+index 03ebdccf5f69..fc94ff6a6d72 100644
+--- a/scripts/gdb/linux/utils.py
++++ b/scripts/gdb/linux/utils.py
+@@ -251,3 +251,12 @@ def parse_vmcore(s):
+     else:
+         kerneloffset = int(match.group(1), 16)
+     return VmCore(kerneloffset=kerneloffset)
++
++
++def get_vmlinux():
++    vmlinux = 'vmlinux'
++    for obj in gdb.objfiles():
++        if (obj.filename.endswith('vmlinux') or
++            obj.filename.endswith('vmlinux.debug')):
++            vmlinux = obj.filename
++    return vmlinux
 -- 
 2.49.0
 
