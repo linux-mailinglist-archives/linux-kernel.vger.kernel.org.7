@@ -1,202 +1,246 @@
-Return-Path: <linux-kernel+bounces-649913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-649964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07A13AB8AB7
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 17:31:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94797AB8BA2
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 17:56:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F97A16ECE0
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 15:29:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 536C77B6A02
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 15:54:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8049219315;
-	Thu, 15 May 2025 15:29:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFD0F21A452;
+	Thu, 15 May 2025 15:55:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="H0/eBXaN"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="rrCTBBl0"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E54B215F6C;
-	Thu, 15 May 2025 15:29:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C9E2481C4;
+	Thu, 15 May 2025 15:55:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747322951; cv=none; b=VUbpvhiSk9G9xpQaAWErI7bCQ0y2R4UBnb0mPP3uL0+bxoN1QixLosVORiqdFJ4SMH+n8rh6+JpElAGnPJzHmCaEX9EgSJg24Wgj0v4Z0GDDrcKMcK/aHgtW7fWIrRam1DjIIOJP7OBWyssPin6p+HeflpJtBwrHBjkqZdXXJjk=
+	t=1747324546; cv=none; b=D/k8S+xqlFhTBQvYtHarPatP5586FA5ml7A7Fg3zmBHe7EX83++fao2YtkIjhPfuWWhq3RzMrcMiHHuHwKYLC5Cs44++3kI0GhIYU48S29fvNzsA/2SvtHAvTq+ax7YW22ofns06pUZrYFZGomaHL76ictbpb7AXzLLe9cHs2ck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747322951; c=relaxed/simple;
-	bh=wzY+6d/sGnmcDJMn4ZDQ5jNioYD2ve8+ymqCu8LJxn4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MuAI1Z9dz+oO5JrQgSSrzpkUlFvq+lXMXHsY3yC0+Dj0yB9yA2sG8uf1JeGBeKMFYVeYVTQoLh5rs//kUhqUwrC4n/vLGWT0U/IX4d/EShWNptO/MBOgtnvQ77TJXe3kEDa1WyVC+SUl1qwfwDpcpB7dCwKFIDcYcBDqLDbY3kY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=H0/eBXaN; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1747322949; x=1778858949;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=wzY+6d/sGnmcDJMn4ZDQ5jNioYD2ve8+ymqCu8LJxn4=;
-  b=H0/eBXaNAe89FwXAo0V0150EZYTueLMfQnPn9v295MchETBw3PhVW9mE
-   sTWhzd1BklwSPB6cOUf5OwBCXMGiG67H8R4V8yiJ1fd48ZZaaxgxOGxB6
-   hVl8buTtJEIt3cSD49EZL2sWKd29v/1asR7IKgC4AZXzgRVx8WaCdsXw9
-   WpcckqNicjnOn/twLRjp4h/u9j9ES6I75Wx0tQvND0optiomS1HMwcJd9
-   Aa8yLpQBqnzufXvBao0BLCcoWSnmCMHb2WkV/qxir2kWQKcGaQnxQn/nq
-   b4ydOQHl/l0FtYQOrryZdT69ltuKvuXGGYfBcgifmqslHZHcD2TdpIrKq
-   w==;
-X-CSE-ConnectionGUID: zj1yJUZfQRq//toGZmlMQg==
-X-CSE-MsgGUID: Bp/g86dqQTSQX/PZULlG1A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11434"; a="60285042"
-X-IronPort-AV: E=Sophos;i="6.15,291,1739865600"; 
-   d="scan'208";a="60285042"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2025 08:29:08 -0700
-X-CSE-ConnectionGUID: IgnFK8KoTEyhykzgNMormA==
-X-CSE-MsgGUID: XE+ntt9zSKCmZ8lx6SbkdQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,291,1739865600"; 
-   d="scan'208";a="138940815"
-Received: from gkhatri-mobl.amr.corp.intel.com (HELO desk) ([10.125.146.13])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2025 08:29:07 -0700
-Date: Thu, 15 May 2025 08:29:00 -0700
-From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Guenter Roeck <linux@roeck-us.net>,
-	Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>,
-	stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
-	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
-	f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
-	hargar@microsoft.com, broonie@kernel.org,
-	Darren Kenny <darren.kenny@oracle.com>
-Subject: Re: [PATCH 6.6 000/113] 6.6.91-rc2 review
-Message-ID: <20250515152900.vk3vbotiedv2temq@desk>
-References: <20250514125617.240903002@linuxfoundation.org>
- <861004b4-e036-4306-b129-252b9cb983c7@oracle.com>
- <2025051440-sturdily-dragging-3843@gregkh>
- <9af6afb1-9d91-48ea-a212-bcd6d1a47203@oracle.com>
- <e1ea37bd-ea7d-4e8a-bb2f-6be709eb99f4@roeck-us.net>
- <2025051527-travesty-shape-0e3b@gregkh>
- <20250515152557.a4q2cqab4uvhnpia@desk>
+	s=arc-20240116; t=1747324546; c=relaxed/simple;
+	bh=rWO0JWxEoRf/w8MJDqvOKsYDZgxP5f41XaVpF6qf6KY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=G4wxthIzRNr5f3qLXlLlQrn/6wBSAZc+i51yEjzE44Ikg6mpUCMd1YWqYP0Jg6BLco3jtgLW3nKfpYLDN2KLM9wxulrWa9ekQ41ynDDu6fuWNjrZcmeJdKRN8aHvD49z7G8fFi0pp42d/RKWqXHm30M5bMT4i0WKEBtUiFRd3hg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=rrCTBBl0; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54FDn3Xo032297;
+	Thu, 15 May 2025 15:55:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=NDbeIq
+	zSfGVF6IdpJ2cVNjVG3CvEK6xmLyCZ9X3Wz0Q=; b=rrCTBBl0DuaPMw8x8QbUSD
+	4EiBfwzdMOcQ2iyMKRSBGC/IT5SohlXJ7rJPO+Zfhpjzn+4q2ill8a9lJpQJuiOr
+	JEwnbHWRM7Hr3Fmk3XFfpkkNa83YjxyTYs+E5Rg2PvNTbtA3xjkFvrKi+w/uBxWe
+	YencbEGnIxN+c/57h7YO28BEBHF0x5Q6hKE7MYbDGRUkmYy3VIKELrFTY4y0X44T
+	0bWQ7QbFdpQIe+lL5mLCV5h5EmqVT5e0Eeo0bDsqqz/rrRIsyb3ybB5CAkAyCbT/
+	Ty0XeAacYdwi29soyF0bdrF5RuIzxZPyEmPQjjL4pDcCWkPjs+nimipVItYTIPxA
+	==
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46nhg30q2m-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 15 May 2025 15:55:40 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 54FE40p4024279;
+	Thu, 15 May 2025 15:55:39 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 46mbfsb2sm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 15 May 2025 15:55:39 +0000
+Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 54FFtZ7R45875552
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 15 May 2025 15:55:35 GMT
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id E0DD3201D6;
+	Thu, 15 May 2025 15:29:38 +0000 (GMT)
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 7D750201D1;
+	Thu, 15 May 2025 15:29:38 +0000 (GMT)
+Received: from p-imbrenda (unknown [9.152.224.66])
+	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 15 May 2025 15:29:38 +0000 (GMT)
+Date: Thu, 15 May 2025 17:29:36 +0200
+From: Claudio Imbrenda <imbrenda@linux.ibm.com>
+To: "Christoph Schlameuss" <schlameuss@linux.ibm.com>
+Cc: <linux-kernel@vger.kernel.org>, <kvm@vger.kernel.org>,
+        <linux-s390@vger.kernel.org>, <frankja@linux.ibm.com>,
+        <borntraeger@de.ibm.com>, <seiden@linux.ibm.com>, <nsg@linux.ibm.com>,
+        <nrb@linux.ibm.com>, <david@redhat.com>, <hca@linux.ibm.com>,
+        <agordeev@linux.ibm.com>, <svens@linux.ibm.com>, <gor@linux.ibm.com>
+Subject: Re: [PATCH v1 1/5] s390: remove unneeded includes
+Message-ID: <20250515172936.5447d582@p-imbrenda>
+In-Reply-To: <D9WSBQ41MJ2M.1KMCYVAHP1JFF@linux.ibm.com>
+References: <20250514163855.124471-1-imbrenda@linux.ibm.com>
+	<20250514163855.124471-2-imbrenda@linux.ibm.com>
+	<D9WSBQ41MJ2M.1KMCYVAHP1JFF@linux.ibm.com>
+Organization: IBM
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250515152557.a4q2cqab4uvhnpia@desk>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=Cf0I5Krl c=1 sm=1 tr=0 ts=68260e7c cx=c_pps a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17 a=kj9zAlcOel0A:10 a=dt9VzEwgFbYA:10 a=VnNF1IyMAAAA:8 a=YI8s6InO9XsLWCBpwgcA:9 a=CjuIK1q_8ugA:10
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTE1MDE1NSBTYWx0ZWRfX8aWx3wxt8wQS T2NAgj7RpabwoPqzRrasO2EQl1q1WSadL8NiOpBmNICdQAcZ1JrW+xq6BIFJkcy43XS83X89qEI qHcz1ULSPluKcQz1aNxhX0TD/qAsWNEGRARkevi9DbE8UraLeGKcJ+TmL1JnG3ERyOUxb2UOpn8
+ Rg3GRM1u4sYLOZOOiYMvZKapLXVy7Tj8smldyTS5arwAbGzSg4BGv3h5h0DR3z0b/iBBEjQZepy cxxamR+7iwRvsu8BkeQikQegfTniU9Ukkj2zsYE7U/N5FYn8kZW3mmfdexZq9dFjqrXczykfD5e jp08lM7fp5jcNjDx2B/vq2cG1e/XuVWcE9xtTZKKa9dXZBV6nM1B9Qhi8kHXG436tJdwgqneGbO
+ V+SN0Fl9MgNXAa4yn5jS9fIJr3kTqCJ6hmvQ17oNFj+1zNIqUVndhQzfiKMf4Jgo8NT3DSy6
+X-Proofpoint-GUID: WaUJGBACeeYxeRGtT_2qwni0yt2MFamB
+X-Proofpoint-ORIG-GUID: WaUJGBACeeYxeRGtT_2qwni0yt2MFamB
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-15_06,2025-05-15_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 suspectscore=0
+ spamscore=0 malwarescore=0 lowpriorityscore=0 mlxlogscore=999
+ impostorscore=0 phishscore=0 priorityscore=1501 mlxscore=0 bulkscore=0
+ adultscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2505070000
+ definitions=main-2505150155
 
-On Thu, May 15, 2025 at 08:26:04AM -0700, Pawan Gupta wrote:
-> On Thu, May 15, 2025 at 07:35:26AM +0200, Greg Kroah-Hartman wrote:
-> > On Wed, May 14, 2025 at 01:49:06PM -0700, Guenter Roeck wrote:
-> > > On 5/14/25 13:33, Harshit Mogalapalli wrote:
-> > > > Hi Greg,
-> > > > 
-> > > > On 15/05/25 01:35, Greg Kroah-Hartman wrote:
-> > > > > On Thu, May 15, 2025 at 12:29:40AM +0530, Harshit Mogalapalli wrote:
-> > > > > > Hi Greg,
-> > > > > > On 14/05/25 18:34, Greg Kroah-Hartman wrote:
-> > > > > > > This is the start of the stable review cycle for the 6.6.91 release.
-> > > > > > > There are 113 patches in this series, all will be posted as a response
-> > > > > > > to this one.  If anyone has any issues with these being applied, please
-> > > > > > > let me know.
-> > > > > > > 
-> > > > > > > Responses should be made by Fri, 16 May 2025 12:55:38 +0000.
-> > > > > > > Anything received after that time might be too late.
-> > > > > > 
-> > > > > > ld: vmlinux.o: in function `patch_retpoline':
-> > > > > > alternative.c:(.text+0x3b6f1): undefined reference to `module_alloc'
-> > > > > > make[2]: *** [scripts/Makefile.vmlinux:37: vmlinux] Error 1
-> > > > > > 
-> > > > > > We see this build error in 6.6.91-rc2 tag.
-> > > > > 
-> > > > > What is odd about your .config?  Have a link to it?  I can't duplicate
-> > > > > it here on my builds.
-> > > > > 
-> > > > 
-> > > > So this is a config where CONFIG_MODULES is unset(!=y) -- with that we could reproduce it on defconfig + disabling CONFIG_MODULES as well.
-> > > > 
-> > > 
-> > > Key is the combination of CONFIG_MODULES=n with CONFIG_MITIGATION_ITS=y.
-> > 
-> > Ah, this is due to the change in its_alloc() for 6.6.y and 6.1.y by the
-> > call to module_alloc() instead of execmem_alloc() in the backport of
-> > 872df34d7c51 ("x86/its: Use dynamic thunks for indirect branches").
-> 
-> Sorry for the trouble. I wish I had a test to catch problems like this. The
-> standard config targets defconfig, allyesconfig, allnoconfig, etc. do not
-> expose such issues. The only thing that comes close is randconfig.
-> 
-> CONFIG_MODULES=n is not a common setting, I wonder how people find such
-> issues? (trying to figure out how to prevent such issues in future).
-> 
-> > Pawan, any hints on what should be done here instead?
-> 
-> Since dynamic thunks are not possible without CONFIG_MODULES, one option is
-> to adjust the already in 6.6.91-rc2 patch 9f35e331144a (x86/its: Fix build
-> errors when CONFIG_MODULES=n) to also bring the ITS thunk allocation under
-> CONFIG_MODULES.
-> 
-> I am not seeing any issue with below build and boot test:
-> 
->   #!/bin/bash -ex
-> 
->   ./scripts/config --disable CONFIG_MODULES
->   ./scripts/config --disable CONFIG_MITIGATION_ITS
->   # https://github.com/arighi/virtme-ng
->   vng -b
->   vng -- lscpu
-> 
->   # main test
->   ./scripts/config --disable CONFIG_MODULES
->   ./scripts/config --enable CONFIG_MITIGATION_ITS
->   vng -b
->   vng -- lscpu
-> 
->   ./scripts/config --enable CONFIG_MODULES
->   ./scripts/config --disable CONFIG_MITIGATION_ITS
->   vng -b
->   vng -- lscpu
-> 
->   ./scripts/config --enable CONFIG_MODULES
->   ./scripts/config --enable CONFIG_MITIGATION_ITS
->   vng -b
->   vng -- lscpu
-> 
->   echo "PASS"
-> 
-> Similar change is required for 6.1 and 5.15 as well. 6.12 is fine because
-> it uses execmem_alloc().
-> 
-> --- 8< ---
-> From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-> Subject: [PATCH 6.6] x86/its: Fix build errors when CONFIG_MODULES=n
-> 
-> From: Eric Biggers <ebiggers@google.com>
-> 
-> commit 9f35e33144ae5377d6a8de86dd3bd4d995c6ac65 upstream.
-> 
-> Fix several build errors when CONFIG_MODULES=n, including the following:
-> 
-> ../arch/x86/kernel/alternative.c:195:25: error: incomplete definition of type 'struct module'
->   195 |         for (int i = 0; i < mod->its_num_pages; i++) {
-> 
->   [ pawan: backport: Bring ITS dynamic thunk code under CONFIG_MODULES ]
-> 
-> Fixes: 872df34d7c51 ("x86/its: Use dynamic thunks for indirect branches")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Eric Biggers <ebiggers@google.com>
-> Acked-by: Dave Hansen <dave.hansen@intel.com>
-> Tested-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-> Reviewed-by: Alexandre Chartre <alexandre.chartre@oracle.com>
-> Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+On Thu, 15 May 2025 15:56:44 +0200
+"Christoph Schlameuss" <schlameuss@linux.ibm.com> wrote:
 
-Agh!
+> You added one unnecessary import to arch/s390/kvm/intercept.c
+> 
+> With that removed:
+> Reviewed-by: Christoph Schlameuss <schlameuss@linux.ibm.com>
+> 
+> 
+> On Wed May 14, 2025 at 6:38 PM CEST, Claudio Imbrenda wrote:
+> > Many files don't need to include asm/tlb.h or asm/gmap.h.
+> > On the other hand, asm/tlb.h does need to include asm/gmap.h.
+> >
+> > Remove all unneeded includes so that asm/tlb.h is not directly used by
+> > s390 arch code anymore. Remove asm/gmap.h from a few other files as
+> > well, so that now only KVM code, mm/gmap.c, and asm/tlb.h include it.
+> >
+> > Signed-off-by: Claudio Imbrenda <imbrenda@linux.ibm.com>
+> > ---
+> >  arch/s390/include/asm/tlb.h | 1 +
+> >  arch/s390/include/asm/uv.h  | 1 -
+> >  arch/s390/kvm/intercept.c   | 1 +
+> >  arch/s390/mm/fault.c        | 1 -
+> >  arch/s390/mm/gmap.c         | 1 -
+> >  arch/s390/mm/init.c         | 1 -
+> >  arch/s390/mm/pgalloc.c      | 2 --
+> >  arch/s390/mm/pgtable.c      | 1 -
+> >  8 files changed, 2 insertions(+), 7 deletions(-)
+> >
+> > diff --git a/arch/s390/include/asm/tlb.h b/arch/s390/include/asm/tlb.h
+> > index f20601995bb0..56d5f9e0eb2e 100644
+> > --- a/arch/s390/include/asm/tlb.h
+> > +++ b/arch/s390/include/asm/tlb.h
+> > @@ -36,6 +36,7 @@ static inline bool __tlb_remove_folio_pages(struct mmu_gather *tlb,
+> >  
+> >  #include <asm/tlbflush.h>
+> >  #include <asm-generic/tlb.h>
+> > +#include <asm/gmap.h>
+> >  
+> >  /*
+> >   * Release the page cache reference for a pte removed by
+> > diff --git a/arch/s390/include/asm/uv.h b/arch/s390/include/asm/uv.h
+> > index 46fb0ef6f984..eeb2db4783e6 100644
+> > --- a/arch/s390/include/asm/uv.h
+> > +++ b/arch/s390/include/asm/uv.h
+> > @@ -16,7 +16,6 @@
+> >  #include <linux/bug.h>
+> >  #include <linux/sched.h>
+> >  #include <asm/page.h>
+> > -#include <asm/gmap.h>
+> >  #include <asm/asm.h>
+> >  
+> >  #define UVC_CC_OK	0
+> > diff --git a/arch/s390/kvm/intercept.c b/arch/s390/kvm/intercept.c
+> > index a06a000f196c..b4834bd4d216 100644
+> > --- a/arch/s390/kvm/intercept.c
+> > +++ b/arch/s390/kvm/intercept.c
+> > @@ -16,6 +16,7 @@
+> >  #include <asm/irq.h>
+> >  #include <asm/sysinfo.h>
+> >  #include <asm/uv.h>
+> > +#include <asm/gmap.h>  
+> 
+> This import is not needed.
 
-Signed-off-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+it is needed here, but it can be removed in patch 5
+(I'll fix that for v2)
+
+> 
+> >  
+> >  #include "kvm-s390.h"
+> >  #include "gaccess.h"
+> > diff --git a/arch/s390/mm/fault.c b/arch/s390/mm/fault.c
+> > index da84ff6770de..3829521450dd 100644
+> > --- a/arch/s390/mm/fault.c
+> > +++ b/arch/s390/mm/fault.c
+> > @@ -40,7 +40,6 @@
+> >  #include <asm/ptrace.h>
+> >  #include <asm/fault.h>
+> >  #include <asm/diag.h>
+> > -#include <asm/gmap.h>
+> >  #include <asm/irq.h>
+> >  #include <asm/facility.h>
+> >  #include <asm/uv.h>
+> > diff --git a/arch/s390/mm/gmap.c b/arch/s390/mm/gmap.c
+> > index a94bd4870c65..4869555ff403 100644
+> > --- a/arch/s390/mm/gmap.c
+> > +++ b/arch/s390/mm/gmap.c
+> > @@ -24,7 +24,6 @@
+> >  #include <asm/machine.h>
+> >  #include <asm/gmap.h>
+> >  #include <asm/page.h>
+> > -#include <asm/tlb.h>
+> >  
+> >  /*
+> >   * The address is saved in a radix tree directly; NULL would be ambiguous,
+> > diff --git a/arch/s390/mm/init.c b/arch/s390/mm/init.c
+> > index afa085e8186c..074bf4fb4ce2 100644
+> > --- a/arch/s390/mm/init.c
+> > +++ b/arch/s390/mm/init.c
+> > @@ -40,7 +40,6 @@
+> >  #include <asm/kfence.h>
+> >  #include <asm/dma.h>
+> >  #include <asm/abs_lowcore.h>
+> > -#include <asm/tlb.h>
+> >  #include <asm/tlbflush.h>
+> >  #include <asm/sections.h>
+> >  #include <asm/sclp.h>
+> > diff --git a/arch/s390/mm/pgalloc.c b/arch/s390/mm/pgalloc.c
+> > index e3a6f8ae156c..ddab36875370 100644
+> > --- a/arch/s390/mm/pgalloc.c
+> > +++ b/arch/s390/mm/pgalloc.c
+> > @@ -12,8 +12,6 @@
+> >  #include <asm/mmu_context.h>
+> >  #include <asm/page-states.h>
+> >  #include <asm/pgalloc.h>
+> > -#include <asm/gmap.h>
+> > -#include <asm/tlb.h>
+> >  #include <asm/tlbflush.h>
+> >  
+> >  unsigned long *crst_table_alloc(struct mm_struct *mm)
+> > diff --git a/arch/s390/mm/pgtable.c b/arch/s390/mm/pgtable.c
+> > index 9901934284ec..7df70cd8f739 100644
+> > --- a/arch/s390/mm/pgtable.c
+> > +++ b/arch/s390/mm/pgtable.c
+> > @@ -20,7 +20,6 @@
+> >  #include <linux/ksm.h>
+> >  #include <linux/mman.h>
+> >  
+> > -#include <asm/tlb.h>
+> >  #include <asm/tlbflush.h>
+> >  #include <asm/mmu_context.h>
+> >  #include <asm/page-states.h>  
+> 
+
 
