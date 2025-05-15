@@ -1,131 +1,163 @@
-Return-Path: <linux-kernel+bounces-649607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-649610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7552AB86AA
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 14:44:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5330DAB86B0
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 14:45:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A9AD4C275E
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 12:44:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 683253B5D97
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 12:45:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3932298CC8;
-	Thu, 15 May 2025 12:44:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B27C9298CDD;
+	Thu, 15 May 2025 12:45:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="O6RRyUKt"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eRHT+ezS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ECEE1FAC54
-	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 12:44:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15126746E;
+	Thu, 15 May 2025 12:45:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747313064; cv=none; b=TZQI5WFMoI/kPwZ7GAcdCfS6Xi0fsLwZZ5gF0b7LPU4yhMdFK+7DpLbNvEaylfKUcxonhB510SbjG5RZ2/XIoZKfVTfGPIYzTl60pFZKG4vd8Ak9xGDUZTDJldCD9Uesl6eDgSt/MKLLJDGuA+PLKri4uMI8YOe4tgnp5D1ubWA=
+	t=1747313120; cv=none; b=Kb3IUy8Ok1UIFXP/g3Fj7q7H/QqV8hSN504RwTB58XbTNzIfdifxCbngkLUAp7skuUoijm36syP3dvwZjJlrgNlImap4/7vTs9nCl2FiWOa4TKvltl3GiV5n5DxU+Bb142DmGNI1TtgeAMCrhMdMMWWg6s8srKASNeOPNkpxRDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747313064; c=relaxed/simple;
-	bh=3dlSMLkE5eysI1Q7wOsUof6VrGPy5tGwHiOqA9GfYyo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QckQ/fm6JwrUM5QpTTcM9kRX3ubRuNXN79JxgukCXVL6RfyKLzPEsBnEjmhHkGjYy8yXe3g5pAdpeA41aLFT/1sO9wZXICrhWZMLJkrJDdXaIDf52ILqsYD1KxLnqLCYSHnvTD580v4KcOB3XVpjYGNBni6AUwBv98DJ/Mo894Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=O6RRyUKt; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1747313060;
-	bh=3dlSMLkE5eysI1Q7wOsUof6VrGPy5tGwHiOqA9GfYyo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=O6RRyUKtj5NWRw3FZOAnkrUQMxnt+Ut1Fm3NvwkN7GXDV35QvfbXtWrbV7nsNzrPW
-	 r+ZF/a3i0ozamFbTAkxNVTnaHiuFc/OSl0PElmtP0N7ccMZVF0l+j3Xs5kVuoW7qBC
-	 9N9g1W+2PVOlLVxQHl+m6ZxAvpuQA4yIqPOcZTOok5Ujd+44URnhRyoYAI+g1MitMI
-	 Xz9mtNYj6ktSgSKw32sJqdLHRjJzGJYYQzMsEUslPBkUTDOadfX2yDT2Jdc5Vjpebz
-	 bUKmdkdQwRNewZ2XGcLFYlEH3W1H5ywh+hmlTu4Xefs2ol32AmIJIDiSJ9zk5VnOaT
-	 TkjBwaE4WqXpw==
-Received: from [192.168.1.90] (unknown [82.76.59.134])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: cristicc)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 7E51217E0202;
-	Thu, 15 May 2025 14:44:19 +0200 (CEST)
-Message-ID: <7729efd6-fa88-4022-b8d8-b32fe49bf4aa@collabora.com>
-Date: Thu, 15 May 2025 15:44:18 +0300
+	s=arc-20240116; t=1747313120; c=relaxed/simple;
+	bh=n6t0QGGKj4SxZGOv74+Gcw/BcrsNt79VDm3c8SVl93w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RPvNS13KPY67TQb6lkT4KPUDETGiYk84MjQkc1xYjK8waNyKdNgQvkElwLZ7YvHLg0byaeShq1vO3hZot/rzJt9pFCib7AMyzcF7wDEeqPpZ9xJmgkFs/2LTlKnbV+tBD5u6TmcmV9rszysLZRjf1bGSOur7y+HLUEY2Jw9FrvM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eRHT+ezS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E19AC4CEE7;
+	Thu, 15 May 2025 12:45:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747313116;
+	bh=n6t0QGGKj4SxZGOv74+Gcw/BcrsNt79VDm3c8SVl93w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=eRHT+ezSxCLkK6rCH9X1xj4GDVblvbfhHjGtn5uHF3zDo6VYUgUpuZafkswY6xQwm
+	 kocZ+wHnYHAtAr1tKxrTcMDv89QazEO8ZoYK1mTDDg5JJW0bqsBjVXIktW8rKlvyfc
+	 nBtsEf87aeq1x/LDf5ygfk6YGL2RdgvcLPXOJleaND8vbGWftcHdtq9yVlgWLO6xBm
+	 mHrmxUAzUKl5jOMVTY6j8PTOHt4iSSfxJV7HCoOYh4QTIQ7rEPmFOHNkSSHv9o+00t
+	 AEU69Cir+C6BAjjLu/VCzt2faZv6YDQNIN6UtDZhpSaxQPuGzzmA1LnCo328sIeBs6
+	 XHFUkbj4C28Ng==
+Date: Thu, 15 May 2025 14:45:10 +0200
+From: Danilo Krummrich <dakr@kernel.org>
+To: Daniel Almeida <daniel.almeida@collabora.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] rust: irq: add support for request_irq()
+Message-ID: <aCXh1g5FWNiz7exb@pollux>
+References: <20250514-topics-tyr-request_irq-v3-0-d6fcc2591a88@collabora.com>
+ <20250514-topics-tyr-request_irq-v3-1-d6fcc2591a88@collabora.com>
+ <aCUQ0VWgoxdmIUaS@pollux>
+ <A7E3A124-AF77-4A4A-B4E2-AE7DDB1CE007@collabora.com>
+ <aCXYaCGvO_tI1OOh@pollux>
+ <39C56E3E-07C6-44BB-B5F6-38090F037032@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 06/23] drm/connector: hdmi: Use YUV420 output format as
- an RGB fallback
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>,
- Dave Stevenson <dave.stevenson@raspberrypi.com>,
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
- Dmitry Baryshkov <lumag@kernel.org>, kernel@collabora.com,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20250425-hdmi-conn-yuv-v4-0-5e55e2aaa3fa@collabora.com>
- <20250425-hdmi-conn-yuv-v4-6-5e55e2aaa3fa@collabora.com>
- <amnwcb3sxo7nbfobag3v2ojowqvrpqqkqykg3qfhxwxzp5olur@fibxgdcs2mee>
-Content-Language: en-US
-From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-In-Reply-To: <amnwcb3sxo7nbfobag3v2ojowqvrpqqkqykg3qfhxwxzp5olur@fibxgdcs2mee>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <39C56E3E-07C6-44BB-B5F6-38090F037032@collabora.com>
 
-Hi Maxime,
+On Thu, May 15, 2025 at 09:27:51AM -0300, Daniel Almeida wrote:
+> 
+> 
+> > On 15 May 2025, at 09:04, Danilo Krummrich <dakr@kernel.org> wrote:
+> > 
+> > On Thu, May 15, 2025 at 08:54:35AM -0300, Daniel Almeida wrote:
+> >> Hi Danilo,
+> >> 
+> >>> On 14 May 2025, at 18:53, Danilo Krummrich <dakr@kernel.org> wrote:
+> >>> 
+> >>> On Wed, May 14, 2025 at 04:20:51PM -0300, Daniel Almeida wrote:
+> >>>> +/// // This is running in process context.
+> >>>> +/// fn register_irq(irq: u32, handler: Handler) -> Result<Arc<Registration<Handler>>> {
+> >>>> +///     let registration = Registration::register(irq, flags::SHARED, c_str!("my-device"), handler);
+> >>>> +///
+> >>>> +///     // You can have as many references to the registration as you want, so
+> >>>> +///     // multiple parts of the driver can access it.
+> >>>> +///     let registration = Arc::pin_init(registration, GFP_KERNEL)?;
+> >>> 
+> >>> This makes it possible to arbitrarily extend the lifetime of an IRQ
+> >>> registration. However, we must guarantee that the IRQ is unregistered when the
+> >>> corresponding device is unbound. We can't allow drivers to hold on to device
+> >>> resources after the corresponding device has been unbound.
+> >>> 
+> >>> Why does the data need to be part of the IRQ registration itself? Why can't we
+> >>> pass in an Arc<T> instance already when we register the IRQ?
+> >>> 
+> >>> This way we'd never have a reason to ever access the Registration instance
+> >>> itself ever again and we can easily wrap it as Devres<irq::Registration> -
+> >>> analogously to devm_request_irq() on the C side - without any penalties.
+> >>> 
+> >>>> +///     // The handler may be called immediately after the function above
+> >>>> +///     // returns, possibly in a different CPU.
+> >>>> +///
+> >>>> +///     {
+> >>>> +///         // The data can be accessed from the process context too.
+> >>>> +///         let mut data = registration.handler().0.lock();
+> >>>> +///         *data = 42;
+> >>>> +///     }
+> >>>> +///
+> >>>> +///     Ok(registration)
+> >>>> +/// }
+> >>> 
+> >> 
+> >> Up until this point, there was no need for the data to not be inline with the
+> >> registration. This new design would force an Arc, which, apart from the
+> >> heap-allocation, is restrictive for users.
+> > 
+> > Does the current design not also imply a heap allocation heap allocation? With
+> > my proposal irq::Registration::new() can just return an irq::Registration
+> > instance, not an impl PinInit that you need to stuff into a Box or Arc instead.
+> > Hence, there shouldn't be a difference.
+> 
+> Well, not really, because this impl PinInit can be assigned to something larger
+> that is already pinned, like drm::Device::Data for example, which is (or was)
+> already behind an Arc, or any other private data in other subsystems.
+> 
+> IIUC what you proposed has yet another indirection. If we reuse the example
+> from above, that would be an Arc for the drm Data, and another Arc for the
+> handler itself?
 
-On 5/13/25 4:35 PM, Maxime Ripard wrote:
-> Hi,
-> 
-> On Fri, Apr 25, 2025 at 01:26:57PM +0300, Cristian Ciocaltea wrote:
->> Try to make use of YUV420 when computing the best output format and
->> RGB cannot be supported for any of the available color depths.
->>
->> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
->> ---
->>  drivers/gpu/drm/display/drm_hdmi_state_helper.c | 22 +++++++++++++++++-----
->>  1 file changed, 17 insertions(+), 5 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/display/drm_hdmi_state_helper.c b/drivers/gpu/drm/display/drm_hdmi_state_helper.c
->> index 9e0a468073acbb2477eff1abef1c09d63620afaa..1fba10b92a6baa49150b6ff1e96bf2c2739bf269 100644
->> --- a/drivers/gpu/drm/display/drm_hdmi_state_helper.c
->> +++ b/drivers/gpu/drm/display/drm_hdmi_state_helper.c
->> @@ -648,14 +648,26 @@ hdmi_compute_config(const struct drm_connector *connector,
->>  				       8, connector->max_bpc);
->>  	int ret;
->>  
->> -	/*
->> -	 * TODO: Add support for YCbCr420 output for HDMI 2.0 capable
->> -	 * devices, for modes that only support YCbCr420.
->> -	 */
->>  	ret = hdmi_compute_format_bpc(connector, conn_state, mode, max_bpc,
->>  				      HDMI_COLORSPACE_RGB);
->> +	if (!ret)
->> +		return 0;
-> 
-> Sorry, I missed it on the previous iteration, but this condition
-> inversion compared to the rest of the function is throwing me off :)
-> 
-> I believe something like
-> 
-> If (ret) {
->    if (connector->ycbcr_420_allowed) {
->       hdmi_compute_format_bpc(..., HDMI_COLORSPACE_YUV420)
->    } else {
->      drm_dbg_kms("Can't use YUV420")
->    }
-> }
-> 
-> Would be more natural
+Can't you implement Handler for drm::Device::Data and e.g. make Registration
+take an Arc<T: Handler>?
 
-Yep, will do.
+The irq::Registration itself doesn't need to be allocated dynamically, so it'd
+still be a single allocation, no?
 
-Please let me know if I can start preparing v5, as I'm not sure if you
-managed to also check the test-related patches.
-
-Thanks,
-Cristian
+> I definitely see your point here, I am just trying to brainstorm another way of
+> doing this.
+> > 
+> >> Can’t we use Devres with the current implementation?
+> >> 
+> >> IIUC from a very cursory glance, all that would mean is that you'd have to call
+> >> try_access() on your handler, which should be fine?
+> > 
+> > Well, that would work indeed.
+> > 
+> > But people will - with good reason - be upset that every access to the handler's
+> > data needs to be guarded with the RCU read side critical section implied by
+> > Revocable and hence Devres.
+> 
+> True, I totally missed that.
+> 
+> > 
+> > We can easily avoid that in this case, hence we should do it.
+> 
+> — Daniel
+> 
 
