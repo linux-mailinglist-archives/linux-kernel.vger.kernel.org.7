@@ -1,273 +1,272 @@
-Return-Path: <linux-kernel+bounces-650538-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-650540-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58BA7AB92B3
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 01:13:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ADAFAAB92B9
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 01:14:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 178EF7A9B67
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 23:12:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4AC797ADAC6
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 23:13:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59AE928D821;
-	Thu, 15 May 2025 23:13:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D1F628DEEF;
+	Thu, 15 May 2025 23:14:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h1/VX6hA"
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="oEJD+/+i"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12EEC19FA93;
-	Thu, 15 May 2025 23:13:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E81B8289350;
+	Thu, 15 May 2025 23:13:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747350816; cv=none; b=ZH4Tu33epPVYbseC3az5yomyh093bQWPE+2RZHNinygEEQjBVOVC1fzpiuDhkA5LcmpubV5dkq4tVFixk6Pp1uOY7JPJEORA3G99RvxqNOY3+Msqg187w4cXnxule3qGSI9RMmty7V7yRZtXfwB2huU2w/V/8sdF+vXH2UzWIz0=
+	t=1747350843; cv=none; b=SXpSwf0LqeLGw8SQaKlFgu//KnH6Y4tr79jK1VJD1co+nqxDCRb/skWlT2ua59gKg+RlMGDvMiL5XoMEl/eqQ6IkksQFd/Aom6swMrKHdqo4H3z/IAdgn9ltZq6p4qbCVY48tg3MwyLkcLfS53aAUJlZ08hLD0IsO8J7NNMqQ8c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747350816; c=relaxed/simple;
-	bh=rMGTe2f0xjfvVRMXuNW1byFydKvdBVL6wOaiad7a4jA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=p3RpnOw6fMhUEEXjgEK8ELJ5Spq2A5d1hMrV0Hcn4ycFibIHnWNBwmqcfs7ztBWd36SVKaRYKBYTxEazqOFTB4IBQg5MIpMbBsoMR7uHBZ0jZFJdv8rKbbAS9n0dukdVfrRBvloLcf+OhI07oxEBVjlIjU/1O//I21zwBYAphZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h1/VX6hA; arc=none smtp.client-ip=209.85.215.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-b26df8f44e6so1112449a12.2;
-        Thu, 15 May 2025 16:13:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747350813; x=1747955613; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=HZLtSoPTWIDXtlzB5/eV7RAMuqxvAneOk4mPIHABE40=;
-        b=h1/VX6hAvltAHSf0TqQeMK3+pJ41W1he583GUGEMqS1ldBRaoI4+1gMVlBQkOwbzNY
-         LL2NUOPJYtGJgUPYktafQRwhTkJuv42tLrdBIzskBdZuxFJoL6TXlwZQyVYTArT/QbUE
-         TPtXi6xlh1n8//n4Ruby+8/Obs75F5QjkrnENu6Z9spr4Lubhy0L4lTxc2KGDY4WMK2H
-         H97i1XfoiWR8QgnQNHhMHTkD5Et9xmdapmG+u8ZnO0WXq3KYNSP1DkTSUszjBQ1+idVZ
-         2cEgTapIgVczRJyKgZKmzRL3ka4gJjlUIM4zq/5vbQCMB9HTvUiM8KegFqwDbxTkAMsk
-         qKcA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747350813; x=1747955613;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HZLtSoPTWIDXtlzB5/eV7RAMuqxvAneOk4mPIHABE40=;
-        b=bj0HfCcMGtG7w+hwe19h3wBUcjvEcHqHUk+KrNEoc5GSvQ07vPnzj1aICfTYwDmFKt
-         yiVeTXMGS8ogSvN5FFQd6VcqrBK4wyasHCHEBdu4H8ZgT+O1FWUGsniHCITzaSxALn+M
-         WaXMi5kRMS10hKdkB0KLyhEylqjHxub3WZSh9zlWfnYZpjGO5qX4VwCYxfNiiAyL7pRd
-         sb53U461E+A3R/Gh1sgl7kqo4leFJbREct3bob//YVe/DJ2cyFV36/kejsGVEeHwTQ2T
-         oTxS3M1rL/DHwEICaZfNfySRkEGYSopfa6bUvbK82tJYNlfi4f28zRunC5eu6ib5FGfG
-         x+rg==
-X-Forwarded-Encrypted: i=1; AJvYcCUXIWwSn4AtegDXy3s+dRlhu+CWII7mOL7pwwYa8Z36dfwU0oSBsofXBIj+0nc/Yi3LAZB4qz8zb/VlklU=@vger.kernel.org, AJvYcCW+Xf0fHNIpwRVVjNQNPhUWczufdFnYBwjQ1lUGR+m0o0mstK/RDJsbVp++7Bch/vRmvtjh4+jo5/ID1Chk8Iz8@vger.kernel.org
-X-Gm-Message-State: AOJu0YzED66OXzUlbHJfEe8wl3shNEjcWorBUvFj0LNsB8/M8t6lZg6C
-	eEziTITaXCnYx2ZwkGvCzgwh/jxW8WoRRgFedAO28N0AVw5ORZqQhEavUktM
-X-Gm-Gg: ASbGncsRG2VtRA+Fzp80d956UTVHuV2KsGRnbMu8X4YzW2Sq1Ck0IhhLBwIx7OXKGbO
-	JF5aC8CCgZ3PZz9nZA46t3sCgu32F4Qs/pNNKgeKA1gO33JmRiOK+MyD5P3REyVC2egPGskL7ZX
-	UvFPytNAYgV0Gz8+fpyfLy0ndvHKqj/WLqtmErD2kRKuLo5Ot3+cw/coNNigp1TAalQilovBZ8E
-	2FGyrDaDdCauqjas+2dsW49Lg2ZEsOs9cFZhqzC5OYPiGooqKCMeVYVmB0oNRBQt10dL+9caH2j
-	0YZKRmZSpC/73o182iVJLjuiTr1LofzIBPWNtukfh9Uy/ZkM8+XU3WSqhNsFTARQt6H6uGV3r+4
-	zQETGpS2TtqBH
-X-Google-Smtp-Source: AGHT+IEMWAyLw9og40QZUUd+RwjdVaZHBVBVptNM65YbRcHC1wud+bnH5LoJ2EJNeTB+z/GNtESxkA==
-X-Received: by 2002:a17:903:2449:b0:223:619e:71da with SMTP id d9443c01a7336-231d455d993mr14362505ad.49.1747350813449;
-        Thu, 15 May 2025 16:13:33 -0700 (PDT)
-Received: from localhost (c-73-158-218-242.hsd1.ca.comcast.net. [73.158.218.242])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-231d4e980c0sm2966485ad.126.2025.05.15.16.13.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 May 2025 16:13:32 -0700 (PDT)
-From: Stanislav Fomichev <stfomichev@gmail.com>
-To: netdev@vger.kernel.org
-Cc: davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	andrew+netdev@lunn.ch,
-	horms@kernel.org,
-	jiri@resnulli.us,
-	shuah@kernel.org,
-	stfomichev@gmail.com,
-	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Subject: [PATCH net] selftests: net: validate team flags propagation
-Date: Thu, 15 May 2025 16:13:32 -0700
-Message-ID: <20250515231332.4120071-1-stfomichev@gmail.com>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1747350843; c=relaxed/simple;
+	bh=KqMuxf9SaKWHq2sSCg2ifS1SPQDPbNmvhFTbFsJ80aA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PHi++mEN48c1U4H1Zqt4Qf4tahv/eUHBOLmgL7anj3WD2B7wz/0JKoXNwi+h5T+yOGgxWmgl/0tbWVXZvtjnv8s9BJduwLcm9R8aSF8gPtIx0Sw6kfCgGJvJ43pEY+PiPfGGyWO1sJoxnEXdiB4LuHa0mXWAJpSRUKAWJa7gDWA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=oEJD+/+i; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
+	:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=l2HTjJLXCkXP9njX/Q5a/gHMnA3q+ubjVW5ykhl9oWI=; b=oEJD+/+ivxS5ZnxMiRO3xEvLuK
+	sZ+vLy8qZArr8TTsXZS509uANu+4A16KAEc0ROcLCe83KbXiMnNhxpW5lstEsXgrAIJJie3ZgVjt8
+	PM60dkM9bevTKEBQ+UYye/perG3OQwDFZGo4XgvKtTGdfjRJkIYAqBl+8RTZ5fNFHfCd7TXP/IgoH
+	vqmH2tU6VXbYz/tK5Fl4fCqNpIoa5viMf2mySByX05s/2//nFTFEvAnoIHXzAJP3GWh3X472LrF2l
+	u5tPCxgW144uZsOufE8RS1CcN846R0lL6gt1T/I9ZeTNYjJeuo6dRAMnryseIjFszECXASDUeZK8+
+	BZjavgPQ==;
+Received: from [50.53.25.54] (helo=[192.168.254.17])
+	by desiato.infradead.org with esmtpsa (Exim 4.98.1 #2 (Red Hat Linux))
+	id 1uFhlo-000000000Tl-0jCW;
+	Thu, 15 May 2025 23:13:46 +0000
+Message-ID: <f79ad154-2bbe-4d21-8cd2-6ae3e5be2ed7@infradead.org>
+Date: Thu, 15 May 2025 16:13:39 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v10 01/13] Documentation: x86: Add AMD Hardware Feedback
+ Interface documentation
+To: Mario Limonciello <superm1@kernel.org>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: Mario Limonciello <mario.limonciello@amd.com>,
+ Perry Yuan <perry.yuan@amd.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+ "H . Peter Anvin" <hpa@zytor.com>, Jonathan Corbet <corbet@lwn.net>,
+ Huang Rui <ray.huang@amd.com>, "Gautham R . Shenoy"
+ <gautham.shenoy@amd.com>, "Rafael J . Wysocki" <rafael@kernel.org>,
+ Viresh Kumar <viresh.kumar@linaro.org>,
+ "open list:AMD HETERO CORE HARDWARE FEEDBACK DRIVER"
+ <platform-driver-x86@vger.kernel.org>,
+ "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)"
+ <linux-kernel@vger.kernel.org>,
+ "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+ "open list:AMD PSTATE DRIVER" <linux-pm@vger.kernel.org>,
+ Bagas Sanjaya <bagasdotme@gmail.com>
+References: <20250515211950.3102922-1-superm1@kernel.org>
+ <20250515211950.3102922-2-superm1@kernel.org>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20250515211950.3102922-2-superm1@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Cover three recent cases:
-1. missing ops locking for the lowers during netdev_sync_lower_features
-2. missing locking for dev_set_promiscuity (plus netdev_ops_assert_locked
-   with a comment on why/when it's needed)
-3. rcu lock during team_change_rx_flags
+Hi,
 
-Verified that each one triggers when the respective fix is reverted.
-Not sure about the placement, but since it all relies on teaming,
-added to the teaming directory.
+On 5/15/25 2:19 PM, Mario Limonciello wrote:
+> From: Perry Yuan <Perry.Yuan@amd.com>
+> 
+> Introduce a new documentation file, `amd_hfi.rst`, which delves into the
+> implementation details of the AMD Hardware Feedback Interface and its
+> associated driver, `amd_hfi`. This documentation describes how the
+> driver provides hint to the OS scheduling which depends on the capability
+> of core performance and efficiency ranking data.
+> 
+> This documentation describes
+> * The design of the driver
+> * How the driver provides hints to the OS scheduling
+> * How the driver interfaces with the kernel for efficiency ranking data.
+> 
+> Reviewed-by: Bagas Sanjaya <bagasdotme@gmail.com>
+> Signed-off-by: Perry Yuan <Perry.Yuan@amd.com>
+> Reviewed-by: Mario Limonciello <mario.limonciello@amd.com>
+> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+> ---
+>  Documentation/arch/x86/amd-hfi.rst | 133 +++++++++++++++++++++++++++++
+>  Documentation/arch/x86/index.rst   |   1 +
+>  2 files changed, 134 insertions(+)
+>  create mode 100644 Documentation/arch/x86/amd-hfi.rst
+> 
+> diff --git a/Documentation/arch/x86/amd-hfi.rst b/Documentation/arch/x86/amd-hfi.rst
+> new file mode 100644
+> index 0000000000000..8c1799acb6fe6
+> --- /dev/null
+> +++ b/Documentation/arch/x86/amd-hfi.rst
+> @@ -0,0 +1,133 @@
+> +.. SPDX-License-Identifier: GPL-2.0
+> +
+> +======================================================================
+> +Hardware Feedback Interface For Hetero Core Scheduling On AMD Platform
+> +======================================================================
+> +
+> +:Copyright: 2025 Advanced Micro Devices, Inc. All Rights Reserved.
+> +
+> +:Author: Perry Yuan <perry.yuan@amd.com>
+> +:Author: Mario Limonciello <mario.limonciello@amd.com>
+> +
+> +Overview
+> +--------
+> +
+> +AMD Heterogeneous Core implementations are comprised of more than one
+> +architectural class and CPUs are comprised of cores of various efficiency and
+> +power capabilities: performance-oriented *classic cores* and power-efficient
+> +*dense cores*. As such, power management strategies must be designed to
+> +accommodate the complexities introduced by incorporating different core types.
+> +Heterogeneous systems can also extend to more than two architectural classes
+> +as well. The purpose of the scheduling feedback mechanism is to provide
+> +information to the operating system scheduler in real time such that the
+> +scheduler can direct threads to the optimal core.
+> +
+> +The goal of AMD's heterogeneous architecture is to attain power benefit by
+> +sending background thread to the dense cores while sending high priority
 
-One ugly bit is that I add NETIF_F_LRO to netdevsim; there is no way
-to trigger netdev_sync_lower_features without it.
+                      threads
 
-Signed-off-by: Stanislav Fomichev <stfomichev@gmail.com>
----
- drivers/net/netdevsim/netdev.c                |  2 +
- net/core/dev.c                                | 10 ++-
- .../selftests/drivers/net/team/Makefile       |  2 +-
- .../testing/selftests/drivers/net/team/config |  1 +
- .../selftests/drivers/net/team/propagation.sh | 79 +++++++++++++++++++
- 5 files changed, 92 insertions(+), 2 deletions(-)
- create mode 100755 tools/testing/selftests/drivers/net/team/propagation.sh
+> +threads to the classic cores. From a performance perspective, sending
+> +background threads to dense cores can free up power headroom and allow the
+> +classic cores to optimally service demanding threads. Furthermore, the area
+> +optimized nature of the dense cores allows for an increasing number of
+> +physical cores. This improved core density will have positive multithreaded
+> +performance impact.
+> +
+> +AMD Heterogeneous Core Driver
+> +-----------------------------
+> +
+> +The ``amd_hfi`` driver delivers the operating system a performance and energy
+> +efficiency capability data for each CPU in the system. The scheduler can use
+> +the ranking data from the HFI driver to make task placement decisions.
+> +
+> +Thread Classification and Ranking Table Interaction
+> +----------------------------------------------------
+> +
+> +The thread classification is used to select into a ranking table that
+> +describes an efficiency and performance ranking for each classification.
+> +
+> +Threads are classified during runtime into enumerated classes. The classes
+> +represent thread performance/power characteristics that may benefit from
+> +special scheduling behaviors. The below table depicts an example of thread
+> +classification and a preference where a given thread should be scheduled
+> +based on its thread class. The real time thread classification is consumed
+> +by the operating system and is used to inform the scheduler of where the
+> +thread should be placed.
+> +
+> +Thread Classification Example Table
+> +^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> ++----------+----------------+-------------------------------+---------------------+---------+
+> +| class ID | Classification | Preferred scheduling behavior | Preemption priority | Counter |
+> ++----------+----------------+-------------------------------+---------------------+---------+
+> +| 0        | Default        | Performant                    | Highest             |         |
+> ++----------+----------------+-------------------------------+---------------------+---------+
+> +| 1        | Non-scalable   | Efficient                     | Lowest              | PMCx1A1 |
+> ++----------+----------------+-------------------------------+---------------------+---------+
+> +| 2        | I/O bound      | Efficient                     | Lowest              | PMCx044 |
+> ++----------+----------------+-------------------------------+---------------------+---------+
+> +
+> +Thread classification is performed by the hardware each time that the thread is switched out.
+> +Threads that don't meet any hardware specified criteria will be classified as "default".
 
-diff --git a/drivers/net/netdevsim/netdev.c b/drivers/net/netdevsim/netdev.c
-index 0e0321a7ddd7..3bd1f8cffee8 100644
---- a/drivers/net/netdevsim/netdev.c
-+++ b/drivers/net/netdevsim/netdev.c
-@@ -879,11 +879,13 @@ static void nsim_setup(struct net_device *dev)
- 			 NETIF_F_SG |
- 			 NETIF_F_FRAGLIST |
- 			 NETIF_F_HW_CSUM |
-+			 NETIF_F_LRO |
- 			 NETIF_F_TSO;
- 	dev->hw_features |= NETIF_F_HW_TC |
- 			    NETIF_F_SG |
- 			    NETIF_F_FRAGLIST |
- 			    NETIF_F_HW_CSUM |
-+			    NETIF_F_LRO |
- 			    NETIF_F_TSO;
- 	dev->max_mtu = ETH_MAX_MTU;
- 	dev->xdp_features = NETDEV_XDP_ACT_HW_OFFLOAD;
-diff --git a/net/core/dev.c b/net/core/dev.c
-index 0d891634c692..4debd4b8e0f5 100644
---- a/net/core/dev.c
-+++ b/net/core/dev.c
-@@ -9188,8 +9188,16 @@ static int __dev_set_promiscuity(struct net_device *dev, int inc, bool notify)
- 
- 		dev_change_rx_flags(dev, IFF_PROMISC);
- 	}
--	if (notify)
-+	if (notify) {
-+		/* The ops lock is only required to ensure consistent locking
-+		 * for `NETDEV_CHANGE` notifiers. This function is sometimes
-+		 * called without the lock, even for devices that are ops
-+		 * locked, such as in `dev_uc_sync_multiple` when using
-+		 * bonding or teaming.
-+		 */
-+		netdev_ops_assert_locked(dev);
- 		__dev_notify_flags(dev, old_flags, IFF_PROMISC, 0, NULL);
-+	}
- 	return 0;
- }
- 
-diff --git a/tools/testing/selftests/drivers/net/team/Makefile b/tools/testing/selftests/drivers/net/team/Makefile
-index 2d5a76d99181..eaf6938f100e 100644
---- a/tools/testing/selftests/drivers/net/team/Makefile
-+++ b/tools/testing/selftests/drivers/net/team/Makefile
-@@ -1,7 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0
- # Makefile for net selftests
- 
--TEST_PROGS := dev_addr_lists.sh
-+TEST_PROGS := dev_addr_lists.sh propagation.sh
- 
- TEST_INCLUDES := \
- 	../bonding/lag_lib.sh \
-diff --git a/tools/testing/selftests/drivers/net/team/config b/tools/testing/selftests/drivers/net/team/config
-index b5e3a3aad4bf..636b3525b679 100644
---- a/tools/testing/selftests/drivers/net/team/config
-+++ b/tools/testing/selftests/drivers/net/team/config
-@@ -1,5 +1,6 @@
- CONFIG_DUMMY=y
- CONFIG_IPV6=y
- CONFIG_MACVLAN=y
-+CONFIG_NETDEVSIM=m
- CONFIG_NET_TEAM=y
- CONFIG_NET_TEAM_MODE_LOADBALANCE=y
-diff --git a/tools/testing/selftests/drivers/net/team/propagation.sh b/tools/testing/selftests/drivers/net/team/propagation.sh
-new file mode 100755
-index 000000000000..849a5f2cb3a7
---- /dev/null
-+++ b/tools/testing/selftests/drivers/net/team/propagation.sh
-@@ -0,0 +1,79 @@
-+#!/bin/bash
-+# SPDX-License-Identifier: GPL-2.0
-+
-+set -e
-+
-+NSIM_LRO_ID=$((256 + RANDOM % 256))
-+NSIM_LRO_SYS=/sys/bus/netdevsim/devices/netdevsim$NSIM_LRO_ID
-+
-+NSIM_DEV_SYS_NEW=/sys/bus/netdevsim/new_device
-+NSIM_DEV_SYS_DEL=/sys/bus/netdevsim/del_device
-+
-+cleanup()
-+{
-+	ip link del dummyteam &>/dev/null
-+	ip link del team0 &>/dev/null
-+	echo $NSIM_LRO_ID > $NSIM_DEV_SYS_DEL
-+}
-+
-+# Trigger LRO propagation to the lower.
-+# https://lore.kernel.org/netdev/aBvOpkIoxcr9PfDg@mini-arch/
-+team_lro()
-+{
-+	# using netdevsim because it supports NETIF_F_LRO
-+	NSIM_LRO_NAME=$(find $NSIM_LRO_SYS/net -maxdepth 1 -type d ! \
-+		-path $NSIM_LRO_SYS/net -exec basename {} \;)
-+
-+	ip link add name team0 type team
-+	ip link set $NSIM_LRO_NAME down
-+	ip link set dev $NSIM_LRO_NAME master team0
-+	ip link set team0 up
-+	ethtool -K team0 large-receive-offload off
-+
-+	ip link del team0
-+}
-+
-+# Trigger promisc propagation to the lower during IFLA_MASTER.
-+# https://lore.kernel.org/netdev/20250506032328.3003050-1-sdf@fomichev.me/
-+team_promisc()
-+{
-+	ip link add name dummyteam type dummy
-+	ip link add name team0 type team
-+	ip link set dummyteam down
-+	ip link set team0 promisc on
-+	ip link set dev dummyteam master team0
-+	ip link set team0 up
-+
-+	ip link del team0
-+	ip link del dummyteam
-+}
-+
-+# Trigger promisc propagation to the lower via netif_change_flags (aka
-+# ndo_change_rx_flags).
-+# https://lore.kernel.org/netdev/20250514220319.3505158-1-stfomichev@gmail.com/
-+team_change_flags()
-+{
-+	ip link add name dummyteam type dummy
-+	ip link add name team0 type team
-+	ip link set dummyteam down
-+	ip link set dev dummyteam master team0
-+	ip link set team0 up
-+	ip link set team0 promisc on
-+
-+	# Make sure we can add more L2 addresses without any issues.
-+	ip link add link team0 address 00:00:00:00:00:01 team0.1 type macvlan
-+	ip link set team0.1 up
-+
-+	ip link del team0.1
-+	ip link del team0
-+	ip link del dummyteam
-+}
-+
-+trap cleanup EXIT
-+modprobe netdevsim || :
-+echo $NSIM_LRO_ID > $NSIM_DEV_SYS_NEW
-+udevadm settle
-+team_lro
-+team_promisc
-+team_change_flags
-+modprobe -r netdevsim || :
+                        I would say                        are classified
+
+> +
+> +AMD Hardware Feedback Interface
+> +--------------------------------
+> +
+> +The Hardware Feedback Interface provides to the operating system information
+> +about the performance and energy efficiency of each CPU in the system. Each
+> +capability is given as a unit-less quantity in the range [0-255]. A higher
+> +performance value indicates higher performance capability, and a higher
+> +efficiency value indicates more efficiency. Energy efficiency and performance
+> +are reported in separate capabilities in the shared memory based ranking table.
+> +
+> +These capabilities may change at runtime as a result of changes in the
+> +operating conditions of the system or the action of external factors.
+> +Power Management FW is responsible for detecting events that would require
+
+s/FW/firmware/                                                s/would//
+
+> +a reordering of the performance and efficiency ranking. Table updates would
+
+                                                                       s/would//
+
+> +happen relatively infrequently and occur on the time scale of seconds or more.
+> +
+> +The following events trigger a table update:
+> +    * Thermal Stress Events
+> +    * Silent Compute
+> +    * Extreme Low Battery Scenarios
+> +
+> +The kernel or a userspace policy daemon can use these capabilities to modify
+> +task placement decisions. For instance, if either the performance or energy
+> +capabilities of a given logical processor becomes zero, it is an indication
+> +that the hardware recommends to the operating system to not schedule any tasks
+> +on that processor for performance or energy efficiency reasons, respectively.
+> +
+> +Implementation details for Linux
+> +--------------------------------
+> +
+> +The implementation of threads scheduling consists of the following steps:
+> +
+> +1. A thread is spawned and scheduled to the ideal core using the default
+> +   heterogeneous scheduling policy.
+> +2. The processor profiles thread execution and assigns an enumerated
+> +   classification ID.
+> +   This classification is communicated to the OS via logical processor
+> +   scope MSR.
+> +3. During the thread context switch out the operating system consumes the
+> +   workload(WL) classification which resides in a logical processor scope MSR.
+
+      workload (WL)
+
+> +4. The OS triggers the hardware to clear its history by writing to an MSR,
+> +   after consuming the WL classification and before switching in the new thread.
+> +5. If due to the classification, ranking table, and processor availability,
+> +   the thread is not on its ideal processor, the OS will then consider
+> +   scheduling the thread on its ideal processor (if available).
+> +
+> +Ranking Table
+> +-------------
+> +The ranking table is a shared memory region that is used to communicate the
+> +performance and energy efficiency capabilities of each CPU in the system.
+> +
+> +The ranking table design includes rankings for each APIC ID in the system and
+> +rankings both for performance and efficiency for each workload classification.
+> +
+> +.. kernel-doc:: drivers/platform/x86/amd/hfi/hfi.c
+> +   :doc: amd_shmem_info
+> +
+> +Ranking Table update
+> +---------------------------
+> +The power management firmware issues an platform interrupt after updating the
+> +ranking table and is ready for the operating system to consume it. CPUs receive
+> +such interrupt and read new ranking table from shared memory which PCCT table
+> +has provided, then ``amd_hfi`` driver parse the new table to provide new
+
+                                         parses
+
+> +consume data for scheduling decisions.
+
+
 -- 
-2.49.0
+~Randy
 
 
