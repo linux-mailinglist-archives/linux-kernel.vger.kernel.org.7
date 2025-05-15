@@ -1,94 +1,88 @@
-Return-Path: <linux-kernel+bounces-649557-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-649566-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41459AB8626
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 14:20:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7D2EAB862F
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 14:22:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BCA7C18923D0
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 12:17:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6824516CE1D
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 12:19:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E986529995C;
-	Thu, 15 May 2025 12:13:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E172A298C21;
+	Thu, 15 May 2025 12:15:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Q/nEksP4"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="ADdBRD9A"
+Received: from mail-wr1-f66.google.com (mail-wr1-f66.google.com [209.85.221.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BF9129CB57
-	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 12:13:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B392298C0E
+	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 12:15:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747311224; cv=none; b=Evl4xS4zfOvHsM4xY/WPpF6dtG9OQHbwdTD0DRK8/f4H+08sECiFd2ZoN+xSxeCWcxRNr1G5DAf2nUYsUChkI/TGOWdd/z+8Tf43/bXtwAmZs1lJ9VSsJwmBzNQunWXqSl1FOLPPRiVHOKvpwB9PV/NHXd6EgJ0ZYZoPwMSryqs=
+	t=1747311343; cv=none; b=NAFJSJ8qBuswiNiUjAqvQEAeAJk5xqJxeU6Szj62G6OpH+VUr0Wu3MQ9184nr3ss2bKe50Rwcr3T4BULshBFfMN9QrR3xbK2R6Dc22fgilAVPGLCf15UWInTOFp+DoniZRLf8POw+N29xLDkzWISL6yqvBSjVOjRUPBFk78QxdU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747311224; c=relaxed/simple;
-	bh=SMzCIxMMZEO9396KBs8rN2h+xUSN4fGX3RDCLaGg6m4=;
+	s=arc-20240116; t=1747311343; c=relaxed/simple;
+	bh=xSdV6ElSngf/vG72YPll51aXchF4HcqQwTl808G2t4I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kLRV0vnVVjwAHK232HbdAZfwa2e5+s02zOyiejCdxoMXlMn+362RVOB3JHm8WcxmxzbtPcCBVTIcqrgnEQ09s9zHfeT+bJmo2la6JCj5cuBLu7YAuU2TQYtyz7s5j1oCmaCLB76YX6voaw8VyOWya10637NxitL/gZHfj9K/ODo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Q/nEksP4; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1747311223; x=1778847223;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=SMzCIxMMZEO9396KBs8rN2h+xUSN4fGX3RDCLaGg6m4=;
-  b=Q/nEksP4GSkatiz0YkufmgnbDu+IrqVsQG+NqE3NZuWkIYMcmCRxrWj2
-   mlfAmHXXD+DqZyGtek/b2BqwnHpUBx7wdLuDDEFjTL7wqgUkDSNtk3C5t
-   d+aVDpSKSsBHOZjnfQpxO3Jstfjf+sMXDnEdkIgUKEPFsLiQikL4peIll
-   DU+ri6RqxW+OCnMEbZiaYLgE7pUbtwr8faaqjBJb06xqVjdD/LMt+iUcs
-   A98Tf0uU49y6YrFCD+jsv8MSrHzFpF0tF2gwRYnPuUDhmnFt5yJ9/uPCB
-   CL9mtzh74xY/C3bz+hO0kfWu+rPxg7SzLLRkBpom1tAub3azGdJ5NfgKc
-   w==;
-X-CSE-ConnectionGUID: kRv/SIHmRmKd6RHxOdESiw==
-X-CSE-MsgGUID: 3H1ZlCboSZS/uUPPhxYECw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11434"; a="48360738"
-X-IronPort-AV: E=Sophos;i="6.15,291,1739865600"; 
-   d="scan'208";a="48360738"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2025 05:13:42 -0700
-X-CSE-ConnectionGUID: W8qAHBCoTcuDraKKNLsqjA==
-X-CSE-MsgGUID: k/GCdjmUSmOyXOBwmWmUKA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,291,1739865600"; 
-   d="scan'208";a="169290312"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2025 05:13:37 -0700
-Date: Thu, 15 May 2025 15:13:33 +0300
-From: Raag Jadav <raag.jadav@intel.com>
-To: "Usyskin, Alexander" <alexander.usyskin@intel.com>
-Cc: Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	"De Marchi, Lucas" <lucas.demarchi@intel.com>,
-	Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>,
-	"Vivi, Rodrigo" <rodrigo.vivi@intel.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	"Poosa, Karthik" <karthik.poosa@intel.com>,
-	"Abliyev, Reuven" <reuven.abliyev@intel.com>,
-	"Weil, Oren jer" <oren.jer.weil@intel.com>,
-	"linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-	"intel-xe@lists.freedesktop.org" <intel-xe@lists.freedesktop.org>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	"intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Tomas Winkler <tomasw@gmail.com>
-Subject: Re: [PATCH v9 02/12] mtd: add driver for intel graphics non-volatile
- memory device
-Message-ID: <aCXabQt_nhiTa1pF@black.fi.intel.com>
-References: <20250424132536.3043825-1-alexander.usyskin@intel.com>
- <20250424132536.3043825-3-alexander.usyskin@intel.com>
- <aBCcdPbIxthARrMj@black.fi.intel.com>
- <CY5PR11MB636656BB76C04BD77F0ADB25ED90A@CY5PR11MB6366.namprd11.prod.outlook.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=XBj0wJWRtSTfXqBCSCRuqN9aXIKrjqC0BR2sV5NaI+4r5Rlj1OGLuJ4fYbv7kBxazFeiZitoAmelJy1tGdp0yRqsPUV/zrjfzOY0c3jWbnK95Vw/BnP94Er1w+si3+t7zWFDQYoaCXxc6ekwgBRxmLJpwozMNNT+qDM1zpRBDs4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=ADdBRD9A; arc=none smtp.client-ip=209.85.221.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f66.google.com with SMTP id ffacd0b85a97d-3a1c85e77d7so534211f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 05:15:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1747311339; x=1747916139; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=uH0GAaSc7W4vyN6o8zkocK26uhT3TpN4oC3foWYOu0s=;
+        b=ADdBRD9AcbnKshz/eD2TFVWwb2POcIt5HT6uUGFZ9U36qmMch2tq7Mi4DPWARrAum6
+         u94eglNkOoebzboAOTkGycG/1StEHSGusu8BGitMs5GKxNpEE9SaXju7xuzJh/jXZMcH
+         QRqVtz8AV28MKXQbeuxm5cacaM5njc2ZYU6A/DKWh70aojo4rV9ueHMyvalQoIgB7Hau
+         mJyJErP2M3uEpN3aauoW5Pe1Qdba9ILjkOi5tqHEujrjSlzo6JTy/ltWfOX3G6QGe1D+
+         pHYw+eo5cs6ymkHlhVcB8cso5+rRhsmFa8Rse3vGuLoJhs+41FxSFEryc1fhqDm1edkK
+         bNMQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747311339; x=1747916139;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uH0GAaSc7W4vyN6o8zkocK26uhT3TpN4oC3foWYOu0s=;
+        b=IUHOgC2QhBSwxFRbA2yz/CXYsLv+38cIpXxlo9jt9WeoW5MPF8IOkk1R9vW/rW2GqU
+         IOMMgEK724u66/7SFoqCB9hINelC7ZM4gmxlZdiaSLTtQA4J+IFyQbdv6F+cIkH/sDno
+         /5nUjxlVA1QkkH1W8ghfvAMqS3VRjyr/bUmP6RoJwqjUMjvkbQPLjhlUP9FRbsUzFsg7
+         BJa9k612mFpHLefAFEVJCgLRHoqFVZxLJHrhUvieDC2Yvy7DD5aYXMe6UDGWkp6qw43u
+         t1E4t9FC33VWAjOm0VdSn/LVtb8MR7hBJl7GYZ8XEHe/s8WtOoOIAEo+Tzz7IjeucVQi
+         QaEw==
+X-Forwarded-Encrypted: i=1; AJvYcCWMvBpir4cnvdz+QnnnLl+MZrZcRt4fNgENTKeATak02y/A41SUHBU8uC6s0+ZGFp2K/SzFMuOzQcDuGwM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzA5M9MjxBke7rD61D8gBYw59Rvm2WCydQAMkTXm3lpbqmk2ABT
+	b19GCI5L0TK8+G/yqK2aRR4zEM6lHNA3tiYPaR0GX7i9NgjzPbgSFnH6LYA4gaQ=
+X-Gm-Gg: ASbGnctcL7oT0deFfphIeC74fjdWMuBnV/3Owa/cO/+3CpqxZ3yMp/6vK8RmzspeMWA
+	RgmpAU3+WX1GDuEJjvD6pAtSV01k+K0p7EYKxzEhH/cpvF7wppetttCM9qEl0U3AmUIAF1huMBP
+	i2R4H7hvnXZm3Rswwignstp4oA13Ia4VZGLTWN63RF0QezTfWPG+pf7zVXFKGp9Lr9EqK8GraB0
+	RMkAtdka46jRVF0U0D+ii1c1ZsBdJbGmQpDRihR7D8POmzsl944x8dj6QP/g74cz+UzMO22ukKR
+	TmUPdaL+pAW9nDmFqK2dH8qq4g8ewl1SAmPB7BsLLBagnQuOpFwEbKb9PoU0vJo/NuMnZSNUYbC
+	e+NoWaf1FacR0Jd+erDeP1V2D3RcgEjgXjOOkAUPt5Uqu
+X-Google-Smtp-Source: AGHT+IGvHF0ghUmj2Kk8tVmCLsRiUBezE1BL4S2vxUPaMXUrfbDHNuKJGNldtJMeEAHQa/avJuPj0w==
+X-Received: by 2002:a05:6000:1789:b0:3a3:4a30:9286 with SMTP id ffacd0b85a97d-3a3537a8fdamr2085268f8f.42.1747311339495;
+        Thu, 15 May 2025 05:15:39 -0700 (PDT)
+Received: from u94a (2001-b011-fa04-b2d3-b2dc-efff-fee8-7e7a.dynamic-ip6.hinet.net. [2001:b011:fa04:b2d3:b2dc:efff:fee8:7e7a])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74237761f23sm11153625b3a.77.2025.05.15.05.15.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 15 May 2025 05:15:39 -0700 (PDT)
+Date: Thu, 15 May 2025 20:15:32 +0800
+From: Shung-Hsi Yu <shung-hsi.yu@suse.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, 
+	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, 
+	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com, f.fainelli@gmail.com, 
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, 
+	hargar@microsoft.com, broonie@kernel.org, kees@kernel.org
+Subject: Re: [PATCH 6.14 000/197] 6.14.7-rc2 review
+Message-ID: <vrvefaimjqkseuoyuhgg6omt2ypgp5v6xwwuxihj2t5jidizyr@ir5w67k4kl36>
+References: <20250514125625.496402993@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,55 +91,22 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CY5PR11MB636656BB76C04BD77F0ADB25ED90A@CY5PR11MB6366.namprd11.prod.outlook.com>
+In-Reply-To: <20250514125625.496402993@linuxfoundation.org>
 
-On Thu, May 15, 2025 at 03:41:08PM +0530, Usyskin, Alexander wrote:
-> > On Thu, Apr 24, 2025 at 04:25:26PM +0300, Alexander Usyskin wrote:
-> > > Add auxiliary driver for intel discrete graphics
-> > > non-volatile memory device.
-
+On Wed, May 14, 2025 at 03:04:16PM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.14.7 release.
+> There are 197 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 ...
+> Kees Cook <kees@kernel.org>
+>     mm: vmalloc: support more granular vrealloc() sizing
 
-> > > +	for (n = 0, i = 0; i < INTEL_DG_NVM_REGIONS; i++) {
-> > > +		if (!invm->regions[i].name)
-> > > +			continue;
-> > > +
-> > > +		name = kasprintf(GFP_KERNEL, "%s.%s",
-> > > +				 dev_name(&aux_dev->dev), invm-
-> > >regions[i].name);
-> > > +		if (!name)
-> > > +			continue;
-> > > +		nvm->regions[n].name = name;
-> > > +		nvm->regions[n].id = i;
-> > > +		n++;
-> > > +	}
-> > > +	nvm->nregions = n; /* in case where kasprintf fail */
-> > 
-> > Considering kasprintf failure, should we move forward if n == 0?
-> Not sure if adding exit path here adds something positive to driver
-> other than complexity.
+The above is causing a slow down in BPF verifier[1]. Assuming BPF
+selftests are somewhat representing of real world BPF programs, the slow
+down would be around 2x on average, but for an unrealistic worth-case it
+could go as high as 40x[2].
 
-With an error path already in place it shouldn't be too complex, but upto you.
-
-...
-
-> > > +static void intel_dg_mtd_remove(struct auxiliary_device *aux_dev)
-> > > +{
-> > > +	struct intel_dg_nvm *nvm = dev_get_drvdata(&aux_dev->dev);
-> > > +
-> > > +	if (!nvm)
-> > > +		return;
-> > 
-> > Are we expecting this?
-> > 
-> > > +	dev_set_drvdata(&aux_dev->dev, NULL);
-> > 
-> > Do we need this?
-> Is there guaranty by auxiliary device that after release nothing is called?
-
-Any reports/link to read about such issues? My understanding is that driver
-->remove() callbacks are bus lock held and there won't be an active instance
-to be called after unbind.
-
-Raag
+1: https://lore.kernel.org/stable/20250515041659.smhllyarxdwp7cav@desk/
+2: https://lore.kernel.org/stable/g4fpslyse2s6hnprgkbp23ykxn67q5wabbkpivuc3rro5bivo4@sj2o3nd5vwwm/
 
