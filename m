@@ -1,190 +1,126 @@
-Return-Path: <linux-kernel+bounces-650477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-650480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B7AAAB91F7
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 23:58:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CD5AAB9219
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 00:04:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35A591BC679B
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 21:58:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 130C31BC6BA6
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 22:04:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 675BB288CA8;
-	Thu, 15 May 2025 21:58:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01AA3289E3F;
+	Thu, 15 May 2025 22:04:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ev9ltSrX"
-Received: from mail-io1-f52.google.com (mail-io1-f52.google.com [209.85.166.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MbwBTVo2"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 387C419CCEA;
-	Thu, 15 May 2025 21:57:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17D382192EB;
+	Thu, 15 May 2025 22:04:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747346281; cv=none; b=kXON6gZeTB3tQsokto+Y/bHwEx/VnqBAskk3PlYLj3h2wMqYRHJnZOqAqOjPIHsNHMlFPq+XnDmz4FADVjMdUjTUVS6KgGYun/efDwld/Keb/JRffBN8jwQNbVI80NDKryfMCCDwSNk85UG4FzuayHnbrQBtKynDdELYsr3fn6M=
+	t=1747346642; cv=none; b=AXCs4a5FiSQLTngTloisBf5HrW5KN2+zQCPbDXPi6njk7XDbkdWH7dJDVPBeJ94RfoLt9MQi6ny3m5VR3pNQXKJXy67Hr7TabsoZzBArDKtHvx9dE4nIJos5Eb1KmOevDZzWh7YlKpGt62FcF5UJC6lfQAscxgFzrf9WDik5Qh8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747346281; c=relaxed/simple;
-	bh=51+I3ne6qhWVkEbmeXWBV5Ymb9zgRr3MD2wvqeP+id0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RXpOb7R3BmuXveHE8kjOvaf4r68GXv46EtBZWMrk0t3AhVh8W/mL5MwYo70Ddk7wQeYVZXlqxePQy2k+FW1pWTIKlv4YgydhYP4YYAAjGsp60qP6UCTQagret+OxgxxALdVXQxjZx6emQ/n4FJo8lKxUcWCY8SIswf3JZXhYpJg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ev9ltSrX; arc=none smtp.client-ip=209.85.166.52
+	s=arc-20240116; t=1747346642; c=relaxed/simple;
+	bh=myqbMmuISLBc8NWdxpmMnZmTWdPoef+ZJQqAK75OSMA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dEUEdJYD/k5Tcjie3mr3F8wOPet648kTIGMarhcqVzL9aTDSXv0V7rjH0yk8qigYeZQY68mBWHQNEx/leNEM8Pcz9ISygf48B80Pw37QriNQyu+3SNdKJMgwRqFAybetuqZa8T7nWtniw5xEX3vvOotJe+MzSAqP2PIP8q1G3hk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MbwBTVo2; arc=none smtp.client-ip=209.85.210.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f52.google.com with SMTP id ca18e2360f4ac-864a071b44bso39389539f.3;
-        Thu, 15 May 2025 14:57:59 -0700 (PDT)
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-73bf5aa95e7so1539367b3a.1;
+        Thu, 15 May 2025 15:04:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747346279; x=1747951079; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZWPIGi65hQLBAgzuyd+N24zLjShm5Vi7JZs1Wtdqzgg=;
-        b=ev9ltSrXWpsZtoEQJSUCYj+hXxFNb7a637HFTMG9emsESCva0YxKmE2om6kcFREJXL
-         L6UXDqienCLbxD2GxJQB+vb3APRst3DKWXABCh2ZJjApRX6RgNBtSo7Zfi2wqP5b4A0X
-         VdZlW8aGQfexE0UMtA3S4G8tM6ruUvN7APPhRrCWmFcXsilLr/e4NmKGwoEEYEWdqO5V
-         IOD2jT5ySRgJhx2oZ4Sw1M+YrPPZq4YrCuDPixKDz/mCW7G3Ijq9H7k2jk6d5OL3Tb5R
-         JI8jYQXLZ4mOeC1zaRzbMNvk2xyCSc63gIL/R6+U2WOUK/2nNfgh8k6l9LB4YbKbvvTm
-         pDnQ==
+        d=gmail.com; s=20230601; t=1747346640; x=1747951440; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=CLZVl59i+cLGSuNYnHKizgt3XCFfJAE/Fk11Cib4KvY=;
+        b=MbwBTVo2euxlb1eP0FC6kpidutOfrlXMq1ntuG50B/bT9u/86NMGbdqWg1RxE+yMMV
+         2Yvje8OoMRXghWUqp0hK4t64VJgP0u6ZXC43/K/VkEZfjpEoq+rmcOh6ELkqvKjfzNPT
+         1neISC9snX/siowBR/BG6vqIj6ZTvML0iVgAoTQP1C7GVZJYNk5GLWm53/3CB6FKjaWQ
+         ISEgOyRTS/VDL+qCoo43/n7hHF9Wi7zcBR9J+L2IxxhCfiPYQryIoGir0xhADD3t3fh9
+         vxCzORCDZ0gh5i6vsXctsbYLQYkPRiCf//JK//JAvtCVmmMJQf8UOTZdCe6qdcngADtc
+         j0kA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747346279; x=1747951079;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZWPIGi65hQLBAgzuyd+N24zLjShm5Vi7JZs1Wtdqzgg=;
-        b=oimqQffC3oJ3tvxgBblatLQsa7kf8w3gkQPgP2Rn6Fbxp/R5QuwKpGAuGunVZMOEXo
-         5GzKAuqjSoSX3ZICF3I1LWVwsBVggs5SO7SSix3Hwz85lgEc7iqfkQFp4K/pnrtBRbaK
-         qKtQB1OrWywIdYpP3m11DdGM2NOMjLopFeENYuS3/9U5ECNNOr02hsbwMQYMkUiNAY5f
-         xBIkF+IGisPW4pqsJWWmuTxXpzQZ+YzrMWE+CZH3nveviS7doqMb00sUl81znBl+GzvF
-         /2W5fyoN2ls9bHZbMj/I3ozMK1gBFF7ffZc8iVo72kC2qrR7bNec+57AgMXWpv0RfLJp
-         QBEg==
-X-Forwarded-Encrypted: i=1; AJvYcCWcKKVhg09/Gtbovz6PDKyLbj3YOsbgpwNnCM91GwRxoPNx8nNzkSfCO3YND45PY7xQsNpqhttmSo6YftZn@vger.kernel.org, AJvYcCXzg8pnzRzeigQWaK/tJCWtjx1FYbshX+EQysWNFrWhfV8JzfGnhbqkqChNYB7WUUXn9sH8/cjq065malX8@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhyqskdKYFHhquFBTVcFado06ci2cdD/dFDv4RCvNcGU/cwgSp
-	qojEVtDu6shAhMCL6Re+hJ4Xkr5lGpznHmWlC5LHig54eTB09NXQ1P+jYjmFRSfbtD4Ij8GPeKW
-	ht425BeDAEP4CElcY9CqP9MAtsS7JAb95Ww==
-X-Gm-Gg: ASbGncuz4itbb7k4FgjZgjE4KTIzTCBakJByBmR5WXf6Sj9BHeqkmXuI7OXAC7PBYpR
-	Uc0YMqN/hJNFMXL6typwBRJE8fkClwrWuby7aN2D7sx+MPaI6cFPaQQOh47yO8n7d/fvdzA4cr1
-	LdUPbnj9/iDiTiGL+OF1YNiphhUOymdJNY5s451jDb9kceGbzqmKrEzm2KUrFqFgE=
-X-Google-Smtp-Source: AGHT+IGZP3ADNraxTdjsvTc5WLL4t8pJQzUr1tqWOb0/phnP0YQRlQC1v5nNou1wGhWO4usCosXrLStB1fTg71/ymrw=
-X-Received: by 2002:a05:6602:4c0e:b0:864:9cc7:b847 with SMTP id
- ca18e2360f4ac-86a24df598emr71745639f.14.1747346279173; Thu, 15 May 2025
- 14:57:59 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1747346640; x=1747951440;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CLZVl59i+cLGSuNYnHKizgt3XCFfJAE/Fk11Cib4KvY=;
+        b=t8Qo76/QEPoN/mPBOtkn7Er5p1qrVwoqoL56P8Xkscil9Qpk7AQCOFfcjBRJU7CR7y
+         Q/24ky0koRHulVhEZSBiB33XjL5cwuv+6q0p6+fP2qsw4PNr8oPP4be5MFfuAHJSce8L
+         nO6/+gShA3CUSuE7uwFhcqz8kq6wm2Xu9pvqWFHEQCVCNCkFyY299xJ/FMgnbHBUPxPX
+         8YVIL38bX5Bth3MDIXXapfB+I1/sfY+6ADpf3byKjX1VHvgxw25KNj7RjtSHTstymiWX
+         lnjsZ00Q0QH32eZnwN2LYXXhmIY+HsGxc3KxW+zQkYe6xouzxTUHQ3SosGHtqKcBqv1v
+         eHUg==
+X-Forwarded-Encrypted: i=1; AJvYcCUvyLfdgDEh8fd7jCYul78LmOj7er5DqZE6Md7SLNO6T74ExGB9Wwr9rMqV51hxR5YHjzSGfnUwDE40XLA5@vger.kernel.org, AJvYcCW7IiIDS+sBMfdoy+FNhJHqW5/5zf5SYIc6aDIh6XyNCd4HH6e6ekAyL76MuB/Y+Z07/X9dHOT+aarG@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxesha33Xz5lt3OfHJNB8kZGuXZRccX6e6kufekwghH9Urf/ZcU
+	ZaNOhlXRo5u2pRjADiKf2CCpKfLtx9dNhJHhm7JdI5wJwd+duSHhsK0A
+X-Gm-Gg: ASbGnctwjrtiU5Qz72/excR280G26u96zrwII9rb0UbEom977dg6nKWx2Z4QTIlV5D1
+	YrgI6IAgcJp180QT50l62Cs7ouW5lFfOEBSuvPbkJaNXsndtXSWg9fvuUC801SuWX3ji3M2/bqG
+	CoBIGpyCGAnXsncA6uowp4yUxZ4KPM3cDSUL15vD5u+1pDoHjSxakZIB2htzHiJkancjn4H+LM6
+	CWnS/Vu1rPaNMRKAllTUGypvEyYqWSxIGkbHPMvf5p8iSt5tWyBq/bwHyOoUPRmlg/RimUXvBIB
+	CwVl1yxmTGO+02g900W7RT3omphZppSWhX4ZMlStKkGIuRX/qMTm4cZisfpUfB9KrA==
+X-Google-Smtp-Source: AGHT+IFBtph9fv+7fKDEC6nUWw7uIsIzzIOwz1cYir/tCyC84UZwVDLtqukgWlfF7ed346exY4Vk/g==
+X-Received: by 2002:a05:6a00:21c3:b0:73e:10ea:b1e9 with SMTP id d2e1a72fcca58-742a979672dmr1193531b3a.6.1747346640178;
+        Thu, 15 May 2025 15:04:00 -0700 (PDT)
+Received: from localhost.localdomain ([50.46.184.91])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-742a986d8d7sm284352b3a.130.2025.05.15.15.03.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 15 May 2025 15:03:59 -0700 (PDT)
+From: Joseph Kogut <joseph.kogut@gmail.com>
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Steve deRosier <derosier@cal-sierra.com>,
+	Joseph Kogut <joseph.kogut@gmail.com>
+Subject: [PATCH v2 1/2] dt-bindings: arm: rockchip: Add Radxa CM5 IO board
+Date: Thu, 15 May 2025 15:00:33 -0700
+Message-ID: <20250515220034.393303-1-joseph.kogut@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250514175527.42488-1-robdclark@gmail.com> <20250514175527.42488-2-robdclark@gmail.com>
- <aCWrwz2IF6VBUi4e@pollux> <aCWueFzx2QzF7LVg@pollux> <CAF6AEGu9MPxKnkHo45gSRxaCP+CTzqsKZjiLuy4Ne4GbrsStGA@mail.gmail.com>
- <aCYqlvp_T77LyuMa@pollux>
-In-Reply-To: <aCYqlvp_T77LyuMa@pollux>
-From: Rob Clark <robdclark@gmail.com>
-Date: Thu, 15 May 2025 14:57:46 -0700
-X-Gm-Features: AX0GCFs6YgaO4c1gJb_pjyiu_k16Ux8vtO0EyxRMsKZHeJCwowWkm7UmCmbyt6U
-Message-ID: <CAF6AEGsOTNedZhuBzipSQgNpG0SyVObaeq+g5U1hGUFfRYjw8w@mail.gmail.com>
-Subject: Re: [PATCH v4 01/40] drm/gpuvm: Don't require obj lock in destructor path
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
-	linux-arm-msm@vger.kernel.org, Connor Abbott <cwabbott0@gmail.com>, 
-	Rob Clark <robdclark@chromium.org>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, May 15, 2025 at 10:55=E2=80=AFAM Danilo Krummrich <dakr@kernel.org>=
- wrote:
->
-> On Thu, May 15, 2025 at 10:35:21AM -0700, Rob Clark wrote:
-> > On Thu, May 15, 2025 at 2:06=E2=80=AFAM Danilo Krummrich <dakr@kernel.o=
-rg> wrote:
-> > >
-> > > On Thu, May 15, 2025 at 10:54:27AM +0200, Danilo Krummrich wrote:
-> > > > Hi Rob,
-> > > >
-> > > > Can you please CC me on patches for GPUVM?
-> > > >
-> > > > On Wed, May 14, 2025 at 10:53:15AM -0700, Rob Clark wrote:
-> > > > > From: Rob Clark <robdclark@chromium.org>
-> > > > >
-> > > > > See commit a414fe3a2129 ("drm/msm/gem: Drop obj lock in
-> > > > > msm_gem_free_object()") for justification.
-> > > >
-> > > > Please write a proper commit message that explains the problem and =
-the solution.
-> > > > Please don't just refer to another commit and leave it to the revie=
-wer of the
-> > > > patch to figure this out.
-> > > >
-> > > > > Signed-off-by: Rob Clark <robdclark@chromium.org>
-> > > > > ---
-> > > > >  drivers/gpu/drm/drm_gpuvm.c | 7 +++++--
-> > > > >  1 file changed, 5 insertions(+), 2 deletions(-)
-> > > >
-> > > >
-> > > > > diff --git a/drivers/gpu/drm/drm_gpuvm.c b/drivers/gpu/drm/drm_gp=
-uvm.c
-> > > > > index f9eb56f24bef..1e89a98caad4 100644
-> > > > > --- a/drivers/gpu/drm/drm_gpuvm.c
-> > > > > +++ b/drivers/gpu/drm/drm_gpuvm.c
-> > > > > @@ -1511,7 +1511,9 @@ drm_gpuvm_bo_destroy(struct kref *kref)
-> > > > >     drm_gpuvm_bo_list_del(vm_bo, extobj, lock);
-> > > > >     drm_gpuvm_bo_list_del(vm_bo, evict, lock);
-> > > > >
-> > > > > -   drm_gem_gpuva_assert_lock_held(obj);
-> > > > > +   if (kref_read(&obj->refcount) > 0)
-> > > > > +           drm_gem_gpuva_assert_lock_held(obj);
-> > > > > +
-> > > > >     list_del(&vm_bo->list.entry.gem);
-> > > >
-> > > > This seems wrong.
-> > > >
-> > > > A VM_BO object keeps a reference of the underlying GEM object, so t=
-his should
-> > > > never happen.
-> > > >
-> > > > This function calls drm_gem_object_put() before it returns.
-> > >
-> > > I noticed your subsequent patch that allows VM_BO structures to have =
-weak
-> > > references to GEM objects.
-> > >
-> > > However, even with that this seems wrong. If the reference count of t=
-he GEM
-> > > object is zero when drm_gpuvm_bo_destroy() is called it means that th=
-e GEM
-> > > object is dead. However, until drm_gpuvm_bo_destroy() is called the G=
-EM object
-> > > potentially remains to be on the extobj and eviced list, which means =
-that other
-> > > code paths might fetch it from those lists and consider it to be a va=
-lid GEM
-> > > object.
-> >
-> > We only iterate extobj or evicted in VM_BIND mode, where we aren't
-> > using WEAK_REF.  I suppose some WARN_ON()s or BUG_ON()s could make
-> > this more clear.
->
-> There is also the GEM object's list of VM_BOs, are you using that?
+Add device tree binding for the Radxa CM5 IO board.
 
-yes, but at this point there are no more ref's to the obj, and that
-list is obj specific
+This board is based on the rk3588s.
 
-> Anyways, I don't agree with that. Even if you can tweak your driver to no=
-t run
-> into trouble with this, we can't introduce a mode that violates GOUVM's i=
-nternal
-> lifetimes and subsequently fix it up with WARN_ON() or BUG_ON().
->
-> I still don't see a real technical reason why msm can't be reworked to fo=
-llow
-> those lifetime rules.
+Signed-off-by: Joseph Kogut <joseph.kogut@gmail.com>
+---
+ Documentation/devicetree/bindings/arm/rockchip.yaml | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-The basic issue is that (a) it would be really awkward to have two
-side-by-side VM/VMA management/tracking systems.  But in legacy mode,
-we have the opposite direction of reference holding.  (But at the same
-time, don't need/use most of the features of gpuvm.)
+diff --git a/Documentation/devicetree/bindings/arm/rockchip.yaml b/Documentation/devicetree/bindings/arm/rockchip.yaml
+index 650fb833d96e..d9ca282c0b4f 100644
+--- a/Documentation/devicetree/bindings/arm/rockchip.yaml
++++ b/Documentation/devicetree/bindings/arm/rockchip.yaml
+@@ -840,6 +840,13 @@ properties:
+           - const: radxa,cm3
+           - const: rockchip,rk3566
+ 
++      - description: Radxa Compute Module 5 (CM5)
++        items:
++          - enum:
++            - radxa,cm5-io
++          - const: radxa,cm5
++          - const: rockchip,rk3588s
++
+       - description: Radxa CM3 Industrial
+         items:
+           - enum:
 
-BR,
--R
+base-commit: c94d59a126cb9a8d1f71e3e044363d654dcd7af8
+-- 
+2.49.0
+
 
