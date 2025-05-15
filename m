@@ -1,56 +1,63 @@
-Return-Path: <linux-kernel+bounces-649538-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-649539-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3034AB85FA
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 14:14:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B8F2AB85FB
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 14:15:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 455EF1895E19
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 12:13:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E79671BC3C31
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 12:13:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 071E029E046;
-	Thu, 15 May 2025 12:08:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D616629E063;
+	Thu, 15 May 2025 12:08:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bqo+yoYW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YN7ffb7y"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B2E129ACE2;
-	Thu, 15 May 2025 12:08:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30C0029995F;
+	Thu, 15 May 2025 12:08:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747310924; cv=none; b=FH6l+gbxgq6/HGYxt2KF1TEc5m06Gz2Ejil/zZuMWO3WgGZii9PfwzDKiLHeRzJKXnqpRqtNtZwTPv25uywisDJ0Od1RfbfL0e9RuAVwsldNpiw8s1LwGB54CCFYxKRrfY2faSY1bXDr3RPtcDTMb3Bhj345v/KIHnXKAh6GCQw=
+	t=1747310930; cv=none; b=oMCtjUDwYfVToOppPStxnkQsXfD2UdLk8shRatJiPjH5Bh/2x3WpE3hkZBb/kt+mDnGyk9Ua7U+ekAhzKUC3kjEK1PUXdimSBgeSJ6J35hVNn9A1iLzstoWLkcVqstdz1jgoJWyqSFTvWTIXgmD02RZGEk1NVtj/SRtDa44CtwM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747310924; c=relaxed/simple;
-	bh=o6Yo9ffZe8vls+XOaSwAXVdrRoKLr/juPqgg+0PvdX0=;
+	s=arc-20240116; t=1747310930; c=relaxed/simple;
+	bh=86NXsxwr9vhZEYlXZBFK/v1h1nZ5Erj4W+GuIw278PM=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=evdci05j6760JffhkhDwkgRFE8ZxHHMKesnSlMZjvcpS8B0UsLMThUd5EP0LQCQFMczOAaPiePRAD1MaYfIEFYE3C/vfoduPpGSmci3xY1mfcV+/eCj/W/9+fcDGP8waKo+ikxd+Wfei4O53PWj5BBBIwhk5I61MzDPF8o5P+70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bqo+yoYW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E067C4CEE7;
-	Thu, 15 May 2025 12:08:39 +0000 (UTC)
+	 MIME-Version:Content-Type; b=kf5fSp2G9VGvsocVQHvuJj8qMM/KnfstGmsxGEPHhJHfDFyoc47/yrC1AU8wpCnZ3utbNOh7SIQe3SK4oRTm5m0LyGnC8PAgzu/iYr+jvtcA1cVOCUF8TSZP91zIowMg9IPbD7MJj9N8RiCm6Gc3AaHDSH5r2YX0MAD/AGSu9eo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YN7ffb7y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8E17C4CEE7;
+	Thu, 15 May 2025 12:08:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747310924;
-	bh=o6Yo9ffZe8vls+XOaSwAXVdrRoKLr/juPqgg+0PvdX0=;
+	s=k20201202; t=1747310929;
+	bh=86NXsxwr9vhZEYlXZBFK/v1h1nZ5Erj4W+GuIw278PM=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=bqo+yoYWmnQ8aLtTYE8fM6eJQrohVECcFco+1TAIKTPADWVm7oFXW7zn8j0wtJ+WD
-	 KI1atVJtISFq07mf6TmtuG/ZWk0l+vZqPBbk8zscy4ibbcYUwjG9saT/yw2w1d2WHr
-	 EkqdbIHxBiE8izHqW3LS3Sl96+a6hG8pfEvgogTePRON5I/lyAUGfJ7mW3hLFXTR8u
-	 orBTs9NBnDw2FFNTmI72+CruqPHqiMVNQKlaaiW+UHIxzQike/OSQt8LTNBymipelv
-	 alNTPEAV9315lEqipKJgMyY4DBOvLro2WlpV6ujP55cLuIzUhcbcZvev3y1f8/cr0z
-	 VoRzLmhIyh3tA==
+	b=YN7ffb7yFwts5GmI1ng/AB94u1hmc4IJfOr//UwNihrDPbdf1RL66PDyfkEsTRend
+	 uXZ0qjJFA8hKpIb4ePz3pd8aiK2euR3+gaWBmuoVIyyIWlNiw9JftL6B95wJ4zp02l
+	 Uqi47/SBXfked9k/CYtfePmfXdxSUYKSaPKDVfGPm3ii3YqHIsQ8VIgid5eR7LqSJM
+	 uFS0eLxvUF0AWZNfQwea6fBAwJa/qWvPFGlFY2OFox+X5O5zZBqnjapeRUSjRAJF9P
+	 aD7tynfWiYUPYHCFNOvXsweHlE7RTJyescQwtdh3xvtCl3kz5tMB5WaFJm4E3t/7/2
+	 J2WXFWO7ZhqxQ==
 From: Mark Brown <broonie@kernel.org>
-To: robh@kernel.org, tiwai@suse.com, devicetree@vger.kernel.org, 
- conor+dt@kernel.org, lgirdwood@gmail.com, linux-kernel@vger.kernel.org, 
- linux-sound@vger.kernel.org, perex@perex.cz, krzk+dt@kernel.org, 
- Zhang Yi <zhangyi@everest-semi.com>
-Cc: amadeuszx.slawinski@linux.intel.com, krzk@kernel.org
-In-Reply-To: <20250514094546.35508-1-zhangyi@everest-semi.com>
-References: <20250514094546.35508-1-zhangyi@everest-semi.com>
-Subject: Re: [PATCH v8 0/2] ASoC: codecs: add support for ES8389
-Message-Id: <174731091956.350483.2947360703784632396.b4-ty@kernel.org>
-Date: Thu, 15 May 2025 14:08:39 +0200
+To: linux-sound@vger.kernel.org, Tavian Barnes <tavianator@tavianator.com>
+Cc: Peter Ujfalusi <peter.ujfalusi@linux.intel.com>, 
+ Liam Girdwood <lgirdwood@gmail.com>, 
+ Bard Liao <yung-chuan.liao@linux.intel.com>, 
+ Ranjani Sridharan <ranjani.sridharan@linux.intel.com>, 
+ Daniel Baluta <daniel.baluta@nxp.com>, 
+ Kai Vehmanen <kai.vehmanen@linux.intel.com>, 
+ Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>, 
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+ Peter Zijlstra <peterz@infradead.org>, sound-open-firmware@alsa-project.org, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <570b15570b274520a0d9052f4e0f064a29c950ef.1747229716.git.tavianator@tavianator.com>
+References: <570b15570b274520a0d9052f4e0f064a29c950ef.1747229716.git.tavianator@tavianator.com>
+Subject: Re: [PATCH v5] ASoC: SOF: Intel: hda: Fix UAF when reloading
+ module
+Message-Id: <174731092440.350483.15391857686536607897.b4-ty@kernel.org>
+Date: Thu, 15 May 2025 14:08:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,16 +68,13 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-c25d1
 
-On Wed, 14 May 2025 17:45:44 +0800, Zhang Yi wrote:
-> The driver is for codec ES8389 of everest-semi.
-> 
-> v8 -> v7: Modifying apply error issue
-> 
-> v7 -> v6:
->           - Modify the order in the Kconfig and Makefile
->           - Remove ES8390 in description of codec driver
->           - Romove unused variable in the codec driver
->           - Modify notation for declaring variables
+On Wed, 14 May 2025 09:37:49 -0400, Tavian Barnes wrote:
+> hda_generic_machine_select() appends -idisp to the tplg filename by
+> allocating a new string with devm_kasprintf(), then stores the string
+> right back into the global variable snd_soc_acpi_intel_hda_machines.
+> When the module is unloaded, this memory is freed, resulting in a global
+> variable pointing to freed memory.  Reloading the module then triggers
+> a use-after-free:
 > 
 > [...]
 
@@ -80,10 +84,8 @@ Applied to
 
 Thanks!
 
-[1/2] ASoC: codecs: add support for ES8389
-      commit: dd4eb861d0521acca1b7e07683a7e90b2e01f66a
-[2/2] ASoC: dt-bindings: Add Everest ES8389 audio CODEC
-      commit: c8e7d528284a0bb1cd462b994c464bf31d24a0ce
+[1/1] ASoC: SOF: Intel: hda: Fix UAF when reloading module
+      commit: 7dd7f39fce0022b386ef1ea5ffef92ecc7dfc6af
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
