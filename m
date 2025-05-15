@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-649641-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-649643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2426AB870A
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 14:55:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4016EAB8711
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 14:55:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C51EB189CAD0
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 12:53:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 686C518863A1
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 12:53:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F05329AB19;
-	Thu, 15 May 2025 12:51:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7803A29B20D;
+	Thu, 15 May 2025 12:51:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="BmvkpP6e"
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="QwMHcV9K"
 Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 143892222CB;
-	Thu, 15 May 2025 12:51:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 596E629ACD7;
+	Thu, 15 May 2025 12:51:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747313463; cv=none; b=qKc5sYCyfzQlDaKf5pQjxwPr3y6usLICV0a39VF017r5+jI7k3v25f4RIyu492hAzQH1eJYI70RnYRRbUuBL0vXLH2ZfXGvAZseuy8ochzJMgiihlAA6vO47IAG/fRtDkPbJ+P47y4lFcIJdzsaR0xLRAgbh1xgDmBKH5KGr+ak=
+	t=1747313466; cv=none; b=TGehvT0LEZr95hUZMjSMEAWBd/U8D4pygOPOiUH1H8sTgDSG5YTQk3g3XFd9pZdDqURXubggvvdOGKmElQqMQzY2uWTFu5RstpEu94fg84yFMKn6LMOeOUUe0NeTKY2VapacYaXoOjMqWF5udA8SoK22ZBOxOK7WeBPC/4K87/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747313463; c=relaxed/simple;
-	bh=F8W/3V6XabSLzxAT8Z3MNAqD3PxeKTMsocXCNNqLo8A=;
+	s=arc-20240116; t=1747313466; c=relaxed/simple;
+	bh=dGNaWkGgS9U31fWTHyQBFUOXdmxvm/T2H+mtOiW2Qcg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=e7psh7XhnpjB/+npDpoSQzndw1xaX9ALmYV4JTLzJJPD7in5/s66B9ZiYN5V1XW7UCrZPrzp1VQ6Dg3kcxnTCt8zTP8XcciH/qcN+7klhE+ydxjTY1NhOYDfQs8aD1Hz8xV5/iyq1vNyOM0sDHM3mmPhTO/gjIsnNxwp5hhexAI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=BmvkpP6e; arc=none smtp.client-ip=185.11.138.130
+	 MIME-Version:Content-Type; b=DJhOrcJzPhOeQOsagyIZUCZ+a42LzXOG5Q9PSkDZ5xEuVKyrooV1NUxHOYuh94erpDXm9Cwiml4xywWpqqLAAv1L6Le3TzIkDHCkFesmoOJ1G9mDrkJ4hZUhrs/rwZFPp1ZcRqUQiTi7yQwIoO9m9vOHWBzCLn4fajCkslWh/MQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=QwMHcV9K; arc=none smtp.client-ip=185.11.138.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
@@ -35,35 +35,34 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
 	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
 	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
 	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=Lo8tkKW23+9WMFJ5yoTSmuGd48aBjFyaRNNWMBrBWOQ=; b=BmvkpP6eIxfLKtQ9w3Uake6ka9
-	/9CqizimXLWD3ytdX1PUn4ITl/TGBlhGsWxTcUSzRGijga8WzU+mLIpOc3Z95TFsWEleyRh+fqqm2
-	VyNDWFGDoJ4DROR58cEpf1SEgCOP57kAbGhxX71ycOzcJaoweOmHEkJ/XfcEEgEvXluS3sGGIl/f8
-	5H3ijB5QiJZEa70fSDY2qI+ixApiYZCNQRi7vWmMiuw40RO3hQwdfBFF5Kmxsy9DhdzbZNRAeyCMI
-	2pY+duacKFQbAaQ1Zdyh+9WTu0U0gX2rm5gacCFnQ7EOIK18b1AKNMTUzCyFuW2ndhjhjJ03dOI/r
-	2ALerG/Q==;
+	bh=QaorzZ1NhBrQjON3+nty+UxvATBO1FN3Ey2kw1dXSHA=; b=QwMHcV9K3OBIS1QzeAX6NAb4vg
+	WPH/JpNo0ANxNir+AML2JbRsJV8k69cVa+APK/0gg2iDCyQEzi0w8eqb18VswH+blDAvspTSWPr/G
+	fqd1amrwEtNbXqn3t9BPsPPKpa4877g4MfcsIXXzPfY5U/4r/GfLDXz3Q2GPxUBvYAKwYMs+wuTj5
+	1/4dXyTZZZswUt9hdt8AMOgsWAlvK2/ALPsPmvT0fr2KzhAhuGPWStGK6ioyXDOVuiycEgTI6yMc5
+	yhnj4BkI2CFmHBsBzLeQfPOAu4WjiJY5l+vHw0dTibVHMDD3Lfkdv36+dzUMWFb0kXnUxLVzX7FBf
+	ltdmNQMA==;
 Received: from i53875a50.versanet.de ([83.135.90.80] helo=localhost.localdomain)
 	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.94.2)
 	(envelope-from <heiko@sntech.de>)
-	id 1uFY37-0004ph-Ic; Thu, 15 May 2025 14:50:57 +0200
+	id 1uFY38-0004ph-0W; Thu, 15 May 2025 14:50:58 +0200
 From: Heiko Stuebner <heiko@sntech.de>
-To: vkoul@kernel.org,
-	kishon@kernel.org,
-	Heiko Stuebner <heiko@sntech.de>
-Cc: robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	linux-phy@lists.infradead.org,
-	devicetree@vger.kernel.org,
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	nicolas.frattaroli@collabora.com,
+	ziyao@disroot.org,
+	linux-clk@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: (subset) [PATCH 0/3] usb-phy support for the old rk3036 soc
-Date: Thu, 15 May 2025 14:50:41 +0200
-Message-ID: <174731343058.2524804.7975318323595517347.b4-ty@sntech.de>
+	linux-kernel@vger.kernel.org,
+	kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH 1/2] clk: rockchip: rk3576: add missing slab.h include
+Date: Thu, 15 May 2025 14:50:42 +0200
+Message-ID: <174731343064.2524804.7884388044477445638.b4-ty@sntech.de>
 X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250503201512.991277-1-heiko@sntech.de>
-References: <20250503201512.991277-1-heiko@sntech.de>
+In-Reply-To: <20250515082652.2503063-1-heiko@sntech.de>
+References: <20250515082652.2503063-1-heiko@sntech.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,20 +73,18 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Sat, 03 May 2025 22:15:09 +0200, Heiko Stuebner wrote:
-> While trying to resurrect the rk3036 board in my boardfarm, I also
-> implemented the up to now missing usb2phy support.
-> 
-> The implementation is quite similar to the rk3128, except the not-
-> supported charger-detection, so its addition was quite simple.
+On Thu, 15 May 2025 10:26:51 +0200, Heiko Stuebner wrote:
+> The change for auxiliary GRFs introduced kzalloc usage into the rk3576 clock
+> driver, but missed adding the header for its prototype. Add it now.
 > 
 > 
-> [...]
 
 Applied, thanks!
 
-[3/3] ARM: dts: rockchip: add rk3036 usb2phy nodes and enable them on kylin
-      commit: 9e010737dd434e3eee1fa75938abea0dc2fab8e2
+[1/2] clk: rockchip: rk3576: add missing slab.h include
+      commit: 92da5c3cba23ee4be2c043bb63a551c89c48de18
+[2/2] clk: rockchip: rk3528: add slab.h header include
+      commit: 276036283716b9135525b195675ea42801bde204
 
 Best regards,
 -- 
