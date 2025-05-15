@@ -1,125 +1,140 @@
-Return-Path: <linux-kernel+bounces-648851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-648853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BC43AB7C8C
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 06:03:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5627AAB7C8F
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 06:05:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30B641B671B2
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 04:03:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E81934C1D5F
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 04:05:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CFA21E1A3F;
-	Thu, 15 May 2025 04:03:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9D211CCB40;
+	Thu, 15 May 2025 04:05:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zB9ixvAo"
-Received: from mail-qk1-f201.google.com (mail-qk1-f201.google.com [209.85.222.201])
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="MRLd47WZ"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E66A74B1E4F
-	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 04:03:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A141E4B1E4F
+	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 04:05:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747281793; cv=none; b=ZVbrxJ5sVqgl2fHsr8bajSHR/u7+Z2R3JYcqjcHdbAiu13zREwpX3KczqenvXMRGVHptLeq6v5S5rPKWQXBS5Kp2zRUN6ws98pfTZBGjiOpk4O8EEYqNAkx+5NKEEsj+D7JeJLhtRjwiJ2bRRTd/qIS2HCBUvwSQnG1rFkMknLM=
+	t=1747281945; cv=none; b=UkyAOyeDy7hUsqvHh+RyXn5bJ0AIkXaQZKOM1krW/BsLz2ej4jy0cDj+Al0TvBj7fyNO2/luZYXe7Kf7OS4x/k/XmKX/HBdLO9sa6ZdrrLOhA2EdThTyRJXi92Z+Ec3StHIp9UTXyQHzZ1G+lI/FJlinykcB4SryWwp4S86fssI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747281793; c=relaxed/simple;
-	bh=n4uExHzumO1fQwjk2io6q9vLPmqmud+oReW5kLsLRgA=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Content-Type; b=OFQNI1C20tftrBRw1N5XlI9rMdoP7DutgD0kTVm20Xb6YjiD1uw34un+MJDyljaqHV/H9LRLCq/PjJBitQfWXTEpfWEV9TVzN0YPn1fiUQ27A2ji8qm40qtz432erFMBmhDPPmTBpvY2kSB8EJ4uNkYYgpfvugvrZdw+KsQflhA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--royluo.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zB9ixvAo; arc=none smtp.client-ip=209.85.222.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--royluo.bounces.google.com
-Received: by mail-qk1-f201.google.com with SMTP id af79cd13be357-7c791987cf6so121839385a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 21:03:11 -0700 (PDT)
+	s=arc-20240116; t=1747281945; c=relaxed/simple;
+	bh=4BrBtZ2F1ecLOcCh0xCoTuqU15CYRmOnEkYROeguuYI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ckDQkNf9Y/ubr+dU02rwkigvHfv5U2mjGIyUpcQLFio3KO8qjVvQj6SxRDnAsK8A65IrglW+T/VIqjJHU9KrD70XBr/nKXf8he2E/xkVk7IdpvNBuIcHqdIvsk8V3m4QKUe5znKj4A7cFNXDZIKSCWCkWqgEgAre4zUYK2NBSgk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=MRLd47WZ; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-7411f65811cso535055b3a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 21:05:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1747281791; x=1747886591; darn=vger.kernel.org;
-        h=to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=i+ZS0urdC4ZHS2t+t45gk4d+KxYXBTgibfbR8Pb/1O4=;
-        b=zB9ixvAoJI9yiq8v8uN0rU7luSkjWQQAa6iY+EFO0mbu+SRovpltn9ZLZcM75wzTu3
-         hK9rduvXfn1ET3HCG045yXpHXpM1DryqVZRyIX4eKxNfkvTfUC4OukIPszthw5PayQN1
-         oTXJoI3VsY8dE5zEoRe1TJvjHUQY4ne0UopqDDJaapFv6QRCCKHbXgU6+DvhB0mmNQ88
-         pd13glgVfDRrJX/2tCm6I9DzHEh5WcGOpb8q40RafMo2S1ghPyvstkyztwrWseXJBRUM
-         to5YX5ZJnYcIN5ZE1Ed6V0K87WaKHtlfJr9PoziUFj+Ei61vXser2U2l/mnv1o0WhUs2
-         Ny9Q==
+        d=bytedance.com; s=google; t=1747281943; x=1747886743; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=PK1RN466vWHMmTxKr5nOsDNGYJ0uWoOdFWw3uonOjaU=;
+        b=MRLd47WZBbreavzuhzH6ei6kzBbtusCBbTZoxCntuQr5a9R/N16ngqz5ut8tt11KBR
+         d1DPU3M8zs9KJgb32RvRcRWwYfQKuf7imfZtqfu0Q8hMqVQAi2xNpEXH7t9q7Nfq63eh
+         1iAz2ajVnrjrOMrUPEVlmYjXtmxB5ym1O06bjM0QMz5p0MFUaLowTnnGVyf5JxwDsNwz
+         c4UE0DUJmgTG3J7bbJuu2R880mlayjQI9/RUuU5XhsYH9hZqQOtPdL7UF8Szh6Ij3qUJ
+         UF6W7VAP1bIUjrbwiz1AUHQyKs8sEFqnU8MKANzHIaFhSpiiCmyEhAEg9qfV+YeNvu0F
+         KI+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747281791; x=1747886591;
-        h=to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=i+ZS0urdC4ZHS2t+t45gk4d+KxYXBTgibfbR8Pb/1O4=;
-        b=Bgdfqxry1nNTg4FvpZAGiwZBdUwFyyzKv69L3Xn3KyYUiaA+U19m+kKQft9h03pIBT
-         YnClElOTN944kde+bdUTuPrSJDLgWTxRpAqfkKVTVpVHUlfoWV2S0lDqqWNH7sYmDjYr
-         p5dVbuUZ45ZmfNXdFDu+bB0bB4O2I3UByRO9TeWPutPVpqK/9eN5lLYtnJeQQCsFF3Sg
-         KBlY+EhxNoavKft8zEexJ+EpwaMGpavn/wnubMo8+/p2XWR/XrEh5Mxl14CcLtstgqj9
-         Pkm0dA5j43ZcbpADAmsRQk+ch5d4J9EmcEoUH9sI93Qc6J+5CcZSN6tYLkbq3i5tRYu3
-         EXUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV8cvRmZGuq9pR2RQnlYxn9097w1LI0XfrmEKwk7QPOWpKG3lNQpQBF5mG82SOlLKY5fidSWpCUOb1HDBY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxuIwLyjQoQK/tYkh0F9gbR4jpXQ2vMOrSjHJhc67qM1fMxSrKH
-	BwHrVE7d51zjttWVxlqK65K5O6GQtul2ASqpa1e1CUfBVnUqX/4/TK92ulgQ3edlrPL0Qurzr5n
-	lFg==
-X-Google-Smtp-Source: AGHT+IF3Wqyyndyy472LEFKDw4lbcut1iEeIAEVEaDeoESIchpMsKaRDtH0yEOmBJ/KsWHdtaPZ2JicfGs0=
-X-Received: from qkbee18.prod.google.com ([2002:a05:620a:8012:b0:7cc:ccf4:e8ca])
- (user=royluo job=prod-delivery.src-stubby-dispatcher) by 2002:a05:620a:19aa:b0:7c7:bb07:af07
- with SMTP id af79cd13be357-7cd287e2236mr757842285a.22.1747281790848; Wed, 14
- May 2025 21:03:10 -0700 (PDT)
-Date: Thu, 15 May 2025 04:02:59 +0000
+        d=1e100.net; s=20230601; t=1747281943; x=1747886743;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PK1RN466vWHMmTxKr5nOsDNGYJ0uWoOdFWw3uonOjaU=;
+        b=ukpxCq53fkZmC9haOMOzfeNSLvrz0WdiFwJIe+YjxmV+q+UyJJ9svisIwZvXjTCRXC
+         zgtUT3LQvOXteX+x8L1UPozs33eZ/yvix1kYuZpDjPAmrdMmDT3013zSDhhOYPm6mO0c
+         lJOdSGieCMkpsr3M5MqCl90l8OT39OckJAPs5j4Wrkh6Xuja/ai1EDWjYTW1KIso6A3V
+         dfDv4CR1lsI3Wcyl1QzFeq55UaesZi7MTX0lP5mATMDmZBqPFukpnrd7s8Z5OnhAlpE3
+         ZAVjHQRF1tuWoqkLnGusGyqtejjnfCkcOMNgvqSsRxPGxxn/sVSvYrkjFDFGEympNHtF
+         0S0Q==
+X-Gm-Message-State: AOJu0Ywe1fTSD2UkF7LfBo64OiWYIXyoHaRTiYB+WtEHxbHYUZh4Oby7
+	QraMOH7osOHrL8HQ7MlkDgXHjCSPwjyEzTvC0xcaNJtV9HjDkyyU8seekwRT7d0=
+X-Gm-Gg: ASbGncvWY9HjBmsNOuXctGTkPZJ51cxoF4FRYbePRqZeDSWSLr26th5y3j68edkb90L
+	cjfG3vXrSQgVZHjz4S2Z5I4qGhYHWQrnYv9CLztKCxTqap44i8xQbb+Iwxgqjj/QRTz0d1K+hAI
+	ESnpiLzR4uL1MMA/qp23V4c6cF8FR0SZoHF7niVk3fDioISupmTmqPuTeWgpUipBKqFzV1SkKP/
+	qWR47bOYbX2gQAVLbGZrSpfAazGA8wocA3Mt0rJCl1h6ykzVLwUtUPgyupEFKuovx10nZFkG4x7
+	UMWwoTyyg5v6F0X9uxgHZYPoEl7ah+q/4ADVsuG6ngloLv4Vrwvj6/n+7q3k+0rlT3oEOZc=
+X-Google-Smtp-Source: AGHT+IGRwO82Idquls1uiuElruqIR6Bjili+nFRMaupvyS6khLTUGskU4C0v+Cv+/zG+gY5fH5J5DQ==
+X-Received: by 2002:a05:6a00:2294:b0:736:51ab:7aed with SMTP id d2e1a72fcca58-74298545429mr1702048b3a.16.1747281942570;
+        Wed, 14 May 2025 21:05:42 -0700 (PDT)
+Received: from n232-176-004.byted.org ([36.110.131.55])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74237a405c4sm10326785b3a.154.2025.05.14.21.05.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 May 2025 21:05:41 -0700 (PDT)
+From: Muchun Song <songmuchun@bytedance.com>
+To: tj@kernel.org,
+	jiangshanlai@gmail.com
+Cc: linux-kernel@vger.kernel.org,
+	muchun.song@linux.dev,
+	Muchun Song <songmuchun@bytedance.com>
+Subject: [PATCH] workqueue: show the latest function name in /proc/PID/{comm,stat,status}
+Date: Thu, 15 May 2025 12:05:23 +0800
+Message-Id: <20250515040523.430181-1-songmuchun@bytedance.com>
+X-Mailer: git-send-email 2.20.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.49.0.1045.g170613ef41-goog
-Message-ID: <20250515040259.1254356-1-royluo@google.com>
-Subject: [PATCH v1 2/2] usb: dwc3: Force full reset on xhci removal
-From: Roy Luo <royluo@google.com>
-To: royluo@google.com, Thinh.Nguyen@synopsys.com, gregkh@linuxfoundation.org, 
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-During an xhci host controller reset (via `USBCMD.HCRST`), reading DWC3
-registers can return zero instead of their actual values. This applies
-not only to registers within the xhci memory space but also those in
-the broader DWC3 IP block.
+Workqueues, such as system_unbound_wq, are shared across the system,
+making it difficult to determine which tasks are being executed by
+each worker. This patch improves clarity by displaying the latest
+function name associated with each workqueue worker in the
+/proc/PID/{comm,stat,status}. For example:
 
-By default, the xhci driver doesn't wait for the reset handshake to
-complete during teardown. This can cause problems when the DWC3 controller
-is operating as a dual role device and is switching from host to device
-mode, the invalid register read caused by ongoing HCRST could lead to
-gadget mode startup failures and unintended register overwrites.
+Before:
+  # ps 64 67 68
+  PID TTY STAT TIME COMMAND
+  64  ?   I    0:00 [kworker/u34:0-events_unbound]
+  67  ?   I    0:00 [kworker/u33:1-events_unbound]
+  68  ?   I    0:00 [kworker/u33:2-events_unbound]
 
-To mitigate this, enable xhci-full-reset-on-remove-quirk to ensure that
-xhci_reset() completes its full reset handshake during xhci removal.
+After:
+  # ps 64 67 68
+  PID TTY STAT TIME COMMAND
+  64  ?   I    0:00 [kworker/u34:0-events_unbound:flush_memcg_stats_dwork]
+  67  ?   I    0:00 [kworker/u33:1-events_unbound:flush_to_ldisc]
+  68  ?   I    0:00 [kworker/u33:2-events_unbound:idle_cull_fn]
 
-Signed-off-by: Roy Luo <royluo@google.com>
+This change provides a clearer view of the tasks being performed by
+each worker, enhancing system monitoring and debugging.
+
+Signed-off-by: Muchun Song <songmuchun@bytedance.com>
 ---
- drivers/usb/dwc3/host.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ kernel/workqueue.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/usb/dwc3/host.c b/drivers/usb/dwc3/host.c
-index b48e108fc8fe..ea865898308f 100644
---- a/drivers/usb/dwc3/host.c
-+++ b/drivers/usb/dwc3/host.c
-@@ -126,7 +126,7 @@ static int dwc3_host_get_irq(struct dwc3 *dwc)
- 
- int dwc3_host_init(struct dwc3 *dwc)
- {
--	struct property_entry	props[6];
-+	struct property_entry	props[7];
- 	struct platform_device	*xhci;
- 	int			ret, irq;
- 	int			prop_idx = 0;
-@@ -182,6 +182,9 @@ int dwc3_host_init(struct dwc3 *dwc)
- 	if (DWC3_VER_IS_WITHIN(DWC3, ANY, 300A))
- 		props[prop_idx++] = PROPERTY_ENTRY_BOOL("quirk-broken-port-ped");
- 
-+	if (dwc->dr_mode == USB_DR_MODE_OTG)
-+		props[prop_idx++] = PROPERTY_ENTRY_BOOL("xhci-full-reset-on-remove-quirk");
-+
- 	if (prop_idx) {
- 		ret = device_create_managed_software_node(&xhci->dev, props, NULL);
- 		if (ret) {
+diff --git a/kernel/workqueue.c b/kernel/workqueue.c
+index 3bef0754cf73..6d4ca373b980 100644
+--- a/kernel/workqueue.c
++++ b/kernel/workqueue.c
+@@ -6475,9 +6475,12 @@ void wq_worker_comm(char *buf, size_t size, struct task_struct *task)
+ 			 * current, prepend '+', otherwise '-'.
+ 			 */
+ 			if (worker->desc[0] != '\0') {
+-				if (worker->current_work)
+-					scnprintf(buf + off, size - off, "+%s",
+-						  worker->desc);
++				if (worker->current_func)
++					scnprintf(buf + off, size - off, "+%s:%ps",
++						  worker->desc, worker->current_func);
++				else if (worker->last_func)
++					scnprintf(buf + off, size - off, "-%s:%ps",
++						  worker->desc, worker->last_func);
+ 				else
+ 					scnprintf(buf + off, size - off, "-%s",
+ 						  worker->desc);
 -- 
-2.49.0.1045.g170613ef41-goog
+2.20.1
 
 
