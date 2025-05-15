@@ -1,130 +1,115 @@
-Return-Path: <linux-kernel+bounces-648708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-648705-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3D2BAB7AB0
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 02:43:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96C9DAB7AAA
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 02:42:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE5FA860154
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 00:42:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AD76C7AD681
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 00:40:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DED3E72600;
-	Thu, 15 May 2025 00:43:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41DAD72605;
+	Thu, 15 May 2025 00:41:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lvYn/i4W"
-Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com [209.85.222.43])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="u1ISadiA"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBD808F66;
-	Thu, 15 May 2025 00:43:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A8014B1E71
+	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 00:41:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747269789; cv=none; b=SJmUURFhBO1WKbOlmXhMztPaFdBvLrk/Wts0Bcsa5wpx7b76QJmIFHJe4sa3gwG0EoCj29Y7+Q+xSg+p/2EW7661edD2evHCaU/irrR9KwZqg0H1nPZO9WllXu5taiPEKGSyNhS0K6zBl/Q3SBwTH1N5uyTLqw263i7o5dXUiCI=
+	t=1747269717; cv=none; b=J5Rqvfn5dhhC5CLOsjpKi1B5yima5ZzXsTiUwTlZ0+DDEnW+uRdPmrjmeynmmsy2Yz36wEzeBwVqpGwqZy0A+11grclB/14Oa4dS7sovjqu6JazMAVplrQBsi4UrCqG8CNqD6cMJAdId4JQ+pZ1M0yrjZlbOXDdXwarRbL1LvNo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747269789; c=relaxed/simple;
-	bh=CaZ4C3YksYVpPo32yraBL2f0bTtgs+Duayou0LWapfY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZW2iUNkXG7uZjUqRlLyRxrCRPuhDCVtK09Zulorb9eWKLM33kPLe2MdWxdrU+DpQI+SmVds/jdZHgWSihjVwX0pBsZHqJ1Q9PCEc9wFUMWwomCnVlpXw4ddO1XqV4aDsNM3XoTt+shOsW0yGBrmy6NGXdmJ0vXsgliFxrsuVmMQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lvYn/i4W; arc=none smtp.client-ip=209.85.222.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f43.google.com with SMTP id a1e0cc1a2514c-879c44a1dc4so86297241.3;
-        Wed, 14 May 2025 17:43:07 -0700 (PDT)
+	s=arc-20240116; t=1747269717; c=relaxed/simple;
+	bh=iFfSERXqavDusfX1VCYEGypsr/UbOLQkpthUgOBORHo=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=nlT04WjUtbUTA0SJx1NJpEBt4j4lIv82A8B8+7syuUpf2CgzdMwY/DuG1QZJqBCSTl4eUkkTcPlCDsLnHkV8dzdAZzASLsAjIEuPRWrbNhQHs5gRiFoVW6Dx3F8AI4y3uIqFN1ty61cX6f8bVyFMEyV2IFwUoxxhgswHr0c/NNo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=u1ISadiA; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-30abb33d1d2so719668a91.0
+        for <linux-kernel@vger.kernel.org>; Wed, 14 May 2025 17:41:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747269786; x=1747874586; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=cueXC2hlZsQuDhrii/uQD0jplPg4hNH073llC7Ktm+A=;
-        b=lvYn/i4WzfCA3U8fecyOhYOTzQXW2Otj5/d/nA7JP1s5v2dkHUwvpDCA7wKWJntx94
-         dI6VmnIWvWJyAAolJdga/rKXRy45kHv8sdLBpEzfzf/CuyrvOLbcBllvuYNmsMDKviPH
-         v6uuiqexM4iykGfICRMEXJfW9YO++ESmmqBQouJB+MFgILZSgw4TDZICOqAFURkdQrdr
-         +iUAae0xMpQiSF+fdr6XN8gvWB508p+9jsCZ9jC/7u+mlyO1nVfEZrruzzJqTrhNtd9X
-         VutqTco8HIx1+UlvqMlNk7XIOXasUrpkDHR5Eo2zEvyGFMRmGA0ajzzoRMnT+KFQQJ+S
-         Fouw==
+        d=google.com; s=20230601; t=1747269715; x=1747874515; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ip9lVrq9USVSeXSDB7Ry76GsvvsCyjvJx3E1UJmIZxg=;
+        b=u1ISadiAZpAaCftabQ06ASHhPH/NGcJx2PrPazkovU5v0dj+iy3oYUZ7KNLNDXrRee
+         YodszaCJgd/yLiNRsG2eyN/c3ndUs5TyavEBUR6Jo4vMwES8nZTTC43qx/bhA2uFuLCz
+         2Vlj89TejxcoL4ygvleWDkLXw4DQ1VgQC1TldwB735MiDa69qXFXjFRoB/xENsfA1j9F
+         6VtXi6jCjOLCArZ5p34VYOSZ9IBZhp+/ntLMNm11cuZztYJ1X89D5wW3oSoJWfiX5SIA
+         o99DFrnmKDNzG6QRGZTpk7H86vQ9d5Le40+LbPc6a5q6TGSUKr8j9juFNsiTio8yFD4i
+         kpYw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747269786; x=1747874586;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cueXC2hlZsQuDhrii/uQD0jplPg4hNH073llC7Ktm+A=;
-        b=fsDcRVCsZKpoOrZI7og8PLk1EJ3QWYMuVQ+dZP6j3xgTY1/p24jBiuD/1P40XGEjKr
-         X1XTaOoV9XwUoG1Ek518Uds50k0JVIDg44bbJLHxndzlFdYbC3LelF18Q1WnlqqwbeQd
-         7eQjbBBnVhuqWRhC36Dk20iaml8fi9fqIwW99hhUUU6RSI3tY0so42iiaKh5A+Bnpugl
-         KI83y/l24IQzyzkADVfocNsnLIt1Qh9dGuqQIJmO2/2lJ7a5B9OB8r5qcDvwm5awnp4K
-         OSvRKOHhJYWcOI2SL+cedVNMUvPDvGoFD2ZDeuuawifKAj33++jCo/E6d0joPuzkzXA+
-         a0Ag==
-X-Forwarded-Encrypted: i=1; AJvYcCUD7badEAns5F0lyPfNtORT7++D1NuLsILIEEVA7TrKkujGOXsiePGt+bAzZGwZmdySvcmKyOJkzxEI+4w=@vger.kernel.org, AJvYcCWfFo828+TY4Efj4vcvTK5zJ76/HE+hGZKTEC0pAiuisF9ZHEXRiLiVKs+gzGidguDiBN4GKsG9ldCPFau7IEY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9M2xCma1TJV6wVoXDbELn5E7up5rvo2sxSuGR09PkkAn0j9FO
-	iAX6kSGgt93HxvX+D4aGlw/hLLMxTOrreQTB1N1yvfxvYGFbU7Yd
-X-Gm-Gg: ASbGncsk0Mlp2dIGBl3s2V7LGf/98v6HfU6YIi00qjQttvb/ETb/Huiuybb7upX7Ipm
-	haxSVKQ+yqX1uCN6crXWUPioHykoa/Vnna6+Nrg364SKsFcy9aJpKna31q14sPEbNUXBEYgOWWO
-	hOoLZkQG789uAwQ6myGPFR4enzLb8hEnkcSMC5eSjOIRAIL4G3EzDVs6N+UfxzNKaEYQdiY6aZx
-	fU3JGRYZ+R+jZ1j6tyn9mt75VhSTvKr+ifVjI8aVXdsWgVWftCRSfQcSGb6/DdPL+ah5hdJH/R8
-	GsgxUcBySWlrqRaXx4GWUH4nLZoiM2Ptq19mVBkibfTtkBoY8Y8xvfWAqrAqgnJE/CHOjCYuWdU
-	=
-X-Google-Smtp-Source: AGHT+IGMCVTHaTAAEE9TyxMrC1UkOXyDv9xgn/r9jfFGP1Q8+03YjUg0MM1rRdEdZGDUJNxnohsoQA==
-X-Received: by 2002:a05:6102:4b82:b0:4c5:505a:c1f5 with SMTP id ada2fe7eead31-4df7de00c28mr6031983137.24.1747269786465;
-        Wed, 14 May 2025 17:43:06 -0700 (PDT)
-Received: from localhost.localdomain ([2804:14d:4c64:81ec:7409:107a:a63b:a3da])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-879f603551dsm9775065241.0.2025.05.14.17.43.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 May 2025 17:43:06 -0700 (PDT)
-From: Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>
-To: jjohnson@kernel.org
-Cc: ~lkcamp/patches@lists.sr.ht,
-	linux-wireless@vger.kernel.org,
-	ath11k@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] wifi: ath11k: clean-up during wrong ath11k_crypto_mode
-Date: Wed, 14 May 2025 21:40:54 -0300
-Message-ID: <20250515004258.87234-1-rodrigo.gobbi.7@gmail.com>
-X-Mailer: git-send-email 2.49.0
+        d=1e100.net; s=20230601; t=1747269715; x=1747874515;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ip9lVrq9USVSeXSDB7Ry76GsvvsCyjvJx3E1UJmIZxg=;
+        b=MCBbvKSINqXVYlpfNKjpIy4tfshLz/wYv6Wm+idYwRhWOwZx+8dvrqoXcZcaPROmVW
+         E2rKh40A/uTSG2WBaso0pIT56O0DfrjiDidlBtOFsipFqwlp43lonBT4uQkW+xi3NyhI
+         QlEzx9CMVJ6Oy3iEKI5r95F8TVWnqrqTu/fRzZ6aUtB5vv6FHPq+JFDLuOntVtoqznru
+         J/+Y9Zm0ExaoO324tZ9K4cL2CMlDR6BJZ9XW0o3G/JbX1Uw+5cKqtXPMbRxks+QzO5+e
+         w+xUozv+yrEhj5jEPXzj3gSn4UvLjg4U/84XWwJDlcnH8VyiJ1z5o9smahp8dV3iz/QI
+         YjrA==
+X-Forwarded-Encrypted: i=1; AJvYcCWFC+PnKFXONeLU2tW/3lCCSGmFK6BlpRwaGIYW9MvpuxsRvBWX/yLZ84a9DXo8dYwHbccmIq8QrxVUb+A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWIUyxVYsVjgE9MyWF5oJ3dqMpXdus4rLwcuprQNjoIVTxuPLv
+	oQbEThCr+wc/HoDC7H3/PKobsl7a7Ujoe0K3V9GXCrNxDkEspYwlYv3Cdczp97XL5SN8wvwd28U
+	JFQ==
+X-Google-Smtp-Source: AGHT+IEQQ2m9ChwSAgqTmcRTO2wVdgVG7h1KF3HTjNgQHsWD0J4xMyzMFU8Gl88ps+nHWYhsRW6yQlC7s94=
+X-Received: from pjboe15.prod.google.com ([2002:a17:90b:394f:b0:2ef:7af4:5e8e])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:55c7:b0:30c:5604:f646
+ with SMTP id 98e67ed59e1d1-30e519309bfmr943173a91.25.1747269715611; Wed, 14
+ May 2025 17:41:55 -0700 (PDT)
+Date: Wed, 14 May 2025 17:41:54 -0700
+In-Reply-To: <20250324173121.1275209-24-mizhang@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20250324173121.1275209-1-mizhang@google.com> <20250324173121.1275209-24-mizhang@google.com>
+Message-ID: <aCU4Uuhzo_ovR7r8@google.com>
+Subject: Re: [PATCH v4 23/38] KVM: x86/pmu: Configure the interception of PMU MSRs
+From: Sean Christopherson <seanjc@google.com>
+To: Mingwei Zhang <mizhang@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Paolo Bonzini <pbonzini@redhat.com>, Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, Liang@google.com, 
+	Kan <kan.liang@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	Yongwei Ma <yongwei.ma@intel.com>, Xiong Zhang <xiong.y.zhang@linux.intel.com>, 
+	Dapeng Mi <dapeng1.mi@linux.intel.com>, Jim Mattson <jmattson@google.com>, 
+	Sandipan Das <sandipan.das@amd.com>, Zide Chen <zide.chen@intel.com>, 
+	Eranian Stephane <eranian@google.com>, Shukla Manali <Manali.Shukla@amd.com>, 
+	Nikunj Dadhania <nikunj.dadhania@amd.com>
+Content-Type: text/plain; charset="us-ascii"
 
-if ath11k_crypto_mode is invalid (not ATH11K_CRYPT_MODE_SW/ATH11K_CRYPT_MODE_HW),
-ath11k_core_qmi_firmware_ready() will not undo some actions that was previously
-started/configured. It's reasonable to undo things during this condition, despite
-the value used at ath11k_crypto_mode not being valid in this case.
+Again, use more precise language.  "Configure interceptions" is akin to "do work".
+It gives readers a vague idea of what's going on, but this
 
-Signed-off-by: Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>
----
-Smatch got the following error:
+  KVM: x86/pmu: Disable interception of select PMU MSRs for mediated vPMUs
 
-drivers/net/wireless/ath/ath11k/core.c:2166 ath11k_core_qmi_firmware_ready() warn: missing unwind goto?
+is just as concise, and more descriptive.
 
-When the ath11k_crypto_mode, which is a module param, is not
-ATH11K_CRYPT_MODE_SW/HW, clean-up actions are not triggered. 
-Considering the whole ath11k_core_qmi_firmware_ready() function,
-during potential errors, those actions are properly triggered. 
-I'm suggesting a little change over the default case to clean things up.
-Tks and regards.
----
- drivers/net/wireless/ath/ath11k/core.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+> +	/*
+> +	 * In mediated vPMU, intercept global PMU MSRs when guest PMU only owns
+> +	 * a subset of counters provided in HW or its version is less than 2.
+> +	 */
+> +	if (kvm_mediated_pmu_enabled(vcpu) && kvm_pmu_has_perf_global_ctrl(pmu) &&
+> +	    pmu->nr_arch_gp_counters == kvm_pmu_cap.num_counters_gp)
 
-diff --git a/drivers/net/wireless/ath/ath11k/core.c b/drivers/net/wireless/ath/ath11k/core.c
-index 2e9f8a5e61e4..fd3017c444a4 100644
---- a/drivers/net/wireless/ath/ath11k/core.c
-+++ b/drivers/net/wireless/ath/ath11k/core.c
-@@ -2163,7 +2163,9 @@ int ath11k_core_qmi_firmware_ready(struct ath11k_base *ab)
- 		break;
- 	default:
- 		ath11k_info(ab, "invalid crypto_mode: %d\n", ath11k_crypto_mode);
--		return -EINVAL;
-+		ret = -EINVAL;
-+		ath11k_dp_free(ab);
-+		goto err_firmware_stop;
- 	}
- 
- 	if (ath11k_frame_mode == ATH11K_HW_TXRX_RAW)
--- 
-2.49.0
+This logic belongs in common code.  Just because AMD doesn't have fixed counters
+doesn't mean KVM can't have a superfluous "0 == 0" check.
 
+> +	if (kvm_mediated_pmu_enabled(vcpu) && kvm_pmu_has_perf_global_ctrl(pmu) &&
+
+Just require the guest to have PERF_GLOBAL_CTRL, I don't see any reason to support
+v1 PMUs.  It adds complexity and weirdness, and I can't imagine there's a use case.
 
