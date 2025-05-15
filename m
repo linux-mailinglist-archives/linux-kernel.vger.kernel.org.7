@@ -1,207 +1,160 @@
-Return-Path: <linux-kernel+bounces-649537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-649533-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC437AB85EE
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 14:13:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 505A7AB85DD
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 14:12:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 70C787B9CF6
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 12:11:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 15DCB7B96ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 12:11:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2D8B29DB8E;
-	Thu, 15 May 2025 12:08:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEE82298C1F;
+	Thu, 15 May 2025 12:08:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="XpfYxYud"
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2043.outbound.protection.outlook.com [40.107.100.43])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GgxIcFue"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 332A229ACD3;
-	Thu, 15 May 2025 12:08:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.43
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747310923; cv=fail; b=YwrJfn0vnA5/kMCbSa8ScenwSDsP48T2M5Qix14iN8Z5C5Hi5zSVdIFVFRVn1wudBnInqVXlaHOa/4dVlR41qrMq1L6JuFgtAnxH8pIMFk+ybEiec/cWWfZ+Zck1GtSUqa3xGByPeBbay71/CvFJFZU3n/1fViKJncqkBvBvRvs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747310923; c=relaxed/simple;
-	bh=k+sYv1vErRd76FerCR3lBQjCmVJ0kCueNOWf4eIAXcA=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=axn47kOaCoolfjytnnB7iUZ7XkscOlxqI1ETuHiaWWjklnGaeeRUnPevPnyM8LlDfIfYcznLlQ5waqDTluO9gvg5PUq8ontBXzAXINbdWgg6sqAgv4zBu4o2Mm3i7c2KRuRrEucRDFA4m/5evz0jI1B5DqJ5LWk+FOoD5teeVQQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=XpfYxYud; arc=fail smtp.client-ip=40.107.100.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ZJhxheFBqV/ojo+/XZQF4Tq3VivGfKTsqdNSQn4NCX7WwemI1wueifcPk6hXeVNwe3FMcORXY2jKMK2EvwRAxQZUJ3Ilweo1DFUd/uGXHisqhNO3PqoA0XKxprC5wyAbCNRC0Q536D4okBOiTniHl3fwX8k67zdKIq923aIgOTCvtvd+uM/1X02tf+9lT/Vw4OLdRVPhc2V5de+EhgyAhukxCxebJgL1i/KUbmaz9vkObTbvh+jYluUvv6QDyeJDQXrK+QATWI3aUCM3Xif/BRMkUdIUb2rrox8IVUlcMAUJAgD20sNW71UBNxYc2EuaxpK7OB/suugcukbMeRkJpQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Ftg/CyEP9NfkuvWf0cYWfexGAPN6rVWwfg7ZWld6tUM=;
- b=sj2NT6vqW3AYOZWvq9rXbTSMolTOzgNIjpATD6oGrZt7y43SzxYZQYp1Y0GALEeQQBI/RhU3SjXSxur02O99+tVScV3PGBk0CHdyrtOJjeRAK4h766kQo4ocrGpZjq3hH4PGI+kauPThrAu8p9pbWSee0tKxZ84wcZwvgFwT+nSYNPqJeSLvG0onEc7h7Di056B116Z+boJbnJkXps+a8EI+5bevjlDxmTF/71OdPP5D4l+Nn01ZM+vEH9/klyTRhmPgWK6uZoNV+Ua3mpaSu00Au1u5Xp0evjmfbCgGd+D4wIMUvgA0u1xOKnAiEFZuGMHuZrMs4M6XfCE342Gaew==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=google.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Ftg/CyEP9NfkuvWf0cYWfexGAPN6rVWwfg7ZWld6tUM=;
- b=XpfYxYudcWfi6QiUfTlEKUXPwOcu+ioQaYi7EJLFLLU4j+uIDQ+/ezvELuDaSWBih6SIe9+/HBqIiu9oRUn+u+DEIIT0hiHxvHrICKmt9+a2EN/t30xSJ3SYyyiBbXzFcXy68MwuqRcszHi9Nq7GF4dEMSSjNP3YDScQFhh7QY0=
-Received: from MN2PR16CA0048.namprd16.prod.outlook.com (2603:10b6:208:234::17)
- by CY8PR12MB7492.namprd12.prod.outlook.com (2603:10b6:930:93::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8722.29; Thu, 15 May
- 2025 12:08:37 +0000
-Received: from BL02EPF00021F6D.namprd02.prod.outlook.com
- (2603:10b6:208:234:cafe::2c) by MN2PR16CA0048.outlook.office365.com
- (2603:10b6:208:234::17) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8722.20 via Frontend Transport; Thu,
- 15 May 2025 12:08:37 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- BL02EPF00021F6D.mail.protection.outlook.com (10.167.249.9) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8722.18 via Frontend Transport; Thu, 15 May 2025 12:08:37 +0000
-Received: from BLR-L1-SARUNKOD.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 15 May
- 2025 07:08:33 -0500
-From: Sairaj Kodilkar <sarunkod@amd.com>
-To: <seanjc@google.com>
-CC: <baolu.lu@linux.intel.com>, <dmatlack@google.com>, <dwmw2@infradead.org>,
-	<iommu@lists.linux.dev>, <joao.m.martins@oracle.com>, <joro@8bytes.org>,
-	<kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>, <mlevitsk@redhat.com>,
-	<pbonzini@redhat.com>, <vasant.hegde@amd.com>,
-	<suravee.suthikulpanit@amd.com>, <naveen.rao@amd.com>, Sairaj Kodilkar
-	<sarunkod@amd.com>
-Subject: Re: [PATCH 00/67] KVM: iommu: Overhaul device posted IRQs support
-Date: Thu, 15 May 2025 17:38:04 +0530
-Message-ID: <20250515120804.32131-1-sarunkod@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250404193923.1413163-1-seanjc@google.com>
-References: <20250404193923.1413163-1-seanjc@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 345AB2989B3
+	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 12:08:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747310910; cv=none; b=ExDbSp1G78v/qrD0zzvA4nr7CwxGPP9Z3cTrbz/6J14BOcXsb+1V2E0P5Q6+ma4vndfXHPAcnlWwsZ1P03ePA6IQKLgKOg0nDlnrcCGHYa5ZYrBMNR3/F+5CiZIkA6Qnp6Re/J6uB3HEaVz/Ql3cX4i/bvAer6oUkCEHTEtHzwk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747310910; c=relaxed/simple;
+	bh=jx/eB7hgLA5HQUuDgQzihrae+bLqoXk6pIT/jLB/LeI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=V/bjlxWeH9Itn/Imum/O3RwGx8bwrUm1ADGgYJgV3PxCBTMMdzW//Q0/fYo/MSPkKfWA/m2uGQ+L7pTVGiqYzmQH+VOWJcaG5K+OPIy6B+trGQBI0cR/NFafPJyhA+2kAefqTIsOp37fsqRCfokFBcLzO4ke2G0DpQjKrNjS06Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GgxIcFue; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 009CFC4CEE7;
+	Thu, 15 May 2025 12:08:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747310909;
+	bh=jx/eB7hgLA5HQUuDgQzihrae+bLqoXk6pIT/jLB/LeI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GgxIcFueqWIHANePWfZYXCpUkSPIMhQEU5tFfIFtKrX5mh9KKQEziNnPpdyexnxa/
+	 LdgMNjmFFANii/HrwRPOUxjpV1C3Oj0uHHY0jTmdHvju6v7E0LMVkGZ/bzi/PrVst6
+	 /AcEazD6UUpi7agkr/l+pgZ1zPp43ydtxLkf1Or+xYxCQ2wA/Fn77wcZQJ/HYvVogX
+	 W+adQy4ELFF2isrrxTiIBcj1qdrism2pc0m1EkMHZkCS0vt67w5SwEklQbXsv+QUX5
+	 6CrwIv+GP/7lsh1TnQKk8khqxMrwiymX7oKezg1Xbuz0Tyd/7xKmLhQTcX27QMVeuB
+	 y9H6IqwfMNggQ==
+Date: Thu, 15 May 2025 14:08:25 +0200
+From: Ingo Molnar <mingo@kernel.org>
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: "Kirill A. Shutemov" <kirill@shutemov.name>,
+	Ard Biesheuvel <ardb+git@google.com>, linux-kernel@vger.kernel.org,
+	x86@kernel.org, Linus Torvalds <torvalds@linux-foundation.org>,
+	Brian Gerst <brgerst@gmail.com>
+Subject: Re: [PATCH v3 2/7] x86/cpu: Allow caps to be set arbitrarily early
+Message-ID: <aCXZOTi6Oe0jiNq2@gmail.com>
+References: <20250514104242.1275040-9-ardb+git@google.com>
+ <20250514104242.1275040-11-ardb+git@google.com>
+ <aCWQOzCla7i__iEl@gmail.com>
+ <u4abxvlhfrg4pdvtsej6zh2wizb7krg5okps347uwp5bhselwp@7e2cbs5scxpr>
+ <aCWjZ0LsNz8a7fjP@gmail.com>
+ <CAMj1kXHGJcn+BrchpFSKL8mykvYjhcSGEVrRwLSXHsu7jAFW8Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL02EPF00021F6D:EE_|CY8PR12MB7492:EE_
-X-MS-Office365-Filtering-Correlation-Id: 25c5f502-fd80-4641-c9ef-08dd93a9395f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|82310400026|36860700013|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?N0H/lJ0jc4uSbnf9rkZKw3H6Wav4muBTXZkeXAUt+hLg/UTn00CxId8Ecz1g?=
- =?us-ascii?Q?uVizsASLCiEcB3WeAzE1E1F9YQQWnynaxeUhNVti86x8Q+/Gsf2vXMK8YiPk?=
- =?us-ascii?Q?NrLN1fWlZZa7HGFysbs1aAxGNYs2sI+uD9wkU32xFbXgfUamaUkDXW3g6HhW?=
- =?us-ascii?Q?TWeSmylVM0H4l69FIVRN0G/4L2NDHIwaUH5d9c+9zI1Q+kCpx3PWWJo/avJi?=
- =?us-ascii?Q?qfgJPCQvvCGrzvfjgiHM/IdGB1NcciJlWE5JGKzMc9oZeAYkwyF3Q631x1Ph?=
- =?us-ascii?Q?/2KzFZRCJWKUTEEeG+TqZMz1JhP9AXXSH9Vh8b1TanSHPNJoCgqdl9JBen4Z?=
- =?us-ascii?Q?BZdimkv6yEQHZgbbLdwHZbmOrVuozsqbf44kifVyxOF/tzc51Ibe+Xlz943f?=
- =?us-ascii?Q?7HYvWHXT4LT2DY0OEIpVWyKw2CQxtrvJWXfpuDqCmj+buzVgy2YzCDDroE9Y?=
- =?us-ascii?Q?sBW0IwPKQEjXs79EiXlwfCsOINAV29RMpXTleJZTeHg6UjIp/UD9UumsNuP7?=
- =?us-ascii?Q?qh/9ot2XPLVkrAaJrqRWjZuq4BTHIYrJyCv9iOFXX94OseRitYG2iVj56FPt?=
- =?us-ascii?Q?lmfY32sPW7bLKn8RLIF+IVctzyLLU0+bp32zB4Y443oi7GUDip877C6AyLo7?=
- =?us-ascii?Q?DXBvHq9b9yYr8lUCKcS0Wmfp6RnP47BqtBkWtY4DFf4ViT2CMzajPiavL1FG?=
- =?us-ascii?Q?Z9tMhD9EO2m5A+daLg5E9oU7Ck2oSUqgtNsNbJL3DLkpPCg0IQbUVmMlfvMu?=
- =?us-ascii?Q?wH7l4oRZ9DfMLiYAHoWajvlXb9mc71N69xqdEx8gtrovQ5Ty89bEr3YNrJIq?=
- =?us-ascii?Q?fGx2gEcATtNEK7pgJZ93A1HLCzP0TobVkuoqDWHoOE3LOBe5xoz6CJ1h7CK2?=
- =?us-ascii?Q?/JJOM8rzaTZLd2G0QmpzEugKzpdm7Z6qGj4Mk4F1FGw6DPt7hW1nGLXYqWjw?=
- =?us-ascii?Q?MKTuNP6WOoghvAKJoOgPs1DvkchxoWM78fNus54flssym4+df/v+8s6EU3Iq?=
- =?us-ascii?Q?w9trrYPObKfcQlp2l0akRBYKHbT2d9JhaLsR18qI2ZKhjnYEH7eVkSvG0sXB?=
- =?us-ascii?Q?Tq5MqrqsgYVVFH3jmCXVvgM+2gGxu19FwbzT2woNqEiCIs++PW5DYSrcN5v8?=
- =?us-ascii?Q?9SVL6bKydHCGp0jQ1NGIzv30FsedoXDBxa/6aETOLkBmF6fyPi8pP7obfwpr?=
- =?us-ascii?Q?3xzAQdlzjWG0e5E3TeHReG310/43lu4pAtB0vKl9Pdx/fvnbM0vNywcycOt5?=
- =?us-ascii?Q?OzeNibiQxPMDwtLSIa7XVZuThacaL1ztGvd4J7pMdoTaP+euRNTa1rjIwut+?=
- =?us-ascii?Q?eUN8aZJpNyj1gUdVUzDlD3wLkcx8srkog2FbhsPvuKKLm6fJ6JI/CQsizlGP?=
- =?us-ascii?Q?lO5JVjN9gU6AS/0qZk/HYls+wN/7wdk28h6En7291GJfIybSV+sFZRmBEKmX?=
- =?us-ascii?Q?5Z/A1h85kEtie66gugrkSCk3gdXB+3ZU3cQLesQWE4+R1LwlpvxlLM0HE3FE?=
- =?us-ascii?Q?cgEil1LgskNmRYrZv2AOSq2kotxX4qJAkC1y?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(7416014)(82310400026)(36860700013)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 May 2025 12:08:37.7375
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 25c5f502-fd80-4641-c9ef-08dd93a9395f
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BL02EPF00021F6D.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7492
-
-Hi Sean,
-
-We ran few tests with following setup
-
-* Turin system with 2P, 192 cores each (SMT enabled, Total 768)
-* 4 NVMEs of size 1.7 attached to a single IOMMU
-* Total RAM 247 GiB
-* Qemu version : 9.1.93
-* Guest kernel : 6.14-rc7
-* FIO random reads with 4K blocksize and libai
-
-With above setup we measured the Guest nvme interrupts, IOPS, GALOG interrupts
-and GALOG entries for 60 seconds with and without your changes.
-
-Here are the results,
-
-                          VCPUS = 32, Jobs per NVME = 8
-==============================================================================================
-                             w/o Sean's patches           w/ Sean's patches     Percent change
-----------------------------------------------------------------------------------------------
-Guest Nvme interrupts               123,922,860                 124,559,110              0.51%
-IOPS (in kilo)                            4,795                       4,796              0.04%
-GALOG Interrupts                         40,245                         164            -99.59%
-GALOG entries                            42,040                         169            -99.60%
-----------------------------------------------------------------------------------------------
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMj1kXHGJcn+BrchpFSKL8mykvYjhcSGEVrRwLSXHsu7jAFW8Q@mail.gmail.com>
 
 
-                VCPUS = 64, Jobs per NVME = 16
-==============================================================================================
-                             w/o Sean's patches           w/ Sean's patches     Percent change
-----------------------------------------------------------------------------------------------
-Guest Nvme interrupts               99,483,339                   99,800,056             0.32% 
-IOPS (in kilo)                           4,791                        4,798             0.15% 
-GALOG Interrupts                        47,599                       11,634           -75.56% 
-GALOG entries                           48,899                       11,923           -75.62%
-----------------------------------------------------------------------------------------------
+* Ard Biesheuvel <ardb@kernel.org> wrote:
 
+> On Thu, 15 May 2025 at 09:18, Ingo Molnar <mingo@kernel.org> wrote:
+> >
+> >
+> > * Kirill A. Shutemov <kirill@shutemov.name> wrote:
+> >
+> > > On Thu, May 15, 2025 at 08:56:59AM +0200, Ingo Molnar wrote:
+> > > >
+> > > > * Ard Biesheuvel <ardb+git@google.com> wrote:
+> > > >
+> > > > > From: Ard Biesheuvel <ardb@kernel.org>
+> > > > >
+> > > > > cpu_feature_enabled() uses a ternary alternative, where the late variant
+> > > > > is based on code patching and the early variant accesses the capability
+> > > > > field in boot_cpu_data directly.
+> > > > >
+> > > > > This allows cpu_feature_enabled() to be called quite early, but it still
+> > > > > requires that the CPU feature detection code runs before being able to
+> > > > > rely on the return value of cpu_feature_enabled().
+> > > > >
+> > > > > This is a problem for the implementation of pgtable_l5_enabled(), which
+> > > > > is based on cpu_feature_enabled(X86_FEATURE_5LEVEL_PAGING), and may be
+> > > > > called extremely early. Currently, there is a hacky workaround where
+> > > > > some source files that may execute before (but also after) CPU feature
+> > > > > detection have a different version of pgtable_l5_enabled(), based on the
+> > > > > USE_EARLY_PGTABLE_L5 preprocessor macro.
+> > > > >
+> > > > > Instead, let's make it possible to set CPU feature arbitrarily early, so
+> > > > > that the X86_FEATURE_5LEVEL_PAGING capability can be set before even
+> > > > > entering C code.
+> > > > >
+> > > > > This involves relying on static initialization of boot_cpu_data and the
+> > > > > cpu_caps_set/cpu_caps_cleared arrays, so they all need to reside in
+> > > > > .data. This ensures that they won't be cleared along with the rest of
+> > > > > BSS.
+> > > > >
+> > > > > Note that forcing a capability involves setting it in both
+> > > > > boot_cpu_data.x86_capability[] and cpu_caps_set[].
+> > > > >
+> > > > > Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+> > > > > ---
+> > > > >  arch/x86/kernel/cpu/common.c | 9 +++------
+> > > > >  1 file changed, 3 insertions(+), 6 deletions(-)
+> > > > >
+> > > > > diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+> > > > > index 6f7827015834..f6f206743d6a 100644
+> > > > > --- a/arch/x86/kernel/cpu/common.c
+> > > > > +++ b/arch/x86/kernel/cpu/common.c
+> > > > > @@ -704,8 +704,8 @@ static const char *table_lookup_model(struct cpuinfo_x86 *c)
+> > > > >  }
+> > > > >
+> > > > >  /* Aligned to unsigned long to avoid split lock in atomic bitmap ops */
+> > > > > -__u32 cpu_caps_cleared[NCAPINTS + NBUGINTS] __aligned(sizeof(unsigned long));
+> > > > > -__u32 cpu_caps_set[NCAPINTS + NBUGINTS] __aligned(sizeof(unsigned long));
+> > > > > +__u32 __read_mostly cpu_caps_cleared[NCAPINTS + NBUGINTS] __aligned(sizeof(unsigned long));
+> > > > > +__u32 __read_mostly cpu_caps_set[NCAPINTS + NBUGINTS] __aligned(sizeof(unsigned long));
+> > > >
+> > > > This change is not mentioned in the changelog AFAICS, but it should be
+> > > > in a separate patch anyway.
+> > >
+> > > And why not __ro_after_init?
+> >
+> > That's patch #7 :-)
+> >
+> > I got confused about that too.
+> >
+> > Patch #2 should not touch this line, and patch #7 should simply
+> > introduce __ro_after_init, and we are good I think.
+> >
+> 
+> This change is needed because it prevents these arrays from being
+> cleared along with the rest of BSS, which occurs after the startup
+> code executes.
 
-                VCPUS = 192, Jobs per NVME = 48
-==============================================================================================
-                             w/o Sean's patches          w/ Sean's patches      Percent change
-----------------------------------------------------------------------------------------------
-Guest Nvme interrupts               76,750,310                  78,066,512               1.71%
-IOPS (in kilo)                           4,751                       4,749              -0.04%
-GALOG Interrupts                        56,621                      54,732              -3.34%
-GALOG entries                           59,579                      56,215              -5.65%
-----------------------------------------------------------------------------------------------
- 
+I see, it's a correctness & bisectability aspect, even if it's 
+obsoleted later on. Good point, objection withdrawn.
 
-The results show that patches have significant impact on the number of posted
-interrupts at lower vCPU count (32 and 64) while providing similar IOPS and
-Guest NVME interrupt rate (i.e. patches do not regress).
+> So conceptually, moving these out of BSS is similar to dropping the
+> memset()s, and therefore this belongs in the same patch.
+> 
+> However, you are correct that moving these into __ro_after_init
+> achieves the same thing, so I will just reorder that patch with this
+> one, and clarify in the commit log that we are relying on the fact
+> that __ro_after_init is not cleared at boot time.
 
-Along with the performance evaluation, we did sanity tests such with AVIC,
-x2AVIC and kernel selftest.  All tests look good.
+That works fine for me too - whichever order you prefer.
 
-For AVIC related patches:
-Tested-by: Sairaj Kodilkar <sarunkod@amd.com>
+Thanks,
 
-Regards
-Sairaj Kodilkar
-
+	Ingo
 
