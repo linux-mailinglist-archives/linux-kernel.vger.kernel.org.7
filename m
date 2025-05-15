@@ -1,193 +1,110 @@
-Return-Path: <linux-kernel+bounces-650112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-650110-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5AD6AB8D45
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 19:11:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0BA6AB8D3F
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 19:10:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D19A83BEDFA
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4EF931BC62D5
 	for <lists+linux-kernel@lfdr.de>; Thu, 15 May 2025 17:10:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88FA0255F2A;
-	Thu, 15 May 2025 17:10:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DEE12550CD;
+	Thu, 15 May 2025 17:09:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="n/1g+h6+"
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tj7snRIl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 645A821B910
-	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 17:10:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF2B4253F17;
+	Thu, 15 May 2025 17:09:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747329011; cv=none; b=uIIGVpF5YFEHzRG0HUvATKl4dwllXRqT7GAWemHc3N27vCqiCryBAtY6fQ+pIPWTNkWScoqTNlKYwDjrp/SrFSJvQKhfpoBO/pBkudXL7/FbfSrsBvdz3udWuL7W01wdGjBDmn4zVeC2DorCIel1jrKkJQzTGXuc0ith4TsTsAc=
+	t=1747328994; cv=none; b=Z2ejEP4FVYWg38+rg679CsD6stpJwCS6f1sJ1IBLrSY2arox2X7JOggB+Rjj4otAN15NfvKyrQ47WnNBXpXwePfXROWqgEXDxsBb04ZWu6a2VIVjvnqPGi+xdhe/+Bf18WsUuCAzEHUvV4EI5mGaqu1NWCcQG2SqC154Pu6gPE0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747329011; c=relaxed/simple;
-	bh=7l959DDc7jBJh95vOkWz3tllgngyDo+k0XrFifMPGTE=;
-	h=From:In-Reply-To:References:Mime-Version:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QeWaDQqHCDpEdZKAyJevsXJc+1ZH3JCltmDZMFZoEoHEBT7H8wDCjqRkIgzJzzA1iihYDuIv49fZe8C66pfjb45MwvRhDlbbFrfR1GT2Z0V79GATEA8NT88Vmf1jfjbaHcamStTL4+Lh+Vjx+E3UalnAyYPCbKrxZnXAbtQhMBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=n/1g+h6+; arc=none smtp.client-ip=185.125.188.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-oo1-f71.google.com (mail-oo1-f71.google.com [209.85.161.71])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id A6047497A9
-	for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 17:10:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1747329008;
-	bh=hc10wZlOZXdQSTbtiNrSV2vv5sB6wouwtdIbWrMrirQ=;
-	h=From:In-Reply-To:References:Mime-Version:Date:Message-ID:Subject:
-	 To:Cc:Content-Type;
-	b=n/1g+h6+xEGwyMVYQHML0fkLRjN/999MtpfAj5h7byIauToL948Vp8WRUaTk6yI23
-	 QQ2+oqrDJTyXvt1fzMXs68FC/CJFuLYhz7vy/Iyxmd/NiZ2n6qP1XrzwjHot/hHjhX
-	 uXnJteiXFKh+rQK+TYcTM1v0Lb1UlNsTNhhVzfEAE2ZCwwvfrBYnJHfb3lbt6e+jPn
-	 JgU0XiCpMK/OB0QfP/Xc5HkYk+2LuHNytF5C3DuKVgOI2MwUpvfi6CClCycjcFRMU4
-	 U7dvyHXpH4QdxlJi1Ss2gQvtnRmCo0oXwQUI4xPcIXewA7mIwY9cuz/GRqe+2SIDM/
-	 CInsACzHL6Kog==
-Received: by mail-oo1-f71.google.com with SMTP id 006d021491bc7-606691c2afdso1545823eaf.0
-        for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 10:10:08 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747329007; x=1747933807;
-        h=cc:to:subject:message-id:date:mime-version:references:in-reply-to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hc10wZlOZXdQSTbtiNrSV2vv5sB6wouwtdIbWrMrirQ=;
-        b=Qmy2Kxgl/+Bbcs4stkovmhaVYtZAawntP45gOW42TyPpyFsfs8Cig84suyI1+hUVFM
-         tZCgTxcXfbhAxJwl2mUX1vmybMlSTFTz1tq/351oFVMjVMNV8uM2kdbNhmzTDXNLmDbZ
-         uyMgXtsQ95AUari2/+sCW5OijRV1H5FaGZ0MLNLvdxpYas1daaNjBHHu7gblXGdBRTvs
-         u8Gn/fumtm6BBDeU8HqDBOWYN9ASkGavh+n3EHcK2565t5PuM3XjtHLaoUVu1yCt4Zmr
-         TTgCjiEAm5LOulP66iE0+pzAIUfSLOrI8MI9TB8XITic8pHVD/2YMlm4cXT+nGdUXMyj
-         nqdw==
-X-Gm-Message-State: AOJu0YxmAwLqJhTHg3zdeE7JFhU5LcpOym05vUwYYASbTBZeLcYftQnW
-	R/DF25GMd/s8uuySKBPZy/bVE+MZE7MroHM+GRl35tyG4CW4VnEG7ILm36Xea6Qd4dHwuYNRCni
-	NVPCZLM4tUWtj9PKh9+oD1SKopsGzoEZcmoJ9BWfCtQRts9e69eeTJ7aMLkqCHcqFcwb10DJxmy
-	2recvQJnmjGdVicPGwnlEpepBcgssonOH2DA2IROiG+dkqbAfbGuZsmJBE
-X-Gm-Gg: ASbGncsGXU2b0eMoVNRJdgSSBW5xhxOweEy80fepXqPIxILhIafx7DOjgFN2Q12Ezl5
-	TscCCKd10FyQth5/iVSZQ249K2EKo4lGcz9lu/1e+IIt5konN68UQ12SjZ2ifGL/ovdxNSw==
-X-Received: by 2002:a05:6820:1841:b0:606:107a:ebd8 with SMTP id 006d021491bc7-609f374ddb4mr117617eaf.5.1747329007175;
-        Thu, 15 May 2025 10:10:07 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFzb9VcV3Lnf5ruIIC6ey76hxyhG8TiKGAlKsdKpz4KyWmg3ddQXbaDSEZE53clpDxkh1hdWXrmr5qJP7/70kY=
-X-Received: by 2002:a05:6820:1841:b0:606:107a:ebd8 with SMTP id
- 006d021491bc7-609f374ddb4mr117595eaf.5.1747329006841; Thu, 15 May 2025
- 10:10:06 -0700 (PDT)
-Received: from 348282803490 named unknown by gmailapi.google.com with
- HTTPREST; Thu, 15 May 2025 10:10:05 -0700
-Received: from 348282803490 named unknown by gmailapi.google.com with
- HTTPREST; Thu, 15 May 2025 10:10:05 -0700
-From: Emil Renner Berthing <emil.renner.berthing@canonical.com>
-In-Reply-To: <20250502103101.957016-5-e@freeshell.de>
-References: <20250502103101.957016-1-e@freeshell.de> <20250502103101.957016-5-e@freeshell.de>
+	s=arc-20240116; t=1747328994; c=relaxed/simple;
+	bh=vigcnckwJAxU7xBLD9wpWuNrdCa6qlHweBDjwqaDrGw=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=LdFHQMOZVA4QmoUJ7gKr3/x2wBsIH4rF1w4UJV3nXM5NfgCAhnDBCHDSA+LdpXJEjzRBQyWnE+WKHO8gdgyZDeFmRxtJch8JHBh2aijPeWM/xYLw/JS40E/u3ODWusPhgZNHb00CIAjUOcmhoVB21zenjdk/KDuMaegVJg0sGVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tj7snRIl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65350C4CEE7;
+	Thu, 15 May 2025 17:09:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747328993;
+	bh=vigcnckwJAxU7xBLD9wpWuNrdCa6qlHweBDjwqaDrGw=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=Tj7snRIlyhVCMcAGIKYQ7aqTRqTDmICMm9sGE9FuaJILy9n2qJsp1yGyQFmu5qGb/
+	 xXYeajq/Oned+JZEKb3sgnmWn1aXxNJF6f8oZ86ki9URAIrToswiD8/xfh4iVhAcV6
+	 rMbap9zOVdLY9FMsKmPhMVPYhVj9uPURBvXdgCFQISNaHltyeTcD7nkmL2uOsNSykl
+	 sRWWTugLUuUEg5LniZdazq6C42KwxXCPjukWxnJvBCNoOJPKF9XFyNO2QVxTg/N1CL
+	 f+DzONjGHv6eaRUBmeXjV2dkK868Kz1U4216abFCrhHUhM25Su3SJ6YHlcCAaEXnyS
+	 tOrwyGcMoxUIA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADDC13806659;
+	Thu, 15 May 2025 17:10:31 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Date: Thu, 15 May 2025 10:10:05 -0700
-X-Gm-Features: AX0GCFsnIcyqJ3U7xBWuljucy5NCfIr9h3FNHYe_s9G96TiWFSA6H61K7riL4Vc
-Message-ID: <CAJM55Z8sqZ8g1zbphoKaqkZfFoh6GGCXF9dVPds5FydY3=46Gg@mail.gmail.com>
-Subject: Re: [PATCH v3 4/4] riscv: dts: starfive: jh7110-common:
- bootph-pre-ram hinting needed by boot loader
-To: E Shattow <e@freeshell.de>, Emil Renner Berthing <kernel@esmil.dk>, Conor Dooley <conor@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-riscv@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] Bluetooth: btusb: Add new VID/PID 13d3/3584 for MT7922
+From: patchwork-bot+bluetooth@kernel.org
+Message-Id: 
+ <174732903051.3181810.414853071879946435.git-patchwork-notify@kernel.org>
+Date: Thu, 15 May 2025 17:10:30 +0000
+References: <SY7P300MB0829AE8C53A9A35F9038F97ABF832@SY7P300MB0829.AUSP300.PROD.OUTLOOK.COM>
+In-Reply-To: <SY7P300MB0829AE8C53A9A35F9038F97ABF832@SY7P300MB0829.AUSP300.PROD.OUTLOOK.COM>
+To: =?utf-8?b?6Z2S5Y+2IOilv+WfjiA8c3VubGl3ZWkyMDE1c0BvdXRsb29rLmNvbT4=?=@codeaurora.org
+Cc: marcel@holtmann.org, luiz.dentz@gmail.com,
+ linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
 
-E Shattow wrote:
-> Add bootph-pre-ram hinting to jh7110-common.dtsi:
->   - i2c5_pins and i2c-pins subnode for connection to eeprom
->   - eeprom node
->   - qspi flash configuration subnode
->   - memory node
->   - mmc0 for eMMC
->   - mmc1 for SD Card
->   - uart0 for serial console
->
->   With this the U-Boot SPL secondary program loader may drop such overrides.
->
-> Signed-off-by: E Shattow <e@freeshell.de>
+Hello:
 
-Acked-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
+This patch was applied to bluetooth/bluetooth-next.git (master)
+by Luiz Augusto von Dentz <luiz.von.dentz@intel.com>:
 
-> ---
->  arch/riscv/boot/dts/starfive/jh7110-common.dtsi | 9 +++++++++
->  1 file changed, 9 insertions(+)
->
-> diff --git a/arch/riscv/boot/dts/starfive/jh7110-common.dtsi b/arch/riscv/boot/dts/starfive/jh7110-common.dtsi
-> index f1dc45b98e1d..d2cdb2f276c3 100644
-> --- a/arch/riscv/boot/dts/starfive/jh7110-common.dtsi
-> +++ b/arch/riscv/boot/dts/starfive/jh7110-common.dtsi
-> @@ -28,6 +28,7 @@ chosen {
->  	memory@40000000 {
->  		device_type = "memory";
->  		reg = <0x0 0x40000000 0x1 0x0>;
-> +		bootph-pre-ram;
->  	};
->
->  	gpio-restart {
-> @@ -249,6 +250,7 @@ emmc_vdd: aldo4 {
->  	eeprom@50 {
->  		compatible = "atmel,24c04";
->  		reg = <0x50>;
-> +		bootph-pre-ram;
->  		pagesize = <16>;
->  	};
->  };
-> @@ -268,6 +270,7 @@ &mmc0 {
->  	assigned-clocks = <&syscrg JH7110_SYSCLK_SDIO0_SDCARD>;
->  	assigned-clock-rates = <50000000>;
->  	bus-width = <8>;
-> +	bootph-pre-ram;
->  	cap-mmc-highspeed;
->  	mmc-ddr-1_8v;
->  	mmc-hs200-1_8v;
-> @@ -285,6 +288,7 @@ &mmc1 {
->  	assigned-clocks = <&syscrg JH7110_SYSCLK_SDIO1_SDCARD>;
->  	assigned-clock-rates = <50000000>;
->  	bus-width = <4>;
-> +	bootph-pre-ram;
->  	no-sdio;
->  	no-mmc;
->  	cd-gpios = <&sysgpio 41 GPIO_ACTIVE_LOW>;
-> @@ -323,6 +327,7 @@ &qspi {
->  	nor_flash: flash@0 {
->  		compatible = "jedec,spi-nor";
->  		reg = <0>;
-> +		bootph-pre-ram;
->  		cdns,read-delay = <2>;
->  		spi-max-frequency = <100000000>;
->  		cdns,tshsl-ns = <1>;
-> @@ -402,6 +407,8 @@ GPOEN_SYS_I2C2_DATA,
->  	};
->
->  	i2c5_pins: i2c5-0 {
-> +		bootph-pre-ram;
-> +
->  		i2c-pins {
->  			pinmux = <GPIOMUX(19, GPOUT_LOW,
->  					      GPOEN_SYS_I2C5_CLK,
-> @@ -410,6 +417,7 @@ GPI_SYS_I2C5_CLK)>,
->  					      GPOEN_SYS_I2C5_DATA,
->  					      GPI_SYS_I2C5_DATA)>;
->  			bias-disable; /* external pull-up */
-> +			bootph-pre-ram;
->  			input-enable;
->  			input-schmitt-enable;
->  		};
-> @@ -638,6 +646,7 @@ GPOEN_DISABLE,
->  };
->
->  &uart0 {
-> +	bootph-pre-ram;
->  	pinctrl-names = "default";
->  	pinctrl-0 = <&uart0_pins>;
->  	status = "okay";
-> --
-> 2.49.0
->
+On Wed, 30 Apr 2025 23:50:50 +0000 you wrote:
+> From dcb763edda3fd9f3fdb6525b07072fdd136d713a Mon Sep 17 00:00:00 2001
+> From: Liwei Sun <sunliwei2015s@outlook.com>
+> Date: Thu, 1 May 2025 06:18:50 +0800
+> Subject: [PATCH] Bluetooth: btusb: Add new VID/PID 13d3/3584 for MT7922
+> 
+> A new variant of MT7922 wireless device has been identified.
+> The device introduces itself as MEDIATEK MT7922,
+> so treat it as MediaTek device.
+> With this patch, btusb driver works as expected:
+> [    3.151162] Bluetooth: Core ver 2.22
+> [    3.151185] Bluetooth: HCI device and connection manager initialized
+> [    3.151189] Bluetooth: HCI socket layer initialized
+> [    3.151191] Bluetooth: L2CAP socket layer initialized
+> [    3.151194] Bluetooth: SCO socket layer initialized
+> [    3.295718] Bluetooth: hci0: HW/SW Version: 0x008a008a, Build Time: 20241106163512
+> [    4.676634] Bluetooth: BNEP (Ethernet Emulation) ver 1.3
+> [    4.676637] Bluetooth: BNEP filters: protocol multicast
+> [    4.676640] Bluetooth: BNEP socket layer initialized
+> [    5.560453] Bluetooth: hci0: Device setup in 2320660 usecs
+> [    5.560457] Bluetooth: hci0: HCI Enhanced Setup Synchronous Connection command is advertised, but not supported.
+> [    5.619197] Bluetooth: hci0: AOSP extensions version v1.00
+> [    5.619204] Bluetooth: hci0: AOSP quality report is supported
+> [    5.619301] Bluetooth: MGMT ver 1.23
+> [    6.741247] Bluetooth: RFCOMM TTY layer initialized
+> [    6.741258] Bluetooth: RFCOMM socket layer initialized
+> [    6.741261] Bluetooth: RFCOMM ver 1.11
+> 
+> [...]
+
+Here is the summary with links:
+  - Bluetooth: btusb: Add new VID/PID 13d3/3584 for MT7922
+    https://git.kernel.org/bluetooth/bluetooth-next/c/72d82f47a019
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
