@@ -1,141 +1,105 @@
-Return-Path: <linux-kernel+bounces-651845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-651847-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DA16ABA3CB
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 21:31:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EBFDABA3D0
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 21:32:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 521071B6322F
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 19:31:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A887F4A1F14
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 19:32:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 919DE27FB18;
-	Fri, 16 May 2025 19:31:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF91528001B;
+	Fri, 16 May 2025 19:31:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EndgVF7j"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="k57DJFDm"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB38DEEBA;
-	Fri, 16 May 2025 19:31:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D0BF22758F;
+	Fri, 16 May 2025 19:31:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747423878; cv=none; b=tHw0+abtAXRFK6hR/7QIGELWZOiHC7rkA4abuvChTWIRXZtb81D1q9Uq8yfgLABH5C499aaWAgPYd9KBvBajAfE6x2iD0lYuUXk6HZnnsBHZP+Y2iENt0WMYWgwjhxAVQT3NIXm4OkQfzu4yArcUXzK9t1Xj9q7WaEyQNFjrUQY=
+	t=1747423889; cv=none; b=BBShFW58jmam/ga1mcgJ6Ic6zbEdYUU8T46ouTAB9QYPN5jBhZn4Q+JwOkIK2Xe3xAasD4hZ+gvT4YWV/ECl8dAf2wctnfAVllXZrw21zqiwp1aB8NzQPwLAOxtffWx2NApHEjZwnb2K3SKwqhcRoXiKsbzFUs0tDTq8TuVObl0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747423878; c=relaxed/simple;
-	bh=AWPQKMivdFQ6QmrVDoYacp12BqW2VCLe3IzFWlx64xM=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=LyICde8WPO+Mw3XQqgzLFNjq+RGP1U3DtpfWg4tn1L7/XtSfFGE3fgy3hlS1xEt3QQxHt4/Ur+zo7VlUqKaBjd2Kk1MdC70Uh/kGcTBH1VDDcgH1G569Rw8y3jlAd0QR4bbUuWXZstiuaMFzub2xOfiDp0o89Mu5HCXNVPnunFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EndgVF7j; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 296CFC4CEE4;
-	Fri, 16 May 2025 19:31:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747423876;
-	bh=AWPQKMivdFQ6QmrVDoYacp12BqW2VCLe3IzFWlx64xM=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=EndgVF7jHnRNOZffKKDayjFtL05ED5RQkdlaGYZWIvu0UXFilqtk8NXOQ+IlfVVxm
-	 abX+EGyiT298vd5JGQY+ri7TQ28zNYmVxR8Ii8dWGw3aPAsZxQ5t3brz2OEro3ASzL
-	 oxpineiAJTm71bOH7dlLGr+vSaiYGdSK0OJXKxjRezK7lz6ronWfMBc/jJpjJdwfhr
-	 GjA57D3RkdirRz1PR+T3wqMkyVdKMTkUi1fzRx/MbATfaEqjy4RLuvy74Ld1KOMGXP
-	 pZNg/e+6nBokBQeleuf8CpDJz2NjZlQ5hYSqcvaAMjA3tS22hYobBm7YE6CPyHjZQr
-	 3csYRAZKS0euw==
-Date: Fri, 16 May 2025 14:31:14 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1747423889; c=relaxed/simple;
+	bh=NaqEM84cu4ycUxBbCQx13HKvKQs+ctdwMpFshxVrNuw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Dizdbl9xI3QvZz9jdLnIFqedGwqwElf0K6oPDJASgF9DNi2QX0qrBVEDpiT5LABx+PAf4Qp+HGZx7zqvz7zYSU9XfE8eakpQUWcPqVUwVZ+d++TAVQV8+Ql9yEA9jSwELU3k3Bd5WTTX17zNxc3Qn3Kt793WR1mKG9S2x3+KkjU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=k57DJFDm; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=zOXMxc5W6wuiCar1u6v5ZVlTOFZ/jKB4sF/AGJ9NqVY=; b=k57DJFDmLvKVekiZ031vy3siG0
+	GFrJpNfmBGFRmsBdFA5EC6rpWAPIihDustQCLHMpTiVOIu3W077CZBdyRLvSq2qrjz52AKNDA5OQc
+	MsAlAhJEGvpWZWgWexb4A8OWB4Tplw9AiffVSZldwERVcDfqFqyIB7tVEXtfircFQeU/k/9BeKj43
+	msiFpfWgAYKq2U+c9/SY+gKYCY5HkKtojJHYVIC3cZzLzDH3n74euHF8OA4LywmgRMfZov1hYL6uS
+	fg1+f7DG+oxxtjyr5dg/bjii+q0/NE1bperzxAucMeQfvCpiClAfisGKSOzpgnA/hkgtBqNBzyeSR
+	RmwOkaSg==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uG0mA-00000002VNC-1rUf;
+	Fri, 16 May 2025 19:31:22 +0000
+Date: Fri, 16 May 2025 20:31:22 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Edward Adam Davis <eadavis@qq.com>
+Cc: syzbot+321477fad98ea6dd35b7@syzkaller.appspotmail.com,
+	brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH] fs: Additional checks on new and old dir
+Message-ID: <20250516193122.GS2023217@ZenIV>
+References: <680809f3.050a0220.36a438.0003.GAE@google.com>
+ <tencent_55ACA45C1762977206C3B376C36BA96B8305@qq.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: David Airlie <airlied@gmail.com>, devicetree@vger.kernel.org, 
- Thomas Zimmermann <tzimmermann@suse.de>, Maxime Ripard <mripard@kernel.org>, 
- linux-kernel@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, 
- Oded Gabbay <ogabbay@kernel.org>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Jonathan Corbet <corbet@lwn.net>, 
- Sebastian Reichel <sebastian.reichel@collabora.com>, 
- dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, 
- linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org, 
- =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
- Jeff Hugo <jeff.hugo@oss.qualcomm.com>, 
- Sumit Semwal <sumit.semwal@linaro.org>, Heiko Stuebner <heiko@sntech.de>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Nicolas Frattaroli <nicolas.frattaroli@collabora.com>, 
- Simona Vetter <simona@ffwll.ch>, linux-rockchip@lists.infradead.org, 
- linux-doc@vger.kernel.org
-To: Tomeu Vizoso <tomeu@tomeuvizoso.net>
-In-Reply-To: <20250516-6-10-rocket-v3-1-7051ac9225db@tomeuvizoso.net>
-References: <20250516-6-10-rocket-v3-0-7051ac9225db@tomeuvizoso.net>
- <20250516-6-10-rocket-v3-1-7051ac9225db@tomeuvizoso.net>
-Message-Id: <174742024812.3649303.12389396177218408388.robh@kernel.org>
-Subject: Re: [PATCH v3 01/10] dt-bindings: npu: rockchip,rknn: Add bindings
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <tencent_55ACA45C1762977206C3B376C36BA96B8305@qq.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-
-On Fri, 16 May 2025 18:53:15 +0200, Tomeu Vizoso wrote:
-> Add the bindings for the Neural Processing Unit IP from Rockchip.
+On Wed, May 14, 2025 at 06:39:40AM +0800, Edward Adam Davis wrote:
+> In the reproducer, when calling renameat2(), olddirfd and newdirfd passed
+> are the same value r0, see [1]. This situation should be avoided.
 > 
-> v2:
-> - Adapt to new node structure (one node per core, each with its own
->   IOMMU)
-> - Several misc. fixes from Sebastian Reichel
+> [1]
+> renameat2(r0, &(0x7f0000000240)='./bus/file0\x00', r0, &(0x7f00000001c0)='./file0\x00', 0x0)
 > 
-> v3:
-> - Split register block in its constituent subblocks, and only require
->   the ones that the kernel would ever use (Nicolas Frattaroli)
-> - Group supplies (Rob Herring)
-> - Explain the way in which the top core is special (Rob Herring)
-> 
-> Signed-off-by: Tomeu Vizoso <tomeu@tomeuvizoso.net>
-> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+> Reported-by: syzbot+321477fad98ea6dd35b7@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=321477fad98ea6dd35b7
+> Tested-by: syzbot+321477fad98ea6dd35b7@syzkaller.appspotmail.com
+> Signed-off-by: Edward Adam Davis <eadavis@qq.com>
 > ---
->  .../bindings/npu/rockchip,rknn-core.yaml           | 162 +++++++++++++++++++++
->  1 file changed, 162 insertions(+)
+>  fs/namei.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
+> diff --git a/fs/namei.c b/fs/namei.c
+> index 84a0e0b0111c..ff843007ca94 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -5013,7 +5013,7 @@ int vfs_rename(struct renamedata *rd)
+>  	struct name_snapshot old_name;
+>  	bool lock_old_subdir, lock_new_subdir;
+>  
+> -	if (source == target)
+> +	if (source == target || old_dir == target)
+>  		return 0;
 
-My bot found errors running 'make dt_binding_check' on your patch:
+What the hell?
 
-yamllint warnings/errors:
+1) olddirfd and newdirfd have nothing to do with vfs_rename() - they are
+bloody well gone by the time we get there.
 
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/npu/rockchip,rknn-core.yaml: properties:reg-names: 'oneOf' conditional failed, one must be fixed:
-	[{'const': 'pc'}, {'const': 'cna'}, {'const': 'core'}] is too long
-	[{'const': 'pc'}, {'const': 'cna'}, {'const': 'core'}] is too short
-	False schema does not allow 3
-	1 was expected
-	3 is greater than the maximum of 2
-	hint: "minItems" is only needed if less than the "items" list length
-	from schema $id: http://devicetree.org/meta-schemas/items.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/npu/rockchip,rknn-core.example.dtb: npu-core@fdab0000 (rockchip,rk3588-rknn-core-top): compatible: 'oneOf' conditional failed, one must be fixed:
-	['rockchip,rk3588-rknn-core-top', 'rockchip,rknn-core-top'] is too long
-	'rockchip,rk3588-rknn-core-top' is not one of ['rockchip,rk3588-rknn-core']
-	from schema $id: http://devicetree.org/schemas/npu/rockchip,rknn-core.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/npu/rockchip,rknn-core.example.dtb: npu-core@fdab0000 (rockchip,rk3588-rknn-core-top): reg: [[0, 4255842304, 0, 36864]] is too short
-	from schema $id: http://devicetree.org/schemas/npu/rockchip,rknn-core.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/npu/rockchip,rknn-core.example.dtb: npu-core@fdac0000 (rockchip,rk3588-rknn-core): compatible: 'oneOf' conditional failed, one must be fixed:
-	['rockchip,rk3588-rknn-core', 'rockchip,rknn-core'] is too long
-	'rockchip,rk3588-rknn-core' is not one of ['rockchip,rk3588-rknn-core-top']
-	from schema $id: http://devicetree.org/schemas/npu/rockchip,rknn-core.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/npu/rockchip,rknn-core.example.dtb: npu-core@fdac0000 (rockchip,rk3588-rknn-core): reg: [[0, 4255907840, 0, 36864]] is too short
-	from schema $id: http://devicetree.org/schemas/npu/rockchip,rknn-core.yaml#
+2) there's nothing wrong with having the same value passed in both -
+and it's certainly not a "quietly do nothing".
 
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250516-6-10-rocket-v3-1-7051ac9225db@tomeuvizoso.net
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+3) the check added in this patch is... odd.  You are checking essentically
+for rename("foo/bar", "foo").  It should fail (-ENOTEMPTY or -EINVAL, depending
+upon RENAME_EXCHANGE in flags) without having reached vfs_rename().
 
