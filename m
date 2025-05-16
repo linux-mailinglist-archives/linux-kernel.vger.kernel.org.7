@@ -1,192 +1,154 @@
-Return-Path: <linux-kernel+bounces-650798-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-650806-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 155BBAB9634
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 08:49:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 21000AB9651
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 08:56:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBF381B66121
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 06:49:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 09B191BC2D06
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 06:56:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C89F5221FA6;
-	Fri, 16 May 2025 06:49:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 373D222370D;
+	Fri, 16 May 2025 06:56:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="YiJGYxMJ"
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XVStc5d+"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5FF386250
-	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 06:49:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0470282F1;
+	Fri, 16 May 2025 06:56:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747378171; cv=none; b=FmzjefmSeGTtuR8U3W+WaEANO9/seYKD2mx40DSFSIn8/TmudUrSA2MSzvifI8dmDyvLNPLcrl+nmzXfPQqU+mckvjF9NtEuDXkdvRr3akyfT15uRj8XnaT3jv0yhD3J6UxAX/XzrWMnj0FNe7y2rECerH6ozuo60xvJXPWgToM=
+	t=1747378576; cv=none; b=Mdftu1y/RmIkTOXegsOAGeYhSynaihpRt6bikfmYohWBof5/CPLLK6/vJuEaYte5zVVIFz5n4N801YSaDA9Wl/2wOGF9wcwg98QtbaltH7KLZzmFp2LuIcVihODALqnK7Abuq/HdnBho9vlcgcRV8ypBlV2GsTDeKEb+HawmJSw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747378171; c=relaxed/simple;
-	bh=ETPUvd+Wu9KCeh5ub6TK+4dTcmzJXIfQ/od7UewXjZE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 References; b=BKEV+fkfQ3uxk11NcbmbyGxJFELeJXKDY44mwDlhFntCo2eSNGViwB7SVkhEwFVhSUgupBmDxAJSrOItFFQudg86Peg5Bs/4jkcvrDSNLVkp2GKfjaVFqnD5g0uInaw2P50ezXugwbj38DyLL7tZXPUP1GopI7RIy8w9STxueis=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=YiJGYxMJ; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas2p4.samsung.com (unknown [182.195.41.56])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250516064926epoutp02fbc0786d65d8693cf7ff739b004415cb~-7y89pk3i0070000700epoutp02X
-	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 06:49:26 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250516064926epoutp02fbc0786d65d8693cf7ff739b004415cb~-7y89pk3i0070000700epoutp02X
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1747378166;
-	bh=iYu1W65d4aeFd6OvF67vEVZwGzMfLuw3crP4cuShCis=;
-	h=Date:From:To:Cc:Subject:References:From;
-	b=YiJGYxMJZIGdt1e35GDgWiXwO1YBW9VRL3dnDt0hY4AavbI5lPFSBn4fYmkZbui7W
-	 1ShtwuS2lZbQjlzbZhWsX6tTOYK9h8pQkhXjWbAyi2T2xeINaetFxCPKoC5Z2POS3w
-	 YekaXkaR7BL11ht8LdgxmL0mKKmRgJ4IRV6c7mgE=
-Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
-	epcas2p3.samsung.com (KnoxPortal) with ESMTPS id
-	20250516064925epcas2p3c0b4dd50eecf6ac0ba1d539b2beaaac8~-7y8MPVwM0507105071epcas2p3N;
-	Fri, 16 May 2025 06:49:25 +0000 (GMT)
-Received: from epcas2p4.samsung.com (unknown [182.195.36.88]) by
-	epsnrtp04.localdomain (Postfix) with ESMTP id 4ZzHkD72Cjz6B9mP; Fri, 16 May
-	2025 06:49:24 +0000 (GMT)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas2p2.samsung.com (KnoxPortal) with ESMTPA id
-	20250516064924epcas2p24c8f3dc1860768b2b7bed30a41528770~-7y61sHzM1774717747epcas2p2I;
-	Fri, 16 May 2025 06:49:24 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20250516064924epsmtrp1818ec032d326a6f7fee6edbb309d0857~-7y60jS611520215202epsmtrp1A;
-	Fri, 16 May 2025 06:49:24 +0000 (GMT)
-X-AuditID: b6c32a29-566fe7000000223e-da-6826dff4953d
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	60.14.08766.4FFD6286; Fri, 16 May 2025 15:49:24 +0900 (KST)
-Received: from perf (unknown [10.229.95.91]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20250516064924epsmtip146597e4c87a451500848ddb378884dc4~-7y6ktU0k1210412104epsmtip1K;
-	Fri, 16 May 2025 06:49:24 +0000 (GMT)
-Date: Fri, 16 May 2025 15:53:58 +0900
-From: Youngmin Nam <youngmin.nam@samsung.com>
-To: Mark Rutland <mark.rutland@arm.com>, Marc Zyngier <maz@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner
-	<tglx@linutronix.de>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	junhosj.choi@samsung.com, hajun.sung@samsung.com, joonki.min@samsung.com,
-	d7271.choe@samsung.com, jkkkkk.choi@samsung.com, jt1217.kim@samsung.com,
-	qperret@google.com, willdeacon@google.com, dhyun.cha@samsung.com,
-	kn_hong.choi@samsung.com, mankyum.kim@samsung.com
-Subject: [QUESTION] arch_counter_register() restricts CNTPT access when
- booted in EL1, even if EL2 is supported
-Message-ID: <aCbhBttvi8mvsyGE@perf>
+	s=arc-20240116; t=1747378576; c=relaxed/simple;
+	bh=6rfuUKsjOTxXxT8uLY3kxtdvK2WPbv9CQZT5mG0czjU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jjlcaE7ECiIv2nxocCpajNoGxhp3lshMeTkA4zWLfzsTPrb7osZFyya7PHS2HjqBMsi57VP+wKWHXib9CTxcFFdZhHhfSDFeRdvCLNpiMwgM30csNpJNfTd81u1sTzEj5DJG5WIBKcHLSplcD2aXwW7KJq9ziZt1BWisoYjReFI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XVStc5d+; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1747378575; x=1778914575;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=6rfuUKsjOTxXxT8uLY3kxtdvK2WPbv9CQZT5mG0czjU=;
+  b=XVStc5d+Cez+rAX9YiRsil8c4f3b8g/lUcIsnOtzSCG54wNlxEXnhSIj
+   I6E2eMKQ+oWvW/xC3icoHq7qMUxOPExiRusFE4gByj+FxbNKlb6BTTVkB
+   Beu4uGjOkrIzv2CYoB9BSHltQegSv4zDWUGgVGv0idxP0cx7vcE4xDbV6
+   UdIrHLi8Q7ChzXZCSgldExULNiuOmJTFgMPnRtQC7PxN7Ntg5T25jM/Hp
+   fdmLvSidj9WM9MnKGIkxWhdfiVeN4LVTRYpXooTYwKWxO2GW1ROV10T22
+   ACmR5MnvSQLoS9Q+f317vOz2GZGl36vnyCroqInMv9Wwk6WxBspfIVXdF
+   g==;
+X-CSE-ConnectionGUID: YlU8t5dBQWuxydaNzqKCDA==
+X-CSE-MsgGUID: NO6i86uQTDCKUTu+1Oo8Mw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11434"; a="74738750"
+X-IronPort-AV: E=Sophos;i="6.15,293,1739865600"; 
+   d="scan'208";a="74738750"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2025 23:56:14 -0700
+X-CSE-ConnectionGUID: O0/Va5nMQmqorCi9kxe9jw==
+X-CSE-MsgGUID: 9O/mnJV4RoG4sk0/ylvhkA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,293,1739865600"; 
+   d="scan'208";a="138345283"
+Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
+  by orviesa009.jf.intel.com with ESMTP; 15 May 2025 23:56:11 -0700
+Received: from kbuild by 1992f890471c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uFozI-000J4N-1Z;
+	Fri, 16 May 2025 06:56:08 +0000
+Date: Fri, 16 May 2025 14:55:15 +0800
+From: kernel test robot <lkp@intel.com>
+To: Alexey Charkov <alchark@gmail.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Guenter Roeck <linux@roeck-us.net>
+Cc: oe-kbuild-all@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-watchdog@vger.kernel.org, Alexey Charkov <alchark@gmail.com>
+Subject: Re: [PATCH v3 4/4] watchdog: Add support for VIA/WonderMedia SoC
+ watchdog functionality
+Message-ID: <202505161430.wdURc0TG-lkp@intel.com>
+References: <20250515-vt8500-timer-updates-v3-4-2197a1b062bd@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupjkeLIzCtJLcpLzFFi42LZdlhJTvfLfbUMg6/fuC2u7Z3IbjHvs6zF
-	6wu/mSya9l9itjh/cDq7xdXd75gtJkzew27xu6mZ1WLC+82MFpseX2O1uLxrDpvFtWtP2S2W
-	Xr/IZLFzzklWizObtrFYbN40ldmi/edrFgdBjzXz1jB6LNhU6rFpVSebx51re9g83p07x+6x
-	eUm9R9+WVYwenzfJBXBEcdmkpOZklqUW6dslcGXcP3uHsWCXUMXkAyvZGhh/8XUxcnJICJhI
-	XN95hb2LkYtDSGA3o8S6J3/ZIBIyErdXXmaFsIUl7rccYYUous8ocWDKayCHg4NFQFXi0i5z
-	kBo2AV2JbSf+MYLYIgJzGCW6FpmA2MwCN5gkjk0oBbGFBQol1s9aygxi8wooS3yZ1wRlC0qc
-	nPmEBaJeXeLPvEvMIOOZBaQllv/jgAjLSzRvnc08gZF/FpKOWUg6ZiF0zELSsYCRZRWjZGpB
-	cW56brFhgWFearlecWJucWleul5yfu4mRnCUaWnuYNy+6oPeIUYmDsZDjBIczEoivNezlDOE
-	eFMSK6tSi/Lji0pzUosPMUpzsCiJ84q/6E0REkhPLEnNTk0tSC2CyTJxcEo1MMnkzvu3Tdrw
-	47+nt09mh8a0fRN99M0noKdzlcG6FIdriimCdvlWZewX61/NLAvtKmRS8fKfc6TjU8m5JRJH
-	HhlcSUnnblhl9GerjG/W9Mei/u48ndulGAOP3oyQSfr5M02WIf5k0Pkb7OJl+7oCYkMfqwWc
-	eNlzrmjn5Adyydf+MX4P2Pw14KiRj2SjlslT24285UsuabRl8/aICG0RXbZ4c3UOt9Rs3zs1
-	L8Sd1zBX3p25TGhOyqKcHd1LHrNJOxkzvmu1erhOzeUWC2uqo2y2oZk62+moZ1mzrBZnn3Po
-	8ev/JCEedKHml2ZNb9LtDp60f6lvyqtNV/900u1yeaPH/Crp2Y05F/NnVj9TYinOSDTUYi4q
-	TgQAMVcUdCEDAAA=
-X-CMS-MailID: 20250516064924epcas2p24c8f3dc1860768b2b7bed30a41528770
-X-Msg-Generator: CA
-Content-Type: multipart/mixed;
-	boundary="----.cKlolkxedMLVDWcgmrm8Gdt3k.eYqjXC2h.qDwGQioKViW9=_56d50_"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-cpgsPolicy: CPGSC10-234,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250516064924epcas2p24c8f3dc1860768b2b7bed30a41528770
-References: <CGME20250516064924epcas2p24c8f3dc1860768b2b7bed30a41528770@epcas2p2.samsung.com>
-
-------.cKlolkxedMLVDWcgmrm8Gdt3k.eYqjXC2h.qDwGQioKViW9=_56d50_
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20250515-vt8500-timer-updates-v3-4-2197a1b062bd@gmail.com>
 
-Hi arm arch timer experts,
+Hi Alexey,
 
-While reviewing the arm_arch_timer code in Linux 6.12,
-I noticed that the function arch_counter_register() restricts the use of the physical counter (cntpct_el0)
-on systems where the kernel is running in EL1, even if EL2 is supported and cntpct_el0 is accessible.
+kernel test robot noticed the following build warnings:
 
-In our case:
-- We are not using pKVM.
-- The kernel is booted in EL1.
-- We disabled VIRT_PPI and explicitly selected PHYS_NONSECURE_PPI for the timer refering to below code.
+[auto build test WARNING on 92a09c47464d040866cf2b4cd052bc60555185fb]
 
-static enum arch_timer_ppi_nr __init arch_timer_select_ppi(void)
-{
-	if (is_kernel_in_hyp_mode())
-		return ARCH_TIMER_HYP_PPI;
+url:    https://github.com/intel-lab-lkp/linux/commits/Alexey-Charkov/dt-bindings-timer-via-vt8500-timer-Convert-to-YAML/20250516-025729
+base:   92a09c47464d040866cf2b4cd052bc60555185fb
+patch link:    https://lore.kernel.org/r/20250515-vt8500-timer-updates-v3-4-2197a1b062bd%40gmail.com
+patch subject: [PATCH v3 4/4] watchdog: Add support for VIA/WonderMedia SoC watchdog functionality
+config: sparc-allmodconfig (https://download.01.org/0day-ci/archive/20250516/202505161430.wdURc0TG-lkp@intel.com/config)
+compiler: sparc64-linux-gcc (GCC) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250516/202505161430.wdURc0TG-lkp@intel.com/reproduce)
 
-	if (!is_hyp_mode_available() && arch_timer_ppi[ARCH_TIMER_VIRT_PPI])
-		return ARCH_TIMER_VIRT_PPI;
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202505161430.wdURc0TG-lkp@intel.com/
 
-	if (IS_ENABLED(CONFIG_ARM64))
-		return ARCH_TIMER_PHYS_NONSECURE_PPI;
+All warnings (new ones prefixed by >>):
 
-	return ARCH_TIMER_PHYS_SECURE_PPI;
-}
-
-Despite this, the `arch_counter_register()` logic selects `cntvct_el0` unconditionally
-due to the `!is_hyp_mode_available()` condition.
-
-static void __init arch_counter_register(unsigned type)
-{
-	u64 (*scr)(void);
-	u64 start_count;
-	int width;
-
-	/* Register the CP15 based counter if we have one */
-	if (type & ARCH_TIMER_TYPE_CP15) {
-		u64 (*rd)(void);
-
-		if ((IS_ENABLED(CONFIG_ARM64) && !is_hyp_mode_available()) ||
-		    arch_timer_uses_ppi == ARCH_TIMER_VIRT_PPI) {
-			if (arch_timer_counter_has_wa()) {
-				rd = arch_counter_get_cntvct_stable;
-				scr = raw_counter_get_cntvct_stable;
-			} else {
-				rd = arch_counter_get_cntvct;
-				scr = arch_counter_get_cntvct;
-			}
-		} else {
-			if (arch_timer_counter_has_wa()) {
-				rd = arch_counter_get_cntpct_stable;
-				scr = raw_counter_get_cntpct_stable;
-			} else {
-				rd = arch_counter_get_cntpct;
-				scr = arch_counter_get_cntpct;
-			}
-		}
-
-As I understand it, `is_hyp_mode_available()` checks whether the kernel booted into EL2
-— not whether EL2 is *supported* by the hardware.
-
-Therefore, even on systems where EL2 exists and `cntpct_el0` is accessible from EL1,
-the kernel still forces the use of `cntvct_el0` if the boot EL is EL1.
-
-Is this restriction to `cntvct_el0` in EL1 an architectural requirement,
-or simply a conservative default to avoid possible traps on some systems?
-
-If the hardware clearly supports EL2 and allows CNTPT access from EL1, could this restriction be relaxed?
-
-Any guidance would be appreciated.
-
-------.cKlolkxedMLVDWcgmrm8Gdt3k.eYqjXC2h.qDwGQioKViW9=_56d50_
-Content-Type: text/plain; charset="utf-8"
+   drivers/watchdog/vt8500-wdt.c: In function 'vt8500_wdt_probe':
+>> drivers/watchdog/vt8500-wdt.c:98:44: warning: conversion from 'long unsigned int' to 'unsigned int' changes value from '6148914691236517' to '3287081637' [-Woverflow]
+      98 |         drvdata->wdd.max_hw_heartbeat_ms = -1UL / (VT8500_TIMER_HZ / 1000);
+         |                                            ^
 
 
-------.cKlolkxedMLVDWcgmrm8Gdt3k.eYqjXC2h.qDwGQioKViW9=_56d50_--
+vim +98 drivers/watchdog/vt8500-wdt.c
+
+    75	
+    76	static int vt8500_wdt_probe(struct platform_device *pdev)
+    77	{
+    78		struct device *dev = &pdev->dev;
+    79		struct vt8500_wdt *drvdata;
+    80	
+    81		drvdata = devm_kzalloc(dev, sizeof(struct vt8500_wdt), GFP_KERNEL);
+    82		if (!drvdata)
+    83			return -ENOMEM;
+    84	
+    85		/*
+    86		 * The register area where the timer and watchdog reside is disarranged.
+    87		 * Hence mapping individual register blocks for the timer and watchdog
+    88		 * is not recommended as they would have access to each others
+    89		 * registers. The timer driver creates the watchdog as a child device.
+    90		 * During the watchdogs creation, the timer driver passes the base
+    91		 * address to the watchdog over the private interface.
+    92		 */
+    93	
+    94		drvdata->regbase = (void __iomem *)dev->platform_data;
+    95	
+    96		drvdata->wdd.info = &vt8500_watchdog_info;
+    97		drvdata->wdd.ops = &vt8500_watchdog_ops;
+  > 98		drvdata->wdd.max_hw_heartbeat_ms = -1UL / (VT8500_TIMER_HZ / 1000);
+    99		drvdata->wdd.parent = dev;
+   100	
+   101		watchdog_set_drvdata(&drvdata->wdd, drvdata);
+   102	
+   103		return devm_watchdog_register_device(dev, &drvdata->wdd);
+   104	}
+   105	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
