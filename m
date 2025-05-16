@@ -1,192 +1,208 @@
-Return-Path: <linux-kernel+bounces-651695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-651714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAADFABA1D9
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 19:23:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCBECABA216
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 19:43:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5550D9E149B
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 17:22:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C26E1C007B5
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 17:43:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 312062741CD;
-	Fri, 16 May 2025 17:22:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NJARW/kx"
-Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3081727586A;
+	Fri, 16 May 2025 17:42:26 +0000 (UTC)
+Received: from smtp-190d.mail.infomaniak.ch (smtp-190d.mail.infomaniak.ch [185.125.25.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08AE425CC77;
-	Fri, 16 May 2025 17:22:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB8672505C5
+	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 17:42:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747416168; cv=none; b=hcN/O5v8ZIPAkfg6w2yI76/Woze971/rS4Zl45tZMyiLdPnnm5uBi5qSdAE874y8Akr+RC4Gyd7HRTC4FfG8Bps/mbMHyXaaCsCBrO3QnBZ8ErEQOsAjeAJyPTSx5ds+bnaAYc1tr17HrWXJ2Ms/fnsAhD+uTSSNypNKgHqoslY=
+	t=1747417345; cv=none; b=P/BdOaZlQQcc/DO15jgfMALMtg+XoMNQdncqR2IPoZLk0C+9H0TJI0N9U1TM9C28Bcxn+nBsaTyW6Qep7IsRYjb6IwA0Sbkb3ddRCtJGh09OuOLZJaGeqj8xMePgXjDaqEHLyD7uWSozAYZOqsI6RhU22ebdlzDG1I2FaKcsIrY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747416168; c=relaxed/simple;
-	bh=gHDnfoajrPghe0uHWBzNeNQBRVEv0TYcue3CT7aNfik=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 Mime-Version:Content-Type; b=K0kkd5B08+9yOWV1GhsT78an6VFc41vggcXjkle1S487Ittf/yZ2u1aEP9rNKGULU907Ig9lbBFIdRkBwND+a9FsXnR3B4Kab8IhfdtjX8zDiOxclViDR3KtjhTmJC9xssk9f04CfFUW2EtlN16bNaVxIbXe2pSpgHuBOY0ennM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NJARW/kx; arc=none smtp.client-ip=209.85.222.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-7c5568355ffso204946385a.0;
-        Fri, 16 May 2025 10:22:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747416165; x=1748020965; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rijU/iw06s1As7dK45CRJ6ZUYyr3AoRxB/Rs1KgsH2c=;
-        b=NJARW/kxHAezzeVEWXZdhZTVlQ7NAXZCjbWZGoS9DvUtB2TFwXlOOUcx0dOpLym0LN
-         tE2gkQkuymuWH+4tU4dhHetH/QRUgF/RAK6V9848vS64MKBb4yX73y//XrU4B/+y3Cbw
-         zdJ0WWHOnnb4ScpXgWWHATk1Ex22yj6sgEgkQfok0DI+QUTi/wpAqMjsNpxAHKjLg6pS
-         vfDF7BeMen5Q9cYLXkAY1DKa+TuCHBCS1/aK3ioGK6sLK25bgOSoM7RnnFQRVNawhzUf
-         n8Lb0iRzzfTqp0SDUi28h/z43fDJ/CpUleAnsDMVnqJQgICeuCc4/OFU6mUi3McRG/7k
-         Y1rg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747416165; x=1748020965;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=rijU/iw06s1As7dK45CRJ6ZUYyr3AoRxB/Rs1KgsH2c=;
-        b=t5GNa/iEJmT5wKlWjgspeqzv36spvkvT8F1I4qLskQndKSQbaIES3P4ScrFcX+teZD
-         4Sh2B9RcBQr1p1LRtyAH22iv76nWN0DSvjpG6m8zOWnR0qKtMsKlWIAWMndNiK/n4d+/
-         cCFYr1J6HJva0kXXG2w7Q4EpNxXnAi1Ql+M07Gr7G0cZGTw1mmDRhS1P1UP7RvynJhd3
-         xgir3+hcSyRC0Q2jXg2AlYBjbXIyBmanF70oeXbVc7I6kMaMx6PuGA7pRdYbOEdCiaeN
-         Z1FQjRhgeqFnZ+cK68ihXmlolQgn4KlajtgaoB87Z2KZz64jGuZh7jrZvwo7qxcjbatS
-         53Aw==
-X-Forwarded-Encrypted: i=1; AJvYcCV2YGptP5LNs1fgZ6UQZfizVQysU9cG7RFNe3CjbyMCSY18jyL/U5jIOW/5+9LnOz8gvco=@vger.kernel.org, AJvYcCVdAn/SZ21e3g0qt6361tGvAqgqsHlNDywZlPpBMEcZvjyxEq3iDnvUwlxCGOyug3cVuTSZeAwML4S/lbSU@vger.kernel.org, AJvYcCVgafJd4HnJwNogd9bLuKbq1yoVEVmJ7GRLoqjRJvAJ00paQhCXgxn00AE7N8tpl0To/8PBgBBS@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzxi6X/S85/+KfEBBLwHKsBWugAAP7f7Qr6pv3cTEYYpRV7uiwj
-	7q2QB30UaPgt+H4mcvbYxfgkoRuwdz86Y9D9Xsd4uUwOViDaoQbeBsbW
-X-Gm-Gg: ASbGnctRoUx7uoAG8wWZP2f/uD+5tIW+qNO6Aninjxz051L6cO8InNDWF9FtXQHid/R
-	dZCPMR3UDcA/paKEE4RqQaKbw7Lkpd2CB0ip4yaudhOTFo/s7L3fp4Kssqbx5WjxrwEhPJZ3SHI
-	rWdHdArNKO7h8UGz++tqEpx80L40RzTTshhyDHmeZRe+K19uTRIBgFrLd3WJnaH2dbW4Ls38RxK
-	g0vU3Tp/sC34v1WtQ0qQkWNRR8AxPo1L4mYcUaA9CkzQuanVGOaW+WU2XmNdJD/w5CUmSW0IsbQ
-	uf6+7YcT/sbMoBDoPeMuxlMDc2Pz+BAchXg7qi0Otw9lML0u5Vst0Vl36W1WasJlbYBzVfae01z
-	BYSjB8SxJvLe1wmYpC30vmzI=
-X-Google-Smtp-Source: AGHT+IGgbFIs4gVRzBrRl+Z/NMLlfhcLYA4US1p+mqyo1Padg1fqO6Wvl/Kd4VdVk1OpuKSb+zZPyw==
-X-Received: by 2002:a05:620a:4593:b0:7c5:3b3b:c9da with SMTP id af79cd13be357-7cd4677d5bbmr725106685a.40.1747416164763;
-        Fri, 16 May 2025 10:22:44 -0700 (PDT)
-Received: from localhost (23.67.48.34.bc.googleusercontent.com. [34.48.67.23])
-        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-7cd467bc7d1sm144103785a.1.2025.05.16.10.22.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 May 2025 10:22:44 -0700 (PDT)
-Date: Fri, 16 May 2025 13:22:43 -0400
-From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-To: Daniel Xu <dxu@dxuuu.xyz>, 
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
- Alexander Shalimov <alex-shalimov@yandex-team.ru>
-Cc: andrew@lunn.ch, 
- David Miller <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, 
- jacob.e.keller@intel.com, 
- jasowang@redhat.com, 
- Jakub Kicinski <kuba@kernel.org>, 
- linux-kernel@vger.kernel.org, 
- netdev@vger.kernel.org, 
- Paolo Abeni <pabeni@redhat.com>, 
- "bpf@vger.kernel.org" <bpf@vger.kernel.org>
-Message-ID: <68277463d4c43_2ba041294cf@willemb.c.googlers.com.notmuch>
-In-Reply-To: <0bcc08e4-9f22-431c-97f3-c7d5784d2652@app.fastmail.com>
-References: <681a63e3c1a6c_18e44b2949d@willemb.c.googlers.com.notmuch>
- <20250514233931.56961-1-alex-shalimov@yandex-team.ru>
- <6825f65ae82b5_24bddc29422@willemb.c.googlers.com.notmuch>
- <0bcc08e4-9f22-431c-97f3-c7d5784d2652@app.fastmail.com>
-Subject: Re: [PATCH] net/tun: expose queue utilization stats via ethtool
+	s=arc-20240116; t=1747417345; c=relaxed/simple;
+	bh=kzzMtAkAvsHpI2Azo0/w0vdO+w4bqLIgLNTR4fkASTU=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=CpXjguHHaotr5j28O/VXmk0OwiFY8+WaIC6HA0EsjcdCvwG66RWtkMXrOUDIgGOYUWDeJ+d9dZxUGSdrUPbOQH+4D+Pmo/bH1vWOZez7sb3SoHpiwUc/zGSh4AU3T0xifoBD0UUFSmd5GPaJOzJSlUAVeTGNxxrSS65RvmH0tE0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=0leil.net; spf=pass smtp.mailfrom=0leil.net; arc=none smtp.client-ip=185.125.25.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=0leil.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=0leil.net
+Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4ZzYsb3nGKzK1R;
+	Fri, 16 May 2025 19:26:43 +0200 (CEST)
+Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4ZzYsZ1yphzSdm;
+	Fri, 16 May 2025 19:26:42 +0200 (CEST)
+From: Quentin Schulz <foss+kernel@0leil.net>
+Date: Fri, 16 May 2025 19:26:10 +0200
+Subject: [PATCH] arm64: dts: rockchip: support camera module on Haikou
+ Video Demo on PX30 Ringneck
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250516-ringneck-haikou-video-demo-cam-v1-1-fff23160395f@cherry.de>
+X-B4-Tracking: v=1; b=H4sIADF1J2gC/x3NTQqAIBBA4avErBswyf6uEi1MxxoiDaUIorsnL
+ b/New8kikwJhuKBSBcnDj6jKgswq/YLIdtskEIqoaoGI/vFk9lw1byFEy+2FNDSHtDoHWspmk6
+ 5uXW9gxw5Ijm+/8E4ve8HLcFN+HAAAAA=
+X-Change-ID: 20250516-ringneck-haikou-video-demo-cam-420685fb7f9f
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Quentin Schulz <quentin.schulz@cherry.de>
+X-Mailer: b4 0.14.2
+X-Infomaniak-Routing: alpha
 
-Daniel Xu wrote:
-> On Thu, May 15, 2025, at 7:12 AM, Willem de Bruijn wrote:
-> > Alexander Shalimov wrote:
-> >> 06.05.2025, 22:32, "Willem de Bruijn" <willemdebruijn.kernel@gmail.c=
-om>:
-> >> > Perhaps bpftrace with a kfunc at a suitable function entry point t=
-o
-> >> > get access to these ring structures.
-> >> =
+From: Quentin Schulz <quentin.schulz@cherry.de>
 
-> >> Thank you for your responses!
-> >> =
+The Haikou Video Demo adapter has a proprietary connector for a camera
+module which has an OV5675 camera sensor and a companion DW9714 focus
+lens driver.
 
-> >> Initially, we implemented such monitoring using bpftrace but we were=
+This adds support for the camera module on PX30 Ringneck module fitted
+on a Haikou devkit with the Haikou Video Demo adapter.
 
-> >> not satisfied with the need to double-check the structure definition=
-s
-> >> in tun.c for each new kernel version.
-> >> =
+Signed-off-by: Quentin Schulz <quentin.schulz@cherry.de>
+---
+This adapter is also used with RK3588 Tiger, but there's currently no
+camera stack at all on RK3588, and RK3399 Puma, but:
+ - 19.2MHz is not achievable exactly, so need to patch the driver to
+   support 24MHz for example, this will come later,
+ - The camera clk is on an IO domain at 1.8V but configured at boot at
+   3.3V, and until the IO domain is properly configured, the camera
+   won't receive a clock. Based on the probe order, it is possible (and
+   empirically very likely) that the camera won't be detected at all.
+   A Linux kernel solution was attempted multiple times in the past,
+   c.f.
+   https://lore.kernel.org/linux-gpio/20230904115816.1237684-1-s.hauer@pengutronix.de/
+   https://lore.kernel.org/lkml/20220802095252.2486591-1-foss+kernel@0leil.net/
+   We'll need to figure something out this time as I won't be able to
+   upstream camera support without it :)
 
-> >> We attached kprobe to the "tun_net_xmit()" function. This function
-> >> gets a "struct net_device" as an argument, which is then explicitly
-> >> cast to a tun_struct - "struct tun_struct *tun =3D netdev_priv(dev)"=
-.
-> >> However, performing such a cast within bpftrace is difficult because=
+To test, install libcamera on Debian Bookworm (or more recent I guess)
+add a file at /usr/share/libcamera/ipa/rkisp1/ov5675.yaml whose content
+is (remove one leading whitespace):
 
-> >> tun_struct is defined in tun.c - meaning the structure definition
-> >> cannot be included directly (not a header file). As a result, we wer=
-e
-> >> forced to add fake "struct tun_struct" and "struct tun_file"
-> >> definitions, whose maintenance across kernel versions became
-> >> cumbersome (see below). The same problems exists even with kfunc and=
+ # SPDX-License-Identifier: CC0-1.0
+ %YAML 1.1
+ ---
+ version: 1
+ algorithms:
+   - Agc:
+   - Awb:
+   - BlackLevelCorrection:
+   - ColorProcessing:
+ ...
 
-> >> btf - we are not able to cast properly netdev to tun_struct.
-> >> =
+then call
 
-> >> That=E2=80=99s why we decided to add this functionality directly to =
-the kernel.
-> >
-> > Let's solve this in bpftrace instead. That's no reason to rever to
-> > hardcoded kernel APIs.
-> >
-> > It quite possibly already is. I'm no bpftrace expert. Cc:ing bpf@
-> =
+qcam -platform eglfs -c /base/i2c@ff190000/camera@36
 
-> Yeah, should be possible. You haven't needed to include header
-> files to access type information available in BTF for a while now.
-> This seems to work for me - mind giving this a try?
-> =
+While this is running, control the focus lens driver with:
 
-> ```
-> fentry:tun:tun_net_xmit {
->     $tun =3D (struct tun_struct *)args->dev->priv;
->     print($tun->numqueues);  // or whatever else you want
-> }
-> ```
-> =
+v4l2-ctl -d /dev/v4l-subdev5 -c focus_absolute=150
 
-> fentry probes are better in general than kprobes if all you're doing
-> is attaching to the entry of a function.
-> =
+and change the focus_absolute value to see the lens moving and the focus
+change.
 
-> You could do the same with kprobes like this if you really want, though=
-:
-> =
+I'll try to have a look at libcamera's config file so I can send a
+proper one to the project instead of this dummy one.
+---
+ .../rockchip/px30-ringneck-haikou-video-demo.dtso  | 56 ++++++++++++++++++++++
+ 1 file changed, 56 insertions(+)
 
-> ```
-> kprobe:tun:tun_net_xmit {
->     $dev =3D (struct net_device *)arg1;
->     $tun =3D (struct tun_struct *)$dev->priv;
->     print($tun->numqueues);  // or whatever else you want
-> }
-> ```
-> =
+diff --git a/arch/arm64/boot/dts/rockchip/px30-ringneck-haikou-video-demo.dtso b/arch/arm64/boot/dts/rockchip/px30-ringneck-haikou-video-demo.dtso
+index 7d9ea5aa598486680191d52e4c87af59f7b0e579..1e3f43bbe1734e5c88d1f76f8f7a545d881df88d 100644
+--- a/arch/arm64/boot/dts/rockchip/px30-ringneck-haikou-video-demo.dtso
++++ b/arch/arm64/boot/dts/rockchip/px30-ringneck-haikou-video-demo.dtso
+@@ -94,6 +94,15 @@ video-adapter-led {
+ 	};
+ };
+ 
++&cif_clkout_m0 {
++	rockchip,pins =
++		<2 RK_PB3 1 &pcfg_pull_none_12ma>;
++};
++
++&csi_dphy {
++	status = "okay";
++};
++
+ &display_subsystem {
+ 	status = "okay";
+ };
+@@ -135,6 +144,12 @@ &i2c1 {
+ 	/* OV5675, GT911, DW9714 are limited to 400KHz */
+ 	clock-frequency = <400000>;
+ 
++	focus: focus@c {
++		compatible = "dongwoon,dw9714";
++		reg = <0xc>;
++		vcc-supply = <&cam_afvdd_2v8>;
++	};
++
+ 	touchscreen@14 {
+ 		compatible = "goodix,gt911";
+ 		reg = <0x14>;
+@@ -157,6 +172,47 @@ pca9670: gpio@27 {
+ 		pinctrl-names = "default";
+ 		reset-gpios = <&gpio0 RK_PA2 GPIO_ACTIVE_LOW>;
+ 	};
++
++	camera@36 {
++		compatible = "ovti,ov5675";
++		reg = <0x36>;
++		clocks = <&cru SCLK_CIF_OUT>;
++		assigned-clocks = <&cru SCLK_CIF_OUT>;
++		/* Only parent to get exactly 19.2MHz */
++		assigned-clock-parents = <&cru USB480M>;
++		assigned-clock-rates = <19200000>;
++		avdd-supply = <&cam_avdd_2v8>;
++		dvdd-supply = <&cam_dvdd_1v2>;
++		dovdd-supply = <&cam_dovdd_1v8>;
++		lens-focus = <&focus>;
++		orientation = <0>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&cif_clkout_m0>;
++		reset-gpios = <&pca9670 6 GPIO_ACTIVE_LOW>;
++		rotation = <180>;
++
++		port {
++			cam_out: endpoint {
++				data-lanes = <1 2>;
++				link-frequencies = /bits/ 64 <450000000>;
++				remote-endpoint = <&mipi_in_cam>;
++			};
++		};
++	};
++};
++
++&isp {
++	status = "okay";
++
++	ports {
++		port@0 {
++			mipi_in_cam: endpoint@0 {
++				reg = <0>;
++				data-lanes = <1 2>;
++				remote-endpoint = <&cam_out>;
++			};
++		};
++	};
+ };
+ 
+ &pinctrl {
 
-> Although it looks like there's a bug when you omit the module name
-> where bpftrace doesn't find the struct definition. I'll look into that.=
+---
+base-commit: fee3e843b309444f48157e2188efa6818bae85cf
+change-id: 20250516-ringneck-haikou-video-demo-cam-420685fb7f9f
 
-
-Minor: unless tun is built-in.
-
-Thanks a lot for your response, Daniel. Good to know that we can get
-this information without kernel changes. And I learned something new
-:) Replicated your examples.
+Best regards,
+-- 
+Quentin Schulz <quentin.schulz@cherry.de>
 
 
