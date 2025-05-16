@@ -1,219 +1,204 @@
-Return-Path: <linux-kernel+bounces-651114-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-651116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3E25AB9A28
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 12:29:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 315B1AB9A33
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 12:32:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3D1D3AD077
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 10:29:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26F5F9E3CB4
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 10:31:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C64B3235063;
-	Fri, 16 May 2025 10:29:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A01F235066;
+	Fri, 16 May 2025 10:32:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="UcbmLly/"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2049.outbound.protection.outlook.com [40.107.94.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Q5FwqsCu";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="zPr4ETf7";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Q5FwqsCu";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="zPr4ETf7"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 790881DFE8;
-	Fri, 16 May 2025 10:29:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.49
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747391357; cv=fail; b=jMSuH5ZNi4US+H2i+VPla5S5+wnX+34YXs6EHvkm8kSUzcR1SEIyevLwE7wmH0oGzm5bR6ZXGVgpP89Jzqw60e6YN0gNbDqrCmNoj3Lyot0g7dZ19PdxMPZETSKAQx2Y0U/pIFIzUrGDrbsGLKYCea4M6y2oWNG516M5cLu39xY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747391357; c=relaxed/simple;
-	bh=T0auLDBfFqmnfBh2huJORrmmDimULMTpSsR/gjfpMhQ=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=p3R/8M4jwlbHDnwgcZ79CYnwVENVZshNjClqoa/VEDO1kUVpWYaRxEl00NgB7Eeu0zPSysd5yqKFM6t09ynU/fxGkzwThtuRXVi551I3+H4GlTSDmrREIVdNOpBkZCGjG0GCLn0EmjFYbFsl5HrJoa0VpBYGC+mhQpppm5yExbc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=UcbmLly/; arc=fail smtp.client-ip=40.107.94.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=j6onwqZMUnnBfpQ9lr/ixBayJxfdYu5FGgpWa0yE5c1HqpSXf22FXe5rOczwhMIYEl+E11blFc9HciXy5NE5zVK054plr9hDzJNl945c/xbUPOqkIt0U8PFJ1NwfMvY+GNwQiwrYCTiDbxZccUFHux2EHTtTLxGU11b1yWRMFVx8zdNg9MmdmJypkHSfd8NG1KrdEfWC/OjJ6aOGM8hlNQqSAOzzjSBjvgIQ/gwowB7K6DE3Dtv3b9wSfuQU8KJhCJqHmZmole6Ne/gdJ4Xvc7Q3rFEaJjMS5TUp50tt+t5iYykQ59K7Xv1PGouUMh7FuRDvQ2XlssJh6TQhXQJYSg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=T0auLDBfFqmnfBh2huJORrmmDimULMTpSsR/gjfpMhQ=;
- b=gnOxfciFBfzCuhvP6n1khpZEbYQfS/dHLCwuhdmkC207xXVbc3sYRfAeWyyEnoRM5tToZWyeM59VGfD3EYXrG0izNXGGhfyf21q215WSterz8TTc3cHQ3aTFexdDzG9nE+nb3NXlazFdWFxuGhRzSsE9LJRttSFbDYEthLbz709WLJueTfn2PSGhEKFyaY3NzzpFkoCO9Q0VUfWwoRsH5O4APW4Y9V1bhxfqbO7E3xu1jCNOhr10VgC0fTwK1Va4CI3dwuG08xen5NsnJTSGZM8pYdjEmseCMHqME+b1d/WOoMXYVNnQwlowxoFAOzIDVIWnF/3S5FmXACw+BfUNeA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=T0auLDBfFqmnfBh2huJORrmmDimULMTpSsR/gjfpMhQ=;
- b=UcbmLly/3YcFB7VbMu+92biRd8Znv/KRpwF7GfWdfWnc7Tf6fCruEIVBm8Cl99joZMIrJYlcfqwusf7S3nNVR4K8iBKlibGPCwrtRpZ84DGIpxWC2BSL5SshhHnBeTNgqkF1feeFPMTF9VpRtB1SlQmqTbHBmnB0lYJwQZRQDGA=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
- by BL3PR12MB6619.namprd12.prod.outlook.com (2603:10b6:208:38e::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8722.30; Fri, 16 May
- 2025 10:29:11 +0000
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::46fb:96f2:7667:7ca5]) by PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::46fb:96f2:7667:7ca5%7]) with mapi id 15.20.8722.027; Fri, 16 May 2025
- 10:29:10 +0000
-Message-ID: <772d694e-706a-4d98-a236-43d59094e8d6@amd.com>
-Date: Fri, 16 May 2025 12:29:04 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] dmabuf/heaps: implement DMA_BUF_IOCTL_RW_FILE for
- system_heap
-To: wangtao <tao.wangtao@honor.com>,
- "sumit.semwal@linaro.org" <sumit.semwal@linaro.org>,
- "benjamin.gaignard@collabora.com" <benjamin.gaignard@collabora.com>,
- "Brian.Starkey@arm.com" <Brian.Starkey@arm.com>,
- "jstultz@google.com" <jstultz@google.com>,
- "tjmercier@google.com" <tjmercier@google.com>
-Cc: "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
- "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
- "linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "wangbintian(BintianWang)" <bintian.wang@honor.com>,
- yipengxiang <yipengxiang@honor.com>, liulu 00013167 <liulu.liu@honor.com>,
- hanfeng 00012985 <feng.han@honor.com>
-References: <20250513092803.2096-1-tao.wangtao@honor.com>
- <fdc8f0a2-5b2f-4898-8090-0d7b888c15d8@amd.com>
- <5b68b2a50d48444b93d97f5d342f37c8@honor.com>
- <ef978301-6a63-451d-9ae6-171968b26a55@amd.com>
- <9f732ac8b90e4e819e0a6a5511ac3f6d@honor.com>
- <50092362-4644-4e47-9c63-fc82ba24e516@amd.com>
- <2755aae2f1674b239569bf1acad765dc@honor.com>
- <2487bad4-81d6-4ea2-96a7-a6ac741c9d9c@amd.com>
- <a3f57102bc6e4588bc7659485feadbc1@honor.com>
- <5c11b50c-2e36-4fd5-943c-086f55adffa8@amd.com>
- <e23bfe917c8744aa9162744bdd8ac458@honor.com>
-Content-Language: en-US
-From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-In-Reply-To: <e23bfe917c8744aa9162744bdd8ac458@honor.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: BL0PR01CA0006.prod.exchangelabs.com (2603:10b6:208:71::19)
- To PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00F522253FD
+	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 10:32:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747391526; cv=none; b=jASA705TVfJOClEwgcrOCyS7dZ8qDbhWDnLtUtgX7ZV0EhLqQfm+cd5H6oUUkAhdKjkBrWMeHxIy42+bJDax/DDUhku2VsWHkhUX/8j9B6F63Uu6R1x5OQz8YpLNuMbodki5npd4vXLcmjtzEG63fTBOmnBkv5LReKL9APyCYwk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747391526; c=relaxed/simple;
+	bh=Y6itP7Kh2dIc69u5d6PKjEC5APhDujvVRHjoJJoRjZw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eMsqriuRlE+2AP+zq8fQ8HBhXtZ5YWH3x/zKxeQ0USlJzJ8mOrZ5wKnH/NvptC6nN7DNoZKzMBZlqd2WvtHB7zVgiyoP3C9N29xJJjpeDIOZWDzwiqTsnJ0+znv6+0uXYG2MHwfWktV00Ud9lesm9yCrq6vSUEDMCAv0i9DJi24=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Q5FwqsCu; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=zPr4ETf7; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Q5FwqsCu; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=zPr4ETf7; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 25533218B8;
+	Fri, 16 May 2025 10:32:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1747391523; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Mxnb1geN517pevzpOjZliU3PBMZrTHg/aQoTFkapi0Y=;
+	b=Q5FwqsCufDChGJ5Ehc6EZzwwM/ZDphg2wt7gThyIWdtYpbRYIBdX0FaqDvh96cGDL2pBgu
+	wO8jSyVxZdmtQqL6H5ISImo7CfmuktlYr+JRtc7ijhb/+yMisqTzPXlzQu09ankUFGdto4
+	q6Z9tmvErpEpgabXmuZyEpzwwQYIBmE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1747391523;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Mxnb1geN517pevzpOjZliU3PBMZrTHg/aQoTFkapi0Y=;
+	b=zPr4ETf7RJtJ3TuezENhO7tXFg9K+iEPbt/oRuYP+oDesI9mfbqO4sZMMs8RyeQO1bUkWc
+	U6b5QLiee5tQ/LDA==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1747391523; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Mxnb1geN517pevzpOjZliU3PBMZrTHg/aQoTFkapi0Y=;
+	b=Q5FwqsCufDChGJ5Ehc6EZzwwM/ZDphg2wt7gThyIWdtYpbRYIBdX0FaqDvh96cGDL2pBgu
+	wO8jSyVxZdmtQqL6H5ISImo7CfmuktlYr+JRtc7ijhb/+yMisqTzPXlzQu09ankUFGdto4
+	q6Z9tmvErpEpgabXmuZyEpzwwQYIBmE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1747391523;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Mxnb1geN517pevzpOjZliU3PBMZrTHg/aQoTFkapi0Y=;
+	b=zPr4ETf7RJtJ3TuezENhO7tXFg9K+iEPbt/oRuYP+oDesI9mfbqO4sZMMs8RyeQO1bUkWc
+	U6b5QLiee5tQ/LDA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 190C513411;
+	Fri, 16 May 2025 10:32:03 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id lYYZBiMUJ2jUAgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Fri, 16 May 2025 10:32:03 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id C788AA09DD; Fri, 16 May 2025 12:31:58 +0200 (CEST)
+Date: Fri, 16 May 2025 12:31:58 +0200
+From: Jan Kara <jack@suse.cz>
+To: Zizhi Wo <wozizhi@huaweicloud.com>
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, yangerkun@huawei.com
+Subject: Re: [PATCH] fs: Rename the parameter of mnt_get_write_access()
+Message-ID: <vtfnncganindq4q7t4icfaujkgejlbd7repvurpjx6nwf6i7zp@hr44m22ij4qf>
+References: <20250516032147.3350598-1-wozizhi@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|BL3PR12MB6619:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0cbd2b59-fa7a-4310-0530-08dd94647ed8
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|376014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?T0s5OEFiMkY5ZGc2dG9TS01LYk5FYkJqVnRWdHBjQlNWTnNObnpOVGJkYjFM?=
- =?utf-8?B?WlRrMW9ISm1NUDVjS0xuNGVoaEFSZHhhTjV1WnJrdWhlS3FxMEpDbUtGRmpD?=
- =?utf-8?B?WkxwMlp6RHdkeWkxTjM3N3N2T3BPcC8yUVV1eFJ4dWVyNXV0QmQySkFFeGh2?=
- =?utf-8?B?Q1NJWXRRU0JmeDU3MmV6MlcvSFc2LytBNHViRG1UM0FDcXUrY0RPbjJCeXk4?=
- =?utf-8?B?Ri9yK0hSejZPRkIxclFiV3ZtbEdXaHhvRHVvTWFJbXdCZXlpNFEyZnhxSms3?=
- =?utf-8?B?R0VOdnNaZmd2Z0FqaUJyNTdLN3ZMUTIvQzV1MUppVGdLTVRqTzhxQnA1L3ly?=
- =?utf-8?B?eWIwc0VvM1h6cExpbDFqSy81cy9RLzlabmRDTzBuaGhtWlhkbTJneVgxN0ZQ?=
- =?utf-8?B?UzM4WlBjWTlISUpraklPSmxGaVFBS2JyUWo0bFEveWIrK0oyWXpGcGJPV0VD?=
- =?utf-8?B?QXUxV1VvY3FKU0JqMVZ0dkhUTUMwbVpLaUVVSG9yVWlBdFF2bm5KY1RaYnA5?=
- =?utf-8?B?LzdDdExXNDlDbHF4cVVaU1FUMXlKbGdKcXdIUW0wekQ2S0FQQTVwYThxczJV?=
- =?utf-8?B?dnA3eDhqVk83UkNyblVFaloycTY4V2lPeHBMOStZWmt2cEFYSHJNMU53QW51?=
- =?utf-8?B?bnJQalE2UHJNV25FMVlDdURWNE9iT3RpdUdERTZwb1J0MUNvVXN5SXYzWFZj?=
- =?utf-8?B?cnc4VTVXZHBIVjd4bmdBb1M1OTZhWmFtbTYrbDVMbFFSSnZUK2dTUTlhbllT?=
- =?utf-8?B?SHdobElBR3I1enRFeWV4citRSloxb1dWS0pCQ2NYTUp1b2o1TTFCbVpmajdZ?=
- =?utf-8?B?ZWNQSU5oazhLNVhScm5OaElLRVJPdk9xSkIxYTBNOFYwdXN0dXJ2WSt2d1Vp?=
- =?utf-8?B?SjFLTTdieDlIK1M2R2JNVnV2Ti9sSnhYUHAxSVljelRrWkMwczlQL2dFaFMv?=
- =?utf-8?B?OTVBTVE3dGR3SkdRRTRUdk13bjB5RDNBSHAyNGhGYjJSWWFIeFJoUWJMS2hU?=
- =?utf-8?B?bWdOUGJxRi9mUnZ6NXJSd05JSnZMalBEMkw3WHBwZzMyeEI2Zk13MmN4N1d1?=
- =?utf-8?B?ZE9wNENrVWp0Y0FITkhOdDcveXJTcC8wbWlrY3c3TGpRaEJIOGU2bVgvbFRL?=
- =?utf-8?B?RnhRaXFocmRNQy95dk85dFM2RzlzZ1BlTlBOTzVHZXpIL1AyVWFJVlp6MTlY?=
- =?utf-8?B?U0lseW5JUXBkZk9xRUJmSTgzOE5ONjN4TjZhejVUY28yaVlOYy9oQ016Q2ZZ?=
- =?utf-8?B?dUxYREE0OHhHVFg5VWlxd1JkVWVCemVWTCtnU0M3OTJZVTVrbmpCaytReGRm?=
- =?utf-8?B?dHhpZ3BHYjVTOXhCeDVMNWhKZzF6UVlYNW9CR0tYNXpPSnBVQXBURXExYjQ0?=
- =?utf-8?B?ajVWL2N4RytQVFRIK3NONksyeXYrVlZXanVqajBGVDFZQnd5c3k5L3p6Q2Rn?=
- =?utf-8?B?MG5MQW9Dd09Ra05IU0hlanJJcXp4aEgyTzd4TWY4L1RiV0JqRG1yR2hWaGRV?=
- =?utf-8?B?THhBVXQzSDZuVWo2V1N2NVBGUERqYk1Fc0RZS0R0UUU3R094NXdqSzBEZ0VI?=
- =?utf-8?B?UGhhSHdVbWZuMVZtTDJLNDRQVDJTL1ZxbXZML3ZMUGlsMGEwUUgyZ0pDcG5O?=
- =?utf-8?B?VDZYVmJ4L0txeVV3eXpkSjhFTVpJZGJha1dDMXBPSGVlUk4xRU9nSWdhczZC?=
- =?utf-8?B?V2c5b0ZlVXZ0UXZLS29sdmJIakJPM1lEYnkvNEphVWlCZU9LRGJUZmpGbG9a?=
- =?utf-8?B?QkYxYXVWRVd4aHkzU2lZYlRlT0YxWTRaWVluUDVQZGloL1M1bzZJMm9JL2xM?=
- =?utf-8?B?MENvMmphdVNSZ3FIZk1xbEJ5cU1JK3NQSjhoTXU2QmxrWFBOTHo4ZFdqYU9Z?=
- =?utf-8?B?a3NiSWZGVG9HVWJrWkE3L29RSTA4UHlJSlVJTUtxaXlXN3Y4Y2Q1anJJejU0?=
- =?utf-8?Q?uHjKgC6ezHs=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?cCt2TkNTV3RDUlk5TU0wdEkyZXNmcFFmSzdDbWRlOWZxcEpYWlhZSklBZjBn?=
- =?utf-8?B?UmNMUUxWYWZPWXc5cWo2WlBXa3FmakNSbWhYaU5GQkRJSitYRGRNTzlER3E3?=
- =?utf-8?B?S2NTbTErckJHb2c0ZTg0MmZUQXFYL0hmN01WNDFYalRGcHJJaVZUVitDRTd6?=
- =?utf-8?B?aHBEM0NpbGRJbDFEVUxwMUtCcEp2d3BPNG81RVMvTWVzRWdDYlJrS2lRNWhE?=
- =?utf-8?B?Vm1IUDhmTytmN2FPdTlZK2JsSjg2NFRtYWREbUxkQXFPT0x5aGFwZHFjQVcw?=
- =?utf-8?B?YU92U3MzcldleEJYZmVMOEI5aGFOMlBlTktRcDNZN01kbjdBUk54OEdnTHZJ?=
- =?utf-8?B?Q2hGSVRpZkRJWGtMNGNlNitLdk5BbkErTWFBOFhQMHZ5Vm5XVkZaRTdPNUZR?=
- =?utf-8?B?Nitsc2p0OGQrMFl1a05uTHJ2RGJ0K2ttaDhlYkQ2VEg3dUpXOFR2aXFZekFD?=
- =?utf-8?B?cmlUYnA1K2dyc3cyNDB3d2lzcDdFMDdEZU82VDhhQkVkbHRvQm42UG9yZUVC?=
- =?utf-8?B?OGowekY0cHZNMnFxN0U1bWVKRmQrWk9kakt0dCs4Wnk5YmM3b3U3L3dVaTdJ?=
- =?utf-8?B?MVhkYmNVRC9KMmNZNUwwZ3NSbWxmNGg5MVk0b3JSUlZEK1hpdjU1WHc1MFJE?=
- =?utf-8?B?d3dPcytZaUNZMHg5QlI4NVdpNnVvYmE4OEtCRDZ1UlhkOGNWYXNBRXh4RDJD?=
- =?utf-8?B?WHhIQ09oODc0Qjg2Q3lBRU9PZUwrbmxSbXdPSG41a25sWXZLd3VZY3NhVTNJ?=
- =?utf-8?B?REF0L05pT0ZYdkRCbWROMS85MWJLV1VzSnFqQ0FaamhuU0M0cU9kTjZrQmdS?=
- =?utf-8?B?ZTI4MVpZdVRyeHR6UTVheXJ0bWxsakVJVzI4WTRreXhQWUVpNGIweENRemFF?=
- =?utf-8?B?RlFUS0wzQ0llK0NiQmRCdjd5YW8wb0I5d1A4NStNZTFjMGxoTVFvWGxpaEpw?=
- =?utf-8?B?aU41Qk44ZnMvUFJIdXNmcmNMM2JnYUZLMUlpSkI1T3puWUVXRVFheFBmMjBx?=
- =?utf-8?B?L0lPUE55WHJma1lxRENGRXBXUUVRRlc5dFdxSmpQc1RPOFhKWlIrV3pYSmpD?=
- =?utf-8?B?TWtMazFlVUh6dXg4SDdHTTY4d2xHbE1IOVQ5VndDZnJzZmVOT0o0TTZ6MFRn?=
- =?utf-8?B?TFVMMHZaR0JsdklwbzVKZGt2bEYwdjgxc1ZIT2dWdEtDUUFyd1g1dGFQdlRu?=
- =?utf-8?B?TGgveXE3emxsRzlRSElmaU93YS9GL2NSOXlIalhHMGhkTTJpUzNpY29WZzBN?=
- =?utf-8?B?UUYweVIvSTNRUWhOQm5iVVRYbTBRZFBYNE1yaVh5cDVOSGdQb3ZKUlB2MmMy?=
- =?utf-8?B?NStyRnJLNlF0QjhNSnFmQjNyTjE2TkllUk1laktQNWt6Y3J4VU54Y0ZQYUd0?=
- =?utf-8?B?bzRCOHc1M01Oanp1dFRmOFdaOWsrSlBZcEc5OWwzOURvVWhxQTNxMzJSdFJx?=
- =?utf-8?B?VVl4WHhHS09FeHRjL1FteithVXh5RHRubGpQcmpZdzhJSXNadS9nUHA2SGYx?=
- =?utf-8?B?amwvWDBDM3lDeFQ3M2lUWGpPcmdlWEVaakE1dTFaVWdRQUpTbUp2cnlYTTdr?=
- =?utf-8?B?RFRneDlRVnBrNktoQ2hXR3VZc1hNdXdoTERWU0RnQWJrWjlGK2FCOStyVXBy?=
- =?utf-8?B?VGRPeXJWOHROU21yRFNFME1GRWVtbFdIc0hPZmhyM2JIbnZQVWFPM0puRzVD?=
- =?utf-8?B?SmV0aEhWRGc2dHl3Um5DK2hEL2tmQ2tZc3hUYUhIaDZSZHdCMkgwN21wN3dO?=
- =?utf-8?B?UzVXMVRvd1l3QjNWbHlWQVNGaEZBYlJGbzBSN2RHUDRSYVE0ZDFqc1M5dXFU?=
- =?utf-8?B?SHRHZSs0YmNTWjdyaUJrc20ydmhsbXJRVXRSaEFOdThhbENHK2hBdFgwQ2c1?=
- =?utf-8?B?ZHUyd0FYbmg4UHplVGFWcm9nMUUxMnRwZUM3M0tVVnlVa1lSTGZNRERnWEFM?=
- =?utf-8?B?Nllub2EvWnZyV1EwZzNzeXk0bHArNEpEN1k0cUhLRGNndnpoWmlaMXZWS2JB?=
- =?utf-8?B?WWE5bUl4RU9UWm1tTVB2bCtIRTE5Q1c2YkwzMVZGTHFRSS9pWWYxb1pCTS9h?=
- =?utf-8?B?NlpPZy9aT2lWZ0FhcllkdkhYT0FaS21zMklzcDJLN3plRUg4S2dhZlNJMkxl?=
- =?utf-8?Q?qKmZHUR90VvEC4rTZGQs7cAb8?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0cbd2b59-fa7a-4310-0530-08dd94647ed8
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 May 2025 10:29:10.4470
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: IpTYxXVtQRZRLz7T/leCuNkxktXa7+Hw+lc0YsyjRgr5ufP3Ct8bi4KDdwTMqRIS
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL3PR12MB6619
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250516032147.3350598-1-wozizhi@huaweicloud.com>
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	RCVD_COUNT_THREE(0.00)[3];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,huawei.com:email]
+X-Spam-Score: -3.80
 
-On 5/16/25 11:49, wangtao wrote:
->>>> Please try using udmabuf with sendfile() as confirmed to be working by
->> T.J.
->>> [wangtao] Using buffer IO with dmabuf file read/write requires one
->> memory copy.
->>> Direct IO removes this copy to enable zero-copy. The sendfile system
->>> call reduces memory copies from two (read/write) to one. However, with
->>> udmabuf, sendfile still keeps at least one copy, failing zero-copy.
->>
->>
->> Then please work on fixing this.
-> [wangtao] What needs fixing? Does sendfile achieve zero-copy?
-> sendfile reduces memory copies (from 2 to 1) for network sockets,
-> but still requires one copy and cannot achieve zero copies.
+On Fri 16-05-25 11:21:47, Zizhi Wo wrote:
+> From: Zizhi Wo <wozizhi@huawei.com>
+> 
+> Rename the parameter in mnt_get_write_access() from "m" to "mnt" for
+> consistency between declaration and implementation.
+> 
+> Signed-off-by: Zizhi Wo <wozizhi@huawei.com>
 
-Well why not? See sendfile() is the designated Linux uAPI for moving data between two files, maybe splice() is also appropriate.
+I'm sorry but this is just a pointless churn. I agree the declaration and
+implementation should better be consistent (although in this particular
+case it isn't too worrying) but it's much easier (and with much lower
+chance to cause conflicts) to just fixup the declaration.
 
-The memory file descriptor and your destination file are both a files. So those uAPIs apply.
+								Honza
 
-Now what you suggest is to add a new IOCTL to do this in a very specific manner just for the system DMA-buf heap. And as far as I can see that is in general a complete no-go.
-
-I mean I understand why you do this. Instead of improving the existing functionality you're just hacking something together because it is simple for you.
-
-It might be possible to implement that generic for DMA-buf heaps if udmabuf allocation overhead can't be reduced, but that is then just the second step.
-
-Regards,
-Christian.
+> ---
+>  fs/namespace.c | 14 +++++++-------
+>  1 file changed, 7 insertions(+), 7 deletions(-)
+> 
+> diff --git a/fs/namespace.c b/fs/namespace.c
+> index 1b466c54a357..b1b679433ab3 100644
+> --- a/fs/namespace.c
+> +++ b/fs/namespace.c
+> @@ -483,7 +483,7 @@ static int mnt_is_readonly(struct vfsmount *mnt)
+>   */
+>  /**
+>   * mnt_get_write_access - get write access to a mount without freeze protection
+> - * @m: the mount on which to take a write
+> + * @mnt: the mount on which to take a write
+>   *
+>   * This tells the low-level filesystem that a write is about to be performed to
+>   * it, and makes sure that writes are allowed (mnt it read-write) before
+> @@ -491,13 +491,13 @@ static int mnt_is_readonly(struct vfsmount *mnt)
+>   * frozen. When the write operation is finished, mnt_put_write_access() must be
+>   * called. This is effectively a refcount.
+>   */
+> -int mnt_get_write_access(struct vfsmount *m)
+> +int mnt_get_write_access(struct vfsmount *mnt)
+>  {
+> -	struct mount *mnt = real_mount(m);
+> +	struct mount *m = real_mount(mnt);
+>  	int ret = 0;
+>  
+>  	preempt_disable();
+> -	mnt_inc_writers(mnt);
+> +	mnt_inc_writers(m);
+>  	/*
+>  	 * The store to mnt_inc_writers must be visible before we pass
+>  	 * MNT_WRITE_HOLD loop below, so that the slowpath can see our
+> @@ -505,7 +505,7 @@ int mnt_get_write_access(struct vfsmount *m)
+>  	 */
+>  	smp_mb();
+>  	might_lock(&mount_lock.lock);
+> -	while (READ_ONCE(mnt->mnt.mnt_flags) & MNT_WRITE_HOLD) {
+> +	while (READ_ONCE(m->mnt.mnt_flags) & MNT_WRITE_HOLD) {
+>  		if (!IS_ENABLED(CONFIG_PREEMPT_RT)) {
+>  			cpu_relax();
+>  		} else {
+> @@ -530,8 +530,8 @@ int mnt_get_write_access(struct vfsmount *m)
+>  	 * read-only.
+>  	 */
+>  	smp_rmb();
+> -	if (mnt_is_readonly(m)) {
+> -		mnt_dec_writers(mnt);
+> +	if (mnt_is_readonly(mnt)) {
+> +		mnt_dec_writers(m);
+>  		ret = -EROFS;
+>  	}
+>  	preempt_enable();
+> -- 
+> 2.39.2
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
