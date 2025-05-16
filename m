@@ -1,329 +1,244 @@
-Return-Path: <linux-kernel+bounces-651205-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-651208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C52B4AB9B9D
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 14:08:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60763AB9BAB
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 14:11:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 81A80189C6DA
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 12:08:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED9033B19EC
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 12:10:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C0FD238142;
-	Fri, 16 May 2025 12:08:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB76223A9BB;
+	Fri, 16 May 2025 12:10:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="IV8OkrRB"
-Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="hsvr53u5"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 379B91361
-	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 12:07:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 088FF1361;
+	Fri, 16 May 2025 12:10:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747397279; cv=none; b=JXcaU5GdJRWVPZRbOn/kg+g67QXaoP1/srYYUA8uP0AG9Z4tgyUCJa5wf44Halyw4/oC2FpG/2cwaTx87JSKJC2BjbxD3XyUhGBAlPisAmfSVw94e/7JF4x8EMpEJXacuCtPaSiJu99g0UVzzGUqhLfugKqh85nxr4OJdUNY6fQ=
+	t=1747397453; cv=none; b=jN1gHrJRB9QRs0YdBj1xHT82yaACO/Kh/JLXIw5W8COHgy8gC90+x4S9XRC8AyOiUUi/iCGcaOq6mOOfXZ5nJzT+iJciIuxMBEWy8Q2p6rbzVRfx5FHP8gMhiM0E6O2SdR0RzDgnDvZ0vlR6XemFQMpJ/6Wn+xodeC4IXZ3w3fY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747397279; c=relaxed/simple;
-	bh=wC0JoQ2jtOkGfxIeSX2wwCEjyGoWayjcplNo+j9yLvc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rxnpGajx11JnwvY2VCY7nUb1Ryw8PX+oi/rKZUbKl/tSvk4yrkU1MGUdijvKnr49Xqfj0gbZhH7BlGSw3JV//VeTDd9CTlUTcadDKw9alkQt83J/eZ/gx54RS27KgPEnIPsHoPq7Z56hMOD3LO1LvJ1eAGjQXnZge17rTxcxdeY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=IV8OkrRB; arc=none smtp.client-ip=95.215.58.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Fri, 16 May 2025 20:07:08 +0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1747397265;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2PQP4CfvZo5c+28K4YG9Cb+1p+vxFB02sB5cLp2u7Ho=;
-	b=IV8OkrRBrBjRKKc5Fv224BT+fk0nuMYqnz9hYX+d7Np3h5W8T+pHqqj54dla5UpRwu9v4b
-	Y3W3ZSPqHm65PO2s6JLkvcN7KJcDSO9dmjCeKmmlmmYnwI90WmO24Z8VcG3r23SzULDUuk
-	q2mvfkFypOhyyXJ3LDwDAlVwEpxq7fA=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Dawei Li <dawei.li@linux.dev>
-To: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: andersson@kernel.org, linux-remoteproc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, set_pte_at@outlook.com,
-	dawei.li@linux.dev
-Subject: Re: [PATCH v2 1/3] rpmsg: char: Reuse eptdev logic for anon device
-Message-ID: <20250516120708.GA10474@wendao-VirtualBox>
-References: <20250509155927.109258-1-dawei.li@linux.dev>
- <20250509155927.109258-2-dawei.li@linux.dev>
- <aCZNZPkb5oPZiz9G@p14s>
+	s=arc-20240116; t=1747397453; c=relaxed/simple;
+	bh=GQZ4AQkxvF4AVWG2+3A96DKQdtd0+Bh5Qo/EXpIFCp8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=VNBhvG6YHsmRJIVySSccxy5Bg4BqIFMN8tZkD6crD2f3CoP/PVDkFCJT4lQQaYlTk9U1wwreZ5pTlagJbmYNkk2L138E9qT2eG21LJDjBpGxCqOlSZtWl7uI15GfJiymj4MKB17qbSjJmzZRyDaDedHC7KUTDK3a7ZyzEU4W6Eo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=hsvr53u5; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54GASX3V020923;
+	Fri, 16 May 2025 14:10:18 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	AUqkuqqNfwv9TzLB2auox1AYvgBbMC8kgRWp43OMpKQ=; b=hsvr53u5RVEmNowt
+	Rj+biihArb/195vChHxDvhEpOBIoMMTXCtF01uaVBzpqgo1hCNVhe1I8d1chqsa2
+	O3HelKcdTOZyGYRROcVj4hhXHZKLFMDfIkMdT3+DDfVM5JIXDO27Xtgm7xF5nGEG
+	CKNCX5FhT4OeSalAHEPKYUHhDoPKSmNd9W1Yow/Pthc2IAberfC4/wp+szFsd0Bz
+	Ce/B10EC8mQvsZR2i2eUnN7UINS10/WlUfygaKCSJi3KFcCY94umVA+1LDBl955y
+	VAV9uIQAvm8bsaF0k349u6llinJJL0U9CAe94lBgsdHN5hu/TDE25PXM5bnxw2pQ
+	a+iqSg==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 46mbdrp3m8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 16 May 2025 14:10:18 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id A064840046;
+	Fri, 16 May 2025 14:08:42 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 58425B6B7AB;
+	Fri, 16 May 2025 14:07:24 +0200 (CEST)
+Received: from [10.130.77.120] (10.130.77.120) by SHFDAG1NODE3.st.com
+ (10.75.129.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 16 May
+ 2025 14:07:23 +0200
+Message-ID: <b3bff3aa-cd99-4c9e-851a-950a4877e664@foss.st.com>
+Date: Fri, 16 May 2025 14:07:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aCZNZPkb5oPZiz9G@p14s>
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 4/9] PCI: stm32: Add PCIe Endpoint support for
+ STM32MP25
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+CC: <lpieralisi@kernel.org>, <kw@linux.com>, <robh@kernel.org>,
+        <bhelgaas@google.com>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <mcoquelin.stm32@gmail.com>, <alexandre.torgue@foss.st.com>,
+        <p.zabel@pengutronix.de>, <thippeswamy.havalige@amd.com>,
+        <shradha.t@samsung.com>, <quic_schintav@quicinc.com>,
+        <cassel@kernel.org>, <johan+linaro@kernel.org>,
+        <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+References: <20250423090119.4003700-1-christian.bruel@foss.st.com>
+ <20250423090119.4003700-5-christian.bruel@foss.st.com>
+ <tdgyva6qyn6qwzvft4f7r3tgp5qswuv4q5swoaeomnnbxtmz5j@zo3gvevx2skp>
+ <619756c5-1a61-4aa9-b7fb-6be65175ded2@foss.st.com>
+ <b5x4fayqm242xqm3rgwvrz3jywlixedhhxwo7lft2y3tnuszxr@3oy2kzj2of5l>
+From: Christian Bruel <christian.bruel@foss.st.com>
+Content-Language: en-US
+In-Reply-To: <b5x4fayqm242xqm3rgwvrz3jywlixedhhxwo7lft2y3tnuszxr@3oy2kzj2of5l>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE3.st.com
+ (10.75.129.71)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-16_05,2025-05-16_02,2025-03-28_01
 
-Hi Mathieu,
+(Sorry I missed the last point before my reply with a new v9/v10 series)
 
-Thanks for reviewing.
-
-On Thu, May 15, 2025 at 02:24:04PM -0600, Mathieu Poirier wrote:
-> Hi,
+On 5/15/25 13:26, Manivannan Sadhasivam wrote:
+> On Mon, May 12, 2025 at 06:06:16PM +0200, Christian Bruel wrote:
+>> Hello Manivannan,
+>>
+>> On 4/30/25 09:50, Manivannan Sadhasivam wrote:
+>>> On Wed, Apr 23, 2025 at 11:01:14AM +0200, Christian Bruel wrote:
+>>>> Add driver to configure the STM32MP25 SoC PCIe Gen1 2.5GT/s or Gen2 5GT/s
+>>>> controller based on the DesignWare PCIe core in endpoint mode.
+>>>>
+>>>> Uses the common reference clock provided by the host.
+>>>>
+>>>> The PCIe core_clk receives the pipe0_clk from the ComboPHY as input,
+>>>> and the ComboPHY PLL must be locked for pipe0_clk to be ready.
+>>>> Consequently, PCIe core registers cannot be accessed until the ComboPHY is
+>>>> fully initialised and refclk is enabled and ready.
+>>>>
+>>>> Signed-off-by: Christian Bruel <christian.bruel@foss.st.com>
+>>>> ---
+>>>>    drivers/pci/controller/dwc/Kconfig         |  12 +
+>>>>    drivers/pci/controller/dwc/Makefile        |   1 +
+>>>>    drivers/pci/controller/dwc/pcie-stm32-ep.c | 414 +++++++++++++++++++++
+>>>>    drivers/pci/controller/dwc/pcie-stm32.h    |   1 +
+>>>>    4 files changed, 428 insertions(+)
+>>>>    create mode 100644 drivers/pci/controller/dwc/pcie-stm32-ep.c
+>>>>
+>>>> diff --git a/drivers/pci/controller/dwc/Kconfig b/drivers/pci/controller/dwc/Kconfig
+>>>> index 2aec5d2f9a46..aceff7d1ef33 100644
+>>>> --- a/drivers/pci/controller/dwc/Kconfig
+>>>> +++ b/drivers/pci/controller/dwc/Kconfig
+>>>> @@ -422,6 +422,18 @@ config PCIE_STM32_HOST
+>>>>    	  This driver can also be built as a module. If so, the module
+>>>>    	  will be called pcie-stm32.
+>>>> +config PCIE_STM32_EP
+>>>> +	tristate "STMicroelectronics STM32MP25 PCIe Controller (endpoint mode)"
+>>>> +	depends on ARCH_STM32 || COMPILE_TEST
+>>>> +	depends on PCI_ENDPOINT
+>>>> +	select PCIE_DW_EP
+>>>> +	help
+>>>> +	  Enables endpoint support for DesignWare core based PCIe controller
+>>>> +	  found in STM32MP25 SoC.
+>>>
+>>> Can you please use similar description for the RC driver also?
+>>>
+>>> "Enables Root Complex (RC) support for the DesignWare core based PCIe host
+>>> controller found in STM32MP25 SoC."
+>>
+>> Yes, will align the messages
+>>
+>>>> +
+>>>> +	  This driver can also be built as a module. If so, the module
+>>>> +	  will be called pcie-stm32-ep.
+>>>> +
+>>>>    config PCI_DRA7XX
+>>>>    	tristate
+>>>
+>>> [...]
+>>>
+>>>> +static int stm32_add_pcie_ep(struct stm32_pcie *stm32_pcie,
+>>>> +			     struct platform_device *pdev)
+>>>> +{
+>>>> +	struct dw_pcie_ep *ep = &stm32_pcie->pci.ep;
+>>>> +	struct device *dev = &pdev->dev;
+>>>> +	int ret;
+>>>> +
+>>>> +	ret = pm_runtime_resume_and_get(dev);
+>>>
+>>> This needs to be called before devm_pm_runtime_enable().
+>>
+>> OK. Also and we must use pm_runtime_get_noresume() here.
+>>
 > 
-> On Fri, May 09, 2025 at 11:59:25PM +0800, Dawei Li wrote:
-> > Current uAPI implementation for rpmsg ctrl & char device manipulation is
-> > abstracted in procedures below:
-> > 
-> > Current uAPI implementation for rpmsg ctrl & char device manipulation is
-> > abstracted in procedures below:
-> > - fd = open("/dev/rpmsg_ctrlX")
-> > - ioctl(fd, RPMSG_CREATE_EPT_IOCTL, &info); /dev/rpmsgY devnode is
-> >   generated.
-> > - fd_ep = open("/dev/rpmsgY", O_RDWR)
-> > - operations on fd_ep(write, read, poll ioctl)
-> > - ioctl(fd_ep, RPMSG_DESTROY_EPT_IOCTL)
-> > - close(fd_ep)
-> > - close(fd)
-> > 
-> > This /dev/rpmsgY abstraction is less favorable for:
-> > - Performance issue: It's time consuming for some operations are
-> > invovled:
-> >   - Device node creation.
-> >     Depends on specific config, especially CONFIG_DEVTMPFS, the overall
-> >     overhead is based on coordination between DEVTMPFS and userspace
-> >     tools such as udev and mdev.
-> > 
-> >   - Extra kernel-space switch cost.
-> > 
-> >   - Other major costs brought by heavy-weight logic like device_add().
-> > 
-> > - /dev/rpmsgY node can be opened only once. It doesn't make much sense
-> >     that a dynamically created device node can be opened only once.
-> > 
-> > - For some container application such as docker, a client can't access
-> >   host's dev unless specified explicitly. But in case of /dev/rpmsgY, which
-> >   is generated dynamically and whose existence is unknown for clients in
-> >   advance, this uAPI based on device node doesn't fit well.
-> > 
-> > An anon inode based approach is introduced to address the issues above.
-> > Rather than generating device node and opening it, rpmsg code just make
-> > a anon inode representing eptdev and return the fd to userspace.
+> Yes!
 > 
-> Please change occurences of "anon" for "anonyous".  "Anon" was used to avoid
-> writing "anonymous" all the time in the code, but description should not use the
-> shorthand.  In the title, this patch and all other patches.
-
-Acked.
-
+>>>
+>>>> +	if (ret < 0) {
+>>>> +		dev_err(dev, "pm runtime resume failed: %d\n", ret);
+>>>> +		return ret;
+>>>> +	}
+>>>> +
+>>>> +	ret = regmap_update_bits(stm32_pcie->regmap, SYSCFG_PCIECR,
+>>>> +				 STM32MP25_PCIECR_TYPE_MASK,
+>>>> +				 STM32MP25_PCIECR_EP);
+>>>> +	if (ret) {
+>>>> +		goto err_pm_put_sync;
+>>>> +		return ret;
+>>>> +	}
+>>>> +
+>>>> +	reset_control_assert(stm32_pcie->rst);
+>>>> +	reset_control_deassert(stm32_pcie->rst);
+>>>> +
+>>>> +	ep->ops = &stm32_pcie_ep_ops;
+>>>> +
+>>>> +	ret = dw_pcie_ep_init(ep);
+>>>> +	if (ret) {
+>>>> +		dev_err(dev, "failed to initialize ep: %d\n", ret);
+>>>> +		goto err_pm_put_sync;
+>>>> +	}
+>>>> +
+>>>> +	ret = stm32_pcie_enable_resources(stm32_pcie);
+>>>> +	if (ret) {
+>>>> +		dev_err(dev, "failed to enable resources: %d\n", ret);
+>>>> +		goto err_ep_deinit;
+>>>> +	}
+>>>> +
+>>>> +	ret = dw_pcie_ep_init_registers(ep);
+>>>> +	if (ret) {
+>>>> +		dev_err(dev, "Failed to initialize DWC endpoint registers\n");
+>>>> +		goto err_disable_resources;
+>>>> +	}
+>>>> +
+>>>> +	pci_epc_init_notify(ep->epc);
+>>>> +
+>>>
+>>> Hmm, looks like you need to duplicate dw_pcie_ep_init_registers() and
+>>> pci_epc_init_notify() in stm32_pcie_perst_deassert() for hw specific reasons.
+>>> So can you drop these from there?
+>>
+>> We cannot remove dw_pcie_ep_init_registers() and dw_pcie_ep_init_registers()
+>> here because the PCIe registers need to be ready at the end of
+>> pcie_stm32_probe, as the host might already be running. In that case the
+>> host enumerates with /sys/bus/pci/rescan rather than asserting/deasserting
+>> PERST#.
+>> Therefore, we do not need to reboot the host after initializing the EP."
+>>
 > 
-> > 
-> > The legacy abstraction based on struct dev and struct cdev is honored
-> > for:
-> > - Avoid legacy uAPI break(RPMSG_CREATE_EPT_IOCTL)
-> > - Reuse existing logic:
-> >   -- dev_err() and friends.
-> >   -- Life cycle management of struct device.
-> > 
-> > Signed-off-by: Dawei Li <dawei.li@linux.dev>
-> > ---
-> >  drivers/rpmsg/rpmsg_char.c | 80 ++++++++++++++++++++++++++------------
-> >  1 file changed, 56 insertions(+), 24 deletions(-)
-> > 
-> > diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
-> > index eec7642d2686..5b2a883d6236 100644
-> > --- a/drivers/rpmsg/rpmsg_char.c
-> > +++ b/drivers/rpmsg/rpmsg_char.c
-> > @@ -91,7 +91,8 @@ int rpmsg_chrdev_eptdev_destroy(struct device *dev, void *data)
-> >  	/* wake up any blocked readers */
-> >  	wake_up_interruptible(&eptdev->readq);
-> >  
-> > -	cdev_device_del(&eptdev->cdev, &eptdev->dev);
-> > +	if (eptdev->dev.devt)
-> > +		cdev_device_del(&eptdev->cdev, &eptdev->dev);
-> >  	put_device(&eptdev->dev);
-> >  
-> >  	return 0;
-> > @@ -132,21 +133,17 @@ static int rpmsg_ept_flow_cb(struct rpmsg_device *rpdev, void *priv, bool enable
-> >  	return 0;
-> >  }
-> >  
-> > -static int rpmsg_eptdev_open(struct inode *inode, struct file *filp)
-> > +static int __rpmsg_eptdev_open(struct rpmsg_eptdev *eptdev)
-> >  {
-> > -	struct rpmsg_eptdev *eptdev = cdev_to_eptdev(inode->i_cdev);
-> >  	struct rpmsg_endpoint *ept;
-> >  	struct rpmsg_device *rpdev = eptdev->rpdev;
-> >  	struct device *dev = &eptdev->dev;
-> >  
-> > -	mutex_lock(&eptdev->ept_lock);
-> >  	if (eptdev->ept) {
-> > -		mutex_unlock(&eptdev->ept_lock);
-> >  		return -EBUSY;
-> >  	}
-> >  
-> >  	if (!eptdev->rpdev) {
-> > -		mutex_unlock(&eptdev->ept_lock);
-> >  		return -ENETRESET;
-> >  	}
-> >  
-> > @@ -164,21 +161,32 @@ static int rpmsg_eptdev_open(struct inode *inode, struct file *filp)
-> >  	if (!ept) {
-> >  		dev_err(dev, "failed to open %s\n", eptdev->chinfo.name);
-> >  		put_device(dev);
-> > -		mutex_unlock(&eptdev->ept_lock);
-> >  		return -EINVAL;
-> >  	}
-> >  
-> >  	ept->flow_cb = rpmsg_ept_flow_cb;
-> >  	eptdev->ept = ept;
-> > -	filp->private_data = eptdev;
-> > -	mutex_unlock(&eptdev->ept_lock);
-> >  
-> >  	return 0;
-> >  }
-> >  
-> > -static int rpmsg_eptdev_release(struct inode *inode, struct file *filp)
-> > +static int rpmsg_eptdev_open(struct inode *inode, struct file *filp)
-> >  {
-> >  	struct rpmsg_eptdev *eptdev = cdev_to_eptdev(inode->i_cdev);
-> > +	int ret;
-> > +
-> > +	mutex_lock(&eptdev->ept_lock);
-> > +	ret = __rpmsg_eptdev_open(eptdev);
-> > +	if (!ret)
-> > +		filp->private_data = eptdev;
-> > +	mutex_unlock(&eptdev->ept_lock);
-> > +
-> > +	return ret;
-> > +}
-> > +
-> > +static int rpmsg_eptdev_release(struct inode *inode, struct file *filp)
-> > +{
-> > +	struct rpmsg_eptdev *eptdev = filp->private_data;
-> >  	struct device *dev = &eptdev->dev;
-> >  
-> >  	/* Close the endpoint, if it's not already destroyed by the parent */
-> > @@ -400,12 +408,13 @@ static void rpmsg_eptdev_release_device(struct device *dev)
-> >  	struct rpmsg_eptdev *eptdev = dev_to_eptdev(dev);
-> >  
-> >  	ida_free(&rpmsg_ept_ida, dev->id);
-> > -	ida_free(&rpmsg_minor_ida, MINOR(eptdev->dev.devt));
-> > +	if (eptdev->dev.devt)
-> > +		ida_free(&rpmsg_minor_ida, MINOR(eptdev->dev.devt));
-> >  	kfree(eptdev);
-> >  }
-> >  
-> > -static struct rpmsg_eptdev *rpmsg_chrdev_eptdev_alloc(struct rpmsg_device *rpdev,
-> > -						      struct device *parent)
-> > +static struct rpmsg_eptdev *__rpmsg_chrdev_eptdev_alloc(struct rpmsg_device *rpdev,
-> > +							struct device *parent, bool cdev)
-> 
-> 
-> I would simply rename this rpmsg_eptdev_alloc() and then use is in
-> rpmsg_chrdev_eptdev_alloc() and rpmsg_anonynous_eptdev_alloc()
+> Since PERST# is level triggered, the endpoint should still receive the PERST#
+> deassert interrupt if the host was already booted. In that case, these will be
+> called by the stm32_pcie_perst_deassert() function.
 
-Agreed. rpmsg_eptdev_alloc() is much better.
+GPIO level interrupts are simulated on STM32 (*), so I didn't consider 
+using them here
+However, using the same sequence as in pcie-qcom-ep.c works fine with 
+the gpio hack, avoiding the call the dw_pcie_ep_init_registers() here.
 
-> 
-> >  {
-> >  	struct rpmsg_eptdev *eptdev;
-> >  	struct device *dev;
-> > @@ -428,33 +437,50 @@ static struct rpmsg_eptdev *rpmsg_chrdev_eptdev_alloc(struct rpmsg_device *rpdev
-> >  	dev->groups = rpmsg_eptdev_groups;
-> >  	dev_set_drvdata(dev, eptdev);
-> >  
-> > -	cdev_init(&eptdev->cdev, &rpmsg_eptdev_fops);
-> > -	eptdev->cdev.owner = THIS_MODULE;
-> > +	if (cdev) {
-> > +		cdev_init(&eptdev->cdev, &rpmsg_eptdev_fops);
-> > +		eptdev->cdev.owner = THIS_MODULE;
-> > +	}
-> >  
-> >  	return eptdev;
-> >  }
-> >  
-> > -static int rpmsg_chrdev_eptdev_add(struct rpmsg_eptdev *eptdev, struct rpmsg_channel_info chinfo)
-> > +static struct rpmsg_eptdev *rpmsg_chrdev_eptdev_alloc(struct rpmsg_device *rpdev,
-> > +						      struct device *parent)
-> > +{
-> > +	return __rpmsg_chrdev_eptdev_alloc(rpdev, parent, true);
-> > +}
-> > +
-> > +static int __rpmsg_chrdev_eptdev_add(struct rpmsg_eptdev *eptdev,
-> > +				     struct rpmsg_channel_info chinfo, bool cdev)
-> 
-> Same here, rpmsg_eptdev_add()
+I will switch to this scheme. Thank you
 
-Acked.
+Christian
 
-All the issues above, including those for patch 2/3, will be fixed in
-V3.
+(*) 47beed513a85b3561e74cbb4dd7af848716fa4e0 ("pinctrl: stm32: Add level 
+interrupt support to gpio irq chip")
 
-Thanks,
-
-	Dawei
 
 > 
-> >  {
-> >  	struct device *dev = &eptdev->dev;
-> >  	int ret;
-> >  
-> >  	eptdev->chinfo = chinfo;
-> >  
-> > -	ret = ida_alloc_max(&rpmsg_minor_ida, RPMSG_DEV_MAX - 1, GFP_KERNEL);
-> > -	if (ret < 0)
-> > -		goto free_eptdev;
-> > -	dev->devt = MKDEV(MAJOR(rpmsg_major), ret);
-> > +	if (cdev) {
-> > +		ret = ida_alloc_max(&rpmsg_minor_ida, RPMSG_DEV_MAX - 1, GFP_KERNEL);
-> > +		if (ret < 0)
-> > +			goto free_eptdev;
-> >  
-> > +		dev->devt = MKDEV(MAJOR(rpmsg_major), ret);
-> > +	}
-> > +
-> > +	/* Anon inode device still need dev name for dev_err() and friends */
-> >  	ret = ida_alloc(&rpmsg_ept_ida, GFP_KERNEL);
-> >  	if (ret < 0)
-> >  		goto free_minor_ida;
-> >  	dev->id = ret;
-> >  	dev_set_name(dev, "rpmsg%d", ret);
-> >  
-> > -	ret = cdev_device_add(&eptdev->cdev, &eptdev->dev);
-> > -	if (ret)
-> > -		goto free_ept_ida;
-> > +	ret = 0;
-> > +
-> > +	if (cdev) {
-> > +		ret = cdev_device_add(&eptdev->cdev, &eptdev->dev);
-> > +		if (ret)
-> > +			goto free_ept_ida;
-> > +	}
-> >  
-> >  	/* We can now rely on the release function for cleanup */
-> >  	dev->release = rpmsg_eptdev_release_device;
-> > @@ -464,7 +490,8 @@ static int rpmsg_chrdev_eptdev_add(struct rpmsg_eptdev *eptdev, struct rpmsg_cha
-> >  free_ept_ida:
-> >  	ida_free(&rpmsg_ept_ida, dev->id);
-> >  free_minor_ida:
-> > -	ida_free(&rpmsg_minor_ida, MINOR(dev->devt));
-> > +	if (cdev)
-> > +		ida_free(&rpmsg_minor_ida, MINOR(dev->devt));
-> >  free_eptdev:
-> >  	put_device(dev);
-> >  	kfree(eptdev);
-> > @@ -472,6 +499,11 @@ static int rpmsg_chrdev_eptdev_add(struct rpmsg_eptdev *eptdev, struct rpmsg_cha
-> >  	return ret;
-> >  }
-> >  
-> > +static int rpmsg_chrdev_eptdev_add(struct rpmsg_eptdev *eptdev, struct rpmsg_channel_info chinfo)
-> > +{
-> > +	return __rpmsg_chrdev_eptdev_add(eptdev, chinfo, true);
-> > +}
-> > +
-> >  int rpmsg_chrdev_eptdev_create(struct rpmsg_device *rpdev, struct device *parent,
-> >  			       struct rpmsg_channel_info chinfo)
-> >  {
-> > -- 
-> > 2.25.1
-> > 
+> - Mani
+> 
 
