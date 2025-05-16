@@ -1,125 +1,105 @@
-Return-Path: <linux-kernel+bounces-650753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-650755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A4A0AB9593
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 07:45:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62733AB95AE
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 07:52:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6EF0C1B67048
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 05:45:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA9701BA7E8E
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 05:52:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 546762222A0;
-	Fri, 16 May 2025 05:45:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21C21221F05;
+	Fri, 16 May 2025 05:52:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C0KpI7Bt"
-Received: from mail-io1-f41.google.com (mail-io1-f41.google.com [209.85.166.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="IlF8fXdI"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4856A221D9E;
-	Fri, 16 May 2025 05:45:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A2B7288DA;
+	Fri, 16 May 2025 05:52:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747374312; cv=none; b=hlcgmNSSG2pa0nEyfgAMqCVMJz0udG2bHaWCPYUtT2MCyzFr+gCFbnutssTtgf/1C45jmWl+gAaWFUG7J44i23kiNycxcQ5fKGydRx2FclBs5EFKg6FSi5wCvtWfZd9w0YjgLg7/AkPVlbTRp+mO2RXQGLL2uPYTb1s41/9wDuI=
+	t=1747374739; cv=none; b=XqNpncfoeoIX2d3dIKLPCwoUE+23vUIlNcTrAM7PDQv1rOqA0dsEj2Y8Mc5dly6TDO4myOxU2gq+8x0+j3hqFkGPIU9ZYhMXpL6OZC9AEymdYxER6V0vrqBWmIOEvL+T18YYVgp2BpDCV2RY84KNr+M9vRnOipdGvNb5ihYJywg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747374312; c=relaxed/simple;
-	bh=KQ8DEGIjFGtjkOm1Z6wmVOGMqwGH2m8oFkwVyWUXYnY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PhLLPLLsnRzepw5asxvUxi2d11CXIg4uGqX4liUuZwH9X42ydQXmAPN6NbePkcZ/taqfUdX7qKkwE8/HZInV4TxV+YifrmZupKpi0ndURybkZbpe8AlKQ3+f3pu1h8pACqv+lh+YAvZ0jNCVyQIRGzaraMdZvzruA4re3ecrT9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C0KpI7Bt; arc=none smtp.client-ip=209.85.166.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f41.google.com with SMTP id ca18e2360f4ac-85df99da233so155274339f.3;
-        Thu, 15 May 2025 22:45:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747374310; x=1747979110; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9aVGf3ko8McvoV5H/mqGMDqVnghfA90z2DNdFa2PxtE=;
-        b=C0KpI7BtR+pjQ7Wp+2CNzlv1G8b6l5W44CImTXib6ROBXJXPVlL5LQs9X3oAKCEgPW
-         xkxZS/KmzEyUSZz3RSG64FGFjpn5vNs1ledcZdDD0yOOvq+S88GsFcqVt7E5a+pkPDfA
-         un1qggiTBL2xkk062osjiJ+hDhUVqNIAXQC5qWAHA/mz/4a7c3nZ+3/TZbqzSduEjvUt
-         SchG59dhBwd+4NdkSivgLOaNBjpF7fwoBqP5/GWfg/xdjm7gzuMysoFM9azAJeAeMqjW
-         7aTLCQzlRg4i7kH5t3Z2S8GyOfCoiuFk5mtWwaAkKJcW7Zrpn8/9UL/PhC7uo/3xtEMd
-         4Xew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747374310; x=1747979110;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9aVGf3ko8McvoV5H/mqGMDqVnghfA90z2DNdFa2PxtE=;
-        b=hbPDDIBPilFRr/x5TmhgcBQDuwuM/TNSbJ1RGlTXqrBCT3vlV/cuMwk78K43PZIDVi
-         VNYTXiYioZSBWUN1PToCoOokkH3fzDPDuwZ73cWeHYLmWC9gD4h5n+d7MP5JGQ6r8Z/H
-         DDIf02NC4/Wic6H+28f7ENKpXVXg5+7eYr9CnTV4ZxdC9cXzdCrgVFyJVdT3Xa0OwZcF
-         9BwPOw+ng0I9cLCZ5Vlb449KnWY8NzUmL/LbvrtmfYOLA0UTtwevy53oe0RNPupMC3m4
-         s7BhZ8MTqei9YY0Ct0lTkruPPDXkaFKyNA248h1P1SbqN/4kIBAedzSXW59j5d58KgoO
-         RXhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV23pVO9mFgtnoNYBt2oqzjWRmI6K5UvNZNuMqlXJ3E7UQVzRFLW4w8oV4Y3rNroHETIsLy2SVakw4ImusA@vger.kernel.org, AJvYcCVmEoySAagEUV6SzvrjQ1zEJu4YKi8RTqtMw4zak+BNR2SgmHqcW4pGNsfWEvSSlYqGU6BwqkSFzN8Pqw==@vger.kernel.org, AJvYcCXeLQgKyWTN5MnKMMijIWTkeLbZUMQz8bRZ0IKDwQMuuxFbuUtC1Pe/YFb1tZ17UhL9x2lnw5WhljjVF8ZtPpqUNliL@vger.kernel.org
-X-Gm-Message-State: AOJu0YyDfAPGkbKyf0hkc+k02UMGNx81Xl+D8bfemigTfGdAHPURcNMa
-	s33gZv0dIsfVmen4Ey+ffnJvVGCd3HSy9koAppV98mzq9Cvdn5f+2HEqTB6IkuF45K/qru3/BFr
-	96JS2CvgqsHvoGeBqiZfPpl7O4w6h0vQ=
-X-Gm-Gg: ASbGncs/aUq40t/U5QlqDcg3r0hV0n/8C+3jFGbS0jnlOsf5dnqgyA4QJ58tbpSN7ey
-	ozarfLtklezvVSxe8x4qMp6xZ3kUYsJ8yEXRwPyDXRYM6btseQcK35tH8zxs8upP9ZccSUEX+bo
-	Aij05e1K/7vgaAiiPkMbtKdRvv1gNtDkPqZ2S0pgdctoA=
-X-Google-Smtp-Source: AGHT+IH/fIQmQ0PPXOQCAyw2SYiLWKIfvjBJ0LkJ4GEuPRDhvdmhjetKdN0Q2HnIImX3K50vxPRCK4V6pqYMo8VW4Zs=
-X-Received: by 2002:a05:6e02:339f:b0:3d4:2409:ce6 with SMTP id
- e9e14a558f8ab-3db857282d6mr12509285ab.5.1747374310306; Thu, 15 May 2025
- 22:45:10 -0700 (PDT)
+	s=arc-20240116; t=1747374739; c=relaxed/simple;
+	bh=aw08LBXzt6obXPy/8Vm80GRmMC7w0UnW/0OPYmGgpZM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XB3d8h6mbDOqjzgelvLn5iN8jxjElSkbYAClfd5k20i+ZBIq2eLQ1vv45O5ht7EEuTEEb/PcAn3cyFSw4QZI3Kdpna65CVgOI7XDo62yXk9v5vcXF2USg6zoDrIRqR64qyTjVKgAnYttZfKW0THwOkifU0B99EgXelv+zbTPR/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=IlF8fXdI; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=K8UXY7rT/l3eeHRyLbzo//dG7vL4enowgat/pk9HleM=; b=IlF8fXdI+7gIwHPmL36dnwQJYA
+	znkqyKppR4lYlt38el9ZKosOASWE4iHCifZDLGO4IKaOSkyU1ITC+e26DPAeKhH1RMgkMZw3ARfCH
+	DrmNFEE7qFu9Q0tkHCgoo736lnxo/sCz8uBEfBZN11TIGyZ8vmobr+0E3yknxwrs+V8gNwiTyPRSW
+	tdciEteZ7NYUsGCD0oZV7Jlj1L3x9FmxkhtF7f1UkbuPzJSlb3XJaAs4cQJtVmHbrJnVr8+IH4YvS
+	jA0a5kfs1Gb8TfuZgadMUSw4541KHSd85QJQehpyvP6fDV8c9lKLF8QjJGvhQCk9hDGANPx5dEu7W
+	p0nW4LuA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uFnzT-00000002XCz-1Gf0;
+	Fri, 16 May 2025 05:52:15 +0000
+Date: Thu, 15 May 2025 22:52:15 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Benjamin Marzinski <bmarzins@redhat.com>
+Cc: Christoph Hellwig <hch@infradead.org>, Hannes Reinecke <hare@suse.de>,
+	Kevin Wolf <kwolf@redhat.com>, Martin Wilck <mwilck@suse.com>,
+	dm-devel@lists.linux.dev, hreitz@redhat.com, mpatocka@redhat.com,
+	snitzer@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] dm mpath: Interface for explicit probing of active
+ paths
+Message-ID: <aCbSj9HLGJD1dK3u@infradead.org>
+References: <20250429165018.112999-1-kwolf@redhat.com>
+ <47dd225b433b0df585a25084a2e793344eeda239.camel@suse.com>
+ <aCIRUwt5BueQmlMZ@redhat.com>
+ <aCLe5UT2kfzI96TQ@infradead.org>
+ <0340c51e-6f89-4799-b2f1-19c785a19ff2@suse.de>
+ <aCLjPLCztuXhgpnA@infradead.org>
+ <d2a7fa68-1890-4367-a2ac-59ec220779bd@suse.de>
+ <aCLrbz3bRLwUbA8p@infradead.org>
+ <aCNzf7MJa-hLQpmv@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250515061643.31472-1-kerneljasonxing@gmail.com>
- <20250515061643.31472-3-kerneljasonxing@gmail.com> <aCbBEg-DFYvx0Dpa@infradead.org>
- <CAL+tcoBtLu6_E1qKL9VHOiCe_RVpEGzMiMqA3GpPi1Z88aMiWw@mail.gmail.com> <aCbH1eA8Iicg_Fq_@infradead.org>
-In-Reply-To: <aCbH1eA8Iicg_Fq_@infradead.org>
-From: Jason Xing <kerneljasonxing@gmail.com>
-Date: Fri, 16 May 2025 13:44:32 +0800
-X-Gm-Features: AX0GCFvHJDgX8tyRmZmTFC32DZWnKpLQIi2lM-nsQoTd2O3TIIJvfRPQ-MRMkBk
-Message-ID: <CAL+tcoBmLvPh-OhmUP2O5BoR3_FPWPXyLFhipNh5b-xHTGCb7A@mail.gmail.com>
-Subject: Re: [PATCH v2 2/4] relayfs: introduce dump of relayfs statistics function
-To: Christoph Hellwig <hch@infradead.org>
-Cc: axboe@kernel.dk, rostedt@goodmis.org, mhiramat@kernel.org, 
-	mathieu.desnoyers@efficios.com, akpm@linux-foundation.org, 
-	linux-kernel@vger.kernel.org, linux-block@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, Jason Xing <kernelxing@tencent.com>, 
-	Yushan Zhou <katrinzhou@tencent.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aCNzf7MJa-hLQpmv@redhat.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Fri, May 16, 2025 at 1:06=E2=80=AFPM Christoph Hellwig <hch@infradead.or=
-g> wrote:
->
-> On Fri, May 16, 2025 at 01:02:59PM +0800, Jason Xing wrote:
-> > Do you mean make it inline in include/linux/relay.h like how
-> > relay_write() works?
-> >
-> > Will do that.
->
-> Just drop the extern, which is not needed:
->
-> size_t relay_dump(struct rchan *chan, int flags);
+On Tue, May 13, 2025 at 12:29:51PM -0400, Benjamin Marzinski wrote:
+> On Mon, May 12, 2025 at 11:49:19PM -0700, Christoph Hellwig wrote:
+> > On Tue, May 13, 2025 at 08:32:12AM +0200, Hannes Reinecke wrote:
+> > > Reservations and stuff.
+> > 
+> > They should use the kernel persistent reservation API.
+> 
+> Currently QEMU isn't sending Persistent Reservation requests to
+> multipath devices at all. It's sending those directly to the underlying
+> scsi devices. The issue here is with all the other SCSI commands that
+> users want to send to their SCSI passthrough device that is actually a
+> multipath device on top of a number of SCSI paths. They expect to
+> get back the actual sense and status information, so QEMU needs to
+> send them via SG_IOs.
 
-Got it.
+And that's the problem.  There is plenty of path (I_T_L) nexus
+specific information in SCSI, and just trying to glob it back
+together above means you'll get path specific information in something
+that doesn't claim to be multi-pathing and will get random and
+changing results depending on the underlying path selection.
 
->
-> > >
-> > > This export seems unused even with the entire series applied.
-> >
-> > My initial thought was to provide a symbol for some kernel modules to u=
-se.
->
-> The only user is blktrace, which can't be modular.  Or you plan to
-> submit a modular user soon, like in the next merge window/  If so
-> note that and add a pointer to it in the cover letter.
+> Without reading that sense and status information in kernel, the
+> multipath target can't know if it needs to fail a path and retry the
+> ioctl down a different path.
 
-I'm still thinking about how to upstream my internal module... So in
-this series, I will remove it.
+The blk_status_t has the information to fail over.  But the whole
+idea of implementing SG_IO in dm-mpath or any other stacking layer
+is just really, really dangerous.
 
-Thanks,
-Jason
 
