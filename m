@@ -1,172 +1,103 @@
-Return-Path: <linux-kernel+bounces-651250-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-651239-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1480AB9C2E
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 14:35:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BECEAB9C13
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 14:31:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 999384E3C8E
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 12:34:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7B1B3A36B1
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 12:31:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52B3323FC4C;
-	Fri, 16 May 2025 12:34:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CF8123D2AC;
+	Fri, 16 May 2025 12:31:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dRJT/7xp"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hOFO6vsW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D0C323FC41;
-	Fri, 16 May 2025 12:34:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A38A1E50E;
+	Fri, 16 May 2025 12:31:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747398864; cv=none; b=ut4faeoc3FFOq5SlsG/OVDwoHd7HRiEbR4MxTK5iVBos+hpbLBqtRpQwXhOBDkBFf8tJG1LxRudlu5v1Wc3cRgEXSyJJdi8cb3G2wGaIR44cn1Pi+v0oe5magdyiz8HDatqJ2Yu4QCzoaWLHDATZXHKlyrDDbLvsexJ/uSQ4BEY=
+	t=1747398677; cv=none; b=i6+Ci3iinIKSi9TLY2BLBDiFrem2GqZSdM1wQ4qdnMN5zEKmcyb3C1SJlF4fXvOQ8Z3d5ozLUGlja5uw7nG7IhyK/Zd9K0SlfNQ4Sbgswyn8/KNgLf0z07K7nxwcG+P9jaNIcxokrmbTaKXcINTa91AUe0jVizgmoLIOhl0XrcY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747398864; c=relaxed/simple;
-	bh=+qMIjfa+7kK9fPghuhEoRJqGZazz8er/CgaCIfrLeRk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hZ0yKM56qUwXUF28EtA+S0Dh4nrQ6zIdQHAMqNg8+0LWibnfgpafHhGRg1NQEfUxphPliEIP0cmOFUHU4tghEE6HFCL9XqB+HjG4hCRz+r5JXmxgnUdtxO2B8vCUkEhBNYCSgxAQeaaMN5NutQO8sCLMiyDZ83ywz0R2YCZ9UlI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dRJT/7xp; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-73bf5aa95e7so1985762b3a.1;
-        Fri, 16 May 2025 05:34:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747398862; x=1748003662; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=sQ8MdKTVw3ECVi8keYANU6Bo31kbzYISRDJG8aBqrlI=;
-        b=dRJT/7xpoHhD4p5WcEz0fH19YPhzdY3pOcigtldxoEIq8LIULZaIVOtfKcsTJTFjuI
-         q7+kYT0pwulLhfCNiZ8rOzbDRWeiHUpIV8SrwJVaKZHrr4+HML3Lk5vy2vUkBgw1Gelx
-         Ae2R+CDPvGmcv4w+QEG6iZn6Vp6oUvYPgkno5mtFTPBkYn4sGdmTuIWUMkvCK7I0qRd2
-         oOk0ylh/qkQepLYk1/0wyzD6IL4JXnU7quvosvmY+faH/PTwCkuJairyItXFuL87AbsU
-         C0U2ySA1TMjLWMb5xsBHI5Vd2fVoY8HmH95UHocDw9B0dzUoivaBliu5oXq2S9tDJ4kf
-         UcbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747398862; x=1748003662;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=sQ8MdKTVw3ECVi8keYANU6Bo31kbzYISRDJG8aBqrlI=;
-        b=XiChj+NmGwSA8WIowVb+N88IWI2JKN0tCwG5xThzv+xzr8tzxRacm0Pu2jUVf9BzXs
-         Vmotjn+xIwypAuEawyRHI/S3VJUNCPei+LEo5VdUKOrqgedacclJxmN6nbjGdDihG9nV
-         mUFswIDpMCu4VqHRe+R2Q6tgdUr/8pLd+zJdX2zTgWpEGkcCW39DCQyh2O7qLsNGngCe
-         GyaCUAuLrJJWsCtzz+4DIYSGGEUsYGBLuzma5Bc0Fn3gy7oEELShV/Bb8HBjW52Pieg/
-         BQYvUO/gGbk6AArU4Ev9lwS7mEODUg35eCZWyxm9GrNzEGrhTGUO2+h63l/Rmci6a6nc
-         8aGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVfuX/AeEcjyrboGCOa64bltf5Q1Z3RJMYyJ3AP94Zt5AOO4oN1lHTOC7ZjwZhajc7XyO/VkRMm2N3v58I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKDa/6II9BpMh/g2jO9p+tP1wqSMEC1lt+7gmfQ4QqaTuPP6kd
-	hmphEYyTHoKdrfSXbpjbSTopcxY625sHzO+Ph7CQ/qPnjK1qn0YtBwLVN/UMGQ==
-X-Gm-Gg: ASbGncvAKDR3y4nc3ktrsmK1XxU+S/dCm+UMLoqYEFCP8NHAMTGAt183PLOlvFxobvv
-	JNyvIAAo66RZ5VwpzQOkm30C+alTGeZMqAq/Md8AJgTTl5r9n5CoXGQ1+sA3O7jZzVc2Sp9WeQd
-	MQuAhlJJC4fRdxt8p5FrileA40VOoCtWyfEmFjNkttt0WrXZzXOz1gdOgIRkWCvyyjPJnoX56mg
-	yg0YGdSC0aK6rgLXxEoRxqcqaB1g2fEXIxSiLBL00N4aMMCVyWig+pOuJNcRzdx+juSAptO4UXM
-	3Aom+4NMZFtwODYGCFL6rK6vhbM2VPqPn6j0pbSEYVf6Gxwpduqgi+NsycUEtKfOso6DCd/4eAt
-	2XCDR6Gp5a8IikaJ+Ylpd3Gl9zPe3
-X-Google-Smtp-Source: AGHT+IHxDDmFGa84W12vZqtf53NmGHtdif2gYB6Efz3zCfXjSc47WLKLMkpX9cKPOuKzJ3458fB86w==
-X-Received: by 2002:a05:6a00:18a7:b0:742:a0cf:7753 with SMTP id d2e1a72fcca58-742a97769efmr4786725b3a.3.1747398862149;
-        Fri, 16 May 2025 05:34:22 -0700 (PDT)
-Received: from carrot.. (i223-218-69-4.s41.a014.ap.plala.or.jp. [223.218.69.4])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-742a9829c10sm1443078b3a.96.2025.05.16.05.34.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 May 2025 05:34:21 -0700 (PDT)
-From: Ryusuke Konishi <konishi.ryusuke@gmail.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-nilfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Christoph Hellwig <hch@lst.de>
-Subject: [PATCH] nilfs2: remove wbc->for_reclaim handling
-Date: Fri, 16 May 2025 21:31:13 +0900
-Message-ID: <20250516123417.6779-1-konishi.ryusuke@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1747398677; c=relaxed/simple;
+	bh=P6XGWGJuATalMapJ3ehd2QZWwZCyzu5iLtSo/UIb75o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dVoZGwh/2s8iyo7tCM5BaXLPCOvkNQipctonGd3TEkKfDfVIpSX5wqA41Ihoto+BjLOZs9ac+j0zR38UaehKtOk7KLuQOdtNXCA6weEq79yM8pflla8Cd0xQc1wic5WuPam+I04N8c1Z4wFJ28XDoWDKr0jZNxzJjSk1nsCDq/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hOFO6vsW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA4B3C4CEE4;
+	Fri, 16 May 2025 12:31:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747398677;
+	bh=P6XGWGJuATalMapJ3ehd2QZWwZCyzu5iLtSo/UIb75o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hOFO6vsWjIVTN016AUqDm7zPSIHzt9FFUIw/H8Ec/lBLBGIHZ2WWpO0nHjPzfbuAQ
+	 hE/JDMXKgQhJtvg5V5KGovTQAF8b+3gbKZse1BEXQObJVrmz/RvLaYiS6OcMgvaZBp
+	 7nbwCKz9246cDnTHBPQQBwgZ/NdHAqHeLJHMDiBG1aNk3FCTuFpeShNc/Y+C1RG7D1
+	 tqaTVjqXe9jnNC8L+ZOf6+TAmNNeYqXUm8EVzeq/TaUAt0ZiSufqlUggvc5mvq0jYf
+	 hNJ82SZLbRn8pLrgVjDpnxK2m+kmH9Uu2ZLZLyp72oWm6sRPxjrioc6Qdn4BUBMmFC
+	 bCvowjiID++uA==
+Date: Fri, 16 May 2025 14:31:14 +0200
+From: Mark Brown <broonie@kernel.org>
+To: Artur Weber <aweber.kernel@gmail.com>
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Stanislav Jakubek <stano.jakubek@gmail.com>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	~postmarketos/upstreaming@lists.sr.ht
+Subject: Re: [PATCH v9 7/8] regulator: bcm590xx: Rename BCM59056-specific
+ data as such
+Message-ID: <aCcwEtpjpEv_FiKB@finisterre.sirena.org.uk>
+References: <20250515-bcm59054-v9-0-14ba0ea2ea5b@gmail.com>
+ <20250515-bcm59054-v9-7-14ba0ea2ea5b@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="efwBYL81B3k1M8EO"
+Content-Disposition: inline
+In-Reply-To: <20250515-bcm59054-v9-7-14ba0ea2ea5b@gmail.com>
+X-Cookie: Well begun is half done.
 
-From: Christoph Hellwig <hch@lst.de>
 
-Since commit 013a07052a1a ("nilfs2: convert metadata aops from writepage
-to writepages"), nilfs_mdt_write_folio can't be called from reclaim
-context any more.  Remove the code keyed of the wbc->for_reclaim flag,
-which is now only set for writing out swap or shmem pages inside the
-swap code, but never passed to file systems.
+--efwBYL81B3k1M8EO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Link: https://lkml.kernel.org/r/20250508054938.15894-7-hch@lst.de
-Signed-off-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Ryusuke Konishi <konishi.ryusuke@gmail.com>
----
-Andrew, please add this to the queue for the next merge cycle.
+On Thu, May 15, 2025 at 04:16:34PM +0200, Artur Weber wrote:
+> Previously, the driver used the BCM590XX prefix for register data
+> specific to the BCM59056. As we will be introducing other regulators
+> to this driver as well, make the BCM59056-specific values use the
+> BCM59056 prefix.
 
-This removes dead code on nilfs2 regarding the for_reclaim flag in
-writeback control.  It is part of Christoph's series "stop passing a
-writeback_control to swap/shmem writeout", but I'm sending it ahead
-separately at his request.
+Reviewed-by: Mark Brown <broonie@kernel.org>
 
-Thanks,
-Ryusuke Konishi
+--efwBYL81B3k1M8EO
+Content-Type: application/pgp-signature; name="signature.asc"
 
- fs/nilfs2/mdt.c     |  2 --
- fs/nilfs2/segment.c | 16 ----------------
- fs/nilfs2/segment.h |  1 -
- 3 files changed, 19 deletions(-)
+-----BEGIN PGP SIGNATURE-----
 
-diff --git a/fs/nilfs2/mdt.c b/fs/nilfs2/mdt.c
-index 2f850a18d6e7..946b0d3534a5 100644
---- a/fs/nilfs2/mdt.c
-+++ b/fs/nilfs2/mdt.c
-@@ -422,8 +422,6 @@ static int nilfs_mdt_write_folio(struct folio *folio,
- 
- 	if (wbc->sync_mode == WB_SYNC_ALL)
- 		err = nilfs_construct_segment(sb);
--	else if (wbc->for_reclaim)
--		nilfs_flush_segment(sb, inode->i_ino);
- 
- 	return err;
- }
-diff --git a/fs/nilfs2/segment.c b/fs/nilfs2/segment.c
-index 83970d97840b..61a4141f8d6b 100644
---- a/fs/nilfs2/segment.c
-+++ b/fs/nilfs2/segment.c
-@@ -2221,22 +2221,6 @@ static void nilfs_segctor_do_flush(struct nilfs_sc_info *sci, int bn)
- 	spin_unlock(&sci->sc_state_lock);
- }
- 
--/**
-- * nilfs_flush_segment - trigger a segment construction for resource control
-- * @sb: super block
-- * @ino: inode number of the file to be flushed out.
-- */
--void nilfs_flush_segment(struct super_block *sb, ino_t ino)
--{
--	struct the_nilfs *nilfs = sb->s_fs_info;
--	struct nilfs_sc_info *sci = nilfs->ns_writer;
--
--	if (!sci || nilfs_doing_construction())
--		return;
--	nilfs_segctor_do_flush(sci, NILFS_MDT_INODE(sb, ino) ? ino : 0);
--					/* assign bit 0 to data files */
--}
--
- struct nilfs_segctor_wait_request {
- 	wait_queue_entry_t	wq;
- 	__u32		seq;
-diff --git a/fs/nilfs2/segment.h b/fs/nilfs2/segment.h
-index f723f47ddc4e..4b39ed43ae72 100644
---- a/fs/nilfs2/segment.h
-+++ b/fs/nilfs2/segment.h
-@@ -226,7 +226,6 @@ extern void nilfs_relax_pressure_in_lock(struct super_block *);
- extern int nilfs_construct_segment(struct super_block *);
- extern int nilfs_construct_dsync_segment(struct super_block *, struct inode *,
- 					 loff_t, loff_t);
--extern void nilfs_flush_segment(struct super_block *, ino_t);
- extern int nilfs_clean_segments(struct super_block *, struct nilfs_argv *,
- 				void **);
- 
--- 
-2.43.0
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmgnMBEACgkQJNaLcl1U
+h9DqmAf/bQ7IrBsLoIk0QlWpx9mGGsEhrT5JyqKADi/mNCt74Xk0lh/8GM2pOGGJ
+T51tAPDKyrEkGIhBBKSv2vKvYR03KUuudSdkHgcBiLBkRCQAvwo20KTv5xSPaTwf
+rORiRsSiyQlGQtVrRSHDlAAaQsfiQ7gFOf7vrCuKp5MIDfLsLWSng1L0MNkXDWho
+cpz76EMmeBdvGk74HwU7aYw5GRPUrG6PR+cRVOBjK+50kHMljTI06Jh6zN3/FJLb
+4oe2JC2uYjCroAc61SW8rmjle/9KWF1/BjuLpSN3GzeHo0C91OZnS1gVeVhGm6X2
+tzeu8Zwe3YMPfwu3SEJf62XAkB4Vzw==
+=6NbA
+-----END PGP SIGNATURE-----
 
+--efwBYL81B3k1M8EO--
 
