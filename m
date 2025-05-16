@@ -1,203 +1,119 @@
-Return-Path: <linux-kernel+bounces-650931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-650935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E6D1AB97EC
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 10:44:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 771FDAB9801
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 10:45:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4016A1BC19D6
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 08:44:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9FF904E2E33
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 08:45:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A93D22DFB6;
-	Fri, 16 May 2025 08:44:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17B43282E1;
+	Fri, 16 May 2025 08:45:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dj84Ptfj"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="dzxxhTxZ"
+Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17DDB22DA1C;
-	Fri, 16 May 2025 08:44:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C74C522E00E;
+	Fri, 16 May 2025 08:45:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747385043; cv=none; b=j5cLuxK7BemHu4GPNCZ+HQ9RBjYuUxnZh9atvmwkvoIO8/U5YvTsgMMz14Nw0XKXTK8hCaTCVT58Xxe9k8o040O8uvx2BFHF3wHufayBREP+48DLEhd1/MslM8rahwT6wJwChcjWP017PmgbMNu+jgaDhBQaphOHJ9OQ1OlV+JI=
+	t=1747385104; cv=none; b=SNeFOiYCEes8fL/TbY4hzBUuYpZ0ewqOiQlXaQlgfkZduEBE5OIc+D66vxzhNyAwafTlT8paBrsmkf9HCZLJxZKj1cMJo/GqONGllb64/DPdSVWOwUNQjCnVKMdkww3KyIM5aWhVBtVKhg6dAyR6d4fx0pm2tmd0nAur3dmtlj4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747385043; c=relaxed/simple;
-	bh=PEe/BWeTXTas3wR7l/W/bpH8YZaNXD6PalA0ThrUNZg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BF4iF9P3TPbp8yyPCswxPtWFe7+3lIx71OV93l1aqnKmGFiBKsJXyoIq0MQocfdllDL5eDRjd2xQfmHNjTeWsvRT/Gf5/P1xcRglvK4GgNKw6+dgqt3f511ijVNmjuGOEMNnYmZl+nyEHxjmxZNV0y/AcqnTyt9rC6z+hbW7RFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Dj84Ptfj; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43cf257158fso13212605e9.2;
-        Fri, 16 May 2025 01:44:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747385040; x=1747989840; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wtu7zpoEhIazPVBR9VLrQ2O+ovOuUIuW+9nEGJrTJjc=;
-        b=Dj84PtfjvZS/Q5NV3i06KBdZTUEhBpm3wn8GDOk9qb6ySr6Avbz5x6JzFL+pE7QskY
-         PPK6/erIMm97OqRHdobfvHVJlr8cxT8FxW9aiLAeyKT7KYK2C1KELsaOlz3xGQnoKxhT
-         X5Ky95f75t2NGix6ricmpZRm4OMX7m1fjdcmyLEVN794Avjs+FYsrgBndkHAMrVTRoz3
-         cfSenpPx7a4nKtnjNX80962rVHQLhQmOotMKCSjFsPRdI1RVzdkdTwikWUmMR9z9cSZH
-         jObhu4t014ODbByHh4MR4+mrkGW4gDbeICHEW89kvjM+Adecvgb/b31v2snougubA01m
-         nKYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747385040; x=1747989840;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wtu7zpoEhIazPVBR9VLrQ2O+ovOuUIuW+9nEGJrTJjc=;
-        b=bpjx7RTf/L9J3/jK3s63hoggOgD6FgII6uQeyUsclfASvQWgS+HeebwAhOt7m16fwq
-         t4VEIn+qYkGv0JSAHLNxIiudD9+3yeWKbUJCf/6hKntLhNiWeJKvxFzgj/JlYVYTsx87
-         sn15nTS8R5o1sCV/tD2GoUJr5EraPyhFR+XB477XhAyzRCUAYekL8qXOpc/scLhNgRoC
-         CP9fhEyji7feUvY90TP5lVHsnqkszVF+AF2+JKqdx3b1Ji2S+8ToMcZIJ1l+zBPSUHPo
-         QUIoO6Z2umPCflfnkHZFRUJ5rzX9l1tJVeIB7K2S0/aSXuyMn27hi3kxzErUfDwbuN/u
-         I4Eg==
-X-Forwarded-Encrypted: i=1; AJvYcCVgC/+Q/H1FsGGyJYxaqp7ofY80tZDWu3dxNSjrdfqfqQM0E6askpaX2Kv05sS5JcDOV0CFTI+7LsltH7Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/azEuUQhT+oJL3fy4nXRUEyCdE8DdlUPC9CWwNtEoBsnyB0Wo
-	s4yL4NYSsvyNP5yDvcadOgLo07v8spK9jdh+ZoKHjpfLe822AqLXyTNoyh9x3ZfK
-X-Gm-Gg: ASbGncvyRDUK/uDn6ZIr79UKMs7roH+AXBl/63FOtgByhZy5sy8DBffmqN95GP+ZpLC
-	cjtg031NaKiYIULTmdbLv//2bWABBLnvl3Q3FLfFOrGzYcFemMoG4J3vFTOOdCxi6B4jZPF35tT
-	0KPLEEih6SO1AacFgXthMqQA3zZVyKcz0NEWq9SShvUvcAfkOaS7LkpaUFwVR58ghDTz4ZRw7LS
-	p6/NM4/iBR7jri0bFVtvRf5of9USOWzpfZ3J8JPnYehey+z9nCeYpbg/jcCSDb3tLfTi++ZQb6F
-	ehpSxsf+BYK5KSglphN/Uv8itxTAoaDFXDqT7d7RreQ8xx9E9aYdt+c55eLQ9GjWRSrh9TVVqH0
-	B
-X-Google-Smtp-Source: AGHT+IEYZb/TzXzZVFqdhqGt3K1l/2137LORafBeymggFrs92Lp+L3YIGu5RsSNqD4chBhDRXMQG/Q==
-X-Received: by 2002:a05:600c:821b:b0:442:ccfa:18c with SMTP id 5b1f17b1804b1-442ff03c671mr12712175e9.32.1747385039900;
-        Fri, 16 May 2025 01:43:59 -0700 (PDT)
-Received: from localhost.localdomain ([213.74.214.99])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-442fd50ee03sm25352005e9.14.2025.05.16.01.43.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 May 2025 01:43:59 -0700 (PDT)
-From: Can Ayberk Demir <ayberkdemir@gmail.com>
-To: netdev@vger.kernel.org
-Cc: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Michal Simek <michal.simek@amd.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Can Ayberk DEMIR <ayberkdemir@gmail.com>,
-	Suraj Gupta <suraj.gupta2@amd.com>
-Subject: [PATCH net v4] net: axienet: safely drop oversized RX frames
-Date: Fri, 16 May 2025 11:43:34 +0300
-Message-Id: <20250516084334.2463-1-ayberkdemir@gmail.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
-In-Reply-To: <20250509104755.46464-1-ayberkdemir@gmail.com>
-References: <20250509104755.46464-1-ayberkdemir@gmail.com>
+	s=arc-20240116; t=1747385104; c=relaxed/simple;
+	bh=MCPD5vLVfDPlZDQL7eGOOEzDsmZvrf8VWIwwoE0whJs=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=gBMpm7/+Gygf6DhgAGB6pETnxeRrfDjC8g88jk/nV5L1gQ7ahCG1/0C9hC81Hd+2mDG/lZTeTH+TRMy8EX3UNu5pLmjxJ7ePMimvB99fwOu7QUUGuQr0A+/SAzf99kFxAKkZmHoErpCQC3ENbvzG6G6szQXx8PniWv1FZhMZDl0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=dzxxhTxZ; arc=none smtp.client-ip=67.231.148.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
+	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54G7up4N008332;
+	Fri, 16 May 2025 01:44:49 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=pfpt0220; bh=F4WHEyC2UcuKVIqP0y7lKr7
+	SaYwxU8ryoBlI5c6cbcE=; b=dzxxhTxZoD8b1tRhcIWGPUQUj99o8ak3sUTbln4
+	VmBLfm53d4kinsQnVvB+vtHj1W16U2HyfKfcST024xRCY6hxqgLKEdlhMp2iRVS0
+	+a7rS5rbPI6AUX3ecQocL3AxpTo2rlOhpSwyjPfrVTN2zQpxZAUAnpTxjvl3g/h9
+	yUfL8ZEbyfKhnyzDZIamxV8sousX+N9LjBqEMA8+gorpVQ91Cr89xoAD0wpwk7yd
+	FCRDdJT92/En4UkCPPK3dGZ5hoW1H7qi5xWlkzBQYOtFjJ4JcSLmIzWzD3N164BM
+	0NEhCryyWMWlyRt3cc+4jim9xPj/F7bMDF2erXJiZb3wqCg==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 46p1du02nu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 16 May 2025 01:44:49 -0700 (PDT)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Fri, 16 May 2025 01:44:48 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Fri, 16 May 2025 01:44:48 -0700
+Received: from bharat-OptiPlex-Tower-Plus-7020.. (unknown [10.28.34.254])
+	by maili.marvell.com (Postfix) with ESMTP id 5A7BC3F707C;
+	Fri, 16 May 2025 01:44:44 -0700 (PDT)
+From: Bharat Bhushan <bbhushan2@marvell.com>
+To: <bbrezillon@kernel.org>, <schalla@marvell.com>,
+        <herbert@gondor.apana.org.au>, <davem@davemloft.net>,
+        <giovanni.cabiddu@intel.com>, <linux@treblig.org>,
+        <bharatb.linux@gmail.com>, <linux-crypto@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC: <stable@vger.kernel.org>, Bharat Bhushan <bbhushan2@marvell.com>
+Subject: [PATCH v2 0/2] crypto: octeontx2: Changes related to LMTST memory
+Date: Fri, 16 May 2025 14:14:39 +0530
+Message-ID: <20250516084441.3721548-1-bbhushan2@marvell.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: IH5gXWqIRfCMVLpD6jzdiNjAD9fNKKO-
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTE2MDA4MiBTYWx0ZWRfX75uIOdWJ4a0P BfG7woKXlp1uAud1rDPL8h3zCZoypX8jv4yDMAE88z/PoRTMbj1+CpE9IU/J/+eaLMaJi3iWQTA bDkVTpvzBSzlwQDFJozXzlzVkh3YkVrYd/vBHjYt4QDVtQKjpLAnHocj3nEhl+MaWxZKbDjLGh6
+ EKWU5oRo9LW/6KuP0JYb4NtqwkCxQ2mQtW48AWDIq30eyIrpPX2NkRgLxVt/AE33m3+K5sPC0YF a38DJzCH52/d8EHvhUFkKInwjs6rFTCgxh3DuDoka6toxLnfXxXbBQ9hUqzwq2p+5P7Iv7ae2Fq pKRjJ4nxzBNwyVQq/CNcwAmVsEvtzX7wWyuMoGVJXgyy/+kH1ZSrBhyTM0G+ST6Ix4KIPMrko8r
+ dsOwZelu0+2/PnKCbl7lvdxbroSXnVYxWru0ga3beSOdRFvXMVCl/iXYTJyrf2+uS4kGkXqE
+X-Proofpoint-GUID: IH5gXWqIRfCMVLpD6jzdiNjAD9fNKKO-
+X-Authority-Analysis: v=2.4 cv=fvPcZE4f c=1 sm=1 tr=0 ts=6826fb01 cx=c_pps a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17 a=dt9VzEwgFbYA:10 a=5-JLTSaU0EQnWg3z5X0A:9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-16_03,2025-05-15_01,2025-03-28_01
 
-From: Can Ayberk DEMIR <ayberkdemir@gmail.com>
+v1->v2:
+ -  Removed changes in pci-host-common.c, those were comitted
+    by mistake.
 
-In AXI Ethernet (axienet) driver, receiving an Ethernet frame larger
-than the allocated skb buffer may cause memory corruption or kernel panic,
-especially when the interface MTU is small and a jumbo frame is received.
-
-This bug was discovered during testing on a Kria K26 platform. When an
-oversized frame is received and `skb_put()` is called without checking
-the tailroom, the following kernel panic occurs:
-
-  skb_panic+0x58/0x5c
-  skb_put+0x90/0xb0
-  axienet_rx_poll+0x130/0x4ec
-  ...
-  Kernel panic - not syncing: Oops - BUG: Fatal exception in interrupt
-
-Fixes: 8a3b7a252dca ("drivers/net/ethernet/xilinx: added Xilinx AXI Ethernet driver")
-
-Signed-off-by: Can Ayberk DEMIR <ayberkdemir@gmail.com>
-Tested-by: Suraj Gupta <suraj.gupta2@amd.com>
----
-Changes in v4:
-- Moved Fixes: tag before SOB as requested
-- Added Tested-by tag from Suraj Gupta
-
-Changes in v3:
-- Fixed 'ndev' undeclared error → replaced with 'lp->ndev'
-- Added rx_dropped++ for statistics
-- Added Fixes: tag
-
-Changes in v2:
-- This patch addresses style issues pointed out in v1.
----
- .../net/ethernet/xilinx/xilinx_axienet_main.c | 47 +++++++++++--------
- 1 file changed, 28 insertions(+), 19 deletions(-)
-
-diff --git a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-index 1b7a653c1f4e..7a12132e2b7c 100644
---- a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-+++ b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-@@ -1223,28 +1223,37 @@ static int axienet_rx_poll(struct napi_struct *napi, int budget)
- 			dma_unmap_single(lp->dev, phys, lp->max_frm_size,
- 					 DMA_FROM_DEVICE);
+The first patch moves the initialization of cptlfs device info to the early
+probe stage, also eliminate redundant initialization.
  
--			skb_put(skb, length);
--			skb->protocol = eth_type_trans(skb, lp->ndev);
--			/*skb_checksum_none_assert(skb);*/
--			skb->ip_summed = CHECKSUM_NONE;
--
--			/* if we're doing Rx csum offload, set it up */
--			if (lp->features & XAE_FEATURE_FULL_RX_CSUM) {
--				csumstatus = (cur_p->app2 &
--					      XAE_FULL_CSUM_STATUS_MASK) >> 3;
--				if (csumstatus == XAE_IP_TCP_CSUM_VALIDATED ||
--				    csumstatus == XAE_IP_UDP_CSUM_VALIDATED) {
--					skb->ip_summed = CHECKSUM_UNNECESSARY;
-+			if (unlikely(length > skb_tailroom(skb))) {
-+				netdev_warn(lp->ndev,
-+					    "Dropping oversized RX frame (len=%u, tailroom=%u)\n",
-+					    length, skb_tailroom(skb));
-+				dev_kfree_skb(skb);
-+				lp->ndev->stats.rx_dropped++;
-+				skb = NULL;
-+			} else {
-+				skb_put(skb, length);
-+				skb->protocol = eth_type_trans(skb, lp->ndev);
-+				/*skb_checksum_none_assert(skb);*/
-+				skb->ip_summed = CHECKSUM_NONE;
-+
-+				/* if we're doing Rx csum offload, set it up */
-+				if (lp->features & XAE_FEATURE_FULL_RX_CSUM) {
-+					csumstatus = (cur_p->app2 &
-+							XAE_FULL_CSUM_STATUS_MASK) >> 3;
-+					if (csumstatus == XAE_IP_TCP_CSUM_VALIDATED ||
-+					    csumstatus == XAE_IP_UDP_CSUM_VALIDATED) {
-+						skb->ip_summed = CHECKSUM_UNNECESSARY;
-+					}
-+				} else if (lp->features & XAE_FEATURE_PARTIAL_RX_CSUM) {
-+					skb->csum = be32_to_cpu(cur_p->app3 & 0xFFFF);
-+					skb->ip_summed = CHECKSUM_COMPLETE;
- 				}
--			} else if (lp->features & XAE_FEATURE_PARTIAL_RX_CSUM) {
--				skb->csum = be32_to_cpu(cur_p->app3 & 0xFFFF);
--				skb->ip_summed = CHECKSUM_COMPLETE;
--			}
- 
--			napi_gro_receive(napi, skb);
-+				napi_gro_receive(napi, skb);
- 
--			size += length;
--			packets++;
-+				size += length;
-+				packets++;
-+			}
- 		}
- 
- 		new_skb = napi_alloc_skb(napi, lp->max_frm_size);
+The second patch updates the driver to use a dynamically allocated
+memory region for LMTST instead of the statically allocated memory
+from firmware. It also adds myself as a maintainer.
+
+Bharat Bhushan (2):
+  crypto: octeontx2: Initialize cptlfs device info once
+  crypto: octeontx2: Use dynamic allocated memory region for lmtst
+
+ MAINTAINERS                                   |  1 +
+ drivers/crypto/marvell/octeontx2/cn10k_cpt.c  | 89 ++++++++++++++-----
+ drivers/crypto/marvell/octeontx2/cn10k_cpt.h  |  1 +
+ .../marvell/octeontx2/otx2_cpt_common.h       |  1 +
+ .../marvell/octeontx2/otx2_cpt_mbox_common.c  | 25 ++++++
+ drivers/crypto/marvell/octeontx2/otx2_cptlf.c |  5 +-
+ drivers/crypto/marvell/octeontx2/otx2_cptlf.h | 12 ++-
+ .../marvell/octeontx2/otx2_cptpf_main.c       | 18 +++-
+ .../marvell/octeontx2/otx2_cptpf_mbox.c       |  6 +-
+ .../marvell/octeontx2/otx2_cptpf_ucode.c      |  2 -
+ .../marvell/octeontx2/otx2_cptvf_main.c       | 19 ++--
+ .../marvell/octeontx2/otx2_cptvf_mbox.c       |  1 +
+ 12 files changed, 133 insertions(+), 47 deletions(-)
+
 -- 
-2.39.5 (Apple Git-154)
+2.34.1
 
 
