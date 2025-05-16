@@ -1,154 +1,348 @@
-Return-Path: <linux-kernel+bounces-651452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-651454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC338AB9EA2
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 16:31:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60482AB9EA7
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 16:32:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E507164E95
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 14:31:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 692F33BD037
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 14:32:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8D68189B80;
-	Fri, 16 May 2025 14:31:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD08F189B80;
+	Fri, 16 May 2025 14:32:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Uu08swzm"
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="oK4UAnTZ"
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09464182D2;
-	Fri, 16 May 2025 14:31:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84EAF14884C
+	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 14:32:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747405895; cv=none; b=PCqutF4DNMcR1kyzLuuQKwDOGyYZQ1g/V9H4wfwOH7GNHDpwBPv3i0rs3bu7Lc6aPhKxzrBxtfvRZs86U1Sj7KL/8zNE+fV9OIq5Aljlh3krCU2MS4w8BST9rnt8IISsnUwPb/vpvfDls1DA1DhPxIWKI+972skv2BhLCWDlf6M=
+	t=1747405947; cv=none; b=jY3kx3RMqMvIi1aaftc4bqVLJS3mb4WxjWfjAsCVSGsEVFMfdNuki6/ygT2YLzs1csyL9SVyD4RlvskdRG4CxF0sngC0WGOmFBivSvrBLFSKRYpyMbz1EW7+roob9VW+1aMMM9XQ6xhJwdt7l7ZEzEeSC3GAqheQ1ZuHKPuoPps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747405895; c=relaxed/simple;
-	bh=M7o1V0Yz2b8z6+5dv8rT1AaCCrJCBA8c8DP1AB+RZSY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Oidqy9NByoXZtxr+1J7Q1TwpbTQPVjkTycrsobCJvWn7TF9R+/wZgKpIzDGz5LCN9Eh2ca50QGYATO64RqlQVXjoiqB25faNsdDVjO2HryKQXDfJSkb0cNbdm8NpldbzHtHAGEEz32JdwpU9JZJN4DuLpsASVkvzPCbPZ+9gPyc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Uu08swzm; arc=none smtp.client-ip=198.47.19.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 54GEUvXx331109;
-	Fri, 16 May 2025 09:30:57 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1747405857;
-	bh=Se7SjLpGUe2hll4l9FYqJAqFl200CdYNr0JbGi6Mdfo=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=Uu08swzmfS19/F+OugzJFEeiinG4K2YQuYzn2rPbTK4NsM3qTu+BQUdpjXERBeBaG
-	 r7nni9qw+7W92Cq9IoOUj2780qtHVaiSXgqnC+7zv+qkRiJ+DJLNdQ8H3W4OjgAR27
-	 0umN77qj1puGL12tQp4dss0kxRMKCmIjsqHHom1k=
-Received: from DLEE102.ent.ti.com (dlee102.ent.ti.com [157.170.170.32])
-	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 54GEUvAf2265453
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Fri, 16 May 2025 09:30:57 -0500
-Received: from lewvowa02.ent.ti.com (10.180.75.80) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 16
- May 2025 09:30:57 -0500
-Received: from DLEE101.ent.ti.com (157.170.170.31) by lewvowa02.ent.ti.com
- (10.180.75.80) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.2507.34; Fri, 16 May
- 2025 09:30:57 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE101.ent.ti.com
- (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 16 May 2025 09:30:57 -0500
-Received: from [10.249.42.149] ([10.249.42.149])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 54GEUugK055994;
-	Fri, 16 May 2025 09:30:56 -0500
-Message-ID: <d09482d0-5169-4a2a-b00b-e492928abe5b@ti.com>
-Date: Fri, 16 May 2025 09:30:56 -0500
+	s=arc-20240116; t=1747405947; c=relaxed/simple;
+	bh=AUSWPpp8SI2mmg4oBzYhM6nAv/gioMP9u8pxX9JHqAM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=UdhtStEXA+aBkuSJr6XuEs8EUYSyCr9hcqfdQNey6WjLRpozLeYcp3oXaNpb8GB63bugkEOpD7lI5g8eqssW1uq0ZS7poJCYZPSy+UN2OAAF2/iZrUUmRTuKb0aluaj0OYFkXJoVhSs5t1c1Kt6rwZ/txA5t6p5/wdHYndlXR1w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=oK4UAnTZ; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id C03B843B63;
+	Fri, 16 May 2025 14:32:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1747405937;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Cx+R6Ss+hRUkdPKaV+SmJaLvjR4vIHIih0chKUPxnCs=;
+	b=oK4UAnTZbf3QFQSp7nPHE1kshQcN+92jeNk5DmLXcz3ZnCf5oD4mLLn+nn1FVl5tQ4FqQ8
+	SKzN53hHN7Grvbf3dYNhr/my9mH75FZ/nMpxklZJYIU5D6/DS31ZVgY5EYg44BkH8yZ2mG
+	hqJYqe8ALXiw2L/HeFt2N/wzwO/bJ5XesgIE40pJxVUYralBRd5CxfUSlLtAfBxGSufVAN
+	n+hiavGZsyv2oe496seLHTh70/TMfYXCcKgNSktZbhZVASDUinctI8WGxftoCgE4/PVYuV
+	YPunZJJEpzwevwEq2daR1DCInvI7TQAqHnBWSBg7YtW/3sfZ3LcfZuHJkQnMww==
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: =?utf-8?Q?=C3=81lvaro_Fern=C3=A1ndez?= Rojas <noltari@gmail.com>
+Cc: linux-mtd@lists.infradead.org,  dregan@broadcom.com,
+  bcm-kernel-feedback-list@broadcom.com,  florian.fainelli@broadcom.com,
+  rafal@milecki.pl,  computersforpeace@gmail.com,  kamal.dasu@broadcom.com,
+  dan.beygelman@broadcom.com,  william.zhang@broadcom.com,
+  frieder.schrempf@kontron.de,  linux-kernel@vger.kernel.org,
+  vigneshr@ti.com,  richard@nod.at,  bbrezillon@kernel.org,
+  kdasu.kdev@gmail.com,  jaimeliao.tw@gmail.com,  kilobyte@angband.pl,
+  jonas.gorski@gmail.com,  dgcbueu@gmail.com
+Subject: Re: [PATCH v4] mtd: rawnand: brcmnand: legacy exec_op implementation
+In-Reply-To: <20250515050759.1016697-1-noltari@gmail.com> (=?utf-8?Q?=22?=
+ =?utf-8?Q?=C3=81lvaro_Fern=C3=A1ndez?=
+	Rojas"'s message of "Thu, 15 May 2025 07:07:59 +0200")
+References: <20250515050759.1016697-1-noltari@gmail.com>
+User-Agent: mu4e 1.12.7; emacs 29.4
+Date: Fri, 16 May 2025 16:32:16 +0200
+Message-ID: <87o6vsd3tb.fsf@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mux: mmio: Fix missing CONFIG_REGMAP_MMIO
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Peter Rosin
-	<peda@axentia.se>, Andrew Lunn <andrew+netdev@lunn.ch>,
-        "David S. Miller"
-	<davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, <linux-kernel@vger.kernel.org>,
-        <netdev@vger.kernel.org>, Heiner Kallweit
-	<hkallweit1@gmail.com>
-CC: kernel test robot <lkp@intel.com>,
-        Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>,
-        Samuel Holland <samuel@sholland.org>, "Arnd
- Bergmann" <arnd@arndb.de>
-References: <20250515140555.325601-2-krzysztof.kozlowski@linaro.org>
- <174738338644.6332.8007717408731919554.b4-ty@linaro.org>
- <bfe991fa-f54c-4d58-b2e0-34c4e4eb48f4@linaro.org>
- <3172aba1-77f8-46a7-a967-14fae37f66ea@linaro.org>
-Content-Language: en-US
-From: Andrew Davis <afd@ti.com>
-In-Reply-To: <3172aba1-77f8-46a7-a967-14fae37f66ea@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-State: clean
+X-GND-Score: 0
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdefuddvleelucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecunecujfgurhephffvvefujghffgffkfggtgfgsehtqhertddtreejnecuhfhrohhmpefoihhquhgvlhcutfgrhihnrghluceomhhiqhhuvghlrdhrrgihnhgrlhessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepueeijeduvefgkeeuveffgeejleegledtvdduveeftdetfeejvdfffedvgfduffeknecuffhomhgrihhnpegsuhhfrdhinhenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpehmihhquhgvlhdrrhgrhihnrghlsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvtddprhgtphhtthhopehnohhlthgrrhhisehgmhgrihhlrdgtohhmpdhrtghpthhtoheplhhinhhugidqmhhtugeslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopegurhgvghgrnhessghrohgruggtohhmrdgtohhmpdhrtghpthhtohepsggtmhdqkhgvrhhnvghlqdhfvggvuggsrggtkhdqlhhishhtsegsrhhorggutghomhdrtghomhdprhgtphhtthhopehflhhorhhirghnrdhfrghin
+ hgvlhhlihessghrohgruggtohhmrdgtohhmpdhrtghpthhtoheprhgrfhgrlhesmhhilhgvtghkihdrphhlpdhrtghpthhtoheptghomhhpuhhtvghrshhfohhrphgvrggtvgesghhmrghilhdrtghomhdprhgtphhtthhopehkrghmrghlrdgurghsuhessghrohgruggtohhmrdgtohhm
+X-GND-Sasl: miquel.raynal@bootlin.com
 
-On 5/16/25 3:58 AM, Krzysztof Kozlowski wrote:
-> On 16/05/2025 10:26, Krzysztof Kozlowski wrote:
->> On 16/05/2025 10:16, Krzysztof Kozlowski wrote:
->>>
->>> On Thu, 15 May 2025 16:05:56 +0200, Krzysztof Kozlowski wrote:
->>>> MMIO mux uses now regmap_init_mmio(), so one way or another
->>>> CONFIG_REGMAP_MMIO should be enabled, because there are no stubs for
->>>> !REGMAP_MMIO case:
->>>>
->>>>    ERROR: modpost: "__regmap_init_mmio_clk" [drivers/mux/mux-mmio.ko] undefined!
->>>>
->>>> REGMAP_MMIO should be, because it is a non-visible symbol, but this
->>>> causes a circular dependency:
->>>>
->>>> [...]
->>>
->>> Applied, thanks!
->>>
->>> [1/1] mux: mmio: Fix missing CONFIG_REGMAP_MMIO
->>>        https://git.kernel.org/krzk/linux/c/39bff565b40d26cc51f6e85b3b224c86a563367e
->>>
->> And dropped. More recursive dependencies are detected, so my fix here is
->> incomplete.
->>
->> error: recursive dependency detected!
->> 	symbol REGMAP default is visible depending on REGMAP_MMIO
->> 	symbol REGMAP_MMIO is selected by MUX_MMIO
->> 	symbol MUX_MMIO depends on MULTIPLEXER
->> 	symbol MULTIPLEXER is selected by MDIO_BUS_MUX_MULTIPLEXER
->> 	symbol MDIO_BUS_MUX_MULTIPLEXER depends on MDIO_BUS
->> 	symbol MDIO_BUS is selected by REGMAP
->>
->> https://krzk.eu/#/builders/43/builds/4855
->>
->> That's a mess, I need work on this a bit more.
-> 
-> 
-> My branch fails with above error because I do not have Heiner's commit
-> a3e1c0ad8357 ("net: phy: factor out provider part from mdio_bus.c").
-> Will it reach current RC (rc7) at some point? I could merge the tag to
-> my next branch to solve it.
-> 
-> 
+Hello Alvaro,
 
-I took a shot at breaking this recursive dependency at the REGMAP config[0].
-That should allow REGMAP_MMIO to be selected by MUX_MMIO without touching
-stuff here in netdev.
+On 15/05/2025 at 07:07:59 +02, =C3=81lvaro Fern=C3=A1ndez Rojas <noltari@gm=
+ail.com> wrote:
 
-Kconfig is a huge mess at this point, the golden rule of "select should be
-used with care" is completely ignored, there are now more uses of select
-in Linux Kconfig than the normal "depends on"! Might be time to add that
-SAT solver..
+> Commit 3c8260ce7663 ("mtd: rawnand: brcmnand: exec_op implementation")
+> removed legacy interface functions, breaking < v5.0 controllers support.
+> In order to fix older controllers we need to add an alternative exec_op
+> implementation which doesn't rely on low level registers.
+>
+> Fixes: 3c8260ce7663 ("mtd: rawnand: brcmnand: exec_op implementation")
+> Signed-off-by: =C3=81lvaro Fern=C3=A1ndez Rojas <noltari@gmail.com>
 
-Andrew
+Since you have a precise list of what is supported and what's not, I'd
+have expected the rest of the behavior to be identical. Are these
+controllers so different in how to program them? Can't we use the
+existing exec_op() implementation without some of the opcodes?
 
-[0] https://www.spinics.net/lists/kernel/msg5687922.html
+
+> +/* Native command conversion */
+
+Should mention "legacy" somewhere I guess, and even what legacy means in
+this context, which is version(controller) < XXX.
+
+> +static const u8 native_cmd_conv[] =3D {
+> +	[NAND_CMD_READ0]	=3D CMD_NOT_SUPPORTED,
+> +	[NAND_CMD_READ1]	=3D CMD_NOT_SUPPORTED,
+> +	[NAND_CMD_RNDOUT]	=3D CMD_PARAMETER_CHANGE_COL,
+> +	[NAND_CMD_PAGEPROG]	=3D CMD_NOT_SUPPORTED,
+> +	[NAND_CMD_READOOB]	=3D CMD_NOT_SUPPORTED,
+> +	[NAND_CMD_ERASE1]	=3D CMD_BLOCK_ERASE,
+> +	[NAND_CMD_STATUS]	=3D CMD_NOT_SUPPORTED,
+> +	[NAND_CMD_SEQIN]	=3D CMD_NOT_SUPPORTED,
+> +	[NAND_CMD_RNDIN]	=3D CMD_NOT_SUPPORTED,
+> +	[NAND_CMD_READID]	=3D CMD_DEVICE_ID_READ,
+> +	[NAND_CMD_ERASE2]	=3D CMD_NULL,
+> +	[NAND_CMD_PARAM]	=3D CMD_PARAMETER_READ,
+> +	[NAND_CMD_GET_FEATURES]	=3D CMD_NOT_SUPPORTED,
+> +	[NAND_CMD_SET_FEATURES]	=3D CMD_NOT_SUPPORTED,
+> +	[NAND_CMD_RESET]	=3D CMD_NOT_SUPPORTED,
+> +	[NAND_CMD_READSTART]	=3D CMD_NOT_SUPPORTED,
+> +	[NAND_CMD_READCACHESEQ]	=3D CMD_NOT_SUPPORTED,
+> +	[NAND_CMD_READCACHEEND]	=3D CMD_NOT_SUPPORTED,
+> +	[NAND_CMD_RNDOUTSTART]	=3D CMD_NULL,
+> +	[NAND_CMD_CACHEDPROG]	=3D CMD_NOT_SUPPORTED,
+> +};
+> +
+>  /* Controller feature flags */
+>  enum {
+>  	BRCMNAND_HAS_1K_SECTORS			=3D BIT(0),
+> @@ -237,6 +262,10 @@ struct brcmnand_controller {
+>  	/* List of NAND hosts (one for each chip-select) */
+>  	struct list_head host_list;
+>=20=20
+> +	/* Function to be called from exec_op */
+> +	int (*exec_instr)(struct nand_chip *chip,
+> +			  const struct nand_operation *op);
+> +
+>  	/* EDU info, per-transaction */
+>  	const u16               *edu_offsets;
+>  	void __iomem            *edu_base;
+> @@ -2490,14 +2519,152 @@ static int brcmnand_op_is_reset(const struct nan=
+d_operation *op)
+>  	return 0;
+>  }
+>=20=20
+> +static int brcmnand_exec_instructions(struct nand_chip *chip,
+> +				      const struct nand_operation *op)
+> +{
+> +	struct brcmnand_host *host =3D nand_get_controller_data(chip);
+> +	unsigned int i;
+> +	int ret =3D 0;
+> +
+> +	for (i =3D 0; i < op->ninstrs; i++) {
+> +		ret =3D brcmnand_exec_instr(host, i, op);
+> +		if (ret)
+> +			break;
+> +	}
+> +
+> +	return ret;
+> +}
+> +
+> +static int brcmnand_exec_instructions_legacy(struct nand_chip *chip,
+> +					     const struct nand_operation *op)
+> +{
+> +	struct mtd_info *mtd =3D nand_to_mtd(chip);
+> +	struct brcmnand_host *host =3D nand_get_controller_data(chip);
+> +	struct brcmnand_controller *ctrl =3D host->ctrl;
+> +	const struct nand_op_instr *instr;
+> +	unsigned int i, j;
+> +	u8 cmd =3D CMD_NULL, last_cmd =3D CMD_NULL;
+> +	int ret =3D 0;
+> +	u64 last_addr;
+> +
+> +	for (i =3D 0; i < op->ninstrs; i++) {
+> +		instr =3D &op->instrs[i];
+> +
+> +		if (instr->type =3D=3D NAND_OP_CMD_INSTR) {
+
+Could we use a switch case here? Seems more appropriate.
+
+> +			cmd =3D native_cmd_conv[instr->ctx.cmd.opcode];
+> +			if (cmd =3D=3D CMD_NOT_SUPPORTED) {
+> +				dev_err(ctrl->dev, "unsupported cmd=3D%d\n",
+> +					instr->ctx.cmd.opcode);
+> +				ret =3D -EOPNOTSUPP;
+> +				break;
+> +			}
+> +		} else if (instr->type =3D=3D NAND_OP_ADDR_INSTR) {
+> +			u64 addr =3D 0;
+> +
+> +			if (cmd =3D=3D CMD_NULL)
+> +				continue;
+> +
+> +			if (instr->ctx.addr.naddrs > 8) {
+> +				dev_err(ctrl->dev, "unsupported naddrs=3D%u\n",
+> +					instr->ctx.addr.naddrs);
+> +				ret =3D -EOPNOTSUPP;
+> +				break;
+> +			}
+> +
+> +			for (j =3D 0; j < instr->ctx.addr.naddrs; j++)
+> +				addr |=3D (instr->ctx.addr.addrs[j]) << (j << 3);
+> +
+> +			if (cmd =3D=3D CMD_BLOCK_ERASE)
+> +				addr <<=3D chip->page_shift;
+> +			else if (cmd =3D=3D CMD_PARAMETER_CHANGE_COL)
+> +				addr &=3D ~((u64)(FC_BYTES - 1));
+> +
+> +			brcmnand_set_cmd_addr(mtd, addr);
+> +			brcmnand_send_cmd(host, cmd);
+> +			last_addr =3D addr;
+> +			last_cmd =3D cmd;
+> +			cmd =3D CMD_NULL;
+> +			brcmnand_waitfunc(chip);
+
+Waitfunc is a legacy interface, are you sure this is the correct
+function call here?
+
+> +
+> +			if (last_cmd =3D=3D CMD_PARAMETER_READ ||
+> +			    last_cmd =3D=3D CMD_PARAMETER_CHANGE_COL) {
+> +				/* Copy flash cache word-wise */
+> +				u32 *flash_cache =3D (u32 *)ctrl->flash_cache;
+> +
+> +				brcmnand_soc_data_bus_prepare(ctrl->soc, true);
+> +
+> +				/*
+> +				 * Must cache the FLASH_CACHE now, since changes in
+> +				 * SECTOR_SIZE_1K may invalidate it
+> +				 */
+> +				for (j =3D 0; j < FC_WORDS; j++)
+> +					/*
+> +					 * Flash cache is big endian for parameter pages, at
+> +					 * least on STB SoCs
+> +					 */
+> +					flash_cache[j] =3D be32_to_cpu(brcmnand_read_fc(ctrl, j));
+> +
+> +				brcmnand_soc_data_bus_unprepare(ctrl->soc, true);
+> +			}
+> +		} else if (instr->type =3D=3D NAND_OP_DATA_IN_INSTR) {
+> +			u8 *in =3D instr->ctx.data.buf.in;
+> +
+> +			if (last_cmd =3D=3D CMD_DEVICE_ID_READ) {
+> +				u32 val;
+> +
+> +				if (instr->ctx.data.len > 8) {
+> +					dev_err(ctrl->dev, "unsupported len=3D%u\n",
+> +						instr->ctx.data.len);
+> +					ret =3D -EOPNOTSUPP;
+> +					break;
+> +				}
+> +
+> +				for (j =3D 0; j < instr->ctx.data.len; j++) {
+> +					if (j =3D=3D 0)
+> +						val =3D brcmnand_read_reg(ctrl, BRCMNAND_ID);
+> +					else if (j =3D=3D 4)
+> +						val =3D brcmnand_read_reg(ctrl, BRCMNAND_ID_EXT);
+> +
+> +					in[j] =3D (val >> (24 - ((j % 4) << 3))) & 0xff;
+> +				}
+> +			} else if (last_cmd =3D=3D CMD_PARAMETER_READ ||
+> +				   last_cmd =3D=3D CMD_PARAMETER_CHANGE_COL) {
+> +				u64 addr;
+> +				u32 offs;
+> +
+> +				for (j =3D 0; j < instr->ctx.data.len; j++) {
+> +					addr =3D last_addr + j;
+> +					offs =3D addr & (FC_BYTES - 1);
+> +
+> +					if (j > 0 && offs =3D=3D 0)
+> +						nand_change_read_column_op(chip, addr, NULL, 0,
+> +									   false);
+> +
+> +					in[j] =3D ctrl->flash_cache[offs];
+> +				}
+> +			}
+> +		} else if (instr->type =3D=3D NAND_OP_WAITRDY_INSTR) {
+> +			ret =3D bcmnand_ctrl_poll_status(host, NAND_CTRL_RDY, NAND_CTRL_RDY, =
+0);
+> +			if (ret)
+> +				break;
+> +		} else {
+> +			dev_err(ctrl->dev, "unsupported instruction type: %d\n", instr->type);
+> +			ret =3D -EINVAL;
+
+EOPNOTSUPP I guess?
+
+> +			break;
+> +		}
+> +	}
+> +
+> +	return ret;
+> +}
+> +
+>  static int brcmnand_exec_op(struct nand_chip *chip,
+>  			    const struct nand_operation *op,
+>  			    bool check_only)
+>  {
+>  	struct brcmnand_host *host =3D nand_get_controller_data(chip);
+> +	struct brcmnand_controller *ctrl =3D host->ctrl;
+>  	struct mtd_info *mtd =3D nand_to_mtd(chip);
+>  	u8 *status;
+> -	unsigned int i;
+>  	int ret =3D 0;
+>=20=20
+>  	if (check_only)
+[adding one more context line]
+                 return 0;
+
+There is a lot that is unsupported, and this is okay, but you need to
+control all these earlier and implement a function that does all the
+checks when exec_op() is called with the check_only parameter set (just
+above). The support for the old SoCs *must* not return 0 by default and
+instead check the validity of the op when requested.
+
+> @@ -2525,11 +2692,7 @@ static int brcmnand_exec_op(struct nand_chip *chip,
+>  	if (op->deassert_wp)
+>  		brcmnand_wp(mtd, 0);
+>=20=20
+> -	for (i =3D 0; i < op->ninstrs; i++) {
+> -		ret =3D brcmnand_exec_instr(host, i, op);
+> -		if (ret)
+> -			break;
+> -	}
+> +	ret =3D ctrl->exec_instr(chip, op);
+>=20=20
+>  	if (op->deassert_wp)
+>  		brcmnand_wp(mtd, 1);
+> @@ -3142,6 +3305,12 @@ int brcmnand_probe(struct platform_device *pdev, s=
+truct brcmnand_soc *soc)
+>  	if (ret)
+>  		goto err;
+>=20=20
+> +	/* Only v5.0+ controllers have low level ops support */
+> +	if (ctrl->nand_version >=3D 0x0500)
+
+Did I just read that 4 or 4.1 was the correct boundary instead of 5?
+
+> +		ctrl->exec_instr =3D brcmnand_exec_instructions;
+> +	else
+> +		ctrl->exec_instr =3D brcmnand_exec_instructions_legacy;
+> +
+>  	/*
+>  	 * Most chips have this cache at a fixed offset within 'nand' block.
+>  	 * Some must specify this region separately.
+
+Thanks,
+Miqu=C3=A8l
 
