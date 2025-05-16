@@ -1,276 +1,157 @@
-Return-Path: <linux-kernel+bounces-650572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-650561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53BC7AB9333
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 02:30:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FC41AB9307
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 02:06:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F72F3BB857
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 00:30:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32A64A05745
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 00:06:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30A2F8F6C;
-	Fri, 16 May 2025 00:30:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B02D8F4A;
+	Fri, 16 May 2025 00:06:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ox.ac.uk header.i=@ox.ac.uk header.b="Uy7KaO9k";
-	dkim=pass (2048-bit key) header.d=UniOxfordNexus.onmicrosoft.com header.i=@UniOxfordNexus.onmicrosoft.com header.b="c1+SQLYP"
-Received: from fallback4.mail.ox.ac.uk (fallback4.mail.ox.ac.uk [129.67.1.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 606E04B1E50;
-	Fri, 16 May 2025 00:30:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=129.67.1.171
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747355438; cv=fail; b=Qmg5l9KPuq3TrYid7oR25J+r+YE3dvbeYuK7tQGS9u/qpXLBjDOGjv7/2fGMoMVbdzw6pZj8QWFOmaBcIaIW/zGqJXaGvJy0Wpf9n6EIIK6G9HtGA3PIumuQWgHbY5Vz/pPSbFKZHHXeNhEvi11soU1r2VEQ8/ipBNqsPq/F+JY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747355438; c=relaxed/simple;
-	bh=pgGF7Al+R1dsXXH7A6Yt+gPCrGa6akEQItlkTYs+j+c=;
-	h=From:To:CC:Subject:Date:Message-Id:Content-Type:MIME-Version; b=nRq0y1+K/mxGLkHqQr/W9DxurAS/8XFmV9wTvZlYE7wsUszrn3+SHVcNzMv/H74yZhNl4TNrZgGPbcfpCnYvK+O6PlkycuOz2h1kiIDI1E19Oxss4g/5KUZiUx45jJ9mWiHTMKoB/6Etkx1GRWRWnBENDEJqXK49y7rrv1IMQ0I=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=magd.ox.ac.uk; spf=pass smtp.mailfrom=magd.ox.ac.uk; dkim=pass (2048-bit key) header.d=ox.ac.uk header.i=@ox.ac.uk header.b=Uy7KaO9k; dkim=pass (2048-bit key) header.d=UniOxfordNexus.onmicrosoft.com header.i=@UniOxfordNexus.onmicrosoft.com header.b=c1+SQLYP; arc=fail smtp.client-ip=129.67.1.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=magd.ox.ac.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=magd.ox.ac.uk
-Received: from relay18.mail.ox.ac.uk ([163.1.2.165])
-	by fallback4.mail.ox.ac.uk with esmtp (Exim 4.92)
-	(envelope-from <praveen.balakrishnan@magd.ox.ac.uk>)
-	id 1uFiKD-0007ku-Gg; Fri, 16 May 2025 00:49:17 +0100
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=ox.ac.uk;
-	 s=flood; h=MIME-Version:Content-Type:Message-Id:Date:Subject:CC:To:From:
-	reply-to; bh=dw20B83WpMy5DaBCahe5i8vUhPWhia9cDLiwm2QORoY=; t=1747352957;
-	x=1748216957; b=Uy7KaO9klmnsdhqLZq8MlM27tb+EPQalsgnYqrTC+4nVifK3iPC5BFrVKceMB
-	8T5sfJLrYhzvJOIc8cKB9GH3EREWkZlIBxuqO+APxLJtPhrRw3bW+mVUkE/WHQmty1SEj3Jk/oYP8
-	+4J7MKjP0tqaAuF5EccYmbGzbEcQDEXuXWG1cBKCOc/0JYPBfzZJav8cZ3QFcoLjeETMn7B/PHrYP
-	yACa1gKQjDHHF4ayWfU2imGVLd2faxPCavqfiptNy/D5HYvoxS+9yeHwdk1Hc3QGUXZBTK1S5vWxg
-	wTKtcYrpETRyVZlRbrSdSDtQKXWfYnaM57WtmAEcp4oQ4+/0NQ==;
-Received: from ex03.nexus.ox.ac.uk ([163.1.154.243] helo=EX03.ad.oak.ox.ac.uk)
-	by relay18.mail.ox.ac.uk with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-	(Exim 4.92)
-	(envelope-from <praveen.balakrishnan@magd.ox.ac.uk>)
-	id 1uFiK0-000A8S-86; Fri, 16 May 2025 00:49:04 +0100
-Received: from EX03.ad.oak.ox.ac.uk (163.1.154.243) by EX03.ad.oak.ox.ac.uk
- (163.1.154.243) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Fri, 16 May
- 2025 00:49:03 +0100
-Received: from LO0P265CU003.outbound.protection.outlook.com (40.93.67.52) by
- EX03.ad.oak.ox.ac.uk (163.1.154.243) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.37 via Frontend Transport; Fri, 16 May 2025 00:49:03 +0100
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=lNsfjdS0xnSNO3skPDHDRhIvjGTTwjulNbbZbBzj4hTJ2mrp2iNFJD3RsFOnXQRqiKWEmaTsuykexhei2cES/gP4lK630O3m/jGRz7KaL707J8r744YHt/N49dVAY0maiMKsxxl4NlgLA63+U3qL6e9xbFsrJJ1bcIGJRuXrGq7tOqg/gYoL8hHYsogSMZ8mB35Jk7XyVUvoV6jZ22KhniF52g2C49MaR33Psb1cpoXizfEJ4YR8viMx/iqFGyAMzDs4/yPx4oxMJqrNivWQUmx8EF8oi0e9f1ikGZQiqmhVRZKjQGnEbkPVwJOlf3NUfHIVYILtVuCutOe6P1zPsg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=dw20B83WpMy5DaBCahe5i8vUhPWhia9cDLiwm2QORoY=;
- b=rzRS9r3kVUJPf/SsyE0br448CxLpBhNbNrppuTCwfF+76hcBOV2yBEZNn6KUh2QgTD5Qjpag7NeMP3xi/8yn4cN9hrWdOUVAMejdDbYjqRQ7ThXCuilHrKd8FClN2VSZOE8LNZ1XTtgo3rers9J6hdS3KhYq6Wf2VGuTQN6tlBooQ0CT78zgHh+KJxQYRhbBpOCjyVjBkOkrWGp6QRd2fvYKaQpbnH6WdGCR8uote9HDFco1mjhflk7zSTBINzwlPFS3b3rrQ3cYObhzzcIZ6lUA2LNrwGRHvvWeiMLnr1Nks9q1Hb+U3tUkk/HzGg3glmRT+EFs9/B/eIjFTjQNNg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=magd.ox.ac.uk; dmarc=pass action=none
- header.from=magd.ox.ac.uk; dkim=pass header.d=magd.ox.ac.uk; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=UniOxfordNexus.onmicrosoft.com; s=selector2-UniOxfordNexus-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dw20B83WpMy5DaBCahe5i8vUhPWhia9cDLiwm2QORoY=;
- b=c1+SQLYPzvhJdW5niCcHuQ07ixlJrl0gpkBunnHmsLCWuhvPMp66NrvAYgCKuYjvs3o03x4YONyvkhj1DQQQUphGv5GuUdloHZ2IVcirGYVbwhlOp8NLTSZmz3PiqPKpdnJs1ye4wubdf8y+z1cwxR4S2N1tVgMCFVpqQPTmnT7yAGfQeiUPMmFw043xbBTjpnJt6fYhaSVEv/5NOG+m3SYpyxKgpHnTWskm5cxFjjcsC3xjJTF5pwrNmN5PuBEsQqaCrXQauGt7o2bJuJV2fjOt1NDIrXnY5mJTsEsq/mYS1IH0+k0pyWXDJwE/2SNsfZ7uSKocJORRzVkvvZGIIQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=magd.ox.ac.uk;
-Received: from LO6P265MB6985.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:323::12)
- by CW1P265MB7531.GBRP265.PROD.OUTLOOK.COM (2603:10a6:400:214::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8722.33; Thu, 15 May
- 2025 23:48:57 +0000
-Received: from LO6P265MB6985.GBRP265.PROD.OUTLOOK.COM
- ([fe80::639f:86e3:3b7c:f6dd]) by LO6P265MB6985.GBRP265.PROD.OUTLOOK.COM
- ([fe80::639f:86e3:3b7c:f6dd%5]) with mapi id 15.20.8722.031; Thu, 15 May 2025
- 23:48:57 +0000
-From: Praveen Balakrishnan <praveen.balakrishnan@magd.ox.ac.uk>
-To: <corey@minyard.net>, <corbet@lwn.net>
-CC: Praveen Balakrishnan <praveen.balakrishnan@magd.ox.ac.uk>,
-	<openipmi-developer@lists.sourceforge.net>, <linux-doc@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <skhan@linuxfoundation.org>,
-	<linux-kernel-mentees@lists.linux.dev>
-Subject: [PATCH] docs: ipmi: fix spelling and grammar mistakes
-Date: Fri, 16 May 2025 00:47:57 +0100
-Message-Id: <20250515234757.19710-1-praveen.balakrishnan@magd.ox.ac.uk>
-X-Mailer: git-send-email 2.39.5
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: LO2P265CA0239.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:b::35) To LO6P265MB6985.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:323::12)
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="EpyzgGMk"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30C22360;
+	Fri, 16 May 2025 00:06:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747353980; cv=none; b=F+QaiAW4cM0LvEUXAUICSjJ93+rXLcRjFyxTX8e8LMWZtKbucGcRnxM5uAhQRdYC5Jb1nINDjcthyCplk800/5Thixq+YMQjEgXMQTAFFCtwrTr5Uft22FhF5C3CWyIZ3Xz2zvFH3HHvLHumnbqsy9xeMaM//xtCMRbh/YfFo/g=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747353980; c=relaxed/simple;
+	bh=KKn14RxDnhs0g2VH2G6IzLyy9k++nBywcMwn1qgn0BM=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=Lt3WecNdVBkI3s49Rrn4CvW+rincKxiilHs0IdZFGxSYB4xIzJQS5k4Bh9h384gnSlO1COxpSTgmB9MGbdHLjwvzWzDe7fgtu4LlOuS7v6vyHZr6l7IgMwdUZWOW2tkkuRnO0XGMzmaqjcU8tohW6S/msJiKXguRtF3KWtn+peA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=EpyzgGMk; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: by linux.microsoft.com (Postfix, from userid 1053)
+	id 3AD002118E3E; Thu, 15 May 2025 17:06:13 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 3AD002118E3E
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1747353973;
+	bh=vmatFXQWLZ6Ou3o7YLAM7AGrpaeb79pSbACAqY3PBz8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=EpyzgGMkaghhW92z7Z0L06fPqUw2Uj94taabQPLGVGxwXc+uM3s4RSnqMUiAkNoyp
+	 10E5vcOmvv1gko5KreuJkQO28WVt5iMkzGPXhVJ39LT83K0k+rIaCUvYMw7BnTNppX
+	 E4qbwqMnw+xmd3LvAvmZvSHCdoSQgPz1qaLtMVT4=
+From: Vijay Balakrishna <vijayb@linux.microsoft.com>
+To: Borislav Petkov <bp@alien8.de>,
+	Tony Luck <tony.luck@intel.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: James Morse <james.morse@arm.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Robert Richter <rric@kernel.org>,
+	linux-edac@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Tyler Hicks <code@tyhicks.com>,
+	Marc Zyngier <maz@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	devicetree@vger.kernel.org,
+	Vijay Balakrishna <vijayb@linux.microsoft.com>
+Subject: [v9 PATCH 0/3] Add L1 and L2 error detection for A72
+Date: Thu, 15 May 2025 17:06:10 -0700
+Message-Id: <1747353973-4749-1-git-send-email-vijayb@linux.microsoft.com>
+X-Mailer: git-send-email 1.8.3.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LO6P265MB6985:EE_|CW1P265MB7531:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8e9f491f-f0ad-4eef-84f5-08dd940b0eca
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|41320700013|366016|376014;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?UavdwifmTKClw4U5wNbGDi7HeBObACQGCcaoX28INKNjbh3x+rftINwg0Qh+?=
- =?us-ascii?Q?S447xYZzf7ez9ac9LnhP79TdEB1CraZXL6OYHf2LJJaN5Vj+EKAfIoFi9Lp3?=
- =?us-ascii?Q?CCQ57we9wADPYQhro3CnQwJ9dKtOgvpmyuXCiZuHQOL7l6kh8uVFTMoJ5O07?=
- =?us-ascii?Q?LOVuoqJuudF222YEx2kh3DlHi6T8mHmmWX8RRt33osk/WiXcMJiKLilhVvvV?=
- =?us-ascii?Q?gfM+VN5HlFounwIfoio2ILRQCIjh0XrN6JoDTlYPMqgyX35yZPct8IScVnXZ?=
- =?us-ascii?Q?8sQbsxH2vF/hr/mgFleS3u5hmApPCUiY6ZKEZ7nDeHQjyeRqLBReY4QHMnZV?=
- =?us-ascii?Q?nZb9AfpWihdcSyzE3WPPTpvlUT4NSKfIkLgsxI9KwmMypcOpIani1mk1UB1w?=
- =?us-ascii?Q?F960VTgBiTrODg5dJQte+fxZZxhLjKCWo8PgSj+pFQHhZ/J3h7nJt9Me4uHd?=
- =?us-ascii?Q?Nb0bGmjS1EQAZUG7FYuARBtwneZU3jPH3FlZtQbrlYFkUdw3yAT46zCRA5Fl?=
- =?us-ascii?Q?hZgd8bCpZ0CiBeIlFW+w7DUihWYLnhMX9JYNTyi8FEo4OjBR0+Tkk/ouPSzr?=
- =?us-ascii?Q?Nw6SOjtxrSNcBO5BXQHPmPRK7wiAqP1BzN8MFmL1HGkAIJohMrO/p9ZhHQ+n?=
- =?us-ascii?Q?MAaRoiRWs6nPkBvzuXj9Of1Wo/rOa8IBMQE2CjO/XreV80NTtCna9lyf0ibO?=
- =?us-ascii?Q?RLICp8BOWl58xFkEJ+kIsl893GeQINfIBrHPWpwoM6EBgLwFlykBc7rido8g?=
- =?us-ascii?Q?PaTnSK6EbvhF7gS0FrlX673uE1/Iy8zKxqL02TQhOSEak3riKxOCs0P8mpBf?=
- =?us-ascii?Q?TKH2BwDr9lQ5XypI0hGXVfh9verwpu5mafPjKF+0K1BGhOpqSTdxfmYP2CAU?=
- =?us-ascii?Q?pfJng6Y7I4zZdIubmuxwmzZmZtEVS2LNNZxPE36Tl1Cz+r5ZBQhyBYg/B1La?=
- =?us-ascii?Q?JqFj3gsmWTwvAKI/JLWD6KDS4fwmE9On8aaQPFfwph5iUi+t3t7MEMj6MNRp?=
- =?us-ascii?Q?IZpys/Zsn+EIkXt6NhzyrhxEdhDGRMsHkXAyYvRCGy5yPT2yhNMqdSzs7O0f?=
- =?us-ascii?Q?GFcYrH5KRCiqpjtK+RQY71QGFYZQa5ERsXP8rD1GgpeeZpyh6pLI2Pbxarf4?=
- =?us-ascii?Q?XDQnN8hf96LAe5fAlWgOx0wHHDp2Us8jfztVP2SVwsvFSZYruW7uKYEjPXsF?=
- =?us-ascii?Q?ezeOsDwv2DdBc2fHntM3DichXsLe9Go3iL/fizzvutjV1GSsHugD/cIPYA8H?=
- =?us-ascii?Q?so9XLuEM+WOz6HC+kG1FjeMFV+h/NQwKsRBWmC2Rn/fRm317Zr1FATOJKKAt?=
- =?us-ascii?Q?hadzn1b8Jzpf+rTC1wideASwUCf0OGqyfgkBwMCZ4B0lPbyZMQ37GYzxrrYl?=
- =?us-ascii?Q?jeOd5cDhw6+w2M+MRqc7u5tP9i5O0DpqAWWjcciX/8C4JwcgC86+br6tVpc5?=
- =?us-ascii?Q?+5CVAH5sV74=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LO6P265MB6985.GBRP265.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(41320700013)(366016)(376014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?wkdFfuqkVQKlNBZCui2iTqiDxXuEhMwr9MUyUK3Q+TTnE8i8HZfA97YLLKp1?=
- =?us-ascii?Q?gq/jiLkDAiODvpRZ9E4TyaSOvWOfxS4Y+vs3HfbvB3wiGSRv5+Rq3EYjmK59?=
- =?us-ascii?Q?h9ehK/M5x0iw0XVY+jRhODHhpUvMmGxx/XbtkwS5HRjfTdRwiAXAjB2bYs47?=
- =?us-ascii?Q?GreBWlS5CkIgZmG35pMRRr9gMvTsoYDlz72IaBWxrBVleNyZHYBLA6UIBvyl?=
- =?us-ascii?Q?xo72IBxVbVfg8PSwL90eWHc8PweGwEdzA0KBRqF7uKehtInv1/TxpBnHxtN6?=
- =?us-ascii?Q?wanOSttZoAokmvmDDY125uijRd/D4L+4kGeLQoTHh9aPcWMvRDMfzcNMSwrS?=
- =?us-ascii?Q?ISRf8AsolMwXWcPGJIt1z9AocntMLpHBprg1zdXQUjgrpwGy66EIreXh48aZ?=
- =?us-ascii?Q?b4YNMvdfnhDNqVa1+VdZ9Cf1zzERVIGP1k+sAR4N0TNPR5Whn2K46carhogJ?=
- =?us-ascii?Q?kajzK3iErd1LMvn2qigRTRbjYiBMqH2SKUbG4ankOEB7RaecqKA94WVtr55L?=
- =?us-ascii?Q?opd740dcHMgBNX/SQMvSmfTwzDpJJ5cuRNzZPK1uzCJyx//OTkYt96w/u5PQ?=
- =?us-ascii?Q?qfGJVBfi0jDsxCjtAfruZpr8xbdbaRy+zScjN+7M5f6w9p00JJlShOeGnaV7?=
- =?us-ascii?Q?CQxsWfR8oyuY2j9HG0GISIRgjXhyGOimI1hM+m2MpCFbxh1iWrmCKgEQsk7t?=
- =?us-ascii?Q?LzqLEZiHvtagz3L+4Xg1ZZyCIk5Yn2DaINUQvm8PFpjsL2ZFqHvLdFK3PPgY?=
- =?us-ascii?Q?ZH8NSbu6zy4h3n88KFSt4I7OOfrLnJUBWhlr6hq1LjwztjP6IzMNq8CM9XXP?=
- =?us-ascii?Q?4aLFgPfRXVIITW0B5Yz/hdFBu4NrmrtsGzZqgjR10esvIajbS8mn+dzkuX5L?=
- =?us-ascii?Q?5Nen36AyQH7g6q2ABozl6Y6hXZLuk/BfZL1E4kmxe+VmgTtszJxD0+ghUwen?=
- =?us-ascii?Q?bLikAJQZ5zkCu7T3fHIzocsHiHzYRNNI7Xc7N1Gr+uOfH/RGp0X7wd510WEf?=
- =?us-ascii?Q?7RquZugvUD2fs11rmXLekGgm11GPZVad4fy3FYhr5D3A8IFo8CU3b7s6rkJx?=
- =?us-ascii?Q?xMwCrHFyjUBTP4KAtnjs4ZXHmndGztGCv9rtoCfO+Lo6VMMyKicVyW+EBPsh?=
- =?us-ascii?Q?Y3eVimM1mTWr6avgJcMZTB6DeEDoT7FrKwutNBK3N4mC7VwnVCzwzGT7Ihwk?=
- =?us-ascii?Q?0/BN6gWauHEKwJlVoX73yh9eqUb8DrDSNd9qeP7LJiAOAjQpaeIppUpCkg+U?=
- =?us-ascii?Q?sw6qMbbzxrHz3zkgrX7Uc6CDMdc4B3T3DWxnHZFGJMA9hfy3eT/mRCb9jgiy?=
- =?us-ascii?Q?5uW+kmG+8RhpeKiV6jZds/McC2YPXmvLHVI+dwmFZkAkBJ9ClHlf9sYDsZhG?=
- =?us-ascii?Q?3Nqzdlm3d5ZgBaRQ69+2e853ZPHIBOb2C8yAnMPnlZJqeGi42bFWx5Y4+68s?=
- =?us-ascii?Q?ECoCA9qSUtjGRV+llN/I8JYCKZCz5FMduxH4lF4JC06jBnUL662Y3yForGOU?=
- =?us-ascii?Q?Su4op5fj2BgXJKoc1DYHXxBxEvq0mUP22eOCEPIFw4dDL9T/Z2kdGCu9FCQT?=
- =?us-ascii?Q?qzxYTV8zoz7iTVXwCiK/mS34gur+wedIZyFTd3DD?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8e9f491f-f0ad-4eef-84f5-08dd940b0eca
-X-MS-Exchange-CrossTenant-AuthSource: LO6P265MB6985.GBRP265.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 May 2025 23:48:57.1527
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: cc95de1b-97f5-4f93-b4ba-fe68b852cf91
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 74OUewZK6HswG3FxlRiAs2OWm6kzbU1c74+X6Rqv7uUlAc9VfnJ8IxVxHjSpga6oZUQjqF670p7vrMF//CavtQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CW1P265MB7531
-X-OriginatorOrg: magd.ox.ac.uk
-X-NTG-DKIM-verify: pass 
 
-Corrected various spelling and grammatical mistakes in
-Documentation/driver-api/ipmi.rst to improve readability.
+This is an attempt to revive [v5] series. I have attempted to address comments
+and suggestions from Marc Zyngier since [v5]. Additionally, I have limited
+the support only for A72 processors per [v8] discussion. Testing the driver
+on a problematic A72 SoC has led to the detection of Correctable Errors (CEs).
+Below are logs captured from the problematic SoC during various boot instances.
 
-No changes to the technical content has been made.
+[  876.896022] EDAC DEVICE0: CE: cortex-arm64-edac instance: cpu2 block: L1 count: 1 'L1-D Data RAM correctable error(s) on CPU 2'
 
-Signed-off-by: Praveen Balakrishnan <praveen.balakrishnan@magd.ox.ac.uk>
----
- Documentation/driver-api/ipmi.rst | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+[ 3700.978086] EDAC DEVICE0: CE: cortex-arm64-edac instance: cpu2 block: L1 count: 1 'L1-D Data RAM correctable error(s) on CPU 2'
 
-diff --git a/Documentation/driver-api/ipmi.rst b/Documentation/driver-api/ipmi.rst
-index dfa021eacd63..d9fb2376e8da 100644
---- a/Documentation/driver-api/ipmi.rst
-+++ b/Documentation/driver-api/ipmi.rst
-@@ -45,7 +45,7 @@ manual), choose the 'IPMI SI handler' option.  A driver also exists
- for direct I2C access to the IPMI management controller.  Some boards
- support this, but it is unknown if it will work on every board.  For
- this, choose 'IPMI SMBus handler', but be ready to try to do some
--figuring to see if it will work on your system if the SMBIOS/APCI
-+figuring to see if it will work on your system if the SMBIOS/ACPI
- information is wrong or not present.  It is fairly safe to have both
- these enabled and let the drivers auto-detect what is present.
- 
-@@ -63,7 +63,7 @@ situation, you need to read the section below named 'The SI Driver' or
- IPMI defines a standard watchdog timer.  You can enable this with the
- 'IPMI Watchdog Timer' config option.  If you compile the driver into
- the kernel, then via a kernel command-line option you can have the
--watchdog timer start as soon as it initializes.  It also have a lot
-+watchdog timer start as soon as it initializes.  It also has a lot
- of other options, see the 'Watchdog' section below for more details.
- Note that you can also have the watchdog continue to run if it is
- closed (by default it is disabled on close).  Go into the 'Watchdog
-@@ -317,13 +317,13 @@ This gives the receiver a place to actually put the message.
- 
- If the message cannot fit into the data you provide, you will get an
- EMSGSIZE error and the driver will leave the data in the receive
--queue.  If you want to get it and have it truncate the message, us
-+queue.  If you want to get it and have it truncate the message, use
- the IPMICTL_RECEIVE_MSG_TRUNC ioctl.
- 
- When you send a command (which is defined by the lowest-order bit of
- the netfn per the IPMI spec) on the IPMB bus, the driver will
- automatically assign the sequence number to the command and save the
--command.  If the response is not receive in the IPMI-specified 5
-+command.  If the response is not received in the IPMI-specified 5
- seconds, it will generate a response automatically saying the command
- timed out.  If an unsolicited response comes in (if it was after 5
- seconds, for instance), that response will be ignored.
-@@ -367,7 +367,7 @@ channel bitmasks do not overlap.
- 
- To respond to a received command, set the response bit in the returned
- netfn, use the address from the received message, and use the same
--msgid that you got in the receive message.
-+msgid that you got in the received message.
- 
- From userland, equivalent IOCTLs are provided to do these functions.
- 
-@@ -440,7 +440,7 @@ register would be 0xca6.  This defaults to 1.
- 
- The regsizes parameter gives the size of a register, in bytes.  The
- data used by IPMI is 8-bits wide, but it may be inside a larger
--register.  This parameter allows the read and write type to specified.
-+register.  This parameter allows the read and write type to be specified.
- It may be 1, 2, 4, or 8.  The default is 1.
- 
- Since the register size may be larger than 32 bits, the IPMI data may not
-@@ -481,8 +481,8 @@ If your IPMI interface does not support interrupts and is a KCS or
- SMIC interface, the IPMI driver will start a kernel thread for the
- interface to help speed things up.  This is a low-priority kernel
- thread that constantly polls the IPMI driver while an IPMI operation
--is in progress.  The force_kipmid module parameter will all the user to
--force this thread on or off.  If you force it off and don't have
-+is in progress.  The force_kipmid module parameter will allow the user
-+to force this thread on or off.  If you force it off and don't have
- interrupts, the driver will run VERY slowly.  Don't blame me,
- these interfaces suck.
- 
-@@ -583,7 +583,7 @@ kernel command line as::
- These are the same options as on the module command line.
- 
- The I2C driver does not support non-blocking access or polling, so
--this driver cannod to IPMI panic events, extend the watchdog at panic
-+this driver cannot do IPMI panic events, extend the watchdog at panic
- time, or other panic-related IPMI functions without special kernel
- patches and driver modifications.  You can get those at the openipmi
- web page.
-@@ -610,7 +610,7 @@ Parameters are::
- 	ipmi_ipmb.retry_time_ms=<Time between retries on IPMB>
- 	ipmi_ipmb.max_retries=<Number of times to retry a message>
- 
--Loading the module will not result in the driver automatcially
-+Loading the module will not result in the driver automatically
- starting unless there is device tree information setting it up.  If
- you want to instantiate one of these by hand, do::
- 
+[  976.956158] EDAC DEVICE0: CE: cortex-arm64-edac instance: cpu2 block: L1 count: 1 'L1-D Data RAM correctable error(s) on CPU 2'
+
+[ 1427.933606] EDAC DEVICE0: CE: cortex-arm64-edac instance: cpu2 block: L1 count: 1 'L1-D Data RAM correctable error(s) on CPU 2'
+
+[  192.959911] EDAC DEVICE0: CE: cortex-arm64-edac instance: cpu2 block: L1 count: 1 'L1-D Data RAM correctable error(s) on CPU 2'
+
+Testing our product kernel involved adding the 'edac-enabled' property to CPU
+nodes in the DTS. For mainline sanity checks, we tested under QEMU by
+extracting the default DTB and modifying the DTS to include the 'edac-enabled'
+property. We then verified the presence of /sysfs nodes for CE and UE counts
+for the emulated A72 CPUs.
+
+Our primary focus is on A72. We have a significant number of A72-based systems
+in our fleet, and timely replacements via monitoring CEs will be instrumental
+in managing them effectively.
+
+I am eager to hear your suggestions and feedback on this series.
+
+Thanks,
+Vijay
+
+[v5] https://lore.kernel.org/all/20210401110615.15326-1-s.hauer@pengutronix.de/#t
+[v6] https://lore.kernel.org/all/1744241785-20256-1-git-send-email-vijayb@linux.microsoft.com/
+[v7] https://lore.kernel.org/all/1744409319-24912-1-git-send-email-vijayb@linux.microsoft.com/#t
+[v8] https://lore.kernel.org/all/1746404860-27069-1-git-send-email-vijayb@linux.microsoft.com/
+
+Changes since v8: 
+- removed support for A53 and A57
+- added entry to MAINTAINERS
+- added missing module exit point to enable unload
+
+Changes since v7: 
+- v5 was based on the internal product kernel, identified following upon review
+- correct format specifier to print CPUID/WAY
+- removal of unused dynamic attributes for edac_device_alloc_ctl_info() 
+- driver remove callback return type is void
+
+Changes since v6:
+- restore the change made in [v5] to clear CPU/L2 syndrome registers
+  back to read_errors()
+- upon detecting a valid error, clear syndrome registers immediately
+  to avoid clobbering between the read and write (Marc)
+- NULL return check for of_get_cpu_node() (Tyler)
+- of_node_put() to avoid refcount issue (Tyler)
+- quotes are dropped in yaml file (Krzysztof)
+
+Changes since v5:
+- rebase on v6.15-rc1
+- the syndrome registers for CPU/L2 memory errors are cleared only upon
+  detecting an error and an isb() after for synchronization (Marc)
+- "edac-enabled" hunk moved to initial patch to avoid breaking virtual
+  environments (Marc)
+- to ensure compatibility across all three families, we are not reporting
+  "L1 Dirty RAM," documented only in the A53 TRM
+- above prompted changing default CPU L1 error meesage from "unknown"
+  to "Unspecified"
+- capturing CPUID/WAY information in L2 memory error log (Marc)
+- module license from "GPL v2" to "GPL" (checkpatch.pl warning)
+- extend support for A72
+
+Sascha Hauer (2):
+  drivers/edac: Add L1 and L2 error detection for A72
+  dt-bindings: arm: cpus: Add edac-enabled property
+
+Vijay Balakrishna (1):
+  EDAC: Add EDAC driver for Cortex A72
+
+ .../devicetree/bindings/arm/cpus.yaml         |   6 +
+ MAINTAINERS                                   |   7 +
+ drivers/edac/Kconfig                          |   8 +
+ drivers/edac/Makefile                         |   1 +
+ drivers/edac/edac_a72.c                       | 233 ++++++++++++++++++
+ 5 files changed, 255 insertions(+)
+ create mode 100644 drivers/edac/edac_a72.c
+
+
+base-commit: fee3e843b309444f48157e2188efa6818bae85cf
 -- 
-2.39.5
+2.49.0
 
 
