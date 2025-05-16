@@ -1,86 +1,181 @@
-Return-Path: <linux-kernel+bounces-651209-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-651210-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E38FAB9BB3
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 14:14:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEF15AB9BB4
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 14:14:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0AF34168E27
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 12:14:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6AD961BC5783
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 12:14:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E032623A9BB;
-	Fri, 16 May 2025 12:14:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8892323D293;
+	Fri, 16 May 2025 12:14:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JWBRPaQc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NcQkNwe1"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4860B1361;
-	Fri, 16 May 2025 12:14:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D14801361;
+	Fri, 16 May 2025 12:14:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747397643; cv=none; b=pt6EiwvUW6X6h8quY0EaW/jdF4xyVE4paid/jRfbGrSyPCuf86e1D1ae9YvHkEV6HbAtpxnSrDAy7mx+TId/2EQ4FxO284QVfqn0Uo6nIj9uFnO+JR3IYWAL4EISmPgenWVFtPb+Y/KYdbYCnJBp5DwPYweFMlvX8KPgSLMxDVM=
+	t=1747397650; cv=none; b=UT7ZxIw8EBtLDXxn0PVyhY/fwxPZI9HHoCT++3gtpj+8t7BW3wARnH6YnTH4cyV2j5Rk6uoG8r1CS3a6NhMhln/g2kaRL8I5TRYMmjXbX8kctKiTpVCTPr6hqwoD+HeqCvNsShqeRSvFw9q1wm2jjP5N4zeAE6G/FiLpEfBvp0Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747397643; c=relaxed/simple;
-	bh=l0eKWla4Ve3xFHCq34yr+gQ3U6VR2dIwm5VdL5/Mo3E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F5EL3OXrVdwJO5gSO/GQxsTSuT2JgUwIAw2suOewSMm27bpMfvycrsDjcxJjQblOxiSXyQuZ9/QY+zkU6ycNh8sZU71aMF6dXaPcU8INt4M30PXttoLo2mT7XQ2R2xVrxxpLIfY1FZaOZxYKDQpH2HVxGdWa1DyhDRLJR/oZcsc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JWBRPaQc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5D07C4CEE4;
-	Fri, 16 May 2025 12:13:58 +0000 (UTC)
+	s=arc-20240116; t=1747397650; c=relaxed/simple;
+	bh=y+mm5weWo+9kNZUrNcHd1yv3c9QMyVj137bK/yu+2IQ=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=NWA9PmSJwRQnr5DbQiQJVKiTUjAnqgLgEy+4hpmJEdwS8/ryRpNwS3NDRV0t1jdg+RiGFRXdDA6YFpLVyZzCgLPn/7wLHhrExN4x1bFG2fFBdhSYX/BxP9TQU8W6v32xwzVZKyaiqtDCpkGDJbkW2t5o93RjNK65NLed1UkzFsw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NcQkNwe1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id A77F7C4CEE4;
+	Fri, 16 May 2025 12:14:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747397642;
-	bh=l0eKWla4Ve3xFHCq34yr+gQ3U6VR2dIwm5VdL5/Mo3E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JWBRPaQckf2fwpuqhBvYNiyD0sGG/KsTdE2FEkybtywn7sN588dftgBncSwZFoij9
-	 v1bjmnDG+RycQe3ZKwauQyuYf6kVQa3RQ1/MDSVrU510eIJxPlAsJKVSWcrP08iVCj
-	 WFi9sJ8uGR9HRoz5o4JUG2FawrVZGdLVCaCYYfdbjcVZIUJnrT/olpna8o4e3sbF7B
-	 gqMjbdfpm+1w4/l0i11jHc2/pfiMeqhFxDvYy9UE36e4bLqkXNlQ1Vij6KiwLuI4Sh
-	 42P6xa4FIQR2GUorQ27C2tpHE4WkBMSP/dZZkcEIMGn80TFBpiumRNdFh0aEsKhSO3
-	 D/U6OufZSLmQw==
-Date: Fri, 16 May 2025 14:13:56 +0200
-From: Danilo Krummrich <dakr@kernel.org>
-To: Alexandre Courbot <acourbot@nvidia.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH v2 0/3] rust: select AUXILIARY_BUS instead of depending
- on it
-Message-ID: <aCcsBIOJHr-hq4Wg@pollux>
-References: <20250515-aux_bus-v2-0-47c70f96ae9b@nvidia.com>
+	s=k20201202; t=1747397650;
+	bh=y+mm5weWo+9kNZUrNcHd1yv3c9QMyVj137bK/yu+2IQ=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=NcQkNwe1hRAblU0y/Z8KxQG3iGYAn8ePBhZwT6u6ClIzUdOSsusdpIvBJWKPkuriw
+	 a6eKE+D6vMBXeUdXmt7JeZc1NHS0XxbxY8Bz+wnCjadFGhUal8eyt3NZxmJ/NOYimv
+	 adnXTTbdFbIFobwr2fhPHrzlwzKy3EDIcAjE2v2ATLY20RMkUIFHhxgvIyG/Q3y1Y+
+	 6rL/J7+tCuhnWQWwIT5YsHtl02uxa+ePePqOPCW1TlLw8P4pkwS5jpukQuULEV99FK
+	 6KQbO6wYsM17culeW9Qz/dzsoQ6zA+QMa5bsi7uSeXfxDrkjCM7k9fb4prHSpAQ4JU
+	 FhzLCnoKivR9w==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94302C3ABC9;
+	Fri, 16 May 2025 12:14:10 +0000 (UTC)
+From: Per Larsen via B4 Relay <devnull+perlarsen.google.com@kernel.org>
+Subject: [PATCH v4 0/5] KVM: arm64: Support FF-A 1.2 and SEND_DIRECT2 ABI
+Date: Fri, 16 May 2025 12:13:59 +0000
+Message-Id: <20250516-virtio-msg-ffa-v4-0-580ee70e5081@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250515-aux_bus-v2-0-47c70f96ae9b@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAgsJ2gC/2WOQW7DIBAAvxJx7kawGOLklH9UPVC82CsFE4GLW
+ kX+e7GlSml7nMOM5iEKZaYiLoeHyFS5cJobdC8H4Sc3jwQ8NBYo0UgjLVTOCyeIZYQQHCC6cEJ
+ /RmWkaNI9U+DPPfj61jjkFGGZMrnnDMomyP6oETvdKVBwp3y7cowfs5uXo09xi01clpS/9rmKW
+ /In0P/9qAgSaOi70Eujz9Zcx5TGG+2pbaTqJ1/pf75u/mCtP9kQ1Dv6X/66rt/O9UQQKgEAAA=
+ =
+X-Change-ID: 20250506-virtio-msg-ffa-22af72c92150
+To: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+ Joey Gouly <joey.gouly@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
+ Zenghui Yu <yuzenghui@huawei.com>, 
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+ Sudeep Holla <sudeep.holla@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
+ linux-kernel@vger.kernel.org, sebastianene@google.com, qperret@google.com, 
+ qwandor@google.com, arve@android.com, perl@immunant.com, 
+ lpieralisi@kernel.org, kernel-team@android.com, tabba@google.com, 
+ james.morse@arm.com, armellel@google.com, jean-philippe@linaro.org, 
+ ahomescu@google.com, Per Larsen <perlarsen@google.com>, 
+ Ayrton Munoz <ayrton@google.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1747397650; l=3725;
+ i=perlarsen@google.com; s=20250508; h=from:subject:message-id;
+ bh=y+mm5weWo+9kNZUrNcHd1yv3c9QMyVj137bK/yu+2IQ=;
+ b=YzR/YMJmP2O7HT5umZO1tXDefZXVOIPW3ZjT4X/487ou9ZmBRtFIlzlCHKeURiH7NXnrHvjh+
+ AAqajWtMT4DDZqFxrcC7Cys3ubzFbX+mFNYnYzaTAfcbfXtEPsWX6Ic
+X-Developer-Key: i=perlarsen@google.com; a=ed25519;
+ pk=jjc/Ta4VmrLRmMoahP6d1mBcKzvWU+nsmdtYe2oS2kQ=
+X-Endpoint-Received: by B4 Relay for perlarsen@google.com/20250508 with
+ auth_id=402
+X-Original-From: Per Larsen <perlarsen@google.com>
+Reply-To: perlarsen@google.com
 
-On Thu, May 15, 2025 at 05:23:17PM +0900, Alexandre Courbot wrote:
-> I noticed this after trying to understand why my minimal Nova defconfig
-> was not selecting NOVA_CORE anymore and why I couldn't even find it in
-> menuconfig.
-> 
-> CONFIG_AUXILIARY_BUS cannot be enabled directly and must be selected by
-> another module. Options that depend on it thus cannot be enabled unless
-> a different module selecting AUXILIARY_BUS is also enabled.
-> 
-> All non-Rust modules using CONFIG_AUXILIARY_BUS select it, so it should
-> make sense for the Rust ones to use that scheme as well.
+Hi,
 
-Applied to nova-next, thanks!
+The FF-A 1.2 specification introduces a new SEND_DIRECT2 ABI which
+allows registers x4-x17 to be used for the message payload. This patch
+set prevents the host from using a lower FF-A version than what has
+already been negotiated with the hypervisor. This is necessary because
+the hypervisor does not have the necessary compatibility paths to
+translate from the hypervisor FF-A version to a previous version.
+
+Support for FF-A 1.2 in the hypervisor is added as a precursor to the
+addition of the FFA_MSG_SEND_DIRECT_REQ2 messaging interface. The bulk
+of this change has to do with the upgrade to SMCCC 1.2 required by
+FF-A 1.2. Additionally, unimplemented FF-A 1.2 interfaces are added to
+the list of unsupported functions.
+
+Tested by booting Android under QEMU and loading Trusty as the guest
+VM and observing the SEND_DIRECT2 ABI being used successfully during
+guest boot.
+
+Changes since v3:
+- all:        Remove Signed-off-by: Per Larsen <perl@immunant.com>
+- 2/5:        Split out from 2/3, zero x4-x7 in set_ffa_retval
+- 3/5:        Split out from 2/3, Mark FFA_NOTIFICATION_* calls as
+              unsupported
+- 2/3 -> 4/5: Drop ffa_get_hypervisor_version, access hyp_ffa_version
+              directly when version negotiation is complete.
+- 3/3 -> 5/5: Call ffa_to_smccc_1_2_error directly in
+              do_do_ffa_direct_msg2
+              Push call to ffa_call_needs_smccc_1_2 lower down by adding
+              ffa_get_func_id and ffa_set_retval_smccc_1_x.
+              Drop ffa_to_smccc_1_2_regs and ffa_to_smccc_1_2_regs_prop
+              as they are no longer used.
+- Link to v3: https://lore.kernel.org/r/20250513-virtio-msg-ffa-v3-0-d66c76ff1b2c@google.com 
+
+Changes since v2:
+- 2/3: Removed files added by mistake.
+       Add and use ffa_get_hypervisor_version to access hyp_ffa_version
+- 3/3: Use ffa_get_hypervisor_version to access hyp_ffa_version safely
+- Link to v2: https://lore.kernel.org/r/20250508-virtio-msg-ffa-v2-0-ed84f8053965@google.com
+
+Changes since v1:
+- 1/3: Simplify commit message; drop long comment in do_ffa_version
+- 2/3: Correct use of Co-developed-by: footer
+       s/arm_smccc_1_2_smc_fallback/arm_smccc_1_x_smc/
+       Always access hyp_ffa_version w/lock held
+       Remove superfluous comments in ffa_call_supported
+       Add and use FFA_FEAT_RXTX_MIN_SZ_MASK instead of constant
+       Add FFA_PARTITION_INFO_GET_REGS to calls that require SMCCC 1.2
+- 3/3: Always access hyp_ffa_version w/lock held
+       Correct formatting
+
+Thanks,
+Per Larsen
+
+--
+2.49.0
+
+---
+To: Marc Zyngier <maz@kernel.org>
+To: Oliver Upton <oliver.upton@linux.dev>
+To: Joey Gouly <joey.gouly@arm.com>
+To: Suzuki K Poulose <suzuki.poulose@arm.com>
+To: Zenghui Yu <yuzenghui@huawei.com>
+To: Catalin Marinas <catalin.marinas@arm.com>
+To: Will Deacon <will@kernel.org>
+To: Sudeep Holla <sudeep.holla@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: kvmarm@lists.linux.dev
+Cc: linux-kernel@vger.kernel.org
+
+---
+
+---
+Per Larsen (5):
+      KVM: arm64: Restrict FF-A host version renegotiation
+      KVM: arm64: Zero x4-x7 in ffa_set_retval
+      KVM: arm64: Mark FFA_NOTIFICATION_* calls as unsupported
+      KVM: arm64: Bump the supported version of FF-A to 1.2
+      KVM: arm64: Support FFA_MSG_SEND_DIRECT_REQ2 in host handler
+
+ arch/arm64/kvm/hyp/nvhe/Makefile |   1 +
+ arch/arm64/kvm/hyp/nvhe/ffa.c    | 186 +++++++++++++++++++++++++++++++++++++--
+ include/linux/arm_ffa.h          |   3 +
+ 3 files changed, 182 insertions(+), 8 deletions(-)
+---
+base-commit: fee3e843b309444f48157e2188efa6818bae85cf
+change-id: 20250506-virtio-msg-ffa-22af72c92150
+
+Best regards,
+-- 
+Per Larsen <perlarsen@google.com>
+
+
 
