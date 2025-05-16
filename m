@@ -1,216 +1,207 @@
-Return-Path: <linux-kernel+bounces-650566-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-650568-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B580FAB9324
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 02:22:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 33D00AB9328
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 02:27:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D633D1BC0F1D
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 00:22:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DFC771B64075
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 00:27:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68444CA6B;
-	Fri, 16 May 2025 00:22:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A41A748D;
+	Fri, 16 May 2025 00:27:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CUXqAjcz"
-Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ViiTfVGN"
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD8B84B1E65
-	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 00:22:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3534217E4;
+	Fri, 16 May 2025 00:27:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747354948; cv=none; b=e8xJKel+C2uDmn4OufFS6J7vCt+jQmOW4ZmGf6GwYnLEkkzgiMbifD0riGj3Z1utV8o22lx9BFw7EixfrEe4uLUEcyQ25TpxE/O4Z9AiSh6s7KpMxxQSHMzBBoskfxJosgAeaTQFhtLyfixHUxS4fyCfUudVqZimRpi2hIMBMsg=
+	t=1747355246; cv=none; b=UCfV/DrPUFFcqjr5vL5rUHAvu1XufnlFieRbiDGSJoplLFjHy1ibRp3JZejNXouvNwJmA+f+O7L8l0LyKXNnFYk6Cg6zZzHO/ofqUOpgYAzJV0ovyBA9K+ffKXPhOFvLBkDZ/gjWn1pv10veq+dz6eR0FCaG2VT0rJOM+UUe2PA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747354948; c=relaxed/simple;
-	bh=FLr14or9G6ctdhc4NjO2TMqj5hlhyJOyOKBdrjBX+q0=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=roDviWKC/gt5ETpQfcMoN/kupdjqYqbkJuBfXTdCUAT1H6xL3DS3C142QFBocAVCggLwtICIDEU7KimmWn9LxP0pFYFcTczpidrV6SVAMQMLMntEyJBX1jK6zSXVQ1Qz5Oyn0sZJTLl/DLGP+uafzi3tmhwNEGgu9J8LuAoomI4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CUXqAjcz; arc=none smtp.client-ip=209.85.210.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-741a845cab2so2140143b3a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 17:22:25 -0700 (PDT)
+	s=arc-20240116; t=1747355246; c=relaxed/simple;
+	bh=N8sOvo4FwSgkli1GbdXZABMRKYXeBpInBEb9HE55zSo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=uGb7/aBBga/r9VJYuZCsR9dCuxg9kokQETlEI5A/WxAoFGmia7Z1QdoJFpaJ8U8fi1xY3vQf0WNV2y/lQAW7irHlCPgeM4oLx6uFXM1k/+QhmAnfpm98QfKIiUhZXRViF3OJrZSJPGOxNwlZ/HhF16vd/Ip41csSyRDx5MAvsZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ViiTfVGN; arc=none smtp.client-ip=209.85.160.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-4769aef457bso19752091cf.2;
+        Thu, 15 May 2025 17:27:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1747354945; x=1747959745; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=U2sAkeu7MGicRsmk1eQ6Ys1LarlK/EQzO2qqYVap+q8=;
-        b=CUXqAjczPMuTHriZl6tvaL4123gmRh9zTXElchUlG6gYQCikDJRMz1sCutUHfzgoJf
-         G9sVqQV3rr9ma/GFOyUz8xe0EmS8n2lyWgz3kUK4PfEgNgkm0q9RsJu4xrt7VAlqEksN
-         pPPxv92ER/JvLVvvcpoayrDxJ+hpKqc2oVPgE0fnfwhrKKNDwTtXFbrzBsUgJbMWOFx8
-         En4szy+an3umatgmNrQ+G/cUAbUxOs/cNqgIsjezLCwixE0mU0BLsFO/m7M9C6LT6Oow
-         /dixVeiszZhi/YLzvg/K/CPiFbEsSrQHIOVKmrOrkXlgwMhrhwVuG+r03Qz6rHAug8AW
-         4/KA==
+        d=gmail.com; s=20230601; t=1747355244; x=1747960044; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=m6pURmVL5pc7CL/4Z+XDERMVUMwy4OEE/W3/L9YQ5D0=;
+        b=ViiTfVGNyvm0KJF8YTiQMvSQSfgfXlbrXmL/+y5bMNmVjPJ29SZVOQedQ2TKtSUrw6
+         4LeNcJrkak4vHRiHBqHwWy3JBcC9xc7cQgu+QgEXZOR+du5LATbeg7EJ7DrbJ2oi74SO
+         0w344/XoUktWKNjyMZ1nwsftvdCv8OUnxN6ZerpPgvjrQwieChFYQ07vxoPMc1Vf5tDW
+         ODO7PVajj8fq54AB/m5P6Elg8UXQ8VtgRVNudzdyIVdy4nmo5+AfhlacEjSP78OhWVYd
+         SPd0qLa0C/ewgq8GB4/phclU2eM/OR4+Zr5fo9FhCdK06ju9xZV/myrcrP9WjD3dErJe
+         UNcw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747354945; x=1747959745;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=U2sAkeu7MGicRsmk1eQ6Ys1LarlK/EQzO2qqYVap+q8=;
-        b=Hpzia0zCTx8tab8AGNuFI+Hk3SQqt/rya/wkBGL5PSFn2tvopFgXqR5lPJ5gVkz5Ic
-         dlHyFPEuYOOhiGuOLiy5vSeiymNOijZdCtOdoyNmkY/nGa77K9CXnzCyanCZAcsCopQi
-         YIv2P0DKcgg/5EXT+BR3ioBOWBDuLeE/iEjCZtFacDWKFEMRdzY+XcqNBkmeui9GAu0p
-         jnN3y3hqIWSyib3xf5xQNBYx0uSEpnaqIKTsjzMiO/gYIBx6iRKb8RellNa+ZCE7DBrA
-         n+25DYdEzaqTRmgf5GRHCf+YvNThe0CE5+GfPxodKZ5yM1JMA9+KSaRZam9r4BpG53FM
-         80Mw==
-X-Forwarded-Encrypted: i=1; AJvYcCWDnfmsgWCQnn6ubnZefSdGgTXxM7xlvZDPEKvoYAypXoP0Ksr1zW4EWNeODyAym906QPdiDgI+rQCB8ZQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwPFQtyqk5nCyXbHK+riFX+A243gg/rmWB+N3S1EQu6bsawhcmj
-	OR7uqG8ue3HepxtUIB62pJuxFgcMzBaJOVn/0rJ/1THLWmzP55vwXj7oViGBsqa/zVkIXRvgiFR
-	Fii/CyEsSWB3iuivrq3pNfuTvwA==
-X-Google-Smtp-Source: AGHT+IE6+aZ6pB0+4YWi/bOE+1/FrllyYKfVOjrPP4jF0YyDdqPgCbM1S1tbN8ddfEjmhOfVoPvdJc2p2g7nYFoIDA==
-X-Received: from pfbmb27.prod.google.com ([2002:a05:6a00:761b:b0:736:b063:5038])
- (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6a00:4fc2:b0:73e:598:7e5b with SMTP id d2e1a72fcca58-742acc906ccmr622342b3a.1.1747354944946;
- Thu, 15 May 2025 17:22:24 -0700 (PDT)
-Date: Thu, 15 May 2025 17:22:21 -0700
-In-Reply-To: <cover.1747264138.git.ackerleytng@google.com>
+        d=1e100.net; s=20230601; t=1747355244; x=1747960044;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=m6pURmVL5pc7CL/4Z+XDERMVUMwy4OEE/W3/L9YQ5D0=;
+        b=o++gK3ikkTAOjZnVV9+sKOfWVtPiZ+nyrkYVNi7s9QsuxzRt0GDjjf+p7oarX/R+MB
+         w8Cq3c61s8f3B45W72j4Rtc3VCWROdmwS19uI0vU23lXxTIjnAfscPang2RgGZ63yWAE
+         MbIaSgJlToV75Z3seJItF4gjwzvdW9Pg01HikpuH3z8K8ai8a+FhQa0bnwhfr+dZ8swG
+         OEK3AkSffNt6BifJTDbNXRxw4M+kOlv/O+BdgZWTInAezc0Cq+4dqEuUN1c7GPDGXvMX
+         nPHS1FYC41TtQRaYObUXdlra0ZfFK/1I2k1SBU2AFG4s+90K08Mx1CaHkp3bSs4lsP5L
+         6yZg==
+X-Forwarded-Encrypted: i=1; AJvYcCWxKDmY4JpDgIvG/cl6K1W9VErbCngBr99revCtg5+TvH9IksovOpWNHh2Bjj5iIMTkXlPt/YPw4Nqi@vger.kernel.org, AJvYcCX8DWptX2t3dgGSC/d4m+ByFQjq0T6AAxxunUaCOU8S6Nt8IO/TagHGyOBcX8/zTABn6ANK1wd7tP3uDbNy@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8ltjWqI+87uelgSYejp2COBNPcWCkItIjqrfMeHaBts62K+5S
+	HJyy7q8uDNORJCEwFREYPokwu+plCp/RUEMp7ZC/P5UnS2cJ/f5j+2iM
+X-Gm-Gg: ASbGncsOgJSg12ff3fucjCyF075aVboftd2ijdiWWqvL/EKtdYPEjihZhpTy6Hrwei5
+	XU1xtRVEFEFPv8mgegWB1URzPFK/HnsUe0KVw3+2ylNniJ3qURlMT84UHjFEhwX+KPcYEI+fWpY
+	HKuMY+Ust2dY2wqqa31fyI5fX0jOvurE5/Gih44WlqMywgc6M+BVkp/1jvBTDTB1VWD/ya/qA2A
+	xDVmGDUl1uNUnYd4RwjxLOBUHYue2Hv6sN4j/GQ0Ib0+oXu2AqMORIOVPlKURODsJy+NqeJYsvc
+	UHlAOpbpys0SrCa2Rgb8rXPS1iSs3uYr1eY3fi1+dxtidpWBnDB3ZSllHybVnXw=
+X-Google-Smtp-Source: AGHT+IGri81tUaY4oEPMDFBUBSTE06hP6AeMH0PFD71DE1XCAFR5XnVVmfT9+56UOC1NwRJLmcI+KA==
+X-Received: by 2002:a05:622a:98d:b0:48f:5d4f:8e86 with SMTP id d75a77b69052e-494ae4ac4b0mr30273961cf.50.1747355243930;
+        Thu, 15 May 2025 17:27:23 -0700 (PDT)
+Received: from localhost.localdomain ([216.237.233.165])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-494ae3cef1fsm4563991cf.9.2025.05.15.17.27.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 15 May 2025 17:27:22 -0700 (PDT)
+From: John Clark <inindev@gmail.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>
+Cc: Quentin Schulz <quentin.schulz@cherry.de>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	John Clark <inindev@gmail.com>
+Subject: [PATCH v5 0/3] [PATCH v5 0/3] Add device tree support for Luckfox Omni3576 and Core3576
+Date: Thu, 15 May 2025 20:27:10 -0400
+Message-Id: <20250516002713.145026-1-inindev@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <cover.1747264138.git.ackerleytng@google.com>
-X-Mailer: git-send-email 2.49.0.1101.gccaa498523-goog
-Message-ID: <a2fb493750ee445f8cc779d9fdf18329ec65812f.1747264138.git.ackerleytng@google.com>
-Subject: [RFC PATCH v2 51/51] KVM: selftests: Test guest_memfd for accuracy of st_blocks
-From: Ackerley Tng <ackerleytng@google.com>
-To: kvm@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	x86@kernel.org, linux-fsdevel@vger.kernel.org
-Cc: ackerleytng@google.com, aik@amd.com, ajones@ventanamicro.com, 
-	akpm@linux-foundation.org, amoorthy@google.com, anthony.yznaga@oracle.com, 
-	anup@brainfault.org, aou@eecs.berkeley.edu, bfoster@redhat.com, 
-	binbin.wu@linux.intel.com, brauner@kernel.org, catalin.marinas@arm.com, 
-	chao.p.peng@intel.com, chenhuacai@kernel.org, dave.hansen@intel.com, 
-	david@redhat.com, dmatlack@google.com, dwmw@amazon.co.uk, 
-	erdemaktas@google.com, fan.du@intel.com, fvdl@google.com, graf@amazon.com, 
-	haibo1.xu@intel.com, hch@infradead.org, hughd@google.com, ira.weiny@intel.com, 
-	isaku.yamahata@intel.com, jack@suse.cz, james.morse@arm.com, 
-	jarkko@kernel.org, jgg@ziepe.ca, jgowans@amazon.com, jhubbard@nvidia.com, 
-	jroedel@suse.de, jthoughton@google.com, jun.miao@intel.com, 
-	kai.huang@intel.com, keirf@google.com, kent.overstreet@linux.dev, 
-	kirill.shutemov@intel.com, liam.merwick@oracle.com, 
-	maciej.wieczor-retman@intel.com, mail@maciej.szmigiero.name, maz@kernel.org, 
-	mic@digikod.net, michael.roth@amd.com, mpe@ellerman.id.au, 
-	muchun.song@linux.dev, nikunj@amd.com, nsaenz@amazon.es, 
-	oliver.upton@linux.dev, palmer@dabbelt.com, pankaj.gupta@amd.com, 
-	paul.walmsley@sifive.com, pbonzini@redhat.com, pdurrant@amazon.co.uk, 
-	peterx@redhat.com, pgonda@google.com, pvorel@suse.cz, qperret@google.com, 
-	quic_cvanscha@quicinc.com, quic_eberman@quicinc.com, 
-	quic_mnalajal@quicinc.com, quic_pderrin@quicinc.com, quic_pheragu@quicinc.com, 
-	quic_svaddagi@quicinc.com, quic_tsoni@quicinc.com, richard.weiyang@gmail.com, 
-	rick.p.edgecombe@intel.com, rientjes@google.com, roypat@amazon.co.uk, 
-	rppt@kernel.org, seanjc@google.com, shuah@kernel.org, steven.price@arm.com, 
-	steven.sistare@oracle.com, suzuki.poulose@arm.com, tabba@google.com, 
-	thomas.lendacky@amd.com, vannapurve@google.com, vbabka@suse.cz, 
-	viro@zeniv.linux.org.uk, vkuznets@redhat.com, wei.w.wang@intel.com, 
-	will@kernel.org, willy@infradead.org, xiaoyao.li@intel.com, 
-	yan.y.zhao@intel.com, yilun.xu@intel.com, yuzenghui@huawei.com, 
-	zhiquan1.li@intel.com
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Test that st_blocks in struct stat (inode->i_blocks) is updated.
+Subject: [PATCH v5 0/3] Add device tree support for Luckfox Omni3576 and Core3576
 
-Change-Id: I67d814f130671b6b64b575e6a25fd17b1994c640
-Signed-off-by: Ackerley Tng <ackerleytng@google.com>
+This series adds device tree support for the Luckfox Omni3576 Carrier
+Board with the Core3576 Module, powered by the Rockchip RK3576 SoC
+(four Cortex-A72 cores, four Cortex-A53 cores, Mali-G52 MC3 GPU). It
+enables essential functionality for booting Linux and basic connectivity,
+with plans for future support of peripherals like WiFi, MIPI-DSI, HDMI,
+and Ethernet.
+
+Tested features (on Linux 6.15-rc4):
+ - UART: Serial console operational
+ - SD card: Mounts and reads/writes successfully
+ - PCIe: NVMe SSD detected, mounted, and fully functional
+ - USB 2.0: Host ports operational
+ - RTC: Timekeeping and wake-up tested
+ - LED: Heartbeat trigger functional
+ - eMMC: Enabled in device tree, not populated on tested hardware
+
+The series includes three patches:
+ 1. dt-bindings: vendor-prefixes: Add Luckfox vendor prefix
+ 2. dt-bindings: arm: rockchip: Add Luckfox Omni3576 and Core3576 bindings
+ 3. arm64: dts: rockchip: Add Luckfox Omni3576 board support
+
+The device tree is covered by the existing ROCKCHIP ARCHITECTURE entry in
+MAINTAINERS. I am aware of ongoing RK3576 upstreaming efforts (e.g., by
+Collabora) and welcome feedback or collaboration to align with mainline
+driver development.
+
+Changes in v5:
+ - Patch 1: Moved luckfox vendor prefix to correct alphabetical position
+   between lsi and lunzn (Quentin Schulz, v4).
+   Acked-by: Conor Dooley <conor.dooley@microchip.com>
+   Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+ - Patch 2: Unchanged from v4.
+   Reviewed-by: Quentin Schulz <quentin.schulz@cherry.de>
+   Acked-by: Rob Herring (Arm) <robh@kernel.org>
+ - Patch 3:
+   - Updated copyright to include John Clark (Quentin Schulz, v4).
+   - Reordered top-level nodes alphabetically per DTS coding style
+     (Quentin Schulz, v4).
+   - Reordered CPU node overrides to match alphabetical order (cpu_bX
+     before cpu_lX) (Quentin Schulz, v4).
+   - Moved mmc0 alias to rk3576-luckfox-core3576.dtsi for module-level
+     eMMC; kept mmc1 in rk3576-luckfox-omni3576.dts for board-specific
+     SD (Quentin Schulz, v4).
+   - Added regulator-state-mem to top-level regulator-fixed nodes with
+     blank lines, omitting deprecated regulator-suspend-microvolt; PMIC
+     regulators retain regulator-suspend-microvolt to preserve Luckfox
+     SDK behavior, with a future patch planned after RK806 driver
+     validation (Quentin Schulz, v4).
+   - Removed redundant max-frequency from &sdmmc, as it matches
+     rk3576.dtsi (Quentin Schulz, v4).
+   - Added vmmc-supply and vqmmc-supply to &sdhci to support eMMC (Jonas
+     Karlman, v2).
+   - Confirmed blank line style compliance across DTSI and DTS (Jonas
+     Karlman, v2).
+
+Changes in v4:
+ - Patch 1: Unchanged, Acked-by: Conor Dooley.
+ - Patch 2: Fixed binding for Omni3576 to use correct enum syntax (enum:
+   [luckfox,omni3576]), added luckfox,core3576 to compatible string
+   (Heiko Stuebner, v3).
+ - Patch 3: Updated compatible string in rk3576-luckfox-omni3576.dts to
+   match revised binding.
+
+Changes in v3:
+ - Split device tree into rk3576-luckfox-core3576.dtsi and
+   rk3576-luckfox-omni3576.dts for modularity (Jonas Karlman, v2).
+ - Patch 3:
+   - Added pinctrl for green LED GPIO (Jonas Karlman, v2).
+   - Reordered regulator node properties for consistency (Jonas
+     Karlman, v2).
+   - Used gpios instead of deprecated gpio in regulators (Jonas
+     Karlman, v2).
+   - Removed vendor-specific pmic-power-off pinctrl and pwrkey from
+     RK806 PMIC (Jonas Karlman, v2).
+   - Removed no-mmc from &sdmmc to enable MMC support (Jonas Karlman, v2).
+   - Removed Ethernet nodes (gmac0/gmac1) due to unreliable PHY driver
+     (Andrew Lunn, v2).
+   - Addressed DTB warnings within scope (Rob Herring, v2).
+   - Added RNG node per Nicolas Frattaroli’s patch (v3).
+
+Changes in v2:
+ - Enabled HDMI node, untested due to driver issues (Heiko Stuebner,
+   Nicolas Frattaroli, v1).
+ - Enabled Ethernet 1 node, removed in v3 (Heiko Stuebner, v1).
+ - Clarified eMMC enabled but unpopulated (Heiko Stuebner, v1).
+ - Patch 1: Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+ - Patch 2: Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+Signed-off-by: John Clark <inindev@gmail.com>
 ---
- .../testing/selftests/kvm/guest_memfd_test.c  | 55 ++++++++++++++++---
- 1 file changed, 46 insertions(+), 9 deletions(-)
+John Clark (3):
+ dt-bindings: vendor-prefixes: Add luckfox prefix
+ dt-bindings: arm: rockchip: Add Luckfox Omni3576 and Core3576 bindings
+ arm64: dts: rockchip: Add Luckfox Omni3576 Board support
 
-diff --git a/tools/testing/selftests/kvm/guest_memfd_test.c b/tools/testing/selftests/kvm/guest_memfd_test.c
-index c8acccaa9e1d..f51cd876d7dc 100644
---- a/tools/testing/selftests/kvm/guest_memfd_test.c
-+++ b/tools/testing/selftests/kvm/guest_memfd_test.c
-@@ -142,41 +142,78 @@ static void test_file_size(int fd, size_t page_size, size_t total_size)
- 	TEST_ASSERT_EQ(sb.st_blksize, page_size);
- }
- 
--static void test_fallocate(int fd, size_t page_size, size_t total_size)
-+static void assert_st_blocks_equals_size(int fd, size_t page_size, size_t expected_size)
- {
-+	struct stat sb;
-+	int ret;
-+
-+	/* TODO: st_blocks is not updated for 4K-page guest_memfd. */
-+	if (page_size == getpagesize())
-+		return;
-+
-+	ret = fstat(fd, &sb);
-+	TEST_ASSERT(!ret, "fstat should succeed");
-+	TEST_ASSERT_EQ(sb.st_blocks, expected_size / 512);
-+}
-+
-+static void test_fallocate(int fd, size_t test_page_size, size_t total_size)
-+{
-+	size_t page_size;
- 	int ret;
- 
- 	ret = fallocate(fd, FALLOC_FL_KEEP_SIZE, 0, total_size);
- 	TEST_ASSERT(!ret, "fallocate with aligned offset and size should succeed");
-+	assert_st_blocks_equals_size(fd, test_page_size, total_size);
- 
- 	ret = fallocate(fd, FALLOC_FL_KEEP_SIZE | FALLOC_FL_PUNCH_HOLE,
--			page_size - 1, page_size);
-+			test_page_size - 1, test_page_size);
- 	TEST_ASSERT(ret, "fallocate with unaligned offset should fail");
-+	assert_st_blocks_equals_size(fd, test_page_size, total_size);
- 
--	ret = fallocate(fd, FALLOC_FL_KEEP_SIZE, total_size, page_size);
-+	ret = fallocate(fd, FALLOC_FL_KEEP_SIZE, total_size, test_page_size);
- 	TEST_ASSERT(ret, "fallocate beginning at total_size should fail");
-+	assert_st_blocks_equals_size(fd, test_page_size, total_size);
- 
--	ret = fallocate(fd, FALLOC_FL_KEEP_SIZE, total_size + page_size, page_size);
-+	ret = fallocate(fd, FALLOC_FL_KEEP_SIZE, total_size + test_page_size, test_page_size);
- 	TEST_ASSERT(ret, "fallocate beginning after total_size should fail");
-+	assert_st_blocks_equals_size(fd, test_page_size, total_size);
- 
- 	ret = fallocate(fd, FALLOC_FL_KEEP_SIZE | FALLOC_FL_PUNCH_HOLE,
--			total_size, page_size);
-+			total_size, test_page_size);
- 	TEST_ASSERT(!ret, "fallocate(PUNCH_HOLE) at total_size should succeed");
-+	assert_st_blocks_equals_size(fd, test_page_size, total_size);
- 
- 	ret = fallocate(fd, FALLOC_FL_KEEP_SIZE | FALLOC_FL_PUNCH_HOLE,
--			total_size + page_size, page_size);
-+			total_size + test_page_size, test_page_size);
- 	TEST_ASSERT(!ret, "fallocate(PUNCH_HOLE) after total_size should succeed");
-+	assert_st_blocks_equals_size(fd, test_page_size, total_size);
- 
- 	ret = fallocate(fd, FALLOC_FL_KEEP_SIZE | FALLOC_FL_PUNCH_HOLE,
--			page_size, page_size - 1);
-+			test_page_size, test_page_size - 1);
- 	TEST_ASSERT(ret, "fallocate with unaligned size should fail");
-+	assert_st_blocks_equals_size(fd, test_page_size, total_size);
- 
- 	ret = fallocate(fd, FALLOC_FL_KEEP_SIZE | FALLOC_FL_PUNCH_HOLE,
--			page_size, page_size);
-+			test_page_size, test_page_size);
- 	TEST_ASSERT(!ret, "fallocate(PUNCH_HOLE) with aligned offset and size should succeed");
-+	assert_st_blocks_equals_size(fd, test_page_size, total_size - test_page_size);
- 
--	ret = fallocate(fd, FALLOC_FL_KEEP_SIZE, page_size, page_size);
-+	ret = fallocate(fd, FALLOC_FL_KEEP_SIZE | FALLOC_FL_PUNCH_HOLE,
-+			test_page_size, test_page_size);
-+	TEST_ASSERT(!ret, "fallocate(PUNCH_HOLE) in a hole should succeed");
-+	assert_st_blocks_equals_size(fd, test_page_size, total_size - test_page_size);
-+
-+	ret = fallocate(fd, FALLOC_FL_KEEP_SIZE, test_page_size, test_page_size);
- 	TEST_ASSERT(!ret, "fallocate to restore punched hole should succeed");
-+	assert_st_blocks_equals_size(fd, test_page_size, total_size);
-+
-+	page_size = getpagesize();
-+	if (test_page_size == page_size) {
-+		ret = fallocate(fd, FALLOC_FL_KEEP_SIZE | FALLOC_FL_PUNCH_HOLE,
-+				test_page_size + page_size, page_size);
-+		TEST_ASSERT(!ret, "fallocate(PUNCH_HOLE) of a subfolio should succeed");
-+		assert_st_blocks_equals_size(fd, test_page_size, total_size);
-+	}
- }
- 
- static void test_invalid_punch_hole(int fd, size_t page_size, size_t total_size)
+ .../devicetree/bindings/arm/rockchip.yaml     |   7 +
+ .../devicetree/bindings/vendor-prefixes.yaml  |   2 +
+ arch/arm64/boot/dts/rockchip/Makefile         |   1 +
+ .../dts/rockchip/rk3576-luckfox-core3576.dtsi | 748 ++++++++++++++++++
+ .../dts/rockchip/rk3576-luckfox-omni3576.dts  |  50 ++
+ 5 files changed, 808 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/rockchip/rk3576-luckfox-core3576.dtsi
+ create mode 100644 arch/arm64/boot/dts/rockchip/rk3576-luckfox-omni3576.dts
+
 -- 
-2.49.0.1045.g170613ef41-goog
-
+2.39.5
 
