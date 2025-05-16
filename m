@@ -1,200 +1,131 @@
-Return-Path: <linux-kernel+bounces-651000-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-651002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74EFAAB98C3
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 11:27:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BBEFAB98C7
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 11:28:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 128041BA8762
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 09:28:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C511501FF8
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 09:28:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B609230BDC;
-	Fri, 16 May 2025 09:27:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 473962309AA;
+	Fri, 16 May 2025 09:28:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ghVqXed4"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="MTDI9d0Y";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="LMLui3hf"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BF8A1F4CB7;
-	Fri, 16 May 2025 09:27:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C4F117B425;
+	Fri, 16 May 2025 09:28:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747387658; cv=none; b=PSp/VRxSf24yWOG+/Z91GSMsxctViU1TY2h8FwjxFW2QMDF/PTo5x734O7W06dChf0S7oOXojTS822rl6JiIhuLIt6H5PhNaAtTFqo9HvpRoCMwmXDOshQxMMu+lK5jJFrlnuk6lMFUbssBIWv+f71XVaJ7jbeOOIkcI5Ex2Vf4=
+	t=1747387689; cv=none; b=mOsTS9tpg7jwzMiFBINNHb8sNX6f8vXcQDGVG+qTpmSa+1NuXzNuwGgazg4XJ6+yHPPBXFy1UMxysyiXoU/XF7TW/Qf3dCU6MZNRgUc4u4N6yalwd9vQLDr664PtKtRVjsBaR/0JvY0JplUXqlydJMfRmxTWG7n09JV7IvYXIJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747387658; c=relaxed/simple;
-	bh=7sCtWjGf9D06Cj3oOh64Vch8nFlmHXurl2sy4zalXj4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Su/GPVjf3oKeH37wZz4N1pPS1eg+wl/zaPmVnK1hYr5dZ3/6/oq+zurFKf/D90HrI+15kZWSQh5gthwRBat9gHXlL5591Yp0801hs+Y+AAKeEm4DsZV/1RRq2wel/KI2eTVD8RnylLZao2sAiOInvSY1ZvPf0y8oClaLvkEjy+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ghVqXed4; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-74294fa4bb5so2651099b3a.1;
-        Fri, 16 May 2025 02:27:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747387655; x=1747992455; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bdfMuiy3XMb+qdaWg+FGaZyg6nxjISiUPUAWLtCvrm8=;
-        b=ghVqXed4+jtYL0GMwoHSaUWxILK8TI8eBfPtSJIaCrO/oJ1kV1+MMCYXHi9RRSUpcC
-         OYTB2apCc7RuY94CH8H3y4zDYfMx4MpU7O4HlIFXvPvpegj2AJL1V25XlSFzsy9TvXCH
-         1Xj0IX3wsJT73KLxzzbfIbvEWEcd5i7lqqOnSir7vQX9vgCaC7CK9ogmGrRfhun/9HNH
-         4DV5Gy46PUq+evDUYdowdsBdcVp1l3p6H8BksD7sRh47E6Q8n92LyrbByzJgP4z1/7Ac
-         AglJV1nMZGSPFURklHQGdvUyoED0Z8Hrcc9IirYPnSFVIDVDCRMiPGZgkgBBA5OyPWqi
-         ZHKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747387655; x=1747992455;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bdfMuiy3XMb+qdaWg+FGaZyg6nxjISiUPUAWLtCvrm8=;
-        b=wYqbPZydwTtOaRyp7ypGuqH97g18rugUyr9MZbY4UVEvx4dIWQLKN+zQNw+wcDSize
-         /tWrYLZqLAo5qToLqkmt77FC2zFX9JI9wKHf1UW/kx8pnD0jGr14EYIZh5Y+w8m4iUw2
-         eEBvQUOzLrepr6VhNrOGIXh8ebTuMZZgRux+6C8xT8YhcbtRZOGtX/KSFcR3Ec7vOJFm
-         dcj+ocfszCk/4BsJz0Fa8SKLK8uraRBUxqNw9OX3ZWxKnZs6Qeg4yiOK5DDlb3iuRT8I
-         3y85xzRjXMt7bwtZ3ZyrOiCBTs2FZaLdUrEPSeY0Bob0DqHQPdYhP4q0qhVj8ARknz1Z
-         4Qow==
-X-Forwarded-Encrypted: i=1; AJvYcCVQWrPm2RdIsQwqFk9FZNY4nJ2KyzxY5+2ttaU/L1c1GZsKi5pCSvfXpoe33+tGMlXX1BwlbN0gLqTNEdU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzMJ1QvLSobERQQUL+Dsf5hE7Dk+ljPlT9BjRz6RT8kdfyQWspW
-	6Nd8dFGXr4AfAo0H7y2DKddPXu7cE1NkO7rC/xznOsutCXzC8IU5lL+nSSQOJGeA
-X-Gm-Gg: ASbGncvVsYeDvPnQj+/ag8LhjQnUZTrqqwlGzjXt2SWHZ/ETwifA6t9S4YYuob+ncEj
-	7osnpBB57YClaRZRKlqzEI+ka3OkolT8GD3DF1GCl+ngPc4U5I4DxRordYKgJKpvB3RxxOWft5/
-	RGNOPW6MQ0bwKc+7O9XOlK9h3Uzkp+CGuZRy1dpF1Y4OGKRLNUsDeUeHxVaL6JUHeTuW2O9/jYI
-	cNtS9uZ5oHARb++JjdEj+bu94pcq/RyGgPej9s7Mujx//TTAC+uOplg+EGYFVF0k41bWJMNfk3M
-	0EVnGkaR5MMyTgaDsSor3BoIexjUVXGXjY0pF9bkdr31dMh3zNZhIEkHUUU=
-X-Google-Smtp-Source: AGHT+IHoQj4+b6p05o+r0PSdapSWdiaWzqLgW7wsyD6llGJaPVTAAqZ0D69xfQVM6dlYOjrX01SaPQ==
-X-Received: by 2002:aa7:8e8a:0:b0:742:b3a6:db09 with SMTP id d2e1a72fcca58-742b3a6dbdbmr50914b3a.16.1747387655473;
-        Fri, 16 May 2025 02:27:35 -0700 (PDT)
-Received: from victorshih.. ([2402:7500:577:397a:896b:66ce:fdf5:6801])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-742a98a229esm1097876b3a.161.2025.05.16.02.27.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 May 2025 02:27:35 -0700 (PDT)
-From: Victor Shih <victorshihgli@gmail.com>
-To: ulf.hansson@linaro.org,
-	adrian.hunter@intel.com
-Cc: linux-mmc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	benchuanggli@gmail.com,
-	HL.Liu@genesyslogic.com.tw,
-	Greg.tu@genesyslogic.com.tw,
-	Victor Shih <victorshihgli@gmail.com>,
-	Ben Chuang <ben.chuang@genesyslogic.com.tw>,
-	Victor Shih <victor.shih@genesyslogic.com.tw>
-Subject: [PATCH V1 2/2] mmc: sdhci-uhs2: Adjust some error messages and register dump for SD UHS-II card
-Date: Fri, 16 May 2025 17:27:16 +0800
-Message-ID: <20250516092716.3918-3-victorshihgli@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250516092716.3918-1-victorshihgli@gmail.com>
-References: <20250516092716.3918-1-victorshihgli@gmail.com>
+	s=arc-20240116; t=1747387689; c=relaxed/simple;
+	bh=dlDha9z2voc3K7ZndzuXEpZISD4Js5B+4bqJb6RluJk=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=rS7xTA3Ar+EJPRJFlIh76fnGPKOm6rhtKJZYksvqZq9QQ4rWU/rQMPgycfG/Mh9L7ng6c7shN+xyfMswisExa2JqUaG2PzXS/Nn2HKUesoihPdvZ1eHb4N5kMoNmPsnL44G3L2udeY5M/aYUWdbdaLYhCt48dzV9OeEeQv7wlIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=MTDI9d0Y; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=LMLui3hf; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 16 May 2025 09:28:05 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1747387686;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GNq/58C7E9N6itWByJdcWr2Jvl1DPdIstlbH/Sr6pkg=;
+	b=MTDI9d0Y7t2KbNfzLS34Rr9YLkerz3fWKux0rJTAudwq8Wdw7ztDh/39HDQmRQtADr6ZNw
+	s4BV3g3xdpJ5K5OtR2K2lGK5f+06brIHqCi4BluG8Mg3eq1Uj1vk6xm9YL/bvDJUT5Z9QB
+	3cW1t2MLQKl54gcRLs7d/JtqgrY+Mj5YFuaj10xjTgiyRs8OqxPro6x+zrMrWki/l0jdfk
+	0PrdHY557F19/NgUV4SJC6aJRTXZ6zBJcjDe7yPrGU8zK3+4DOsgxnaJYPnh4hBUOtqe7N
+	ajMglc3kMW9nF2sBPvDD3klteycObGxdoCUoYebVuS/uTNHqxcsnLDrrzpB88A==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1747387686;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GNq/58C7E9N6itWByJdcWr2Jvl1DPdIstlbH/Sr6pkg=;
+	b=LMLui3hfuFH/TR4IXT/ZAn8gOu8qNRSk58PQlrBXtIQvPg/bbvGGNdtE/X0P5v2pGr3asB
+	IUzZ6aVTv1XZ5PCA==
+From: "tip-bot2 for Lukas Bulwahn" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/urgent] x86/mm: Remove duplicated word in warning message
+Cc: Lukas Bulwahn <lukas.bulwahn@redhat.com>, Ingo Molnar <mingo@kernel.org>,
+ Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>,
+ Peter Zijlstra <peterz@infradead.org>, kernel-janitors@vger.kernel.org,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250516090810.556623-1-lukas.bulwahn@redhat.com>
+References: <20250516090810.556623-1-lukas.bulwahn@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Message-ID: <174738768534.406.13532690829248851233.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-From: Victor Shih <victor.shih@genesyslogic.com.tw>
+The following commit has been merged into the x86/urgent branch of tip:
 
-Adjust some error messages to debug mode and register dump to dynamic
-debug mode to avoid causing misunderstanding it is an error.
+Commit-ID:     03680913744de17fa49e62b1d8f71bab42b0b721
+Gitweb:        https://git.kernel.org/tip/03680913744de17fa49e62b1d8f71bab42b0b721
+Author:        Lukas Bulwahn <lukas.bulwahn@redhat.com>
+AuthorDate:    Fri, 16 May 2025 11:08:10 +02:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Fri, 16 May 2025 11:16:52 +02:00
 
-Signed-off-by: Ben Chuang <ben.chuang@genesyslogic.com.tw>
-Signed-off-by: Victor Shih <victor.shih@genesyslogic.com.tw>
+x86/mm: Remove duplicated word in warning message
+
+Commit bbeb69ce3013 ("x86/mm: Remove CONFIG_HIGHMEM64G support") introduces
+a new warning message MSG_HIGHMEM_TRIMMED, which accidentally introduces a
+duplicated 'for for' in the warning message.
+
+Remove this duplicated word.
+
+This was noticed while reviewing for references to obsolete kernel build
+config options.
+
+Fixes: bbeb69ce3013 ("x86/mm: Remove CONFIG_HIGHMEM64G support")
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: kernel-janitors@vger.kernel.org
+Link: https://lore.kernel.org/r/20250516090810.556623-1-lukas.bulwahn@redhat.com
 ---
- drivers/mmc/host/sdhci-uhs2.c | 18 +++++++++---------
- drivers/mmc/host/sdhci.h      | 16 ++++++++++++++++
- 2 files changed, 25 insertions(+), 9 deletions(-)
+ arch/x86/mm/init_32.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/mmc/host/sdhci-uhs2.c b/drivers/mmc/host/sdhci-uhs2.c
-index c53b64d50c0d..9ff867aee985 100644
---- a/drivers/mmc/host/sdhci-uhs2.c
-+++ b/drivers/mmc/host/sdhci-uhs2.c
-@@ -99,8 +99,8 @@ void sdhci_uhs2_reset(struct sdhci_host *host, u16 mask)
- 	/* hw clears the bit when it's done */
- 	if (read_poll_timeout_atomic(sdhci_readw, val, !(val & mask), 10,
- 				     UHS2_RESET_TIMEOUT_100MS, true, host, SDHCI_UHS2_SW_RESET)) {
--		pr_warn("%s: %s: Reset 0x%x never completed. %s: clean reset bit.\n", __func__,
--			mmc_hostname(host->mmc), (int)mask, mmc_hostname(host->mmc));
-+		DBG("%s: %s: Reset 0x%x never completed. %s: clean reset bit.\n", __func__,
-+		    mmc_hostname(host->mmc), (int)mask, mmc_hostname(host->mmc));
- 		sdhci_writeb(host, 0, SDHCI_UHS2_SW_RESET);
- 		return;
- 	}
-@@ -335,8 +335,8 @@ static int sdhci_uhs2_interface_detect(struct sdhci_host *host)
- 	if (read_poll_timeout(sdhci_readl, val, (val & SDHCI_UHS2_IF_DETECT),
- 			      100, UHS2_INTERFACE_DETECT_TIMEOUT_100MS, true,
- 			      host, SDHCI_PRESENT_STATE)) {
--		pr_warn("%s: not detect UHS2 interface in 100ms.\n", mmc_hostname(host->mmc));
--		sdhci_dumpregs(host);
-+		DBG("%s: not detect UHS2 interface in 100ms.\n", mmc_hostname(host->mmc));
-+		sdhci_dbg_dumpregs(host, "UHS2 interface detect timeout in 100ms");
- 		return -EIO;
- 	}
+diff --git a/arch/x86/mm/init_32.c b/arch/x86/mm/init_32.c
+index ad662cc..148eba5 100644
+--- a/arch/x86/mm/init_32.c
++++ b/arch/x86/mm/init_32.c
+@@ -565,7 +565,7 @@ static void __init lowmem_pfn_init(void)
+ 	"only %luMB highmem pages available, ignoring highmem size of %luMB!\n"
  
-@@ -345,8 +345,8 @@ static int sdhci_uhs2_interface_detect(struct sdhci_host *host)
- 
- 	if (read_poll_timeout(sdhci_readl, val, (val & SDHCI_UHS2_LANE_SYNC),
- 			      100, UHS2_LANE_SYNC_TIMEOUT_150MS, true, host, SDHCI_PRESENT_STATE)) {
--		pr_warn("%s: UHS2 Lane sync fail in 150ms.\n", mmc_hostname(host->mmc));
--		sdhci_dumpregs(host);
-+		DBG("%s: UHS2 Lane sync fail in 150ms.\n", mmc_hostname(host->mmc));
-+		sdhci_dbg_dumpregs(host, "UHS2 Lane sync fail in 150ms");
- 		return -EIO;
- 	}
- 
-@@ -417,12 +417,12 @@ static int sdhci_uhs2_do_detect_init(struct mmc_host *mmc)
- 		host->ops->uhs2_pre_detect_init(host);
- 
- 	if (sdhci_uhs2_interface_detect(host)) {
--		pr_warn("%s: cannot detect UHS2 interface.\n", mmc_hostname(host->mmc));
-+		DBG("%s: cannot detect UHS2 interface.\n", mmc_hostname(host->mmc));
- 		return -EIO;
- 	}
- 
- 	if (sdhci_uhs2_init(host)) {
--		pr_warn("%s: UHS2 init fail.\n", mmc_hostname(host->mmc));
-+		DBG("%s: UHS2 init fail.\n", mmc_hostname(host->mmc));
- 		return -EIO;
- 	}
- 
-@@ -504,7 +504,7 @@ static int sdhci_uhs2_check_dormant(struct sdhci_host *host)
- 	if (read_poll_timeout(sdhci_readl, val, (val & SDHCI_UHS2_IN_DORMANT_STATE),
- 			      100, UHS2_CHECK_DORMANT_TIMEOUT_100MS, true, host,
- 			      SDHCI_PRESENT_STATE)) {
--		pr_warn("%s: UHS2 IN_DORMANT fail in 100ms.\n", mmc_hostname(host->mmc));
-+		DBG("%s: UHS2 IN_DORMANT fail in 100ms.\n", mmc_hostname(host->mmc));
- 		sdhci_dumpregs(host);
- 		return -EIO;
- 	}
-diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
-index cd0e35a80542..2c28240e6003 100644
---- a/drivers/mmc/host/sdhci.h
-+++ b/drivers/mmc/host/sdhci.h
-@@ -898,4 +898,20 @@ void sdhci_switch_external_dma(struct sdhci_host *host, bool en);
- void sdhci_set_data_timeout_irq(struct sdhci_host *host, bool enable);
- void __sdhci_set_timeout(struct sdhci_host *host, struct mmc_command *cmd);
- 
-+#if defined(CONFIG_DYNAMIC_DEBUG) || \
-+	(defined(CONFIG_DYNAMIC_DEBUG_CORE) && defined(DYNAMIC_DEBUG_MODULE))
-+#define SDHCI_DBG_ANYWAY 0
-+#elif defined(DEBUG)
-+#define SDHCI_DBG_ANYWAY 1
-+#else
-+#define SDHCI_DBG_ANYWAY 0
-+#endif
-+
-+#define sdhci_dbg_dumpregs(host, fmt)					\
-+do {									\
-+	DEFINE_DYNAMIC_DEBUG_METADATA(descriptor, fmt);			\
-+	if (DYNAMIC_DEBUG_BRANCH(descriptor) ||	SDHCI_DBG_ANYWAY)	\
-+		sdhci_dumpregs(host);					\
-+} while (0)
-+
- #endif /* __SDHCI_HW_H */
--- 
-2.43.0
-
+ #define MSG_HIGHMEM_TRIMMED \
+-	"Warning: only 4GB will be used. Support for for CONFIG_HIGHMEM64G was removed!\n"
++	"Warning: only 4GB will be used. Support for CONFIG_HIGHMEM64G was removed!\n"
+ /*
+  * We have more RAM than fits into lowmem - we try to put it into
+  * highmem, also taking the highmem=x boot parameter into account:
 
