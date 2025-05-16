@@ -1,115 +1,101 @@
-Return-Path: <linux-kernel+bounces-651540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-651550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE262AB9FCD
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 17:25:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA784AB9FF7
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 17:35:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B04AE1B64F55
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 15:26:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02C8A1678FC
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 15:35:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C3A51B0F23;
-	Fri, 16 May 2025 15:25:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49C8D1C4A10;
+	Fri, 16 May 2025 15:35:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TVRX/Cgm"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="g85XleWb"
+Received: from smtp.smtpout.orange.fr (smtp-23.smtpout.orange.fr [80.12.242.23])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E75A5E55B
-	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 15:25:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD0751AF0AE;
+	Fri, 16 May 2025 15:35:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747409149; cv=none; b=MoIh2ZNyZGG6j+nak9aEV06AiKjUnImdvWLR/TD4JlnbfuZBJc1jVTnCLdR61snpm7cuSyKnOmU3wuLES3gXQxX7m2r/0PiDNRMQsbOYKAaraaCL24zp0dXIZWLSnbofTNRxq1AWVejPct4LnKRpDSIamENHy4uuftZ1Orr/qec=
+	t=1747409726; cv=none; b=pzoEV7MelSVdqUeIJhMImeC0ju0T9czmnpEs7oOQNYO5qdeyfOvcSvt1v13Zjh943LxSO7/9swE4iixmCARqxbvk6BJqGMlecpNzMy/rCWqxvEwMfe6hhHQdEg2p7vuMCH7A0NJcIHqgqcVpzQ5zAGxU9+tLI0dAEsmQVYGbLPM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747409149; c=relaxed/simple;
-	bh=T4BIEAhDTqZRM5mH//Q104xKr6Ry1/Eg1Nn09EvX+g0=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=QbXXrLhIsc9Ur+N+5ySjj+aK4LnPZZrzabiMKQ4HYa/AAEdcyBFv1oHHLMitWy+3XShtqk83iJvhRN/oJvU0itPFd12Cpsha7Ug3JjMa+c4J0TK+WfwNGTG+0WmyCJPeFSzXGCgxNP4xhsdLzHfqqKIOfHVqLtXgKlLfCQL5bus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TVRX/Cgm; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-ac2bb7ca40bso369802166b.3
-        for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 08:25:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747409146; x=1748013946; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=l5LnrWpUjzC81baVRdodmHMAvpPilsMBmZXNYI9sj7k=;
-        b=TVRX/Cgmc+yYsfcqdJEohwJrVuyzLpUUBYHuTIDmvMrV2phfGJQyh4AjslzaEomtge
-         5HkIV77SfxUOpr+Gi5JwprZ1RkmowCoTb4LVVpO++nJtpoh0qU9rSkwQdm4oH3QlUNC6
-         sUa7wKJmO9fPd4jFc6jQdwx4RlJzRZUbOCIhVta8eYzPxjA1ZeqSB7uMu0uHvQgRu6TG
-         dEPHFHM5Do45SbmCFGCvqB8oExrjaDGoOkqIuqRaVHhHdnfgLnKgv+sfcFmLsrLGrPaN
-         hoShbyUvNIWdJ/SU6gUEJ5Fb5eOB7UUXvtuLBxP+xyzkTn5rjmiUccDm3dTNQ1ezOaDO
-         cVUQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747409146; x=1748013946;
-        h=content-disposition:mime-version:message-id:subject:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=l5LnrWpUjzC81baVRdodmHMAvpPilsMBmZXNYI9sj7k=;
-        b=dWzgLuoRP98SQAhMcU8skV5DDEnBRlHkfI8rEpTQwp0ayWooRUaGz+R5DzR09JvMjX
-         +xPTkmS1nELpq9R9qqsqMIRMT1A1ma2bCJu+l4mpn4UW231IJPstGQswoP9KoeFr8Tyj
-         +vaj7BYaNwCAMs4/kI0m9z31m0OsukmkBueSyWSpbxhTJhIn4EgdDUbmv1XVnHLQ+t4Q
-         DsGLrXgNK2quYMNnbu81Dw9ksBv2AJlrs6FUCykdSVPiQSL9CachUqzsFVbRyMt+8Orf
-         bdMqkbEq0krMZjBBvSzy0sMwiCyjYLgogRYND1+XfQ1poz9l8uC4Wn8dJQRPh6HwdZ2Z
-         uTPA==
-X-Forwarded-Encrypted: i=1; AJvYcCUBxYL5wg7Ssdf4OwTiHZuH15NAdQ5xA8ctIGF9BzV4cHFNKhNCnhfpypd6ssuhuxXk4z5Y56O13P1bcpE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzqSFZgsRzhRtsGaBeod6xHyohtZboyFjSV4EcwVOAZm8rGU6KQ
-	W1vaiO5lZKNHMDTm0c9UT3s+LojLPTGJEZVRhOWCw9XayzfSyY+n1WAO27Fw4VU+
-X-Gm-Gg: ASbGnctJapcnwpEh0B2ZbEWsr1BhVXoTxlqtOyG8jaF9hv1NlRUZ9X3k5cQ13ISIKK9
-	vHf4sHVN/VVyiyZ6pd5koV6JfUh582M5eUHknY8VRgnkB0830M2fxFZnKF1ABXd5EbqkHYRyj9Y
-	lKv3nAWlsIZTeRnjggAoT8QjOYoEvwOSJPxnfIhKkkMZopDEK4871wJ9NZVEuSdm8R84uLaqGBy
-	mVarkIk8fdaOhQggUrSXwRDzm8h26gnIsh9zbgyY3Vmg7uiSNYpoCGbhVoTcA9KOOM3fZ4dbXXl
-	FpFfy7Wz0Vg/7bdwuwUK1/gnK+AAtEZBLXUt3UKJDh7AFSdSCIznbIbem4DjROgJBiRHOUhx8yw
-	pbGdrXM44LtTNz9UmJ9SqdcfP7lbu2Zj0aCC/
-X-Google-Smtp-Source: AGHT+IGCd4kvqEQL28zuvNOdejv/esSCapeHgE1kimyPHzr1Kjusxal7Vrwxo7ZEzhkXe4YSHMvxTw==
-X-Received: by 2002:a17:906:f5a4:b0:ad2:450b:f8da with SMTP id a640c23a62f3a-ad52d4ca492mr373367866b.19.1747409145958;
-        Fri, 16 May 2025 08:25:45 -0700 (PDT)
-Received: from andreas-VirtualBox (089144209151.atnat0018.highway.a1.net. [89.144.209.151])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad52d04b096sm173795066b.33.2025.05.16.08.25.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 May 2025 08:25:45 -0700 (PDT)
-Date: Fri, 16 May 2025 17:25:44 +0200
-From: Andreas Kleinbichler <andi.kleinbichler@gmail.com>
-To: Dave Penkler <dpenkler@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: [PATCH] staging: gpib: switch to kmalloc(sizeof(*status))
-Message-ID: <aCdY-OgvoTUjcIeF@andreas-VirtualBox>
+	s=arc-20240116; t=1747409726; c=relaxed/simple;
+	bh=/U/nSb15E4ccps1g6g3HFA2uL8MksQyuiZhO0hZgBwY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eUAHet8b89SfW27Pv0DuF+xkdRnp7X+bB/ZON/+X5IY3No/5xvYz6jBAe7EcPSW2349zmA8R1lHDU5dgsx/7xiCgWIg+LsB3Jy43YAjyk9wu5R1J+zzB72BM8BdrKEUgtR6wA15rw0UKQIOtVaLnPAuhjg+O6zzncJNQINwSVqU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=g85XleWb; arc=none smtp.client-ip=80.12.242.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id FwwhurcklA4O7FwwhuuZlc; Fri, 16 May 2025 17:26:03 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1747409163;
+	bh=bjLIqRmqM8iATan66koGC4b1mSQGnkyDHRBUgumcFk4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=g85XleWbkPpB980J6oB9JJ1sNnATa4gE3PW4WVxKrWLck3X2699CiaVuUNLNQe/nm
+	 7FQBgLBu2xl6nVyM/vCGP2U8HF/FjTFhpG+ShHwkfn/OQQnZWYKKA0wp3hLOJA6c8L
+	 FcFQ0JucHXB5I03prTBqbgTfHN1RAzG1GCK5NQZ4xOVtfdvLnDYygK5oIvawoNAyS+
+	 9HWdjAaitCW6bLxVPQqYpUZ+bxR7N1CG7ba0NqLEPDJ5sk54tyHh2WKFj3YYjgbkAY
+	 228r3OPLIwJ9ZbHyl6/V9h+BckjGv/hpFTqAvDLQTc0gzZVaT5SUjANVkzwsMw02YL
+	 UIRTJPQIgc2Jw==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Fri, 16 May 2025 17:26:03 +0200
+X-ME-IP: 90.11.132.44
+Message-ID: <eb0b9f89-8c34-4d30-87bd-c4e631f5b1b7@wanadoo.fr>
+Date: Fri, 16 May 2025 17:25:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] firmware: arm_scmi: Use dev_err_probe() simplify the code
+To: long.yunjian@zte.com.cn, sudeep.holla@arm.com
+Cc: cristian.marussi@arm.com, peng.fan@nxp.com, justin.chen@broadcom.com,
+ florian.fainelli@broadcom.com, arm-scmi@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ fang.yumeng@zte.com.cn, mou.yi@zte.com.cn, ouyang.maochun@zte.com.cn,
+ xu.lifeng1@zte.com.cn
+References: <20250515203855146Sn9x-Uw9Teur35mOjn41C@zte.com.cn>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20250515203855146Sn9x-Uw9Teur35mOjn41C@zte.com.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Fix checkpatch warning:
+Le 15/05/2025 à 14:38, long.yunjian@zte.com.cn a écrit :
+> From: Yumeng Fang <fang.yumeng@zte.com.cn>
+> 
+> In the probe path, dev_err() can be replaced with dev_err_probe()
+> which will check if error code is -EPROBE_DEFER and prints the
+> error name. It also sets the defer probe reason which can be
+> checked later through debugfs.
+> 
+> Signed-off-by: Yumeng Fang <fang.yumeng@zte.com.cn>
+> ---
+>   drivers/firmware/arm_scmi/transports/mailbox.c | 17 +++++++----------
+>   1 file changed, 7 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/firmware/arm_scmi/transports/mailbox.c b/drivers/firmware/arm_scmi/transports/mailbox.c
+> index bd041c99b92b..816e79537935 100644
+> --- a/drivers/firmware/arm_scmi/transports/mailbox.c
+> +++ b/drivers/firmware/arm_scmi/transports/mailbox.c
+> @@ -13,6 +13,7 @@
+>   #include <linux/of_address.h>
+>   #include <linux/platform_device.h>
+>   #include <linux/slab.h>
+> +#include <linux/dev_printk.h>
+> 
 
-Prefer kmalloc(sizeof(*status)...) over
-kmalloc(sizeof(struct gpib_status_byte)...)
+includes are (mostly) alphabetically ordered right-now.
+So, It would be better to keep this logic, IMHO.
 
-Signed-off-by: Andreas Kleinbichler <andi.kleinbichler@gmail.com>
----
- drivers/staging/gpib/common/gpib_os.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/staging/gpib/common/gpib_os.c b/drivers/staging/gpib/common/gpib_os.c
-index d87025aadccc..0678829ad14f 100644
---- a/drivers/staging/gpib/common/gpib_os.c
-+++ b/drivers/staging/gpib/common/gpib_os.c
-@@ -198,7 +198,7 @@ int push_status_byte(struct gpib_board *board, struct gpib_status_queue *device,
- 			return retval;
- 	}
- 
--	status = kmalloc(sizeof(struct gpib_status_byte), GFP_KERNEL);
-+	status = kmalloc(sizeof(*status), GFP_KERNEL);
- 	if (!status)
- 		return -ENOMEM;
- 
--- 
-2.43.0
-
+CJ
 
