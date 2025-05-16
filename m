@@ -1,167 +1,142 @@
-Return-Path: <linux-kernel+bounces-650615-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-650617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA6C6AB93CD
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 03:52:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83801AB93D5
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 03:56:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3BE23B1C35
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 01:51:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78BB23B20F8
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 01:55:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F51822423E;
-	Fri, 16 May 2025 01:51:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6940B225A29;
+	Fri, 16 May 2025 01:56:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="U6Zh2as+"
-Received: from out30-130.freemail.mail.aliyun.com (out30-130.freemail.mail.aliyun.com [115.124.30.130])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dbUFM4le"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8858823AD
-	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 01:51:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47AA623AD;
+	Fri, 16 May 2025 01:56:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747360315; cv=none; b=ag9WbTQSSPu4u6vhj3Uxj789eH6en2XU9/dFbwDHwY5q2rfgyniIqhIK5Xs9lMbXzm3cmdlKq1Nc5/B4FtdKD+I1btYrEawC1hhVBw+l/O0jy9nmoFDcegJpop7Hmd5SkYksTmWyBMympdU3nqq6OaaZCppkp7C5yVG8gshX+TY=
+	t=1747360566; cv=none; b=YLzeLGKEroo6BDuszDLpLDfLbePcQ+GGl88hugqmDdUXeDKFhChPd7pKajhd3hPan8SjSHyT7vf5lOX1c+D/SuiJIqPLdi10aOoJTZx0STN7rRAT7ZRHueYjHjdyqeyCLtumTUiDcWhHr/YoGQx6ItcZHBXBmifqEuRBA66huRI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747360315; c=relaxed/simple;
-	bh=Kvi3+MByPKVUnusiq/0ZjYdwk7l60C4sKMs/kucIHB8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=PIUmMylPaui73HkhjFPGlca/eHhw5HOSTeTqC19vlDFz9fFX4eKUG6APZJuhmQj9jZRXC93TbMwBkvgnphpiP5on6ksNJeDjMTHO6qSZ4dl5MzCATPTg9o1nJeGohc0eQmHZess0gcqBSGeKDi2+VJbBPfolCuizyk3LqgKALTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=U6Zh2as+; arc=none smtp.client-ip=115.124.30.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1747360309; h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
-	bh=ASU4Fxc7OHYIafbgzFRpS/eCwbldDAYcq+8dy81di+w=;
-	b=U6Zh2as+uxElW7kiMbyAWOw3FimN1ImicwIFNGoDMUJpabEvFtrPCWx23G04FVgxvR/Fy4URDmrKNRdBA7M9NXRndK428uJso0HSUsUtyXaabtEdMXrhtHgRoZDSqRjK8TzVNVff4UABMw9rrX1+Xdzo7oGgziwppKtpIPN9P6k=
-Received: from DESKTOP-5N7EMDA(mailfrom:ying.huang@linux.alibaba.com fp:SMTPD_---0WatLZYe_1747360306 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Fri, 16 May 2025 09:51:47 +0800
-From: "Huang, Ying" <ying.huang@linux.alibaba.com>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,  Zi Yan <ziy@nvidia.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,  David Hildenbrand
- <david@redhat.com>,  Alistair Popple <apopple@nvidia.com>,  Matthew Brost
- <matthew.brost@intel.com>,  Joshua Hahn <joshua.hahnjy@gmail.com>,  Rakie
- Kim <rakie.kim@sk.com>,  linux-mm@kvack.org,
-  linux-kernel@vger.kernel.org,  Byungchul Park <byungchul@sk.com>,
-  Gregory Price <gourry@gourry.net>
-Subject: Re: [PATCH] MAINTAINERS: add mm memory policy section
-In-Reply-To: <ed6f0fc2-5608-4eea-b1be-07e3e19be263@lucifer.local> (Lorenzo
-	Stoakes's message of "Thu, 15 May 2025 20:25:17 +0100")
-References: <20250515191358.205684-1-lorenzo.stoakes@oracle.com>
-	<ed6f0fc2-5608-4eea-b1be-07e3e19be263@lucifer.local>
-Date: Fri, 16 May 2025 09:51:46 +0800
-Message-ID: <87bjrtpbkd.fsf@DESKTOP-5N7EMDA>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1747360566; c=relaxed/simple;
+	bh=GL5gVAuFOk2LeSHFbYE6Y3fD6MyXSNNeP8jl2yiUPQw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hKSvjdhQrHJCDvy4VM853lAtGBhvawNukCrAVnQziBcD0LoUqFdOtdbbPU08DQsL1MoLKlvGng2je6ZBj8WIUE3yclUC5flxoic8wcJudv58IQ8NzLznmsZVeHk+kIH6cjrSngm/UJwdnXqyGkPdfzhKb/lly9HF8XuqIJICisI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dbUFM4le; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1747360563; x=1778896563;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=GL5gVAuFOk2LeSHFbYE6Y3fD6MyXSNNeP8jl2yiUPQw=;
+  b=dbUFM4leqw9kdMvY3M2soKQsid0bVYwBliv/6iM0Z2Es3ptPY2tSSy0s
+   SDFJ+NyH4fS7pxg6+xBFJpqXunEBbqJZS6svpIQnrA+1+p0jqatMgElLX
+   CrA702bpdWVYgnWdWyXnbq1T9xWg7CfXNiCqvnfTcQO/Qr9pMWScpxoX1
+   wFGX4S5j9BSQw9VmcYGUkgd3Ewpf8QmeQTtz39E8LEvp5aKXS3P9uT/2e
+   xNtlVfCEet2o/5LSMOtKCZHet9/swmYDjiax2jHuuj+gju06CD6WSK5HR
+   jwPLw3w579RD1n+UcbejyTJDHlDWDH5kY2Ge9KkpMrTgGMK4QIGiuwKdQ
+   g==;
+X-CSE-ConnectionGUID: QU8mtAOhTUGL3CWVgF6ihg==
+X-CSE-MsgGUID: mtyS4GBuQhWmoCz6Xa97xQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11434"; a="49305488"
+X-IronPort-AV: E=Sophos;i="6.15,292,1739865600"; 
+   d="scan'208";a="49305488"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2025 18:56:02 -0700
+X-CSE-ConnectionGUID: Gona/V5USEaobqVLBA23VA==
+X-CSE-MsgGUID: ezm2cH0fT5SpLASKbSf+CQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,292,1739865600"; 
+   d="scan'208";a="138428560"
+Received: from wopr.jf.intel.com ([10.54.75.146])
+  by orviesa006.jf.intel.com with ESMTP; 15 May 2025 18:56:02 -0700
+From: Todd Brandt <todd.e.brandt@intel.com>
+To: platform-driver-x86@vger.kernel.org,
+	ilpo.jarvinen@linux.intel.com,
+	xi.pardee@linux.intel.com
+Cc: linux-kernel@vger.kernel.org,
+	todd.e.brandt@linux.intel.com,
+	todd.e.brandt@intel.com
+Subject: [PATCH] platform/x86/intel/pmc Fix Arrow Lake U/H support to intel_pmc_core driver
+Date: Thu, 15 May 2025 18:56:00 -0700
+Message-Id: <3492e00e6e343d03e28bc58c4365b282e71e786d.1747360275.git.todd.e.brandt@intel.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ascii
+Content-Transfer-Encoding: 8bit
 
-Lorenzo Stoakes <lorenzo.stoakes@oracle.com> writes:
+The ARL requires that the GMA and NPU devices both be in D3Hot in order
+for PC10 and S0iX to be achieved in S2idle. The original ARL-H/U addition
+to the intel_pmc_core driver attempted to do this by switching them to D3
+in the init and resume calls of the intel_pmc_core driver.
 
-> Hi Andrew,
->
-> Could you also apply the attached fix-patch, as I accidentally missed Ying
-> from the reviewer list.
->
-> Thanks, Lorenzo
->
-> On Thu, May 15, 2025 at 08:13:58PM +0100, Lorenzo Stoakes wrote:
->> As part of the ongoing efforts to sub-divide memory management
->> maintainership and reviewership, establish a section for memory policy and
->> migration and add appropriate maintainers and reviewers.
->>
->> Reviewed-by: Rakie Kim <rakie.kim@sk.com>
->> Acked-by: Matthew Brost <matthew.brost@intel.com>
->> Reviewed-by: Joshua Hahn <joshua.hahnjy@gmail.com>
->> Acked-by: David Hildenbrand <david@redhat.com>
->> Acked-by: Zi Yan <ziy@nvidia.com>
->> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
->> ---
->> v1:
->> * un-RFC'd as there seems to be consensus.
->> * Added Gregory and Byungchui who kindly offered to be reviewers also!
->> * Removed Alistair as he hasn't been active on-list lately. Alistair - hope
->>   you don't mind, We can very easily add you later, just don't want put you
->>   here without your positive consent :)
->>
->> RFC:
->> https://lore.kernel.org/all/20250513160007.132378-1-lorenzo.stoakes@oracle.com/
->>
->>  MAINTAINERS | 19 +++++++++++++++++++
->>  1 file changed, 19 insertions(+)
->>
->> diff --git a/MAINTAINERS b/MAINTAINERS
->> index 314007e2befd..17403329d76f 100644
->> --- a/MAINTAINERS
->> +++ b/MAINTAINERS
->> @@ -15577,6 +15577,25 @@ W:	http://www.linux-mm.org
->>  T:	git git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm
->>  F:	mm/gup.c
->>
->> +MEMORY MANAGEMENT - MEMORY POLICY AND MIGRATION
->> +M:	Andrew Morton <akpm@linux-foundation.org>
->> +M:	David Hildenbrand <david@redhat.com>
->> +R:	Zi Yan <ziy@nvidia.com>
->> +R:	Matthew Brost <matthew.brost@intel.com>
->> +R:	Joshua Hahn <joshua.hahnjy@gmail.com>
->> +R:	Rakie Kim <rakie.kim@sk.com>
->> +R:	Byungchul Park <byungchul@sk.com>
->> +R:	Gregory Price <gourry@gourry.net>
->> +L:	linux-mm@kvack.org
->> +S:	Maintained
->> +W:	http://www.linux-mm.org
->> +T:	git git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm
->> +F:	include/linux/mempolicy.h
->> +F:	include/linux/migrate.h
->> +F:	mm/mempolicy.c
->> +F:	mm/migrate.c
->> +F:	mm/migrate_device.c
->> +
->>  MEMORY MANAGEMENT - NUMA MEMBLOCKS AND NUMA EMULATION
->>  M:	Andrew Morton <akpm@linux-foundation.org>
->>  M:	Mike Rapoport <rppt@kernel.org>
->> --
->> 2.49.0
->
-> ----8<----
-> From 6e6b63cdce577718d939178625b62fe92e15565f Mon Sep 17 00:00:00 2001
-> From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> Date: Thu, 15 May 2025 20:23:27 +0100
-> Subject: [PATCH] add Ying as reviewer
->
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> ---
->  MAINTAINERS | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 17403329d76f..b4f74cdc5304 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -15586,6 +15586,7 @@ R:	Joshua Hahn <joshua.hahnjy@gmail.com>
->  R:	Rakie Kim <rakie.kim@sk.com>
->  R:	Byungchul Park <byungchul@sk.com>
->  R:	Gregory Price <gourry@gourry.net>
-> +R:	Ying Huang <ying.huang@linux.alibaba.com>
->  L:	linux-mm@kvack.org
->  S:	Maintained
->  W:	http://www.linux-mm.org
+The problem is the ARL-H/U have a different NPU device and thus are not
+being properly set and thus S0iX does not work properly in ARL-H/U. This
+patch creates a new ARL-H specific device id that is correct and also
+adds the D3 fixup to the suspend callback. This way if the PCI devies
+drop from D3 to D0 after resume they can be corrected for the next
+suspend. Thus there is no dropout in S0iX.
 
-Thank Zi for nominating me!
-
-It's my pleasure to be listed as reviewer.  Feel free to add my
-
-Acked-by: Huang Ying <ying.huang@linux.alibaba.com>
-
-in the future versions.
-
+Signed-off-by: Todd Brandt <todd.e.brandt@intel.com>
 ---
-Best Regards,
-Huang, Ying
+ drivers/platform/x86/intel/pmc/arl.c | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/platform/x86/intel/pmc/arl.c b/drivers/platform/x86/intel/pmc/arl.c
+index 320993bd6d31..5053e3dd8f5e 100644
+--- a/drivers/platform/x86/intel/pmc/arl.c
++++ b/drivers/platform/x86/intel/pmc/arl.c
+@@ -681,6 +681,7 @@ static struct pmc_info arl_pmc_info_list[] = {
+ 
+ #define ARL_NPU_PCI_DEV			0xad1d
+ #define ARL_GNA_PCI_DEV			0xae4c
++#define ARL_H_NPU_PCI_DEV		0x7d1d
+ #define ARL_H_GNA_PCI_DEV		0x774c
+ /*
+  * Set power state of select devices that do not have drivers to D3
+@@ -694,7 +695,7 @@ static void arl_d3_fixup(void)
+ 
+ static void arl_h_d3_fixup(void)
+ {
+-	pmc_core_set_device_d3(ARL_NPU_PCI_DEV);
++	pmc_core_set_device_d3(ARL_H_NPU_PCI_DEV);
+ 	pmc_core_set_device_d3(ARL_H_GNA_PCI_DEV);
+ }
+ 
+@@ -705,6 +706,13 @@ static int arl_resume(struct pmc_dev *pmcdev)
+ 	return cnl_resume(pmcdev);
+ }
+ 
++static void arl_h_suspend(struct pmc_dev *pmcdev)
++{
++	arl_h_d3_fixup();
++
++	cnl_suspend(pmcdev);
++}
++
+ static int arl_h_resume(struct pmc_dev *pmcdev)
+ {
+ 	arl_h_d3_fixup();
+@@ -739,7 +747,7 @@ struct pmc_dev_info arl_h_pmc_dev = {
+ 	.dmu_guid = ARL_PMT_DMU_GUID,
+ 	.regmap_list = arl_pmc_info_list,
+ 	.map = &mtl_socm_reg_map,
+-	.suspend = cnl_suspend,
++	.suspend = arl_h_suspend,
+ 	.resume = arl_h_resume,
+ 	.init = arl_h_core_init,
+ };
+-- 
+2.25.1
+
 
