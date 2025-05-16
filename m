@@ -1,125 +1,167 @@
-Return-Path: <linux-kernel+bounces-651182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-651180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E7FAAB9B33
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 13:38:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 586E9AB9B31
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 13:36:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7E4FA7B7866
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 11:36:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C6473B4781
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 11:35:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D75A9236445;
-	Fri, 16 May 2025 11:37:55 +0000 (UTC)
-Received: from baidu.com (mx24.baidu.com [111.206.215.185])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1875021B9E2;
+	Fri, 16 May 2025 11:36:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Hmd1RQRv"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45C823E47B
-	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 11:37:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.206.215.185
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC8FC481C4
+	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 11:36:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747395475; cv=none; b=q3pfQZNdjI/6nN66fEoE8baCDrDjUD9t0YO0/09L17Jt0UBwVAATzOVhjKsaYpmcvznI/TYU9U/VsUuXml88F+tMGzQ+d6bW4WgzaFcwkzYv8gIJkF+ekGFW+2z9Ro1vJ3xfYBk0WgzXP+hNKZXwc2taDZM01v4dA2Ut7rvnzBs=
+	t=1747395369; cv=none; b=cenpplFl+n5KkTKG7FNi/TARpqOSnqF0LM9Jv+BLHzVHFC6l2OUXIFQVxmCvs1EBkP7aR43AIl0LR4Tde0kGCS6KD2qG/rgl6vPZmla0nkMXM3u9jc3W6QKNYUOH4XCvt93Q/CxVMVY4ia4fogsMt7/HwDstw9VwkfJvEULiUaA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747395475; c=relaxed/simple;
-	bh=awl/7E1ji534cXc/ww/L2rcWUhrfX+LPnJudYVkFZ5c=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=PNmDSar8mLlACbQZk5NQZDP9mz3RDUPr1ovhUZ2SvXFNEClHNKk26eaBb1JH5l7s/MBgQ0vVzl9dofmIFPniTBdIrhWbZAhGB0i6JVAnse6u+a0Rxdj61sqyYcOD7yMElnlGIUEI7sAELBuFGWM4UVccDs3CUsE7hp2gqBYm5s4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com; spf=pass smtp.mailfrom=baidu.com; arc=none smtp.client-ip=111.206.215.185
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baidu.com
-From: Wenjie Xu <xuwenjie04@baidu.com>
-To: <muchun.song@linux.dev>, <osalvador@suse.de>, <akpm@linux-foundation.org>
-CC: <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>, Wenjie Xu
-	<xuwenjie04@baidu.com>, Li RongQing <lirongqing@baidu.com>
-Subject: [PATCH] hugetlb: two-phase hugepage allocation when reservation is high
-Date: Fri, 16 May 2025 19:35:52 +0800
-Message-ID: <20250516113552.17648-1-xuwenjie04@baidu.com>
-X-Mailer: git-send-email 2.41.0
+	s=arc-20240116; t=1747395369; c=relaxed/simple;
+	bh=x71wh9qpjv9m4txcRMSYgEFgU/qLQI3szX4WfGrxJsk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QNEv9q/qBwxV0ZMnEdDb0+oWGd937Ko/NVFH6Ov5rIBgA0LuZrUP5cvrXWUSF7RnSxFWapJrO+LIb4XQ7jjS78vzIYgJOv0AbTuiq1MqZCLTjhDIYJm6X6pP4eWPIvnmTP7GVJKKCseIqXMR3mc/Eo0q7NsldR0GkklRkQvN+vM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Hmd1RQRv; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54G3Dm1X007861
+	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 11:36:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	ekV2UpDnpry6+UbUBtnNG7zgHt6PFpPr1W7ydztSu/k=; b=Hmd1RQRvsa5D2YvH
+	kW0Td15We6WvuB8+hJYTpq0VMz3JPHZvTMXtouBGo3lbrUO3w3sRMx5X5xQHlIP2
+	6GlIQUllUGjBtqGfZr9o8vTFpaWYeEfmkUiborFFuSNIZyQpCWJwP3NcXqjKcVRr
+	Siry3Gyt4lH1fLWNZ02qUjXAhUW6JdWpZcDZLn5Mqz47oQa/1k8vntCwXtxnw6hp
+	LxUS3sroneKyVWUZ1iJRnAWsMYehVOJWwQksmUsrnIoJaRj01k9u2IlZEk19it7L
+	/Paf6Yuxerz5QOjEBryU4iWDcqBHh//JzO5HZgsSVkK+Y3LfeVriUEIRPMEG0txT
+	qsrQsg==
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46mbcq1r3a-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 11:36:06 +0000 (GMT)
+Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7c76062c513so48450785a.3
+        for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 04:36:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747395366; x=1748000166;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ekV2UpDnpry6+UbUBtnNG7zgHt6PFpPr1W7ydztSu/k=;
+        b=jQBFYvgyE19L+CFEW1G2gOHBDw9VwZpgxvTC0tmD1UXZuH2zT5apACOMIECs2Jc1JZ
+         WeN+DS4YYMPTNgeLeXUNry/KsHZ6iM5GVr7PDp3U+TmZ2ITrclJwEzUlNNE/qf+G7Ktp
+         nsK6FGob/82/BDbGDUCP9AbFqhPjdCSLhjU9eKKhZ/jkmzd2k3l1qh/+7gtEGzb7slG7
+         d4wD5JWAx/lVPK6dfMH0VYze9ubc/Nd9haEkpjLZYf8c45vC2LZJZ3Y4J/WHxbmJ++92
+         s6/a804LyvT6zyilJN+eMjyXKLAAAEkwKgv18b2UbXGij5jZaaGNx1ehvFK8RxDPHO3f
+         W7CQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUuaC/EI43qUOWKeuHm/Bse5tVlin07HS7Vl1JVul1/4rdqLkKj3PBMt9QcvjcYFqUIjieE9X0whvq62pM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzYgD8/nKpAE+E19Uj+BXs8PjL18zL4GUGu+k3iGgBhumgOWemq
+	3WR5sNkxShSU0q75R0ALL16r5ULP0LvwEkyRmGXSyQErKlNozga7d4+kACwOS2GdsMmmLl0srms
+	gHZsn9YavU+Yb0tUFD5cF38lZeTvzDlV1JrmUoFEZDFTPy9N5t54G+eH6cMtawuuBwyo=
+X-Gm-Gg: ASbGncv8BmvwyEMuWoOL79Yqjm0D/CrFCMcDiSd8aO21su+Nki7WI8RHZEEde/oeus6
+	Tcvkno5NQnvS50phz+tlU1kSfV8NI5OLeC1wyh5PNZFgQe1Yr+lplh3FJJdVCO+cbQ3dlDFe1G3
+	BnJ3r0tfLZr3slF4mLzzt89NvkRkO+4zDIb2HHBJgoMq0A+aBpVJO+KQCT7offQ1iiHn4cW6ReY
+	qR4XIDtcw/k1MvSWWA/TOl755UAVWNUZxx8yQX7m3RsENULQtqra+MMzgL9BtZijLNVwmmb32Jh
+	s4+xl/CskUGcyTTmEfz/lclo4SYWO0l3ZXKcIMsxxRtq4F/fW36YSDJioAHwmYy/yQ==
+X-Received: by 2002:a05:6214:2602:b0:6f8:9a2e:1726 with SMTP id 6a1803df08f44-6f8b0720ba1mr21196886d6.0.1747395365886;
+        Fri, 16 May 2025 04:36:05 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFQAvfyU/2baVWoHmgKenJhYPlFdeNZN/pq43vpeCxwa5wY8TW2sY5mrUqs5+/uZrvj9eUOwA==
+X-Received: by 2002:a05:6214:2602:b0:6f8:9a2e:1726 with SMTP id 6a1803df08f44-6f8b0720ba1mr21196686d6.0.1747395365458;
+        Fri, 16 May 2025 04:36:05 -0700 (PDT)
+Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad52d047738sm146675366b.19.2025.05.16.04.36.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 16 May 2025 04:36:04 -0700 (PDT)
+Message-ID: <fd92ae5f-2caf-408e-8a79-6338e6c8ea07@oss.qualcomm.com>
+Date: Fri, 16 May 2025 13:36:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: BJHW-Mail-Ex10.internal.baidu.com (10.127.64.33) To
- BJHW-MAIL-EX28.internal.baidu.com (10.127.64.43)
-X-FEAS-Client-IP: 10.127.64.36
-X-FE-Policy-ID: 52:10:53:SYSTEM
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] arm64: dts: qcom: sm8750: Add Soundwire nodes
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20250424-sm8750-audio-part-2-v1-0-50133a0ec35f@linaro.org>
+ <20250424-sm8750-audio-part-2-v1-1-50133a0ec35f@linaro.org>
+ <e83b58ea-0124-4619-82a5-35134dc0a935@oss.qualcomm.com>
+ <afda790f-0b5e-4569-a92b-904df936df85@linaro.org>
+ <1a0be977-39b8-4089-a37e-dd378c03e476@oss.qualcomm.com>
+ <17b9649d-b788-4a13-b7eb-bf54b7a83b0f@linaro.org>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <17b9649d-b788-4a13-b7eb-bf54b7a83b0f@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: wpWg7Gkiwclp_mnMiwjOeiTtMCkK3rOs
+X-Proofpoint-ORIG-GUID: wpWg7Gkiwclp_mnMiwjOeiTtMCkK3rOs
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTE2MDExMCBTYWx0ZWRfX8TESyxdzArrl
+ NrSiTnM71eem36ScsqSmcBfeKsDthKlM2aifnvRGRQwYlrFyq1YFfQVu4BrUkTs/zZxcvQcL8TE
+ tyqvmbx/7DOD1/KF3ztN637zugIaz+E1M8D6VfBWHkEvQNADJaTC6gY2vRe9g20y8EcwTnaiIgN
+ 8FeHYsooQD8zFoy2lnXvABlUwBpkUJr4yYLnjPhQmveVz569aYh/SU4vXd8oKYikBwnIgm46ebg
+ 9rJhNFkyulcedOrX/396ucAYPC9mz73TVnw4EMrHJTKDzbMxwaQqAu8vgbfFcrEYpPkuR1gx7BQ
+ +Mz1q1006WKPu2Namfhz6LwFAaJn/o3gN4PYx06tGjK0tJtvU8txbY5HGlwyd0pjAOBwFMtEljV
+ IYWvS4MBMdArLObMwSE8ggB58rf1zs7FmP3bEaYasXJVaSVW67jh01S3r/ik/jL1AzZnEtcr
+X-Authority-Analysis: v=2.4 cv=KcvSsRYD c=1 sm=1 tr=0 ts=68272326 cx=c_pps
+ a=50t2pK5VMbmlHzFWWp8p/g==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=8ckfQZQAI897uWQ1iqcA:9
+ a=QEXdDO2ut3YA:10 a=IoWCM6iH3mJn3m4BftBB:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-16_05,2025-05-16_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 bulkscore=0 clxscore=1015 adultscore=0 phishscore=0
+ lowpriorityscore=0 mlxlogscore=735 spamscore=0 malwarescore=0 impostorscore=0
+ mlxscore=0 suspectscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505070000
+ definitions=main-2505160110
 
-When the total reserved hugepages account for 95% or more of system RAM
-(common in cloud computing on physical servers), allocating them all in one
-go can starve the rest of the kernel and lead to OOM during early boot.
+On 5/13/25 10:26 AM, Krzysztof Kozlowski wrote:
+> On 12/05/2025 21:38, Konrad Dybcio wrote:
+>>>>>  arch/arm64/boot/dts/qcom/sm8750.dtsi | 122 +++++++++++++++++++++++++++++++++++
+>>>>>  1 file changed, 122 insertions(+)
+>>>>>
+>>>>> diff --git a/arch/arm64/boot/dts/qcom/sm8750.dtsi b/arch/arm64/boot/dts/qcom/sm8750.dtsi
+>>>>> index 149d2ed17641a085d510f3a8eab5a96304787f0c..1e7aa25c675e76ce6aa571e04d7117b8c2ab25f8 100644
+>>>>> --- a/arch/arm64/boot/dts/qcom/sm8750.dtsi
+>>>>> +++ b/arch/arm64/boot/dts/qcom/sm8750.dtsi
+>>>>> @@ -2257,6 +2257,36 @@ lpass_wsa2macro: codec@6aa0000 {
+>>>>>  			#sound-dai-cells = <1>;
+>>>>>  		};
+>>>>>  
+>>>>> +		swr3: soundwire@6ab0000 {
+>>>>> +			compatible = "qcom,soundwire-v2.0.0";
+>>>>
+>>>> They're v2.1.0, same on 8650, there's a number of new registers
+>>>
+>>> Sorry, but no. This the "generic" compatible and it is correct. Devices
+>>> expose versions, which is perfectly usable, thus changing compatible to
+>>> different one is not useful. We could go with soc specific compatibles
+>>> and new generic one, but what would that solve? This one is generic
+>>> enough - the device is compatible with v2.0.
+>>
+>> Well, I'd expect a "2.1.0", "2.0.0" fallback there..
+> 
+> OK, let's see if any DT maintainer will ack such thing. :)
 
-The previous hugetlb vmemmap batching change (91f386bf0772) can worsen
-peak memory pressure under these conditions by deferring page frees,
-exacerbating allocation failures. To prevent this, split the allocation
-into two equal batches whenever
-huge_reserved_pages >= total_base_pages * 95ULL / 100UL.
+They sure did in e.g.
 
-This change does not alter the number of padata worker threads per batch;
-it merely introduces a second round of padata_do_multithreaded(). The added
-overhead of restarting the worker threads is minimal.
+83adc98ec0d8 ("dt-bindings: dma: Add support for SM6115 and QCM2290 SoCs")
 
-Fixes: 91f386bf0772 ("hugetlb: batch freeing of vmemmap pages")
-
-Co-developed-by: Li RongQing <lirongqing@baidu.com>
-Signed-off-by: Li RongQing <lirongqing@baidu.com>
-Signed-off-by: Wenjie Xu <xuwenjie04@baidu.com>
----
- mm/hugetlb.c | 24 ++++++++++++++++++++----
- 1 file changed, 20 insertions(+), 4 deletions(-)
-
-diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-index 6ea1be71aa42..7bdcaab6f7ec 100644
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -3616,12 +3616,21 @@ static unsigned long __init hugetlb_pages_alloc_boot(struct hstate *h)
- 		.numa_aware	= true
- 	};
- 
-+	unsigned long huge_pages;
-+	int i, hugetlb_page_alloc_iter;
-+
-+	unsigned long total_base_pages = totalram_pages();
-+	unsigned long huge_reserved_pages = h->max_huge_pages << h->order;
-+
-+	hugetlb_page_alloc_iter = (huge_reserved_pages >= total_base_pages * 95ULL / 100UL)
-+				 ? 2 : 1;
-+
-+	huge_pages = h->max_huge_pages / hugetlb_page_alloc_iter;
-+
- 	unsigned long jiffies_start;
- 	unsigned long jiffies_end;
- 
- 	job.thread_fn	= hugetlb_pages_alloc_boot_node;
--	job.start	= 0;
--	job.size	= h->max_huge_pages;
- 
- 	/*
- 	 * job.max_threads is 25% of the available cpu threads by default.
-@@ -3645,10 +3654,17 @@ static unsigned long __init hugetlb_pages_alloc_boot(struct hstate *h)
- 	}
- 
- 	job.max_threads	= hugepage_allocation_threads;
--	job.min_chunk	= h->max_huge_pages / hugepage_allocation_threads;
-+	job.min_chunk	= huge_pages / hugepage_allocation_threads;
- 
- 	jiffies_start = jiffies;
--	padata_do_multithreaded(&job);
-+	for (i = 0; i < hugetlb_page_alloc_iter; i++) {
-+		job.start = huge_pages * i;
-+		job.size = (i + 1 == hugetlb_page_alloc_iter)
-+			 ? h->max_huge_pages - huge_pages * i
-+			 : huge_pages;
-+		padata_do_multithreaded(&job);
-+	}
-+
- 	jiffies_end = jiffies;
- 
- 	pr_info("HugeTLB: allocation took %dms with hugepage_allocation_threads=%ld\n",
--- 
-2.41.0
-
+Konrad
 
