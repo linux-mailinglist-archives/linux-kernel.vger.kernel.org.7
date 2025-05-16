@@ -1,121 +1,190 @@
-Return-Path: <linux-kernel+bounces-650781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-650784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5D0FAB9609
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 08:35:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B2CBBAB9612
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 08:36:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBF471BC4BCD
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 06:35:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F7371BC4C6A
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 06:36:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E593A224885;
-	Fri, 16 May 2025 06:34:54 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49160224B14;
+	Fri, 16 May 2025 06:36:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ZacF8oTr"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B5521D88AC;
-	Fri, 16 May 2025 06:34:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE4ED21CC4D;
+	Fri, 16 May 2025 06:36:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747377294; cv=none; b=qmgbFqJGDnDUArFZYCHl6gLtBnYKTO9cbUfgRDxY2h0s7t9oVm9/bcAeMU4+FAmK+55LWS7jP6uDo/A5CZguaGqCW5QjjSc4DTwLHPse7gV9sAdlX/rCIG800noSDm+vh01VpXPM3GU2E/kGFzuvweb1ABwkkO6pFRxkbcXwB/g=
+	t=1747377390; cv=none; b=pBYo81BvZLLZAUaAWpaNWvz1YDxfXFXRgVLW4NgH2se/ntQgDnMkfGNy/BoXj5iDHt3kwZCVGzYbo5zJIgRikRbLDfxzRWwsOunDhqP2McRQwktRrz0iMwTM06LiSNeEjdKbLZYGFVayOJVIR6lAYPHApXxpe9XFaZaqcyY/zSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747377294; c=relaxed/simple;
-	bh=TKu5/yJLwlz0W5cl8c+lO8cbA5gUEqmahbihBE2G8QM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZWW1TSsNKmRdV8Hq5iNyPljZsfRO2YpEkOVviSXK4ULz+7ly6gDlwQ6qElwfXTxk5kj/VytK5bHBfaLv4guk1TR90nNVy3L5hM8xIo2zyE+vZ3VtyjYcRPx6TXrffVswLLzM590ezTw8/WfjFdhpzvUKmzPuQB3bEjfgmmivbbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 9E4B368AA6; Fri, 16 May 2025 08:34:47 +0200 (CEST)
-Date: Fri, 16 May 2025 08:34:47 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: Dave Chinner <david@fromorbit.com>
-Cc: Christoph Hellwig <hch@lst.de>, Carlos Maiolino <cem@kernel.org>,
-	linux-xfs@vger.kernel.org, cen zhang <zzzccc427@gmail.com>,
-	lkmm@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] xfs: mark the i_delayed_blks access in
- xfs_file_release as racy
-Message-ID: <20250516063447.GA14632@lst.de>
-References: <20250513052614.753577-1-hch@lst.de> <aCO7injOF7DFJGY9@dread.disaster.area> <FezVRpM-CK9-HuEp3IpLjF-tP7zIL0rzKfhspjIkdGvS3giuWzM9eeby5_eQjL5_gNG1YC4Zu0snd2lBHnL0xg==@protonmail.internalid> <20250514042946.GA23355@lst.de> <ymjsjb7ich2s5f7tmhslhlnymjmso5o2lsvdoudy3dtbr7vjwk@moxzvvjdh6zl> <20250514130417.GA21064@lst.de> <aCUlXbEg9wuyPEB6@dread.disaster.area>
+	s=arc-20240116; t=1747377390; c=relaxed/simple;
+	bh=ha4URqno53+8IBqXFpktJS1GXjWV40bui4aNG0QuF8g=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+	 In-Reply-To:Content-Type; b=Xr+1Gv54EIm66w/Xzwo293QbOh8d0g+/rThTSFir0HpSSw0ks+9yxMyDjBLNF5UYwVkhAu5D62jD31HPkqAyqJTAO1V6l67v8m6gSOr6Ss9TVFquwsSnkkdPIJx+pst4U7BjOns12+L64ip5bhlAbHIJ3bSQaO3BPCMafVjwz/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ZacF8oTr; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54G37mmC001154;
+	Fri, 16 May 2025 06:36:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	WaMAGfBbgDWG1NFAeAULSkUJlJOsNpmee8ZzO7nXfBc=; b=ZacF8oTrBc0LqKLx
+	P0TgtGmMl5Muu690TCV8cZlH52BH0NOj8ltic8NRNgE+sUzpVPHwnQuszZLvoiBo
+	0LDg4/zVCUf0/vF8qmFlfdwz9OvDGr+o6fFkowoasFXLDCwhCSIVHrZjl1SSehGi
+	kVfrq9ttV4f/peQrPchYdH19+5Mhx4rGEfsfl3q+QaqKgPX38QedT7rue8wM5+O4
+	57BhgQVeeRGfbb+MvSNoaj7KRcHHH2teuCpW209cAtPeOWHDta4ylcu5ezYDgRWl
+	6J0iJ+AlkNIdRA/v5WTYNxqC3s7cIavhMqOxZEMs6FCCJ5y+liI5w3OB3pLj5fQr
+	JqC/EQ==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46mbcp0w6q-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 16 May 2025 06:36:24 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 54G6aN4s010065
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 16 May 2025 06:36:23 GMT
+Received: from [10.218.32.171] (10.80.80.8) by nasanex01c.na.qualcomm.com
+ (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 15 May
+ 2025 23:36:17 -0700
+Message-ID: <df6386a1-5b4e-46d5-a431-6ca136a87980@quicinc.com>
+Date: Fri, 16 May 2025 12:06:14 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aCUlXbEg9wuyPEB6@dread.disaster.area>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 1/8] dt-bindings: serial: describe SA8255p
+From: Praveen Talari <quic_ptalari@quicinc.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+        Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>,
+        Jiri Slaby <jirislaby@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-serial@vger.kernel.org>, <devicetree@vger.kernel.org>
+CC: <psodagud@quicinc.com>, <djaggi@quicinc.com>, <quic_msavaliy@quicinc.com>,
+        <quic_vtanuku@quicinc.com>, <quic_arandive@quicinc.com>,
+        <quic_mnaresh@quicinc.com>, <quic_shazhuss@quicinc.com>,
+        Nikunj Kela
+	<quic_nkela@quicinc.com>
+References: <20250506180232.1299-1-quic_ptalari@quicinc.com>
+ <20250506180232.1299-2-quic_ptalari@quicinc.com>
+ <35659475-862a-4678-a2a5-173c2254ae60@kernel.org>
+ <2f3e608b-5536-4c6d-b7ca-c8cf4c9d0b1b@quicinc.com>
+ <4b2c24e4-d515-481d-a00b-d50ae57304dd@quicinc.com>
+Content-Language: en-US
+In-Reply-To: <4b2c24e4-d515-481d-a00b-d50ae57304dd@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 9LDWp9enGqWWGUhQVSS3gMVl2DXkuiyY
+X-Proofpoint-ORIG-GUID: 9LDWp9enGqWWGUhQVSS3gMVl2DXkuiyY
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTE2MDA2MCBTYWx0ZWRfX8QSRwKutBXH1
+ ZTw81ApNsrFIp8iecc7noiNQ6l3Gc7NvTl9krPdGVlBbfZjbBdvzv2qhJ08RnUylaaQExr9Cgfz
+ gatUHQ7vr5bIA8ReKdI8pNa5Vupi3FOGVn/MX/K77MBhTTlwnzd0YSzpVJo/7FRr4XPV8nBPDNw
+ fftTO6svgaamIvfBmsTx+bL5WnSKFO4LPkXNrN85qGQcIUsEXS0Drain/WqBVFwbDTlp1o3Vd2c
+ K1qZd4n4So78WpEP/IBejfOw5Ks85RUnPhNUIakD2iibRjFwfDNJwrnNyVSjN0WXO56qqMZ9cLu
+ GPX/QMDSU1hxTABD+Jc8gfcoRALFRNqQn9yVdnqF8FvfbkcJssMu1b6e7MrCd9L/UsVOoONZ5bm
+ AdQuCroGNwkCee1TOT5YHWr2yt5KQbb+QXvjmtrUMaeidd+IE/K3AyUsJ8VJcBrLm5gQXx+1
+X-Authority-Analysis: v=2.4 cv=Gp9C+l1C c=1 sm=1 tr=0 ts=6826dce8 cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10
+ a=Am187KbwW9CzcosyEMcA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-16_02,2025-05-15_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 clxscore=1015 spamscore=0 lowpriorityscore=0 impostorscore=0
+ bulkscore=0 adultscore=0 suspectscore=0 priorityscore=1501 mlxscore=0
+ malwarescore=0 mlxlogscore=943 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505070000
+ definitions=main-2505160060
 
-On Thu, May 15, 2025 at 09:21:01AM +1000, Dave Chinner wrote:
-> > I'd like to understand that one a bit more.  It might be because the
-> > validator doesn't understand a semaphore used as lock is a lock, but
-> > I'll follow up there.
-> 
-> Even so, it's not a race because at that point in time the object
-> cannot be seen by anything other than the process that is
-> initialising it.
+Hi Krzysztof
 
-In the current tree after the folio/vmalloc series b_addr is only
-assigned during buffer allocation.  But I suspect they tested before that
-where b_addr can be set at runtime.  Either way it always happens under
-b_sema because that is initialized to locked just after allocating
-the memory for the buffer.
+Gentle reminder!!
 
-> I'm wary of this, because at this point I suspect that there aren't
-> a lot of people with sufficient time and knowledge to adequately
-> address these issues.
+On 5/9/2025 10:02 AM, Praveen Talari wrote:
+> Hi Krzysztof,
+>
+> Thank for you review and valuable inputs.
+>
+> On 5/8/2025 11:15 AM, Praveen Talari wrote:
+>> Hi Krzysztof
+>>
+>> Thank you for your patience. I consider your inputs as valuable 
+>> learning.
+>>
+>> On 5/6/2025 11:53 PM, Krzysztof Kozlowski wrote:
+>>> On 06/05/2025 20:02, Praveen Talari wrote:
+>>>> +
+>>>> +properties:
+>>>> +  compatible:
+>>>> +    enum:
+>>>> +      - qcom,sa8255p-geni-uart
+>>>> +      - qcom,sa8255p-geni-debug-uart
+>>>> +
+>>>> +  reg:
+>>>> +    maxItems: 1
+>>>> +
+>>>> +  interrupts:
+>>>> +    minItems: 1
+>>> Nothing changed here, this should be dropped based on previous 
+>>> discussion.
+>>>
+>>> You sent this v5 on 8:02 PM of my time. *THEN* you responded to my
+>>> comment at v4 at 8:05 PM. That's the way to waste everyone's time.
+>>>
+>>> I do not understand why interrupt is optional for a new, complete 
+>>> device
+>>> description.
+>
+> To put it simply, because we are using the RX GPIO line as wake up IRQ 
+> and not all SE related pins are mapped in the PDC,
+>
+> there is no specific wake-up pin to define. Therefore, the wake-up IRQ 
+> should be considered optional.
 
-I'm more than happy to address these, because proper documentation
-of concurrency helps fixing a huge number of bugs, and also really
-helps documenting the code.  I hate having to spend hours trying to
-figure out why something can be safely used lockless or not.
+I hope this response has addressed your query.
 
-> We should have learnt this lesson from lockdep - false positive
-> whack-a-mole shut up individual reports but introduced technical
-> debt that had to be addressed later because whack-a-mole didn't
-> address the underlying issues.
+Thanks,
 
-I'm not sure who "we" is, but I've always pushed back to hacks just
-to shut up lockdep.  And at the same time I'm immensively grateful
-for having lockdep and can't think of working without it anymore.
+Praveen
 
-> We need functions like xfs_vn_getattr(), the allocation AG selection
-> alogrithms and object initialisation functions to be marked as
-> inherently racy, because they intentionally don't hold locks for any
-> of the accesses they make. kcsan provides:
-
-Functions never are racy, specific data access are.  So a function wide
-assignment is just the dumbest thing ever, this already badly failed
-for things like early Java object-level synchronization.
-
-> 
-> For variables like ip->i_delayed_blks, where we intentionally
-> serialise modifications but do not serialise readers, we have:
-> 
-> -	uint64_t                i_delayed_blks; /* count of delay alloc blks */
-> +	uint64_t __data_racy    i_delayed_blks; /* count of delay alloc blks */
-> 
-> This means all accesses to the variable are considered to be racy
-> and kcsan will ignore it and not report it. We can do the same for
-> lip->li_lsn and other variables.
-
-But not all access are racy.  We rely on proper synchronized accesses
-for accounting.  Now for something that has a lot of unsynchronized
-access, adding a wrapper for them might be fine, but for i_delayed_blks
-I don't think we actually have enough for them to bother.
-
-> IOWs, we do not need to spew data_race() wrappers or random
-> READ_ONCE/WRITE_ONCE macros all over the code to silence known false
-> positives.  If we mark the variables and functions we know have racy
-> accesses, these one-line changes will avoid -all- false positives on
-> those variables/from those functions.
-
-And also drop a lot of the actually useful checks. That's exaxctly
-the kind of hack you rant about above.
-
+>
+> Thanks,
+>
+> Praveen
+>
+>>
+>> On this platform, there is no use case of waking up UART, so we 
+>> consider the  wake up IRQ as optional.
+>>
+>> Thanks,
+>>
+>> Praveen
+>>
+>>>
+>>> Best regards,
+>>> Krzysztof
 
