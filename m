@@ -1,79 +1,47 @@
-Return-Path: <linux-kernel+bounces-651240-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-651277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5208EAB9C14
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 14:32:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F3C5AB9C99
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 14:50:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D7E11B658C4
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 12:32:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 296351B671B1
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 12:51:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED57C23D2AB;
-	Fri, 16 May 2025 12:32:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8FAC24166A;
+	Fri, 16 May 2025 12:50:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BUj0IFk2"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cIEDDkLd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EBAE1E871;
-	Fri, 16 May 2025 12:32:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86ABC2367C4;
+	Fri, 16 May 2025 12:50:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747398739; cv=none; b=FZe1C4r6yXpFPgUNHdW5QlkOqYp685gOi6CpmqxSImVrz8aHMDn/w9Qukw5HdrQ5jzlUT7vYTTbmRVVxorO38gcCzAczHcDnWv4al+DGnV1GFccwZKNO4kVwcZayzWiwVv8Ov3OBR/g63MzK4YNwXrbEPaoadJZlVU2OTV1yrRs=
+	t=1747399837; cv=none; b=e1HXXhgasdhEER+VXwaKASjgTFyB3qPi5R4/QFBNHFYtd9VCBg7ASudGqWr0nLUwJ0f9sW9VBJ7I+T6rK0qdC5exT1HqkX6zG0Fr+dF4NIiHen6+OvO9GRsR4H+upa6pBK9K5Z+rvKC2hByFaIaf2M558fMcaV5g1++e/SvI7ok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747398739; c=relaxed/simple;
-	bh=vz8e+4t88j8l0kTGU0H6UiRUgiWoi0o8ZwWhaWnHA5Q=;
+	s=arc-20240116; t=1747399837; c=relaxed/simple;
+	bh=EIeNaMhAQEKBU5kfqSd6zp7mh+1oorSEUk+so/0Y3jY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VRKH3fFYYwi7hqMl4DwKeS0lezV9CbS0hTy35Ds9iuoz+BXlKP+BhD9Dm3yLW6ko2QuPWP0gSMTZssC4mxGWmwA+QW4isbccrOK62GyvsgBQWz8aKHZHwqBgFGz/or81eZJo8GUGm2emkGZAjuOdR1lgUT99Q3I1x9TrnTT+b/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BUj0IFk2; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-601956fa3beso56591a12.0;
-        Fri, 16 May 2025 05:32:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747398736; x=1748003536; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=9VjB+mgTWPBjKCY5An5NLA0HaWKUbup+xoRGJGQX42M=;
-        b=BUj0IFk2ymSkaGrBREtK8QusYKvt/teepvYFolLdVkgsnHYZasTKQiso/EkwNMpMmS
-         aaLq/k90kro8Q4RJCu7tPWFgi6Zm0fXlBsji8b0QrWOQjjvsOFp9QS91ki2bPJwPWM0n
-         EA+X2Ot1W+Ep1N5gOvVbdmubMe39YYmMqADQRnFYS8B2kKRh8XyUXgxIjmkonT/fF44B
-         VCn+80QnNEJrLcRc+mE3kYzbXi+HwzBlalOG8V/PuDGrebZDo4xzbS81pLnc8emo+cUC
-         3VVB3Z6ReocLk9smYV/6vVyBGvfqYlQ0vplDRkWi+7LAsdpKPa8CEdYNmsE8V+07laHz
-         m9Rg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747398736; x=1748003536;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9VjB+mgTWPBjKCY5An5NLA0HaWKUbup+xoRGJGQX42M=;
-        b=DUiLngR5vQvYMOZXJKLKmZLXiAaGyf5MhoFLDEXtS97aHcYeIIapqVvssWxjhcSp9e
-         G9Xu9gaXGBeEmsyJS5PkV72wIlXIydRdkRy7Skl9gxQasQBLi8kKLw6lDuKZ7LpxidfE
-         ZI+09yzyinC1bMFAA6ofW2HGLSiOzZ5desriwQids5knBQY49rKwl0A0B7i5yaWIUL/r
-         Jt1D9gDUvKHSrrp10fHHePokt0S/Pj9kx8RXGmvnDbR6gs/YQHeAlrQfZd460DPXwvAk
-         ZL0pRr7n9lukxN+oF3frlun4S3S/6z4hY2fjC45yjw4tRLmIVQPWVY0aX8HeWK1O/1QG
-         hkEA==
-X-Forwarded-Encrypted: i=1; AJvYcCXP1OF75ZYsNfdtYli5uBWh8yvv3KDetdDO0oYtEKBXytW7AJcS94oUStKyfa4SRuXq8/h2Pd8/r3xC6fQ=@vger.kernel.org, AJvYcCXZGTEHd7ZwmcL26hK+Lwj7OX2AZ82fQM84xu5QlMJjnBE0/R6aA08/GBPaQrAma0CBvP0JwbRvjhj1DTc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxj9Ijx/Ginw/+/R5Fxjh+owk65VoeWa/ndgqwaTUoker7jgxal
-	abaVvXIisQrXNngBI+k7BU2211b5wN9CkQrgIqJx/KgkAIwQof5ClFCDeoXb8Q==
-X-Gm-Gg: ASbGncu1xUBvGU0vMitPa/g3mqW9RbhL+5UIMj7jpGrG8lTGAd5B48jQtFBiy4tY0sB
-	7ixpoBUOMve/WZIwEB/fjayUuE+RBWRqdIKBGFPVOcX/e6o6jv+t4VQC6zTFnjparpYjt+8U4PS
-	2fFQFfJ9L+hPTrWWIPYvwlEPNoeI7T/irUGKW/1XYYsiFiM27mjuzO3ui/eZJwUxt7n6JQG9Jyv
-	GoARfk5VEjhyS+kzXnOWAZSS6tpJJTzIXeKrwx2W1k/871g/yJHEoII+Z/yeZ3W/HYEq1h/gaTB
-	HX4LB0OLGxncU8aE3JYbyDUx46StlD4Hwl8PJXCTeG5kYjl+295qogHkKLWT2qNqeIBeKUc1QJU
-	GF4vPzeQ=
-X-Google-Smtp-Source: AGHT+IGZNd7gvcuPjF8am/ru/x51t5U1lJDJNKBy7Lvh9bT8GVBMZoyoacJgZIR9HZAUTZWB81JrCQ==
-X-Received: by 2002:a17:907:868e:b0:ad5:22c0:f5f1 with SMTP id a640c23a62f3a-ad52d5a97e7mr316285566b.50.1747398735260;
-        Fri, 16 May 2025 05:32:15 -0700 (PDT)
-Received: from [192.168.6.174] ([92.120.5.13])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad52d04f263sm152842266b.1.2025.05.16.05.32.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 16 May 2025 05:32:14 -0700 (PDT)
-Message-ID: <0aa11ef6-4166-41d8-98bc-6c7687d10b11@gmail.com>
-Date: Fri, 16 May 2025 15:50:02 +0300
+	 In-Reply-To:Content-Type; b=GN3SAhrTKEiwc++4bpZpLH69ZMtuNIkht8h7RluCF4QJK2YgrqATnyVAwfT4nNoemSyR86HK5jDwJiE7Z28rOaCMKKWHaOZjB6kPCVUnfHkRXTiUi1yAVlVb/BLkEQrnPwtvzFjp+p88WkQdd+hbftW+4hsOL0ha7tY7Jq4Wd1Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cIEDDkLd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9CC1C4CEE4;
+	Fri, 16 May 2025 12:50:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747399837;
+	bh=EIeNaMhAQEKBU5kfqSd6zp7mh+1oorSEUk+so/0Y3jY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=cIEDDkLd2GN9wC6gw62OtkCQ4AmdaKiNtCQK4aQQZjJCMCww6XGBE9JHmqee3Pne2
+	 Mv2sHZpSRJZ9dcEjE6MNytZviH2DMQVRCXALbo++IBD+npUOE97SyRHXxGpi8hxw8E
+	 +vhA6anJ8Cl/IMAJsbRBawmqKDoivpvqgZ5tpent1bcXulIomFlBWj0WSUGfaadEgh
+	 1ZQCWmgI/nKmV6xEx1yO66aeHSjdmZ6DWqpEey1Tzf5AL1TZjmOxY08M2V2u/YQHLF
+	 MXnGRMvLmxuwYrbKjwArq5hwQPbc03daP5tvjsORLxCy4hpX3qb7X3+oLd3BjfjFtH
+	 LyJW82YoBSHzw==
+Message-ID: <5e35d79b-06e7-4b19-87fc-a2087a3434c2@kernel.org>
+Date: Fri, 16 May 2025 14:50:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,225 +49,619 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 2/3] ASoC: audio-graph-card2: support explicitly
- disabled links
-Content-Language: en-GB
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>,
- linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org
-References: <20250515153128.147457-1-laurentiumihalcea111@gmail.com>
- <20250515153128.147457-3-laurentiumihalcea111@gmail.com>
- <874ixltjzw.wl-kuninori.morimoto.gx@renesas.com>
-From: Mihalcea Laurentiu <laurentiumihalcea111@gmail.com>
-In-Reply-To: <874ixltjzw.wl-kuninori.morimoto.gx@renesas.com>
+Subject: Re: [PATCH v1 2/2] usb: dwc3: eic7700: Add EIC7700 usb driver
+To: zhangsenchuan@eswincomputing.com, gregkh@linuxfoundation.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, Thinh.Nguyen@synopsys.com, p.zabel@pengutronix.de
+Cc: ningyu@eswincomputing.com, linmin@eswincomputing.com,
+ yangwei1@eswincomputing.com
+References: <20250516095237.1516-1-zhangsenchuan@eswincomputing.com>
+ <20250516095408.704-1-zhangsenchuan@eswincomputing.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250516095408.704-1-zhangsenchuan@eswincomputing.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+
+On 16/05/2025 11:54, zhangsenchuan@eswincomputing.com wrote:
+> +static ssize_t dwc3_mode_store(struct device *device,
+> +			       struct device_attribute *attr, const char *buf,
+> +			       size_t count)
+> +{
+> +	struct dwc3_eswin *eswin = dev_get_drvdata(device);
+> +	struct dwc3 *dwc = eswin->dwc;
+> +	enum usb_role new_role;
+> +	struct usb_role_switch *role_sw = dwc->role_sw;
+> +
+> +	if (!strncmp(buf, "1", 1) || !strncmp(buf, "host", 4)) {
+> +		new_role = USB_ROLE_HOST;
+> +	} else if (!strncmp(buf, "0", 1) || !strncmp(buf, "peripheral", 10)) {
+> +		new_role = USB_ROLE_DEVICE;
+> +	} else {
+> +		dev_info(eswin->dev, "illegal dr_mode\n");
+> +		return count;
+> +	}
+> +	eswin->force_mode = true;
+> +
+> +	mutex_lock(&eswin->lock);
+> +	usb_role_switch_set_role(role_sw, new_role);
+> +	mutex_unlock(&eswin->lock);
+> +
+> +	return count;
+> +}
+> +
+> +static DEVICE_ATTR_RW(dwc3_mode);
+
+Missing ABI documentation. Anyway, unlikely this will be accepted.
 
 
-On 16.05.2025 04:36, Kuninori Morimoto wrote:
-> Hi Laurentiu
->
-> Thank you for the patch
->
->> An explicitly disabled link is a DAI link in which one of its device
->> endpoints (e.g: codec or CPU) has been disabled in the DTS via the
->> "status" property. Formally speaking:
->>
->> 	OF_LINK_IS_DISABLED(lnk) = OF_NODE_IS_DISABLED(dev0) ||
->> 	                           OF_NODE_IS_DISABLED(dev1);
->>
->> where dev0 and dev1 are the two devices (CPU/codec) that make up the
->> link.
->>
->> If at least one link was explicitly disabled that means DAPM routes
->> passed through the OF property "routing" can fail as some widgets might
->> not exist. Consider the following example:
->>
->> 	CODEC A has widgets A0, A1.
->> 	CODEC B has widgets B0, B1.
->>
->> 	my-card {
->> 		compatible = "audio-graph-card2":
->> 		label = "my-label";
->> 		links = <&cpu0_port>, <&cpu1_port>;
->> 		routing = "A0", "A1",
->> 		          "B0", "B1";
->> 	};
->>
->> 	CODEC A's DT node was disabled.
->> 	CODEC B's DT node is enabled.
->> 	CPU0's DT node is enabled.
->> 	CPU1's DT node is enabled.
->>
->> If CODEC A's DT node is disabled via the 'status = "disabled"' property
->> that means the A0 -> A1 route cannot be created. This doesn't affect the
->> B0 -> B1 route though as CODEC B was never disabled in the DT.
->>
->> This is why, if any explicitly disabled link is discovered, the
->> "disable_of_route_checks" flag is turned on.
->>
->> If all links were explicitly disabled the sound card creation will fail.
->> Otherwise, if there's at least one link which wasn't explicitly disabled
->> then the sound card creation will succeed.
->>
->> Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
->> ---
-> I think I could understand your situation, but the solution (= this patch) is
-> too much complicated for me. Indeed it might detect disabled device, but some
-> board might want to detect it as error, unlike your case.
+> +
+> +static ssize_t dwc3_hub_rst_show(struct device *device,
+> +				 struct device_attribute *attr, char *buf)
+> +{
+> +	struct dwc3_eswin *eswin = dev_get_drvdata(device);
+> +
+> +	if (!IS_ERR(eswin->hub_gpio))
+> +		return sprintf(buf, "%d", gpiod_get_raw_value(eswin->hub_gpio));
+> +
+> +	return sprintf(buf, "UNKONWN");
+> +}
+> +
+> +static ssize_t dwc3_hub_rst_store(struct device *device,
+> +				  struct device_attribute *attr,
+> +				  const char *buf, size_t count)
+> +{
+> +	struct dwc3_eswin *eswin = dev_get_drvdata(device);
+> +
+> +	if (!IS_ERR(eswin->hub_gpio)) {
+> +		if (!strncmp(buf, "0", 1))
+> +			gpiod_set_raw_value(eswin->hub_gpio, 0);
+> +		else
+> +			gpiod_set_raw_value(eswin->hub_gpio, 1);
+> +	}
+> +
+> +	return count;
+> +}
+> +
+> +static DEVICE_ATTR_RW(dwc3_hub_rst);
+> +
+> +static struct attribute *dwc3_eswin_attrs[] = {
+> +	&dev_attr_dwc3_mode.attr,
+> +	&dev_attr_dwc3_hub_rst.attr,
+> +	NULL,
+> +};
+> +
+> +static struct attribute_group dwc3_eswin_attr_group = {
+> +	.name = NULL, /* we want them in the same directory */
+> +	.attrs = dwc3_eswin_attrs,
+> +};
+> +
+> +static int dwc3_eswin_device_notifier(struct notifier_block *nb,
+> +				      unsigned long event, void *ptr)
+> +{
+> +	struct dwc3_eswin *eswin =
+> +		container_of(nb, struct dwc3_eswin, device_nb);
+> +
+> +	mutex_lock(&eswin->lock);
+> +	eswin->new_usb_role = USB_ROLE_DEVICE;
+> +	mutex_unlock(&eswin->lock);
+> +	if (!eswin->suspended)
+> +		schedule_work(&eswin->otg_work);
+> +
+> +	return NOTIFY_DONE;
+> +}
+> +
+> +static int dwc3_eswin_host_notifier(struct notifier_block *nb,
+> +				    unsigned long event, void *ptr)
+> +{
+> +	struct dwc3_eswin *eswin = container_of(nb, struct dwc3_eswin, host_nb);
+> +
+> +	mutex_lock(&eswin->lock);
+> +	eswin->new_usb_role = USB_ROLE_HOST;
+> +	mutex_unlock(&eswin->lock);
+> +	if (!eswin->suspended)
+> +		schedule_work(&eswin->otg_work);
+> +
+> +	return NOTIFY_DONE;
+> +}
+> +
+> +static void dwc3_eswin_otg_extcon_evt_work(struct work_struct *work)
+> +{
+> +	struct dwc3_eswin *eswin =
+> +		container_of(work, struct dwc3_eswin, otg_work);
+> +	struct usb_role_switch *role_sw = eswin->dwc->role_sw;
+> +
+> +	if (true == eswin->force_mode)
+> +		return;
+> +	mutex_lock(&eswin->lock);
+> +	usb_role_switch_set_role(role_sw, eswin->new_usb_role);
+> +	mutex_unlock(&eswin->lock);
+> +}
+> +
+> +static int dwc3_eswin_get_extcon_dev(struct dwc3_eswin *eswin)
+> +{
+> +	struct device *dev = eswin->dev;
+> +	struct extcon_dev *edev;
+> +	s32 ret = 0;
+> +
+> +	if (device_property_read_bool(dev, "extcon")) {
+
+extcon is not a bool. This is just wrong... plus undocumented ABI.
 
 
-that is true. One problem with this solution is the fact that you can't
+> +		edev = extcon_get_edev_by_phandle(dev, 0);
+> +		if (IS_ERR(edev)) {
+> +			if (PTR_ERR(edev) != -EPROBE_DEFER)
+> +				dev_err(dev, "couldn't get extcon device\n");
+> +			return PTR_ERR(edev);
 
-really distinguish between links that were intentionally disabled (see example
+Do not open code dev_err_probe.
 
-from RFC's cover letter) and links that were accidentally disabled (e.g. user
+> +		}
+> +		eswin->edev = edev;
+> +		eswin->device_nb.notifier_call = dwc3_eswin_device_notifier;
+> +		ret = devm_extcon_register_notifier(dev, edev, EXTCON_USB,
+> +						    &eswin->device_nb);
+> +		if (ret < 0)
+> +			dev_err(dev, "failed to register notifier for USB\n");
+> +
+> +		eswin->host_nb.notifier_call = dwc3_eswin_host_notifier;
+> +		ret = devm_extcon_register_notifier(dev, edev, EXTCON_USB_HOST,
+> +						    &eswin->host_nb);
+> +		if (ret < 0)
+> +			dev_err(dev,
+> +				"failed to register notifier for USB-HOST\n");
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int __init dwc3_eswin_deassert(struct dwc3_eswin *eswin)
 
-forgot to set 'status = "okay"' for one of the link's devices)
+That's wrong annotation. You did not build your kernel with DEBUG
+SECTION MISMATCH.
 
+> +{
+> +	int rc;
+> +
+> +	if (eswin->vaux_rst) {
+> +		rc = reset_control_deassert(eswin->vaux_rst);
+> +		WARN_ON(rc != 0);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int dwc3_eswin_assert(struct dwc3_eswin *eswin)
+> +{
+> +	int rc = 0;
+> +
+> +	if (eswin->vaux_rst) {
+> +		rc = reset_control_assert(eswin->vaux_rst);
+> +		WARN_ON(rc != 0);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int dwc_usb_clk_init(struct device *dev)
+> +{
+> +	struct regmap *regmap;
+> +	u32 hsp_usb_bus;
+> +	u32 hsp_usb_axi_lp;
+> +	u32 hsp_usb_vbus_freq;
+> +	u32 hsp_usb_mpll;
+> +	int ret;
+> +
+> +	regmap = syscon_regmap_lookup_by_phandle(dev->of_node,
+> +						 "eswin,hsp_sp_csr");
+> +	if (IS_ERR(regmap)) {
+> +		dev_dbg(dev, "No hsp_sp_csr phandle specified\n");
+> +		return -1;
+> +	}
+> +	ret = of_property_read_u32_index(dev->of_node, "eswin,hsp_sp_csr", 1,
+> +					 &hsp_usb_bus);
+> +	if (ret) {
+> +		dev_err(dev, "can't get usb sid cfg reg offset (%d)\n", ret);
+> +		return ret;
+> +	}
+> +	ret = of_property_read_u32_index(dev->of_node, "eswin,hsp_sp_csr", 2,
+> +					 &hsp_usb_axi_lp);
+> +	if (ret) {
+> +		dev_err(dev, "can't get usb sid cfg reg offset (%d)\n", ret);
+> +		return ret;
+> +	}
+> +	ret = of_property_read_u32_index(dev->of_node, "eswin,hsp_sp_csr", 3,
+> +					 &hsp_usb_vbus_freq);
+> +	if (ret) {
+> +		dev_err(dev, "can't get usb sid cfg reg offset (%d)\n", ret);
+> +		return ret;
+> +	}
+> +	ret = of_property_read_u32_index(dev->of_node, "eswin,hsp_sp_csr", 4,
+> +					 &hsp_usb_mpll);
+> +	if (ret) {
+> +		dev_err(dev, "can't get usb sid cfg reg offset (%d)\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	/*
+> +	 * usb1 clock init
+> +	 * ref clock is 24M, below need to be set to satisfy usb phy requirement(125M)
+> +	 */
+> +	regmap_write(regmap, hsp_usb_vbus_freq, HSP_USB_VBUS_FSEL);
+> +	regmap_write(regmap, hsp_usb_mpll, HSP_USB_MPLL_DEFAULT);
+> +	/*
+> +	 * reset usb core and usb phy
+> +	 */
+> +	regmap_write(regmap, hsp_usb_bus,
+> +		     HSP_USB_BUS_FILTER_EN | HSP_USB_BUS_CLKEN_GM |
+> +			     HSP_USB_BUS_CLKEN_GS | HSP_USB_BUS_SW_RST |
+> +			     HSP_USB_BUS_CLK_EN);
+> +	regmap_write(regmap, hsp_usb_axi_lp,
+> +		     HSP_USB_AXI_LP_XM_CSYSREQ | HSP_USB_AXI_LP_XS_CSYSREQ);
+> +
+> +	return 0;
+> +}
+> +
+> +static int dwc3_eswin_probe(struct platform_device *pdev)
+> +{
+> +	struct dwc3_eswin *eswin;
+> +	struct device *dev = &pdev->dev;
+> +	struct device_node *np = dev->of_node, *child;
+> +	struct platform_device *child_pdev;
+> +	unsigned int count;
+> +	int ret;
+> +	int i;
+> +	int err_desc = 0;
+> +
+> +	eswin = devm_kzalloc(dev, sizeof(*eswin), GFP_KERNEL);
+> +	if (!eswin)
+> +		return -ENOMEM;
+> +	eswin->hub_gpio = devm_gpiod_get(dev, "hub-rst", GPIOD_OUT_HIGH);
+> +	err_desc = IS_ERR(eswin->hub_gpio);
+> +
+> +	if (!err_desc)
+> +		gpiod_set_raw_value(eswin->hub_gpio, 1);
+> +
+> +	count = of_clk_get_parent_count(np);
+> +	if (!count)
+> +		return -ENOENT;
+> +
+> +	eswin->num_clocks = count;
+> +	eswin->force_mode = false;
+> +	eswin->clks = devm_kcalloc(dev, eswin->num_clocks, sizeof(struct clk *),
+> +				   GFP_KERNEL);
+> +	if (!eswin->clks)
+> +		return -ENOMEM;
+> +
+> +	platform_set_drvdata(pdev, eswin);
+> +
+> +	mutex_init(&eswin->lock);
+> +
+> +	eswin->dev = dev;
+> +
+> +	mutex_lock(&eswin->lock);
 
->
-> You want to add "disable_of_route_checks" flag to the card, right ?
-> How about to add new property, like "force detect xxx", or
-> "DAI might not be detected", etc, etc, etc...
->
-> If we can have such property, it will be more simple code.
->
-> 	if (it_has_flag("force_detect_xxx")) {
-> 		dev_info(dev, "xxx");
-> 		card->disable_of_route_checks = 1;
-> 	}
+I don't understand the point of it. Explain me, what are you protecting
+here from what? How is it possible?
 
+> +
+> +	for (i = 0; i < eswin->num_clocks; i++) {
+> +		struct clk *clk;
+> +
+> +		clk = of_clk_get(np, i);
 
-well, I think the solution is made up of 2 parts:
+No, use devm_clk_Get
 
-    1) the part that allows link devices to be disabled
+> +		if (IS_ERR(clk)) {
+> +			ret = PTR_ERR(clk);
+> +			goto err0;
+> +		}
+> +		ret = clk_prepare_enable(clk);
+> +		if (ret < 0) {
+> +			clk_put(clk);
+> +			goto err0;
+> +		}
+> +
+> +		eswin->clks[i] = clk;
 
-    2) the part that allows routes to fails
+Use get_enabled and bulk api.
 
+> +	}
+> +
+> +	eswin->vaux_rst = devm_reset_control_get(dev, "vaux");
+> +	if (IS_ERR_OR_NULL(eswin->vaux_rst)) {
 
-what you're suggesting is dropping the first part and going with just the second one.
+OR_NULL? Why?
 
-The problem I see with this (let's assume we have the BASE-PLUGIN example presented
+> +		dev_err(dev, "Failed to asic0_rst handle\n");
 
-in the RFC's cover letter) is that:
+Syntax is always: retrun dev_err_probe
 
-    1) You'll have to specify the links inside of PLUGIN's DT overlay (instead of BASE's DTS)
+> +		return -EFAULT;
 
-    2) You'll have to do the link connection part inside PLUGIN's DT overlay.
+No, return proper error codes.
 
+> +	}
+> +
+> +	dwc3_eswin_deassert(eswin);
+> +	dwc_usb_clk_init(dev);
+> +
+> +	pm_runtime_set_active(dev);
+> +	pm_runtime_enable(dev);
+> +	ret = pm_runtime_get_sync(dev);
+> +	if (ret < 0) {
+> +		dev_err(dev, "get_sync failed with err %d\n", ret);
+> +		goto err1;
+> +	}
+> +
+> +	child = of_get_child_by_name(np, "dwc3");
+> +	if (!child) {
+> +		dev_err(dev, "failed to find dwc3 core node\n");
+> +		ret = -ENODEV;
+> +		goto err1;
+> +	}
+> +	/* Allocate and initialize the core */
+> +	ret = of_platform_populate(np, NULL, NULL, dev);
+> +	if (ret) {
+> +		dev_err(dev, "failed to create dwc3 core\n");
+> +		goto err1;
+> +	}
+> +
+> +	INIT_WORK(&eswin->otg_work, dwc3_eswin_otg_extcon_evt_work);
+> +	child_pdev = of_find_device_by_node(child);
+> +	if (!child_pdev) {
+> +		dev_err(dev, "failed to find dwc3 core device\n");
+> +		ret = -ENODEV;
+> +		goto err2;
+> +	}
+> +	eswin->dwc = platform_get_drvdata(child_pdev);
+> +	if (!eswin->dwc) {
+> +		dev_err(dev, "failed to get drvdata dwc3\n");
+> +		ret = -EPROBE_DEFER;
+> +		goto err2;
+> +	}
+> +	eswin->child_dev = &child_pdev->dev;
+> +	ret = dwc3_eswin_get_extcon_dev(eswin);
+> +	if (ret < 0)
+> +		dev_err(dev, "couldn't get extcon device: %d\n", ret);
+> +
+> +	mutex_unlock(&eswin->lock);
+> +	ret = sysfs_create_group(&dev->kobj, &dwc3_eswin_attr_group);
+> +	if (ret)
+> +		dev_err(dev, "failed to create sysfs group: %d\n", ret);
+> +
+> +	return ret;
+> +err2:
+> +	cancel_work_sync(&eswin->otg_work);
+> +	of_platform_depopulate(dev);
+> +
+> +err1:
+> +	pm_runtime_put_sync(dev);
+> +	pm_runtime_disable(dev);
+> +	dwc3_eswin_assert(eswin);
+> +err0:
+> +	for (i = 0; i < eswin->num_clocks && eswin->clks[i]; i++) {
+> +		if (!pm_runtime_status_suspended(dev))
+> +			clk_disable(eswin->clks[i]);
+> +		clk_unprepare(eswin->clks[i]);
+> +		clk_put(eswin->clks[i]);
+> +	}
+> +
+> +	mutex_unlock(&eswin->lock);
+> +
+> +	return ret;
+> +}
+> +
+> +static void dwc3_eswin_remove(struct platform_device *pdev)
+> +{
+> +	struct dwc3_eswin *eswin = platform_get_drvdata(pdev);
+> +	struct device *dev = &pdev->dev;
+> +	int i = 0;
+> +
+> +	cancel_work_sync(&eswin->otg_work);
+> +
+> +	sysfs_remove_group(&dev->kobj, &dwc3_eswin_attr_group);
+> +
+> +	/* Restore hcd state before unregistering xhci */
+> +	if (eswin->edev && !eswin->connected) {
+> +		struct usb_hcd *hcd = dev_get_drvdata(&eswin->dwc->xhci->dev);
+> +
+> +		pm_runtime_get_sync(dev);
+> +
+> +		/*
+> +		 * The xhci code does not expect that HCDs have been removed.
+> +		 * It will unconditionally call usb_remove_hcd() when the xhci
+> +		 * driver is unloaded in of_platform_depopulate(). This results
+> +		 * in a crash if the HCDs were already removed. To avoid this
+> +		 * crash, add the HCDs here as dummy operation.
+> +		 * This code should be removed after pm runtime support
+> +		 * has been added to xhci.
+> +		 */
+> +		if (hcd->state == HC_STATE_HALT) {
+> +			usb_add_hcd(hcd, hcd->irq, IRQF_SHARED);
+> +			usb_add_hcd(hcd->shared_hcd, hcd->irq, IRQF_SHARED);
+> +		}
+> +	}
+> +
+> +	of_platform_depopulate(dev);
+> +
+> +	pm_runtime_put_sync(dev);
+> +	pm_runtime_disable(dev);
+> +
+> +	dwc3_eswin_assert(eswin);
+> +	for (i = 0; i < eswin->num_clocks; i++) {
+> +		if (!pm_runtime_status_suspended(dev))
+> +			clk_disable(eswin->clks[i]);
+> +		clk_unprepare(eswin->clks[i]);
+> +		clk_put(eswin->clks[i]);
+> +	}
+> +}
+> +
+> +#ifdef CONFIG_PM
+> +static int dwc3_eswin_runtime_suspend(struct device *dev)
+> +{
+> +	struct dwc3_eswin *eswin = dev_get_drvdata(dev);
+> +	int i;
+> +
+> +	for (i = 0; i < eswin->num_clocks; i++)
+> +		clk_disable(eswin->clks[i]);
+> +
+> +	device_init_wakeup(dev, false);
+> +
+> +	return 0;
+> +}
+> +
+> +static int dwc3_eswin_runtime_resume(struct device *dev)
+> +{
+> +	struct dwc3_eswin *eswin = dev_get_drvdata(dev);
+> +	int i;
+> +
+> +	for (i = 0; i < eswin->num_clocks; i++)
+> +		clk_enable(eswin->clks[i]);
+> +
+> +	device_init_wakeup(dev, true);
 
-So, our example DTS and DT overlay would look like this:
+This feels odd. What is the point of wakeup if you disable it for the
+sleeping periods?
 
+> +
+> +	return 0;
+> +}
+> +
+> +static int __maybe_unused dwc3_eswin_suspend(struct device *dev)
+> +{
+> +	struct dwc3_eswin *eswin = dev_get_drvdata(dev);
+> +	struct dwc3 *dwc = eswin->dwc;
+> +
+> +	eswin->suspended = true;
+> +	cancel_work_sync(&eswin->otg_work);
+> +
+> +	/*
+> +	 * The flag of is_phy_on is only true if
+> +	 * the DWC3 is in Host mode.
+> +	 */
+> +	if (eswin->is_phy_on) {
+> +		phy_power_off(dwc->usb2_generic_phy[0]);
+> +
+> +		/*
+> +		 * If link state is Rx.Detect, it means that
+> +		 * no usb device is connecting with the DWC3
+> +		 * Host, and need to power off the USB3 PHY.
+> +		 */
+> +		dwc->link_state = dwc3_gadget_get_link_state(dwc);
+> +		if (dwc->link_state == DWC3_LINK_STATE_RX_DET)
+> +			phy_power_off(dwc->usb3_generic_phy[0]);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int __maybe_unused dwc3_eswin_resume(struct device *dev)
+> +{
+> +	struct dwc3_eswin *eswin = dev_get_drvdata(dev);
+> +	struct dwc3 *dwc = eswin->dwc;
+> +
+> +	eswin->suspended = false;
+> +
+> +	if (eswin->is_phy_on) {
+> +		phy_power_on(dwc->usb2_generic_phy[0]);
+> +
+> +		if (dwc->link_state == DWC3_LINK_STATE_RX_DET)
+> +			phy_power_on(dwc->usb3_generic_phy[0]);
+> +	}
+> +
+> +	if (eswin->edev)
+> +		schedule_work(&eswin->otg_work);
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct dev_pm_ops dwc3_eswin_dev_pm_ops = {
+> +	SET_SYSTEM_SLEEP_PM_OPS(dwc3_eswin_suspend, dwc3_eswin_resume)
+> +		SET_RUNTIME_PM_OPS(dwc3_eswin_runtime_suspend,
+> +				   dwc3_eswin_runtime_resume, NULL)
+> +};
+> +
+> +#define DEV_PM_OPS (&dwc3_eswin_dev_pm_ops)
+> +#else
+> +#define DEV_PM_OPS NULL
+> +#endif /* CONFIG_PM */
+> +
+> +static const struct of_device_id eswin_dwc3_match[] = {
+> +	{ .compatible = "eswin,eic7700-dwc3" },
+> +	{ /* Sentinel */ }
+> +};
+> +
+> +MODULE_DEVICE_TABLE(of, eswin_dwc3_match);
+> +
+> +static struct platform_driver dwc3_eswin_driver = {
+> +	.probe = dwc3_eswin_probe,
+> +	.remove = dwc3_eswin_remove,
+> +	.driver = {
+> +		.name = "eic7700-dwc3",
+> +		.pm = DEV_PM_OPS,
+> +		.of_match_table = eswin_dwc3_match,
+> +	},
+> +};
+> +
+> +module_platform_driver(dwc3_eswin_driver);
+> +
+> +MODULE_ALIAS("platform:eic7700-dwc3");
 
-[snippet from base.dts]
+Drop. You should not need MODULE_ALIAS() in normal cases. If you need
+it, usually it means your device ID table is wrong (e.g. misses either
+entries or MODULE_DEVICE_TABLE()). MODULE_ALIAS() is not a substitute
+for incomplete ID table.
 
-	my_card: card {
-		compatible = "audio-graph-card2";
-		links = <&l2>; /* here, we're only allowed to specify links that exist */
-		routing = "Headphones", "C20",
-			  "Headphones", "C21",
-			  "Line", "C01";
-	};
+Both of your drivers - this and PCI - are in very poor shape. I suggest
+redoing them based on latest upstream drivers, not pushing to us your
+downstream code.
 
-	d0: cpu@0 {
-		l0: port { l0_ep: endpoint { /* connected when plugin.dtbo is applied */ } };
-	};
-
-	d1: cpu@1 {
-		l1: port { l1_ep: endpoint { /* connected when plugin.dtbo is applied */ } };
-	};
-
-	d2: cpu@2 {
-		l2: port { l2_ep: endpoint { remote-endpoint = <&c2_ep>; } };
-	};
-
-	c2: codec@2 {
-		port { c2_ep: endpoint { remote-endpoint = <&l2_ep>; } };
-	};
-
-
-[snippet from plugin.dtso]
-
-&my_card {
-	/* here we're forced to also specify l2 even if this is already done
-         * in base.dts. This is because DT overlays don't support appending to
-	 * properties.
-         */
-	remote-endpoint = <&l0>, <&l1>, <&l2>;
-};
-
-&l0_ep {
-	remote-endpoint = <&c1_ep>;
-};
-
-&l1_ep {
-	remote-endpoint = <&c2_ep>;
-};
-
-c0: codec@0 {
-	port { c0_ep: endpoint { remote-endpoint = <&l0_ep>; } };
-};
-
-c1: codec@1 {
-	port { c1_ep: endpoint { remote-endpoint = <&l1_ep>; } };
-};
-
-Assume that we also have BASE1 that is compatible with PLUGIN but
-C0 and C1 are connected to BASE1's D0 and D5. Since there's no D1-C1
-connection that means you'll have to create another DT overlay. Thus,
-the scalability of plugin.dtso decreases.
-
-Now, for our particular case, we have BASE0 and BASE1 with the following
-DAIs and CODECS (these are physically present on the base boards):
-
-BASE0 has DAIs D0, D1 and CODEC C0
-BASE1 has DAIs D0, D1 and CODEC C1
-
-Both of these boards are compatible with plugin PLUGIN that has codec C2.
-The possible DAI links are:
-
-For BASE0:
-
-D0 <----> C0
-D1 <----> C2 (only possible with PLUGIN connected)
-
-For BASE1:
-
-D0 <----> C1
-D1 <----> C2 (only possible with PLUGIN connected)
-
-Since the D1 <---> C2 connection is valid for both BASE0-PLUGIN and
-BASE1-PLUGIN combinations I think we can make do without the support
-for explicitly disabled links. But I don't think this is ideal because:
-
-1) If we ever need to support board BASE3 that is compatible with PLUGIN
-and uses Dn != D1 to connect with PLUGIN's C2 codec then we're going to
-either modify our devicetrees (to make plugin.dtso applicable to BASE3
-as well) or add another DT overlay (not really desirable because we already
-have a lot of devicetrees). (note: more of an _if_ situation. Don't think we
-can actually use this as an argument. I just wanted to have this out in the
-open)
-
-2) People might get confused when looking at the "links" and "routing"
-properties. Now, "links" will only contain links that actually exist, while
-"routing" can contain widgets from codecs that don't exist on the base board.
-(note: perhaps not a deal breaker? again, just wanted to have this out in the
-open)
-
-
-Either way, I believe your concern is valid. This new feature adds a lot of
-extra code and validating it is a pain. Still, even if we go with just the
-extra DT property as you suggested I believe this is a step forward so I think
-we can go with that for now and see how well this scales.
-
-
-BTW, thanks a lot for taking the time to review this huge series!!
-
-> Thank you for your help !!
->
-> Best regards
-> ---
-> Kuninori Morimoto
+Best regards,
+Krzysztof
 
