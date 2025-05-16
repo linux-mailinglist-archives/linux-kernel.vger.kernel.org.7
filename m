@@ -1,58 +1,58 @@
-Return-Path: <linux-kernel+bounces-651605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-651604-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 499ECABA092
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 18:04:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86610ABA08F
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 18:04:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 83ED616BE30
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 16:04:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B981189783C
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 16:04:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B93ED1D5CED;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98EDB1D54FE;
 	Fri, 16 May 2025 16:03:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="No/NinQ6";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="5KEMvBkG"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Gt0x0UDR";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="p1as1lxM"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C0B819007D
-	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 16:03:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93F8F1922FB
+	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 16:03:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747411433; cv=none; b=TlaiIDV6NJLfA64zdMsEsoVGbefbu6BI30cBRcumtS/FQK7L22wcM9uY9M4YcgLoLJ1Y7dBmUOSeeWEwC3KwnQJuWmaNvfwgbt1IwVX/w54l7nhPqILhGXdPQc0BEznA6M5nVolLmq52GavVPRdizK5d/izUPLxMAefhmqokjXA=
+	t=1747411433; cv=none; b=s1GZJfXcTLfKW49cjMoaREB/P1GwIcj7kW4CeWUiSSkEkKMaNylqhABWzeUE9GCNVaXm6ZSTs+VzHGU8M3+FB2sLkU4y65YD+XCIjTtXh6Pi4nXLEbihapORtBq6AJOVVO58lv8gDAv3s/FLF12ekKpcosU/3Gl8TldEzFTJcPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1747411433; c=relaxed/simple;
-	bh=7quEVCGbCH2J/NQogOv1jyN8vMCSyQTngwDy7ifxKfo=;
+	bh=j/BzPvwStte+u580GD3gncn95b2rBkz0AAqHpk6bJBc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qKV6XGVZS/ex+hh0bZ1Ii5xwytrbD0I3HstgIYYlRKSeJlBs75zYsYgwZSL+4eAzOWS1SRrXu924tLXW3zxjaqbmndh04GsMzdJ8PDYV9khObrANn+OPNnr3QMLCvhuN2mwZXzGGZ8SQHZ9Qn9yxETB77XpYnjAP53BOvmZa7pw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=No/NinQ6; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=5KEMvBkG; arc=none smtp.client-ip=193.142.43.55
+	 MIME-Version; b=YjpAoJRKNwVfWC62G6ugRS6fTW3bTFwWDTRcDzRGOPvpncPMjL3ijEuXafJHTseDFiISkMxczQA64xGqXnZAgUHiCulHTiuqmWD9ovj5Tdg9XF+Ulx84jNYrgQI960+YjAxPLsc+A3Pr3f341emOvyNlRBEFOIam4li8K06b3mE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Gt0x0UDR; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=p1as1lxM; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020; t=1747411429;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=OgPtag8YLEfLZf6k4CCxGs8DpMmSVn6yKu/hnu3LgNs=;
-	b=No/NinQ64fCwmsVpXXpPwIbCWz0G6bsJx8FkPbotC21FOXsmSFRfZH2NyIKc+mVTKVunpW
-	3lAZlUpjJo5g5yo0sYp4hZkZMLfJKZeWQ57YPEsXDAnOyErDdnYetSiMnSgeC11GYnK6vu
-	S4qDbj04l1cVDjJ0v7K28FWERfIIzTvk8ooWoImZ0KMYDlP+22wBv3uXs5CIlFSZ8zhVp+
-	8m/OUsq6nsjizQ6BunYs3KyHfHssi5mXo7sT/T05/2wFKzw3L+qpf+3NNCQF2WeTDCIG0X
-	4FoehmvOhm4GK5GdhgVAdfJfPBEMrL+HDLbJ+RyWi5raVo7eU3hKaa0Pe0+IoA==
+	bh=tuFsKmSU09nElHvJf8RpcCbmx97tu90mrN0WgRIDs1o=;
+	b=Gt0x0UDRlqbzCMf3WZWXcjyIKDMEXF2DP1na5G5uRRliI6jM2oeJXvnpHZiWngwhuFHc4S
+	VVh2BzxyCBi8sxUCqp9ZJxXBmZb+9H5lZJINSPdPtsW0LUfepedNTuuWtCAtzvGAsfzWIe
+	W+Xu+RmTUnihdj47dr1AJo3k/0lEepXkA6B6h/p8WOrxidF3XlXGu3dalWY7GtuJDlcOZe
+	h5UTH80Yow8jlzkZzYFfF/F4vUITnlK2yN9Ih8PenpLRCc8BWNyl5PB1kUD7GORLDcZksz
+	W7vPncoNTEZMUkxeYFfGUy90QNpDvG9KZKK2aujLauhcnhsvo53cPLmLRD3Bzg==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020e; t=1747411429;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=OgPtag8YLEfLZf6k4CCxGs8DpMmSVn6yKu/hnu3LgNs=;
-	b=5KEMvBkG54Kusk+LD7LLRUPLvPjlSD1UQYhLrMYlQ+mTkQgwSfG5AjdRuBgsXbC+/OSirP
-	ObaRlBWSn7jzZXAw==
+	bh=tuFsKmSU09nElHvJf8RpcCbmx97tu90mrN0WgRIDs1o=;
+	b=p1as1lxMTu99FODwmIB+5sc+w3lSmVkSmv2G6f5dW0ZoDRhEhJEE2k9ve7XF0fOEb08fLv
+	J5cv4EOeXCEizFBg==
 To: linux-kernel@vger.kernel.org
 Cc: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>,
 	Darren Hart <dvhart@infradead.org>,
@@ -64,9 +64,9 @@ Cc: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>,
 	Valentin Schneider <vschneid@redhat.com>,
 	Waiman Long <longman@redhat.com>,
 	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [PATCH 2/5] selftests/futex: Use TAP output in futex_numa_mpol
-Date: Fri, 16 May 2025 18:03:36 +0200
-Message-ID: <20250516160339.1022507-3-bigeasy@linutronix.de>
+Subject: [PATCH 3/5] futex: Use RCU_INIT_POINTER() in futex_mm_init().
+Date: Fri, 16 May 2025 18:03:37 +0200
+Message-ID: <20250516160339.1022507-4-bigeasy@linutronix.de>
 In-Reply-To: <20250516160339.1022507-1-bigeasy@linutronix.de>
 References: <20250516160339.1022507-1-bigeasy@linutronix.de>
 Precedence: bulk
@@ -75,176 +75,42 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 
-Use TAP output for easier automated testing.
+There is no need for an explicit NULL pointer initialisation plus a
+comment why it is okay. RCU_INIT_POINTER() can be used for NULL
+initialisations and it is documented.
 
-Suggested-by: Andr=C3=A9 Almeida <andrealmeid@igalia.com>
+This has been build tested with gcc version 9.3.0 (Debian 9.3.0-22) on a
+x86-64 defconfig.
+
+Fixes: 094ac8cff7858 ("futex: Relax the rcu_assign_pointer() assignment of =
+mm->futex_phash in futex_mm_init()")
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 ---
- .../futex/functional/futex_numa_mpol.c        | 65 +++++++++----------
- 1 file changed, 32 insertions(+), 33 deletions(-)
+ include/linux/futex.h | 9 +--------
+ 1 file changed, 1 insertion(+), 8 deletions(-)
 
-diff --git a/tools/testing/selftests/futex/functional/futex_numa_mpol.c b/t=
-ools/testing/selftests/futex/functional/futex_numa_mpol.c
-index dd70532f293ec..d18949ea915aa 100644
---- a/tools/testing/selftests/futex/functional/futex_numa_mpol.c
-+++ b/tools/testing/selftests/futex/functional/futex_numa_mpol.c
-@@ -61,10 +61,8 @@ static void create_max_threads(void *futex_ptr)
- 		thread_args[i].flags =3D FUTEX2_SIZE_U32 | FUTEX_PRIVATE_FLAG | FUTEX2_N=
-UMA;
- 		thread_args[i].result =3D 0;
- 		ret =3D pthread_create(&threads[i], NULL, thread_lock_fn, &thread_args[i=
-]);
--		if (ret) {
--			error("pthread_create failed\n", errno);
--			exit(1);
--		}
-+		if (ret)
-+			ksft_exit_fail_msg("pthread_create failed\n");
- 	}
+diff --git a/include/linux/futex.h b/include/linux/futex.h
+index 168ffd5996b48..005b040c4791b 100644
+--- a/include/linux/futex.h
++++ b/include/linux/futex.h
+@@ -88,14 +88,7 @@ void futex_hash_free(struct mm_struct *mm);
+=20
+ static inline void futex_mm_init(struct mm_struct *mm)
+ {
+-	/*
+-	 * No need for rcu_assign_pointer() here, as we can rely on
+-	 * tasklist_lock write-ordering in copy_process(), before
+-	 * the task's MM becomes visible and the ->futex_phash
+-	 * becomes externally observable:
+-	 */
+-	mm->futex_phash =3D NULL;
+-
++	RCU_INIT_POINTER(mm->futex_phash, NULL);
+ 	mutex_init(&mm->futex_hash_lock);
  }
 =20
-@@ -74,10 +72,8 @@ static void join_max_threads(void)
-=20
- 	for (i =3D 0; i < MAX_THREADS; i++) {
- 		ret =3D pthread_join(threads[i], NULL);
--		if (ret) {
--			error("pthread_join failed for thread %d\n", errno, i);
--			exit(1);
--		}
-+		if (ret)
-+			ksft_exit_fail_msg("pthread_join failed for thread %d\n", i);
- 	}
- }
-=20
-@@ -95,12 +91,12 @@ static void __test_futex(void *futex_ptr, int must_fail=
-, unsigned int futex_flag
- 		if (must_fail) {
- 			if (ret < 0)
- 				break;
--			fail("Should fail, but didn't\n");
--			exit(1);
-+			ksft_exit_fail_msg("futex2_wake(%d, 0x%x) should fail, but didn't\n",
-+					   to_wake, futex_flags);
- 		}
- 		if (ret < 0) {
--			error("Failed futex2_wake(%d)\n", errno, to_wake);
--			exit(1);
-+			ksft_exit_fail_msg("Failed futex2_wake(%d, 0x%x): %m\n",
-+					   to_wake, futex_flags);
- 		}
- 		if (!ret)
- 			usleep(50);
-@@ -111,16 +107,17 @@ static void __test_futex(void *futex_ptr, int must_fa=
-il, unsigned int futex_flag
-=20
- 	for (i =3D 0; i < MAX_THREADS; i++) {
- 		if (must_fail && thread_args[i].result !=3D -1) {
--			fail("Thread %d should fail but succeeded (%d)\n", i, thread_args[i].re=
-sult);
-+			ksft_print_msg("Thread %d should fail but succeeded (%d)\n",
-+				       i, thread_args[i].result);
- 			need_exit =3D 1;
- 		}
- 		if (!must_fail && thread_args[i].result !=3D 0) {
--			fail("Thread %d failed (%d)\n", i, thread_args[i].result);
-+			ksft_print_msg("Thread %d failed (%d)\n", i, thread_args[i].result);
- 			need_exit =3D 1;
- 		}
- 	}
- 	if (need_exit)
--		exit(1);
-+		ksft_exit_fail_msg("Aborting due to earlier errors.\n");
- }
-=20
- static void test_futex(void *futex_ptr, int must_fail)
-@@ -167,41 +164,41 @@ int main(int argc, char *argv[])
- 		}
- 	}
-=20
-+	ksft_print_header();
-+	ksft_set_plan(1);
-+
- 	mem_size =3D sysconf(_SC_PAGE_SIZE);
- 	futex_ptr =3D mmap(NULL, mem_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | =
-MAP_ANONYMOUS, 0, 0);
--	if (futex_ptr =3D=3D MAP_FAILED) {
--		error("mmap() for %d bytes failed\n", errno, mem_size);
--		return 1;
--	}
-+	if (futex_ptr =3D=3D MAP_FAILED)
-+		ksft_exit_fail_msg("mmap() for %d bytes failed\n", mem_size);
-+
- 	futex_numa =3D futex_ptr;
-=20
--	info("Regular test\n");
-+	ksft_print_msg("Regular test\n");
- 	futex_numa->futex =3D 0;
- 	futex_numa->numa =3D FUTEX_NO_NODE;
- 	test_futex(futex_ptr, 0);
-=20
--	if (futex_numa->numa =3D=3D FUTEX_NO_NODE) {
--		fail("NUMA node is left unitiliazed\n");
--		return 1;
--	}
-+	if (futex_numa->numa =3D=3D FUTEX_NO_NODE)
-+		ksft_exit_fail_msg("NUMA node is left unitiliazed\n");
-=20
--	info("Memory too small\n");
-+	ksft_print_msg("Memory too small\n");
- 	test_futex(futex_ptr + mem_size - 4, 1);
-=20
--	info("Memory out of range\n");
-+	ksft_print_msg("Memory out of range\n");
- 	test_futex(futex_ptr + mem_size, 1);
-=20
- 	futex_numa->numa =3D FUTEX_NO_NODE;
- 	mprotect(futex_ptr, mem_size, PROT_READ);
--	info("Memory, RO\n");
-+	ksft_print_msg("Memory, RO\n");
- 	test_futex(futex_ptr, 1);
-=20
- 	mprotect(futex_ptr, mem_size, PROT_NONE);
--	info("Memory, no access\n");
-+	ksft_print_msg("Memory, no access\n");
- 	test_futex(futex_ptr, 1);
-=20
- 	mprotect(futex_ptr, mem_size, PROT_READ | PROT_WRITE);
--	info("Memory back to RW\n");
-+	ksft_print_msg("Memory back to RW\n");
- 	test_futex(futex_ptr, 0);
-=20
- 	/* MPOL test. Does not work as expected */
-@@ -213,20 +210,22 @@ int main(int argc, char *argv[])
- 		ret =3D mbind(futex_ptr, mem_size, MPOL_BIND, &nodemask,
- 			    sizeof(nodemask) * 8, 0);
- 		if (ret =3D=3D 0) {
--			info("Node %d test\n", i);
-+			ksft_print_msg("Node %d test\n", i);
- 			futex_numa->futex =3D 0;
- 			futex_numa->numa =3D FUTEX_NO_NODE;
-=20
- 			ret =3D futex2_wake(futex_ptr, 0, FUTEX2_SIZE_U32 | FUTEX_PRIVATE_FLAG =
-| FUTEX2_NUMA | FUTEX2_MPOL);
- 			if (ret < 0)
--				error("Failed to wake 0 with MPOL.\n", errno);
-+				ksft_test_result_fail("Failed to wake 0 with MPOL: %m\n");
- 			if (0)
- 				test_futex_mpol(futex_numa, 0);
- 			if (futex_numa->numa !=3D i) {
--				fail("Returned NUMA node is %d expected %d\n",
--				     futex_numa->numa, i);
-+				ksft_test_result_fail("Returned NUMA node is %d expected %d\n",
-+						      futex_numa->numa, i);
- 			}
- 		}
- 	}
-+	ksft_test_result_pass("NUMA MPOL tests passed\n");
-+	ksft_finished();
- 	return 0;
- }
 --=20
 2.49.0
 
