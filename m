@@ -1,201 +1,139 @@
-Return-Path: <linux-kernel+bounces-651678-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-651684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72FD4ABA1AA
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 19:10:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B6D2ABA1B5
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 19:12:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EFBB24E47C9
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 17:10:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1DB461BA2804
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 17:12:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18F73272E79;
-	Fri, 16 May 2025 17:10:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EDA626F46C;
+	Fri, 16 May 2025 17:12:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="k5fcNovM"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BopuGbPF"
+Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com [209.85.221.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F1EA26AAAA
-	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 17:10:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79050253326;
+	Fri, 16 May 2025 17:11:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747415443; cv=none; b=uQ2ZMaadFPEy9FVUc3GusP0XBLvqPHFGjCRbm1Qq96LFTGbDKExMsREz3B+uYCWb36/zaXR49fXPOriiVr8Iqp9b43UXDedzLXU+pka67qsMBIZfw5ocKcQoFQBJ1Mkq25hqrRBWJMyI/20jTuH9yJPcFFaDO5qwVPDoyxIqWU0=
+	t=1747415521; cv=none; b=U2aosPYcuTlQtckg2GcZtOzb1PHWvJ7GsAzivGOEnCssIVcGjovVQW/N1/rCgMsCtz/LuyZf+ea+X+VRFnDvbJPuThPK82ye938dyG2acYUj6BjYM0m18DsBkDHu/PBIhSQHyfeMEkx5PtDoPqDOi/KyYncBKGEkDfnpkTq4EsM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747415443; c=relaxed/simple;
-	bh=G6qWcf2f0b0ZiprK6YnOZRU4oWNHGHo/J34bbeqy3AY=;
+	s=arc-20240116; t=1747415521; c=relaxed/simple;
+	bh=OmRKj2XGoYIJqcdUtZTOASiF24tdoRUpWqZw3F4eErU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Z2G2f15dQWWEjXl9nbUcKxN//ndYOMv6O3QfQxMzl1WEfSVBEMAijgdvmjqqziSAUaoYPEviJAXJgxxdQHECjddPom4bfakFzAw7vQFXPvT00LE8OK3/qRNNz8Ccpno4/vKjjFSEMwxjHYPEEVjlR2Rm21odiPobZ3S4Q0QZD14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=k5fcNovM; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-ac34257295dso373953466b.2
-        for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 10:10:41 -0700 (PDT)
+	 To:Cc:Content-Type; b=X3RZczD6hCPTEEDiDFxQcqM3dloB5gH8yLOkA3PPRhcS8x+GpEbY6GwArM9DIEpZ+4CGBh6AXAX3eamk0lPH/qTVBsaw5MmYmgBIFFD8WH5ZWAle8At0evySwoTMfkgjX1efqdvh/UCOG03GURjdQak4FtEiww0zwhKA+Khez9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BopuGbPF; arc=none smtp.client-ip=209.85.221.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f180.google.com with SMTP id 71dfb90a1353d-525b44ec88aso738955e0c.3;
+        Fri, 16 May 2025 10:11:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1747415440; x=1748020240; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1747415518; x=1748020318; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=gerRkJKHTQKNvQo9k3X99QHawPSXLzta86cYlEnhtcc=;
-        b=k5fcNovMyxgMBUQASf44vbsDXb/ZiOxy1rXPzsFaCG/jn664RFBwRzlFHXgMzH+9WA
-         VSTeoRSgiHLzWrb89vLuoVadP/YK40ePAulRKCgO8uwFGKx869VCclu4DGNwn1GCvRA9
-         DO16Cs0uwm865qX92l3l5t+KSJAyiQSNFedEWe15NEwApFdnSz6HrKL72fLQXcJUsTkc
-         liA1xxpwQI1R8RSjCHy7ZW/OhFe4RbqOxuA23ecOhDOpryRcee3E338Q+yE9FnuAJfPp
-         p9Yzs38i9bA7uRFgdNvekujhCkfIrvuTDJnIY5jV3PZKgaiwf4szcUkTd6PiBLakH97L
-         3FJA==
+        bh=fhDH5x31OY0sDQlP+75NDdLaYCVS3MYscT17OHcsFQo=;
+        b=BopuGbPFTLlqlIfVBz4M700OKK2/P/ufWpcABv4UqaCd9OTyZukuaK/6ksm2poMicD
+         WoaIJRpdvqeDJnUo4In7EqPU1Ps8Cy9CCarWwot1Y0o1rlUvhG5/3qCzM8xKnPEwkVJ6
+         8O2q6ztPbK9Ot85SeQIwjOtsaVutB2RXcbDgPDmJHtzPbB0kDObW/+aHndM1bU+w7Loq
+         FocmcbDpgzWr3f++Un1deOjeO8MnAAdc3Ca43A6dBAI5dOBOohSTEiNXP9GJ2Rk++5Ca
+         1lUJr7QDMqgkjttExD3ZGmbG3/swApKm9WcTN+4mzGqYC2YD1/eqp5TuW3pHWyqgA+7J
+         yEqg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747415440; x=1748020240;
+        d=1e100.net; s=20230601; t=1747415518; x=1748020318;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=gerRkJKHTQKNvQo9k3X99QHawPSXLzta86cYlEnhtcc=;
-        b=C0YXea8lWEYry/XyQQj64G0Kgo11jGK/cqzalc0wBOfh826lO2sDScG6oImQU4ceif
-         C55UQGoto99ryUtXyAsEn+ddauzjhrW+L6vQGpVfvqJB65gB+A7UIZ1bc19RWWB473k9
-         dqs+fOshwBVRjJj4WG/3JR0ZqTti3vXJ/Q9FSmHu9udq8y+OZVb0SkCd/6Dsbd9XsEV9
-         Hj+BPZ8yztHmp6oETRPOlhtaJ4q8fh5BvywrXeZdQ7+zpblnrtl0wdZJE3Se5KWdveKz
-         4AZKOs+D+R/VtBWvODLlcvdverRYoweLo1lGuICTBIVfJlOtxkDOt7qMTAn5Dzdnf5ER
-         o/zw==
-X-Forwarded-Encrypted: i=1; AJvYcCVyZueGK3O8YmcgOIfW5+29fD54r34vIICsyV+XymCIch+r7k3jSZXnqvFzUwdYW/MgfDNU+s7mvoqcIHc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyRtk/xfAHJlw5qLoZMo2RsdqGfN6bmZVE3f1WG2AzZvyqZfSxN
-	Vgv4vTTcalRJYvnzHa9+s1RiwyzEQzE0RRrP9PpRrGZ33CO4ZDeo8/XnlHlMOlKD6WWx+KCuH7r
-	WlCg+GtK8jbvBlSC/VmwR5pavFjwMD8vnmZmnPt9N7iHJq18/bzb23OTUveA=
-X-Gm-Gg: ASbGncuVWUpIQ/uRtJ24+QRCLSCdnQdT0qDrk/Qx7WRjsr1pQ6KHAVxR4nn61rX/VeO
-	ou5iJ7QX6g0msIJIv/zKTvWyCSxkA8CbxBymW0gyzzrKleY7wpCQnHLsZZqBmGjoWEQHuRoFKpU
-	MCCPvmLQLxEVMdLXw6RNAdZ3jaQX1WnM7wD5NdcOaOpg==
-X-Google-Smtp-Source: AGHT+IH3dUSAi6c1I9L11RyH3JvAS1lfke58i5i+2bvcKcpNPnFkk++9/uDN4MZ8LU+4SM8H+CNaUrMhVbgkifEKQaU=
-X-Received: by 2002:a17:907:980d:b0:ad2:3f1f:7965 with SMTP id
- a640c23a62f3a-ad52d43838fmr435418166b.4.1747415439480; Fri, 16 May 2025
- 10:10:39 -0700 (PDT)
+        bh=fhDH5x31OY0sDQlP+75NDdLaYCVS3MYscT17OHcsFQo=;
+        b=exVW9gB765Zt6N2T8c/FNKjyY1CK+SylYgS/yW7GjOjetboGXRU9cJSJASSDe+xjMy
+         EFjDIMxZYTt1L1OXsYGf5YXftuaAaiJQg0P1pg4/N4L+e47fUs9AWpCppTbvT1kiagVf
+         VJPvGVV5DXRRruwUDhutjl/WpQFJ3sF/hpowt1RDwCMw6sMiQ85Pg3NAxMHEn8fQY7u5
+         8yE8qxYcu5lGmdz0YFD0w9QhJQOriZrxOs+NGg0qFlz//oM38yG6sa7v3hAno91OtzDK
+         nFpvXHHrSH8QZ5UXdskz3m3pmwODlsY3Iv7hF9TVXpfg4k5z2tOfsTw2jS4frjjU+dgO
+         STSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUQPWtYOUIEa6hlI3fvcnEh9QchjI6a3fYfgWWWRSMlo9tb304TqDl4IiOifY7Gc6VBBwS/o+gvTNnqDzA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzkMrRx4oQuwu3dM2BxYXcsZD5MJsxlD9ElpSZ8dX72adtGUR+Y
+	KIoAX3zxlMqrT6Lj8zs8OS5toPerXmZ0NdXTm6ZsNyQvCX/AuKbetHL0zCNYW6exxanmRvpBRQ8
+	KeDz57juWYGCxGVr1txfGUL64HeHtJtE=
+X-Gm-Gg: ASbGncul6glSVmb/5/SBqAkRggUqIFQWxInoaJuVzE+qhDOde5cGDTt6aoYSTfLO1sP
+	m/SIatOVpFQztPRAbkPzCsStiWM2vmUAb7JExrsl9lKJXbzmtEgg7zCfjmsC5qg24ncqaEpoSgK
+	SaFlgwOWDvGQDKw6v+/LuTUOx8KZWL/XI=
+X-Google-Smtp-Source: AGHT+IGCHH91w5aLLk2zhH1OD0M76Qr/hbRf+ItmTxpc3fxs9gNjUQOKE6DSW7gfQpTUGMqdAkdbaP7RWiKhTiRaV/Y=
+X-Received: by 2002:a05:6122:221d:b0:520:61ee:c814 with SMTP id
+ 71dfb90a1353d-52dba7fe312mr4755074e0c.1.1747415517612; Fri, 16 May 2025
+ 10:11:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250303183646.327510-1-ctshao@google.com> <Z9TXabugl374M3bA@google.com>
- <Z9hFJtEKfsGGUDMg@x1> <Z9hLKsZOfouM3K7H@x1> <Z9hR8M-SQ5TD2qMX@google.com>
- <Z9iHiTv_ud6GEhJh@x1> <CAJpZYjXwUz7x1XUF7AzgYR6PZo_igrwK9BkxGx_3N0pCs1YRvw@mail.gmail.com>
- <Z9iY7HFebiSaWZJQ@x1> <Z9kBAhEKKphn8JL6@google.com>
-In-Reply-To: <Z9kBAhEKKphn8JL6@google.com>
-From: Chun-Tse Shao <ctshao@google.com>
-Date: Fri, 16 May 2025 10:10:27 -0700
-X-Gm-Features: AX0GCFuxZaVWDjQvfXAkXFtuvUXS80ty4Z15Tq9hfM3hchhkS1MSN6mO7AulQsg
-Message-ID: <CAJpZYjVeMrjN09kaVCBs97q8_hnsgwwo7s0C0ctL5Kt0_FknBQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] perf record: Add 8-byte aligned event type PERF_RECORD_COMPRESSED2
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, linux-kernel@vger.kernel.org, peterz@infradead.org, 
-	mingo@redhat.com, mark.rutland@arm.com, alexander.shishkin@linux.intel.com, 
-	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com, 
-	kan.liang@linux.intel.com, terrelln@fb.com, leo.yan@arm.com, 
-	james.clark@linaro.org, christophe.leroy@csgroup.eu, ben.gainey@arm.com, 
-	linux-perf-users@vger.kernel.org
+References: <cover.1747231254.git.rabenda.cn@gmail.com> <b538e2b24eab8b740091d80ca76b20ef6014a4e5.1747231254.git.rabenda.cn@gmail.com>
+ <20250514-showplace-yahoo-e3c306355288@spud>
+In-Reply-To: <20250514-showplace-yahoo-e3c306355288@spud>
+From: Han Gao <rabenda.cn@gmail.com>
+Date: Sat, 17 May 2025 01:11:46 +0800
+X-Gm-Features: AX0GCFvBGlC7lcpTFlf3PZ0KsWEj3nP-8_pPYriZOyvUH2LtrlBI49XleAD1C_M
+Message-ID: <CAAT7Ki9Fw0+Ntv+oFqr2R=EHnFZrT6KmyTPN2MCDDGvSn-Wi8A@mail.gmail.com>
+Subject: Re: [PATCH v2 1/4] dt-bindings: riscv: add Sophgo SG2042_EVB_V1.X bindings
+To: Conor Dooley <conor@kernel.org>
+Cc: devicetree@vger.kernel.org, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Chen Wang <unicorn_wang@outlook.com>, Inochi Amaoto <inochiama@gmail.com>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, 
+	Thomas Bonnefille <thomas.bonnefille@bootlin.com>, Guo Ren <guoren@kernel.org>, 
+	Chao Wei <chao.wei@sophgo.com>, sophgo@lists.linux.dev, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Ping.
+On Thu, May 15, 2025 at 12:22=E2=80=AFAM Conor Dooley <conor@kernel.org> wr=
+ote:
+>
+> On Wed, May 14, 2025 at 10:08:59PM +0800, Han Gao wrote:
+> > Add DT binding documentation for the Sophgo SG2042_EVB_V1.X board [1].
+>
+> 1.x? Is the v1.0 something people can get their hands on, or just the
+> v1.1?
+> What differences do the boards have that are minimal enough that
+> specific compatibles would not be required?
+>
 
-For suggestions from Namhyung and Arnaldo, it was merged in:
+First of all, v1.1 and v1.0 are compatible boards.
+There is no difference between v1.1 and v1.0 from dts.
 
-https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/co=
-mmit/?h=3Dperf-tools-next&id=3Db1b26ce8bb0eab1d058353ab6fa1a2b652a9a020
+Both v1.1 and v1.0 have been discontinued.
+About 80 pieces of v1.1 are in the hands of community developers.
 
-Thanks,
-CT
-
-On Mon, Mar 17, 2025 at 10:13=E2=80=AFPM Namhyung Kim <namhyung@kernel.org>=
- wrote:
->
-> Hello,
->
-> On Mon, Mar 17, 2025 at 06:49:32PM -0300, Arnaldo Carvalho de Melo wrote:
-> > On Mon, Mar 17, 2025 at 02:45:39PM -0700, Chun-Tse Shao wrote:
-> > > On Mon, Mar 17, 2025 at 1:35=E2=80=AFPM Arnaldo Carvalho de Melo
-> > > <acme@kernel.org> wrote:
-> > > >
-> > > > On Mon, Mar 17, 2025 at 09:46:40AM -0700, Namhyung Kim wrote:
-> > > > > On Mon, Mar 17, 2025 at 01:17:46PM -0300, Arnaldo Carvalho de Mel=
-o wrote:
-> > > > > > On Mon, Mar 17, 2025 at 12:52:09PM -0300, Arnaldo Carvalho de M=
-elo wrote:
-> > > > > > > Checking the discussion and the patch.
-> > > > > >
-> > > > > > My first impression yesterday when I saw this on the smartphone=
- was: how
-> > > > > > will an old perf binary handle the new PERF_RECORD_COMPRESSED2?=
- Will it
-> > > > > > ignore it while emitting a warning, since it can be skipped and=
- then
-> > > > > > what we will get a partial view?
-> > > > > >
-> > > > > > Having some session output showing how an older perf binary han=
-dles
-> > > > > > PERF_RECORD_COMPRESS2 would be informative.
-> > > > >
-> > > > > I think it'll show the below warning:
-> > > > >
-> > > > >   <offset> [<size>]: failed to process type: 83
-> > > >
-> > > > Right that is what I got:
-> > > >
-> > > > =E2=AC=A2 [acme@toolbox perf-tools-next]$ perf.old script -i /tmp/p=
-erf.data.ck8
-> > > > 0xbf0 [0x250]: failed to process type: 83 [Invalid argument]
-> > > > =E2=AC=A2 [acme@toolbox perf-tools-next]$
-> > > >
-> > > > I think we should change that to something more informative, like:
-> > > >
-> > > > 0xbf0 [0x250]: failed to process unknown type 83, please update per=
-f.
->
-> That would be nice, but there are cases it can fail even without new
-> record formats.  So it should also check if the type number is greater
-> than or equal to the max.
->
-> > > >
-> > > > And then does it stop at that record it doesn't grok?
-> > > >
-> > > >         if ((skip =3D perf_session__process_event(session, event, h=
-ead, "pipe")) < 0) {
-> > > >                 pr_err("%#" PRIx64 " [%#x]: failed to process type:=
- %d\n",
-> > > >                        head, event->header.size, event->header.type=
-);
-> > > >                 err =3D -EINVAL;
-> > > >                 goto out_err;
-> > > >         }
-> > > >
-> > > >         head +=3D size;
-> > > >
-> > > > So we're stopping there.
-> > > >
-> > > > Maybe we can just warn and skip?
-> > >
-> > > Thank you Arnaldo, it is a good suggestion and I will work on this la=
-ter.
 > >
-> > Thank you for considering that, really appreciated!
->
-> It would be hard to process misaligned data though.  Probably we also
-> want to add a check to make sure it's properly aligned.
->
-> Thanks,
-> Namhyung
->
+> > Link: https://github.com/sophgo/sophgo-hardware/tree/master/SG2042/SG20=
+42-x8-EVB [1]
 > >
-> > perf deals with so much stuff and code flux that all the help that we
-> > can get is what is needed for it to continue to be relevant and useful.
+> > Signed-off-by: Han Gao <rabenda.cn@gmail.com>
+> > ---
+> >  Documentation/devicetree/bindings/riscv/sophgo.yaml | 1 +
+> >  1 file changed, 1 insertion(+)
 > >
-> > After all what is the point of a tool that produces bad results? :-)
+> > diff --git a/Documentation/devicetree/bindings/riscv/sophgo.yaml b/Docu=
+mentation/devicetree/bindings/riscv/sophgo.yaml
+> > index a14cb10ff3f0..6c82f89b56ca 100644
+> > --- a/Documentation/devicetree/bindings/riscv/sophgo.yaml
+> > +++ b/Documentation/devicetree/bindings/riscv/sophgo.yaml
+> > @@ -34,6 +34,7 @@ properties:
+> >        - items:
+> >            - enum:
+> >                - milkv,pioneer
+> > +              - sophgo,sg2042-evb-v1
+> >            - const: sophgo,sg2042
 > >
-> > - Arnaldo
+> >  additionalProperties: true
+> > --
+> > 2.47.2
 > >
-> > > -CT
-> > >
-> > > >
-> > > > Anyway, the series as is seems ok.
-> > > >
-> > > > I'll test a bit more and send my Tested-by
-> > > >
-> > > > - Arnaldo
 
