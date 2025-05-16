@@ -1,322 +1,304 @@
-Return-Path: <linux-kernel+bounces-651310-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-651312-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5EA6AB9D02
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 15:12:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29C66AB9D06
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 15:13:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BCF8F1BA3503
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 13:12:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC9914E31F2
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 13:13:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90DD4244663;
-	Fri, 16 May 2025 13:12:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B53D242923;
+	Fri, 16 May 2025 13:13:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vPDrwwwv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1B5F243946;
-	Fri, 16 May 2025 13:12:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="SNSNO+ih"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 765883232
+	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 13:13:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747401135; cv=none; b=d+iNuHA33UESa23bWTqBTrUTN7QmrWXHfdl+3YKCZlvCFAqivBvn332LLjU6EJxoQS1PLRCaWLj/DbDw+WkRBH0y0dlZu8dbeHg5XyA1/AT9fVAx0Z/RPzvuYes8airpTeBPdN+Z0+pjTWcKbuzN7RZxl7692q7qtR8ZEmAjyD0=
+	t=1747401217; cv=none; b=Z9ORnl4igAxfFLACR/tbKTJ57ihcGqAKFZJZkO2OwVi6fe3fEnGWr1BAYRbjU+cZttGr4Yl5jp9EDjvCbD8dTvd+Iju92U6EJncl854oFqihaSy/nb3HYTauEFj3VCV1u0eGcGv/4SjNTWGcab6b5+wkSUJqeu987fAXTUo4FOg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747401135; c=relaxed/simple;
-	bh=LIxhz0Ikkb6uhXfsYATNN0zoJH5c6DUtaKMEfAc+aBk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pDAcH/2FHlHwwzb6uTWYUPew8Z/7QiwPABich0Q1c+Go0agsrZiMiMvl/Z1w0xW/UvBtPBh+q7WmRV0WSC0z36M/B2ZXHTxBSPi0fDuwhtLcG+z68RENEg24w3OfCUfw5wlGBgxQ89EzyifII4x02AShYzJN4xJOv5CQGm5FAxw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vPDrwwwv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F614C4CEF4;
-	Fri, 16 May 2025 13:12:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747401135;
-	bh=LIxhz0Ikkb6uhXfsYATNN0zoJH5c6DUtaKMEfAc+aBk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=vPDrwwwvQ2xDcxDXAL8gNsaOcLAvIqyIE1CtyizfeMQCuNT0TZdcbI6vhnQvTvroQ
-	 cr1PtUfweGB9rPToytDxG7ZxJNAEyy3xnOF/JxQrs/BfvZNVwSAe3cVmrudQlTw3Y7
-	 YxTJk99uj3ZyE0fQ4NK7jk/5jNfItWApA+iC5fgU/U9lNzT9L4mwTW/jEMzrNihOkB
-	 ednVZsTF11dT1ttteIgBdwIEu+Kz0A7fgHQdPKXVfHVadUF2b9RGTVoIvXbqh28e18
-	 cw4ZL4GwbsDvpdhecizHs2wM8I2k8eOwZ5sBqRqjk2OFYbnh7D4WTB9CSlHHCZSRyK
-	 0lw9OFm5y53ww==
-Message-ID: <f13fe182-b5e5-4938-8260-24f8f60e8f83@kernel.org>
-Date: Fri, 16 May 2025 15:12:10 +0200
+	s=arc-20240116; t=1747401217; c=relaxed/simple;
+	bh=IsAANWVCLZd+B/824y5ZEsdIagzG8xZ0ELPRfSy6Y/E=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=GACGMjmljkcXQ7D14NHDX2Zy1YgWMFqeOIMLK65EV7Hd0u+ag7nVpFfqovnLPR5iWhaFaYpSpNu0tCdoVaQjhFwhS/ZNuX3dgJMh54ZceM/hmLrkPdSlnhDlnQ96176ij6vplLWzG3MHhlDAG1IdI9Hr+JdAWTDViUTM8L9CD9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=SNSNO+ih; arc=none smtp.client-ip=220.197.31.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=Oo
+	CdmYL9Qu8u5gGOwJxG6K2/QoL5v6Jy0+zblOekNy4=; b=SNSNO+ihhAX4Yh6pvq
+	AsEOgG8XKgJO2VaNrvwVdwCni1Xf/DmD9WUeVFQ4+deGaHeghzSbnFILy3Ef5M6V
+	IFuVMSEL05KNjsAoF0b6cBD5MQgsQd1oVwfUc73xy1QcXjKlS5kIc47Sncr8DO3V
+	BFWFZ5eCU5DuHo/6hh8ml6rgg=
+Received: from localhost.localdomain (unknown [])
+	by gzga-smtp-mtada-g1-4 (Coremail) with SMTP id _____wDHAl_POSdoJXONBw--.60693S4;
+	Fri, 16 May 2025 21:13:04 +0800 (CST)
+From: David Wang <00107082@163.com>
+To: surenb@google.com,
+	kent.overstreet@linux.dev
+Cc: linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: BUG: unable to handle page fault for address
+Date: Fri, 16 May 2025 21:12:46 +0800
+Message-Id: <20250516131246.6244-1-00107082@163.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/2] dt-bindings: sdhci: eswin: Documentation for
- eic7700 SoC
-To: dongxuyang@eswincomputing.com, ulf.hansson@linaro.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, linux-mmc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- adrian.hunter@intel.com, p.zabel@pengutronix.de, shanchun1218@gmail.com
-Cc: ningyu@eswincomputing.com, linmin@eswincomputing.com,
- xuxiang@eswincomputing.com
-References: <20250516091259.774-1-dongxuyang@eswincomputing.com>
- <20250516091650.832-1-dongxuyang@eswincomputing.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250516091650.832-1-dongxuyang@eswincomputing.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+X-CM-TRANSID:_____wDHAl_POSdoJXONBw--.60693S4
+X-Coremail-Antispam: 1Uf129KBjvJXoWfGw48uw45ZF48Cw1DGF45Wrg_yoWkKrWxpr
+	yFgFW7KF48Jr1kXFs7J3W3tw4UAwnrCa15WryxKr1F93WUu3yDJF9rAr1UJFZ8Jr47ta12
+	vFn2q3WjyF1rXaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UEjgsUUUUU=
+X-CM-SenderInfo: qqqrilqqysqiywtou0bp/xtbBkAlPqmgnM2XZCQAAs1
 
-On 16/05/2025 11:16, dongxuyang@eswincomputing.com wrote:
-> From: Xuyang Dong <dongxuyang@eswincomputing.com>
-> 
-> Add device tree binding documentation for the ESWIN
-> eic7700 sdhci controller module.
-> 
-> Signed-off-by: Xiang Xu <xuxiang@eswincomputing.com>
-> Signed-off-by: Xuyang Dong <dongxuyang@eswincomputing.com>
-> ---
+Hi,
+
+I caught a page fault when I was changing my nvidia driver:
+(This happens randomly, I can reproduce it with about 1/3 probability)
+
+[Fri May 16 12:05:41 2025] BUG: unable to handle page fault for address: ff=
+ff9d28984c3000
+[Fri May 16 12:05:41 2025] #PF: supervisor read access in kernel mode
+[Fri May 16 12:05:41 2025] #PF: error_code(0x0000) - not-present page
+...
+[Fri May 16 12:05:41 2025] RIP: 0010:release_module_tags+0x103/0x1b0
+...
+[Fri May 16 12:05:41 2025] Call Trace:
+[Fri May 16 12:05:41 2025]  <TASK>
+[Fri May 16 12:05:41 2025]  codetag_unload_module+0x135/0x160
+[Fri May 16 12:05:41 2025]  free_module+0x19/0x1a0
+...
+(full kernel logs are pasted at the end.)
+
+Using a image with DEBUG_INFO, the calltrack parses as:
+
+RIP: 0010:release_module_tags (./include/linux/alloc_tag.h:134 lib/alloc_ta=
+g.c:352 lib/alloc_tag.c:573)=20
+[Fri May 16 12:05:41 2025] codetag_unload_module (lib/codetag.c:355)=20
+[Fri May 16 12:05:41 2025] free_module (kernel/module/main.c:1305)=20
+[Fri May 16 12:05:41 2025] __do_sys_delete_module (kernel/module/main.c:795)
+
+The offending lines in my codebase:
+	126 static inline struct alloc_tag_counters alloc_tag_read(struct alloc_ta=
+g *tag)
+	127 {
+	...
+	131=20
+	132         for_each_possible_cpu(cpu) {
+	133                 counter =3D per_cpu_ptr(tag->counters, cpu);
+>>>>	134                 v.bytes +=3D counter->bytes;   <--------------here
+	135                 v.calls +=3D counter->calls;
 
 
-Folks,you need to slow down because you are sending patchsets with the
-same issues, thus we need to repeat the same review comments. Learn from
-the review first.
+Nvidia drivers are out-tree... there could be some strange behavior in it c=
+auses this.. but,
+when I check the code, I got concerned about lifecycle of tag->counters.
+Based on following defination:
+	108 #define DEFINE_ALLOC_TAG(_alloc_tag)                                  =
+          \
+	109         static DEFINE_PER_CPU(struct alloc_tag_counters, _alloc_tag_cn=
+tr);      \
+	110         static struct alloc_tag _alloc_tag __used __aligned(8)        =
+          \
+	111         __section(ALLOC_TAG_SECTION_NAME) =3D {                       =
+            \
+	112                 .ct =3D CODE_TAG_INIT,                                =
+            \
+	113                 .counters =3D &_alloc_tag_cntr };
+	114=20
+_alloc_tag_cntr is the data referenced by tag->counters, but they are in di=
+fferent section,
+and alloc_tag only prepare storage for section ALLOC_TAG_SECTION_NAME.
+right?
+Then what happens to those ".data..percpu" section when module is unloaded?
+Is it safe to keep using those ".data..percpu" section after module unloade=
+d,
+or even during module is unloading?
 
->  .../bindings/mmc/eswin,sdhci-eic7700.yaml     | 131 ++++++++++++++++++
->  1 file changed, 131 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mmc/eswin,sdhci-eic7700.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/mmc/eswin,sdhci-eic7700.yaml b/Documentation/devicetree/bindings/mmc/eswin,sdhci-eic7700.yaml
-> new file mode 100644
-> index 000000000000..d4826f2aa619
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mmc/eswin,sdhci-eic7700.yaml
-> @@ -0,0 +1,131 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/mmc/eswin,sdhci-eic7700.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: ESWIN EIC7700 SoC SDHCI controller
-> +
-> +maintainers:
-> +  - Shuang Liang <liangshuang@eswincomputing.com>
-> +  - Xuyang Dong <dongxuyang@eswincomputing.com>
-> +
-> +allOf:
-> +  - $ref: /schemas/mmc/mmc-controller.yaml#
-> +
-> +properties:
-> +  compatible:
-> +    const: eswin,eic7700-emmc-sdhci
-> +
-> +  reg:
-> +    maxItems: 1
-> +    description: Common configuration registers
+I was expecting page fault when I make following experiments:
 
-Blank line, drop description
+1.Load module A
+2.Load module B
+3.module B alloc memory, and handover the memory to A
+4.unload module B
+(memory profiling report module B has memory not freed)
+... after a while....
+5.unload module A, where A free the memory. (when A kfree the memory,
+the counters used to be in module B's ".data..percpu" section should
+be referenced, it that section is gone, a pagefault should happen).
 
-> +  "#address-cells":
-> +    const: 1
-
-Blank line
-
-> +  "#size-cells":
-> +    const: 1
-
-This is wrong.
-
-Why do you need these properties?  You are duplicating (and wrongly) MMC
-schema.
+But, after several trials, not page fault reported....
+Would kernel keeps ".data..percpu" since ALLOC_TAG_SECTION_NAME has referen=
+ce to it,
+or I just need wait longer for kernel to "purge" those sections.
 
 
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  assigned-clocks:
-> +    maxItems: 1
-> +    description: should contain "core_clk" phandle + clock-specifier pairs.
-> +
-> +  assigned-clock-rates:
-> +    maxItems: 1
+Full logs:
+[Fri May 16 12:02:28 2025] nvidia-modeset: Loading NVIDIA Kernel Mode Setti=
+ng Driver for UNIX platforms  550.144.03  Mon Dec 30 17:10:10 UTC 2024
+[Fri May 16 12:02:28 2025] [drm] [nvidia-drm] [GPU ID 0x00002600] Loading d=
+river
+[Fri May 16 12:02:28 2025] [drm] Initialized nvidia-drm 0.0.0 for 0000:26:0=
+0.0 on minor 0
+[Fri May 16 12:03:45 2025] [drm] [nvidia-drm] [GPU ID 0x00002600] Unloading=
+ driver
+[Fri May 16 12:03:46 2025] nvidia-modeset: Unloading
+[Fri May 16 12:03:46 2025] nvidia-nvlink: Unregistered Nvlink Core, major d=
+evice number 240
+[Fri May 16 12:04:38 2025] VFIO - User Level meta-driver version: 0.3
+[Fri May 16 12:04:38 2025] nvidia-nvlink: Nvlink Core is being initialized,=
+ major device number 239
 
-Drop both properties. Do you see this anywhere in the bindings?
+[Fri May 16 12:04:38 2025] nvidia 0000:26:00.0: vgaarb: VGA decodes changed=
+: olddecodes=3Dnone,decodes=3Dnone:owns=3Dnone
+[Fri May 16 12:04:38 2025] NVRM: loading NVIDIA UNIX x86_64 Kernel Module  =
+570.144  Thu Apr 10 20:33:29 UTC 2025
+[Fri May 16 12:04:38 2025] nvidia-modeset: Loading NVIDIA Kernel Mode Setti=
+ng Driver for UNIX platforms  570.144  Thu Apr 10 20:03:03 UTC 2025
+[Fri May 16 12:04:38 2025] nvidia_drm: Unknown symbol drm_client_setup (err=
+ -2)
+[Fri May 16 12:04:40 2025] nvidia-modeset: Unloading
+[Fri May 16 12:04:40 2025] nvidia-nvlink: Unregistered Nvlink Core, major d=
+evice number 239
+[Fri May 16 12:05:40 2025] VFIO - User Level meta-driver version: 0.3
+[Fri May 16 12:05:40 2025] nvidia-nvlink: Nvlink Core is being initialized,=
+ major device number 239
 
-> +
-> +  clocks:
-> +    minItems: 2
-
-No list items instead.
-
-> +    description: handles to clock for the sdhci controller.
-
-Drop description
-
-> +
-> +  clock-names:
-> +    minItems: 2
-> +    description: the name of each clock.
-
-No, list items instead. Do you see any bindings written like that?
-
-> +
-> +  clock-output-names:
-> +    maxItems: 1
-> +
-> +  '#clock-cells':
-> +    enum: [0]
-> +    description:
-> +      With this property in place we will export one clock
-> +      representing the Card Clock. These clocks are expected to be
-> +      consumed by our PHY.
-> +
-> +  resets:
-> +    description: resets to be used by the controller.
-
-Missing constraints. Drop description, useless.
-
-> +
-> +  reset-names:
-> +    description: names of the resets listed in resets property in the same order.
-
-Drop property
-
-> +
-> +  bus-width:
-> +    enum: [4, 8]
-> +    description: for emmc bus-width is 8, for sdio bus-width is 4.
-
-Why do you need it? Look at other bindings.
-
-> +
-> +  eswin,hsp_sp_csr:
-
-Look at DTS coding style first. What characters are allowed in properties?
-
-> +    $ref: /schemas/types.yaml#/definitions/phandle-array
-> +    description: hsp_sp_csr regs to be used by the controller.
-
-For what purpose?
-
-> +    items:
-> +      - description: phandle to HSP_SP_CSR register block
-> +      - description: status register offset
-> +      - description: control register offset
-> +      - description: configuration register offset
-> +
-> +  eswin,syscrg_csr:
-> +    $ref: /schemas/types.yaml#/definitions/phandle-array
-> +    description: syscrg_csr regs to be used by the controller.
-
-For what purpose?
-
-
-> +    items:
-> +      - description: phandle to SYS_CRG_CSR register block
-> +      - description: status register offset
-> +      - description: control register offset
-> +      - description: configuration register offset
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +  - assigned-clocks
-> +  - assigned-clock-rates
-> +  - clocks
-> +  - clock-names
-> +  - clock-output-names
-> +  - resets
-> +  - reset-names
-> +  - bus-width
-> +  - eswin,hsp_sp_csr
-> +  - eswin,syscrg_csr
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +
-
-Drop blank line
-
-> +    sdhci_emmc: mmc@50450000 {
-
-Drop label
-
-> +      compatible = "eswin,eic7700-emmc-sdhci";
-> +      reg = <0x50450000 0x10000>;
-> +      interrupt-parent = <&plic>;
-> +      interrupts = <79>;
-> +      clocks = <&clock 554>, <&clock 546>;
-> +      clock-names = "clk_xin", "clk_ahb";
-> +      assigned-clocks = <&clock 554>;
-> +      assigned-clock-rates = <200000000>;
-> +      clock-output-names = "emmc_cardclock";
-> +      #clock-cells = <0>;
-> +
-> +      resets = <&reset 7 (1 << 6)>,
-> +        <&reset 7 (1 << 3)>,
-> +        <&reset 7 (1 << 19)>,
-> +        <&reset 7 (1 << 23)>;
-> +      reset-names = "txrx_rst", "phy_rst", "prstn", "arstn";
-> +
-> +      core-clk-reg = <0x51828160>;
-> +      disable-cqe-dcmd;
-> +      bus-width = <8>;
-> +      non-removable;
-> +      mmc-hs400-1_8v;
-> +      max-frequency = <200000000>;
-> +      eswin,hsp_sp_csr = <&hsp_sp_csr 0x1038 0x508 0x50c>;
-> +      eswin,syscrg_csr = <&sys_crg 0x160 0x148 0x14c>;
-> +      status = "disabled";
-
-No, drop.
+[Fri May 16 12:05:40 2025] nvidia 0000:26:00.0: vgaarb: VGA decodes changed=
+: olddecodes=3Dnone,decodes=3Dnone:owns=3Dnone
+[Fri May 16 12:05:40 2025] NVRM: loading NVIDIA UNIX x86_64 Kernel Module  =
+570.144  Thu Apr 10 20:33:29 UTC 2025
+[Fri May 16 12:05:40 2025] nvidia-modeset: Loading NVIDIA Kernel Mode Setti=
+ng Driver for UNIX platforms  570.144  Thu Apr 10 20:03:03 UTC 2025
+[Fri May 16 12:05:40 2025] [drm] [nvidia-drm] [GPU ID 0x00002600] Loading d=
+river
+[Fri May 16 12:05:40 2025] [drm] Initialized nvidia-drm 0.0.0 for 0000:26:0=
+0.0 on minor 0
+[Fri May 16 12:05:40 2025] [drm] [nvidia-drm] [GPU ID 0x00002600] Unloading=
+ driver
+[Fri May 16 12:05:40 2025] nvidia-modeset: Unloading
+[Fri May 16 12:05:41 2025] nvidia-nvlink: Unregistered Nvlink Core, major d=
+evice number 239
+[Fri May 16 12:05:41 2025] BUG: unable to handle page fault for address: ff=
+ff9d28984c3000
+[Fri May 16 12:05:41 2025] #PF: supervisor read access in kernel mode
+[Fri May 16 12:05:41 2025] #PF: error_code(0x0000) - not-present page
+[Fri May 16 12:05:41 2025] PGD 163001067 P4D 163001067 PUD 0=20
+[Fri May 16 12:05:41 2025] Oops: Oops: 0000 [#1] SMP NOPTI
+[Fri May 16 12:05:41 2025] CPU: 0 UID: 0 PID: 35898 Comm: modprobe Tainted:=
+ G           OE       6.15.0-rc6-linan-0 #587 PREEMPT(voluntary)=20
+[Fri May 16 12:05:41 2025] Tainted: [O]=3DOOT_MODULE, [E]=3DUNSIGNED_MODULE
+[Fri May 16 12:05:41 2025] Hardware name: Micro-Star International Co., Ltd=
+. MS-7B89/B450M MORTAR MAX (MS-7B89), BIOS 2.L0 07/18/2024
+[Fri May 16 12:05:41 2025] RIP: 0010:release_module_tags+0x103/0x1b0
+[Fri May 16 12:05:41 2025] Code: e3 4c 03 64 24 08 4c 39 e3 72 bf 8b 0d 86 =
+02 f6 00 31 ed 31 c0 eb 17 48 63 f0 49 8b 54 24 20 83 c0 01 48 8b 34 f5 40 =
+e6 d4 95 <48> 03 2c 16 89 ce 48 63 d0 48 c7 c7 c0 fd d4 95 e8 78 3f f5 ff 8b
+[Fri May 16 12:05:41 2025] RSP: 0018:ffffb2eb40bdfe00 EFLAGS: 00010202
+[Fri May 16 12:05:41 2025] RAX: 0000000000000001 RBX: ffffffffc04609d7 RCX:=
+ 0000000000000008
+[Fri May 16 12:05:41 2025] RDX: 0000000000000000 RSI: ffff9d28984c3000 RDI:=
+ ffffffff95d4fdc0
+[Fri May 16 12:05:41 2025] RBP: 0000000000000000 R08: ffff9d25035aed08 R09:=
+ 000000000000fcf8
+[Fri May 16 12:05:41 2025] R10: ffffb2eb40bdfe00 R11: 0000000000000001 R12:=
+ ffffffffc04609b0
+[Fri May 16 12:05:41 2025] R13: ffffffffc19ef000 R14: ffff9d2502ab6870 R15:=
+ 0000000000000000
+[Fri May 16 12:05:41 2025] FS:  00007fe9ee051040(0000) GS:ffff9d28984c3000(=
+0000) knlGS:0000000000000000
+[Fri May 16 12:05:41 2025] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[Fri May 16 12:05:41 2025] CR2: ffff9d28984c3000 CR3: 000000011278d000 CR4:=
+ 0000000000350ef0
+[Fri May 16 12:05:41 2025] Call Trace:
+[Fri May 16 12:05:41 2025]  <TASK>
+[Fri May 16 12:05:41 2025]  codetag_unload_module+0x135/0x160
+[Fri May 16 12:05:41 2025]  free_module+0x19/0x1a0
+[Fri May 16 12:05:41 2025]  __do_sys_delete_module+0x274/0x310
+[Fri May 16 12:05:41 2025]  ? srso_return_thunk+0x5/0x5f
+[Fri May 16 12:05:41 2025]  ? fpregs_assert_state_consistent+0x21/0x50
+[Fri May 16 12:05:41 2025]  ? srso_return_thunk+0x5/0x5f
+[Fri May 16 12:05:41 2025]  do_syscall_64+0x4b/0x120
+[Fri May 16 12:05:41 2025]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+[Fri May 16 12:05:41 2025] RIP: 0033:0x7fe9ed928a67
+[Fri May 16 12:05:41 2025] Code: 73 01 c3 48 8b 0d 99 83 0c 00 f7 d8 64 89 =
+01 48 83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 b8 b0 00 00 =
+00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 69 83 0c 00 f7 d8 64 89 01 48
+[Fri May 16 12:05:41 2025] RSP: 002b:00007ffe17759568 EFLAGS: 00000206 ORIG=
+_RAX: 00000000000000b0
+[Fri May 16 12:05:41 2025] RAX: ffffffffffffffda RBX: 0000564f850b7e70 RCX:=
+ 00007fe9ed928a67
+[Fri May 16 12:05:41 2025] RDX: 0000000000000000 RSI: 0000000000000800 RDI:=
+ 0000564f850b7ed8
+[Fri May 16 12:05:41 2025] RBP: 0000000000000000 R08: 1999999999999999 R09:=
+ 0000000000000000
+[Fri May 16 12:05:41 2025] R10: 00007fe9ed99bac0 R11: 0000000000000206 R12:=
+ 0000000000000000
+[Fri May 16 12:05:41 2025] R13: 0000000000000000 R14: 00007ffe177595a0 R15:=
+ 00007ffe1775aa60
+[Fri May 16 12:05:41 2025]  </TASK>
+[Fri May 16 12:05:41 2025] Modules linked in: vfio_pci_core(E-) vfio(E) drm=
+_client_lib(E) amd_atl(E) intel_rapl_msr(E) intel_rapl_common(E) binfmt_mis=
+c(E) edac_mce_amd(E) kvm_amd(E) snd_hda_codec_realtek(E) nls_ascii(E) iwlmv=
+m(E) nls_cp437(E) snd_hda_codec_generic(E) snd_hda_codec_hdmi(E) kvm(E) snd=
+_hda_scodec_component(E) mac80211(E) irqbypass(E) uvcvideo(E) vfat(E) snd_h=
+da_intel(E) libarc4(E) ghash_clmulni_intel(E) fat(E) videobuf2_vmalloc(E) s=
+nd_intel_dspcfg(E) sha256_ssse3(E) uvc(E) snd_usb_audio(E) sha1_ssse3(E) sn=
+d_hda_codec(E) videobuf2_memops(E) iwlwifi(E) drm_ttm_helper(E) videobuf2_v=
+4l2(E) aesni_intel(E) snd_usbmidi_lib(E) snd_hda_core(E) ttm(E) snd_rawmidi=
+(E) gf128mul(E) snd_pcsp(E) snd_seq_device(E) ppdev(E) snd_hwdep(E) crypto_=
+simd(E) drm_kms_helper(E) videodev(E) cryptd(E) cfg80211(E) snd_pcm(E) vide=
+obuf2_common(E) rapl(E) snd_timer(E) sp5100_tco(E) drm(E) mc(E) wmi_bmof(E)=
+ k10temp(E) tpm_crb(E) rfkill(E) snd(E) sha3_generic(E) video(E) soundcore(=
+E) jitterentropy_rng(E) sha512_ssse3(E) tpm_tis(E) ccp(E)
+[Fri May 16 12:05:41 2025]  sha512_generic(E) tpm_tis_core(E) joydev(E) drb=
+g(E) tpm(E) ansi_cprng(E) libaescfb(E) ecdh_generic(E) ecc(E) parport_pc(E)=
+ parport(E) sg(E) rng_core(E) evdev(E) msr(E) loop(E) fuse(E) efi_pstore(E)=
+ dm_mod(E) configfs(E) ip_tables(E) x_tables(E) autofs4(E) ext4(E) crc16(E)=
+ mbcache(E) jbd2(E) btrfs(E) blake2b_generic(E) efivarfs(E) raid10(E) raid4=
+56(E) async_raid6_recov(E) async_memcpy(E) async_pq(E) async_xor(E) async_t=
+x(E) xor(E) raid6_pq(E) raid1(E) raid0(E) md_mod(E) hid_generic(E) usbhid(E=
+) hid(E) sd_mod(E) ahci(E) xhci_pci(E) libahci(E) nvme(E) xhci_hcd(E) libat=
+a(E) i2c_piix4(E) i2c_smbus(E) r8169(E) nvme_core(E) realtek(E) usbcore(E) =
+scsi_mod(E) scsi_common(E) usb_common(E) wmi(E) gpio_amdpt(E) gpio_generic(=
+E) button(E) [last unloaded: vfio_pci_core(E)]
+[Fri May 16 12:05:41 2025] CR2: ffff9d28984c3000
+[Fri May 16 12:05:41 2025] ---[ end trace 0000000000000000 ]---
+[Fri May 16 12:05:41 2025] RIP: 0010:release_module_tags+0x103/0x1b0
+[Fri May 16 12:05:41 2025] Code: e3 4c 03 64 24 08 4c 39 e3 72 bf 8b 0d 86 =
+02 f6 00 31 ed 31 c0 eb 17 48 63 f0 49 8b 54 24 20 83 c0 01 48 8b 34 f5 40 =
+e6 d4 95 <48> 03 2c 16 89 ce 48 63 d0 48 c7 c7 c0 fd d4 95 e8 78 3f f5 ff 8b
+[Fri May 16 12:05:41 2025] RSP: 0018:ffffb2eb40bdfe00 EFLAGS: 00010202
+[Fri May 16 12:05:41 2025] RAX: 0000000000000001 RBX: ffffffffc04609d7 RCX:=
+ 0000000000000008
+[Fri May 16 12:05:41 2025] RDX: 0000000000000000 RSI: ffff9d28984c3000 RDI:=
+ ffffffff95d4fdc0
+[Fri May 16 12:05:41 2025] RBP: 0000000000000000 R08: ffff9d25035aed08 R09:=
+ 000000000000fcf8
+[Fri May 16 12:05:41 2025] R10: ffffb2eb40bdfe00 R11: 0000000000000001 R12:=
+ ffffffffc04609b0
+[Fri May 16 12:05:41 2025] R13: ffffffffc19ef000 R14: ffff9d2502ab6870 R15:=
+ 0000000000000000
+[Fri May 16 12:05:41 2025] FS:  00007fe9ee051040(0000) GS:ffff9d28984c3000(=
+0000) knlGS:0000000000000000
+[Fri May 16 12:05:41 2025] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[Fri May 16 12:05:41 2025] CR2: ffff9d28984c3000 CR3: 000000011278d000 CR4:=
+ 0000000000350ef0
+[Fri May 16 12:05:41 2025] note: modprobe[35898] exited with irqs disabled
+[Fri May 16 12:05:41 2025] note: modprobe[35898] exited with preempt_count 1
 
 
-Best regards,
-Krzysztof
+
+
+Thanks
+David
+
 
