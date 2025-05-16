@@ -1,222 +1,155 @@
-Return-Path: <linux-kernel+bounces-660803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-660894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CBC1AC2253
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 14:04:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E000AC2380
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 15:13:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9C94D7AED28
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 12:03:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 007273B6B28
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 13:12:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E216236421;
-	Fri, 23 May 2025 12:04:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2CC11A01CC;
+	Fri, 23 May 2025 13:12:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="KWH490rE"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MPxVG9Do"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFDAA2036ED;
-	Fri, 23 May 2025 12:04:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2349914885B;
+	Fri, 23 May 2025 13:12:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748001880; cv=none; b=obBCcaqY0NCx/VthtJB3Lti9+lqDt0YboqQh2t8qD6aQ4PHreFPYPtgRDLAGnM+H3gnvPGXfVojUsHK+XWzKPb6xCm8aNzZ0WtErIIumhQNxVJjY1zUv/ANOny649oZbG3JhndJ+E+yOMK4gk44Z6tYwk5RoLLL5PWBqIjzX+1Y=
+	t=1748005960; cv=none; b=tlNLByJ7L34/8fWljh6dDetkFkoMGPYEiyAB242WaY9gVWb+NBAQe7IVDs0dpxCqXHwztpddvhqRKS1b07zSrBxB8EATEtSs4QQoHX2nTHioBGFw4zkBVp6a/dy2qrgbZoOlN6ChrDtfpAfZl7tfquWwSpbr+y1+oID0AwxirIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748001880; c=relaxed/simple;
-	bh=KUciZpVHXkEANVkxmh/SLhERPr0kKkkkuizcZDLh1OU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gSm1T+38nQSNw4oh01Z+iMKsMsHFmmEL3l/lbYeiDkUmOUCJxTK8kaT5KyEgN4FUceigQnW277jYKzRuYxdL6qdh0hXbEyX96XnB9Lhb85AycT9rD7CfgH6pgjPgdttvFHG7u5QCfZqdqUGODoJHFCG8E6t8GiaLHvcl16oSO80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=KWH490rE; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (179.218-130-109.adsl-dyn.isp.belgacom.be [109.130.218.179])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 6782F4A4;
-	Fri, 23 May 2025 14:04:14 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1748001854;
-	bh=KUciZpVHXkEANVkxmh/SLhERPr0kKkkkuizcZDLh1OU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KWH490rEsxTFMwCvm9b+3blEsuePTcPO/YjZpGITfQspRER8doOV65JjHLtS1U9JN
-	 QNSP3iIMgJojMjLGxKWIdPyCZeL7+w3VTFWo7HIJtEUNvq9Q8a8Jhf7U1gO3xzU37h
-	 2Yt6qdrdOpLAu2N+WSvMIAtKc22icVm9B2eMM0P8=
-Date: Fri, 23 May 2025 14:04:30 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Ricardo Ribalda <ribalda@chromium.org>
-Cc: Hans de Goede <hdegoede@redhat.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/4] media: uvcvideo: Refactor uvc_ctrl_set_handle()
-Message-ID: <20250523120430.GF12514@pendragon.ideasonboard.com>
-References: <20250509-uvc-followup-v1-0-73bcde30d2b5@chromium.org>
- <20250509-uvc-followup-v1-1-73bcde30d2b5@chromium.org>
- <20250523085341.GA7516@pendragon.ideasonboard.com>
- <CANiDSCuuaJ9AOr9nGc+GN5UhHs2b0CCZvEnF1Qdw2vn9yo_uXw@mail.gmail.com>
+	s=arc-20240116; t=1748005960; c=relaxed/simple;
+	bh=9SugXRrE9PpqZwWLIG/qzbGhzadN0J1Xh2e9tSKDdFQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jOZVbtVoC/0jWkieM5vPeDRUrnbP3CLzZqMAnfNTwyy0ec4sjKQ04RyELlLeDScIF5AJdF5sbyOy28rRM/AQHuWb0Ec7aU/ic2ECKyqLN3xn1y0VqU74d3ZIWcJsbPSM4J5P2LdpRKgkVe8V67i+J69BebGMbck/3zIM1LttqOE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MPxVG9Do; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1748005958; x=1779541958;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=9SugXRrE9PpqZwWLIG/qzbGhzadN0J1Xh2e9tSKDdFQ=;
+  b=MPxVG9Dob5fYGZ0t77KCD8ESDvuZSr5wo0sBlfgWBr64GZ11OYWc/6/q
+   ngAzCK0gMIyq+WxuywE1lUftOxUyMIgJpmV1j9pjMhKMfndT0ZoAfnPQf
+   ciKJ9WcEupDda5awZoNUaRCVHayB7ImsVyNfMfmh4VdMsNeHiZ5OxUJdg
+   OUWgZ2sRwxGeH2zMvy2UXLN2IoWFQFkwkhE8k2Yjpc1O813sZ/nbE6MH6
+   YJBFchX2+KHcpupIANmg4JYbQgehpGSyFj3hB4erblDjgTT2//g9YYMTS
+   UVybV33I2jkxUWZ0aImCBfXqAnh5wNnNRqZlSSef4iIVkKRj5zZXbxPSp
+   Q==;
+X-CSE-ConnectionGUID: bSSJGygTTreFkJfZrwL4fw==
+X-CSE-MsgGUID: EuaUNaTWTMS48SiYhvJZaQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11441"; a="49766784"
+X-IronPort-AV: E=Sophos;i="6.15,308,1739865600"; 
+   d="scan'208";a="49766784"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 May 2025 06:12:37 -0700
+X-CSE-ConnectionGUID: FS7zd6hQRtaKz/WmDWSIhw==
+X-CSE-MsgGUID: Zxpj9SUSS+SuYp4TB3pPog==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,308,1739865600"; 
+   d="scan'208";a="146126629"
+Received: from msatwood-mobl.amr.corp.intel.com (HELO [10.125.109.147]) ([10.125.109.147])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 May 2025 06:12:36 -0700
+Message-ID: <509a5751-f2a4-45af-8bfb-1058dae549fb@intel.com>
+Date: Fri, 16 May 2025 08:19:18 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CANiDSCuuaJ9AOr9nGc+GN5UhHs2b0CCZvEnF1Qdw2vn9yo_uXw@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 0/6] Introduce CET supervisor state support
+To: Ingo Molnar <mingo@kernel.org>, Chao Gao <chao.gao@intel.com>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+ tglx@linutronix.de, seanjc@google.com, pbonzini@redhat.com,
+ peterz@infradead.org, rick.p.edgecombe@intel.com, weijiang.yang@intel.com,
+ john.allen@amd.com, bp@alien8.de, chang.seok.bae@intel.com,
+ xin3.li@intel.com, Aruna Ramakrishna <aruna.ramakrishna@oracle.com>,
+ Dave Hansen <dave.hansen@linux.intel.com>, Eric Biggers
+ <ebiggers@google.com>, "H. Peter Anvin" <hpa@zytor.com>,
+ Ingo Molnar <mingo@redhat.com>, Kees Cook <kees@kernel.org>,
+ Maxim Levitsky <mlevitsk@redhat.com>, Mitchell Levy
+ <levymitchell0@gmail.com>, Nikolay Borisov <nik.borisov@suse.com>,
+ Oleg Nesterov <oleg@redhat.com>, Samuel Holland <samuel.holland@sifive.com>,
+ Sohil Mehta <sohil.mehta@intel.com>, Stanislav Spassov <stanspas@amazon.de>,
+ Uros Bizjak <ubizjak@gmail.com>, Vignesh Balasubramanian <vigbalas@amd.com>,
+ Zhao Liu <zhao1.liu@intel.com>
+References: <20250512085735.564475-1-chao.gao@intel.com>
+ <aCYLMY00dKbiIfsB@gmail.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <aCYLMY00dKbiIfsB@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, May 23, 2025 at 12:58:31PM +0200, Ricardo Ribalda wrote:
-> On Fri, 23 May 2025 at 10:53, Laurent Pinchart wrote:
-> > On Fri, May 09, 2025 at 06:24:13PM +0000, Ricardo Ribalda wrote:
-> > > Today uvc_ctrl_set_handle() covers two use-uses: setting the handle and
-> > > clearing the handle. The only common code between the two cases is the
-> > > lockdep_assert_held.
-> > >
-> > > The code looks cleaner if we split these two usecases in two functions.
-> >
-> > It does indeed. Thanks for pushing for this :-)
-> >
-> > > We also take this opportunity to use pending_async_ctrls from ctrl where
-> > > possible.
-> > >
-> > > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-> > > ---
-> > >  drivers/media/usb/uvc/uvc_ctrl.c | 65 +++++++++++++++++++++-------------------
-> > >  1 file changed, 35 insertions(+), 30 deletions(-)
-> > >
-> > > diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
-> > > index 44b6513c526421943bb9841fb53dc5f8e9f93f02..26be1d0a1891cf3a9a7489f60f9a2931c78d3239 100644
-> > > --- a/drivers/media/usb/uvc/uvc_ctrl.c
-> > > +++ b/drivers/media/usb/uvc/uvc_ctrl.c
-> > > @@ -1812,48 +1812,53 @@ static void uvc_ctrl_send_slave_event(struct uvc_video_chain *chain,
-> > >       uvc_ctrl_send_event(chain, handle, ctrl, mapping, val, changes);
-> > >  }
-> > >
-> > > -static int uvc_ctrl_set_handle(struct uvc_fh *handle, struct uvc_control *ctrl,
-> > > -                            struct uvc_fh *new_handle)
-> > > +static int uvc_ctrl_set_handle(struct uvc_fh *handle, struct uvc_control *ctrl)
-> > >  {
-> > > -     lockdep_assert_held(&handle->chain->ctrl_mutex);
-> > > -
-> > > -     if (new_handle) {
-> > > -             int ret;
-> > > +     int ret;
-> > >
-> > > -             if (ctrl->handle)
-> > > -                     dev_warn_ratelimited(&handle->stream->dev->udev->dev,
-> > > -                                          "UVC non compliance: Setting an async control with a pending operation.");
-> > > +     lockdep_assert_held(&handle->chain->ctrl_mutex);
-> > >
-> > > -             if (new_handle == ctrl->handle)
-> > > -                     return 0;
-> > > +     if (ctrl->handle) {
-> > > +             dev_warn_ratelimited(&handle->stream->dev->udev->dev,
-> > > +                                  "UVC non compliance: Setting an async control with a pending operation.");
-> > >
-> > > -             if (ctrl->handle) {
-> > > -                     WARN_ON(!ctrl->handle->pending_async_ctrls);
-> > > -                     if (ctrl->handle->pending_async_ctrls)
-> > > -                             ctrl->handle->pending_async_ctrls--;
-> > > -                     ctrl->handle = new_handle;
-> > > -                     handle->pending_async_ctrls++;
-> > > +             if (ctrl->handle == handle)
-> > >                       return 0;
-> > > -             }
-> > > -
-> > > -             ret = uvc_pm_get(handle->chain->dev);
-> > > -             if (ret)
-> > > -                     return ret;
-> > >
-> > > -             ctrl->handle = new_handle;
-> > > -             handle->pending_async_ctrls++;
-> > > +             WARN_ON(!ctrl->handle->pending_async_ctrls);
-> > > +             if (ctrl->handle->pending_async_ctrls)
-> > > +                     ctrl->handle->pending_async_ctrls--;
-> > > +             ctrl->handle = handle;
-> > > +             ctrl->handle->pending_async_ctrls++;
-> > >               return 0;
-> > >       }
-> > >
-> > > +     ret = uvc_pm_get(handle->chain->dev);
-> > > +     if (ret)
-> > > +             return ret;
-> > > +
-> > > +     ctrl->handle = handle;
-> > > +     ctrl->handle->pending_async_ctrls++;
-> > > +     return 0;
-> > > +}
-> > > +
-> > > +static int uvc_ctrl_clear_handle(struct uvc_fh *handle,
-> > > +                              struct uvc_control *ctrl)
-> > > +{
-> > > +     lockdep_assert_held(&handle->chain->ctrl_mutex);
-> > > +
-> > >       /* Cannot clear the handle for a control not owned by us.*/
-> >
-> > While at it, I'll add a space before */ when applying.
-> >
-> > >       if (WARN_ON(ctrl->handle != handle))
-> > >               return -EINVAL;
-> >
-> > But actually, as the caller guarantees that handle == ctrl->handle in
-> > both call sites (renaming the function makes this clear), can we drop
-> > the handle argument to this function ?
-> >
-> > If that's fine with you, I'd like to also change the
-> > uvc_ctrl_set_handle() function to pass the ctrl argument first.
+On 5/15/25 08:41, Ingo Molnar wrote:
+> * Chao Gao <chao.gao@intel.com> wrote:
+>> I kindly request your consideration for merging this series. Most of 
+>> patches have received Reviewed-by/Acked-by tags.
+> I don't see anything objectionable in this series.
 > 
-> SGTM, let me know if you have time to do this or if you prefer that I do it.
+> The upcoming v6.16 merge window is already quite crowded in terms of 
+> FPU changes, so I think at this point we are looking at a v6.17 merge, 
+> done shortly after v6.16-rc1 if everything goes well. Dave, what do you 
+> think?
 
-I'll send a new version of this patch.
+It's getting into shape, but it has a slight shortage of reviews. For
+now, it's an all-Intel patch even though I _thought_ AMD had this
+feature too. It's also purely for KVM and has some suggested-by's from
+Sean, but no KVM acks on it.
 
-> > > -     ctrl->handle = NULL;
-> > > -     if (WARN_ON(!handle->pending_async_ctrls))
-> > > +     if (WARN_ON(!ctrl->handle->pending_async_ctrls)) {
-> > > +             ctrl->handle = NULL;
-> > >               return -EINVAL;
-> > > -     handle->pending_async_ctrls--;
-> > > +     }
-> > > +
-> > > +     ctrl->handle->pending_async_ctrls--;
-> > >       uvc_pm_put(handle->chain->dev);
-> >
-> > This will need to become
-> >
-> >         uvc_pm_put(ctrl->handle->chain->dev);
-> >
-> > Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> >
-> > > +     ctrl->handle = NULL;
-> > >       return 0;
-> > >  }
-> > >
-> > > @@ -1871,7 +1876,7 @@ void uvc_ctrl_status_event(struct uvc_video_chain *chain,
-> > >
-> > >       handle = ctrl->handle;
-> > >       if (handle)
-> > > -             uvc_ctrl_set_handle(handle, ctrl, NULL);
-> > > +             uvc_ctrl_clear_handle(handle, ctrl);
-> > >
-> > >       list_for_each_entry(mapping, &ctrl->info.mappings, list) {
-> > >               s32 value;
-> > > @@ -2161,7 +2166,7 @@ static int uvc_ctrl_commit_entity(struct uvc_device *dev,
-> > >
-> > >               if (!rollback && handle && !ret &&
-> > >                   ctrl->info.flags & UVC_CTRL_FLAG_ASYNCHRONOUS)
-> > > -                     ret = uvc_ctrl_set_handle(handle, ctrl, handle);
-> > > +                     ret = uvc_ctrl_set_handle(handle, ctrl);
-> > >
-> > >               if (ret < 0 && !rollback) {
-> > >                       if (err_ctrl)
-> > > @@ -3271,7 +3276,7 @@ void uvc_ctrl_cleanup_fh(struct uvc_fh *handle)
-> > >               for (unsigned int i = 0; i < entity->ncontrols; ++i) {
-> > >                       if (entity->controls[i].handle != handle)
-> > >                               continue;
-> > > -                     uvc_ctrl_set_handle(handle, &entity->controls[i], NULL);
-> > > +                     uvc_ctrl_clear_handle(handle, &entity->controls[i]);
-> > >               }
-> > >       }
-> > >
-
--- 
-Regards,
-
-Laurent Pinchart
+I have the feeling Sean would speak up if this was going in a bad
+direction for KVM, but I do love to see acks accompanying suggested-by's
+to indicate that the suggestion was interpreted properly.
 
