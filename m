@@ -1,100 +1,137 @@
-Return-Path: <linux-kernel+bounces-650712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-650714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0FB7AB94D9
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 05:43:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3807AB9502
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 05:47:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F4FA189E017
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 03:43:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1073A1BA638D
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 03:48:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 056B522CBC4;
-	Fri, 16 May 2025 03:43:01 +0000 (UTC)
-Received: from 1wt.eu (ded1.1wt.eu [163.172.96.212])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC61E157E6B;
-	Fri, 16 May 2025 03:42:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=163.172.96.212
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B43A23313E;
+	Fri, 16 May 2025 03:47:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="G4dNYCWR"
+Received: from smtpbgjp3.qq.com (smtpbgjp3.qq.com [54.92.39.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B585D14012;
+	Fri, 16 May 2025 03:47:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.92.39.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747366980; cv=none; b=CEClNoo70gIVk4zgrvw004i6SdS9qiQpZZiO4HrRy3Dk+cTtkitFp4beM6S0SE5pUSiuTnnYhQaTMpoIFLT0pvKmWTIquluFEfxjDl/oyKTQ6EnKauGSAbnPAMFSvwftEMDGnAemYzlweyuLzza/ChcURqeK9t3NUYih0q5fjLo=
+	t=1747367248; cv=none; b=CjawvP3uv9uquH0IGME3gbsBNEGl481l4/GB6KhKuNKiptM61qr3JWLn78nEtfXadPN/almshlxvWOrictPCvN/DhxC2py7KnPbLvoA5c4QJxBK5iYI4LClRpUIjLvAynVBeXnm0Z3LqTXgYZ0aRmQ/kA4hhYulxXJB1D9axfOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747366980; c=relaxed/simple;
-	bh=OVkUQi0BOxewrN/TcrPE7P8qoc+l5nR7NbzjdSJwhTo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ly5DA6mFIhYYUvnuf8rMyqDJzi1+8riQUuWLYSuuzhZnCWovOcTiRPasiEmz4Px8ix8se9roryTPa1blmtYL/y0slvxntwQdvgYwP6r1XVHjmseZlWH615iIpYcwyP297Vkz3xGTv1Xf93aviqWTnieDrpm7Q7+rOlvrPxmd6Fk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu; spf=pass smtp.mailfrom=1wt.eu; arc=none smtp.client-ip=163.172.96.212
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=1wt.eu
-Received: (from willy@localhost)
-	by pcw.home.local (8.15.2/8.15.2/Submit) id 54G3gWRw012606;
-	Fri, 16 May 2025 05:42:32 +0200
-Date: Fri, 16 May 2025 05:42:32 +0200
-From: Willy Tarreau <w@1wt.eu>
-To: "H. Peter Anvin" <hpa@zytor.com>
-Cc: enh <enh@google.com>, Arnd Bergmann <arnd@arndb.de>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        libc-alpha@sourceware.org, linux-arch@vger.kernel.org
-Subject: Re: Metalanguage for the Linux UAPI
-Message-ID: <20250516034232.GA12472@1wt.eu>
-References: <feb98a0f-8d17-495c-b556-b4fe19446d5d@zytor.com>
- <CAJgzZoqUV6gSfgCWbfe6oSH5k9qt30gpJ0epa+w78WQUgTCqNQ@mail.gmail.com>
- <e4d114e3-984a-482d-a162-03f896cd2053@zytor.com>
+	s=arc-20240116; t=1747367248; c=relaxed/simple;
+	bh=s2rihKl9XDtBH5mPiYwlPCYKyYdViNQfkjpgYaOGXVw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gAmx49Ll+3uD0o+CkiuwrbyOyCkFnfoopKg4D0dkjXou1L0d8dNKlbKx5pBoe58LVS1n+7FoQY2EMp06e3I2VNc7/QHyuTM0YX3OXlI6OMhF6d2inSEg1ope0puob2mPkERFcFm+G1MzeaT4dkWdo8ys9tM7HQ3mxvpvvVIEYm4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=G4dNYCWR; arc=none smtp.client-ip=54.92.39.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1747367215;
+	bh=1KyIl7Rv4fR9Xm7x89ddsmf0zM0jgC8Wn8zmDSvEkX8=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version;
+	b=G4dNYCWR8qcFqAw6Euzl76lpYCNB87LEWkOEe2dFvsftdp+UbEAn7hnf1+0jmSWCh
+	 c5pgO9cfxbtY5oibkS3Ld5JUBYzD/KFXPH4WM6Iev/YiGg3RzfsA+Pe0jysxWnqBEy
+	 Gigpyu6hRLNMriHqvT6YSyVlb42l3cdpTR0ALeoA=
+X-QQ-mid: zesmtpip2t1747367207tc0f146ca
+X-QQ-Originating-IP: vgaBzqfMUuElUlGxB27jZgCiRCcjbDssB8bQ6mUogdg=
+Received: from localhost.localdomain ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Fri, 16 May 2025 11:46:45 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 5041222066668530054
+EX-QQ-RecipientCnt: 7
+From: tuhaowen <tuhaowen@uniontech.com>
+To: pavel@kernel.org,
+	len.brown@intel.com
+Cc: linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	huangbibo@uniontech.com,
+	wangyuli@uniontech.com,
+	tuhaowen <tuhaowen@uniontech.com>
+Subject: [PATCH] PM/console: Fix the black screen issue
+Date: Fri, 16 May 2025 11:46:43 +0800
+Message-Id: <20250516034643.22355-1-tuhaowen@uniontech.com>
+X-Mailer: git-send-email 2.20.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <e4d114e3-984a-482d-a162-03f896cd2053@zytor.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: N0zPMTspoMaf97td3EsIO7VorJ54SVVu6b/94hfk49uAVMthh5mJ6ox3
+	GDjcgbcUQk/PW98Q4jwmvF+hLu2+FnogIsY/781aY9R2Q1XT8rf6I/MXdfpq9nRQT8FFU6s
+	xmjBEpJYAVfizZC4Q3F7ayMGmc5gLLApZLKZUa7MCxPlpcKPF6kBgCB5Gj069Zu7EajjQYE
+	XW0APoNhb+Ec5SVogBHJz93/eUwD8B8v+Lv4Kh9fO+rbq0mjrynKF6FpYBhjPbqswdVI7U0
+	etpLeH1Q3LBvBHmajISwv41t3SI6vLTentL7AZ+OkYPjR3CqRfzY81E3OtiJJtt/nBgNvJq
+	euwc2+05S8wM+HDN71lw6Kn74Axtd3+EfqCjz2D4ErLncXoHw2wXkrTfMCYfj3UFvDSMoMa
+	YWWVGm+mEztBCBXRF5Bo3FQ8aH+FJHO1dLRwLOjF1tTiWP8TA1Z0H31AtlIvs4eSmZrxRvQ
+	hu68N4LBXjsOJ7dYrUDeeY9UMJVKpFnQwakDq6z/f4WH/TNBs/CWs68MkzE4mc/T/ZPBf7f
+	dgrCi0aWLpTh7O3UOktlEw2vncxX0SlVqyz5+HJkHtMBdfjBxz8dsGff+UrjGFMKHFzNQI9
+	VTdEzhQYceBF55At6ocIFkBANS7DEzj/6TX9ZbeBM2/VI4GsSaBnFP/o+nxwTCf7vZyJe8w
+	u2tWy8Y/zaoUc9OpoQkgOcgnV7HJGDHo/HtGeVCmY2gWCrgiK4eeBC3tdYyzpHWk6sIwavm
+	pwScrq8U5UZEjkGm7UQb+SAzYLvzL8fxrVeqh3PrEobxdoniwtOrKT9ZhZ6anNhY5jzzYvo
+	TVPPswu0CHDBqUcRnPg5M6jnZwt96qIx+CMftXQ3UKifCXE/rSVfm0MA5jZfaporImuHKUJ
+	sMMeeqkpmOLa2Src/VLKMRj85N0GSAmwWOk5O4Mg+LCWkJ6l5Yz9ols4BV0LntxBVAgPzJ/
+	WBn23iAnan99WsPuTirE4/O6iN+irXzfZZukMrT6PHU40KVSJxuh+AZbXZd6wKc7qyts=
+X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
+X-QQ-RECHKSPAM: 0
 
-On Thu, May 15, 2025 at 02:24:29PM -0700, H. Peter Anvin wrote:
-> On 5/15/25 13:26, enh wrote:
-> > On Thu, May 15, 2025 at 4:05 PM H. Peter Anvin <hpa@zytor.com> wrote:
-> > > 
-> > > OK, so this is something I have been thinking about for quite a while.
-> > > It would be a quite large project, so I would like to hear people's
-> > > opinions on it before even starting.
-> > > 
-> > > We have finally succeeded in divorcing the Linux UAPI from the general
-> > > kernel headers, but even so, there are a lot of things in the UAPI that
-> > > means it is not possible for an arbitrary libc to use it directly; for
-> > > example "struct termios" is not the glibc "struct termios", but
-> > > redefining it breaks the ioctl numbering unless the ioctl headers are
-> > > changed as well, and so on. However, other libcs want to use the struct
-> > > termios as defined in the kernel, or, more likely, struct termios2.
-> > 
-> > bionic is a ("the only"?) libc that tries to not duplicate _anything_
-> > and always defer to the uapi headers. we have quite an extensive list
-> > of hacks we need to apply to rewrite the uapi headers into something
-> > directly usable (and a lot of awful python to apply those hacks):
-> > 
-> > https://cs.android.com/android/platform/superproject/main/+/main:bionic/libc/kernel/tools/defaults.py
-> > 
-> 
-> Not "the only".
+When the computer enters sleep status without a monitor
+connected, the system switches the console to the virtual
+terminal tty63(SUSPEND_CONSOLE).
 
-Indeed, nolibc (/tools/include/nolibc) directly includes uapi as well, and
-since nolibc doesn't compile anything but only exposes include files, these
-appear as-is in the application. So far the headers look clean enough for
-our use cases and have not caused problems. But admittedly, applications
-are small and limited (selftests and init code).
+If a monitor is subsequently connected before waking up,
+the system skips the required VT restoration process
+during wake-up, leaving the console on tty63 instead of
+switching back to tty1.
 
-One thing we've been considering which we would find convenient there
-would be to generate an indirection layer for all files that would include
-the right one depending on the detected arch so as to ease compilation for
-any arch with all the uapi files available, as it seems totally feasible
-right now (i.e. each .h file would just have "#if defined(__arch_xxx__)
-#include <arch_xxx/foo.h>" etc). We could imagine having a
-"make install-all-headers" target to produce that thing for example. I'm
-sharing this so that you can also have this in mind to consider whether or
-not your chosen approach would break that possibility.
+Signed-off-by: tuhaowen <tuhaowen@uniontech.com>
+---
+ kernel/power/console.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-Just my two cents,
-Willy
+diff --git a/kernel/power/console.c b/kernel/power/console.c
+index fcdf0e14a47d..832e04bf5439 100644
+--- a/kernel/power/console.c
++++ b/kernel/power/console.c
+@@ -16,6 +16,7 @@
+ #define SUSPEND_CONSOLE	(MAX_NR_CONSOLES-1)
+ 
+ static int orig_fgconsole, orig_kmsg;
++static int vt_switch_done;
+ 
+ static DEFINE_MUTEX(vt_switch_mutex);
+ 
+@@ -136,15 +137,19 @@ void pm_prepare_console(void)
+ 	if (orig_fgconsole < 0)
+ 		return;
+ 
++	vt_switch_done = 1;
++
+ 	orig_kmsg = vt_kmsg_redirect(SUSPEND_CONSOLE);
+ 	return;
+ }
+ 
+ void pm_restore_console(void)
+ {
+-	if (!pm_vt_switch())
++	if (!pm_vt_switch() && !vt_switch_done)
+ 		return;
+ 
++	vt_switch_done = 0;
++
+ 	if (orig_fgconsole >= 0) {
+ 		vt_move_to_console(orig_fgconsole, 0);
+ 		vt_kmsg_redirect(orig_kmsg);
+-- 
+2.20.1
+
 
