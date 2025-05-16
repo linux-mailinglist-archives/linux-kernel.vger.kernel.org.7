@@ -1,254 +1,235 @@
-Return-Path: <linux-kernel+bounces-651262-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-651263-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B144AB9C57
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 14:40:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9707AB9C62
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 14:41:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0C991895625
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 12:40:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 904A6505FAC
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 12:41:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A38BC243379;
-	Fri, 16 May 2025 12:40:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA67D241679;
+	Fri, 16 May 2025 12:40:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="a8tg98+G"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="CtdLHoXj"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11olkn2085.outbound.protection.outlook.com [40.92.20.85])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34AB1242923
-	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 12:39:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747399200; cv=none; b=b27ud3kWSO2ktSaf43yJ3NqyEJ5y8i9UgMlACp/yrgNU9WvPUKM6MJmSYcqnapbRfkh1iqI4ySXyYnQmY20Nkq9eZPZo/e41yXBMFx0ZUQe38dzuIL5w7KSGo0gDXiq9c+5gZq98+TZDOrt3aJ4z0nVvBhQREAosGaFn+FZncEk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747399200; c=relaxed/simple;
-	bh=rdOAlDn565rE1FqMI4nBJDb9BzleRulrsucs0xSkJLA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Na7F/mpAtIaAY5lwDZ3WGLFXmcbdo7f8b1RYGMHElDK9/FE/4aQ/28K0z57Cbiv3g08ykgeQ6ukOcWAsJilYgLYoZiBe7eojMMbEd5huV8NKniWyfj8tHvp54IHA0qwDVu80ocbtYcBjKO8ef/aOVvOSH0xSf8FuCPxZ2fj8b9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=a8tg98+G; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1747399198;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hiLZZy7QAtq/50XMExKGpNPia0HeTXt82qBD/QjAX4s=;
-	b=a8tg98+GvyQ4oA8fHZ1RYO2AK4cEYGhr5Dc6etsEV7j+0sehPQLB25vR1xWJw3wuZJ6TOR
-	K+hJqEvCRBdf4HYp61zVi5XArIuX9kO3LwygwQB9pcSquTONY3EOlBQIloDOcK6haDGVyv
-	GoMgXEcrE84eRY8mmbnBXnf//nrQCz4=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-582-E-gcCyCNN6C8ego3w_n8Jg-1; Fri, 16 May 2025 08:39:57 -0400
-X-MC-Unique: E-gcCyCNN6C8ego3w_n8Jg-1
-X-Mimecast-MFC-AGG-ID: E-gcCyCNN6C8ego3w_n8Jg_1747399196
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-442f4a3851fso17436975e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 05:39:56 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747399196; x=1748003996;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hiLZZy7QAtq/50XMExKGpNPia0HeTXt82qBD/QjAX4s=;
-        b=frtNOoTmf8BdhRxv2VVdj6Ko5YZBaJDsr7Ohb+5bIWGZGwuwON6aTtyA49fiCIJ6UG
-         ZX7gjQ4myv+07OfBHqjpBcuJ+Yp8yE/XaMiXNitXlL0eRKsueF4A2nZpUpqAAfX9tjCX
-         bET3Ffgm5ix6WhBlGjYaPFX1xPlzH/0axrXmn75LiYXMBNfQ0E3eHUY7Yc8kajFZWfmO
-         RExbXKSaKjrihvLK5sSkzEVYPkOkxnVVBdOUsuh5v6LNLONx329XJVN49P1tGXTfapL5
-         Db/yvp/rVdskcbT2AYWL1k9AT/kSIQlRivZIGAsDtbu/5ovmsSV0Vrt4sxg4bi4Fi/FJ
-         s9ig==
-X-Gm-Message-State: AOJu0YzcQSzOxWPvHCZpHjhkDiQRWvRxnDlhbZdxlKwC1+aryL2l3x7U
-	Lp3PoCPMWTPAyzymKbbbPAnwji/r8H2pTuWHEodyc8OTLQZQf4WSTysdp/QJW55UzPG0tMISubb
-	9zEVM5wVF0tp2qMLg5HjW1ZVVbyGbSFK4HWJ61d5H9eWKTvdySC2dTPhOQ5yceTQDmmpJhHr0nt
-	/A7M4oIKZaup4xu3tUFBkoTxKx7rSu+bIxTtBovUJe5g+Mziou
-X-Gm-Gg: ASbGncu1wKMNZ6ZLATI38tszWciChVzkaqVUTlGT5zsjOSXLZ27zDVuGA7uRWM+fXA6
-	nRSLCIMquYiG8mSiFFOQnwWaOqbo7kgLCHrcdku+BNbmnethE0nUGuAssxlXBA4jyKtKCisJmAL
-	xi2TIAO5Xjwv6LJ1/juBtCMok/bMIME7Nr7WTHCbbW8TfKbYXfl3LYmnjNK0AhyLSLvxWfN6d/R
-	TNjjCqgyKqArVwObzXSu/lbHHQdVEf0jvRATkiFTpnyOrxEXsmkgj9/WXtpbkWo2Da12nt07G9r
-	i42tu6dl10IDb9zLovc43kurBsZ++QoE3/9fwRwd7a6Cdf4YbCieyAwOw6cVB8299O5eKIkG
-X-Received: by 2002:a05:600c:c1b:b0:43c:e481:3353 with SMTP id 5b1f17b1804b1-442feffbb8dmr28003505e9.17.1747399195811;
-        Fri, 16 May 2025 05:39:55 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHPCjYc5Wqc+yI//ttOUMN3UV92gYVHaHXlQYA3K8J/bBkEM9DoFCaA+VbVbF4V9/mI2J6diA==
-X-Received: by 2002:a05:600c:c1b:b0:43c:e481:3353 with SMTP id 5b1f17b1804b1-442feffbb8dmr28002955e9.17.1747399195319;
-        Fri, 16 May 2025 05:39:55 -0700 (PDT)
-Received: from localhost (p200300d82f474700e6f9f4539ece7602.dip0.t-ipconnect.de. [2003:d8:2f47:4700:e6f9:f453:9ece:7602])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-442f3380498sm108750375e9.11.2025.05.16.05.39.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 16 May 2025 05:39:54 -0700 (PDT)
-From: David Hildenbrand <david@redhat.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-s390@vger.kernel.org,
-	kvm@vger.kernel.org,
-	linux-mm@kvack.org,
-	David Hildenbrand <david@redhat.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Janosch Frank <frankja@linux.ibm.com>,
-	Claudio Imbrenda <imbrenda@linux.ibm.com>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	Thomas Huth <thuth@redhat.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Zi Yan <ziy@nvidia.com>,
-	Sebastian Mitterle <smitterl@redhat.com>
-Subject: [PATCH v1 3/3] s390/uv: improve splitting of large folios that cannot be split while dirty
-Date: Fri, 16 May 2025 14:39:46 +0200
-Message-ID: <20250516123946.1648026-4-david@redhat.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250516123946.1648026-1-david@redhat.com>
-References: <20250516123946.1648026-1-david@redhat.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E75DA23C50B;
+	Fri, 16 May 2025 12:40:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.20.85
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747399250; cv=fail; b=hhY0A2XI3tJ4ZjvYf01AcLlfsFbM4CEA+PsheR2nAMn0hOyd5Hp69nfxNJxhNBUm6eU+CTh9SYuQRGHrWB6pIj1+MYFJ4sFFA8HIiSXta+lRue48yw2ciukLHcR1u2s1xaXQkMQHmJfdyVUOPL0yfXF6TEiiwy+4HxoV5HUuPXM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747399250; c=relaxed/simple;
+	bh=HPWReZnvPk7MttteZKnB386+oVnQINr+M7Dd6mS2Txs=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=GvcIk73gFBSsHIirZoO5DRh8nLD4t+W88635jVakIbo+wReMAnExo5uBBFIPRQN0zFUJRIRgn0vsvf7lU0BMKcmr3tcOKOd31fbJqwv2Q6oT8Xy0zMC8WSTlgVHP1Yx2leprcnWPizYGueSUhxhOcYq5xqle1zAKYvez+ll9wc8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=CtdLHoXj; arc=fail smtp.client-ip=40.92.20.85
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=CtWw+cBmY7WZ/NrwDLXfx7E/rax0iKQ6RVpCA9KJBw/jNqC6JB+BjLIi2ZULB/lCOeHrXvQr1lRvyqDPgD4PqiQ5eG/QgDmznQEZ7hRa6+eHUP6GJOxmpnuB4ViUj+XMBqMHTCgqcyM1bVMVP5AMFPaZyUZC3wHYvKlRk5YhlKliFK4QPkkllvAPCzG3/XLMDPMnul8BLe31WbLRiawq51z1+i4j1k00yNGIx2OnHWZkje17lZ59e8vQW8l5/pFk8Xly2jJLB+DHsH0SFsxijElhkjdz19ZRlumgIFssn6EV03dyduqOuqmxeP7NP1kXhIHs9c33/jl+RRBmXweiUw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=bkWqQYlkMrKHrLbejL5B6VryflfWd0zio3bk66fPFI4=;
+ b=idbcTqpGAWs/zK4AjhFANkgjecumZrRLu3BAVJVXpVtxtgElu/1CHSFd5dyWxwxqIR8wivUl5BQ1/yVDznry10BTi3LqFLBAQvAtvC9qc47RYcsXs5/epiC3hgS3Lbhtr/RnSBcnNGvmctYD5w9Wwth5UUuOryvQy5/+Y+jdSPLO2ebSTVuCNzL1zQZcJF39W5Usxgq1vh+hQLGMuF7CPn3npUedonXhsFh4ESzDqa/tJiCVzx2tJYfV/nofT3lTVWKakR7f6tIEMyQYStcHOi6QY7HrDBx3g+k9YkmHtGmLj8bNPOpAqdZmJKge9H4X1eW4TrFUrfooZcsVMydFuQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=bkWqQYlkMrKHrLbejL5B6VryflfWd0zio3bk66fPFI4=;
+ b=CtdLHoXjNAt0P7t26YIttEABTE23PnpFnzqMjD6KC+UqfBwkeFBh/f0MLjufPOXqfDYZKtih3Vqs/Xht7dgTq+ID8H9UhDRs6xlRgGuQUfwBXOJCY1wEc/UmYqpJiGgXRNsclrAeCsGe5XrDmZOkXXKmFSd4SSupyVbmPv7k3yQkmvc8wtBkvBIeIhHa6tYvGSqbc+nUwA79G6NCmhwyiX/QHPmu/eiRFPOEGpqK3Eqf9DkoqiipMZCppEhnLoRKAhSW1fywgdKnIuJCZ/nCCW5iAKaoMuuAowxattE2gLNFixS6s7kfyFGaLuvBUt0akR/LvtwggZeKs3fpndGDfA==
+Received: from DS7PR19MB8883.namprd19.prod.outlook.com (2603:10b6:8:253::16)
+ by BN0PR19MB5264.namprd19.prod.outlook.com (2603:10b6:408:153::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8722.33; Fri, 16 May
+ 2025 12:40:45 +0000
+Received: from DS7PR19MB8883.namprd19.prod.outlook.com
+ ([fe80::e0c2:5b31:534:4305]) by DS7PR19MB8883.namprd19.prod.outlook.com
+ ([fe80::e0c2:5b31:534:4305%4]) with mapi id 15.20.8722.027; Fri, 16 May 2025
+ 12:40:45 +0000
+Message-ID:
+ <DS7PR19MB88834246DF8B6F50CBDF64869D93A@DS7PR19MB8883.namprd19.prod.outlook.com>
+Date: Fri, 16 May 2025 16:40:36 +0400
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/5] Add CMN PLL clock controller support for IPQ5018
+To: Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Luo Jie <quic_luoj@quicinc.com>,
+ Lee Jones <lee@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
+ Arnd Bergmann <arnd@arndb.de>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+References: <20250516-ipq5018-cmn-pll-v3-0-f3867c5a2076@outlook.com>
+Content-Language: en-US
+From: George Moussalem <george.moussalem@outlook.com>
+In-Reply-To: <20250516-ipq5018-cmn-pll-v3-0-f3867c5a2076@outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: DX0P273CA0053.AREP273.PROD.OUTLOOK.COM
+ (2603:1086:300:5a::17) To DS7PR19MB8883.namprd19.prod.outlook.com
+ (2603:10b6:8:253::16)
+X-Microsoft-Original-Message-ID:
+ <1d21af35-4ea1-4151-992b-30f9769efd23@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR19MB8883:EE_|BN0PR19MB5264:EE_
+X-MS-Office365-Filtering-Correlation-Id: 00dadea0-f659-4df1-d0eb-08dd9476e097
+X-MS-Exchange-SLBlob-MailProps:
+	qdrM8TqeFBu6m38okHpoNWln7NSyvc1VSI6wIG5oma4YkOU0p/SjoUv1PhURL08gl8kac8hRmqzg3ORzFDxCwaBasrNsBzYROKvZbSuH1XtgLxJeLWhpQ8WecxqbzW0D6MAiJ9JOqw4yOjGVWyLL9oNBZGi2XmPMcoamY8neMOeny6+vdrv5q7uhhoaR0kiOoBnRzH2NOteSkaWL6XG2xQ3ACZwFsaWbfJrEY4eZ3l3v0ndr9EJQsrQCgXy2/KKgik/QJtBk1TcUHj3G3sdeQinNMHJdmOd6r6vtR3uV/zfuOqhQK+UDo5/RpgcBExOD3neReW5S4zpjo3B2SPpCSJu/KUKsH+3QZJhjk2KutfMd6usmOBoh+XULhjwqAELyLllHUvcqlL0HMBuJSRve8U3eOHhwmS6UExb+BFDhPDqpqVnkvtyhnxECpwpZugUgx36esVZ36iJsfnLrTkJ9RQctCVD7ZvpqhzO23GM2gzk3OSepZ3GeGC7efrx+3DzuRFWFjElCq7ChUjQ5dY5eLsd6Z0awCTJ0SlShEyadMDyMZ6CmVxJuIALAVORes3CEfd1oPMkVEvwtWOZB+pqNiaAFMOhw6cfJY56XyRCA6p/jHLo525b1eOK3s3QwpL93XXeFcmxg0r2IVCusqPBbbvTUb3uNl5Y29kzU2WyOSWO8oekH9N+akdZ0fUXit/tL+L0wYUvOE67iLj8jobGJnIijugvqOFRziTE9mzFaAdjtABHPpISStRy8S5QgJcgSxKLo0mtCSg/s2ytJ938IuSlULm9Ktj6o
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|41001999006|8060799009|19110799006|15080799009|7092599006|5072599009|6090799003|461199028|3412199025|4302099013|440099028|10035399007|1602099012;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?MWgyTTQxSmhUdXRCd01xaUZ1MzhSZEpyUlM5Z2ZtZlFkTktlb1pBOC9LcjlB?=
+ =?utf-8?B?bzlpWkx5ZEk3eWt4MHI3Vjl5TUFmeHNsSHMwak5GRU12NVdTRkMyMklrK0ZC?=
+ =?utf-8?B?cVd6bjZ4bFA0OEF6ZkdibHNiQzRqSWIrVkVOZmVyN1hHQlQ5QW9xdjI4K0V4?=
+ =?utf-8?B?QVJ0aU9ZeVNEcVFxVEdUdUxRNmViQnpoNVp0RFZOQU12VHV6TmdydXVCUEZR?=
+ =?utf-8?B?UVM0WVRTY2xZaEg1dElNTlVEb3RBRlI4akx5M3ZHQzA2WllJZy9pbFZwSmhH?=
+ =?utf-8?B?aVRYaU0wR0hlR2NPeVRndkFKbDRXVVJIeHNpL3U2Mnl3VjJ6SHczR3QwbDQ5?=
+ =?utf-8?B?clA2Nnd5KzlUbFhobzFRNnRnNm1IOStyKy9yVWtFbDNnUGQrWnUzazVhb1BE?=
+ =?utf-8?B?YlowdnNvTTJXV2dvUzcySTFNZFFLaTYrRmhpYUQzbDRWdzh0eUJTd09Oay82?=
+ =?utf-8?B?ZHZBNEg2UjN5SEhlODlwTEZ0VnF5UjBDbFB6aGZoWTlOa0V4NnpVcEhSK0c4?=
+ =?utf-8?B?ekZZd3lTZThPOUMxQ0tQcU9YTFNGZEJDRmpob0ZmSmtPZFBtK3FPVzY1YUJi?=
+ =?utf-8?B?UFZxL3NPRzNZMi9kcUJmengvRkxSZjkxc0dIbmRaY0JnS2RWdGpYdzBob3Y2?=
+ =?utf-8?B?SE5tTTZZRlNzYk94MzVvRktHb2FqQXJqWlFISzRrUmhacHpqbEU2eFBpNzc3?=
+ =?utf-8?B?MlpYVEdvTWNUMWZVWHI1VExpcnhFZ0dTQzhtVzNIM1BmUVpBc1grRksyUHdX?=
+ =?utf-8?B?cGxqaThoK1hlcXEvOFJEV1RKY2dqSi9YTi9jQnlLd2pZQnM3dUI2SzBVUTNS?=
+ =?utf-8?B?NDVjWFk3UlpSRjN4a0VuVjRFUDlNMXdRWHF1OU9hQXJJOGFKeThHdG0yZ0N0?=
+ =?utf-8?B?enRpMjZySXNHd2M3TE93SVRxWkZUU0ViZVRVMUVGYXVzdnIySk1kZ25YczBh?=
+ =?utf-8?B?aU82ZUJESGltb0k1aDBSSGlDMEVrYWNHVDFneTBNMlhFelpxRFNJeFA5eDFF?=
+ =?utf-8?B?dVdMd0hQNmt4TXZNcWFEWk81VzgrRHNNdWMwem0rMnBxNGJMaWRZd3VpdkR5?=
+ =?utf-8?B?N1F0Z2l3MTJ3clRhZUdDNjI2Z3NrQXZFSmdkVURIeXpmcTcrVzdMcVg5bnl3?=
+ =?utf-8?B?Um00K2pRNGRrVURlcVI3K2dVbVpZeTdSenhoNCtmTlpBelk3STVnS2doTVZJ?=
+ =?utf-8?B?alMwQ3dnb04xM2orSURyb2NNNThLcXVDbXJVck55d3RCUmtWQ1NZK25hZ0Fn?=
+ =?utf-8?B?MTYwd2prM2ZId2VtcWZQRGphb29ZempMbVNpK0hPbWVrZ0NOYUZwODlyK2RD?=
+ =?utf-8?B?MUtHUWt0SHc4NW03NkFYQWdIeUQ3UHgxZ1VlOHRGQkZ6U0dDMG83NlgwNWRL?=
+ =?utf-8?B?MXVBTnNQSHF6QUdNVXp1cTJjbnlUMXB5WmtWQVRBUUlrN2d1c1lHOTh4Tm1O?=
+ =?utf-8?B?dUY3d2hUVUYyZ1Yra3VRY3RrcVlQS3lHZlJ4U3JocUhkM2ZCdEF1WUFGL3BB?=
+ =?utf-8?B?SFdrTm1JNEVNSWdKa2RmWTU3WGRoaCtxOWNvdSt1MFJpdWxWdFJCR2ZGcnM2?=
+ =?utf-8?B?SGVMUzFNY2tuTFVsM0xiWWRvRXdpWTREUUVEaUxvZG9Xa1ZPK2JNSTMyL3pN?=
+ =?utf-8?B?Q2hETkNVYjdBcm9STFZVUjhNZmUzRmlpTTZ2TkkvVUxTSWNvUnlXdnNNV2tM?=
+ =?utf-8?B?UFZCUXppL1NrS0ZCNzJudGpsbU9waXhuVjZFb0RseXgreVRKVEVyS3VIdTVj?=
+ =?utf-8?B?bXVHVjZ1dTJna1E2UzlzcTVUVGRLeGsrTUdUdWxCYlBvSnBGMGJ2elp3bndC?=
+ =?utf-8?Q?Hdh75V8fHQ88DihOzSDuxXtuVQB+FN1FXV8U8=3D?=
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?TUhjeTZJRTVCUkJlaHZ5VXdGZ1RhZmpsZm5EQStDcWJtcDNSSGNBS3UrZWxC?=
+ =?utf-8?B?M25hcWR4d2x6Q0tiSUlFWW51UkduZFVzZnhvdzFsbkdsZTM0U1dmNFAwbmJV?=
+ =?utf-8?B?bjh4TXIwRHVsL095TDE4REM3QU0wakRpNWhKQWN4Wm1jNDFQWG9pejVZaXNv?=
+ =?utf-8?B?V1ZiNEdrcVpGVE5xZnBya21uNEt4WlRreG8rYjRFWWhzM2IxaDF4Yk9VUHo4?=
+ =?utf-8?B?aVRNZlJ3ZU5YSlpjeGJVK3ovUXUzaVhYNDRLbnE1TlA0UGh0WUtOMFZpNE5I?=
+ =?utf-8?B?R2U2OTZ2RkxCWkVrNWV0V1JkbHkrUFBrWStscDVoMkorekdQa0hNWWY0Wmxl?=
+ =?utf-8?B?MnFPNE1XYzlJYTRicFcrOTlUNERNSHR2dmdMd1RnWkhub01rYjBKQWsvLzhw?=
+ =?utf-8?B?VGJoTUVIeHRFSCs5WUlZUEhDemdjbTlDM3FuSkxKcVRyU0VvTE9GSFl5eEN6?=
+ =?utf-8?B?Nnh4S2VkSU12WERDKzJKaDFwMXp6QzhMcnlTR3FOZTIxaWpzcERyVVpidWhE?=
+ =?utf-8?B?TFRmOExWanQxMEkzTnJ6M0ZoRmFtK2p5ellHL0lZYUM1bEdjZkQ3R1VIY0U3?=
+ =?utf-8?B?alpkMlRSR3hmalZhcFJCNlNhV3VuVjR4MG1jaWxMaDhwdGM0bDdhUnQ1OTFL?=
+ =?utf-8?B?VXp1YlMvazd5SllCY3B6aHNkUDNQcUh6L3dRbllReHQ3TXBpanRnRFJJVmY0?=
+ =?utf-8?B?UjJvbkhSQ3FuVVE3ZmZ2OFdZdnZEcWhrQjBFdUJDSGxnOVVqTFVJd3UxSjIx?=
+ =?utf-8?B?T0N2QlVhS25aMXlGWVRHVzZCdVZISFVrbWN6alZiY3N2MC9CaFhDbm4yQWdy?=
+ =?utf-8?B?c0ZvY08xbStMMHRDL1VuOVFTOVhmcnBLWm5LVmNkUmZ6WTJVUTVsdXhzQmZh?=
+ =?utf-8?B?WnZwYjJ4Tm5iV2c5ZjJpOWhKcHNWUTNkakJFbngvdEMrZDhmaXFPKzdqZ0Ji?=
+ =?utf-8?B?OThIS1djTFgwc2tESFdFYUFzclVFckNES1poVmxTczZMaXl1ZEZOZDE0bDJS?=
+ =?utf-8?B?RG1Qa3ZnVHhCem9zMkNMTVNRR0ZTTjhYblN2Y1dKUU1TemdqODVBZTAxVHdz?=
+ =?utf-8?B?cVZZcWQxS0V0c2FiQjU2c1ZEVjhobzJGY2h4QUlYbVNXMXVMVmRrWjhzRlFX?=
+ =?utf-8?B?aHlFRUpyT2dudmdhZjN5anpJNCtacjNEQTRKNmpsYlNodDZ4U0RZSkZWaWN3?=
+ =?utf-8?B?N3Nzd2F6Yk0vQTZoUkJ6TlNLMXpSNFRtaHJIUWVXcU1tT2tOUHJ3amxGU29h?=
+ =?utf-8?B?WFBZMkh2bldqTnV4Z2NpN2lJaHFxZHRqN2M0YWI3bUNOUllneXg0MGlWZ29w?=
+ =?utf-8?B?MCtQUHg1TkdqUnZOdnM0clZEeTdVMUdIaG15SzhKckljeGpwTXhjWUpxWWJt?=
+ =?utf-8?B?VE9VM0pHTEVSWnhvbHZNNGdrb1lsdTNqME5rWWNrSkVzbmJnTy9pbXAzYXVu?=
+ =?utf-8?B?anc1REw3WFlGZXkvY1FIYlBvckFKV3NQUVZKOXkrM3pVZ1ZKMHB2VnluOTVB?=
+ =?utf-8?B?b3N0QUZnVGw0M1pRZFg5UFhCSWhkcDRvdXRVSGdUdGhnQ2Q1cE45RXIzekxM?=
+ =?utf-8?B?V2Z3dnVTUTdhOEhtc1RGbFZkWFRydnhFVGk3VkgyRnVJTEVHTDBtc3NHMDZJ?=
+ =?utf-8?B?ZXl6aFlFc3lESTdRU3gvOHFLaGs5UjNZSHYxNDB4VHhmODczTURPZktpTmtD?=
+ =?utf-8?Q?eAljyzlthCDVD+L+h63x?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 00dadea0-f659-4df1-d0eb-08dd9476e097
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR19MB8883.namprd19.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 May 2025 12:40:45.8445
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN0PR19MB5264
 
-Currently, starting a PV VM on an iomap-based filesystem with large
-folio support, such as XFS, will not work. We'll be stuck in
-unpack_one()->gmap_make_secure(), because we can't seem to make progress
-splitting the large folio.
+Apologies, please disregard this version, something went wrong with 
+rebasing. I've sent version 4 in the meantime.
 
-The problem is that we require a writable PTE but a writable PTE under such
-filesystems will imply a dirty folio.
-
-So whenever we have a writable PTE, we'll have a dirty folio, and dirty
-iomap folios cannot currently get split, because
-split_folio()->split_huge_page_to_list_to_order()->filemap_release_folio()
-will fail in iomap_release_folio().
-
-So we will not make any progress splitting such large folios.
-
-Until dirty folios can be split more reliably, let's manually trigger
-writeback of the problematic folio using
-filemap_write_and_wait_range(), and retry the split immediately
-afterwards exactly once, before looking up the folio again.
-
-Should this logic be part of split_folio()? Likely not; most split users
-don't have to split so eagerly to make any progress.
-
-For now, this seems to affect xfs, zonefs and erofs, and this patch
-makes it work again (tested on xfs only).
-
-While this could be considered a fix for 6795801366da ("xfs: Support
-large folios"), df2f9708ff1f ("zonefs: enable support for large folios")
-and ce529cc25b18 ("erofs: enable large folios for iomap mode"), before
-commit eef88fe45ac9 ("s390/uv: Split large folios in gmap_make_secure()"),
-we did not try splitting large folios at all. So it's all rather part of
-making SE compatible with file systems that support large folios. But to
-have some "Fixes:" tag, let's just use eef88fe45ac9.
-
-Not CCing stable, because there are a lot of dependencies, and it simply
-not working is not critical in stable kernels.
-
-Reported-by: Sebastian Mitterle <smitterl@redhat.com>
-Closes: https://issues.redhat.com/browse/RHEL-58218
-Fixes: eef88fe45ac9 ("s390/uv: Split large folios in gmap_make_secure()")
-Signed-off-by: David Hildenbrand <david@redhat.com>
----
- arch/s390/kernel/uv.c | 66 +++++++++++++++++++++++++++++++++++++++----
- 1 file changed, 60 insertions(+), 6 deletions(-)
-
-diff --git a/arch/s390/kernel/uv.c b/arch/s390/kernel/uv.c
-index f6ddb2b54032e..d278bf0c09d1b 100644
---- a/arch/s390/kernel/uv.c
-+++ b/arch/s390/kernel/uv.c
-@@ -15,6 +15,7 @@
- #include <linux/pagemap.h>
- #include <linux/swap.h>
- #include <linux/pagewalk.h>
-+#include <linux/backing-dev.h>
- #include <asm/facility.h>
- #include <asm/sections.h>
- #include <asm/uv.h>
-@@ -338,22 +339,75 @@ static int make_folio_secure(struct mm_struct *mm, struct folio *folio, struct u
-  */
- static int s390_wiggle_split_folio(struct mm_struct *mm, struct folio *folio)
- {
--	int rc;
-+	int rc, tried_splits;
- 
- 	lockdep_assert_not_held(&mm->mmap_lock);
- 	folio_wait_writeback(folio);
- 	lru_add_drain_all();
- 
--	if (folio_test_large(folio)) {
-+	if (!folio_test_large(folio))
-+		return 0;
-+
-+	for (tried_splits = 0; tried_splits < 2; tried_splits++) {
-+		struct address_space *mapping;
-+		loff_t lstart, lend;
-+		struct inode *inode;
-+
- 		folio_lock(folio);
- 		rc = split_folio(folio);
-+		if (rc != -EBUSY) {
-+			folio_unlock(folio);
-+			return rc;
-+		}
-+
-+		/*
-+		 * Splitting with -EBUSY can fail for various reasons, but we
-+		 * have to handle one case explicitly for now: some mappings
-+		 * don't allow for splitting dirty folios; writeback will
-+		 * mark them clean again, including marking all page table
-+		 * entries mapping the folio read-only, to catch future write
-+		 * attempts.
-+		 *
-+		 * While the system should be writing back dirty folios in the
-+		 * background, we obtained this folio by looking up a writable
-+		 * page table entry. On these problematic mappings, writable
-+		 * page table entries imply dirty folios, preventing the
-+		 * split in the first place.
-+		 *
-+		 * To prevent a livelock when trigger writeback manually and
-+		 * letting the caller look up the folio again in the page
-+		 * table (turning it dirty), immediately try to split again.
-+		 *
-+		 * This is only a problem for some mappings (e.g., XFS);
-+		 * mappings that do not support writeback (e.g., shmem) do not
-+		 * apply.
-+		 */
-+		if (!folio_test_dirty(folio) || folio_test_anon(folio) ||
-+		    !folio->mapping || !mapping_can_writeback(folio->mapping)) {
-+			folio_unlock(folio);
-+			break;
-+		}
-+
-+		/*
-+		 * Ideally, we'd only trigger writeback on this exact folio. But
-+		 * there is no easy way to do that, so we'll stabilize the
-+		 * mapping while we still hold the folio lock, so we can drop
-+		 * the folio lock to trigger writeback on the range currently
-+		 * covered by the folio instead.
-+		 */
-+		mapping = folio->mapping;
-+		lstart = folio_pos(folio);
-+		lend = lstart + folio_size(folio) - 1;
-+		inode = igrab(mapping->host);
- 		folio_unlock(folio);
- 
--		if (rc != -EBUSY)
--			return rc;
--		return -EAGAIN;
-+		if (unlikely(!inode))
-+			break;
-+
-+		filemap_write_and_wait_range(mapping, lstart, lend);
-+		iput(mapping->host);
- 	}
--	return 0;
-+	return -EAGAIN;
- }
- 
- int make_hva_secure(struct mm_struct *mm, unsigned long hva, struct uv_cb_header *uvcb)
--- 
-2.49.0
+On 5/16/25 15:43, George Moussalem via B4 Relay wrote:
+> The CMN PLL block of IPQ5018 supplies output clocks for XO at 24 MHZ,
+> sleep at 32KHZ, and the ethernet block at 50MHZ.
+> 
+> This patch series extends the CMN PLL driver to support IPQ5018. It also
+> adds the SoC specific header file to export the CMN PLL output clock
+> specifiers for IPQ5018. A new table of output clocks is added for the
+> CMN PLL of IPQ5018, which is acquired from the device according to the
+> compatible.
+> 
+> Signed-off-by: George Moussalem <george.moussalem@outlook.com>
+> ---
+> Changes in v3:
+> - After further testing and evaluating different solutions, reverted to
+>    marking the XO clock in the GCC as critical as agreed with Konrad
+> - Moved kernel traces out of commit message of patch 1 to under the
+>    diffstat separator and updated commit message accordingly
+> - Updated commit message of patch 3
+> - Link to v2: https://lore.kernel.org/r/20250506-ipq5018-cmn-pll-v2-0-c0a9fcced114@outlook.com
+> 
+> Changes in v2:
+> - Moved up commit documenting ipq5018 in qcom,tcsr bindings
+> - Fixed binding issues reported by Rob's bot
+> - Undone accidental deletion of reg property in cmn pll bindings
+> - Fixed register address and size based on address and size cells of 1
+> - Removed XO and XO_SRC clock structs from GCC and enabled them as
+>    always-on as suggested by Konrad
+> - Removed bindings for XO and XO_SRC clocks
+> - Removed qcom,tscr-cmn-pll-eth-enable property from bindings and will
+>    move logic to ipq5018 internal phy driver as per Jie's recommendation.
+> - Removed addition of tcsr node and its bindings from this patch set
+> - Corrected spelling mistakes
+> - Link to v1: https://lore.kernel.org/r/20250502-ipq5018-cmn-pll-v1-0-27902c1c4071@outlook.com
+> 
+> ---
+> George Moussalem (5):
+>        clk: qcom: ipq5018: keep XO clock always on
+>        dt-bindings: clock: qcom: Add CMN PLL support for IPQ5018 SoC
+>        clk: qcom: ipq-cmn-pll: Add IPQ5018 SoC support
+>        arm64: dts: ipq5018: Add CMN PLL node
+>        arm64: dts: qcom: Update IPQ5018 xo_board_clk to use fixed factor clock
+> 
+>   .../bindings/clock/qcom,ipq9574-cmn-pll.yaml       |  1 +
+>   arch/arm64/boot/dts/qcom/ipq5018-rdp432-c2.dts     |  3 +-
+>   .../dts/qcom/ipq5018-tplink-archer-ax55-v1.dts     |  3 +-
+>   arch/arm64/boot/dts/qcom/ipq5018.dtsi              | 20 ++++++++++--
+>   drivers/clk/qcom/gcc-ipq5018.c                     |  2 +-
+>   drivers/clk/qcom/ipq-cmn-pll.c                     | 37 ++++++++++++++--------
+>   include/dt-bindings/clock/qcom,ipq5018-cmn-pll.h   | 16 ++++++++++
+>   7 files changed, 63 insertions(+), 19 deletions(-)
+> ---
+> base-commit: 8a2d53ce3c5f82683ad3df9a9a55822816fe64e7
+> change-id: 20250501-ipq5018-cmn-pll-8e517de873f8
+> prerequisite-change-id: 20250411-qcom_ipq5424_cmnpll-960a8f597033:v2
+> prerequisite-patch-id: dc3949e10baf58f8c28d24bb3ffd347a78a1a2ee
+> prerequisite-patch-id: da645619780de3186a3cccf25beedd4fefab36df
+> prerequisite-patch-id: 4b5d81954f1f43d450a775bcabc1a18429933aaa
+> prerequisite-patch-id: 541f835fb279f83e6eb2405c531bd7da9aacf4bd
+> 
+> Best regards,
 
 
