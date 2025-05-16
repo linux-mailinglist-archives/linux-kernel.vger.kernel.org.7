@@ -1,150 +1,140 @@
-Return-Path: <linux-kernel+bounces-650833-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-650863-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAE1EAB96B7
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 09:40:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C420CAB96FF
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 09:58:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4FE3A173EF1
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 07:40:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35BB7501772
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 07:58:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13EBE22A80E;
-	Fri, 16 May 2025 07:40:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="tMhxtrrt";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="wRC1Mvas"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 270EE22B59A;
+	Fri, 16 May 2025 07:58:37 +0000 (UTC)
+Received: from mta21.hihonor.com (mta21.hihonor.com [81.70.160.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C90E215F56;
-	Fri, 16 May 2025 07:39:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 140DE21ADC6;
+	Fri, 16 May 2025 07:58:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.160.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747381199; cv=none; b=UKt7x8IH6n9mI/OqplJED4SkjQRqEPxCKFLCuYxfizkVHcLOrygHCRW8ZgRjA5HErx+iYoXJnl1iJQOgzkzBnoZfcLPCTp0F+T/0ocwtz7orsYM6SyYtsxcyCgiPreSdpbYknZJdUk0zDAQgYITNU+TBNBn1dhDDHE11ZC+qosE=
+	t=1747382316; cv=none; b=JkxsaPYBnxFdJnBzUBroG5RrGSODmGYEoEYcbJffSKGpaJHKmWbYfsSOJbNat76BNsCty5lzkDb9o5srZ3nilR1BgXPT+M5QChH6dqL+8SuBcbBm1zt4ntPkarDHxurEleo4IjaLfAA47/6EJ9dVqc4NWV5IPlQghUgAh9kJni8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747381199; c=relaxed/simple;
-	bh=XTjLqTcoNMdGSbSKnQQPkVayOTpXLo05+7q7IPtqkYo=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=LdmQQKlYLM/TGdpzaul6/JQgvocJAKABQAkhuuDB6Tx9+nCfHsxh0qkqA8TFG7tEu7ZaZNFn1mEAv98TZBajEDowS2v35OSqNKN0Wkc7/9pG/ZKB5vfPQGMSSOPPxOIv9zOiLkW+uP0g5xBAkxhDPeqrcEDsaYhX1PdKmV6gjEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=tMhxtrrt; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=wRC1Mvas; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 16 May 2025 07:39:53 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1747381194;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TBrAnIgcsqjR5hm3aw2mc2dVx93ozX/mOPLOqZD8ffw=;
-	b=tMhxtrrtwNuPtkLnJ4HnugPjGKFnN+z6KpNrxBkvWyuwgc5QHBcGQ49fzPVKAYp7D9nEBk
-	xgnQAa8gFhJQHkdCs7Ir9TpgBsuyf82agrq2da5GaoX7n2FdK2DQr6NB4k+TL3oiuPG9aU
-	u4wKXTdnXKhBYrJc03thkMgNQiKe3CHJbI/QoUbdJVM+qxhFeedCnFNqCv/jDjti98MhWE
-	hrNwkybNr1dYtaRvZJuadewvpRvMhuwUF+0FJcbeu2nW5f0Xmuqgv5ERUYjzJAphEEy2hL
-	vGOuC+fy0p0RoTT+sfrlQCVPrSGb63pOeODTeNS9i8M5hk7FvH/5PS3BuflX8A==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1747381194;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TBrAnIgcsqjR5hm3aw2mc2dVx93ozX/mOPLOqZD8ffw=;
-	b=wRC1MvasgNOrGpKA3vJut46RL02lYAP09KWXu1iMx6f4oYz2cEJmgTJStYJPlrOSJ66pNI
-	8xyzJ/HbpUBbZiDg==
-From: "tip-bot2 for Borislav Petkov (AMD)" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: locking/futex] futex: Fix kernel-doc comments
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
- "Borislav Petkov (AMD)" <bp@alien8.de>, Ingo Molnar <mingo@kernel.org>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- Thomas Gleixner <tglx@linutronix.de>, Peter Zijlstra <peterz@infradead.org>,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250515171641.24073-1-bp@kernel.org # submission>
-References: <20250515171641.24073-1-bp@kernel.org # submission>
+	s=arc-20240116; t=1747382316; c=relaxed/simple;
+	bh=8DICuJj/aS8QeGGaAqlp0qVc70UAvfUs8AsAucUsZ1o=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=HZCdBBmh18K7Bzu5WUqYgXPJI53LqfBY8nXFDKxwLKR5g6398X+suJgYr15MZ7a+i/ceXK5KlPKBtqUbhtg9hwgU2robkpqhXBhT0HucOXhT1FPuNhySpyw/jz82Fk3N+bQtC1L2Vw2lQF3CDpT9yNS4+PQJsLICaY2Q70LBrqY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; arc=none smtp.client-ip=81.70.160.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=honor.com
+Received: from w013.hihonor.com (unknown [10.68.26.19])
+	by mta21.hihonor.com (SkyGuard) with ESMTPS id 4ZzJpz5Lh1zYlsdM;
+	Fri, 16 May 2025 15:38:35 +0800 (CST)
+Received: from a005.hihonor.com (10.68.18.24) by w013.hihonor.com
+ (10.68.26.19) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 16 May
+ 2025 15:40:25 +0800
+Received: from a010.hihonor.com (10.68.16.52) by a005.hihonor.com
+ (10.68.18.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 16 May
+ 2025 15:40:25 +0800
+Received: from a010.hihonor.com ([fe80::7127:3946:32c7:6e]) by
+ a010.hihonor.com ([fe80::7127:3946:32c7:6e%14]) with mapi id 15.02.1544.011;
+ Fri, 16 May 2025 15:40:25 +0800
+From: wangtao <tao.wangtao@honor.com>
+To: =?utf-8?B?Q2hyaXN0aWFuIEvDtm5pZw==?= <christian.koenig@amd.com>,
+	"sumit.semwal@linaro.org" <sumit.semwal@linaro.org>,
+	"benjamin.gaignard@collabora.com" <benjamin.gaignard@collabora.com>,
+	"Brian.Starkey@arm.com" <Brian.Starkey@arm.com>, "jstultz@google.com"
+	<jstultz@google.com>, "tjmercier@google.com" <tjmercier@google.com>
+CC: "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	"linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"wangbintian(BintianWang)" <bintian.wang@honor.com>, yipengxiang
+	<yipengxiang@honor.com>, liulu 00013167 <liulu.liu@honor.com>, "hanfeng
+ 00012985" <feng.han@honor.com>
+Subject: RE: [PATCH 2/2] dmabuf/heaps: implement DMA_BUF_IOCTL_RW_FILE for
+ system_heap
+Thread-Topic: [PATCH 2/2] dmabuf/heaps: implement DMA_BUF_IOCTL_RW_FILE for
+ system_heap
+Thread-Index: AQHbw+qMldEo/aUx7kiLwLLmDDhXfrPP52GAgACTfSD//4oVgIAB7nTg//+OJQCAAiukIP//j3cAADMZG0A=
+Date: Fri, 16 May 2025 07:40:25 +0000
+Message-ID: <a3f57102bc6e4588bc7659485feadbc1@honor.com>
+References: <20250513092803.2096-1-tao.wangtao@honor.com>
+ <fdc8f0a2-5b2f-4898-8090-0d7b888c15d8@amd.com>
+ <5b68b2a50d48444b93d97f5d342f37c8@honor.com>
+ <ef978301-6a63-451d-9ae6-171968b26a55@amd.com>
+ <9f732ac8b90e4e819e0a6a5511ac3f6d@honor.com>
+ <50092362-4644-4e47-9c63-fc82ba24e516@amd.com>
+ <2755aae2f1674b239569bf1acad765dc@honor.com>
+ <2487bad4-81d6-4ea2-96a7-a6ac741c9d9c@amd.com>
+In-Reply-To: <2487bad4-81d6-4ea2-96a7-a6ac741c9d9c@amd.com>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174738119305.406.5896356423889834809.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
 
-The following commit has been merged into the locking/futex branch of tip:
-
-Commit-ID:     bd59f6170968314c82e2b65f8bbaec55896b7a5f
-Gitweb:        https://git.kernel.org/tip/bd59f6170968314c82e2b65f8bbaec55896b7a5f
-Author:        Borislav Petkov (AMD) <bp@alien8.de>
-AuthorDate:    Thu, 15 May 2025 19:16:41 +02:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Fri, 16 May 2025 09:33:53 +02:00
-
-futex: Fix kernel-doc comments
-
-Fix those:
-
-  ./kernel/futex/futex.h:208: warning: Function parameter or struct member 'drop_hb_ref' not described in 'futex_q'
-  ./kernel/futex/waitwake.c:343: warning: expecting prototype for futex_wait_queue(). Prototype was for futex_do_wait() instead
-  ./kernel/futex/waitwake.c:594: warning: Function parameter or struct member 'task' not described in 'futex_wait_setup'
-
-Fixes: 93f1b6d79a73 ("futex: Move futex_queue() into futex_wait_setup()")
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Acked-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: https://lore.kernel.org/r/20250512185641.0450a99b@canb.auug.org.au # report
-Link: https://lore.kernel.org/r/20250515171641.24073-1-bp@kernel.org     # submission
----
- kernel/futex/futex.h    | 1 +
- kernel/futex/waitwake.c | 5 ++---
- 2 files changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/kernel/futex/futex.h b/kernel/futex/futex.h
-index 069fc2a..fcd1617 100644
---- a/kernel/futex/futex.h
-+++ b/kernel/futex/futex.h
-@@ -175,6 +175,7 @@ typedef void (futex_wake_fn)(struct wake_q_head *wake_q, struct futex_q *q);
-  * @requeue_pi_key:	the requeue_pi target futex key
-  * @bitset:		bitset for the optional bitmasked wakeup
-  * @requeue_state:	State field for futex_requeue_pi()
-+ * @drop_hb_ref:	Waiter should drop the extra hash bucket reference if true
-  * @requeue_wait:	RCU wait for futex_requeue_pi() (RT only)
-  *
-  * We use this hashed waitqueue, instead of a normal wait_queue_entry_t, so
-diff --git a/kernel/futex/waitwake.c b/kernel/futex/waitwake.c
-index bd8fef0..b3738fb 100644
---- a/kernel/futex/waitwake.c
-+++ b/kernel/futex/waitwake.c
-@@ -334,8 +334,7 @@ out_unlock:
- static long futex_wait_restart(struct restart_block *restart);
- 
- /**
-- * futex_wait_queue() - futex_queue() and wait for wakeup, timeout, or signal
-- * @hb:		the futex hash bucket, must be locked by the caller
-+ * futex_do_wait() - wait for wakeup, timeout, or signal
-  * @q:		the futex_q to queue up on
-  * @timeout:	the prepared hrtimer_sleeper, or null for no timeout
-  */
-@@ -578,7 +577,7 @@ int futex_wait_multiple(struct futex_vector *vs, unsigned int count,
-  * @flags:	futex flags (FLAGS_SHARED, etc.)
-  * @q:		the associated futex_q
-  * @key2:	the second futex_key if used for requeue PI
-- * task:	Task queueing this futex
-+ * @task:	Task queueing this futex
-  *
-  * Setup the futex_q and locate the hash_bucket.  Get the futex value and
-  * compare it with the expected value.  Handle atomic faults internally.
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogQ2hyaXN0aWFuIEvDtm5p
+ZyA8Y2hyaXN0aWFuLmtvZW5pZ0BhbWQuY29tPg0KPiBTZW50OiBUaHVyc2RheSwgTWF5IDE1LCAy
+MDI1IDEwOjI2IFBNDQo+IFRvOiB3YW5ndGFvIDx0YW8ud2FuZ3Rhb0Bob25vci5jb20+OyBzdW1p
+dC5zZW13YWxAbGluYXJvLm9yZzsNCj4gYmVuamFtaW4uZ2FpZ25hcmRAY29sbGFib3JhLmNvbTsg
+QnJpYW4uU3RhcmtleUBhcm0uY29tOw0KPiBqc3R1bHR6QGdvb2dsZS5jb207IHRqbWVyY2llckBn
+b29nbGUuY29tDQo+IENjOiBsaW51eC1tZWRpYUB2Z2VyLmtlcm5lbC5vcmc7IGRyaS1kZXZlbEBs
+aXN0cy5mcmVlZGVza3RvcC5vcmc7IGxpbmFyby0NCj4gbW0tc2lnQGxpc3RzLmxpbmFyby5vcmc7
+IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7DQo+IHdhbmdiaW50aWFuKEJpbnRpYW5XYW5n
+KSA8YmludGlhbi53YW5nQGhvbm9yLmNvbT47IHlpcGVuZ3hpYW5nDQo+IDx5aXBlbmd4aWFuZ0Bo
+b25vci5jb20+OyBsaXVsdSAwMDAxMzE2NyA8bGl1bHUubGl1QGhvbm9yLmNvbT47IGhhbmZlbmcN
+Cj4gMDAwMTI5ODUgPGZlbmcuaGFuQGhvbm9yLmNvbT4NCj4gU3ViamVjdDogUmU6IFtQQVRDSCAy
+LzJdIGRtYWJ1Zi9oZWFwczogaW1wbGVtZW50DQo+IERNQV9CVUZfSU9DVExfUldfRklMRSBmb3Ig
+c3lzdGVtX2hlYXANCj4gDQo+IE9uIDUvMTUvMjUgMTY6MDMsIHdhbmd0YW8gd3JvdGU6DQo+ID4g
+W3dhbmd0YW9dIE15IFRlc3QgQ29uZmlndXJhdGlvbiAoQ1BVIDFHSHosIDUtdGVzdCBhdmVyYWdl
+KToNCj4gPiBBbGxvY2F0aW9uOiAzMngzMk1CIGJ1ZmZlciBjcmVhdGlvbg0KPiA+IC0gZG1hYnVm
+IDUzbXMgdnMuIHVkbWFidWYgNjk0bXMgKDEwWCBzbG93ZXIpDQo+ID4gLSBOb3RlOiBzaG1lbSBz
+aG93cyBleGNlc3NpdmUgYWxsb2NhdGlvbiB0aW1lDQo+IA0KPiBZZWFoLCB0aGF0IGlzIHNvbWV0
+aGluZyBhbHJlYWR5IG5vdGVkIGJ5IG90aGVycyBhcyB3ZWxsLiBCdXQgdGhhdCBpcw0KPiBvcnRo
+b2dvbmFsLg0KPiANCj4gPg0KPiA+IFJlYWQgMTAyNE1CIEZpbGU6DQo+ID4gLSBkbWFidWYgZGly
+ZWN0IDMyNm1zIHZzLiB1ZG1hYnVmIGRpcmVjdCA0NjFtcyAoNDAlIHNsb3dlcikNCj4gPiAtIE5v
+dGU6IHBpbl91c2VyX3BhZ2VzX2Zhc3QgY29uc3VtZXMgbWFqb3JpdHkgQ1BVIGN5Y2xlcw0KPiA+
+DQo+ID4gS2V5IGZ1bmN0aW9uIGNhbGwgdGltaW5nOiBTZWUgZGV0YWlscyBiZWxvdy4NCj4gDQo+
+IFRob3NlIGFyZW4ndCB2YWxpZCwgeW91IGFyZSBjb21wYXJpbmcgZGlmZmVyZW50IGZ1bmN0aW9u
+YWxpdGllcyBoZXJlLg0KPiANCj4gUGxlYXNlIHRyeSB1c2luZyB1ZG1hYnVmIHdpdGggc2VuZGZp
+bGUoKSBhcyBjb25maXJtZWQgdG8gYmUgd29ya2luZyBieSBULkouDQpbd2FuZ3Rhb10gVXNpbmcg
+YnVmZmVyIElPIHdpdGggZG1hYnVmIGZpbGUgcmVhZC93cml0ZSByZXF1aXJlcyBvbmUgbWVtb3J5
+IGNvcHkuDQpEaXJlY3QgSU8gcmVtb3ZlcyB0aGlzIGNvcHkgdG8gZW5hYmxlIHplcm8tY29weS4g
+VGhlIHNlbmRmaWxlIHN5c3RlbSBjYWxsDQpyZWR1Y2VzIG1lbW9yeSBjb3BpZXMgZnJvbSB0d28g
+KHJlYWQvd3JpdGUpIHRvIG9uZS4gSG93ZXZlciwgd2l0aCB1ZG1hYnVmLA0Kc2VuZGZpbGUgc3Rp
+bGwga2VlcHMgYXQgbGVhc3Qgb25lIGNvcHksIGZhaWxpbmcgemVyby1jb3B5Lg0KDQpJZiB1ZG1h
+YnVmIHNlbmRmaWxlIHVzZXMgYnVmZmVyIElPIChmaWxlIHBhZ2UgY2FjaGUpLCByZWFkIGxhdGVu
+Y3kgbWF0Y2hlcw0KZG1hYnVmIGJ1ZmZlciByZWFkLCBidXQgYWxsb2NhdGlvbiB0aW1lIGlzIG11
+Y2ggbG9uZ2VyLg0KV2l0aCBEaXJlY3QgSU8sIHRoZSBkZWZhdWx0IDE2LXBhZ2UgcGlwZSBzaXpl
+IG1ha2VzIGl0IHNsb3dlciB0aGFuIGJ1ZmZlciBJTy4NCg0KVGVzdCBkYXRhIHNob3dzOg0KdWRt
+YWJ1ZiBkaXJlY3QgcmVhZCBpcyBtdWNoIGZhc3RlciB0aGFuIHVkbWFidWYgc2VuZGZpbGUuDQpk
+bWFidWYgZGlyZWN0IHJlYWQgb3V0cGVyZm9ybXMgdWRtYWJ1ZiBkaXJlY3QgcmVhZCBieSBhIGxh
+cmdlIG1hcmdpbi4NCg0KSXNzdWU6IEFmdGVyIHVkbWFidWYgaXMgbWFwcGVkIHZpYSBtYXBfZG1h
+X2J1ZiwgYXBwcyB1c2luZyBtZW1mZCBvcg0KdWRtYWJ1ZiBmb3IgRGlyZWN0IElPIG1pZ2h0IGNh
+dXNlIGVycm9ycywgYnV0IHRoZXJlIGFyZSBubyBzYWZlZ3VhcmRzIHRvDQpwcmV2ZW50IHRoaXMu
+DQoNCkFsbG9jYXRlIDMyeDMyTUIgYnVmZmVyIGFuZCByZWFkIDEwMjQgTUIgZmlsZSBUZXN0Og0K
+TWV0cmljICAgICAgICAgICAgICAgICB8IGFsbG9jIChtcykgfCByZWFkIChtcykgfCB0b3RhbCAo
+bXMpDQotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLXwtLS0tLS0tLS0tLS18LS0tLS0tLS0tLS18LS0t
+LS0tLS0tLS0NCnVkbWFidWYgYnVmZmVyIHJlYWQgICAgfCA1MzkgICAgICAgIHwgMjAxNyAgICAg
+IHwgMjU1NQ0KdWRtYWJ1ZiBkaXJlY3QgcmVhZCAgICB8IDUyMiAgICAgICAgfCA2NTggICAgICAg
+fCAxMTc5DQp1ZG1hYnVmIGJ1ZmZlciBzZW5kZmlsZXwgNTA1ICAgICAgICB8IDEwNDAgICAgICB8
+IDE1NDYNCnVkbWFidWYgZGlyZWN0IHNlbmRmaWxlfCA1MTAgICAgICAgIHwgMjI2OSAgICAgIHwg
+Mjc4MA0KZG1hYnVmIGJ1ZmZlciByZWFkICAgICB8IDUxICAgICAgICAgfCAxMDY4ICAgICAgfCAx
+MTE4DQpkbWFidWYgZGlyZWN0IHJlYWQgICAgIHwgNTIgICAgICAgICB8IDI5NyAgICAgICB8IDM0
+OQ0KDQp1ZG1hYnVmIHNlbmRmaWxlIHRlc3Qgc3RlcHM6DQoxLiBPcGVuIGRhdGEgZmlsZSgxMDI0
+TUIpLCBnZXQgYmFja19mZA0KMi4gQ3JlYXRlIG1lbWZkKDMyTUIpICMgTG9vcCBzdGVwcyAyLTYN
+CjMuIEFsbG9jYXRlIHVkbWFidWYgd2l0aCBtZW1mZA0KNC4gQ2FsbCBzZW5kZmlsZShtZW1mZCwg
+YmFja19mZCkNCjUuIENsb3NlIG1lbWZkIGFmdGVyIHNlbmRmaWxlDQo2LiBDbG9zZSB1ZG1hYnVm
+DQo3LiBDbG9zZSBiYWNrX2ZkDQoNCj4gDQo+IFJlZ2FyZHMsDQo+IENocmlzdGlhbi4NCg0K
 
