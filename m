@@ -1,138 +1,169 @@
-Return-Path: <linux-kernel+bounces-650866-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-650868-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84C4DAB970C
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 10:01:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDFECAB9710
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 10:02:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9C7C3A7A9A
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 08:01:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73B064E3E06
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 08:02:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC16C22CBC1;
-	Fri, 16 May 2025 08:01:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31E0422C32D;
+	Fri, 16 May 2025 08:02:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="NckPpyb9"
-Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TxhMNkkH"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC49320B807;
-	Fri, 16 May 2025 08:01:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1147225A35
+	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 08:02:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747382479; cv=none; b=FoKFV2Q77hFqR9yd+VFjHMgfFRXaBduUFIhy88fGwHgmSgjAriy/LzbJ5hU3WyVKY1778lMWOEZ28saCf/+Xmlmx1EjLJCIDxzyvIcZ6/HifmmA9XugG4054CYv2f1Bdd/HXGa8HhGoJzN3wKjt4noLjHxNP3mgdPyfTFdbL/18=
+	t=1747382543; cv=none; b=PPJbH46cbQKdrGqaN2vqmQUFe3befi4IlYMW9lCw9JNUPIQasMVXd+uZTSWdRnLS1076sAN8Xqth0LEIKB/tAaDZmGbcBaEPDnC+xp7HlhPqfq/rhHKp4OlJ1Qj+xzMOva+f0LY0wHjH4R45QaEd9l9PAJu1RLcBJjNr8cq91qs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747382479; c=relaxed/simple;
-	bh=wIjTiwi1RCwoRNBe09BLJXxzhYLSf+aCXPd/oQh3fI0=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=U+hJtlG0MCPCXt4hRTSKZb//QS3/z61GkCTed6On+OBd/hklpzSoyHJyZ4oRduDM217RF0muAsUBKcQR3AmUsyMbuBtKpF0EdgW8WUnNuGGiYSv/YpTrwd0ySLcl/22HtF6Pf2tAz1hnJc78SRMvdcgVsYSEisAzlF7ongLT+Oo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=NckPpyb9; arc=none smtp.client-ip=168.119.38.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=X1HXctmWs4+Ph3l5TlPhcon/Scqg6QqLW4qi06AARVA=;
-	t=1747382477; x=1748592077; b=NckPpyb9AnoSGYjUTsdxMl2Wx52BUVz7npBhjgQs+hRJA9k
-	uXvLNAIeoYE0XPPT6RNkPUkL0Ww0hxmuhdL1r7G4h5VWx9g7kx5JV9OzjGVeyP12Ho0aiZBt9RKN8
-	hcChsB0I/B5A7W3SZIbuXOmWshJjvfDgHYPxbKHuwhPZo6C1uzQ+L5bs+YLvn4TV7iBsnOn8fFLxJ
-	miF2tHdz6LbQ8V8lgzhOizDJ9Wkkqtk0MpCc0JWiMcNpkZXXk+/aM52oF2KrS4rv4ineZAECRx/fn
-	ZyxjgPB7lY+XmtczTQOtRIG4lTuR4ltQd2Q66qhpL7/5jo2f65d5hXr1mesdOwzg==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.98.1)
-	(envelope-from <johannes@sipsolutions.net>)
-	id 1uFq0G-0000000E1g6-0yF3;
-	Fri, 16 May 2025 10:01:12 +0200
-Message-ID: <d23e55879c6d8b6cabcc8357f153ae0622a4c53a.camel@sipsolutions.net>
-Subject: Re: [PATCH wireless-next 2/3] wifi: mac80211: Allow scan on a radio
- while operating on DFS on another radio
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>
-Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Fri, 16 May 2025 10:01:11 +0200
-In-Reply-To: <20250514-mlo-dfs-acs-v1-2-74e42a5583c6@quicinc.com>
-References: <20250514-mlo-dfs-acs-v1-0-74e42a5583c6@quicinc.com>
-	 <20250514-mlo-dfs-acs-v1-2-74e42a5583c6@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+	s=arc-20240116; t=1747382543; c=relaxed/simple;
+	bh=H3gGoNY17k//3FrPE7INqoVxNAhhPQXH8fJGugRmmyc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NHjI29I+3K7MI8R/n0xde7ecUltM+BeLFg2JOSzLxTaVs6Oa7MDYsXTLo7a5HQ1olBQzC873ZJammpI2DCBtlWKrpsXDyG7AQHNZ5QuH9Z1uEWNYkTdpBdZRRcpA4G2LqfoRoB4j+9BopNFGjZMr/5RbHaJOXB7UvPT0PuLWlYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TxhMNkkH; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1747382540;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=ZlDySxqINDrxm4UjNN3OmOU4dY+W91mBT9wkqzNyPtk=;
+	b=TxhMNkkH1w8Ms4F5mCaT1Zcr6qt9aydJVcMX1cxpp8X5YYz7CLEYdlPxiPBsgNxzmk8ajE
+	981eRzQZiiitRNDXJU0ix7anMiriQVcmpBfvsLdOvt4Diz1OPBqYssLqKtGGmYRBMWX25s
+	PIXk4A150TsBn+j2Mru7XU1dA/fLCo0=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-544-2bes0w0GNcuThdknEfrhXg-1; Fri, 16 May 2025 04:02:19 -0400
+X-MC-Unique: 2bes0w0GNcuThdknEfrhXg-1
+X-Mimecast-MFC-AGG-ID: 2bes0w0GNcuThdknEfrhXg_1747382538
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-43e9b0fd00cso9608535e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 01:02:19 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747382538; x=1747987338;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=ZlDySxqINDrxm4UjNN3OmOU4dY+W91mBT9wkqzNyPtk=;
+        b=RaTT6N+9JtizJZbfXhnI6UEfx1J32RV+vf0QwDF0UFbL3upHeZkXVQchjquGWvj7ZG
+         xyyghdYJyO0BuClYjlTduim/mZZwwGZUCun9i1YgFHHRzB4flAhLRYogaqk5V5tc1Tcs
+         iZvRD6zA9TzTk8xcUKSBj0pEJnjevcB25VimEICSqqLWY9U+0HFDNmEkpUc2lO2SjHc5
+         NX6EEyZTc/Rqme9Bmx8K/j8kGbN0/b/Fu+A7jfVCQYqzqYEfoxoOmbP7k9AhT7vEiq+S
+         JDNvkbOQNoOSpRSXTXAF5LwmjxYqCaVMkC6all+cLzA8EQMd4DGrCTFUvdqswhkQJMly
+         x+Hw==
+X-Forwarded-Encrypted: i=1; AJvYcCVHi5dCOf5zgQKj4nbLtSE2x1MOC67JnqvgppfMm4dSIrTGa+bRaYAxP3cwYjBjZocd04AD7MKpCUEaV08=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwEAWWWX/wm22zeznNqku60k/YtSQJluYRePM17rEAKUTz65A4q
+	1ls4Kq4Ac9sabeyE7+yiaUuyJSd6e8TeDhFTkuxU1o0AwCLgXYvDC9SDSjcF2CVg9Fg4/4GUHLM
+	c0vd+aHFgnBelDlXUaS5uojRZEe1K1z+XG+peaIo02SYdwygpB4Cp48SQNDZ4PN+Ynm/UDe1Y2f
+	70
+X-Gm-Gg: ASbGncvx5AicSNstjs0XVf4Ac/fZsYHVqI6vyi9yK3/qmKX68LZ8o8qmxj0cFH69a4X
+	jpN2TdRZF3c94Ea8FljeueefUzT8SP5o6vJvMkcxFrdrNMm6EVGIP9jGmT4nOvLdQ+/b8vk03Xd
+	ElOkLNnmxhU8/yyfRaG7Eq4Buk5zG7/oS7hwcxqgHxuuIyxhpjZ59ZE1AiQjN6w8gNmbzsl3ZXT
+	p1sERFxm6oBkS8KBINk9deq50txbpDZDro8Jb4fKpxCMfoxxVJPeyK6MDkt2/vxkHoTvYy2z88v
+	kNRgzhw2AHdqvTP7JU71Shy1vzpWzZGEfY+zzpsWksFiwwoGmYjws34P3Fpwg42CwvFl/2h5ChI
+	7MVQHg68w0Ou3biL4Xv6LfaoWafxool6xoF/tXbQ=
+X-Received: by 2002:a05:600c:a08c:b0:442:f861:3536 with SMTP id 5b1f17b1804b1-442fd94e353mr20683985e9.7.1747382538219;
+        Fri, 16 May 2025 01:02:18 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGelgfYf1CtFX2ouWOGPMb4VwIumpsnFvLJhBDDEnBHD32A6BcPQixmIbH4BEGdqHTdU69TsQ==
+X-Received: by 2002:a05:600c:a08c:b0:442:f861:3536 with SMTP id 5b1f17b1804b1-442fd94e353mr20683725e9.7.1747382537878;
+        Fri, 16 May 2025 01:02:17 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f47:4700:e6f9:f453:9ece:7602? (p200300d82f474700e6f9f4539ece7602.dip0.t-ipconnect.de. [2003:d8:2f47:4700:e6f9:f453:9ece:7602])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-442fd583f71sm23537405e9.27.2025.05.16.01.02.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 16 May 2025 01:02:17 -0700 (PDT)
+Message-ID: <f924f789-5269-4046-99a4-2991f9a3ab3c@redhat.com>
+Date: Fri, 16 May 2025 10:02:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-malware-bazaar: not-scanned
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] selftests/mm: Fix test result reporting in gup_longterm
+To: Mark Brown <broonie@kernel.org>, Andrew Morton
+ <akpm@linux-foundation.org>, Shuah Khan <shuah@kernel.org>
+Cc: linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250515-selftests-mm-gup-longterm-dups-v1-1-05f8f731cf63@kernel.org>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20250515-selftests-mm-gup-longterm-dups-v1-1-05f8f731cf63@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, 2025-05-14 at 16:58 +0530, Raj Kumar Bhagat wrote:
-> Currently, in multi-radio wiphy cases, if one radio is operating on a DFS
-> channel, -EBUSY is returned even when a scan is requested on a different
-> radio. Because of this, an MLD AP with one radio (link) on a DFS channel
-> and Automatic Channel Selection (ACS) on another radio (link) cannot be
-> brought up.
->=20
-> In multi-radio wiphy cases, multiple radios are grouped under a single
-> wiphy. Hence, if a radio is operating on a DFS channel and a scan is
-> requested on a different radio of the same wiphy, the scan can be allowed
-> simultaneously without impacting the DFS operations.
->=20
-> Add logic to check the underlying radio used for the requested scan. If t=
-he
-> radio on which DFS is already running is not being used, allow the scan
-> operation; otherwise, return -EBUSY.
-
-So while I agree in principle, I think this needs to be more carefully
-constructed because it relies on an unstated (?) assumption that each
-radio is going to ever be used for scanning on a certain band. That
-seems to make sense, and a radio will certainly only ever be able to
-_operate_ on the frequencies listed for it (due to chanctx etc.), but is
-it really true that it will never be able to operate at all on other
-frequencies?
-
-I'm not sure I find the notion of e.g. having a 5 and 6 GHz radio that
-are used for operating on those bands, but being able to scan 5 GHz
-channels using the 6 GHz radio completely unimaginable? Maybe it is
-though and I'm just overly paranoid?
-
-We could also just leave that up to the drivers, of course, but then I
-think we should _state_ this assumption somewhere in the docs/header
-file(s)?
-
-> +bool ieee80211_is_radio_idx_in_scan_req(struct wiphy *wiphy,
-> +					struct cfg80211_scan_request *scan_req,
-> +					int radio_idx)
-> +{
-> +	struct ieee80211_channel *chan;
-> +	int i, chan_radio_idx;
-> +
-> +	if (!scan_req)
-> +		return false;
-
-That seems overly paranoid, or maybe it should be WARN_ON()? I mean,
-asking something about a scan request and then not giving one is just
-the wrong thing to do in the first place, no?
-
-And if you're going to be paranoid then this probably shouldn't be
-called with an invalid/negative radio_idx either :)
+On 15.05.25 10:57, Mark Brown wrote:
+> The kselftest framework uses the string logged when a test result is
+> reported as the unique identifier for a test, using it to track test
+> results between runs. The gup_longterm test completely fails to follow
+> this pattern, it runs a single test function repeatedly with various
+> parameters but each result report is a string logging an error message
+> which is fixed between runs.
 
 
-> +	for (i =3D 0; i < scan_req->n_channels; i++) {
-> +		chan =3D scan_req->channels[i];
-> +		chan_radio_idx =3D cfg80211_get_radio_idx_by_chan(wiphy, chan);
-> +		/*
-> +		 * Skip channels with an invalid radio index and continue
-> +		 * checking. If any channel in the scan request matches the
-> +		 * given radio index, return true.
-> +		 */
-> +		if (chan_radio_idx < 0)
-> +			continue;
+As the person who wrote that test (that you apparently didn't CC for 
+some reason), what exactly is the problem with that?
 
-This seems ... wrong? If there's a channel in the scan request that
-didn't map to _any_ radio then how are we even scanning there? And the
-comment seems even stranger, why would we _want_ to ignore it (which it
-conveniently doesn't answer)?
+We run tests. If all pass, we're happy, if one fails, we investigate.
 
-johannes
+-- 
+Cheers,
+
+David / dhildenb
+
 
