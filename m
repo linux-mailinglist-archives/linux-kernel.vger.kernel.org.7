@@ -1,86 +1,177 @@
-Return-Path: <linux-kernel+bounces-651823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-651824-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91D6CABA37B
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 21:15:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C13DAABA37E
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 21:16:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81C18A05892
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 19:15:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 683A57A7250
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 19:15:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED43927F73A;
-	Fri, 16 May 2025 19:15:07 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C83DF224242;
+	Fri, 16 May 2025 19:16:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n/7aSAIi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 104C227FB19
-	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 19:15:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B68C2AEFE;
+	Fri, 16 May 2025 19:16:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747422907; cv=none; b=AP/2f+eu9nN0Zh42vs4CPjr2O9B/pQbH85UKtf9qx79Oso6wo1lp8QusqHKhiGCXI8LaCPmx2wQPw4fklStxqnLyzf8CBOFKzvVjqZM04+TndiTF86dG+7Tb0Loa7U5Z3qTbC2b+KJ2eOm31CstQqrp4qkD/90+39YFywss8D90=
+	t=1747422998; cv=none; b=HeJ7Bolit2OJK5WvjAUQyHyUDvKG4xhb5y/l/Kg/5UJEPpzdlnWNvAo1rpGTSaKdtBvk/Ji9nl1tBYNfsCHbTb5u4UVlboNkt3ixnZENDfQuIDE2ZAzhiyUVm/Po78t5gJsLSJM+61Mq05pR6RP5h5XSEgFzdAPmLDM9g73OZs8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747422907; c=relaxed/simple;
-	bh=G35392uCTkWo3tyFMASjh/6Ph3SGjcIfXoUEtps6ogI=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=kQ0THG6rZVUXi7iw+bW1x2vJP9gYT2XfTBxxPd02UYXEsKNkQRqzH7QsBpH76XUhdBlRKyM7vxpqHIc0lAFv46dNhaBwoxo/1Ks0SuAc6W4lszpMbJzFEl6NBExBA3TxAPkmTCkDiMVoYqU9vryBM/zwavY8Zqz1ZpYx+yP1R7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3db84d8ac08so12088105ab.3
-        for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 12:15:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747422905; x=1748027705;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9Cz9rWh2upx1xxlBClqnLaOuBq19NFNWGYw1jTLbKKs=;
-        b=BfcPuC4KI/voQwmByNb/ddH7uJSFYNhEluKn0Vw/V5QSIVoRhi6mxznRx3aBPhBZsu
-         NXU6c5uX85nZsa6B6tRmvZAVUrJUrOlzKvZ4dGYyqwViIAYnMxXmPv3jNirFbXD41ESs
-         lnnlJrsRvX55MOnEq+gKgY57JbTGu8dcmymwq/Rim/WiInnSD6inN5AkAoYr1XFt6SKD
-         sM2v7j1eaFBKO/Bs2pU+HXyYec0SlyWc09vHXOqu6a82qKNfl1MTaRTLTYlcwJf22yfk
-         N00h6kgEZBg72gAftSOBqTAyyo9igyeQ+AHNOj+V/8CkLJuYsSaTNhDAnHOMfl/n3ftC
-         r4Cw==
-X-Forwarded-Encrypted: i=1; AJvYcCWhAEqTEfXa3urYnn1Bv/dOFRQ+/ovv66gSkcHkpYbGXOuWBAGWf4p11WwppTNUG/uabZBKXezrxpCOXLg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywytf2iMf2np52VktXrfNvXgok0FuPmsyd7kpx9Qnych1m3yVGR
-	7Wj25opP6Au52SXsr4wLgZG3Y86LsRZGpD562kwB9uFREu0im1LhKLoVdDAsyx6/IK3MNoUY1fu
-	qRqoMOOtzMbgQ2JyyN46mTYhu1O3ZDzbrr6ldRcIiTrvAypjVH4zLEji/WJQ=
-X-Google-Smtp-Source: AGHT+IEqEeQJq+KnKHHB4M3mtWwuath1nVpslOg2R7PsjbjjQSO4flB+oFZD7MfplYoyPijLFSBM21d06vF4lCK0YIuIUekt6B8s
+	s=arc-20240116; t=1747422998; c=relaxed/simple;
+	bh=vsq76j3iWf8u5+jrxprtL/SbkQb7ySNpc4vIhbllWU0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=R33kOtI+5yjtNTjZzCnVi3pzLCJLhVjfEbh0LaXsd8TQjhI1WpCBjn+cz6PSZaET4dxD79fdg5I/yF/S8cmZtDotLYqPWtJyrY0/LiriyTq3l0dAZNZDdbAe0do9BlBgflblgoSHt1Ar/G1vUktCJUjHW/GT/C4Xst1+okVZ6TI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n/7aSAIi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25333C4CEE4;
+	Fri, 16 May 2025 19:16:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747422997;
+	bh=vsq76j3iWf8u5+jrxprtL/SbkQb7ySNpc4vIhbllWU0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=n/7aSAIibFXsS263wD+UTRxSXrsoDrbL3wXqS8WA41bF8a4exPCCdGBL3Wch6WqYZ
+	 3dFxDfMtrYWTvvj0niRBe/hv+Nmv+FLM2qqTplxD0MntH4BsTXyzpm0XAp70nhcD7x
+	 sE68Q1gp1mqUCIQa+e5X662FMfNnZdqu2+tCPcBNX8aT/u5/nAk9vlYk8Jp86PQ8TJ
+	 QgVeFcVtUj2IXvhYkM1/Sc6AnWv+88oI/5UuwNP7xehEV4eLJ+3evvYc3WmcQEhpac
+	 e8LoEz+wdWkDGg/VKFziBaOrraOLgrclBCBLBhvmDTC4nvToB/Un4w7KdudGH0e5vE
+	 Zz0deKuUT8Fog==
+Date: Fri, 16 May 2025 16:16:34 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Chun-Tse Shao <ctshao@google.com>
+Cc: Namhyung Kim <namhyung@kernel.org>, linux-kernel@vger.kernel.org,
+	peterz@infradead.org, mingo@redhat.com, mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+	irogers@google.com, adrian.hunter@intel.com,
+	kan.liang@linux.intel.com, terrelln@fb.com, leo.yan@arm.com,
+	james.clark@linaro.org, christophe.leroy@csgroup.eu,
+	ben.gainey@arm.com, linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] perf record: Add 8-byte aligned event type
+ PERF_RECORD_COMPRESSED2
+Message-ID: <aCePEgXqcfQ9BCQy@x1>
+References: <20250303183646.327510-1-ctshao@google.com>
+ <Z9TXabugl374M3bA@google.com>
+ <Z9hFJtEKfsGGUDMg@x1>
+ <Z9hLKsZOfouM3K7H@x1>
+ <Z9hR8M-SQ5TD2qMX@google.com>
+ <Z9iHiTv_ud6GEhJh@x1>
+ <CAJpZYjXwUz7x1XUF7AzgYR6PZo_igrwK9BkxGx_3N0pCs1YRvw@mail.gmail.com>
+ <Z9iY7HFebiSaWZJQ@x1>
+ <Z9kBAhEKKphn8JL6@google.com>
+ <CAJpZYjVeMrjN09kaVCBs97q8_hnsgwwo7s0C0ctL5Kt0_FknBQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:3a0a:b0:86a:93c:5571 with SMTP id
- ca18e2360f4ac-86a2317c56cmr657314339f.1.1747422905199; Fri, 16 May 2025
- 12:15:05 -0700 (PDT)
-Date: Fri, 16 May 2025 12:15:05 -0700
-In-Reply-To: <a0192a61-3d51-46e5-9db9-be863db9c460@yandex.ru>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68278eb9.a00a0220.398d88.0220.GAE@google.com>
-Subject: Re: [syzbot] [bluetooth?] KASAN: slab-use-after-free Read in
- mgmt_remove_adv_monitor_complete (3)
-From: syzbot <syzbot+feb0dc579bbe30a13190@syzkaller.appspotmail.com>
-To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJpZYjVeMrjN09kaVCBs97q8_hnsgwwo7s0C0ctL5Kt0_FknBQ@mail.gmail.com>
 
-Hello,
+On Fri, May 16, 2025 at 10:10:27AM -0700, Chun-Tse Shao wrote:
+> Ping.
+> 
+> For suggestions from Namhyung and Arnaldo, it was merged in:
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/commit/?h=perf-tools-next&id=b1b26ce8bb0eab1d058353ab6fa1a2b652a9a020
 
-syzbot tried to test the proposed patch but the build/boot failed:
+Testing it now, fixed up this:
 
-net/bluetooth/mgmt.c:9362:27: error: incompatible pointer types passing 'struct work_struct *' to parameter of type 'struct delayed_work *' [-Werror,-Wincompatible-pointer-types]
++It is deprecated and new files should use PERF_RECORD_COMPRESSED2 to gurantee
+                                                                      guarantee
++8-byte alignment.
 
-
-Tested on:
-
-commit:         9f35e331 x86/its: Fix build errors when CONFIG_MODULES=n
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-kernel config:  https://syzkaller.appspot.com/x/.config?x=91c351a0f6229e67
-dashboard link: https://syzkaller.appspot.com/bug?extid=feb0dc579bbe30a13190
-compiler:       Debian clang version 20.1.2 (++20250402124445+58df0ef89dd6-1~exp1~20250402004600.97), Debian LLD 20.1.2
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=15cd0e70580000
-
+- Arnaldo
+ 
+> Thanks,
+> CT
+> 
+> On Mon, Mar 17, 2025 at 10:13 PM Namhyung Kim <namhyung@kernel.org> wrote:
+> >
+> > Hello,
+> >
+> > On Mon, Mar 17, 2025 at 06:49:32PM -0300, Arnaldo Carvalho de Melo wrote:
+> > > On Mon, Mar 17, 2025 at 02:45:39PM -0700, Chun-Tse Shao wrote:
+> > > > On Mon, Mar 17, 2025 at 1:35 PM Arnaldo Carvalho de Melo
+> > > > <acme@kernel.org> wrote:
+> > > > >
+> > > > > On Mon, Mar 17, 2025 at 09:46:40AM -0700, Namhyung Kim wrote:
+> > > > > > On Mon, Mar 17, 2025 at 01:17:46PM -0300, Arnaldo Carvalho de Melo wrote:
+> > > > > > > On Mon, Mar 17, 2025 at 12:52:09PM -0300, Arnaldo Carvalho de Melo wrote:
+> > > > > > > > Checking the discussion and the patch.
+> > > > > > >
+> > > > > > > My first impression yesterday when I saw this on the smartphone was: how
+> > > > > > > will an old perf binary handle the new PERF_RECORD_COMPRESSED2? Will it
+> > > > > > > ignore it while emitting a warning, since it can be skipped and then
+> > > > > > > what we will get a partial view?
+> > > > > > >
+> > > > > > > Having some session output showing how an older perf binary handles
+> > > > > > > PERF_RECORD_COMPRESS2 would be informative.
+> > > > > >
+> > > > > > I think it'll show the below warning:
+> > > > > >
+> > > > > >   <offset> [<size>]: failed to process type: 83
+> > > > >
+> > > > > Right that is what I got:
+> > > > >
+> > > > > ⬢ [acme@toolbox perf-tools-next]$ perf.old script -i /tmp/perf.data.ck8
+> > > > > 0xbf0 [0x250]: failed to process type: 83 [Invalid argument]
+> > > > > ⬢ [acme@toolbox perf-tools-next]$
+> > > > >
+> > > > > I think we should change that to something more informative, like:
+> > > > >
+> > > > > 0xbf0 [0x250]: failed to process unknown type 83, please update perf.
+> >
+> > That would be nice, but there are cases it can fail even without new
+> > record formats.  So it should also check if the type number is greater
+> > than or equal to the max.
+> >
+> > > > >
+> > > > > And then does it stop at that record it doesn't grok?
+> > > > >
+> > > > >         if ((skip = perf_session__process_event(session, event, head, "pipe")) < 0) {
+> > > > >                 pr_err("%#" PRIx64 " [%#x]: failed to process type: %d\n",
+> > > > >                        head, event->header.size, event->header.type);
+> > > > >                 err = -EINVAL;
+> > > > >                 goto out_err;
+> > > > >         }
+> > > > >
+> > > > >         head += size;
+> > > > >
+> > > > > So we're stopping there.
+> > > > >
+> > > > > Maybe we can just warn and skip?
+> > > >
+> > > > Thank you Arnaldo, it is a good suggestion and I will work on this later.
+> > >
+> > > Thank you for considering that, really appreciated!
+> >
+> > It would be hard to process misaligned data though.  Probably we also
+> > want to add a check to make sure it's properly aligned.
+> >
+> > Thanks,
+> > Namhyung
+> >
+> > >
+> > > perf deals with so much stuff and code flux that all the help that we
+> > > can get is what is needed for it to continue to be relevant and useful.
+> > >
+> > > After all what is the point of a tool that produces bad results? :-)
+> > >
+> > > - Arnaldo
+> > >
+> > > > -CT
+> > > >
+> > > > >
+> > > > > Anyway, the series as is seems ok.
+> > > > >
+> > > > > I'll test a bit more and send my Tested-by
+> > > > >
+> > > > > - Arnaldo
 
