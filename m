@@ -1,123 +1,169 @@
-Return-Path: <linux-kernel+bounces-650736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-650738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C4C5AB9550
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 06:45:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E038AB9554
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 06:47:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58056A20929
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 04:44:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 29C391BC0D34
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 04:47:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C9202153D8;
-	Fri, 16 May 2025 04:45:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C3ED1AAA1A;
+	Fri, 16 May 2025 04:47:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="fnOanZqk"
-Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JYrQ7mk1"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58122635
-	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 04:44:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D49FE635
+	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 04:46:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747370701; cv=none; b=mticmJBzzahFIXf+QADuFp+DwLVnZXY6pz+afiNHhdRrSGPB4NA1NZVYcsBFugPdAFofjXuULjRYOKSQzd9QKg7aELuiJnDDZwxBbzk/3pnDMN2cvKukwg/RbTOw3LP87jZ6vb7Md/Qz8NugzxKvZZ1w8Lvk0Qhq84XkbuagQWQ=
+	t=1747370819; cv=none; b=nA+mRDj5hypzPewv6wTvHaXOzNztkOOp/KqVPQbqo6bW/W8QEObYHUbJkRnEHXusdkQ+f8N1WuSxHqeGdELhQqfBcW6XIPBewsU/T8ddlf/OK9wasB8AE3RJ2cbvc+QD/55cP9xbBX1PjebUWE0PDgAayXGH5YQT7ZfUbByemhk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747370701; c=relaxed/simple;
-	bh=WSpzODpV4dJWy/J5dEH9vbYqEWoBxCuasvmRptIrYNA=;
-	h=Content-Type:From:Mime-Version:Subject:Message-Id:Date:To:Cc; b=KlaI7iBj3lnBUoq/YNg5COV4lAxPpz9ptSMSferHvVy9HwQEEkJBTV5vv/Kv+lLWLxanZiIJBT+6klY9pekNiBPFSWoatZO/rBtIPGDWSZEM7ZT1j4USJMrFNV808J60eK68VbTEyukuO67EuF05lqtWljbKwQraAm6TUO8YpGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=fnOanZqk; arc=none smtp.client-ip=95.215.58.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Content-Type: text/plain; charset=utf-8
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1747370696;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=Bf8BD4LEhzFGD3sMsBfuBuusPKPc5rowAvEBihUw1v0=;
-	b=fnOanZqkBDFdlWMxADgGrlTABQieTPSxlvwkOOOMIYMxxR0XYGG0Nc3qSs8IccxylQFIZO
-	I5eAMoHGMCNbh/AZnyAkvMM1b0zoa1ST26PssFvhy4ZBKhzHIU2RqMmaBn3vPKD67U6JZK
-	2mtk/n3RMp+0yoljoCRlInVRqopzH1I=
-Content-Transfer-Encoding: quoted-printable
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Muchun Song <muchun.song@linux.dev>
+	s=arc-20240116; t=1747370819; c=relaxed/simple;
+	bh=YVuTc2bSEf4nvi4SFTWj2WF2nu6sLlHBK3XBb/RYm80=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XrI6d4Lm3SRTRCksqRh1RHD/x9/mhCxVVR0DQrlb5h/+OWhQQS3iNaakCG/IqVpvsjeZM9Y5BLRPA3rZeyqpwoLbWJbMZ0Kd8o+0XJPeE7lUWwY10rexTYR942Z9qpwEG4FOCS609z1g5MipT/hvq8ApD7jZM1ADz3ae43xf/oY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JYrQ7mk1; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-6000791e832so4373a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 21:46:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1747370816; x=1747975616; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2p0J63BoeaEvteCr8KS2NoqHGRsgMBWEa842OReu8K8=;
+        b=JYrQ7mk1ucg2AijvN4hL4ITFM31ibFWr3SRJ027uMMA7uMMJsvWrrLe464PXCzf6aK
+         uqHryffKOQR7BgITf9YT0wDpL49c8RLkcn3pHRQ/DfDDkxr0D8XkFCret+Y4+JUTBLWz
+         v01Tm18if45qqCJDBYgRE/PZ9eASV6If8NRMAq9YTdUR127ozFoIxGOslxHN/IS+m0hB
+         TsWvzc4Wy4nC05UiCRaB6Wv4bVmV1XdyYCegbTwmyBz7+Mrdrhf0xtwmkxtopG/hXqE7
+         mDqnI4TsZVT2VYjL58eyOLQg/LRg4YxG48ZoIFqVdLTNFlrnQk3BeFluQo/y50c86Smz
+         SaiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747370816; x=1747975616;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2p0J63BoeaEvteCr8KS2NoqHGRsgMBWEa842OReu8K8=;
+        b=EjTCLwgJNaInXYtV0bwBMlDJNrtYPnjYcqwjuDUCepRN5uMP++x5ZTo/4k9zikQjqn
+         cESPdKpCOCIcvrouBZGZqAxL9ocec6FgM8EXaWWSErVd/7Do0+TZAFBObxw8X0/Is5bn
+         iBeBzs/wq4ema/M8F0nsv/Eb+XfVRXxklLTWI8684Oc/vowksHN87oJigVuaIfqxCQa5
+         ano9zyutJcDkWAunLXZ3gWEWwr7aWcWuPNgW4eEJuqYudFQHbVrJBbSVrQL16o3lryJE
+         IyC+LxBPo6ZGFdMMROFxt6tzDpzWDrNfeMM/7bk4TgIPuS2dVEfdNWDpetCRrZnFVNpZ
+         f4gw==
+X-Forwarded-Encrypted: i=1; AJvYcCVo0bfitpy3JRloQrxJlvrPmB3EOEvdU0DxyIXftLWnB4qNafnISfL5TYZAz+UO7eKGGio5efFJVoeAC54=@vger.kernel.org
+X-Gm-Message-State: AOJu0YySZ/9opgqpm2RfaM1UMaRHU9OFmXeVRD3FF2rfIm1/sBOjBl3Q
+	HkCaTFM7xAoCrEyR927WmtXA9IEEka8oyxg9Xad+jeLxAECk1Lh+p7CbP1AlzRBZxZ1iBrRXfjq
+	Rjt/D6BDjtY1eMjFHHRBmn1gh0FKhd13NPcJhDaHS
+X-Gm-Gg: ASbGncuFjWKXhKHlIzfhK7V8SbYxwqiKlsK7aORHB08/8xnhYrXiUImG9wllUKA+uNS
+	T7abXoZX69Z3Q4hJv7rHtug1ORs8CiB1Lc0cYXaiJJl7Gfr4HOUp4Ll//0QXQRecU4Z79a1eXDa
+	Tt4mfojBYbvu6kNNIoYdFfP8tb2n6h/YzWozJQCNFYHq8XCE2Y1cnZ8bg=
+X-Google-Smtp-Source: AGHT+IFnmoFOBw17NS2NeC02qMp4/ejkZq6GrfrN6F7Vp/sqYPTFxrI/Eg+hDjqnmiO4OTE0pVaJT9sRsUCUWjBbxJ4=
+X-Received: by 2002:a50:c049:0:b0:5fd:28:c3f6 with SMTP id 4fb4d7f45d1cf-5ffc9dbe5b8mr187295a12.4.1747370815935;
+ Thu, 15 May 2025 21:46:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH] workqueue: show the latest function name in /proc/PID/{comm,stat,status}
-Message-Id: <8A1F225D-714C-427C-A0ED-1DE5D93DEAD1@linux.dev>
-Date: Fri, 16 May 2025 12:44:19 +0800
-To: Tejun Heo <tj@kernel.org>
-Cc: Muchun Song <songmuchun@bytedance.com>, jiangshanlai@gmail.com,
- linux-kernel@vger.kernel.org
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+References: <20250416144917.16822-1-guanyulin@google.com> <20250416144917.16822-3-guanyulin@google.com>
+ <2025042540-implode-yelp-b8e5@gregkh>
+In-Reply-To: <2025042540-implode-yelp-b8e5@gregkh>
+From: Guan-Yu Lin <guanyulin@google.com>
+Date: Fri, 16 May 2025 12:45:00 +0800
+X-Gm-Features: AX0GCFtgmPfhoBhTfthJn2kGFoSwJy9bgtoOW1SPfO4jiDRojCDEDAC7W0affGo
+Message-ID: <CAOuDEK1SUMBdxq49G6UxB_DubbM78xUe3w4V062AJ1Ok1NfCHg@mail.gmail.com>
+Subject: Re: [PATCH v12 2/4] usb: add apis for offload usage tracking
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: mathias.nyman@intel.com, stern@rowland.harvard.edu, sumit.garg@kernel.org, 
+	gargaditya08@live.com, kekrby@gmail.com, jeff.johnson@oss.qualcomm.com, 
+	quic_zijuhu@quicinc.com, andriy.shevchenko@linux.intel.com, 
+	ben@decadent.org.uk, broonie@kernel.org, quic_wcheng@quicinc.com, 
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-=EF=BB=BF
+On Fri, Apr 25, 2025 at 7:12=E2=80=AFPM Greg KH <gregkh@linuxfoundation.org=
+> wrote:
+>
+> On Wed, Apr 16, 2025 at 02:43:02PM +0000, Guan-Yu Lin wrote:
+> > +int usb_offload_put(struct usb_device *udev)
+> > +{
+> > +     int ret;
+> > +
+> > +     if (udev->state =3D=3D USB_STATE_NOTATTACHED ||
+> > +                     udev->state =3D=3D USB_STATE_SUSPENDED)
+> > +             return -EAGAIN;
+>
+> What's to prevent the state of the device from changing right after you
+> check for this?
+>
 
-> On May 15, 2025, at 23:53, Tejun Heo <tj@kernel.org> wrote:
->=20
-> Hello, Muchun.
->=20
-> On Thu, May 15, 2025 at 12:05:23PM +0800, Muchun Song wrote:
->> Workqueues, such as system_unbound_wq, are shared across the system,
->> making it difficult to determine which tasks are being executed by
->> each worker. This patch improves clarity by displaying the latest
->> function name associated with each workqueue worker in the
->> /proc/PID/{comm,stat,status}. For example:
->>=20
->> Before:
->>  # ps 64 67 68
->>  PID TTY STAT TIME COMMAND
->>  64  ?   I    0:00 [kworker/u34:0-events_unbound]
->>  67  ?   I    0:00 [kworker/u33:1-events_unbound]
->>  68  ?   I    0:00 [kworker/u33:2-events_unbound]
->>=20
->> After:
->>  # ps 64 67 68
->>  PID TTY STAT TIME COMMAND
->>  64  ?   I    0:00 [kworker/u34:0-events_unbound:flush_memcg_stats_dwork]=
+The caller of usb_offload_put() should hold the device lock, so I
+think the state of the usb device will remain the same within
+usb_offload_put().
 
->>  67  ?   I    0:00 [kworker/u33:1-events_unbound:flush_to_ldisc]
->>  68  ?   I    0:00 [kworker/u33:2-events_unbound:idle_cull_fn]
->>=20
->> This change provides a clearer view of the tasks being performed by
->> each worker, enhancing system monitoring and debugging.
->=20
-> One worry I have about this is that these will likely be stale most of the=
+> And why -EAGAIN, you don't mention that in the comment for the function.
+>
+> Also, to pile on, sorry, the coding style needs to be fixed up here :)
+>
 
-> time as kworkers are just sitting and waiting, and there's no connection
-> between what a kworker ran before and what it's going to run next, so I'm
-> unsure how useful the extra information is.
+I'll separate these 2 states into two error handling checks and
+provide appropriate error code respectively. Thanks for your advice.
 
-Hi Tejun,
+> > +bool usb_offload_check(struct usb_device *udev)
+> > +{
+> > +     struct usb_device *child;
+> > +     bool active;
+> > +     int port1;
+> > +
+> > +     usb_hub_for_each_child(udev, port1, child) {
+>
+> No locking is needed for this loop at all?  What happens if a device is
+> added or removed while it is looping?
+>
 
-Monitoring tools like atop can indeed record comm of processes. When we
-encounter issues such as high CPU usage, these tools can help us identify
-the problem. For instance, if kworkers are consuming most of the CPU, we
-can use this information to pinpoint which specific function is using
-the most CPU.
+Currently the expectation is that all the downstream usb devices
+should either go to suspend or be marked as "offload_at_suspend".
+Based on this, is there still a chance that usb devices are being
+added or removed? My understanding is device addition/removal requires
+locks for the upstream usb device, which we've already acquired before
+entering usb_offload_check().
 
-Another use case is when we use the isolcpus=3D command line option
-to isolate CPUs, we want to make sure that no kworker threads run on
-those CPUs. But sometimes, kworkers might still get scheduled there, causing=
- latency
-issues. By using this information, we can figure out which module's
-function ran on the CPU before and then dig into the code to see how to
-stop it from happening.
+> > +             device_lock(&child->dev);
+> > +             active =3D usb_offload_check(child);
+> > +             device_unlock(&child->dev);
+> > +             if (active)
+> > +                     return true;
+> > +     }
+> > +
+> > +     return !!udev->offload_usage;
+>
+> But the state can change right afterwards, so no one can do anything
+> with this value, right?  What is is used for?
+>
+> thanks,
+>
+> greg k-h
 
+If we could ensure that all the downstream usb devices satisfy the
+following conditions, could the state still change?
+1. usb devices either are suspended or marked as "offload_at_suspend".
+2. "offload_usage" could only be modified when the usb device is
+neither suspended nor marked as "offload_at_suspend".
+Regarding point 1, I'll update the function description to state the
+function should only be called after we ensure the downstream usb
+devices are either suspended or marked as "offload_at_suspend".
+Regarding point 2, I'll update the usb_offload_get()/usb_offload_put()
+so that "offload_usage" changes only when the device is active and not
+marked as "offload_at_suspend".
 
-Muchun,
-Thanks
-
->=20
-> Thanks.
->=20
-> --=20
-> tejun
-
-
+Regards,
+Guan-Yu
 
