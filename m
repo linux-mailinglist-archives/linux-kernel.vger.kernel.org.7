@@ -1,167 +1,135 @@
-Return-Path: <linux-kernel+bounces-651283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-651284-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB9BCAB9CA9
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 14:53:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67080AB9CB1
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 14:54:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE8E81B65106
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 12:53:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20285A21C1B
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 12:53:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 413C024169B;
-	Fri, 16 May 2025 12:53:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D7BE23BD0C;
+	Fri, 16 May 2025 12:53:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VAQvjyw2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="eOb4QqOH";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Uag54dlR"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EDA423C8AA;
-	Fri, 16 May 2025 12:53:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B585C23E336
+	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 12:53:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747399986; cv=none; b=TEpqymJVZjpIfbcQCLxd+ENcO7JJ4FjDaGxewif4YAgmMynaeoUg4VBJp2Lxg7E6m8Yl+YQXwB6+1pQa1rb8zFANQg9G/6muAs61Y7c6ck4Jj5ht4493uTVtQ8OQSbufUmBjlAuKfGICOvs6IH7vxGWF+EAltx0hvsxB2Y0pWYA=
+	t=1747400021; cv=none; b=EBLJEYUur6wkLecLsBJIyQyG1TOw3r0K1mceOG3lnfRKEAfCzlIJRCoBxjmriPPwbgmLygjhjOoMDUybdz91YqucYVjdwE4787Y/Cfsr6/3K+dy9zFqk+eCv3naeTnELry2bJmI7qhShT0vptyGnrkDGUqzkF+E8I4olVy9LJvc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747399986; c=relaxed/simple;
-	bh=dzuiRq21ALwM6MTldxavm7mgWxjTHhj05kGsdxVsYOU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=HwwLaVxgTbH3OV5nHyw1gfZHxr4Syy+oPZFr1MOgDp3TV29vEdQJFS/cgIZg9/wG+rSvWyeUtRAvNX1MWucJq9UZt/HU9rCQo+kCoddmT/ISCEo4Dg/bEZ9qyzTzdxm8CUD8SeJE6N337KczVaAbtA2hUXfeQCVLW8OXgkJ3Vk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VAQvjyw2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06B38C4CEE4;
-	Fri, 16 May 2025 12:53:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747399986;
-	bh=dzuiRq21ALwM6MTldxavm7mgWxjTHhj05kGsdxVsYOU=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=VAQvjyw2D3kxrGgWyZHJMOj2Y6EkhITZKAau5RYIVbSSJIKGlD5JU6fRIdMpFW+rZ
-	 C6EyFTWh57FkN/UKKa1K5ZYmLN3q4kfr3hQgZt9Th58h3Fv8skw/Qk8/GsfC9DDL1x
-	 +6cA2qbB4mkBC9M41gHPNZV1FBIaMe5JhELyqnN4ZMrmBWDenfVsNTHJ7NRaXG/3j3
-	 o8aWhYp3O+kJfBKGc4LuDUyKwwki1a5xJP1nuqgQZd/nxhBnlDyBt0WjT659/gsdWf
-	 N/D0IDWaE85pl85bRFGxxkYEOp5H/7mC7P9COEwbWWel4ioIf/eA/DhW9Bw6f9X7ho
-	 cX4OHIdlZeing==
-Message-ID: <31cf95ec-ef19-4f87-a27b-9ff183f5d257@kernel.org>
-Date: Fri, 16 May 2025 14:53:01 +0200
+	s=arc-20240116; t=1747400021; c=relaxed/simple;
+	bh=1QcFDARgJ/NZlT5hJNgAwCkcdIeenMBtbImX2aLknN4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FkMxxkqGOcDCkYrjI0jdbVA0N0iVtVRiHWq1APPdz+ly/k/YCnkg4prgdKTIsufOVRCs0hsoXLZ1WAVdsUyznBYRSxprUIpIZ/+GqL+3kLCIPSehuI1t7QhcM0WZFEAEinnl9sx2JrAyFJupl+4rdb81340X4sW+ubbXQbfour8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=eOb4QqOH; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Uag54dlR; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 16 May 2025 14:53:36 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1747400018;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8vys/FNYdzEnMcyGygtNsLyX1fDBnwOGQAd6LgzIouk=;
+	b=eOb4QqOHqGOrsIMa0BPgFFGyrwpb470b9J9apOTbkyaktX/vyEx0NEX0TrY0oIvgcabDpF
+	ZP8cCZMt4QUalEp3HzG5vnYo3VLC0v7ISzGqSEcB3p6hWYkjNsm+kTHqbg9dcpdp06B/FN
+	XSwXJLh8/5uENWxaMjqe0+NNesSZOvXGo625LXaUMMiWkc7SDllSfAu6xd+Cb0T6o/urYB
+	bsLBRwhTTpaYQYmtU1/8DE6xaAaZE/Uef+8jmcHwSjbyKuZ5Y1f9hDSKx5XVaSpGHsKBXh
+	RpdV07S/dG9nbtOsM3KfykFpxTUCgL9h6dPmqSE8nVlCgZ3HcL2bYlzqo8JyGg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1747400018;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8vys/FNYdzEnMcyGygtNsLyX1fDBnwOGQAd6LgzIouk=;
+	b=Uag54dlR8zRl0oQmC0bvs9rsP8aF6wRAsAZNnwWz9guT9aUTE1aVRUKTu9Doj/dtpoQ0sN
+	N5a5wVRrkyebQnDQ==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: =?utf-8?B?QW5kcsOp?= Almeida <andrealmeid@igalia.com>
+Cc: Darren Hart <dvhart@infradead.org>, linux-kernel@vger.kernel.org,
+	Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Waiman Long <longman@redhat.com>
+Subject: Re: [PATCH v12 03/21] futex: Move futex_queue() into
+ futex_wait_setup()
+Message-ID: <20250516125336.zd1aBkwv@linutronix.de>
+References: <20250416162921.513656-1-bigeasy@linutronix.de>
+ <20250416162921.513656-4-bigeasy@linutronix.de>
+ <7a0da763-08ae-4e3a-a630-2ce3d32e477e@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] dt-bindings: i2c: Add required properties
-To: Akhil R <akhilrajeev@nvidia.com>, andi.shyti@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, thierry.reding@gmail.com, jonathanh@nvidia.com,
- ldewangan@nvidia.com, digetx@gmail.com, p.zabel@pengutronix.de,
- linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
- linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250516124349.58318-1-akhilrajeev@nvidia.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250516124349.58318-1-akhilrajeev@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <7a0da763-08ae-4e3a-a630-2ce3d32e477e@igalia.com>
 
-On 16/05/2025 14:43, Akhil R wrote:
-> Add required DT properties for Tegra I2C controllers.
+On 2025-05-05 18:43:16 [-0300], Andr=C3=A9 Almeida wrote:
+> > --- a/kernel/futex/waitwake.c
+> > +++ b/kernel/futex/waitwake.c
+> > @@ -339,18 +339,8 @@ static long futex_wait_restart(struct restart_bloc=
+k *restart);
+> >    * @q:		the futex_q to queue up on
+> >    * @timeout:	the prepared hrtimer_sleeper, or null for no timeout
+> >    */
+> > -void futex_wait_queue(struct futex_hash_bucket *hb, struct futex_q *q,
+> > -			    struct hrtimer_sleeper *timeout)
+> > +void futex_do_wait(struct futex_q *q, struct hrtimer_sleeper *timeout)
+>=20
+> Update the name in the kernel doc comment as well. Also drop from the
+> comment the part that says "futex_queue() and ..."
 
-Why? Required by whom/what? Some context or any justification is needed
-here. Are you breaking the ABI (means: prove that you are not).
+This has been done.
 
-Please use subject prefixes matching the subsystem. You can get them for
-example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
-your patch is touching. For bindings, the preferred subjects are
-explained here:
-https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patches.html#i-for-patch-submitters
+=E2=80=A6
+> > @@ -636,10 +629,25 @@ int futex_wait_setup(u32 __user *uaddr, u32 val, =
+unsigned int flags,
+> >   	}
+> >   	if (uval !=3D val) {
+> > -		futex_q_unlock(*hb);
+> > -		ret =3D -EWOULDBLOCK;
+> > +		futex_q_unlock(hb);
+> > +		return -EWOULDBLOCK;
+> >   	}
+> > +	if (key2 && futex_match(&q->key, key2)) {
+> > +		futex_q_unlock(hb);
+> > +		return -EINVAL;
+>=20
+> Please add this new ret value in the kernel doc too.
 
-> 
-> Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
-> ---
-> v1->v2:
->   * Added all required properties
-> 
->  .../bindings/i2c/nvidia,tegra20-i2c.yaml      | 19 +++++++++++++++++++
->  1 file changed, 19 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/i2c/nvidia,tegra20-i2c.yaml b/Documentation/devicetree/bindings/i2c/nvidia,tegra20-i2c.yaml
-> index 19aefc022c8b..0717f2304cfc 100644
-> --- a/Documentation/devicetree/bindings/i2c/nvidia,tegra20-i2c.yaml
-> +++ b/Documentation/devicetree/bindings/i2c/nvidia,tegra20-i2c.yaml
-> @@ -118,6 +118,13 @@ properties:
->        - const: rx
->        - const: tx
->  
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +  - clocks
-> +  - clock-names
-> +
->  allOf:
->    - $ref: /schemas/i2c/i2c-controller.yaml
->    - if:
-> @@ -171,6 +178,18 @@ allOf:
->        properties:
->          power-domains: false
->  
-> +  - if:
-> +      not:
-> +        properties:
-> +          compatible:
-> +            contains:
-> +              enum:
-> +                - nvidia,tegra194-i2c
-> +    then:
-> +        required:
+I'm going to add this:
 
-Never tested, so quite dissapointing.
+--- a/kernel/futex/waitwake.c
++++ b/kernel/futex/waitwake.c
+@@ -585,7 +585,8 @@ int futex_wait_multiple(struct futex_vector *vs, unsign=
+ed int count,
+  *
+  * Return:
+  *  -  0 - uaddr contains val and hb has been locked;
+- *  - <1 - -EFAULT or -EWOULDBLOCK (uaddr does not contain val) and hb is =
+unlocked
++ *  - <0 - On error and the hb is unlocked. A possible reason: the uaddr c=
+an not
++ *	   be read, does not contain the expected value or is not properly alig=
+ned.
+  */
+ int futex_wait_setup(u32 __user *uaddr, u32 val, unsigned int flags,
+ 		     struct futex_q *q, union futex_key *key2,
 
-Test your patches before sending, not after.
-
-Best regards,
-Krzysztof
+Sebastian
 
