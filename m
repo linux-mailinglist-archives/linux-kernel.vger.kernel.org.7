@@ -1,151 +1,197 @@
-Return-Path: <linux-kernel+bounces-651192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-651194-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA259AB9B70
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 13:48:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D6DADAB9B73
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 13:48:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4779616B5DE
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 11:48:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B036C504598
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 11:48:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D37382367DA;
-	Fri, 16 May 2025 11:47:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E93BF235046;
+	Fri, 16 May 2025 11:48:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="P4nRl3qj"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ow/Zig/M"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7823E22F743;
-	Fri, 16 May 2025 11:47:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46AAC22F743
+	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 11:48:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747396075; cv=none; b=QuSrleOpTDelgNa4DuEkOcCEbRTeuiVuOpB0wIPhDFJVipXxyOQ8GpM2TwSgeD+ZwIsQPm86lrHwA9dLrGb8vVoinE7CT9aFRI2KJtbfibeqBqY/lJXltouQzvY0YOu4vFjNA/Nt/KMiL1KYVXjNjCRqCdbZ+Thciw+16kbzB9M=
+	t=1747396093; cv=none; b=cM7r0qg2+FxA1sEMJ1AJ50HvnKS0j6Gkdi3KHbRsjwXfgxEi+nf/d1zt8VASByD7qEnIEHuVJE0wVGPwdVsoTGzN1aGFbSpgwEZ2tKzLUpArzF60J5MPo9m2DogMRPI1kTNtYVr35CYijPAI1Qv9xmnHNtztBN0yBJwbKAdXvdg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747396075; c=relaxed/simple;
-	bh=ZfFxY5oT1+GiPdEDCb43Vlgf8axV3EHMnD0lvoZH1zY=;
+	s=arc-20240116; t=1747396093; c=relaxed/simple;
+	bh=3MYijVPQvpzqVThNCDiXH+5zTAGvUkwSQecbvmdBVoc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s5ARznPe+lAiNwCLOKtl41smMqUzQFBDEl/967l/vvWXf59Glm2UUxHsDLHpykpCYOgOSd7r+4kJKHAScxgEZO/m4InE8T8qz5ZsITiX9WfpbBRoX8Rf59jhneNeJSyQL5cVY0hXD12uNT1zxqC08HvmcakRwRjzirnemR7V/S8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=P4nRl3qj; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1747396073; x=1778932073;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=ZfFxY5oT1+GiPdEDCb43Vlgf8axV3EHMnD0lvoZH1zY=;
-  b=P4nRl3qj9I8ZsQy+Jz/a7kM6SvJL3GtlP+adtavBX9xKD53YzNRxfU5V
-   k5a/YB4kDfwIRw4T3DUmThkkAv60JuFv8b4yhpIQH612U3KQ/78mWCZDH
-   8rlzQIFGBPYEbQeHgZRIbDOqTK6Bqap9DgAEInT7CeehkQw8PqIAC63Io
-   DMJkojtaBKDS+TUTsrpeJ7CTMq2ixmu/fmo1Mqe67dWbtfbUGm1EKdWYR
-   9om+W2BlK1Pc0khXeEmStDojj6HKQ2R8xPl0qmiHFphbxOFJD2Nls/qqn
-   UdT9dCCv4hRC5QR+a3Z4c56qVBNJ6aI5qQTjOBYS/gYwoRcCu53SuD/Nx
-   g==;
-X-CSE-ConnectionGUID: q6dthDWGRdiwcU4wepDnaA==
-X-CSE-MsgGUID: G721PXtiTbq0IcxZgvsi3Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11434"; a="59596494"
-X-IronPort-AV: E=Sophos;i="6.15,293,1739865600"; 
-   d="scan'208";a="59596494"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 May 2025 04:47:52 -0700
-X-CSE-ConnectionGUID: IiCRcDEsR/2tYxgtdk89hw==
-X-CSE-MsgGUID: 9YI8a5wTTya0g92baVMvYA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,293,1739865600"; 
-   d="scan'208";a="138416540"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa009.jf.intel.com with ESMTP; 16 May 2025 04:47:47 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1000)
-	id 1CF961BC; Fri, 16 May 2025 14:47:46 +0300 (EEST)
-Date: Fri, 16 May 2025 14:47:46 +0300
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To: =?utf-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
-Cc: "Kirill A. Shutemov" <kirill@shutemov.name>, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Andy Lutomirski <luto@kernel.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Ard Biesheuvel <ardb@kernel.org>, 
-	Jan Kiszka <jan.kiszka@siemens.com>, Kieran Bingham <kbingham@kernel.org>, 
-	Michael Roth <michael.roth@amd.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
-	Brijesh Singh <brijesh.singh@amd.com>, Sandipan Das <sandipan.das@amd.com>, 
-	Tom Lendacky <thomas.lendacky@amd.com>, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-efi@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCHv2 3/3] x86/64/mm: Make 5-level paging support
- unconditional
-Message-ID: <fbpq5hjdymw7hdzulssd5b4xarb4tqroi3kmhspkcbrd2f73gq@rptxof477v3c>
-References: <20250516091534.3414310-1-kirill.shutemov@linux.intel.com>
- <20250516091534.3414310-4-kirill.shutemov@linux.intel.com>
- <e5c5037f-6429-41bd-8166-de3aa1de01bd@suse.com>
- <oqdepd27wqf4duawnb3qo2ra6ftjyzjqfxupfj3hkmxvp6w4tl@oy32plygk7dt>
- <51d78ee7-4b68-425b-bccb-d123d7210305@suse.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=d3teHMCL0wnSpfswWeSQAz1WrlJE5W/51kyrJgRnK/gCfB9ohwgVgJvGKQ6fkAmQsaO3LP5DyW4vsM3LLoQ+sO6XmjCOPwNTCHkcSb0LVS/7kvIszTcE1YZtHF1YaiXZ38Bs2W68dCW/HCFIcbj6Hp1vhurIJWucp/qGqBVZ918=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ow/Zig/M; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61EC6C4CEE4;
+	Fri, 16 May 2025 11:48:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747396092;
+	bh=3MYijVPQvpzqVThNCDiXH+5zTAGvUkwSQecbvmdBVoc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Ow/Zig/MtvU9TV1An7IkGMy5ojFoH6ZCFr3m5fXOfb2daB/s2IvbdCwl+pIdOPNHn
+	 +OfoyNdV5npqNeCClbn0lJd3hjNSf30/G0jY15n6nxW+bM+21RaUxHtajhetqs/68h
+	 tuqxp7oa26SeBl8p0HtWn24nAV3OMUI7CNCq7t+0MXAoXQeikOWMzk6Gp6e3VjW1i0
+	 j8UziO5Rdbslm2zpfpq2bj01teEjuK+RG61zZrcTQIXKfrRzQeGirlaWaNI7Shm6Do
+	 3iQpLe277g5Fg4cB3eF2fA9i5QRBa34j/SiVwel0LPB3jNf0FgIRzATvAnNWvTAUjb
+	 8zzbLizIcBP5A==
+Date: Fri, 16 May 2025 13:48:04 +0200
+From: Alexey Gladkov <legion@kernel.org>
+To: Chen Ridong <chenridong@huaweicloud.com>
+Cc: akpm@linux-foundation.org, paulmck@kernel.org, bigeasy@linutronix.de,
+	roman.gushchin@linux.dev, brauner@kernel.org, tglx@linutronix.de,
+	frederic@kernel.org, peterz@infradead.org, oleg@redhat.com,
+	joel.granados@kernel.org, viro@zeniv.linux.org.uk,
+	lorenzo.stoakes@oracle.com, avagin@google.com,
+	mengensun@tencent.com, linux@weissschuh.net, jlayton@kernel.org,
+	ruanjinjie@huawei.com, kees@kernel.org,
+	linux-kernel@vger.kernel.org, lujialin4@huawei.com,
+	Eric Biederman <ebiederm@xmission.com>
+Subject: Re: [RFC next v2 0/5] ucount: add rlimit cache for ucount
+Message-ID: <aCcl9M-BgOJ86gVJ@example.org>
+References: <20250509072054.148257-1-chenridong@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <51d78ee7-4b68-425b-bccb-d123d7210305@suse.com>
+In-Reply-To: <20250509072054.148257-1-chenridong@huaweicloud.com>
 
-On Fri, May 16, 2025 at 01:29:27PM +0200, Jürgen Groß wrote:
-> On 16.05.25 13:09, Kirill A. Shutemov wrote:
-> > On Fri, May 16, 2025 at 12:42:21PM +0200, Jürgen Groß wrote:
-> > > On 16.05.25 11:15, Kirill A. Shutemov wrote:
-> > > > Both Intel and AMD CPUs support 5-level paging, which is expected to
-> > > > become more widely adopted in the future.
-> > > > 
-> > > > Remove CONFIG_X86_5LEVEL and ifdeffery for it to make it more readable.
-> > > > 
-> > > > Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> > > > Suggested-by: Borislav Petkov <bp@alien8.de>
-> > > > ---
-> > > >    Documentation/arch/x86/cpuinfo.rst            |  8 +++----
-> > > >    .../arch/x86/x86_64/5level-paging.rst         |  9 --------
-> > > >    arch/x86/Kconfig                              | 22 +------------------
-> > > >    arch/x86/Kconfig.cpufeatures                  |  4 ----
-> > > >    arch/x86/boot/compressed/pgtable_64.c         | 11 ++--------
-> > > >    arch/x86/boot/header.S                        |  4 ----
-> > > >    arch/x86/boot/startup/map_kernel.c            |  5 +----
-> > > >    arch/x86/include/asm/page_64.h                |  2 --
-> > > >    arch/x86/include/asm/page_64_types.h          |  7 ------
-> > > >    arch/x86/include/asm/pgtable_64_types.h       | 18 ---------------
-> > > >    arch/x86/kernel/alternative.c                 |  2 +-
-> > > >    arch/x86/kernel/head64.c                      |  2 --
-> > > >    arch/x86/kernel/head_64.S                     |  2 --
-> > > >    arch/x86/mm/init.c                            |  4 ----
-> > > >    arch/x86/mm/pgtable.c                         |  2 +-
-> > > >    drivers/firmware/efi/libstub/x86-5lvl.c       |  2 +-
-> > > >    16 files changed, 10 insertions(+), 94 deletions(-)
-> > > 
-> > > There are some instances of:
-> > > 
-> > > #if CONFIG_PGTABLE_LEVELS >= 5
-> > > 
-> > > in 64-bit-only code under arch/x86, which could be simplified, too.
-> > > 
-> > > They are still correct, but I wanted to hint at further code removals
-> > > being possible.
-> > 
-> > Okay, fair enough. Fixup is below.
-> > 
-> > Did I miss anything else?
+On Fri, May 09, 2025 at 07:20:49AM +0000, Chen Ridong wrote:
+> The will-it-scale test case signal1 [1] has been observed. and the test
+> results reveal that the signal sending system call lacks linearity.
+
+The signal1 testcase is pretty synthetic. It sends a signal in a busy loop.
+
+Do you have an example of a closer-to-life scenario where this delay
+becomes a bottleneck ?
+
+https://github.com/antonblanchard/will-it-scale/blob/master/tests/signal1.c
+
+> To further investigate this issue, we initiated a series of tests by
+> launching varying numbers of dockers and closely monitored the throughput
+> of each individual docker. The detailed test outcomes are presented as
+> follows:
 > 
-> Yes.
+> 	| Dockers     |1      |4      |8      |16     |32     |64     |
+> 	| Throughput  |380068 |353204 |308948 |306453 |180659 |129152 |
 > 
-> One more instance in arch/x86/xen/mmu_pv.c,
+> The data clearly demonstrates a discernible trend: as the quantity of
+> dockers increases, the throughput per container progressively declines.
+> In-depth analysis has identified the root cause of this performance
+> degradation. The ucouts module conducts statistics on rlimit, which
+> involves a significant number of atomic operations. These atomic
+> operations, when acting on the same variable, trigger a substantial number
+> of cache misses or remote accesses, ultimately resulting in a drop in
+> performance.
+> 
+> Notably, even though a new user_namespace is created upon docker startup,
+> the problem persists. This is because all these dockers share the same
+> parent node, meaning that rlimit statistics continuously modify the same
+> atomic variable.
+> 
+> Currently, when incrementing a specific rlimit within a child user
+> namespace by 1, the corresponding rlimit in the parent node must also be
+> incremented by 1. Specifically, if the ucounts corresponding to a task in
+> Docker B is ucount_b_1, after incrementing the rlimit of ucount_b_1 by 1,
+> the rlimit of the parent node, init_ucounts, must also be incremented by 1.
+> This operation should be ensured to stay within the limits set for the
+> user namespaces.
+> 
+> 	init_user_ns                             init_ucounts
+> 	^                                              ^
+> 	|                        |                     |
+> 	|<---- usr_ns_a(docker A)|usr_ns_a->ucount---->|
+> 	|                        |                     |
+> 	|<---- usr_ns_b(docker B)|usr_ns_a->ucount---->|
+> 					^
+> 					|
+> 					|
+> 					|
+> 					ucount_b_1
+> 
+> What is expected is that dockers operating within separate namespaces
+> should remain isolated and not interfere with one another. Regrettably,
+> the current signal system call fails to achieve this desired level of
+> isolation.
+> 
+> Proposal:
+> 
+> To address the aforementioned issues, the concept of implementing a cache
+> for each namespace's rlimit has been proposed. If a cache is added for
+> each user namespace's rlimit, a certain amount of rlimits can be allocated
+> to a particular namespace in one go. When resources are abundant, these
+> resources do not need to be immediately returned to the parent node. Within
+> a user namespace, if there are available values in the cache, there is no
+> need to request additional resources from the parent node.
+> 
+> 	init_user_ns                             init_ucounts
+> 	^                                              ^
+> 	|                        |                     |
+> 	|<---- usr_ns_a(docker A)|usr_ns_a->ucount---->|
+> 	|                        |                     |
+> 	|<---- usr_ns_b(docker B)|usr_ns_b->ucount---->|
+> 			^		^
+> 			|		|
+> 			cache_rlimit--->|
+> 					|
+> 					ucount_b_1
+> 
+> 
+> The ultimate objective of this solution is to achieve complete isolation
+> among namespaces. After applying this patch set, the final test results
+> indicate that in the signal1 test case, the performance does not
+> deteriorate as the number of containers increases. This effectively meets
 
-Ah. Right.
-
-> one in arch/x86/include/asm/paravirt.h,
-> one in arch/x86/include/asm/paravirt_types.h,
-> one in arch/x86/kernel/paravirt.c
-
-Hm. Is paravirt 64-bit only?
+> the goal of linear scalability.
+> 
+> 	| Dockers     |1      |4      |8      |16     |32     |64     |
+> 	| Throughput  |381809 |382284 |380640 |383515 |381318 |380120 |
+> 
+> Challenges:
+> 
+> When checking the pending signals in the parent node using the command
+>  cat /proc/self/status | grep SigQ, the retrieved value includes the
+> cached signal counts from its child nodes. As a result, the SigQ value
+> in the parent node fails to accurately and instantaneously reflect the
+> actual number of pending signals.
+> 
+> 	# cat /proc/self/status | grep SigQ
+> 	SigQ:	16/6187667
+> 
+> TODO:
+> 
+> Add cache for the other rlimits.
+> 
+> [1] https://github.com/antonblanchard/will-it-scale/blob/master/tests/
+> 
+> Chen Ridong (5):
+>   user_namespace: add children list node
+>   usernamespace: make usernamespace rcu safe
+>   user_namespace: add user_ns iteration helper
+>   uounts: factor out __inc_rlimit_get_ucounts/__dec_rlimit_put_ucounts
+>   ucount: add rlimit cache for ucount
+> 
+>  include/linux/user_namespace.h |  23 ++++-
+>  kernel/signal.c                |   2 +-
+>  kernel/ucount.c                | 181 +++++++++++++++++++++++++++++----
+>  kernel/user.c                  |   2 +
+>  kernel/user_namespace.c        |  60 ++++++++++-
+>  5 files changed, 243 insertions(+), 25 deletions(-)
+> 
+> -- 
+> 2.34.1
+> 
 
 -- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+Rgrds, legion
+
 
