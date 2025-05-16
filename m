@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-651767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-651769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 649E7ABA2D1
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 20:30:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E2C2ABA2D3
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 20:30:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61E3DA22AC3
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 18:29:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C33E7504AD0
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 18:30:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA2B527FD72;
-	Fri, 16 May 2025 18:29:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CB72280033;
+	Fri, 16 May 2025 18:29:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Sahfkd0H"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="n/3FQJvy"
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F4BA27F18F;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B3B727F73A;
 	Fri, 16 May 2025 18:29:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747420166; cv=none; b=m1ymSxSKWBqafen9XEhzICARLEUVxMGe1gXfA2BNeyuVREUZ9ZFyLzi85hripIwwWd7vYQA9TGv2rigxv3ms+cBg6tIaLUgA7LLz0egbiewcrrnew0Lxj5m4orFaMHG4+xTuH0RafcqcaOw81PEySP/i1Au6/SD4G3xfAOyC1+M=
+	t=1747420167; cv=none; b=lUY1YlSTMPlZCH/Iz4mCvv/hJKRHRg9I257y4YovnKkgMU72YyBYje2sP4zViiWPwgU/oGCT4BU8eBb6ViAxtJ8M4dZ3ttxDCZGGX/xMZYJ0ZlzWkxYjFwPYaIDgjR3isFliob0kVEkj8rz2et49Oq0VlBwnqhnG52dXk6KKaQ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747420166; c=relaxed/simple;
-	bh=eftPXZUtS7TWj+fyRnjgJB01av2QQsqnM0j4qbjXMQk=;
+	s=arc-20240116; t=1747420167; c=relaxed/simple;
+	bh=s+EyXjLUXo0M2dfj157AL5fvrY36sWvSBJ2tuImTWtk=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ICFMLOmkkceNw4frSRHpRpScR2fugnXet/uoB+gKbvQgxEvXpmZtYdFNZDGyMBnAC7RbLg4Wyasu1y4fv2Cni9soNBVQ0sUrvfVD/i/eeanh+foSeaSZ/kyj6fTRvl3Dh9p7XH2p6PrBAMhOj5nvBtFSkIgptIODSIgUefeO5k0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Sahfkd0H; arc=none smtp.client-ip=192.198.163.17
+	 MIME-Version; b=WeZELLkWy2JtNFPoZF2F6v9gcAcC6Ial7B2UNghjDjGuJcBUmvhPZsoLiV2B/RplLQfccQAWO8+RTz1p8mLAkYHhhPptKbr7GcWoQdoPks+iVcoBxWx3W2T7KIPTN6qprI4F2yn3CikH0YqUa7LRirmxOP5nOl7mAEI1ZY8TJ+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=n/3FQJvy; arc=none smtp.client-ip=192.198.163.17
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1747420164; x=1778956164;
+  t=1747420165; x=1778956165;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=eftPXZUtS7TWj+fyRnjgJB01av2QQsqnM0j4qbjXMQk=;
-  b=Sahfkd0HHiA2sFks7AOwLsyEfeLJp9heVmc27soUhp6xFds7rsDLLybH
-   SA7u2o3SsGnFzOhJgnM2ShASXjEquThRoECOfaQUiVh6v1WkenpxswuVZ
-   wwVWmuSTBsIov6zISr1DkUlGcw934zVWi2Z+bnEcQEY8yIxEtJicpSjV1
-   Ef2sPW5Nw9nPmN3+1FK16WGIjHLFXvYsosS7OrGstqVHRe2I8faqIYzal
-   Tdj5EcYjlC1uGLq+RhlXiT8MYDlEpzkhI0237MVwP/HMO6bumqO0+aU6M
-   tq8IOSPdz8YJTaKDpn09ZCG/TcMa8P3yMmVJis+8IULN3R/ZRlpoSxkA4
+  bh=s+EyXjLUXo0M2dfj157AL5fvrY36sWvSBJ2tuImTWtk=;
+  b=n/3FQJvyXnu8zaiuhSLIuksR+gMgqxXx7Jf9XIQWVB1je+r3+QQgpCL6
+   rzqZEcduVP8bzbuhgm61fs+7jyLqG/qV4vfBPGU5e7aZDxxmUPs4sWfsV
+   Wosyct8gBZYUutrS4tWyoJVMIH/zeSFMHbFeCBL/odG7Kw6oUkhmiCGsn
+   Qb+CEly4mUIPhqUlIHrrcwIEEe0ldjxtCGE5mkMxT4KqfSrWH4yE+8Agp
+   Hmq9/9gGiadgsCw42nxrInP6qCeEuuWx7YHoXJn7adgNvD1iBLe2E2Pid
+   LS+47Vw7HX2czC4VQDuawJnKIGlMlcDpz3FU68Qt3RWxdbsoU0mPi3nE0
    g==;
-X-CSE-ConnectionGUID: Qz4eYZWuQFSBZVd2piz2kA==
-X-CSE-MsgGUID: aRZvGTAuSYiMyuvYppffAw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11435"; a="49328825"
+X-CSE-ConnectionGUID: 7QQPApb2SEyTa8y/GpK4OQ==
+X-CSE-MsgGUID: JGQKBhMsQBuBUdixCbvmZw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11435"; a="49328833"
 X-IronPort-AV: E=Sophos;i="6.15,294,1739865600"; 
-   d="scan'208";a="49328825"
+   d="scan'208";a="49328833"
 Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 May 2025 11:29:21 -0700
-X-CSE-ConnectionGUID: pssoVBvOROmS2NGrVCVxXA==
-X-CSE-MsgGUID: aYFUfRG1S4+jxhI3msdw0A==
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 May 2025 11:29:22 -0700
+X-CSE-ConnectionGUID: JhatOYD3R/aJuVTali1oXA==
+X-CSE-MsgGUID: PJZxwUZ2Qo+BlYBDLBCcQg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.15,294,1739865600"; 
-   d="scan'208";a="169802607"
+   d="scan'208";a="169802609"
 Received: from kanliang-dev.jf.intel.com ([10.165.154.102])
   by fmviesa001.fm.intel.com with ESMTP; 16 May 2025 11:29:21 -0700
 From: kan.liang@linux.intel.com
@@ -70,11 +70,12 @@ Cc: eranian@google.com,
 	tmricht@linux.ibm.com,
 	leo.yan@arm.com,
 	Kan Liang <kan.liang@linux.intel.com>,
-	silviazhao <silviazhao-oc@zhaoxin.com>,
-	CodyYao-oc <CodyYao-oc@zhaoxin.com>
-Subject: [PATCH V3 05/16] perf/x86/zhaoxin: Remove driver-specific throttle support
-Date: Fri, 16 May 2025 11:28:42 -0700
-Message-Id: <20250516182853.2610284-6-kan.liang@linux.intel.com>
+	Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH V3 06/16] powerpc/perf: Remove driver-specific throttle support
+Date: Fri, 16 May 2025 11:28:43 -0700
+Message-Id: <20250516182853.2610284-7-kan.liang@linux.intel.com>
 X-Mailer: git-send-email 2.38.1
 In-Reply-To: <20250516182853.2610284-1-kan.liang@linux.intel.com>
 References: <20250516182853.2610284-1-kan.liang@linux.intel.com>
@@ -96,26 +97,47 @@ event_limit. It already does an inatomic event disable. The pmu->stop
 is not required either.
 
 Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
-Cc: silviazhao <silviazhao-oc@zhaoxin.com>
-Cc: CodyYao-oc <CodyYao-oc@zhaoxin.com>
+Cc: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
+Cc: Madhavan Srinivasan <maddy@linux.ibm.com>
+Cc: linuxppc-dev@lists.ozlabs.org
 ---
- arch/x86/events/zhaoxin/core.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ arch/powerpc/perf/core-book3s.c  | 6 ++----
+ arch/powerpc/perf/core-fsl-emb.c | 3 +--
+ 2 files changed, 3 insertions(+), 6 deletions(-)
 
-diff --git a/arch/x86/events/zhaoxin/core.c b/arch/x86/events/zhaoxin/core.c
-index 2fd9b0cf9a5e..49a5944fac63 100644
---- a/arch/x86/events/zhaoxin/core.c
-+++ b/arch/x86/events/zhaoxin/core.c
-@@ -397,8 +397,7 @@ static int zhaoxin_pmu_handle_irq(struct pt_regs *regs)
- 		if (!x86_perf_event_set_period(event))
- 			continue;
+diff --git a/arch/powerpc/perf/core-book3s.c b/arch/powerpc/perf/core-book3s.c
+index 42ff4d167acc..8b0081441f85 100644
+--- a/arch/powerpc/perf/core-book3s.c
++++ b/arch/powerpc/perf/core-book3s.c
+@@ -2344,12 +2344,10 @@ static void record_and_restart(struct perf_event *event, unsigned long val,
+ 			ppmu->get_mem_weight(&data.weight.full, event->attr.sample_type);
+ 			data.sample_flags |= PERF_SAMPLE_WEIGHT_TYPE;
+ 		}
+-		if (perf_event_overflow(event, &data, regs))
+-			power_pmu_stop(event, 0);
++		perf_event_overflow(event, &data, regs);
+ 	} else if (period) {
+ 		/* Account for interrupt in case of invalid SIAR */
+-		if (perf_event_account_interrupt(event))
+-			power_pmu_stop(event, 0);
++		perf_event_account_interrupt(event);
+ 	}
+ }
+ 
+diff --git a/arch/powerpc/perf/core-fsl-emb.c b/arch/powerpc/perf/core-fsl-emb.c
+index d2ffcc7021c5..7120ab20cbfe 100644
+--- a/arch/powerpc/perf/core-fsl-emb.c
++++ b/arch/powerpc/perf/core-fsl-emb.c
+@@ -635,8 +635,7 @@ static void record_and_restart(struct perf_event *event, unsigned long val,
+ 
+ 		perf_sample_data_init(&data, 0, last_period);
  
 -		if (perf_event_overflow(event, &data, regs))
--			x86_pmu_stop(event, 0);
+-			fsl_emb_pmu_stop(event, 0);
 +		perf_event_overflow(event, &data, regs);
  	}
+ }
  
- 	/*
 -- 
 2.38.1
 
