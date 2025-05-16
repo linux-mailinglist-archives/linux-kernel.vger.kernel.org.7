@@ -1,118 +1,153 @@
-Return-Path: <linux-kernel+bounces-650846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-650844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F5BFAB96D0
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 09:49:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E837AB96CC
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 09:48:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A8D51644F3
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 07:49:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B75867A0369
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 07:47:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 027CA22CBED;
-	Fri, 16 May 2025 07:48:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07E6E22A4EE;
+	Fri, 16 May 2025 07:48:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="HdTE/7lO"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fByWf7El"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A66212288F9;
-	Fri, 16 May 2025 07:48:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD251229B23;
+	Fri, 16 May 2025 07:48:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747381717; cv=none; b=GB2xPeeCIPquD8axmpVSxm8GBjmZBAHYdifl0DxAjLBtQzphcykDR1eAXUvoCNGzMJoYVcjsLZXngHCxm3KRtRV52mFOMKY5wTH6enmxll4MqO7pdjo+3fRjx/5VmaDUOC+wBIg7SRCYmoEnOb449yzWWYuYtx7j7CFyzbVIQoo=
+	t=1747381700; cv=none; b=s16ynJJxB88VK9uZTz8r4pLDdPA5jzK/j7bzgjG1xTgp4ObccMRTQpzlRhvLHSPn6R69a7AH1aM7QANBI1j9xC6WaDjKOVB+/5O+IuNEMqjuvphjz5yyFmfT7zuRsdYYJKVoUTVH6yGdp44ypphSI6Juhc9RPLJ7y4S+dR6zyqY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747381717; c=relaxed/simple;
-	bh=NGGea+Xl9PhfLPNnOL1TZgnMozKaFETgeW8lvayNJEs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y1qEDu/LsaL2Yw4s66yyTd9/Q+JR27V2Hntd5+C0ADxRHp4EkT0b8YlEVBBgmZHjJR0wdVLjBvwWubIxY9eRpq6KhKp9oC5LPIeV5cklUKJuDLJ1C5GKkDkOssqQblMm+3A8KovbrsMhlP5mBRq7c8Qu4YV/aXTuwRhgX5BiJp0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=HdTE/7lO; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id B5EA540E01ED;
-	Fri, 16 May 2025 07:48:29 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id s4U2TzRhrVR5; Fri, 16 May 2025 07:48:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1747381706; bh=N7Zdp89bjOj4FjeUAF9kFqVmlf6VStnPSEwpdOdDTRo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HdTE/7lOnT2f6hY8ww9RAXnyBcXkrxsLYTIMiemYtpol/JQr9zNik2VRthZmd/JC+
-	 8fqOYkA9nHsUS8SXSrgHNbss/zDP2jyIOyT/DVqjUwKewv4DV/RJxuqOfD19XbZ+G/
-	 i0MCaMZsW9SdM1tbJ4clokpf6NTbK4ko5lHhGO4zwWguMjpF0xBXDXVIuP3Wa5oYE1
-	 MPD385I+O68yukhzdizfu4a+EsNWWZWyUkjjoQQ9aNW06l7rp1MHLQp3cN3xA0vw14
-	 Dsml7w8Az4Xnk/gfbJzp654iBAWXdrOAUNoEAox3H5iFcKhtjC7waIlSn6K3FawkNG
-	 dqcrwhcCfCquXuBzCsH3sWN1xiLBmtK3HUjpDSf642Q3yvUed5mTI+Djjn8cwguEts
-	 8HnovGW0Fk7blveZN6CI5YL8e2eEgZKPfphIKSR69oTZ3K1BcpoCsf4KWC7XXD7Ukd
-	 4TCqd3esqtY3YM9PbGP4tMgQswh0yFah18TQEYAilO0r/4O35wSSWtVrJ42b5hwYfK
-	 7CM1YVXSQ62mP2djQl9ICzl4wfQK+e9R+YW5sU8S4EERZ1WUCPwsw1iWVM/4TWz1FC
-	 N62Gf6zTrTaIjOwlvgoqP0ocynsbPOUVcJT3tGeQIAdLZWqjC3IYRBcRQI3cZ24rm1
-	 ur9k4jHjrGvaz5vpHAdQSsAE=
-Received: from zn.tnic (p579690ee.dip0.t-ipconnect.de [87.150.144.238])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 25AC940E0239;
-	Fri, 16 May 2025 07:48:15 +0000 (UTC)
-Date: Fri, 16 May 2025 09:48:06 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Suraj Jitindar Singh <surajjs@amazon.com>,
-	David Kaplan <David.Kaplan@amd.com>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>, stable@vger.kernel.org
-Subject: Re: [PATCH 2/2] x86/bugs: Don't WARN() when overwriting
- retbleed_return_thunk with srso_return_thunk
-Message-ID: <20250516074806.GAaCbttptX_H2Gn8OZ@fat_crate.local>
-References: <20250515173830.uulahmrm37vyjopx@desk>
- <20250515233433.105054-1-surajjs@amazon.com>
- <20250515233433.105054-2-surajjs@amazon.com>
+	s=arc-20240116; t=1747381700; c=relaxed/simple;
+	bh=aHU9BkOiWPz0W7SgeBJtFfgnX1JrevC7v3V7mSP2xu0=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XSI8g/zcmyxZe8k1qMV6B4BhvL14Trl9JCLWNdFWjLSR+vzCwXeWbWfjyfRX+0BMPEF7YhLkFNOAAJGLrrXWUvFLIWbi3YqvhWQT6iWSkjkQx4o+o/G88c8rbd0GS6eh7d3rVHEMsc9mlhnDYUjkH6oNvdyZVQ7eJIgfj0Ivvv0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fByWf7El; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43cfe574976so11930845e9.1;
+        Fri, 16 May 2025 00:48:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747381696; x=1747986496; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Iea2KBGhuX+X3B5IwokVwAMngxE9zC3wkNecLtzJuIY=;
+        b=fByWf7ElJXPDwfYizACbB6oedfDfYEiEgjF87XIT8WE8BzJEFKyW1RIFSqozLuHNYx
+         HlRMq7+1MP2js/3Ed/ORK/JCrqCe2y2K379zlVIdupVWWyVQWeZ9Hk7zbhc6N371f6Fl
+         QBZhIWEKr+Y6Zld1BT2bFeeX9tIa/xX26KvKYuJuxzrwCtIs8E8W1Ar2jKost99+R9D0
+         Omimk3ocGL2KkVLbzvAOek0wV+4yLSLIfm5Q5Q2kkd88/o/SbhQPKB4a8s8OO4MrHIFm
+         A1PuZNIJCSAc0vJqi0pK8uxvGW1aPBp8gronGH0HjuveCnVvEI4t7VxvuWxadGGsL9wQ
+         tALA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747381696; x=1747986496;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Iea2KBGhuX+X3B5IwokVwAMngxE9zC3wkNecLtzJuIY=;
+        b=ascFcWK0ZrVTYaEHfHmsxZmXFe95eorcE2IKgOWQPt8Qrp4u5kxn1BguISYMrm/GJL
+         oCqbSv8tUS7OKsFHPhJXZJRIU3BAWUDJJAmwf4KKzwv8RY9+TeMtOUIpL0wtMxMljnWn
+         j6hYatqXDp76OBODuDXoKpdpzWAQ12btKGZHyPhPm6uVxNI4iBcXGD+3L76itTTG2gEI
+         WEB9mSqdw2avJ5AvVFQ+XpH4xeG8MH+JObq8e1t0uJbEZDTtdyt7rNkK1Bs4tbxqEZ4h
+         6r7jAVzRetxJKWpF7PgctejvCwnylfm2WPjHN3ZFmJZv4eKn49DwwN7i7+gCbnQoDKBP
+         4f9g==
+X-Forwarded-Encrypted: i=1; AJvYcCVlq7M+2RddexYQcfddfMUGbbAQyRp0YZM6BwDPPfLaXHLNpip7s8vON7N+E6RQBOaP8lA=@vger.kernel.org, AJvYcCWjDQuNgXnXuL6lannjw41ZvApOjYzPfO8hn/E8TcjsBMS4HZdvSpWdv4Ah07omX98KgoszrM33pODXvsb1frErux40@vger.kernel.org, AJvYcCXoTJoCObZ1IZ1TgHiRSawwekjLSmyODz4xVeVH2+NmaloFP4lJNE4rDOUoJYj68jANj0Bc8g+75VWujCNU@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMTdiAZI0jyCRg0a7hIs62AvtexmybaPZX+8CLMHGErR0OBSqq
+	A/2XP/jZ7WlIsWWExpPKq2cQ6mMnHJFUdTr2t0FQEZKOdOs4CYck3X1L
+X-Gm-Gg: ASbGnctkRz/MU8DK9m4aDIz0m0jmQ10tMYVhPumg2Dip68GdJvgOlJOx68vfnRTMAy8
+	ecOOfgFr86aPSv3bNcCu6QCqwo7ATnHUcnYEoFwhqhLQKGFGg8R/K4pco6myIgXIbNqMAagM9+s
+	fikweuShSAO6n8ZfQvfGMBQ6UIa65CTbBXBeWAOKzWe3Qa5OHXgsyKMRiRvBTtEMlR934k/qNEl
+	uRqXL6eXA4vj2EhFmk6lnDRW+aAja9WAY2PpFseQh5KN4lGFrvY9Xo6OW3apbmANNuGqlPdW4pL
+	FuVmXEAxRfy22Hm+QgzrS9eIGjy86jq7zKiUS8ro+l+n
+X-Google-Smtp-Source: AGHT+IGQ+NOoE9SmiilWjuHQSHVFmRvd6nruvsoD0CaRSvyKLFALVWv9yv4FTaMJyFRhS43gFw4FBA==
+X-Received: by 2002:a05:600c:35c8:b0:441:d43d:4f68 with SMTP id 5b1f17b1804b1-442fd63c6b7mr25677055e9.15.1747381695662;
+        Fri, 16 May 2025 00:48:15 -0700 (PDT)
+Received: from krava ([2a00:102a:401a:bc81:9db7:192e:9f02:9c0c])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-442fd50b9b2sm24420585e9.12.2025.05.16.00.48.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 16 May 2025 00:48:15 -0700 (PDT)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Fri, 16 May 2025 09:48:11 +0200
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: Oleg Nesterov <oleg@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	x86@kernel.org, Song Liu <songliubraving@fb.com>,
+	Yonghong Song <yhs@fb.com>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Hao Luo <haoluo@google.com>, Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Alan Maguire <alan.maguire@oracle.com>,
+	David Laight <David.Laight@aculab.com>,
+	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas@t-8ch.de>,
+	Ingo Molnar <mingo@kernel.org>
+Subject: Re: [PATCHv2 perf/core 13/22] selftests/bpf: Rename
+ uprobe_syscall_executed prog to test_uretprobe_multi
+Message-ID: <aCbtu2LQxHo6pgVH@krava>
+References: <20250515121121.2332905-1-jolsa@kernel.org>
+ <20250515121121.2332905-14-jolsa@kernel.org>
+ <CAEf4BzZ4975boVLbDXhVkjbiY_gp=RTTzJZ9zhfXc0zrgs4obw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250515233433.105054-2-surajjs@amazon.com>
+In-Reply-To: <CAEf4BzZ4975boVLbDXhVkjbiY_gp=RTTzJZ9zhfXc0zrgs4obw@mail.gmail.com>
 
-On Thu, May 15, 2025 at 04:34:33PM -0700, Suraj Jitindar Singh wrote:
-> -	WARN(x86_return_thunk != __x86_return_thunk,
-> +	WARN((x86_return_thunk != __x86_return_thunk) &&
-> +	     (thunk != srso_return_thunk ||
-> +	      x86_return_thunk != retbleed_return_thunk),
->  	     "x86/bugs: return thunk changed from %ps to %ps\n",
->  	     x86_return_thunk, thunk);
+On Thu, May 15, 2025 at 10:24:42AM -0700, Andrii Nakryiko wrote:
 
-This is still adding that nasty conditional which I'd like to avoid.
+SNIP
 
-And I just had this other idea: we're switching to select/update/apply logic
-with the mitigations and I'm sure we can use that new ability to select the
-proper mitigation when other mitigations are influencing the decision, to
-select the proper return thunk.
+> > diff --git a/tools/testing/selftests/bpf/progs/uprobe_syscall_executed.c b/tools/testing/selftests/bpf/progs/uprobe_syscall_executed.c
+> > index 0d7f1a7db2e2..c4c3447378ba 100644
+> > --- a/tools/testing/selftests/bpf/progs/uprobe_syscall_executed.c
+> > +++ b/tools/testing/selftests/bpf/progs/uprobe_syscall_executed.c
+> > @@ -8,10 +8,17 @@ struct pt_regs regs;
+> >  char _license[] SEC("license") = "GPL";
+> >
+> >  int executed = 0;
+> > +int pid;
+> >
+> > -SEC("uretprobe.multi")
+> > -int test(struct pt_regs *regs)
+> > +static int inc_executed(void)
+> >  {
+> > -       executed = 1;
+> > +       if (bpf_get_current_pid_tgid() >> 32 == pid)
+> > +               executed++;
+> 
+> it's customary (and makes sense to me) with filtering like this to not
+> add nestedness:
+> 
+> 
+> if (bpf_get_current_pid_tgid() >> 32 != pid)
+>     return 0;
+> 
+> executed += 1;
+> return 0;
 
-I'm thinking for retbleed and SRSO we could set it only once, perhaps in
-srso_select_mitigation() as it runs last.
+ok, will change
 
-I don't want to introduce an amd_return_thunk... :-)
+jirka
 
-But David might have a better idea...
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+> 
+> >         return 0;
+> >  }
+> > +
+> > +SEC("uretprobe.multi")
+> > +int test_uretprobe_multi(struct pt_regs *ctx)
+> > +{
+> > +       return inc_executed();
+> > +}
+> > --
+> > 2.49.0
+> >
 
