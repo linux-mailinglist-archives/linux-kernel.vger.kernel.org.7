@@ -1,143 +1,180 @@
-Return-Path: <linux-kernel+bounces-651412-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-651413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81FFAAB9E2D
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 16:07:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E301EAB9E2F
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 16:07:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 165DB4E6EA3
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 14:07:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EF343AD4A1
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 14:07:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C31714BF89;
-	Fri, 16 May 2025 14:06:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80081219E0;
+	Fri, 16 May 2025 14:07:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Cp8Anbs3"
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="idtMLIEf"
+Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79785249EB;
-	Fri, 16 May 2025 14:06:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 406AC78F5D
+	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 14:07:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747404414; cv=none; b=VD9j10hhyFrpwjKfEu7ZANzuKqQUNvo1ri4IPBtCsomZr2VfZk5MBfTIITtZ+ZgZCfUWeKCeGD0Gtk/ImQgXGxycisXatd8zbm3ke6dM//gP+RoRuRIUwmI97V1+RfN2st5APlnqaFHPoWkTRqyYaJ61aON9kMPTr6EEefIT4xM=
+	t=1747404450; cv=none; b=tZaCXUwb3o0oE0Gyc9RsT649d7bwWg3/9xU2BHwyocGd14h8OhSBioUKz6/16/wnIwLKl59gEI4XjO+laoylahSEs1/lqnypRluUZ2dePVlopLFdK63wbObJKJfegNDWsblp4dGB9HnXeJ2LAJrS5/5IV9z0XjPwAO536anhQqo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747404414; c=relaxed/simple;
-	bh=uosMdzNKbsqAbGcb+VwdzGGyGC+QOp1QBS3qepjAz/g=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=NG1QxrLc+SrngdbXscIhW/6MjUzhkysI7HWJrcZMojqUsHHAnMVKZBKXAJN9L6aPZ1Rg1WZUGfwTm5G7kk+NZtmBeBOmdgm2wOckpVaqaCuXGkbhmwkSDUrxhFVVhQF5mueof2L8LHf8v71YozAIsvuYl0deYb9/IWxrtrSDaJg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Cp8Anbs3; arc=none smtp.client-ip=217.70.183.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id CC69E4399F;
-	Fri, 16 May 2025 14:06:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1747404403;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7FNaCT4ZQwywoNYi1aikoPuxQeiAAAtXSDPCSbSoQYY=;
-	b=Cp8Anbs3tIhc8FvhUb0RNthAJPHEeUjwx9VmSb6FIaINNL81nGtSTJ188OY96x8D3KpVwH
-	eM/Vy69l9h8+IzytTJXijZyRXmmNcrexqy4isLI0OWbCzE8ED6/q5/jsX6aqNlJTycUNig
-	zJLld6lvyiRe8joEgtGWc2uioTw3gI0ICoojca399xh/ruR4NcfgyNBo07uCBe0q2BJ0nj
-	uQ/g+Q3Y/3sy+gdC63lTh6B00vDYFTGzAbuzgTPo+OB0ghdspBOJPByuJqiKGBp3Qhi8K5
-	4mRBlYxsqTx3CK1vooo5+H0InweCrOfay/P4VPAUadkU3VY3kJ0/wzqWKAf8Rg==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: "Mahapatra, Amit Kumar" <amit.kumar-mahapatra@amd.com>
-Cc: "richard@nod.at" <richard@nod.at>,  "vigneshr@ti.com" <vigneshr@ti.com>,
-  "robh@kernel.org" <robh@kernel.org>,  "krzk+dt@kernel.org"
- <krzk+dt@kernel.org>,  "conor+dt@kernel.org" <conor+dt@kernel.org>,
-  "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-  "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-  "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,  "git
- (AMD-Xilinx)" <git@amd.com>,  "amitrkcian2002@gmail.com"
- <amitrkcian2002@gmail.com>,  Bernhard Frauendienst
- <kernel@nospam.obeliks.de>
-Subject: Re: [PATCH v12 3/3] mtd: Add driver for concatenating devices
-In-Reply-To: <IA0PR12MB7699B60558C5211F8F80C471DC96A@IA0PR12MB7699.namprd12.prod.outlook.com>
-	(Amit Kumar Mahapatra's message of "Tue, 13 May 2025 14:45:39 +0000")
-References: <20250205133730.273985-1-amit.kumar-mahapatra@amd.com>
-	<20250205133730.273985-4-amit.kumar-mahapatra@amd.com>
-	<8734fa8hed.fsf@bootlin.com>
-	<IA0PR12MB76994BA493127004B569F2AEDC832@IA0PR12MB7699.namprd12.prod.outlook.com>
-	<87o6vyjgfl.fsf@bootlin.com>
-	<IA0PR12MB7699B60558C5211F8F80C471DC96A@IA0PR12MB7699.namprd12.prod.outlook.com>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Fri, 16 May 2025 16:06:41 +0200
-Message-ID: <87o6vsejke.fsf@bootlin.com>
+	s=arc-20240116; t=1747404450; c=relaxed/simple;
+	bh=ZiJQtCrV56w4/Y1W+Sd1A8QY8PZatBWXeocXad9ibgg=;
+	h=Date:In-Reply-To:Mime-Version:Message-ID:Subject:From:To:Cc:
+	 Content-Type; b=e22Z1ehVebCsKxdHdNvvDQTWYkHIMhVM3cZmnTqwF91MJv6ZoLVRlzdo7ZyEJZpnyy/d36eMV2UULp16ybFgoCj2UfJQb6bGE97GU8QrE8YDsm/ZRB8nhNkAGWcdWgpHqC+uG2yuZCYZbE9q1PdXSogvlQqGTTxJYSUsXeRyhP4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=idtMLIEf; arc=none smtp.client-ip=209.85.210.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
+Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-73bfc657aefso1616357b3a.1
+        for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 07:07:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1747404448; x=1748009248; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=I0BEoaGPs7E0lHGHqMtx20JU7Z7mIAdbQ03kowt/oEI=;
+        b=idtMLIEfiyQRD6EJjBSQqU6I0nM3t0N49ASuI9AsmxSORZZjg7PTZJe7Pu1/6ljRUo
+         JYs1vLhGN8/vXI+0YYJnISfclbcul9ilyjI6gxvwxQ3oNJEbrUtpMCAOj3vpgo2+HYke
+         xjsb/zWmHVAut0NPgXLvppVfXSKzckVvffKVJ/zo8SpIklO4huTgSW2Z6VvNtbxXjubP
+         HNo08DOadfNYsWP+6tq20NUf6NLSBJRvpIoRLFfuEUjKZoUKFra16T/waDeum5JskYRp
+         vr1q1gm9w2T5Oevxx6PxfJXF1OF3lv/+7OD5O2fM4dFcpHZBAFQtQWXU8tX/32xiEf92
+         mUgg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747404448; x=1748009248;
+        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=I0BEoaGPs7E0lHGHqMtx20JU7Z7mIAdbQ03kowt/oEI=;
+        b=q/kDM/8tG8qVrJqTjE2aMVK589hACMw8OxGG7cVnAm6c85L47LDajzYdORyV3mBtGw
+         hfqTAIjjFwnlBIol5e0UFw7oEpjBTRrt40w6r166HClcylmnOo1OUGbRag8s1ksKg70k
+         KfLHsx7Bn0rSD6XJwESLfHDDY4IbS6qPa/SxHP+xhi3FlCgPjO5w3YYYwETBEYmcZCL9
+         i9NrsLXTKUa8ED9cnXErykFJMWvDKu8lpFtHlDVIqIiABwQ7ZWg6AAcpmt2xAsZqIpoM
+         lrWBoaZtXkCNpf3gKe2FAa2v9UdO/TYGu7qgyPaNnasOZD5CXh+30Zudc3W88Vxc1CII
+         BK5g==
+X-Forwarded-Encrypted: i=1; AJvYcCUe8SJm9oa4Wt2LqbjYT7P+Ixm3a+BFtVz9qUCaR8sHhRZWPNBVjgnRF+YO1fo4GH3zd0jXAJlguMKc8JM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxao/UUHJYe309HGT7qcRWXlB1yPKZJ0FwcoV56c+jHk6fjFK1o
+	stuj+Zy1JAgxze45OFdNtm+loZTBLF8KkrZW4v3VLdftmdfsYsw1B2mljfyvg2gKT1M4e8Tky+l
+	de5whdJLFnK27Ohm6Vtib3C/noA==
+X-Google-Smtp-Source: AGHT+IHjj8hb/RVvZ0IOpTAd6gcfF67ZbXjAX68CTThBkFnrnLTw7dIsH6cNRpPgLu+DDO0Lal4k3FXkbzgyillaoQ==
+X-Received: from pffl14.prod.google.com ([2002:a62:be0e:0:b0:73e:1cf2:cd5c])
+ (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6a00:c8d:b0:740:6f69:f52a with SMTP id d2e1a72fcca58-742a9616b19mr4851938b3a.0.1747404448303;
+ Fri, 16 May 2025 07:07:28 -0700 (PDT)
+Date: Fri, 16 May 2025 07:07:27 -0700
+In-Reply-To: <b3c2da681c5bf139e2eaf0ea82c7422f972f6288.1747264138.git.ackerleytng@google.com>
+ (message from Ackerley Tng on Wed, 14 May 2025 16:42:08 -0700)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdefuddvleegucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufgjfhgffffkgggtgfesthhqredttderjeenucfhrhhomhepofhiqhhuvghlucftrgihnhgrlhcuoehmihhquhgvlhdrrhgrhihnrghlsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeffgefhjedtfeeigeduudekudejkedtiefhleelueeiueevheekvdeludehiedvfeenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpehmihhquhgvlhdrrhgrhihnrghlsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeduvddprhgtphhtthhopegrmhhithdrkhhumhgrrhdqmhgrhhgrphgrthhrrgesrghmugdrtghomhdprhgtphhtthhopehrihgthhgrrhgusehnohgurdgrthdprhgtphhtthhopehvihhgnhgvshhhrhesthhirdgtohhmpdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkrhiikhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegtohhnohhrodgutheskhgvr
- hhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqmhhtugeslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopeguvghvihgtvghtrhgvvgesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-GND-Sasl: miquel.raynal@bootlin.com
+Mime-Version: 1.0
+Message-ID: <diqzzffcfy3k.fsf@ackerleytng-ctop.c.googlers.com>
+Subject: Re: [RFC PATCH v2 29/51] mm: guestmem_hugetlb: Wrap HugeTLB as an
+ allocator for guest_memfd
+From: Ackerley Tng <ackerleytng@google.com>
+To: Ackerley Tng <ackerleytng@google.com>
+Cc: kvm@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	x86@kernel.org, linux-fsdevel@vger.kernel.org, aik@amd.com, 
+	ajones@ventanamicro.com, akpm@linux-foundation.org, amoorthy@google.com, 
+	anthony.yznaga@oracle.com, anup@brainfault.org, aou@eecs.berkeley.edu, 
+	bfoster@redhat.com, binbin.wu@linux.intel.com, brauner@kernel.org, 
+	catalin.marinas@arm.com, chao.p.peng@intel.com, chenhuacai@kernel.org, 
+	dave.hansen@intel.com, david@redhat.com, dmatlack@google.com, 
+	dwmw@amazon.co.uk, erdemaktas@google.com, fan.du@intel.com, fvdl@google.com, 
+	graf@amazon.com, haibo1.xu@intel.com, hch@infradead.org, hughd@google.com, 
+	ira.weiny@intel.com, isaku.yamahata@intel.com, jack@suse.cz, 
+	james.morse@arm.com, jarkko@kernel.org, jgg@ziepe.ca, jgowans@amazon.com, 
+	jhubbard@nvidia.com, jroedel@suse.de, jthoughton@google.com, 
+	jun.miao@intel.com, kai.huang@intel.com, keirf@google.com, 
+	kent.overstreet@linux.dev, kirill.shutemov@intel.com, liam.merwick@oracle.com, 
+	maciej.wieczor-retman@intel.com, mail@maciej.szmigiero.name, maz@kernel.org, 
+	mic@digikod.net, michael.roth@amd.com, mpe@ellerman.id.au, 
+	muchun.song@linux.dev, nikunj@amd.com, nsaenz@amazon.es, 
+	oliver.upton@linux.dev, palmer@dabbelt.com, pankaj.gupta@amd.com, 
+	paul.walmsley@sifive.com, pbonzini@redhat.com, pdurrant@amazon.co.uk, 
+	peterx@redhat.com, pgonda@google.com, pvorel@suse.cz, qperret@google.com, 
+	quic_cvanscha@quicinc.com, quic_eberman@quicinc.com, 
+	quic_mnalajal@quicinc.com, quic_pderrin@quicinc.com, quic_pheragu@quicinc.com, 
+	quic_svaddagi@quicinc.com, quic_tsoni@quicinc.com, richard.weiyang@gmail.com, 
+	rick.p.edgecombe@intel.com, rientjes@google.com, roypat@amazon.co.uk, 
+	rppt@kernel.org, seanjc@google.com, shuah@kernel.org, steven.price@arm.com, 
+	steven.sistare@oracle.com, suzuki.poulose@arm.com, tabba@google.com, 
+	thomas.lendacky@amd.com, usama.arif@bytedance.com, vannapurve@google.com, 
+	vbabka@suse.cz, viro@zeniv.linux.org.uk, vkuznets@redhat.com, 
+	wei.w.wang@intel.com, will@kernel.org, willy@infradead.org, 
+	xiaoyao.li@intel.com, yan.y.zhao@intel.com, yilun.xu@intel.com, 
+	yuzenghui@huawei.com, zhiquan1.li@intel.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 13/05/2025 at 14:45:39 GMT, "Mahapatra, Amit Kumar" <amit.kumar-mahapatr=
-a@amd.com> wrote:
+Ackerley Tng <ackerleytng@google.com> writes:
 
-> [AMD Official Use Only - AMD Internal Distribution Only]
+> guestmem_hugetlb is an allocator for guest_memfd. It wraps HugeTLB to
+> provide huge folios for guest_memfd.
 >
-> Hello Miquel,
+> This patch also introduces guestmem_allocator_operations as a set of
+> operations that allocators for guest_memfd can provide. In a later
+> patch, guest_memfd will use these operations to manage pages from an
+> allocator.
 >
->> >> > +           mtd->dev.parent =3D concat->subdev[0]->dev.parent;
->> >> > +           mtd->dev =3D concat->subdev[0]->dev;
->> >> > +
->> >> > +           /* Register the platform device */
->> >> > +           ret =3D mtd_device_register(mtd, NULL, 0);
->> >> > +           if (ret)
->> >> > +                   goto destroy_concat;
->> >> > +   }
->> >> > +
->> >> > +   return 0;
->> >> > +
->> >> > +destroy_concat:
->> >> > +   mtd_concat_destroy(mtd);
->> >> > +
->> >> > +   return ret;
->> >> > +}
->> >> > +
->> >> > +late_initcall(mtd_virt_concat_create_join);
->> >>
->> >> The current implementation does not support probe deferrals, I
->> >> believe it should be handled.
->> >
->> > I see that the parse_mtd_partitions() API can return -EPROBE_DEFER
->> > during MTD device registration, but this behavior is specific to the
->> > parse_qcomsmem_part parser. None of the other parsers appear to
->> > support probe deferral. As discussed in RFC [1], the virtual concat
->> > feature is purely a fixed-partition capability, and based on my
->> > understanding, the fixed-partition parser does not support probe defer=
-ral.
->> > Please let me know if you can think of any other probe deferral
->> > scenarios that might impact the virtual concat driver.
->>
->> That's true, but I kind of dislike the late_initcall, I fear it might br=
-eak in creative ways.
+> The allocator operations are memory-management specific and are placed
+> in mm/ so key mm-specific functions do not have to be exposed
+> unnecessarily.
 >
-> I understand, but since we require the partition information to be
-> available, late_initcall seems to be the most suitable choice among the
-> initcall levels=E2=80=94if we decide to proceed with using an initcall.
-> Regarding potential failures, as far as I can tell, the operation would
-> fail if, at the time of concatenation, one or more of the MTD devices
-> involved in the concat are not yet available. In such a scenario, we can
-> issue a kernel warning and exit gracefully. But, However, if you prefer
-> to move away from using initcalls and have an alternative
-> implementation approach in mind, please let us know.
+> Signed-off-by: Ackerley Tng <ackerleytng@google.com>
+>
+> Change-Id: I3cafe111ea7b3c84755d7112ff8f8c541c11136d
+> ---
+>  include/linux/guestmem.h      |  20 +++++
+>  include/uapi/linux/guestmem.h |  29 +++++++
+>  mm/Kconfig                    |   5 +-
+>  mm/guestmem_hugetlb.c         | 159 ++++++++++++++++++++++++++++++++++
+>  4 files changed, 212 insertions(+), 1 deletion(-)
+>  create mode 100644 include/linux/guestmem.h
+>  create mode 100644 include/uapi/linux/guestmem.h
+>
+> <snip>
+>
+> diff --git a/mm/Kconfig b/mm/Kconfig
+> index 131adc49f58d..bb6e39e37245 100644
+> --- a/mm/Kconfig
+> +++ b/mm/Kconfig
+> @@ -1218,7 +1218,10 @@ config SECRETMEM
+>  
+>  config GUESTMEM_HUGETLB
+>  	bool "Enable guestmem_hugetlb allocator for guest_memfd"
+> -	depends on HUGETLBFS
+> +	select GUESTMEM
+> +	select HUGETLBFS
+> +	select HUGETLB_PAGE
+> +	select HUGETLB_PAGE_OPTIMIZE_VMEMMAP
 
-I am sorry but this does not work with modules, and we cannot ignore this
-case I believe. More specifically, if a controller probe is deferred
-(with EPROBE_DEFER or just prevented because some dependencies are not
-yet satisfied), you'll get incorrectly defined mtd devices.
+My bad. I left out CONFIG_HUGETLB_PAGE_OPTIMIZE_VMEMMAP_DEFAULT_ON=y in
+my testing and just found that when it is set, I hit
 
-Thanks,
-Miqu=C3=A8l
+  BUG_ON(pte_page(ptep_get(pte)) != walk->reuse_page);
+
+with the basic guest_memfd_test on splitting pages on allocation.
+
+I'll follow up with the fix soon.
+
+Another note about testing: I've been testing in a nested VM for the
+development process:
+
+1. Host
+2. VM for development
+3. Nested VM running kernel being developed
+4. Nested nested VMs created during selftests
+
+This series has not yet been tested on a physical host.
+
+>  	help
+>  	  Enable this to make HugeTLB folios available to guest_memfd
+>  	  (KVM virtualization) as backing memory.
+>
+> <snip>
+>
 
