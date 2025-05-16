@@ -1,147 +1,146 @@
-Return-Path: <linux-kernel+bounces-651331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-651333-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD937AB9D3B
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 15:27:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4396CAB9D41
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 15:28:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A2C81881E4A
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 13:27:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8741F3BAF23
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 13:27:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DE8570824;
-	Fri, 16 May 2025 13:26:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AA3838F9C;
+	Fri, 16 May 2025 13:27:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NjT84hXe"
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H8jGqE6/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FCA92C181
-	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 13:26:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF51235975;
+	Fri, 16 May 2025 13:27:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747401997; cv=none; b=KeG9QlsCReyXrMPR10istZbvkNoPwHc31KlzfAyyJbKcyRVfiNTvt5n4fRPfPlYzNRrA0jCvCX1qebCEVJ8ORoVO0cNomIVlwBDwSL0Mz+/cRVWT0sGUA/WN1sSBZ0wDEdB8tK0hX3vbvBWARA9CeUGzXZnM0tZyYQopwzqpkr0=
+	t=1747402050; cv=none; b=dP0Xu7SocuvWEufvGYFh+VBFl/mD/xkedXGu0kJcTy+MgyUio3OVlzpukGTdX3L0/TxbUhQDqyodffEuwzdwEKjtUrWtqOFp78jRi7wFQjomwMAzOBMwcrf9rLqs+X6pMEYXvvcgNiucaAUOEz1ltobBD4Sdsc2SDqZnLJTZmx8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747401997; c=relaxed/simple;
-	bh=oOqs3k0tlpF5HjyzxYG4IK2pdYHASxUiUCxNE7N6sVQ=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=KEAvvGSBClINJxsi78Wyo7ZkpQHMqxgLIwyMuMbUjUIwRN+8gTuWSCcNprBoHLNpoce3GPVu1VsMZIOviartT5husmHqwp/dQfdEfMD105eHtlMnwYRDvLKhEgWgEMKKALGUY34B/0hYvW+VYNE24P3EQ2oIivBwkQFWNNbqDLc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NjT84hXe; arc=none smtp.client-ip=209.85.215.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b00e4358a34so1288732a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 06:26:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1747401994; x=1748006794; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=jUF92U1DJmFEjkB/6aO1QXrYLsPasET5mz/HpdkaAk0=;
-        b=NjT84hXecCf9KCtiUY32vsnEwyF0h8tmXlIMd/UlrjQVnCLXQwbfPy6FAgLewRkDSe
-         FK/kvajs/JV6xEsk20fi9J3CHDw3hhjT9pArWxOFAAT0EE8h+Uf95rIAJolFtVBHHklE
-         UQc+UA05tS2DaMJ6hylE8SoCF9HvAmVoOThNQpd/AZHZP3DlMv1BooB1fznhuVzm2P5u
-         CwLNsMNzPZibm/llen7xkyHQd3aeQw5cR52t5AlaE367br4iI2FjBK0JO9/U2V9bWYyp
-         cTElatBDShYV9ZN0V2vFtxrr4bokU/sKEKbkJhPwN+8y/ob/C+19chKQeasl7rcBgmpA
-         Jfyg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747401994; x=1748006794;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jUF92U1DJmFEjkB/6aO1QXrYLsPasET5mz/HpdkaAk0=;
-        b=PHhCKpMb+FE26rWDwAE7KeAyY1N8OFGrXCoU3+wxovkRHnQLQWDyXpGeUPFHzzAuTq
-         KN07WXMp8UKR3dOhm9eOgyKOoKM0Jy3bx4g8x+broI1unrOS33aVkkQTPjSeTB2qiOwT
-         y3EmdMzZ+1weKSk0v7pAtXw0P0D/whbUWPEzku7FyZJ47tDxfGn4jPdb805roP7RriMP
-         r9bBrK6qPUeTWBuidMFf2zpkPNWEebS+8AKOXV5HslTcHqzQ/G9aI6EHAQ1KC7sYAbsY
-         X+Q9L+DxKVWtaLUBiwlQa+pi7EG6nwAN91I6qRWBxP2eBHprtckQ7ULCERwMoMHldEE9
-         bkFA==
-X-Forwarded-Encrypted: i=1; AJvYcCUvTC8zJlVw1G69WV8nc89dLVvonfqmTmhYXT5Hjv/Vt/ujnVIpKAZRgkbS7SmoC22wj29+DsLxcRUOGcw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YweAr3v/YW4dd/0XP1KeZnGt+Ubi0Ke0o6TABIJJ1wcfJjAn3kH
-	Ax0Tb/dXnyhg9zPM8hqjkw0QOM2y8HzFQt8Xem8ZOZaGdlkUdLPq5+ZRhoJK6b99R61DSBk7Rar
-	ebwpZpw==
-X-Google-Smtp-Source: AGHT+IENAvEw35fiE7fP5luIXtFIoumLYQF+Tnj/cRu9Hs0uoimDXOXKxgPyre23vv5rc2HSAcjSbPWRUJQ=
-X-Received: from pjbsb5.prod.google.com ([2002:a17:90b:50c5:b0:2fc:1158:9fe5])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90a:c88e:b0:2fe:b937:2a51
- with SMTP id 98e67ed59e1d1-30e7d5d91f8mr5440318a91.33.1747401994585; Fri, 16
- May 2025 06:26:34 -0700 (PDT)
-Date: Fri, 16 May 2025 06:26:32 -0700
-In-Reply-To: <20250324173121.1275209-30-mizhang@google.com>
+	s=arc-20240116; t=1747402050; c=relaxed/simple;
+	bh=GQH4vjzbq/e3q06rdz3MkAysTEwVc8CsqS1cU11LWMY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OUrXDEjhIZe8+dY1714LMAJ4lbyiI93wVK2zjNlWEV1u6g/c4fSa8PD4+U1CpubvwDy4dB2ub584IcNU7BztwADH+qr/s0mfRHnMB7mJIPcXrze+/GTb0gCrxnnd4FyTG2q/2VHZ3AKqdFC8EHnZwqyY9YAm/qS+gjwdsxNDBLQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H8jGqE6/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2101C4CEE4;
+	Fri, 16 May 2025 13:27:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747402050;
+	bh=GQH4vjzbq/e3q06rdz3MkAysTEwVc8CsqS1cU11LWMY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=H8jGqE6/RU8FID9CdY+1PxxTwwfZlhsnz+701bzBzDybJIxzNDM2Md2xA7HKkmqNO
+	 iqrsPtWAEgPRkNJV4RcNPTBXI0p893dZNQTCxOMgQLC3JwhK4uMr9iyvS4pvy2Ufbz
+	 tS9Ac6k2JMwpmnQ6ipHLp3am+dzgFnrmN85021yWLrbH7RL0L01lihVlZFWPLaj0dO
+	 mD9m33cOBWX2IwAC9lg6fpe/G/a+EQJvoJAVDnvMudX+rM4tmBYaIDO2BQWRUyT+ly
+	 Ow8GZe28t5K+OaJ6RLA+SSjaVVmXNZrhB5uiMIqCPWRapKfzhYXBtjko7Fuvp3BNq3
+	 EhHeYNFKSwUzQ==
+Message-ID: <43341d97-e6fc-4b09-82cf-ea81d9f877bb@kernel.org>
+Date: Fri, 16 May 2025 15:27:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250324173121.1275209-1-mizhang@google.com> <20250324173121.1275209-30-mizhang@google.com>
-Message-ID: <aCc9CKw3DGXXQbbe@google.com>
-Subject: Re: [PATCH v4 29/38] KVM: x86/pmu: Switch host/guest PMU context at vm-exit/vm-entry
-From: Sean Christopherson <seanjc@google.com>
-To: Mingwei Zhang <mizhang@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Paolo Bonzini <pbonzini@redhat.com>, Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, Liang@google.com, 
-	Kan <kan.liang@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	Yongwei Ma <yongwei.ma@intel.com>, Xiong Zhang <xiong.y.zhang@linux.intel.com>, 
-	Dapeng Mi <dapeng1.mi@linux.intel.com>, Jim Mattson <jmattson@google.com>, 
-	Sandipan Das <sandipan.das@amd.com>, Zide Chen <zide.chen@intel.com>, 
-	Eranian Stephane <eranian@google.com>, Shukla Manali <Manali.Shukla@amd.com>, 
-	Nikunj Dadhania <nikunj.dadhania@amd.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] dt-bindings: reset: eswin: Documentation for eic7700
+ SoC
+To: dongxuyang@eswincomputing.com, p.zabel@pengutronix.de, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: ningyu@eswincomputing.com, linmin@eswincomputing.com,
+ huangyifeng@eswincomputing.com
+References: <20250514002945.415-1-dongxuyang@eswincomputing.com>
+ <20250514003121.473-1-dongxuyang@eswincomputing.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
+ QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
+ +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
+ ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
+ 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
+ hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
+ tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
+ 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
+ naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
+ hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
+ whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
+ qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
+ RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
+ Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
+ H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
+ dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
+ AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
+ jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
+ zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
+ XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
+In-Reply-To: <20250514003121.473-1-dongxuyang@eswincomputing.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Mar 24, 2025, Mingwei Zhang wrote:
-> +	/*
-> +	 * Clear hardware selector MSR content and its counter to avoid
-> +	 * leakage and also avoid this guest GP counter get accidentally
-> +	 * enabled during host running when host enable global ctrl.
-> +	 */
-> +	for (i = 0; i < pmu->nr_arch_gp_counters; i++) {
-> +		pmc = &pmu->gp_counters[i];
-> +		eventsel_msr = pmc_msr_addr(pmu, pmu->gp_eventsel_base, i);
-> +		counter_msr = pmc_msr_addr(pmu, pmu->gp_counter_base, i);
+On 14/05/2025 02:31, dongxuyang@eswincomputing.com wrote:
+> diff --git a/include/dt-bindings/reset/eswin,eic7700-reset.h b/include/dt-bindings/reset/eswin,eic7700-reset.h
+> new file mode 100644
+> index 000000000000..fcf004620db9
+> --- /dev/null
+> +++ b/include/dt-bindings/reset/eswin,eic7700-reset.h
+> @@ -0,0 +1,460 @@
+> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
+> +/*
+> + * Copyright 2024, Beijing ESWIN Computing Technology Co., Ltd.. All rights reserved.
+> + *
+> + * Device Tree binding constants for EIC7700 reset controller.
+> + *
+> + * Authors:
+> + *	Yifeng Huang <huangyifeng@eswincomputing.com>
+> + *	Xuyang Dong <dongxuyang@eswincomputing.com>
+> + */
 > +
-> +		rdpmcl(i, pmc->counter);
-> +		rdmsrl(eventsel_msr, pmc->eventsel_hw);
+> +#ifndef __DT_ESWIN_EIC7700_RESET_H__
+> +#define __DT_ESWIN_EIC7700_RESET_H__
+> +
+> +#define SNOC_RST_CTRL 0X00
 
-As pointed out by Dapeng offlist, this RDMSR is unnecessary since event selector
-MSRs are always intercepted.
+No, IDs are abstract, decimal numbers going from 0. Not hex.
 
-> +		if (pmc->counter)
-> +			wrmsrl(counter_msr, 0);
-> +		if (pmc->eventsel_hw)
-> +			wrmsrl(eventsel_msr, 0);
-> +	}
-> +
-> +	for (i = 0; i < pmu->nr_arch_fixed_counters; i++) {
-> +		pmc = &pmu->fixed_counters[i];
-> +		counter_msr = pmc_msr_addr(pmu, pmu->fixed_base, i);
-> +
-> +		rdpmcl(INTEL_PMC_FIXED_RDPMC_BASE | i, pmc->counter);
-> +		if (pmc->counter)
-> +			wrmsrl(counter_msr, 0);
-> +	}
-> +
-> +}
-> +static void intel_put_guest_context(struct kvm_vcpu *vcpu)
-> +{
-> +	struct kvm_pmu *pmu = vcpu_to_pmu(vcpu);
-> +
-> +	/* Global ctrl register is already saved at VM-exit. */
-> +	rdmsrl(MSR_CORE_PERF_GLOBAL_STATUS, pmu->global_status);
-> +
-> +	/* Clear hardware MSR_CORE_PERF_GLOBAL_STATUS MSR, if non-zero. */
-> +	if (pmu->global_status)
-> +		wrmsrl(MSR_CORE_PERF_GLOBAL_OVF_CTRL, pmu->global_status);
-> +
-> +	rdmsrl(MSR_CORE_PERF_FIXED_CTR_CTRL, pmu->fixed_ctr_ctrl_hw);
+...
 
-And same thing here.  Though I'm confused as to why KVM always intercept
-FIXED_CTR_CTRL.
+> +#define SW_NOC_NSP_RSTN (1 << 0)
 
-/me rummages around the SDM
+All these are not really bindings IDs either. This all should be 0, 1, 2
+etc. Do not treat hardware numbers as bindings, because it is not needed
+and it does not bring any benefits.
 
-Ahh, because there are Any Thread bits in there.  That absolutely needs to be
-called out, probably in the interception logic in pmu_intel.c.  I'll add a comment.
+
+Best regards,
+Krzysztof
 
