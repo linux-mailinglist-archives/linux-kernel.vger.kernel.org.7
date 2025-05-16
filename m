@@ -1,125 +1,133 @@
-Return-Path: <linux-kernel+bounces-651078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-651081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 040FFAB99C7
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 12:10:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2BCCAB99CC
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 12:12:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 93B074E62D4
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 10:10:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C463B3BF40A
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 10:11:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6A3A232395;
-	Fri, 16 May 2025 10:10:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Uhny24M/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5325B235076;
+	Fri, 16 May 2025 10:11:24 +0000 (UTC)
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 244278F58
-	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 10:10:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 112FA233159;
+	Fri, 16 May 2025 10:11:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747390249; cv=none; b=mKIFt1S1Q8WIatdrXF/rTUj8NCyYF9MAjPe+VqLpRJgW7iUcjXvKkwG8Eb4Pe3q7ZE7YNAU/DOild7W0Yrw0HtmyZ67AlycXbNiDbhC85A4mYxmAPQD7umCUh+p1w2fiIrYXaeTXf/m5vumMrd6Ka5sH+lraI+AfYr8tQ0ag8z4=
+	t=1747390284; cv=none; b=ip7F9i0heTFwra0JzzbbkpXEHupPid/4CRJPIjdQMaqtjJokn/BxjWwOgbtWPZv0DdqADt2kDk6Jo+45R4xkGJ/GhZkhIhhyExHkp5XcC5NE0wK91bBMapSB3AbcbFinET2TTLpRsm+svi5stsGNyNXYunm+HI7Hw8UJF2sjILs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747390249; c=relaxed/simple;
-	bh=nJMnMk864bD0yjxvNLVC5z9JnUPyx+NfeeAg3CAITUU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N/wgJkbRa263GpUegT4Zr63HdCAXyAAiiG4X1hj1c9lTqvV+ZVuMbujdeXB5D5gGwUsvtHvL7r2npEixyHXPi4vSJyPx8ee6iJu4JKH2GbGa7am28o9CJclWTnIyl2lpFI3XtC3ZCYyj7D90FVKQiliL+S0bQbBCyhsG7kt9bc4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Uhny24M/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 718C4C4CEE4;
-	Fri, 16 May 2025 10:10:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747390248;
-	bh=nJMnMk864bD0yjxvNLVC5z9JnUPyx+NfeeAg3CAITUU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Uhny24M/hraIhlTWniNLaGqBksLnOLG9/E8mftFMioFIReKD6VIcq8NbuEErbZlgR
-	 XGb77Exg3Dg+jXzyuc0IFJrr2y8MQh44Ct+QvDbpVKadJMo+GXJac5rdyp0WMd35p1
-	 6dc12fNI+zEEuIgIDOen4ev67dv1l1SpuRniHjtAELOzfbOP3w3z0qreEtFiqJ5Abw
-	 mddI58Raui5aPsWwTsA1VqB7E8e5d3jWpiisVH+lw+iUP7s4pYcT3/Wpl7qBXNY1Zn
-	 mhMy5sCvhWg9MS/4c1wM0xxOMAAwE6QrDADIW2zsD/MRAxXaOZWNZl7uleWGC9d4Rf
-	 YuluXlK8Wi69g==
-Date: Fri, 16 May 2025 13:10:39 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Donet Tom <donettom@linux.ibm.com>
-Cc: David Hildenbrand <david@redhat.com>,
+	s=arc-20240116; t=1747390284; c=relaxed/simple;
+	bh=aaTOj7kfhFSOVIoJP8tXQ3B2wT5QtcvJnD+E2EI11lw=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=JAlY2PYXcKMEuTGJibYlbyCZVDmUVMO5oy8/kuv+TcmI8aF1xlXuPXsA3tvSTE3And4i9rz/I+812AUA1birqwO8b9r+lLkqnnDP62m6H9e5OVt83Vp9TaaJJ4ITHRUfaQMr9RXro758U8b761wXU8b6Zzpm7zw7Zus6xOiCaeg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=pankajraghav.com; arc=none smtp.client-ip=80.241.56.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4ZzNC35VRsz9stK;
+	Fri, 16 May 2025 12:11:11 +0200 (CEST)
+From: Pankaj Raghav <p.raghav@samsung.com>
+To: "Darrick J . Wong" <djwong@kernel.org>,
+	hch@lst.de,
+	willy@infradead.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	David Hildenbrand <david@redhat.com>,
+	linux-fsdevel@vger.kernel.org,
+	mcgrof@kernel.org,
+	gost.dev@samsung.com,
 	Andrew Morton <akpm@linux-foundation.org>,
-	Oscar Salvador <osalvador@suse.de>, Zi Yan <ziy@nvidia.com>,
-	Ritesh Harjani <ritesh.list@gmail.com>, rafael@kernel.org,
-	Danilo Krummrich <dakr@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Yury Norov <yury.norov@gmail.com>,
-	Dave Jiang <dave.jiang@intel.com>
-Subject: Re: [PATCH v4 3/4] Remove register_memory_blocks_under_node()
- function call from register_one_node
-Message-ID: <aCcPHwjaWxhHr4Nh@kernel.org>
-References: <f94685be9cdc931a026999d236d7e92de29725c7.1747376551.git.donettom@linux.ibm.com>
- <e0ef6ae9348f46bcc135f0e6cb7663d763e40b72.1747376551.git.donettom@linux.ibm.com>
+	kernel@pankajraghav.com,
+	Pankaj Raghav <p.raghav@samsung.com>
+Subject: [RFC 0/3] add large zero page for zeroing out larger segments
+Date: Fri, 16 May 2025 12:10:51 +0200
+Message-ID: <20250516101054.676046-1-p.raghav@samsung.com>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <e0ef6ae9348f46bcc135f0e6cb7663d763e40b72.1747376551.git.donettom@linux.ibm.com>
+X-Rspamd-Queue-Id: 4ZzNC35VRsz9stK
 
-On Fri, May 16, 2025 at 03:19:53AM -0500, Donet Tom wrote:
-> register_one_node() is now only called via cpu_up() → __try_online_node()
-> during CPU hotplug operations to online a node. At this stage, the node has
-> not yet had any memory added. As a result, there are no memory blocks to
-> walk or register, so calling register_memory_blocks_under_node() is
-> unnecessary. Therefore, the call to register_memory_blocks_under_node()
-> has been removed from register_one_node().
-> 
-> Signed-off-by: Donet Tom <donettom@linux.ibm.com>
+Introduce LARGE_ZERO_PAGE of size 2M as an alternative to ZERO_PAGE.
+Similar to ZERO_PAGE, LARGE_ZERO_PAGE is also a global shared page.
+2M seems to be a decent compromise between memory usage and performance.
 
-Acked-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+This idea (but not the implementation) was suggested during the review of
+adding LBS support to XFS[1][2].
 
-> ---
-> v3->v4
-> 
-> Addressed Mike's comment by dropping the call to
-> register_memory_blocks_under_node() from register_one_node()
-> 
-> v3 - https://lore.kernel.org/all/b49ed289096643ff5b5fbedcf1d1c1be42845a74.1746250339.git.donettom@linux.ibm.com/
-> v2 - https://lore.kernel.org/all/fbe1e0c7d91bf3fa9a64ff5d84b53ded1d0d5ac7.1745852397.git.donettom@linux.ibm.com/
-> v1 - https://lore.kernel.org/all/50142a29010463f436dc5c4feb540e5de3bb09df.1744175097.git.donettom@linux.ibm.com/
-> ---
->  include/linux/node.h | 6 ------
->  1 file changed, 6 deletions(-)
-> 
-> diff --git a/include/linux/node.h b/include/linux/node.h
-> index 806e62638cbe..8b8f96ca5b06 100644
-> --- a/include/linux/node.h
-> +++ b/include/linux/node.h
-> @@ -137,15 +137,9 @@ static inline int register_one_node(int nid)
->  	int error = 0;
->  
->  	if (node_online(nid)) {
-> -		struct pglist_data *pgdat = NODE_DATA(nid);
-> -		unsigned long start_pfn = pgdat->node_start_pfn;
-> -		unsigned long end_pfn = start_pfn + pgdat->node_spanned_pages;
-> -
->  		error = __register_one_node(nid);
->  		if (error)
->  			return error;
-> -		register_memory_blocks_under_node(nid, start_pfn, end_pfn,
-> -						  MEMINIT_EARLY);
->  	}
->  
->  	return error;
-> -- 
-> 2.43.5
-> 
+NOTE:
+===
+This implementation probably has a lot of holes, and it is not complete.
+For example, this implementation only works on x86.
 
+The intent of the RFC is:
+- To understand if this is something we still need in the kernel.
+- If this is the approach we want to take to implement a feature like
+  this or should we explore other alternatives.
+
+I have excluded a lot of Maintainers/mailing list and only included relevant
+folks in this RFC to understand the direction we want to take if this
+feature is needed.
+===
+
+There are many places in the kernel where we need to zeroout larger
+chunks but the maximum segment we can zeroout at a time is limited by
+PAGE_SIZE.
+
+This is especially annoying in block devices and filesystems where we
+attach multiple ZERO_PAGEs to the bio in different bvecs. With multipage
+bvec support in block layer, it is much more efficient to send out
+larger zero pages as a part of a single bvec.
+
+Some examples of places in the kernel where this could be useful:
+- blkdev_issue_zero_pages()
+- iomap_dio_zero()
+- vmalloc.c:zero_iter()
+- rxperf_process_call()
+- fscrypt_zeroout_range_inline_crypt()
+- bch2_checksum_update()
+...
+
+I have converted blkdev_issue_zero_pages() and iomap_dio_zero() as an
+example as a part of this series.
+
+While there are other options such as huge_zero_page, they can fail
+based on the system conditions requiring a fallback to ZERO_PAGE[3].
+
+LARGE_ZERO_PAGE is added behind a config option so that systems that are
+constrained by memory are not forced to use it.
+
+Looking forward to some feedback.
+
+[1] https://lore.kernel.org/linux-xfs/20231027051847.GA7885@lst.de/
+[2] https://lore.kernel.org/linux-xfs/ZitIK5OnR7ZNY0IG@infradead.org/
+
+Pankaj Raghav (3):
+  mm: add large zero page for efficient zeroing of larger segments
+  block: use LARGE_ZERO_PAGE in __blkdev_issue_zero_pages()
+  iomap: use LARGE_ZERO_PAGE in iomap_dio_zero()
+
+ arch/Kconfig                   |  8 ++++++++
+ arch/x86/include/asm/pgtable.h | 20 +++++++++++++++++++-
+ arch/x86/kernel/head_64.S      |  9 ++++++++-
+ block/blk-lib.c                |  4 ++--
+ fs/iomap/direct-io.c           | 31 +++++++++----------------------
+ 5 files changed, 46 insertions(+), 26 deletions(-)
+
+
+base-commit: 9e619cd4fefd19cdce16e169d5827bc64ae01aa1
 -- 
-Sincerely yours,
-Mike.
+2.47.2
+
 
