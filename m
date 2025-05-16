@@ -1,119 +1,231 @@
-Return-Path: <linux-kernel+bounces-650979-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-650981-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD634AB9883
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 11:17:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE183AB9886
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 11:18:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E9ADA02AF3
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 09:16:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D5B11BC5DFD
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 09:17:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E16522FE0F;
-	Fri, 16 May 2025 09:16:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iqw4uHgr"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23B65218ADE;
-	Fri, 16 May 2025 09:16:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2173F224AEB;
+	Fri, 16 May 2025 09:17:22 +0000 (UTC)
+Received: from azure-sdnproxy.icoremail.net (l-sdnproxy.icoremail.net [20.188.111.126])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8D3722CBC9;
+	Fri, 16 May 2025 09:17:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=20.188.111.126
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747387012; cv=none; b=uHoF+1t32AiP0NpcoLT7SBNNFQkTKnk2iDt2vscL6CSkFZmmUAoSu67U5fYZoCyfAuPMqgs25ya04wNuvVBqeH/KRPxJXdtQ5qE0wdS4VLjz1PJ6W+Cgl7Y2I0CCD/CMR4EGmw6BJi/e6Nyx3WDjNExhQ+87rzYxmD3QufVu3m0=
+	t=1747387041; cv=none; b=U7tnjCNgtOrp60Qu+hPJC4U2j59q5qBJ2G2c6pSadz14vc/UtIXzd1KmlgZGIqFG2nsC3mJ/H7J1ruPPmcyZBONUW/tDO/8+mL6X8/ZXEli2mcEGlinsDClig+NfHa3Ij8X07r2hGbDCmE8XVdJ5xVHfEgJAZ8sz+h3vNi8xa60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747387012; c=relaxed/simple;
-	bh=5bNokGWiUlhbfBOBRggN7GhZMFpZiGHRUlzivFTfzAc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ubdccjCpjs/dxtd0W+PO1WvSNbDFTFQt5DERCODznQP6p/6Lk7hjZ6zkztVcGMupY3XScEzuyBAlFipJ8I5tb/e090GYB/cUSLuvR8VtsiLm01WQpGua2w6KFqqsltiELNGY22rXC5ZlA5HgktWRSmtG1+LyR/GeAzHO4qiYxcE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iqw4uHgr; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1747387011; x=1778923011;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=5bNokGWiUlhbfBOBRggN7GhZMFpZiGHRUlzivFTfzAc=;
-  b=iqw4uHgrgco3f9XlG3GVPTsYEAnEYHNLhv3obUgj9t3eG2KKYINEEqSl
-   JRBKWqIHiFRIPdE8trmtIszviJGWjl1rG67TrEa2APftsm8HgpzprrQ/v
-   T2i/Aqr2Gj3WGowRPUQEffx9E+G4DC/7Dpj/TNZmIe6dZfCK64vPIR1bh
-   iGqRp4yx8fBMp0zsP9vnhum9gk9BSqkf2IrOzDWJj6zQNyVeNqW0W2dht
-   MJ8I1py3Hrao989DJp24BbeWtHxq6Z755NaMUnuJH09ohwwesvfiPEgeO
-   1RpJYGwkxq2b/tJEWqNCZxMFi3OlnWuEY+/KnEOfvnPFozVO5+1wMi0Nh
-   A==;
-X-CSE-ConnectionGUID: 82IoawnFQJ+OvOILY+OvlA==
-X-CSE-MsgGUID: 2zq0xG+ZQau8MoqZGbWefA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11434"; a="60690653"
-X-IronPort-AV: E=Sophos;i="6.15,293,1739865600"; 
-   d="scan'208";a="60690653"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 May 2025 02:16:51 -0700
-X-CSE-ConnectionGUID: JzZeaai2Rz6LkmatA+ChmQ==
-X-CSE-MsgGUID: n3qolihySfSuUaicXBZnsA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,293,1739865600"; 
-   d="scan'208";a="161947142"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 May 2025 02:16:48 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1uFrBN-000000025vO-1Kab;
-	Fri, 16 May 2025 12:16:45 +0300
-Date: Fri, 16 May 2025 12:16:45 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: phasta@kernel.org
-Cc: Jonathan Corbet <corbet@lwn.net>, Bjorn Helgaas <bhelgaas@google.com>,
-	Mark Brown <broonie@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Zijun Hu <quic_zijuhu@quicinc.com>,
-	Yang Yingliang <yangyingliang@huawei.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org
-Subject: Re: [PATCH 6/7] PCI: Remove unnecessary prototype from pci.h
-Message-ID: <aCcCfeRqqOqWKG63@smile.fi.intel.com>
-References: <20250515124604.184313-2-phasta@kernel.org>
- <20250515124604.184313-8-phasta@kernel.org>
- <aCXl-U5Dsv3hdCWa@smile.fi.intel.com>
- <3f1140397e628cfdf4156f02f5454f844003dc6d.camel@mailbox.org>
+	s=arc-20240116; t=1747387041; c=relaxed/simple;
+	bh=xJfQfSHH/0PyHDRDTuD+QGC9oCH7IyYYHmP0zFExXzg=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=PGqgEbVlZyYcBlQQt2zfH1UvDWOPge6djZ7OUt1g/YpML8OBI+Qhu7hcCuMAnpgxrsTVhz33sL7U2Wr+6wonQFgQtjmVb1tI2+yzI7fRNAJmXUWOHXAQRrlK6qoWShNBGzqZJkEv//H2xb4aE9E77oKuKAPH7O7VEqXVqetUwbA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=20.188.111.126
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
+Received: from E0005152DT.eswin.cn (unknown [10.12.96.41])
+	by app2 (Coremail) with SMTP id TQJkCgAXqZKEAidohNF8AA--.49748S2;
+	Fri, 16 May 2025 17:16:54 +0800 (CST)
+From: dongxuyang@eswincomputing.com
+To: ulf.hansson@linaro.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	linux-mmc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	adrian.hunter@intel.com,
+	p.zabel@pengutronix.de,
+	shanchun1218@gmail.com
+Cc: ningyu@eswincomputing.com,
+	linmin@eswincomputing.com,
+	xuxiang@eswincomputing.com,
+	Xuyang Dong <dongxuyang@eswincomputing.com>
+Subject: [PATCH v1 1/2] dt-bindings: sdhci: eswin: Documentation for eic7700 SoC
+Date: Fri, 16 May 2025 17:16:50 +0800
+Message-Id: <20250516091650.832-1-dongxuyang@eswincomputing.com>
+X-Mailer: git-send-email 2.31.1.windows.1
+In-Reply-To: <20250516091259.774-1-dongxuyang@eswincomputing.com>
+References: <20250516091259.774-1-dongxuyang@eswincomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3f1140397e628cfdf4156f02f5454f844003dc6d.camel@mailbox.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:TQJkCgAXqZKEAidohNF8AA--.49748S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxAF1UKFWfJF48Kr17Gw17Wrg_yoWrWFyDpF
+	4xGw1UAr1fXF1fua1rKw10kF1agan8GF1IyrnrXw1Yy3WYgFy0qw1ayFy5Ga4UAr1xZay3
+	XFyY934xAa17AF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBv14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lw4CEc2x0rVAKj4xxMxkF7I0En4kS14v26r1q6r43MxkIecxEwVCm-wCF04
+	k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18
+	MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr4
+	1lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1l
+	IxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4
+	A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUXJ5wUUUUU=
+X-CM-SenderInfo: pgrqw5xx1d0w46hv4xpqfrz1xxwl0woofrz/
 
-On Thu, May 15, 2025 at 03:37:06PM +0200, Philipp Stanner wrote:
-> On Thu, 2025-05-15 at 16:02 +0300, Andy Shevchenko wrote:
-> > On Thu, May 15, 2025 at 02:46:04PM +0200, Philipp Stanner wrote:
-> > > pcim_intx() once was an internal PCI function, but since then has
-> > > been
-> > > published and is used by drivers, and, therefore, available in
-> > > include/linux/pci.h. The function is not used within PCI anymore.
-> > > 
-> > > Remove pcim_intx()'s prototype from drivers/pci/pci.h
-> > 
-> > Can this be moved up in the series? Or is there other dependencies?
-> > I.o.w. this
-> > looks like a leftover from something of the previous work.
-> 
-> That can be moved to anywhere, including a separate patch. It's an
-> independent patch, a leftover from last year. But it's related to
-> devres, because it was also added because of the problem with
-> pcim_enable_device().
+From: Xuyang Dong <dongxuyang@eswincomputing.com>
 
-When put at the end of the series it makes an illusion that there are
-dependencies. Separate patch is ideal, being first is good enough to me.
+Add device tree binding documentation for the ESWIN
+eic7700 sdhci controller module.
 
+Signed-off-by: Xiang Xu <xuxiang@eswincomputing.com>
+Signed-off-by: Xuyang Dong <dongxuyang@eswincomputing.com>
+---
+ .../bindings/mmc/eswin,sdhci-eic7700.yaml     | 131 ++++++++++++++++++
+ 1 file changed, 131 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mmc/eswin,sdhci-eic7700.yaml
+
+diff --git a/Documentation/devicetree/bindings/mmc/eswin,sdhci-eic7700.yaml b/Documentation/devicetree/bindings/mmc/eswin,sdhci-eic7700.yaml
+new file mode 100644
+index 000000000000..d4826f2aa619
+--- /dev/null
++++ b/Documentation/devicetree/bindings/mmc/eswin,sdhci-eic7700.yaml
+@@ -0,0 +1,131 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/mmc/eswin,sdhci-eic7700.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: ESWIN EIC7700 SoC SDHCI controller
++
++maintainers:
++  - Shuang Liang <liangshuang@eswincomputing.com>
++  - Xuyang Dong <dongxuyang@eswincomputing.com>
++
++allOf:
++  - $ref: /schemas/mmc/mmc-controller.yaml#
++
++properties:
++  compatible:
++    const: eswin,eic7700-emmc-sdhci
++
++  reg:
++    maxItems: 1
++    description: Common configuration registers
++  "#address-cells":
++    const: 1
++  "#size-cells":
++    const: 1
++
++  interrupts:
++    maxItems: 1
++
++  assigned-clocks:
++    maxItems: 1
++    description: should contain "core_clk" phandle + clock-specifier pairs.
++
++  assigned-clock-rates:
++    maxItems: 1
++
++  clocks:
++    minItems: 2
++    description: handles to clock for the sdhci controller.
++
++  clock-names:
++    minItems: 2
++    description: the name of each clock.
++
++  clock-output-names:
++    maxItems: 1
++
++  '#clock-cells':
++    enum: [0]
++    description:
++      With this property in place we will export one clock
++      representing the Card Clock. These clocks are expected to be
++      consumed by our PHY.
++
++  resets:
++    description: resets to be used by the controller.
++
++  reset-names:
++    description: names of the resets listed in resets property in the same order.
++
++  bus-width:
++    enum: [4, 8]
++    description: for emmc bus-width is 8, for sdio bus-width is 4.
++
++  eswin,hsp_sp_csr:
++    $ref: /schemas/types.yaml#/definitions/phandle-array
++    description: hsp_sp_csr regs to be used by the controller.
++    items:
++      - description: phandle to HSP_SP_CSR register block
++      - description: status register offset
++      - description: control register offset
++      - description: configuration register offset
++
++  eswin,syscrg_csr:
++    $ref: /schemas/types.yaml#/definitions/phandle-array
++    description: syscrg_csr regs to be used by the controller.
++    items:
++      - description: phandle to SYS_CRG_CSR register block
++      - description: status register offset
++      - description: control register offset
++      - description: configuration register offset
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - assigned-clocks
++  - assigned-clock-rates
++  - clocks
++  - clock-names
++  - clock-output-names
++  - resets
++  - reset-names
++  - bus-width
++  - eswin,hsp_sp_csr
++  - eswin,syscrg_csr
++
++unevaluatedProperties: false
++
++examples:
++  - |
++
++    sdhci_emmc: mmc@50450000 {
++      compatible = "eswin,eic7700-emmc-sdhci";
++      reg = <0x50450000 0x10000>;
++      interrupt-parent = <&plic>;
++      interrupts = <79>;
++      clocks = <&clock 554>, <&clock 546>;
++      clock-names = "clk_xin", "clk_ahb";
++      assigned-clocks = <&clock 554>;
++      assigned-clock-rates = <200000000>;
++      clock-output-names = "emmc_cardclock";
++      #clock-cells = <0>;
++
++      resets = <&reset 7 (1 << 6)>,
++        <&reset 7 (1 << 3)>,
++        <&reset 7 (1 << 19)>,
++        <&reset 7 (1 << 23)>;
++      reset-names = "txrx_rst", "phy_rst", "prstn", "arstn";
++
++      core-clk-reg = <0x51828160>;
++      disable-cqe-dcmd;
++      bus-width = <8>;
++      non-removable;
++      mmc-hs400-1_8v;
++      max-frequency = <200000000>;
++      eswin,hsp_sp_csr = <&hsp_sp_csr 0x1038 0x508 0x50c>;
++      eswin,syscrg_csr = <&sys_crg 0x160 0x148 0x14c>;
++      status = "disabled";
++    };
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.17.1
 
 
