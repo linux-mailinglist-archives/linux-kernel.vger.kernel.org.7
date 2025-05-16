@@ -1,111 +1,166 @@
-Return-Path: <linux-kernel+bounces-652084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-652079-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2582ABA6D9
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 May 2025 02:01:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9287ABA6C2
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 May 2025 01:55:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC985A23B8B
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 May 2025 00:00:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20EAF4A7FC9
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 23:55:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 009DF34CDD;
-	Sat, 17 May 2025 00:00:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aOOwxmqm"
-Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com [209.85.217.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51A5E281359;
+	Fri, 16 May 2025 23:55:05 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF46E3C26;
-	Sat, 17 May 2025 00:00:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E71ED231856;
+	Fri, 16 May 2025 23:55:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747440055; cv=none; b=Y11YqMEEse7zDpc47q9PRxbDG8p/cmSaSgGqdCgCG3g0nj6O0vW6rSOJZYEjoR0aD9ltonbjLY4Q0SZS0i/mRAR+kJpaAx0gAp62FLn0S13q8ADVybErtfCrNe9SnCndoFwsEboMp+O60CB/9uRCAMZtZ8rROgWlyWA8b/P7YY4=
+	t=1747439705; cv=none; b=DQIcXEGkahqz+U7VSY+GidFD/Jr4N2cI0yOfX1EdqR7FS0CyOFldImGRa4sO6HybYD6m0ZD4a4o6KbuHe0INtEig0sTNRwzOR6P5sf4gyijxPVabzGt+VlpiaMn5BKAcgQjHYIQQILJwUdTWPFhPdUAT49//lziS70S68pNXbuA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747440055; c=relaxed/simple;
-	bh=KjcJjtelOwQL5UBmL+8NLtma/yUYClrcyHGdIfTMHF0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UE8V2TH7vRRMJnBcwuCDQ1yUmqrwo1SzxwrBUCc9pl4EH+Rx+oix4dBPipSzaerA+LXi/MYJGA8Fek1xO8WDur3D1Y7DeZ0YlNspRsDIcnbWo9JFsQ+UwIfGW0OYdL4jO4tIcxlwUh/x8/Dq/DiOXpXtkykBbOlQD9xms0jEkok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aOOwxmqm; arc=none smtp.client-ip=209.85.217.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f43.google.com with SMTP id ada2fe7eead31-4dfa0f6127dso710852137.1;
-        Fri, 16 May 2025 17:00:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747440053; x=1748044853; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=X8AywrBQhhtb4QmqPICmPCLx2PfD8ufTv2fjGFxU3B8=;
-        b=aOOwxmqmWb71ZyZt2iA+v4RKKp1q1PnD0RRFWnghtHFvLXhqwb1ZkQeeNXq2hz3B90
-         yl2++Y1CsbZNgU36KRjetf7Rhecr51tMbu1EhA0Vi1Re7TJz+wXct/vjP8bFU+UYJzb3
-         bWF4ySNtNanC5XFkilA5w2FUj8O1F8cDUw9dKXPmMLKkATFkiSTeIjHIzecWWaFQ38zP
-         G4VhoaaEJFRxL26ev2Jgd5lBf9e9Vzdjv5e8k/cTL4o8qL7w6xKbPkPzeXy7Rohm8+zJ
-         3pliLBjQFF4Ipnh3oA03utToweDGRareVl1vdc8RAaexdO66eqwWrertkK06r47qHkVk
-         dKdw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747440053; x=1748044853;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=X8AywrBQhhtb4QmqPICmPCLx2PfD8ufTv2fjGFxU3B8=;
-        b=eGkTpteRqRnuU9epPd3JefdnMsf8jfIV/3fDi0ZZbi+VG2t5iVoIwGTogaRP+me5Ou
-         0aHr3/JAteoxp0OsvjT5PpkTqibZA4ngn4eECnMeHoMJLiY08E/dDp0CaEnw+kAxeskZ
-         ZkcHsD47Pwpxc0F65HAMPNPmzkECPrfgAYyivs1q7IlKJfNjqOiiip7Y1H14TW6Lq56b
-         XolokFJDEBpcFrc4U6s5pfX+7Be0cdOOwOKtSywM7uRC0pXJBuBSoj0zoappPt/b/e9R
-         o87l0taKMhnxVNPZhYosap9iN4gBJbtxc7//qiD5QRrxMrbdLNwMi9+EUF6OYcjg5oZi
-         N8Xw==
-X-Forwarded-Encrypted: i=1; AJvYcCVQpyy2azombIu7DVX/yn4gTEgRxmU1ZwFZVsNmik89AGYqbviBw7lt93P/sW3eS2NNL2OeF53dp3wyrsk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwO78FI6stPe5Qc7slLzc3hvvN0KSfHuNez5F40y+o8VUhD+vfe
-	L1wc07HBkb0eFGMA90lFM+0zik6dHEsXL2MSChocuHQeRRmw5h0Q9Oku
-X-Gm-Gg: ASbGncuW1CynI74gv4kX8iMxHie5u5cZck4jYbxffSlqO9gMIWvIIhBy1VXXoU0tmIQ
-	8BX+jlnONupXauC9Nxb+WQ6/k/0v0YzJGoWWyq17ZPVUaEUDUo67wU1a9ulrZWxfqySa9hw5V/E
-	gdjrNtTDTCxHlVx0p9pB4pTEsprQ/tjv9UzgiEuJRXWcDHi+ZRm/ixEsB6W7uN5Io/sTmj9vycV
-	y1umby2frDQ9yiUwLUOnhqOfvCRfd+oXzKpK6jBM7cpMfJOmvTsi5bRiybmPT+AQ1fi0eFx5tf+
-	d8pjvFQqWs1uvlCikM6caOC4/8cJwXwoyl+cvjy8iOKdD3Gl0UnjOjsw44J7kl+Fe5vkesLBblz
-	AEV0pRdH4UIvRlFgxvIocZg6U79Av
-X-Google-Smtp-Source: AGHT+IHY2CrtzFGHfrsgfnT+H0O5Zg/eWuENBU6A4XIJwZGfHVtLF0WJqip8G5UINcll73oHJ2mVBg==
-X-Received: by 2002:a05:6102:508a:b0:4de:1ab2:ac67 with SMTP id ada2fe7eead31-4e049d329cbmr5464348137.2.1747440052548;
-        Fri, 16 May 2025 17:00:52 -0700 (PDT)
-Received: from Ubuntu.. (syn-097-097-020-058.res.spectrum.com. [97.97.20.58])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4dfa687ed41sm2659765137.25.2025.05.16.17.00.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 May 2025 17:00:52 -0700 (PDT)
-From: Jonathan Velez <jonvelez12345@gmail.com>
-To: Thinh.Nguyen@synopsys.com,
-	gregkh@linuxfoundation.org
-Cc: linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Jonathan Velez <jonvelez12345@gmail.com>
-Subject: [PATCH] docs: usb: dwc3: add documentation of 'sg' field in dwc3_request struct
-Date: Fri, 16 May 2025 23:54:47 +0000
-Message-ID: <20250516235447.17466-1-jonvelez12345@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1747439705; c=relaxed/simple;
+	bh=CfqjHVwYMYg0l/h6PF8KpBfyUMOE57166y6yYuTN2a8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=V8IljFLVgItpe9UfaPQbXOll3PrvUqhN0cITOQnvN5qc+OllrNHImuRaKd9fDd2AeZfZAAy3oCV23u98VmJ2x9cT2H3vcQV8+4YosWXgnJV/CO3hN21lR4fOJkFJE8wxQJeVNwyXiqEv+FcClncJydhvAkmQ5h9f7nzhGH2ANm4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4ZzkT53QB4z4f3jd5;
+	Sat, 17 May 2025 07:54:33 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 5983D1A1382;
+	Sat, 17 May 2025 07:54:58 +0800 (CST)
+Received: from [10.174.176.88] (unknown [10.174.176.88])
+	by APP4 (Coremail) with SMTP id gCh0CgAHa19P0CdoeQWHMg--.3231S3;
+	Sat, 17 May 2025 07:54:58 +0800 (CST)
+Message-ID: <b3d6db6f-61d8-498a-b90c-0716a64f7528@huaweicloud.com>
+Date: Sat, 17 May 2025 07:54:55 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] fs: Rename the parameter of mnt_get_write_access()
+To: Jan Kara <jack@suse.cz>
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ yangerkun@huawei.com
+References: <20250516032147.3350598-1-wozizhi@huaweicloud.com>
+ <vtfnncganindq4q7t4icfaujkgejlbd7repvurpjx6nwf6i7zp@hr44m22ij4qf>
+From: Zizhi Wo <wozizhi@huaweicloud.com>
+In-Reply-To: <vtfnncganindq4q7t4icfaujkgejlbd7repvurpjx6nwf6i7zp@hr44m22ij4qf>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgAHa19P0CdoeQWHMg--.3231S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxXFy8tw43Cr17JF18Xr4Utwb_yoW5Aw4kpr
+	WSgFy8Ka1xJry29rnFya9xCa4fW3ykKrZrK34rWw1avrZ8Zr1Sga4vgr4S9F1kAr9rA34x
+	uF40y3s3ur1ayrDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUymb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij64vI
+	r41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8Gjc
+	xK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0
+	cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8V
+	AvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E
+	14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07UK2NtUUUUU=
+X-CM-SenderInfo: pzr2x6tkl6x35dzhxuhorxvhhfrp/
 
-Signed-off-by: Jonathan Velez <jonvelez12345@gmail.com>
----
- drivers/usb/dwc3/core.h | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/usb/dwc3/core.h b/drivers/usb/dwc3/core.h
-index f11570c8ffd0..bb140dde07d6 100644
---- a/drivers/usb/dwc3/core.h
-+++ b/drivers/usb/dwc3/core.h
-@@ -942,6 +942,7 @@ struct dwc3_hwparams {
-  * @request: struct usb_request to be transferred
-  * @list: a list_head used for request queueing
-  * @dep: struct dwc3_ep owning this request
-+ * @sg: pointer to the scatter-gather list for transfers
-  * @start_sg: pointer to the sg which should be queued next
-  * @num_pending_sgs: counter to pending sgs
-  * @remaining: amount of data remaining
--- 
-2.43.0
+
+在 2025/5/16 18:31, Jan Kara 写道:
+> On Fri 16-05-25 11:21:47, Zizhi Wo wrote:
+>> From: Zizhi Wo <wozizhi@huawei.com>
+>>
+>> Rename the parameter in mnt_get_write_access() from "m" to "mnt" for
+>> consistency between declaration and implementation.
+>>
+>> Signed-off-by: Zizhi Wo <wozizhi@huawei.com>
+> 
+> I'm sorry but this is just a pointless churn. I agree the declaration and
+> implementation should better be consistent (although in this particular
+> case it isn't too worrying) but it's much easier (and with much lower
+> chance to cause conflicts) to just fixup the declaration.
+> 
+> 								Honza
+
+Yes, I had considered simply fixing the declaration earlier. However, in
+the include/linux/mount.h file, similar functions like
+"mnt_put_write_access" use "mnt" as the parameter name rather than "m",
+just like "mnt_get_write_access". So I chose to modify the function
+implementation directly, although this resulted in a larger amount of
+changes. So as you can see, for simplicity, I will directly update the
+parameter name in the function declaration in the second version.
+
+Thanks,
+Zizhi Wo
+
+> 
+>> ---
+>>   fs/namespace.c | 14 +++++++-------
+>>   1 file changed, 7 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/fs/namespace.c b/fs/namespace.c
+>> index 1b466c54a357..b1b679433ab3 100644
+>> --- a/fs/namespace.c
+>> +++ b/fs/namespace.c
+>> @@ -483,7 +483,7 @@ static int mnt_is_readonly(struct vfsmount *mnt)
+>>    */
+>>   /**
+>>    * mnt_get_write_access - get write access to a mount without freeze protection
+>> - * @m: the mount on which to take a write
+>> + * @mnt: the mount on which to take a write
+>>    *
+>>    * This tells the low-level filesystem that a write is about to be performed to
+>>    * it, and makes sure that writes are allowed (mnt it read-write) before
+>> @@ -491,13 +491,13 @@ static int mnt_is_readonly(struct vfsmount *mnt)
+>>    * frozen. When the write operation is finished, mnt_put_write_access() must be
+>>    * called. This is effectively a refcount.
+>>    */
+>> -int mnt_get_write_access(struct vfsmount *m)
+>> +int mnt_get_write_access(struct vfsmount *mnt)
+>>   {
+>> -	struct mount *mnt = real_mount(m);
+>> +	struct mount *m = real_mount(mnt);
+>>   	int ret = 0;
+>>   
+>>   	preempt_disable();
+>> -	mnt_inc_writers(mnt);
+>> +	mnt_inc_writers(m);
+>>   	/*
+>>   	 * The store to mnt_inc_writers must be visible before we pass
+>>   	 * MNT_WRITE_HOLD loop below, so that the slowpath can see our
+>> @@ -505,7 +505,7 @@ int mnt_get_write_access(struct vfsmount *m)
+>>   	 */
+>>   	smp_mb();
+>>   	might_lock(&mount_lock.lock);
+>> -	while (READ_ONCE(mnt->mnt.mnt_flags) & MNT_WRITE_HOLD) {
+>> +	while (READ_ONCE(m->mnt.mnt_flags) & MNT_WRITE_HOLD) {
+>>   		if (!IS_ENABLED(CONFIG_PREEMPT_RT)) {
+>>   			cpu_relax();
+>>   		} else {
+>> @@ -530,8 +530,8 @@ int mnt_get_write_access(struct vfsmount *m)
+>>   	 * read-only.
+>>   	 */
+>>   	smp_rmb();
+>> -	if (mnt_is_readonly(m)) {
+>> -		mnt_dec_writers(mnt);
+>> +	if (mnt_is_readonly(mnt)) {
+>> +		mnt_dec_writers(m);
+>>   		ret = -EROFS;
+>>   	}
+>>   	preempt_enable();
+>> -- 
+>> 2.39.2
+>>
 
 
