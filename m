@@ -1,88 +1,89 @@
-Return-Path: <linux-kernel+bounces-651119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-651117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D39D2AB9A3D
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 12:33:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81A8CAB9A37
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 12:32:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ACE01A03D75
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 10:32:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FAF15003DF
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 10:32:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F4B423507A;
-	Fri, 16 May 2025 10:32:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CD7923373B;
+	Fri, 16 May 2025 10:32:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="aZj9L9I7"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="mg7J3dFb"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1507323373B
-	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 10:32:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C7D82253FD
+	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 10:32:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747391556; cv=none; b=G4pTyX451YGFpydsWUfSflvdcsbZRip9wfJ192y/7Ua5xM96A2ZBsLhsRrkkp62yjf/BlSjMqPVEw6fJEkIyiDl7h4wHrwVs9t3Yuxlv+nUANvN5DqqFLutft6a8pC15qVT3VHDaJNiNgSIgnMOWV15tmRnny3A4/ci6s6FYKlE=
+	t=1747391546; cv=none; b=EI2CWYWj5pzboTwnU3mL2JoQQJqIaETdELou+6Ne9u/s21xQBldrfxjAjYL9FcmIjLpKB7aYsjlG/tWNHqwFY+U/wsr8olXIerVJC7lu+J8UA8wEkXgcR7aBNC+cyRwwGI5uz3pa7m5xNVyM87hUAZuogoEFJ5tkQdcpXErzXfQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747391556; c=relaxed/simple;
-	bh=a8ch7gicVeQYk0s0g17/TSxDaoXIRs7pIpXTym2VefE=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=oCoVC1/nsoFc5wCukwDljwsqQoa3FJh3hhWTU5Tj8pdgRB5kSJaODTzAPM6Dz1otoaKxa9O4GRqpGIwGIjg8g86Ic7Tsp//0HP+/mfyS2lx2yYyRfXXjVHPXUbawXtRBP98H/9DmXMIzn4C71EQ2kxbNYmd0BQ77JCKj6DUu9Ek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=aZj9L9I7; arc=none smtp.client-ip=205.220.168.131
+	s=arc-20240116; t=1747391546; c=relaxed/simple;
+	bh=/C0zCFlmoCu6SwB6lcoMtilSssRPYWVKRmqyPdOjwR8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=ey8MI2VdBHf4Hk+WwrExMOmQDtAJ0pD25CsaJw0v4S/LDrmW3jaD4CkPEvsyued4fSKLnQfkrd9J9eMvt9jeUQvWPN00H2k5zZkPDJOm1r41FjPq1LPaK5myF18PlaHJfxZB85bdkIOEqiz0dcgubSk2BnHl2BQWtUwWjz3RCUM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=mg7J3dFb; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54G4MrZj014096
-	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 10:32:34 GMT
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54G3GnFg001798
+	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 10:32:23 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=QcCZddeYaGyi07pSs0CvoB
-	rZISg5ik3bB/eBUeNltxI=; b=aZj9L9I7rTD4ftxP1OikyWQQLPmB8Ysq63U8hk
-	mAp2LNYXzqEAeijrmTKtuBiLGyOyVVsZNx9dLgbao/9c0lpJyvHBjT3XFpT6rhkN
-	s/dAwl1oLLNYeWwjSFTwb148Hc4HmgWNzJAA9W/c01BMTX+KrFAW6S+2ZSiODIu+
-	HFRXzWqjuMcvWOu3QtHtL+PiJcydd7tcgjojqhGtObnmNxXwIv4q/uUfLzq7yYLv
-	vkp7Nd+dhel/26mI8P78i6QqklGNbhvBKSkNmqnCNNjtPSAcYtL3Dch8wEcM1vpS
-	a9H3VsOmp28/uu8fpsez55MWaDdNV/ZK7z+w7GV/vnf7X4wQ==
-Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com [209.85.210.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46nx9js2f7-1
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	9xe4JJpZYL0oQKo4qYAE5I1ncsvjogZQwLUp9nB2aP0=; b=mg7J3dFbSef0ZfRT
+	LdOHuus7faZ4JxMkfU8Hg2DHOu+wvy2UOzX7b3KEPfHhpzK3mYfHGOXniDbvA0co
+	I3qLz6TFTKVwRtrc6jojmp3QGtvKCnk8pNxwNMUK7n3wglnCDilnmGoIMCnZ0wXy
+	nFFsKM1PyLn9TuZgWCdMJFSZupmVdKXBdaMOfvWLXkoTK2IBkU+J2HxhFXUle+97
+	kj2R64eh/X+32jtNy4C9VnlcpJe7Zyoih22kZF82yURERhk60jk+LwAxofgdEl3c
+	v5IHAbdpN/JmuC3zfQEGSvsgEo8vse5HYC3PGURN1pngu8LdbwdD33bcEy+fxVkH
+	hsYoWg==
+Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com [209.85.210.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46mbcrhfwr-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 10:32:33 +0000 (GMT)
-Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-74255209c4bso3336477b3a.2
-        for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 03:32:31 -0700 (PDT)
+	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 10:32:23 +0000 (GMT)
+Received: by mail-pf1-f200.google.com with SMTP id d2e1a72fcca58-73bfc657aefso1490939b3a.1
+        for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 03:32:23 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747391540; x=1747996340;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=QcCZddeYaGyi07pSs0CvoBrZISg5ik3bB/eBUeNltxI=;
-        b=GhhspwHt420RF51+I7DhJV9fmlEd6wGBKniHFDD/+i0VSeVXwqE9yePejL626p2RLO
-         e81wLcvFpXDqNFAnWbwE4yaRiTKztZGC5YIgQe9TudjWC0pSI8gNCTe7k9aT6D2fhA8g
-         nnmps5O/R5+NyqD/nFHiIgpee9ZZLthyUFYZD6x8Do4exnjT/zkZwXisuwYVBN/Xj1ug
-         XF/XaDFzN7uyK3oAQZ/1/I3bYnutY1GTHgA7Lgh0GobG3eRSMQQYW9wQKl0r4+ArJ+Y0
-         jAblL1DSa15Y7XVfrCHRJrmvn4QoRuN84TAuxuJQHk2gLJ7jy+ozqWAh2Gjnsv1qeKTy
-         wMjg==
-X-Forwarded-Encrypted: i=1; AJvYcCUZEMjuDwtuRIqT2lLns8g8UASNjGsYLL5PUw5gWm8ACf3T2pLRY1ixBDOhhKc1U5IOMWrzSC1QxU937ac=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3p48ElXEFgiuiQAT3ByNvhQpgFDpzAG4ZvOaRcfdURr5q9H/t
-	J8ecV1jwrF0QFcXAhPHE2/Gvewj5/p9nROOAcm59Bg0egbZHkpDKurefDzEseHCkLQARYoFmQiH
-	HzrRM8TgsZlMfM1M9CIbXZdq5TG77g9V/DhsflN3MML5N01Q8VfvULf9FZQu2v53N2+g=
-X-Gm-Gg: ASbGncsL3uwF5fMAYt36ntfpnisdhpZga+P6FXd0PN1wIO4jURsJSnMzHytrqweiVSL
-	Z5/BD5TYkpXovtSpRYkZcdgFtHHfxfFvubXnoobtbVo5SpHcEGYv16j5cuLl4DS8IWW/GgJw9Dm
-	HYOuHVooREM2lua7KK1GduIRkDlEQVaIBrOYS2A3Ju6dVa2yJmOZTBa5YURlY+fj1nOsrlUS0KL
-	l0qoJPglQI4njfVnXZhFxtWLzbrrNzK1+IcUttbsb8EvPTik1JYeDfq7CQkpP6mRIz+qT9g+wZt
-	1BaCASYyCQpCEnPO5huGSqZ0hHm/GmL0Gkx5NAtHZMz4EnKthlyWkwgR2t9yc9pf+vWif0N4j/+
-	RlS2bvOAnsTYuBhK3J3+BZ/n7lMWIVbqRonbS
-X-Received: by 2002:a05:6a00:1382:b0:740:5927:aa4c with SMTP id d2e1a72fcca58-742acba8f87mr2737944b3a.0.1747391539999;
-        Fri, 16 May 2025 03:32:19 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEhnO1ecGoSJXfMsKvSCjPaHv/MOQMmbO2A1LqkZG3UPXES6eAFxgdeGK4jmgoSaTbApYRLtg==
-X-Received: by 2002:a05:6a00:1382:b0:740:5927:aa4c with SMTP id d2e1a72fcca58-742acba8f87mr2737914b3a.0.1747391539567;
-        Fri, 16 May 2025 03:32:19 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1747391542; x=1747996342;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9xe4JJpZYL0oQKo4qYAE5I1ncsvjogZQwLUp9nB2aP0=;
+        b=ijoivyZRQb8k7GSYvcDq5YsBoxnTlLFNSnyFv3dj14ykfRy6hWXXTpE1D/LkTf5zMG
+         QXLHBBq1l1fUZt9J6VeCUG2di3Yir6V+exbejh0n8Z2vyePSy331n0kdUDYYJI/oUwZe
+         hIHhpfYzkW/PJq8p3XyYYy4tEPyeaKQA7NynoqAYiKoZqR2WEXFf4UtYTmuGTGrFo8Jp
+         jDjTYXrCi3ismdPHdqOKwAZ+YP3QQIciZqubZ6CB9Al1yRGjWv0e8+B0hmLB0uuRtxQ8
+         LCsa6h0qJjBKg5QWU+5j90GWk2dnGMu19VekB36U73V/ZaifiPaCaYakyU3UpovO9KNQ
+         j2Qw==
+X-Forwarded-Encrypted: i=1; AJvYcCVflyRKlQJNSLJljGj097ooTRtG3IajkOfheypUh0CcQyCk2sDV3tIy61oRRi0XnMELHbjLSeQ+mQuFvTA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzYHzvSxjenw6CiUL2qjMNnzxuRsLjloYflWpMU8Xz8t4MSINLF
+	+zHDOT4+DzCCXP6B6caDiqlFdXItLsM/LKRa8hvoji1UbejqWv3wxeSQvJsZfcODHrsIuM10oRK
+	yafvcqgcvAtPoJXeX7g3295yr1g3CFAE5BVG1PDIPgKFLmd4J+b36EfeVHwv7gRyE7wQ=
+X-Gm-Gg: ASbGnctgY8My2qNKqgZ4l1nyDPi0l1qWuGusrQ9oiEKSAr3LlXKdeSoMiTRdg0blWKd
+	MhUqwMnC8O80VqO7sud+atYtX+tYbE1m2RhX9vl7U4qaYSipCvgDmQ//jEsdIo+VE9iL+XNNXCi
+	StU0pLYtrchVDaSfw+775w3XEIL90lmHJJDIl5PXQqyN07FDam85rx+Ha2XYhVvpDja2gbH5Tw0
+	bRED//uTOg8JdzuTQItnHXOh4l7/ADvucv5QFx2hty1iufYwtWeost6HUEaScm2h1plzyLUbvEr
+	z4uaKgari57n+7w8n9hwnvNY23vnwKxsBCX2c+KLy8/az53BoPb6NnDzvGQ9aFB+Lp9SRBNitnc
+	ItNdbgIEL8aiAmfTBNHf4LRx2hRUfIFFbvejN
+X-Received: by 2002:a05:6a00:8593:b0:732:2923:b70f with SMTP id d2e1a72fcca58-742a97bd16emr3417936b3a.11.1747391542049;
+        Fri, 16 May 2025 03:32:22 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGw+3bj0H7s+N+1VhN7TU4jcgdq8iHHxRkKSKdccszazRmhKVDHpqKbGq8N2Qh/FdfH7ixzfA==
+X-Received: by 2002:a05:6a00:8593:b0:732:2923:b70f with SMTP id d2e1a72fcca58-742a97bd16emr3417899b3a.11.1747391541597;
+        Fri, 16 May 2025 03:32:21 -0700 (PDT)
 Received: from hu-adisi-blr.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com. [103.229.18.19])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-742a986d8d7sm1247585b3a.130.2025.05.16.03.32.17
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-742a986d8d7sm1247585b3a.130.2025.05.16.03.32.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 May 2025 03:32:19 -0700 (PDT)
+        Fri, 16 May 2025 03:32:21 -0700 (PDT)
 From: Aditya Kumar Singh <aditya.kumar.singh@oss.qualcomm.com>
-Subject: [PATCH wireless-next v2 0/2] wifi: mac80211: some bug fixes in MLO
- scan handling
-Date: Fri, 16 May 2025 16:02:06 +0530
-Message-Id: <20250516-bug_fix_mlo_scan-v2-0-12e59d9110ac@oss.qualcomm.com>
+Date: Fri, 16 May 2025 16:02:07 +0530
+Subject: [PATCH wireless-next v2 1/2] wifi: mac80211: validate SCAN_FLAG_AP
+ in scan request during MLO
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,77 +92,68 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIACYUJ2gC/3XQ22oDIRAG4FcJXtego642V32PUhYPYyLsoV0Tm
- xL23WuWQgPZvRGG8f9mmBvJOCXM5LC7kQlLymkcagEvO+JPdjgiTaHWBBgoJhlQdzm2MV3bvhv
- b7O1AIyodlXbcm4bU2OeEtb+Q7+Q7TdhhznTA65l81PYp5fM4/SwDC18+/dni2S6cMiqAWVN95
- 7h9G3Pef11s58e+39fnPnHJK76Vf5UglHMSosPn/H2nAo97yBUHqtPEBkAbyYyWG454dPSKI6r
- jTUDjYgBh+YYj/x21dvMiq2O9cgGYb0LwK848z79SsEPP3gEAAA==
-X-Change-ID: 20250402-bug_fix_mlo_scan-fe57f57b1c86
+Message-Id: <20250516-bug_fix_mlo_scan-v2-1-12e59d9110ac@oss.qualcomm.com>
+References: <20250516-bug_fix_mlo_scan-v2-0-12e59d9110ac@oss.qualcomm.com>
+In-Reply-To: <20250516-bug_fix_mlo_scan-v2-0-12e59d9110ac@oss.qualcomm.com>
 To: Johannes Berg <johannes@sipsolutions.net>
 Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
         Aditya Kumar Singh <aditya.kumar.singh@oss.qualcomm.com>
 X-Mailer: b4 0.14.2
-X-Proofpoint-ORIG-GUID: RZeBBn27L7cj3wVHY0Ujx1cMF_z6MoLk
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTE2MDEwMCBTYWx0ZWRfX/yQQ8SQjcLad
- 2QpQvOfRN3Yja1zcX7g+HLA1AIhMQixgFaMxOOHw+mj6Qdvz3kNqNhbly1gqJR9HY9EfBkOGHAx
- XOawGEcZ+dGPo0z634yc9AggZ9/lKvBq9LqX9gvup/vKtqYXlY+O4Cvjr3FmyHVnKX8HOHenMkR
- yXcylDtDiRguZCWCDgEkcWT+7LOg4Rhkw99FAm0pB/L/WHt+t6zUH7i6yqmRFpgMoM2pYfXEwVd
- MBlpZ3sRM8RIghkR6RE6hfnk2i91bSC+X2+JjVQL6Vgumbx0qKVlH3FNOisOXoKLcyxATQ8tkNB
- BdosmA+tncFsV4nu6pH5ulJTTxWfzRL7PEh2n2QEwlnq6G/SeftzH5jCrOkrxK1rVsq+OMySghE
- PY8ZtDsq+Bprex3FsKGXIoOWjLKyh55rHQUT1jH02SaJ77GmnnyCENIibPdsyK4aHznJzkVg
-X-Authority-Analysis: v=2.4 cv=CIIqXQrD c=1 sm=1 tr=0 ts=68271441 cx=c_pps
- a=WW5sKcV1LcKqjgzy2JUPuA==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
- a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
- a=gPft80QSANvjOYXkS70A:9 a=QEXdDO2ut3YA:10 a=OpyuDcXvxspvyRM73sMx:22
-X-Proofpoint-GUID: RZeBBn27L7cj3wVHY0Ujx1cMF_z6MoLk
+X-Proofpoint-ORIG-GUID: ukdvG0-kZWf23XwwF2bM67Zy4V6Z27gt
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTE2MDEwMCBTYWx0ZWRfX26kDu6+CjVEl
+ FZVs5FTUDVe3LAxCLbUtKgLl8Dl21coPuU/XyBr+I23N+eGU1ewfa4fjf3BHxl+CXz2m6xncG3V
+ vIxKX0cQEp2GDQwTG9ghnNWyepwCVeyUdmY5WU8W2KN5DmXdgw+ic3yi4jx9xitJQuTQjkOyXnS
+ 09tUQmbq/sdNMEoWSAWmiFq6l+fDlUsTSWW+9caQ6UeUDyc4wZ3BMrTz+8C5PggeKTf94AdUC6C
+ DzPcpguChkF2iVCSBPgARoGUq6G38J6whlOFGmN4z/BM9NLNNnlf7TvbeTA0/RwZ5WJSsNGdhJ2
+ GtEkuRz5ehFti9kRL4YZsQtjgrC0Uh8eOpIrE3iCMcENyCHgXWKEX6htay1Onu04xuVRRmmhwt1
+ bPAgcsi6OZd0KN86j9MU51UYK81Q8uvQyyD4XkIQBr5sNbIgY2/HCHqhWNeCbA5UXUXL2Prp
+X-Authority-Analysis: v=2.4 cv=K7UiHzWI c=1 sm=1 tr=0 ts=68271437 cx=c_pps
+ a=mDZGXZTwRPZaeRUbqKGCBw==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
+ a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=EUspDBNiAAAA:8 a=DDi9Blm5zKVmG00JEVUA:9
+ a=QEXdDO2ut3YA:10 a=zc0IvFSfCIW2DFIPzwfm:22
+X-Proofpoint-GUID: ukdvG0-kZWf23XwwF2bM67Zy4V6Z27gt
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
  definitions=2025-05-16_04,2025-05-16_01,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 adultscore=0 mlxscore=0 suspectscore=0 lowpriorityscore=0
- phishscore=0 mlxlogscore=937 spamscore=0 impostorscore=0 clxscore=1015
- priorityscore=1501 bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ adultscore=0 priorityscore=1501 mlxscore=0 suspectscore=0 malwarescore=0
+ phishscore=0 mlxlogscore=999 clxscore=1015 bulkscore=0 impostorscore=0
+ lowpriorityscore=0 spamscore=0 classifier=spam authscore=0 authtc=n/a authcc=
  route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505070000
  definitions=main-2505160100
 
-This series addresses issues related to MLO handling in probe response
-acceptance and scan request validation.
+When an AP interface is already beaconing, a subsequent scan is not allowed
+unless the user space explicitly sets the flag NL80211_SCAN_FLAG_AP in the
+scan request. If this flag is not set, the scan request will be returned
+with the error code -EOPNOTSUPP. However, this restriction currently
+applies only to non-ML interfaces. For ML interfaces, scans are allowed
+without this flag being explicitly set by the user space which is wrong.
+This is because the beaconing check currently uses only the deflink, which
+does not get set during MLO.
 
-* Validate SCAN_FLAG_AP in scan request during MLO:
-	Enforce the requirement for the NL80211_SCAN_FLAG_AP flag in scan
-	requests when an AP interface is beaconing.
+Hence to fix this, during MLO, use the existing helper
+ieee80211_num_beaconing_links() to know if any of the link is beaconing.
 
-	Apply this restriction to ML interfaces by using the existing
-	helper ieee80211_num_beaconing_links() to check if any link is
-	beaconing.
-
-* Accept probe response on link address as well:
-	Ensure unicast probe response frames are accepted if the
-	destination address matches any of the link addresses when a
-	random MAC address is not requested.
-
-	This change corrects the behavior where probe response frames are
-	dropped incorrectly for MLO interfaces.
-
-Both the changes are as such independent from each other. Since both are
-related to MLO scanning, currently kept in same series.
-
+Signed-off-by: Aditya Kumar Singh <aditya.kumar.singh@oss.qualcomm.com>
 ---
-Changes in v2:
-- Use ieee80211_num_beaconing_links() alone since now it can handle non-mlo
-  as well.
-- Link to v1: https://lore.kernel.org/r/20250513-bug_fix_mlo_scan-v1-0-94235bb42fbe@oss.qualcomm.com
+ net/mac80211/cfg.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
----
-Aditya Kumar Singh (2):
-      wifi: mac80211: validate SCAN_FLAG_AP in scan request during MLO
-      wifi: mac80211: accept probe response on link address as well
+diff --git a/net/mac80211/cfg.c b/net/mac80211/cfg.c
+index 05b7296b152cfbe1e81f8981eee52d72f711706c..d9d88f2f283120ba366401d3ac546e59d8c61c21 100644
+--- a/net/mac80211/cfg.c
++++ b/net/mac80211/cfg.c
+@@ -2924,7 +2924,7 @@ static int ieee80211_scan(struct wiphy *wiphy,
+ 		 * the frames sent while scanning on other channel will be
+ 		 * lost)
+ 		 */
+-		if (sdata->deflink.u.ap.beacon &&
++		if (ieee80211_num_beaconing_links(sdata) &&
+ 		    (!(wiphy->features & NL80211_FEATURE_AP_SCAN) ||
+ 		     !(req->flags & NL80211_SCAN_FLAG_AP)))
+ 			return -EOPNOTSUPP;
 
- net/mac80211/cfg.c  |  2 +-
- net/mac80211/scan.c | 18 +++++++++++++++++-
- 2 files changed, 18 insertions(+), 2 deletions(-)
----
-base-commit: 68b44b05f4c880c42109a91d2e0e7faa94f40529
-change-id: 20250402-bug_fix_mlo_scan-fe57f57b1c86
+-- 
+2.34.1
 
 
