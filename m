@@ -1,115 +1,191 @@
-Return-Path: <linux-kernel+bounces-651067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-651053-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25F4FAB99AB
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 12:05:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3AF0AB998B
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 11:57:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6B85169599
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 10:05:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2B4647ABEEA
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 09:55:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 705B72327A7;
-	Fri, 16 May 2025 10:05:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10AB623183F;
+	Fri, 16 May 2025 09:55:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U1M1bucr"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IY1gutf/"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87B4A381C4;
-	Fri, 16 May 2025 10:05:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF6AA8F58;
+	Fri, 16 May 2025 09:55:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747389919; cv=none; b=cG8435gScA0j1kr8a8wg5A+uWIfTXjmucvCYi3VDQtIpfNiA5aTl0PPI9pafENIvDNx1/dJpvPL4tjze4I4YX5GFbLLgeel0ThTOPp09xlbjUANzNzCMprFmsU1sX3W0EC3WXQUrfsssNgn121sj7rTCnPfHTtlBRp+Kay4wHNg=
+	t=1747389334; cv=none; b=BNLkVeZjLq8Wl6vZ6Ph8E/sS9ISQ6ECYph5q8hdBItxgWs9H3dZSfagK4dsWB1ZENWFqUzWIT07Gg+b/3COPywG3H2ltTksBIECMBtYy3TE3qIFAqkq18abgLOa0f7jnF+nLQohEzBgol1zo9yWp5LXmNlDwDe/LJ4hkD/c/AEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747389919; c=relaxed/simple;
-	bh=/1cSL/Lh7tlBOp4/gUuenclvwCFSIFtB1YjDaNqi7c8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bHH/l/7WDmBakZ2UFgHaEMSz15Zp2tGEvBSGP4inNSDbc+b/OAYdiregopzAvHwvXqd43T9o59Uh6sRDrE3ze4Eyotl5GSrFSsAs8sU+HBug1wVrzQX2kK1dL0sXpd8lE2+SYmBOoCUp0Lrk4mOCZCglAxosOLXBe/ePzHe1/TI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U1M1bucr; arc=none smtp.client-ip=209.85.214.177
+	s=arc-20240116; t=1747389334; c=relaxed/simple;
+	bh=F6ORg0yRnpqLbpE6aw8TDMpSUs9XkjRKy6srRdJ4A2Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LSYnpJO5M41qV2UzqHIoa8hBnu0izD1XEKcFD2Bp7RxQfNEtlfMeDOMm53/zLQh55DZUX6mvrhnLny1BrFvEJMTJdyLZ+ZEFB8E0mvNC0GShVUz5kM4H8cLvcHLcIjhlG4bLfbEcpEbm0CGrVFomxR/crOQFJlg9LXfE7TpRbVo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IY1gutf/; arc=none smtp.client-ip=209.85.218.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-231e98e46c0so1683365ad.3;
-        Fri, 16 May 2025 03:05:18 -0700 (PDT)
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-ad24677aaf6so255421866b.2;
+        Fri, 16 May 2025 02:55:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747389918; x=1747994718; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=RFijRLgGDoaMi5lWPDlmsyQ4o4dXkE7VloEdKbWCl3Q=;
-        b=U1M1bucrfDgWLTP448EbmAWu3FUyTSMoyeoohuxmES5xqyPpqV6zNovE5v6nTDL/ad
-         DhwjZGjyq487UJGiYF+3GCZyPhIYijuqL2+PPPlRfDfzPoIq29XTFHznbFaeOG2+hWvV
-         6zMBTm+1yVIdR6nSSbqkyyFiGc2/0BDMZB2FIYePI8C8QB4u9XAAbqtv/rCL8AQUedyB
-         t5sTO9wYD9vbn+Tr+mUNdOS6o8E/FmGtvwCSRcaQsuFzBIZ/twZdoysCk5HWD3Ahj8aw
-         LIZb2vjosZgdK/PEh4QSHJ+WR2pv0P/LkB3rrL1lL0YLYpPO7ApvTxQziDubZlBhHNN4
-         jnNA==
+        d=gmail.com; s=20230601; t=1747389331; x=1747994131; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Axg7F7QjuzXYT66ePL9GXJ6xq+M+wgyKaCF1Z17Ng8I=;
+        b=IY1gutf/8mB77UbteAaO+qhp13HflZjNqxp+0AdEymZ5pdzlkgEuoOmynyCE5wYDU5
+         fdfztyXnREuTRD2fXuUb5PJW0A9oLxeWBCuJXfqC5hf+4AVHNyybJhM5LTHuRnvHscty
+         WaHbJppFzTYbm5VaYSJmC6hHT1hLbttygRc1yDZT1+VA/hdB4FCq2Na6R9KgbcFt56QP
+         yMslViLmd36IFIkwVre1Pl2MdKul+XmbrYnkyUnMK+KZnQKgdcVjXbtGRX0L5KGgNOkm
+         fNrGi7viCqzW3Me4mgjtszzTQ2yaTVYUXGNn5ShJuaLBM6BzZ+1pgSpscBfQijOKXm8b
+         mmyw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747389918; x=1747994718;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=RFijRLgGDoaMi5lWPDlmsyQ4o4dXkE7VloEdKbWCl3Q=;
-        b=Rn00ayWiPbr8a1nPbBl07i0lL5pJEI8jvA8YzNKHYHNgdaN99zcy6gfUYcA2CzGCjf
-         m34iPojytHbpxm/IWils+5L2OKuOis23zKpZjBp91Zdd0gL+QaRgXVQ7ZuI2drG+THp8
-         Bl0HnGP8LH8FcQZ6J/n6wsov6bJO+RdQ6oUieUVKVTulQZ/IcZXRE7o8es+gbG2YrGSy
-         Ftnde4ECfpYBYjNZFtnhBXFruSnKyT61lpFXJRC0p/HLmAgRIGD8BDDEx43eae2MNEal
-         C8iq6ZPbTn57hxeWl0pCO35A1dtb72i1S46+/iC5VMIcmBvR2ZktZ4rdVBmkI16gPc49
-         vzQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVVV2tQ4Y6kEBZPNFSHrgC6qwrL+iH02nxbFeU+k0P+RWH8l3cD5n4qTZjlHYD3Ev322336uU9QEozecZfk@vger.kernel.org, AJvYcCXpo+lUbvYOTTMyHky3nKUC8OYr5Eh0o0W06lG9FLQCCavhfyDt9tP2GCc7R5UTO2PBLixokCx0xVI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyl6WRMEhVhL7evoD7GBgx3bI80SdJeLkh0sOu/fRxhI0t8fHUs
-	HEMoZSpqagMtO8xRoS0PledzaxjBPuvkj8+A5ff74UT21XYj6aO1Yhuct5fo1xBw
-X-Gm-Gg: ASbGncv3NcfnKl7jh1ExptQfUw3pG0YZRvtHZRRWt4tiQISa1FZi2KtKs0xA1TqABfe
-	nJyEOQcLgeQpOriedfApRSzv6vdGqmnuK6IAtc2u/K7MCLkita2Fb/od+wViR2Z7p12EtTroMou
-	cHUIQtayrLPwZClt2XFPgeGp8sf97C8hrubCJza7p3oznc412jcfskgsRLid69uSewaTNx8AsO7
-	v3RYC/hwfmClbe8HDeJ+FxEuTHk0Tr/HGdPAE3fvUOkvHIBseSihImARxlYQgkyQo2dMLIIjzml
-	NkhsxdbooL/paRdu4qekSpPuvyHNIFTEZVU4+Qz/mJY1EgAG4D0/tKYM1CeP0oQ=
-X-Google-Smtp-Source: AGHT+IFnBvl/fc5vkXH6aoPRzVyKb0aBPkGRkmKPOR1gB40ebLaewudBvyA06ohiC/L+TZL2gX7XJg==
-X-Received: by 2002:a17:903:24e:b0:22e:4a6c:fef2 with SMTP id d9443c01a7336-231d45ae355mr38262335ad.53.1747389917675;
-        Fri, 16 May 2025 03:05:17 -0700 (PDT)
-Received: from harshPC.. ([2405:201:400a:31fb:f6e6:d112:b6:cd3d])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-231d4e9828esm10988575ad.114.2025.05.16.03.05.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 May 2025 03:05:17 -0700 (PDT)
-From: Harshal <embedkari167@gmail.com>
-To: jdelvare@suse.com,
-	wsa+renesas@sang-engineering.com,
-	skhan@linuxfoundation.org
-Cc: Harshal <embedkari167@gmail.com>,
-	linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-kernel-mentees@lists.linux.dev
-Subject: [PATCH] docs: i2c: fix spelling mistake
-Date: Fri, 16 May 2025 15:34:38 +0530
-Message-ID: <20250516100445.8484-1-embedkari167@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1747389331; x=1747994131;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Axg7F7QjuzXYT66ePL9GXJ6xq+M+wgyKaCF1Z17Ng8I=;
+        b=bW8sff5WVfQqi017bqMSSYKJXxxS3L3GG11T66jj3l2itXhPUBrn2pU1dMowCUaR4z
+         S5Iv0rEAqB6o0gM8Dky5Q4Zgh3nx6mB4VH2SnpsX3EFqpIAYzEyY/3EQV3lQ2Gwvy0t0
+         Er1VTFfrHT63vlB47Gh/yf9PDy3i3psVJw+2cLbKKVwEl30aYqYZysQ8frGjg3L4BPEH
+         Cw53P+Nxc3DcqVanxZK6SxYltLMN9CDQxFu0m1mISavymXpJJmNeypS0JMGZe1KdE6S1
+         behvpRfYCdzOd3wk1yJ5gQJCu33FsL/80mLpR2kmAr4HT4PLrB6a44BwyYLS38yVa1bQ
+         tUHw==
+X-Forwarded-Encrypted: i=1; AJvYcCUZZZitO/VopdBW4vVopz+PZXDDRL30k4cG5o5NQ4AZMCOi2Hs6Y+EMT7N2yMAocBVQE4tjIAO1mmrAmVM=@vger.kernel.org, AJvYcCXqtY3aLUFMSg55G0DgOA1sb/Z0zl/cFMoUL0IZTNWJ6chfiX9yC8b6cNBczrZxydPNfDECBEpVXbNcvzw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy14EXvo44ufCdRbjHxuJfUW7R2X+gedyieIFo2UAGLpEZQnonM
+	MhP4UUsDTUAIQ2hd0Fjhk4bbyFo7d93pJCf756HNg527C2VOivW/5acXNu8DMw==
+X-Gm-Gg: ASbGncsmEummKQtEQWEDwbI7UWMCze2OnfR3mGMM2aYg+mT4OoZuFihhmlf0KDp5I4R
+	iD9NVYTCnQ9Ww6NNJPyNO8EBW63jcjTlnysn1ZMpUNsWfCf94mQwur4wfPY1tfZ9x0Zdy2r+1qc
+	ri6/XN37uhKr+2cNg0X5HwvwgEvMIFL017OhbQXpheM9o7dDsv0BJyRjPFURTu4+fUCqve2EgEc
+	5w6gHDO6fvYl0sB4buQe2zgX0+Cm0qDIGFFVCHp+EKcM6upXWAVZV/2292lWe7nSH/Ih2LwxnSs
+	4XXclcpfg13EPfq6/TMbtLsQkOMUcRqN36xtABqlzu9id5Xpl2USqI7I1t3maYf8ZQ4Nmk18e8V
+	E3Bmerv9ZQuUPp0D8Eg==
+X-Google-Smtp-Source: AGHT+IGbL/TPBNXrDuxYzIG3AQQgcydYk4efAjQsTWHoUpwrnWH3h6zVQ0RXFqueVJ6EXMmGZdEghw==
+X-Received: by 2002:a17:907:c10:b0:ad5:1f59:96f8 with SMTP id a640c23a62f3a-ad52d50aab1mr214119166b.34.1747389330713;
+        Fri, 16 May 2025 02:55:30 -0700 (PDT)
+Received: from [192.168.6.174] ([92.120.5.13])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad52d439639sm128936966b.104.2025.05.16.02.55.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 16 May 2025 02:55:30 -0700 (PDT)
+Message-ID: <a1466ee2-8931-4ec6-bca8-69c2117d0f6b@gmail.com>
+Date: Fri, 16 May 2025 13:13:16 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 1/3] ASoC: re-introduce disable_route_checks flag for
+ OF routes
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+ Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>,
+ linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org
+References: <20250515153128.147457-1-laurentiumihalcea111@gmail.com>
+ <20250515153128.147457-2-laurentiumihalcea111@gmail.com>
+ <875xi1tkm7.wl-kuninori.morimoto.gx@renesas.com>
+Content-Language: en-GB
+From: Mihalcea Laurentiu <laurentiumihalcea111@gmail.com>
+In-Reply-To: <875xi1tkm7.wl-kuninori.morimoto.gx@renesas.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-fix resistors spelling in i2c-parport.rst
 
-Signed-off-by: Harshal <embedkari167@gmail.com>
----
- Documentation/i2c/busses/i2c-parport.rst | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On 16.05.2025 04:22, Kuninori Morimoto wrote:
+> Hi Laurentiu
+>
+> Thank you for the patch
+>
+>> The "disable_route_checks" flag was previously removed via commit
+>> dd2395162c07 ("ASoC: remove disable_route_checks") as it wasn't being
+>> used anywhere.
+>>
+>> Re-introduce an OF-specific variant of the flag: "disable_of_route_checks"
+>> as this will be used by audio-graph-card2.
+>>
+>> Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+>> ---
+>>  include/sound/soc.h  |  1 +
+>>  sound/soc/soc-core.c | 12 ++++++++++--
+>>  2 files changed, 11 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/include/sound/soc.h b/include/sound/soc.h
+>> index 1fffef311c41..e76da038557d 100644
+>> --- a/include/sound/soc.h
+>> +++ b/include/sound/soc.h
+>> @@ -1077,6 +1077,7 @@ struct snd_soc_card {
+>>  	unsigned int instantiated:1;
+>>  	unsigned int topology_shortname_created:1;
+>>  	unsigned int fully_routed:1;
+>> +	unsigned int disable_of_route_checks:1;
+>>  	unsigned int probed:1;
+>>  	unsigned int component_chaining:1;
+>>  	struct device *devres_dev;
+>> diff --git a/sound/soc/soc-core.c b/sound/soc/soc-core.c
+>> index 67bebc339148..b14a52d6f550 100644
+>> --- a/sound/soc/soc-core.c
+>> +++ b/sound/soc/soc-core.c
+>> @@ -2245,8 +2245,16 @@ static int snd_soc_bind_card(struct snd_soc_card *card)
+>>  
+>>  	ret = snd_soc_dapm_add_routes(&card->dapm, card->of_dapm_routes,
+>>  				      card->num_of_dapm_routes);
+>> -	if (ret < 0)
+>> -		goto probe_end;
+>> +	if (ret < 0) {
+>> +		if (card->disable_of_route_checks) {
+>> +			ret = 0;
+>> +			dev_info(card->dev,
+>> +				 "%s: disable_of_route_checks set, ignoring errors on add_routes\n",
+>> +				 __func__);
+>> +		} else {
+>> +			goto probe_end;
+>> +		}
+>> +	}
+> commit dd2395162c07 removed flag from 3 parts (core x2 / topology), but
+> this patch get back only one of them.
 
-diff --git a/Documentation/i2c/busses/i2c-parport.rst b/Documentation/i2c/busses/i2c-parport.rst
-index a9b4e8133700..4cbf45952d52 100644
---- a/Documentation/i2c/busses/i2c-parport.rst
-+++ b/Documentation/i2c/busses/i2c-parport.rst
-@@ -84,7 +84,7 @@ Remarks:
-                    \|
- 
-    must be 74HC05, they must be open collector output.
-- - All resitors are 10k.
-+ - All resistors are 10k.
-  - Pins 18-25 of the parallel port connected to GND.
-  - Pins 4-9 (D2-D7) could be used as VDD is the driver drives them high.
-    The ADM1032 evaluation board uses D4-D7. Beware that the amount of
--- 
-2.43.0
 
+hm, so the rationale for introducing this OF-specific flag was because
+
+audio-graph-card2 is the only user for this feature and this user only
+
+needs to disable route checks for OF-based routes. On second thought
+
+though I think it might be better to have this feature for all routes in case
+
+someone might need it for non-OF routes as well? (if we go with the current
+
+approach and it turns out someone needs it for non-OF routes you're going
+
+to need more changes to support that)
+
+
+>
+> I think this flag check should be implemented in snd_soc_dapm_add_route()
+> itself instead of each caller, but what do you think ?
+
+
+good idea, I'll give it a try
+
+
+>
+> And maybe we want to use more easy-to-understand naming, like
+> "ignore route check", etc ?
+
+
+sure
+
+
+>
+> Thank you for your help !!
+>
+> Best regards
+> ---
+> Kuninori Morimoto
 
