@@ -1,108 +1,91 @@
-Return-Path: <linux-kernel+bounces-650968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-650992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0816AB9864
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 11:12:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8084FAB98A7
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 11:21:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B8274E4CFA
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 09:12:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 988E39E2DFC
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 09:21:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6045D22F767;
-	Fri, 16 May 2025 09:12:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tUNsK4qB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7483422FE0E;
+	Fri, 16 May 2025 09:21:50 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD8811A704B;
-	Fri, 16 May 2025 09:12:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C5E615530C;
+	Fri, 16 May 2025 09:21:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747386764; cv=none; b=RXymRvdf7t4fcq1VgHofwB7AYX2zjiHpc5P7JShb55KsMMcyAfEEovHd2xGOThXHq33WQ2nrqyKbl1lKSPkhf959UFakTHVtGImaTCeWzYrXO+ViZShv+F2zaiEg150tt0nPzxj7zcrnf51zEoy4guH4xL7nuN0lxSVT3MwU9QI=
+	t=1747387310; cv=none; b=CFVmkvLFOe9StTMYNBzpqp8wlidoHwvAuk4p/tc3ZSMnzeT2Ogt6V2nu5qbWvCIZFbYQrIV9/d+f6cMP2TMJBqQM+3tXJCyKEeAgGK8WgTaM0TnuVuqEnlkxqC3kLLlAKqUj1LCd2DOTnufF/dGiSw4CHCNX2Dwyy8mRyCth5DE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747386764; c=relaxed/simple;
-	bh=To9rgQRvNKeScnKbTmPrF+XAs6vdvnfL46mXdQcYXdk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ezc4EjwWt5HFte+IPz5cBE5YnjXdAYbcEWevCvuQ3kaP2v3EaGyACLzhfslNwwaTw5s2zp6T5KxBmQwaefC7LWbsaMI5arcEFBkvms7ROGKCSSqihnghXdSwyiOmvcLb95+yl3szt5TNumIdjAq0a55R0ZpOag1tknCPKgze0KY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tUNsK4qB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6047C4CEE4;
-	Fri, 16 May 2025 09:12:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747386764;
-	bh=To9rgQRvNKeScnKbTmPrF+XAs6vdvnfL46mXdQcYXdk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tUNsK4qBaBBxJzi+e2ykS/6qWXVQddxS9Y6QIEcvzHTxHXg/f62zmMKWHawGqlyhY
-	 AWznps5s1J2sUy03zPQGgriWJAI46hZiHkcwLdUcYvrlzEaZSifRuMYd5CDLAYeOaK
-	 tQWaDgR1CUnEHhVo+S4SF26NLDVXZ1oVNeqRt8D6MX2sqcH/w+ZS1Hy/wMeY9hVSRi
-	 tp8ZMZZjwvfReMsf5czOmR/92uPN8/eM+K0sw+iCkp8v2EHxW2l1UhdX3ryV/gi1U9
-	 oSxvAN0F46d4DT00wP2bNtstMUrrDyV16NmgxbKeSSpN/pgWsU5ELUb0KtYda+7rNU
-	 yxF4Txjj8Ilgg==
-Date: Fri, 16 May 2025 11:12:37 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Nam Cao <namcao@linutronix.de>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
-	Gabriele Monaco <gmonaco@redhat.com>,
-	linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	john.ogness@linutronix.de, Petr Mladek <pmladek@suse.com>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v8 00/22] RV: Linear temporal logic monitors for RT
- application
-Message-ID: <aCcBhY3zYpuH_oIr@gmail.com>
-References: <cover.1747046848.git.namcao@linutronix.de>
- <aCb1kBEkiriPbMo4@gmail.com>
- <20250516085522.g9Uq2WBN@linutronix.de>
+	s=arc-20240116; t=1747387310; c=relaxed/simple;
+	bh=31DsqiZfKoEAo/n/fuz2JtG3HxLVTfefOHjr+q6fCQc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=uEEU2r/Uwi6rLA4M3OCiNaA0ygeFfBcnImLK+b/PA0bjvcgDWUBGgMKiz+Bg1zET6Xgyrmb1x+xaueOV4//HihW1YAEg3m7q2wIT94PkyRZo0bvC8lASv+vLSTYxSuQD45y5+IanM+Sv92SYCkaVJMF3KlzGKPz/c+HW6zLMg1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.163])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4ZzM1m4289z2Cdht;
+	Fri, 16 May 2025 17:18:04 +0800 (CST)
+Received: from kwepemg500010.china.huawei.com (unknown [7.202.181.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 2F3CF1800B2;
+	Fri, 16 May 2025 17:21:44 +0800 (CST)
+Received: from huawei.com (10.175.104.67) by kwepemg500010.china.huawei.com
+ (7.202.181.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 16 May
+ 2025 17:21:43 +0800
+From: Wang Zhaolong <wangzhaolong1@huawei.com>
+To: <sfrench@samba.org>, <sfrench@us.ibm.com>
+CC: <linux-cifs@vger.kernel.org>, <samba-technical@lists.samba.org>,
+	<linux-kernel@vger.kernel.org>, <chengzhihao1@huawei.com>,
+	<wangzhaolong1@huawei.com>, <yi.zhang@huawei.com>, <yangerkun@huawei.com>
+Subject: [PATCH V2 0/2] smb: client: Fix use-after-free in readdir
+Date: Fri, 16 May 2025 17:12:54 +0800
+Message-ID: <20250516091256.2756826-1-wangzhaolong1@huawei.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250516085522.g9Uq2WBN@linutronix.de>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ kwepemg500010.china.huawei.com (7.202.181.71)
 
+V2:
+  - Correct spelling mistakes in the commit message, such as 'lopp' -> 'loop'.
+  - The titles of patches follow the same style.
 
-* Nam Cao <namcao@linutronix.de> wrote:
+This patch series addresses a use-after-free vulnerability in the SMB/CIFS
+client readdir implementation that can be triggered during concurrent
+directory reads when a signal interrupts directory enumeration.
 
-> On Fri, May 16, 2025 at 10:21:36AM +0200, Ingo Molnar wrote:
-> > 
-> > * Nam Cao <namcao@linutronix.de> wrote:
-> > 
-> > > Nam Cao (22):
-> > >   x86/tracing: Remove redundant trace_pagefault_key
-> > >   x86/tracing: Move page fault trace points to generic
-> > 
-> > Does the renaming of the tracepoint class from 'x86_exceptions' to
-> > 'exceptions' have any negative effects on tooling?
-> 
-> No, tracepoint class name doesn't affect userspace. The tracepoints' names
-> seen from userspace are the same after the patches:
-> 	exceptions:page_fault_kernel
-> 	exceptions:page_fault_user
+The root cause is in the operation sequence in find_cifs_entry():
+1. When query_dir_next() fails due to signal interruption (ERESTARTSYS)
+2. The code continues to access last_entry pointer before checking the return code
+3. This can access freed memory since the buffer may have been released
 
-Perfect, thank you!
+The race condition can be triggered by processes accessing the same directory
+with concurrent readdir operations, especially when signals are involved.
 
-Since there's been no new review feedback about these two patches since 
--v5, I've applied them to tip:x86/debug, with a v6.15-rc6 base, because 
-IMO they make sense independently of your series as well.
+The fix is straightforward:
+1. First patch ensures we check the return code before using any pointers
+2. Second patch improves defensiveness by resetting all related buffer pointers
+   when freeing the network buffer
 
-Thanks,
+Wang Zhaolong (2):
+  smb: client: Fix use-after-free in cifs_fill_dirent
+  smb: client: Reset all search buffer pointers when releasing buffer
 
-	Ingo
+ fs/smb/client/readdir.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+-- 
+2.39.2
+
 
