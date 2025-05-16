@@ -1,112 +1,151 @@
-Return-Path: <linux-kernel+bounces-651656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-651664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92229ABA13A
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 18:55:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8D14ABA173
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 19:01:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9842C1BA868C
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 16:55:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F0679E22F7
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 16:57:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C478620CCC8;
-	Fri, 16 May 2025 16:53:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45482212B3F;
+	Fri, 16 May 2025 16:56:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K0AZM/WH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 015F31DDC2A;
-	Fri, 16 May 2025 16:53:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="a/G4I8ha"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F26622417C3;
+	Fri, 16 May 2025 16:56:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747414429; cv=none; b=IGj9IbCOUBGVkZxPU2Qg8SJUN+2XROKWz48dJHSEalGlj4PydETPjP2HwSDZAE2Y4U4VEvl9BVIScZ1I0oJpUbT6QFL/Ec5dZo+G5TDT0jewT9fmYWNS0TTGe5/kaCF6bMtj2xW5tMsgfDqYqdGq3wSZMnVo56E1uBDPtgnBuGI=
+	t=1747414582; cv=none; b=NnH8ZlAnnXPnWkUeMI4LVefLWUtQdoOh24Y2pJr9HxH2qzsBefwDRObpPL6vuqsUX4IVxMDFp5ekA6i9DeTQ4nA5bLTdOIUNgjuJa2VcM6wAYta6QRQLwxkf0trSfnt39/rrP9Gx6biksRv5KVJKSvApq5OBTeNSF965OLnY4mA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747414429; c=relaxed/simple;
-	bh=gNW+7TtMUM7lGkKFYvhyFcX7e8P3pZT4KoiVlpFjICo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DIkwkGD7g4c2NPFRI+WyCrvQb1W7wYBS0PIJkqmDD97f+3Ek9NFIZj4/hQpqzHX/dYWPixNfXvgFyzO7a3v8BMF+/FV+3HzyvF6cNCvKR8rZOqw+6M6FD+XTi59nmwD2uLtriWeVHqCd7McmSWjXQV36Aho19sp24i+RgF6ht4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K0AZM/WH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F529C4CEF3;
-	Fri, 16 May 2025 16:53:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747414428;
-	bh=gNW+7TtMUM7lGkKFYvhyFcX7e8P3pZT4KoiVlpFjICo=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=K0AZM/WHkIM/qkUypevLdnzzY800HqjD+DQk3EspbBN0pK+1enPyE1noNGvw2ISAv
-	 sUGRiH8wlgjpHocu4xNNEmFGK920dEw58CkP7ulNE9K1WSfm9nNRleFZBked/yJ71K
-	 k5HSSaToM/eFv03ACXW88lKF/+e5QLQgPB4wJjEh5MdnKNulfZLYGaPkeFhI3ChvTN
-	 aQlJx2Ixr/hRimseN8QEYqtyhv04e7uwllTn6AyQgSVbUr0zk2+9uWgxBg8/okmU0R
-	 S7vAyrAOLrSNFUxD/lBG+VFxmJobAYDNnNLR4zzJRvEJh3Bx7FIezs8Rj1NiDNvH8m
-	 rcZA+KYgOakBw==
-Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-7c9376c4bddso268406085a.3;
-        Fri, 16 May 2025 09:53:48 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVPCyhAbgi0VcNA0KkBnORp/53zTdbiqIW5fJSHtlZwvn6Ls37fZJ+Sjx/0OSd+l2iJei23CbBcEjcwdBwDLJvJ1w==@vger.kernel.org, AJvYcCVWGWNvOihBWc/2nn8rHTWfE2re2A/VqA6GvxZjvXCrbRzA4M2HuOCc+by4gtcdG21GP+aZX8c+xUL7mVL1Bg==@vger.kernel.org, AJvYcCX7+W8EDcC1jbKyKRAWYaRU7Kys2xVVB329cUWLyr9g1IHyzLuM3uTY60lZeP7xHURzqVOQNTcCkHsVej8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwsIftRMHgnFbp+LcyoZhnST9YrO7+z44bOSMQI2PLaQP9lwyIM
-	a/TEWaZdvf/78DVBGrD0CaNzlnLuOSBIrslJd0PImm4X2l9tlWkmC7RmOmtRdVyL74f2JQp0IwD
-	HYJvqE88lZziA7n5VOQ+E+GtiQ0hcA4Y=
-X-Google-Smtp-Source: AGHT+IFYMPM8sSmrqIW21t3SlXlT3FCCm2dJlRMJ71bVHCSHc3IMxpcI15wCR4GKjvDMf42liz3czXx0mNeec5L+ncA=
-X-Received: by 2002:a05:620a:4551:b0:7c5:5f38:b78f with SMTP id
- af79cd13be357-7cd4673b9femr581672585a.29.1747414427420; Fri, 16 May 2025
- 09:53:47 -0700 (PDT)
+	s=arc-20240116; t=1747414582; c=relaxed/simple;
+	bh=khofMY+tQKRgt4Zd2hx1ukVRxjpmBs++tuBbX8jH09I=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=MtDoeURKU4iO7FY+T5dgvb6JipTnTDo3BLsUHK3xAU+S7z77TWo0CT8JKb1wcv6mSJSbPnM3ysMU1K2UXUr23mbDLQqyxKEuFhqwPtAvXxb/64q5sSjbsbFWLiDNobMMXVWA23W5pcGL4GHtw0WXnaJGXfj9iuFYBpadQMh8ENw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=a/G4I8ha; arc=none smtp.client-ip=117.135.210.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=vQ
+	p5KgHSKW4HOO20NVV22SdGkoXvOWWW2pqTNEBzMz4=; b=a/G4I8haOIBbu5bErr
+	ytWKeslCzg1XBtmlCDeCdQApTp8/o1owb5PyXTB22syPUtD590ZCq6xX+BS+YauY
+	5rWnBKx7FMsVqr7L1rZj/hacpmg3kvLb0BhzIuCoX6rAaTnO+R7ieCt+Xnwjz4vl
+	FavdEP3hHECs5wRHEfcPTc7KY=
+Received: from localhost.localdomain (unknown [])
+	by gzga-smtp-mtada-g0-3 (Coremail) with SMTP id _____wB3lOX6bSdoVElgBw--.64634S2;
+	Sat, 17 May 2025 00:55:22 +0800 (CST)
+From: Hans Zhang <18255117159@163.com>
+To: bhelgaas@google.com,
+	tglx@linutronix.de,
+	kw@linux.com,
+	manivannan.sadhasivam@linaro.org,
+	mahesh@linux.ibm.com
+Cc: oohall@gmail.com,
+	linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	Hans Zhang <18255117159@163.com>
+Subject: [PATCH 0/4] pci: implement "pci=aer_panic"
+Date: Sat, 17 May 2025 00:55:14 +0800
+Message-Id: <20250516165518.125495-1-18255117159@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250320171559.3423224-1-song@kernel.org> <Z_fhAyzPLNtPf5fG@pathway.suse.cz>
-In-Reply-To: <Z_fhAyzPLNtPf5fG@pathway.suse.cz>
-From: Song Liu <song@kernel.org>
-Date: Fri, 16 May 2025 09:53:36 -0700
-X-Gmail-Original-Message-ID: <CAPhsuW4MAcVpXmZVQauoaYe0o3tDvvZfgmCrYFFyFojYpNiWWg@mail.gmail.com>
-X-Gm-Features: AX0GCFswWuh29mi00OXRAzuYoajxd21bc-p1p3_IOZYYbVK2ROe03x1xdxnX9VM
-Message-ID: <CAPhsuW4MAcVpXmZVQauoaYe0o3tDvvZfgmCrYFFyFojYpNiWWg@mail.gmail.com>
-Subject: Re: [PATCH v3 0/2] arm64: livepatch: Enable livepatch without sframe
-To: Petr Mladek <pmladek@suse.com>
-Cc: mark.rutland@arm.com, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-toolchains@vger.kernel.org, 
-	live-patching@vger.kernel.org, indu.bhagat@oracle.com, puranjay@kernel.org, 
-	wnliu@google.com, irogers@google.com, joe.lawrence@redhat.com, 
-	jpoimboe@kernel.org, peterz@infradead.org, roman.gushchin@linux.dev, 
-	rostedt@goodmis.org, will@kernel.org, kernel-team@meta.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wB3lOX6bSdoVElgBw--.64634S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxXFWUuF4kGF1xuF48ur1UAwb_yoW5ZF1DpF
+	WrKws0krn5GFySyFn3CayxWryYy3Z3J345GFykWw18X3ZxKFyUJ34SyFW5tFZIgrW09w45
+	Xr4vqrWUWw4DGFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pRvoGdUUUUU=
+X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiWx1Po2gnaWRvYwAAsk
 
-On Thu, Apr 10, 2025 at 8:17=E2=80=AFAM Petr Mladek <pmladek@suse.com> wrot=
-e:
->
-[...]
-> >
-> > [1] https://lore.kernel.org/live-patching/20250127213310.2496133-1-wnli=
-u@google.com/
-> > [2] https://lore.kernel.org/live-patching/20250129232936.1795412-1-song=
-@kernel.org/
-> > [3] https://sourceware.org/bugzilla/show_bug.cgi?id=3D32589
-> > [4] https://lore.kernel.org/linux-arm-kernel/20241017092538.1859841-1-m=
-ark.rutland@arm.com/
-> >
-> > Changes v2 =3D> v3:
-> > 1. Remove a redundant check for -ENOENT. (Josh Poimboeuf)
-> > 2. Add Tested-by and Acked-by on v1. (I forgot to add them in v2.)
->
-> The approach and both patches look reasonable:
->
-> Reviewed-by: Petr Mladek <pmladek@suse.com>
->
-> Is anyone, Arm people, Mark, against pushing this into linux-next,
-> please?
+The following series introduces a new kernel command-line option aer_panic
+to enhance error handling for PCIe Advanced Error Reporting (AER) in
+mission-critical environments. This feature ensures deterministic recover
+from fatal PCIe errors by triggering a controlled kernel panic when device
+recovery fails, avoiding indefinite system hangs.
 
-Ping.
+Problem Statement
+In systems where unresolved PCIe errors (e.g., bus hangs) occur,
+traditional error recovery mechanisms may leave the system unresponsive
+indefinitely. This is unacceptable for high-availability environment
+requiring prompt recovery via reboot.
 
-ARM folks, please share your thoughts on this work. To fully support
-livepatching of kernel modules, we also need [1]. We hope we can
-land this in the 6.16 kernel.
+Solution
+The aer_panic option forces a kernel panic on unrecoverable AER errors.
+This bypasses prolonged recovery attempts and ensures immediate reboot.
 
-Thanks,
-Song
+Patch Summary:
+Documentation Update: Adds aer_panic to kernel-parameters.txt, explaining
+its purpose and usage.
 
-[1] https://lore.kernel.org/linux-arm-kernel/20250412010940.1686376-1-dylan=
-bhatch@google.com/
+Command-Line Handling: Implements pci=aer_panic parsing and state
+management in PCI core.
+
+State Exposure: Introduces pci_aer_panic_enabled() to check if the panic
+mode is active.
+
+Panic Trigger: Modifies recovery logic to panic the system when recovery
+fails and aer_panic is enabled.
+
+Impact
+Controlled Recovery: Reduces downtime by replacing hangs with immediate
+reboots.
+
+Optional: Enabled via pci=aer_panic; no default behavior change.
+
+Dependency: Requires CONFIG_PCIEAER.
+
+For example, in mobile phones and tablets, when there is a problem with
+the PCIe link and it cannot be restored, it is expected to provide an
+alternative method to make the system panic without waiting for the
+battery power to be completely exhausted before restarting the system.
+
+---
+For example, the sm8250 and sm8350 of qcom will panic and restart the
+system when they are linked down.
+
+https://github.com/DOITfit/xiaomi_kernel_sm8250/blob/d42aa408e8cef14f4ec006554fac67ef80b86d0d/drivers/pci/controller/pci-msm.c#L5440
+
+https://github.com/OnePlusOSS/android_kernel_oneplus_sm8350/blob/13ca08fdf0979fdd61d5e8991661874bb2d19150/drivers/net/wireless/cnss2/pci.c#L950
+
+
+Since the design schemes of each SOC manufacturer are different, the AXI
+and other buses connected by PCIe do not have a design to prevent hanging.
+Once a FATAL error occurs in the PCIe link and cannot be restored, the
+system needs to be restarted.
+
+
+Dear Mani,
+
+I wonder if you know how other SoCs of qcom handle FATAL errors that occur
+in PCIe link.
+---
+
+Hans Zhang (4):
+  pci: implement "pci=aer_panic"
+  PCI/AER: Introduce aer_panic kernel command-line option
+  PCI/AER: Expose AER panic state via pci_aer_panic_enabled()
+  PCI/AER: Trigger kernel panic on recovery failure if aer_panic is set
+
+ .../admin-guide/kernel-parameters.txt          |  7 +++++++
+ drivers/pci/pci.c                              |  2 ++
+ drivers/pci/pci.h                              |  4 ++++
+ drivers/pci/pcie/aer.c                         | 18 ++++++++++++++++++
+ drivers/pci/pcie/err.c                         |  8 ++++++--
+ 5 files changed, 37 insertions(+), 2 deletions(-)
+
+
+base-commit: fee3e843b309444f48157e2188efa6818bae85cf
+prerequisite-patch-id: 299f33d3618e246cd7c04de10e591ace2d0116e6
+prerequisite-patch-id: 482ad0609459a7654a4100cdc9f9aa4b671be50b
+-- 
+2.25.1
+
 
