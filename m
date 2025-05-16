@@ -1,80 +1,170 @@
-Return-Path: <linux-kernel+bounces-651586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-651588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7C34ABA054
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 17:55:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79F95ABA068
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 17:58:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DCEA23BB64A
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 15:54:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CFEF37AE5D2
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 15:56:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DF5D1C6FFE;
-	Fri, 16 May 2025 15:55:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA2211C84BB;
+	Fri, 16 May 2025 15:57:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SrBTGjCa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="AjJ9cePP"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB9B686359;
-	Fri, 16 May 2025 15:55:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B4011B87C0;
+	Fri, 16 May 2025 15:57:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747410903; cv=none; b=gDKFkCcAC8vdwP9bUyJKhpETM8QS1SstCNR60jDrR4IXHkSaB6g5H49B/f1dEqNlvbl/7BeEf8phKJPKvCSUT423sujFfWOSCV3s3tN3+ZWQZQk4+hQDr0Ze+336rQSppPCLOJ2m39KEBozRJKxsMlKB83t58hCkMB2ComWhnuo=
+	t=1747411050; cv=none; b=L9s7jdO0l7ce8BA1M3jpHkePURzr8yP796cqr3j/aWlx+5MJbdmN4uHC5btc6uAR94wkCf1c7tlIbhXOuGDz1Pa32mM8UxqyQXPMpNkaXaAPeESUCPH7jVb0MXyZo8DnyMGiSCnNQlR485XmbFaB6B9JVV6SxcwYVfK/FjDI/ms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747410903; c=relaxed/simple;
-	bh=jCR+XOlu938UmhLRf+cXPylXtwXh3iTH9ibsnuXVZ4Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=uw1BFaR13oXL4SWH+yx9nZDOYX4QgstFjfkDBGeXuETyEMkzxKYFHmf9XRVLGRBnjFdnFuDlYeU9cNashfP65g82PnuAQlF8paFe5aPyedgvLnpcrPHNJ1HqoLIxlggUOTFIw1xjyYce+4VAqwjBqdoQLksIanZlWDDPj2z+S5g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SrBTGjCa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1D3EC4CEED;
-	Fri, 16 May 2025 15:55:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747410902;
-	bh=jCR+XOlu938UmhLRf+cXPylXtwXh3iTH9ibsnuXVZ4Y=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=SrBTGjCamKGSVwpYT7KZv3j/7qTb7mdF3j5Fmjo570QbAqat85zxD6xYPYDPuE+p2
-	 mzjFLkOIUyvracu0bS6Sy+9UT61QLbUg+HQ45vkZjf+r1juPmtE1lXkKTGR1k7xdsk
-	 5PegGz6m5MtcNdcmf1fzFJ/wPNLH8L23HnnM4XJJbE4bXMwzsh6SyRvwb96WeSGtJy
-	 Iq97Qza7awoKLYYtJOjKRXhBiMj27z61j4UNmsadoebYwVj6zMH8alv9PjDnTtWzMJ
-	 vztTZlqQGt/3CR2tMTpFrSDE3KR/ZJOwxPtED+t3VPbJgaQ6l0GgEzqY6JvRG7RmE7
-	 ZGSYdEb6B2Emw==
-Date: Fri, 16 May 2025 08:55:01 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Peter Rosin <peda@axentia.se>, Andrew Lunn <andrew+netdev@lunn.ch>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Andrew Davis
- <afd@ti.com>, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, Heiner
- Kallweit <hkallweit1@gmail.com>, kernel test robot <lkp@intel.com>, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>, Samuel Holland
- <samuel@sholland.org>, Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH] mux: mmio: Fix missing CONFIG_REGMAP_MMIO
-Message-ID: <20250516085501.648794e4@kernel.org>
-In-Reply-To: <3172aba1-77f8-46a7-a967-14fae37f66ea@linaro.org>
-References: <20250515140555.325601-2-krzysztof.kozlowski@linaro.org>
-	<174738338644.6332.8007717408731919554.b4-ty@linaro.org>
-	<bfe991fa-f54c-4d58-b2e0-34c4e4eb48f4@linaro.org>
-	<3172aba1-77f8-46a7-a967-14fae37f66ea@linaro.org>
+	s=arc-20240116; t=1747411050; c=relaxed/simple;
+	bh=vmOhw7E5n8ItXJtoI0Qn1bmqPGvIwGI25HVL824vRQk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ny2gMgcJqkcypldFIs4NDA2kAJ5lL3vW+27DH3QtcMyC0jbhjmF9fP5sSIFNzr36IOO2HbAS02DRyduL65vIMR3saVcMgCcCQ71ha3S0eTqdAaXOdVOf4s0caqzFhfLlKq8ezijg5hZheW3KxYF0Hb9GBDjRLCYATjoZvdGRI3A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=fail (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=AjJ9cePP reason="signature verification failed"; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 766CD40E0196;
+	Fri, 16 May 2025 15:57:25 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=fail (4096-bit key)
+	reason="fail (body has been altered)" header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id ftRXRXYPH5WN; Fri, 16 May 2025 15:57:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1747411039; bh=d43PR9DO7flii+mSU353fCYxRMVTIixhK4mXJVLuqvE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AjJ9cePP7C8WJjPGUBhpAGUIwQSbXvP5Y/KBwNRbCto1Kl6rmnUL8kB7a0K2KaHxn
+	 LGhLp8LxH9qEq8+sFBPRku+hXkZ3PEfcJyvaVCDSUSWQaAn/8+Ltab/SwVA3EYbCND
+	 jGfZkEh3/ebi5b/5ZrGU4PtYGzBn4g9s5F1ZNdQdbY1wbt+3dFKoFQ+i1/PP1UnN/q
+	 NNxdf3jACnj+RGPInrkxbcHDD+g3Ux1CqBCY+Rg1ma8HxxHgbagdPTfOwLKx33QeSW
+	 dNCcDm08qDjhui2empuUurv/RQF624XAvLqcQnljUJWs064HWAagP0sdWnKKaAcrDU
+	 mHnh79jqhtQi+5xKHbj1x+LFg2/Q0A3DEO8r4sH3F+asol1by69VEQxtNeAQf01UrL
+	 bj9unSQqLzM+eQRyFbkem+pG2n0txW88XYnv1vm5dahcoNacRFefKL8byO5zAmj4r3
+	 37XVv3oFzLA+bvCXaNnAznN5GQMrQ240rvo6oEQjFRv14I62aIul3lfp+TWFcmE3HX
+	 W6ILZ3piqRAHkKJM3RXNHAOciA6tlL5YpWNfVEyYPUF6OTmbycA1K2s8ulRssHxsWI
+	 LwsGoMbg3IdSEUybVtvSAS4VZz4i4hScxUGgeFWhLwhoEM+XRFCXqoHFzaPTvKY8qr
+	 SavJA9Mp/Kz9zVtD0quep+QM=
+Received: from zn.tnic (p579690ee.dip0.t-ipconnect.de [87.150.144.238])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id F032F40E0239;
+	Fri, 16 May 2025 15:56:55 +0000 (UTC)
+Date: Fri, 16 May 2025 17:56:49 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>, Jonathan Corbet <corbet@lwn.net>,
+	Andy Lutomirski <luto@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Jan Kiszka <jan.kiszka@siemens.com>,
+	Kieran Bingham <kbingham@kernel.org>,
+	Michael Roth <michael.roth@amd.com>,
+	Rick Edgecombe <rick.p.edgecombe@intel.com>,
+	Brijesh Singh <brijesh.singh@amd.com>,
+	Sandipan Das <sandipan.das@amd.com>,
+	Juergen Gross <jgross@suse.com>,
+	Tom Lendacky <thomas.lendacky@amd.com>,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-efi@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCHv2 3/3] x86/64/mm: Make 5-level paging support
+ unconditional
+Message-ID: <20250516155649.GFaCdgQa7sX75vOLSm@fat_crate.local>
+References: <20250516091534.3414310-1-kirill.shutemov@linux.intel.com>
+ <20250516091534.3414310-4-kirill.shutemov@linux.intel.com>
+ <20250516153009.GEaCdaAdhCVpjaViSx@fat_crate.local>
+ <aCdd60hwRbx207bU@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <aCdd60hwRbx207bU@gmail.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 16 May 2025 10:58:38 +0200 Krzysztof Kozlowski wrote:
-> My branch fails with above error because I do not have Heiner's commit
-> a3e1c0ad8357 ("net: phy: factor out provider part from mdio_bus.c").
-> Will it reach current RC (rc7) at some point? 
+On Fri, May 16, 2025 at 05:46:51PM +0200, Ingo Molnar wrote:
+>=20
+> * Borislav Petkov <bp@alien8.de> wrote:
+>=20
+> > On Fri, May 16, 2025 at 12:15:33PM +0300, Kirill A. Shutemov wrote:
+> > > @@ -173,10 +173,10 @@ For example, when an old kernel is running on=
+ new hardware.
+> > >  The kernel disabled support for it at compile-time
+> > >  --------------------------------------------------
+> > > =20
+> > > -For example, if 5-level-paging is not enabled when building (i.e.,
+> > > -CONFIG_X86_5LEVEL is not selected) the flag "la57" will not show u=
+p [#f1]_.
+> > > +For example, if Linear Address Masking (LAM) is not enabled when b=
+uilding (i.e.,
+> > > +CONFIG_ADDRESS_MASKING is not selected) the flag "lam" will not sh=
+ow up.
+> > >  Even though the feature will still be detected via CPUID, the kern=
+el disables
+> > > -it by clearing via setup_clear_cpu_cap(X86_FEATURE_LA57).
+> > > +it by clearing via setup_clear_cpu_cap(X86_FEATURE_LAM).
+> >=20
+> > LOL, good one.
+> >=20
+> > The rest looks nice and good to me. And FWIW, it boots fine on my Zen=
+5 with
+> > 5lvl enabled.
+> >=20
+> > Reviewed-by: Borislav Petkov (AMD) <bp@alien8.de>
 
-No :( We merged it to net-next, so it will have to wait until the merge
-window. Worst case you can double apply that change? Maybe git will be
-clever enough to auto-resolve. Obviously only if absolutely necessary..
-We could also try to sequence our PRs to Linus so that your changes
-are rebased after net-next merge. We send our PR in the first day or
-two of the MW.
+Bah, and I thought I'm replying to v3. :-\
+
+Anyway...
+
+> What's your preference on timing? v6.17 or v6.16?
+
+Right, here's what I'm thinking:
+
+* Kirill's patches would simplify Ard's cleanup a bit
+
+* The 4th one: Kirill A. Shutemov ( :  85|) =E2=94=9C=E2=94=80>[PATCHv3 4=
+/4] x86/paravirt: Restrict PARAVIRT_XXL to 64-bit only
+
+looks ok too.
+
+So, I don't see anything speaking against queueing them *now* for the upc=
+oming
+merge window, I am testing the tip lineup on a daily basis this and next =
+week
+and if it all looks good, we could probably send them.
+
+If not, we delay.
+
+And if there's other issues which get detected later, during the 6.16-rc
+phase, we revert.
+
+So we have an exit route from each scenario.
+
+So I guess let's...
+
+Unless I'm missing an aspect.
+
+Thx.
+
+--=20
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
