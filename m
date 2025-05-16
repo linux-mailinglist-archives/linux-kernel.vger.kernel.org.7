@@ -1,513 +1,199 @@
-Return-Path: <linux-kernel+bounces-651808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-651810-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71AE6ABA33F
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 20:56:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DDE8ABA347
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 20:57:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 073214E5730
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 18:56:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3DF881C0352E
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 18:57:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A55C27F745;
-	Fri, 16 May 2025 18:56:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6AD027FD44;
+	Fri, 16 May 2025 18:56:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=savoirfairelinux.com header.i=@savoirfairelinux.com header.b="yKghKIlT"
-Received: from mail.savoirfairelinux.com (mail.savoirfairelinux.com [208.88.110.44])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TYvSR2H0"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FE4E27D781;
-	Fri, 16 May 2025 18:56:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=208.88.110.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32F7B27F756
+	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 18:56:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747421763; cv=none; b=MeJ54VHyPWo5qisqQM29XqGswpEjClbTUaVUNAv3HAsz6E/ZzjSZ5cs9ylZLrwzeSYGQoNOFetmWAwcHmCer+7uV8GT0ma98jvMfwfWpL7qJKtboFVoj2ukyVRS3aIxr3gqlUYYrNeeX3YRRSt4Bwm/jGRGS3hfb/szhar9QqmE=
+	t=1747421798; cv=none; b=GzI7znJDx363cTydTywwX1TBmo3yCWirPm6cNxk58Ky3XB7xPogcvfTpOSHwlpVZ5DKGw+xXLTK/pBlJdayzwB8N69LDrE1LTuiMbzTW7nKSBid4dtr5P//yx6lCSXPq6ax7wFIXcicUdQajSEgUNnEF0UNabXjPpxoyj80UqK0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747421763; c=relaxed/simple;
-	bh=YcSBNtTWEN+1Njluqvk1eZewsWgnA+YCrAVwP6mP6GI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lSEvgLAiHpjG8mEX+hYYh+0nJjLg5cT4l3H+SSX8lld3PW1P5KdoWCZgq3UCW0CYlJFPQYYFibo+pXGvNJ3wJeGotex5Eqs/1bXmBEO1tvYwKjx8UC4E4R+TlgcGnuULmXa+m+GN9g5t+jpDjTpIhgBbGqizUNcS4nvm+vlYmBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=savoirfairelinux.com; spf=pass smtp.mailfrom=savoirfairelinux.com; dkim=pass (2048-bit key) header.d=savoirfairelinux.com header.i=@savoirfairelinux.com header.b=yKghKIlT; arc=none smtp.client-ip=208.88.110.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=savoirfairelinux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=savoirfairelinux.com
-Received: from localhost (localhost [127.0.0.1])
-	by mail.savoirfairelinux.com (Postfix) with ESMTP id 2E0C89C6885;
-	Fri, 16 May 2025 14:56:00 -0400 (EDT)
-Received: from mail.savoirfairelinux.com ([127.0.0.1])
- by localhost (mail.savoirfairelinux.com [127.0.0.1]) (amavis, port 10032)
- with ESMTP id 5WF-8qgso41Z; Fri, 16 May 2025 14:55:59 -0400 (EDT)
-Received: from localhost (localhost [127.0.0.1])
-	by mail.savoirfairelinux.com (Postfix) with ESMTP id 086E29C8AFC;
-	Fri, 16 May 2025 14:55:59 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.savoirfairelinux.com 086E29C8AFC
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=savoirfairelinux.com; s=DFC430D2-D198-11EC-948E-34200CB392D2;
-	t=1747421759; bh=LElRp6m8b2exy8+zvoLctFh6JXMrdYfI5BTl1vyDZcM=;
-	h=Date:From:To:Message-ID:MIME-Version;
-	b=yKghKIlTPPYXI0ms9hk2RHV8vE3QsJWQvQnTEN68lGRvwjAZJpzDBuGCrOZwGtNEk
-	 UO6Q/58qj/OFbAfHGdKB8g/qhbCPqd25VBpOiIRNFcnVo3l+5r3jnL3q5gBU81wEhT
-	 9FM33TYF6f9TApPsifwP623umACoHmrwwF26NHFubVjtGlnX/FwUaStZoujBYB34Qn
-	 5XCek1XjxBODRaVPqoIDC7Jjo2CoQS4mylCbAwzNW7BY6IihoCaLwNk4PaR0wLNhdC
-	 NzeRAwCGC1Mp+M6TsCCF/UTaGpoK2a8nXJoywM8ACjLAVkIiHCvj1WWTmmaiWU9lSY
-	 j2x6hbUFDH53g==
-X-Virus-Scanned: amavis at mail.savoirfairelinux.com
-Received: from mail.savoirfairelinux.com ([127.0.0.1])
- by localhost (mail.savoirfairelinux.com [127.0.0.1]) (amavis, port 10026)
- with ESMTP id MvNcu0qfzPEy; Fri, 16 May 2025 14:55:58 -0400 (EDT)
-Received: from fedora (unknown [192.168.51.254])
-	by mail.savoirfairelinux.com (Postfix) with ESMTPSA id CD9DF9C6885;
-	Fri, 16 May 2025 14:55:58 -0400 (EDT)
-Date: Fri, 16 May 2025 14:55:57 -0400
-From: Samuel Kayode <samuel.kayode@savoirfairelinux.com>
-To: Lee Jones <lee@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Sebastian Reichel <sre@kernel.org>, Robin Gong <yibin.gong@nxp.com>
-Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-imx@nxp.com, linux-input@vger.kernel.org,
-	Abel Vesa <abelvesa@linux.com>, Abel Vesa <abel.vesa@nxp.com>,
-	Robin Gong <b38343@freescale.com>,
-	Enric Balletbo Serra <eballetbo@gmail.com>
-Subject: [PATCH v2 6/9] regulator: pf1550: add support for regulator
-Message-ID: <4dd316e06a66634b5af13f1faedc985753b061bc.1747409892.git.samuel.kayode@savoirfairelinux.com>
-References: <cover.1747409892.git.samuel.kayode@savoirfairelinux.com>
+	s=arc-20240116; t=1747421798; c=relaxed/simple;
+	bh=7UqtzUtVmyD7A3rWpGZUDe3v1crBMFvZJX7iNW8CaaA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NZW4IwFnGkvGRYdVrg/GrxkXqi8/BqHhcZAPoP6WwYeCcdhTMJhYNATnm722HgB7ffDZtfvzeedlrNbaMCz8I9mo4MYMOauQfKqa1X3Qt3MB5Dl3oCHQ2VF3Q6rURAYc0Kyxc3jRxlGfJPzoeAXeromUqTVAcvagXojOGl6f4hU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TYvSR2H0; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1747421795;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=ifcGTgJelxajCiU2FWoz2x8XggC8WSn+rbLJz+ygqMw=;
+	b=TYvSR2H0SUWnrHZicXV7JJxUzFSFd0mM/APwaxz5IUaBMurnExS1sNjclltk6L8rHNyPs+
+	KAGD/2aHzWWQHQB4Kmq3JXTD+SnAboiExM5c0RM4vlL5oWoaXWOBXE918/x8ll14LiRTlB
+	lLb0lkztlcvScWQqNI7O1uUOHqW3O1o=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-275-ADSlKVeTMIuyHe7uQuq_UA-1; Fri, 16 May 2025 14:56:33 -0400
+X-MC-Unique: ADSlKVeTMIuyHe7uQuq_UA-1
+X-Mimecast-MFC-AGG-ID: ADSlKVeTMIuyHe7uQuq_UA_1747421792
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-43d5ca7c86aso13834615e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 11:56:33 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747421792; x=1748026592;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=ifcGTgJelxajCiU2FWoz2x8XggC8WSn+rbLJz+ygqMw=;
+        b=Be0y+be9ckBz1uUk0GQiV7U36gQcm8/tzI8o3Mz7kNDGPqFSQH2KwXnSLsSoWN2wmk
+         NvjNEvXuienHlQ35BdYHKL98CkXvglnEkTXyvcrOTrXXc257DOwL+8aeEIAxkHcYlDzT
+         AKtcBOB7j+jfY8p+OOFNVQMi88xHIy67+rwVbUbu39AheFMSNGz1wumRJfgoUgC9hh0z
+         JMHZSLh5Q2UuHx0HRerTLs1QwsVr8kZ5uoGoySWnYfi+ljp5q9XBXgAiOzpJPI+pj1k7
+         iJXTZ9804swD7xOp8Lu0EVdhrvZOUIMXgu3agyzfBaNLS3eR9SmWPP8LyVzEOF0yU/ly
+         5cfA==
+X-Gm-Message-State: AOJu0YxsOn+PlsFpMdgxOLK8W9fLghlGqLzW6xFQ85tgUAxH66OH4s0B
+	EqL+byUZv8eMFPxfcnobCr7aVyWMXdiYD6zqgnpL23tm/UeXZgeoS1VuoyXB43Rj7ZMs5Mz0A0V
+	DCRsqkg3WLHQOtR4XQgWkeuZUa+b6TmOQrJD3PSk3RNRVzEi1Uz5DcvMdBdhrMAE4Gw==
+X-Gm-Gg: ASbGnctgbD3Dbl8s/KBWhZiCMbFdbdmcg3L3CfBJiQNEV4pV3p/y36AgNolXWeUXC9M
+	16rWYP8sen5oOo7Su3cXWztEOUMcS6BFVaiHVIG1C1flglS1yfqIiQcFGY4NEK3IqnPOb8McAeE
+	NvMxQO9Tic75JkUZjs/I95VGexUdSek4L4PJ/B255R/WGQqQNcyGUMwhNLVstT683HRvQoibQ/M
+	QCSBYLqzfniUzU1QV9wqf4FKf27uAq6UTE/ev41AcExRgkHmcmE/8l25K22sxGIADAAs9nigm6n
+	wgE9BeSFlEqgXr3paB/dIjnVf+MkKW+6yoLdgb6riA==
+X-Received: by 2002:a05:6000:2dc2:b0:3a0:b65b:78ef with SMTP id ffacd0b85a97d-3a35c845c04mr4820397f8f.52.1747421792495;
+        Fri, 16 May 2025 11:56:32 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFkqi1Ur9MV4UU247rCekfZQh5zJYD0LlUxflLVxHjPBhdhdSsqXUpzAVzfUm2pO8VCCsxcJA==
+X-Received: by 2002:a05:6000:2dc2:b0:3a0:b65b:78ef with SMTP id ffacd0b85a97d-3a35c845c04mr4820376f8f.52.1747421792158;
+        Fri, 16 May 2025 11:56:32 -0700 (PDT)
+Received: from [192.168.3.141] (p57a1ac29.dip0.t-ipconnect.de. [87.161.172.41])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a35ca4d230sm3656530f8f.4.2025.05.16.11.56.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 16 May 2025 11:56:31 -0700 (PDT)
+Message-ID: <eb93777b-cb74-41d9-80e9-a700bf693d4e@redhat.com>
+Date: Fri, 16 May 2025 20:56:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1747409892.git.samuel.kayode@savoirfairelinux.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 0/3] s390/uv: handle folios that cannot be split while
+ dirty
+To: Claudio Imbrenda <imbrenda@linux.ibm.com>
+Cc: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+ kvm@vger.kernel.org, linux-mm@kvack.org,
+ Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Janosch Frank <frankja@linux.ibm.com>, Heiko Carstens <hca@linux.ibm.com>,
+ Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev
+ <agordeev@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>,
+ Thomas Huth <thuth@redhat.com>, Matthew Wilcox <willy@infradead.org>,
+ Zi Yan <ziy@nvidia.com>, Sebastian Mitterle <smitterl@redhat.com>
+References: <20250516123946.1648026-1-david@redhat.com>
+ <20250516191748.3bd0861c@p-imbrenda>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20250516191748.3bd0861c@p-imbrenda>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Add regulator support for the pf1550 PMIC.
+On 16.05.25 19:17, Claudio Imbrenda wrote:
+> On Fri, 16 May 2025 14:39:43 +0200
+> David Hildenbrand <david@redhat.com> wrote:
+> 
+>>  From patch #3:
+>>
+>> "
+>> Currently, starting a PV VM on an iomap-based filesystem with large
+>> folio support, such as XFS, will not work. We'll be stuck in
+>> unpack_one()->gmap_make_secure(), because we can't seem to make progress
+>> splitting the large folio.
+>>
+>> The problem is that we require a writable PTE but a writable PTE under such
+>> filesystems will imply a dirty folio.
+>>
+>> So whenever we have a writable PTE, we'll have a dirty folio, and dirty
+>> iomap folios cannot currently get split, because
+>> split_folio()->split_huge_page_to_list_to_order()->filemap_release_folio()
+>> will fail in iomap_release_folio().
+>>
+>> So we will not make any progress splitting such large folios.
+>> "
+>>
+>> Let's fix one related problem during unpack first, to then handle such
+>> folios by triggering writeback before immediately trying to split them
+>> again.
+>>
+>> This makes it work on XFS with large folios again.
+>>
+>> Long-term, we should cleanly supporting splitting such folios even
+>> without writeback, but that's a bit harder to implement and not a quick
+>> fix.
+> 
+> picked for 6.16, I think it will survive the CI without issues, since
+> I assume you tested this thoroughly
 
-Signed-off-by: Samuel Kayode <samuel.kayode@savoirfairelinux.com>
----
- drivers/regulator/Kconfig  |   7 +
- drivers/regulator/Makefile |   1 +
- drivers/regulator/pf1550.c | 380 +++++++++++++++++++++++++++++++++++++
- 3 files changed, 388 insertions(+)
- create mode 100644 drivers/regulator/pf1550.c
+I did test what was known to be broken, but our QE did not run a bigger 
+test on it. So giving it some soaking time + waiting for a bit for more 
+review might be a good idea!
 
-diff --git a/drivers/regulator/Kconfig b/drivers/regulator/Kconfig
-index 05e32d764028..cdce1658957f 100644
---- a/drivers/regulator/Kconfig
-+++ b/drivers/regulator/Kconfig
-@@ -1038,6 +1038,13 @@ config REGULATOR_PV88090
- 	  Say y here to support the voltage regulators and convertors
- 	  on PV88090
- 
-+config REGULATOR_PF1550
-+	tristate "Freescale PF1550 regulator"
-+	depends on MFD_PF1550
-+	help
-+	  This driver controls a PF1550 regulator via I2C bus.
-+	  The regulators include three switch and three ldo.
-+
- config REGULATOR_PWM
- 	tristate "PWM voltage regulator"
- 	depends on PWM
-diff --git a/drivers/regulator/Makefile b/drivers/regulator/Makefile
-index 524e026c0273..2d11c069b0ca 100644
---- a/drivers/regulator/Makefile
-+++ b/drivers/regulator/Makefile
-@@ -124,6 +124,7 @@ obj-$(CONFIG_REGULATOR_QCOM_USB_VBUS) += qcom_usb_vbus-regulator.o
- obj-$(CONFIG_REGULATOR_PALMAS) += palmas-regulator.o
- obj-$(CONFIG_REGULATOR_PCA9450) += pca9450-regulator.o
- obj-$(CONFIG_REGULATOR_PF9453) += pf9453-regulator.o
-+obj-$(CONFIG_REGULATOR_PF1550) += pf1550.o
- obj-$(CONFIG_REGULATOR_PF8X00) += pf8x00-regulator.o
- obj-$(CONFIG_REGULATOR_PFUZE100) += pfuze100-regulator.o
- obj-$(CONFIG_REGULATOR_PV88060) += pv88060-regulator.o
-diff --git a/drivers/regulator/pf1550.c b/drivers/regulator/pf1550.c
-new file mode 100644
-index 000000000000..e7a9c3b43c12
---- /dev/null
-+++ b/drivers/regulator/pf1550.c
-@@ -0,0 +1,380 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * pf1550.c - regulator driver for the PF1550
-+ *
-+ * Copyright (C) 2016 Freescale Semiconductor, Inc.
-+ * Robin Gong <yibin.gong@freescale.com>
-+ *
-+ * This driver is based on pfuze100-regulator.c
-+ */
-+
-+#include <linux/err.h>
-+#include <linux/slab.h>
-+#include <linux/interrupt.h>
-+#include <linux/module.h>
-+#include <linux/regmap.h>
-+#include <linux/slab.h>
-+#include <linux/mfd/pf1550.h>
-+#include <linux/regulator/driver.h>
-+#include <linux/regulator/machine.h>
-+#include <linux/regulator/of_regulator.h>
-+#include <linux/regulator/machine.h>
-+#include <linux/platform_device.h>
-+
-+#define PF1550_MAX_REGULATOR 7
-+
-+struct pf1550_desc {
-+	struct regulator_desc desc;
-+	unsigned char stby_reg;
-+	unsigned char stby_mask;
-+};
-+
-+struct pf1550_regulator_info {
-+	struct device *dev;
-+	struct pf1550_dev *pf1550;
-+	struct pf1550_desc regulator_descs[PF1550_MAX_REGULATOR];
-+	int irq;
-+};
-+
-+static struct pf1550_irq_info pf1550_regulator_irqs[] = {
-+	{ PF1550_PMIC_IRQ_SW1_LS,		"sw1-lowside" },
-+	{ PF1550_PMIC_IRQ_SW2_LS,		"sw2-lowside" },
-+	{ PF1550_PMIC_IRQ_SW3_LS,		"sw3-lowside" },
-+
-+	{ PF1550_PMIC_IRQ_SW1_HS,		"sw1-highside" },
-+	{ PF1550_PMIC_IRQ_SW2_HS,		"sw2-highside" },
-+	{ PF1550_PMIC_IRQ_SW3_HS,		"sw3-highside" },
-+
-+	{ PF1550_PMIC_IRQ_LDO1_FAULT,		"ldo1-fault" },
-+	{ PF1550_PMIC_IRQ_LDO2_FAULT,		"ldo2-fault" },
-+	{ PF1550_PMIC_IRQ_LDO3_FAULT,		"ldo3-fault" },
-+
-+	{ PF1550_PMIC_IRQ_TEMP_110,		"temp-110" },
-+	{ PF1550_PMIC_IRQ_TEMP_125,		"temp-125" },
-+};
-+
-+static const int pf1550_sw12_volts[] = {
-+	1100000, 1200000, 1350000, 1500000, 1800000, 2500000, 3000000, 3300000,
-+};
-+
-+static const int pf1550_ldo13_volts[] = {
-+	750000, 800000, 850000, 900000, 950000, 1000000, 1050000, 1100000,
-+	1150000, 1200000, 1250000, 1300000, 1350000, 1400000, 1450000, 1500000,
-+	1800000, 1900000, 2000000, 2100000, 2200000, 2300000, 2400000, 2500000,
-+	2600000, 2700000, 2800000, 2900000, 3000000, 3100000, 3200000, 3300000,
-+};
-+
-+static int pf1550_set_ramp_delay(struct regulator_dev *rdev, int ramp_delay)
-+{
-+	int id = rdev_get_id(rdev);
-+	unsigned int ramp_bits;
-+	int ret;
-+
-+	if (id > PF1550_VREFDDR)
-+		return -EACCES;
-+
-+	ramp_delay = 6250 / ramp_delay;
-+	ramp_bits = ramp_delay >> 1;
-+	ret = regmap_update_bits(rdev->regmap, rdev->desc->vsel_reg + 4, 0x10,
-+				 ramp_bits << 4);
-+	if (ret < 0)
-+		dev_err(&rdev->dev, "ramp failed, err %d\n", ret);
-+
-+	return ret;
-+}
-+
-+static const struct regulator_ops pf1550_sw1_ops = {
-+	.list_voltage = regulator_list_voltage_table,
-+	.set_voltage_sel = regulator_set_voltage_sel_regmap,
-+	.get_voltage_sel = regulator_get_voltage_sel_regmap,
-+	.set_voltage_time_sel = regulator_set_voltage_time_sel,
-+	.set_ramp_delay = pf1550_set_ramp_delay,
-+};
-+
-+static const struct regulator_ops pf1550_sw2_ops = {
-+	.list_voltage = regulator_list_voltage_linear,
-+	.set_voltage_sel = regulator_set_voltage_sel_regmap,
-+	.get_voltage_sel = regulator_get_voltage_sel_regmap,
-+	.set_voltage_time_sel = regulator_set_voltage_time_sel,
-+	.set_ramp_delay = pf1550_set_ramp_delay,
-+};
-+
-+static const struct regulator_ops pf1550_ldo1_ops = {
-+	.enable = regulator_enable_regmap,
-+	.disable = regulator_disable_regmap,
-+	.is_enabled = regulator_is_enabled_regmap,
-+	.list_voltage = regulator_list_voltage_table,
-+	.map_voltage = regulator_map_voltage_ascend,
-+	.set_voltage_sel = regulator_set_voltage_sel_regmap,
-+	.get_voltage_sel = regulator_get_voltage_sel_regmap,
-+};
-+
-+static const struct regulator_ops pf1550_ldo2_ops = {
-+	.enable = regulator_enable_regmap,
-+	.disable = regulator_disable_regmap,
-+	.is_enabled = regulator_is_enabled_regmap,
-+	.list_voltage = regulator_list_voltage_linear,
-+	.set_voltage_sel = regulator_set_voltage_sel_regmap,
-+	.get_voltage_sel = regulator_get_voltage_sel_regmap,
-+};
-+
-+static const struct regulator_ops pf1550_fixed_ops = {
-+	.enable = regulator_enable_regmap,
-+	.disable = regulator_disable_regmap,
-+	.is_enabled = regulator_is_enabled_regmap,
-+	.list_voltage = regulator_list_voltage_linear,
-+};
-+
-+#define PF_VREF(_chip, _name, voltage)	{	\
-+	.desc = {	\
-+		.name = #_name,	\
-+		.of_match = of_match_ptr(#_name),	\
-+		.regulators_node = of_match_ptr("regulators"),	\
-+		.n_voltages = 1,	\
-+		.ops = &pf1550_fixed_ops,	\
-+		.type = REGULATOR_VOLTAGE,	\
-+		.id = _chip ## _ ## _name,	\
-+		.owner = THIS_MODULE,	\
-+		.min_uV = (voltage),	\
-+		.enable_reg = _chip ## _PMIC_REG_ ## _name ## _CTRL, \
-+		.enable_mask = 0x1,	\
-+	},	\
-+	.stby_reg = _chip ## _PMIC_REG_ ## _name ## _CTRL, \
-+	.stby_mask = 0x2,	\
-+}
-+
-+#define PF_SW1(_chip, _name, mask, voltages)	{	\
-+	.desc = {	\
-+		.name = #_name,	\
-+		.of_match = of_match_ptr(#_name),	\
-+		.regulators_node = of_match_ptr("regulators"),	\
-+		.n_voltages = ARRAY_SIZE(voltages),	\
-+		.ops = &pf1550_sw1_ops,	\
-+		.type = REGULATOR_VOLTAGE,	\
-+		.id = _chip ## _ ## _name,	\
-+		.owner = THIS_MODULE,	\
-+		.volt_table = voltages,	\
-+		.vsel_reg = _chip ## _PMIC_REG_ ## _name ## _VOLT, \
-+		.vsel_mask = (mask),	\
-+	},	\
-+	.stby_reg = _chip ## _PMIC_REG_ ## _name ## _STBY_VOLT,	\
-+	.stby_mask = (mask),	\
-+}
-+
-+#define PF_SW3(_chip, _name, min, max, mask, step)	{	\
-+	.desc = {	\
-+		.name = #_name,	\
-+		.of_match = of_match_ptr(#_name),	\
-+		.regulators_node = of_match_ptr("regulators"),	\
-+		.n_voltages = ((max) - (min)) / (step) + 1,	\
-+		.ops = &pf1550_sw2_ops,	\
-+		.type = REGULATOR_VOLTAGE,	\
-+		.id = _chip ## _ ## _name,	\
-+		.owner = THIS_MODULE,	\
-+		.min_uV = (min),	\
-+		.uV_step = (step),	\
-+		.vsel_reg = _chip ## _PMIC_REG_ ## _name ## _VOLT, \
-+		.vsel_mask = (mask),	\
-+	},	\
-+	.stby_reg = _chip ## _PMIC_REG_ ## _name ## _STBY_VOLT,	\
-+	.stby_mask = (mask),	\
-+}
-+
-+#define PF_LDO1(_chip, _name, mask, voltages)	{	\
-+	.desc = {	\
-+		.name = #_name,	\
-+		.of_match = of_match_ptr(#_name),	\
-+		.regulators_node = of_match_ptr("regulators"),	\
-+		.n_voltages = ARRAY_SIZE(voltages),	\
-+		.ops = &pf1550_ldo1_ops,	\
-+		.type = REGULATOR_VOLTAGE,	\
-+		.id = _chip ## _ ## _name,	\
-+		.owner = THIS_MODULE,	\
-+		.volt_table = voltages, \
-+		.vsel_reg = _chip ## _PMIC_REG_ ## _name ## _VOLT, \
-+		.vsel_mask = (mask),	\
-+		.enable_reg = _chip ## _PMIC_REG_ ## _name ## _CTRL, \
-+		.enable_mask = 0x1,	\
-+	},	\
-+	.stby_reg = _chip ## _PMIC_REG_ ## _name ## _CTRL, \
-+	.stby_mask = 0x2,	\
-+}
-+
-+#define PF_LDO2(_chip, _name, mask, min, max, step)	{	\
-+	.desc = {	\
-+		.name = #_name,	\
-+		.of_match = of_match_ptr(#_name),	\
-+		.regulators_node = of_match_ptr("regulators"),	\
-+		.n_voltages = ((max) - (min)) / (step) + 1,	\
-+		.ops = &pf1550_ldo2_ops,	\
-+		.type = REGULATOR_VOLTAGE,	\
-+		.id = _chip ## _ ## _name,	\
-+		.owner = THIS_MODULE,	\
-+		.min_uV = (min),	\
-+		.uV_step = (step),	\
-+		.vsel_reg = _chip ## _PMIC_REG_ ## _name ## _VOLT, \
-+		.vsel_mask = (mask),	\
-+		.enable_reg = _chip ## _PMIC_REG_ ## _name ## _CTRL, \
-+		.enable_mask = 0x1,	\
-+	},	\
-+	.stby_reg = _chip ## _PMIC_REG_ ## _name ## _CTRL, \
-+	.stby_mask = 0x2,	\
-+}
-+
-+static struct pf1550_desc pf1550_regulators[] = {
-+	PF_SW3(PF1550, SW1, 600000, 1387500, 0x3f, 12500),
-+	PF_SW3(PF1550, SW2, 600000, 1387500, 0x3f, 12500),
-+	PF_SW3(PF1550, SW3, 1800000, 3300000, 0xf, 100000),
-+	PF_VREF(PF1550, VREFDDR, 1200000),
-+	PF_LDO1(PF1550, LDO1, 0x1f, pf1550_ldo13_volts),
-+	PF_LDO2(PF1550, LDO2, 0xf, 1800000, 3300000, 100000),
-+	PF_LDO1(PF1550, LDO3, 0x1f, pf1550_ldo13_volts),
-+};
-+
-+static irqreturn_t pf1550_regulator_irq_handler(int irq, void *data)
-+{
-+	struct pf1550_regulator_info *info = data;
-+	int i, irq_type = -1;
-+
-+	info->irq = irq;
-+
-+	for (i = 0; i < ARRAY_SIZE(pf1550_regulator_irqs); i++)
-+		if (info->irq == pf1550_regulator_irqs[i].virq)
-+			irq_type = pf1550_regulator_irqs[i].irq;
-+
-+	switch (irq_type) {
-+	case PF1550_PMIC_IRQ_SW1_LS:
-+	case PF1550_PMIC_IRQ_SW2_LS:
-+	case PF1550_PMIC_IRQ_SW3_LS:
-+		dev_info(info->dev, "lowside interrupt triggered! irq_type=%d\n",
-+			 irq_type);
-+		break;
-+	case PF1550_PMIC_IRQ_SW1_HS:
-+	case PF1550_PMIC_IRQ_SW2_HS:
-+	case PF1550_PMIC_IRQ_SW3_HS:
-+		dev_info(info->dev, "highside interrupt triggered! irq_type=%d\n",
-+			 irq_type);
-+		break;
-+	case PF1550_PMIC_IRQ_LDO1_FAULT:
-+	case PF1550_PMIC_IRQ_LDO2_FAULT:
-+	case PF1550_PMIC_IRQ_LDO3_FAULT:
-+		dev_info(info->dev, "ldo fault triggered! irq_type=%d\n",
-+			 irq_type);
-+		break;
-+	case PF1550_PMIC_IRQ_TEMP_110:
-+	case PF1550_PMIC_IRQ_TEMP_125:
-+		dev_info(info->dev, "thermal exception triggered! irq_type=%d\n",
-+			 irq_type);
-+		break;
-+	default:
-+		dev_err(info->dev, "regulator interrupt: irq %d occurred\n",
-+			irq_type);
-+	}
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static int pf1550_regulator_probe(struct platform_device *pdev)
-+{
-+	struct pf1550_dev *iodev = dev_get_drvdata(pdev->dev.parent);
-+	struct device_node *np = pdev->dev.of_node;
-+	struct pf1550_regulator_info *info;
-+	int i, ret = 0;
-+	struct regulator_config config = { };
-+
-+	if (!np)
-+		return -ENODEV;
-+
-+	info = devm_kzalloc(&pdev->dev, sizeof(struct pf1550_regulator_info),
-+			    GFP_KERNEL);
-+	if (!info)
-+		return -ENOMEM;
-+
-+	config.dev = iodev->dev;
-+	config.regmap = iodev->regmap;
-+	info->dev = &pdev->dev;
-+	info->pf1550 = iodev;
-+
-+	memcpy(info->regulator_descs, pf1550_regulators,
-+	       sizeof(info->regulator_descs));
-+
-+	for (i = 0; i < ARRAY_SIZE(pf1550_regulators); i++) {
-+		struct regulator_dev *rdev;
-+		struct regulator_desc *desc;
-+		unsigned int val;
-+
-+		desc = &info->regulator_descs[i].desc;
-+
-+		if (desc->id == PF1550_SW2) {
-+			pf1550_read_otp(info->pf1550, 0x1f, &val);
-+			/* OTP_SW2_DVS_ENB == 1? */
-+			if ((val & 0x8)) {
-+				desc->volt_table = pf1550_sw12_volts;
-+				desc->n_voltages = ARRAY_SIZE(pf1550_sw12_volts);
-+				desc->ops = &pf1550_sw1_ops;
-+			}
-+		}
-+
-+		rdev = devm_regulator_register(&pdev->dev, desc, &config);
-+		if (IS_ERR(rdev)) {
-+			dev_err(&pdev->dev,
-+				"Failed to initialize regulator-%d\n", i);
-+			return PTR_ERR(rdev);
-+		}
-+	}
-+
-+	platform_set_drvdata(pdev, info);
-+
-+	for (i = 0; i < ARRAY_SIZE(pf1550_regulator_irqs); i++) {
-+		struct pf1550_irq_info *regulator_irq =
-+						&pf1550_regulator_irqs[i];
-+		unsigned int virq = 0;
-+
-+		virq = regmap_irq_get_virq(iodev->irq_data_regulator,
-+					   regulator_irq->irq);
-+
-+		if (!virq)
-+			return -EINVAL;
-+		regulator_irq->virq = virq;
-+
-+		ret = devm_request_threaded_irq(&pdev->dev, virq, NULL,
-+						pf1550_regulator_irq_handler,
-+					IRQF_NO_SUSPEND,
-+					regulator_irq->name, info);
-+		if (ret) {
-+			dev_err(&pdev->dev,
-+				"failed: irq request (IRQ: %d, error :%d)\n",
-+				regulator_irq->irq, ret);
-+			return ret;
-+		}
-+	}
-+
-+	/* unmask all exception interrupts for regulators */
-+	regmap_write(info->pf1550->regmap, PF1550_PMIC_REG_SW_INT_MASK0, 0);
-+	regmap_write(info->pf1550->regmap, PF1550_PMIC_REG_SW_INT_MASK1, 0);
-+	regmap_write(info->pf1550->regmap, PF1550_PMIC_REG_LDO_INT_MASK0, 0);
-+	regmap_write(info->pf1550->regmap, PF1550_PMIC_REG_TEMP_INT_MASK0, 0);
-+
-+	return 0;
-+}
-+
-+static const struct platform_device_id pf1550_regulator_id[] = {
-+	{"pf1550-regulator", PF1550},
-+	{ /* sentinel */ }
-+};
-+
-+MODULE_DEVICE_TABLE(platform, pf1550_regulator_id);
-+
-+static struct platform_driver pf1550_regulator_driver = {
-+	.driver = {
-+		   .name = "pf1550-regulator",
-+		   },
-+	.probe = pf1550_regulator_probe,
-+	.id_table = pf1550_regulator_id,
-+};
-+
-+module_platform_driver(pf1550_regulator_driver);
-+
-+MODULE_DESCRIPTION("Freescale PF1550 regulator driver");
-+MODULE_AUTHOR("Robin Gong <yibin.gong@freescale.com>");
-+MODULE_LICENSE("GPL v2");
 -- 
-2.49.0
+Cheers,
+
+David / dhildenb
 
 
