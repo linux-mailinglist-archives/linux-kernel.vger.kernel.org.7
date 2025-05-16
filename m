@@ -1,100 +1,101 @@
-Return-Path: <linux-kernel+bounces-650810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-650812-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E14A4AB965F
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 09:04:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D8A4AB9662
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 09:07:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE403A05265
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 07:03:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5111A055B2
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 07:06:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C03C9224AEE;
-	Fri, 16 May 2025 07:03:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N+Dv1/8Q"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F337225A29;
+	Fri, 16 May 2025 07:07:03 +0000 (UTC)
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F4F1442C;
-	Fri, 16 May 2025 07:03:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 768CC21C9ED;
+	Fri, 16 May 2025 07:06:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747379037; cv=none; b=OL/79/XXgKU+eCtynVEujYgxoLmOBo/Ar8G+5yp2jVnEKJfIY5zZTgft/xSR0lt7FoQ5giUUpXzTpE+HvLvYOJJzVn2S4uxHonheOeLUAWp8fFkcEyGU1xevlrQqZ0gvLZdpoTgAyS7GrbPUzw9NC9EnUxg03i62Fv1yGsoM7CA=
+	t=1747379223; cv=none; b=WOmqYRjyf7MUrakGmca13Pr/izUDPQitB3A9pRro0ONRP5PrZ3YxAFVMT4okE+KTGmXfRtF3sSGbrjGuHa0PttJhjxK9DnomVgURPM0Sy7HHfmFFW/3YHkj8CQotW01p1YYwFBA3+Zul7uPPh3FiaZ7nnUyclp/MichDbfEdOwk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747379037; c=relaxed/simple;
-	bh=BSOuz0Sa7NnM27jLiJyPK8CIt/5UN80833LDwnsMzN8=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=epGPn9fylTnMgQqb/f/6n8v7cGtHIU34PDPXnSTZ6zNKiTeMh5boXzfWo75ELYm4/uKD1BTsCgqZgO/1YtaeusOEhuZH8t+1wjlpZSnVgdiDzG8d21vqGdDyprtNhsPqnhWeUpZYz15/BZxvPzsOgaMxIdYuKmnpP43yWUoJbAI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N+Dv1/8Q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78D05C4CEE4;
-	Fri, 16 May 2025 07:03:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747379036;
-	bh=BSOuz0Sa7NnM27jLiJyPK8CIt/5UN80833LDwnsMzN8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=N+Dv1/8Q1cgZN/Y++AHMGsWADynJKYdRP8jW01IKZ6dz3QrY9iC6aNokjBOa8iC6l
-	 /04aAzMecEWdquyQtHN8u2sL6c6nEE+NW+lvWw+os9sPeu2YBFPG19TeXY0DXq3zYf
-	 tPybNfh1OU/VNQMN8WNoDRWuSxcILXxK1LZ7NfByw2LLLvtwe/GQBLNSsN0QVF8a2h
-	 oG6XQahOhUEGS56gl8iI6NLCSo6pRFMklCccjeFVnH0erxDkunfbf2z53rJkMT/y+u
-	 O7mL0V1vgYPqDw1Wzz3O+nFAARBvnhMpWqHR7DHpXhFaFln8VjPrH2F4n8Oz8tsSAU
-	 U5LT5sy3KXyEA==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1uFp6o-00FTKu-4X;
-	Fri, 16 May 2025 08:03:54 +0100
-Date: Fri, 16 May 2025 08:03:53 +0100
-Message-ID: <86h61lf352.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: adrianhoyin.ng@altera.com
-Cc: dinguyen@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	tglx@linutronix.de,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/3] Add quirk to support address bus size limitation
-In-Reply-To: <cover.1747368554.git.adrianhoyin.ng@altera.com>
-References: <cover.1747368554.git.adrianhoyin.ng@altera.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1747379223; c=relaxed/simple;
+	bh=gi4OINKpVpBeeEdHJ6OG1fFkBMzpHsys3YXOaC0Jbkg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=SanjFdiIDZcCrRVeelLISI8HAtF7qCd6f7b9bLWffTie3wCuoZWBq3VpIpEFi+GyYe7FAIeyp4k/IemAGvsn2vzz8q4vbjeM5LD2z3eLbHjwnwsFLfPlkCsixerNSsIMaf1go9ApJVh8mDPkgK7/VfWBEIYFF3+veuUculDcQXw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost (unknown [124.16.138.129])
+	by APP-03 (Coremail) with SMTP id rQCowAC3YT4L5CZoUPZUFg--.3762S2;
+	Fri, 16 May 2025 15:06:51 +0800 (CST)
+From: Chen Ni <nichen@iscas.ac.cn>
+To: g@b4.vu,
+	perex@perex.cz,
+	tiwai@suse.com
+Cc: linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Chen Ni <nichen@iscas.ac.cn>
+Subject: [PATCH] ALSA: scarlett2: Use USB API functions rather than constants
+Date: Fri, 16 May 2025 15:04:16 +0800
+Message-Id: <20250516070416.12458-1-nichen@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: adrianhoyin.ng@altera.com, dinguyen@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, tglx@linutronix.de, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:rQCowAC3YT4L5CZoUPZUFg--.3762S2
+X-Coremail-Antispam: 1UD129KBjvdXoW7JrWfur1UJr4ktr4fGr1Utrb_yoWDtFc_Xa
+	yI9w4Dur4qgr1qk345Aw4fJF40kwnrX3WFvF4fK39IyFyjqa95Aw42qr4kCrn7uF40yryD
+	GryDtr98KFyIkjkaLaAFLSUrUUUUbb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbV8FF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
+	6F4UJwA2z4x0Y4vEx4A2jsIE14v26F4UJVW0owA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v26r4UJVWxJr1lOx8S6xCaFVCjc4AY6r
+	1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCY1x0262kKe7AK
+	xVWUAVWUtwCY02Avz4vE14v_GF4l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr
+	0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY
+	17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcV
+	C0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY
+	6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvj
+	DU0xZFpf9x0JUhqXdUUUUU=
+X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
 
-On Fri, 16 May 2025 05:13:31 +0100,
-adrianhoyin.ng@altera.com wrote:
-> 
-> From: Adrian Ng Ho Yin <adrianhoyin.ng@altera.com>
-> 
-> This patch set adds support for the address bus size limitation by
-> allocating buffers with in a 32 bit address range.
-> 
-> -Add device tree binding to enable a quirk to support a limited address
-> bus size.
-> -Update ITS node for Agilex5 with dma_32bit_quirk.
-> -Add implementation to configure gfp flags to allocate buffers within
-> 32 bit addressable range when quirk is set.
+Use the function usb_endpoint_num() rather than constants.
 
-No. Please join the pack of other totally broken integrations and
-reuse the *existing* infrastructure. You'll be in good company.
+The Coccinelle semantic patch is as follows:
 
-	M.
+@@ struct usb_endpoint_descriptor *epd; @@
 
+- (epd->bEndpointAddress & \(USB_ENDPOINT_NUMBER_MASK\|0x0f\))
++ usb_endpoint_num(epd)
+
+Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+---
+ sound/usb/mixer_scarlett2.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/sound/usb/mixer_scarlett2.c b/sound/usb/mixer_scarlett2.c
+index 288d22e6a0b2..93589e86828a 100644
+--- a/sound/usb/mixer_scarlett2.c
++++ b/sound/usb/mixer_scarlett2.c
+@@ -8574,8 +8574,7 @@ static int scarlett2_find_fc_interface(struct usb_device *dev,
+ 
+ 		epd = get_endpoint(intf->altsetting, 0);
+ 		private->bInterfaceNumber = desc->bInterfaceNumber;
+-		private->bEndpointAddress = epd->bEndpointAddress &
+-			USB_ENDPOINT_NUMBER_MASK;
++		private->bEndpointAddress = usb_endpoint_num(epd);
+ 		private->wMaxPacketSize = le16_to_cpu(epd->wMaxPacketSize);
+ 		private->bInterval = epd->bInterval;
+ 		return 0;
 -- 
-Without deviation from the norm, progress is not possible.
+2.25.1
+
 
