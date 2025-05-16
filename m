@@ -1,82 +1,143 @@
-Return-Path: <linux-kernel+bounces-650587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-650589-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8583FAB937A
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 03:09:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB1E0AB9380
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 03:10:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C464C3BED08
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 01:08:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 830331885F6E
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 01:10:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 273F1214A6F;
-	Fri, 16 May 2025 01:09:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 647652153F4;
+	Fri, 16 May 2025 01:10:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RGbgPKQx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HgZBkbvX"
+Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AE271F956;
-	Fri, 16 May 2025 01:09:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E3E4214813
+	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 01:10:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747357741; cv=none; b=jONY7cFI0GBXQktKdUQNr8Hf/WeS+mVeP0uuiaZQcxV1QuPDCwnxDcG9/Ri4UDolky6DVUGiNGQH2zyzSwbbagqeWgifnWbRHtAeZOUr9DrhzTErSfJSmNp/zOMFsa5FGtu6iA5GN1HV+4HUBERqeyT1+xosUGjj1TkRRQGYFFM=
+	t=1747357820; cv=none; b=PwuVmnQUgs1h/IBRz/YwPyWxyqxEnMaurhsWWLGHbXGYJnTtvec5UKLMsaR+rEy+HFq1JEqBWw93VrDyNUQBaS8UgzgdUJAy5MfIFSzkCZIORZNqTtYYcgnVa2KknTRoXYIqY/H9QVYsQ5q3L+QOiIA1jp4SsCR8PMwt8vaX2bY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747357741; c=relaxed/simple;
-	bh=LlunDUDR2TDmEZ4XUi/62Fa3/lxpELn/iGKcFemx0pY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=An9X1wT3vSj9uWjVEfBPbE3POVKNfBeLcmcjHWU4CkByI+xLPp/j+wLAPxfQmMaqjuFIcUGCMN0HPxjCGIePDQMzxH+iYSymSkN5cc6XPsovkoOMVFpjZZNoWY0jI1sJzW2GQU3A0JZ3jNKLwXogytWav751eK0dL6FDYXDXngo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RGbgPKQx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD1F0C4CEE7;
-	Fri, 16 May 2025 01:08:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747357740;
-	bh=LlunDUDR2TDmEZ4XUi/62Fa3/lxpELn/iGKcFemx0pY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=RGbgPKQxwqSNa6sH9Id4EeYCV2OlsMGF0tPsQ2HerBXkMsznD/z1C1dV7O90isz/5
-	 PvGQjMzjA7R0CEJl7QIWw6BW9uQTvj6EYlwj8YUeyEvzablmHzdgLEsLbBVjNBhCUk
-	 HnbbR1dPatfKYT9qMd9bPlH50j8zjn8hnWKtt4jZj/XkJxAPi+AT/oWgrTwivLKlD6
-	 cCzJmLUVLB5/3qqoiMZkD25VaGRxzw3iBAmJ64j8yLD9pIrJe49KhLUBaYdZluIFEO
-	 8sBH69+tOVkmjgtGEGnxxwtTlqwra9xHqA27Y639nB4an2gwDDGKM3ufJ+jxUOPofZ
-	 4inbHkljJci3g==
-Date: Thu, 15 May 2025 18:08:58 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Jinjian Song <jinjian.song@fibocom.com>
-Cc: chandrashekar.devegowda@intel.com, chiranjeevi.rapolu@linux.intel.com,
- haijun.liu@mediatek.com, m.chetan.kumar@linux.intel.com,
- ricardo.martinez@linux.intel.com, loic.poulain@linaro.org,
- ryazanov.s.a@gmail.com, johannes@sipsolutions.net, davem@davemloft.net,
- edumazet@google.com, pabeni@redhat.com, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org, linux-doc@vger.kernel.org,
- angelogioacchino.delregno@collabora.com,
- linux-arm-kernel@lists.infradead.org, matthias.bgg@gmail.com,
- corbet@lwn.net, linux-mediatek@lists.infradead.org, helgaas@kernel.org,
- danielwinkler@google.com, korneld@google.com, andrew+netdev@lunn.ch,
- horms@kernel.org, rafael.wang@fibocom.com
-Subject: Re: [net-next v1] net: wwan: t7xx: Parameterize data plane RX BAT
- and FAG count
-Message-ID: <20250515180858.2568d930@kernel.org>
-In-Reply-To: <20250514104728.10869-1-jinjian.song@fibocom.com>
-References: <20250514104728.10869-1-jinjian.song@fibocom.com>
+	s=arc-20240116; t=1747357820; c=relaxed/simple;
+	bh=4OvX/SlIoZzCJCssk73J7YDq+IVGREhHUKEp5bnG8Fg=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=bVdh9H6QX2bJmGyWviFFe9hAjASpcDI0Pa0tmcKC1yvg+KSFq2axa7JmdAU0BCbrFFRX9iL+x5tIlnUqg3EVfviXNe0V/I4UUtgjH3cea8mBXYyYyACT6b5f+N9WN8jBIso0FRQ5SRZumv92q2mdrmRMyKeLO4+3Es3TQmdr0Gw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HgZBkbvX; arc=none smtp.client-ip=209.85.210.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-740adfc7babso1342022b3a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 18:10:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1747357818; x=1747962618; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=BfYmymD4WqB6RcT+A7NSAJ3/ssCfFT/DbabI8Oq16WQ=;
+        b=HgZBkbvXJBPZluMOUSlmAFz96Q7nBfMxQvCen6quVQ/3J7BJhWnm1toiw1CauxFFTU
+         GQWihV2/GoUfsBszNsw+JxDrb9axKkX+eSN3CeH7P9l5Q2n0ypjbRWLPEPpP/MpQU889
+         qtnCejcZaVOXJQjoZ4CXZQitVsNBQYHkdGv4ccMHwjaa4bWxvNG/rn9BakXXhRRPxIRV
+         0zXw2oMYCLNFO+tHcAGdk5etFcouSglCCRK4VMjgiC2tZeZedOzDuNj9ie3vtboWm5FR
+         Kv8C1QWccpkOveapivAg0kdO03mrVdkj5/TULUpv1ZPYqW8UCXIrme3VTO27VcCphcRC
+         //Sw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747357818; x=1747962618;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=BfYmymD4WqB6RcT+A7NSAJ3/ssCfFT/DbabI8Oq16WQ=;
+        b=Xasb5ZIrlpU6nNCus7/P2QHvVu8uWwTRJa8Kxft6tfto0VcJjTv3JbNE0CiwF23BkI
+         naEscVRxk9D13hzflErRk9VsQ+yZr7dK+x8TMIlJ8iM7sSSiMP7HR1HWw5LmduJK2Tu5
+         8OVks4AI/fBtjJxZgaa2ObuwGj7EMU4t2EhBnr8/t85J/kykDBACPJqhN37Dxzra9xrv
+         kn0bBbQDbN4Maa8JykdwUiFkRjTe9QGFMW+zAUcX66b6adutbZqPnEnb4wgsin4HF31L
+         ZZxybV9/AH67Df6PLpcmSheqm5YWb17+qEDXmfi5H4sB8TpHO5BqHONF7V5UYTAm1wEV
+         C8uQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUCDOs4WoHywArGySTbsgCt6OJto26vD4EuYA1Hxpf18Z27skIcqPtJeoo2E58ghdS4LwjeZ5R6CY1ZuCk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzfP1GHgzpThgCHKq9Nn5ImJxkSOYE/++GKbruHeMNORQE9UOsL
+	LlW+s8SDLgCualoFSUqHIsJoCetmF+Yu+kv6ibmBSn4qro3PZRQ/ajCzR4/aDeKSgavfi5MnM/f
+	WeyW1vw==
+X-Google-Smtp-Source: AGHT+IFN6q5EEUT8mtkOVvJbhI1LPbC36AWs5ckYgMuXXlLBYgP2Ku77QbL5NxcjQXJ1Z0V89/x/Blxa6lU=
+X-Received: from pfblr19.prod.google.com ([2002:a05:6a00:7393:b0:742:9ac3:9e04])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a21:e89:b0:215:d4be:b0b2
+ with SMTP id adf61e73a8af0-21621a02357mr2171784637.34.1747357818528; Thu, 15
+ May 2025 18:10:18 -0700 (PDT)
+Date: Thu, 15 May 2025 18:10:17 -0700
+In-Reply-To: <20250324173121.1275209-31-mizhang@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <20250324173121.1275209-1-mizhang@google.com> <20250324173121.1275209-31-mizhang@google.com>
+Message-ID: <aCaQedEhZwj9BsVK@google.com>
+Subject: Re: [PATCH v4 30/38] KVM: x86/pmu: Handle emulated instruction for
+ mediated vPMU
+From: Sean Christopherson <seanjc@google.com>
+To: Mingwei Zhang <mizhang@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Paolo Bonzini <pbonzini@redhat.com>, Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, Liang@google.com, 
+	Kan <kan.liang@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	Yongwei Ma <yongwei.ma@intel.com>, Xiong Zhang <xiong.y.zhang@linux.intel.com>, 
+	Dapeng Mi <dapeng1.mi@linux.intel.com>, Jim Mattson <jmattson@google.com>, 
+	Sandipan Das <sandipan.das@amd.com>, Zide Chen <zide.chen@intel.com>, 
+	Eranian Stephane <eranian@google.com>, Shukla Manali <Manali.Shukla@amd.com>, 
+	Nikunj Dadhania <nikunj.dadhania@amd.com>
+Content-Type: text/plain; charset="us-ascii"
 
-On Wed, 14 May 2025 18:47:28 +0800 Jinjian Song wrote:
-> The DMA buffer for data plane RX is currently fixed, being parameterized
-> to allow configuration.
+On Mon, Mar 24, 2025, Mingwei Zhang wrote:
+>  static void kvm_pmu_incr_counter(struct kvm_pmc *pmc)
+>  {
+> -	pmc->emulated_counter++;
+> -	kvm_pmu_request_counter_reprogram(pmc);
+> +	struct kvm_vcpu *vcpu = pmc->vcpu;
+> +
+> +	/*
+> +	 * For perf-based PMUs, accumulate software-emulated events separately
+> +	 * from pmc->counter, as pmc->counter is offset by the count of the
+> +	 * associated perf event. Request reprogramming, which will consult
+> +	 * both emulated and hardware-generated events to detect overflow.
+> +	 */
+> +	if (!kvm_mediated_pmu_enabled(vcpu)) {
+> +		pmc->emulated_counter++;
+> +		kvm_pmu_request_counter_reprogram(pmc);
+> +		return;
+> +	}
+> +
+> +	/*
+> +	 * For mediated PMUs, pmc->counter is updated when the vCPU's PMU is
+> +	 * put, and will be loaded into hardware when the PMU is loaded. Simply
+> +	 * increment the counter and signal overflow if it wraps to zero.
+> +	 */
+> +	pmc->counter = (pmc->counter + 1) & pmc_bitmask(pmc);
+> +	if (!pmc->counter) {
 
-Module parameters are discouraged, they are pretty poor as an API since
-they apply to all devices in the system. Can you describe what "frg"
-and "bat" are ? One of the existing APIs likely covers them.
-Please also describe the scope (are they per netdev or some sort of
-device level params)?
--- 
-pw-bot: cr
+Ugh, this is broken for the fastpath.  If kvm_skip_emulated_instruction() is
+invoked by handle_fastpath_set_msr_irqoff() or handle_fastpath_hlt(), KVM may
+consume stale information (GLOBAL_CTRL, GLOBAL_STATUS and PMCs), and even if KVM
+gets lucky and those are all fresh, the PMC and GLOBAL_STATUS changes won't be
+propagated back to hardware.
+
+The best idea I have is to track whether or not the guest may be counting branches
+and/or instruction based on eventsels, and then bail from fastpaths that need to
+skip instructions.  That flag would also be useful to further optimize
+kvm_pmu_trigger_event().
+
+> +		pmc_to_pmu(pmc)->global_status |= BIT_ULL(pmc->idx);
+> +		if (pmc_pmi_enabled(pmc))
+> +			kvm_make_request(KVM_REQ_PMI, vcpu);
+> +	}
+>  }
+>  
+>  static inline bool cpl_is_matched(struct kvm_pmc *pmc)
+> -- 
+> 2.49.0.395.g12beb8f557-goog
+> 
 
