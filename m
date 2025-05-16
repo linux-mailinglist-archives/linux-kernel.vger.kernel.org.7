@@ -1,54 +1,52 @@
-Return-Path: <linux-kernel+bounces-651045-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-651047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5472CAB9975
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 11:55:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A2186AB997D
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 11:55:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ADF207ABA82
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 09:53:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4AB717A58B9
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 09:53:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49C5223315E;
-	Fri, 16 May 2025 09:53:55 +0000 (UTC)
-Received: from azure-sdnproxy.icoremail.net (azure-sdnproxy.icoremail.net [13.75.44.102])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D10C9231821;
-	Fri, 16 May 2025 09:53:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.75.44.102
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7A12235076;
+	Fri, 16 May 2025 09:54:02 +0000 (UTC)
+Received: from unicom146.biz-email.net (unicom146.biz-email.net [210.51.26.146])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BB6D231858;
+	Fri, 16 May 2025 09:53:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.26.146
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747389234; cv=none; b=NiAd744GkSyaJ+6dxQOQyEHS9zhEwcIlb0FcUyDAG9ISJEbmL+bxvYNtKnIOi7YtvBuWIH/C5PvR/R9oWpPBHQ6m0FFbayRgOf0gPS5BE1Y18u5hj+Sxs0GfGYc54B3tCrPhYyR7Lq8NSheQMjLgMyLtcnrS0krUAHDnyUBc2E4=
+	t=1747389242; cv=none; b=XjQe2gi15frYhGC2e/RfXPLzqjATpJ+C6W2eHejSo7eCxWXE0shkqwNgFeSKW0PKnWBiyEaWoCofA79YqYaOJ+09wIOcwnUJ91e8LoM913lGJzlAH8hLyyvL/gSJQUYiPK6jeb+Bypr1mUm75Vrj/TtAZ+MuLzVrI9bu9YV6iqs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747389234; c=relaxed/simple;
-	bh=bCqTG1438dYtVjz6t2eraDVHWLpId1AIgdo8T587GWU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=GWZTZbEv74wdt7G7k0232Z0YTZW6NmyeIUoHvB/G4VBHC7fcHWAVRj+P9jJ6DbRckADrQBCU3fGEuPsyxEGxoBzuZrxGWcBfsUxLCLtI3gGCdrsvkuj35cLgrb3q7DPnRXkIebLBKckOVLnJzoGU9kYXJXH5iDGsr8l9wggKhE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=13.75.44.102
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
-Received: from E0004758DT.eswin.cn (unknown [10.12.96.83])
-	by app2 (Coremail) with SMTP id TQJkCgDXaJIkCydol9V8AA--.41163S2;
-	Fri, 16 May 2025 17:53:42 +0800 (CST)
-From: zhangsenchuan@eswincomputing.com
-To: gregkh@linuxfoundation.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Thinh.Nguyen@synopsys.com,
-	p.zabel@pengutronix.de
-Cc: ningyu@eswincomputing.com,
-	linmin@eswincomputing.com,
-	yangwei1@eswincomputing.com,
-	Senchuan Zhang <zhangsenchuan@eswincomputing.com>
-Subject: [PATCH v1 1/2] dt-bindings: usb: Add Eswin EIC7700 Usb controller
-Date: Fri, 16 May 2025 17:53:37 +0800
-Message-ID: <20250516095338.1467-1-zhangsenchuan@eswincomputing.com>
-X-Mailer: git-send-email 2.49.0.windows.1
-In-Reply-To: <20250516095237.1516-1-zhangsenchuan@eswincomputing.com>
-References: <20250516095237.1516-1-zhangsenchuan@eswincomputing.com>
+	s=arc-20240116; t=1747389242; c=relaxed/simple;
+	bh=q0ACZUFrY5UcA6zkdpN4QJxoZ852bW+WRHVN5OX318Q=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=qs3fp+4s7H4VuwNorN16rcT1Mq67mRqb5tBc/OOeKZpKiznL2nC0qVllYkNfUs5e+HJleFgoXPpahm/fEzmquiwxWly9wmt0xNvTu4XTvVEBzn0mUcH7z8wRSovhHXf2d4tOcV8I0AA93swc+2X638cw9DDZr8sxWQv2TDnvfSY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.26.146
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
+Received: from jtjnmail201602.home.langchao.com
+        by unicom146.biz-email.net ((D)) with ASMTP (SSL) id 202505161753474539;
+        Fri, 16 May 2025 17:53:47 +0800
+Received: from jtjnmail201607.home.langchao.com (10.100.2.7) by
+ jtjnmail201602.home.langchao.com (10.100.2.2) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Fri, 16 May 2025 17:53:49 +0800
+Received: from locahost.localdomain.com (10.94.6.108) by
+ jtjnmail201607.home.langchao.com (10.100.2.7) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Fri, 16 May 2025 17:53:48 +0800
+From: Charles Han <hanchunchao@inspur.com>
+To: <krzk@kernel.org>, <sre@kernel.org>, <akpm@linux-foundation.org>,
+	<lee@kernel.org>
+CC: <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Charles Han
+	<hanchunchao@inspur.com>
+Subject: [PATCH] charger: max14577: Handle NULL pdata when CONFIG_OF is not set
+Date: Fri, 16 May 2025 17:53:46 +0800
+Message-ID: <20250516095346.24169-1-hanchunchao@inspur.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,165 +54,46 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:TQJkCgDXaJIkCydol9V8AA--.41163S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxZw1kWr45Kr4kKF1UCFyfJFb_yoW5tr43pa
-	93CrW0qr4fXF1fXa18WF10kan3J3Z3CF18Cr92yw17trnaqa4Fqw4akFy5Wa4UCr1xZ34a
-	gFWYv3yftw47C3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBm14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_JF0_Jw1lYx0Ex4A2jsIE14v26r4j6F4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
-	Y2ka0xkIwI1lw4CEc2x0rVAKj4xxMxkF7I0En4kS14v26r1q6r43MxkIecxEwVCm-wCF04
-	k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18
-	MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr4
-	1lIxAIcVC0I7IYx2IY67AKxVWUCVW8JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Cr0_Gr1U
-	MIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I
-	8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUeZ2-DUUUU
-X-CM-SenderInfo: x2kd0wpvhquxxxdqqvxvzl0uprps33xlqjhudrp/
+Content-Type: text/plain
+X-ClientProxiedBy: Jtjnmail201613.home.langchao.com (10.100.2.13) To
+ jtjnmail201607.home.langchao.com (10.100.2.7)
+tUid: 2025516175347009ab4415561c54360ebd2bbe3d44228
+X-Abuse-Reports-To: service@corp-email.com
+Abuse-Reports-To: service@corp-email.com
+X-Complaints-To: service@corp-email.com
+X-Report-Abuse-To: service@corp-email.com
 
-From: Senchuan Zhang <zhangsenchuan@eswincomputing.com>
+When the kernel is not configured  CONFIG_OF, the max14577_charger_dt_init
+function returns NULL. Fix the max14577_charger_probe functionby returning
+ -ENODATA instead of potentially passing a NULL pointer to PTR_ERR.
 
-Add Device Tree binding documentation for the ESWIN EIC7700
-usb controller module.
+Fix below smatch warning.
+smatch warnings:
+drivers/power/supply/max14577_charger.c:576 max14577_charger_probe() warn: passing zero to 'PTR_ERR'
 
-Co-developed-by: Wei Yang <yangwei1@eswincomputing.com>
-Signed-off-by: Wei Yang <yangwei1@eswincomputing.com>
-Signed-off-by: Senchuan Zhang <zhangsenchuan@eswincomputing.com>
+Fixes: e30110e9c96f ("charger: max14577: Configure battery-dependent settings from DTS and sysfs")
+Signed-off-by: Charles Han <hanchunchao@inspur.com>
 ---
- .../bindings/usb/eswin,eic7700-usb.yaml       | 120 ++++++++++++++++++
- 1 file changed, 120 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/usb/eswin,eic7700-usb.yaml
+ drivers/power/supply/max14577_charger.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/usb/eswin,eic7700-usb.yaml b/Documentation/devicetree/bindings/usb/eswin,eic7700-usb.yaml
-new file mode 100644
-index 000000000000..eb8260069b99
---- /dev/null
-+++ b/Documentation/devicetree/bindings/usb/eswin,eic7700-usb.yaml
-@@ -0,0 +1,120 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/usb/eswin,eic7700-usb.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Eswin EIC7700 SoC Usb Controller
-+
-+maintainers:
-+  - Wei Yang <yangwei1@eswincomputing.com>
-+  - Senchuan Zhang <zhangsenchuan@eswincomputing.com>
-+
-+description: |
-+  The Usb controller on EIC7700 SoC.
-+
-+properties:
-+  compatible:
-+    const: eswin,eic7700-usb
-+
-+  reg:
-+    maxItems: 3
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  interrupt-names:
-+    items:
-+      - const: peripheral
-+
-+  clocks:
-+    maxItems: 3
-+    description: handles to clock for the usb controller.
-+
-+  clock-names:
-+    items:
-+      - const: suspend
-+      - const: aclk
-+      - const: cfg_clk
-+    description: the name of each clock.
-+
-+  resets:
-+    description: resets to be used by the controller.
-+
-+  reset-names:
-+    items:
-+      - const: vaux
-+    description: names of the resets listed in resets property in the same order.
-+
-+  eswin,hsp_sp_csr:
-+    description: |
-+      High-speed equipment control register.
-+    $ref: /schemas/types.yaml#/definitions/phandle-array
-+
-+  ranges: true
-+
-+  dma-noncoherent: true
-+
-+  numa-node-id:
-+    maximum: 0
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+  - interrupt-names
-+  - interrupt-parent
-+  - clocks
-+  - clock-names
-+  - resets
-+  - reset-names
-+  - eswin,hsp_sp_csr
-+  - dma-noncoherent
-+  - ranges
-+  - numa-node-id
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    usb {
-+        #address-cells = <2>;
-+        #size-cells = <2>;
-+
-+        usbdrd3_0: usb0{
-+          compatible = "eswin,eic7700-dwc3";
-+          #address-cells = <2>;
-+          #size-cells = <2>;
-+          clocks = <&clock 270>,
-+                   <&clock 545>,
-+                   <&clock 546>;
-+          clock-names = "suspend","aclk", "cfg_clk";
-+          eswin,hsp_sp_csr = <&hsp_sp_csr 0x800 0x808 0x83c 0x840>;
-+          resets = <&reset 0x07 (1 << 15)>;
-+          reset-names = "vaux";
-+          ranges;
-+          numa-node-id = <0>;
-+          status = "disabled";
-+          usbdrd_dwc3_0: dwc3@50480000 {
-+            compatible = "snps,dwc3";
-+            reg = <0x0 0x50480000 0x0 0x10000>;
-+            #address-cells = <2>;
-+            #size-cells = <2>;
-+            interrupt-parent = <&plic>;
-+            interrupts = <85>;
-+            interrupt-names = "peripheral";
-+            dr_mode = "peripheral";
-+            phy_type = "utmi";
-+            maximum-speed = "high-speed";
-+            eswin,hsp_sp_csr = <&hsp_sp_csr 0x1044>;
-+            snps,dis_enblslpm_quirk;
-+            snps,dis-u2-freeclk-exists-quirk;
-+            snps,dis_u2_susphy_quirk;
-+            snps,dis-del-phy-power-chg-quirk;
-+            snps,parkmode-disable-ss-quirk;
-+            status = "disabled";
-+            numa-node-id = <0>;
-+            dma-noncoherent;
-+          };
-+        };
-+    };
+diff --git a/drivers/power/supply/max14577_charger.c b/drivers/power/supply/max14577_charger.c
+index 1cef2f860b5f..ed6f5a584c2c 100644
+--- a/drivers/power/supply/max14577_charger.c
++++ b/drivers/power/supply/max14577_charger.c
+@@ -572,8 +572,10 @@ static int max14577_charger_probe(struct platform_device *pdev)
+ 	chg->max14577 = max14577;
+ 
+ 	chg->pdata = max14577_charger_dt_init(pdev);
+-	if (IS_ERR_OR_NULL(chg->pdata))
++	if (IS_ERR(chg->pdata))
+ 		return PTR_ERR(chg->pdata);
++	else if (!chg->pdata)
++		return -ENODATA;
+ 
+ 	ret = max14577_charger_reg_init(chg);
+ 	if (ret)
 -- 
-2.25.1
+2.43.0
 
 
