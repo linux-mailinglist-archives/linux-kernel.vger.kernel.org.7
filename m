@@ -1,156 +1,106 @@
-Return-Path: <linux-kernel+bounces-651439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-651441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D49FAB9E76
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 16:18:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70157AB9E7C
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 16:19:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 10B4316612B
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 14:18:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A68C01BC30FE
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 14:18:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C2F619938D;
-	Fri, 16 May 2025 14:17:47 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EE2A1519AC;
-	Fri, 16 May 2025 14:17:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 843001922D3;
+	Fri, 16 May 2025 14:18:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=maine.edu header.i=@maine.edu header.b="NeZPS+LI"
+Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 393C218FC92
+	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 14:18:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747405067; cv=none; b=m3HdM55u62gBKVUVLjVDnAI0Yu063s3IamMtYUhJwlYP28FSPAsYriHXcFpufiF8E5PNgc91bqhhSfTF2Dq0KduBpyaASmmrddp134e4+YNvOOGarSX47YrF7gHj/k0s6Jp4siAkfDkckfkbfoVkqPXklrwy1Ug70vOTH1sjpnk=
+	t=1747405094; cv=none; b=E963W4h+QA4BA8NTb//+c6jb0Epn6hEzlmOVgI/N9bTKJ/V2LkEN/G6lqDdwRpBA5tPQWHH1VqcrfXlPrV2hTvq4fe7+HGf52XTkzSi8aKezaF5CY0I8lTVZm6iEn6k7MlVKx3j1w0uMOUunKDj8GmpMRiOMNuTsobIzczF51y0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747405067; c=relaxed/simple;
-	bh=OBQ87NQ92PyH+abCzIQ6vkFUgeV3C1Skp1kurt7pTxg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HzOcce4HvTm//U0Cf+MTg//tvYbnzWJCVWh0b8jIXQ1gvdthacAvREt8aCvYwQJmcFi4j26WnwwqPE6kO4g3OrLzTVP7idvZQNxjeMHSgpbjacpSZFWkFGgZ2z99e/SsaZNtsmrwGo0QJBFux3IQxQhKxdldatEO1zKTDQpa9DM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6B1EF169C;
-	Fri, 16 May 2025 07:17:32 -0700 (PDT)
-Received: from localhost (e132581.arm.com [10.1.196.87])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F2ADD3F63F;
-	Fri, 16 May 2025 07:17:43 -0700 (PDT)
-Date: Fri, 16 May 2025 15:17:39 +0100
-From: Leo Yan <leo.yan@arm.com>
-To: "Liang, Kan" <kan.liang@linux.intel.com>
-Cc: peterz@infradead.org, mingo@redhat.com, namhyung@kernel.org,
-	irogers@google.com, mark.rutland@arm.com,
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-	eranian@google.com, ctshao@google.com, tmricht@linux.ibm.com
-Subject: Re: [PATCH V2 01/15] perf: Fix the throttle logic for a group
-Message-ID: <20250516141739.GG412060@e132581.arm.com>
-References: <20250514151401.2547932-1-kan.liang@linux.intel.com>
- <20250514151401.2547932-2-kan.liang@linux.intel.com>
- <20250515094300.GC412060@e132581.arm.com>
- <4a44b8cb-7c73-4926-8b9f-1f63929ea48f@linux.intel.com>
- <20250516125146.GE412060@e132581.arm.com>
- <b0d1b369-3d1a-47a5-befe-9c723ed5bb79@linux.intel.com>
+	s=arc-20240116; t=1747405094; c=relaxed/simple;
+	bh=eMAldY621LGBuYWnS0DttmFZTqueAPJOlZY/rBYz5WY=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=dNL6GlZkFB3qDMgwNlL0va6qIAv/vF+iDCtV75DykDJpOhqTpjM0Xm0cmtGC84zlUi5sH7Kz5Cmzus+vv5Irs4O+NIaQ69OmljKF/y3UApjYy7GzWEhPTCCtHMqmxGalB2TDu72gxE2kH+LntosvJOH+LwRfHCWklCVV4Uh7G5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=maine.edu; spf=pass smtp.mailfrom=maine.edu; dkim=pass (1024-bit key) header.d=maine.edu header.i=@maine.edu header.b=NeZPS+LI; arc=none smtp.client-ip=209.85.222.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=maine.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maine.edu
+Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-7c5b2472969so217902185a.1
+        for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 07:18:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=maine.edu; s=google; t=1747405089; x=1748009889; darn=vger.kernel.org;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:date
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=owY4nRaaHwvI0FEJzLInMFg5XKLo1UFESw5ag0F5X+w=;
+        b=NeZPS+LIdYd8rZsx68P/1Fr/6QxTqVyMCcRY5T7d3L4VUWLKuA10Dha32ET9/bYE2V
+         JFyM0eG8ApelM+O1795yEvvIjMDLG+pobTO9QU7eZhXvSMB5IfmRs84EhNpmX+XYbYLv
+         KoGphNopelw223F5CluNFoAhI3SS6yrKIQaSM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747405089; x=1748009889;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:date
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=owY4nRaaHwvI0FEJzLInMFg5XKLo1UFESw5ag0F5X+w=;
+        b=ocz/Y1/1PE+Icrgh0k3KsW1xnCsDG54iU8hVxa/GltUwd3fYRZNvV5tdUNOmSRBL8r
+         b3QDtuK7oEVhAGP8kDnnwxH22u7rARNwdILZL/6MaR/m1ch7YJwZcYS9LGO71aIHEsWs
+         pwfS0yEcVeOa2b/RhWUbmREin/+hhxBwBcBsiLmC0AghX2NgpMJaDDP5ecHUZA9J9Jf+
+         t2/6mEyeeGLhS/JS5IJwzlhvc5c+gziEDqRrROjFLN58b/8po7wQADA431HDCRiQyoeM
+         Cge1VtepqdLKpVWniuCaMmEvJY0scn9k9LMTWwVYikBpN0lz2qN4Qtag8yBHdVWSmLgp
+         T2Kg==
+X-Gm-Message-State: AOJu0Yx4gMJ5tY5SZuMZlaJL1DGi1bcFdq17vB0J92iMBWzxn+QwxYYU
+	03wv+6MbZjAdPahB95zdSdchbDyTlH6lGeNowv0JVKrNlH3yYxFHvxf2frEdycS9sDmdxaWHEm3
+	XMhQevA==
+X-Gm-Gg: ASbGncuvlfY0nnil8iuAvb9bXn1EHw633sXNzIObhnBb2Rx/v2NfkI6U5HECuW3Y2li
+	1Zai+8AyLnF4dyyk48lbduj7OzSernRu+swwLSVHnzFlTn5Z4R7+C6D0+bFZrcvXGID67n+ov0V
+	knFqTj3k0yWZvXoJt2cPv1Ahw370F0Evzr5x0osXEs5lgG8gkjBiSEPOW/Nq71uZubABhN/lZIT
+	CNv3o14MgoX+uvfQQMOfRHKCFv9Nw2tpN4Ypv4V8GDim6a0rRpp+lKqmT0VvaFLqtbiyqZQzaVz
+	WiaCm60WWhsMroFFmT6nhj3sBdPQCv+QwEG320A3jEmRPrVr6MA/NODAHjBr7eC8wrP9fLs=
+X-Google-Smtp-Source: AGHT+IHX54JGF3VTnio+m8DU2sCiIbyBg5xhIiMGOX8DYyY/nAQMnnooQoTr9NQ1eTWo+ItnU0AtUg==
+X-Received: by 2002:a05:620a:444d:b0:7c5:5f19:c64f with SMTP id af79cd13be357-7cd46708138mr549132785a.4.1747405089444;
+        Fri, 16 May 2025 07:18:09 -0700 (PDT)
+Received: from [192.168.8.146] (weaver.eece.maine.edu. [130.111.218.23])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7cd467db690sm123338585a.48.2025.05.16.07.18.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 16 May 2025 07:18:08 -0700 (PDT)
+From: Vince Weaver <vincent.weaver@maine.edu>
+X-Google-Original-From: Vince Weaver <vince@maine.edu>
+Date: Fri, 16 May 2025 10:18:07 -0400 (EDT)
+To: linux-kernel@vger.kernel.org
+cc: linux-tip-commits@vger.kernel.org, Sandipan Das <sandipan.das@amd.com>, 
+    Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+    linux-perf-users@vger.kernel.org, x86@kernel.org
+Subject: Re: [tip: perf/urgent] perf/x86/amd/core: Fix Family 17h+ instruction
+ cache events
+In-Reply-To: <174740303900.406.5499797802401271693.tip-bot2@tip-bot2>
+Message-ID: <c409c331-da7d-7424-e0db-a4c61ea423ca@maine.edu>
+References: =?utf-8?q?=3C2f475a1ba4b240111e69644fc2d5bf93b2e39c99=2E174661?= =?utf-8?q?8724=2Egit=2Esandipan=2Edas=40amd=2Ecom=3E?= <174740303900.406.5499797802401271693.tip-bot2@tip-bot2>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b0d1b369-3d1a-47a5-befe-9c723ed5bb79@linux.intel.com>
+Content-Type: text/plain; charset=US-ASCII
 
-On Fri, May 16, 2025 at 09:28:07AM -0400, Liang, Kan wrote:
+On Fri, 16 May 2025, tip-bot2 for Sandipan Das wrote:
 
-[...]
-
-> > Just a minor suggestion. Seems to me, the parameter "start" actually
-> > means "only_enable_sibling". For more readable, the function can be
-> > refine as:
-> > 
-> > static void perf_event_unthrottle_group(struct perf_event *event,
-> >                                         bool only_enable_sibling)
-> > {
-> > 	struct perf_event *sibling, *leader = event->group_leader;
-> > 
-> > 	perf_event_unthrottle(leader,
-> >                 only_enable_sibling ? leader != event : true);
-> >         ...
-> > }
-> > 
+> The following commit has been merged into the perf/urgent branch of tip:
 > 
-> It should work for the perf_adjust_freq_unthr_events(), which only start
-> the leader.
 
-> But it's possible that the __perf_event_period() update a
-> sibling, not leader.
-
-Should not perf_event_unthrottle_group() always enable sibling events?
-
-The only difference is how the leader event to be enabled.  It can be
-enabled in perf_event_unthrottle_group() in period mode, or in
-frequency mode due to a new period value is generated, the leader
-event is enabled in perf_adjust_freq_unthr_events() or in
-__perf_event_period().
-
-This is why I suggested to rename the flag to only_enable_sibling:
-
-  true: only enable sibling events
-  false: enable all events (leader event and sibling events)
-
-Or, we can rename the flag as "skip_start_event", means to skip
-enabling the event specified in the argument.
-
-> I think I can check the name to bool event_has_start.
-> Is the name OK?
-
-I am still confused for the naming "event_has_start" :)
-
-What exactly does it mean?
-
-> diff --git a/kernel/events/core.c b/kernel/events/core.c
-> index a270fcda766d..b1cb07fa9c18 100644
-> --- a/kernel/events/core.c
-> +++ b/kernel/events/core.c
-> @@ -2749,13 +2749,13 @@ static void perf_event_throttle(struct
-> perf_event *event)
->  	perf_log_throttle(event, 0);
->  }
+> perf/x86/amd/core: Fix Family 17h+ instruction cache events
 > 
-> -static void perf_event_unthrottle_group(struct perf_event *event, bool
-> start)
-> +static void perf_event_unthrottle_group(struct perf_event *event, bool
-> event_has_start)
->  {
->  	struct perf_event *sibling, *leader = event->group_leader;
-> 
-> -	perf_event_unthrottle(leader, leader != event || start);
-> +	perf_event_unthrottle(leader, event_has_start ? leader != event : true);
->  	for_each_sibling_event(sibling, leader)
-> -		perf_event_unthrottle(sibling, sibling != event || start);
-> +		perf_event_unthrottle(sibling, event_has_start ? sibling != event :
-> true);
->  }
-> 
->  static void perf_event_throttle_group(struct perf_event *event)
-> @@ -4423,7 +4423,7 @@ static void perf_adjust_freq_unthr_events(struct
-> list_head *event_list)
-> 
->  		if (hwc->interrupts == MAX_INTERRUPTS) {
->  			perf_event_unthrottle_group(event,
-> -				!event->attr.freq || !event->attr.sample_freq);
-> +				(event->attr.freq && event->attr.sample_freq));
->  		}
-> 
->  		if (!event->attr.freq || !event->attr.sample_freq)
-> @@ -6466,7 +6466,7 @@ static void __perf_event_period(struct perf_event
-> *event,
->  		 * while we already re-started the event/group.
->  		 */
->  		if (event->hw.interrupts == MAX_INTERRUPTS)
-> -			perf_event_unthrottle_group(event, false);
-> +			perf_event_unthrottle_group(event, true);
->  		perf_pmu_enable(event->pmu);
+> PMCx080 and PMCx081 report incorrect IC accesses and misses respectively
+> for all Family 17h and later processors. PMCx060 unit mask 0x10 replaces
+> PMCx081 for counting IC misses but there is no suitable replacement for
+> counting IC accesses.
 
-The logic in the updated code is correct for me.
+can you link to the errata document that describes this problem as well as 
+maybe give a rundown of how and why this breaks?
 
-Thanks,
-Leo
+Vince Weaver
+vincent.weaver@maine.edu
 
