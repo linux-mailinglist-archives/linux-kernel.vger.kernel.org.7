@@ -1,449 +1,147 @@
-Return-Path: <linux-kernel+bounces-651596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-651582-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82B3EABA082
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 18:00:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2731AABA04A
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 17:50:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 101679E2FEC
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 15:59:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15C8F3A93B7
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 15:49:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E16BC1C84B8;
-	Fri, 16 May 2025 15:58:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19C401B4F09;
+	Fri, 16 May 2025 15:50:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="PhkEs3NL";
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="PhkEs3NL"
-Received: from PA4PR04CU001.outbound.protection.outlook.com (mail-francecentralazon11013050.outbound.protection.outlook.com [40.107.162.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="LAAOmoTq"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E8DD1DED52
-	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 15:58:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.162.50
-ARC-Seal:i=3; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747411138; cv=fail; b=fC3h3CaQ4DA93UItxRzpURunot6H4wiyQK441cHBfnOFXA5Q3rb4OEg5U+XlqB/VONx7cEEfy8EuKugHMkBQlXTUe6Q/BVFkS3njjfdqtHljthNXZKUDJ8v52sgxN2jzvBbILT0uYmEnzITUbuX6HG0bSro5qVTH68CBfdW6vfU=
-ARC-Message-Signature:i=3; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747411138; c=relaxed/simple;
-	bh=/8o3cFgnnrgWoQjy9f42CHMAGgoGSsKkTA+lJgfF2v8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=dR7VWJdVHvx04mMOmprkXicNDCNYwf+fyOWp9moXjstIj9Gs2FXf1H4/IZaEacdj9IRQS/uQSS24upIDs4Y3mAKM9yp0glJ6tIpaxvwvev4hK/OcAKUk2om7jfDkfQbqMyER3oukg8tLxyDcW5AZem6eWHKdQXA3qQY+15S52gY=
-ARC-Authentication-Results:i=3; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=PhkEs3NL; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=PhkEs3NL; arc=fail smtp.client-ip=40.107.162.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-ARC-Seal: i=2; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
- b=IIkLhjMFbxyLGKdi2tE8M9UFcwZ6Sb0fho7XpOyfQDAr8CJpN+CBgB5Mtwyn/eqALFs+hFFrYmJCkW9KuluKY3buYn59FJjlCXwCjlekPe6rCfb6u1m8qiKIKzkZUBNafU+YUUK/QcgnjHV4B08dsS5jLDma240MPkChtWvBH+V+DQinlCblqavWBXJwDcFTFRYaQUY1bbaVxSN+2gfOWFlFxk76dpIUN4PqhDmI4BEdV9bJ5XfbMjXPekMVQDw6p5PUMRGKLi4fst358DfiS6QvsNbxiCS6EftjWR9UmV0Kd9mEXQ4XdDaH7h0Ld8HxM5oFmavweQ6i4DfQWZCTTg==
-ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=FZotHG/NiHZdV7jEQZVPj2JqaAhiLixdocbppNgllw8=;
- b=CS6BmieYLoR5uWHa08RVNd20CwMgtXvcU67dwt189HvVIhiFk+v1W2CPStMpBHEs1tuNkVzK7c9jAj6A1fclqDMRzg5eDxz1tKg8mJPnq+Qzbf6M7tY29O6VWBuXrEvQJpT4L9Mohc5Ids8+rKyNXbs3tcHX41rMy7Muy1T5p+JgwhBxMTyOeMRb0qKBBohMk1e7Zut04C5FuFyqI6hVyANRQbth70n9M6U0iEUxD9QFXoXrIPhRTEni4YJnwCfbCYq93VDo0UTL3k4DP0VtJekQaA+K7XqkIKWTcNpSJJNKDp4NAfLElE4FJzAdGwsbHHPpsLWEFv1vJ+IzYUHzkA==
-ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
- 4.158.2.129) smtp.rcpttodomain=collabora.com smtp.mailfrom=arm.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=arm.com;
- dkim=pass (signature was verified) header.d=arm.com; arc=pass (0 oda=1 ltdi=1
- spf=[1,1,smtp.mailfrom=arm.com] dkim=[1,1,header.d=arm.com]
- dmarc=[1,1,header.from=arm.com])
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FZotHG/NiHZdV7jEQZVPj2JqaAhiLixdocbppNgllw8=;
- b=PhkEs3NLBWinQf6Sou7/ypmrVRkpGNIRAmTrafhoSPhBtQpmhg3XkKbRr1qgKsbqm7fIpsf8YqCKjNnYKgP9krffzAcbq9zTjm2yM1VHrUgnEVkRFDwveMRN1N0Gav8gtuudh6uhkFz9RQNCJF+ddaBhh+tWFPG0Y/fCuH0cgE4=
-Received: from AM0PR03CA0030.eurprd03.prod.outlook.com (2603:10a6:208:14::43)
- by DBAPR08MB5573.eurprd08.prod.outlook.com (2603:10a6:10:1a2::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8722.33; Fri, 16 May
- 2025 15:58:51 +0000
-Received: from AMS0EPF0000019E.eurprd05.prod.outlook.com
- (2603:10a6:208:14:cafe::77) by AM0PR03CA0030.outlook.office365.com
- (2603:10a6:208:14::43) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8746.17 via Frontend Transport; Fri,
- 16 May 2025 15:58:51 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 4.158.2.129)
- smtp.mailfrom=arm.com; dkim=pass (signature was verified)
- header.d=arm.com;dmarc=pass action=none header.from=arm.com;
-Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
- 4.158.2.129 as permitted sender) receiver=protection.outlook.com;
- client-ip=4.158.2.129; helo=outbound-uk1.az.dlp.m.darktrace.com; pr=C
-Received: from outbound-uk1.az.dlp.m.darktrace.com (4.158.2.129) by
- AMS0EPF0000019E.mail.protection.outlook.com (10.167.16.250) with Microsoft
- SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.8746.27
- via Frontend Transport; Fri, 16 May 2025 15:58:49 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ubSWNFL2jGmmhkhKyBfuivXA2BXQX9qJYo4EZ4DaNSrAHhN4WdST/lOzJU2zHyanyUHlzQbZW0WRwT5/D6/BZ7j16IVyjmIOGD4nKeiK6Lg2KI8mqeUdhcDGPBXW53vnsrIAvVpqhdObAAf/yNmh18y767+SibwH2oP87xDP46+HIHdpOd8I76/K2iHf4IU5OOKQT+y8+TAXdRuduuhipycASgSKsFbHy56VmUnrV5V+oMgcadnwajsjqmSOZI/wQ2bdOxuuAjoflvTObZ0YlR3mNZypWFJ5ywb0il854gZRhIKGm9/2Zy/BwM/oVs3MM0Hvq7u7/30IdVp8XLlCdA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=FZotHG/NiHZdV7jEQZVPj2JqaAhiLixdocbppNgllw8=;
- b=TC9h77uYTf2TBkpX3A/6TcTkCL916+PRGOBou3h9UK7i4r6rw0SjrcBJ7MP3iL9gTnxLBTbLXaX9ky/vnmLdytnisY/dlnVLm0lhKRCQPB30/mMNUgrc82rTxasjGML/K0K+jBteBciRYxkI8E2oE8CmMB2irDl5CIv5Drb6agVDFC37tK77Y0tT8yQK8fxGQwxnIxSfbLSRR0Ga7D5nICyy6H0rS5SEKDUdFBkkkQtwAhTTOrlXd5RBLs6dxENq3KlQgeVBr13tpDu1eUFB/g7pGSGUVBuJ5oUDxo0eSSNdNJtMxPgsQj5fIU4fBGdJ5V9Z8LVQJE+cP7zzP9o52A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
- header.d=arm.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FZotHG/NiHZdV7jEQZVPj2JqaAhiLixdocbppNgllw8=;
- b=PhkEs3NLBWinQf6Sou7/ypmrVRkpGNIRAmTrafhoSPhBtQpmhg3XkKbRr1qgKsbqm7fIpsf8YqCKjNnYKgP9krffzAcbq9zTjm2yM1VHrUgnEVkRFDwveMRN1N0Gav8gtuudh6uhkFz9RQNCJF+ddaBhh+tWFPG0Y/fCuH0cgE4=
-Authentication-Results-Original: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=arm.com;
-Received: from AM0PR08MB3315.eurprd08.prod.outlook.com (2603:10a6:208:5c::16)
- by VE1PR08MB5837.eurprd08.prod.outlook.com (2603:10a6:800:1a9::23) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8722.32; Fri, 16 May
- 2025 15:58:17 +0000
-Received: from AM0PR08MB3315.eurprd08.prod.outlook.com
- ([fe80::42a0:1b6e:cf98:d8fc]) by AM0PR08MB3315.eurprd08.prod.outlook.com
- ([fe80::42a0:1b6e:cf98:d8fc%4]) with mapi id 15.20.8722.031; Fri, 16 May 2025
- 15:58:17 +0000
-From: Lukas Zapolskas <lukas.zapolskas@arm.com>
-To: Boris Brezillon <boris.brezillon@collabora.com>,
-	Steven Price <steven.price@arm.com>,
-	Liviu Dudau <liviu.dudau@arm.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Cc: =?UTF-8?q?Adri=C3=A1n=20Larumbe?= <adrian.larumbe@collabora.com>,
-	Lukas Zapolskas <lukas.zapolskas@arm.com>
-Subject: [PATCH v4 7/7] drm/panthor: Expose the panthor perf ioctls
-Date: Fri, 16 May 2025 16:49:41 +0100
-Message-Id: <d196bcce96cf0e3672905c3cb0336505728ddc52.1747148172.git.lukas.zapolskas@arm.com>
-X-Mailer: git-send-email 2.33.0.dirty
-In-Reply-To: <cover.1747148172.git.lukas.zapolskas@arm.com>
-References: <cover.1747148172.git.lukas.zapolskas@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: LO4P265CA0304.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:391::12) To AM0PR08MB3315.eurprd08.prod.outlook.com
- (2603:10a6:208:5c::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFCE25661
+	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 15:49:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747410599; cv=none; b=rMXsI/QCTtR6kSGCP8qocxigogYLkf4MZW77g3AW3mPFRGo+pyK0/kXnswlzCGS4brfIicA9huD4wTggsYNoAv5Xpo6Ahd//W5KGLGFkJdSIcYCSFllKhUi2+y2VTpgJoQRkEUZiGk8tL2hL3eYX4AvWTiE/knUJk9zMzTlElfI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747410599; c=relaxed/simple;
+	bh=JpkaASypHV31ANZvoYuzM/VCYCe14HE5EBiA8Qn/Lo8=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=bQvPvTyGtWvT+SMH2fahsZp+w5t9VKzpFeRb2oBZiSNgbRoonU7ISa9zkoiJFFWR4aZsJc+QD6FosOafffoiyb67BrCZqK2A+PRH6q42nIuvNz0ts+UQdbaSS19AAQcFifKF+OnsHLU4G3YGOgAMq4aeISdH7c7kKcUcGzhYC9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=LAAOmoTq; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-30dfd9e7fa8so2864854a91.2
+        for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 08:49:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1747410597; x=1748015397; darn=vger.kernel.org;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=DQq08iC5AMkz4yvNE7oCYDyYJ6HwaFXKyHL4aPlfToY=;
+        b=LAAOmoTqSHAE2KFBaqgclN3q308u/BE/ccr2gdRpjBW8pTHkUux7Jh+xa4uSktQ8V+
+         xFS2GA7VcEwsBqRRynbYuplqCVLuR+a2pWGCexFNjuDdhiGGNfgLumq0TBXAUulCqwtg
+         XhFb8IP3r1Jdqey5X8U7Fi91YEz5fzd8pDpHD+tPNE0ue9+EQSKfdluIiEUAZ4pf4yId
+         qHDref5BVFjQEAVs6DJBfGSsZyMEq4QUGduaDNZVcrmfH7kFCml7P7MwuC7jmyHalkA7
+         HknPFP0ANC2E2YfjnWo7rUAb7U2YfL/BlfDX7gSTtRnh7fD8Jwx/O2V0n0sP/GG8w9wA
+         bgUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747410597; x=1748015397;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DQq08iC5AMkz4yvNE7oCYDyYJ6HwaFXKyHL4aPlfToY=;
+        b=Zo5aUQIwFaMkgcao7c9Diyg3QAznds80jZGjdsz9B0YW+SEY78H1TY1shgMDXNWo/9
+         diCguXUcdyR6icXPw1f1SYyfAwNnIAeFebA6VkEMiuMwS7Tz5YZYqd9iOKtbXsjeZZ8z
+         8N4leQAFupXm0cHkNNIWBCz+UmjCUX0+78bigHeDwWuit5XpdHXu+uLt53z8F2WnIJ+I
+         mODMPPmppMNIr2Z7bFFTtoWSD8uneq0E1AzASMKOiWjcS+gOac+kxZg6fd2JgfrvDq4Z
+         H2QX3QDyvPCSKeQK4F1MrPR6ZpwmVbuwXRec69dTFl2TVZVAedMIYOeEjZJ4cKbdwNG5
+         m0xA==
+X-Forwarded-Encrypted: i=1; AJvYcCWCjPEvWxucGxsNa8Q5R9ELjcmA0KYkdkg86J6iV+xlMbrlkduBL+gIRKgQJFm5m2cJS1Hll6rlvg6wu8k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyzLnmJb2WlbYgQ1zeSjLQqhTP42HYAXnZ+O89DfUNl9BMIV2tB
+	fzy4oIFDbebu/OWs+HZL3EZqdFsUplHApbd5+aNNnHbDl1A2KzlwE4yyHtMoKjKxbgpCY55nmsB
+	mM6hK
+X-Gm-Gg: ASbGnctNNHxhjpdV9KcJ+TDcoMV4M+uNQY/pi+NbKd9Yro56mXrKo/tyZ1Dn03yHYR4
+	G2VsI1bkcoOvA0krJwAKg8NX3y7bYrXAa+T5r21YyXkNayh5LrJunBRGYV9gG3t4ZiPWF5U1VyW
+	GrXFfZKhO3CpOgoRx3n/bzt5mcdtlR3xyw5pV0slzFuUlnF4O1pL4VaKwY7tCAy6lJXhz3TP45u
+	oi269QAlrsRUH9y43tkZ7vgIU8nBRaNYVM0c8ujZKVjtBnLlG/Aur4aoc2+nzJZriOoWHClSe9b
+	RFnCpZ8Lrz7n6mOZjgG38xvJD7+8BzquzsjiWDkLxCMjzRNr7p2c934nE/b5f4hy+KMiozG9jju
+	NtptfJBJjXwjpEw==
+X-Google-Smtp-Source: AGHT+IFh4shsoB9AdIyllbddv/+L1vYFXbpx0M94kDy+ICVHvdPChMsSzgRCcPPWhpWg4OGO2PuxuQ==
+X-Received: by 2002:a05:6214:27ef:b0:6e8:fcc9:a291 with SMTP id 6a1803df08f44-6f8b2c95ca5mr45535716d6.23.1747410586709;
+        Fri, 16 May 2025 08:49:46 -0700 (PDT)
+Received: from xanadu (modemcable179.17-162-184.mc.videotron.ca. [184.162.17.179])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6f8b08aed47sm13526396d6.50.2025.05.16.08.49.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 16 May 2025 08:49:46 -0700 (PDT)
+Date: Fri, 16 May 2025 11:49:44 -0400 (EDT)
+From: Nicolas Pitre <npitre@baylibre.com>
+To: David Laight <david.laight.linux@gmail.com>
+cc: =?ISO-8859-15?Q?Uwe_Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>, 
+    Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, 
+    Oleg Nesterov <oleg@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
+    Biju Das <biju.das.jz@bp.renesas.com>
+Subject: Re: [PATCH next 0/3] lib: Implement mul_u64_u64_div_u64_roundup()
+In-Reply-To: <20250516131758.2a304d1b@pumpkin>
+Message-ID: <028q4r18-q026-0qoo-sr92-752s68rpp6n4@onlyvoer.pbz>
+References: <20250405204530.186242-1-david.laight.linux@gmail.com> <5e7mp3nreaadppjhxhpffyff2d2ccwcjf2suonxe43eofngddu@qfufr2wiw7yn> <20250516131758.2a304d1b@pumpkin>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-TrafficTypeDiagnostic:
-	AM0PR08MB3315:EE_|VE1PR08MB5837:EE_|AMS0EPF0000019E:EE_|DBAPR08MB5573:EE_
-X-MS-Office365-Filtering-Correlation-Id: c73a1eb5-6317-45c4-6048-08dd94928c0a
-X-LD-Processed: f34e5979-57d9-4aaa-ad4d-b122a662184d,ExtAddr,ExtAddr
-x-checkrecipientrouted: true
-NoDisclaimer: true
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam-Untrusted:
- BCL:0;ARA:13230040|376014|1800799024|366016|921020;
-X-Microsoft-Antispam-Message-Info-Original:
- =?utf-8?B?K0YyMFdKbWdCMU5YVjNDRUNZSEYwczVWbzB1emtrSG4yVWNZU0Vra2hWZ2lQ?=
- =?utf-8?B?bk5VQkRhY1p3WXRTMndaWGxCWmNNRktiMkNNOW5BaW43RmVGbnRlbDlRMjJ2?=
- =?utf-8?B?OXp2NUdyS0pmdTJVZDFkUDFHKzVPeVJoYTBISElZNkltZHpvNUFVM2JxVitR?=
- =?utf-8?B?VXhJWXRBVG13TElsRDhzYmwxY2VNTC96cmdLY1YvVHZ5ZFplREh4VXFUdzlJ?=
- =?utf-8?B?MCtQbzM1UmYrYXpIaGFkTytQY1JlVzNoNHlveW1tYlI0dVovbXljVlFjTXRq?=
- =?utf-8?B?cUNSekJwZUwxMGtIYk1UWW1Qb2NWNm5sdWxta1U4Z0Nzdkd6S1VkNUQrYmJB?=
- =?utf-8?B?Mk9WdC90Zlc0TlNSYmlzWXFBM1ZFTnlycFd1NzZxYWc2QzZnSDFIeDdRYVg4?=
- =?utf-8?B?VjZrcDNndGhHSGN3UFU1V2dCS0lHR2grc1FQc043eS9QdWVnUWNEVCs3M0hM?=
- =?utf-8?B?Mm0vTnlYVGpscTVtS1VsWVRmb3FNV3lKRGpHTm0zelcrT3JqV3lSUlIvbWN2?=
- =?utf-8?B?MVh5UVlJUlN3OXdlVGd2d3BKQVk5NnNkWVk3aFdHUE1qR1RHWXJqdHpEKzRI?=
- =?utf-8?B?NWNBNVNHZVNyNU10RkZzRkp5cGxJOXdSdy9Ncm10eTNSdE1oVHhYNkNPRWFM?=
- =?utf-8?B?U05pRnpCamFNbkNUV2V6ZkNMSUFoMHo2Wm1rempEcTA1dklvVHBZS29wVngr?=
- =?utf-8?B?TmpGYlhUYWZaVlB5OWJQVDlza2J2eUFNN01keWZuL1Vob3BaS0NBNTZkQXBG?=
- =?utf-8?B?bnEzdW9QcEg5VFAxclZJSzh4RXhabzVIMVFPNUlrbkl5bUUyZ2dRWnBiemFv?=
- =?utf-8?B?c2crZzRDeFd6cm1Da1Vkdk5zR3VLN1BvQ1RCSEtWMC9teGFnczVaMkxxSDR6?=
- =?utf-8?B?QnV6L0R2eFRQRmlpdGcxYldhZXZrSzNpeEkyb0JDM1VFeUVVaCsxN2NscHd0?=
- =?utf-8?B?QVEyVDB5SHgraVF2Z0V3eUI0Vy95Y0RiaVlqQUx5Q2w2MU5ZNHBQdGdVZE5J?=
- =?utf-8?B?UVZ4L2xFQWcyRlhRajUxeWcxYWE5anZBc2ZXWGFtallSK2hLK0Y0Q1k0MDhn?=
- =?utf-8?B?RVRtK1NwQlg5OUlWdkZUUVQrNmVkbllOZkhXSmVWNTlNbzBiQVV4QmoxMk1x?=
- =?utf-8?B?Y25INEhJVlMwK1ExNW1xZDlSb0tuV0dEeXVoUGdNUEU0RUpzUUNvUHdMM1pQ?=
- =?utf-8?B?U3ZGc3A1ZjMwR1BJOUpXQjhKWHNWWU5DRHhCa0xVVjAxU1lObVg0YWFTWmZR?=
- =?utf-8?B?Vmc0b0V2TnJqdFJZSzZoVlpXNmhKVzEzR3BGeGdqaEluY0pXSjdtenhCTkE0?=
- =?utf-8?B?dFNwZGNpUUZXSk9vc3U1OTRGdzFkK1FMVTNvMDFXRDhlaXB2RHQ1RUpLV0pH?=
- =?utf-8?B?QXpndlZjVkQranRzUWNqeWpnN09DelVjMVFZdGQ4WW5ROUx2Y21IRnFyTjZj?=
- =?utf-8?B?T3BPbGlWQTBjdDREd2tQV09kNXU0V2wrdjVoN21JanJPZ1JBV25YY0J4NEhr?=
- =?utf-8?B?NUZWRXRaLytweUVteVB0R0cwQ2RiMzArblF3REVBSG0zc1MrQmh3Qk1DeE5E?=
- =?utf-8?B?bllQWVM3aVpKMktnQWVvTUg0ODhGTkc2bVQ0bFl0UWthekhGU1BoWDlmaW1O?=
- =?utf-8?B?dDVCeUp3WWdZMWpCQmZFK0puTmRxTnV2SFlubkhPUDBEUThaT2RxVVBzOEJH?=
- =?utf-8?B?aS9kZHRtcjlDcVZia1d4S09aZjFpOVRwMzFUMVY5TWRvRXVsRkxwei9oWHV2?=
- =?utf-8?B?UDBteWt4SThIZ3lSVXhxdCtKYjVLNjZTSUdTUmxxUzl4Tmc1V21FUU10K204?=
- =?utf-8?B?dVhYekxJN3VnVzg5VVVucmFRajRVak1kWnVBemxWOURVdjFmdXNUMFBlQU5T?=
- =?utf-8?B?QTk3dzJxQitKRmlxYWJRRGs4akRJZjlxNFVNM0p2U3ZPbDZFTE0wbmt0dmxC?=
- =?utf-8?B?QnFGZENqbWtnTWhJTmdKOFRYdHJYaFJneC9UaDNEVHBBeE8zQnZQR1JuWFVx?=
- =?utf-8?B?V2hZU2U4bzFnPT0=?=
-X-Forefront-Antispam-Report-Untrusted:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM0PR08MB3315.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VE1PR08MB5837
-X-EOPAttributedMessage: 0
-X-MS-Exchange-Transport-CrossTenantHeadersStripped:
- AMS0EPF0000019E.eurprd05.prod.outlook.com
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id-Prvs:
-	6b7b07c2-d25b-450e-3741-08dd94927909
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|35042699022|14060799003|82310400026|1800799024|376014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?ZnZLbkdvRDJFdzRjSTBOZGQvdmlzZHZHWURFMHhQQ1U5SW5xd1A1dHc5bVQv?=
- =?utf-8?B?Y25FQ1VKQm5mSGh1VlRIeVBQb0VsU1dZeTYrSDZ6VFdIaVA3TUJpQjZSMkZx?=
- =?utf-8?B?a2NvMlBUOHhXbmpEcUI3Z3R3UDNMN1pOZExsYnZESUM5VmloeWVjUVVJaEwy?=
- =?utf-8?B?ZlpncURlUHhrUXFmblFiTEZFT2dQWEJaYUpBajgwZ28rc1Z1cUc4K1J3dFRu?=
- =?utf-8?B?Q25lZGJjbDczSzlVYkxIZ1AyS0VNNXR4VDNQVm9vTzJsMi9iMDlYTEw2Njdh?=
- =?utf-8?B?clJNbEZWb0hUWmgwaXlKU0JlMjhWOUZxSVFKdHZUYWt4WU41WURXdU1hMHhu?=
- =?utf-8?B?RTJ6RXpBWWxvSzg2b2JqTmxjVGJNM1J1Wm5JMUhLM0lPUVFlclkvdGF4TVFY?=
- =?utf-8?B?VUdXbG1kNGRkZ0dIZUFRVVcxTDRBU1NkandDN0M1Sjg3SXc4SGk2S05ZbThB?=
- =?utf-8?B?Y0tqWFc3S2JRa2U4NzVibkhLTmNZNUQ4L0VoVjEyNkxnaUlGZW1DZmtnQmkx?=
- =?utf-8?B?b0ZsQjNYWDMyRnFEaE16anVaU2poeURQbVJyTmxPS2taSFYwUk5BZ2h3bmNU?=
- =?utf-8?B?eHRmS2pONm1SRmFDZzZ1WDQ0RGdZcGxGeUZ1VWxGdGg2ZGNqaVdsOVExNWUv?=
- =?utf-8?B?Zmw0Q28vaURsRmpJZ0JlRFJyQ2tlL28zMEV3WmtyaU9Va3kzK3dsK3dDT2ti?=
- =?utf-8?B?VzZCdTRKenIxRnRSdVZVTnV3ZVhtdGlyNDNDY2lrU1BZK0l3RWFhNjc5eWZm?=
- =?utf-8?B?V1VtZTBkMmwzSEtSNzYyUXhLUml3VENmN1oxbHRUajNjVDJSWGliOUxSNTAr?=
- =?utf-8?B?eFRGUm1qZk1Cejkzbk4wZ1gxTFIvMGFWeUQ2eEJFcWJZY1VJUkZjaW43K1BW?=
- =?utf-8?B?R09pNE1pQS9OSlpua1ZrYVJPV3VxSGxSSUwzTjFqS2JDYmk4Y0J0TzgwbzNv?=
- =?utf-8?B?Qy9aYU04QkQzYjA3a0J6N2hDRGJtMVpUSS9obkxvaW1WQW9PRTV1Qk9tNWJn?=
- =?utf-8?B?aU5oQVBRS0NFV1BNMjdqZzdyYng5OGZReTQ2U2Roc1k3VEljTmNTaVR4RGI2?=
- =?utf-8?B?eFA4S09SVzVoMVZtUERaY1ZwWTBIenB2L0YzdFVQT3FaWkZNZXFKTnY3MFBo?=
- =?utf-8?B?bkdZa3dYZEM1M2trdHh3UjZ3WjN6WmVqT0g0S3AxL1NkTUVRVDBTQVFycHRv?=
- =?utf-8?B?ejlxZnNMNzZzek5NbnI5REhDc3ZHVk0zd3FPN2prRTUxSndRdDhCSEFrZXc5?=
- =?utf-8?B?OEhmZnZYenV0eFcycVkxaFVrWVFsVCtpZXUyTWZtUzJVS0p2YzAvaEdZMmlQ?=
- =?utf-8?B?UFRHc1IvU2dVQnNFZDlvdWp6VjVIaVdEZUVsN2R2RnhDcnZTRDNoV3Bia2lD?=
- =?utf-8?B?RGRqYXo5dmlkL3BDbjhTSDZodHBkVUJzWnZQT0pTZHZGQmFYdHpJS1Q2U2xY?=
- =?utf-8?B?cGFuRC9PQjQweFJuajcrb0FLa0V6SFNhd2UrRGwvM1Y4MU1ISlZCdjF2Tmw1?=
- =?utf-8?B?QkdCMDRRYnVJdi9JSWtuN1lzTy9FUm9meWpuSG5yZkViWTNHUmt3dTNsZkpT?=
- =?utf-8?B?RDlXVWp3MHFhSi8yOUVNcmVQa0gxUnN6MkROM2Uwby9ZU0VmZkx2b1ZhTjBH?=
- =?utf-8?B?S0hpMk8xZVFOUE0wSkpydHRkV2RxSDlQODhwWUJKQ2VaN0llREVaNGFhZXVz?=
- =?utf-8?B?YnV0c3FBOUllVEUvVWd3UERRNGlERkxtWnZ6cjh4bjNTaWZnS3crcVJkcjBF?=
- =?utf-8?B?bWFQc0dnQkpISlJaUnd3ek1Bck5Xd2N5Uk84UzJxeFBzZ3R2dGhBTEtHcW81?=
- =?utf-8?B?UDZERDhHanNvVjhLc3VaUDBRTFA4MTNXWGVmcnBTWHYxa0ZzTFgwblA1TXdt?=
- =?utf-8?B?UW9pOGF1YTc4bU9zQ0ZoSUNkNGVHemZnM2dNaXA5elBENmZZdVg4aXhlWUtL?=
- =?utf-8?B?Sk95dkRJUDFuTW81a24wVDArNmYzdTE3WHh1c09UQjEzSDkxNDR4ME9xaHNu?=
- =?utf-8?B?MitYT3p1WSt1cjE3dml4NGVhTFhseWhNZHlkUUVIckY3dFNaa2hTU2tnY2l6?=
- =?utf-8?B?UUR4QTkxRnJDS2tENjN0UEpBTnUwUVN6VExxUT09?=
-X-Forefront-Antispam-Report:
-	CIP:4.158.2.129;CTRY:GB;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:outbound-uk1.az.dlp.m.darktrace.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(35042699022)(14060799003)(82310400026)(1800799024)(376014)(921020);DIR:OUT;SFP:1101;
-X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 May 2025 15:58:49.1105
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: c73a1eb5-6317-45c4-6048-08dd94928c0a
-X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[4.158.2.129];Helo=[outbound-uk1.az.dlp.m.darktrace.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	AMS0EPF0000019E.eurprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBAPR08MB5573
+Content-Type: multipart/mixed; boundary="-1463781375-633285779-1747410586=:4117"
 
-This patch implements the PANTHOR_PERF_CONTROL ioctl series, and
-a PANTHOR_GET_UOBJ wrapper to deal with the backwards and forwards
-compatibility of the uAPI.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-The minor version is bumped to indicate that the feature is now
-supported.
+---1463781375-633285779-1747410586=:4117
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 
-Signed-off-by: Lukas Zapolskas <lukas.zapolskas@arm.com>
-Reviewed-by: Adrián Larumbe <adrian.larumbe@collabora.com>
----
- drivers/gpu/drm/panthor/panthor_drv.c | 141 +++++++++++++++++++++++++-
- 1 file changed, 139 insertions(+), 2 deletions(-)
+On Fri, 16 May 2025, David Laight wrote:
 
-diff --git a/drivers/gpu/drm/panthor/panthor_drv.c b/drivers/gpu/drm/panthor/panthor_drv.c
-index 4c1381320859..850a894fe91b 100644
---- a/drivers/gpu/drm/panthor/panthor_drv.c
-+++ b/drivers/gpu/drm/panthor/panthor_drv.c
-@@ -31,6 +31,7 @@
- #include "panthor_gpu.h"
- #include "panthor_heap.h"
- #include "panthor_mmu.h"
-+#include "panthor_perf.h"
- #include "panthor_regs.h"
- #include "panthor_sched.h"
- 
-@@ -73,6 +74,39 @@ panthor_set_uobj(u64 usr_ptr, u32 usr_size, u32 min_size, u32 kern_size, const v
- 	return 0;
- }
- 
-+/**
-+ * panthor_get_uobj() - Copy kernel object to user object.
-+ * @usr_ptr: Users pointer.
-+ * @usr_size: Size of the user object.
-+ * @min_size: Minimum size for this object.
-+ *
-+ * Helper automating kernel -> user object copies.
-+ *
-+ * Don't use this function directly, use PANTHOR_UOBJ_GET() instead.
-+ *
-+ * Return: valid pointer on success, an encoded error code otherwise.
-+ */
-+static void*
-+panthor_get_uobj(u64 usr_ptr, u32 usr_size, u32 min_size)
-+{
-+	int ret;
-+	void *out_alloc __free(kvfree) = NULL;
-+
-+	/* User size shouldn't be smaller than the minimal object size. */
-+	if (usr_size < min_size)
-+		return ERR_PTR(-EINVAL);
-+
-+	out_alloc = kvmalloc(min_size, GFP_KERNEL);
-+	if (!out_alloc)
-+		return ERR_PTR(-ENOMEM);
-+
-+	ret = copy_struct_from_user(out_alloc, min_size, u64_to_user_ptr(usr_ptr), usr_size);
-+	if (ret)
-+		return ERR_PTR(ret);
-+
-+	return_ptr(out_alloc);
-+}
-+
- /**
-  * panthor_get_uobj_array() - Copy a user object array into a kernel accessible object array.
-  * @in: The object array to copy.
-@@ -176,7 +210,12 @@ panthor_get_uobj_array(const struct drm_panthor_obj_array *in, u32 min_stride,
- 		 PANTHOR_UOBJ_DECL(struct drm_panthor_queue_submit, syncs), \
- 		 PANTHOR_UOBJ_DECL(struct drm_panthor_queue_create, ringbuf_size), \
- 		 PANTHOR_UOBJ_DECL(struct drm_panthor_vm_bind_op, syncs), \
--		 PANTHOR_UOBJ_DECL(struct drm_panthor_perf_info, shader_blocks))
-+		 PANTHOR_UOBJ_DECL(struct drm_panthor_perf_info, shader_blocks), \
-+		 PANTHOR_UOBJ_DECL(struct drm_panthor_perf_cmd_setup, shader_enable_mask), \
-+		 PANTHOR_UOBJ_DECL(struct drm_panthor_perf_cmd_start, user_data), \
-+		 PANTHOR_UOBJ_DECL(struct drm_panthor_perf_cmd_stop, user_data), \
-+		 PANTHOR_UOBJ_DECL(struct drm_panthor_perf_cmd_sample, user_data))
-+
- 
- /**
-  * PANTHOR_UOBJ_SET() - Copy a kernel object to a user object.
-@@ -191,6 +230,24 @@ panthor_get_uobj_array(const struct drm_panthor_obj_array *in, u32 min_stride,
- 			 PANTHOR_UOBJ_MIN_SIZE(_src_obj), \
- 			 sizeof(_src_obj), &(_src_obj))
- 
-+/**
-+ * PANTHOR_UOBJ_GET() - Copies a user object from _usr_ptr to a kernel accessible _dest_ptr.
-+ * @_dest_ptr: Local variable
-+ * @_usr_size: Size of the user object.
-+ * @_usr_ptr: The pointer of the object in userspace.
-+ *
-+ * Return: Error code. See panthor_get_uobj().
-+ */
-+#define PANTHOR_UOBJ_GET(_dest_ptr, _usr_size, _usr_ptr) \
-+	({ \
-+		typeof(_dest_ptr) _tmp; \
-+		_tmp = panthor_get_uobj(_usr_ptr, _usr_size, \
-+				PANTHOR_UOBJ_MIN_SIZE(_tmp[0])); \
-+		if (!IS_ERR(_tmp)) \
-+			_dest_ptr = _tmp; \
-+		PTR_ERR_OR_ZERO(_tmp); \
-+	})
-+
- /**
-  * PANTHOR_UOBJ_GET_ARRAY() - Copy a user object array to a kernel accessible
-  * object array.
-@@ -1339,6 +1396,83 @@ static int panthor_ioctl_vm_get_state(struct drm_device *ddev, void *data,
- 	return 0;
- }
- 
-+#define perf_cmd(command) \
-+	({ \
-+		struct drm_panthor_perf_cmd_##command *command##_args __free(kvfree) = NULL; \
-+		int _ret = PANTHOR_UOBJ_GET(command##_args, args->size, args->pointer); \
-+		if (_ret) \
-+			return _ret; \
-+		return panthor_perf_session_##command(pfile, ptdev->perf, args->handle, \
-+				command##_args->user_data); \
-+	})
-+
-+static int panthor_ioctl_perf_control(struct drm_device *ddev, void *data,
-+				      struct drm_file *file)
-+{
-+	struct panthor_device *ptdev = container_of(ddev, struct panthor_device, base);
-+	struct panthor_file *pfile = file->driver_priv;
-+	struct drm_panthor_perf_control *args = data;
-+	int ret;
-+
-+	if (!args->pointer) {
-+		switch (args->cmd) {
-+		case DRM_PANTHOR_PERF_COMMAND_SETUP:
-+			args->size = sizeof(struct drm_panthor_perf_cmd_setup);
-+			return 0;
-+
-+		case DRM_PANTHOR_PERF_COMMAND_TEARDOWN:
-+			args->size = 0;
-+			return 0;
-+
-+		case DRM_PANTHOR_PERF_COMMAND_START:
-+			args->size = sizeof(struct drm_panthor_perf_cmd_start);
-+			return 0;
-+
-+		case DRM_PANTHOR_PERF_COMMAND_STOP:
-+			args->size = sizeof(struct drm_panthor_perf_cmd_stop);
-+			return 0;
-+
-+		case DRM_PANTHOR_PERF_COMMAND_SAMPLE:
-+			args->size = sizeof(struct drm_panthor_perf_cmd_sample);
-+			return 0;
-+
-+		default:
-+			return -EINVAL;
-+		}
-+	}
-+
-+	switch (args->cmd) {
-+	case DRM_PANTHOR_PERF_COMMAND_SETUP:
-+	{
-+		struct drm_panthor_perf_cmd_setup *setup_args __free(kvfree) = NULL;
-+
-+		ret = PANTHOR_UOBJ_GET(setup_args, args->size, args->pointer);
-+		if (ret)
-+			return -EINVAL;
-+
-+		return panthor_perf_session_setup(ptdev, ptdev->perf, setup_args, pfile);
-+	}
-+	case DRM_PANTHOR_PERF_COMMAND_TEARDOWN:
-+	{
-+		return panthor_perf_session_teardown(pfile, ptdev->perf, args->handle);
-+	}
-+	case DRM_PANTHOR_PERF_COMMAND_START:
-+	{
-+		perf_cmd(start);
-+	}
-+	case DRM_PANTHOR_PERF_COMMAND_STOP:
-+	{
-+		perf_cmd(stop);
-+	}
-+	case DRM_PANTHOR_PERF_COMMAND_SAMPLE:
-+	{
-+		perf_cmd(sample);
-+	}
-+	default:
-+		return -EINVAL;
-+	}
-+}
-+
- static int
- panthor_open(struct drm_device *ddev, struct drm_file *file)
- {
-@@ -1409,6 +1543,7 @@ static const struct drm_ioctl_desc panthor_drm_driver_ioctls[] = {
- 	PANTHOR_IOCTL(TILER_HEAP_CREATE, tiler_heap_create, DRM_RENDER_ALLOW),
- 	PANTHOR_IOCTL(TILER_HEAP_DESTROY, tiler_heap_destroy, DRM_RENDER_ALLOW),
- 	PANTHOR_IOCTL(GROUP_SUBMIT, group_submit, DRM_RENDER_ALLOW),
-+	PANTHOR_IOCTL(PERF_CONTROL, perf_control, DRM_RENDER_ALLOW),
- };
- 
- static int panthor_mmap(struct file *filp, struct vm_area_struct *vma)
-@@ -1518,6 +1653,8 @@ static void panthor_debugfs_init(struct drm_minor *minor)
-  * - 1.2 - adds DEV_QUERY_GROUP_PRIORITIES_INFO query
-  *       - adds PANTHOR_GROUP_PRIORITY_REALTIME priority
-  * - 1.3 - adds DRM_PANTHOR_GROUP_STATE_INNOCENT flag
-+ * - 1.4 - adds DEV_QUERY_PERF_INFO query
-+ *       - adds PERF_CONTROL ioctl
-  */
- static const struct drm_driver panthor_drm_driver = {
- 	.driver_features = DRIVER_RENDER | DRIVER_GEM | DRIVER_SYNCOBJ |
-@@ -1531,7 +1668,7 @@ static const struct drm_driver panthor_drm_driver = {
- 	.name = "panthor",
- 	.desc = "Panthor DRM driver",
- 	.major = 1,
--	.minor = 3,
-+	.minor = 4,
- 
- 	.gem_create_object = panthor_gem_create_object,
- 	.gem_prime_import_sg_table = drm_gem_shmem_prime_import_sg_table,
--- 
-2.33.0.dirty
+> On Fri, 16 May 2025 11:47:58 +0200
+> Uwe Kleine-König <u.kleine-koenig@baylibre.com> wrote:
+> 
+> > Hello David,
+> > 
+> > On Sat, Apr 05, 2025 at 09:45:27PM +0100, David Laight wrote:
+> > > The pwm-stm32.c code wants a 'rounding up' version of mul_u64_u64_div_u64().
+> > > This can be done simply by adding 'divisor - 1' to the 128bit product.
+> > > Implement mul_u64_add_u64_div_u64(a, b, c, d) = (a * b + c)/d based on the
+> > > existing code.
+> > > Define mul_u64_u64_div_u64(a, b, d) as mul_u64_add_u64_div_u64(a, b, 0, d) and
+> > > mul_u64_u64_div_u64_roundup(a, b, d) as mul_u64_add_u64_div_u64(a, b, d-1, d).
+> > > 
+> > > Only x86-64 has an optimsed (asm) version of the function.
+> > > That is optimised to avoid the 'add c' when c is known to be zero.
+> > > In all other cases the extra code will be noise compared to the software
+> > > divide code.
+> > > 
+> > > I've updated the test module to test mul_u64_u64_div_u64_roundup() and
+> > > also enhanced it to verify the C division code on x86-64.
+> > > 
+> > > Note that the code generated by gcc (eg for 32bit x86) just for the multiply
+> > > is rather more horrid than one would expect (clang does better).
+> > > I dread to think how long the divide loop takes.
+> > > And I'm not at all sure the call in kernel/sched/cputime.c isn't in a
+> > > relatively common path (rather than just hardware initialisation).
+> > > 
+> > > David Laight (3):
+> > >   lib: Add mul_u64_add_u64_div_u64() and mul_u64_u64_div_u64_roundup()
+> > >   lib: Add tests for mul_u64_u64_div_u64_roundup()
+> > >   lib: Update the muldiv64 tests to verify the C on x86-64  
+> > 
+> > I wonder what happend to this series. I'd like to make use of
+> > mul_u64_u64_div_u64_roundup() so I'd be interested to get this into the
+> > mainline.
+> 
+> I've a WIP rewrite of the divide code, speeds it up considerably for
+> 'not amd-64'.
 
+May I suggest you simply submit the new API now (addressing my latest 
+comments if possible) and submit the divide optimization later?
+
+
+Nicolas
+---1463781375-633285779-1747410586=:4117--
 
