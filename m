@@ -1,185 +1,155 @@
-Return-Path: <linux-kernel+bounces-651245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-651251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABC47AB9C20
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 14:33:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98911AB9C42
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 14:36:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 41F21504C50
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 12:33:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 37C707B2898
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 12:35:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01DB823F403;
-	Fri, 16 May 2025 12:33:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE9D8242D72;
+	Fri, 16 May 2025 12:36:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="m9y+kmP7"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aOw4moov"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85CF01E871;
-	Fri, 16 May 2025 12:33:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC03D1D6DBB;
+	Fri, 16 May 2025 12:36:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747398808; cv=none; b=L3FJpdamsrsGoI0kpRsrdiycfhGBHurwWleVNS/94KNrB+jh2EimrKtlQwuiKDIXF3ggzoFZopXNp43ra1IuUPM9AItW5y2brNhGRhbuYjsE0FSlZVuTmvivlZPTFTFBXXYei8H8DvX47vPvH3Vbbq7KMELGdWDQSITSsYHsO4I=
+	t=1747398971; cv=none; b=GEm8jZlOkUGrQcFKgIqa+OH1vyo3EDTTlIoZY/UN7rI0pJSASvu5ssgviaSHoP0JvORWtOuGScOZ9DIYnrZtbbAQoVwdV2MzkK/rSfGHQXobYY5dkakOsHBmS1R5DjBbqisoEAhuiWhKXAohhSuh/P37jdcT77OWotrSgzvUNWo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747398808; c=relaxed/simple;
-	bh=ralu6RICTpQnyjwnYm0KblIg9bXK3LZesJ0Nb9yI6wI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fte1/LMhXgIvyYnbmUPW/cLUPEm0H5d197CFMzCh+Cvl+WNMKyheGcY40A2P0oWD4Yk1AeNdaWTSuA18BqiUBMcOk5C/ftMLAdgDlPVcW8rkXH8HYyOYpmL4vIVU6aHhjLqAc8GhamIK1lgSQw9smZ03HbL2rI3s1F+OY098NQ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.helo=mgamail.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=m9y+kmP7; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.helo=mgamail.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1747398807; x=1778934807;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=ralu6RICTpQnyjwnYm0KblIg9bXK3LZesJ0Nb9yI6wI=;
-  b=m9y+kmP73V3KdCNuJLFdAGD7rYfFU+SnW4uzbRPs5Kl0i38PSKUEJdCs
-   reR/xg1cnINnwTMQd6ILpTMMD4V8eOBNOeZXkUWOM47x/ovssTbbzQbL5
-   mXj7xD6spgF79k0UOsAcW9IUAmfAJ8LbfU+V2f/dOBFu2DVbi7lk6Gq64
-   +CQvj7uK0UJ7utYXZinfynUQsU0GzT3+CCV7sWKtlZN3Rg/zsLPkVITh3
-   MhOggtxCbO4ixEdogoeNmIlXw+XboCyT3MPjMiqOCkfYC/f3UUIs94EHF
-   7fjEAzuF932wJ+JOladbCJucgt0Mk9a+aXxfqflVscrLGBoWDk6jST7l+
-   g==;
-X-CSE-ConnectionGUID: St1/buTmQcmm5sDJvwYb5Q==
-X-CSE-MsgGUID: Xl2UV874S56ETGD7cUldYQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11434"; a="53041500"
-X-IronPort-AV: E=Sophos;i="6.15,293,1739865600"; 
-   d="scan'208";a="53041500"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 May 2025 05:33:25 -0700
-X-CSE-ConnectionGUID: ufwtGiO9Sx+Nj2lVwjM4gg==
-X-CSE-MsgGUID: S0Enck1iT7ioNUavPLVvaQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,293,1739865600"; 
-   d="scan'208";a="139216320"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa007.jf.intel.com with ESMTP; 16 May 2025 05:33:20 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1000)
-	id 84F571E0; Fri, 16 May 2025 15:33:19 +0300 (EEST)
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To: Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>
-Cc: Jonathan Corbet <corbet@lwn.net>,
-	Andy Lutomirski <luto@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Jan Kiszka <jan.kiszka@siemens.com>,
-	Kieran Bingham <kbingham@kernel.org>,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	Michael Roth <michael.roth@amd.com>,
-	Rick Edgecombe <rick.p.edgecombe@intel.com>,
-	Brijesh Singh <brijesh.singh@amd.com>,
-	Sandipan Das <sandipan.das@amd.com>,
-	Juergen Gross <jgross@suse.com>,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-efi@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: [PATCHv3 4/4] x86/paravirt: Restrict PARAVIRT_XXL to 64-bit only
-Date: Fri, 16 May 2025 15:33:06 +0300
-Message-ID: <20250516123306.3812286-5-kirill.shutemov@linux.intel.com>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250516123306.3812286-1-kirill.shutemov@linux.intel.com>
-References: <20250516123306.3812286-1-kirill.shutemov@linux.intel.com>
+	s=arc-20240116; t=1747398971; c=relaxed/simple;
+	bh=rJpXVxnBUus4bk7EUo2JlBe6LQiEcnBeH8nz+pXrakQ=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=qP3VQSZRhZsD05QvOMjP6jtJNPVnGV40eAkNQeRyw6TVy7NTgu5nO39fhWsJ2bpPekljLM1r3wckv0ExRFidq69HrkAzk67rYtBWSLeEkJumJy2qyUa3aikpjfbrq0p7YUgyDxO3Jn2CPfylCsA3rOXgH+OvvJQkscl9NeAtHko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aOw4moov; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 49A79C4CEE4;
+	Fri, 16 May 2025 12:36:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747398970;
+	bh=rJpXVxnBUus4bk7EUo2JlBe6LQiEcnBeH8nz+pXrakQ=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=aOw4moovYuu2URtOxLmJIAC857uquZx8/OGFqk1N4LqilDPsnckWWU0BvUa7G3VAu
+	 hd8K/Qh3FMFVrJ8TZgjMo9JrOUrVegxtIftlmz3gcAYUCzfBFpNwLn/yag1O3Ss/aa
+	 vytx4w3aU6ZeL302ynajEuWP7M9ODY9fJ37+PVt3iNtcVoHW/RXdCbnnn0S5W46Dqu
+	 8J4DDNzZ1wPHiWWjQR6/QzaVNRLDE7mojZwDYGWg35VgFaQnEmL6DEDFCt+RLHViVw
+	 esQPjpe5NVc7uYoLZbMLirt9SMYYhkjoD216Ozz3iIwITQS9nXhrj1Xlq+vF+ArRJw
+	 hL14ra2zI7c4w==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EE68C3ABC9;
+	Fri, 16 May 2025 12:36:10 +0000 (UTC)
+From: George Moussalem via B4 Relay <devnull+george.moussalem.outlook.com@kernel.org>
+Subject: [PATCH v4 0/5] Add CMN PLL clock controller support for IPQ5018
+Date: Fri, 16 May 2025 16:36:07 +0400
+Message-Id: <20250516-ipq5018-cmn-pll-v4-0-389a6b30e504@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIADcxJ2gC/23P207EIBCA4VdpuBYDw7G98j2M2SAdXGJbetpGs
+ +m7S7te1NQrMiR8/HMnE44RJ1IVdzLiEqeYujzIp4L4q+s+kMY6zwQYKKYYp7Ef8mGpbzvaNw2
+ 1qLip0RoRLMmv+hFD/NrF17fHPOJwy/D8uCTvbkLqU9vGuSqsg1oJj8KrYEFb4WpRh9KVTikLY
+ LkOqCUacgyqij1Hck6HDF22Jgnykpu2pFIzZ4MqDROiWoBsGdc4zWn83vdc+N7xuxKcVlo4ZRR
+ MycBzL5nhL+k2Nyl9PufPdi2jB0GfBciCZ64M3mPNuTwL4iDwfwSRhSCsNl45YEb/FdZ1/QF3W
+ Ql4uwEAAA==
+X-Change-ID: 20250501-ipq5018-cmn-pll-8e517de873f8
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Luo Jie <quic_luoj@quicinc.com>, 
+ Lee Jones <lee@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+ Arnd Bergmann <arnd@arndb.de>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ George Moussalem <george.moussalem@outlook.com>, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1747398968; l=3223;
+ i=george.moussalem@outlook.com; s=20250321; h=from:subject:message-id;
+ bh=rJpXVxnBUus4bk7EUo2JlBe6LQiEcnBeH8nz+pXrakQ=;
+ b=pKS14h5cIqFL3O7chlnYPrt4EAhFndx8NMyqGPpq9twY7tnGDTTLFIa79fBe6nG6AgkkEVfOY
+ 5JaWJxFXKHSAJqwh82GMkV8fUC+1epTSwpa9X6Up18uV503oclsV7E6
+X-Developer-Key: i=george.moussalem@outlook.com; a=ed25519;
+ pk=/PuRTSI9iYiHwcc6Nrde8qF4ZDhJBlUgpHdhsIjnqIk=
+X-Endpoint-Received: by B4 Relay for george.moussalem@outlook.com/20250321
+ with auth_id=364
+X-Original-From: George Moussalem <george.moussalem@outlook.com>
+Reply-To: george.moussalem@outlook.com
 
-PARAVIRT_XXL is exclusively utilized by XEN_PV, which is only compatible
-with 64-bit machines.
+The CMN PLL block of IPQ5018 supplies output clocks for XO at 24 MHZ,
+sleep at 32KHZ, and the ethernet block at 50MHZ.
 
-Clearly designate PARAVIRT_XXL as 64-bit only and remove ifdefs to
-support CONFIG_PGTABLE_LEVELS < 5.
+This patch series extends the CMN PLL driver to support IPQ5018. It also
+adds the SoC specific header file to export the CMN PLL output clock
+specifiers for IPQ5018. A new table of output clocks is added for the
+CMN PLL of IPQ5018, which is acquired from the device according to the
+compatible.
 
-Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Signed-off-by: George Moussalem <george.moussalem@outlook.com>
 ---
- arch/x86/Kconfig                      | 1 +
- arch/x86/include/asm/paravirt.h       | 4 ----
- arch/x86/include/asm/paravirt_types.h | 2 --
- arch/x86/kernel/paravirt.c            | 2 --
- 4 files changed, 1 insertion(+), 8 deletions(-)
+Changes in v4:
+- Re-add missing CMN PLL node after git pull and rebase on linux-next
+- Link to v3: https://lore.kernel.org/r/20250516-ipq5018-cmn-pll-v3-0-f3867c5a2076@outlook.com
 
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 7aed3fa0e780..a9d4c715b9fc 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -799,6 +799,7 @@ config PARAVIRT
- 
- config PARAVIRT_XXL
- 	bool
-+	depends on X86_64
- 
- config PARAVIRT_DEBUG
- 	bool "paravirt-ops debugging"
-diff --git a/arch/x86/include/asm/paravirt.h b/arch/x86/include/asm/paravirt.h
-index 03f680d1057a..b5e59a7ba0d0 100644
---- a/arch/x86/include/asm/paravirt.h
-+++ b/arch/x86/include/asm/paravirt.h
-@@ -463,8 +463,6 @@ static inline void set_p4d(p4d_t *p4dp, p4d_t p4d)
- 	PVOP_VCALL2(mmu.set_p4d, p4dp, val);
- }
- 
--#if CONFIG_PGTABLE_LEVELS >= 5
--
- static inline p4d_t __p4d(p4dval_t val)
- {
- 	p4dval_t ret = PVOP_ALT_CALLEE1(p4dval_t, mmu.make_p4d, val,
-@@ -496,8 +494,6 @@ static inline void __set_pgd(pgd_t *pgdp, pgd_t pgd)
- 		set_pgd(pgdp, native_make_pgd(0));			\
- } while (0)
- 
--#endif  /* CONFIG_PGTABLE_LEVELS == 5 */
--
- static inline void p4d_clear(p4d_t *p4dp)
- {
- 	set_p4d(p4dp, native_make_p4d(0));
-diff --git a/arch/x86/include/asm/paravirt_types.h b/arch/x86/include/asm/paravirt_types.h
-index b08b9d3122d6..37a8627d8277 100644
---- a/arch/x86/include/asm/paravirt_types.h
-+++ b/arch/x86/include/asm/paravirt_types.h
-@@ -189,12 +189,10 @@ struct pv_mmu_ops {
- 
- 	void (*set_p4d)(p4d_t *p4dp, p4d_t p4dval);
- 
--#if CONFIG_PGTABLE_LEVELS >= 5
- 	struct paravirt_callee_save p4d_val;
- 	struct paravirt_callee_save make_p4d;
- 
- 	void (*set_pgd)(pgd_t *pgdp, pgd_t pgdval);
--#endif	/* CONFIG_PGTABLE_LEVELS >= 5 */
- 
- 	struct pv_lazy_ops lazy_mode;
- 
-diff --git a/arch/x86/kernel/paravirt.c b/arch/x86/kernel/paravirt.c
-index 015bf298434f..ab3e172dcc69 100644
---- a/arch/x86/kernel/paravirt.c
-+++ b/arch/x86/kernel/paravirt.c
-@@ -211,12 +211,10 @@ struct paravirt_patch_template pv_ops = {
- 
- 	.mmu.set_p4d		= native_set_p4d,
- 
--#if CONFIG_PGTABLE_LEVELS >= 5
- 	.mmu.p4d_val		= PTE_IDENT,
- 	.mmu.make_p4d		= PTE_IDENT,
- 
- 	.mmu.set_pgd		= native_set_pgd,
--#endif /* CONFIG_PGTABLE_LEVELS >= 5 */
- 
- 	.mmu.pte_val		= PTE_IDENT,
- 	.mmu.pgd_val		= PTE_IDENT,
+Changes in v3:
+- After further testing and evaluating different solutions, reverted to
+  marking the XO clock in the GCC as critical as agreed with Konrad
+- Moved kernel traces out of commit message of patch 1 to under the
+  diffstat separator and updated commit message accordingly
+- Updated commit message of patch 3
+- Link to v2: https://lore.kernel.org/r/20250506-ipq5018-cmn-pll-v2-0-c0a9fcced114@outlook.com
+
+Changes in v2:
+- Moved up commit documenting ipq5018 in qcom,tcsr bindings
+- Fixed binding issues reported by Rob's bot
+- Undone accidental deletion of reg property in cmn pll bindings
+- Fixed register address and size based on address and size cells of 1
+- Removed XO and XO_SRC clock structs from GCC and enabled them as
+  always-on as suggested by Konrad
+- Removed bindings for XO and XO_SRC clocks
+- Removed qcom,tscr-cmn-pll-eth-enable property from bindings and will 
+  move logic to ipq5018 internal phy driver as per Jie's recommendation.
+- Removed addition of tcsr node and its bindings from this patch set
+- Corrected spelling mistakes
+- Link to v1: https://lore.kernel.org/r/20250502-ipq5018-cmn-pll-v1-0-27902c1c4071@outlook.com
+
+---
+George Moussalem (5):
+      clk: qcom: ipq5018: keep XO clock always on
+      dt-bindings: clock: qcom: Add CMN PLL support for IPQ5018 SoC
+      clk: qcom: ipq-cmn-pll: Add IPQ5018 SoC support
+      arm64: dts: ipq5018: Add CMN PLL node
+      arm64: dts: qcom: Update IPQ5018 xo_board_clk to use fixed factor clock
+
+ .../bindings/clock/qcom,ipq9574-cmn-pll.yaml       |  1 +
+ arch/arm64/boot/dts/qcom/ipq5018-rdp432-c2.dts     |  3 +-
+ .../dts/qcom/ipq5018-tplink-archer-ax55-v1.dts     |  3 +-
+ arch/arm64/boot/dts/qcom/ipq5018.dtsi              | 34 ++++++++++++++++++--
+ drivers/clk/qcom/gcc-ipq5018.c                     |  2 +-
+ drivers/clk/qcom/ipq-cmn-pll.c                     | 37 ++++++++++++++--------
+ include/dt-bindings/clock/qcom,ipq5018-cmn-pll.h   | 16 ++++++++++
+ 7 files changed, 77 insertions(+), 19 deletions(-)
+---
+base-commit: 8a2d53ce3c5f82683ad3df9a9a55822816fe64e7
+change-id: 20250501-ipq5018-cmn-pll-8e517de873f8
+prerequisite-change-id: 20250411-qcom_ipq5424_cmnpll-960a8f597033:v2
+prerequisite-patch-id: dc3949e10baf58f8c28d24bb3ffd347a78a1a2ee
+prerequisite-patch-id: da645619780de3186a3cccf25beedd4fefab36df
+prerequisite-patch-id: 4b5d81954f1f43d450a775bcabc1a18429933aaa
+prerequisite-patch-id: 541f835fb279f83e6eb2405c531bd7da9aacf4bd
+
+Best regards,
 -- 
-2.47.2
+George Moussalem <george.moussalem@outlook.com>
+
 
 
