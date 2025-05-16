@@ -1,158 +1,125 @@
-Return-Path: <linux-kernel+bounces-650861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-650864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7492AB96F8
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 09:57:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F00D7AB9702
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 09:59:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DCB63B611E
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 07:57:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CFE321BA8097
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 07:59:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF66322AE7E;
-	Fri, 16 May 2025 07:57:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0768822AE7E;
+	Fri, 16 May 2025 07:59:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="cAn2T6op";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Tow4f+0p";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="cAn2T6op";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Tow4f+0p"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U3xEd25L"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 541D722A4EF
-	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 07:57:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E1F021ADC6;
+	Fri, 16 May 2025 07:59:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747382263; cv=none; b=vDx7OTDOZWqngy9vc0Mo74evkuoBTPNMkNMAsI4/JUBOpHuQ0KY7GnKNl/5+/bD5ahZlolfr1Nz6UCmrir9x5A0ZSWfhhlEA0xnilD2rXeWXbt5ONCPZwqgGwLbpJpDRQp6w2hpE68ID2H8uKB+c2EaznFlJ8FXVEIo9FMFFFiY=
+	t=1747382375; cv=none; b=tbaMxoZM/y+W/m8piU7/Q2mpE8HKJc8Wkbn1FzmAIVn9DuQWLsphKO+X1NZ5xt8vD7woAp6lE8n2o2Wp8y0gEDHt4ojRKy8zIPHdk5YocXNzABkk2ZkjTD9ls+bBMKKlc7PYSuTylmzaW7OuEMsMeJPiY8NcMdoAh9yyfOTkhDk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747382263; c=relaxed/simple;
-	bh=8utIiyd9CQDss9kAzJcZaPUjnFZOAVM615J5C3Qh7B4=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ff0hDI073EgKpCE7kZJ0zuJ5M6E1i/7+c7JBsWVLaz8zeoVg2cgBes7v9+Sx1H2o8mPcwg6a0/kqCmDW3uZCKkCuIg7+xsgHn4rVVgVzxum7d/9ed5atSrOqQw5a5pjx0WDPjYKS+hdiiyla/uUE1AEghTA1f3njpxo4/KJP/c8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=cAn2T6op; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Tow4f+0p; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=cAn2T6op; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Tow4f+0p; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 55A461F7EE;
-	Fri, 16 May 2025 07:57:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1747382259; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7F6ASfUhy3Ogjv0fj23qSGbSfm30A8DjwOn6lXKJ40Y=;
-	b=cAn2T6opIFUdBjYpxHX6NOOu6PQmhDf3E1u1omE0NMH1ikbvCurS6cpK4DNr34dq8caNuA
-	XnOibxZ8Uvf9v24fNpil4MqxlgIfle82b/FDkfdr4sA4IZMB5PXtETTJDQAYdj4iRxl9nz
-	pX8+Z1YlNLxvs4rlmZhP+2/WGpvUU+c=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1747382259;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7F6ASfUhy3Ogjv0fj23qSGbSfm30A8DjwOn6lXKJ40Y=;
-	b=Tow4f+0puezh5xwlZ0G2U/V3TFfSuCLezanvSNL8/uFgppTp26viQpBwiFzBK+OcuNliH3
-	CQoQlJv6f1z7NVAQ==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=cAn2T6op;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=Tow4f+0p
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1747382259; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7F6ASfUhy3Ogjv0fj23qSGbSfm30A8DjwOn6lXKJ40Y=;
-	b=cAn2T6opIFUdBjYpxHX6NOOu6PQmhDf3E1u1omE0NMH1ikbvCurS6cpK4DNr34dq8caNuA
-	XnOibxZ8Uvf9v24fNpil4MqxlgIfle82b/FDkfdr4sA4IZMB5PXtETTJDQAYdj4iRxl9nz
-	pX8+Z1YlNLxvs4rlmZhP+2/WGpvUU+c=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1747382259;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7F6ASfUhy3Ogjv0fj23qSGbSfm30A8DjwOn6lXKJ40Y=;
-	b=Tow4f+0puezh5xwlZ0G2U/V3TFfSuCLezanvSNL8/uFgppTp26viQpBwiFzBK+OcuNliH3
-	CQoQlJv6f1z7NVAQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2530F13977;
-	Fri, 16 May 2025 07:57:39 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id gv3sB/PvJmg8TQAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Fri, 16 May 2025 07:57:39 +0000
-Date: Fri, 16 May 2025 09:57:38 +0200
-Message-ID: <87wmahvvgt.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Chen Ni <nichen@iscas.ac.cn>
-Cc: g@b4.vu,
-	perex@perex.cz,
-	tiwai@suse.com,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ALSA: usb: fcp: Use USB API functions rather than constants
-In-Reply-To: <20250516070938.12520-1-nichen@iscas.ac.cn>
-References: <20250516070938.12520-1-nichen@iscas.ac.cn>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1747382375; c=relaxed/simple;
+	bh=51UiwAtTBw1xtOTx6e1Pp64GJoZ4L5WSxUxJDmEN9Kg=;
+	h=Content-Type:Date:Message-Id:Cc:From:To:Subject:References:
+	 In-Reply-To; b=djQSGw9JHskFnwiurmcLP/EFaoV2zcexlVTcZS61Fea+YxUn03VtKSj6eHJ/vecFgfmkGYJLXvPSG+4ALZt/BIrUnZQt+dVny4fnTfdRvdscPr21chPOKtilR4vrsUvvnigIrVJVlyddwj+hRh6I/Ms7K117jlacPXEt49o99XM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U3xEd25L; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50609C4CEE4;
+	Fri, 16 May 2025 07:59:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747382374;
+	bh=51UiwAtTBw1xtOTx6e1Pp64GJoZ4L5WSxUxJDmEN9Kg=;
+	h=Date:Cc:From:To:Subject:References:In-Reply-To:From;
+	b=U3xEd25LCeI5ukSRK+khUpX/7FrIdv7pmsPIoVDcXd977W94/6EfEvi7labDdNvg7
+	 89SxW/GpepKxBL5ot2BIQ51iRgEMwULni7ZiUz3AFh3MVjC7zEUbWXuJzzjUVvxoIK
+	 CfsX2IzFCTgcmg74kg8SnZ64ckcp9pFGw6cKBf4SczEUSqn/Y1khXtZ2mOe1LDiXhE
+	 blgmYVgSOJehRAknA1OoYmdfQGvU4whBtwlBWF3TsUN8wumFBZkCt7f6AsDwatq/CY
+	 Fde1crnHIujZ1oW/M9gwSEx3LwfmIiqHQwp1XNkS5zgLUM//OSXAghtYvJbbeopjRV
+	 cniiO3aZVFuLg==
+Content-Type: multipart/signed;
+ boundary=d7312f90523e3e5483928f25794944ee2c9f0b4081e939bb716620953902;
+ micalg=pgp-sha384; protocol="application/pgp-signature"
+Date: Fri, 16 May 2025 09:59:30 +0200
+Message-Id: <D9XFCQYPTRMX.3AKZYI2Z5SV2Y@kernel.org>
+Cc: "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>, "Thomas
+ Zimmermann" <tzimmermann@suse.de>, "Maxime Ripard" <mripard@kernel.org>,
+ "David Airlie" <airlied@gmail.com>, "Laurent Pinchart"
+ <laurent.pinchart@ideasonboard.com>, "Simona Vetter" <simona@ffwll.ch>,
+ "Nishanth Menon" <nm@ti.com>, "Vignesh Raghavendra" <vigneshr@ti.com>,
+ "Devarsh Thakkar" <devarsht@ti.com>, "Praneeth Bajjuri" <praneeth@ti.com>,
+ "Udit Kumar" <u-kumar1@ti.com>, "Jayesh Choudhary" <j-choudhary@ti.com>,
+ "Francesco Dolcini" <francesco@dolcini.it>, "Alexander Sverdlin"
+ <alexander.sverdlin@siemens.com>, "DRI Development List"
+ <dri-devel@lists.freedesktop.org>, "Devicetree List"
+ <devicetree@vger.kernel.org>, "Linux Kernel List"
+ <linux-kernel@vger.kernel.org>
+From: "Michael Walle" <mwalle@kernel.org>
+To: "Aradhya Bhatia" <aradhya.bhatia@linux.dev>, "Rob Herring"
+ <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor
+ Dooley" <conor+dt@kernel.org>, "Tomi Valkeinen"
+ <tomi.valkeinen@ideasonboard.com>, "Jyri Sarha" <jyri.sarha@iki.fi>
+Subject: Re: [PATCH v7 4/4] drm/tidss: Add OLDI bridge support
+X-Mailer: aerc 0.16.0
+References: <20250329133943.110698-1-aradhya.bhatia@linux.dev>
+ <20250329133943.110698-5-aradhya.bhatia@linux.dev>
+In-Reply-To: <20250329133943.110698-5-aradhya.bhatia@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Rspamd-Queue-Id: 55A461F7EE
-X-Spam-Flag: NO
-X-Spam-Score: -3.51
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.51 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	MIME_TRACE(0.00)[0:+];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:dkim,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Action: no action
 
-On Fri, 16 May 2025 09:09:38 +0200,
-Chen Ni wrote:
-> 
-> Use the function usb_endpoint_num() rather than constants.
-> 
-> The Coccinelle semantic patch is as follows:
-> 
-> @@ struct usb_endpoint_descriptor *epd; @@
-> 
-> - (epd->bEndpointAddress & \(USB_ENDPOINT_NUMBER_MASK\|0x0f\))
-> + usb_endpoint_num(epd)
-> 
-> Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+--d7312f90523e3e5483928f25794944ee2c9f0b4081e939bb716620953902
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
 
-Thanks, applied.
+On Sat Mar 29, 2025 at 2:39 PM CET, Aradhya Bhatia wrote:
+> From: Aradhya Bhatia <a-bhatia1@ti.com>
+>
+> The AM62x and AM62Px SoCs feature 2 OLDI TXes each, which makes it
+> possible to connect them in dual-link or cloned single-link OLDI display
+> modes. The current OLDI support in tidss_dispc.c can only support for
+> a single OLDI TX, connected to a VP and doesn't really support
+> configuration of OLDIs in the other modes. The current OLDI support in
+> tidss_dispc.c also works on the principle that the OLDI output can only
+> be served by one, and only one, DSS video-port. This isn't the case in
+> the AM62Px SoC, where there are 2 DSS controllers present that share the
+> OLDI TXes.
+>
+> Having their own devicetree and their own bridge entity will help
+> support the various display modes and sharing possiblilities of the OLDI
+> hardware.
+>
+> For all these reasons, add support for the OLDI TXes as DRM bridges.
+>
+> Reviewed-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+> Tested-by: Alexander Sverdlin <alexander.sverdlin@siemens.com>
+> Signed-off-by: Aradhya Bhatia <a-bhatia1@ti.com>
+> Signed-off-by: Aradhya Bhatia <aradhya.bhatia@linux.dev>
 
+Tested-by: Michael Walle <mwalle@kernel.org> # on a j722s/am67a
 
-Takashi
+FWIW, I have a few downstream patches to get the DSS on j722s
+running.
+
+-michael
+
+--d7312f90523e3e5483928f25794944ee2c9f0b4081e939bb716620953902
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iKgEABMJADAWIQTIVZIcOo5wfU/AngkSJzzuPgIf+AUCaCbwYhIcbXdhbGxlQGtl
+cm5lbC5vcmcACgkQEic87j4CH/hj6gF/Wusj103bkQJ0s/qoyxRDcMUItzGDi4DS
+o3U2g+BCnLNbwlPXUphnJlSKimOAS8ynAX9WTLPfNmCmAVDU8f08fakCPkJUot0x
+tdNCXLNt5WYI5Hj5jUV6ysIYmadhcu0rjv8=
+=GNXG
+-----END PGP SIGNATURE-----
+
+--d7312f90523e3e5483928f25794944ee2c9f0b4081e939bb716620953902--
 
