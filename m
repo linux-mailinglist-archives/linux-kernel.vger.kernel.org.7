@@ -1,129 +1,192 @@
-Return-Path: <linux-kernel+bounces-650859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-650867-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3C88AB96F1
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 09:54:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8C83AB970E
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 10:01:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B4F94E8376
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 07:54:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CCF8C3BC1FE
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 08:01:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A90B922ACD3;
-	Fri, 16 May 2025 07:54:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 483C522CBD5;
+	Fri, 16 May 2025 08:01:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fCGEQZ3R"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=damsy.net header.i=@damsy.net header.b="CgXcYEZX";
+	dkim=permerror (0-bit key) header.d=damsy.net header.i=@damsy.net header.b="cr+6076D"
+Received: from jeth.damsy.net (jeth.damsy.net [51.159.152.102])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F8D621ADC6;
-	Fri, 16 May 2025 07:54:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00DA521FF4A;
+	Fri, 16 May 2025 08:01:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.159.152.102
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747382081; cv=none; b=rlyIIXUjVWBlWoHCYmRMIQiuipbCZNinhDDwrTD9cEwsxJ2i3IwcckU7Mc75HgxjYLcM9eEdKFg27/JaCdojAs6l6+VE+jjRCRe7Mv8XlWXWYHSWU3pE7KwrsfSTFyGwtxMM+WJBFPqZ4T+YHhnaeu8GUWCCWl4V2U+JggTOsJA=
+	t=1747382503; cv=none; b=tcT6pRHErEd3c1YN1VyfjTN8ZGTaa2wsQh5Mp36xOisC4hrfDR+medADCpSlwNbDQQ5UArnFq6U0fHK1/SPMx7fW1Z/0uOAXjM7T1wOFaQ6DbyZCU8hHP2wBxlBzuzeJ5Xfx5orqBTWZPv5jrbYpWu5SIsm55rcAT8G2D2KSVr4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747382081; c=relaxed/simple;
-	bh=YSfKbVIwu+plTobu2WYKYnvMg3HxLlYHFzSqEGbrl5U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OLz/RVmAOtjQzxV6ANjzVJRVvg5/ggz2c1DLuSPQhuHYevccPz9ajeMxuXa9ANry1zbI5JZZ3OgN4nD9ko+rgWTzmbx/aDqLPCf1kWOBrSDcxDoRQmKIXlmRhy/bhXbJ3RpooPRgR059Fd0AsitBnKOdNTtnV/CBjkRNJO6RPFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fCGEQZ3R; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2907AC4CEE4;
-	Fri, 16 May 2025 07:54:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747382080;
-	bh=YSfKbVIwu+plTobu2WYKYnvMg3HxLlYHFzSqEGbrl5U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fCGEQZ3R4xBnG/qpktNbb559KyutB+p2jB0QbMZCILVVHQlEwItbEwy/6xXdebMfH
-	 r/eZJ/QFNrUs3YjEXbZBmnOv8mi7vfs7RsPbIcOdCpakJWxztEE2TBM/UMxpI+ejBm
-	 JPh2KY7HXIiXZPOE69bcj8VN2oS5i61m27OL+EOXHoaUxAXSQ9WDtKapebOiIBv29T
-	 bdVo12fLIPXme7Tc9iy+UEdE0Zb5+CcznELOq23v6tdTUsZZ9sbsRi6o1/+PMb1EFl
-	 iIw+OwkydtpPtlMobipbcwUBmXjuumIafJ/hqxDV6Huzf2B4i02hs8GyMiwX/6IokS
-	 neW62ogPVTjyQ==
-Date: Fri, 16 May 2025 09:54:35 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	"Ahmed S. Darwish" <darwi@linutronix.de>,
-	Artem Bityutskiy <artem.bityutskiy@linux.intel.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Subject: Re: linux-next: manual merge of the tip tree with the pm tree
-Message-ID: <aCbvO5Q0B3yYxji4@gmail.com>
-References: <20250516161541.0cff29b8@canb.auug.org.au>
+	s=arc-20240116; t=1747382503; c=relaxed/simple;
+	bh=yUSd1lLOUTfXqwk/RalMi6aO3FyaQpO1WZ3T1xPz8kY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aJ3uUunyhD1mAMJAYKlbzcGg7ZN1wZy62MfFsHPjWmY7j/fpl8n8XOBvzfx06/Q8Cz3U54FPnUDi8W4CJ14SDXt/gDgar6qNEFuQTrtS50c3FQGQxTpejrTvEWa1sYgMX/Cx28gyY76XmFOxHHt1k7yHlfXcWYWdFrc7NvSKBhs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=damsy.net; spf=pass smtp.mailfrom=damsy.net; dkim=pass (2048-bit key) header.d=damsy.net header.i=@damsy.net header.b=CgXcYEZX; dkim=permerror (0-bit key) header.d=damsy.net header.i=@damsy.net header.b=cr+6076D; arc=none smtp.client-ip=51.159.152.102
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=damsy.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=damsy.net
+DKIM-Signature: v=1; a=rsa-sha256; s=202408r; d=damsy.net; c=relaxed/relaxed;
+	h=From:To:Subject:Date:Message-ID; t=1747382182; bh=YPy+tEZL6apKgfvAMCRSsSk
+	8zKBxHWC7t2m1Vfn3jPs=; b=CgXcYEZX8hN/Q2e8M/80XSvSboXrdC5slsIEaxO8MEjbT6Mt06
+	NdM43xSHHG2AVxLNrAJ4Z/rw82f8ujBNTnDLilcOjG59X7I7rVHF//JMltYERkh69ySJFndsqSx
+	2HhmYqvQC7SUV5omtgvmMwLo0ARUefbpfAS/r+YYeQl/GundzUUsICBAzgrplwocwNIoenYkdiW
+	goHq/TnW15uWBkrP31QDMpLX2C8+q4Gm30YK12rfwlU0W2q4vIPu1XLqmwTw79bf5dWhsKd/qJi
+	RepcAKpFb9Gsi4geYsjwp19Die7hbGY4GrXm9agLG5xJ3BpvoG7HBdb1iKUDvsec6cQ==;
+DKIM-Signature: v=1; a=ed25519-sha256; s=202408e; d=damsy.net; c=relaxed/relaxed;
+	h=From:To:Subject:Date:Message-ID; t=1747382182; bh=YPy+tEZL6apKgfvAMCRSsSk
+	8zKBxHWC7t2m1Vfn3jPs=; b=cr+6076Dkxypklpp92ebvSZPCsy2GPT7BKIzpqigg57qRQwr/u
+	kl/P0+TezIcHj+VIk3KIKeqKsYydjFqRI+Aw==;
+Message-ID: <7f04847e-9549-47cc-9b61-7b32df24ef8e@damsy.net>
+Date: Fri, 16 May 2025 09:56:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250516161541.0cff29b8@canb.auug.org.au>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 09/10] drm/doc: document some tracepoints as uAPI
+To: phasta@kernel.org,
+ Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Jonathan Corbet <corbet@lwn.net>, Matthew Brost <matthew.brost@intel.com>,
+ Danilo Krummrich <dakr@kernel.org>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>,
+ Sumit Semwal <sumit.semwal@linaro.org>
+Cc: Lucas Stach <l.stach@pengutronix.de>, =?UTF-8?Q?Ma=C3=ADra_Canal?=
+ <mcanal@igalia.com>, =?UTF-8?Q?Christian_K=C3=B6nig?=
+ <christian.koenig@amd.com>, dri-devel@lists.freedesktop.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org
+References: <20250424083834.15518-1-pierre-eric.pelloux-prayer@amd.com>
+ <20250424083834.15518-10-pierre-eric.pelloux-prayer@amd.com>
+ <27825c551adeda28f4b329f44c316ad2ab67fa5d.camel@mailbox.org>
+Content-Language: en-US
+From: Pierre-Eric Pelloux-Prayer <pierre-eric@damsy.net>
+In-Reply-To: <27825c551adeda28f4b329f44c316ad2ab67fa5d.camel@mailbox.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
+Hi,
 
-* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+Le 14/05/2025 à 14:53, Philipp Stanner a écrit :
+> On Thu, 2025-04-24 at 10:38 +0200, Pierre-Eric Pelloux-Prayer wrote:
+>> This commit adds a document section in drm-uapi.rst about
+>> tracepoints,
+>> and mark the events gpu_scheduler_trace.h as stable uAPI.
+>>
+>> The goal is to explicitly state that tools can rely on the fields,
+>> formats and semantics of these events.
+>>
+>> Acked-by: Lucas Stach <l.stach@pengutronix.de>
+>> Acked-by: Maíra Canal <mcanal@igalia.com>
+>> Reviewed-by: Christian König <christian.koenig@amd.com>
+>> Signed-off-by: Pierre-Eric Pelloux-Prayer
+>> <pierre-eric.pelloux-prayer@amd.com>
+>> ---
+>>   Documentation/gpu/drm-uapi.rst                | 19
+>> +++++++++++++++++++
+>>   .../gpu/drm/scheduler/gpu_scheduler_trace.h   | 19
+>> +++++++++++++++++++
+>>   2 files changed, 38 insertions(+)
+>>
+>> diff --git a/Documentation/gpu/drm-uapi.rst b/Documentation/gpu/drm-
+>> uapi.rst
+>> index 69f72e71a96e..4863a4deb0ee 100644
+>> --- a/Documentation/gpu/drm-uapi.rst
+>> +++ b/Documentation/gpu/drm-uapi.rst
+>> @@ -693,3 +693,22 @@ dma-buf interoperability
+>>   
+>>   Please see Documentation/userspace-api/dma-buf-alloc-exchange.rst
+>> for
+>>   information on how dma-buf is integrated and exposed within DRM.
+>> +
+>> +
+>> +Trace events
+>> +============
+>> +
+>> +See Documentation/trace/tracepoints.rst for information about using
+>> +Linux Kernel Tracepoints.
+>> +In the DRM subsystem, some events are considered stable uAPI to
+>> avoid
+>> +breaking tools (e.g.: GPUVis, umr) relying on them. Stable means
+>> that fields
+>> +cannot be removed, nor their formatting updated. Adding new fields
+>> is
+>> +possible, under the normal uAPI requirements.
+>> +
+>> +Stable uAPI events
+>> +------------------
+>> +
+>> +From ``drivers/gpu/drm/scheduler/gpu_scheduler_trace.h``
+>> +
+>> +.. kernel-doc::  drivers/gpu/drm/scheduler/gpu_scheduler_trace.h
+>> +   :doc: uAPI trace events
+>> \ No newline at end of file
+>> diff --git a/drivers/gpu/drm/scheduler/gpu_scheduler_trace.h
+>> b/drivers/gpu/drm/scheduler/gpu_scheduler_trace.h
+>> index 781b20349389..7e840d08ef39 100644
+>> --- a/drivers/gpu/drm/scheduler/gpu_scheduler_trace.h
+>> +++ b/drivers/gpu/drm/scheduler/gpu_scheduler_trace.h
+>> @@ -32,6 +32,25 @@
+>>   #define TRACE_SYSTEM gpu_scheduler
+>>   #define TRACE_INCLUDE_FILE gpu_scheduler_trace
+>>   
+>> +/**
+>> + * DOC: uAPI trace events
+>> + *
+>> + * ``drm_sched_job_queue``, ``drm_sched_job_run``,
+>> ``drm_sched_job_add_dep``,
+>> + * ``drm_sched_job_done`` and ``drm_sched_job_unschedulable`` are
+>> considered
+>> + * stable uAPI.
+>> + *
+>> + * Common trace events attributes:
+>> + *
+>> + * * ``dev``   - the dev_name() of the device running the job.
+>> + *
+>> + * * ``ring``  - the hardware ring running the job. Together with
+>> ``dev`` it
+>> + *   uniquely identifies where the job is going to be executed.
+>> + *
+>> + * * ``fence`` - the &dma_fence.context and the &dma_fence.seqno of
+>> + *   &drm_sched_fence.finished
+>> + *
+>> + */
+> 
+> For my understanding, why do you use the double apostrophes here?
 
-> Hi all,
-> 
-> Today's linux-next merge of the tip tree got a conflict in:
-> 
->   drivers/idle/intel_idle.c
-> 
-> between commit:
-> 
->   6138f3451516 ("intel_idle: Add C1 demotion on/off sysfs knob")
-> 
-> from the pm tree and commit:
-> 
->   968e30006807 ("x86/cpuid: Set <asm/cpuid/api.h> as the main CPUID header")
-> 
-> from the tip tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell
-> 
-> diff --cc drivers/idle/intel_idle.c
-> index 3292bf74e3c2,433d858b7be1..000000000000
-> --- a/drivers/idle/intel_idle.c
-> +++ b/drivers/idle/intel_idle.c
-> @@@ -52,8 -51,7 +52,8 @@@
->   #include <linux/notifier.h>
->   #include <linux/cpu.h>
->   #include <linux/moduleparam.h>
->  +#include <linux/sysfs.h>
-> - #include <asm/cpuid.h>
-> + #include <asm/cpuid/api.h>
->   #include <asm/cpu_device_id.h>
->   #include <asm/intel-family.h>
->   #include <asm/mwait.h>
+To get similar formatting to function arguments and make the output a bit nicer to read.
 
-So I don't think the <asm/cpuid.h> change is needed - the header still 
-fully exists:
+> 
+> Also, the linking for the docu afair here two requires you to write
+> 
+> &struct dma_fence.seqno
+> 
+> If I am not mistaken
+> 
+> https://www.kernel.org/doc/html/latest/doc-guide/kernel-doc.html#highlights-and-cross-references
 
-  starship:~/tip> ls -lh arch/x86/include/asm/cpuid/api.h arch/x86/include/asm/cpuid.h
-  -rw-rw-r-- 1 mingo mingo 6.1K May 16 09:34 arch/x86/include/asm/cpuid/api.h
-  -rw-rw-r-- 1 mingo mingo  149 May 16 09:34 arch/x86/include/asm/cpuid.h
+Indeed, thanks. I fixed this.
 
-And the <linux/sysfs.h> addition is probably a build fix for the PM 
-tree? The <asm/cpuid.h> header's indirect header dependencies did not 
-change. Should probably not be carried in -next, as this masks a build 
-failure that will then trigger in Linus's tree?
+Pierre-Eric
 
-(Unless I'm missing something that is.)
+> 
+> 
+> P.
+> 
+>> +
+>>   DECLARE_EVENT_CLASS(drm_sched_job,
+>>   	    TP_PROTO(struct drm_sched_job *sched_job, struct
+>> drm_sched_entity *entity),
+>>   	    TP_ARGS(sched_job, entity),
 
-Thanks,
-
-	Ingo
 
