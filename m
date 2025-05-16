@@ -1,95 +1,322 @@
-Return-Path: <linux-kernel+bounces-651308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-651310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED3B6AB9CFF
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 15:12:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5EA6AB9D02
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 15:12:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 919DE3B764A
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 13:11:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BCF8F1BA3503
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 13:12:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53964242907;
-	Fri, 16 May 2025 13:12:06 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90DD4244663;
+	Fri, 16 May 2025 13:12:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vPDrwwwv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76EB71E4B2
-	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 13:12:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1B5F243946;
+	Fri, 16 May 2025 13:12:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747401126; cv=none; b=FDr7D9FVLGqsKmnujz2Udm65R17BxSduFx9e+5EpWqo03TcWbHEkxAYQWJztrsUHwTDfJR33eSrFfQcJ2Xos3ulNpIyPRPof9dqXtQffusLc2qZ1FGq5qWgTvBR9XQndxg382iBFxNqmxXM0+biP2OwXZHRqmKHlhsLJotyKeMQ=
+	t=1747401135; cv=none; b=d+iNuHA33UESa23bWTqBTrUTN7QmrWXHfdl+3YKCZlvCFAqivBvn332LLjU6EJxoQS1PLRCaWLj/DbDw+WkRBH0y0dlZu8dbeHg5XyA1/AT9fVAx0Z/RPzvuYes8airpTeBPdN+Z0+pjTWcKbuzN7RZxl7692q7qtR8ZEmAjyD0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747401126; c=relaxed/simple;
-	bh=lBjUklRCVHSesGaOJQAl7/ZtDpqTcBIOqud9HnD490E=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=bLTO7swRvaPFUW/Aazmd3DWghyb8uc9Yx77eybP/E0EPaOBg5tVu9ixva06Gu2qm5OwgU1bGRvI3UTBJ0UMs+pdhB1ZDqY8J8PGxcfnHfTk74DmD7nHvs2DoL0saTJeO/IACuBEWwuVYiTsAJEbR2Ycyb2QMzF0UiM4Hz7Klq7w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-85b418faf73so357589539f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 06:12:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747401123; x=1748005923;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jiSUfcR8G2HSHfJonyUWLd25mR3jDZnIqw2qP2u5kZ8=;
-        b=W0AfSKpqYmArtCpkjQEp1Frz5gCACBx4tmUmgDAobJ0vJDKhxrG/syNi5uAtKXAp6z
-         w03fUdvFi2w//HwCDGXL7cecNzajokc1o8qi71kXW9YEG/d9mjREhKy5VAgu68DOYYEQ
-         xrbVaLcD8YJE+n2QYbmX28TcWtq4+8CXcDZ0OEyQGEFfAvs4IWsuPKOzol4bPXRpkoSp
-         McyLpMXAFPGq4arpV3DJmWS53cANAD8ASGQQidfOihMWeS0MAX3YCrMqr6ZnfyhkqJWQ
-         Dy+6/agDZfB15Y3oXiRmI+x2qOF4FFUrqf76Q6RuqooVJ9owSWrFsil3OtyBPkctRxIS
-         RmPA==
-X-Forwarded-Encrypted: i=1; AJvYcCXGWZKN7pRVlWOoTN3geKLogcNjp+FfpNeBAE37ugERHdVEBct+BolPrwaVR3AY8JqGrOuXJ1BA1uAZz10=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxzZWptvRe+RuG9owJnSQGtpdlTxl8qS99FWy45A4aqczuv/jss
-	od5zEdqNR0KbiabjC7GhyGJn/u6GnuAKT+710ipq1J8EJBIm2s5GV4dFAKGrNS+jOsNCf6D+Nam
-	7UlPPYSfnxfIyGfw0wnZmgtfUd7sReFloO/69Y8MKRl3t6WRP0B+jv+MZWNE=
-X-Google-Smtp-Source: AGHT+IE8WC20GMk3Zs9rOQ2P30KuitIuETori3LDdwWsfz8tOIL22S1Y8T3/+P4YHTH5q49URWA37Cc3S3oDhZ/cr8O/7M8+L4f/
+	s=arc-20240116; t=1747401135; c=relaxed/simple;
+	bh=LIxhz0Ikkb6uhXfsYATNN0zoJH5c6DUtaKMEfAc+aBk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pDAcH/2FHlHwwzb6uTWYUPew8Z/7QiwPABich0Q1c+Go0agsrZiMiMvl/Z1w0xW/UvBtPBh+q7WmRV0WSC0z36M/B2ZXHTxBSPi0fDuwhtLcG+z68RENEg24w3OfCUfw5wlGBgxQ89EzyifII4x02AShYzJN4xJOv5CQGm5FAxw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vPDrwwwv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F614C4CEF4;
+	Fri, 16 May 2025 13:12:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747401135;
+	bh=LIxhz0Ikkb6uhXfsYATNN0zoJH5c6DUtaKMEfAc+aBk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=vPDrwwwvQ2xDcxDXAL8gNsaOcLAvIqyIE1CtyizfeMQCuNT0TZdcbI6vhnQvTvroQ
+	 cr1PtUfweGB9rPToytDxG7ZxJNAEyy3xnOF/JxQrs/BfvZNVwSAe3cVmrudQlTw3Y7
+	 YxTJk99uj3ZyE0fQ4NK7jk/5jNfItWApA+iC5fgU/U9lNzT9L4mwTW/jEMzrNihOkB
+	 ednVZsTF11dT1ttteIgBdwIEu+Kz0A7fgHQdPKXVfHVadUF2b9RGTVoIvXbqh28e18
+	 cw4ZL4GwbsDvpdhecizHs2wM8I2k8eOwZ5sBqRqjk2OFYbnh7D4WTB9CSlHHCZSRyK
+	 0lw9OFm5y53ww==
+Message-ID: <f13fe182-b5e5-4938-8260-24f8f60e8f83@kernel.org>
+Date: Fri, 16 May 2025 15:12:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:3e94:b0:864:4a82:15ec with SMTP id
- ca18e2360f4ac-86a231b703amr567830239f.6.1747401123505; Fri, 16 May 2025
- 06:12:03 -0700 (PDT)
-Date: Fri, 16 May 2025 06:12:03 -0700
-In-Reply-To: <66fa9da7.050a0220.6bad9.003c.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <682739a3.a00a0220.398d88.020b.GAE@google.com>
-Subject: Re: [syzbot] [kernel?] INFO: task hung in worker_thread (5)
-From: syzbot <syzbot+c27cd2da6c2dc003b4a1@syzkaller.appspotmail.com>
-To: bigeasy@linutronix.de, bp@alien8.de, bsegall@google.com, 
-	dave.hansen@linux.intel.com, dietmar.eggemann@arm.com, edumazet@google.com, 
-	hpa@zytor.com, juri.lelli@redhat.com, kerneljasonxing@gmail.com, 
-	kuba@kernel.org, linux-kernel@vger.kernel.org, mgorman@suse.de, 
-	mingo@redhat.com, pabeni@redhat.com, peterz@infradead.org, 
-	rostedt@goodmis.org, syzkaller-bugs@googlegroups.com, tglx@linutronix.de, 
-	vincent.guittot@linaro.org, vschneid@redhat.com, x86@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/2] dt-bindings: sdhci: eswin: Documentation for
+ eic7700 SoC
+To: dongxuyang@eswincomputing.com, ulf.hansson@linaro.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, linux-mmc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ adrian.hunter@intel.com, p.zabel@pengutronix.de, shanchun1218@gmail.com
+Cc: ningyu@eswincomputing.com, linmin@eswincomputing.com,
+ xuxiang@eswincomputing.com
+References: <20250516091259.774-1-dongxuyang@eswincomputing.com>
+ <20250516091650.832-1-dongxuyang@eswincomputing.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250516091650.832-1-dongxuyang@eswincomputing.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-syzbot suspects this issue was fixed by commit:
+On 16/05/2025 11:16, dongxuyang@eswincomputing.com wrote:
+> From: Xuyang Dong <dongxuyang@eswincomputing.com>
+> 
+> Add device tree binding documentation for the ESWIN
+> eic7700 sdhci controller module.
+> 
+> Signed-off-by: Xiang Xu <xuxiang@eswincomputing.com>
+> Signed-off-by: Xuyang Dong <dongxuyang@eswincomputing.com>
+> ---
 
-commit 66951e4860d3c688bfa550ea4a19635b57e00eca
-Author: Peter Zijlstra <peterz@infradead.org>
-Date:   Mon Jan 13 12:50:11 2025 +0000
 
-    sched/fair: Fix update_cfs_group() vs DELAY_DEQUEUE
+Folks,you need to slow down because you are sending patchsets with the
+same issues, thus we need to repeat the same review comments. Learn from
+the review first.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=100696f4580000
-start commit:   aa486552a110 Merge tag 'memblock-v6.12-rc1' of git://git.k..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=6c71bad3e6ab6955
-dashboard link: https://syzkaller.appspot.com/bug?extid=c27cd2da6c2dc003b4a1
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12afcaa9980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10edb627980000
+>  .../bindings/mmc/eswin,sdhci-eic7700.yaml     | 131 ++++++++++++++++++
+>  1 file changed, 131 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mmc/eswin,sdhci-eic7700.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/mmc/eswin,sdhci-eic7700.yaml b/Documentation/devicetree/bindings/mmc/eswin,sdhci-eic7700.yaml
+> new file mode 100644
+> index 000000000000..d4826f2aa619
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mmc/eswin,sdhci-eic7700.yaml
+> @@ -0,0 +1,131 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/mmc/eswin,sdhci-eic7700.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: ESWIN EIC7700 SoC SDHCI controller
+> +
+> +maintainers:
+> +  - Shuang Liang <liangshuang@eswincomputing.com>
+> +  - Xuyang Dong <dongxuyang@eswincomputing.com>
+> +
+> +allOf:
+> +  - $ref: /schemas/mmc/mmc-controller.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    const: eswin,eic7700-emmc-sdhci
+> +
+> +  reg:
+> +    maxItems: 1
+> +    description: Common configuration registers
 
-If the result looks correct, please mark the issue as fixed by replying with:
+Blank line, drop description
 
-#syz fix: sched/fair: Fix update_cfs_group() vs DELAY_DEQUEUE
+> +  "#address-cells":
+> +    const: 1
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+Blank line
+
+> +  "#size-cells":
+> +    const: 1
+
+This is wrong.
+
+Why do you need these properties?  You are duplicating (and wrongly) MMC
+schema.
+
+
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  assigned-clocks:
+> +    maxItems: 1
+> +    description: should contain "core_clk" phandle + clock-specifier pairs.
+> +
+> +  assigned-clock-rates:
+> +    maxItems: 1
+
+Drop both properties. Do you see this anywhere in the bindings?
+
+> +
+> +  clocks:
+> +    minItems: 2
+
+No list items instead.
+
+> +    description: handles to clock for the sdhci controller.
+
+Drop description
+
+> +
+> +  clock-names:
+> +    minItems: 2
+> +    description: the name of each clock.
+
+No, list items instead. Do you see any bindings written like that?
+
+> +
+> +  clock-output-names:
+> +    maxItems: 1
+> +
+> +  '#clock-cells':
+> +    enum: [0]
+> +    description:
+> +      With this property in place we will export one clock
+> +      representing the Card Clock. These clocks are expected to be
+> +      consumed by our PHY.
+> +
+> +  resets:
+> +    description: resets to be used by the controller.
+
+Missing constraints. Drop description, useless.
+
+> +
+> +  reset-names:
+> +    description: names of the resets listed in resets property in the same order.
+
+Drop property
+
+> +
+> +  bus-width:
+> +    enum: [4, 8]
+> +    description: for emmc bus-width is 8, for sdio bus-width is 4.
+
+Why do you need it? Look at other bindings.
+
+> +
+> +  eswin,hsp_sp_csr:
+
+Look at DTS coding style first. What characters are allowed in properties?
+
+> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+> +    description: hsp_sp_csr regs to be used by the controller.
+
+For what purpose?
+
+> +    items:
+> +      - description: phandle to HSP_SP_CSR register block
+> +      - description: status register offset
+> +      - description: control register offset
+> +      - description: configuration register offset
+> +
+> +  eswin,syscrg_csr:
+> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+> +    description: syscrg_csr regs to be used by the controller.
+
+For what purpose?
+
+
+> +    items:
+> +      - description: phandle to SYS_CRG_CSR register block
+> +      - description: status register offset
+> +      - description: control register offset
+> +      - description: configuration register offset
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - assigned-clocks
+> +  - assigned-clock-rates
+> +  - clocks
+> +  - clock-names
+> +  - clock-output-names
+> +  - resets
+> +  - reset-names
+> +  - bus-width
+> +  - eswin,hsp_sp_csr
+> +  - eswin,syscrg_csr
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +
+
+Drop blank line
+
+> +    sdhci_emmc: mmc@50450000 {
+
+Drop label
+
+> +      compatible = "eswin,eic7700-emmc-sdhci";
+> +      reg = <0x50450000 0x10000>;
+> +      interrupt-parent = <&plic>;
+> +      interrupts = <79>;
+> +      clocks = <&clock 554>, <&clock 546>;
+> +      clock-names = "clk_xin", "clk_ahb";
+> +      assigned-clocks = <&clock 554>;
+> +      assigned-clock-rates = <200000000>;
+> +      clock-output-names = "emmc_cardclock";
+> +      #clock-cells = <0>;
+> +
+> +      resets = <&reset 7 (1 << 6)>,
+> +        <&reset 7 (1 << 3)>,
+> +        <&reset 7 (1 << 19)>,
+> +        <&reset 7 (1 << 23)>;
+> +      reset-names = "txrx_rst", "phy_rst", "prstn", "arstn";
+> +
+> +      core-clk-reg = <0x51828160>;
+> +      disable-cqe-dcmd;
+> +      bus-width = <8>;
+> +      non-removable;
+> +      mmc-hs400-1_8v;
+> +      max-frequency = <200000000>;
+> +      eswin,hsp_sp_csr = <&hsp_sp_csr 0x1038 0x508 0x50c>;
+> +      eswin,syscrg_csr = <&sys_crg 0x160 0x148 0x14c>;
+> +      status = "disabled";
+
+No, drop.
+
+
+Best regards,
+Krzysztof
 
