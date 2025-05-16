@@ -1,281 +1,253 @@
-Return-Path: <linux-kernel+bounces-650608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-650607-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C2BCAB93BC
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 03:41:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7FB5AB93B8
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 03:40:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9BFC3A84D6
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 01:40:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 668C117E42C
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 01:40:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B19A622D4DD;
-	Fri, 16 May 2025 01:40:47 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C897A2253A1;
+	Fri, 16 May 2025 01:40:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k2dYN2jw"
+Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com [209.85.167.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C804121ABB4
-	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 01:40:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6451C21ABB4;
+	Fri, 16 May 2025 01:40:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747359647; cv=none; b=u8y2xWZzuzzbAWaDZGlAb8opp8n0kVutWD89gAzxlYFUx6Q/zLD3N5o4YW0Fk8CGJDkoIaVVmdWbTIbUl4J6joaueFbqkuAlECntTE5R3MXe+DlBODvTQ890q4dn6+6X6l/li0rdbEYP62EvrIR/aFTpqjD+tNT177xXi+Z/hP0=
+	t=1747359640; cv=none; b=HVhacS+FwmMPN2hjFaSuofoiRDfbuCbhVM5EwiLHxcDK33GCOF6PQhWfqJsiaQ0L32tfHokR0TPdGPtMoAuhbJ4vvQ/baXQnAqSdkdlRDKfEipv5d7Dya33+f3GlKsUkdR5zhxT9qAPJ6MkLnEAiO6Ei4GNWOcndOE3YFtq6tRU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747359647; c=relaxed/simple;
-	bh=DmYPolF3D2IG3Iz9Q5jhq3/pStdUj+Lyi/uPJ4380H8=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GCxwww3eYefkIeoSc0OsvPCX0+t5gU7QKDhPm+nLHXsRTZ+wLdmvvzq67Pt8rvWJr0giazTTxEdVRk/GL8gV1S7sG9n2iMSrei8ewVhiC94E8SQXvYGc6nNLbK1RIbaJY5DWQqncfgx+aJEyf38N/bXbE1HvgWBy8KMuZtGBcY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4Zz8rD5kQXz1DKdV;
-	Fri, 16 May 2025 09:39:08 +0800 (CST)
-Received: from kwepemj200003.china.huawei.com (unknown [7.202.194.15])
-	by mail.maildlp.com (Postfix) with ESMTPS id 0354C1402ED;
-	Fri, 16 May 2025 09:40:37 +0800 (CST)
-Received: from localhost.huawei.com (10.90.30.45) by
- kwepemj200003.china.huawei.com (7.202.194.15) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 16 May 2025 09:40:36 +0800
-From: Qinxin Xia <xiaqinxin@huawei.com>
-To: <21cnbao@gmail.com>, <m.szyprowski@samsung.com>, <robin.murphy@arm.com>
-CC: <yangyicong@huawei.com>, <hch@lst.de>, <iommu@lists.linux.dev>,
-	<jonathan.cameron@huawei.com>, <prime.zeng@huawei.com>,
-	<fanghao11@huawei.com>, <linux-kernel@vger.kernel.org>, <linuxarm@huawei.com>
-Subject: [PATCH v4 2/4] dma-mapping: benchmark: modify the framework to adapt to more map modes
-Date: Fri, 16 May 2025 09:40:32 +0800
-Message-ID: <20250516014034.1577549-3-xiaqinxin@huawei.com>
-X-Mailer: git-send-email 2.33.0
-In-Reply-To: <20250516014034.1577549-1-xiaqinxin@huawei.com>
-References: <20250516014034.1577549-1-xiaqinxin@huawei.com>
+	s=arc-20240116; t=1747359640; c=relaxed/simple;
+	bh=HOWTaMr10Y//SBsq/knUx6OQEtcZK6r9ddhtzirgbQQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AJXl/j9Z7YI/bpc7KPP+5GLy/SXVwlGMDSJb0kgaXnScHqN4QGTKEticOQej5HqoeFIzxPSw0iYIQwtOz2ozz9NXHwk/Yu2sedRGrx6T7pdZNIPOZAOPqJHhyTwvHKJay3UAugehaJUlZrguMLbP8Lz86kSQNQRi5eF5cQWyxwo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k2dYN2jw; arc=none smtp.client-ip=209.85.167.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f181.google.com with SMTP id 5614622812f47-3f7f7b70aebso1498864b6e.2;
+        Thu, 15 May 2025 18:40:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747359637; x=1747964437; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=YbnWlrrlEA62ju+DNKq+Eh0Q+yGH2JwjMo6Br6ozAQQ=;
+        b=k2dYN2jw3WSnsg6PaG5afZiNzrsvCGjGmeMa3JQVhT+N+8FI3pFwGWvJsEQ6uxyJY8
+         6WjeiQ+7ZpNZodzeMW47QSh8u3LBu7734ec2H9PGRb5aXhdMRkaAwAQuscu++W1aN3FC
+         zkdolObzn28gN/vK+j3TPHY9myiCR9KcUSQlgsK3LDMMid5RLuYqWbUgTtgrHv2ngc7U
+         9d5HGs5s5K+yLCaC3T6chDhKFRM75yxsQX+SQSlTQ6v7BP0wfGWSY8mYQiPfx6EvhILP
+         rlajHCb10d/R5Lhgt+FJFGNeA6cTiH/gp3BhMvdxkWD35O0vgsHhwrJ9ozl7GAS6DC1h
+         YA0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747359637; x=1747964437;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YbnWlrrlEA62ju+DNKq+Eh0Q+yGH2JwjMo6Br6ozAQQ=;
+        b=oSm+9ecCCOxaWiVrGHJhv3FRlgcNna8R/a2HHufQYig1PQnx3Hez/2/tlEsoc+UYww
+         3Re+GmSUk20PilrpXCj9PAECyFCaPM/kzk0YfzyxhETCvW9ETKOs+EAgMoVA9Yur2w1Y
+         EIVRMPtAQrfdNbG4DGOkONAMgYxeDepVeTTj5/DtJL4PM4s89JpU4Cjm5VCNui6nZ8Qi
+         QMZnV3UVX+xGQ3WoYox6FMmQ0tCDKcNOER1qIhyIV/1FtyNdUmXuGEgeoEjTd0U6g78G
+         7t6YKXRCOpveuUP2YvgG+vbKFv+kyybSGLHQ+rs6itqBHqUGJNPPR6g4ZkZdfJqDoF38
+         i3KA==
+X-Forwarded-Encrypted: i=1; AJvYcCW8P++4cyoFY5Wb82dRphPTOqk8hwQyBmIY4OQADWvdXqsGPeRwQoSc0pTMge9/UEh8QGHCrY6c2Mv7@vger.kernel.org, AJvYcCWFFsYBfzkHpW9wOPfH/+zqsBbOPDekECvOVm3GZcd6CibHDPPCza5ykfOubW7szDD2Be9qmCjVTrXyFgkK@vger.kernel.org, AJvYcCX3IQ3cZTzcrpCN7zUtUy29BY4Zoqia+Yty9NtWfAUcgKQKxtdkGUE//UgXgmRXcM+FSoPGcutJJmBbkz2LgA==@vger.kernel.org, AJvYcCXGek8CMyFE2+kyAYMsiMj69EIXAYomoPCkgY+7Fx33rKcBg5Gf4xt0vwMqzcNfsM9GMUeWlsZ3@vger.kernel.org
+X-Gm-Message-State: AOJu0YxOAJE31R0C7rP0uZmW6Z4JvhUyJAg01irveZVL73J1GjVfkE3l
+	jWXOveHOZgHavXUN7TWFO24xmlhDmIQdoLImCJNy1dV6Cw1qT91oWgPF
+X-Gm-Gg: ASbGnctSRhxWoxtwo0iVwojMIdBpTVXgHkyuBa5TpLmGar/M5rOCh/OSobTSaNJy/mg
+	YijW3cAkedZLd5FgXEs2FVqnde2xcjBLAcc/OdRNs5PTHaOai1cp2bknbUAzP+TCjCNpVRPgrvX
+	yKfdi5OPLNx/7Sxkj5yPrINR6c4uWBxclwTitD6COo47CTNgfNuGkN5Hna/TrE5R4Dsd82eayTH
+	jamzuv9cckv/72Qw0Ci20L5MPib8cylKEqXYb+tZG11euNElrbfRxOyOGjApxX3TfHllUz3fKRf
+	S1H8qV0B+toF7Lr81N0g+Zw9QAznLfNZn2MXAvdzJO7oN/fMOUebNpytM2xDC7c/pY1JvLvUNZA
+	YOmmlkqZHwd8aJw==
+X-Google-Smtp-Source: AGHT+IETLFoqkRb+eG0skJqyUnlAjIbWcsG/aqzYb4kHYSnQsR/l6nXXMDIKY2j37A0T02BKkdYMog==
+X-Received: by 2002:a05:6808:80a9:b0:400:32b9:7926 with SMTP id 5614622812f47-404d863751cmr1331555b6e.6.1747359637153;
+        Thu, 15 May 2025 18:40:37 -0700 (PDT)
+Received: from [192.168.7.203] (c-98-57-15-22.hsd1.tx.comcast.net. [98.57.15.22])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-404d98b2785sm154670b6e.33.2025.05.15.18.40.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 15 May 2025 18:40:35 -0700 (PDT)
+Message-ID: <be7f0fda-ac21-4f94-a6cf-b4c3ca59630a@gmail.com>
+Date: Thu, 15 May 2025 20:40:33 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v5 0/5] Add PCS support for Qualcomm IPQ9574 SoC
+To: Lei Wei <quic_leiwei@quicinc.com>,
+ "Russell King (Oracle)" <linux@armlinux.org.uk>,
+ Jakub Kicinski <kuba@kernel.org>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+ Heiner Kallweit <hkallweit1@gmail.com>, netdev@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, quic_kkumarcs@quicinc.com,
+ quic_suruchia@quicinc.com, quic_pavir@quicinc.com, quic_linchen@quicinc.com,
+ quic_luoj@quicinc.com, srinivas.kandagatla@linaro.org,
+ bartosz.golaszewski@linaro.org, vsmuthu@qti.qualcomm.com, john@phrozen.org,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+References: <20250207-ipq_pcs_6-14_rc1-v5-0-be2ebec32921@quicinc.com>
+ <20250211195934.47943371@kernel.org> <Z6x1xD0krK0_eycB@shell.armlinux.org.uk>
+ <71a69eb6-9e24-48ab-8301-93ec3ff43cc7@quicinc.com>
+ <0c1a0dbd-fd24-40d7-bec9-c81583be1081@gmail.com>
+ <c6a78dd6-763c-41a0-8a6e-2e81723412be@quicinc.com>
+ <62c98d4f-8f02-43cc-8af6-99edfa5f6c88@gmail.com>
+ <df2fa427-00d9-4d74-adec-c81feda69df5@quicinc.com>
+Content-Language: en-US
+From: mr.nuke.me@gmail.com
+In-Reply-To: <df2fa427-00d9-4d74-adec-c81feda69df5@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemj200003.china.huawei.com (7.202.194.15)
 
-In some service scenarios, the performance of dma_map_sg needs to be
-tested to support different map modes for benchmarks. This patch adjusts
-the DMA map benchmark framework to make the DMA map benchmark framework
-more flexible and adaptable to other mapping modes in the future.
-By abstracting the framework into four interfaces:prepare, unprepare,
-do_map, and do_unmap.The new map schema can be introduced more easily
-without major modifications to the existing code structure.
+On 5/15/25 10:27 AM, Lei Wei wrote:
+> 
+> 
+> On 5/15/2025 10:32 AM, Alex G. wrote:
+>> On 5/14/25 11:03, Lei Wei wrote:> On 5/13/2025 6:56 AM, 
+>> mr.nuke.me@gmail.com wrote:
+>>>> On 2/19/25 4:46 AM, Lei Wei wrote:
+>>>>
+>>>> I tried this PCS driver, and I am seeing a circular dependency in 
+>>>> the clock init. If the clock tree is:
+>>>>      GCC -> NSSCC -> PCS(uniphy) -> NSSCC -> PCS(mii)
+>>>>
+>>>> The way I understand it, the UNIPHY probe depends on the MII probe. 
+>>>> If MII .probe() returns -EPROBE_DEFER, then so will the 
+>>>> UNIPHY .probe(). But the MII cannot probe until the UNIPHY is done, 
+>>>> due to the clock dependency. How is it supposed to work?
+>>>>
+>>>> The way I found to resolve this is to move the probing of the MII 
+>>>> clocks to ipq_pcs_get().
+>>>>
+>>>> This is the kernel log that I see:
+>>>>
+>>>> [   12.008754] platform 39b00000.clock-controller: deferred probe 
+>>>> pending: platform: supplier 7a00000.ethernet-pcs not ready
+>>>> [   12.008788] mdio_bus 90000.mdio-1:18: deferred probe pending: 
+>>>> mdio_bus: supplier 7a20000.ethernet-pcs not ready
+>>>> [   12.018704] mdio_bus 90000.mdio-1:00: deferred probe pending: 
+>>>> mdio_bus: supplier 90000.mdio-1:18 not ready
+>>>> [   12.028588] mdio_bus 90000.mdio-1:01: deferred probe pending: 
+>>>> mdio_bus: supplier 90000.mdio-1:18 not ready
+>>>> [   12.038310] mdio_bus 90000.mdio-1:02: deferred probe pending: 
+>>>> mdio_bus: supplier 90000.mdio-1:18 not ready
+>>>> [   12.047943] mdio_bus 90000.mdio-1:03: deferred probe pending: 
+>>>> mdio_bus: supplier 90000.mdio-1:18 not ready
+>>>> [   12.057579] platform 7a00000.ethernet-pcs: deferred probe 
+>>>> pending: ipq9574_pcs: Failed to get MII 0 RX clock
+>>>> [   12.067209] platform 7a20000.ethernet-pcs: deferred probe 
+>>>> pending: ipq9574_pcs: Failed to get MII 0 RX clock
+>>>> [   12.077200] platform 3a000000.qcom-ppe: deferred probe pending: 
+>>>> platform: supplier 39b00000.clock-controller not ready
+>>>>
+>>>>
+>>>
+>>> Hello, thanks for bringing this to our notice. Let me try to 
+>>> understand the reason for the probe failure:
+>>>
+>>> The merged NSSCC DTS does not reference the PCS node directly in the 
+>>> "clocks" property. It uses a placeholder phandle '<0>' for the 
+>>> reference. Please see below patch which is merged.
+>>> https://lore.kernel.org/all/20250313110359.242491-6- 
+>>> quic_mmanikan@quicinc.com/
+>>>
+>>> Ideally there should be no direct dependency from NSSCC to PCS driver if
+>>> we use this version of the NSSCC DTS.
+>>>
+>>> Hence it seems that you may have a modified patch here, and DTS 
+>>> changes have been applied to enable all the Ethernet components 
+>>> including PCS and NSSCC, and NSSCC modified to have a direct 
+>>> reference to PCS? However even in this case, I think the driver probe 
+>>> should work if the drivers are built as modules. Can you please 
+>>> confirm if the NSSCC and PCS drivers are built-in to the kernel and 
+>>> not built as modules
+>>
+>> The NSSCC and PCS built-in. I also added the uniphy PCS clocks to the 
+>> NSSCC in order to expose the issue.
+>>
+>> I have a heavily patched tree with PPE driver and EDMA support. That's 
+>> the final use case in order to support ethernet, right?
+>>
+> 
+> Yes, all the drivers are eventually for enabling the Ethernet function
+> on IPQ9574.
+> 
+>>
+>>> For the case where the drivers are built-in to kernel, and the NSSCC DTS
+>>> node has a direct reference to PCS node, we can use the below solution:
+>>> [Note that the 'UNIPHY' PCS clocks are not needed for NSSCC clocks
+>>> initialization/registration.]
+>>>
+>>>      Enable 'post-init-providers' property in the NSSCC DTS node to mark
+>>>     'UNIPHY' PCS as post-initialization providers to NSSCC. This will
+>>>      ensure following probe order by the kernel:
+>>>
+>>>      1.) NSSCC driver
+>>>      2.) PCS driver.
+>>>
+>>> Please let me know if the above suggestion can help.
+>>
+>> I see. Adding the 'post-init-providers' property does fix the circular 
+>> dependency. Thank you!
+>>
+>> I have another question. Do you have a public repository with the 
+>> unmerged IPQ9574 patches, including, PCS, PPE, EDMA, QCA8084 ?
+>>
+> 
+> May I know the source of your PPE/EDMA changes using which this issue
+> is seen?
 
-Reviewed-by: Barry Song <baohua@kernel.org>
-Signed-off-by: Qinxin Xia <xiaqinxin@huawei.com>
----
- include/linux/map_benchmark.h |   8 ++-
- kernel/dma/map_benchmark.c    | 122 +++++++++++++++++++++++++++-------
- 2 files changed, 106 insertions(+), 24 deletions(-)
+I use a mix of upstream submissions, and openwrt patches. As noted, 
+using 'post-init-providers' takes care of the problem.
 
-diff --git a/include/linux/map_benchmark.h b/include/linux/map_benchmark.h
-index 2ac2fe52f248..020b3155c262 100644
---- a/include/linux/map_benchmark.h
-+++ b/include/linux/map_benchmark.h
-@@ -15,6 +15,11 @@
- #define DMA_MAP_TO_DEVICE       1
- #define DMA_MAP_FROM_DEVICE     2
- 
-+enum {
-+	DMA_MAP_BENCH_SINGLE_MODE,
-+	DMA_MAP_BENCH_MODE_MAX
-+};
-+
- struct map_benchmark {
- 	__u64 avg_map_100ns; /* average map latency in 100ns */
- 	__u64 map_stddev; /* standard deviation of map latency */
-@@ -27,6 +32,7 @@ struct map_benchmark {
- 	__u32 dma_dir; /* DMA data direction */
- 	__u32 dma_trans_ns; /* time for DMA transmission in ns */
- 	__u32 granule;  /* how many PAGE_SIZE will do map/unmap once a time */
--	__u8 expansion[76];     /* For future use */
-+	__u8  map_mode; /* the mode of dma map */
-+	__u8 expansion[75];     /* For future use */
- };
- #endif /* _KERNEL_DMA_BENCHMARK_H */
-diff --git a/kernel/dma/map_benchmark.c b/kernel/dma/map_benchmark.c
-index cc19a3efea89..05f85cf00c35 100644
---- a/kernel/dma/map_benchmark.c
-+++ b/kernel/dma/map_benchmark.c
-@@ -5,6 +5,7 @@
- 
- #define pr_fmt(fmt)	KBUILD_MODNAME ": " fmt
- 
-+#include <linux/cleanup.h>
- #include <linux/debugfs.h>
- #include <linux/delay.h>
- #include <linux/device.h>
-@@ -31,17 +32,99 @@ struct map_benchmark_data {
- 	atomic64_t loops;
- };
- 
-+struct map_benchmark_ops {
-+	void *(*prepare)(struct map_benchmark_data *map);
-+	void (*unprepare)(void *mparam);
-+	int (*do_map)(void *mparam);
-+	void (*do_unmap)(void *mparam);
-+};
-+
-+struct dma_single_map_param {
-+	struct device *dev;
-+	dma_addr_t addr;
-+	void *xbuf;
-+	u32 npages;
-+	u32 dma_dir;
-+};
-+
-+static void *dma_single_map_benchmark_prepare(struct map_benchmark_data *map)
-+{
-+	struct dma_single_map_param *params __free(kfree) = kzalloc(sizeof(*params),
-+								    GFP_KERNEL);
-+	if (!params)
-+		return NULL;
-+
-+	params->npages = map->bparam.granule;
-+	params->dma_dir = map->bparam.dma_dir;
-+	params->dev = map->dev;
-+	params->xbuf = alloc_pages_exact(params->npages * PAGE_SIZE, GFP_KERNEL);
-+	if (!params->xbuf)
-+		return NULL;
-+
-+	/*
-+	 * for a non-coherent device, if we don't stain them in the
-+	 * cache, this will give an underestimate of the real-world
-+	 * overhead of BIDIRECTIONAL or TO_DEVICE mappings;
-+	 * 66 means evertything goes well! 66 is lucky.
-+	 */
-+	if (params->dma_dir != DMA_FROM_DEVICE)
-+		memset(params->xbuf, 0x66, params->npages * PAGE_SIZE);
-+
-+	return_ptr(params);
-+}
-+
-+static void dma_single_map_benchmark_unprepare(void *mparam)
-+{
-+	struct dma_single_map_param *params = mparam;
-+
-+	free_pages_exact(params->xbuf, params->npages * PAGE_SIZE);
-+	kfree(params);
-+}
-+
-+static int dma_single_map_benchmark_do_map(void *mparam)
-+{
-+	struct dma_single_map_param *params = mparam;
-+	int ret = 0;
-+
-+	params->addr = dma_map_single(params->dev, params->xbuf,
-+				      params->npages * PAGE_SIZE, params->dma_dir);
-+	if (unlikely(dma_mapping_error(params->dev, params->addr))) {
-+		pr_err("dma_map_single failed on %s\n", dev_name(params->dev));
-+		ret = -ENOMEM;
-+	}
-+
-+	return ret;
-+}
-+
-+static void dma_single_map_benchmark_do_unmap(void *mparam)
-+{
-+	struct dma_single_map_param *params = mparam;
-+
-+	dma_unmap_single(params->dev, params->addr,
-+			 params->npages * PAGE_SIZE, params->dma_dir);
-+}
-+
-+static struct map_benchmark_ops dma_single_map_benchmark_ops = {
-+	.prepare = dma_single_map_benchmark_prepare,
-+	.unprepare = dma_single_map_benchmark_unprepare,
-+	.do_map = dma_single_map_benchmark_do_map,
-+	.do_unmap = dma_single_map_benchmark_do_unmap,
-+};
-+
-+static struct map_benchmark_ops *dma_map_benchmark_ops[DMA_MAP_BENCH_MODE_MAX] = {
-+	[DMA_MAP_BENCH_SINGLE_MODE] = &dma_single_map_benchmark_ops,
-+};
-+
- static int map_benchmark_thread(void *data)
- {
--	void *buf;
--	dma_addr_t dma_addr;
- 	struct map_benchmark_data *map = data;
--	int npages = map->bparam.granule;
--	u64 size = npages * PAGE_SIZE;
-+	__u8 map_mode = map->bparam.map_mode;
- 	int ret = 0;
- 
--	buf = alloc_pages_exact(size, GFP_KERNEL);
--	if (!buf)
-+	struct map_benchmark_ops *mb_ops = dma_map_benchmark_ops[map_mode];
-+	void *mparam = mb_ops->prepare(map);
-+
-+	if (!mparam)
- 		return -ENOMEM;
- 
- 	while (!kthread_should_stop())  {
-@@ -49,23 +132,10 @@ static int map_benchmark_thread(void *data)
- 		ktime_t map_stime, map_etime, unmap_stime, unmap_etime;
- 		ktime_t map_delta, unmap_delta;
- 
--		/*
--		 * for a non-coherent device, if we don't stain them in the
--		 * cache, this will give an underestimate of the real-world
--		 * overhead of BIDIRECTIONAL or TO_DEVICE mappings;
--		 * 66 means evertything goes well! 66 is lucky.
--		 */
--		if (map->dir != DMA_FROM_DEVICE)
--			memset(buf, 0x66, size);
--
- 		map_stime = ktime_get();
--		dma_addr = dma_map_single(map->dev, buf, size, map->dir);
--		if (unlikely(dma_mapping_error(map->dev, dma_addr))) {
--			pr_err("dma_map_single failed on %s\n",
--				dev_name(map->dev));
--			ret = -ENOMEM;
-+		ret = mb_ops->do_map(mparam);
-+		if (ret)
- 			goto out;
--		}
- 		map_etime = ktime_get();
- 		map_delta = ktime_sub(map_etime, map_stime);
- 
-@@ -73,7 +143,8 @@ static int map_benchmark_thread(void *data)
- 		ndelay(map->bparam.dma_trans_ns);
- 
- 		unmap_stime = ktime_get();
--		dma_unmap_single(map->dev, dma_addr, size, map->dir);
-+		mb_ops->do_unmap(mparam);
-+
- 		unmap_etime = ktime_get();
- 		unmap_delta = ktime_sub(unmap_etime, unmap_stime);
- 
-@@ -108,7 +179,7 @@ static int map_benchmark_thread(void *data)
- 	}
- 
- out:
--	free_pages_exact(buf, size);
-+	mb_ops->unprepare(mparam);
- 	return ret;
- }
- 
-@@ -209,6 +280,11 @@ static long map_benchmark_ioctl(struct file *file, unsigned int cmd,
- 
- 	switch (cmd) {
- 	case DMA_MAP_BENCHMARK:
-+		if (map->bparam.map_mode >= DMA_MAP_BENCH_MODE_MAX) {
-+			pr_err("invalid map mode\n");
-+			return -EINVAL;
-+		}
-+
- 		if (map->bparam.threads == 0 ||
- 		    map->bparam.threads > DMA_MAP_MAX_THREADS) {
- 			pr_err("invalid thread number\n");
--- 
-2.33.0
+https://github.com/mrnuke/linux/commits/ipq95xx-devel-20250515/
+
+> 
+> The openwrt repository contains the unmerged IPQ9574 patches, Although
+> this version will be updated very soon with latest code(with some 
+> fixes), the version of the code in the repo currently is also functional 
+> and tested.
+> 
+> https://github.com/CodeLinaro/openwrt/tree/main/target/linux/qualcommbe/ 
+> patches-6.6
+
+
+Will you be updating a clock example with IPQ9574 + QCA8084 to the repo?
+
+Alex
+
+>>
+>>> Later once the IPQ PCS driver is merged, we are planning to push the 
+>>> PCS DTS changes, along with an update of the NSSCC DTS to point to 
+>>> the PCS node and mark the "post-init-providers" property. This should 
+>>> work for all cases.
+>>>
+>>> Also, in my view, it is not suitable to move PCS MII clocks get to
+>>> "ipq_pcs_get()" because the natural loading order for the drivers
+>>> is as below:
+>>>
+>>> 1) NSSCC driver
+>>> 2) PCS driver
+>>> 3) Ethernet driver.
+>>>
+>>> Additionally, the community is currently working on an infrastructure to
+>>> provide a common pcs get method. (Christian and Sean Anderson has 
+>>> been working on this). Therefore, I expect "ipq_pcs_get" to be 
+>>> dropped in the future and replaced with the common pcs get method 
+>>> once this common infra is merged.
+>>
+>> That makes sense. Thank you for clarifying.
+> 
 
 
