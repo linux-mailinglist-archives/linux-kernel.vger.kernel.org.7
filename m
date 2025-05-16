@@ -1,204 +1,167 @@
-Return-Path: <linux-kernel+bounces-651116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-651119-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 315B1AB9A33
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 12:32:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D39D2AB9A3D
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 12:33:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26F5F9E3CB4
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 10:31:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ACE01A03D75
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 10:32:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A01F235066;
-	Fri, 16 May 2025 10:32:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F4B423507A;
+	Fri, 16 May 2025 10:32:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Q5FwqsCu";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="zPr4ETf7";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Q5FwqsCu";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="zPr4ETf7"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="aZj9L9I7"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00F522253FD
-	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 10:32:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1507323373B
+	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 10:32:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747391526; cv=none; b=jASA705TVfJOClEwgcrOCyS7dZ8qDbhWDnLtUtgX7ZV0EhLqQfm+cd5H6oUUkAhdKjkBrWMeHxIy42+bJDax/DDUhku2VsWHkhUX/8j9B6F63Uu6R1x5OQz8YpLNuMbodki5npd4vXLcmjtzEG63fTBOmnBkv5LReKL9APyCYwk=
+	t=1747391556; cv=none; b=G4pTyX451YGFpydsWUfSflvdcsbZRip9wfJ192y/7Ua5xM96A2ZBsLhsRrkkp62yjf/BlSjMqPVEw6fJEkIyiDl7h4wHrwVs9t3Yuxlv+nUANvN5DqqFLutft6a8pC15qVT3VHDaJNiNgSIgnMOWV15tmRnny3A4/ci6s6FYKlE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747391526; c=relaxed/simple;
-	bh=Y6itP7Kh2dIc69u5d6PKjEC5APhDujvVRHjoJJoRjZw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eMsqriuRlE+2AP+zq8fQ8HBhXtZ5YWH3x/zKxeQ0USlJzJ8mOrZ5wKnH/NvptC6nN7DNoZKzMBZlqd2WvtHB7zVgiyoP3C9N29xJJjpeDIOZWDzwiqTsnJ0+znv6+0uXYG2MHwfWktV00Ud9lesm9yCrq6vSUEDMCAv0i9DJi24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Q5FwqsCu; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=zPr4ETf7; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Q5FwqsCu; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=zPr4ETf7; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 25533218B8;
-	Fri, 16 May 2025 10:32:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1747391523; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Mxnb1geN517pevzpOjZliU3PBMZrTHg/aQoTFkapi0Y=;
-	b=Q5FwqsCufDChGJ5Ehc6EZzwwM/ZDphg2wt7gThyIWdtYpbRYIBdX0FaqDvh96cGDL2pBgu
-	wO8jSyVxZdmtQqL6H5ISImo7CfmuktlYr+JRtc7ijhb/+yMisqTzPXlzQu09ankUFGdto4
-	q6Z9tmvErpEpgabXmuZyEpzwwQYIBmE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1747391523;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Mxnb1geN517pevzpOjZliU3PBMZrTHg/aQoTFkapi0Y=;
-	b=zPr4ETf7RJtJ3TuezENhO7tXFg9K+iEPbt/oRuYP+oDesI9mfbqO4sZMMs8RyeQO1bUkWc
-	U6b5QLiee5tQ/LDA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1747391523; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Mxnb1geN517pevzpOjZliU3PBMZrTHg/aQoTFkapi0Y=;
-	b=Q5FwqsCufDChGJ5Ehc6EZzwwM/ZDphg2wt7gThyIWdtYpbRYIBdX0FaqDvh96cGDL2pBgu
-	wO8jSyVxZdmtQqL6H5ISImo7CfmuktlYr+JRtc7ijhb/+yMisqTzPXlzQu09ankUFGdto4
-	q6Z9tmvErpEpgabXmuZyEpzwwQYIBmE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1747391523;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Mxnb1geN517pevzpOjZliU3PBMZrTHg/aQoTFkapi0Y=;
-	b=zPr4ETf7RJtJ3TuezENhO7tXFg9K+iEPbt/oRuYP+oDesI9mfbqO4sZMMs8RyeQO1bUkWc
-	U6b5QLiee5tQ/LDA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 190C513411;
-	Fri, 16 May 2025 10:32:03 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id lYYZBiMUJ2jUAgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Fri, 16 May 2025 10:32:03 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id C788AA09DD; Fri, 16 May 2025 12:31:58 +0200 (CEST)
-Date: Fri, 16 May 2025 12:31:58 +0200
-From: Jan Kara <jack@suse.cz>
-To: Zizhi Wo <wozizhi@huaweicloud.com>
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, yangerkun@huawei.com
-Subject: Re: [PATCH] fs: Rename the parameter of mnt_get_write_access()
-Message-ID: <vtfnncganindq4q7t4icfaujkgejlbd7repvurpjx6nwf6i7zp@hr44m22ij4qf>
-References: <20250516032147.3350598-1-wozizhi@huaweicloud.com>
+	s=arc-20240116; t=1747391556; c=relaxed/simple;
+	bh=a8ch7gicVeQYk0s0g17/TSxDaoXIRs7pIpXTym2VefE=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=oCoVC1/nsoFc5wCukwDljwsqQoa3FJh3hhWTU5Tj8pdgRB5kSJaODTzAPM6Dz1otoaKxa9O4GRqpGIwGIjg8g86Ic7Tsp//0HP+/mfyS2lx2yYyRfXXjVHPXUbawXtRBP98H/9DmXMIzn4C71EQ2kxbNYmd0BQ77JCKj6DUu9Ek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=aZj9L9I7; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54G4MrZj014096
+	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 10:32:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=QcCZddeYaGyi07pSs0CvoB
+	rZISg5ik3bB/eBUeNltxI=; b=aZj9L9I7rTD4ftxP1OikyWQQLPmB8Ysq63U8hk
+	mAp2LNYXzqEAeijrmTKtuBiLGyOyVVsZNx9dLgbao/9c0lpJyvHBjT3XFpT6rhkN
+	s/dAwl1oLLNYeWwjSFTwb148Hc4HmgWNzJAA9W/c01BMTX+KrFAW6S+2ZSiODIu+
+	HFRXzWqjuMcvWOu3QtHtL+PiJcydd7tcgjojqhGtObnmNxXwIv4q/uUfLzq7yYLv
+	vkp7Nd+dhel/26mI8P78i6QqklGNbhvBKSkNmqnCNNjtPSAcYtL3Dch8wEcM1vpS
+	a9H3VsOmp28/uu8fpsez55MWaDdNV/ZK7z+w7GV/vnf7X4wQ==
+Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com [209.85.210.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46nx9js2f7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 10:32:33 +0000 (GMT)
+Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-74255209c4bso3336477b3a.2
+        for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 03:32:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747391540; x=1747996340;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QcCZddeYaGyi07pSs0CvoBrZISg5ik3bB/eBUeNltxI=;
+        b=GhhspwHt420RF51+I7DhJV9fmlEd6wGBKniHFDD/+i0VSeVXwqE9yePejL626p2RLO
+         e81wLcvFpXDqNFAnWbwE4yaRiTKztZGC5YIgQe9TudjWC0pSI8gNCTe7k9aT6D2fhA8g
+         nnmps5O/R5+NyqD/nFHiIgpee9ZZLthyUFYZD6x8Do4exnjT/zkZwXisuwYVBN/Xj1ug
+         XF/XaDFzN7uyK3oAQZ/1/I3bYnutY1GTHgA7Lgh0GobG3eRSMQQYW9wQKl0r4+ArJ+Y0
+         jAblL1DSa15Y7XVfrCHRJrmvn4QoRuN84TAuxuJQHk2gLJ7jy+ozqWAh2Gjnsv1qeKTy
+         wMjg==
+X-Forwarded-Encrypted: i=1; AJvYcCUZEMjuDwtuRIqT2lLns8g8UASNjGsYLL5PUw5gWm8ACf3T2pLRY1ixBDOhhKc1U5IOMWrzSC1QxU937ac=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3p48ElXEFgiuiQAT3ByNvhQpgFDpzAG4ZvOaRcfdURr5q9H/t
+	J8ecV1jwrF0QFcXAhPHE2/Gvewj5/p9nROOAcm59Bg0egbZHkpDKurefDzEseHCkLQARYoFmQiH
+	HzrRM8TgsZlMfM1M9CIbXZdq5TG77g9V/DhsflN3MML5N01Q8VfvULf9FZQu2v53N2+g=
+X-Gm-Gg: ASbGncsL3uwF5fMAYt36ntfpnisdhpZga+P6FXd0PN1wIO4jURsJSnMzHytrqweiVSL
+	Z5/BD5TYkpXovtSpRYkZcdgFtHHfxfFvubXnoobtbVo5SpHcEGYv16j5cuLl4DS8IWW/GgJw9Dm
+	HYOuHVooREM2lua7KK1GduIRkDlEQVaIBrOYS2A3Ju6dVa2yJmOZTBa5YURlY+fj1nOsrlUS0KL
+	l0qoJPglQI4njfVnXZhFxtWLzbrrNzK1+IcUttbsb8EvPTik1JYeDfq7CQkpP6mRIz+qT9g+wZt
+	1BaCASYyCQpCEnPO5huGSqZ0hHm/GmL0Gkx5NAtHZMz4EnKthlyWkwgR2t9yc9pf+vWif0N4j/+
+	RlS2bvOAnsTYuBhK3J3+BZ/n7lMWIVbqRonbS
+X-Received: by 2002:a05:6a00:1382:b0:740:5927:aa4c with SMTP id d2e1a72fcca58-742acba8f87mr2737944b3a.0.1747391539999;
+        Fri, 16 May 2025 03:32:19 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEhnO1ecGoSJXfMsKvSCjPaHv/MOQMmbO2A1LqkZG3UPXES6eAFxgdeGK4jmgoSaTbApYRLtg==
+X-Received: by 2002:a05:6a00:1382:b0:740:5927:aa4c with SMTP id d2e1a72fcca58-742acba8f87mr2737914b3a.0.1747391539567;
+        Fri, 16 May 2025 03:32:19 -0700 (PDT)
+Received: from hu-adisi-blr.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com. [103.229.18.19])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-742a986d8d7sm1247585b3a.130.2025.05.16.03.32.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 16 May 2025 03:32:19 -0700 (PDT)
+From: Aditya Kumar Singh <aditya.kumar.singh@oss.qualcomm.com>
+Subject: [PATCH wireless-next v2 0/2] wifi: mac80211: some bug fixes in MLO
+ scan handling
+Date: Fri, 16 May 2025 16:02:06 +0530
+Message-Id: <20250516-bug_fix_mlo_scan-v2-0-12e59d9110ac@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250516032147.3350598-1-wozizhi@huaweicloud.com>
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	RCVD_COUNT_THREE(0.00)[3];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,huawei.com:email]
-X-Spam-Score: -3.80
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIACYUJ2gC/3XQ22oDIRAG4FcJXtego642V32PUhYPYyLsoV0Tm
+ xL23WuWQgPZvRGG8f9mmBvJOCXM5LC7kQlLymkcagEvO+JPdjgiTaHWBBgoJhlQdzm2MV3bvhv
+ b7O1AIyodlXbcm4bU2OeEtb+Q7+Q7TdhhznTA65l81PYp5fM4/SwDC18+/dni2S6cMiqAWVN95
+ 7h9G3Pef11s58e+39fnPnHJK76Vf5UglHMSosPn/H2nAo97yBUHqtPEBkAbyYyWG454dPSKI6r
+ jTUDjYgBh+YYj/x21dvMiq2O9cgGYb0LwK848z79SsEPP3gEAAA==
+X-Change-ID: 20250402-bug_fix_mlo_scan-fe57f57b1c86
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Aditya Kumar Singh <aditya.kumar.singh@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Proofpoint-ORIG-GUID: RZeBBn27L7cj3wVHY0Ujx1cMF_z6MoLk
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTE2MDEwMCBTYWx0ZWRfX/yQQ8SQjcLad
+ 2QpQvOfRN3Yja1zcX7g+HLA1AIhMQixgFaMxOOHw+mj6Qdvz3kNqNhbly1gqJR9HY9EfBkOGHAx
+ XOawGEcZ+dGPo0z634yc9AggZ9/lKvBq9LqX9gvup/vKtqYXlY+O4Cvjr3FmyHVnKX8HOHenMkR
+ yXcylDtDiRguZCWCDgEkcWT+7LOg4Rhkw99FAm0pB/L/WHt+t6zUH7i6yqmRFpgMoM2pYfXEwVd
+ MBlpZ3sRM8RIghkR6RE6hfnk2i91bSC+X2+JjVQL6Vgumbx0qKVlH3FNOisOXoKLcyxATQ8tkNB
+ BdosmA+tncFsV4nu6pH5ulJTTxWfzRL7PEh2n2QEwlnq6G/SeftzH5jCrOkrxK1rVsq+OMySghE
+ PY8ZtDsq+Bprex3FsKGXIoOWjLKyh55rHQUT1jH02SaJ77GmnnyCENIibPdsyK4aHznJzkVg
+X-Authority-Analysis: v=2.4 cv=CIIqXQrD c=1 sm=1 tr=0 ts=68271441 cx=c_pps
+ a=WW5sKcV1LcKqjgzy2JUPuA==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
+ a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
+ a=gPft80QSANvjOYXkS70A:9 a=QEXdDO2ut3YA:10 a=OpyuDcXvxspvyRM73sMx:22
+X-Proofpoint-GUID: RZeBBn27L7cj3wVHY0Ujx1cMF_z6MoLk
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-16_04,2025-05-16_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 adultscore=0 mlxscore=0 suspectscore=0 lowpriorityscore=0
+ phishscore=0 mlxlogscore=937 spamscore=0 impostorscore=0 clxscore=1015
+ priorityscore=1501 bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505070000
+ definitions=main-2505160100
 
-On Fri 16-05-25 11:21:47, Zizhi Wo wrote:
-> From: Zizhi Wo <wozizhi@huawei.com>
-> 
-> Rename the parameter in mnt_get_write_access() from "m" to "mnt" for
-> consistency between declaration and implementation.
-> 
-> Signed-off-by: Zizhi Wo <wozizhi@huawei.com>
+This series addresses issues related to MLO handling in probe response
+acceptance and scan request validation.
 
-I'm sorry but this is just a pointless churn. I agree the declaration and
-implementation should better be consistent (although in this particular
-case it isn't too worrying) but it's much easier (and with much lower
-chance to cause conflicts) to just fixup the declaration.
+* Validate SCAN_FLAG_AP in scan request during MLO:
+	Enforce the requirement for the NL80211_SCAN_FLAG_AP flag in scan
+	requests when an AP interface is beaconing.
 
-								Honza
+	Apply this restriction to ML interfaces by using the existing
+	helper ieee80211_num_beaconing_links() to check if any link is
+	beaconing.
 
-> ---
->  fs/namespace.c | 14 +++++++-------
->  1 file changed, 7 insertions(+), 7 deletions(-)
-> 
-> diff --git a/fs/namespace.c b/fs/namespace.c
-> index 1b466c54a357..b1b679433ab3 100644
-> --- a/fs/namespace.c
-> +++ b/fs/namespace.c
-> @@ -483,7 +483,7 @@ static int mnt_is_readonly(struct vfsmount *mnt)
->   */
->  /**
->   * mnt_get_write_access - get write access to a mount without freeze protection
-> - * @m: the mount on which to take a write
-> + * @mnt: the mount on which to take a write
->   *
->   * This tells the low-level filesystem that a write is about to be performed to
->   * it, and makes sure that writes are allowed (mnt it read-write) before
-> @@ -491,13 +491,13 @@ static int mnt_is_readonly(struct vfsmount *mnt)
->   * frozen. When the write operation is finished, mnt_put_write_access() must be
->   * called. This is effectively a refcount.
->   */
-> -int mnt_get_write_access(struct vfsmount *m)
-> +int mnt_get_write_access(struct vfsmount *mnt)
->  {
-> -	struct mount *mnt = real_mount(m);
-> +	struct mount *m = real_mount(mnt);
->  	int ret = 0;
->  
->  	preempt_disable();
-> -	mnt_inc_writers(mnt);
-> +	mnt_inc_writers(m);
->  	/*
->  	 * The store to mnt_inc_writers must be visible before we pass
->  	 * MNT_WRITE_HOLD loop below, so that the slowpath can see our
-> @@ -505,7 +505,7 @@ int mnt_get_write_access(struct vfsmount *m)
->  	 */
->  	smp_mb();
->  	might_lock(&mount_lock.lock);
-> -	while (READ_ONCE(mnt->mnt.mnt_flags) & MNT_WRITE_HOLD) {
-> +	while (READ_ONCE(m->mnt.mnt_flags) & MNT_WRITE_HOLD) {
->  		if (!IS_ENABLED(CONFIG_PREEMPT_RT)) {
->  			cpu_relax();
->  		} else {
-> @@ -530,8 +530,8 @@ int mnt_get_write_access(struct vfsmount *m)
->  	 * read-only.
->  	 */
->  	smp_rmb();
-> -	if (mnt_is_readonly(m)) {
-> -		mnt_dec_writers(mnt);
-> +	if (mnt_is_readonly(mnt)) {
-> +		mnt_dec_writers(m);
->  		ret = -EROFS;
->  	}
->  	preempt_enable();
-> -- 
-> 2.39.2
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+* Accept probe response on link address as well:
+	Ensure unicast probe response frames are accepted if the
+	destination address matches any of the link addresses when a
+	random MAC address is not requested.
+
+	This change corrects the behavior where probe response frames are
+	dropped incorrectly for MLO interfaces.
+
+Both the changes are as such independent from each other. Since both are
+related to MLO scanning, currently kept in same series.
+
+---
+Changes in v2:
+- Use ieee80211_num_beaconing_links() alone since now it can handle non-mlo
+  as well.
+- Link to v1: https://lore.kernel.org/r/20250513-bug_fix_mlo_scan-v1-0-94235bb42fbe@oss.qualcomm.com
+
+---
+Aditya Kumar Singh (2):
+      wifi: mac80211: validate SCAN_FLAG_AP in scan request during MLO
+      wifi: mac80211: accept probe response on link address as well
+
+ net/mac80211/cfg.c  |  2 +-
+ net/mac80211/scan.c | 18 +++++++++++++++++-
+ 2 files changed, 18 insertions(+), 2 deletions(-)
+---
+base-commit: 68b44b05f4c880c42109a91d2e0e7faa94f40529
+change-id: 20250402-bug_fix_mlo_scan-fe57f57b1c86
+
 
