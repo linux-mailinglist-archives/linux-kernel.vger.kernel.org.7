@@ -1,139 +1,212 @@
-Return-Path: <linux-kernel+bounces-651717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-651719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22039ABA222
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 19:44:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BF6BABA228
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 19:45:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9FCBC1C009E8
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 17:44:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD8FA18955A8
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 17:45:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3EB2275110;
-	Fri, 16 May 2025 17:43:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8EAF277020;
+	Fri, 16 May 2025 17:45:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="g5G0G4u1"
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="20Whvgl+"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B078022B595
-	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 17:43:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8316C26FA78
+	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 17:45:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747417395; cv=none; b=KmqvvWExaKa33F5eK4OOyE5pHT4njLbGb5Zbezy+3x4IVoDZ+otQZGk5OfkkCxBanRX6K6aD3r9eQai0A7G7GZ7cgPFTXj6DrwGyljrmUkaozgiQzlM/HFscNzLg2rnLI7HvOkdAX3/NgHBnbolSX0IkoFyR6kJ6Z4jadLlXAWk=
+	t=1747417511; cv=none; b=s/FB1Kz6PiaR0Lbg3TeEoyvC5NPI+UlsQ6KXsFCT1kpwkDkJDlabiCTD/Hcw8C6Q9quD2zpOF4d3ffjMRz9/ae5dbbNLODMum9JJFaZxeK5EA4uL8j86EgHbocikWqKKL6t0m7C2Duzyot8D178A51MIBDvmrWqoqonWi1BNBlY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747417395; c=relaxed/simple;
-	bh=sBay1aenEjXfkacn+ZY+Cr1OwhROHPoxGk23mUtmbX8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=H4iXxWYyVfMLHJMSuSwG+Q/7xXZvd+cCHCzsUEc2nNN6Hx1JNiP7wBO+wG10ClnyZUJOTKoI+ps2DJ5PBD1rpCivCNk7Rd5EgYbvdI3TgcQYedGM7MyvxGBSBEWkCPWiKKGPbcDzkeaNWiLQJMcuepMwm1EslvWzHcZWoeUFHKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=g5G0G4u1; arc=none smtp.client-ip=209.85.216.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-30e542e4187so1796529a91.3
-        for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 10:43:13 -0700 (PDT)
+	s=arc-20240116; t=1747417511; c=relaxed/simple;
+	bh=SElR/wgeiqhNU2PLvcnH4xPVCpxXR17vAM5o54bgRPY=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=AeL9F9E6MzM0+u5SB5kp9RRwIcYmaMm+jbv7q+x3+NvrCbBMRwrUZtzl75JJt5oblp6hl2OpLsM+Lx6L2ijSTiBDZ1xKdffSl+qU8W0wb+AtIhZk0OHVj7asTh+vVNpgUS9VCvxURiV2RFpljc6TL2WbZpgIHMyfW3nGyBbDP6w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=20Whvgl+; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-30c9b0aa4ccso2196454a91.3
+        for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 10:45:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1747417388; x=1748022188; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+KFX83QNItwP0IuJnpM+8MJlz755t87bEyDF8uRue2k=;
-        b=g5G0G4u1eTfA8MEoVGpWxpd+FWroIHC9MMRqy3UQr4kiDvpo0yC9WlACpp3B4f88PE
-         0ju9DvlYO1SZ9e2pG8c8oKDzN9MDXMSxBvtwF1WGbkG09uXmwDg2EAKAz5bcjcK0tt9e
-         T7/VyE0mPm+dWmdTCXKEREvmY+N1C3YGKGEk4=
+        d=google.com; s=20230601; t=1747417509; x=1748022309; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=RmpgPqdPibQ4HZg5sdzMeXt+/PpG65nXkSoggikM9ks=;
+        b=20Whvgl+p8Wfn7Q/66MnARgGKgOXFaL+voQyeJ1+YKBGykK2WGLuuLNp8rBykhyHGZ
+         oB2R0IQ2ozSuXolxVFBrm+1lwhEbTMNycThSz4bG+rKGpC37T1imqeMgpUiqqA1rFm7+
+         yJLouX7rl9PHs7Ft03IHNcL1e7pmnP8TrXutk6fEj9RXoYVXW3FG04f3oiszW418Yecu
+         Fp+Qmk1w6IkS6e4tlOZok5ZrwQ6E+ksFBEAvDJo5o9muutudgZiCV3Iwdx1ldj8kh3ya
+         QRZvv0jK9IjOumdYyx4duNBaPJxVapTSMGtVx4KvNm+5Az0OZpw4Z64AP64+VGvywYJR
+         dNUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747417388; x=1748022188;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+KFX83QNItwP0IuJnpM+8MJlz755t87bEyDF8uRue2k=;
-        b=Fe0uixW3u+p0oMrUbaI9kFN8LSsFozYu2unIvYy3MyttYNxgEB9ktQNS/kPc9ke/kw
-         TJQ7SxvFyLEvLh+yY8R3Aez65sisTap0tdfnWuNjAqGE4KXKJp+uEE9EboSd4Y8ulvqG
-         Mzi/hGBjSxbSYuDOdkerXIB2zCtwR9cnuC79gbqmBpnqO3ZSL4HSsQpfBXYt3e1LdJ72
-         TGfEqW2uic9VjGwYE49mRQIJ6suE0CfqUMhme92VdwJ8JFHjBVn5RKuow9HXTFFzwFuW
-         pYY3ovs2UuN7+gr6ihFvcrS2FbJhfVzQe5P+hPGYAM5PkGghjzCG9EiXjLBCFgNmwcXR
-         RzBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUf/AlXJ+CKJzH6W5uUa3OL9guJWZlHRVBzi3V+LYvC3NMzoY6S1M4jXpWltrWcxInpgFUIZeq8SCnCfVM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHQlYu/XyoP7aHngBVBT7b/nNI+n4ET9Z2AlrrfBo+NoZ0MzGL
-	UkBL98VDoHJwtHPAyurBnbUmsY6ef6FckQZ0sqN1rzeRqVd5G6BE5te4o59ZAXc/ghsbOaLPQQ+
-	MAUM=
-X-Gm-Gg: ASbGncvG62KlAUtQgbfXSaQUz6b8e136Ay4da376+Iwxp1AxCdLPWt2qQMKeqoxPtoF
-	XBb9/kTIbxieCrIyo8S6Lkk6GO7P5SWkuJz/LZo9t5Aqlqv+//WYAHTHfRhkdOek24Klbx0LPk9
-	4NAETrq7o1MS8JwjZcOFY8o1kt8xFTHQ62565DiAgu8cAfo9ED+kkejnZZfg92tMdjm7iy2y8RY
-	Y2hvn9NMubWPQjK9Oc9MB1k0CauDyAY9HL7/SthNONeZ6yAVjuZGNq1qlg6xKO4faNPC6GqQMBD
-	CaxiABVdalRQXxzQ9+JVMA3N8Ph5S+dx8ue6lG9Ep6v01BrNubzwLuhMqiD9ocCSUGb4ye+Rjgy
-	Ak268DlOcSRO51Px63Ss=
-X-Google-Smtp-Source: AGHT+IFP6v9PwzmDfuWBuEezudX2s5gibQ6Z6LxElR52J30FLGXHxgl6bbKcezWP3rDDGKftGVTysw==
-X-Received: by 2002:a17:90b:38c5:b0:30e:9aa2:6d35 with SMTP id 98e67ed59e1d1-30e9aa26ef5mr1958030a91.0.1747417387886;
-        Fri, 16 May 2025 10:43:07 -0700 (PDT)
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com. [209.85.210.175])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-30e334390b7sm5992024a91.19.2025.05.16.10.43.05
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 16 May 2025 10:43:05 -0700 (PDT)
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-74248a3359fso2650130b3a.2
-        for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 10:43:05 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCW8mDBIeWuB+qMwhHownQDZgSwEedAJSoBPrJ//VdPQ3Zoi0IWYJdqX8BKxQ5AGE6q6Mb/bMrPKawbkswg=@vger.kernel.org
-X-Received: by 2002:a17:903:3d0f:b0:231:7e15:f7a with SMTP id
- d9443c01a7336-231d453469cmr47600355ad.27.1747417384710; Fri, 16 May 2025
- 10:43:04 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1747417509; x=1748022309;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=RmpgPqdPibQ4HZg5sdzMeXt+/PpG65nXkSoggikM9ks=;
+        b=j9Xwqdih0sLTwhiXv5aWaaf3BHtQdaEd6NA7oSYqjJTc9VSwwSBKbO1LAPkaWs7Tw5
+         7xlP0jg456q8iwTNJX2olU3j53Y3R0XZ0frRl6CZNycQAAZ/QPtbRoOFN2JUx4Rkrega
+         2GGSCxRlAfPOEyCxI/HPXu350psJvz/HEzhMIfDtaqhuUcZdMQGTgG8KTVlGy9GpsC5J
+         TPqSp1EwPJ9qYH354xC6Bu11vt3Mms4+7vKx8cldr9Sr6C/LvAS3BnkHMvGz/dFNKBGr
+         caE2Cwt8F1q+tcoJoFMeg0VbvOcXVTvd1bM/bzSn4VeOA2yy79CynQ/+to/Pvckz5m7s
+         wAnQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWOavoMf6Ghuan6ilBUv5qfRo31C6YKBhFoe2qqRjqZKTyDgbOzjLwm61fTL+PVthmbH3H1urJxO3uQ+Sg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxVbG0UthCRHWSBT8WyuQRTSty1iC/m0GyVcqX0vrtzVPo8LJ0T
+	3I6xBzQZ6bt1kd8CmBfT/zAND+7eoHJBUont2uYKa+quH0q8268MgqloYk9qZPgIpL0PcZtv3Jp
+	cccGj7A==
+X-Google-Smtp-Source: AGHT+IE5q1d8Vhf45B58FtB+DPajsRh9WD6SiM5jWunemSpWwoZ702eFXBFahwA7/IbgQCUG1fK7U0brYiw=
+X-Received: from pjbrs11.prod.google.com ([2002:a17:90b:2b8b:b0:308:867e:1ced])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90a:e706:b0:2f9:c144:9d13
+ with SMTP id 98e67ed59e1d1-30e7d5a8af4mr6412464a91.24.1747417508805; Fri, 16
+ May 2025 10:45:08 -0700 (PDT)
+Date: Fri, 16 May 2025 10:45:07 -0700
+In-Reply-To: <CAGtprH8EMnmvvVir6_U+L5S3SEvrU1OzLrvkL58fXgfg59bjoA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250515211110.8806-1-robdclark@gmail.com>
-In-Reply-To: <20250515211110.8806-1-robdclark@gmail.com>
-From: Doug Anderson <dianders@chromium.org>
-Date: Fri, 16 May 2025 10:42:53 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=VhOhGHnHZKBmzFKAFG-WnGhWRyqPm=FwK5mxUJ-ChWGQ@mail.gmail.com>
-X-Gm-Features: AX0GCFsvr22QrX8yE42n8nz9bH4x0JASq7vWnUdqtPzSrItPo7-Ymzm-4RYVtfc
-Message-ID: <CAD=FV=VhOhGHnHZKBmzFKAFG-WnGhWRyqPm=FwK5mxUJ-ChWGQ@mail.gmail.com>
-Subject: Re: [PATCH] drm/panel-edp: Add BOE NV133WUM-N61 panel entry
-To: Rob Clark <robdclark@gmail.com>
-Cc: dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, 
-	Rob Clark <robdclark@chromium.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Jessica Zhang <quic_jesszhan@quicinc.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+References: <cover.1747264138.git.ackerleytng@google.com> <ada87be8b9c06bc0678174b810e441ca79d67980.camel@intel.com>
+ <CAGtprH9CTsVvaS8g62gTuQub4aLL97S7Um66q12_MqTFoRNMxA@mail.gmail.com>
+ <24e8ae7483d0fada8d5042f9cd5598573ca8f1c5.camel@intel.com>
+ <aCaM7LS7Z0L3FoC8@google.com> <7d3b391f3a31396bd9abe641259392fd94b5e72f.camel@intel.com>
+ <CAGtprH8EMnmvvVir6_U+L5S3SEvrU1OzLrvkL58fXgfg59bjoA@mail.gmail.com>
+Message-ID: <aCdVXn3ZqFXzQ0e4@google.com>
+Subject: Re: [RFC PATCH v2 00/51] 1G page support for guest_memfd
+From: Sean Christopherson <seanjc@google.com>
+To: Vishal Annapurve <vannapurve@google.com>
+Cc: Rick P Edgecombe <rick.p.edgecombe@intel.com>, "pvorel@suse.cz" <pvorel@suse.cz>, 
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, "catalin.marinas@arm.com" <catalin.marinas@arm.com>, 
+	Jun Miao <jun.miao@intel.com>, Kirill Shutemov <kirill.shutemov@intel.com>, 
+	"pdurrant@amazon.co.uk" <pdurrant@amazon.co.uk>, "steven.price@arm.com" <steven.price@arm.com>, 
+	"peterx@redhat.com" <peterx@redhat.com>, "x86@kernel.org" <x86@kernel.org>, 
+	"amoorthy@google.com" <amoorthy@google.com>, "tabba@google.com" <tabba@google.com>, 
+	"quic_svaddagi@quicinc.com" <quic_svaddagi@quicinc.com>, "maz@kernel.org" <maz@kernel.org>, 
+	"vkuznets@redhat.com" <vkuznets@redhat.com>, "quic_eberman@quicinc.com" <quic_eberman@quicinc.com>, 
+	"keirf@google.com" <keirf@google.com>, "hughd@google.com" <hughd@google.com>, 
+	"mail@maciej.szmigiero.name" <mail@maciej.szmigiero.name>, "palmer@dabbelt.com" <palmer@dabbelt.com>, 
+	Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>, Yan Y Zhao <yan.y.zhao@intel.com>, 
+	"ajones@ventanamicro.com" <ajones@ventanamicro.com>, "willy@infradead.org" <willy@infradead.org>, 
+	"jack@suse.cz" <jack@suse.cz>, "paul.walmsley@sifive.com" <paul.walmsley@sifive.com>, "aik@amd.com" <aik@amd.com>, 
+	"usama.arif@bytedance.com" <usama.arif@bytedance.com>, 
+	"quic_mnalajal@quicinc.com" <quic_mnalajal@quicinc.com>, "fvdl@google.com" <fvdl@google.com>, 
+	"rppt@kernel.org" <rppt@kernel.org>, "quic_cvanscha@quicinc.com" <quic_cvanscha@quicinc.com>, 
+	"nsaenz@amazon.es" <nsaenz@amazon.es>, "vbabka@suse.cz" <vbabka@suse.cz>, Fan Du <fan.du@intel.com>, 
+	"anthony.yznaga@oracle.com" <anthony.yznaga@oracle.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"thomas.lendacky@amd.com" <thomas.lendacky@amd.com>, "mic@digikod.net" <mic@digikod.net>, 
+	"oliver.upton@linux.dev" <oliver.upton@linux.dev>, 
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>, "bfoster@redhat.com" <bfoster@redhat.com>, 
+	"binbin.wu@linux.intel.com" <binbin.wu@linux.intel.com>, "muchun.song@linux.dev" <muchun.song@linux.dev>, 
+	Zhiquan1 Li <zhiquan1.li@intel.com>, "rientjes@google.com" <rientjes@google.com>, 
+	"mpe@ellerman.id.au" <mpe@ellerman.id.au>, Erdem Aktas <erdemaktas@google.com>, 
+	"david@redhat.com" <david@redhat.com>, "jgg@ziepe.ca" <jgg@ziepe.ca>, 
+	"jhubbard@nvidia.com" <jhubbard@nvidia.com>, Haibo1 Xu <haibo1.xu@intel.com>, 
+	"anup@brainfault.org" <anup@brainfault.org>, Dave Hansen <dave.hansen@intel.com>, 
+	Isaku Yamahata <isaku.yamahata@intel.com>, "jthoughton@google.com" <jthoughton@google.com>, 
+	Wei W Wang <wei.w.wang@intel.com>, 
+	"steven.sistare@oracle.com" <steven.sistare@oracle.com>, "jarkko@kernel.org" <jarkko@kernel.org>, 
+	"quic_pheragu@quicinc.com" <quic_pheragu@quicinc.com>, "chenhuacai@kernel.org" <chenhuacai@kernel.org>, 
+	Kai Huang <kai.huang@intel.com>, "shuah@kernel.org" <shuah@kernel.org>, 
+	"dwmw@amazon.co.uk" <dwmw@amazon.co.uk>, "pankaj.gupta@amd.com" <pankaj.gupta@amd.com>, 
+	Chao P Peng <chao.p.peng@intel.com>, "nikunj@amd.com" <nikunj@amd.com>, Alexander Graf <graf@amazon.com>, 
+	"viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, "pbonzini@redhat.com" <pbonzini@redhat.com>, 
+	"yuzenghui@huawei.com" <yuzenghui@huawei.com>, "jroedel@suse.de" <jroedel@suse.de>, 
+	"suzuki.poulose@arm.com" <suzuki.poulose@arm.com>, "jgowans@amazon.com" <jgowans@amazon.com>, 
+	Yilun Xu <yilun.xu@intel.com>, "liam.merwick@oracle.com" <liam.merwick@oracle.com>, 
+	"michael.roth@amd.com" <michael.roth@amd.com>, "quic_tsoni@quicinc.com" <quic_tsoni@quicinc.com>, 
+	"richard.weiyang@gmail.com" <richard.weiyang@gmail.com>, Ira Weiny <ira.weiny@intel.com>, 
+	"aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>, Xiaoyao Li <xiaoyao.li@intel.com>, 
+	"qperret@google.com" <qperret@google.com>, 
+	"kent.overstreet@linux.dev" <kent.overstreet@linux.dev>, "dmatlack@google.com" <dmatlack@google.com>, 
+	"james.morse@arm.com" <james.morse@arm.com>, "brauner@kernel.org" <brauner@kernel.org>, 
+	"ackerleytng@google.com" <ackerleytng@google.com>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, "pgonda@google.com" <pgonda@google.com>, 
+	"quic_pderrin@quicinc.com" <quic_pderrin@quicinc.com>, "roypat@amazon.co.uk" <roypat@amazon.co.uk>, 
+	"linux-mm@kvack.org" <linux-mm@kvack.org>, "will@kernel.org" <will@kernel.org>, 
+	"hch@infradead.org" <hch@infradead.org>
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Fri, May 16, 2025, Vishal Annapurve wrote:
+> On Thu, May 15, 2025 at 7:12=E2=80=AFPM Edgecombe, Rick P <rick.p.edgecom=
+be@intel.com> wrote:
+> > On Thu, 2025-05-15 at 17:57 -0700, Sean Christopherson wrote:
+> > > You're conflating two different things.  guest_memfd allocating and m=
+anaging
+> > > 1GiB physical pages, and KVM mapping memory into the guest at 1GiB/2M=
+iB
+> > > granularity.  Allocating memory in 1GiB chunks is useful even if KVM =
+can only
+> > > map memory into the guest using 4KiB pages.
+> >
+> > I'm aware of the 1.6% vmemmap benefits from the LPC talk. Is there more=
+? The
+> > list quoted there was more about guest performance. Or maybe the clever=
+ page
+> > table walkers that find contiguous small mappings could benefit guest
+> > performance too? It's the kind of thing I'd like to see at least broadl=
+y called
+> > out.
+>=20
+> The crux of this series really is hugetlb backing support for guest_memfd=
+ and
+> handling CoCo VMs irrespective of the page size as I suggested earlier, s=
+o 2M
+> page sizes will need to handle similar complexity of in-place conversion.
+>=20
+> Google internally uses 1G hugetlb pages to achieve high bandwidth IO,
 
-On Thu, May 15, 2025 at 2:11=E2=80=AFPM Rob Clark <robdclark@gmail.com> wro=
-te:
->
-> From: Rob Clark <robdclark@chromium.org>
->
-> Add an eDP panel for BOE NV133WUM-N61, which appears to be a 3rd panel
-> option on the lenevo x13s laptop.
->
-> edid:
-> 00 ff ff ff ff ff ff 00 09 e5 64 09 00 00 00 00
-> 16 1e 01 04 a5 1d 12 78 03 55 8e a7 51 4c 9c 26
-> 0f 52 53 00 00 00 01 01 01 01 01 01 01 01 01 01
-> 01 01 01 01 01 01 74 3c 80 a0 70 b0 28 40 30 20
-> 36 00 1e b3 10 00 00 1a 5d 30 80 a0 70 b0 28 40
-> 30 20 36 00 1e b3 10 00 00 1a 00 00 00 fe 00 42
-> 4f 45 20 48 46 0a 20 20 20 20 20 20 00 00 00 fe
-> 00 4e 56 31 33 33 57 55 4d 2d 4e 36 31 0a 00 7d
->
-> datasheet: https://datasheet4u.com/pdf-down/N/V/1/NV133WUM-N61-BOE.pdf
->
-> v2: Actually get the panel name correct in the table
->
-> Signed-off-by: Rob Clark <robdclark@chromium.org>
-> ---
->  drivers/gpu/drm/panel/panel-edp.c | 1 +
->  1 file changed, 1 insertion(+)
+E.g. hitting target networking line rates is only possible with 1GiB mappin=
+gs,
+otherwise TLB pressure gets in the way.
 
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
+> lower memory footprint using HVO and lower MMU/IOMMU page table memory
+> footprint among other improvements. These percentages carry a substantial
+> impact when working at the scale of large fleets of hosts each carrying
+> significant memory capacity.
 
-Pushed to drm-misc-next
+Yeah, 1.6% might sound small, but over however many bytes of RAM there are =
+in
+the fleet, it's a huge (lol) amount of memory saved.
 
-[1/1] drm/panel-edp: Add BOE NV133WUM-N61 panel entry
-      commit: 3330b71caff6cdc387fdad68a895c9c81cc2f477
+> > >   Yes, some of this is useful for TDX, but we (and others) want to us=
+e
+> > > guest_memfd for far more than just CoCo VMs.
+> >
+> >
+> > >  And for non-CoCo VMs, 1GiB hugepages are mandatory for various workl=
+oads.
+> > I've heard this a lot. It must be true, but I've never seen the actual =
+numbers.
+> > For a long time people believed 1GB huge pages on the direct map were c=
+ritical,
+> > but then benchmarking on a contemporary CPU couldn't find much differen=
+ce
+> > between 2MB and 1GB. I'd expect TDP huge pages to be different than tha=
+t because
+> > the combined walks are huge, iTLB, etc, but I'd love to see a real numb=
+er.
+
+The direct map is very, very different than userspace and thus guest mappin=
+gs.
+Software (hopefully) isn't using the direct map to index multi-TiB database=
+s,
+or to transfer GiBs of data over the network.  The amount of memory the ker=
+nel
+is regularly accessing is an order or two magnitude smaller than single pro=
+cess
+use cases.
+
+A few examples from a quick search:
+
+http://pvk.ca/Blog/2014/02/18/how-bad-can-1gb-pages-be
+https://www.percona.com/blog/benchmark-postgresql-with-linux-hugepages/
 
