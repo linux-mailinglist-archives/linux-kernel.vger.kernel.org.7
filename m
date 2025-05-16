@@ -1,116 +1,113 @@
-Return-Path: <linux-kernel+bounces-652019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-652021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EC2EABA5F6
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 May 2025 00:36:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4631BABA5F9
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 May 2025 00:38:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ABAD01B62D1D
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 22:36:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D73954E30A7
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 22:38:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D282127FD47;
-	Fri, 16 May 2025 22:36:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F9AE27FB09;
+	Fri, 16 May 2025 22:38:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="L4d1Vxmv"
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BoLlkuP1"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38811231841;
-	Fri, 16 May 2025 22:36:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D32B1ACEDC
+	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 22:38:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747434973; cv=none; b=iFMCv7PEs7RM3sN0nNrEKw157yyQdS8QoWwyBZUJkVbZOltH+5/eLP+iVZuxLFoh54acePl+nim6oUb5V685VeP3h/qqfsPtfZWj19co8WZOd/9YiZteGcKFmtnIyk1+I9+0NyjSSs8AGLvtN/SOEy5q5rv3AyCs090TOJv9TmA=
+	t=1747435090; cv=none; b=Ov3wHcV2zR6h3w62x0IJmnF0jVs5GvQNn6NPy0Cc2h2zlalvxiZh4FZke0T2A/Xy1EIK77sfuhcfRbz/e6tF4rQWweZmutqSePzZ1RT1050NbhtvOnzitBreHI6xxx9ORnrc3kE6JboLCtTQp8FzmSfoQAZ8A6oT3o7ImrJ2vws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747434973; c=relaxed/simple;
-	bh=S8VqnsRWmVgpbWGtGj+EFiFExcvjj76012BsLEMWG8A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=SjTcEFHmGNUFzuJOGM1WlqsjeKBzNRD1Spy9B1JSCVj0JFcAb3SKY9na8ng3JR7yPEyXE7/jUlSKP5+Ppp+IXz0mUEHDoJceahAN9NrO3y3U71WU1BYzyj6heUr+1dTFLcFHNyFJuDgLrorsoiyfoFDzdhxtVm+FglPBSLNv7Bs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=L4d1Vxmv; arc=none smtp.client-ip=198.47.19.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 54GMa3UZ419051;
-	Fri, 16 May 2025 17:36:03 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1747434963;
-	bh=ApFBcOWG2ieHiTUYXnkfHS3k7Kt6Hoxe9udfT1lGPaU=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=L4d1VxmvTUJDq2EFONO7jt0pi7rMHt/MtBucl1TBizYEbCt5qBh1Ed/qJQ3pAlUh1
-	 WV82mGPqYzhrHz0MC8CDOnqm2ExeiP1iRCVnGLovZIDf7Tu3uSOSYA4ENCVmX8Jjyk
-	 tEv7iZVfGPro3+ckEuRsZgNN3UyYxU94e63Pyn0o=
-Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
-	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 54GMa3PX202875
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Fri, 16 May 2025 17:36:03 -0500
-Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 16
- May 2025 17:36:03 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 16 May 2025 17:36:02 -0500
-Received: from [128.247.81.105] (judy-hp.dhcp.ti.com [128.247.81.105])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 54GMa2EU095804;
-	Fri, 16 May 2025 17:36:02 -0500
-Message-ID: <5cede33c-664c-488a-aef7-4619368c24d6@ti.com>
-Date: Fri, 16 May 2025 17:36:02 -0500
+	s=arc-20240116; t=1747435090; c=relaxed/simple;
+	bh=pBTFc+3Zv98uZHsk2V1qM8sRTzR8wvQArvBZWqbUo5Y=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=Ub/lN7FWI02A1C2tpYbdbbnC7ZI9im1eKCs+Iyisq6Rrh65TzgqeU2CEYSh/tRucnEYOSOrmbZgg3blK4FOkxLRIPW89rRD6kfONgLYb73yYnu0Qxbb4ynkYwzKa/y9Nx+1osIb86Vl1OLmizr6QEYPgNi3oaqzvfLEEc2BNPw4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BoLlkuP1; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1747435087;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=knR8VDb1IumT6u7RrqbALTgfooWBtkP6TS/+WVFSTeQ=;
+	b=BoLlkuP1rXXhJSi3drVkkXG4Um5oxgchRedEMHbXCGAIHWLxzysJcvl/JlN/ynsjnRylcu
+	Mm1i0KcUejPdJRK10F/0oMSpFxccWuvpxEQbGv4UI+XH7GQIBUNAMz2/+t9b2gqmvJj4h5
+	VWMbXOEjURe9Noi5lvNbmc7XgkdIFBE=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-647-K9yMwR7jPauK67Fxc3sMJw-1; Fri,
+ 16 May 2025 18:38:03 -0400
+X-MC-Unique: K9yMwR7jPauK67Fxc3sMJw-1
+X-Mimecast-MFC-AGG-ID: K9yMwR7jPauK67Fxc3sMJw_1747435082
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A61471800771;
+	Fri, 16 May 2025 22:38:02 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.188])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 6EEBB195608D;
+	Fri, 16 May 2025 22:38:00 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <6824951b.a00a0220.104b28.000d.GAE@google.com>
+References: <6824951b.a00a0220.104b28.000d.GAE@google.com>
+To: syzbot <syzbot+25b83a6f2c702075fcbc@syzkaller.appspotmail.com>
+Cc: dhowells@redhat.com, linux-fsdevel@vger.kernel.org,
+    linux-kernel@vger.kernel.org, netfs@lists.linux.dev,
+    pc@manguebit.com, syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [netfs?] KASAN: slab-out-of-bounds Read in iov_iter_revert
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/7] serial: 8250: Add PRUSS UART driver
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC: Jiri Slaby <jirislaby@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Vignesh
- Raghavendra <vigneshr@ti.com>,
-        Tero Kristo <kristo@kernel.org>, Bin Liu
-	<b-liu@ti.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Andrew
- Davis <afd@ti.com>, <linux-kernel@vger.kernel.org>,
-        <linux-serial@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-References: <20250513215934.933807-1-jm@ti.com>
- <20250513215934.933807-4-jm@ti.com>
- <2025051408-discolor-backwash-5574@gregkh>
-Content-Language: en-US
-From: Judith Mendez <jm@ti.com>
-In-Reply-To: <2025051408-discolor-backwash-5574@gregkh>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2705413.1747435079.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date: Fri, 16 May 2025 23:37:59 +0100
+Message-ID: <2705414.1747435079@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-Hi Greg,
+#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.gi=
+t v6.15-rc6
 
-On 5/14/25 2:36 AM, Greg Kroah-Hartman wrote:
-> On Tue, May 13, 2025 at 04:59:30PM -0500, Judith Mendez wrote:
->> From: Bin Liu <b-liu@ti.com>
->>
->> This adds a new serial 8250 driver that supports the UART in PRUSS or
->> PRU_ICSS*.
->>
->> The UART sub-module is based on the industry standard TL16C550 UART
->> controller, which has 16-bytes FIFO and supports 16x and 13x over
->> samplings.
-> 
-> If it is based on an existing controller, why do we need a new driver
-> for this?  Please explain in detail why this code is needed at all, and
-> not just a new "quirk" for the existing driver?
+commit 4f771b49180c404f518c686cdff749ff81f3cc77
+Author: David Howells <dhowells@redhat.com>
+Date:   Fri May 16 23:35:25 2025 +0100
 
-This was explained in RFC [0] but the patch description can be improved
-so will fix for v2.
+    netfs: Fix oops in write-retry from mis-resetting the subreq iterator
 
-[0] https://lore.kernel.org/all/ba88a5c0-a8b8-4e48-9752-76881fa8e94e@ti.com/
+diff --git a/fs/netfs/write_retry.c b/fs/netfs/write_retry.c
+index f75e0e8c02cf..9d1d8a8bab72 100644
+--- a/fs/netfs/write_retry.c
++++ b/fs/netfs/write_retry.c
+@@ -39,9 +39,10 @@ static void netfs_retry_write_stream(struct netfs_io_re=
+quest *wreq,
+ 			if (test_bit(NETFS_SREQ_FAILED, &subreq->flags))
+ 				break;
+ 			if (__test_and_clear_bit(NETFS_SREQ_NEED_RETRY, &subreq->flags)) {
+-				struct iov_iter source =3D subreq->io_iter;
++				struct iov_iter source;
+ =
 
-Thanks
-~ Judith
+-				iov_iter_revert(&source, subreq->len - source.count);
++				netfs_reset_iter(subreq);
++				source =3D subreq->io_iter;
+ 				netfs_get_subrequest(subreq, netfs_sreq_trace_get_resubmit);
+ 				netfs_reissue_write(stream, subreq, &source);
+ 			}
+
 
