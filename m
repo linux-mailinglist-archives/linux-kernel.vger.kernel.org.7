@@ -1,451 +1,187 @@
-Return-Path: <linux-kernel+bounces-651505-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-651497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1FB6AB9F5E
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 17:08:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61F9EAB9F48
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 17:04:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C3705188F5FF
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 15:03:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01496A2573C
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 15:00:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAAB0211A19;
-	Fri, 16 May 2025 14:58:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA41A1F4717;
+	Fri, 16 May 2025 14:58:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NW0Q+SlU"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V6xMM9Jw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1DB320DD54;
-	Fri, 16 May 2025 14:58:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB2101F2BAB;
+	Fri, 16 May 2025 14:58:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747407538; cv=none; b=fLsTHOUFhz+o4mqWfm0nP+nPsH91Ts5QS3gwLNEQAoLL5oLNQDk6jq+JaT7tVQ+ZLEQgH/pU7jD/jpnu6fCo24xsDzOJo62n9MYOt6gQjbp3HQYv7WLGa1eKyVH9gn+1TOF3Ff2D/VTH3ArtKgdpGGfc2R9XObfBbHFQ3P6q1ow=
+	t=1747407526; cv=none; b=ijB6i7Kcvb9mtu4+tDlj1E803NOeHIlMz2l9e4M2gg/84bAYxSqBYkqFErCMSdnPAnbyTSeF9E2OgUEfZHCsvEIef8SmRXIgWw3QMbUfAWnDUPLc33ej+vl+OeCkkkfhiZS52kxRe+njMLs62jy1vlKeXG8H7dvNzkhyqAIPmvg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747407538; c=relaxed/simple;
-	bh=57pFULhsbulHXnWbMB8Z+24WO/qyN9Gxay/WlWTNaq4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=JhzfCE4+E01T8RlpbQbcvSkV7HDSBwrspPiBB0Cp/zXWvdqFxB3S4zldDBTI6nL3oK9QDpDAjb0u5owhXGBoRRlmwdNj7FKDb9wnWne6dRJwmq9HXkojHMP8UJ/1hZ2mJTkOhYHR5ScsxHopQ9T2qaLXcRzsmET4rMkKVVw//U4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NW0Q+SlU; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1747407537; x=1778943537;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=57pFULhsbulHXnWbMB8Z+24WO/qyN9Gxay/WlWTNaq4=;
-  b=NW0Q+SlUXagzJEywaSCNQW0lNArArx9dZO8TnHh9UMUW9VGw4eYxSOCc
-   NTtrrN6bQWk0c0rvSPZUtFBTKOqB4iZHavSudJ+18nHncbzyTgVeGhgjT
-   +lk6XPjNRO3ubtitIZRHERG4tvQeLNkkNPx1sNqsVI/2DQYkZNLDkyjmx
-   HzmXNbvTgAe39GvspijHPFM41+dinyX93wWP54OyR8m6CdjrYGJJbc8pO
-   rULxEhYL2kXdJCAautlovuUxrepPu05OOLDQXXhRXThvCKQu5uqjEFIGX
-   8mNo9xROABH5oebcP4oua5InHjwqtRKjn5k+8yM2eYOTV/2/BTyN6R0N6
-   w==;
-X-CSE-ConnectionGUID: 9P22qL/oTuutJhxClwyTgw==
-X-CSE-MsgGUID: 796stXFdRoWtrOdplQD1pw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11435"; a="60407618"
-X-IronPort-AV: E=Sophos;i="6.15,294,1739865600"; 
-   d="scan'208";a="60407618"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 May 2025 07:58:57 -0700
-X-CSE-ConnectionGUID: X1qrOAqISFKQXdJu+f7J/g==
-X-CSE-MsgGUID: Xf428BNnS/6DkrwOWcnP7w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,294,1739865600"; 
-   d="scan'208";a="139240135"
-Received: from irvmail002.ir.intel.com ([10.43.11.120])
-  by orviesa007.jf.intel.com with ESMTP; 16 May 2025 07:58:49 -0700
-Received: from mglak.igk.intel.com (mglak.igk.intel.com [10.237.112.146])
-	by irvmail002.ir.intel.com (Postfix) with ESMTP id C3D0434324;
-	Fri, 16 May 2025 15:58:46 +0100 (IST)
-From: Larysa Zaremba <larysa.zaremba@intel.com>
-To: intel-wired-lan@lists.osuosl.org,
-	Tony Nguyen <anthony.l.nguyen@intel.com>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Jiri Pirko <jiri@resnulli.us>,
-	Tatyana Nikolova <tatyana.e.nikolova@intel.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
-	Lee Trager <lee@trager.us>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Larysa Zaremba <larysa.zaremba@intel.com>,
-	Sridhar Samudrala <sridhar.samudrala@intel.com>,
-	Jacob Keller <jacob.e.keller@intel.com>,
-	Michal Swiatkowski <michal.swiatkowski@linux.intel.com>,
-	Mateusz Polchlopek <mateusz.polchlopek@intel.com>,
-	Ahmed Zaki <ahmed.zaki@intel.com>,
-	netdev@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Karlsson, Magnus" <magnus.karlsson@intel.com>,
-	Emil Tantilov <emil.s.tantilov@intel.com>,
-	Madhu Chittim <madhu.chittim@intel.com>,
-	Josh Hay <joshua.a.hay@intel.com>,
-	Milena Olech <milena.olech@intel.com>,
-	pavan.kumar.linga@intel.com,
-	"Singhai, Anjali" <anjali.singhai@intel.com>
-Subject: [PATCH iwl-next v4 15/15] ixd: add devlink support
-Date: Fri, 16 May 2025 16:58:12 +0200
-Message-ID: <20250516145814.5422-16-larysa.zaremba@intel.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20250516145814.5422-1-larysa.zaremba@intel.com>
-References: <20250516145814.5422-1-larysa.zaremba@intel.com>
+	s=arc-20240116; t=1747407526; c=relaxed/simple;
+	bh=hDbT6l8Ra4g1YkirifZKoYMzeq+3uNXkWZ7n3nMfPI8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=J8yScT+TKpYq0ow1gWD37zOuimhcVY5HGfNKnGfu5JZ223/p/aCd0LJ/Fm2bFluozhdAyCvPrZs05SC4ebuL68BQ5DUCAAs2YedY2USdWSGM/nlYm0mQdjw1T/TxB3e6bBKxTdaApYK1mWInummIB1RN5fCbguoZxWzPrKUfSik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V6xMM9Jw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4EBECC4CEF9;
+	Fri, 16 May 2025 14:58:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747407525;
+	bh=hDbT6l8Ra4g1YkirifZKoYMzeq+3uNXkWZ7n3nMfPI8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=V6xMM9JwEfvlz1axejebsqy7HHf6Fip3sstL6Sgp+uQ/M+5YQpvGbMSj7tWa7P4Kh
+	 gPzHqZct2qk6Jj2jZ3KWGdr9FkAioGUV5xb8O3uhHJ7Ij1OnApX9wR1FaMjGQIx4nQ
+	 YXgkij3UEeE8qCfCiEhDzy/O//cmoJT9Bd7Ngfw6xJERTATXOmM8i0ku9jAcgUwWVz
+	 vqdk6Bpuf4mnYOm84fkg3qtzwA7+IFO250Y6zuFhXuYq+2M+cxA0HCqPlXwMGYIuJg
+	 pM4ZuFeofvURRluv165gKSjhz128QC86DfzOofsfFarLShF7HQr7wX4ybN/17+3L3n
+	 Rwgq3d2ir+MNg==
+Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-b26df8f44e6so1883008a12.2;
+        Fri, 16 May 2025 07:58:45 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU0pgWrUFR+HSRruF2rRUUWD26nqwr1rZOPyPQQ332K++0NS8N+qb2825+CnAhdY3QTONBHa9+hAIw=@vger.kernel.org, AJvYcCV43CZXYypZ6nBEc2OGVuRATHydMvqqjH2EEzRb6gvzvEAJBlLE5+7bn3w1HDz/lVPCWNKx8khVn9wyjzs=@vger.kernel.org, AJvYcCWXCl5w8k4PHrY/S/VolN5ENT8+H3vb8iTg6gweqdSyn2HXAb45AyxyTH66xU6ytXCCXF1123p3JdIt@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyi+lHkNqxK3CXJtsEVEKxBq5sq9UlqON8Zrm5Tlp6KYAFzR+Z+
+	4/4WRNKPsbDKArxwMKZq8t87brf+DYQoEunAADEsqTgJEKNPKdGFQ+AO9vO9nk08b68O+4apNhA
+	GYINWYLCf8uyHNet8CnTVHP0xVrDByEE=
+X-Google-Smtp-Source: AGHT+IF5oHQ3XiAHYu26SgYpqkEnmMVmix54PXMDrlWr+tTbxJJdHTghAEF9U7opguKYaqW8+b2I34wPBroq6Ou90Xg=
+X-Received: by 2002:a05:6820:1792:b0:608:3f1d:bbdb with SMTP id
+ 006d021491bc7-609f37ac4d0mr1916015eaf.8.1747407513779; Fri, 16 May 2025
+ 07:58:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250514193406.3998101-1-superm1@kernel.org> <20250514193406.3998101-2-superm1@kernel.org>
+In-Reply-To: <20250514193406.3998101-2-superm1@kernel.org>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Fri, 16 May 2025 16:58:22 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0jifqTP_eZ33nBmKPCuLWrrVF_0jNGf5CpHU6nXuK8qBw@mail.gmail.com>
+X-Gm-Features: AX0GCFvRVOcB0kGKWz9Xrc6Hm7LoXkhsAklO5VHQqK_W1PeYhcRLJ3-5UfSo-D0
+Message-ID: <CAJZ5v0jifqTP_eZ33nBmKPCuLWrrVF_0jNGf5CpHU6nXuK8qBw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] PM: Use hibernate flows for system power off
+To: Mario Limonciello <superm1@kernel.org>
+Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Alex Deucher <alexander.deucher@amd.com>, 
+	Bjorn Helgaas <bhelgaas@google.com>, 
+	"open list:RADEON and AMDGPU DRM DRIVERS" <amd-gfx@lists.freedesktop.org>, 
+	"open list:HIBERNATION (aka Software Suspend, aka swsusp)" <linux-pm@vger.kernel.org>, 
+	"open list:PCI SUBSYSTEM" <linux-pci@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
+	Mario Limonciello <mario.limonciello@amd.com>, AceLan Kao <acelan.kao@canonical.com>, 
+	Kai-Heng Feng <kaihengf@nvidia.com>, Mark Pearson <mpearson-lenovo@squebb.ca>, 
+	=?UTF-8?Q?Merthan_Karaka=C5=9F?= <m3rthn.k@gmail.com>, 
+	Denis Benato <benato.denis96@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Amritha Nambiar <amritha.nambiar@intel.com>
+On Wed, May 14, 2025 at 9:34=E2=80=AFPM Mario Limonciello <superm1@kernel.o=
+rg> wrote:
+>
+> From: Mario Limonciello <mario.limonciello@amd.com>
+>
+> When the system is powered off the kernel will call device_shutdown()
+> which will issue callbacks into PCI core to wake up a device and call
+> it's shutdown() callback.  This will leave devices in ACPI D0 which can
+> cause some devices to misbehave with spurious wakeups and also leave some
+> devices on which will consume power needlessly.
+>
+> The issue won't happen if the device is in D3 before system shutdown, so
+> putting device to low power state before shutdown solves the issue.
+>
+> ACPI Spec 6.5, "7.4.2.5 System \_S4 State" says "Devices states are
+> compatible with the current Power Resource states. In other words, all
+> devices are in the D3 state when the system state is S4."
+>
+> The following "7.4.2.6 System \_S5 State (Soft Off)" states "The S5
+> state is similar to the S4 state except that OSPM does not save any
+> context." so it's safe to assume devices should be at D3 for S5.
+>
+> To accomplish this, modify the PM core to call all the device hibernate
+> callbacks when turning off the system when the kernel is compiled with
+> hibernate support. If compiled without hibernate support or hibernate fai=
+ls
+> fall back into the previous shutdown flow.
+>
+> Cc: AceLan Kao <acelan.kao@canonical.com>
+> Cc: Kai-Heng Feng <kaihengf@nvidia.com>
+> Cc: Mark Pearson <mpearson-lenovo@squebb.ca>
+> Cc: Merthan Karaka=C5=9F <m3rthn.k@gmail.com>
+> Tested-by: Denis Benato <benato.denis96@gmail.com>
+> Link: https://lore.kernel.org/linux-pci/20231213182656.6165-1-mario.limon=
+ciello@amd.com/
+> Link: https://lore.kernel.org/linux-pci/20250506041934.1409302-1-superm1@=
+kernel.org/
+> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+> ---
+> v2:
+>  * Handle failures to hibernate (fall back to shutdown)
+>  * Don't use dedicated events
+>  * Only allow under CONFIG_HIBERNATE_CALLBACKS
+> ---
+>  kernel/reboot.c | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
+>
+> diff --git a/kernel/reboot.c b/kernel/reboot.c
+> index ec087827c85cd..52f5e6e36a6f8 100644
+> --- a/kernel/reboot.c
+> +++ b/kernel/reboot.c
+> @@ -13,6 +13,7 @@
+>  #include <linux/kexec.h>
+>  #include <linux/kmod.h>
+>  #include <linux/kmsg_dump.h>
+> +#include <linux/pm.h>
+>  #include <linux/reboot.h>
+>  #include <linux/suspend.h>
+>  #include <linux/syscalls.h>
+> @@ -305,6 +306,17 @@ static void kernel_shutdown_prepare(enum system_stat=
+es state)
+>                 (state =3D=3D SYSTEM_HALT) ? SYS_HALT : SYS_POWER_OFF, NU=
+LL);
+>         system_state =3D state;
+>         usermodehelper_disable();
+> +#ifdef CONFIG_HIBERNATE_CALLBACKS
+> +       if (dpm_suspend_start(PMSG_HIBERNATE))
+> +               goto resume_devices;
 
-Enable initial support for the devlink interface with the ixd driver. The
-ixd hardware is a single function PCIe device. So, the PCIe adapter gets
-its own devlink instance to manage device-wide resources or configuration.
+A failure of one device may trigger a cascade of failures when trying
+to resume devices and it is not even necessary to resume the ones that
+have been powered off successfully.
 
-$ devlink dev show
-pci/0000:83:00.6
+IMV this should just ignore errors during the processing of devices,
+so maybe introduce PMSG_POWEROFF for it?
 
-$ devlink dev info pci/0000:83:00.6
-pci/0000:83:00.6:
-  driver ixd
-  serial_number 00-a0-c9-ff-ff-23-45-67
-  versions:
-      fixed:
-        device.type MEV
-      running:
-        cp 0.0
-        virtchnl 2.0
+It should also ignore wakeup events that occur while devices are powered of=
+f.
 
-Signed-off-by: Amritha Nambiar <amritha.nambiar@intel.com>
-Reviewed-by: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
-Reviewed-by: Maciej Fijalkowski <maciej.fijalkowski@intel.com>
-Reviewed-by: Przemek Kitszel <przemyslaw.kitszel@intel.com>
-Signed-off-by: Larysa Zaremba <larysa.zaremba@intel.com>
----
- Documentation/networking/devlink/index.rst   |   1 +
- Documentation/networking/devlink/ixd.rst     |  35 +++++++
- drivers/net/ethernet/intel/ixd/Kconfig       |   1 +
- drivers/net/ethernet/intel/ixd/Makefile      |   1 +
- drivers/net/ethernet/intel/ixd/ixd_devlink.c | 105 +++++++++++++++++++
- drivers/net/ethernet/intel/ixd/ixd_devlink.h |  44 ++++++++
- drivers/net/ethernet/intel/ixd/ixd_main.c    |  13 ++-
- 7 files changed, 197 insertions(+), 3 deletions(-)
- create mode 100644 Documentation/networking/devlink/ixd.rst
- create mode 100644 drivers/net/ethernet/intel/ixd/ixd_devlink.c
- create mode 100644 drivers/net/ethernet/intel/ixd/ixd_devlink.h
+> +       if (dpm_suspend_end(PMSG_HIBERNATE))
+> +               goto resume_devices;
+> +       return;
+> +
+> +resume_devices:
+> +       pr_emerg("Failed to power off devices, using shutdown instead.\n"=
+);
+> +       dpm_resume_end(PMSG_RESTORE);
 
-diff --git a/Documentation/networking/devlink/index.rst b/Documentation/networking/devlink/index.rst
-index 8319f43b5933..ee9d89429fa2 100644
---- a/Documentation/networking/devlink/index.rst
-+++ b/Documentation/networking/devlink/index.rst
-@@ -85,6 +85,7 @@ parameters, info versions, and other features it supports.
-    ionic
-    ice
-    ixgbe
-+   ixd
-    mlx4
-    mlx5
-    mlxsw
-diff --git a/Documentation/networking/devlink/ixd.rst b/Documentation/networking/devlink/ixd.rst
-new file mode 100644
-index 000000000000..81b28ffb00f6
---- /dev/null
-+++ b/Documentation/networking/devlink/ixd.rst
-@@ -0,0 +1,35 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+===================
-+ixd devlink support
-+===================
-+
-+This document describes the devlink features implemented by the ``ixd``
-+device driver.
-+
-+Info versions
-+=============
-+
-+The ``ixd`` driver reports the following versions
-+
-+.. list-table:: devlink info versions implemented
-+    :widths: 5 5 5 90
-+
-+    * - Name
-+      - Type
-+      - Example
-+      - Description
-+    * - ``device.type``
-+      - fixed
-+      - MEV
-+      - The hardware type for this device
-+    * - ``cp``
-+      - running
-+      - 0.0
-+      - Version number (major.minor) of the Control Plane software
-+        running on the device.
-+    * - ``virtchnl``
-+      - running
-+      - 2.0
-+      - 2-digit version number (major.minor) of the communication channel
-+        (virtchnl) used by the device.
-diff --git a/drivers/net/ethernet/intel/ixd/Kconfig b/drivers/net/ethernet/intel/ixd/Kconfig
-index 24510c50070e..34181c59dcdc 100644
---- a/drivers/net/ethernet/intel/ixd/Kconfig
-+++ b/drivers/net/ethernet/intel/ixd/Kconfig
-@@ -7,6 +7,7 @@ config IXD
- 	select LIBETH
- 	select LIBIE_CP
- 	select LIBIE_PCI
-+	select NET_DEVLINK
- 	help
- 	  This driver supports Intel(R) Control Plane PCI Function
- 	  of Intel E2100 and later IPUs and FNICs.
-diff --git a/drivers/net/ethernet/intel/ixd/Makefile b/drivers/net/ethernet/intel/ixd/Makefile
-index 90abf231fb16..03760a2580b9 100644
---- a/drivers/net/ethernet/intel/ixd/Makefile
-+++ b/drivers/net/ethernet/intel/ixd/Makefile
-@@ -8,5 +8,6 @@ obj-$(CONFIG_IXD) += ixd.o
- ixd-y := ixd_main.o
- ixd-y += ixd_ctlq.o
- ixd-y += ixd_dev.o
-+ixd-y += ixd_devlink.o
- ixd-y += ixd_lib.o
- ixd-y += ixd_virtchnl.o
-diff --git a/drivers/net/ethernet/intel/ixd/ixd_devlink.c b/drivers/net/ethernet/intel/ixd/ixd_devlink.c
-new file mode 100644
-index 000000000000..6f60cfe4fab2
---- /dev/null
-+++ b/drivers/net/ethernet/intel/ixd/ixd_devlink.c
-@@ -0,0 +1,105 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright (c) 2025, Intel Corporation. */
-+
-+#include "ixd.h"
-+#include "ixd_devlink.h"
-+
-+#define IXD_DEVLINK_INFO_LEN	128
-+
-+/**
-+ * ixd_fill_dsn - Get the serial number for the ixd device
-+ * @adapter: adapter to query
-+ * @buf: storage buffer for the info request
-+ */
-+static void ixd_fill_dsn(struct ixd_adapter *adapter, char *buf)
-+{
-+	u8 dsn[8];
-+
-+	/* Copy the DSN into an array in Big Endian format */
-+	put_unaligned_be64(pci_get_dsn(adapter->cp_ctx.mmio_info.pdev), dsn);
-+
-+	snprintf(buf, IXD_DEVLINK_INFO_LEN, "%8phD", dsn);
-+}
-+
-+/**
-+ * ixd_fill_device_name - Get the name of the underlying hardware
-+ * @adapter: adapter to query
-+ * @buf: storage buffer for the info request
-+ * @buf_size: size of the storage buffer
-+ */
-+static void ixd_fill_device_name(struct ixd_adapter *adapter, char *buf,
-+				 size_t buf_size)
-+{
-+	if (adapter->caps.device_type == VIRTCHNL2_MEV_DEVICE)
-+		snprintf(buf, buf_size, "%s", "MEV");
-+	else
-+		snprintf(buf, buf_size, "%s", "UNKNOWN");
-+}
-+
-+/**
-+ * ixd_devlink_info_get - .info_get devlink handler
-+ * @devlink: devlink instance structure
-+ * @req: the devlink info request
-+ * @extack: extended netdev ack structure
-+ *
-+ * Callback for the devlink .info_get operation. Reports information about the
-+ * device.
-+ *
-+ * Return: zero on success or an error code on failure.
-+ */
-+static int ixd_devlink_info_get(struct devlink *devlink,
-+				struct devlink_info_req *req,
-+				struct netlink_ext_ack *extack)
-+{
-+	struct ixd_adapter *adapter = devlink_priv(devlink);
-+	char buf[IXD_DEVLINK_INFO_LEN];
-+	int err;
-+
-+	ixd_fill_dsn(adapter, buf);
-+	err = devlink_info_serial_number_put(req, buf);
-+	if (err)
-+		return err;
-+
-+	ixd_fill_device_name(adapter, buf, IXD_DEVLINK_INFO_LEN);
-+	err = devlink_info_version_fixed_put(req, "device.type", buf);
-+	if (err)
-+		return err;
-+
-+	snprintf(buf, sizeof(buf), "%u.%u",
-+		 le16_to_cpu(adapter->caps.cp_ver_major),
-+		 le16_to_cpu(adapter->caps.cp_ver_minor));
-+
-+	err = devlink_info_version_running_put(req, "cp", buf);
-+	if (err)
-+		return err;
-+
-+	snprintf(buf, sizeof(buf), "%u.%u",
-+		 adapter->vc_ver.major, adapter->vc_ver.minor);
-+
-+	return devlink_info_version_running_put(req, "virtchnl", buf);
-+}
-+
-+static const struct devlink_ops ixd_devlink_ops = {
-+	.info_get = ixd_devlink_info_get,
-+};
-+
-+/**
-+ * ixd_adapter_alloc - Allocate devlink and return adapter pointer
-+ * @dev: the device to allocate for
-+ *
-+ * Allocate a devlink instance for this device and return the private area as
-+ * the adapter structure.
-+ *
-+ * Return: adapter structure on success, NULL on failure
-+ */
-+struct ixd_adapter *ixd_adapter_alloc(struct device *dev)
-+{
-+	struct devlink *devlink;
-+
-+	devlink = devlink_alloc(&ixd_devlink_ops, sizeof(struct ixd_adapter),
-+				dev);
-+	if (!devlink)
-+		return NULL;
-+
-+	return devlink_priv(devlink);
-+}
-diff --git a/drivers/net/ethernet/intel/ixd/ixd_devlink.h b/drivers/net/ethernet/intel/ixd/ixd_devlink.h
-new file mode 100644
-index 000000000000..c43ce0655de2
---- /dev/null
-+++ b/drivers/net/ethernet/intel/ixd/ixd_devlink.h
-@@ -0,0 +1,44 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/* Copyright (c) 2025, Intel Corporation. */
-+
-+#ifndef _IXD_DEVLINK_H_
-+#define _IXD_DEVLINK_H_
-+#include <net/devlink.h>
-+
-+struct ixd_adapter *ixd_adapter_alloc(struct device *dev);
-+
-+/**
-+ * ixd_devlink_free - teardown the devlink
-+ * @adapter: the adapter structure to free
-+ *
-+ */
-+static inline void ixd_devlink_free(struct ixd_adapter *adapter)
-+{
-+	struct devlink *devlink = priv_to_devlink(adapter);
-+
-+	devlink_free(devlink);
-+}
-+
-+/**
-+ * ixd_devlink_unregister - Unregister devlink resources for this adapter.
-+ * @adapter: the adapter structure to cleanup
-+ *
-+ * Releases resources used by devlink and cleans up associated memory.
-+ */
-+static inline void ixd_devlink_unregister(struct ixd_adapter *adapter)
-+{
-+	devlink_unregister(priv_to_devlink(adapter));
-+}
-+
-+/**
-+ * ixd_devlink_register - Register devlink interface for this adapter
-+ * @adapter: pointer to ixd adapter structure to be associated with devlink
-+ *
-+ * Register the devlink instance associated with this adapter
-+ */
-+static inline void ixd_devlink_register(struct ixd_adapter *adapter)
-+{
-+	devlink_register(priv_to_devlink(adapter));
-+}
-+
-+#endif /* _IXD_DEVLINK_H_ */
-diff --git a/drivers/net/ethernet/intel/ixd/ixd_main.c b/drivers/net/ethernet/intel/ixd/ixd_main.c
-index c6dd6b3f14bb..d58b49bb3953 100644
---- a/drivers/net/ethernet/intel/ixd/ixd_main.c
-+++ b/drivers/net/ethernet/intel/ixd/ixd_main.c
-@@ -4,6 +4,7 @@
- #include "ixd.h"
- #include "ixd_ctlq.h"
- #include "ixd_lan_regs.h"
-+#include "ixd_devlink.h"
- 
- MODULE_DESCRIPTION("Intel(R) Control Plane Function Device Driver");
- MODULE_IMPORT_NS("LIBIE_CP");
-@@ -21,12 +22,15 @@ static void ixd_remove(struct pci_dev *pdev)
- 	/* Do not mix removal with (re)initialization */
- 	cancel_delayed_work_sync(&adapter->init_task.init_work);
- 
-+	ixd_devlink_unregister(adapter);
-+
- 	/* Leave the device clean on exit */
- 	ixd_trigger_reset(adapter);
- 	ixd_deinit_dflt_mbx(adapter);
- 
- 	libie_pci_unmap_all_mmio_regions(&adapter->cp_ctx.mmio_info);
- 	libie_pci_deinit_dev(pdev);
-+	ixd_devlink_free(adapter);
- }
- 
- /**
-@@ -94,7 +98,7 @@ static int ixd_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
- 	if (WARN_ON(ent->device != IXD_DEV_ID_CPF))
- 		return -EINVAL;
- 
--	adapter = devm_kzalloc(&pdev->dev, sizeof(*adapter), GFP_KERNEL);
-+	adapter = ixd_adapter_alloc(&pdev->dev);
- 	if (!adapter)
- 		return -ENOMEM;
- 
-@@ -103,7 +107,7 @@ static int ixd_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
- 
- 	err = libie_pci_init_dev(pdev);
- 	if (err)
--		return err;
-+		goto free_adapter;
- 
- 	pci_set_drvdata(pdev, adapter);
- 
-@@ -119,11 +123,14 @@ static int ixd_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
- 	queue_delayed_work(system_unbound_wq, &adapter->init_task.init_work,
- 			   msecs_to_jiffies(500));
- 
-+	ixd_devlink_register(adapter);
-+
- 	return 0;
- 
- deinit_dev:
- 	libie_pci_deinit_dev(pdev);
--
-+free_adapter:
-+	ixd_devlink_free(adapter);
- 	return err;
- }
- 
--- 
-2.47.0
+Unfortunately, PMSG_RESTORE is not the right resume action for
+PMSG_HIBERNATE because it may not power-up things (some drivers assume
+that the restore kernel will power-up devices and so they don't do it
+in "restore" callbacks).
 
+I do realize that hibernation uses it to reverse PMSG_HIBERNATE, but
+it should not do that either.  That may be fixed later, though.
+
+> +#endif
+>         device_shutdown();
+>  }
+>  /**
+> --
+
+I'd prefer to get back to this series after the 6.16 merge window
+starts.  It is sort of last minute for 6.16 and it is far from ready
+IMV.
+
+Thanks!
 
