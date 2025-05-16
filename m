@@ -1,190 +1,111 @@
-Return-Path: <linux-kernel+bounces-652078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-652084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85EEBABA6C0
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 May 2025 01:53:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2582ABA6D9
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 May 2025 02:01:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 19D854E35AD
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 23:53:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC985A23B8B
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 May 2025 00:00:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A0D8281369;
-	Fri, 16 May 2025 23:53:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 009DF34CDD;
+	Sat, 17 May 2025 00:00:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="ss1zWcoL"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aOOwxmqm"
+Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com [209.85.217.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6D6A28032B
-	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 23:53:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF46E3C26;
+	Sat, 17 May 2025 00:00:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747439620; cv=none; b=ZADPVfx4Q4wlOaKEYHJtQ9MmsKUs82bwGdSTtdHnXGdbfiFVGzk2wQd3eDE5UX0ziitvmDGT+9ZoCe+8MjzGzOxj+c06a4ViicXFmw2Ogel+jXih6lRmIPtBbsh5Jh/n3N7t52meEqiVSqKKAIAUKJ6So1AfOf0v/brTfnHifU4=
+	t=1747440055; cv=none; b=Y11YqMEEse7zDpc47q9PRxbDG8p/cmSaSgGqdCgCG3g0nj6O0vW6rSOJZYEjoR0aD9ltonbjLY4Q0SZS0i/mRAR+kJpaAx0gAp62FLn0S13q8ADVybErtfCrNe9SnCndoFwsEboMp+O60CB/9uRCAMZtZ8rROgWlyWA8b/P7YY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747439620; c=relaxed/simple;
-	bh=Jin3yk6dEqe8GxRTxVuJZ/xNO3DOAiT60Ttp+cflGnA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bLy51wUOFt14UYmMTuSl5JZcHrpEHYgVo3qMj8uGrRXIqRuUdjnkA5stxPXVQASbozXjMnMSN4gERLeNHNKO9CCaDIZ+evoQgC4P+AYAspofDHZzY0HT5ymNiy2vvFXInHT4xuwzj99ZnIK00zFjz/kNHfClEatkXdMmP/LSCEs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=ss1zWcoL; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-232054aa4ebso446685ad.1
-        for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 16:53:37 -0700 (PDT)
+	s=arc-20240116; t=1747440055; c=relaxed/simple;
+	bh=KjcJjtelOwQL5UBmL+8NLtma/yUYClrcyHGdIfTMHF0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UE8V2TH7vRRMJnBcwuCDQ1yUmqrwo1SzxwrBUCc9pl4EH+Rx+oix4dBPipSzaerA+LXi/MYJGA8Fek1xO8WDur3D1Y7DeZ0YlNspRsDIcnbWo9JFsQ+UwIfGW0OYdL4jO4tIcxlwUh/x8/Dq/DiOXpXtkykBbOlQD9xms0jEkok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aOOwxmqm; arc=none smtp.client-ip=209.85.217.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f43.google.com with SMTP id ada2fe7eead31-4dfa0f6127dso710852137.1;
+        Fri, 16 May 2025 17:00:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1747439617; x=1748044417; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=+X0sEMByIYCJp9C2VC0Yrhh05RdaqRYJfaKNmUnn3Dg=;
-        b=ss1zWcoLjm+yyyGpvkpDHNG2ZmRtR4JDINtig19pEH+jr6OVvg+yICzTbzobfg0yty
-         IWPWCxzQf3+c8YM9xjF25PLmrEcT8SCrKnQbAcWIftx2eepjmn2iJ0Sb2RcYmIyOhsrK
-         QN/1xjGYisF0zUIsARxu4ajVnhe4llRazcB5+h21G1Cw8LWI/yI/aqtZbScM7/HNY1Ly
-         2naChlrZ9x4UmrL+Nwj+hen6EKge2ARk1HeRVzlJAak50MYf9LvKVr4/njfNAmQWeHb5
-         VMhnhG7HEZkyxAeHQP96dKWhFhEG+Y+jpkmd3QdNvPk0m3bceEBdRP2s6ZLCz4rG0J5j
-         J2OQ==
+        d=gmail.com; s=20230601; t=1747440053; x=1748044853; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=X8AywrBQhhtb4QmqPICmPCLx2PfD8ufTv2fjGFxU3B8=;
+        b=aOOwxmqmWb71ZyZt2iA+v4RKKp1q1PnD0RRFWnghtHFvLXhqwb1ZkQeeNXq2hz3B90
+         yl2++Y1CsbZNgU36KRjetf7Rhecr51tMbu1EhA0Vi1Re7TJz+wXct/vjP8bFU+UYJzb3
+         bWF4ySNtNanC5XFkilA5w2FUj8O1F8cDUw9dKXPmMLKkATFkiSTeIjHIzecWWaFQ38zP
+         G4VhoaaEJFRxL26ev2Jgd5lBf9e9Vzdjv5e8k/cTL4o8qL7w6xKbPkPzeXy7Rohm8+zJ
+         3pliLBjQFF4Ipnh3oA03utToweDGRareVl1vdc8RAaexdO66eqwWrertkK06r47qHkVk
+         dKdw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747439617; x=1748044417;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+X0sEMByIYCJp9C2VC0Yrhh05RdaqRYJfaKNmUnn3Dg=;
-        b=tmvJwyPL59rV+WPubG8Da/np1kEh46AxVqX5yegYxK5wCQvinJWYQywGizg2go1Wx0
-         Lc29Nw5uUBpEIp6E1bS/Cx3n8oBacKRg3hAFZW0VpmWcTGaLnuJDRVQzQxDCpNF6jY2C
-         Hh1mEXjamUDMvYYuCPsmW8k2uPz8r11IYRsv/sI55DqZS5Bh2WqmWIPwKfiIR//XRkSW
-         ebBIXcJg4BdUv5F2lFeoLEohUeM0MEH0JcFwTT9vTa7RdQ28jXIf1CzLtUUlN2mGcSPd
-         ofQUCjO5V263ElQ/FV8HTeHxf4sOza/0nu/p3SrwYiOpe59C1Ie7W4yQl+pw+V6g8ZfA
-         Ao8w==
-X-Forwarded-Encrypted: i=1; AJvYcCWbtMFcnAQwhUt2/qGMVvAZ7qAjMRqW3vnJaofu8LDdHf0l/dzaNON6JsmvN8zGGN2i+leb1PFCgCVTniw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzop8rFVr9JNu4VL7QR0rz66KPNhNbQJjG2d8+xmkdOhxYVKOR/
-	qd82YapxNzzRM2G4jv5NH8/UKS0T0sRO0XQFZG9EH24nLO+Nf2ZLC6oPrvfls4Se9KU=
-X-Gm-Gg: ASbGnctchQHq7VOxHWdYM8tpaeka6gVjP3eT5fglG3TIqWdPGHsqMcOCghnUktSFff3
-	3GEGEN/E19qC6PJ3s4nTB2UfENmuzKC2DJQiTt5WgEByalDk7D/m7+q2qGfI4NuLT5DCAnExAD5
-	xjQCZpho/+D6Hiq1CTvUMnQ2d+v228/6r8W/jm8YWcnjE66ERjh67cQplm4PJ3pbzdShZ/aJRae
-	FlNyqV5nCsScxUfi51jpceVhROauJrWUYHeLdmxPh3ajAPmelrYc3V8sC4Rg3l9Kw2xR4hPODDB
-	koFogKvVe88/YeSbfnuGU1aXs7+LZhwyGEwST2p3bepypD0pUeQ2
-X-Google-Smtp-Source: AGHT+IFRzWoflz3ycvTOCP0vPm7ds3Ft1eoTh6/GYuCA/U8J5Mo9M+nIUUI5eWrfofGnl4RnIgS3/Q==
-X-Received: by 2002:a17:903:f8d:b0:21f:1549:a563 with SMTP id d9443c01a7336-231d43d56ccmr63299065ad.2.1747439616878;
-        Fri, 16 May 2025 16:53:36 -0700 (PDT)
-Received: from [192.168.1.23] ([50.34.76.202])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-231d4ac95e1sm19998765ad.20.2025.05.16.16.53.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 16 May 2025 16:53:36 -0700 (PDT)
-Message-ID: <386489f5-e814-403f-9997-849e55345210@rivosinc.com>
-Date: Fri, 16 May 2025 16:53:34 -0700
+        d=1e100.net; s=20230601; t=1747440053; x=1748044853;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=X8AywrBQhhtb4QmqPICmPCLx2PfD8ufTv2fjGFxU3B8=;
+        b=eGkTpteRqRnuU9epPd3JefdnMsf8jfIV/3fDi0ZZbi+VG2t5iVoIwGTogaRP+me5Ou
+         0aHr3/JAteoxp0OsvjT5PpkTqibZA4ngn4eECnMeHoMJLiY08E/dDp0CaEnw+kAxeskZ
+         ZkcHsD47Pwpxc0F65HAMPNPmzkECPrfgAYyivs1q7IlKJfNjqOiiip7Y1H14TW6Lq56b
+         XolokFJDEBpcFrc4U6s5pfX+7Be0cdOOwOKtSywM7uRC0pXJBuBSoj0zoappPt/b/e9R
+         o87l0taKMhnxVNPZhYosap9iN4gBJbtxc7//qiD5QRrxMrbdLNwMi9+EUF6OYcjg5oZi
+         N8Xw==
+X-Forwarded-Encrypted: i=1; AJvYcCVQpyy2azombIu7DVX/yn4gTEgRxmU1ZwFZVsNmik89AGYqbviBw7lt93P/sW3eS2NNL2OeF53dp3wyrsk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwO78FI6stPe5Qc7slLzc3hvvN0KSfHuNez5F40y+o8VUhD+vfe
+	L1wc07HBkb0eFGMA90lFM+0zik6dHEsXL2MSChocuHQeRRmw5h0Q9Oku
+X-Gm-Gg: ASbGncuW1CynI74gv4kX8iMxHie5u5cZck4jYbxffSlqO9gMIWvIIhBy1VXXoU0tmIQ
+	8BX+jlnONupXauC9Nxb+WQ6/k/0v0YzJGoWWyq17ZPVUaEUDUo67wU1a9ulrZWxfqySa9hw5V/E
+	gdjrNtTDTCxHlVx0p9pB4pTEsprQ/tjv9UzgiEuJRXWcDHi+ZRm/ixEsB6W7uN5Io/sTmj9vycV
+	y1umby2frDQ9yiUwLUOnhqOfvCRfd+oXzKpK6jBM7cpMfJOmvTsi5bRiybmPT+AQ1fi0eFx5tf+
+	d8pjvFQqWs1uvlCikM6caOC4/8cJwXwoyl+cvjy8iOKdD3Gl0UnjOjsw44J7kl+Fe5vkesLBblz
+	AEV0pRdH4UIvRlFgxvIocZg6U79Av
+X-Google-Smtp-Source: AGHT+IHY2CrtzFGHfrsgfnT+H0O5Zg/eWuENBU6A4XIJwZGfHVtLF0WJqip8G5UINcll73oHJ2mVBg==
+X-Received: by 2002:a05:6102:508a:b0:4de:1ab2:ac67 with SMTP id ada2fe7eead31-4e049d329cbmr5464348137.2.1747440052548;
+        Fri, 16 May 2025 17:00:52 -0700 (PDT)
+Received: from Ubuntu.. (syn-097-097-020-058.res.spectrum.com. [97.97.20.58])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4dfa687ed41sm2659765137.25.2025.05.16.17.00.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 16 May 2025 17:00:52 -0700 (PDT)
+From: Jonathan Velez <jonvelez12345@gmail.com>
+To: Thinh.Nguyen@synopsys.com,
+	gregkh@linuxfoundation.org
+Cc: linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jonathan Velez <jonvelez12345@gmail.com>
+Subject: [PATCH] docs: usb: dwc3: add documentation of 'sg' field in dwc3_request struct
+Date: Fri, 16 May 2025 23:54:47 +0000
+Message-ID: <20250516235447.17466-1-jonvelez12345@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] RISC-V: KVM: Remove scounteren initialization
-To: Anup Patel <anup@brainfault.org>
-Cc: Atish Patra <atishp@atishpatra.org>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Alexandre Ghiti <alex@ghiti.fr>, kvm@vger.kernel.org,
- kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20250515-fix_scounteren_vs-v3-1-729dc088943e@rivosinc.com>
- <CAAhSdy38s0WWc7Cv4KF+0_pGC3xKU3_PLgeedz7Pu04-xKm4jw@mail.gmail.com>
-Content-Language: en-US
-From: Atish Patra <atishp@rivosinc.com>
-In-Reply-To: <CAAhSdy38s0WWc7Cv4KF+0_pGC3xKU3_PLgeedz7Pu04-xKm4jw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
+Signed-off-by: Jonathan Velez <jonvelez12345@gmail.com>
+---
+ drivers/usb/dwc3/core.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-On 5/16/25 5:18 AM, Anup Patel wrote:
-> On Fri, May 16, 2025 at 4:41 AM Atish Patra <atishp@rivosinc.com> wrote:
->> Scounteren CSR controls the direct access the hpmcounters and cycle/
->> instret/time from the userspace. It's the supervisor's responsibility
->> to set it up correctly for it's user space. They hypervisor doesn't
->> need to decide the policy on behalf of the supervisor.
->>
->> Signed-off-by: Atish Patra <atishp@rivosinc.com>
->> ---
->> Changes in v3:
->> - Removed the redundant declaration
->> - Link to v2: https://lore.kernel.org/r/20250515-fix_scounteren_vs-v2-1-1fd8dc0693e8@rivosinc.com
->>
->> Changes in v2:
->> - Remove the scounteren initialization instead of just setting the TM bit.
->> - Link to v1: https://lore.kernel.org/r/20250513-fix_scounteren_vs-v1-1-c1f52af93c79@rivosinc.com
->> ---
->>   arch/riscv/kvm/vcpu.c | 4 ----
->>   1 file changed, 4 deletions(-)
->>
->> diff --git a/arch/riscv/kvm/vcpu.c b/arch/riscv/kvm/vcpu.c
->> index 60d684c76c58..9bfaae9a11ea 100644
->> --- a/arch/riscv/kvm/vcpu.c
->> +++ b/arch/riscv/kvm/vcpu.c
->> @@ -111,7 +111,6 @@ int kvm_arch_vcpu_create(struct kvm_vcpu *vcpu)
->>   {
->>          int rc;
->>          struct kvm_cpu_context *cntx;
->> -       struct kvm_vcpu_csr *reset_csr = &vcpu->arch.guest_reset_csr;
->>
->>          spin_lock_init(&vcpu->arch.mp_state_lock);
->>
->> @@ -146,9 +145,6 @@ int kvm_arch_vcpu_create(struct kvm_vcpu *vcpu)
->>          if (kvm_riscv_vcpu_alloc_vector_context(vcpu, cntx))
->>                  return -ENOMEM;
->>
->> -       /* By default, make CY, TM, and IR counters accessible in VU mode */
->> -       reset_csr->scounteren = 0x7;
->> -
->>          /* Setup VCPU timer */
->>          kvm_riscv_vcpu_timer_init(vcpu);
->>
->>
->> ---
->> base-commit: 01f95500a162fca88cefab9ed64ceded5afabc12
->> change-id: 20250513-fix_scounteren_vs-fdd86255c7b7
->> --
-> Overall, this looks good.
->
-> Reviewed-by: Anup Patel <anup@brainfault.org>
->
-> Currently, the scounteren.TM bit is only set by the Linux SBI PMU
-> driver but KVM RISC-V only provides SBI PMU for guest when
-> Sscofpmf is available in host so we need the below hunk to
-> completely get rid-off scounteren initialization in KVM RISC-V.
->
-> diff --git a/arch/riscv/kernel/head.S b/arch/riscv/kernel/head.S
-> index 356d5397b2a2..bdf3352acf4c 100644
-> --- a/arch/riscv/kernel/head.S
-> +++ b/arch/riscv/kernel/head.S
-> @@ -131,6 +131,12 @@ secondary_start_sbi:
->       csrw CSR_IE, zero
->       csrw CSR_IP, zero
->
-> +#ifndef CONFIG_RISCV_M_MODE
-> +    /* Enable time CSR */
-> +    li t0, 0x2
-> +    csrw CSR_SCOUNTEREN, t0
-> +#endif
-> +
->       /* Load the global pointer */
->       load_global_pointer
->
-> @@ -226,6 +232,10 @@ SYM_CODE_START(_start_kernel)
->        * to hand it to us.
->        */
->       csrr a0, CSR_MHARTID
-> +#else
-> +    /* Enable time CSR */
-> +    li t0, 0x2
-> +    csrw CSR_SCOUNTEREN, t0
->   #endif /* CONFIG_RISCV_M_MODE */
->
->       /* Load the global pointer */
->
-> I have queued this patch for Linux-6.16 with the above hunk squashed.
+diff --git a/drivers/usb/dwc3/core.h b/drivers/usb/dwc3/core.h
+index f11570c8ffd0..bb140dde07d6 100644
+--- a/drivers/usb/dwc3/core.h
++++ b/drivers/usb/dwc3/core.h
+@@ -942,6 +942,7 @@ struct dwc3_hwparams {
+  * @request: struct usb_request to be transferred
+  * @list: a list_head used for request queueing
+  * @dep: struct dwc3_ep owning this request
++ * @sg: pointer to the scatter-gather list for transfers
+  * @start_sg: pointer to the sg which should be queued next
+  * @num_pending_sgs: counter to pending sgs
+  * @remaining: amount of data remaining
+-- 
+2.43.0
 
-Yes. Thanks for adding this.
-
-> Thanks,
-> Anup
 
