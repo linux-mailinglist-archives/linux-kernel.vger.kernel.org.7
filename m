@@ -1,180 +1,110 @@
-Return-Path: <linux-kernel+bounces-651581-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-651579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0750CABA049
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 17:49:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69A59ABA043
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 17:48:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 780751BC0024
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 15:49:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0CB7317D63A
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 15:48:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE6EE1C6FFE;
-	Fri, 16 May 2025 15:48:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7967B1B042E;
+	Fri, 16 May 2025 15:48:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="LSi28N3z"
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="fvZMxuAc";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0xJReZjU"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35E0915E5D4
-	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 15:48:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 399A75661;
+	Fri, 16 May 2025 15:48:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747410535; cv=none; b=G22L14lE9Qdx6ukN1XOBgNKNVJaZpdbHkgdImQhyEjTRxQV2UYjXCFVymrFCqjdu7mvW0ofN8Huq/odXrDDX/8/3gN6bvVL4KQOMmxE+Gvu0Flmiob5fS9zldjbQsXW2GASxiclNABxPYMUdodXqPE1QFbucfjXH0YVX7tN9Tls=
+	t=1747410518; cv=none; b=o1Tmg4NNyATC7XAU4XwJ8rque9jxTZ/3JyKvS1hWDso+M3N/wLRLKRLFRpjUalbzdxo2dQ7tzS+DUYw9GjOy5QezO/sHDXnpqV3xiTw5bMkIo7wVf17P3PzThJwnqjJThpC9zJvysM/NqHUnTWtGCJt0WAHIf5I9LK2xB/sukts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747410535; c=relaxed/simple;
-	bh=er2OB2i7RCtO/LFMaZ1J3Yz/jZgl0pHvF91imDiZ8Zo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BbOKibqxZ1ogugbOMiAs86xdaj2Tg61zX5i3iKtPRGjWBP2uaJr6aqprbNId8gDx2y3jDxPSzC/95SYVHn+jTNCjnbLdNGSsbDe/7UQH/PIqymyD6VCU8JXTEr2/PuB/6TRk9DFllD0wdqmuncwS7z8GNKkPRvTSwz7Ee/EGt8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=LSi28N3z; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=t9eRXSIwwJ3RBs8er8Ia3CDy+A4KCgoqDqon5Mvaeos=; b=LSi28N3zdS6zipMOTvcgz7ZOpT
-	ARoDZ3iVGv0zZ3AC52kOH3tZE0Fqb6Y+qIeXIO3QTakpPr9Y1tZDEmmBNd4wimhGhml4EXDXqq5ih
-	0ZzskI013n78iqc5XYerMOFk+Gpvy1j2HcRgK+Xh8eGYeeQRv2Fbh9G7fXxzYQfSf2gpzvjC8J1dv
-	WhfjcHJgre4naDZlLd1fHoptYHTmFT3k20Mdhmv6j0jJSpFds7W2L8Jll/8lcb+GOmq2Vz60XFIM2
-	FTMLgYM/BM4OmrnY+zfyJ6KIkVYlXbMq3hPznEDRqjniP0me4QCP28S+qlWk2yAeKXHFtn6VjMWLC
-	TVCa+NZg==;
-Received: from [81.79.92.254] (helo=[192.168.0.101])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1uFxCf-0099NR-PB; Fri, 16 May 2025 17:48:28 +0200
-Message-ID: <d3c7081d-0a57-45be-acee-d9e0fed185c5@igalia.com>
-Date: Fri, 16 May 2025 16:48:27 +0100
+	s=arc-20240116; t=1747410518; c=relaxed/simple;
+	bh=4yMasbm5F2D522We+YwsedBsKgRMIliDwjKsRn9gphg=;
+	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=QrhQH+uMa05aEaC/Hw8FTiXbaEpVYzthZ91xy5+AUiZKxGG/3hkNB6YnyhOVUi64AZbxs82l8/Pcj6kM2HB/j72VCFfvc1BJaZX6nhy/ihxQNQpMuY6j+pinDgsOOWhCCQ1J1POOFx+dLCIKqMFQxW/t5/j+E+Fi4jkTTxOUqGQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=fvZMxuAc; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0xJReZjU; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 16 May 2025 15:48:34 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1747410515;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=hgge4HhhXxyrPI3FhKC2KCKVMaw2xM2oKM+p5LaSYP0=;
+	b=fvZMxuAc812kW+js3gpISzsRPS7wNgXOIi1Mc/8QnaAvGC98IPRrOOOj1wiIV2upOInMHR
+	QOD7r67byJQNfm24rTK0BGhVEOhjYbX/GPq4f/bCrCQ8tm+Zcy37liAs/Cpsy0nbROJuBL
+	9ZaGg8HMnJhIjWgIcwjMfDYFxertH3WrohW8ZWhZiBL1VG/T3shuUmZjSlCYNMplsnKlF/
+	2L16dFApLa8TctXQguqmgmJYnq59W724CAX/8ph8Q+R3yw68DsB36Ya1OYAvfL5h6QsLBX
+	iZtsTTYZ/j+Vu3OjLpaiISYehCMRf+uLKkluvOHQsKMfK/pnv+I8Ibg96EhTzg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1747410515;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=hgge4HhhXxyrPI3FhKC2KCKVMaw2xM2oKM+p5LaSYP0=;
+	b=0xJReZjUeBSQzadgU1QDYtv6pbaViw+eJDaDCmql+sBpaNitVw78z0va3zgMFgn8LMNCMM
+	Mvul3tFHgI4guiAw==
+From: "tip-bot2 for Borislav Petkov (AMD)" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/core] x86/bugs: Fix indentation due to ITS merge
+Cc: "Borislav Petkov (AMD)" <bp@alien8.de>, Ingo Molnar <mingo@kernel.org>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/6] drm/sched: Prevent teardown waitque from blocking
- too long
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: Philipp Stanner <phasta@kernel.org>, Lyude Paul <lyude@redhat.com>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Matthew Brost <matthew.brost@intel.com>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, Danilo Krummrich <dakr@redhat.com>
-References: <20250424095535.26119-2-phasta@kernel.org>
- <20250424095535.26119-4-phasta@kernel.org>
- <1297389f-70f6-4813-8de8-1a0c4f92250a@igalia.com> <aCcLMhS5kyD60PEX@pollux>
- <e152d20b-c62e-47d9-a891-7910d1d24c6a@igalia.com> <aCcZSA79X9Nk2mzh@pollux>
- <24173faf-c2f0-4d08-93db-587891dc8b5d@igalia.com> <aCco0RFRVM1POr6J@pollux>
-Content-Language: en-GB
-From: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
-In-Reply-To: <aCco0RFRVM1POr6J@pollux>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Message-ID: <174741051403.406.11257957809384086628.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 
+The following commit has been merged into the x86/core branch of tip:
 
-On 16/05/2025 13:00, Danilo Krummrich wrote:
-> On Fri, May 16, 2025 at 12:35:52PM +0100, Tvrtko Ursulin wrote:
->>
->> On 16/05/2025 11:54, Danilo Krummrich wrote:
->>> On Fri, May 16, 2025 at 11:19:50AM +0100, Tvrtko Ursulin wrote:
->>>>
->>>> On 16/05/2025 10:53, Danilo Krummrich wrote:
->>>>> On Fri, May 16, 2025 at 10:33:30AM +0100, Tvrtko Ursulin wrote:
->>>>>> On 24/04/2025 10:55, Philipp Stanner wrote:
->>>>>>> +	 * @kill_fence_context: kill the fence context belonging to this scheduler
->>>>>>
->>>>>> Which fence context would that be? ;)
->>>>>
->>>>> There's one one per ring and a scheduler instance represents a single ring. So,
->>>>> what should be specified here?
->>>>
->>>> I was pointing out the fact not all drivers are 1:1 sched:entity.
->>>
->>> I'm well aware, but how is that relevant? Entities don't have an associated
->>> fence context, but a GPU Ring (either hardware or software) has, which a
->>> scheduler instance represents.
->>
->> Aha! Well.. how it is relevant and do entities not have an associated fence
->> context? Well, entity->fence_context.. that was my first association this
->> whole time. Never it crossed my mind this is talking about the hardware
->> fence context. Proof in the pudding naming should be improved.
-> 
-> It says "fence context belonging to this scheduler", which should be
-> unambiguous, however I agree that we could mark out the difference even more.
+Commit-ID:     4375decf50f74878e73c29c9dcd8af51dd3f7376
+Gitweb:        https://git.kernel.org/tip/4375decf50f74878e73c29c9dcd8af51dd3f7376
+Author:        Borislav Petkov (AMD) <bp@alien8.de>
+AuthorDate:    Fri, 16 May 2025 16:31:38 +02:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Fri, 16 May 2025 17:39:12 +02:00
 
-Cool, I had tunnel vision due working with entity->fence_context a lot 
-and this just had misfortune to re-use the same name.
+x86/bugs: Fix indentation due to ITS merge
 
->> But I also don't think there is a requirement for fences returned from
->> ->run_job() to have a single context. Which again makes it not the best
->> naming.
-> 
-> It's implied by the fact that a scheduler instance represents a ring. Having
-> multiple fence contexts per ring doesn't make any sense.
-> 
-> But it's indeed not written down -- we should do that then.
+No functional changes.
 
-Would you do it in code or just in docs? I don't see a real benefit to 
-it to be honest, since nothing depends on anything apart that it is a 
-fence which will signal when job is done. But I am not aware of anything 
-where it would be a problem either. One to run past driver maintainers I 
-guess.
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ arch/x86/kernel/cpu/bugs.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
->>> In the callback the driver should neither tear down an entity, nor the whole
->>> scheduler, hence we shouldn't call it like that. sched_kill() is therefore
->>> misleading as well.
->>
->>   ->sched_exit()? ->sched_stop()? ->sched_cleanup()?
-> 
-> I think this all would throw up questions like "What does {exit,stop,cleanup}
-> mean in this context?". And the answer would be "kill the fence context of the
-> ring represented by the scheduler".
-> 
-> I think we want a name that represents that without an indirection that we have
-> to define.
-
-Well fence_kill_context wasn't self-descriptive to me neither so there 
-is that too. In other words some kerneldoc will be needed anyway and a 
-callback to call while tearing something down is pretty standard stuff. 
-So I don't think it is a big deal to explain what that callback should do.
-
->>> It should be named after what it actually does (or should do). Feel free to
->>> propose a different name that conforms with that.
->>>
->>>>>> We also probably want some commentary on the topic of indefinite (or very
->>>>>> long at least) blocking a thread exit / SIGINT/TERM/KILL time.
->>>>>
->>>>> You mean in case the driver does implement the callback, but does *not* properly
->>>>> tear down the fence context? So, you ask for describing potential consequences
->>>>> of drivers having bugs in the implementation of the callback? Or something else?
->>>>
->>>> I was proposing the kerneldoc for the vfunc should document the callback
->>>> must not block, or if blocking is unavoidable, either document a guideline
->>>> on how long is acceptable. Maybe even enforce a limit in the scheduler core
->>>> itself.
->>>
->>> Killing the fence context shouldn't block.
->>
->> Cool. And maybe convert the wait_event to wait_event_timeout with a warning
->> to be robust.
-> 
-> That would make sense if it could deadlock, but even if the driver does nothing
-> it should terminate eventually. The rule that we always rely on is that we
-> guarantee throughout the kernel that fences are signalled eventually.
-
-Given it is an opt-in fair enough. (Some drivers don't have automatic 
-fence expiration, but then again they don't have this callback either. 
-And once they start adding it, there will be kerneldoc to say callback 
-must not block.)
-
-Regards,
-
-Tvrtko
-
+diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+index dd8b50b..d1a03ff 100644
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -2975,10 +2975,10 @@ static void __init srso_apply_mitigation(void)
+ 
+ 		if (boot_cpu_data.x86 == 0x19) {
+ 			setup_force_cpu_cap(X86_FEATURE_SRSO_ALIAS);
+-				set_return_thunk(srso_alias_return_thunk);
++			set_return_thunk(srso_alias_return_thunk);
+ 		} else {
+ 			setup_force_cpu_cap(X86_FEATURE_SRSO);
+-				set_return_thunk(srso_return_thunk);
++			set_return_thunk(srso_return_thunk);
+ 		}
+ 		break;
+ 	case SRSO_MITIGATION_IBPB:
 
