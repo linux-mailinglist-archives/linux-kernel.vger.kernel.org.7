@@ -1,54 +1,52 @@
-Return-Path: <linux-kernel+bounces-650993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-650970-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0763AB98A9
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 11:22:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15FBEAB9868
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 11:13:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C05C4501501
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 09:22:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA9C41BA69C8
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 09:13:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E7782309BE;
-	Fri, 16 May 2025 09:21:51 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B2E322DA07;
-	Fri, 16 May 2025 09:21:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 788A022F75D;
+	Fri, 16 May 2025 09:13:34 +0000 (UTC)
+Received: from zg8tmja5ljk3lje4ms43mwaa.icoremail.net (zg8tmja5ljk3lje4ms43mwaa.icoremail.net [209.97.181.73])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9893E227EBE;
+	Fri, 16 May 2025 09:13:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.97.181.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747387311; cv=none; b=H9H2AUkxDV2y2pcuPH+BEK0+XazE0tsVfD2g51kbryDzFvUtiGRCPmlrEKLwWn+rENbll6KfgDTYsIYMwrTTut6ycFOP/SQZsAsqFxyyAzk4oKlqua3cTIIAs25pz7oukWaIFhtkUUi3jnmKRO8qn1TVgcPvr2GsEutFCbZH6H0=
+	t=1747386814; cv=none; b=ld+ltv6PRnop8hEPKuPe1o3ZIhz4VdfUGkZvQEGnPdXohZXMwEVZFrOI5saMebinGjGU4bqSZn4u9wXdGxe1eSlACGEd1pxHweoIHF6ZXCJQ179lPB35hr8DcXcVdpZTXzP0QBj7zH9FUUBS3FKLTKLMn+3SPAZO1S6ijtgWLOQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747387311; c=relaxed/simple;
-	bh=LCRkojFXW3npo30sHbjFTCo9FEh0VftKeTU++mHTC0E=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=q6NuU85aRiKU1txJ7Bo6hMI/lkPD4xEBD7KuwHDoKVD5Vl36QoSOZWKmQLRcMg4vRpcaAntz8OgcqZ9Sc2vNRNc9GiayGux8zWbTdRsybj18p7dKd+cjUmzJ73QWX4D8twOgrjUlGsY6IDTD07DtV+hWAAyIX4WwNdkrMZ4xs7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4ZzM4K13D8z1d1CT;
-	Fri, 16 May 2025 17:20:17 +0800 (CST)
-Received: from kwepemg500010.china.huawei.com (unknown [7.202.181.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id C32101800B3;
-	Fri, 16 May 2025 17:21:45 +0800 (CST)
-Received: from huawei.com (10.175.104.67) by kwepemg500010.china.huawei.com
- (7.202.181.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 16 May
- 2025 17:21:44 +0800
-From: Wang Zhaolong <wangzhaolong1@huawei.com>
-To: <sfrench@samba.org>, <sfrench@us.ibm.com>
-CC: <linux-cifs@vger.kernel.org>, <samba-technical@lists.samba.org>,
-	<linux-kernel@vger.kernel.org>, <chengzhihao1@huawei.com>,
-	<wangzhaolong1@huawei.com>, <yi.zhang@huawei.com>, <yangerkun@huawei.com>
-Subject: [PATCH V2 2/2] smb: client: Reset all search buffer pointers when releasing buffer
-Date: Fri, 16 May 2025 17:12:56 +0800
-Message-ID: <20250516091256.2756826-3-wangzhaolong1@huawei.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20250516091256.2756826-1-wangzhaolong1@huawei.com>
-References: <20250516091256.2756826-1-wangzhaolong1@huawei.com>
+	s=arc-20240116; t=1747386814; c=relaxed/simple;
+	bh=2LTT0+WmAJtlQ1IqZtUhdjsXEEI+MhON5zg4EbTcuJ4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=YX4brUVnuVnX8RN/poXI5hXf6U1K/ylkdZbrzup5Gh7aFZispRntFF9fw4EwCShxu3tDHUiawXccujLPiJWxBmDwLtkzq1ojXoN6kv72oiUNlnnYmWHY5PiEw9gLfamLKZfrf7XieWiZnOHLVLvQXMTMM03Zxtn1iecJZ2S3OZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=209.97.181.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
+Received: from E0005152DT.eswin.cn (unknown [10.12.96.41])
+	by app2 (Coremail) with SMTP id TQJkCgDXaJKqASdoD9F8AA--.41109S2;
+	Fri, 16 May 2025 17:13:16 +0800 (CST)
+From: dongxuyang@eswincomputing.com
+To: ulf.hansson@linaro.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	linux-mmc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	adrian.hunter@intel.com,
+	p.zabel@pengutronix.de,
+	shanchun1218@gmail.com
+Cc: ningyu@eswincomputing.com,
+	linmin@eswincomputing.com,
+	xuxiang@eswincomputing.com,
+	Xuyang Dong <dongxuyang@eswincomputing.com>
+Subject: [PATCH v1 0/2] Add driver support for ESWIN eic7700 SoC sdhci controller
+Date: Fri, 16 May 2025 17:12:59 +0800
+Message-Id: <20250516091259.774-1-dongxuyang@eswincomputing.com>
+X-Mailer: git-send-email 2.31.1.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,45 +54,64 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemg500010.china.huawei.com (7.202.181.71)
+X-CM-TRANSID:TQJkCgDXaJKqASdoD9F8AA--.41109S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Ww4fZFWDGryxuF4rWF17Jrb_yoW8Ary8pa
+	1ruFyFyrsxWFyfJ3s3G3WYk3y5J3WfJrWYkr4fWw1rXFW5ury8Kr4fKFyYqryDXry8Ja93
+	Zr90gr15CFy5AFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBv14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lw4CEc2x0rVAKj4xxMxkF7I0En4kS14v26r1q6r43MxkIecxEwVCm-wCF04
+	k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18
+	MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr4
+	1lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1l
+	IxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4
+	A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUmjgxUUUUU=
+X-CM-SenderInfo: pgrqw5xx1d0w46hv4xpqfrz1xxwl0woofrz/
 
-Multiple pointers in struct cifs_search_info (ntwrk_buf_start,
-srch_entries_start, and last_entry) point to the same allocated buffer.
-However, when freeing this buffer, only ntwrk_buf_start was set to NULL,
-while the other pointers remained pointing to freed memory.
+From: Xuyang Dong <dongxuyang@eswincomputing.com>
 
-This is defensive programming to prevent potential issues with stale
-pointers. While the active UAF vulnerability is fixed by the previous
-patch, this change ensures consistent pointer state and more robust error
-handling.
+	Add support for the sdhci-emmc and sdhci-sdio functionality in the Linux
+	kernel. The driver provides basic functionality of emmc and sdio for the eic7700
+	series chips, which are part of the	Eswin SoC family.
 
-Signed-off-by: Wang Zhaolong <wangzhaolong1@huawei.com>
----
- fs/smb/client/readdir.c | 3 +++
- 1 file changed, 3 insertions(+)
+	Features:
+	 Implement support for the ESWIN eic7700 SoC sdhci-emmc controller and
+	 sdhci-sdio controller. Integrate with the Linux sdhci subsystem for consistency and
+	 scalability.
 
-diff --git a/fs/smb/client/readdir.c b/fs/smb/client/readdir.c
-index 67d7dd64b5e2..787d6bcb5d1d 100644
---- a/fs/smb/client/readdir.c
-+++ b/fs/smb/client/readdir.c
-@@ -731,11 +731,14 @@ find_cifs_entry(const unsigned int xid, struct cifs_tcon *tcon, loff_t pos,
- 				cifs_small_buf_release(cfile->srch_inf.
- 						ntwrk_buf_start);
- 			else
- 				cifs_buf_release(cfile->srch_inf.
- 						ntwrk_buf_start);
-+			/* Reset all pointers to the network buffer to prevent stale references */
- 			cfile->srch_inf.ntwrk_buf_start = NULL;
-+			cfile->srch_inf.srch_entries_start = NULL;
-+			cfile->srch_inf.last_entry = NULL;
- 		}
- 		rc = initiate_cifs_search(xid, file, full_path);
- 		if (rc) {
- 			cifs_dbg(FYI, "error %d reinitiating a search on rewind\n",
- 				 rc);
--- 
-2.39.2
+	Supported chips:
+	 ESWIN eic7700 series SoC.
+
+	Test:
+	 Test this patch on the Sifive HiFive Premier P550 (which uses the EIC7700 SoC),
+	 including emmc and sdio peripherals. Perform read, write and erase tests on emmc.
+	 Read and write tests after mounting the file system. Verification of kernel support
+	 for emmc device. So this verifies that sdhci driver patch is working properly.
+
+Xuyang Dong (2):
+  dt-bindings: sdhci: eswin: Documentation for eic7700 SoC
+  sdhci: eswin: Add eic7700 sdhci driver
+
+ .../bindings/mmc/eswin,sdhci-eic7700.yaml     |  131 ++
+ drivers/mmc/host/Kconfig                      |   47 +
+ drivers/mmc/host/Makefile                     |    4 +-
+ drivers/mmc/host/sdhci-eic7700.c              |  353 ++++++
+ drivers/mmc/host/sdhci-eic7700.h              |  237 ++++
+ drivers/mmc/host/sdhci-of-eic7700-sdio.c      |  991 ++++++++++++++++
+ drivers/mmc/host/sdhci-of-eic7700.c           | 1053 +++++++++++++++++
+ 7 files changed, 2816 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/mmc/eswin,sdhci-eic7700.yaml
+ create mode 100644 drivers/mmc/host/sdhci-eic7700.c
+ create mode 100644 drivers/mmc/host/sdhci-eic7700.h
+ create mode 100644 drivers/mmc/host/sdhci-of-eic7700-sdio.c
+ create mode 100644 drivers/mmc/host/sdhci-of-eic7700.c
+
+--
+2.17.1
 
 
