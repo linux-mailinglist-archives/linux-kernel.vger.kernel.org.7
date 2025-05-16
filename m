@@ -1,125 +1,128 @@
-Return-Path: <linux-kernel+bounces-650991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-651008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53D07AB98A4
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 11:21:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C4F7AB98D9
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 11:31:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDE5E188CC57
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 09:21:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D1D11BA8B26
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 09:31:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8233C22FE0F;
-	Fri, 16 May 2025 09:21:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yt97lc3e"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E07522FDE2;
+	Fri, 16 May 2025 09:31:32 +0000 (UTC)
+Received: from mta22.hihonor.com (mta22.honor.com [81.70.192.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2494922E3E2
-	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 09:20:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 256AD7483;
+	Fri, 16 May 2025 09:31:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.192.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747387259; cv=none; b=bi4ZF4PPxeKXJXocGCVzMGn26aaKTyXEBn1mRtxHy2yzJowd0fPncN6ATgmOJu50HsYmFgww76BBY3U7QmSHyEsAkulx+7hdCVbEDn5Zfsz/zLJ2rXpaFmaugqItL0Dkg6ro5XN7P6Fxd2HPUA3D2FXHyO5/TnMOUAk+ew3QRhU=
+	t=1747387892; cv=none; b=i7It+YArkNbn6LaUGW0UaSAG79IdaG+bp2YwY3+zYxOBJ36W6KBTEu9d/9naOibAUvQF2O8DJURz9T0euyHui6upee8kqgA6vuVYxnFHkySNInuN0fBOAfbCoGgBN1SZNYVpOfh43N38qJpVebD9WTpHgVJZ/xBjrmpOehYHnYw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747387259; c=relaxed/simple;
-	bh=LKnFOUwwXq/9fAvcKvTjoW/6ZFr5JUhO2L711QhoihA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c2OkZlaoVQzpAgKLr3OLidxDY/AyHflWhxV8iMhHVf1BvbYFSgOIiNKZ60t4dCY4gN4XUrepJWaQiP5H2d7s4fiXi/0lCMSY170O3pWsf7x/p6qbCFeVqLakb83OaDnOfHxehVj1SGCla1SjkMqi294l7EeD2WdSPOuSJavIVdc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yt97lc3e; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-43d0618746bso14928915e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 02:20:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1747387256; x=1747992056; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=oVkdhl0yZ1MFLhzxiopsXMYZ7EZJ0whWLEhnArATGGM=;
-        b=yt97lc3e5iz9s7CTwnr5fw38Q04ZN+A9rhPxyeIhYoC1E/Z6M2KlEH0gLtv29oBBDj
-         Gv0zvo5yQSvwgBPht518ICoLAM3dP/x9QrstAsaogn+8F9KXqPHKBb7Or1lYlTEwEKFU
-         22SvuXQfLDDdYr2pPWrKPsudEk8lwDrmGFgFq+Nrc697Ym2/8kMCKaM09k3q00B6DUIV
-         50Y4leJyswQUOe55uu+aKouyephrTKusMS3Rfa5tY663V1BwAJg8Vh2MLkttdpLrJ+qp
-         NnNEYot0MFayLff8B5Ws/fpK5FmTwggGs1IcfAh2FTjtrn6RO+dLLRDGtx3MloIBy45k
-         3+dQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747387256; x=1747992056;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oVkdhl0yZ1MFLhzxiopsXMYZ7EZJ0whWLEhnArATGGM=;
-        b=TKz7OgonU6wtaVXMAzZwUxoqWiV2hfQvfmpPHK/H+lAUbEj1qU6nQBfA3DOFm988yi
-         oMqRTkFtym/DjxQDpzzPT40Pf1mamZthg8rerG2dbfPKxnXK/f89hY5Tua2dZnKcK7VT
-         nbC9ansLz85UQlRzhIcbt0nH65CfaoBEKKzYgD4sKw5npjbIv9ZFj4bxakm0JylphEDK
-         b6ThKY8wJ51CjTuPrKo53Gg0dy7lmHADBL16uSbM4i622Y+YO+9QA11xunClwpeyfRzC
-         wsiE/7PC7v17NNJru6NzWa7+FGB6FDdqZCtxCH2AZuJf2JD16t4S4jcFlW54oYY70lFU
-         z8Wg==
-X-Forwarded-Encrypted: i=1; AJvYcCWfInEHKXWeERLGLr7Qnaf8cXdVXRr8pKwlodpxkr/ycO63aUXwaZxlU6XE/IXbqdWXmM0UyvkcJLb+sRA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwovcdTnsLUnFiRLY0TqjIXZs61H8MnjmWORR6qNs5j6/ubEsEo
-	zlG3hGQ2qezYu6/EXE+5jLlqu0rIHMw5HbyFc+7Zv9jfJF8rWbZgIyLLXDyIr+pUYhE=
-X-Gm-Gg: ASbGncv9xNsmtGTd1dGysvWesog1QTPabvfPtpTDCLhvrweG3XkPbxHY1MLiWxSNYbX
-	y7v7e9mlPLBo+NwSkjrmLUVbWZy2H14mEcxlOiAl2bVlI3svm4Jj9dzcx5IzZTKO7xgLtzL3fl9
-	alxB5upK7eN9l2Acmdw1ulIy0TkBqpQNCR4REsKDxKZIkPJNgHYViQuCjdEs6+ak1o/dcOI8axQ
-	fTd9kt0i+m2Js1lu75l4HdvlFU/IDyNZupKQMcfwkVkM86pWb/G0hXpJ+r/E7H7Sk6Vqv2I5W3Z
-	hapKJlJj8GeZt7Yjv3Tvqp9Ey5vNGTxLzi/2YucNZY+c9gE1GBnMkc0ST2osIclwEJNNd2cQtmt
-	C1Zw5wolF2fBE8g==
-X-Google-Smtp-Source: AGHT+IES3ifXyD0j3PvByP7vCZ00BMKCLJoV59bgFS9BgxMTVRCSsT0jxN+o23wdcE+SKI61YC0zEw==
-X-Received: by 2002:a05:600c:34d5:b0:43c:e7a7:1e76 with SMTP id 5b1f17b1804b1-442fefd5e7fmr17195875e9.1.1747387256441;
-        Fri, 16 May 2025 02:20:56 -0700 (PDT)
-Received: from mai.linaro.org (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a35ca4d263sm2210297f8f.3.2025.05.16.02.20.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 May 2025 02:20:55 -0700 (PDT)
-Date: Fri, 16 May 2025 11:20:54 +0200
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Thierry Reding <treding@nvidia.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>, linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 1/5] soc: tegra: fuse: add Tegra114 nvmem cells and
- fuse lookups
-Message-ID: <aCcDdqXo_d34BHpE@mai.linaro.org>
-References: <20250321145326.113211-1-clamor95@gmail.com>
- <20250321145326.113211-2-clamor95@gmail.com>
+	s=arc-20240116; t=1747387892; c=relaxed/simple;
+	bh=46Wom2JNnd0VAYDNrrzY9gWvmu9C6AMWiAQqgHf94Ck=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=BNG5eyYFgEr6RrU6Lw9To82yy5DPxMU9+xusqp4veR4E0jZJHupCfQLeLLnle5vsFwARLmlhWSaC1/FeFvHs+CFlhwUyr+vQgsMakz0Ey3aQ/GuX0yDrIIDbkF9PPh7kMyqB1n1GVgNo+vDO8RPX9CZIXK0/AzaiSUGLGdICXf4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; arc=none smtp.client-ip=81.70.192.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=honor.com
+Received: from w003.hihonor.com (unknown [10.68.17.88])
+	by mta22.hihonor.com (SkyGuard) with ESMTPS id 4ZzMGZ02P2zYl3Ls;
+	Fri, 16 May 2025 17:29:10 +0800 (CST)
+Received: from a010.hihonor.com (10.68.16.52) by w003.hihonor.com
+ (10.68.17.88) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 16 May
+ 2025 17:30:59 +0800
+Received: from localhost.localdomain (10.144.18.117) by a010.hihonor.com
+ (10.68.16.52) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 16 May
+ 2025 17:30:58 +0800
+From: wangtao <tao.wangtao@honor.com>
+To: <sumit.semwal@linaro.org>, <christian.koenig@amd.com>,
+	<benjamin.gaignard@collabora.com>, <Brian.Starkey@arm.com>,
+	<jstultz@google.com>, <tjmercier@google.com>
+CC: <linux-media@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+	<linaro-mm-sig@lists.linaro.org>, <linux-kernel@vger.kernel.org>,
+	<bintian.wang@honor.com>, <yipengxiang@honor.com>, <liulu.liu@honor.com>,
+	<feng.han@honor.com>, wangtao <tao.wangtao@honor.com>
+Subject: [PATCH v2 0/2] dma-buf: Add direct I/O support via DMA_BUF_IOCTL_RW_FILE
+Date: Fri, 16 May 2025 17:21:46 +0800
+Message-ID: <20250516092148.12778-1-tao.wangtao@honor.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250321145326.113211-2-clamor95@gmail.com>
+Content-Type: text/plain
+X-ClientProxiedBy: w002.hihonor.com (10.68.28.120) To a010.hihonor.com
+ (10.68.16.52)
 
-On Fri, Mar 21, 2025 at 04:53:22PM +0200, Svyatoslav Ryhel wrote:
-> Add missing Tegra114 nvmem cells and fuse lookups which were added for
-> Tegra124+ but omitted for Tegra114.
-> 
-> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> ---
->  drivers/soc/tegra/fuse/fuse-tegra30.c | 122 ++++++++++++++++++++++++++
->  1 file changed, 122 insertions(+)
-> 
-> diff --git a/drivers/soc/tegra/fuse/fuse-tegra30.c b/drivers/soc/tegra/fuse/fuse-tegra30.c
+Introduce DMA_BUF_IOCTL_RW_FILE ioctl for direct file I/O on dma-buf objects.
 
-Why this code does not end up in a fuse-tegra114.c ? (as there is
-speedo-tegra114.c along in the directory) ?
+Current flow:
+1. Allocate dma-buf (buf_fd)       # Get buffer descriptor
+2. Map memory (vaddr)              # Access via virtual address
+3. File ops: open/lseek/read       # Read into mapped memory
+
+Problem:
+- No direct I/O support in dmabuf
+- 70% read time spent on page cache & memcpy
+- High latency/power with buffer I/O
+
+Solution:
+Add rw_file callback in exporter. When holding sgtable exclusively:
+- Build bio_vec and set IOCB_DIRECT flag
+- Use vfs_iocb_iter_read for direct I/O
+
+Improved usage:
+    dmabuf_fd = dmabuf_alloc(len, heap_fd)
+    file_fd = open(file_path, O_RDONLY)
+    if (direct_io) arg.flags |= DMA_BUF_RW_FLAGS_DIRECT
+    ioctl(dmabuf_fd, DMA_BUF_IOCTL_RW_FILE, &arg)
+
+Performance gains:
+- Throughput: 1032MB/s -> 3776MB/s (UFS4.0 @4GB/s)
+- Zero page cache overhead
+- Direct path eliminates memory copies
+
+Use cases:
+- AI model loading
+- Real-time data streaming
+- Task snapshot storage
+
+vs udmabuf:
+- udmabuf creation slower
+- udmabuf direct I/O slower than dmabuf direct I/O
+- sendfile still has 1 copy vs dmabuf's zero-copy
+
+Test (32x32MB buffer, 1GB file, UFS @4GB/s, CPU @1GHZ):
+Metric                 | alloc (ms) | read (ms) | total (ms)
+-----------------------|------------|-----------|-----------
+udmabuf buffer read    | 539        | 2017      | 2555
+udmabuf direct read    | 522        | 658       | 1179
+udmabuf buffer sendfile| 505        | 1040      | 1546
+udmabuf direct sendfile| 510        | 2269      | 2780
+dmabuf buffer read     | 51         | 1068      | 1118
+patch 1-2 direct read  | 52         | 297       | 349
+
+v1: https://lore.kernel.org/all/20250513092803.2096-1-tao.wangtao@honor.com
+v1 -> v2:
+  Dma-buf exporter verify exclusive access to the dmabuf's sgtable.
+
+wangtao (2):
+  dmabuf: add DMA_BUF_IOCTL_RW_FILE
+  dmabuf/heaps: implement DMA_BUF_IOCTL_RW_FILE for system_heap
+
+ drivers/dma-buf/dma-buf.c           |   8 ++
+ drivers/dma-buf/heaps/system_heap.c | 121 ++++++++++++++++++++++++++++
+ include/linux/dma-buf.h             |  15 ++++
+ include/uapi/linux/dma-buf.h        |  28 +++++++
+ 4 files changed, 172 insertions(+)
 
 -- 
+2.17.1
 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
 
