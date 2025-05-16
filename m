@@ -1,187 +1,208 @@
-Return-Path: <linux-kernel+bounces-651497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-651506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61F9EAB9F48
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 17:04:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF57BAB9F5F
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 17:08:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01496A2573C
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 15:00:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DBFC417FC45
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 15:03:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA41A1F4717;
-	Fri, 16 May 2025 14:58:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ADB01D47AD;
+	Fri, 16 May 2025 14:59:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V6xMM9Jw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="HsMV7N3M"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB2101F2BAB;
-	Fri, 16 May 2025 14:58:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89B691C84BB
+	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 14:59:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747407526; cv=none; b=ijB6i7Kcvb9mtu4+tDlj1E803NOeHIlMz2l9e4M2gg/84bAYxSqBYkqFErCMSdnPAnbyTSeF9E2OgUEfZHCsvEIef8SmRXIgWw3QMbUfAWnDUPLc33ej+vl+OeCkkkfhiZS52kxRe+njMLs62jy1vlKeXG8H7dvNzkhyqAIPmvg=
+	t=1747407560; cv=none; b=a82e3tylpICSh52cWzvNO2r59ZbXCwDNc0fJt/2IVy+8lk2188MZX/QcL3M8IVT82Ik2suBQSGfhwrWYjMryqOl4zI30tr/Ad7EQiQvYXcMAx04KCmYdMQ54WnnLYPrLaPPcqQ6UWOicxLzlMNo71KZBweTq+roWDO+H0Yc+E04=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747407526; c=relaxed/simple;
-	bh=hDbT6l8Ra4g1YkirifZKoYMzeq+3uNXkWZ7n3nMfPI8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=J8yScT+TKpYq0ow1gWD37zOuimhcVY5HGfNKnGfu5JZ223/p/aCd0LJ/Fm2bFluozhdAyCvPrZs05SC4ebuL68BQ5DUCAAs2YedY2USdWSGM/nlYm0mQdjw1T/TxB3e6bBKxTdaApYK1mWInummIB1RN5fCbguoZxWzPrKUfSik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V6xMM9Jw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4EBECC4CEF9;
-	Fri, 16 May 2025 14:58:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747407525;
-	bh=hDbT6l8Ra4g1YkirifZKoYMzeq+3uNXkWZ7n3nMfPI8=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=V6xMM9JwEfvlz1axejebsqy7HHf6Fip3sstL6Sgp+uQ/M+5YQpvGbMSj7tWa7P4Kh
-	 gPzHqZct2qk6Jj2jZ3KWGdr9FkAioGUV5xb8O3uhHJ7Ij1OnApX9wR1FaMjGQIx4nQ
-	 YXgkij3UEeE8qCfCiEhDzy/O//cmoJT9Bd7Ngfw6xJERTATXOmM8i0ku9jAcgUwWVz
-	 vqdk6Bpuf4mnYOm84fkg3qtzwA7+IFO250Y6zuFhXuYq+2M+cxA0HCqPlXwMGYIuJg
-	 pM4ZuFeofvURRluv165gKSjhz128QC86DfzOofsfFarLShF7HQr7wX4ybN/17+3L3n
-	 Rwgq3d2ir+MNg==
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-b26df8f44e6so1883008a12.2;
-        Fri, 16 May 2025 07:58:45 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU0pgWrUFR+HSRruF2rRUUWD26nqwr1rZOPyPQQ332K++0NS8N+qb2825+CnAhdY3QTONBHa9+hAIw=@vger.kernel.org, AJvYcCV43CZXYypZ6nBEc2OGVuRATHydMvqqjH2EEzRb6gvzvEAJBlLE5+7bn3w1HDz/lVPCWNKx8khVn9wyjzs=@vger.kernel.org, AJvYcCWXCl5w8k4PHrY/S/VolN5ENT8+H3vb8iTg6gweqdSyn2HXAb45AyxyTH66xU6ytXCCXF1123p3JdIt@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyi+lHkNqxK3CXJtsEVEKxBq5sq9UlqON8Zrm5Tlp6KYAFzR+Z+
-	4/4WRNKPsbDKArxwMKZq8t87brf+DYQoEunAADEsqTgJEKNPKdGFQ+AO9vO9nk08b68O+4apNhA
-	GYINWYLCf8uyHNet8CnTVHP0xVrDByEE=
-X-Google-Smtp-Source: AGHT+IF5oHQ3XiAHYu26SgYpqkEnmMVmix54PXMDrlWr+tTbxJJdHTghAEF9U7opguKYaqW8+b2I34wPBroq6Ou90Xg=
-X-Received: by 2002:a05:6820:1792:b0:608:3f1d:bbdb with SMTP id
- 006d021491bc7-609f37ac4d0mr1916015eaf.8.1747407513779; Fri, 16 May 2025
- 07:58:33 -0700 (PDT)
+	s=arc-20240116; t=1747407560; c=relaxed/simple;
+	bh=cXNyu6wGlniSomvsFvAqW5/72I3yBkBq5fuIF92Y3cg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hD9AZCEM6lQ0BE798y9kt1dAtXj6rIpXeSGylPOO7iLQJFyd69UcwmS30BtIfjgBD0F0gYX5kSOYuye8IoXqsQ9uSJEEy6ue4NqgM0d9UiJxZG1sE/hyfhYrFDyEHrbT/wFSJeXggQs9MRZ9P7PSF9pSaZIqDhdokUEpMktYTYc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=HsMV7N3M; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54GC6EhJ007889
+	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 14:59:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	90slheclqHTeFlUy8kLs7MTzw3fm6eIhnYeb+zUtODQ=; b=HsMV7N3MCu1q1T5B
+	bKezIwRscC1Nqfr/1En56HB5XBQ4yewcbBMUReoLYHSo+THMPx0Vkn92M9rUvFW9
+	LUGgb694+Rr7LhG2Bb+D8V50MsjtpoWOk56mqu8vjvda9RbP06dsYEOPyxjAJHbl
+	iemC4vM9SgP7Fg5C8EpGM8gZJWyh7Fbr1qKF2+6W+PgDU4Zo0cDplueiSTw8WQBo
+	BEAzhGDyO0YI/N0AFFYInCS/p9W9B3Xo85JlfueNraQkgGkuTS50Ey0diHI3f6/O
+	8Y/A6xQDcMjggGZ+Ugz1BjJa2Db8bj7iaZGkMbJnib+tcKSNyXofBPs2Vlxxweij
+	kdthvw==
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46mbcq28ex-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 14:59:16 +0000 (GMT)
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-22eb21a2788so30879675ad.2
+        for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 07:59:16 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747407555; x=1748012355;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=90slheclqHTeFlUy8kLs7MTzw3fm6eIhnYeb+zUtODQ=;
+        b=cCbVBZ39YyjT8693jqrdwDRHcduotOjNu+XPW7dd/wA1ZLh8D/lxDm7FlO20A2F7Ua
+         4hxZLWahFY9hrMb9675hQ3133c571ELz/0kJ24izXQkMjzevaQ0oI+PDA10dWWdE1uSA
+         /dRGz7VR7Xkc30qatcPewlk6tvIvO+tSyP99xYJmO8i2mVvcJS3bo3t4DqHDkZO15RP8
+         UIb+0Rn8QR+222yr6kl5sEMx7j0FigPFmEswuNDcrTCAMuTnP3QWsHfTzjectYU14wNs
+         1h2J+/vbb2LLwqs/5qY0kuWXZPVbANyZ5Apw0BWOBx82FdjuGxjIXQgRjm7CuUvqX5Yc
+         hVsA==
+X-Forwarded-Encrypted: i=1; AJvYcCUt4ayGhWCp2n76D6PqNmZVXCrJ9U6H+SduVRHqCNR3BoBdcD1TzOdkldEplvsmNFHULCY20OzEzVjFwRw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxxSrhw0Q4DSTAfN1VhZoC2kVr7duzZj+2mUOSaw1xosOPqIhWP
+	MxXUo1GNh5SuFTIkTF0GRzMod2IBSX8L2N8r8Bb5f58uIQA2ET2kZVkPyUfDTKkXCRKQXFUGQuO
+	vJPoroYgUjVo3R8WZENjoFJuOUx7TbQzHi5s39IhdLZiCi8DA/BBzPBpAtYgpwxc9HEY=
+X-Gm-Gg: ASbGncuw6Zzyi+0kZaS3gvOgeO/znB8gY1mayCCXb+wGO8mpYQwxzcDJemj+lYFGZfN
+	WBFuhajktdrt7Wh4XNr95DO6WAFGK/nNLlWOdTKLozkqJeHHI8avQ/6DEYSlNzJYl7d84rcCabE
+	dYOJN5xfy3f2W3bQnrJtSLz6n2XOSNXaRns/GX0ugpn69F2CGKEmBD1HW0Mszi73f0nj7bIcVM1
+	93bQ4vLygc0SOwdEpDd80NrMp7h8qOXINhBJOb0CslNhaTeC2CxtaVzlzds9U86ExA+7HhSJqbZ
+	B1p2r1W7g7BVtNNTMGSMawhH4SQbVZ42PCtc5XJU7YclkuIBKVb+KH1ia/6dXQ==
+X-Received: by 2002:a17:902:cecf:b0:231:b407:db41 with SMTP id d9443c01a7336-231d43bf736mr44889465ad.27.1747407555416;
+        Fri, 16 May 2025 07:59:15 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE9QUuer/H2zXnlCjjwWpwBnKAXckxeSB/Cp2w6YMZtX7hgsrBVAG8oDxbzoZZTSRVT91y46w==
+X-Received: by 2002:a17:902:cecf:b0:231:b407:db41 with SMTP id d9443c01a7336-231d43bf736mr44889065ad.27.1747407554961;
+        Fri, 16 May 2025 07:59:14 -0700 (PDT)
+Received: from [10.226.59.182] (i-global254.qualcomm.com. [199.106.103.254])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-231d4e97798sm15328575ad.147.2025.05.16.07.59.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 16 May 2025 07:59:14 -0700 (PDT)
+Message-ID: <f6eac84d-3d67-4f99-a9c5-a9f03d748010@oss.qualcomm.com>
+Date: Fri, 16 May 2025 08:59:11 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250514193406.3998101-1-superm1@kernel.org> <20250514193406.3998101-2-superm1@kernel.org>
-In-Reply-To: <20250514193406.3998101-2-superm1@kernel.org>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Fri, 16 May 2025 16:58:22 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0jifqTP_eZ33nBmKPCuLWrrVF_0jNGf5CpHU6nXuK8qBw@mail.gmail.com>
-X-Gm-Features: AX0GCFvRVOcB0kGKWz9Xrc6Hm7LoXkhsAklO5VHQqK_W1PeYhcRLJ3-5UfSo-D0
-Message-ID: <CAJZ5v0jifqTP_eZ33nBmKPCuLWrrVF_0jNGf5CpHU6nXuK8qBw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] PM: Use hibernate flows for system power off
-To: Mario Limonciello <superm1@kernel.org>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Alex Deucher <alexander.deucher@amd.com>, 
-	Bjorn Helgaas <bhelgaas@google.com>, 
-	"open list:RADEON and AMDGPU DRM DRIVERS" <amd-gfx@lists.freedesktop.org>, 
-	"open list:HIBERNATION (aka Software Suspend, aka swsusp)" <linux-pm@vger.kernel.org>, 
-	"open list:PCI SUBSYSTEM" <linux-pci@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
-	Mario Limonciello <mario.limonciello@amd.com>, AceLan Kao <acelan.kao@canonical.com>, 
-	Kai-Heng Feng <kaihengf@nvidia.com>, Mark Pearson <mpearson-lenovo@squebb.ca>, 
-	=?UTF-8?Q?Merthan_Karaka=C5=9F?= <m3rthn.k@gmail.com>, 
-	Denis Benato <benato.denis96@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5] bus: mhi: host: don't free bhie tables during
+ suspend/hibernation
+To: Muhammad Usama Anjum <usama.anjum@collabora.com>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Jeff Johnson <jjohnson@kernel.org>,
+        Youssef Samir
+ <quic_yabdulra@quicinc.com>,
+        Matthew Leung <quic_mattleun@quicinc.com>, Yan Zhen <yanzhen@vivo.com>,
+        Alex Elder <elder@kernel.org>, Kunwu Chan <chentao@kylinos.cn>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jacek Lawrynowicz <jacek.lawrynowicz@linux.intel.com>,
+        "Dr. David Alan Gilbert" <linux@treblig.org>
+Cc: kernel@collabora.com, sebastian.reichel@collabora.com,
+        Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
+        Baochen Qiang <quic_bqiang@quicinc.com>, mhi@lists.linux.dev,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-wireless@vger.kernel.org, ath11k@lists.infradead.org,
+        ath12k@lists.infradead.org
+References: <20250514081447.279981-1-usama.anjum@collabora.com>
+Content-Language: en-US
+From: Jeff Hugo <jeff.hugo@oss.qualcomm.com>
+In-Reply-To: <20250514081447.279981-1-usama.anjum@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: __Kg3l8EE9y7Nbq5zW60YVrtxlLwRYSI
+X-Proofpoint-ORIG-GUID: __Kg3l8EE9y7Nbq5zW60YVrtxlLwRYSI
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTE2MDE0NSBTYWx0ZWRfX/3YNTpDcAs+d
+ /p9rABXzRomANfMBylW0yvO6evX3ZArAUBOl0oOswGnxPXd6vVboc/JrBk8GaA4fnE30p9tHab/
+ Qh70KyDieq7Su4RcxopOtMnIrlmI7qfuOtzqsc1WpE4bVUuBwe3+zr2VLWyM2p0WrMqTky/e8LF
+ T8DXDYyVDboPXpL2M+/bhj02dHKWJTTYkbYPNhXQoJ+tolTXKcMAmzf+ujSyWL/qPQKs5Wx/NaR
+ 1QpkkoxnLF2ZJ+a8hpXe1WLt+B3KTTrddITzMAvRNU+NrQ1hXQx0u1fcBDZaRS1W2QIeme6OMqb
+ 0T7mJ6aWETNhpEIiS0ZhOM1p9oY6JdlTO+7uoMqlNhNsF11XDL8tGywjnfSeE1KlOfszweWJ8/n
+ EJizDTKlLf9664m0Lsq6sbBuZNZtaryY8aj7QAFEfPsXvoPkyqyTtFtuYzDAAGiOp9HPsfxk
+X-Authority-Analysis: v=2.4 cv=KcvSsRYD c=1 sm=1 tr=0 ts=682752c4 cx=c_pps
+ a=IZJwPbhc+fLeJZngyXXI0A==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8
+ a=EUspDBNiAAAA:8 a=QX4gbG5DAAAA:8 a=rJ0JV_LFfDDBQ4JBDEYA:9 a=QEXdDO2ut3YA:10
+ a=uG9DUKGECoFWVXl0Dc02:22 a=TjNXssC_j7lpFel5tvFf:22 a=AbAUZ8qAyYyZVLSsDulk:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-16_05,2025-05-16_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 bulkscore=0 clxscore=1015 adultscore=0 phishscore=0
+ lowpriorityscore=0 mlxlogscore=999 spamscore=0 malwarescore=0 impostorscore=0
+ mlxscore=0 suspectscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505070000
+ definitions=main-2505160145
 
-On Wed, May 14, 2025 at 9:34=E2=80=AFPM Mario Limonciello <superm1@kernel.o=
-rg> wrote:
->
-> From: Mario Limonciello <mario.limonciello@amd.com>
->
-> When the system is powered off the kernel will call device_shutdown()
-> which will issue callbacks into PCI core to wake up a device and call
-> it's shutdown() callback.  This will leave devices in ACPI D0 which can
-> cause some devices to misbehave with spurious wakeups and also leave some
-> devices on which will consume power needlessly.
->
-> The issue won't happen if the device is in D3 before system shutdown, so
-> putting device to low power state before shutdown solves the issue.
->
-> ACPI Spec 6.5, "7.4.2.5 System \_S4 State" says "Devices states are
-> compatible with the current Power Resource states. In other words, all
-> devices are in the D3 state when the system state is S4."
->
-> The following "7.4.2.6 System \_S5 State (Soft Off)" states "The S5
-> state is similar to the S4 state except that OSPM does not save any
-> context." so it's safe to assume devices should be at D3 for S5.
->
-> To accomplish this, modify the PM core to call all the device hibernate
-> callbacks when turning off the system when the kernel is compiled with
-> hibernate support. If compiled without hibernate support or hibernate fai=
-ls
-> fall back into the previous shutdown flow.
->
-> Cc: AceLan Kao <acelan.kao@canonical.com>
-> Cc: Kai-Heng Feng <kaihengf@nvidia.com>
-> Cc: Mark Pearson <mpearson-lenovo@squebb.ca>
-> Cc: Merthan Karaka=C5=9F <m3rthn.k@gmail.com>
-> Tested-by: Denis Benato <benato.denis96@gmail.com>
-> Link: https://lore.kernel.org/linux-pci/20231213182656.6165-1-mario.limon=
-ciello@amd.com/
-> Link: https://lore.kernel.org/linux-pci/20250506041934.1409302-1-superm1@=
-kernel.org/
-> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+On 5/14/2025 2:14 AM, Muhammad Usama Anjum wrote:
+> Fix dma_direct_alloc() failure at resume time during bhie_table
+> allocation because of memory pressure. There is a report where at
+> resume time, the memory from the dma doesn't get allocated and MHI
+> fails to re-initialize.
+> 
+> To fix it, don't free the memory at power down during suspend /
+> hibernation. Instead, use the same allocated memory again after every
+> resume / hibernation. This patch has been tested with resume and
+> hibernation both.
+> 
+> There are two allocations of bhie; rddm and fbc. Optimize both of those
+
+There are 3, but you touch 2.  I just commented on this in v4.  Only 
+touching two is fine (the device for the 3rd one doesn't need this), but 
+the documentation must be accurate.
+
+> allocations. The rddm is of constant size for a given hardware. While
+> the fbc_image size depends on the firmware. If the firmware changes,
+> we'll free and allocate new memory for it. This patch is moticated from
+
+moticated?  Motivated maybe?
+
+> the ath12k [1] and ath11k [2] patches. They don't free the memory and
+> reuse the same memory if new size is same. The firmware caching hasn't
+> been implemented for the drivers other than the nouveau. (The changing
+> of firmware isn't tested/supported for wireless drivers. But let's
+> follow the example patches here.)
+> 
+> [1] https://lore.kernel.org/all/20240419034034.2842-1-quic_bqiang@quicinc.com/
+> [2] https://lore.kernel.org/all/20220506141448.10340-1-quic_akolli@quicinc.com/
+> 
+> Tested-on: WCN6855 WLAN.HSP.1.1-03926.13-QCAHSPSWPL_V2_SILICONZ_CE-2.52297.6
+> Tested-on: WCN7850 hw2.0 WLAN.HMT.1.1.c5-00284-QCAHMTSWPL_V1.0_V2.0_SILICONZ-3
+> 
+> Acked-by: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
+> Tested-by: Baochen Qiang <quic_bqiang@quicinc.com>
+> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
 > ---
-> v2:
->  * Handle failures to hibernate (fall back to shutdown)
->  * Don't use dedicated events
->  * Only allow under CONFIG_HIBERNATE_CALLBACKS
-> ---
->  kernel/reboot.c | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
->
-> diff --git a/kernel/reboot.c b/kernel/reboot.c
-> index ec087827c85cd..52f5e6e36a6f8 100644
-> --- a/kernel/reboot.c
-> +++ b/kernel/reboot.c
-> @@ -13,6 +13,7 @@
->  #include <linux/kexec.h>
->  #include <linux/kmod.h>
->  #include <linux/kmsg_dump.h>
-> +#include <linux/pm.h>
->  #include <linux/reboot.h>
->  #include <linux/suspend.h>
->  #include <linux/syscalls.h>
-> @@ -305,6 +306,17 @@ static void kernel_shutdown_prepare(enum system_stat=
-es state)
->                 (state =3D=3D SYSTEM_HALT) ? SYS_HALT : SYS_POWER_OFF, NU=
-LL);
->         system_state =3D state;
->         usermodehelper_disable();
-> +#ifdef CONFIG_HIBERNATE_CALLBACKS
-> +       if (dpm_suspend_start(PMSG_HIBERNATE))
-> +               goto resume_devices;
+> Changes since v1:
+> - Don't free bhie tables during suspend/hibernation only
+> - Handle fbc_image changed size correctly
+> - Remove fbc_image getting set to NULL in *free_bhie_table()
+> 
+> Changes since v2:
+> - Remove the new mhi_partial_unprepare_after_power_down() and instead
+>    update mhi_power_down_keep_dev() to use
+>    mhi_power_down_unprepare_keep_dev() as suggested by Mani
+> - Update all users of this API such as ath12k (previously only ath11k
+>    was updated)
+> - Define prev_fw_sz in docs
+> - Do better alignment of comments
+> 
+> Changes since v3:
+> - Fix state machine of ath12k by setting ATH12K_MHI_DEINIT with
+>    ATH12K_MHI_POWER_OFF_KEEP_DEV state (Thanks Sebastian for testing and
+>    finding the problem)
+> - Use static with mhi_power_down_unprepare_keep_dev()
+> - Remove crash log as it was showing that kworker wasn't able to
+>    allocate memory.
+> 
+> Changes since v4:
+> - Update desctiption
 
-A failure of one device may trigger a cascade of failures when trying
-to resume devices and it is not even necessary to resume the ones that
-have been powered off successfully.
+While I'm commenting on spelling, "description"
 
-IMV this should just ignore errors during the processing of devices,
-so maybe introduce PMSG_POWEROFF for it?
 
-It should also ignore wakeup events that occur while devices are powered of=
-f.
-
-> +       if (dpm_suspend_end(PMSG_HIBERNATE))
-> +               goto resume_devices;
-> +       return;
-> +
-> +resume_devices:
-> +       pr_emerg("Failed to power off devices, using shutdown instead.\n"=
-);
-> +       dpm_resume_end(PMSG_RESTORE);
-
-Unfortunately, PMSG_RESTORE is not the right resume action for
-PMSG_HIBERNATE because it may not power-up things (some drivers assume
-that the restore kernel will power-up devices and so they don't do it
-in "restore" callbacks).
-
-I do realize that hibernation uses it to reverse PMSG_HIBERNATE, but
-it should not do that either.  That may be fixed later, though.
-
-> +#endif
->         device_shutdown();
->  }
->  /**
-> --
-
-I'd prefer to get back to this series after the 6.16 merge window
-starts.  It is sort of last minute for 6.16 and it is far from ready
-IMV.
-
-Thanks!
+Code looks ok to me. I think we just need to hash out some of the 
+documentation and this will be good to go.
 
