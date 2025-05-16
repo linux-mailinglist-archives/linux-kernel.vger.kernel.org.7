@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-651239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-651241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BECEAB9C13
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 14:31:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 124BBAB9C16
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 14:32:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7B1B3A36B1
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 12:31:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 79437502902
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 12:32:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CF8123D2AC;
-	Fri, 16 May 2025 12:31:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD73123E32E;
+	Fri, 16 May 2025 12:32:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hOFO6vsW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dP74h7WP"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A38A1E50E;
-	Fri, 16 May 2025 12:31:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 300C91E871;
+	Fri, 16 May 2025 12:32:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747398677; cv=none; b=i6+Ci3iinIKSi9TLY2BLBDiFrem2GqZSdM1wQ4qdnMN5zEKmcyb3C1SJlF4fXvOQ8Z3d5ozLUGlja5uw7nG7IhyK/Zd9K0SlfNQ4Sbgswyn8/KNgLf0z07K7nxwcG+P9jaNIcxokrmbTaKXcINTa91AUe0jVizgmoLIOhl0XrcY=
+	t=1747398756; cv=none; b=fGYgAv0apVam/Nk1hbOFg1NEb3TX9mu6c+4JyByE3lcExdjdwHHAxTJDEyzyRMB5PiEeKn/gpD1ib6Tq0daLByuuj73OnU/hPmqKKT421o9Sg6C29XW/LjbVD7WGfQ5rPgc8oWklcUTcxaDSBhciyx4GovrZjNknZKbJe7cwfHQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747398677; c=relaxed/simple;
-	bh=P6XGWGJuATalMapJ3ehd2QZWwZCyzu5iLtSo/UIb75o=;
+	s=arc-20240116; t=1747398756; c=relaxed/simple;
+	bh=LZPPcB2Se1xayB1f1+P9TFpe9Vt4mOCdBfx1Vac89o0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dVoZGwh/2s8iyo7tCM5BaXLPCOvkNQipctonGd3TEkKfDfVIpSX5wqA41Ihoto+BjLOZs9ac+j0zR38UaehKtOk7KLuQOdtNXCA6weEq79yM8pflla8Cd0xQc1wic5WuPam+I04N8c1Z4wFJ28XDoWDKr0jZNxzJjSk1nsCDq/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hOFO6vsW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA4B3C4CEE4;
-	Fri, 16 May 2025 12:31:16 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z+uFuRMwIrh+a7gN30Yvxe+U5Rr1r4G3s+S4POfUvus20IQJMvmvZ9qoS/P2dvJ1H3UZTzblBvkIet3V4DJYCVtw8LVlV12rsMQ4eeT7lOgNzRwl/NbD2QOHNmKzfNKK+S8CjyPxeNz5qmyl5yovdaxuVTJuOQQUgmny16D/o7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dP74h7WP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C9E6C4CEE4;
+	Fri, 16 May 2025 12:32:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747398677;
-	bh=P6XGWGJuATalMapJ3ehd2QZWwZCyzu5iLtSo/UIb75o=;
+	s=k20201202; t=1747398756;
+	bh=LZPPcB2Se1xayB1f1+P9TFpe9Vt4mOCdBfx1Vac89o0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hOFO6vsWjIVTN016AUqDm7zPSIHzt9FFUIw/H8Ec/lBLBGIHZ2WWpO0nHjPzfbuAQ
-	 hE/JDMXKgQhJtvg5V5KGovTQAF8b+3gbKZse1BEXQObJVrmz/RvLaYiS6OcMgvaZBp
-	 7nbwCKz9246cDnTHBPQQBwgZ/NdHAqHeLJHMDiBG1aNk3FCTuFpeShNc/Y+C1RG7D1
-	 tqaTVjqXe9jnNC8L+ZOf6+TAmNNeYqXUm8EVzeq/TaUAt0ZiSufqlUggvc5mvq0jYf
-	 hNJ82SZLbRn8pLrgVjDpnxK2m+kmH9Uu2ZLZLyp72oWm6sRPxjrioc6Qdn4BUBMmFC
-	 bCvowjiID++uA==
-Date: Fri, 16 May 2025 14:31:14 +0200
+	b=dP74h7WPGpcKPl4edo/YKKy6Ak52fVBy6wsOgoSgrlwvGykV6y7+9U3qKr+705fi9
+	 nOIfJWrsOt5VjD09txTFFfMvJhoVXXKdaIgb2EctOMmS3LXB7DL5yg5AIs/p1xTH5Y
+	 DAKYumrFJRW6GrNtVhwVOPy/sEIEOiu+H/aEtC9Hk1FT9+Hf2R8xNHxXCh5gczhuyY
+	 btPEdM8HSBZycbRZl+gieZ59BTVR5UoQkSbV5LlZS/IyHclDbkcpNgt/DXQOAsPIo1
+	 zacvCQhIuRQ/kBQcGPSrM0t+XfO9EiGbE1200BSCIkAwA0tJhXEzyf+TRGl6Netk2b
+	 G+A8lFgE/ZLqg==
+Date: Fri, 16 May 2025 14:32:33 +0200
 From: Mark Brown <broonie@kernel.org>
 To: Artur Weber <aweber.kernel@gmail.com>
 Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
@@ -54,11 +54,11 @@ Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
 	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	~postmarketos/upstreaming@lists.sr.ht
-Subject: Re: [PATCH v9 7/8] regulator: bcm590xx: Rename BCM59056-specific
- data as such
-Message-ID: <aCcwEtpjpEv_FiKB@finisterre.sirena.org.uk>
+Subject: Re: [PATCH v9 8/8] regulator: bcm590xx: Add support for BCM59054
+ regulators
+Message-ID: <aCcwYc-P3wnVElVW@finisterre.sirena.org.uk>
 References: <20250515-bcm59054-v9-0-14ba0ea2ea5b@gmail.com>
- <20250515-bcm59054-v9-7-14ba0ea2ea5b@gmail.com>
+ <20250515-bcm59054-v9-8-14ba0ea2ea5b@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,38 +66,37 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="efwBYL81B3k1M8EO"
+	protocol="application/pgp-signature"; boundary="rt7h2hlvi3JLefw0"
 Content-Disposition: inline
-In-Reply-To: <20250515-bcm59054-v9-7-14ba0ea2ea5b@gmail.com>
+In-Reply-To: <20250515-bcm59054-v9-8-14ba0ea2ea5b@gmail.com>
 X-Cookie: Well begun is half done.
 
 
---efwBYL81B3k1M8EO
+--rt7h2hlvi3JLefw0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Thu, May 15, 2025 at 04:16:34PM +0200, Artur Weber wrote:
-> Previously, the driver used the BCM590XX prefix for register data
-> specific to the BCM59056. As we will be introducing other regulators
-> to this driver as well, make the BCM59056-specific values use the
-> BCM59056 prefix.
+On Thu, May 15, 2025 at 04:16:35PM +0200, Artur Weber wrote:
+> The BCM59056 and BCM59054 are very similar in terms of regulators. Add
+> the register definitions for the BCM59054 and enable support for it in
+> the driver.
 
-Reviewed-by: Mark Brown <broonie@kernel.org>
+Reviewed-by: Mark Brown <brooni@kernel.org>
 
---efwBYL81B3k1M8EO
+--rt7h2hlvi3JLefw0
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmgnMBEACgkQJNaLcl1U
-h9DqmAf/bQ7IrBsLoIk0QlWpx9mGGsEhrT5JyqKADi/mNCt74Xk0lh/8GM2pOGGJ
-T51tAPDKyrEkGIhBBKSv2vKvYR03KUuudSdkHgcBiLBkRCQAvwo20KTv5xSPaTwf
-rORiRsSiyQlGQtVrRSHDlAAaQsfiQ7gFOf7vrCuKp5MIDfLsLWSng1L0MNkXDWho
-cpz76EMmeBdvGk74HwU7aYw5GRPUrG6PR+cRVOBjK+50kHMljTI06Jh6zN3/FJLb
-4oe2JC2uYjCroAc61SW8rmjle/9KWF1/BjuLpSN3GzeHo0C91OZnS1gVeVhGm6X2
-tzeu8Zwe3YMPfwu3SEJf62XAkB4Vzw==
-=6NbA
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmgnMGAACgkQJNaLcl1U
+h9Achwf9GfRM59JFB98JmDtCZm0VP87rX1U+t2r3UHaO2db9sYgezOwwkNwQ74YC
+YVyyz/WDkhTzez4QPx/p9uDPzxq9sBuM6r6qgHFoz6AkKuzcR666OL/lz37Ugfx/
+DFxcn9o/pRIUzbVPTnN1ZCjvLAOvyySSjXi8U+8eMJA13rE1P+gcQHNDfe8xpIvz
+iSTTcPO39SY8gkNkUuLqqoItlccqf2SUhCVoQea0bGDsg0RJt/OaF5hKl/IHgVf1
+mxILPt3JnkqKIofAoSOi4eAiCmahqn1ypDTOnwBcl0CUiPSozDoXNOpWxjsx9v2l
+EE0vR1dvqKD2mRk3Mq0u3UCleLuXuw==
+=Z/pP
 -----END PGP SIGNATURE-----
 
---efwBYL81B3k1M8EO--
+--rt7h2hlvi3JLefw0--
 
