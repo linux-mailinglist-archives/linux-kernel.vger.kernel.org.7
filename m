@@ -1,112 +1,172 @@
-Return-Path: <linux-kernel+bounces-650565-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-650567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7519BAB9316
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 02:16:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C43EAB9326
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 02:23:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF2C43A52DB
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 00:15:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 056261BC5EA5
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 00:23:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BAE38836;
-	Fri, 16 May 2025 00:16:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 986096FC5;
+	Fri, 16 May 2025 00:22:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="IslUog/D"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="f+XR5A0I"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C91D17E4;
-	Fri, 16 May 2025 00:16:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E3CA15E8B
+	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 00:22:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747354570; cv=none; b=j7uSjmYLsrI8wpCc/LYuLv7dJChLrfCGJB9U1RZjgaK+jZsFFJUvEMDVk+wrqcKFezvQmiyVy2iuL8VQUtPEWfPo4/AWAPvS/QGBvF6z0wrWxM+9YYfviN0MpZzUlXqc0vOaXn4WXTXP0JL/Xnin2LJ/qIE4W36kNv5ciOCy7cM=
+	t=1747354956; cv=none; b=BRN9DKPmyxRzJtOVLZazKaN+JOJ0yQMnOCZN9bc65hSdoueikSKWXnXb+1oatvBSEA/XgnetVi4cIY/OEnivAkBX2YfOY7v2IVS3WifLfQOtepkBYiNyqa22s80hBWiniqbOCl9uGXjx/ps6JhZZoncMJLztpyPiCcNeRDJwQFs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747354570; c=relaxed/simple;
-	bh=p5NR/VDZKJ8yjpgeliNA7RHEjb5AW+yTp7x/ak01lxY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ceb1D6LSoFHU7JV7pVlhtgPNBljOn3pcXizBBadupVH05r9YQXWtN4qSsKDgaSaGD0Y7Ayu6SsRP4EV3TviC9Pu4K4uoX0tansEbkC2GwvD4ggdlZcoDzoY3fdyXHwTvRXyMGgpcw2x2tcUbOffu1jF7zgN3caERItyhtNv0oYU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=IslUog/D; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1747354565;
-	bh=J4XIcsUxSb8ZfiZj/Iaa/P2J+JIXvoXMCLXM7gI/t1g=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=IslUog/Dk4dKnDuiubDEJYEB3/MZO1WhEjgn/7Sz1dNyDuJXb8LnKkudiVusPBuCQ
-	 iCMXsOc3HCO11MAken6AMs8eOIGBxSwOnvyqhH/tc0mXpNTrdKR/S3T8FBho3gT1N0
-	 WDarHTC0DlUI7WxXPUvskUXPxlD1FMQzy+fBZRuUiBPtIsh7PfSW1yJdsg/VSiopYe
-	 iWpyCVYeZlp79IEDllSq1lyXZt8q5UOS0LLRtvI4ltfiDVnilwW8FcNNsWbecYiW+e
-	 o9kAG7RMIyLrxfhYdf3CQd1TiNFX4PqAW6TuamOxzPwREpMN1smugbpRWDttiEGUGE
-	 qe2b/u0i8sqkw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	s=arc-20240116; t=1747354956; c=relaxed/simple;
+	bh=9TW8mOZYka0YbshSHwE1KONB6ACt3Bc7zaWs0FWLxo4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=crXc/5XuZFmtAhjDqghW/oLezquLGDZpaxWSjmn9U9YfyfvFPfXQJZIUlGqvJTJ7MXOHNhQcDy9RvGgdef6qJIzI/TVV2hU5AnUsxbcwOUTMUYoA0kOMLIhLDf8y2tncFoPq2XGhfGyu5gQTJmaQqY46IcMTzjwbQlXrRM17sqo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=f+XR5A0I; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1747354952;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=L79G3bUaADCLMaIHySbV8zUHfQYcpHCcJ7lOsHDG9sI=;
+	b=f+XR5A0IkDqdblgUJ21alWnfe3xl5WbXwNfrqD1J1O3EQXoPQLyZXYZHpXl1ZjikPYe4CH
+	HBW4n4XkGD6lu2KkZlZocOm0ab8z346ZWHK7k1mLtZiac40i0MF9HnRM/LyFng/wqKG2j6
+	z+vcbSQPBoyApF1Dn5w5UOrhcef1Bwk=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-665-oEVTFpYuO4mDdQi3nftzwA-1; Thu,
+ 15 May 2025 20:22:28 -0400
+X-MC-Unique: oEVTFpYuO4mDdQi3nftzwA-1
+X-Mimecast-MFC-AGG-ID: oEVTFpYuO4mDdQi3nftzwA_1747354947
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Zz70P16W4z4xFt;
-	Fri, 16 May 2025 10:16:05 +1000 (AEST)
-Date: Fri, 16 May 2025 10:16:04 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Paolo Bonzini <pbonzini@redhat.com>, KVM <kvm@vger.kernel.org>
-Cc: Binbin Wu <binbin.wu@linux.intel.com>, Isaku Yamahata
- <isaku.yamahata@intel.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build warning after merge of the kvm tree
-Message-ID: <20250516101604.7261c44a@canb.auug.org.au>
-In-Reply-To: <20250409131356.48683f58@canb.auug.org.au>
-References: <20250409131356.48683f58@canb.auug.org.au>
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 15B3C1800446;
+	Fri, 16 May 2025 00:22:21 +0000 (UTC)
+Received: from localhost (unknown [10.72.112.140])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D4C9030075F7;
+	Fri, 16 May 2025 00:22:18 +0000 (UTC)
+Date: Fri, 16 May 2025 08:22:14 +0800
+From: Baoquan He <bhe@redhat.com>
+To: linux-integrity@vger.kernel.org, kexec@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org, zohar@linux.ibm.com,
+	pmenzel@molgen.mpg.de, coxu@redhat.com, ruyang@redhat.com,
+	chenste@linux.microsoft.com
+Subject: Re: [PATCH] ima: add a knob ima= to make IMA be able to be disabled
+Message-ID: <aCaFNvHbYxrCaPbe@MiWiFi-R3L-srv>
+References: <20250515233953.14685-1-bhe@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/offU.zWJ54GnTgL4.MCsxi3";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250515233953.14685-1-bhe@redhat.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
---Sig_/offU.zWJ54GnTgL4.MCsxi3
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+CC kexec list.
 
-Hi all,
+On 05/16/25 at 07:39am, Baoquan He wrote:
+> Kdump kernel doesn't need IMA functionality, and enabling IMA will cost
+> extra memory. It would be very helpful to allow IMA to be disabled for
+> kdump kernel.
+> 
+> And Coiby also mentioned that for kdump kernel incorrect ima-policy loaded
+> by systemd could cause kdump kernel hang, and it's possible the booting
+> process may be stopped by a strict, albeit syntax-correct policy and users
+> can't log into the system to fix the policy. In these cases, allowing to
+> disable IMA is very helpful too for kdump kernel.
+> 
+> Hence add a knob ima=on|off here to allow people to disable IMA in kdump
+> kenrel if needed.
+> 
+> Signed-off-by: Baoquan He <bhe@redhat.com>
+> ---
+>  .../admin-guide/kernel-parameters.txt         |  5 +++++
+>  security/integrity/ima/ima_main.c             | 22 +++++++++++++++++++
+>  2 files changed, 27 insertions(+)
+> 
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> index d9fd26b95b34..762fb6ddcc24 100644
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -2202,6 +2202,11 @@
+>  			different crypto accelerators. This option can be used
+>  			to achieve best performance for particular HW.
+>  
+> +	ima=		[IMA] Enable or disable IMA
+> +			Format: { "off" | "on" }
+> +			Default: "on"
+> +			Note that this is only useful for kdump kernel.
+> +
+>  	init=		[KNL]
+>  			Format: <full_path>
+>  			Run specified binary instead of /sbin/init as init
+> diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+> index f3e7ac513db3..07af5c6af138 100644
+> --- a/security/integrity/ima/ima_main.c
+> +++ b/security/integrity/ima/ima_main.c
+> @@ -27,6 +27,7 @@
+>  #include <linux/fs.h>
+>  #include <linux/iversion.h>
+>  #include <linux/evm.h>
+> +#include <linux/crash_dump.h>
+>  
+>  #include "ima.h"
+>  
+> @@ -38,11 +39,27 @@ int ima_appraise;
+>  
+>  int __ro_after_init ima_hash_algo = HASH_ALGO_SHA1;
+>  static int hash_setup_done;
+> +static int ima_disabled;
+>  
+>  static struct notifier_block ima_lsm_policy_notifier = {
+>  	.notifier_call = ima_lsm_policy_change,
+>  };
+>  
+> +static int __init ima_setup(char *str)
+> +{
+> +	if (strncmp(str, "off", 3) == 0)
+> +		ima_disabled = 1;
+> +	else if (strncmp(str, "on", 2) == 0)
+> +		ima_disabled = 0;
+> +	else
+> +		pr_err("Invalid ima setup option: \"%s\" , please specify ima=on|off.", str);
+> +
+> +	return 1;
+> +}
+> +__setup("ima=", ima_setup);
+> +
+> +
+> +
+>  static int __init hash_setup(char *str)
+>  {
+>  	struct ima_template_desc *template_desc = ima_template_desc_current();
+> @@ -1184,6 +1201,11 @@ static int __init init_ima(void)
+>  {
+>  	int error;
+>  
+> +	if (ima_disabled && is_kdump_kernel()) {
+> +		pr_info("IMA functionality is disabled");
+> +		return 0;
+> +	}
+> +
+>  	ima_appraise_parse_cmdline();
+>  	ima_init_template_list();
+>  	hash_setup(CONFIG_IMA_DEFAULT_HASH);
+> -- 
+> 2.41.0
+> 
 
-On Wed, 9 Apr 2025 13:13:56 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
-rote:
->=20
-> After merging the kvm tree, today's linux-next build (htmldocs) produced
-> this warning:
->=20
-> Documentation/virt/kvm/x86/intel-tdx.rst:255: WARNING: Footnote [1] is no=
-t referenced. [ref.footnote]
->=20
-> Introduced by commit
->=20
->   52f52ea79a4c ("Documentation/virt/kvm: Document on Trust Domain Extensi=
-ons (TDX)")
-
-I am still seeing this warning (as of yesterday).
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/offU.zWJ54GnTgL4.MCsxi3
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmgmg8QACgkQAVBC80lX
-0Gy35wf9G9EOsTSoYAqfF2IPKIKxpF2zpc2zruIwVg1LLPN5NxPCk+jzW4fmhPHU
-aKZOzQfbV5ep2Is3QyzxVlLEXeJ5E25HxAPlEv2A1UAtIE7URgMy2bEtxfnVSxb/
-qG1lNFVUb2zjs09+kPk0adwkycfQkys1BTNDMG71vpsz71jemt6Xfoh4d+ecDsSi
-iyTH3gZiSEEq60tXLGwC0fcqGLuM9tCqzzG3TpB2HPzJz407u8Hgz/I9jFOHaFMw
-lodXVTqAty5bvOg8IpclAvPeg017hEOQJW8XYuefHjrzr7UcE3GcuedIzmdp69GU
-zR4bq7D2+3sfnCKKE3NZ//2bnXh95g==
-=pkqc
------END PGP SIGNATURE-----
-
---Sig_/offU.zWJ54GnTgL4.MCsxi3--
 
