@@ -1,52 +1,52 @@
-Return-Path: <linux-kernel+bounces-650969-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-650971-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BAA3AB9865
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 11:13:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDED2AB986A
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 11:15:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9E4E1BA6699
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 09:13:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3AA89E842D
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 09:14:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 816C022E40E;
-	Fri, 16 May 2025 09:13:14 +0000 (UTC)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46B5222F178;
+	Fri, 16 May 2025 09:15:10 +0000 (UTC)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A705C21ABBF
-	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 09:13:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BBF622F767
+	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 09:15:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747386794; cv=none; b=LfLfVHCZHBoFlx41wxHkNFFcM7gadVb7AQ9ePOZAonSic1nh+BfkROD8vTZg1UNH6zrX3hzl+D1g+C8y4/jDz617EdZg3NCk2/lGqWEDncRaEloa4G+44ZVNGqa0JE/QaCvf1AnGRIeq+t7+XCaoS/rCYzsolBGI20dMoNQkrQg=
+	t=1747386909; cv=none; b=kDi2GpiHFL0CjUTCn+NWIYdij0iepmPTfnZiTkk+NdTwI6r8M4y6sdy0i7AEkltTqEuwhOuoYZed1AmRutqXs4pXQ9IVOJnstV48JZwj1ekQA6JhvEEt8mh6vm0jq810gBgf0BEygAUPt/ONZrO4MA41jQlEN7d4cMvkbxT3XnE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747386794; c=relaxed/simple;
-	bh=ksekMZVhPXdIuET0lg2g9cXAvBNY/5XmvEQhXStTji0=;
+	s=arc-20240116; t=1747386909; c=relaxed/simple;
+	bh=dvoRulqO5sSKW2URNc81lBRhLgtG8JIRZqlFBSNK9AI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e3xmtKSFOm6ixp7jYjKEub3ScmEZ4PVvtQK2A/EK42KsH4C+xGlu9+p+mfRPFawlnBZ4H3/xwGASfS6/x2cFuDHgl05xS848Si37amgGH4yLwkrrM8PTh294neouCYKWO28jjzi6rIGpuMjcL0Y1lo0PdtpYoLKAEUoYR/A9OY0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=198.175.65.9
+	 Content-Type:Content-Disposition:In-Reply-To; b=shEzLUNkR+dq/zOKTBJhrF35ho0HS6AGg//7BkmmdIZpBAEwDrB0uREWoJ3VRTiRsTiPYuVTzZZJa0ww5HDNw4OOSR+VpYXTbCqzBnZqFp0DkiFe/pBdOI97hhEiCdVee/WxSK6kDQzrIyv8j9aIba3wDGT7NbeRIDo2gC1FLAo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=192.198.163.15
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
-X-CSE-ConnectionGUID: 978PjgOEQTOin37xaoX0Lg==
-X-CSE-MsgGUID: Lmt7C9DnQBaRvgW9/vOBeQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11434"; a="71856940"
+X-CSE-ConnectionGUID: V0FdqX5zQrOadGW6I9ft2w==
+X-CSE-MsgGUID: 54Z/RwDUTnG24MANAnCl0w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11434"; a="49490611"
 X-IronPort-AV: E=Sophos;i="6.15,293,1739865600"; 
-   d="scan'208";a="71856940"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 May 2025 02:13:12 -0700
-X-CSE-ConnectionGUID: Y87Srr0sRye6sqqtksERhw==
-X-CSE-MsgGUID: QazlszgLTlWhAADhp7qgHw==
+   d="scan'208";a="49490611"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 May 2025 02:15:08 -0700
+X-CSE-ConnectionGUID: Gw0/6v7yTMGN9LHvVZeP0Q==
+X-CSE-MsgGUID: NWywiDFrSY2Gz/+Vv2oRBw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.15,293,1739865600"; 
-   d="scan'208";a="142644054"
+   d="scan'208";a="139120727"
 Received: from smile.fi.intel.com ([10.237.72.52])
-  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 May 2025 02:13:04 -0700
+  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 May 2025 02:15:04 -0700
 Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
 	(envelope-from <andy.shevchenko@gmail.com>)
-	id 1uFr7l-000000025sp-1nBT;
-	Fri, 16 May 2025 12:13:01 +0300
-Date: Fri, 16 May 2025 12:13:01 +0300
+	id 1uFr9h-000000025u1-210K;
+	Fri, 16 May 2025 12:15:01 +0300
+Date: Fri, 16 May 2025 12:15:01 +0300
 From: Andy Shevchenko <andy.shevchenko@gmail.com>
 To: Ingo Molnar <mingo@kernel.org>
 Cc: linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@kernel.org>,
@@ -59,12 +59,13 @@ Cc: linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@kernel.org>,
 	Peter Zijlstra <peterz@infradead.org>,
 	Thomas Gleixner <tglx@linutronix.de>,
 	David Woodhouse <dwmw@amazon.co.uk>
-Subject: Re: [PATCH 05/29] x86/boot/e820: Print gaps in the E820 table
-Message-ID: <aCcBnWbfKalvndCI@smile.fi.intel.com>
+Subject: Re: [PATCH 07/29] x86/boot/e820: Print out sizes of E820 memory
+ ranges
+Message-ID: <aCcCFZtk9LWFQpf5@smile.fi.intel.com>
 References: <20250421185210.3372306-1-mingo@kernel.org>
- <20250421185210.3372306-6-mingo@kernel.org>
- <aAc6aj5FVMkwDo06@surfacebook.localdomain>
- <aCXBvRe6PrY_zlvU@gmail.com>
+ <20250421185210.3372306-8-mingo@kernel.org>
+ <aAc5Wlwj4gaBApIy@surfacebook.localdomain>
+ <aCXFdvWiNW94F24R@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,51 +74,39 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aCXBvRe6PrY_zlvU@gmail.com>
+In-Reply-To: <aCXFdvWiNW94F24R@gmail.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Thu, May 15, 2025 at 12:28:13PM +0200, Ingo Molnar wrote:
+On Thu, May 15, 2025 at 12:44:06PM +0200, Ingo Molnar wrote:
 > * Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
-> > Mon, Apr 21, 2025 at 08:51:45PM +0200, Ingo Molnar kirjoitti:
+> > Mon, Apr 21, 2025 at 08:51:47PM +0200, Ingo Molnar kirjoitti:
 
 ...
 
-> > > +		u64 range_start, range_end;
+> > > +	if (size & (SZ_1T-1))
+> > > +		pr_cont(" %4llu.%01llu TB", size/SZ_1T, 10*(size & (SZ_1T-1))/SZ_1T);
+> > > +	else
+> > > +		pr_cont(" %4llu   TB", size/SZ_1T);
+> > > +}
 > > 
-> > struct range (from range.h) and...
+> > Don't you want to use string_helpers.h provided API? 
+> > string_get_size().
 > 
-> Yeah, using those primitives makes sense, but right now the e820 code 
-> isn't using them, and it's better to have similar & unified range 
-> handling code patterns.
+> I don't think string_get_size() knows the fine distinction between:
 > 
-> In principle I wouldn't be opposed to patches that convert the e820 
-> code to <linux/range.h> types.
-
-Okay, perhaps a separate cleanup in the future. Not sure if I will have time,
-but let's see...
-
-...
-
-> > > +		if (range_start > range_end_prev) {
-> > > +			pr_info("%s: [gap %#018Lx-%#018Lx]\n",
-> > > +				who,
-> > > +				range_end_prev,
-> > > +				range_start-1);
-> > 
-> > %pra
+>     BIOS-e820: [mem 0x00000000fffc0000-0x00000000ffffffff]  256   KB device reserved
 > 
-> This would be part of any <linux/range.h> conversion patches.
+> and:
 > 
-> > with who mentioned the "gap"?
+>     BIOS-e820: [mem 0x00000000fffc0000-0x00000000ffffffff]  256.0 KB device reserved
 > 
-> Not sure I understand?
+> "256 KB" is exactly 256 KB, while "256.0 KB" denotes a value that is a 
+> bit larger than 256 KB but rounds down to 256 KB at 1 KB granularity.
+> 
+> When reading platform boot logs it's useful to know when such values 
+> are exact, at a glance.
 
-With the range.h in place and the mentioned specifier, the above will be like
-
-BIOS-e820: [mem 0x0000000000000000-0x000000000009fbff] usable
-BIOS-e820: [mem 0x000000000009fc00-0x000000000009ffff] reserved
-BIOS-e820: [range 0x00000000000a0000-0x00000000000effff] gap
-BIOS-e820: [mem 0x00000000000f0000-0x00000000000fffff] reserved
+We can patch string_size() to print precise integers without fractional part.
 
 -- 
 With Best Regards,
