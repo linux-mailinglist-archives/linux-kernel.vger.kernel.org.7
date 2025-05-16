@@ -1,392 +1,352 @@
-Return-Path: <linux-kernel+bounces-651229-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-651231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECFA4AB9BEE
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 14:23:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 58A12AB9BF3
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 14:25:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B2DA501062
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 12:23:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 394824A5E05
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 12:25:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5A7523BCF0;
-	Fri, 16 May 2025 12:23:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE1D223C8DB;
+	Fri, 16 May 2025 12:25:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="er4C+rKe"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="lwHqUuEW"
+Received: from mail-io1-f47.google.com (mail-io1-f47.google.com [209.85.166.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF2CBA32
-	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 12:23:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40D8523A989
+	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 12:25:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747398219; cv=none; b=dS/XtwAw7HSCG1NvnWpxHWrsE36Tk/DPDGWHSK3QnUMggVimFNnxnGA8M9xEuXKudwIJXU6SW0OuJqVd576kozWUpJeVbbvkz8vC9oBt7Dfq8cqnnFWiBN3SxusqZKr78Y1i+l2tY4zsiciy5PqbnA25MJl/8yLbba635lW1Q/o=
+	t=1747398319; cv=none; b=TILNzhlid4ZtqUuD+DmGiipZP67PTD8PtlZVHMF7Px8xZpuQJtTIWJFe00+w6NrGJytI3ZE9B7Pi9TpfsYOlUeSDoK3i3YrpL2xbeoQo573cqxgHaEZljqpbBuyAZOM70QhZDERiLR7ha/x5MD+Q0E+wj50b1gSx7UqiuKsorgI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747398219; c=relaxed/simple;
-	bh=5cSjmPcJFe08vCHYUQOMP0LFKhHQYhx6GlqEZsgr4Lw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bZucKJoD/mCD8oJATuD1HmJEUZaxsiZ9WDENNqxS1ak1C6FIsPNebNYBZIMNdRtn5EOC8POT7VBiO5WZf7+u8GbpUfnY9BDIrvcfWjCoAp0avFwZVEUOnVhFFbNX6Ii4XfPrvK9TOF614nzReTl7XXZvHywSHjaLNOPM9POqGlE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=er4C+rKe; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from [192.168.88.20] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 9A4C21D8;
-	Fri, 16 May 2025 14:23:10 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1747398191;
-	bh=5cSjmPcJFe08vCHYUQOMP0LFKhHQYhx6GlqEZsgr4Lw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=er4C+rKeFmATxIjgjge+HfUxkVrhHgLDcTcdUOWMIITHKdLXuAFfliDaaKNrDITTs
-	 FfOq6dic+4+PSqAbLbnHSu1paicrc+nyOvY4S1WSiOh0NtiU6+Ez/xSfdA6orF1t5k
-	 Nzp444mvm7dJTMOphOC3Pck1hFvb3RnrhPE3AqDI=
-Message-ID: <19101cd7-5b4d-416d-a00e-6657b81149a6@ideasonboard.com>
-Date: Fri, 16 May 2025 15:23:25 +0300
+	s=arc-20240116; t=1747398319; c=relaxed/simple;
+	bh=IfwHj4hXkENcr27VCiQj43X0I1+ByxSbJW7c3tceRls=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MxwNGCVKt1IKeFxidh+jtbe8wGBb8yhJLmRgzqsG6l093Uw/UM6yFcf2PQQr4o8gXAzqIroGG+Urm3ZIe8RKgXGniWBMZFkHOm5wZJFXS1JpXJ9vwNmzimOIxemA6vUTCwrV8OJKM4+ozK1F4NjAYgbdBvuBM2w5m4/WzApGxSk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=lwHqUuEW; arc=none smtp.client-ip=209.85.166.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
+Received: by mail-io1-f47.google.com with SMTP id ca18e2360f4ac-867347b8de9so105051339f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 05:25:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1747398316; x=1748003116; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dtzmSwvWraldTd8lkysDlNoQ1DXQCdHXLloM1BvhiIM=;
+        b=lwHqUuEWmu8+2TWR90qRcRsZQA8SQnqMsDsflSzOUFeempZVG2sIFYA7xT4OfmXZ8G
+         3kXpwsJkHdd3hIjqIutnfgn6YQJ9NaZrtiTkInAKpcyHJtOSFEIEdkD9Q3ZrtpuBLEFw
+         l2qSqID83xXJvTpbRkjjp9spni5qN/07c9a7lzgEZvsm7kofoUoMnuSs+xmJaBs0YygO
+         r4K4a3TUKT1Sm4KFdCChINoHsb3j6zs3ONyfYl/LALOdXJl9mHYEuIgpaYw+K2BcdW7t
+         eY7EbEsR1VZxOuD1i/FRYKhnpvWcMMmIcqbxMCnFFVmQlJr4mL4tdZwc9SaLfkDqCKWP
+         2Q6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747398316; x=1748003116;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dtzmSwvWraldTd8lkysDlNoQ1DXQCdHXLloM1BvhiIM=;
+        b=Jbp3zNCOZbXzPe2MdqDxXDTitUFsZbdFNGHXFfU1SCgejBZKt+1c/5UnhLL9LiBGB7
+         kOH4LSHUQRBNf+DZI55rpvX2jyr1CWNSa07TWufvTEbIxeS2NiOzfOsCepC5KS53VBOU
+         X9JSRIj8O3wFKuaw6docCMTDCdYP7RtGCAoIAb7CWQTOAHuW8BtZcMImbs1PkKtnl1cY
+         22OhxQ0vEMpS4sjkK9wL7bwmfeqNHwdZ42RXJRQ5ZwClRPa5i1YGA4Zo77FOWHNW812B
+         yDexP1k0mDeKsEFXFY2DaQcv+weWiCg5bF4TPuaciihrs+lzTrCEc48un9LC3XXDqkPT
+         qVsw==
+X-Forwarded-Encrypted: i=1; AJvYcCWhz/Wqh/rmubevSyg4fnLFD1eScG5HtjYIlAWeExAuwHh1hVKEjTPUhI/1/w5Orme8BVrBuW+nhjdgpdI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxEUtuE3s4ViQSDjDh2M5lzYBVdTY6PHmnbaveF9gaF1xXy0cFz
+	JdNPSKl7t/qGJEjRj54W1UFQYayTGWmPnHgw2r4FhRH3M54besmjSOL4XD8k8ASl54XsmdD1ot7
+	X6TFw17Nql198LZ6Ewlqe4VqpJ1Ah0EUxku2LOPtm4Q==
+X-Gm-Gg: ASbGncurLQlxPLOawd3AAIi2ngutjxfPyCduBCQpBCJnDVfomVphSfTkg/khNWgAxaC
+	YamETX8HvIlGPTyXHycq1C33vQakqnBE3T0eqNEKZ8jCUn6VeWhr84RO16lmiUZdNSmPAw2xsGv
+	tVIpQyGeie8McRN2Lg6RhkE8ARUVJtDprxYQ==
+X-Google-Smtp-Source: AGHT+IHPWwPiAwYxbRgOwbLJ8Wt1LFZ7gCqAZ6zYj80ECcVPBuog5ktr4uSIzb0vvBVZ5Sec9lqalAGFy3YMrIrrsvw=
+X-Received: by 2002:a05:6602:3a81:b0:867:973:f2cb with SMTP id
+ ca18e2360f4ac-86a23840913mr446523339f.7.1747398316181; Fri, 16 May 2025
+ 05:25:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v12 0/5] drm/atomic-helper: Re-order CRTC and Bridge ops
-To: Aradhya Bhatia <aradhya.bhatia@linux.dev>,
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Andrzej Hajda <andrzej.hajda@intel.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Cc: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
- Devarsh Thakkar <devarsht@ti.com>, Praneeth Bajjuri <praneeth@ti.com>,
- Udit Kumar <u-kumar1@ti.com>, Jayesh Choudhary <j-choudhary@ti.com>,
- Alexander Sverdlin <alexander.sverdlin@siemens.com>,
- DRI Development List <dri-devel@lists.freedesktop.org>,
- Linux Kernel List <linux-kernel@vger.kernel.org>
-References: <20250406131642.171240-1-aradhya.bhatia@linux.dev>
-Content-Language: en-US
-From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
- 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
-In-Reply-To: <20250406131642.171240-1-aradhya.bhatia@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250515143723.2450630-4-rkrcmar@ventanamicro.com> <20250515143723.2450630-5-rkrcmar@ventanamicro.com>
+In-Reply-To: <20250515143723.2450630-5-rkrcmar@ventanamicro.com>
+From: Anup Patel <anup@brainfault.org>
+Date: Fri, 16 May 2025 17:55:05 +0530
+X-Gm-Features: AX0GCFvgO4Z_DUSR0CTeFhf6b_B2_U8BewNneA58JqHvGUyRV6T-_YfvZD5T4C4
+Message-ID: <CAAhSdy1Z43xRC7tGS21-5rcX7uMeuWCHhABSuqNzELbp26aj0Q@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] RISC-V: KVM: add KVM_CAP_RISCV_MP_STATE_RESET
+To: =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@ventanamicro.com>
+Cc: kvm-riscv@lists.infradead.org, kvm@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Atish Patra <atishp@atishpatra.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Alexandre Ghiti <alex@ghiti.fr>, Andrew Jones <ajones@ventanamicro.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi all,
-
-On 06/04/2025 16:16, Aradhya Bhatia wrote:
-> Hello all,
-> 
-> This series re-orders the sequences in which the drm CRTC and the drm
-> Bridge get enabled and disabled with respect to each other.
-> 
-> The bridge pre_enable calls have been shifted before the crtc_enable and
-> the bridge post_disable calls have been shifted after the crtc_disable.
-> 
-> This has been done as per the definition of bridge pre_enable.
-> "The display pipe (i.e. clocks and timing signals) feeding this bridge will
-> not yet be running when this callback is called".
-> 
-> Since CRTC is also a source feeding the bridge, it should not be enabled
-> before the bridges in the pipeline are pre_enabled.
-
-Any further comments to this?
-
-All the patches have been reviewed and tested. I can push this, along 
-with the serieses that depend on this, via drm-misc, but I'll need an 
-ack from a maintainer.
-
-  Tomi
-
-
-> The original sequence. for display pipe enable looks like:
-> 
->        crtc_enable
-> 
->        bridge[n]_pre_enable
->        ...
->        bridge[1]_pre_enable
-> 
->        encoder_enable
-> 
->        bridge[1]_enable
->        ...
->        bridge[n]_enable
-> 
-> The sequence of enable after this patch-set will look like:
-> 
->        bridge[n]_pre_enable
->        ...
->        bridge[1]_pre_enable
-> 
->        crtc_enable
->        encoder_enable
-> 
->        bridge[1]_enable
->        ...
->        bridge[n]_enable
-> 
-> 
-> For the disable sequence, this is what the original looks like:
-> 
->        bridge[n]_disable
->        ...
->        bridge[1]_disable
-> 
->        encoder_disable
-> 
->        bridge[1]_post_disable
->        ...
->        bridge[n]_post_disable
-> 
->        crtc_disable
-> 	
-> This is what the disable sequence will be, after this series of patches:
-> 
->        bridge[n]_disable
->        ...
->        bridge[1]_disable
-> 
->        encoder_disable
->        crtc_disable
-> 
->        bridge[1]_post_disable
->        ...
->        bridge[n]_post_disable
-> 
-> This series further updates the bridge API definitions to accurately
-> reflect the updated scenario.
-> 
-> This series is a subset of its v11[0] which had 14 patches in the revision.
-> 9 of those 14 patches (which were specific to the cdns-dsi bridge driver)
-> were merged[1].
-> 
-> Regards
-> Aradhya
-> 
+On Thu, May 15, 2025 at 8:22=E2=80=AFPM Radim Kr=C4=8Dm=C3=A1=C5=99 <rkrcma=
+r@ventanamicro.com> wrote:
+>
+> Add a toggleable VM capability to reset the VCPU from userspace by
+> setting MP_STATE_INIT_RECEIVED through IOCTL.
+>
+> Reset through a mp_state to avoid adding a new IOCTL.
+> Do not reset on a transition from STOPPED to RUNNABLE, because it's
+> better to avoid side effects that would complicate userspace adoption.
+> The MP_STATE_INIT_RECEIVED is not a permanent mp_state -- IOCTL resets
+> the VCPU while preserving the original mp_state -- because we wouldn't
+> gain much from having a new state it in the rest of KVM, but it's a very
+> non-standard use of the IOCTL.
+>
+> Signed-off-by: Radim Kr=C4=8Dm=C3=A1=C5=99 <rkrcmar@ventanamicro.com>
 > ---
-> * Note on checkpatch warning in patch 2/4 *
-> Patch 2/4 causes the checkpatch to flare up for 1 checkpatch 'check' -
-> 
-> CHECK: Lines should not end with a '('
-> #79: FILE: drivers/gpu/drm/drm_atomic_helper.c:1304:
-> +                       new_crtc_state = drm_atomic_get_new_crtc_state(
-> 
-> This patch is largely duplicating the original code, with minor differences to
-> perform different operations. This line of code pre-exists in the file and
-> have simply been duplicated. I have decided to keep it as is to maintain the
-> uniformity and the originally intended readability. Should perhaps a fix be
-> required, this patch/series is not the right place, and another patch can be
-> created to fix this across the whole file.
-> 
-> References:
-> [0]: Revision v11 of this series.
-> https://lore.kernel.org/all/20250329113925.68204-1-aradhya.bhatia@linux.dev/
-> 
-> [1]: Patches 1 through 9 getting merged.
-> https://lore.kernel.org/all/174335361171.2556605.12634785416741695829.b4-ty@oss.qualcomm.com/
-> 
-> 
-> ---
-> Change Log:
-> 
->    - Changes in v12:
->      - Drop patches 1 through 9 since they have been merged.
->      - Rebase onto newer drm-misc-next.
->      - Re-word the patch 3/4, ("drm/bridge: Update the bridge enable/disable doc")
->        to make it more readable.
-> 
->    - Changes in v11:
->      - Add patch v11:13/14 ("drm/bridge: Update the bridge enable/disable doc"),
->        that updates the documentation about the order of the various bridge
->        enable/disable hooks being called wrt the CRTC and encoder hooks.
->      - Rebase on drm-misc-next instead of linux-next.
->        As part of rebase, accommodate the following change:
->        - Change patch v10:08/13 ("drm/bridge: cdns-dsi: Support atomic bridge
->          APIs") to v11:08/13 ("drm/bridge: cdns-dsi: Add input format
->          negotiation"), since Maxime has already updated the bridge hooks to
->          their atomic versions in commit 68c98e227a96 ("drm/bridge: cdns-csi:
->          Switch to atomic helpers").
->          My new patch now only adds the format negotiation hook for the cdns-dsi.
->          (Note: Since the new patch is now only a subset of the old one, without
->          any change in logic, I decided to carry forward the R-b and T-b tags.)
->      - Add Alexander Sverdlin's T-b in patches 10, 11, 12.
-> 
->    - Changes in v10:
->      - Rebase on latest linux-next (next-20250226).
->      - As part of rebase, update the patches to accommodate a couple of
->        widespread changes in DRM Framework -
->          - All the ("drm/atomic-helper: Change parameter name of ***") commits.
->          - All the ("drm/bridge: Pass full state to ***") commits.
->        (These updates are only trivial substitutions.)
->      - Add Tomi Valkeinen's T-b tags in all the patches.
-> 
->    - Changes in v9:
->      - Fix the oops in 11/13 - where the encoder_bridge_enable _was_ pre_enabling
->        the bridges instead of enabling.
->      - Add the following tags:
->        - Dmitry Baryshkov's R-b in patches 2, 10, 11, and A-b in patch 12.
->        - Jayesh Choudhary's R-b in patch 12.
->        - Tomi Valkeinen's R-b in patches 2, 10, 11, 12.
-> 
->    - Changes in v8:
->      - Move the phy de-initialization to bridge post_disable() instead of bridge
->        disable() in patch-3.
->      - Copy the private bridge state (dsi_cfg), in addition to the bridge_state,
->        in patch-9.
->      - Split patch v7:11/12 into three patches, v8:{10,11,12}/13, to separate out
->        different refactorings into different patches, and improve bisectability.
->      - Move patch v7:02/12 down to v8:06/12, to keep the initial patches for
->        fixes only.
->      - Drop patch v7:04/12 as it doesn't become relevant until patch v7:12/12.
->      - Add R-b tags of Dmitry Baryshkov in patch-9 and patch-3, and of
->        Tomi Valkeinen in patch-9.
->     
->    - Changes in v7:
->      - phy_init()/exit() were called from the PM path in v6. Change it back to
->        the bridge enable/disable path in patch-3, so that the phy_init() can go
->        back to being called after D-Phy reset assert.
->      - Reword commit text in patch-5 to explain the need of the fix.
->      - Drop the stray code in patch-10.
->      - Add R-b tag of Dmitry Baryshkov in patch-6.
-> 
->    - Changes in v6:
->      - Reword patch 3 to better explain the fixes around phy de-init.
->      - Fix the Lane ready timeout condition in patch 7.
->      - Fix the dsi _bridge_atomic_check() implementation by adding a new
->        bridge state structure in patch 10.
->      - Rework and combine patches v5:11/13 and v5:12/13 to v6:11/12.
->      - Generate the patches of these series using the "patience" algorithm.
->        Note: All patches, except v6:11/12, *do not* differ from their default
->        (greedy) algorithm variants.
->        For patch 11, the patience algorithm significantly improves the readability.
->      - Rename and move the Bridge enable/disable enums from public to private
->        in patch 11.
->      - Add R-b tags of Tomi Valkeinen in patch 6, and Dmitry Baryshkov in patch 2.
-> 
->    - Changes in v5:
->      - Fix subject and description in patch 1/13.
->      - Add patch to check the return value of
->        phy_mipi_dphy_get_default_config() (patch: 6/13).
->      - Change the Clk and Data Lane ready timeout from forever to 5s.
->      - Print an error instead of calling WARN_ON_ONCE in patch 7/13.
->      - Drop patch v4-07/11: "drm/bridge: cdns-dsi: Reset the DCS write FIFO".
->        There has been some inconsistencies found with this patch upon further
->        testing. This patch was being used to enable a DSI panel based on ILITEK
->        ILI9881C bridge. This will be debugged separately.
->      - Add patch to move the DSI mode check from _atomic_enable() to
->        _atomic_check() (patch: 10/13).
->      - Split patch v4-10/11 into 2 patches - 11/13 and 12/13.
->        Patch 11/13 separates out the Encoder-Bridge operations into a helper
->        function *without* changing the logic. Patch 12/13 then changes the order
->        of the encoder-bridge operations as was intended in the original patch.
->      - Add detailed comment for patch 13/13.
->      - Add Tomi Valkeinen's R-b in patches 1, 2, 4, 5, 7, 8, 9, 13.
-> 
->    - Changes in v4:
->      - Add new patch, "drm/bridge: cdns-dsi: Move to devm_drm_of_get_bridge()",
->        to update to an auto-managed way of finding next bridge in the chain.
->      - Drop patch "drm/bridge: cdns-dsi: Fix the phy_initialized variable" and
->        add "drm/bridge: cdns-dsi: Fix Phy _init() and _exit()" that properly
->        de-initializes the Phy and maintains the initialization state.
->      - Reword patch "drm/bridge: cdns-dsi: Reset the DCS write FIFO" to explain
->        the HW concerns better.
->      - Add R-b tag from Dmitry Baryshkov for patches 1/11 and 8/11.
-> 
->    - Changes in v3:
->      - Reword the commit message for patch "drm/bridge: cdns-dsi: Fix OF node
->        pointer".
->      - Add a new helper API to figure out DSI host input pixel format
->        in patch "drm/mipi-dsi: Add helper to find input format".
->      - Use a common function for bridge pre-enable and enable, and bridge disable
->        and post-disable, to avoid code duplication.
->      - Add T-b tag from Dominik Haller in patch 5/10. (Missed to add it in v2).
->      - Add R-b tag from Dmitry Baryshkov for patch 8/10.
-> 
->    - Changes in v2:
->      - Drop patch "drm/tidss: Add CRTC mode_fixup"
->      - Split patch "drm/bridge: cdns-dsi: Fix minor bugs" into 4 separate ones
->      - Drop support for early_enable/late_disable APIs and instead re-order the
->        pre_enable / post_disable APIs to be called before / after crtc_enable /
->        crtc_disable.
->      - Drop support for early_enable/late_disable in cdns-dsi and use
->        pre_enable/post_disable APIs instead to do bridge enable/disable.
-> 
-> 
-> Previous versions:
-> 
-> v1:  https://lore.kernel.org/all/20240511153051.1355825-1-a-bhatia1@ti.com/
-> v2:  https://lore.kernel.org/all/20240530093621.1925863-1-a-bhatia1@ti.com/
-> v3:  https://lore.kernel.org/all/20240617105311.1587489-1-a-bhatia1@ti.com/
-> v4:  https://lore.kernel.org/all/20240622110929.3115714-1-a-bhatia1@ti.com/
-> v5:  https://lore.kernel.org/all/20241019195411.266860-1-aradhya.bhatia@linux.dev/
-> v6:  https://lore.kernel.org/all/20250111192738.308889-1-aradhya.bhatia@linux.dev/
-> v7:  https://lore.kernel.org/all/20250114055626.18816-1-aradhya.bhatia@linux.dev/
-> v8:  https://lore.kernel.org/all/20250126191551.741957-1-aradhya.bhatia@linux.dev/
-> v9:  https://lore.kernel.org/all/20250209121032.32655-1-aradhya.bhatia@linux.dev/
-> v10: https://lore.kernel.org/all/20250226155228.564289-1-aradhya.bhatia@linux.dev/
-> v11: https://lore.kernel.org/all/20250329113925.68204-1-aradhya.bhatia@linux.dev/
-> 
-> ---
-> 
-> Aradhya Bhatia (5):
->    drm/atomic-helper: Refactor crtc & encoder-bridge op loops into
->      separate functions
->    drm/atomic-helper: Separate out bridge pre_enable/post_disable from
->      enable/disable
->    drm/atomic-helper: Re-order bridge chain pre-enable and post-disable
->    drm/bridge: Update the bridge enable/disable doc
->    drm/bridge: cdns-dsi: Use pre_enable/post_disable to enable/disable
-> 
->   .../gpu/drm/bridge/cadence/cdns-dsi-core.c    |  64 +++--
->   drivers/gpu/drm/drm_atomic_helper.c           | 160 +++++++++--
->   include/drm/drm_bridge.h                      | 249 +++++++++++++-----
->   3 files changed, 355 insertions(+), 118 deletions(-)
-> 
-> 
-> base-commit: dd717762761807452ca25634652e180a80349cd8
+> If we want a permanent mp_state, I think that MP_STATE_UNINITIALIZED
+> would be reasonable.  KVM could reset on transition to any other state.
 
+Yes, MP_STATE_UNINITIALIZED looks better. I also suggest
+that VCPU should be reset when set_mpstate() is called with
+MP_STATE_UNINITIALIZED and the current state is
+MP_STATE_STOPPED.
+
+Regards,
+Anup
+
+>
+> v3: do not allow allow userspace to set the HSM reset state [Anup]
+> v2: new
+> ---
+>  Documentation/virt/kvm/api.rst        | 11 +++++++++++
+>  arch/riscv/include/asm/kvm_host.h     |  3 +++
+>  arch/riscv/include/asm/kvm_vcpu_sbi.h |  1 +
+>  arch/riscv/kvm/vcpu.c                 | 27 ++++++++++++++-------------
+>  arch/riscv/kvm/vcpu_sbi.c             | 17 +++++++++++++++++
+>  arch/riscv/kvm/vm.c                   | 13 +++++++++++++
+>  include/uapi/linux/kvm.h              |  1 +
+>  7 files changed, 60 insertions(+), 13 deletions(-)
+>
+> diff --git a/Documentation/virt/kvm/api.rst b/Documentation/virt/kvm/api.=
+rst
+> index 47c7c3f92314..e107694fb41f 100644
+> --- a/Documentation/virt/kvm/api.rst
+> +++ b/Documentation/virt/kvm/api.rst
+> @@ -8496,6 +8496,17 @@ aforementioned registers before the first KVM_RUN.=
+ These registers are VM
+>  scoped, meaning that the same set of values are presented on all vCPUs i=
+n a
+>  given VM.
+>
+> +7.43 KVM_CAP_RISCV_MP_STATE_RESET
+> +---------------------------------
+> +
+> +:Architectures: riscv
+> +:Type: VM
+> +:Parameters: None
+> +:Returns: 0 on success, -EINVAL if arg[0] is not zero
+> +
+> +When this capability is enabled, KVM resets the VCPU when setting
+> +MP_STATE_INIT_RECEIVED through IOCTL.  The original MP_STATE is preserve=
+d.
+> +
+>  8. Other capabilities.
+>  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>
+> diff --git a/arch/riscv/include/asm/kvm_host.h b/arch/riscv/include/asm/k=
+vm_host.h
+> index f673ebfdadf3..85cfebc32e4c 100644
+> --- a/arch/riscv/include/asm/kvm_host.h
+> +++ b/arch/riscv/include/asm/kvm_host.h
+> @@ -119,6 +119,9 @@ struct kvm_arch {
+>
+>         /* AIA Guest/VM context */
+>         struct kvm_aia aia;
+> +
+> +       /* KVM_CAP_RISCV_MP_STATE_RESET */
+> +       bool mp_state_reset;
+>  };
+>
+>  struct kvm_cpu_trap {
+> diff --git a/arch/riscv/include/asm/kvm_vcpu_sbi.h b/arch/riscv/include/a=
+sm/kvm_vcpu_sbi.h
+> index da28235939d1..439ab2b3534f 100644
+> --- a/arch/riscv/include/asm/kvm_vcpu_sbi.h
+> +++ b/arch/riscv/include/asm/kvm_vcpu_sbi.h
+> @@ -57,6 +57,7 @@ void kvm_riscv_vcpu_sbi_system_reset(struct kvm_vcpu *v=
+cpu,
+>                                      u32 type, u64 flags);
+>  void kvm_riscv_vcpu_sbi_request_reset(struct kvm_vcpu *vcpu,
+>                                       unsigned long pc, unsigned long a1)=
+;
+> +void kvm_riscv_vcpu_sbi_load_reset_state(struct kvm_vcpu *vcpu);
+>  int kvm_riscv_vcpu_sbi_return(struct kvm_vcpu *vcpu, struct kvm_run *run=
+);
+>  int kvm_riscv_vcpu_set_reg_sbi_ext(struct kvm_vcpu *vcpu,
+>                                    const struct kvm_one_reg *reg);
+> diff --git a/arch/riscv/kvm/vcpu.c b/arch/riscv/kvm/vcpu.c
+> index a78f9ec2fa0e..521cd41bfffa 100644
+> --- a/arch/riscv/kvm/vcpu.c
+> +++ b/arch/riscv/kvm/vcpu.c
+> @@ -51,11 +51,11 @@ const struct kvm_stats_header kvm_vcpu_stats_header =
+=3D {
+>                        sizeof(kvm_vcpu_stats_desc),
+>  };
+>
+> -static void kvm_riscv_vcpu_context_reset(struct kvm_vcpu *vcpu)
+> +static void kvm_riscv_vcpu_context_reset(struct kvm_vcpu *vcpu,
+> +                                        bool kvm_sbi_reset)
+>  {
+>         struct kvm_vcpu_csr *csr =3D &vcpu->arch.guest_csr;
+>         struct kvm_cpu_context *cntx =3D &vcpu->arch.guest_context;
+> -       struct kvm_vcpu_reset_state *reset_state =3D &vcpu->arch.reset_st=
+ate;
+>         void *vector_datap =3D cntx->vector.datap;
+>
+>         memset(cntx, 0, sizeof(*cntx));
+> @@ -65,13 +65,8 @@ static void kvm_riscv_vcpu_context_reset(struct kvm_vc=
+pu *vcpu)
+>         /* Restore datap as it's not a part of the guest context. */
+>         cntx->vector.datap =3D vector_datap;
+>
+> -       /* Load SBI reset values */
+> -       cntx->a0 =3D vcpu->vcpu_id;
+> -
+> -       spin_lock(&reset_state->lock);
+> -       cntx->sepc =3D reset_state->pc;
+> -       cntx->a1 =3D reset_state->a1;
+> -       spin_unlock(&reset_state->lock);
+> +       if (kvm_sbi_reset)
+> +               kvm_riscv_vcpu_sbi_load_reset_state(vcpu);
+>
+>         /* Setup reset state of shadow SSTATUS and HSTATUS CSRs */
+>         cntx->sstatus =3D SR_SPP | SR_SPIE;
+> @@ -84,7 +79,7 @@ static void kvm_riscv_vcpu_context_reset(struct kvm_vcp=
+u *vcpu)
+>         csr->scounteren =3D 0x7;
+>  }
+>
+> -static void kvm_riscv_reset_vcpu(struct kvm_vcpu *vcpu)
+> +static void kvm_riscv_reset_vcpu(struct kvm_vcpu *vcpu, bool kvm_sbi_res=
+et)
+>  {
+>         bool loaded;
+>
+> @@ -100,7 +95,7 @@ static void kvm_riscv_reset_vcpu(struct kvm_vcpu *vcpu=
+)
+>
+>         vcpu->arch.last_exit_cpu =3D -1;
+>
+> -       kvm_riscv_vcpu_context_reset(vcpu);
+> +       kvm_riscv_vcpu_context_reset(vcpu, kvm_sbi_reset);
+>
+>         kvm_riscv_vcpu_fp_reset(vcpu);
+>
+> @@ -177,7 +172,7 @@ int kvm_arch_vcpu_create(struct kvm_vcpu *vcpu)
+>         kvm_riscv_vcpu_sbi_init(vcpu);
+>
+>         /* Reset VCPU */
+> -       kvm_riscv_reset_vcpu(vcpu);
+> +       kvm_riscv_reset_vcpu(vcpu, false);
+>
+>         return 0;
+>  }
+> @@ -526,6 +521,12 @@ int kvm_arch_vcpu_ioctl_set_mpstate(struct kvm_vcpu =
+*vcpu,
+>         case KVM_MP_STATE_STOPPED:
+>                 __kvm_riscv_vcpu_power_off(vcpu);
+>                 break;
+> +       case KVM_MP_STATE_INIT_RECEIVED:
+> +               if (vcpu->kvm->arch.mp_state_reset)
+> +                       kvm_riscv_reset_vcpu(vcpu, false);
+> +               else
+> +                       ret =3D -EINVAL;
+> +               break;
+>         default:
+>                 ret =3D -EINVAL;
+>         }
+> @@ -714,7 +715,7 @@ static void kvm_riscv_check_vcpu_requests(struct kvm_=
+vcpu *vcpu)
+>                 }
+>
+>                 if (kvm_check_request(KVM_REQ_VCPU_RESET, vcpu))
+> -                       kvm_riscv_reset_vcpu(vcpu);
+> +                       kvm_riscv_reset_vcpu(vcpu, true);
+>
+>                 if (kvm_check_request(KVM_REQ_UPDATE_HGATP, vcpu))
+>                         kvm_riscv_gstage_update_hgatp(vcpu);
+> diff --git a/arch/riscv/kvm/vcpu_sbi.c b/arch/riscv/kvm/vcpu_sbi.c
+> index 0afef0bb261d..31fd3cc98d66 100644
+> --- a/arch/riscv/kvm/vcpu_sbi.c
+> +++ b/arch/riscv/kvm/vcpu_sbi.c
+> @@ -167,6 +167,23 @@ void kvm_riscv_vcpu_sbi_request_reset(struct kvm_vcp=
+u *vcpu,
+>         kvm_make_request(KVM_REQ_VCPU_RESET, vcpu);
+>  }
+>
+> +void kvm_riscv_vcpu_sbi_load_reset_state(struct kvm_vcpu *vcpu)
+> +{
+> +       struct kvm_vcpu_csr *csr =3D &vcpu->arch.guest_csr;
+> +       struct kvm_cpu_context *cntx =3D &vcpu->arch.guest_context;
+> +       struct kvm_vcpu_reset_state *reset_state =3D &vcpu->arch.reset_st=
+ate;
+> +
+> +       cntx->a0 =3D vcpu->vcpu_id;
+> +
+> +       spin_lock(&vcpu->arch.reset_state.lock);
+> +       cntx->sepc =3D reset_state->pc;
+> +       cntx->a1 =3D reset_state->a1;
+> +       spin_unlock(&vcpu->arch.reset_state.lock);
+> +
+> +       cntx->sstatus &=3D ~SR_SIE;
+> +       csr->vsatp =3D 0;
+> +}
+> +
+>  int kvm_riscv_vcpu_sbi_return(struct kvm_vcpu *vcpu, struct kvm_run *run=
+)
+>  {
+>         struct kvm_cpu_context *cp =3D &vcpu->arch.guest_context;
+> diff --git a/arch/riscv/kvm/vm.c b/arch/riscv/kvm/vm.c
+> index 7396b8654f45..b27ec8f96697 100644
+> --- a/arch/riscv/kvm/vm.c
+> +++ b/arch/riscv/kvm/vm.c
+> @@ -209,6 +209,19 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm, lo=
+ng ext)
+>         return r;
+>  }
+>
+> +int kvm_vm_ioctl_enable_cap(struct kvm *kvm, struct kvm_enable_cap *cap)
+> +{
+> +       switch (cap->cap) {
+> +       case KVM_CAP_RISCV_MP_STATE_RESET:
+> +               if (cap->flags)
+> +                       return -EINVAL;
+> +               kvm->arch.mp_state_reset =3D true;
+> +               return 0;
+> +       default:
+> +               return -EINVAL;
+> +       }
+> +}
+> +
+>  int kvm_arch_vm_ioctl(struct file *filp, unsigned int ioctl, unsigned lo=
+ng arg)
+>  {
+>         return -EINVAL;
+> diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
+> index b6ae8ad8934b..454b7d4a0448 100644
+> --- a/include/uapi/linux/kvm.h
+> +++ b/include/uapi/linux/kvm.h
+> @@ -930,6 +930,7 @@ struct kvm_enable_cap {
+>  #define KVM_CAP_X86_APIC_BUS_CYCLES_NS 237
+>  #define KVM_CAP_X86_GUEST_MODE 238
+>  #define KVM_CAP_ARM_WRITABLE_IMP_ID_REGS 239
+> +#define KVM_CAP_RISCV_MP_STATE_RESET 240
+>
+>  struct kvm_irq_routing_irqchip {
+>         __u32 irqchip;
+> --
+> 2.49.0
+>
 
