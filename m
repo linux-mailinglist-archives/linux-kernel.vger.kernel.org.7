@@ -1,101 +1,126 @@
-Return-Path: <linux-kernel+bounces-651204-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-651207-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B311AB9B9B
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 14:07:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41424AB9BA1
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 14:08:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AEC26189618D
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 12:07:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC764A04C2C
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 12:08:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 727E4238159;
-	Fri, 16 May 2025 12:06:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37B5D23A9BB;
+	Fri, 16 May 2025 12:08:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RX6+G9yC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i+9LraLU"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDDC91361;
-	Fri, 16 May 2025 12:06:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 099B7238C1D;
+	Fri, 16 May 2025 12:08:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747397213; cv=none; b=UHeNdF2KzTHTvrFaI+8hgS4xqKs9VwxVyBNMdxh9LCd9ukdfkAfNv5ryd7wC/PuBLKt4cr/A/ocS1Curl5/Z+QC9Hy+Ec6HXtRsXFikvGAM06sdyTi0tuYx5DcBybhmAVUO6/PZNyqg1QutuV/wpFBbkgtkyb0c8pUI8vZF8JA4=
+	t=1747397308; cv=none; b=hzJkMYJ8PfhA4hLmorSo1nuGBzoAwWNUxzZZR5f4GWYuR2rLYjmHBIRqxZOd7BS0cLVstPQnc0FXTbS3GCDKwnhd7vy79VVq0Mzxcxb0ZXw5gqKHtktxeDYntDz97h3VHiy/tm1j+aEpn/xm453XLFDLyISZcruO5MYH82uI82Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747397213; c=relaxed/simple;
-	bh=YVC5S9ZL3DJBFupA3JCCgZgdIfQCsHEqHZ600McfhKo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rLHZo6YQck1fUD7/+dM3O9NnjI6/0DQwTwGb41jcrBJXQn90/R0pT/1D0zCRnYWO3KK2Xp9OMb9sd4mSTmOBaNkto3yxflQUk3Tr10ItPLC14oJIsUT+sTqfDmM/Z84exq4KrkSiFyBSEBZtxAcntP9v0MUc48VUHyVhy+hXF90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RX6+G9yC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35145C4CEE4;
-	Fri, 16 May 2025 12:06:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747397213;
-	bh=YVC5S9ZL3DJBFupA3JCCgZgdIfQCsHEqHZ600McfhKo=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=RX6+G9yCD2cqcY4Ffqv68F3AHQI1luiKN1nyR39iy7FK/dqfN6dyIykaBFIPIbu8Z
-	 TZew2gR9Jaw5f8lLGS4im/wCCP+a7obSfnE285H0ZuuPF/qaSRdPAtaJsk5htiS/Q8
-	 YlvOaP0135woHv4kqXZoaT8mR/1nlrCkJkFMOMUcc0GVHjbW+OLp5/5MYWYKyBhDRJ
-	 0VTzyCbZZdGGl2eJ3rQrrk3f/v0OSVBn40qM3izXoR5XGi+p2deUNSanBeyVv8rpu2
-	 THi/JvbD+lFYxDUW+36YALf8h6aZFNGr//O5Cz4VVZjlnYI40G2tw8IVpot9sMObTm
-	 pktOP2UHrgu0A==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=valley-girl.lan)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1uFtpz-00FXq5-0g;
-	Fri, 16 May 2025 13:06:51 +0100
-From: Marc Zyngier <maz@kernel.org>
-To: Wei-Lin Chang <r09922117@csie.ntu.edu.tw>
-Cc: Oliver Upton <oliver.upton@linux.dev>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Jintack Lim <jintack@cs.columbia.edu>,
-	Christoffer Dall <christoffer.dall@arm.com>,
+	s=arc-20240116; t=1747397308; c=relaxed/simple;
+	bh=LLFTaXnhleq34jL/n5gBjVlQjNQtKROkYDnqUvpqa5U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FPtK4UGFLx06E2jj8iJ8lgKMgBiPAInYPBvUC/Ex73QbD+gnYhNt8bJHPI/VXE6a6S++LXzUygugZzamXRWZ+9VhZbZ8lLJxdmOEouiAUuNSIvEDCl6J46n00pex3DwPeA1aok+25sT7jyh+/NkG08dpsavQaPi3lJccuqVMao4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i+9LraLU; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43cfa7e7f54so15204145e9.1;
+        Fri, 16 May 2025 05:08:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747397305; x=1748002105; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=l7S/vG1lp5geqRglunYVLNLd5lLTAffxPlQ/qp918/4=;
+        b=i+9LraLU+vxLQtPtNgarbmStQYEmWuOTuoxvpQRl/yiPpQhDXn9PdfgWT92Sje4+B5
+         Egfat00fnh33qd0tgDLhT2OtlOvX0QI9KIrzkkmBc73Dx4Tm5i82EFOZ0hY1MaGdeOQD
+         0vF7zUVYOle4JK6MUxY+CZZdZ2R7rIoD3wV15c5e6t2gDg9AxpNmdeG4WcfBKSvZCgm3
+         R3AUdggWy1YcHppL5+KhmUmMQAECkR0qVTwWXJOITFbZ5WcBmWCxN8RWoKL2zSlDw6XL
+         SW8W1hrw5IJkhvrM5JhirC9fRU0ZAFBSKFudSxAaDuc8NyrNmrJbo8lA6f6YzzThnDpK
+         YRbg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747397305; x=1748002105;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=l7S/vG1lp5geqRglunYVLNLd5lLTAffxPlQ/qp918/4=;
+        b=uQsZtH0ewakaqNDN4dpedQgMlyHc7QMZ06vYk5hA6UQsVawhgH7cZLUzskNpajw7AZ
+         +KJVP6w+oAGlb0yPaea0NxOBDneWZyI4FvRLcZEf/5/4t0YuoYbFVrGrRoP26hBACK2o
+         FdP2X0dg8X3qqQ3FCFTssal6stFEMHjnlYLVdWMUC0uLhhI/2Th8f6HeYvzU50gWKikb
+         iSI4wNdWQlx7v9fHD2Qv9Y7JiGuNFYFEmI6Z9ioF1oH+gCxELckm3GF87EQMzYuc+Wyk
+         xWjBJuriSfhq2P9Zimys7mH4G7RJBZ8SF5MPmGSx0EyCNKUz0TVrpERt8BvI7axEtJx2
+         BUeA==
+X-Forwarded-Encrypted: i=1; AJvYcCVKa9dtH638AxQ/baUR2FPCyxwnLtsDHIGAt65tzm9pvOQR5PmrQlquyLgc3Hj3zVJ/EKRgGK8YSR//NFN8@vger.kernel.org, AJvYcCWJLl9JZv8U+zvjtJe0bF73Qu0BRspPqcKL8Dyh+oofgl80wbDKjBl+uNlaxNNy4CWbiVjVqQhjYluxq3c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YypjvX3jFeQYMjx3ew1OLu6c2Y7lxWTs9uO4aKmGlMTWIuyatax
+	YTFSG/O6dgIyefzcgdDacTXfNSUvM3oa+v9+ipFxx2jUPU0UM2pzSAWH
+X-Gm-Gg: ASbGncvLoFBJZiUuHAA070ACAIDMkAY3Xb2hXmkR0o0H8OU6vYK7W2BwE16NmcRyuee
+	MhnXcGuxBg6EHSRxNh5HG6TqDYy7Xxedkssm5OoERN72c6zmzmd+5pCHBklqsNHVadzzAfOYlgq
+	T/LijH6Ffr53HMaXUiAQlKgHPSz0saVajmvNT6ND87qQu5Y5/ovGLFVXVNC/0G1Nfrdd2fWRa77
+	TXSl8i1UO9tOoYqqamtKF60/nowI569Br/bRhygcohrnOVfh4O3sVDhcnExMfyv4YUaAdinCLCr
+	ju3YGr6hckDpZyXUdPC/WeznEO6tGkaXmIOgDVhbp6a10xyP50q0WaY8ZnpQd9DfORZIf/cQfnO
+	2fUY=
+X-Google-Smtp-Source: AGHT+IETHNO4PZaxAV5fQzFYG7nB1lHUisZaUbqvlKR7l0R0thhXbB9LDnls9f0950ZGMS0nNFwq9w==
+X-Received: by 2002:a05:600c:821b:b0:43b:bfa7:c7d with SMTP id 5b1f17b1804b1-442f84c2008mr72290655e9.2.1747397304833;
+        Fri, 16 May 2025 05:08:24 -0700 (PDT)
+Received: from localhost.localdomain ([2a02:2f07:610b:a400:6472:d2f9:d536:4c30])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-442f338050csm102275725e9.10.2025.05.16.05.08.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 16 May 2025 05:08:24 -0700 (PDT)
+From: Ovidiu Panait <ovidiu.panait.oss@gmail.com>
+To: clabbe.montjoie@gmail.com,
+	herbert@gondor.apana.org.au,
+	davem@davemloft.net,
+	linux-crypto@vger.kernel.org
+Cc: wens@csie.org,
+	jernej.skrabec@gmail.com,
+	samuel@sholland.org,
 	linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] KVM: arm64: nv: Remove clearing of ICH_LR<n>.EOI if ICH_LR<n>.HW == 1
-Date: Fri, 16 May 2025 13:06:47 +0100
-Message-Id: <174739720148.2525124.8020669410674069519.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20250512133223.866999-1-r09922117@csie.ntu.edu.tw>
-References: <20250512133223.866999-1-r09922117@csie.ntu.edu.tw>
+	linux-sunxi@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Ovidiu Panait <ovidiu.panait.oss@gmail.com>
+Subject: [PATCH] crypto: sun8i-ce - move fallback ahash_request to the end of the struct
+Date: Fri, 16 May 2025 15:06:56 +0300
+Message-ID: <20250516120656.3610623-1-ovidiu.panait.oss@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: r09922117@csie.ntu.edu.tw, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org, jintack@cs.columbia.edu, christoffer.dall@arm.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Mon, 12 May 2025 21:32:23 +0800, Wei-Lin Chang wrote:
-> In the case of ICH_LR<n>.HW == 1, bit 41 of LR is just a part of pINTID
-> without EOI meaning, and bit 41 will be zeroed by the subsequent clearing
-> of ICH_LR_PHYS_ID_MASK anyway.
-> No functional changes intended.
-> 
-> 
+'struct ahash_request' has a flexible array at the end, so it must be the
+last member in a struct, to avoid overwriting other struct members.
 
-Applied to next, thanks!
+Therefore, move 'fallback_req' to the end of the 'sun8i_ce_hash_reqctx'
+struct.
 
-[1/1] KVM: arm64: nv: Remove clearing of ICH_LR<n>.EOI if ICH_LR<n>.HW == 1
-      commit: 92c749e4aa90cd684d87cb5bde6a9d51e83fe6e3
+Fixes: 56f6d5aee88d ("crypto: sun8i-ce - support hash algorithms")
+Signed-off-by: Ovidiu Panait <ovidiu.panait.oss@gmail.com>
+---
+ drivers/crypto/allwinner/sun8i-ce/sun8i-ce.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Cheers,
-
-	M.
+diff --git a/drivers/crypto/allwinner/sun8i-ce/sun8i-ce.h b/drivers/crypto/allwinner/sun8i-ce/sun8i-ce.h
+index 3b5c2af013d0..83df4d719053 100644
+--- a/drivers/crypto/allwinner/sun8i-ce/sun8i-ce.h
++++ b/drivers/crypto/allwinner/sun8i-ce/sun8i-ce.h
+@@ -308,8 +308,8 @@ struct sun8i_ce_hash_tfm_ctx {
+  * @flow:	the flow to use for this request
+  */
+ struct sun8i_ce_hash_reqctx {
+-	struct ahash_request fallback_req;
+ 	int flow;
++	struct ahash_request fallback_req; // keep at the end
+ };
+ 
+ /*
 -- 
-Without deviation from the norm, progress is not possible.
-
+2.48.1
 
 
