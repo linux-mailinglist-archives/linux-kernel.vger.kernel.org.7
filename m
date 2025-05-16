@@ -1,99 +1,103 @@
-Return-Path: <linux-kernel+bounces-650693-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-650695-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A793AAB94A2
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 05:20:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BD2EAB94A6
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 05:21:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 841691BC5EA2
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 03:20:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79713A04797
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 03:20:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F8B4233715;
-	Fri, 16 May 2025 03:19:37 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AA6022D4D9;
+	Fri, 16 May 2025 03:21:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="Qe2vQ5ES"
+Received: from out30-98.freemail.mail.aliyun.com (out30-98.freemail.mail.aliyun.com [115.124.30.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD8CF231CB0;
-	Fri, 16 May 2025 03:19:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63CAE3D69;
+	Fri, 16 May 2025 03:20:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747365577; cv=none; b=oKWYvYOWBs5YM38F13t9zwWmFFCVbBEe9RyKqYV/NcLvb4nobhSjwvHWRjt0jNs5t1NHiPxtnvfqUpQFyl3FuOjI79aSIUveAZjB73NCY+ldJFOdsmdcKNdleNHwddo5oaOTOqHxkeHmz3lzbPcBudw5gRKrisleJEAKI8UuF6M=
+	t=1747365660; cv=none; b=WofnVF2r2Er7ubX+TGKxafnmeRP048w388KNkalEKj/4nqdgSRU9QeqjY0qhIAXB5BvYXg61JqvbTWxRYzgR/JEoj3ejhGfuwrOw0X2V69L2XSeRmAfi39AZCIwwLjitH1fJI6MYG8IOeVUpRr1YcuR1ufzVhHmSED/GT1q2X6o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747365577; c=relaxed/simple;
-	bh=Ki9eoEwrRY5OB59ViUBqj0hp30LyxpOgkRGYcCndRKE=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=U2EtB0qnyJIgm6EdyYRBRbALd7YmJOGIL269ooSllPo+JRrURKJfxFlRDVajdl1MpTrbIGwuS5TzbNodC0s/OrZ+XG9qQIE3MvFSIr/4pVd+9kj6vi0JSIa3+9RDAA9xhM3HQcNwVcyVv8ynHdcpMtGlI/veNJul3lXmBaB5Sno=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4ZzByz31G0zyVPT;
-	Fri, 16 May 2025 11:15:07 +0800 (CST)
-Received: from kwepemg500010.china.huawei.com (unknown [7.202.181.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id B5E5C180B41;
-	Fri, 16 May 2025 11:19:26 +0800 (CST)
-Received: from huawei.com (10.175.101.6) by kwepemg500010.china.huawei.com
- (7.202.181.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 16 May
- 2025 11:19:25 +0800
-From: Wang Zhaolong <wangzhaolong1@huawei.com>
-To: <sfrench@samba.org>, <sfrench@us.ibm.com>
-CC: <linux-cifs@vger.kernel.org>, <samba-technical@lists.samba.org>,
-	<linux-kernel@vger.kernel.org>, <wangzhaolong1@huawei.com>,
-	<yi.zhang@huawei.com>, <yangerkun@huawei.com>, <chengzhihao1@huawei.com>
-Subject: [PATCH -next 2/2] cifs: Reset all search buffer pointers when releasing buffer
-Date: Fri, 16 May 2025 11:19:23 +0800
-Message-ID: <20250516031923.159247-3-wangzhaolong1@huawei.com>
-X-Mailer: git-send-email 2.34.3
-In-Reply-To: <20250516031923.159247-1-wangzhaolong1@huawei.com>
-References: <20250516031923.159247-1-wangzhaolong1@huawei.com>
+	s=arc-20240116; t=1747365660; c=relaxed/simple;
+	bh=hO+rR+dWcD6f6Hge8HMHr7Cb8QAg8f4oCX2KJ+iFwGg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ThYBdsP6hx/dFQoSi5G7HUkYLbGRsGFAJWJiJ/JAQDeoGjHA+G1N/dpvlG0riiLGbzy6n/JSHiX1Teek4gatIb11DwM8C2ow3S/IBdQuC8K4jMp3Ihc9gVZBEf6Gt0B4YyCfWQGKq9yzW/VnFclJZPOzTiQwBn6BJSx5ZX8PoJM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=Qe2vQ5ES; arc=none smtp.client-ip=115.124.30.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1747365649; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=GExNtFmUWMDmQxbl32tS+x8auE8iVSf/kkBrvwmxa6I=;
+	b=Qe2vQ5EScnbO8JSIBIePdAgK5F+iwDwlWl4bdEp+3E8ZhAvyGiZWaPpNeFweKwaA47898Zp+6bEWBnG3dJzSHeqU9toaqcH4ZkIRu6WDU1KY6NNykvf05JhEu8cdGtExjm1413XDlB0o+ABqA7EsEcKGnXWpLXF9nuxHV1pkib0=
+Received: from 30.74.144.109(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WatldDB_1747365643 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Fri, 16 May 2025 11:20:45 +0800
+Message-ID: <9c54397f-3cbf-4fa2-bf69-ba89613d355f@linux.alibaba.com>
+Date: Fri, 16 May 2025 11:20:42 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemg500010.china.huawei.com (7.202.181.71)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 06/12] khugepaged: introduce khugepaged_scan_bitmap for
+ mTHP support
+To: Nico Pache <npache@redhat.com>, linux-mm@kvack.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org
+Cc: david@redhat.com, ziy@nvidia.com, lorenzo.stoakes@oracle.com,
+ Liam.Howlett@oracle.com, ryan.roberts@arm.com, dev.jain@arm.com,
+ corbet@lwn.net, rostedt@goodmis.org, mhiramat@kernel.org,
+ mathieu.desnoyers@efficios.com, akpm@linux-foundation.org,
+ baohua@kernel.org, willy@infradead.org, peterx@redhat.com,
+ wangkefeng.wang@huawei.com, usamaarif642@gmail.com, sunnanyong@huawei.com,
+ vishal.moola@gmail.com, thomas.hellstrom@linux.intel.com,
+ yang@os.amperecomputing.com, kirill.shutemov@linux.intel.com,
+ aarcange@redhat.com, raquini@redhat.com, anshuman.khandual@arm.com,
+ catalin.marinas@arm.com, tiwai@suse.de, will@kernel.org,
+ dave.hansen@linux.intel.com, jack@suse.cz, cl@gentwo.org,
+ jglisse@google.com, surenb@google.com, zokeefe@google.com,
+ hannes@cmpxchg.org, rientjes@google.com, mhocko@suse.com,
+ rdunlap@infradead.org
+References: <20250515032226.128900-1-npache@redhat.com>
+ <20250515032226.128900-7-npache@redhat.com>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <20250515032226.128900-7-npache@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Multiple pointers in struct cifs_search_info (ntwrk_buf_start,
-srch_entries_start, and last_entry) point to the same allocated buffer.
-However, when freeing this buffer, only ntwrk_buf_start was set to NULL,
-while the other pointers remained pointing to freed memory.
 
-This is defensive programming to prevent potential issues with stale
-pointers. While the active UAF vulnerability is fixed by the previous
-patch.
 
-Signed-off-by: Wang Zhaolong <wangzhaolong1@huawei.com>
----
- fs/smb/client/readdir.c | 3 +++
- 1 file changed, 3 insertions(+)
+On 2025/5/15 11:22, Nico Pache wrote:
+> khugepaged scans anons PMD ranges for potential collapse to a hugepage.
+> To add mTHP support we use this scan to instead record chunks of utilized
+> sections of the PMD.
+> 
+> khugepaged_scan_bitmap uses a stack struct to recursively scan a bitmap
+> that represents chunks of utilized regions. We can then determine what
+> mTHP size fits best and in the following patch, we set this bitmap while
+> scanning the anon PMD. A minimum collapse order of 2 is used as this is
+> the lowest order supported by anon memory.
+> 
+> max_ptes_none is used as a scale to determine how "full" an order must
+> be before being considered for collapse.
+> 
+> When attempting to collapse an order that has its order set to "always"
+> lets always collapse to that order in a greedy manner without
+> considering the number of bits set.
+> 
+> Signed-off-by: Nico Pache <npache@redhat.com>
 
-diff --git a/fs/smb/client/readdir.c b/fs/smb/client/readdir.c
-index 67d7dd64b5e2..787d6bcb5d1d 100644
---- a/fs/smb/client/readdir.c
-+++ b/fs/smb/client/readdir.c
-@@ -731,11 +731,14 @@ find_cifs_entry(const unsigned int xid, struct cifs_tcon *tcon, loff_t pos,
- 				cifs_small_buf_release(cfile->srch_inf.
- 						ntwrk_buf_start);
- 			else
- 				cifs_buf_release(cfile->srch_inf.
- 						ntwrk_buf_start);
-+			/* Reset all pointers to the network buffer to prevent stale references */
- 			cfile->srch_inf.ntwrk_buf_start = NULL;
-+			cfile->srch_inf.srch_entries_start = NULL;
-+			cfile->srch_inf.last_entry = NULL;
- 		}
- 		rc = initiate_cifs_search(xid, file, full_path);
- 		if (rc) {
- 			cifs_dbg(FYI, "error %d reinitiating a search on rewind\n",
- 				 rc);
--- 
-2.34.3
+Sigh. You still haven't addressed or explained the issues I previously 
+raised [1], so I don't know how to review this patch again...
 
+[1] 
+https://lore.kernel.org/all/83a66442-b7c7-42e7-af4e-fd211d8ed6f8@linux.alibaba.com/
 
