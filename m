@@ -1,422 +1,383 @@
-Return-Path: <linux-kernel+bounces-651140-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-651142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47D20AB9A9A
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 12:56:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FEA8AB9AA2
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 12:59:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 027491BA78FF
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 10:56:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A22416334B
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 10:59:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 233E12367AB;
-	Fri, 16 May 2025 10:56:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 061D72367AD;
+	Fri, 16 May 2025 10:58:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tomeuvizoso-net.20230601.gappssmtp.com header.i=@tomeuvizoso-net.20230601.gappssmtp.com header.b="da+2tWSO"
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="cpbfMO1N";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="TDZnE+Yj"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C41BC233D9C
-	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 10:56:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747392977; cv=none; b=iomfCjYVRpI45VWi7siEoraVCIdLEQx5RK8k4blB4YSIDB59RHsPdCrBN4/atjTxbRiU5KZ6K3vKT3f2hringhHCLmcv1MNhmBUtSYaKZYHa0OenA7O6neLblXM8Q6ZcB8/7ofbK2d2NxOLLjU6A9vYK9DEdwWpXFZtxPtUgouU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747392977; c=relaxed/simple;
-	bh=IRrrSdP2uqh02wzXH9M7KBTL5iRQN9j2xYfXsWMp6OY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kRNbOnZcekEHNbkNI1H1pcamrb8ozM3AN91TEkG2N5fhIfhSP3CHJxOm9R/WfGw2MA/sO5OBqD1YOKQYOllL7SMMGKdH/O6HfVa5+XCS4ZYU7E1YJljhk1OcFmfG8UyOE/CpB5CLImXmqeYIbhk53tNuAx/E2UN/0wPNElXePHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tomeuvizoso.net; spf=pass smtp.mailfrom=tomeuvizoso.net; dkim=pass (2048-bit key) header.d=tomeuvizoso-net.20230601.gappssmtp.com header.i=@tomeuvizoso-net.20230601.gappssmtp.com header.b=da+2tWSO; arc=none smtp.client-ip=209.85.128.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tomeuvizoso.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tomeuvizoso.net
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-70ca2888e99so9791967b3.0
-        for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 03:56:14 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9EE317C220;
+	Fri, 16 May 2025 10:58:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747393137; cv=fail; b=OSrn2IRm84oyTE6VFatD4QdRc7SKaXOoBbsjFvKrLAuDNpRjH8yr9p2sSqKDHnIGla6Pdetkc+JEDDpiZZd1toKm3sQbYDqkqt/iw/cR/0KGbsGtHyQWX84oo/B3RhrlweLj1eXWCym/YlLkWLj4+8J0IC1bCjdzEd5iF0gAI2M=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747393137; c=relaxed/simple;
+	bh=whRJ60l6iofT4KjnNu9wlWfJd0PrUZb2xeasttzLipQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=EEEf+GqzPe0RY/FHkzqBNGhcDfETy96pd4vZ1tpV9GILPbzyu0vuC7xDoAzwnvZ3fh8UONZQNraPCJ1OMHnup7L6sBhJlc9D0cIHWxwA8gxuFlSS0fR+Wm/vIYV2mQ+frPrWPnYKVfBGYnkg/6Mwvv4hUy+ieVojkgpSUCXRuWo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=cpbfMO1N; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=TDZnE+Yj; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54GAfqJm012690;
+	Fri, 16 May 2025 10:57:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2025-04-25; bh=CW7XtJZUyxym7YNeNE
+	XVB5kps5+YxAhNgc5K3uxjlyE=; b=cpbfMO1NARa2a60WUaNDrQExLb2dNf6tEe
+	A0g9lyGd9rmbspIQ3NsqEA8J/3roVlFBwL5Z2XYIrUBIeSAfOGsQ5lEfPQ38//o8
+	UMLnJJqeWm/I9bcOBc9hvAmpoNiuSq9k0MIZKgOZx+Wfqf3daSHmdNGZfAKG4Kbf
+	uDitcwC5tOjZAlM6VVLCMG6s3JPKvnChGBJCPuB0TL/JVzvEPYzs3vrZR9Fn2l5D
+	tu08nGLTYIM7jU1Ji4XRSVlKie4Dk9VFZXcofzE4Qm8DMxRG4UJf3jgB42B7E5IT
+	ms68/nIRCSThpqFCIMUkX/XiAuUcVis8lJaLEVVxjHMYJdl+unww==
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 46nrbes4m1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 16 May 2025 10:57:55 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 54GAT6ZZ027134;
+	Fri, 16 May 2025 10:57:54 GMT
+Received: from nam12-bn8-obe.outbound.protection.outlook.com (mail-bn8nam12lp2170.outbound.protection.outlook.com [104.47.55.170])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 46mbtafeqq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 16 May 2025 10:57:54 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=hRghEnt933vQFMvZMnv+aew0UwOABJgoGGh5D1fhRxSrdBPCf/O+aItpSvqWk5+LL7cK9r1ivcPE7Z0sfB2aDfZe++5GysYr4LpSdSWwwyr52lPynKGMq7zL+le930FWIn1efWkrZCxzKzEEMba9z/JkuQpHvB1Vf+8A4jzHzoFNpJr3i3DDlzgGV8xoBhF3PNwOhp20ehwbncgYeZ3IU735vHGNdJWhXZzmj0g7VmuzgsR7ZPkNcd858Q6KIMtQlbAIsZfTS24azW2m0Y2uVb+r1x4iYIpZsRMNUfy44qjNI8GgoPXiLb2ZsBjyCcMLqUSxlogPGDMaYtjycMQIfg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=CW7XtJZUyxym7YNeNEXVB5kps5+YxAhNgc5K3uxjlyE=;
+ b=sNGiGRe9h9sSgNgW3hlv/0jWxzuW1hD/7tanzm+MlVD377WAXzm3VY+3IsM7mfzOi/BQYXOBFnO2d8Re292v633hf/Joz/r+vzaQU40uKiVOGGbEZQRCcbtt0Y6txoPL3lBPa28yflV2T056po/BOcEm64Cj0feug9Nt5dLiFZOfF1ec4wcm1M5UwJnxZPe7MDJn129KNqkociHoVqR5P5CZE/t5GQtf3wlrMofuXQer5u8KIgF1uBYejBS4RPzYrAnIm0+ZbijNeyU6qjEmiI4JpKJKdL9D+OA2alxH3FH5AQ/hWk8rO00L2V98/ievuDu3rCyoWmdk123V5Lf2SA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tomeuvizoso-net.20230601.gappssmtp.com; s=20230601; t=1747392973; x=1747997773; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wvq8SJtHkSgAHowZhDbqFL61WnW2AkvgYvOEybV9RGs=;
-        b=da+2tWSOUAhNemGjnnnD6vW4hmbI12RH9aHIHucBuqdkBC4kt/79aBjXGvxZahRE/v
-         gB/o8wBPsjCUU6NLhhSZ7jqFFySlgtZrTZEjqzMKU12vOlIfVtCsNf2viZnv7A453k8z
-         O5o6+fYdTLvRGL2yJH87ZTzlwCqrq6l0yVqr1DBsctKUso+aNSrGE72GA2NeCwalEKpg
-         8H64krw3xwQZRjetUcbCDpIrfOh3qS24p6BWGLaYE3+X3/BtDUIOhn9H6VFa2IuHrNux
-         hLlB7aVpafatt41OI/txl6EkhXoC7ZQKZ0j2Hof1yGIm3DXOQmimZlfhBplvy3IeSrwb
-         C/dQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747392973; x=1747997773;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wvq8SJtHkSgAHowZhDbqFL61WnW2AkvgYvOEybV9RGs=;
-        b=oTTnYlfz5woNh1r9ri/QIzytLqNKOoSfd7n4nLlS8QNuR6aDOC9ia/dNoHMnL3jzLP
-         uPwxhiQzYOrFL3Uk2zXhKi2jCR/IV072A21g8fooKasoVe7bRTnrHbyOJvDC6J4rBpDU
-         IrQRktu4QvQ08MJnzerIhdzUSWyXHxHCWeqHeDflPWCrj+cLfI/SoEBobcmiF+ekif9u
-         pBh6zwHKnKdwWpLEWFHrZtQ6+wv0Pz5KnBbFr9bVN5NimcOA8h2Ew4H8i68lkXiLrNSk
-         XcNBwofyD3XSv/XRf9VR1E0o3+RTwONzVflNfJG5ZyNX+WkocnrRbfBLMBb1lmeCr4YY
-         dZmw==
-X-Forwarded-Encrypted: i=1; AJvYcCUALwf/wTUa5nIPlEtD4RI5bt9as3GBETQtWTuvpNTRnHGW1jIcJLrMblRig7gYO1ijBzlMW9IJp4ebjeE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/lPnBbzPshTl3KiFAV90ryZ6PDMh19nY4bHoH4fP8FQ5uAgcC
-	Fh7XxXCbJBVeq09x2nRBTKKEZo9bc6XoVrnUh+P3bmbZywPzwxA/NUTZW8DGVwTim3warzMVqZE
-	bBHpQU8Q=
-X-Gm-Gg: ASbGncvECnPz2zhSY4bQQTe7gp6uVwztu87INuKKfQVy3DyFp2O5Ouxxzk8z6JeMTih
-	lJDuwC67stCX6iSB3sQLHdcdeyn8L2JEwqrUfoE7bPF90e83KeoWGPlKRhWZAVvrtHfsIzQB03z
-	rNCp5SzLphbtbQ1B6OAmpboYV6qGYh1QVq9n7b5F/QRL9T0CD6auZf2TM4UvuB16Idgr4yJXnx7
-	B8k3rWJFWdOz/LeP/ZatgvPgr4Q5PHsMBjNIGE0Wa5SKpf2HALa90Lt4pIn6XUgCTIQCv0jrmhz
-	9h9taWrS5ex1FqgaktKdN2heiuT517+bbswFN9DxJm12VhcYr8BczKCho2UMrjmvQO0VanbYJkt
-	e6TMI4O4qytBbJyzYW50=
-X-Google-Smtp-Source: AGHT+IE0BSzctv3wwMpozhnU80k69/QXe6M6bale5k7Ttq3u4RvTeq2L5ZQTyobpec4KDJitemoZ9Q==
-X-Received: by 2002:a05:690c:6e06:b0:70c:a34b:5288 with SMTP id 00721157ae682-70ca7a572cfmr49865157b3.27.1747392973681;
-        Fri, 16 May 2025 03:56:13 -0700 (PDT)
-Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com. [209.85.219.169])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-70ca852d942sm3386897b3.102.2025.05.16.03.56.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 16 May 2025 03:56:13 -0700 (PDT)
-Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e733cd55f9eso1914228276.1;
-        Fri, 16 May 2025 03:56:13 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUKGGOW50hj+LvpQsxSol/h7BR/Ijctm34OdZFhAeGIItG1IpS1VlrrVTUBb08ZcIt9WRcg4qQHTHT0@vger.kernel.org, AJvYcCUpn2+Iweqju9CICYxMxQmqXCOnP7UYy9TgHzyvV5Q1mCUxQrOkEJRdloHqsgI6w3vAdGTU2yPJ/UT5@vger.kernel.org, AJvYcCUwOOpBG/J8ND67/4O8sSAK9Nh1Yp1LrWNv5pRpK+low3GcjHjvLjPK2TayftuZQz8BcqTVFUzT4rYSzj8=@vger.kernel.org, AJvYcCXbYOJNiIW43VaJaVcPEpciZDXGCuNe3M9Pz6rn9BgwLBi1IzicELvTBPFyh9KxoOIqhKQ0qfd68DogvifO@vger.kernel.org
-X-Received: by 2002:a05:6902:1890:b0:e6d:e962:f317 with SMTP id
- 3f1490d57ef6-e7b69d5b0d2mr3967716276.10.1747392973185; Fri, 16 May 2025
- 03:56:13 -0700 (PDT)
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=CW7XtJZUyxym7YNeNEXVB5kps5+YxAhNgc5K3uxjlyE=;
+ b=TDZnE+YjoGzqex9tdVR9rx44XdmtyKmSkeyAOe5LnlEA2MT59FQzyQr/YwNv8AYYPADePa813JruR0RCYFJnlgH4sjF5JJHDFj5hfIzwDQthWdF30JOvmcFPawd+0Z9EiYbfwdA4WrJpzs0OCpKMdLj6gMO0vKLrnZ8sdDWHSAY=
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
+ by IA3PR10MB8640.namprd10.prod.outlook.com (2603:10b6:208:583::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8722.32; Fri, 16 May
+ 2025 10:57:53 +0000
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2%6]) with mapi id 15.20.8699.022; Fri, 16 May 2025
+ 10:57:52 +0000
+Date: Fri, 16 May 2025 11:57:46 +0100
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: Usama Arif <usamaarif642@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        hannes@cmpxchg.org, shakeel.butt@linux.dev, riel@surriel.com,
+        ziy@nvidia.com, laoar.shao@gmail.com, baolin.wang@linux.alibaba.com,
+        Liam.Howlett@oracle.com, npache@redhat.com, ryan.roberts@arm.com,
+        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        kernel-team@meta.com
+Subject: Re: [PATCH 1/6] prctl: introduce PR_THP_POLICY_DEFAULT_HUGE for the
+ process
+Message-ID: <1a175a2c-8afa-4995-9dec-e3e7cf1efc72@lucifer.local>
+References: <20250515133519.2779639-1-usamaarif642@gmail.com>
+ <20250515133519.2779639-2-usamaarif642@gmail.com>
+ <c0af0eb2-d10f-4ee3-87dd-c23cca6cfd1a@lucifer.local>
+ <ddc0dd46-8541-4d4a-ac59-287e11e1d3ff@gmail.com>
+ <02ead03b-339b-45c8-b252-d31a66501c39@lucifer.local>
+ <3a2a329d-2592-4e31-a763-d87dcd925966@redhat.com>
+ <8ea288f2-5196-41f9-bd65-e29f22bb29e8@lucifer.local>
+ <5f77366d-e100-46bb-ac85-aa4b216eb2cf@redhat.com>
+ <cbc95f9b-1c13-45ec-8d34-38544d3f2dd3@lucifer.local>
+ <8f0a22c2-3176-4942-994d-58d940901ecf@redhat.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8f0a22c2-3176-4942-994d-58d940901ecf@redhat.com>
+X-ClientProxiedBy: LO3P265CA0026.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:387::9) To DM4PR10MB8218.namprd10.prod.outlook.com
+ (2603:10b6:8:1cc::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250225-6-10-rocket-v2-0-d4dbcfafc141@tomeuvizoso.net>
- <3628015.iIbC2pHGDl@workhorse> <CAAObsKDYpDt15NePk7DZbfwXnn5uaJxCu-pwZd-+PDEi56C73A@mail.gmail.com>
- <6549034.lOV4Wx5bFT@workhorse>
-In-Reply-To: <6549034.lOV4Wx5bFT@workhorse>
-From: Tomeu Vizoso <tomeu@tomeuvizoso.net>
-Date: Fri, 16 May 2025 12:56:02 +0200
-X-Gmail-Original-Message-ID: <CAAObsKC_h2iQWsjeTQm71Q2Vp4yTne+xP5_zc+X2u-_sP8_CDg@mail.gmail.com>
-X-Gm-Features: AX0GCFvfyIhbJSWWie1awNYiOYU4KhI_m0n6kxRk7hmgZ7cUnrZxeaiTgoKbzoU
-Message-ID: <CAAObsKC_h2iQWsjeTQm71Q2Vp4yTne+xP5_zc+X2u-_sP8_CDg@mail.gmail.com>
-Subject: Re: [PATCH v2 1/7] dt-bindings: npu: rockchip,rknn: Add bindings
-To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, Oded Gabbay <ogabbay@kernel.org>, 
-	Jonathan Corbet <corbet@lwn.net>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Sumit Semwal <sumit.semwal@linaro.org>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	Sebastian Reichel <sebastian.reichel@collabora.com>, Jeffrey Hugo <quic_jhugo@quicinc.com>, 
-	linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, linux-doc@vger.kernel.org, 
-	linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|IA3PR10MB8640:EE_
+X-MS-Office365-Filtering-Correlation-Id: 642991ad-5f62-4095-6f51-08dd94688170
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?ACvIQdb+aVdNOP2Gw5GwODIpKW7wCz4BGfzFcuS/TRc7oWvGTw1/LDEFib0J?=
+ =?us-ascii?Q?Ja+0biICdIF6izda429Ip0P3ceOLPDsdiV77AwPWFh2iC89Kjp9bncHeQm1O?=
+ =?us-ascii?Q?ydFrnLTcr7HrMEOUTnlWY0xl3p9SUUiC6uBPwnOJnpVvTEG3KECJBl8xEoY/?=
+ =?us-ascii?Q?v4uZ0/lrl8Ugj6ILNysiRVBPrdi1xPihwgQ5ThuYLsd7AnzT7r8iRaWilbqv?=
+ =?us-ascii?Q?WrABHEZINDEdI1ANc3IFfLIDXHwYgw/OexfAl8fdg17eLN3JRJrJqfxZo2x/?=
+ =?us-ascii?Q?CbOZpwIW23ktgdxFTnBrUwDgKO6Ia7j1xc8T9ftmbTznQv8+HSkilUMHxg77?=
+ =?us-ascii?Q?QSl0Kqe0VK5NFLvg1Adg6BdARWgU2L9JLkPUujKb5HUoogCwZDZU2PVr1/ys?=
+ =?us-ascii?Q?fZ8mLo2tbmj1BWFnLSvUYJ9cev78CqYZNaXuIq/CFWqaIDRXah3AGWBZy+zw?=
+ =?us-ascii?Q?knKC0YI/FH7RTADRirJLj+8nabgHb6fdlRwkrIM54JhFK1Pyf67nfl42nKml?=
+ =?us-ascii?Q?7zvTWdhLnMPnFGiVnUtg6Z09+Gi1THHGrg4KqFSyX1mtPNBNHV4fdJ2hioZI?=
+ =?us-ascii?Q?I6AfxUCKWRdzj6jmG4Mobc+Ot0HRqwg5xkcmbs/hvKvZ4N7GVR0WNPHfVAIT?=
+ =?us-ascii?Q?qC2C0UI/DFJPnQBFlku6HkYpxFDFXHROd22Bin8+aIdOaVzF9sYI/aQePYL3?=
+ =?us-ascii?Q?Eb7ahr06OJp0w46O/ZsHHkUwOS/c04G5LLeBcDCvJwY3v63DzeCCOePlXNpU?=
+ =?us-ascii?Q?KB0w/7hc1bQ23dcK9VgUYzhCOh2YdGl818q+zclRZMlt8kGZUry2fRpIzURs?=
+ =?us-ascii?Q?S+4NthZKs3IZka5FBXP7AmJ2g30SX84GdZR6ms6NsFiI8RxJLSHmNidb2og/?=
+ =?us-ascii?Q?cMhrmu04pmXV+zv9cqv6XYcjXJzptzznh+YG/4Bd/qibyuZeNyf0tXM1MLPT?=
+ =?us-ascii?Q?ybZAxFVXrCiBZQiOd3+zNLck5d1GUCpy6FTIDu6exzhzB98LsQOUxK+OtEAB?=
+ =?us-ascii?Q?3Jxt0FbNTtWbocymqvBPayV9YFpOOAeCnvU9voY4L6pkfNXGaprpx0bErX18?=
+ =?us-ascii?Q?ok01dXdOUDcB1jEzlhr/HtSRolFabvzZKLYwFGkygzdL91ZMbLgbziAGsKrv?=
+ =?us-ascii?Q?+kkn8W0P8SWZYki7O5TBQ4dfLd/QBW9CTLhrEmPCKymyf6k3LKweNnkl2y5/?=
+ =?us-ascii?Q?FqiT7+NkVuOiqksR3S12g5cho/nkJdEOAzJdD6zdcBPgyOFalqtP5Hlncml/?=
+ =?us-ascii?Q?7cXS8H2td9AJ0LlzSsqryRPR7X2w9+HbyxU9yq/2dOPJWE6xA301YMhtPZBl?=
+ =?us-ascii?Q?gWv8DbRNydS43TAbaYir3rK/e13bnmDFKcJFOWSWOmq7Bi7IqRAn7KI+xvhR?=
+ =?us-ascii?Q?CAEgidQ=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?gPcWIvywl7nT08cH6avkN8iK5pwSWwxmF0Apa6GfxZ1ZjQ/e5zru6n7eag0E?=
+ =?us-ascii?Q?1oQdi4MM/PFrex5/DhQJAL4Cn6AldSez1A5+HJyz2WOBOjxNqlyy0E8w+J++?=
+ =?us-ascii?Q?6yfGJCOUYJe7H7VT5PCQ7k6iZj+F5vWApVc3/UhFsYCGz2mWuFimdRVcd8VB?=
+ =?us-ascii?Q?4MHeVoMa4ycRXFDJExI4+P9r4aL+y3pD6l4tiTP2dih/R7e3aVodzO/FHkmk?=
+ =?us-ascii?Q?LuePmVTTC99Zg5k5NirudU2qrqGvzinffE++DnaWYKReNZ1epfVDfrDNwuct?=
+ =?us-ascii?Q?KVARb+u4aqihQpVBaYvcf138xbTw6uXxIcXol8kFyo5EMMy9D9RolvsH6py7?=
+ =?us-ascii?Q?KF43TQM0Y4/WJ/BjJ2uhRZbeE/mAzjgKpzhDd4TyQ7YY9uotNNZXM3WsFo0J?=
+ =?us-ascii?Q?KTf3PH9rdG45MvJkdkmSjPKAx0fcwR2L+/cLrbAbejGM4RDmyova4LFn1iE2?=
+ =?us-ascii?Q?cu2vR1eZWGjPX2yApGHfNhPD3dh87NnDjzKBX4bLGCV9svmTXaFVdHXVetea?=
+ =?us-ascii?Q?0lvA2dla3wVzZb7FLLVHue3miomWn9E2KmXNu/QtxBOBsfm10l9GMz+0v3Im?=
+ =?us-ascii?Q?Yq92/VCfqy18eQqbk8NworNoI4brM2VKMGCMCi5p6HMR3ytmpOc68I2sVJd+?=
+ =?us-ascii?Q?tO4bPJFGjiDNYnIu9067ELWvEAzxq1XclpcMHG41rYVgnqvVs5qy5lEZMq/p?=
+ =?us-ascii?Q?0d5KpBdF/flo9TcyKDtAH9CtuHM6GPtJR6rfrSLR4iPB0uUc73XsNegyhT4Q?=
+ =?us-ascii?Q?reoKdYS1VpzI4erz89Yp+6tVmE/xWgSUy6Szv0CdxDOfd8HX46a07b4pYgSm?=
+ =?us-ascii?Q?Wd3e3HcP2T4NBUhQM95LsxCR/QOeyQRNP7/6pTW/zGtsfGQQLABlujfgT02J?=
+ =?us-ascii?Q?iPrW2qoWNw4GPKEtFe5IZU++Twa2bQVPs91qj6a1fc3awOzBdGcOVAFQ/gMn?=
+ =?us-ascii?Q?LJZPrYQS2RaAtdquB67wZ/P46JPRVMAsxvbBEqyBByzIb5cCSon03+4tiC5N?=
+ =?us-ascii?Q?oPZ3tdy5Lwgnl0YAzXdGzj9eF+wTXptshnVMQYtbHYe7d6C+49NMErxh4UdZ?=
+ =?us-ascii?Q?9aNSQwG1ip4xFE0kMwwRaztF/rHQdlDGazynp6QO3Vw2b8rQ71M1V3kH4U37?=
+ =?us-ascii?Q?29V8gdE7xYu8K7ums6SXZlA4N7c+8z+SEXamQt3TvaQZ0vLDoD9+h7AA6upw?=
+ =?us-ascii?Q?GUM8HB2JcBNPIZzf7jZXOCF/Hd9dYkiZGfzGp4sfpgxjr7GQZrWuZQ2g6T+y?=
+ =?us-ascii?Q?cVOmf5zFoKv+466xlOXz2vX4TLktbaIP3AsAFYqo4A15AhnscmdeKMkWPpJx?=
+ =?us-ascii?Q?VjzvLyrzHzOFIZi+6fUJVyZ/bt4f4j/wQ+d7Kxe04yi1DtqSEaQnJsIGwj+5?=
+ =?us-ascii?Q?t1YDe1cEQ7K+pRXGIamv6cXKj0n87aESSUGfjmEMex2j8p/NvXWHFADQplEG?=
+ =?us-ascii?Q?vou/3xcK6rIkY0SLqF/kjgqt78vmolWN/8xH1QdClfrqi6PkMKNKhlGN900Z?=
+ =?us-ascii?Q?dg0YUwbiPvubMQugO9YzskxRED8+fwfO57zryrs5hV6pNwlv8TrUorqGDWNd?=
+ =?us-ascii?Q?G01roykaMhp/LLPzldoMFKqKU+UnaYIxZEkCJS2v+h2BZnfEg7gtxAUJsCzy?=
+ =?us-ascii?Q?mw=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	hoHFOw1Lcozfx0XYvr9Lx17uF+T1WwJT+UKoCzqYV1iisbzn+wftUwLCPkqIxGyoRCwgflduyvv9qlGNj18HVVFhcjuE2QGoFY5POfEx6fDCKi2uUBkBV/9n/ilhHMS4nRxRrvAlaRMBbrTCPioVvj0KoKLAGDd5yr3rj9nhtMNILIxTRLO95KXthYmfID6ALVh8ctORTVxTobUaRKAZAnAg1oeRPxv/jsp52QxsiaEollzq7yg7kpIQ/EGSEG1cxQStvv5YTs3EJfKqGKcyIerhFffxSAxJY0cK9n0LauGjfkw6RoyF8CU8+nfmmt3VDuGcuzSBGDo6zgBMUudPplQXNPZeWKDxh6Dt4e0wf7067QlpxwSXKhv+FSnoK+G3ZhVhyjeraWkCfh2azyU6hXJ22No0rBB1gG7UTF0xB0Ih3QbK41aqreLb1bO4Nxw9RXtCw4O9erOYnnep8zslhP/gyQF7mPtR5POHkQf1+abH52wVBi1wS4rmcLjQBnkKbcE11gAaraTJly9VHY/Lqh28dLDKganBd31REHYXPEZi49B6rqF72C16QVpEXg4Yny0xg2URluGApLpFDHJTPhIltCEmdq4Y2+BnITdIdos=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 642991ad-5f62-4095-6f51-08dd94688170
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 May 2025 10:57:52.7541
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: fFmoMUYsQlTIgOWt0G/IKa1y4bwTn7oxFw6LQc3ZQVglYukGNIGTSmmww2Wi6cJ5Q9IeTuazK86O4P3ohnkLWGqOkc+VIjw4B3YEEL+KUEY=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA3PR10MB8640
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-16_04,2025-05-16_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 malwarescore=0
+ mlxlogscore=999 phishscore=0 bulkscore=0 mlxscore=0 spamscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2505070000 definitions=main-2505160103
+X-Proofpoint-ORIG-GUID: U_C6e3cKyDW8XhMRb6q2C-lit5i1_LeD
+X-Authority-Analysis: v=2.4 cv=R8YDGcRX c=1 sm=1 tr=0 ts=68271a33 b=1 cx=c_pps a=e1sVV491RgrpLwSTMOnk8w==:117 a=e1sVV491RgrpLwSTMOnk8w==:17 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19
+ a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=dt9VzEwgFbYA:10 a=GoEa3M9JfhUA:10 a=GcyzOjIWAAAA:8 a=20KFwNOVAAAA:8 a=fTS9dbWWaBYbUYzJkG8A:9 a=CjuIK1q_8ugA:10 a=pckeWPcl4qcA:10 a=hQL3dl6oAZ8NdCsdz28n:22 cc=ntf awl=host:14694
+X-Proofpoint-GUID: U_C6e3cKyDW8XhMRb6q2C-lit5i1_LeD
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTE2MDEwMyBTYWx0ZWRfX/+QJSSE4vSZw MCzhvi4lCOS0NbP1GVd260roCjvy7uGaw1oRPlaUd6WmV13fW9t0rYOrZR+NP6EZ3KPYtUjT3dr MHDwlSxzbzQrGeiKoS40daSsie0cEiM2XJG45uHgjtY11v2JJgZ3nU6dVyCCldrUyCi87THOWFD
+ 3k9Wt6/BV2X1S6ffYZzOsvlrEKclGKNc16rpL6hUOdaml2dkHwyNSxRXRWdxY4r0YLPpTFyQeaS a/UdLCPvIpW1RDr4X6xCQGtBudOfGHAIjoAwYFws4MAo+dGwGpFfV21mVDbEELDJqsS9Qrvx2eI h0he7uCfB3U0JmxNIcghJLcLAnh0wvCvnD9Uhu2UPWzhuipwnBrXBKGoYdv2Yrho9+C4HbPOCuw
+ WBCu/K6f8ddd8/BEqDK5vbuiQTwuNe5XFhUfHgJJIGnYJs/PZtn5DVRGObg/zM9DGkbBWMVt
 
-On Fri, May 16, 2025 at 12:25=E2=80=AFPM Nicolas Frattaroli
-<nicolas.frattaroli@collabora.com> wrote:
->
-> On Thursday, 15 May 2025 10:30:14 Central European Summer Time Tomeu Vizo=
-so wrote:
-> > On Wed, May 14, 2025 at 7:50=E2=80=AFPM Nicolas Frattaroli
-> > <nicolas.frattaroli@collabora.com> wrote:
-> > >
-> > > On Wednesday, 14 May 2025 17:18:22 Central European Summer Time Tomeu=
- Vizoso wrote:
-> > > > Hi Nicolas,
-> > > >
-> > > > Thanks for looking at this. Some thoughts below:
-> > > >
-> > > > On Fri, Apr 25, 2025 at 8:50=E2=80=AFPM Nicolas Frattaroli
-> > > > <nicolas.frattaroli@collabora.com> wrote:
-> > > > >
-> > > > > On Tuesday, 25 February 2025 08:55:47 Central European Summer Tim=
-e Tomeu Vizoso wrote:
-> > > > > > Add the bindings for the Neural Processing Unit IP from Rockchi=
-p.
+On Fri, May 16, 2025 at 09:45:17AM +0200, David Hildenbrand wrote:
+> On 15.05.25 22:35, Lorenzo Stoakes wrote:
+> > On Thu, May 15, 2025 at 09:12:13PM +0200, David Hildenbrand wrote:
+> > > On 15.05.25 20:08, Lorenzo Stoakes wrote:
+> > > > On Thu, May 15, 2025 at 06:11:55PM +0200, David Hildenbrand wrote:
+> > > > > > > > So if you're not overriding VM_NOHUGEPAGE, the whole point of this exercise
+> > > > > > > > is to override global 'never'?
+> > > > > > > >
+> > > > > > >
+> > > > > > > Again, I am not overriding never.
+> > > > > > >
+> > > > > > > hugepage_global_always and hugepage_global_enabled will evaluate to false
+> > > > > > > and you will not get a hugepage.
 > > > > > >
-> > > > > > v2:
-> > > > > > - Adapt to new node structure (one node per core, each with its=
- own
-> > > > > >   IOMMU)
-> > > > > > - Several misc. fixes from Sebastian Reichel
-> > > > > >
-> > > > > > Signed-off-by: Tomeu Vizoso <tomeu@tomeuvizoso.net>
-> > > > > > Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.c=
-om>
-> > > > > > ---
-> > > > > >  .../bindings/npu/rockchip,rknn-core.yaml           | 152 +++++=
-++++++++++++++++
-> > > > > >  1 file changed, 152 insertions(+)
-> > > > > >
-> > > > > > diff --git a/Documentation/devicetree/bindings/npu/rockchip,rkn=
-n-core.yaml b/Documentation/devicetree/bindings/npu/rockchip,rknn-core.yaml
-> > > > > > new file mode 100644
-> > > > > > index 0000000000000000000000000000000000000000..e8d0afe4a7d1c4f=
-166cf13a9f4aa7c1901362a3f
-> > > > > > --- /dev/null
-> > > > > > +++ b/Documentation/devicetree/bindings/npu/rockchip,rknn-core.=
-yaml
-> > > > > > @@ -0,0 +1,152 @@
-> > > > > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > > > > > +%YAML 1.2
-> > > > > > +---
-> > > > > > +$id: http://devicetree.org/schemas/npu/rockchip,rknn-core.yaml=
-#
-> > > > > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > > > > > +
-> > > > > > +title: Neural Processing Unit IP from Rockchip
-> > > > > > +
-> > > > > > +maintainers:
-> > > > > > +  - Tomeu Vizoso <tomeu@tomeuvizoso.net>
-> > > > > > +
-> > > > > > +description:
-> > > > > > +  Rockchip IP for accelerating inference of neural networks, b=
-ased on NVIDIA's
-> > > > > > +  open source NVDLA IP.
-> > > > > > +
-> > > > > > +properties:
-> > > > > > +  $nodename:
-> > > > > > +    pattern: '^npu-core@[a-f0-9]+$'
-> > > > > > +
-> > > > > > +  compatible:
-> > > > > > +    oneOf:
-> > > > > > +      - items:
-> > > > > > +          - enum:
-> > > > > > +              - rockchip,rk3588-rknn-core-top
-> > > > > > +          - const: rockchip,rknn-core-top
-> > > > > > +      - items:
-> > > > > > +          - enum:
-> > > > > > +              - rockchip,rk3588-rknn-core
-> > > > > > +          - const: rockchip,rknn-core
-> > > > > > +
-> > > > > > +  reg:
-> > > > > > +    maxItems: 1
+> > > > > > Yeah, again ack, but I kind of hate that we set VM_HUGEPAGE everywhere even
+> > > > > > if the policy is never.
 > > > > >
-> > > > > Hi Tomeu,
-> > > > >
-> > > > > as you probably know, RK3576 has quite a similar NPU. This is why=
- I'm currently
-> > > > > poking at this patch series. One of the differences I ran into wa=
-s that the
-> > > > > IOMMU of each NPU core now sits within the reg address space rang=
-e of the core
-> > > > > as described by the single reg item binding and assumed by the dr=
-iver.
+> > > > > I think it should behave just as if someone does manually an madvise(). So
+> > > > > whatever we do here during an madvise, we should try to do the same thing
+> > > > > here.
 > > > >
-> > > > But this is not a difference, right?
+> > > > Ack I agree with this.
+> > > >
+> > > > It actually simplifies things a LOT to view it this way - we're saying 'by
+> > > > default apply madvise(...) to new VMAs'.
+> > > >
+> > > > Hm I wonder if we could have a more generic version of this...
+> > > >
+> > > > Note though that we're not _quite_ doing this.
+> > > >
+> > > > So in hugepage_madvise():
+> > > >
+> > > > int hugepage_madvise(struct vm_area_struct *vma,
+> > > > 		     unsigned long *vm_flags, int advice)
+> > > > {
+> > > > 	...
+> > > >
+> > > > 	switch (advice) {
+> > > > 	case MADV_HUGEPAGE:
+> > > > 		*vm_flags &= ~VM_NOHUGEPAGE;
+> > > > 		*vm_flags |= VM_HUGEPAGE;
+> > > >
+> > > > 		...
+> > > >
+> > > > 		break;
+> > > >
+> > > > 		...
+> > > > 	}
+> > > >
+> > > > 	...
+> > > > }
+> > > >
+> > > > So here we're actually clearing VM_NOHUGEPAGE and overriding it, but in the
+> > > > proposed code we're not.
 > > >
-> > > It is. E.g. on RK3588, you use reg =3D <0x0 0xfdab0000 0x0 0x9000>; f=
-or
-> > > rknn_core_top, and rknn_mmu_top then sits at 0xfdab9000, which is jus=
-t
-> > > outside the reg range of the rknn_core_top node. That means acquiring=
- the
-> > > iomem as a resource succeeds for you, whereas for me it fails.
+> > > Yeah, I think I suggested that, but probably we should just do exactly what
+> > > madvise() does.
 > >
-> > Ah, got it now, thanks.
+> > Yes, agreed.
 > >
-> > > >
-> > > > > This seemed weird to me at first, since I would've guessed the co=
-res would be
-> > > > > exactly the same, but I noticed that they kind of still are; the =
-RK3588's NPU
-> > > > > also has a "hole" between 0x2000 and 0x2fff on each core, which i=
-s where RK3576
-> > > > > put its IOMMU.
-> > > >
-> > > > So this is the same in both RK3576 and RK3588, right?
-> > >
-> > > Yes, both RK3576 and RK3588 have a hole in the same area. RK3562 also=
- has
-> > > the same hole. RK3568 doesn't have the offsets for the individual par=
-ts of
-> > > the NPU in the TRM, making all the relative register offsets the TRM =
-then
-> > > goes on to document completely pointless as it omits what those offse=
-ts
-> > > are based on, so we don't know if it has a hole there. I vaguely reca=
-ll
-> > > that it has the IOMMU either before or past the global range (not sur=
-e if
-> > > I wrote these findings down anywhere?), so if it has a hole at 0x2000
-> > > then it's unused like on the RK3588. I don't have access to the RV110=
-6
-> > > Part 2 TRM where the NPU is described, so I don't know whether that h=
-as a
-> > > hole there unless we dig into the downstream code.
-> > >
-> > > >
-> > > > > This is some information I gleaned from the RK3588 TRM, specifica=
-lly section
-> > > > > 36.4.1 "Internal Address Mapping", which shows where each "part" =
-of the NPU core
-> > > > > has its address space.
-> > > > >
-> > > > > Right now we just represent this as a single reg item per core. I=
-'ve played
-> > > > > with the idea of splitting this up into the distinct ranges the T=
-RM lists and
-> > > > > giving each a reg-names entry, but this would require a major rew=
-ork of the
-> > > > > driver from what I can tell, including to the auto-generated regi=
-ster header.
-> > > > >
-> > > > > For now, my hack on RK3576 is to just ioremap the range defined b=
-y resource
-> > > > > start to resource end inside rocket manually if I get -EBUSY tryi=
-ng to ioremap
-> > > > > the resource proper. This is quite an ugly hack though, it means =
-the IOMMU node
-> > > > > still has its address overlapping with another node in the DT, an=
-d it also means
-> > > > > we have an unavoidable error message printed into the kernel log.=
- This is also
-> > > > > what the vendor driver seems to do.
-> > > > >
-> > > > > What do you reckon is a reg setup in the binding that is both rea=
-sonable to
-> > > > > implement in the driver while accurately describing the hardware?
-> > > >
-> > > > Guess we could go with some smaller granularity and have 3 register
-> > > > areas per core, instead of 10:
-> > > >
-> > > > - CORE: PC+CNA (0x0000 ~ 0x1fff)
-> > > > - AUX: CORE+DPU+PPU+DDMA+SDMA (0x3000 ~ 0x9fff)
-> > > > - GLOBAL (0xf000 ~ 0xf004)
-> > > >
-> > > > So the IOMMU on all the known SoCs can have its own regmap. I have
-> > > > chosen to call the first one CORE because these are the components
-> > > > that are absolutely needed in any NPU that is oriented towards
-> > > > convolutional networks (convolutions, basically). I have named the
-> > > > second AUX because it contains hardware units that are optional and
-> > > > are used to implement operations that may be common but that aren't=
- as
-> > > > computational expensive as convolutions and thus might be skipped i=
-n
-> > > > lower-end versions of the IP.
-> > > >
-> > > > What do you think?
-> > >
-> > > I'm personally fine with this approach. I've floated a two-area appro=
-ach
-> > > to Sebastian Reichel before who, as far as I can recall, expressed hi=
-s
-> > > distaste for  it as it seemed like an arbitrary division. I do concur=
- in
-> > > that, it seems very arbitrary, so it's hard to say whether the bindin=
-gs
-> > > maintainers would let us get away with it if they get wind of it.
-> > > Unfortunately they are Cc'd on this E-Mail, so the cat is out of the =
-bag
-> > > in this regard.
+> > Usama - do you have any issue with us switching to how madvise() does it?
 > >
-> > Actually, after thinking a bit more about it I'm leaning towards only
-> > having the PC, CNA and CORE areas in the DT, as those are the only
-> > ones that should be accessible from the CPU.
+> > >
+> > > >
+> > > > So we're back into confusing territory again :)
+> > > >
+> > > > I wonder if we could...
+> > > >
+> > > > 1. Add an MADV_xxx that mimics the desired behaviour here.
+> > > >
+> > > > 2. Add a generic 'madvise() by default' thing at a process level?
+> > > >
+> > > > Is this crazy?
+> > >
+> > > I think that's what I had in mind, just a bit twisted.
+> > >
+> > > What could work is
+> > >
+> > > 1) prctl to set the default
+> > >
+> > > 2) madvise() to adjust all existing VMAs
+> > >
+> > >
+> > > We might have to teach 2) to ignore non-compatible VMAs / holes. Maybe not,
+> > > worth an investigation.
+> >
+> > Yeah, I think it'd _probably_ be ok except on s390 (which can fail, and so
+> > we'd have to be able to say - skip on error, carry on).
+> >
+> > We'll just get an -ENOMEM at the end for the gaps (god how I hate
+> > that). Otherwise I don't think MADV_HUGEPAGE actually is really that
+> > restrictive.
+> >
+> > That would simplify :)
+> >
+> > But I still so hate using prctl()... this might be one of those cases where
+> > we simply figure out we have no other choice.
+> > > But when you put it as simply as this maybe it's not so bad. With the
+> > flags2 gone by fixing this stupid 32-bit limit it's less awful.
+> >
+> > Perhaps worth seeing what an improved RFC of this series looks like with
+> > all the various bits fixed to give an idea.
 >
-> That does make sense to me. I've just checked the RK3576 specific reg
-> fiddling code I hacked in and it doesn't appear to be writing to any
-> other areas either.
+> Yes.
+>
+> >
+> > But you do then wonder if we could make this _generic_ for _any_ madvise(),
+> > and how _that_ would look.
+> >
+> > But perhaps that's insane because many VMAs would simply not be suited to
+> > having certain madvise flags set hmm.
+>
+> Same thinking. I think this is rather special.
+>
+> In a perfect world not even the madvise(*HUGEPAGE) would exist.
+>
+> But here we are ... 14 years (wow!) after
 
-Cool.
+This feels like the tale of the kernel :)
 
-> >
-> > The registers for the other units should be set by the PC, as it reads
-> > the command stream.
-> >
-> > So three register areas that can be set to wherever Rockchip has
-> > placed them, and we just ignore the others in the kernel, as we don't
-> > have any business messing with them ourselves.
-> >
-> > What do you think?
 >
-> This seems like a good solution. Any further reg ranges that are used in
-> other variants (e.g. RK3562/RK3576 and maybe RV1106) introduce something
-> called "CBUF" and I'm not yet sure if that'll need any writes to its regs
-> from the driver, but if it does then it's easy to add another range for i=
-t
-> in the binding for just those compatibles.
+> commit 0af4e98b6b095c74588af04872f83d333c958c32
+> Author: Andrea Arcangeli <aarcange@redhat.com>
+> Date:   Thu Jan 13 15:46:55 2011 -0800
+>
+>     thp: madvise(MADV_HUGEPAGE)
+>
+>
+>
+> (I'm surprised you don't complain about madvise(). IMHO, prctl() is even a
+> better interface than catch-all madvise(); a syscall where an advise might
+> not be an advise. I saw some funny rants about MADV_DONTNEED on reddit at
+> some point ... :) mctrl() would have been clearer, at least for me :D )
 
-Do you have any further info on those CBUF regs? In the NVDLA
-documentation, CBUF is the block that handles the Convolution Buffer,
-but on the RK3588 it is part of the CNA block.
+No I prefer madvise() massively, I mean yes in a way it's hacky, but prctl() is
+the ultimate hack.
 
-In any case, I don't think the kernel will have to do anything about it.
+So as an interface it's actually kinda fine like 'virtual range X-Y, advise ZZZ
+about it'.
 
-Cheers,
+(as for naming haha maybe you have a point actually, the 'advice' bit
+has always been strange... :)
 
-Tomeu
+But.
 
-> >
-> > Thanks,
-> >
-> > Tomeu
+The actual set of advice is bloody hideous and confusing and I've seen
+first hand userspace people get very, very confused about what each thing
+does. The naming is horrible, overloaded, overwrought.
+
+And the weird behaviour with gaps is also horrible...
+
+So there's lots to moan about there, but saying prctl() is somehow superior
+to the true evil of prctl() is far too far :P
+
+I mean take a look at https://man7.org/linux/man-pages/man2/prctl.2.html
+
+Things like:
+
+	PR_SET_MM
+	PR_SET_VMA
+
+Are super worrying...
+
 >
-> Kind regards,
-> Nicolas Frattaroli
+> --
+> Cheers,
 >
-> >
-> > > What speaks for the 3 register area split is that anything that bring=
-s
-> > > more holes and doubly mapped things into the AUX area is probably goi=
-ng
-> > > to be so radically different it'll ideally have its own binding anywa=
-y,
-> > > or needs more than just a compatible added to the binding.
-> > >
-> > > I think as far as arbitrary splits goes, the one you propose is proba=
-bly
-> > > the one most closely aligned with reality. Certain register areas do
-> > > seem like something they'd never move away from its corresponding
-> > > companion, whereas adding parts to the AUX area or removing from it i=
-s
-> > > probably going to be quite common. So it can essentially be treated a=
-s
-> > > the area where optional things will most likely land as you pointed o=
-ut,
-> > > which then don't need more bindings fiddling to add those optional th=
-ings
-> > > as explicitly named areas in the bindings as long as we treat it as j=
-ust
-> > > one opaque area s far as the binding is concerned.
-> > >
-> > > Also, unless there's some virtual combined sparse iomem API in the ke=
-rnel
-> > > that I'm not aware of, that's probably the easiest path forward for t=
-he
-> > > driver as well.
-> > >
-> > > >
-> > > > Regards,
-> > > >
-> > > > Tomeu
-> > >
-> > > Kind regards,
-> > > Nicolas Frattaroli
-> > >
-> > > >
-> > > > > The RK3568, which uses a similar NPU design has the IOMMU at an o=
-ffset of 0xb000
-> > > > > from the core's start of PC, so probably after any core specifics=
- but before the
-> > > > > global registers if I hazard a guess.
-> > > > >
-> > > > > For those without access to the TRM: splitting this up into multi=
-ple reg items
-> > > > > per core precisely the way the TRM does it would result in no les=
-s than 10 reg
-> > > > > items on RK3588, if I count correctly.
-> > > > >
-> > > > > Kind regards,
-> > > > > Nicolas Frattaroli
-> > > > >
-> > > > >
-> > > >
-> > >
-> > >
-> > >
-> > >
-> >
+> David / dhildenb
 >
->
->
->
+
+I wonder if we just need a new syscall overall... *puts thinking cap on*.
+
+A galaxy brained idea may be coming to me good sir :P
+
+Watch this space...
 
