@@ -1,325 +1,142 @@
-Return-Path: <linux-kernel+bounces-651561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-651563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F91BABA00F
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 17:39:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1A11ABA014
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 17:40:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B281A00A35
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 15:38:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B9873AC628
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 15:39:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B572F1C3BF7;
-	Fri, 16 May 2025 15:38:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CA2D1BCA07;
+	Fri, 16 May 2025 15:39:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DoyDFv/F"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hcx4OFPk"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B424D1BCA07;
-	Fri, 16 May 2025 15:38:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F4337D07D;
+	Fri, 16 May 2025 15:39:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747409917; cv=none; b=OD1Tx0Ke1exQmSOtAeuV4lbbyCJFkjieo9NDMw6pl75liytdMBprQnp4aRlnvhfLBl3wA48uip9HJhU3TAVG3Yxg1qA9fdiYH6YxVW03zuCYd0JleUiS58snFoMm3IaY1JGGatrO24aqUTfDxROdja9ngI/r0sgbPGooKq8WPlw=
+	t=1747409981; cv=none; b=DBMXxucmRdw3JGJWIFeyJ1uMLEmc5W054ZycD2fd3aLUcT1PlcNb4ublZrdWS+29ugLD69wjbbrI6vMj5kx3CPsqNJiPsvoXCWMxfikscK3CgRvKA4BRUDiLTYE4lB6vTmwEU4BVq657roiz5iiAAOxyrDDbFkA2Mm1WnO/SPow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747409917; c=relaxed/simple;
-	bh=p/CJELP+LYI04oeiLrNDf1hN9tbg6iLdso7k5jp9WAA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ke/n88Es03v+YLIImxK5N+y/oxnM5w3ZPRyX6uG74DHbyEloocBmt2bM6KOhjdAqvBX6HX9I6b0CnNj9Gd24ajjjs5uv9ZeBzp/zpggcAnxJwKfh2gx0huilIywShGNm6QMmEE1zapFh4KS2GaRxSQpGsCuCmz3x9LXcVwPaT9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DoyDFv/F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6742FC4CEE4;
-	Fri, 16 May 2025 15:38:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747409917;
-	bh=p/CJELP+LYI04oeiLrNDf1hN9tbg6iLdso7k5jp9WAA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DoyDFv/F0wQNV4gdc0CpieobyL+iC5qY4+BbOyScBKPO0bV9CgmaWGThPX0tAlTo7
-	 BeFT2e7UnFas36YJjPUxsOT5aToPCQU24HvOwphxe1y+UEjUHoUXKDfQWUvPRFOHga
-	 tKhgKfBHOByXIowU3dqwwu97qu1GDtGlXQM0WxqRyoIbYIvfhIPwlFMz8d3cdC+A8c
-	 l/PY5532VN3tDnOpkIqU0xm/VPAUlavpeg3uMKHcA1LmgFIjn4qcbSxFXMYy5Qxr0K
-	 CQbvzuJAWUCwW0XIbFzF63hnAZaxzXCRUqZm/j4sw1Pbc1ihVMr0nLRaCSbUneu6tp
-	 d03taouRq8H3A==
-Date: Fri, 16 May 2025 17:38:31 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: linux-kernel@vger.kernel.org
-Cc: linux-tip-commits@vger.kernel.org,
-	"Borislav Petkov (AMD)" <bp@alien8.de>, x86@kernel.org
-Subject: [PATCH] x86/bugs: Apply misc stylistic touchups
-Message-ID: <aCdb9wY6YfIXMhT6@gmail.com>
-References: <174740680468.406.372152086131806707.tip-bot2@tip-bot2>
+	s=arc-20240116; t=1747409981; c=relaxed/simple;
+	bh=iDIsHC3y66fGc4LfQnJ5V8YU10/v+RufQGfi5233qK0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lhdLElMSYJGwfytFKSbK8hxh/9DIdL+C1zJTCXOUQiuUoTcC0LyESuG+1QzpT63hdbrjYt/laC8yxf/H6ETZ5OXtyXkuIaD4NWymCDMonERagRaDzyNzfHPvJssampEWk1Xp5O4D7TTnFQbhjUeaLpS4ROWSA/OqwcdUWNayTgI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Hcx4OFPk; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-22fac0694aaso17353645ad.1;
+        Fri, 16 May 2025 08:39:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747409979; x=1748014779; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JGiKIF0HHFglk0sqGu0nqCpHZY3PnkC+CaBwFGqqE6U=;
+        b=Hcx4OFPko8SNJpxyY+ohqjf2zLziqnoptyA9Pv7sWsx1xdvFYPz6oq4AcBK2Kf6mkI
+         loOwYaRL3PQ3+jiUa+wHMU5yn3dM6Ym4Zqk98gSOVTbO6Su46RZD9JS6IE2ZTYHhD5CX
+         Tu+fw9GcO5WndAVMKyjWLZck9JF7HaNGogstIiL3CbQ25gm0stWUlHVB6u7li1ziHZ0L
+         nvYNkyLiWdyy4jUBJrMNv4BCN8RKRX6x12FzXAjgBXayKsGrAolW4eZbAHgXhO3quIaY
+         DHmGOFVEbk46RnTHh7L9+BtKVDRtXXb8AtW6jDv9hmZdA8qsSasMPjIxcLvdjArb6gjt
+         VVLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747409979; x=1748014779;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JGiKIF0HHFglk0sqGu0nqCpHZY3PnkC+CaBwFGqqE6U=;
+        b=smDBi2ndSQj+vaiCBNtYbPwvw1+MXXHaJNCQUVl9It2kmXHOE4LBSB3kYmglDmQZPz
+         2yi/x68dVIcrghwxHCRBXm8N2YfOe8gtnhP7lKxc8ONt9E3EjG+UxdDhsUuFyfXZBpR3
+         gksmL/gQwC7/TlDeYpQ0pY2xHNTQ8Y+yyck5khWzOISAsBts8WfVxtBve6KkQ0wYiHDF
+         daZdnOK0WjqwO6Aqge2fkmGWkkMi1/tZfk0qAwBNSCcg1mXuw+vZBF+ed+DSocYMuaoM
+         VcyCzf5MR+3XUhx3jbUDvGQCCxW/yE17m9a8YuE6h+a5RA9Fwozzpyi/RvM1nc7eGEMI
+         ELYw==
+X-Forwarded-Encrypted: i=1; AJvYcCWKKfvu51y9t0WN2JWMSveTxlLbHTD7xTLoaCWceMnZ5NG0LlGou0Sg4qLIn74/aime9PRS6QzJWfoIdVnR@vger.kernel.org, AJvYcCXe77t9RI4Ak7Fki7t0dI1V6uTaquHx/DpNGNEKYwXjjSK7xWv23Mqu0Jd1ZcOdB1UL4rGxGuWg1OfaCY0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwebN0KBqCZZB7AcGSYDW11s96hVGWLB49vJolmomD0k3OEo4EG
+	LacqdlepWobhoiDeOonLa91QVNt/irIXsIB2U/7McOQ82UQhpgkT4P6s380mv2/m6cMPfIZ5aTi
+	Iis2gmOpMfVEeGvaSvACKlKw7XZFkCU4=
+X-Gm-Gg: ASbGncu4FmeZuZJQstSkKBqTi7O63wvKSg72kFZiYluUytgIwr+sVZFJb1Vt3PFjpfK
+	XgQl9x1XGXZm6opUxnDBTvbezPC1BgVp2XeWYH3ftk1FoL3QC3LT7BEtZ353pV6zql3xik7yVBh
+	uhwgpKVJE6ZlKRjVyssx8W1HItANuUGzs96rnfeljDN+5xb5K+KGCY9IgadK7uSQ==
+X-Google-Smtp-Source: AGHT+IHikhQn4nXRiXmVKBN2OJHB2bviiEdvoxOFs3NV3OqShuxi+7fYwGopfwwtrDxFnXLqd1EwiIscXVmZINnj/EI=
+X-Received: by 2002:a17:902:dac5:b0:22e:4509:cb89 with SMTP id
+ d9443c01a7336-231de21d4d5mr39699155ad.0.1747409979348; Fri, 16 May 2025
+ 08:39:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <174740680468.406.372152086131806707.tip-bot2@tip-bot2>
+References: <20250506130712.156583-1-ltykernel@gmail.com> <20250506130712.156583-5-ltykernel@gmail.com>
+ <SN6PR02MB41576BE5D8E86D8F3B75E11AD491A@SN6PR02MB4157.namprd02.prod.outlook.com>
+In-Reply-To: <SN6PR02MB41576BE5D8E86D8F3B75E11AD491A@SN6PR02MB4157.namprd02.prod.outlook.com>
+From: Tianyu Lan <ltykernel@gmail.com>
+Date: Fri, 16 May 2025 23:39:02 +0800
+X-Gm-Features: AX0GCFsGTo92A1phqftktV3NEJoSCxkf-iPtXI1gfVfFQ5yTZqIqxSsb7kTkcus
+Message-ID: <CAMvTesA7LbQpqFA=K+romUaphUo23zPNvW-J2P4LmGiBGYZEfA@mail.gmail.com>
+Subject: Re: [RFC PATCH 4/6] x86/Hyper-V: Allow Hyper-V to inject Hyper-V vectors
+To: Michael Kelley <mhklinux@outlook.com>
+Cc: "kys@microsoft.com" <kys@microsoft.com>, "haiyangz@microsoft.com" <haiyangz@microsoft.com>, 
+	"wei.liu@kernel.org" <wei.liu@kernel.org>, "decui@microsoft.com" <decui@microsoft.com>, 
+	"tglx@linutronix.de" <tglx@linutronix.de>, "mingo@redhat.com" <mingo@redhat.com>, "bp@alien8.de" <bp@alien8.de>, 
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, "x86@kernel.org" <x86@kernel.org>, 
+	"hpa@zytor.com" <hpa@zytor.com>, "Neeraj.Upadhyay@amd.com" <Neeraj.Upadhyay@amd.com>, 
+	"yuehaibing@huawei.com" <yuehaibing@huawei.com>, "kvijayab@amd.com" <kvijayab@amd.com>, 
+	"jacob.jun.pan@linux.intel.com" <jacob.jun.pan@linux.intel.com>, "jpoimboe@kernel.org" <jpoimboe@kernel.org>, 
+	"tiala@microsoft.com" <tiala@microsoft.com>, 
+	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-* tip-bot2 for Borislav Petkov (AMD) <tip-bot2@linutronix.de> wrote:
-
-> The following commit has been merged into the x86/core branch of tip:
-> 
-> Commit-ID:     ff8f7a889abd9741abde6e83d33a3a7d9d6e7d83
-> Gitweb:        https://git.kernel.org/tip/ff8f7a889abd9741abde6e83d33a3a7d9d6e7d83
-> Author:        Borislav Petkov (AMD) <bp@alien8.de>
-> AuthorDate:    Fri, 16 May 2025 16:31:38 +02:00
-> Committer:     Borislav Petkov (AMD) <bp@alien8.de>
-> CommitterDate: Fri, 16 May 2025 16:31:38 +02:00
-> 
-> x86/bugs: Fix indentation due to ITS merge
-> 
-> No functional changes.
-> 
-> Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-> ---
->  arch/x86/kernel/cpu/bugs.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-> index dd8b50b..d1a03ff 100644
-> --- a/arch/x86/kernel/cpu/bugs.c
-> +++ b/arch/x86/kernel/cpu/bugs.c
-> @@ -2975,10 +2975,10 @@ static void __init srso_apply_mitigation(void)
->  
->  		if (boot_cpu_data.x86 == 0x19) {
->  			setup_force_cpu_cap(X86_FEATURE_SRSO_ALIAS);
-> -				set_return_thunk(srso_alias_return_thunk);
-> +			set_return_thunk(srso_alias_return_thunk);
->  		} else {
->  			setup_force_cpu_cap(X86_FEATURE_SRSO);
-> -				set_return_thunk(srso_return_thunk);
-> +			set_return_thunk(srso_return_thunk);
->  		}
->  		break;
->  	case SRSO_MITIGATION_IBPB:
-
-This reminded me of this bugs.c housekeeping patch I have stashed:
-
-===================================>
-From: Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH] x86/bugs: Apply misc stylistic touchups
-
- - s/its/it's
-
- - Use the pr_fmt 'RETBleed' string consistently in other messages as well
-
- - Use the pr_fmt 'Spectre V2' string consistently in other messages as well
-
- - Use 'user space' consistently. (vs. 'userspace')
-
- - Capitalize 'SWAPGS' consistently.
-
- - Capitalize 'L1D' consistently.
-
- - Spell '44 bits' consistently.
-
- - Consistently use empty lines before final 'return' statements where justified.
-
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- arch/x86/kernel/cpu/bugs.c | 51 +++++++++++++++++++++++-----------------------
- 1 file changed, 26 insertions(+), 25 deletions(-)
-
-diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -172,7 +172,7 @@ DEFINE_STATIC_KEY_FALSE(mds_idle_clear);
- EXPORT_SYMBOL_GPL(mds_idle_clear);
- 
- /*
-- * Controls whether l1d flush based mitigations are enabled,
-+ * Controls whether L1D flush based mitigations are enabled,
-  * based on hw features and admin setting via boot parameter
-  * defaults to false
-  */
-@@ -286,7 +286,7 @@ x86_virt_spec_ctrl(u64 guest_virt_spec_ctrl, bool setguest)
- 
- 	/*
- 	 * If the host has SSBD mitigation enabled, force it in the host's
--	 * virtual MSR value. If its not permanently enabled, evaluate
-+	 * virtual MSR value. If it's not permanently enabled, evaluate
- 	 * current's TIF_SSBD thread flag.
- 	 */
- 	if (static_cpu_has(X86_FEATURE_SPEC_STORE_BYPASS_DISABLE))
-@@ -1028,13 +1028,13 @@ static enum spectre_v1_mitigation spectre_v1_mitigation __ro_after_init =
- 		SPECTRE_V1_MITIGATION_AUTO : SPECTRE_V1_MITIGATION_NONE;
- 
- static const char * const spectre_v1_strings[] = {
--	[SPECTRE_V1_MITIGATION_NONE] = "Vulnerable: __user pointer sanitization and usercopy barriers only; no swapgs barriers",
--	[SPECTRE_V1_MITIGATION_AUTO] = "Mitigation: usercopy/swapgs barriers and __user pointer sanitization",
-+	[SPECTRE_V1_MITIGATION_NONE] = "Vulnerable: __user pointer sanitization and usercopy barriers only; no SWAPGS barriers",
-+	[SPECTRE_V1_MITIGATION_AUTO] = "Mitigation: usercopy/SWAPGS barriers and __user pointer sanitization",
- };
- 
- /*
-  * Does SMAP provide full mitigation against speculative kernel access to
-- * userspace?
-+ * user space?
-  */
- static bool smap_works_speculatively(void)
- {
-@@ -1067,7 +1067,7 @@ static void __init spectre_v1_apply_mitigation(void)
- 	if (spectre_v1_mitigation == SPECTRE_V1_MITIGATION_AUTO) {
- 		/*
- 		 * With Spectre v1, a user can speculatively control either
--		 * path of a conditional swapgs with a user-controlled GS
-+		 * path of a conditional SWAPGS with a user-controlled GS
- 		 * value.  The mitigation is to add lfences to both code paths.
- 		 *
- 		 * If FSGSBASE is enabled, the user can put a kernel address in
-@@ -1085,16 +1085,16 @@ static void __init spectre_v1_apply_mitigation(void)
- 			 * is serializing.
- 			 *
- 			 * If neither is there, mitigate with an LFENCE to
--			 * stop speculation through swapgs.
-+			 * stop speculation through SWAPGS.
- 			 */
- 			if (boot_cpu_has_bug(X86_BUG_SWAPGS) &&
- 			    !boot_cpu_has(X86_FEATURE_PTI))
- 				setup_force_cpu_cap(X86_FEATURE_FENCE_SWAPGS_USER);
- 
- 			/*
--			 * Enable lfences in the kernel entry (non-swapgs)
-+			 * Enable lfences in the kernel entry (non-SWAPGS)
- 			 * paths, to prevent user entry from speculatively
--			 * skipping swapgs.
-+			 * skipping SWAPGS.
- 			 */
- 			setup_force_cpu_cap(X86_FEATURE_FENCE_SWAPGS_KERNEL);
- 		}
-@@ -1177,7 +1177,7 @@ static int __init retbleed_parse_cmdline(char *str)
- early_param("retbleed", retbleed_parse_cmdline);
- 
- #define RETBLEED_UNTRAIN_MSG "WARNING: BTB untrained return thunk mitigation is only effective on AMD/Hygon!\n"
--#define RETBLEED_INTEL_MSG "WARNING: Spectre v2 mitigation leaves CPU vulnerable to RETBleed attacks, data leaks possible!\n"
-+#define RETBLEED_INTEL_MSG "WARNING: Spectre V2 mitigation leaves CPU vulnerable to RETBleed attacks, data leaks possible!\n"
- 
- static void __init retbleed_select_mitigation(void)
- {
-@@ -1415,7 +1415,7 @@ static void __init its_select_mitigation(void)
- 		goto out;
- 	}
- 	if (spectre_v2_enabled == SPECTRE_V2_NONE) {
--		pr_err("WARNING: Spectre-v2 mitigation is off, disabling ITS\n");
-+		pr_err("WARNING: Spectre V2 mitigation is off, disabling ITS\n");
- 		its_mitigation = ITS_MITIGATION_OFF;
- 		goto out;
- 	}
-@@ -1466,7 +1466,7 @@ static void __init its_select_mitigation(void)
- 		set_return_thunk(call_depth_return_thunk);
- 		if (retbleed_mitigation == RETBLEED_MITIGATION_NONE) {
- 			retbleed_mitigation = RETBLEED_MITIGATION_STUFF;
--			pr_info("Retbleed mitigation updated to stuffing\n");
-+			pr_info("RETBleed mitigation updated to stuffing\n");
- 		}
- 		break;
- 	}
-@@ -1490,8 +1490,9 @@ bool retpoline_module_ok(bool has_retpoline)
- 	if (spectre_v2_enabled == SPECTRE_V2_NONE || has_retpoline)
- 		return true;
- 
--	pr_err("System may be vulnerable to spectre v2\n");
-+	pr_err("System may be vulnerable to Spectre V2\n");
- 	spectre_v2_bad_module = true;
-+
- 	return false;
- }
- 
-@@ -1504,8 +1505,8 @@ static inline const char *spectre_v2_module_string(void) { return ""; }
- #endif
- 
- #define SPECTRE_V2_LFENCE_MSG "WARNING: LFENCE mitigation is not recommended for this CPU, data leaks possible!\n"
--#define SPECTRE_V2_EIBRS_EBPF_MSG "WARNING: Unprivileged eBPF is enabled with eIBRS on, data leaks possible via Spectre v2 BHB attacks!\n"
--#define SPECTRE_V2_EIBRS_LFENCE_EBPF_SMT_MSG "WARNING: Unprivileged eBPF is enabled with eIBRS+LFENCE mitigation and SMT, data leaks possible via Spectre v2 BHB attacks!\n"
-+#define SPECTRE_V2_EIBRS_EBPF_MSG "WARNING: Unprivileged eBPF is enabled with eIBRS on, data leaks possible via Spectre V2 BHB attacks!\n"
-+#define SPECTRE_V2_EIBRS_LFENCE_EBPF_SMT_MSG "WARNING: Unprivileged eBPF is enabled with eIBRS+LFENCE mitigation and SMT, data leaks possible via Spectre V2 BHB attacks!\n"
- #define SPECTRE_V2_IBRS_PERF_MSG "WARNING: IBRS mitigation selected on Enhanced IBRS CPU, this may cause unnecessary performance loss\n"
- 
- #ifdef CONFIG_BPF_SYSCALL
-@@ -1537,7 +1538,7 @@ static inline bool match_option(const char *arg, int arglen, const char *opt)
- 	return len == arglen && !strncmp(arg, opt, len);
- }
- 
--/* The kernel command line selection for spectre v2 */
-+/* The kernel command line selection for Spectre V2 */
- enum spectre_v2_mitigation_cmd {
- 	SPECTRE_V2_CMD_NONE,
- 	SPECTRE_V2_CMD_AUTO,
-@@ -1697,7 +1698,7 @@ static void __init spectre_v2_user_update_mitigation(void)
- 	 * injection in user-mode as the IBRS bit remains always set which
- 	 * implicitly enables cross-thread protections.  However, in legacy IBRS
- 	 * mode, the IBRS bit is set only on kernel entry and cleared on return
--	 * to userspace.  AMD Automatic IBRS also does not protect userspace.
-+	 * to user space.  AMD Automatic IBRS also does not protect user space.
- 	 * These modes therefore disable the implicit cross-thread protection,
- 	 * so allow for STIBP to be selected in those cases.
- 	 */
-@@ -1714,7 +1715,7 @@ static void __init spectre_v2_user_update_mitigation(void)
- 	     retbleed_mitigation == RETBLEED_MITIGATION_IBPB)) {
- 		if (spectre_v2_user_stibp != SPECTRE_V2_USER_STRICT &&
- 		    spectre_v2_user_stibp != SPECTRE_V2_USER_STRICT_PREFERRED)
--			pr_info("Selecting STIBP always-on mode to complement retbleed mitigation\n");
-+			pr_info("Selecting STIBP always-on mode to complement RETBleed mitigation\n");
- 		spectre_v2_user_stibp = SPECTRE_V2_USER_STRICT_PREFERRED;
- 	}
- 	pr_info("%s\n", spectre_v2_user_strings[spectre_v2_user_stibp]);
-@@ -1923,7 +1924,7 @@ static void __init spectre_v2_select_rsb_mitigation(enum spectre_v2_mitigation m
- 	case SPECTRE_V2_EIBRS_LFENCE:
- 	case SPECTRE_V2_EIBRS_RETPOLINE:
- 		if (boot_cpu_has_bug(X86_BUG_EIBRS_PBRSB)) {
--			pr_info("Spectre v2 / PBRSB-eIBRS: Retire a single CALL on VMEXIT\n");
-+			pr_info("Spectre V2 / PBRSB-eIBRS: Retire a single CALL on VMEXIT\n");
- 			setup_force_cpu_cap(X86_FEATURE_RSB_VMEXIT_LITE);
- 		}
- 		break;
-@@ -1931,13 +1932,13 @@ static void __init spectre_v2_select_rsb_mitigation(enum spectre_v2_mitigation m
- 	case SPECTRE_V2_RETPOLINE:
- 	case SPECTRE_V2_LFENCE:
- 	case SPECTRE_V2_IBRS:
--		pr_info("Spectre v2 / SpectreRSB: Filling RSB on context switch and VMEXIT\n");
-+		pr_info("Spectre V2 / SpectreRSB: Filling RSB on context switch and VMEXIT\n");
- 		setup_force_cpu_cap(X86_FEATURE_RSB_CTXSW);
- 		setup_force_cpu_cap(X86_FEATURE_RSB_VMEXIT);
- 		break;
- 
- 	default:
--		pr_warn_once("Unknown Spectre v2 mode, disabling RSB mitigation\n");
-+		pr_warn_once("Unknown Spectre V2 mode, disabling RSB mitigation\n");
- 		dump_stack();
- 		break;
- 	}
-@@ -1945,7 +1946,7 @@ static void __init spectre_v2_select_rsb_mitigation(enum spectre_v2_mitigation m
- 
- /*
-  * Set BHI_DIS_S to prevent indirect branches in kernel to be influenced by
-- * branch history in userspace. Not needed if BHI_NO is set.
-+ * branch history in user space. Not needed if BHI_NO is set.
-  */
- static bool __init spec_ctrl_bhi_dis(void)
- {
-@@ -2696,7 +2697,7 @@ enum vmx_l1d_flush_state l1tf_vmx_mitigation = VMENTER_L1D_FLUSH_AUTO;
- EXPORT_SYMBOL_GPL(l1tf_vmx_mitigation);
- 
- /*
-- * These CPUs all support 44bits physical address space internally in the
-+ * These CPUs all support 44 bits physical address space internally in the
-  * cache but CPUID can report a smaller number of physical address bits.
-  *
-  * The L1TF mitigation uses the top most address bit for the inversion of
-@@ -2705,9 +2706,9 @@ EXPORT_SYMBOL_GPL(l1tf_vmx_mitigation);
-  * which report 36bits physical address bits and have 32G RAM installed,
-  * then the mitigation range check in l1tf_select_mitigation() triggers.
-  * This is a false positive because the mitigation is still possible due to
-- * the fact that the cache uses 44bit internally. Use the cache bits
-+ * the fact that the cache uses 44 bits internally. Use the cache bits
-  * instead of the reported physical bits and adjust them on the affected
-- * machines to 44bit if the reported bits are less than 44.
-+ * machines to 44 bits if the reported bits are less than 44.
-  */
- static void override_cache_bits(struct cpuinfo_x86 *c)
- {
+On Thu, May 15, 2025 at 12:54=E2=80=AFAM Michael Kelley <mhklinux@outlook.c=
+om> wrote:
+>
+> From: Tianyu Lan <ltykernel@gmail.com> Sent: Tuesday, May 6, 2025 6:07 AM
+> >
+>
+> Update Subject prefix to "x86/hyperv".
+>
+> > When Secure AVIC is enabled, call Secure AVIC
+> > function to allow Hyper-V to inject REENLIGHTENMENT,
+> > STIMER0 and CALLBACK vectors.
+> >
+> > Signed-off-by: Tianyu Lan <tiala@microsoft.com>
+> > ---
+> >  arch/x86/hyperv/hv_init.c | 12 ++++++++++++
+> >  1 file changed, 12 insertions(+)
+> >
+> > diff --git a/arch/x86/hyperv/hv_init.c b/arch/x86/hyperv/hv_init.c
+> > index ddeb40930bc8..d75df5c3965d 100644
+> > --- a/arch/x86/hyperv/hv_init.c
+> > +++ b/arch/x86/hyperv/hv_init.c
+> > @@ -131,6 +131,18 @@ static int hv_cpu_init(unsigned int cpu)
+> >               wrmsrl(HV_X64_MSR_VP_ASSIST_PAGE, msr.as_uint64);
+> >       }
+> >
+> > +     /* Allow Hyper-V vector to be injected from Hypervisor. */
+> > +     if (ms_hyperv.features & HV_ACCESS_REENLIGHTENMENT)
+> > +             x2apic_savic_update_vector(cpu,
+> > +                                        HYPERV_REENLIGHTENMENT_VECTOR,=
+ true);
+>
+> This will allow Hyper-V to submit the re-enlightenment interrupt on
+> any vCPU, even though the Linux guest has programmed the interrupt
+> to only arrive to a particular vCPU.  That selected vCPU is set up in
+> set_hv_tscchange_cb(), and maintained in clear_hv_tscchange_cb()
+> and in hv_cpu_die(). I'm not super familiar with the re-enlightenment
+> code, but I don't see a problem if Hyper-V sends the interrupt on an
+> unexpected vCPU.  So it's probably OK to enable this interrupt vector
+> on all vCPUs.
+>
+Yes, I will double check it. Thanks for suggestion..
+--
+Thanks
+Tianyu Lan
 
