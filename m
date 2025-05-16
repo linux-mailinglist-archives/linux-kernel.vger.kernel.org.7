@@ -1,185 +1,193 @@
-Return-Path: <linux-kernel+bounces-650873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-650871-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43387AB9729
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 10:06:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDEB0AB9724
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 10:06:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23B7A4E7B79
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 08:06:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA7073AEE4E
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 08:05:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F9F822CBD5;
-	Fri, 16 May 2025 08:06:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20DB522CBC4;
+	Fri, 16 May 2025 08:05:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="jpRzEyE1"
-Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2070.outbound.protection.outlook.com [40.107.20.70])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="pRVbBiBO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5942224259;
-	Fri, 16 May 2025 08:06:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.70
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747382804; cv=fail; b=O5eWb4DhoMkYv04x+oRZ24M8XhCgAYNxs2Y80YfpICXVL4PeACZ+VhDu3Dw2Khc+CFUHE9IebDPh7J9go0ou2rRSNU5D/gYhCKXw0QXol99/WN/OxeZrjxjWK871HD/gj3+b6L7cPUCnrSZDnuCBnlZtf3WhUCdclnSImKJDNqg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747382804; c=relaxed/simple;
-	bh=+yP/RUWY9vxILA5yxVLh0hDveBck3G/sxE+lJkg+YXE=;
-	h=From:To:Subject:Date:Message-Id:Content-Type:MIME-Version; b=rB/VijBiDeymR8JAfyvg2WaPqKMKkz7yiYo3JO2y/BKwPvydGX2fc4GBkKX5aBiJURTGvVU47QugJvmXVdql9jZC8ZMeQOY1rzUcf4xeY7Xa3JHRnbjrdd3Wl/58vh6iDT1jRTkd6/dzBcEgFNr7xaZjrVmBMKQYk1UL6CvbDk4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=jpRzEyE1; arc=fail smtp.client-ip=40.107.20.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=q4cUSPBD29U3SnAOs0sLs8lZ9hT0l6qfZp+A6KCmZMbsx2ci6ZzXr7wbDwiBoklZ4MCFFTsULq5KDMX2rpQmA/u2Wr/j2ZIVCZG7cqP+oRiN6Gr2gHAc/soCmV03PPPOjbRnoGoJqT+zk2ZFBMAwaQp8N1QLUPWcIw6EmwX/zeYdtM0dtBr5SE9VXAAt+UBKkMqP+txbPYnWiYbybCpWBdr5bSVGl5+4tTnSAMRanzlTpyoXgagsQcQN9WKY/bTyHDv0NFcVyYqbfGE6lhVZEwYPEhCqH9ob0vYzN4hwKf3wPfL4MLhnrQ0i54RfH0B4D47UWMgl1wurOCiQYhmsNg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=DmHtDEyRMYieDfivjDNfPaJX6DVrir+/DNoyoIQmWz0=;
- b=iUhp2RY4kB1oOJ30PmnVm7h8VMZ34V87KERfdt8Eu2Wi4FyXmrvNKAJbMnH3AnBB6Rrq/DtwAxWF0jokkjJk48R/tFsUPfFRPDG626ecpIACwMihTHbZULOvYOcZRhzqJjH3I/IJqvVCQPSloVdS+cdKwzCPJyTXRUElULZY0/Eo2wvhyhxci3Ej+62VkbaSG11he6mRT8V8AqAh2lTpJTFDbPcbvQZQhQUITXZTpGc2oJBhY36j1ma461IVzO6YBz7tPG2/SpGhwGM/bRJ4ro+NLCnb/mq2fSg27EyAW96jYfGvd89gZhOVmVJJsHfazvxdA87ZDTv5ONeakmWIvg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DmHtDEyRMYieDfivjDNfPaJX6DVrir+/DNoyoIQmWz0=;
- b=jpRzEyE1lFhM95fvI4+7KuzxngZL1M3pcxEM0oiD26PFnwoCNbGEPpUNZDJjJLKZxvVBNuJlpuaZg0Zl53f/E4lOUKJYXZoUG1guDCXd1GL2fqWZZ/UCaMbQJBpL1Bx8y5etFPiAOx4DO8fOkI5nq/ep+OotkCJLKbpLg0YIbynnKAmEnzs1tgYof+8xYzefF6GbGymZpqVu3k7PJQoKtkfIPlovBnqxldYglN4d27etIWFfBYdsl5wg+coW9Iq+XfugyJzdIWhYaNxOEtiZi8zGNN4aR9oLtZLozJcIaHSsa7FfXVJlzi6ZPZ0SlXR7htxY/U7oH6im+hfETn84Rg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AM0PR04MB7044.eurprd04.prod.outlook.com (2603:10a6:208:191::20)
- by AS4PR04MB9313.eurprd04.prod.outlook.com (2603:10a6:20b:4e4::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8722.31; Fri, 16 May
- 2025 08:06:40 +0000
-Received: from AM0PR04MB7044.eurprd04.prod.outlook.com
- ([fe80::7be0:296:768c:e891]) by AM0PR04MB7044.eurprd04.prod.outlook.com
- ([fe80::7be0:296:768c:e891%4]) with mapi id 15.20.8722.031; Fri, 16 May 2025
- 08:06:39 +0000
-From: Shengjiu Wang <shengjiu.wang@nxp.com>
-To: shengjiu.wang@gmail.com,
-	Xiubo.Lee@gmail.com,
-	festevam@gmail.com,
-	nicoleotsuka@gmail.com,
-	lgirdwood@gmail.com,
-	broonie@kernel.org,
-	perex@perex.cz,
-	tiwai@suse.com,
-	linux-sound@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] ASoC: fsl_xcvr: update platform driver name
-Date: Fri, 16 May 2025 16:03:34 +0800
-Message-Id: <20250516080334.3272878-1-shengjiu.wang@nxp.com>
-X-Mailer: git-send-email 2.37.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SI2PR04CA0010.apcprd04.prod.outlook.com
- (2603:1096:4:197::11) To AM0PR04MB7044.eurprd04.prod.outlook.com
- (2603:10a6:208:191::20)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E4F820B807;
+	Fri, 16 May 2025 08:05:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747382748; cv=none; b=ODTCExCniOuBzbgQlFJ2Sd/ZsXYuDaGmk2YDfnYz2J7atXMj0O2PYjE1OLhBkUhOIEa/irdYjqs894dXb+enuhKb3/0azmLrgH/wTTSZHBdnlrEswam0yxTSBpqe+YDb3/apyBKl09kZTm+sSlzprTmXiuWAxzNaCaQyK1wjjSQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747382748; c=relaxed/simple;
+	bh=ds4odAefAQvzyanBagLFGP/a0SAzCWLHPEI73H21+qM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JlnXprei2oyfqeciTK8KLELKt7t5sc7tcbBDNhHlhZHcKhYBztOtX8vVVz1Jof2nzwUI+q9Rc/DRZHueNOywFSkGJlmp5QtjVGthx/TBqgU3GW5jSLdPigmOHB3LU85JhZCMzLevzYwlFLFqj7/1/EP4uwQwkzQof4zABhQjZ6s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=pRVbBiBO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F896C4CEEF;
+	Fri, 16 May 2025 08:05:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1747382747;
+	bh=ds4odAefAQvzyanBagLFGP/a0SAzCWLHPEI73H21+qM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pRVbBiBOqpn2tM3WYE6C5RSlOK6DmWOAWEcV6c41K8ZBoSNYbiQMx+eaQ8R0Npx1E
+	 epCtMwHpldf3l0Wrf9tjH0Ny/jcgTctvsgUOvFldcZharnc7RW1mi9GkPMmrxIVxuD
+	 vcmeBD9etUFAxvfNeGWYqPRRu9T/mjqpO68KQz6E=
+Date: Fri, 16 May 2025 10:03:59 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+Cc: Guenter Roeck <linux@roeck-us.net>,
+	Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>,
+	stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
+	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+	f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
+	hargar@microsoft.com, broonie@kernel.org,
+	Darren Kenny <darren.kenny@oracle.com>
+Subject: Re: [PATCH 6.6 000/113] 6.6.91-rc2 review
+Message-ID: <2025051632-uncaring-immature-ed38@gregkh>
+References: <20250514125617.240903002@linuxfoundation.org>
+ <861004b4-e036-4306-b129-252b9cb983c7@oracle.com>
+ <2025051440-sturdily-dragging-3843@gregkh>
+ <9af6afb1-9d91-48ea-a212-bcd6d1a47203@oracle.com>
+ <e1ea37bd-ea7d-4e8a-bb2f-6be709eb99f4@roeck-us.net>
+ <2025051527-travesty-shape-0e3b@gregkh>
+ <20250515152557.a4q2cqab4uvhnpia@desk>
+ <20250515152900.vk3vbotiedv2temq@desk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM0PR04MB7044:EE_|AS4PR04MB9313:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6216f7ef-8eb0-4751-4491-08dd945095d8
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|366016|1800799024|7416014|52116014|921020|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?2RB64vemiQNv1I75nKiT7OLWonMO76plPJ77ytDxmhq3B8Fcmoe4mMutAHRl?=
- =?us-ascii?Q?l6L0RRM8lVg6AaS+MZzXVfAjZgp/qgx8ZLC/qQ3Dp0vX94AIUBeQ1z+P2Z4P?=
- =?us-ascii?Q?1jbI+dgVxEELlSdGRBE82lEEcO1yD4+sjgHDb/AsR5kH6WitemYYo1YCIrOf?=
- =?us-ascii?Q?8/43RPkKpIUsKu03G5scoc8QuzUVjgee0A0LEo+s2whiiFLKEcxFzy9AiZzr?=
- =?us-ascii?Q?10j9Lm/BOWYRxILdvHyiDhmFEm15O/DsDYPcFprlfKwwWXwK+FqoojhwZj/J?=
- =?us-ascii?Q?Tl9yqLO7eg43j8U2etKJ+G0dDdO1OKlJoqVT5pkRUe2jNi4haKkgIyLs5IlO?=
- =?us-ascii?Q?VhSIz44KyKsqkjhlN5Dq12p/Z7dGOvkDKW3prSowqsRGv6NkjVSts6nrqnnJ?=
- =?us-ascii?Q?RXyB9nP9mw2wu1UaulR3wt5TtzwvK64PQUFY7Vja2y2NrR1dZsILLf7Tqzew?=
- =?us-ascii?Q?4hloITxKPxzF1/MHxvJWwFEeTz5MXbK89ZboCkG7LpjLSnohReKwro31CR5S?=
- =?us-ascii?Q?du8JCqLpKDmktcKbMVrmCRzZvTYuPMIz50ERJ4i9VOGWE8giD5WCo/YKZ5Ed?=
- =?us-ascii?Q?hdoJJxwzBCg4ono2B0wyH0om3hNYtck++yJmV6twDmWN73mmBWLfuqbj+8ax?=
- =?us-ascii?Q?nQ+kFLwOyCbieIbCbduL9Ipy8i2C81qxhmvseS9CDkg4+wdT8Amqov0Rolia?=
- =?us-ascii?Q?vibjRVQLfAtepHzxoMBLRA4qeqX2S2avpxLICSTb56tivQLe4dDPuEZOrOSX?=
- =?us-ascii?Q?7qCqEeT2e5YN4Qs5QbgGTc+u/f8l10y+10FYS+kGqdcePskVTVmCWFZqBRbE?=
- =?us-ascii?Q?BeoRJ0KKtEw5guDvUYahrCRU2sjEyLFqWHIxKCImdVVAbjdaDu+WXtgnK2SD?=
- =?us-ascii?Q?zR3Ias7hZLtFvi9ExV9CFG8Ct4BWdzDqrpmXD2nDBhYSb8Y4uhRDQSa0bu/6?=
- =?us-ascii?Q?m5dbihIEaRg3+MxA0s8jNqh08awfG9TFTetV0g9s8iEqZUWSm9sqj8biR6EI?=
- =?us-ascii?Q?8oBHi/V5REJShDHZiZOh6zMblVdhAsLULUBABQLH8ouyZw7t1ido6fRh+vT8?=
- =?us-ascii?Q?K2MkevvAOzaalNfDirdZ+sNUrgVmcex5ShO7pb+oVHypQNrZZRnmo+D//c1c?=
- =?us-ascii?Q?n8b0bMPbh1nSIBX13A5PVuOFsNnH9VW0nRU4blgrhOicKGDqF0YwEa/6hFSP?=
- =?us-ascii?Q?Cqvz5OdMEDNdKcQ57r6OEVqVR1wiSzksaA6BmLnMw1FcvcAmuWNY8lwSXxIO?=
- =?us-ascii?Q?EaB+fKkwJHJJCFHXQCSj+XMr/EVXFwJybXB9amPhsuYxDvOASe6wh15dy3ae?=
- =?us-ascii?Q?uDKsatoNPQPmJWjJHCEyMMdftrVtQeU7WcMjAmPsizo3hVJd0h0S3xm1Aefz?=
- =?us-ascii?Q?MKZq4wYJScUz882jidhh8PPAuI/l7Zp+LGfgV+q/VLR+ABAkPGGk11LWyDBg?=
- =?us-ascii?Q?KR7j1vNurJDueXuubhK+XjLkP82LqUby2+AH8ObtU6lSvYVc7qClnNP+RNXO?=
- =?us-ascii?Q?aiZtj/00UL5AqIc=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM0PR04MB7044.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(7416014)(52116014)(921020)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?QjlC+bat9NKtcHVZMRfbipPWebwwhs4XgUly6aMAe5k4IcPClZXFpktV/D+h?=
- =?us-ascii?Q?NdAJ9i+NReqWBzCX77nHANeZOEGcJBuxRXohB1vCVBnxi1XQj295YKTDWI/3?=
- =?us-ascii?Q?tCa/a2z4lGXC0w4ftk8Goyl32isrNHBpSeQSBXpAdpVGZ0w3keVKNI/Ikoii?=
- =?us-ascii?Q?cVHZVtjjstoI4vFPZcESMwhN8+JT/s8eqizTuz0UVaFZL++9WC8a+mByF73H?=
- =?us-ascii?Q?w5TkDnMewZwljdRUM0k0zg0LkNz8SwN8hWQ1lXi/bWoveDl8r4f0a76dZncF?=
- =?us-ascii?Q?pg6piVkAwZ02znzm95R2TNKBRFfn+7um6S0s0hENf/BBqP25mDplvvglZpEc?=
- =?us-ascii?Q?ef0A441iTMIVhjA+9rjjFpYsjETALR0XgvdlVujsE0hYri32ifqDE4Ua8IZ9?=
- =?us-ascii?Q?aZC3wmGzEDGLfk+izvr2CJU7E+DqgGibOUeFgTyNTAcrcn4xzGZlaiqX8+mB?=
- =?us-ascii?Q?f/384fX5VfWtBJCOnIQFuuWRbxxqBGj+4ppCkpqZNWao1aM02IXSvTR6CqzZ?=
- =?us-ascii?Q?fBAvaHCPedFHCgiS4aCd3sEr0VkQxVUb0jd7JEHkT1LIWZh5LCmlvF2gjlil?=
- =?us-ascii?Q?QQ/aZ4j0qRybLeoNlzxcdBJbpd+DF0GuSW8EhMQrBytNbDEgx4L+HjQbJHX/?=
- =?us-ascii?Q?P8wItS2V20HRvQtYvOg/0U38kHtCJ9XQ2JPNwo5EQa+k91hRHnL2rS6bcK5v?=
- =?us-ascii?Q?bLgCGJcsQu+E1veud4v8FhJ7w+7twukKxozCpAM1ELZoQ//0Vhtfr8oVJ5hp?=
- =?us-ascii?Q?fdoqzyPWBZ8fadijipP3f+q2Fu+pZh927LWtRbODyByPqh6Rl1z1nhsOnaxp?=
- =?us-ascii?Q?BYnSYHlFJmnGa2uvR13aFrrwHJKbAfpyBWNSvaqbV0nC800W1cegCXv5+mfi?=
- =?us-ascii?Q?Wj/jj28629iwYH+VB80aUQSc3pB3BHneOMwsfrSXJSeR4RRor6mY+Urken9y?=
- =?us-ascii?Q?EN6PJEerlvWjJdNqwwwodujFZHq/RVN1oXEznbyrjBq6cVVN7U8II4oVJMgV?=
- =?us-ascii?Q?zcM9NmEvvkOgdvbOKxo0IHd3bcDLXiqduWwTiOoMO9KPFuYXT1+f0T/EIgK2?=
- =?us-ascii?Q?+VNJt7qswklzk8OR9jfQQmNkm73XU+Q02rvSfTYlb3ubA/rNHnanUvTHq6ZL?=
- =?us-ascii?Q?BLivOgpgnyOwdcvHf/gMpOsP3W/c+iwCJhWx2UyIdIEV1rZg4fvh1rFdOGkF?=
- =?us-ascii?Q?C2Mu72tRhAGqO8Vd3o+QZvmEYG3tUOIB7D32rq+hB8nfE8vOKafOmyEPO5uL?=
- =?us-ascii?Q?keQysfR6/f5MW/jAFubEEwuzhNZWd3/FT+AOzHjZqmn5gSyGwZlXxSY8/Tzu?=
- =?us-ascii?Q?k2Nyj6PCdazHW2dx7WWPYEjbC3/qYd49H0Fhob7LaTs7ozL24oDdGwl9lUoE?=
- =?us-ascii?Q?J0rWsXfFMNEqLOGZwxY6/AUQD0pUq6i+uOcL6AAPNke5LPpGZ/DSdsthLzax?=
- =?us-ascii?Q?o36g7JoyKn3aiUFy9E+YlPiRB/MgOLkrzDEVBVd0pcVyxS0LmysDFtgJ7tfn?=
- =?us-ascii?Q?vuW/cJto0CHxGIz1S73k1FbdQo3EfOPU3hDnJT1AU1FQv2F5DStorpE4J0+E?=
- =?us-ascii?Q?ChIfJPOR4IxpHGkj7yAONHTzCUJxfakJFL+YNk4z?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6216f7ef-8eb0-4751-4491-08dd945095d8
-X-MS-Exchange-CrossTenant-AuthSource: AM0PR04MB7044.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 May 2025 08:06:39.6945
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: cfm/P6/wQamsCieUGhmtO9Ff2gJsk3HBHC4TS0LdncUpxsDKr+aAaXvw7T+wnW4rIKtVEuKzkHADuBB+JvXLTw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS4PR04MB9313
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250515152900.vk3vbotiedv2temq@desk>
 
-XCVR driver is not only used for i.MX8MP platform, so update driver name
-to make it more generic.
+On Thu, May 15, 2025 at 08:29:00AM -0700, Pawan Gupta wrote:
+> On Thu, May 15, 2025 at 08:26:04AM -0700, Pawan Gupta wrote:
+> > On Thu, May 15, 2025 at 07:35:26AM +0200, Greg Kroah-Hartman wrote:
+> > > On Wed, May 14, 2025 at 01:49:06PM -0700, Guenter Roeck wrote:
+> > > > On 5/14/25 13:33, Harshit Mogalapalli wrote:
+> > > > > Hi Greg,
+> > > > > 
+> > > > > On 15/05/25 01:35, Greg Kroah-Hartman wrote:
+> > > > > > On Thu, May 15, 2025 at 12:29:40AM +0530, Harshit Mogalapalli wrote:
+> > > > > > > Hi Greg,
+> > > > > > > On 14/05/25 18:34, Greg Kroah-Hartman wrote:
+> > > > > > > > This is the start of the stable review cycle for the 6.6.91 release.
+> > > > > > > > There are 113 patches in this series, all will be posted as a response
+> > > > > > > > to this one.  If anyone has any issues with these being applied, please
+> > > > > > > > let me know.
+> > > > > > > > 
+> > > > > > > > Responses should be made by Fri, 16 May 2025 12:55:38 +0000.
+> > > > > > > > Anything received after that time might be too late.
+> > > > > > > 
+> > > > > > > ld: vmlinux.o: in function `patch_retpoline':
+> > > > > > > alternative.c:(.text+0x3b6f1): undefined reference to `module_alloc'
+> > > > > > > make[2]: *** [scripts/Makefile.vmlinux:37: vmlinux] Error 1
+> > > > > > > 
+> > > > > > > We see this build error in 6.6.91-rc2 tag.
+> > > > > > 
+> > > > > > What is odd about your .config?  Have a link to it?  I can't duplicate
+> > > > > > it here on my builds.
+> > > > > > 
+> > > > > 
+> > > > > So this is a config where CONFIG_MODULES is unset(!=y) -- with that we could reproduce it on defconfig + disabling CONFIG_MODULES as well.
+> > > > > 
+> > > > 
+> > > > Key is the combination of CONFIG_MODULES=n with CONFIG_MITIGATION_ITS=y.
+> > > 
+> > > Ah, this is due to the change in its_alloc() for 6.6.y and 6.1.y by the
+> > > call to module_alloc() instead of execmem_alloc() in the backport of
+> > > 872df34d7c51 ("x86/its: Use dynamic thunks for indirect branches").
+> > 
+> > Sorry for the trouble. I wish I had a test to catch problems like this. The
+> > standard config targets defconfig, allyesconfig, allnoconfig, etc. do not
+> > expose such issues. The only thing that comes close is randconfig.
+> > 
+> > CONFIG_MODULES=n is not a common setting, I wonder how people find such
+> > issues? (trying to figure out how to prevent such issues in future).
+> > 
+> > > Pawan, any hints on what should be done here instead?
+> > 
+> > Since dynamic thunks are not possible without CONFIG_MODULES, one option is
+> > to adjust the already in 6.6.91-rc2 patch 9f35e331144a (x86/its: Fix build
+> > errors when CONFIG_MODULES=n) to also bring the ITS thunk allocation under
+> > CONFIG_MODULES.
+> > 
+> > I am not seeing any issue with below build and boot test:
+> > 
+> >   #!/bin/bash -ex
+> > 
+> >   ./scripts/config --disable CONFIG_MODULES
+> >   ./scripts/config --disable CONFIG_MITIGATION_ITS
+> >   # https://github.com/arighi/virtme-ng
+> >   vng -b
+> >   vng -- lscpu
+> > 
+> >   # main test
+> >   ./scripts/config --disable CONFIG_MODULES
+> >   ./scripts/config --enable CONFIG_MITIGATION_ITS
+> >   vng -b
+> >   vng -- lscpu
+> > 
+> >   ./scripts/config --enable CONFIG_MODULES
+> >   ./scripts/config --disable CONFIG_MITIGATION_ITS
+> >   vng -b
+> >   vng -- lscpu
+> > 
+> >   ./scripts/config --enable CONFIG_MODULES
+> >   ./scripts/config --enable CONFIG_MITIGATION_ITS
+> >   vng -b
+> >   vng -- lscpu
+> > 
+> >   echo "PASS"
+> > 
+> > Similar change is required for 6.1 and 5.15 as well. 6.12 is fine because
+> > it uses execmem_alloc().
+> > 
+> > --- 8< ---
+> > From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+> > Subject: [PATCH 6.6] x86/its: Fix build errors when CONFIG_MODULES=n
+> > 
+> > From: Eric Biggers <ebiggers@google.com>
+> > 
+> > commit 9f35e33144ae5377d6a8de86dd3bd4d995c6ac65 upstream.
+> > 
+> > Fix several build errors when CONFIG_MODULES=n, including the following:
+> > 
+> > ../arch/x86/kernel/alternative.c:195:25: error: incomplete definition of type 'struct module'
+> >   195 |         for (int i = 0; i < mod->its_num_pages; i++) {
+> > 
+> >   [ pawan: backport: Bring ITS dynamic thunk code under CONFIG_MODULES ]
+> > 
+> > Fixes: 872df34d7c51 ("x86/its: Use dynamic thunks for indirect branches")
+> > Cc: stable@vger.kernel.org
+> > Signed-off-by: Eric Biggers <ebiggers@google.com>
+> > Acked-by: Dave Hansen <dave.hansen@intel.com>
+> > Tested-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+> > Reviewed-by: Alexandre Chartre <alexandre.chartre@oracle.com>
+> > Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+> > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> 
+> Agh!
+> 
+> Signed-off-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
 
-Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
----
- sound/soc/fsl/fsl_xcvr.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks for this.
 
-diff --git a/sound/soc/fsl/fsl_xcvr.c b/sound/soc/fsl/fsl_xcvr.c
-index 83aea341c1b6..e3111dd80be4 100644
---- a/sound/soc/fsl/fsl_xcvr.c
-+++ b/sound/soc/fsl/fsl_xcvr.c
-@@ -1827,7 +1827,7 @@ static const struct dev_pm_ops fsl_xcvr_pm_ops = {
- static struct platform_driver fsl_xcvr_driver = {
- 	.probe = fsl_xcvr_probe,
- 	.driver = {
--		.name = "fsl,imx8mp-audio-xcvr",
-+		.name = "fsl-xcvr",
- 		.pm = pm_ptr(&fsl_xcvr_pm_ops),
- 		.of_match_table = fsl_xcvr_dt_ids,
- 	},
--- 
-2.34.1
+It applied to 6.6.y, but not 6.1.y or 5.15.y, so can you provide some
+updated versions for them too?
 
+thanks,
+
+greg k-h
 
