@@ -1,217 +1,154 @@
-Return-Path: <linux-kernel+bounces-650774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-650771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8038AB95F4
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 08:25:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12443AB95E7
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 08:23:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 558C15020D8
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 06:25:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6CFBE1B64188
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 06:23:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D7B8224AFE;
-	Fri, 16 May 2025 06:25:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87002224242;
+	Fri, 16 May 2025 06:23:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dU+m4VKp"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="buN4rWEW"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B995223DC7;
-	Fri, 16 May 2025 06:25:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DB52149DF0;
+	Fri, 16 May 2025 06:23:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747376732; cv=none; b=D8mJxsOyPocMNXva2ARfYhF2ntYwgg5IPt88LVxLJt+Iu8Wv1yrErizhe9kr2sTzJsNmSrosnvDKx3izfh4BGGrjMo/DF1ky99er9EWN+2Z3jAAFSf0SPb+6pw5Nc80iVDwBQWYDBb7iAn9q1ghtAXt8UsCvM/WOWvKH0YxLtm8=
+	t=1747376588; cv=none; b=svhXFLyeKpYMeowW92sztrxhZMwQeW59osxkvorgHPu42SA5pl5JRz2KL1zA4Im5uPMQjaeYdpCuSu46frRfS5ihwZ2lLDfL+2N1jTWRqZ9iQWJ/gqpal068OE25Pp7LDpr/AwbQWOmVt7wG2kRy7LV0pgIBbdPw9ebefAjhpSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747376732; c=relaxed/simple;
-	bh=lCwb6qvlkqeYb94a9hs2gM7d9RlJ/96IMNwhyjCb+Lg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FpZAZS5hnqpGB3Ki9bgHAfOIZRwmsd+9HXxoOZ/EkmsNhGfIYZffcd2/y5onbD+khc5ksBsMQt710y5tuRGCRNHB2KaMyQRRnp+nRR6z0h3jQRYBhDoLlWW9EKBzEhcKqwvnpDd+qLEXi0p4LGcEbA/+riBhRCQAE9LHztaXS6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dU+m4VKp; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1747376731; x=1778912731;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=lCwb6qvlkqeYb94a9hs2gM7d9RlJ/96IMNwhyjCb+Lg=;
-  b=dU+m4VKpsYEOmF2tRhwwsasbi+d4bXcwQBJmbmm8xWFAE07FTb7sLox7
-   CdhikvXUECvx584l6sdyyHtF18es9beUjms2WUUvYtOKhkSiYPxc6HIAg
-   hnGsW+jKBNt37RVVHH1dZWEBrnA1HsdObAjKn/V5Z+kvupi8ou2hwcz4s
-   Ogep/XLpnSgJjg8hZlavZR+V5RPyUGCzW0AXf+j78VaO7Tt5qhWvODRNH
-   2s0qmFtinpO9S3gomi4lL1UhKNBTJnYDgUds/RPFm6QO8ybkLuKMqMfoj
-   mC1jxzXuKNIx8VkOwfM4Yqm/VFfAmxJWs7bny7agOnGqy5MSonYukM7V1
-   A==;
-X-CSE-ConnectionGUID: X7TKXzZkR92UfBtuNo9Ehg==
-X-CSE-MsgGUID: hQzWwRlkSgyZwfnW1tFQVQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11434"; a="66741987"
-X-IronPort-AV: E=Sophos;i="6.15,293,1739865600"; 
-   d="scan'208";a="66741987"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2025 23:25:30 -0700
-X-CSE-ConnectionGUID: 5Zv+L4k4Q/GDOPGKqyBYEA==
-X-CSE-MsgGUID: u+Y2gDkpS/CZp7vpWOupPA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,293,1739865600"; 
-   d="scan'208";a="143831538"
-Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
-  by fmviesa004.fm.intel.com with ESMTP; 15 May 2025 23:25:24 -0700
-Date: Fri, 16 May 2025 14:19:45 +0800
-From: Xu Yilun <yilun.xu@linux.intel.com>
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Zhi Wang <zhiw@nvidia.com>, Alexey Kardashevskiy <aik@amd.com>,
-	kvm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
-	sumit.semwal@linaro.org, christian.koenig@amd.com,
-	pbonzini@redhat.com, seanjc@google.com, alex.williamson@redhat.com,
-	vivek.kasireddy@intel.com, dan.j.williams@intel.com,
-	yilun.xu@intel.com, linux-coco@lists.linux.dev,
-	linux-kernel@vger.kernel.org, lukas@wunner.de, yan.y.zhao@intel.com,
-	daniel.vetter@ffwll.ch, leon@kernel.org, baolu.lu@linux.intel.com,
-	zhenzhong.duan@intel.com, tao1.su@intel.com
-Subject: Re: [RFC PATCH 00/12] Private MMIO support for private assigned dev
-Message-ID: <aCbZATrK7EPyH4qt@yilunxu-OptiPlex-7050>
-References: <aB4tQHmHzHooDeTE@yilunxu-OptiPlex-7050>
- <20250509184318.GD5657@nvidia.com>
- <aB7Ma84WXATiu5O1@yilunxu-OptiPlex-7050>
- <2c4713b0-3d6c-4705-841b-1cb58cd9a0f5@amd.com>
- <20250512140617.GA285583@nvidia.com>
- <20250513130315.0158a626.zhiw@nvidia.com>
- <aCRmoDupzK9zTqFL@yilunxu-OptiPlex-7050>
- <20250514230502.6b64da7f.zhiw@nvidia.com>
- <aCYsNSFQJZzHVOFI@yilunxu-OptiPlex-7050>
- <20250515192127.GA580805@nvidia.com>
+	s=arc-20240116; t=1747376588; c=relaxed/simple;
+	bh=kAqlUSjGQ7XVoDiauuw37jXI/mkgMBH06rOVBpOtey0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=O298mUFAGj0sD0ZyOO78Q5heuk+y6/5zAHj7/f3J2z6avFgqOgZVhCyt3thARSqs4ISeUcFjSTGGBaAG0LFkJV8aLxpohmTfs8OOyVL3B/Qi7TmnJPGzi+jzAon1iZhz0LiIbyk3EkPLVOkwSGAPAAjBl8CHCZH011skeBg9qsg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=buN4rWEW; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1747376583;
+	bh=61rzR6yyeTYJhtqbC+3q3R5b8i5Ra9N5t38Ao6d8M0I=;
+	h=Date:From:To:Cc:Subject:From;
+	b=buN4rWEWF/jjUmGcRJtc4l/VrnFLg7pPtF7tHJtxyrllYG51iApcIajfGeJLWiiA3
+	 LUnw2PQFT+HevhmbRJZ1LdXXlwKURQxaB7ljsTQpydgMWZl6XHRAguImrlMWfMV/vx
+	 lAIuYdoRSE92cAi4lHdelqQh1iCH0lI8RO1J87SJPxUWLzadcp9jhkX6QKSQCJ9XN6
+	 4wJL1t9f3nBOTNZoV04OVEkD+rX6avj2O+l73id+OAzU4YfZcFBsW7Mi8g7p26pumJ
+	 6codrccu5DvskmC60gG6sWRjMe7tF1HvcHbF5Scs6sKRjTM4g4NxWrq2iBbo5tTz43
+	 ZpawER16lsy5Q==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZzH7p45zbz4xG4;
+	Fri, 16 May 2025 16:23:01 +1000 (AEST)
+Date: Fri, 16 May 2025 16:23:01 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, David Miller <davem@davemloft.net>, Jakub Kicinski
+ <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: Networking <netdev@vger.kernel.org>, Breno Leitao <leitao@debian.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: manual merge of the ftrace tree with the net-next tree
+Message-ID: <20250516162301.6c5d2d3c@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250515192127.GA580805@nvidia.com>
+Content-Type: multipart/signed; boundary="Sig_/MhmGtAwXzQPCV1yRg=qNL6I";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Thu, May 15, 2025 at 04:21:27PM -0300, Jason Gunthorpe wrote:
-> On Fri, May 16, 2025 at 02:02:29AM +0800, Xu Yilun wrote:
-> > > IMHO, I think it might be helpful that you can picture out what are the
-> > > minimum requirements (function/life cycle) to the current IOMMUFD TSM
-> > > bind architecture:
-> > > 
-> > > 1.host tsm_bind (preparation) is in IOMMUFD, triggered by QEMU handling
-> > > the TVM-HOST call.
-> > > 2. TDI acceptance is handled in guest_request() to accept the TDI after
-> > > the validation in the TVM)
-> > 
-> > I'll try my best to brainstorm and make a flow in ASCII. 
-> > 
-> > (*) means new feature
-> > 
-> > 
-> >       Guest          Guest TSM       QEMU           VFIO            IOMMUFD       host TSM          KVM 
-> >       -----          ---------       ----           ----            -------       --------          ---
-> > 1.                                                                               *Connect(IDE)
-> > 2.                                 Init vdev            
-> 
-> open /dev/vfio/XX as a VFIO action
-> 
-> Then VFIO attaches to IOMMUFD as an iommufd action creating the idev
-> 
-> > 3.                                *create dmabuf   
-> > 4.                                               *export dmabuf                              
-> > 5.                                create memslot
-> > 6.                                                                                              *import dmabuf
-> > 7.                                setup shared DMA
-> > 8.                                                                 create hwpt
-> > 9.                                               attach hwpt
-> > 10.                                  kvm run
-> > 11.enum shared dev
-> > 12.*Connect(Bind)
-> > 13.                  *GHCI Bind
-> > 14.                                  *Bind
-> > 15                                                                 CC viommu alloc
-> > 16.                                                                vdevice allloc
-> 
-> viommu and vdevice creation happen before KVM run. The vPCI function
-> is visible to the guest from the very start, even though it is in T=0
-> mode. If a platform does not require any special CC steps prior to KVM
-> run then it just has a NOP for these functions.
-> 
+--Sig_/MhmGtAwXzQPCV1yRg=qNL6I
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Fine.
+Hi all,
 
-> What you have here is some new BIND operation against the already
-> existing vdevice as we discussed earlier.
-> 
-> > 16.                                              *attach vdev
-> > 17.                                                               *setup CC viommu
-> > 18                                                                 *tsm_bind
-> > 19.                                                                                  *bind
-> > 20.*Attest
-> > 21.               *GHCI get CC info
-> > 22.                                 *get CC info
-> > 23.                                                                *vdev guest req
-> > 24.                                                                                 *guest req
-> > 25.*Accept
-> > 26.             *GHCI accept MMIO/DMA
-> > 27.                                *accept MMIO/DMA
-> > 28.                                                               *vdev guest req
-> > 29.                                                                                 *guest req
-> > 30.                                                                                              *map private MMIO
-> > 31.             *GHCI start tdi
-> > 32.                                *start tdi
-> > 33.                                                               *vdev guest req
-> > 34.                                                                                 *guest req
-> 
-> This seems reasonable you want to have some generic RPC scheme to
-> carry messages fro mthe VM to the TSM tunneled through the iommufd
-> vdevice (because the vdevice has the vPCI ID, the KVM ID, the VIOMMU
-> id and so on)
-> 
-> > 35.Workload...
-> > 36.*disconnect(Unbind)
-> > 37.              *GHCI unbind
-> > 38.                                *Unbind
-> > 39.                                            *detach vdev
-> 
-> unbind vdev. vdev remains until kvm is stopped.
-> 
-> > 40.                                                               *tsm_unbind
-> > 41.                                                                                 *TDX stop tdi
-> > 42.                                                                                 *TDX disable mmio cb
-> > 43.                                            *cb dmabuf revoke
-> > 44.                                                                                               *unmap private MMIO
-> > 45.                                                                                 *TDX disable dma cb
-> > 46.                                                              *cb disable CC viommu
-> 
-> I don't know why you'd disable a viommu while the VM is running,
-> doesn't make sense.
+Today's linux-next merge of the ftrace tree got a conflict in:
 
-Here it means remove the CC setup for viommu, shared setup is still
-kept.
+  include/trace/events/tcp.h
 
-It is still because of the TDX enforcement on Unbind :(
+between commit:
 
-  1. STOP TDI via TDISP message STOP_INTERFACE
-  2. Private MMIO unmap from Secure EPT
-  3. Trusted Device Context Table cleanup for the TDI
-  4. TDI ownership reclaim and metadata free
+  0f08335ade71 ("trace: tcp: Add tracepoint for tcp_sendmsg_locked()")
 
-It is doing Step 3 so that the TDI could finally been removed.
+from the net-next tree and commit:
 
-Please also note I does CC viommu setup on "Bind".
+  ac01fa73f530 ("tracepoint: Have tracepoints created with DECLARE_TRACE() =
+have _tp suffix")
 
-Thanks,
-Yilun
+from the ftrace tree.
 
-> 
-> > 47.                                                                                 *TDX tdi free
-> > 48.                                                                                 *enable mmio
-> > 49.                                            *cb dmabuf recover
-> > 50.workable shared dev
-> 
-> This is a nice chart, it would be good to see a comparable chart for
-> AMD and ARM
-> 
-> Jason
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc include/trace/events/tcp.h
+index 006c2116c8f6,4f9fa1b5b89b..000000000000
+--- a/include/trace/events/tcp.h
++++ b/include/trace/events/tcp.h
+@@@ -332,31 -259,7 +332,31 @@@ TRACE_EVENT(tcp_retransmit_synack
+  		  __entry->saddr_v6, __entry->daddr_v6)
+  );
+ =20
+ +TRACE_EVENT(tcp_sendmsg_locked,
+ +	TP_PROTO(const struct sock *sk, const struct msghdr *msg,
+ +		 const struct sk_buff *skb, int size_goal),
+ +
+ +	TP_ARGS(sk, msg, skb, size_goal),
+ +
+ +	TP_STRUCT__entry(
+ +		__field(const void *, skb_addr)
+ +		__field(int, skb_len)
+ +		__field(int, msg_left)
+ +		__field(int, size_goal)
+ +	),
+ +
+ +	TP_fast_assign(
+ +		__entry->skb_addr =3D skb;
+ +		__entry->skb_len =3D skb ? skb->len : 0;
+ +		__entry->msg_left =3D msg_data_left(msg);
+ +		__entry->size_goal =3D size_goal;
+ +	),
+ +
+ +	TP_printk("skb_addr %p skb_len %d msg_left %d size_goal %d",
+ +		  __entry->skb_addr, __entry->skb_len, __entry->msg_left,
+ +		  __entry->size_goal));
+ +
+- DECLARE_TRACE(tcp_cwnd_reduction_tp,
++ DECLARE_TRACE(tcp_cwnd_reduction,
+  	TP_PROTO(const struct sock *sk, int newly_acked_sacked,
+  		 int newly_lost, int flag),
+  	TP_ARGS(sk, newly_acked_sacked, newly_lost, flag)
+
+--Sig_/MhmGtAwXzQPCV1yRg=qNL6I
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmgm2cUACgkQAVBC80lX
+0Gy1XAf/TQNrX/392lAmxGaLAFewkcu0ip+zR8lrguAon5p8FrCWHj4SSCuxtDXu
+JtzjbscSAqXI79g2B1wV4V/nSnFtHap4hlck41s6OR+hRK3TnzBj44mzOJ22mF3M
+1+gkfAaCA/zmyk2FuGL7tH+AdqOyozOgISi8iSU6P9zLcj1ubLclarC0hWf3+Vv/
+rNbjN37pL7QnZ8TMMq2Wknb/5QrXJphmFaMHrqGl8w9lOyDYaiDI+yqsPLz0t5gr
+RRinFkOV+pO8dKgvBGRLC1YtKTI+xctsu2JhOltRfs10ad5dt8/jUps8i1HOPq47
+BCn28/dbzl5d4fc4N/7Y31wEx6Zqdw==
+=ELlq
+-----END PGP SIGNATURE-----
+
+--Sig_/MhmGtAwXzQPCV1yRg=qNL6I--
 
