@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-651967-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-651970-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA571ABA548
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 23:36:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3A39ABA550
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 23:37:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6ECC23A96BC
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 21:36:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0CCEB1C00F37
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 21:37:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5D6E280CD6;
-	Fri, 16 May 2025 21:35:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CF0B2820B8;
+	Fri, 16 May 2025 21:35:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cKfZDR+M"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dr6scmLr"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D9D428033C;
-	Fri, 16 May 2025 21:35:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 914C128152D;
+	Fri, 16 May 2025 21:35:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747431346; cv=none; b=ryLbJkjSX45vMii0LUgzHkyBeoZzCUoElv601ZkE8hH4Tm80vCisOhn7HuNVfQYcWvXii9ZDqfG6gNwfqOcD2/zkiVGuK3Xpi5+Jt33EPzAk2ldxiIln/MDNPDAipG3kYOn/HZ5/lJ4bm+yQG5OvJiP+ec+AqTaVGa/6WAqlzJ8=
+	t=1747431349; cv=none; b=HRFjVGJBIlbFYlXYmxwdXAS+Fx8uIjVLrifUJuNH/WTKK9armnbsC1eMzG/a5iZvgBQkG7ZHLgEnvsufLEbeClZ13afhUD1wSv3S8P+f4K8Dh2slcLBMIBn/MT9pLcBAGNjTDmcjd9F3Py2O15/wREGDy7tMQ2L8l35UHwe0eWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747431346; c=relaxed/simple;
-	bh=BzobJcLxLeRhDRDPjKP3jskHkbluaiGCUjUvUOw9ZAk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JbunRWb+VhG31BbD65ubitpEAusUj3C0NCcQNnD3jIZGp6GYDcfo12Kk8yv7O+AM2TFQQgh9LaLCcTV2/3dL2mTXEpsewn9PHS2dRPXN6GzcXUKPT2IhKpIhe80goqJvveDHotv+/0FNlbuwTlN+ef6+t5U0MTKYZnW1M5/IaGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cKfZDR+M; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8993FC4CEE4;
-	Fri, 16 May 2025 21:35:43 +0000 (UTC)
+	s=arc-20240116; t=1747431349; c=relaxed/simple;
+	bh=gNk8obhgQhIjZzvh9RUuL8tdGwi4aItMetnuFmJAOv4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=Ut6BKqNYOHChy0XOYjZeAXl24Z1QBs23d8lE1+GHZXhkhnhUyjq7wPRbFMRWW34Q1/Tcf+F/1KK0EGKinos+IXZoW4vPfAagEzRfujzc+7dvFdjz3EjSr689qfc7o7lNLn4riENipXjfbHqPQArCbcUcgO+wsgZyypj/Q2QSojY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dr6scmLr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A824C4CEE4;
+	Fri, 16 May 2025 21:35:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747431345;
-	bh=BzobJcLxLeRhDRDPjKP3jskHkbluaiGCUjUvUOw9ZAk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=cKfZDR+MaIEqFaysttriomJeoCA4Put4Nr85iYrsye09Rd0jfT2Qj3QIvUkIqMvSc
-	 yvakqjZH0+j7/+BQCdzOPwDpV4W0/daEC+J1Sz1JYv/PJLEbi56maTtSkgOH77pKvt
-	 588QrPgb2xPKDPaUwG7d/Iax29pTi9lhGT93J3kstohiXgotPaGvCcxd1nRsoUZ8Q5
-	 aM7MofHFEdoTaxcn5prOMz0Xp4yQsmllo9E1z/0RU5SkYM57vfUeDFrZUTOaC4TbeD
-	 GSvwhvAbOOU5a3I2yO4v4wt+3rCIzLGQ5rLtWzpW4/Dq9SxZzz0RpX5um7fV4g/Fe9
-	 wBkBZfhtD7mjA==
-Message-ID: <efa6b325-4fd5-4e9b-b851-af7f527e340e@kernel.org>
-Date: Fri, 16 May 2025 21:36:18 +0200
+	s=k20201202; t=1747431349;
+	bh=gNk8obhgQhIjZzvh9RUuL8tdGwi4aItMetnuFmJAOv4=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=Dr6scmLrU7J2SAs93Hs8WK/xT7ajHOqXsJfhUXNU7FL8Gd6KzCfZ8q8QBiJTPkI/Z
+	 6tNHTb5N+2cBG8DrL17NsBwjvgt3ix/uYJc4vEz8Linups4IL3IRHwz/J5gOkpH1No
+	 8nMjNSCY9QTLIBtvLDfV4RnY6x/X/rzxI38/5pg84mRn/mzK0+51Edo4qObnaEseRn
+	 2dlDtDnmyGXR+Mf9uqMnRS0ri2Shqfp6tZAC5L1stdhodiGCDtVxngM6PAn16dWYJz
+	 5ANCO1wYRJgY7/m6Qkjf5yC1wEqsWOpcl8Jy4wPsdXo7GSFK/iXu2txDPTsKVen/Ft
+	 7RiqNdOTYg7ww==
+Message-ID: <982e5e2f-db79-4fe0-9a7e-31daf047de0f@kernel.org>
+Date: Fri, 16 May 2025 21:38:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,13 +49,13 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings:iio:gyroscope:invensense,itg3200: add binding
-To: Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, dlechner@baylibre.com,
- nuno.sa@analog.com, andy@kernel.org
-Cc: ~lkcamp/patches@lists.sr.ht, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250515002817.81863-1-rodrigo.gobbi.7@gmail.com>
+Subject: Re: [PATCH v3 1/6] dt-bindings: mfd: add bindings for QIXIS CPLD
+To: Ioana Ciornei <ioana.ciornei@nxp.com>, lee@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, shawnguo@kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, vladimir.oltean@nxp.com
+References: <20250515155628.233007-1-ioana.ciornei@nxp.com>
+ <20250515155628.233007-2-ioana.ciornei@nxp.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -101,95 +101,37 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250515002817.81863-1-rodrigo.gobbi.7@gmail.com>
+In-Reply-To: <20250515155628.233007-2-ioana.ciornei@nxp.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 15/05/2025 02:21, Rodrigo Gobbi wrote:
-> There is no txt file for it, add yaml for invensense,itg3200 gyroscope.
-> 
-> Signed-off-by: Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>
-> ---
+On 15/05/2025 17:56, Ioana Ciornei wrote:
+> +    const: 1
+> +
+> +  "#size-cells":
+> +    const: 0
+> +
+> +patternProperties:
+> +  '^mux-controller(@[a-f0-9]+)$':
 
-Subject, missing spaces.
+Drop ()
 
-Please use subject prefixes matching the subsystem. You can get them for
-example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
-your patch is touching. For bindings, the preferred subjects are
-explained here:
-https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patches.html#i-for-patch-submitters
-
-> Added @Jonathan as the maintainer here due a suggestion in a
-> different thread for a different binding file.
-> Created this yaml using the driver probe and comparing with other gyro bindings.
-> Tks and regards.
-> ---
->  .../iio/gyroscope/invensense,itg3200.yaml     | 51 +++++++++++++++++++
->  1 file changed, 51 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/iio/gyroscope/invensense,itg3200.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/iio/gyroscope/invensense,itg3200.yaml b/Documentation/devicetree/bindings/iio/gyroscope/invensense,itg3200.yaml
-> new file mode 100644
-> index 000000000000..0656dbb58cf2
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/iio/gyroscope/invensense,itg3200.yaml
-> @@ -0,0 +1,51 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/iio/gyroscope/invensense,itg3200.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +    $ref: /schemas/mux/reg-mux.yaml#
 > +
-> +title: Invensense ITG-3200 Gyroscope
-> +
-> +maintainers:
-> +  - Jonathan Cameron <jic23@kernel.org>
-
-Not really, this should be someone interested in the hardware.
-
-> +
-> +description: |
-> +  Triple-axis, digital output gyroscope with a three 16-bit analog-to-digital
-> +  converters (ADCs) for digitizing the gyro outputs, a user-selectable internal
-> +  low-pass filter bandwidth, and a Fast-Mode I2C . Datasheet can be found here:
-> +  https://invensense.tdk.com/wp-content/uploads/2015/02/ITG-3200-Register-Map.pdf
-> +
-> +properties:
-> +  compatible:
-> +    const: invensense,itg3200
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    minItems: 1
-
-No, maxItems instead. Look at other bindings.
-
-> +
-> +  mount-matrix:
-> +    description: an optional 3x3 mounting rotation matrix.
-> +
-> +required:
+> +required
 > +  - compatible
 > +  - reg
+> +  - "#address-cells"
+
+Keep consistent quotes, either ' or "
+
+> +  - "#size-cells"
 > +
 > +additionalProperties: false
 > +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +    i2c {
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +        itg3200@68 {
-
-Node names should be generic. See also an explanation and list of
-examples (not exhaustive) in DT specification:
-https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
 
 
-
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
