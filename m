@@ -1,127 +1,150 @@
-Return-Path: <linux-kernel+bounces-650869-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-650941-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02140AB9713
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 10:02:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A99EAB9815
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 10:49:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 923F74E61EB
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 08:02:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 26FCA1B63D4E
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 08:49:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9994622B8BF;
-	Fri, 16 May 2025 08:02:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7AEB22B8BF;
+	Fri, 16 May 2025 08:49:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GW/EPIWU"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="UoyyS/jH"
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 399CD225A35
-	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 08:02:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 377B3221275
+	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 08:49:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747382559; cv=none; b=RH3BApd15D4Kt8GGa1JvnhiMi/4aT8SrXi9mFrkg0BKRTefHo95NLUQNIRCMYoxyHffsNU4iMrLBG+kAlND1Ckc1W08sxN0FZ/tedV6yc0k9Fph1+Mz9zqVQCH/o4WQzgsMVe/m6oRhiNT3C+PEPDWRT2kT8jRBD+FuD1UoiXtk=
+	t=1747385366; cv=none; b=XETK3w9aMh6j2JZuUs9nlmQQjlAL1Kdx1ZiFfAlVpBlz/XZdB/3CG8/XxjEhIdoHKoUZ5pBBJfgO2/dTLaKqOQsPE8xXN/zse/nMwAelqHl3mngnT/Vp8MAO5D8VhX9jiLtMjbYbngy7DTfax3pOVLlBLZKIgT+AU3KrGt7FFME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747382559; c=relaxed/simple;
-	bh=GG4H/sccbSVzVwAwliBjKqAZoNtWhkKlmZNI68D6kmE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rqR3ceYabhwzki2YqJOcc9lA67SS3BSxk+TH20YUrottxcize/j8bIYZvdj/htefFqN1u0vLIeo61x3F4ckWowBsbalkMwgo7iqJh4zC0j2yiKKOVz8zrntV61VgjM6yEu94JVRCVmJqlc/0/2TiDM9byoFr8+u28GCzVd8/y0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GW/EPIWU; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3a0be50048eso1735287f8f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 01:02:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1747382555; x=1747987355; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=bdKztaKZj+ArxWleSUI2lI0rhw/lHk7zt8SPSV2S+Ko=;
-        b=GW/EPIWUiIO1WEoPmHec93o2Cs0Oi7jXWo5qkJbwKnAPYrjw7QCUEBoFSLs5UtMxNU
-         Yw0XPfckh2ZRAiKuDJJKuRDkA7SzQSvo1A0Cg/mvvcwd22JJFvTn/hYRrAOhvA0KN1TB
-         R8j6LNnyWtwJpvs7At0YyfBN1OhUVzc93ssCve/uLnoCcOT7+Zpiy/PQ5I3jTZhiut6d
-         LUDi+mYahPWaAN1WdXk3qPTY9lMUDUn6yJny20RHRE1qoFi+5+yHFv47es1cBAPKR+cj
-         wrtzAI89HLbjFAudBCoQsnGrS5P3QOhiLkKAjo7OsRE20NooUJsedUmukz92yckDGQbU
-         Dp4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747382555; x=1747987355;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bdKztaKZj+ArxWleSUI2lI0rhw/lHk7zt8SPSV2S+Ko=;
-        b=sm1lsO9wm5d74HI3bzAU1axymvZH/JW8tdkAN5a2lxhyLKyYBRNNBVBCwHAa7MTm1J
-         YStDdURDwCGTzC/PCpnLBBlHw5z4Jf/BxEZ1T8tMiBNe8/VdZurs6RKMJAbX8O+G8tKw
-         qKL2iwrdy7Rkfj2LRHwbuUMYAJwzcHGUI2tLG5QthZy8fp5WY3NjinRLVenjWEhwZV8K
-         YWqkUvEMeSBK26lcwrUoaet296ySJd2Wf1EZjPXgwy4xr+QPMK1mIYOgTXo2V69TYszp
-         2qM9R2V6+kYaY1aNDolMahVlY23Db9JQv8BX1TcJkNkaIdLBOlSp40pOyEuMiBzlLGWz
-         ovFg==
-X-Forwarded-Encrypted: i=1; AJvYcCV2nAqo1UDBsxet5vykOp3VrcE/jFyFIvUui0IPVQG5KRFv4Pv3a33uAEQRR+Ft+6sbqgaSPEBbyC/gb4c=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxpm3hSUjtpiFWceCm0fTpqZLA+ixQCDipru2rl7qAxRqrsFU6w
-	eIBEUpUrea9lahSW2RTcTK92/Ps4Nkc4c6/zRBgvYpWNdDvLUu5FJNBj0Z8khvZcEqI=
-X-Gm-Gg: ASbGncu2VLjd8q6ZTeujRzZN7t3+Lp82cgTZOtNRgJsunRZdgw9bHNU/AQmOoeX5iVI
-	A0OLe2DD0V4dYgqGDZ0oJw5QX0+8V493Q/ueGkPBGzvFFNNZQPhWdCERAOtGi1mDorWteDGOi0F
-	LAOaiawpBC2uHTQONxvHr94ub6reWdkgFT+JtucI2Hj8/i6IvMN4H/BCaIm9vevUD86PoAhxwJ7
-	1wZf8JR5evIf+ITw71VPjsZsaB7CHLbQ1c9WHHN0X0QZNXdev/T5QQpVdeAMlYxnvdn40P071x0
-	JiMTMI/IMSU4m+EQQxFPjgGK0B5LwUDvhUGZPd6zz+f/Srq0InY9ws2R+WiP95p7ETWvXkUWWux
-	6oQIw2zvf2s4WYPxO
-X-Google-Smtp-Source: AGHT+IGajP2MNPkEe6N02ds5+ATpXbBcyUjkhr3oNkMVyA1PAD1v31L2wT8EjnkrVr11DTg5FBDOMA==
-X-Received: by 2002:a05:6000:2ca:b0:39a:ca05:54a9 with SMTP id ffacd0b85a97d-3a35c8263d1mr2594040f8f.29.1747382555439;
-        Fri, 16 May 2025 01:02:35 -0700 (PDT)
-Received: from localhost (110.8.30.213.rev.vodafone.pt. [213.30.8.110])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a35ca8d185sm2005730f8f.98.2025.05.16.01.02.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 May 2025 01:02:34 -0700 (PDT)
-Date: Fri, 16 May 2025 11:02:32 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Cristian Marussi <cristian.marussi@arm.com>
-Cc: long.yunjian@zte.com.cn, sudeep.holla@arm.com, peng.fan@nxp.com,
-	justin.chen@broadcom.com, florian.fainelli@broadcom.com,
-	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, fang.yumeng@zte.com.cn,
-	mou.yi@zte.com.cn, ouyang.maochun@zte.com.cn, xu.lifeng1@zte.com.cn
-Subject: Re: [PATCH] firmware: arm_scmi: Use dev_err_probe() simplify the code
-Message-ID: <4c970388-4b1e-4c5c-bc54-d55c2d9cd62b@suswa.mountain>
-References: <20250515203855146Sn9x-Uw9Teur35mOjn41C@zte.com.cn>
- <aCXzPGvPayVyiMHG@pluto>
+	s=arc-20240116; t=1747385366; c=relaxed/simple;
+	bh=RTh17wKWPYBiq7CWlWiqgQXRAXIrPv4zEk3aLTukMdU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=btTCZ8EqyEtoMuhxxBOAMqV4olxV3KHX24IR+pAulvoV+wxfxcJeusou4O/6e3Zi2xfb728wK4Fq71N/FGv1Ik7I7uEDTz+rO97FFhto7SiA8u2B6uzZiN7DGM6LbFXSNJI46OgTPLq5D8jISxsMRoEdDqhnz0O8pl94/YgAPLA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=UoyyS/jH; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250516084359epoutp02062efd027f0c8ca96a13399c2a4c0760~-9W99HOER2193121931epoutp02Q
+	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 08:43:59 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250516084359epoutp02062efd027f0c8ca96a13399c2a4c0760~-9W99HOER2193121931epoutp02Q
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1747385039;
+	bh=oDUn4vGxqZ0dgmjFCUlqP7z0I19O5uz1oFEJFFgwGN0=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=UoyyS/jHUfHBgn2s40CTQovf0uZEDIjk1ZbQcmnfIyarsh1XUGGVlDRHYt6u0OpWv
+	 otsyupWW1nChjaSPUyKv5ykTycdpX7qvi1I6TmqZw+BUYG9U9pvA8N5mqtvsBaX8Vf
+	 hW5KrDb1bpNe3/ZJvT9xfzi2YgeNRRyaBxsgwKTA=
+Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPS id
+	20250516084358epcas5p3efd61ab4296640f46f59d806c92959a9~-9W9Gz9vg0984709847epcas5p3h;
+	Fri, 16 May 2025 08:43:58 +0000 (GMT)
+Received: from epcas5p4.samsung.com (unknown [182.195.38.177]) by
+	epsnrtp02.localdomain (Postfix) with ESMTP id 4ZzLGN1Lchz2SSKb; Fri, 16 May
+	2025 08:43:56 +0000 (GMT)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+	20250516070436epcas5p4204b77c1a146ab05ff897d930c32041e~-8AMna2Bk1740617406epcas5p4y;
+	Fri, 16 May 2025 07:04:36 +0000 (GMT)
+Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20250516070436epsmtrp2a81743acebd8ecc647593b88a5676dd0~-8AMmgodn0262802628epsmtrp2H;
+	Fri, 16 May 2025 07:04:36 +0000 (GMT)
+X-AuditID: b6c32a28-460ee70000001e8a-95-6826e3840519
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	27.A0.07818.483E6286; Fri, 16 May 2025 16:04:36 +0900 (KST)
+Received: from bose.samsungds.net (unknown [107.108.83.9]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250516070434epsmtip25ce2feee6b9c38117999b0188e44db32~-8AKM8aYr0738607386epsmtip2I;
+	Fri, 16 May 2025 07:04:34 +0000 (GMT)
+From: Pritam Manohar Sutar <pritam.sutar@samsung.com>
+To: gregkh@linuxfoundation.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, alim.akhtar@samsung.com, Thinh.Nguyen@synopsys.com
+Cc: linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, rosa.pila@samsung.com, dev.tailor@samsung.com,
+	faraz.ata@samsung.com, muhammed.ali@samsung.com, selvarasu.g@samsung.com,
+	pritam.sutar@samsung.com
+Subject: [PATCH v3 0/2] initial usb support for ExynosAutov920 soc
+Date: Fri, 16 May 2025 12:43:31 +0530
+Message-Id: <20250516071333.3223226-1-pritam.sutar@samsung.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aCXzPGvPayVyiMHG@pluto>
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrCLMWRmVeSWpSXmKPExsWy7bCSvG7LY7UMg5MTVCwezNvGZrFm7zkm
+	i3s7lrFbzD9yjtXi2o2F7BbNi9ezWbycdY/NYtPja6wWl3fNYbOYcX4fk8WiZa3MFudfdLFa
+	PLu3gs3i/54d7BZffj5gtjiy/COTxaoFB9gdBD02repk89g/dw27x+Yl9R59W1YxemzZ/5nR
+	4/MmuQC2KC6blNSczLLUIn27BK6MbSfaWQs281S0r7nB3sB4l7OLkYNDQsBEYvom7S5GLg4h
+	gd2MEnsWvmbpYuQEistIPJq2kRXCFpZY+e85O0TRW0aJzTMusoA0swmYSkzckwASFxGYxihx
+	pGE/C4jDLHCcSWLKymZGkG5hASeJSbe3MIHYLAKqEl8+bwVr5hWwl/gyQRxigbzE/oNnmUFs
+	XgFBiZMzn4AdwQwUb946m3kCI98sJKlZSFILGJlWMUqmFhTnpucmGxYY5qWW6xUn5haX5qXr
+	JefnbmIER4SWxg7Gd9+a9A8xMnEwHmKU4GBWEuG9nqWcIcSbklhZlVqUH19UmpNafIhRmoNF
+	SZx3pWFEupBAemJJanZqakFqEUyWiYNTqoEpI0tmZuqJOe6/tNd2cv+fdqDccR3vncR8nug4
+	Z54NslX5e5c0MP7a/GH7Qgl7h3jFuI0K84Qc8jL3H22Z9FFJv351aNVd03bj4t5m3wuTL52O
+	9BFP0Giz65FWTeZp4uO6KL3o7C/mNt/Hq5an7vq0ZF1gCOefRfWn/OxXcRXO8AxOfR476/X0
+	bW3Sq5VYRf96y5xsmvlPe/om/ReCnFN+CL1oua53QdZNLdvxObfpbtdaUdaJ+2wU8vuPX11w
+	/C6r5bOPYs+U37BJMEgwvrmyVm+e5Puiv033gyeXPmfZEM/ZOr9yeWR4jt//iP7WtoByi/Bb
+	3tFJMd97Ygp/ybl9F/NSU74qe+DKH+1VD5VYijMSDbWYi4oTAWqHKu73AgAA
+X-CMS-MailID: 20250516070436epcas5p4204b77c1a146ab05ff897d930c32041e
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-542,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250516070436epcas5p4204b77c1a146ab05ff897d930c32041e
+References: <CGME20250516070436epcas5p4204b77c1a146ab05ff897d930c32041e@epcas5p4.samsung.com>
 
-On Thu, May 15, 2025 at 02:59:24PM +0100, Cristian Marussi wrote:
-> On Thu, May 15, 2025 at 08:38:55PM +0800, long.yunjian@zte.com.cn wrote:
-> > From: Yumeng Fang <fang.yumeng@zte.com.cn>
-> > 
-> 
-> Hi,
-> 
-> > In the probe path, dev_err() can be replaced with dev_err_probe()
-> > which will check if error code is -EPROBE_DEFER and prints the
-> > error name. It also sets the defer probe reason which can be
-> > checked later through debugfs.
-> 
-> All true...but...if you look at the main scmi_probe() function all of these
-> failures are trapped at that level currently on the return path...
-> 
-> see the call chain from
-> 
-> scmi_probe()
-> 	....
-> 	ret = scmi_channels_setup(info); 
-> 	...
-> 
-> ...so your probe errors will be overridden there with a more generic message
-> left in debugfs at the top level.
+This SoC has a DWC3 compatible USB controller
 
-Good point.  But that feels like a mistake in dev_err_probe().
-Ideally, it would print the first error message.  I bet someone
-will eventually fix this.
+The USB 3.1 DRD controller has the following features:
+    * compliant with both USB device 3.1 and USB device 2.0 standards
+    * compliant with USB host 3.1 and USB host 2.0 standards
+    * supports USB device 3.1 and USB device 2.0 interfaces
+    * supports USB host 3.1 and USB host 2.0 interfaces
+    * full-speed (12 Mbps) and high-speed (480 Mbps) modes with USB device
+      2.0 interface
+    * super-speed (5 Gbps) mode with USB device 3.1 Gen1 interface
+    * super-speed plus (10 Gbps) mode with USB device 3.1 Gen2 interface
+    * single USB port which can be used for USB 3.1 or USB 2.0
+    * on-chip USB PHY transceiver
+    * DWC3 compatible
+    * supports up to 16 bi-directional endpoints
+    * compliant with xHCI 1.1 specification
 
-regards,
-dan carpenter
+changelog
+----------
+Changes in v3:
+- Added Acked-by, Reviewed-by tags.
+- Added the usb mailing list.
+  link for v2: https://lore.kernel.org/linux-usb/20250515225815.23sxkgior5wzsgsc@synopsys.com/
+
+Changes in v2:
+- Grouped compatible string "samsung,exynosautov920-dwusb3" along with
+  the other Samsung compatibles.
+  link for v1: https://lore.kernel.org/linux-usb/20250514140741.415981-1-pritam.sutar@samsung.com/
+
+Pritam Manohar Sutar (2):
+  dt-bindings: usb: samsung,exynos-dwc3: add dt-schema ExynosAutov920
+  usb: dwc3-exynos: add support for ExynosAutov920
+
+ .../bindings/usb/samsung,exynos-dwc3.yaml        | 16 ++++++++++++++++
+ drivers/usb/dwc3/dwc3-exynos.c                   |  9 +++++++++
+ 2 files changed, 25 insertions(+)
+
+-- 
+2.34.1
+
 
