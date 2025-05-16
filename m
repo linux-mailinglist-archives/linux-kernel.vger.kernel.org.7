@@ -1,99 +1,148 @@
-Return-Path: <linux-kernel+bounces-651047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-651044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2186AB997D
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 11:55:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EC44AB996F
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 11:54:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4AB717A58B9
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 09:53:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6639F16495D
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 09:54:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7A12235076;
-	Fri, 16 May 2025 09:54:02 +0000 (UTC)
-Received: from unicom146.biz-email.net (unicom146.biz-email.net [210.51.26.146])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2121D23184F;
+	Fri, 16 May 2025 09:53:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="F/eg2ZxU"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BB6D231858;
-	Fri, 16 May 2025 09:53:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.26.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6B0E231826
+	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 09:53:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747389242; cv=none; b=XjQe2gi15frYhGC2e/RfXPLzqjATpJ+C6W2eHejSo7eCxWXE0shkqwNgFeSKW0PKnWBiyEaWoCofA79YqYaOJ+09wIOcwnUJ91e8LoM913lGJzlAH8hLyyvL/gSJQUYiPK6jeb+Bypr1mUm75Vrj/TtAZ+MuLzVrI9bu9YV6iqs=
+	t=1747389233; cv=none; b=giy3Nj1sTlBnv8wohDqf5+4rNsNn+6CcSABGS7paG6yDJFY9/BtJ/Ra9ZoMrc47L1bSCIHyO610bQxwCMjzNlV4E+jTQE/l6ur8vlL5bxu+HEhDr0+nnu5EtfoggE2CFBkQXnDGTRBpBa+cxf7uKgh6ne4fZqIrvUvl4rgukt1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747389242; c=relaxed/simple;
-	bh=q0ACZUFrY5UcA6zkdpN4QJxoZ852bW+WRHVN5OX318Q=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=qs3fp+4s7H4VuwNorN16rcT1Mq67mRqb5tBc/OOeKZpKiznL2nC0qVllYkNfUs5e+HJleFgoXPpahm/fEzmquiwxWly9wmt0xNvTu4XTvVEBzn0mUcH7z8wRSovhHXf2d4tOcV8I0AA93swc+2X638cw9DDZr8sxWQv2TDnvfSY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.26.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
-Received: from jtjnmail201602.home.langchao.com
-        by unicom146.biz-email.net ((D)) with ASMTP (SSL) id 202505161753474539;
-        Fri, 16 May 2025 17:53:47 +0800
-Received: from jtjnmail201607.home.langchao.com (10.100.2.7) by
- jtjnmail201602.home.langchao.com (10.100.2.2) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Fri, 16 May 2025 17:53:49 +0800
-Received: from locahost.localdomain.com (10.94.6.108) by
- jtjnmail201607.home.langchao.com (10.100.2.7) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Fri, 16 May 2025 17:53:48 +0800
-From: Charles Han <hanchunchao@inspur.com>
-To: <krzk@kernel.org>, <sre@kernel.org>, <akpm@linux-foundation.org>,
-	<lee@kernel.org>
-CC: <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Charles Han
-	<hanchunchao@inspur.com>
-Subject: [PATCH] charger: max14577: Handle NULL pdata when CONFIG_OF is not set
-Date: Fri, 16 May 2025 17:53:46 +0800
-Message-ID: <20250516095346.24169-1-hanchunchao@inspur.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1747389233; c=relaxed/simple;
+	bh=0T9dXX4j3/xNPrysk0i+Gd7aVj9eRvCOhtMXwW578kM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZYFnJD8Y+thNRgrH2OGSiIkAwpc/ZdDZ7HE1ghdtTMGZh732W1uisbUHMvxaECYJbJhAi2lUGlrZvNyGEtBFqM+VS/17JEajNqy1R3rhPPnne5CR/3x2hZsxTBaOU3dBaMBbBTp4z41b15SXD4j5M1ItZ8IjdqlAYszZBLpm1gw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=F/eg2ZxU; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-441d1ed82dbso18670555e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 02:53:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1747389230; x=1747994030; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=0T9dXX4j3/xNPrysk0i+Gd7aVj9eRvCOhtMXwW578kM=;
+        b=F/eg2ZxUpml2N8mRwZ6n+Ttvvxpi+XTozMO9rt0wxcCEt4+YBa9+K0/oZqK4BCm2vn
+         a4iwU7Wp8NBz34JxO0pEBP5KZopHDm/MBCh41U9xQnaK7PYI13I123gKZ0Bsh9gH/tKg
+         drefYBzrPnr3yC+jHNO0yLnEsh+OZGkXVccmM3X8t6NFxap5LWtvOSptztHGwg0PunWM
+         pGJveWXwosoysGQAxzX7NXKzJvKAB/n7Bm158E9Qg37oOkEMDsagPUmrSnOTp1TnOe3W
+         poP1xD19T4uT9JMeNZrNpDj/9Ynkcuf+fnWEjNN+CLqpi6dxld0FBeYAHepZy2gw8sv+
+         0jjA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747389230; x=1747994030;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0T9dXX4j3/xNPrysk0i+Gd7aVj9eRvCOhtMXwW578kM=;
+        b=Z+d579VN43Obc05ad3lN1jK/C7iHb6gyAXXT2n+EzaaAbocPRpJ1i9/iJN18PFxGME
+         qWyzTF7X1wJRCr1OH64dMYIfY9CEKiKvtSRLozFvJO0KE15ubhQvWymWDLRgm4YdscK5
+         wlb14rcgQEp2Q8dFR75JAXs7tlP6G+D/l7kHTrGvhppRaQ/KYpqpXu2cO7v+TNtUgewq
+         b5VRftAUM+onxGwp8yDFLFiPfTOT9d1sX6j9fXnJuSTdfMMuDmlGhttc7Zd+7G7RXWhY
+         PGgaVoMkM2WFIHY8B9RPk4/jBXx/SZoL+Ki4coKfM2W/hB7WctP8u/cVbxr7XESovUSV
+         BA9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWUgbQScgZK6i2ywnWPvmNy1t7We9ErkrHFAPkvxEwR5+4lqZtLekgStK/7OHCsZ8Irog0JOXvmYHSjFoU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyxk0WCD40qY9MT2KFXmMTxoTvdCjSd6fPeSw6/UEtb4qGnawa5
+	eJGkiudokxMHu5DeQLl9upXcpXZacP3JJAL0bBIcDGK8/Yvq681R2LduUQtxLN8Vc70=
+X-Gm-Gg: ASbGnctLue3RXSB11Zo2P2oXfkMx1FKgMGzJPEkxC5mUnj/SIH5qtZ+kmTnHvGqNy76
+	N8Er+Svl5OiCxREZZ7FGN/NoEkZ2BLvAOqNo5XIM3dcVra7+imhamgLxnVMFFAVainkTenxZbhg
+	PDe/EhWk/SuSkzg3I5QoHoAWD70e9T46DRlkqU5hZMMiFe2OBkW7ziyWu2PZMfxhIeskorv9YEe
+	KEjTFlRJfG/daF0gSWfu2AzYEXqn1uXh0nNrVGnPQ2tU48yPrWtH/cwlXIVmRAIrTEkIOB51lFj
+	S7Sthxo/hOGZJng1con6XQGHlTORhgvDoGIvuIsaZruOsbB/udFuIqaERcfzl7yBfDbEE6T4lkZ
+	AD2r5rza7+jPQ8gI98t1n4AuT71Bf
+X-Google-Smtp-Source: AGHT+IGWMqbdmzot88BwoyJkKVlik7hJWWIpAdv/u8TjYPa8JtimIILaeyozEucB70fzns1tTqycTw==
+X-Received: by 2002:a5d:51cd:0:b0:3a3:5cca:a539 with SMTP id ffacd0b85a97d-3a35ccaa7c1mr1995111f8f.20.1747389229889;
+        Fri, 16 May 2025 02:53:49 -0700 (PDT)
+Received: from localhost (p200300f65f00780800000000000001b9.dip0.t-ipconnect.de. [2003:f6:5f00:7808::1b9])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3a35ca5a87fsm2274308f8f.29.2025.05.16.02.53.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 16 May 2025 02:53:49 -0700 (PDT)
+Date: Fri, 16 May 2025 11:53:48 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Vladimir Zapolskiy <vz@mleia.com>, 
+	Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>, Arnd Bergmann <arnd@arndb.de>
+Cc: Purva Yeshi <purvayeshi550@gmail.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ARM: dts: lpc32xx: Add #pwm-cells property to the two
+ SoC PWMs
+Message-ID: <ss6jqmpz55wz3sb27kg7mu555qowf5enu3fe32zlxgqeix7odi@zhs3ns4euljf>
+References: <20250403104915.251303-2-u.kleine-koenig@baylibre.com>
+ <hbz3gikjqwuqmexzrxis43gmxcviiryihi7pdp3btdb3sopqi4@mssyr62bunxk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: Jtjnmail201613.home.langchao.com (10.100.2.13) To
- jtjnmail201607.home.langchao.com (10.100.2.7)
-tUid: 2025516175347009ab4415561c54360ebd2bbe3d44228
-X-Abuse-Reports-To: service@corp-email.com
-Abuse-Reports-To: service@corp-email.com
-X-Complaints-To: service@corp-email.com
-X-Report-Abuse-To: service@corp-email.com
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="z5nkams7un7oxsws"
+Content-Disposition: inline
+In-Reply-To: <hbz3gikjqwuqmexzrxis43gmxcviiryihi7pdp3btdb3sopqi4@mssyr62bunxk>
 
-When the kernel is not configured  CONFIG_OF, the max14577_charger_dt_init
-function returns NULL. Fix the max14577_charger_probe functionby returning
- -ENODATA instead of potentially passing a NULL pointer to PTR_ERR.
 
-Fix below smatch warning.
-smatch warnings:
-drivers/power/supply/max14577_charger.c:576 max14577_charger_probe() warn: passing zero to 'PTR_ERR'
+--z5nkams7un7oxsws
+Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] ARM: dts: lpc32xx: Add #pwm-cells property to the two
+ SoC PWMs
+MIME-Version: 1.0
 
-Fixes: e30110e9c96f ("charger: max14577: Configure battery-dependent settings from DTS and sysfs")
-Signed-off-by: Charles Han <hanchunchao@inspur.com>
----
- drivers/power/supply/max14577_charger.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Hello,
 
-diff --git a/drivers/power/supply/max14577_charger.c b/drivers/power/supply/max14577_charger.c
-index 1cef2f860b5f..ed6f5a584c2c 100644
---- a/drivers/power/supply/max14577_charger.c
-+++ b/drivers/power/supply/max14577_charger.c
-@@ -572,8 +572,10 @@ static int max14577_charger_probe(struct platform_device *pdev)
- 	chg->max14577 = max14577;
- 
- 	chg->pdata = max14577_charger_dt_init(pdev);
--	if (IS_ERR_OR_NULL(chg->pdata))
-+	if (IS_ERR(chg->pdata))
- 		return PTR_ERR(chg->pdata);
-+	else if (!chg->pdata)
-+		return -ENODATA;
- 
- 	ret = max14577_charger_reg_init(chg);
- 	if (ret)
--- 
-2.43.0
+[adding Arnd to To:]
 
+On Thu, Apr 24, 2025 at 05:05:29PM +0200, Uwe Kleine-K=F6nig wrote:
+> On Thu, Apr 03, 2025 at 12:49:14PM +0200, Uwe Kleine-K=F6nig wrote:
+> > If these PWMs are to be used, a #pwm-cells property is necessary. The
+> > right location for that is in the SoC's dtsi file to not make
+> > machine.dts files repeat the value for each usage. Currently the
+> > machines based on nxp/lpc/lpc32xx.dtsi don't make use of the PWMs, so
+> > there are no properties to drop there.
+> >=20
+> > Signed-off-by: Uwe Kleine-K=F6nig <u.kleine-koenig@baylibre.com>
+>=20
+> I wonder if this patch is still on someone's radar. I didn't hear
+> anything back and it's not in next.
+
+This is still the status quo.=20
+
+There is a patch in next touching arch/arm/boot/dts/nxp/lpc/lpc32xx.dtsi
+applied by Arnd. So maybe the problem that my patch wasn't picked up is
+that Arnd wasn't aware?
+
+Best regards
+Uwe
+
+--z5nkams7un7oxsws
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmgnCykACgkQj4D7WH0S
+/k4gBQf+MMHEz38OrUBBBQ7bgEtkz9tyZsvJY8TyLqJF1RXpnPhz0boYcprA6rhL
+H3fnPM32zczBLCqyIwIHE79WpttHwN5jm6UK1Gi9na7cF85zHfJnnJCKrb3IDoPP
+Gqb1DTEGHchPSkVI8przpdi/19wzLRhKpNb9RU4ILGtzqhVGjeQYf5mI8P419/JC
+s29FNZjX8+W2sZBsxfxioM6SHVgjpsRP1DfxPYkf/cMKWk6+fPIiYCS2UwGRUKmX
+Utr9tdaw8HsNHBiXGudxAojQiH6HdpZp17ET7SYu7SqRkzhJw6q8pqRrerxJhx6o
+IN6p6ADPdGVEPiG0kp4QiricGqtmnw==
+=xD5v
+-----END PGP SIGNATURE-----
+
+--z5nkams7un7oxsws--
 
