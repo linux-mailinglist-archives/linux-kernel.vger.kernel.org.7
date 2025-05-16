@@ -1,171 +1,158 @@
-Return-Path: <linux-kernel+bounces-651040-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-651042-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31606AB9962
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 11:52:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C026CAB9969
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 11:53:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D90B1BC0BC6
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 09:52:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 165E71BC4F63
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 09:53:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1CF3231827;
-	Fri, 16 May 2025 09:52:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B620231837;
+	Fri, 16 May 2025 09:53:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lwwXpaoy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Hr6iignh"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2071222F768;
-	Fri, 16 May 2025 09:52:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9132230BFF;
+	Fri, 16 May 2025 09:53:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747389129; cv=none; b=lcdWAJsd2aI3Gfy5xJgnhq3UwjQ9iszq9tbrXPA4q3OVg6Fq8yC5QBW2BqtfHI2q4mF7AoRrElMAx+mt7zGoYMWNOU0k7Kr69K88JTzwqdBrVsA8P9fvft7LDmuALMfBI8w90yjvq/qEBRgzRjcQYBsq/brA4TdPkR+MGacgZPA=
+	t=1747389203; cv=none; b=mXHtGldJi8xcTQD3JOHbPvBzL9zqKikxv/0BQpihOU8ENH8dWgTZGV+wezJ7t1SBsCR++C8obCyR9/rRhD3igFPwNnezE/byxEop0OXqIHy6hulSnnrhOIZseATTqxTsB/dYdATgpwogshCABm28t1KQK/mF1wfDyK6Tnl37UiY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747389129; c=relaxed/simple;
-	bh=LPskX+KQ9GPO7GtQP8RFX4zL0CkpIZBhYYAREwIva/w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=srgjQj4/JUVi7R2Wzp0z+zZF7j2BRFpPYiwmas5L3eRshgMskG09qbio1Ckge/4UZjcXXc2NQVJIVKBZ9vw3rt4PNN5pVwpu01PqvNrwGhNyj2AbDn8rmgz4oUuvQ/VvQm3MQXMVqkwDy7smu6TRuPr6Vc6HrP7Dy5S/tEdpYSo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lwwXpaoy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 994F5C4CEEB;
-	Fri, 16 May 2025 09:52:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747389128;
-	bh=LPskX+KQ9GPO7GtQP8RFX4zL0CkpIZBhYYAREwIva/w=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=lwwXpaoyD7HUDWI/P92VPgVuAV2PfDga9JR/ywuM2hhejO4zYRrdfh3XtDnAyZiSI
-	 y4tNoBGu4pDUm8CTUMqpA56WbRdkHi/uJpzi86ljYYptAGxM5Xg5wfo/93QRH1jkGi
-	 5o6potLRx6WX9xSUQCUK1FqTxjQjhmYQ7mNlQp0P68TM0Q8ClyaTl/ypFll2LuSvIM
-	 B0agJv7/3JYcfAzJcUxkNViut9Yive6V+KDv+fu8l6pAF8EtC7H6qNBwx3+qoZQJax
-	 y2JhnCwWZTLcXMtnI5MKU6ZrCaYxhqH62XHZwP61pBxFoGoGa9K0jlgstCHjraGXp9
-	 bu+Ab8CDirYcw==
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-54fcc593466so2149305e87.0;
-        Fri, 16 May 2025 02:52:08 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWzYOq4PR+xhEwIkV+TGVfFLMnHT7O47btoN6S0MEmFiYKcCeaxLDnG+ChtL5XjxpgNoHOokNyCS/Mwxg9x@vger.kernel.org, AJvYcCX5DgpsSMJID/m8IK+oKFrQOtWmywiScGlWEF+0x0CxBhWt0BKfi7NcGewKY4C0EykIg0hJrfOdK4fW@vger.kernel.org, AJvYcCXfL9eNVIEjzESMrBxzNnIGV4Npg6ECaYlK/4NM/J4c+xx2i3+3o0RfYVsQN7B1C9C5flEld1Mo9Z4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWedqb0y4J5k50wifrUrK3bFt5Ky4ckQVPTZYdeRExCAIgKE5W
-	CciANua4hKpuU3tHHhmlrw382L21c9vJ4SZsAAS39G8CNxZw30AIg6/LH7+po1BYku5Lw+Yxh4x
-	wpKmmCm5rxCpJxg3AnTkRXhDH0sXi2GQ=
-X-Google-Smtp-Source: AGHT+IHahFUEPmwbg86aUtdIPUwGuxneUVxJgAjBKxN4poCYamgz1Nsh24E33Vy1oV+OEmftpq0+1+l5gtclDi2iex4=
-X-Received: by 2002:a05:6512:3e01:b0:549:4a13:3a82 with SMTP id
- 2adb3069b0e04-550e97b4b52mr551735e87.21.1747389127009; Fri, 16 May 2025
- 02:52:07 -0700 (PDT)
+	s=arc-20240116; t=1747389203; c=relaxed/simple;
+	bh=csnhmuPBMvbHmy4ivocukJqDYD46AL3QBOXgr7aDbJs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HuXdaiMFjjdZ45NTLiT7JHROiFKra189K6pUuPCfpku5GH9uQTyt+0G9JpXw1aFxEtI2kw2MGUPlD4z/O2opAUs2u6LY5OKrqOxFjzrayUPM6xybTNFDvLOxjKemFtdx//PiJ+cmw54kJ4r0UZpGm+jWLGi6I/uACqFUhDIsXhw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Hr6iignh; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1747389202; x=1778925202;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=csnhmuPBMvbHmy4ivocukJqDYD46AL3QBOXgr7aDbJs=;
+  b=Hr6iignhG/XfA7NB9Hr/nklAcil7H1rvamcTmo4xoLUSYWSJNAjsbSaB
+   282AKOFzWJeeIfHEf/oCb+FKwQPpuoY8KCDAkyXqpndwQapczW0GJHtwJ
+   /OzH/cAd+bfT6A7IBNNgRncgdqmOfu8IV7TxJgqp0UT94Hx4Xi/YEdJGf
+   iqLeQtbZJe1QNgpCfxR6GdZBMX71NsWFys12UGNufqnVRLNaKuBmxyqJc
+   Z6I2DOH4/iMJpnJ+zHaBIbYVkq+r6tEdCjJHbZvZ6rSCVA/00A6Y3M3FH
+   HDQA15pMpQacTZIwSrQ51Bmugdle29yHG1fsPZAMazhv2g9LLa9tRGLgx
+   g==;
+X-CSE-ConnectionGUID: rC58i1ivRXemZET3zqXHfw==
+X-CSE-MsgGUID: Rct6MJ3xToKs5fUeWTnvzw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11434"; a="60693739"
+X-IronPort-AV: E=Sophos;i="6.15,293,1739865600"; 
+   d="scan'208";a="60693739"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 May 2025 02:53:21 -0700
+X-CSE-ConnectionGUID: evRQ209LQkSgZtAo94MheQ==
+X-CSE-MsgGUID: B5U9kBc4RGKG9e2lP9j1ZQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,293,1739865600"; 
+   d="scan'208";a="139127901"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa010.fm.intel.com with ESMTP; 16 May 2025 02:53:18 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id C0F5B23F; Fri, 16 May 2025 12:53:16 +0300 (EEST)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Hans de Goede <hdegoede@redhat.com>,
+	linux-gpio@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	platform-driver-x86@vger.kernel.org
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Alex Shi <alexs@kernel.org>,
+	Yanteng Si <si.yanteng@linux.dev>,
+	Dongliang Mu <dzm91@hust.edu.cn>,
+	Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: [PATCH v1 1/1] gpiolib-acpi: Update file references in the Documentation and MAINTAINERS
+Date: Fri, 16 May 2025 12:52:34 +0300
+Message-ID: <20250516095306.3417798-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250516091534.3414310-1-kirill.shutemov@linux.intel.com> <20250516091534.3414310-3-kirill.shutemov@linux.intel.com>
-In-Reply-To: <20250516091534.3414310-3-kirill.shutemov@linux.intel.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Fri, 16 May 2025 10:51:55 +0100
-X-Gmail-Original-Message-ID: <CAMj1kXGe6jx=dZ3Xe8Cz-xD0pHUaDCyKB4Shb4B=U5vAWXcdRw@mail.gmail.com>
-X-Gm-Features: AX0GCFuipmN9JlqI_7OlvvLMi5ltnYPmHTTuJWEdyO20yOdRQp9HX7CWVyTtVAs
-Message-ID: <CAMj1kXGe6jx=dZ3Xe8Cz-xD0pHUaDCyKB4Shb4B=U5vAWXcdRw@mail.gmail.com>
-Subject: Re: [PATCHv2 2/3] x86/64/mm: Make SPARSEMEM_VMEMMAP the only memory model
-To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Jonathan Corbet <corbet@lwn.net>, Andy Lutomirski <luto@kernel.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Jan Kiszka <jan.kiszka@siemens.com>, 
-	Kieran Bingham <kbingham@kernel.org>, Michael Roth <michael.roth@amd.com>, 
-	Rick Edgecombe <rick.p.edgecombe@intel.com>, Brijesh Singh <brijesh.singh@amd.com>, 
-	Sandipan Das <sandipan.das@amd.com>, Juergen Gross <jgross@suse.com>, 
-	Tom Lendacky <thomas.lendacky@amd.com>, linux-kernel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-efi@vger.kernel.org, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Fri, 16 May 2025 at 10:15, Kirill A. Shutemov
-<kirill.shutemov@linux.intel.com> wrote:
->
-> 5-level paging only supports SPARSEMEM_VMEMMAP. CONFIG_X86_5LEVEL is
-> being phased out, making 5-level paging support mandatory.
->
-> Make CONFIG_SPARSEMEM_VMEMMAP mandatory for x86-64 and eliminate
-> any associated conditional statements.
->
-> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+The recent changes in the gpiolib-acpi.c need also updates in the Documentation
+and MAINTAINERS. Do the necessary changes here.
 
-Reviewed-by: Ard Biesheuvel <ardb@kernel.org>
+Fixes: babb541af627 ("gpiolib: acpi: Move quirks to a separate file")
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Closes: https://lore.kernel.org/r/20250516193436.09bdf8cc@canb.auug.org.au
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ Documentation/driver-api/gpio/index.rst                    | 2 +-
+ Documentation/translations/zh_CN/driver-api/gpio/index.rst | 2 +-
+ MAINTAINERS                                                | 2 +-
+ drivers/platform/x86/intel/int0002_vgpio.c                 | 2 +-
+ 4 files changed, 4 insertions(+), 4 deletions(-)
 
-> ---
->  arch/x86/Kconfig      | 2 +-
->  arch/x86/mm/init_64.c | 9 +--------
->  2 files changed, 2 insertions(+), 9 deletions(-)
->
-> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-> index d3c2da3b2f0b..45b36a019b5e 100644
-> --- a/arch/x86/Kconfig
-> +++ b/arch/x86/Kconfig
-> @@ -1467,7 +1467,6 @@ config X86_PAE
->  config X86_5LEVEL
->         bool "Enable 5-level page tables support"
->         default y
-> -       select SPARSEMEM_VMEMMAP
->         depends on X86_64
->         help
->           5-level paging enables access to larger address space:
-> @@ -1579,6 +1578,7 @@ config ARCH_SPARSEMEM_ENABLE
->         def_bool y
->         select SPARSEMEM_STATIC if X86_32
->         select SPARSEMEM_VMEMMAP_ENABLE if X86_64
-> +       select SPARSEMEM_VMEMMAP if X86_64
->
->  config ARCH_SPARSEMEM_DEFAULT
->         def_bool X86_64 || (NUMA && X86_32)
-> diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
-> index bf45c7aed336..66330fe4e18c 100644
-> --- a/arch/x86/mm/init_64.c
-> +++ b/arch/x86/mm/init_64.c
-> @@ -833,7 +833,6 @@ void __init paging_init(void)
->         zone_sizes_init();
->  }
->
-> -#ifdef CONFIG_SPARSEMEM_VMEMMAP
->  #define PAGE_UNUSED 0xFD
->
->  /*
-> @@ -932,7 +931,6 @@ static void __meminit vmemmap_use_new_sub_pmd(unsigned long start, unsigned long
->         if (!IS_ALIGNED(end, PMD_SIZE))
->                 unused_pmd_start = end;
->  }
-> -#endif
->
->  /*
->   * Memory hotplug specific functions
-> @@ -1152,16 +1150,13 @@ remove_pmd_table(pmd_t *pmd_start, unsigned long addr, unsigned long end,
->                                 pmd_clear(pmd);
->                                 spin_unlock(&init_mm.page_table_lock);
->                                 pages++;
-> -                       }
-> -#ifdef CONFIG_SPARSEMEM_VMEMMAP
-> -                       else if (vmemmap_pmd_is_unused(addr, next)) {
-> +                       } else if (vmemmap_pmd_is_unused(addr, next)) {
->                                         free_hugepage_table(pmd_page(*pmd),
->                                                             altmap);
->                                         spin_lock(&init_mm.page_table_lock);
->                                         pmd_clear(pmd);
->                                         spin_unlock(&init_mm.page_table_lock);
->                         }
-> -#endif
->                         continue;
->                 }
->
-> @@ -1500,7 +1495,6 @@ unsigned long memory_block_size_bytes(void)
->         return memory_block_size_probed;
->  }
->
-> -#ifdef CONFIG_SPARSEMEM_VMEMMAP
->  /*
->   * Initialise the sparsemem vmemmap using huge-pages at the PMD level.
->   */
-> @@ -1647,4 +1641,3 @@ void __meminit vmemmap_populate_print_last(void)
->                 node_start = 0;
->         }
->  }
-> -#endif
-> --
-> 2.47.2
->
+diff --git a/Documentation/driver-api/gpio/index.rst b/Documentation/driver-api/gpio/index.rst
+index 34b57cee3391..43f6a3afe10b 100644
+--- a/Documentation/driver-api/gpio/index.rst
++++ b/Documentation/driver-api/gpio/index.rst
+@@ -27,7 +27,7 @@ Core
+ ACPI support
+ ============
+ 
+-.. kernel-doc:: drivers/gpio/gpiolib-acpi.c
++.. kernel-doc:: drivers/gpio/gpiolib-acpi-core.c
+    :export:
+ 
+ Device tree support
+diff --git a/Documentation/translations/zh_CN/driver-api/gpio/index.rst b/Documentation/translations/zh_CN/driver-api/gpio/index.rst
+index e4d54724a1b5..f64a69f771ca 100644
+--- a/Documentation/translations/zh_CN/driver-api/gpio/index.rst
++++ b/Documentation/translations/zh_CN/driver-api/gpio/index.rst
+@@ -42,7 +42,7 @@ ACPI支持
+ 
+ 该API在以下内核代码中:
+ 
+-drivers/gpio/gpiolib-acpi.c
++drivers/gpio/gpiolib-acpi-core.c
+ 
+ 设备树支持
+ ==========
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 96b827049501..d1290bbb6ac6 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -10105,7 +10105,7 @@ L:	linux-acpi@vger.kernel.org
+ S:	Supported
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/andy/linux-gpio-intel.git
+ F:	Documentation/firmware-guide/acpi/gpio-properties.rst
+-F:	drivers/gpio/gpiolib-acpi.c
++F:	drivers/gpio/gpiolib-acpi-*.c
+ F:	drivers/gpio/gpiolib-acpi.h
+ 
+ GPIO AGGREGATOR
+diff --git a/drivers/platform/x86/intel/int0002_vgpio.c b/drivers/platform/x86/intel/int0002_vgpio.c
+index 3b48cd7a4075..b7b98343fdc6 100644
+--- a/drivers/platform/x86/intel/int0002_vgpio.c
++++ b/drivers/platform/x86/intel/int0002_vgpio.c
+@@ -23,7 +23,7 @@
+  * ACPI mechanisms, this is not a real GPIO at all.
+  *
+  * This driver will bind to the INT0002 device, and register as a GPIO
+- * controller, letting gpiolib-acpi.c call the _L02 handler as it would
++ * controller, letting gpiolib-acpi call the _L02 handler as it would
+  * for a real GPIO controller.
+  */
+ 
+-- 
+2.47.2
+
 
