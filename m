@@ -1,141 +1,120 @@
-Return-Path: <linux-kernel+bounces-651780-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-651785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8E6BABA2E5
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 20:33:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93E99ABA2F6
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 20:34:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C94850636E
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 18:33:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E9E8A278A4
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 18:34:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E62911C07C4;
-	Fri, 16 May 2025 18:30:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 228FF28031E;
+	Fri, 16 May 2025 18:32:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NpfJnmbW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="TfLjLWj/"
+Received: from out-185.mta0.migadu.com (out-185.mta0.migadu.com [91.218.175.185])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 354511A255C;
-	Fri, 16 May 2025 18:30:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21337280016
+	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 18:32:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747420253; cv=none; b=BlQNVICVp0N774qwE7iVwboqw98XtgfZY0RZ9yvKpguYylfO2slQ/gYqwiC4OVjwkaMrFeNTidZjiSIi8uY6Fccdz6yHX5Y+bfyKh76X4TQcY1wFxkmyog1/CHveWEawrpApucALaDBq7NRUphjSlVqLPLwc1eqKJW31zkxvJrY=
+	t=1747420372; cv=none; b=HkWZWwTJbnnTZh9kt509LwyVoYmYueY1wd2jKXGL5TdY4XLnVJZdrkxx0Z77CxDc4k1JKdTwY8gxJ2JCXOYdD9yYn+FpA8XgsyLUcliCpQDPDEpZg51CvXb3oVbtDdQvs4fDuYcPQgHqeZig81LC64dxOEjDpTDBwNAdtVSBXFA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747420253; c=relaxed/simple;
-	bh=AWPQKMivdFQ6QmrVDoYacp12BqW2VCLe3IzFWlx64xM=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=qXdX4bCN7HtaX8bdLkO2Ylkgz83iURTt2fDqokY4W11shuWeKdr9wU7cZQ2pcC6YDgiHEpEvtWR2iS2P5vD8yw+7vEmJ0WiiOUHDI13I7npUYoE/YZ2be+hXWjLye7U+QUCBW9DKfemXJuTjqY2o07kwMD9cQntac0/GTSAdP9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NpfJnmbW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F32DC4CEE4;
-	Fri, 16 May 2025 18:30:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747420252;
-	bh=AWPQKMivdFQ6QmrVDoYacp12BqW2VCLe3IzFWlx64xM=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=NpfJnmbWyUqyMYoLy35vtxm0N29rgijba7ENUDqS7YmsKZUjUSF9tmwKOrEJMV3sh
-	 BOJ+AttBuVq8cSt48iOr9mkb3Lh54y/rA743ERhn9bavTxA66G9K4nY+vqUMYyvrUq
-	 pMuoisg9g1acwcd2Ohpqspyw4DZ3Bs72y9MVjchH2UnMlcG7PCQmnOvi7ptszJrLzd
-	 6loH1rBQKNyR4iKiDuf1m96yLUTX/I7GK7ZCZF7FTeW+XK5ihU9YtAH7p8jresWjGY
-	 FFvdQ3mTfy2XP+gLjQR2Cvrb6Xai9RjaFlkRc6wAgftsA5qwcTnVWIpNoT5D17ix6a
-	 YQGHmGwBWpsNw==
-Date: Fri, 16 May 2025 13:30:50 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1747420372; c=relaxed/simple;
+	bh=YIcodLdvBBeOnbc5f6aqLHIuwN4mjNqQy193de/5g/o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=u65JDw9jOr9HcJYvZY8qwReAR3tviWEXAX4GRS2UdG2hyV2FdVgLOFi5EqMp/seDsDa1ncMVqqhcgv8rxDZxe59FSdKj4iWzggYegu2VSWyP4hVj2iH4hSWf5N3JbRxB9C7pp1uz4IMm2mtx+uo3sX4Stj2dtforOTKVfKvvJQk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=TfLjLWj/; arc=none smtp.client-ip=91.218.175.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1747420357;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=3itOgcDfGvCSNJojD1kWLSfTvY0H0Nn9ZZT8m3VXc9E=;
+	b=TfLjLWj/hIgCbCVByfp3HZ5c7rlJh1zgJsyfd5tpGiuovYQE+y6a1JLonBjp1468v03wKg
+	zRjX7O3l+pI3sx55HwtMFPOp+rsTgTYb+8Cl3fxfOH/apewbzg13tt7+eGptOpe+PJe3ks
+	5CWBtbGlYiq0TaNF2+nSrXtjPWU527c=
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Johannes Weiner <hannes@cmpxchg.org>,
+	Michal Hocko <mhocko@kernel.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Muchun Song <muchun.song@linux.dev>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Harry Yoo <harry.yoo@oracle.com>,
+	Yosry Ahmed <yosry.ahmed@linux.dev>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Tejun Heo <tj@kernel.org>,
+	bpf@vger.kernel.org,
+	linux-mm@kvack.org,
+	cgroups@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Meta kernel team <kernel-team@meta.com>
+Subject: [PATCH v3 0/5] memcg: nmi-safe kmem charging
+Date: Fri, 16 May 2025 11:32:26 -0700
+Message-ID: <20250516183231.1615590-1-shakeel.butt@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: David Airlie <airlied@gmail.com>, devicetree@vger.kernel.org, 
- Thomas Zimmermann <tzimmermann@suse.de>, Maxime Ripard <mripard@kernel.org>, 
- linux-kernel@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, 
- Oded Gabbay <ogabbay@kernel.org>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Jonathan Corbet <corbet@lwn.net>, 
- Sebastian Reichel <sebastian.reichel@collabora.com>, 
- dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, 
- linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org, 
- =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
- Jeff Hugo <jeff.hugo@oss.qualcomm.com>, 
- Sumit Semwal <sumit.semwal@linaro.org>, Heiko Stuebner <heiko@sntech.de>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Nicolas Frattaroli <nicolas.frattaroli@collabora.com>, 
- Simona Vetter <simona@ffwll.ch>, linux-rockchip@lists.infradead.org, 
- linux-doc@vger.kernel.org
-To: Tomeu Vizoso <tomeu@tomeuvizoso.net>
-In-Reply-To: <20250516-6-10-rocket-v3-1-7051ac9225db@tomeuvizoso.net>
-References: <20250516-6-10-rocket-v3-0-7051ac9225db@tomeuvizoso.net>
- <20250516-6-10-rocket-v3-1-7051ac9225db@tomeuvizoso.net>
-Message-Id: <174742024812.3649303.12389396177218408388.robh@kernel.org>
-Subject: Re: [PATCH v3 01/10] dt-bindings: npu: rockchip,rknn: Add bindings
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
+Users can attached their BPF programs at arbitrary execution points in
+the kernel and such BPF programs may run in nmi context. In addition,
+these programs can trigger memcg charged kernel allocations in the nmi
+context. However memcg charging infra for kernel memory is not equipped
+to handle nmi context for all architectures.
 
-On Fri, 16 May 2025 18:53:15 +0200, Tomeu Vizoso wrote:
-> Add the bindings for the Neural Processing Unit IP from Rockchip.
-> 
-> v2:
-> - Adapt to new node structure (one node per core, each with its own
->   IOMMU)
-> - Several misc. fixes from Sebastian Reichel
-> 
-> v3:
-> - Split register block in its constituent subblocks, and only require
->   the ones that the kernel would ever use (Nicolas Frattaroli)
-> - Group supplies (Rob Herring)
-> - Explain the way in which the top core is special (Rob Herring)
-> 
-> Signed-off-by: Tomeu Vizoso <tomeu@tomeuvizoso.net>
-> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
-> ---
->  .../bindings/npu/rockchip,rknn-core.yaml           | 162 +++++++++++++++++++++
->  1 file changed, 162 insertions(+)
-> 
+This series removes the hurdles to enable kmem charging in the nmi
+context for most of the archs. For archs without CONFIG_HAVE_NMI, this
+series is a noop. For archs with NMI support and have
+CONFIG_ARCH_HAS_NMI_SAFE_THIS_CPU_OPS, the previous work to make memcg
+stats re-entrant is sufficient for allowing kmem charging in nmi
+context. For archs with NMI support but without
+CONFIG_ARCH_HAS_NMI_SAFE_THIS_CPU_OPS and with
+ARCH_HAVE_NMI_SAFE_CMPXCHG, this series added infra to support kmem
+charging in nmi context. Lastly those archs with NMI support but without
+CONFIG_ARCH_HAS_NMI_SAFE_THIS_CPU_OPS and ARCH_HAVE_NMI_SAFE_CMPXCHG,
+kmem charging in nmi context is not supported at all.
 
-My bot found errors running 'make dt_binding_check' on your patch:
+Mostly used archs have support for CONFIG_ARCH_HAS_NMI_SAFE_THIS_CPU_OPS
+and this series should be almost a noop (other than making
+memcg_rstat_updated nmi safe) for such archs. 
 
-yamllint warnings/errors:
+Changes since v2:
+- Rearrange in_nmi() check as suggested by Vlastimil
+- Fix commit messag of patch 5 as suggested by Vlastimil
 
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/npu/rockchip,rknn-core.yaml: properties:reg-names: 'oneOf' conditional failed, one must be fixed:
-	[{'const': 'pc'}, {'const': 'cna'}, {'const': 'core'}] is too long
-	[{'const': 'pc'}, {'const': 'cna'}, {'const': 'core'}] is too short
-	False schema does not allow 3
-	1 was expected
-	3 is greater than the maximum of 2
-	hint: "minItems" is only needed if less than the "items" list length
-	from schema $id: http://devicetree.org/meta-schemas/items.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/npu/rockchip,rknn-core.example.dtb: npu-core@fdab0000 (rockchip,rk3588-rknn-core-top): compatible: 'oneOf' conditional failed, one must be fixed:
-	['rockchip,rk3588-rknn-core-top', 'rockchip,rknn-core-top'] is too long
-	'rockchip,rk3588-rknn-core-top' is not one of ['rockchip,rk3588-rknn-core']
-	from schema $id: http://devicetree.org/schemas/npu/rockchip,rknn-core.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/npu/rockchip,rknn-core.example.dtb: npu-core@fdab0000 (rockchip,rk3588-rknn-core-top): reg: [[0, 4255842304, 0, 36864]] is too short
-	from schema $id: http://devicetree.org/schemas/npu/rockchip,rknn-core.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/npu/rockchip,rknn-core.example.dtb: npu-core@fdac0000 (rockchip,rk3588-rknn-core): compatible: 'oneOf' conditional failed, one must be fixed:
-	['rockchip,rk3588-rknn-core', 'rockchip,rknn-core'] is too long
-	'rockchip,rk3588-rknn-core' is not one of ['rockchip,rk3588-rknn-core-top']
-	from schema $id: http://devicetree.org/schemas/npu/rockchip,rknn-core.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/npu/rockchip,rknn-core.example.dtb: npu-core@fdac0000 (rockchip,rk3588-rknn-core): reg: [[0, 4255907840, 0, 36864]] is too short
-	from schema $id: http://devicetree.org/schemas/npu/rockchip,rknn-core.yaml#
+Changes since v1:
+- The main change was to explicitly differentiate between archs which
+  have sane NMI support from others and make the series almost a noop
+  for such archs. (Suggested by Vlastimil)
+- This version very explicitly describes where kmem charging in nmi
+  context is supported and where it is not.
 
-doc reference errors (make refcheckdocs):
+Shakeel Butt (5):
+  memcg: disable kmem charging in nmi for unsupported arch
+  memcg: nmi safe memcg stats for specific archs
+  memcg: add nmi-safe update for MEMCG_KMEM
+  memcg: nmi-safe slab stats updates
+  memcg: make memcg_rstat_updated nmi safe
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250516-6-10-rocket-v3-1-7051ac9225db@tomeuvizoso.net
+ include/linux/memcontrol.h |  21 ++++++
+ mm/memcontrol.c            | 136 +++++++++++++++++++++++++++++++++----
+ 2 files changed, 145 insertions(+), 12 deletions(-)
 
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+-- 
+2.47.1
 
 
