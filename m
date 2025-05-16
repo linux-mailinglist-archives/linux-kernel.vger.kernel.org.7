@@ -1,457 +1,179 @@
-Return-Path: <linux-kernel+bounces-651895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-651896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA526ABA437
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 21:45:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD466ABA43A
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 21:46:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 836C4541331
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 19:44:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B311A541245
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 19:45:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94D45289E2E;
-	Fri, 16 May 2025 19:37:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEE3B280321;
+	Fri, 16 May 2025 19:40:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="AUeDAysR";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="M16snZk9"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="LpsgOArL"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D56F028A416;
-	Fri, 16 May 2025 19:37:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E1E827FB18
+	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 19:40:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747424274; cv=none; b=ILK+mt5TuTDpSabx/r8sqkzAbdqSiERVi1rdRXmtgEa9OmBj+BWe/pRNixQLXwaS0WBQ8GZryVC1u1nJri6WDj3t2q1mN4H52KfjpAtVRtB/CsuIN64keLQHyGW4TWU9rfuCxTCejigvfWULeEqGacUWDynqzzRrgzwWtzdq+T0=
+	t=1747424434; cv=none; b=jc5iOwfNfiV9HxXEAObdwmb3grmg5YgaeUhppzZRvCyxUv9Ewl5LcEctpveqKcnsNBBThtW11EkuWdwoLtWWCkWNNqeqis4I+q7HxlM8mKwjeaFibu+8j2ga97UZY/Zc5WZZ3fkDa5kZMCFW7DbVWAyub58I7sQnw70r5HQQuT0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747424274; c=relaxed/simple;
-	bh=sARRcteCcDU4WL6HUdQBtQFA+tK3SrYX+qFYs3yu1VY=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=ANfEIPkZaGThQiN1ZU8pRtCSkxFTBDdWa8pk860QjBoEy3faE6+Y4I5jnxCiDVQiq8aAEPbRIFOaZAZ+sYPqqak/nqxSxXVdI52hH2AtqvTIoKp9pq7wQuFS5nHrZhmDjHbnvEwvcIJIA4YpaH0xGzOzhOmz5N3po+gCSyiG2WA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=AUeDAysR; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=M16snZk9; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 16 May 2025 19:37:49 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1747424270;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vYHi4xBd+UHcRieSOq361r9ytUNAU0fi2uiqW3wvK3M=;
-	b=AUeDAysRirBpg8gnd4Dbm5vy5zzBjISU5RKfwxrvS+oRQv/xelZQZdrVToUCqGVAywTf3H
-	cEySQjkIniqrcCHgH2dpQTIQU44lr+oFL7pN7wYApeMABl0jKYHWTdnIRefgj5lFzMRQht
-	IPVKtbC6P1bL/UFunhCbK1XxX6a1sNZF1v7cFdL8AXzc9uPQBRxPlBEJmjY24KKx614Fmo
-	wFWJKwjODgS6r0jR+yttpFp0eqI9aB9oVRJtV3iGXUQoW9kW3K9+g599U1iFH1PchJ+0Lw
-	X6R4dmUvu6YoImtVad3Fr/PSalK4NF7anJ20TVs+ykxsFlqcUnZsTCI+2nCQ3Q==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1747424270;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vYHi4xBd+UHcRieSOq361r9ytUNAU0fi2uiqW3wvK3M=;
-	b=M16snZk94/Pk1l8HEnsj9xQsY4QLQTtbL5K/tnMyWyFIbHjClSQtBGrQSl7LuRUvLmQ3Bj
-	atXNA6Nc0xpiFrCQ==
-From: "tip-bot2 for Jiri Slaby (SUSE)" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/cleanups] irqchip: Switch to of_fwnode_handle()
-Cc: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>,
- Antonio Borneo <antonio.borneo@foss.st.com>,
- Herve Codina <herve.codina@bootlin.com>, Anup Patel <anup@brainfault.org>,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250319092951.37667-7-jirislaby@kernel.org>
-References: <20250319092951.37667-7-jirislaby@kernel.org>
+	s=arc-20240116; t=1747424434; c=relaxed/simple;
+	bh=Dke5viz5DkYp7SAwu8Cf1opH5fNIs66Ce7w7D+pJw0w=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=sbuhdPSWioibPaeNAs3KBuu6uIhBcTjExk3SdBNEZWuZVAcPsC9Q5SBoYggIh8CbM2uuzzRfhIv1hpgqXpo9K0WVzl4gADz+AzEvFvb8BfnCV7kUy7Vi7j/7KvDs5h1NWZTkyKs2cL5gSMd/4u/Ey94Wg7HZzS5Jo5GnnXmnuuE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=LpsgOArL; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54GBuncY026134
+	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 19:40:31 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	5G7ksd0wXjHCiCnsoecac/SagfBtut8BWKbVXx39nk4=; b=LpsgOArL4Lh2Kiok
+	Pznd+NmIR5t0OhXFEhtzsRUOFmjpHtiPDE3whGT7OW4CwxUebgIqmnvDnSYtzfMY
+	GbB8+jl0Chffpd81txe+KbFv1FG3bg/r1F0sxOgWJlK1ABCZ8fIU/bbtgEVAiGD4
+	qh7YCqNJEVsufgpDJKUXzFi40agAo69W6ItEIjt1PYeOzn4o7PlsecHJyeT7I5md
+	tWXhSlCLSOPDX+yhC02jZVhIL6BnvEWH7B2Zn0PTEbQayHgWEfX61/VM0dZ/muDe
+	NsAfFfeLDAFFFBUQNXXqjXJkS0mB4JgHc8OhYhrpGr+jOEUmzlOG3sWKzdpOecfO
+	3ya4dA==
+Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com [209.85.215.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46mbcyu82g-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 19:40:31 +0000 (GMT)
+Received: by mail-pg1-f200.google.com with SMTP id 41be03b00d2f7-af59547f55bso1463577a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 12:40:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747424430; x=1748029230;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5G7ksd0wXjHCiCnsoecac/SagfBtut8BWKbVXx39nk4=;
+        b=ApQFiyAAdQD2rvCqDN9qHSDH7yK1P2YyKPp8sKhy4xOHmoRssIo7ThCnW5NGC6DnEH
+         gol+d8jsoIXFEgToIDBMAynK1F5DLeQ5SyvoZ7eCB7h0vFJetg/FI1aXUl6QqYoCt3Ei
+         +kG5auINjDff2yykTs32upYNZcqfYQUSvnCqlsEZCzLUsF8/PidR3oKBt3oBtt3FV84e
+         naLvv3Wodg/PwbyWLRvH1yZ2dYiuRMzWemu1azOw7MxPEnCWeGd4EQOo8hoF/rMVRUsp
+         hscW2Zw+LfjkBHHkGJIxtKHRTVQeFdhSzirknj5kIHsa/3nyg+AOJjbpsm2r/VPOnuQC
+         ou6w==
+X-Forwarded-Encrypted: i=1; AJvYcCVY7t3thJJCeJsHBw2EwK5RgyMpV7dL8pmefHXfjjgHAO0+lB763eCtFhi/ysrqed1lFkAZ6rX0epNVBE8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzUObiQ5rbvr59O8XnCkMS9Mmc/B7u6NAAk9SoqOs4avWZLdNbU
+	zvCyAf7BTA1HlFo3Mg15tWkja/Q+Y2fRSwLguepRIofey4PE2p4jVB7tA5wG7ardaExxqAa/W3B
+	xaLlN74RFtcyXYueWn+JKYTyAAl/Uu6Lp/Tb3h/sbvblwe5dcvgeBQA68TZkGCcMrCi4koGftqr
+	o=
+X-Gm-Gg: ASbGncv2PQor8XsqMXNI8t3cKMevmQ3Bq/faisEYWZLw6xgzQq/AkwfcSozEpSYq4Py
+	MgMKlkhDj4dTVlXkRlfxZ0xXVZ+v5ifXwdz4RsxSMvLAZ6wR/59tmtau7SPsvPTtN8KvU8YaOkn
+	cvm1XbyzQkxmnxa/hKOJ2x3iylPEvY4SqLpkiiQqBj1+x8mQUwtQpePlgIxmeylUeMdPdTFnZkr
+	cR6FLSDvGJHmU9muni7KsjHxvCsVuFVltFR6Y/7H3fh8GsTtk1zh5JODxPWErtOLbhKM4thjguG
+	Y736lZCl5P8XKwv+OyBTonDN5EOec2InVYMyesAEJd3jJ92H
+X-Received: by 2002:a17:902:f54a:b0:231:b7a6:df1a with SMTP id d9443c01a7336-231de3ba25fmr45392925ad.50.1747424430261;
+        Fri, 16 May 2025 12:40:30 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFqVFV7Kgb6vfQ/FeDrtMUl3/8u4tdcjBCZnmJAEL8s50lZlgCge7RMn6WiFDEbR5w5NzOCcQ==
+X-Received: by 2002:a17:902:f54a:b0:231:b7a6:df1a with SMTP id d9443c01a7336-231de3ba25fmr45392675ad.50.1747424429850;
+        Fri, 16 May 2025 12:40:29 -0700 (PDT)
+Received: from [169.254.0.1] (Global_NAT1.qualcomm.com. [129.46.96.20])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-231d4e97798sm17955255ad.147.2025.05.16.12.40.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 16 May 2025 12:40:29 -0700 (PDT)
+From: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
+To: Johannes Berg <johannes@sipsolutions.net>,
+        Jeff Johnson <jjohnson@kernel.org>,
+        Baochen Qiang <quic_bqiang@quicinc.com>
+Cc: linux-wireless@vger.kernel.org, ath12k@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+In-Reply-To: <20250418-ath12k-6g-lp-vlp-v1-0-c869c86cad60@quicinc.com>
+References: <20250418-ath12k-6g-lp-vlp-v1-0-c869c86cad60@quicinc.com>
+Subject: Re: [PATCH ath-next 00/15] wifi: ath12k: add support for 6 GHz
+ station for various modes : LPI, SP and VLP
+Message-Id: <174742442913.3316767.4054734425093603053.b4-ty@oss.qualcomm.com>
+Date: Fri, 16 May 2025 12:40:29 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174742426963.406.12910922553808224010.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-
-The following commit has been merged into the irq/cleanups branch of tip:
-
-Commit-ID:     87228532e7e96871b4def877002562bfa285e6c7
-Gitweb:        https://git.kernel.org/tip/87228532e7e96871b4def877002562bfa285e6c7
-Author:        Jiri Slaby (SUSE) <jirislaby@kernel.org>
-AuthorDate:    Wed, 19 Mar 2025 10:28:59 +01:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Fri, 16 May 2025 21:06:07 +02:00
-
-irqchip: Switch to of_fwnode_handle()
-
-of_node_to_fwnode() is irqdomain's reimplementation of the "officially"
-defined of_fwnode_handle(). The former is in the process of being
-removed, so use the latter instead.
-
-[ tglx: Fix up subject prefix ]
-
-Signed-off-by: Jiri Slaby (SUSE) <jirislaby@kernel.org>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Antonio Borneo <antonio.borneo@foss.st.com>
-Reviewed-by: Herve Codina <herve.codina@bootlin.com>
-Reviewed-by: Anup Patel <anup@brainfault.org>
-Acked-by: Herve Codina <herve.codina@bootlin.com> # irq-lan966x-oic
-Link: https://lore.kernel.org/all/20250319092951.37667-7-jirislaby@kernel.org
+X-Mailer: b4 0.14.0
+X-Proofpoint-GUID: oZBhXGJFQ166TTM8O_cTePF43kKxlVxl
+X-Proofpoint-ORIG-GUID: oZBhXGJFQ166TTM8O_cTePF43kKxlVxl
+X-Authority-Analysis: v=2.4 cv=JszxrN4C c=1 sm=1 tr=0 ts=682794af cx=c_pps
+ a=oF/VQ+ItUULfLr/lQ2/icg==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=EUspDBNiAAAA:8 a=kn8lAQMWUTpYvoNR6e0A:9
+ a=QEXdDO2ut3YA:10 a=3WC7DwWrALyhR5TkjVHa:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTE2MDE5MyBTYWx0ZWRfX5pFXh16Pm+7I
+ g421CLR/I+VJWnmAa2F2GjZ4k/phCdTko4cBXAtcIIE0zYByRz7APUKu8dJ12neU+q/hNRw+g9u
+ cZNGLXG+o6v0M4OROBZ3HSiXBuQvZ41bYXCZtSRT/c/ELMIYccNd6Hahj/CId9FPRyaEJkzQsKu
+ eHikO6DZK4jk75U4xY0CAp5244U0C3DP9yRpml6lwpxuw7BPv0ZtEXvqekqV0/D2zyXjQ9yndWq
+ q9UO6rRc0CV+qReg0A+kFxjwFNm46Lhknr4OvsWGysSgoIIpeyobv19zHg9pO4yhVpvpNZlq5Gx
+ tsaF5Bk1F62ydpqQCCx8aSX7lOiT/japlgQGwgNIRkxJorUHwUIGCYdrWAOAAIN6L43P0wLyR0u
+ YYX7X0LG70NS/ItvR/34VKWw/lpxI4oIJeXcKjukg7KPL0qOrcy8gU89z32rGecTZj6Dilx4
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-16_06,2025-05-16_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 priorityscore=1501 suspectscore=0 mlxlogscore=999 bulkscore=0
+ malwarescore=0 mlxscore=0 adultscore=0 phishscore=0 spamscore=0
+ lowpriorityscore=0 clxscore=1015 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505070000 definitions=main-2505160193
 
 
----
- drivers/irqchip/irq-alpine-msi.c            | 2 +-
- drivers/irqchip/irq-apple-aic.c             | 4 ++--
- drivers/irqchip/irq-armada-370-xp.c         | 4 ++--
- drivers/irqchip/irq-gic-v3-its-fsl-mc-msi.c | 2 +-
- drivers/irqchip/irq-gic-v3.c                | 4 ++--
- drivers/irqchip/irq-ixp4xx.c                | 2 +-
- drivers/irqchip/irq-lan966x-oic.c           | 2 +-
- drivers/irqchip/irq-loongarch-cpu.c         | 2 +-
- drivers/irqchip/irq-loongson-eiointc.c      | 2 +-
- drivers/irqchip/irq-loongson-htvec.c        | 2 +-
- drivers/irqchip/irq-loongson-liointc.c      | 2 +-
- drivers/irqchip/irq-loongson-pch-msi.c      | 2 +-
- drivers/irqchip/irq-loongson-pch-pic.c      | 2 +-
- drivers/irqchip/irq-ls-scfg-msi.c           | 2 +-
- drivers/irqchip/irq-meson-gpio.c            | 2 +-
- drivers/irqchip/irq-qcom-mpm.c              | 2 +-
- drivers/irqchip/irq-riscv-intc.c            | 2 +-
- drivers/irqchip/irq-sni-exiu.c              | 2 +-
- drivers/irqchip/irq-stm32mp-exti.c          | 2 +-
- drivers/irqchip/irq-ti-sci-inta.c           | 4 ++--
- drivers/irqchip/irq-ti-sci-intr.c           | 2 +-
- drivers/irqchip/irq-uniphier-aidet.c        | 2 +-
- 22 files changed, 26 insertions(+), 26 deletions(-)
+On Fri, 18 Apr 2025 10:55:33 +0800, Baochen Qiang wrote:
+> Currently for 6 GHz reg rules from WMI_REG_CHAN_LIST_CC_EXT_EVENTID event,
+> host chooses low power indoor type rule regardless of interface type or AP's
+> power type, which is not correct. This series change to choose proper rule
+> based on interface type and AP's power type.
+> 
+> When connecting to a 6 GHz AP, currently host sends power settings to firmware
+> over WMI_PDEV_PARAM_TXPOWER_LIMIT2G/WMI_PDEV_PARAM_TXPOWER_LIMIT5G commands.
+> Actually there is a new command WMI_VDEV_SET_TPC_POWER_CMDID with which host
+> can send more detailed parameter than with those two. So add support for this
+> interface.
+> 
+> [...]
 
-diff --git a/drivers/irqchip/irq-alpine-msi.c b/drivers/irqchip/irq-alpine-msi.c
-index a1430ab..0207d35 100644
---- a/drivers/irqchip/irq-alpine-msi.c
-+++ b/drivers/irqchip/irq-alpine-msi.c
-@@ -213,7 +213,7 @@ static int alpine_msix_init_domains(struct alpine_msix_data *priv,
- 		return -ENOMEM;
- 	}
- 
--	msi_domain = pci_msi_create_irq_domain(of_node_to_fwnode(node),
-+	msi_domain = pci_msi_create_irq_domain(of_fwnode_handle(node),
- 					       &alpine_msix_domain_info,
- 					       middle_domain);
- 	if (!msi_domain) {
-diff --git a/drivers/irqchip/irq-apple-aic.c b/drivers/irqchip/irq-apple-aic.c
-index 974dc08..032d66d 100644
---- a/drivers/irqchip/irq-apple-aic.c
-+++ b/drivers/irqchip/irq-apple-aic.c
-@@ -1014,7 +1014,7 @@ static int __init aic_of_ic_init(struct device_node *node, struct device_node *p
- 
- 	irqc->info.die_stride = off - start_off;
- 
--	irqc->hw_domain = irq_domain_create_tree(of_node_to_fwnode(node),
-+	irqc->hw_domain = irq_domain_create_tree(of_fwnode_handle(node),
- 						 &aic_irq_domain_ops, irqc);
- 	if (WARN_ON(!irqc->hw_domain))
- 		goto err_unmap;
-@@ -1067,7 +1067,7 @@ static int __init aic_of_ic_init(struct device_node *node, struct device_node *p
- 
- 	if (is_kernel_in_hyp_mode()) {
- 		struct irq_fwspec mi = {
--			.fwnode		= of_node_to_fwnode(node),
-+			.fwnode		= of_fwnode_handle(node),
- 			.param_count	= 3,
- 			.param		= {
- 				[0]	= AIC_FIQ, /* This is a lie */
-diff --git a/drivers/irqchip/irq-armada-370-xp.c b/drivers/irqchip/irq-armada-370-xp.c
-index 2aa6a51..de98d16 100644
---- a/drivers/irqchip/irq-armada-370-xp.c
-+++ b/drivers/irqchip/irq-armada-370-xp.c
-@@ -353,7 +353,7 @@ static int __init mpic_msi_init(struct mpic *mpic, struct device_node *node,
- 	if (!mpic->msi_inner_domain)
- 		return -ENOMEM;
- 
--	mpic->msi_domain = pci_msi_create_irq_domain(of_node_to_fwnode(node), &mpic_msi_domain_info,
-+	mpic->msi_domain = pci_msi_create_irq_domain(of_fwnode_handle(node), &mpic_msi_domain_info,
- 						     mpic->msi_inner_domain);
- 	if (!mpic->msi_domain) {
- 		irq_domain_remove(mpic->msi_inner_domain);
-@@ -492,7 +492,7 @@ static int __init mpic_ipi_init(struct mpic *mpic, struct device_node *node)
- {
- 	int base_ipi;
- 
--	mpic->ipi_domain = irq_domain_create_linear(of_node_to_fwnode(node), IPI_DOORBELL_NR,
-+	mpic->ipi_domain = irq_domain_create_linear(of_fwnode_handle(node), IPI_DOORBELL_NR,
- 						    &mpic_ipi_domain_ops, mpic);
- 	if (WARN_ON(!mpic->ipi_domain))
- 		return -ENOMEM;
-diff --git a/drivers/irqchip/irq-gic-v3-its-fsl-mc-msi.c b/drivers/irqchip/irq-gic-v3-its-fsl-mc-msi.c
-index 8e87fc3..11549d8 100644
---- a/drivers/irqchip/irq-gic-v3-its-fsl-mc-msi.c
-+++ b/drivers/irqchip/irq-gic-v3-its-fsl-mc-msi.c
-@@ -152,7 +152,7 @@ static void __init its_fsl_mc_of_msi_init(void)
- 		if (!of_property_read_bool(np, "msi-controller"))
- 			continue;
- 
--		its_fsl_mc_msi_init_one(of_node_to_fwnode(np),
-+		its_fsl_mc_msi_init_one(of_fwnode_handle(np),
- 					np->full_name);
- 	}
- }
-diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
-index 270d7a4..efc791c 100644
---- a/drivers/irqchip/irq-gic-v3.c
-+++ b/drivers/irqchip/irq-gic-v3.c
-@@ -1826,7 +1826,7 @@ static int partition_domain_translate(struct irq_domain *d,
- 
- 	ppi_idx = __gic_get_ppi_index(ppi_intid);
- 	ret = partition_translate_id(gic_data.ppi_descs[ppi_idx],
--				     of_node_to_fwnode(np));
-+				     of_fwnode_handle(np));
- 	if (ret < 0)
- 		return ret;
- 
-@@ -2192,7 +2192,7 @@ static void __init gic_populate_ppi_partitions(struct device_node *gic_node)
- 
- 		part = &parts[part_idx];
- 
--		part->partition_id = of_node_to_fwnode(child_part);
-+		part->partition_id = of_fwnode_handle(child_part);
- 
- 		pr_info("GIC: PPI partition %pOFn[%d] { ",
- 			child_part, part_idx);
-diff --git a/drivers/irqchip/irq-ixp4xx.c b/drivers/irqchip/irq-ixp4xx.c
-index f23b02f..a9a5a52 100644
---- a/drivers/irqchip/irq-ixp4xx.c
-+++ b/drivers/irqchip/irq-ixp4xx.c
-@@ -261,7 +261,7 @@ static int __init ixp4xx_of_init_irq(struct device_node *np,
- 		pr_crit("IXP4XX: could not ioremap interrupt controller\n");
- 		return -ENODEV;
- 	}
--	fwnode = of_node_to_fwnode(np);
-+	fwnode = of_fwnode_handle(np);
- 
- 	/* These chip variants have 64 interrupts */
- 	is_356 = of_device_is_compatible(np, "intel,ixp43x-interrupt") ||
-diff --git a/drivers/irqchip/irq-lan966x-oic.c b/drivers/irqchip/irq-lan966x-oic.c
-index 41ac880..9445c3a 100644
---- a/drivers/irqchip/irq-lan966x-oic.c
-+++ b/drivers/irqchip/irq-lan966x-oic.c
-@@ -224,7 +224,7 @@ static int lan966x_oic_probe(struct platform_device *pdev)
- 		.exit		= lan966x_oic_chip_exit,
- 	};
- 	struct irq_domain_info d_info = {
--		.fwnode		= of_node_to_fwnode(pdev->dev.of_node),
-+		.fwnode		= of_fwnode_handle(pdev->dev.of_node),
- 		.domain_flags	= IRQ_DOMAIN_FLAG_DESTROY_GC,
- 		.size		= LAN966X_OIC_NR_IRQ,
- 		.hwirq_max	= LAN966X_OIC_NR_IRQ,
-diff --git a/drivers/irqchip/irq-loongarch-cpu.c b/drivers/irqchip/irq-loongarch-cpu.c
-index e62dab4..950bc08 100644
---- a/drivers/irqchip/irq-loongarch-cpu.c
-+++ b/drivers/irqchip/irq-loongarch-cpu.c
-@@ -100,7 +100,7 @@ static const struct irq_domain_ops loongarch_cpu_intc_irq_domain_ops = {
- static int __init cpuintc_of_init(struct device_node *of_node,
- 				struct device_node *parent)
- {
--	cpuintc_handle = of_node_to_fwnode(of_node);
-+	cpuintc_handle = of_fwnode_handle(of_node);
- 
- 	irq_domain = irq_domain_create_linear(cpuintc_handle, EXCCODE_INT_NUM,
- 				&loongarch_cpu_intc_irq_domain_ops, NULL);
-diff --git a/drivers/irqchip/irq-loongson-eiointc.c b/drivers/irqchip/irq-loongson-eiointc.c
-index bb79e19..b2860eb 100644
---- a/drivers/irqchip/irq-loongson-eiointc.c
-+++ b/drivers/irqchip/irq-loongson-eiointc.c
-@@ -554,7 +554,7 @@ static int __init eiointc_of_init(struct device_node *of_node,
- 		priv->vec_count = VEC_COUNT;
- 
- 	priv->node = 0;
--	priv->domain_handle = of_node_to_fwnode(of_node);
-+	priv->domain_handle = of_fwnode_handle(of_node);
- 
- 	ret = eiointc_init(priv, parent_irq, 0);
- 	if (ret < 0)
-diff --git a/drivers/irqchip/irq-loongson-htvec.c b/drivers/irqchip/irq-loongson-htvec.c
-index 5da02c7..d8558eb 100644
---- a/drivers/irqchip/irq-loongson-htvec.c
-+++ b/drivers/irqchip/irq-loongson-htvec.c
-@@ -248,7 +248,7 @@ static int htvec_of_init(struct device_node *node,
- 	}
- 
- 	err = htvec_init(res.start, resource_size(&res),
--			num_parents, parent_irq, of_node_to_fwnode(node));
-+			num_parents, parent_irq, of_fwnode_handle(node));
- 	if (err < 0)
- 		return err;
- 
-diff --git a/drivers/irqchip/irq-loongson-liointc.c b/drivers/irqchip/irq-loongson-liointc.c
-index 2b1bd4a..95cade5 100644
---- a/drivers/irqchip/irq-loongson-liointc.c
-+++ b/drivers/irqchip/irq-loongson-liointc.c
-@@ -363,7 +363,7 @@ static int __init liointc_of_init(struct device_node *node,
- 	}
- 
- 	err = liointc_init(res.start, resource_size(&res),
--			revision, of_node_to_fwnode(node), node);
-+			revision, of_fwnode_handle(node), node);
- 	if (err < 0)
- 		return err;
- 
-diff --git a/drivers/irqchip/irq-loongson-pch-msi.c b/drivers/irqchip/irq-loongson-pch-msi.c
-index 9c62108..c07876a 100644
---- a/drivers/irqchip/irq-loongson-pch-msi.c
-+++ b/drivers/irqchip/irq-loongson-pch-msi.c
-@@ -243,7 +243,7 @@ static int pch_msi_of_init(struct device_node *node, struct device_node *parent)
- 		return -EINVAL;
- 	}
- 
--	err = pch_msi_init(res.start, irq_base, irq_count, parent_domain, of_node_to_fwnode(node));
-+	err = pch_msi_init(res.start, irq_base, irq_count, parent_domain, of_fwnode_handle(node));
- 	if (err < 0)
- 		return err;
- 
-diff --git a/drivers/irqchip/irq-loongson-pch-pic.c b/drivers/irqchip/irq-loongson-pch-pic.c
-index 69efda3..62e6bf3 100644
---- a/drivers/irqchip/irq-loongson-pch-pic.c
-+++ b/drivers/irqchip/irq-loongson-pch-pic.c
-@@ -392,7 +392,7 @@ static int pch_pic_of_init(struct device_node *node,
- 	}
- 
- 	err = pch_pic_init(res.start, resource_size(&res), vec_base,
--				parent_domain, of_node_to_fwnode(node), 0);
-+				parent_domain, of_fwnode_handle(node), 0);
- 	if (err < 0)
- 		return err;
- 
-diff --git a/drivers/irqchip/irq-ls-scfg-msi.c b/drivers/irqchip/irq-ls-scfg-msi.c
-index 3cb8079..cbe11a8 100644
---- a/drivers/irqchip/irq-ls-scfg-msi.c
-+++ b/drivers/irqchip/irq-ls-scfg-msi.c
-@@ -225,7 +225,7 @@ static int ls_scfg_msi_domains_init(struct ls_scfg_msi *msi_data)
- 	}
- 
- 	msi_data->msi_domain = pci_msi_create_irq_domain(
--				of_node_to_fwnode(msi_data->pdev->dev.of_node),
-+				of_fwnode_handle(msi_data->pdev->dev.of_node),
- 				&ls_scfg_msi_domain_info,
- 				msi_data->parent);
- 	if (!msi_data->msi_domain) {
-diff --git a/drivers/irqchip/irq-meson-gpio.c b/drivers/irqchip/irq-meson-gpio.c
-index 0a25536..7d17762 100644
---- a/drivers/irqchip/irq-meson-gpio.c
-+++ b/drivers/irqchip/irq-meson-gpio.c
-@@ -607,7 +607,7 @@ static int meson_gpio_irq_of_init(struct device_node *node, struct device_node *
- 
- 	domain = irq_domain_create_hierarchy(parent_domain, 0,
- 					     ctl->params->nr_hwirq,
--					     of_node_to_fwnode(node),
-+					     of_fwnode_handle(node),
- 					     &meson_gpio_irq_domain_ops,
- 					     ctl);
- 	if (!domain) {
-diff --git a/drivers/irqchip/irq-qcom-mpm.c b/drivers/irqchip/irq-qcom-mpm.c
-index 7942d8e..00c770e 100644
---- a/drivers/irqchip/irq-qcom-mpm.c
-+++ b/drivers/irqchip/irq-qcom-mpm.c
-@@ -447,7 +447,7 @@ static int qcom_mpm_init(struct device_node *np, struct device_node *parent)
- 
- 	priv->domain = irq_domain_create_hierarchy(parent_domain,
- 				IRQ_DOMAIN_FLAG_QCOM_MPM_WAKEUP, pin_cnt,
--				of_node_to_fwnode(np), &qcom_mpm_ops, priv);
-+				of_fwnode_handle(np), &qcom_mpm_ops, priv);
- 	if (!priv->domain) {
- 		dev_err(dev, "failed to create MPM domain\n");
- 		ret = -ENOMEM;
-diff --git a/drivers/irqchip/irq-riscv-intc.c b/drivers/irqchip/irq-riscv-intc.c
-index f653c13..e580588 100644
---- a/drivers/irqchip/irq-riscv-intc.c
-+++ b/drivers/irqchip/irq-riscv-intc.c
-@@ -242,7 +242,7 @@ static int __init riscv_intc_init(struct device_node *node,
- 		chip = &andes_intc_chip;
- 	}
- 
--	return riscv_intc_init_common(of_node_to_fwnode(node), chip);
-+	return riscv_intc_init_common(of_fwnode_handle(node), chip);
- }
- 
- IRQCHIP_DECLARE(riscv, "riscv,cpu-intc", riscv_intc_init);
-diff --git a/drivers/irqchip/irq-sni-exiu.c b/drivers/irqchip/irq-sni-exiu.c
-index c7db617..7d10bf6 100644
---- a/drivers/irqchip/irq-sni-exiu.c
-+++ b/drivers/irqchip/irq-sni-exiu.c
-@@ -249,7 +249,7 @@ static int __init exiu_dt_init(struct device_node *node,
- 		return -ENXIO;
- 	}
- 
--	data = exiu_init(of_node_to_fwnode(node), &res);
-+	data = exiu_init(of_fwnode_handle(node), &res);
- 	if (IS_ERR(data))
- 		return PTR_ERR(data);
- 
-diff --git a/drivers/irqchip/irq-stm32mp-exti.c b/drivers/irqchip/irq-stm32mp-exti.c
-index cb83d6c..649b84f 100644
---- a/drivers/irqchip/irq-stm32mp-exti.c
-+++ b/drivers/irqchip/irq-stm32mp-exti.c
-@@ -531,7 +531,7 @@ static int stm32mp_exti_domain_alloc(struct irq_domain *dm,
- 		if (ret)
- 			return ret;
- 		/* we only support one parent, so far */
--		if (of_node_to_fwnode(out_irq.np) != dm->parent->fwnode)
-+		if (of_fwnode_handle(out_irq.np) != dm->parent->fwnode)
- 			return -EINVAL;
- 
- 		of_phandle_args_to_fwspec(out_irq.np, out_irq.args,
-diff --git a/drivers/irqchip/irq-ti-sci-inta.c b/drivers/irqchip/irq-ti-sci-inta.c
-index a887efb..38dfc1f 100644
---- a/drivers/irqchip/irq-ti-sci-inta.c
-+++ b/drivers/irqchip/irq-ti-sci-inta.c
-@@ -233,7 +233,7 @@ static struct ti_sci_inta_vint_desc *ti_sci_inta_alloc_parent_irq(struct irq_dom
- 	INIT_LIST_HEAD(&vint_desc->list);
- 
- 	parent_node = of_irq_find_parent(dev_of_node(&inta->pdev->dev));
--	parent_fwspec.fwnode = of_node_to_fwnode(parent_node);
-+	parent_fwspec.fwnode = of_fwnode_handle(parent_node);
- 
- 	if (of_device_is_compatible(parent_node, "arm,gic-v3")) {
- 		/* Parent is GIC */
-@@ -709,7 +709,7 @@ static int ti_sci_inta_irq_domain_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 	}
- 
--	msi_domain = ti_sci_inta_msi_create_irq_domain(of_node_to_fwnode(node),
-+	msi_domain = ti_sci_inta_msi_create_irq_domain(of_fwnode_handle(node),
- 						&ti_sci_inta_msi_domain_info,
- 						domain);
- 	if (!msi_domain) {
-diff --git a/drivers/irqchip/irq-ti-sci-intr.c b/drivers/irqchip/irq-ti-sci-intr.c
-index b49a731..686a8f6 100644
---- a/drivers/irqchip/irq-ti-sci-intr.c
-+++ b/drivers/irqchip/irq-ti-sci-intr.c
-@@ -149,7 +149,7 @@ static int ti_sci_intr_alloc_parent_irq(struct irq_domain *domain,
- 		goto err_irqs;
- 
- 	parent_node = of_irq_find_parent(dev_of_node(intr->dev));
--	fwspec.fwnode = of_node_to_fwnode(parent_node);
-+	fwspec.fwnode = of_fwnode_handle(parent_node);
- 
- 	if (of_device_is_compatible(parent_node, "arm,gic-v3")) {
- 		/* Parent is GIC */
-diff --git a/drivers/irqchip/irq-uniphier-aidet.c b/drivers/irqchip/irq-uniphier-aidet.c
-index 601f934..6005c2d 100644
---- a/drivers/irqchip/irq-uniphier-aidet.c
-+++ b/drivers/irqchip/irq-uniphier-aidet.c
-@@ -188,7 +188,7 @@ static int uniphier_aidet_probe(struct platform_device *pdev)
- 	priv->domain = irq_domain_create_hierarchy(
- 					parent_domain, 0,
- 					UNIPHIER_AIDET_NR_IRQS,
--					of_node_to_fwnode(dev->of_node),
-+					of_fwnode_handle(dev->of_node),
- 					&uniphier_aidet_domain_ops, priv);
- 	if (!priv->domain)
- 		return -ENOMEM;
+Applied, thanks!
+
+[01/15] wifi: ath12k: fix a possible dead lock caused by ab->base_lock
+        commit: ef115c265a21e3c11deee7f73bd1061775a7bf20
+[02/15] wifi: ath12k: refactor ath12k_reg_chan_list_event()
+        commit: 9e8e55c5832d4f905d7ca306f976669d523e9ff2
+[03/15] wifi: ath12k: refactor ath12k_reg_build_regd()
+        commit: c96bce15c568fdb8edd29b35aeb0f20c2524108c
+[04/15] wifi: ath12k: add support to select 6 GHz regulatory type
+        commit: fafa6ff0823b79bfe4d1950e7bd51bb1c6dd49cf
+[05/15] wifi: ath12k: move reg info handling outside
+        commit: 75639b743515537b6ee56bb89c857aaf8726713a
+[06/15] wifi: ath12k: store reg info for later use
+        commit: eaa027a1d83f87c83f0b4138ca2427875a21b446
+[07/15] wifi: ath12k: determine interface mode in _op_add_interface()
+        commit: ee2fc1f7347e8393b94d35a0d2b9d24920c9b24f
+[08/15] wifi: ath12k: update regulatory rules when interface added
+        commit: 4c546023d71a2b175ae7dd17b42efcd5a832a1ca
+[09/15] wifi: ath12k: update regulatory rules when connection established
+        commit: 7ed3e88664e328bb7cda5e71568b83426b3f3289
+[10/15] wifi: ath12k: save power spectral density(PSD) of regulatory rule
+        commit: d6b11d0ddadb9e7addd0f582f31ae8e6c256ba9d
+[11/15] wifi: ath12k: add parse of transmit power envelope element
+        commit: cccbb9d0dd6ab9e3353066217e9ab5b44bd761d3
+[12/15] wifi: ath12k: save max transmit power in vdev start response event from firmware
+        commit: b0501a0ee772222e3a7fa5c94eb7c6b16fe20610
+[13/15] wifi: ath12k: fill parameters for vdev set TPC power WMI command
+        commit: aeda163bb0c7b9fc58bdd6ae90c0eef4f4050b7b
+[14/15] wifi: ath12k: add handler for WMI_VDEV_SET_TPC_POWER_CMDID
+        commit: 9a9e8ea7f6d31351039343e9e3b1927c61a2ccc3
+[15/15] wifi: ath12k: use WMI_VDEV_SET_TPC_POWER_CMDID when EXT_TPC_REG_SUPPORT for 6 GHz
+        commit: 29cb3d26d01c275ea652010cc62f324793e34a31
+
+Best regards,
+-- 
+Jeff Johnson <jeff.johnson@oss.qualcomm.com>
+
 
