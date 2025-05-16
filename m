@@ -1,56 +1,66 @@
-Return-Path: <linux-kernel+bounces-650586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-650588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9A6DAB936E
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 03:06:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 963CAAB937D
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 03:09:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 949DB1883713
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 01:06:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 428D218876D1
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 01:09:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B891A218851;
-	Fri, 16 May 2025 01:06:29 +0000 (UTC)
-Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFB7C1D07BA;
-	Fri, 16 May 2025 01:06:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.178.238
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DF7C214A7D;
+	Fri, 16 May 2025 01:09:37 +0000 (UTC)
+Received: from zg8tmja5ljk3lje4ms43mwaa.icoremail.net (zg8tmja5ljk3lje4ms43mwaa.icoremail.net [209.97.181.73])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 162B71F956;
+	Fri, 16 May 2025 01:09:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.97.181.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747357589; cv=none; b=u1zISUqALpfZgk6JCSPLjes1BNR09sUvT5WllIviwlrNk0mnupWogcHlqQLxtE7T/1x9nxI5QFruKDCN94DgZO2MUkgEPm/h2k7JHcgB6lQ/dSLtpJqRrdw7JFQkswIs2l4snZxNjTXqktE24CTCqIIM+TbXkBtM9rb29b0xE30=
+	t=1747357777; cv=none; b=J9E+tHjF9F/GxRmejtrzOj5S8OMWgLzeI8cEC5YAnR0RvZWuzzhhQYFI3LMhhu6RIxyMx78ozPkRgASuNCKk1iqQWCdYX3gTSLwNDqcPLyKXJb4FjRlkAnfJMVUyWwYuO17kQGTWZQgxpLvoZPeDvNF02WeXyMinIZPjaqg4Mog=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747357589; c=relaxed/simple;
-	bh=iWe+pDg3nhAToeNEy23pymMfv/bCCn4vhsW6Rod9HCw=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=T/xb292Z6lXd+B5dd0408OzumKdWAAQFB+x8nZicmAlo23NjuWTIYAjVwVlIpw0wktVk4EO8LiAqCxrNO81kPJNgyas1WAFn8YlSJGFvCpm0K4V1+yTnSXUE3z34sFrdHujWPIQKwYUoq6Of5aQn2Uk9/Jl7usd3YATYmX81cII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.178.238
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
-Received: from pps.filterd (m0250812.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54G10BuJ025562;
-	Fri, 16 May 2025 01:06:17 GMT
-Received: from ala-exchng02.corp.ad.wrs.com (ala-exchng02.wrs.com [147.11.82.254])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 46mbc8ujjn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Fri, 16 May 2025 01:06:17 +0000 (GMT)
-Received: from ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) by
- ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.43; Thu, 15 May 2025 18:06:12 -0700
-Received: from pek-lpg-core1.wrs.com (147.11.136.210) by
- ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server id
- 15.1.2507.43 via Frontend Transport; Thu, 15 May 2025 18:06:03 -0700
-From: <jianqi.ren.cn@windriver.com>
-To: <gregkh@linuxfoundation.org>, <stable@vger.kernel.org>
-CC: <patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-        <jianqi.ren.cn@windriver.com>, <jack@suse.cz>, <amir73il@gmail.com>,
-        <miklos@szeredi.hu>, <linux-fsdevel@vger.kernel.org>,
-        <dima@arista.com>, <brauner@kernel.org>
-Subject: [PATCH 5.10.y] fs: relax assertions on failure to encode file handles
-Date: Fri, 16 May 2025 09:06:04 +0800
-Message-ID: <20250516010604.1344396-1-jianqi.ren.cn@windriver.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1747357777; c=relaxed/simple;
+	bh=1o3/YwJrRJuNryCpdoNha+JxfChRAzKipqygCyBmcKc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=b2q2p6AbLHOveYLivmQw6nLRsQN7FIfMvCwYwM860eubBT/IcmUlQ8QGBX5DAH9rv+tNBKvl637U26ApQgj/1Dw7bpnLtQGPhNhXmy/kkjKWSjPmASa1ybsow0wP18/4WYGxBVtw4NkL48xn2aeTipPMIreMOjt3b2TuJwK6WDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=209.97.181.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
+Received: from E0005182DT.eswin.cn (unknown [10.12.97.162])
+	by app2 (Coremail) with SMTP id TQJkCgDXaJImkCZoiJh8AA--.40410S2;
+	Fri, 16 May 2025 09:08:58 +0800 (CST)
+From: weishangjuan@eswincomputing.com
+To: andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	richardcochran@gmail.com,
+	netdev@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	mcoquelin.stm32@gmail.com,
+	alexandre.torgue@foss.st.com,
+	p.zabel@pengutronix.de,
+	yong.liang.choong@linux.intel.com,
+	rmk+kernel@armlinux.org.uk,
+	jszhang@kernel.org,
+	inochiama@gmail.com,
+	jan.petrous@oss.nxp.com,
+	dfustini@tenstorrent.com,
+	0x1207@gmail.com,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org
+Cc: ningyu@eswincomputing.com,
+	linmin@eswincomputing.com,
+	lizhi2@eswincomputing.com,
+	Shangjuan Wei <weishangjuan@eswincomputing.com>
+Subject: [PATCH v1 0/2] Add driver support for Eswin eic7700 SoC ethernet controller
+Date: Fri, 16 May 2025 09:08:48 +0800
+Message-ID: <20250516010849.784-1-weishangjuan@eswincomputing.com>
+X-Mailer: git-send-email 2.49.0.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,108 +68,53 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-GUID: LE476H6c5nWOaIkZ1Q6JjIi6CpxNNOey
-X-Proofpoint-ORIG-GUID: LE476H6c5nWOaIkZ1Q6JjIi6CpxNNOey
-X-Authority-Analysis: v=2.4 cv=IIACChvG c=1 sm=1 tr=0 ts=68268f89 cx=c_pps a=K4BcnWQioVPsTJd46EJO2w==:117 a=K4BcnWQioVPsTJd46EJO2w==:17 a=dt9VzEwgFbYA:10 a=VwQbUJbxAAAA:8 a=1XWaLZrsAAAA:8 a=pGLkceISAAAA:8 a=hSkVLCK3AAAA:8 a=n2GhSfulAAAA:8 a=t7CeM3EgAAAA:8
- a=Bk0MVvKMp5wsRsodY8IA:9 a=cQPPKAXgyycSBL8etih5:22 a=9NqWk_7B-uqI6kdQTXIl:22 a=FdTzh2GWekK77mhwV6Dw:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTE2MDAwOCBTYWx0ZWRfXyfu3Sb7jXs23 9aQdVILgNf138BEGvtFUQkG9ujo42QWDkBRMRqBXDJyF9K9KsKL0fpx/KOsVPEiEWnAmZkS61jj FEQzfipl3rcfWosOOzRt4toWHCNDbaXMVWACLBNdii/fQPz3Kf4Nz0JeEGnt7AJmtpGng+v6uyG
- VhFadNLMrInkZg61uUfrt8BC4DuElnghjVKpwomyhFW6opRzeGadHNUsqQ1CmhqVOXUKTnt96Sk SlxdHm5yx63rmII1pufFF4FhuTk0GKnZw69C88f6yq8k6pBx9ZoH2Dpw7KzTDINgeWa5gGTMolB bTyuVgH/cAjM42mlXcxw5YBLMwT/+v1iZIoo7wCuWeArZIICrqa5f0lwmPcPFC7hmZbHkcMeqVg
- obwGksaXZ/fMeQporw9LALo1ThZTuNPAoPk5OE21Eim6aMsiIOPyfv7l/87HwgPzfjY82oBl
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-15_11,2025-05-15_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- spamscore=0 mlxscore=0 suspectscore=0 malwarescore=0 phishscore=0
- bulkscore=0 impostorscore=0 mlxlogscore=999 priorityscore=1501
- clxscore=1015 adultscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.21.0-2505070000
- definitions=main-2505160008
+X-CM-TRANSID:TQJkCgDXaJImkCZoiJh8AA--.40410S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrur1rAr1kXr1kKw4DXw1fWFg_yoWkGwb_Cr
+	1xZr95Ja1UXF4jvayjkrs7uryq9F4DJrySkFZ8AFWYv3sFqrWDGF95ArykZF1UGr4rJF9x
+	Wryft34Iyw12gjkaLaAFLSUrUUUU1b8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbHkYjsxI4VWkCwAYFVCjjxCrM7AC8VAFwI0_Wr0E3s1l1xkIjI8I
+	6I8E6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM2
+	8CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0
+	cI8IcVCY1x0267AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwV
+	C2z280aVCY1x0267AKxVW0oVCq3wAaw2AFwI0_Jrv_JF1le2I262IYc4CY6c8Ij28IcVAa
+	Y2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ec7
+	CjxVAajcxG14v26r1j6r4UMcIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_
+	Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E8c
+	xan2IY04v7M4kE6xkIj40Ew7xC0wCY1x0262kKe7AKxVWrXVW3AwCY02Avz4vE-syl42xK
+	82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGw
+	C20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48J
+	MIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMI
+	IF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E
+	87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvj4Rz6wtUUUUU
+X-CM-SenderInfo: pzhl2xxdqjy31dq6v25zlqu0xpsx3x1qjou0bp/
 
-From: Amir Goldstein <amir73il@gmail.com>
+From: Shangjuan Wei <weishangjuan@eswincomputing.com>
 
-commit 974e3fe0ac61de85015bbe5a4990cf4127b304b2 upstream.
+  Introduce a driver for the Eswin eic7700 series SoC ethernet controller,
+  adding support for the ethernet functionality in the Linux kernel. The
+  driver provides basic functionality to manage and control the ethernet
+  signals for the eic7700 series chips, which are part of the Eswin SoC family.
 
-Encoding file handles is usually performed by a filesystem >encode_fh()
-method that may fail for various reasons.
+  Supported chips:
+    Eswin eic7700 series SoC.
 
-The legacy users of exportfs_encode_fh(), namely, nfsd and
-name_to_handle_at(2) syscall are ready to cope with the possibility
-of failure to encode a file handle.
+  Test:
+    I tested this patch on the Sifive HiFive Premier P550 (which uses the EIC7700 SoC),
+    including system boot and ethernet.
 
-There are a few other users of exportfs_encode_{fh,fid}() that
-currently have a WARN_ON() assertion when ->encode_fh() fails.
-Relax those assertions because they are wrong.
+Shangjuan Wei (2):
+  ethernet: eswin: Document for eic7700 SoC
+  ethernet: eswin: Add eic7700 ethernet driver
 
-The second linked bug report states commit 16aac5ad1fa9 ("ovl: support
-encoding non-decodable file handles") in v6.6 as the regressing commit,
-but this is not accurate.
+ .../bindings/net/eswin,eic7700-eth.yaml       | 142 +++++
+ drivers/net/ethernet/stmicro/stmmac/Kconfig   |  11 +
+ drivers/net/ethernet/stmicro/stmmac/Makefile  |   1 +
+ .../ethernet/stmicro/stmmac/dwmac-eic7700.c   | 521 ++++++++++++++++++
+ 4 files changed, 675 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/net/eswin,eic7700-eth.yaml
+ create mode 100644 drivers/net/ethernet/stmicro/stmmac/dwmac-eic7700.c
 
-The aforementioned commit only increases the chances of the assertion
-and allows triggering the assertion with the reproducer using overlayfs,
-inotify and drop_caches.
-
-Triggering this assertion was always possible with other filesystems and
-other reasons of ->encode_fh() failures and more particularly, it was
-also possible with the exact same reproducer using overlayfs that is
-mounted with options index=on,nfs_export=on also on kernels < v6.6.
-Therefore, I am not listing the aforementioned commit as a Fixes commit.
-
-Backport hint: this patch will have a trivial conflict applying to
-v6.6.y, and other trivial conflicts applying to stable kernels < v6.6.
-
-Reported-by: syzbot+ec07f6f5ce62b858579f@syzkaller.appspotmail.com
-Tested-by: syzbot+ec07f6f5ce62b858579f@syzkaller.appspotmail.com
-Closes: https://lore.kernel.org/linux-unionfs/671fd40c.050a0220.4735a.024f.GAE@google.com/
-Reported-by: Dmitry Safonov <dima@arista.com>
-Closes: https://lore.kernel.org/linux-fsdevel/CAGrbwDTLt6drB9eaUagnQVgdPBmhLfqqxAf3F+Juqy_o6oP8uw@mail.gmail.com/
-Cc: stable@vger.kernel.org
-Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-Link: https://lore.kernel.org/r/20241219115301.465396-1-amir73il@gmail.com
-Signed-off-by: Christian Brauner <brauner@kernel.org>
-[Minor conflict resolved due to code context change.]
-Signed-off-by: Jianqi Ren <jianqi.ren.cn@windriver.com>
-Signed-off-by: He Zhe <zhe.he@windriver.com>
----
-Verified the build test
----
- fs/notify/fdinfo.c     | 4 +---
- fs/overlayfs/copy_up.c | 5 ++---
- 2 files changed, 3 insertions(+), 6 deletions(-)
-
-diff --git a/fs/notify/fdinfo.c b/fs/notify/fdinfo.c
-index 55081ae3a6ec..dd5bc6ffae85 100644
---- a/fs/notify/fdinfo.c
-+++ b/fs/notify/fdinfo.c
-@@ -51,10 +51,8 @@ static void show_mark_fhandle(struct seq_file *m, struct inode *inode)
- 	size = f.handle.handle_bytes >> 2;
- 
- 	ret = exportfs_encode_inode_fh(inode, (struct fid *)f.handle.f_handle, &size, NULL);
--	if ((ret == FILEID_INVALID) || (ret < 0)) {
--		WARN_ONCE(1, "Can't encode file handler for inotify: %d\n", ret);
-+	if ((ret == FILEID_INVALID) || (ret < 0))
- 		return;
--	}
- 
- 	f.handle.handle_type = ret;
- 	f.handle.handle_bytes = size * sizeof(u32);
-diff --git a/fs/overlayfs/copy_up.c b/fs/overlayfs/copy_up.c
-index 65ac504595ba..8557180bd7e1 100644
---- a/fs/overlayfs/copy_up.c
-+++ b/fs/overlayfs/copy_up.c
-@@ -302,9 +302,8 @@ struct ovl_fh *ovl_encode_real_fh(struct dentry *real, bool is_upper)
- 	buflen = (dwords << 2);
- 
- 	err = -EIO;
--	if (WARN_ON(fh_type < 0) ||
--	    WARN_ON(buflen > MAX_HANDLE_SZ) ||
--	    WARN_ON(fh_type == FILEID_INVALID))
-+	if (fh_type < 0 || fh_type == FILEID_INVALID ||
-+	    WARN_ON(buflen > MAX_HANDLE_SZ))
- 		goto out_err;
- 
- 	fh->fb.version = OVL_FH_VERSION;
 -- 
-2.34.1
+2.17.1
 
 
