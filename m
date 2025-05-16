@@ -1,120 +1,150 @@
-Return-Path: <linux-kernel+bounces-651185-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-651188-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFFADAB9B4A
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 13:42:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44F13AB9B5F
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 13:43:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 876BC7AE10C
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 11:41:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 921DBA2161E
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 11:43:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36021238C12;
-	Fri, 16 May 2025 11:42:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACF2D23C8AE;
+	Fri, 16 May 2025 11:43:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aCPe+Yz8"
-Received: from mail-yb1-f193.google.com (mail-yb1-f193.google.com [209.85.219.193])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Typvw2Qz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 333A441760
-	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 11:42:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2A88236445;
+	Fri, 16 May 2025 11:43:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747395755; cv=none; b=dHuJzD/Yv40zHYWR27vdH6ATRq9S10XNBcNj9U2h7XsJWCfceheCemgyOb5MeNMPOAThFkxuduFZXdHvJlGGsbX2ApxowRO59mdKqM0U2z9Qhtcj24WrL2IFmyFQDd0+P2/xh2TzNexn3GJndX/WTe23B+jLKVDID1KH9LLWHRg=
+	t=1747395788; cv=none; b=SY/ccCTDuO/kvEdM7ZXNeelPkp9PQCs+Z09FDhC457ukLIMU8F8aNsf8rh+m6i08xQjx3j9cW0tnbodl0IytfBxg3R7OgHB+OGrwh7Z2DIjWDPdeNfVOQuoJVwjcqIjQ+Vevyg8Xgf/DJwC1fsK5epRfzv/Aia5djlBjjskkn2s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747395755; c=relaxed/simple;
-	bh=qiMV3dMi+9DlhdCTYBcFKYMBvMxUD3LJ1STAMRmHlO8=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=mcdl/gttZYQv6RVsklrDM4+3fT9OhAsUzFrMyprdjPw6s4VpOyW7p0MS249rAEADjbkZkDteLh+BUeD1vWYxv0Fhg7Xwxu8um04HycWR8PpxyGHCf4a7Udhv+sgUssoRAurCeXygOGFoxk7T2aLaPZZM8QUQwRsF4pWXbg7b0Fc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aCPe+Yz8; arc=none smtp.client-ip=209.85.219.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f193.google.com with SMTP id 3f1490d57ef6-e78effa4b34so2693794276.0
-        for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 04:42:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747395753; x=1748000553; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=qiMV3dMi+9DlhdCTYBcFKYMBvMxUD3LJ1STAMRmHlO8=;
-        b=aCPe+Yz8G15MyzbyDkOHeb9WfI/Xo10utwQ0lt3hQVJBJGcStgHQAK4w0334lpiuuR
-         nnfbJK8gkKGZ7ULYn2zk8XQWqDym/PUnk8TJy0qTyThQPNhLJnRnCt6tW7qpP7eC2fHd
-         68NFrFRp0b4CskMLKWcXY+4rr32h0BIwXF7Cp+IbrlhCY7ZG7GCyo88VORLjOXY7aHiG
-         6Rp+xwEXEt6WJcNaxylPCwAPYfH/Ss4ZbbgA7oTTpy+2nW8bxEHEtENzsVoc1KykZq8/
-         7MPbDIIB/3oqG14ensbO2/iCXbsChGve+haeKQnkcIl1kqjh5/aS/5d2TZz18QujweqG
-         A+XA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747395753; x=1748000553;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=qiMV3dMi+9DlhdCTYBcFKYMBvMxUD3LJ1STAMRmHlO8=;
-        b=ww+LczcelnmUHSkpsGHViz+jLlAczxiM8CSsOqfiLm37BnN/rYLEHXOKkrekXh54ky
-         GPPOuhMaxpkxxIENEJA944D9AEuDJw2ZPTUwN78IQ33x7l+3VKTHrFnIywFrxF8P7s1W
-         KZtabFrd1m1HuOX4OjYszoQjB9iJg8F1OSZPDSruD748+vCGtkuEL+2G9eNj1r0CAYZo
-         n+uVzKj3AUrPiO6oj20KdM3sabl/X4PlrQwS7b7UHmxiJVWlrFCmS/3XZDoWG+/V3hxa
-         baeoCyJCMzmabd8nYP1Wvs3UQKPw2MWi+/793g3uYMb/ZtASC0p11wkvaquIycTo45Mu
-         cinw==
-X-Forwarded-Encrypted: i=1; AJvYcCW1g88gqyGUcGRJ0EFch9kTzsKWVyWpDHlfIHHTgIt8wJM+Yu7cnZbxC4H3nPwT9CkT4xIZRpMd8xOKqRs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0/Cs6TFqKE7n2RbDNUjcjyiQCrL2zqdoozfBBNeJ9WfDbG6dE
-	hRYpCh5jdTc0MplNDJLHymlC7OW4O7CguviNiFpYaTbzFBJOOzwOJkx9T/HrXw0qBnnBWnG6Wx2
-	YpS6BZs9it96WsjZpmJHjow1ERfi7k+kFpEYSgvo=
-X-Gm-Gg: ASbGncugU1bWNqlhYAo1mv9YgDkYCcfUemq5DjYUqqsW4iGaCkaDKGuku6N7UvLrzzr
-	4wec/hA0nZZsQp0m01phU3jS2ExfnNTgseE0y12R8MJ+nLlg1tUJsLOUfCUPu7fXEjMhecXZDaH
-	8+j8JM1t2rkrzzBrk9blDZE2BO/g7ZAonZaeQ=
-X-Google-Smtp-Source: AGHT+IEqOHRPI9mMx9Iw5eaBYbZdEYeRPHy72IJwKVqT09nHXqCoGVb4KDCzuftFzMlgMWjU6O9shtHe9RpoQvqfBL0=
-X-Received: by 2002:a05:6902:2b86:b0:e78:f196:5d48 with SMTP id
- 3f1490d57ef6-e7b6b18c7d4mr3667234276.13.1747395753173; Fri, 16 May 2025
- 04:42:33 -0700 (PDT)
+	s=arc-20240116; t=1747395788; c=relaxed/simple;
+	bh=fkyGOBNq4mn02C/tNZBlsJTqqLN8Mw9XQTfp03e3HKs=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=lwRAVI80g5qcMjPeZxBqVeWCVATdXsTqlkzwkAdiAPtBia/k1ouxGTh8ct65ky6oPh5yM8m71MHSGYv6TrwstzyQ1fyQnKcWi1sB62Wg6+FRCTzzRCkKm3VELmWme6mhpCcmim4iuSzpZZLtghJwEu9w32URuaov/veXgGU7APw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Typvw2Qz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 5B96BC4CEE4;
+	Fri, 16 May 2025 11:43:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747395787;
+	bh=fkyGOBNq4mn02C/tNZBlsJTqqLN8Mw9XQTfp03e3HKs=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=Typvw2Qz1ZvB5T5ie/ouqdjL6FrdOkwabdTpXSEmqCNvqvVP5H+rvdDV/8SF9dO1x
+	 1zQF/xZIWME9XM/7FLx/A48qg9N6c3J9DpjP1+r/UMdF48SadWfJkWlVTfWtOLVbRY
+	 S2bPDmLbct9nqJgSfH8NWHWHUaz5HvTWmhYaqE9rPc0GV0hUpW8uS2sDRvwrLT4ujj
+	 qLJ9ERZAMFtGBMLbI0qDuHGBOD3euRHzs6p9jCPzwSaQFqTKoZo3UFCbC8kDmZy3kp
+	 wWHRPO7hU/+aXIyybYOiHk/CCGqA40hS/zgRF8ZlDYOBb+4DGpuavbM348azyGXT0w
+	 8vvf0ByAJ2biw==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4805FC3ABC9;
+	Fri, 16 May 2025 11:43:07 +0000 (UTC)
+From: George Moussalem via B4 Relay <devnull+george.moussalem.outlook.com@kernel.org>
+Subject: [PATCH v3 0/5] Add CMN PLL clock controller support for IPQ5018
+Date: Fri, 16 May 2025 15:43:03 +0400
+Message-Id: <20250516-ipq5018-cmn-pll-v3-0-f3867c5a2076@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Guoyu Yin <y04609127@gmail.com>
-Date: Fri, 16 May 2025 19:42:22 +0800
-X-Gm-Features: AX0GCFtdxDf5MJAWdsDhhE1EdqPM7pPra-wvzgCAWWruf6VBGH0_LqXshVq0ZUM
-Message-ID: <CAJNGr6vHrsSZ4QrRbRrN8-+tTb7ks8+xY9W7iE2VLsdgZe-eFQ@mail.gmail.com>
-Subject: [BUG]INFO: Slab ADDR objects=NUM used=NUM fp=ADDR flags=ADDR
-To: ericvh@kernel.org
-Cc: lucho@ionkov.net, asmadeus@codewreck.org, linux_oss@crudebyte.com, 
-	v9fs@lists.linux.dev, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAMckJ2gC/2WPy27DIBBFf8ViXSoYwIBX+Y+qiigMDapt/IrVK
+ vK/FztdpMpqdEeaM+feyIxTwpk01Y1MuKY55b4E8VIRf3H9J9IUSibAQDHFOE3DWIahvuvp0Lb
+ UoOI6oNEiGlKuhglj+j6Ib+/3POF4LeDlviQfbkbqc9elpamMg6CER+FVNFAb4YII0TrrlDIAh
+ tcRa4maPAo11aEjOadjAZ13JwnyXJx2JVszZ6KymgnRrEB2jUualzz9HD1Xfnj8VYKnSiunjIK
+ 2DDz3kml+ytelzfnrtTw7aAX6QKifCVAInjkbvcfAufxP2LbtFx5Mjbt5AQAA
+X-Change-ID: 20250501-ipq5018-cmn-pll-8e517de873f8
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Luo Jie <quic_luoj@quicinc.com>, 
+ Lee Jones <lee@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+ Arnd Bergmann <arnd@arndb.de>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ George Moussalem <george.moussalem@outlook.com>, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1747395784; l=3030;
+ i=george.moussalem@outlook.com; s=20250321; h=from:subject:message-id;
+ bh=fkyGOBNq4mn02C/tNZBlsJTqqLN8Mw9XQTfp03e3HKs=;
+ b=GGaR1mCUVxhn4A+yR6h65H9l0PYj+psc2s7YkYAelpgf+aeC/3Ewo5U45pGz/ZFgiOEWib8zg
+ ih80VRgzdhLDoJ9C/e0SO5UnSyTKzk6PZqGLwGIWU8E8L7hd08eIk2b
+X-Developer-Key: i=george.moussalem@outlook.com; a=ed25519;
+ pk=/PuRTSI9iYiHwcc6Nrde8qF4ZDhJBlUgpHdhsIjnqIk=
+X-Endpoint-Received: by B4 Relay for george.moussalem@outlook.com/20250321
+ with auth_id=364
+X-Original-From: George Moussalem <george.moussalem@outlook.com>
+Reply-To: george.moussalem@outlook.com
 
-Hi,
+The CMN PLL block of IPQ5018 supplies output clocks for XO at 24 MHZ,
+sleep at 32KHZ, and the ethernet block at 50MHZ.
 
-I encountered a kernel crash on linux5.10 described as "INFO: Slab
-ADDR objects=NUM used=NUM fp=ADDR." The issue occurs when shutting
-down the 9p-fcall-cache slab cache, with the dmesg log indicating that
-objects remain in the cache, triggering kernel warnings and errors.
+This patch series extends the CMN PLL driver to support IPQ5018. It also
+adds the SoC specific header file to export the CMN PLL output clock
+specifiers for IPQ5018. A new table of output clocks is added for the
+CMN PLL of IPQ5018, which is acquired from the device according to the
+compatible.
 
-According to the dmesg log, the crash occurs in kmem_cache_destroy,
-with the call path p9_client_destroy -> kmem_cache_destroy. This
-happens during resource cleanup after a failed 9P filesystem mount.
-The log shows that the 9p-fcall-cache slab cache still contains
-objects (e.g., "objects=3 used=1"), indicating incomplete cleanup.
+Signed-off-by: George Moussalem <george.moussalem@outlook.com>
+---
+Changes in v3:
+- After further testing and evaluating different solutions, reverted to
+  marking the XO clock in the GCC as critical as agreed with Konrad
+- Moved kernel traces out of commit message of patch 1 to under the
+  diffstat separator and updated commit message accordingly
+- Updated commit message of patch 3
+- Link to v2: https://lore.kernel.org/r/20250506-ipq5018-cmn-pll-v2-0-c0a9fcced114@outlook.com
 
-I suspect that p9_client_destroy fails to properly release all fcall
-objects in the cleanup path after a mount failure, possibly due to
-reference count errors or a memory leak. I recommend reviewing the
-p9_client_destroy function in net/9p/client.c to ensure all fcall
-objects are freed before the slab cache is destroyed.
+Changes in v2:
+- Moved up commit documenting ipq5018 in qcom,tcsr bindings
+- Fixed binding issues reported by Rob's bot
+- Undone accidental deletion of reg property in cmn pll bindings
+- Fixed register address and size based on address and size cells of 1
+- Removed XO and XO_SRC clock structs from GCC and enabled them as
+  always-on as suggested by Konrad
+- Removed bindings for XO and XO_SRC clocks
+- Removed qcom,tscr-cmn-pll-eth-enable property from bindings and will 
+  move logic to ipq5018 internal phy driver as per Jie's recommendation.
+- Removed addition of tcsr node and its bindings from this patch set
+- Corrected spelling mistakes
+- Link to v1: https://lore.kernel.org/r/20250502-ipq5018-cmn-pll-v1-0-27902c1c4071@outlook.com
 
-This can be reproduced on:
+---
+George Moussalem (5):
+      clk: qcom: ipq5018: keep XO clock always on
+      dt-bindings: clock: qcom: Add CMN PLL support for IPQ5018 SoC
+      clk: qcom: ipq-cmn-pll: Add IPQ5018 SoC support
+      arm64: dts: ipq5018: Add CMN PLL node
+      arm64: dts: qcom: Update IPQ5018 xo_board_clk to use fixed factor clock
 
-HEAD commit:
-
-2c85ebc57b3e1817b6ce1a6b703928e113a90442
-
-console output : https://pastebin.com/raw/4CieLjqM
-
-kernel config : https://pastebin.com/raw/gPbJY2Bq
-
-C reproducer : https://pastebin.com/raw/EanQb7c
-
-The C reproducer may take a few minutes to trigger this crash, please
-wait for a while.
+ .../bindings/clock/qcom,ipq9574-cmn-pll.yaml       |  1 +
+ arch/arm64/boot/dts/qcom/ipq5018-rdp432-c2.dts     |  3 +-
+ .../dts/qcom/ipq5018-tplink-archer-ax55-v1.dts     |  3 +-
+ arch/arm64/boot/dts/qcom/ipq5018.dtsi              | 20 ++++++++++--
+ drivers/clk/qcom/gcc-ipq5018.c                     |  2 +-
+ drivers/clk/qcom/ipq-cmn-pll.c                     | 37 ++++++++++++++--------
+ include/dt-bindings/clock/qcom,ipq5018-cmn-pll.h   | 16 ++++++++++
+ 7 files changed, 63 insertions(+), 19 deletions(-)
+---
+base-commit: 8a2d53ce3c5f82683ad3df9a9a55822816fe64e7
+change-id: 20250501-ipq5018-cmn-pll-8e517de873f8
+prerequisite-change-id: 20250411-qcom_ipq5424_cmnpll-960a8f597033:v2
+prerequisite-patch-id: dc3949e10baf58f8c28d24bb3ffd347a78a1a2ee
+prerequisite-patch-id: da645619780de3186a3cccf25beedd4fefab36df
+prerequisite-patch-id: 4b5d81954f1f43d450a775bcabc1a18429933aaa
+prerequisite-patch-id: 541f835fb279f83e6eb2405c531bd7da9aacf4bd
 
 Best regards,
+-- 
+George Moussalem <george.moussalem@outlook.com>
 
-Guoyu
+
 
