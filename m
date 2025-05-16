@@ -1,83 +1,56 @@
-Return-Path: <linux-kernel+bounces-651643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-651646-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00F45ABA10A
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 18:49:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDA40ABA112
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 18:53:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9E3B77B6D95
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 16:48:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1339D1BA1B8F
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 16:53:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA1011DE2CE;
-	Fri, 16 May 2025 16:49:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 364721DE882;
+	Fri, 16 May 2025 16:53:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U6QT4B88"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7DA741760;
-	Fri, 16 May 2025 16:49:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="gMbhFKJI"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF0331C5D46;
+	Fri, 16 May 2025 16:53:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747414153; cv=none; b=GwsPe0E89+ztCx/GClLNbrDQwostrvTGMnYGnWEcjugIKs3bIrLb51t9FjulZv+oWcJ1qfSuW+67vY81iHtuqH1rRuUyS3YfujxeyXKQ7m2CX91ov2zgTQHoMXMNAUj6GBhNZtV84nIF2urKgI5m1tly/oMASOfiV/0nZln/bWA=
+	t=1747414393; cv=none; b=n1D4pZf2+226VkvNiaAhX7LkKO8smSPF9Dxe3idmr0vtkz/t/RgB9SJsmjWn/cL2Z2Wkf4AneQXO21wCNHyFv+CnQooFyY9HjT98gVz8/6pMqdzB4JI/B1fUkDqhGufpkqKK7aTZ8Vi1+MZJQPIa1zjmods0fGJbETVGGxOGj2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747414153; c=relaxed/simple;
-	bh=/mlq8eQDbKPnb3XOZNN5sgJbyvO/ncRpvHJjF4pxdno=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=V8OVsvv/L15rH/i6X41BWRlnkrFsSVKqF4IkS+1YAZLhSSR6vnDh+YUA0yy8u9ZORztQ2YmGx36sH8BNWPywAvWHdSveQUq37l4sWYilnPxWps0RTbcH0QErr6WQbAhkkA4BTt1mqyxhVdXO43iqd0RxeZqgNWyYU5MQHnpx38Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U6QT4B88; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-73bf5aa95e7so2380253b3a.1;
-        Fri, 16 May 2025 09:49:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747414151; x=1748018951; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=LbhWXOd+OEyb1Eiiffm06MaKsnNTsDGXVTdFbUo7D60=;
-        b=U6QT4B88/NFXLfm8ErSoRl7uD6shazAAEg9yjce8uTYzMjAGwvwITd1/91MIZ+t4KW
-         bKNa7yi6q5QIM2J16L6dptSwZTi73magy9AfUemolNsDnrNSaKSNXYgMyQtyk4clsutJ
-         Vv3IshUVlfHyiJSyjFf4TJ0+pVeMl3hDVclR5G01FqmmLd1PjXfwMGDchCL3Yg1iWS7Z
-         XW+yTGtBEfSBh5o5WrQiszad9lJVbU5vQcyUwPtOO79k8XroxDvTi6E/rCni35oRXxVH
-         +iBztZS9xqhZ2Axq9YonyIlXxEzkfY9zjllNuTRyPT9asKcOZqaw8Ug1MB3kfm/JoWI7
-         yuYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747414151; x=1748018951;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LbhWXOd+OEyb1Eiiffm06MaKsnNTsDGXVTdFbUo7D60=;
-        b=LqMQg6FZHA2yQf1huyvHjVbvFxjuVwwBdAlRWgxFKHu3YVNoTh8GPcNuZOztAnRqHL
-         K0NN7edSRwiCCfgI8fI3PczSRIpx0xMC2RyywL14oXN5j7NV7bSc1cA67EInoy0JQYGy
-         GfAfTO5801LVcAzahuKKOFvtAGFbPH6gApke/nykcncIt57MQZfGVfqEr/kVrmNdXxS6
-         O81YNDrdi91i0fAubDd/qndecpJfxvccFgm2aqL/V9XYO/KhPwc1lYRS9KHCsPc1IRaL
-         Afagyk8rPJr5uL+v8EME4BWwhEhMn//cTy+n7clAXD3fNs/KtZMVaoTSSwx0aHfuLZXI
-         0pxw==
-X-Forwarded-Encrypted: i=1; AJvYcCUJ1bjCNlHXq+Ebb2GfAFC9b3fwcYfbkoLMH7nD6hCLUfOu4cr7EhbD8sNNFkk6uPnUt2Ri1uFuSjYv9vs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzeM8lq920J96RfrbDAFrujvjOaPhD4PWsgY+FviraU1QS4vk3W
-	ACjY2kOUB56CZQAPWuczhDf6+kZh/y0d9HSn24Pr2PajY6Q3qPnPpG9s
-X-Gm-Gg: ASbGncsayC9ku/FisZWT4vtkddYAUPB3EchPhgZRz9q0+zyvPLfBbYE3tKyVhgBV2P+
-	lwa1SrmZyapSfYhx17lNnSI4uwdYbc+QZuVbkAhr1Dr50zCxqVIepwokvWfXRR+49AD/h+kIcZg
-	IWxJMTkZquszZU8mJIReuQm3Z18gGAB4ThjPD4mnzeLyBTLjd3is3HCCkiF4XqfldrE0itAuY6S
-	XGNG24w9GqWjRolQt6SFt8CrhaCNBji9jSdHfvlAKp9rnS33Njv+2M1hWXPiWMlU/sOGidozV32
-	Ol978+15aLXvkwxEIZDm5XTwjSdZYKbOaz7ZUUdUB4XJBUxWWaW7gg==
-X-Google-Smtp-Source: AGHT+IHgpBkEA5jao8AFZhjUwipXDHq1C0+zdkgS9xg6GlPvl6Hk6Ct9CuoCbeUY4IivC2KsTff4Kg==
-X-Received: by 2002:a05:6a00:21c3:b0:73e:10ea:b1e9 with SMTP id d2e1a72fcca58-742a979672dmr5269786b3a.6.1747414150699;
-        Fri, 16 May 2025 09:49:10 -0700 (PDT)
-Received: from lolcat.. ([2401:4900:1c42:3d25:8f97:4da2:63c3:46c2])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-742a9829ad2sm1807443b3a.93.2025.05.16.09.49.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 May 2025 09:49:10 -0700 (PDT)
-From: rodgepritesh@gmail.com
-To: skhan@linuxfoundation.org
-Cc: linux-kselftest@vger.kernel.org,
+	s=arc-20240116; t=1747414393; c=relaxed/simple;
+	bh=e7r59I1570V/ZTAVNQn6tuVe/hq4uTnS4Xt8CyEI4D8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=FoF6W1XJUE/WDDYdj9Gng1rhQiLKfAbQLipHyxdRNik/qyekr8ciYNI+2+v69aKAL6u/UVqIhKz7Lc8KfMAjioAjhUS4GR3Jp4rYTesqlDWPzWcky97ZvtsYZKaXsS9SK6VSNI/jsVHnOHcj7Y2rWVgyfrjZMh72gaR8+e15sBM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=gMbhFKJI; arc=none smtp.client-ip=220.197.31.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=zK
+	fG+U01Noy/xyIUU1fu+yTBbwmBMuvCo8WgyfdyiDc=; b=gMbhFKJIKu4t8s7/p3
+	eqajkqTxi554DWlCWATYq+kVV5RUkdC/681MyiNLS8opTY5mlvfmUzcVRQ2lJZI0
+	wlIzI7sy+tOXKlu0xoR4Lm8xir2Ojo/avIKy5WE0BYXbMh6xDnbfXi0t1kroGiXa
+	yB8DKgMt/jMKKR8/tFVGsuC+k=
+Received: from localhost.localdomain (unknown [])
+	by gzga-smtp-mtada-g0-4 (Coremail) with SMTP id _____wDn1+RLbSdo12CoBw--.59952S2;
+	Sat, 17 May 2025 00:52:28 +0800 (CST)
+From: Hans Zhang <18255117159@163.com>
+To: bhelgaas@google.com,
+	tglx@linutronix.de,
+	kw@linux.com,
+	manivannan.sadhasivam@linaro.org,
+	mahesh@linux.ibm.com
+Cc: oohall@gmail.com,
+	linux-pci@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	rodgepritesh@gmail.com
-Subject: [PATCH]  [PATCH] Change pidns to pid namespace
-Date: Fri, 16 May 2025 22:19:02 +0530
-Message-ID: <20250516164902.91085-1-rodgepritesh@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	linuxppc-dev@lists.ozlabs.org,
+	Hans Zhang <18255117159@163.com>
+Subject: [PATCH 0/2] PCI: Convert MSI and AER state tracking variables to bool type
+Date: Sat, 17 May 2025 00:52:21 +0800
+Message-Id: <20250516165223.125083-1-18255117159@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,31 +58,39 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wDn1+RLbSdo12CoBw--.59952S2
+X-Coremail-Antispam: 1Uf129KBjvdXoW7XFWxAw17tw4rtFWrtryxXwb_yoWftrg_u3
+	4kXrW7Kr4j9rsrAF1Fvr4fZryY93y0vF1kXw1Fvryayas7Zw1UXFWUXr95u3WfWFn3tFyY
+	9wnrArnFyr1xujkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7sRuzuWtUUUUU==
+X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiWx1Po2gnaWRfNwAAsA
 
-From: Pritesh Rodge <rodgepritesh@gmail.com>
+This patch series converts MSI/AER state tracking variables from int to
+bool type to improve code clarity and align with kernel coding standards.
 
-Changed a comment in memfd_test.c , Unabbreviated pidns to pid namespace
-for better understanding .
+These variables inherently represent boolean states (enabled/disabled).
+Existing code already treats them as truth values in condition checks.
+Explicit bool type eliminates ambiguity between integer 1/0 and
+true/false. Follows modern kernel practices for state tracking with proper
+type semantics.
 
-Signed-off-by: Pritesh Rodge <rodgepritesh@gmail.com>
----
- tools/testing/selftests/memfd/memfd_test.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+No functional changes - pure code cleanup to enhance readability and
+maintainability.
 
-diff --git a/tools/testing/selftests/memfd/memfd_test.c b/tools/testing/selftests/memfd/memfd_test.c
-index 5b993924cc3f..4e4c46246a4e 100644
---- a/tools/testing/selftests/memfd/memfd_test.c
-+++ b/tools/testing/selftests/memfd/memfd_test.c
-@@ -1359,7 +1359,7 @@ static int sysctl_nested_child(void *arg)
- 
- 	printf("%s nested sysctl 0\n", memfd_str);
- 	sysctl_assert_write("0");
--	/* A further nested pidns works the same. */
-+	/* A further nested pid-namespace works the same. */
- 	pid = spawn_thread(CLONE_NEWPID, sysctl_simple_child, NULL);
- 	join_thread(pid);
- 
+Hans Zhang (2):
+  PCI/MSI: Use bool for MSI enable state tracking
+  PCI/AER: Use bool for AER disable state tracking
+
+ drivers/pci/msi/api.c  | 2 +-
+ drivers/pci/msi/msi.c  | 4 ++--
+ drivers/pci/msi/msi.h  | 2 +-
+ drivers/pci/pcie/aer.c | 4 ++--
+ include/linux/pci.h    | 4 ++--
+ 5 files changed, 8 insertions(+), 8 deletions(-)
+
+
+base-commit: fee3e843b309444f48157e2188efa6818bae85cf
 -- 
-2.43.0
+2.25.1
 
 
