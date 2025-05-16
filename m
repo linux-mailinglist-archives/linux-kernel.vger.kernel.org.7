@@ -1,138 +1,196 @@
-Return-Path: <linux-kernel+bounces-651458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-651460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CAD8AB9EB3
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 16:34:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60034AB9EB6
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 16:35:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E5AB21BC3440
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 14:35:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50382A02BA4
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 14:35:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85B2B199237;
-	Fri, 16 May 2025 14:34:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCF47199924;
+	Fri, 16 May 2025 14:35:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uB1vcffg"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ny4brOeJ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DACF718DF6D;
-	Fri, 16 May 2025 14:34:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3033218DF6D;
+	Fri, 16 May 2025 14:35:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747406089; cv=none; b=dFEogqbgaJTkISMbYhUpOegRv9xWhQ37aDip2M4yljuDgVTBDUJ4rKO+5iUzMGrqzw4q3UjnEXgkqsaE/elLR0joOLYZV1MCGJGsTdB5WwD98yCsQDI8ZYimYHdmQpH9E3yplPcGPvn20HouqJjJrSgytnB6uzQLZCtpTOmSihw=
+	t=1747406133; cv=none; b=YZgm0pmCrjt3IvP5xclb7n7bGjNTQIcpTzt4SY9Tcr8fP0twgEdtQBWoQoFuyg455nOUll9taBy++kJBK11nK2sXEil3gb7gK+0/5xnGM2QLJwWyAcckgtDDjO612GtWSSfm9Ep69q3kcXrrPZZqpHe/2qWQ1reEyvrz0XfWKWo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747406089; c=relaxed/simple;
-	bh=0NjYNMvQxfUI57i71mZdpWSId3SrSDS4W9O9Zr+MoGI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DG90qXkGat8+pb/mfSvPMB6ykawEfRMgswJM48TCO4k3qAAmlYZhPc8JigUe58otkhls9xJ0eyH3Qbi9o9ZZE2wTCCTmiImMA5ncR9bQhjuNxQO7PNGZhORqcXBcpGH6oE+IVUTpt1yb4kb8U2S2Qw9mRSL6UVWif6ki7B/R3Yk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uB1vcffg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 411F3C4CEE4;
-	Fri, 16 May 2025 14:34:49 +0000 (UTC)
+	s=arc-20240116; t=1747406133; c=relaxed/simple;
+	bh=J/QIpR8OrpPuQ+5A7yOJJ6px/zqtCG8WzG0h+HuXQ6A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BXiltqAseu1rCYDke/9x5Rf/jn0F8l7Q2kmIlKHG/seVcbJpGKjXtk4rY8Dh9X+UuZfdRlkycPu5gH1YhjZ3/ilYosEqiYDaq+qb4hwi6XKhkw5PomqTjPripR+RUxoshWhQ3R1DlMV509H8lQ471oSbJ7Yl/3KXRwqN21vZFQo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ny4brOeJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19C5FC4CEE4;
+	Fri, 16 May 2025 14:35:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747406089;
-	bh=0NjYNMvQxfUI57i71mZdpWSId3SrSDS4W9O9Zr+MoGI=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=uB1vcffgg6asDkiwuek2idPAL+Xa/uDS0WdWBL4YgJDRKFiNPLuN00aztZgtSO7ho
-	 RkKK5Yv3968Fwo35Te+ut9+nyP2CX3xXRYqovjFmv8C32OApNkZvqDJsqV3FviVYEe
-	 h9id4yigUG/lWWrP+jzRzmisVO5n9rl/j/YhxIeFZhiFktdq6mrEhGjV7lalhPwqo8
-	 0/NdrhAf+dc2etCqo9+TOy004idrbJ1YcADi0B8yaS0gPG/4DfnyH/gt6MOnM00hCq
-	 uglyaAlv5/1NzIV01oIqLfAdd3yBWc0ik7q/ghLSnHz7Xqrh3LcdyAc5qIQNhKRtSy
-	 txHclJUTbLTiw==
-Received: by mail-ot1-f53.google.com with SMTP id 46e09a7af769-72a4793d4e2so1799187a34.2;
-        Fri, 16 May 2025 07:34:49 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVd6pRiYMzk7f35cwlypQYgOldwdYwfStr09+pQTmvqAgBTuQwGa4uQBI5NPKZi4jPDhfjTPE/DAdTg@vger.kernel.org, AJvYcCXZhAvr6m3Ymv41vIP+FeXRobqT2uWDDzONVMo556xHRXHU3K5CnVQqrF5VZ5ZtEJuxIkkC1c/pw7HQ+/bf@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw9xkXn6UvnF0aE+wsTgYocU67UE/NBuWSBX+m/FWnENiUywC33
-	OLKc/2MPmZezAnRYxlQDyYWte/DaPv5shQ4I8BCDgID3GAzJMWfLBobU+AZhX2CiH4hWR7Ifba2
-	bsT6pCigYZ49HEcfkSSyNxc8PLl2Oq3o=
-X-Google-Smtp-Source: AGHT+IE1b+2SUr/+Z1nzo4YCIhc1faUpWy8qmtN/YR8z+9MG/tkEjVzSXTYLTsCJsEgl7e+RNHo99Z+n43Rh/jV2Hl0=
-X-Received: by 2002:a05:6820:1908:b0:606:361b:52ad with SMTP id
- 006d021491bc7-609f3731c3bmr2213078eaf.3.1747406088562; Fri, 16 May 2025
- 07:34:48 -0700 (PDT)
+	s=k20201202; t=1747406132;
+	bh=J/QIpR8OrpPuQ+5A7yOJJ6px/zqtCG8WzG0h+HuXQ6A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ny4brOeJKXph/t0D/hx1MGGohyf6S7Y0VZRSXauILnXRs3dGKithzOLuUj201t9yU
+	 TnxIc+MET1ilm8OyXKte1fvFHdiZgsHACSFiYGGv4HWbQpmwkcG2yiJzIIqFSgJj+4
+	 xX4DYsRAxQ2Vpc3WFXMu1Yd+mz4+3apPWO9yKSWTs8zkweOjM6s9VPdSthHyxVdOMH
+	 TZRDRjeuo0YLxkEFR1BDF8aR6DOGWfKySiSrY2HekzLli65jWY+rMZLYkTa3upyuV7
+	 MWIYfzsg8g3wTxPX7ueJ5xJyH7IZvaoDICYNFTieAFzLdjSJT8bAzKzxCB4zUCfk8o
+	 qKYbA5fqhTHqw==
+Date: Fri, 16 May 2025 11:35:29 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: "Wang, Weilin" <weilin.wang@intel.com>
+Cc: Ian Rogers <irogers@google.com>, Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	"Hunter, Adrian" <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	James Clark <james.clark@linaro.org>,
+	"linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v1] perf intel-tpebs: Filter non-workload samples
+Message-ID: <aCdNMenCaonhRfJK@x1>
+References: <20250430200108.243234-1-irogers@google.com>
+ <CO6PR11MB5635C6FF9A6C91B68FCE7937EE90A@CO6PR11MB5635.namprd11.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250512011833.142204-1-qiyuzhu2@amd.com>
-In-Reply-To: <20250512011833.142204-1-qiyuzhu2@amd.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Fri, 16 May 2025 16:34:37 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0ibrZOLi8yi1VzTPVVTTTb7S7_5RO4knfNJcaL9vOWYjg@mail.gmail.com>
-X-Gm-Features: AX0GCFtWIRrf42a8BQLU188g_6BH0wOMrnKzeAVlk1ei0WcxuSAzKQg-PsCucwA
-Message-ID: <CAJZ5v0ibrZOLi8yi1VzTPVVTTTb7S7_5RO4knfNJcaL9vOWYjg@mail.gmail.com>
-Subject: Re: [PATCH v3] ACPI:PRM: Reduce unnecessary printing to avoid the
- worries of regular users
-To: Zhu Qiyu <qiyuzhu2@amd.com>
-Cc: rafael@kernel.org, lenb@kernel.org, linux-acpi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CO6PR11MB5635C6FF9A6C91B68FCE7937EE90A@CO6PR11MB5635.namprd11.prod.outlook.com>
 
-On Mon, May 12, 2025 at 3:19=E2=80=AFAM Zhu Qiyu <qiyuzhu2@amd.com> wrote:
->
-> Commit 088984c8d54c ("ACPI: PRM: Find EFI_MEMORY_RUNTIME block for PRM
-> handler and context") introduces non-essential printing "Failed
-> to find VA for GUID: 7626C6AE-F973-429C-A91C-107D7BE298B0, PA: 0x0"
-> which causes unnecessary worry for regular users.
->
-> Refer to PRM Spec Section 4.1.2[1], both static data buffer address
-> and ACPI parameter buffer address may be NULL if they are not needed.
-> So there is no need to print out "Failed to find VA ... " to intimidate
-> regular users.
->
-> Link: https://uefi.org/sites/default/files/resources/Platform%20Runtime%2=
-0Mechanism%20-%20with%20legal%20notice.pdf # [1]
->
-> Signed-off-by: Zhu Qiyu <qiyuzhu2@amd.com>
-> ---
->
-> Previous versions can be found at:
-> v1: https://lore.kernel.org/linux-acpi/CAJZ5v0hv0WKd-SXFhUgYs-Zpc+-PsSNOB=
-u0r7L5TzJWgddtsKA@mail.gmail.com/t/#u
-> v2: https://lore.kernel.org/linux-acpi/20250512010620.142155-1-qiyuzhu2@a=
-md.com/#r
->
-> Changes in v2:
->  - Reduce the code changes.
-> Changes in v3:
->  - Fixed title letters not showing.
->
->  drivers/acpi/prmt.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/acpi/prmt.c b/drivers/acpi/prmt.c
-> index e549914a636c..28a9930267a3 100644
-> --- a/drivers/acpi/prmt.c
-> +++ b/drivers/acpi/prmt.c
-> @@ -85,7 +85,7 @@ static u64 efi_pa_va_lookup(efi_guid_t *guid, u64 pa)
->                 }
->         }
->
-> -       pr_warn("Failed to find VA for GUID: %pUL, PA: 0x%llx", guid, pa)=
-;
-> +       pr_info("VA for GUID: %pUL, PA: 0x%llx not found\n", guid, pa);
+On Thu, May 15, 2025 at 08:46:22PM +0000, Wang, Weilin wrote:
+> > -----Original Message-----
+> > From: Ian Rogers <irogers@google.com>
+> > Sent: Wednesday, April 30, 2025 1:01 PM
+> > To: Peter Zijlstra <peterz@infradead.org>; Ingo Molnar <mingo@redhat.com>;
+> > Arnaldo Carvalho de Melo <acme@kernel.org>; Namhyung Kim
+> > <namhyung@kernel.org>; Mark Rutland <mark.rutland@arm.com>;
+> > Alexander Shishkin <alexander.shishkin@linux.intel.com>; Jiri Olsa
+> > <jolsa@kernel.org>; Ian Rogers <irogers@google.com>; Hunter, Adrian
+> > <adrian.hunter@intel.com>; Kan Liang <kan.liang@linux.intel.com>; Wang,
+> > Weilin <weilin.wang@intel.com>; James Clark <james.clark@linaro.org>; linux-
+> > perf-users@vger.kernel.org; linux-kernel@vger.kernel.org
+> > Subject: [PATCH v1] perf intel-tpebs: Filter non-workload samples
+> > 
+> > If perf is running with a benchmark then we want the retirement
+> > latency samples associated with the benchmark rather than from the
+> > system as a whole. Use the workload's PID to filter out samples that
+> > aren't from the workload or its children.
+> > 
+> > Signed-off-by: Ian Rogers <irogers@google.com>
 
-Thanks for following my advice, but on second thought, it would be
-good to discard the message entirely if pa is zero and it is valid by
-the spac, but still complain if pa is nonzero and it cannot be mapped.
+> Tested-by: Weilin Wang <weilin.wang@intel.com>
 
-So what about doing something like this in acpi_parse_prmt():
+Thanks, applied to perf-tools-next,
 
-if (handler_info->static_data_buffer_address)
-        th->static_data_buffer_addr =3D efi_pa_va_lookup(&th->guid,
-handler_info->static_data_buffer_address);
-else
-        th->static_data_buffer_addr =3D 0;
-
-and analogously for th->acpi_param_buffer_addr()?
-
->
->         return 0;
->  }
->
-> base-commit: 92a09c47464d040866cf2b4cd052bc60555185fb
-> --
+- Arnaldo
+ 
+> > ---
+> >  tools/perf/util/intel-tpebs.c | 59
+> > ++++++++++++++++++++++++++++++++++-
+> >  1 file changed, 58 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/tools/perf/util/intel-tpebs.c b/tools/perf/util/intel-tpebs.c
+> > index 7fd6cae1063e..4ad4bc118ea5 100644
+> > --- a/tools/perf/util/intel-tpebs.c
+> > +++ b/tools/perf/util/intel-tpebs.c
+> > @@ -3,7 +3,7 @@
+> >   * intel_tpebs.c: Intel TPEBS support
+> >   */
+> > 
+> > -
+> > +#include <api/fs/fs.h>
+> >  #include <sys/param.h>
+> >  #include <subcmd/run-command.h>
+> >  #include <thread.h>
+> > @@ -121,6 +121,59 @@ static int evsel__tpebs_start_perf_record(struct
+> > evsel *evsel)
+> >  	return ret;
+> >  }
+> > 
+> > +static bool is_child_pid(pid_t parent, pid_t child)
+> > +{
+> > +	if (parent < 0 || child < 0)
+> > +		return false;
+> > +
+> > +	while (true) {
+> > +		char path[PATH_MAX];
+> > +		char line[256];
+> > +		FILE *fp;
+> > +
+> > +new_child:
+> > +		if (parent == child)
+> > +			return true;
+> > +
+> > +		if (child <= 0)
+> > +			return false;
+> > +
+> > +		scnprintf(path, sizeof(path), "%s/%d/status",
+> > procfs__mountpoint(), child);
+> > +		fp = fopen(path, "r");
+> > +		if (!fp) {
+> > +			/* Presumably the process went away. Assume not a
+> > child. */
+> > +			return false;
+> > +		}
+> > +		while (fgets(line, sizeof(line), fp) != NULL) {
+> > +			if (strncmp(line, "PPid:", 5) == 0) {
+> > +				fclose(fp);
+> > +				if (sscanf(line + 5, "%d", &child) != 1) {
+> > +					/* Unexpected error parsing. */
+> > +					return false;
+> > +				}
+> > +				goto new_child;
+> > +			}
+> > +		}
+> > +		/* Unexpected EOF. */
+> > +		fclose(fp);
+> > +		return false;
+> > +	}
+> > +}
+> > +
+> > +static bool should_ignore_sample(const struct perf_sample *sample, const
+> > struct tpebs_retire_lat *t)
+> > +{
+> > +	pid_t workload_pid = t->evsel->evlist->workload.pid;
+> > +	pid_t sample_pid = sample->pid;
+> > +
+> > +	if (workload_pid < 0 || workload_pid == sample_pid)
+> > +		return false;
+> > +
+> > +	if (!t->evsel->core.attr.inherit)
+> > +		return true;
+> > +
+> > +	return !is_child_pid(workload_pid, sample_pid);
+> > +}
+> > +
+> >  static int process_sample_event(const struct perf_tool *tool
+> > __maybe_unused,
+> >  				union perf_event *event __maybe_unused,
+> >  				struct perf_sample *sample,
+> > @@ -140,6 +193,10 @@ static int process_sample_event(const struct
+> > perf_tool *tool __maybe_unused,
+> >  		mutex_unlock(tpebs_mtx_get());
+> >  		return -EINVAL;
+> >  	}
+> > +	if (should_ignore_sample(sample, t)) {
+> > +		mutex_unlock(tpebs_mtx_get());
+> > +		return 0;
+> > +	}
+> >  	/*
+> >  	 * Need to handle per core results? We are assuming average retire
+> >  	 * latency value will be used. Save the number of samples and the sum
+> > of
+> > --
+> > 2.49.0.906.g1f30a19c02-goog
+> 
 
