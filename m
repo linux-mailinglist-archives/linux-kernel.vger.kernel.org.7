@@ -1,187 +1,187 @@
-Return-Path: <linux-kernel+bounces-650754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-650751-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF3CFAB9596
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 07:47:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AD30AB958C
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 07:31:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6AABCA03B5B
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 05:46:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B0111BC358A
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 05:31:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B80E221F05;
-	Fri, 16 May 2025 05:47:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB5B1221FCE;
+	Fri, 16 May 2025 05:31:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="aOI+jdb2"
-Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11013020.outbound.protection.outlook.com [52.101.67.20])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Xe5+BfOC"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CBE1288DA;
-	Fri, 16 May 2025 05:47:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.67.20
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747374426; cv=fail; b=ikEHbqEt46hKIKjKPtYKM3026VweOVQDc37G66cWwnHVUIAGk3ldhtyPV5wCiCwyRQEFbawH7a5VFyCdaAWKRj4M2n6bMrjr3QD/SZY6zI5yfESEtjt/xOsDvIAtCSV25mdiJO8zG0Yu43w/uEARy83jdQACNcXZakC/5diKyJ8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747374426; c=relaxed/simple;
-	bh=NcUKXWHRAp/kU6qG9K0rqvGUDtlZO5EIAE3uK3L7BGk=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=peNtL/pWOPc+cw151VriUtHTuo/8hEacS8V0HUDpBvt8PuTPCr5gWWneL4KhIGf53blEAQ+AvRx3c2HUeKTL1EFH6DvmcEs4upSYgXEwXK8Zzkj6wDOSrDZ7BMednfa6QjV+mC8tXY6svi2ugxBkaHobwOusRzRzP/taWWulrT4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=aOI+jdb2; arc=fail smtp.client-ip=52.101.67.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=R7tXntZ4Y+47+g+ThEtGaqcvgp7ASJFLHPD5m9u00lhkuyBMyWpyTY40WB/a1gMc7d2uwcnktI5V6AD5gIGhkY2i2yrIySE2FVRDJcLY9bdDBktbSwfuwJnydnq3bKbNu5cvYit/rjPjjyCVIBOfqM9U/60ZKAp6IhVQ9HlBwlpwnfy/KZqy727d4nTjpzD59GAjugvhNT8qaT1WGe4mlqcSLgoKCXDWTnpAE/p54e8S7k/4Q2L19TKr/7GX6nRSk8sfja1g6iwzDSkeRe0VsWnryGERNKjYg8gWyHfkyqDM6jXdJHoZloBrSSZzMS6CEyx2kYB24eI1B1iS/p2lWg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=jOj+DHHoZqTvJobXs7qJFydH/N5EOOPEqt15AKbiveA=;
- b=xjOZhmxNxpsH4VoysBCynngZYt44/2yXmZzluwwF83wMGLmqJoeVnFipUeCEO+po+glJtISsfKBRi36oCVM5QdsN643czUkKOjUkaL1ByNp4B5l/OpkEZjtV8IXVeamsBDcSXMY4qnJl3MDxfFff8QvZAlDay31brm4vRa0crucTBueR8JDi7oE3CM+Zsj0+t0zHnXaVuHPINE6C8S2IMkEz+OiWRyN/vaGnlPnS8kdD4wvhM4F/MA+lyf8t4bPO4aJHjwB/A8VH9zJ+dR638nPIGhgMwOQYGagd9hJOV7BfOOqD95NZDhHeiz6MOzaXP1J30trSNth2zUbGG/XdHg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jOj+DHHoZqTvJobXs7qJFydH/N5EOOPEqt15AKbiveA=;
- b=aOI+jdb2jWDubvLUou6zlUsVIuvLfLEiEb9+ae+6DsySgnJOJQddxMtgj2PCql0WMHO8ufwXTjgRNqt31bP15uTzi0WOkYTRZGe0deNEDBe/SXxoPhqGZIYY6CL52pK9QoYAJyz7xqakyWIEvRmgEbsdELdKOiIYmabUyEb4WvquyUgQzD5dK83TX8Iu5tqKQ0fbihs+jqxjUw9n6iGHslRlh8gu/umEVxd5iQm4sk4jNhVOP0SKApzTjvZVmIKRzPw1hT25Qu6OoX+ECyvLA006O2Qzm1042TgwFKrXuuqKP5wNBTppBHVWmecBKW9gNZUh+3SDhWwgDV0Gzb/Z/Q==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB8510.eurprd04.prod.outlook.com (2603:10a6:102:211::7)
- by AM9PR04MB7572.eurprd04.prod.outlook.com (2603:10a6:20b:2d4::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8722.32; Fri, 16 May
- 2025 05:47:02 +0000
-Received: from PAXPR04MB8510.eurprd04.prod.outlook.com
- ([fe80::a7c2:e2fa:8e04:40db]) by PAXPR04MB8510.eurprd04.prod.outlook.com
- ([fe80::a7c2:e2fa:8e04:40db%5]) with mapi id 15.20.8722.031; Fri, 16 May 2025
- 05:47:02 +0000
-From: Wei Fang <wei.fang@nxp.com>
-To: claudiu.manoil@nxp.com,
-	vladimir.oltean@nxp.com,
-	xiaoning.wang@nxp.com,
-	andrew+netdev@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev
-Subject: [PATCH net-next] net: enetc: fix the error handling in enetc4_pf_netdev_create()
-Date: Fri, 16 May 2025 13:27:34 +0800
-Message-Id: <20250516052734.3624191-1-wei.fang@nxp.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SI2PR02CA0054.apcprd02.prod.outlook.com
- (2603:1096:4:196::13) To PAXPR04MB8510.eurprd04.prod.outlook.com
- (2603:10a6:102:211::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6003D139E;
+	Fri, 16 May 2025 05:31:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747373470; cv=none; b=UXDJ4EFbmwCKEs9+pDFVHIxcB/HgIrFCGZjMr+VTS9g5fSKZa7Dz2fBIVzEXFPY5HZiIl4KtqWjcyQSMWVxml+VZ/HoeGMy9w5Wi6MuycaIxOK7ce6F6fsLzNNhnWs7EilIFm4bm6jAKggyd1K7Nbj/f1Cl5KMMETQwTKHT0d9k=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747373470; c=relaxed/simple;
+	bh=toxGotdghsHUab1+RRGl3zwSsX4qzYDutwY3v4Z9C+g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=S+7KBxD4OArOOmtT9wnhpQ4zwWwejXyS5CRhgv9gzVnowdnMCk9PCIlGjm4QP8+CsG91yaHHevN4CdBkhMHhbbxzsEFNvua3SVPEiOjnYX6t6ZPOUogq0dX/SLRb3F3ZK9pquOT7ByRSJ8e6J9XZo/NUso+n8pZEMBmJLz1vubs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Xe5+BfOC; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1747373469; x=1778909469;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=toxGotdghsHUab1+RRGl3zwSsX4qzYDutwY3v4Z9C+g=;
+  b=Xe5+BfOCSaSLdQjyvioK3QzYYfSrCgNUA8oBu7Q6XxYSMS4nSaoY+PCa
+   b5yXxtEXHNjuhLLdCV/Aiu37YzzwyrpgYcwoY5BoIYKbWNi3R2wVAfekC
+   4lcXWst74NpkkPE3lLDrfe3fNAOLkj1z+o+7QkeY3zwrQ3RkE227KFcNs
+   n1sJAyM016yWfkmerBifTzQpQ1AcTtU1B5jd1uee9tcLpT/4R+oSnbAhN
+   cE7rDHR3bjRGrL7Pogp+VZ+Qv1oMb3S0y+MG392NUtXXR9tR8yYZmnw/y
+   eqCyreIHyXA6ndKByfJgyrTRrFtLnn5OSS4AYGnQBACTVAt6GZLa0XvyZ
+   Q==;
+X-CSE-ConnectionGUID: /5uEeI+LQKufEjzxxXrgvA==
+X-CSE-MsgGUID: iyW2gnn4TumPO38a0LXtFg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11434"; a="74734088"
+X-IronPort-AV: E=Sophos;i="6.15,293,1739865600"; 
+   d="scan'208";a="74734088"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2025 22:31:08 -0700
+X-CSE-ConnectionGUID: XDTdNfeGSuG7gBpjsL5y9w==
+X-CSE-MsgGUID: m0RU7hrdT9K3M202SrKrLw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,293,1739865600"; 
+   d="scan'208";a="138979538"
+Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
+  by fmviesa008.fm.intel.com with ESMTP; 15 May 2025 22:31:04 -0700
+Received: from kbuild by 1992f890471c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uFnew-000J1T-0H;
+	Fri, 16 May 2025 05:31:02 +0000
+Date: Fri, 16 May 2025 13:30:33 +0800
+From: kernel test robot <lkp@intel.com>
+To: Chiang Brian <chiang.brian@inventec.com>,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Chiang Brian <chiang.brian@inventec.com>,
+	linux-hwmon@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v7 2/2] hwmon: (pmbus/tps53679) Add support for TPS53685
+Message-ID: <202505161242.oQFhPxZ9-lkp@intel.com>
+References: <20250515081449.1433772-3-chiang.brian@inventec.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB8510:EE_|AM9PR04MB7572:EE_
-X-MS-Office365-Filtering-Correlation-Id: 910cfa75-5fe7-43f2-512e-08dd943d1478
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|366016|1800799024|52116014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?HlimePQySFxSeHZCTOij/fQqWZXMLXg7bYgQPlMBOSx3FtR3b85rzPCCxjIs?=
- =?us-ascii?Q?1J3xawHo3xFR12LppQBHQeAkCU/TFr/7goCWb3OLJvYkgugqXYkkoO3nGAAP?=
- =?us-ascii?Q?0imDBV1+fx2sA5mpq+HjRbtNnSXZWjF+/cXbLy05ypFNL5IGuXctvgQ8Fgi+?=
- =?us-ascii?Q?ZM4CCukf+IM3SK3GEGKg5j4mGQ+C2QjCF+RryJ6pJ17ebZyXwkXW0RYORIcQ?=
- =?us-ascii?Q?VT7RBA0wxWQEtxz2HwYf7xT9smhlkJ95ZbbY8iJ35C+qEO4nMqYbhCFfm59P?=
- =?us-ascii?Q?6M9u5Siw9ztkmDrJZm4kwWHWw6J8KcuyrWvnBntxB2CJwd/TiaL3WOUjGhxr?=
- =?us-ascii?Q?wIB4qgBked0rISnuLo8nIg4ckKlYBYXZZW4OHNbPpexTWGwGuK3DTajAVKpU?=
- =?us-ascii?Q?y3mMvY/PlbpjOpb7pZ09CHt9PGHBtk8H/hupquDsbD6t37wyq25hMgLtul/r?=
- =?us-ascii?Q?iHxnwO9J4l4NHZpflWEGZ7ytCsyny9OBiHHXo+9BE38b02W5s5YRRRsZcGYd?=
- =?us-ascii?Q?HTDkMXxHmRdtlnvWM+vA4B6P0Fcp4noth9EQezon7tGS5tnXFirc3CHOzArn?=
- =?us-ascii?Q?sk4SlykKtZZtrjaJbzAcK2iz+i0tHRl077NgNn12XmRRfznEnXaGz0YrSTr2?=
- =?us-ascii?Q?dCy702kRsqbcYTeCZ54AIO49U6XRa39EiWnr43OM7PVLvqJ1CYZJgpkvxBSu?=
- =?us-ascii?Q?2pnBLfQA3FX9YUecX6FvVn6i6qkw1QlDHVAoik24jazqdsqDA7E9gGcBKVtr?=
- =?us-ascii?Q?YsPxWib4VAWC+8rM2tg96z29nvZH8YW35nHDCcnX8dav8qedYJc8nusnSO0I?=
- =?us-ascii?Q?B8BSmwzIPfjGV5PazHuJgyu9FbTPT0UtVjEIFYixB5JjdoRSACWo537S9AH4?=
- =?us-ascii?Q?sNYlkifTCWtVBVw1Xqhe67iavdmV8GJCoVqgkfM/9XTC6ksg8//QOpZ1WAf8?=
- =?us-ascii?Q?1Q3wGEKZJRT/FzjdGRibEVE2zV7GwYaidYBgYXps8uGLDybjwD57dRsWZngZ?=
- =?us-ascii?Q?+2nTV74i+OmyqpvQPpWDD3dvxb5nD47YjtZz8rnLgm4CN6sfva0kubg5o/I3?=
- =?us-ascii?Q?SlS/p7k1amphTedkl04ltxLZPjSPKYOVVA/eYv7p5CO4Jm6tqKHyA7y5GB47?=
- =?us-ascii?Q?Zrp6SHqwyO/76E423LWQQuVmWmLimwJyF47ckDvcqX2BqOWCDx7i6sq+c/I2?=
- =?us-ascii?Q?oRintOoncPGpnYPDz1Mdd5pEuu0nhZz9qB5hmx4uTvfgpEO1J4txQErfMQcr?=
- =?us-ascii?Q?EWLcY5RQKx+dhtPX6bycZa/TsceflAV0WXLUJP8XuX9EBMdpS3mLk1ktRsyS?=
- =?us-ascii?Q?tNKYoBmlvwOEqivfwEnV/RVt815VyIG55W9VTqV5s9MJVnMl/uBqto6yLAY2?=
- =?us-ascii?Q?E2QnfWZG6AIiEKYcGCYX1M5YCFS+ZJr10bXYA4HYMnglFjHhm8cRqxXVBvd/?=
- =?us-ascii?Q?/dlLXicSVDuJSV8J9wmOPTK8nXU0ZIOTp3Rq1FhtfEIp/nzZyHUdcQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8510.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(52116014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?rn2rlGfmdjYnxG/LQNnTCQFsA3MmVad53drOBf7HoLPYwJr9jCXbBhQ+Nbmk?=
- =?us-ascii?Q?VMsqRz0cAAMvKBACvVIqpzv09aTQXmmtz3FUPze9bTcEGuoa4GjfI1irJAyI?=
- =?us-ascii?Q?SKnSuO47EWIHv0LTCPS14FNMowb4a08qZWq/j0TFLrnXZM/VroUU92u5HERi?=
- =?us-ascii?Q?b0wTPhi2+/AByfYFjuEbz/cdlrY3fV4j9wdFpPz+e+AN1z9AxAoUK3PyL7yH?=
- =?us-ascii?Q?WEPg03V2yzurMAPlsqWpGcHa8flExw1ckyveK/JNJb/ARL2bcQgmScYLR3pQ?=
- =?us-ascii?Q?9ye0i6l9Q5YPLzkejwQugIMsA9ymvzJPkE1kowve6xDYlLCB0lMIwy/R+SLH?=
- =?us-ascii?Q?AE/JhSI8J39ujQ5mX5VEGSmJYoR7u1EQkP+jeWSJLNNmS+1lS3iFCAcWOpK6?=
- =?us-ascii?Q?fMOJJaiuHkYHZe5vm9bjgxerL0OUaAtqpXzeXmk3gASBKp6Fdy9XsGDjLMjd?=
- =?us-ascii?Q?bQ/dN/DmvzvcolBwiZO2Yal3gvCYc5vT43JWkudk9sYGDxvT9b+zhTS00Zm0?=
- =?us-ascii?Q?nK+pJ+xSmRGQKfgRrDgf72DC5jZesU1Xos1FwhhB1l6bzNaIUx9EHM3JV8Om?=
- =?us-ascii?Q?01Gqd7DRdz7j8ttRAQ6cfd/FBaaYy+urdeM63aFyVIkOCuRuJiHzYucOH581?=
- =?us-ascii?Q?SdXpOUtkDF9MQY4pHsmTAaU8azTOWpmuOQYzK36XFMMDtt7JnQsIt8SCWBsR?=
- =?us-ascii?Q?c7crDyu3oAxKEQPvEM4c/7AdDMDa8jAogYQyRL8OhzfNaI8KrRGy9/JZvVw1?=
- =?us-ascii?Q?iwUFx+9BWPVEHqtOdycQm2iPV9a9N5aH68+qm92JERR4zLe0LbCSz3sF+Iva?=
- =?us-ascii?Q?TANrE4md2e/z6AwWIbbgvEZjCv2bL+0mD0ymaULD2hvGvfViaM+zlHUKLgf9?=
- =?us-ascii?Q?wy3wECfWVFd+idVPxjQKFYK1Fe34wjBSNszAil5K9L4A3T8V2c/oVrk/5vh0?=
- =?us-ascii?Q?sglKPJaWV0UWAq7ftvMXAPfGgb9ph+mYYjP89B7TPGVUCIyZGM4tChoP59aS?=
- =?us-ascii?Q?59eAGky4w/lGCBRUkjL2cRLO3FgjQij/l83wqB261828SmZcbxVqyqQDlUpp?=
- =?us-ascii?Q?uqvZnKta6Q1HrLqj+y51kyE1e9z/3FNCQ1qjtfKOybbb4KIRhLibPfxAdfea?=
- =?us-ascii?Q?yg/ihjCzXpcgJ5eW+qnuQbeMyZTSfCczeITQgj5HH9ZqGeTqsKxPMIcjytPY?=
- =?us-ascii?Q?BInG7sUkzi6nmQYsC45C7qRlP0exhPY79zxNSNZ3Jn8NzspSgKWr+VvPLFLi?=
- =?us-ascii?Q?jtQu3Eb3CuLtdEJPstKBI6GZ3ifZFeBHmUYa+lybCgCSFvINbYVzpeegfN1p?=
- =?us-ascii?Q?f5TRNDpHxBVSsYmjUYhs7TZNfZNpvXOkZknpxKbzx6fdcA+yd95zkJ4Cd3sV?=
- =?us-ascii?Q?smzRbnmT/8GZVLZXwp+EX2D22fMGijGb+ppd0z5aUYb5x3IBLvNUpYvKG0WF?=
- =?us-ascii?Q?pjqePmNsepInzODfTTTlsKp9DvSNfroUlkKKon6tAP926wu3K/mCyb/Y2Fva?=
- =?us-ascii?Q?Aa0ths1F1n5QYe4jSXf/WDaasnREDgvTUjNe4FHD8qRezwZLq2lQJbSlhUNS?=
- =?us-ascii?Q?622HM9TUcq3H0lEco0P5bTJOps9+8XK48vADUwtw?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 910cfa75-5fe7-43f2-512e-08dd943d1478
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8510.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 May 2025 05:47:01.9548
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: InHpiPaLVLozSQKlJ1I+MNfexeFBpbdybHFcp/kbBXv6JgE8Jx8iDvfa2nRA2TzreIaqYOAkNKLNXhCtwGLXUg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR04MB7572
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250515081449.1433772-3-chiang.brian@inventec.com>
 
-Fix the handling of err_wq_init and err_reg_netdev paths in
-enetc4_pf_netdev_create() function.
+Hi Chiang,
 
-Fixes: 6c5bafba347b ("net: enetc: add MAC filtering for i.MX95 ENETC PF")
-Signed-off-by: Wei Fang <wei.fang@nxp.com>
----
- drivers/net/ethernet/freescale/enetc/enetc4_pf.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+kernel test robot noticed the following build errors:
 
-diff --git a/drivers/net/ethernet/freescale/enetc/enetc4_pf.c b/drivers/net/ethernet/freescale/enetc/enetc4_pf.c
-index c16378eb50bc..b3dc1afeefd1 100644
---- a/drivers/net/ethernet/freescale/enetc/enetc4_pf.c
-+++ b/drivers/net/ethernet/freescale/enetc/enetc4_pf.c
-@@ -971,8 +971,9 @@ static int enetc4_pf_netdev_create(struct enetc_si *si)
- 	return 0;
- 
- err_reg_netdev:
--	enetc4_link_deinit(priv);
-+	destroy_workqueue(si->workqueue);
- err_wq_init:
-+	enetc4_link_deinit(priv);
- err_link_init:
- 	enetc_free_msix(priv);
- err_alloc_msix:
+[auto build test ERROR on robh/for-next]
+[also build test ERROR on groeck-staging/hwmon-next krzk-dt/for-next linus/master v6.15-rc6 next-20250515]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Chiang-Brian/hwmon-pmbus-tps53679-Add-support-for-TPS53685/20250515-171511
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
+patch link:    https://lore.kernel.org/r/20250515081449.1433772-3-chiang.brian%40inventec.com
+patch subject: [PATCH v7 2/2] hwmon: (pmbus/tps53679) Add support for TPS53685
+config: i386-buildonly-randconfig-001-20250516 (https://download.01.org/0day-ci/archive/20250516/202505161242.oQFhPxZ9-lkp@intel.com/config)
+compiler: clang version 20.1.2 (https://github.com/llvm/llvm-project 58df0ef89dd64126512e4ee27b4ac3fd8ddf6247)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250516/202505161242.oQFhPxZ9-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202505161242.oQFhPxZ9-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> drivers/hwmon/pmbus/tps53679.c:133:50: error: incompatible integer to pointer conversion passing 'int' to parameter of type 'char *' [-Wint-conversion]
+     133 |         ret = tps53679_identify_chip(client, pmbus_rev, device_id);
+         |                                                         ^~~~~~~~~
+   drivers/hwmon/pmbus/tps53679.c:90:26: note: passing argument to parameter 'id' here
+      90 |                                   u8 revision, char *id)
+         |                                                      ^
+>> drivers/hwmon/pmbus/tps53679.c:165:10: error: incompatible pointer to integer conversion passing 'char[2]' to parameter of type 'int' [-Wint-conversion]
+     165 |                                             TPS53681_DEVICE_ID);
+         |                                             ^~~~~~~~~~~~~~~~~~
+   drivers/hwmon/pmbus/tps53679.c:34:32: note: expanded from macro 'TPS53681_DEVICE_ID'
+      34 | #define TPS53681_DEVICE_ID     "\x81"
+         |                                ^~~~~~
+   drivers/hwmon/pmbus/tps53679.c:129:25: note: passing argument to parameter 'device_id' here
+     129 |                                         int pmbus_rev, int device_id)
+         |                                                            ^
+   2 errors generated.
+
+
+vim +133 drivers/hwmon/pmbus/tps53679.c
+
+53030bcc87e4a4b Guenter Roeck 2020-01-20  120  
+53030bcc87e4a4b Guenter Roeck 2020-01-20  121  /*
+53030bcc87e4a4b Guenter Roeck 2020-01-20  122   * Common identification function for chips with multi-phase support.
+53030bcc87e4a4b Guenter Roeck 2020-01-20  123   * Since those chips have special configuration registers, we want to have
+53030bcc87e4a4b Guenter Roeck 2020-01-20  124   * some level of reassurance that we are really talking with the chip
+53030bcc87e4a4b Guenter Roeck 2020-01-20  125   * being probed. Check PMBus revision and chip ID.
+53030bcc87e4a4b Guenter Roeck 2020-01-20  126   */
+53030bcc87e4a4b Guenter Roeck 2020-01-20  127  static int tps53679_identify_multiphase(struct i2c_client *client,
+53030bcc87e4a4b Guenter Roeck 2020-01-20  128  					struct pmbus_driver_info *info,
+53030bcc87e4a4b Guenter Roeck 2020-01-20  129  					int pmbus_rev, int device_id)
+53030bcc87e4a4b Guenter Roeck 2020-01-20  130  {
+53030bcc87e4a4b Guenter Roeck 2020-01-20  131  	int ret;
+53030bcc87e4a4b Guenter Roeck 2020-01-20  132  
+53030bcc87e4a4b Guenter Roeck 2020-01-20 @133  	ret = tps53679_identify_chip(client, pmbus_rev, device_id);
+53030bcc87e4a4b Guenter Roeck 2020-01-20  134  	if (ret < 0)
+53030bcc87e4a4b Guenter Roeck 2020-01-20  135  		return ret;
+53030bcc87e4a4b Guenter Roeck 2020-01-20  136  
+53030bcc87e4a4b Guenter Roeck 2020-01-20  137  	ret = tps53679_identify_mode(client, info);
+53030bcc87e4a4b Guenter Roeck 2020-01-20  138  	if (ret < 0)
+53030bcc87e4a4b Guenter Roeck 2020-01-20  139  		return ret;
+53030bcc87e4a4b Guenter Roeck 2020-01-20  140  
+53030bcc87e4a4b Guenter Roeck 2020-01-20  141  	return tps53679_identify_phases(client, info);
+53030bcc87e4a4b Guenter Roeck 2020-01-20  142  }
+53030bcc87e4a4b Guenter Roeck 2020-01-20  143  
+53030bcc87e4a4b Guenter Roeck 2020-01-20  144  static int tps53679_identify(struct i2c_client *client,
+53030bcc87e4a4b Guenter Roeck 2020-01-20  145  			     struct pmbus_driver_info *info)
+53030bcc87e4a4b Guenter Roeck 2020-01-20  146  {
+53030bcc87e4a4b Guenter Roeck 2020-01-20  147  	return tps53679_identify_mode(client, info);
+53030bcc87e4a4b Guenter Roeck 2020-01-20  148  }
+53030bcc87e4a4b Guenter Roeck 2020-01-20  149  
+340e957083852e1 Chiang Brian  2025-05-15  150  static int tps53685_identify(struct i2c_client *client,
+340e957083852e1 Chiang Brian  2025-05-15  151  				 struct pmbus_driver_info *info)
+340e957083852e1 Chiang Brian  2025-05-15  152  {
+340e957083852e1 Chiang Brian  2025-05-15  153  	info->func[1] |= PMBUS_HAVE_VIN | PMBUS_HAVE_IIN | PMBUS_HAVE_PIN |
+340e957083852e1 Chiang Brian  2025-05-15  154  			 PMBUS_HAVE_STATUS_INPUT;
+340e957083852e1 Chiang Brian  2025-05-15  155  	info->format[PSC_VOLTAGE_OUT] = linear;
+340e957083852e1 Chiang Brian  2025-05-15  156  	return tps53679_identify_chip(client, TPS53681_PMBUS_REVISION,
+340e957083852e1 Chiang Brian  2025-05-15  157  					   TPS53685_DEVICE_ID);
+340e957083852e1 Chiang Brian  2025-05-15  158  }
+340e957083852e1 Chiang Brian  2025-05-15  159  
+53030bcc87e4a4b Guenter Roeck 2020-01-20  160  static int tps53681_identify(struct i2c_client *client,
+53030bcc87e4a4b Guenter Roeck 2020-01-20  161  			     struct pmbus_driver_info *info)
+53030bcc87e4a4b Guenter Roeck 2020-01-20  162  {
+53030bcc87e4a4b Guenter Roeck 2020-01-20  163  	return tps53679_identify_multiphase(client, info,
+53030bcc87e4a4b Guenter Roeck 2020-01-20  164  					    TPS53681_PMBUS_REVISION,
+53030bcc87e4a4b Guenter Roeck 2020-01-20 @165  					    TPS53681_DEVICE_ID);
+53030bcc87e4a4b Guenter Roeck 2020-01-20  166  }
+53030bcc87e4a4b Guenter Roeck 2020-01-20  167  
+
 -- 
-2.34.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
