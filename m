@@ -1,147 +1,163 @@
-Return-Path: <linux-kernel+bounces-651726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-651730-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70337ABA242
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 19:55:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 250E7ABA256
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 20:03:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3CEC77B36E2
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 17:54:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1087F3BBCD4
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 18:02:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF59E27467D;
-	Fri, 16 May 2025 17:55:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DA16278E7C;
+	Fri, 16 May 2025 18:02:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oXsYRLW9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b="IDpC/Q9n"
+Received: from mxout2.routing.net (mxout2.routing.net [134.0.28.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EC15A31;
-	Fri, 16 May 2025 17:55:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACA7D221719;
+	Fri, 16 May 2025 18:02:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.0.28.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747418136; cv=none; b=nDDYXM5PcVLw/Ddzd5PcgFzyKWBF5KW47wxtjqnmlJlbH62Zm+bB81IIzAeBYMhy/0yc0vAFkxrjmgjGkilV5+d/ISsJ74nj0z0PYmxwVpBumnjBCj6MHQrcbrxOSltnx8LKRQUpxjeGTK3apz2a5iw1isA41o2p1D/PEvq1G2w=
+	t=1747418526; cv=none; b=F6kCzYB6V0pamZoYS1TBwO88XHdhPmEp15A0VgtVJJZU1N93i5e4A5o43ILEjh1AAfqWafqXdfNmlzAJ3qynC4693LpbmKY0/FxIJWTdhpRAfwsP+AQsP//kcoxnOuzzn1ogd69UPp6sy3p0VMyiClF36TBpfMKWDBaDrSH6sPc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747418136; c=relaxed/simple;
-	bh=87659Yp0pBUovntwXSCrP69ngOFsdE4y0V+GC8gkJPQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Mfvgvlxqmh0vtW7oL40PyMh47JctpYCuQUWS3ppTiKpv4SsoAdqFL2mY6VIPw9J+Rwb8aQGa/4Yn/r9VrV5LlxFfdKpmHw6ajDmegpT9NeUOhamNRuSL8H8D/UBZpMq6+rzMTo8AwJG6lmV6d7Li7n4m5dNUANrBymps420cTno=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oXsYRLW9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B88CFC4CEE4;
-	Fri, 16 May 2025 17:55:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747418135;
-	bh=87659Yp0pBUovntwXSCrP69ngOFsdE4y0V+GC8gkJPQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oXsYRLW9S2kor5aUGNfsKLqJVIoZythoR8GaXfP38Yy4hdPsAcVf5kRj5L/i6j/i8
-	 lGloeN3rqntU+5KdeNDQm3FMLA1jMGC2qPwUFj9A5netwgHaQ5OSaJNJoF2PRU8Ux4
-	 gSt5y/JoHkV0Ex2LG7Y4zKPbrMhTS7SXvXvcru46DcmjhBxvDED/1sAEyRV29iP+eT
-	 9zJljoguKeT1kH0DsESv2DSpZ7hkZuMRP8CuS7r5Fx4jJ1vJw9373bVUb9yF41ui9F
-	 8tfFaGHseseXow1DdgkCdHZ4I6e3fElbcx4JnxQVWEEcoT7CHtpMFSGT6M06fUt/qz
-	 wV+Fm6eGPTzwg==
-Date: Fri, 16 May 2025 19:55:27 +0200
-From: Danilo Krummrich <dakr@kernel.org>
-To: Daniel Almeida <daniel.almeida@collabora.com>
-Cc: Abdiel Janulgue <abdiel.janulgue@gmail.com>, lyude@redhat.com,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Valentin Obst <kernel@valentinobst.de>,
-	open list <linux-kernel@vger.kernel.org>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Robin Murphy <robin.murphy@arm.com>, airlied@redhat.com,
-	rust-for-linux@vger.kernel.org,
-	"open list:DMA MAPPING HELPERS" <iommu@lists.linux.dev>,
-	Petr Tesarik <petr@tesarici.cz>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Sui Jingfeng <sui.jingfeng@linux.dev>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Michael Kelley <mhklinux@outlook.com>
-Subject: Re: [RFC PATCH 1/2] rust: add initial scatterlist bindings
-Message-ID: <aCd8D5IA0RXZvtcv@pollux>
-References: <20250512095544.3334680-1-abdiel.janulgue@gmail.com>
- <20250512095544.3334680-2-abdiel.janulgue@gmail.com>
- <B3564D77-9E26-4019-9B75-B0C53B26B64F@collabora.com>
- <aCZYcs6Aj-cz81qs@pollux>
- <E2F129BE-777A-4DBD-BC3E-44033BCD11E4@collabora.com>
+	s=arc-20240116; t=1747418526; c=relaxed/simple;
+	bh=UuF/JNUJBZ53+cPezbxA19lKN/JAyHQZ9Ehmog69s08=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LHw8bGvj0xrtEIqvZVReKMvmTB3rqiN1uYVY3P2Et9QBCjoqzo//NaUCLb94RCbGWaWiNaN/8YnnFrjd3sKOPktKBcQkGFEHkdHRdUa5nf9QWJWHWSePph7MYhX0cSm8qJQeNVGUQ5I0/mVsg4I2Cy0R0J7qDY/ZboAkZMcd77I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de; spf=pass smtp.mailfrom=fw-web.de; dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b=IDpC/Q9n; arc=none smtp.client-ip=134.0.28.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fw-web.de
+Received: from mxbulk.masterlogin.de (unknown [192.168.10.85])
+	by mxout2.routing.net (Postfix) with ESMTP id 0EC785FCB0;
+	Fri, 16 May 2025 18:01:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailerdienst.de;
+	s=20200217; t=1747418515;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=+JWgG7Xrb6kxHm/xBKBKplVRGDNZd7l9BWTCNftkPlo=;
+	b=IDpC/Q9nRdQRXK07+fcgEwZW75VKBwMst5E+e4D80srfYhdwyAFBS0ykeaQEhis9D5K/Mt
+	rmlKzEUgu82nwjK21lyQeaGGsGmMjnq0r01km9cVo9aBAY6LLS3YRceQkPZavqqnicPigT
+	9vp9f4y3eEFltnfyfLtyOoTmOkYIoQg=
+Received: from frank-u24.. (fttx-pool-157.180.226.139.bambit.de [157.180.226.139])
+	by mxbulk.masterlogin.de (Postfix) with ESMTPSA id B069A1226D6;
+	Fri, 16 May 2025 18:01:54 +0000 (UTC)
+From: Frank Wunderlich <linux@fw-web.de>
+To: Andrew Lunn <andrew@lunn.ch>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: Frank Wunderlich <frank-w@public-files.de>,
+	=?UTF-8?q?Ar=C4=B1n=C3=A7=20=C3=9CNAL?= <arinc.unal@arinc9.com>,
+	Landen Chao <Landen.Chao@mediatek.com>,
+	DENG Qingfang <dqfext@gmail.com>,
+	Sean Wang <sean.wang@mediatek.com>,
+	Daniel Golle <daniel@makrotopia.org>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Felix Fietkau <nbd@nbd.name>,
+	netdev@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: [PATCH v2 00/14] further mt7988 devicetree work
+Date: Fri, 16 May 2025 20:01:30 +0200
+Message-ID: <20250516180147.10416-1-linux@fw-web.de>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <E2F129BE-777A-4DBD-BC3E-44033BCD11E4@collabora.com>
 
-On Fri, May 16, 2025 at 01:57:59PM -0300, Daniel Almeida wrote:
-> Hi Danilo, 
-> 
-> Replying to you and Lyude here at the same time.
-> 
-> > On 15 May 2025, at 18:11, Danilo Krummrich <dakr@kernel.org> wrote:
-> > 
-> > On Mon, May 12, 2025 at 08:39:36AM -0300, Daniel Almeida wrote:
-> >>> On 12 May 2025, at 06:53, Abdiel Janulgue <abdiel.janulgue@gmail.com> wrote:
-> >>> +impl SGEntry {
-> >>> +    /// Convert a raw `struct scatterlist *` to a `&'a SGEntry`.
-> >>> +    ///
-> >>> +    /// # Safety
-> >>> +    ///
-> >>> +    /// Callers must ensure that the `struct scatterlist` pointed to by `ptr` is valid for the lifetime
-> >>> +    /// of the returned reference.
-> >>> +    pub unsafe fn as_ref<'a>(ptr: *mut bindings::scatterlist) -> &'a Self {
-> >>> +        // SAFETY: The pointer is valid and guaranteed by the safety requirements of the function.
-> >>> +        unsafe { &*ptr.cast() }
-> >>> +    }
-> >> 
-> >> Hmm, this name is not good. When people see as_ref() they will think of the
-> >> standard library where it is used to convert from &T to &U. This is not what is
-> >> happening here. Same in other places where as_ref() is used in this patch.
-> > 
-> > as_ref() is fine, we use this exact way commonly in the kernel, e.g. for Device,
-> > GlobalLockedBy, Cpumask and for various DRM types.
-> > 
-> > Rust std does the same, e.g. in [1].
-> > 
-> > I think I also asked for this in your Resource patch for consistency, where you
-> > call this from_ptr() instead.
-> > 
-> > [1] https://doc.rust-lang.org/std/ptr/struct.NonNull.html#method.as_ref
-> > 
-> 
-> That is not the same thing. What you've linked to still takes &self and returns
-> &T.
+From: Frank Wunderlich <frank-w@public-files.de>
 
-Fair enough. :)
+This series continues mt7988 devicetree work
 
-> So, IMHO, the problem is not conflicting with the std AsRef, in the sense that the
-> code might not compile because of it. The problem is taking a very well
-> known name and then changing its semantics.
+- Add SPI with BPI-R4 nand to reach eMMC
+- Add thermal protection (fan+cooling-points)
+- Extend cpu frequency scaling with CCI
+- Basic network-support (ethernet controller + builtin switch + SFP Cages)
 
-I don't see the problem, a function signature is always read as a whole, in this
-case:
+depencies (i hope this list is complete and latest patches/series linked):
 
-	fn as_ref<'a>(ptr: *mut bindings::foo) -> &'a Self
+"Add Bananapi R4 variants and add xsphy" (reviewed, partially applied):
+https://patchwork.kernel.org/project/linux-mediatek/list/?series=955733
 
-which reads as "take this pointer and give me a reference", i.e. "as ref".
+"net: phy: mediatek: do not require syscon compatible for pio property":
+https://patchwork.kernel.org/project/netdevbpf/patch/20250510174933.154589-1-linux@fw-web.de/
+for phy led function (RFC not yet reviewed, resent without RFC)
 
-Anyways, I'm not very much opinionated about the exact name, I care about
-consistency.
+for 2.5g phy function (currently disabled):
+- net: ethernet: mtk_eth_soc: add support for MT7988 internal 2.5G PHY (already merged to 6.15-net-next)
+- net: phy: mediatek: add driver for built-in 2.5G ethernet PHY on MT7988
+  https://patchwork.kernel.org/project/netdevbpf/patch/20250516102327.2014531-3-SkyLake.Huang@mediatek.com/ (v4)
 
-So, if you feel like we should name it differently, please also change the
-existing functions in the kernel.
+for SFP-Function (macs currently disabled):
 
-> Anyways, this is just a small observation. I'll drop my case, specially
-> considering that the current as_ref() is already prevalent in a lot of code upstream :)
-> 
-> — Daniel
-> 
+PCS clearance which is a 1.5 year discussion currently ongoing
+
+e.g. something like this (one of):
+* https://patchwork.kernel.org/project/netdevbpf/patch/20250511201250.3789083-4-ansuelsmth@gmail.com/ (v4)
+* https://patchwork.kernel.org/project/netdevbpf/patch/20250512161013.731955-4-sean.anderson@linux.dev/ (v4)
+* https://patchwork.kernel.org/project/netdevbpf/patch/ba4e359584a6b3bc4b3470822c42186d5b0856f9.1721910728.git.daniel@makrotopia.org/
+
+full usxgmii driver:
+https://patchwork.kernel.org/project/netdevbpf/patch/07845ec900ba41ff992875dce12c622277592c32.1702352117.git.daniel@makrotopia.org/
+
+first PCS-discussion is here:
+https://patchwork.kernel.org/project/netdevbpf/patch/8aa905080bdb6760875d62cb3b2b41258837f80e.1702352117.git.daniel@makrotopia.org/
+
+and then dts nodes for sgmiisys+usxgmii
+
+when above depencies are solved the mac1/2 can be enabled and 2.5G phy/SFP slots will work.
+
+changes:
+v2:
+  - change reg to list of items in eth binding
+  - changed mt7530 binding:
+    - unevaluatedProperties=false
+    - mediatek,pio subproperty
+    - from patternProperty to property
+  - board specific properties like led function and labels moved to bpi-r4 dtsi
+
+Frank Wunderlich (14):
+  dt-bindings: net: mediatek,net: update for mt7988
+  dt-bindings: net: dsa: mediatek,mt7530: add dsa-port definition for
+    mt7988
+  dt-bindings: net: dsa: mediatek,mt7530: add internal mdio bus
+  arm64: dts: mediatek: mt7988: add spi controllers
+  arm64: dts: mediatek: mt7988: move uart0 and spi1 pins to soc dtsi
+  arm64: dts: mediatek: mt7988: add cci node
+  arm64: dts: mediatek: mt7988: add phy calibration efuse subnodes
+  arm64: dts: mediatek: mt7988: add basic ethernet-nodes
+  arm64: dts: mediatek: mt7988: add switch node
+  arm64: dts: mediatek: mt7988a-bpi-r4: Add fan and coolingmaps
+  arm64: dts: mediatek: mt7988a-bpi-r4: configure spi-nodes
+  arm64: dts: mediatek: mt7988a-bpi-r4: add proc-supply for cci
+  arm64: dts: mediatek: mt7988a-bpi-r4: add sfp cages and link to gmac
+  arm64: dts: mediatek: mt7988a-bpi-r4: configure switch phys and leds
+
+ .../bindings/net/dsa/mediatek,mt7530.yaml     |  24 +-
+ .../devicetree/bindings/net/mediatek,net.yaml |  10 +-
+ .../mediatek/mt7988a-bananapi-bpi-r4-2g5.dts  |  11 +
+ .../dts/mediatek/mt7988a-bananapi-bpi-r4.dts  |  18 +
+ .../dts/mediatek/mt7988a-bananapi-bpi-r4.dtsi | 158 ++++++-
+ arch/arm64/boot/dts/mediatek/mt7988a.dtsi     | 389 +++++++++++++++++-
+ 6 files changed, 590 insertions(+), 20 deletions(-)
+
+-- 
+2.43.0
+
 
