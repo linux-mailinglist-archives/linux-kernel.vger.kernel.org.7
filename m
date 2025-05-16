@@ -1,140 +1,168 @@
-Return-Path: <linux-kernel+bounces-651923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-651919-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C8DCABA49D
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 22:18:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8AABABA494
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 22:17:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1A871C039ED
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 20:18:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 953FB1881DEB
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 20:16:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C09527FD58;
-	Fri, 16 May 2025 20:17:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D75728000E;
+	Fri, 16 May 2025 20:16:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wA7+KUkT"
-Received: from mail-qk1-f201.google.com (mail-qk1-f201.google.com [209.85.222.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pwqCmEeo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19D66272E4E
-	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 20:17:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63BA427CCC4;
+	Fri, 16 May 2025 20:16:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747426657; cv=none; b=YehktjCA9x4iE5J2wabLfWQQexFk6Y+B12R/lamc2n172N/6QLG+9FsoZbynCVDhK8EDrihkXbCnfiaSPDtczRfQXn/an+8+AGzvPNPtk1kKrV5/K0No4tDRNQO4AhfMFuX2t3vZ2WNvzp3/+qDuZCpFVNBdaLzLQt7HpsWs28c=
+	t=1747426590; cv=none; b=sJZPhKQhALlh2k3PIRRBS05Xvs3/CSfwODlDXD1Ju6s0MZpzpcQTSamX6Z9dqgh+o6sJFb3OMcu39n+h+lHWrnSAjGHpxfaCF0VXFiDecfqmi34TC/O4J8Hb+zhMBQyVRe/ihLnsyaWuibb+zJQT2KIEVGcSKSQ+4GJ5ZKrsa0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747426657; c=relaxed/simple;
-	bh=Bu/MHyg4YHVuyS3LOBxtHZLr7L1GcDOPIZ8uDIhpLxE=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=ohIo4fcrWHd1iRWB36PMQdUGNVRKbCliCKIT3pOsypBGU9B+ak9QCSbH1sIN+DUD9KiGkHCnpd4ml2SGbU+8gDal7VHrm87v5s/b4otcptNge5SyNh8TFYnC0ZtvGmZQ8aShY8zz5/XeSr5IA8CPUOUj/FPKDMxgSvxcRUYvqW4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--rmoar.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wA7+KUkT; arc=none smtp.client-ip=209.85.222.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--rmoar.bounces.google.com
-Received: by mail-qk1-f201.google.com with SMTP id af79cd13be357-7c95556f824so252119685a.2
-        for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 13:17:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1747426655; x=1748031455; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=9CHB9wwhPWWYDPfcbzkF4W4PL5+L+ibby6qD0MEp0ho=;
-        b=wA7+KUkTZfDZHWUzAQZEc/j43NZtxeO0xvYKRFAOOEBw5HhFLqRCLmVhZyU6AUXsmE
-         sbeXGCG/+E1XAxoNMHWt8uLAplyuiG0eD0FDOWCA9iePoWTcTR4NYLpiC73paNcVSGJA
-         vdKUgUfbS2ZWV5cKMPuCoiyeFt95o8b3fyH7aSqhTaq3Ddlkl0whTqHjImQZDvl8Ci7+
-         /KEa0vsg5oKet608rnx199jPnO0NDkMcEXd6QUgFctxdD1vVVKGxVaO/Ghk1C5yX3Umj
-         GMrQTwkd+W9Eo48NmhDVTlWAtDD4gaU95aRuawDMWGakd0avlm8UhYOfQ/aB8XiqL5Fy
-         cPSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747426655; x=1748031455;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=9CHB9wwhPWWYDPfcbzkF4W4PL5+L+ibby6qD0MEp0ho=;
-        b=GdYEeJDDfD3RjcqYKqUep9q5mdFNRm3D51WqY6JY7NAyUsZfN5gaoZP72MOvrOwY4i
-         Sz19s2Rz+HReJWg3asl3ryrcs5weaY08mw+6Q/ufC4aF1a3JiHvZ4gNWTBgxFD4FKlQf
-         SYaSDswgBjT5wxckmhsT1/VMooG+QSiSgRWS5e7x7BFyLy3hw2Htb4pP3vTDUHhzgMWb
-         v2MBn3TBmgPDsCmKic9s5oNlnT4u3xZORKQqkJ8eQlnPGKCXyyeIEXooS0cfuJs6ID4F
-         L8c1VF+6fvrXSMqShzAXeb1R/LLYgvqdcl4JfRCgH0FIci6NBWmINmsPh2LfdtYyvgHW
-         Nj2A==
-X-Forwarded-Encrypted: i=1; AJvYcCUbhY11zzTNf+RHWONq6n0jrbL1lrDXZRkVS0vzY5zyc3HATYM1OELPoE+63+vCN3AiTjEcIVlQs3fPJis=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQ2ei/lec9IXF6AAD83WAtrIQFiL4WcykWZrFrorOiz6ait2z9
-	lcsdjdvpoWqr+Ms7sHMI2dhLpUHlR4VlxayyCiwvW21gvL/BcF/gvyQi4K6UgsLcC4svVFDEw5+
-	xAA==
-X-Google-Smtp-Source: AGHT+IGFEFtE0VXSdQwE4QdE7XZfEG6vLdmjRQWUL17HoHMazJClUlrpqfyCzriA1nm9WNAdMI+aZK50Dw==
-X-Received: from qknqj9.prod.google.com ([2002:a05:620a:8809:b0:7cd:177:9ba4])
- (user=rmoar job=prod-delivery.src-stubby-dispatcher) by 2002:a05:620a:1a26:b0:7c5:592c:c27
- with SMTP id af79cd13be357-7cd46721b89mr656986685a.21.1747426654978; Fri, 16
- May 2025 13:17:34 -0700 (PDT)
-Date: Fri, 16 May 2025 20:16:15 +0000
+	s=arc-20240116; t=1747426590; c=relaxed/simple;
+	bh=D1Z5w9AYGSfUlSKYqF+jgYYMgx9eNNsKAADS1moCkaw=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=dqbP0DcAA4DEhI+WCAWCKgx/gaZUHgYzzpkbv0akLuM8T8wwwthzmNqBiei/xU7AOlyxSDnnDVGWeXjbQcwFaO/jZ+Gsq4reUumUxZMe9QPBXHdmQNzrMnm13+xN1eOuu/5vEuGHbK5HzdwlfEKpMTh3U9Qi4kd5tPNO0AhUWtA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pwqCmEeo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D593C4CEE4;
+	Fri, 16 May 2025 20:16:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747426589;
+	bh=D1Z5w9AYGSfUlSKYqF+jgYYMgx9eNNsKAADS1moCkaw=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=pwqCmEeonx6ZXsuHmxwr0Jq+QDCCSpFRxtVtCeFnTCGBowrq1J/0iVNS+DlBi8lT5
+	 3086VLUmQPO+HjhKKoeuLvHgdKJNjYW7tV11djgzhOesw81NxW4b83xfLL3WK+fRcG
+	 eoA0LtBJgkrc++Tk0L9/C0/IKi3IZLSLwS5Ogyy9RATr+JzkQILJug8DFmCe85v5d/
+	 8XGn6o4w1ZgJD4uipVfaCJAiGijIyz+xLxm1S6/Bve61cO+RXpK5PlweNjUVxB2JOf
+	 7uWXhI4oCgWfRPAAcVHr7rz+6EB7ASHt6F+9GLxKvqQmu4ZJUKxDbASAGOUK2f58Z1
+	 ieYD1QT0BfbYw==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-X-Mailer: git-send-email 2.49.0.1101.gccaa498523-goog
-Message-ID: <20250516201615.1237037-1-rmoar@google.com>
-Subject: [PATCH] kunit: tool: add test counts to JSON output
-From: Rae Moar <rmoar@google.com>
-To: davidgow@google.com, brendan.higgins@linux.dev, skhan@linuxfoundation.org
-Cc: dlatypov@google.com, kunit-dev@googlegroups.com, 
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	Rae Moar <rmoar@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 16 May 2025 22:16:23 +0200
+Message-Id: <D9XV0Y22JHU5.3T51FVQONVERC@kernel.org>
+Cc: "FUJITA Tomonori" <fujita.tomonori@gmail.com>, <andrew+netdev@lunn.ch>,
+ <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+ <pabeni@redhat.com>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+ <conor+dt@kernel.org>, <hkallweit1@gmail.com>, <linux@armlinux.org.uk>,
+ <florian.fainelli@broadcom.com>, <bcm-kernel-feedback-list@broadcom.com>,
+ <kabel@kernel.org>, <andrei.botila@oss.nxp.com>, <tmgross@umich.edu>,
+ <ojeda@kernel.org>, <alex.gaynor@gmail.com>, <boqun.feng@gmail.com>,
+ <gary@garyguo.net>, <bjorn3_gh@protonmail.com>, <benno.lossin@proton.me>,
+ <a.hindborg@kernel.org>, <aliceryhl@google.com>, <dakr@kernel.org>,
+ <sd@queasysnail.net>, <michael@fossekall.de>, <daniel@makrotopia.org>,
+ <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>
+Subject: Re: [net-next PATCH v10 7/7] rust: net::phy sync with
+ match_phy_device C changes
+From: "Benno Lossin" <lossin@kernel.org>
+To: "Christian Marangi" <ansuelsmth@gmail.com>
+X-Mailer: aerc 0.20.1
+References: <20250515112721.19323-1-ansuelsmth@gmail.com>
+ <20250515112721.19323-8-ansuelsmth@gmail.com>
+ <20250516.213005.1257508224493103119.fujita.tomonori@gmail.com>
+ <D9XO2721HEQI.3BGSHJXCHPTL@kernel.org>
+ <682755d8.050a0220.3c78c8.a604@mx.google.com>
+In-Reply-To: <682755d8.050a0220.3c78c8.a604@mx.google.com>
 
-Add the test counts to the JSON output from kunit.py. For example:
+On Fri May 16, 2025 at 5:12 PM CEST, Christian Marangi wrote:
+> On Fri, May 16, 2025 at 04:48:53PM +0200, Benno Lossin wrote:
+>> On Fri May 16, 2025 at 2:30 PM CEST, FUJITA Tomonori wrote:
+>> > On Thu, 15 May 2025 13:27:12 +0200
+>> > Christian Marangi <ansuelsmth@gmail.com> wrote:
+>> >> @@ -574,6 +577,23 @@ pub const fn create_phy_driver<T: Driver>() -> D=
+riverVTable {
+>> >>  /// This trait is used to create a [`DriverVTable`].
+>> >>  #[vtable]
+>> >>  pub trait Driver {
+>> >> +    /// # Safety
+>> >> +    ///
+>> >> +    /// For the duration of `'a`,
+>> >> +    /// - the pointer must point at a valid `phy_driver`, and the ca=
+ller
+>> >> +    ///   must be in a context where all methods defined on this str=
+uct
+>> >> +    ///   are safe to call.
+>> >> +    unsafe fn from_raw<'a>(ptr: *const bindings::phy_driver) -> &'a =
+Self
+>> >> +    where
+>> >> +        Self: Sized,
+>> >> +    {
+>> >> +        // CAST: `Self` is a `repr(transparent)` wrapper around `bin=
+dings::phy_driver`.
+>> >> +        let ptr =3D ptr.cast::<Self>();
+>> >> +        // SAFETY: by the function requirements the pointer is valid=
+ and we have unique access for
+>> >> +        // the duration of `'a`.
+>> >> +        unsafe { &*ptr }
+>> >> +    }
+>> >
+>> > We might need to update the comment. phy_driver is const so I think
+>> > that we can access to it any time.
+>>=20
+>> Why is any type implementing `Driver` a transparent wrapper around
+>> `bindings::phy_driver`?
+>>=20
+>
+> Is this referred to a problem with using from_raw or more of a general
+> question on how the rust wrapper are done for phy code?
 
-...
-"git_branch": "kselftest",
-"misc":
-{
-    "tests": 2,
-    "passed": 1.
-    "failed": 1,
-    "crashed": 0,
-    "skipped": 0,
-    "errors": 0,
-}
-...
+I looked at the `phy.rs` file again and now I'm pretty sure the above
+code is wrong. `Self` can be implemented on any type (even types like
+`Infallible` that do not have any valid bit patterns, since it's an
+empty enum). The abstraction for `bindings::phy_driver` is
+`DriverVTable` not an object of type `Self`, so you should cast to that
+pointer instead.
 
-To output the JSON using the following command:
-./tools/testing/kunit/kunit.py run example --json
+>> >>      /// Defines certain other features this PHY supports.
+>> >>      /// It is a combination of the flags in the [`flags`] module.
+>> >>      const FLAGS: u32 =3D 0;
+>> >> @@ -602,7 +622,7 @@ fn get_features(_dev: &mut Device) -> Result {
+>> >> =20
+>> >>      /// Returns true if this is a suitable driver for the given phyd=
+ev.
+>> >>      /// If not implemented, matching is based on [`Driver::PHY_DEVIC=
+E_ID`].
+>> >> -    fn match_phy_device(_dev: &Device) -> bool {
+>> >> +    fn match_phy_device<T: Driver>(_dev: &mut Device, _drv: &T) -> b=
+ool {
+>> >>          false
+>> >>      }
+>> >
+>> > I think that it could be a bit simpler:
+>> >
+>> > fn match_phy_device(_dev: &mut Device, _drv: &Self) -> bool
+>> >
+>> > Or making it a trait method might be more idiomatic?
+>> >
+>> > fn match_phy_device(&self, _dev: &mut Device) -> bool
+>>=20
+>> Yeah that would make most sense.
+>>
+>
+> I think
+>
+> fn match_phy_device(_dev: &mut Device, _drv: &Self) -> bool
+>
+> more resemble the C parallel function so I think this suite the best,
+> should make it easier to port if ever (am I wrong?)
 
-This has been requested by KUnit users. The counts are in a "misc"
-field because the JSON output needs to be compliant with the KCIDB
-submission guide. There are no counts fields but there is a "misc" field
-in the guide.
+I don't understand what you mean by "easier to port if ever". From a
+Rust perspective, it makes much more sense to use the `&self` receiver,
+since the driver is asked if it can take care of the device. If you want
+to keep the order how it is in C that is also fine, but if I were to
+write it, I'd use the receiver.
 
-Signed-off-by: Rae Moar <rmoar@google.com>
 ---
- tools/testing/kunit/kunit_json.py | 10 ++++++++++
- 1 file changed, 10 insertions(+)
-
-diff --git a/tools/testing/kunit/kunit_json.py b/tools/testing/kunit/kunit_json.py
-index 10ff65689dd8..80fa4e354a17 100644
---- a/tools/testing/kunit/kunit_json.py
-+++ b/tools/testing/kunit/kunit_json.py
-@@ -39,10 +39,20 @@ def _get_group_json(test: Test, common_fields: JsonObj) -> JsonObj:
- 		status = _status_map.get(subtest.status, "FAIL")
- 		test_cases.append({"name": subtest.name, "status": status})
- 
-+	test_counts = test.counts
-+	counts_json = {
-+		"tests": test_counts.total(),
-+		"passed": test_counts.passed,
-+		"failed": test_counts.failed,
-+		"crashed": test_counts.crashed,
-+		"skipped": test_counts.skipped,
-+		"errors": test_counts.errors,
-+	}
- 	test_group = {
- 		"name": test.name,
- 		"sub_groups": sub_groups,
- 		"test_cases": test_cases,
-+		"misc": counts_json
- 	}
- 	test_group.update(common_fields)
- 	return test_group
-
-base-commit: c2493384e8110d5a4792fff4b9d46e47b78ea10a
--- 
-2.49.0.1101.gccaa498523-goog
-
+Cheers,
+Benno
 
