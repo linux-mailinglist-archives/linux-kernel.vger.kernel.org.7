@@ -1,120 +1,207 @@
-Return-Path: <linux-kernel+bounces-651316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-651314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 173B2AB9D0F
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 15:17:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AF815AB9D09
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 15:15:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D31733B3757
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 13:16:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E1073AACED
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 13:15:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EAE414F90;
-	Fri, 16 May 2025 13:17:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF1BEEEBA;
+	Fri, 16 May 2025 13:15:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="1kY1eeJw"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WNzvVjlX"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A64314B1E4A;
-	Fri, 16 May 2025 13:17:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B0F44B1E4A;
+	Fri, 16 May 2025 13:15:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747401422; cv=none; b=Ydbay5Z2Z84eCAqFwV90w9MhQzLQtwC+NSEMjLY7iVKN9SWkr8L0J4Z8lQo6DVogtkT6Ncgr60X3h+lNoFDTTgK1D+OJUAaJAMmGCUlw3W3G9MPNEVnyWQZeKYPaAaU+/8typA0ceKrImFFwxKFz44rqDNLb+9l7xzJtKTLKYZE=
+	t=1747401348; cv=none; b=Px8Sh4BJ0IJrTi2AmZxTDn27XPXS8eMnvCv91Z3ktEMAtwX0HV6IXQ/gs0VTJdDJlvgRGlf9L2skUCo8/MQ7es9E7QyNWigXEBtk/7iLL6x0JMWPxqaif/7yURqTfMLB1TBKsd9vAnjeUK70wXFMnMELJQ43/6RZBfjQZ72CNbg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747401422; c=relaxed/simple;
-	bh=R1rj1kecMietGTIXFY8TxpvZyKXJeN7GH3gGjW8Japc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sSB3obiqFLVL/WKr/GWjo2nI6hT0scG1MbHYvbig1rDTv98ygOEuNxGvIvkYmnWSPjnlX+N7jBKsZJTI1z/GjLrTZBiGSI296ai42mxv+2Uah+le/Pcm8uZihbDvI3Aa0XTSgFCkMGcugQTrql4l0PyME6kuRnmUZw+JWa+2DVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=1kY1eeJw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95A68C4CEE4;
-	Fri, 16 May 2025 13:17:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1747401422;
-	bh=R1rj1kecMietGTIXFY8TxpvZyKXJeN7GH3gGjW8Japc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=1kY1eeJwRXp3nr6muCDAiu6Gg+ETTXIHv5AN8XhJzdt0zK4uO1lZgbb3cwaf1janD
-	 tk0WxoA5mlSWVZgI4Er4sRQ6XnqhiX4o36V6790o9Pv1bd8XfNicNBURPAiKc1Vfx6
-	 xJFi3oeMXmo2xGx2ELwaRq+OlST7AJFEq4ton/BE=
-Date: Fri, 16 May 2025 15:15:14 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: John Hubbard <jhubbard@nvidia.com>
-Cc: Timur Tabi <timur@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>, linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH] rust: add basic ELF sections parser
-Message-ID: <2025051647-urology-think-b8e0@gregkh>
-References: <20250515-elf-v1-1-4b53745453c0@nvidia.com>
- <2025051543-override-rockiness-3ead@gregkh>
- <D9WLFTPRB9FJ.OL6I760HKALZ@nvidia.com>
- <D9WP3YU31199.Q8IEDBJZ87LU@nvidia.com>
- <2025051532-gentleman-reset-58f2@gregkh>
- <CAOZdJXWKLu0y+kwC+Bm8nBCLizQVpsDdDUoS--hVgz2vnuZJQg@mail.gmail.com>
- <8b14b078-b899-42e8-8522-599daa65bc63@nvidia.com>
+	s=arc-20240116; t=1747401348; c=relaxed/simple;
+	bh=aIVuP15lLI18U0B27tPS187TYHrY2xiLduyapf9Ur+w=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=VxfOEvHlScoI7RsfoL/HE16/Hundk69aiaqs1JBgq1RlSK22c1takfUPit/YU0Re5W5KQAOzy4nA3REhaA1zYb2ISmviXQYh1NvTYr/wpcw5AfG13IQjVqtfYbMSLy8xIOXR5NOWqk0lcrrsVQma2MLtrgsfG4xtkplqshlbhQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WNzvVjlX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B674BC4CEE4;
+	Fri, 16 May 2025 13:15:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747401347;
+	bh=aIVuP15lLI18U0B27tPS187TYHrY2xiLduyapf9Ur+w=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=WNzvVjlXL2rom+TaLrRhnGLzOtPPIqPH2Sbaww3H4+/4s0Qab7I7VpvL7EcI1G/RF
+	 zmDbBDdnWAQtcWwrJe5DkLutsVGA0NpDDFFXf+3ZnXVgI+f6tI92fJD1EwVyMIfsW1
+	 w+5RkzWnstATQtjzh8qEZyLM3Sqbv2fXqWqnHZdRn9fVXMCIQ7Pst+4XdkI8AZCesZ
+	 VYj45a3d2Gi4dFdKWQxiQ7dFXXCWJZbLBKW9Qq9bQua0ohw8+gKzOkOPaGcoE5tT/d
+	 0jc/vxhwoXL1VzKAAeOKplXupXTuA+rtwdNxGTShHGod077hHA1Uwss0N62W9dIrbX
+	 uDO/SeJiH+5hQ==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1uFuuf-00FYy4-Nm;
+	Fri, 16 May 2025 14:15:45 +0100
+Date: Fri, 16 May 2025 14:15:45 +0100
+Message-ID: <867c2gg0hq.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Vincent Donnefort <vdonnefort@google.com>
+Cc: oliver.upton@linux.dev,
+	joey.gouly@arm.com,
+	suzuki.poulose@arm.com,
+	yuzenghui@huawei.com,
+	catalin.marinas@arm.com,
+	will@kernel.org,
+	qperret@google.com,
+	linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	kernel-team@android.com
+Subject: Re: [PATCH v4 07/10] KVM: arm64: Convert pkvm_mappings to interval tree
+In-Reply-To: <20250509131706.2336138-8-vdonnefort@google.com>
+References: <20250509131706.2336138-1-vdonnefort@google.com>
+	<20250509131706.2336138-8-vdonnefort@google.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <8b14b078-b899-42e8-8522-599daa65bc63@nvidia.com>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: vdonnefort@google.com, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org, qperret@google.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, kernel-team@android.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Thu, May 15, 2025 at 12:17:00PM -0700, John Hubbard wrote:
-> On 5/15/25 7:30 AM, Timur Tabi wrote:
-> > On Thu, May 15, 2025 at 6:43 AM Greg KH <gregkh@linuxfoundation.org> wrote:
-> >>> Or if ELF is the problem, I don't mind introducing a WAD loader. ;)
-> >>
-> >> The "problem" I'm not understanding is why does the kernel have to do
-> >> any of this parsing at all?
-> > 
-> > Nova will need to parse ELF headers in order to properly load and boot
-> > Nvidia firmware images.  Nouveau does this already:
-> > 
-> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/gpu/drm/nouveau/nvkm/subdev/gsp/r535.c#n2931
+On Fri, 09 May 2025 14:17:03 +0100,
+Vincent Donnefort <vdonnefort@google.com> wrote:
 > 
-> Hi Greg!
+> From: Quentin Perret <qperret@google.com>
 > 
-> Nouveau influenced us heavily here, because having firmware that we
-> can post once, and use everywhere (Nouveau and Nova), is very attractive.
+> In preparation for supporting stage-2 huge mappings for np-guest, let's
+> convert pgt.pkvm_mappings to an interval tree.
 > 
-> Alex and Timur discuss other details that explain why the standard 
-> user-space approach is less simple and clean than it might appear at
-> first glance, but I wanted to emphasize that the firmware re-use point
-> a little bit, too.
+> No functional change intended.
 > 
-> Oh, and also: the ELF images are going to remain extremely simple,
-> because there is nothing now (nor can I see anything in the future)
-> that would drive anyone to do complicated things. For example, if
-> there is some exotic new thing in the future, it could be put into
-> its own firmware image if necessary--because we understand that
-> this parser here is intended to be a simple subset of ELF, and
-> left alone really.
+> Suggested-by: Vincent Donnefort <vdonnefort@google.com>
+> Signed-off-by: Quentin Perret <qperret@google.com>
+> Signed-off-by: Vincent Donnefort <vdonnefort@google.com>
+> 
+> diff --git a/arch/arm64/include/asm/kvm_pgtable.h b/arch/arm64/include/asm/kvm_pgtable.h
+> index 6b9d274052c7..1b43bcd2a679 100644
+> --- a/arch/arm64/include/asm/kvm_pgtable.h
+> +++ b/arch/arm64/include/asm/kvm_pgtable.h
+> @@ -413,7 +413,7 @@ static inline bool kvm_pgtable_walk_lock_held(void)
+>   */
+>  struct kvm_pgtable {
+>  	union {
+> -		struct rb_root					pkvm_mappings;
+> +		struct rb_root_cached				pkvm_mappings;
+>  		struct {
+>  			u32					ia_bits;
+>  			s8					start_level;
+> diff --git a/arch/arm64/include/asm/kvm_pkvm.h b/arch/arm64/include/asm/kvm_pkvm.h
+> index d91bfcf2db56..da75d41c948c 100644
+> --- a/arch/arm64/include/asm/kvm_pkvm.h
+> +++ b/arch/arm64/include/asm/kvm_pkvm.h
+> @@ -173,6 +173,7 @@ struct pkvm_mapping {
+>  	struct rb_node node;
+>  	u64 gfn;
+>  	u64 pfn;
+> +	u64 __subtree_last;	/* Internal member for interval tree */
+>  };
+>  
+>  int pkvm_pgtable_stage2_init(struct kvm_pgtable *pgt, struct kvm_s2_mmu *mmu,
+> diff --git a/arch/arm64/kvm/pkvm.c b/arch/arm64/kvm/pkvm.c
+> index 057874bbe3e1..6febddbec69e 100644
+> --- a/arch/arm64/kvm/pkvm.c
+> +++ b/arch/arm64/kvm/pkvm.c
+> @@ -5,6 +5,7 @@
+>   */
+>  
+>  #include <linux/init.h>
+> +#include <linux/interval_tree_generic.h>
+>  #include <linux/kmemleak.h>
+>  #include <linux/kvm_host.h>
+>  #include <asm/kvm_mmu.h>
+> @@ -256,80 +257,63 @@ static int __init finalize_pkvm(void)
+>  }
+>  device_initcall_sync(finalize_pkvm);
+>  
+> -static int cmp_mappings(struct rb_node *node, const struct rb_node *parent)
+> +static u64 __pkvm_mapping_start(struct pkvm_mapping *m)
+>  {
+> -	struct pkvm_mapping *a = rb_entry(node, struct pkvm_mapping, node);
+> -	struct pkvm_mapping *b = rb_entry(parent, struct pkvm_mapping, node);
+> -
+> -	if (a->gfn < b->gfn)
+> -		return -1;
+> -	if (a->gfn > b->gfn)
+> -		return 1;
+> -	return 0;
+> +	return m->gfn * PAGE_SIZE;
+>  }
+>  
+> -static struct rb_node *find_first_mapping_node(struct rb_root *root, u64 gfn)
+> +static u64 __pkvm_mapping_end(struct pkvm_mapping *m)
+>  {
+> -	struct rb_node *node = root->rb_node, *prev = NULL;
+> -	struct pkvm_mapping *mapping;
+> -
+> -	while (node) {
+> -		mapping = rb_entry(node, struct pkvm_mapping, node);
+> -		if (mapping->gfn == gfn)
+> -			return node;
+> -		prev = node;
+> -		node = (gfn < mapping->gfn) ? node->rb_left : node->rb_right;
+> -	}
+> -
+> -	return prev;
+> +	return (m->gfn + 1) * PAGE_SIZE - 1;
+>  }
+>  
+> -/*
+> - * __tmp is updated to rb_next(__tmp) *before* entering the body of the loop to allow freeing
+> - * of __map inline.
+> - */
+> +INTERVAL_TREE_DEFINE(struct pkvm_mapping, node, u64, __subtree_last,
+> +		     __pkvm_mapping_start, __pkvm_mapping_end, static,
+> +		     pkvm_mapping);
+> +
+>  #define for_each_mapping_in_range_safe(__pgt, __start, __end, __map)				\
+> -	for (struct rb_node *__tmp = find_first_mapping_node(&(__pgt)->pkvm_mappings,		\
+> -							     ((__start) >> PAGE_SHIFT));	\
+> +	for (struct pkvm_mapping *__tmp = pkvm_mapping_iter_first(&(__pgt)->pkvm_mappings,	\
+> +								  __start, __end - 1);		\
+>  	     __tmp && ({									\
+> -				__map = rb_entry(__tmp, struct pkvm_mapping, node);		\
+> -				__tmp = rb_next(__tmp);						\
+> +				__map = __tmp;							\
+> +				__tmp = pkvm_mapping_iter_next(__map, __start, __end - 1);	\
+>  				true;								\
+>  		       });									\
+> -	    )											\
+> -		if (__map->gfn < ((__start) >> PAGE_SHIFT))					\
+> -			continue;								\
+> -		else if (__map->gfn >= ((__end) >> PAGE_SHIFT))					\
+> -			break;									\
+> -		else
+> +	    )
 
-Ok, then why not just bury this down in the driver that is going to
-actually use it?  This patch series was adding it to ALL kernels, if you
-need/want it or not, and as such would be seen as a generic way to
-handle all ELF images.  But as that's not the case here, just copy what
-you did in the existing C driver and make it private to your code, so
-that no one else has to worry about accidentally thinking it would also
-work for their code :)
+The removal of the comment worries me a bit. Is this iterator still
+safe wrt freeing of the iterator in the loop?
 
-And I still think that having the kernel do this is a mistake, firmware
-should always just be a "pass through" otherwise you open yourself up to
-all sorts of complexity and vulnerabilities in the kernel, both of which
-is generally not a good idea.
+Thanks,
 
-thanks,
+	M.
 
-greg k-h
+-- 
+Without deviation from the norm, progress is not possible.
 
