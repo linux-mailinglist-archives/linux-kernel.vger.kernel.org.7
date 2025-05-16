@@ -1,126 +1,117 @@
-Return-Path: <linux-kernel+bounces-651052-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-651054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 639CDAB9982
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 11:56:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 662EEAB9988
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 11:57:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 881C99E17E2
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 09:55:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65CF3169515
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 09:56:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F379235345;
-	Fri, 16 May 2025 09:54:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65795231A51;
+	Fri, 16 May 2025 09:56:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Vkudkfw+"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OQaiVqgc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6CBA231837;
-	Fri, 16 May 2025 09:54:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0FE622F77D;
+	Fri, 16 May 2025 09:56:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747389292; cv=none; b=LkMGWC4P6O4nfxXJJK3mYM8jAq8Rw/Y/z91pdVVcau2+f/NRG1qLZ0tAZfbF6epGBnPmRXIwAw3PcQxcv+DAPYgFzOLPQRnzEDw/LwsMsfYh7oLVNbOlhi8pXTqHDQaM0vr1MoGJNs2YvXBH3b0AhZDLeeIoDDE2EthJCJy7Qrw=
+	t=1747389387; cv=none; b=O3k/qlkO4ist8jk00lHz2o66jDfHYtiA+ETsr+wt0pBfYjm/XtXcpuFsGkuvjow+QzXNq6ydMZZmeHTZBdO7/gAVce7+AlZ6/i0DwXn8bSnWl5a63YLn5FXZqnKpsiiCo6Ki/A5UO0tYTJWWIDRV7wpKJIPni+Tnwvqr8kNdBL0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747389292; c=relaxed/simple;
-	bh=c0iIl7dJXWna8S1DBQZPoPO7ke8+5gOze/1BvGwFB/s=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eZjcpHIIUUShdeJiD7Ty9uFYKYEtw1rjRWdGW0VqWsNEPOMVZ3mA4Dy3WkddNezkVUE+aIrMdhxF7l9Dt1OH3LIK/CiRC/dLzo7yln16WND5XHtN7hsSwaAm8vRaYoZJDfOT2RufK76WKfpz7P4hiOPxYU34XKAs2Xv+lXBhru4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Vkudkfw+; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1747389287;
-	bh=jDeYi4hO2+10znc75difMvtZmuJ188y5tW3/0jbzEGk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Vkudkfw+ldEnbtby5RDZRxhpw76cbq6ti2Rx10gvpcwcWcRM3xZnbUrhZXyR/jr3g
-	 5AWcKZt5S1I8A38xpWS8Uw8EJCOH+UINRoy6es3WCh/3xAba/5hUrCO1+KJ5Q4420W
-	 oeT7bdswOTv0ugFHZO/GVNygCYlwkQnAj/C3glPjYWT6OQNA+IJxIarbWaKQnHAwDi
-	 SU8lWcjNLMGjZmqpQSvU1c5/BNnDpbb3cp2hDcjQC/zNMGfrbPfcM5EWKT97BBHOs1
-	 njAfgNciLW0UAu6KBmyOjET0y52mfEjozShlHbBgVTOniouuk3DYj8DsPPniORixFR
-	 AnAHc2TN+mr4A==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZzMr65b6Nz4wcd;
-	Fri, 16 May 2025 19:54:46 +1000 (AEST)
-Date: Fri, 16 May 2025 19:54:46 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>,
- Peter Zijlstra <peterz@infradead.org>, "Rafael J. Wysocki"
- <rjw@rjwysocki.net>, "Ahmed S. Darwish" <darwi@linutronix.de>, Artem
- Bityutskiy <artem.bityutskiy@linux.intel.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, "Rafael J. Wysocki"
- <rafael.j.wysocki@intel.com>
-Subject: Re: linux-next: manual merge of the tip tree with the pm tree
-Message-ID: <20250516195446.1331ac06@canb.auug.org.au>
-In-Reply-To: <aCbvO5Q0B3yYxji4@gmail.com>
-References: <20250516161541.0cff29b8@canb.auug.org.au>
-	<aCbvO5Q0B3yYxji4@gmail.com>
+	s=arc-20240116; t=1747389387; c=relaxed/simple;
+	bh=6qeyCCT7zpD3fvBMzDh5PQih0K0gpp9zF5Ci9QuAQKU=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=j6zqHdszEPoKWDOsLD1oNfh74L9VvYip1pyfB1iX9GyHR/rzhC3jxt3lTSahjGO7uNlVCTLI8lVX8bBEiOFx6IZ94trFku+zLRwjR7paFJ3quzjAAfyW4XbCqFRAAUCBO360YCXitVbx+Q8X+T6I7yJjRF0tqi1hXyAOjlGDbbg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OQaiVqgc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5FFDC4CEE4;
+	Fri, 16 May 2025 09:56:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747389387;
+	bh=6qeyCCT7zpD3fvBMzDh5PQih0K0gpp9zF5Ci9QuAQKU=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=OQaiVqgcB4Yu1+5FQF3O+JYdhQOUxOL6ue+z9lgTS/63FWdwt5JKcjGthvKHTelL5
+	 TYjZ2XGort85qrI+rPdUCj8Q3qSh/keXgZA3DHr11CyS0Bq29vB3m4+gJej5K7FMbe
+	 Itl5Wkwu4n+sUioWXy+vOpUpbqq7AFlRRAYuLJfcqsowHRpiojOwyWTlnA44AHzH/I
+	 dE2nIpCf5drU842wxWPDW4iZpBQAztXf7VHzLBgclkDOunJJ579HZJLYmRT+N0bWaW
+	 rPUzRJtCNGFz0uDL6VS1Z7UOASHz6QpDPbHytF6TmyuPT+R9c3Y8Bs7yjGfEWHtnjC
+	 jbZDXoW9puzpQ==
+Date: Fri, 16 May 2025 04:56:25 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/_wVQ2Q4E=Z6=pvU9HE0DJkb";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Kevin Hilman <khilman@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+ linux-clk@vger.kernel.org, Tero Kristo <kristo@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org, 
+ Conor Dooley <conor+dt@kernel.org>, Andreas Kemnade <andreas@kemnade.info>, 
+ devicetree@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>
+To: Sukrut Bellary <sbellary@baylibre.com>
+In-Reply-To: <20250516081612.767559-2-sbellary@baylibre.com>
+References: <20250516081612.767559-1-sbellary@baylibre.com>
+ <20250516081612.767559-2-sbellary@baylibre.com>
+Message-Id: <174738938517.2667160.10906175729020548648.robh@kernel.org>
+Subject: Re: [PATCH v2 1/3] dt-bindings: clock: ti: Convert autoidle
+ binding to yaml
 
---Sig_/_wVQ2Q4E=Z6=pvU9HE0DJkb
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi Ingo,
+On Fri, 16 May 2025 01:16:10 -0700, Sukrut Bellary wrote:
+> Autoidle clock is not an individual clock; it is always a derivate of some
+> basic clock like a gate, divider, or fixed-factor. This binding will be
+> referred in ti,divider-clock.yaml, and ti,fixed-factor-clock.yaml.
+> 
+> As all clocks don't support the autoidle feature e.g.,
+> in DRA77xx/AM57xx[1], dpll_abe_x2* and dpll_per_x2 don't have
+> autoidle, remove required properties from the binding.
+> 
+> Add the creator of the original binding as a maintainer.
+> 
+> [1] https://www.ti.com/lit/ug/spruhz6l/spruhz6l.pdf
+> 
+> Signed-off-by: Sukrut Bellary <sbellary@baylibre.com>
+> ---
+>  .../devicetree/bindings/clock/ti/autoidle.txt | 37 -------------------
+>  .../bindings/clock/ti/ti,autoidle.yaml        | 34 +++++++++++++++++
+>  2 files changed, 34 insertions(+), 37 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/clock/ti/autoidle.txt
+>  create mode 100644 Documentation/devicetree/bindings/clock/ti/ti,autoidle.yaml
+> 
 
-On Fri, 16 May 2025 09:54:35 +0200 Ingo Molnar <mingo@kernel.org> wrote:
->
-> So I don't think the <asm/cpuid.h> change is needed - the header still=20
-> fully exists:
->=20
->   starship:~/tip> ls -lh arch/x86/include/asm/cpuid/api.h arch/x86/includ=
-e/asm/cpuid.h =20
->   -rw-rw-r-- 1 mingo mingo 6.1K May 16 09:34 arch/x86/include/asm/cpuid/a=
-pi.h
->   -rw-rw-r-- 1 mingo mingo  149 May 16 09:34 arch/x86/include/asm/cpuid.h
+My bot found errors running 'make dt_binding_check' on your patch:
 
-That change is in the tip tree and involved in the conflict, so I just
-used it as it was in the tip tree.  This is normal conflict resolution.
+yamllint warnings/errors:
 
-> And the <linux/sysfs.h> addition is probably a build fix for the PM=20
-> tree? The <asm/cpuid.h> header's indirect header dependencies did not=20
-> change. Should probably not be carried in -next, as this masks a build=20
-> failure that will then trigger in Linus's tree?
+dtschema/dtc warnings/errors:
 
-Well, it did not fail building yesterday (without the include) and
-looks like the commit is adding the first sysfs use in this file ..
 
-Mind you, if the sysfs.h include had been added a line or 2 higher up -
-or even if there was a blank line between the linux/ and asm/ includes,
-there may have been no conflict reported and git would have produced
-the resulting file with both changes all by itself.
---=20
-Cheers,
-Stephen Rothwell
+doc reference errors (make refcheckdocs):
+Warning: Documentation/devicetree/bindings/clock/ti/fixed-factor-clock.txt references a file that doesn't exist: Documentation/devicetree/bindings/clock/ti/autoidle.txt
+Warning: Documentation/devicetree/bindings/clock/ti/ti,divider-clock.yaml references a file that doesn't exist: Documentation/devicetree/bindings/clock/ti/autoidle.txt
+Documentation/devicetree/bindings/clock/ti/fixed-factor-clock.txt: Documentation/devicetree/bindings/clock/ti/autoidle.txt
+Documentation/devicetree/bindings/clock/ti/ti,divider-clock.yaml: Documentation/devicetree/bindings/clock/ti/autoidle.txt
 
---Sig_/_wVQ2Q4E=Z6=pvU9HE0DJkb
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250516081612.767559-2-sbellary@baylibre.com
 
------BEGIN PGP SIGNATURE-----
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmgnC2YACgkQAVBC80lX
-0Gwe7gf9E6XyrZUQ/x29fidSris5oEq8H+8IHMlQnVg69w5cmDnpAci+tXVbG7uH
-wjlxT1dNmtELA9s9KxPEqMTWtZvs0E/UwxxYkf5Q/leKR+tDS4DOz7bnBm0gml4z
-+hEQam9ryMYYARwWdYWWsKcJt5UB9AcdS+jDUgwZRap3BxaX6AEiHcrhoyJzDy/r
-KunDG0l9//VQ5gtl2R2PPl1C0TixtGPUK81q/SFTeEa+wL8VeXSjsQmmsG10S/eu
-0hYp/ERPHIQT4efXz5VynC49SIjnbaIk7nZ/m7Otg8w3COJ/KQurqsVGULHT2MUU
-pTVC9kzUshus5R5BEP+mioGWbYIhgg==
-=sDmX
------END PGP SIGNATURE-----
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
 
---Sig_/_wVQ2Q4E=Z6=pvU9HE0DJkb--
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
 
