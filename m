@@ -1,34 +1,34 @@
-Return-Path: <linux-kernel+bounces-651606-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-651607-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8C49ABA090
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 18:04:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B986BABA093
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 18:05:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DD723A1F17
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 16:03:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A211C1BC2110
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 16:04:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15DD71D7E5C;
-	Fri, 16 May 2025 16:03:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B25451DEFDC;
+	Fri, 16 May 2025 16:03:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="4VFj0kdP";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="9agI9YLt"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="NHlOhMpr";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="qOpNI+uL"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4AD513A3ED
-	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 16:03:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B46C41D5ACE
+	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 16:03:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747411433; cv=none; b=T7JFuGNFJN4+nX5C1iA+cdm9/JEEieqwmZeeujdckD9WEuYcATGwgDLEjqqYOLGN1OhX/2u6RtUVKL5M+d8EMYTjHRYw8Q+eATy5qRS6A9s+DtGcCD5U4EYG+uG5nrW3ehYFYVdAASYnwk4xlA8QAKnkUNRwWp8r6by8io0ll7Y=
+	t=1747411435; cv=none; b=C5RTjzAGuxr+X+SpOPZGAKQmOpo0Zur32BgzzoBsfUqz7u9EKEoxInYnnrg9izpwKnd1BPhRwMu8PkmYpyZGgw3MUl2nDeRllZKoGtoZYgnZjbksaZn9d6pnqWAZ6nBE8oWchXHqTOdSBVOS18zSOxSkRmfDAIjDiFcgw8KciJ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747411433; c=relaxed/simple;
-	bh=Q3h53einSp2rQD+2e6peNlK0GqD6WCe3aehcIGdB/OY=;
+	s=arc-20240116; t=1747411435; c=relaxed/simple;
+	bh=UEOKv11enIFpCK2oVRSy1ul3aPEAXc6EBGaVRdNt/hM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=kB7IT3u0uOLgRXlulxeiHGvjwV0WRTTAg9oaK8dINIqCap83hRrrmZZg2/CIcRLVg69qSOZIlfzPod4Jh2skzNNebo+5gWMbtRuR7YQxXvIIOiz8tZSiWvKIuyyQWdJWwF5LGN3hW7uECb3olkRYQcuPtvwNYjfQZdCcccVKIzs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=4VFj0kdP; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=9agI9YLt; arc=none smtp.client-ip=193.142.43.55
+	 MIME-Version; b=i/y6+DJWRVUZ8mI3MyTRR8j+6Ydm0twi4bqJYv3ND4lOW3wGW69mpY9dOoePc6hSN60veKIHMfEZpVAj4COiyQpwGWsltL4YksqM69LCiMAUfdWPi4hLPzs1qtnqSDFgiu3zAHpJa3/UI24nir6/sz8hoFhlkz76adhLuaQmUiU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=NHlOhMpr; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=qOpNI+uL; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
@@ -38,21 +38,21 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=HGohYDFWFlr+myl6Dzhrw+soITHCqOqPB4Qu9PLO+4E=;
-	b=4VFj0kdPmmldFasr6fsNhg++FuUNzmnEh5gCBORHOnT2zzgNpUcJB622DlF7IOeIdJm9HT
-	GPIBCvxDgxU9QNS74+q9S3pcFyurXt3/kNptbhJQzpllVJ3YeMhAXJ4xsuBa1DL/L80RSQ
-	8EzDfJqt1j2hNvvm+V8wFcKDwCLHCitQ1tStmhRFwo7A8avqZS99HSZzFOcTUP7DaFz2U+
-	4znN+AwKIyfC+SHffdV4NjcWC63+jspxbCyvWEmPdwswMsEiImtnz/lwYrraIdScrf8VMw
-	FXktsx0z2YJSf2qselJvV+Swj8dpPJ6HVarOOqsOLdI04+MilSNrYJTJCoUF5g==
+	bh=QtVBdKPTm7T943W3PPJoranNLaZ2FktfS3xeuVJaJVs=;
+	b=NHlOhMpr27FKduk6nv3Ug1XL/kmTDeR8zj4XV6oVCP69DqQ9DHV7o9wr+7mWNzNgzR+m6y
+	r5YBBi/3swe9aPUXKfKN6HPx6oXY6o6Jln407X1sMSr3fN2DprURf5IH3ZrPBd8CE+bTTY
+	R5DYhHThjO+m4Z1Xakg80z+GegZoVj4sKzfbJNSGkAjZJ4I1uIA8okNlpk/I/1IKWWwd31
+	4Mbdx/s7J62xRX3WwcQwx2ad3tI0fTylL9fRdvvxX8KRRsGTFssc6GjMZb/oVizyOT6f3w
+	e51iM/rxQsMjhyH2kelTjxb5M1y5/UhbWUcgHg+NUs9LQeWjx3r2XCarQh5Z9A==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020e; t=1747411430;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=HGohYDFWFlr+myl6Dzhrw+soITHCqOqPB4Qu9PLO+4E=;
-	b=9agI9YLt5aCMdchmuD9n6NFRwdWCRngnfoNe0YLE6uUNi+sOdshTTcCa2rNgC6R4oXvSNU
-	asN3Kf90ttBO9AAw==
+	bh=QtVBdKPTm7T943W3PPJoranNLaZ2FktfS3xeuVJaJVs=;
+	b=qOpNI+uL88mQrbp4GJ3ET/NDGKqnV071Fozcd9kpHv3L4j4ifPEGH404DqeityfBBJzGXx
+	ToeHvWItNJFAXHCQ==
 To: linux-kernel@vger.kernel.org
 Cc: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>,
 	Darren Hart <dvhart@infradead.org>,
@@ -64,9 +64,9 @@ Cc: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>,
 	Valentin Schneider <vschneid@redhat.com>,
 	Waiman Long <longman@redhat.com>,
 	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [PATCH 4/5] tools headers: Synchronize prctl.h ABI header
-Date: Fri, 16 May 2025 18:03:38 +0200
-Message-ID: <20250516160339.1022507-5-bigeasy@linutronix.de>
+Subject: [PATCH 5/5] futex: Correct the kernedoc return value for futex_wait_setup()
+Date: Fri, 16 May 2025 18:03:39 +0200
+Message-ID: <20250516160339.1022507-6-bigeasy@linutronix.de>
 In-Reply-To: <20250516160339.1022507-1-bigeasy@linutronix.de>
 References: <20250516160339.1022507-1-bigeasy@linutronix.de>
 Precedence: bulk
@@ -77,87 +77,35 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 
-The prctl.h ABI header was slightly updated during the development of
-the interface. In particular the "immutable" parameter became a bit in
-the option argument.
+The kerneldoc for futex_wait_setup() states it can return "0" or "<1".
+This isn't true because the error case is "<0" not less than 1.
 
-Synchronize prctl.h ABI header again and make use of the definition in
-the testsuite.
+Document that <0 is returned on error. Drop the possible return values
+and state possible reasons.
 
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 ---
- tools/include/uapi/linux/prctl.h               |  1 +
- .../futex/functional/futex_priv_hash.c         | 18 +++++++++---------
- 2 files changed, 10 insertions(+), 9 deletions(-)
+ kernel/futex/waitwake.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/tools/include/uapi/linux/prctl.h b/tools/include/uapi/linux/pr=
-ctl.h
-index 21f30b3ded74b..43dec6eed559a 100644
---- a/tools/include/uapi/linux/prctl.h
-+++ b/tools/include/uapi/linux/prctl.h
-@@ -367,6 +367,7 @@ struct prctl_mm_map {
- /* FUTEX hash management */
- #define PR_FUTEX_HASH			78
- # define PR_FUTEX_HASH_SET_SLOTS	1
-+# define FH_FLAG_IMMUTABLE		(1ULL << 0)
- # define PR_FUTEX_HASH_GET_SLOTS	2
- # define PR_FUTEX_HASH_GET_IMMUTABLE	3
-=20
-diff --git a/tools/testing/selftests/futex/functional/futex_priv_hash.c b/t=
-ools/testing/selftests/futex/functional/futex_priv_hash.c
-index 72a621d9313f3..32abd9acdf186 100644
---- a/tools/testing/selftests/futex/functional/futex_priv_hash.c
-+++ b/tools/testing/selftests/futex/functional/futex_priv_hash.c
-@@ -30,9 +30,9 @@ static int counter;
- # define PR_FUTEX_HASH_GET_IMMUTABLE	3
- #endif
-=20
--static int futex_hash_slots_set(unsigned int slots, int immutable)
-+static int futex_hash_slots_set(unsigned int slots, int flags)
- {
--	return prctl(PR_FUTEX_HASH, PR_FUTEX_HASH_SET_SLOTS, slots, immutable);
-+	return prctl(PR_FUTEX_HASH, PR_FUTEX_HASH_SET_SLOTS, slots, flags);
- }
-=20
- static int futex_hash_slots_get(void)
-@@ -63,11 +63,11 @@ static void futex_hash_slots_set_verify(int slots)
- 	ksft_test_result_pass("SET and GET slots %d passed\n", slots);
- }
-=20
--static void futex_hash_slots_set_must_fail(int slots, int immutable)
-+static void futex_hash_slots_set_must_fail(int slots, int flags)
- {
- 	int ret;
-=20
--	ret =3D futex_hash_slots_set(slots, immutable);
-+	ret =3D futex_hash_slots_set(slots, flags);
- 	ksft_test_result(ret < 0, "futex_hash_slots_set(%d, %d)\n",
- 			 slots, immutable);
- }
-@@ -254,18 +254,18 @@ int main(int argc, char *argv[])
- 		ret =3D futex_hash_slots_set(0, 0);
- 		ksft_test_result(ret =3D=3D 0, "Global hash request\n");
- 	} else {
--		ret =3D futex_hash_slots_set(4, 1);
-+		ret =3D futex_hash_slots_set(4, FH_FLAG_IMMUTABLE);
- 		ksft_test_result(ret =3D=3D 0, "Immutable resize to 4\n");
- 	}
- 	if (ret !=3D 0)
- 		goto out;
-=20
- 	futex_hash_slots_set_must_fail(4, 0);
--	futex_hash_slots_set_must_fail(4, 1);
-+	futex_hash_slots_set_must_fail(4, FH_FLAG_IMMUTABLE);
- 	futex_hash_slots_set_must_fail(8, 0);
--	futex_hash_slots_set_must_fail(8, 1);
--	futex_hash_slots_set_must_fail(0, 1);
--	futex_hash_slots_set_must_fail(6, 1);
-+	futex_hash_slots_set_must_fail(8, FH_FLAG_IMMUTABLE);
-+	futex_hash_slots_set_must_fail(0, FH_FLAG_IMMUTABLE);
-+	futex_hash_slots_set_must_fail(6, FH_FLAG_IMMUTABLE);
-=20
- 	ret =3D pthread_barrier_init(&barrier_main, NULL, MAX_THREADS);
- 	if (ret !=3D 0) {
+diff --git a/kernel/futex/waitwake.c b/kernel/futex/waitwake.c
+index b3738fbe83c62..e2bbe5509ec27 100644
+--- a/kernel/futex/waitwake.c
++++ b/kernel/futex/waitwake.c
+@@ -585,7 +585,8 @@ int futex_wait_multiple(struct futex_vector *vs, unsign=
+ed int count,
+  *
+  * Return:
+  *  -  0 - uaddr contains val and hb has been locked;
+- *  - <1 - -EFAULT or -EWOULDBLOCK (uaddr does not contain val) and hb is =
+unlocked
++ *  - <0 - On error and the hb is unlocked. A possible reason: the uaddr c=
+an not
++ *	   be read, does not contain the expected value or is not properly alig=
+ned.
+  */
+ int futex_wait_setup(u32 __user *uaddr, u32 val, unsigned int flags,
+ 		     struct futex_q *q, union futex_key *key2,
 --=20
 2.49.0
 
