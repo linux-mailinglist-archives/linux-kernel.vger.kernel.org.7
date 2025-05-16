@@ -1,96 +1,188 @@
-Return-Path: <linux-kernel+bounces-651436-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-651440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18B84AB9E6F
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 16:16:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C9F6AB9E79
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 16:18:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AE0587A92F6
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 14:15:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 504381BC3301
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 14:18:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4620B19F120;
-	Fri, 16 May 2025 14:16:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 541AE185E7F;
+	Fri, 16 May 2025 14:17:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="F0BCeZxc"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="XtXRnzWg"
+Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4722156228;
-	Fri, 16 May 2025 14:16:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6CE31632DF
+	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 14:17:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747404977; cv=none; b=gofCOLaDZptENmRLmqjQqDX4QV0RgLHhXvYZTWyFMBCKmH15PARoAscaoM3/l1Wygi0rFkJGjRu1xgPBVVA4tLe0dnGAvvD5TW2WEdk8G+X4iDB2wlTKjefnP8LT2hSU6c74kfHaT7/PJs+vW8yIJ2TnuhWTuLHvTaZeWmiwWBQ=
+	t=1747405074; cv=none; b=FUmsMrKo6yeVFyMB9XEeOF7R6VMbYbW39vzTEhEPlgJ5rVCitvSPRqDZS8qmBCNuIJ79oN7bH/2JZ/RvNPIT5U7moCOsH6dq4kKxDPEAYgtwrf+LidTo26SGU6Lb8hQZI/WFCt6f7CFGv7mfKXQOTgZFJduOIiNS2uU8c+CSWy4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747404977; c=relaxed/simple;
-	bh=gQpoNRZoT4Laj13U4Bh1ZV0ArWEfGdTmj1r3KozSV5s=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=hEJoSJSC4y6y0cDV4MP/gx95Nq6VHZc+qXJx1f88Np/hi1fkFDqMis4gKxXvWVp/F/bI1qYMIBSMwXveGG5dysGd8F475PuZmjYyleeq0wm6uDxbK9ugrObbS2vNRFkBP9FPar2LT06Fkf+n7zrB5h/78ZMlkPJyrVqBhbjZA4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=F0BCeZxc; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1747404974;
-	bh=gQpoNRZoT4Laj13U4Bh1ZV0ArWEfGdTmj1r3KozSV5s=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=F0BCeZxc4Hvnn4U+tm1M/aTPl9AHHvTScCJEu/gnm2urOCaLEOUE2y0/igK4q7LSM
-	 MW+wZL/O5Ubu3aZY0H4YZdQNJY6YlB8G+KhTYcESqkFEytEts7epDBmT6v/DOFjeWF
-	 Vsrnkji1TDN++N4z3v3+3paftPLWSO/i8obJDqEvnOqRb5fBAGpoGmY2qM/JHDrvCR
-	 BOmJkUhlRKGIu98iRLxQIPBnlmsP3VVLDSGnd/8yUCMYax9elMoa7BmwltFIlkC1fg
-	 oNoWJ9W3E3NJ28mmwcyZ37SaQMPe7cEKCuDy70kE09R2zmH0VTbT5dli95nVv9El9H
-	 wFN+8mzxihe9Q==
-Received: from 2a01cb0892f2d600c8f85cf092d4af51.ipv6.abo.wanadoo.fr (2a01cb0892F2D600c8f85CF092d4aF51.ipv6.abo.wanadoo.fr [IPv6:2a01:cb08:92f2:d600:c8f8:5cf0:92d4:af51])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: jmassot)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 91A1617E07E4;
-	Fri, 16 May 2025 16:16:13 +0200 (CEST)
-Message-ID: <2646b1358d1d141cbb5988a3bb2bbf4177f4ce4f.camel@collabora.com>
-Subject: Re: [PATCH 3/3] arm64: dts: mediatek: mt8188: gce: add missing
- 'clock-names'
-From: Julien Massot <julien.massot@collabora.com>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	kernel@collabora.com, Michael Turquette <mturquette@baylibre.com>, Stephen
- Boyd	 <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski	 <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Matthias Brugger	 <matthias.bgg@gmail.com>, Garmin Chang
- <garmin.chang@mediatek.com>, Friday Yang	 <friday.yang@mediatek.com>
-Cc: Conor Dooley <conor.dooley@microchip.com>, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
-Date: Fri, 16 May 2025 16:16:12 +0200
-In-Reply-To: <89234201-9315-41f5-ab13-68272f62c53d@collabora.com>
-References: <20250515-dtb-check-mt8188-v1-0-cda383cbeb4f@collabora.com>
-	 <20250515-dtb-check-mt8188-v1-3-cda383cbeb4f@collabora.com>
-	 <89234201-9315-41f5-ab13-68272f62c53d@collabora.com>
-Organization: Collabora Ltd.
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.1 (3.56.1-1.fc42) 
+	s=arc-20240116; t=1747405074; c=relaxed/simple;
+	bh=di7VcqmsOR/ksmcCT55gbdF3amMK+ETAgYq2FlW2QA8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jJw0W+Qn03M1Hj5tFAcyF8x8xh2tcj4va464YfJpNvYcarIXGOuoH8iaP/eQETSnD+aoFGOTyrkd9CMcfaZinVBTUSs39gI4uKfBF7PB6QXbjr61eP/E6PwEDeLjsMhx9qqPsdBcW0C88iyt7H1ZEVBK3Vag/h96ajkvJ2tifmk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=XtXRnzWg; arc=none smtp.client-ip=91.218.175.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1747405060;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=2WuqP8hVhA8NoR8vkcRmgIaGt57MUyF4WZKw8XNlY3A=;
+	b=XtXRnzWg1XOU15tFoqBgtCFbrOgBRiT7vGUxMP8epA3uZ4lF0it8pMe1uNaV+HyNBzFFrn
+	sGv4+MERAu4wsBhIr4sEv6MvLdRkj7lshSJoDgWgxbrajRIK8lbexfkw6+wwTag7erT9E1
+	qFouPCUZPmw/ouaJeyusQBLxSkzKA0A=
+From: Jiayuan Chen <jiayuan.chen@linux.dev>
+To: bpf@vger.kernel.org
+Cc: Jiayuan Chen <jiayuan.chen@linux.dev>,
+	Michal Luczaj <mhal@rbox.co>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Jakub Sitnicki <jakub@cloudflare.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Thadeu Lima de Souza Cascardo <cascardo@igalia.com>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH bpf-next v6] bpf, sockmap: avoid using sk_socket after free when sending
+Date: Fri, 16 May 2025 22:17:12 +0800
+Message-ID: <20250516141713.291150-1-jiayuan.chen@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, 2025-05-15 at 16:52 +0200, AngeloGioacchino Del Regno wrote:
-> Il 15/05/25 15:31, Julien Massot ha scritto:
-> > The 'clock-names' property is required by the dt binding.
-> >=20
->=20
-> I just remembered something....
->=20
->=20
-> ...care to respin this patch instead?
-> https://lore.kernel.org/all/20240911104327.123602-1-angelogioacchino.delr=
-egno@collabora.com/
->=20
+The sk->sk_socket is not locked or referenced in backlog thread, and
+during the call to skb_send_sock(), there is a race condition with
+the release of sk_socket. All types of sockets(tcp/udp/unix/vsock)
+will be affected.
 
-Ok, we will resend this patch instead, I dropped the patch 3/3 in the v2.
+Race conditions:
+'''
+CPU0                               CPU1
 
-Regards,
-Julien
+backlog::skb_send_sock
+  sendmsg_unlocked
+    sock_sendmsg
+      sock_sendmsg_nosec
+                                   close(fd):
+                                     ...
+                                     ops->release() -> sock_map_close()
+                                     sk_socket->ops = NULL
+                                     free(socket)
+      sock->ops->sendmsg
+            ^
+            panic here
+'''
+
+The ref of psock become 0 after sock_map_close() executed.
+'''
+void sock_map_close()
+{
+    ...
+    if (likely(psock)) {
+    ...
+    // !! here we remove psock and the ref of psock become 0
+    sock_map_remove_links(sk, psock)
+    psock = sk_psock_get(sk);
+    if (unlikely(!psock))
+        goto no_psock; <=== Control jumps here via goto
+        ...
+        cancel_delayed_work_sync(&psock->work); <=== not executed
+        sk_psock_put(sk, psock);
+        ...
+}
+'''
+
+Based on the fact that we already wait for the workqueue to finish in
+sock_map_close() if psock is held, we simply increase the psock
+reference count to avoid race conditions.
+
+With this patch, if the backlog thread is running, sock_map_close() will
+wait for the backlog thread to complete and cancel all pending work.
+
+If no backlog running, any pending work that hasn't started by then will
+fail when invoked by sk_psock_get(), as the psock reference count have
+been zeroed, and sk_psock_drop() will cancel all jobs via
+cancel_delayed_work_sync().
+
+In summary, we require synchronization to coordinate the backlog thread
+and close() thread.
+
+The panic I catched:
+'''
+Workqueue: events sk_psock_backlog
+RIP: 0010:sock_sendmsg+0x21d/0x440
+RAX: 0000000000000000 RBX: ffffc9000521fad8 RCX: 0000000000000001
+...
+Call Trace:
+ <TASK>
+ ? die_addr+0x40/0xa0
+ ? exc_general_protection+0x14c/0x230
+ ? asm_exc_general_protection+0x26/0x30
+ ? sock_sendmsg+0x21d/0x440
+ ? sock_sendmsg+0x3e0/0x440
+ ? __pfx_sock_sendmsg+0x10/0x10
+ __skb_send_sock+0x543/0xb70
+ sk_psock_backlog+0x247/0xb80
+...
+'''
+
+Reported-by: Michal Luczaj <mhal@rbox.co>
+Fixes: 4b4647add7d3 ("sock_map: avoid race between sock_map_close and sk_psock_put")
+Signed-off-by: Jiayuan Chen <jiayuan.chen@linux.dev>
+
+---
+V5 -> V6: Use correct "Fixes" tag.
+V4 -> V5:
+This patch is extracted from my previous v4 patchset that contained
+multiple fixes, and it remains unchanged. Since this fix is relatively
+simple and easy to review, we want to separate it from other fixes to
+avoid any potential interference.
+---
+ net/core/skmsg.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/net/core/skmsg.c b/net/core/skmsg.c
+index 276934673066..34c51eb1a14f 100644
+--- a/net/core/skmsg.c
++++ b/net/core/skmsg.c
+@@ -656,6 +656,13 @@ static void sk_psock_backlog(struct work_struct *work)
+ 	bool ingress;
+ 	int ret;
+ 
++	/* Increment the psock refcnt to synchronize with close(fd) path in
++	 * sock_map_close(), ensuring we wait for backlog thread completion
++	 * before sk_socket freed. If refcnt increment fails, it indicates
++	 * sock_map_close() completed with sk_socket potentially already freed.
++	 */
++	if (!sk_psock_get(psock->sk))
++		return;
+ 	mutex_lock(&psock->work_mutex);
+ 	while ((skb = skb_peek(&psock->ingress_skb))) {
+ 		len = skb->len;
+@@ -708,6 +715,7 @@ static void sk_psock_backlog(struct work_struct *work)
+ 	}
+ end:
+ 	mutex_unlock(&psock->work_mutex);
++	sk_psock_put(psock->sk, psock);
+ }
+ 
+ struct sk_psock *sk_psock_init(struct sock *sk, int node)
+-- 
+2.47.1
+
 
