@@ -1,85 +1,45 @@
-Return-Path: <linux-kernel+bounces-650783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-650781-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE742AB960E
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 08:35:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D5D0FAB9609
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 08:35:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64E651BC4C7D
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 06:35:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBF471BC4BCD
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 06:35:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5D81226177;
-	Fri, 16 May 2025 06:35:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Phrsj/DR"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E593A224885;
+	Fri, 16 May 2025 06:34:54 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72F9F223DC5;
-	Fri, 16 May 2025 06:35:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B5521D88AC;
+	Fri, 16 May 2025 06:34:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747377317; cv=none; b=FutoGa6IS4XuwCbHfPEFRI+GZHIa2vK8CnrTuBfDXJtnGVPQsUhCFiRVduo4bixeWZMQ79omxIH4Sz0FTebeYHJ0OXnoLtRH0DON2eRT0wQde1Hzz1Xn+EbSNN5jcN3SPrNBIz+7EJHN5gQKJ/BWg/Tru5V2puX2H2K4s37XwYk=
+	t=1747377294; cv=none; b=qmgbFqJGDnDUArFZYCHl6gLtBnYKTO9cbUfgRDxY2h0s7t9oVm9/bcAeMU4+FAmK+55LWS7jP6uDo/A5CZguaGqCW5QjjSc4DTwLHPse7gV9sAdlX/rCIG800noSDm+vh01VpXPM3GU2E/kGFzuvweb1ABwkkO6pFRxkbcXwB/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747377317; c=relaxed/simple;
-	bh=EWO6CZzwsD8bIRRFpNMF4OS0mHTBB1Wpe5eviDCIk8E=;
+	s=arc-20240116; t=1747377294; c=relaxed/simple;
+	bh=TKu5/yJLwlz0W5cl8c+lO8cbA5gUEqmahbihBE2G8QM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KoelOqJvMVuUx8Gxupes25mDOBQR/uluzh1vJo798GIT8RN5PYA6+eCSXVyIolKjXu8Qh71g1P7WVyNnjG7RCEHReNOpJh2HiB0xC0NNHhvu8yD2kZfZLsRdWakflF9cOu33ha10VUg+BoOkYX41waWt0HdS40uUSie2s094G28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Phrsj/DR; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1747377316; x=1778913316;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=EWO6CZzwsD8bIRRFpNMF4OS0mHTBB1Wpe5eviDCIk8E=;
-  b=Phrsj/DRgzc7qmMvEHL/x38r1X2T2R+6Yf86oyOdYN2DjWBo9FCKzkbo
-   YfZihoYvO1CfFva81fV5nBY3jKmxWNlmrcari3oj1Z183Iw/LyoA0tte6
-   VIkTaSPb5bjwQzLvYz2HHEzxYEtgfmyad5UT0KMw46SvPBKvv7o7N2fqi
-   7IVb0g+qfs1CZ5SUYkrA5tbGp3BVmBIY42flWtmHC9yE9lCdHTuXSpdpP
-   h4jxqYAsaZwXE+vrai5A2o9EYg/M5sRM9dhtxkyegDjFjpZnxadM4qhLx
-   qiaWTpcro4quaDZILIZU3CE9Rbrrt7NKMAvsCYS1hZ2TkJFPYFS45ia21
-   Q==;
-X-CSE-ConnectionGUID: Fe+2de0HTGu7pnLwRt46Zw==
-X-CSE-MsgGUID: 5/R8HrB5SZek0NdlE3/knA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11434"; a="49323335"
-X-IronPort-AV: E=Sophos;i="6.15,293,1739865600"; 
-   d="scan'208";a="49323335"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2025 23:35:14 -0700
-X-CSE-ConnectionGUID: FdBqF5OARzSE8VaoJNoetw==
-X-CSE-MsgGUID: 4TNMa49+RSqU+LxFVGFPHQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,293,1739865600"; 
-   d="scan'208";a="138990800"
-Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
-  by fmviesa008.fm.intel.com with ESMTP; 15 May 2025 23:35:09 -0700
-Received: from kbuild by 1992f890471c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uFoew-000J3N-2g;
-	Fri, 16 May 2025 06:35:06 +0000
-Date: Fri, 16 May 2025 14:34:47 +0800
-From: kernel test robot <lkp@intel.com>
-To: "paul-pl.chen" <paul-pl.chen@mediatek.com>, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, chunkuang.hu@kernel.org,
-	angelogioacchino.delregno@collabora.com
-Cc: oe-kbuild-all@lists.linux.dev, matthias.bgg@gmail.com,
-	p.zabel@pengutronix.de, jason-jh.lin@mediatek.com,
-	nancy.lin@mediatek.com, singo.chang@mediatek.com,
-	xiandong.wang@mediatek.com, sirius.wang@mediatek.com,
-	paul-pl.chen@mediatek.com, sunny.shen@mediatek.com,
-	fshao@chromium.org, treapking@chromium.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	Project_Global_Chrome_Upstream_Group@mediatek.com
-Subject: Re: [PATCH v3 15/17] drm/mediatek: add ovlsys_adaptor support for
- MT8196
-Message-ID: <202505161422.JeAeW3Pd-lkp@intel.com>
-References: <20250515093454.1729720-16-paul-pl.chen@mediatek.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZWW1TSsNKmRdV8Hq5iNyPljZsfRO2YpEkOVviSXK4ULz+7ly6gDlwQ6qElwfXTxk5kj/VytK5bHBfaLv4guk1TR90nNVy3L5hM8xIo2zyE+vZ3VtyjYcRPx6TXrffVswLLzM590ezTw8/WfjFdhpzvUKmzPuQB3bEjfgmmivbbs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 9E4B368AA6; Fri, 16 May 2025 08:34:47 +0200 (CEST)
+Date: Fri, 16 May 2025 08:34:47 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: Dave Chinner <david@fromorbit.com>
+Cc: Christoph Hellwig <hch@lst.de>, Carlos Maiolino <cem@kernel.org>,
+	linux-xfs@vger.kernel.org, cen zhang <zzzccc427@gmail.com>,
+	lkmm@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] xfs: mark the i_delayed_blks access in
+ xfs_file_release as racy
+Message-ID: <20250516063447.GA14632@lst.de>
+References: <20250513052614.753577-1-hch@lst.de> <aCO7injOF7DFJGY9@dread.disaster.area> <FezVRpM-CK9-HuEp3IpLjF-tP7zIL0rzKfhspjIkdGvS3giuWzM9eeby5_eQjL5_gNG1YC4Zu0snd2lBHnL0xg==@protonmail.internalid> <20250514042946.GA23355@lst.de> <ymjsjb7ich2s5f7tmhslhlnymjmso5o2lsvdoudy3dtbr7vjwk@moxzvvjdh6zl> <20250514130417.GA21064@lst.de> <aCUlXbEg9wuyPEB6@dread.disaster.area>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,71 +48,74 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250515093454.1729720-16-paul-pl.chen@mediatek.com>
+In-Reply-To: <aCUlXbEg9wuyPEB6@dread.disaster.area>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-Hi paul-pl.chen,
+On Thu, May 15, 2025 at 09:21:01AM +1000, Dave Chinner wrote:
+> > I'd like to understand that one a bit more.  It might be because the
+> > validator doesn't understand a semaphore used as lock is a lock, but
+> > I'll follow up there.
+> 
+> Even so, it's not a race because at that point in time the object
+> cannot be seen by anything other than the process that is
+> initialising it.
 
-kernel test robot noticed the following build errors:
+In the current tree after the folio/vmalloc series b_addr is only
+assigned during buffer allocation.  But I suspect they tested before that
+where b_addr can be set at runtime.  Either way it always happens under
+b_sema because that is initialized to locked just after allocating
+the memory for the buffer.
 
-[auto build test ERROR on robh/for-next]
-[also build test ERROR on linus/master v6.15-rc6 next-20250515]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> I'm wary of this, because at this point I suspect that there aren't
+> a lot of people with sufficient time and knowledge to adequately
+> address these issues.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/paul-pl-chen/dt-bindings-soc-mediatek-add-mutex-yaml-for-MT8196/20250515-173733
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
-patch link:    https://lore.kernel.org/r/20250515093454.1729720-16-paul-pl.chen%40mediatek.com
-patch subject: [PATCH v3 15/17] drm/mediatek: add ovlsys_adaptor support for MT8196
-config: arm64-randconfig-001-20250516 (https://download.01.org/0day-ci/archive/20250516/202505161422.JeAeW3Pd-lkp@intel.com/config)
-compiler: aarch64-linux-gcc (GCC) 9.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250516/202505161422.JeAeW3Pd-lkp@intel.com/reproduce)
+I'm more than happy to address these, because proper documentation
+of concurrency helps fixing a huge number of bugs, and also really
+helps documenting the code.  I hate having to spend hours trying to
+figure out why something can be safely used lockless or not.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202505161422.JeAeW3Pd-lkp@intel.com/
+> We should have learnt this lesson from lockdep - false positive
+> whack-a-mole shut up individual reports but introduced technical
+> debt that had to be addressed later because whack-a-mole didn't
+> address the underlying issues.
 
-All error/warnings (new ones prefixed by >>):
+I'm not sure who "we" is, but I've always pushed back to hacks just
+to shut up lockdep.  And at the same time I'm immensively grateful
+for having lockdep and can't think of working without it anymore.
 
-   drivers/gpu/drm/mediatek/mtk_drm_drv.c: In function 'mtk_drm_ovl_adaptor_probe':
->> drivers/gpu/drm/mediatek/mtk_drm_drv.c:1071:32: error: storage size of 'ovlsys_priv' isn't known
-    1071 |  struct mtk_drm_ovlsys_private ovlsys_priv;
-         |                                ^~~~~~~~~~~
->> drivers/gpu/drm/mediatek/mtk_drm_drv.c:1071:32: warning: unused variable 'ovlsys_priv' [-Wunused-variable]
-   drivers/gpu/drm/mediatek/mtk_drm_drv.c: In function 'mtk_drm_probe':
-   drivers/gpu/drm/mediatek/mtk_drm_drv.c:1145:50: error: 'DDP_COMPONENT_DRM_OVLSYS_ADAPTOR2' undeclared (first use in this function); did you mean 'DDP_COMPONENT_DRM_OVLSYS_ADAPTOR0'?
-    1145 |  mtk_drm_ovl_adaptor_probe(dev, private, &match, DDP_COMPONENT_DRM_OVLSYS_ADAPTOR2);
-         |                                                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-         |                                                  DDP_COMPONENT_DRM_OVLSYS_ADAPTOR0
-   drivers/gpu/drm/mediatek/mtk_drm_drv.c:1145:50: note: each undeclared identifier is reported only once for each function it appears in
+> We need functions like xfs_vn_getattr(), the allocation AG selection
+> alogrithms and object initialisation functions to be marked as
+> inherently racy, because they intentionally don't hold locks for any
+> of the accesses they make. kcsan provides:
 
+Functions never are racy, specific data access are.  So a function wide
+assignment is just the dumbest thing ever, this already badly failed
+for things like early Java object-level synchronization.
 
-vim +1071 drivers/gpu/drm/mediatek/mtk_drm_drv.c
+> 
+> For variables like ip->i_delayed_blks, where we intentionally
+> serialise modifications but do not serialise readers, we have:
+> 
+> -	uint64_t                i_delayed_blks; /* count of delay alloc blks */
+> +	uint64_t __data_racy    i_delayed_blks; /* count of delay alloc blks */
+> 
+> This means all accesses to the variable are considered to be racy
+> and kcsan will ignore it and not report it. We can do the same for
+> lip->li_lsn and other variables.
 
-  1066	
-  1067	static void mtk_drm_ovl_adaptor_probe(struct device *dev, struct mtk_drm_private *private,
-  1068					      struct component_match **match, enum mtk_ddp_comp_id id)
-  1069	{
-  1070		struct platform_device *ovl_adaptor;
-> 1071		struct mtk_drm_ovlsys_private ovlsys_priv;
-  1072		bool is_ovlsys = (id != DDP_COMPONENT_DRM_OVL_ADAPTOR);
-  1073		char *dev_name = is_ovlsys ? "mediatek-disp-ovlsys-adaptor" : "mediatek-disp-ovl-adaptor";
-  1074		void *drv_data = is_ovlsys ? (void *)&ovlsys_priv : (void *)private->mmsys_dev;
-  1075		size_t data_size = is_ovlsys ? sizeof(ovlsys_priv) : sizeof(*private->mmsys_dev);
-  1076	
-  1077		if (mtk_drm_find_mmsys_comp(private, id, &ovlsys_priv.use_path)) {
-  1078			ovlsys_priv.mmsys_dev = private->mmsys_dev;
-  1079			ovl_adaptor = platform_device_register_data(dev, dev_name, PLATFORM_DEVID_AUTO,
-  1080								    drv_data, data_size);
-  1081			private->ddp_comp[id].dev = &ovl_adaptor->dev;
-  1082			mtk_ddp_comp_init(NULL, &private->ddp_comp[id], id);
-  1083			component_match_add(dev, match, compare_dev, &ovl_adaptor->dev);
-  1084		}
-  1085	}
-  1086	
+But not all access are racy.  We rely on proper synchronized accesses
+for accounting.  Now for something that has a lot of unsynchronized
+access, adding a wrapper for them might be fine, but for i_delayed_blks
+I don't think we actually have enough for them to bother.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> IOWs, we do not need to spew data_race() wrappers or random
+> READ_ONCE/WRITE_ONCE macros all over the code to silence known false
+> positives.  If we mark the variables and functions we know have racy
+> accesses, these one-line changes will avoid -all- false positives on
+> those variables/from those functions.
+
+And also drop a lot of the actually useful checks. That's exaxctly
+the kind of hack you rant about above.
+
 
