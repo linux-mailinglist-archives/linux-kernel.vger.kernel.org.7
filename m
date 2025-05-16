@@ -1,115 +1,96 @@
-Return-Path: <linux-kernel+bounces-651434-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-651436-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B49C6AB9E6C
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 16:16:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18B84AB9E6F
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 16:16:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5DC504E2EE3
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 14:16:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AE0587A92F6
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 14:15:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4320A165F1A;
-	Fri, 16 May 2025 14:16:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4620B19F120;
+	Fri, 16 May 2025 14:16:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Nu4aWrEU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="F0BCeZxc"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98F6B3209;
-	Fri, 16 May 2025 14:16:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4722156228;
+	Fri, 16 May 2025 14:16:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747404967; cv=none; b=hf3sxXjWyqyG13OEleBetbmM/kj6to82+WkAj/g7C9h8HPr5BEN5jco+G1630P8PNeaAsSLWOTyqhYU6z/9jX/Ml9A0gZ/jkGQNP1rVX38wHQf+mNomxedtX/xeYoRW3Vz3sAc6JBmaT10FCJbM4Ryfpx5KiMKSBH8UaAf2nfI4=
+	t=1747404977; cv=none; b=gofCOLaDZptENmRLmqjQqDX4QV0RgLHhXvYZTWyFMBCKmH15PARoAscaoM3/l1Wygi0rFkJGjRu1xgPBVVA4tLe0dnGAvvD5TW2WEdk8G+X4iDB2wlTKjefnP8LT2hSU6c74kfHaT7/PJs+vW8yIJ2TnuhWTuLHvTaZeWmiwWBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747404967; c=relaxed/simple;
-	bh=Ir57TohQL0KRns31TnG4/ir/T9F377bTIMsPI537Qvo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nX0xQKzclwlRfIu3p0XTWTnnoSdBO8wrUR3jg0wFXMkRFasiNedr5dR6i/tg1uNQ3Z7gabR/XYGXS3xCrBFOSQ7YqhqLu6lif4BL9S2wakPh7rHUWCQjKGf7tJFcSHfdpR+q4rOG/74cBnZQAWlRh3V4ehCVRztxNBW6E8InWdw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Nu4aWrEU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE996C4CEEF;
-	Fri, 16 May 2025 14:16:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747404967;
-	bh=Ir57TohQL0KRns31TnG4/ir/T9F377bTIMsPI537Qvo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Nu4aWrEUI/5uqe3wKQxK2G6ddxYztWjS/tlakBcslFmqlFhuQN5AyNPn9DzFhqYzM
-	 ay2//QXgJHaZg1ZxRohNy+0nkyXTzH/WvIhyse573PEawRazrkmsEiETzNQSo4Q+Ew
-	 QhMH+ZaTf7WhesfSL3ZHBc8SKs5k3BeAznCujNNgcPvj2G4JQGxnlMh3JXxxCzxap3
-	 Q73YUlGBAMfg+FzSiqqzMQDGqdVYtaGAVpEJLCenbTwomlPfpm5hrfngsdkOBL/fh8
-	 rCbu5moP6gIhSchaimz5vKWCoV4pcr1PMKr60iFgQhiasQInQJmGHrnynyfqmIEfxM
-	 GTvu0t7jA9+cg==
-Date: Fri, 16 May 2025 15:16:02 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
-Cc: gregkh@linuxfoundation.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, michal.simek@amd.com,
-	linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	git@amd.com
-Subject: Re: [PATCH] dt-bindings: usb: dwc3-xilinx: allow dma-coherent
-Message-ID: <20250516-exclusion-suffocate-94a1c87c1262@spud>
-References: <1747401516-286356-1-git-send-email-radhey.shyam.pandey@amd.com>
+	s=arc-20240116; t=1747404977; c=relaxed/simple;
+	bh=gQpoNRZoT4Laj13U4Bh1ZV0ArWEfGdTmj1r3KozSV5s=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=hEJoSJSC4y6y0cDV4MP/gx95Nq6VHZc+qXJx1f88Np/hi1fkFDqMis4gKxXvWVp/F/bI1qYMIBSMwXveGG5dysGd8F475PuZmjYyleeq0wm6uDxbK9ugrObbS2vNRFkBP9FPar2LT06Fkf+n7zrB5h/78ZMlkPJyrVqBhbjZA4o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=F0BCeZxc; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1747404974;
+	bh=gQpoNRZoT4Laj13U4Bh1ZV0ArWEfGdTmj1r3KozSV5s=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=F0BCeZxc4Hvnn4U+tm1M/aTPl9AHHvTScCJEu/gnm2urOCaLEOUE2y0/igK4q7LSM
+	 MW+wZL/O5Ubu3aZY0H4YZdQNJY6YlB8G+KhTYcESqkFEytEts7epDBmT6v/DOFjeWF
+	 Vsrnkji1TDN++N4z3v3+3paftPLWSO/i8obJDqEvnOqRb5fBAGpoGmY2qM/JHDrvCR
+	 BOmJkUhlRKGIu98iRLxQIPBnlmsP3VVLDSGnd/8yUCMYax9elMoa7BmwltFIlkC1fg
+	 oNoWJ9W3E3NJ28mmwcyZ37SaQMPe7cEKCuDy70kE09R2zmH0VTbT5dli95nVv9El9H
+	 wFN+8mzxihe9Q==
+Received: from 2a01cb0892f2d600c8f85cf092d4af51.ipv6.abo.wanadoo.fr (2a01cb0892F2D600c8f85CF092d4aF51.ipv6.abo.wanadoo.fr [IPv6:2a01:cb08:92f2:d600:c8f8:5cf0:92d4:af51])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: jmassot)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 91A1617E07E4;
+	Fri, 16 May 2025 16:16:13 +0200 (CEST)
+Message-ID: <2646b1358d1d141cbb5988a3bb2bbf4177f4ce4f.camel@collabora.com>
+Subject: Re: [PATCH 3/3] arm64: dts: mediatek: mt8188: gce: add missing
+ 'clock-names'
+From: Julien Massot <julien.massot@collabora.com>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	kernel@collabora.com, Michael Turquette <mturquette@baylibre.com>, Stephen
+ Boyd	 <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski	 <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Matthias Brugger	 <matthias.bgg@gmail.com>, Garmin Chang
+ <garmin.chang@mediatek.com>, Friday Yang	 <friday.yang@mediatek.com>
+Cc: Conor Dooley <conor.dooley@microchip.com>, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+Date: Fri, 16 May 2025 16:16:12 +0200
+In-Reply-To: <89234201-9315-41f5-ab13-68272f62c53d@collabora.com>
+References: <20250515-dtb-check-mt8188-v1-0-cda383cbeb4f@collabora.com>
+	 <20250515-dtb-check-mt8188-v1-3-cda383cbeb4f@collabora.com>
+	 <89234201-9315-41f5-ab13-68272f62c53d@collabora.com>
+Organization: Collabora Ltd.
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.1 (3.56.1-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="++J8wUPqIH71Ph6D"
-Content-Disposition: inline
-In-Reply-To: <1747401516-286356-1-git-send-email-radhey.shyam.pandey@amd.com>
 
-
---++J8wUPqIH71Ph6D
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, May 16, 2025 at 06:48:36PM +0530, Radhey Shyam Pandey wrote:
-> On Versal Gen 2 SoC the LPD USB DMA controller is coherent with the CPU
-> so allow specifying the information.
-
-Sounds like it should actually be marked required on this platform, no?
-
+On Thu, 2025-05-15 at 16:52 +0200, AngeloGioacchino Del Regno wrote:
+> Il 15/05/25 15:31, Julien Massot ha scritto:
+> > The 'clock-names' property is required by the dt binding.
+> >=20
 >=20
-> Signed-off-by: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
-> ---
->  Documentation/devicetree/bindings/usb/dwc3-xilinx.yaml | 2 ++
->  1 file changed, 2 insertions(+)
+> I just remembered something....
 >=20
-> diff --git a/Documentation/devicetree/bindings/usb/dwc3-xilinx.yaml b/Doc=
-umentation/devicetree/bindings/usb/dwc3-xilinx.yaml
-> index 379dacacb526..36f5c644d959 100644
-> --- a/Documentation/devicetree/bindings/usb/dwc3-xilinx.yaml
-> +++ b/Documentation/devicetree/bindings/usb/dwc3-xilinx.yaml
-> @@ -26,6 +26,8 @@ properties:
-> =20
->    ranges: true
-> =20
-> +  dma-coherent: true
-> +
->    power-domains:
->      description: specifies a phandle to PM domain provider node
->      maxItems: 1
 >=20
-> base-commit: 8566fc3b96539e3235909d6bdda198e1282beaed
-> --=20
-> 2.34.1
+> ...care to respin this patch instead?
+> https://lore.kernel.org/all/20240911104327.123602-1-angelogioacchino.delr=
+egno@collabora.com/
 >=20
 
---++J8wUPqIH71Ph6D
-Content-Type: application/pgp-signature; name="signature.asc"
+Ok, we will resend this patch instead, I dropped the patch 3/3 in the v2.
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaCdIogAKCRB4tDGHoIJi
-0iOiAQDWypdVROV/PgOlz0vB9+pT8ItFOLzc373ZCWhYPG4v9wEAs590WVLjPkDS
-zFLXLiN0iThggG8xi6fqQW6pQFIthgs=
-=2pq7
------END PGP SIGNATURE-----
-
---++J8wUPqIH71Ph6D--
+Regards,
+Julien
 
