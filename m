@@ -1,145 +1,155 @@
-Return-Path: <linux-kernel+bounces-651705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-651707-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D102ABA200
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 19:42:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AF1FABA20B
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 19:42:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1DB73B1253
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 17:41:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 395999E2E75
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 17:41:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AD8A2741CD;
-	Fri, 16 May 2025 17:40:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3878D2749D9;
+	Fri, 16 May 2025 17:41:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="XqQUiNS0"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JkzQErQb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74E80277815
-	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 17:40:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AF4D25CC77;
+	Fri, 16 May 2025 17:41:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747417251; cv=none; b=dmAzj6topWKGEongJ5aX6vsT4DgyTf+643Y+Ieolpspow4KG/hyVjR7/B46oeAYg7BU5krew9KZOe6OXglCRJEek3LGhnu1BWHk8TbEWM9EKtgKu60vRW1l5KBsJEqd8rL/VXCEmLbrYIZF1fCQc3MQLPUD+3snBnJMxjF2bQGE=
+	t=1747417310; cv=none; b=DShxqFMAddL91DJSJ6wQHugKETF1HM8hy0+Dbs3xT+/r748nD43BjIMSgbgAvjyBTDApsM9ATFYF7JXvGqmweusbGbErxxeJgS4RqW1B6yrvw5WCtXEJYahSTaYl95VZfNKOeWB/L6JwcnwhQErowNEgti8FVB7HGee3qmM9a5E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747417251; c=relaxed/simple;
-	bh=jG/ckrkV16bWaO/MxjZ0wfaCqOg/mK5Z0V22ANGyr7c=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=nJ3y81OkrAQjyTvM6vYckSkGB40SkTMGiH4lTf9gJtgh79vKzI+Uw4SVmxCF/ZUJdv+ilQvWG5xuTaE3hHXP58C0bTTLe64m6qvC0Mj1Io+KAhWVNds92OUy/A0X4kHUagedGBdfni6GRDd2C3dceoCKiPX1CHLfr4yFSTr6Rtw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=XqQUiNS0; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54GCP7CQ014932
-	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 17:40:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	OYYYIkhOgZCks7bf2vlFMUbm63VtKXu7vPL0cGHE8hg=; b=XqQUiNS0PL0F4tWT
-	ev4lcrBfAfaoNNCV+nyE97NkM94NNKYAZF383UlOOqGDmpHX28gqzskGeKOKOxDi
-	VC5+SFmHQxlE/nRnM+QwIEdVmr8dR0ussP3bJ6OEIeaWh3nFzZIxwme2g65gDVUe
-	oHPI+aq7pdtmQCa8mxzTjT2sOB/gW34y2M33Wl+joEPhepTevtf+NHeTOf+e5TKX
-	TNKaiwXLsv9v0/quVgdQJKMCL1JpKYDegj2EpQMaMVwIkK5ZXiJhhZVpYXmxGTPG
-	IyXsZI7N6AzpOKNziDglX6l/5LJbwvTb+kvYkW/xQFpPkRST7mBUgFl5c5q2n0m7
-	D5g8ng==
-Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com [209.85.215.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46nx9jt733-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 17:40:49 +0000 (GMT)
-Received: by mail-pg1-f199.google.com with SMTP id 41be03b00d2f7-b090c7c2c6aso1511032a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 10:40:49 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747417248; x=1748022048;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OYYYIkhOgZCks7bf2vlFMUbm63VtKXu7vPL0cGHE8hg=;
-        b=JSfnopUGS4S4qYO908LJpBhOm2iO2XkXpXnxHk40MEQp0SE06WCbzJ8mN+fEMfSF5w
-         ZfuH0S5vKcb1omibT4vN8kP2+ceAXaDUetHzVyel60s6sd4zvmvUQulkPWuFZm34cARR
-         agggbolYCOP5FZBv0y2opgjHPkSoOw+Hq0qRSqcgJPiyQJIuUUY2OvcLN4wV9Ew1DCaz
-         lp7sOud1wXguVViW9B5PwgwmWgx56gAla5d+BpYHwW+JjaWLrTKBLCLVRKCPE3idhXdl
-         +KJgbAoUCr4U1QVZIVT7Yg7asG1UHE8z/AVinqnFz+Yb6oE2Lz2uEgI/s8A9i5bLcOhp
-         8M0g==
-X-Forwarded-Encrypted: i=1; AJvYcCXfXqMaHqi3P41/InG1eCIOJLo0C5M1l1KkC6FrnvJ+dROiXZvmjLhbJakZGaVOmEcd4CX0UcyAgU7xTwA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YybVGiAyNJajWr9lVe4mdFkvkcPryGibbqjcQfIBPYRupdFMFCm
-	SjQjCNvk1lfuYZvOkwaI7EQ5zBg7QAQh4a40w+X1vVso2yqMK7T2Gf1lb+tlbpfFtFYrXD8TDNY
-	4ckkxlChCkfJoyapwrM4X9v6xuFnCbj+whwzr8LC4Ku32X2yz1dEz8kMF5++IJuQLVCEkvzW3Nl
-	c=
-X-Gm-Gg: ASbGncvjHJIWOja1iWrjy1NUtIFwMZheP22d3mF5q33C1+VZk1ZprRdZW+fY+KR1DC9
-	TPKNU2x/A2jDWQ4ZlBpruTlyiDuMkcbBvA1OTpy9mqClilLPmwT6BxJ3WdrcemVkJfNEgGmjLiF
-	igAWdSAPydQpzVIODdrKWkZ5cEoTezxgHua+9OORl1sELoVGDRjxKYzV80oJvJkEF2K38YTCDD7
-	WEK4BatiLcJ2f1bdaScFWKTj4XXXYt9lKXQ2ca6gCVBES+Ed0YoVwmijgQDjB1HQuuQn7aR4O9H
-	tAQbrBgXUg5dFmZa2JRz+RtO2aKDo2FGgA7pBv4x3EyRFxg+
-X-Received: by 2002:a17:903:11c6:b0:216:6283:5a8c with SMTP id d9443c01a7336-231de370f04mr40949015ad.39.1747417248438;
-        Fri, 16 May 2025 10:40:48 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEbOhxGp/5Y26jPBRYigTgBT2fqhDZibBzzCDxwoOF3qU7F17OUCBtbwUaLfsqf/k9ZfuCzEA==
-X-Received: by 2002:a17:903:11c6:b0:216:6283:5a8c with SMTP id d9443c01a7336-231de370f04mr40948725ad.39.1747417248028;
-        Fri, 16 May 2025 10:40:48 -0700 (PDT)
-Received: from [169.254.0.1] (Global_NAT1.qualcomm.com. [129.46.96.20])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-231d4ade573sm16994125ad.80.2025.05.16.10.40.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 May 2025 10:40:47 -0700 (PDT)
-From: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
-To: linux-wireless@vger.kernel.org, Rosen Penev <rosenp@gmail.com>
-Cc: =?utf-8?q?Toke_H=C3=B8iland-J=C3=B8rgensen?= <toke@toke.dk>,
-        linux-kernel@vger.kernel.org
-In-Reply-To: <20250421040044.44887-1-rosenp@gmail.com>
-References: <20250421040044.44887-1-rosenp@gmail.com>
-Subject: Re: [PATCHv2] wifi: ath9k: ahb: do ioremap resource in one step
-Message-Id: <174741724683.2935573.9349928860978714588.b4-ty@oss.qualcomm.com>
-Date: Fri, 16 May 2025 10:40:46 -0700
+	s=arc-20240116; t=1747417310; c=relaxed/simple;
+	bh=FqfDVZ8sK98Vx3ih8ZP0NXhSIP8giKOMw4w7k8L3Dug=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=M0shHuw9X1lI0jg6onqPDJHL5sVxXXtImtEu3gORnHElwKHXQHEdnPTUxB2Z3RmdRuN6FvYejq/j8jatoHzVHQ/CzF2io/I+rtMv1N1yST0oTZMl8ZUsP4itFvLsC0OQrgXJj3tvKXJsS4q7Z3HQIZTd/taSACAYnXsEYSwI0+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JkzQErQb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5CE4C4CEE4;
+	Fri, 16 May 2025 17:41:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747417310;
+	bh=FqfDVZ8sK98Vx3ih8ZP0NXhSIP8giKOMw4w7k8L3Dug=;
+	h=From:To:Cc:Subject:Date:From;
+	b=JkzQErQbKVJyIeMPEtPEPhj/JO9Oo5nffZxbFSfVWYNu0WQ+pK+k1pN93CdkH4T1h
+	 LlrjOcrfH65Wz/e2VSywpqSw5uL0zin9tZGuuQ1FEO/XIC6P5lRnHMgG3lYLmwv5TM
+	 frzOh+AJe7tzCPWXjxSnl4lEMMna6BustnDNLacpRYcV2AfvnefordFIxI61LKksLa
+	 ivhwU6U0y+8Nd1t+xlxMGYHXNEw11R5tAQszibBYA4o8frtZ3stYivVi1e1II7Xyty
+	 qOpicbCCF5wyrKLBsVOhvRfESnRQWja2oAK3MycyXmsvz2eFgxGAgQLMVnEDNsv7Di
+	 yFcWJsSrVu1VA==
+From: Philipp Stanner <phasta@kernel.org>
+To: Jonathan Corbet <corbet@lwn.net>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Philipp Stanner <phasta@kernel.org>,
+	Mark Brown <broonie@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Zijun Hu <quic_zijuhu@quicinc.com>,
+	Yang Yingliang <yangyingliang@huawei.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>
+Cc: linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org
+Subject: [PATCH v2 0/6] PCI: Remove hybrid-devres region requests
+Date: Fri, 16 May 2025 19:41:35 +0200
+Message-ID: <20250516174141.42527-1-phasta@kernel.org>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.0
-X-Proofpoint-ORIG-GUID: butti8S16BXie8hsqBpuQDIQlzbyYuzK
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTE2MDE3MiBTYWx0ZWRfX+YRmbMM+6/Wt
- DuohIA1sQp7jBtz7B7ZYzkQp5V/rUz6KMIoP9FEGOtl+FJObB49ed4i9fge4CuhVCUGmtZ0bj5j
- td33exzXByIEQGhh2jvjiYYW+pw+9U+Vsm5OBkvN8BNwzL+O8NOsw81grX+DSRW5oUABastpvzq
- K6lgO5snupLCXjYckqWMNGPpSLlHzXvWtovkZM/7PR0FJdqSZx7rfjZJ9F1zpu96FPgh8U4uRKQ
- JwOgmlZDIAL7SaVvtwsSE5FEGdvQ4uvTQev26pCi4hRw8CWw/5earj2yd/H669XHxxS094jKfPR
- 6BIvavBVp3MDRuKmq8Vj1zVfzQQYQuszV4PLjh5g8xYUdgOXwNB9yAkH/wzupQfV/lRO7igHyXL
- /pmaP3qdUMok+Zgcmxo/Kkns6mRaWDvJ+15gcGKYp/3lk4vBzTbLcpnQRob/T57XdTg+5C9Y
-X-Authority-Analysis: v=2.4 cv=CIIqXQrD c=1 sm=1 tr=0 ts=682778a1 cx=c_pps
- a=Oh5Dbbf/trHjhBongsHeRQ==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=EUspDBNiAAAA:8 a=CHUqY5kqh3KTGWwiF1UA:9
- a=QEXdDO2ut3YA:10 a=_Vgx9l1VpLgwpw_dHYaR:22
-X-Proofpoint-GUID: butti8S16BXie8hsqBpuQDIQlzbyYuzK
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-16_05,2025-05-16_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 adultscore=0 mlxscore=0 suspectscore=0 lowpriorityscore=0
- phishscore=0 mlxlogscore=872 spamscore=0 impostorscore=0 clxscore=1015
- priorityscore=1501 bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505070000
- definitions=main-2505160172
+Content-Transfer-Encoding: 8bit
 
+Changes in v2:
+  - Drop patch for removing forgotten header. Patch is unrelated. Will
+    resend seperately. (Andy)
+  - Make docu patch headline "Documentation/driver-api:". There seems to
+    be no canonical way, but this style is quite frequent. (Andy)
+  - Apply Andy's RBs where applicable.
 
-On Sun, 20 Apr 2025 21:00:44 -0700, Rosen Penev wrote:
-> Simplifies probe slightly and adds extra error codes.
-> 
-> Switching from devm_ioremap to the platform variant ends up calling
-> devm_request_mem_region, which reserves the memory region for the
-> various wmacs. Per board, there is only one wmac and after some fairly
-> thorough analysis, there are no overlapping memory regions between wmacs
-> and other devices on the ahb.
-> 
-> [...]
+Howdy,
 
-Applied, thanks!
+the great day has finally arrived, I managed to get rid of one of the
+big three remaining problems in the PCI devres API (the other two being
+MSI having hybrid-devres, too, and the good old pcim_iomap_tablle)!
 
-[1/1] wifi: ath9k: ahb: do ioremap resource in one step
-      commit: b4206774fe8231187e5863ff861160db77d4960b
+It turned out that there aren't even that many users of the hybrid API,
+where pcim_enable_device() switches certain functions in pci.c into
+managed devres mode, which we want to remove.
 
-Best regards,
+The affected drivers can be found with:
+
+grep -rlZ "pcim_enable_device" | xargs -0 grep -l "pci_request"
+
+These were:
+
+	ASoC [1]
+	alsa [2] 
+	cardreader [3]
+	cirrus [4]
+	i2c [5]
+	mmc [6]
+	mtd [7]
+	mxser [8]
+	net [9]
+	spi [10]
+	vdpa [11]
+	vmwgfx [12]
+
+All of those have been merged and are queued up for the merge window.
+The only possible exception is vdpa, but it seems to be ramped up right
+now; vdpa, however, doesn't even use the hybrid behavior, so that patch
+is just for generic cleanup anyways.
+
+With the users of the hybrid feature gone, the feature itself can
+finally be burned.
+
+So I'm sending out this series now to probe whether it's judged to be
+good enough for the upcoming merge window. If we could take it, we would
+make it impossible that anyone adds new users of the hybrid thing.
+
+If it's too late for the merge window, then that's what it is, of
+course.
+
+In any case I'm glad we can get rid of most of that legacy stuff now.
+
+Regards,
+Philipp
+
+[1] https://lore.kernel.org/all/174657893832.4155013.12131767110464880040.b4-ty@kernel.org/
+[2] https://lore.kernel.org/all/8734dy3tvz.wl-tiwai@suse.de/
+[3] https://lore.kernel.org/all/20250417091532.26520-2-phasta@kernel.org/ (private confirmation mail from Greg KH)
+[4] https://lore.kernel.org/dri-devel/e7c45c099f8981257866396e01a91df1afcfbf97.camel@mailbox.org/
+[5] https://lore.kernel.org/all/l26azmnpceka2obq4gtwozziq6lbilb2owx57aajtp3t6jhd3w@llmeikgjvqyh/
+[6] https://lore.kernel.org/all/CAPDyKFqqV2VEqi17UHmFE0b9Y+h5q2YaNfHTux8U=7DgF+svEw@mail.gmail.com/
+[7] https://lore.kernel.org/all/174591865790.993381.15992314896975862083.b4-ty@bootlin.com/
+[8] https://lore.kernel.org/all/20250417081333.20917-2-phasta@kernel.org/ (private confirmation mail from Greg KH)
+[9] https://lore.kernel.org/all/174588423950.1081621.6688170836136857875.git-patchwork-notify@kernel.org/
+[10] https://lore.kernel.org/all/174492457740.248895.3318833401427095151.b4-ty@kernel.org/
+[11] https://lore.kernel.org/all/20250515072724-mutt-send-email-mst@kernel.org/
+[12] https://lore.kernel.org/dri-devel/CABQX2QNQbO4dMq-Hi6tvpi7OTwcVfjM62eCr1OGkzF8Phy-Shw@mail.gmail.com/
+
+Philipp Stanner (6):
+  PCI: Remove hybrid devres nature from request functions
+  Documentation/driver-api: Update pcim_enable_device()
+  PCI: Remove pcim_request_region_exclusive()
+  PCI: Remove request_flags relict from devres
+  PCI: Remove redundant set of request funcs
+  PCI: Remove hybrid-devres hazzard warnings from doc
+
+ .../driver-api/driver-model/devres.rst        |   2 +-
+ drivers/pci/devres.c                          | 201 +++---------------
+ drivers/pci/iomap.c                           |  16 --
+ drivers/pci/pci.c                             |  42 ----
+ drivers/pci/pci.h                             |   3 -
+ 5 files changed, 32 insertions(+), 232 deletions(-)
+
 -- 
-Jeff Johnson <jeff.johnson@oss.qualcomm.com>
+2.49.0
 
 
