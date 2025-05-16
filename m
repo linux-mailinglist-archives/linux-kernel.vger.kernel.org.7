@@ -1,111 +1,120 @@
-Return-Path: <linux-kernel+bounces-651288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-651292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6740FAB9CC5
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 14:58:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9070AB9CCE
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 14:59:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 765281BA65FE
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 12:58:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF3341BA8151
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 12:58:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DC55242D68;
-	Fri, 16 May 2025 12:57:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54A03241684;
+	Fri, 16 May 2025 12:58:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fpJb7Dqz"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="h6kvDvfd"
+Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 660DB242900
-	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 12:57:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 136361DFDE;
+	Fri, 16 May 2025 12:58:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747400261; cv=none; b=R2RaUtRiBG7jCpNno4uX08O9P7SlR70bFC7+4eDktwOysomzcI71ePRlRVnQS4tdiu6oEPVz7LUbcrIxtctYCjqb1GZRslAC50IlKq9KRV4RYBOELj0hLXLhBSxMG7iU2q0geFdrmGYLoO/9sbg+tmuGPSa5xRGpJaJ+BlxjAJg=
+	t=1747400315; cv=none; b=kBmYNZV2ZyZQFbvqAi5uIeA9KIevf6lNCVnOWQXeFnB+gu/YKBCs5RHdiVXwWWdX1K0RrRhURx1nUWeY6MQj2pJIKRxMOuM9TltKFSJl6+xdjBvgovsiD2RGU2lNjD8JM3FV99PVsu5s7sbWUIbchncgBvSChrlFQPjwl07NeHk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747400261; c=relaxed/simple;
-	bh=+FSC98TIvnpgQW12nqD/3kXRZ0Fs9oV3gTLvM68micU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WEJPmkM8gjn/hdm36KmEBZZIX7rIUIXqoOzu99tBDwBqpNfReCldCxRpZJiCyZCKkDtKJX34TDvjFn9re4gz+vTN0raVBqQ8bw8vrnoxsTllvBKI9sqonBIP5bvPfBcTl3jMTf10yC9ggl6A5VRo6sIpo0tJDfeDrsIAwqxSh5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fpJb7Dqz; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3a206845eadso1344621f8f.3
-        for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 05:57:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747400258; x=1748005058; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=VW89Tj8c9PUVGNCzuX2ZlyTNAUa8vPwg+B5bpWF7mn4=;
-        b=fpJb7DqzyAbJKili4GDbkMbpmkUDvXrS2d5hAlKrghuFlzF8lVgUy/uVbdbrT4snUm
-         1So37OH5BKCDVAbJ7FkS99CrS4o7NplOUX4BOhq4OrYCEcMfVYqUycug5i9RdTW2oSZF
-         aNfh9GCrZYh4s3zIp8CrSLPHYflw5N7bVXkVzAEhdY1B5g/d5kiJXMs59xQxfq+ZXo39
-         EdTJhqoBBY6mIEqjGSq+NHD/4/4ev8vbf75zMzT6Ca17fBMF/MraxNEqas08iRg5Yz6l
-         Z4pCnzR+zekyMQ47d9kOKXKCmDtYWyzElD4K3KM6VbeEoRiXmKTjz7PqeaUaYYeuPXmx
-         boow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747400258; x=1748005058;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=VW89Tj8c9PUVGNCzuX2ZlyTNAUa8vPwg+B5bpWF7mn4=;
-        b=bTUwfOCLqTAs+IgZrDf4aLATZ2F9FE/UsBp6d4LzJk3hC3KYtVhC12XUvmrpJ+v3Bm
-         tMwcHPUNpRDYuunc9uDUWPQiadNPYPIco9rxhxT7YEDsjzwxFqLiapQG9GKTu0pJ61vJ
-         J09fe68uviy0NK5q8cn/4rN3uDh63tHwLp2/ATZJ0D0w0K7kxQjQOx3fh0Byyifp/Msv
-         eGV9M1Mv9WR8fHc7MtRpQguiRiLkn62pC7EZs84iIQVNx2vxXbyuaXTxLg24XH+dy4sW
-         UFWiww9u6fVjbg+DwpJ0IFEGTqzVPrbqR6tfSVJeCasCNdUefxqgkcWcZefSdrzXKbBP
-         VsRg==
-X-Forwarded-Encrypted: i=1; AJvYcCVLjswDdcuyPdNc4dHK60b3NSXEAZIZSXUmZrTOdecp6UYaz1mSNY04ivkyZOPFNqp6FRrz2Q3dRs+ql08=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyeIe8zekUuTqcXWSeLwnzEv5lLETmmSnhahjWMUmrcSAJXWS8e
-	g1FS5s7h2hN8KiIioYQ/FD9R2r/Ga3p3dJ2a0FqoeUpZ+qqAkKkokndx
-X-Gm-Gg: ASbGncsJzrWyrh0Ui12AkDOegVKLW+DHN0EFzhS6eIXRz9+c8ry48ldWBUh1DVO9r/H
-	mWfbZ+r0SJK4mjTVz/e72i9eryrL8OUdok3fIRZt3MspZhzYNEAEd7GC9tZ2TTkDL2PRgUCbBpY
-	Ujbcvfg5yMnXaSzYK8SnOrSSDR9+RD0uPeZItTVxvvR5TGGv26ce+owJwC128S0bfXZojJN1qlw
-	vHFL83qW83hrOY1WIJJZDdxEr6DrYeHjHIowo+Asl3a2Uq3DLSPLuLlIjlE4lGierTAOTcN3gHW
-	DGGpeoKB8rukweXx5IASSZTGzmWHdBcmu3WMNiPkotoAzEUMPiyi4r2ETEN5jOTNE+8jLqsFON9
-	n6uSgEwVLLKGOg4ovswi+6caVCbzlbc9MpfHcZy+PH8QT
-X-Google-Smtp-Source: AGHT+IG0G1UCWDav1n+DgzbFKo/1bZ6LmsukOQf7dpPE+qHxbbihNA8ofnaXhsPLIKr+h/EAOWcePg==
-X-Received: by 2002:a05:6000:1881:b0:3a1:f635:1136 with SMTP id ffacd0b85a97d-3a35fead113mr2208312f8f.28.1747400257319;
-        Fri, 16 May 2025 05:57:37 -0700 (PDT)
-Received: from localhost.localdomain (host86-152-218-15.range86-152.btcentralplus.com. [86.152.218.15])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a35ca8d119sm2777040f8f.92.2025.05.16.05.57.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 May 2025 05:57:36 -0700 (PDT)
-From: Thomas Thelen <tommythelen@gmail.com>
-To: linux-kernel-mentees@lists.linux.dev,
-	skhan@linuxfoundation.org,
-	linux-kernel@vger.kernel.org
-Cc: Thomas Thelen <tommythelen@gmail.com>
-Subject: [PATCH] Fix spelling error for 'Celsius'
-Date: Fri, 16 May 2025 05:56:12 -0700
-Message-ID: <20250516125733.5778-1-tommythelen@gmail.com>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1747400315; c=relaxed/simple;
+	bh=Ymo/u6vYKJNNE7DarQjuIGwdjzxN7gU7VNb+iJ+1k+Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=BotAAyUEGDYCsz+v1iVre6/fQTxwncHJzfHivjCda+EWMRxjCTaxKXre0et9/Wa8OJ97UbpObflf54Mr/coOAVFNPli4ztUGX603+72VlmUnJbrp0qtHVgQ0EClAqHhsivvc4eu/DIs88PLENWYp/Ax3L/JUhqzBVPX+mUMyj7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=h6kvDvfd; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54GB2cC6002118;
+	Fri, 16 May 2025 14:58:08 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	3vjseJYbJT5ETJFPoncHRVVX4/JCv6agmUw3wmhKosc=; b=h6kvDvfd3E/ew6uD
+	kIA4mZS2tnjaseju95OgnOlcaevnuXwOZJvA36MXrggZ/Hr7PdgvofDVTarF8Ygx
+	KFMVVv8lABPdDH6QhBWt1yNLdOHWgCjglzDTT6MURdczeInpIVdBFl1U6j2eriHK
+	ga0oVq4B+n0RWP2EFXFlCK3S/xisYYw8Z9soT15E74cr1eRFcDn6onQcZqPOqaNO
+	i9mY5whVoiTkjperNXUXlhd8t1trzhw3qYmuAK3KX22+sCEJOu9DDTeAmUAO9XAj
+	A3A4/C457uS9c3CjHYHd1EtwweqJdhzUQ41LXkiZ8iXL51uhSuD++EGj2trv82u/
+	bWkdYA==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 46mbdwe848-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 16 May 2025 14:58:08 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id F01D740063;
+	Fri, 16 May 2025 14:57:08 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id C4D70B44890;
+	Fri, 16 May 2025 14:56:23 +0200 (CEST)
+Received: from [10.48.87.62] (10.48.87.62) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 16 May
+ 2025 14:56:23 +0200
+Message-ID: <ae7b8134-923c-4967-b25c-fc1411fd0602@foss.st.com>
+Date: Fri, 16 May 2025 14:56:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5] spi: stm32-ospi: Make usage of
+ reset_control_acquire/release() API
+To: Mark Brown <broonie@kernel.org>
+CC: Philipp Zabel <p.zabel@pengutronix.de>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        <linux-kernel@vger.kernel.org>, <linux-spi@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <20250514-b4-upstream_ospi_reset_update-v5-1-7b5de0552c8c@foss.st.com>
+ <aCWxusdUYgeGRaqk@finisterre.sirena.org.uk>
+Content-Language: en-US
+From: Patrice CHOTARD <patrice.chotard@foss.st.com>
+In-Reply-To: <aCWxusdUYgeGRaqk@finisterre.sirena.org.uk>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-16_05,2025-05-16_02,2025-03-28_01
 
-Signed-off-by: Thomas Thelen <tommythelen@gmail.com>
----
- .../devicetree/bindings/thermal/nvidia,tegra124-soctherm.yaml   | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/thermal/nvidia,tegra124-soctherm.yaml b/Documentation/devicetree/bindings/thermal/nvidia,tegra124-soctherm.yaml
-index 19bb1f324183..f28de8cd983a 100644
---- a/Documentation/devicetree/bindings/thermal/nvidia,tegra124-soctherm.yaml
-+++ b/Documentation/devicetree/bindings/thermal/nvidia,tegra124-soctherm.yaml
-@@ -160,7 +160,7 @@ properties:
-       SOCTHERM hardware will assert the thermal trigger signal to the Power
-       Management IC, which can be configured to reset or shutdown the device.
-       It is an array of pairs where each pair represents a tsensor ID followed
--      by a temperature in milli Celcius. In the absence of this property the
-+      by a temperature in milli Celsius. In the absence of this property the
-       critical trip point will be used for thermtrip temperature.
- 
-       Note:
--- 
-2.48.1
 
+On 5/15/25 11:19, Mark Brown wrote:
+> On Wed, May 14, 2025 at 03:56:01PM +0200, Patrice Chotard wrote:
+> 
+>> This patch is dependent on commit 6b3754009f87
+>> ("reset: Add devm_reset_control_array_get_exclusive_released()")
+>> available on tag reset-for-v6.16.
+> 
+> When telling people about dependencies like this the standard thing is
+> to also specify the repostiory, or link to a pull request.  The git
+> repository is needed to actually pull the tag.  This appears to be the
+> PR at:
+> 
+>    https://lore.kernel.org/all/20250513092516.3331585-1-p.zabel@pengutronix.de/
+> 
+> which is the full reset pull request for v6.16.  The commit you
+> referenced isn't the tagged commit, it's further back in the history
+> but still has a whole new reset driver backed up behind it.  I'd have
+> expected that if this was expected to be pulled into other subsystems
+> it'd be on a topic branch and directly tagged?
+
+Hi Mark
+
+Sorry for that, how do you want me to proceed ?
+
+Thanks
+Patrice
 
