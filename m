@@ -1,109 +1,121 @@
-Return-Path: <linux-kernel+bounces-651041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-651043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 537B3AB9964
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 11:53:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1E87AB996C
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 11:53:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 43BAD7B082A
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 09:51:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E09C4E4824
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 09:53:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF3AF231849;
-	Fri, 16 May 2025 09:52:56 +0000 (UTC)
-Received: from sgoci-sdnproxy-4.icoremail.net (sgoci-sdnproxy-4.icoremail.net [129.150.39.64])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B89F6230D01;
-	Fri, 16 May 2025 09:52:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.150.39.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81057231A37;
+	Fri, 16 May 2025 09:53:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="V/oHqzV5"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 732E9230BF9;
+	Fri, 16 May 2025 09:53:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747389176; cv=none; b=Lbb+GSDmaPeeT4F5Wo6e1YcnzuxU/z2jGjja4DmO5FufhejN5VJTwhif6x2Kn7Sv21qhch05QK5TxFR1if9zBfeqZukmohJMLiaXr0t1mQXz9Bm3eSEieI+Z4y4B6ZATbC/TkGl9N4+/I8O0PDiD5LcsSdG5FA05et8Oa1sVCx8=
+	t=1747389220; cv=none; b=nTMT7DfGW9qgv/1uoXQlVhOSiJ99CE4fDZ76elFWAxoB0lBkEb3BS9SzRPOMPnPlWMZMbFNyq+PNAdE0S3x3J6+24UBMX26WQVOL8kyhYeKaXGroSf3/EgfJ8YeXCUyJzVUxHNzpafKdNf6JgqBv/ZBBG5cmAByEwMMGTEUTi6o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747389176; c=relaxed/simple;
-	bh=2YvD/IjOEk0LmEPjsc7gRx14VlDeI6fFNp6n6M5+kcs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QcyTk8/AeFForpzyia+ItHllCGrFuoGLIpNFQOahT2QLlnsjI8tbHHTO84u04qdXfaxHWT7B2CkfhvTZ16XgfQv/owOBbbSNXw8vA+OUngTGGdDhTrz8eeUgVyPQh62ze6GCbS+I9qMJ+Fg3yCeSE8ZsKfUr0bZG8+hWy6fna3c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=129.150.39.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
-Received: from E0004758DT.eswin.cn (unknown [10.12.96.83])
-	by app1 (Coremail) with SMTP id TAJkCgDn_Q7oCidoz8x8AA--.60601S2;
-	Fri, 16 May 2025 17:52:42 +0800 (CST)
-From: zhangsenchuan@eswincomputing.com
-To: gregkh@linuxfoundation.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Thinh.Nguyen@synopsys.com,
-	p.zabel@pengutronix.de
-Cc: ningyu@eswincomputing.com,
-	linmin@eswincomputing.com,
-	yangwei1@eswincomputing.com,
-	Senchuan Zhang <zhangsenchuan@eswincomputing.com>
-Subject: [PATCH v1 0/2] Add driver support for Eswin eic7700 SoC Usb controller
-Date: Fri, 16 May 2025 17:52:37 +0800
-Message-ID: <20250516095237.1516-1-zhangsenchuan@eswincomputing.com>
-X-Mailer: git-send-email 2.49.0.windows.1
+	s=arc-20240116; t=1747389220; c=relaxed/simple;
+	bh=kP/eP9CyFOzd2cYwS1iAvjzqmb3Swb4YgY0fKvf6BG4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EqScr49Xe/BcM9JfQ4a6xhM6c3cdZ+rNZXq/DUQGwV0i3JUTGCgy8jEpo0OB4qU4cJ0vc82OzMPc/ln110UHKNUud6lwQPsJyzTdRAmY9qHVjiWH5pgeF3qZfz9IEv0WuY2LFHcSbiI1z5lf1azLm7EcFtzjwdAk0RLFrwmcSRU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=V/oHqzV5; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1747389220; x=1778925220;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=kP/eP9CyFOzd2cYwS1iAvjzqmb3Swb4YgY0fKvf6BG4=;
+  b=V/oHqzV52NKBVvlGTDMPTpZy62BP/eUJb3X6/PxI/qi/jyvHevHkO51i
+   oamcrZkz5dDeZhnLF+xzo+Oiw0aJNJ4gsl3cFe/7CGkuYrAb3BAlSlngd
+   QTxHGy7yzcEBCwzhBVO1qECriJvzumTrp4PddWbgWfJzn4PzVFjohk8dJ
+   6VAvc25DDT2OBti6gp4LFrFvfXbkSovMODiRofgUjk1iJvEuZmQAHnY6a
+   P4lsvXUcUo8Kjy0capTrKjBdUkomlz4CRpGHHTfQaX6s9NgbmbUvD8ZZU
+   x9xi4Doi8TS5NMTR6eJz5IQK+RAwix+os9gW15/VYTlAYoZWjQCjaVngN
+   Q==;
+X-CSE-ConnectionGUID: YjI2E9wlT/OtQHt61wxyMA==
+X-CSE-MsgGUID: q1Lj2t4fRu+ah4m7UMVUEw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11434"; a="60744157"
+X-IronPort-AV: E=Sophos;i="6.15,293,1739865600"; 
+   d="scan'208";a="60744157"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 May 2025 02:53:39 -0700
+X-CSE-ConnectionGUID: vU9s/vPYSHaj3tH7jQvyTw==
+X-CSE-MsgGUID: KhfnSGfJRCSRgwtVcV3uKw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,293,1739865600"; 
+   d="scan'208";a="161957707"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 May 2025 02:53:37 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1uFrl1-000000026UO-2Wef;
+	Fri, 16 May 2025 12:53:35 +0300
+Date: Fri, 16 May 2025 12:53:35 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the gpio-intel tree
+Message-ID: <aCcLH25PSNqtPeSk@smile.fi.intel.com>
+References: <20250516193436.09bdf8cc@canb.auug.org.au>
+ <aCcHKK8FflYRhx2m@smile.fi.intel.com>
+ <20250516194237.03371ba7@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:TAJkCgDn_Q7oCidoz8x8AA--.60601S2
-X-Coremail-Antispam: 1UD129KBjvdXoWrZF13ZFW3Zry7XFy3Zr4Dtwb_yoWkJwc_Cr
-	1kurWDGw1UCFWjyFWjyrZ29rWjka1UXryxWF4ktr15u3yIq3y5Xry0y34UXF18AF43Xr9r
-	Wrs5KFZ7ZryxWjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbhkFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
-	6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUAVWUtwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628v
-	n2kIc2xKxwAKzVCY07xG64k0F24lc7CjxVAaw2AFwI0_Jw0_GFylc2xSY4AK6svPMxAIw2
-	8IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4l
-	x2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrw
-	CI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWxJVW8Jr1l
-	IxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4
-	A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JU6a0QUUUUU=
-X-CM-SenderInfo: x2kd0wpvhquxxxdqqvxvzl0uprps33xlqjhudrp/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250516194237.03371ba7@canb.auug.org.au>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-From: Senchuan Zhang <zhangsenchuan@eswincomputing.com>
+On Fri, May 16, 2025 at 07:42:37PM +1000, Stephen Rothwell wrote:
+> On Fri, 16 May 2025 12:36:40 +0300 Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+> > On Fri, May 16, 2025 at 07:34:36PM +1000, Stephen Rothwell wrote:
+> > > Hi all,
+> > > 
+> > > After merging the gpio-intel tree, today's linux-next build (htmldocs)
+> > > failed like this:
+> > > 
+> > > Error: Cannot open file /home/sfr/next/next/drivers/gpio/gpiolib-acpi.c
+> > > 
+> > > Caused by commit
+> > > 
+> > >   babb541af627 ("gpiolib: acpi: Move quirks to a separate file")
+> > > 
+> > > I have to run
+> > > 
+> > > make KERNELDOC=$(pwd)/scripts/kernel-doc.pl htmldocs
+> > > 
+> > > as the newer Python version dies without a useful error :-(  
+> > 
+> > Thanks for the report! And can you share the output of the above?
 
-     Support for the Eswin eic7700 Usb driver control program has been
-    added to the Linux kernel, which is part of the Eswin SoC family.
+I have just sent 20250516095306.3417798-1-andriy.shevchenko@linux.intel.com, it
+should fix the error here.
 
-    Features:
-     Implements support for the Eswin eic7700 SoC Usb controller,
-    which is responsible for identifying,configuring and connecting
-    usb devices,and provides interfaces for accessing these devices.
-
-    Supported chips:
-     Eswin eic7700 series SoC.
-
-    Test:
-     Tested this patch on the Sifive HiFive Premier P550 (which uses
-    the eic7700 SoC),The driver was tested to be normal through a usb
-    peripheral.
+> This is already being discussed in another thread.
+> 
+> https://lore.kernel.org/all/20250508184839.656af8f6@canb.auug.org.au/
 
 
-Senchuan Zhang (2):
-  dt-bindings: usb: Add Eswin EIC7700 Usb controller
-  usb: dwc3: eic7700: Add EIC7700 usb driver
 
- .../bindings/usb/eswin,eic7700-usb.yaml       | 120 ++++
- drivers/usb/dwc3/Kconfig                      |  11 +
- drivers/usb/dwc3/Makefile                     |   1 +
- drivers/usb/dwc3/dwc3-eic7700.c               | 605 ++++++++++++++++++
- 4 files changed, 737 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/usb/eswin,eic7700-usb.yaml
- create mode 100644 drivers/usb/dwc3/dwc3-eic7700.c
+-- 
+With Best Regards,
+Andy Shevchenko
 
---
-2.25.1
 
 
