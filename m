@@ -1,141 +1,116 @@
-Return-Path: <linux-kernel+bounces-651442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-651444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAD0EAB9E7E
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 16:19:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D63A3AB9E83
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 16:20:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 109D61BC2B42
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 14:19:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BCB7517332F
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 14:19:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 394AC19F43A;
-	Fri, 16 May 2025 14:18:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CEBB18DB24;
+	Fri, 16 May 2025 14:18:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="ZJ1fvfyI"
-Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="VbS9prBQ"
+Received: from 003.mia.mailroute.net (003.mia.mailroute.net [199.89.3.6])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89BE3199FBA
-	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 14:18:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 323B676410;
+	Fri, 16 May 2025 14:18:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747405100; cv=none; b=Nhmh+4MUxp2mv3gjNv4aRM8/fC0R9AQ3d0mvpasXIz6K5SzYihYp82SwXiwyQthAWlASw/18o/Qp7qFGaWV320nPESKYVoy9rKcvjOqQ42poVMDyQeAOFkxgGT0MF++0rsPgXg7FNR+iO0k0PCYFQlZPMRcOXx9gulR807UzsKs=
+	t=1747405131; cv=none; b=du2QnG7rV4bFzR+X4+U9JaYc9NKC0PcxwNZQP66gIovxlh5SUj5GgJZ0ZFGbxHce1dwrMwz0zRXlC3SUmI28v3THOmpZLcoRuSJ9tKANyMpTcNJhVF2ZyByzwKphCtX2rt4BqE7MpS4za02mfj1iAOtBpqYZyGCOYLyD6CLg0yU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747405100; c=relaxed/simple;
-	bh=Mg6g1/TzH+Xhtn16KUSbRqht0teHBbYz5hWZnb6szNU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fTHwP5v1Owx73GEoR4nBmV2zlN31twApIoT0nUJcFdNUCsc+rwEgxbilMD/+3noYd1GryO8tOvgyo+EWWDLx4xdoz6DOi4hkyGxltQeCUKGSjQRkczmBZAky3jPkR+k4CgMSV2O+InvbR9QneTxkkJHPkyqXvv+d732NYo0GRvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=ZJ1fvfyI; arc=none smtp.client-ip=209.85.219.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-6ecfbf8fa76so25665796d6.0
-        for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 07:18:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1747405097; x=1748009897; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=oku1snLMpD2EhPjxkL/jicRSSroCJrOHGMPvLIw4vjs=;
-        b=ZJ1fvfyIoPLhOUTfFLPr2CV0SxTY9jmFKzOClANqq33HzLbTTit4sVHm3+pv/ET8Nd
-         unQVmiHNboGffcxc0Rp/3UKZyQ9IOugXQ1AtwalwgujlN1gNlXpirN+i81W0rdbMFJfF
-         XgsS3J2RWJVcwqzdQ8n0SlNqakXit4pYwveCXj63pvD3XwDaLWwU9rfrzuyRhucdyvCS
-         xXXe3XUhPmXwMl4S0AEWT5aCNwaj6PxFrEModJVAP/KZgk21sKe7cs9shJeV/C1MV+nC
-         oIOcl9xeFgoWC2Pq4KP8G3fpvdp4RJOWZGJvuGuKdaW4tCPRt9OjQfzbHAXAfeJ4O+hc
-         yedw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747405097; x=1748009897;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oku1snLMpD2EhPjxkL/jicRSSroCJrOHGMPvLIw4vjs=;
-        b=o3IOgR00iay245NhG8BXAZ11VugRN9yTvu5G6MaZYAN+v7ab9kA439qfGLL8pcNdaA
-         Axt+AJ3cQPEzklgLrV5UfncrdDzK6IHgaJEVAEbneaR5FdwjciVev/6pAQoE4vK+Qd9b
-         sg9E1/Qg41XuJPt5KNRnP6THnqfVZSeTPOxspFeH+C1IQktDF4WhBgbJF7rem2U4o8zO
-         0GUXB5wCZRnjPKpNPj8qJGCxRkRLpbFgEVQ6ciG+1r6JP00b0+/uAu8VKP6jW2OyJCqn
-         ie1iUFDAf/5pJcX/0hEZJFCkKm/2ojOm5dqrrUs5KOXktsu3aSaJRPuGvlfiwJNc3Qeo
-         8VWA==
-X-Forwarded-Encrypted: i=1; AJvYcCUw2XITADPaa4RUPbo1eDLrcuFFfGpNMszyLbxlZ1xVmvJ7jkB9uFxSLOxNGFYc11y5J/kYxjI/onXO7C0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzxdbHeIO0lx3HBohPW4xWDxLpsNtu2AB0bTVOOv2ZpsGwDa/fG
-	aK+iyhwsTNKnTKvB45Nfs64YVa4m0i5jYIRPrPCVOeYGDa839c9pipflpf1OPX+tg0c=
-X-Gm-Gg: ASbGnctwYYELpClkxc42QljdjC54jts69sFyrartkoJ63fYa93hPFZoRnZRtWtqJ3A+
-	p/d/irPMe2mGpTlsWzor1l/k9csL6pnlxKIWi3Z1V6he6fKUE+lLwk4uBKR1LkDgHhMq1DtBSUV
-	Oj11HU8O5a0Jbs7UjLi3eRkpWZnGnWIeV4UQtgQASdQns92Fj1Mv1xXR9oLPZKzDK9zi68suzwN
-	GHTFdORQgsgk4XToitmSmWZb4FXibo+uwzb+zgCa5kldTiNP6p28QxpIv6b1I/Z49UcyXvcVJ60
-	KFhDyukdfEI7pEdZnU4olW+OYFJthenG2R6sC14+39rs+GwK+1onPAnM6ULybEvHbcHoJO0EXBS
-	1g+4XbV+eCWW1nDIZMkG5seG9v4U=
-X-Google-Smtp-Source: AGHT+IFtHK6p6wGrGRp+/Uark86W3HpnkGxzK5no2sq/+GtMDf7N3+z/MjO6uU/3WYiZf7Bgzm5AWQ==
-X-Received: by 2002:a05:6214:27e2:b0:6f5:4055:83d9 with SMTP id 6a1803df08f44-6f8b2c32c7bmr45344226d6.6.1747405097419;
-        Fri, 16 May 2025 07:18:17 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-142-167-56-70.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.167.56.70])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6f8b096dda9sm12537746d6.71.2025.05.16.07.18.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 May 2025 07:18:16 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1uFvtA-00000002g0J-0A2r;
-	Fri, 16 May 2025 11:18:16 -0300
-Date: Fri, 16 May 2025 11:18:16 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Alex Williamson <alex.williamson@redhat.com>
-Cc: lizhe.67@bytedance.com, kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, muchun.song@linux.dev,
-	Peter Xu <peterx@redhat.com>
-Subject: Re: [PATCH] vfio/type1: optimize vfio_pin_pages_remote() for
- hugetlbfs folio
-Message-ID: <20250516141816.GB530183@ziepe.ca>
-References: <20250513035730.96387-1-lizhe.67@bytedance.com>
- <20250515151946.1e6edf8b.alex.williamson@redhat.com>
+	s=arc-20240116; t=1747405131; c=relaxed/simple;
+	bh=Ibiq5vywsLVTHhNY4g9MBbPn3teE5YJJw1Xxj2f+BA4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=QuUd4CSNsTixExQCkIyTMLtd5YcE5hJGin++0cdbmmrr4/YiVrH1IhA4739UVREE9YsLcXJSDrGKWNKeC/VfB2crEezoq8480LxfwdIekgTYELbqTpgdF3ee5VWb1PNA5FV/7Z6AVO5AJGWrR6AoYbJIu2MJGZa2SN1RPYsCwY8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=VbS9prBQ; arc=none smtp.client-ip=199.89.3.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 003.mia.mailroute.net (Postfix) with ESMTP id 4ZzThf1LpCzltNQ5;
+	Fri, 16 May 2025 14:18:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1747405119; x=1749997120; bh=uTy2Ns3D7T0t6OmoA1ZQh4tj
+	VkxjjMFC2vhAtN8QcwU=; b=VbS9prBQT3VpJ5fDhtR2eThY/3IFckHYrDixYzWw
+	3GPP9BFpE1OulTlLedUKQGZWqw28rkQ1B+l9KZfcW75RO+y95TRtFOAPlVFMy+Ab
+	OEmmZr1F6mS0OhY5UpxlBq0Eu9+/SsHghWONiB2V8tH1oyPcbcg2lg+PXSfhzrqb
+	vT/n56y59bj2veKyR7E1l/s0mTTJ20gC8wlalNcg03xHB83+3UUpxWbeNZ4EwCmc
+	Mb0f7daw1EaBFfcXsPzq2Kfts+hJc/BlstkYlwKO5ZIbAXs8NG9yjcBQgFJ52E/a
+	/uwUbiuBB1BJh5UTP6v7IFeicaiBg07AcJQLK4jaZAEFUQ==
+X-Virus-Scanned: by MailRoute
+Received: from 003.mia.mailroute.net ([127.0.0.1])
+ by localhost (003.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id a2LzUo3fKmFs; Fri, 16 May 2025 14:18:39 +0000 (UTC)
+Received: from [192.168.51.14] (c-73-231-117-72.hsd1.ca.comcast.net [73.231.117.72])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 003.mia.mailroute.net (Postfix) with ESMTPSA id 4ZzThM57h4zlvfmv;
+	Fri, 16 May 2025 14:18:26 +0000 (UTC)
+Message-ID: <432a58c0-8b1c-4585-b299-f35286ee4b62@acm.org>
+Date: Fri, 16 May 2025 07:18:25 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250515151946.1e6edf8b.alex.williamson@redhat.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] scsi: ufs: mcq: delete ufshcd_release_scsi_cmd in
+ ufshcd_mcq_abort
+To: "ping.gao" <ping.gao@samsung.com>, alim.akhtar@samsung.com,
+ avri.altman@wdc.com, James.Bottomley@HansenPartnership.com,
+ martin.petersen@oracle.com, peter.wang@mediatek.com, minwoo.im@samsung.com,
+ manivannan.sadhasivam@linaro.org, chenyuan0y@gmail.com,
+ cw9316.lee@samsung.com, linux-scsi@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <CGME20250516083723epcas5p216a21ffb81631d35f0a12f7a583ea248@epcas5p2.samsung.com>
+ <20250516083812.3894396-1-ping.gao@samsung.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20250516083812.3894396-1-ping.gao@samsung.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, May 15, 2025 at 03:19:46PM -0600, Alex Williamson wrote:
-> On Tue, 13 May 2025 11:57:30 +0800
-> lizhe.67@bytedance.com wrote:
+On 5/16/25 1:38 AM, ping.gao wrote:
+> after ufs UFS_ABORT_TASK process successfully , host will generate
+> mcq irq for abort tag with response OCS_ABORTED
+> ufshcd_compl_one_cqe ->
+>      ufshcd_release_scsi_cmd
 > 
-> > From: Li Zhe <lizhe.67@bytedance.com>
-> > 
-> > When vfio_pin_pages_remote() is called with a range of addresses that
-> > includes hugetlbfs folios, the function currently performs individual
-> > statistics counting operations for each page. This can lead to significant
-> > performance overheads, especially when dealing with large ranges of pages.
-> > 
-> > This patch optimize this process by batching the statistics counting
-> > operations.
-> > 
-> > The performance test results for completing the 8G VFIO IOMMU DMA mapping,
-> > obtained through trace-cmd, are as follows. In this case, the 8G virtual
-> > address space has been mapped to physical memory using hugetlbfs with
-> > pagesize=2M.
-> > 
-> > Before this patch:
-> > funcgraph_entry:      # 33813.703 us |  vfio_pin_map_dma();
-> > 
-> > After this patch:
-> > funcgraph_entry:      # 15635.055 us |  vfio_pin_map_dma();
-> > 
-> > Signed-off-by: Li Zhe <lizhe.67@bytedance.com>
-> > ---
-> >  drivers/vfio/vfio_iommu_type1.c | 49 +++++++++++++++++++++++++++++++++
-> >  1 file changed, 49 insertions(+)
+> But in ufshcd_mcq_abort already do ufshcd_release_scsi_cmd, this means
+>   __ufshcd_release will be done twice.
 > 
-> Hi,
+> This means hba->clk_gating.active_reqs also will be decrease twice, it
+> will be negtive, so delete ufshcd_release_scsi_cmd in ufshcd_mcq_abort
+> function.
 > 
-> Thanks for looking at improvements in this area...
+> static void __ufshcd_release(struct ufs_hba *hba)
+> {
+>      if (!ufshcd_is_clkgating_allowed(hba))
+>          return;
+> 
+>      hba->clk_gating.active_reqs--;
+> 
+>      if (hba->clk_gating.active_reqs < 0) {
+>          panic("ufs abnormal active_reqs!!!!!!");
+>      }
+> 
+>      ...
+> }
+> Signed-off-by: ping.gao <ping.gao@samsung.com>
+A blank line is required between a patch description and a Signed-off-by 
+tag. Additionally, please add a Fixes: tag to the patch description.
 
-Why not just use iommufd? Doesn't it already does all these
-optimizations?
+Thanks,
 
-Indeed today you can use iommufd with a memfd handle which should
-return the huge folios directly from the hugetlbfs and we never
-iterate with 4K pages.
-
-Jason
+Bart.
 
