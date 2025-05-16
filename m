@@ -1,126 +1,124 @@
-Return-Path: <linux-kernel+bounces-650778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-650780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 963C6AB9602
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 08:33:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B75AEAB9607
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 08:33:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 630E27B561C
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 06:31:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CAB2D7A5598
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 06:32:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB914224AEE;
-	Fri, 16 May 2025 06:32:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3450224B14;
+	Fri, 16 May 2025 06:33:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wqr4JEkB"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TyrfVW3k"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0D921FF7DC;
-	Fri, 16 May 2025 06:32:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 809E11D88AC;
+	Fri, 16 May 2025 06:33:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747377176; cv=none; b=Rf5hyJ4MHik0Ky87cH5XoPhG1uwIsbK97tMXmOV8u+M9eljuiFcNzhV0dDHh+1jeSb8QoF77oNHOLCli8H6paOHmE0S7/YczoNss+W+tYd2dpsNC73qkyBNJ39vQEuNM0k19z0Abmzg3mhF3imm34N2pbLnzN19KrFc2LuYbREA=
+	t=1747377218; cv=none; b=QDu+MvvzkE9unJdwTcJdxJMjIviVFd8EIXbGe92Kw/HBc9yv9eMc0my2ylfPj79g602A+ZftmQOOour55fHyobp/IpyYqgstN/Bbly8Vdm7yCmhCc87glYcy048ZUkW+X/A36A/CsXX0Le90f2gXt7md0TNeVQDs3yfcf7sous8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747377176; c=relaxed/simple;
-	bh=NtEGmOTZqNuMiz2OCMtuAQv0Feqa6Dit7H5OY+B8VmM=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZMYQPpnKCM3t0sSUkK6EMRTsIt4nQLOyBLpKnhOk1OZdVMIV3VrZj70rQSnUu9qF2wJw6LQ6+fBpaXymSNPn6d+jURd0eNMtyuexoNMi2r/5a5rHxvJwbj6F/egzeeuijJ+38J3pDZPk7u9m9/jNAsW7ieAIQAvUt7rfTk1fs8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Wqr4JEkB; arc=none smtp.client-ip=209.85.167.45
+	s=arc-20240116; t=1747377218; c=relaxed/simple;
+	bh=ITiHYvPVbIk9Cqhu0/8qKyPCQGSeXSdTjNGJyN7gjH0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=JTAf5sSxvBCoNcNbhtqmPGdTYndvF/y0i5/Pqk/wkKsmwT6leQobepQ6qn1XiTcptALWu1oiHhNo5QLzx1UWG9JMzFPSV/7BCZf5ZtzmIiVnIi+Ops6Nqegh3YK25IHjObxootiQIsThMeWBXv0cqdpc7V/uY6l8RAid6RgrKZY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TyrfVW3k; arc=none smtp.client-ip=209.85.167.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-550d09d4daaso1669835e87.2;
-        Thu, 15 May 2025 23:32:54 -0700 (PDT)
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-54e816aeca6so2361162e87.2;
+        Thu, 15 May 2025 23:33:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747377173; x=1747981973; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=KUJKtPVwdVcpqXmFstCnFFaHnVm1C/pmwz6nmZZHgzI=;
-        b=Wqr4JEkBgQvfK/neI+C1bIzjlWhCLxhRUmlxm8ixsHSQ61qJ9Ku+U69mbPyA1MAqdW
-         DFmBoRjKdR6XucjBQMsGHaw0mRXsl7JHVG2MOnSBm3gehOIGbitrBYLRFAx8TmZFf/Xx
-         OvdTMpDnumb6AR/InivmA1Nd3/28lj3k2c57454Vc6MbGNGiu9/HzQupPQewhFrIH+Ky
-         VEE3XH3Obf9u6pg+okOatnVWxSEz8pbE+xB77J/60fcWrb75PciaNLaqYVsSs2Fp4uzO
-         ID7Gk3ChFDF+dWAxteBhaNxHShnY303uDiUiKy7LhO9uVF3jrGeWj9akLZU4DVdTqXQk
-         kwMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747377173; x=1747981973;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1747377214; x=1747982014; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=KUJKtPVwdVcpqXmFstCnFFaHnVm1C/pmwz6nmZZHgzI=;
-        b=GhW/7g5D0luU25JvO3IJSYXEHmXo8nRpEqRaboYWRS9oAFm+Ekd5WIM7H8O0xoeASS
-         Pi/LO0GgsqwNAUPFOmQ04Cux91VRp3vaaQj4PqZygmHsNO+ayB0w7mM18Ie8bhK+Yj0G
-         GjAwGFfuydD3ecw85wA/kaF0BTCD8JCNtmKHgc9naAvAa8jOj/aRKhxhri9qWfr+NeDM
-         rNzFh8mWTPJQcmc+2o6FlMujjAMdzjVGsnmoTVVK/SaC3VXdQy4huGF/bJfsjzyozEb0
-         hD+P46fY3nGG+uET87aitFVrJ39WgMZHdNxfWiy6dlPfm9N0OXB1ltqOqWSS6y67UKJP
-         88EA==
-X-Forwarded-Encrypted: i=1; AJvYcCUEG3ZuHSN4vEFmbr6AOKVVrEkv0XdT0wrPk2Eh1dt+GLYYb/SwmzZiI2U66ifhgDwMb0C621knmG2sllkQ5af7@vger.kernel.org, AJvYcCVjJz2/375EyI+jINf9FuBcmcVmwXwdiX3D3/FI7caCgQRjxdx5GbCYf8++hWCt4vsXO1g=@vger.kernel.org, AJvYcCWG7KygT2JqvUX6VMMDAoFgrCCGImT+SKiYNXb62Ic1tfg4MuwGwbOuaI39K/W7lc+//0QAwkW0wZP3naEL@vger.kernel.org
-X-Gm-Message-State: AOJu0YzvIZZ4kD2ngrBWmyvCs2fQMmt/Xm2rIE+GgynfDJntzfTtTXW4
-	GEVtJIXaf4QANJEdN9PDeqkX/9jEvayrqZbAKs8HPSm5Va214mNQ8lsF
-X-Gm-Gg: ASbGncusXpTSnj2hvnR1Ao5DPckkYofLYXTIakgmOnNFc/ViesgZdr/5Dm2NnreAjem
-	YL8c//xsx8taDZw+8LP9Lgde2BokGld1igwzFENB3CY2qzcFUVSh2H4CGXnLAMWIJt5PfERCKc5
-	8m9se6XkGT714OLfE4ow053zjqVEiho8cscIPXTXnnwe+mlLpsq5+jaUPyPJVpyTTP9NUiLmJSO
-	Xeaic5y5s5hZdIYK9hiMo+e0UIZUaUWf/nNQ2L/6Pf35Y1g/p3iS/LMowkl+E6cjIBdhtUA7nkj
-	OuzyYuwyCgtZkCaT3A==
-X-Google-Smtp-Source: AGHT+IFRP/vXmfI6lHLwDlzDmnD+1TtQ98Hefzc+j7BWdek+k9pG/xT4EAPbSUkky9UNn9GYhdpyww==
-X-Received: by 2002:a05:6512:6501:b0:550:e147:8165 with SMTP id 2adb3069b0e04-550e71d0bf3mr569220e87.24.1747377172352;
-        Thu, 15 May 2025 23:32:52 -0700 (PDT)
-Received: from pc636 ([2001:9b1:d5a0:a500::800])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-550e703c2f3sm275344e87.214.2025.05.15.23.32.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 May 2025 23:32:51 -0700 (PDT)
-From: Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
-Date: Fri, 16 May 2025 08:32:49 +0200
-To: Kees Cook <kees@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Shung-Hsi Yu <shung-hsi.yu@suse.com>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Erhard Furtner <erhard_f@mailbox.org>,
-	Danilo Krummrich <dakr@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, bpf@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH 0/2] mm: vmalloc: Actually use the in-place vrealloc
- region
-Message-ID: <aCbcEWR9RbjFjXV9@pc636>
-References: <20250515214020.work.519-kees@kernel.org>
+        bh=SBTw7n47tA9Za/6wjkrYsmCiKYOHmpnvJ9njSK+TKlc=;
+        b=TyrfVW3kpw2t2MLaY2NqUpFrFM1gC9j4Yio7aSGz4HW3Ncsh7YpQ79U/1PCc1h7Bs0
+         em8SSPUsIMMsZ5U/FEneK6MWbPOGIuBlf+cOtV/XdhTipUoq6lFI+ZNpAvMppm71VN42
+         n+X6zj/7Z/VvHhfEc1zoH78wglZ+0G6bpOoL1H6znYV5Cm7mJdyeqcMpYO5zvJyHAkKY
+         xdu0GOO3cnaQm2KtsKmXVWHN5i5EgP2C8hCCJjqb2Yc4X4OpVosXJKvLHut7zTQFtLSM
+         5ai8Oxkft+gb1fl3ph+sFveilrusaXqCAqBuUliB0WqWQCptCbYSNZyHQmcWSkt5gWoc
+         IfNw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747377214; x=1747982014;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SBTw7n47tA9Za/6wjkrYsmCiKYOHmpnvJ9njSK+TKlc=;
+        b=SjzeirCs2n2u2C5j8/5l5zjAG3Yr4/2lsp2d+s1sb4bO6nOMaaDGM9W7Uly303jSDO
+         XWWANuv2JNGse7JzqwK2udknytCjvGn2AftvxDp9dcTTxIwM71yZ/glccXnTISQJPkfR
+         bzFzK4fB6GemzRfTYOD2aMwJERqy7w5fBhCsc8ehgb06WuZenNBXoHA4rYbnv6EPwD+f
+         iqGnxYhw/HqLgo9RNUFK2VZFlQBRp4fxdTQB0J8paoWqlRWN2TGQPLBKK5AOjX3xWxXV
+         AMOi1fLBTl+dM5i1M1EFP/CyYIE/vOTLd4NkCP0+e5FS8sCw60bTUGXB1nTvZbWjv1SM
+         j84Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUWswgoxlTBGU0U9Z7LbhipjoKfjBA4vHkD0Ysjp5YTv6EKU7BpVvz0vAnoNnUvojbCm79WVW3L@vger.kernel.org, AJvYcCVibBifrna5eTRWjs7eVQfqiCeygXPMV9+0GCasZJELK2iX34gC/mAI4qlIk/SUjLRUh4G7KKaDMavZ/Y8=@vger.kernel.org, AJvYcCX8+JgfsQhDBTEwgJQzp89vEDewzuOkKUkyajtcjZPzhjX+6l4SopYg6BYy4iEYwEiERs/jtrWWiDoL@vger.kernel.org
+X-Gm-Message-State: AOJu0Yym2FK5R98JGcolF9zf55poJ4gflxpp5TCb6HsFQCqjx8G+LjIw
+	//VDQCr1DSRBDODFUcud5AeKK1lGf+CXvFCXjV7jBi3stkpmTJwgGSWS
+X-Gm-Gg: ASbGnctluEClmoMAX3ZtUCMbGbZfPDTlpl3SF3YKuFOV6UsRItymfpIehlF/3Gvi/pi
+	9khYKxdYJuMcpElzDj9VrT5FdyRC7dpgkm+l7ox8FzoMPi7v3LWEwSfZtUTk0l3jm4Omud9rl2j
+	MXg+KMN40J3tLMJoCMvKAbfSyV+DNENg2qaaaw90nNx3Kk+OC/Oikom2DV5DYRMgLilAn0kxcHt
+	Vx48zIq5dPPS2QlH7Lv36IE1HEAHwsMqjvQLvTYGFSP1+5VYiH7PQ9N9js2z8COPG4VBru0SlIi
+	1215BUl6wIJ1SET8CD9oXsQ+Y6v5LtkLdNM1Rm6FNpxwoCknstn3zikjWJYDxzbwypp0gf9UwUF
+	W+Ow=
+X-Google-Smtp-Source: AGHT+IFXuvhTg0HwM4B7G448RH8kbjZAcl27kGgPEEicb7hYFOL5VilJkbVwHq1ibwD1yMKVeyUIrQ==
+X-Received: by 2002:a05:6512:2616:b0:54d:6aa1:8f5a with SMTP id 2adb3069b0e04-550e71a732dmr438740e87.13.1747377214256;
+        Thu, 15 May 2025 23:33:34 -0700 (PDT)
+Received: from foxbook (adqk186.neoplus.adsl.tpnet.pl. [79.185.144.186])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-550e6f30e6csm281840e87.67.2025.05.15.23.33.32
+        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
+        Thu, 15 May 2025 23:33:33 -0700 (PDT)
+Date: Fri, 16 May 2025 08:33:28 +0200
+From: =?UTF-8?B?TWljaGHFgg==?= Pecio <michal.pecio@gmail.com>
+To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+Cc: Roy Luo <royluo@google.com>, "mathias.nyman@intel.com"
+ <mathias.nyman@intel.com>, "quic_ugoswami@quicinc.com"
+ <quic_ugoswami@quicinc.com>, "gregkh@linuxfoundation.org"
+ <gregkh@linuxfoundation.org>, "linux-usb@vger.kernel.org"
+ <linux-usb@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>, "stable@vger.kernel.org"
+ <stable@vger.kernel.org>
+Subject: Re: [PATCH v2 1/2] xhci: Add a quirk for full reset on removal
+Message-ID: <20250516083328.228813ec@foxbook>
+In-Reply-To: <20250515234244.tpqp375x77jh53fl@synopsys.com>
+References: <20250515185227.1507363-1-royluo@google.com>
+	<20250515185227.1507363-2-royluo@google.com>
+	<20250515234244.tpqp375x77jh53fl@synopsys.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250515214020.work.519-kees@kernel.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, May 15, 2025 at 02:42:14PM -0700, Kees Cook wrote:
-> Hi,
+On Thu, 15 May 2025 23:42:50 +0000, Thinh Nguyen wrote:
+> In any case, this is basically a revert of this change:
+> 6ccb83d6c497 ("usb: xhci: Implement xhci_handshake_check_state()
+> helper")
 > 
-> This fixes a performance regression[1] with vrealloc(). This needs to
-> get into v6.15, which is where the regression originates, and then it'll
-> get backport to the -stable releases as well.
-> 
-> Thanks!
-> 
-> -Kees
-> 
-> [1] https://lore.kernel.org/lkml/20250515-bpf-verifier-slowdown-vwo2meju4cgp2su5ckj@6gi6ssxbnfqg/
-> 
-> Kees Cook (2):
->   mm: vmalloc: Actually use the in-place vrealloc region
->   mm: vmalloc: Only zero-init on vrealloc shrink
-> 
->  mm/vmalloc.c | 13 ++++++++-----
->  1 file changed, 8 insertions(+), 5 deletions(-)
-> 
-Looks good to me both.
+> Can't we just revert or fix the above patch that causes a regression?
 
-Reviewed-by: "Uladzislau Rezki (Sony)" <urezki@gmail.com>
+Also note that 6ccb83d6c497 claimed to fix actual problems, so
+disabling it on selected hardware could bring the old bug back:
 
---
-Uladzislau Rezki
+> In some situations where xhci removal happens parallel to
+> xhci_handshake, we encounter a scenario where the xhci_handshake
+> can't succeed, and it polls until timeout.
+> 
+> If xhci_handshake runs until timeout it can on some platforms result
+> in a long wait which might lead to a watchdog timeout.
+
+But on the other hand, xhci_handshake() has long timeouts because
+the handshakes themselves can take a surprisingly long time (and
+sometimes still succeed), so any reliance on handshake completing
+before timeout is frankly a bug in itself.
+
+Regards,
+Michal
 
