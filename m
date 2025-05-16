@@ -1,152 +1,279 @@
-Return-Path: <linux-kernel+bounces-651020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-651022-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23EC9AB9910
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 11:42:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60698AB9915
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 11:43:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7AC4E1BC166B
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 09:43:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B80025032C0
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 09:43:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07872230BF9;
-	Fri, 16 May 2025 09:42:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="e3VJLERi"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F83E163;
-	Fri, 16 May 2025 09:42:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7876230BED;
+	Fri, 16 May 2025 09:43:22 +0000 (UTC)
+Received: from zg8tmja2lje4os4yms4ymjma.icoremail.net (zg8tmja2lje4os4yms4ymjma.icoremail.net [206.189.21.223])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48A24230BE9;
+	Fri, 16 May 2025 09:43:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=206.189.21.223
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747388564; cv=none; b=ScPgjDGeA8he1LSROwuAPNy7U4v2v+pK4o3ftXWBkuEhWMjz4QqoXe514vHftydOLQvmy54epBIiRq5fbwyA/zoME5qTM6ajY0iQY7FeWgpXuYGn+1Xza9RTbSOM6t18rPepAV904wh9mGlLrkOQslAsEi7A9sBCVY7O9gJl+Rs=
+	t=1747388602; cv=none; b=T/GhaqXTtW2xtBXakkaTvKVEf1p0CTDFq7YTK3XDQ19CjExZ2XW/+nxiI0Y9Z305myRzZxwVFdLd9BBZBulNwJET+KkUm9wbHUi/IMl6Q6W9huKk9nS1ovYa0DIZpfUO8MPonwdWhIXtC0m4MfUwt0eRl9h+0BkX2ZoVLhn1tWo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747388564; c=relaxed/simple;
-	bh=tEeJwceqPhH6rQO5BP/XnO6dPNDzjv4Fb3mwdlwvWhw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Ez8N8I/nv2aC2c9NrCI9O2PWRRXaV40Rq758YOOXhdkxegqwPMfFAaSPegP+sMEDwgG/CAvD+5LUUSLvkk9Dbkz7NzM99KWHsZWjCR2wXB0kMijH6fcxFFhKFTIEIasH6TaQTmdFNg2Kz2ZZHrKG5CuAxt2XHrTKPx1dnIozGrs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=e3VJLERi; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1747388558;
-	bh=3bsTN6s/atC4Hle8m6wzHP/e3ZR4IYSXzgWgQ96g304=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=e3VJLERiklN4QZz634EkcUMUXwZ9IWLIVS2uSWqvVMDTw7dCkE/Q69+hnEa+QiBHl
-	 tRI/tqEglBL3wDjIanrEbkhiLyEvKNjqDuBTlqiHiwX3nckb87vsTMxDdGRy9OZclO
-	 F+0MD+/QpVYYp1z3dEc45L3RGpCChn7NqkLUvNl23kudTZ0e/yvYQ+JXNFzy9dKY4j
-	 BMXmRraly0DlUt0xlfJlcQ5KICEIjfW2RsGhDN2HOx/GUD4rxI4BWECMhP97Xn7psQ
-	 VZv4vrq1irt6S5WZVw4NK3Pu6/5FXF6d17Uq9iqtzhU2xuysUjcrKlSsgTdgtZbNtX
-	 hL2SSGs1FENDA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZzMZ62BzTz4wcQ;
-	Fri, 16 May 2025 19:42:38 +1000 (AEST)
-Date: Fri, 16 May 2025 19:42:37 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the gpio-intel tree
-Message-ID: <20250516194237.03371ba7@canb.auug.org.au>
-In-Reply-To: <aCcHKK8FflYRhx2m@smile.fi.intel.com>
-References: <20250516193436.09bdf8cc@canb.auug.org.au>
-	<aCcHKK8FflYRhx2m@smile.fi.intel.com>
+	s=arc-20240116; t=1747388602; c=relaxed/simple;
+	bh=iRM0oIfGdVUZc4utRbh1pYtMqsKhE0xXF75fL+lPFd8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=PP4eScu7GM7Z6TYukoQWqp5UyDzmzUHjZVa0mk2SAqeruCp8+hphufR7QA9mGPPmQcqK3qRT6CnFNT9kFK48/4RNmmyml744z7j/Q7sINxsh0QXlRUoH/PORA559VDQ3BuWKXZ1Xbw5INjjfajT53g++6dhUlHeJlqKKxQNFx2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=206.189.21.223
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
+Received: from E0004758DT.eswin.cn (unknown [10.12.96.83])
+	by app1 (Coremail) with SMTP id TAJkCgDX7Q6dCCdozst8AA--.60135S2;
+	Fri, 16 May 2025 17:42:55 +0800 (CST)
+From: zhangsenchuan@eswincomputing.com
+To: bhelgaas@google.com,
+	lpieralisi@kernel.org,
+	kw@linux.com,
+	manivannan.sadhasivam@linaro.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.or,
+	linux-kernel@vger.kernel.org,
+	p.zabel@pengutronix.de,
+	johan+linaro@kernel.org,
+	quic_schintav@quicinc.com,
+	shradha.t@samsung.com,
+	cassel@kernel.org,
+	thippeswamy.havalige@amd.com
+Cc: ningyu@eswincomputing.com,
+	linmin@eswincomputing.com,
+	Senchuan Zhang <zhangsenchuan@eswincomputing.com>
+Subject: [PATCH v1 1/2] dt-bindings: PCI: eic7700: Add Eswin eic7700 PCIe host controller
+Date: Fri, 16 May 2025 17:42:48 +0800
+Message-ID: <20250516094249.1879-1-zhangsenchuan@eswincomputing.com>
+X-Mailer: git-send-email 2.49.0.windows.1
+In-Reply-To: <20250516094057.1300-1-zhangsenchuan@eswincomputing.com>
+References: <20250516094057.1300-1-zhangsenchuan@eswincomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/p.qQOCKF0gbsxCDO+Q54S/_";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:TAJkCgDX7Q6dCCdozst8AA--.60135S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxZw1kXr45urWkXFyUtF13Jwb_yoWrCFW5pF
+	Z8GFykCr48Xr13Zw48JF10kF13JanYkFnYyrn7W3WaqrsYqFyjqr4akF13G343Gr47X34Y
+	gFsIvryxtw17A3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBv14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_JF0_Jw1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lw4CEc2x0rVAKj4xxMxkF7I0En4kS14v26r4a6rW5MxkIecxEwVCm-wCF04
+	k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18
+	MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr4
+	1lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1l
+	IxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4
+	A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0pRByxiUUUUU=
+X-CM-SenderInfo: x2kd0wpvhquxxxdqqvxvzl0uprps33xlqjhudrp/
 
---Sig_/p.qQOCKF0gbsxCDO+Q54S/_
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+From: Senchuan Zhang <zhangsenchuan@eswincomputing.com>
 
-Hi Andy,
+Add Device Tree binding documentation for the ESWIN EIC7700
+PCIe controller module,the PCIe controller enables the core
+to correctly initialize and manage the PCIe bus and connected
+devices.
 
-On Fri, 16 May 2025 12:36:40 +0300 Andy Shevchenko <andriy.shevchenko@linux=
-.intel.com> wrote:
->
-> On Fri, May 16, 2025 at 07:34:36PM +1000, Stephen Rothwell wrote:
-> > Hi all,
-> >=20
-> > After merging the gpio-intel tree, today's linux-next build (htmldocs)
-> > failed like this:
-> >=20
-> > Error: Cannot open file /home/sfr/next/next/drivers/gpio/gpiolib-acpi.c
-> >=20
-> > Caused by commit
-> >=20
-> >   babb541af627 ("gpiolib: acpi: Move quirks to a separate file")
-> >=20
-> > I have to run
-> >=20
-> > make KERNELDOC=3D$(pwd)/scripts/kernel-doc.pl htmldocs
-> >=20
-> > as the newer Python version dies without a useful error :-( =20
->=20
-> Thanks for the report! And can you share the output of the above?
+Co-developed-by: Yu Ning <ningyu@eswincomputing.com>
+Signed-off-by: Yu Ning <ningyu@eswincomputing.com>
+Signed-off-by: Senchuan Zhang <zhangsenchuan@eswincomputing.com>
+---
+ .../bindings/pci/eswin,eic7700-pcie.yaml      | 171 ++++++++++++++++++
+ 1 file changed, 171 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pci/eswin,eic7700-pcie.yaml
 
-make[1]: Entering directory '/home/sfr/next/htmldocs'
-  PARSE   include/uapi/linux/dvb/ca.h
-  PARSE   include/uapi/linux/dvb/dmx.h
-  PARSE   include/uapi/linux/dvb/frontend.h
-  PARSE   include/uapi/linux/dvb/net.h
-  PARSE   include/uapi/linux/videodev2.h
-  PARSE   include/uapi/linux/media.h
-  PARSE   include/uapi/linux/cec.h
-  PARSE   include/uapi/linux/lirc.h
-Using alabaster theme
-Using Python kernel-doc
-/home/sfr/next/next/Documentation/bpf/bpf_iterators.rst:55: WARNING: Bullet=
- list ends without a blank line; unexpected unindent. [docutils]
-WARNING: /home/sfr/next/next/kernel/futex/futex.h:207 struct member 'drop_h=
-b_ref' not described in 'futex_q'
-WARNING: /home/sfr/next/next/kernel/futex/waitwake.c:593 function parameter=
- 'task' not described in 'futex_wait_setup'
-/home/sfr/next/next/Documentation/virt/kvm/x86/intel-tdx.rst:255: WARNING: =
-Footnote [1] is not referenced. [ref.footnote]
+diff --git a/Documentation/devicetree/bindings/pci/eswin,eic7700-pcie.yaml b/Documentation/devicetree/bindings/pci/eswin,eic7700-pcie.yaml
+new file mode 100644
+index 000000000000..e1d150c7c81a
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pci/eswin,eic7700-pcie.yaml
+@@ -0,0 +1,171 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/pci/eswin,eic7700-pcie.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Eswin EIC7700 PCIe host controller
++
++maintainers:
++  - Yu Ning <ningyu@eswincomputing.com>
++  - Senchuan Zhang <zhangsenchuan@eswincomputing.com>
++
++description: |
++  The PCIe controller on EIC7700 SoC.
++
++properties:
++  compatible:
++    const: eswin,eic7700-pcie
++
++  reg:
++    maxItems: 3
++
++  reg-names:
++    items:
++      - const: dbi
++      - const: config
++      - const: mgmt
++
++  "#address-cells":
++    const: 3
++  "#size-cells":
++    const: 2
++  '#interrupt-cells':
++    const: 1
++
++  interrupts:
++    maxItems: 9
++
++  interrupt-names:
++    items:
++      - const: msi
++      - const: inta
++      - const: intb
++      - const: intc
++      - const: intd
++
++  interrupt-controller:
++    type: object
++
++  interrupt-map:
++    maxItems: 4
++
++  interrupt-map-mask:
++    items:
++      - const: 0
++      - const: 0
++      - const: 0
++      - const: 7
++
++  clocks:
++    maxItems: 4
++    description: handles to clock for the pcie controller.
++
++  clock-names:
++    items:
++      - const: pcie_aclk
++      - const: pcie_cfg_clk
++      - const: pcie_cr_clk
++      - const: pcie_aux_clk
++    description: the name of each clock.
++
++  resets:
++    description: resets to be used by the controller.
++
++  reset-names:
++    items:
++      - const: pcie_cfg
++      - const: pcie_powerup
++      - const: pcie_pwren
++    description: names of the resets listed in resets property in the same order.
++
++  bus-range:
++    items:
++      - const: 0
++      - const: 0xff
++
++  device_type:
++    const: pci
++
++  ranges: true
++
++  dma-noncoherent: true
++
++  num-lanes:
++    maximum: 4
++
++  numa-node-id:
++    maximum: 0
++
++required:
++  - compatible
++  - reg
++  - reg-names
++  - interrupts
++  - interrupt-names
++  - interrupt-parent
++  - interrupt-map-mask
++  - interrupt-map
++  - '#address-cells'
++  - '#size-cells'
++  - '#interrupt-cells'
++  - clocks
++  - clock-names
++  - resets
++  - reset-names
++  - bus-range
++  - dma-noncoherent
++  - num-lanes
++  - ranges
++  - numa-node-id
++
++additionalProperties: false
++
++examples:
++  - |
++    soc {
++        #address-cells = <2>;
++        #size-cells = <2>;
++
++        pcie: pcie@54000000 {
++          compatible = "eswin,eic7700-pcie";
++          clocks = <&clock 562>,
++                   <&clock 563>,
++                   <&clock 564>,
++                   <&clock 565>;
++          clock-names = "pcie_aclk", "pcie_cfg_clk", "pcie_cr_clk", "pcie_aux_clk";
++
++          reset-names = "pcie_cfg", "pcie_powerup", "pcie_pwren";
++          resets = <&reset 8 (1 << 0)>,
++                   <&reset 8 (1 << 1)>,
++                   <&reset 8 (1 << 2)>;
++
++          #address-cells = <3>;
++          #size-cells = <2>;
++          #interrupt-cells = <1>;
++
++          reg = <0x0 0x54000000 0x0 0x4000000>,
++                <0x0 0x40000000 0x0 0x800000>,
++                <0x0 0x50000000 0x0 0x100000>;
++          reg-names = "dbi", "config", "mgmt";
++          device_type = "pci";
++
++          bus-range = <0x0 0xff>;
++          ranges = <0x81000000 0x0 0x40800000 0x0 0x40800000 0x0 0x800000>,
++                  <0x82000000 0x0 0x41000000 0x0 0x41000000 0x0 0xf000000>,
++                  <0xc3000000 0x80 0x00000000 0x80 0x00000000 0x2 0x00000000>;
++
++          num-lanes = <0x4>;
++          interrupts = <220>, <179>, <180>, <181>, <182>, <183>, <184>, <185>, <186>;
++          interrupt-names = "msi", "inta", "intb", "intc", "intd";
++          interrupt-parent = <&plic>;
++          interrupt-map-mask = <0x0 0x0 0x0 0x7>;
++          interrupt-map = <0x0 0x0 0x0 0x1 &plic 179>,
++                          <0x0 0x0 0x0 0x2 &plic 180>,
++                          <0x0 0x0 0x0 0x3 &plic 181>,
++                          <0x0 0x0 0x0 0x4 &plic 182>;
++          status = "disabled";
++          numa-node-id = <0>;
++          dma-noncoherent;
++        };
++    };
+--
+2.25.1
 
-Sphinx error:
-Sphinx is unable to load the master document (/home/sfr/next/next/Documenta=
-tion/index.rst). The master document must be within the source directory or=
- a subdirectory of it.
-make[3]: *** [/home/sfr/next/next/Documentation/Makefile:123: htmldocs] Err=
-or 2
-make[2]: *** [/home/sfr/next/next/Makefile:1803: htmldocs] Error 2
-make[1]: *** [/home/sfr/next/next/Makefile:248: __sub-make] Error 2
-make[1]: Leaving directory '/home/sfr/next/htmldocs'
-make: *** [Makefile:248: __sub-make] Error 2
-
-This is already being discussed in another thread.
-
-https://lore.kernel.org/all/20250508184839.656af8f6@canb.auug.org.au/
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/p.qQOCKF0gbsxCDO+Q54S/_
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmgnCI0ACgkQAVBC80lX
-0Gx72wf/RrklaMn23aAl9HeCpmOol+FdmXKa12a8f+XXuDQKN1U6jbm3LvMFYDO+
-8XSdfwaSL9f9cXpt0UGyWG39XdRfgrdAf9o1co+2IePoVq+wtyTzrSqZfBS4Gi4h
-df5wShHH9MpbPdVwuKI8noEIQia/L5PP5LBNv5axB8gX7+64ZgiuzdqD0Q3DF88H
-lbduuiNPRNoZ2dfreGWW+bGMQ0byiw/ybyxxHNpzBPNYzXek3cTI1fg4Pz9yQuf/
-gUyMZ18wPzkIUwuYlExLIHUMj8jrCgYyoHk1KAXJ0Pv+XiTRBtnI4AVOhhrwIxs5
-Nz7nbNo7Fh5ZIMSKxnb9QYf2HJ1rFA==
-=7H6Y
------END PGP SIGNATURE-----
-
---Sig_/p.qQOCKF0gbsxCDO+Q54S/_--
 
