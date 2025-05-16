@@ -1,102 +1,87 @@
-Return-Path: <linux-kernel+bounces-650690-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-650692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3ABBAB949F
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 05:20:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 809F1AB94A4
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 05:20:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F11D1179074
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 03:19:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52A6616CCD7
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 03:20:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 279ED25CC68;
-	Fri, 16 May 2025 03:18:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="dSHc5cQQ"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AA2922B8AB;
+	Fri, 16 May 2025 03:19:32 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09C1122F759
-	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 03:18:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55DA21A83E5;
+	Fri, 16 May 2025 03:19:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747365519; cv=none; b=hYtQ5i25AlUzSxOlJJyvDNftvAGpjxPMTiycLTD0PnbGd+PYez1xGsXGsjmT9yRMf+s6HCJE7iY/Z1LMAbYVGZlAv8sFSjru4P1l8vB1udsv3TYnxP5gkbCQ2pjT4MNVa92/GfPlzrXwj/duiaE+z7M2TuFwAzKvTFp/CUmZdPs=
+	t=1747365571; cv=none; b=pKbamidFct7op1h5L2F209x/2YMLEe71osZUqG2nI+q5vxz5yLsXTPA4LcLEiyNBqYZJmMRav4sxZW7zphQojWAoAyP+R17C1YzB6cMAQNki508xdMTVhVJvvZKY5w9X8fdMsTNA+zowTZAO9U3NyjlKqv02Uc6f5hrkNQ1wGIY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747365519; c=relaxed/simple;
-	bh=fUleARR8WOqVRUDxvmAQ8pRYUbbZ08VVcF0Rc27NNPY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QpCw9iIHXs6bWfhMdbrqx1dYcnTKB6Qs6dCwFbAImfkNSs7Fp2cNyOv+rsYaTeRb+/tR853zbJefJLtpkVn7uf4VeygOs2d23sWtygzKGvNJJZhu7dLtY6ceWIhUjdp6Rs33t3Z9ROxLBgj1v/LqJoFJJ/tt291J+VugS2gVK54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=dSHc5cQQ; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-741b3e37a1eso1831665b3a.1
-        for <linux-kernel@vger.kernel.org>; Thu, 15 May 2025 20:18:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1747365517; x=1747970317; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=j7W5OEI+FZQpiN0ZKth0yhvtWhfARtMcnHwli9u5j+8=;
-        b=dSHc5cQQo2CZFdfwoG8O2njoB4pdMQKkcfr3n7Vh/99vPIGoiaTKgUfyjoFHZUlB14
-         953LvPOOf55lnEsq/TPB7sFqkN9W8LIlU45o6sb2PSo7/kPi9a4Rtg1dNR/v9RuOJYpg
-         S4OAYdtRFitpgCrD/BEsEiBYJ7KL0O/7ikFW4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747365517; x=1747970317;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=j7W5OEI+FZQpiN0ZKth0yhvtWhfARtMcnHwli9u5j+8=;
-        b=WctbgAA7nRa1XZ+JjPp34Vsw9AiIKiVxf9PFv6Cw/pnW+S+r0A0Eumur/b7MCLZGNX
-         9BIgG/atASCEVM1yEuXbR6HsJvEGaHTwS6US5TiQXltKGj+oGv7JAhMSRCYVX0+2MBVr
-         9zqxVzk2aTZkxwjAWcnCQ1H9+25OxBkI+D0/XG+5LJ0cmtpnjmx8jzcpjJAG74nSleaT
-         wgfbdpDdehEg2dflJaCUL6DrAn0Wsg5tEAbWylQa3VmUjnQ6ae8ptkXLLYPJwuDsleip
-         xs40Bz4jQacwAhTW24IVA1fNKk8X9gsAvWjPvFDYpuI+o8lz0SwLhKMxoQofnjuBVAMa
-         qFkA==
-X-Forwarded-Encrypted: i=1; AJvYcCURN4vOCuKjkJ3+hpfvynSN2Zd25XBVQ0/bNRLqGUc87Rf//8tHLFsOlXKXXHEsrlVrE/5kuU5qUCjUZXU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJllfa2eKtW7RRor2rzJ5Ixa20fkV2Os+jzoLDLTIEHUxvy+Y4
-	uSOZG372usmh95Uzep1LWpg6wCumy4QCmMhTs7QCSe3ebcIHHzGe3HWX+XPqFXiypw==
-X-Gm-Gg: ASbGncvHMzo0+EEI8iInw7QPsyyEdHSkl+b0DNTcm8Df40WR1cbVffQiW4hQKLuT7kN
-	o5mLi2nc1GqJ9NaLkPKeV6ZTQQhmPEWHhCPindzasbm5/ojucgsUoCeveZnfRC2JEVdE0ZcFaZv
-	fNhQ/iiH/cw9LYMjcPV78TdT9xUHTfRbVxjgkBuwFIDqMwsgEwYITrxc7aCs0WK6TwE11aRlIwI
-	xl9TgXqJrwaiM0drcv7998vUoQuvJI9+PGvwteI4t2ZcJrokfzSr02hRIU8QkUk8vy6fFenRBYg
-	L9O8KGXZdX2D+lQSOmWjxTHpJaVyVtyTQQ3rzt/jebZl/e6ZSmFCq94=
-X-Google-Smtp-Source: AGHT+IHLTkuxZtugendz3dTtnKy+P2jOonT5OD2OO6kiYftSGNfAKI2vlh4zIm6rwvJZn9EZjsTHaQ==
-X-Received: by 2002:a05:6a00:10c6:b0:736:a540:c9ad with SMTP id d2e1a72fcca58-742a98b833bmr2119960b3a.20.1747365517264;
-        Thu, 15 May 2025 20:18:37 -0700 (PDT)
-Received: from google.com ([2401:fa00:8f:203:3a9e:6985:1cf8:b3be])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-742a9871517sm559838b3a.135.2025.05.15.20.18.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 May 2025 20:18:36 -0700 (PDT)
-Date: Fri, 16 May 2025 12:18:31 +0900
-From: Sergey Senozhatsky <senozhatsky@chromium.org>
-To: Ferenc Fejes <ferenc@fejes.dev>
-Cc: Sergey Senozhatsky <senozhatsky@chromium.org>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	John Fastabend <john.fastabend@gmail.com>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Matt Bobrowski <mattbobrowski@google.com>, Andrii Nakryiko <andrii.nakryiko@gmail.com>, bpf@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv2] bpf: add bpf_msleep_interruptible() kfunc
-Message-ID: <3q3yni3umfwq6mhghcoyqfpvji2a2toumo3elgjq44tqvxwuag@jzci6ssmkrf3>
-References: <20250515064800.2201498-1-senozhatsky@chromium.org>
- <eefad549e3d0568b523305252b6ec3a468502d2d.camel@fejes.dev>
+	s=arc-20240116; t=1747365571; c=relaxed/simple;
+	bh=S9hNRYZGBtGHnYh+1TJ2cA7pQVIF2TmPgmAfd2x3vSo=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Iam8lScw/8U+/KrxRBg0nWG9s/MYgjCh/pRdNZR18B29bBfglb9lrJLBoAFLkwJ61BSNLPJxd0Bx/gNtT/k63eAUbzq/0ws89in8JiLsk+3zhGrXWRQ0ML3uTnI3ld3L+fdqHz/dX1ejCS63olycsERVFEoomJcVpYbL7vJ60ZY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4ZzBzH5ptwzQkRL;
+	Fri, 16 May 2025 11:15:23 +0800 (CST)
+Received: from kwepemg500010.china.huawei.com (unknown [7.202.181.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 466BE180B41;
+	Fri, 16 May 2025 11:19:25 +0800 (CST)
+Received: from huawei.com (10.175.101.6) by kwepemg500010.china.huawei.com
+ (7.202.181.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 16 May
+ 2025 11:19:24 +0800
+From: Wang Zhaolong <wangzhaolong1@huawei.com>
+To: <sfrench@samba.org>, <sfrench@us.ibm.com>
+CC: <linux-cifs@vger.kernel.org>, <samba-technical@lists.samba.org>,
+	<linux-kernel@vger.kernel.org>, <wangzhaolong1@huawei.com>,
+	<yi.zhang@huawei.com>, <yangerkun@huawei.com>, <chengzhihao1@huawei.com>
+Subject: [PATCH -next 0/2] smb: client: Fix use-after-free in readdir
+Date: Fri, 16 May 2025 11:19:21 +0800
+Message-ID: <20250516031923.159247-1-wangzhaolong1@huawei.com>
+X-Mailer: git-send-email 2.34.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <eefad549e3d0568b523305252b6ec3a468502d2d.camel@fejes.dev>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemg500010.china.huawei.com (7.202.181.71)
 
-On (25/05/15 10:59), Ferenc Fejes wrote:
-> > +__bpf_kfunc unsigned long bpf_msleep_interruptible(unsigned int msecs)
-> > +{
-> > +	return msleep_interruptible(msecs);
-> 
-> Perhaps exposing fsleep instead of msleep? fsleep might fallback to msleep if no
-> better mechanism exists or if the sleep duration is >1000us.
+This patch series addresses a use-after-free vulnerability in the SMB/CIFS
+client readdir implementation that can be triggered during concurrent
+directory reads when a signal interrupts directory enumeration.
 
-I like the TASK_INTERRUPTIBLE semantics of msleep_interruptible().
+The root cause is in the operation sequence in find_cifs_entry():
+1. When query_dir_next() fails due to signal interruption (ERESTARTSYS)
+2. The code continues to access last_entry pointer before checking the return code
+3. This can access freed memory since the buffer may have been released
+
+The race condition can be triggered by processes accessing the same directory
+with concurrent readdir operations, especially when signals are involved.
+
+The fix is straightforward:
+1. First patch ensures we check the return code before using any pointers
+2. Second patch improves defensiveness by resetting all related buffer pointers
+   when freeing the network buffer
+
+Wang Zhaolong (2):
+  smb: client: Fix use-after-free in cifs_fill_dirent
+  cifs: Reset all search buffer pointers when releasing buffer
+
+ fs/smb/client/readdir.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+-- 
+2.34.3
+
 
