@@ -1,139 +1,371 @@
-Return-Path: <linux-kernel+bounces-652050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-652052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18BE1ABA669
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 May 2025 01:17:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B9EDABA66E
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 May 2025 01:18:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BC14B7BAC8D
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 23:12:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2FF0C7A9053
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 23:13:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9480B280A33;
-	Fri, 16 May 2025 23:12:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFF371E521E;
+	Fri, 16 May 2025 23:14:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wAJ7qzf8"
-Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cumSymbh"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5876127FD47
-	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 23:11:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D52EC1E9B2F;
+	Fri, 16 May 2025 23:14:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747437120; cv=none; b=EuwYDdTL1LgWIMwlq+exRoDbBffyUwApTNCCMPxAk2sTDYQO3K72G4uaF3X+UGxGBglvhB/lilC0rtFJbJBDAGu3SfPN5YGw8e3qw9fFVoHN5ZUUrjNaux54tUqfiDJG04fVY4IVK72PjENIaIdfjXMre7SMGG7eKz6lz0cx5gA=
+	t=1747437253; cv=none; b=gzufJq/4qFN5gNDCatYt97nFfcRLCAYULKj+9x8M1bNQtk3s0tdh0h2k99FgNwgR2ntM+RQj2ZX1v/Ch2L63smD8WhdQlNpvY466fY2rxz/arrManU42AvQGtqo3dAEzAt+nWDcuc2rL7iiisErP7nDBYAZrCNBWYkuxyRhaFYo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747437120; c=relaxed/simple;
-	bh=OqugXQKW2BX+T3PbGJGbPTR0CK06fVopFgGf50LvnZc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QfLYWA91oF/xp3pP/MlzVma3RQf4qc0gXetyeNm+5b1m+JJlN3yCD+0GwmhOh6kK17E8ZRS7qPXos1EiVQz3HSStz+lJ+xd+eKtdY97vJ4vU3igc4raHSvShBgKd0XJUTAg1woDw1zFQ2slGGKOu/etBiKE9bSfiqLRn7S0UluM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wAJ7qzf8; arc=none smtp.client-ip=209.85.222.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-7c922734cc2so306160185a.1
-        for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 16:11:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1747437117; x=1748041917; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OqugXQKW2BX+T3PbGJGbPTR0CK06fVopFgGf50LvnZc=;
-        b=wAJ7qzf8BLjwwwazNTrG4Vem2QP+YmaN2Xa0ff6SniZG1B2eduPtzv/BdGkqPA6U66
-         xxcpTQamI0jLPxaBogyFUo94WG1xXEDqoiGYDp3LJ7XjQGDuLb09gPhAoUFUGNFbeO2d
-         DofSS9UsctERhO2Wr556Fb9zYNHTJzumUMoOXVJnIqRGwg3XM9zKpaWES4YVWyeU5RXF
-         QwJh4wL9kwouT1jtwSwUCejr6RTZ7Q0Ya9cXQCdqPOkj48oUFQxR7/uAC/z4peO2RI5b
-         L32ZajqU3OQwbfb0Hm1XWZlziQnRqZhokaE4peETHuxZI6TjuJEs3GafaZjFEt+6BVSZ
-         ll/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747437117; x=1748041917;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OqugXQKW2BX+T3PbGJGbPTR0CK06fVopFgGf50LvnZc=;
-        b=XBOGOtBf8ZwSSFTU3/sU3Nd+wdubobPgGNtD3WL868tbBsNBgu1rbuySvKzDWBLBae
-         T5oKgxZ06ltP6822W8ieVoCM9kdiLaGQwnk3bzY7bNzw9bLHIosEC0fyDVdF70igQG4S
-         FVBlNslfRVfjtmyzV80zFikkpskYH0IhGy7KhRxCggO/DeMjgIstJeKXtAiTG14bVgbu
-         pDcqFgZUQcVSGJMLHyWdu7www/TQcfMODRI6YHRHvxBKcxJ+SUYLucErOXcOlvwuR1qU
-         LWOCzSQFjiWLm8nkRg3S4mV6QB0ZI/fu7KqGGCp05lsgsj9hNH+fWGVBW+kw6K+cNWHU
-         UI0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWZqQSe75sYPNmO19J/KOx+yJfAtAO4lk7zSC3orHVY78ZyEKjxKcwcLJURCH9vIJD4SKg0AFTo0iagJPs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzA++4Bqjs44PvQ2iy6Dnf3KyaQ/riCPRMibtFC84TXCsJwwM11
-	EnV4nr7bT2eDa+Q3ZVuvLWaAFrJY8vhF28Rf45D/+UKuBDoaNTlrT3bR+99bkBsoWWgoPc4HhmM
-	xmIOVqiszppHeNC0Te/qjPVVhGM8UqBfcIrrNCxm7
-X-Gm-Gg: ASbGnctRpGiTB4xHYiB3UEzvPTldFVcntDNSfsMOA5WwicoZBwG+fK3Bt8Dg3reXt9V
-	aPqpk1mT0FlmqedRZDwCxDknEsOib2cUt5QVE8gSCRw4mAPpzlrHMZaMkwLmQHSakxGUE2vMuaQ
-	W5onz/l/xpXO3zNzGW7Id3q6o50Cx83Nw=
-X-Google-Smtp-Source: AGHT+IGQvSSrPkr7h0bza6OG2FoIU10eYzkpv5Fg9fDQCDDKKTN2XlS1tv+gLuU6FKmYZTKU9t1k9rcjkDY0LWgWQVc=
-X-Received: by 2002:a05:620a:9162:b0:7ca:d9e8:d737 with SMTP id
- af79cd13be357-7cd39e1b14bmr1079981685a.22.1747437116939; Fri, 16 May 2025
- 16:11:56 -0700 (PDT)
+	s=arc-20240116; t=1747437253; c=relaxed/simple;
+	bh=YOuvZZ4wJJU/If3NIuDMUWA+aUU2p/g3rsNeI5CuTM0=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=QW2+fdZqCXe6aW1Az9YgdpB9bgF9xk7dqJTQgGRt5xKmASBiNHXG0jWWdO4pgh62R+8Ds9fPchal7yR7oQzfv68VkFmoGy83Eq08X1XHJh1hDSTZI9YQdQr/NZ3d08KFO2gugzUzrU2GIWzchNp+7pddYc5nmIIRVWIbBW7D4s4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cumSymbh; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1747437251; x=1778973251;
+  h=message-id:date:mime-version:subject:from:to:cc:
+   references:in-reply-to:content-transfer-encoding;
+  bh=YOuvZZ4wJJU/If3NIuDMUWA+aUU2p/g3rsNeI5CuTM0=;
+  b=cumSymbhPaosgbZO4Hfw4nKeqkYPEzDNpd+Z8xqElmItQmX9Vd79FB5m
+   XeMWwu6okfaTw8fOBU70z7m5Q6UYDPkl0y+28mDhdypEkEJfhyqSja2VD
+   sy4iBqqMb5rJfsq+N4DEi3egft8h/43303PYKbYshxYXVncAZCKxEzQRN
+   KRculUYXIUZ80LI+40I+er61/oXZWH4YqY/6zcVpg2U01tUYldqd+GUMU
+   47wxvTFEJRM2C71mbOqLxZedu3FnfZsCB+ZTsrbW6br+5PORrmjsfG60/
+   ecqxuqer8eUeT1OyEWUMRyAcfsLbPYKQZTEtjN9O35gU0yCNIwJVuqmGA
+   A==;
+X-CSE-ConnectionGUID: nukBLJyrSCCaYjdOdCLQWA==
+X-CSE-MsgGUID: aexnmfN3SrWY9DH95Hek6A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11435"; a="49489597"
+X-IronPort-AV: E=Sophos;i="6.15,295,1739865600"; 
+   d="scan'208";a="49489597"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 May 2025 16:14:10 -0700
+X-CSE-ConnectionGUID: YLmDTjDRRpSrjll//T1amw==
+X-CSE-MsgGUID: QSHQpFN+QgmeVgY6RupjJw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,295,1739865600"; 
+   d="scan'208";a="143698705"
+Received: from tfalcon-desk.amr.corp.intel.com (HELO [10.124.220.15]) ([10.124.220.15])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 May 2025 16:14:09 -0700
+Message-ID: <0d87dc70-67d5-4de0-8f12-9895640fd904@linux.intel.com>
+Date: Fri, 16 May 2025 16:14:08 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250515185227.1507363-1-royluo@google.com> <20250515185227.1507363-2-royluo@google.com>
- <20250515234244.tpqp375x77jh53fl@synopsys.com> <20250516083328.228813ec@foxbook>
-In-Reply-To: <20250516083328.228813ec@foxbook>
-From: Roy Luo <royluo@google.com>
-Date: Fri, 16 May 2025 16:11:20 -0700
-X-Gm-Features: AX0GCFsMrs5J30EUO0n4U0eNx8NgCyUTGXB04orUYY9TWHPynysT3i90ibLSUtE
-Message-ID: <CA+zupgwSVRNyf40JiDi6ugSLHX_rXkyS2=pwc9_VHsSXj4AV5g@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] xhci: Add a quirk for full reset on removal
-To: =?UTF-8?Q?Micha=C5=82_Pecio?= <michal.pecio@gmail.com>
-Cc: Thinh Nguyen <Thinh.Nguyen@synopsys.com>, 
-	"mathias.nyman@intel.com" <mathias.nyman@intel.com>, 
-	"quic_ugoswami@quicinc.com" <quic_ugoswami@quicinc.com>, 
-	"gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, 
-	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"stable@vger.kernel.org" <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/6] PCI: Remove hybrid devres nature from request
+ functions
+From: Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@linux.intel.com>
+To: Philipp Stanner <phasta@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+ Bjorn Helgaas <bhelgaas@google.com>, Mark Brown <broonie@kernel.org>,
+ David Lechner <dlechner@baylibre.com>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Zijun Hu <quic_zijuhu@quicinc.com>, Yang Yingliang
+ <yangyingliang@huawei.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-pci@vger.kernel.org
+References: <20250516174141.42527-1-phasta@kernel.org>
+ <20250516174141.42527-2-phasta@kernel.org>
+ <99dba1da-4fc6-4e35-a6fc-40233144f7dd@linux.intel.com>
+Content-Language: en-US
+In-Reply-To: <99dba1da-4fc6-4e35-a6fc-40233144f7dd@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-> There's no state 0. Checking against that is odd. Couldn't we just use
-> xhci_handshake() equivalent instead?
 
-Ok, I will change it in the next version.
-
-On Thu, May 15, 2025 at 11:33=E2=80=AFPM Micha=C5=82 Pecio <michal.pecio@gm=
-ail.com> wrote:
+On 5/16/25 3:58 PM, Sathyanarayanan Kuppuswamy wrote:
+> Hi,
 >
-> On Thu, 15 May 2025 23:42:50 +0000, Thinh Nguyen wrote:
-> > In any case, this is basically a revert of this change:
-> > 6ccb83d6c497 ("usb: xhci: Implement xhci_handshake_check_state()
-> > helper")
-> >
-> > Can't we just revert or fix the above patch that causes a regression?
+> On 5/16/25 10:41 AM, Philipp Stanner wrote:
+>> All functions based on __pci_request_region() and its release counter
+>> part support "hybrid mode", where the functions become managed if the
+>> PCI device was enabled with pcim_enable_device().
+>>
+>> Removing this undesirable feature requires to remove all users who
+>> activated their device with that function and use one of the affected
+>> request functions.
+>>
+>> These users were:
+>>     ASoC
+>>     alsa
+>>     cardreader
+>>     cirrus
+>>     i2c
+>>     mmc
+>>     mtd
+>>     mtd
+>>     mxser
+>>     net
+>>     spi
+>>     vdpa
+>>     vmwgfx
+>>
+>> all of which have been ported to always-managed pcim_ functions by now.
+>>
+>> The hybrid nature can, thus, be removed from the aforementioned PCI
+>> functions.
+>>
+>> Remove all function guards and documentation in pci.c related to the
+>> hybrid redirection. Adjust the visibility of pcim_release_region().
+>>
+>> Signed-off-by: Philipp Stanner <phasta@kernel.org>
+>> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+>> ---
 >
-> Also note that 6ccb83d6c497 claimed to fix actual problems, so
-> disabling it on selected hardware could bring the old bug back:
+> Reviewed-by: Kuppuswamy Sathyanarayanan 
+> <sathyanarayanan.kuppuswamy@linux.intel.com>
 >
-> > In some situations where xhci removal happens parallel to
-> > xhci_handshake, we encounter a scenario where the xhci_handshake
-> > can't succeed, and it polls until timeout.
-> >
-> > If xhci_handshake runs until timeout it can on some platforms result
-> > in a long wait which might lead to a watchdog timeout.
+>>   drivers/pci/devres.c | 39 ++++++++++++---------------------------
+>>   drivers/pci/pci.c    | 42 ------------------------------------------
+>>   drivers/pci/pci.h    |  1 -
+>>   3 files changed, 12 insertions(+), 70 deletions(-)
+>>
+>> diff --git a/drivers/pci/devres.c b/drivers/pci/devres.c
+>> index 73047316889e..5480d537f400 100644
+>> --- a/drivers/pci/devres.c
+>> +++ b/drivers/pci/devres.c
+>> @@ -6,30 +6,13 @@
+>>   /*
+>>    * On the state of PCI's devres implementation:
+>>    *
+>> - * The older devres API for PCI has two significant problems:
+>> + * The older PCI devres API has one significant problem:
+>>    *
+>> - * 1. It is very strongly tied to the statically allocated mapping 
+>> table in
+>> - *    struct pcim_iomap_devres below. This is mostly solved in the 
+>> sense of the
+>> - *    pcim_ functions in this file providing things like ranged 
+>> mapping by
+>> - *    bypassing this table, whereas the functions that were present 
+>> in the old
+>> - *    API still enter the mapping addresses into the table for users 
+>> of the old
+>> - *    API.
+>> - *
+>> - * 2. The region-request-functions in pci.c do become managed IF the 
+>> device has
+>> - *    been enabled with pcim_enable_device() instead of 
+>> pci_enable_device().
+>> - *    This resulted in the API becoming inconsistent: Some functions 
+>> have an
+>> - *    obviously managed counter-part (e.g., pci_iomap() <-> 
+>> pcim_iomap()),
+>> - *    whereas some don't and are never managed, while others don't 
+>> and are
+>> - *    _sometimes_ managed (e.g. pci_request_region()).
+>> - *
+>> - *    Consequently, in the new API, region requests performed by the 
+>> pcim_
+>> - *    functions are automatically cleaned up through the devres 
+>> callback
+>> - *    pcim_addr_resource_release().
+>> - *
+>> - *    Users of pcim_enable_device() + pci_*region*() are redirected in
+>> - *    pci.c to the managed functions here in this file. This isn't 
+>> exactly
+>> - *    perfect, but the only alternative way would be to port ALL 
+>> drivers
+>> - *    using said combination to pcim_ functions.
+>> + * It is very strongly tied to the statically allocated mapping 
+>> table in struct
+>> + * pcim_iomap_devres below. This is mostly solved in the sense of 
+>> the pcim_
+>> + * functions in this file providing things like ranged mapping by 
+>> bypassing
+>> + * this table, whereas the functions that were present in the old 
+>> API still
+>> + * enter the mapping addresses into the table for users of the old API.
+>>    *
+>>    * TODO:
+>>    * Remove the legacy table entirely once all calls to 
+>> pcim_iomap_table() in
+>> @@ -89,10 +72,12 @@ static inline void pcim_addr_devres_clear(struct 
+>> pcim_addr_devres *res)
+>>     /*
+>>    * The following functions, __pcim_*_region*, exist as counterparts 
+>> to the
+>> - * versions from pci.c - which, unfortunately, can be in "hybrid 
+>> mode", i.e.,
+>> - * sometimes managed, sometimes not.
+>> + * versions from pci.c - which, unfortunately, were in the past in 
+>> "hybrid
+>> + * mode", i.e., sometimes managed, sometimes not.
+>
+> Why not remove "hybrid mode"  reference like other places?
 
-On top of this, xhci_handshake_check_state(XHCI_STATE_REMOVING)
-is also used elsewhere like xhci_abort_cmd_ring(), so a simple revert is
-off the table. Commit 6ccb83d6c497 did not specify which platform and
-in what circumstance would xhci handshake timeout, adding a quirk for
-DWC3 seems to be the better option here.
+Please ignore my comment. It looks like you have cleaned up everything
+int the end.
 
 >
-> But on the other hand, xhci_handshake() has long timeouts because
-> the handshakes themselves can take a surprisingly long time (and
-> sometimes still succeed), so any reliance on handshake completing
-> before timeout is frankly a bug in itself.
+>>    *
+>> - * To separate the APIs cleanly, we define our own, simplified 
+>> versions here.
+>> + * To separate the APIs cleanly, we defined our own, simplified 
+>> versions here.
+>> + *
+>> + * TODO: unify those functions with the counterparts in pci.c
+>>    */
+>>     /**
+>> @@ -893,7 +878,7 @@ int pcim_request_region_exclusive(struct pci_dev 
+>> *pdev, int bar, const char *nam
+>>    * Release a region manually that was previously requested by
+>>    * pcim_request_region().
+>>    */
+>> -void pcim_release_region(struct pci_dev *pdev, int bar)
+>> +static void pcim_release_region(struct pci_dev *pdev, int bar)
+>>   {
+>>       struct pcim_addr_devres res_searched;
+>>   diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+>> index e77d5b53c0ce..4acc23823637 100644
+>> --- a/drivers/pci/pci.c
+>> +++ b/drivers/pci/pci.c
+>> @@ -3937,16 +3937,6 @@ void pci_release_region(struct pci_dev *pdev, 
+>> int bar)
+>>       if (!pci_bar_index_is_valid(bar))
+>>           return;
+>>   -    /*
+>> -     * This is done for backwards compatibility, because the old PCI 
+>> devres
+>> -     * API had a mode in which the function became managed if it had 
+>> been
+>> -     * enabled with pcim_enable_device() instead of 
+>> pci_enable_device().
+>> -     */
+>> -    if (pci_is_managed(pdev)) {
+>> -        pcim_release_region(pdev, bar);
+>> -        return;
+>> -    }
+>> -
+>>       if (pci_resource_len(pdev, bar) == 0)
+>>           return;
+>>       if (pci_resource_flags(pdev, bar) & IORESOURCE_IO)
+>> @@ -3984,13 +3974,6 @@ static int __pci_request_region(struct pci_dev 
+>> *pdev, int bar,
+>>       if (!pci_bar_index_is_valid(bar))
+>>           return -EINVAL;
+>>   -    if (pci_is_managed(pdev)) {
+>> -        if (exclusive == IORESOURCE_EXCLUSIVE)
+>> -            return pcim_request_region_exclusive(pdev, bar, name);
+>> -
+>> -        return pcim_request_region(pdev, bar, name);
+>> -    }
+>> -
+>>       if (pci_resource_len(pdev, bar) == 0)
+>>           return 0;
+>>   @@ -4027,11 +4010,6 @@ static int __pci_request_region(struct 
+>> pci_dev *pdev, int bar,
+>>    *
+>>    * Returns 0 on success, or %EBUSY on error.  A warning
+>>    * message is also printed on failure.
+>> - *
+>> - * NOTE:
+>> - * This is a "hybrid" function: It's normally unmanaged, but becomes 
+>> managed
+>> - * when pcim_enable_device() has been called in advance. This hybrid 
+>> feature is
+>> - * DEPRECATED! If you want managed cleanup, use the pcim_* functions 
+>> instead.
+>>    */
+>>   int pci_request_region(struct pci_dev *pdev, int bar, const char 
+>> *name)
+>>   {
+>> @@ -4084,11 +4062,6 @@ static int 
+>> __pci_request_selected_regions(struct pci_dev *pdev, int bars,
+>>    * @name: Name of the driver requesting the resources
+>>    *
+>>    * Returns: 0 on success, negative error code on failure.
+>> - *
+>> - * NOTE:
+>> - * This is a "hybrid" function: It's normally unmanaged, but becomes 
+>> managed
+>> - * when pcim_enable_device() has been called in advance. This hybrid 
+>> feature is
+>> - * DEPRECATED! If you want managed cleanup, use the pcim_* functions 
+>> instead.
+>>    */
+>>   int pci_request_selected_regions(struct pci_dev *pdev, int bars,
+>>                    const char *name)
+>> @@ -4104,11 +4077,6 @@ EXPORT_SYMBOL(pci_request_selected_regions);
+>>    * @name: name of the driver requesting the resources
+>>    *
+>>    * Returns: 0 on success, negative error code on failure.
+>> - *
+>> - * NOTE:
+>> - * This is a "hybrid" function: It's normally unmanaged, but becomes 
+>> managed
+>> - * when pcim_enable_device() has been called in advance. This hybrid 
+>> feature is
+>> - * DEPRECATED! If you want managed cleanup, use the pcim_* functions 
+>> instead.
+>>    */
+>>   int pci_request_selected_regions_exclusive(struct pci_dev *pdev, 
+>> int bars,
+>>                          const char *name)
+>> @@ -4144,11 +4112,6 @@ EXPORT_SYMBOL(pci_release_regions);
+>>    *
+>>    * Returns 0 on success, or %EBUSY on error.  A warning
+>>    * message is also printed on failure.
+>> - *
+>> - * NOTE:
+>> - * This is a "hybrid" function: It's normally unmanaged, but becomes 
+>> managed
+>> - * when pcim_enable_device() has been called in advance. This hybrid 
+>> feature is
+>> - * DEPRECATED! If you want managed cleanup, use the pcim_* functions 
+>> instead.
+>>    */
+>>   int pci_request_regions(struct pci_dev *pdev, const char *name)
+>>   {
+>> @@ -4173,11 +4136,6 @@ EXPORT_SYMBOL(pci_request_regions);
+>>    *
+>>    * Returns 0 on success, or %EBUSY on error.  A warning message is 
+>> also
+>>    * printed on failure.
+>> - *
+>> - * NOTE:
+>> - * This is a "hybrid" function: It's normally unmanaged, but becomes 
+>> managed
+>> - * when pcim_enable_device() has been called in advance. This hybrid 
+>> feature is
+>> - * DEPRECATED! If you want managed cleanup, use the pcim_* functions 
+>> instead.
+>>    */
+>>   int pci_request_regions_exclusive(struct pci_dev *pdev, const char 
+>> *name)
+>>   {
+>> diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
+>> index b81e99cd4b62..8c3e5fb2443a 100644
+>> --- a/drivers/pci/pci.h
+>> +++ b/drivers/pci/pci.h
+>> @@ -1062,7 +1062,6 @@ static inline pci_power_t 
+>> mid_pci_get_power_state(struct pci_dev *pdev)
+>>   int pcim_intx(struct pci_dev *dev, int enable);
+>>   int pcim_request_region_exclusive(struct pci_dev *pdev, int bar,
+>>                     const char *name);
+>> -void pcim_release_region(struct pci_dev *pdev, int bar);
+>
+> Since you removed the only use of pcim_request_region_exclusive(), why 
+> not remove the definition in the same patch?
+>>   /*
+>>    * Config Address for PCI Configuration Mechanism #1
+>
+-- 
+Sathyanarayanan Kuppuswamy
+Linux Kernel Developer
 
-This patch simply honors the contract between the software and
-hardware, allowing the handshake to complete. It doesn't assume the
-handshake will finish on time. If it times out, then it times out and
-returns a failure.
-
-Thanks,
-Roy
 
