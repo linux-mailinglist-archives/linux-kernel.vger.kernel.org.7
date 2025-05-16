@@ -1,132 +1,217 @@
-Return-Path: <linux-kernel+bounces-650770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-650774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70173AB95DE
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 08:16:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8038AB95F4
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 08:25:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EAC38A01753
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 06:15:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 558C15020D8
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 06:25:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 772F0224B04;
-	Fri, 16 May 2025 06:15:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D7B8224AFE;
+	Fri, 16 May 2025 06:25:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="UVV403ZC"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dU+m4VKp"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14F6F22370C;
-	Fri, 16 May 2025 06:15:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B995223DC7;
+	Fri, 16 May 2025 06:25:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747376147; cv=none; b=HYOwiA04FW/Y5jvMTdX3KGJIRvZ8X9V32IBhmidt9K/BUVdCAp3fDwsOF9ICtv51K2g7IZMTkBG8yv4a144oB2UL+0XjJBLbtlenMyiKzDC6+6+/dBIKp1PY/okUq+X/T+8jJb6zs3OKMf2cvC9NfaDzZ5Y66r3G0+TO+yAMTVA=
+	t=1747376732; cv=none; b=D8mJxsOyPocMNXva2ARfYhF2ntYwgg5IPt88LVxLJt+Iu8Wv1yrErizhe9kr2sTzJsNmSrosnvDKx3izfh4BGGrjMo/DF1ky99er9EWN+2Z3jAAFSf0SPb+6pw5Nc80iVDwBQWYDBb7iAn9q1ghtAXt8UsCvM/WOWvKH0YxLtm8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747376147; c=relaxed/simple;
-	bh=o7sl/eKMHWRQLpUyjjDcnK4KRSihAngeYfy95qtlTjY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=WitHRWNvw/T7lg+XWkQNp8tl4GnqQtZWL3cmTn3zeXUxZAzzhu4NztvoL6AJp6VCU45qeQf6amMBYkiFpH6fz/qOThgKSEUAKdwYWoFqRnEMDfLxr0kNWsKReOnUzFZqKnzpeV9/dGoSCL6LJS7v1mn17WuN9Ia2nMhX7O99sII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=UVV403ZC; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1747376143;
-	bh=edUTfuj96/EiihfYwnhVHK6EawxU3y9iZFpYsfs+cpc=;
-	h=Date:From:To:Cc:Subject:From;
-	b=UVV403ZCJfVb9OL1/f4HEhbtEXini6DSFCHSpEA5hwBSs7C+2PiRRRYW7LqxzIGwK
-	 KqsqryE8inLLPO2WmMqLlTt/1B+1L0M1oeuELuRS+sUgWImftdzSrwxLlZDWgZVW6H
-	 wFUYCFN6kNztb3s9rU36f4RvBhLFRQ+kLo4FaGttd3kdNItxdHVbwXXcDfKEXJlp/5
-	 RJIUYSnmOru9OjisqtJXnkjMbHtVFoKx4le6XTJzkYA+kq/p8PBraMAYvBE/9+ECn/
-	 s1gPtn56nVrq5xXmBYagRSi3cWRrPpvkIgss5rQZIqdcfIPu82s2gn6Oia/PMhRigT
-	 wLCh2ehVGZq5Q==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZzGzL0229z4wyR;
-	Fri, 16 May 2025 16:15:41 +1000 (AEST)
-Date: Fri, 16 May 2025 16:15:41 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
- "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>,
- "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: "Ahmed S. Darwish" <darwi@linutronix.de>, Artem Bityutskiy
- <artem.bityutskiy@linux.intel.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, "Rafael J. Wysocki"
- <rafael.j.wysocki@intel.com>
-Subject: linux-next: manual merge of the tip tree with the pm tree
-Message-ID: <20250516161541.0cff29b8@canb.auug.org.au>
+	s=arc-20240116; t=1747376732; c=relaxed/simple;
+	bh=lCwb6qvlkqeYb94a9hs2gM7d9RlJ/96IMNwhyjCb+Lg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FpZAZS5hnqpGB3Ki9bgHAfOIZRwmsd+9HXxoOZ/EkmsNhGfIYZffcd2/y5onbD+khc5ksBsMQt710y5tuRGCRNHB2KaMyQRRnp+nRR6z0h3jQRYBhDoLlWW9EKBzEhcKqwvnpDd+qLEXi0p4LGcEbA/+riBhRCQAE9LHztaXS6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dU+m4VKp; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1747376731; x=1778912731;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=lCwb6qvlkqeYb94a9hs2gM7d9RlJ/96IMNwhyjCb+Lg=;
+  b=dU+m4VKpsYEOmF2tRhwwsasbi+d4bXcwQBJmbmm8xWFAE07FTb7sLox7
+   CdhikvXUECvx584l6sdyyHtF18es9beUjms2WUUvYtOKhkSiYPxc6HIAg
+   hnGsW+jKBNt37RVVHH1dZWEBrnA1HsdObAjKn/V5Z+kvupi8ou2hwcz4s
+   Ogep/XLpnSgJjg8hZlavZR+V5RPyUGCzW0AXf+j78VaO7Tt5qhWvODRNH
+   2s0qmFtinpO9S3gomi4lL1UhKNBTJnYDgUds/RPFm6QO8ybkLuKMqMfoj
+   mC1jxzXuKNIx8VkOwfM4Yqm/VFfAmxJWs7bny7agOnGqy5MSonYukM7V1
+   A==;
+X-CSE-ConnectionGUID: X7TKXzZkR92UfBtuNo9Ehg==
+X-CSE-MsgGUID: hQzWwRlkSgyZwfnW1tFQVQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11434"; a="66741987"
+X-IronPort-AV: E=Sophos;i="6.15,293,1739865600"; 
+   d="scan'208";a="66741987"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2025 23:25:30 -0700
+X-CSE-ConnectionGUID: 5Zv+L4k4Q/GDOPGKqyBYEA==
+X-CSE-MsgGUID: u+Y2gDkpS/CZp7vpWOupPA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,293,1739865600"; 
+   d="scan'208";a="143831538"
+Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
+  by fmviesa004.fm.intel.com with ESMTP; 15 May 2025 23:25:24 -0700
+Date: Fri, 16 May 2025 14:19:45 +0800
+From: Xu Yilun <yilun.xu@linux.intel.com>
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: Zhi Wang <zhiw@nvidia.com>, Alexey Kardashevskiy <aik@amd.com>,
+	kvm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
+	sumit.semwal@linaro.org, christian.koenig@amd.com,
+	pbonzini@redhat.com, seanjc@google.com, alex.williamson@redhat.com,
+	vivek.kasireddy@intel.com, dan.j.williams@intel.com,
+	yilun.xu@intel.com, linux-coco@lists.linux.dev,
+	linux-kernel@vger.kernel.org, lukas@wunner.de, yan.y.zhao@intel.com,
+	daniel.vetter@ffwll.ch, leon@kernel.org, baolu.lu@linux.intel.com,
+	zhenzhong.duan@intel.com, tao1.su@intel.com
+Subject: Re: [RFC PATCH 00/12] Private MMIO support for private assigned dev
+Message-ID: <aCbZATrK7EPyH4qt@yilunxu-OptiPlex-7050>
+References: <aB4tQHmHzHooDeTE@yilunxu-OptiPlex-7050>
+ <20250509184318.GD5657@nvidia.com>
+ <aB7Ma84WXATiu5O1@yilunxu-OptiPlex-7050>
+ <2c4713b0-3d6c-4705-841b-1cb58cd9a0f5@amd.com>
+ <20250512140617.GA285583@nvidia.com>
+ <20250513130315.0158a626.zhiw@nvidia.com>
+ <aCRmoDupzK9zTqFL@yilunxu-OptiPlex-7050>
+ <20250514230502.6b64da7f.zhiw@nvidia.com>
+ <aCYsNSFQJZzHVOFI@yilunxu-OptiPlex-7050>
+ <20250515192127.GA580805@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/PkQzNwqZ9vflZOL5na_rhzX";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250515192127.GA580805@nvidia.com>
 
---Sig_/PkQzNwqZ9vflZOL5na_rhzX
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Thu, May 15, 2025 at 04:21:27PM -0300, Jason Gunthorpe wrote:
+> On Fri, May 16, 2025 at 02:02:29AM +0800, Xu Yilun wrote:
+> > > IMHO, I think it might be helpful that you can picture out what are the
+> > > minimum requirements (function/life cycle) to the current IOMMUFD TSM
+> > > bind architecture:
+> > > 
+> > > 1.host tsm_bind (preparation) is in IOMMUFD, triggered by QEMU handling
+> > > the TVM-HOST call.
+> > > 2. TDI acceptance is handled in guest_request() to accept the TDI after
+> > > the validation in the TVM)
+> > 
+> > I'll try my best to brainstorm and make a flow in ASCII. 
+> > 
+> > (*) means new feature
+> > 
+> > 
+> >       Guest          Guest TSM       QEMU           VFIO            IOMMUFD       host TSM          KVM 
+> >       -----          ---------       ----           ----            -------       --------          ---
+> > 1.                                                                               *Connect(IDE)
+> > 2.                                 Init vdev            
+> 
+> open /dev/vfio/XX as a VFIO action
+> 
+> Then VFIO attaches to IOMMUFD as an iommufd action creating the idev
+> 
+> > 3.                                *create dmabuf   
+> > 4.                                               *export dmabuf                              
+> > 5.                                create memslot
+> > 6.                                                                                              *import dmabuf
+> > 7.                                setup shared DMA
+> > 8.                                                                 create hwpt
+> > 9.                                               attach hwpt
+> > 10.                                  kvm run
+> > 11.enum shared dev
+> > 12.*Connect(Bind)
+> > 13.                  *GHCI Bind
+> > 14.                                  *Bind
+> > 15                                                                 CC viommu alloc
+> > 16.                                                                vdevice allloc
+> 
+> viommu and vdevice creation happen before KVM run. The vPCI function
+> is visible to the guest from the very start, even though it is in T=0
+> mode. If a platform does not require any special CC steps prior to KVM
+> run then it just has a NOP for these functions.
+> 
 
-Hi all,
+Fine.
 
-Today's linux-next merge of the tip tree got a conflict in:
+> What you have here is some new BIND operation against the already
+> existing vdevice as we discussed earlier.
+> 
+> > 16.                                              *attach vdev
+> > 17.                                                               *setup CC viommu
+> > 18                                                                 *tsm_bind
+> > 19.                                                                                  *bind
+> > 20.*Attest
+> > 21.               *GHCI get CC info
+> > 22.                                 *get CC info
+> > 23.                                                                *vdev guest req
+> > 24.                                                                                 *guest req
+> > 25.*Accept
+> > 26.             *GHCI accept MMIO/DMA
+> > 27.                                *accept MMIO/DMA
+> > 28.                                                               *vdev guest req
+> > 29.                                                                                 *guest req
+> > 30.                                                                                              *map private MMIO
+> > 31.             *GHCI start tdi
+> > 32.                                *start tdi
+> > 33.                                                               *vdev guest req
+> > 34.                                                                                 *guest req
+> 
+> This seems reasonable you want to have some generic RPC scheme to
+> carry messages fro mthe VM to the TSM tunneled through the iommufd
+> vdevice (because the vdevice has the vPCI ID, the KVM ID, the VIOMMU
+> id and so on)
+> 
+> > 35.Workload...
+> > 36.*disconnect(Unbind)
+> > 37.              *GHCI unbind
+> > 38.                                *Unbind
+> > 39.                                            *detach vdev
+> 
+> unbind vdev. vdev remains until kvm is stopped.
+> 
+> > 40.                                                               *tsm_unbind
+> > 41.                                                                                 *TDX stop tdi
+> > 42.                                                                                 *TDX disable mmio cb
+> > 43.                                            *cb dmabuf revoke
+> > 44.                                                                                               *unmap private MMIO
+> > 45.                                                                                 *TDX disable dma cb
+> > 46.                                                              *cb disable CC viommu
+> 
+> I don't know why you'd disable a viommu while the VM is running,
+> doesn't make sense.
 
-  drivers/idle/intel_idle.c
+Here it means remove the CC setup for viommu, shared setup is still
+kept.
 
-between commit:
+It is still because of the TDX enforcement on Unbind :(
 
-  6138f3451516 ("intel_idle: Add C1 demotion on/off sysfs knob")
+  1. STOP TDI via TDISP message STOP_INTERFACE
+  2. Private MMIO unmap from Secure EPT
+  3. Trusted Device Context Table cleanup for the TDI
+  4. TDI ownership reclaim and metadata free
 
-from the pm tree and commit:
+It is doing Step 3 so that the TDI could finally been removed.
 
-  968e30006807 ("x86/cpuid: Set <asm/cpuid/api.h> as the main CPUID header")
+Please also note I does CC viommu setup on "Bind".
 
-from the tip tree.
+Thanks,
+Yilun
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc drivers/idle/intel_idle.c
-index 3292bf74e3c2,433d858b7be1..000000000000
---- a/drivers/idle/intel_idle.c
-+++ b/drivers/idle/intel_idle.c
-@@@ -52,8 -51,7 +52,8 @@@
-  #include <linux/notifier.h>
-  #include <linux/cpu.h>
-  #include <linux/moduleparam.h>
- +#include <linux/sysfs.h>
-- #include <asm/cpuid.h>
-+ #include <asm/cpuid/api.h>
-  #include <asm/cpu_device_id.h>
-  #include <asm/intel-family.h>
-  #include <asm/mwait.h>
-
---Sig_/PkQzNwqZ9vflZOL5na_rhzX
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmgm2A0ACgkQAVBC80lX
-0Gxz8wf/bRW2I7R4SlmS9Ra42fkZF67DasMT6To8uIJLDppw1GuldO0MmuFVPUKW
-S594cc8YGS92/3Kazh4splJ1koG4RWde6vTIVSrB+4k6fW2E0bTbh0nQGNmbQQ2D
-3K9NR7tKzPVc8pClKjCQ4WrGkGmKRHtM8NTtIIztGtJMEPZBUBix/x4ZLjJAHvpS
-Wv4Q6kATvr2sZay5O1YjadPhmG/mZ2c+FgDaCvvqQjtLnNMLF5+rNuSeZR+5V2Th
-RB6GQJFy6uCiKSXDFPVg2UZAx4D3JysDLv4CiWn4CAdAEkWQ1j/TBE7AxKBgnsS7
-hpfgO5ZgjFiQISQzLs3rusX1sfW66Q==
-=7Rwr
------END PGP SIGNATURE-----
-
---Sig_/PkQzNwqZ9vflZOL5na_rhzX--
+> 
+> > 47.                                                                                 *TDX tdi free
+> > 48.                                                                                 *enable mmio
+> > 49.                                            *cb dmabuf recover
+> > 50.workable shared dev
+> 
+> This is a nice chart, it would be good to see a comparable chart for
+> AMD and ARM
+> 
+> Jason
 
