@@ -1,170 +1,320 @@
-Return-Path: <linux-kernel+bounces-651073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-651075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C22FBAB99BB
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 12:08:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F405BAB99C1
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 12:09:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A4181BA0CFB
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 10:08:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E3D173B3C81
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 10:09:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B16FF23372C;
-	Fri, 16 May 2025 10:07:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0C9B2222D1;
+	Fri, 16 May 2025 10:09:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="hY/sT02b"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2066.outbound.protection.outlook.com [40.107.92.66])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JclQu3wy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C51B23183F;
-	Fri, 16 May 2025 10:07:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.66
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747390074; cv=fail; b=QV6V+bIDgnBOmsQwUqYcz3bKh0HrqcO3FBuhEyu6P6O0EKgFiA+nMyxHAwt5sZsF1FEaXs1nVhp5RtuayPSlxQPW3mC5hpOJfC+RCY+7DSNg15064gBbzw/5zmv5hid1v6rd5rYnWZsz7ld+bhuYsu4hQ7MWtz3ZcxqspeJubkc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747390074; c=relaxed/simple;
-	bh=BlxxRWmMVbSrgSXhK2bjpMsrybJeJmzba0o1DZHEQ1g=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eVhMXVNoLG5+NTirgRUbI3CSF7VRgRosPpPPQ+hWYYnRryt+uqL+313Og8lrenP4b3T9rnpZoz6qDJGuAWntnGe831Zp7cy6U42urrZC6vZNvfzG/P9fBvAK7ukzM1CmxfPzlHmVBxsk2Ti4cNXiFdXHMfeAD7MD5yTYrTOUeWs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=hY/sT02b; arc=fail smtp.client-ip=40.107.92.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=pdJkkkrom3wcki0Tdi9IyTLRcfi/URRPI9ZUt8ltp5ETLzhyf/w2MAhLGAlG/i75QdQpuaG5AK+C1LvntQ+EU+LIB+4rjhJyWweXowCpDMUM6d6n2v81GDxfO57jxZyZzBk0o1AkcnwFExq4d+Cv1VkzE/ig4QiRN+upbGhcOOGnwkWETAFLGRGY9yEtqAU1B0C5yr1UFWFh1SDOBmH0Wv4gDF1Qzbvuc8JfejrZOT7GluOZE1fs/QtZDXW/gkXEpQQ7HPP2Kw98XdyRGisYSVw737bTWw3fhd/5TsWryZ5M5SUpGUtyNAMU0cvIn8jDUF2QflQF63uO+3W+P4n/Fw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=DjbGsVtN9Ghsemb1k2ugh5+W9Q+OYWFaG6Uejmr/hMc=;
- b=obYLCud2Sbs2oTFkeOT8hm3YlNux0YPfmVRDijrAJNXpCRtMdRiMdAVgZQTVTcSVgTY5UW0ceEJoJK4T3LTYjof7y2FVPAtlZcOw9C7ZmhiBVoUPvHM4syQFfLhC7F95CEfY8S8E3Mtd3WLEAB/ou04MBNUe2TqNJPDAEpazMjhdCnDTnBDvtCYl/Lf6p4RY/UwAiwNWYE8yL8lhRIHfIFE2aSxls2qYDzPeJeQTuDx5PaPVnTkTkI0/aiXt3MRr8ZiCLAU03WxHhkybGCdomgs0HjhWtcxXret4vn9UmBVq/kGwbJt/ivA6obCauBLgIgXENt2aNcf1QPHXOrvekg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DjbGsVtN9Ghsemb1k2ugh5+W9Q+OYWFaG6Uejmr/hMc=;
- b=hY/sT02bMJSvR1A6LNGRWa9qDFcvBVyppGvGVNDy8s++7rqUg6ABYyMX6Gl9v+mtP/VCZWfyl6nV/l2otuPM67wtj4QH9dJEW7u1Hsxgqp/Vdx/k2ZBS/PCB+I24ZHSwovxEv2x/sMd0P3QpWmbks/PqsoW2C6U64FUD3xA4M1c=
-Received: from PH8P221CA0004.NAMP221.PROD.OUTLOOK.COM (2603:10b6:510:2d8::9)
- by IA1PR12MB6065.namprd12.prod.outlook.com (2603:10b6:208:3ef::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8722.31; Fri, 16 May
- 2025 10:07:47 +0000
-Received: from BY1PEPF0001AE1A.namprd04.prod.outlook.com
- (2603:10b6:510:2d8:cafe::13) by PH8P221CA0004.outlook.office365.com
- (2603:10b6:510:2d8::9) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8746.20 via Frontend Transport; Fri,
- 16 May 2025 10:07:45 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- BY1PEPF0001AE1A.mail.protection.outlook.com (10.167.242.102) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8722.18 via Frontend Transport; Fri, 16 May 2025 10:07:45 +0000
-Received: from airavat.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 16 May
- 2025 05:07:42 -0500
-From: Raju Rangoju <Raju.Rangoju@amd.com>
-To: <broonie@kernel.org>
-CC: <linux-spi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<krishnamoorthi.m@amd.com>, <akshata.mukundshetty@amd.com>, Raju Rangoju
-	<Raju.Rangoju@amd.com>
-Subject: [PATCH v2 3/3] spi: spi_amd: Update Kconfig dependencies
-Date: Fri, 16 May 2025 15:36:58 +0530
-Message-ID: <20250516100658.585654-4-Raju.Rangoju@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250516100658.585654-1-Raju.Rangoju@amd.com>
-References: <20250516100658.585654-1-Raju.Rangoju@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD00B381C4
+	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 10:09:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747390160; cv=none; b=owngbI/E1dKvAmlHwX0aZ4RM9mq4DW0YB+KZKNmksw+t8zkBrQiz8S6heUvyh7d3PxxesLgZMjeapLrmIXyrku3XdcMqPbOZsoabJ8qm4eSPBE4gsQvn+l2z/AQoLMl/4Z22FKPyBTgicjodlG2+Qs8URej/rpNbxtTShIlBp9I=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747390160; c=relaxed/simple;
+	bh=kVrshvKd5nIGlIZNHziZvog4XCiYuAiPq6I8gahwiEw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X1+e57BJ0nZAnE6KbCzts9CXmy7U/Q9XZ8hotJvOTyI7gcnXgm9arQut6YJLk7jo6lNkiam98NhWWIGj5QtsDSAkTRdUgDwI26rR5V1mQ7ziN83A0XL7zdZdP9kRBoYXqNMRy5QCDiIKk7h5r1MiWdmkTxZlX1+gDYW6xJ5pi7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JclQu3wy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5DED7C4CEE4;
+	Fri, 16 May 2025 10:09:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747390160;
+	bh=kVrshvKd5nIGlIZNHziZvog4XCiYuAiPq6I8gahwiEw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JclQu3wyPQQOHXxgoHQ5xk6HV92AJrnQZodvFirKBkH58nLBk7XsHL3JOjSsmEB7h
+	 Q9bx0Zugk9bMqMfUC8Ed8SCoA/LrVaI/X6UEZpaPWluYsNg8kDoEx3lS1IcybduWbO
+	 HHCnz9+qZV6FjDso2b8CLHLyEEiqtgk5zM0gwmqiEJh2NtZQFWtlCrgdAhMIFRFha0
+	 82GBZfZRXdmZKZUOd4ASWG5zUmpCh6Jtym7EM1COEm4eTWGlVZsC+mxxT2qwAufe28
+	 Ivp0zxO+9fXIpBko2n1wJ4PBgb6K8nIg2pPBQox4NO6/vgARCQQe66yCZreecLulei
+	 6DZWfKArkHhUw==
+Date: Fri, 16 May 2025 13:09:11 +0300
+From: Mike Rapoport <rppt@kernel.org>
+To: David Hildenbrand <david@redhat.com>
+Cc: Donet Tom <donettom@linux.ibm.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Oscar Salvador <osalvador@suse.de>, Zi Yan <ziy@nvidia.com>,
+	Ritesh Harjani <ritesh.list@gmail.com>, rafael@kernel.org,
+	Danilo Krummrich <dakr@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Alison Schofield <alison.schofield@intel.com>,
+	Yury Norov <yury.norov@gmail.com>,
+	Dave Jiang <dave.jiang@intel.com>
+Subject: Re: [PATCH v4 1/4] driver/base: Optimize memory block registration
+ to reduce boot time
+Message-ID: <aCcOx34j5mgiwfcx@kernel.org>
+References: <f94685be9cdc931a026999d236d7e92de29725c7.1747376551.git.donettom@linux.ibm.com>
+ <56cb2494-56ba-4895-9dd1-23243c2eecdb@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BY1PEPF0001AE1A:EE_|IA1PR12MB6065:EE_
-X-MS-Office365-Filtering-Correlation-Id: 624a22e7-a346-4bab-7f47-08dd94618145
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|1800799024|36860700013|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?U0JnZZyX/q7Iq1EIbzBwVnZPN4N0RedilT45nAzQ48B87h/0UfWVkbXnuUnK?=
- =?us-ascii?Q?hY8vzg1sMCrjVbian7r89bm53ryKO4bZQdQ1o8GzY6/3hmm5PrvKgIBYkUNF?=
- =?us-ascii?Q?KYhwQtfh3xU8wNKIASQH0RYP7WP8VdtVN1nu0XCwQBHswAb65TV7drpUeG+D?=
- =?us-ascii?Q?rZarNP5Ve7IKTui7sX5XTEqFATAUiFvVxoptf6rojI4yjQTNHLO5uBihOJaE?=
- =?us-ascii?Q?GMmRgX8yu7n4t6htJw7pv0pGY+T2S8B/AqeEnB65JL3IxgW4UE0MLSxDCZx6?=
- =?us-ascii?Q?LL5Smx6Z0lc8VBLt8iTOJ9C8vEz14bOSs8RGSxVHgvzbDShlAvRGPVLCEB1M?=
- =?us-ascii?Q?R4ky/fzGeLp303f0smFjJLpDxDPlRxxYApg+BR5d7Tz2be9kud8ZRZ44Nk6b?=
- =?us-ascii?Q?DKtOtIzXde0oejYCUHthqZw0M9vkrx1REulzp8k6uAxsS2kGhSeJmFRW5429?=
- =?us-ascii?Q?XJYKbB0TRxEDmJ6ECJYF7UegivS2iQoJnw1fZ7Y5sJ3oIBbpEF50LVUE5ea2?=
- =?us-ascii?Q?La2KG8+9d2zvM5RMtafX/oc1B779ydH/rmooeknI0WRwFXaZwkQNpFc6aDWW?=
- =?us-ascii?Q?w8Dd9evFSqI5QiyMCLyKN/9RyIjab6HagPEZL9Zv+yLant+K+Mc7MvbC2wi2?=
- =?us-ascii?Q?gBsSDHuWQ8o/+a39zUL1vDGySg5dF+S1vYpyW+jX596Wrln/9QIywIbO8zN2?=
- =?us-ascii?Q?5vP1LOyiN/QxJR5NO4w6fFE6a3nG11Z7tDN0tO7oZMm7ROGsfhULN0vPFnhh?=
- =?us-ascii?Q?XKeeRtufg5rbceGU2lzsjhfTbebwuijf6e6KWKG2wzIOcWVUgtGvz0+m2GnF?=
- =?us-ascii?Q?Hywwxld2kkLHdAFHDFL6VotN0h+0Ud062NDK28K3aiwwBXp0f+gKojPIpwkJ?=
- =?us-ascii?Q?zUy4YpPUBwrg9io+5wyVNvkJusMeJz2UUqSmznxPKR31g6V6GkmuFBuPVPLb?=
- =?us-ascii?Q?Z4qhWd/t1mSvknmndDzN+lnQNPdDqTylLeuAbLwEYBrU2bx2w3BR0O2u7sOI?=
- =?us-ascii?Q?a2xG+e6bFFFSHByoYkjIsYfFgVRLfD5YoBkM61TU7sn2ftb0O4aTwUnAufSf?=
- =?us-ascii?Q?l3Gy2v0H48vEujRNZ3dPo5jPpqr3EeDgd2E8J7tn5EAlQKskLzKvRH+I3W7h?=
- =?us-ascii?Q?FzVl4X2wugg0RPJl0FKVhpBUM5t4X9rXQObiyO81v/eF2rgVaOig6lQ9LMKG?=
- =?us-ascii?Q?opXMmqhqAt1fweyhI/B5OubwF6A8nS1S8zHan/r0WZMMCOWh6dJIGGD8raIM?=
- =?us-ascii?Q?Vgy2VfMC4fnk3ZZBJW53R8Rgcoi1fwEfi3I5aHU1djedazbrtPrdyElFrq7m?=
- =?us-ascii?Q?KSV84Xk022xEffvGHqtpSl7vwAUMvcnszicJnu63tyt7yZhoE5lIGbRwlTTN?=
- =?us-ascii?Q?Ti4NFboF1E71ttlHeTKTi3tL4zyUEYdbKSDUqdrK/s14KUgWh30eGgMepY5T?=
- =?us-ascii?Q?2Whl6OrthM4A2MnSYdiMb3ZJjwB10EEoglJpdUUQgPjlnPft8C7hhiwgpgQb?=
- =?us-ascii?Q?cT92gFvRDbsda1E7grUpoG2aVbPu6WLOjS9q?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(36860700013)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 May 2025 10:07:45.6770
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 624a22e7-a346-4bab-7f47-08dd94618145
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BY1PEPF0001AE1A.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6065
+In-Reply-To: <56cb2494-56ba-4895-9dd1-23243c2eecdb@redhat.com>
 
-Add X86 and SPI_MEM as dependencies for the spi_amd driver to ensure it is
-built only on relevant platforms and with the required SPI memory
-framework.
+On Fri, May 16, 2025 at 11:15:29AM +0200, David Hildenbrand wrote:
+> On 16.05.25 10:19, Donet Tom wrote:
+> > During node device initialization, `memory blocks` are registered under
+> > each NUMA node. The `memory blocks` to be registered are identified using
+> > the node’s start and end PFNs, which are obtained from the node's pg_data
+> > 
+> > However, not all PFNs within this range necessarily belong to the same
+> > node—some may belong to other nodes. Additionally, due to the
+> > discontiguous nature of physical memory, certain sections within a
+> > `memory block` may be absent.
+> > 
+> > As a result, `memory blocks` that fall between a node’s start and end
+> > PFNs may span across multiple nodes, and some sections within those blocks
+> > may be missing. `Memory blocks` have a fixed size, which is architecture
+> > dependent.
+> > 
+> > Due to these considerations, the memory block registration is currently
+> > performed as follows:
+> > 
+> > for_each_online_node(nid):
+> >      start_pfn = pgdat->node_start_pfn;
+> >      end_pfn = pgdat->node_start_pfn + node_spanned_pages;
+> >      for_each_memory_block_between(PFN_PHYS(start_pfn), PFN_PHYS(end_pfn))
+> >          mem_blk = memory_block_id(pfn_to_section_nr(pfn));
+> >          pfn_mb_start=section_nr_to_pfn(mem_blk->start_section_nr)
+> >          pfn_mb_end = pfn_start + memory_block_pfns - 1
+> >          for (pfn = pfn_mb_start; pfn < pfn_mb_end; pfn++):
+> >              if (get_nid_for_pfn(pfn) != nid):
+> >                  continue;
+> >              else
+> >                  do_register_memory_block_under_node(nid, mem_blk,
+> >                                                          MEMINIT_EARLY);
+> > 
+> > Here, we derive the start and end PFNs from the node's pg_data, then
+> > determine the memory blocks that may belong to the node. For each
+> > `memory block` in this range, we inspect all PFNs it contains and check
+> > their associated NUMA node ID. If a PFN within the block matches the
+> > current node, the memory block is registered under that node.
+> > 
+> > If CONFIG_DEFERRED_STRUCT_PAGE_INIT is enabled, get_nid_for_pfn() performs
+> > a binary search in the `memblock regions` to determine the NUMA node ID
+> > for a given PFN. If it is not enabled, the node ID is retrieved directly
+> > from the struct page.
+> > 
+> > On large systems, this process can become time-consuming, especially since
+> > we iterate over each `memory block` and all PFNs within it until a match is
+> > found. When CONFIG_DEFERRED_STRUCT_PAGE_INIT is enabled, the additional
+> > overhead of the binary search increases the execution time significantly,
+> > potentially leading to soft lockups during boot.
+> > 
+> > In this patch, we iterate over `memblock region` to identify the
+> > `memory blocks` that belong to the current NUMA node. `memblock regions`
+> > are contiguous memory ranges, each associated with a single NUMA node, and
+> > they do not span across multiple nodes.
+> > 
+> > for_each_online_node(nid):
+> >    for_each_memory_region(r): // r => region
+> >      if (r->nid != nid):
+> >        continue;
+> >      else
+> >        for_each_memory_block_between(r->base, r->base + r->size - 1):
+> >          do_register_memory_block_under_node(nid, mem_blk, MEMINIT_EARLY);
+> > 
+> > We iterate over all `memblock regions` and identify those that belong to
+> > the current NUMA node. For each `memblock region` associated with the
+> > current node, we calculate the start and end `memory blocks` based on the
+> > region's start and end PFNs. We then register all `memory blocks` within
+> > that range under the current node.
+> > 
+> > Test Results on My system with 32TB RAM
+> > =======================================
+> > 1. Boot time with CONFIG_DEFERRED_STRUCT_PAGE_INIT enabled.
+> > 
+> > Without this patch
+> > ------------------
+> > Startup finished in 1min 16.528s (kernel)
+> > 
+> > With this patch
+> > ---------------
+> > Startup finished in 17.236s (kernel) - 78% Improvement
+> > 
+> > 2. Boot time with CONFIG_DEFERRED_STRUCT_PAGE_INIT disabled.
+> > 
+> > Without this patch
+> > ------------------
+> > Startup finished in 28.320s (kernel)
+> > 
+> > With this patch
+> > ---------------
+> > Startup finished in 15.621s (kernel) - 46% Improvement
+> > 
+> > Acked-by: David Hildenbrand <david@redhat.com>
+> > Acked-by: Zi Yan <ziy@nvidia.com>
+> > Signed-off-by: Donet Tom <donettom@linux.ibm.com>
+> > 
+> > ---
+> > v3 -> v4
+> > 
+> > Addressed Mike's comment by making node_dev_init() call __register_one_node().
+> > 
+> > V3 - https://lore.kernel.org/all/b49ed289096643ff5b5fbedcf1d1c1be42845a74.1746250339.git.donettom@linux.ibm.com/
+> > v2 - https://lore.kernel.org/all/fbe1e0c7d91bf3fa9a64ff5d84b53ded1d0d5ac7.1745852397.git.donettom@linux.ibm.com/
+> > v1 - https://lore.kernel.org/all/50142a29010463f436dc5c4feb540e5de3bb09df.1744175097.git.donettom@linux.ibm.com/
+> > ---
+> >   drivers/base/memory.c  |  4 ++--
+> >   drivers/base/node.c    | 41 ++++++++++++++++++++++++++++++++++++++++-
+> >   include/linux/memory.h |  2 ++
+> >   include/linux/node.h   |  3 +++
+> >   4 files changed, 47 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/drivers/base/memory.c b/drivers/base/memory.c
+> > index 19469e7f88c2..7f1d266ae593 100644
+> > --- a/drivers/base/memory.c
+> > +++ b/drivers/base/memory.c
+> > @@ -60,7 +60,7 @@ static inline unsigned long pfn_to_block_id(unsigned long pfn)
+> >   	return memory_block_id(pfn_to_section_nr(pfn));
+> >   }
+> > -static inline unsigned long phys_to_block_id(unsigned long phys)
+> > +unsigned long phys_to_block_id(unsigned long phys)
+> >   {
+> >   	return pfn_to_block_id(PFN_DOWN(phys));
+> >   }
+> 
+> 
+> I was wondering whether we should move all these helpers into a header, and
+> export sections_per_block instead. Probably doesn't really matter for your
+> use case.
+> 
+> > @@ -632,7 +632,7 @@ int __weak arch_get_memory_phys_device(unsigned long start_pfn)
+> >    *
+> >    * Called under device_hotplug_lock.
+> >    */
+> > -static struct memory_block *find_memory_block_by_id(unsigned long block_id)
+> > +struct memory_block *find_memory_block_by_id(unsigned long block_id)
+> >   {
+> >   	struct memory_block *mem;
+> > diff --git a/drivers/base/node.c b/drivers/base/node.c
+> > index cd13ef287011..f8cafd8c8fb1 100644
+> > --- a/drivers/base/node.c
+> > +++ b/drivers/base/node.c
+> > @@ -20,6 +20,7 @@
+> >   #include <linux/pm_runtime.h>
+> >   #include <linux/swap.h>
+> >   #include <linux/slab.h>
+> > +#include <linux/memblock.h>
+> >   static const struct bus_type node_subsys = {
+> >   	.name = "node",
+> > @@ -850,6 +851,43 @@ void unregister_memory_block_under_nodes(struct memory_block *mem_blk)
+> >   			  kobject_name(&node_devices[mem_blk->nid]->dev.kobj));
+> >   }
+> > +/*
+> > + * register_memory_blocks_under_node_early : Register the memory
+> > + *		  blocks under the current node.
+> > + * @nid : Current node under registration
+> > + *
+> > + * This function iterates over all memblock regions and identifies the regions
+> > + * that belong to the current node. For each region which belongs to current
+> > + * node, it calculates the start and end memory blocks based on the region's
+> > + * start and end PFNs. It then registers all memory blocks within that range
+> > + * under the current node.
+> > + */
+> > +static void register_memory_blocks_under_node_early(int nid)
+> > +{
+> > +	struct memblock_region *r;
+> > +
+> > +	for_each_mem_region(r) {
+> > +		if (r->nid != nid)
+> > +			continue;
+> > +
+> > +		const unsigned long start_block_id = phys_to_block_id(r->base);
+> > +		const unsigned long end_block_id = phys_to_block_id(r->base + r->size - 1);
+> > +		unsigned long block_id;
+> 
+> This should definitely be above the if().
+> 
+> > +
+> > +		for (block_id = start_block_id; block_id <= end_block_id; block_id++) {
+> > +			struct memory_block *mem;
+> > +
+> > +			mem = find_memory_block_by_id(block_id);
+> > +			if (!mem)
+> > +				continue;
+> > +
+> > +			do_register_memory_block_under_node(nid, mem, MEMINIT_EARLY);
+> > +			put_device(&mem->dev);
+> > +		}
+> > +
+> > +	}
+> > +}
+> > +
+> >   void register_memory_blocks_under_node(int nid, unsigned long start_pfn,
+> >   				       unsigned long end_pfn,
+> >   				       enum meminit_context context)
+> > @@ -974,8 +1012,9 @@ void __init node_dev_init(void)
+> >   	 * to applicable memory block devices and already created cpu devices.
+> >   	 */
+> >   	for_each_online_node(i) {
+> > -		ret = register_one_node(i);
+> > +		ret =  __register_one_node(i);
+> >   		if (ret)
+> >   			panic("%s() failed to add node: %d\n", __func__, ret);
+> > +		register_memory_blocks_under_node_early(i);
+> >   	}
+> 
+> In general, LGTM.
+> 
+> 
+> BUT :)
+> 
+> I was wondering whether having a register_memory_blocks_early() call *after*
+> the for_each_online_node(), and walking all memory regions only once would
+> make a difference.
 
-Co-developed-by: Akshata MukundShetty <akshata.mukundshetty@amd.com>
-Signed-off-by: Akshata MukundShetty <akshata.mukundshetty@amd.com>
-Signed-off-by: Raju Rangoju <Raju.Rangoju@amd.com>
----
- drivers/spi/Kconfig | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/spi/Kconfig b/drivers/spi/Kconfig
-index b03a7005f1bd..c51da3fc3604 100644
---- a/drivers/spi/Kconfig
-+++ b/drivers/spi/Kconfig
-@@ -1267,7 +1267,8 @@ config SPI_ZYNQMP_GQSPI
- config SPI_AMD
- 	tristate "AMD SPI controller"
- 	depends on PCI
--	depends on SPI_MASTER || COMPILE_TEST
-+	depends on SPI_MASTER || X86 || COMPILE_TEST
-+	depends on SPI_MEM
- 	help
- 	  Enables SPI controller driver for AMD SoC.
+I don't know how many nodes there should be to see measurable performance
+difference, but having register_memory_blocks_under_node_early() after
+for_each_online_node() is definitely nicer. 
+There's no real need to run for_each_mem_region() for every online node.
  
--- 
-2.34.1
+> We'd have to be smart about memory blocks that fall into multiple regions,
+> but it should be a corner case and doable.
 
+This is a corner case that should be handled regardless of the loop order.
+And I don't think it's handled today at all.
+
+If we have a block that crosses node boundaries, current implementation of
+register_mem_block_under_node_early() will register it under the first
+node.
+ 
+> OTOH, we usually don't expect having a lot of regions, so iterating over
+> them is probably not a big bottleneck? Anyhow, just wanted to raise it.
+
+There would be at least a region per node and having 
+
+for_each_online_node()
+	for_each_mem_region()
+
+makes the loop O(n²) for no good reason.
+ 
+> -- 
+> Cheers,
+> 
+> David / dhildenb
+> 
+
+-- 
+Sincerely yours,
+Mike.
 
