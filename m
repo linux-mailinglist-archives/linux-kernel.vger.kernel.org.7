@@ -1,98 +1,100 @@
-Return-Path: <linux-kernel+bounces-650829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-650831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A30DAB96AF
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 09:38:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE2D3AB96B1
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 09:39:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1232A9E4955
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 07:38:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5EC13A6982
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 07:39:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0B512288F9;
-	Fri, 16 May 2025 07:38:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="tj7EBwB8";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="dUGMkiWz"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67E6D227BB6;
+	Fri, 16 May 2025 07:39:15 +0000 (UTC)
+Received: from mxct.zte.com.cn (mxct.zte.com.cn [183.62.165.209])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7ACA2C9A
-	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 07:38:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FFEF215F56
+	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 07:39:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=183.62.165.209
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747381122; cv=none; b=bQDmjSVNXwYU4qlUZvADNBV4/cRsHWCZ3I1aZVipXLMcHvSh/rpREF6ckVW4HycmzAS3P3mMeigoH1IQckR1DZX2VG8wPxaCy/eovP4r6JyAsvIAEqdRcbYb9NIx2N6KhGmNKAWHO8ncl66kHQ9AFny0u4rymn/KYIgSB/Ll9fo=
+	t=1747381155; cv=none; b=Ox7cgXSauu0XcreLVz8xCsBSLjWKFSfuS1JkvcfoKrEYW7p+bPnDzOrJpjyGesmmcHLmYBIFALcEW0SahOvkKzP/zd6IyBiLF4ukTJG9dKtoz+YaLobKmIX/B0Ifur9kfQcshl3fv6iiUrqQMH/Bgg0hJwDWgzLgw5BHOS6EQdU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747381122; c=relaxed/simple;
-	bh=ZVLGVKEBQ5cb4PX3UeSeAf4vkMgEpq5CVAxwhw2OJWc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uD9FhbXC5WGTSBGHNZB8jTUO6FVSrwcFWZqRG25mJ702CSBPL+qxID8TobpiPbOe6uunvHfd/tyrO9s+ljqQjekteQMmFzgJ1zOlgyDcGb60jMUwrwJ/wezseX50HDAEPnPVfxQUxiJlhjzElaKoqk+u53iLJuOuo0DWAB9g0J8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=tj7EBwB8; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=dUGMkiWz; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 16 May 2025 09:38:37 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1747381119;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZVLGVKEBQ5cb4PX3UeSeAf4vkMgEpq5CVAxwhw2OJWc=;
-	b=tj7EBwB8oSnApCeg9Zm6zjgDdytr4kp7m4l/3JG6T8lXmZje0Y05WVJ2kzhw2tKIaj3KTp
-	zm1SOfUSSxrlAHgmLI6NiUnv35pMDSSHp0Dr+Bq+cjIJgHOK2WQvDJxuMwgDMpuhitG4yI
-	yasV5UNjkl1hjdORyKY4H3yH+aH7RT2PO/Lwjk0hNU3T+5qugi5ypzX65RBQFpSYojjzNh
-	1J2OLSWkL0+FZDBUcp3dM7UwJCPLV6ZrEpw1C6St728DBJ/S2CmbPfZZ9NI2IWY86eiIxl
-	4ERWovFkN3r3raLSZjShhgiemfVPKy0E230mpo4MVWaaKqTiv89XQRhNxE8WmA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1747381119;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZVLGVKEBQ5cb4PX3UeSeAf4vkMgEpq5CVAxwhw2OJWc=;
-	b=dUGMkiWzz6Uvnqx/CX+jRuH+SmKuyLNY0euieaVM6qGJ7dJeoVhNdsBJqZ+S6Gm6Pq6z5S
-	a4mqV7wGFHGs78CQ==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: =?utf-8?B?QW5kcsOp?= Almeida <andrealmeid@igalia.com>
-Cc: linux-kernel@vger.kernel.org, Darren Hart <dvhart@infradead.org>,
-	Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Waiman Long <longman@redhat.com>
-Subject: Re: [PATCH v12 20/21] selftests/futex: Add futex_priv_hash
-Message-ID: <20250516073837.8VYo0vc_@linutronix.de>
-References: <20250416162921.513656-1-bigeasy@linutronix.de>
- <20250416162921.513656-21-bigeasy@linutronix.de>
- <f94a179b-be0f-4758-8eea-2a307db87f36@igalia.com>
+	s=arc-20240116; t=1747381155; c=relaxed/simple;
+	bh=wnWlK+EQ1GSDiKWvq0g6lbjwNO0xVbvCTgg3diz/eiI=;
+	h=Date:Message-ID:In-Reply-To:References:Mime-Version:From:To:Cc:
+	 Subject:Content-Type; b=YJ8jernSfBP3Kxu6hVkrgImZJp4BbSjy63qA9werNNOane1W0Lkobinxt+IwfMh963KAF374W1vjPaKHAksewZhFZ55DxXDTbdbhbtbicbk5YZ+MOmIzOOXSMnLs0qiwln2HsbAuk17E9dFuKYCn8NzSIhSpTTgsfFMP2UhdpO8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=183.62.165.209
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
+Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mxct.zte.com.cn (FangMail) with ESMTPS id 4ZzJqW5x5jz4x5q1;
+	Fri, 16 May 2025 15:39:03 +0800 (CST)
+Received: from xaxapp01.zte.com.cn ([10.88.99.176])
+	by mse-fl1.zte.com.cn with SMTP id 54G7cnLQ019998;
+	Fri, 16 May 2025 15:38:49 +0800 (+08)
+	(envelope-from xu.xin16@zte.com.cn)
+Received: from mapi (xaxapp02[null])
+	by mapi (Zmail) with MAPI id mid32;
+	Fri, 16 May 2025 15:38:51 +0800 (CST)
+Date: Fri, 16 May 2025 15:38:51 +0800 (CST)
+X-Zmail-TransId: 2afa6826eb8bffffffff962-72fda
+X-Mailer: Zmail v1.0
+Message-ID: <20250516153851884Sc0xPVbcP_BcHDTnQzjHH@zte.com.cn>
+In-Reply-To: <20250515190404.203596-1-lorenzo.stoakes@oracle.com>
+References: 20250515190404.203596-1-lorenzo.stoakes@oracle.com
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <f94a179b-be0f-4758-8eea-2a307db87f36@igalia.com>
+Mime-Version: 1.0
+From: <xu.xin16@zte.com.cn>
+To: <lorenzo.stoakes@oracle.com>
+Cc: <akpm@linux-foundation.org>, <david@redhat.com>,
+        <chengming.zhou@linux.dev>, <linux-mm@kvack.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: =?UTF-8?B?UmU6IFtQQVRDSF0gTUFJTlRBSU5FUlM6IGFkZCBtbSBrc20gc2VjdGlvbg==?=
+Content-Type: text/plain;
+	charset="UTF-8"
+X-MAIL:mse-fl1.zte.com.cn 54G7cnLQ019998
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 6826EB97.001/4ZzJqW5x5jz4x5q1
 
-On 2025-05-09 18:22:18 [-0300], Andr=C3=A9 Almeida wrote:
-> Hi Sebastian,
-Hi,
+>  MAINTAINERS | 15 +++++++++++++++
+>  1 file changed, 15 insertions(+)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 314007e2befd..8859357122eb 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -15577,6 +15577,21 @@ W:	http://www.linux-mm.org
+>  T:	git git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm
+>  F:	mm/gup.c
+> 
+> +MEMORY MANAGEMENT - KSM (Kernel Samepage Merging)
+> +M:	Andrew Morton <akpm@linux-foundation.org>
+> +M:	David Hildenbrand <david@redhat.com>
+> +R:	Xu Xin <xu.xin16@zte.com.cn>
+> +R:	Chengming Zhou <chengming.zhou@linux.dev>
+> +L:	linux-mm@kvack.org
+> +S:	Maintained
+> +W:	http://www.linux-mm.org
+> +T:	git git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm
+> +F:	Documentation/admin-guide/mm/ksm.rst
+> +F:	Documentation/mm/ksm.rst
+> +F:	include/linux/ksm.h
+> +F:	include/trace/events/ksm.h
+> +F:	mm/ksm.c
+> +
+>  MEMORY MANAGEMENT - NUMA MEMBLOCKS AND NUMA EMULATION
+>  M:	Andrew Morton <akpm@linux-foundation.org>
+>  M:	Mike Rapoport <rppt@kernel.org>
+> --
+> 2.49.0
 
-> Thank you for adding a selftest for the new uAPI. The recent futex selfte=
-sts
-> accepted uses the kselftest helpers in a different way than the way you h=
-ave
-> used. I've attached a diff to exemplify how I would write this selftest. =
-The
-> advantage is to have a TAP output that can be easier used with automated
-> testing, and that would not stop when the first test fails.
-
-It copied somewhere from existing ones. I think. Let me try to adapt
-here=E2=80=A6
-
-Sebastian
+Acked-by: Xu Xin <xu.xin16@zte.com.cn>
 
