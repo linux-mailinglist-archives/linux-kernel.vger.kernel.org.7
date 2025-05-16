@@ -1,53 +1,67 @@
-Return-Path: <linux-kernel+bounces-650706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-650696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89871AB94CB
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 05:30:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C6F8AB94A7
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 05:23:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85271A04510
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 03:30:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D734E16C7CE
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 03:23:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23407221FCB;
-	Fri, 16 May 2025 03:30:40 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E83911D5ADC;
+	Fri, 16 May 2025 03:23:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="b3MNX5FS"
+Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC44A282EE;
-	Fri, 16 May 2025 03:30:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D49933D69
+	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 03:23:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747366239; cv=none; b=Iug4tZzVjssrM0Gk3PtxcLh7RE2TboEpH9jyxDuDvs3qFNqNPSspY3wd+P80S8k68wj4syDyI42ZdOJxSwmKaOPaOOFN4i0AtTufMEo/Gzq4x50yO/Ot3cHdAKd/Aew7+GHf4cMUroRLSAfWGP1O94pOskrtzXdM6iKlswIdNWs=
+	t=1747365816; cv=none; b=Y90CZ9s716EzmUQTs0FBNU2gAnYunDqFTqG8zSu5DD+tvXc2JPkgyJtGwztQLwznRpAile4r/j/a2zGLflCCljgC1hU2eRHZtt4NTPW5henG2Txn7U5zo7/XlU04U8CNK7G3ObE1IpOwLamLW3a56fMElr2IHob3DYjc/NEVk2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747366239; c=relaxed/simple;
-	bh=kj3vdow+mdOm5xpvaRyV/+K4yhb8mkFxYSd4rw6WDXo=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=XQFToFeKskhBzUnkWjH4jkOCyS+EbVftxmDC/fFsquWU2JpzswIGqxUHz3+JprvXIaVunqZ4Ob4wxpdddjKfjbYMBKsGxhNfitNZ/evN403fhOTnaz1v/q+5NBy9CFgUxqE6+hZoO6u4emNPDZGG/0YCdWz2B6Bv3Psvq9gMgUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4ZzCJp5rHHzYQtsr;
-	Fri, 16 May 2025 11:30:34 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 14F591A01A0;
-	Fri, 16 May 2025 11:30:34 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP4 (Coremail) with SMTP id gCh0CgBHq19YsSZoQlwyMg--.53744S4;
-	Fri, 16 May 2025 11:30:33 +0800 (CST)
-From: Zizhi Wo <wozizhi@huaweicloud.com>
-To: viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	jack@suse.cz,
-	linux-fsdevel@vger.kernel.org,
+	s=arc-20240116; t=1747365816; c=relaxed/simple;
+	bh=AWkkCfi6oA0nYFHIzzJUA86K0s0118UVGL/IWo3IBko=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=R22GFZEKNcVRx/t1ULON0Fa0T8tc9v6jWtgI00Ao422QRLzUGk2YkhYIG1kMz81O+yAHGQOTCUv01IFC5qhe0TofU7d61HqYi7afxPdM7s5HikQUtzh9aFW44KmK2SugSAkmpJvl8mONK3JmRPFV/Ru6icP+3Ai3hlVUAc1NncU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=b3MNX5FS; arc=none smtp.client-ip=91.218.175.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1747365811;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=THgsYtDm20+Ng95cWON+GsyudgBoMpP632XoGpT/cRk=;
+	b=b3MNX5FSuRHSqbwaLZQekRg3fE+NTlXITswQDvhm7fbOiJGUh/g73UGeCslJoRTqVTdkM4
+	M2/EOBoZ3Y172ZjSJqbKlR0l09k7/VPCTyZiY52F1yWG/q224d737WxcoxAScRd+Xa4gfc
+	XTbGmGU6CAyso+ekhLVhcBrvypUpYl4=
+From: Jiayuan Chen <jiayuan.chen@linux.dev>
+To: bpf@vger.kernel.org
+Cc: Jiayuan Chen <jiayuan.chen@linux.dev>,
+	Quentin Monnet <qmo@kernel.org>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Mykyta Yatsenko <yatsenko@meta.com>,
+	Daniel Xu <dxu@dxuuu.xyz>,
+	Tao Chen <chen.dylane@gmail.com>,
 	linux-kernel@vger.kernel.org
-Cc: yangerkun@huawei.com,
-	wozizhi@huaweicloud.com
-Subject: [PATCH] fs: Rename the parameter of mnt_get_write_access()
-Date: Fri, 16 May 2025 11:21:47 +0800
-Message-Id: <20250516032147.3350598-1-wozizhi@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
+Subject: [PATCH bpf-next v3] bpftool: Add support for custom BTF path in prog load/loadall
+Date: Fri, 16 May 2025 11:23:06 +0800
+Message-ID: <20250516032312.275261-1-jiayuan.chen@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,86 +69,108 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgBHq19YsSZoQlwyMg--.53744S4
-X-Coremail-Antispam: 1UD129KBjvJXoW7uF4DGFy3Zr1UKFW7uryUJrb_yoW8ZF17pF
-	yfKFyDGr4IyF12gr1DAa9xJayrG348CFW7t34fWw43ZFyDZr1aga40gr1jqr18Zr92vry8
-	ur4kA34fXry7t37anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkG14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7CjxVAaw2AFwI0_
-	JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67
-	AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIY
-	rxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14
-	v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8
-	JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x0JUBVbkUUU
-	UU=
-X-CM-SenderInfo: pzr2x6tkl6x35dzhxuhorxvhhfrp/
+X-Migadu-Flow: FLOW_OUT
 
-From: Zizhi Wo <wozizhi@huawei.com>
+This patch exposes the btf_custom_path feature to bpftool, allowing users
+to specify a custom BTF file when loading BPF programs using prog load or
+prog loadall commands.
 
-Rename the parameter in mnt_get_write_access() from "m" to "mnt" for
-consistency between declaration and implementation.
+The argument 'btf_custom_path' in libbpf is used for those kernels that
+don't have CONFIG_DEBUG_INFO_BTF enabled but still want to perform CO-RE
+relocations.
 
-Signed-off-by: Zizhi Wo <wozizhi@huawei.com>
+Suggested-by: Quentin Monnet <qmo@kernel.org>
+Signed-off-by: Jiayuan Chen <jiayuan.chen@linux.dev>
+
 ---
- fs/namespace.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+V2 -> V3: Optimized document grammar and some prompts
+https://lore.kernel.org/bpf/20250515065018.240188-1-jiayuan.chen@linux.dev/
+V1 -> V2: Added bash completion and documentation
+https://lore.kernel.org/bpf/20250513035853.75820-1-jiayuan.chen@linux.dev/
+---
+ tools/bpf/bpftool/Documentation/bpftool-prog.rst |  8 +++++++-
+ tools/bpf/bpftool/bash-completion/bpftool        |  4 ++--
+ tools/bpf/bpftool/prog.c                         | 12 +++++++++++-
+ 3 files changed, 20 insertions(+), 4 deletions(-)
 
-diff --git a/fs/namespace.c b/fs/namespace.c
-index 1b466c54a357..b1b679433ab3 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -483,7 +483,7 @@ static int mnt_is_readonly(struct vfsmount *mnt)
-  */
- /**
-  * mnt_get_write_access - get write access to a mount without freeze protection
-- * @m: the mount on which to take a write
-+ * @mnt: the mount on which to take a write
-  *
-  * This tells the low-level filesystem that a write is about to be performed to
-  * it, and makes sure that writes are allowed (mnt it read-write) before
-@@ -491,13 +491,13 @@ static int mnt_is_readonly(struct vfsmount *mnt)
-  * frozen. When the write operation is finished, mnt_put_write_access() must be
-  * called. This is effectively a refcount.
-  */
--int mnt_get_write_access(struct vfsmount *m)
-+int mnt_get_write_access(struct vfsmount *mnt)
- {
--	struct mount *mnt = real_mount(m);
-+	struct mount *m = real_mount(mnt);
- 	int ret = 0;
+diff --git a/tools/bpf/bpftool/Documentation/bpftool-prog.rst b/tools/bpf/bpftool/Documentation/bpftool-prog.rst
+index d6304e01afe0..4dce43e8e8a3 100644
+--- a/tools/bpf/bpftool/Documentation/bpftool-prog.rst
++++ b/tools/bpf/bpftool/Documentation/bpftool-prog.rst
+@@ -127,7 +127,7 @@ bpftool prog pin *PROG* *FILE*
+     Note: *FILE* must be located in *bpffs* mount. It must not contain a dot
+     character ('.'), which is reserved for future extensions of *bpffs*.
  
- 	preempt_disable();
--	mnt_inc_writers(mnt);
-+	mnt_inc_writers(m);
- 	/*
- 	 * The store to mnt_inc_writers must be visible before we pass
- 	 * MNT_WRITE_HOLD loop below, so that the slowpath can see our
-@@ -505,7 +505,7 @@ int mnt_get_write_access(struct vfsmount *m)
- 	 */
- 	smp_mb();
- 	might_lock(&mount_lock.lock);
--	while (READ_ONCE(mnt->mnt.mnt_flags) & MNT_WRITE_HOLD) {
-+	while (READ_ONCE(m->mnt.mnt_flags) & MNT_WRITE_HOLD) {
- 		if (!IS_ENABLED(CONFIG_PREEMPT_RT)) {
- 			cpu_relax();
+-bpftool prog { load | loadall } *OBJ* *PATH* [type *TYPE*] [map { idx *IDX* | name *NAME* } *MAP*] [{ offload_dev | xdpmeta_dev } *NAME*] [pinmaps *MAP_DIR*] [autoattach]
++bpftool prog { load | loadall } *OBJ* *PATH* [type *TYPE*] [map { idx *IDX* | name *NAME* } *MAP*] [{ offload_dev | xdpmeta_dev } *NAME*] [pinmaps *MAP_DIR*] [autoattach] [kernel_btf *BTF_FILE*]
+     Load bpf program(s) from binary *OBJ* and pin as *PATH*. **bpftool prog
+     load** pins only the first program from the *OBJ* as *PATH*. **bpftool prog
+     loadall** pins all programs from the *OBJ* under *PATH* directory. **type**
+@@ -153,6 +153,12 @@ bpftool prog { load | loadall } *OBJ* *PATH* [type *TYPE*] [map { idx *IDX* | na
+     program does not support autoattach, bpftool falls back to regular pinning
+     for that program instead.
+ 
++    The **kernel_btf** option allows specifying an external BTF file to replace
++    the system's own vmlinux BTF file for CO-RE relocations. Note that any
++    other feature relying on BTF (such as fentry/fexit programs, struct_ops)
++    requires the BTF file for the actual kernel running on the host, often
++    exposed at /sys/kernel/btf/vmlinux.
++
+     Note: *PATH* must be located in *bpffs* mount. It must not contain a dot
+     character ('.'), which is reserved for future extensions of *bpffs*.
+ 
+diff --git a/tools/bpf/bpftool/bash-completion/bpftool b/tools/bpf/bpftool/bash-completion/bpftool
+index 1ce409a6cbd9..27512feb5c70 100644
+--- a/tools/bpf/bpftool/bash-completion/bpftool
++++ b/tools/bpf/bpftool/bash-completion/bpftool
+@@ -505,13 +505,13 @@ _bpftool()
+                             _bpftool_get_map_names
+                             return 0
+                             ;;
+-                        pinned|pinmaps)
++                        pinned|pinmaps|kernel_btf)
+                             _filedir
+                             return 0
+                             ;;
+                         *)
+                             COMPREPLY=( $( compgen -W "map" -- "$cur" ) )
+-                            _bpftool_once_attr 'type pinmaps autoattach'
++                            _bpftool_once_attr 'type pinmaps autoattach kernel_btf'
+                             _bpftool_one_of_list 'offload_dev xdpmeta_dev'
+                             return 0
+                             ;;
+diff --git a/tools/bpf/bpftool/prog.c b/tools/bpf/bpftool/prog.c
+index f010295350be..96eea8a67225 100644
+--- a/tools/bpf/bpftool/prog.c
++++ b/tools/bpf/bpftool/prog.c
+@@ -1681,8 +1681,17 @@ static int load_with_options(int argc, char **argv, bool first_prog_only)
+ 		} else if (is_prefix(*argv, "autoattach")) {
+ 			auto_attach = true;
+ 			NEXT_ARG();
++		} else if (is_prefix(*argv, "kernel_btf")) {
++			NEXT_ARG();
++
++			if (!REQ_ARGS(1))
++				goto err_free_reuse_maps;
++
++			open_opts.btf_custom_path = GET_ARG();
  		} else {
-@@ -530,8 +530,8 @@ int mnt_get_write_access(struct vfsmount *m)
- 	 * read-only.
- 	 */
- 	smp_rmb();
--	if (mnt_is_readonly(m)) {
--		mnt_dec_writers(mnt);
-+	if (mnt_is_readonly(mnt)) {
-+		mnt_dec_writers(m);
- 		ret = -EROFS;
- 	}
- 	preempt_enable();
+-			p_err("expected no more arguments, 'type', 'map' or 'dev', got: '%s'?",
++			p_err("expected no more arguments, "
++			      "'type', 'map', 'offload_dev', 'xdpmeta_dev', 'pinmaps', "
++			      "'autoattach', or 'kernel_btf', got: '%s'?",
+ 			      *argv);
+ 			goto err_free_reuse_maps;
+ 		}
+@@ -2474,6 +2483,7 @@ static int do_help(int argc, char **argv)
+ 		"                         [map { idx IDX | name NAME } MAP]\\\n"
+ 		"                         [pinmaps MAP_DIR]\n"
+ 		"                         [autoattach]\n"
++		"                         [kernel_btf BTF_FILE]\n"
+ 		"       %1$s %2$s attach PROG ATTACH_TYPE [MAP]\n"
+ 		"       %1$s %2$s detach PROG ATTACH_TYPE [MAP]\n"
+ 		"       %1$s %2$s run PROG \\\n"
 -- 
-2.39.2
+2.47.1
 
 
