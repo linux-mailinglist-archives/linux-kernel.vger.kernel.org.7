@@ -1,192 +1,158 @@
-Return-Path: <linux-kernel+bounces-650867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-650860-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8C83AB970E
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 10:01:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B92AAB96F6
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 09:57:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CCF8C3BC1FE
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 08:01:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0F53A00AB2
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 07:57:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 483C522CBD5;
-	Fri, 16 May 2025 08:01:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9C1622A81E;
+	Fri, 16 May 2025 07:57:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=damsy.net header.i=@damsy.net header.b="CgXcYEZX";
-	dkim=permerror (0-bit key) header.d=damsy.net header.i=@damsy.net header.b="cr+6076D"
-Received: from jeth.damsy.net (jeth.damsy.net [51.159.152.102])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="D5CPXVP8";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="63yRS3Yh";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="H6+3TOjM";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="jWUGYwdf"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00DA521FF4A;
-	Fri, 16 May 2025 08:01:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.159.152.102
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E181921ADC6
+	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 07:57:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747382503; cv=none; b=tcT6pRHErEd3c1YN1VyfjTN8ZGTaa2wsQh5Mp36xOisC4hrfDR+medADCpSlwNbDQQ5UArnFq6U0fHK1/SPMx7fW1Z/0uOAXjM7T1wOFaQ6DbyZCU8hHP2wBxlBzuzeJ5Xfx5orqBTWZPv5jrbYpWu5SIsm55rcAT8G2D2KSVr4=
+	t=1747382246; cv=none; b=dHNUGTfno8bMml3887qiJ4oZm2x7MxZEx/JhV51bnRUqcnWfyHESQ0MI7L4BR7zPNL7wwxTjbJAIODliF2qjTh82gZlEOSbuCpUf7ggUiObvoq2CgnUE6uIP/LSvEk0U4gjLex/aZs0J4GiiAx7tZDNa88nZ3Cem3kUhY4ZBly4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747382503; c=relaxed/simple;
-	bh=yUSd1lLOUTfXqwk/RalMi6aO3FyaQpO1WZ3T1xPz8kY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aJ3uUunyhD1mAMJAYKlbzcGg7ZN1wZy62MfFsHPjWmY7j/fpl8n8XOBvzfx06/Q8Cz3U54FPnUDi8W4CJ14SDXt/gDgar6qNEFuQTrtS50c3FQGQxTpejrTvEWa1sYgMX/Cx28gyY76XmFOxHHt1k7yHlfXcWYWdFrc7NvSKBhs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=damsy.net; spf=pass smtp.mailfrom=damsy.net; dkim=pass (2048-bit key) header.d=damsy.net header.i=@damsy.net header.b=CgXcYEZX; dkim=permerror (0-bit key) header.d=damsy.net header.i=@damsy.net header.b=cr+6076D; arc=none smtp.client-ip=51.159.152.102
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=damsy.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=damsy.net
-DKIM-Signature: v=1; a=rsa-sha256; s=202408r; d=damsy.net; c=relaxed/relaxed;
-	h=From:To:Subject:Date:Message-ID; t=1747382182; bh=YPy+tEZL6apKgfvAMCRSsSk
-	8zKBxHWC7t2m1Vfn3jPs=; b=CgXcYEZX8hN/Q2e8M/80XSvSboXrdC5slsIEaxO8MEjbT6Mt06
-	NdM43xSHHG2AVxLNrAJ4Z/rw82f8ujBNTnDLilcOjG59X7I7rVHF//JMltYERkh69ySJFndsqSx
-	2HhmYqvQC7SUV5omtgvmMwLo0ARUefbpfAS/r+YYeQl/GundzUUsICBAzgrplwocwNIoenYkdiW
-	goHq/TnW15uWBkrP31QDMpLX2C8+q4Gm30YK12rfwlU0W2q4vIPu1XLqmwTw79bf5dWhsKd/qJi
-	RepcAKpFb9Gsi4geYsjwp19Die7hbGY4GrXm9agLG5xJ3BpvoG7HBdb1iKUDvsec6cQ==;
-DKIM-Signature: v=1; a=ed25519-sha256; s=202408e; d=damsy.net; c=relaxed/relaxed;
-	h=From:To:Subject:Date:Message-ID; t=1747382182; bh=YPy+tEZL6apKgfvAMCRSsSk
-	8zKBxHWC7t2m1Vfn3jPs=; b=cr+6076Dkxypklpp92ebvSZPCsy2GPT7BKIzpqigg57qRQwr/u
-	kl/P0+TezIcHj+VIk3KIKeqKsYydjFqRI+Aw==;
-Message-ID: <7f04847e-9549-47cc-9b61-7b32df24ef8e@damsy.net>
-Date: Fri, 16 May 2025 09:56:21 +0200
+	s=arc-20240116; t=1747382246; c=relaxed/simple;
+	bh=h+ZLQF886DPWyAx8bIzvZvBejNwbMd5cBA0T6CiVgk0=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bX23dloLqpBvpEBwaEavTO9ISMrn/MZ3+asbadCxWB109g5RMrtnG7mbrKSqxkHX9CejpQt7Fs5YzzuOXyap8YdMsHk8Ea5IkqT7E+Do/MoOlACvtH+c3KmyLivsPHAM5Toinv9lAb+hsRWmacgf9STB/sI7oshHG6cM8EXX6L4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=D5CPXVP8; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=63yRS3Yh; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=H6+3TOjM; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=jWUGYwdf; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id D9A7D216E7;
+	Fri, 16 May 2025 07:57:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1747382242; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=K3gkvYB0XTRh8Gd5Dje2X8qgVwuSi/OTcBFjYgDROJQ=;
+	b=D5CPXVP8VrNG3Zw/fVU6jlhs8uKBszNyZ98hR/zuB5/f6z1f7Eq4TgbiQvdj/bc4PotY76
+	IlBQF21HSonL6sD92KPcygelPyS90jWduUUsaXC8ZfaiQhJum5R6hH1kacvdwz+Lly8b7m
+	31QvkKsZ5qShQDJhCZXrwXX9UyyiZ4Q=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1747382242;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=K3gkvYB0XTRh8Gd5Dje2X8qgVwuSi/OTcBFjYgDROJQ=;
+	b=63yRS3YhQSA7+/zyBCoI1pDizh5dpArAbQi68MfBhkmswal8KSE7u4QdbiEd31As5HT8GC
+	E6gHbRjPfusMCHCw==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=H6+3TOjM;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=jWUGYwdf
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1747382241; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=K3gkvYB0XTRh8Gd5Dje2X8qgVwuSi/OTcBFjYgDROJQ=;
+	b=H6+3TOjMTssJdLOM70SW+4PTkuqcOiV4C/plwFCASjtP5ygZx9ZmNbfgUjw3R+LC/dHYG0
+	jLgHlf4g+4zpAhirSpQ9oUvkk24VDVYz6nFCctafR3Gp6CHykJml5CMhcjnG9vz/57/k8F
+	/dFTxJcMFPHOpeXo+lYS4KTL65HMikc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1747382241;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=K3gkvYB0XTRh8Gd5Dje2X8qgVwuSi/OTcBFjYgDROJQ=;
+	b=jWUGYwdfwCWz6YPF+gc4av3E0qf9WHvEVOdO8Y7asEY/g3G0sr+J5bwZKilvq0lDiby7rx
+	RNEG+AyNuU5FRqAg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9C37313977;
+	Fri, 16 May 2025 07:57:21 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id //PUJOHvJmgYTQAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Fri, 16 May 2025 07:57:21 +0000
+Date: Fri, 16 May 2025 09:57:21 +0200
+Message-ID: <87y0uxvvha.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Chen Ni <nichen@iscas.ac.cn>
+Cc: g@b4.vu,
+	perex@perex.cz,
+	tiwai@suse.com,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ALSA: scarlett2: Use USB API functions rather than constants
+In-Reply-To: <20250516070416.12458-1-nichen@iscas.ac.cn>
+References: <20250516070416.12458-1-nichen@iscas.ac.cn>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 09/10] drm/doc: document some tracepoints as uAPI
-To: phasta@kernel.org,
- Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Jonathan Corbet <corbet@lwn.net>, Matthew Brost <matthew.brost@intel.com>,
- Danilo Krummrich <dakr@kernel.org>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>,
- Sumit Semwal <sumit.semwal@linaro.org>
-Cc: Lucas Stach <l.stach@pengutronix.de>, =?UTF-8?Q?Ma=C3=ADra_Canal?=
- <mcanal@igalia.com>, =?UTF-8?Q?Christian_K=C3=B6nig?=
- <christian.koenig@amd.com>, dri-devel@lists.freedesktop.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org
-References: <20250424083834.15518-1-pierre-eric.pelloux-prayer@amd.com>
- <20250424083834.15518-10-pierre-eric.pelloux-prayer@amd.com>
- <27825c551adeda28f4b329f44c316ad2ab67fa5d.camel@mailbox.org>
-Content-Language: en-US
-From: Pierre-Eric Pelloux-Prayer <pierre-eric@damsy.net>
-In-Reply-To: <27825c551adeda28f4b329f44c316ad2ab67fa5d.camel@mailbox.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Rspamd-Queue-Id: D9A7D216E7
+X-Spam-Flag: NO
+X-Spam-Score: -3.51
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.51 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_CONTAINS_FROM(1.00)[];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	MIME_TRACE(0.00)[0:+];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:dkim,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Rspamd-Action: no action
 
-Hi,
+On Fri, 16 May 2025 09:04:16 +0200,
+Chen Ni wrote:
+> 
+> Use the function usb_endpoint_num() rather than constants.
+> 
+> The Coccinelle semantic patch is as follows:
+> 
+> @@ struct usb_endpoint_descriptor *epd; @@
+> 
+> - (epd->bEndpointAddress & \(USB_ENDPOINT_NUMBER_MASK\|0x0f\))
+> + usb_endpoint_num(epd)
+> 
+> Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
 
-Le 14/05/2025 à 14:53, Philipp Stanner a écrit :
-> On Thu, 2025-04-24 at 10:38 +0200, Pierre-Eric Pelloux-Prayer wrote:
->> This commit adds a document section in drm-uapi.rst about
->> tracepoints,
->> and mark the events gpu_scheduler_trace.h as stable uAPI.
->>
->> The goal is to explicitly state that tools can rely on the fields,
->> formats and semantics of these events.
->>
->> Acked-by: Lucas Stach <l.stach@pengutronix.de>
->> Acked-by: Maíra Canal <mcanal@igalia.com>
->> Reviewed-by: Christian König <christian.koenig@amd.com>
->> Signed-off-by: Pierre-Eric Pelloux-Prayer
->> <pierre-eric.pelloux-prayer@amd.com>
->> ---
->>   Documentation/gpu/drm-uapi.rst                | 19
->> +++++++++++++++++++
->>   .../gpu/drm/scheduler/gpu_scheduler_trace.h   | 19
->> +++++++++++++++++++
->>   2 files changed, 38 insertions(+)
->>
->> diff --git a/Documentation/gpu/drm-uapi.rst b/Documentation/gpu/drm-
->> uapi.rst
->> index 69f72e71a96e..4863a4deb0ee 100644
->> --- a/Documentation/gpu/drm-uapi.rst
->> +++ b/Documentation/gpu/drm-uapi.rst
->> @@ -693,3 +693,22 @@ dma-buf interoperability
->>   
->>   Please see Documentation/userspace-api/dma-buf-alloc-exchange.rst
->> for
->>   information on how dma-buf is integrated and exposed within DRM.
->> +
->> +
->> +Trace events
->> +============
->> +
->> +See Documentation/trace/tracepoints.rst for information about using
->> +Linux Kernel Tracepoints.
->> +In the DRM subsystem, some events are considered stable uAPI to
->> avoid
->> +breaking tools (e.g.: GPUVis, umr) relying on them. Stable means
->> that fields
->> +cannot be removed, nor their formatting updated. Adding new fields
->> is
->> +possible, under the normal uAPI requirements.
->> +
->> +Stable uAPI events
->> +------------------
->> +
->> +From ``drivers/gpu/drm/scheduler/gpu_scheduler_trace.h``
->> +
->> +.. kernel-doc::  drivers/gpu/drm/scheduler/gpu_scheduler_trace.h
->> +   :doc: uAPI trace events
->> \ No newline at end of file
->> diff --git a/drivers/gpu/drm/scheduler/gpu_scheduler_trace.h
->> b/drivers/gpu/drm/scheduler/gpu_scheduler_trace.h
->> index 781b20349389..7e840d08ef39 100644
->> --- a/drivers/gpu/drm/scheduler/gpu_scheduler_trace.h
->> +++ b/drivers/gpu/drm/scheduler/gpu_scheduler_trace.h
->> @@ -32,6 +32,25 @@
->>   #define TRACE_SYSTEM gpu_scheduler
->>   #define TRACE_INCLUDE_FILE gpu_scheduler_trace
->>   
->> +/**
->> + * DOC: uAPI trace events
->> + *
->> + * ``drm_sched_job_queue``, ``drm_sched_job_run``,
->> ``drm_sched_job_add_dep``,
->> + * ``drm_sched_job_done`` and ``drm_sched_job_unschedulable`` are
->> considered
->> + * stable uAPI.
->> + *
->> + * Common trace events attributes:
->> + *
->> + * * ``dev``   - the dev_name() of the device running the job.
->> + *
->> + * * ``ring``  - the hardware ring running the job. Together with
->> ``dev`` it
->> + *   uniquely identifies where the job is going to be executed.
->> + *
->> + * * ``fence`` - the &dma_fence.context and the &dma_fence.seqno of
->> + *   &drm_sched_fence.finished
->> + *
->> + */
-> 
-> For my understanding, why do you use the double apostrophes here?
+Thanks, applied.
 
-To get similar formatting to function arguments and make the output a bit nicer to read.
 
-> 
-> Also, the linking for the docu afair here two requires you to write
-> 
-> &struct dma_fence.seqno
-> 
-> If I am not mistaken
-> 
-> https://www.kernel.org/doc/html/latest/doc-guide/kernel-doc.html#highlights-and-cross-references
-
-Indeed, thanks. I fixed this.
-
-Pierre-Eric
-
-> 
-> 
-> P.
-> 
->> +
->>   DECLARE_EVENT_CLASS(drm_sched_job,
->>   	    TP_PROTO(struct drm_sched_job *sched_job, struct
->> drm_sched_entity *entity),
->>   	    TP_ARGS(sched_job, entity),
-
+Takashi
 
