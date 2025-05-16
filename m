@@ -1,356 +1,233 @@
-Return-Path: <linux-kernel+bounces-651110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-651112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3101AB9A20
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 12:26:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B94A9AB9A23
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 12:26:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 887891B683CD
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 10:26:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 785F71BA04B6
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 10:27:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79A5923505C;
-	Fri, 16 May 2025 10:26:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53DB723506F;
+	Fri, 16 May 2025 10:26:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="JB1cbKT7"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="FHI8037C"
+Received: from xry111.site (xry111.site [89.208.246.23])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 510C7231C9F;
-	Fri, 16 May 2025 10:26:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747391176; cv=pass; b=k0LoO3cBNjdrfeFoxs88JuKJ55UHdPCT6mEtLMguDBqiq7GAvgafx7iNQZMcTQddZLH6UeR5jHCk369h69Pk6JQDG7a+IDq/SP1Kr2sEOz0K1lrJfiXlZup+6tXlhbDj/nJ/3wIhT8yLUtMWSMDCaeC4gvJ4G4t+kXcszQXdo1k=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747391176; c=relaxed/simple;
-	bh=8SfH7tS1+DBD1BFvcUPQKwcuArOyOFY5FbHf3u/nmF8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=e3z+RnOI2UWVP+a+A4KKcbaHGwueIbyCUKgeAM4YBzcJxnhFg7lGZBbjQhJB3oaWnACkrEiL6tt//6Zm1ZHuJjJo1VPFA6fscGQdJ1EFcWJen9vniG2hKg+Ie6Vki8sxyAlD1XxDfcr+getnSRi92ZCw6AOm3Be6XNDV5vEnj28=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=JB1cbKT7; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1747391146; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=bemhvM9pwc8lCTJ7XG1tyEEogtDBUUEZ41R2u5OYVFdWR9MOMZskgudhQ3OsgdJO9qjTiLycp/YDRQ8yMEzBwBAwIhN66m/UvH3eoL6WsNwtaduS5/XHC/BWuGmjdXY9vtyRIvW41BGUyo13vMCmBOD/rFbR6pyOkdqIOjZ0FEA=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1747391146; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=7ufq7J+dS4vCBPvGzC6/ZAkxwKyIeNhF3xU0c1WaRyU=; 
-	b=bUS/5eaIuaigVKEH3qqBDvXf5I2A9R4xE8DqK+/1KGO6mC4zhLQLWCc+mDKecABgyufYYTFnZMHmWG1rf1ncsVdFk1s3JPPySHXSInhxKmIzXpf3h+DM2AGOLKRIukfrVZ+Zt/IWFxAq8fA+w725ywuw8g54OfCoLoNgMbH4FpI=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
-	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1747391146;
-	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
-	bh=7ufq7J+dS4vCBPvGzC6/ZAkxwKyIeNhF3xU0c1WaRyU=;
-	b=JB1cbKT7TU5UV3Ld8nZuGxkJHP3cleYuTIvTef8FpJFjK8fYRWPCM+r/1kBImbrj
-	HVMBehTCRnncUQKVNuhcnj/F05QRYNtjQjeEH8tjJ9wuaSxKQNNuwcb+G2R4iP0yRmM
-	ACYHzsfKj0H8AQMBslE47Ai8jzFBAm6A1nehUxAk=
-Received: by mx.zohomail.com with SMTPS id 1747391144724792.7392507526358;
-	Fri, 16 May 2025 03:25:44 -0700 (PDT)
-From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-To: Tomeu Vizoso <tomeu@tomeuvizoso.net>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
- Oded Gabbay <ogabbay@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Sumit Semwal <sumit.semwal@linaro.org>,
- Christian =?UTF-8?B?S8O2bmln?= <christian.koenig@amd.com>,
- Sebastian Reichel <sebastian.reichel@collabora.com>,
- Jeffrey Hugo <quic_jhugo@quicinc.com>, linux-rockchip@lists.infradead.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-doc@vger.kernel.org, linux-media@vger.kernel.org,
- linaro-mm-sig@lists.linaro.org
-Subject: Re: [PATCH v2 1/7] dt-bindings: npu: rockchip,rknn: Add bindings
-Date: Fri, 16 May 2025 12:25:37 +0200
-Message-ID: <6549034.lOV4Wx5bFT@workhorse>
-In-Reply-To:
- <CAAObsKDYpDt15NePk7DZbfwXnn5uaJxCu-pwZd-+PDEi56C73A@mail.gmail.com>
-References:
- <20250225-6-10-rocket-v2-0-d4dbcfafc141@tomeuvizoso.net>
- <3628015.iIbC2pHGDl@workhorse>
- <CAAObsKDYpDt15NePk7DZbfwXnn5uaJxCu-pwZd-+PDEi56C73A@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAED6233706
+	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 10:26:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747391200; cv=none; b=R6i/tpJabi5lc3MP30M53fIQitgje8zJCqlZNoWlt2kSvCYVnAJP+Vnfyr03uqf5Pb/ZlYPF21fFo/MVffiHm1jWHTqylBxourhqhAHcmeAfOog+tClURmL8aQj2aX3+Z7V2uiRQoFieqcDX8LI7Mw2xHQVMbXFe4/soyGwn44I=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747391200; c=relaxed/simple;
+	bh=E2l1wYv0Wpw+TMqnem12bJIKNZtxIm4iVCgykL/fztU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=C2KaU77+AOVAnWCoH850Z//qLpurEMJs1hJPIEKNj9SqF1C0SABKYjY6w3Civ20UNfFNcYfkrfpNKZw2LEV01Vpcx7AWcHKpSvNfyhsVvQpbk0KNfh10i9ftE0XiwrQrswv/GnfssGiQ+7GSA6nK+pkmfQRlCoHWkUIQaXoXYUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=FHI8037C; arc=none smtp.client-ip=89.208.246.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xry111.site;
+	s=default; t=1747391189;
+	bh=6i59xOsB2P1poB0rSQ5FPpBfoLh4uAEDe2LmcbwelDg=;
+	h=From:To:Cc:Subject:Date:From;
+	b=FHI8037Cbd3vejQlthmvBYBGSCM0cKrF0FoXmevvW73Q/D2YSXURyNIiv8b13IP9O
+	 xMY2srcR9H5V4rftjfpLk45pGQKHxPtIUUPQVTuLkG+VRj70j3Yj8aNlvF81vxNhsG
+	 N8Z7rZYFrAoL6uODytsqsp+6XFnIjvmmkhKAVNbg=
+Received: from stargazer.. (unknown [IPv6:240e:457:1000:4d1d:620b:9b2:5a59:f0a1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (secp384r1) server-digest SHA384)
+	(Client did not present a certificate)
+	(Authenticated sender: xry111@xry111.site)
+	by xry111.site (Postfix) with ESMTPSA id 400A265F62;
+	Fri, 16 May 2025 06:26:21 -0400 (EDT)
+From: Xi Ruoyao <xry111@xry111.site>
+To: James Morse <james.morse@arm.com>,
+	Marc Zyngier <maz@kernel.org>,
+	Anshuman Khandual <anshuman.khandual@arm.com>,
+	Ben Horgan <ben.horgan@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
+	Mingcong Bai <jeffbai@aosc.io>,
+	Xi Ruoyao <xry111@xry111.site>,
+	Shaopeng Tan <tan.shaopeng@fujitsu.com>
+Subject: [PATCH v3] arm64: Add override for MPAM
+Date: Fri, 16 May 2025 18:25:56 +0800
+Message-ID: <20250516102556.9688-1-xry111@xry111.site>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Thursday, 15 May 2025 10:30:14 Central European Summer Time Tomeu Vizoso=
- wrote:
-> On Wed, May 14, 2025 at 7:50=E2=80=AFPM Nicolas Frattaroli
-> <nicolas.frattaroli@collabora.com> wrote:
-> >
-> > On Wednesday, 14 May 2025 17:18:22 Central European Summer Time Tomeu V=
-izoso wrote:
-> > > Hi Nicolas,
-> > >
-> > > Thanks for looking at this. Some thoughts below:
-> > >
-> > > On Fri, Apr 25, 2025 at 8:50=E2=80=AFPM Nicolas Frattaroli
-> > > <nicolas.frattaroli@collabora.com> wrote:
-> > > >
-> > > > On Tuesday, 25 February 2025 08:55:47 Central European Summer Time =
-Tomeu Vizoso wrote:
-> > > > > Add the bindings for the Neural Processing Unit IP from Rockchip.
-> > > > >
-> > > > > v2:
-> > > > > - Adapt to new node structure (one node per core, each with its o=
-wn
-> > > > >   IOMMU)
-> > > > > - Several misc. fixes from Sebastian Reichel
-> > > > >
-> > > > > Signed-off-by: Tomeu Vizoso <tomeu@tomeuvizoso.net>
-> > > > > Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
-> > > > > ---
-> > > > >  .../bindings/npu/rockchip,rknn-core.yaml           | 152 +++++++=
-++++++++++++++
-> > > > >  1 file changed, 152 insertions(+)
-> > > > >
-> > > > > diff --git a/Documentation/devicetree/bindings/npu/rockchip,rknn-=
-core.yaml b/Documentation/devicetree/bindings/npu/rockchip,rknn-core.yaml
-> > > > > new file mode 100644
-> > > > > index 0000000000000000000000000000000000000000..e8d0afe4a7d1c4f16=
-6cf13a9f4aa7c1901362a3f
-> > > > > --- /dev/null
-> > > > > +++ b/Documentation/devicetree/bindings/npu/rockchip,rknn-core.ya=
-ml
-> > > > > @@ -0,0 +1,152 @@
-> > > > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > > > > +%YAML 1.2
-> > > > > +---
-> > > > > +$id: http://devicetree.org/schemas/npu/rockchip,rknn-core.yaml#
-> > > > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > > > > +
-> > > > > +title: Neural Processing Unit IP from Rockchip
-> > > > > +
-> > > > > +maintainers:
-> > > > > +  - Tomeu Vizoso <tomeu@tomeuvizoso.net>
-> > > > > +
-> > > > > +description:
-> > > > > +  Rockchip IP for accelerating inference of neural networks, bas=
-ed on NVIDIA's
-> > > > > +  open source NVDLA IP.
-> > > > > +
-> > > > > +properties:
-> > > > > +  $nodename:
-> > > > > +    pattern: '^npu-core@[a-f0-9]+$'
-> > > > > +
-> > > > > +  compatible:
-> > > > > +    oneOf:
-> > > > > +      - items:
-> > > > > +          - enum:
-> > > > > +              - rockchip,rk3588-rknn-core-top
-> > > > > +          - const: rockchip,rknn-core-top
-> > > > > +      - items:
-> > > > > +          - enum:
-> > > > > +              - rockchip,rk3588-rknn-core
-> > > > > +          - const: rockchip,rknn-core
-> > > > > +
-> > > > > +  reg:
-> > > > > +    maxItems: 1
-> > > >
-> > > > Hi Tomeu,
-> > > >
-> > > > as you probably know, RK3576 has quite a similar NPU. This is why I=
-'m currently
-> > > > poking at this patch series. One of the differences I ran into was =
-that the
-> > > > IOMMU of each NPU core now sits within the reg address space range =
-of the core
-> > > > as described by the single reg item binding and assumed by the driv=
-er.
-> > >
-> > > But this is not a difference, right?
-> >
-> > It is. E.g. on RK3588, you use reg =3D <0x0 0xfdab0000 0x0 0x9000>; for
-> > rknn_core_top, and rknn_mmu_top then sits at 0xfdab9000, which is just
-> > outside the reg range of the rknn_core_top node. That means acquiring t=
-he
-> > iomem as a resource succeeds for you, whereas for me it fails.
->=20
-> Ah, got it now, thanks.
->=20
-> > >
-> > > > This seemed weird to me at first, since I would've guessed the core=
-s would be
-> > > > exactly the same, but I noticed that they kind of still are; the RK=
-3588's NPU
-> > > > also has a "hole" between 0x2000 and 0x2fff on each core, which is =
-where RK3576
-> > > > put its IOMMU.
-> > >
-> > > So this is the same in both RK3576 and RK3588, right?
-> >
-> > Yes, both RK3576 and RK3588 have a hole in the same area. RK3562 also h=
-as
-> > the same hole. RK3568 doesn't have the offsets for the individual parts=
- of
-> > the NPU in the TRM, making all the relative register offsets the TRM th=
-en
-> > goes on to document completely pointless as it omits what those offsets
-> > are based on, so we don't know if it has a hole there. I vaguely recall
-> > that it has the IOMMU either before or past the global range (not sure =
-if
-> > I wrote these findings down anywhere?), so if it has a hole at 0x2000
-> > then it's unused like on the RK3588. I don't have access to the RV1106
-> > Part 2 TRM where the NPU is described, so I don't know whether that has=
- a
-> > hole there unless we dig into the downstream code.
-> >
-> > >
-> > > > This is some information I gleaned from the RK3588 TRM, specificall=
-y section
-> > > > 36.4.1 "Internal Address Mapping", which shows where each "part" of=
- the NPU core
-> > > > has its address space.
-> > > >
-> > > > Right now we just represent this as a single reg item per core. I'v=
-e played
-> > > > with the idea of splitting this up into the distinct ranges the TRM=
- lists and
-> > > > giving each a reg-names entry, but this would require a major rewor=
-k of the
-> > > > driver from what I can tell, including to the auto-generated regist=
-er header.
-> > > >
-> > > > For now, my hack on RK3576 is to just ioremap the range defined by =
-resource
-> > > > start to resource end inside rocket manually if I get -EBUSY trying=
- to ioremap
-> > > > the resource proper. This is quite an ugly hack though, it means th=
-e IOMMU node
-> > > > still has its address overlapping with another node in the DT, and =
-it also means
-> > > > we have an unavoidable error message printed into the kernel log. T=
-his is also
-> > > > what the vendor driver seems to do.
-> > > >
-> > > > What do you reckon is a reg setup in the binding that is both reaso=
-nable to
-> > > > implement in the driver while accurately describing the hardware?
-> > >
-> > > Guess we could go with some smaller granularity and have 3 register
-> > > areas per core, instead of 10:
-> > >
-> > > - CORE: PC+CNA (0x0000 ~ 0x1fff)
-> > > - AUX: CORE+DPU+PPU+DDMA+SDMA (0x3000 ~ 0x9fff)
-> > > - GLOBAL (0xf000 ~ 0xf004)
-> > >
-> > > So the IOMMU on all the known SoCs can have its own regmap. I have
-> > > chosen to call the first one CORE because these are the components
-> > > that are absolutely needed in any NPU that is oriented towards
-> > > convolutional networks (convolutions, basically). I have named the
-> > > second AUX because it contains hardware units that are optional and
-> > > are used to implement operations that may be common but that aren't as
-> > > computational expensive as convolutions and thus might be skipped in
-> > > lower-end versions of the IP.
-> > >
-> > > What do you think?
-> >
-> > I'm personally fine with this approach. I've floated a two-area approach
-> > to Sebastian Reichel before who, as far as I can recall, expressed his
-> > distaste for  it as it seemed like an arbitrary division. I do concur in
-> > that, it seems very arbitrary, so it's hard to say whether the bindings
-> > maintainers would let us get away with it if they get wind of it.
-> > Unfortunately they are Cc'd on this E-Mail, so the cat is out of the bag
-> > in this regard.
->=20
-> Actually, after thinking a bit more about it I'm leaning towards only
-> having the PC, CNA and CORE areas in the DT, as those are the only
-> ones that should be accessible from the CPU.
+As the message of the commit 09e6b306f3ba ("arm64: cpufeature: discover
+CPU support for MPAM") already states, if a buggy firmware fails to
+either enable MPAM or emulate the trap as if it were disabled, the
+kernel will just fail to boot.  While upgrading the firmware should be
+the best solution, we have some hardware of which the vendor have made
+no response 2 months after we requested a firmware update.  Allow
+overriding it so our devices don't become some e-waste.
 
-That does make sense to me. I've just checked the RK3576 specific reg
-fiddling code I hacked in and it doesn't appear to be writing to any
-other areas either.
+Cc: James Morse <james.morse@arm.com>
+Cc: Marc Zyngier <maz@kernel.org>
+Cc: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
+Cc: Mingcong Bai <jeffbai@aosc.io>
+Tested-by: Shaopeng Tan <tan.shaopeng@fujitsu.com>
+Tested-by: Ben Horgan <ben.horgan@arm.com>
+Signed-off-by: Xi Ruoyao <xry111@xry111.site>
+---
 
->=20
-> The registers for the other units should be set by the PC, as it reads
-> the command stream.
->=20
-> So three register areas that can be set to wherever Rockchip has
-> placed them, and we just ignore the others in the kernel, as we don't
-> have any business messing with them ourselves.
->=20
-> What do you think?
+[v2]->v3:
+- Fix typos in the subject and a comment.
+- Remove a useless #include directive.
 
-This seems like a good solution. Any further reg ranges that are used in
-other variants (e.g. RK3562/RK3576 and maybe RV1106) introduce something
-called "CBUF" and I'm not yet sure if that'll need any writes to its regs
-from the driver, but if it does then it's easy to add another range for it
-in the binding for just those compatibles.
+[v1]->v2:
+- Handle the override and initialize EL2 mpam in finalise_el2_state
+- Move info->mpamidr assignment to {init,update}_cpu_features
 
->=20
-> Thanks,
->=20
-> Tomeu
+[v1]: https://lore.kernel.org/linux-arm-kernel/20250401055650.22542-1-xry111@xry111.site/
 
-Kind regards,
-Nicolas Frattaroli
+ .../admin-guide/kernel-parameters.txt         |  3 +++
+ arch/arm64/include/asm/el2_setup.h            | 24 ++++++++-----------
+ arch/arm64/kernel/cpufeature.c                |  7 ++++--
+ arch/arm64/kernel/cpuinfo.c                   |  7 ++++--
+ arch/arm64/kernel/pi/idreg-override.c         |  2 ++
+ 5 files changed, 25 insertions(+), 18 deletions(-)
 
->=20
-> > What speaks for the 3 register area split is that anything that brings
-> > more holes and doubly mapped things into the AUX area is probably going
-> > to be so radically different it'll ideally have its own binding anyway,
-> > or needs more than just a compatible added to the binding.
-> >
-> > I think as far as arbitrary splits goes, the one you propose is probably
-> > the one most closely aligned with reality. Certain register areas do
-> > seem like something they'd never move away from its corresponding
-> > companion, whereas adding parts to the AUX area or removing from it is
-> > probably going to be quite common. So it can essentially be treated as
-> > the area where optional things will most likely land as you pointed out,
-> > which then don't need more bindings fiddling to add those optional thin=
-gs
-> > as explicitly named areas in the bindings as long as we treat it as just
-> > one opaque area s far as the binding is concerned.
-> >
-> > Also, unless there's some virtual combined sparse iomem API in the kern=
-el
-> > that I'm not aware of, that's probably the easiest path forward for the
-> > driver as well.
-> >
-> > >
-> > > Regards,
-> > >
-> > > Tomeu
-> >
-> > Kind regards,
-> > Nicolas Frattaroli
-> >
-> > >
-> > > > The RK3568, which uses a similar NPU design has the IOMMU at an off=
-set of 0xb000
-> > > > from the core's start of PC, so probably after any core specifics b=
-ut before the
-> > > > global registers if I hazard a guess.
-> > > >
-> > > > For those without access to the TRM: splitting this up into multipl=
-e reg items
-> > > > per core precisely the way the TRM does it would result in no less =
-than 10 reg
-> > > > items on RK3588, if I count correctly.
-> > > >
-> > > > Kind regards,
-> > > > Nicolas Frattaroli
-> > > >
-> > > >
-> > >
-> >
-> >
-> >
-> >
->=20
-
-
-
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 8f75ec177399..0bfcbeab7a3b 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -458,6 +458,9 @@
+ 	arm64.nomops	[ARM64] Unconditionally disable Memory Copy and Memory
+ 			Set instructions support
+ 
++	arm64.nompam	[ARM64] Unconditionally disable Memory Partitioning And
++			Monitoring support
++
+ 	arm64.nomte	[ARM64] Unconditionally disable Memory Tagging Extension
+ 			support
+ 
+diff --git a/arch/arm64/include/asm/el2_setup.h b/arch/arm64/include/asm/el2_setup.h
+index d40e427ddad9..2e6b9086efc5 100644
+--- a/arch/arm64/include/asm/el2_setup.h
++++ b/arch/arm64/include/asm/el2_setup.h
+@@ -294,19 +294,6 @@
+ .Lskip_gcs_\@:
+ .endm
+ 
+-.macro __init_el2_mpam
+-	/* Memory Partitioning And Monitoring: disable EL2 traps */
+-	mrs	x1, id_aa64pfr0_el1
+-	ubfx	x0, x1, #ID_AA64PFR0_EL1_MPAM_SHIFT, #4
+-	cbz	x0, .Lskip_mpam_\@		// skip if no MPAM
+-	msr_s	SYS_MPAM2_EL2, xzr		// use the default partition
+-						// and disable lower traps
+-	mrs_s	x0, SYS_MPAMIDR_EL1
+-	tbz	x0, #MPAMIDR_EL1_HAS_HCR_SHIFT, .Lskip_mpam_\@	// skip if no MPAMHCR reg
+-	msr_s	SYS_MPAMHCR_EL2, xzr		// clear TRAP_MPAMIDR_EL1 -> EL2
+-.Lskip_mpam_\@:
+-.endm
+-
+ /**
+  * Initialize EL2 registers to sane values. This should be called early on all
+  * cores that were booted in EL2. Note that everything gets initialised as
+@@ -324,7 +311,6 @@
+ 	__init_el2_stage2
+ 	__init_el2_gicv3
+ 	__init_el2_hstr
+-	__init_el2_mpam
+ 	__init_el2_nvhe_idregs
+ 	__init_el2_cptr
+ 	__init_el2_fgt
+@@ -371,6 +357,16 @@
+ #endif
+ 
+ .macro finalise_el2_state
++	check_override id_aa64pfr0, ID_AA64PFR0_EL1_MPAM_SHIFT, .Linit_mpam_\@, .Lskip_mpam_\@, x1, x2
++
++.Linit_mpam_\@:
++	msr_s	SYS_MPAM2_EL2, xzr		// use the default partition
++						// and disable lower traps
++	mrs_s	x0, SYS_MPAMIDR_EL1
++	tbz	x0, #MPAMIDR_EL1_HAS_HCR_SHIFT, .Lskip_mpam_\@  // skip if no MPAMHCR reg
++	msr_s   SYS_MPAMHCR_EL2, xzr		// clear TRAP_MPAMIDR_EL1 -> EL2
++
++.Lskip_mpam_\@:
+ 	check_override id_aa64pfr0, ID_AA64PFR0_EL1_SVE_SHIFT, .Linit_sve_\@, .Lskip_sve_\@, x1, x2
+ 
+ .Linit_sve_\@:	/* SVE register access */
+diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+index 4c46d80aa64b..7b8c998a0466 100644
+--- a/arch/arm64/kernel/cpufeature.c
++++ b/arch/arm64/kernel/cpufeature.c
+@@ -1198,8 +1198,10 @@ void __init init_cpu_features(struct cpuinfo_arm64 *info)
+ 		cpacr_restore(cpacr);
+ 	}
+ 
+-	if (id_aa64pfr0_mpam(info->reg_id_aa64pfr0))
++	if (id_aa64pfr0_mpam(read_sanitised_ftr_reg(SYS_ID_AA64PFR0_EL1))) {
++		info->reg_mpamidr = read_cpuid(MPAMIDR_EL1);
+ 		init_cpu_ftr_reg(SYS_MPAMIDR_EL1, info->reg_mpamidr);
++	}
+ 
+ 	if (id_aa64pfr1_mte(info->reg_id_aa64pfr1))
+ 		init_cpu_ftr_reg(SYS_GMID_EL1, info->reg_gmid);
+@@ -1450,7 +1452,8 @@ void update_cpu_features(int cpu,
+ 		cpacr_restore(cpacr);
+ 	}
+ 
+-	if (id_aa64pfr0_mpam(info->reg_id_aa64pfr0)) {
++	if (id_aa64pfr0_mpam(read_sanitised_ftr_reg(SYS_ID_AA64PFR0_EL1))) {
++		info->reg_mpamidr = read_cpuid(MPAMIDR_EL1);
+ 		taint |= check_update_ftr_reg(SYS_MPAMIDR_EL1, cpu,
+ 					info->reg_mpamidr, boot->reg_mpamidr);
+ 	}
+diff --git a/arch/arm64/kernel/cpuinfo.c b/arch/arm64/kernel/cpuinfo.c
+index 285d7d538342..15d39fbc6085 100644
+--- a/arch/arm64/kernel/cpuinfo.c
++++ b/arch/arm64/kernel/cpuinfo.c
+@@ -494,8 +494,11 @@ static void __cpuinfo_store_cpu(struct cpuinfo_arm64 *info)
+ 	if (id_aa64pfr0_32bit_el0(info->reg_id_aa64pfr0))
+ 		__cpuinfo_store_cpu_32bit(&info->aarch32);
+ 
+-	if (id_aa64pfr0_mpam(info->reg_id_aa64pfr0))
+-		info->reg_mpamidr = read_cpuid(MPAMIDR_EL1);
++	/*
++	 * info->reg_mpamidr deferred to {init,update}_cpu_features because we
++	 * don't want to read it (and trigger a trap on buggy firmware) if
++	 * using an aa64pfr0_el1 override to unconditionally disable MPAM.
++	 */
+ 
+ 	if (IS_ENABLED(CONFIG_ARM64_SME) &&
+ 	    id_aa64pfr1_sme(info->reg_id_aa64pfr1)) {
+diff --git a/arch/arm64/kernel/pi/idreg-override.c b/arch/arm64/kernel/pi/idreg-override.c
+index c6b185b885f7..836e5a9b98d0 100644
+--- a/arch/arm64/kernel/pi/idreg-override.c
++++ b/arch/arm64/kernel/pi/idreg-override.c
+@@ -127,6 +127,7 @@ static const struct ftr_set_desc pfr0 __prel64_initconst = {
+ 	.fields		= {
+ 	        FIELD("sve", ID_AA64PFR0_EL1_SVE_SHIFT, pfr0_sve_filter),
+ 		FIELD("el0", ID_AA64PFR0_EL1_EL0_SHIFT, NULL),
++		FIELD("mpam", ID_AA64PFR0_EL1_MPAM_SHIFT, NULL),
+ 		{}
+ 	},
+ };
+@@ -246,6 +247,7 @@ static const struct {
+ 	{ "rodata=off",			"arm64_sw.rodataoff=1" },
+ 	{ "arm64.nolva",		"id_aa64mmfr2.varange=0" },
+ 	{ "arm64.no32bit_el0",		"id_aa64pfr0.el0=1" },
++	{ "arm64.nompam",		"id_aa64pfr0.mpam=0" },
+ };
+ 
+ static int __init parse_hexdigit(const char *p, u64 *v)
+-- 
+2.49.0
 
 
