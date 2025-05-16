@@ -1,188 +1,305 @@
-Return-Path: <linux-kernel+bounces-651276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-651240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 992F8AB9C94
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 14:50:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5208EAB9C14
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 14:32:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7F9D47A4A88
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 12:49:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D7E11B658C4
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 12:32:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 674B824291C;
-	Fri, 16 May 2025 12:50:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED57C23D2AB;
+	Fri, 16 May 2025 12:32:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="VzYcp7dU"
-Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2074.outbound.protection.outlook.com [40.107.95.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BUj0IFk2"
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 139BC1DFDE;
-	Fri, 16 May 2025 12:49:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.74
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747399799; cv=fail; b=X293gx3bl/f2J7wbIhY/mkxfuwiK1ZHhjrkAwWtI8Ow40ShhBPwb3aRmWg7dzBvzPBgDHpIYbQkCAy68gEW2+1GuqYnk7XNkiscS3RfFFGxiop4I99jgxzMshK8pdonbd3PayO4VOTwDHGObzu72jN6t1DthJ7v6BwofI+8foqU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747399799; c=relaxed/simple;
-	bh=/ssxdQx4KBY4OPAe6Nn+lJC2blTajUh+GRZj7o79He0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=oYvnqkvVE7JbXSM2o9u2CvG+nrT3xdbYZg81TOgsCAzJD7MdDbIDAcmTtKvLdOoe0sVv5OeFmAhYyx4w1Y16LZjidDXN0SzYnrLqfmRvvm+OE7Iuyr+WkX1AJ0ifccAmzYB8Ebd//PaETrOfuqJJHlKd6OBzCwNwxBHTURhtwKo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=VzYcp7dU; arc=fail smtp.client-ip=40.107.95.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=bZZGRSanTmg6iwhMe7oGyogTjem71pdxHlLOOL+MI3a6k74CiXRp2pkrlnuuG24oTVp+Ow7cFHG8tz0xuMZs0v/PKeNH3XssoFBPvJPdWItWvCAk4BwgDh69+NQoQuTmqR8B93cS7c4DM20gZlLXXBk+DeIGNZiIcm79qSQnPncqyrcOZavAUg3Htj/pP9F1yczmDxHwl7XK8qnttj3Kb4uG2/KGuRNmWLW5Y7ROJVgCHqAkjYOIdektCjyjd7PJhBAasjrT2lXRIQ7NLempbSsJ0Gk4vcb+YE16+i7gFLvIPvt5sd+5z1LE2nKWaFlFjVUUvGBctdhpjcCQrCKvAQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=HCOliCDFiza2YXF/6yogjX8ZCITtgDW9sZwjVVE5EJQ=;
- b=O/ueFMTl93ZP2vrB5a2lYu6b8yBJEdPvZ8LGVx3pTM62Z09c5aMxzSscNufXNLMMwHlS0PFDCHQUMFtIsVxzhtSVMSUBmdmuR00fZBaBv+GUWsMKYOo1yXeYTnP2yU8hNzWln2ZeDFkP33veMbV0FGO1ZUrTgIqtZjENPJf5AvhRC42pHpFvd5Evtva0yV6wa5NCIyFcoKda5UwAqVtxGOaA9pikK9fLaKWLxQGDj4JoD+5oLvconJ0RJ8c5Y347ytDMPGzpcMpufGZH2LWMDHAwWoAq3LAQldzcdUwti/1x7XS02vSmwb3mhpNd6nqu3Wj6GvtKn3VBbNj0MJsvGg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HCOliCDFiza2YXF/6yogjX8ZCITtgDW9sZwjVVE5EJQ=;
- b=VzYcp7dUV9Y4FZj6pXoQyafuHXBXOBavJbhc3wi1ffK87mk9w9WsAWOterkCyuCqApVxQBjBn7kC+hdtjZ9rfbEFr49dPXOIyxHegT4PdvGxFBSmHMCcza8VqNWZQcbLa20LFLMk/Zpbu6jai8yzqjm71pVYUcQX9dh/4avCtr+BOnfAz8prX27T/PC6sxRxZjBcrKciVNW5jgJZqukse4rJAHQmLNYkvY2PikSZthLFwFzg1ZOG4hIJjBT31gjI+iYeudUH6eUPVPM3ROAvW0GWhh46B2Wlqhx33eHjvajwsMHbbUH6O+JIds0CCYvF09RDXeR45kMzMRhXs6Rkfw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
- by LV8PR12MB9407.namprd12.prod.outlook.com (2603:10b6:408:1f9::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.21; Fri, 16 May
- 2025 12:49:55 +0000
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732%7]) with mapi id 15.20.8722.031; Fri, 16 May 2025
- 12:49:54 +0000
-Date: Fri, 16 May 2025 09:49:53 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Xu Yilun <yilun.xu@linux.intel.com>
-Cc: Zhi Wang <zhiw@nvidia.com>, Alexey Kardashevskiy <aik@amd.com>,
-	kvm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
-	sumit.semwal@linaro.org, christian.koenig@amd.com,
-	pbonzini@redhat.com, seanjc@google.com, alex.williamson@redhat.com,
-	vivek.kasireddy@intel.com, dan.j.williams@intel.com,
-	yilun.xu@intel.com, linux-coco@lists.linux.dev,
-	linux-kernel@vger.kernel.org, lukas@wunner.de, yan.y.zhao@intel.com,
-	daniel.vetter@ffwll.ch, leon@kernel.org, baolu.lu@linux.intel.com,
-	zhenzhong.duan@intel.com, tao1.su@intel.com
-Subject: Re: [RFC PATCH 00/12] Private MMIO support for private assigned dev
-Message-ID: <20250516124953.GD613512@nvidia.com>
-References: <20250509184318.GD5657@nvidia.com>
- <aB7Ma84WXATiu5O1@yilunxu-OptiPlex-7050>
- <2c4713b0-3d6c-4705-841b-1cb58cd9a0f5@amd.com>
- <20250512140617.GA285583@nvidia.com>
- <20250513130315.0158a626.zhiw@nvidia.com>
- <aCRmoDupzK9zTqFL@yilunxu-OptiPlex-7050>
- <20250514230502.6b64da7f.zhiw@nvidia.com>
- <aCYsNSFQJZzHVOFI@yilunxu-OptiPlex-7050>
- <20250515192127.GA580805@nvidia.com>
- <aCbZATrK7EPyH4qt@yilunxu-OptiPlex-7050>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aCbZATrK7EPyH4qt@yilunxu-OptiPlex-7050>
-X-ClientProxiedBy: BLAPR05CA0008.namprd05.prod.outlook.com
- (2603:10b6:208:36e::11) To CH3PR12MB8659.namprd12.prod.outlook.com
- (2603:10b6:610:17c::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EBAE1E871;
+	Fri, 16 May 2025 12:32:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747398739; cv=none; b=FZe1C4r6yXpFPgUNHdW5QlkOqYp685gOi6CpmqxSImVrz8aHMDn/w9Qukw5HdrQ5jzlUT7vYTTbmRVVxorO38gcCzAczHcDnWv4al+DGnV1GFccwZKNO4kVwcZayzWiwVv8Ov3OBR/g63MzK4YNwXrbEPaoadJZlVU2OTV1yrRs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747398739; c=relaxed/simple;
+	bh=vz8e+4t88j8l0kTGU0H6UiRUgiWoi0o8ZwWhaWnHA5Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VRKH3fFYYwi7hqMl4DwKeS0lezV9CbS0hTy35Ds9iuoz+BXlKP+BhD9Dm3yLW6ko2QuPWP0gSMTZssC4mxGWmwA+QW4isbccrOK62GyvsgBQWz8aKHZHwqBgFGz/or81eZJo8GUGm2emkGZAjuOdR1lgUT99Q3I1x9TrnTT+b/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BUj0IFk2; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-601956fa3beso56591a12.0;
+        Fri, 16 May 2025 05:32:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747398736; x=1748003536; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=9VjB+mgTWPBjKCY5An5NLA0HaWKUbup+xoRGJGQX42M=;
+        b=BUj0IFk2ymSkaGrBREtK8QusYKvt/teepvYFolLdVkgsnHYZasTKQiso/EkwNMpMmS
+         aaLq/k90kro8Q4RJCu7tPWFgi6Zm0fXlBsji8b0QrWOQjjvsOFp9QS91ki2bPJwPWM0n
+         EA+X2Ot1W+Ep1N5gOvVbdmubMe39YYmMqADQRnFYS8B2kKRh8XyUXgxIjmkonT/fF44B
+         VCn+80QnNEJrLcRc+mE3kYzbXi+HwzBlalOG8V/PuDGrebZDo4xzbS81pLnc8emo+cUC
+         3VVB3Z6ReocLk9smYV/6vVyBGvfqYlQ0vplDRkWi+7LAsdpKPa8CEdYNmsE8V+07laHz
+         m9Rg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747398736; x=1748003536;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9VjB+mgTWPBjKCY5An5NLA0HaWKUbup+xoRGJGQX42M=;
+        b=DUiLngR5vQvYMOZXJKLKmZLXiAaGyf5MhoFLDEXtS97aHcYeIIapqVvssWxjhcSp9e
+         G9Xu9gaXGBeEmsyJS5PkV72wIlXIydRdkRy7Skl9gxQasQBLi8kKLw6lDuKZ7LpxidfE
+         ZI+09yzyinC1bMFAA6ofW2HGLSiOzZ5desriwQids5knBQY49rKwl0A0B7i5yaWIUL/r
+         Jt1D9gDUvKHSrrp10fHHePokt0S/Pj9kx8RXGmvnDbR6gs/YQHeAlrQfZd460DPXwvAk
+         ZL0pRr7n9lukxN+oF3frlun4S3S/6z4hY2fjC45yjw4tRLmIVQPWVY0aX8HeWK1O/1QG
+         hkEA==
+X-Forwarded-Encrypted: i=1; AJvYcCXP1OF75ZYsNfdtYli5uBWh8yvv3KDetdDO0oYtEKBXytW7AJcS94oUStKyfa4SRuXq8/h2Pd8/r3xC6fQ=@vger.kernel.org, AJvYcCXZGTEHd7ZwmcL26hK+Lwj7OX2AZ82fQM84xu5QlMJjnBE0/R6aA08/GBPaQrAma0CBvP0JwbRvjhj1DTc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxj9Ijx/Ginw/+/R5Fxjh+owk65VoeWa/ndgqwaTUoker7jgxal
+	abaVvXIisQrXNngBI+k7BU2211b5wN9CkQrgIqJx/KgkAIwQof5ClFCDeoXb8Q==
+X-Gm-Gg: ASbGncu1xUBvGU0vMitPa/g3mqW9RbhL+5UIMj7jpGrG8lTGAd5B48jQtFBiy4tY0sB
+	7ixpoBUOMve/WZIwEB/fjayUuE+RBWRqdIKBGFPVOcX/e6o6jv+t4VQC6zTFnjparpYjt+8U4PS
+	2fFQFfJ9L+hPTrWWIPYvwlEPNoeI7T/irUGKW/1XYYsiFiM27mjuzO3ui/eZJwUxt7n6JQG9Jyv
+	GoARfk5VEjhyS+kzXnOWAZSS6tpJJTzIXeKrwx2W1k/871g/yJHEoII+Z/yeZ3W/HYEq1h/gaTB
+	HX4LB0OLGxncU8aE3JYbyDUx46StlD4Hwl8PJXCTeG5kYjl+295qogHkKLWT2qNqeIBeKUc1QJU
+	GF4vPzeQ=
+X-Google-Smtp-Source: AGHT+IGZNd7gvcuPjF8am/ru/x51t5U1lJDJNKBy7Lvh9bT8GVBMZoyoacJgZIR9HZAUTZWB81JrCQ==
+X-Received: by 2002:a17:907:868e:b0:ad5:22c0:f5f1 with SMTP id a640c23a62f3a-ad52d5a97e7mr316285566b.50.1747398735260;
+        Fri, 16 May 2025 05:32:15 -0700 (PDT)
+Received: from [192.168.6.174] ([92.120.5.13])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad52d04f263sm152842266b.1.2025.05.16.05.32.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 16 May 2025 05:32:14 -0700 (PDT)
+Message-ID: <0aa11ef6-4166-41d8-98bc-6c7687d10b11@gmail.com>
+Date: Fri, 16 May 2025 15:50:02 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|LV8PR12MB9407:EE_
-X-MS-Office365-Filtering-Correlation-Id: 99866117-8bb5-455c-7975-08dd947827de
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?0A88D7Xk+4Dbcoa0kk5LY4CRSr3WKbN1QYlt1yWoEDxXzPBhjfJVtp2Yy70Y?=
- =?us-ascii?Q?zUz11APEe6lFpVGs+yeUiSpTj0mIgBnpo/kfpGHEvYtoZKUhLbQKjZMl1sEE?=
- =?us-ascii?Q?CV9td+Qee3912GrSa7VjI2rwSX37M+KjgE7QlYbf0dVRrlwuzIX2fDEJfAmE?=
- =?us-ascii?Q?5U9i+jOQiSLuQgiRai82kf/cVWWIqbxaWR8ZuzPZOtbO4E0sZmdR0VTzMH8h?=
- =?us-ascii?Q?vz00nwGeg+ZGvc++i5/wu2CfNwCOFwLRlCJu8/9OwprXgJAdqz/8x9TCL7OD?=
- =?us-ascii?Q?51JuCuxp+vntQSDica86aKKREJnGpWDKPXX2dw8CYdZosK72MgXpHl8JVC0d?=
- =?us-ascii?Q?73Wsoc2Pilt/JKr4GCTSVMnsPgmZLMQi3Q3pE1ksHyjgRqs5sKl7h9/dZHHZ?=
- =?us-ascii?Q?5oZuF7m7bNPfFIBFU3P2Q9gv5d+wWDT+elyxQaCGYVk/ruzEvhAViQYTa47C?=
- =?us-ascii?Q?LDAKS1AYyzvz5nuKNCgYmIBJESsoMtI5OHZ39/+gzegWQszJGjSGQcVFfgfd?=
- =?us-ascii?Q?WKE0cRbY/MqDFENIrh4rYFoW8lj0IqnDdnfPhh2yD0+AoDppCsbQCkLq4nb1?=
- =?us-ascii?Q?QCwz7GORKJhNmbdhaSAftCzGHZi0SbkzOMhdvJEyA+QqZ8jPInkU98tLCJez?=
- =?us-ascii?Q?T2XFOX5VT2YyKO19J6lyXJnH0w3qr8IXbQy6/0ahKikb4aR6pOWLb6xvwDRY?=
- =?us-ascii?Q?F4yzjvQwN0qOQ0x0MVEhuRcWmeLbeshyh7/cKS+ZFP6KZ/j9FeeM1FMJtdhE?=
- =?us-ascii?Q?iGCDCVQyHFX96jSaU9l2huSIWbADOrU+5mfZ8CpMcwtU+soxueEHNyQl1Von?=
- =?us-ascii?Q?91t7lvYpBAQcf+ggO99EH5zWblwNgQCAzwYt1Z8voCDoahtrYUZks9M+FVIK?=
- =?us-ascii?Q?0t3jUkYT0vcnzTPz3h35Kgaq4WyR0eC9UjMTJ0nCnNyxwXokkkljBUKv42Ib?=
- =?us-ascii?Q?ki1o2CZOB783irbyzS1V2znb1kKx/Y4oGXWemCEBtJeR46eHlwW5IoA/jDYr?=
- =?us-ascii?Q?6EZy0Heb5j+okEOeprp2jGHS5lc1zLFv4blKBKcO1J21NJNfhZtCAxqYIzUF?=
- =?us-ascii?Q?wSwZec69g0bUMaXurPv3Je/LObXvsc6NiCWF50VH14WlfGK2uGFe4M50UGYW?=
- =?us-ascii?Q?MiymA/rokXkXwNtIeroSNDxt2ZxIIS375xPBo1xvaa6kfhYWEmUZ6ydiHHU/?=
- =?us-ascii?Q?vqb8BL20SyMOGUFfZxn0Tv+eVHmwHe5e1nGJYlWCqX2fDe+sgfXVDFkDqlRo?=
- =?us-ascii?Q?RD4rPqzOmq/v9zJB+rBvZFw43UeANuyjyYGHOclcW5vjcefxgghj4jb16Har?=
- =?us-ascii?Q?U8NlWa40wQv7DEVMslb0BXpUYZoAs1tXRWmb/K1j2oxUmw/4QziHBawfyIBB?=
- =?us-ascii?Q?Fidxp8MS1VqMllg4fyYc3nJ71ed1KgCsFvQ2GlSUpuYR1zkaSY/tjtJrVnBh?=
- =?us-ascii?Q?N0a533mpn3g=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?LGVK2F8W0Wm3fJq3ZH963qAVxDpJoZRHn4o5ndnnNZH/Njvb7ymARfuw+Czd?=
- =?us-ascii?Q?rU6fY25yEtam3E6LXUVvmWcc2WylEzpf83sB+Ot4GwHFAIfMQSTR8nhWrgnb?=
- =?us-ascii?Q?m4rcBXdsv/PpVq7jqo0JZ+FlzoZd9RBFiIUp04odOR5kP3cA3Ku5ktCoxQrd?=
- =?us-ascii?Q?7mhCdLGNWPpfqLMOCwfpg1OfUWqESkMMIkuYetsGuN9Jf0Wj6c3mcnKwCiR7?=
- =?us-ascii?Q?OBVvHfUewD9FCZgpEtyDWW23nIyf4bfXYNwQpzfF3mgaicWutsgnVjWijEAT?=
- =?us-ascii?Q?50AtqDWBGt8Fa2kDU0CxnG8+BhudVe4R9mAiQX0cwapU8d3PnE5Ah8QhheO9?=
- =?us-ascii?Q?DXaE3QJcSPZmXpqMd5U92ecN2js83z0bcqyjaVBxnTyj7FU4KZsX5Sp7yDDy?=
- =?us-ascii?Q?u/FqbiWlIpZbI366Z9ev41YeQJsutysF/QLqv/MRUmD5N50zSJ2fxaVIw4EH?=
- =?us-ascii?Q?b9EZ1X/TcKmlFiMMXl73xRRYsLPu3IRNpJAQKhqSlOq1g0sjCrWh4rBhuS08?=
- =?us-ascii?Q?PC8XBkHmJO1f26bx2egFq9nonFXHwHItp6ALJE+Nj8LO8IgbYgim5HVbeVcQ?=
- =?us-ascii?Q?4fRrMQX6vPrR0MaOFP7CuzXuCgt/B87G3VAxfOS0wS/70YcUwaiFOITqjsqs?=
- =?us-ascii?Q?jMavqJ+D+qHlv+5bFlxLfiVz1vStPbR2H4GNmPPdydSxbfXvryRPupu83J2I?=
- =?us-ascii?Q?jtNVn70+3k1iDTkw4vSBEHYcizEoP0My4+bCWy8nC0EvQEjLdRyB5MqC1B3c?=
- =?us-ascii?Q?gSdUEi1ZvExUQaicrVVJ7CKG4ltYW6sA0+3NT9wf4qJmFmGvvKQR8Bu02Bx2?=
- =?us-ascii?Q?5uu235zAA1l4xNl0mlWiqam3dZxIx+ZLzbdp1i6N8pLIgtcPbzYKISQVrhwj?=
- =?us-ascii?Q?GASA5nc30bbVRL2QveY7fym+ItFOVXaN94HuucZGS5YrtU/+j0ddVFomRgZ/?=
- =?us-ascii?Q?P/VMNInvVl57yJDsY4Q2CiI0WEYPgcDTzG+MgX9VWZsGjekLiPWciAQnkm0X?=
- =?us-ascii?Q?58aQYmpPpvG+EumBIVsOt5/Ak1OsQkrmsMSpNOouQQ3bmYRSbI64C5YnhU0o?=
- =?us-ascii?Q?qNkrR9ikpV5BdFDYb1sBzbQojEbYikYKjyjRA137a8Kbr1Xbm8yGwgFTVaKf?=
- =?us-ascii?Q?kCbHlZz3qLhe0jrKnNTVE063hrrdF2yfIwJ//DKtwFM1GPakbnRKf3GgItcK?=
- =?us-ascii?Q?LycW0tLTZ0rePXdEL+YO4tHUy1oe5P5BkTtPQZvLqHZduOrDq2SXa4Gekigk?=
- =?us-ascii?Q?bzusr7gpP6c65BVxD4papYI7WmyvyCLujluSuMgrOTBWw8HiWnymc9cwV0kH?=
- =?us-ascii?Q?f6QScR0RRbujCtJw/DXa4w/XlETbpurBKkU4c2rkncq+yrHRykYYo8zATLT2?=
- =?us-ascii?Q?1LnlXep6JKSLfE89xAuqC0dHsgdglZ6bfVjQE2E2BqaZYfTYIuDpE3KfJvB4?=
- =?us-ascii?Q?tvAmTjkCs/qHQTW7Yk6ZwiOFT7EU9kzThORcgcymRezw/RvVXY3gGB2C7pP3?=
- =?us-ascii?Q?zobk7N238b4zs5M+gHQ99tl8UlHsR1Krmf54uyVPdigca/LG9gx7Qe9fXD94?=
- =?us-ascii?Q?bxnKHikjOdKIOq/6oXWPQ0tdT31QZF7G3xm500mz?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 99866117-8bb5-455c-7975-08dd947827de
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 May 2025 12:49:54.4226
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: qHDieHybEthLyfPYmZGKux0H70WkxopgOQkWV1RZOpH6ipjgKvxAGwv7uUgjSCwU
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR12MB9407
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 2/3] ASoC: audio-graph-card2: support explicitly
+ disabled links
+Content-Language: en-GB
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+ Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>,
+ linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org
+References: <20250515153128.147457-1-laurentiumihalcea111@gmail.com>
+ <20250515153128.147457-3-laurentiumihalcea111@gmail.com>
+ <874ixltjzw.wl-kuninori.morimoto.gx@renesas.com>
+From: Mihalcea Laurentiu <laurentiumihalcea111@gmail.com>
+In-Reply-To: <874ixltjzw.wl-kuninori.morimoto.gx@renesas.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Fri, May 16, 2025 at 02:19:45PM +0800, Xu Yilun wrote:
-> > I don't know why you'd disable a viommu while the VM is running,
-> > doesn't make sense.
-> 
-> Here it means remove the CC setup for viommu, shared setup is still
-> kept.
 
-That might makes sense for the vPCI function, but not the vIOMMU. A
-secure VIOMMU needs to be running at all times while the guest is
-running. Perhaps it has no devices it can be used with, but it's
-functionality has to be there because a driver in the VM will be
-connected to it.
+On 16.05.2025 04:36, Kuninori Morimoto wrote:
+> Hi Laurentiu
+>
+> Thank you for the patch
+>
+>> An explicitly disabled link is a DAI link in which one of its device
+>> endpoints (e.g: codec or CPU) has been disabled in the DTS via the
+>> "status" property. Formally speaking:
+>>
+>> 	OF_LINK_IS_DISABLED(lnk) = OF_NODE_IS_DISABLED(dev0) ||
+>> 	                           OF_NODE_IS_DISABLED(dev1);
+>>
+>> where dev0 and dev1 are the two devices (CPU/codec) that make up the
+>> link.
+>>
+>> If at least one link was explicitly disabled that means DAPM routes
+>> passed through the OF property "routing" can fail as some widgets might
+>> not exist. Consider the following example:
+>>
+>> 	CODEC A has widgets A0, A1.
+>> 	CODEC B has widgets B0, B1.
+>>
+>> 	my-card {
+>> 		compatible = "audio-graph-card2":
+>> 		label = "my-label";
+>> 		links = <&cpu0_port>, <&cpu1_port>;
+>> 		routing = "A0", "A1",
+>> 		          "B0", "B1";
+>> 	};
+>>
+>> 	CODEC A's DT node was disabled.
+>> 	CODEC B's DT node is enabled.
+>> 	CPU0's DT node is enabled.
+>> 	CPU1's DT node is enabled.
+>>
+>> If CODEC A's DT node is disabled via the 'status = "disabled"' property
+>> that means the A0 -> A1 route cannot be created. This doesn't affect the
+>> B0 -> B1 route though as CODEC B was never disabled in the DT.
+>>
+>> This is why, if any explicitly disabled link is discovered, the
+>> "disable_of_route_checks" flag is turned on.
+>>
+>> If all links were explicitly disabled the sound card creation will fail.
+>> Otherwise, if there's at least one link which wasn't explicitly disabled
+>> then the sound card creation will succeed.
+>>
+>> Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+>> ---
+> I think I could understand your situation, but the solution (= this patch) is
+> too much complicated for me. Indeed it might detect disabled device, but some
+> board might want to detect it as error, unlike your case.
 
-At most "bind" should only tell the already existing secure vIOMMU
-that it is allowed to translate for a specific vPCI function.
 
-Jason
+that is true. One problem with this solution is the fact that you can't
+
+really distinguish between links that were intentionally disabled (see example
+
+from RFC's cover letter) and links that were accidentally disabled (e.g. user
+
+forgot to set 'status = "okay"' for one of the link's devices)
+
+
+>
+> You want to add "disable_of_route_checks" flag to the card, right ?
+> How about to add new property, like "force detect xxx", or
+> "DAI might not be detected", etc, etc, etc...
+>
+> If we can have such property, it will be more simple code.
+>
+> 	if (it_has_flag("force_detect_xxx")) {
+> 		dev_info(dev, "xxx");
+> 		card->disable_of_route_checks = 1;
+> 	}
+
+
+well, I think the solution is made up of 2 parts:
+
+    1) the part that allows link devices to be disabled
+
+    2) the part that allows routes to fails
+
+
+what you're suggesting is dropping the first part and going with just the second one.
+
+The problem I see with this (let's assume we have the BASE-PLUGIN example presented
+
+in the RFC's cover letter) is that:
+
+    1) You'll have to specify the links inside of PLUGIN's DT overlay (instead of BASE's DTS)
+
+    2) You'll have to do the link connection part inside PLUGIN's DT overlay.
+
+
+So, our example DTS and DT overlay would look like this:
+
+
+[snippet from base.dts]
+
+	my_card: card {
+		compatible = "audio-graph-card2";
+		links = <&l2>; /* here, we're only allowed to specify links that exist */
+		routing = "Headphones", "C20",
+			  "Headphones", "C21",
+			  "Line", "C01";
+	};
+
+	d0: cpu@0 {
+		l0: port { l0_ep: endpoint { /* connected when plugin.dtbo is applied */ } };
+	};
+
+	d1: cpu@1 {
+		l1: port { l1_ep: endpoint { /* connected when plugin.dtbo is applied */ } };
+	};
+
+	d2: cpu@2 {
+		l2: port { l2_ep: endpoint { remote-endpoint = <&c2_ep>; } };
+	};
+
+	c2: codec@2 {
+		port { c2_ep: endpoint { remote-endpoint = <&l2_ep>; } };
+	};
+
+
+[snippet from plugin.dtso]
+
+&my_card {
+	/* here we're forced to also specify l2 even if this is already done
+         * in base.dts. This is because DT overlays don't support appending to
+	 * properties.
+         */
+	remote-endpoint = <&l0>, <&l1>, <&l2>;
+};
+
+&l0_ep {
+	remote-endpoint = <&c1_ep>;
+};
+
+&l1_ep {
+	remote-endpoint = <&c2_ep>;
+};
+
+c0: codec@0 {
+	port { c0_ep: endpoint { remote-endpoint = <&l0_ep>; } };
+};
+
+c1: codec@1 {
+	port { c1_ep: endpoint { remote-endpoint = <&l1_ep>; } };
+};
+
+Assume that we also have BASE1 that is compatible with PLUGIN but
+C0 and C1 are connected to BASE1's D0 and D5. Since there's no D1-C1
+connection that means you'll have to create another DT overlay. Thus,
+the scalability of plugin.dtso decreases.
+
+Now, for our particular case, we have BASE0 and BASE1 with the following
+DAIs and CODECS (these are physically present on the base boards):
+
+BASE0 has DAIs D0, D1 and CODEC C0
+BASE1 has DAIs D0, D1 and CODEC C1
+
+Both of these boards are compatible with plugin PLUGIN that has codec C2.
+The possible DAI links are:
+
+For BASE0:
+
+D0 <----> C0
+D1 <----> C2 (only possible with PLUGIN connected)
+
+For BASE1:
+
+D0 <----> C1
+D1 <----> C2 (only possible with PLUGIN connected)
+
+Since the D1 <---> C2 connection is valid for both BASE0-PLUGIN and
+BASE1-PLUGIN combinations I think we can make do without the support
+for explicitly disabled links. But I don't think this is ideal because:
+
+1) If we ever need to support board BASE3 that is compatible with PLUGIN
+and uses Dn != D1 to connect with PLUGIN's C2 codec then we're going to
+either modify our devicetrees (to make plugin.dtso applicable to BASE3
+as well) or add another DT overlay (not really desirable because we already
+have a lot of devicetrees). (note: more of an _if_ situation. Don't think we
+can actually use this as an argument. I just wanted to have this out in the
+open)
+
+2) People might get confused when looking at the "links" and "routing"
+properties. Now, "links" will only contain links that actually exist, while
+"routing" can contain widgets from codecs that don't exist on the base board.
+(note: perhaps not a deal breaker? again, just wanted to have this out in the
+open)
+
+
+Either way, I believe your concern is valid. This new feature adds a lot of
+extra code and validating it is a pain. Still, even if we go with just the
+extra DT property as you suggested I believe this is a step forward so I think
+we can go with that for now and see how well this scales.
+
+
+BTW, thanks a lot for taking the time to review this huge series!!
+
+> Thank you for your help !!
+>
+> Best regards
+> ---
+> Kuninori Morimoto
 
