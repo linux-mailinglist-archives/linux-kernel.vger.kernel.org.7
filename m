@@ -1,124 +1,257 @@
-Return-Path: <linux-kernel+bounces-650780-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-650782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B75AEAB9607
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 08:33:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7DE7AB960C
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 08:35:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CAB2D7A5598
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 06:32:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9FACDA214A7
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 06:34:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3450224B14;
-	Fri, 16 May 2025 06:33:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01F87224B05;
+	Fri, 16 May 2025 06:35:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TyrfVW3k"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OETKptcR"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 809E11D88AC;
-	Fri, 16 May 2025 06:33:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9226F220F59
+	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 06:35:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747377218; cv=none; b=QDu+MvvzkE9unJdwTcJdxJMjIviVFd8EIXbGe92Kw/HBc9yv9eMc0my2ylfPj79g602A+ZftmQOOour55fHyobp/IpyYqgstN/Bbly8Vdm7yCmhCc87glYcy048ZUkW+X/A36A/CsXX0Le90f2gXt7md0TNeVQDs3yfcf7sous8=
+	t=1747377314; cv=none; b=VmCQtvAjUT0Hd6zhkVCqZKF2RDwc4UD9WpG999DdLx6Gw18gPP1/yFXCxH7KLkqOPNF4zRZWl+8CwvoClD+ENiQ5ohPUUhdxxh5njV88kYErEshxFvOxEskIOsin39phKAS7qTVO4EyXUtGnzEMjSlzHg6eNPSByacI3VXCstL4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747377218; c=relaxed/simple;
-	bh=ITiHYvPVbIk9Cqhu0/8qKyPCQGSeXSdTjNGJyN7gjH0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JTAf5sSxvBCoNcNbhtqmPGdTYndvF/y0i5/Pqk/wkKsmwT6leQobepQ6qn1XiTcptALWu1oiHhNo5QLzx1UWG9JMzFPSV/7BCZf5ZtzmIiVnIi+Ops6Nqegh3YK25IHjObxootiQIsThMeWBXv0cqdpc7V/uY6l8RAid6RgrKZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TyrfVW3k; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-54e816aeca6so2361162e87.2;
-        Thu, 15 May 2025 23:33:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747377214; x=1747982014; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SBTw7n47tA9Za/6wjkrYsmCiKYOHmpnvJ9njSK+TKlc=;
-        b=TyrfVW3kpw2t2MLaY2NqUpFrFM1gC9j4Yio7aSGz4HW3Ncsh7YpQ79U/1PCc1h7Bs0
-         em8SSPUsIMMsZ5U/FEneK6MWbPOGIuBlf+cOtV/XdhTipUoq6lFI+ZNpAvMppm71VN42
-         n+X6zj/7Z/VvHhfEc1zoH78wglZ+0G6bpOoL1H6znYV5Cm7mJdyeqcMpYO5zvJyHAkKY
-         xdu0GOO3cnaQm2KtsKmXVWHN5i5EgP2C8hCCJjqb2Yc4X4OpVosXJKvLHut7zTQFtLSM
-         5ai8Oxkft+gb1fl3ph+sFveilrusaXqCAqBuUliB0WqWQCptCbYSNZyHQmcWSkt5gWoc
-         IfNw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747377214; x=1747982014;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SBTw7n47tA9Za/6wjkrYsmCiKYOHmpnvJ9njSK+TKlc=;
-        b=SjzeirCs2n2u2C5j8/5l5zjAG3Yr4/2lsp2d+s1sb4bO6nOMaaDGM9W7Uly303jSDO
-         XWWANuv2JNGse7JzqwK2udknytCjvGn2AftvxDp9dcTTxIwM71yZ/glccXnTISQJPkfR
-         bzFzK4fB6GemzRfTYOD2aMwJERqy7w5fBhCsc8ehgb06WuZenNBXoHA4rYbnv6EPwD+f
-         iqGnxYhw/HqLgo9RNUFK2VZFlQBRp4fxdTQB0J8paoWqlRWN2TGQPLBKK5AOjX3xWxXV
-         AMOi1fLBTl+dM5i1M1EFP/CyYIE/vOTLd4NkCP0+e5FS8sCw60bTUGXB1nTvZbWjv1SM
-         j84Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUWswgoxlTBGU0U9Z7LbhipjoKfjBA4vHkD0Ysjp5YTv6EKU7BpVvz0vAnoNnUvojbCm79WVW3L@vger.kernel.org, AJvYcCVibBifrna5eTRWjs7eVQfqiCeygXPMV9+0GCasZJELK2iX34gC/mAI4qlIk/SUjLRUh4G7KKaDMavZ/Y8=@vger.kernel.org, AJvYcCX8+JgfsQhDBTEwgJQzp89vEDewzuOkKUkyajtcjZPzhjX+6l4SopYg6BYy4iEYwEiERs/jtrWWiDoL@vger.kernel.org
-X-Gm-Message-State: AOJu0Yym2FK5R98JGcolF9zf55poJ4gflxpp5TCb6HsFQCqjx8G+LjIw
-	//VDQCr1DSRBDODFUcud5AeKK1lGf+CXvFCXjV7jBi3stkpmTJwgGSWS
-X-Gm-Gg: ASbGnctluEClmoMAX3ZtUCMbGbZfPDTlpl3SF3YKuFOV6UsRItymfpIehlF/3Gvi/pi
-	9khYKxdYJuMcpElzDj9VrT5FdyRC7dpgkm+l7ox8FzoMPi7v3LWEwSfZtUTk0l3jm4Omud9rl2j
-	MXg+KMN40J3tLMJoCMvKAbfSyV+DNENg2qaaaw90nNx3Kk+OC/Oikom2DV5DYRMgLilAn0kxcHt
-	Vx48zIq5dPPS2QlH7Lv36IE1HEAHwsMqjvQLvTYGFSP1+5VYiH7PQ9N9js2z8COPG4VBru0SlIi
-	1215BUl6wIJ1SET8CD9oXsQ+Y6v5LtkLdNM1Rm6FNpxwoCknstn3zikjWJYDxzbwypp0gf9UwUF
-	W+Ow=
-X-Google-Smtp-Source: AGHT+IFXuvhTg0HwM4B7G448RH8kbjZAcl27kGgPEEicb7hYFOL5VilJkbVwHq1ibwD1yMKVeyUIrQ==
-X-Received: by 2002:a05:6512:2616:b0:54d:6aa1:8f5a with SMTP id 2adb3069b0e04-550e71a732dmr438740e87.13.1747377214256;
-        Thu, 15 May 2025 23:33:34 -0700 (PDT)
-Received: from foxbook (adqk186.neoplus.adsl.tpnet.pl. [79.185.144.186])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-550e6f30e6csm281840e87.67.2025.05.15.23.33.32
-        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
-        Thu, 15 May 2025 23:33:33 -0700 (PDT)
-Date: Fri, 16 May 2025 08:33:28 +0200
-From: =?UTF-8?B?TWljaGHFgg==?= Pecio <michal.pecio@gmail.com>
-To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
-Cc: Roy Luo <royluo@google.com>, "mathias.nyman@intel.com"
- <mathias.nyman@intel.com>, "quic_ugoswami@quicinc.com"
- <quic_ugoswami@quicinc.com>, "gregkh@linuxfoundation.org"
- <gregkh@linuxfoundation.org>, "linux-usb@vger.kernel.org"
- <linux-usb@vger.kernel.org>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>, "stable@vger.kernel.org"
- <stable@vger.kernel.org>
-Subject: Re: [PATCH v2 1/2] xhci: Add a quirk for full reset on removal
-Message-ID: <20250516083328.228813ec@foxbook>
-In-Reply-To: <20250515234244.tpqp375x77jh53fl@synopsys.com>
-References: <20250515185227.1507363-1-royluo@google.com>
-	<20250515185227.1507363-2-royluo@google.com>
-	<20250515234244.tpqp375x77jh53fl@synopsys.com>
+	s=arc-20240116; t=1747377314; c=relaxed/simple;
+	bh=QCZtNJW2TAKa87VLFt4NbNEoeK4ppmMpbEoMRvqP0Vc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kGy/NWHmL/RlbY9I3Ca969kx7J/yz2o1hLyELOvNm2OwhpeDmZNV47jsFpcQVnvyGLJ6/k8n3SsTLG7926qu1oo/OG7htihSvv63p2R60q1s6RUKQV02eoOjl/iN0FdMTn8N8hhf5GY7Im0pWebpoJvOqdvwkT7aClWEdezIVvQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OETKptcR; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1747377313; x=1778913313;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=QCZtNJW2TAKa87VLFt4NbNEoeK4ppmMpbEoMRvqP0Vc=;
+  b=OETKptcRzuxR0O48XheaEF+hFFi+zAtO0fWFc9JiwBDksbLNUB1Nxo4y
+   KpHW8YP/c/rzM+5zUY6pXd6VkETf8AQUcN7j2sY7YqZHNHjD1Q/9y5mzR
+   +9VTPA697tvwTq1sZtaI0F42RJ7+7Va7xjhKr36Oq5zEHLy+2/PvhF/7D
+   HG9uSuGjOKJlNFyDeIowKbUJj1Vxo7JUc+/XvqOvSY85co2FKCI+9ByXi
+   NAiG4zgypQ7ah7llX/PbaindV1/Y+RFn+qjfp4tbuI9idgPv7LDVksFYJ
+   37oF94+EtUiTuDTgmuEp09yhqY1IZL4Z5toFeFsjYghlgyXonKeSHgkiJ
+   Q==;
+X-CSE-ConnectionGUID: sBmQPx/IS+mPGXOXPlAsew==
+X-CSE-MsgGUID: oiekgxb0Qh67UVU3xXTbmw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11434"; a="53011096"
+X-IronPort-AV: E=Sophos;i="6.15,293,1739865600"; 
+   d="scan'208";a="53011096"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2025 23:35:12 -0700
+X-CSE-ConnectionGUID: 6i7joXiyRzyfNlAd6YLpEQ==
+X-CSE-MsgGUID: CRTgF/3RRkWobcHHH2vTlA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,293,1739865600"; 
+   d="scan'208";a="169661158"
+Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
+  by fmviesa001.fm.intel.com with ESMTP; 15 May 2025 23:35:09 -0700
+Received: from kbuild by 1992f890471c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uFoew-000J3L-2d;
+	Fri, 16 May 2025 06:35:06 +0000
+Date: Fri, 16 May 2025 14:34:45 +0800
+From: kernel test robot <lkp@intel.com>
+To: Ashley Smith <ashley.smith@collabora.com>,
+	Boris Brezillon <bbrezillon@kernel.org>,
+	Steven Price <steven.price@arm.com>,
+	Liviu Dudau <liviu.dudau@arm.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Cc: oe-kbuild-all@lists.linux.dev, kernel@collabora.com,
+	Ashley Smith <ashley.smith@collabora.com>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/panthor: Reset queue slots if termination fails
+Message-ID: <202505161417.tAUp1jmc-lkp@intel.com>
+References: <20250515103314.1682471-1-ashley.smith@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250515103314.1682471-1-ashley.smith@collabora.com>
 
-On Thu, 15 May 2025 23:42:50 +0000, Thinh Nguyen wrote:
-> In any case, this is basically a revert of this change:
-> 6ccb83d6c497 ("usb: xhci: Implement xhci_handshake_check_state()
-> helper")
-> 
-> Can't we just revert or fix the above patch that causes a regression?
+Hi Ashley,
 
-Also note that 6ccb83d6c497 claimed to fix actual problems, so
-disabling it on selected hardware could bring the old bug back:
+kernel test robot noticed the following build errors:
 
-> In some situations where xhci removal happens parallel to
-> xhci_handshake, we encounter a scenario where the xhci_handshake
-> can't succeed, and it polls until timeout.
-> 
-> If xhci_handshake runs until timeout it can on some platforms result
-> in a long wait which might lead to a watchdog timeout.
+[auto build test ERROR on 9934ab18051118385c7ea44d8e14175edbe6dc9c]
 
-But on the other hand, xhci_handshake() has long timeouts because
-the handshakes themselves can take a surprisingly long time (and
-sometimes still succeed), so any reliance on handshake completing
-before timeout is frankly a bug in itself.
+url:    https://github.com/intel-lab-lkp/linux/commits/Ashley-Smith/drm-panthor-Reset-queue-slots-if-termination-fails/20250515-183502
+base:   9934ab18051118385c7ea44d8e14175edbe6dc9c
+patch link:    https://lore.kernel.org/r/20250515103314.1682471-1-ashley.smith%40collabora.com
+patch subject: [PATCH] drm/panthor: Reset queue slots if termination fails
+config: sparc-randconfig-002-20250516 (https://download.01.org/0day-ci/archive/20250516/202505161417.tAUp1jmc-lkp@intel.com/config)
+compiler: sparc64-linux-gcc (GCC) 8.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250516/202505161417.tAUp1jmc-lkp@intel.com/reproduce)
 
-Regards,
-Michal
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202505161417.tAUp1jmc-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   drivers/gpu/drm/panthor/panthor_sched.c: In function 'panthor_sched_suspend':
+>> drivers/gpu/drm/panthor/panthor_sched.c:2736:18: error: expected ';' before 'queue_count'
+        for (i = 0; i queue_count; i++) {
+                     ^~~~~~~~~~~~
+                     ;
+
+
+vim +2736 drivers/gpu/drm/panthor/panthor_sched.c
+
+  2666	
+  2667	void panthor_sched_suspend(struct panthor_device *ptdev)
+  2668	{
+  2669		struct panthor_scheduler *sched = ptdev->scheduler;
+  2670		struct panthor_csg_slots_upd_ctx upd_ctx;
+  2671		struct panthor_group *group;
+  2672		u32 suspended_slots;
+  2673		u32 i;
+  2674	
+  2675		mutex_lock(&sched->lock);
+  2676		csgs_upd_ctx_init(&upd_ctx);
+  2677		for (i = 0; i < sched->csg_slot_count; i++) {
+  2678			struct panthor_csg_slot *csg_slot = &sched->csg_slots[i];
+  2679	
+  2680			if (csg_slot->group) {
+  2681				csgs_upd_ctx_queue_reqs(ptdev, &upd_ctx, i,
+  2682							group_can_run(csg_slot->group) ?
+  2683							CSG_STATE_SUSPEND : CSG_STATE_TERMINATE,
+  2684							CSG_STATE_MASK);
+  2685			}
+  2686		}
+  2687	
+  2688		suspended_slots = upd_ctx.update_mask;
+  2689	
+  2690		csgs_upd_ctx_apply_locked(ptdev, &upd_ctx);
+  2691		suspended_slots &= ~upd_ctx.timedout_mask;
+  2692	
+  2693		if (upd_ctx.timedout_mask) {
+  2694			u32 slot_mask = upd_ctx.timedout_mask;
+  2695	
+  2696			drm_err(&ptdev->base, "CSG suspend failed, escalating to termination");
+  2697			csgs_upd_ctx_init(&upd_ctx);
+  2698			while (slot_mask) {
+  2699				u32 csg_id = ffs(slot_mask) - 1;
+  2700				struct panthor_csg_slot *csg_slot = &sched->csg_slots[csg_id];
+  2701	
+  2702				/* If the group was still usable before that point, we consider
+  2703				 * it innocent.
+  2704				 */
+  2705				if (group_can_run(csg_slot->group))
+  2706					csg_slot->group->innocent = true;
+  2707	
+  2708				/* We consider group suspension failures as fatal and flag the
+  2709				 * group as unusable by setting timedout=true.
+  2710				 */
+  2711				csg_slot->group->timedout = true;
+  2712	
+  2713				csgs_upd_ctx_queue_reqs(ptdev, &upd_ctx, csg_id,
+  2714							CSG_STATE_TERMINATE,
+  2715							CSG_STATE_MASK);
+  2716				slot_mask &= ~BIT(csg_id);
+  2717			}
+  2718	
+  2719			csgs_upd_ctx_apply_locked(ptdev, &upd_ctx);
+  2720	
+  2721			slot_mask = upd_ctx.timedout_mask;
+  2722			while (slot_mask) {
+  2723				u32 csg_id = ffs(slot_mask) - 1;
+  2724				struct panthor_csg_slot *csg_slot = &sched->csg_slots[csg_id];
+  2725	
+  2726				/* Terminate command timedout, but the soft-reset will
+  2727				 * automatically terminate all active groups, so let's
+  2728				 * force the state to halted here.
+  2729				 */
+  2730				if (csg_slot->group->state != PANTHOR_CS_GROUP_TERMINATED) {
+  2731					csg_slot->group->state = PANTHOR_CS_GROUP_TERMINATED;
+  2732	
+  2733					/* Reset the queue slots manually if the termination
+  2734					 * request failed.
+  2735					 */
+> 2736					for (i = 0; i queue_count; i++) {
+  2737						if (group->queues[i])
+  2738							cs_slot_reset_locked(ptdev, csg_id, i);
+  2739					}
+  2740				}
+  2741				slot_mask &= ~BIT(csg_id);
+  2742			}
+  2743		}
+  2744	
+  2745		/* Flush L2 and LSC caches to make sure suspend state is up-to-date.
+  2746		 * If the flush fails, flag all queues for termination.
+  2747		 */
+  2748		if (suspended_slots) {
+  2749			bool flush_caches_failed = false;
+  2750			u32 slot_mask = suspended_slots;
+  2751	
+  2752			if (panthor_gpu_flush_caches(ptdev, CACHE_CLEAN, CACHE_CLEAN, 0))
+  2753				flush_caches_failed = true;
+  2754	
+  2755			while (slot_mask) {
+  2756				u32 csg_id = ffs(slot_mask) - 1;
+  2757				struct panthor_csg_slot *csg_slot = &sched->csg_slots[csg_id];
+  2758	
+  2759				if (flush_caches_failed)
+  2760					csg_slot->group->state = PANTHOR_CS_GROUP_TERMINATED;
+  2761				else
+  2762					csg_slot_sync_update_locked(ptdev, csg_id);
+  2763	
+  2764				slot_mask &= ~BIT(csg_id);
+  2765			}
+  2766		}
+  2767	
+  2768		for (i = 0; i < sched->csg_slot_count; i++) {
+  2769			struct panthor_csg_slot *csg_slot = &sched->csg_slots[i];
+  2770	
+  2771			group = csg_slot->group;
+  2772			if (!group)
+  2773				continue;
+  2774	
+  2775			group_get(group);
+  2776	
+  2777			if (group->csg_id >= 0)
+  2778				sched_process_csg_irq_locked(ptdev, group->csg_id);
+  2779	
+  2780			group_unbind_locked(group);
+  2781	
+  2782			drm_WARN_ON(&group->ptdev->base, !list_empty(&group->run_node));
+  2783	
+  2784			if (group_can_run(group)) {
+  2785				list_add(&group->run_node,
+  2786					 &sched->groups.idle[group->priority]);
+  2787			} else {
+  2788				/* We don't bother stopping the scheduler if the group is
+  2789				 * faulty, the group termination work will finish the job.
+  2790				 */
+  2791				list_del_init(&group->wait_node);
+  2792				group_queue_work(group, term);
+  2793			}
+  2794			group_put(group);
+  2795		}
+  2796		mutex_unlock(&sched->lock);
+  2797	}
+  2798	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
