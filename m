@@ -1,253 +1,262 @@
-Return-Path: <linux-kernel+bounces-650607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-650611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7FB5AB93B8
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 03:40:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 396BFAB93BD
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 03:41:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 668C117E42C
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 01:40:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9217F1BC6ED3
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 01:41:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C897A2253A1;
-	Fri, 16 May 2025 01:40:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k2dYN2jw"
-Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com [209.85.167.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38CF2233145;
+	Fri, 16 May 2025 01:40:49 +0000 (UTC)
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6451C21ABB4;
-	Fri, 16 May 2025 01:40:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C817B22A4F2
+	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 01:40:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747359640; cv=none; b=HVhacS+FwmMPN2hjFaSuofoiRDfbuCbhVM5EwiLHxcDK33GCOF6PQhWfqJsiaQ0L32tfHokR0TPdGPtMoAuhbJ4vvQ/baXQnAqSdkdlRDKfEipv5d7Dya33+f3GlKsUkdR5zhxT9qAPJ6MkLnEAiO6Ei4GNWOcndOE3YFtq6tRU=
+	t=1747359648; cv=none; b=e7ESDaeQtTIaXth3bn5wSMeOvRKbLgInpPLgirGq+nt4s/Swbwdf+uR28Eh46cJsaXPcJ7W6hVnqJt6uhboue/PoE7vXQm5ltHuABXKaBsJc78pnnWrIQTSTy+GwqcYkV5X7KpxHfnsnC3XmGZ6oWORIwbpgb77IuPeHKyQ9puA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747359640; c=relaxed/simple;
-	bh=HOWTaMr10Y//SBsq/knUx6OQEtcZK6r9ddhtzirgbQQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AJXl/j9Z7YI/bpc7KPP+5GLy/SXVwlGMDSJb0kgaXnScHqN4QGTKEticOQej5HqoeFIzxPSw0iYIQwtOz2ozz9NXHwk/Yu2sedRGrx6T7pdZNIPOZAOPqJHhyTwvHKJay3UAugehaJUlZrguMLbP8Lz86kSQNQRi5eF5cQWyxwo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k2dYN2jw; arc=none smtp.client-ip=209.85.167.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f181.google.com with SMTP id 5614622812f47-3f7f7b70aebso1498864b6e.2;
-        Thu, 15 May 2025 18:40:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747359637; x=1747964437; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=YbnWlrrlEA62ju+DNKq+Eh0Q+yGH2JwjMo6Br6ozAQQ=;
-        b=k2dYN2jw3WSnsg6PaG5afZiNzrsvCGjGmeMa3JQVhT+N+8FI3pFwGWvJsEQ6uxyJY8
-         6WjeiQ+7ZpNZodzeMW47QSh8u3LBu7734ec2H9PGRb5aXhdMRkaAwAQuscu++W1aN3FC
-         zkdolObzn28gN/vK+j3TPHY9myiCR9KcUSQlgsK3LDMMid5RLuYqWbUgTtgrHv2ngc7U
-         9d5HGs5s5K+yLCaC3T6chDhKFRM75yxsQX+SQSlTQ6v7BP0wfGWSY8mYQiPfx6EvhILP
-         rlajHCb10d/R5Lhgt+FJFGNeA6cTiH/gp3BhMvdxkWD35O0vgsHhwrJ9ozl7GAS6DC1h
-         YA0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747359637; x=1747964437;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YbnWlrrlEA62ju+DNKq+Eh0Q+yGH2JwjMo6Br6ozAQQ=;
-        b=oSm+9ecCCOxaWiVrGHJhv3FRlgcNna8R/a2HHufQYig1PQnx3Hez/2/tlEsoc+UYww
-         3Re+GmSUk20PilrpXCj9PAECyFCaPM/kzk0YfzyxhETCvW9ETKOs+EAgMoVA9Yur2w1Y
-         EIVRMPtAQrfdNbG4DGOkONAMgYxeDepVeTTj5/DtJL4PM4s89JpU4Cjm5VCNui6nZ8Qi
-         QMZnV3UVX+xGQ3WoYox6FMmQ0tCDKcNOER1qIhyIV/1FtyNdUmXuGEgeoEjTd0U6g78G
-         7t6YKXRCOpveuUP2YvgG+vbKFv+kyybSGLHQ+rs6itqBHqUGJNPPR6g4ZkZdfJqDoF38
-         i3KA==
-X-Forwarded-Encrypted: i=1; AJvYcCW8P++4cyoFY5Wb82dRphPTOqk8hwQyBmIY4OQADWvdXqsGPeRwQoSc0pTMge9/UEh8QGHCrY6c2Mv7@vger.kernel.org, AJvYcCWFFsYBfzkHpW9wOPfH/+zqsBbOPDekECvOVm3GZcd6CibHDPPCza5ykfOubW7szDD2Be9qmCjVTrXyFgkK@vger.kernel.org, AJvYcCX3IQ3cZTzcrpCN7zUtUy29BY4Zoqia+Yty9NtWfAUcgKQKxtdkGUE//UgXgmRXcM+FSoPGcutJJmBbkz2LgA==@vger.kernel.org, AJvYcCXGek8CMyFE2+kyAYMsiMj69EIXAYomoPCkgY+7Fx33rKcBg5Gf4xt0vwMqzcNfsM9GMUeWlsZ3@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOAJE31R0C7rP0uZmW6Z4JvhUyJAg01irveZVL73J1GjVfkE3l
-	jWXOveHOZgHavXUN7TWFO24xmlhDmIQdoLImCJNy1dV6Cw1qT91oWgPF
-X-Gm-Gg: ASbGnctSRhxWoxtwo0iVwojMIdBpTVXgHkyuBa5TpLmGar/M5rOCh/OSobTSaNJy/mg
-	YijW3cAkedZLd5FgXEs2FVqnde2xcjBLAcc/OdRNs5PTHaOai1cp2bknbUAzP+TCjCNpVRPgrvX
-	yKfdi5OPLNx/7Sxkj5yPrINR6c4uWBxclwTitD6COo47CTNgfNuGkN5Hna/TrE5R4Dsd82eayTH
-	jamzuv9cckv/72Qw0Ci20L5MPib8cylKEqXYb+tZG11euNElrbfRxOyOGjApxX3TfHllUz3fKRf
-	S1H8qV0B+toF7Lr81N0g+Zw9QAznLfNZn2MXAvdzJO7oN/fMOUebNpytM2xDC7c/pY1JvLvUNZA
-	YOmmlkqZHwd8aJw==
-X-Google-Smtp-Source: AGHT+IETLFoqkRb+eG0skJqyUnlAjIbWcsG/aqzYb4kHYSnQsR/l6nXXMDIKY2j37A0T02BKkdYMog==
-X-Received: by 2002:a05:6808:80a9:b0:400:32b9:7926 with SMTP id 5614622812f47-404d863751cmr1331555b6e.6.1747359637153;
-        Thu, 15 May 2025 18:40:37 -0700 (PDT)
-Received: from [192.168.7.203] (c-98-57-15-22.hsd1.tx.comcast.net. [98.57.15.22])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-404d98b2785sm154670b6e.33.2025.05.15.18.40.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 15 May 2025 18:40:35 -0700 (PDT)
-Message-ID: <be7f0fda-ac21-4f94-a6cf-b4c3ca59630a@gmail.com>
-Date: Thu, 15 May 2025 20:40:33 -0500
+	s=arc-20240116; t=1747359648; c=relaxed/simple;
+	bh=2vnT2i1xN5daZtW7H4aFUWo3uraWJ893sxEvdprct/M=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QlOPHj/foCGVWzSx4b+OSoQ6GWgMt5VrnTsdU7PPDK9pCDtlGcC86cTZVuuDAqw9I+UB5qPX829vTZwiNfAfWDZXt9qSdyzIab5TmLopu1Z0q/5V6woPEBiWwOmBSz4kn8vtRVrDg5296zJN31b23aVspCOuo++ntLWNBvfKSPo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4Zz8rF1hTFz1DKdX;
+	Fri, 16 May 2025 09:39:09 +0800 (CST)
+Received: from kwepemj200003.china.huawei.com (unknown [7.202.194.15])
+	by mail.maildlp.com (Postfix) with ESMTPS id 70A9B180484;
+	Fri, 16 May 2025 09:40:37 +0800 (CST)
+Received: from localhost.huawei.com (10.90.30.45) by
+ kwepemj200003.china.huawei.com (7.202.194.15) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 16 May 2025 09:40:36 +0800
+From: Qinxin Xia <xiaqinxin@huawei.com>
+To: <21cnbao@gmail.com>, <m.szyprowski@samsung.com>, <robin.murphy@arm.com>
+CC: <yangyicong@huawei.com>, <hch@lst.de>, <iommu@lists.linux.dev>,
+	<jonathan.cameron@huawei.com>, <prime.zeng@huawei.com>,
+	<fanghao11@huawei.com>, <linux-kernel@vger.kernel.org>, <linuxarm@huawei.com>
+Subject: [PATCH v4 3/4] dma-mapping: benchmark: add support for dma_map_sg
+Date: Fri, 16 May 2025 09:40:33 +0800
+Message-ID: <20250516014034.1577549-4-xiaqinxin@huawei.com>
+X-Mailer: git-send-email 2.33.0
+In-Reply-To: <20250516014034.1577549-1-xiaqinxin@huawei.com>
+References: <20250516014034.1577549-1-xiaqinxin@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v5 0/5] Add PCS support for Qualcomm IPQ9574 SoC
-To: Lei Wei <quic_leiwei@quicinc.com>,
- "Russell King (Oracle)" <linux@armlinux.org.uk>,
- Jakub Kicinski <kuba@kernel.org>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
- Heiner Kallweit <hkallweit1@gmail.com>, netdev@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, quic_kkumarcs@quicinc.com,
- quic_suruchia@quicinc.com, quic_pavir@quicinc.com, quic_linchen@quicinc.com,
- quic_luoj@quicinc.com, srinivas.kandagatla@linaro.org,
- bartosz.golaszewski@linaro.org, vsmuthu@qti.qualcomm.com, john@phrozen.org,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-References: <20250207-ipq_pcs_6-14_rc1-v5-0-be2ebec32921@quicinc.com>
- <20250211195934.47943371@kernel.org> <Z6x1xD0krK0_eycB@shell.armlinux.org.uk>
- <71a69eb6-9e24-48ab-8301-93ec3ff43cc7@quicinc.com>
- <0c1a0dbd-fd24-40d7-bec9-c81583be1081@gmail.com>
- <c6a78dd6-763c-41a0-8a6e-2e81723412be@quicinc.com>
- <62c98d4f-8f02-43cc-8af6-99edfa5f6c88@gmail.com>
- <df2fa427-00d9-4d74-adec-c81feda69df5@quicinc.com>
-Content-Language: en-US
-From: mr.nuke.me@gmail.com
-In-Reply-To: <df2fa427-00d9-4d74-adec-c81feda69df5@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ kwepemj200003.china.huawei.com (7.202.194.15)
 
-On 5/15/25 10:27 AM, Lei Wei wrote:
-> 
-> 
-> On 5/15/2025 10:32 AM, Alex G. wrote:
->> On 5/14/25 11:03, Lei Wei wrote:> On 5/13/2025 6:56 AM, 
->> mr.nuke.me@gmail.com wrote:
->>>> On 2/19/25 4:46 AM, Lei Wei wrote:
->>>>
->>>> I tried this PCS driver, and I am seeing a circular dependency in 
->>>> the clock init. If the clock tree is:
->>>>      GCC -> NSSCC -> PCS(uniphy) -> NSSCC -> PCS(mii)
->>>>
->>>> The way I understand it, the UNIPHY probe depends on the MII probe. 
->>>> If MII .probe() returns -EPROBE_DEFER, then so will the 
->>>> UNIPHY .probe(). But the MII cannot probe until the UNIPHY is done, 
->>>> due to the clock dependency. How is it supposed to work?
->>>>
->>>> The way I found to resolve this is to move the probing of the MII 
->>>> clocks to ipq_pcs_get().
->>>>
->>>> This is the kernel log that I see:
->>>>
->>>> [   12.008754] platform 39b00000.clock-controller: deferred probe 
->>>> pending: platform: supplier 7a00000.ethernet-pcs not ready
->>>> [   12.008788] mdio_bus 90000.mdio-1:18: deferred probe pending: 
->>>> mdio_bus: supplier 7a20000.ethernet-pcs not ready
->>>> [   12.018704] mdio_bus 90000.mdio-1:00: deferred probe pending: 
->>>> mdio_bus: supplier 90000.mdio-1:18 not ready
->>>> [   12.028588] mdio_bus 90000.mdio-1:01: deferred probe pending: 
->>>> mdio_bus: supplier 90000.mdio-1:18 not ready
->>>> [   12.038310] mdio_bus 90000.mdio-1:02: deferred probe pending: 
->>>> mdio_bus: supplier 90000.mdio-1:18 not ready
->>>> [   12.047943] mdio_bus 90000.mdio-1:03: deferred probe pending: 
->>>> mdio_bus: supplier 90000.mdio-1:18 not ready
->>>> [   12.057579] platform 7a00000.ethernet-pcs: deferred probe 
->>>> pending: ipq9574_pcs: Failed to get MII 0 RX clock
->>>> [   12.067209] platform 7a20000.ethernet-pcs: deferred probe 
->>>> pending: ipq9574_pcs: Failed to get MII 0 RX clock
->>>> [   12.077200] platform 3a000000.qcom-ppe: deferred probe pending: 
->>>> platform: supplier 39b00000.clock-controller not ready
->>>>
->>>>
->>>
->>> Hello, thanks for bringing this to our notice. Let me try to 
->>> understand the reason for the probe failure:
->>>
->>> The merged NSSCC DTS does not reference the PCS node directly in the 
->>> "clocks" property. It uses a placeholder phandle '<0>' for the 
->>> reference. Please see below patch which is merged.
->>> https://lore.kernel.org/all/20250313110359.242491-6- 
->>> quic_mmanikan@quicinc.com/
->>>
->>> Ideally there should be no direct dependency from NSSCC to PCS driver if
->>> we use this version of the NSSCC DTS.
->>>
->>> Hence it seems that you may have a modified patch here, and DTS 
->>> changes have been applied to enable all the Ethernet components 
->>> including PCS and NSSCC, and NSSCC modified to have a direct 
->>> reference to PCS? However even in this case, I think the driver probe 
->>> should work if the drivers are built as modules. Can you please 
->>> confirm if the NSSCC and PCS drivers are built-in to the kernel and 
->>> not built as modules
->>
->> The NSSCC and PCS built-in. I also added the uniphy PCS clocks to the 
->> NSSCC in order to expose the issue.
->>
->> I have a heavily patched tree with PPE driver and EDMA support. That's 
->> the final use case in order to support ethernet, right?
->>
-> 
-> Yes, all the drivers are eventually for enabling the Ethernet function
-> on IPQ9574.
-> 
->>
->>> For the case where the drivers are built-in to kernel, and the NSSCC DTS
->>> node has a direct reference to PCS node, we can use the below solution:
->>> [Note that the 'UNIPHY' PCS clocks are not needed for NSSCC clocks
->>> initialization/registration.]
->>>
->>>      Enable 'post-init-providers' property in the NSSCC DTS node to mark
->>>     'UNIPHY' PCS as post-initialization providers to NSSCC. This will
->>>      ensure following probe order by the kernel:
->>>
->>>      1.) NSSCC driver
->>>      2.) PCS driver.
->>>
->>> Please let me know if the above suggestion can help.
->>
->> I see. Adding the 'post-init-providers' property does fix the circular 
->> dependency. Thank you!
->>
->> I have another question. Do you have a public repository with the 
->> unmerged IPQ9574 patches, including, PCS, PPE, EDMA, QCA8084 ?
->>
-> 
-> May I know the source of your PPE/EDMA changes using which this issue
-> is seen?
+Support for dma scatter-gather mapping and is intended for testing
+mapping performance. It achieves by introducing the dma_sg_map_param
+structure and related functions, which enable the implementation of
+scatter-gather mapping preparation, mapping, and unmapping operations.
+Additionally, the dma_map_benchmark_ops array is updated to include
+operations for scatter-gather mapping. This commit aims to provide
+a wider range of mapping performance test to cater to different scenarios.
 
-I use a mix of upstream submissions, and openwrt patches. As noted, 
-using 'post-init-providers' takes care of the problem.
+Reviewed-by: Barry Song <baohua@kernel.org>
+Signed-off-by: Qinxin Xia <xiaqinxin@huawei.com>
+---
+ include/linux/map_benchmark.h |  43 ++++++++++----
+ kernel/dma/map_benchmark.c    | 103 ++++++++++++++++++++++++++++++++++
+ 2 files changed, 134 insertions(+), 12 deletions(-)
 
-https://github.com/mrnuke/linux/commits/ipq95xx-devel-20250515/
-
-> 
-> The openwrt repository contains the unmerged IPQ9574 patches, Although
-> this version will be updated very soon with latest code(with some 
-> fixes), the version of the code in the repo currently is also functional 
-> and tested.
-> 
-> https://github.com/CodeLinaro/openwrt/tree/main/target/linux/qualcommbe/ 
-> patches-6.6
-
-
-Will you be updating a clock example with IPQ9574 + QCA8084 to the repo?
-
-Alex
-
->>
->>> Later once the IPQ PCS driver is merged, we are planning to push the 
->>> PCS DTS changes, along with an update of the NSSCC DTS to point to 
->>> the PCS node and mark the "post-init-providers" property. This should 
->>> work for all cases.
->>>
->>> Also, in my view, it is not suitable to move PCS MII clocks get to
->>> "ipq_pcs_get()" because the natural loading order for the drivers
->>> is as below:
->>>
->>> 1) NSSCC driver
->>> 2) PCS driver
->>> 3) Ethernet driver.
->>>
->>> Additionally, the community is currently working on an infrastructure to
->>> provide a common pcs get method. (Christian and Sean Anderson has 
->>> been working on this). Therefore, I expect "ipq_pcs_get" to be 
->>> dropped in the future and replaced with the common pcs get method 
->>> once this common infra is merged.
->>
->> That makes sense. Thank you for clarifying.
-> 
+diff --git a/include/linux/map_benchmark.h b/include/linux/map_benchmark.h
+index 020b3155c262..9e8ec59e027a 100644
+--- a/include/linux/map_benchmark.h
++++ b/include/linux/map_benchmark.h
+@@ -17,22 +17,41 @@
+ 
+ enum {
+ 	DMA_MAP_BENCH_SINGLE_MODE,
++	DMA_MAP_BENCH_SG_MODE,
+ 	DMA_MAP_BENCH_MODE_MAX
+ };
+ 
++/**
++ * struct map_benchmark - Benchmarking data for DMA mapping operations.
++ * @avg_map_100ns: Average map latency in 100ns.
++ * @map_stddev: Standard deviation of map latency.
++ * @avg_unmap_100ns: Average unmap latency in 100ns.
++ * @unmap_stddev: Standard deviation of unmap latency.
++ * @threads: Number of threads performing map/unmap operations in parallel.
++ * @seconds: Duration of the test in seconds.
++ * @node: NUMA node on which this benchmark will run.
++ * @dma_bits: DMA addressing capability.
++ * @dma_dir: DMA data direction.
++ * @dma_trans_ns: Time for DMA transmission in ns.
++ * @granule: Number of PAGE_SIZE units to map/unmap at once.
++	     In SG mode, this represents the number of scatterlist entries.
++	     In single mode, this represents the total size of the mapping.
++ * @map_mode: Mode of DMA mapping.
++ * @expansion: Reserved for future use.
++ */
+ struct map_benchmark {
+-	__u64 avg_map_100ns; /* average map latency in 100ns */
+-	__u64 map_stddev; /* standard deviation of map latency */
+-	__u64 avg_unmap_100ns; /* as above */
++	__u64 avg_map_100ns;
++	__u64 map_stddev;
++	__u64 avg_unmap_100ns;
+ 	__u64 unmap_stddev;
+-	__u32 threads; /* how many threads will do map/unmap in parallel */
+-	__u32 seconds; /* how long the test will last */
+-	__s32 node; /* which numa node this benchmark will run on */
+-	__u32 dma_bits; /* DMA addressing capability */
+-	__u32 dma_dir; /* DMA data direction */
+-	__u32 dma_trans_ns; /* time for DMA transmission in ns */
+-	__u32 granule;  /* how many PAGE_SIZE will do map/unmap once a time */
+-	__u8  map_mode; /* the mode of dma map */
+-	__u8 expansion[75];     /* For future use */
++	__u32 threads;
++	__u32 seconds;
++	__s32 node;
++	__u32 dma_bits;
++	__u32 dma_dir;
++	__u32 dma_trans_ns;
++	__u32 granule;
++	__u8  map_mode;
++	__u8 expansion[75];
+ };
+ #endif /* _KERNEL_DMA_BENCHMARK_H */
+diff --git a/kernel/dma/map_benchmark.c b/kernel/dma/map_benchmark.c
+index 05f85cf00c35..843be4dc0993 100644
+--- a/kernel/dma/map_benchmark.c
++++ b/kernel/dma/map_benchmark.c
+@@ -17,6 +17,7 @@
+ #include <linux/module.h>
+ #include <linux/pci.h>
+ #include <linux/platform_device.h>
++#include <linux/scatterlist.h>
+ #include <linux/slab.h>
+ #include <linux/timekeeping.h>
+ 
+@@ -111,8 +112,110 @@ static struct map_benchmark_ops dma_single_map_benchmark_ops = {
+ 	.do_unmap = dma_single_map_benchmark_do_unmap,
+ };
+ 
++struct dma_sg_map_param {
++	struct sg_table sgt;
++	struct device *dev;
++	void **buf;
++	u32 npages;
++	u32 dma_dir;
++};
++
++static void *dma_sg_map_benchmark_prepare(struct map_benchmark_data *map)
++{
++	struct scatterlist *sg;
++	int i;
++
++	struct dma_sg_map_param *params __free(kfree) = kzalloc(sizeof(*params), GFP_KERNEL);
++	if (!params)
++		return NULL;
++
++	/*
++	 * Set the number of scatterlist entries based on the granule.
++	 * In SG mode, 'granule' represents the number of scatterlist entries.
++	 * Each scatterlist entry corresponds to a single page.
++	 */
++	params->npages = map->bparam.granule;
++	params->dma_dir = map->bparam.dma_dir;
++	params->dev = map->dev;
++	params->buf = kmalloc_array(params->npages, sizeof(*params->buf),
++				    GFP_KERNEL);
++	if (!params->buf)
++		goto out;
++
++	if (sg_alloc_table(&params->sgt, params->npages, GFP_KERNEL))
++		goto free_buf;
++
++	for_each_sgtable_sg(&params->sgt, sg, i) {
++		params->buf[i] = (void *)__get_free_page(GFP_KERNEL);
++		if (!params->buf[i])
++			goto free_page;
++
++		if (params->dma_dir != DMA_FROM_DEVICE)
++			memset(params->buf[i], 0x66, PAGE_SIZE);
++
++		sg_set_buf(sg, params->buf[i], PAGE_SIZE);
++	}
++
++	return_ptr(params);
++
++free_page:
++	while (i-- > 0)
++		free_page((unsigned long)params->buf[i]);
++
++	sg_free_table(&params->sgt);
++free_buf:
++	kfree(params->buf);
++out:
++	return NULL;
++}
++
++static void dma_sg_map_benchmark_unprepare(void *mparam)
++{
++	struct dma_sg_map_param *params = mparam;
++	int i;
++
++	for (i = 0; i < params->npages; i++)
++		free_page((unsigned long)params->buf[i]);
++
++	sg_free_table(&params->sgt);
++
++	kfree(params->buf);
++	kfree(params);
++}
++
++static int dma_sg_map_benchmark_do_map(void *mparam)
++{
++	struct dma_sg_map_param *params = mparam;
++	int ret = 0;
++
++	int sg_mapped = dma_map_sg(params->dev, params->sgt.sgl,
++				   params->npages, params->dma_dir);
++	if (!sg_mapped) {
++		pr_err("dma_map_sg failed on %s\n", dev_name(params->dev));
++		ret = -ENOMEM;
++	}
++
++	return ret;
++}
++
++static void dma_sg_map_benchmark_do_unmap(void *mparam)
++{
++	struct dma_sg_map_param *params = mparam;
++
++	dma_unmap_sg(params->dev, params->sgt.sgl, params->npages,
++		     params->dma_dir);
++}
++
++static struct map_benchmark_ops dma_sg_map_benchmark_ops = {
++	.prepare = dma_sg_map_benchmark_prepare,
++	.unprepare = dma_sg_map_benchmark_unprepare,
++	.do_map = dma_sg_map_benchmark_do_map,
++	.do_unmap = dma_sg_map_benchmark_do_unmap,
++};
++
+ static struct map_benchmark_ops *dma_map_benchmark_ops[DMA_MAP_BENCH_MODE_MAX] = {
+ 	[DMA_MAP_BENCH_SINGLE_MODE] = &dma_single_map_benchmark_ops,
++	[DMA_MAP_BENCH_SG_MODE] = &dma_sg_map_benchmark_ops,
+ };
+ 
+ static int map_benchmark_thread(void *data)
+-- 
+2.33.0
 
 
