@@ -1,96 +1,91 @@
-Return-Path: <linux-kernel+bounces-650890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-650892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 401BBAB9757
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 10:18:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B4F7AB9760
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 10:18:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B4481189B6F7
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 08:17:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9FFA6A21063
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 08:17:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EA8F23098D;
-	Fri, 16 May 2025 08:16:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDE5A231840;
+	Fri, 16 May 2025 08:16:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="ajQIsT/J"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="DJ+31PtA"
+Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39FB822CBE8
-	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 08:16:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBF6722F383
+	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 08:16:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747383387; cv=none; b=NaiDGzX3O90EYKMukes44hwO7dZX4H2gPVeexBUZGxhascP05jvyT2p7aXlDPAw2M8Z6rD1N9Pna8+ledyLnI5naKoB9RdVnyVbAr5RZKgzxX9A78B3lZLgOr76+k47U9M7e6LSyBX+noaPdtjzKPK5xvRLliL+Vmh2k4u3jiJM=
+	t=1747383397; cv=none; b=tteiXtwSEcK/AN29o7Q0v/YFvEvG1nD0R34RU48WfP/Of7P33Y7gT3cUpdpwoNzDryraSvT4Zg1QOzjnXpdLXK2Xuhz/5nC1ngJ7FlXuf7jOEUbB1lKxv36nmznMeWolP9uIQ98qf2LdqCQVwTaH0V5m4/OkyJT3zkkp9YIx+6s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747383387; c=relaxed/simple;
-	bh=ne4PfWXtPTDke/5/uFZ5cI1NkNx1QheiiJRSL2tSd1o=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=M+z9zUDQOZn1NL14tAm/B+OELDx0OsxLdyfGThw2vCRx4e0SdmDqGTuZB8dlbebsB08nWlg1KcwhRjCKJYZ37bqRjehqOieou36Kfx3BQk10pdi6lYe89RiZfwFKUCZu7ncu+PPKK44U2sLknpcMdUVDJ7eQO+YMjyUXCI7aATc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=ajQIsT/J; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-22e4db05fe8so18045795ad.0
-        for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 01:16:25 -0700 (PDT)
+	s=arc-20240116; t=1747383397; c=relaxed/simple;
+	bh=PqgeI6KNd9dfvMFjO+MUux9+7/4y055Ts4/mxEWkxwE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=HQbholZ60+f2dSmQwybdtgRyV4PzS6qiyoH4Qh2TJnWB177ijS2QZG/l/p79hnnAwWvhsgdVZuhvsFoxio4fS/DkmvAI3hYNUU6h+bu3JvPgdMAdlbRTVwayjDQwBR7lWZbYiBL7J3WbTVs9cxrFoLmqHOzMSEG3X2WGrt3LISA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=DJ+31PtA; arc=none smtp.client-ip=209.85.222.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-7c53b9d66fdso247177885a.3
+        for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 01:16:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1747383385; x=1747988185; darn=vger.kernel.org;
+        d=bytedance.com; s=google; t=1747383394; x=1747988194; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=/V2daD2rTNcNp3coCr/ToEF+NAYlBMkaOYzNetHBK5g=;
-        b=ajQIsT/JNGABAJnRdU4L0P233li6jU3+9UAWxfrTa0rzIpVAIxlhcxAXvYQv7prP2r
-         l2CZA/HUdhquexq/VK1cum58wmLFcueq7kCdh6zMlVWg8SSAvEJbnTLfC2X3bjVj/LSg
-         Wg0ddOsfnQSkjQkl/K93UA5VPBBF1ly7iCpM44d31KvaHuGwJ5lX3NImgIG2t97nxVSQ
-         cCgte/vEfuUICw/VG0M2yc3zY1FKRjIQTk0s+q7Re0xHDVf6vZAlISqwjqup4SmcoOKV
-         GE3Gc1a890brdf7lvyKd70Pus7cS5n8DN2wrNv5H0phPVXWc2Ft6YZwbepYw76QkIME/
-         bY9w==
+        bh=3sqLyXB121iu/Ux2S4uUFO89KPL9TBqnWTY9YgSrPFo=;
+        b=DJ+31PtAbI2CPvi3SuaE9V3d4t8g05KfC2zwGfrZz4jBUUirxyw30+Sfb5ARHKfQC7
+         jpuT0nUjO7yCMDQMCFupKADG2onFAqEfIzj/8S9JlPB2ktRldSCBXff/O31MQ/Yb7A+K
+         7BIxksdoWFxJcyV4BP/joUQVy38o4ob5+NTzBHSXAgmV1h6wRZmtUPGn11Im74mBi0KI
+         jyJ3ycmjigGyvPsTWkOdP55g3byNsHVNeHFQhBbvuGIF4IJP+bPBwGByBTe5TF5xZu80
+         MG0Yev4QFbVSimEUXWlarS97VVLg4J9aUnc4EAbuFj+M+Lke/xifaDWq1qJXwsQegD0U
+         bSuQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747383385; x=1747988185;
+        d=1e100.net; s=20230601; t=1747383394; x=1747988194;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=/V2daD2rTNcNp3coCr/ToEF+NAYlBMkaOYzNetHBK5g=;
-        b=A3X3qpq4GtNnLH9QQ0UGt+DIWtc8ytOfdTG0Mpj6C4mMOQWUX8WTdx3opUrg8TAkgB
-         KiADclhNkEExVdXWJWQ8mLH/LvYikCDrHOsRBNDFjPK/z5MV+JpwDEP6CiiNIuYGjnuU
-         UJlEb/iWJgOAioidP2Wyy+GQ+qO6xPhAOfs0rjUDp82ouIDDuSp3jjX37cq8UIO0f/1r
-         I89B7XsgmR9oBWXwC777FHZll8BHVvs9FH3s6zJLle9n058n4E/fmjqONOYpm9Tf2TLa
-         IG81Xhf94jO4RremI2+bhXnrQhVIIXJZ2Eq9dLySNOckDMSNqDOsefzGd5b9OHU2EfDZ
-         OeJg==
-X-Forwarded-Encrypted: i=1; AJvYcCWbUkAPQeYDMbODjC9FFaib6xRLVUOcyJ5QcnyUNIEotBSQkqJlVMnFXVGlrlL6s7PQKmQ73o49qE2Lm2g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHxAn1ERnipfoPp9SW53nf6oYd95w6MJd3KmAgtfGLhY8Eituy
-	epI27UNWGKzgkltQxm04+kpqArM2f7wizRlGFTBH9UXaeaYu2nvd1WBJX4DQ4iXPRBo=
-X-Gm-Gg: ASbGncvyt1GgTYWvMuLSWfKe7MG9WhIFLEeilPFMM6VwaDfoWoEN7MpqtCcIa+iVUCa
-	98WLwGujYWB+glp164IMqKTgtw7rKqGzFkCXnoEitFlYaKUGFbwL2z15aapPdJII/89SN+gzr7L
-	HSLk+WII40rqTZXJNDBiUMKq3pqJpSzouYSxgOSRGgx3xmalhgL8R7PDs6yoVkDPx9i3UG5MYPq
-	OcteT6TfaF2yB9ExCeI2GCtlgLPEgHn4KCmfSyikPI2YB/hsIgpVKop7+2/6fo0DtPKGTyFHmLe
-	fpdlAeQHgYTIWEPCNVyhCm3OgfVdHgnQA5mVnvUpjsouSYUXIWmilLKl7isqtZJwk//gsBl87wE
-	B75UyDehEouamwA==
-X-Google-Smtp-Source: AGHT+IGNwOPd4/78bjds7wJXN85y4exK0t1zW51cDsS9UCcuz87FTXGSkJI8YZ6TyRB1xxjOHnrMRQ==
-X-Received: by 2002:a17:902:ea0a:b0:22f:b040:9751 with SMTP id d9443c01a7336-231de3b9709mr18773765ad.45.1747383385431;
-        Fri, 16 May 2025 01:16:25 -0700 (PDT)
-Received: from dev-linux.. (syn-076-088-115-008.res.spectrum.com. [76.88.115.8])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-231d4e97801sm9397695ad.133.2025.05.16.01.16.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 May 2025 01:16:24 -0700 (PDT)
-From: Sukrut Bellary <sbellary@baylibre.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: Sukrut Bellary <sbellary@baylibre.com>,
-	Tero Kristo <kristo@kernel.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Andreas Kemnade <andreas@kemnade.info>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 3/3] dt-bindings: clock: ti: add ti,autoidle.yaml reference
-Date: Fri, 16 May 2025 01:16:12 -0700
-Message-Id: <20250516081612.767559-4-sbellary@baylibre.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250516081612.767559-1-sbellary@baylibre.com>
-References: <20250516081612.767559-1-sbellary@baylibre.com>
+        bh=3sqLyXB121iu/Ux2S4uUFO89KPL9TBqnWTY9YgSrPFo=;
+        b=oozctl2mqoWgKo2y5Mtp1i57BftEgGqaUOPp7/IhasgnEiu2afhuugoYZiCSveMt7/
+         L0t1VnNNRcq8q/Za/RfhJ2oc7ddNkbM4txlw02TrBW9EThADbSPoi9t3NYNszc+Xftvl
+         W2YkxwkyyCz7ZBQWZkqbFdOK32FT5DkLteJfz+wyxbUFnvRJdW7QxdQUxFLCasm6nyQG
+         FZSuMMwHm7scVJtcK1EA/XABotVLmNdvufJuAX93ylYZLGZtyKfwmAn7jtBkb8xJu9km
+         aivybGi/qESSNJ1WyCYC1+OZSYicruvJgrTcSO+reU2swHV64ZOL2oLADne5vjUwsHEs
+         1BSg==
+X-Forwarded-Encrypted: i=1; AJvYcCXKaVS+Gi9leocmQIsbrordYDhP+q9OwBpfTV9CeV7j4ZCPhXZFHgAwxeH1FpKZB3bhmxIwjnJ3T750X0s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzNjeVtA13N1gvU50OaG92GJ2ZraCz2fPORpGPI0x5UOGQmSfjc
+	0XhVT+f/wAp24ADAm6TCiTkClKqi9UFLuSr6KZvHcuPWCJGMG2+6rIhJxfL5YphU5bJRmY/5bDA
+	wyktY
+X-Gm-Gg: ASbGncsHjTGRpe8hjVydYWimXxyZHqQlCbLVqEOySpoikbzkoTg3hvi+Sa3RlbpnCmS
+	S+TtqdFlv8aBtfnwJYlEo/okOPZsu2SfMCGCjuAfCYFUci3GBU8J1WdMvqkVu/UpaqpWNH37/PL
+	YqOFUMPg7lFHo2O1LmtgXYtNPl8ZazI7xiDSPahzM1W/bdm+UlHTQsiXWw4ZlZ7ZczloG8U6RtK
+	LqI0yE892HE3oxX5qrR6HIT9ZbkysjsR+Qds4C2Ya3Vk4cIIHJEKz3T3pUYGvNQCtovy6s5TcFC
+	/C7FGxqfZZmtmoW6kbt4sEs8YyEoVS63Z2sWgWQSfYuYpbszRouTj13Ga0bIjCVJImw4iF1LgG6
+	eVQ==
+X-Google-Smtp-Source: AGHT+IEr22vSw+ZqySumyL1nO/Q9dyJfDfxfA3GzkDraC668SVjDmD7pyN/KZTUegXTa+Xrss41vLA==
+X-Received: by 2002:a17:902:f78c:b0:21f:85ee:f2df with SMTP id d9443c01a7336-231de35f324mr25086705ad.15.1747383382994;
+        Fri, 16 May 2025 01:16:22 -0700 (PDT)
+Received: from localhost.localdomain ([203.208.189.7])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-231e2f57f0csm5586765ad.251.2025.05.16.01.16.20
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Fri, 16 May 2025 01:16:22 -0700 (PDT)
+From: lizhe.67@bytedance.com
+To: alex.williamson@redhat.com
+Cc: kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	lizhe.67@bytedance.com,
+	muchun.song@linux.dev,
+	peterx@redhat.com
+Subject: Re: [PATCH] vfio/type1: optimize vfio_pin_pages_remote() for hugetlbfs folio
+Date: Fri, 16 May 2025 16:16:16 +0800
+Message-ID: <20250516081616.73039-1-lizhe.67@bytedance.com>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20250515151946.1e6edf8b.alex.williamson@redhat.com>
+References: <20250515151946.1e6edf8b.alex.williamson@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -99,71 +94,131 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-ti,divider-clock uses properties from ti,autoidle.
-As we are converting autoidle binding to ti,autoidle.yaml, fix the reference
-here.
+On Thu, 15 May 2025 15:19:46 -0600, alex.williamson@redhat.com wrote:
 
-Signed-off-by: Sukrut Bellary <sbellary@baylibre.com>
----
- .../bindings/clock/ti/ti,divider-clock.yaml   | 22 ++++---------------
- 1 file changed, 4 insertions(+), 18 deletions(-)
+>> +/*
+>> + * Find a random vfio_pfn that belongs to the range
+>> + * [iova, iova + PAGE_SIZE * npage)
+>> + */
+>> +static struct vfio_pfn *vfio_find_vpfn_range(struct vfio_dma *dma,
+>> +		dma_addr_t iova, unsigned long npage)
+>> +{
+>> +	struct vfio_pfn *vpfn;
+>> +	struct rb_node *node = dma->pfn_list.rb_node;
+>> +	dma_addr_t end_iova = iova + PAGE_SIZE * npage;
+>> +
+>> +	while (node) {
+>> +		vpfn = rb_entry(node, struct vfio_pfn, node);
+>> +
+>> +		if (end_iova <= vpfn->iova)
+>> +			node = node->rb_left;
+>> +		else if (iova > vpfn->iova)
+>> +			node = node->rb_right;
+>> +		else
+>> +			return vpfn;
+>> +	}
+>> +	return NULL;
+>> +}
+>
+>This essentially duplicates vfio_find_vpfn(), where the existing
+>function only finds a single page.  The existing function should be
+>extended for this new use case and callers updated.  Also the vfio_pfn
 
-diff --git a/Documentation/devicetree/bindings/clock/ti/ti,divider-clock.yaml b/Documentation/devicetree/bindings/clock/ti/ti,divider-clock.yaml
-index 3fbe236eb565..6729fcb839d2 100644
---- a/Documentation/devicetree/bindings/clock/ti/ti,divider-clock.yaml
-+++ b/Documentation/devicetree/bindings/clock/ti/ti,divider-clock.yaml
-@@ -55,9 +55,10 @@ description: |
-   is missing it is the same as supplying a zero shift.
- 
-   This binding can also optionally provide support to the hardware autoidle
--  feature, see [1].
-+  feature.
- 
--  [1] Documentation/devicetree/bindings/clock/ti/autoidle.txt
-+allOf:
-+  - $ref: ti,autoidle.yaml#
- 
- properties:
-   compatible:
-@@ -97,7 +98,6 @@ properties:
-     minimum: 1
-     default: 1
- 
--
-   ti,max-div:
-     $ref: /schemas/types.yaml#/definitions/uint32
-     description:
-@@ -116,20 +116,6 @@ properties:
-       valid divisor programming must be a power of two,
-       only valid if ti,dividers is not defined.
- 
--  ti,autoidle-shift:
--    $ref: /schemas/types.yaml#/definitions/uint32
--    description:
--      bit shift of the autoidle enable bit for the clock,
--      see [1].
--    maximum: 31
--    default: 0
--
--  ti,invert-autoidle-bit:
--    type: boolean
--    description:
--      autoidle is enabled by setting the bit to 0,
--      see [1]
--
-   ti,set-rate-parent:
-     type: boolean
-     description:
-@@ -156,7 +142,7 @@ required:
-   - clocks
-   - reg
- 
--additionalProperties: false
-+unevaluatedProperties: false
- 
- examples:
-   - |
--- 
-2.34.1
+How about implementing it in this way?
 
+static inline struct vfio_pfn *vfio_find_vpfn(struct vfio_dma *dma, dma_addr_t iova)
+{
+	return vfio_find_vpfn_range(dma, iova, 1);
+}
+
+With this implement, the caller who calls vfio_find_vpfn() won't need to
+be modified.
+
+>is not "random", it's the first vfio_pfn overlapping the range.
+
+Yes you are right. I will modify the comments to "Find the first vfio_pfn
+overlapping the range [iova, iova + PAGE_SIZE * npage) in rb tree" in v2.
+
+>> +
+>>  static void vfio_link_pfn(struct vfio_dma *dma,
+>>  			  struct vfio_pfn *new)
+>>  {
+>> @@ -670,6 +694,31 @@ static long vfio_pin_pages_remote(struct vfio_dma *dma, unsigned long vaddr,
+>>  				iova += (PAGE_SIZE * ret);
+>>  				continue;
+>>  			}
+>> +
+>
+>Spurious new blank line.
+>
+>> +		}
+>
+>A new blank line here would be appreciated.
+
+Thank you. I will address this in v2.
+
+>> +		/* Handle hugetlbfs page */
+>> +		if (likely(!disable_hugepages) &&
+>
+>Isn't this already accounted for with npage = 1?
+
+Yes. This check is not necessary. I will remove it in v2.
+
+>> +				folio_test_hugetlb(page_folio(batch->pages[batch->offset]))) {
+>
+>I don't follow how this guarantees the entire batch->size is
+>contiguous.  Isn't it possible that a batch could contain multiple
+>hugetlb folios?  Is the assumption here only true if folio_nr_pages()
+>(or specifically the pages remaining) is >= batch->capacity?  What
+
+Yes.
+
+>happens if we try to map the last half of one 2MB hugetlb page and
+>first half of the non-physically-contiguous next page?  Or what if the
+>hugetlb size is 64KB and the batch contains multiple folios that are
+>not physically contiguous?
+
+Sorry for my problematic implementation. I will fix it in v2.
+
+>> +			if (pfn != *pfn_base + pinned)
+>> +				goto out;
+>> +
+>> +			if (!rsvd && !vfio_find_vpfn_range(dma, iova, batch->size)) {
+>> +				if (!dma->lock_cap &&
+>> +				    mm->locked_vm + lock_acct + batch->size > limit) {
+>> +					pr_warn("%s: RLIMIT_MEMLOCK (%ld) exceeded\n",
+>> +						__func__, limit << PAGE_SHIFT);
+>> +					ret = -ENOMEM;
+>> +					goto unpin_out;
+>> +				}
+>> +				pinned += batch->size;
+>> +				npage -= batch->size;
+>> +				vaddr += PAGE_SIZE * batch->size;
+>> +				iova += PAGE_SIZE * batch->size;
+>> +				lock_acct += batch->size;
+>> +				batch->offset += batch->size;
+>> +				batch->size = 0;
+>> +				continue;
+>> +			}
+>
+>There's a lot of duplication with the existing page-iterative loop.  I
+>think they could be consolidated if we extract the number of known
+>contiguous pages based on the folio into a variable, default 1.
+
+Good idea! I will try to implement this optimization based on this idea
+in v2.
+
+>Also, while this approach is an improvement, it leaves a lot on the
+>table in scenarios where folio_nr_pages() exceeds batch->capacity.  For
+>example we're at best incrementing 1GB hugetlb pages in 2MB increments.
+>We're also wasting a lot of cycles to fill pages points we mostly don't
+>use.  Thanks,
+
+Yes, this is the ideal case. However, we are uncertain whether the pages
+to be pinned are hugetlbfs folio, and increasing batch->capacity would
+lead to a significant increase in memory usage. Additionally, since
+pin_user_pages_remote() currently lacks a variant that can reduce the
+overhead of "filling pages points" of hugetlbfs folio (maybe not correct).
+I suggest we proceeding with additional optimizations after further
+infrastructure improvements.
 
