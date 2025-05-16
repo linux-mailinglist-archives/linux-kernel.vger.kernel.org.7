@@ -1,176 +1,169 @@
-Return-Path: <linux-kernel+bounces-651085-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-651087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 089DAAB99D8
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 12:13:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F27C3AB99DF
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 12:14:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4DD80A027E3
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 10:12:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C26118926F4
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 10:13:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48A3A235076;
-	Fri, 16 May 2025 10:11:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E302238C24;
+	Fri, 16 May 2025 10:12:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="TYpmUliP";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="FOV6xyBc";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="TYpmUliP";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="FOV6xyBc"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="rbzOS7wb"
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34F9D233710
-	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 10:11:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F237D23814D
+	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 10:12:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747390317; cv=none; b=UkgyO8Sxq9RwnYNhPyJF17gD4zjlhjpxjNZUToQlX7UFHwots1ejpWl3gPWzeS/RCx8/A3XDRp2EGx8wp6M1rRCWhxhhy8IzbNZP0zazhXN/3bh/FewDlzoXKb6Zt86uWTgb8T/vDntOdenFXeKa4og030oBMhvZha6PFFTyyf4=
+	t=1747390327; cv=none; b=ReWgtOJf1ot5ObD0YK6ZichIoFe9Ba82xWT9ZqiSJb6HpE6yBn1fn7qRIAMDLiKckaNU9NQ2fnUPRea6zvdyFai00IiheXGTvHEwDzqIvSuEtyVmIi60kHzW0oqz9ZDMDonongdH01NYUCCdpQFNAUDB+qNg38Eh2D6irRAk8fk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747390317; c=relaxed/simple;
-	bh=+3aSa0zGyJVWOAEcjIMdpcVpebjJ9XPj2YDRvIVR1V8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TeIrx7nL1pKq2UO90ffBcZpM1Pj0dtcWH2xdoj1GSuyNNvcMikcFLjiV80ada4i3PYJwvIPhZo8D0CB9+SJkmHE+stpTrrrP9mq0n2XeIsi6Cd65wEHhay5wOc/eNQYvdc15NHfgJVmaz64BXQJsROy9T4LMii0Udads82XY0b0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=TYpmUliP; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=FOV6xyBc; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=TYpmUliP; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=FOV6xyBc; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 561E31F809;
-	Fri, 16 May 2025 10:11:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1747390314; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=youHGKw+zjVdB0o0ZjgatBC6iHWjbZv4aIw7gOUEDHo=;
-	b=TYpmUliP43TLbAV/HUJ5iQ7ZLjJRT0TYghAkdMMIrwMjbr8wNF9jy6s6AeUxtAR/Zs77SV
-	hos7JyhYXlK8DOIb++McF3YCWb7vmB+KM7j+5uy0RbivBoxwxAbOwBU3GOFCdAnmnsZO5n
-	8zMbNK8N31klQLLLf9W8xHdkUb7rJ04=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1747390314;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=youHGKw+zjVdB0o0ZjgatBC6iHWjbZv4aIw7gOUEDHo=;
-	b=FOV6xyBcg3XrdF9eNho1lKp0/Loif2bLWp1gCqsF8QQJpdywm+IthxteclRGMX2tjfSn5E
-	MPUMvaIp1lxC1LBw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1747390314; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=youHGKw+zjVdB0o0ZjgatBC6iHWjbZv4aIw7gOUEDHo=;
-	b=TYpmUliP43TLbAV/HUJ5iQ7ZLjJRT0TYghAkdMMIrwMjbr8wNF9jy6s6AeUxtAR/Zs77SV
-	hos7JyhYXlK8DOIb++McF3YCWb7vmB+KM7j+5uy0RbivBoxwxAbOwBU3GOFCdAnmnsZO5n
-	8zMbNK8N31klQLLLf9W8xHdkUb7rJ04=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1747390314;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=youHGKw+zjVdB0o0ZjgatBC6iHWjbZv4aIw7gOUEDHo=;
-	b=FOV6xyBcg3XrdF9eNho1lKp0/Loif2bLWp1gCqsF8QQJpdywm+IthxteclRGMX2tjfSn5E
-	MPUMvaIp1lxC1LBw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4BA0013977;
-	Fri, 16 May 2025 10:11:54 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id QxB0EmoPJ2iGewAAD6G6ig
-	(envelope-from <jack@suse.cz>); Fri, 16 May 2025 10:11:54 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id CA35FA09DD; Fri, 16 May 2025 12:11:53 +0200 (CEST)
-Date: Fri, 16 May 2025 12:11:53 +0200
-From: Jan Kara <jack@suse.cz>
-To: Davidlohr Bueso <dave@stgolabs.net>
-Cc: brauner@kernel.org, jack@suse.cz, viro@zeniv.linux.org.uk, 
-	mcgrof@kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/4] fs/buffer: use sleeping lookup in __getblk_slowpath()
-Message-ID: <2dati3l5r4u7uypyzrp5r6diuz6fuuhnv673szh7akdz55wbd3@gjexaphlhv7u>
-References: <20250515173925.147823-1-dave@stgolabs.net>
- <20250515173925.147823-2-dave@stgolabs.net>
+	s=arc-20240116; t=1747390327; c=relaxed/simple;
+	bh=d0FRiALmlRh4658ew0IPbF0DGfgYfxPaSLkl+tyPeew=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UwqXRUhuKeW8Kif0Z7fCGAbbt3thbAW8J3jbxsiGgIk5p2ZopteCSTAiE/KRyfcnf+6tQvDs2dAtT/5g48TWvQaP2oWSEh5VhSU+P55MJewrGZ9txtzI4eP8LgKAelOHas3Ft+D3WP/Z/pejDeZYmWlmCDVnnv0Aq4fTuV5/M4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=rbzOS7wb; arc=none smtp.client-ip=209.85.215.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-b0b2d0b2843so1470511a12.2
+        for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 03:12:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google; t=1747390325; x=1747995125; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BYgEmFkLzngjrAp+Ezttc9ZzVi7JvNzJScbPscBcw1k=;
+        b=rbzOS7wbk5Ych4xZn6gv0/UGWSFYIOnJ2ocfeIDwMvLwdzCG9ARs0NVRnrMOldjDlD
+         dk0JT3bsOYhLG96lFPRM5th/Ncg7SndhMXQgTlhC4JhOMpKQNyvtJmjQyq6oqKUeo4IL
+         +jjRAJvtaGPEkziRdIDtquVtDcW9E3ow3oZXI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747390325; x=1747995125;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BYgEmFkLzngjrAp+Ezttc9ZzVi7JvNzJScbPscBcw1k=;
+        b=OXEbDA6RVAbxcAb5qnGJ68R+YAMgnjI3oZ0+SE+pE+V0B1uxuZKjl19ohlHBCZyA59
+         qnR2NnpSaRn0GBONdz5tb5qqVzA2VzGWUvZpdan0sS2nXgILfd0tU6ZORmMxYhV+U6Ms
+         LhuGPT4Htc65mWyJQ1uTWCsOvJHpuInVjNVBLZ95IdFWB7YOi+qr5pG308vkixvO9bs7
+         b47b6HsQYStSue1dsYRUfhOPVUgaO/1BJoEhfF4x/VHcS8wnfgiQb/S8IO7lLnDq0Sra
+         OLWDYj9fAqz/UOEWCHsD2NJMq2xZ9Zn1crNkbfGfN78Qi6vwJhOV8rec82tQfeZkElqr
+         H6dw==
+X-Forwarded-Encrypted: i=1; AJvYcCVRBcngKR9bSGQ71nXj8H5pHwr5LwNVZLdByZsnDOFqaPTNHGp8SXerv/ARl2tM9BsVM+R/nGoSztrFApM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwftTXsV1pTCmKhvriJPTbpS/9e70NdbYf0VHJD3q0Mp0/Boml2
+	w6yQqHUaorHYChbLjAftkH8QU3pV/CeY3jZsdkvojf/6wXN3THZotkbgtwyHnoQls+Wbgm4d48z
+	tGOBFlBLfD8oqd7JolwnWmQMzSZOIsrhL/GK8cLDx4g==
+X-Gm-Gg: ASbGncu7Q1YSQ7bQTDCrTDhFyL5MKNpwJaNjnhvpQ0ilkEiCp1yGiD4Pj7XvAUmgbm3
+	MxDF/JZkI7sEUIbiG1rPriHCRAQxjISIYNzTi0rwYzCp5iLsjaeapnGEN6L8OLypx5OyChuo9cB
+	w1AT+ER/BxXURvE0Nqh7ctW49wWiovgPc=
+X-Google-Smtp-Source: AGHT+IEahdby4WlhFBrzP3TTtfzK9CfL8PPGgJOtXddvjGzliwZ++ZJsevn/WphCoiZBknrEiweCADHFA4Ad2+v0G9U=
+X-Received: by 2002:a17:902:f691:b0:223:5945:ffd5 with SMTP id
+ d9443c01a7336-231d452d9e8mr35792465ad.32.1747390325218; Fri, 16 May 2025
+ 03:12:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250515173925.147823-2-dave@stgolabs.net>
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	RCVD_COUNT_THREE(0.00)[3];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
-X-Spam-Score: -3.80
+References: <20250514070545.1868850-1-dario.binacchi@amarulasolutions.com>
+ <20250514070545.1868850-2-dario.binacchi@amarulasolutions.com> <20250516040520.GC28759@nxa18884-linux>
+In-Reply-To: <20250516040520.GC28759@nxa18884-linux>
+From: Michael Nazzareno Trimarchi <michael@amarulasolutions.com>
+Date: Fri, 16 May 2025 12:11:54 +0200
+X-Gm-Features: AX0GCFvTTvkYmZgAupUSG_j3MamO3A5m7OZvwC9De3vE2YHP6-H68MG8tQS5hHE
+Message-ID: <CAOf5uwmM=+QoaJH8vsUKL-fDab_Fmhxd1d-622pRi-hK=EXk4g@mail.gmail.com>
+Subject: Re: [PATCH 2/3] ARM: dts: imx6ulz-bsh-smm-m2: Enable uart2
+To: Peng Fan <peng.fan@oss.nxp.com>
+Cc: Dario Binacchi <dario.binacchi@amarulasolutions.com>, linux-kernel@vger.kernel.org, 
+	linux-amarula@amarulasolutions.com, 
+	Wolfgang Birkner <wolfgang.birkner@bshg.com>, Conor Dooley <conor+dt@kernel.org>, 
+	Fabio Estevam <festevam@gmail.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Rob Herring <robh@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, devicetree@vger.kernel.org, 
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu 15-05-25 10:39:22, Davidlohr Bueso wrote:
-> Just as with the fast path, call the lookup variant depending
-> on the gfp flags.
-> 
-> Signed-off-by: Davidlohr Bueso <dave@stgolabs.net>
+Hi
 
-Looks good. Feel free to add:
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+On Fri, May 16, 2025 at 4:56=E2=80=AFAM Peng Fan <peng.fan@oss.nxp.com> wro=
+te:
+>
+> On Wed, May 14, 2025 at 09:05:34AM +0200, Dario Binacchi wrote:
+> >From: Wolfgang Birkner <wolfgang.birkner@bshg.com>
+> >
+> >uart2 is used as wake up source.
+> >
+> >Signed-off-by: Wolfgang Birkner <wolfgang.birkner@bshg.com>
+> >Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+> >---
+> >
+> > arch/arm/boot/dts/nxp/imx/imx6ulz-bsh-smm-m2.dts | 4 ++++
+> > 1 file changed, 4 insertions(+)
+> >
+> >diff --git a/arch/arm/boot/dts/nxp/imx/imx6ulz-bsh-smm-m2.dts b/arch/arm=
+/boot/dts/nxp/imx/imx6ulz-bsh-smm-m2.dts
+> >index 5c32d1e3675c..fff21f28c552 100644
+> >--- a/arch/arm/boot/dts/nxp/imx/imx6ulz-bsh-smm-m2.dts
+> >+++ b/arch/arm/boot/dts/nxp/imx/imx6ulz-bsh-smm-m2.dts
+> >@@ -37,6 +37,10 @@ &snvs_poweroff {
+> >       status =3D "okay";
+> > };
+> >
+> >+&uart2 {
+> >+      status =3D "okay";
+> >+};
+>
+> No need pinctrl settings?
+>
 
-								Honza
-> ---
->  fs/buffer.c | 7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/buffer.c b/fs/buffer.c
-> index b8e1e6e325cd..5a4342881f3b 100644
-> --- a/fs/buffer.c
-> +++ b/fs/buffer.c
-> @@ -1122,6 +1122,8 @@ static struct buffer_head *
->  __getblk_slow(struct block_device *bdev, sector_t block,
->  	     unsigned size, gfp_t gfp)
->  {
-> +	bool blocking = gfpflags_allow_blocking(gfp);
-> +
->  	/* Size must be multiple of hard sectorsize */
->  	if (unlikely(size & (bdev_logical_block_size(bdev)-1) ||
->  			(size < 512 || size > PAGE_SIZE))) {
-> @@ -1137,7 +1139,10 @@ __getblk_slow(struct block_device *bdev, sector_t block,
->  	for (;;) {
->  		struct buffer_head *bh;
->  
-> -		bh = __find_get_block(bdev, block, size);
-> +		if (blocking)
-> +			bh = __find_get_block_nonatomic(bdev, block, size);
-> +		else
-> +			bh = __find_get_block(bdev, block, size);
->  		if (bh)
->  			return bh;
->  
-> -- 
-> 2.39.5
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+We found out that in imx6ulz, if we don't enable wakeup on uart2 (or
+other uarts that do not conflict on pinout) we are not able to wake up
+from uart4, which is the console.
+According to the TRM and the code everything look fine but the real
+result it's we stuck in suspend
+
+Here is how we are able to resume.
+
+uart2
+echo enabled > wakeup
+uart4
+echo enabled > wakeup
+
+Michael
+
+> Regards,
+> Peng
+>
+> >+
+> > &uart3 {
+> >       pinctrl-names =3D "default";
+> >       pinctrl-0 =3D <&pinctrl_uart3>;
+> >--
+> >2.43.0
+> >
+> >base-commit: e9565e23cd89d4d5cd4388f8742130be1d6f182d
+> >branch: bsh-202505-imx6ulz_smm_m2
+>
+>
+
+
+--=20
+Michael Nazzareno Trimarchi
+Co-Founder & Chief Executive Officer
+M. +39 347 913 2170
+michael@amarulasolutions.com
+__________________________________
+
+Amarula Solutions BV
+Joop Geesinkweg 125, 1114 AB, Amsterdam, NL
+T. +31 (0)85 111 9172
+info@amarulasolutions.com
+www.amarulasolutions.com
 
