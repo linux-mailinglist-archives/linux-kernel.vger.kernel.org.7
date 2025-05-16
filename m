@@ -1,53 +1,85 @@
-Return-Path: <linux-kernel+bounces-650954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-650949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A76EAB9842
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 11:01:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 918B9AB9836
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 11:01:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A1A3F7B12D0
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 09:00:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 20F3A7A285C
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 08:59:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCCE122F77D;
-	Fri, 16 May 2025 09:01:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29D2222E3E9;
+	Fri, 16 May 2025 09:00:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="dxeL/aXj"
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="YOy6A7NP"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77F81230BE6
-	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 09:01:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0581F1DFE8
+	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 09:00:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747386072; cv=none; b=Hj1KmjbFLJZ41cThkzjYDBSRpWu9XWYURrYjsxv5lJzzbJJR+9jSlUoCxy5MKIugadCgl+6cpm/4F6VH38VJnzk+VRisjHfjKgIZ5dibyrysdBoBW1oUOwFoNR1Qv2nFvRMS0ji1eLCX90aAJQBVKXB2YpnGw88Z4JBdKypOxGY=
+	t=1747386054; cv=none; b=LB/13noyF4Q3nndh5YuXFhSC18dkZdCerALk877wsfmtYd742vwPbhOJSvJCDzPB/LXI/upP8swhvukhjqyi52swFGIFF3NcpJXdrHQoi/SQw6MZ/Ov8G5Lpev11kXtIiXsfOJU8i92rrotAWLsPj162YUcvwxYH6SFEOY8cXRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747386072; c=relaxed/simple;
-	bh=qytcSDUeqn2AhnCTzkvDS+ojSWiShvINuV4e4CKoQKw=;
+	s=arc-20240116; t=1747386054; c=relaxed/simple;
+	bh=jnZhFIc60EpD17GuUJxPaSX4JS1jVvOVrSRcJ4Ikqws=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mHV2g17rWf//XI6spn6OGOHbZ5grqPrKJtTemWO5He0peaC5Gr6FUTqX4PylMkNaWWIy9xaOS/xSIINvHvSat7M3fN7iwPn/NC2aSnO3DGMoM8blvbYc/HwCkVRtr/xchz543U66FYWUt2pic8YbNNMhLrQwIk5vA23PTZG4Gis=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=dxeL/aXj; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=S7aux+kj8gQ8QGSp6GxYHHNN+3p7fRTeAIsrjdB94Os=; b=dxeL/aXj6cnZeJqwkVWIJ5evwn
-	fbQbvN9R/Vgmjx96Ox1FQf2bpnrT0Z15I+pmUuYb/fsInl0tht5lqrn/inD9+J6WEkIVHP8eq+B5I
-	uztPjcgoT3ypKTSCsPgDN1smqnv6EemP1nKljhfNr5bnBYfjcM0nE2874RHgAYfm0bLlWzhFsXhl6
-	+Im7ddUOAuQh3mltfhNkEc3URbN0le+H3f6rDDSvIo/bMwgfzHbSgdDEJ44ceFFnVsXs0s8XqabOP
-	iOTs8KgbjzRLFG3oYS5r0EfU3c+mI86jUjYgZyMJOcdfEyoUcqFbHJJCz3jZ0DBwmcf1Q0mu1t7eC
-	KS9A6k1w==;
-Received: from [81.79.92.254] (helo=[192.168.0.101])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1uFqq8-0090ON-50; Fri, 16 May 2025 11:00:46 +0200
-Message-ID: <ac454a95-15ed-4de2-8bff-e67bcc9831ec@igalia.com>
-Date: Fri, 16 May 2025 10:00:45 +0100
+	 In-Reply-To:Content-Type; b=uj9apJnnGEow9I0Be2gYUyITPNF+PQ8pKg8V6vDvD1pUGQA8wN1sYGubFnCUYtLjstgH0aMpxpM73LimjQVO6JXqOq25xuwZSDxhJVVGqgZyNJ9BkD0ZR/JP63FnBADL9Sfqh9WEj3+u1I3n2ut2J+uCvEzx0JRhUlCgswtIdP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=YOy6A7NP; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54G6MuCS027744
+	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 09:00:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	emNqD3+84OsoC1sz/sXLny32zR/CcxC3pmnwMkCRoCM=; b=YOy6A7NPx6grlFyP
+	xIY8FjBE6HADmb0Dksh2OqNTkJCjHnpZl9scKhjH8jipX/dAPYOWESQPyJ7aH4kK
+	o8mKWhf9m7FNJnJAqUj9aFvPLeBpMrkOkugSLQFf9jEQfGyKZcX4RJMc9sDcyO8+
+	yNXuHxV7nZAjApOBM18obg3e0u92oWcD7e3nfkxOxBpg7xf9b/usDQbvxNigP4g7
+	PcZ8W9IQXs1ib/TSOvT77adv4fmIWMeo2JtCCaGsx3VKHzwMUgdYXvFlycEQ8htT
+	hc/zXNJkvnU3yaw7XIYfNIyyYNH4qWCJnt6J5LUd0XdF1bcm4GS5jsaSsQWRjARO
+	A954PA==
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46p01n0e9s-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 09:00:51 +0000 (GMT)
+Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6f8aab0a94cso2727516d6.1
+        for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 02:00:51 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747386051; x=1747990851;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=emNqD3+84OsoC1sz/sXLny32zR/CcxC3pmnwMkCRoCM=;
+        b=HBBN439/uQkyaCReL3NdJVzqhvcJFplFKmNUuq0OxKbaa/jdJKZmQfPGRdKnhU38oX
+         zh5QKDnfUg1ivq5MsuIga4646Cnxeq0uKtnEgKfFubx1IdY1++8aHM4q6IuUOoUSGBCL
+         h38WvzJ+LNlKjPTl2ALLS2iMPwYUimF9nppnNe/WkomhOQUE/nijdlx5lwxLYgSngfn9
+         OtguY5rHD4YGnGcb/HFr/RSHlzqC/0TCrHzy1Dy/kmoC5N2ZjBiVuGuTpPpYTu6PK6up
+         cfuNbvlqyN5e6AKWXUaVxPImjvRVIIvgaHPpwg66isVW6H61eRjFDfhzjKOKdbzCaNbf
+         qLsQ==
+X-Gm-Message-State: AOJu0Yycw71R5MP8SubjgsTgU5J0g4jt19O3cD33lyGJr9bscosLl0Aq
+	fb7RXki0mOzYu44s7Wgu0wFa1exz3csP89Ceja673y9yYSiN9CejFDnXZqsYM/xjUiXdY8A4hyJ
+	bKCZJ3MfHzB35fB78VYEv8jkTewPEf4BF0WpjJxoZck2oY0kK8C4Lj5YVSRsylBBIBrQ=
+X-Gm-Gg: ASbGnctCd9Uze7IUoOivB2AZhioAP2ODM5asRPZClqR/4i7rxfknJ243g/GjYurfv2l
+	uFPmAHgWcjdSj6AdTyuLhZ8EzQxyLVpy0b/beEqzaGwxXwCubgarZ4mzTKvKTe4vtFZchLkcYTd
+	xw0KsOW6qMPz4IN2e6pwdD0td1S+J+wKTvIsHmPwv/qVtKdw+6yrWZoTaDAoc7YBCTyTj2+YJ6k
+	zv+8gPx7pF0zZO3eVZ7t8e40KU3v8eaYlNBJcjoyqUbC+yCI+SlGNfcnlAcqE6tFlUNejKXy+eM
+	e9tk0qlb6SnANAxwk6e97fQV3Dv489JwK3WEkSBhFqF5+T4cX2Rqr+jhvNHgEGg9cg==
+X-Received: by 2002:ad4:5f8e:0:b0:6d9:2fe3:bf0c with SMTP id 6a1803df08f44-6f8b087cad8mr16035606d6.4.1747386050647;
+        Fri, 16 May 2025 02:00:50 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFssDUTPLfA8FG52oie+qg7EwCQlej6WrDyiMpP6WkKB2iMQNNW99VeHioL7oGkK8GI+fj7kg==
+X-Received: by 2002:ad4:5f8e:0:b0:6d9:2fe3:bf0c with SMTP id 6a1803df08f44-6f8b087cad8mr16035296d6.4.1747386050098;
+        Fri, 16 May 2025 02:00:50 -0700 (PDT)
+Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6005a6e019asm1055150a12.36.2025.05.16.02.00.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 16 May 2025 02:00:49 -0700 (PDT)
+Message-ID: <f5e1510f-3496-4f5e-b093-623d3b4be428@oss.qualcomm.com>
+Date: Fri, 16 May 2025 11:00:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,349 +87,74 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 6/6] drm/sched: Port unit tests to new cleanup design
-To: phasta@kernel.org, Lyude Paul <lyude@redhat.com>,
- Danilo Krummrich <dakr@kernel.org>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Matthew Brost <matthew.brost@intel.com>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>
-Cc: dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <20250424095535.26119-2-phasta@kernel.org>
- <20250424095535.26119-8-phasta@kernel.org>
- <894cf4cdb7e14b2a21dcf87bfeac4776cb695395.camel@mailbox.org>
- <a1c9c680-2927-428c-95e9-2e79d14cec58@igalia.com>
- <84021a2461db55617018050b7c0e07a15dceb634.camel@mailbox.org>
- <1d753b0f-4770-4f90-b2fb-48193262d713@igalia.com>
- <b98ac3e08922f5d1a6a83d1caa9f8d1d4a7aaac2.camel@mailbox.org>
-Content-Language: en-GB
-From: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
-In-Reply-To: <b98ac3e08922f5d1a6a83d1caa9f8d1d4a7aaac2.camel@mailbox.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v2 2/2] arm64: dts: qcom: sa8775p: Remove max link speed
+ property for PCIe EP
+To: Neil Armstrong <neil.armstrong@linaro.org>,
+        Mrinmay Sarkar <mrinmay.sarkar@oss.qualcomm.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+        krishna.chundru@oss.qualcomm.com, quic_vbadigan@quicinc.com,
+        quic_nayiluri@quicinc.com, quic_ramkri@quicinc.com,
+        quic_nitegupt@quicinc.com, Mrinmay Sarkar <quic_msarkar@quicinc.com>
+References: <20250514-update_phy-v2-0-d4f319221474@quicinc.com>
+ <20250514-update_phy-v2-2-d4f319221474@quicinc.com>
+ <8ba99df8-012b-4883-af6a-970dd9f877f6@linaro.org>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <8ba99df8-012b-4883-af6a-970dd9f877f6@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=M4lNKzws c=1 sm=1 tr=0 ts=6826fec3 cx=c_pps
+ a=oc9J++0uMp73DTRD5QyR2A==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=KKAkSRfTAAAA:8 a=EUspDBNiAAAA:8
+ a=4QkPWBSfZRwaAYBdk_UA:9 a=QEXdDO2ut3YA:10 a=ZXulRonScM0A:10
+ a=iYH6xdkBrDN1Jqds4HTS:22 a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTE2MDA4NCBTYWx0ZWRfX7YPY2o/fkfrJ
+ RC5qUdsOKGB0wNRxoJaqjbyQU6XC3cyOIwldL3Jk2+Gqu6ugBl0MyPhXzULlgv7ajqo6LXAaaQv
+ GOma7I8uk8PLHUV2REfARICnbDkhRHL4fGc7xMA+dxCXX7AEeW8aJG+lTV3PGWSAXyTc7PpCmWk
+ NsKyGdg/GFhJLhNueFxLcQqFC7fNTCQz8F3rv2PDo7Vd7/YaIK3rIm3UYcUTj7i/T/d/jBf7nj4
+ nZN+pHeNLJeoIU9v8CvbDigDfEiRGZnC1M1h8ihe1qfKkuVbO6FzyHRP9DMwIrxah8DqUYU/jU2
+ hw94v5iFepLakU5uOsIE0kOO3wl5zXEg8wHwu5qlTXOjs3qvZ6iEIs4p3nIoZhWkyTqQe/hcnSw
+ 4aZ43VO+ySHwq9/6o56ManLmrpDw/oTCwyABVsxvkbLktLit4/AErW2+k5PWYfjQzfVF3yFh
+X-Proofpoint-ORIG-GUID: eDiX7nDaOzJIf0GEQjzwcBBGdXqP-2t9
+X-Proofpoint-GUID: eDiX7nDaOzJIf0GEQjzwcBBGdXqP-2t9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-16_04,2025-05-15_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 clxscore=1015 impostorscore=0 malwarescore=0 mlxlogscore=959
+ mlxscore=0 lowpriorityscore=0 phishscore=0 bulkscore=0 adultscore=0
+ priorityscore=1501 suspectscore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505070000 definitions=main-2505160084
 
+On 5/14/25 6:38 PM, neil.armstrong@linaro.org wrote:
+> On 14/05/2025 13:37, Mrinmay Sarkar wrote:
+>> From: Mrinmay Sarkar <mrinmay.sarkar@oss.qualcomm.com>
+>>
+>> The maximum link speed was previously restricted to Gen3 due to the
+>> absence of Gen4 equalization support in the driver.
+>>
+>> Add change to remove max link speed property, Since Gen4 equalization
+>> support has already been added into the driver.
+> 
+> Which driver, PHY or Controller ?
 
-On 14/05/2025 10:19, Philipp Stanner wrote:
-> On Wed, 2025-05-14 at 09:30 +0100, Tvrtko Ursulin wrote:
->>
->> On 12/05/2025 09:00, Philipp Stanner wrote:
->>> On Thu, 2025-05-08 at 13:51 +0100, Tvrtko Ursulin wrote:
->>>>
->>>> Hi Philipp,
->>>>
->>>> On 08/05/2025 12:03, Philipp Stanner wrote:
->>>>> On Thu, 2025-04-24 at 11:55 +0200, Philipp Stanner wrote:
->>>>>> The unit tests so far took care manually of avoiding memory
->>>>>> leaks
->>>>>> that
->>>>>> might have occurred when calling drm_sched_fini().
->>>>>>
->>>>>> The scheduler now takes care by itself of avoiding memory
->>>>>> leaks
->>>>>> if
->>>>>> the
->>>>>> driver provides the callback
->>>>>> drm_sched_backend_ops.kill_fence_context().
->>>>>>
->>>>>> Implement that callback for the unit tests. Remove the manual
->>>>>> cleanup
->>>>>> code.
->>>>>
->>>>> @Tvrtko: On a scale from 1-10, how much do you love this patch?
->>>>> :)
->>>>
->>>> Specific patch aside, it is the series as a whole I would like to
->>>> be
->>>> sure there isn't a more elegant way to achieve the same end
->>>> result.
->>>
->>> I count this as a 9/10 \o/
->>
->> :) Yes, sorry, it would a bit lower than that, at least until someone
->> can point out a fatal flaw in my alternative. :)
-> 
-> There's no fatal flaw in my approach either :)
-> 
->>
->>> But jokes aside:
->>>
->>>>
->>>> Like that sketch of a counter proposal I sent for the reasons
->>>> listed
->>>> with it. Which were, AFAIR, to avoid needing to add more state
->>>> machine,
->>>
->>> Well the state machine added is basically just the waitqueue. The
->>> WRITE_ONCE booleans are currently just for correctness and clarity.
->>> I've looked at them and want to remove them all in an other patch,
->>> because I think they're not needed (workqueue handles that)
->>>
->>> But yes, the added state is > 0
->>>
->>>> to avoid mandating drivers have to keep an internal list,
->>>
->>> That's not mandated by the scheduler, but by logic itself. All
->>> drivers
->>> need to have a list of on-flight fences. Otherwise the drivers
->>> would
->>> have no chance of signaling those fences once their GPU tells them
->>> to
->>> do so.
->>
->> Probably it would be hard to signal without tracking of some sort
->> yes,
->> although it wouldn't have to be indexed by fence context, or looked
->> up
->> by it so maybe still simpler.
-> 
-> Well, the decisive point remains that all drivers must know all on-air
-> fences, so they all are able to signal those fences.
-> 
->>
->> More importantly I think with this comment I was thinking about the
->> fact
->> that with ops->cancel_job() approach I was able to remove the _done_
->> list tracking from the mock scheduler.
-> 
-> If the done_list is just about avoiding memory leaks, then I should
-> also be able to remove it completely, shouldn't I? In this patch here I
-> already remove the leak-related code in drm_mock_sched_fini(), but
-> hadn't looked too deeply into what else the done_list does. Is it just
-> about the leaks?
+Controller, see 
 
-Yes, I added it specifically to enable freeing completed jobs before 
-calling drm_sched_fini (so mock scheduler does not have to look at the 
-scheduler internal sched->job_list). On a glance you should be able to 
-remove it too and it looks it should just work. You can peek at my patch 
-for how to remove it completely if it helps.
+09483959e34d ("PCI: dwc: Add support for configuring lane equalization presets")
 
->>> I have now provided two users of the new API, nouveau and the unit
->>> tests. Can you think of a party for which the suggested approach
->>> wouldn't work?
->>
->> I did not think along those lines yet so don't know. I just thought
->> it
->> was too much code to implement a relatively simple thing and that
->> also a
->> few things in the design bothered me.
->>
->> If you look at the diffstat from my proposal and ignore kerneldoc and
->> unit test stats, it literally adds 8 lines to drm_sched_fini() and a
->> single line to gpu_scheduler.h:
->>
->> +       void (*cancel_job)(struct drm_sched_job *sched_job);
->>
->> And in the former after it stops the workers:
->>
->> +       if (sched->ops->cancel_job) {
->> +               struct drm_sched_job *job;
->> +
->> +               list_for_each_entry_reverse(job, &sched-
->>> pending_list,
->> list) {
->> +                       sched->ops->cancel_job(job);
->> +                       sched->ops->free_job(job);
->> +               }
->> +       }
->>
->> To me this looks quite clean. Unless, I say this again, I am missing
->> some fatal flaw why it doesn't work.
-> 
-> It does work. I've stated that before. But mine works, too. And mine
-> doesn't have a hard blocker either, as far as I can see.
-> 
-> So let's focus on the main differences:
-> 
-> Your version adds fewer lines of code, that's correct.
-> 
-> I think cleaning up through just having the driver signal the fences
-> all at once is better because
->     1. The very same code path both for "legacy-fini" and "new-fini" is
->        responsible for cleaning up the jobs. Notably, the free_job()
->        callback is only invoked by the same parties as before, primarily
->        the work items. We don't add a new, only sometimes running, code
->        path *that free's jobs*.
->     2. The scheduler's already fractured design doesn't fracture
->        further: the free_job work item remains responsible for calling
->        free_job(). Having just one party being responsible for one thing
->        is a desirable design goal.
->     3. Considering that many drivers generously (ab)use API internals of
->        the scheduler, and considering that there is already ambiguity of
->        who's responsible for handling job lifetimes, I believe it is
->        safer not to add an additional code path that can free jobs, but
->        keep that one path.
+and commits around it
 
-All three look the same root argument. I would not be too concerned 
-since it is still "one party" - the scheduler internals.
+does this change depends on the patch 1 PHY settings update ?
 
->     4. It reads more cleanly: "We're not canceling a single job here,
->        we're killing all associated jobs now all at once", raising
->        awareness for driver programmers that this is a significant
->        event: we're tearing down while not all of your jobs have
->        finished on your GPU.
+That I'm curious about too, but I would guesstimate no
 
-It looks we simply may end up not agreeing.
-
-I don't see most of the points above as significant, or even valid as a 
-differentiator between the two approaches, while what I object to the 
-most is adding of more state machine stuff. Because that is what I think 
-makes the scheduler harder to maintain. More flags, more stopping some 
-workers while leaving some run, etc.
-
-A new callback to cancel a single job is IMO completely clean. 
-Equivalent to how we already have ->timedout_job(), which, in the 
-context of the recent discussions, really has the semantics of "cancel 
-if it hasn't completed in the meantime". So I even wonder if there could 
-be scope to share something with ->cancel_job(). The design or the 
-implementation.
-
-Regards,
-
-Tvrtko
-
->>
->>> Don't get me wrong, your approach does work and it definitely has
->>> its
->>> charm. However, I think what I propose here is syntactically a bit
->>> cleaner because the classical order of a fence first being signaled
->>> in
->>> the driver and then the associated job being freed as usual by the
->>> scheduler is guaranteed. IOW, we primarily rely on the signaling
->>> path.
->>>
->>> Either way, neither your nor my approach would have worked out of
->>> the
->>> box in Nouveau without that driver exploding.
->>
->> What do you mean by this - the latest version of your series does or
->> does not work for nouveau?
-> 
-> Mine works with Nouveau, but revealed a bug in Nouveau [1]. Yours would
-> have ran into that bug, too.
-> 
-> My point is just that your job-by-job approach wouldn't have been
-> superior to my approach in practice, i.e., when implementing it in the
-> first "beta tester", Nouveau. Would have been the same problem in
-> different color.
-> 
-> So just because a cancel_job() callback would result in fewer lines of
-> code wouldn't mean it's superior in practice. I expect the same to be
-> the case for other drivers, especially those who use scheduler
-> internals.
-> 
-> So, summarizing:
->   * My approach works. Your approach works.
->   * It works for all drivers, because they all have a list of fences.
->   * It communicates more clearly to the driver what this is all about.
->   * It keeps the scheduler's design more consistent regarding
->     responsibility / code paths for job life times.
-> 
-> P.
-> 
-> [1] https://lore.kernel.org/dri-devel/20250415121900.55719-2-phasta@kernel.org/
-> 
->>
->> Regards,
->>
->> Tvrtko
->>
->>>
->>>>    and to align
->>>> better with the existing prototypes in the sched ops table (where
->>>> everything operates on jobs).
->>>
->>> That's not a hard criteria IMO. Those are sched_backend_ops, not
->>> sched_job_backend_ops, and prepare_job() already takes a parameter
->>> other than a job.
->>>
->>>
->>> Cheers,
->>> P.
->>>
->>>>
->>>> Regards,
->>>>
->>>> Tvrtko
->>>>
->>>>>> Signed-off-by: Philipp Stanner <phasta@kernel.org>
->>>>>> ---
->>>>>>     .../gpu/drm/scheduler/tests/mock_scheduler.c  | 34
->>>>>> ++++++++++++-----
->>>>>> --
->>>>>>     1 file changed, 21 insertions(+), 13 deletions(-)
->>>>>>
->>>>>> diff --git a/drivers/gpu/drm/scheduler/tests/mock_scheduler.c
->>>>>> b/drivers/gpu/drm/scheduler/tests/mock_scheduler.c
->>>>>> index f999c8859cf7..a72d26ca8262 100644
->>>>>> --- a/drivers/gpu/drm/scheduler/tests/mock_scheduler.c
->>>>>> +++ b/drivers/gpu/drm/scheduler/tests/mock_scheduler.c
->>>>>> @@ -228,10 +228,30 @@ static void mock_sched_free_job(struct
->>>>>> drm_sched_job *sched_job)
->>>>>>      /* Mock job itself is freed by the kunit framework. */
->>>>>>     }
->>>>>>     
->>>>>> +static void mock_sched_fence_context_kill(struct
->>>>>> drm_gpu_scheduler
->>>>>> *gpu_sched)
->>>>>> +{
->>>>>> + struct drm_mock_scheduler *sched =
->>>>>> drm_sched_to_mock_sched(gpu_sched);
->>>>>> + struct drm_mock_sched_job *job;
->>>>>> + unsigned long flags;
->>>>>> +
->>>>>> + spin_lock_irqsave(&sched->lock, flags);
->>>>>> + list_for_each_entry(job, &sched->job_list, link) {
->>>>>> + spin_lock(&job->lock);
->>>>>> + if (!dma_fence_is_signaled_locked(&job-
->>>>>>> hw_fence)) {
->>>>>> + dma_fence_set_error(&job->hw_fence, -
->>>>>> ECANCELED);
->>>>>> + dma_fence_signal_locked(&job->hw_fence);
->>>>>> + }
->>>>>> + complete(&job->done);
->>>>>> + spin_unlock(&job->lock);
->>>>>> + }
->>>>>> + spin_unlock_irqrestore(&sched->lock, flags);
->>>>>> +}
->>>>>> +
->>>>>>     static const struct drm_sched_backend_ops
->>>>>> drm_mock_scheduler_ops = {
->>>>>>      .run_job = mock_sched_run_job,
->>>>>>      .timedout_job = mock_sched_timedout_job,
->>>>>> - .free_job = mock_sched_free_job
->>>>>> + .free_job = mock_sched_free_job,
->>>>>> + .kill_fence_context = mock_sched_fence_context_kill,
->>>>>>     };
->>>>>>     
->>>>>>     /**
->>>>>> @@ -300,18 +320,6 @@ void drm_mock_sched_fini(struct
->>>>>> drm_mock_scheduler *sched)
->>>>>>      drm_mock_sched_job_complete(job);
->>>>>>      spin_unlock_irqrestore(&sched->lock, flags);
->>>>>>     
->>>>>> - /*
->>>>>> - * Free completed jobs and jobs not yet processed by the
->>>>>> DRM
->>>>>> scheduler
->>>>>> - * free worker.
->>>>>> - */
->>>>>> - spin_lock_irqsave(&sched->lock, flags);
->>>>>> - list_for_each_entry_safe(job, next, &sched->done_list,
->>>>>> link)
->>>>>> - list_move_tail(&job->link, &list);
->>>>>> - spin_unlock_irqrestore(&sched->lock, flags);
->>>>>> -
->>>>>> - list_for_each_entry_safe(job, next, &list, link)
->>>>>> - mock_sched_free_job(&job->base);
->>>>>> -
->>>>>>      drm_sched_fini(&sched->base);
->>>>>>     }
->>>>>>     
->>>>>
->>>>
->>>
->>
-> 
-
+Konrad
 
