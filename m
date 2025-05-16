@@ -1,298 +1,161 @@
-Return-Path: <linux-kernel+bounces-651218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-651219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 595EAAB9BBF
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 14:16:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE7F8AB9BCE
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 14:18:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D5DC87B0C96
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 12:15:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A357D3BC8E5
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 12:17:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A07E423BD02;
-	Fri, 16 May 2025 12:16:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B24A723A989;
+	Fri, 16 May 2025 12:18:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="P34j7bq7"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2066.outbound.protection.outlook.com [40.107.243.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eL3egZ0L"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E02CC13B7A3;
-	Fri, 16 May 2025 12:16:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.66
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747397774; cv=fail; b=Wigr/mzMeny/aODy8MMk/p1nrD6Npa8sVgn12+TTXvLQdCtE5yUGgv6PoveYkLd3y1HQ+DffNMy3gmxYzQ7ud9tjfNuVTZv65vZPE3qbttKKC++Ca4q9yG2F0BPEIQFjMkqZn025tHqB1Z1wtsWCjasoVu3hpj8BBRyd+DmNcz0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747397774; c=relaxed/simple;
-	bh=FBkgozGc7heSSth2aQ+73h0IykCMk6pzS/9D7E0qiTA=;
-	h=Content-Type:Date:Message-Id:To:Cc:Subject:From:References:
-	 In-Reply-To:MIME-Version; b=osLZdTgobfVfFIaRHeEenxRt5+A3Guvh5jyhGPy18mcJJEYZ+Oz/ZzGz5ifHBDpOIe8cwM8COk6PPZYqfqMz9BYYP1NtzlHOl6PtH8Aq6y82pIODUOYqOG4+y4AdcEbzlyVVgKvqIqT88VIT34B8YJDOKJ794PBQvPD9VPpMnkk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=P34j7bq7; arc=fail smtp.client-ip=40.107.243.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Gigoj0z8fHqFE1zDyfbTgdhleKQW4b6/urxqu7R7w0w19FssPjY8NcnzCUEG3ac//sUO0qBxAOoUSf71tOUCIH13nYWxZk1zso2Uzgvl65KpjiUGP1vYW6qT9g4LqY5lXaPqGvQ0pD6DbZLlREh8aHrx/K9wJUl52R1u+dAdHi7+UybczvFfAZZSxTAnLZaU5KovTMfvq99KTV5ltCJhME54VKBx17gMNmVyK45ODkL7fj21QpVGpgRo5UjM9ygCUNxqds0qkSwSUiUekV3NjzencmKHXJNJkuQaZXjruKgHr+K8GoZzvAWjbQwEMUT6sVTxcm4k8opk7qyiQglEzQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=SxkYp+guvseVldZZd4QHeSLy1Iq//l8PiZ86OYjUvng=;
- b=Q7355XfpaYhjjbWSlPNyF3eUJrg0YE4DK3UIC6ENyTom04Z5/bvfCEXnwvgIB0sDPJAe8sBHwySHub3hwCyloor+git/vqXzDZjVSazuyLMBCEzR+E94aO4Oqk/3XFNfykTebK332dBByOo0mwDhus0ummXxgfFVOLjIqkSOI6T+k8iVq/3lKms2IOUJaCtQTVTYACPZ5GVpJ270nJs/ZC22nD84/RdzxJtfKpPmaSWJaH+G81VycQzt1124CLAbXVCsIXRj2d3KwCO4CbE9HLFOqyu4w4JtrAbWZtU/0DfmJJ4b6y1BdpBBbWIJqquZz54QFVgaqtXAL70ajg0Bdg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=SxkYp+guvseVldZZd4QHeSLy1Iq//l8PiZ86OYjUvng=;
- b=P34j7bq7AoVL7GRTGCusxSkkaiIrIIlaAEEyy1jqUHoyp1/Rf8HR8MoTAhHcUia9JxNnZ4x5ygJR7cl0n+cnxFiGhRqKQZ/Ud0c+YQ+159hnrmuNYgdSGIkdR9Lhm/+cS50/G8dErEJgjaW41nvOEUQY53SKh10PEJ7H/nHfl26iFNf149OoWNDKXla7BdvEkqSHJRwmr7rSqIAp4ZP4pjwPZ0+kRsZUaU20U/WubCR9OpgBvIUe9MERYk34FfIHqyYuPjZyDjogVa3i3t8WKXIw6AjmF9zRC+iKEKZEIrv76Cyi5iaPCAOiJAL/nOwgRvxs4Ickg2yy0CKtVdnDcQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
- by SN7PR12MB6888.namprd12.prod.outlook.com (2603:10b6:806:260::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8722.30; Fri, 16 May
- 2025 12:16:09 +0000
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::6e37:569f:82ee:3f99]) by CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::6e37:569f:82ee:3f99%5]) with mapi id 15.20.8722.027; Fri, 16 May 2025
- 12:16:08 +0000
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 16 May 2025 21:16:05 +0900
-Message-Id: <D9XKT7HUDX2W.3I4LIUI35AWDV@nvidia.com>
-To: "Danilo Krummrich" <dakr@kernel.org>
-Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
- <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
- <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Benno Lossin" <benno.lossin@proton.me>,
- "Andreas Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl"
- <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>, "David Airlie"
- <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Maarten Lankhorst"
- <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
- "Thomas Zimmermann" <tzimmermann@suse.de>, "Jonathan Corbet"
- <corbet@lwn.net>, "John Hubbard" <jhubbard@nvidia.com>, "Ben Skeggs"
- <bskeggs@nvidia.com>, "Joel Fernandes" <joelagnelf@nvidia.com>, "Timur
- Tabi" <ttabi@nvidia.com>, "Alistair Popple" <apopple@nvidia.com>,
- <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>,
- <nouveau@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>
-Subject: Re: [PATCH v3 09/19] gpu: nova-core: wait for GFW_BOOT completion
-From: "Alexandre Courbot" <acourbot@nvidia.com>
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: aerc 0.20.1-0-g2ecb8770224a
-References: <20250507-nova-frts-v3-0-fcb02749754d@nvidia.com>
- <20250507-nova-frts-v3-9-fcb02749754d@nvidia.com> <aCNSI1iwvK8w51oJ@pollux>
-In-Reply-To: <aCNSI1iwvK8w51oJ@pollux>
-X-ClientProxiedBy: TYAPR01CA0046.jpnprd01.prod.outlook.com
- (2603:1096:404:28::34) To CH2PR12MB3990.namprd12.prod.outlook.com
- (2603:10b6:610:28::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 604B719FA93
+	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 12:18:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747397885; cv=none; b=JAEQYWeBRNk9joVY3uBbiQY2T2T/mWvyIF7XxXi1sVuS3Mn6MlnUHkDcMrCs02/Sz5kcD57+0nTALMXSkqrakBj6HcCZ1fCOCCadwS2LvXqYvbK37M1SB0jkbW+oh9VIINNyIgJXTc2AAkwfy43yB+zCUHEr07++wp2NJqV0gdw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747397885; c=relaxed/simple;
+	bh=hweRMDBbMgYEt5Dl85UjPVti8UDtwdriVOJKL4UqFLY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jRofe59WwVkhzgEj+vBa3F0DH9X9t+0DLwqP6EGzywckTJME9VK0Qnbdmgho6RnrYohfWQfnzLaYssoJT03QCNtyfznEzwClmM3QgLN/xw6LRyAZJXBc6ldrHeIUPpm9wyZ6laqZ+B4s9PLCHZBAuESno7s1mXS6s3pZ7CEFde4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eL3egZ0L; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43cfe63c592so21029515e9.2
+        for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 05:18:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747397881; x=1748002681; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=X47ZGQTdlEcBRUJmRih6LvTVvMFGNhFYURx88/HuE/M=;
+        b=eL3egZ0LR8tL/icOuO1WISzyHq5p/7eHsAGe8niRYdyVwPD6IlfafHeFHcMpPwwCLk
+         amdxBLAUpHGeD+TgnSs9NMtJJqWtOv8ypPjBjLR/vac+MIGgkcxmJlfTqxGuqgU1XfVh
+         aUnhAP/JWlb56YoD+dYFoL6l5Kx9zw67UntaLvXhhPCueMVJkDsmdp9r+OELEtcvhMzf
+         5EFOvbp1VbLLibBx+HD1th6DxbzP8mJunlEFaRvLjAS7x6W9dCbel+8OOqUJxpDOGROs
+         8w/ApW8n/AxecKF7tGyFLy8XdfFjltZJh9Pa7KtjmFrMciQTKzmTPtUxonUWLyDJx/zs
+         75tQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747397881; x=1748002681;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=X47ZGQTdlEcBRUJmRih6LvTVvMFGNhFYURx88/HuE/M=;
+        b=bDOBcdWsxQE5LIrXo8E+x1ceVIS5t2T30YLtnsnvarqkFlKJ9uBif2s5Zm8Vkenkvj
+         dfSS1t4+K0ZWWZfkHGz6+J1vwZWQNQiTRtqtn+bh/mwXqUhhw18l1oh/dZ/AkJTmr/0F
+         BBOgZx3OW/4WHiFkZAVv5N2Tr6TWeIhLQgL3SJfFMz+CJulTmhAoFN7oLwm8ocjUM4tj
+         P6ElxpzQ1i077+ECOop2xVZQxMjn0eAu0RwWYZMJGd02b6UfGFdqAyjyPic7OEQI8+P5
+         lYv42vOS3GaoSfRbepDBIzTmwBEair6axdXPvebO00qUxD3Di5d+zQs2EBX6cGNKeoSr
+         IPnQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWSvGjNSsUb9he3mmbdmzt0gQhHY68HZsIsPS4C5wAMN5JHpl3nkXW5KZ+4jit0vVFTNrLozv0NraMsWs8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9j8b27WzbCLyyyqXBpObJpvgwU3X33YT8RzNCh5aIGPP7yfhE
+	2PcbCoDWKrb0yKLoSnhbacg2+o/70yCR3otGNfQIvrbXZzTwav4fyUPX
+X-Gm-Gg: ASbGncuKQvZMO+N/grW3bG4P/b0aF+eEqd7cBR+I0/C11PRsw3MQPRNUyHSnmbz4OyK
+	NBv0hjEbGq6rhThh5bvnziZysDZtTsZ0UU6qEn/NwIPAufatlq7kKstFM/ZoGZIySCUUip/+1fa
+	17Le2e6zOPTVoQk2lFrZ53gvP+sosl8+cBvZXPRdtA2d5DoU72F2/KkkdaU6pB9fK5b4W54S+Jv
+	SqjIIZdGmW+fgHbL3Kl1m169mB2jqEaclQeoQ248VX+M5dWi3ZSkx6og2+0GS2vV3thiw6L9rPw
+	awd7ktkKAlDg48uRtmfiEXJ3v7gJvm3RyX2oBODaXRY1X8j/kcFh4Np0WMP5cyqaMYTH306Nteq
+	usfaWFeoWIsRcIA==
+X-Google-Smtp-Source: AGHT+IH0J1ELfcQkOEshGXIHJbKTcVdYhtFdGW7TPb6gIpDGduQddR7Mrc0J+r4kneCopXMfacaOQA==
+X-Received: by 2002:a05:600c:8889:20b0:442:f44f:66f with SMTP id 5b1f17b1804b1-442fd672542mr20883745e9.31.1747397881313;
+        Fri, 16 May 2025 05:18:01 -0700 (PDT)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-442f39e84d3sm110946875e9.32.2025.05.16.05.18.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 16 May 2025 05:18:01 -0700 (PDT)
+Date: Fri, 16 May 2025 13:17:58 +0100
+From: David Laight <david.laight.linux@gmail.com>
+To: Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <u.kleine-koenig@baylibre.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
+ Nicolas Pitre <npitre@baylibre.com>, Oleg Nesterov <oleg@redhat.com>, Peter
+ Zijlstra <peterz@infradead.org>, Biju Das <biju.das.jz@bp.renesas.com>
+Subject: Re: [PATCH next 0/3] lib: Implement mul_u64_u64_div_u64_roundup()
+Message-ID: <20250516131758.2a304d1b@pumpkin>
+In-Reply-To: <5e7mp3nreaadppjhxhpffyff2d2ccwcjf2suonxe43eofngddu@qfufr2wiw7yn>
+References: <20250405204530.186242-1-david.laight.linux@gmail.com>
+	<5e7mp3nreaadppjhxhpffyff2d2ccwcjf2suonxe43eofngddu@qfufr2wiw7yn>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|SN7PR12MB6888:EE_
-X-MS-Office365-Filtering-Correlation-Id: 69de1463-39bf-49d9-9d47-08dd94737053
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|10070799003|1800799024|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?RVhmaWgzcXlpWXRJeDhTdklIVEp1N3dWeFhKOTNGbUw5cGJxckttRnQ5bXJW?=
- =?utf-8?B?ZkZIczJvRUVib1BtTmdMc21TTmNBdGtTZ1N6cExuUzFlRFY4VFE1ZTVJUEpJ?=
- =?utf-8?B?M2thcERDbFBNQTlQTU1BVVo1YVEwMENqY2RGS2lxUUVjczErekVhRkR2eko4?=
- =?utf-8?B?M2pFRXJGUVdrNEFBVmhnZVgvcGYyYTRVL3NVY2hzWDdnaHBJWW1lZENidkZN?=
- =?utf-8?B?aGhjSWRyNi91aHUrYisyWDh5N25VZnFUQ3Y4T1ZPdjZVU0pZdzVwL1AvenlO?=
- =?utf-8?B?M1haL0V1MXpSMGFuNk9JeEFvSERjYzZ4NmNyQlVoNDVsVnRrbnRxc2M5KzZI?=
- =?utf-8?B?KzlpSlBLMXBxaEQ3ayt6b1NObDFPNUtUaG5aK3dRMFRWQTM0bi95eGs3MmJq?=
- =?utf-8?B?YjJVSjlBSUNxdUtBeEc2a0NBVDBIa1hkaFNaTEF3V2Z5UUEyQ28zbzVSSHlC?=
- =?utf-8?B?M2xwWGFpZWgrb2lWVkhrd3gxcWVsWVB3aTU2cU1UNEJMNlRjTndGS2NYUUZ6?=
- =?utf-8?B?bnlDanp3WDBNVFdvN2lPYVJ0WEJCcDhKZnEvY3NPWGJmTmhxdklpT3ZHS0R3?=
- =?utf-8?B?Wnh1YlRJZkVOVFFEdTA0NnhJRTBjcUlDd1Y0SUZ3U1FRVWM3WW1NckxQYUJx?=
- =?utf-8?B?KzlESmE2KzFTbWlGSGNKYWZ2bHBZNVU3T0I1V01md21tUGE0d3d4UXdUVkxQ?=
- =?utf-8?B?QTJ4VHpDeUVMWXBJaVJTU1R0OVEvRWkxY3dqcEpKY2xNUVluOWdYTTlxWGtS?=
- =?utf-8?B?ek9scG1RK3hqbGtkZVM4Y0J4dDE1eUYzTWsxenZtUm1qR0xVeGp1Y0t0QThD?=
- =?utf-8?B?YVNUd0crazdOR2pJa2tvUjQra0E5VW9qMlN2dGUxUTdQalJuRzVzWTFKTzBy?=
- =?utf-8?B?ZmE0Y0pPVW5IQjZibjdXU2pQc285TWFYZmc5NDB1Z0Rlc0lraVVNSnFBUi82?=
- =?utf-8?B?am1NcHVCSVB2QUNDOXRNMStHeDNuZnVoT1VGWldOVzBJdlNsOTFnSzIzc0da?=
- =?utf-8?B?cDR5S0NjNWtsNFZwQTI4M25tT1FYK1B0WTV4SkdsMHRUak8zbWhrS0dnR01r?=
- =?utf-8?B?SU1xUUVzbHBKKzZpa1lyUlpPcWMvK2Y1c1c3VndEWlpqbHl5dzNCU1J2VTd6?=
- =?utf-8?B?R1RHUTFTejVSMXUvK2J6aWN0VGNjUFg4aEM4VU8reW8yTDd4NE1RUldGU08v?=
- =?utf-8?B?N1JQN0xsbmhXSG9pS2lIR0FLZFZmcFlPRlBRdUdjcERzczZEN0dLL1drQnpJ?=
- =?utf-8?B?UzhaY1AyV2dOd0R6d0l4TmJDekxXMjIwL2YybnpCWXlhVE4wcXFhdzFGajBJ?=
- =?utf-8?B?MndRa2JZc21YdTVHOEhNazRhSVpwUTJXTHcwMkkzZmxLSldWcEJ3Vkh1eGJl?=
- =?utf-8?B?VXk5b0VOcDNhMjB5OE9neFhTUjhtTnh1QVJmSG91Z0ozT1pkNXlkYzBpZjlF?=
- =?utf-8?B?Q3hoRWNyS2Y1dVBqWnlvWGd1SUM2Sk84cVBzSFI4UXFlVlNpSUJwMnNlR0gz?=
- =?utf-8?B?MkoySyt0VU9oakhCN1B2dGdUcWUrakd5TWppR1pYWi9ibFBXRlpnU1JoS1dn?=
- =?utf-8?B?YzlKVlBpZjhtWkZhZ3JtemFuLzlaSEtwb0lDWU9PaHowY0x1Q2tXOW5xdnRs?=
- =?utf-8?B?aWVQN1JDMWVPdXJUamxGOFExZmVTVTVOS0lKTXlCVnN1TXNTeko1ZTRzY0pD?=
- =?utf-8?B?bmdiSmJZTWNZaWxiblFCVmJyeVhhUG9STFVRMmRZdG14d0tGVFVjOGhyMUh3?=
- =?utf-8?B?bk1pYWFLczBMZWVHS2pyRGExajB3KzlmQ3lvSlNyZVRtN0tNNDBoQ3NpSlhK?=
- =?utf-8?B?VEtCWWFtT2U5MitQVlFpcU5abXRRN0JTL3c0YXJtYWJwZ3pEZVhZbFo0c0hU?=
- =?utf-8?B?UCttakF4ZlBsa3BvOU10V1N6b1BmZTNXcXpHWS9sKytUNmJHZUkwdC9Lb2gy?=
- =?utf-8?Q?iKnlDsR4rIU=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(10070799003)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?OVpVdER5eUdBNGtYOEpNS213Y1c3U1ZFYW9TV2RYSTByNEhSaXAxVnVHNmNL?=
- =?utf-8?B?VW5FUGlrUjdLV2R3Uk9Xc2FSamRDRVRaV0I1VDZrblcyUHBldkVFMVZOQkd1?=
- =?utf-8?B?ZnNWLzZDcm5QTnhvVHlOMFBVK3AvVXY4YXNoM3FXRWhYRVZhYjFZQ0gxRUJK?=
- =?utf-8?B?Smc5bld1R2VBSTJsWEZMdmFieGRpSzJLYlJQVnFYVDZCbnQ5YzdVQUNJby9q?=
- =?utf-8?B?WFprWTB0QWQ2REFNbFVCTnNUd1J4N3ZyVXVEclJxNU5zVlVlWngwdkZ0Qkwx?=
- =?utf-8?B?djRUZzNnZkdDK21yNkljMmZBdkVsaEdYYk9MWHJvdTJZYUNxUVExMzA1R1Rw?=
- =?utf-8?B?MDB2dVU1d25kVm0xSVNTZEJXUlpLeWZFRnJOVkVLN3hlQlg1elNlUDVtRFNo?=
- =?utf-8?B?VGVOWG5UV3g1YnVXdkg3Z29RdmJCL25obUlGejc2WWNPQW92TUd6UDNrYmh5?=
- =?utf-8?B?bVg1b3dlMGhQOERaS1RxVHZPL0pRbll4djFCM284NkFEWCtKUzZNamk5aG5D?=
- =?utf-8?B?cDZTVThqNTZoVXcwZ1dNUzhHdDRzY3FyM0JRYmd2R1JEc3VWeXpRZk5HWlhj?=
- =?utf-8?B?S2VnZXR0R0w4REd5eWphTVFBOUppSXFIUHdJa2tuOFMvZ2FJamd5Yk5MeXh0?=
- =?utf-8?B?M3hSWm1FS3lEM3lXNmtVc2xJUEowRXdXMFRDaCs1SzBBL20xdmR0ZjhCcEs3?=
- =?utf-8?B?NTBQaDVHcHphNFNnVU9Kb0JIQWhqN3hyVE13YkdWQ3lkVytWWUZ5ZGIvZFBF?=
- =?utf-8?B?Y1RjcjhLOFIrRUdFSG0zUy9KVHZiQUJMb0h1aUk5MTlndk02M0dqM2Yxa1Z6?=
- =?utf-8?B?T0NPaFNjalVyY3h6dllwSGdBaW5jR2Nlbk1EUEFSdkRmUGlKRW0xSTQ0cDRm?=
- =?utf-8?B?SEs4SDVkSEY5WlhOd0dOMmVVd3p2dDkraWhtTHB6N1B2UUlFRjVtNFBBaEMz?=
- =?utf-8?B?dDRoQWduWnBYVjRTZDVEaytnd1VQTFNRQUxub1owaiszaTNWaFVJN21BVk5v?=
- =?utf-8?B?SWZmWmFWT0FBNmNjbDZNWEc1Y1ZGNVBpbG9udUpuMG1pN0hVQ3RrS1lQRndR?=
- =?utf-8?B?SXA2Tk1MalpqSkZxTEM3TTVra3NDTjh0dWkzMlRHZlBZck1MWDJwQ2Z2UjZn?=
- =?utf-8?B?dFNBYmU4Ny9qa3YzeEp4K3g0VzFUaG9NOC8ybldzMEZoSE1yUXRCaXAwYjdy?=
- =?utf-8?B?VVNHTUpJM2kwRmpxc2c5bVNmL0F1a3p3Z1FqaHJzbkEybzdpVE9oK3FFT1pT?=
- =?utf-8?B?MDdSSUIyYW1sSGFIUzR5MjFyUkxJY3ZmVVpsMlI4Q1Q2TTFzcXJPWGxSSnFR?=
- =?utf-8?B?R3NwN3UvVXB1Q3JMZENSaytEMFZOdGE3ZmVQYkkzZFMrM3dyc2h4L0Vpc3Qv?=
- =?utf-8?B?c2FwbUpTUkZRVjVqb2lTMHg3b0lhRkxnYUhkY0JRRFZNOU9Zaks5dFpSeG0v?=
- =?utf-8?B?M0N3MDJmUnJYVEVpekF4dW5SOHBhQThxM01lVXdYbVh2ZkZNQ1JvZTVsRVpx?=
- =?utf-8?B?dlQ3NEpwQUVJWDBkZjNJMDRBcUV2V2FYS005R1JqNndRdFd0ODVlUTd0Q2E3?=
- =?utf-8?B?RVBGc3FwZ2JkZDB5UHBveFRydlVuVEZ2dE5oMVFEOTFSVW1wMWE0U0xRQ1VL?=
- =?utf-8?B?Ym5UY0dnU1RibWpKT3JLY2JrcXRsQ2dxWjdQWHZNOGZ6azhwYnI2YjFCejla?=
- =?utf-8?B?TVFIVllnaDFUR2ZpaGQxdVQ2UGljU0dSWUYra0l3N0tWL2wrQ0puYTI0b2dM?=
- =?utf-8?B?eVIwd2FGK1VyZmNMM0swUVlHTmlwVUZiUm5DdnBYWVoxN0VuQ2tObDk2RVJq?=
- =?utf-8?B?WThzcUNLV1pmakJPQ1pPbjZhdk1zZGxMMUQvTUJaNExNRmpSSFNaenhDK3dv?=
- =?utf-8?B?Z2dCaTQvaVIzenBLSCswMjlWKy81enRvWm9XY2lwZVNMWFdrR0Q0Vk1GUmwy?=
- =?utf-8?B?TFNQQjFOblp2VlZoNGZyV2pSMktrcnJhMFBQeHZ4cGErVWtMeks2SnNWdUJ1?=
- =?utf-8?B?RHE1OHJSbmpMNVNHZHpsNUtvc1l4L25BRmVaaklKcHNCczJhTzc1REZ5UXhp?=
- =?utf-8?B?MnpwM2o0WVYxb2hqbzl1dDJZcUZHYVFlbWpjTG8ydUVRb3g4aHJBR1BUWUVs?=
- =?utf-8?B?NjdHc2k2bkEyNENmamlSUWxlYWh6Z2g2THFuYU9xT2RDYUkxM2FReHNZSHVU?=
- =?utf-8?Q?AYZ8sE4CRlcY/E3nv0awAikGcUEtFampqvTuSi1KjJcj?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 69de1463-39bf-49d9-9d47-08dd94737053
-X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 May 2025 12:16:08.5395
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Z7cc70mYIn9QNeG8qnP9JwoXTYdSJYlARorAXGud1KdVRjToHfurv/fe03jEBvcYXpL3bE5azpyPiXkqzrWN9Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB6888
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Tue May 13, 2025 at 11:07 PM JST, Danilo Krummrich wrote:
-> On Wed, May 07, 2025 at 10:52:36PM +0900, Alexandre Courbot wrote:
->> Upon reset, the GPU executes the GFW_BOOT firmware in order to
->> initialize its base parameters such as clocks. The driver must ensure
->> that this step is completed before using the hardware.
->>=20
->> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
->> ---
->>  drivers/gpu/nova-core/devinit.rs   | 38 +++++++++++++++++++++++++++++++=
-+++++++
->>  drivers/gpu/nova-core/driver.rs    |  2 +-
->>  drivers/gpu/nova-core/gpu.rs       |  5 +++++
->>  drivers/gpu/nova-core/nova_core.rs |  1 +
->>  drivers/gpu/nova-core/regs.rs      | 11 +++++++++++
->>  5 files changed, 56 insertions(+), 1 deletion(-)
->>=20
->> diff --git a/drivers/gpu/nova-core/devinit.rs b/drivers/gpu/nova-core/de=
-vinit.rs
->> new file mode 100644
->> index 0000000000000000000000000000000000000000..5be2e0344fb651e5e53c9223=
-aefeb5b2d95b8de1
->> --- /dev/null
->> +++ b/drivers/gpu/nova-core/devinit.rs
->> @@ -0,0 +1,38 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +
->> +//! Methods for device initialization.
->> +
->> +use kernel::bindings;
->> +use kernel::prelude::*;
->> +
->> +use crate::driver::Bar0;
->> +use crate::regs;
->> +
->> +/// Wait for devinit FW completion.
->> +///
->> +/// Upon reset, the GPU runs some firmware code to setup its core param=
-eters. Most of the GPU is
->> +/// considered unusable until this step is completed, so it must be wai=
-ted on very early during
->> +/// driver initialization.
->> +pub(crate) fn wait_gfw_boot_completion(bar: &Bar0) -> Result<()> {
->> +    let mut timeout =3D 2000;
->> +
->> +    loop {
->> +        let gfw_booted =3D regs::NV_PGC6_AON_SECURE_SCRATCH_GROUP_05_PR=
-IV_LEVEL_MASK::read(bar)
->> +            .read_protection_level0()
->> +            && (regs::NV_PGC6_AON_SECURE_SCRATCH_GROUP_05::read(bar).va=
-lue() & 0xff) =3D=3D 0xff;
->
-> What does it mean when the first 8 bits are set? Why don't we have a mask=
- and
-> value to compare for that?
+On Fri, 16 May 2025 11:47:58 +0200
+Uwe Kleine-K=C3=B6nig <u.kleine-koenig@baylibre.com> wrote:
 
-Since this is a scratch register, the particular behavior of the bits
-was documented in a separate OpenRM file - I finally found the
-explanation after looking it up.
+> Hello David,
+>=20
+> On Sat, Apr 05, 2025 at 09:45:27PM +0100, David Laight wrote:
+> > The pwm-stm32.c code wants a 'rounding up' version of mul_u64_u64_div_u=
+64().
+> > This can be done simply by adding 'divisor - 1' to the 128bit product.
+> > Implement mul_u64_add_u64_div_u64(a, b, c, d) =3D (a * b + c)/d based o=
+n the
+> > existing code.
+> > Define mul_u64_u64_div_u64(a, b, d) as mul_u64_add_u64_div_u64(a, b, 0,=
+ d) and
+> > mul_u64_u64_div_u64_roundup(a, b, d) as mul_u64_add_u64_div_u64(a, b, d=
+-1, d).
+> >=20
+> > Only x86-64 has an optimsed (asm) version of the function.
+> > That is optimised to avoid the 'add c' when c is known to be zero.
+> > In all other cases the extra code will be noise compared to the software
+> > divide code.
+> >=20
+> > I've updated the test module to test mul_u64_u64_div_u64_roundup() and
+> > also enhanced it to verify the C division code on x86-64.
+> >=20
+> > Note that the code generated by gcc (eg for 32bit x86) just for the mul=
+tiply
+> > is rather more horrid than one would expect (clang does better).
+> > I dread to think how long the divide loop takes.
+> > And I'm not at all sure the call in kernel/sched/cputime.c isn't in a
+> > relatively common path (rather than just hardware initialisation).
+> >=20
+> > David Laight (3):
+> >   lib: Add mul_u64_add_u64_div_u64() and mul_u64_u64_div_u64_roundup()
+> >   lib: Add tests for mul_u64_u64_div_u64_roundup()
+> >   lib: Update the muldiv64 tests to verify the C on x86-64 =20
+>=20
+> I wonder what happend to this series. I'd like to make use of
+> mul_u64_u64_div_u64_roundup() so I'd be interested to get this into the
+> mainline.
 
-This appears to be a GFW boot progress counter, with 0xff meaninig that
-boot is completed. I have added a (documented) specialization of this
-register as well as a helper function to make this clear.
+I've a WIP rewrite of the divide code, speeds it up considerably for
+'not amd-64'.
 
->
->> +
->> +        if gfw_booted {
->> +            return Ok(());
->> +        }
->> +
->> +        if timeout =3D=3D 0 {
->> +            return Err(ETIMEDOUT);
->> +        }
->> +        timeout -=3D 1;
->
-> NIT: This means the timeout is ~4s; can we start with timeout =3D=3D 4000=
- and decrement
-> with the number of ms passed to msleep()?
->
-> Anyways, this should go away with read_poll_timeout() anyways.
+IIRC (the test machine is powered off) the test cases with random data
+do down from over 900 clocks to below 150 for x86-32.
+The 64bit code (on x64-x64 but skipping the divide instruction) are ~70
+clocks rather than nearer 180.
+Both those clock counts are almost data independent.
 
-Yes, the timeout code was a bit weird. Actually as you pointed out, we
-can also use the `wait_on` helper introduced later in this series.
+The code relies on the cpu having an 'unsigned long/unsigned long'
+instruction.
 
->
->> +
->> +        // TODO: use `read_poll_timeout` once it is available.
->> +        // (https://lore.kernel.org/lkml/20250220070611.214262-8-fujita=
-.tomonori@gmail.com/)
->> +        // SAFETY: msleep should be safe to call with any parameter.
->> +        unsafe { bindings::msleep(2) };
->> +    }
->> +}
->> diff --git a/drivers/gpu/nova-core/driver.rs b/drivers/gpu/nova-core/dri=
-ver.rs
->> index a08fb6599267a960f0e07b6efd0e3b6cdc296aa4..752ba4b0fcfe8d835d366570=
-bb2f807840a196da 100644
->> --- a/drivers/gpu/nova-core/driver.rs
->> +++ b/drivers/gpu/nova-core/driver.rs
->> @@ -10,7 +10,7 @@ pub(crate) struct NovaCore {
->>      pub(crate) gpu: Gpu,
->>  }
->> =20
->> -const BAR0_SIZE: usize =3D 8;
->> +const BAR0_SIZE: usize =3D 0x1000000;
->
-> This means that we'll fail probing the card if BAR0 is not at least 16MiB=
-.
-> AFAIK, that should be fine. However, can you make this a separate patch p=
-lease?
+I got reasonable code for 32bit x64 running gcc 12.2 from debian.
+Then copied it to godbolt and found gcc before 15.0 making a pigs
+breakfast of it (all clang versions are fine).
+So some rework.
 
-Sure!
+I still need to actually plumb it into the kernel sources.
+
+I do want to test the divide loop on x86-64, at least for 64bit.
+Probably by including the code directly into the test module.
+
+	David
+
 
