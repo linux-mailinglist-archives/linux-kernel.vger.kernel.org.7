@@ -1,61 +1,65 @@
-Return-Path: <linux-kernel+bounces-651557-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-651559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F59FABA005
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 17:38:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AF47ABA007
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 17:38:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75AE11BA4BFC
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 15:38:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DBC91172BF8
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 15:38:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA9231C84D7;
-	Fri, 16 May 2025 15:37:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FBD41D6188;
+	Fri, 16 May 2025 15:38:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tWrjbSnt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tSWKXFQj"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 489FF1C6FF3
-	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 15:37:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC7351D5ABA
+	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 15:38:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747409877; cv=none; b=hnbgX9REVmI30NIj+QNeTVZMb8rO2aCeiK63pp6aKUAHZuB5Chr3/yZleKLnqA2PizJGEOCIHaSe1OUmS993mKahtfgzptm4vIyrsxb92CDBeUh0G+Y6jl7CfzkBaBdmjvGyEEw3gTSD2LxHE/eXQ6NtaBMXYNUQ4HKpy6ysZ80=
+	t=1747409881; cv=none; b=p7+qpzG45h0otbnDzwcFjCcGnmQULxRug/yOvm5+4UQ/0PEwsNIZ/2qgQPpLmEIZVKTmJ6cOfnUxAjaUQaxmQqFR38nsPDMYUGt+LtG/w1Vh1PD5dMJ3W7KR773+ue0nxuJ/KdDOEgbwJUquSIUdIhMoCQy4C7sy7D9yk5Urhqs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747409877; c=relaxed/simple;
-	bh=GPLWfIxhxeI+gEoZlD4EGy1WAmfKbNh7zDOUf73kHr4=;
+	s=arc-20240116; t=1747409881; c=relaxed/simple;
+	bh=jWNvYz+zqkaA7TqzGqTcYg2figdY5U1juqFUFBIhnks=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=swhCT7n+GDUuFi6LKO0Xi8YkIXoAQSGNVDQDV4utBzxfjn8e3cl6iEOPLMDmcwINCX4AdKw2e8dYTv9+Ez2ESrZMXOE+mCCgYhiZb1tROlwsp8IWzvyddOLt0fyoCVScZd1JUfjk+z5/tWzXbi0zNRON8OuQNREPZbxU+S7sviQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tWrjbSnt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED770C4CEED;
-	Fri, 16 May 2025 15:37:54 +0000 (UTC)
+	 MIME-Version:Content-Type; b=uBbRbvgrY/OhBHcfb3s4em9bStysMm8W/rr8vW8+RcmTIb9LvX8fEhmfvV69790c+x6mbnxt4J1wjVmmuCpACilJKWohxnU9PWut5NvLw7ask8z8ymB4t8SfVEVpUHwpiID9SbrHklUFpah50Vo1Sw6bvH7ms8XrpsdblTEfBLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tSWKXFQj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5042C4CEF8;
+	Fri, 16 May 2025 15:37:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747409876;
-	bh=GPLWfIxhxeI+gEoZlD4EGy1WAmfKbNh7zDOUf73kHr4=;
+	s=k20201202; t=1747409881;
+	bh=jWNvYz+zqkaA7TqzGqTcYg2figdY5U1juqFUFBIhnks=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=tWrjbSntMZnHCoWWroihESxoAMFpKMGUBnZ83YpMR9MpmhslxLmHGbnWQZtZiJFC9
-	 jBHieqIOARhil/WWM7HWsh4XkVNku68fvwCaV2R4WnBsBlPED4nrXW0a1/ON6KX7N+
-	 zhM3dGZM2heN6iMrTpSPH7eeZvLOsN7mcT9CuNeC2IToG2nonNuuWHXrvaa2lCJfD1
-	 HsvIk75tfo617e3YeKrOAX78f0r9SkLhSNque1A78cvth+h7p7hJtUEMoD2M9pkftC
-	 2tbDRyqOZQ6wMLPTOiFBZLt7w37A0icH5f6ZfOcQjMd5D7Eai6N/d88CNyVzmuw6Zv
-	 BfxWTghSNUGOA==
+	b=tSWKXFQjJHH6DqPAP2ki5ul6F3e3Tn7sIUDEVmsDMZ6wVehQ0p4YUaf2lMiHRYCaP
+	 IAkOxSPYYBmZsjrOiMZt0GMNVtCJgUdw4zqfiejVqTUIISYHineeqslDLO7u96XEmU
+	 pT3tomaMqHHOnWlV9VSD/t3McW5b5lIFQzfmuKKlfjij2cZsNhzoN8lbr2sZ/7A2W+
+	 yV5B38ABa8s41qQ5G68JIvrNF2I6bCD7WsNRlKkoMPd2fbwKkt+FhFT2tNmqzDmRg4
+	 27ONeR54uivYUhwxzP35JNHXRUcHa745uR6+XGxBJcZTxgwpEgKBVFRoRCy2qTu8MZ
+	 0bySiFZUW7bgw==
 From: Will Deacon <will@kernel.org>
 To: linux-arm-kernel@lists.infradead.org,
-	Ard Biesheuvel <ardb+git@google.com>
+	Gavin Shan <gshan@redhat.com>
 Cc: catalin.marinas@arm.com,
 	kernel-team@android.com,
 	Will Deacon <will@kernel.org>,
 	linux-kernel@vger.kernel.org,
-	mark.rutland@arm.com,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Yeoreum Yun <yeoreum.yun@arm.com>
-Subject: Re: [PATCH v2 0/3] arm64/boot: Forbid the use of BSS symbols in startup code
-Date: Fri, 16 May 2025 16:37:44 +0100
-Message-Id: <174740792413.188921.9613065517341295309.b4-ty@kernel.org>
+	anshuman.khandual@arm.com,
+	ryan.roberts@arm.com,
+	dev.jain@arm.com,
+	peterx@redhat.com,
+	joey.gouly@arm.com,
+	yangyicong@hisilicon.com,
+	shan.gavin@gmail.com
+Subject: Re: [PATCH v2] arm64: mm: Drop redundant check in pmd_trans_huge()
+Date: Fri, 16 May 2025 16:37:46 +0100
+Message-Id: <174740461415.2575604.10045637964283416849.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20250508114328.2460610-5-ardb+git@google.com>
-References: <20250508114328.2460610-5-ardb+git@google.com>
+In-Reply-To: <20250508085251.204282-1-gshan@redhat.com>
+References: <20250508085251.204282-1-gshan@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,28 +69,23 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-On Thu, 08 May 2025 13:43:29 +0200, Ard Biesheuvel wrote:
-> Move any variables accessed or assigned by the startup code out of BSS,
-> and into .data, so that we can forbid the use of BSS variables
-> altogether, by ASSERT()'ing in the linker script that each symbol made
-> available to the startup code lives before __bss_start in the linker
-> map.
+On Thu, 08 May 2025 18:52:51 +1000, Gavin Shan wrote:
+> pmd_val(pmd) is redundant because a positive pmd_present(pmd) ensures
+> a positive pmd_val(pmd) according to their definitions like below.
 > 
-> Changes since v1:
-> - fix build error due to missing declaration in #1
-> - work around Clang complaining about the ASSERT() expression in the
->   linker script
+>   #define pmd_val(x)       ((x).pmd)
+>   #define pmd_present(pmd) pte_present(pmd_pte(pmd))
+>   #define pte_present(pte) (pte_valid(pte) || pte_present_invalid(pte))
+>   #define pte_valid(pte)   (!!(pte_val(pte) & PTE_VALID))
+>   #define pte_present_invalid(pte) \
+>           ((pte_val(pte) & (PTE_VALID | PTE_PRESENT_INVALID)) == PTE_PRESENT_INVALID)
 > 
 > [...]
 
 Applied to arm64 (for-next/mm), thanks!
 
-[1/3] arm64/boot: Move init_pgdir[] and init_idmap_pgdir[] into __pi_ namespace
-      https://git.kernel.org/arm64/c/93d0d6f8a654
-[2/3] arm64/boot: Move global CPU override variables out of BSS
-      https://git.kernel.org/arm64/c/4afff6cc9a55
-[3/3] arm64/boot: Disallow BSS exports to startup code
-      https://git.kernel.org/arm64/c/90530521079e
+[1/1] arm64: mm: Drop redundant check in pmd_trans_huge()
+      https://git.kernel.org/arm64/c/13c63ce35883
 
 Cheers,
 -- 
