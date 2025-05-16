@@ -1,166 +1,98 @@
-Return-Path: <linux-kernel+bounces-651315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-651317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 161E2AB9D0B
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 15:16:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E075BAB9D12
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 15:17:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C88243AD812
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 13:15:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7DFAB503B15
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 13:17:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 859F02BD04;
-	Fri, 16 May 2025 13:16:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB9614B1E4A;
+	Fri, 16 May 2025 13:17:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZndHyWnU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bTONgGAq"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E66372940F
-	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 13:16:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D383812E7F;
+	Fri, 16 May 2025 13:17:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747401361; cv=none; b=cmAXuyJvL99fGlqq6jec7kE0JfpMcRJGr4ZsypnqkhAX9mNe8dyR8ky/vaKGKo/MfmGiablpDtxvPyRSi7LUvJFhAd16VdfdcaAPxZcn5irHdm17XP9WBLzkvUi1UKA0JZWqPHobrPdjONiZgy/kKONcDaJXIAScVzFVFaLfeB0=
+	t=1747401461; cv=none; b=Exeh6ihxYwQ1Wy1qsEZZ0XxAkWvMl51B6lT1+qLspDcVy1MJkT8J9D3hG2HkqkNLGNADkAmMAx48SCKnbXJLlVkP7TxUED++CuiE3GMJE6TH3B80nxyLSchcNXueV6AQLFuuyGCF2yKdvzTpjh3xZPW722nOYYCeh/fcXhWadTc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747401361; c=relaxed/simple;
-	bh=uvvI8RXh4rZJqEJHK/WRU2hAsaJ0v4o/pfgSZSgKH6E=;
+	s=arc-20240116; t=1747401461; c=relaxed/simple;
+	bh=rVeEmKln0gNTxsxDZ0s6DRl00sLdCRCSPPJjd26+MDE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CaMfhXfcBCvEpNywp0G3F6hF/3p4P5QzSvq5Ptp45/OHGcUSnzbFQA63jLcNqYLrp4FVHYQMc5WS4CBhePFF3b56nDzyqSBvxyo3anCE1LxVqW/K9ZOOrkRAz3ngIxR1LV6PDEo8qIexaTG0DRy3UUqgW/2NonmBTPUI82wpWJM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZndHyWnU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 325BCC4CEE4;
-	Fri, 16 May 2025 13:15:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747401360;
-	bh=uvvI8RXh4rZJqEJHK/WRU2hAsaJ0v4o/pfgSZSgKH6E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZndHyWnUtTl2Ohswj3nHyvVAXeQ6TjP9gkXk8xPOjGtX+f72esC2vbnNw1DiGIsWJ
-	 lVmTjzE6CFCeoxIoO7Fzxlzlpv6FYXhIYKd8Df5jjx3X0QECNmguPuz39ToUNPw4SR
-	 +2TlFO+0konrNtwjzaoH1QfK5O8JErI6U271cSAk7f0buYA0Cst4GxwngMj9+d6Y13
-	 i2kluMysPKw/7TCqX7HtmVaMcS0DowRMkuDGNek6kb7JH8M4bCglgD1FFzLFHy1nkK
-	 4l+rSc8F8qckDFHv15znnxQsvBRYX1wX8rF3f0ySanQYhuMr/UqkF/gOkTu4ik8IDa
-	 ZSUQMXC7NUzAA==
-Date: Fri, 16 May 2025 15:15:56 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Dave Stevenson <dave.stevenson@raspberrypi.com>, 
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, Dmitry Baryshkov <lumag@kernel.org>, kernel@collabora.com, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 12/23] drm/tests: helpers: Add a (re)try helper
- variant to enable CRTC connector
-Message-ID: <n2ojf77winz6b4kchmt6bnppomb6cpg4okrwnh6iibsemou4as@t5lhg3m24bjm>
-References: <20250425-hdmi-conn-yuv-v4-0-5e55e2aaa3fa@collabora.com>
- <20250425-hdmi-conn-yuv-v4-12-5e55e2aaa3fa@collabora.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=rRrz2GXgxrPyxXWFTgl7oUCO3P+XIQGuFs32APnu3wi/xeeyyfgM+LfTcauGw8dJrOvJYGGxGZUZgjDc7V2I1Q9fKbbyol/JQBFUNAbcKHXYjAZu8hizSCdmbLvq3clPctIqiL1vKHRvoMi8msFBWfbFcMbOiE1pxTKplwSbFpA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bTONgGAq; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1747401460; x=1778937460;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=rVeEmKln0gNTxsxDZ0s6DRl00sLdCRCSPPJjd26+MDE=;
+  b=bTONgGAqVQ7ewUyjwdvs+lwBbflSAfsIWlk7cRra1byyQMw9Q8ZmHZip
+   peuam05vfLk18pyN3BzBGXZ4Yzv8L/jifU3EpkjkfmJ1vpMvXoXnjPhaS
+   QhOcDbnf1TrmjFl86j87Cwjzczg6B2yl6OqJSZ0d56Tfoc69uObZh+ilz
+   Kiuw81U39o6Ldp9AA9bcABA9oUavgdr7mvMIK7PNETf6gxp64lXd1P1ua
+   uCpvrDTAXt7bDNXLbqXGYLbxzRDX+X++l8Q09tH88z8bQ2C7l8ozi8eIf
+   NI73bM2uf4r5O7L9H+PKI766yh3jrPZwreWFdiNIzb/0ihvkg74obX7pZ
+   Q==;
+X-CSE-ConnectionGUID: 7otnPEuwRAONIrJ16ZV3Cw==
+X-CSE-MsgGUID: gewe6C/ERRC1ejwdJ2dhdQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11435"; a="53045003"
+X-IronPort-AV: E=Sophos;i="6.15,293,1739865600"; 
+   d="scan'208";a="53045003"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 May 2025 06:17:39 -0700
+X-CSE-ConnectionGUID: 7e9q5ZeFSxW+0LvW/hgXUw==
+X-CSE-MsgGUID: 4VIMYbnlSKqD9Ot6qaED7A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,293,1739865600"; 
+   d="scan'208";a="143934000"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa004.fm.intel.com with ESMTP; 16 May 2025 06:17:34 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+	id BAD1A1BC; Fri, 16 May 2025 16:17:32 +0300 (EEST)
+Date: Fri, 16 May 2025 16:17:32 +0300
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Andy Lutomirski <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Ard Biesheuvel <ardb@kernel.org>, Jan Kiszka <jan.kiszka@siemens.com>, 
+	Kieran Bingham <kbingham@kernel.org>, Michael Roth <michael.roth@amd.com>, 
+	Rick Edgecombe <rick.p.edgecombe@intel.com>, Brijesh Singh <brijesh.singh@amd.com>, 
+	Sandipan Das <sandipan.das@amd.com>, Juergen Gross <jgross@suse.com>, 
+	Tom Lendacky <thomas.lendacky@amd.com>, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-efi@vger.kernel.org, linux-mm@kvack.org, 
+	Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCHv3 0/4] x86: Make 5-level paging support unconditional for
+ x86-64
+Message-ID: <rdbzqwmbjel6oiy6db5l6tgu5bzbwdni5gi2q7p7nmr24dwo6m@3vciui3f2ws4>
+References: <20250516123306.3812286-1-kirill.shutemov@linux.intel.com>
+ <aCc5cm_ZC-y9OnyA@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="btnk46swg4gpsgrg"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250425-hdmi-conn-yuv-v4-12-5e55e2aaa3fa@collabora.com>
+In-Reply-To: <aCc5cm_ZC-y9OnyA@gmail.com>
 
+On Fri, May 16, 2025 at 03:11:14PM +0200, Ingo Molnar wrote:
+> Does this approach sound good to everyone?
 
---btnk46swg4gpsgrg
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v4 12/23] drm/tests: helpers: Add a (re)try helper
- variant to enable CRTC connector
-MIME-Version: 1.0
+Sounds good to me.
 
-Hi,
-
-On Fri, Apr 25, 2025 at 01:27:03PM +0300, Cristian Ciocaltea wrote:
-> Provide a wrapper over drm_kunit_helper_enable_crtc_connector() to
-> automatically handle EDEADLK.
->=20
-> This is going to help improve the error handling in a bunch of test
-> cases without open coding the restart of the atomic sequence.
->=20
-> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-> ---
->  drivers/gpu/drm/tests/drm_kunit_helpers.c | 39 +++++++++++++++++++++++++=
-++++++
->  include/drm/drm_kunit_helpers.h           |  7 ++++++
->  2 files changed, 46 insertions(+)
->=20
-> diff --git a/drivers/gpu/drm/tests/drm_kunit_helpers.c b/drivers/gpu/drm/=
-tests/drm_kunit_helpers.c
-> index 5f7257840d8ef0aeabe5f00802f5037ed652ae66..4e1174c50b1f2b6358eb740cd=
-73c6d86e53d0df9 100644
-> --- a/drivers/gpu/drm/tests/drm_kunit_helpers.c
-> +++ b/drivers/gpu/drm/tests/drm_kunit_helpers.c
-> @@ -332,6 +332,45 @@ int drm_kunit_helper_enable_crtc_connector(struct ku=
-nit *test,
->  }
->  EXPORT_SYMBOL_GPL(drm_kunit_helper_enable_crtc_connector);
-> =20
-> +/**
-> + * drm_kunit_helper_try_enable_crtc_connector - (Re)tries to enable a CR=
-TC -> Connector output
-> + * @test: The test context object
-> + * @drm: The device to alloc the plane for
-> + * @crtc: The CRTC to enable
-> + * @connector: The Connector to enable
-> + * @mode: The display mode to configure the CRTC with
-> + * @ctx: Locking context
-> + *
-> + * This function is a wrapper over @drm_kunit_helper_enable_crtc_connect=
-or
-> + * to automatically handle EDEADLK and (re)try to enable the route from
-> + * @crtc to @connector, with the given @mode.
-> + *
-> + * Returns:
-> + *
-> + * A pointer to the new CRTC, or an ERR_PTR() otherwise.
-> + */
-> +int drm_kunit_helper_try_enable_crtc_connector(struct kunit *test,
-> +					       struct drm_device *drm,
-> +					       struct drm_crtc *crtc,
-> +					       struct drm_connector *connector,
-> +					       const struct drm_display_mode *mode,
-> +					       struct drm_modeset_acquire_ctx *ctx)
-> +{
-> +	int ret;
-> +
-> +retry_enable:
-> +	ret =3D drm_kunit_helper_enable_crtc_connector(test, drm, crtc, connect=
-or,
-> +						     mode, ctx);
-> +	if (ret =3D=3D -EDEADLK) {
-> +		ret =3D drm_modeset_backoff(ctx);
-> +		if (!ret)
-> +			goto retry_enable;
-> +	}
-> +
-> +	return ret;
-> +}
-> +EXPORT_SYMBOL_GPL(drm_kunit_helper_try_enable_crtc_connector);
-
-I'm not sure it's a good idea. This function might affect the locking
-context of the caller without even reporting it.
-
-Generally speaking, I'd really prefer to have explicit locking, even if
-it means slightly more boilerplate.
-
-Maxime
-
---btnk46swg4gpsgrg
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaCc6hwAKCRAnX84Zoj2+
-dvcBAYDcTwDF538RFQHBgVAINQXEsJRaLAEAcd9prk21mK44LnqoDRgF5/Yg5F+n
-we44oSABgKmQossFkY00emM9Nm+PKxJYxKdSsPJzFceIrdumROrLzgfYnB1zHpOz
-wWLd/RlkyA==
-=kUrs
------END PGP SIGNATURE-----
-
---btnk46swg4gpsgrg--
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
 
