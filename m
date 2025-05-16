@@ -1,192 +1,90 @@
-Return-Path: <linux-kernel+bounces-651290-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-651294-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1E6FAB9CC9
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 14:58:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F4E2AB9CD2
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 15:00:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E0854E87F0
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 12:58:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F0F21BA7DCB
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 13:01:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A780D242925;
-	Fri, 16 May 2025 12:57:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39439233149;
+	Fri, 16 May 2025 13:00:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c3wJ9KUe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="DKdO7lef"
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 059601DFDE;
-	Fri, 16 May 2025 12:57:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BA8F288DA
+	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 13:00:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747400275; cv=none; b=VvvO/PQyJQXexHxQcFcawK1lN8f9bEDwWy3QYZHj2B7Z4Dx5fSh8RiV9SRJohE0iGXqtBj4EfiCqumRC+rm570nxzfdnWtNnL99Yb7LK2BBWkG1mzpWPv5NgPdwR0NuLJeoHUpbexvRenOIb7MPEpxDvH5vIeYjSG6R1+BtDqPw=
+	t=1747400445; cv=none; b=SbuujFGXQugA2J31cTO0AFQEl269ogOLqUhUVixLJtb+ug5/RiaOMvdGslyf7rqCeaMsV218FB1LeagcUS8DRkda1bACiYrC+RimrF+IitdGcZcejsUFHb4FWQWslSzcHwk6SjrTwoPuCH0y4YlfASZhd+aelHoIgA5ez5hxOKM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747400275; c=relaxed/simple;
-	bh=YZxxILgmfc1qF1rrNWG6/WtUXq2234pqpZt+RioE+Oc=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Yd2LRPCHzD9ZvFtsfPeDE6r2ZO96Q67AN3/G+5OAx2oSg43xfoUXX6EoiXSah0SL406/AtbmgwRMHZqqt18GUUmgvwUT9eDy0z8oI6oNHUmbdc+1fyCidqvm2Hjdk5zxffUofDjyot1tYDJjUe8/RaTShyEU/qFfRvXy2vHClVY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c3wJ9KUe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2798C4CEE4;
-	Fri, 16 May 2025 12:57:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747400274;
-	bh=YZxxILgmfc1qF1rrNWG6/WtUXq2234pqpZt+RioE+Oc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=c3wJ9KUewGkliyK1GQc3uMF2StFwkDkd44yXnLyqtpOXcMZY+iFDdhz1CMgJvR1JS
-	 QnxWz3HQ7VsoXpbIiUeguYfzo+JHtEjj1Sp3o7PjYG4oOGzi2thZ8XU1Sg2c9wX10g
-	 pzPgsVc5yKRXhPo0LRSO+smBm9BVkKmLcZWORBURWZO4i7gHN+Nd05jXe8PbfFPdrL
-	 IB5xV8xKWoJ5Dl6qdc69cCSvEBJK6we9xOT2fCMDD+AP/O6gT7aBINVnCXv80Jl3RU
-	 E4BSWm+viNGiy5iex/O5cn6lomBwWInw/9XIA9yJe03a3bTxekkYEPg1LjmXgzJ2IO
-	 FukrHGfuxqiVw==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1uFudM-00FYgz-LR;
-	Fri, 16 May 2025 13:57:52 +0100
-Date: Fri, 16 May 2025 13:57:52 +0100
-Message-ID: <86a57cg1bj.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Vincent Donnefort <vdonnefort@google.com>
-Cc: oliver.upton@linux.dev,
-	joey.gouly@arm.com,
-	suzuki.poulose@arm.com,
-	yuzenghui@huawei.com,
-	catalin.marinas@arm.com,
-	will@kernel.org,
-	qperret@google.com,
-	linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	kernel-team@android.com
-Subject: Re: [PATCH v4 02/10] KVM: arm64: Introduce for_each_hyp_page
-In-Reply-To: <20250509131706.2336138-3-vdonnefort@google.com>
-References: <20250509131706.2336138-1-vdonnefort@google.com>
-	<20250509131706.2336138-3-vdonnefort@google.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1747400445; c=relaxed/simple;
+	bh=PWP4LH9xR2HpDA5u4cqtd86qoVPk0fysIaqESMWoHhw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tKzxjntrK4imH2pGJqebUq7d1+jpOKETwsQ/1AAbSOzQG5puub0H5bGgRlVSa6SS9dqW1iEYLIkd1ycOWS3I7SX7b64tLDdwVHomOQUKtKNsXTDx9feiDQPvJQ920EWQgUaODQiqAKuXFnubxenp/pqZi2CcSmfaq0p69yqF6Hs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=DKdO7lef; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=JMlS1qozVnD4sPHAMw0lOaAueEL7RjhSNxCAWJP+y1c=; b=DKdO7lefgYrTwBrdVu74affOy2
+	QljTpv79QeAX6xgsiIlsaRGkYgC4M8vmYuDy2KBRRlur6jXNv44aqDP/riAmLsUqC6fMdBe/KNDy3
+	a+VfyJW8U4QG8JYwaDud9czsWwmO+kL4tENyDnMERd1BK4wYAZqOAkYO3myTcyyNXwGSpZ33RD6Xo
+	qkLAI0fKZ+nnwAw6WRFUtTH6eu8crApFE/ZcV7OvpkIK2/07Bw8AqGeXgheCIc3yYW+tKXXJADxwt
+	Q+YVkuNMEqP3ixj32CDm0BSd60Tnet/1jFD2kBP6QiF8yjLoBI/wsin+kOuBU/pc2pJFxJIUA6o7Z
+	A5xjrNoA==;
+Received: from [191.204.192.64] (helo=[192.168.15.100])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1uFuaF-0095nh-Vm; Fri, 16 May 2025 15:00:38 +0200
+Message-ID: <18c1df5c-4cbd-4f4b-99ac-ca7c87414461@igalia.com>
+Date: Fri, 16 May 2025 10:00:34 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: vdonnefort@google.com, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org, qperret@google.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, kernel-team@android.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v12 14/21] futex: Allow to resize the private local hash
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: linux-kernel@vger.kernel.org, Darren Hart <dvhart@infradead.org>,
+ Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>,
+ Juri Lelli <juri.lelli@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Valentin Schneider <vschneid@redhat.com>, Waiman Long <longman@redhat.com>
+References: <20250416162921.513656-1-bigeasy@linutronix.de>
+ <20250416162921.513656-15-bigeasy@linutronix.de>
+ <986dcbc0-0505-496a-ae75-e0c1bd7c2725@igalia.com>
+ <20250516104921.sy7Z-oy_@linutronix.de>
+Content-Language: en-US
+From: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
+In-Reply-To: <20250516104921.sy7Z-oy_@linutronix.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri, 09 May 2025 14:16:58 +0100,
-Vincent Donnefort <vdonnefort@google.com> wrote:
+Em 16/05/2025 07:49, Sebastian Andrzej Siewior escreveu:
+> On 2025-05-08 17:32:24 [-0300], André Almeida wrote:
+>>> +			if (!__futex_pivot_hash(mm, new) && custom)
+>>> +				goto again;
+>>
+>> Is it safe to use a goto inside a scoped_guard(){}?
 > 
-> Add a helper to iterate over the hypervisor vmemmap. This will be
-> particularly handy with the introduction of huge mapping support
-> for the np-guest stage-2.
+> We jump outside of the scoped_guard() and while testing I've been
+> looking at the assembly and gcc did the right thing. So I would say why
+> not. The alternative would be to do manual lock/unlock and think about
+> the unlock just before the goto statement so this looks "easier".
 > 
-> Signed-off-by: Vincent Donnefort <vdonnefort@google.com>
-> 
-> diff --git a/arch/arm64/kvm/hyp/include/nvhe/memory.h b/arch/arm64/kvm/hyp/include/nvhe/memory.h
-> index eb0c2ebd1743..676a0a13c741 100644
-> --- a/arch/arm64/kvm/hyp/include/nvhe/memory.h
-> +++ b/arch/arm64/kvm/hyp/include/nvhe/memory.h
-> @@ -96,24 +96,24 @@ static inline struct hyp_page *hyp_phys_to_page(phys_addr_t phys)
->  #define hyp_page_to_virt(page)	__hyp_va(hyp_page_to_phys(page))
->  #define hyp_page_to_pool(page)	(((struct hyp_page *)page)->pool)
->  
-> -static inline enum pkvm_page_state get_host_state(phys_addr_t phys)
-> +static inline enum pkvm_page_state get_host_state(struct hyp_page *p)
->  {
-> -	return (enum pkvm_page_state)hyp_phys_to_page(phys)->__host_state;
-> +	return (enum pkvm_page_state)p->__host_state;
 
-I'm not quite sure why we have this cast the first place. If we are so
-keen on type consistency, why isn't __host_state an enum pkvm_page_state
-the first place?
-
->  }
->  
-> -static inline void set_host_state(phys_addr_t phys, enum pkvm_page_state state)
-> +static inline void set_host_state(struct hyp_page *p, enum pkvm_page_state state)
->  {
-> -	hyp_phys_to_page(phys)->__host_state = state;
-> +	p->__host_state = state;
->  }
->  
-> -static inline enum pkvm_page_state get_hyp_state(phys_addr_t phys)
-> +static inline enum pkvm_page_state get_hyp_state(struct hyp_page *p)
->  {
-> -	return hyp_phys_to_page(phys)->__hyp_state_comp ^ PKVM_PAGE_STATE_MASK;
-> +	return p->__hyp_state_comp ^ PKVM_PAGE_STATE_MASK;
-
-And we don't seem that bothered here.
-
->  }
->  
-> -static inline void set_hyp_state(phys_addr_t phys, enum pkvm_page_state state)
-> +static inline void set_hyp_state(struct hyp_page *p, enum pkvm_page_state state)
->  {
-> -	hyp_phys_to_page(phys)->__hyp_state_comp = state ^ PKVM_PAGE_STATE_MASK;
-> +	p->__hyp_state_comp = state ^ PKVM_PAGE_STATE_MASK;
->  }
->  
->  /*
-> diff --git a/arch/arm64/kvm/hyp/nvhe/mem_protect.c b/arch/arm64/kvm/hyp/nvhe/mem_protect.c
-> index 23544928a637..4d269210dae0 100644
-> --- a/arch/arm64/kvm/hyp/nvhe/mem_protect.c
-> +++ b/arch/arm64/kvm/hyp/nvhe/mem_protect.c
-> @@ -60,6 +60,9 @@ static void hyp_unlock_component(void)
->  	hyp_spin_unlock(&pkvm_pgd_lock);
->  }
->  
-> +#define for_each_hyp_page(start, size, page)   \
-> +	for (page = hyp_phys_to_page(start); page < hyp_phys_to_page((start) + (size)); page++)
-> +
-
-Huh. This really should be something like:
-
-#define for_each_hyp_page(__p, __st, __sz)   			\
-	for (struct hyp_page *__p = hyp_phys_to_page(__st),	\
-	     *__e = __p + ((__sz) >> PAGE_SHIFT);		\
-	     __p < __e; __p++)
-
-so that:
-
-- the iterator variable comes first and looks like a normal for-loop
-- the iterator has a scope limited to the loop
-- we don't evaluate parameters multiple times
-- we don't evaluate the end of the loop multiple times
-- we try not to reuse common variable names
-
->  static void *host_s2_zalloc_pages_exact(size_t size)
->  {
->  	void *addr = hyp_alloc_pages(&host_s2_pool, get_order(size));
-> @@ -481,7 +484,8 @@ static int host_stage2_adjust_range(u64 addr, struct kvm_mem_range *range)
->  		return -EAGAIN;
->  
->  	if (pte) {
-> -		WARN_ON(addr_is_memory(addr) && get_host_state(addr) != PKVM_NOPAGE);
-> +		WARN_ON(addr_is_memory(addr) &&
-> +			get_host_state(hyp_phys_to_page(addr)) != PKVM_NOPAGE);
->  		return -EPERM;
->  	}
->  
-> @@ -507,10 +511,10 @@ int host_stage2_idmap_locked(phys_addr_t addr, u64 size,
->  
->  static void __host_update_page_state(phys_addr_t addr, u64 size, enum pkvm_page_state state)
->  {
-> -	phys_addr_t end = addr + size;
-> +	struct hyp_page *page;
-
-and then these extra declarations can go.
-
-Thanks,
-
-	M.
-
--- 
-Without deviation from the norm, progress is not possible.
+Ok, thanks for conforming it! I wasn't sure about the goto but now it's 
+clear to me.
 
