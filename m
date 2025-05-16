@@ -1,116 +1,104 @@
-Return-Path: <linux-kernel+bounces-651484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-651487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B2B6AB9F06
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 16:56:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5243AB9F1A
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 16:58:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31FC61C00334
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 14:56:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 115951BC75E0
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 14:57:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 406BE1AD3FA;
-	Fri, 16 May 2025 14:56:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02D491C878E;
+	Fri, 16 May 2025 14:56:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="Qpn9pmf/"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6DC713C914;
-	Fri, 16 May 2025 14:56:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="f72yQSZf"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0606F1AAE13
+	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 14:56:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747407389; cv=none; b=fBRowXelMUE1PuSX0/LBy/K5zVR0DUzaB/ljLChMs9UApgwgki4ZSS1/W9IOVtYmfDiMHuPUErW0kNxSJSO+ozHpt//N8d+JY3ejTlI5pC2klQypTfqrt1GyMejC2nQ1XBKWcv0BGaBnkWs1HQekDR/5BYQMrVRa9VuWXwtwhBE=
+	t=1747407394; cv=none; b=hqb8ja9s4FJMbvYfY3H03TnFdTA1Zf2nVhx1dlSMUCUADq2tlHuX58GEwu1JyFSQOtNPm5TpcwPeN22bJwRjtH3c6JVrVyj1ZuePIVOms6ZYn5T7gV8dk2b3CcuwNlmiz1ojQkuZacXKrVfjvBWArRULa+hhp/P5JlQG+OMjPOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747407389; c=relaxed/simple;
-	bh=8oeZBsX5EC0b5DNou3U2gY7TL+OyZZNV32V+AEK5ox0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=n9EB5kvqj+88xJsHLA+y7zQbrQIu8WcKFyBmBy0XRjLJVnVITtBw4bwDmwLDODgywOu55MlxVXT5G5YGYuImQdHfmnHLyLi/djIbqi7TvXQgMZa33me9auMsz398S9p/rjKfDLs1yotVy/Q2Pma8IkEOL6YDM2XyVO3iG+24tqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=Qpn9pmf/; arc=none smtp.client-ip=117.135.210.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=0j
-	oqUCbd9YvfR3Cm4Fm+cClE5ZXyYtYajQTs8EUIyUc=; b=Qpn9pmf/PmS+YDPrMB
-	1doX8fxFQg+0WijijSwAlEhPPvP2t3sxj+9Ben1ViyNmx1bnK+HU7t/lXiQknnpC
-	MJWUwFBuwdaG0Dqm3Ez3r8/MwukETUXNrbPie7KmvQY7lKsXaapU1NaUpixCjN/h
-	j9iqXCP1f08WTNUwD+P3dD61E=
-Received: from localhost.localdomain (unknown [])
-	by gzga-smtp-mtada-g0-3 (Coremail) with SMTP id _____wCXtfDyUSdoaTNOBw--.62835S5;
-	Fri, 16 May 2025 22:55:49 +0800 (CST)
-From: Hans Zhang <18255117159@163.com>
-To: shawn.lin@rock-chips.com,
-	lpieralisi@kernel.org,
-	kw@linux.com,
-	bhelgaas@google.com,
-	heiko@sntech.de,
-	manivannan.sadhasivam@linaro.org
-Cc: robh@kernel.org,
-	linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	Hans Zhang <18255117159@163.com>
-Subject: [PATCH v2 3/3] PCI: rockchip-host: Remove unused header includes
-Date: Fri, 16 May 2025 22:55:44 +0800
-Message-Id: <20250516145544.110516-4-18255117159@163.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250516145544.110516-1-18255117159@163.com>
-References: <20250516145544.110516-1-18255117159@163.com>
+	s=arc-20240116; t=1747407394; c=relaxed/simple;
+	bh=5Vvd7zQOtBcVeoZIh3z7GQDSiXKnwjTmCZqac6Uywzk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HDskIU2buVh/rY3ytvAgN7tOTSf3/XgNcrnJbrmuSF3FjlU1KZDuVsbNS2v48pyB3tfGQBAm78YDluvvGEUq2PxENDlTK55iN1/uH0+FDc3GP5t9XUx5WqtvDdQgmi8a6dqn7BupivhrDJTV5708ZEH6x2emc7H/ichfiThvSUs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=f72yQSZf; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id A237740E0239;
+	Fri, 16 May 2025 14:56:27 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id kBt0zxmgUwaA; Fri, 16 May 2025 14:56:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1747407383; bh=dkG4Tj2c4D+ncCjxcAP/kcrKa4+KsqbdebOSlTMn0Lg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=f72yQSZfFni8myLeFrNIFg84lgy8SiFhEZ/74khf4R0y22syCjyYNqlg4xHYpLOTw
+	 +XAxeYOpUWGB1iEbG3FE1mtzQ1UgAERHpRDTpli1M4E6IuTi578JFr/FiQ65J8auIN
+	 Y1JisYSpe+w+jB/xk0rjwZMX/B15worlwLTemdginFA/1KvAHCcvsbv2VQ8MikyIhu
+	 1bfUXP7UI+yyWKjW/SlQy211z1Dkiy7DwGpqAbeKMsSLKwGAwmghi1zG30NF/Rlj3y
+	 VocbJ+vEi8q6ktq41ABe91nkJYpGoSLsipyuC/nULoiWurqojbPty6RXSkRtrD4+PA
+	 4ErKe0cU8Qg+2r5db6CocgEbjDe1AV9tmuCWgYLLscuGtqEM4F2WNCYbyirBv2mIWC
+	 yHgBldZxsDTHxMJWWyyU05h5TC1CwOmsvcK5m0Gz+WShCHeNznrNEmXqDx3O1i/L24
+	 tmUZLE2gScCWArooxZiGuCI9Gs1oNjA8rvIkU0gOe6d6sQ8nbIMCJD5yI4Fh5pQJBv
+	 HvnqQRlGtI/x+PkSqT+YkJhYvnemazb9EHvSo9Ud9HeBzQ6xtdPn91P31v78J1kEcH
+	 BwdJLfU/lx5F9phUoBbidU7GMchgwGAZJ/FYHeVsBTmyaplIgKH4R2Mz1nw8KYBAJY
+	 RBeMRXKqKGH4KmoAnBKOXEJI=
+Received: from zn.tnic (p579690ee.dip0.t-ipconnect.de [87.150.144.238])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id B099040E016A;
+	Fri, 16 May 2025 14:56:13 +0000 (UTC)
+Date: Fri, 16 May 2025 16:56:07 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+Cc: "Kaplan, David" <David.Kaplan@amd.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"x86@kernel.org" <x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] x86/bugs: Restructure ITS mitigation
+Message-ID: <20250516145607.GDaCdSB-7i-YfaL5rR@fat_crate.local>
+References: <20250515134756.93274-1-david.kaplan@amd.com>
+ <20250515211159.njyxgxuxmyhqx46m@desk>
+ <LV3PR12MB92655C23DF46F1F3B88139009490A@LV3PR12MB9265.namprd12.prod.outlook.com>
+ <20250515220243.fk4z7rifcxdm2e7h@desk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wCXtfDyUSdoaTNOBw--.62835S5
-X-Coremail-Antispam: 1Uf129KBjvJXoW7ZF1fWw17JryxuF1DuryUZFb_yoW8GF1UpF
-	WqkFWxJrZ5AF1UCFnruF1qkrn0va1DZr47J342ga47Z342yr1vq395Crnxtr1kAFW2gF1U
-	Cay3trs5CrW5XrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07U1pBhUUUUU=
-X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiOgdPo2gnTU2UZQAAsv
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250515220243.fk4z7rifcxdm2e7h@desk>
 
-Clean up the driver by removing unnecessary header includes
-(e.g., <linux/clk.h>, <linux/reset.h>) that are no longer referenced
-after refactoring. This improves code readability and build efficiency.
+On Thu, May 15, 2025 at 03:02:43PM -0700, Pawan Gupta wrote:
+> No, I am able to apply now. Earlier my b4 based script failed because it
+> couldn't find the base-commit. It works when I am apply manually, sorry to
+> bother you.
 
-Signed-off-by: Hans Zhang <18255117159@163.com>
----
- drivers/pci/controller/pcie-rockchip-host.c | 9 ---------
- 1 file changed, 9 deletions(-)
+Yah, tip/master changes very often and gets regenerated so the top-most commit
+is gone. Just apply manually.
 
-diff --git a/drivers/pci/controller/pcie-rockchip-host.c b/drivers/pci/controller/pcie-rockchip-host.c
-index 209eb94ece1b..ba360ed62afa 100644
---- a/drivers/pci/controller/pcie-rockchip-host.c
-+++ b/drivers/pci/controller/pcie-rockchip-host.c
-@@ -12,26 +12,17 @@
-  */
- 
- #include <linux/bitrev.h>
--#include <linux/clk.h>
--#include <linux/delay.h>
- #include <linux/gpio/consumer.h>
--#include <linux/init.h>
- #include <linux/interrupt.h>
- #include <linux/iopoll.h>
- #include <linux/irq.h>
- #include <linux/irqchip/chained_irq.h>
- #include <linux/irqdomain.h>
--#include <linux/kernel.h>
--#include <linux/mfd/syscon.h>
- #include <linux/module.h>
- #include <linux/of.h>
- #include <linux/of_pci.h>
--#include <linux/pci.h>
--#include <linux/pci_ids.h>
- #include <linux/phy/phy.h>
- #include <linux/platform_device.h>
--#include <linux/reset.h>
--#include <linux/regmap.h>
- 
- #include "../pci.h"
- #include "pcie-rockchip.h"
+Thx.
+
 -- 
-2.25.1
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
