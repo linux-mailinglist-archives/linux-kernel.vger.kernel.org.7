@@ -1,218 +1,187 @@
-Return-Path: <linux-kernel+bounces-650934-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-650936-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2F66AB97FD
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 10:45:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 971D3AB9807
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 10:45:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 18CE7501495
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 08:44:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 752469E0E73
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 08:45:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC33A1F866B;
-	Fri, 16 May 2025 08:44:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 587AC22E414;
+	Fri, 16 May 2025 08:45:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W/sbU/0K"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="iZvVCIFz"
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4599F21FF5D;
-	Fri, 16 May 2025 08:44:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F222D21B9D8;
+	Fri, 16 May 2025 08:45:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.156.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747385087; cv=none; b=bxRLcztGLHBwPQlRkxa2T1xBytDCUCvPvlBVDF7sDEMZTJtE15aR8toZqkbwFgtQ3MTHJ9X8DYH4SlMKZ60x7xKNAKRre6I+yj0YYsPwMnh1ZJ33b5bT3tfjcde2AlUkxgbHZmqsBFwRSIIBoghMCcVATqLo5218sjSXjx7n1MU=
+	t=1747385134; cv=none; b=PgeQSu+65AldTyqqOtazuffgOqzElnzU0baodMRFx2f6np1tbTcGWiZOKh6zGsb76KAiVAwFqPis00b5WLnaSJXG0DMojbjxsEPBNsIA7GMCd+TU0CPGP7PldBpJsG7rNUodeOTP53UGBsvHCKjL1ZmFc7GHzQND6yNaLTI6hzs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747385087; c=relaxed/simple;
-	bh=7e/OXKN0NStJdf9sdGtozg9da3NAhB97YtAKvSLueYY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Xlt3FAW2Wuif38nVK56XzCI0cys5ahKgXdujxkcwD+QHxfa56IMjI0r0YxR3Yp4taWA+CHXHlc888QsHy6EK8SaXg/NFlIDVkB/vH7gq7f/BfJDRbczI9cZ7boKzsATGXTwRlk7Ik9HeNWqD7eCRuSbqOlC+XrGsJs1Uh/j5a/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W/sbU/0K; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-54c0fa6d455so2150667e87.1;
-        Fri, 16 May 2025 01:44:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747385083; x=1747989883; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=BjJUr9oGlf0d4GJbWfHcRPedGVrnjrqGO+ZV1su5URQ=;
-        b=W/sbU/0KYWFqkeroEVB0c4MnoBR9tGTR6pxbwvu+KUZeGk6/YrOlDtntLLr3EY3ORj
-         ewGevl/EUVjstrozQQq4aLiPVDMIIUuR85ieiXtiKVD2wrQnhqfOKvwInA2EU4ka5RZ2
-         7G3/LefKwIuYtPMnHBa9h04hX106Y3f7Ql8i5Zb+a9MkY3nwvQiIFFqa/RJ09C/1k+tR
-         ztQQglO+fLVg4cgsafqdYbrcuIhrnXJAq5isbvIaZReTgTYvyZhKQXE3r+PnRsL37f6+
-         wQMzfIz9wMT5ld1kOiwQRI0VFXGNWO8FCCN77yNqkR/V2TpwqB3sm65Pl+t7aM86GKL2
-         y8Rg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747385083; x=1747989883;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=BjJUr9oGlf0d4GJbWfHcRPedGVrnjrqGO+ZV1su5URQ=;
-        b=pvQs0ZQts27l7E4UxfQ75BFySax1P4yDmitTXT62oHmrQFnSnQo8dd1vk24gLS6k0Q
-         JCTY77jKCf6J6SrkIKBnA8YxpFzTzccRMuSqowJR5XuaxCxZ/I4QsHOeguRG9S5238Gu
-         oLHxc2m4AarehJMjf+T+MqmI4Oq7Uh3MBM4HIlckSJVoiRdV3/8PuePI0AfP0SJhHHS2
-         LtOWZQeOot/Yyq8cDcs3AWcblbXregv89BbXCoQri0L9qEWeUBgnyXrj09Rs0PrdJOmK
-         kffiscYZhrmznDDSkN+oWKSvTOOWjk6XUYYsJ/XisHDd0/i4/cUvuQiTNwGFp1VMUTY6
-         1EcQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVeEsFhbKrQ4oFHd7ywPLjDOlw+tUHvNCqs+PzyVuoDTCRq0zd2o5aTvsQ7b3fvFCW/uTVAb4r1XI8Zspk=@vger.kernel.org, AJvYcCVs9Amh6Tm4EB9KN9aGavS4HrrKZnXMedd+Z2MKqWYptGA3QIFEVtlBC7+lGqVh/jeedsHzszCi+DuX@vger.kernel.org, AJvYcCXmL9ruG8WBjHMvpz0S/VDIGO7sQnxQI5nlySgyX7Ve25qvhJrxV8vtCdwv0rQZCH1Q9CxI+iwDmDd8S76Bu5Ms@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJwBEP5gq4EEIi0txF2k8Y6jnT2U+quAJgo2BZfy64qOnu6JkF
-	btWjzxvz1EZiAaM06bd5n7wKctzDr0I4gSCLN+1OTmMdtJl5IH+E/gBo
-X-Gm-Gg: ASbGncu0BzNHi4Ng60muKIbUq5WWQ1WPu4iRxl4DHnAwDE4QTiYKqYXctd6Hp1RpujT
-	OpwU4iDZmEIVku+GEdtJqp/QkHOhz/CvbuGxTdQu9+mLaFve0RtoLe6Zaw9a+rikuqaI70+q8QP
-	3yYC2MZ8KxS4XH4XbgiFJxUuCk8rb6NinIo/H/nPIR1Aq7n2IKJpaFSQ2V8e34CpeTDinYgIiFZ
-	BYbLPDhKBCbgt3/h7PQfUHWpZ8ZzK9WvA8qTY2rmJ1P/3koHu3Q5Awed8xfumf50RYkD/ZaMRqK
-	dT8az47kNXPy2J1e1fb1KKIogE6hAZXf4nH5xx6f4B6P99oeP/ZOuHwmnGw/7kRvyakKYyocYHs
-	CgRetm2m7mjo+PY838Us00Hz9+c+2k9Lw4YzbR4WHhn73i25YU3Mwqrx1kFtYQkygoGOFd761iU
-	IFWIRPf7f0p0uD
-X-Google-Smtp-Source: AGHT+IGzetvgHg8oZtCko1ljUWov76mE1LJ2yWfIXfTog79PcffiRirbLk3BUeMemY7tVa3DIm1Eiw==
-X-Received: by 2002:a05:6512:6614:b0:550:e608:410b with SMTP id 2adb3069b0e04-550e71e9968mr605074e87.33.1747385083071;
-        Fri, 16 May 2025 01:44:43 -0700 (PDT)
-Received: from ?IPV6:2001:14ba:53:1500:af87:7c77:739c:7417? (2001-14ba-53-1500-af87-7c77-739c-7417.rev.dnainternet.fi. [2001:14ba:53:1500:af87:7c77:739c:7417])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-550e702da4dsm325902e87.202.2025.05.16.01.44.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 16 May 2025 01:44:41 -0700 (PDT)
-Message-ID: <b1ac8546-b385-4ed9-b15e-da147c35ade3@gmail.com>
-Date: Fri, 16 May 2025 11:44:39 +0300
+	s=arc-20240116; t=1747385134; c=relaxed/simple;
+	bh=3bBBe0HQb0Ed7Gl/Noo0rkSg2Ion18PRsWjl5r5hvsM=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZTaancybERAuqdE48DWqoYN2dXzZfrYCQmoVBT4fMO40PrXFu4dfzv4TjNT9grwfYWsIHCtYj/iG8u9efUpgC9ZBMjWD4aSx0TyIY5W2X+1Pby1CAdkbvf2o9n27IFvD06eI7aBJcjKXjbcUquLuCZW5tV5SOPT8ht4q4OPfHHs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=iZvVCIFz; arc=none smtp.client-ip=67.231.156.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
+	by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54G6AflK018907;
+	Fri, 16 May 2025 01:45:10 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pfpt0220; bh=i
+	EXY57rh/LiHp95qWg8e6r9ONYGQRdEg7ZfdZx/cvOo=; b=iZvVCIFzZWPXmeSk0
+	LrIzMwM31bFhZqH0dYz1z7mkpe0HnxYPc+UEDYfUjEQj7DG6kekTb82AJx/DnuCd
+	xcIzpVFtwaWZ2oBRw8r04MA4j6iKX1XC2wUS+VhEyHhZXxAChuvXjGG8Su45OeNs
+	BB8fn9DAabAm9Bt2iazf5HecQUqBY0yotCK9croaZnl5Q9mRqxmPwjiDyBpjddnW
+	39ZfkIg9+jMNyB7KjUfpxY7dUxWwhhVH3Y6tFlsn/fchZ8siWoEWQdRlq5jBanlV
+	OKXXKc5vLZGFxLVdSzEc2TmWKbIOhoQgMaE0NSC9Umb1OoYGi/uWO3FKdDrMY19D
+	aaskA==
+Received: from dc5-exch05.marvell.com ([199.233.59.128])
+	by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 46nyv4re8d-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 16 May 2025 01:45:10 -0700 (PDT)
+Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
+ DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Fri, 16 May 2025 01:44:52 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
+ (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Fri, 16 May 2025 01:44:52 -0700
+Received: from bharat-OptiPlex-Tower-Plus-7020.. (unknown [10.28.34.254])
+	by maili.marvell.com (Postfix) with ESMTP id 901583F707C;
+	Fri, 16 May 2025 01:44:48 -0700 (PDT)
+From: Bharat Bhushan <bbhushan2@marvell.com>
+To: <bbrezillon@kernel.org>, <schalla@marvell.com>,
+        <herbert@gondor.apana.org.au>, <davem@davemloft.net>,
+        <giovanni.cabiddu@intel.com>, <linux@treblig.org>,
+        <bharatb.linux@gmail.com>, <linux-crypto@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC: <stable@vger.kernel.org>, Bharat Bhushan <bbhushan2@marvell.com>
+Subject: [PATCH v2 1/2] crypto: octeontx2: Initialize cptlfs device info once
+Date: Fri, 16 May 2025 14:14:40 +0530
+Message-ID: <20250516084441.3721548-2-bbhushan2@marvell.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250516084441.3721548-1-bbhushan2@marvell.com>
+References: <20250516084441.3721548-1-bbhushan2@marvell.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] selftests: Improve test output grammar, code style
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: skhan@linuxfoundation.org, shuah@kernel.org,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-rtc@vger.kernel.org
-References: <20250515162249.29510-1-hannelotta@gmail.com>
- <20250515165629d521d4a2@mail.local>
-Content-Language: en-US
-From: =?UTF-8?B?SGFubmUtTG90dGEgTcOkZW5ww6TDpA==?= <hannelotta@gmail.com>
-In-Reply-To: <20250515165629d521d4a2@mail.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Authority-Analysis: v=2.4 cv=S6bZwJsP c=1 sm=1 tr=0 ts=6826fb16 cx=c_pps a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17 a=dt9VzEwgFbYA:10 a=M5GUcnROAAAA:8 a=3-882hBxx_MLuhTU-JcA:9 a=OBjm3rFKGHvpk9ecZwUJ:22
+X-Proofpoint-GUID: zC0K-ydAxGFnp-G-4BIPDQe_R8EJMRbq
+X-Proofpoint-ORIG-GUID: zC0K-ydAxGFnp-G-4BIPDQe_R8EJMRbq
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTE2MDA4MiBTYWx0ZWRfX4v/QBTtE/OOK Ard0yEHgpn+I7dJi7w9B45B64ADGKaK3SbUiu1SGS1eLie2svVDqUJ7GvqNRP0eM1rDq5oSW3u5 u7ZKEvLzn5rldHNA4/1qdXhteUgNyM6nTf93Jki00UORpIQoFo6pZDOTo3+iSNl25ynl/M9n91Q
+ q4MhX/DsZJlLTT4sXp8X8o09MNV7UCS1eJa+RoLdOk1iRwQ4gkjzb1RJ14uDh6bitYseQUuAm+d +9csYRjy1m/VWbaqWDndg0Lb/bEmQvZC4nk9VGgAkS3p/WIgCQs6p5yzYul1/bV6BwECz9RsKIr wxhdqDQhTREK68qA/cOwjCan6SYybyvcmpalXAcjS3NqADvVKiA9M5A8n3txVxSNsVV0fQdAJZm
+ 2A5JswoU8v3lTduUUpGo/WJ8P4JDT7HzZtAZkJ5sRF0dgEOuD0XqUvAvqKdRn2zw1wrUY/zt
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-16_03,2025-05-15_01,2025-03-28_01
 
-Hello,
+Function otx2_cptlf_set_dev_info() initializes common
+fields of cptlfs data-struct. This function is called
+every time a cptlf is initialized but this needs be done
+once for a cptlf block. So this initialization is moved
+to early device probe code to avoid redundant initialization.
 
-On 5/15/25 19:56, Alexandre Belloni wrote:
-> Hello,
-> 
-> On 15/05/2025 19:22:49+0300, Hanne-Lotta Mäenpää wrote:
->> Add small grammar fixes in perf events and Real Time Clock tests'
->> output messages.
->>
->> Include braces around a single if statement, when there are multiple
->> statements in the else branch, to align with the kernel coding style.
->>
->> Signed-off-by: Hanne-Lotta Mäenpää <hannelotta@gmail.com>
->> ---
->>   tools/testing/selftests/perf_events/watermark_signal.c |  7 ++++---
->>   tools/testing/selftests/rtc/rtctest.c                  | 10 +++++-----
->>   2 files changed, 9 insertions(+), 8 deletions(-)
->>
->> diff --git a/tools/testing/selftests/perf_events/watermark_signal.c b/tools/testing/selftests/perf_events/watermark_signal.c
->> index 49dc1e831174..6176afd4950b 100644
->> --- a/tools/testing/selftests/perf_events/watermark_signal.c
->> +++ b/tools/testing/selftests/perf_events/watermark_signal.c
->> @@ -65,8 +65,9 @@ TEST(watermark_signal)
->>   
->>   	child = fork();
->>   	EXPECT_GE(child, 0);
->> -	if (child == 0)
->> +	if (child == 0) {
->>   		do_child();
->> +	}
-> 
-> This change seems unrelated.
+Signed-off-by: Bharat Bhushan <bbhushan2@marvell.com>
+---
+v1->v2:
+ - No change
 
-It is related as a code style fix. I noticed it while reviewing the 
-tests, and decided not to make a separate commit of it. Inspiration is 
-from the kernel coding style docs, see the second last example in: 
-https://www.kernel.org/doc/html/latest/process/coding-style.html#placing-braces-and-spaces
+ drivers/crypto/marvell/octeontx2/otx2_cptpf_main.c  | 6 ++++++
+ drivers/crypto/marvell/octeontx2/otx2_cptpf_mbox.c  | 5 -----
+ drivers/crypto/marvell/octeontx2/otx2_cptpf_ucode.c | 2 --
+ drivers/crypto/marvell/octeontx2/otx2_cptvf_main.c  | 5 +++--
+ 4 files changed, 9 insertions(+), 9 deletions(-)
 
-> 
->>   	else if (child < 0) {
->>   		perror("fork()");
->>   		goto cleanup;
->> @@ -75,7 +76,7 @@ TEST(watermark_signal)
->>   	if (waitpid(child, &child_status, WSTOPPED) != child ||
->>   	    !(WIFSTOPPED(child_status) && WSTOPSIG(child_status) == SIGSTOP)) {
->>   		fprintf(stderr,
->> -			"failed to sycnhronize with child errno=%d status=%x\n",
->> +			"failed to synchronize with child errno=%d status=%x\n",
->>   			errno,
->>   			child_status);
->>   		goto cleanup;
->> @@ -84,7 +85,7 @@ TEST(watermark_signal)
->>   	fd = syscall(__NR_perf_event_open, &attr, child, -1, -1,
->>   		     PERF_FLAG_FD_CLOEXEC);
->>   	if (fd < 0) {
->> -		fprintf(stderr, "failed opening event %llx\n", attr.config);
->> +		fprintf(stderr, "failed to setup performance monitoring %llx\n", attr.config);
->>   		goto cleanup;
->>   	}
->>   
->> diff --git a/tools/testing/selftests/rtc/rtctest.c b/tools/testing/selftests/rtc/rtctest.c
->> index be175c0e6ae3..8fd4d5d3b527 100644
->> --- a/tools/testing/selftests/rtc/rtctest.c
->> +++ b/tools/testing/selftests/rtc/rtctest.c
->> @@ -138,10 +138,10 @@ TEST_F_TIMEOUT(rtc, date_read_loop, READ_LOOP_DURATION_SEC + 2) {
->>   		rtc_read = rtc_time_to_timestamp(&rtc_tm);
->>   		/* Time should not go backwards */
->>   		ASSERT_LE(prev_rtc_read, rtc_read);
->> -		/* Time should not increase more then 1s at a time */
->> +		/* Time should not increase more than 1s per read */
->>   		ASSERT_GE(prev_rtc_read + 1, rtc_read);
->>   
->> -		/* Sleep 11ms to avoid killing / overheating the RTC */
->> +		/* Sleep 11ms to avoid overheating the RTC */
->>   		nanosleep_with_retries(READ_LOOP_SLEEP_MS * 1000000);
->>   
->>   		prev_rtc_read = rtc_read;
->> @@ -236,7 +236,7 @@ TEST_F(rtc, alarm_alm_set) {
->>   	if (alarm_state == RTC_ALARM_DISABLED)
->>   		SKIP(return, "Skipping test since alarms are not supported.");
->>   	if (alarm_state == RTC_ALARM_RES_MINUTE)
->> -		SKIP(return, "Skipping test since alarms has only minute granularity.");
->> +		SKIP(return, "Skipping test since alarms have only minute granularity.");
-> 
-> I guess the proper fix is to remove the s in alarms as there is only one
-> alarm.
-
-You are right. I sent patch v2 in another email, with the proposed change.
-
-> 
->>   
->>   	rc = ioctl(self->fd, RTC_RD_TIME, &tm);
->>   	ASSERT_NE(-1, rc);
->> @@ -306,7 +306,7 @@ TEST_F(rtc, alarm_wkalm_set) {
->>   	if (alarm_state == RTC_ALARM_DISABLED)
->>   		SKIP(return, "Skipping test since alarms are not supported.");
->>   	if (alarm_state == RTC_ALARM_RES_MINUTE)
->> -		SKIP(return, "Skipping test since alarms has only minute granularity.");
->> +		SKIP(return, "Skipping test since alarms have only minute granularity.");
->>   
->>   	rc = ioctl(self->fd, RTC_RD_TIME, &alarm.time);
->>   	ASSERT_NE(-1, rc);
->> @@ -502,7 +502,7 @@ int main(int argc, char **argv)
->>   	if (access(rtc_file, R_OK) == 0)
->>   		ret = test_harness_run(argc, argv);
->>   	else
->> -		ksft_exit_skip("[SKIP]: Cannot access rtc file %s - Exiting\n",
->> +		ksft_exit_skip("Cannot access RTC file %s - exiting\n",
->>   						rtc_file);
->>   
->>   	return ret;
->> -- 
->> 2.39.5
->>
-> 
-
-Best regards,
-
-Hanne-Lotta Mäenpää
+diff --git a/drivers/crypto/marvell/octeontx2/otx2_cptpf_main.c b/drivers/crypto/marvell/octeontx2/otx2_cptpf_main.c
+index 12971300296d..687b6c7d7674 100644
+--- a/drivers/crypto/marvell/octeontx2/otx2_cptpf_main.c
++++ b/drivers/crypto/marvell/octeontx2/otx2_cptpf_main.c
+@@ -639,6 +639,12 @@ static int cptpf_device_init(struct otx2_cptpf_dev *cptpf)
+ 	/* Disable all cores */
+ 	ret = otx2_cpt_disable_all_cores(cptpf);
+ 
++	otx2_cptlf_set_dev_info(&cptpf->lfs, cptpf->pdev, cptpf->reg_base,
++				&cptpf->afpf_mbox, BLKADDR_CPT0);
++	if (cptpf->has_cpt1)
++		otx2_cptlf_set_dev_info(&cptpf->cpt1_lfs, cptpf->pdev,
++					cptpf->reg_base, &cptpf->afpf_mbox,
++					BLKADDR_CPT1);
+ 	return ret;
+ }
+ 
+diff --git a/drivers/crypto/marvell/octeontx2/otx2_cptpf_mbox.c b/drivers/crypto/marvell/octeontx2/otx2_cptpf_mbox.c
+index ec1ac7e836a3..3eb45bb91296 100644
+--- a/drivers/crypto/marvell/octeontx2/otx2_cptpf_mbox.c
++++ b/drivers/crypto/marvell/octeontx2/otx2_cptpf_mbox.c
+@@ -264,8 +264,6 @@ static int handle_msg_rx_inline_ipsec_lf_cfg(struct otx2_cptpf_dev *cptpf,
+ 		return -ENOENT;
+ 	}
+ 
+-	otx2_cptlf_set_dev_info(&cptpf->lfs, cptpf->pdev, cptpf->reg_base,
+-				&cptpf->afpf_mbox, BLKADDR_CPT0);
+ 	cptpf->lfs.global_slot = 0;
+ 	cptpf->lfs.ctx_ilen_ovrd = cfg_req->ctx_ilen_valid;
+ 	cptpf->lfs.ctx_ilen = cfg_req->ctx_ilen;
+@@ -278,9 +276,6 @@ static int handle_msg_rx_inline_ipsec_lf_cfg(struct otx2_cptpf_dev *cptpf,
+ 
+ 	if (cptpf->has_cpt1) {
+ 		cptpf->rsrc_req_blkaddr = BLKADDR_CPT1;
+-		otx2_cptlf_set_dev_info(&cptpf->cpt1_lfs, cptpf->pdev,
+-					cptpf->reg_base, &cptpf->afpf_mbox,
+-					BLKADDR_CPT1);
+ 		cptpf->cpt1_lfs.global_slot = num_lfs;
+ 		cptpf->cpt1_lfs.ctx_ilen_ovrd = cfg_req->ctx_ilen_valid;
+ 		cptpf->cpt1_lfs.ctx_ilen = cfg_req->ctx_ilen;
+diff --git a/drivers/crypto/marvell/octeontx2/otx2_cptpf_ucode.c b/drivers/crypto/marvell/octeontx2/otx2_cptpf_ucode.c
+index 1c2aa9626088..3e8357c0ecb2 100644
+--- a/drivers/crypto/marvell/octeontx2/otx2_cptpf_ucode.c
++++ b/drivers/crypto/marvell/octeontx2/otx2_cptpf_ucode.c
+@@ -1515,8 +1515,6 @@ int otx2_cpt_discover_eng_capabilities(struct otx2_cptpf_dev *cptpf)
+ 	if (ret)
+ 		goto delete_grps;
+ 
+-	otx2_cptlf_set_dev_info(lfs, cptpf->pdev, cptpf->reg_base,
+-				&cptpf->afpf_mbox, BLKADDR_CPT0);
+ 	ret = otx2_cptlf_init(lfs, OTX2_CPT_ALL_ENG_GRPS_MASK,
+ 			      OTX2_CPT_QUEUE_HI_PRIO, 1);
+ 	if (ret)
+diff --git a/drivers/crypto/marvell/octeontx2/otx2_cptvf_main.c b/drivers/crypto/marvell/octeontx2/otx2_cptvf_main.c
+index d84eebdf2fa8..11e351a48efe 100644
+--- a/drivers/crypto/marvell/octeontx2/otx2_cptvf_main.c
++++ b/drivers/crypto/marvell/octeontx2/otx2_cptvf_main.c
+@@ -283,8 +283,6 @@ static int cptvf_lf_init(struct otx2_cptvf_dev *cptvf)
+ 
+ 	lfs_num = cptvf->lfs.kvf_limits;
+ 
+-	otx2_cptlf_set_dev_info(lfs, cptvf->pdev, cptvf->reg_base,
+-				&cptvf->pfvf_mbox, cptvf->blkaddr);
+ 	ret = otx2_cptlf_init(lfs, eng_grp_msk, OTX2_CPT_QUEUE_HI_PRIO,
+ 			      lfs_num);
+ 	if (ret)
+@@ -396,6 +394,9 @@ static int otx2_cptvf_probe(struct pci_dev *pdev,
+ 
+ 	cptvf_hw_ops_get(cptvf);
+ 
++	otx2_cptlf_set_dev_info(&cptvf->lfs, cptvf->pdev, cptvf->reg_base,
++				&cptvf->pfvf_mbox, cptvf->blkaddr);
++
+ 	ret = otx2_cptvf_send_caps_msg(cptvf);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "Couldn't get CPT engine capabilities.\n");
+-- 
+2.34.1
 
 
