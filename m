@@ -1,192 +1,199 @@
-Return-Path: <linux-kernel+bounces-651666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-651668-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D555ABA16E
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 19:00:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22F74ABA16D
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 19:00:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A0D052229E
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 16:58:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 657D1189A349
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 16:59:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5D0521FF44;
-	Fri, 16 May 2025 16:57:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8753B25393E;
+	Fri, 16 May 2025 16:59:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="My6CHPVv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="FbziE6P3"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 256CE24E4C1;
-	Fri, 16 May 2025 16:57:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747414627; cv=none; b=C8Rp9K/d4abK7YsucJF+VRlBRjFfQBTyOY3wkkDUEKrVH2DsGZ2gb8NxGj/WLpXGFkdGN+GWf6pvemwtIy42sDmfokfNu54BSlnPWpzfNwNaB0No6afbQlwBAhe1GtbeKOdAi+XU9o6fqjEXtxqv6yEyrSqSzmO3Jj6eVdR3ltM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747414627; c=relaxed/simple;
-	bh=3OaLhhbnyaFRUsMl6Jn49C7vgfWOS9Skc2umIuHl5kM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MtXNg84k4D5bey6ZioyJqeVABsLA2w3fGQRLtyfsqg0f0PsVKKZb9q6fwXZVDNhBeEP6l6BFneOhx7nGb6oJRYA4yguzaCbp+89zpY+t6zEU0biNk456N6DiIZB62gzTALZgF/9W8kUjb61SxsBaT6VFl/V/rTbNu4oBP0gSBJg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=My6CHPVv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A09FDC4CEE4;
-	Fri, 16 May 2025 16:57:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747414626;
-	bh=3OaLhhbnyaFRUsMl6Jn49C7vgfWOS9Skc2umIuHl5kM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=My6CHPVvF21PFuSvisGrbzzRAZMex9cLcoEVbn3FfDU3JKfZBAeBcwW3CXw/y4mgO
-	 C0UCscLFmYgFksVXrWZFw8PkJC2BcfKDex72q/m3VIOiSOcg7Po7JW0RnfMfYt6BfM
-	 ojY5p9djPQDrZOrvKJiGO9yo80H0B7Wc8kUnsNwGFuwXVEtQ4YXcns3Zgs2zVSMhCD
-	 BTBbsFmQB3LO6gYzY/NAmM56Lw/Tx/WYTsVaXLtC8zWoYmOIxg2fzr0qn/Ga7TuI3h
-	 d0a9oB/dmvYjIP39pXqvnrPdx+VJ99g5IK17dGMmOKnIEcA/d2xjHu/s7NIrLMsFMr
-	 5FJ1dkj4dmqEw==
-Received: by mail-oi1-f179.google.com with SMTP id 5614622812f47-3fe83c8cbdbso1132522b6e.3;
-        Fri, 16 May 2025 09:57:06 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVgVyIEa+dK0QSmO+Is50o5kWmu3MZ3CabTsR7+HAgBMDEmbnIxLs7Nb7ab3pf7to9MHFL8G0lY5AXu@vger.kernel.org, AJvYcCX62DFcNAPQd0rBi/oVw6PNQz9M+lX0eJpMlY/RayqcqzZGFpESZ019WSn8qadp4hE5kOGwYeh8jHPwSDyY@vger.kernel.org
-X-Gm-Message-State: AOJu0YzmADdwJSI/bgWi46mADwGeA7pLSv6SO50llzXc8aUtob8ptFPH
-	SKqdE0k1Va8MMgrRJdNOBijrx3PCclvjKOnDRNVAdc0gvA+Z0sMT2FWItg1QnVW1JA1gC3Ay23/
-	yIio1U1GQszTx+fh9MpMKGuWeVjKsubs=
-X-Google-Smtp-Source: AGHT+IF9rWHdjVzlKTbyipJxoGTP8OW1Szm3iv18BWWmjdNbX3F6izSpbQWRnYfinB9TUP4TEKvsLet0zFSjqEcQ8i0=
-X-Received: by 2002:a05:6808:399a:b0:404:766:3129 with SMTP id
- 5614622812f47-404da70a555mr2201120b6e.1.1747414625999; Fri, 16 May 2025
- 09:57:05 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2422F2116F4;
+	Fri, 16 May 2025 16:59:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747414752; cv=pass; b=s3cbkMbAAhFaqkXmoRGsHzrWM3WZ1yLfsPchi2J6eNso6wso2Oznpv4/fD5Nhn3j+JHgELODWXBsmjy9FREx1entzUJyBhE/JU4/wDAJGLwZCQe+zOsBQKNXPjPvT0B/WimYYw3qpR0uvXBV91YxIoS2z5nkwjrbKBMmpaLTBgI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747414752; c=relaxed/simple;
+	bh=u9CnnsxgBHYiMqrlH88scXaMolkI1hCUr/OKugbhe5w=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=pixG/EZULAcVfl0rpVnmQd0IA/C8c4jNFP8NIPDheBqP1DsyR2W7O4aNDDteKdUc/7iq0gDMU0aVj/KFFPaWnC0w9ro9ejnkocB7iQM/E7yvNXjftLeiPETEPi5YeZzwOH3hpZ4M2cdQvn4z5CaFFi59UkGKey3lsBJbFULWQhc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=FbziE6P3; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1747414698; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=ACyHRvfJmA7Y2Kox0fwKg6zSpbnFTWJWZE/4EHlZDMSQZFrU8DeFj2P9BRvL6oWv72ZAPcWkCiLVq8Fr5kYNhkY7KskQ2TGrFRhCLgRPhNunmksAQXsxUqbmX78LJl86QREzTQ9TLSr9gCZSFxiHE+KQX7Sr5qd+0wzEZyQYY9w=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1747414698; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=74P/MVvEdQBxgBZoK6QuPVyfTK+cWj6e2b7brUvTP/I=; 
+	b=SYPfq2OYs9F78KHHzfZ01ofNRtneVGNZLZi+ha5tQkeg44WCU54zq0dMx7gOblNp9AE5QwKU1bW3hTXl6nxtw4etoPZepWqjeNKq3v4BhSHAhvCC2c8Thz5UWF8Utqq2ggVvEbuXGgrWYOyJp4sstQqp1fV8HU/bwxQzghwcPrw=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1747414698;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=74P/MVvEdQBxgBZoK6QuPVyfTK+cWj6e2b7brUvTP/I=;
+	b=FbziE6P3W0Kl3k2r5njdXfq6gpVRmRRn2+f5FaytbMT7wdfA8gASt6BaYNVWUSbO
+	MiwOjO9FRVDrstgCM+QkGV6HFjpYPs0+C7WrYjTsjjtHeIkKQyfJ9mYCiBnmEzTEGNo
+	kcdieD+cO/XeoWkueu2dVKeTlFGmMor/OBe2ew9k=
+Received: by mx.zohomail.com with SMTPS id 1747414696338270.7222041661928;
+	Fri, 16 May 2025 09:58:16 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250410165456.4173-1-W_Armin@gmx.de> <91ea8aed-5f98-4e4e-b3ee-fdc86d54f787@gmx.de>
- <CAJZ5v0jOR9=jA=8XASBpxJyXaB4TvXmxcZQWq1qUgq1J4h_tEg@mail.gmail.com>
- <90cba8fa-e6a9-4dab-a4ea-fa96d570a870@gmx.de> <c8127d88-194a-4a23-b22e-040e2c6b3e9b@gmx.de>
- <CAJZ5v0icUnepOwb87k44nAt1ZwfHp_BqSBzS-TrQWJ_4E3Ls=g@mail.gmail.com>
- <5cec046e-c495-4517-82c8-83ae3cdb63a1@gmx.de> <CAJZ5v0iEni2ie-6sCiZBfwugZ--NmJQX6=2EYKXnHwRCfpqUzQ@mail.gmail.com>
-In-Reply-To: <CAJZ5v0iEni2ie-6sCiZBfwugZ--NmJQX6=2EYKXnHwRCfpqUzQ@mail.gmail.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Fri, 16 May 2025 18:56:53 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0grVpm8MUGYRRhC6VTRRQxvCEmzRJm27F83vJ4a-Wwjhg@mail.gmail.com>
-X-Gm-Features: AX0GCFuz5tlxTSYTkGoJf924BrOs0gzXQsdXvj2unTi0EKN6a7i14_orfifvrS4
-Message-ID: <CAJZ5v0grVpm8MUGYRRhC6VTRRQxvCEmzRJm27F83vJ4a-Wwjhg@mail.gmail.com>
-Subject: Re: [PATCH 0/3] ACPI: thermal: Properly support the _SCP control method
-To: Armin Wolf <w_armin@gmx.de>
-Cc: rui.zhang@intel.com, lenb@kernel.org, linux-acpi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.500.181.1.5\))
+Subject: Re: [RFC PATCH 1/2] rust: add initial scatterlist bindings
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <aCZYcs6Aj-cz81qs@pollux>
+Date: Fri, 16 May 2025 13:57:59 -0300
+Cc: Abdiel Janulgue <abdiel.janulgue@gmail.com>,
+ lyude@redhat.com,
+ Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>,
+ Valentin Obst <kernel@valentinobst.de>,
+ open list <linux-kernel@vger.kernel.org>,
+ Marek Szyprowski <m.szyprowski@samsung.com>,
+ Robin Murphy <robin.murphy@arm.com>,
+ airlied@redhat.com,
+ rust-for-linux@vger.kernel.org,
+ "open list:DMA MAPPING HELPERS" <iommu@lists.linux.dev>,
+ Petr Tesarik <petr@tesarici.cz>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Herbert Xu <herbert@gondor.apana.org.au>,
+ Sui Jingfeng <sui.jingfeng@linux.dev>,
+ Randy Dunlap <rdunlap@infradead.org>,
+ Michael Kelley <mhklinux@outlook.com>
 Content-Transfer-Encoding: quoted-printable
+Message-Id: <E2F129BE-777A-4DBD-BC3E-44033BCD11E4@collabora.com>
+References: <20250512095544.3334680-1-abdiel.janulgue@gmail.com>
+ <20250512095544.3334680-2-abdiel.janulgue@gmail.com>
+ <B3564D77-9E26-4019-9B75-B0C53B26B64F@collabora.com>
+ <aCZYcs6Aj-cz81qs@pollux>
+To: Danilo Krummrich <dakr@kernel.org>
+X-Mailer: Apple Mail (2.3826.500.181.1.5)
+X-ZohoMailClient: External
 
-On Fri, May 16, 2025 at 3:59=E2=80=AFPM Rafael J. Wysocki <rafael@kernel.or=
-g> wrote:
->
-> On Sat, May 3, 2025 at 12:29=E2=80=AFAM Armin Wolf <W_Armin@gmx.de> wrote=
-:
-> >
-> > Am 28.04.25 um 14:34 schrieb Rafael J. Wysocki:
-> >
-> > > On Mon, Apr 28, 2025 at 2:31=E2=80=AFPM Armin Wolf <W_Armin@gmx.de> w=
-rote:
-> > >> Am 27.04.25 um 00:52 schrieb Armin Wolf:
-> > >>
-> > >>> Am 26.04.25 um 15:12 schrieb Rafael J. Wysocki:
-> > >>>
-> > >>>> On Sat, Apr 26, 2025 at 1:20=E2=80=AFAM Armin Wolf <W_Armin@gmx.de=
-> wrote:
-> > >>>>> Am 10.04.25 um 18:54 schrieb Armin Wolf:
-> > >>>>>
-> > >>>>>> The ACPI specification defines an interface for the operating sy=
-stem
-> > >>>>>> to change the preferred cooling mode of a given ACPI thermal zon=
-e.
-> > >>>>>> This interface takes the form of a special ACPI control method c=
-alled
-> > >>>>>> _SCP (see section 11.4.13 for details) and is already supported =
-by the
-> > >>>>>> ACPI thermal driver.
-> > >>>>>>
-> > >>>>>> However this support as many issues:
-> > >>>>>>
-> > >>>>>>     - the kernel advertises support for the "3.0 _SCP Extensions=
-"
-> > >>>>>> yet the
-> > >>>>>>       ACPI thermal driver does not support those extensions. Thi=
-s may
-> > >>>>>>       confuse the ACPI firmware.
-> > >>>>>>
-> > >>>>>>     - the execution of the _SCP control method happens after the=
- driver
-> > >>>>>>       retrieved the trip point values. This conflicts with the A=
-CPI
-> > >>>>>>       specification:
-> > >>>>>>
-> > >>>>>>         "OSPM will automatically evaluate _ACx and _PSV objects =
-after
-> > >>>>>>          executing _SCP."
-> > >>>>>>
-> > >>>>>>     - the cooling mode is hardcoded to active cooling and cannot=
- be
-> > >>>>>>       changed by the user.
-> > >>>>>>
-> > >>>>>> Those issues are fixed in this patch series. In the end the user
-> > >>>>>> will be able to tell the ACPI firmware wether he prefers active =
-or
-> > >>>>>> passive cooling. This setting will also be interesting for
-> > >>>>>> applications like TLP (https://linrunner.de/tlp/index.html).
-> > >>>>>>
-> > >>>>>> The whole series was tested on various devices supporting the _S=
-CP
-> > >>>>>> control method and on a device without the _SCP control method a=
-nd
-> > >>>>>> appears to work flawlessly.
-> > >>>>> Any updates on this? I can proof that the new interface for setti=
-ng
-> > >>>>> the cooling mode
-> > >>>>> works. Additionally the first two patches fix two issues inside t=
-he
-> > >>>>> underlying code
-> > >>>>> itself, so having them inside the mainline tree would be benefici=
-al
-> > >>>>> to users.
-> > >>>> Sure.
-> > >>>>
-> > >>>> I'm going to get to them next week, probably on Monday.
-> > >>> Ok, thanks.
-> > >>>
-> > >>> Armin Wolf
-> > >>>
-> > >> I am a bit ashamed of myself but i think we need to put this patch s=
-eries on hold after all :(.
-> > >>
-> > >> The reason of this is that i am confused by the ACPI specification r=
-egarding _SCP:
-> > >>
-> > >>          11.1.2.1. OSPM Change of Cooling Policy
-> > >>
-> > >>          When OSPM changes the platform=E2=80=99s cooling policy fro=
-m one cooling mode to the other, the following occurs:
-> > >>
-> > >>          1. OSPM notifies the platform of the new cooling mode by ru=
-nning the Set Cooling Policy (_SCP) control method in all thermal zones and=
- invoking the OS-specific Set Cooling Policy interface to all participating=
- devices in each thermal zone.
-> > >>
-> > >>          2. Thresholds are updated in the hardware and OSPM is notif=
-ied of the change.
-> > >>
-> > >>          3. OSPM re-evaluates the active and passive cooling tempera=
-ture trip points for the zone and all devices in the zone to obtain the new=
- temperature thresholds.
-> > >>
-> > >> This section of the ACPI specification tells me that we need to eval=
-uate the _SCP control method of all ACPI thermal zones
-> > >> at the same time, yet section 11.4.13. tells me that each _SCP contr=
-ol methods belongs to the individual thermal zone.
+Hi Danilo,=20
 
-It just says "This object may exist under a thermal zone or a device"
-so I don't see any contradiction.  Section 11.4.13 says where it is
-located and Section 11.1.2.1 says when to evaluate it.
+Replying to you and Lyude here at the same time.
 
-However, Section 11.4.13 also says "OSPM will automatically evaluate
-_ACx and _PSV objects after executing _SCP" which is not arranged for
-in your patch [3/3] IIUC.
+> On 15 May 2025, at 18:11, Danilo Krummrich <dakr@kernel.org> wrote:
+>=20
+> On Mon, May 12, 2025 at 08:39:36AM -0300, Daniel Almeida wrote:
+>>> On 12 May 2025, at 06:53, Abdiel Janulgue =
+<abdiel.janulgue@gmail.com> wrote:
+>>> +impl SGEntry {
+>>> +    /// Convert a raw `struct scatterlist *` to a `&'a SGEntry`.
+>>> +    ///
+>>> +    /// # Safety
+>>> +    ///
+>>> +    /// Callers must ensure that the `struct scatterlist` pointed =
+to by `ptr` is valid for the lifetime
+>>> +    /// of the returned reference.
+>>> +    pub unsafe fn as_ref<'a>(ptr: *mut bindings::scatterlist) -> =
+&'a Self {
+>>> +        // SAFETY: The pointer is valid and guaranteed by the =
+safety requirements of the function.
+>>> +        unsafe { &*ptr.cast() }
+>>> +    }
+>>=20
+>> Hmm, this name is not good. When people see as_ref() they will think =
+of the
+>> standard library where it is used to convert from &T to &U. This is =
+not what is
+>> happening here. Same in other places where as_ref() is used in this =
+patch.
+>=20
+> as_ref() is fine, we use this exact way commonly in the kernel, e.g. =
+for Device,
+> GlobalLockedBy, Cpumask and for various DRM types.
+>=20
+> Rust std does the same, e.g. in [1].
+>=20
+> I think I also asked for this in your Resource patch for consistency, =
+where you
+> call this from_ptr() instead.
+>=20
+> [1] =
+https://doc.rust-lang.org/std/ptr/struct.NonNull.html#method.as_ref
+>=20
 
-Thanks!
+That is not the same thing. What you've linked to still takes &self and =
+returns
+&T. In order words, it converts *from* &self to another type:
+
+pub trait AsRef<T>
+where
+T: ?Sized,
+{
+    // Required method
+    fn as_ref(&self) -> &T;
+}
+
+The signature in the kernel is different, i.e.:
+
+fn as_ref<'a>(ptr: *mut bindings::scatterlist) -> &'a Self =20
+
+This takes a pointer and converts *to* &self, which is a bit in the =
+wrong
+direction IMHO. You also have to provide `ptr`, which is a departure =
+from the
+syntax used elsewhere in Rust, i.e.:
+
+// no explicit arguments:
+let bar: &Bar =3D foo.as_ref();
+
+vs
+
+// slightly confusing:
+//
+// Bar::as_ref() creates &Bar instead of taking it as an argument to =
+return something else
+let bar =3D Bar::as_ref(foo_ptr);  =20
+
+
+Which is more akin to how the "from" prefix works, starting from the =
+=46rom trait
+itself, i.e.:
+
+let bar  =3D Bar::from(...); // Ok: creates Bar,
+
+...to other similar nomenclatures:
+
+let bar =3D Bar::from_ptr(foo_ptr); // Ok, creates &Bar
+
+So, IMHO, the problem is not conflicting with the std AsRef, in the =
+sense that the
+code might not compile because of it. The problem is taking a very well
+known name and then changing its semantics.
+
+Anyways, this is just a small observation. I'll drop my case, specially
+considering that the current as_ref() is already prevalent in a lot of =
+code upstream :)
+
+=E2=80=94 Daniel
+
 
