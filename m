@@ -1,231 +1,155 @@
-Return-Path: <linux-kernel+bounces-650928-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-650925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EC54AB97DD
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 10:41:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57E28AB97D0
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 10:37:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E95AE1BA774F
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 08:41:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BB833BE6AF
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 08:37:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 826D622DA1D;
-	Fri, 16 May 2025 08:41:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25D3322D9FF;
+	Fri, 16 May 2025 08:37:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="bV5T8TAK"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="VY6vauHw"
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC342282E1;
-	Fri, 16 May 2025 08:41:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A231C282E1
+	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 08:37:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747384872; cv=none; b=aUJQ3uuPXbhLO332C3gArkRwTxSEF8KPJMIzFD1534BRVCYI0prP6KpAzQJR8RLXp7JQdLfJ6qLpXuODfryr6kBKUwNoOn943iaYXL96JX6tYV02tqlwXYxEqj4wlDZGvAnuOOnEejl4ECOiGN74bI08N4sheNjQJjXqMcOkw3w=
+	t=1747384655; cv=none; b=W4/vlh7jjv1vNdIt++nU2X60O3aQ9B50PwqOIpq2eaAjvB/JaCX6JtlV7194FIH2WExl/MMx3n+LzlyLnuGwbng8Vp1YQXjS/J/PMJdL9FyoZ1VEBx+ne/JITVDVZNTqSpg9rn/5K1wTzyzPAH2yB+fXR1GdMimCTBDX270tRuc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747384872; c=relaxed/simple;
-	bh=vFvunMkscxWQ2aGc2PjT/YAlhcjkc5XfDLQnAOD2iUw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=buKg6F0QIo9qutB6srUb2VO+Do3iunzOKfT1h0QjoNZQdaizeFKs7oOlFQ4EO7r8CKjq6RagQ6B2cjL2ei8qBZAVTcm/4/CzXt2M3TyQgIvr9m2dirtHxhLkuCnU7auZ0OTZ8XDB1EQTaqH7rHZoWUi9/qpX9lzQz2a6T1Aig5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=bV5T8TAK; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54G7PoHT028005;
-	Fri, 16 May 2025 10:40:13 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	jOVQbSyRtvHqlvBwmgwbNuyQyI33ggIazbqG1gBI7zE=; b=bV5T8TAK7sCLOU2a
-	M33BxFPl4Hm54I2NCmUuqlxss0eiqlrpXONjMgoIpqqFYl9vfMqMaiq6qtGd/vzM
-	uclxTteUpXmPMHaztuyyZt/g08HdkcZUJPPBwTdFYlt5yfQGh+0uYeu3FnQ33LBc
-	PpNV8gAuTu8Dq64zPc3NeGa1igIHNyp6GqRpfsP5ssE9mGe1nYwF2B1gkREIqFDl
-	2mG5Qw8Pwm2iwD0FUjuypOyhDZw3ezcK1msu1YhxZESXebfmFJ/vFuBxFHRlX906
-	c6aKPkBTAjFxL7spZ2AmChDAqzVt0NRJnZbJOz5QkJpvZL2+5s+6qCWpAdbLbZ0E
-	bvA56A==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 46mbdy4g62-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 16 May 2025 10:40:13 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 1FCE04002D;
-	Fri, 16 May 2025 10:38:37 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 8E7B0B34A7F;
-	Fri, 16 May 2025 10:37:18 +0200 (CEST)
-Received: from [10.130.77.120] (10.130.77.120) by SHFDAG1NODE3.st.com
- (10.75.129.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 16 May
- 2025 10:37:17 +0200
-Message-ID: <7df0c1e5-f53b-4a44-920a-c2dfe8842481@foss.st.com>
-Date: Fri, 16 May 2025 10:37:16 +0200
+	s=arc-20240116; t=1747384655; c=relaxed/simple;
+	bh=fi7qBQVzRR/BDXaQCkUxtll5IWUl9/nKV++lPsLDtZQ=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=a9K4427of+2JJGi8d+2coli4r5DywO/dcRrgjJiQOhq7DJ0PSOLd9jPX5faCXNee9S8ywtiHYpfGxkUM5A0plTdmZvkboDKMMzMo7BEmTFbmXqraAIYMYX3TUm7TGeZkvuK2v5iUZZTFubP//qWNTbxqXAh5x6SR6f8J/a51GhQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=VY6vauHw; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250516083724epoutp0172ecd7822acefab5da2412f9b686f0a5~-9ROaW2h63199431994epoutp01z
+	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 08:37:24 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250516083724epoutp0172ecd7822acefab5da2412f9b686f0a5~-9ROaW2h63199431994epoutp01z
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1747384645;
+	bh=4Zhu/vBMgvVq9L8aEv9dFQUEhIuLX61Uo6B2T4FP0rQ=;
+	h=From:To:Subject:Date:References:From;
+	b=VY6vauHwa5U9PyfKXdlk9vquDD00fnqFsuIhWrnH7SMEbZ2W2CJSuV0RqUODVSPXj
+	 fDNgzVFiRpP1ubiUkfB1iYDIW4BaIqFegfHtjUxTgM90lIjcS0l0oAgfCoMx2cz8/j
+	 fN7Sugzi7y8vZ1rBkE8NceAVOKnoEn7EMXO3ZD4E=
+Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPS id
+	20250516083724epcas5p4e69fbb3781dec4dabd3d5811f4184ca7~-9RNveLRe2035120351epcas5p4J;
+	Fri, 16 May 2025 08:37:24 +0000 (GMT)
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39]) by
+	epsnrtp04.localdomain (Postfix) with ESMTP id 4ZzL6r1h0Vz6B9mB; Fri, 16 May
+	2025 08:37:24 +0000 (GMT)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250516083723epcas5p216a21ffb81631d35f0a12f7a583ea248~-9RNeGMEZ1166711667epcas5p2C;
+	Fri, 16 May 2025 08:37:23 +0000 (GMT)
+Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20250516083723epsmtrp1dfd1976faf326d98147978e81e3b387b~-9RNdRYxX1472814728epsmtrp1K;
+	Fri, 16 May 2025 08:37:23 +0000 (GMT)
+X-AuditID: b6c32a28-460ee70000001e8a-d5-6826f9430553
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	76.4E.07818.349F6286; Fri, 16 May 2025 17:37:23 +0900 (KST)
+Received: from hzsscr.. (unknown [109.120.22.104]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250516083723epsmtip12f72bf26ad708cadebac3e7b790a3275~-9RMrqrIA1581115811epsmtip11;
+	Fri, 16 May 2025 08:37:23 +0000 (GMT)
+From: "ping.gao" <ping.gao@samsung.com>
+To: alim.akhtar@samsung.com, avri.altman@wdc.com, bvanassche@acm.org,
+	James.Bottomley@HansenPartnership.com, martin.petersen@oracle.com,
+	peter.wang@mediatek.com, minwoo.im@samsung.com,
+	manivannan.sadhasivam@linaro.org, chenyuan0y@gmail.com,
+	ping.gao@samsung.com, cw9316.lee@samsung.com, linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] scsi: ufs: mcq: delete ufshcd_release_scsi_cmd in
+ ufshcd_mcq_abort
+Date: Fri, 16 May 2025 16:38:12 +0800
+Message-Id: <20250516083812.3894396-1-ping.gao@samsung.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 2/9] PCI: stm32: Add PCIe host support for STM32MP25
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-CC: <lpieralisi@kernel.org>, <kw@linux.com>, <robh@kernel.org>,
-        <bhelgaas@google.com>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <mcoquelin.stm32@gmail.com>, <alexandre.torgue@foss.st.com>,
-        <p.zabel@pengutronix.de>, <thippeswamy.havalige@amd.com>,
-        <shradha.t@samsung.com>, <quic_schintav@quicinc.com>,
-        <cassel@kernel.org>, <johan+linaro@kernel.org>,
-        <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-References: <20250423090119.4003700-1-christian.bruel@foss.st.com>
- <20250423090119.4003700-3-christian.bruel@foss.st.com>
- <gzw3rcuwuu7yswljzde2zszqlzkfsilozdfv2ebrcxjpvngpkk@hvzqb5wbjalb>
- <c01d0d72-e43c-4e10-b298-c8ed4f5d1942@foss.st.com>
- <ec33uuugief45swij7eu3mbx7htfxov6qa5miucqsrdp36z7qe@svpbhliveks4>
-From: Christian Bruel <christian.bruel@foss.st.com>
-Content-Language: en-US
-In-Reply-To: <ec33uuugief45swij7eu3mbx7htfxov6qa5miucqsrdp36z7qe@svpbhliveks4>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE3.st.com
- (10.75.129.71)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-16_03,2025-05-15_01,2025-03-28_01
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrCLMWRmVeSWpSXmKPExsWy7bCSnK7zT7UMgz3fTCwezNvGZvHy51U2
+	i2kffjJbvJyxlNlixqk2VouN/RwWl3fNYbPovr6DzeJuSyerxfLj/5gsnp0+wGyx9dNvVovP
+	TxcwOfB6XL7i7bFz1l12j2mTTrF53Lm2h82j5eR+Fo+PT2+xePRtWcXo8XmTnEf7gW6mAM4o
+	LpuU1JzMstQifbsErozGpVvZCtZyVbQ27mFuYDzI0cXIySEhYCLx4dIP1i5GLg4hgd2MEjs7
+	lzJDJCQkPnf+YYWwhSVW/nvODlH0lFFi1vn57CAJNgF1iT/X74J1iwi8Z5I4eq+VBSQhLBAs
+	sefREbAiFgFVidNr7oNN5RWwlri68DQbxFR5if0Hz0LFBSVOznwC1ssMFG/eOpt5AiPvLCSp
+	WUhSCxiZVjFKphYU56bnJhsWGOallusVJ+YWl+al6yXn525iBAe8lsYOxnffmvQPMTJxMB5i
+	lOBgVhLhvZ6lnCHEm5JYWZValB9fVJqTWnyIUZqDRUmcd6VhRLqQQHpiSWp2ampBahFMlomD
+	U6qBKae/IO0il9XujNpTdz66L1WK8pJn26n/L7iPsZ9josiRBbYHexLZjQQV8m96SK4JnuFz
+	WeSTlFvxagZvXePwhxumhHpd7TMRYLQIkI/ovy1oyO+v+5cvOu+XxuwFLs+O/vyzIu7l3UUS
+	qY/fzdBU/1/yWd5B1C7huXXb8sgd7wvy6/r2clmXzPO9c1ff5eyZ9/w8JX8NOT5nv2NOKtp7
+	iondcqmRjeEE777/tf1Jq5fk7jfJaY1lOs0T8WblL0GRzSk7ol7uOmf5/0vV1R2ZKxsf8Py6
+	/OlixboZnm33vQ8uV4g45PrvImvCljsRzZGKL8wKOn5nXlNeeLL2yLpihsoNlo4PAxbK3b5o
+	rxylxFKckWioxVxUnAgA5yrrAOcCAAA=
+X-CMS-MailID: 20250516083723epcas5p216a21ffb81631d35f0a12f7a583ea248
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+X-CMS-RootMailID: 20250516083723epcas5p216a21ffb81631d35f0a12f7a583ea248
+References: <CGME20250516083723epcas5p216a21ffb81631d35f0a12f7a583ea248@epcas5p2.samsung.com>
 
+after ufs UFS_ABORT_TASK process successfully , host will generate
+mcq irq for abort tag with response OCS_ABORTED
+ufshcd_compl_one_cqe ->
+    ufshcd_release_scsi_cmd
 
+But in ufshcd_mcq_abort already do ufshcd_release_scsi_cmd, this means
+ __ufshcd_release will be done twice.
 
-On 5/15/25 13:29, Manivannan Sadhasivam wrote:
-> On Mon, May 12, 2025 at 05:08:13PM +0200, Christian Bruel wrote:
->> Hi Manivannan,
->>
->> On 4/30/25 09:30, Manivannan Sadhasivam wrote:
->>> On Wed, Apr 23, 2025 at 11:01:12AM +0200, Christian Bruel wrote:
->>>> Add driver for the STM32MP25 SoC PCIe Gen1 2.5 GT/s and Gen2 5GT/s
->>>> controller based on the DesignWare PCIe core.
->>>>
->>>> Supports MSI via GICv2m, Single Virtual Channel, Single Function
->>>>
->>>> Supports WAKE# GPIO.
->>>>
->>>
->>> Mostly looks good. Just a couple of comments below.
->>>
->>>> Signed-off-by: Christian Bruel <christian.bruel@foss.st.com>
->>>> ---
->>>>    drivers/pci/controller/dwc/Kconfig      |  12 +
->>>>    drivers/pci/controller/dwc/Makefile     |   1 +
->>>>    drivers/pci/controller/dwc/pcie-stm32.c | 368 ++++++++++++++++++++++++
->>>>    drivers/pci/controller/dwc/pcie-stm32.h |  15 +
->>>>    4 files changed, 396 insertions(+)
->>>>    create mode 100644 drivers/pci/controller/dwc/pcie-stm32.c
->>>>    create mode 100644 drivers/pci/controller/dwc/pcie-stm32.h
->>>>
->>>
->>> [...]
->>>
->>>> +static int stm32_pcie_probe(struct platform_device *pdev)
->>>> +{
->>>> +	struct stm32_pcie *stm32_pcie;
->>>> +	struct device *dev = &pdev->dev;
->>>> +	int ret;
->>>> +
->>>> +	stm32_pcie = devm_kzalloc(dev, sizeof(*stm32_pcie), GFP_KERNEL);
->>>> +	if (!stm32_pcie)
->>>> +		return -ENOMEM;
->>>> +
->>>> +	stm32_pcie->pci.dev = dev;
->>>> +	stm32_pcie->pci.ops = &dw_pcie_ops;
->>>> +	stm32_pcie->pci.pp.ops = &stm32_pcie_host_ops;
->>>> +
->>>> +	stm32_pcie->regmap = syscon_regmap_lookup_by_compatible("st,stm32mp25-syscfg");
->>>> +	if (IS_ERR(stm32_pcie->regmap))
->>>> +		return dev_err_probe(dev, PTR_ERR(stm32_pcie->regmap),
->>>> +				     "No syscfg specified\n");
->>>> +
->>>> +	stm32_pcie->clk = devm_clk_get(dev, NULL);
->>>> +	if (IS_ERR(stm32_pcie->clk))
->>>> +		return dev_err_probe(dev, PTR_ERR(stm32_pcie->clk),
->>>> +				     "Failed to get PCIe clock source\n");
->>>> +
->>>> +	stm32_pcie->rst = devm_reset_control_get_exclusive(dev, NULL);
->>>> +	if (IS_ERR(stm32_pcie->rst))
->>>> +		return dev_err_probe(dev, PTR_ERR(stm32_pcie->rst),
->>>> +				     "Failed to get PCIe reset\n");
->>>> +
->>>> +	ret = stm32_pcie_parse_port(stm32_pcie);
->>>> +	if (ret)
->>>> +		return ret;
->>>> +
->>>> +	platform_set_drvdata(pdev, stm32_pcie);
->>>> +
->>>> +	ret = pm_runtime_set_active(dev);
->>>> +	if (ret < 0) {
->>>> +		dev_err(dev, "Failed to activate runtime PM %d\n", ret);
->>>
->>> Please use dev_err_probe() here and below.
->>
->> OK, will report this in the EP driver also.
->>
->>>
->>>> +		return ret;
->>>> +	}
->>>> +
->>>> +	ret = devm_pm_runtime_enable(dev);
->>>> +	if (ret < 0) {
->>>> +		dev_err(dev, "Failed to enable runtime PM %d\n", ret);
->>>> +		return ret;
->>>> +	}
->>>> +
->>>> +	pm_runtime_get_noresume(dev);
->>>> +
->>>
->>> I know that a lot of the controller drivers do this for no obvious reason. But
->>> in this case, I believe you want to enable power domain or genpd before
->>> registering the host bridge. Is that right?
->>
->> We call pm_runtime_enable() before stm32_add_pcie_port() and
->> dw_pcie_host_init(). This ensures that PCIe is active during the PERST#
->> sequence and before accessing the DWC registers.
->>
-> 
-> What do you mean by 'PCIe is active'? Who is activating it other than this
-> driver?
+This means hba->clk_gating.active_reqs also will be decrease twice, it
+will be negtive, so delete ufshcd_release_scsi_cmd in ufshcd_mcq_abort
+function.
 
-"PCIe is active" in the sense of pm_runtime_active() and PM runtime_enabled.
+static void __ufshcd_release(struct ufs_hba *hba)
+{
+    if (!ufshcd_is_clkgating_allowed(hba))
+        return;
 
-A better call point would be just before dw_host_init(), after the PCIe 
-controller is reset :
+    hba->clk_gating.active_reqs--;
 
-stm32_add_pcie_port()
-clk_prepare_enable()
-devm_pm_runtime_enable()
-dw_pcie_host_init()
+    if (hba->clk_gating.active_reqs < 0) {
+        panic("ufs abnormal active_reqs!!!!!!");
+    }
 
-with this sequence, the stm32_pcie_suspend_noirq() is well balanced. 
-does that sound better ?
+    ...
+}
+Signed-off-by: ping.gao <ping.gao@samsung.com>
+---
+ drivers/ufs/core/ufs-mcq.c | 5 -----
+ 1 file changed, 5 deletions(-)
 
-> 
->>> And the fact that you are not
->>> decrementing the runtime usage count means, you want to keep it ON all the time?
->>> Beware that your system suspend/resume calls would never get executed.
->>
->> We do not support PM runtime autosuspend, so we must notify PM runtime that
->> PCIe is always active. Without invoking pm_runtime_get_noresume(), PCIe
->> would mistakenly be marked as suspended.
-> 
-> This cannot happen unless the child devices are also suspended? Or if there are
-> no child devices connected.
+diff --git a/drivers/ufs/core/ufs-mcq.c b/drivers/ufs/core/ufs-mcq.c
+index f1294c29f484..2106c63db5ca 100644
+--- a/drivers/ufs/core/ufs-mcq.c
++++ b/drivers/ufs/core/ufs-mcq.c
+@@ -713,10 +713,5 @@ int ufshcd_mcq_abort(struct scsi_cmnd *cmd)
+ 		return FAILED;
+ 	}
+ 
+-	spin_lock_irqsave(&hwq->cq_lock, flags);
+-	if (ufshcd_cmd_inflight(lrbp->cmd))
+-		ufshcd_release_scsi_cmd(hba, lrbp);
+-	spin_unlock_irqrestore(&hwq->cq_lock, flags);
+-
+ 	return SUCCESS;
+ }
+-- 
+2.25.1
 
-If no device is connected or if one is active, without 
-pm_runtime_get_noresume(), pm_genpd_summary says "PCIe suspended" 
-despite being clocked and having accessible configuration space
-
-thank you,
-
-Christian
-
-> 
-> - Mani
-> 
 
