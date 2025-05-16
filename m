@@ -1,85 +1,118 @@
-Return-Path: <linux-kernel+bounces-650965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-650967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61604AB985C
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 11:08:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D2AEAB9863
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 11:12:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DF299E3FE8
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 09:08:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A3C059E7C13
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 09:11:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90ECB22F386;
-	Fri, 16 May 2025 09:08:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 909B622F392;
+	Fri, 16 May 2025 09:11:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vn/X524u"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AnMboYw+"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E62951A704B;
-	Fri, 16 May 2025 09:08:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A42F21ABBF
+	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 09:11:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747386522; cv=none; b=qhBrJOCBQ5xpYUPyoMUKHVwhtAhlICnx1UbaGRx3RfmZ6DNIw/CI33ht0W/c/5e7PZOCocEq3QoqJR9rCyYSgE2IW4ib5t8PJyMo+HJgMyyxKQTFRRlEUrgw6tI4tOg5XO15x+EFMHTVWWhiau36wkS5zfl7drlut1HAyWzjG/I=
+	t=1747386713; cv=none; b=biXPvLIIhdIyXqey9Zj37PHgC0yvDhCkp6Ge2sX0pXjaZcHxGbmLqgCtxNgs4j8GFIrmpWK3mTmpflDeDtlQf3kqlxkMlLMCsyxsNcxTZV7vfC/R3A3EajD+Q/cTZmFxXVut1jvFRg4AExCsKW1YLlKnWRvBKK8+Ry5q5wdKJRo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747386522; c=relaxed/simple;
-	bh=UALEwkCt9TSe/SLITzVhGp9yYZKC1uwhiV/qqqtwwwc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YirEma0Ryo0Mf473/9AHYRfbNEXNVkc+1E1r/i3Ds+QwUOmUULnzdzexU01Jc+ZqSdEthimQmmv4qLFB+sH4Tvsq6CGGppCeEQ6/P4BnmFYFpc/dRoJ+ltAapI/q+MgDixM7/NvbwKUa95jMOLVaMkXMRH+p7M1moO1ZfzFseBU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vn/X524u; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3EFDFC4CEE4;
-	Fri, 16 May 2025 09:08:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747386521;
-	bh=UALEwkCt9TSe/SLITzVhGp9yYZKC1uwhiV/qqqtwwwc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Vn/X524ulQTmzlz/OTMFbh+SoaVnp+NWrmNGy/X+1UCDmclgAiZHCsddtaqRNMIS1
-	 ZKLFa+NEBF1uoK9TlD7aF1zMrIfLmSjO6JRYv+vCB9NZXcSQfxgd8U4Tiycid/+ygB
-	 EHGeILgIJyJdnIOkn5w0bEBtgDbjXHSO1YoCcZZWslPV5X+B3F+ortc5ICOopDha6+
-	 rH2SkmaDw1bZzOorLBo4qeJYiKBrLhLkIURBReNjKi2mNOWtoONPbGnZzhr0OX6FuG
-	 rKJURNkAlTVwAWsnEYPvjkj+ZicHkOPATvlzAxvmL5DqDtork2RAZoBseGt8GjPLPp
-	 WzqYoEOES8bLw==
-Date: Fri, 16 May 2025 10:08:37 +0100
-From: Simon Horman <horms@kernel.org>
-To: Sagi Maimon <maimon.sagi@gmail.com>
-Cc: jonathan.lemon@gmail.com, vadim.fedorenko@linux.dev,
-	richardcochran@gmail.com, andrew+netdev@lunn.ch,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: Re: [PATCH v5] ptp: ocp: Limit signal/freq counts in summary output
- functions
-Message-ID: <20250516090837.GF1898636@horms.kernel.org>
-References: <20250514073541.35817-1-maimon.sagi@gmail.com>
+	s=arc-20240116; t=1747386713; c=relaxed/simple;
+	bh=scJc5ntLqs5pH3aPhx3ppFySMhN3SIrwwumf18q+O8w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Mp3Xwy3vZ2ev7iKQaFOULGOCGYDxL6HBinqB3mgOLSnMUkTAAagbRNKmFr/8NOAJ2JuGqPoe2SQE28QuyGzjm4IRdP/PyHO5mBIMb7UZqRDh2m4P4Z0n6hWTbqiYrL5SM8TWS5jOLkqX8biXH7SkquWv7JLSWSgKhT94v7B+2u4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AnMboYw+; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3a363d15c64so20989f8f.3
+        for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 02:11:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1747386709; x=1747991509; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=EjEZ5Ge0QfE2Uu3iAKcOD88CCG1vBxpHSQayKs9W9g0=;
+        b=AnMboYw+yPMJhp5Y3bn0sov38mnShcAjsMbU7oxeeT270mQFuUO2y0CHc6COzj5qhb
+         cXWn/7w6YHRu2j7p/Q2t8ItwDzJafm080sv6pcTp+mNJALrP+RoDMRpZWDp27lzrUpT0
+         kcV4nG7WfDmGFHLsp5Z7tf3fCVZ/bG7LQzgnTYO8828Jd3uOAaRPWrzJGIE6VFI+fpYG
+         UpBhSWxvkX9xpJYuWJYR4Xs/BcmobDtNyODr7Ry3vPIuPm8h1SmKnETQXOwhnLL+UF1n
+         P2JDx5AqO5XbddAniHfDKurxH/KKwmQ54JkUHyHVi4uzzCSUkmwS/0mjU2W0v96n2Zsi
+         PC2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747386709; x=1747991509;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=EjEZ5Ge0QfE2Uu3iAKcOD88CCG1vBxpHSQayKs9W9g0=;
+        b=jtMh9Avm3qRlKT2tv6aHI397JBnfLS8lgN81JcTzUeau/bOZJCVnCkYjpDtRHZF08m
+         GTsxt0a4Rg+DraJyK9pRzXjNB7fM0Ilr0bGisN34vEhPJwvQClbmNu8Lqb1FtppXM24u
+         VuEeTJ617NuPk5WcozzYYvX3KpgkfSjStfwoMKCPrWgleIV8IqB6zJvaAsrG9wMN5ayl
+         dbDtL3A0HBqT454Ifg/HjK+PL9OGh2GG6C7uaAICo3DP6pXVeho0cweDYtIIwWDpooiC
+         NQsIHkCglXc3fy0RGnuKD+DXxOm6g2cZpZYUnmKLkOsidkOsjKD7PW9BoYU457RJK9rG
+         SyqA==
+X-Gm-Message-State: AOJu0YyO9FWjxQh+c7Hp1fD4O7obSJrDOvzFts5W9UCE/VZY1uWnGEGb
+	xyGESKs3KPdmgRk6Qvp9Y1W6ui0gzVL67RJu8gEJq1yp7Q035r01cXjynwsHmWyFijM=
+X-Gm-Gg: ASbGnctoxzo+iXJop6u3wdC0tPdvs83hYhJXdIUuAF+62doJiH/kaorqCn4GPTXSujE
+	Nj0htbBujQ8QukGeEslIMstIBigt7yT46McCa5fcoIHeHZz9kjs6S7IYLAEZ63PX6yp61DY6Ebg
+	Gv0o7BCkCq967+ud63NRRrfgHyvPubNxtQNslJ1OSszyiuUgpRKXIwaqMW3xSe7JVllZCywyg5E
+	XjatBhQWuKwyT7xt1GwRUWneWJyB7Hx56ljnqG6PQPu5OEmnICBnYfGvmhHvP7R/jBRAejh1nuT
+	4Q+Y2Ye3PFP+F/ILhDeOqStbWOtPrwffPb1NsfGvbZuQm0fZdPZdJ1iKkEVRcYy9Jxb923QmsR3
+	7L2Nljdrf9ycf
+X-Google-Smtp-Source: AGHT+IFNUTuIstQezL6MQaChP/LsR57dqefIl+e5tbhmk79x9d9G3qMwbPat+AN49vK7UttUY9Y0Kg==
+X-Received: by 2002:a05:6000:400f:b0:39c:1f04:bb4a with SMTP id ffacd0b85a97d-3a35c808b27mr2666079f8f.10.1747386709362;
+        Fri, 16 May 2025 02:11:49 -0700 (PDT)
+Received: from [192.168.2.1] (146725694.box.freepro.com. [130.180.211.218])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3a35ca62910sm2246831f8f.50.2025.05.16.02.11.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 16 May 2025 02:11:48 -0700 (PDT)
+Message-ID: <de1e4c74-2ee6-46fb-b058-db3bb72bc346@linaro.org>
+Date: Fri, 16 May 2025 11:11:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250514073541.35817-1-maimon.sagi@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: linux-next: duplicate patch in the clockevents tree
+To: Stephen Rothwell <sfr@canb.auug.org.au>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
+ "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux Next Mailing List <linux-next@vger.kernel.org>
+References: <20250516164342.74fd3f15@canb.auug.org.au>
+Content-Language: en-US
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <20250516164342.74fd3f15@canb.auug.org.au>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, May 14, 2025 at 10:35:41AM +0300, Sagi Maimon wrote:
-> The debugfs summary output could access uninitialized elements in
-> the freq_in[] and signal_out[] arrays, causing NULL pointer
-> dereferences and triggering a kernel Oops (page_fault_oops).
-> This patch adds u8 fields (nr_freq_in, nr_signal_out) to track the
-> number of initialized elements, with a maximum of 4 per array.
-> The summary output functions are updated to respect these limits,
-> preventing out-of-bounds access and ensuring safe array handling.
+On 5/16/25 08:43, Stephen Rothwell wrote:
+> Hi all,
 > 
-> Signed-off-by: Sagi Maimon <maimon.sagi@gmail.com>
-> ---
-> Addressed comments from Vadim Fedorenko:
-> - https://www.spinics.net/lists/kernel/msg5683022.html
-> Addressed comments from Jakub Kicinski:
-> - https://www.spinics.net/lists/netdev/msg1091131.html
-> Changes since v4:
-> - remove fix from signal/freq show/store routines.
+> The following commit is also in the tip tree as a different commit
+> (but the same patch):
+> 
+>    1732e45b79bb ("genirq: Fix typo in IRQ_NOTCONNECTED comment")
+> 
+> This is commit
+> 
+>    0128816c42b5 ("genirq: Fix typo in IRQ_NOTCONNECTED comment")
+> 
+> in the tip tree.
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+Fixed, thanks!
 
+-- 
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
