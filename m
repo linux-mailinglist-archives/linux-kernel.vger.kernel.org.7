@@ -1,148 +1,250 @@
-Return-Path: <linux-kernel+bounces-651286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-651291-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0734AB9CBD
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 14:56:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DE583AB9CCB
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 14:58:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A3CD4E7612
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 12:56:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C98C94E7F04
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 12:58:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E96B24168A;
-	Fri, 16 May 2025 12:56:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7157B2441A6;
+	Fri, 16 May 2025 12:57:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d3/ZUFQI"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="H3yab2Ai"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BE66235069;
-	Fri, 16 May 2025 12:56:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84EFD242D68;
+	Fri, 16 May 2025 12:57:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747400161; cv=none; b=N8af68H9GRBBFFO2K21IjlVfxfylLhgvEEp+1djVwDg1wXVAYrGXJCdL1bgGzihwS7O4ZCwi4k5BpF9DOk02FpdvRkosOwc3opBWoI48BoxXtubmG0BBN5HlaC1pZaa+uuwkoT0Fm6w4pcdhs9O+9NwoBKTNM41bk396MPaONkc=
+	t=1747400276; cv=none; b=aXgQkhd0ku5I8baDG0v3lJ5/4o5wAa1nXplZ1aoSkQxJerVQyPAZskp4gSI8dRfqreMmpS7BlQX0cIDrYEe+iKCo5oZrQQRN02TiHQq4Acq2tLqJ7TKqjhhphf3wXeaiM/pk5VU7jJt4Ctvi4Il2H41ThqkHhPW87i06V2UViws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747400161; c=relaxed/simple;
-	bh=35T8hI2tRF7pIOtlKuLnScRi9cOm0aWdJQGAqF4pEPg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=odp2BsanJ+HbvcktvVzrCwemh9zUiyjXWX/7q+ECSIfYCbpRpO7eOE/+hSpp0vHjUefc2AdvtrVfJCWJZvPsYfTvVQjZzpZqANHMxtjuhoWqK8zre+dDUOjr4o17elcxt3u1WqXzhadP2FN5K4TvOO2Of2q3D4OSpZtI0CgwdAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d3/ZUFQI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7174CC4CEE4;
-	Fri, 16 May 2025 12:55:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747400160;
-	bh=35T8hI2tRF7pIOtlKuLnScRi9cOm0aWdJQGAqF4pEPg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=d3/ZUFQIWu1K3dI+L0Bz3XZO2xZPD5oV2ESWzsSx3mIj7ODASu3hMNQ7Bk/f40q/i
-	 dL1DvQak9kHu7e+K8MX+e7TYLwkaZ4sS2tL76q3Uo3QWgXgb/X9ggmlEsZX5TKUMmH
-	 ZKX8ebQ3lPkL7Gg9Oz1ByCKyuY9NE9as9lBbddkR47net5aToxgiqjpHX+iqqvdRSC
-	 zb5Bw9TtxTfkyIDJ4iJPHYd+Js80Ot93v3pgyJki0ZaKJmIkY44Qb5s5uv9G9p+7SQ
-	 X/OV2I3+mCO3K/ISsgeMo2zVdrA84UjQA3cmMkThsegztkFAux/eo/m+8DVhvlFWAj
-	 lahCPtmReLx/g==
-Message-ID: <cafba18a-5391-4d9d-aa4c-2f06f93af0f8@kernel.org>
-Date: Fri, 16 May 2025 14:55:54 +0200
+	s=arc-20240116; t=1747400276; c=relaxed/simple;
+	bh=bqQBd5PjO+Z7B7y6xL8kSFo8RkFPRhvksEEkPk1FNKo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sXAcO3SYmn2NHxOmfTuKsUZ/YSKqHyWTiXtYDJ0V+ssB+aRvyqou29IuNh6WTvffhy9sjHtKiWSr6qMUiu/CVqrpI0ZYt+tPav4AZFrNmocP7VBsD/xV23M9quM3IUfQrtDpHF2ILPEbtd5n+MI1bFrWD1+y9iHdP65Sl9JRt2k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=H3yab2Ai; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 617B3C4CEE4;
+	Fri, 16 May 2025 12:57:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1747400275;
+	bh=bqQBd5PjO+Z7B7y6xL8kSFo8RkFPRhvksEEkPk1FNKo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=H3yab2Aievc6KyEn/HP5yAftNhFIJDyqgLHX3f9HTb70eYjHjFzW9evKQGhgPFWEY
+	 /R0g1GA+IGPO7L9Po8C0OxzSBjOrwQihCO8Znp3YRDQ8yroMoqsiPP8/Z15sAXqeHj
+	 MefhwGSoSlr0ZxLVf6guqsXm204gFVSspJfWlq0M=
+Date: Fri, 16 May 2025 14:56:07 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
+Cc: mka@chromium.org, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org, git@amd.com,
+	Jonathan Stroud <jonathan.stroud@amd.com>
+Subject: Re: [PATCH] usb: misc: onboard_usb_dev: Fix usb5744 initialization
+ sequence
+Message-ID: <2025051659-stood-scary-c3ba@gregkh>
+References: <1747398760-284021-1-git-send-email-radhey.shyam.pandey@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/8] dt-bindings: media: nxp: Add Wave6 video codec
- device
-To: Nas Chung <nas.chung@chipsnmedia.com>
-Cc: "mchehab@kernel.org" <mchehab@kernel.org>,
- "hverkuil@xs4all.nl" <hverkuil@xs4all.nl>,
- "sebastian.fricke@collabora.com" <sebastian.fricke@collabora.com>,
- "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
- <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
- "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-imx@nxp.com" <linux-imx@nxp.com>, "marex@denx.de" <marex@denx.de>,
- "jackson.lee" <jackson.lee@chipsnmedia.com>,
- "lafley.kim" <lafley.kim@chipsnmedia.com>
-References: <20250422093119.595-1-nas.chung@chipsnmedia.com>
- <20250422093119.595-3-nas.chung@chipsnmedia.com>
- <20250425-romantic-truthful-dove-3ef949@kuoka>
- <SL2P216MB124656A87931B153F815820BFB8AA@SL2P216MB1246.KORP216.PROD.OUTLOOK.COM>
- <f1073f21-0885-486f-80c8-00f91dfd7448@kernel.org>
- <SL2P216MB1246002B8EFD5CBE69E447ACFB96A@SL2P216MB1246.KORP216.PROD.OUTLOOK.COM>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
- QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
- +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
- ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
- 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
- hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
- tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
- 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
- naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
- hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
- whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
- qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
- RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
- Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
- H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
- dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
- AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
- jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
- zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
- XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <SL2P216MB1246002B8EFD5CBE69E447ACFB96A@SL2P216MB1246.KORP216.PROD.OUTLOOK.COM>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1747398760-284021-1-git-send-email-radhey.shyam.pandey@amd.com>
 
-On 13/05/2025 09:39, Nas Chung wrote:
->>
->> All of above are wrong for the SoC...
->>
->>>
->>>         #include <dt-bindings/interrupt-controller/arm-gic.h>
->>>         #include <dt-bindings/clock/nxp,imx95-clock.h>
->>>
->>>         soc {
->>>           #address-cells = <2>;
->>>           #size-cells = <2>;
->>>
->>>           vpu: video-codec {
->>>             compatible = "nxp,imx95-vpu", "cnm,wave633c";
->>
->> What does this device represent? It is not "ctrl", because you made ctrl
->> separate device node. Your binding description suggests that is the VPU
->> control region.
+On Fri, May 16, 2025 at 06:02:40PM +0530, Radhey Shyam Pandey wrote:
+> From: Jonathan Stroud <jonathan.stroud@amd.com>
 > 
-> My intention was to represent the MMIO VPU device, which includes
-> both the core and control nodes.
+> Introduce i2c APIs to read/write for proper configuration register
+> programming. It ensures that read-modify-write sequence is performed
+> and reserved bit in Runtime Flags 2 register are not touched.
+> 
+> Also legacy smbus block write inserted an extra count value into the
+> i2c data stream which breaks the register write on the usb5744.
+> 
+> Switching to new read/write i2c APIs fixes both issues.
+> 
+> Fixes: 6782311d04df ("usb: misc: onboard_usb_dev: add Microchip usb5744 SMBus programming support")
+> Signed-off-by: Jonathan Stroud <jonathan.stroud@amd.com>
+> Co-developed-by: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
+> Signed-off-by: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
+> ---
+>  drivers/usb/misc/onboard_usb_dev.c | 100 +++++++++++++++++++++++++----
+>  1 file changed, 87 insertions(+), 13 deletions(-)
+> 
+> diff --git a/drivers/usb/misc/onboard_usb_dev.c b/drivers/usb/misc/onboard_usb_dev.c
+> index 15fa90f47c70..320278a0ac39 100644
+> --- a/drivers/usb/misc/onboard_usb_dev.c
+> +++ b/drivers/usb/misc/onboard_usb_dev.c
+> @@ -36,9 +36,10 @@
+>  #define USB5744_CMD_CREG_ACCESS			0x99
+>  #define USB5744_CMD_CREG_ACCESS_LSB		0x37
+>  #define USB5744_CREG_MEM_ADDR			0x00
+> +#define USB5744_CREG_MEM_RD_ADDR		0x04
+>  #define USB5744_CREG_WRITE			0x00
+> -#define USB5744_CREG_RUNTIMEFLAGS2		0x41
+> -#define USB5744_CREG_RUNTIMEFLAGS2_LSB		0x1D
+> +#define USB5744_CREG_READ			0x01
+> +#define USB5744_CREG_RUNTIMEFLAGS2		0x411D
+>  #define USB5744_CREG_BYPASS_UDC_SUSPEND		BIT(3)
+>  
+>  static void onboard_dev_attach_usb_driver(struct work_struct *work);
+> @@ -309,11 +310,88 @@ static void onboard_dev_attach_usb_driver(struct work_struct *work)
+>  		pr_err("Failed to attach USB driver: %pe\n", ERR_PTR(err));
+>  }
+>  
+> +static int onboard_dev_5744_i2c_read_byte(struct i2c_client *client, u16 addr, u8 *data)
+> +{
+> +	struct i2c_msg msg[2];
+> +	u8 rd_buf[3];
+> +	int ret;
+> +
+> +	u8 wr_buf[7] = {0, USB5744_CREG_MEM_ADDR, 4,
+> +			USB5744_CREG_READ, 1,
+> +			addr >> 8 & 0xff,
+> +			addr & 0xff};
+> +	msg[0].addr = client->addr;
+> +	msg[0].flags = 0;
+> +	msg[0].len = sizeof(wr_buf);
+> +	msg[0].buf = wr_buf;
+> +
+> +	ret = i2c_transfer(client->adapter, msg, 1);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	wr_buf[0] = USB5744_CMD_CREG_ACCESS;
+> +	wr_buf[1] = USB5744_CMD_CREG_ACCESS_LSB;
+> +	wr_buf[2] = 0;
+> +	msg[0].len = 3;
+> +
+> +	ret = i2c_transfer(client->adapter, msg, 1);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	wr_buf[0] = 0;
+> +	wr_buf[1] = USB5744_CREG_MEM_RD_ADDR;
+> +	msg[0].len = 2;
+> +
+> +	msg[1].addr = client->addr;
+> +	msg[1].flags = I2C_M_RD;
+> +	msg[1].len = 2;
+> +	msg[1].buf = rd_buf;
+> +
+> +	ret = i2c_transfer(client->adapter, msg, 2);
+> +	if (ret < 0)
+> +		return ret;
+> +	*data = rd_buf[1];
+> +
+> +	return 0;
+> +}
+> +
+> +static int onboard_dev_5744_i2c_write_byte(struct i2c_client *client, u16 addr, u8 data)
+> +{
+> +	struct i2c_msg msg[2];
+> +	int ret;
+> +
+> +	u8 wr_buf[8] = {0, USB5744_CREG_MEM_ADDR, 5,
+> +			USB5744_CREG_WRITE, 1,
+> +			addr >> 8 & 0xff,
+> +			addr & 0xff,
+> +			data};
+> +	msg[0].addr = client->addr;
+> +	msg[0].flags = 0;
+> +	msg[0].len = sizeof(wr_buf);
+> +	msg[0].buf = wr_buf;
+> +
+> +	ret = i2c_transfer(client->adapter, msg, 1);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	msg[0].len = 3;
+> +	wr_buf[0] = USB5744_CMD_CREG_ACCESS;
+> +	wr_buf[1] = USB5744_CMD_CREG_ACCESS_LSB;
+> +	wr_buf[2] = 0;
+> +
+> +	ret = i2c_transfer(client->adapter, msg, 1);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	return 0;
+> +}
+> +
+>  static int onboard_dev_5744_i2c_init(struct i2c_client *client)
+>  {
+>  #if IS_ENABLED(CONFIG_USB_ONBOARD_DEV_USB5744)
+>  	struct device *dev = &client->dev;
+>  	int ret;
+> +	u8 reg;
+>  
+>  	/*
+>  	 * Set BYPASS_UDC_SUSPEND bit to ensure MCU is always enabled
+> @@ -321,20 +399,16 @@ static int onboard_dev_5744_i2c_init(struct i2c_client *client)
+>  	 * The command writes 5 bytes to memory and single data byte in
+>  	 * configuration register.
+>  	 */
+> -	char wr_buf[7] = {USB5744_CREG_MEM_ADDR, 5,
+> -			  USB5744_CREG_WRITE, 1,
+> -			  USB5744_CREG_RUNTIMEFLAGS2,
+> -			  USB5744_CREG_RUNTIMEFLAGS2_LSB,
+> -			  USB5744_CREG_BYPASS_UDC_SUSPEND};
+> -
+> -	ret = i2c_smbus_write_block_data(client, 0, sizeof(wr_buf), wr_buf);
+> +	ret = onboard_dev_5744_i2c_read_byte(client,
+> +					     USB5744_CREG_RUNTIMEFLAGS2, &reg);
+>  	if (ret)
+> -		return dev_err_probe(dev, ret, "BYPASS_UDC_SUSPEND bit configuration failed\n");
+> +		return dev_err_probe(dev, ret, "CREG_RUNTIMEFLAGS2 read failed\n");
+>  
+> -	ret = i2c_smbus_write_word_data(client, USB5744_CMD_CREG_ACCESS,
+> -					USB5744_CMD_CREG_ACCESS_LSB);
+> +	reg |= USB5744_CREG_BYPASS_UDC_SUSPEND;
+> +	ret = onboard_dev_5744_i2c_write_byte(client,
+> +					      USB5744_CREG_RUNTIMEFLAGS2, reg);
+>  	if (ret)
+> -		return dev_err_probe(dev, ret, "Configuration Register Access Command failed\n");
+> +		return dev_err_probe(dev, ret, "BYPASS_UDC_SUSPEND bit configuration failed\n");
+>  
+>  	/* Send SMBus command to boot hub. */
+>  	ret = i2c_smbus_write_word_data(client, USB5744_CMD_ATTACH,
+> 
+> base-commit: 484803582c77061b470ac64a634f25f89715be3f
+> -- 
+> 2.34.1
+> 
+> 
 
-Then what is the VPU device if not CTRL? What is the CTRL device?
+Hi,
 
+This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
+a patch that has triggered this response.  He used to manually respond
+to these common problems, but in order to save his sanity (he kept
+writing the same thing over and over, yet to different people), I was
+created.  Hopefully you will not take offence and will fix the problem
+in your patch and resubmit it so that it can be accepted into the Linux
+kernel tree.
 
-Best regards,
-Krzysztof
+You are receiving this message because of the following common error(s)
+as indicated below:
+
+- You have marked a patch with a "Fixes:" tag for a commit that is in an
+  older released kernel, yet you do not have a cc: stable line in the
+  signed-off-by area at all, which means that the patch will not be
+  applied to any older kernel releases.  To properly fix this, please
+  follow the documented rules in the
+  Documentation/process/stable-kernel-rules.rst file for how to resolve
+  this.
+
+If you wish to discuss this problem further, or you have questions about
+how to resolve this issue, please feel free to respond to this email and
+Greg will reply once he has dug out from the pending patches received
+from other developers.
+
+thanks,
+
+greg k-h's patch email bot
 
