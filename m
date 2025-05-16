@@ -1,56 +1,83 @@
-Return-Path: <linux-kernel+bounces-651405-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-651407-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F0FFAB9E16
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 16:00:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09DC0AB9E1D
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 16:03:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F3E99E1515
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 14:00:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A4E14A867B
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 14:03:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2486618C937;
-	Fri, 16 May 2025 14:00:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62EA413B280;
+	Fri, 16 May 2025 14:02:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JZFYVSq7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JllxqA74"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79E2F188734;
-	Fri, 16 May 2025 14:00:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAA64FC1D;
+	Fri, 16 May 2025 14:02:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747404004; cv=none; b=YP9rkWUw+fkR+O1xx2pN34oX4MOdfNYdeu9AUy4SuNVwP+ksLCFj9iBlgmnJk6yzmSPp2OJvISYsFMFjRkDwAMK5xeBPi9VImXR4oBmBHssZI/PT4g5qWcUsu5rUq0/x8XFfUXvUAqqPOVZe1aaGZJCuVTSPsTH4pFDCIhysIlk=
+	t=1747404177; cv=none; b=aysilkJnywP08va3KnY5kTgM+aNzUrbf6Eze9rFt9F5XuyC9OVBLqRg2hYH1rBsASeaz0nxRvWxQOf9l0zZk/s+tPxyfOjKaHrCkGbjgz0DGFvgbfR+PxAHlQvGkmivpI75rQh6NRTd5m9JQwbm59RHWsFi3iIhEFMigNVqlRNk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747404004; c=relaxed/simple;
-	bh=BvTzr413V6VBxtMA82ZSx+N0EIx/GNeVC6zTvua2xLo=;
+	s=arc-20240116; t=1747404177; c=relaxed/simple;
+	bh=XD5LW1X8Za8qYgmHHCMJojUWKp2P7yuhRCd7itD26lo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tbOniCPSXClYuGmPRtNMgcytDvId7SkjLiTX3EqGQFvCP8WXFGl4eZMZynK5l+y+4AbU3VPakdo2XpwCk0UY5Lu+fTdZ85wBxeEBvakXBdVGZMPQptfF78IlCoPNqx+SNDr0Lfiry6rIydSaPYbonERkuDH1BboOmx5dBlRWPY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JZFYVSq7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9BD9C4CEED;
-	Fri, 16 May 2025 14:00:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747404003;
-	bh=BvTzr413V6VBxtMA82ZSx+N0EIx/GNeVC6zTvua2xLo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JZFYVSq7ATDSktvpGBHE8mAJThrw46Bb0fWjBMvnv19GsxTp4CmFa3YWRguMsxOe2
-	 TCFXekBFpJu5UFtvW8g7RPiH4g978YWFGzyfn9qW4krrzD80MD/XvWcHaEmzQPXkmU
-	 J9n+bbp2S1l/fp4yfEGwruHU5FwpTGJUjm5ROVn91XPIm9lfzeHs09jRLYZry1ktUJ
-	 70KmoBr+CYjrBvduMkEA7ty3mCJvr8oFhog02M+XFNm2s2biQc4ZOcCbqwbR4apbYD
-	 7kZnMbhBWfYY+lOOwWLW+DxB3W2lJnkOGb6Hn9ATVh6Zkpg0qeQXLD9yecVu3SR5hH
-	 P1ZOgr9cdp0Fw==
-Date: Fri, 16 May 2025 14:59:59 +0100
-From: Will Deacon <will@kernel.org>
-To: Anshuman Khandual <anshuman.khandual@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org,
-	Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64/ptrace: Make user_hwdebug_state.dbg_regs[] array
- size as ARM_MAX_BRP
-Message-ID: <20250516135958.GA13612@willie-the-truck>
-References: <20250421055212.123774-1-anshuman.khandual@arm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=U/OqElIWENcUZyQC95gNZJLFCrpys2EEYyRt2SZiTgD7z6Jf32egtPnLoAIQBxxB8/cvNCqVCKl0oQhizaHatAybsrGFsRUG8V2ebz8ZHb5UXftL0EOYW5sdv36ZdMtgrrroE6kV/KoevSXbaYaArpVVf1XsM/s0tnI9dxUARQg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JllxqA74; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1747404177; x=1778940177;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=XD5LW1X8Za8qYgmHHCMJojUWKp2P7yuhRCd7itD26lo=;
+  b=JllxqA74mq/yQjzpbNgf3FK+rzg9hWY+7kjMFUXOPOHQT8CPQyB/GbQr
+   jr2Od9NDw31cOjb+x8t0nQm23S5AqIvXpXZTWrZrvrJisgZJ0QaCy+64D
+   fYIPOs1W/Y1+raWqx/uZcy2DVBEebj3jUJ3sH3gOzoOIvKb2cw2XiKKUh
+   LvIvX7b9AGfwc12eIOxb9oJDdp20YaCQTDicw8rPZq2fxa3auRdQT2kha
+   ljeH8Yky5wlLNK0gB0F3KWM7O/5RHj1PKwTMido0153kAadtJTLnCDEBM
+   p0I6QGmkNNaRITYbMWGo6ukpBErXWh3ZvViGKPfiJQ7WDwML0yTEsa8yQ
+   Q==;
+X-CSE-ConnectionGUID: EdcAXMIaRiWVWSI5ewwPcw==
+X-CSE-MsgGUID: JtsSB7aGQmClbsmOW+U43A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11435"; a="53049001"
+X-IronPort-AV: E=Sophos;i="6.15,293,1739865600"; 
+   d="scan'208";a="53049001"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 May 2025 07:01:48 -0700
+X-CSE-ConnectionGUID: ZTRg3ApCQOeOOdReIf9O4g==
+X-CSE-MsgGUID: OLEkQDUZR2y+jHsqHAwl6A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,293,1739865600"; 
+   d="scan'208";a="139101238"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa008.fm.intel.com with ESMTP; 16 May 2025 07:01:42 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+	id 0FE981BC; Fri, 16 May 2025 17:01:20 +0300 (EEST)
+Date: Fri, 16 May 2025 17:01:20 +0300
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: Dave Hansen <dave.hansen@intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Andy Lutomirski <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Ard Biesheuvel <ardb@kernel.org>, Jan Kiszka <jan.kiszka@siemens.com>, 
+	Kieran Bingham <kbingham@kernel.org>, Michael Roth <michael.roth@amd.com>, 
+	Rick Edgecombe <rick.p.edgecombe@intel.com>, Brijesh Singh <brijesh.singh@amd.com>, 
+	Sandipan Das <sandipan.das@amd.com>, Juergen Gross <jgross@suse.com>, 
+	Tom Lendacky <thomas.lendacky@amd.com>, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-efi@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCHv3 2/4] x86/64/mm: Make SPARSEMEM_VMEMMAP the only memory
+ model
+Message-ID: <rqkfqkkli57fbd5zkj3bwko44kmqqwnfdm766snm26y2so52ss@6it24qxv356q>
+References: <20250516123306.3812286-1-kirill.shutemov@linux.intel.com>
+ <20250516123306.3812286-3-kirill.shutemov@linux.intel.com>
+ <30570ca0-8da4-4ebc-84d6-0a4badfb7154@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,104 +86,29 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250421055212.123774-1-anshuman.khandual@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <30570ca0-8da4-4ebc-84d6-0a4badfb7154@intel.com>
 
-On Mon, Apr 21, 2025 at 11:22:12AM +0530, Anshuman Khandual wrote:
-> Array elements inside 'struct user_hwdebug_state.dbg_regs[]' are inherently
-> coupled with maximum breakpoints or watchpoints which could be present on a
-> platform and which are defined with macros ARM_MAX_[BRP|WRP].
+On Fri, May 16, 2025 at 06:42:03AM -0700, Dave Hansen wrote:
+> On 5/16/25 05:33, Kirill A. Shutemov wrote:
+> > 5-level paging only supports SPARSEMEM_VMEMMAP. CONFIG_X86_5LEVEL is
+> > being phased out, making 5-level paging support mandatory.
+> > 
+> > Make CONFIG_SPARSEMEM_VMEMMAP mandatory for x86-64 and eliminate
+> > any associated conditional statements.
+> I think we have ourselves a catch-22 here.
 > 
-> Rather than explicitly trying to keep the array elements in sync with these
-> macros and then adding a BUILD_BUG_ON() just to ensure continued compliance
-> , move these two macros into the uapi ptrace header itself thus making them
-> available both for user space and kernel.
+> SPARSEMEM_VMEMMAP was selected because the other sparsemem modes
+> couldn't handle a dynamic MAX_PHYS{MEM,ADDR}_BITS introduced by 5-level
+> paging. Now you're proposing making it static again, but keeping the
+> SPARSEMEM_VMEMMAP dependency.
 > 
-> While here also ensure that ARM_MAX_BRP and ARM_MAX_WRP are always the same
-> via a new BUILD_BUG_ON(). This helps in making sure that user_hwdebug_state
-> structure remains usable both for breakpoint and watchpoint registers set
-> via ptrace() system call interface.
-> 
-> Cc: Will Deacon <will@kernel.org>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-perf-users@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
-> ---
-> This patch applies on v6.15-rc3
-> 
->  arch/arm64/include/asm/hw_breakpoint.h |  7 -------
->  arch/arm64/include/uapi/asm/ptrace.h   | 10 +++++++++-
->  arch/arm64/kernel/hw_breakpoint.c      |  9 +++++++++
->  3 files changed, 18 insertions(+), 8 deletions(-)
-> 
-> diff --git a/arch/arm64/include/asm/hw_breakpoint.h b/arch/arm64/include/asm/hw_breakpoint.h
-> index bd81cf17744a..63c21b515647 100644
-> --- a/arch/arm64/include/asm/hw_breakpoint.h
-> +++ b/arch/arm64/include/asm/hw_breakpoint.h
-> @@ -75,13 +75,6 @@ static inline void decode_ctrl_reg(u32 reg,
->  #define ARM_KERNEL_STEP_ACTIVE	1
->  #define ARM_KERNEL_STEP_SUSPEND	2
->  
-> -/*
-> - * Limits.
-> - * Changing these will require modifications to the register accessors.
-> - */
-> -#define ARM_MAX_BRP		16
-> -#define ARM_MAX_WRP		16
-> -
->  /* Virtual debug register bases. */
->  #define AARCH64_DBG_REG_BVR	0
->  #define AARCH64_DBG_REG_BCR	(AARCH64_DBG_REG_BVR + ARM_MAX_BRP)
-> diff --git a/arch/arm64/include/uapi/asm/ptrace.h b/arch/arm64/include/uapi/asm/ptrace.h
-> index 0f39ba4f3efd..8683f541a467 100644
-> --- a/arch/arm64/include/uapi/asm/ptrace.h
-> +++ b/arch/arm64/include/uapi/asm/ptrace.h
-> @@ -99,6 +99,14 @@ struct user_fpsimd_state {
->  	__u32		__reserved[2];
->  };
->  
-> +/*
-> + * Maximum number of breakpoint and watchpoint registers
-> + * on the platform. These macros get used both in kernel
-> + * and user space as well.
-> + */
-> +#define ARM_MAX_BRP		16
-> +#define ARM_MAX_WRP		16
-> +
->  struct user_hwdebug_state {
->  	__u32		dbg_info;
->  	__u32		pad;
-> @@ -106,7 +114,7 @@ struct user_hwdebug_state {
->  		__u64	addr;
->  		__u32	ctrl;
->  		__u32	pad;
-> -	}		dbg_regs[16];
-> +	}		dbg_regs[ARM_MAX_BRP];	/* Or ARM_MAX_WRP */
->  };
->  
->  /* SVE/FP/SIMD state (NT_ARM_SVE & NT_ARM_SSVE) */
-> diff --git a/arch/arm64/kernel/hw_breakpoint.c b/arch/arm64/kernel/hw_breakpoint.c
-> index 722ac45f9f7b..9bc51682713d 100644
-> --- a/arch/arm64/kernel/hw_breakpoint.c
-> +++ b/arch/arm64/kernel/hw_breakpoint.c
-> @@ -981,6 +981,15 @@ static int __init arch_hw_breakpoint_init(void)
->  {
->  	int ret;
->  
-> +	/*
-> +	 * Maximum supported breakpoint and watchpoint registers must
-> +	 * always be the same - regardless of actual register numbers
-> +	 * found on a given platform. This is because the user facing
-> +	 * ptrace structure 'user_hwdebug_state' actually depends on
-> +	 * these macros to be the same.
-> +	 */
-> +	BUILD_BUG_ON(ARM_MAX_BRP != ARM_MAX_WRP);
+> If you remove the dynamic MAX_PHYS{MEM,ADDR}_BITS, you should also
+> remove the dependency on SPARSEMEM_VMEMMAP. No?
 
-Sorry, but I don't understand why this patch is an improvement over what
-we have.
+I guess. But how?
 
-Will
+And is there any value to support !SPARSEMEM_VMEMMAP?
+
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
 
