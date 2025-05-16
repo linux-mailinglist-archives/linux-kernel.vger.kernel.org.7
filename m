@@ -1,99 +1,65 @@
-Return-Path: <linux-kernel+bounces-651095-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-651097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D65E7AB99F4
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 12:18:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05A27AB99F8
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 12:18:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E768C1BA0F29
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 10:18:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 54DED171D67
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 May 2025 10:18:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAB9C233D7B;
-	Fri, 16 May 2025 10:17:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 942CB17B425;
+	Fri, 16 May 2025 10:18:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="KMz7hydx";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="hxWR4sMr";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="KMz7hydx";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="hxWR4sMr"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="dBv+liR1"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A70F4213E8E
-	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 10:17:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4669D21348
+	for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 10:18:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747390665; cv=none; b=LsE0BLJRGbjag6bbiaFy/RvQ6RzlU+vXxay1xJIA6upScS5dRjL4kDdOdqEdaruLbofJDXsxjwTTous/DhSQsjrVN7+bMdYvC5A3Q8hSbKwPE4/ENbwS7zT7Mgg8tHcG1mAUiIyrhiJ7NnNgNWJ5fbzKbKqxkVcWVtSRfC+letg=
+	t=1747390719; cv=none; b=XRV9t82P6HgZY/m7xRLsdiRi4/1VXa/fQ4MNb+oL+B0qhDoHJVSkjcwQ+TRUgqB6qUEXwYb37Tigt66Y91KZX/wMLjHp4ITqV5DBwVV1A7/I20izudPcR/5azOHL2pD/qAyL8tiTokWS+36nbw/SKI0k1OIZL4xveAzpcGlWyoc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747390665; c=relaxed/simple;
-	bh=mjxgZTlaJ0bk/qVD2RmINx8GDGAic+62Ege7yBhYlZY=;
+	s=arc-20240116; t=1747390719; c=relaxed/simple;
+	bh=MrP6EsJqviAhQz4o3MRxgRSgg/Abz7EHwXfiwjVApKI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=opcPS8bfdbGdrm890rhmuosaJbwfbbzhgpbkNqt8xv6IaYwYsgXrNh8KlWc8yO2gwhoNg7cTTyqDh6cF5G+1H+T9iKnXf+w7NfD+BglFaZ0xGp4T2DBEsnzK7EyZ9CePeIE3z8r+2XUF9im6lrqQH8fQPmdHUNlQkBo/72zs+1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=KMz7hydx; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=hxWR4sMr; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=KMz7hydx; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=hxWR4sMr; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id BE35A218B5;
-	Fri, 16 May 2025 10:17:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1747390661; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uO9x4Sj1nJ4i5yMk2K2202lgmAIgPbzgztfZFEf1C/Q=;
-	b=KMz7hydxziyn9aIus2oIxGgbw9Nxi7FN7VDzXbj540J145/NeAZoZIZiSCD+FpTEvF+0Yt
-	rrkoI7N/mqH9AKME5HtSF5xcJORpsuhN5lHyk383ZsxYcb0KUrUaBPlsGUS1uJ/Pz2YJTc
-	czO5Yi4iFCEWN9jler0mUvD7Xv0ZSBo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1747390661;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uO9x4Sj1nJ4i5yMk2K2202lgmAIgPbzgztfZFEf1C/Q=;
-	b=hxWR4sMrJ1SQRVmnAh2q6k32MzTT6fdNlrbbseEgjYwi7BUUuyFhaItapNla+1sZSjbqAn
-	PHR5XEulWkXhToBg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1747390661; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uO9x4Sj1nJ4i5yMk2K2202lgmAIgPbzgztfZFEf1C/Q=;
-	b=KMz7hydxziyn9aIus2oIxGgbw9Nxi7FN7VDzXbj540J145/NeAZoZIZiSCD+FpTEvF+0Yt
-	rrkoI7N/mqH9AKME5HtSF5xcJORpsuhN5lHyk383ZsxYcb0KUrUaBPlsGUS1uJ/Pz2YJTc
-	czO5Yi4iFCEWN9jler0mUvD7Xv0ZSBo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1747390661;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uO9x4Sj1nJ4i5yMk2K2202lgmAIgPbzgztfZFEf1C/Q=;
-	b=hxWR4sMrJ1SQRVmnAh2q6k32MzTT6fdNlrbbseEgjYwi7BUUuyFhaItapNla+1sZSjbqAn
-	PHR5XEulWkXhToBg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B2A8713411;
-	Fri, 16 May 2025 10:17:41 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id SemZK8UQJ2hVfQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Fri, 16 May 2025 10:17:41 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 57F6CA09DD; Fri, 16 May 2025 12:17:37 +0200 (CEST)
-Date: Fri, 16 May 2025 12:17:37 +0200
-From: Jan Kara <jack@suse.cz>
-To: Davidlohr Bueso <dave@stgolabs.net>
-Cc: brauner@kernel.org, jack@suse.cz, viro@zeniv.linux.org.uk, 
-	mcgrof@kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/4] fs/buffer: optimize discard_buffer()
-Message-ID: <khepgn2kxjm7tcfntoxuocalp6zesrpjbsurwi6ynjetwxocdp@mrhw7g7wa7mh>
-References: <20250515173925.147823-1-dave@stgolabs.net>
- <20250515173925.147823-5-dave@stgolabs.net>
+	 Content-Type:Content-Disposition:In-Reply-To; b=TixGZ9oAChIlkvlGh8yO40i3sbGwg3bdY3Hi2bpZ2dWRCGOvsHGWXGPt5ZG0Ckiq9fXX7wkg7l/ptoU3Fo0fvwNIOctcwn9L86OJvj07dsZ2XzYwfTAvOn5G9KvaaO5pcbjczEhR6tL2dBtyxBXsWD1kwwQzf8JgEROBzIZCGyY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=dBv+liR1; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=ED8saWIDf+VhAgkMufv/m3ti9EfjBcQPJpBZsJ4x8p0=; b=dBv+liR1bQtYaPdMqR0ivYfECM
+	FYG8GvsZz/OKi+ra++m7CePM2hpQL10Cw4oNHnlS7HnhS2Q1tEV3HgI5rh1dLHdoMO+/0L6iqZ6hs
+	3R9p4Bgoebv8udyVL/LHmxr4P0Qqe8gxYscktLiuT0fi26QCuTM2P21upg5ORFUAYGD21OCkAcES+
+	ZkNVtqYQGi3ohJv0XJ6Eb2YDOU7c5YQA57kZS5tejzByQ4Gy01cUPEk3bP1UQYl164xdIJ9JGQdEY
+	3zjxVMplm6MiQte5HkEQZW1P4sJqNoW7k0DFo9to6RXz+gf5y9/5FPdojllgdQyi+zNabVbsBc/Vu
+	96SQJM8w==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.1 #2 (Red Hat Linux))
+	id 1uFs91-000000003dp-1tp9;
+	Fri, 16 May 2025 10:18:23 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 6C587300780; Fri, 16 May 2025 12:18:22 +0200 (CEST)
+Date: Fri, 16 May 2025 12:18:22 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Chris Mason <clm@meta.com>
+Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
+	dietmar.eggemann@arm.com, vschneid@redhat.com,
+	Juri Lelli <juri.lelli@gmail.com>,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: scheduler performance regression since v6.11
+Message-ID: <20250516101822.GC16434@noisy.programming.kicks-ass.net>
+References: <1e3c711f-8c96-4c39-bbe2-7742940d1d31@meta.com>
+ <20250509194955.GA25798@noisy.programming.kicks-ass.net>
+ <20250512180846.GA25891@noisy.programming.kicks-ass.net>
+ <2f394a01-1cd9-4719-9394-647d8731cf3f@meta.com>
+ <d3c8527f-ffaf-4463-a305-17ca21a06ce8@meta.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -102,78 +68,146 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250515173925.147823-5-dave@stgolabs.net>
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	RCVD_COUNT_THREE(0.00)[3];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Score: -3.80
+In-Reply-To: <d3c8527f-ffaf-4463-a305-17ca21a06ce8@meta.com>
 
-On Thu 15-05-25 10:39:25, Davidlohr Bueso wrote:
-> While invalidating, the clearing of the bits in discard_buffer()
-> is done in one fully ordered CAS operation. In the past this was
-> done via individual clear_bit(), until e7470ee89f0 (fs: buffer:
-> do not use unnecessary atomic operations when discarding buffers).
-> This implies that there were never strong ordering requirements
-> outside of being serialized by the buffer lock.
-> 
-> As such relax the ordering for archs that can benefit. Further,
-> the implied ordering in buffer_unlock() makes current cmpxchg
-> implied barrier redundant due to release semantics. And while in
-> theory the unlock could be part of the bulk clearing, it is
-> best to leave it explicit, but without the double barriers.
-> 
-> Signed-off-by: Davidlohr Bueso <dave@stgolabs.net>
+On Mon, May 12, 2025 at 06:35:24PM -0400, Chris Mason wrote:
 
-Yes, we just want to clear several flag bits as cheaply as possible while
-other tasks can be modifying other flags. You change makes sense so feel
-free to add:
+Right, so I can reproduce on Thomas' SKL and maybe see some of it on my
+SPR.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+I've managed to discover a whole bunch of ways that ttwu() can explode
+again :-) But as you surmised, your workload *LOVES* TTWU_QUEUE, and
+DELAYED_DEQUEUE takes some of that away, because those delayed things
+remain on-rq and ttwu() can't deal with that other than by doing the
+wakeup in-line and that's exactly the thing this workload hates most.
 
-								Honza
+(I'll keep poking at ttwu() to see if I can get a combination of
+TTWU_QUEUE and DELAYED_DEQUEUE that does not explode in 'fun' ways)
 
-> ---
->  fs/buffer.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/buffer.c b/fs/buffer.c
-> index 210b43574a10..f0fc78910abf 100644
-> --- a/fs/buffer.c
-> +++ b/fs/buffer.c
-> @@ -1616,8 +1616,8 @@ static void discard_buffer(struct buffer_head * bh)
->  	bh->b_bdev = NULL;
->  	b_state = READ_ONCE(bh->b_state);
->  	do {
-> -	} while (!try_cmpxchg(&bh->b_state, &b_state,
-> -			      b_state & ~BUFFER_FLAGS_DISCARD));
-> +	} while (!try_cmpxchg_relaxed(&bh->b_state, &b_state,
-> +				      b_state & ~BUFFER_FLAGS_DISCARD));
->  	unlock_buffer(bh);
->  }
->  
-> -- 
-> 2.39.5
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+However, I've found that flipping the default in ttwu_queue_cond() seems
+to make up for quite a bit -- for your workload.
+
+(basically, all the work we can get away from those pinned message CPUs
+is a win)
+
+Also, meanwhile you discovered that the other part of your performance
+woes were due to dl_server, specifically, disabling that gave you back a
+healthy chunk of your performance.
+
+The problem is indeed that we toggle the dl_server on every nr_running
+from 0 and to 0 transition, and your workload has a shit-ton of those,
+so every time we get the overhead of starting and stopping this thing.
+
+In hindsight, that's a fairly stupid setup, and the below patch changes
+this to keep the dl_server around until it's not seen fair activity for
+a whole period. This appears to fully recover this dip.
+
+Trouble seems to be that dl_server_update() always gets tickled by
+random garbage, so in the end the dl_server never stops... oh well.
+
+Juri, could you have a look at this, perhaps I messed up something
+trivial -- its been like that this week :/
+
+---
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index f96ac1982893..1f92572b20c0 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -702,6 +702,7 @@ struct sched_dl_entity {
+ 	unsigned int			dl_defer	  : 1;
+ 	unsigned int			dl_defer_armed	  : 1;
+ 	unsigned int			dl_defer_running  : 1;
++	unsigned int			dl_server_idle    : 1;
+ 
+ 	/*
+ 	 * Bandwidth enforcement timer. Each -deadline task has its
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index c81cf642dba0..010537a2f368 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -3964,7 +3964,7 @@ static inline bool ttwu_queue_cond(struct task_struct *p, int cpu)
+ 	if (!cpu_rq(cpu)->nr_running)
+ 		return true;
+ 
+-	return false;
++	return sched_feat(TTWU_QUEUE_DEFAULT);
+ }
+ 
+ static bool ttwu_queue_wakelist(struct task_struct *p, int cpu, int wake_flags)
+diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
+index ad45a8fea245..dce3a95cb8bc 100644
+--- a/kernel/sched/deadline.c
++++ b/kernel/sched/deadline.c
+@@ -1639,8 +1639,10 @@ void dl_server_update_idle_time(struct rq *rq, struct task_struct *p)
+ void dl_server_update(struct sched_dl_entity *dl_se, s64 delta_exec)
+ {
+ 	/* 0 runtime = fair server disabled */
+-	if (dl_se->dl_runtime)
++	if (dl_se->dl_runtime) {
++		dl_se->dl_server_idle = 0;
+ 		update_curr_dl_se(dl_se->rq, dl_se, delta_exec);
++	}
+ }
+ 
+ void dl_server_start(struct sched_dl_entity *dl_se)
+@@ -1663,20 +1665,24 @@ void dl_server_start(struct sched_dl_entity *dl_se)
+ 		setup_new_dl_entity(dl_se);
+ 	}
+ 
+-	if (!dl_se->dl_runtime)
++	if (!dl_se->dl_runtime || dl_se->dl_server_active)
+ 		return;
+ 
++	trace_printk("dl_server starting\n");
++
+ 	dl_se->dl_server_active = 1;
+ 	enqueue_dl_entity(dl_se, ENQUEUE_WAKEUP);
+ 	if (!dl_task(dl_se->rq->curr) || dl_entity_preempt(dl_se, &rq->curr->dl))
+ 		resched_curr(dl_se->rq);
+ }
+ 
+-void dl_server_stop(struct sched_dl_entity *dl_se)
++static void __dl_server_stop(struct sched_dl_entity *dl_se)
+ {
+ 	if (!dl_se->dl_runtime)
+ 		return;
+ 
++	trace_printk("dl_server stopping\n");
++
+ 	dequeue_dl_entity(dl_se, DEQUEUE_SLEEP);
+ 	hrtimer_try_to_cancel(&dl_se->dl_timer);
+ 	dl_se->dl_defer_armed = 0;
+@@ -1684,6 +1690,10 @@ void dl_server_stop(struct sched_dl_entity *dl_se)
+ 	dl_se->dl_server_active = 0;
+ }
+ 
++void dl_server_stop(struct sched_dl_entity *dl_se)
++{
++}
++
+ void dl_server_init(struct sched_dl_entity *dl_se, struct rq *rq,
+ 		    dl_server_has_tasks_f has_tasks,
+ 		    dl_server_pick_f pick_task)
+@@ -2436,6 +2446,9 @@ static struct task_struct *__pick_task_dl(struct rq *rq)
+ 		p = dl_se->server_pick_task(dl_se);
+ 		if (!p) {
+ 			if (dl_server_active(dl_se)) {
++				if (dl_se->dl_server_idle)
++					__dl_server_stop(dl_se);
++				dl_se->dl_server_idle = 1;
+ 				dl_se->dl_yielded = 1;
+ 				update_curr_dl_se(rq, dl_se, 0);
+ 			}
+diff --git a/kernel/sched/features.h b/kernel/sched/features.h
+index 3c12d9f93331..75aa7fdc4c98 100644
+--- a/kernel/sched/features.h
++++ b/kernel/sched/features.h
+@@ -81,6 +81,7 @@ SCHED_FEAT(TTWU_QUEUE, false)
+  */
+ SCHED_FEAT(TTWU_QUEUE, true)
+ #endif
++SCHED_FEAT(TTWU_QUEUE_DEFAULT, false)
+ 
+ /*
+  * When doing wakeups, attempt to limit superfluous scans of the LLC domain.
 
