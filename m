@@ -1,215 +1,163 @@
-Return-Path: <linux-kernel+bounces-652341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-652335-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 357DBABAA26
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 May 2025 15:01:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBE2DABAA1B
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 May 2025 14:59:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 214081B656F4
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 May 2025 13:01:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C4524A269C
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 May 2025 12:59:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A5311FFC77;
-	Sat, 17 May 2025 13:01:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E492F1FBE9E;
+	Sat, 17 May 2025 12:59:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="T2uKLySS"
-Received: from out-177.mta1.migadu.com (out-177.mta1.migadu.com [95.215.58.177])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0Om75EA5";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ORIuqj1K"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 940EAB665
-	for <linux-kernel@vger.kernel.org>; Sat, 17 May 2025 13:01:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C381D10E9;
+	Sat, 17 May 2025 12:59:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747486885; cv=none; b=JHt3qKCaZePGcn9QMfxHgkvG+lg7wGSB6GWc5+ouZclOSxI3Cz6IjMjBoUHaY7Gp7jsw6elkPVRJQ7lGaXj2ZwLDVsCj72zhSc1WWxrvkr8cwmxrOMVextC1DXwW5C4IzX5JQoFMuNoV40TAFwCTs/k31wyrBfC8d1LNlbUk05g=
+	t=1747486791; cv=none; b=a6Pb4W0yCONCyOg/GMixe/+kakaH5Pq1e+FK48T+jNJcf3mFg0i54Pc0ff8WqMtXpY6HddwTJ4ax2CT2sL3ecJsD5K9BJlP03olAC4IItIFyOjOiM6QjZAiDEbcNd/vvSJtqp/YO7YmLEM5LYoo811Q1ZZeUJSQv9q9V2jSZfuw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747486885; c=relaxed/simple;
-	bh=kDaVvTvZqoOc1Lp/g1cuDMsT0TpIV9jdN6pFoRbJ7tM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HFZx9djgd+qyb+/0ao9XAK3Kw4lit4Y+4MkGwJl6Eta6mJHkIbexqIPuGyRMHf3iY0saPuOWbVr+IeP1HwIgn+b9HljWSDtUEyD3U32thLkmeuJvlxBypkrfQ8YAH2G9euzBvPxZnrQ9wb1sD1upYkwby1pSCChdBO1PuZdT62U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=T2uKLySS; arc=none smtp.client-ip=95.215.58.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1747486876;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=WIbKSwCYsCTCU4ZAr2VOIQ93eekYXV3ibAlWtorV7R4=;
-	b=T2uKLySSMrAnMBqimeW4wwjhdKSEjpp9YvCe6cAhJ4+2MtrJvIU+Y8F0A9Qdv1P0Q03jFh
-	vUCFqolm0HXgbbEMkfbsPnjkHx+5NCAvseTXpvp6XiiHSoMgdNFpWPdxBMQvT0JMowrr8d
-	bcE8fhgUD+LcZeVVhIMz1siRXJxxHvU=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Naveen N Rao <naveen@kernel.org>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] powerpc: Fix indentation and replace typedef with struct name
-Date: Sat, 17 May 2025 14:58:31 +0200
-Message-ID: <20250517125834.421088-2-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1747486791; c=relaxed/simple;
+	bh=0mMDRy1b2yRgy90TvSbSKUlqY37D7lYIjf2FijldRz8=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=Chy38ZSuTP98KE/Ij0uY2EiEExCfFfnC21eN4cijAuZE6aaj0/QRDG5zipg6clsNXbPpYOxSfFf5zg+dE0kjr9WHjmz68Dbewd2F5HSr3Pm3+vi/hTXktSAzC6oVS4u1DVbI4yTChH8ozZGAxUfKgSdaVajHQj+V+h3KDP+yHZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0Om75EA5; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ORIuqj1K; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Sat, 17 May 2025 12:59:46 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1747486787;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NSUOBKxZ6phfUyk3cllQ+R4FMe5a+C7SOJL6FYLJ9/w=;
+	b=0Om75EA5d54u688lpANlfIq5ZFsHhBy8UKmZQtQCXiOIl6CHEvPPqYvnQJlpmKz9SnZiqU
+	iyvRGYe+gpDWkwXgAZAP0fBvl+KC/8BvdZUZaTjFFyyMV6kJpjL1+Lexa3VF2AaPv1IV3C
+	QtLLXGNkKPFiDtGjIWRewkZNqqUpo89wdBk007hU2MmbE069HtaOLomv0+oaYfrSAHzDc8
+	1j7RoL8FWvxSDHA8j5t+LCza7XwP+RWivWCcKUpM44l68/mzY/fCUpaZ0t8zk8G8mbg2Io
+	2UNTuWozH6tIpi4ig7Rrhtk1G4D/LI2M1PXIXfJGcSxnssXtcNXDqYuMlHs4gw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1747486787;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NSUOBKxZ6phfUyk3cllQ+R4FMe5a+C7SOJL6FYLJ9/w=;
+	b=ORIuqj1KoAyjGte6x0pYf4OBsuaPrucgry8Odv3bWqt38PJHFMyUF2o8i1mUqfme+rFvh3
+	1I+K1vbNjaBdwdBw==
+From: "tip-bot2 for Kan Liang" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: perf/core] perf/core: Add the is_event_in_freq_mode() helper to
+ simplify the code
+Cc: Kan Liang <kan.liang@linux.intel.com>, Ingo Molnar <mingo@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250516182853.2610284-2-kan.liang@linux.intel.com>
+References: <20250516182853.2610284-2-kan.liang@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Message-ID: <174748678630.406.13302797229812275159.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-Indent several struct members using tabs instead of spaces.
+The following commit has been merged into the perf/core branch of tip:
 
-Replace the typedef alias AOUTHDR with an explicit struct name to
-silence a checkpatch warning.
+Commit-ID:     ca559503b89c30bc49178d0e4a1e0b23f991fb9f
+Gitweb:        https://git.kernel.org/tip/ca559503b89c30bc49178d0e4a1e0b23f991fb9f
+Author:        Kan Liang <kan.liang@linux.intel.com>
+AuthorDate:    Fri, 16 May 2025 11:28:38 -07:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Sat, 17 May 2025 10:02:27 +02:00
 
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+perf/core: Add the is_event_in_freq_mode() helper to simplify the code
+
+Add a helper to check if an event is in freq mode to improve readability.
+
+No functional changes.
+
+Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: https://lore.kernel.org/r/20250516182853.2610284-2-kan.liang@linux.intel.com
 ---
- arch/powerpc/boot/hack-coff.c |  2 +-
- arch/powerpc/boot/rs6000.h    | 84 +++++++++++++++++------------------
- 2 files changed, 41 insertions(+), 45 deletions(-)
+ kernel/events/core.c | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
 
-diff --git a/arch/powerpc/boot/hack-coff.c b/arch/powerpc/boot/hack-coff.c
-index a010e124ac4b..6bf0c94302f5 100644
---- a/arch/powerpc/boot/hack-coff.c
-+++ b/arch/powerpc/boot/hack-coff.c
-@@ -31,7 +31,7 @@ main(int ac, char **av)
-     int i, nsect;
-     int aoutsz;
-     struct external_filehdr fhdr;
--    AOUTHDR aout;
-+    struct aouthdr aout;
-     struct external_scnhdr shdr;
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index b846107..952340f 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -2351,6 +2351,11 @@ event_filter_match(struct perf_event *event)
+ 	       perf_cgroup_match(event);
+ }
  
-     if (ac != 2) {
-diff --git a/arch/powerpc/boot/rs6000.h b/arch/powerpc/boot/rs6000.h
-index a9d879155ef9..584c7f9c1912 100644
---- a/arch/powerpc/boot/rs6000.h
-+++ b/arch/powerpc/boot/rs6000.h
-@@ -36,32 +36,30 @@ struct external_filehdr {
- /********************** AOUT "OPTIONAL HEADER" **********************/
++static inline bool is_event_in_freq_mode(struct perf_event *event)
++{
++	return event->attr.freq && event->attr.sample_freq;
++}
++
+ static void
+ event_sched_out(struct perf_event *event, struct perf_event_context *ctx)
+ {
+@@ -2388,7 +2393,7 @@ event_sched_out(struct perf_event *event, struct perf_event_context *ctx)
  
+ 	if (!is_software_event(event))
+ 		cpc->active_oncpu--;
+-	if (event->attr.freq && event->attr.sample_freq) {
++	if (is_event_in_freq_mode(event)) {
+ 		ctx->nr_freq--;
+ 		epc->nr_freq--;
+ 	}
+@@ -2686,7 +2691,7 @@ event_sched_in(struct perf_event *event, struct perf_event_context *ctx)
  
--typedef struct
--{
--  unsigned char	magic[2];	/* type of file			*/
--  unsigned char	vstamp[2];	/* version stamp		*/
--  unsigned char	tsize[4];	/* text size in bytes, padded to FW bdry */
--  unsigned char	dsize[4];	/* initialized data "  "	*/
--  unsigned char	bsize[4];	/* uninitialized data "   "	*/
--  unsigned char	entry[4];	/* entry pt.			*/
--  unsigned char	text_start[4];	/* base of text used for this file */
--  unsigned char	data_start[4];	/* base of data used for this file */
--  unsigned char	o_toc[4];	/* address of TOC */
--  unsigned char	o_snentry[2];	/* section number of entry point */
--  unsigned char	o_sntext[2];	/* section number of .text section */
--  unsigned char	o_sndata[2];	/* section number of .data section */
--  unsigned char	o_sntoc[2];	/* section number of TOC */
--  unsigned char	o_snloader[2];	/* section number of .loader section */
--  unsigned char	o_snbss[2];	/* section number of .bss section */
--  unsigned char	o_algntext[2];	/* .text alignment */
--  unsigned char	o_algndata[2];	/* .data alignment */
--  unsigned char	o_modtype[2];	/* module type (??) */
--  unsigned char o_cputype[2];	/* cpu type */
--  unsigned char	o_maxstack[4];	/* max stack size (??) */
--  unsigned char o_maxdata[4];	/* max data size (??) */
--  unsigned char	o_resv2[12];	/* reserved */
--}
--AOUTHDR;
-+struct aouthdr {
-+	unsigned char	magic[2];	/* type of file			*/
-+	unsigned char	vstamp[2];	/* version stamp		*/
-+	unsigned char	tsize[4];	/* text size in bytes, padded to FW bdry */
-+	unsigned char	dsize[4];	/* initialized data "  "	*/
-+	unsigned char	bsize[4];	/* uninitialized data "   "	*/
-+	unsigned char	entry[4];	/* entry pt.			*/
-+	unsigned char	text_start[4];	/* base of text used for this file */
-+	unsigned char	data_start[4];	/* base of data used for this file */
-+	unsigned char	o_toc[4];	/* address of TOC */
-+	unsigned char	o_snentry[2];	/* section number of entry point */
-+	unsigned char	o_sntext[2];	/* section number of .text section */
-+	unsigned char	o_sndata[2];	/* section number of .data section */
-+	unsigned char	o_sntoc[2];	/* section number of TOC */
-+	unsigned char	o_snloader[2];	/* section number of .loader section */
-+	unsigned char	o_snbss[2];	/* section number of .bss section */
-+	unsigned char	o_algntext[2];	/* .text alignment */
-+	unsigned char	o_algndata[2];	/* .data alignment */
-+	unsigned char	o_modtype[2];	/* module type (??) */
-+	unsigned char	o_cputype[2];	/* cpu type */
-+	unsigned char	o_maxstack[4];	/* max stack size (??) */
-+	unsigned char	o_maxdata[4];	/* max data size (??) */
-+	unsigned char	o_resv2[12];	/* reserved */
-+};
+ 	if (!is_software_event(event))
+ 		cpc->active_oncpu++;
+-	if (event->attr.freq && event->attr.sample_freq) {
++	if (is_event_in_freq_mode(event)) {
+ 		ctx->nr_freq++;
+ 		epc->nr_freq++;
+ 	}
+@@ -4252,11 +4257,11 @@ static void perf_adjust_freq_unthr_events(struct list_head *event_list)
+ 		if (hwc->interrupts == MAX_INTERRUPTS) {
+ 			hwc->interrupts = 0;
+ 			perf_log_throttle(event, 1);
+-			if (!event->attr.freq || !event->attr.sample_freq)
++			if (!is_event_in_freq_mode(event))
+ 				event->pmu->start(event, 0);
+ 		}
  
- #define AOUTSZ 72
- #define SMALL_AOUTSZ (28)
-@@ -119,10 +117,10 @@ struct external_scnhdr {
-  */
- struct external_lineno {
- 	union {
--		char l_symndx[4];	/* function name symbol index, iff l_lnno == 0*/
-+		char l_symndx[4];	/* function name symbol index, iff l_lnno == 0 */
- 		char l_paddr[4];	/* (physical) address of line number	*/
- 	} l_addr;
--	char l_lnno[2];	/* line number		*/
-+	char l_lnno[2];	/* line number */
- };
+-		if (!event->attr.freq || !event->attr.sample_freq)
++		if (!is_event_in_freq_mode(event))
+ 			continue;
  
+ 		/*
+@@ -12848,7 +12853,7 @@ perf_event_alloc(struct perf_event_attr *attr, int cpu,
  
-@@ -136,20 +134,19 @@ struct external_lineno {
- #define E_FILNMLEN	14	/* # characters in a file name		*/
- #define E_DIMNUM	4	/* # array dimensions in auxiliary entry */
+ 	hwc = &event->hw;
+ 	hwc->sample_period = attr->sample_period;
+-	if (attr->freq && attr->sample_freq)
++	if (is_event_in_freq_mode(event))
+ 		hwc->sample_period = 1;
+ 	hwc->last_period = hwc->sample_period;
  
--struct external_syment
--{
--  union {
--    char e_name[E_SYMNMLEN];
--    struct {
--      char e_zeroes[4];
--      char e_offset[4];
--    } e;
--  } e;
--  char e_value[4];
--  char e_scnum[2];
--  char e_type[2];
--  char e_sclass[1];
--  char e_numaux[1];
-+struct external_syment {
-+	union {
-+		char e_name[E_SYMNMLEN];
-+		struct {
-+			char e_zeroes[4];
-+			char e_offset[4];
-+		} e;
-+	} e;
-+	char e_value[4];
-+	char e_scnum[2];
-+	char e_type[2];
-+	char e_sclass[1];
-+	char e_numaux[1];
- };
- 
- 
-@@ -191,7 +188,7 @@ union external_auxent {
- 	} x_file;
- 
- 	struct {
--		char x_scnlen[4];			/* section length */
-+		char x_scnlen[4];	/* section length */
- 		char x_nreloc[2];	/* # relocation entries */
- 		char x_nlinno[2];	/* # line numbers */
- 	} x_scn;
-@@ -211,7 +208,6 @@ union external_auxent {
- 		unsigned char x_stab[4];
- 		unsigned char x_snstab[2];
- 	} x_csect;
--
- };
- 
- #define	SYMENT	struct external_syment
--- 
-2.49.0
-
 
