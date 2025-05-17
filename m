@@ -1,159 +1,123 @@
-Return-Path: <linux-kernel+bounces-652288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-652293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCEEAABA972
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 May 2025 12:07:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7087BABA97E
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 May 2025 12:13:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F3DD3BEEA8
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 May 2025 10:06:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA0754A48C1
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 May 2025 10:13:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB690211A2A;
-	Sat, 17 May 2025 10:03:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E12D41E521E;
+	Sat, 17 May 2025 10:13:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="xYVNHlul";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="eMqYhcdN"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gXDRp+AZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7074720E6EB;
-	Sat, 17 May 2025 10:03:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45269F4FA;
+	Sat, 17 May 2025 10:13:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747476191; cv=none; b=VJT5Q8EzGC+eS/Q8iJ2/G3NLhh7CK3Vet20jzNPQ0wXFQxt79PHkk/o7+8l6+s4ocQhHnxZvJzG5yxHWbpOXsUWpjeLNPTyUI5DQ80Zd///dQpIP1LFuSJ2wR101mh34/k+Ha1xN7ul/xftzkvYFkna7O71DZxTpZNZTG9NdPsI=
+	t=1747476818; cv=none; b=YoJjwBj3mAFtvoQz3SdGo+nJDzoB81iqI6ZoiEZtnwDpW3p3yeOP14Cghl/U5NuPUjQEoPFpBihk6MtCIjFONkuECcrMX6liv6Hw5/LJgujdFx7rWqKfKNYugc0XKZ6W2l5gZBeC674gxy3eioLiVq2QwJcsKtuiUFzjTPWQXPM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747476191; c=relaxed/simple;
-	bh=2ybJlWpR/QuJvABpkIJlXTk6kMLfJLGf6FCwF8WG4eA=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=S+3qeJdL+Lp9cLGbBxYQu6CPhQVvbHAsdVzNXlx0MOxPp3NyskMC4vIyHX9shjGhUuzKms9I/oDdbJ5lrgNsZjM4qUFMjwpGMkgtWn6FqGYdo9CU1fIdk1yprFL1pQVIkkqFL18hetfht7aMuKgd2dF3Y71uBhkVmBDuehnjSKM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=xYVNHlul; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=eMqYhcdN; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Sat, 17 May 2025 10:03:07 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1747476188;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TuUn8cKqOTjuNEfHp2yj+KO26bLMTTxbTLo3jLLSwdE=;
-	b=xYVNHlull3gxEVwSaYEvDNPyGEIf5O4yDX1FJ1GwVqb8MuX6qi0/eKMkZX/p/Rsmz/hMuW
-	E+9A5eF0htQ+n1m44lqMCbEK5BA8/ux2gePvDNLhQbAxf+NyeL5a+dONdJsDFGTa63Mk+Z
-	tMA+djaUVSR7N+Lk5RsxnkEcb6NVK4va9EdM+/NkoXDmMW3cV9m14yOYnfdkrnSZpiGKNj
-	K3u7SRODB6Cei8Dq2mscy4a/cCR5tkzBR6x7fTd1EiZV9LGObwXxDcwHZ4qQeNq+8IE5J8
-	9pahMyMLcliSAyqhKJBNPz58i6clgUKYJ1sLuIO0VrHFvk8tcZzrVeVUU2u1Hg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1747476188;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TuUn8cKqOTjuNEfHp2yj+KO26bLMTTxbTLo3jLLSwdE=;
-	b=eMqYhcdNA49GAKs5sjWe1NtTpsJcT0zfqLtloHGB+Xux0hi8tJaMLpBtIuEBQlRFi6tzCx
-	+JgnvgQAHCf0svCg==
-From: "tip-bot2 for Yury Norov [NVIDIA]" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/cache] cpumask: Relax cpumask_any_but()
-Cc: "Yury Norov [NVIDIA]" <yury.norov@gmail.com>,
- James Morse <james.morse@arm.com>, "Borislav Petkov (AMD)" <bp@alien8.de>,
- Reinette Chatre <reinette.chatre@intel.com>, Fenghua Yu <fenghuay@nvidia.com>,
- Tony Luck <tony.luck@intel.com>, x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250515165855.31452-2-james.morse@arm.com>
-References: <20250515165855.31452-2-james.morse@arm.com>
+	s=arc-20240116; t=1747476818; c=relaxed/simple;
+	bh=8yh9ur/IZvga/MBbfC24SRQ6hiqIOhARvKINKIIyYsw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uDJia0ZsXOupalfbfGosEk4bnCP/7E1+DJwK0vBn40d8efMWEH0bOI+BZdG+O5lWdHxy0BK1/nhPLtu9wnL1VVMVGEmLpROt9yWTPHCcbU9Zrf3tvwyB3n901pwDnYKsCYkMSACzil8cOpsx5NgBGVfnrMwa2HWJ1pNLXd2/S6c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gXDRp+AZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8BFDC4CEE3;
+	Sat, 17 May 2025 10:13:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747476817;
+	bh=8yh9ur/IZvga/MBbfC24SRQ6hiqIOhARvKINKIIyYsw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gXDRp+AZr6hTkDdELXCjL8VZSUncksHbTgeuKQBwpTJciP10Le46qm6h24SJz8EDN
+	 gyOUOXzwifMGvpdxiuHvWRULijdksDs+nAf8bbJX7OD0MCDPLMeWIvvLGmyFYbTs0y
+	 s7eEA7PPyJpJcsoAcrEcYEhlVS84kQO51FW8bFSo894kB/zv7zroBH2bNVY8nlDZol
+	 m/Mv4emnCmLonzPJGL3VSNdi+AhaNgn2f44d1ou2xZUmDzdh3behSJxWDxx8Kj+rjE
+	 djoPd6KjAsjWezADaCYeNahN5zyAdRlK72LU81WHjdhKYR3WbpNvH8Q5AxtZWKjeuQ
+	 Muro7NPPMh9Ag==
+Date: Sat, 17 May 2025 12:13:32 +0200
+From: Danilo Krummrich <dakr@kernel.org>
+To: John Hubbard <jhubbard@nvidia.com>
+Cc: Alexandre Courbot <acourbot@nvidia.com>,
+	Greg KH <gregkh@linuxfoundation.org>, Timur Tabi <timur@kernel.org>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH] rust: add basic ELF sections parser
+Message-ID: <aChhTJvY6KFvqrTP@pollux>
+References: <D9WP3YU31199.Q8IEDBJZ87LU@nvidia.com>
+ <2025051532-gentleman-reset-58f2@gregkh>
+ <CAOZdJXWKLu0y+kwC+Bm8nBCLizQVpsDdDUoS--hVgz2vnuZJQg@mail.gmail.com>
+ <8b14b078-b899-42e8-8522-599daa65bc63@nvidia.com>
+ <2025051647-urology-think-b8e0@gregkh>
+ <D9XMAV4ERYK7.39TLQBLYTX3TU@nvidia.com>
+ <aCc_PSOPkLWTcTru@pollux>
+ <D9XNS413TVXB.3SWWJE4JGEN8B@nvidia.com>
+ <aCdhS10JCh6HRpqV@pollux>
+ <08a91cb8-2e08-44a5-9d5c-c2c223aaa71d@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174747618717.406.10177537461146320578.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <08a91cb8-2e08-44a5-9d5c-c2c223aaa71d@nvidia.com>
 
-The following commit has been merged into the x86/cache branch of tip:
+On Fri, May 16, 2025 at 12:00:11PM -0700, John Hubbard wrote:
+> On 5/16/25 9:01 AM, Danilo Krummrich wrote:
+> > I did not argue for or against it -- what I do disagree with is that we seem to
+> > just agree to disagree and stuff a generic piece of code into nova-core after
+> > three mails back and forth.
+> > 
+> > Please keep discussing the above with Greg until we get to a real conclusion.
+> 
+> Danilo, this is a small amount of code. Is there any real problem with
+> a compromise, that starts out with Greg's approach of putting this code
+> in Nova?
+> 
+> And then we can promote it if and when we can make a good case for that.
+> 
+> But in the meantime, we really need to be able to take "yes" (from Greg)
+> for an answer! I don't want to blow up the firmware images, shred
+> the "Nouveau and Nova can use the same images" story, and delay merging,
+> all over 100 lines of code.
 
-Commit-ID:     189572bf4e005431051319def435ac4b7e4489ca
-Gitweb:        https://git.kernel.org/tip/189572bf4e005431051319def435ac4b7e4489ca
-Author:        Yury Norov [NVIDIA] <yury.norov@gmail.com>
-AuthorDate:    Thu, 15 May 2025 16:58:31 
-Committer:     Borislav Petkov (AMD) <bp@alien8.de>
-CommitterDate: Thu, 15 May 2025 20:24:22 +02:00
+What I disagree with is that it seems that you actually *can* "make a good case
+for it", but stop discussing it with Greg, because he would agree with just
+stuffing this generic infrastructure in the driver.
 
-cpumask: Relax cpumask_any_but()
+It seems like taking the way of least resistance even though you seem to have
+good arguments for this to be generic infrastructure.
 
-Similarly to other cpumask search functions, accept -1, and consider it as
-'any CPU' hint. This helps users to avoid coding special cases.
+The fact that *only* nova-core would use it to begin with is not the relevant
+factor. nova-core is, for obvious reasons, the only user of quite some generic
+infrastructure, yet we don't stuff it into the driver.
 
-Signed-off-by: Yury Norov [NVIDIA] <yury.norov@gmail.com>
-Signed-off-by: James Morse <james.morse@arm.com>
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Reviewed-by: James Morse <james.morse@arm.com>
-Reviewed-by: Reinette Chatre <reinette.chatre@intel.com>
-Reviewed-by: Fenghua Yu <fenghuay@nvidia.com>
-Tested-by: James Morse <james.morse@arm.com>
-Tested-by: Tony Luck <tony.luck@intel.com>
-Tested-by: Fenghua Yu <fenghuay@nvidia.com>
-Link: https://lore.kernel.org/20250515165855.31452-2-james.morse@arm.com
----
- include/linux/cpumask.h | 16 ++++++++++++----
- 1 file changed, 12 insertions(+), 4 deletions(-)
+The relevant factor is, do we agree that this is a valid requirement for drivers
+in general (which you seem to answer with a clear "yes"). Which means we should
+keep discussing it.
 
-diff --git a/include/linux/cpumask.h b/include/linux/cpumask.h
-index f9a8683..a3ee875 100644
---- a/include/linux/cpumask.h
-+++ b/include/linux/cpumask.h
-@@ -413,14 +413,18 @@ unsigned int cpumask_next_wrap(int n, const struct cpumask *src)
-  * @cpu: the cpu to ignore.
-  *
-  * Often used to find any cpu but smp_processor_id() in a mask.
-+ * If @cpu == -1, the function is equivalent to cpumask_any().
-  * Return: >= nr_cpu_ids if no cpus set.
-  */
- static __always_inline
--unsigned int cpumask_any_but(const struct cpumask *mask, unsigned int cpu)
-+unsigned int cpumask_any_but(const struct cpumask *mask, int cpu)
- {
- 	unsigned int i;
- 
--	cpumask_check(cpu);
-+	/* -1 is a legal arg here. */
-+	if (cpu != -1)
-+		cpumask_check(cpu);
-+
- 	for_each_cpu(i, mask)
- 		if (i != cpu)
- 			break;
-@@ -433,16 +437,20 @@ unsigned int cpumask_any_but(const struct cpumask *mask, unsigned int cpu)
-  * @mask2: the second input cpumask
-  * @cpu: the cpu to ignore
-  *
-+ * If @cpu == -1, the function is equivalent to cpumask_any_and().
-  * Returns >= nr_cpu_ids if no cpus set.
-  */
- static __always_inline
- unsigned int cpumask_any_and_but(const struct cpumask *mask1,
- 				 const struct cpumask *mask2,
--				 unsigned int cpu)
-+				 int cpu)
- {
- 	unsigned int i;
- 
--	cpumask_check(cpu);
-+	/* -1 is a legal arg here. */
-+	if (cpu != -1)
-+		cpumask_check(cpu);
-+
- 	i = cpumask_first_and(mask1, mask2);
- 	if (i != cpu)
- 		return i;
+If we can't conclude that this should be generic infrastructure, we can still
+figure out the way forward for nova-core (i.e. have our own ELF parser in
+nova-core if necessary).
+
+But, as I said above, please don't stop the discussion with agreeing to disagree
+after three mails back and forth.
+
+We have plenty of time to discuss it; we do not target v6.16 and the v6.17 merge
+window is far away.
+
+- Danilo
 
