@@ -1,177 +1,120 @@
-Return-Path: <linux-kernel+bounces-652507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-652504-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5027FABAC49
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 May 2025 22:15:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77A99ABAC41
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 May 2025 22:14:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DAA29189E1C8
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 May 2025 20:15:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE43C179104
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 May 2025 20:14:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9076E216E26;
-	Sat, 17 May 2025 20:14:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29915214A7A;
+	Sat, 17 May 2025 20:14:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="liqWWzmH"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NAAZM1iQ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2FD3215198;
-	Sat, 17 May 2025 20:14:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D184B1D514F;
+	Sat, 17 May 2025 20:14:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747512872; cv=none; b=UmNPkA/4AKguu4eM8jG5jHjK7F0zshriCbAFyQguFSVDo5s1lU7PaPADJ8SKTpt9ObFQrj/rRAJ2t/g1QlEAMDWO7k4MtJOvr9HU5pphjwEwUa5blifjk1cJ4XFWkdaqRhzqYE+iI0sMQXz+wSY9l7zut4R+1FA0udg+a4p8TPw=
+	t=1747512860; cv=none; b=qyj3VJaziV+s3huH4IFvQz0mFUL/gv4urM08G7dat/ueKmtuVq9q4Uo/Q25Z22MjLUe9lEoE51YhGWm0TNY9CdUf+B4OPU+A83ptYy6mB1YPMQ6RrAyyGSdDBGRM5xdU7h3EA8Ni7IKTwyHdKeEMqj+KNyLxLuHSunWBtOYXoUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747512872; c=relaxed/simple;
-	bh=9G4ubJ6lV4V2dWOs0FNh/K1YDBBBYb3K8frA6VqI9G8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=OgvHD9pUlkBdrA0Nv6ptYHkkrk9G+MUrJM1XLGxIb+RdBOW9By37ANyGVe/YQ2R+Ma8U8hdsx2Mg56G7X5+YVUThaZfILdyQwWYvIGi2dyD4e0IdKPKL1oW4ixRHUA1usDFy14c42bWK3/dytCN/NjVMGf4mYPC3K5UKvcI5lB0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=liqWWzmH; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3a363d15c64so847369f8f.3;
-        Sat, 17 May 2025 13:14:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747512869; x=1748117669; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pvRhcUvsur4qZV9ZsxMG2pchOpKzL3rOM+elE1weNSU=;
-        b=liqWWzmHg1ee4VFoip3O053X+AesVBVWJtyVi0mk6G7JNBKEMLoHelPHfxx8izvadB
-         6jzt3uXwSYo49akToyame61Qzhd1WgLa3PihuMgolvnfGU+/UEEY6t2nHpQnrHKHb1qH
-         NpaOgbSENZx1gangmxwI+979WvK+j16Rvz9xxBXifw8a/G2SCZL+EInn/mg4+IplOfoU
-         fmATVlmM3u3TLt0QN4wrJ2CIzb3hLcR7AlU8gW6IX/g/Xh1gI9ESqT7GA07CqKYsPjfV
-         HR7WGJPpPZpm+oeOL5qkB3dpYNiTUFnzWsmWYRjlzOeZa7YiEmUCmhmIQUAgjQ/AhIG/
-         lXsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747512869; x=1748117669;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pvRhcUvsur4qZV9ZsxMG2pchOpKzL3rOM+elE1weNSU=;
-        b=SBcKVfkF/1YjQxZhLeDovM0SBRDyh4OGETo9UuRJbAi4ereoNQIrKPTH5odhqdnSmG
-         tGl2uPA+4su3JAyuA+3demXSRGde8HVW4SsM9M1Knn93OApfHujZhPbHFJWry7QBJ28H
-         4/7TNISX364iNGGi29GrNnucMZaWsXqiPoV3SUbMmD4oeuSws/np+nSWhW7J1LNcH7jb
-         1KSFtnmlNfobNQQaBpoV5g8vfekzH1Ge+QMP7f+xOJTuGgKEsYp6THxvbbhIlwCAl9eX
-         y47vbkBdgDh21MyXqx8eCujDOg0yMsLKRxgfkjn0ivmnzTaxWf3vxR47wB966yIOkX5z
-         UEmw==
-X-Forwarded-Encrypted: i=1; AJvYcCUHZioR+Ge3z12KovxVy6coK2Svfll0sGkicwsMTJNg+4YICY973WWj+R33euM70AKQzfcp0/V1@vger.kernel.org, AJvYcCVc5pZi806UtHjvlMnfHe40Z7uKd1xmctgtnzt2D+WLq+SwvWK/6oszc+JenrRofSkhXHsfpJZxLs4EH1vcydQ=@vger.kernel.org, AJvYcCWsqILzJEzINNlDmhs0Aq3MhzVeWLH5rWYxnk0KGF/JyChx96jnGxq/Yii9DVjWkjP8eHHwiIqTC24SiIfn@vger.kernel.org, AJvYcCXXo92uxsTgjcdnFemtXsfxH7j+7mkqxztH70OsojV069D87V24ucp1vGxnpz6lRhXIzu0vca2OEE64@vger.kernel.org
-X-Gm-Message-State: AOJu0YwxiHAUK3xS22ULg7/E9lkrTTa2vV298iTsLLcofSWD8iuHlMd5
-	8F8lQlg6t8YpSkCqps/OkUPUl+4xfg4jEkePdTegkvI9nkHNO1GcoGaN
-X-Gm-Gg: ASbGncscUwvewok3o9QBoUm6bgvMF6TZAJXQ2b6AsUKBP64s9uZtAi8VW45HbUI4NS7
-	tGFS9rl7kdO8Acl+ScUXJWDFNzuxtDMAC56FcuBb8WULIkjWYSu4l2mXX8WnVZ9DQBSgOLACsMx
-	035ar2sAVjH19aekKFr93GlMTpsij5AbQcMqm696wh0bd5fz+cTVDODHM8d6AErnXiCsMrbNDMT
-	TV/FQVfrijXADVMSxn8SYyAdNufDqC0Qc4LoQ/JOsmOlpcKZSSS44meoUcp//pD9ImcLaQHgUZf
-	YC4XvUfCHZrvx9+n+ILTt71evwvV4d9ycOBaNPqq1M9PL1UfWivRGXhZKp8B+4da9r09fWGr+M2
-	Bdw6jQGBVgacZ8frDi2gx
-X-Google-Smtp-Source: AGHT+IH0ZGWnW1K3Jp3p4o3BJE8BsjzlmsMNkZXGB5yNqvSvLbdgA7SMzMBdF7N3MFqmjTATY5rLmg==
-X-Received: by 2002:a05:6000:2210:b0:3a1:fc91:2819 with SMTP id ffacd0b85a97d-3a35c825f62mr6793668f8f.32.1747512869146;
-        Sat, 17 May 2025 13:14:29 -0700 (PDT)
-Received: from localhost.localdomain (93-34-88-225.ip49.fastwebnet.it. [93.34.88.225])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-442fd4fdcccsm85345445e9.6.2025.05.17.13.14.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 17 May 2025 13:14:28 -0700 (PDT)
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Christian Marangi <ansuelsmth@gmail.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	=?UTF-8?q?Marek=20Beh=C3=BAn?= <kabel@kernel.org>,
-	Andrei Botila <andrei.botila@oss.nxp.com>,
-	FUJITA Tomonori <fujita.tomonori@gmail.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Sabrina Dubroca <sd@queasysnail.net>,
-	Michael Klein <michael@fossekall.de>,
-	Daniel Golle <daniel@makrotopia.org>,
-	netdev@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org
-Cc: "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>
-Subject: [net-next PATCH v12 2/6] net: phy: bcm87xx: simplify .match_phy_device OP
-Date: Sat, 17 May 2025 22:13:46 +0200
-Message-ID: <20250517201353.5137-3-ansuelsmth@gmail.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250517201353.5137-1-ansuelsmth@gmail.com>
-References: <20250517201353.5137-1-ansuelsmth@gmail.com>
+	s=arc-20240116; t=1747512860; c=relaxed/simple;
+	bh=SKCXI74U/gmxDrxYFYuuztblXn49b0th/copPEAX0yY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TAeFuoc5vb4ll7b7zlSxPy+9ZY6+eNZk+vbpjf3Xoo+iZFLd3fog3y1ypiY9+C1YHoNNwkPzQU2zyrxKEFXXXd6EzJs3jgSahuMZGXoeWk++p+AUSZkScEvxHVHvmmqGXrtzaNUqdpj6/HMqYgYG6+oQyS6fP4qFnSpz9IiXXHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NAAZM1iQ; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1747512858; x=1779048858;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=SKCXI74U/gmxDrxYFYuuztblXn49b0th/copPEAX0yY=;
+  b=NAAZM1iQu7o9eOvMNHvIujreYQZz+EmZIp0DufE9XRk02/XfoSTAC7i0
+   Llfu0VMWKRhgy1r6JZgqJIfu6BJ/EbOuR3zec+KlmSeS+DIP5bt6sXwrM
+   16QQkBWRV4f6rUMUCUFlCKdPvSnZzugUvUf3Rinycma7gRjHejK99jYTS
+   gNf0AeID9nGPJ3AwZlaR2t3JBYiryDZSd9n2V/F3NhUfcyu2/VGsiRG9W
+   2zRBUu4Cmel5Hw9ZCUusbmG7cbFS3tMTZZa3UNDZCy72sX0HqO0LpPKfl
+   GKEO6aUzthLuXZD4KRwEItrjcDOH4bU1NeOBXbDZKx5vuUfQ/t9RnxbAf
+   g==;
+X-CSE-ConnectionGUID: w7BWnZsTT8Co0CGAUDvb3w==
+X-CSE-MsgGUID: ROqHLJkHSTueapHaVycYwQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11436"; a="37075922"
+X-IronPort-AV: E=Sophos;i="6.15,297,1739865600"; 
+   d="scan'208";a="37075922"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 May 2025 13:14:17 -0700
+X-CSE-ConnectionGUID: ENNxh/SVSKKbaUQ9PgtivQ==
+X-CSE-MsgGUID: plOD7kqdRKK6xKcgcWpZ7w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,297,1739865600"; 
+   d="scan'208";a="144244932"
+Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
+  by fmviesa004.fm.intel.com with ESMTP; 17 May 2025 13:14:14 -0700
+Received: from kbuild by 1992f890471c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uGNvA-000KP5-04;
+	Sat, 17 May 2025 20:14:12 +0000
+Date: Sun, 18 May 2025 04:13:46 +0800
+From: kernel test robot <lkp@intel.com>
+To: Samuel Kayode <samuel.kayode@savoirfairelinux.com>,
+	Lee Jones <lee@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Sebastian Reichel <sre@kernel.org>, Robin Gong <yibin.gong@nxp.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-imx@nxp.com,
+	linux-input@vger.kernel.org, Abel Vesa <abelvesa@linux.com>,
+	Enric Balletbo Serra <eballetbo@gmail.com>
+Subject: Re: [PATCH v2 6/9] regulator: pf1550: add support for regulator
+Message-ID: <202505180341.aMQhbUVJ-lkp@intel.com>
+References: <4dd316e06a66634b5af13f1faedc985753b061bc.1747409892.git.samuel.kayode@savoirfairelinux.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4dd316e06a66634b5af13f1faedc985753b061bc.1747409892.git.samuel.kayode@savoirfairelinux.com>
 
-Simplify .match_phy_device OP by using a generic function and using the
-new phy_id PHY driver info instead of hardcoding the matching PHY ID.
+Hi Samuel,
 
-Reviewed-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
-Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
----
- drivers/net/phy/bcm87xx.c | 14 ++++----------
- 1 file changed, 4 insertions(+), 10 deletions(-)
+kernel test robot noticed the following build warnings:
 
-diff --git a/drivers/net/phy/bcm87xx.c b/drivers/net/phy/bcm87xx.c
-index 1e1e2259fc2b..299f9a8f30f4 100644
---- a/drivers/net/phy/bcm87xx.c
-+++ b/drivers/net/phy/bcm87xx.c
-@@ -185,16 +185,10 @@ static irqreturn_t bcm87xx_handle_interrupt(struct phy_device *phydev)
- 	return IRQ_HANDLED;
- }
- 
--static int bcm8706_match_phy_device(struct phy_device *phydev,
-+static int bcm87xx_match_phy_device(struct phy_device *phydev,
- 				    const struct phy_driver *phydrv)
- {
--	return phydev->c45_ids.device_ids[4] == PHY_ID_BCM8706;
--}
--
--static int bcm8727_match_phy_device(struct phy_device *phydev,
--				    const struct phy_driver *phydrv)
--{
--	return phydev->c45_ids.device_ids[4] == PHY_ID_BCM8727;
-+	return phydev->c45_ids.device_ids[4] == phydrv->phy_id;
- }
- 
- static struct phy_driver bcm87xx_driver[] = {
-@@ -208,7 +202,7 @@ static struct phy_driver bcm87xx_driver[] = {
- 	.read_status	= bcm87xx_read_status,
- 	.config_intr	= bcm87xx_config_intr,
- 	.handle_interrupt = bcm87xx_handle_interrupt,
--	.match_phy_device = bcm8706_match_phy_device,
-+	.match_phy_device = bcm87xx_match_phy_device,
- }, {
- 	.phy_id		= PHY_ID_BCM8727,
- 	.phy_id_mask	= 0xffffffff,
-@@ -219,7 +213,7 @@ static struct phy_driver bcm87xx_driver[] = {
- 	.read_status	= bcm87xx_read_status,
- 	.config_intr	= bcm87xx_config_intr,
- 	.handle_interrupt = bcm87xx_handle_interrupt,
--	.match_phy_device = bcm8727_match_phy_device,
-+	.match_phy_device = bcm87xx_match_phy_device,
- } };
- 
- module_phy_driver(bcm87xx_driver);
+[auto build test WARNING on b1d8766052eb0534b27edda8af1865d53621bd6a]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Samuel-Kayode/dt-bindings-power-supply-add-pf1550/20250517-030259
+base:   b1d8766052eb0534b27edda8af1865d53621bd6a
+patch link:    https://lore.kernel.org/r/4dd316e06a66634b5af13f1faedc985753b061bc.1747409892.git.samuel.kayode%40savoirfairelinux.com
+patch subject: [PATCH v2 6/9] regulator: pf1550: add support for regulator
+compiler: clang version 20.1.2 (https://github.com/llvm/llvm-project 58df0ef89dd64126512e4ee27b4ac3fd8ddf6247)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202505180341.aMQhbUVJ-lkp@intel.com/
+
+includecheck warnings: (new ones prefixed by >>)
+>> drivers/regulator/pf1550.c: linux/regulator/machine.h is included more than once.
+>> drivers/regulator/pf1550.c: linux/slab.h is included more than once.
+
+vim +19 drivers/regulator/pf1550.c
+
+  > 19	#include <linux/regulator/machine.h>
+    20	#include <linux/regulator/of_regulator.h>
+  > 21	#include <linux/regulator/machine.h>
+    22	#include <linux/platform_device.h>
+    23	
+
 -- 
-2.48.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
