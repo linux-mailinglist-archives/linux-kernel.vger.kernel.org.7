@@ -1,99 +1,119 @@
-Return-Path: <linux-kernel+bounces-652298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-652295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08A86ABA98A
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 May 2025 12:50:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D509ABA983
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 May 2025 12:30:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C12E1B67448
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 May 2025 10:51:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E92CA7AD23C
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 May 2025 10:29:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C99A1F4CAE;
-	Sat, 17 May 2025 10:50:40 +0000 (UTC)
-Received: from pegase1.c-s.fr (pegase1.c-s.fr [93.17.236.30])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B69C31EB5DA
-	for <linux-kernel@vger.kernel.org>; Sat, 17 May 2025 10:50:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.236.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D02C1F3D20;
+	Sat, 17 May 2025 10:30:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DkRCu/h7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA0591E8348
+	for <linux-kernel@vger.kernel.org>; Sat, 17 May 2025 10:30:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747479040; cv=none; b=J5af/xb4LRkDHuY17CMFfUUGo2C1niLbDfLlD3NOU4hUld3SxmRktyzhHxwXUGF3eJbEil9jbhtYAFDCSO2+/FJCt55g/2cprbh6NQd+E3+IbV1qvF1mVanCflOXrrOEButIuBMJ5QuZPZI63FTwqgzeMZvD7y0C4MoCwl8Veu0=
+	t=1747477821; cv=none; b=hNFny4Sy3wOvDxAMqRbNpPgJP2F5ScsGj/N+MfQ3u5aVlel36GbELRiFDkehgR1MmNumo0fU2k7FHCq1ifgkV0LOV5lqhF02x8G/tgYjW9EKfLjlhIV3sbj6qoMEP2PnEFQf7H1KWVElTpcPx3Jom+j7Cc77J6FriK72reRKBE0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747479040; c=relaxed/simple;
-	bh=9IJRMUDl0W4Nj2xp0CSKskCMgMCmRN6k8RLDVc62IRo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=I/VVssFkIk7Anx2RzuOhZ31+zqdKi3e7UG2iAep3LtlkBhtU0giA0xs9ENHCteYpP1fGWuWSpEb57S1s/e+IX7Xa8rOiHxpQGCGWQ8y4i7Y85P60lytCIDZKfQxKiOGYyyc/rtqe0Sqr2gorwTQvdOeDy/PeMsegoWHCRnBSOg4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.236.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [192.168.12.233])
-	by localhost (Postfix) with ESMTP id 4b00ML269qz9sd1;
-	Sat, 17 May 2025 12:20:30 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-	by localhost (pegase1.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id u_j-kwnIF3ju; Sat, 17 May 2025 12:20:30 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase1.c-s.fr (Postfix) with ESMTP id 4b00ML1S3rz9scH;
-	Sat, 17 May 2025 12:20:30 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 2C26F8B768;
-	Sat, 17 May 2025 12:20:30 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id x8KOnfLvFbC2; Sat, 17 May 2025 12:20:30 +0200 (CEST)
-Received: from PO20335.IDSI0.si.c-s.fr (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id CD4468B767;
-	Sat, 17 May 2025 12:20:29 +0200 (CEST)
-Received: from PO20335.IDSI0.si.c-s.fr (localhost [127.0.0.1])
-	by PO20335.IDSI0.si.c-s.fr (8.18.1/8.17.1) with ESMTPS id 54HAKL7u013343
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Sat, 17 May 2025 12:20:21 +0200
-Received: (from chleroy@localhost)
-	by PO20335.IDSI0.si.c-s.fr (8.18.1/8.18.1/Submit) id 54HAKLua013342;
-	Sat, 17 May 2025 12:20:21 +0200
-X-Authentication-Warning: PO20335.IDSI0.si.c-s.fr: chleroy set sender to christophe.leroy@csgroup.eu using -f
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-To: Ioana Ciornei <ioana.ciornei@nxp.com>,
-        Thorsten Blum <thorsten.blum@linux.dev>
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: Re: [RESEND PATCH] bus: fsl-mc: Use strscpy() instead of strscpy_pad()
-Date: Sat, 17 May 2025 12:19:40 +0200
-Message-ID: <174747706461.12970.12407868094636158420.b4-ty@csgroup.eu>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20250429104149.66334-1-thorsten.blum@linux.dev>
-References: <20250429104149.66334-1-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1747477821; c=relaxed/simple;
+	bh=NBLuObZypd7FUQ4RdXCGShJPwkbjl+7jqVZyIFp1z0E=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=q1CrGY06aneXOtDGsaOmru4HaT0fdlBUPgESZguAenySV+nZ1L7Zuk64fmnGgeZ9Z8dutKSDX3CttZ9tI8ywT4gpuifHURN50bhKu2fMObfW0xwoQ57CoB9gjCQEmvySieChtkerGdP3UGP86L1x3NVIcEVCpv/pxtJrIvXru1g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DkRCu/h7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36E04C4CEE3;
+	Sat, 17 May 2025 10:30:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747477821;
+	bh=NBLuObZypd7FUQ4RdXCGShJPwkbjl+7jqVZyIFp1z0E=;
+	h=From:To:Cc:Subject:Date:From;
+	b=DkRCu/h7I2WHU4dS2WlSghrYRvnB8JHkuQX9J8+7/4WFH/BhP3xPEBUAgGWe6Uj/5
+	 rvnmEBORJY/Uriw0QRh3c9YErEer/VlibqrQoBQHMzyvNGXYbcJe1MfuFMcXmxDtWh
+	 ecqi48zUxZXkDm/ROMIvoKbGhU4mEjE4TqlpqYo1eDwx0Gw7kVfPAHdc4CVu72gNEb
+	 YuQhM6E+2yBuFpPhvybz3fOrlGY3psq3MIhTO/yyyHMHvkC+JaFKQTRzvsTkt5zgUb
+	 pl0eCI64BsBYAmXhU6mSvzZvv/Uczwlxdgri/FWfSEsdZzEym+BPjobnKw7iH+VV3x
+	 QnfQJHyYYwZkg==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=valley-girl.lan)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1uGEo6-00Fmrq-MV;
+	Sat, 17 May 2025 11:30:19 +0100
+From: Marc Zyngier <maz@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH] irqchip/msi-lib: Honor the MSI_FLAG_PCI_MSI_MASK_PARENT flag
+Date: Sat, 17 May 2025 11:30:11 +0100
+Message-Id: <20250517103011.2573288-1-maz@kernel.org>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1747477178; l=671; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=XARyMbMk0ocC0UV7ijn+e4ygQ6tnPtTPYUc6a6ZTFP0=; b=fkqCiXLFaISyXqz2xP4gHlZDKtyZDvfwuga56YIyOEnd0km5wkX/PCp9NOkV7Mx6YutdOhz/h PA8WrhPkw7zA0xZr/GdsY1tjFtS1EH2vVWIjvpac6rM2w7jHCLRReMH
-X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
 Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, tglx@linutronix.de
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
+For systems that implement interrupt masking at the interrupt
+controller level, the MSI library offers MSI_FLAG_PCI_MSI_MASK_PARENT.
+It indicates that it isn't enough to only unmask the interrupt at the PCI
+device level, but that the interrupt controller must also be involved.
 
-On Tue, 29 Apr 2025 12:41:48 +0200, Thorsten Blum wrote:
-> Both destination buffers are already zero-initialized, making strscpy()
-> sufficient for safely copying 'obj_type'. The additional NUL-padding
-> performed by strscpy_pad() is unnecessary.
-> 
-> If the destination buffer has a fixed length, strscpy() automatically
-> determines its size using sizeof() when the argument is omitted. This
-> makes the explicit size arguments unnecessary.
-> 
-> [...]
+However, the way this is currently done is less than optimal, as the
+masking/unmasking is done on both side, always. It would be far cheaper
+to unmask both at the start of times, and then only deal with the
+interrupt controller mask, which is likely to be cheaper than a round-trip
+to the endpoint.
 
-Applied, thanks!
+Implement this by patching up the irq_chip structure associated with
+the MSIs to perform the full unmask on .irq_enable(), and the full mask
+on .irq_shutdown(). This asymmetry allows the preservation of the
+"lazy disable" feature, which relies on the top-level irq_chip not
+implementing the .irq_disable() callback. Yes, this is a terrible hack.
 
-[1/1] bus: fsl-mc: Use strscpy() instead of strscpy_pad()
-      commit: 61ddf5faa7cc091b409936d571ec1af34ce487a1
+Signed-off-by: Marc Zyngier <maz@kernel.org>
+---
+ drivers/irqchip/irq-msi-lib.c | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-Best regards,
+diff --git a/drivers/irqchip/irq-msi-lib.c b/drivers/irqchip/irq-msi-lib.c
+index 246c30205af40..8c62034ab8d92 100644
+--- a/drivers/irqchip/irq-msi-lib.c
++++ b/drivers/irqchip/irq-msi-lib.c
+@@ -112,6 +112,21 @@ bool msi_lib_init_dev_msi_info(struct device *dev, struct irq_domain *domain,
+ 	 */
+ 	if (!chip->irq_set_affinity && !(info->flags & MSI_FLAG_NO_AFFINITY))
+ 		chip->irq_set_affinity = msi_domain_set_affinity;
++
++	/*
++	 * If the parent domain insists on being in charge of masking, obey
++	 * blindly. The default mask/unmask become the shutdown/enable
++	 * callbacks, ensuring that we correctly start/stop the interrupt.
++ 	 * We make a point in not using the irq_disable() in order to
++	 * preserve the "lazy disable" behaviour.
++	 */
++	if (info->flags & MSI_FLAG_PCI_MSI_MASK_PARENT) {
++		chip->irq_shutdown	= chip->irq_mask;
++		chip->irq_enable	= chip->irq_unmask;
++		chip->irq_mask		= irq_chip_mask_parent;
++		chip->irq_unmask	= irq_chip_unmask_parent;
++	}
++
+ 	return true;
+ }
+ EXPORT_SYMBOL_GPL(msi_lib_init_dev_msi_info);
 -- 
-Christophe Leroy <christophe.leroy@csgroup.eu>
+2.39.2
+
 
