@@ -1,254 +1,280 @@
-Return-Path: <linux-kernel+bounces-652137-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-652126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B1C9ABA7B9
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 May 2025 04:02:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73562ABA7A4
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 May 2025 03:59:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C2E01897AD6
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 May 2025 02:02:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D99E9E37F2
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 May 2025 01:59:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5E0317A2F0;
-	Sat, 17 May 2025 02:00:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 879B013DBA0;
+	Sat, 17 May 2025 01:59:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ox.ac.uk header.i=@ox.ac.uk header.b="csUSsKvA";
-	dkim=pass (2048-bit key) header.d=UniOxfordNexus.onmicrosoft.com header.i=@UniOxfordNexus.onmicrosoft.com header.b="QF1V+cXH"
-Received: from relay18.mail.ox.ac.uk (relay18.mail.ox.ac.uk [163.1.2.165])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="F1q6phCQ"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF72415A86B;
-	Sat, 17 May 2025 02:00:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=163.1.2.165
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747447228; cv=fail; b=Y8yy3/i4HRKA8IotsTxfGyxwh+onWq2vsGMA5kMs/M6oaMpgbUhQbOvKEUMiz1Fg+CsnxNyrC7yLOZlcRmRJqASfBXzh3ZwdbMJRKix6mw08f+mXHm7pYmlEy1Eg9wNNBJLOgiwlf8MXERW4kyWoBwZYm07HdGS7LZjUQYmZmqY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747447228; c=relaxed/simple;
-	bh=UYY4BsaRBHtAH3fsbs532dt1S8R6DX0yZgOha9eXU1M=;
-	h=From:To:CC:Subject:Date:Message-Id:Content-Type:MIME-Version; b=u0i8j2Q8AGbB2MK84BHud68vwmYguR+oP9j6MLg42WwFyRKgTBxlwfeew3WunhW7RAYFwybKv31IQOcz8kU8Ypm34eeSqq0bmLoOtXto1ALmeppAwQESqhxgrmkWM5LQcZsVBzZzp+8juNGgMQOEsU3qcqUeVYQ8ppco3EbWeE8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=magd.ox.ac.uk; spf=pass smtp.mailfrom=magd.ox.ac.uk; dkim=pass (2048-bit key) header.d=ox.ac.uk header.i=@ox.ac.uk header.b=csUSsKvA; dkim=pass (2048-bit key) header.d=UniOxfordNexus.onmicrosoft.com header.i=@UniOxfordNexus.onmicrosoft.com header.b=QF1V+cXH; arc=fail smtp.client-ip=163.1.2.165
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=magd.ox.ac.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=magd.ox.ac.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=ox.ac.uk;
-	 s=flood; h=MIME-Version:Content-Type:Message-Id:Date:Subject:CC:To:From:
-	reply-to; bh=MDoj/XCROTt2dZBKeVF+QoqeprIcpfe8Yl5Sd7TdN9Q=; t=1747447224;
-	x=1748311224; b=csUSsKvAOOMJia0dVRR8g4UOzZ3iBflGour352c70n+oTp/8qJ9jRc/PbEueQ
-	4OLuIx6aE9D2Fnpyon8Lr2WxfhIJOjzysAkXtHmqTjQajKZFAMH+xXw3+Py3y7sZXejfIaZuQ6PGG
-	y6vak2e+YJvrV51xw7m1HkiLIY6LPGeifNXD4t8LaBXksujGHIkVxj5QLDL7iSYDAocMJJ5eeyzNe
-	t4o4LihkJjx/5BgzHgovT+yc8BGN/4t8nVZBcuFBGEDGU6PFuZY24Axb9MhSLnPF6VJg2Oj4RJDnP
-	FZzWvnIGLbE7zzHXG5ukwzfEx3Wl7CyofLOY4fMuERO1h53xXg==;
-Received: from ex02.nexus.ox.ac.uk ([163.1.154.242] helo=EX02.ad.oak.ox.ac.uk)
-	by relay18.mail.ox.ac.uk with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-	(Exim 4.92)
-	(envelope-from <praveen.balakrishnan@magd.ox.ac.uk>)
-	id 1uG6qX-0008ZI-8F; Sat, 17 May 2025 03:00:17 +0100
-Received: from EX02.ad.oak.ox.ac.uk (163.1.154.242) by EX02.ad.oak.ox.ac.uk
- (163.1.154.242) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Sat, 17 May
- 2025 03:00:17 +0100
-Received: from LO3P265CU004.outbound.protection.outlook.com (40.93.67.2) by
- EX02.ad.oak.ox.ac.uk (163.1.154.242) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.37 via Frontend Transport; Sat, 17 May 2025 03:00:17 +0100
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=HC0SOyn1+TdtIFvbU+4SoCPXZQPduw5grLVPtZq5/1dIEJ0z5DpXQFv8XNzxHEFLUg87ZmFIbL6TwplTYlCpt5Sbv+S3af6l5ouGJeWLd16q7ABw59UObYoNV3ftoJx8F9IWCcCdIz67DOypTZygN3Xs7vzLGsaCXUGx/OVpaBaT5yG3i1Uj9sEw7zai1bIkYDpnuUYKaVE9GUwuT+MiqNinP3OVYxG0NDSWR1mie39S7x4zQjB5o4eW9HW2YE+oSqsGiI8YrDb1cZeX7SPqwMqFZAj3Ywff2HSB7xyUC88BnwrMfGSDbmB/0b7Lna9ny5Vep3DX9lXNlX7drRT2wQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=MDoj/XCROTt2dZBKeVF+QoqeprIcpfe8Yl5Sd7TdN9Q=;
- b=Kzzcgug04bjGtNEWoXlylq8JhRR2rU3G9/JVGBQgF9eR97+ELF1RURaTNtksHxtpSbKYT9WoTCBSRGU3A0HD6MTqef5D8V0MaFBbUROgTFXA4satUHVInGkGbdDxiMkidOUQSwQv3jchITTi9wSwuBfTx304HXQ1klzfCIHGuJgvcouQarN9rT/XehDdP95lOA69WoqDMtYJaB5uFujDrA2YbsFt+2LJ8Sm1kbzaqM7y2kyiNU6Y3F4vdj9yYGXfs7lbjdip1sb+xAMUnEa2zmyY4KjK8CTdeQrHfCmKMxQWW55gqGWOD/B4KTk2lgS0vKRzRlq2V+pPLvnameRCtg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=magd.ox.ac.uk; dmarc=pass action=none
- header.from=magd.ox.ac.uk; dkim=pass header.d=magd.ox.ac.uk; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=UniOxfordNexus.onmicrosoft.com; s=selector2-UniOxfordNexus-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=MDoj/XCROTt2dZBKeVF+QoqeprIcpfe8Yl5Sd7TdN9Q=;
- b=QF1V+cXH3I42DcZ3+ogFTqVIj86cCIrHrC+ySmZxnffqVQVURdD8AfSUoCJlmVte7G3PaUwsQuNGhJdU7/FNBgY0EwgLRJkvW56o8o/xYYkZG2EkgQG7MEynstpMpjMqLYtXpyZX3xqbpHCY6YIhRZZ5crq7uslGSxYGzfxYjT1lyZAO7KZE8eUV83o8KvJPN2GgIlQzAaxBobTRadbv8QwKwTJo8yDC9gu0keo/B6FFecig21ouF2Q1sn7OkpZmAAyUKf5DxXREZfWaGx4eLFCiBdDkLhQqdLDthk4i4UE7Dah6AvBFyr5lBzCNrq1Ue2trLdXSOtzh7jO2XOXBsw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=magd.ox.ac.uk;
-Received: from LO6P265MB6985.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:323::12)
- by LO0P265MB2874.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:175::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8722.33; Sat, 17 May
- 2025 02:00:16 +0000
-Received: from LO6P265MB6985.GBRP265.PROD.OUTLOOK.COM
- ([fe80::639f:86e3:3b7c:f6dd]) by LO6P265MB6985.GBRP265.PROD.OUTLOOK.COM
- ([fe80::639f:86e3:3b7c:f6dd%5]) with mapi id 15.20.8722.031; Sat, 17 May 2025
- 02:00:16 +0000
-From: Praveen Balakrishnan <praveen.balakrishnan@magd.ox.ac.uk>
-To: <shuah@kernel.org>
-CC: Praveen Balakrishnan <praveen.balakrishnan@magd.ox.ac.uk>,
-	<linux-kselftest@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<skhan@linuxfoundation.org>, <linux-kernel-mentees@lists.linux.dev>
-Subject: [PATCH] selftests: net: fix spelling and grammar mistakes
-Date: Sat, 17 May 2025 02:59:12 +0100
-Message-Id: <20250517015912.131187-1-praveen.balakrishnan@magd.ox.ac.uk>
-X-Mailer: git-send-email 2.39.5
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: LO2P265CA0063.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:60::27) To LO6P265MB6985.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:323::12)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6C2A23DE
+	for <linux-kernel@vger.kernel.org>; Sat, 17 May 2025 01:59:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747447186; cv=none; b=P8KgNjDDv87UTFniq1xP3TWb0XQxJftlH0bO31W4nhwtk++SI0Qaus72+4+CrGMWwovZ3K28qxyPSEppFilEF8xoazZ9yA3cReZRwO0SbhOWhFTvKrwQgv21Nuuaz4fY4Md/Lx+YxUt81B9UuOikSkKqd98yjgI+qLvT9HdZO0k=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747447186; c=relaxed/simple;
+	bh=hjFdZEvl37wQhL9LcL8NZ5b+ROX0vh00ZSwY5lXDjpk=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=tp2PyzgJQIO0N7lLnlVl/3ofGKXpfNFoEc98xKywivSMiEhl9+ZdSBZeViBuF0iGlO3pMbvGe4ZoyxYJ+YSH3yt0KJcyqYt5zA239W73OVeNMyPwZGcA2cFCXzYAdv8bSjvJjI4e+KOdB/tXYimooSh1Wt0NqhmllNqWZp65coE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=F1q6phCQ; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54GBunt5026134
+	for <linux-kernel@vger.kernel.org>; Sat, 17 May 2025 01:59:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=qGWiMePQgV6L4yTAdBmFNw
+	MO2iLQuv57rmtFIgCbF/E=; b=F1q6phCQDYnAdxZae9pCWHkC3iAr+0XU0MB7cQ
+	1bL2GutQi0t+vyiMI4rBJwZpfqUIKThV3rVKuB113ga92Mnqf6ovOiNMMix2RRBy
+	2ElIPKBglJ8PlTOZkgTw61HVHNq7AmOXKArpjLp0fAUPP5Ivu1IWs5kVpT3j5in9
+	E8usU7CdC6mwfaJW2J6NrERvF850k+l+sIoVKOjhlNps6h7DaRqFQ9bgWL6Fh3b4
+	cmUHADppu2KLZuJ7VQxJo6SAjMKW++XVXaOJ2xyq80yR8lsSn/iYKts0iGPVZRAO
+	61bf5t8pMcioUgpKiCcYqDk4ep+hz7NsnYCbael/V/j5D8MQ==
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46mbcyutcp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Sat, 17 May 2025 01:59:43 +0000 (GMT)
+Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6f6e57ffb40so62601516d6.1
+        for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 18:59:43 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747447182; x=1748051982;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qGWiMePQgV6L4yTAdBmFNwMO2iLQuv57rmtFIgCbF/E=;
+        b=N6rVxZccPpgN+GoRsr/6o3YkGdxPxoWA3UnvDbWYoFWByu7m6awgA5ZKrkaEq1cwfT
+         neOLenAuMwF9gakTtkJilOKLrSpuVXP7mAI5uHTBkRw4I1uWqDXKB5nqlg9/UT5xSEZ/
+         8tv3ICbT+FyFNcVTQU+d1MfQuBLijCDLF1GS7Q0+RK62eiQDtlk81FMXMomf1ZWUXA2F
+         2+Qgnon7dP4KPFFTWdovcsXnFjlQA08YPRoovagXC9Gj0RdLA9QKFN4Vhi1HxOC2RZ3F
+         JnvCe/KOEsXdq6IUqR2qbthDlwuGkHQKmKQhWQLtyW+Firdt3mvhcp3KAKrd+DVPcJdp
+         gb5A==
+X-Forwarded-Encrypted: i=1; AJvYcCWwkhKEC1m/9BfRoiF5bP4fPcXS6JzF5Cl10mviKKIoepn6iCIK/kl05iee/noXMaG2XqHtC9Zrpuarf3g=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4CxOJ+W1WFe4W6vbJQVlRGa0SK+9o5u1Ou8S6uCXSHtVhjQB0
+	LeoP5vVpBTGbXZ4GE+G+ueKWougGe4NIgNqnINjUk2eqNL8yrteq9FsMGI1Wz5R7Pks12zPUukv
+	vSRwUOPtQaZW4UBOmhuvqpuwHSgiJGw1MgdeBTYNlDugSF7jyVl7NH0e1bpezWN4AiQ3KRQiSKy
+	U=
+X-Gm-Gg: ASbGncub6jJ0WppL22fLFiKD1ND/gSW4d4AMuKT/Tc6CizODwb+wNqxGl5SG4ugTjz9
+	OGM6Uis66E0lvwKTUp29gqHhiAZTjsxai98J32SzjYOxQH693pxgLpYf5p4DhzyCvSWfJP+/nqS
+	kF0hf9dd44M4rtvEaNLdd4HgxNUjhjPdEWzyXUinfgg1E/2JUmYQ3FFhL1aRVU5F5s2+ie2O4Ui
+	UcVyW9JcJy+OMvcXqpcuIWCE/Ds5P56M8w6Z3CgpN+gtAo8GgeL5fTI15Rjk1ZZYpupb6eH3ctR
+	H9b0v2VVwtyyRFl+5XCNHX378bwPRmKO3c7Vjgfxajzl8EH/14FdKoX2V5ySFbvY5uW9F3SyC05
+	hK76gtnCaS2oAUBBOEVKvVm75
+X-Received: by 2002:a05:6214:252c:b0:6f8:ae32:39a5 with SMTP id 6a1803df08f44-6f8b2c57bd1mr84368546d6.10.1747447182041;
+        Fri, 16 May 2025 18:59:42 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHdRJsYEsxk0BEmeVebS2Cx8g0s90b9cPEntoWzF2SPmhijU54V83iK564eilKYSjqBg9QfZw==
+X-Received: by 2002:a05:6214:252c:b0:6f8:ae32:39a5 with SMTP id 6a1803df08f44-6f8b2c57bd1mr84368366d6.10.1747447181644;
+        Fri, 16 May 2025 18:59:41 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-550e70180f7sm672167e87.128.2025.05.16.18.59.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 16 May 2025 18:59:40 -0700 (PDT)
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Subject: [PATCH v6 00/10] drm/display: generic HDMI CEC helpers
+Date: Sat, 17 May 2025 04:59:36 +0300
+Message-Id: <20250517-drm-hdmi-connector-cec-v6-0-35651db6f19b@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LO6P265MB6985:EE_|LO0P265MB2874:EE_
-X-MS-Office365-Filtering-Correlation-Id: 130df9f6-2517-4bd2-ca32-08dd94e6914e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|41320700013|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?rjBFNodhf+fSEVyF7agvGYwd1CoJmiRr4vHCo95A617vAdvkzNHqqXQkLAp5?=
- =?us-ascii?Q?1nbeu9WdqYVprFeeJzdFeIOhbugoA35cRoUvJ2KVG50UA5Tg8nWXKH5qu92L?=
- =?us-ascii?Q?W0VhpdieeOkQaONNAyilj9QYLQXYYejcoETPGbTyy/1h0qxjhS86NUl4/KmI?=
- =?us-ascii?Q?ko6KrC9uBWJcbYCvlEW4fQRoVIemqxfONSXLX+8a3xGgpE/aoUhKlMziszEn?=
- =?us-ascii?Q?goThHXiE/wl22+p0P+U5bkyWBYjd9AkdhBcU/Y22ee6mRacSS71a0+J7CBur?=
- =?us-ascii?Q?ROWpWwgw3gs1Ew553Lau8wn6OtybRDRW3TvMCXWIT1mLcwuzo4RHD4NBqxH8?=
- =?us-ascii?Q?GXiIGr/85QpiEt9McN01YGRtht3j4LNlWE2SFmH/6v3Ybx9lwVS6WOAUf/Zz?=
- =?us-ascii?Q?goEaHLjjyehY/KX9CUZcrVxOysAoxq0m8Y/z87i+Vz73WNIsOyOjvjh5f1PQ?=
- =?us-ascii?Q?9aI2a2/74N5HRwW5JhrawF0XbNpl8xhuY5vKAgNNGboXv07nXPnk4MvQNqDK?=
- =?us-ascii?Q?m1BB8sZgNJOZjGYZgUrZT9Y8Gdcr4QQupXFdfCZVGc2whtcyhrAbCYxg7a9h?=
- =?us-ascii?Q?JcRayDIVI8XFoPDw7eZ/bcyUh1jzje0uirKF+NXsv2wCHqMgX25+7vadWE9X?=
- =?us-ascii?Q?LL0TJqAWqN/VtfYEBCZdBQvqWyrHksZfYgW3zCQZzB/RUky9U+JXScBBSC/D?=
- =?us-ascii?Q?LyJUzBHCW+dkGw30IRCDlWOY1pQBu9RVNsVj8KOHJA1bXVFZD6x2d1enjG7A?=
- =?us-ascii?Q?SXOkLolPXiSXe85bJdwlGkZwYz7ocHSoiajVyQWBlFWZ7MEoAdRI5I4PVOLz?=
- =?us-ascii?Q?YJ5PV/PgvrRdDJb0Y3tU6kc5wrRYUrBsc1cwniAFu2dXJhDWhdumpZDfYG3h?=
- =?us-ascii?Q?ggQSeBHvrI8oY5ril9e31D0mswllrk/Y1nVUwKYPIVNgocaDX9wELLCJabab?=
- =?us-ascii?Q?YGMBFHJ4qezRttTsjsVH0BwOdDtULzdTIvs60J0xwxVAGEL+q1/LcbwSKWeK?=
- =?us-ascii?Q?wlEoDfH5UoeCPb1onb+6S3iqpqLdUFNXKhnehlAT2qEa87k8ayDzLpaskE/8?=
- =?us-ascii?Q?TZa/XdaqaZ8nFIWA5URdr/fhtruMocxr5Gky/2Tx4P7L3zmm803fugff3i0S?=
- =?us-ascii?Q?y/wNhtOgP8/jVtWAYg5frC9lD/XjI+bhbnyefMLImPb73Z+mK+ttgX3nuafl?=
- =?us-ascii?Q?x5SJY53KF4ivqGYQYANS4ZWAmtujVBx8ToDxKMXuvj+TuX54XrKiwD2+6/Eb?=
- =?us-ascii?Q?EdC9R2SE6ZHQP75g2Ie2sMUebbUOS+5GQuoXtajzvX3KVmrufrIMgtDQEZ6J?=
- =?us-ascii?Q?Il3WQI5gf8wyr7AUY+Qhv0eCuu0kGDO/gsbW8fEjM/0UWjzKXV9Qpy5fAXEv?=
- =?us-ascii?Q?+VTbdBe41mQ/PSUzSH6/28qxWYq+tOJYGnd9HQNRKBfs/w7NSOebdfYS5Vww?=
- =?us-ascii?Q?Z6X+SsaxlNI=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LO6P265MB6985.GBRP265.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(41320700013)(366016)(376014)(1800799024);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?mClkrCJEiJRNfjhs3gevsgfZ+t4yDqnCmT5R3/KN06LSHOGAFhB24ZUj+2Ib?=
- =?us-ascii?Q?w2QGnxAG9FaCu1yWacvQmSdkH3BUAn9ACSX0syOC+YwQWKTIxi55ckG22S72?=
- =?us-ascii?Q?tZvBEiilqZMtA9ucri13mdBzisPtpeUd8QdQeXqzEo6MrOIos3gyfUnls8sJ?=
- =?us-ascii?Q?5JZqCW9Py0gfwTIfwPirLHR3Qg+6J8ixNntTnyYoKo9KLDjRakdxHNFITjwL?=
- =?us-ascii?Q?WJGc1rl7Q1faYK0dBKwveZmYGhn54yI2nEZCjT9RHe8/BpUtVU313/YDYZJI?=
- =?us-ascii?Q?J2zZXEY4qpg+/B/lIk0Ux7I8gSnaMClw56J95FDNRL/SMfw75UE2UPiKwB0h?=
- =?us-ascii?Q?TW3IUAY2+GRUtrYadLYp4muLiRc9plLOVn3svnxyNCGMbB0KjRG1Gbjw7ZF3?=
- =?us-ascii?Q?l85pQt2lhcwK9nitE3CYVTyfHt0c2b8Ht4DdwxPWnbPkqnFOpUFjHcdcTwG1?=
- =?us-ascii?Q?tCAFQ3QvivffdN5DS7m3QyGuCYvm9SxsWJPri7kKB8x6Z700yHd3VKcVOdXZ?=
- =?us-ascii?Q?1T4Z2VrJ/lErBsfM/ezjuzvl46eGdYo8Db1Bc+uKQ0My7a9U9gEy08l+sYLp?=
- =?us-ascii?Q?GKEZNqXI4X9T0q+sNIfinJsFin9XMMOF7eZpWBqtz/3He8vJ57sl7xCXVKlL?=
- =?us-ascii?Q?6lysopgOSHFE24Hc1XK0jfcSxO5mZ3MPo5xSJ9esrcmIdk697EecC6pRwA0F?=
- =?us-ascii?Q?KL6WbgwnpQrWaFV5vqRimNFVrPbWC7FNAutPjLbV8K9FlZ7VKQmPewZG6cie?=
- =?us-ascii?Q?tQVqdLXYUWJk5MQYtyTtd7ZPfPDV1PmtqGLo+KoRI9zb+CkchhGI8FWvsbQJ?=
- =?us-ascii?Q?c8EHzs8y6fukDvR/nu9BK7yzN1I+zP1bKmW8j4GDlZjYdzyGuBn/eh2FtRbD?=
- =?us-ascii?Q?bgOYKeXafkSutnCVc7J/b5i2v18fVnn3HjEkW71tbPyAMg6KpiDdIhLJ1DkG?=
- =?us-ascii?Q?7ueO4DmAvt5D5R5H1NbBd5bKAW+nFD2hMbbd7wuHq8B+KTmKHxi1z1OXDRhS?=
- =?us-ascii?Q?S6C74/4Sju4MtxUEPJ8UAGvODgIj40TNc29kmQkqluPHShmKxUKymVt4fVl4?=
- =?us-ascii?Q?RPtN0fbpxJWodRGoasnuuP8/gBPZ7EuvaWpA10wm/CU7Zc4ulZ2EhNH7AkAH?=
- =?us-ascii?Q?khhTKQHxuI8Ld1AUiwEfLtX4SmvUybfxyxmBThaStK+dQZDDVA7ifgtc3hKg?=
- =?us-ascii?Q?Caoui8irDVWgxiHSpv4Kn73FcQUZbp9Mcw+SNh0f4IXcukCPTvBu9YeyB4HT?=
- =?us-ascii?Q?nOuaOPv4ukat/ewZcQvm5EaE6tJBnhz3aA2iOEFLCb1FdpwlbRW93jxvbzLW?=
- =?us-ascii?Q?+Hf9i3MIgQ9uBIjcoWySmWBItGM2w09M0fOzf8loj/atk5hisbGqM3m4dwlN?=
- =?us-ascii?Q?pnEljpfwTdOO0F3OvGu5yrfw/u8qltgfS0ZQNtM/9OrR9SdqDVvaZtqjC4V1?=
- =?us-ascii?Q?5vdE6axpJ80rGok2GIoMK2+Mk/wq1X/4gyB7g13tcpZyTox6c3lv+hQ2ahE4?=
- =?us-ascii?Q?HKKWYFkbM2pM4IQJi0Ya7VfgGa9tLBb+H45TTx0C82PfGb8siYRkjfjz1fwi?=
- =?us-ascii?Q?Vkb3wBXi5XB05Z4o8tRdfR+ZaIiEotihIGigRAhD?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 130df9f6-2517-4bd2-ca32-08dd94e6914e
-X-MS-Exchange-CrossTenant-AuthSource: LO6P265MB6985.GBRP265.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 May 2025 02:00:15.9389
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: cc95de1b-97f5-4f93-b4ba-fe68b852cf91
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: qN1mC0j0dDMKcAZEh1u60OVhu6dxJwbzUaz2/qF4X58Q2XvjhEWPFlz0Z0FwsdqVUqeJpzbv81kKCp+eTaa9Ug==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LO0P265MB2874
-X-OriginatorOrg: magd.ox.ac.uk
-X-NTG-DKIM-verify: pass 
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAIjtJ2gC/3XR3YrDIBAF4FcJXq/ZcfxJ0qu+x9ILo7YRGrPVN
+ HQpefc16ZYulNwMjnA+D3gnyUXvEtkVdxLd5JMfQl7UR0FMp8PJUW/zThBQMERObexpZ3tPzRC
+ CM+MQqXGGctEAGleLqq1IDn9Hd/S3Ff46PPboLtfsj49L0urkMtL3ftwVi9r7ZD6fBxrcbSRLs
+ vMpP/KzNpzYGv0rI7fKTIwCbWvgNRhVIbL92Qcdh3KIp9Wc8OlIYAw2HcxOA6oy9ZELpfibw/8
+ 5qDYdnh3ZyhataKSy+s0RLyePTUdkR1dMIWgprIQ3R74cAdWmI7MDooamZWAR1H5Iqbxc9Xn5j
+ zIPcpjn+RdCS4gxHQIAAA==
+X-Change-ID: 20241223-drm-hdmi-connector-cec-34902ce847b7
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Dave Stevenson <dave.stevenson@raspberrypi.com>,
+        =?utf-8?q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>,
+        Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
+        Andrzej Hajda <andrzej.hajda@intel.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Robert Foss <rfoss@kernel.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Dmitry Baryshkov <lumag@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6185;
+ i=dmitry.baryshkov@oss.qualcomm.com; h=from:subject:message-id;
+ bh=hjFdZEvl37wQhL9LcL8NZ5b+ROX0vh00ZSwY5lXDjpk=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBoJ+2KUDbjYoJj8Abd+H6zHWTqOwnTDahSEoqfH
+ luBDg+KnueJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCaCftigAKCRCLPIo+Aiko
+ 1VxKB/0RJvE8XVan9SHutV1bRQYB+BzFsOnAMD/RvNccIxwixPSBYXedOy05FCajXEwy79xHKfF
+ eNvoiofGQjNXxfcH5FQYCspQJj7y50VO6KrsP37m2BeObFI/agRJXbjrsSjJVK72wcGiAqJWBuG
+ PxmuLBA7Qt0ZncgEpHc9uQnOX8GTItd6ueMsar19fFJG7K05K17YZzVHBaoFjTERrrBMnbeOCwv
+ sZ8wdQkuOC84wjk3BfbdnjuY71WdJg02k1oLlixkaD3qNphGJdOF3JwyeeIqxaT9JglBYcEGYDe
+ fI2ZPX5Med9OTxIHpEhjMEWUMjTCESUFjcusVB3bib52QjV+
+X-Developer-Key: i=dmitry.baryshkov@oss.qualcomm.com; a=openpgp;
+ fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
+X-Proofpoint-GUID: 7p98yStVUHlmv8909SglDJdsdj_MjexU
+X-Proofpoint-ORIG-GUID: 7p98yStVUHlmv8909SglDJdsdj_MjexU
+X-Authority-Analysis: v=2.4 cv=JszxrN4C c=1 sm=1 tr=0 ts=6827ed8f cx=c_pps
+ a=7E5Bxpl4vBhpaufnMqZlrw==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=dt9VzEwgFbYA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=KKAkSRfTAAAA:8
+ a=71nJb1rnCRvFoa6Wa_EA:9 a=QEXdDO2ut3YA:10 a=pJ04lnu7RYOZP9TFuWaZ:22
+ a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTE3MDAxNyBTYWx0ZWRfX8jfi0pUot8tU
+ FSizxSgfhGmdx550UYIYZVSGmyn7cRCmNK0lPtiL55AAKo59k3gF61IKfOpoh7G9uiLQRS5VVEO
+ +6rFS+aS6Dqu6IrAOV3irDQquPcrtGeK15sRAKY1Gq4xN5IZWftfHIl/LpBRPGorunqGpeWgJbk
+ HXpc+xcmF4Hcbkpy9KjaWVkEWI1oPHelX1BPCO88mirNnnObNr0djJvd2vdAiDvFAapfMqf0zcy
+ nxxu7nbFZ/Y0c/XFJAkTkkyvcTBBEVKPbIImrHvoz528JEKkuTHWazrAczX1WhXKGEL6o2CQ4Tw
+ 2j7/Rv3K1ZZjtbOY1Um2DWxeL2ZRvKGzsW6/TWn26vjklvclhfBh2a6EQcYmq+thSFjHpi2VWXK
+ 0Igm2PAyFKS6Sar0ktQ7+O7dQyvcW8otKoAiPf4q1QpNcXvRDmvntAgwijiZi4p5Ttfi/siX
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-17_01,2025-05-16_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 priorityscore=1501 suspectscore=0 mlxlogscore=999 bulkscore=0
+ malwarescore=0 mlxscore=0 adultscore=0 phishscore=0 spamscore=0
+ lowpriorityscore=0 clxscore=1015 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505070000 definitions=main-2505170017
 
-Fix several spelling and grammatical mistakes in output messages from
-the net selftests to improve readability.
+Currently it is next to impossible to implement CEC handling for the
+setup using drm_bridges and drm_bridge_connector: bridges don't have a
+hold of the connector at the proper time to be able to route CEC events.
 
-Only the message strings for the test output have been modified. No
-changes to the functional logic of the tests have been made.
+At the same time it not very easy and obvious to get the CEC physical
+address handling correctly. Drivers handle it at various places, ending
+up with the slight differences in behaviour.
 
-Signed-off-by: Praveen Balakrishnan <praveen.balakrishnan@magd.ox.ac.uk>
+Follow up the HDMI Connector and HDMI Audio series and implement generic
+HDMI CEC set of helpers that link into the HDMI Connector and
+drm_bridge_connector frameworks and provide a way to implement CEC
+handling for HDMI bridges in an easy yet standard way.
+
+Notes:
+- the patchset was only compile-tested
+- being an RFC some of the API functions and structures are left
+  undocumented
+- although the patchset provides drm_bridge / drm_bridge_connector API
+  for working with CEC, there is no actual bridge that uses the API
+  (yet)
+
+- I'm pretty unhappy with the drm_bridge integration code, we end up
+  duplicating wrappers for CEC functions instead of reusing the
+  drm_connector wrapping functions. An easy way would be to map
+  drm_bridge to the corresponding drm_connector, but that would
+  either require a state or storing drm_connector inside a drm_bridge.
+  Current code stores cec_adapter instead.
+
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 ---
- .../testing/selftests/net/netfilter/conntrack_vrf.sh |  4 ++--
- tools/testing/selftests/net/openvswitch/ovs-dpctl.py |  2 +-
- tools/testing/selftests/net/rps_default_mask.sh      | 12 ++++++------
- 3 files changed, 9 insertions(+), 9 deletions(-)
+Changes in v6:
+- Fixed vc4 to build with changed API (Maxime)
+- Reworked helpers to use drmm to unregister CEC implementations
+  (Maxime)
+- Expanded commit message to explain void *data design (Maxime)
+- Dropped extra include of drm_connector.h from drm_hdmi_cec_helper.h
+  (Jani)
+- Link to v5: https://lore.kernel.org/r/20250407-drm-hdmi-connector-cec-v5-0-04809b10d206@oss.qualcomm.com
 
-diff --git a/tools/testing/selftests/net/netfilter/conntrack_vrf.sh b/tools/testing/selftests/net/netfilter/conntrack_vrf.sh
-index e95ecb37c2b1..806d2bfbd6e7 100755
---- a/tools/testing/selftests/net/netfilter/conntrack_vrf.sh
-+++ b/tools/testing/selftests/net/netfilter/conntrack_vrf.sh
-@@ -236,9 +236,9 @@ EOF
- 	ip netns exec "$ns1" ping -q -w 1 -c 1 "$DUMMYNET".2 > /dev/null
- 
- 	if ip netns exec "$ns0" nft list counter t fibcount | grep -q "packets 1"; then
--		echo "PASS: fib lookup returned exepected output interface"
-+		echo "PASS: fib lookup returned expected output interface"
- 	else
--		echo "FAIL: fib lookup did not return exepected output interface"
-+		echo "FAIL: fib lookup did not return expected output interface"
- 		ret=1
- 		return
- 	fi
-diff --git a/tools/testing/selftests/net/openvswitch/ovs-dpctl.py b/tools/testing/selftests/net/openvswitch/ovs-dpctl.py
-index 8a0396bfaf99..b521e0dea506 100644
---- a/tools/testing/selftests/net/openvswitch/ovs-dpctl.py
-+++ b/tools/testing/selftests/net/openvswitch/ovs-dpctl.py
-@@ -1877,7 +1877,7 @@ class OvsPacket(GenericNetlinkSocket):
-                     elif msg["cmd"] == OvsPacket.OVS_PACKET_CMD_EXECUTE:
-                         up.execute(msg)
-                     else:
--                        print("Unkonwn cmd: %d" % msg["cmd"])
-+                        print("Unknown cmd: %d" % msg["cmd"])
-             except NetlinkError as ne:
-                 raise ne
- 
-diff --git a/tools/testing/selftests/net/rps_default_mask.sh b/tools/testing/selftests/net/rps_default_mask.sh
-index 4287a8529890..b200019b3c80 100755
---- a/tools/testing/selftests/net/rps_default_mask.sh
-+++ b/tools/testing/selftests/net/rps_default_mask.sh
-@@ -54,16 +54,16 @@ cleanup
- 
- echo 1 > /proc/sys/net/core/rps_default_mask
- setup
--chk_rps "changing rps_default_mask dont affect existing devices" "" lo $INITIAL_RPS_DEFAULT_MASK
-+chk_rps "changing rps_default_mask doesn't affect existing devices" "" lo $INITIAL_RPS_DEFAULT_MASK
- 
- echo 3 > /proc/sys/net/core/rps_default_mask
--chk_rps "changing rps_default_mask dont affect existing netns" $NETNS lo 0
-+chk_rps "changing rps_default_mask doesn't affect existing netns" $NETNS lo 0
- 
- ip link add name $VETH type veth peer netns $NETNS name $VETH
- ip link set dev $VETH up
- ip -n $NETNS link set dev $VETH up
--chk_rps "changing rps_default_mask affect newly created devices" "" $VETH 3
--chk_rps "changing rps_default_mask don't affect newly child netns[II]" $NETNS $VETH 0
-+chk_rps "changing rps_default_mask affects newly created devices" "" $VETH 3
-+chk_rps "changing rps_default_mask doesn't affect newly child netns[II]" $NETNS $VETH 0
- ip link del dev $VETH
- ip netns del $NETNS
- 
-@@ -72,8 +72,8 @@ chk_rps "rps_default_mask is 0 by default in child netns" "$NETNS" lo 0
- 
- ip netns exec $NETNS sysctl -qw net.core.rps_default_mask=1
- ip link add name $VETH type veth peer netns $NETNS name $VETH
--chk_rps "changing rps_default_mask in child ns don't affect the main one" "" lo $INITIAL_RPS_DEFAULT_MASK
-+chk_rps "changing rps_default_mask in child ns doesn't affect the main one" "" lo $INITIAL_RPS_DEFAULT_MASK
- chk_rps "changing rps_default_mask in child ns affects new childns devices" $NETNS $VETH 1
--chk_rps "changing rps_default_mask in child ns don't affect existing devices" $NETNS lo 0
-+chk_rps "changing rps_default_mask in child ns doesn't affect existing devices" $NETNS lo 0
- 
- exit $ret
+Changes in v5:
+- Fixed the check in adv7511_bridge_hdmi_tmds_char_rate_valid().
+- Major rework of HDMI CEC to follow 'helpers' design. Implemented
+  generic data structures that can be used for both CEC notifiers and
+  CEC adapters (Maxime).
+- Link to v4: https://lore.kernel.org/r/20250202-drm-hdmi-connector-cec-v4-0-a71620a54d50@linaro.org
+
+Changes in v4:
+- Rebased on top of drm-misc-next + commit 78a5acf5433d ("drm/display:
+  hdmi: Do not read EDID on disconnected connectors")
+- Moved 'select DRM_DISPLAY_HDMI_CEC_HELPER' under the
+  DRM_I2C_ADV7511_CEC symbol
+- Fixed documentation for @hdmi_audio_i2s_formats to describe default
+  behaviour.
+- Split drm_connector_cleanup() patch from the patch adding CEC-related
+  data structures (Maxime).
+- Documented that CEC mutex protects all data fields in struct
+  drm_connector_cec (Maxime).
+- Improved drm_connector_cec_funcs.unregister() documentation.
+- Documented struct drm_connector_hdmi_cec_adapter_ops fields. Added a
+  note to the commit message on the difference between it and struct
+  drm_connector_cec_funcs (Maxime).
+- Fixed Kconfig dependencies.
+- Link to v3: https://lore.kernel.org/r/20250126-drm-hdmi-connector-cec-v3-0-5b5b2d4956da@linaro.org
+
+Changes in v3:
+- Moved default available_las setting to
+  drm_connector_hdmi_cec_register(), allowing drivers to pass 0 instead
+  of CEC_MAX_LOG_ADDRS.
+- Reworked drm_bridge interface to store opaque pointer and interpret it
+  as drm_connector in CEC helpers code.
+- Fixed EINVAL checks in drm_connector_hdmi_cec_register().
+- Added the adv7511 patch, demonstrating CEC helpers for the DRM
+  bridges.
+- Link to v2: https://lore.kernel.org/r/20250110-drm-hdmi-connector-cec-v2-0-9067c8f34663@linaro.org
+
+Changes in v2:
+- Refactored CEC funcs, adding more wrappers to provide more consistent
+  interface (Maxime)
+- Removed export of drm_connector_cec_unregister() (Maxime)
+- Restored and rephrased comment in vc4_hdmi (Maxime)
+- Squashed vc4 patches
+- Link to v1: https://lore.kernel.org/r/20241225-drm-hdmi-connector-cec-v1-0-b80380c67221@linaro.org
+
+---
+Dmitry Baryshkov (10):
+      drm/bridge: move private data to the end of the struct
+      drm/bridge: allow limiting I2S formats
+      drm/connector: add CEC-related fields
+      drm/display: move CEC_CORE selection to DRM_DISPLAY_HELPER
+      drm/display: add CEC helpers code
+      drm/display: hdmi-state-helper: handle CEC physical address
+      drm/vc4: hdmi: switch to generic CEC helpers
+      drm/display: bridge-connector: hook in CEC notifier support
+      drm/display: bridge-connector: handle CEC adapters
+      drm/bridge: adv7511: switch to the HDMI connector helpers
+
+ drivers/gpu/drm/bridge/adv7511/Kconfig             |   5 +-
+ drivers/gpu/drm/bridge/adv7511/adv7511.h           |  52 ++--
+ drivers/gpu/drm/bridge/adv7511/adv7511_audio.c     |  77 +----
+ drivers/gpu/drm/bridge/adv7511/adv7511_cec.c       |  57 ++--
+ drivers/gpu/drm/bridge/adv7511/adv7511_drv.c       | 345 +++++++++------------
+ drivers/gpu/drm/bridge/adv7511/adv7533.c           |   4 -
+ drivers/gpu/drm/display/Kconfig                    |  13 +-
+ drivers/gpu/drm/display/Makefile                   |   4 +
+ drivers/gpu/drm/display/drm_bridge_connector.c     | 108 +++++++
+ drivers/gpu/drm/display/drm_hdmi_audio_helper.c    |   3 +
+ drivers/gpu/drm/display/drm_hdmi_cec_helper.c      | 192 ++++++++++++
+ .../gpu/drm/display/drm_hdmi_cec_notifier_helper.c |  64 ++++
+ drivers/gpu/drm/display/drm_hdmi_state_helper.c    |   7 +-
+ drivers/gpu/drm/drm_connector.c                    |  42 +++
+ drivers/gpu/drm/vc4/Kconfig                        |   1 +
+ drivers/gpu/drm/vc4/vc4_hdmi.c                     | 139 ++++-----
+ drivers/gpu/drm/vc4/vc4_hdmi.h                     |   1 -
+ include/drm/display/drm_hdmi_audio_helper.h        |   1 +
+ include/drm/display/drm_hdmi_cec_helper.h          |  72 +++++
+ include/drm/drm_bridge.h                           |  76 ++++-
+ include/drm/drm_connector.h                        |  48 +++
+ 21 files changed, 880 insertions(+), 431 deletions(-)
+---
+base-commit: 3330b71caff6cdc387fdad68a895c9c81cc2f477
+change-id: 20241223-drm-hdmi-connector-cec-34902ce847b7
+
+Best regards,
 -- 
-2.39.5
+Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 
 
