@@ -1,51 +1,51 @@
-Return-Path: <linux-kernel+bounces-652425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-652427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CF0CABAB35
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 May 2025 18:47:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 558CCABAB39
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 May 2025 18:49:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D77CA9E613A
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 May 2025 16:47:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2557D3B8332
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 May 2025 16:49:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED573202C21;
-	Sat, 17 May 2025 16:47:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E221205E3B;
+	Sat, 17 May 2025 16:49:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CwKJsu4x"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G5eZ8abm"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 596142110E
-	for <linux-kernel@vger.kernel.org>; Sat, 17 May 2025 16:47:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D7451EA90
+	for <linux-kernel@vger.kernel.org>; Sat, 17 May 2025 16:49:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747500449; cv=none; b=Ug/AYncsSespjJwvXniX5wvwuRCT2P6qQNRE275VzjntX1PQuq11kTLj2UaXAk3OVtR7/QtjIdd8gulAeRu6UklBbLkBmBL76KdBii5U4inDpcYVGIdcm0Al1nD4EHU5G9ZZgZ27ut5IDrSkHijP+29YpBZQep1Fxg2H0LAOD5A=
+	t=1747500554; cv=none; b=SH+DXHopBMzfmxaKkcDEmlzxAb4gdGlH6bLMGdsto1p91kP71hLZjSnA5rx0xDeicsGi4ZrtCQiAfkQ+dWIOal7ykXvdgCwTGLyZWg35H6zA4xPxQ48z7n5WJ8nLemHjUHBwzrTnGK8kJWsUo5YSxgvu25fJdxaEr6Q9y2Dospc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747500449; c=relaxed/simple;
-	bh=X843EsW90SQPIktSdsGG4bH24rc8i/BN+we0DJIQWjI=;
+	s=arc-20240116; t=1747500554; c=relaxed/simple;
+	bh=ObCO1wuvl/p0oqIvyXUQUhX+WLA8c9baP0tYpJ7fE50=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=pz8iyhYheiFrzxDLlTuTkvQowUBycWDqxK+7V5ZgO6C+rydmqJ5r+YCvH8JRfo+1yRj7/SuodJOiobEpHonSzdq1elg8KOOhl3AvwqU7R5aw4q1PSEjgzObR8o9INLj8Hz5u2xOOkULLQqRDNe2PIog7kp3T1C0gZ0GMJR637TU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CwKJsu4x; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B159C4CEE3;
-	Sat, 17 May 2025 16:47:28 +0000 (UTC)
+	 Content-Disposition; b=LVZCBfZ/omqr3i646klrgcCQo/6NhcnQ5fi7SiXt3vNWZR1FWX1WHVOqzYIUa2hEsEA/oHrasjNva4FTnYlpZ3+SaWGsFVo+O1QNVH51ApVy01dHEoB+6Cq+MMVaE8IDi3pOJxpN7PNWHaJe5xHqYkKUE9qVDbOvXbvWGtcjhUM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G5eZ8abm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C8C1C4CEE3;
+	Sat, 17 May 2025 16:49:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747500448;
-	bh=X843EsW90SQPIktSdsGG4bH24rc8i/BN+we0DJIQWjI=;
+	s=k20201202; t=1747500554;
+	bh=ObCO1wuvl/p0oqIvyXUQUhX+WLA8c9baP0tYpJ7fE50=;
 	h=Date:From:To:Cc:Subject:From;
-	b=CwKJsu4xwy+b+NuIHWm7v3jbPajQ2e1PHmbYDe4N/j89IZL0EgIEWuJP9PciFr60+
-	 3MYkbhRWuNsEb7A+Pj4GhbNcoEFOO+/1Vq6vgY9y/l8expkW206H744mOWp2JaUkCE
-	 DwSb3zMfRIDlTMJS/pM0rUvpceUpzziDQBwnPISUD8+eEj4hZb88w0d2Nf13U0zG4c
-	 JUyBP3hjGjTRNQd+AQteX+hkoZvBNf2M1Yu77OZOHnk2/ugoDI0IRaItqUwsNlhGZs
-	 m30PDtJIpX4cNDMQs+/DF90TVkmo6jixkXeefBikW/rU9gJ1I8lLuEFhgLGyWsd+vO
-	 oGW3LYbYG2DvQ==
-Date: Sat, 17 May 2025 17:47:25 +0100
+	b=G5eZ8abmoGdd3b/KPnBXThmIsHjort9ZbcODDeeHTR7/OFWKL5VVTcgSK9p04CHU9
+	 i/baoAbiQHXbh5kaylfUyZhq70SnQHe5XKWTWsuLTcC4/2IvoOL+cwrTzU12CS1g+/
+	 BxFNaHQieUgAyQx5dOm3QSh2swcjVINQnKNaGXMzoRX/Q2xS8njq1LV3WCJlZ+tZvp
+	 bwjrS9ZnQ+o148CJdIlddxTYCwG7KN2iCOWLDMW59fbvn7BX65X5HGxSlw7pSaOHCm
+	 5HxBSEvaEVmnWXnO4EO4mmP3Cl2MavkP8eYnnCXDO74Gfqd5ZzOi7tTIUxBjSCg7kX
+	 xs+RcxASilw7w==
+Date: Sat, 17 May 2025 17:49:10 +0100
 From: Vinod Koul <vkoul@kernel.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: LKML <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL]: Generic phy fixes for 6.15
-Message-ID: <aCi9nYPCxxtrO9g5@vaman>
+Subject: [GIT PULL]: dmaengine fixes for 6.15
+Message-ID: <aCi+BteelekIQK07@vaman>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,11 +53,11 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="9MyRx1ZPY5576eo/"
+	protocol="application/pgp-signature"; boundary="SKw8+HHxUjrEuEhv"
 Content-Disposition: inline
 
 
---9MyRx1ZPY5576eo/
+--SKw8+HHxUjrEuEhv
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -65,8 +65,8 @@ Content-Transfer-Encoding: quoted-printable
 
 Hello Linus,
 
-Here is Generic phy drivers fixes request which contains of bunch of
-renesas fixes and few smaller fixes in other drivers.
+Last pull request before I catch the plane from Lisbon. This has a bunch
+of idxd driver fixes, dmatest revert and bunch of smaller driver fixes.
 
 The following changes since commit 0af2f6be1b4281385b618cb86ad946eded089ac8:
 
@@ -74,88 +74,107 @@ The following changes since commit 0af2f6be1b4281385b618cb86ad946eded089ac8:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/phy/linux-phy.git tags/phy-=
-fixes-6.15
+  git://git.kernel.org/pub/scm/linux/kernel/git/vkoul/dmaengine.git tags/dm=
+aengine-fix-6.15
 
-for you to fetch changes up to b2ea5f49580c0762d17d80d8083cb89bc3acf74f:
+for you to fetch changes up to 811d6a923b40fc130f91abf49151f57cf9ac2a6f:
 
-  phy: Fix error handling in tegra_xusb_port_init (2025-05-14 12:28:43 +010=
-0)
-
-----------------------------------------------------------------
-phy fixes for 6.15
-
- - Biggest is Rensas fixes for unbind ole detection, irq, locking etc
- - tegra fixes for error handling at init and UTMI power states and
-   stray unlock fix
- - rockchip missing assignment and pll output fixes
- - startfive usb host detection fixes
+  dmaengine: mediatek: drop unused variable (2025-05-15 11:42:13 +0100)
 
 ----------------------------------------------------------------
-Algea Cao (1):
-      phy: phy-rockchip-samsung-hdptx: Fix PHY PLL output 50.25MHz error
+dmaengine fixes for v6.15
 
-Claudiu Beznea (5):
-      phy: renesas: rcar-gen3-usb2: Fix role detection on unbind/bind
-      phy: renesas: rcar-gen3-usb2: Move IRQ request in probe
-      phy: renesas: rcar-gen3-usb2: Lock around hardware registers and driv=
-er data
-      phy: renesas: rcar-gen3-usb2: Assert PLL reset on PHY power off
-      phy: renesas: rcar-gen3-usb2: Set timing registers only once
+Driver fixes for:
+ - bunch of idxd potential mem leak fixes
+ - dmatest revert for waiting for interrupt fix as that causes issue
+ - couple of ti k3 udma fixes for locking and cap_mask
+ - mediatek deadlock fix and unused variable cleanup fix
 
-Dan Carpenter (2):
-      phy: rockchip-samsung-dcphy: Add missing assignment
-      phy: tegra: xusb: remove a stray unlock
+----------------------------------------------------------------
+Basavaraj Natikar (1):
+      dmaengine: ptdma: Move variable condition check to the first place an=
+d remove redundancy
 
-Geert Uytterhoeven (1):
-      phy: can-transceiver: Re-instate "mux-states" property presence check
+Dave Jiang (1):
+      dmaengine: idxd: Fix ->poll() return value
 
-Hal Feng (1):
-      phy: starfive: jh7110-usb: Fix USB 2.0 host occasional detection fail=
-ure
+Nathan Lynch (1):
+      dmaengine: Revert "dmaengine: dmatest: Fix dmatest waiting less when =
+interrupted"
 
-Ma Ke (1):
-      phy: Fix error handling in tegra_xusb_port_init
+Purva Yeshi (1):
+      dmaengine: idxd: cdev: Fix uninitialized use of sva in idxd_cdev_open
 
-Nitin Rawat (1):
-      phy: qcom-qmp-ufs: check for mode type for phy setting
+Qiu-ji Chen (1):
+      dmaengine: mediatek: Fix a possible deadlock error in mtk_cqdma_tx_st=
+atus()
 
-Wayne Chang (1):
-      phy: tegra: xusb: Use a bitmask for UTMI pad power state tracking
+Ronald Wahl (1):
+      dmaengine: ti: k3-udma: Add missing locking
 
- drivers/phy/phy-can-transceiver.c                 |  22 ++--
- drivers/phy/qualcomm/phy-qcom-qmp-ufs.c           |   3 +-
- drivers/phy/renesas/phy-rcar-gen3-usb2.c          | 133 ++++++++++++------=
+Shuai Xue (9):
+      dmaengine: idxd: fix memory leak in error handling path of idxd_setup=
+_wqs
+      dmaengine: idxd: fix memory leak in error handling path of idxd_setup=
+_engines
+      dmaengine: idxd: fix memory leak in error handling path of idxd_setup=
+_groups
+      dmaengine: idxd: Add missing cleanup for early error out in idxd_setu=
+p_internals
+      dmaengine: idxd: Add missing cleanups in cleanup internals
+      dmaengine: idxd: fix memory leak in error handling path of idxd_alloc
+      dmaengine: idxd: fix memory leak in error handling path of idxd_pci_p=
+robe
+      dmaengine: idxd: Add missing idxd cleanup to fix memory leak in remov=
+e call
+      dmaengine: idxd: Refactor remove call with idxd_cleanup() helper
+
+Stefan Wahren (1):
+      dmaengine: fsl-edma: Fix return code for unhandled interrupts
+
+Vinicius Costa Gomes (1):
+      dmaengine: idxd: Fix allowing write() from different address spaces
+
+Vinod Koul (1):
+      dmaengine: mediatek: drop unused variable
+
+Yemike Abhilash Chandra (1):
+      dmaengine: ti: k3-udma: Use cap_mask directly from dma_device structu=
+re instead of a local copy
+
+ drivers/dma/amd/ptdma/ptdma-dmaengine.c |  19 ++--
+ drivers/dma/dmatest.c                   |   6 +-
+ drivers/dma/fsl-edma-main.c             |   2 +-
+ drivers/dma/idxd/cdev.c                 |  13 ++-
+ drivers/dma/idxd/init.c                 | 159 +++++++++++++++++++++++-----=
 ----
- drivers/phy/rockchip/phy-rockchip-samsung-dcphy.c |   2 +-
- drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c |   2 +
- drivers/phy/starfive/phy-jh7110-usb.c             |   7 ++
- drivers/phy/tegra/xusb-tegra186.c                 |  46 ++++----
- drivers/phy/tegra/xusb.c                          |   8 +-
- 8 files changed, 132 insertions(+), 91 deletions(-)
+ drivers/dma/mediatek/mtk-cqdma.c        |   6 +-
+ drivers/dma/ti/k3-udma.c                |  10 +-
+ 7 files changed, 148 insertions(+), 67 deletions(-)
+
 
 --=20
 ~Vinod
 
---9MyRx1ZPY5576eo/
+--SKw8+HHxUjrEuEhv
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEE+vs47OPLdNbVcHzyfBQHDyUjg0cFAmgovZwACgkQfBQHDyUj
-g0dG7A//bGs1bjFqL8XbUD3HTw+YnyhBS4GlHqYMxFF05PSpONpc1hZ16EtTr9dX
-IIS/8Z6L+eX5bsYgfoK0vVMUjn2oGfkspa+MpsUkIsXwyfkbEAYn8LJpb4AJtP9R
-WGOu5nYF9pN6iFQL0xvobaVu0DR0tfcCMk0I+cLwvMZxd14/b6OMsTlfkhTNd76j
-sEXVdK2y5R+y/b5+1ftwvi5I1nKOB/dAXdJ6UW3CUvz1IYHEzG0UXjsNNcSe/Mf4
-jBgKye84ulVBNBVVwZ02mmmWuqdtHx72ij0EVidRLf/NJYh7xgSrH7EGFZiOOIfR
-a31RAh53Z/MrCpisDEKL+Wg2jfL+SoRf1gOAi/7qlqOnMIC1ycUdbZEKbUe9Q+kh
-loxSRFrswfmd83BUAPPscRVOjAYU7+RebrOEk73niSCzJTwVKbgBL32R4BJnMypR
-vB4QsLZRvdLd8Ae7jOH+Jv1bv3ZMwxY7FNewX34odF0mPYuAgqZMZqhxH5fWtq1I
-IbQlZbD2GNhc3OAXLGa8wNORbPZ7wuzzeCasmOqHyO0yCUafAGttRJuqAgZ3d/bG
-Nj/W1dINBWOXi5Kj3PDqjbe/aBlMt0rFZccWmCXgyqATOW6JoE6tq6jXq5DLg7Uh
-EULbl7Zfd5jsTzn/1VD5kTBcHyuInQl9wyyDMdtgsqFx75d5aNA=
-=0dOB
+iQIzBAABCgAdFiEE+vs47OPLdNbVcHzyfBQHDyUjg0cFAmgovgYACgkQfBQHDyUj
+g0effxAAgNYPwmEqgN5WUqvvjjLjLuRw8UQTrIxDi/HX2FlJROrjpv0yEuXG+Uim
+gjiIIzCvHh0+OxnapdjUv343E4FPX/tFvLeN29cZkgP51x0UtLXW2zc2tAatwo+f
+Tnfsn1s7LF9YofItZ/bbZy9+OkZxWkdrQ7Znhp3pLx+TwE0JAGCRAKUu0D453TvB
+J+4JRz3LZcT6O9yZoC8CSNQIfLsj/dMPwsh6oM/BaIb/SuBlU69t9RDFMBcXjeLo
+NQUtacEddGs5rqYFOH8RJvcb638nLsof3EOP80zoR74uDDdFjVd8PrauOqH25URl
+9Eqc/6Uzga8sx3yn5Vyg1g6gyqji04QHvAAxjbruQl2lR3vdXGz3f6DWJM7ljgjK
+PIwBICLVBU5Tej8zQ+sKCR5NHkIDJMsAasYGMxV+oAnEZ0Rh3nfU+qExRsaQG1Ef
+apJ7VmkzHdkNyCHy+2kSsHuxtMFoXH4LPHrNtHvzs4VSGolXRnt2phon4bCPg7rM
+rzCLvK5ASoi7xOzQTxMHxP4h6EcqxqhWkC6rDHH+7CyCSNjuPg7nldVymHKMGGOm
+YSE9Vl69l2M3pWYzsgCxwhwroccPIOmsrB949YdjuCtasQKmmyGavE4vxPlj+TRN
+mDaM8RCH8bvNLbrIhr0anBtF/uKDj8ftOM9UQZ2zmHiio0K8aj4=
+=czZ7
 -----END PGP SIGNATURE-----
 
---9MyRx1ZPY5576eo/--
+--SKw8+HHxUjrEuEhv--
 
