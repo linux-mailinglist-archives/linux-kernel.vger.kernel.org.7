@@ -1,70 +1,71 @@
-Return-Path: <linux-kernel+bounces-652302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-652297-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 784DBABA990
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 May 2025 12:51:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34CADABA989
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 May 2025 12:50:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E73043B444A
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 May 2025 10:51:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C23954A7261
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 May 2025 10:50:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA2701FBEBE;
-	Sat, 17 May 2025 10:50:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 257721F417E;
+	Sat, 17 May 2025 10:50:36 +0000 (UTC)
 Received: from pegase1.c-s.fr (pegase1.c-s.fr [93.17.236.30])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B98AE1F4C85
-	for <linux-kernel@vger.kernel.org>; Sat, 17 May 2025 10:50:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 200BD1EB5DA
+	for <linux-kernel@vger.kernel.org>; Sat, 17 May 2025 10:50:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.236.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747479058; cv=none; b=mwGYPwUT+saztSpLohD/5DoByErJ0nIYjyhboj1lpp3gQOExGKcALDLyANu4fjn1mTE5SEkLuNkwLjPZLuWA3MtYWhfsmhYEzYBh8uK+fJJ0TmDLkFxvUX3QtTt5N3OOGlXXn3FTdUMznhRx2DDPz7XBtctro1fIrXQGXo2MFQM=
+	t=1747479035; cv=none; b=EpvoM81uBfFzG/9Bdc3LzssPb+iWPrOPOqo+CuokXvTO1CjVBFF9juWgxl1oRvBOvZJ/GutOAJsv1N7+W9tiQ+sUW1Rm2m3OEgcRBSdLc04FNl/tN9DXYztSaDWFgrpCnFxCIM9/0HvYzOsDSLMfldKbylGIUUBrV3YPdqbdS0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747479058; c=relaxed/simple;
-	bh=W2szJNh0Cou1FWEFeZTPmBSB8+UckQAm1YZPA0vLsI8=;
+	s=arc-20240116; t=1747479035; c=relaxed/simple;
+	bh=k+CMuWETIWwkqw1qINaTIZnTP1ci7VFjRGzRVLKnMK8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Z5/Vh2Uvu65SV3aPZeizYfJeQGSBbczSSaKPY5B0j7OkD92kytYxrjcvIuTb6l/JtDNaH/ClYjx894H/tccTYzwoNNgo+XyGgXByWouZc58JB6tBm59XUJk5Sf1AwZsw6JV1n0rE4pUsFNG0ySv4TYG4o+ZTMhVQDulLPVwGGR8=
+	 MIME-Version:Content-Type; b=Aqq0b23t7RrHqDRftcGEAOcan2TPjao4htA1h5qtps2k0Bo9HcRTu0SjxAUFkIef2+vGrGuH3XuFBbXp+x18egCH5r0th0EpSxSBdGSckvI8+2xN/K9bCoKB+FAfXU+kuPE7gU5++uB7FTKd+NX8yTy1T3kPXN8u0DItm9GFYt0=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.236.30
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
 Received: from localhost (mailhub3.si.c-s.fr [192.168.12.233])
-	by localhost (Postfix) with ESMTP id 4b00M63T1Xz9sWb;
-	Sat, 17 May 2025 12:20:18 +0200 (CEST)
+	by localhost (Postfix) with ESMTP id 4b00M92B0Wz9sbr;
+	Sat, 17 May 2025 12:20:21 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at c-s.fr
 Received: from pegase1.c-s.fr ([192.168.12.234])
 	by localhost (pegase1.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id L5WR6SaDXKDR; Sat, 17 May 2025 12:20:18 +0200 (CEST)
+	with ESMTP id klZbKNPdRbl2; Sat, 17 May 2025 12:20:21 +0200 (CEST)
 Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase1.c-s.fr (Postfix) with ESMTP id 4b00M54MKVz9sYQ;
-	Sat, 17 May 2025 12:20:17 +0200 (CEST)
+	by pegase1.c-s.fr (Postfix) with ESMTP id 4b00M91Vfwz9sbF;
+	Sat, 17 May 2025 12:20:21 +0200 (CEST)
 Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 916848B767;
-	Sat, 17 May 2025 12:20:17 +0200 (CEST)
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 2E90A8B767;
+	Sat, 17 May 2025 12:20:21 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at c-s.fr
 Received: from messagerie.si.c-s.fr ([127.0.0.1])
 	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id 5a4ytmCj7k7m; Sat, 17 May 2025 12:20:17 +0200 (CEST)
+	with ESMTP id lRU_1UESIp_b; Sat, 17 May 2025 12:20:21 +0200 (CEST)
 Received: from PO20335.IDSI0.si.c-s.fr (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 57FEF8B763;
-	Sat, 17 May 2025 12:20:17 +0200 (CEST)
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 010048B763;
+	Sat, 17 May 2025 12:20:20 +0200 (CEST)
 Received: from PO20335.IDSI0.si.c-s.fr (localhost [127.0.0.1])
-	by PO20335.IDSI0.si.c-s.fr (8.18.1/8.17.1) with ESMTPS id 54HAKChm013324
+	by PO20335.IDSI0.si.c-s.fr (8.18.1/8.17.1) with ESMTPS id 54HAKDeU013328
 	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Sat, 17 May 2025 12:20:12 +0200
+	Sat, 17 May 2025 12:20:13 +0200
 Received: (from chleroy@localhost)
-	by PO20335.IDSI0.si.c-s.fr (8.18.1/8.18.1/Submit) id 54HAKAOe013321;
-	Sat, 17 May 2025 12:20:10 +0200
+	by PO20335.IDSI0.si.c-s.fr (8.18.1/8.18.1/Submit) id 54HAKCZa013327;
+	Sat, 17 May 2025 12:20:12 +0200
 X-Authentication-Warning: PO20335.IDSI0.si.c-s.fr: chleroy set sender to christophe.leroy@csgroup.eu using -f
 From: Christophe Leroy <christophe.leroy@csgroup.eu>
-To: qiang.zhao@nxp.com, Chen Ni <nichen@iscas.ac.cn>
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
-        linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] soc: fsl: qe: Consolidate chained IRQ handler install/remove
-Date: Sat, 17 May 2025 12:19:37 +0200
-Message-ID: <174747706462.12970.7308015211348240691.b4-ty@csgroup.eu>
+To: joro@8bytes.org, will@kernel.org, Ioana Ciornei <ioana.ciornei@nxp.com>,
+        Robin Murphy <robin.murphy@arm.com>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>, iommu@lists.linux.dev,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        Will McVicker <willmcvicker@google.com>
+Subject: Re: [PATCH] bus: fsl_mc: Fix driver_managed_dma check
+Date: Sat, 17 May 2025 12:19:38 +0200
+Message-ID: <174747706458.12970.14926241943300392052.b4-ty@csgroup.eu>
 X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20250515083919.3811473-1-nichen@iscas.ac.cn>
-References: <20250515083919.3811473-1-nichen@iscas.ac.cn>
+In-Reply-To: <20250425133929.646493-3-robin.murphy@arm.com>
+References: <20250425133929.646493-3-robin.murphy@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,22 +73,26 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1747477178; l=445; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=QUgzluer8yWbklILpqvTZIvYWxJlUPH1isJ6Z8FhIEk=; b=pQs8UzFywkxRkHAAXzbabVgBKt/zw2mtRTUaXgdw12fvhe2X4vMySzp+cMmb138Tt1mFER2xv olckTPdFsd7AAjDltcPnWmf4f1zbly0PskqxLmQR0TaVjig+zSlZPAu
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1747477178; l=776; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=qVOoIrTsoZcWCm+U3VKSICm/zw2sUZWZNpODf/MkZBk=; b=hcgFMiXEXjwpytNmOoTfd2InNdVfJslU9f4biTG/D/UIE0NQCxLGxC3d2He2BGQXZaIvjCHZj F/2J+wZIwSHCm2cWa3rAdnSdYIVe9HqSD/LwdqJGijLc21KbUBD+RyQ
 X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
 Content-Transfer-Encoding: 8bit
 
 
-On Thu, 15 May 2025 16:39:19 +0800, Chen Ni wrote:
-> Chained irq handlers usually set up handler data as well.
-> irq_set_chained_handler_and_data() can set both under irq_desc->lock.
-> Replace the two calls with one.
+On Fri, 25 Apr 2025 14:39:28 +0100, Robin Murphy wrote:
+> Since it's not currently safe to take device_lock() in the IOMMU probe
+> path, that can race against really_probe() setting dev->driver before
+> attempting to bind. The race itself isn't so bad, since we're only
+> concerned with dereferencing dev->driver itself anyway, but sadly my
+> attempt to implement the check with minimal churn leads to a kind of
+> TOCTOU issue, where dev->driver becomes valid after to_fsl_mc_driver(NULL)
+> is already computed, and thus the check fails to work as intended.
 > 
-> 
+> [...]
 
 Applied, thanks!
 
-[1/1] soc: fsl: qe: Consolidate chained IRQ handler install/remove
-      commit: 695d702f42bf4bd335e30f542ca710af081ee2a3
+[1/1] bus: fsl_mc: Fix driver_managed_dma check
+      commit: 152f33ee30ee6a7f4c15bedd7529dc5945315547
 
 Best regards,
 -- 
