@@ -1,141 +1,200 @@
-Return-Path: <linux-kernel+bounces-652472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-652474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45C72ABABD5
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 May 2025 20:22:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23E80ABABDE
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 May 2025 20:29:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DFC9C4A0F3A
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 May 2025 18:22:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0BA02167CE0
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 May 2025 18:29:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E982E21480E;
-	Sat, 17 May 2025 18:22:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DF69214A66;
+	Sat, 17 May 2025 18:28:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BHrLybgC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="kUJ+dPzm"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 363202D052;
-	Sat, 17 May 2025 18:22:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E3B42147EE
+	for <linux-kernel@vger.kernel.org>; Sat, 17 May 2025 18:28:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747506143; cv=none; b=KT9Qo5+OehH+H1+qAUrK+hjh1Zv8mIYXJd1e/RtZPWVmx34uZ1D3xkyF9PGLSk22omGprIm22+7ilhDk4rZ9b2zlvbltNEy5gdIua368tJ0vPP2CzhOYUTdkN8vO+f+19LruGbjfkfyKgAA3P1/HRNdci3rpn+gt4sNTsoTdSH0=
+	t=1747506538; cv=none; b=W+vrIbRLvQC8VXsAmv2lkCQZ7u9K+i2W3wG92iXmkk0VxFLX1jfUxotoWlBeFnUK2smYqtjdU8uTnEh+7CX+58vd20fgwgSmwbXt4AvGEruFwS9Ygz6MgbePX8eneX0Pent7LM80s4kcC7Pj3WR2Gz8AKnEoaZJcIwlVdANKozQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747506143; c=relaxed/simple;
-	bh=AWPQKMivdFQ6QmrVDoYacp12BqW2VCLe3IzFWlx64xM=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=lAy4SoGF2ODVTzPQS0BVJoXDjwWaiEX44/2Yar9EgciinqctXaGbs8PG5ZHBh9uscfE4A4253MDvy9VcY7SmfeBE5SHgUWL2l6/xGlhq8+z363ISbtYv6hiQE2lqLPNHbo8khdaqsSU9tq/kiXyJOI+DLBCbuARRXsphJn4Eyco=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BHrLybgC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 631F7C4CEE3;
-	Sat, 17 May 2025 18:22:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747506142;
-	bh=AWPQKMivdFQ6QmrVDoYacp12BqW2VCLe3IzFWlx64xM=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=BHrLybgCAiJ0CoanbY78k+isk1NvLB6ZNiy9v2y5PvHKf3KL+MrdPuw+8r7wwZZg3
-	 VnksktJf2RghVntXQvtSNBo9mB2nFJJGkQzXl21tbHz6aNu8ZYBfdkWe8feZKdu6kV
-	 h3u3vi419FvP9PK/lUZFugflT3tyCXNtdIyC3KD/sTSvb7FeGqSXgzLl0wyX2Bc2dZ
-	 QEpC5rdBrEw+LSZRT/16sqDd6wrNsYfHpEOYu4JevfVdccVkx3+wHNhcjST/fxDhdu
-	 Owl8GhPXwAlTsfynOA6g9w6nAf3FEvWimasw1XmC/Rj75Nr9xvNBnwwdjSF4LlBOFZ
-	 zHtq6wgZathLg==
-Date: Sat, 17 May 2025 13:22:21 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1747506538; c=relaxed/simple;
+	bh=venq4ySRUNYuHOZSXjX1NXCJQJfWk5jFiFmaLZjp1z4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=W6JBbPmIGM5n+//xA4sukXVN4Pvw/Wf8i/pcVAYOuaZZN8AC7XWgcW1ugJXuMGhHAO6e2BBIsfU7a2gQ11iVKCoXrTtEL+CWTRpSctIAjBAscJwBm9vU10yqJLejXE9K08u+bhAUvSs0+fhrubkSrqurs4nECEx5i3akVWW4sI0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=kUJ+dPzm; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54HGKThH029958
+	for <linux-kernel@vger.kernel.org>; Sat, 17 May 2025 18:28:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	WM0LxhWS7WoqwNfrt1DjXdDre6/96mPxCXdCCzvVj2c=; b=kUJ+dPzmPOUT1H2e
+	4f3vdsTGtRsnkKqfAHQaVG6C4ia/O5UBXNhiKnvDXpWPJLOE8wn8fa8CHIPZQQxb
+	fSI67sTTSEaWrXxCWefbK1Cx3sgo2vf5h4aT+tK3DdS2hSl459bt6NoowRStl2+b
+	/h2tFib9F1xUpRbecSDNtJpNpCUDXjMtC6LvdcMwddbid/XMZE3ryN1bXKF8HJAU
+	C5bG4XIDWLKhxV/J4eLeKfo2EgtcPupxMzNHPFEHE+10FNbRR26YKUPbLUwRsLcE
+	Q0X3KOx3wUnNrDx9uYI7E4pzVzYbDZH2+iCSlw8sZdOTnae8wA8gvgD4dXGDq10U
+	yg4NaQ==
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46pjm4s0fq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Sat, 17 May 2025 18:28:56 +0000 (GMT)
+Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-6f8bf12828eso3211496d6.2
+        for <linux-kernel@vger.kernel.org>; Sat, 17 May 2025 11:28:56 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747506533; x=1748111333;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WM0LxhWS7WoqwNfrt1DjXdDre6/96mPxCXdCCzvVj2c=;
+        b=q2cIQWg1FUZwNG7H5In1Q2t8T5M2GR1Ttp64JGMWwGrEVRJFSfG6mYx378TtYD9731
+         SrOy5g9sLnmwzlbmpM+jpNoq4HlZNkVFl3aGXsV3PVmLVnwnwrlLrLSk600ghXAIbXst
+         v5jneEzipE+fyTdfGwhm2AGp3KnpMStN/c1VrmZdNnmyLFeS2SkiUSem3WM5Lkfag3E8
+         Q/aIHTiZ5OsWDYs3RLJ8n9h6xmeo3oXbvPLWHup8knTi2MTAn9aJYhQMteDa2ZhtCfRh
+         XLATLVQ9QI0eLkZBQgZEk/7edAkWxuk5sEuSclzMYd6UUwMFWtN8RWr4BQrCA9s5LhEY
+         nkjg==
+X-Forwarded-Encrypted: i=1; AJvYcCXdhjgG0XpSiAMSA/A3/nKsAxj4zBw/YCmY9htXXE83YcBH4IbXSX4tlORakxiSBBNLufTgIYDMiGT3h50=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyNL7/GEcVwJseMxx46LakkuAmllwikM1mNQR/3J9lkScO0DvDR
+	TK6jT1CzXxBeAwg0CEdHtJ+EyPTxjl3kqCuZNrGP9MJU06yfOv0knwLmMABzkGciEMLx+LBMnz9
+	/RsMt6kBfjqfpQ3gXLw1ybfROKzJnuZiVB88UBc/OFOmij0KgXvyL5Ji2EdkK1Xyn4yk=
+X-Gm-Gg: ASbGncsnH6R+oeOwnoMChxJO4ljnJfSy1ew8f3lR/MWTMGSKP1iQ+mbT865qvb4j6qv
+	kpzFPRJFsUL1sJ3jSgPiEAzk/YOio3F0VMUgOdYoIFqJ2fihEODp48c4zcGW4dlCpc7fepAkacR
+	fQuEwDgX4+EIvDbOfO6o4RuF/3/EQJDwixE+owAmmRuPTiuKqYMDOf4tYiEbA2qoF1rv9rL5ETL
+	yVnL0Zoe36U/XrriLJGqmHUgmcwFOuxp3T/AlLHDwkOk8Dc8Ng5SSfwdTrCCzlB9bMeGSPCLZYo
+	8ksElACSeTRPoNJINJuewP1vedJuvDC/fXXdT/gxaUgONz51vrwxTEzFkmcnma19ww==
+X-Received: by 2002:ac8:5acd:0:b0:494:acf4:9572 with SMTP id d75a77b69052e-494ae232bd8mr46453651cf.0.1747506533377;
+        Sat, 17 May 2025 11:28:53 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGqlFqFfxfLYXFiiljRHIXrnkNmpSimkZBjJ/iFwPezDkWXAt4BzxdvbnuBYSABObtqzWL8Xw==
+X-Received: by 2002:ac8:5acd:0:b0:494:acf4:9572 with SMTP id d75a77b69052e-494ae232bd8mr46453431cf.0.1747506532951;
+        Sat, 17 May 2025 11:28:52 -0700 (PDT)
+Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad52d4c516dsm325677666b.154.2025.05.17.11.28.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 17 May 2025 11:28:52 -0700 (PDT)
+Message-ID: <6fa4959c-d733-4d50-904f-caf933e02da9@oss.qualcomm.com>
+Date: Sat, 17 May 2025 20:28:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: David Airlie <airlied@gmail.com>, devicetree@vger.kernel.org, 
- Thomas Zimmermann <tzimmermann@suse.de>, Maxime Ripard <mripard@kernel.org>, 
- linux-kernel@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, 
- Oded Gabbay <ogabbay@kernel.org>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Jonathan Corbet <corbet@lwn.net>, 
- Sebastian Reichel <sebastian.reichel@collabora.com>, 
- dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, 
- linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org, 
- =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
- Jeff Hugo <jeff.hugo@oss.qualcomm.com>, 
- Sumit Semwal <sumit.semwal@linaro.org>, Heiko Stuebner <heiko@sntech.de>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Nicolas Frattaroli <nicolas.frattaroli@collabora.com>, 
- Simona Vetter <simona@ffwll.ch>, linux-rockchip@lists.infradead.org, 
- linux-doc@vger.kernel.org
-To: Tomeu Vizoso <tomeu@tomeuvizoso.net>
-In-Reply-To: <20250516-6-10-rocket-v3-1-7051ac9225db@tomeuvizoso.net>
-References: <20250516-6-10-rocket-v3-0-7051ac9225db@tomeuvizoso.net>
- <20250516-6-10-rocket-v3-1-7051ac9225db@tomeuvizoso.net>
-Message-Id: <174742024812.3649303.12389396177218408388.robh@kernel.org>
-Subject: Re: [PATCH v3 01/10] dt-bindings: npu: rockchip,rknn: Add bindings
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 06/10] phy: qcom: Add M31 based eUSB2 PHY driver
+To: Wesley Cheng <quic_wcheng@quicinc.com>, Vinod Koul <vkoul@kernel.org>
+Cc: Melody Olvera <melody.olvera@oss.qualcomm.com>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+References: <20250409-sm8750_usb_master-v4-0-6ec621c98be6@oss.qualcomm.com>
+ <20250409-sm8750_usb_master-v4-6-6ec621c98be6@oss.qualcomm.com>
+ <Z/exOF4T+0vNLQwg@vaman> <0517c37d-b1ba-466e-bffd-9f47b0d458d5@quicinc.com>
+ <aCRVaNDQP/PdAXPR@vaman> <5183b76b-8043-4309-b25d-e1ae505f929e@quicinc.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <5183b76b-8043-4309-b25d-e1ae505f929e@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=dIimmPZb c=1 sm=1 tr=0 ts=6828d568 cx=c_pps
+ a=wEM5vcRIz55oU/E2lInRtA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=jJrOw3FHAAAA:8 a=VwQbUJbxAAAA:8
+ a=7CQSdrXTAAAA:8 a=VM-KvOk4zruIL__GPFMA:9 a=QEXdDO2ut3YA:10 a=-FEs8UIgK8oA:10
+ a=OIgjcC2v60KrkQgK7BGD:22 a=a-qgeE7W1pNrGK8U0ZQC:22
+X-Proofpoint-ORIG-GUID: ahTGRI9OmuQMOe8blEJWtY29hrxCfaQ7
+X-Proofpoint-GUID: ahTGRI9OmuQMOe8blEJWtY29hrxCfaQ7
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTE3MDE4MyBTYWx0ZWRfXzJxLne7RSiAk
+ MUcucno6nEOe9oK3oSZmnwKJnWUHcZFqNnj1gTJor+mSQWm8rVUi5dPYyLUt7WzQ+p5xJ2i/qK0
+ UTggFNW0jt0u+8x1ozivZ/3pl2KfVhBuxr/00nPBd9rKsVdSDOEHmVrA52dCnZ2zKk3lB7JY3+O
+ M7YvnEcQXRAMMon0pTF8McUOVp5FMUh77OpyAqT+HUYcdNw88FWSj48SccqpKmYzNd5fUFfOTtK
+ ST8fK9//bzWteN1sj9dpyCEco/FWlvBxUi2i1plmrGRKwOAHsaBedDCnON5boq5JIK327Tix4ya
+ iNuQbq8ZQ3StjTNsZMwA6FlujUKKVE8lkMbuKy/1G9+LYzZmCC5PyYu1unaYZWqP3mzVB/refwU
+ +o2ernqoc8NgzZXyH7h5cNi7LUZGsHtAuWMBI8u3159cb+x356PI+Qc4oxihuWmiyCNTV9wi
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-17_08,2025-05-16_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 mlxscore=0 bulkscore=0 malwarescore=0 suspectscore=0
+ impostorscore=0 clxscore=1015 phishscore=0 adultscore=0 priorityscore=1501
+ mlxlogscore=999 spamscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505070000
+ definitions=main-2505170183
 
-
-On Fri, 16 May 2025 18:53:15 +0200, Tomeu Vizoso wrote:
-> Add the bindings for the Neural Processing Unit IP from Rockchip.
+On 5/14/25 8:24 PM, Wesley Cheng wrote:
+> Hi Vinod,
 > 
-> v2:
-> - Adapt to new node structure (one node per core, each with its own
->   IOMMU)
-> - Several misc. fixes from Sebastian Reichel
+> On 5/14/2025 1:33 AM, Vinod Koul wrote:
+>> On 16-04-25, 15:45, Wesley Cheng wrote:
+>>> Hi Vinod,
+>>>
+>>> On 4/10/2025 4:53 AM, Vinod Koul wrote:
+>>>> On 09-04-25, 10:48, Melody Olvera wrote:
+>>>>
+>>>>> +static int m31eusb2_phy_write_readback(void __iomem *base, u32 offset,
+>>>>> +					const u32 mask, u32 val)
+>>>>> +{
+>>>>> +	u32 write_val;
+>>>>> +	u32 tmp;
+>>>>> +
+>>>>> +	tmp = readl_relaxed(base + offset);
+>>>>> +	tmp &= ~mask;
+>>>>> +	write_val = tmp | val;
+>>>>> +
+>>>>> +	writel_relaxed(write_val, base + offset);
+>>>>> +
+>>>>> +	tmp = readl_relaxed(base + offset);
+>>>>
+>>>> Why are you using _relaxed version here?
+>>>>
+>>>
+>>> No particular reason.  I think someone pointed this out previously, and I
+>>> was open to use the non-relaxed variants, but I assume using the relaxed vs
+>>> non-relaxed apis comes down to preference in this case.
+>>
+>> Nope you cant! There _needs_ to be a specific reasons!
+>> When you are doing read, modify, write, it is very important to know the
+>> right version to use...
+>>
 > 
-> v3:
-> - Split register block in its constituent subblocks, and only require
->   the ones that the kernel would ever use (Nicolas Frattaroli)
-> - Group supplies (Rob Herring)
-> - Explain the way in which the top core is special (Rob Herring)
+> I mean, its a write readback, which ensures the bus transaction is complete
+> based on [1], hence why **in this situation** it is up to preference.
 > 
-> Signed-off-by: Tomeu Vizoso <tomeu@tomeuvizoso.net>
-> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
-> ---
->  .../bindings/npu/rockchip,rknn-core.yaml           | 162 +++++++++++++++++++++
->  1 file changed, 162 insertions(+)
-> 
+> Otherwise, w/o the readback then we'd need to ensure writes are made
+> depending on the required sequencing (in spots where the sequence is
+> strictly defined), and that can be enforced using barriers.  If you feel
+> like using the non-relaxed variant is preferred let me know.  I can replace
+> it and remove the readback.
 
-My bot found errors running 'make dt_binding_check' on your patch:
+Readback is stronger on arm64, as otherwise the writes may be buffered and
+not observable at the other endpoint even though the instruction has been
+issued, even if a barrier has been issued
 
-yamllint warnings/errors:
+Some resources:
 
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/npu/rockchip,rknn-core.yaml: properties:reg-names: 'oneOf' conditional failed, one must be fixed:
-	[{'const': 'pc'}, {'const': 'cna'}, {'const': 'core'}] is too long
-	[{'const': 'pc'}, {'const': 'cna'}, {'const': 'core'}] is too short
-	False schema does not allow 3
-	1 was expected
-	3 is greater than the maximum of 2
-	hint: "minItems" is only needed if less than the "items" list length
-	from schema $id: http://devicetree.org/meta-schemas/items.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/npu/rockchip,rknn-core.example.dtb: npu-core@fdab0000 (rockchip,rk3588-rknn-core-top): compatible: 'oneOf' conditional failed, one must be fixed:
-	['rockchip,rk3588-rknn-core-top', 'rockchip,rknn-core-top'] is too long
-	'rockchip,rk3588-rknn-core-top' is not one of ['rockchip,rk3588-rknn-core']
-	from schema $id: http://devicetree.org/schemas/npu/rockchip,rknn-core.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/npu/rockchip,rknn-core.example.dtb: npu-core@fdab0000 (rockchip,rk3588-rknn-core-top): reg: [[0, 4255842304, 0, 36864]] is too short
-	from schema $id: http://devicetree.org/schemas/npu/rockchip,rknn-core.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/npu/rockchip,rknn-core.example.dtb: npu-core@fdac0000 (rockchip,rk3588-rknn-core): compatible: 'oneOf' conditional failed, one must be fixed:
-	['rockchip,rk3588-rknn-core', 'rockchip,rknn-core'] is too long
-	'rockchip,rk3588-rknn-core' is not one of ['rockchip,rk3588-rknn-core-top']
-	from schema $id: http://devicetree.org/schemas/npu/rockchip,rknn-core.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/npu/rockchip,rknn-core.example.dtb: npu-core@fdac0000 (rockchip,rk3588-rknn-core): reg: [[0, 4255907840, 0, 36864]] is too short
-	from schema $id: http://devicetree.org/schemas/npu/rockchip,rknn-core.yaml#
+https://youtu.be/i6DayghhA8Q
+https://lore.kernel.org/linux-arm-msm/20240618153419.GC2354@willie-the-truck/
+https://developer.arm.com/documentation/ddi0487/latest sec B2.6.9
 
-doc reference errors (make refcheckdocs):
+There's been a real bug observed (pun not intended):
+Commit 2f8cf2c3f3e3 ("clk: qcom: reset: Ensure write completion on reset de/assertion")
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250516-6-10-rocket-v3-1-7051ac9225db@tomeuvizoso.net
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+Konrad
 
