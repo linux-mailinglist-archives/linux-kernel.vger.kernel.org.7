@@ -1,341 +1,293 @@
-Return-Path: <linux-kernel+bounces-652087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-652089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BAC4ABA6EB
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 May 2025 02:08:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D2BC3ABA6F2
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 May 2025 02:09:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32B0A3B918F
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 May 2025 00:07:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06C613BA16B
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 May 2025 00:09:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24FBB1876;
-	Sat, 17 May 2025 00:07:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 436F4B676;
+	Sat, 17 May 2025 00:09:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qnjUiM2C"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="UYJSOIm9"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A668510E0
-	for <linux-kernel@vger.kernel.org>; Sat, 17 May 2025 00:07:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 975C98F6F;
+	Sat, 17 May 2025 00:09:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747440467; cv=none; b=CXnMIhGaPBcTsLSNlmqC4SwRpz+bP1y9XE7D4FrJMRPDxH7N0IIFBDfPiXC41T20lu8xQ0nTWJtgdRJr8LkJ0/vuyk5f+U9JRBtw3xOnVnpJorNsmiIPSXVoThjnsoUaA0BsWHL1WdinZFBkMQYT602yoLFI6CRrlvSpeT/GOz8=
+	t=1747440546; cv=none; b=DYQq5wkJL2CIX0GjJys4/vp9bh3eVq5CqwLVShXhO6d/+ibQ+JqXl6QlH8V15LKICBIykfnpRVTlwmgbDV4DqXYisoprba6J5r7PGUscMc91chzT9cOWovTIfBAxLIFt6Yd1rsS/FPUCKLoNjKrv+8HQ3gMeQESZBmgCvp09560=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747440467; c=relaxed/simple;
-	bh=3yPE3c5dUT5+Hn52LTfDQCFtdocCY/Dn7NOkbDjgRbE=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=lWTqThQrXR9oKtWwoASvQReYhJ7uMVyqKcy2mXNYVA/q7Rv+A4qXoFKMCzAuqHOJ2Sg+bp74fsY7SK1CY+mfYvAsiu33QIDLiBedzAK8EpQbLG+2RqtDYXAgFH408at3XDZJ2E1eJec1HMaOV/BbgRFLi4IRwyvKxl+o9AMyfSc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qnjUiM2C; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-231dfb7315eso6503535ad.1
-        for <linux-kernel@vger.kernel.org>; Fri, 16 May 2025 17:07:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1747440465; x=1748045265; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=fdTg2aIq+yKN3X+ZqL5WTi+FS98hIL9CGjxbsmV+g0Q=;
-        b=qnjUiM2CI1rItUJ7I8IAWUJnZ+/6okj34dB/myjnDEATvGCgsJatOMv6icHprqDLCh
-         FNEk56At4ZQ8+W2zM02zbxcAHgr9Z5tzFpxISECUUe+QyA/V/Abzm94/pp1IMKYKynFz
-         /QHcBQSoJ0ebEhX7mTDkRd2YeaGRZdwAREGZiHxrdVW3R3/mVwUYkEG2ErlOXgVr1OKD
-         QoCDWLt32qINZuwx1i0NYVjfZ5QyOXD1yQ46KXDh6/4wHouamDmTdPJEvQaLvQEosYIn
-         Xe2vDR/K3foT2xxg4nyHrK1SbAQbnAgg0KQNfQuhrMsiI1sW15cLH/siYMm55mMNQ0c4
-         hy2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747440465; x=1748045265;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=fdTg2aIq+yKN3X+ZqL5WTi+FS98hIL9CGjxbsmV+g0Q=;
-        b=HEgKr+6ZuVelRkbNFRF0PiqHTPEbNjIlbwoA6ykLntsOvxRz+I2bMGTdJOohOvar8f
-         bZfBor5LATLKD9TR+kqx9Rt+zwmTfYWFWREn48OqC+svSmV0XFbTZslYqOlIRYFydQH8
-         jzIEPNrJprRviTj5nEwS4tLD/qOBynR4YwN6Nk0uZjgpqKCW47XEDL6+Db7KSxMSnW+Y
-         GDHTwNQHUX2FLbe6UZAzjn193kY7weD7P/WX+ZIpffWqmzJszjlD/TaD9H4z4mLKGmJQ
-         B4rw3Rt2ElCh2prDknPH0Rw7kkOWrihze5lES3PcDSsQfeDYFRbVdDAzt2xbVdQT2CX0
-         9Q7w==
-X-Forwarded-Encrypted: i=1; AJvYcCVddxovCbzR9Xaxx0aE5c5K2DRAdMxw+jKjb8UQiMNgkA5awZ4sTr/H3f6uQ75jhsX7c0Vcr7HzjlzBZ98=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMs74jjrLzWXPXrbNUTgIKQZyBDLNj8SYJE1KcfbMYtEgflWsp
-	WCN+OHQYbszk69+XXZ1uIo8WhiA/EmF/05uhUK5D5CImF1p3LCOYcMAz4jyRcqMImmqo46Fhd2G
-	64hRSmg==
-X-Google-Smtp-Source: AGHT+IF4OSk8BpiEzrk7dV2VBPTsTg/7CEypyxMwwI1iF2ySUnXZwnrvr4pqvulJrcNA+KCIz4y5EUcqX9c=
-X-Received: from ploh6.prod.google.com ([2002:a17:902:f706:b0:22e:3312:15a5])
- (user=surenb job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:1a68:b0:227:ac2a:1dd6
- with SMTP id d9443c01a7336-231d45273c6mr86050615ad.24.1747440464816; Fri, 16
- May 2025 17:07:44 -0700 (PDT)
-Date: Fri, 16 May 2025 17:07:39 -0700
+	s=arc-20240116; t=1747440546; c=relaxed/simple;
+	bh=FfZgdD0f9yr2um86emLIcU/HVdPM4XRKywowsvCWmEY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=WzCoNX42UyrksTl4Rcoflz7G84ZNZDFFOXi+kbaRiTw1hcKIRe0sZ224h9Z+oc40ubxJHppKSFjuI7yH3PYi38dpXXmUuDuj9S+lmCKomgJ4IZOp4Viujf1aPgqRskQXjUlQ1eW2fyApAmMN3HYeTrX+YRk8XjexsEgFIJB5V6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=UYJSOIm9; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54GCHouU002120;
+	Sat, 17 May 2025 00:08:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	kTk7xRffMswbzTXuCCq8zid0YNK/PoGynlrIilTSHtQ=; b=UYJSOIm9XrMznxGv
+	PKX5+m2/91QCG52MSgmxGrifK2NCdeqGD9rDMyIhxvccV80N442w39RfVsbaoG5a
+	K5K+xX2MwGmblyN4zAIQZwuaui5+hagJ1N82o0fFLDDzqUnMxKH1P/xS5ZEW+Tqz
+	79YWjwgo+vBsn7N6ORkpTCAMZL9I/VRR9zVDIQi+xl69YnjFgLevQzr1iRNGw6q7
+	+GffuUqQfHPxoY+stGEhzwchYXpoXBsenBz/QOw6QxURwV3TqTK78hWvJYI+y8Jo
+	A0mNH18wxnvinCxGZ4q2AJUuBo1liaFyiB3euOKiZvXCgyJbS+ZWAV3scSACL4E/
+	Obss8g==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46mbcrk93c-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 17 May 2025 00:08:30 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 54H08TBm016475
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 17 May 2025 00:08:29 GMT
+Received: from [10.134.71.99] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 16 May
+ 2025 17:08:28 -0700
+Message-ID: <75f503ea-e8cf-48f3-b39e-388ac456821f@quicinc.com>
+Date: Fri, 16 May 2025 17:08:28 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.49.0.1101.gccaa498523-goog
-Message-ID: <20250517000739.5930-1-surenb@google.com>
-Subject: [PATCH 1/1] alloc_tag: allocate percpu counters for module tags dynamically
-From: Suren Baghdasaryan <surenb@google.com>
-To: akpm@linux-foundation.org
-Cc: kent.overstreet@linux.dev, 00107082@163.com, dennis@kernel.org, 
-	tj@kernel.org, cl@gentwo.org, pasha.tatashin@soleen.com, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, surenb@google.com
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 00/24] drm/msm: Add support for SM8750
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Abhinav Kumar
+	<quic_abhinavk@quicinc.com>,
+        Sean Paul <sean@poorly.run>,
+        Marijn Suijten
+	<marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, "Simona
+ Vetter" <simona@ffwll.ch>,
+        Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Krishna Manikandan <quic_mkrishn@quicinc.com>,
+        Jonathan Marek
+	<jonathan@marek.ca>,
+        Kuogee Hsieh <quic_khsieh@quicinc.com>,
+        Neil Armstrong
+	<neil.armstrong@linaro.org>,
+        Dmitry Baryshkov <lumag@kernel.org>, Rob Clark
+	<robdclark@gmail.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        "Michael
+ Turquette" <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Rob Clark <robdclark@chromium.org>,
+        <linux-clk@vger.kernel.org>, Srinivas Kandagatla <srini@kernel.org>,
+        "Dmitry
+ Baryshkov" <dmitry.baryshkov@oss.qualcomm.com>
+References: <20250430-b4-sm8750-display-v5-0-8cab30c3e4df@linaro.org>
+Content-Language: en-US
+From: Jessica Zhang <quic_jesszhan@quicinc.com>
+In-Reply-To: <20250430-b4-sm8750-display-v5-0-8cab30c3e4df@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: qHZxSWgUZHAJEnbr4A_2uY0OfozDuEx9
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTE2MDIzNSBTYWx0ZWRfX8++ol42qIIV8
+ PXzgLMQuPf6306r81xIAqfBTAdYXO6UmdhZQxPc7oSOu9WeisyuCQJsE1gvbWLz8G4HxuYqYjv1
+ a2otz8Ay1NjWTyGXtHpHUZE71o2N58r8vzFRdAnoI9zchrIFfFxqmeCTKTj3/QtyVXzM1OG9Abc
+ 6+SQ/q0jWmKperUPLbFid3uG/J9VZ3VHlroFg3eIt1S8IzmqAKHUaig6nTu5ywWR1KWiANMTQEc
+ qRNimJVIWXA+ml0Mu8eFjCVpt9Mu8h84x9Wvlr59QOY/OC10NyfgYEycYTcpsMPoVgLspe1+l2x
+ HJBmX4ErHh/2U8jeymUnkf1Kvl2azfdCPWiO8qs2GJIf3XxcEcpB09R8L8Z+MqZAwc76zfiVw04
+ FGbw44RN7dMklaQwPWNklJCkTByt6O2DQXx7qoWq3+CbW9yN+tCTK/Jfrgk2Vysn7G7/iBIj
+X-Authority-Analysis: v=2.4 cv=K7UiHzWI c=1 sm=1 tr=0 ts=6827d37e cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=VwQbUJbxAAAA:8
+ a=KKAkSRfTAAAA:8 a=e5mUnYsNAAAA:8 a=k5wYIqEnLEkAo4cnzkIA:9 a=QEXdDO2ut3YA:10
+ a=cvBusfyB2V15izCimMoJ:22 a=Vxmtnl_E_bksehYqCbjh:22
+X-Proofpoint-GUID: qHZxSWgUZHAJEnbr4A_2uY0OfozDuEx9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-16_08,2025-05-16_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 priorityscore=1501 mlxscore=0 suspectscore=0 malwarescore=0
+ phishscore=0 mlxlogscore=999 clxscore=1011 bulkscore=0 impostorscore=0
+ lowpriorityscore=0 spamscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505070000
+ definitions=main-2505160235
 
-When a module gets unloaded it checks whether any of its tags are still
-in use and if so, we keep the memory containing module's allocation tags
-alive until all tags are unused. However percpu counters referenced by
-the tags are freed by free_module(). This will lead to UAF if the memory
-allocated by a module is accessed after module was unloaded. To fix this
-we allocate percpu counters for module allocation tags dynamically and
-we keep it alive for tags which are still in use after module unloading.
-This also removes the requirement of a larger PERCPU_MODULE_RESERVE when
-memory allocation profiling is enabled because percpu memory for counters
-does not need to be reserved anymore.
 
-Fixes: 0db6f8d7820a ("alloc_tag: load module tags into separate contiguous memory")
-Reported-by: David Wang <00107082@163.com>
-Closes: https://lore.kernel.org/all/20250516131246.6244-1-00107082@163.com/
-Signed-off-by: Suren Baghdasaryan <surenb@google.com>
----
- include/linux/alloc_tag.h | 12 ++++++
- include/linux/codetag.h   |  8 ++--
- include/linux/percpu.h    |  4 --
- lib/alloc_tag.c           | 87 +++++++++++++++++++++++++++++++--------
- lib/codetag.c             |  5 ++-
- 5 files changed, 88 insertions(+), 28 deletions(-)
 
-diff --git a/include/linux/alloc_tag.h b/include/linux/alloc_tag.h
-index a946e0203e6d..8f7931eb7d16 100644
---- a/include/linux/alloc_tag.h
-+++ b/include/linux/alloc_tag.h
-@@ -104,6 +104,16 @@ DECLARE_PER_CPU(struct alloc_tag_counters, _shared_alloc_tag);
- 
- #else /* ARCH_NEEDS_WEAK_PER_CPU */
- 
-+#ifdef MODULE
-+
-+#define DEFINE_ALLOC_TAG(_alloc_tag)						\
-+	static struct alloc_tag _alloc_tag __used __aligned(8)			\
-+	__section(ALLOC_TAG_SECTION_NAME) = {					\
-+		.ct = CODE_TAG_INIT,						\
-+		.counters = NULL };
-+
-+#else  /* MODULE */
-+
- #define DEFINE_ALLOC_TAG(_alloc_tag)						\
- 	static DEFINE_PER_CPU(struct alloc_tag_counters, _alloc_tag_cntr);	\
- 	static struct alloc_tag _alloc_tag __used __aligned(8)			\
-@@ -111,6 +121,8 @@ DECLARE_PER_CPU(struct alloc_tag_counters, _shared_alloc_tag);
- 		.ct = CODE_TAG_INIT,						\
- 		.counters = &_alloc_tag_cntr };
- 
-+#endif /* MODULE */
-+
- #endif /* ARCH_NEEDS_WEAK_PER_CPU */
- 
- DECLARE_STATIC_KEY_MAYBE(CONFIG_MEM_ALLOC_PROFILING_ENABLED_BY_DEFAULT,
-diff --git a/include/linux/codetag.h b/include/linux/codetag.h
-index d14dbd26b370..0ee4c21c6dbc 100644
---- a/include/linux/codetag.h
-+++ b/include/linux/codetag.h
-@@ -36,10 +36,10 @@ union codetag_ref {
- struct codetag_type_desc {
- 	const char *section;
- 	size_t tag_size;
--	void (*module_load)(struct codetag_type *cttype,
--			    struct codetag_module *cmod);
--	void (*module_unload)(struct codetag_type *cttype,
--			      struct codetag_module *cmod);
-+	void (*module_load)(struct module *mod,
-+			    struct codetag *start, struct codetag *end);
-+	void (*module_unload)(struct module *mod,
-+			      struct codetag *start, struct codetag *end);
- #ifdef CONFIG_MODULES
- 	void (*module_replaced)(struct module *mod, struct module *new_mod);
- 	bool (*needs_section_mem)(struct module *mod, unsigned long size);
-diff --git a/include/linux/percpu.h b/include/linux/percpu.h
-index 52b5ea663b9f..85bf8dd9f087 100644
---- a/include/linux/percpu.h
-+++ b/include/linux/percpu.h
-@@ -15,11 +15,7 @@
- 
- /* enough to cover all DEFINE_PER_CPUs in modules */
- #ifdef CONFIG_MODULES
--#ifdef CONFIG_MEM_ALLOC_PROFILING
--#define PERCPU_MODULE_RESERVE		(8 << 13)
--#else
- #define PERCPU_MODULE_RESERVE		(8 << 10)
--#endif
- #else
- #define PERCPU_MODULE_RESERVE		0
- #endif
-diff --git a/lib/alloc_tag.c b/lib/alloc_tag.c
-index 25ecc1334b67..c7f602fa7b23 100644
---- a/lib/alloc_tag.c
-+++ b/lib/alloc_tag.c
-@@ -350,18 +350,28 @@ static bool needs_section_mem(struct module *mod, unsigned long size)
- 	return size >= sizeof(struct alloc_tag);
- }
- 
--static struct alloc_tag *find_used_tag(struct alloc_tag *from, struct alloc_tag *to)
-+static bool clean_unused_counters(struct alloc_tag *start_tag,
-+				  struct alloc_tag *end_tag)
- {
--	while (from <= to) {
-+	struct alloc_tag *tag;
-+	bool ret = true;
-+
-+	for (tag = start_tag; tag <= end_tag; tag++) {
- 		struct alloc_tag_counters counter;
- 
--		counter = alloc_tag_read(from);
--		if (counter.bytes)
--			return from;
--		from++;
-+		if (!tag->counters)
-+			continue;
-+
-+		counter = alloc_tag_read(tag);
-+		if (!counter.bytes) {
-+			free_percpu(tag->counters);
-+			tag->counters = NULL;
-+		} else {
-+			ret = false;
-+		}
- 	}
- 
--	return NULL;
-+	return ret;
- }
- 
- /* Called with mod_area_mt locked */
-@@ -371,12 +381,16 @@ static void clean_unused_module_areas_locked(void)
- 	struct module *val;
- 
- 	mas_for_each(&mas, val, module_tags.size) {
-+		struct alloc_tag *start_tag;
-+		struct alloc_tag *end_tag;
-+
- 		if (val != &unloaded_mod)
- 			continue;
- 
- 		/* Release area if all tags are unused */
--		if (!find_used_tag((struct alloc_tag *)(module_tags.start_addr + mas.index),
--				   (struct alloc_tag *)(module_tags.start_addr + mas.last)))
-+		start_tag = (struct alloc_tag *)(module_tags.start_addr + mas.index);
-+		end_tag = (struct alloc_tag *)(module_tags.start_addr + mas.last);
-+		if (clean_unused_counters(start_tag, end_tag))
- 			mas_erase(&mas);
- 	}
- }
-@@ -561,7 +575,8 @@ static void *reserve_module_tags(struct module *mod, unsigned long size,
- static void release_module_tags(struct module *mod, bool used)
- {
- 	MA_STATE(mas, &mod_area_mt, module_tags.size, module_tags.size);
--	struct alloc_tag *tag;
-+	struct alloc_tag *start_tag;
-+	struct alloc_tag *end_tag;
- 	struct module *val;
- 
- 	mas_lock(&mas);
-@@ -575,15 +590,22 @@ static void release_module_tags(struct module *mod, bool used)
- 	if (!used)
- 		goto release_area;
- 
--	/* Find out if the area is used */
--	tag = find_used_tag((struct alloc_tag *)(module_tags.start_addr + mas.index),
--			    (struct alloc_tag *)(module_tags.start_addr + mas.last));
--	if (tag) {
--		struct alloc_tag_counters counter = alloc_tag_read(tag);
-+	start_tag = (struct alloc_tag *)(module_tags.start_addr + mas.index);
-+	end_tag = (struct alloc_tag *)(module_tags.start_addr + mas.last);
-+	if (!clean_unused_counters(start_tag, end_tag)) {
-+		struct alloc_tag *tag;
-+
-+		for (tag = start_tag; tag <= end_tag; tag++) {
-+			struct alloc_tag_counters counter;
-+
-+			if (!tag->counters)
-+				continue;
- 
--		pr_info("%s:%u module %s func:%s has %llu allocated at module unload\n",
--			tag->ct.filename, tag->ct.lineno, tag->ct.modname,
--			tag->ct.function, counter.bytes);
-+			counter = alloc_tag_read(tag);
-+			pr_info("%s:%u module %s func:%s has %llu allocated at module unload\n",
-+				tag->ct.filename, tag->ct.lineno, tag->ct.modname,
-+				tag->ct.function, counter.bytes);
-+		}
- 	} else {
- 		used = false;
- 	}
-@@ -596,6 +618,34 @@ static void release_module_tags(struct module *mod, bool used)
- 	mas_unlock(&mas);
- }
- 
-+static void load_module(struct module *mod, struct codetag *start, struct codetag *stop)
-+{
-+	/* Allocate module alloc_tag percpu counters */
-+	struct alloc_tag *start_tag;
-+	struct alloc_tag *stop_tag;
-+	struct alloc_tag *tag;
-+
-+	if (!mod)
-+		return;
-+
-+	start_tag = ct_to_alloc_tag(start);
-+	stop_tag = ct_to_alloc_tag(stop);
-+	for (tag = start_tag; tag < stop_tag; tag++) {
-+		WARN_ON(tag->counters);
-+		tag->counters = alloc_percpu(struct alloc_tag_counters);
-+		if (!tag->counters) {
-+			while (--tag >= start_tag) {
-+				free_percpu(tag->counters);
-+				tag->counters = NULL;
-+			}
-+			shutdown_mem_profiling(true);
-+			pr_err("Failed to allocate memory for allocation tag percpu counters in the module %s. Memory allocation profiling is disabled!\n",
-+			       mod->name);
-+			break;
-+		}
-+	}
-+}
-+
- static void replace_module(struct module *mod, struct module *new_mod)
- {
- 	MA_STATE(mas, &mod_area_mt, 0, module_tags.size);
-@@ -757,6 +807,7 @@ static int __init alloc_tag_init(void)
- 		.needs_section_mem	= needs_section_mem,
- 		.alloc_section_mem	= reserve_module_tags,
- 		.free_section_mem	= release_module_tags,
-+		.module_load		= load_module,
- 		.module_replaced	= replace_module,
- #endif
- 	};
-diff --git a/lib/codetag.c b/lib/codetag.c
-index 42aadd6c1454..de332e98d6f5 100644
---- a/lib/codetag.c
-+++ b/lib/codetag.c
-@@ -194,7 +194,7 @@ static int codetag_module_init(struct codetag_type *cttype, struct module *mod)
- 	if (err >= 0) {
- 		cttype->count += range_size(cttype, &range);
- 		if (cttype->desc.module_load)
--			cttype->desc.module_load(cttype, cmod);
-+			cttype->desc.module_load(mod, range.start, range.stop);
- 	}
- 	up_write(&cttype->mod_lock);
- 
-@@ -333,7 +333,8 @@ void codetag_unload_module(struct module *mod)
- 		}
- 		if (found) {
- 			if (cttype->desc.module_unload)
--				cttype->desc.module_unload(cttype, cmod);
-+				cttype->desc.module_unload(cmod->mod,
-+					cmod->range.start, cmod->range.stop);
- 
- 			cttype->count -= range_size(cttype, &cmod->range);
- 			idr_remove(&cttype->mod_idr, mod_id);
+On 4/30/2025 6:00 AM, Krzysztof Kozlowski wrote:
+> Hi,
+> 
+> Dependency / Rabased on top of
+> ==============================
+> https://lore.kernel.org/all/20241214-dpu-drop-features-v1-0-988f0662cb7e@linaro.org/
 
-base-commit: 6e68a205c07b3c311f19a4c9c5de95d191d5a459
--- 
-2.49.0.1101.gccaa498523-goog
+Hey Krzysztof,
+
+JFYI, I think there was some discussion on IRC (specifically #linux-msm) 
+about having the feature bit dependency back in February.
+
+I believe both Abhinav and Dmitry agreed that you can keep the changes 
+to do version checks and drop this dependency.
+
+There are still some ongoing discussions regarding the feature bit 
+series, so this way your series isn't blocked by that.
+
+Thanks,
+
+Jessica Zhang
+
+> 
+> Merging
+> =======
+> DSI works! With the fixes here and debugging help from Jessica and
+> Abhinav, the DSI panel works properly.
+> 
+> The display clock controller patch can go separately.
+> 
+> Changes in v5:
+> =============
+> - Add ack/rb tags
+> - New patches:
+>    #6: clk: qcom: dispcc-sm8750: Fix setting rate byte and pixel clocks
+>    #14: drm/msm/dsi/phy: Toggle back buffer resync after preparing PLL
+>    #15: drm/msm/dsi/phy: Define PHY_CMN_CTRL_0 bitfields
+>    #16: drm/msm/dsi/phy: Fix reading zero as PLL rates when unprepared
+>    #17: drm/msm/dsi/phy: Fix missing initial VCO rate
+> 
+> - Patch drm/msm/dsi: Add support for SM8750:
+>    - Only reparent byte and pixel clocks while PLLs is prepared. Setting
+>      rate works fine with earlier DISP CC patch for enabling their parents
+>      during rate change.
+> 
+> - Link to v4: https://lore.kernel.org/r/20250311-b4-sm8750-display-v4-0-da6b3e959c76@linaro.org
+> 
+> Changes in v4
+> =============
+> - Add ack/rb tags
+> - Implement Dmitry's feedback (lower-case hex, indentation, pass
+>    mdss_ver instead of ctl), patches:
+>    drm/msm/dpu: Implement 10-bit color alpha for v12.0 DPU
+>    drm/msm/dpu: Implement CTL_PIPE_ACTIVE for v12.0 DPU
+> 
+> - Rebase on latest next
+> - Drop applied two first patches
+> - Link to v3: https://lore.kernel.org/r/20250221-b4-sm8750-display-v3-0-3ea95b1630ea@linaro.org
+> 
+> Changes in v3
+> =============
+> - Add ack/rb tags
+> - #5: dt-bindings: display/msm: dp-controller: Add SM8750:
+>    Extend commit msg
+> 
+> - #7: dt-bindings: display/msm: qcom,sm8750-mdss: Add SM8750:
+>    - Properly described interconnects
+>    - Use only one compatible and contains for the sub-blocks (Rob)
+> 
+> - #12: drm/msm/dsi: Add support for SM8750:
+>    Drop 'struct msm_dsi_config sm8750_dsi_cfg' and use sm8650 one.
+> - drm/msm/dpu: Implement new v12.0 DPU differences
+>    Split into several patches
+> - Link to v2: https://lore.kernel.org/r/20250217-b4-sm8750-display-v2-0-d201dcdda6a4@linaro.org
+> 
+> Changes in v2
+> =============
+> - Implement LM crossbar, 10-bit alpha and active layer changes:
+>    New patch: drm/msm/dpu: Implement new v12.0 DPU differences
+> - New patch: drm/msm/dpu: Add missing "fetch" name to set_active_pipes()
+> - Add CDM
+> - Split some DPU patch pieces into separate patches:
+>    drm/msm/dpu: Drop useless comments
+>    drm/msm/dpu: Add LM_7, DSC_[67], PP_[67] and MERGE_3D_5
+>    drm/msm/dpu: Add handling of LM_6 and LM_7 bits in pending flush mask
+> - Split DSI and DSI PHY patches
+> - Mention CLK_OPS_PARENT_ENABLE in DSI commit
+> - Mention DSI PHY PLL work:
+>    https://patchwork.freedesktop.org/patch/542000/?series=119177&rev=1
+> - DPU: Drop SSPP_VIG4 comments
+> - DPU: Add CDM
+> - Link to v1: https://lore.kernel.org/r/20250109-b4-sm8750-display-v1-0-b3f15faf4c97@linaro.org
+> 
+> Best regards,
+> Krzysztof
+> 
+> ---
+> Krzysztof Kozlowski (24):
+>        dt-bindings: display/msm: dsi-phy-7nm: Add SM8750
+>        dt-bindings: display/msm: dsi-controller-main: Add SM8750
+>        dt-bindings: display/msm: dp-controller: Add SM8750
+>        dt-bindings: display/msm: qcom,sm8650-dpu: Add SM8750
+>        dt-bindings: display/msm: qcom,sm8750-mdss: Add SM8750
+>        clk: qcom: dispcc-sm8750: Fix setting rate byte and pixel clocks
+>        drm/msm/dpu: Add missing "fetch" name to set_active_pipes()
+>        drm/msm/dpu: Clear CTL_FETCH_PIPE_ACTIVE on mixer reset
+>        drm/msm/dpu: Clear CTL_FETCH_PIPE_ACTIVE on ctl_path reset
+>        drm/msm/dpu: Clear CTL_FETCH_PIPE_ACTIVE before blend setup
+>        drm/msm/dpu: Drop useless comments
+>        drm/msm/dpu: Add LM_7, DSC_[67], PP_[67] and MERGE_3D_5
+>        drm/msm/dpu: Add handling of LM_6 and LM_7 bits in pending flush mask
+>        drm/msm/dsi/phy: Toggle back buffer resync after preparing PLL
+>        drm/msm/dsi/phy: Define PHY_CMN_CTRL_0 bitfields
+>        drm/msm/dsi/phy: Fix reading zero as PLL rates when unprepared
+>        drm/msm/dsi/phy: Fix missing initial VCO rate
+>        drm/msm/dsi/phy: Add support for SM8750
+>        drm/msm/dsi: Add support for SM8750
+>        drm/msm/dpu: Add support for SM8750
+>        drm/msm/dpu: Implement 10-bit color alpha for v12.0 DPU
+>        drm/msm/dpu: Implement CTL_PIPE_ACTIVE for v12.0 DPU
+>        drm/msm/dpu: Implement LM crossbar for v12.0 DPU
+>        drm/msm/mdss: Add support for SM8750
+> 
+>   .../bindings/display/msm/dp-controller.yaml        |   4 +
+>   .../bindings/display/msm/dsi-controller-main.yaml  |  54 ++-
+>   .../bindings/display/msm/dsi-phy-7nm.yaml          |   1 +
+>   .../bindings/display/msm/qcom,sm8650-dpu.yaml      |   1 +
+>   .../bindings/display/msm/qcom,sm8750-mdss.yaml     | 470 +++++++++++++++++++
+>   drivers/clk/qcom/dispcc-sm8750.c                   |   4 +-
+>   .../drm/msm/disp/dpu1/catalog/dpu_12_0_sm8750.h    | 496 +++++++++++++++++++++
+>   drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c           |  58 ++-
+>   drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c        |  12 +
+>   drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c     |  35 +-
+>   drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h     |   1 +
+>   drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.c         |  71 ++-
+>   drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.h         |  19 +-
+>   drivers/gpu/drm/msm/disp/dpu1/dpu_hw_lm.c          | 210 ++++++++-
+>   drivers/gpu/drm/msm/disp/dpu1/dpu_hw_lm.h          |  18 +
+>   drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h        |   6 +
+>   drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c            |   1 +
+>   drivers/gpu/drm/msm/dsi/dsi.h                      |   2 +
+>   drivers/gpu/drm/msm/dsi/dsi_cfg.c                  |  14 +
+>   drivers/gpu/drm/msm/dsi/dsi_cfg.h                  |   1 +
+>   drivers/gpu/drm/msm/dsi/dsi_host.c                 |  81 ++++
+>   drivers/gpu/drm/msm/dsi/phy/dsi_phy.c              |   2 +
+>   drivers/gpu/drm/msm/dsi/phy/dsi_phy.h              |   2 +
+>   drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c          | 157 ++++++-
+>   drivers/gpu/drm/msm/msm_mdss.c                     |  33 ++
+>   drivers/gpu/drm/msm/msm_mdss.h                     |   1 +
+>   .../gpu/drm/msm/registers/display/dsi_phy_7nm.xml  |  25 +-
+>   27 files changed, 1730 insertions(+), 49 deletions(-)
+> ---
+> base-commit: 4ec6605d1f7e5df173ffa871cce72567f820a9c2
+> change-id: 20250109-b4-sm8750-display-6ea537754af1
+> 
+> Best regards,
 
 
