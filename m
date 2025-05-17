@@ -1,125 +1,151 @@
-Return-Path: <linux-kernel+bounces-652156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-652154-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4383ABA7E6
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 May 2025 04:38:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 19B88ABA7E1
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 May 2025 04:34:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44A374C23E4
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 May 2025 02:39:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C72944A1064
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 May 2025 02:34:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CB1C15B102;
-	Sat, 17 May 2025 02:38:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B96FD155A30;
+	Sat, 17 May 2025 02:34:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gGVP+gTz"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (2048-bit key) header.d=squebb.ca header.i=@squebb.ca header.b="ScGk6mwT";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="XlQFNK5i"
+Received: from fout-a4-smtp.messagingengine.com (fout-a4-smtp.messagingengine.com [103.168.172.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD778155393;
-	Sat, 17 May 2025 02:38:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E34D2940F;
+	Sat, 17 May 2025 02:34:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747449530; cv=none; b=IDBGhvkIRux9xx2G8KtaTZumBKzuIjS3ygqPx1dRK6Ti2+gCuczS+bZYWpy1oBFuCRx7Ucgn58ItxbhZw2CdvfdVj2kw3XGwscdExgexGIcloI1YzkjwFU50Ex0guBEel/gr6wpYIHS7eMyUknCEsAGcstlyEJL7IavolHh5Po4=
+	t=1747449262; cv=none; b=VWogRGvJpKWmiQnHOoIJjDpUJSDE8jY78bTs3fwUydlPAnQiSR8l+UKu3RQqp8qYWUl7eYiXIpqCMO+yR7Xoo3mg/yOy45c9zKpDIepBtlR3ajmk5dhmVlrPzRP9PbdfRx+7GHpyWEuT05/p3ZuklsG+rHHTeMRdN6iPHd1DY0g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747449530; c=relaxed/simple;
-	bh=ml22strUZn+xOk9qBkBac3qcQdnFAG09ONFp/e6vtto=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RCIAbEuG/Ph2ZA7nUU6jELZaNc3qnFhggerl1rwKQpUyGNbhSTw2PQ5FlS12vvJUsmuJbOVcZ0oWUEuzVmHo7cF3wjEWRHyXHxBVw97RCJQB+d2HwrNS2HwzudCoHny0QdrFyYfXWmvT/RVbgorp8qG+t/P+4ctRyiF3J2iigU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gGVP+gTz; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1747449529; x=1778985529;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ml22strUZn+xOk9qBkBac3qcQdnFAG09ONFp/e6vtto=;
-  b=gGVP+gTzcU6IjYMMCMW4PiTHZ/vxS8fFsZn7yPe1ftOll1L3Cm4VgC2p
-   u9xlbKOh3Lh9giire/eMcYHbMHu8DlsFDNEaGmj4o4LvCYbOjyiEkCroq
-   L34Fzi7gqatwXIyBujQUdwSPnWze2yj10jot3l5UPWi8vOnMqDBUEHdp4
-   1K3zGCux9jXZzDrLYDfNofTiHkfmLsBAhlU24yndH3MqzKMfhTub/XU6T
-   +Ljbq2xoTQgeqeZxCuUBJ+0LO17M9K49e1rZ6tfvIE/KjJS+kPEd9UtFQ
-   mIYYgLFAMnbdLbbOiXsEgIENNx/7UUAohGa4v9pzzgrOtnY8NUgL/y0AT
-   g==;
-X-CSE-ConnectionGUID: 87Yg3peaQAqdVwOXI7pC0g==
-X-CSE-MsgGUID: L+Maswm2SuicBGbQwxEVMA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11435"; a="74828438"
-X-IronPort-AV: E=Sophos;i="6.15,295,1739865600"; 
-   d="scan'208";a="74828438"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 May 2025 19:38:48 -0700
-X-CSE-ConnectionGUID: WsTNlC65TIOa6GM8/8KyQA==
-X-CSE-MsgGUID: 3knh1WNVQgOcOdqzelccDQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,295,1739865600"; 
-   d="scan'208";a="169788702"
-Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
-  by orviesa002.jf.intel.com with ESMTP; 16 May 2025 19:38:42 -0700
-Date: Sat, 17 May 2025 10:33:00 +0800
-From: Xu Yilun <yilun.xu@linux.intel.com>
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Zhi Wang <zhiw@nvidia.com>, Alexey Kardashevskiy <aik@amd.com>,
-	kvm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
-	sumit.semwal@linaro.org, christian.koenig@amd.com,
-	pbonzini@redhat.com, seanjc@google.com, alex.williamson@redhat.com,
-	vivek.kasireddy@intel.com, dan.j.williams@intel.com,
-	yilun.xu@intel.com, linux-coco@lists.linux.dev,
-	linux-kernel@vger.kernel.org, lukas@wunner.de, yan.y.zhao@intel.com,
-	daniel.vetter@ffwll.ch, leon@kernel.org, baolu.lu@linux.intel.com,
-	zhenzhong.duan@intel.com, tao1.su@intel.com
-Subject: Re: [RFC PATCH 00/12] Private MMIO support for private assigned dev
-Message-ID: <aCf1XNQamIJLi+OL@yilunxu-OptiPlex-7050>
-References: <aB7Ma84WXATiu5O1@yilunxu-OptiPlex-7050>
- <2c4713b0-3d6c-4705-841b-1cb58cd9a0f5@amd.com>
- <20250512140617.GA285583@nvidia.com>
- <20250513130315.0158a626.zhiw@nvidia.com>
- <aCRmoDupzK9zTqFL@yilunxu-OptiPlex-7050>
- <20250514230502.6b64da7f.zhiw@nvidia.com>
- <aCYsNSFQJZzHVOFI@yilunxu-OptiPlex-7050>
- <20250515192127.GA580805@nvidia.com>
- <aCbZATrK7EPyH4qt@yilunxu-OptiPlex-7050>
- <20250516124953.GD613512@nvidia.com>
+	s=arc-20240116; t=1747449262; c=relaxed/simple;
+	bh=iETPR42QaEtytfuv0q61ElwepwCEwWASA1OTwHBh/eM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=eRnDksFhs2Z0c9YOyWSRFRHg7LAh83drR6h1zNn/Eg33pX5BLjo9XRWFBTG77pLPKJR7lChOvhKA6E2s3B5FDa9/fPn9TrRfryY4iP8qDt5/5QwdqmFxsPPc3K9rRz5BBBufXs5xQdfHI2sluXo7sD8t3nZ4K/xrTEBsAi1+ZKY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squebb.ca; spf=pass smtp.mailfrom=squebb.ca; dkim=pass (2048-bit key) header.d=squebb.ca header.i=@squebb.ca header.b=ScGk6mwT; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=XlQFNK5i; arc=none smtp.client-ip=103.168.172.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squebb.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=squebb.ca
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfout.phl.internal (Postfix) with ESMTP id 179CA13800E4;
+	Fri, 16 May 2025 22:34:17 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-05.internal (MEProxy); Fri, 16 May 2025 22:34:17 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=squebb.ca; h=cc
+	:cc:content-transfer-encoding:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm1; t=1747449257; x=
+	1747535657; bh=W6kB3UyFZitt+7gd9LRi3/C0t0XNRVsvLqHtoc5yCoM=; b=S
+	cGk6mwTIcsqbL8dFljbDkHU8mcumpG5FRNvv+yfXyTC4E0OpTD4JuC99ibcF70Gm
+	U0wzu7qTdTeTMaYIVTdUrYlFxDWiO8rFsVk2KRwk9rB+5idaa0zNGA2muEVN5ofa
+	vooWMbp7PfNvf5V1paiUtWGX8ZPQzxzvLLDZALfowdkFrz0EPK5q79nck8duFFHi
+	LUpDhO94XGVVi/KQhAZN9sKvPrkzAmRLVQ4LBHr2LdiBuALjOoDWiOc6jRcrg6KE
+	CkyKH6d4EyAJ6waAuCsKcEA2bFWO6ou8AzTf60PP2VkJxb8AVYyoqvrY/YtemEXG
+	ooPk8Od8AptlEuGVs0xHg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
+	:x-me-sender:x-sasl-enc; s=fm3; t=1747449257; x=1747535657; bh=W
+	6kB3UyFZitt+7gd9LRi3/C0t0XNRVsvLqHtoc5yCoM=; b=XlQFNK5iYKfc4oCRd
+	NkomZ0ebJO0MmSO/dFd3q41Zb6s46Ra2EnadbzkBTi6tBVuOPS9jdV/lumVcnsby
+	dgf3z7Y4+a/EejKlNALAvcdyuigsSgCoGL6lmEI8xIArpGouoykpC5662m9oadpQ
+	SZwxasnxFtkYTv5Q2ccQVWzYWMTefyR4Z5KayIkxDuEZ7Y99g35lceVnDj1kGvGO
+	0FvvvHakOC1S1Skg2s+Z2geluqMFPBZjUP7OjAZIEI5AzATuGGJYTciI0JR+qmb7
+	FvVmz+N2qehnnDnYI7cLfifhcCj4eCckD2jyUB3RgTEb51RTnJfObnic0UEcsDQl
+	ARSag==
+X-ME-Sender: <xms:qPUnaO4RZLue4vdpzjBnhkL2NADQLKQquoOlmsyf7v2-tohNLFYn9A>
+    <xme:qPUnaH6SFeV6w91BZRLSnjrtk6Evc9uc2qCh59r_hnGDqbpzQcbQ_11Zi3yb4aat4
+    H0Cyi7XI9-nyhAZqgA>
+X-ME-Received: <xmr:qPUnaNfrVDNcBE2RKww7U7G2s1dU-i595nbrXpDhcjNPD7qKHlQi6Gus5OSJjgIG-ncc_k6WQyFTVbkrgxuo78ZWjnsSTRn9hgqfvVBg5nkWom7knw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdefudeggeegucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnegoteeftdduqddtudculdduhedmnecujfgurhephffvvefu
+    fffkofgjfhgggfestdekredtredttdenucfhrhhomhepofgrrhhkucfrvggrrhhsohhnuc
+    eomhhpvggrrhhsohhnqdhlvghnohhvohesshhquhgvsggsrdgtrgeqnecuggftrfgrthht
+    vghrnhepvedtlefggefgjeettddvgfekhfeugfeutdekfeefudeuuddvieeutdeljedvhf
+    dvnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedt
+    necurfgrrhgrmhepmhgrihhlfhhrohhmpehmphgvrghrshhonhdqlhgvnhhovhhosehsqh
+    huvggssgdrtggrpdhnsggprhgtphhtthhopeejpdhmohguvgepshhmthhpohhuthdprhgt
+    phhtthhopehmphgvrghrshhonhdqlhgvnhhovhhosehsqhhuvggssgdrtggrpdhrtghpth
+    htohephhguvghgohgvuggvsehrvgguhhgrthdrtghomhdprhgtphhtthhopehilhhpohdr
+    jhgrrhhvihhnvghnsehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtohepihgsmh
+    dqrggtphhiqdguvghvvghlsehlihhsthhsrdhsohhurhgtvghfohhrghgvrdhnvghtpdhr
+    tghpthhtohepphhlrghtfhhorhhmqdgurhhivhgvrhdqgiekieesvhhgvghrrdhkvghrnh
+    gvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghr
+    nhgvlhdrohhrghdprhgtphhtthhopeguvggsrghrsghoshesrhgvughhrghtrdgtohhm
+X-ME-Proxy: <xmx:qPUnaLIAI0iwgH1HYjrlZhfkap3-yzt9t8_yPgURZ6eLsy7HznzYBg>
+    <xmx:qPUnaCL84mXNEsZXdqfOEhBrSc37zBEi5BAMAl9df7LAngrb0d1B-g>
+    <xmx:qPUnaMyCaryYdMh7T-vVNumLPdJMa9iC5PKOEZGH0pRAwRAjQGMXKA>
+    <xmx:qPUnaGKKitmMJx2AD_Vtf-3Ubv3a32ET6W1rLUKCpKzIcdsTMMMt7A>
+    <xmx:qfUnaM2qtyft4pB8ma2ZIA_1h33EGXrjy97PehYwwhPXKJjSN0Gg4TdZ>
+Feedback-ID: ibe194615:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 16 May 2025 22:34:16 -0400 (EDT)
+From: Mark Pearson <mpearson-lenovo@squebb.ca>
+To: mpearson-lenovo@squebb.ca
+Cc: hdegoede@redhat.com,
+	ilpo.jarvinen@linux.intel.com,
+	ibm-acpi-devel@lists.sourceforge.net,
+	platform-driver-x86@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Derek Barbosa <debarbos@redhat.com>
+Subject: [PATCH] platform/x86: thinkpad_acpi: Ignore battery threshold change event notification
+Date: Fri, 16 May 2025 22:33:37 -0400
+Message-ID: <20250517023348.2962591-1-mpearson-lenovo@squebb.ca>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <mpearson-lenovo@squebb.ca>
+References: <mpearson-lenovo@squebb.ca>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250516124953.GD613512@nvidia.com>
+Content-Transfer-Encoding: 8bit
 
-On Fri, May 16, 2025 at 09:49:53AM -0300, Jason Gunthorpe wrote:
-> On Fri, May 16, 2025 at 02:19:45PM +0800, Xu Yilun wrote:
-> > > I don't know why you'd disable a viommu while the VM is running,
-> > > doesn't make sense.
-> > 
-> > Here it means remove the CC setup for viommu, shared setup is still
-> > kept.
-> 
-> That might makes sense for the vPCI function, but not the vIOMMU. A
-> secure VIOMMU needs to be running at all times while the guest is
-> running. Perhaps it has no devices it can be used with, but it's
-> functionality has to be there because a driver in the VM will be
-> connected to it.
-> 
-> At most "bind" should only tell the already existing secure vIOMMU
-> that it is allowed to translate for a specific vPCI function.
+If user modifies the battery charge threshold an ACPI event is generated.
+Confirmed with Lenovo FW team this is only generated on user event. As no
+action is needed, ignore the event and prevent spurious kernel logs.
 
-So I think something like:
+Reported-by: Derek Barbosa <debarbos@redhat.com>
+Closes: https://lore.kernel.org/platform-driver-x86/7e9a1c47-5d9c-4978-af20-3949d53fb5dc@app.fastmail.com/T/#m5f5b9ae31d3fbf30d7d9a9d76c15fb3502dfd903
+Signed-off-by: Mark Pearson <mpearson-lenovo@squebb.ca>
+---
+ drivers/platform/x86/thinkpad_acpi.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-struct iommufd_vdevice_ops {
-	int (*setup_trusted_dma)(struct iommufd_vdevice *vdev); //for Bind
-	void (*remove_trusted_dma)(struct iommufd_vdevice *vdev); //for Unbind
-};
+diff --git a/drivers/platform/x86/thinkpad_acpi.c b/drivers/platform/x86/thinkpad_acpi.c
+index 92b21e49faf6..657625dd60a0 100644
+--- a/drivers/platform/x86/thinkpad_acpi.c
++++ b/drivers/platform/x86/thinkpad_acpi.c
+@@ -231,6 +231,7 @@ enum tpacpi_hkey_event_t {
+ 	/* Thermal events */
+ 	TP_HKEY_EV_ALARM_BAT_HOT	= 0x6011, /* battery too hot */
+ 	TP_HKEY_EV_ALARM_BAT_XHOT	= 0x6012, /* battery critically hot */
++	TP_HKEY_EV_ALARM_BAT_LIM_CHANGE	= 0x6013, /* battery charge limit changed*/
+ 	TP_HKEY_EV_ALARM_SENSOR_HOT	= 0x6021, /* sensor too hot */
+ 	TP_HKEY_EV_ALARM_SENSOR_XHOT	= 0x6022, /* sensor critically hot */
+ 	TP_HKEY_EV_THM_TABLE_CHANGED	= 0x6030, /* windows; thermal table changed */
+@@ -3777,6 +3778,10 @@ static bool hotkey_notify_6xxx(const u32 hkey, bool *send_acpi_ev)
+ 		pr_alert("THERMAL EMERGENCY: battery is extremely hot!\n");
+ 		/* recommended action: immediate sleep/hibernate */
+ 		break;
++	case TP_HKEY_EV_ALARM_BAT_LIM_CHANGE:
++		pr_debug("Battery Info: battery charge threshold changed\n");
++		/* User changed charging threshold. No action needed */
++		return true;
+ 	case TP_HKEY_EV_ALARM_SENSOR_HOT:
+ 		pr_crit("THERMAL ALARM: a sensor reports something is too hot!\n");
+ 		/* recommended action: warn user through gui, that */
+-- 
+2.43.0
 
-Thanks,
-Yilun
-
-> 
-> Jason
-> 
 
