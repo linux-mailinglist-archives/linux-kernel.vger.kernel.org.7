@@ -1,134 +1,138 @@
-Return-Path: <linux-kernel+bounces-652228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-652235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8898ABA8F3
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 May 2025 10:51:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13EEFABA902
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 May 2025 10:53:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 835434C2C24
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 May 2025 08:51:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC321A054CB
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 May 2025 08:52:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70E751DE3A8;
-	Sat, 17 May 2025 08:51:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 705FD1DF267;
+	Sat, 17 May 2025 08:52:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cVyTSYLw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CwNSwy3k"
+Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com [209.85.221.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA67DB676;
-	Sat, 17 May 2025 08:51:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 391FB1DF271;
+	Sat, 17 May 2025 08:52:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747471863; cv=none; b=em5ipowB4H4OYr/6za06BolxEkF9IgbeyPwxA40dIC/WEvgtzq3GdINZGAN8nohxp9WLD1Doqi7oJMe8IK+RjqRQdi/oysQHAwpBGn21pLxJPgKLfrHTZsmhqugG9f494ufGklc4GPJHktnVLoC4pHf6Zs93bkm9x2ccyK5PBc4=
+	t=1747471954; cv=none; b=RsaB+3zR6q1HuIidHQHKJADeB25WL0UYKh3uLM+PRob0px1NxCbp5qhgE75U+NlJkZ1hP7Mdi5GohtwMfpdukXuD2vujJZommZhBRBGRH5zT98NjjCdu0ddVnl535qol5Z8U67SoxvoeKODBQ4eS+x5UOdwt/x93lpdtDtjgQps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747471863; c=relaxed/simple;
-	bh=dDQtD4ccdQG3UJa8qk1S/jtk3uLsTxKgzWBbQ6o6fdI=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kV1Vyow7phCbeSSo5/ml/VbPYmWtu3ySkx2rKxp9L/IF7gTJimncppSbZN5UEgF9h3Dk6k60sWxC5ma8+loCf0aiEvhgDw1RyHiuJmqS9ZgdHcJmZvKU2OiNSc2lLzpfAS0kkkjuP17PkiQaAmc0YKeSDgm4vxnzAU7PS1zEqEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cVyTSYLw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30D7FC4CEE3;
-	Sat, 17 May 2025 08:51:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747471863;
-	bh=dDQtD4ccdQG3UJa8qk1S/jtk3uLsTxKgzWBbQ6o6fdI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=cVyTSYLwsGN96CR4uED4vSOD9avoVXlg309uHrcqPr1euk0/Zm0lnHavfYrikseMY
-	 ft+N/Mim4XEOxbycMS91qF2LYiHWeGbwFnzXkiMeRXYF1S1l7lcOHyWfdlYpOVAiA+
-	 cS19ZxHEqtHRmlGCdFEJRSG50tri7jfQg7IHuL+EHB3Pp78hrIgBa1IMdXdoa8GKBC
-	 Iqaugk9tI/h4rLE657RdnwG/kkdmVcVE0+yRqng5sqNOnQ5px7ELEfImjW3uTsMjSV
-	 QhxF8l359kle+Mnhy4lfnNY2tI3pBhM5udaOKYhEyBR5CSeBHXwhE2MwiHvUFLmypJ
-	 kzWCkzECP5pqA==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=wait-a-minute.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1uGDG0-00Flz2-OG;
-	Sat, 17 May 2025 09:51:00 +0100
-Date: Sat, 17 May 2025 09:51:39 +0100
-Message-ID: <878qmvr55w.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Vincent Donnefort <vdonnefort@google.com>
-Cc: oliver.upton@linux.dev,
-	joey.gouly@arm.com,
-	suzuki.poulose@arm.com,
-	yuzenghui@huawei.com,
-	catalin.marinas@arm.com,
-	will@kernel.org,
-	qperret@google.com,
-	linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	kernel-team@android.com
-Subject: Re: [PATCH v4 01/10] KVM: arm64: Handle huge mappings for np-guest CMOs
-In-Reply-To: <aCd7l455qd4NmOeb@google.com>
-References: <20250509131706.2336138-1-vdonnefort@google.com>
-	<20250509131706.2336138-2-vdonnefort@google.com>
-	<86bjrsg3az.wl-maz@kernel.org>
-	<aCd7l455qd4NmOeb@google.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1747471954; c=relaxed/simple;
+	bh=qbGX0vY8ua1yjyX4gKrkjXd8FS4pqHM2ZzBMCrO0vV8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=nCxwJMA/SFZvtI117NlL6moEDyRIN5rW8RLIuj5qRUCG/1dFZfVXff2nMAJZubqnzyUynt/qtjQaSZMTk8I3FH24Yv0UlzeoLfz6aNsmlo5eGuqFwixORred6kNS4xveSWkVc5ci2+DRDW8eehJzc9cLXM3Wt3ToFlKJFqKYh3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CwNSwy3k; arc=none smtp.client-ip=209.85.221.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f181.google.com with SMTP id 71dfb90a1353d-52410fb2afeso1773049e0c.3;
+        Sat, 17 May 2025 01:52:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747471952; x=1748076752; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=iNsWbQeM3Ef5H0Pf+40JMXz6QJMor+ntR9ZNUEK2L3U=;
+        b=CwNSwy3k19CuI5vv1GriPUs+ReW0xJkzNNrPH9YeJz28Rc+rRI+B1PHt1Pn2h6uO4Z
+         iBkPqbHmmrLIuP9tLbOjlycpGV2wnRJjv1lzSQcnoJbnPyCeD4myUungx8ChL99/rYa0
+         YHNMfZUc08Mj0Hdsdu6qbZgzxFKfW8W8o/YmxuyQe4b047wFqxrJeByIquO8K5nIwJ0U
+         JPzN0kNYB122pn47wYjgHkFcOLlTNGQE7S0SKIEaQUJDco7y6/iYoKJnxWq4tn6nNxJg
+         0akos/Mu2NhiLzEJc6nI40lNcQBWyWh+hArO0BHz7ze/WH0uOlsT0uxcd6aQ7Gi7qOjQ
+         MIPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747471952; x=1748076752;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=iNsWbQeM3Ef5H0Pf+40JMXz6QJMor+ntR9ZNUEK2L3U=;
+        b=jJ369RNtLGL0Hd3bGnRnRgFAzWz3Tz/zYLnL2MHMHQI32WHHgLOI9jeUkIid/pPvCR
+         LxBkGUzzlXRyR6oklxmCfMNiTEA7V4dMsogVLVNzTDfwzEAiWeb3IJNR5y6NTva/0kmN
+         guzZsbvRa2KvtkvNRh7uy8CQ8UNXFQNefaDswQEBNcDN+YxbpMNb6jPbXsZfg1E1BEnD
+         BCLrsoX99Ez7z7hHYINcwGAa0Op3giGqlbTcZgwq8lP/MsoGquGv41qlwBNHhDUM1pm5
+         et2ffZ+G7xXsUvWwq2Zrdn0z+DFxinOqv9YDxD0jKK4QBYeSEllEZlsVHVpdKp/0jjw2
+         UBzQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW6mC6SQbmIJ+olhYvFPWaw0WTLj+QGZTxiSFsO8vfj5Y9nPJBs0XRjAMt+zz/LIm4egFvN9/2RnZ7NUHI=@vger.kernel.org, AJvYcCWeZ06dOxFXJQHXUpJFe6wS3otlu32m0gnuvxFDg7bKyuLGPCtjr4CPDVcONe+7EvaqRqYrB607F397cnkE2+qKue1efg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxU10DFJRgaPpWIUucucJz0SqT/8y3Ny6m3RpwXpWIHVQR9Bosq
+	jlTMkA5/hXKihVnXWMaHpzz1ht15b0kbRCMY6MZPRytPSYgHR1DXXlnO4YbhLA==
+X-Gm-Gg: ASbGnctE4JebL0wOx/wgR8nbp/AXO5P0Wy/hZmFjz3SX0ex10i7pTAs5Z5Z9E4ZLz6d
+	FIrVQBluqCRXQTQnOhkgcfFAPhxuh/JbUfx2Bq4bfDqAoiIicpqfq+xNTsdN6ShWAIXPE/7RNZz
+	ChzweieSG6lbn2g9C6E5zdFAPQ3a5WhC2L2IFiVud+dj+d8mI2aXwtnhA0Vyfyoopf4c1W22+P7
+	1s4jhy5gFBgMkWlzROaFIHe4evO2IfAjTDoHlsJNv6mQH2uPs9P+Qh2ePkoTer1v++2xUSNfGkX
+	nRrytFyeFWzwJIptQijl8x9oxMZBqwt4maANEOKnlAnibIHYhg==
+X-Google-Smtp-Source: AGHT+IGP8LQww2xigb+BfZQUHdyFE9Gg6EhJtQK/HkUNyGB1GnpKuO2Nk5syCihGsKnFwLYIJg3K9A==
+X-Received: by 2002:a05:6122:46a7:b0:52a:863f:78dd with SMTP id 71dfb90a1353d-52dba91e5a2mr7834990e0c.6.1747471941735;
+        Sat, 17 May 2025 01:52:21 -0700 (PDT)
+Received: from [192.168.1.26] ([181.85.227.70])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-52dba9405adsm3455812e0c.11.2025.05.17.01.52.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 17 May 2025 01:52:21 -0700 (PDT)
+From: Kurt Borja <kuurtb@gmail.com>
+Date: Sat, 17 May 2025 05:51:39 -0300
+Subject: [PATCH v2 4/5] MAINTAINERS: Add FIRMWARE ATTRIBUTES CLASS entry
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: vdonnefort@google.com, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org, qperret@google.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, kernel-team@android.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250517-fw-attrs-api-v2-4-fa1ab045a01c@gmail.com>
+References: <20250517-fw-attrs-api-v2-0-fa1ab045a01c@gmail.com>
+In-Reply-To: <20250517-fw-attrs-api-v2-0-fa1ab045a01c@gmail.com>
+To: Hans de Goede <hdegoede@redhat.com>, 
+ =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
+ Joshua Grisham <josh@joshuagrisham.com>, 
+ Mark Pearson <mpearson-lenovo@squebb.ca>, Armin Wolf <W_Armin@gmx.de>, 
+ Mario Limonciello <mario.limonciello@amd.com>
+Cc: Antheas Kapenekakis <lkml@antheas.dev>, 
+ "Derek J. Clark" <derekjohn.clark@gmail.com>, 
+ Prasanth Ksr <prasanth.ksr@dell.com>, Jorge Lopez <jorge.lopez2@hp.com>, 
+ platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Dell.Client.Kernel@dell.com, Kurt Borja <kuurtb@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=827; i=kuurtb@gmail.com;
+ h=from:subject:message-id; bh=qbGX0vY8ua1yjyX4gKrkjXd8FS4pqHM2ZzBMCrO0vV8=;
+ b=owGbwMvMwCUmluBs8WX+lTTG02pJDBkafvqOa+p1zpWc+sAv8/Ewe8ryiB/Pfst3+8zdphK1g
+ +9o8u61HaUsDGJcDLJiiiztCYu+PYrKe+t3IPQ+zBxWJpAhDFycAjCR28cZ/nvNcuiamKQSFHvO
+ bXH9w4OhtlmtTBn9WvccGdceeKN/8QHD/9IaK2XWq+Ycabt3KE5WqzEMKbA496fvM8dFQV0vI49
+ 9fAA=
+X-Developer-Key: i=kuurtb@gmail.com; a=openpgp;
+ fpr=54D3BE170AEF777983C3C63B57E3B6585920A69A
 
-On Fri, 16 May 2025 18:53:27 +0100,
-Vincent Donnefort <vdonnefort@google.com> wrote:
-> 
-> Hi,
-> 
-> Thanks for having a look at the series.
-> 
-> On Fri, May 16, 2025 at 01:15:00PM +0100, Marc Zyngier wrote:
-> > On Fri, 09 May 2025 14:16:57 +0100,
-> > Vincent Donnefort <vdonnefort@google.com> wrote:
-> > > 
-> > > clean_dcache_guest_page() and invalidate_icache_guest_page() accept a
-> > > size as an argument. But they also rely on fixmap, which can only map a
-> > > single PAGE_SIZE page.
-> > > 
-> > > With the upcoming stage-2 huge mappings for pKVM np-guests, those
-> > > callbacks will get size > PAGE_SIZE. Loop the CMOs on a PAGE_SIZE basis
-> > > until the whole range is done.
-> > > 
-> > > Signed-off-by: Vincent Donnefort <vdonnefort@google.com>
-> > > 
-> > > diff --git a/arch/arm64/kvm/hyp/nvhe/mem_protect.c b/arch/arm64/kvm/hyp/nvhe/mem_protect.c
-> > > index 31173c694695..23544928a637 100644
-> > > --- a/arch/arm64/kvm/hyp/nvhe/mem_protect.c
-> > > +++ b/arch/arm64/kvm/hyp/nvhe/mem_protect.c
-> > > @@ -219,14 +219,28 @@ static void guest_s2_put_page(void *addr)
-> > >  
-> > >  static void clean_dcache_guest_page(void *va, size_t size)
-> > >  {
-> > > -	__clean_dcache_guest_page(hyp_fixmap_map(__hyp_pa(va)), size);
-> > > -	hyp_fixmap_unmap();
-> > > +	WARN_ON(!PAGE_ALIGNED(size));
-> > 
-> > What if "va" isn't aligned?
-> 
-> So the only callers are either for PAGE_SIZE or PMD_SIZE with the right
-> alignment addr alignment.
-> 
-> But happy to make this more future-proof, after all an ALIGN() is quite cheap.
+Add entry for the FIRMWARE ATTRIBUTES CLASS.
 
-Exactly. I'd rather have too many of those instead of something that
-may not terminate. If anything, it makes it easy to reason about it.
+Signed-off-by: Kurt Borja <kuurtb@gmail.com>
+---
+ MAINTAINERS | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-Thanks,
-
-	M.
+diff --git a/MAINTAINERS b/MAINTAINERS
+index cfb3b51cec83d96e969c5b3be791948cb9d60bb9..48509d4da8b132f61ff2d5f90e121bf94ee30e24 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -9190,6 +9190,13 @@ F:	include/linux/firewire.h
+ F:	include/uapi/linux/firewire*.h
+ F:	tools/firewire/
+ 
++FIRMWARE ATTRIBUTES CLASS
++M:	Kurt Borja <kuurtb@gmail.com>
++L:	platform-driver-x86@vger.kernel.org
++S:	Maintained
++F:	drivers/platform/x86/firmware_attributes_class.*
++K:	(devm_)?fwat_device_(un)?register
++
+ FIRMWARE FRAMEWORK FOR ARMV8-A
+ M:	Sudeep Holla <sudeep.holla@arm.com>
+ L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
 
 -- 
-Without deviation from the norm, progress is not possible.
+2.49.0
+
 
