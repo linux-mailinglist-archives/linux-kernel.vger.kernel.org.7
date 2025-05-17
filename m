@@ -1,136 +1,111 @@
-Return-Path: <linux-kernel+bounces-652467-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-652473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 110B3ABABC3
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 May 2025 20:02:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1475ABABDA
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 May 2025 20:27:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AAE1A4A16EA
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 May 2025 18:02:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A4B6189B0B4
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 May 2025 18:27:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 616272147E6;
-	Sat, 17 May 2025 18:01:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 580492147F5;
+	Sat, 17 May 2025 18:27:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="OX7MW6+Q"
-Received: from mout.web.de (mout.web.de [212.227.17.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="ttwAqimS"
+Received: from sonic306-20.consmr.mail.sg3.yahoo.com (sonic306-20.consmr.mail.sg3.yahoo.com [106.10.241.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A30944B1E45;
-	Sat, 17 May 2025 18:01:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F15852147F0
+	for <linux-kernel@vger.kernel.org>; Sat, 17 May 2025 18:26:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=106.10.241.140
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747504917; cv=none; b=YFmnmrE/laCqnDflZ8ViYoe6Xt+ANbH2FQnkXccm7t8Xigg4pEzsNCm1rrAKhhR1VBZfe0mT1OEJ4AhTl31H/9qrVYU1MdTVeRj21jGBd8G1lQ8Td0cJotlElI+r54L0OvipOlz3pMrtBz2s4lwdV9IOP28NsimAykz/raTR1r8=
+	t=1747506420; cv=none; b=POGo5Q25lPoLKuZKfAECzaKp4/MJTJrXhuJCE0bSJJmG+UWYkXlLGQ2bPVi/4V0M1mt/zvYvRSA3V+6VybcIOPZRejW6RFIRs48rt8sSRRgNABtMd4jNNnAEdU5NA6m2DXvloOylN86Ozkh9mRd1+hrgdLO2FIh0Pe49IH/NZj4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747504917; c=relaxed/simple;
-	bh=5aBOsGbdCnxAk09k8KrUvZofVNhHW+rS11IkuXATWpA=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=JElhIoInjF/fqyuC8fIblvdSseYgOt5xFOHtYTQZnvtquwZBMI0pNT0GnXNXm8a+OF+dVMIwVmjT53WYo3j0PTwDqzesRJfD57KqKMma9oyYgQWWnQXMh63mwro+hzlrMoirDGWedt+bW5N3uUY4m9GOrYTQu7mbWdxfYrFumic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=OX7MW6+Q; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1747504890; x=1748109690; i=markus.elfring@web.de;
-	bh=SpGz0mgfSy0dGsokb7EQbHYPttCEHqkOkWjC/fsUf04=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=OX7MW6+QBZZW2lVeru+HJmDMrmgU2tET/B5GXkWmXHhnZIHzPGrDVv0Gjqwy0Jd5
-	 q8qnw20PRgHDwKaUY9zVr8neySHZmvAzGcOpSTz3l7xM1OpaPMQh7EuBDa57lY92s
-	 48MB3WOOqNa+Io3qwaV/CE4RjcTbUooXlIOFtAns2RUIgBJ1KtLXnkmbb3gTlR4VA
-	 feeOp2va9Wo3iabmuW03ui5Dqr+Et1NQv2M8x6VuEkfgmU7FectftiaZ37UZUe4sU
-	 bltFzTEdinxxQepgZSlH1f/DpKibEAi1btaLCeHOMJzqgckU/BVdzeqjr+U8wBAYt
-	 lSOqZZWNuTRwjlwO5g==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.69.250]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MnFyI-1uhk2Y0I9k-00k7yM; Sat, 17
- May 2025 20:01:30 +0200
-Message-ID: <8debcddc-b788-4ee0-99d4-b9ac28d62df9@web.de>
-Date: Sat, 17 May 2025 20:01:21 +0200
+	s=arc-20240116; t=1747506420; c=relaxed/simple;
+	bh=EBqHy2tR5pNufrZGJpYLAcDwSIe7Er6lEEDQ1GY9Tkg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:References; b=CsqpmBSdP/KsTfAKzFKON45GKxQ5Qte+jQclQfEM2rVo34iYKyF+DYIgIa9zt2t6lTBpCQ+/F64upxWw303u/7u/yj7n6+8HAQ63YbMtVzK7YdvjKFZLr0xD4NbEUYiWYStwE517wBhyVt9GmmzAII2RQlp+kUE7QiNMa8StPX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com; spf=pass smtp.mailfrom=yahoo.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=ttwAqimS; arc=none smtp.client-ip=106.10.241.140
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yahoo.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1747506417; bh=3UHvXxXmIvOZrge3esMONCsNL2kDZZe74x0xb+Kshfw=; h=From:To:Cc:Subject:Date:References:From:Subject:Reply-To; b=ttwAqimSywt7JQo8oQ4u1s2JiL+LokeLWZipRhOchBkejfeFnVP79JXPMt4XpWZN0GJ/ooqx73XA0pX9KFvfpJgZwqGynyCV+dh5TrAw7gS8Cf53h8B+/R7pQKZ5NEUp4oGo1QqTyVx9ztzAovMoamibKDDATgYLUTcDyhG9FYwvpluzF9Vfn/XfE9KXY/oUpwHAZqeKo7eZlY7EgP/xlK0DtuvfnQpKB8HVhf6Bbz9F4FCX+v23gOUEad/pRTOCPfBxAZD+MEv8tOjxg/crwsABh2q0aOyv4EijW08YuufCHsXeqlKH/Ht5bmWvOezP7luVUVcQGyegJsUkyDQQiw==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1747506417; bh=nHC23dcJAUQdInXpyTIIm6tBpfjsNQa2UNePCqjP+/t=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=ScvYzWVwVgKUbLhKFh8FzzSuVKTAKr1yIdNaDkEZWSg95n2qiREWxK6hY7V4WWY1nyU4G01fkTlWsNWfqdpwmUqvaS9GvgJ6PTNuqkHw/9irWAuXgUf8zKUo90VnHzR7m6HthDuxTySMbR83v+jA/fifElV04JGafIW+wzf5f7anXZGndnz2e96OEO8pylvrI5uoNRUabQ82DGLbPhWj/oILsBpqqrTV/E4fySFEaxjis3v2dU0Y0TLqM9DTcXEtcQVIJ5eHYUgjbf/PKLtkK86BGINDGB0MMwOP/VRZRadWHyyGYLEGZrN1lIFf2jHfkHNtfwtVZNemukEEVmJNJA==
+X-YMail-OSG: OMoe9fcVM1lWRtfkB7dZ353UbqAZKH8M4RDoC0lg9_UcQe95_XBIm5y7B8CdhL.
+ WXwfG0MvuLPTtZ9EEjOo8yU1eYswMkGbRZIBVpTh79Uu7X380DfTUoFJxTGhFnSPZ8q0S.n1nXzQ
+ yRFEUZu6ucW7f9KtjET4IUwlmLJRY_fB.9RWdn3ZhnKeQKxRb4qZcscvaLyUymWBcWSvCymn0gUU
+ 6hDBcNgJgsRhZ43o2Vc666zMCQxDUvOe_hzFSkYLr1E8gHaDbojPJawoWhfD2pW0vrD__Z_Nh7mS
+ jyF8ysS4hfTa5a.UROuDRNiHTvRvCdL3lH2U5wD3JE42lvISndHFOmq4hCTfFK2gYP3dBbRGjq2q
+ e1rUmysjyo8ZO_qf3nrN5LlZH7N5WeqmWGE9zsqju9uA594OZRz0dpDypkDQ3dyu1gXoJRC0xTz6
+ WhgQOG0SQuPYk5_mZOdzMGBSCNI.jGtCc2PRQOLisWOjBYg_eZCiTRi5XZXSu_d.iQfmtEu3JLbZ
+ dMKT.CyGKl5H8JyTafWqFeUh_rHPAOs.a443HVKWq4rVA0h8DhFjjqgl5WPCIejX70ZLhkN3PWpr
+ M2P.NFrLMOfAnOFP9pwRDF_6x7aR4LWSSjFhojcLPhpVMLb9od0Ddtnc1pKTkNFpXPCuwPyiE1Yu
+ 3FsIafPRnGI1rIsHZ9Md1YnJuYcJgTWsFIuCIYLa4u0rMG3jlROkGgL4EBAWl81H5jWMyskljCVm
+ sauB0rildYCw_y9kDp4EV3hqdOawkg9V5hoI5SsIp3SHRz6FGut0MjFr7HE2ZjYFaTT5fBuuAwML
+ kBksH6pY0WJMMVo4Uc.5eDvvLozD8H3SsVIzV3nwwz6caQ5qnyULjTb43ZtE8aTI5Iw318J1IejS
+ EzkR1Hu7RvMDwchzUu_3XJ9r5HKz1701KnVzP6xalMne8WPfMvlHZMc6ssADCelgkdUDRbnNBFxf
+ MyzUnUTUpGrlPRQsPFtCpRYLDnj_oNXmyVhHxJOS0e.UrOh4mwUgfS88USMUeTtntkdagOeqlEyh
+ fA7g5KU2pfq6c7L5qnXkhiPDXFjMBPcgvOj4gvd93fuLt_NpcUF.EYwa6xu735USYHfFhIvE5WFS
+ WhY5MzlN2V1qyxZ1YYlfahT2iQNrpF_leC5B2Cdoi9KtEKtLq8wNlPJklevLRNeuNwREhBwTKxiT
+ 8cEfbqU_AnBlkq9DGEIsgNO6tO19TvcrgYaAqtHCYPDzRdsLMJ2g_vHXW4XG0ymIKu3gCo9xSLJ8
+ a2Pl1FUSgsqknxSSW7_5_PVWdkjGro0sAEHCDjF8HUgDQi.bkURuQrBO6shoU2HiR0mMw8.Mq4th
+ u9rP0yxTxCFgXEfQOnmTYkyf1M_HgqN3ZVWSXgKtutNVdNt7b6JWlKA_EOSr8KByiucNz6qoGixc
+ k4ggg2ZomwZ5dtrvBbPErBTUe7_JKyF_AbmirM6ui_FmQp75mAQ1LyLeP7Jc.4dymlKejFSn6Txn
+ JjBTiFQDaENvZIS8DOeQ8lGwNV1ntazH5Jd2d83xOjCehCHODsDaqx7FPY4qsru5RDweKiFp5zvk
+ IRNOld5P4OWV.GCYI_Yt5GGFBqZUED2mRszN02umn0vkl4IFLidWtWV7ZgmZ7NeOhuY5YBnm2dtU
+ d7SZZr4UNyqCetApxk0JmU4u_6qleOy0GaE0hgkMJXa8RGCPm.ZK.AFNc9R2bSTJkps.ymflmLxy
+ AkgviLHIIaheC4aYDmIOeBe.rD.Vq22oBIZFxLQmj2edygwHPZA5_BZxHUWmhN0PkAdUstrc4pgb
+ PxHaZbllLB_JgToKI8IyIgRdUhA3_VDqHSOmth75ib7bm9v4cSj7DnjpbauVUdy2YUg3eg9qbGF.
+ pCbgz0fqK_ecMeosLfKewyCaTo51lPccUcnmQQCHg6LkNrVQesF4WuT5LU0DHvUEh8njBeHqzepC
+ QmrvOglvtQZkKDx8lZDBmJ3Ps12Qg7zj5cuwCj8A7m2NA1i9DH1Yr3I4La.VV3ebLgmeKBy_nMB8
+ Y4okd5R2lO0OVBoXJrQB4LthVCusNXl00BRBm3EZp4Y19AaSQtCDFV05HSLm8KG3Oe7LaUieQYEa
+ eoe32FxVZ3ILF2w1ELJwBJ99TeFVVTUTIgxBw9cEGWNAEnNaP1ENvq2TI.brgorMnkAcwIqd.DZu
+ A_Ipqmaa8P15W50SRtvg_JrC.ipjHJTQPvjCCOOx.oLP3lBpe4nP_WWpJgAPAB6pxkmDec4FSWUs
+ HmKrtkY8-
+X-Sonic-MF: <sumanth.gavini@yahoo.com>
+X-Sonic-ID: 21cb2226-1882-44ce-a8b4-2a820bdef71b
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic306.consmr.mail.sg3.yahoo.com with HTTP; Sat, 17 May 2025 18:26:57 +0000
+Received: by hermes--production-gq1-74d64bb7d7-tqd77 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 3970cc1b0723ee96acf525c652fe9875;
+          Sat, 17 May 2025 17:56:31 +0000 (UTC)
+From: Sumanth Gavini <sumanth.gavini@yahoo.com>
+To: skhan@linuxfoundation.org,
+	W_Armin@gmx.de
+Cc: Sumanth Gavini <sumanth.gavini@yahoo.com>,
+	platform-driver-x86@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] docs: ABI: Fix "aassociated" to "associated"
+Date: Sat, 17 May 2025 10:56:04 -0700
+Message-ID: <20250517175626.1363502-1-sumanth.gavini@yahoo.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: vulab@iscas.ac.cn, linux-wireless@vger.kernel.org,
- Ajay Singh <ajay.kathat@microchip.com>,
- Claudiu Beznea <claudiu.beznea@tuxon.dev>, Kalle Valo <kvalo@kernel.org>
-Cc: stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-References: <20250517154611.910-1-vulab@iscas.ac.cn>
-Subject: Re: [PATCH] wifi: wilc1000: Handle wilc_sdio_cmd52() failure in
- wilc_sdio_read_init()
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20250517154611.910-1-vulab@iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:aDje+Y5p/VRQQNoqQwcR8EeolwyzVYwEevv8AI2mofIQL67z2Dg
- UVFdnfpVkVzM1LoM7nHHDxMNNSKuhZKhPYs5LYowD3xlLrChFuYjBgYGPIPAR7FldgrnHOm
- FRd2FA8Ozf1QWiaSobqPcY5g194LCeb6O1AQUFS+AJ+w63f3G/DopUpzqJeoGRHrn5goeOd
- oBAk57C9SQvUvU/CV7FmQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:j08uRNsWw4w=;INUoJGRpounDjCuc8mXXkLl4t4C
- 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
+Content-Transfer-Encoding: 8bit
+References: <20250517175626.1363502-1-sumanth.gavini.ref@yahoo.com>
 
-=E2=80=A6
-> Add error handling for wilc_sdio_cmd52(). If wilc_sdio_cmd52() fails,
-> log an error message via dev_err().
-=E2=80=A6
-> ---
->  drivers/net/wireless/microchip/wilc1000/sdio.c | 8 +++++++-
-=E2=80=A6
+Fix misspelling reported by codespell
 
-How do you think about to integrate adjustments for two function implement=
-ations
-by a single patch for better error handling in the affected software modul=
-e?
+Signed-off-by: Sumanth Gavini <sumanth.gavini@yahoo.com>
+---
+ Documentation/ABI/testing/sysfs-bus-wmi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Regards,
-Markus
+diff --git a/Documentation/ABI/testing/sysfs-bus-wmi b/Documentation/ABI/testing/sysfs-bus-wmi
+index aadb35b82198..d71a219c610e 100644
+--- a/Documentation/ABI/testing/sysfs-bus-wmi
++++ b/Documentation/ABI/testing/sysfs-bus-wmi
+@@ -76,6 +76,6 @@ Date:		May 2017
+ Contact:	Darren Hart (VMware) <dvhart@infradead.org>
+ Description:
+ 		This file contains a boolean flags signaling the data block
+-		aassociated with the given WMI device is writable. If the
++		associated with the given WMI device is writable. If the
+ 		given WMI device is not associated with a data block, then
+ 		this file will not exist.
+-- 
+2.43.0
+
 
