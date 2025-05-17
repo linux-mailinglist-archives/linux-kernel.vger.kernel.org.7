@@ -1,123 +1,121 @@
-Return-Path: <linux-kernel+bounces-652205-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-652209-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60E19ABA8B1
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 May 2025 09:37:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29C4BABA8BF
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 May 2025 09:47:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 089299E2004
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 May 2025 07:37:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC1554A4B8E
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 May 2025 07:47:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94E661CEAC2;
-	Sat, 17 May 2025 07:37:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 661961D514B;
+	Sat, 17 May 2025 07:47:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i6Mzp+M6"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=wp.pl header.i=@wp.pl header.b="BrNLLp+g"
+Received: from mx4.wp.pl (mx4.wp.pl [212.77.101.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65B382E628;
-	Sat, 17 May 2025 07:37:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3897A17BB35
+	for <linux-kernel@vger.kernel.org>; Sat, 17 May 2025 07:47:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.77.101.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747467431; cv=none; b=NF1Hd5LLjtU8v2AanhAFdlnJAvYfzQ8YpiQOKSqSHX7ji89w1acIXKw4kyK6qUlu2eZc9/ZjVG/YeAJnIa+WojA/WxWyy2W0ySvDPxVEF8DyAdMWdLXWh9djhWMRsaenUfUxG9RQ5F5LTQtkbeZE3VLd4yI10HzD/DRCiYHJgIE=
+	t=1747468045; cv=none; b=m1KrxasuB31H6gTBf0DCrsdUKxpZzkd4745l56jAKOOWaaGz06dCId3LjSwJwzvIQ7ZT42oCQ0jPsPg/dkUVRAb3/3m5jO70IN7RG3l9UDLQltrzrwGfcUNZL+JhgQGbDcPZ7/qMFJS585D0jUeN76G0QiQnJdlKTFpxGDC0o6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747467431; c=relaxed/simple;
-	bh=WuAHkOW9ql5yv/SUiIu0f7YuUFvaxuASyvebZHs6ZLc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YaQTVSo/byhMi5i8iwXPIrxRN/rt8Apc+sboxFP3jmCPMuOkzM2uYzoeTH2w6JuBa/5zGtHeZNUK2OBI77oARQ5puXwBxFZ7X6AtUgVs9CT/Cqfd9zNnfx3rU79cFT8KAR70FuVU28pfAROwesjRYjIN9/W7nkWebRVLH5Wyops=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i6Mzp+M6; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3a0adcc3e54so1765237f8f.1;
-        Sat, 17 May 2025 00:37:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747467428; x=1748072228; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=rHYIKB/0zV8yrGOwmdmiFz7Fi2QYRZJNTisvQQQ6Btw=;
-        b=i6Mzp+M681hGI7VDqZLHU5HFRCt+FSJgpCA0V4JUGM7c0avUqWkfaRlw3ZCaCFdsY1
-         fNFxGkc4NYNsEVQFHF5NsSkfJtRM4teV+R14DHBM2JfjNeCP27fK1E/v8O4cVpjJB+TN
-         +rreLCAjnIHmdcQ5rBHrr6zpEshLeQLIa3O5kA+80Wpz5A9FslnAcjpQhb2gF46ebyyS
-         ymbCKmI1xvpZGrfe5mx8dDDLbvYfGqHBNQMx8gWsij6oKYFTD1yLjHqIKg7g5oPUNl+C
-         xOqPu7b+eNvAISlUmIiilIqQjZQua0yDfBU8MFU8oOr16tdX4sg45WmeVAB3tjx3jOGL
-         uFAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747467428; x=1748072228;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rHYIKB/0zV8yrGOwmdmiFz7Fi2QYRZJNTisvQQQ6Btw=;
-        b=rwmGvolLcQkAgnJgdnFaDwkNwtFl8S5S1uuvWwzRKfD0jcftixdYdUCx12C9wgqjJn
-         tPuKF+Zf82L3+CQSgz5qcfXjPMyKRHe7VWPB4Hydp3uMjqJbTm+yCiPNG5npj+SeNaAT
-         Uy3WU7K/yS1U+1ll4pSFCKFNEvzp6aC8CbuOm45rVl5z3E+x+kDeS9V/rZUDaOlWDvuA
-         JQ/Q976rGWP3VQ4Cp77KYgCHOFG+JZZxds3aBS/wZ7P1rRjvgZWBueKr0sbv9U/qRErN
-         6McinE+Gp+DqFwu816GOAXlubc7ML3RxiQVZUBBjbPRnjyBcPGsjWxU7mqwKRnPy8FcH
-         eofw==
-X-Forwarded-Encrypted: i=1; AJvYcCUNg2ezPdWr/hUdF8CRIVEry2pxDCJa3x/hDbpG0e7s3kVQEJ96xe244EXMDV0fOFa9tBLZr05OpiKy@vger.kernel.org, AJvYcCUoPMwPeUXAC+2tEoAp9B5CGLnA31gCmnm28JUD+T48y0ktw7NMIcqDsHgmcKdnmVbMGBOIzRiCC2U6AOIaww==@vger.kernel.org, AJvYcCVkYfRQmKbs7YlA5pkWTwPBgADJBobNaLCS+ruHpId6t1mYPTOa0qK2TM3Rxg2taZBJhQstMbcYPpz9rzNR@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5zoe7U0HCZ62Pk/J/y8+J7CSGcSl2OdK2I+ty7c2Ob209mNh0
-	/wzERsB/dLsJZu6uA6gk22lQ9Xp+M0UagGj/jcvpbDrb23rsg1pycvQgk6qaUlLjxfgDvtFzais
-	lLfrnkSX7HrGMd3gsShCak0V+KRJz78WGqX0=
-X-Gm-Gg: ASbGnct4ZJj6Km9WOj2/cPIDqwKKec2R7JEAMLcy/y4lDB7fgRHc8sS9zwcmpyfxsKy
-	MEUWh5t0nQB0IIWgVu+jB7oUNT54ICMmTzmVTHmpG+LkqhkYhZTSFMy2AgN01I/tYzQvf+U1xhQ
-	+DaMRto2ViFjCYzpd4ZGtw6fcOraDX9YQeD65r+Z68Vro=
-X-Google-Smtp-Source: AGHT+IEKyb/pKJIOSy3lBKTBF6kz37Mbh9p/L7AFJleoZoBWXPA8bDN4nJW/RnK4Iutw6/dlRJRxPz122PID8RwPTag=
-X-Received: by 2002:adf:fd8c:0:b0:3a3:62c0:fde with SMTP id
- ffacd0b85a97d-3a362c01034mr3209289f8f.35.1747467427343; Sat, 17 May 2025
- 00:37:07 -0700 (PDT)
+	s=arc-20240116; t=1747468045; c=relaxed/simple;
+	bh=GzUx3qX8x8Ti/WYrmeDubgDgmu4jLi8bLsh1uhw67kY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UwXBgcxCWksloqoGJE4BPuZUSpxLSwGV78oam2mZkNIRuZoe1ETlE5j+1MfPfkpyt2iYzYW1EeAhl/Fo5eAqeqfcgC+nykGK2WU8JLRnYJsEWQYM526fvf0tK0RNJP3o3OZr7u9lklDYNd6VwCuUY/t+alICmlqUbuvH+EH4jJU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl; spf=pass smtp.mailfrom=wp.pl; dkim=pass (2048-bit key) header.d=wp.pl header.i=@wp.pl header.b=BrNLLp+g; arc=none smtp.client-ip=212.77.101.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wp.pl
+Received: (wp-smtpd smtp.wp.pl 25770 invoked from network); 17 May 2025 09:40:40 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wp.pl; s=20241105;
+          t=1747467640; bh=vQzP50BnvI3iw2cFJFa5sluy2kEXYWbvimnAccLCu5M=;
+          h=From:To:Cc:Subject;
+          b=BrNLLp+garP4N8WaeTnMRagYwZpHQ7I6HOH5WNH4Or66u0Te/Ov1VGM9iPfCEzSjB
+           XN9w+ZsSr4ZX61NM6YnIgi8YCUiRXXlKTDOIpT5E8fPJoiNjNOyVrmXIaeCUVe8Yv3
+           9TqZ3dvokEroZDA0fRAShrlSZV9OaqDjv2q3FXMoq6XLwPfUGz1v/16BYOcck0frCz
+           ens3cmATBAZRVvwFAd31wHxaX3Mn0vbOJQ2SZ1cFH0Dk8KdqA9XplRMraKMwSGtS0b
+           PV3b9Daw6C526l/CjINRvEefI90nYXK33NQ7zAx5Iaeaj/odicvm9bPkof/5jSEys/
+           lHLfHkeeJUgbQ==
+Received: from 89-64-9-114.dynamic.play.pl (HELO localhost) (stf_xl@wp.pl@[89.64.9.114])
+          (envelope-sender <stf_xl@wp.pl>)
+          by smtp.wp.pl (WP-SMTPD) with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP
+          for <pchelkin@ispras.ru>; 17 May 2025 09:40:40 +0200
+Date: Sat, 17 May 2025 09:40:40 +0200
+From: Stanislaw Gruszka <stf_xl@wp.pl>
+To: Fedor Pchelkin <pchelkin@ispras.ru>,
+	Johannes Berg <johannes@sipsolutions.net>
+Cc: Alexei Safin <a.safin@rosa.ru>, lvc-project@linuxtesting.org,
+	netdev@vger.kernel.org, Kalle Valo <kvalo@kernel.org>,
+	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	"David S . Miller" <davem@davemloft.net>
+Subject: [PATCH] wifi: iwlegacy: Check rate_idx range after addition
+Message-ID: <20250517074040.GA96365@wp.pl>
+References: <20250424185244.3562-1-a.safin@rosa.ru>
+ <20250427063900.GA48509@wp.pl>
+ <d57qkj2tj4bgfobgzbhcb4bceh327o35mgamy2yyfuvolg4ymo@7p7hbpyg5bxi>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250331204610.526672-1-alex.vinarskis@gmail.com>
-In-Reply-To: <20250331204610.526672-1-alex.vinarskis@gmail.com>
-From: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
-Date: Sat, 17 May 2025 09:36:56 +0200
-X-Gm-Features: AX0GCFvAiofb_Uy-3eUIz1YQ-MA8_4UUZRMU5FPRF2iVPAIqvMukDd3P0i25i7M
-Message-ID: <CAMcHhXqWzrqc4wFJy=ZAj1vygR9d26s-yspHT3VVXmnbSye=CA@mail.gmail.com>
-Subject: Re: [PATCH v3 0/1] arm64: dts: qcom: x1e80100-dell-xps-9345: Add
- WiFi/BT pwrseq
-To: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>, linux-arm-msm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	laurentiu.tudor1@dell.com, dmitry.baryshkov@oss.qualcomm.com, 
-	johan@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d57qkj2tj4bgfobgzbhcb4bceh327o35mgamy2yyfuvolg4ymo@7p7hbpyg5bxi>
+X-WP-MailID: 779311392d6761ada01cae0109ceb9c8
+X-WP-AV: skaner antywirusowy Poczty Wirtualnej Polski
+X-WP-SPAM: NO 0000000 [sVOR]                               
 
-On Mon, 31 Mar 2025 at 22:46, Aleksandrs Vinarskis
-<alex.vinarskis@gmail.com> wrote:
->
-> Add bluetooth to mentioned device.
->
-> Changes to V2:
-> * Fixed commit message misunderstanding
-> * Picked Bryan's R-by
-> * Picked Laurentiu's T-by
-> * Link to v2: https://lore.kernel.org/all/20250331073423.3184322-1-alex.vinarskis@gmail.com/
->
-> Changes to V1:
-> * Fixed commit message
-> * Picked Dmitry's R-by
-> * Link to v1: https://lore.kernel.org/all/20250330212729.3062485-1-alex.vinarskis@gmail.com/
->
-> Aleksandrs Vinarskis (1):
->   arm64: dts: qcom: x1e80100-dell-xps-9345: Add WiFi/BT pwrseq
+Move rate_idx range check after we add IL_FIRST_OFDM_RATE for it
+for 5GHz band.
 
-Seems this one got forgotten. Shall I respin, or it can be picked as
-is? Still applies cleanly.
+Additionally use ">= RATE_COUNT" check instead of "> RATE_COUNT_LEGACY"
+to avoid possible reviewers and static code analyzers confusion about
+size of il_rate array.
 
-Thanks,
-Alex
+Reported-by: Fedor Pchelkin <pchelkin@ispras.ru>
+Reported-by: Alexei Safin <a.safin@rosa.ru>
+Signed-off-by: Stanislaw Gruszka <stf_xl@wp.pl>
+---
+ drivers/net/wireless/intel/iwlegacy/4965-mac.c | 15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
 
->
->  .../dts/qcom/x1e80100-dell-xps13-9345.dts     | 144 ++++++++++++++++++
->  1 file changed, 144 insertions(+)
->
-> --
-> 2.45.2
->
+diff --git a/drivers/net/wireless/intel/iwlegacy/4965-mac.c b/drivers/net/wireless/intel/iwlegacy/4965-mac.c
+index dc8c408902e6..2294ea43b4c7 100644
+--- a/drivers/net/wireless/intel/iwlegacy/4965-mac.c
++++ b/drivers/net/wireless/intel/iwlegacy/4965-mac.c
+@@ -1567,16 +1567,19 @@ il4965_tx_cmd_build_rate(struct il_priv *il,
+ 	/**
+ 	 * If the current TX rate stored in mac80211 has the MCS bit set, it's
+ 	 * not really a TX rate.  Thus, we use the lowest supported rate for
+-	 * this band.  Also use the lowest supported rate if the stored rate
+-	 * idx is invalid.
++	 * this band.
+ 	 */
+ 	rate_idx = info->control.rates[0].idx;
+-	if ((info->control.rates[0].flags & IEEE80211_TX_RC_MCS) || rate_idx < 0
+-	    || rate_idx > RATE_COUNT_LEGACY)
++	if (info->control.rates[0].flags & IEEE80211_TX_RC_MCS)
+ 		rate_idx = rate_lowest_index(&il->bands[info->band], sta);
+-	/* For 5 GHZ band, remap mac80211 rate indices into driver indices */
+-	if (info->band == NL80211_BAND_5GHZ)
++	else if (info->band == NL80211_BAND_5GHZ)
++		/* For 5 GHZ band, remap mac80211 rate indices into driver indices */
+ 		rate_idx += IL_FIRST_OFDM_RATE;
++
++	/* Use the lowest supported rate if the stored rate idx is invalid. */
++	if (rate_idx < 0 || rate_idx >= RATE_COUNT)
++		rate_idx = rate_lowest_index(&il->bands[info->band], sta);
++
+ 	/* Get PLCP rate for tx_cmd->rate_n_flags */
+ 	rate_plcp = il_rates[rate_idx].plcp;
+ 	/* Zero out flags for this packet */
+-- 
+2.25.4
 
