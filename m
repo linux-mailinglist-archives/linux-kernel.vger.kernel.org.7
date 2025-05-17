@@ -1,251 +1,379 @@
-Return-Path: <linux-kernel+bounces-652479-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-652481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E384ABABED
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 May 2025 20:51:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CECB5ABABF0
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 May 2025 20:52:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41D893ACAF4
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 May 2025 18:51:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EEFEC17EAAA
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 May 2025 18:52:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95C4920B81B;
-	Sat, 17 May 2025 18:51:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D2C720C02E;
+	Sat, 17 May 2025 18:51:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="SphmvRfh"
-Received: from mail-ed1-f67.google.com (mail-ed1-f67.google.com [209.85.208.67])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="NyS4mrpS"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2076.outbound.protection.outlook.com [40.107.93.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 773311DDC0F
-	for <linux-kernel@vger.kernel.org>; Sat, 17 May 2025 18:51:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.67
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747507901; cv=none; b=jAIEGN+LhQZF29rA02jUTHajK9w70nXxWyUN6p97TP+lppCE7Pkv+pR75vxo++rr0doN8sNYVldlmI8ot4mIJEoCPMAIIfNLksZenbpay+2pZU7sNSCPEO1O8Qsjm3vAloLzeXYlyJYezx6MLH7evWzY5WHU2wmCYca+1k+rANk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747507901; c=relaxed/simple;
-	bh=esvr8R6WEoSrZXgQlzfaTrT/BDn5P1ZhexoSJKjzt7M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XFfLm09aIjLt8Xesuu5baludQ9qHtjIcEI45Z/z0vqURqsJkoRJA5MUv4IYtFPgDTk11AcdQ27w6pgul33QgLxUFJ7F7tTmquk2QZqr1ANoMb2xNgfVRSN33nvHhGQ81OF92BnIfel6F/EMngojnvieNY+WxqPlOxcpBf/PTHpw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=SphmvRfh; arc=none smtp.client-ip=209.85.208.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f67.google.com with SMTP id 4fb4d7f45d1cf-601ab204085so707728a12.1
-        for <linux-kernel@vger.kernel.org>; Sat, 17 May 2025 11:51:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1747507897; x=1748112697; darn=vger.kernel.org;
-        h=in-reply-to:autocrypt:from:content-language:references:cc:to
-         :subject:user-agent:mime-version:date:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=esvr8R6WEoSrZXgQlzfaTrT/BDn5P1ZhexoSJKjzt7M=;
-        b=SphmvRfhzRyPcBCXHlc3FF9CBrmzQ3pC68oIkqHkVFl5/20Gsju4RGg+RMbmgmSkP9
-         9N8BQv59YtEKHh5DTP6YnNvuKeWu0i5NseZsdwp3jv8f2vNOltc3sJ2QD2Inrfsv7f4z
-         hWtExXCJZVEu24y+5ciLy6UhXvF7J3t/m8VnSE/lqxLoa/GrjQKletZwoE7qYbFknu/1
-         KgwWVHWZcMAGie/0MyPYhVQBmoh9IwqwH/Cg6BdHQENqYo8PoHFbbwJY70ZnzURr/UFS
-         TTx1XO81a29fRPv+JDNb1lkm9ZcV3RK665J7At+JeBDvpnSth/QQndrI6Mq1blsP+2f4
-         CLpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747507897; x=1748112697;
-        h=in-reply-to:autocrypt:from:content-language:references:cc:to
-         :subject:user-agent:mime-version:date:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=esvr8R6WEoSrZXgQlzfaTrT/BDn5P1ZhexoSJKjzt7M=;
-        b=BslbfHxqA7EZEAMSAlYMFh8q7yKwNb/nNExYC2+24FnwiqIf/QJ9nt9FxWHaRA3Bw9
-         gb0TgO18FFhmObU93d8NBhNAVVcS88QSJzyZ/qJNL9dVW5jXRVutcSdsjy4P3dk+ME5o
-         X8CoFncysiAXaqZqQS30R0LTg/uOKVHMLgHlu2v3xdQGvVpUdGBXSJZ86F9vNsCLMyG9
-         Vh987pclhF4Ry1YMqcJUAuI+9itU2YOFKXWseKl10+QDipIR0cPENiDe/B50OXYjPH1I
-         KdbMUvU+1LccLRxYzQQLvdQRP9ZMv3Lyxf2C3AnZR9LOErQm1cVMt3KzjG1RY/xecViO
-         bPhw==
-X-Forwarded-Encrypted: i=1; AJvYcCWFs2HB0h7y9m0XoT5tXEjbfHxbtHihyr+821QQfaAMYfaNnOKmgJM/NyKqf7Ci4zpmki4WJy1bJDf20ZY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzID8DeyMeUrUr5Xm43kiZmcrZ2qU5I7aZTiFGwlbdsRA5yUPpZ
-	sax3cBadtj9CqF6KTmcER9vy7ScRe+8rSVJVVSoIa0Gdnh4HmPbAcxHsMtqPGcqRIYY=
-X-Gm-Gg: ASbGncsx3x2ZlF2tb+e75TUV/K2OrPLDiXxReEtuZHwAZwCN+MtaFdKvBqlFBy6BlAW
-	ORbmeeZj43m7h0UExl7DJ82VkAWreQfbQxynpq3vS9V1BcrqLA3P5HUETRZu+qbm3NBygZPbyzR
-	PY0fDYaxN0ZliWqcEmQZ6GyHhR5heGH8LET1DUSnlk/s2xhqcCtQS9OqUgl9Ru15lEv2se6wyEk
-	SD5KxcRbyMJOxoo1FV3VG+aI3K9wDsuStMfyugUupH4CS545ZB/rRovAx49RihyxBG+tHcFPUvv
-	t7PlxI7lHG7aXKuj/p3nSxryqdMlFtO43v9mhWiD2+Wd5QE+kSjevJYGJ25RpJbjYB9HpG1+hGw
-	tRjjljMKkDj4FuwXlvVM8Oc6EIGdiUqXqkGbNNGQY1i+gp6/OWoRRi65BgRXF0C2LwUTKEouVy3
-	PZxSFXLnh8T5U=
-X-Google-Smtp-Source: AGHT+IFEF2Q0UxOZnJlm+Ccp+4eTz4P200IBb4VqMusjriDU43pbgoKygbxgSW1mEWMO0YQml7o1iw==
-X-Received: by 2002:a17:907:7e9c:b0:ad5:11a2:f95e with SMTP id a640c23a62f3a-ad52f1a09b1mr739087266b.5.1747507896600;
-        Sat, 17 May 2025 11:51:36 -0700 (PDT)
-Received: from ?IPV6:2003:e5:872a:8800:5c7b:1ac1:4fa0:423b? (p200300e5872a88005c7b1ac14fa0423b.dip0.t-ipconnect.de. [2003:e5:872a:8800:5c7b:1ac1:4fa0:423b])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad52d498747sm329295866b.137.2025.05.17.11.51.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 17 May 2025 11:51:36 -0700 (PDT)
-Message-ID: <5f76fa30-53cf-4cdd-9201-5fd525573858@suse.com>
-Date: Sat, 17 May 2025 20:51:34 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3C1521481D
+	for <linux-kernel@vger.kernel.org>; Sat, 17 May 2025 18:51:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.76
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747507909; cv=fail; b=CmfRy+aoDwShzBRhUFuuREZtBhat7j/M6MWOqCliLmvO0F96W6B4Ect5Ov6p81d4WFQHnsXv5PIH5bApgBtNN8T+bOlyd1bD/xa8Cuujdo+azq13WkSjWr1rIQ8e5fNHBU0mtCfeLd/I3xlTx/bLp8LLDNPrj0sNT+1xgzFaM68=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747507909; c=relaxed/simple;
+	bh=st/6EvTwFsElHd4A4/+flWF6jUrLr/bGvlof0KMzT3c=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=A/RRXyxObF2/xHuXLqsclZeSiCa7Er/OcHetHffTO7hY5sc9uNorkBv1SN/hD3Fin+ou1WtlVmzHyajvO7fX/tyiCiiqqzy6m0CZjN4++bXh86u71W7+bKDrn7euemE7W6/ekyfHO/KyRSLupyj9yx4or8Hl5RgrAT88P9323RM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=NyS4mrpS; arc=fail smtp.client-ip=40.107.93.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=fd3LkKlgoR8Nbr8VvAmv1m48YkV+41YnNMkdlY0KqD6cxspllaoYBgcndJ4CbpA6R7zrcUL6zcw2XUOBeNPrJjywO/34btr47pzf9mprtdRRseec0gMBWXrYO4FMJ4ihn4ptM5MUCtQOdUo8b081u2ctsAZcA/ZxNeZqZC3HWmVMfviTJDFcal9/avmTrO4NtRjWezdr3FvVkD9GCH24lT3h9rGftwhvXjKu2CW6Flu79o5BOh227ot8yB0qZUDRuhSL70HezU81niWv9ipmtaUUQBOAMAgUqm4M9U1YG3YJYwfJDMgX6PDvC+qhREz9T8MSn5jYALSPhVe+H13l3w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=AF+sX931u23cGMu75MOf+qT/rbwV5x4nifDoqw6A2o4=;
+ b=bEaTjcUedMzOu0f81NvmIUb5yOdMJKA3SeO8ETgJHjX42ZK5i1irbijkGzKoFNkOkQ2hDl2nDAugWgBqHUj36/0XRKabjw/wZx+fC1CJUcQwErZFlj167rhJwJaWrrSNq0jWQ31DV9a4o7kjT8WJ0wvRqJPdDrHRmO0vmlYoe7Ln8xlt6mWriJ67ER1bUkTxrNGOJAMF+PbbTgAsSmZGFWldX4pWQ2OUNEXFOj+SS3FLsSax+N3NYRALJ0Bbz1vxA+0eAA1J7xIOkt3iPVZW43ecz2THyxdnDUQLU28xdYTkEAYKNirR+HwgEYTFMYc6MUDREM5EaDeVOsAYKZWEMg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=AF+sX931u23cGMu75MOf+qT/rbwV5x4nifDoqw6A2o4=;
+ b=NyS4mrpScGZ/4MHScv1iikH0auaXip5i18NKwQ0/b9EqOQ+6t139CYWvDXWLURtVC4U8VdTlZbby2XAhhOLFpf+IfNrvZRbXX+ZeWX/MdDCpFLKtrhP8YuI3QDxge9EvJcp/cdnaQTPIcwI10t5lxEf/XPW0jTPyojlLukX344PPDAxCKA0KtRlIXqFWMskgtSBfB7bS6jNHDi121DwUk1UUJrtNHbHaiKLrFcoEYRkiCZ2XvFKbJvD4pL8sjV3ZAK/xOBwYyoruEISDtD5zbDjLnEGlSrRSvtxa/Vokkzfi7tcOYEcMLyfsMGhlsyifxi4ZfZ4QmLguiCmaGjlZzQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) by
+ PH7PR12MB8013.namprd12.prod.outlook.com (2603:10b6:510:27c::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8722.30; Sat, 17 May
+ 2025 18:51:38 +0000
+Received: from DS7PR12MB9473.namprd12.prod.outlook.com
+ ([fe80::5189:ecec:d84a:133a]) by DS7PR12MB9473.namprd12.prod.outlook.com
+ ([fe80::5189:ecec:d84a:133a%5]) with mapi id 15.20.8722.031; Sat, 17 May 2025
+ 18:51:38 +0000
+From: Zi Yan <ziy@nvidia.com>
+To: Juan Yescas <jyescas@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, tjmercier@google.com,
+ isaacmanjarres@google.com, surenb@google.com, kaleshsingh@google.com,
+ Vlastimil Babka <vbabka@suse.cz>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ David Hildenbrand <david@redhat.com>, Mike Rapoport <rppt@kernel.org>,
+ Minchan Kim <minchan@kernel.org>
+Subject: Re: [PATCH v4] mm: Add CONFIG_PAGE_BLOCK_ORDER to select page block
+ order
+Date: Sat, 17 May 2025 14:51:36 -0400
+X-Mailer: MailMate (2.0r6255)
+Message-ID: <8E999CBA-6F55-4DCA-8BE3-569B1C537802@nvidia.com>
+In-Reply-To: <20250510010338.3978696-1-jyescas@google.com>
+References: <20250510010338.3978696-1-jyescas@google.com>
+Content-Type: text/plain
+X-ClientProxiedBy: BN9PR03CA0787.namprd03.prod.outlook.com
+ (2603:10b6:408:13f::12) To DS7PR12MB9473.namprd12.prod.outlook.com
+ (2603:10b6:8:252::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1A 2/3] x86/xen/msr: Fix uninitialized symbol 'err'
-To: "Xin Li (Intel)" <xin@zytor.com>, linux-kernel@vger.kernel.org,
- xen-devel@lists.xenproject.org, linux-acpi@vger.kernel.org
-Cc: tglx@linutronix.de, mingo@kernel.org, bp@alien8.de,
- dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
- peterz@infradead.org, boris.ostrovsky@oracle.com, dan.carpenter@linaro.org,
- rafael@kernel.org, lenb@kernel.org
-References: <ae1d05f6-cd65-4ca4-87c5-af0ae34e21ce@suse.com>
- <20250517165713.935384-1-xin@zytor.com>
-Content-Language: en-US
-From: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
-Autocrypt: addr=jgross@suse.com; keydata=
- xsBNBFOMcBYBCACgGjqjoGvbEouQZw/ToiBg9W98AlM2QHV+iNHsEs7kxWhKMjrioyspZKOB
- ycWxw3ie3j9uvg9EOB3aN4xiTv4qbnGiTr3oJhkB1gsb6ToJQZ8uxGq2kaV2KL9650I1SJve
- dYm8Of8Zd621lSmoKOwlNClALZNew72NjJLEzTalU1OdT7/i1TXkH09XSSI8mEQ/ouNcMvIJ
- NwQpd369y9bfIhWUiVXEK7MlRgUG6MvIj6Y3Am/BBLUVbDa4+gmzDC9ezlZkTZG2t14zWPvx
- XP3FAp2pkW0xqG7/377qptDmrk42GlSKN4z76ELnLxussxc7I2hx18NUcbP8+uty4bMxABEB
- AAHNH0p1ZXJnZW4gR3Jvc3MgPGpncm9zc0BzdXNlLmNvbT7CwHkEEwECACMFAlOMcK8CGwMH
- CwkIBwMCAQYVCAIJCgsEFgIDAQIeAQIXgAAKCRCw3p3WKL8TL8eZB/9G0juS/kDY9LhEXseh
- mE9U+iA1VsLhgDqVbsOtZ/S14LRFHczNd/Lqkn7souCSoyWsBs3/wO+OjPvxf7m+Ef+sMtr0
- G5lCWEWa9wa0IXx5HRPW/ScL+e4AVUbL7rurYMfwCzco+7TfjhMEOkC+va5gzi1KrErgNRHH
- kg3PhlnRY0Udyqx++UYkAsN4TQuEhNN32MvN0Np3WlBJOgKcuXpIElmMM5f1BBzJSKBkW0Jc
- Wy3h2Wy912vHKpPV/Xv7ZwVJ27v7KcuZcErtptDevAljxJtE7aJG6WiBzm+v9EswyWxwMCIO
- RoVBYuiocc51872tRGywc03xaQydB+9R7BHPzsBNBFOMcBYBCADLMfoA44MwGOB9YT1V4KCy
- vAfd7E0BTfaAurbG+Olacciz3yd09QOmejFZC6AnoykydyvTFLAWYcSCdISMr88COmmCbJzn
- sHAogjexXiif6ANUUlHpjxlHCCcELmZUzomNDnEOTxZFeWMTFF9Rf2k2F0Tl4E5kmsNGgtSa
- aMO0rNZoOEiD/7UfPP3dfh8JCQ1VtUUsQtT1sxos8Eb/HmriJhnaTZ7Hp3jtgTVkV0ybpgFg
- w6WMaRkrBh17mV0z2ajjmabB7SJxcouSkR0hcpNl4oM74d2/VqoW4BxxxOD1FcNCObCELfIS
- auZx+XT6s+CE7Qi/c44ibBMR7hyjdzWbABEBAAHCwF8EGAECAAkFAlOMcBYCGwwACgkQsN6d
- 1ii/Ey9D+Af/WFr3q+bg/8v5tCknCtn92d5lyYTBNt7xgWzDZX8G6/pngzKyWfedArllp0Pn
- fgIXtMNV+3t8Li1Tg843EXkP7+2+CQ98MB8XvvPLYAfW8nNDV85TyVgWlldNcgdv7nn1Sq8g
- HwB2BHdIAkYce3hEoDQXt/mKlgEGsLpzJcnLKimtPXQQy9TxUaLBe9PInPd+Ohix0XOlY+Uk
- QFEx50Ki3rSDl2Zt2tnkNYKUCvTJq7jvOlaPd6d/W0tZqpyy7KVay+K4aMobDsodB3dvEAs6
- ScCnh03dDAFgIq5nsB11j3KPKdVoPlfucX2c7kGNH+LUMbzqV6beIENfNexkOfxHfw==
-In-Reply-To: <20250517165713.935384-1-xin@zytor.com>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------wYlEYju0WXW3nEzZsQVz5sqK"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR12MB9473:EE_|PH7PR12MB8013:EE_
+X-MS-Office365-Filtering-Correlation-Id: b6d7696a-ac04-4da8-fb1e-08dd9573dae0
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?WsMk9buWHtoXlbneSKPa3MjPZjqbK8MkSYFnXayD9uFJsabcXuXN7DoqhqL5?=
+ =?us-ascii?Q?2O0aKP9BEFyT7mLUaIK5EoIe+fN44HaDepoilE8764Ill9J2g7HQ15L56lRw?=
+ =?us-ascii?Q?aWy5dNF76Je5Al2kobJvLrh8Hy5I4JDB0d1H9LoCJ+1KBLBEfdSwzaaqOiuU?=
+ =?us-ascii?Q?HJhBAkBv+wdNFlhdwHeU8W2m9KMxsJCeROph8RCzYCphoXrNoqj+gJIzRzR8?=
+ =?us-ascii?Q?QE58+MnDtRqCCXJFvQCKca/opVEexQjVHQ6hC3iWzAgiCGJNnshYMTcIZKxN?=
+ =?us-ascii?Q?N8gea+ioItDCi0up9RgG16wxJq0Luep32YD1ZroggiDEVk05j/HeEIHJs3Qd?=
+ =?us-ascii?Q?LOeklr3gdzvDOInoFveYc0wxK589hy+jlbf8eMhff8LC8Jm3Z6zMjkTQtLne?=
+ =?us-ascii?Q?c8URFrsnLi6PIwcmW4HL1u4D/QfxyzLTVBrZAUVhkAY6C8Ng/WWzFT5tqY9g?=
+ =?us-ascii?Q?jTB6MvFvRSHmk0nc055fIazS2aDL9yKSJ+0DFAvDNKgqKbgQeAr3Az55gfFo?=
+ =?us-ascii?Q?v8pfy10Vh3qZ3e87O4xmH1/dFVgdnoF0LmMlgR2YPzOWELiV7EIFC/fs+C75?=
+ =?us-ascii?Q?bGh3hu6FvNlhWWm4NeK42o7nRj4niUrN50SyJWkuQaXWSbbv/sPTAaN7t7ul?=
+ =?us-ascii?Q?cav4Mzkm9w7eCM2++9AsLcEMDd2tXhVuPGVtlqPqSPLPbBVp5TutQznpKDip?=
+ =?us-ascii?Q?QC7gN4mndvGxsdWWtjFnYyQTil+GBBB/4dg8q3s2KEeodCEkjHML6bWfwE3I?=
+ =?us-ascii?Q?0BD7DWrDLl2jTINSJKYy3WN7pdetH6mT5NMpk1P2P0ozSyYnyvCshkKucTvW?=
+ =?us-ascii?Q?aGDyjgzOXIKzHQPTHd2/TFn0rmYBIljYm5DtKL+aIZMWG00xsj8il7cDUCwu?=
+ =?us-ascii?Q?AuH0QH19nF10y4+ZqlI32Mnwwtp1w2kjNzyPvp/KBJ0TvWoV0ky6GRMHAnmf?=
+ =?us-ascii?Q?bjQ7b4fVQeYIGX1G+WQdUOPgsp7YwjvGEA3GEXAVU4AGVVx2wna1N61FBD3x?=
+ =?us-ascii?Q?SwWBE5818I/x9OcYoG/TPrHt+0sFbYB3VU7Ti2RLU2kdkwfMwGLYhnWFfQNZ?=
+ =?us-ascii?Q?9K3F9hxYFepPXFHIivxD9qwNkGaezZoqMZXrbNFwICGZUiMuoYY9cHjJ2ahb?=
+ =?us-ascii?Q?T2o1MzT4KGI52Xqev4jNqAAIdKXnKVL+3BJa96Z59bYicNoeGdz33Vv3jBRm?=
+ =?us-ascii?Q?X9p/Dy4W4RLzuFeloBiTOsuaaDdEmCIdaPDf1Xv9XNViGa5dU+ZiWUzp+wof?=
+ =?us-ascii?Q?iRk81b6rzqXwNarG8dH7Z/JakHLIzN04CR79oNyL7Nn19Mwg7e05Yb4jf6oE?=
+ =?us-ascii?Q?qhWviHWEFZOS9v101TBevWrABi2/he48Uqotdqh6EmrlQ2pwzOzZqRmPuetB?=
+ =?us-ascii?Q?GlZDMrxr4w/6Kh7skszYnUQKnnT7TDl5/8x2/OxQ2bokWc+jj8GhSZ6MCysN?=
+ =?us-ascii?Q?xWj1dAHxwHs=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9473.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?/bNBvcoUE4NWcX67KGrMVNDatQCcXQY8DkxSl7amZ8R+Rx/g/zis2Kw+sRJ3?=
+ =?us-ascii?Q?CgvH5tBnxQz6RTtm6iUCzoYy5wmBzcybTuUCaDyZ/wrwkA5Qz/ZCl0dSZZZ2?=
+ =?us-ascii?Q?J+MK8ZfQgCSrADeSju4fgWcbXWvydDWMOK/VIyhopgDRAfKvD0FF3b3VplgY?=
+ =?us-ascii?Q?Pyy717FPfo4nMA+X+nGZL1anjy2Ae+ENC2LwEaq6kbCr2A6qMYH4zmgj0he3?=
+ =?us-ascii?Q?gf1n7pc/BRieLILjvb1rOqr19tyUhm8NBj+h9lPL8UA+rC3g1Ke2VnKWiaKS?=
+ =?us-ascii?Q?rJWD9371+hdLBiVVLuKJVjl0irRJIW0EMUqek6wQg/VkZyQtexbi3l40M4tH?=
+ =?us-ascii?Q?niH6nw3sdymwZBDdAT0b/3dGEY4u7MHTZw/VgjORU/3DAMnQU3uV1vePx1sZ?=
+ =?us-ascii?Q?Md7LEsynwZPD9BadHuq9gzDvN0Roy1BaPfzNH4Aq7pYH2WvAzLGHdlARvYPE?=
+ =?us-ascii?Q?GBTiiEw2DAq7Wo6hry8Ssm7a1CM8uivzbMNh/CdVBThVmN9RiPx+ef+5rEvI?=
+ =?us-ascii?Q?VfEAEOHepcuBEyQGZ6PBtdZmPZ4NX/z/mbASkKnhkMUEpYyywL1ePkGHGkeq?=
+ =?us-ascii?Q?FCHuqOx0Te8BDHlIPtgeSovvYgxpTn+EIyMr3wDwAXdn/Y1k4GugcInOdLm0?=
+ =?us-ascii?Q?LFaQx9x6fv47Q/9ey0padpXGMfyqdcqv8z/kd36KmnnTIzk9btF7y9dz4Btr?=
+ =?us-ascii?Q?gOrUDT9mzRGxpqdKUOpqlz/oBlZcrmcFT0t2xu+fdeJIbQHSGfdPVPLXE71s?=
+ =?us-ascii?Q?Wl0SZXNWM1kcGs6MzQ5RR1GAfttWr3y1X9t1Y/QJS2OjOBIADHsylvH3++kq?=
+ =?us-ascii?Q?yfaj7g6xqfNXw4Ps+dSDtu7yA3LQd3IFfy/+sos2AFH5o8NOh9FM1uWgVihx?=
+ =?us-ascii?Q?35KU6Ku0+C4nxzfqTIgm6Lg2heEK+j8lInFFcyTufvo2If7IUlz48r1KHIxo?=
+ =?us-ascii?Q?5pbGqYkE7KXq3qMCx6O7K1LVPXXuBCyuO7fxZ7aEq8YGpnre8QZRqw0on2RN?=
+ =?us-ascii?Q?5YNcnxTz6byAlfkxteW/zALmEE++oj0SDiax8yBdmETSnAN+KJwvGXcX5Km2?=
+ =?us-ascii?Q?eTXvy4hG1Pb9uurxu3dZO64oEu1MlkL0SgpC/s0opcgNQgz2yJoeneM6MXlJ?=
+ =?us-ascii?Q?dGmgU+oOrY1y71Sca5ymRdQNtVgBQAyFuOEq89aaiHBMxHX/KuyF5DilzUYi?=
+ =?us-ascii?Q?NRcfFJqH/P06wEd9EOEJAk0JuQBrX5bI4gBA55NfHaQ3Aoib3upuJ3Z1bZGn?=
+ =?us-ascii?Q?V2Mg5UFRndpfCJWhrJYQnA/rYLpr+eLvfA0M6CzYrgwxwIiqZlqaUv4kvnBk?=
+ =?us-ascii?Q?2cZ5eieU6QL5aHjt4gssZ8g+hDMdCJ0bcD9/W8+L15SN4iU48vTzyFkxS64Y?=
+ =?us-ascii?Q?q03Bp+mvwRn+a2kW2a8wvp+m+KC/VImdtLFGlLkKIXZ4EU9q/6ajoxfydn64?=
+ =?us-ascii?Q?oYYyz8JhVuwAbDix8zt7rtOJz0RHfwBQjRWf1SmxKpkhGhhDKwRCBLEB2IIK?=
+ =?us-ascii?Q?9Si0/sDevhpbmF3Hlsfr0lwm/OUlJnJ3IWqUiNP7OyGE0e8PFZ5mfp2BRABk?=
+ =?us-ascii?Q?ZKzRUVt3Uu0CLuCYa2vOUclRx5YPPldYY3gNyqu1?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b6d7696a-ac04-4da8-fb1e-08dd9573dae0
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9473.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 May 2025 18:51:38.3527
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 82GOoxmh1xLqsXm5tawE0LNS0WgPPSZoZbpUJr879OnxoXctUvr82B1fFOMdz9AH
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB8013
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------wYlEYju0WXW3nEzZsQVz5sqK
-Content-Type: multipart/mixed; boundary="------------npkniPAj3lZU17c0YJiIJgOs";
- protected-headers="v1"
-From: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
-To: "Xin Li (Intel)" <xin@zytor.com>, linux-kernel@vger.kernel.org,
- xen-devel@lists.xenproject.org, linux-acpi@vger.kernel.org
-Cc: tglx@linutronix.de, mingo@kernel.org, bp@alien8.de,
- dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
- peterz@infradead.org, boris.ostrovsky@oracle.com, dan.carpenter@linaro.org,
- rafael@kernel.org, lenb@kernel.org
-Message-ID: <5f76fa30-53cf-4cdd-9201-5fd525573858@suse.com>
-Subject: Re: [PATCH v1A 2/3] x86/xen/msr: Fix uninitialized symbol 'err'
-References: <ae1d05f6-cd65-4ca4-87c5-af0ae34e21ce@suse.com>
- <20250517165713.935384-1-xin@zytor.com>
-In-Reply-To: <20250517165713.935384-1-xin@zytor.com>
+On 9 May 2025, at 21:02, Juan Yescas wrote:
 
---------------npkniPAj3lZU17c0YJiIJgOs
-Content-Type: multipart/mixed; boundary="------------llwv3cxcMOeLkriHHzdPWzyR"
+> Problem: On large page size configurations (16KiB, 64KiB), the CMA
+> alignment requirement (CMA_MIN_ALIGNMENT_BYTES) increases considerably,
+> and this causes the CMA reservations to be larger than necessary.
+> This means that system will have less available MIGRATE_UNMOVABLE and
+> MIGRATE_RECLAIMABLE page blocks since MIGRATE_CMA can't fallback to them.
+>
+> The CMA_MIN_ALIGNMENT_BYTES increases because it depends on
+> MAX_PAGE_ORDER which depends on ARCH_FORCE_MAX_ORDER. The value of
+> ARCH_FORCE_MAX_ORDER increases on 16k and 64k kernels.
+>
+> For example, in ARM, the CMA alignment requirement when:
+>
+> - CONFIG_ARCH_FORCE_MAX_ORDER default value is used
+> - CONFIG_TRANSPARENT_HUGEPAGE is set:
+>
+> PAGE_SIZE | MAX_PAGE_ORDER | pageblock_order | CMA_MIN_ALIGNMENT_BYTES
+> -----------------------------------------------------------------------
+>    4KiB   |      10        |      10         |  4KiB * (2 ^ 10)  =  4MiB
+>   16Kib   |      11        |      11         | 16KiB * (2 ^ 11) =  32MiB
+>   64KiB   |      13        |      13         | 64KiB * (2 ^ 13) = 512MiB
+>
+> There are some extreme cases for the CMA alignment requirement when:
+>
+> - CONFIG_ARCH_FORCE_MAX_ORDER maximum value is set
+> - CONFIG_TRANSPARENT_HUGEPAGE is NOT set:
+> - CONFIG_HUGETLB_PAGE is NOT set
+>
+> PAGE_SIZE | MAX_PAGE_ORDER | pageblock_order |  CMA_MIN_ALIGNMENT_BYTES
+> ------------------------------------------------------------------------
+>    4KiB   |      15        |      15         |  4KiB * (2 ^ 15) = 128MiB
+>   16Kib   |      13        |      13         | 16KiB * (2 ^ 13) = 128MiB
+>   64KiB   |      13        |      13         | 64KiB * (2 ^ 13) = 512MiB
+>
+> This affects the CMA reservations for the drivers. If a driver in a
+> 4KiB kernel needs 4MiB of CMA memory, in a 16KiB kernel, the minimal
+> reservation has to be 32MiB due to the alignment requirements:
+>
+> reserved-memory {
+>     ...
+>     cma_test_reserve: cma_test_reserve {
+>         compatible = "shared-dma-pool";
+>         size = <0x0 0x400000>; /* 4 MiB */
+>         ...
+>     };
+> };
+>
+> reserved-memory {
+>     ...
+>     cma_test_reserve: cma_test_reserve {
+>         compatible = "shared-dma-pool";
+>         size = <0x0 0x2000000>; /* 32 MiB */
+>         ...
+>     };
+> };
+>
+> Solution: Add a new config CONFIG_PAGE_BLOCK_ORDER that
+> allows to set the page block order in all the architectures.
+> The maximum page block order will be given by
+> ARCH_FORCE_MAX_ORDER.
+>
+> By default, CONFIG_PAGE_BLOCK_ORDER will have the same
+> value that ARCH_FORCE_MAX_ORDER. This will make sure that
+> current kernel configurations won't be affected by this
+> change. It is a opt-in change.
+>
+> This patch will allow to have the same CMA alignment
+> requirements for large page sizes (16KiB, 64KiB) as that
+> in 4kb kernels by setting a lower pageblock_order.
+>
+> Tests:
+>
+> - Verified that HugeTLB pages work when pageblock_order is 1, 7, 10
+> on 4k and 16k kernels.
+>
+> - Verified that Transparent Huge Pages work when pageblock_order
+> is 1, 7, 10 on 4k and 16k kernels.
+>
+> - Verified that dma-buf heaps allocations work when pageblock_order
+> is 1, 7, 10 on 4k and 16k kernels.
+>
+> Benchmarks:
+>
+> The benchmarks compare 16kb kernels with pageblock_order 10 and 7. The
+> reason for the pageblock_order 7 is because this value makes the min
+> CMA alignment requirement the same as that in 4kb kernels (2MB).
+>
+> - Perform 100K dma-buf heaps (/dev/dma_heap/system) allocations of
+> SZ_8M, SZ_4M, SZ_2M, SZ_1M, SZ_64, SZ_8, SZ_4. Use simpleperf
+> (https://developer.android.com/ndk/guides/simpleperf) to measure
+> the # of instructions and page-faults on 16k kernels.
+> The benchmark was executed 10 times. The averages are below:
+>
+>            # instructions         |     #page-faults
+>     order 10     |  order 7       | order 10 | order 7
+> --------------------------------------------------------
+>  13,891,765,770	 | 11,425,777,314 |    220   |   217
+>  14,456,293,487	 | 12,660,819,302 |    224   |   219
+>  13,924,261,018	 | 13,243,970,736 |    217   |   221
+>  13,910,886,504	 | 13,845,519,630 |    217   |   221
+>  14,388,071,190	 | 13,498,583,098 |    223   |   224
+>  13,656,442,167	 | 12,915,831,681 |    216   |   218
+>  13,300,268,343	 | 12,930,484,776 |    222   |   218
+>  13,625,470,223	 | 14,234,092,777 |    219   |   218
+>  13,508,964,965	 | 13,432,689,094 |    225   |   219
+>  13,368,950,667	 | 13,683,587,37  |    219   |   225
+> -------------------------------------------------------------------
+>  13,803,137,433  | 13,131,974,268 |    220   |   220    Averages
+>
+> There were 4.85% #instructions when order was 7, in comparison
+> with order 10.
+>
+>      13,803,137,433 - 13,131,974,268 = -671,163,166 (-4.86%)
+>
+> The number of page faults in order 7 and 10 were the same.
+>
+> These results didn't show any significant regression when the
+> pageblock_order is set to 7 on 16kb kernels.
+>
+> - Run speedometer 3.1 (https://browserbench.org/Speedometer3.1/) 5 times
+>  on the 16k kernels with pageblock_order 7 and 10.
+>
+> order 10 | order 7  | order 7 - order 10 | (order 7 - order 10) %
+> -------------------------------------------------------------------
+>   15.8	 |  16.4    |         0.6        |     3.80%
+>   16.4	 |  16.2    |        -0.2        |    -1.22%
+>   16.6	 |  16.3    |        -0.3        |    -1.81%
+>   16.8	 |  16.3    |        -0.5        |    -2.98%
+>   16.6	 |  16.8    |         0.2        |     1.20%
+> -------------------------------------------------------------------
+>   16.44     16.4            -0.04	          -0.24%   Averages
+>
+> The results didn't show any significant regression when the
+> pageblock_order is set to 7 on 16kb kernels.
+>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Vlastimil Babka <vbabka@suse.cz>
+> Cc: Liam R. Howlett <Liam.Howlett@oracle.com>
+> Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> Cc: David Hildenbrand <david@redhat.com>
+> CC: Mike Rapoport <rppt@kernel.org>
+> Cc: Zi Yan <ziy@nvidia.com>
+> Cc: Suren Baghdasaryan <surenb@google.com>
+> Cc: Minchan Kim <minchan@kernel.org>
+> Signed-off-by: Juan Yescas <jyescas@google.com>
+> Acked-by: Zi Yan <ziy@nvidia.com>
+> ---
+> Changes in v4:
+>   - Set PAGE_BLOCK_ORDER in incluxe/linux/mmzone.h to
+>     validate that MAX_PAGE_ORDER >= PAGE_BLOCK_ORDER at
+>     compile time.
+>   - This change fixes the warning in:
+>    https://lore.kernel.org/oe-kbuild-all/202505091548.FuKO4b4v-lkp@intel.com/
+>
+> Changes in v3:
+>   - Rename ARCH_FORCE_PAGE_BLOCK_ORDER to PAGE_BLOCK_ORDER
+>     as per Matthew's suggestion.
+>   - Update comments in pageblock-flags.h for pageblock_order
+>     value when THP or HugeTLB are not used.
+>
+> Changes in v2:
+>   - Add Zi's Acked-by tag.
+>   - Move ARCH_FORCE_PAGE_BLOCK_ORDER config to mm/Kconfig as
+>     per Zi and Matthew suggestion so it is available to
+>     all the architectures.
+>   - Set ARCH_FORCE_PAGE_BLOCK_ORDER to 10 by default when
+>     ARCH_FORCE_MAX_ORDER is not available.
+>
+>
+>  include/linux/mmzone.h          | 16 ++++++++++++++++
+>  include/linux/pageblock-flags.h |  8 ++++----
+>  mm/Kconfig                      | 31 +++++++++++++++++++++++++++++++
+>  3 files changed, 51 insertions(+), 4 deletions(-)
 
---------------llwv3cxcMOeLkriHHzdPWzyR
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
+Hi Juan,
 
-T24gMTcuMDUuMjUgMTg6NTcsIFhpbiBMaSAoSW50ZWwpIHdyb3RlOg0KPiB4ZW5fcmVhZF9t
-c3Jfc2FmZSgpIGN1cnJlbnRseSBwYXNzZXMgYW4gdW5pbml0aWFsaXplZCBhcmd1bWVudCBl
-cnIgdG8NCj4geGVuX2RvX3JlYWRfbXNyKCkuICBCdXQgYXMgeGVuX2RvX3JlYWRfbXNyKCkg
-bWF5IG5vdCBzZXQgdGhlIGFyZ3VtZW50LA0KPiB4ZW5fcmVhZF9tc3Jfc2FmZSgpIGNvdWxk
-IHJldHVybiBlcnIgd2l0aCBhbiB1bnByZWRpY3RhYmxlIHZhbHVlLg0KPiANCj4gVG8gZW5z
-dXJlIGNvcnJlY3RuZXNzLCBpbml0aWFsaXplIGVyciB0byAwIChyZXByZXNlbnRpbmcgc3Vj
-Y2VzcykNCj4gaW4geGVuX3JlYWRfbXNyX3NhZmUoKS4NCj4gDQo+IERvIHRoZSBzYW1lIGlu
-IHhlbl9yZWFkX21zcigpLCBldmVuIGVyciBpcyBub3QgdXNlZCBhZnRlciBiZWluZyBwYXNz
-ZWQNCj4gdG8geGVuX2RvX3JlYWRfbXNyKCkuDQo+IA0KPiBGaXhlczogZDgxNWRhODRmZGQw
-ICgieDg2L21zcjogQ2hhbmdlIHRoZSBmdW5jdGlvbiB0eXBlIG9mIG5hdGl2ZV9yZWFkX21z
-cl9zYWZlKCkiDQo+IFJlcG9ydGVkLWJ5OiBEYW4gQ2FycGVudGVyIDxkYW4uY2FycGVudGVy
-QGxpbmFyby5vcmc+DQo+IENsb3NlczogaHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcveGVuLWRl
-dmVsL2FCeE5JX1EwLU1odEJTWkdAc3RhbmxleS5tb3VudGFpbi8NCj4gU2lnbmVkLW9mZi1i
-eTogWGluIExpIChJbnRlbCkgPHhpbkB6eXRvci5jb20+DQoNClJldmlld2VkLWJ5OiBKdWVy
-Z2VuIEdyb3NzIDxqZ3Jvc3NAc3VzZS5jb20+DQoNCg0KSnVlcmdlbg0K
---------------llwv3cxcMOeLkriHHzdPWzyR
-Content-Type: application/pgp-keys; name="OpenPGP_0xB0DE9DD628BF132F.asc"
-Content-Disposition: attachment; filename="OpenPGP_0xB0DE9DD628BF132F.asc"
-Content-Description: OpenPGP public key
-Content-Transfer-Encoding: quoted-printable
+The patch below on top of your v4 fixed powerpc build issue, as I tested
+it locally.
 
------BEGIN PGP PUBLIC KEY BLOCK-----
+From 5c2ae4dfca135e99da45302e4f5d96a315a99603 Mon Sep 17 00:00:00 2001
+From: Zi Yan <ziy@nvidia.com>
+Date: Sat, 17 May 2025 14:49:39 -0400
+Subject: [PATCH] fix CONFIG_PAGE_BLOCK_ORDER
 
-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
-kt+z4drzFUyEjLM1vVvIMjkUoJs=3D
-=3DeeAB
------END PGP PUBLIC KEY BLOCK-----
+Signed-off-by: Zi Yan <ziy@nvidia.com>
+---
+ mm/Kconfig | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---------------llwv3cxcMOeLkriHHzdPWzyR--
+diff --git a/mm/Kconfig b/mm/Kconfig
+index 79237842f7e2..af0dd42e3506 100644
+--- a/mm/Kconfig
++++ b/mm/Kconfig
+@@ -1016,10 +1016,10 @@ config ARCH_FORCE_MAX_ORDER
+ # as per include/linux/mmzone.h.
+ config PAGE_BLOCK_ORDER
+ 	int "Page Block Order"
+-	range 1 10 if !ARCH_FORCE_MAX_ORDER
+-	default 10 if !ARCH_FORCE_MAX_ORDER
+-	range 1 ARCH_FORCE_MAX_ORDER if ARCH_FORCE_MAX_ORDER
+-	default ARCH_FORCE_MAX_ORDER if ARCH_FORCE_MAX_ORDER
++	range 1 10 if ARCH_FORCE_MAX_ORDER = 0
++	default 10 if ARCH_FORCE_MAX_ORDER = 0
++	range 1 ARCH_FORCE_MAX_ORDER if ARCH_FORCE_MAX_ORDER != 0
++	default ARCH_FORCE_MAX_ORDER if ARCH_FORCE_MAX_ORDER != 0
 
---------------npkniPAj3lZU17c0YJiIJgOs--
+ 	help
+ 	  The page block order refers to the power of two number of pages that
+-- 
+2.47.2
 
---------------wYlEYju0WXW3nEzZsQVz5sqK
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature.asc"
 
------BEGIN PGP SIGNATURE-----
 
-wsB5BAABCAAjFiEEhRJncuj2BJSl0Jf3sN6d1ii/Ey8FAmgo2rYFAwAAAAAACgkQsN6d1ii/Ey/y
-1gf+OIrTmR24006WFmEsHRhFAD+Rxh+DPGsuFdt+zPIvZT46MPLR0SQ9a4Xugs+lkkjnEnwBQ4Gp
-sCkPjxXliS8bO+w203UixwqIvyYXSTVMhdl0kvgEBcDobMfbPQExTR0iGja6kQyiy/Oyhz1/MmWe
-sKSteetLIxXWLruF/qFh0yxi8QLgDs8vkNY5eTA9Vzx0iGItISRn3u5v/qpmW1Cz9+sSEeihfULy
-t6Q9miXwajrovQR3tn4+NBKOaF4oRnM74lrohRFAJRHj46vmMRqkO8n1WkLV5c6KsjSyh4102Mh3
-J0gYZzleGWsaA7/Q2Xb8VT4ECuTX+pTYeMtzNV74hA==
-=t71+
------END PGP SIGNATURE-----
 
---------------wYlEYju0WXW3nEzZsQVz5sqK--
+--
+Best Regards,
+Yan, Zi
 
