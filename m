@@ -1,75 +1,133 @@
-Return-Path: <linux-kernel+bounces-652375-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-652377-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C816ABAAA8
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 May 2025 16:18:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23CFAABAAB1
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 May 2025 16:26:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D9281B62688
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 May 2025 14:18:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E6FA4A4191
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 May 2025 14:26:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42F782045B1;
-	Sat, 17 May 2025 14:18:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GNdysJ6q"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E290205AB9;
+	Sat, 17 May 2025 14:25:57 +0000 (UTC)
+Received: from mail-m49198.qiye.163.com (mail-m49198.qiye.163.com [45.254.49.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B4C936124;
-	Sat, 17 May 2025 14:18:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D6644B1E6E;
+	Sat, 17 May 2025 14:25:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747491513; cv=none; b=kzy4k5/S2W0wcn1a34NJWHWwhuLxqDNdgnOxaxk54vsAwYDOB82JnmBid7BIb+br3qj1IDxXvtZhIdGx+9/UtLmmMCKp4WbUydj9re5M4IAjFOCgJcLfdYJoh7QT7ygYHsuPvNYRi24KTjy93ZQXXHPbxQJpHldeJ8Ee1hAyXBE=
+	t=1747491956; cv=none; b=Xs1qTr+U1Qev9FnGIanpHUlpaZaNKixvSqcjyQQN7eaP0AD+pscFmgt4O6v2M+kTOnxDYX8+zweCfhPc7aqhUADSOTiwXkpUt+hHKFzw6x8ZJOevxHBYlxFVz9SqbhOavRbUokcJaxBjdaHN2jEID9PoisDLGuqtbcayR0hcFTE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747491513; c=relaxed/simple;
-	bh=LxEYc2pAjQx8x8cwygYNqZYnBKrdf5NUsjqGkCTuDp8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RxsNrzSYWbbgDyCPa9GgMYEe55WF62GQiDIWfpxqAMtPnXSmNjLYMHnpFaXBoLlbH+VGl+d3ZkDBGTfDtCqQ1FpwwucqZ3tGKQSmVcyIrq1YOu6tTUwUNAmhIbPUs3sFTRUA1mLKNEGZOKJ5zb178IdKgFgb81HqGqkwqPT5OH8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GNdysJ6q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2DEB4C4CEE3;
-	Sat, 17 May 2025 14:18:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747491513;
-	bh=LxEYc2pAjQx8x8cwygYNqZYnBKrdf5NUsjqGkCTuDp8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GNdysJ6qQ0FTwkov1iCMUY92ST9UXn64g1zrLpTmf2yFYduDURdDGbfBnMUuzxTX+
-	 eYtdmg5ggiSlSbmKQoockgqmoJ33g5BmdQJy1jYQ3b6MUztC48/4CgfZaofxyDL45w
-	 H5T5I7dxd5nDu6ncznXhEnMnFxJzhDnhkvDcKHV5mtO83lkYrkYX/k7k8qc6x5ewgv
-	 XsDQKFfXZu1X1u4TfMOAoFja5cJl5Crp3U+FyTWTFtkd2hGAIT+6NlI0Hx0LO/SoCw
-	 ikBVNXyass9H3K8ag7xpl2LhEJ2lOmIqipcWxj/MOFVlExqG1PtccQKmUW1xggAmdb
-	 SQYLuzsOGCiKw==
-Date: Sat, 17 May 2025 15:18:28 +0100
-From: Simon Horman <horms@kernel.org>
-To: Wei Fang <wei.fang@nxp.com>
-Cc: claudiu.manoil@nxp.com, vladimir.oltean@nxp.com, xiaoning.wang@nxp.com,
-	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, imx@lists.linux.dev
-Subject: Re: [PATCH net-next] net: enetc: fix the error handling in
- enetc4_pf_netdev_create()
-Message-ID: <20250517141828.GN3339421@horms.kernel.org>
-References: <20250516052734.3624191-1-wei.fang@nxp.com>
+	s=arc-20240116; t=1747491956; c=relaxed/simple;
+	bh=DmeY3YouFP9bsBkCPDQ4W/C56R8APGZdkd/YEZ5y3YE=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=QzV+IG40w0pMNq6LSzOsyg+j5sqWIRlGL4URV41RTGlmShIQ/ioq0qEZbuGgbFHxJ/2IgNsP8TDxvocamhL7bXSAA5431IvbWZ72FQDZJgBd0E2XlzaO49yA0jvkBGe8qf4WpAqiH51UnL15cxTAcYxwL+08w04P1VN1u7Gj76w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=whut.edu.cn; spf=pass smtp.mailfrom=whut.edu.cn; arc=none smtp.client-ip=45.254.49.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=whut.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=whut.edu.cn
+Received: from [127.0.0.1] (gy-adaptive-ssl-proxy-3-entmail-virt135.gy.ntes [27.18.99.32])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 1562e81de;
+	Sat, 17 May 2025 22:25:39 +0800 (GMT+08:00)
+From: Ze Huang <huangze@whut.edu.cn>
+Subject: [PATCH v3 0/4] Add USB2.0 PHY and USB3.0 PHY support for SpacemiT
+ K1
+Date: Sat, 17 May 2025 22:25:13 +0800
+Message-Id: <20250517-b4-k1-usb3-phy-v2-v3-0-e0655613a163@whut.edu.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250516052734.3624191-1-wei.fang@nxp.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAEmcKGgC/22OwQ6CMBBEf4Xs2SVtKQic/A/DgZZFGiNgC1VC+
+ HcreDSZy5vMzuwKjqwhB2W0giVvnBn6AMkpAt3V/Y3QNIFBMJEyyc+oJN45zk4lOHYLeoGt4iR
+ 5LgsmCwh3o6XWvPfOa3WwpeccqqfDBFU7Qj08HmYqI5/FPEWrOXzDnXHTYJf9Hy/29G86/zMdx
+ FBlBTHR1LkkdXl18xRTM8e6h2rbtg97ajfP4QAAAA==
+X-Change-ID: 20250417-b4-k1-usb3-phy-v2-fb1e41849049
+To: Vinod Koul <vkoul@kernel.org>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>, 
+ Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org, 
+ linux-riscv@lists.infradead.org, spacemit@lists.linux.dev, 
+ linux-kernel@vger.kernel.org, Ze Huang <huangze@whut.edu.cn>, 
+ Junzhong Pan <junzhong.pan@spacemit.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1747491939; l=2251;
+ i=huangze@whut.edu.cn; s=20250325; h=from:subject:message-id;
+ bh=DmeY3YouFP9bsBkCPDQ4W/C56R8APGZdkd/YEZ5y3YE=;
+ b=mljUl/w8vneZSD2Spg8DapkxZoOF9mHrm9hkoMqGjRtE8rycf+ijg1n8asB8Gb7obk2yDpygC
+ P45MwU68o9aA6mJ3/36TWRC2c1D1rJ8ptMqaZsnvxlgJCJkn1bfXXH7
+X-Developer-Key: i=huangze@whut.edu.cn; a=ed25519;
+ pk=C3zfn/kH6oMJickaXBa8dxTZO68EBiD93F+tAenboRA=
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkaGh9IVkJIQ0IfSEpDTh4dQ1YeHw5VEwETFhoSFy
+	QUDg9ZV1kYEgtZQVlJTFVKQ1VCQlVISVlXWRYaDxIVHRRZQVlPS0hVSktJT09PS1VKS0tVS1kG
+X-HM-Tid: 0a96dea2e5bd03a1kunm1562e81de
+X-HM-MType: 10
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6NjY6Hio5DDEyPiooCi4IESsY
+	ATwwFAlVSlVKTE9MT0JKQk9OSU9MVTMWGhIXVRMOGhUcAR47DBMOD1UeHw5VGBVFWVdZEgtZQVlJ
+	TFVKQ1VCQlVISVlXWQgBWUFIQ05KNwY+
 
-On Fri, May 16, 2025 at 01:27:34PM +0800, Wei Fang wrote:
-> Fix the handling of err_wq_init and err_reg_netdev paths in
-> enetc4_pf_netdev_create() function.
-> 
-> Fixes: 6c5bafba347b ("net: enetc: add MAC filtering for i.MX95 ENETC PF")
-> Signed-off-by: Wei Fang <wei.fang@nxp.com>
+This patch series introduces support for the USB2.0 PHY and PCIe/USB3.0
+Combo PHY on the SpacemiT K1 SoC. The implementation has been tested on the
+Milk-V Jupiter and BananaPi-f3.
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+K1 includes three USB ports as follows[1]:
+- A USB2.0 OTG Port
+- A USB2.0 Host Only Port
+- A USB3.0 Port with a USB2.0 DRD interface
 
-I note that this is a fox for a commit is present in net-next but not net.
-Thus a Fixes tag + target of net-next is appropriate.
+USB3.0 PHY for USB3.0 Port is shared with PCIe port A, meaning that only one of
+these interfaces (PCIe or USB3.0) can be active at a given time.
+
+Link: https://developer.spacemit.com/documentation?token=AjHDwrW78igAAEkiHracBI9HnTb#part5 [1]
+
+Signed-off-by: Ze Huang <huangze@whut.edu.cn>
+---
+Changes in v3:
+- improve commit message, provide more info about phy hardware
+- drop superfluous local variable in `spacemit_combphy_wait_ready`
+- replace devm_reset_control_get with devm_reset_control_get_exclusive
+- Link to v2: https://lore.kernel.org/r/20250418-b4-k1-usb3-phy-v2-v2-0-b69e02da84eb@whut.edu.cn
+
+Changes in v2:
+- combphy dt-bindings:
+  - fix reg-names
+  - describe reg
+  - describe #phy-cells argument
+- drop stale ".owner" in driver struct
+- add support for usb lfps_thres in combphy
+- fix Kconfig depends on
+- Link to v1: https://lore.kernel.org/all/20250407-b4-k1-usb3-v3-2-v1-0-bf0bcc41c9ba@whut.edu.cn
+
+---
+Ze Huang (4):
+      dt-bindings: phy: spacemit: add K1 USB2 PHY
+      dt-bindings: phy: spacemit: add K1 PCIe/USB3 combo PHY
+      phy: spacemit: support K1 USB2.0 PHY controller
+      phy: spacemit: add USB3 support for K1 PCIe/USB3 combo PHY
+
+ .../bindings/phy/spacemit,k1-combphy.yaml          |  72 ++++++
+ .../devicetree/bindings/phy/spacemit,usb2-phy.yaml |  40 ++++
+ drivers/phy/Kconfig                                |   1 +
+ drivers/phy/Makefile                               |   1 +
+ drivers/phy/spacemit/Kconfig                       |  21 ++
+ drivers/phy/spacemit/Makefile                      |   3 +
+ drivers/phy/spacemit/phy-k1-combphy.c              | 248 +++++++++++++++++++++
+ drivers/phy/spacemit/phy-k1-usb2.c                 | 131 +++++++++++
+ 8 files changed, 517 insertions(+)
+---
+base-commit: 64e9fdfc89a76fed38d8ddeed72d42ec71957ed9
+change-id: 20250417-b4-k1-usb3-phy-v2-fb1e41849049
+
+Best regards,
+-- 
+Ze Huang <huangze@whut.edu.cn>
+
 
