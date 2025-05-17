@@ -1,123 +1,107 @@
-Return-Path: <linux-kernel+bounces-652293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-652300-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7087BABA97E
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 May 2025 12:13:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADAF7ABA98C
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 May 2025 12:51:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA0754A48C1
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 May 2025 10:13:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1099F4A72A4
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 May 2025 10:51:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E12D41E521E;
-	Sat, 17 May 2025 10:13:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gXDRp+AZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45269F4FA;
-	Sat, 17 May 2025 10:13:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C62A31EBFE0;
+	Sat, 17 May 2025 10:50:49 +0000 (UTC)
+Received: from pegase1.c-s.fr (pegase1.c-s.fr [93.17.236.30])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9C581F473C;
+	Sat, 17 May 2025 10:50:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.236.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747476818; cv=none; b=YoJjwBj3mAFtvoQz3SdGo+nJDzoB81iqI6ZoiEZtnwDpW3p3yeOP14Cghl/U5NuPUjQEoPFpBihk6MtCIjFONkuECcrMX6liv6Hw5/LJgujdFx7rWqKfKNYugc0XKZ6W2l5gZBeC674gxy3eioLiVq2QwJcsKtuiUFzjTPWQXPM=
+	t=1747479049; cv=none; b=H4+R1YBQDz7ENqkDR4IYdmuIRxSp6uXkWeuV+6HB4tgwekIn2bH44q4EnS2IufElhuC7HTFWtfLs8dBitynm/tuJPN65/4kqu4ucSgxejHxr+XUjCkFouTLsZGdLph0i1AZFLau/oulWt+wcMB/d6HJKlMLXpB5GWfPh/T4dQt8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747476818; c=relaxed/simple;
-	bh=8yh9ur/IZvga/MBbfC24SRQ6hiqIOhARvKINKIIyYsw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uDJia0ZsXOupalfbfGosEk4bnCP/7E1+DJwK0vBn40d8efMWEH0bOI+BZdG+O5lWdHxy0BK1/nhPLtu9wnL1VVMVGEmLpROt9yWTPHCcbU9Zrf3tvwyB3n901pwDnYKsCYkMSACzil8cOpsx5NgBGVfnrMwa2HWJ1pNLXd2/S6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gXDRp+AZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8BFDC4CEE3;
-	Sat, 17 May 2025 10:13:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747476817;
-	bh=8yh9ur/IZvga/MBbfC24SRQ6hiqIOhARvKINKIIyYsw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gXDRp+AZr6hTkDdELXCjL8VZSUncksHbTgeuKQBwpTJciP10Le46qm6h24SJz8EDN
-	 gyOUOXzwifMGvpdxiuHvWRULijdksDs+nAf8bbJX7OD0MCDPLMeWIvvLGmyFYbTs0y
-	 s7eEA7PPyJpJcsoAcrEcYEhlVS84kQO51FW8bFSo894kB/zv7zroBH2bNVY8nlDZol
-	 m/Mv4emnCmLonzPJGL3VSNdi+AhaNgn2f44d1ou2xZUmDzdh3behSJxWDxx8Kj+rjE
-	 djoPd6KjAsjWezADaCYeNahN5zyAdRlK72LU81WHjdhKYR3WbpNvH8Q5AxtZWKjeuQ
-	 Muro7NPPMh9Ag==
-Date: Sat, 17 May 2025 12:13:32 +0200
-From: Danilo Krummrich <dakr@kernel.org>
-To: John Hubbard <jhubbard@nvidia.com>
-Cc: Alexandre Courbot <acourbot@nvidia.com>,
-	Greg KH <gregkh@linuxfoundation.org>, Timur Tabi <timur@kernel.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH] rust: add basic ELF sections parser
-Message-ID: <aChhTJvY6KFvqrTP@pollux>
-References: <D9WP3YU31199.Q8IEDBJZ87LU@nvidia.com>
- <2025051532-gentleman-reset-58f2@gregkh>
- <CAOZdJXWKLu0y+kwC+Bm8nBCLizQVpsDdDUoS--hVgz2vnuZJQg@mail.gmail.com>
- <8b14b078-b899-42e8-8522-599daa65bc63@nvidia.com>
- <2025051647-urology-think-b8e0@gregkh>
- <D9XMAV4ERYK7.39TLQBLYTX3TU@nvidia.com>
- <aCc_PSOPkLWTcTru@pollux>
- <D9XNS413TVXB.3SWWJE4JGEN8B@nvidia.com>
- <aCdhS10JCh6HRpqV@pollux>
- <08a91cb8-2e08-44a5-9d5c-c2c223aaa71d@nvidia.com>
+	s=arc-20240116; t=1747479049; c=relaxed/simple;
+	bh=gTe1bWFz2aeZjA8xm0aK+6a85+NBSGps8O1zizoWqow=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=mno1JXVcb2LX0uGGysjS5yLlWmKQzu30+3kbH6gQcbmDpJX8LCFhk0rxLx3Ojf3uIxZDgdJtFxJaK8dV4u7WFFUeYFQ5qdwXoJYm1HwmS6lc5PPGD8by57eC+NKqe+NHiANTdXi37WMuLsbURSaMxZQF0i+xGBriDqPEQ1bUc88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.236.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [192.168.12.233])
+	by localhost (Postfix) with ESMTP id 4b00Lw4Q8Lz9sWd;
+	Sat, 17 May 2025 12:20:08 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+	by localhost (pegase1.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id lAQGIddjf2x1; Sat, 17 May 2025 12:20:08 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase1.c-s.fr (Postfix) with ESMTP id 4b00Lw3gtmz9sVS;
+	Sat, 17 May 2025 12:20:08 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 778DB8B768;
+	Sat, 17 May 2025 12:20:08 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id LHtpXwaBRXOP; Sat, 17 May 2025 12:20:08 +0200 (CEST)
+Received: from PO20335.IDSI0.si.c-s.fr (unknown [192.168.235.99])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 40D948B763;
+	Sat, 17 May 2025 12:20:08 +0200 (CEST)
+Received: from PO20335.IDSI0.si.c-s.fr (localhost [127.0.0.1])
+	by PO20335.IDSI0.si.c-s.fr (8.18.1/8.17.1) with ESMTPS id 54HAK3Eq013312
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Sat, 17 May 2025 12:20:03 +0200
+Received: (from chleroy@localhost)
+	by PO20335.IDSI0.si.c-s.fr (8.18.1/8.18.1/Submit) id 54HAK04l013287;
+	Sat, 17 May 2025 12:20:00 +0200
+X-Authentication-Warning: PO20335.IDSI0.si.c-s.fr: chleroy set sender to christophe.leroy@csgroup.eu using -f
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+To: Kees Cook <kees@kernel.org>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Sean Anderson <sean.anderson@linux.dev>,
+        Camelia Groza <camelia.groza@nxp.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Vladimir Oltean <vladimir.oltean@nxp.com>,
+        "Dr. David Alan Gilbert" <linux@treblig.org>,
+        linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
+        Michael Ellerman <mpe@ellerman.id.au>, linux-kernel@vger.kernel.org,
+        linux-hardening@vger.kernel.org
+Subject: Re: [PATCH] soc: fsl: qbman: Remove const from portal->cgrs allocation type
+Date: Sat, 17 May 2025 12:19:35 +0200
+Message-ID: <174747706460.12970.18215881041765719309.b4-ty@csgroup.eu>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <20250426062040.work.047-kees@kernel.org>
+References: <20250426062040.work.047-kees@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <08a91cb8-2e08-44a5-9d5c-c2c223aaa71d@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1747477178; l=823; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=hNTrwDECXwzB0w5bCYwkYV4UpWwqz6HdVtTVORZF/Fw=; b=mFKsjfXcvpGeGE31KGr09d6oDBkiSjZI94a2MDnCQHBHukcnmeqcKT4xhZFmPL+AOOsVnsPBU ZAVkzoD/un4B/P+9R6d8wR5yHjP/i80Y1UZC5JifRFWXwlPuejDEQbq
+X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
+Content-Transfer-Encoding: 8bit
 
-On Fri, May 16, 2025 at 12:00:11PM -0700, John Hubbard wrote:
-> On 5/16/25 9:01 AM, Danilo Krummrich wrote:
-> > I did not argue for or against it -- what I do disagree with is that we seem to
-> > just agree to disagree and stuff a generic piece of code into nova-core after
-> > three mails back and forth.
-> > 
-> > Please keep discussing the above with Greg until we get to a real conclusion.
+
+On Fri, 25 Apr 2025 23:20:41 -0700, Kees Cook wrote:
+> In preparation for making the kmalloc family of allocators type aware,
+> we need to make sure that the returned type from the allocation matches
+> the type of the variable being assigned. (Before, the allocator would
+> always return "void *", which can be implicitly cast to any pointer type.)
 > 
-> Danilo, this is a small amount of code. Is there any real problem with
-> a compromise, that starts out with Greg's approach of putting this code
-> in Nova?
+> The assigned type is "struct qman_cgrs *", but the returned type,
+> while technically matching, is const qualified. As there is no general
+> way to remove const qualifiers, adjust the allocation type to match
+> the assignment.
 > 
-> And then we can promote it if and when we can make a good case for that.
-> 
-> But in the meantime, we really need to be able to take "yes" (from Greg)
-> for an answer! I don't want to blow up the firmware images, shred
-> the "Nouveau and Nova can use the same images" story, and delay merging,
-> all over 100 lines of code.
+> [...]
 
-What I disagree with is that it seems that you actually *can* "make a good case
-for it", but stop discussing it with Greg, because he would agree with just
-stuffing this generic infrastructure in the driver.
+Applied, thanks!
 
-It seems like taking the way of least resistance even though you seem to have
-good arguments for this to be generic infrastructure.
+[1/1] soc: fsl: qbman: Remove const from portal->cgrs allocation type
+      commit: 5ddac92be4209f29ec26b3ec59a08fc76afe9ab1
 
-The fact that *only* nova-core would use it to begin with is not the relevant
-factor. nova-core is, for obvious reasons, the only user of quite some generic
-infrastructure, yet we don't stuff it into the driver.
-
-The relevant factor is, do we agree that this is a valid requirement for drivers
-in general (which you seem to answer with a clear "yes"). Which means we should
-keep discussing it.
-
-If we can't conclude that this should be generic infrastructure, we can still
-figure out the way forward for nova-core (i.e. have our own ELF parser in
-nova-core if necessary).
-
-But, as I said above, please don't stop the discussion with agreeing to disagree
-after three mails back and forth.
-
-We have plenty of time to discuss it; we do not target v6.16 and the v6.17 merge
-window is far away.
-
-- Danilo
+Best regards,
+-- 
+Christophe Leroy <christophe.leroy@csgroup.eu>
 
