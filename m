@@ -1,111 +1,181 @@
-Return-Path: <linux-kernel+bounces-652473-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-652468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1475ABABDA
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 May 2025 20:27:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A991ABABC5
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 May 2025 20:06:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A4B6189B0B4
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 May 2025 18:27:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 48DB51B620F5
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 May 2025 18:06:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 580492147F5;
-	Sat, 17 May 2025 18:27:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8E402147E3;
+	Sat, 17 May 2025 18:06:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="ttwAqimS"
-Received: from sonic306-20.consmr.mail.sg3.yahoo.com (sonic306-20.consmr.mail.sg3.yahoo.com [106.10.241.140])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TvP9tHw2"
+Received: from mail-ua1-f46.google.com (mail-ua1-f46.google.com [209.85.222.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F15852147F0
-	for <linux-kernel@vger.kernel.org>; Sat, 17 May 2025 18:26:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=106.10.241.140
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93CCD1367;
+	Sat, 17 May 2025 18:06:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747506420; cv=none; b=POGo5Q25lPoLKuZKfAECzaKp4/MJTJrXhuJCE0bSJJmG+UWYkXlLGQ2bPVi/4V0M1mt/zvYvRSA3V+6VybcIOPZRejW6RFIRs48rt8sSRRgNABtMd4jNNnAEdU5NA6m2DXvloOylN86Ozkh9mRd1+hrgdLO2FIh0Pe49IH/NZj4=
+	t=1747505177; cv=none; b=JDhsBmCrpgfY8Z0vjgeENRaxpTT0crSnangq0RJIO81qV/aDY0AQ/IBlGTXKrOnoE0cqCJdTHQD8Mq4JUkQHA1wVubk16xkZC35KRnx6HRm7dRDkvj1sr0hESj+FN27WllHR9aSJE3lB/NLbH774y7Eu3sr6vWHJDMGpXMdjUto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747506420; c=relaxed/simple;
-	bh=EBqHy2tR5pNufrZGJpYLAcDwSIe7Er6lEEDQ1GY9Tkg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:References; b=CsqpmBSdP/KsTfAKzFKON45GKxQ5Qte+jQclQfEM2rVo34iYKyF+DYIgIa9zt2t6lTBpCQ+/F64upxWw303u/7u/yj7n6+8HAQ63YbMtVzK7YdvjKFZLr0xD4NbEUYiWYStwE517wBhyVt9GmmzAII2RQlp+kUE7QiNMa8StPX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com; spf=pass smtp.mailfrom=yahoo.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=ttwAqimS; arc=none smtp.client-ip=106.10.241.140
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yahoo.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1747506417; bh=3UHvXxXmIvOZrge3esMONCsNL2kDZZe74x0xb+Kshfw=; h=From:To:Cc:Subject:Date:References:From:Subject:Reply-To; b=ttwAqimSywt7JQo8oQ4u1s2JiL+LokeLWZipRhOchBkejfeFnVP79JXPMt4XpWZN0GJ/ooqx73XA0pX9KFvfpJgZwqGynyCV+dh5TrAw7gS8Cf53h8B+/R7pQKZ5NEUp4oGo1QqTyVx9ztzAovMoamibKDDATgYLUTcDyhG9FYwvpluzF9Vfn/XfE9KXY/oUpwHAZqeKo7eZlY7EgP/xlK0DtuvfnQpKB8HVhf6Bbz9F4FCX+v23gOUEad/pRTOCPfBxAZD+MEv8tOjxg/crwsABh2q0aOyv4EijW08YuufCHsXeqlKH/Ht5bmWvOezP7luVUVcQGyegJsUkyDQQiw==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1747506417; bh=nHC23dcJAUQdInXpyTIIm6tBpfjsNQa2UNePCqjP+/t=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=ScvYzWVwVgKUbLhKFh8FzzSuVKTAKr1yIdNaDkEZWSg95n2qiREWxK6hY7V4WWY1nyU4G01fkTlWsNWfqdpwmUqvaS9GvgJ6PTNuqkHw/9irWAuXgUf8zKUo90VnHzR7m6HthDuxTySMbR83v+jA/fifElV04JGafIW+wzf5f7anXZGndnz2e96OEO8pylvrI5uoNRUabQ82DGLbPhWj/oILsBpqqrTV/E4fySFEaxjis3v2dU0Y0TLqM9DTcXEtcQVIJ5eHYUgjbf/PKLtkK86BGINDGB0MMwOP/VRZRadWHyyGYLEGZrN1lIFf2jHfkHNtfwtVZNemukEEVmJNJA==
-X-YMail-OSG: OMoe9fcVM1lWRtfkB7dZ353UbqAZKH8M4RDoC0lg9_UcQe95_XBIm5y7B8CdhL.
- WXwfG0MvuLPTtZ9EEjOo8yU1eYswMkGbRZIBVpTh79Uu7X380DfTUoFJxTGhFnSPZ8q0S.n1nXzQ
- yRFEUZu6ucW7f9KtjET4IUwlmLJRY_fB.9RWdn3ZhnKeQKxRb4qZcscvaLyUymWBcWSvCymn0gUU
- 6hDBcNgJgsRhZ43o2Vc666zMCQxDUvOe_hzFSkYLr1E8gHaDbojPJawoWhfD2pW0vrD__Z_Nh7mS
- jyF8ysS4hfTa5a.UROuDRNiHTvRvCdL3lH2U5wD3JE42lvISndHFOmq4hCTfFK2gYP3dBbRGjq2q
- e1rUmysjyo8ZO_qf3nrN5LlZH7N5WeqmWGE9zsqju9uA594OZRz0dpDypkDQ3dyu1gXoJRC0xTz6
- WhgQOG0SQuPYk5_mZOdzMGBSCNI.jGtCc2PRQOLisWOjBYg_eZCiTRi5XZXSu_d.iQfmtEu3JLbZ
- dMKT.CyGKl5H8JyTafWqFeUh_rHPAOs.a443HVKWq4rVA0h8DhFjjqgl5WPCIejX70ZLhkN3PWpr
- M2P.NFrLMOfAnOFP9pwRDF_6x7aR4LWSSjFhojcLPhpVMLb9od0Ddtnc1pKTkNFpXPCuwPyiE1Yu
- 3FsIafPRnGI1rIsHZ9Md1YnJuYcJgTWsFIuCIYLa4u0rMG3jlROkGgL4EBAWl81H5jWMyskljCVm
- sauB0rildYCw_y9kDp4EV3hqdOawkg9V5hoI5SsIp3SHRz6FGut0MjFr7HE2ZjYFaTT5fBuuAwML
- kBksH6pY0WJMMVo4Uc.5eDvvLozD8H3SsVIzV3nwwz6caQ5qnyULjTb43ZtE8aTI5Iw318J1IejS
- EzkR1Hu7RvMDwchzUu_3XJ9r5HKz1701KnVzP6xalMne8WPfMvlHZMc6ssADCelgkdUDRbnNBFxf
- MyzUnUTUpGrlPRQsPFtCpRYLDnj_oNXmyVhHxJOS0e.UrOh4mwUgfS88USMUeTtntkdagOeqlEyh
- fA7g5KU2pfq6c7L5qnXkhiPDXFjMBPcgvOj4gvd93fuLt_NpcUF.EYwa6xu735USYHfFhIvE5WFS
- WhY5MzlN2V1qyxZ1YYlfahT2iQNrpF_leC5B2Cdoi9KtEKtLq8wNlPJklevLRNeuNwREhBwTKxiT
- 8cEfbqU_AnBlkq9DGEIsgNO6tO19TvcrgYaAqtHCYPDzRdsLMJ2g_vHXW4XG0ymIKu3gCo9xSLJ8
- a2Pl1FUSgsqknxSSW7_5_PVWdkjGro0sAEHCDjF8HUgDQi.bkURuQrBO6shoU2HiR0mMw8.Mq4th
- u9rP0yxTxCFgXEfQOnmTYkyf1M_HgqN3ZVWSXgKtutNVdNt7b6JWlKA_EOSr8KByiucNz6qoGixc
- k4ggg2ZomwZ5dtrvBbPErBTUe7_JKyF_AbmirM6ui_FmQp75mAQ1LyLeP7Jc.4dymlKejFSn6Txn
- JjBTiFQDaENvZIS8DOeQ8lGwNV1ntazH5Jd2d83xOjCehCHODsDaqx7FPY4qsru5RDweKiFp5zvk
- IRNOld5P4OWV.GCYI_Yt5GGFBqZUED2mRszN02umn0vkl4IFLidWtWV7ZgmZ7NeOhuY5YBnm2dtU
- d7SZZr4UNyqCetApxk0JmU4u_6qleOy0GaE0hgkMJXa8RGCPm.ZK.AFNc9R2bSTJkps.ymflmLxy
- AkgviLHIIaheC4aYDmIOeBe.rD.Vq22oBIZFxLQmj2edygwHPZA5_BZxHUWmhN0PkAdUstrc4pgb
- PxHaZbllLB_JgToKI8IyIgRdUhA3_VDqHSOmth75ib7bm9v4cSj7DnjpbauVUdy2YUg3eg9qbGF.
- pCbgz0fqK_ecMeosLfKewyCaTo51lPccUcnmQQCHg6LkNrVQesF4WuT5LU0DHvUEh8njBeHqzepC
- QmrvOglvtQZkKDx8lZDBmJ3Ps12Qg7zj5cuwCj8A7m2NA1i9DH1Yr3I4La.VV3ebLgmeKBy_nMB8
- Y4okd5R2lO0OVBoXJrQB4LthVCusNXl00BRBm3EZp4Y19AaSQtCDFV05HSLm8KG3Oe7LaUieQYEa
- eoe32FxVZ3ILF2w1ELJwBJ99TeFVVTUTIgxBw9cEGWNAEnNaP1ENvq2TI.brgorMnkAcwIqd.DZu
- A_Ipqmaa8P15W50SRtvg_JrC.ipjHJTQPvjCCOOx.oLP3lBpe4nP_WWpJgAPAB6pxkmDec4FSWUs
- HmKrtkY8-
-X-Sonic-MF: <sumanth.gavini@yahoo.com>
-X-Sonic-ID: 21cb2226-1882-44ce-a8b4-2a820bdef71b
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic306.consmr.mail.sg3.yahoo.com with HTTP; Sat, 17 May 2025 18:26:57 +0000
-Received: by hermes--production-gq1-74d64bb7d7-tqd77 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 3970cc1b0723ee96acf525c652fe9875;
-          Sat, 17 May 2025 17:56:31 +0000 (UTC)
-From: Sumanth Gavini <sumanth.gavini@yahoo.com>
-To: skhan@linuxfoundation.org,
-	W_Armin@gmx.de
-Cc: Sumanth Gavini <sumanth.gavini@yahoo.com>,
-	platform-driver-x86@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] docs: ABI: Fix "aassociated" to "associated"
-Date: Sat, 17 May 2025 10:56:04 -0700
-Message-ID: <20250517175626.1363502-1-sumanth.gavini@yahoo.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1747505177; c=relaxed/simple;
+	bh=9+h1ovfHuN/3wPA02D/nmMQE3r1DllHMRk/oSCTS1Ts=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ovU1MqCqWpp4mgVsAuWofEnRvls29WdENYyL8kjUSHyw+/uKzFy979Y7Kv6CxgzPUiR62eY7aikd2bwWxYei4gbGCVu/H64SN4jVs/yNx6giENQEl3n41dUHAhzMiXkt1aOhW5ZUOS8GzOiXm5NobC9VYfnla4x2wMNf5DMwc/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TvP9tHw2; arc=none smtp.client-ip=209.85.222.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f46.google.com with SMTP id a1e0cc1a2514c-87bee00b392so1119492241.3;
+        Sat, 17 May 2025 11:06:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747505174; x=1748109974; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=p1schRBN0woVB0x+Am0mrrm4rSAKoNb5LVQXWFxsgYM=;
+        b=TvP9tHw2RlIDpigivcA4PIDZw1YxU+m0YB7aI02/QghOcL1MLisp5V06ZTD4NLSXyL
+         z6aYxhsowIA9RoO8ztjfP6M/UPPYJhvDUCGhhbw6lT8owep89mxPDROO5+GIeK/OHQGj
+         leDULPc3IOEukbrlAdL4hMbEDHZg8Wbl3Rh9k7rIlvMfTr/DWEl1kDSMbpYBXyjfTwmd
+         8mXDEubrE53SKfSRF+pUmfyN89AYRlNe+N1kfEhnOsag+LuZrm34964kugqXCd/QPxVs
+         9uQrmrJq/wm66c3r8JWVWX0vbU2lo0RTKpJNaDp4/XNwhPgnUvzibiBHBHUPFWYGWd22
+         BwdA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747505174; x=1748109974;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=p1schRBN0woVB0x+Am0mrrm4rSAKoNb5LVQXWFxsgYM=;
+        b=ZsdygAQhPfoD4GPYc4h+JbwjqMGN6wecgKbjRlcl6/9CNkj/SngAPdCjFfhk+ZSxHg
+         80jzTTsLXA0jUE/NFDY6LoPvosjtaGS9aWZdNO+dmo8WcjoHulLwC0d9gXDH1inbhnXv
+         ln2EhxVtco26QkSa586DB69WZEODxmith62jjK/4zVhNMCvT5GjH3tyqxXjUUmkijdHP
+         rJOvescnTl6o2SmEJmRbW1LY2BhA/IP63PB1ArpoeHp2Ss36v4ZkE44S4F7dtHFyQ1Jg
+         HFWt+/qIBX0Oy/ouMcuGZzOiJd4IjZVLw2583I1jY/TANzF6tNbjaZnU3T9mIZ0xc4F6
+         QUSw==
+X-Forwarded-Encrypted: i=1; AJvYcCUcz04l9HL8AnJnIjAobRZLAoeTo3MfYMaTyZdf/SMlb9t31d1DjzftSu1iMDdvQQ24bd7tIgJYTj28w7o=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzgc8xLk3JCc+B91PvHZMdH4WFI67DZTh3HbKzUQVccOVzdcaEW
+	P5qd8jfdSl6ND4W5QoswvQdT/oitIDULH1nQ1kiveQZBS6+qOMyE+jJSmR/D7iEiQQVUgY/QKp+
+	Dkx51PIkueDZNItka2DzOJrY6bkcjkDs=
+X-Gm-Gg: ASbGncsIQfcB1OLJYwXAHatBr1CxBCx3VXF+9m/Uz6zq3RSKxKGbr3wqxsGglExai2Z
+	LUhxg3r6cLUMZMuG7T0yOUOp+57nYWR1o5iPZhg9poheLhslsJsbM/P8qS4Qpd3oUU8W1miMVVt
+	tx/4CKiMtoI/b/AP6XRHCpPAksb4FOPqx1yYh8ta/zvxCM
+X-Google-Smtp-Source: AGHT+IH66PFdaZi5J8HDbVArPmOY4TBk+24AltynhiohhEtefKF4b5APmjMEeCNcvpc2ZeWTrAZPNwbAZPkXZvyAPfQ=
+X-Received: by 2002:a05:6102:3e95:b0:4df:8f03:13dd with SMTP id
+ ada2fe7eead31-4dfa6ae735fmr7820730137.5.1747505173766; Sat, 17 May 2025
+ 11:06:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-References: <20250517175626.1363502-1-sumanth.gavini.ref@yahoo.com>
+References: <cover.1747231254.git.rabenda.cn@gmail.com> <4f5eaf5285dbeb0de1c8aa4700ca0910273e7674.1747231254.git.rabenda.cn@gmail.com>
+ <MA0P287MB2262AB8F3A790B876AA2E989FE92A@MA0P287MB2262.INDP287.PROD.OUTLOOK.COM>
+In-Reply-To: <MA0P287MB2262AB8F3A790B876AA2E989FE92A@MA0P287MB2262.INDP287.PROD.OUTLOOK.COM>
+From: Han Gao <rabenda.cn@gmail.com>
+Date: Sun, 18 May 2025 02:06:02 +0800
+X-Gm-Features: AX0GCFtHMGcnarhky-ATNItjF_XCNfJdq0UotRwJwXxNaOVTLJwz1YvpazgWyKs
+Message-ID: <CAAT7Ki9X0KOuuZnVjT2=uexD67rfyL4Gq18ZDgr15CeaoNOmpA@mail.gmail.com>
+Subject: Re: [PATCH v2 2/4] riscv: dts: sophgo: add Sophgo SG2042_EVB_V1.X
+ board device tree
+To: Chen Wang <unicorn_wang@outlook.com>
+Cc: devicetree@vger.kernel.org, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Inochi Amaoto <inochiama@gmail.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Alexandre Ghiti <alex@ghiti.fr>, Thomas Bonnefille <thomas.bonnefille@bootlin.com>, 
+	Guo Ren <guoren@kernel.org>, Chao Wei <chao.wei@sophgo.com>, sophgo@lists.linux.dev, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Fix misspelling reported by codespell
+Added ethernet support based on [4].
 
-Signed-off-by: Sumanth Gavini <sumanth.gavini@yahoo.com>
----
- Documentation/ABI/testing/sysfs-bus-wmi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+[4]: https://lore.kernel.org/all/20250506093256.1107770-5-inochiama@gmail.c=
+om/
 
-diff --git a/Documentation/ABI/testing/sysfs-bus-wmi b/Documentation/ABI/testing/sysfs-bus-wmi
-index aadb35b82198..d71a219c610e 100644
---- a/Documentation/ABI/testing/sysfs-bus-wmi
-+++ b/Documentation/ABI/testing/sysfs-bus-wmi
-@@ -76,6 +76,6 @@ Date:		May 2017
- Contact:	Darren Hart (VMware) <dvhart@infradead.org>
- Description:
- 		This file contains a boolean flags signaling the data block
--		aassociated with the given WMI device is writable. If the
-+		associated with the given WMI device is writable. If the
- 		given WMI device is not associated with a data block, then
- 		this file will not exist.
--- 
-2.43.0
-
+On Sat, May 17, 2025 at 11:22=E2=80=AFAM Chen Wang <unicorn_wang@outlook.co=
+m> wrote:
+>
+> Hi, Han,
+>
+> On 2025/5/14 22:09, Han Gao wrote:
+> > Sophgo SG2042_EVB_V1.X [1] is a prototype development board based on SG=
+2042
+> >
+> > Currently supports serial port, sdcard/emmc, pwm, fan speed control.
+> >
+> > Link: https://github.com/sophgo/sophgo-hardware/tree/master/SG2042/SG20=
+42-x8-EVB [1]
+> >
+> > Signed-off-by: Han Gao <rabenda.cn@gmail.com>
+> > ---
+> >   arch/riscv/boot/dts/sophgo/Makefile          |   1 +
+> >   arch/riscv/boot/dts/sophgo/sg2042-evb-v1.dts | 247 ++++++++++++++++++=
++
+> >   2 files changed, 248 insertions(+)
+> >   create mode 100644 arch/riscv/boot/dts/sophgo/sg2042-evb-v1.dts
+> >
+> > diff --git a/arch/riscv/boot/dts/sophgo/Makefile b/arch/riscv/boot/dts/=
+sophgo/Makefile
+> > index 47d4243a8f35..2470e30ae901 100644
+> > --- a/arch/riscv/boot/dts/sophgo/Makefile
+> > +++ b/arch/riscv/boot/dts/sophgo/Makefile
+> > @@ -3,3 +3,4 @@ dtb-$(CONFIG_ARCH_SOPHGO) +=3D cv1800b-milkv-duo.dtb
+> >   dtb-$(CONFIG_ARCH_SOPHGO) +=3D cv1812h-huashan-pi.dtb
+> >   dtb-$(CONFIG_ARCH_SOPHGO) +=3D sg2002-licheerv-nano-b.dtb
+> >   dtb-$(CONFIG_ARCH_SOPHGO) +=3D sg2042-milkv-pioneer.dtb
+> > +dtb-$(CONFIG_ARCH_SOPHGO) +=3D sg2042-evb-v1.dtb
+> > diff --git a/arch/riscv/boot/dts/sophgo/sg2042-evb-v1.dts b/arch/riscv/=
+boot/dts/sophgo/sg2042-evb-v1.dts
+> > new file mode 100644
+> > index 000000000000..4f39a2575b8e
+> > --- /dev/null
+> > +++ b/arch/riscv/boot/dts/sophgo/sg2042-evb-v1.dts
+>
+> Please run "make CHECK_DTBS=3Dy W=3D1 your_dtb_file" before submitting
+> patch. I have a quick check and get following warnings/errors:
+>
+> Error: ....../arch/riscv/boot/dts/sophgo/sg2042-evb-v1.dts:67.1-7 Label
+> or path gmac0 not found
+> Error: ....../arch/riscv/boot/dts/sophgo/sg2042-evb-v1.dts:86.14-15
+> syntax error
+> FATAL ERROR: Unable to parse input tree
+>
+> And the similar issues existing for sg2042-evb-v2.dts.
+>
+> [......]
+>
+> > +&gmac0 {
+> > +     phy-handle =3D <&phy0>;
+> > +     phy-mode =3D "rgmii-id";
+> > +     status =3D "okay";
+> > +
+> > +     mdio {
+> > +             phy0: phy@0 {
+> > +                     compatible =3D "ethernet-phy-ieee802.3-c22";
+> > +                     reg =3D <0>;
+> > +                     reset-gpios =3D <&port0a 27 GPIO_ACTIVE_LOW>;
+> > +                     reset-assert-us =3D <100000>;
+> > +                     reset-deassert-us =3D <100000>;
+> > +             };
+> > +     };
+> > +};
+>
+> This should be dropped, we can add this after ethernet support is
+> upstreamed.
+>
+> The same for evb_v2.
+>
+> [......]
+>
+> Thanks.
+>
+> Chen
+>
+>
 
