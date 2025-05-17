@@ -1,80 +1,49 @@
-Return-Path: <linux-kernel+bounces-652262-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-652251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46C40ABA938
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 May 2025 11:48:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8856DABA91A
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 May 2025 11:18:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 245829E66B2
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 May 2025 09:48:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 28AD24A5A69
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 May 2025 09:18:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06FA41DE8B2;
-	Sat, 17 May 2025 09:48:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="LGjZcyrB"
-Received: from sonic305-19.consmr.mail.sg3.yahoo.com (sonic305-19.consmr.mail.sg3.yahoo.com [106.10.241.82])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E5AB1D61BC
-	for <linux-kernel@vger.kernel.org>; Sat, 17 May 2025 09:48:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=106.10.241.82
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B04581D86DC;
+	Sat, 17 May 2025 09:18:43 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A70352AE7C
+	for <linux-kernel@vger.kernel.org>; Sat, 17 May 2025 09:18:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747475328; cv=none; b=fWviExbDbPzpRKeyF5lQJ7iHo5dHWGhdsl3v9RD1x8x2fXwhcSiNJ4DHPORGHFqf04eLzdbGQcREVd922sPafpNm8vt41FxXvnmYPqh/x0ujg60/zpeP/f4AaP25HiOgIsiIcMfQ03wIkFPl4AAxD5qfQcL+psewr8kmHbxgRvo=
+	t=1747473523; cv=none; b=QaMzCaOCD0yiK/YpOOzrTp7Ncx2NSFRy0j/0LwBE/cMvHorz6yEfzBbb4+ILzi75K+Ln1Y5YlAwZZab6745cF3WrLMmnEVxbqLha0Dl1Wu6FM3zroPNlQlefTZmK+5SmnkJiOEoaFo4f2f2OumieWcD5Z9oFjeiiRTHGKb1I20A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747475328; c=relaxed/simple;
-	bh=Yb5Rql7cM+SMAkVBhFFCKxJq3PsJPcbf8EEVtS9Lv6I=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:References; b=miByzAPU+mFHCD0T0JOzdYH14nDMnesrT8acn/dgkmmUhOfJADgg8VTv396nAER71numBxik390TfjaTMwfScENkB9E9V0Cynpk5f4Ow/P2Zi4ROxa7zjQ+DqpLvokMKzHDblIkNlPzXoNcfiZI061hcJmzb6tf8CyHsWrybLng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com; spf=pass smtp.mailfrom=yahoo.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=LGjZcyrB; arc=none smtp.client-ip=106.10.241.82
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yahoo.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1747475324; bh=QQhY0Sb/OCIv/LJ1TZqQpbqN7VPKZZoSds6JmDCrdfo=; h=From:To:Cc:Subject:Date:References:From:Subject:Reply-To; b=LGjZcyrBWfLQ5kNWV9aoRNJRRr8Cx4d4OW1jZWby2knYUXkrjwjh0gNmqH9sqo1fEIKG7myJJJQekrPp4v5/qN5lsa2xBXJqZQU5mEmzCoHXB9E7BkCpack8eQx1zC6YMdCHbOR3CxstH85/QqOTW7/ckziB414Un5t5k+f/G8ceJrPdW9VSEyBYThTAiQfweuGd/qgMTtCpbJ6Kk+OGGJ3+6COG9n64P4X1tWEQb7OooUpI/dOHAgvCYW0AFEGF7HL/WtI3k929+OSWkRwZm5beN3IE9/g0LTW6RCSCvCnfQD+xRdOF7nN+PNwsqla75emR14X1A1vy1He1/q2oyA==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1747475324; bh=j65iqfWO2i37mDIkYNc53Nc9fh6ygdZrFU8BmaZZVQI=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=XeciN6kJ86Lg/3rMVHCq8XJgJocCd/i8V6czkEBdBPLXySdTW8oKGgKhex498IofTxwP/39vWWxSZEGj0hoIjYBjSu5b5A/0lmppAhAdEwGpcDbJPsfpvH6zL7qgDRxUSLTEUNQq3fNnoKDMzrnzdNExE/wC5u08p9UMyprUSs75Cpc7lbCHzfr0NvGWfxAvUvpqm1Q4lp+ROL7+NapSHmkJmiKsihoCM8zJ7VEkoFJgd+QxYkpCFstswFS2crwMsjwRzModbHQLYYZHE5ZDhqMR1mA4ldi/W17pQ2wB9SeUcqeyerpukvTQQdV1vrG/U04fi60oAOBUN3End+Xahw==
-X-YMail-OSG: OKp8BpsVM1l0pzz3UjYk8.Ffwyk10z2kB7AA2__rAW.lcxNO0qm5ovPklnoW_Au
- gsd5qiihbQxV9NyAuQ_9NWXbUVHDY3Em9UVDe5XGtBY5YMoGmLKTNipNk5twC4zSWmrYlOBHr4Ih
- o7riF9IK1tq1em0pJ0FUvH5VwwjZgrz.9ofyB31mL2AuARJsyvpej.JvYbAUJV9zVdpC18njxYqy
- MfGQ6A8aTOk9_fuzLST7H3d3E_0TFfpK_mWeUeFl.H_RGk39yBoc2f4fLw8OESuWy3wdW3LIBc3U
- WRbhcw3uwIeSMZxA_MdOCMI7gXT2ROQJFg11XHo8dbGj44X8Ajj17nQt8KJUeFf49Wu49nHlanl1
- jrWAXjzW2gl3fVjamhKt2aDnrf9GI54dlMbiUnPddTGkBFKjgMRrCUzbxZ4elynCn0nDr1J78Y_p
- Zr8rUN5IGTI3IimYyJEV8x8qe__ecjdKl4mtGdij9y4p3DQSbVhbd40UfULTfmksd8Ck9LDscJr5
- XjtQYj_7prKIMzVzK2tqVR5yA5DFKDNlYro4h7pwEfgCpcDgrerm7lZh86mYFfN1a9tCDE0XkqQX
- x55CeRaekHKrVXijVmsLfZU.V17CxfWLsKY8yqdUxmLnOfY8.GxMIvs8nqQPgz97nIc_up_096vW
- 4u.q2uXVUO5wryl8rSeGp1o1qOQrjnwAEcFY2t55WUt7Y8r_53pJzzb_acnTdYshYfRMGD2Z.pxY
- VFrCh5p67a26QoDreAL62esXHnxMUQX8VMavA6rBEyw17LVdCNR2e3fztkeoHBq_m51dI1Fo71Dm
- Kyikfd6ZSPfBFlgJQVT7i_8y9bESxEnUq5O2cUwtltHWDSJtN79QY4xlk9uPqt7NjYBVzdyUKQ.C
- mZbtJHgQuNpI1McA_NeQ9GjpDBt96lhNyrT3fphM9MuYktQzfpJlrlQL0ld2eXqXgJx_PF5dNVOZ
- a15S8mExzGSjlIYdW.afN_2V2.emWItAC4lFxfFzGeLcs1naSh0ZRI1DxOkpF50sV81rfVNpUXEC
- UAntd1aqJnzfcAhsDVSsIzUlYcN02_POlFRQPz6_dcQq4jvz5L8HyOSOtZn1.57SQoXUJYKLFyj7
- M2GH4ZeZCqlc9f4JEA1j8HiQp8ID69lNgbq3yFyF5Oktx_2com2VMe7L41ubKOWSvNVUuckIAIQ9
- R90xkp3lN3jtRmL0sw4loxF__w_aBp76rrgacnZxPwM36Tek8trgZX5YX6bT46H6euFlw2jX5yRu
- QwD_m1jJ5Fz7nZt_C4FRE5T6yNQ63V9zgfvCTOJQqzWkBcPLd1vhuX4MyC14SWrZLvtV8ZGG0bmH
- eddKDyti5vN9asEvz04zW0wwU_GdjbwrCqemTG.N6WByQ7ExqP5urNSrEnQ6P06ZPNPM2BGWXtDW
- OmYUjz9OCr3_hwzEP0b2BNzyricG.hkbC4bH8qZxagAfk_8qCAT447ucQKTgR.dopmTf0KxMQkn5
- q0BiXelMgblfmSJtPRpSVRlQVCb_0iYyaLbsjgxOkq2HvInQVyWPmgnWpLqVwfuvQU4NAJRjkNOK
- UMoEeRGXn.4gNvGEI2Kovmw5mvYSke7t3i3z7CVXCoMg.vBsGMPYRx3w7e45YADuILu_fFzLm7K_
- jGKWNYjtzQyy4Cm8z9fmEm0TseFk5xg.sb_x6JBmdG50mKc93oiOVpnQFbawihzO2LHxcR33_nej
- vprScUv541rJfxgT7W32NVjEhjgUvwIj061AKieIJ2zdrj8fgCXRIiJ9bSCA2nwPvueqqAOm7y_1
- gvEyBIe_bMm5SM_tesrh.vFdqta0k_YZLJGSroccL874.URIah.V0cOUZu__CHHATTUt2qdkQdtQ
- is6QAjX38Qjzyy8Y5hSFEa.94IABFBCTzHfsxNCMtFg1HWJGei1_dhkLCYShrmhN48ynf9kOC4Ca
- eGhuh2QonYiTDyqceG8OJGEw1Zdao07l0s3G.mTJ.8D7gFcCilpcoDA_ndYyY8tmb4NMoYUkE1tu
- i53IhTUVjSY8TTfCRt6YJuTGgRJ6KEjAfD7mntG0e2J5PmmXhOTrOX5lLXLvranUObAsAghfqH.C
- FyHQaJlFeLoBIzKE7PLo_dP8gTPSrQCwzN2dMcVCjlEf.i2QCMCKdICsoDT5XLiZGJ2HFsXr_utA
- z88mvNSZMg2m2aymng09LBwyvw3TZr_Ofhx4u7dzXjkycfc_mFM6NbqMBJcBFMZ29BwdX0vWHRFk
- vBicw
-X-Sonic-MF: <sumanth.gavini@yahoo.com>
-X-Sonic-ID: c31025da-d115-409e-8b76-906fc1b1965c
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic305.consmr.mail.sg3.yahoo.com with HTTP; Sat, 17 May 2025 09:48:44 +0000
-Received: by hermes--production-gq1-74d64bb7d7-nrjbm (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 3bfd33b1abe7a8799d233b982da9b471;
-          Sat, 17 May 2025 09:18:17 +0000 (UTC)
-From: Sumanth Gavini <sumanth.gavini@yahoo.com>
-To: skhan@linuxfoundation.org,
-	sumanth.gavini@yahoo.com
-Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH] docs: ABI: Fix "diasble" to "disable"
-Date: Sat, 17 May 2025 02:18:10 -0700
-Message-ID: <20250517091814.1263768-1-sumanth.gavini@yahoo.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1747473523; c=relaxed/simple;
+	bh=Wx3vkHoGM2SIgtXNrgr14kmQXUf9CbbQw1ZTh/t+Fs0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JY3+YD78uVyl/FkvA6De2GDOWQvc7BWF6/Z0ZzoeBeQUVNALfLwt7Muha9Drf0Fi72RwYZLoyhD6QfHlquJwm6cQ8b/cyzU+onFHp24mlD4kR4M5vqyv0iNacbsdxoN1g9tPa7i0iDUEpRIVD9ue9pRly5aYDvkIKU0h+RMGgTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [223.64.68.186])
+	by gateway (Coremail) with SMTP id _____8DxOGpnVChoZqnuAA--.61368S3;
+	Sat, 17 May 2025 17:18:31 +0800 (CST)
+Received: from localhost.localdomain (unknown [223.64.68.186])
+	by front1 (Coremail) with SMTP id qMiowMDxOcRiVChosg_cAA--.55457S2;
+	Sat, 17 May 2025 17:18:29 +0800 (CST)
+From: Huacai Chen <chenhuacai@loongson.cn>
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+	Huacai Chen <chenhuacai@kernel.org>
+Cc: loongarch@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Guo Ren <guoren@kernel.org>,
+	Xuerui Wang <kernel@xen0n.name>,
+	Jiaxun Yang <jiaxun.yang@flygoat.com>,
+	Huacai Chen <chenhuacai@loongson.cn>
+Subject: [GIT PULL] LoongArch fixes for v6.15-rc7
+Date: Sat, 17 May 2025 17:18:17 +0800
+Message-ID: <20250517091817.3490818-1-chenhuacai@loongson.cn>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,29 +51,63 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-References: <20250517091814.1263768-1-sumanth.gavini.ref@yahoo.com>
+X-CM-TRANSID:qMiowMDxOcRiVChosg_cAA--.55457S2
+X-CM-SenderInfo: hfkh0x5xdftxo6or00hjvr0hdfq/
+X-Coremail-Antispam: 1Uk129KBj93XoW7ArWrZw17AFW7CF1fAw15ZFc_yoW8Xw13pr
+	9xCrnxGF4UGr13Jr13t34DWrn8tryxGw43Xa13t34xGr1UAr1UXr18KrykXFy5t3yrKr10
+	qF18Jw1YgF1UJwbCm3ZEXasCq-sJn29KB7ZKAUJUUUUr529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUU9jb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v2
+	6F4UJVW0owAaw2AFwI0_Jrv_JF1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0c
+	Ia020Ex4CE44I27wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jrv_
+	JF1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwI
+	xGrwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwCFI7km07C267AKxVWU
+	XVWUAwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67
+	kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY
+	6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0x
+	vEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2Kfnx
+	nUUI43ZEXa7IU8hiSPUUUUU==
 
- Fix misspelling reported by codespell
+The following changes since commit 82f2b0b97b36ee3fcddf0f0780a9a0825d52fec3:
 
-Signed-off-by: Sumanth Gavini <sumanth.gavini@yahoo.com>
----
- Documentation/ABI/testing/sysfs-devices-power | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+  Linux 6.15-rc6 (2025-05-11 14:54:11 -0700)
 
-diff --git a/Documentation/ABI/testing/sysfs-devices-power b/Documentation/ABI/testing/sysfs-devices-power
-index 54195530e97a..d3da88b26a53 100644
---- a/Documentation/ABI/testing/sysfs-devices-power
-+++ b/Documentation/ABI/testing/sysfs-devices-power
-@@ -56,7 +56,7 @@ Date:		January 2009
- Contact:	Rafael J. Wysocki <rjw@rjwysocki.net>
- Description:
- 		The /sys/devices/.../async attribute allows the user space to
--		enable or diasble the device's suspend and resume callbacks to
-+		enable or disable the device's suspend and resume callbacks to
- 		be executed asynchronously (ie. in separate threads, in parallel
- 		with the main suspend/resume thread) during system-wide power
- 		transitions (eg. suspend to RAM, hibernation).
--- 
-2.43.0
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/chenhuacai/linux-loongson.git tags/loongarch-fixes-6.15-2
+
+for you to fetch changes up to 12614f794274f63fbdfe76771b2b332077d63848:
+
+  LoongArch: uprobes: Remove redundant code about resume_era (2025-05-14 22:18:10 +0800)
+
+----------------------------------------------------------------
+LoongArch fixes for v6.15-rc7
+
+Fix some bugs about kernel-fpu, cpu idle function, hibernation and
+uprobes.
+----------------------------------------------------------------
+Huacai Chen (3):
+      LoongArch: Fix MAX_REG_OFFSET calculation
+      LoongArch: Move __arch_cpu_idle() to .cpuidle.text section
+      LoongArch: Save and restore CSR.CNTC for hibernation
+
+Tianyang Zhang (1):
+      LoongArch: Prevent cond_resched() occurring within kernel-fpu
+
+Tiezhu Yang (2):
+      LoongArch: uprobes: Remove user_{en,dis}able_single_step()
+      LoongArch: uprobes: Remove redundant code about resume_era
+
+ arch/loongarch/include/asm/ptrace.h  |  2 +-
+ arch/loongarch/include/asm/uprobes.h |  1 -
+ arch/loongarch/kernel/genex.S        |  7 +++++--
+ arch/loongarch/kernel/kfpu.c         | 22 ++++++++++++++++++++--
+ arch/loongarch/kernel/time.c         |  2 +-
+ arch/loongarch/kernel/uprobes.c      | 11 +----------
+ arch/loongarch/power/hibernate.c     |  3 +++
+ 7 files changed, 31 insertions(+), 17 deletions(-)
 
 
