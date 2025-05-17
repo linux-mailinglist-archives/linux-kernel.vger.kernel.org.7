@@ -1,137 +1,111 @@
-Return-Path: <linux-kernel+bounces-652207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-652210-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B01DEABA8BA
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 May 2025 09:43:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 348BEABA8C2
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 May 2025 09:48:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5D49A7A1BF3
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 May 2025 07:42:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A31C1BA1FDD
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 May 2025 07:48:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EB191D47AD;
-	Sat, 17 May 2025 07:43:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="RhJ+KMZt"
-Received: from smtp-relay-canonical-0.canonical.com (smtp-relay-canonical-0.canonical.com [185.125.188.120])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26CD31D5176;
+	Sat, 17 May 2025 07:48:32 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD3354B1E7B;
-	Sat, 17 May 2025 07:43:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.120
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C072D17BB35;
+	Sat, 17 May 2025 07:48:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747467817; cv=none; b=TU0GhLfp7fBP8/Ek6v8PRWUpdiRwx9STH5LBi6XO/b4pVjf8Z/m4k7byDaQOgEabwiBnTJmmPAaBJg18+P9+NPLv1FdNhaPIXts4pDe6HueYQ2ynebXBckWZ8lppiPJIGneyjrdkS6DL3wc2kAWZugSW5Ewm269BqMRyfpA1wow=
+	t=1747468111; cv=none; b=GubASjiXV2czWyHRo4AFqhVzkrGVxlXcdh13qDktdY0SgoS5pwb3JG4Kf5P2aTsQpfeLbcVlNYCzsp1dWzpNXbvQ1/PH57RnuyeG+f+cSEOVvQSflsAQNQ/HH1jlfdWMR+/uTm9iFcM7q4n3LoFB5Rl9eZaLr64XiS9/eDiHIp8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747467817; c=relaxed/simple;
-	bh=/diPrcTC2ZcAz467a9q7d3yX2a+GYT9BwLzJlZoGwLE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jZec2Bg7hyGFwZ0w7U5j+JTpuWhafSDb7D/UdwPyS4Skra0+HhfLKs6gxwo2nZFWyBPXhLKRssIwUwKO7k4p7t7RjCq1DYY7OYyZ+p9lzNdMmqlLT8g4aqZxKr1OqiKUWxNQjbCVpgV/sFfU4P3Uog/aWMHSFrNTL9r8J6eBpAY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=RhJ+KMZt; arc=none smtp.client-ip=185.125.188.120
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from [172.20.3.254] (unknown [213.157.19.135])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 2BE023FAF0;
-	Sat, 17 May 2025 07:43:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1747467811;
-	bh=lanJpbv9eIpVwnNir9zHCZiOBrpASKbYIfOvh94qE0A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type;
-	b=RhJ+KMZtISmBcG8VHzjLOZGEHQSzEn22K/Vvh1z4goxtT/GSulK/7RdtlQm7qSVtm
-	 TmMZEB/ieODGr3CE05DesfVT60YuSgTlI+HxyllppffHVryJspPqkQ2re6u9LvHxwu
-	 C88BTkSEo5GY57P5MmVL6a7Y0iD0jnmQy6/BM/Obo6CzW61WSd9k2Tc45PiwVXz99z
-	 DR9XQpNq2VpnK0T1pRdc2J7RF/2esN6u4dYCU1wa32rU3HgGqHC+q2PZj3BKYO9G7g
-	 neQyDrxPeXwt19iOaRMwm4y/pPpgQdzUnfPU0MWJV1NkJ6wswxy80zg2zGeURLRTbv
-	 KRTE+hMP0ZqHQ==
-Message-ID: <4f37c07c-3a39-4c98-b9c4-13356f5a10dc@canonical.com>
-Date: Sat, 17 May 2025 00:43:30 -0700
+	s=arc-20240116; t=1747468111; c=relaxed/simple;
+	bh=ZSikwAU7c0F2dt8+o8xJqgllizx/j0y5JYScJWfyImo=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=aAR9dg6fHKu9ey+WNkbEr2nCnN+jbj0laklYsCwW3wpnI8Ss81lpY4/YkM4+LAcCQSQ5VRGs3iFaF7VaVi16unOEQ/3makRNetWKLx/WBGiDf1WWpUKHPC3vJjJefkN3RAEvDtvS9Y0YKlxh+c29zRNqDljj+dsJwQPjElaKFb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4ZzwyG4WV7ztR28;
+	Sat, 17 May 2025 15:47:02 +0800 (CST)
+Received: from kwepemf100017.china.huawei.com (unknown [7.202.181.16])
+	by mail.maildlp.com (Postfix) with ESMTPS id 08A0D14020C;
+	Sat, 17 May 2025 15:48:19 +0800 (CST)
+Received: from localhost.localdomain (10.175.104.67) by
+ kwepemf100017.china.huawei.com (7.202.181.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Sat, 17 May 2025 15:48:18 +0800
+From: Zizhi Wo <wozizhi@huawei.com>
+To: <cem@kernel.org>, <djwong@kernel.org>, <dchinner@redhat.com>,
+	<osandov@fb.com>, <john.g.garry@oracle.com>
+CC: <linux-xfs@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<wozizhi@huawei.com>, <yangerkun@huawei.com>, <leo.lilong@huawei.com>
+Subject: [PATCH] xfs: Remove unnecessary checks in functions related to xfs_fsmap
+Date: Sat, 17 May 2025 15:43:41 +0800
+Message-ID: <20250517074341.3841468-1-wozizhi@huawei.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] apparmor: use SHA-256 library API instead of crypto_shash
- API
-To: Eric Biggers <ebiggers@kernel.org>, apparmor@lists.ubuntu.com
-Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-crypto@vger.kernel.org
-References: <20250428190430.850240-1-ebiggers@kernel.org>
- <20250514042147.GA2073@sol>
-Content-Language: en-US
-From: John Johansen <john.johansen@canonical.com>
-Autocrypt: addr=john.johansen@canonical.com; keydata=
- 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 lT9Q
-Organization: Canonical
-In-Reply-To: <20250514042147.GA2073@sol>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ kwepemf100017.china.huawei.com (7.202.181.16)
 
-On 5/13/25 21:21, Eric Biggers wrote:
-> On Mon, Apr 28, 2025 at 12:04:30PM -0700, Eric Biggers wrote:
->> From: Eric Biggers <ebiggers@google.com>
->>
->> This user of SHA-256 does not support any other algorithm, so the
->> crypto_shash abstraction provides no value.  Just use the SHA-256
->> library API instead, which is much simpler and easier to use.
->>
->> Signed-off-by: Eric Biggers <ebiggers@google.com>
->> ---
->>
->> This patch is targeting the apparmor tree for 6.16.
->>
->>   security/apparmor/Kconfig  |  3 +-
->>   security/apparmor/crypto.c | 85 ++++++--------------------------------
->>   2 files changed, 13 insertions(+), 75 deletions(-)
-> 
-> Any interest in taking this patch through the apparmor or security trees?
-> 
-I can take it through my tree
+From: Zizhi Wo <wozizhi@huaweicloud.com>
 
+In __xfs_getfsmap_datadev(), if "pag_agno(pag) == end_ag", we don't need
+to check the result of query_fn(), because there won't be another iteration
+of the loop anyway. Also, both before and after the change, info->group
+will eventually be set to NULL and the reference count of xfs_group will
+also be decremented before exiting the iteration.
+
+The same logic applies to other similar functions as well, so related
+cleanup operations are performed together.
+
+Signed-off-by: Zizhi Wo <wozizhi@huaweicloud.com>
+Signed-off-by: Zizhi Wo <wozizhi@huawei.com>
+---
+ fs/xfs/xfs_fsmap.c | 6 ------
+ 1 file changed, 6 deletions(-)
+
+diff --git a/fs/xfs/xfs_fsmap.c b/fs/xfs/xfs_fsmap.c
+index 414b27a86458..792282aa8a29 100644
+--- a/fs/xfs/xfs_fsmap.c
++++ b/fs/xfs/xfs_fsmap.c
+@@ -579,8 +579,6 @@ __xfs_getfsmap_datadev(
+ 		if (pag_agno(pag) == end_ag) {
+ 			info->last = true;
+ 			error = query_fn(tp, info, &bt_cur, priv);
+-			if (error)
+-				break;
+ 		}
+ 		info->group = NULL;
+ 	}
+@@ -813,8 +811,6 @@ xfs_getfsmap_rtdev_rtbitmap(
+ 			info->last = true;
+ 			error = xfs_getfsmap_rtdev_rtbitmap_helper(rtg, tp,
+ 					&ahigh, info);
+-			if (error)
+-				break;
+ 		}
+ 
+ 		xfs_rtgroup_unlock(rtg, XFS_RTGLOCK_BITMAP_SHARED);
+@@ -1018,8 +1014,6 @@ xfs_getfsmap_rtdev_rmapbt(
+ 			info->last = true;
+ 			error = xfs_getfsmap_rtdev_rmapbt_helper(bt_cur,
+ 					&info->high, info);
+-			if (error)
+-				break;
+ 		}
+ 		info->group = NULL;
+ 	}
+-- 
+2.39.2
 
 
