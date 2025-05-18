@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-653439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-653442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C913ABB9AA
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 11:41:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A6B8ABB9C2
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 11:43:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DAB58167565
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 09:39:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67C05188EB1A
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 09:40:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC81426FDB6;
-	Mon, 19 May 2025 09:29:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB3FF26F448;
+	Mon, 19 May 2025 09:29:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="L/RVJ+Wm"
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="AcAPtkbV"
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AAD826FDB9
-	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 09:29:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F14B270EB6
+	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 09:29:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747646961; cv=none; b=rUwrMcceaN0KZW0fZnRiaLWFRC+j+nODRB4GunARzJ5/aP7M/N4D7ISucpCQ9df694ggcLkvlJoy3a8umbl4e8pemzoh/o3ray+m2vILdztJfNRXAQhYdtIdi9Is4h5eFW/pHMuPOHypj54wInhXhUjuA2CoumlhP+uzDaLw3SE=
+	t=1747646986; cv=none; b=pBErUchNc0Q2piuabNUqnd04djMGZt5FtAVKUaH1pnBggnfysr4VsqQN0xHCBEkME+rc86gWnslacL79v5zubej7Se1EgG85t1hcXsDqfrqzBvkJ/JkHhL56J8qo0LIeyyYP4HCifLW9mEf9NMe+cTU30OK1y4mOI9r5Z5RtiEE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747646961; c=relaxed/simple;
-	bh=DjgRCEdJ83elEzSvGykMTo6aeQJl5+Vqze7Lag7Gvho=;
+	s=arc-20240116; t=1747646986; c=relaxed/simple;
+	bh=z56woakeQWmEguUN8M9JLPjizkUMjCSa+ygM7ouEQcI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=CXg+2SYwxC/ZLv1otGlfaxg+IZ1X1XxC6q/Yj9QbjXsalOB0Z72+CewR7LXwyU7DCYn+H4xDd7+FbVS4twQ3SbX3WXls1qfK3Q8ueSUOWe+5pbAljPHsLU4iWZQatxYCYCMQqllfk5+TzQND9b9cpkqNsfcXwN5tOwRjWMXtlso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=L/RVJ+Wm; arc=none smtp.client-ip=203.254.224.33
+	 Content-Type:References; b=dLtgler6JyWXKE0o+bXM2m10G/vWqMeLhTr8+aZnv/YDp9RbNBKVy0w44DzEsuiuEv4YfCXBKig1bdB95RWf/PZwuj9ihdiYWZ+fp51yTEyaIntnJxcRhLCuBraHbivIzdWjDUkraXxrmvoZJYZkmi2bzjGeb6WqVV3YDquKj8I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=AcAPtkbV; arc=none smtp.client-ip=203.254.224.34
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250519092917epoutp03f878eb1458ffce02234f5f5d3c5e4631~A46YABWeu2924629246epoutp03U
-	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 09:29:17 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250519092917epoutp03f878eb1458ffce02234f5f5d3c5e4631~A46YABWeu2924629246epoutp03U
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250519092935epoutp04f831407a70d2cdaafc6e0b50938714f8~A46ojwcpo1490414904epoutp04H
+	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 09:29:35 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250519092935epoutp04f831407a70d2cdaafc6e0b50938714f8~A46ojwcpo1490414904epoutp04H
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1747646957;
-	bh=hyCYV5tKTc12SwshmyJzcHUJ5CSInB31JwFZiJ35RyE=;
+	s=mail20170921; t=1747646975;
+	bh=l0gwyC5KI+Ug/i3m/cr/xGdP9J34hXTp0M7gsxc71JQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=L/RVJ+WmnF96JHVNFe0+ng4FE/5lFVX1zpPcfpmzNf6Z/GkFcrcyAVS3WhTpWt2Fe
-	 hSHqQHohli5Crd13u3La/XW1wX8F3DH4STiUQKJXdbg9hyzBrLHSPTj0gWcwiC024t
-	 lX/7K9u7WpNMdswguMCxZazFOiO92oJspsqb0hto=
-Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
-	20250519092916epcas5p1f944d982a0b8d7b7f94b8e9145e1268b~A46XDOp1s1962019620epcas5p15;
-	Mon, 19 May 2025 09:29:16 +0000 (GMT)
-Received: from epcas5p3.samsung.com (unknown [182.195.38.183]) by
-	epsnrtp04.localdomain (Postfix) with ESMTP id 4b1C7G1Yrdz6B9mJ; Mon, 19 May
-	2025 09:29:14 +0000 (GMT)
+	b=AcAPtkbVqi7jW/uiBCmnf0zRY4qOnaJ0qOdbeFadctiawjNs8GcW/ukuw9jshS/h/
+	 5aIHg2n8CQyaIwyUd8vAzk4oAvz7Qzt9b79ggomhkWLaJcC7A2rso/ZmYIPVenGeIt
+	 bIGzzXFFrV5XRGDqATpchhB+Jrp81WSXoRGFqvTU=
+Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPS id
+	20250519092934epcas5p341c3cb1babdd45de3c1a3699bae31c20~A46oEMhQl0672806728epcas5p3E;
+	Mon, 19 May 2025 09:29:34 +0000 (GMT)
+Received: from epcas5p2.samsung.com (unknown [182.195.38.183]) by
+	epsnrtp01.localdomain (Postfix) with ESMTP id 4b1C7d38GGz6B9mL; Mon, 19 May
+	2025 09:29:33 +0000 (GMT)
 Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-	20250518193230epcas5p3dfb178a6528556c55e9b694ca8f8ad6c~Atfwy15Xp1682016820epcas5p36;
-	Sun, 18 May 2025 19:32:30 +0000 (GMT)
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+	20250518193235epcas5p4f0bcf581b583a3acf493a20191ad2b00~Atf1u8wx31869918699epcas5p45;
+	Sun, 18 May 2025 19:32:35 +0000 (GMT)
 Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
 	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20250518193230epsmtrp184b5daf49957acd8fd047704d2f70457~AtfwyAvh82445124451epsmtrp1b;
-	Sun, 18 May 2025 19:32:30 +0000 (GMT)
-X-AuditID: b6c32a52-40bff70000004c16-61-682a35ce3ed9
+	20250518193235epsmtrp196053957f0114c70e0099601128bb08b~Atf1t79n72445124451epsmtrp1c;
+	Sun, 18 May 2025 19:32:35 +0000 (GMT)
+X-AuditID: b6c32a52-40bff70000004c16-67-682a35d3922b
 Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
 	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	FD.39.19478.EC53A286; Mon, 19 May 2025 04:32:30 +0900 (KST)
+	6F.39.19478.3D53A286; Mon, 19 May 2025 04:32:35 +0900 (KST)
 Received: from cheetah.samsungds.net (unknown [107.109.115.53]) by
 	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20250518193227epsmtip1824ce2e47b768b1b9d1560fcc5809d57~Atft8GoVD0974409744epsmtip1f;
-	Sun, 18 May 2025 19:32:27 +0000 (GMT)
+	20250518193232epsmtip16453319fe08b323256750a6a7cafd674~Atfy3TlTS1247812478epsmtip1D;
+	Sun, 18 May 2025 19:32:32 +0000 (GMT)
 From: Shradha Todi <shradha.t@samsung.com>
 To: linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.or,
@@ -74,9 +74,9 @@ Cc: manivannan.sadhasivam@linaro.org, lpieralisi@kernel.org, kw@linux.com,
 	vkoul@kernel.org, kishon@kernel.org, arnd@arndb.de,
 	m.szyprowski@samsung.com, jh80.chung@samsung.com, Shradha Todi
 	<shradha.t@samsung.com>, Hrishikesh Dileep <hrishikesh.d@samsung.com>
-Subject: [PATCH 02/10] PCI: exynos: Remove unused MACROs in exynos PCI file
-Date: Mon, 19 May 2025 01:01:44 +0530
-Message-ID: <20250518193152.63476-3-shradha.t@samsung.com>
+Subject: [PATCH 03/10] PCI: exynos: Reorder MACROs to maintain consistency
+Date: Mon, 19 May 2025 01:01:45 +0530
+Message-ID: <20250518193152.63476-4-shradha.t@samsung.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250518193152.63476-1-shradha.t@samsung.com>
 Precedence: bulk
@@ -86,55 +86,76 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrEIsWRmVeSWpSXmKPExsWy7bCSnO45U60Mgxc3WSwezNvGZvF30jF2
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrEIsWRmVeSWpSXmKPExsWy7bCSnO5lU60Mg59zJS0ezNvGZvF30jF2
 	iyVNGRZr9p5jsph/5Byrxc2zu9ktbvxqY7VY8WUmu8XR1v/MFi9n3WOzaOj5zWqx6fE1VovL
 	u+awWZydd5zNYsKqbywWZ78vYLJo+dPCYrH2yF12i7stnawW//fsYLfoPVxrsfPOCWYHMY/f
 	vyYxeuycdZfdY8GmUo9NqzrZPO5c28Pm8eTKdCaPzUvqPfq2rGL0OPJ1OovH501yAVxRXDYp
-	qTmZZalF+nYJXBlXtq9kKpjDXvG/o5WlgXEWWxcjJ4eEgInEtctnmLsYuTiEBLYzSjz/8IQJ
-	IiEp8fniOihbWGLlv+fsILaQwCdGiaa5FiA2m4CWROPXLmYQW0TgBKNE3y1LkEHMAvOZJRqa
-	v4E1Cwt4S6x495wVxGYRUJWYs70FLM4rYCVx7OlboKEcQAvkJfo7JEDCnALWEtvWT2WC2GUl
-	sfDJTkaIckGJkzOfsIDYzEDlzVtnM09gFJiFJDULSWoBI9MqRtHUguLc9NzkAkO94sTc4tK8
-	dL3k/NxNjOBo1Arawbhs/V+9Q4xMHIyHGCU4mJVEeFdt1sgQ4k1JrKxKLcqPLyrNSS0+xCjN
-	waIkzquc05kiJJCeWJKanZpakFoEk2Xi4JRqYCpYl/vJ5syNgIY7jZns8a0JIatnvN93/lhE
-	0LU8Uf1NQdwX7lj+U598WTXZcMWFvD9z1l+KDoo3sHj9w5GVTW3Hvz/6MwSrfTNZ2b/ozfx9
-	kn/WhdZaoYY/eyJv8B1Qtpqr8fzMqfoZPcIFns3Wp7RsTHa2heilqJb7L2E6Nzf1n2/sCfmP
-	HkZiAeo23o8ybn9v8Xr3dqJ9/s3f0ws43bSrth9KWDYj61iRTIZXSqm4i4BDpOWWlseuO5Nm
-	bT8hG3tjWd22iBn28cVff9w4duMbWx1TZ8kLH7G6XVk7u24zSLUt58qYt9L53P43YXdO1ZUk
-	6ybNbFTa7DJd12/9zRV1BznUJk22/HTE1uqflxJLcUaioRZzUXEiAOa88Dk1AwAA
-X-CMS-MailID: 20250518193230epcas5p3dfb178a6528556c55e9b694ca8f8ad6c
+	qTmZZalF+nYJXBl3PixnLPjJW3FrwVr2BsYv3F2MHBwSAiYS7x7XdTFycQgJbGeU2P9oHXMX
+	IydQXFLi88V1TBC2sMTKf8/ZIYo+MUr8m9HIDpJgE9CSaPzaBdYgInCCUaLvliVIEbPAfGaJ
+	huZvYN3CAl4Se97tBGtgEVCV6Ptxhg3E5hWwkmh/sZ0d4gp5if4OCZAwp4C1xLb1U8FahYBK
+	Fj7ZyQhRLihxcuYTFhCbGai8eets5gmMArOQpGYhSS1gZFrFKJpaUJybnptcYKhXnJhbXJqX
+	rpecn7uJERyNWkE7GJet/6t3iJGJg/EQowQHs5II76rNGhlCvCmJlVWpRfnxRaU5qcWHGKU5
+	WJTEeZVzOlOEBNITS1KzU1MLUotgskwcnFINTBNZ9h9Nbb5wzGNKe8fJe3r+6kkPjbz39lxv
+	1jXK/Ffj81xExcM3Vfdw4ALW6XNnxH5/+3Frl8XReV5z1ja2rlgfs7j7QVhSkDK75s1VU8Oc
+	TRjW+8Uxyb0S6BU9sMVp37YJr9R28G2SmHRpWU3JnNXv7W2O3lm90D7CqS4vNdchMSCwo7Ut
+	9aTGFF5Wrp6QPP05aa+y9DoTnznmvb9x/s66vXOa8kUOKny3dDxUvq84ffUf3uVeXjYOJhzr
+	N7mUdSy9XXpg0vZ1G26cUP9ickhj8nm2ZdNffujdGNG5qOdo1ymhbL8P5uWtmR6+DtrM5elm
+	7GJT/u/tWumnyWMS8f6YAJPaBM9FgmsMzc/vVGIpzkg01GIuKk4EAOeqv5I1AwAA
+X-CMS-MailID: 20250518193235epcas5p4f0bcf581b583a3acf493a20191ad2b00
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 X-Sendblock-Type: REQ_APPROVE
 CMS-TYPE: 105P
 cpgsPolicy: CPGSC10-541,Y
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250518193230epcas5p3dfb178a6528556c55e9b694ca8f8ad6c
+X-CMS-RootMailID: 20250518193235epcas5p4f0bcf581b583a3acf493a20191ad2b00
 References: <20250518193152.63476-1-shradha.t@samsung.com>
-	<CGME20250518193230epcas5p3dfb178a6528556c55e9b694ca8f8ad6c@epcas5p3.samsung.com>
+	<CGME20250518193235epcas5p4f0bcf581b583a3acf493a20191ad2b00@epcas5p4.samsung.com>
 
-Some MACROs are defined in the exynos PCI file but are
-not used anywhere within the file. Remove such unused
-MACROs.
+Exynos PCI file follows MACRO definition order where
+register offset is defined in ascending order and each
+bit field within the offset is defined right after offset
+definition. Some MACROs are out of order and so reorder
+those MACROs to maintain consistency.
 
 Suggested-by: Hrishikesh Dileep <hrishikesh.d@samsung.com>
 Signed-off-by: Shradha Todi <shradha.t@samsung.com>
 ---
- drivers/pci/controller/dwc/pci-exynos.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/pci/controller/dwc/pci-exynos.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/pci/controller/dwc/pci-exynos.c b/drivers/pci/controller/dwc/pci-exynos.c
-index 1c70b036376d..990aaa16b132 100644
+index 990aaa16b132..286f4987d56f 100644
 --- a/drivers/pci/controller/dwc/pci-exynos.c
 +++ b/drivers/pci/controller/dwc/pci-exynos.c
-@@ -31,8 +31,6 @@
+@@ -27,11 +27,11 @@
+ 
+ /* PCIe ELBI registers */
+ #define EXYNOS_PCIE_IRQ_PULSE			0x000
++#define EXYNOS_PCIE_IRQ_EN_PULSE		0x00c
+ #define EXYNOS_IRQ_INTA_ASSERT			BIT(0)
  #define EXYNOS_IRQ_INTB_ASSERT			BIT(2)
  #define EXYNOS_IRQ_INTC_ASSERT			BIT(4)
  #define EXYNOS_IRQ_INTD_ASSERT			BIT(6)
--#define EXYNOS_PCIE_IRQ_LEVEL			0x004
--#define EXYNOS_PCIE_IRQ_SPECIAL		0x008
- #define EXYNOS_PCIE_IRQ_EN_PULSE		0x00c
+-#define EXYNOS_PCIE_IRQ_EN_PULSE		0x00c
  #define EXYNOS_PCIE_IRQ_EN_LEVEL		0x010
  #define EXYNOS_PCIE_IRQ_EN_SPECIAL		0x014
+ #define EXYNOS_PCIE_SW_WAKE			0x018
+@@ -42,12 +42,12 @@
+ #define EXYNOS_PCIE_NONSTICKY_RESET		0x024
+ #define EXYNOS_PCIE_APP_INIT_RESET		0x028
+ #define EXYNOS_PCIE_APP_LTSSM_ENABLE		0x02c
++#define EXYNOS_PCIE_ELBI_LTSSM_ENABLE		0x1
+ #define EXYNOS_PCIE_ELBI_RDLH_LINKUP		0x074
+ #define EXYNOS_PCIE_ELBI_XMLH_LINKUP		BIT(4)
+-#define EXYNOS_PCIE_ELBI_LTSSM_ENABLE		0x1
+ #define EXYNOS_PCIE_ELBI_SLV_AWMISC		0x11c
+ #define EXYNOS_PCIE_ELBI_SLV_ARMISC		0x120
+-#define EXYNOS_PCIE_ELBI_SLV_DBI_ENABLE	BIT(21)
++#define EXYNOS_PCIE_ELBI_SLV_DBI_ENABLE		BIT(21)
+ 
+ struct exynos_pcie {
+ 	struct dw_pcie			pci;
 -- 
 2.49.0
 
