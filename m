@@ -1,125 +1,138 @@
-Return-Path: <linux-kernel+bounces-652709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-652711-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67457ABAF5A
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 May 2025 12:41:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D0CC3ABAF60
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 May 2025 12:43:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6EC281899E3B
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 May 2025 10:41:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E520D1899AA5
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 May 2025 10:43:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B31392153C2;
-	Sun, 18 May 2025 10:41:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF343217722;
+	Sun, 18 May 2025 10:43:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WDhWeEBU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="FAoF7bED";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="daCwVe9p"
+Received: from fhigh-a3-smtp.messagingengine.com (fhigh-a3-smtp.messagingengine.com [103.168.172.154])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 182B12139C4;
-	Sun, 18 May 2025 10:41:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DABF3215F5C;
+	Sun, 18 May 2025 10:42:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747564888; cv=none; b=U1Vf8WttcT6lsdLB/44J33ILLVS6MuOkW1wmjdi5Ibmf6m8SuKdrjBdERmMsRTIxAhApBNwlGqKt8qyA0YtXXbuE0lKMc65GoOEfy5fb39kWWJcEqD1DQ3hzdm8gxMNME/TYwSmZ6aiib1zU266yqDS6ApFmjQY8UoDyssEPFvM=
+	t=1747564980; cv=none; b=VWHbX7NitUuUj0Bzc+o9uSGFfrUOaP0iH7uGSycVY2++oZaQzL0Jd7ghG1oWF8QqcFc30S+MQeBCdeqAl6AvBMquH/f+8Mpi3nWga4znZYAvsknAZE72iT5M3+1Ia5PzeDqG2AsvUAWuDa1zY7/V4Zfy6VFGg6aqqksCRrGgFZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747564888; c=relaxed/simple;
-	bh=K1mH3WkoD9iwBulpaktyTTUh3Y+BeGp6zSlmrL77bGM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oWDPfEA21uKd6yh2krbjN3IZY/1q998PjLOthKQCfyprrJQEBmQCJozBWlRGAmiPWhcLHHCsLbNQ2GtTS4Za7fp9rfDoKrxZ7dLmC3qCKo136XDamuiP8xksGMHQcwa+pAZmwwGRIM5DpJXTRX1/WxT6OxZpfXKAUfCmd6A+d5U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WDhWeEBU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEB06C4CEEB;
-	Sun, 18 May 2025 10:41:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747564887;
-	bh=K1mH3WkoD9iwBulpaktyTTUh3Y+BeGp6zSlmrL77bGM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=WDhWeEBUNcsNVnGcl7uQWmjvV0salNzUL8hdGVY+i9vAtQ5SS0kdmL3iEFpJu2PFl
-	 fXw6n9pfFxUWUVsrHlkJ9shV/5FJFEpRaXqYPDiDEAP0XgUWDHCzMDpbh388fnW3w/
-	 WXRk0TrCjBVpt+WudLEjHmLj0Jt8ZuIDztq9pxwRDEkApgYnmW2wOyczW7TbYwCXpf
-	 JprrqX/ja7lluea9I+ZjzrywB6ysdzf7NyLvbVfg65HmZXhoTi/9hftuU8eVv+LNx6
-	 Ws6x03/fp56NLw4ZX2R2RbSPtIrbWoy/Cr3vpTrgvPzAXu9fj28VIXAEuxmpcqHg5+
-	 WdWeM+yMnl21Q==
-Message-ID: <a06717d6-b0fd-43a7-93b4-0732427cc9dd@kernel.org>
-Date: Sun, 18 May 2025 12:41:22 +0200
+	s=arc-20240116; t=1747564980; c=relaxed/simple;
+	bh=nP0a9n5f2g55G3/Q0IkNUusWuZFEawDCs1BGvFlBf/w=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=hmZCzP4ezVSneEDvZWGwOyFFikBvRoig1cfkRFvXzg7ukAYoJ+GCZYygQQH/pL0ZzcqCJ9K3e5aX79LXM63QI+wGP30iCwCEiwvc5IHC82NtCiMOkvwOAZqecWBJ5vY7YvL1cqY4wnPwS+Ixc1vKBbXBA+jmmgxsLFyGIaiKkQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=FAoF7bED; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=daCwVe9p; arc=none smtp.client-ip=103.168.172.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 9E5E911400B5;
+	Sun, 18 May 2025 06:42:56 -0400 (EDT)
+Received: from phl-imap-12 ([10.202.2.86])
+  by phl-compute-05.internal (MEProxy); Sun, 18 May 2025 06:42:56 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1747564976;
+	 x=1747651376; bh=mB5qhGsxIkPKIMXl6hejx8K7RJaj9pVG2JCO3mcm4Qo=; b=
+	FAoF7bEDGQQk1B0VCDFla1zrt6ze+f0nIHDetw3urARsQIY1xlZZL2ont+DsVAYM
+	UiCyo6JLy84bDZTZzd3BPLb4UDIPQHKVwZVuIoOrUuMTZTM+wd/I1HxBeBm21Bq1
+	t7fF5aRnwRQjZKkQLvl7SkyrRzdxJ6IDCNqgtSUNUZms4M7aU8821W2qXbDdEmNL
+	1QAKz19tei9DWGenRdqfdLIUvauDjtW23tpz2QrSeQzuznaCOiGTfad9NP66R+j/
+	tul3XjxkWm0Ik0avkQu268sNRzD/qxauQvAsbIoL/823qUDoQwmXALapMrM872vC
+	2vzWIMip5RvEiNRks8VjGg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1747564976; x=
+	1747651376; bh=mB5qhGsxIkPKIMXl6hejx8K7RJaj9pVG2JCO3mcm4Qo=; b=d
+	aCwVe9plbzUjTN/ZXdzbI8sa6d9gjuubf/6P9A3jY0sbYZqQjdq0wTbyE9mWw+zq
+	8NAaV8hloUwoEhUE4UgFVzY4fJeZYBseCqqA2K17TaiK+HL76Do9WPkUFZKQ8/3t
+	TxbFJXJPQPswSWgcyZjShte5CWStH28nOYaIaYxIPwb6diEIW5nFVFQWlISFhJtM
+	WD4IISc64F8oa30Heseq49N2m8MBVV8CMK31XeG04R9isRe7FmAE95V5QJDEvEUJ
+	EK47xp4EuX/OkdGohmJmIaQ7vT/QssfDOXcOwV6FbS2o37GViij1x6zZbvQ2e0YK
+	4/7uq+O/JxGUqm/a/OGLA==
+X-ME-Sender: <xms:sLkpaIj1QcrmpLC6pmzAIwy_60E4WceOeptpNcs5Uowj3HDH0s0tjA>
+    <xme:sLkpaBDXA_I8dnnc-Zh7BHtkKARm2euQwrI2r6JrX7S2ORkouZW-Q40P3CSRvg0DX
+    8s8eIrlmTefHfrLG1M>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdefudekvdelucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertder
+    tddtnecuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnug
+    gsrdguvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeet
+    fefggfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
+    hmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohep
+    kedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepjhesjhgrnhhnrghurdhnvghtpd
+    hrtghpthhtohepsggvnhhtihhssheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhhi
+    khhosheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhgvnhgssehkvghrnhgvlhdroh
+    hrghdprhgtphhtthhopehrrghfrggvlheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohep
+    lhhinhhugidqrggtphhisehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplh
+    hinhhugidqihhnphhuthesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehl
+    ihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:sLkpaAFK-5hAA0VK1Avek018Gl8lhGvKuYwQe1pD3dEj2BvzQaoPnQ>
+    <xmx:sLkpaJTUSkMQpeamhQC_uvhv9JYyEnG4sjEghmmeFSEgf5BeLcpGig>
+    <xmx:sLkpaFw_jW5uOAwYkvh0e2Dh-FC3-QHSkTb4VUL9fNIdHyI-bIJKJQ>
+    <xmx:sLkpaH4-x6orfJnXoe3FoyM9_PLm7c5wmogoZ-po99Q-G3IMv-l4SA>
+    <xmx:sLkpaGvr1oaaLqw5IAaCmOxw8HPMZ4q_qZ1MZq57idGAxNDhmNYirl18>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 687D71060060; Sun, 18 May 2025 06:42:56 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/4] dt-bindings: LoongArch: Add CTCISZ Forever Pi
-To: Yao Zi <ziyao@disroot.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Huacai Chen <chenhuacai@kernel.org>,
- WANG Xuerui <kernel@xen0n.name>, Neil Armstrong <neil.armstrong@linaro.org>,
- Heiko Stuebner <heiko@sntech.de>, Junhao Xie <bigfoot@classfun.cn>,
- =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
- Aradhya Bhatia <a-bhatia1@ti.com>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Binbin Zhou <zhoubinbin@loongson.cn>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- loongarch@lists.linux.dev, Mingcong Bai <jeffbai@aosc.io>,
- Kexy Biscuit <kexybiscuit@aosc.io>
-References: <20250518080356.43885-1-ziyao@disroot.org>
- <20250518080356.43885-3-ziyao@disroot.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250518080356.43885-3-ziyao@disroot.org>
-Content-Type: text/plain; charset=UTF-8
+X-ThreadId: T7866ccd830be9021
+Date: Sun, 18 May 2025 12:42:36 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Janne Grunau" <j@jannau.net>, "Jiri Kosina" <jikos@kernel.org>,
+ "Benjamin Tissoires" <bentiss@kernel.org>,
+ "Rafael J . Wysocki" <rafael@kernel.org>, "Len Brown" <lenb@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
+ linux-acpi@vger.kernel.org
+Message-Id: <b939dc57-74cd-42e8-b1f3-54ea32829212@app.fastmail.com>
+In-Reply-To: 
+ <20250518-hid_lenovo_acpi_dependency-v1-1-afdb93b5d1a6@jannau.net>
+References: 
+ <20250518-hid_lenovo_acpi_dependency-v1-0-afdb93b5d1a6@jannau.net>
+ <20250518-hid_lenovo_acpi_dependency-v1-1-afdb93b5d1a6@jannau.net>
+Subject: Re: [PATCH 1/2] ACPI: platform_profile: Stub platform_profile_cycle
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
-On 18/05/2025 10:03, Yao Zi wrote:
-> Forever Pi is an Loongson 2K0300-based development board produced by
-> CTCISZ. Features include,
-> 
+On Sun, May 18, 2025, at 12:18, Janne Grunau via B4 Relay wrote:
+*ops);
+> +#ifdef CONFIG_ACPI_PLATFORM_PROFILE
+>  int platform_profile_cycle(void);
+> +#else
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+CONFIG_ACPI_PLATFORM_PROFILE is a 'tristate' symbol, so the #ifdef
+check is wrong here when both the caller and the platform profile
+are in a loadable module.
 
-Best regards,
-Krzysztof
+I think what you want here is
+
+#if IS_ENABLED(CONFIG_ACPI_PLATFORM_PROFILE)
+
+Alternatively, you could move that check into the caller
+and do
+
+      if (IS_ENABLED(CONFIG_ACPI_PLATFORM_PROFILE))
+              ret = platform_profile_cycle();
+
+which makes it a little easier to catch build failures in
+drivers that are missing the 'select ACPI_PLATFORM_PROFILE'.
+
+    Arnd
 
