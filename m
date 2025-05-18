@@ -1,139 +1,279 @@
-Return-Path: <linux-kernel+bounces-652921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-652925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19D15ABB21C
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 00:10:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEA53ABB22C
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 00:19:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B97703B4EFD
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 May 2025 22:10:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B404B1895BB2
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 May 2025 22:19:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3C282063E7;
-	Sun, 18 May 2025 22:10:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 662E120A5EA;
+	Sun, 18 May 2025 22:18:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Ry5FHfhN"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EI9hsT3R"
+Received: from mail-il1-f169.google.com (mail-il1-f169.google.com [209.85.166.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98D4120C00E
-	for <linux-kernel@vger.kernel.org>; Sun, 18 May 2025 22:10:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7CB621147F
+	for <linux-kernel@vger.kernel.org>; Sun, 18 May 2025 22:18:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747606219; cv=none; b=AnPin4BqbigTj1l8bQN0bqFy1F9IFpEq4NPL4XuFikOwc0APA/c6AeXj1bWOWXhLACXBigRazSYsI+LstmbSm8PvRVvKgz2dpj8HDbJPhPv3G/TpQSgn7PVNgNCocUGSymIu9qWB91gEWuWZ4QLNVxQV/ylFfYmzt3zrkYnGyo8=
+	t=1747606703; cv=none; b=h3t2IpDjLNiJsheZNnbRzUEjtFghp+IVreiJGTGPm6bKswBlhKxWPsiTDTkGxVHf0yPppWFTmPV6Np06Egp+VqlFOEgS0WYd/j6GAeUN+hJkCG2BrC+A+peTNt4WqUJ5+2vemIbYUx3BhwT+5s1aXrA6b1Izp9jMwvYsdma6hno=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747606219; c=relaxed/simple;
-	bh=SWvGIfkhRbWfeovnI48bl+Lss7+3GtniH+IW64+H+po=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=eo/wYyZyYdBghFeYers3d4rD82SKKK/Gs9hyhQEMH0h64i3IrddergmYS8jG0faT+L4HR+xzPuWiNqWQPFTd83iVofCqjkhj6GjGA/H852gDh7ceBWZwBhAaZLIMFqgAxzm5gcRLJXP91Pd5CG0oNzZAr3EqV8K4NiHURbr6RnI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ericflorin.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Ry5FHfhN; arc=none smtp.client-ip=209.85.214.201
+	s=arc-20240116; t=1747606703; c=relaxed/simple;
+	bh=I8+4BoFseTpUC5p5dREwDoZE1M55RFCZPPjUHOqxWJE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=je93D88ZAc578ZqSPNxyKKp353jsp7gqPi3GONa1jf+pZB2xQb+RIfu5c1NZ8oO/GoLEDqhE8wWYFqrmz++c+8EM6FOBAGyWs4aK5VQgfI1VhaOpQzqUnRuO0ZdOuNLfTOQjt8XT4mU/XmNyeiXF59t9r6L0JNBI+YT7PXHze0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=EI9hsT3R; arc=none smtp.client-ip=209.85.166.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ericflorin.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-231e3cfc144so18541825ad.2
-        for <linux-kernel@vger.kernel.org>; Sun, 18 May 2025 15:10:16 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-3d96836c1c2so356375ab.0
+        for <linux-kernel@vger.kernel.org>; Sun, 18 May 2025 15:18:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1747606216; x=1748211016; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=7MgIN8qU07WLqB2jI+fLrkDZZnm1G0XlzsKXj9QMd8M=;
-        b=Ry5FHfhNoxTE0oGCsVR64tN0mhBh0v6GPVb9TpfKWV24HCE96I5a9zznoVgKZ2I1Es
-         218h+mZxGI1Kdpt0mbmzOgt6XtBIgEFL1FBucXBNMQgCJSd3MYTEa3EMEA/ehhlySnqH
-         xT7bGcyJLcKzRtjG4JnV7JVuhkl9wCNzvdGc2Qw2o+G6Zq8UqD17YAwe+gyO0ZTG4jrp
-         8lstC9kwl2uuhCvEzJDjrRJicRwe7xFXq3F/C8tsOZ3VUsqXM2Kzdr8FL39pQ9MTpl+2
-         twT0fn/j4kC7eTPk7wpaAEaxpr2YEiIVBw8TPiJWqzYbt5Jcyomry4m6p1LiSY09znNQ
-         vl8Q==
+        d=google.com; s=20230601; t=1747606701; x=1748211501; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VQgUPjhfbykhRFqJ+rojDwjKnCwN3XruuZ2QAR/D3Ms=;
+        b=EI9hsT3RveNwVpzjGejmzUwjVk0Mxjj/Ip5gFuuLrNqjNN+FLTDIYBJIbpArGPXHOK
+         YFlA5zRXqry1RDaaof+mZJGsgFd4Od1/YZ3xb9YVrkzVRf7gqdK7vG5+1yRjkcY9gSxn
+         oXUHKVK0GM6DEwJ2YNMyrak2LSXZSmCRit3hzGgxwM1msg6C14ctSigwXlR0ZQsE/9kf
+         09JFFpsrMo22RTne62BFSfZGBFHFRGqJrs2PDvhll4yKp9mUZ802TbWrhAZ0Ho9bN2GU
+         8OyusXz4h2ByQ3+FIj5Crqo77A1MtQ4JRF/MdOE37l9tDkpc1iow8ydXy4Dx+jWnxF9Q
+         0V6w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747606216; x=1748211016;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7MgIN8qU07WLqB2jI+fLrkDZZnm1G0XlzsKXj9QMd8M=;
-        b=OzTeKV9p5FxSXuQkVFIsm7TwuMrGfj0pDB2cwCLs+PDDBtZfggyeG27Mxc7vV3NiTq
-         QOa4Db+WgPRx000Tz6TzAq2C12yotvxgELubj9sf5JKwWA3Jrk+rZI32CVOndXU/mAHK
-         o0m3iL2QQeBiLaDYrvwpVxtbfZSh+qza4eVJFkcdOj1l/moqZpTH2JXBL9VpUS7Dw93t
-         lvU2xE/tZCi7L0gZbDxSX7wUbJAzLxTCFIPrI8hItKb5HRjNUtnJ0AVoh2iTgyBn7VqP
-         xfRtJQHT5STc7bws1/HM/yzPYFC3tIJ6q1eJ8X+DOSqA2rPFGn21PTXLqgWbGcxVBfZA
-         Ooog==
-X-Forwarded-Encrypted: i=1; AJvYcCUKcP/jvr0d1CjKGMs36AQ0pB12OZxP/MfilFGYN0K5UPlM3drfrzvDGIzUjDOrJwWE2sHxQdKGw//giuA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxy63hLqyWTdpSDxa8VbcNhw5EyEnqkJf83lOcGbJOh9UZC55YV
-	impnJW5ivC0RYaYv7b//DlJm+xiC39dVsZSiiaROyJkmTfBRaoDGAqPtjqmZv4g25d0p9MV+PCu
-	Q5Owc2udtHquK/xNEcrBSdw==
-X-Google-Smtp-Source: AGHT+IGfnAPZYs1RjIQmyMNTBGtrRdET0rahQn+Z7K88kjkMkyG4PvQjlMM8Jb/K6YInMKuOlOjUwZPfuWnIm9Fv
-X-Received: from plbmu14.prod.google.com ([2002:a17:903:b4e:b0:231:e2ee:34c9])
- (user=ericflorin job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:902:d4c9:b0:232:202e:ab18 with SMTP id d9443c01a7336-232202eac80mr53400845ad.26.1747606215822;
- Sun, 18 May 2025 15:10:15 -0700 (PDT)
-Date: Sun, 18 May 2025 15:09:47 -0700
-In-Reply-To: <cover.1747605658.git.ericflorin@google.com>
+        d=1e100.net; s=20230601; t=1747606701; x=1748211501;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VQgUPjhfbykhRFqJ+rojDwjKnCwN3XruuZ2QAR/D3Ms=;
+        b=DL/uy5GqKUnCI45qm12/MgE8B9HEhknLQvIMfycZDooyoYD9vsOtfyPF/+8QH30css
+         hxT9yPxusYHJ1qKhN/taLoTmulWA2d56qs290XzSLGzW4BoUufsZvjoz87V//8b6WlcH
+         l+bPiX6uzwnXvFVaNYNSLc3+Zrf1A9vD6HrFf4eegRQR70H+q2C3+QMZ9ngtsfwzai/B
+         QJLxFC9mjZRlDn/772QQQ8wsOHg0D/KBX+GANtmZ4KhNdKYNPWHG+Ehl5of06XmkkdIe
+         K3bq/ayMwLXKvVyJ6akWEHZ9o869mw98MED7ZL7hdQOFM1WM601EGRyUWK/3uYCKfyLz
+         /3ng==
+X-Forwarded-Encrypted: i=1; AJvYcCX9uYtc7Q+ZfH3XYRSbps1d7bTysQclUoM7pXYFMp07ABCiCyNfn5raytDBbQ8eUOMqCJb5MRMgQeUogQA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0fe/iJ5NRpoO3QaluhLPlnsrg8FbgZ4omTIbpVLgQusTwMcMy
+	wDZGMENUIvXUB4tvGFaVd8W5gFgXPaFQADKnZx86WdMn1fmHqQJdEoidJXvZpw1mrRhvjPe3v7Z
+	edfZS/MfSjRBgrEXGZUoihagKUjSzPASkTqAw7OO4
+X-Gm-Gg: ASbGnctTOyW40p50pRW+xMAdLiYRgCPv8zbna5tyl7SnuhVQBorlJY2Uj+DMRSSk9W2
+	g68C/hhdmCl/Mc7+0VGWeC3T6cCotPl69rLXtVSnvy+1kTno8oXYs0+fbXDulWvJxQZUOSZWcEn
+	chyDUa+1IRqjUTJD9QSJmF8iZEvoKxyc7RgQ==
+X-Google-Smtp-Source: AGHT+IGwu2Fx7PP8eSlcCey0Ju8HK/8zK8WzHwfKvTcQ1qf5yBjQ8fr7BB/Rcbj7QWnzrPs7rGUjYAD6GPfrH+kyWJ0=
+X-Received: by 2002:a05:6e02:2184:b0:3db:8537:e450 with SMTP id
+ e9e14a558f8ab-3dc5d6164acmr3742895ab.20.1747606700751; Sun, 18 May 2025
+ 15:18:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <cover.1747605658.git.ericflorin@google.com>
-X-Mailer: git-send-email 2.49.0.1112.g889b7c5bd8-goog
-Message-ID: <97fcc39f3e63f465c49e8725d10f7c43fd35cd85.1747605658.git.ericflorin@google.com>
-Subject: [PATCH 2/2] staging: sm750fb: rename dpPortBase in lynx_accel
-From: Eric Florin <ericflorin@google.com>
-To: teddy.wang@siliconmotion.com
-Cc: sudipm.mukherjee@gmail.com, gregkh@linuxfoundation.org, 
-	linux-fbdev@vger.kernel.org, linux-staging@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, Eric Florin <ericflorin@google.com>
+MIME-Version: 1.0
+References: <20250518190957.58932-1-howardchu95@gmail.com>
+In-Reply-To: <20250518190957.58932-1-howardchu95@gmail.com>
+From: Ian Rogers <irogers@google.com>
+Date: Sun, 18 May 2025 15:18:09 -0700
+X-Gm-Features: AX0GCFsPfGvCnVlcuNqoTuWtq-ixbng5DINM1ck4tJwl9EvemnlTbUW21Nhga_E
+Message-ID: <CAP-5=fUs9ZVa3z54w1GyKrR=D0YF5GmSZEQ4dh=cKehTPD_w1g@mail.gmail.com>
+Subject: Re: [PATCH v2 0/5] perf test trace: Reduce test failures and make
+ error messages verbose
+To: Howard Chu <howardchu95@gmail.com>
+Cc: acme@kernel.org, mingo@redhat.com, namhyung@kernel.org, 
+	mark.rutland@arm.com, alexander.shishkin@linux.intel.com, jolsa@kernel.org, 
+	adrian.hunter@intel.com, peterz@infradead.org, kan.liang@linux.intel.com, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Rename `dpPortBase` to `dp_port_base` to conform with kernel style
-guidelines as reported by checkpatch.pl
+On Sun, May 18, 2025 at 12:10=E2=80=AFPM Howard Chu <howardchu95@gmail.com>=
+ wrote:
+>
+> Currently, BTF tests fail constantly, this series fixes two major reasons
+> why they fail, and makes the error messages acquired when using '-vv'
+> more verbose, so when they fail, one can easily diagnose the problem.
+>
+> Before:
+>     $ sudo /tmp/perf test enum -vv
+>     107: perf trace enum augmentation tests:
+>     107: perf trace enum augmentation tests                              =
+: Running
+>     --- start ---
+>     test child forked, pid 783533
+>     Checking if vmlinux exists
+>     Tracing syscall landlock_add_rule
+>     Tracing non-syscall tracepoint syscall
+>     ---- end(-1) ----
+>     107: perf trace enum augmentation tests                              =
+: FAILED!
+>
+> After:
+>     $ sudo /tmp/perf test enum -vv
+>     107: perf trace enum augmentation tests:
+>     107: perf trace enum augmentation tests                              =
+: Running
+>     --- start ---
+>     test child forked, pid 851658
+>     Checking if vmlinux exists
+>     Tracing syscall landlock_add_rule
+>     Tracing non-syscall tracepoint timer:hrtimer_setup,timer:hrtimer_star=
+t
+>     [tracepoint failure] Failed to trace tracepoint timer:hrtimer_setup,t=
+imer:hrtimer_start, output:
+>     event syntax error: 'timer:hrtimer_setup,timer:hrtimer_start'
+>                          \___ unknown tracepoint
+>
+>     Error:  File /sys/kernel/tracing//events/timer/hrtimer_setup not foun=
+d.
+>     Hint:   Perhaps this kernel misses some CONFIG_ setting to enable thi=
+s feature?.
+>
+>     Run 'perf list' for a list of valid events
+>
+>      Usage: perf trace [<options>] [<command>]
+>         or: perf trace [<options>] -- <command> [<options>]
+>         or: perf trace record [<options>] [<command>]
+>         or: perf trace record [<options>] -- <command> [<options>]
+>
+>         -e, --event <event>   event/syscall selector. use 'perf list' to =
+list available events---- end(-1) ----
+>     107: perf trace enum augmentation tests                              =
+: FAILED!
+>
+> Changes in v2:
+> - Add an extra newline after error messages
+> - Rename the title of patch 3 to 'Stop tracing hrtimer_setup...'
+> - Take the debug diff for explanation out of patch 5 to make it apply
+>   normally
+> - Add base-commit in this cover letter
 
-CHECK: Avoid CamelCase: <dpPortBase>
+Thanks Howard! I did some testing but see failures that may be
+pre-existing issues:
 
-Signed-off-by: Eric Florin <ericflorin@google.com>
----
- drivers/staging/sm750fb/sm750.h       | 2 +-
- drivers/staging/sm750fb/sm750_accel.c | 2 +-
- drivers/staging/sm750fb/sm750_hw.c    | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+```
+--- start ---
+test child forked, pid 264236
+Checking if vmlinux exists
+Tracing syscall landlock_add_rule
+[syscall failure] Failed to trace syscall landlock_add_rule, output:
 
-diff --git a/drivers/staging/sm750fb/sm750.h b/drivers/staging/sm750fb/sm750.h
-index a2342c69a65a..0ed1e18611ba 100644
---- a/drivers/staging/sm750fb/sm750.h
-+++ b/drivers/staging/sm750fb/sm750.h
-@@ -52,7 +52,7 @@ struct lynx_accel {
- 	/* base virtual address of DPR registers */
- 	volatile unsigned char __iomem *dpr_base;
- 	/* base virtual address of de data port */
--	volatile unsigned char __iomem *dpPortBase;
-+	volatile unsigned char __iomem *dp_port_base;
- 
- 	/* function pointers */
- 	void (*de_init)(struct lynx_accel *accel);
-diff --git a/drivers/staging/sm750fb/sm750_accel.c b/drivers/staging/sm750fb/sm750_accel.c
-index 97791f1b0123..7ac2e7b6ea0f 100644
---- a/drivers/staging/sm750fb/sm750_accel.c
-+++ b/drivers/staging/sm750fb/sm750_accel.c
-@@ -29,7 +29,7 @@ static inline u32 read_dpr(struct lynx_accel *accel, int offset)
- 
- static inline void write_dpPort(struct lynx_accel *accel, u32 data)
- {
--	writel(data, accel->dpPortBase);
-+	writel(data, accel->dp_port_base);
- }
- 
- void sm750_hw_de_init(struct lynx_accel *accel)
-diff --git a/drivers/staging/sm750fb/sm750_hw.c b/drivers/staging/sm750fb/sm750_hw.c
-index 159a5ad621f2..75ceb594fcb1 100644
---- a/drivers/staging/sm750fb/sm750_hw.c
-+++ b/drivers/staging/sm750fb/sm750_hw.c
-@@ -59,7 +59,7 @@ int hw_sm750_map(struct sm750_dev *sm750_dev, struct pci_dev *pdev)
- 	pr_info("mmio virtual addr = %p\n", sm750_dev->pvReg);
- 
- 	sm750_dev->accel.dpr_base = sm750_dev->pvReg + DE_BASE_ADDR_TYPE1;
--	sm750_dev->accel.dpPortBase = sm750_dev->pvReg + DE_PORT_ADDR_TYPE1;
-+	sm750_dev->accel.dp_port_base = sm750_dev->pvReg + DE_PORT_ADDR_TYPE1;
- 
- 	mmio750 = sm750_dev->pvReg;
- 	sm750_set_chip_type(sm750_dev->devid, sm750_dev->revid);
--- 
-2.49.0.1112.g889b7c5bd8-goog
+---- end(-1) ----
+107: perf trace enum augmentation tests                              : FAIL=
+ED!
+--- start ---
+test child forked, pid 264248
+Checking if vmlinux BTF exists
+Testing perf trace's string augmentation
+String augmentation test failed, output:
 
+---- end(-1) ----
+--- start ---
+test child forked, pid 278774
+Checking if vmlinux exists
+Tracing syscall landlock_add_rule
+[syscall failure] Failed to trace syscall landlock_add_rule, output:
+     0.000 (         ): perf/278843 landlock_add_rule(ruleset_fd: 11,
+rule_type: LANDLOCK_RULE_PATH_BENEATH, rule_attr: 0x7ffdcf1dad90,
+flags: 45) ...
+---- end(-1) ----
+107: perf trace enum augmentation tests                              : FAIL=
+ED!
+--- start ---
+test child forked, pid 279196
+Checking if vmlinux exists
+Tracing syscall landlock_add_rule
+[syscall failure] Failed to trace syscall landlock_add_rule, output:
+     0.000 (         ): perf/279262 landlock_add_rule(ruleset_fd: 11,
+rule_type: LANDLOCK_RULE_PATH_BENEATH, rule_attr: 0x7fff37a70fd0,
+flags: 45) ...
+---- end(-1) ----
+107: perf trace enum augmentation tests                              : FAIL=
+ED!
+108: perf trace BTF general tests                                    : FAIL=
+ED!
+--- start ---
+test child forked, pid 278187
+Checking if vmlinux BTF exists
+Testing perf trace's string augmentation
+Testing perf trace's buffer augmentation
+Testing perf trace's struct augmentation
+BTF struct augmentation test failed, output:
+sleep/278352 clock_nanosleep(0, 0, {1,1,}, 0x7ffd31550f50) =3D 0
+---- end(-1) ----
+108: perf trace BTF general tests                                    : FAIL=
+ED!
+--- start ---
+test child forked, pid 278775
+Checking if vmlinux BTF exists
+Testing perf trace's string augmentation
+Testing perf trace's buffer augmentation
+Buffer augmentation test failed, output:
+buffer content
+---- end(-1) ----
+108: perf trace BTF general tests                                    : FAIL=
+ED!
+--- start ---
+test child forked, pid 279547
+Checking if vmlinux BTF exists
+Testing perf trace's string augmentation
+Testing perf trace's buffer augmentation
+Testing perf trace's struct augmentation
+BTF struct augmentation test failed, output:
+sleep/279619 clock_nanosleep(0, 0, {1,1,}, 0x7ffcd47b6450) =3D 0
+---- end(-1) ----
+108: perf trace BTF general tests                                    : FAIL=
+ED!
+--- start ---
+test child forked, pid 264252
+[ perf record: Woken up 1 times to write data ]
+[ perf record: Captured and wrote 0.333 MB /tmp/temporary_file.pl459 ]
+Failed: cannot find *nanosleep syscall
+---- end(-1) ----
+110: perf trace record and replay                                    : FAIL=
+ED!
+--- start ---
+test child forked, pid 278193
+testing: perf trace -s -- true
+Error: cannot find enough pattern ^\s*(open|read|close).*[0-9]+%$ in the ou=
+tput
+
+ Summary of events:
+
+ true (278235), 5 events, 45.5%
+
+   syscall            calls  errors  total       min       avg
+max       stddev
+                                     (msec)    (msec)    (msec)
+(msec)        (%)
+   --------------- --------  ------ -------- --------- ---------
+---------     ------
+
+
+---- end(-1) ----
+111: perf trace summary                                              : FAIL=
+ED!
+```
+
+Thanks,
+Ian
+
+> Howard Chu (5):
+>   perf test trace: Use shell's -f flag to check if vmlinux exists
+>   perf test trace: Remove set -e and print trace test's error messages
+>   perf test trace: Stop tracing hrtimer_setup event in trace enum test
+>   perf test trace: Remove set -e for BTF general tests
+>   perf test trace BTF: Use --sort-events in BTF general tests
+>
+>  tools/perf/tests/shell/trace_btf_enum.sh    | 17 +++++++++--------
+>  tools/perf/tests/shell/trace_btf_general.sh | 19 +++++++++----------
+>  2 files changed, 18 insertions(+), 18 deletions(-)
+>
+>
+> base-commit: f3061d526714ac6cc936c48e76a6eb0512c69b1a
+> --
+> 2.45.2
+>
 
