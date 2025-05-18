@@ -1,321 +1,347 @@
-Return-Path: <linux-kernel+bounces-652916-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-652926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D921CABB20F
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 00:08:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 208C8ABB22D
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 00:19:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B3863B52EA
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 May 2025 22:08:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B0E0E16AAC6
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 May 2025 22:19:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 701632116FE;
-	Sun, 18 May 2025 22:07:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 491201EB18A;
+	Sun, 18 May 2025 22:19:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="CmfOmI/t"
-Received: from smtp.forwardemail.net (smtp.forwardemail.net [121.127.44.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="DJUTQiAg"
+Received: from smtp-8fac.mail.infomaniak.ch (smtp-8fac.mail.infomaniak.ch [83.166.143.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2C1D1FDE01
-	for <linux-kernel@vger.kernel.org>; Sun, 18 May 2025 22:07:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=121.127.44.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A6597DA6A
+	for <linux-kernel@vger.kernel.org>; Sun, 18 May 2025 22:19:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747606074; cv=none; b=geOcjf6iI89ly5hON8VMaTaNI66+Bc7gv0yNqO64xVxFnzrgX3ZfCY/fjw4VQxq2+YxX3skKDypGoNQkfSzuRZylQWdOhSPhBNL7cML214XMKY+ErQ9TIp6IckToKAvc0YA/3ZwbSZR6O1pryWIcSS4bi6koCx68cVLN3ROSD6g=
+	t=1747606779; cv=none; b=kF7cVsjgeKEZWDBG/aLWmqz+T1aKgZqbgR9GeCK2aGpiHXLqf6IpN7dGst50OfktkH4aGT2Bbn9NRNStE4mo/L1Mg8bnW54sTZ1IqJEDPIwcRdzWHNO+xXCBoHAHlyh/3DSGXcXB1ubqjSggT/kMg4Cvo2p2YYYAtgAPpH5Yulc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747606074; c=relaxed/simple;
-	bh=zdjUX70/2vnzr8WWpb97lZD/S0KJr376bHXyAhB+Xng=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=oENPMl9ZmtDqD0fvtx84+LCeQ25OokR8ATDG/gF0PJYdw4RFAFQWg1keQFgsQSkRiuO7UU7RXPDq+SIGgmN6b13TCFUE4gDWh2SUjLcJYNYLObPsqGhT50Xv1Nc4xu3MS6G5Bvd8+7Vokq9x6ru06g3k/rNv+HyWpiY+O9Ibf8M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=CmfOmI/t; arc=none smtp.client-ip=121.127.44.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
- h=Content-Transfer-Encoding: MIME-Version: References: In-Reply-To:
- Message-ID: Date: Subject: Cc: To: From; q=dns/txt; s=fe-e1b5cab7be;
- t=1747606071; bh=pxIzyIRGSrPy+fjzyg+1dQ5Aa4JTc3K1g+7QXk/QVO8=;
- b=CmfOmI/tPHp7WAoSJlawiUmCtQYKt4I+kcQdSQrHom1u1JYGrOpFn1W+3rrxMb/POtOjDbv+X
- UbJJEGXzcx9dK6CCVP153qKYbbpFfD3RdbLEPyUYbi4BJMlDCV5vjiR/oHH4yXpfcsxpXt2fjvC
- XmpkTzEGpwod+lEeZsRfZbLOsmfkH6F2Kf9VBa1Dkd5K9OeSU7LAPNoKWMcIZqjYYHVSqzM6d7U
- qSCWaOnZ5bPJeSOecwe5E94xqYLISfjawQZy92yM1VtzDF2C4uET2MWCqyw8/qhd3KwogOuMOUS
- UWtXUE19Fzy9NzdHl2qjh3dqZj/gLSUUwu/hVgzYaC/A==
-X-Forward-Email-ID: 682a5a3778cae75fbd8d472e
-X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
- 121.127.44.73
-X-Forward-Email-Version: 1.0.3
-X-Forward-Email-Website: https://forwardemail.net
-X-Complaints-To: abuse@forwardemail.net
-X-Report-Abuse: abuse@forwardemail.net
-X-Report-Abuse-To: abuse@forwardemail.net
-From: Jonas Karlman <jonas@kwiboo.se>
-To: Heiko Stuebner <heiko@sntech.de>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: Yao Zi <ziyao@disroot.org>,
-	Chukun Pan <amadeus@jmu.edu.cn>,
-	linux-rockchip@lists.infradead.org,
-	linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Jonas Karlman <jonas@kwiboo.se>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 9/9] arm64: dts: rockchip: Enable more power domains for RK3528
-Date: Sun, 18 May 2025 22:06:56 +0000
-Message-ID: <20250518220707.669515-10-jonas@kwiboo.se>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250518220707.669515-1-jonas@kwiboo.se>
-References: <20250518220707.669515-1-jonas@kwiboo.se>
+	s=arc-20240116; t=1747606779; c=relaxed/simple;
+	bh=ho1VNhehHgmcngBoWat50ncSfIel8Yp65A37rOp9nno=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=L6Bk+kUd3awYLhXugvkZaGz9i6KfIDJeOtI0bd4KxL+FNQ1RSaeoABlRiHBxOTTv45zxoYdHikX2Xa6BW33tipCHHh2uPUe1kbbwFXnZYMUsk0spKUMR7PVNXFhUY3+umRyxeUFx7nEAAt66kzS8o7ySvKGvZ+sTqljTld236Wk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=DJUTQiAg; arc=none smtp.client-ip=83.166.143.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4b0s6k4XKlznQY;
+	Sun, 18 May 2025 21:57:34 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1747598254;
+	bh=6a310mmqiABQv4xLsQnCavG9iMDgvOmMPKNv9TnDAoI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DJUTQiAgNuvy5aY5yl65btNt9qoJvyySGPq++MqMzEzQmARtUxgRFfBG53hOzuVCb
+	 0R4N1Sr2rY/q+haEtTGP0W5SXgYhUFE+dZ0B0dikq6nzNTLHcOKrVyKqih8s8IawKj
+	 8XgjJnDBRzvX2jG7NYgMqM8GB3DyPheSAmpB4iiQ=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4b0s6j2NGgz2qm;
+	Sun, 18 May 2025 21:57:33 +0200 (CEST)
+Date: Sun, 18 May 2025 21:57:32 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack3000@gmail.com>
+Cc: Paul Moore <paul@paul-moore.com>, sergeh@kernel.org, 
+	David Howells <dhowells@redhat.com>, Kees Cook <keescook@chromium.org>, 
+	linux-security-module@vger.kernel.org, Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, 
+	Jann Horn <jannh@google.com>, linux-kernel@vger.kernel.org, 
+	Peter Newman <peternewman@google.com>, Andy Lutomirski <luto@amacapital.net>, 
+	Will Drewry <wad@chromium.org>
+Subject: Re: [RFC 1/2] landlock: Multithreading support for
+ landlock_restrict_self()
+Message-ID: <20250518.xeevoom3kieY@digikod.net>
+References: <20250221184417.27954-2-gnoack3000@gmail.com>
+ <20250221184417.27954-3-gnoack3000@gmail.com>
+ <20250227.Aequah6Avieg@digikod.net>
+ <20250228.b3794e33d5c0@gnoack.org>
+ <20250304.aroh3Aifiiz9@digikod.net>
+ <20250310.990b29c809af@gnoack.org>
+ <20250311.aefai7vo6huW@digikod.net>
+ <20250518.be040c48937c@gnoack.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250518.be040c48937c@gnoack.org>
+X-Infomaniak-Routing: alpha
 
-Describe device power-domains and enable the PD_RKVENC, PD_VO and PD_VPU
-power-domains on RK3528.
+On Sun, May 18, 2025 at 09:40:05AM +0200, Günther Noack wrote:
+> Hello!
+> 
+> On Tue, Mar 11, 2025 at 03:32:53PM +0100, Mickaël Salaün wrote:
+> > On Mon, Mar 10, 2025 at 02:04:23PM +0100, Günther Noack wrote:
+> > > On Tue, Mar 04, 2025 at 09:25:51PM +0100, Mickaël Salaün wrote:
+> > > > On Fri, Feb 28, 2025 at 06:33:55PM +0100, Günther Noack wrote:
+> > > > > Hello!
+> > > > > 
+> > > > > Thanks for the review!
+> > > > > 
+> > > > > I'm adding David Howells to this thread as well.  David, maybe you can
+> > > > > help us and suggest a appropriate way to update the struct cred across
+> > > > > multiple threads?
+> > > 
+> > > Paul and Serge, since you are volunteering to take ownership of
+> > > credentials, maybe you can advise on what is the best approach here?
+> > > 
+> > > To summarize the approaches that I have been discussing with Mickaël:
+> > > 
+> > > Approach 1: Use the creds API thread-by-thread (implemented here)
+> > > 
+> > >   * Each task calls prepare_creds() and commit_creds() on its own, in
+> > >     line with the way the API is designed to be used (from a single
+> > >     task).
+> > >   * Task work gets scheduled with a pseudo-signal and the task that
+> > >     invoked the syscall is waiting for all of them to return.
+> > >   * Task work can fail at the beginning due to prepare_creds(), in
+> > >     which case all tasks have to abort_creds(). Additional
+> > >     synchronization is needed for that.
+> > > 
+> > >   Drawback: We need to grab the system-global task lock to prevent new
+> > >   thread creation and also grab the per-process signal lock to prevent
+> > >   races with other creds accesses, for the entire time as we wait for
+> > >   each task to do the task work.
+> > 
+> > In other words, this approach blocks all threads from the same process.
+> 
+> It does, but that is still an improvement over the current
+> libpsx-based implementation in userspace.  That existing
+> implementation does not block, but it is running the risk that
+> prepare_creds() might fail on one of the threads (e.g. allocation
+> failure), which would leave the processes' threads in an inconsistent
+> state.
+> 
+> Another upside that the in-kernel implementation has is that the
+> implementation of that is hidden behind an API, so if we can
+> eventually find a better approach, we can migrate to it.  It gives us
+> flexibility.
 
-The PD_RKVDEC is used by RKVDEC and DDRPHY CRU, and is kept disabled to
-prevent a full system reset trying to read the rate of the SCMI_CLK_DDR
-clock.
 
-Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
----
- arch/arm64/boot/dts/rockchip/rk3528.dtsi | 28 +++++++++++++++++++++---
- 1 file changed, 25 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3528.dtsi b/arch/arm64/boot/dts/rockchip/rk3528.dtsi
-index c13a6a566164..791cb9b1e8f1 100644
---- a/arch/arm64/boot/dts/rockchip/rk3528.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3528.dtsi
-@@ -403,7 +403,6 @@ power-domain@RK3528_PD_RKVENC {
- 					reg = <RK3528_PD_RKVENC>;
- 					pm_qos = <&qos_rkvenc>;
- 					#power-domain-cells = <0>;
--					status = "disabled";
- 				};
- 				power-domain@RK3528_PD_VO {
- 					reg = <RK3528_PD_VO>;
-@@ -417,7 +416,6 @@ power-domain@RK3528_PD_VO {
- 						 <&qos_vdpp>,
- 						 <&qos_vop>;
- 					#power-domain-cells = <0>;
--					status = "disabled";
- 				};
- 				power-domain@RK3528_PD_VPU {
- 					reg = <RK3528_PD_VPU>;
-@@ -431,7 +429,6 @@ power-domain@RK3528_PD_VPU {
- 						 <&qos_usb3otg>,
- 						 <&qos_vpu>;
- 					#power-domain-cells = <0>;
--					status = "disabled";
- 				};
- 			};
- 		};
-@@ -455,6 +452,7 @@ uart1: serial@ff9f8000 {
- 			clock-names = "baudclk", "apb_pclk";
- 			interrupts = <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>;
- 			dmas = <&dmac 10>, <&dmac 11>;
-+			power-domains = <&power RK3528_PD_RKVENC>;
- 			reg-io-width = <4>;
- 			reg-shift = <2>;
- 			status = "disabled";
-@@ -467,6 +465,7 @@ uart2: serial@ffa00000 {
- 			clock-names = "baudclk", "apb_pclk";
- 			interrupts = <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>;
- 			dmas = <&dmac 12>, <&dmac 13>;
-+			power-domains = <&power RK3528_PD_VPU>;
- 			reg-io-width = <4>;
- 			reg-shift = <2>;
- 			status = "disabled";
-@@ -479,6 +478,7 @@ uart3: serial@ffa08000 {
- 			clock-names = "baudclk", "apb_pclk";
- 			interrupts = <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>;
- 			dmas = <&dmac 14>, <&dmac 15>;
-+			power-domains = <&power RK3528_PD_RKVENC>;
- 			reg-io-width = <4>;
- 			reg-shift = <2>;
- 			status = "disabled";
-@@ -491,6 +491,7 @@ uart4: serial@ffa10000 {
- 			clock-names = "baudclk", "apb_pclk";
- 			interrupts = <GIC_SPI 44 IRQ_TYPE_LEVEL_HIGH>;
- 			dmas = <&dmac 16>, <&dmac 17>;
-+			power-domains = <&power RK3528_PD_VO>;
- 			reg-io-width = <4>;
- 			reg-shift = <2>;
- 			status = "disabled";
-@@ -503,6 +504,7 @@ uart5: serial@ffa18000 {
- 			clock-names = "baudclk", "apb_pclk";
- 			interrupts = <GIC_SPI 45 IRQ_TYPE_LEVEL_HIGH>;
- 			dmas = <&dmac 18>, <&dmac 19>;
-+			power-domains = <&power RK3528_PD_VPU>;
- 			reg-io-width = <4>;
- 			reg-shift = <2>;
- 			status = "disabled";
-@@ -515,6 +517,7 @@ uart6: serial@ffa20000 {
- 			clock-names = "baudclk", "apb_pclk";
- 			interrupts = <GIC_SPI 46 IRQ_TYPE_LEVEL_HIGH>;
- 			dmas = <&dmac 20>, <&dmac 21>;
-+			power-domains = <&power RK3528_PD_VPU>;
- 			reg-io-width = <4>;
- 			reg-shift = <2>;
- 			status = "disabled";
-@@ -527,6 +530,7 @@ uart7: serial@ffa28000 {
- 			clock-names = "baudclk", "apb_pclk";
- 			interrupts = <GIC_SPI 47 IRQ_TYPE_LEVEL_HIGH>;
- 			dmas = <&dmac 22>, <&dmac 23>;
-+			power-domains = <&power RK3528_PD_VPU>;
- 			reg-io-width = <4>;
- 			reg-shift = <2>;
- 			status = "disabled";
-@@ -539,6 +543,7 @@ i2c0: i2c@ffa50000 {
- 			clocks = <&cru CLK_I2C0>, <&cru PCLK_I2C0>;
- 			clock-names = "i2c", "pclk";
- 			interrupts = <GIC_SPI 61 IRQ_TYPE_LEVEL_HIGH>;
-+			power-domains = <&power RK3528_PD_RKVENC>;
- 			#address-cells = <1>;
- 			#size-cells = <0>;
- 			status = "disabled";
-@@ -551,6 +556,7 @@ i2c1: i2c@ffa58000 {
- 			clocks = <&cru CLK_I2C1>, <&cru PCLK_I2C1>;
- 			clock-names = "i2c", "pclk";
- 			interrupts = <GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>;
-+			power-domains = <&power RK3528_PD_RKVENC>;
- 			#address-cells = <1>;
- 			#size-cells = <0>;
- 			status = "disabled";
-@@ -577,6 +583,7 @@ i2c3: i2c@ffa68000 {
- 			clocks = <&cru CLK_I2C3>, <&cru PCLK_I2C3>;
- 			clock-names = "i2c", "pclk";
- 			interrupts = <GIC_SPI 64 IRQ_TYPE_LEVEL_HIGH>;
-+			power-domains = <&power RK3528_PD_VPU>;
- 			#address-cells = <1>;
- 			#size-cells = <0>;
- 			status = "disabled";
-@@ -591,6 +598,7 @@ i2c4: i2c@ffa70000 {
- 			interrupts = <GIC_SPI 65 IRQ_TYPE_LEVEL_HIGH>;
- 			pinctrl-names = "default";
- 			pinctrl-0 = <&i2c4_xfer>;
-+			power-domains = <&power RK3528_PD_VO>;
- 			#address-cells = <1>;
- 			#size-cells = <0>;
- 			status = "disabled";
-@@ -603,6 +611,7 @@ i2c5: i2c@ffa78000 {
- 			clocks = <&cru CLK_I2C5>, <&cru PCLK_I2C5>;
- 			clock-names = "i2c", "pclk";
- 			interrupts = <GIC_SPI 66 IRQ_TYPE_LEVEL_HIGH>;
-+			power-domains = <&power RK3528_PD_VPU>;
- 			#address-cells = <1>;
- 			#size-cells = <0>;
- 			status = "disabled";
-@@ -615,6 +624,7 @@ i2c6: i2c@ffa80000 {
- 			clocks = <&cru CLK_I2C6>, <&cru PCLK_I2C6>;
- 			clock-names = "i2c", "pclk";
- 			interrupts = <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>;
-+			power-domains = <&power RK3528_PD_VPU>;
- 			#address-cells = <1>;
- 			#size-cells = <0>;
- 			status = "disabled";
-@@ -629,6 +639,7 @@ i2c7: i2c@ffa88000 {
- 			interrupts = <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>;
- 			pinctrl-names = "default";
- 			pinctrl-0 = <&i2c7_xfer>;
-+			power-domains = <&power RK3528_PD_VO>;
- 			#address-cells = <1>;
- 			#size-cells = <0>;
- 			status = "disabled";
-@@ -720,6 +731,7 @@ saradc: adc@ffae0000 {
- 			clocks = <&cru CLK_SARADC>, <&cru PCLK_SARADC>;
- 			clock-names = "saradc", "apb_pclk";
- 			interrupts = <GIC_SPI 140 IRQ_TYPE_LEVEL_HIGH>;
-+			power-domains = <&power RK3528_PD_VPU>;
- 			resets = <&cru SRST_P_SARADC>;
- 			reset-names = "saradc-apb";
- 			#io-channel-cells = <1>;
-@@ -740,6 +752,7 @@ gmac0: ethernet@ffbd0000 {
- 			interrupt-names = "macirq", "eth_wake_irq";
- 			phy-handle = <&rmii0_phy>;
- 			phy-mode = "rmii";
-+			power-domains = <&power RK3528_PD_VO>;
- 			resets = <&cru SRST_A_MAC_VO>;
- 			reset-names = "stmmaceth";
- 			rockchip,grf = <&vo_grf>;
-@@ -798,6 +811,7 @@ gmac1: ethernet@ffbe0000 {
- 			interrupts = <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 124 IRQ_TYPE_LEVEL_HIGH>;
- 			interrupt-names = "macirq", "eth_wake_irq";
-+			power-domains = <&power RK3528_PD_VPU>;
- 			resets = <&cru SRST_A_MAC>;
- 			reset-names = "stmmaceth";
- 			rockchip,grf = <&vpu_grf>;
-@@ -848,6 +862,7 @@ sdhci: mmc@ffbf0000 {
- 			pinctrl-names = "default";
- 			pinctrl-0 = <&emmc_bus8>, <&emmc_clk>, <&emmc_cmd>,
- 				    <&emmc_strb>;
-+			power-domains = <&power RK3528_PD_VPU>;
- 			resets = <&cru SRST_C_EMMC>, <&cru SRST_H_EMMC>,
- 				 <&cru SRST_A_EMMC>, <&cru SRST_B_EMMC>,
- 				 <&cru SRST_T_EMMC>;
-@@ -869,6 +884,7 @@ sdio0: mmc@ffc10000 {
- 			max-frequency = <200000000>;
- 			pinctrl-names = "default";
- 			pinctrl-0 = <&sdio0_bus4>, <&sdio0_clk>, <&sdio0_cmd>;
-+			power-domains = <&power RK3528_PD_VPU>;
- 			resets = <&cru SRST_H_SDIO0>;
- 			reset-names = "reset";
- 			status = "disabled";
-@@ -888,6 +904,7 @@ sdio1: mmc@ffc20000 {
- 			max-frequency = <200000000>;
- 			pinctrl-names = "default";
- 			pinctrl-0 = <&sdio1_bus4>, <&sdio1_clk>, <&sdio1_cmd>;
-+			power-domains = <&power RK3528_PD_VPU>;
- 			resets = <&cru SRST_H_SDIO1>;
- 			reset-names = "reset";
- 			status = "disabled";
-@@ -908,6 +925,7 @@ sdmmc: mmc@ffc30000 {
- 			pinctrl-names = "default";
- 			pinctrl-0 = <&sdmmc_bus4>, <&sdmmc_clk>, <&sdmmc_cmd>,
- 				    <&sdmmc_det>;
-+			power-domains = <&power RK3528_PD_VO>;
- 			resets = <&cru SRST_H_SDMMC0>;
- 			reset-names = "reset";
- 			rockchip,default-sample-phase = <90>;
-@@ -961,6 +979,7 @@ gpio1: gpio@ffaf0000 {
- 				gpio-ranges = <&pinctrl 0 32 32>;
- 				interrupt-controller;
- 				#interrupt-cells = <2>;
-+				power-domains = <&power RK3528_PD_VPU>;
- 			};
- 
- 			gpio2: gpio@ffb00000 {
-@@ -973,6 +992,7 @@ gpio2: gpio@ffb00000 {
- 				gpio-ranges = <&pinctrl 0 64 32>;
- 				interrupt-controller;
- 				#interrupt-cells = <2>;
-+				power-domains = <&power RK3528_PD_VO>;
- 			};
- 
- 			gpio3: gpio@ffb10000 {
-@@ -985,6 +1005,7 @@ gpio3: gpio@ffb10000 {
- 				gpio-ranges = <&pinctrl 0 96 32>;
- 				interrupt-controller;
- 				#interrupt-cells = <2>;
-+				power-domains = <&power RK3528_PD_VPU>;
- 			};
- 
- 			gpio4: gpio@ffb20000 {
-@@ -997,6 +1018,7 @@ gpio4: gpio@ffb20000 {
- 				gpio-ranges = <&pinctrl 0 128 32>;
- 				interrupt-controller;
- 				#interrupt-cells = <2>;
-+				power-domains = <&power RK3528_PD_RKVENC>;
- 			};
- 		};
- 	};
--- 
-2.49.0
+> 
+> I guess a possible variant (approach 1B) would be to do the equivalent
+> to what userspace does today, and not make all threads wait for the
+> possible error of prepare_creds() on the other threads.
 
+This 1B variant is not OK because it would remove the guarantee that the
+whole process is restricted.
+
+> 
+> 
+> > > Approach 2: Attempt to do the prepare_creds() step in the calling task.
+> > > 
+> > >   * Would use an API similar to what keyctl uses for the
+> > >     parent-process update.
+> > >   * This side-steps the credentials update API as it is documented in
+> > >     Documentation, using the cred_alloc_blank() helper and replicating
+> > >     some prepare_creds() logic.
+> > > 
+> > >   Drawback: This would introduce another use of the cred_alloc_blank()
+> > >   API (and the cred_transfer LSM hook), which would otherwise be
+> > >   reasonable to delete if we can remove the keyctl use case.
+> > >   (https://lore.kernel.org/all/20240805-remove-cred-transfer-v2-0-a2aa1d45e6b8@google.com/)
+> > 
+> > cred_alloc_blank() was designed to avoid dealing with -ENOMEM, which is
+> > a required property for this Landlock TSYNC feature (i.e. atomic and
+> > consistent synchronization).
+> 
+> Remark on the side, I suspect that the error handling in nptl(7)
+> probably also does not guarantee that, also for setuid(2) and friends.
+> 
+> 
+> > I think it would make sense to replace most of the
+> > key_change_session_keyring() code with a new cred_transfer() helper that
+> > will memcpy the old cred to the new, increment the appropriate ref
+> > counters, and call security_transfer_creds().  We could then use this
+> > helper in Landlock too.
+> > 
+> > To properly handle race conditions with a thread changing its own
+> > credentials, we would need a new LSM hook called by commit_creds().
+> > For the Landlock implementation, this hook would check if the process is
+> > being Landlocked+TSYNC and return -ERESTARTNOINTR if it is the case.
+> > The newly created task_work would then be free to update each thread's
+> > credentials while only blocking the calling thread (which is also a
+> > required feature).
+> > 
+> > Alternatively, instead of a new LSM hook, commit_creds() could check
+> > itself a new group leader's flag set if all the credentials from the
+> > calling process are being updated, and return -ERESTARTNOINTR in this
+> > case.
+> 
+> commit_creds() is explicitly documented to never return errors.
+> It returns a 0 integer so that it lends itself for tail calls,
+> and some of those usages might also rely on it always working.
+> There are ~15 existing calls where the return value is discarded.
+
+Indeed, commit_creds() should always return 0.  My full proposal does
+not look safe enough, but the cred_transfer() helper can still be
+useful.
+
+> 
+> If commit_creds() returns -ERESTARTNOINTR, I assume that your idea is
+> that the task_work would retry the prepare-and-commit when
+> encountering that?
+> 
+> We would have to store the fact that the process is being
+> Landlock+TSYNC'd in a central place (e.g. group leader flag set).
+> When that is done, don't we need more synchronization mechanisms to
+> access that (which RCU was meant to avoid)?
+> 
+> I am having a hard time wrapping my head around these synchronization
+> schemes, I feel this is getting too complicated for what it is trying
+> to do and might become difficult to maintain if we implemented it.
+
+Fair. ERESTARTNOINTR should only be used by a syscall implementation.
+
+> 
+> > > Approach 3: Store Landlock domains outside of credentials altogether
+> > > 
+> > >   * We could also store a task's Landlock domain as a pointer in the
+> > >     per-task security blob, and refcount these.  We would need to make
+> > >     sure that they get newly referenced and updated in the same
+> > >     scenarios as they do within struct cred today.
+> > >   * We could then guard accesses to a task's Landlock domain with a
+> > >     more classic locking mechanism.  This would make it possible to
+> > >     update the Landlock domain of all tasks in a process without
+> > >     having to go through pseudo-signals.
+> > > 
+> > >   Drawbacks:
+> > >   * Would have to make sure that the Landlock domain the task's LSM
+> > >     blob behaves exactly the same as before in the struct cred.
+> > >   * Potentially slower to access Landlock domains that are guarded by
+> > >     a mutex.
+> > 
+> > This would not work because the kernel (including LSM hooks) uses
+> > credentials to check access.
+> 
+> It's unclear to me what you mean by that.
+> 
+> Do you mean that it is hard to replicate for Landlock the cases where
+> the pointer would have to be copied, because the LSM hooks are not
+> suited for it?
+
+struct cred is used to check if a task subject can access a task object.
+Landlock's metadata must stay in struct cred to be available when
+checking access to any kernel object.  The LSM hooks reflect this
+rationale by only passing struct cred when checking a task (e.g.
+security_task_kill()'s cred).
+
+seccomp only cares about filtering raw syscalls, and the seccomp filters
+are just ignored when the kernel (with an LSM or not) checks task's
+permission to access another task.
+
+The per-task security blob could store some state though, e.g. to
+identify if a domain needs to be updated, but I don't see a use case
+here.
+
+> 
+> 
+> Here is another possible approach which a colleague suggested in a
+> discussion:
+> 
+> Approach 4: Freeze-and re-enforce the Landlock ruleset
+> 
+> Another option would be to have a different user space API for this,
+> with a flag LANDLOCK_RESTRICT_SELF_ENTER (name TBD) to enter a given
+> domain.
+> 
+> On first usage of landlock_restrict_self() with the flag, the enforced
+> ruleset would be frozen and linked to the Landlock domain which was
+> enforced at the end.
+> 
+> Subsequent attempts to add rules to the ruleset would fail when the
+> ruleset is frozen.  The ruleset FD is now representing the created
+> domain including all its nesting.
+> 
+> Subsequent usages of landlock_restrict_self() on a frozen ruleset would:
+> 
+> (a) check that the ruleset's domain is a narrower (nested) domain of
+>     the current thread's domain (so that we retain the property of
+>     only locking in a task further than it was before).
+> 
+> (b) set the task's domain to the domain attached to the ruleset
+> 
+> This way, we would keep a per-thread userspace API, avoiding the
+> issues discussed before.  It would become possible to use ruleset file
+> descriptors as handles for entering Landlock domains and pass them
+> around between processes.
+> 
+> The only drawback I can see is that it has the same issues as libpsx
+> and nptl(7) in that the syscall can fail on individual threads due to
+> ENOMEM.
+
+Right. This approach is interesting, but it does not solve the main
+issue here.
+
+Anyway, being able to enter a Landlock domain would definitely be
+useful. I would prefer using a pidfd to refer to a task's Landlock
+domain, which would avoid race condition and make the API clearer.  It
+would be nice to be able to pass a pidfd (instead of a ruleset) to
+landlock_restrict_self().  If we want to directly deal with a domain, we
+should create a dedicated domain FD type.
+
+> 
+> If we can not find a solution for "TSYNC", it seems that this might be
+> a viable alternative.  For multithreaded applications enforcing a
+> Landlock policy, it would become an application of libpsx with the
+> LANDLOCK_RESTRICT_SELF_ENTER flag.
+> 
+> Let me know what you think.
+> 
+> –Günther
+
+Thinking more about this feature, it might actually make sense to
+synchronize all threads from the same process without checking other
+threads' Landlock domain. The rationale are:
+1. Linux threads are not security boundaries and it is allowed for a
+   thread to control other threads' memory, which means changing their
+   code flow.  In other words, thread's permissions are the union of all
+   thread's permissions in the same process.
+2. libpsx and libc's set*id() ignore other thread's credentials and just
+   blindly execute the same code on all threads.
+3. It would be simpler and would avoid another error case.
+
+An issue could happen if a Landlock domain restricting a test thread is
+replaced.  I don't think the benefit of avoiding this issue is worth it
+compared to the guarantee we get when forcing the sandboxing of a full
+process without error.
+
+We should rename the flag to LANDLOCK_RESTRICT_SELF_PROCESS to make it
+clear what it does.
+
+The remaining issues are still the potential memory allocation failures.
+There are two things:
+
+1. We should try as much as possible to limit useless credential
+   duplications by not creating a new struct cred if parent credentials
+   are the same.
+
+2. To avoid the libpsx inconsistency (because of ENOMEM or EPERM),
+   landlock_restrict_self(2) should handle memory allocation and
+   transition the process from a known state to another known state.
+
+What about this approach:
+- "Freeze" all threads of the current process (not ideal but simple) to
+  make sure their credentials don't get updated.
+- Create a new blank credential for the calling thread.
+- Walk through all threads and create a new blank credential for all
+  threads with a different cred than the caller.
+- Inject a task work that will call cred_transfer() for all threads with
+  either the same new credential used by the caller (incrementing the
+  refcount), or it will populate and use a blank one if it has different
+  credentials than the caller.
+
+This may not efficiently deduplicate credentials for all threads but it
+is a simple deduplication approach that should be useful in most cases.
+
+The difficult part is mainly in the "fleezing". It would be nice to
+change the cred API to avoid that but I'm not sure how.
 
