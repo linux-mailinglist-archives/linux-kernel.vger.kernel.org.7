@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-652911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-652907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13B4BABB1FB
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 00:06:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C3EFABB1F5
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 00:05:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 664FF3B54ED
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 May 2025 22:05:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F6F7174570
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 May 2025 22:05:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3581212B3A;
-	Sun, 18 May 2025 22:05:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0510C20D4E7;
+	Sun, 18 May 2025 22:05:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="XxIy6clM"
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="BIDI9BIF"
 Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFDE61DC98B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFD8D1C1F05;
 	Sun, 18 May 2025 22:05:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747605924; cv=none; b=ALd1tzaOY/sngbS+4BKt3/JiG02/+mXwGurNgFCnJcTfWc/SaRt1GIDU961u+JyyOu4TMgEY92m+gpXd7LqGa8L86d+/Kvj9XZW6zP109shNZ7Y/ESAbwq0pxuHeGR7mkg7qVK0bMtfHzD2pHJ3EHS0d9zTTV/UBn1VdH3rWuWM=
+	t=1747605923; cv=none; b=VOIc47JnVZLK9U8isCRBRF4qoiEuvkJ3JodPaXdGleo68p45Sa8rULZIjlDidXDsaIFYBJXOCqnpu9FhC/9AIxklNsDtcYvHThg+M/EO8R+CYna64WCf5p8Y5EZgGBCxDzLQNcTDnEaZc2oqO0egMwBiKihE/hAqs9tJBs0omTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747605924; c=relaxed/simple;
-	bh=PZyaHlFGGiNPWlVC4YexeYLg+SMdvLrN1on5TuLT14U=;
+	s=arc-20240116; t=1747605923; c=relaxed/simple;
+	bh=3yP7bMH2jkvcANwa5lLh/klZmT0dwOlq2ra0BALxO5k=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=IStM2op/UqMXO5ABBGIpEnvEZCfHJcVgSVSezp3a5tgaLFJ+4DDOKVMGOY0giffJP/n55lgTpqmWTEndgNElLx77yiUt89lyp+IdPHA+B8dM4C599CPk0zE4YgyKL2BUm7ji9UUuryYvTeoB2nldWBGbAg9EdPtBQNlpbG7xL6I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=XxIy6clM; arc=none smtp.client-ip=185.11.138.130
+	 MIME-Version; b=h0FcoTHYBQWHmDjc3yxT1CJhtirVdoYAWlJl4QS+CDbcfpcehVBWSdX0ZtO9+16+sOWL5fYXZlRDoOQ+sMDdgHUlMwTNxo5bmckwHCclJ3bzz0ux92Fpa/7IICcxNcgbI21CUz1Wv4Sg332zcCRF5Y13qnuhcBF6vFDfjrdd57c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=BIDI9BIF; arc=none smtp.client-ip=185.11.138.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
@@ -35,17 +35,17 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
 	In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
 	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
 	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=YbcM1bOFMt6WdPHExqK4799CzGHt6PhTiCIlQuVNo5o=; b=XxIy6clMJgBIwEyNeZA5bMadZY
-	HfHalAUEd+mwkWXQsNs7T/Y2nfipGe4tETLYMVWvoBH2J6ggxhO6z7o9/VhjcOcTk8PCIake1OLxV
-	efIzEe61rGf+81NSHcDII5ZdEXV1LDR+exWgNBzv95QyRfY3SUpIK3kDZ6SaMQwBNjvF3iciwu2QC
-	9ZCBB6Lf+sUN6YASaZqc9yQN9tcEXEWqE5K2BacZ/RdVZS00GRzpo5qEBXWx87QaK1sF9JZBU2CsE
-	UKNrx0Xgx2/vPPSRqO9UYZjzgOBLlTNlKp3sTclqDDZ8O4YsjzU5vFPPQvccTKFdC/eJnWMLlp/ID
-	UGcD8KPQ==;
+	bh=GBMtNI6cTtuuD6FKdLMsNoUStz5+7O3bDHN29nw5LRw=; b=BIDI9BIFqqrHzG9df7pynEaLxP
+	gchll30OIePpoSQ0XgeGkB1/cF7YXTk6kioXpeBZfcxcC4pOWpE3BeCtdRDnAxENlyfDjQg2JdMlR
+	KKFf0ulV3w+81HTR1eezkPFakVARPsUDNIElbIQhjjkOErBxIrqipPtzwuejnP51BlMKiCjxNArSk
+	5O35CJbz4zb3uUuPKfmJrVbmW+5dtnIWcWVjYX0nB5RqF6Un/z6r2OJNC8OEW65pap25nlvzqi5SM
+	/fE41RP0nOmHQ39EaGctpElz3D1fCUSDEyobqzfWB+r7zTUlvbmrWB5IpCr+wPVO667yHrE/8UgVa
+	4+b0gyJQ==;
 Received: from i53875a50.versanet.de ([83.135.90.80] helo=localhost.localdomain)
 	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.94.2)
 	(envelope-from <heiko@sntech.de>)
-	id 1uGm7z-0004gv-Cj; Mon, 19 May 2025 00:05:03 +0200
+	id 1uGm7z-0004gv-SL; Mon, 19 May 2025 00:05:03 +0200
 From: Heiko Stuebner <heiko@sntech.de>
 To: heiko@sntech.de
 Cc: robh@kernel.org,
@@ -57,11 +57,10 @@ Cc: robh@kernel.org,
 	devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	kernel test robot <lkp@intel.com>
-Subject: [PATCH 2/6] arm64: dts: rockchip: move rk3576 pinctrl node outside the soc node
-Date: Mon, 19 May 2025 00:04:44 +0200
-Message-ID: <20250518220449.2722673-3-heiko@sntech.de>
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 3/6] arm64: dts: rockchip: remove a double-empty line from rk3576 core dtsi
+Date: Mon, 19 May 2025 00:04:45 +0200
+Message-ID: <20250518220449.2722673-4-heiko@sntech.de>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20250518220449.2722673-1-heiko@sntech.de>
 References: <20250518220449.2722673-1-heiko@sntech.de>
@@ -73,174 +72,25 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The non-mmio pinctrl node is not supposed to be inside the soc simple-bus
-as dtc points out:
+Two empty lines between nodes, is one too many.
 
-../arch/arm64/boot/dts/rockchip/rk3576.dtsi:2351.20-2417.5: Warning (simple_bus_reg): /soc/pinctrl: missing or empty reg/ranges property
-
-Move the pinctrl node outside and adapt the indentation.
-
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202505150745.PQT9TLYX-lkp@intel.com/
 Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 ---
- arch/arm64/boot/dts/rockchip/rk3576.dtsi | 136 +++++++++++------------
- 1 file changed, 68 insertions(+), 68 deletions(-)
+ arch/arm64/boot/dts/rockchip/rk3576.dtsi | 1 -
+ 1 file changed, 1 deletion(-)
 
 diff --git a/arch/arm64/boot/dts/rockchip/rk3576.dtsi b/arch/arm64/boot/dts/rockchip/rk3576.dtsi
-index 3b62e037772a..0e0a37849874 100644
+index 0e0a37849874..b6e946e68b09 100644
 --- a/arch/arm64/boot/dts/rockchip/rk3576.dtsi
 +++ b/arch/arm64/boot/dts/rockchip/rk3576.dtsi
-@@ -429,6 +429,74 @@ simple-audio-card,cpu {
+@@ -2000,7 +2000,6 @@ i2c5: i2c@2ac80000 {
+ 			status = "disabled";
  		};
- 	};
  
-+	pinctrl: pinctrl {
-+		compatible = "rockchip,rk3576-pinctrl";
-+		rockchip,grf = <&ioc_grf>;
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		gpio0: gpio@27320000 {
-+			compatible = "rockchip,gpio-bank";
-+			reg = <0x0 0x27320000 0x0 0x200>;
-+			clocks = <&cru PCLK_GPIO0>, <&cru DBCLK_GPIO0>;
-+			gpio-controller;
-+			gpio-ranges = <&pinctrl 0 0 32>;
-+			interrupts = <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-controller;
-+			#gpio-cells = <2>;
-+			#interrupt-cells = <2>;
-+		};
-+
-+		gpio1: gpio@2ae10000 {
-+			compatible = "rockchip,gpio-bank";
-+			reg = <0x0 0x2ae10000 0x0 0x200>;
-+			clocks = <&cru PCLK_GPIO1>, <&cru DBCLK_GPIO1>;
-+			gpio-controller;
-+			gpio-ranges = <&pinctrl 0 32 32>;
-+			interrupts = <GIC_SPI 157 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-controller;
-+			#gpio-cells = <2>;
-+			#interrupt-cells = <2>;
-+		};
-+
-+		gpio2: gpio@2ae20000 {
-+			compatible = "rockchip,gpio-bank";
-+			reg = <0x0 0x2ae20000 0x0 0x200>;
-+			clocks = <&cru PCLK_GPIO2>, <&cru DBCLK_GPIO2>;
-+			gpio-controller;
-+			gpio-ranges = <&pinctrl 0 64 32>;
-+			interrupts = <GIC_SPI 161 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-controller;
-+			#gpio-cells = <2>;
-+			#interrupt-cells = <2>;
-+		};
-+
-+		gpio3: gpio@2ae30000 {
-+			compatible = "rockchip,gpio-bank";
-+			reg = <0x0 0x2ae30000 0x0 0x200>;
-+			clocks = <&cru PCLK_GPIO3>, <&cru DBCLK_GPIO3>;
-+			gpio-controller;
-+			gpio-ranges = <&pinctrl 0 96 32>;
-+			interrupts = <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-controller;
-+			#gpio-cells = <2>;
-+			#interrupt-cells = <2>;
-+		};
-+
-+		gpio4: gpio@2ae40000 {
-+			compatible = "rockchip,gpio-bank";
-+			reg = <0x0 0x2ae40000 0x0 0x200>;
-+			clocks = <&cru PCLK_GPIO4>, <&cru DBCLK_GPIO4>;
-+			gpio-controller;
-+			gpio-ranges = <&pinctrl 0 128 32>;
-+			interrupts = <GIC_SPI 169 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-controller;
-+			#gpio-cells = <2>;
-+			#interrupt-cells = <2>;
-+		};
-+	};
-+
- 	pmu_a53: pmu-a53 {
- 		compatible = "arm,cortex-a53-pmu";
- 		interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>,
-@@ -2347,74 +2415,6 @@ scmi_shmem: scmi-shmem@4010f000 {
- 			compatible = "arm,scmi-shmem";
- 			reg = <0x0 0x4010f000 0x0 0x100>;
- 		};
 -
--		pinctrl: pinctrl {
--			compatible = "rockchip,rk3576-pinctrl";
--			rockchip,grf = <&ioc_grf>;
--			#address-cells = <2>;
--			#size-cells = <2>;
--			ranges;
--
--			gpio0: gpio@27320000 {
--				compatible = "rockchip,gpio-bank";
--				reg = <0x0 0x27320000 0x0 0x200>;
--				clocks = <&cru PCLK_GPIO0>, <&cru DBCLK_GPIO0>;
--				gpio-controller;
--				gpio-ranges = <&pinctrl 0 0 32>;
--				interrupts = <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>;
--				interrupt-controller;
--				#gpio-cells = <2>;
--				#interrupt-cells = <2>;
--			};
--
--			gpio1: gpio@2ae10000 {
--				compatible = "rockchip,gpio-bank";
--				reg = <0x0 0x2ae10000 0x0 0x200>;
--				clocks = <&cru PCLK_GPIO1>, <&cru DBCLK_GPIO1>;
--				gpio-controller;
--				gpio-ranges = <&pinctrl 0 32 32>;
--				interrupts = <GIC_SPI 157 IRQ_TYPE_LEVEL_HIGH>;
--				interrupt-controller;
--				#gpio-cells = <2>;
--				#interrupt-cells = <2>;
--			};
--
--			gpio2: gpio@2ae20000 {
--				compatible = "rockchip,gpio-bank";
--				reg = <0x0 0x2ae20000 0x0 0x200>;
--				clocks = <&cru PCLK_GPIO2>, <&cru DBCLK_GPIO2>;
--				gpio-controller;
--				gpio-ranges = <&pinctrl 0 64 32>;
--				interrupts = <GIC_SPI 161 IRQ_TYPE_LEVEL_HIGH>;
--				interrupt-controller;
--				#gpio-cells = <2>;
--				#interrupt-cells = <2>;
--			};
--
--			gpio3: gpio@2ae30000 {
--				compatible = "rockchip,gpio-bank";
--				reg = <0x0 0x2ae30000 0x0 0x200>;
--				clocks = <&cru PCLK_GPIO3>, <&cru DBCLK_GPIO3>;
--				gpio-controller;
--				gpio-ranges = <&pinctrl 0 96 32>;
--				interrupts = <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>;
--				interrupt-controller;
--				#gpio-cells = <2>;
--				#interrupt-cells = <2>;
--			};
--
--			gpio4: gpio@2ae40000 {
--				compatible = "rockchip,gpio-bank";
--				reg = <0x0 0x2ae40000 0x0 0x200>;
--				clocks = <&cru PCLK_GPIO4>, <&cru DBCLK_GPIO4>;
--				gpio-controller;
--				gpio-ranges = <&pinctrl 0 128 32>;
--				interrupts = <GIC_SPI 169 IRQ_TYPE_LEVEL_HIGH>;
--				interrupt-controller;
--				#gpio-cells = <2>;
--				#interrupt-cells = <2>;
--			};
--		};
- 	};
- };
- 
+ 		i2c6: i2c@2ac90000 {
+ 			compatible = "rockchip,rk3576-i2c", "rockchip,rk3399-i2c";
+ 			reg = <0x0 0x2ac90000 0x0 0x1000>;
 -- 
 2.47.2
 
