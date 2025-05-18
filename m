@@ -1,180 +1,224 @@
-Return-Path: <linux-kernel+bounces-652609-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-652611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFAE6ABAE16
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 May 2025 07:49:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7964ABAE1A
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 May 2025 07:52:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 460BA7AC574
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 May 2025 05:48:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 47F3D16B63C
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 May 2025 05:52:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DADBF1E25EB;
-	Sun, 18 May 2025 05:49:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 459DF1BD01D;
+	Sun, 18 May 2025 05:52:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="YUMI9ALZ"
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="agF6OgAY"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2083.outbound.protection.outlook.com [40.107.220.83])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF6951CEEBE
-	for <linux-kernel@vger.kernel.org>; Sun, 18 May 2025 05:49:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747547345; cv=none; b=GxiWbginEampMH0KzDoJ0SH/fNjrEi1xudGrvWFzFlWyQ2kNOl4atkBC8YQINE6SD6epW9On6/qf9uv4AAQy+7YJepuE5K0+LIhgY1Fgzt42VSnLAd//JtlzGE0KTHEllswI/Diz9Q0W7I7ms9YYanWGaYKoWApQlCVGfT0SO9M=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747547345; c=relaxed/simple;
-	bh=eZBpP6KfUKXCXO83nQ/GJ5KM078e67pg7DbDDBqWLsc=;
-	h=From:To:CC:Date:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=LhS5xyXj8NEufuVNyb3IxhMQYKPTD1wLaRkMYWiBJXuLv9Yd9XyOki7bFRR4d1dHvS8qcMlA32Q7W+ZdquJvR0rtsXAayUrrRB2Tw5/ksKVf/DfxJ8Qhz9yIVE0Gr6wkBwBVggEohIV4TskN8zGDHS1b1DqdRpUNtJNiPcnC2lY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=YUMI9ALZ; arc=none smtp.client-ip=209.85.160.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4766631a6a4so37045661cf.2
-        for <linux-kernel@vger.kernel.org>; Sat, 17 May 2025 22:49:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1747547341; x=1748152141; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:user-agent
-         :references:in-reply-to:message-id:date:cc:to:from:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=G9qeFJ7lNo+yYpuKZq/TR4G2C9hCrYbOgamht3tIasA=;
-        b=YUMI9ALZ3F59PQe6HDiEQTb/qxV1VE4OfL9j2tyimMWzoXQ3RQudHnmcg1S2lfJqNj
-         yH0MQoiQ8FCkQn3/WR9Cve3698ogucsVNoUHGjVECMPsUCpaGy01roAw7fz0lQzlsrJK
-         oKQPvXlIyc78VOcTyc3WgC1JeR+XKsM6S5hGrvgfNQME7lrJ2M7UnHzKT9lYdw6QqorS
-         +bxkp+exwio/ay+2al+6dNaeypjd1qLAN/w9gVLh/920iOV4aOUYC2Seodi7NYWnIu6Q
-         Kxfoe7yX3g0lZ68WNdRy6Z0SClgeZACMM1gWdyWLi2GMZqiT+IgYLXcx02oA2MblLctv
-         v27g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747547341; x=1748152141;
-        h=content-transfer-encoding:mime-version:subject:user-agent
-         :references:in-reply-to:message-id:date:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=G9qeFJ7lNo+yYpuKZq/TR4G2C9hCrYbOgamht3tIasA=;
-        b=G5e7LQ207d+kurl5+dJJ9qOlGm7Bipg6qlywWqi1s3YEn8pTpHpTugEmtGlGtnAGPh
-         26CtffWm++v3AmrqOJyif6HVMYYQpEmh2UfFVdgVU6uwR5LiPVX8+UFRDLt4yJvcS8Su
-         LmbceCHca69p8ERANvOOkOyEX7fMdR+HkO0zRhz6GepHf1It0vt0HNf5v5uAvEWah59l
-         l+AZ1iYADe+c1sI62PEtSq0KmPDY1V0CCEDdvNWoTU0B8ijxvjHL3YEH8XfBrCBBVC41
-         4YrZZ1UI1kjj0fT/aZdVx+6FU/LPfG/iNh1v5gdsi1tznxoL2tmKk3p1PUv3k4xXM39K
-         Zfwg==
-X-Forwarded-Encrypted: i=1; AJvYcCUhkry8O3hrjOJyJLI57ggA4dTiHlvghNTrVOGN0Exez+P0aOZaDuOZ9EG0YsbmzXdEHHOwzgIOpQsqE6s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLMYbW+rjlIyN1CbanG/+W/1jGDrFSlfkWSWShAKf1gc0wgEd+
-	ww6l6gzVOHe8vhMSC/puOfvyW7rkme6IZiQPa4xCX672MY1dBQH+22gY8NnZKiJdMA==
-X-Gm-Gg: ASbGnctXRNHFzcJL/THSZx4qZmD7uYBUsSMGnzSsydizQNy0FzdD/SB34uuRVhBWOcr
-	vIKCSUF0YplMWIxf6WLKj/RPJwiWRgpHfh91wr9fhiz+wD3YdbhTYz9zMAzj8Fva99OzN6EI638
-	XygqHW4nL1gm2U+TGuFfTkUb1o0kZ+krqI1FnJWKLwCsabl0lcLqut9iuWhNj72P9YzeFV74ocD
-	wRV2ph5QLuLNxLgezwEqQjcVEXXvYoBBAZJ9DSrn0R1v8+/XFOdyx155Cw5NLMBy7FqPnoZRiHQ
-	8D6bDbyz+fBfrRIFm0G3RWN6ML5o7O8hGrlAbm8yLi1513GL606M+VvocuSaEkI+hD+vLkZF3OL
-	U9x0lvcSesxwvHfVKy/pr+NexiQ==
-X-Google-Smtp-Source: AGHT+IGfrmclUyrn2kL47uhxEFRGU+qhsbvKEWHTIktNb5yLBqfzULKgvSCB1fjnKNy9EuB8fUsqdQ==
-X-Received: by 2002:ac8:6f10:0:b0:477:6eca:b40c with SMTP id d75a77b69052e-494ae326c18mr161157901cf.1.1747547341540;
-        Sat, 17 May 2025 22:49:01 -0700 (PDT)
-Received: from [192.168.7.16] (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-494ae3f922csm35228371cf.26.2025.05.17.22.48.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 17 May 2025 22:49:00 -0700 (PDT)
-From: Paul Moore <paul@paul-moore.com>
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-CC: KP Singh <kpsingh@kernel.org>, Blaise Boscaccy <bboscaccy@linux.microsoft.com>, 
-	James Bottomley <James.Bottomley@hansenpartnership.com>, bpf <bpf@vger.kernel.org>, 
-	<code@tyhicks.com>, Jonathan Corbet <corbet@lwn.net>, 
-	"David S. Miller" <davem@davemloft.net>, David Howells <dhowells@redhat.com>, 
-	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
-	Herbert Xu <herbert@gondor.apana.org.au>, Jarkko Sakkinen <jarkko@kernel.org>, 
-	James Morris <jmorris@namei.org>, Jan Stancek <jstancek@redhat.com>, 
-	Justin Stitt <justinstitt@google.com>, <keyrings@vger.kernel.org>, 
-	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>, 
-	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>, 
-	Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, 
-	LSM List <linux-security-module@vger.kernel.org>, 
-	clang-built-linux <llvm@lists.linux.dev>, Masahiro Yamada <masahiroy@kernel.org>, 
-	=?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
-	Bill Wendling <morbo@google.com>, Nathan Chancellor <nathan@kernel.org>, Neal Gompa <neal@gompa.dev>, 
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Nicolas Schier <nicolas@fjasle.eu>, 
-	<nkapron@google.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
-	"Serge E . Hallyn" <serge@hallyn.com>, Shuah Khan <shuah@kernel.org>, Matteo Croce <teknoraver@meta.com>, 
-	Cong Wang <xiyou.wangcong@gmail.com>, <kysrinivasan@gmail.com>, 
-	Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sun, 18 May 2025 01:48:57 -0400
-Message-ID: <196e1f03128.28a7.85c95baa4474aabc7814e68940a78392@paul-moore.com>
-In-Reply-To: <CAADnVQ+wE5cGhy6tgmWgUwkNutueEsrhh6UR8N2fzrZjt-vb4g@mail.gmail.com>
-References: <20250502184421.1424368-1-bboscaccy@linux.microsoft.com>
- <20250502210034.284051-1-kpsingh@kernel.org>
- <CAHC9VhS5Vevcq90OxTmAp2=XtR1qOiDDe5sSXReX5oXzf+siVQ@mail.gmail.com>
- <CACYkzJ5jsWFiXMRDwoGib5t+Xje6STTuJGRZM9Vg2dFz7uPa-g@mail.gmail.com>
- <CACYkzJ6VQUExfyt0=-FmXz46GHJh3d=FXh5j4KfexcEFbHV-vg@mail.gmail.com>
- <CAHC9VhQL_FkUH8F1fvFZmC-8UwZh3zkwjomCo1PiWNW0EGYUPw@mail.gmail.com>
- <CACYkzJ4+=3owK+ELD9Nw7Rrm-UajxXEw8kVtOTJJ+SNAXpsOpw@mail.gmail.com>
- <CAHC9VhTeFBhdagvw4cT3EvA72EYCfAn6ToptpE9PWipG9YLrFw@mail.gmail.com>
- <CAADnVQJ4GDKvLSWuAMdwajA0V2DEw5m-O228QknW8Eo9jxhyig@mail.gmail.com>
- <CAHC9VhTJcV1mqBpxVUtpLhrN4Y9W_BGgB_La5QCqObGheK28Ug@mail.gmail.com>
- <CAADnVQ+wE5cGhy6tgmWgUwkNutueEsrhh6UR8N2fzrZjt-vb4g@mail.gmail.com>
-User-Agent: AquaMail/1.55.1 (build: 105501552)
-Subject: Re: [PATCH v3 0/4] Introducing Hornet LSM
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFCFA2CA6
+	for <linux-kernel@vger.kernel.org>; Sun, 18 May 2025 05:52:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.83
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747547559; cv=fail; b=T0t8qcnSIWTTwnAfqzi14Qut61srI6M519be3vbz0V599p/3YaJq57soDCd/MkIZk3CO04e/3ym2tu030026WeAUg8sNGhE6kqANn7QsBHNaSDWBOHsjWsnq8tmm4bYL+HwUjFYNyIFEjOMiZdOX8jRytQ+chmnBqj5Zq0MhSqY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747547559; c=relaxed/simple;
+	bh=gCBWsB0flW1nZ0WIY75CcPbWj/qtTXwdnlnzUNsMdtM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=PLkWl00RJR7kDrbjI9fc9xAOcMcWkBJBlMISKTwC/KCNkf2Gg9gZ2Dur44jpEgKkDmkk9k9QhQQcCLqgYYRwZHhN2xv1qjJ/nJD38AEvqHCxWTnPk0mQVk+n/LuMgBVmtd27sIFepN02qN7BsURJSbCc6LNc17F6S7+ct5RXcfE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=agF6OgAY; arc=fail smtp.client-ip=40.107.220.83
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=jZNkL6gWEvoWn9v9sOp6yygpHpVbwLq9pbgjI3H8u1B8tt1PEFyZf/kZOhva28nAU5WsLc1UeL4zkj8z6utwxK5Fzz4yzyQLrFAR09ug9wOcAXVulf1FaPnDdX8vyPLLbRtLrTgTpGTK9v0Aa6Qk/uMmBrpas3m1jsGa2mzEshxo5IL/MopNqTHms5qDyWTz4p+PYbMunQNzF8HaNn7AT9nguUw+Y0iA3S5Mj/C05tpQShXZkn66uhLQdavU1PM2QRnBnNkb6+JSuwUisauDGcBDaNtv+FX0VvpzO7REUZfQmHF8fN1LiOJ4dbquqv1UPeSRDhb40zsAOkyH73YM0w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=4fW4XT7S6LZSV2T9WsF1jUJZpSXUgmu2kAoi68aLrUU=;
+ b=LfZASDyOnb7ehDbvxFvqfI85G5qTAZULacayLFiH37vO5C7TCnFDp8PJemtUma4/59uP6QYV/nS70w8iOAbNSP80ZhL7Bnz3O4DuuRNBt1w8O0y6t2+ctuJ163HZtmPSBXx4i0/UvFad7gYl7pl89J19DJUpS6NLnzvyLX/o+jd+l5CIWtFnDdorzqcikglaiaMrq467KCTobNcVgQvuzOKyr1tn0bfcbV8b2u7lLG20AHd5oz/NZUaBbDEKHRW1E7+pGwXTmTObjreAPmnNmZSozTWEcbFBhKhY/kPssOLE0pWfWWunJDMOkLo6VDRzdD6cvU5YZjpQ0oASqrYfhA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=4fW4XT7S6LZSV2T9WsF1jUJZpSXUgmu2kAoi68aLrUU=;
+ b=agF6OgAYRoPR2Tl2EOgDC/ZUDZVTH2dt6FIAyUdetbw1koD8y1EJOQ1HZ/sHOI9hFzfzaSJ8+AUXUWSZIss+uYi0wyr9midZDEXmoIx/Lxu8+ZDhIB4OKXlu6vPr0hZDzaNok8LokUiXczEDrGjcvupi0J8bsquKsJFqtpvpVFbC8PBKElIuvLf3yANQwcw7JBWyGYW7GK1e4Hr44Yj0CKOqMkbbSMaa+X1oFdW20PgljJ9d1tV+7PPNpaWpMvOQez1eqFsFLhQEMb6q6rSytwErg4zyjFWe+D4OJtK4sBuwzSOpXSJnPEXDiUNyx1meEcYBsG59AEBCbyQzL7SN8w==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from LV8PR12MB9620.namprd12.prod.outlook.com (2603:10b6:408:2a1::19)
+ by DS7PR12MB8369.namprd12.prod.outlook.com (2603:10b6:8:eb::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8722.33; Sun, 18 May
+ 2025 05:52:35 +0000
+Received: from LV8PR12MB9620.namprd12.prod.outlook.com
+ ([fe80::1b59:c8a2:4c00:8a2c]) by LV8PR12MB9620.namprd12.prod.outlook.com
+ ([fe80::1b59:c8a2:4c00:8a2c%7]) with mapi id 15.20.8722.031; Sun, 18 May 2025
+ 05:52:34 +0000
+Date: Sun, 18 May 2025 07:52:30 +0200
+From: Andrea Righi <arighi@nvidia.com>
+To: David Vernet <void@manifault.com>
+Cc: Tejun Heo <tj@kernel.org>, Changwoo Min <changwoo@igalia.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/4] sched_ext: idle: Allow scx_bpf_select_cpu_and() from
+ unlocked context
+Message-ID: <aCl1nq0hUJ7IdtC5@gpd3>
+References: <20250515191716.327518-1-arighi@nvidia.com>
+ <20250515191716.327518-4-arighi@nvidia.com>
+ <wdjlm556njybe4bgxk277xj4skryh2qnvd57yoenyf33vd4oyh@gz3ouesvc5vf>
+ <aCkStT1QTGWZ3B50@gpd3>
+ <py6tcjya3nxhmicvdhytyuu43rdw3j5wjw3bc5j66tsj2ngcax@gzifqgx72um6>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <py6tcjya3nxhmicvdhytyuu43rdw3j5wjw3bc5j66tsj2ngcax@gzifqgx72um6>
+X-ClientProxiedBy: MI2P293CA0006.ITAP293.PROD.OUTLOOK.COM
+ (2603:10a6:290:45::18) To LV8PR12MB9620.namprd12.prod.outlook.com
+ (2603:10b6:408:2a1::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; format=flowed; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV8PR12MB9620:EE_|DS7PR12MB8369:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5a78337f-a9e3-45c6-6ea6-08dd95d02fbb
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?VIIJB5yjppSQp7esBlMU8sIcTRN/IPcu8QTASOan/RA6QJ9sk+rXVMOFUT23?=
+ =?us-ascii?Q?Cju72JQEEi63nkxL1Cv3iO6loXffz8sntVDoktLRkim6Y2ozY51c84gxrC9E?=
+ =?us-ascii?Q?d2rWva7dmlpsxgsXj3g+hjl+o48ayC0bSqA9rrHfW0woQMVm32sGGyF6E20x?=
+ =?us-ascii?Q?L3nORa7ig/VbkdYM+4blsl6oA94jl3wnXJAZOB484fOxTcpwi1QHFcnQvrfW?=
+ =?us-ascii?Q?Wts+2tHOx4dIpcu4zyAPdZ2jBJZ+0r7mN6v2T/PyFdBAxqevajgrffkee8zm?=
+ =?us-ascii?Q?0JUO9RApYbZdhCvoU6/w0jhMELFa2s2sesxjb6oG7Crx7V5fP9eFPp4Kvxry?=
+ =?us-ascii?Q?QiVRKSreHaoCo3mdaPnnJri16hCjXesxgK30sTjvF07BKJoPMkzyBqBVjEjr?=
+ =?us-ascii?Q?VH1SN6iY4/veDPOAeveoilr+Jz3aDrFP+YH2srQjMjb6sO4hNs8tBwvgyVi6?=
+ =?us-ascii?Q?aMeje7RO2nvvfNs28pdW09yYiftH8xi66m31/rkE8wH9qUC9Co95n7oP2eFK?=
+ =?us-ascii?Q?UJ2NtnmFtxUc7hAksJI6J6x5vlMBySs6VSj5Sm252w16GNj/c/ZgsqVKidk4?=
+ =?us-ascii?Q?zCgtEK332b1aIWI8tsKtOZSZH0q9eXysIWjyNxS6rifoFiluKarP8DlYiC+Q?=
+ =?us-ascii?Q?FYLdm/7sWgPWqBc/7uN12ofzc4r/LheTghFJp9hcYJmJ5181FIQKb0LZ5erQ?=
+ =?us-ascii?Q?VCdTmJsSqSpl9ge1TiwNst4H0PqEr7892mL+xUvzjarCeiypKKtKX/rHYidO?=
+ =?us-ascii?Q?gBO9SvxiOH4t1VwnE2oiUcmjYNVqOdwS/8G+dwvh6J0PiPP6QjTNfYVwdICq?=
+ =?us-ascii?Q?PK4Hzzzew3x21GYSTJ7zJz7ZpfpCpTpSme8zRI0T1wSFTK5JpckTXIjs1UQz?=
+ =?us-ascii?Q?/Syq47RSfn+0FDWU6H+M6az9tVeQDtPZ6tYfmM3r79BCHhVpzQS/Qa5U4sCj?=
+ =?us-ascii?Q?r+u5BDAugc51kJt+/gacfu3fZY2jNVsISqk8IvQU+pqdzxfywtdRd7ZtMcME?=
+ =?us-ascii?Q?Yb1DeGFZlTQtpNI5tx9sfGrwT1/OmhCYj1UtBKl6tMR1unZ1qODfYRjJ31Vr?=
+ =?us-ascii?Q?uyLrr/5fFrPm6ixTuvh/TpoGayWtf+q5II/tfC8bXQrSVBsJ9azGGicw2pXC?=
+ =?us-ascii?Q?fCFIFxY43J/ieqMu5fPLVSj2mw28ilWHx6SVUYFhSXMSpw3u65I82AH5Przx?=
+ =?us-ascii?Q?A2Glxyl8UKQ4e96061yYXZ/BIhQpyATy4gHcRKnnfzDjJqAdC5ffRj7x4lFG?=
+ =?us-ascii?Q?XoigwbItgtQd4K6zjB5vNqQisSZWx+tshzSglYTUV3/VCXQZ2aFhmGneDVr0?=
+ =?us-ascii?Q?eXADrhh8qbB5HSjGfkg1cTJ/LCtE+Xp++wWMpOO7UhgnbgKp84qkTSKcuFCk?=
+ =?us-ascii?Q?CV6DcPanjS0hq37m/c10xyiJQ94H11kAMlDkixs+8Fttq1Hcmh9RhgpBldn5?=
+ =?us-ascii?Q?A6mfxBoXVMc=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR12MB9620.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?8cvopJkTtdiPd8FRsj0zkmVSF+1soQ4M8R7IdOG7yXgqaD5+1v5q09Y7c1kE?=
+ =?us-ascii?Q?5B87QHfb8ZgiQjIXcr3xu2oGLxORKCVR8sKaXQv5fIYgkafYIBIeU/oNOrmE?=
+ =?us-ascii?Q?zoK5rs0FPVqE4QBEew4n7fuWMgFliKOE3VT4SqLP92VdRUWe8/ggLboDE8+a?=
+ =?us-ascii?Q?GAB1dNbCGwayEREb5a4DEsFypn/7EHlMFGY5TEJgi5nqqacY1zuYUacpieZ6?=
+ =?us-ascii?Q?Ih2saZbfE7j92OsKqMcxaOHmN44/TLM09wA6wcI5sc+JeaazlLi4Z+hmZs6J?=
+ =?us-ascii?Q?2NWqq51zs8isjnQkfhGElVrgptRJm9zX5+nNgLCBqgFqU0SfEwv8/4fq/Y3C?=
+ =?us-ascii?Q?/RIaZcggW6n6ltvY3ANah2IDv3eIzfwGG0REs1Ly32k3cadvK2PM0WabF7Z4?=
+ =?us-ascii?Q?6oOzwYa94h6I4CdJ+MQsO/LsBPh+oDgXTUuXZ0UKmFeN9EltsGf1u25Nbj2+?=
+ =?us-ascii?Q?dpqphOtH2SMSBoS9VDXTI4xoFphc9/6Nj0vBfp53pcxvDwwvk97GjUc4e+y9?=
+ =?us-ascii?Q?pp7or5vhmpQkS8v8LEovcG7XeqPxcuEIRjLk8ARVgX3aXLSeRAZLy9ZdvaPH?=
+ =?us-ascii?Q?P0zGAe5zjuKtwJDySfs9vbCuOq1qmVvt/1bUCr67NEKjuHbJRQzDsNKrUSRw?=
+ =?us-ascii?Q?mNa3qpXXaDQNhg2wFXFX1zek9zyKgN/tyY9U0FSDY2DYd89aO1BF7ngcSzwI?=
+ =?us-ascii?Q?arAXXYHy9kWXMdvZl65RL/HhGgSg+p1Sf+vo1xc16qcGR2LkFAvjX+Z5xGnb?=
+ =?us-ascii?Q?5X6rgP/kHmpyFOs4b5Gs+ZRHaf89MzkitOQGbiN7ERYQFCdRnQZifCW0Q6kt?=
+ =?us-ascii?Q?B9RBV6yl/21G0A2vJdFhOzXjYM48yyYAiDzhszVNPBqIbEfUze5sWc5Vt8xZ?=
+ =?us-ascii?Q?1P4RYC/Zb+Yo6FQ0FT0VcfhrlIeHv5eWnoW/YbT7XrtVKo+qugGaq3u++L2G?=
+ =?us-ascii?Q?kIS/lX+8LsKpgNAXwEE27DaOU15W6ycU7n5hIqJKIRhRSXFbPb1JLpEHFZhh?=
+ =?us-ascii?Q?jxCo4I4ctJIlDMmraDbvfpUTTUYVE6gfEirmWv8vziPiHBnA5R+cQNSoueDB?=
+ =?us-ascii?Q?MiQfS2wYF7yGRKF8LGb7l5oryTblUGlyyX40eBJc8CPuQakrcpzpK989velZ?=
+ =?us-ascii?Q?tc5GZS9exefazXV1pbcMsBJB35WCtpOzytwyRGz6z12MbML+C/ydhub5dB2B?=
+ =?us-ascii?Q?rMjgAmqMnRlc9m4MbBytxeGD8KMo0WgrT4httXi2Bp1rd3xiYeunReyvxJ+5?=
+ =?us-ascii?Q?+V/3NwQZbBeT5ImSn0PYmcTOatS8J9b89Adp8JHJaWygqJdemyI8VXezZrGR?=
+ =?us-ascii?Q?PGJvSuWNCxpscBsFffviYo4RVZ6buOsnp3nyGF6AHM5HJq+6+nZjH0h+bciw?=
+ =?us-ascii?Q?mi4BsB4PQk0dQrVUUlYngej66KOzkMjaNW4cwTHQoUiW8Jq4PEABa8+NpoOy?=
+ =?us-ascii?Q?VdBzgrG396sHjq9nll8Ww0mLc1Xk4uki5V9FqdcJpP8rm4kXKG6VTUnQCOTG?=
+ =?us-ascii?Q?hZpjm7FWaofuEo63HyiYy66mkb5Fc9xxsfrC389QufAUPrt+9NUsMuoCS3mK?=
+ =?us-ascii?Q?1E11Utdm5hfIv/4usjkjezVoLILipIST+5rwxTxH?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5a78337f-a9e3-45c6-6ea6-08dd95d02fbb
+X-MS-Exchange-CrossTenant-AuthSource: LV8PR12MB9620.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 May 2025 05:52:34.5630
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: zABJ6UoeTGDRabeyquecqSgrgznoZ8CgzY8MoAZlwH3lmn/TbHBWpULtD8eh7aOq1N682tCU8n3TWLI5znpFjw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB8369
 
-On May 17, 2025 12:13:50 PM Alexei Starovoitov 
-<alexei.starovoitov@gmail.com> wrote:
-> On Sat, May 17, 2025 at 8:03 AM Paul Moore <paul@paul-moore.com> wrote:
->> On Fri, May 16, 2025 at 7:49 PM Alexei Starovoitov
->> <alexei.starovoitov@gmail.com> wrote:
->>> On Fri, May 16, 2025 at 12:49 PM Paul Moore <paul@paul-moore.com> wrote:
->>>>
->>>> I think we need some clarification on a few of these details, it would
->>>> be good if you could answer the questions below about the
->>>> authorization aspects of your design?
->>>>
->>>> * Is the signature validation code in the BPF verifier *always* going
->>>> to be enforced when a signature is passed in from userspace?  In other
->>>> words, in your design is there going to be either a kernel build time
->>>> or runtime configuration knob that could selectively enable (or
->>>> disable) signature verification in the BPF verifier?
->>>
->>> If there is a signature in union bpf_attr and it's incorrect
->>> the prog_load command will be rejected.
->>> No point in adding a knob to control that.
->>
->> I agree that when a signature is provided and that signature check
->> fails, the BPF load should be rejected.  I'm simply trying to
->> understand how you envision your design handling all of the cases, not
->> just this one, as well as what build and runtime options you expect
->> for controlling various aspects of this behavior.
->>
->>>> * In the case where the signature validation code in the BPF verifier
->>>> is active, what happens when a signature is *not* passed in from
->>>> userspace?  Will the BPF verifier allow the program load to take
->>>> place?  Will the load operation be blocked?  Will the load operation
->>>> be subject to a more granular policy, and if so, how do you plan to
->>>> incorporate that policy decision into the BPF program load path?
->>>
->>> If there is no signature the existing loading semantics will remain intact.
->>> We can discuss whether to add a sysctl or cgroup knob to disallow
->>> loading when signature is not present ...
->>
->> As mentioned earlier this week, if the BPF verifier is performing the
->> signature verification as KP described, we will need a LSM hook after
->> the verifier to serve as an access control point.  Of course that
->> doesn't preclude the addition of some type of sysctl/cgroup/whatever
->> based access control, but the LSM hook would be needed regardless.
->
-> No. New hook is not needed.
+On Sat, May 17, 2025 at 07:40:22PM -0500, David Vernet wrote:
+> On Sun, May 18, 2025 at 12:50:29AM +0200, Andrea Righi wrote:
+> 
+> Hey Andrea,
+> 
+> [...]
+> 
+> > > I wonder if we should just bring this into scx_select_cpu_dfl()? It seems like
+> > > it would makes sense to do this optimization whether we're looking at
+> > > cpus_allowed here, or p->cpus_ptr in scx_select_cpu_dfl(). I seem to recall us
+> > > having this in there before so there may be a reason we removed it, but I've
+> > > been out of the game for a while so I'm not sure.
+> > 
+> > Trying to remember... probably it was removed because ops.select_cpu() is
+> > never called for tasks that can only run on 1 CPU.
+> 
+> Hmmm, I think it is called even for pcpu tasks, no?
 
-It would be good for you to explain how the existing LSM hook is sufficient 
-to authorize the loading of a BPF program using the signature validation 
-state determined in the BPF verifier.
+IIUC ops.select_cpu() is triggered by select_task_rq(), but only if
+p->nr_cpus_allowed > 1 and it's not a migration-disabled task, see:
 
---
-paul-moore.com
+https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/kernel/sched/core.c#n3582
 
->
+> 
+> > > Anyways, if we could do this, then we could bring both scx_bpf_select_cpu_and()
+> > > and scx_select_cpu_dfl() into the scx_kfunc_ids_idle kfunc group and remove
+> > > scx_kfunc_ids_select_cpu.
+> > > 
+> > > What do you think?
+> > 
+> > Are you suggesting that scx_bpf_select_cpu_dfl() should also be allowed in
+> > the same contexts as scx_bpf_select_cpu_and()?
+> 
+> Yep that's what I was thinking.
+> 
+> > I did consider that, but was initially concerned about the potential
+> > overhead of handling different contexts, even though these extra checks to
+> > manage the contexts would likely be negligible in terms of overhead. And it
+> > would give the possibility to use scx_bpf_select_cpu_dfl() in ops.enqueue()
+> > as well, so overall I see more pros than cons.
+> 
+> Now that you mention it I don't see any reason that scx_bpf_select_cpu_dfl()
+> couldn't be called from ops.enqueue() even now, as we do hold the rq lock on
+> that path. But in general I think that if we want to make
+> scx_bpf_select_cpu_and() callable without the rq lock held, that we might as
+> well do it for both as I don't think there's any semantic difference between
+> the two to the user; it's just that one version also does an AND.
 
+Semantically speaking, yes, like you say, they're the same, except that one
+also accepts an additional AND cpumask.
 
+The only reason to keep them separate might be the slight overhead of
+managing contexts, but, again, that should be negligible and not worth
+preserving a different and potentially confusing semantic.
 
+> 
+> As I mentioned in the other thread, I don't have a strong opinion either way,
+> but in my opinion it seems more consistent to move the extra context-handling
+> logic into scx_bpf_select_cpu_dfl() if we do decide to allow callers to use
+> this.
+
+I think I agree, I'll send another patch on top to unify the two kfuncs.
+
+Thanks,
+-Andrea
 
