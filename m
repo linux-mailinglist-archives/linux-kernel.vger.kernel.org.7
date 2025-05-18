@@ -1,73 +1,52 @@
-Return-Path: <linux-kernel+bounces-652923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-652918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E34BABB226
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 00:18:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26D6CABB215
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 00:09:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5B5817455C
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 May 2025 22:18:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EAA0617462E
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 May 2025 22:09:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2308C1DC98B;
-	Sun, 18 May 2025 22:18:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="udaYl8kp"
-Received: from smtp.forwardemail.net (smtp.forwardemail.net [121.127.44.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D395192D97
-	for <linux-kernel@vger.kernel.org>; Sun, 18 May 2025 22:18:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=121.127.44.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C1EC20A5F2;
+	Sun, 18 May 2025 22:08:35 +0000 (UTC)
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E519205E16;
+	Sun, 18 May 2025 22:08:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747606697; cv=none; b=KfS30xD3aT90yFVxuZqU0kItMesn3ZIS8UcgQKGY/40t+bSfuwnh+RjD3DwHigHDrM1hC5z/6vYApW6PsG1cxzE/kkd015UNKhevBozZ7s1CLNbMkvGCQJsYmxihcSY4KGXZfCBFbDAyyoNtWz5jPLAC1+v2X8WV/WxawEVHz0k=
+	t=1747606114; cv=none; b=tVwja7zpDnc9jpcUKs3i5iYbxHwdj88U2aUHY3j6uehnDORED3j03I0amT948hFeBz4wy+qESxSumLTWlupOARrfOddRv8OjWSxFBjn0e4B0YRdFYxGHCVm1QbzgDaOSGs3k349W5mTmT1CeGsVHO2AzFsmcTjI/8WR+K+Fm4dY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747606697; c=relaxed/simple;
-	bh=DxKz006jwkGUBZM3BCh+gAyMS2rjqRfxwgG0kqz1dOE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=N7W7So0j+WffKWAk7zQuDvR2wthad6Cb/26kwXYRWB2R4T4zjU5qADhL7C12Q9PHD9E6ixoKmaIaMTt/G3OgkgLEITOshbM1rpYE4tl1NNn4YhjY92GrznbBBGpzXw5Nd3xIFxtSBIlo2iNPG2qrptNnnVWh0lV2UeffEI95m4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=udaYl8kp; arc=none smtp.client-ip=121.127.44.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
- h=Content-Transfer-Encoding: MIME-Version: References: In-Reply-To:
- Message-ID: Date: Subject: Cc: To: From; q=dns/txt; s=fe-e1b5cab7be;
- t=1747606694; bh=oLHfQ6GJDHKwJN9/gg2l7mvEQ/TXrvVecH6KzjJn08k=;
- b=udaYl8kp9DLTrNBd6v9cbdmxwOuvndeQJ58E8sf5pK0sXvLteasXshilo3NoTjuxoH38YPLfv
- Ckymm/WULqwDkDarAk/DUx2R2nuD0ccXZbscpow3FJQeG4mwVqVkpYMY2vUrz11+7MtFeykQwSH
- Pn2ljipSKgofsiHxnqeKErTGpWe42AYb3/m7DJsHeSoyoMaw4oKTELXv522avxQdDBaPZAfKxk7
- OFgmbcXor3oGor1rs9fJLbQNpiU80901K3bnabDdmysGpUyO8gpPsU0qLRBzgX25Tmy2AtbgiqJ
- 7GQ+X5cStQn4/7mItv5p58whndBIp04USY96dX+jCaUQ==
-X-Forward-Email-ID: 682a5a1e78cae75fbd8d46b0
-X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
- 121.127.44.73
-X-Forward-Email-Version: 1.0.3
-X-Forward-Email-Website: https://forwardemail.net
-X-Complaints-To: abuse@forwardemail.net
-X-Report-Abuse: abuse@forwardemail.net
-X-Report-Abuse-To: abuse@forwardemail.net
-From: Jonas Karlman <jonas@kwiboo.se>
-To: Heiko Stuebner <heiko@sntech.de>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Elaine Zhang <zhangqing@rock-chips.com>
-Cc: Yao Zi <ziyao@disroot.org>,
-	Chukun Pan <amadeus@jmu.edu.cn>,
-	linux-rockchip@lists.infradead.org,
-	linux-pm@vger.kernel.org,
+	s=arc-20240116; t=1747606114; c=relaxed/simple;
+	bh=yzBlRd1OlDFlk125y6ektn+xRypy74jKbtR29XA3BkQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=R38VGZ0H/DLu0ipxQXR0Wg5xV+/CGruuECJzNjS6K/R44Vz/F050foKbdzFoSRv7D/WuDDzksXsv/KJGinf2+/6A3hH9thpI491x2UL83djY2rvYboraJWiRs+3Xez8uqbFFL3PBBPlXcl2RrfX5sKQu91T4iOjg2qwiImQRd0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+X-CSE-ConnectionGUID: 9xbhkz/DRDGOpoUUqVURnQ==
+X-CSE-MsgGUID: yL/NLA/wTHKJWWJapptS3Q==
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 19 May 2025 07:08:25 +0900
+Received: from ubuntu.adwin.renesas.com (unknown [10.226.92.57])
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id E17ED40B55CF;
+	Mon, 19 May 2025 07:08:21 +0900 (JST)
+From: John Madieu <john.madieu.xa@bp.renesas.com>
+To: geert+renesas@glider.be,
+	magnus.damm@gmail.com,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org
+Cc: biju.das.jz@bp.renesas.com,
+	linux-renesas-soc@vger.kernel.org,
 	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Jonas Karlman <jonas@kwiboo.se>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 3/9] dt-bindings: rockchip: pmu: Add compatible for RK3528
-Date: Sun, 18 May 2025 22:06:50 +0000
-Message-ID: <20250518220707.669515-4-jonas@kwiboo.se>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250518220707.669515-1-jonas@kwiboo.se>
-References: <20250518220707.669515-1-jonas@kwiboo.se>
+	linux-kernel@vger.kernel.org,
+	John Madieu <john.madieu.xa@bp.renesas.com>
+Subject: [PATCH] arm64: dts: renesas: r9a09g047e57-smarc: Reduce I2C2 clock frequency
+Date: Mon, 19 May 2025 00:08:12 +0200
+Message-ID: <20250518220812.1480696-1-john.madieu.xa@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,34 +55,31 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add the compatible for the pmu mfd on RK3528 SoC.
+Lower the I2C2 bus clock frequency on the RZ/G3E SMARC SoM from 1MHz to 400KHz
+to improve compatibility with a wider range of I2C peripherals. The previous
+1MHz setting was too aggressive for some devices on the bus, which experienced
+timing issues at such a frequency.
 
-Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
+Fixes: f7a98e256ee3 ("arm64: dts: renesas: rzg3e-smarc-som: Add I2C2 device pincontrol")
+Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
 ---
- Documentation/devicetree/bindings/arm/rockchip/pmu.yaml | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/arm64/boot/dts/renesas/rzg3e-smarc-som.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/arm/rockchip/pmu.yaml b/Documentation/devicetree/bindings/arm/rockchip/pmu.yaml
-index 46c1af851be7..55b2200d6e75 100644
---- a/Documentation/devicetree/bindings/arm/rockchip/pmu.yaml
-+++ b/Documentation/devicetree/bindings/arm/rockchip/pmu.yaml
-@@ -25,6 +25,7 @@ select:
-           - rockchip,rk3288-pmu
-           - rockchip,rk3368-pmu
-           - rockchip,rk3399-pmu
-+          - rockchip,rk3528-pmu
-           - rockchip,rk3562-pmu
-           - rockchip,rk3568-pmu
-           - rockchip,rk3576-pmu
-@@ -44,6 +45,7 @@ properties:
-           - rockchip,rk3288-pmu
-           - rockchip,rk3368-pmu
-           - rockchip,rk3399-pmu
-+          - rockchip,rk3528-pmu
-           - rockchip,rk3562-pmu
-           - rockchip,rk3568-pmu
-           - rockchip,rk3576-pmu
+diff --git a/arch/arm64/boot/dts/renesas/rzg3e-smarc-som.dtsi b/arch/arm64/boot/dts/renesas/rzg3e-smarc-som.dtsi
+index 43d79158d81a..ecea29a76b14 100644
+--- a/arch/arm64/boot/dts/renesas/rzg3e-smarc-som.dtsi
++++ b/arch/arm64/boot/dts/renesas/rzg3e-smarc-som.dtsi
+@@ -85,7 +85,7 @@ &gpu {
+ &i2c2 {
+ 	pinctrl-0 = <&i2c2_pins>;
+ 	pinctrl-names = "default";
+-	clock-frequency = <1000000>;
++	clock-frequency = <400000>;
+ 	status = "okay";
+ 
+ 	raa215300: pmic@12 {
 -- 
-2.49.0
+2.43.0
 
 
