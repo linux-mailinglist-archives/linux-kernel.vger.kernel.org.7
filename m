@@ -1,55 +1,52 @@
-Return-Path: <linux-kernel+bounces-652686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-652699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0719FABAF0F
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 May 2025 11:44:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24490ABAF3A
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 May 2025 12:13:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2552D3B6D4C
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 May 2025 09:44:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD886177B5A
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 May 2025 10:13:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C80A92135C9;
-	Sun, 18 May 2025 09:44:19 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A130E1DB34C;
-	Sun, 18 May 2025 09:44:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8387212B1E;
+	Sun, 18 May 2025 10:13:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="TkzbssGV"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFC751DA3D;
+	Sun, 18 May 2025 10:13:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747561459; cv=none; b=nCDA+rKgPoCjmj6uXLrUzZCEQN4TQjEZgEt8V6KDStQFmTLCyaqvc79/26zsxkYdAPoXXbHDeaZNQeOub10SDnP5UrnAFpKUPv0F3yBRG7B7D50ediHiiAz1rR77onhI72Mgub1p6ZZGLYQi28DLxNahXp2+5LW4ukov2Vnfdgc=
+	t=1747563187; cv=none; b=jOem9epToRDoL0ZdbfNcl2AvdvtR1wPGVbGojgVgy47CYPwSQG6IfXKiWWV3g7Jdr8QKk1zyTRjLdSvMQfFM2LBLQuvAy3TNMJJ1l+hcxInjNTPQ9BM4zNGDihV0sEU97paPT5M/szso9mfCgDgRNqJjU9TpluA+shUvzhtnZt4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747561459; c=relaxed/simple;
-	bh=qQZGVyrQHu1q7OAzBul9jHFJs677FLpnum3Dq8gwdh0=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lSf6p1JVGKK3uceIcIhrke8l2BDpvv2yq5uush9LEQb1nDuxm/uDXimQeYgsFX4cgmaTGtH5lJX3OCrxE0tVRu3EiCnm8AOnaL+r+5uwemYtxSgIj7FfjX9qXNrTr0MAhyOU0iZDelzYw/IWLbTGV1QPnyWrcfrFEzu221szlDY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4b0bRX6YfHz6L574;
-	Sun, 18 May 2025 17:41:12 +0800 (CST)
-Received: from frapeml500005.china.huawei.com (unknown [7.182.85.13])
-	by mail.maildlp.com (Postfix) with ESMTPS id 5319914050C;
-	Sun, 18 May 2025 17:44:14 +0800 (CST)
-Received: from china (10.220.118.114) by frapeml500005.china.huawei.com
- (7.182.85.13) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Sun, 18 May
- 2025 11:44:09 +0200
-From: Gur Stavi <gur.stavi@huawei.com>
-To: Gur Stavi <gur.stavi@huawei.com>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "David S.
- Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
- Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman
-	<horms@kernel.org>
-Subject: [PATCH net-next v1 1/1] queue_api: reduce risk of name collision over txq
-Date: Sun, 18 May 2025 13:00:54 +0300
-Message-ID: <95b60d218f004308486d92ed17c8cc6f28bac09d.1747559621.git.gur.stavi@huawei.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <cover.1747559621.git.gur.stavi@huawei.com>
-References: <cover.1747559621.git.gur.stavi@huawei.com>
+	s=arc-20240116; t=1747563187; c=relaxed/simple;
+	bh=NXp7EgDL0f5TU0KptoBP7XRodmOo3VL990R8lYNfyb0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=YI9Y8/g8Q844EVyv0yFcpuEU+Y2BrpDUAR3ROaN2O5ssoO9anXm8p59NVpuyaQ3h3wlJCbxJHtLG1KuPY+tyeg/G2dS3cFpgMTZkiZWx1oJkra2szMbscBznX9LA05MA4ByyEyP7Hki+ugSGnV/3OeKasZgnnUsYy76vcLL9+To=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=TkzbssGV; arc=none smtp.client-ip=117.135.210.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=s+
+	VSHine5PNrjaH5R325/+aTiBVv/4/hpNggGi1YjwA=; b=TkzbssGVcbFtd94MNj
+	cAndO183Zy2wPRXKD9QNjJxZDsfSiZ0AD4RxjUqEZZxx3127lRgWujySXQeNRyzI
+	dcM91GOIA68kD9OQdD9JtdzRFFNWmEQgmxImwRlowiAqEHSbNirpIXN/ZnpNy14i
+	BBYFFd49GN/pDQLNilTIAkwxo=
+Received: from localhost.localdomain (unknown [])
+	by gzga-smtp-mtada-g1-0 (Coremail) with SMTP id _____wBHHmF9siloIaeOCQ--.36267S4;
+	Sun, 18 May 2025 18:12:26 +0800 (CST)
+From: David Wang <00107082@163.com>
+To: surenb@google.com,
+	mcgrof@kernel.org,
+	petr.pavlu@suse.com
+Cc: linux-modules@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	David Wang <00107082@163.com>
+Subject: [PATCH] module: release codetag section when module load fails
+Date: Sun, 18 May 2025 18:12:12 +0800
+Message-Id: <20250518101212.19930-1-00107082@163.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,61 +54,39 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- frapeml500005.china.huawei.com (7.182.85.13)
+X-CM-TRANSID:_____wBHHmF9siloIaeOCQ--.36267S4
+X-Coremail-Antispam: 1Uf129KBjvdXoWrZw18Jr1fuF4xWryrWw47CFg_yoWftwc_Xw
+	48X348Wr1Dtw409w4rt3Z3WrsYgry8Gr9Y9a4xtay5ta47Zw13Awnxtr9xWF1DWrZ7AFs3
+	ZFnxJ3Wq9r1rCjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7sRXSdgUUUUUU==
+X-CM-SenderInfo: qqqrilqqysqiywtou0bp/1tbiqBhRqmgpq6Y3TQACs-
 
-Rename local variable in macros from txq to _txq.
-When macro parameter get_desc is expended it is likely to have a txq
-token that refers to a different txq variable at the caller's site.
+When module load failed after memory for codetag sections ready,
+codetag section memory was not properly released. This
+causes memory leak, and if next module load happens to got the
+same module address, codetag may pick the uninitialized section
+when manipulating tags during module unload, and lead to
+"unable to handle page fault" BUG.
 
-Signed-off-by: Gur Stavi <gur.stavi@huawei.com>
+Closes: https://lore.kernel.org/all/20250516131246.6244-1-00107082@163.com/
+Signed-off-by: David Wang <00107082@163.com>
 ---
- include/net/netdev_queues.h | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+ kernel/module/main.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/include/net/netdev_queues.h b/include/net/netdev_queues.h
-index 069ff35a72de..ba2eaf39089b 100644
---- a/include/net/netdev_queues.h
-+++ b/include/net/netdev_queues.h
-@@ -288,27 +288,27 @@ netdev_txq_completed_mb(struct netdev_queue *dev_queue,
+diff --git a/kernel/module/main.c b/kernel/module/main.c
+index a2859dc3eea6..5c6ab20240a6 100644
+--- a/kernel/module/main.c
++++ b/kernel/module/main.c
+@@ -2829,6 +2829,7 @@ static void module_deallocate(struct module *mod, struct load_info *info)
+ {
+ 	percpu_modfree(mod);
+ 	module_arch_freeing_init(mod);
++	codetag_free_module_sections(mod);
  
- #define netif_subqueue_try_stop(dev, idx, get_desc, start_thrs)		\
- 	({								\
--		struct netdev_queue *txq;				\
-+		struct netdev_queue *_txq;				\
- 									\
--		txq = netdev_get_tx_queue(dev, idx);			\
--		netif_txq_try_stop(txq, get_desc, start_thrs);		\
-+		_txq = netdev_get_tx_queue(dev, idx);			\
-+		netif_txq_try_stop(_txq, get_desc, start_thrs);		\
- 	})
- 
- #define netif_subqueue_maybe_stop(dev, idx, get_desc, stop_thrs, start_thrs) \
- 	({								\
--		struct netdev_queue *txq;				\
-+		struct netdev_queue *_txq;				\
- 									\
--		txq = netdev_get_tx_queue(dev, idx);			\
--		netif_txq_maybe_stop(txq, get_desc, stop_thrs, start_thrs); \
-+		_txq = netdev_get_tx_queue(dev, idx);			\
-+		netif_txq_maybe_stop(_txq, get_desc, stop_thrs, start_thrs); \
- 	})
- 
- #define netif_subqueue_completed_wake(dev, idx, pkts, bytes,		\
- 				      get_desc, start_thrs)		\
- 	({								\
--		struct netdev_queue *txq;				\
-+		struct netdev_queue *_txq;				\
- 									\
--		txq = netdev_get_tx_queue(dev, idx);			\
--		netif_txq_completed_wake(txq, pkts, bytes,		\
-+		_txq = netdev_get_tx_queue(dev, idx);			\
-+		netif_txq_completed_wake(_txq, pkts, bytes,		\
- 					 get_desc, start_thrs);		\
- 	})
- 
+ 	free_mod_mem(mod);
+ }
 -- 
-2.45.2
+2.39.2
 
 
