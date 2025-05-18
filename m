@@ -1,79 +1,122 @@
-Return-Path: <linux-kernel+bounces-652615-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-652617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1190BABAE25
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 May 2025 08:25:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 091D6ABAE2A
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 May 2025 08:32:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 761F27AAC26
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 May 2025 06:24:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9640D177378
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 May 2025 06:32:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F30B21D516C;
-	Sun, 18 May 2025 06:25:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E739B1E1E1D;
+	Sun, 18 May 2025 06:32:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Nv96UE42"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=brighamcampbell.com header.i=@brighamcampbell.com header.b="StQl3kXn"
+Received: from mail-il1-f174.google.com (mail-il1-f174.google.com [209.85.166.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F9A0469D
-	for <linux-kernel@vger.kernel.org>; Sun, 18 May 2025 06:25:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA179881E
+	for <linux-kernel@vger.kernel.org>; Sun, 18 May 2025 06:32:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747549523; cv=none; b=BENrQcwb70scv3JwfTFg8P1cTBk3WdyIOIkoXre3tLPQFQ37lSvUQgXEYSkcO9huWK5AcE2sb5sCPNMrLwCaumxaxw93JvUVBXVbfY8qXswh6b7vy96uOjk7Rm0jZsLQYlTSlOAqPuveFFGZMdBtfOz32Z5fKT/sjR02rkvLXBQ=
+	t=1747549944; cv=none; b=TE1gY3JokIbxrTMKwMx0VWq+jT6T3idhhIxM642YhVQdssRH4YUamBkneurCxAcOjiPpicY9qyM/dVEfgJMwfVHdFbkDpM6GVYUM+xMyZF2q1aTzXR3QSvtXj9MRqp9M2T550iBDRgONBm2o015v+WKPUKhT2fJsHD1E2b2MphQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747549523; c=relaxed/simple;
-	bh=weqH1BPSyYH4kCNYEEnFs/7D4liVfWYB/hT/1v9DJG8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lLFNXfl4JGY3DBbDE0N+9nob31Qig3thLuyN+nAugk21gRifrpNbaV30u8NOnh0GPghek41ezCNqz6NpzdGu7RUxz4jjbxQFJ41IaKNH4FkU3K4ENWy7tOIzCqCxbV3shdcRyyMwwYTGIwRzA2QY5Bwlq+D8jWjuxlsmYrPkF2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Nv96UE42; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75084C4CEE7;
-	Sun, 18 May 2025 06:25:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747549522;
-	bh=weqH1BPSyYH4kCNYEEnFs/7D4liVfWYB/hT/1v9DJG8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Nv96UE42motK00F58D3temZ3+P6wlADBepODdks3AIhPXgkInkfWK5aZuclKD0vjD
-	 DaFFHQlJS6yaHBsanPaKLkzd7BRipAqC5PcjlT9Ko/as+SmqWRpU3OeTd0IoRHNOm6
-	 4fpTzknkPdIIhFkxyf4xNldKdLuoR5LGlacJ0AaJGqwcVRSCsqQvzOGXAqSdZ5ua2c
-	 JaCoiR1TPHa8yGkVKwiGmtEFUcIiJFVm4Da346qOHxQE0EZo1HIZURFGUVXQqtd5BS
-	 RMcdutHiiH38ETbYRypbl8GenINPHzbbPZhEWVo1321kUZCHpHeR5nZTnvQskI4YFQ
-	 z/9K1dwtnXaEg==
-Date: Sun, 18 May 2025 08:25:17 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Rik van Riel <riel@surriel.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	x86@kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com
-Subject: Re: [PATCH v2] x86/mm: resize user_pcid_flush_mask for PTI /
- broadcast TLB flush combination
-Message-ID: <aCl9TUnOuWivv6Ze@gmail.com>
-References: <20250516123317.70506358@fangorn>
- <aChB9ORFxaL8VfyD@gmail.com>
- <20250517201255.1bc4e61b@fangorn>
+	s=arc-20240116; t=1747549944; c=relaxed/simple;
+	bh=k7e232aRXBYnLIidA4C1W6sTVW1tyPAB4FFr/gmyPl8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GCQEG63sKIlKqYgnrbYjTMnXLDdtCrmXZGu0qDijTgIBCKLVOcG0qTiHj8E6uBRVj/ISWRKfNnHunW+stMzv0dCuGJzzizrrcY4LE5/F9rne6eQHlhXJEjTfYSwooAamAPUUtDBoEBWTKUExaKC4FzcznGWN2XZj5lSX9Otqcc4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=brighamcampbell.com; spf=pass smtp.mailfrom=brighamcampbell.com; dkim=fail (0-bit key) header.d=brighamcampbell.com header.i=@brighamcampbell.com header.b=StQl3kXn reason="key not found in DNS"; arc=none smtp.client-ip=209.85.166.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=brighamcampbell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=brighamcampbell.com
+Received: by mail-il1-f174.google.com with SMTP id e9e14a558f8ab-3da7d0d7d58so26332995ab.0
+        for <linux-kernel@vger.kernel.org>; Sat, 17 May 2025 23:32:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brighamcampbell.com; s=google; t=1747549942; x=1748154742; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=KwP48AH0f+VzkpR044SBe5hj4tEB/4qffvp665GiJdI=;
+        b=StQl3kXnZecP1Yh4PJyQXbDqdsKBvk8LZNxvhqhlgTqm5V9E3Uqcx2VoKcHdPqDKLc
+         LQgCLAkOI54zZ8AkOUNHz5+FgHE76DyIfc5EmIMdMGhNkRQNJcaLR5xeYpkyfiFQ9JJ7
+         YrALxyO+l6gm7zlvIKxNCr3J9+MJeKclOCJ4Gh/fjfMBolagwwlyEcCfEmm7LDCzGohs
+         yAEmj3p0fEZPABOL+S5vcC1sy47aK+edikphDfVKi1/THPmiOmyNp9MrO+FnyEuEZu3f
+         MATZ7DlbRiXXV1GYbZaAwzUUQCPTZMhXqqJEGyVJzcyyIF9XB0yqKLyhBZhMnjRfbpfe
+         9Nxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747549942; x=1748154742;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KwP48AH0f+VzkpR044SBe5hj4tEB/4qffvp665GiJdI=;
+        b=n7tcnVOaKOZOw3Z6Bodbz/jdzVA2tibojMRq6lJrVnFM7uudGOLsT5ktIE3S+eMYIx
+         hVp/ZZGk9WDx0+svwFGmczqsrAOYdLARMvz0F+Xjk3Zws2UqsNoiFZJH5x9gWbsy8DEH
+         UAcQuSPERa0gcJpX0gwJ3mJeHBa2cZlQLinc20BY4znsi3xA5TinIQwpsDngeyQvImuk
+         5nyntuRQS8dUzVy/SSffUDIs5CKxz28lZLD30fUfpmp+UFttSQFQeGdKDUKf6iSJcbCx
+         3DOhnsMQIzVBKpRzSSzBELkvcczIUsXlRNokCK0uYG+o8dE9Z/4SWUUC2DBUBC7nx3dn
+         PwUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU1eYn02AtEAQs1oV/51vKWZs98To0gjjMZ77vt6sIcNYlfoY+Nt79t8OSSAXSMA4K6TfF4sadbHyqgkpo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZtnxKSQLRcGDVe/NrRJ+4Z4RLyfvbfo8/0wwOyzsjg0SbFGu6
+	lfG6y4pFBsVx+7s2PVMbiRHiDztJROrbRqqh+JU5RfEniUSnnxIacw0ftnkRap/gx7U=
+X-Gm-Gg: ASbGncsV2La1IBBSUatQ+/XQHjEMBpLumqiWl/Ze/xGx3We9vk66asKXGUqloAf32sN
+	Qh6GrwbljZgH/fyqC+ayFsZkS0+t+bxsLZ5tfZXtD13zXaXi6jAnMGpaS7aIIJaM6dyaYAw9oK4
+	RsMJUM8BkjT9vW2wzlHaySbKXqYHDDxxjZk+ubzBjJmj6pwTzcqLouh30iBp1qUoKoMatq0YYZc
+	Q67ZxWkNSAkfLCCmUK7gfY/qMQZVRTViHBbTf6c5HVf7lgChUbwBmI32ypKIl1NOni4/Djzez3y
+	7OvxrqX47hjNrG6TEWSL/YnRC0T5++d6vJivOosuZc2lv/fPH3+CKCvLUAQLjmwkYfp+hqqxgdG
+	Ge7gMG0k=
+X-Google-Smtp-Source: AGHT+IEJnu7rOfOWw165nj2xc2++BeA1tyNcutxhMIII9tv0OpltHssTeqXnkk3yhpYX2DQ5ZUgMnQ==
+X-Received: by 2002:a05:6e02:330c:b0:3db:839d:7b36 with SMTP id e9e14a558f8ab-3db857bc504mr89067845ab.21.1747549941790;
+        Sat, 17 May 2025 23:32:21 -0700 (PDT)
+Received: from mystery-machine.brighamcampbell.com ([64.71.154.6])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3dc61e15b2csm4945525ab.58.2025.05.17.23.32.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 17 May 2025 23:32:20 -0700 (PDT)
+From: Brigham Campbell <me@brighamcampbell.com>
+To: shuah@kernel.org,
+	linux-kernel-mentees@lists.linux.dev,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org (maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)),
+	"H. Peter Anvin" <hpa@zytor.com>,
+	linux-kernel@vger.kernel.org (open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)),
+	linux-kselftest@vger.kernel.org (open list:KERNEL SELFTEST FRAMEWORK)
+Cc: Brigham Campbell <me@brighamcampbell.com>
+Subject: [PATCH] kselftest: x86: Improve MOV SS test result message
+Date: Sun, 18 May 2025 00:30:26 -0600
+Message-ID: <20250518063025.1467672-3-me@brighamcampbell.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250517201255.1bc4e61b@fangorn>
+Content-Transfer-Encoding: 8bit
 
+Apparently, this test completes successfully when it completes execution
+without either causing a kernel panic or being killed by the kernel.
+This new test result message is more descriptive and grammatically
+correct.
 
-* Rik van Riel <riel@surriel.com> wrote:
+Signed-off-by: Brigham Campbell <me@brighamcampbell.com>
+---
+ tools/testing/selftests/x86/mov_ss_trap.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> But it is perfectly happy with getting the address of the first long 
-> in that array, which works for both array size 1 and array size 32.
+diff --git a/tools/testing/selftests/x86/mov_ss_trap.c b/tools/testing/selftests/x86/mov_ss_trap.c
+index f22cb6b382f9..d80033c0d7eb 100644
+--- a/tools/testing/selftests/x86/mov_ss_trap.c
++++ b/tools/testing/selftests/x86/mov_ss_trap.c
+@@ -269,6 +269,6 @@ int main()
+ 			);
+ 	}
+ 
+-	printf("[OK]\tI aten't dead\n");
++	printf("[OK]\tkernel handled MOV SS without crashing test\n");
+ 	return 0;
+ }
+-- 
+2.49.0
 
-Yeah. Testing is still a question: does this boot on a system with PCID 
-&& INVLPGB features, with PTI force-enabled ("pti=on" boot option)?
-
-Thanks,
-
-	Ingo
 
