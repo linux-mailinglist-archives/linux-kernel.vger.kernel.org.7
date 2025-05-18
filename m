@@ -1,114 +1,175 @@
-Return-Path: <linux-kernel+bounces-652701-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-652704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 670B8ABAF46
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 May 2025 12:18:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D5B33ABAF4A
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 May 2025 12:32:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 788711899670
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 May 2025 10:19:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0C741895933
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 May 2025 10:33:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 868FD213E67;
-	Sun, 18 May 2025 10:18:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DC6C1DF252;
+	Sun, 18 May 2025 10:32:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oC7lH3X8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Cagupj3D"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5D30212B1E;
-	Sun, 18 May 2025 10:18:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E33F43232
+	for <linux-kernel@vger.kernel.org>; Sun, 18 May 2025 10:32:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747563521; cv=none; b=bq6nzyNMI/YZslzvPeXeeYDW/jNx8KaNJrNrYDPTZTK6U/ecOJwdFtBcQBYDR9DDtTpn2lKT/Vdd4FzCekbliwRd9xsvmRLZfVMWhyXVcf+0veknGHLpS1DcUdsvg9tgSXAOq2IGIQRetcaDou4b4tV3BMxZmVsVhacdXspQHyU=
+	t=1747564368; cv=none; b=fHE6oenwXoSrBk3kvHLcGmBWtaKPy7ZOK1Oezl/BvnAv+DtMp3w72czseE3OghmfXkF29mViqdOrRAfsqtQrHc/cbDWCu79i22+vkw/Ns5HkgOBZsUTgJTL/IFyB8hgn0WBrHdTzxBEs8iEdM/iIKJoSScxvBaOcO6Gl3gECTcY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747563521; c=relaxed/simple;
-	bh=3bpWePsE3/8Eyz1vaUmT1v61DH/LDZGGR7WSY5sci1M=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=npu5q2pZh6SGPkIzPwVDHxSLWzFcwuM/K0OlsUKyugq4O+oDYktuOLYzZ/F9T9GXgPa+XY0+8cYHp8o+RpkMjP4XIvisgedpc0VgZJSWP+QMQtzqIF1LYDqcfXACaxRuDFHvZotu12wePSdh9ee9t3ZmBSWGBNir80Uv7aEeNmQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oC7lH3X8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 640A6C4CEE9;
-	Sun, 18 May 2025 10:18:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747563521;
-	bh=3bpWePsE3/8Eyz1vaUmT1v61DH/LDZGGR7WSY5sci1M=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=oC7lH3X8rVJseb0ZvcrL2bK9WvUfQslKri0aARhMV+5VoSRHEY2gaPBHKWGgcUPBb
-	 C3ubdSplrdPEo1qRndvoToJlp2I5UhPu/tpU3wuvyt7M31z/e/CaE2cUOhP53nWe6k
-	 2G69Md1nJWxICfPuMbEwrgF0gi+tWYK/OcmSq6hCM8t5sGbRxUAnx87OaKvlx9utAB
-	 yiktpWW4lo+oF7OxGwrVNWsViH4m9Iit0cjg15u0Tuig40tqsuG4uyot40fzgz3NV9
-	 vJbhN2PcyFC9HPfKGtSriHyvbSYPnMEgFSuJPhpsU1nzcfXkrO+DQoWvO2VMLDI4sx
-	 pWIeHi4N+nS5Q==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54BB5C3ABC9;
-	Sun, 18 May 2025 10:18:41 +0000 (UTC)
-From: Janne Grunau via B4 Relay <devnull+j.jannau.net@kernel.org>
-Date: Sun, 18 May 2025 12:18:38 +0200
-Subject: [PATCH 2/2] HID: lenovo: Remove CONFIG_ACPI dependency
+	s=arc-20240116; t=1747564368; c=relaxed/simple;
+	bh=rSNr1F8OgyIGJLC0wtphqTviRCaYM5uKzSUj+k5gOJk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=naUBG6A20fPWDJWFK1tUUDQcqlVQS3vHXiCWNQfJDno+SuGdi3a/fipFNq3n8HSgaSssOTcP7BYgBUcuW4CUHEQrXbMYX0oBD/qBAgr/D2NzyaW8bH3o73E1GUaC3rpYAeq+QKtTC3/bVKoyHpddc45YkiVyKRXSg+KuAQ1QrB8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Cagupj3D; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54IADCis005543
+	for <linux-kernel@vger.kernel.org>; Sun, 18 May 2025 10:32:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	2KMB4Lkwm4bquu4Frj3qRe08ajtmQ9XJffkypZKuOtk=; b=Cagupj3DupOaDdl6
+	hZIHTICpCYogEUpG17UOi7aniNW9zbtJ8S0B/WFJKxGBujRSALz40kNN67ic6Imb
+	dafeHScYr+SEcsBPMejJ+zgPXIXnlKRnwP1STx1djW7IIlJl7IUw+5oPB5J/bzb6
+	ZsvFkYLDfF11iRCuGNAwkf2wf6NBJ9lxxqTSdZhOOJdY8l8CvkgLLANKhK6W2dGo
+	CBdBJXZXsW2N91bQjdZKPJVyXiVNPkeEoU6tt7mW6t+0fd+o6DWDupPeWvuEGfJk
+	d2hsn9F1ZpxgTeHBorfPP9RWlPbm8oZMuh9vlFsKtdPsjwjKMXu+mfITrA2PHg8Y
+	xYoukQ==
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46pkr9ssun-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Sun, 18 May 2025 10:32:44 +0000 (GMT)
+Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6f50edda19eso54329566d6.1
+        for <linux-kernel@vger.kernel.org>; Sun, 18 May 2025 03:32:44 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747564363; x=1748169163;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2KMB4Lkwm4bquu4Frj3qRe08ajtmQ9XJffkypZKuOtk=;
+        b=qBEaORJbd3SDzaaxuwdJEqjh6v6crmYXniOSYKhveRmiGgg3mGNkbmdyvwyrZIx4Qy
+         P9RblGEqmnSgnL53rQXwV9ltQlDm0u53HRYWjqTUV572TtMbnU0c7YJcIJ0fYF5eMuWt
+         tZdr01NEmI10H66yESBMe9RqvN3Zf6nWilJbIKTAFPXRO2uPR2X4xdcPhOJ/makPv520
+         52SO2rblZEk03DLpdHGOEGjQmXzZpCfun+MnytaWx2pviX4uzW2SIz0IP6oXZ/tHyzdi
+         0JNjhi6YMVKWQ4BSaFn62MmNx+aFSERqBjiuldsWOdClebJxwmvWAyuBFsCxwblbdqMZ
+         T82w==
+X-Forwarded-Encrypted: i=1; AJvYcCVA0VIaF+1MBHIBcGuXiajlX3F0qFzDPo/8tG61+hu3EK5zngbBT/fDrv7zjTmbeAiZeYvy8dErCdanBHM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwUyjxvyikbPzvtrE2bmYkPr/56GoFrCKiWUqgmUuuUyXgbgCDS
+	nmtOCYMOiaC+G2Djl4PfdjlzDEy+AYxL9iEebTzQ2xN6s2k2BBPspP+OhRbdxGfyJoqXgI5T6Hn
+	MmOKKE3m6WlwJqY6gEuZt7U8nFf1opi1uxXcI+pnA9b1tSMhhZmlAbLCwE1oBT4uydtc=
+X-Gm-Gg: ASbGncsqPnw8s/mpzFHZqaBOcDVlj8aJCnUaGNa8yE5wzUTsZTywxoDbMchIxVCe8Mo
+	Eyx9xxe2w71WrD/sDrfdOQL3GutrNCV0tcUWtmtWPt2hjQaA3GEQIpiXQ79uybOSEkTdqn8ksvQ
+	gKl0zNRmdR/RgfJakFwvKoHA2X/zsDA0mw0t3QMbZzmFPEb+EbEJWwAXyOlTgXG6xXZjbK2tZoq
+	bfKsHJozIZvu7WSif9yCjWaMBuInFQDxELVt7cVBGu0uBQPd3j0U3ngvrrw/wklSawbgvAdflVP
+	dp/I6QqYHO/+jsb0ov5eJ3FpcZ4fNdgBpvwWFWgzGHEQlQ53pGJ9lbnuqKt9vuft7K1+ggTdlZI
+	=
+X-Received: by 2002:a05:6214:14ec:b0:6f8:c23c:5257 with SMTP id 6a1803df08f44-6f8c23c82b2mr69977846d6.11.1747564363363;
+        Sun, 18 May 2025 03:32:43 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEPoFsBUaDrnwOXnuPwNlAF6cFAuLO04cfaVzqOcUVBeyq/FhbV/KeXlfPcZ1p20TjPJxmqKw==
+X-Received: by 2002:a05:6214:14ec:b0:6f8:c23c:5257 with SMTP id 6a1803df08f44-6f8c23c82b2mr69977686d6.11.1747564363030;
+        Sun, 18 May 2025 03:32:43 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-550e6f161bcsm1392553e87.7.2025.05.18.03.32.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 18 May 2025 03:32:42 -0700 (PDT)
+Date: Sun, 18 May 2025 13:32:40 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Rob Clark <robdclark@gmail.com>
+Cc: Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 11/11] drm/msm: make it possible to disable GPU support
+Message-ID: <b7zkrdxmigz3bmgphedzoosgesxs3y24wgi4l52zf6r6djo7vo@aupsak7d6ma2>
+References: <20250503-msm-gpu-split-v2-0-1292cba0f5ad@oss.qualcomm.com>
+ <20250503-msm-gpu-split-v2-11-1292cba0f5ad@oss.qualcomm.com>
+ <CAF6AEGt8uB-KWLDora9SN3K_VntSYZ4HNay4XLd+KqQzcQNfcg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250518-hid_lenovo_acpi_dependency-v1-2-afdb93b5d1a6@jannau.net>
-References: <20250518-hid_lenovo_acpi_dependency-v1-0-afdb93b5d1a6@jannau.net>
-In-Reply-To: <20250518-hid_lenovo_acpi_dependency-v1-0-afdb93b5d1a6@jannau.net>
-To: Arnd Bergmann <arnd@arndb.de>, Jiri Kosina <jikos@kernel.org>, 
- Benjamin Tissoires <bentiss@kernel.org>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-input@vger.kernel.org, 
- linux-acpi@vger.kernel.org, Janne Grunau <j@jannau.net>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1053; i=j@jannau.net;
- s=yk2024; h=from:subject:message-id;
- bh=bo27DdOTnOoQpDLRJMS1oIMxCFrEhqBgkKEdS+8giu4=;
- b=owGbwMvMwCW2UNrmdq9+ahrjabUkhgzNLQyts6/cn2c7q3CmUPq6uJoXXNkbxIX3eQSc0Z9eN
- e985vrCjlIWBjEuBlkxRZYk7ZcdDKtrFGNqH4TBzGFlAhnCwMUpABOpbGT4H3TL9sD882cqd2nN
- mev9+03S9PYF317PPXVpabnF16OpE00Y/kpvWfjl6syyfxtOnGldsen6306L6Q+tnC88/H2nw+9
- +6XxuAA==
-X-Developer-Key: i=j@jannau.net; a=openpgp;
- fpr=8B336A6BE4E5695E89B8532B81E806F586338419
-X-Endpoint-Received: by B4 Relay for j@jannau.net/yk2024 with auth_id=264
-X-Original-From: Janne Grunau <j@jannau.net>
-Reply-To: j@jannau.net
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAF6AEGt8uB-KWLDora9SN3K_VntSYZ4HNay4XLd+KqQzcQNfcg@mail.gmail.com>
+X-Proofpoint-GUID: HwgXKxJOcHk-QDizWFPWMSrUwwP6gaJA
+X-Proofpoint-ORIG-GUID: HwgXKxJOcHk-QDizWFPWMSrUwwP6gaJA
+X-Authority-Analysis: v=2.4 cv=DdAXqutW c=1 sm=1 tr=0 ts=6829b74c cx=c_pps
+ a=oc9J++0uMp73DTRD5QyR2A==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=dt9VzEwgFbYA:10 a=EUspDBNiAAAA:8 a=hVAVfT_TPH0Tf30rILYA:9 a=3ZKOabzyN94A:10
+ a=QEXdDO2ut3YA:10 a=iYH6xdkBrDN1Jqds4HTS:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTE4MDA5OSBTYWx0ZWRfX4vRla9bYlglq
+ eqyk8KeOVu7rW7+bxmeeN7IH87IeYppaKvDHAIv3VhohBMdsEWzJ/QoVI7R36AQeviSy3BdVB8+
+ 73RAkajWjAPW6JUWHIKfVcxU1PO+ZpSHVwffsllhuox8zp51zj90UDDdNvoV+AguyHE5xtQjJAw
+ ctLiyRljFLkkIebZ+qQT+LxZ+IECl6X1OVN+2blSGg6RwTDDWX5fqHvoGS5dIjCFg1pwbfanTg1
+ DTVbMPsiZsVaVILTGeHMZ+qqW3mf+ApkTymSThlgrjmVubJ74/PdqhFbnyiFaMDjRmUIvpqjSYv
+ UwwOGVshiH1QBktm4Bpfw5ycEJlIpztpfYTYQCGPdhS7pKA6t3tp/AwhRKdjQufmIG48zUO3Zwf
+ c0XB4vpLEWbKiHxSYRRctWQlLi9cPFKdM1rJvsa58RKFCP25rsK2kRvkR1DC/+bLqLXKJV6B
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-18_05,2025-05-16_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ mlxlogscore=999 clxscore=1015 phishscore=0 adultscore=0 mlxscore=0
+ spamscore=0 malwarescore=0 suspectscore=0 priorityscore=1501 bulkscore=0
+ impostorscore=0 lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505070000 definitions=main-2505180099
 
-From: Janne Grunau <j@jannau.net>
+On Wed, May 07, 2025 at 09:45:26AM -0700, Rob Clark wrote:
+> On Sat, May 3, 2025 at 12:17 AM Dmitry Baryshkov
+> <dmitry.baryshkov@oss.qualcomm.com> wrote:
+> >
+> > Some of the platforms don't have onboard GPU or don't provide support
+> > for the GPU in the drm/msm driver. Make it possible to disable the GPU
+> > part of the driver and build the KMS-only part.
+> >
+> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+> > ---
+> >  drivers/gpu/drm/msm/Kconfig           |  20 +++--
+> >  drivers/gpu/drm/msm/Makefile          |  14 ++--
+> >  drivers/gpu/drm/msm/msm_debugfs.c     | 135 ++++++++++++++++++----------------
+> >  drivers/gpu/drm/msm/msm_drv.c         |  37 ++++++++--
+> >  drivers/gpu/drm/msm/msm_drv.h         |   3 +
+> >  drivers/gpu/drm/msm/msm_gpu.h         |  71 +++++++++++++++---
+> >  drivers/gpu/drm/msm/msm_submitqueue.c |  12 +--
+> >  7 files changed, 191 insertions(+), 101 deletions(-)
+> >
+> > diff --git a/drivers/gpu/drm/msm/Kconfig b/drivers/gpu/drm/msm/Kconfig
+> > index f6360931ae55a2923264f0e6cc33c6af0d50c706..5605d2bc93a8ad9cb33afcb8ca9da44c68250620 100644
+> > --- a/drivers/gpu/drm/msm/Kconfig
+> > +++ b/drivers/gpu/drm/msm/Kconfig
+> > @@ -15,29 +15,37 @@ config DRM_MSM
+> >         select IOMMU_IO_PGTABLE
+> >         select QCOM_MDT_LOADER if ARCH_QCOM
+> >         select REGULATOR
+> > -       select DRM_EXEC
+> > -       select DRM_SCHED
+> >         select SHMEM
+> >         select TMPFS
+> >         select QCOM_SCM
+> >         select WANT_DEV_COREDUMP
+> >         select SND_SOC_HDMI_CODEC if SND_SOC
+> > -       select SYNC_FILE
+> 
+> fwiw, atomic depends on SYNC_FILE... otoh it is selected at the
+> toplevel by CONFIG_DRM
 
-With platform_profile_cycle() stubbed the dependency on CONFIG_ACPI can
-be relaxed to `ACPI || !ACPI` and CONFIG_ACPI_PLATFORM_PROFILE is only
-selected if ACPI is enabled.
-Cycling through platform profiles is only functional with ACPI but that
-should not be an issue as it only used on a detachable keyboard of a x86
-tablet with a special connector.
-
-Fixes: 52572cde8b4a4 ("HID: lenovo: select CONFIG_ACPI_PLATFORM_PROFILE")
-Signed-off-by: Janne Grunau <j@jannau.net>
----
- drivers/hid/Kconfig | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/hid/Kconfig b/drivers/hid/Kconfig
-index a503252702b7b43c332a12b14bc8b23b83e9f028..984f7bd235141f21e018b51f97546ec9d00324e8 100644
---- a/drivers/hid/Kconfig
-+++ b/drivers/hid/Kconfig
-@@ -595,8 +595,8 @@ config HID_LED
- 
- config HID_LENOVO
- 	tristate "Lenovo / Thinkpad devices"
--	depends on ACPI
--	select ACPI_PLATFORM_PROFILE
-+	depends on ACPI || !ACPI
-+	select ACPI_PLATFORM_PROFILE if ACPI
- 	select NEW_LEDS
- 	select LEDS_CLASS
- 	help
+Within drm/msm it is only used by GEM_SUBMIT code, so I still think this
+is correct.
 
 -- 
-2.49.0
-
-
+With best wishes
+Dmitry
 
