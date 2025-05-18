@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-652800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-652802-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F344DABB071
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 May 2025 16:06:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9469BABB075
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 May 2025 16:08:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9AA218970B0
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 May 2025 14:06:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B9D1189681A
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 May 2025 14:08:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C715F21C9FE;
-	Sun, 18 May 2025 14:06:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C329721CA0E;
+	Sun, 18 May 2025 14:08:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l9YUaH1a"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BWTRwjWK"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E8902CA6;
-	Sun, 18 May 2025 14:06:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CF7B2CA6;
+	Sun, 18 May 2025 14:08:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747577175; cv=none; b=CVjqcv0D6ODIUs2LRM2076HxcT7+g4pw7iQjibnM5/+bPG9rqXXFiGSrDe2dqYYGDpzCFX4c4N2TryT1XAN+obUbvt+W/0olXIFMYezcULBTJ4aTJdDfzST8ZZQIiEPqMELWhp/zFu1sqvymtS+IzX4vq7ZZ63wAxipcsYCnsrA=
+	t=1747577302; cv=none; b=bXHRrk4oy3YVVkZRoGNzC9ad5runuZSXp7WPgF8mZ26+LXtOv0rfVDPcI4yRYIhUdeH54+H6NrbDRkmO3wCP4sqd3S+EC35FePDPunKmammISUxA3xnT2IAvbXA6XbXov9uP0lKFV3Q6kzSo6jItlP+wu/YtY4YFqoC/JyAAVxs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747577175; c=relaxed/simple;
-	bh=Y6RcSOJ3TT05BAGmCI4tHEBMtVlV33BvNPwwrPQrwdw=;
+	s=arc-20240116; t=1747577302; c=relaxed/simple;
+	bh=AgKo8TgX/Hl6XS9+GhfdbOr+7v2ldSOpPxbPPyQ1tWk=;
 	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=A9GlBZNiLhnyW2U2SRAD4FzqVxTvFuns7/PDLe/UxtPbXe6XVQaPU51KOHxcosHCs4dM1/UGk3d75mw0+RCxZqk7kZPRE3RuiKBfouCjc2glj8mLfK2ulDFKW/5k7A2D1F/AsfdBWGDi6P/9ltqguH/p3DDPWTP5ChbmfotmC/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l9YUaH1a; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E860CC4CEE7;
-	Sun, 18 May 2025 14:05:56 +0000 (UTC)
+	 References:In-Reply-To; b=j2rS1mKh6d9t7HFsnxotm2jyNfS+w9pHXJbeHZ01Kgy5uKPdNbcifqQuiZ0BRLYGEgoFhMqz9mhmg7+rxpVackSaahXfkvgKAP3hmbJl7xyYRIrY5ND2k25ZfhU50ACyaKTDnE6FbqvwApIlZOBWnmpFNqymiM9ExISI8tFv/0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BWTRwjWK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7EF6AC4CEE7;
+	Sun, 18 May 2025 14:07:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747577173;
-	bh=Y6RcSOJ3TT05BAGmCI4tHEBMtVlV33BvNPwwrPQrwdw=;
+	s=k20201202; t=1747577302;
+	bh=AgKo8TgX/Hl6XS9+GhfdbOr+7v2ldSOpPxbPPyQ1tWk=;
 	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=l9YUaH1aBItBRjrd3dy8XIY25AGKBS/3Bl3FM3z0SWsjUxEombiJX9hvN541fLUu0
-	 20h7r58cjtkxSGLdtwHVrokxkuTBmb9/sgbY77YkV0ZWSmQo/b1Fr+XfreKR8x0JSu
-	 Ef2HDrvljCi+jFAxmkX6aiXgblZhmSHVeeeXa7MCnq7cpbtnY6fhfuRP+4xaVAgTwJ
-	 OaOUZ68UR5eVEyHFmfZVOqA2aIV4Viqz7W7U+al+vAUCBtRCvYFPtiMEGSWBdqSyE1
-	 sxJtdI+Y8Y+XsDLRexYI9m9hgXIaSHpv9Xbfk1VCYfyy8uHr1Gtk8guDBgctjxU8to
-	 veciyOVhRQI+Q==
+	b=BWTRwjWKsiuVR+Z2kNiFXbZaJiotzFB9hYOPjwmm8UFsnc77yWPju19aMoniHkxa6
+	 KxiQB4vQwwSwoY9wyUyBQmotfUi4b6TSRWq2z3H6ol4i44M8FXeND771erz9au6Hbv
+	 /8yN3Yg4sfspz6wzb4CMRo3cB4wRKjKA7wuu0r6itQ9XncDe6k8MYyVojSZoldfEI9
+	 38aky5DxLYwcdeNu5Bg4cuxETwYpPWosCaII47ZdsVGfiwkh5KVF7rYMEhPvLtkXhO
+	 QlypuxIaS56RSqf7BEhWr3rlwSYESvytnnD4NwrnyjRvCT4IDB4edW6n3jPUZ0TVw8
+	 l1UjPu4kVEIBA==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -48,11 +48,10 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Date: Sun, 18 May 2025 16:05:42 +0200
-Message-Id: <D9ZCE83VYX50.3415QQDCN4R0G@kernel.org>
+Date: Sun, 18 May 2025 16:07:20 +0200
+Message-Id: <D9ZCFH8F2MBK.1J0BC54P9EWN9@kernel.org>
 Cc: <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>
-Subject: Re: [PATCH v3] rust: regulator: add a bare minimum regulator
- abstraction
+Subject: Re: [PATCH v3 1/2] rust: irq: add support for request_irq()
 From: "Benno Lossin" <lossin@kernel.org>
 To: "Alexandre Courbot" <acourbot@nvidia.com>, "Daniel Almeida"
  <daniel.almeida@collabora.com>, "Miguel Ojeda" <ojeda@kernel.org>, "Alex
@@ -61,42 +60,57 @@ To: "Alexandre Courbot" <acourbot@nvidia.com>, "Daniel Almeida"
  <bjorn3_gh@protonmail.com>, "Benno Lossin" <benno.lossin@proton.me>,
  "Andreas Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl"
  <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>, "Danilo
- Krummrich" <dakr@kernel.org>, "Boris Brezillon"
- <boris.brezillon@collabora.com>, "Sebastian Reichel"
- <sebastian.reichel@collabora.com>, "Liam Girdwood" <lgirdwood@gmail.com>,
- "Mark Brown" <broonie@kernel.org>
+ Krummrich" <dakr@kernel.org>, "Greg Kroah-Hartman"
+ <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ "Thomas Gleixner" <tglx@linutronix.de>
 X-Mailer: aerc 0.20.1
-References: <20250513-topics-tyr-regulator-v3-1-4cc2704dfec6@collabora.com>
- <D9YXK1J1XO37.JVILKENRKYXD@nvidia.com>
- <D9Z3R4EYAXV9.211IFNRTOPM6O@kernel.org>
- <D9Z4XGQ2QHXA.2H5X1NZ5IZECC@nvidia.com>
- <D9Z59JWL4BTC.3DTN0LWCJX5AZ@nvidia.com>
- <D9Z73XZUSYWO.R0P38ASITWR7@kernel.org>
- <D9Z8PLIZGSJ6.254ICGG44E4PB@nvidia.com>
-In-Reply-To: <D9Z8PLIZGSJ6.254ICGG44E4PB@nvidia.com>
+References: <20250514-topics-tyr-request_irq-v3-0-d6fcc2591a88@collabora.com> <20250514-topics-tyr-request_irq-v3-1-d6fcc2591a88@collabora.com> <D9ZBIGJWS9I6.17MVKGQWNNOX8@nvidia.com>
+In-Reply-To: <D9ZBIGJWS9I6.17MVKGQWNNOX8@nvidia.com>
 
-On Sun May 18, 2025 at 1:12 PM CEST, Alexandre Courbot wrote:
-> On Sun May 18, 2025 at 6:57 PM JST, Benno Lossin wrote:
->> So just let users ensure that they always match each `enable` call with
->> a `disable` call in the `Dynamic` typestate?
->>
->> That is ok, if no memory issues can arise from forgetting to do so,
->> otherwise those functions need to be `unsafe`.
+On Sun May 18, 2025 at 3:24 PM CEST, Alexandre Courbot wrote:
+> Hi Daniel,
 >
-> There shouldn't be any, the only side effect would be that the regulator
-> stays enabled when it shouldn't.
+> On Thu May 15, 2025 at 4:20 AM JST, Daniel Almeida wrote:
+> <snip>
+>> +/// Callbacks for an IRQ handler.
+>> +pub trait Handler: Sync {
+>> +    /// The actual handler function. As usual, sleeps are not allowed i=
+n IRQ
+>> +    /// context.
+>> +    fn handle_irq(&self) -> IrqReturn;
+>> +}
+>> +
+>> +impl<T: ?Sized + Handler + Send> Handler for Arc<T> {
+>> +    fn handle_irq(&self) -> IrqReturn {
+>> +        T::handle_irq(self)
+>> +    }
+>> +}
+>> +
+>> +impl<T: ?Sized + Handler, A: Allocator> Handler for Box<T, A> {
+>> +    fn handle_irq(&self) -> IrqReturn {
+>> +        T::handle_irq(self)
+>> +    }
+>> +}
 >
-> It's also easy to implement more behaviors using more states. For
-> instance, `Dynamic` just proxies the C API. But if we also think it its
-> useful to have a regulator which use count is clamped to 0 and 1, you
-> could have another state that includes a boolean (instead of being empty
-> lke the others) to track whether the regulator is enabled or not, and an
-> `enable` method that only calls the C `regulator_enable` if that boolean
-> is not already true. That way you remove the need to mirror the calls to
-> enable and disable, while only paying the memory overhead for doing so
-> when you explicitly state you want this behavior.
+> I see that every smart pointer would have to implement Handler in order
+> to be used with this module, but...
+>
+>> +#[pin_data(PinnedDrop)]
+>> +pub struct Registration<T: Handler> {
+>> +    irq: u32,
+>> +    #[pin]
+>> +    handler: T,
+>
+> ... what if you store another type `U: Borrow<T>` here, and take it as
+> the argument of `register`? This way you should be able to use anything
+> that implements Borrow<T>, which includes T itself, Arc<T>, Box<T>, and
+> more, and can remove the two impl blocks above.
 
-Aren't we then duplicating the refcount from the C side?
+I don't think that this is easily possible, since then the
+`Registration` struct will have two generics, which I think is worse.
+
+The impls above are pretty common for these kinds of traits, so I don't
+think it's too bad.
 
 ---
 Cheers,
