@@ -1,109 +1,98 @@
-Return-Path: <linux-kernel+bounces-652798-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-652801-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 550F9ABB06F
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 May 2025 16:04:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4631AABB074
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 May 2025 16:07:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B5181729FF
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 May 2025 14:04:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 821881895BAF
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 May 2025 14:07:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51DDD21C9FE;
-	Sun, 18 May 2025 14:04:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CDD021CA0A;
+	Sun, 18 May 2025 14:07:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VDi1PwEe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="Tkf+PaOP"
+Received: from out162-62-57-137.mail.qq.com (out162-62-57-137.mail.qq.com [162.62.57.137])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADF872CA6;
-	Sun, 18 May 2025 14:04:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2194E2CA6;
+	Sun, 18 May 2025 14:07:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.137
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747577088; cv=none; b=tb6+SjR3sM5NvUHe7FXrBuQtWoaMChSzPKQfpVsOq11Wm8llvzWmfCO2cGFlZUNXQkekrrorMxUpXi2AspxdRqZr6PRH1/yA2TxOqmvt4B7iPmZHJUhgiazriiDCA9UA5vxcSp3orC3/nSFHor2qMxgrgJZmqZYBcKrOwKDdSKM=
+	t=1747577232; cv=none; b=HoBZepH39U6uGxnQsKBfmNLQselw1T9qpSYtT7JDSqoygOieLmhjhwvyWjsfN+pQp+gFTlrXibwETSBWGdCLc+Mj7r3NlqfKd/bpMQ0Tuox/039UrI7ucKnCnVN8HePFhbdOLJPxgE7iTVUOZjl2j774wCN599EmKn79sSAonmc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747577088; c=relaxed/simple;
-	bh=dvIHQWvFCf/Xw3NTmrSMM4jQbP3T5ZdNH0BF7nYqLzc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=uqG7GSe1zXgLZfogzhehaX8hOjH10ty87p+Ybil3927Tbf2/bJ1/AQ1t3ZeVeSRw2S6A8TeNQ8m+18bVDlidYI78ArRzfGrrAEqwLgvj39bksz465ZvaKKHz0X9EgjauZNiMB0WSL88MxqvRycvgQb0nGqP5lgSZLLEdIBCAo3Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VDi1PwEe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA9DDC4CEEB;
-	Sun, 18 May 2025 14:04:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747577088;
-	bh=dvIHQWvFCf/Xw3NTmrSMM4jQbP3T5ZdNH0BF7nYqLzc=;
-	h=From:Date:Subject:To:Cc:From;
-	b=VDi1PwEeQE1qtuntPvDmU7eIZIgSCqg7ON9GvwfX1UNG8gtUxrhCbeKt6y+BJKKex
-	 jIKxcMy3sUrcVhj7JEzSQlYVzkBavap8XkN8ZnzdGcRHioAARsXEXGcKwz5YrRq1hS
-	 M5pjUm/INpdd0w/5qk/tjKqe8LRyjShNYOe01Pp/W8h1Wrqm8hqyiaLcjzJxvkfVvy
-	 PE8AzRCgHSxHIOyOlTkj/aODv5j8qAe8Q3TIRHeDO5Jzo0vsd9vjlKbtYmBq4K3gUB
-	 111sxyBTwQdNgDJeSEKe+OXrG9osjPzSfGpyEhRayXB6JpLaTx6go1/DGeqZOjSa/V
-	 PSGsVcBSoM46A==
-From: Mark Brown <broonie@kernel.org>
-Date: Sun, 18 May 2025 15:04:42 +0100
-Subject: [PATCH] selftests/mm: Deduplicate second mmap() of 5*PAGE_SIZE at
- base
+	s=arc-20240116; t=1747577232; c=relaxed/simple;
+	bh=7ZUOy4zfzwtQfFECls1H0K0rWiwTK00K7JoofSWCwAk=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=JEsvSEs6qY3FoKyRV1Qi2Aavl/lXDlQNrceFc+YsHoJFD89+xZh88a9i83oCe+sNgIiQLL2ez6xJPkKGKaDH0spZ7c9+JPbZCZxtRScitsdsfo88v/jX93Z5ODrS1ILsHsuk+o/JBJjYHL0pxD0/yMbBFNjTXnPiBTwrpp5H9Fg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=Tkf+PaOP; arc=none smtp.client-ip=162.62.57.137
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1747576921; bh=ySspec3YNrQpxYsv4pE3dYx/3DWUTev93a0NvHqCYAc=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=Tkf+PaOP4+TjvyoUmtHWN4GO+oR5cw7jYpGd/9g+y8NWcLiy4o3h2w7+nGA65GoYQ
+	 qVbYuar0HaUtMxQI7PMXkdzwZiH12EXLC8QQARXHCHIWFeUCWKey9lcCTP2yoceREM
+	 cjUNP3sQrYge3JMV8tVk67hQQCWX6kP6py9uRPfM=
+Received: from ctt.. ([219.143.130.140])
+	by newxmesmtplogicsvrszc13-0.qq.com (NewEsmtp) with SMTP
+	id 798228B; Sun, 18 May 2025 22:01:57 +0800
+X-QQ-mid: xmsmtpt1747576917tkneko3hr
+Message-ID: <tencent_7A72A617DCA9854675A3B22B9C0B5F5E4E09@qq.com>
+X-QQ-XMAILINFO: MapnONytPuzijWxJBHCc5PS93VZJwvuokpXoI5q/M+ZsDlZKJp5CVfAhqVZz1b
+	 J4nce0pjPp6rvu1jW9ucyd0Ilc9eHXHfF1X6k8HRQV7PzhaWTnqammcFHeqrUzAyOJh//Ef6HrR3
+	 GeYvjvinwpiiF3aCTUEhnfOgZmO3igKVLIZQuSHLL8+AlJ+yozztRpjG2aAVfHBn0AfNRtGaXoBB
+	 BuAkEP/LMzqSMzWumhq/sOfy25wDzDVHRDqohC+/vBcE6CYwsm/QbPTgs9YBgmk/rvq/ZMEd1Tcp
+	 fxJfHa+gOv6rqX3SNrZ39QPoTRNKkFZNZpMfWKQhxtu498djZJ7pcy/gAv2yBDUC6nAwaoh4a4mg
+	 DZnqtfQYbWFflLFHs6INBVdeV5gwh8P+kQJ6k5YqkjX3BtkrmoCXsjaC7JhPgKeC942IX8u+ScUF
+	 zX88Xkn2m+z0Uxb0/0bijildv3DNbJpBTJvOPd7yWzfwI8KJeCFzRP2eKkrf0/0H3dhuxMbAgm2e
+	 PQS4YB8aL10fUGYRMfJH0GpDb95K19DrN6fjyZ7zbLaEOVpipNMrvBcIHC/WNk67d8ngYmDQjiDb
+	 RUU/Z6vxaZnY5Ye7x0ybbS+jhtf2y8dwZvc86LBPQAMbYkpECcOWaR4a6A3o99PET4CGfJZJASoJ
+	 dkF1sGSp5mP+9Zl3S+ahpoEUzbP7IaAtPTSNEtMfPzNnlQ7E4jUcLhVVJQdU7SVRgtcKgVBGIMTj
+	 llvQ74gB4VtRXDwfJCkhpr+jopP3gsnFi6obNb81/pdRqZ/Xy76qO8Pn07mPvZHWRh1V/S8Shh43
+	 Qjc17FhAt4RabMxkkmTwNhoFkLx9ZiphYu/08NsVducxF4+3iPqeIl/Q5+YxNKW0cOSvtHb1JY8Z
+	 ihcw8+ADlLhUZi23vFSlMsZOXTZi1Gbrud6oCBn7ac6eR8+MHQZ6Oodwwt2/ccbEiuqhsAtCavDY
+	 /QajZEBPWGbWKj7UMGogvJL+EImqr48Jx0A3ZjSPefRFeE1UIt4iij6duxQ7GW4maNWNzH4K3Gti
+	 iowD5bqIqGWCC75+C7S0Fxt+tt5U3xU/NSZuueawLJ6b6j9/xXiVlj79vPCk1ZaFSIzr/voVUuwT
+	 V2lMuN
+X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
+From: Taotao Chen <chentao325@qq.com>
+To: hch@infradead.org,
+	tytso@mit.edu,
+	willy@infradead.org
+Cc: adilger.kernel@dilger.ca,
+	akpm@linux-foundation.org,
+	chentaotao@didiglobal.com,
+	linux-ext4@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: Re: [PATCH 1/3] mm/filemap: initialize fsdata with iocb->ki_flags
+Date: Sun, 18 May 2025 14:01:57 +0000
+X-OQ-MSGID: <20250518140157.20878-1-chentao325@qq.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <aCSxc7TnJzP-n2Lk@infradead.org>
+References: <aCSxc7TnJzP-n2Lk@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250518-selftests-mm-map-fixed-noreplace-dup-v1-1-1a11a62c5e9f@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAPnoKWgC/xWNwQqDMBAFf0X23AWTNkX6K6WHaF7aBRNDVktB/
- PfG48Aws5OiCpQe3U4VX1FZcgNz6Wj6+PwGS2hMtreud+bGijmu0FU5JU6+cJQfAuelosx+Aoe
- tsHVxuMa7GcbRUkuVilM7N8/XcfwBhslvVHYAAAA=
-X-Change-ID: 20250514-selftests-mm-map-fixed-noreplace-dup-25f83f618bb2
-To: Andrew Morton <akpm@linux-foundation.org>, 
- Shuah Khan <shuah@kernel.org>
-Cc: linux-mm@kvack.org, linux-kselftest@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
-X-Mailer: b4 0.15-dev-c25d1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1342; i=broonie@kernel.org;
- h=from:subject:message-id; bh=dvIHQWvFCf/Xw3NTmrSMM4jQbP3T5ZdNH0BF7nYqLzc=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBoKej9hjqg8jkgAQkO4cJwOPfI03xIYCUEAlqhS
- HWNOQ3LwoaJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCaCno/QAKCRAk1otyXVSH
- 0I1EB/sEYsr1ilG59iZJ8+y3tuM9CLgqK1XPD2ou8/BPpVax6d1f4xfc3inAtYF8+ekrwLlpf9y
- Vs45r7LGkgXccp2lEde0PwiT4XCMpGJTJajnOoN5bxyMVwILcwPLTykFr47z5l4ECSz0Fewndzb
- iila9jKij0PaJpa8H5FMdcW3pjKTGmfB05l4v+Mw4RLR2kPAl0HkS613U1ACW6jWXOxEfgeVKE4
- BHhttNt+XepUbr19iHrX4E+tLz4KCoepqqrK2zP2G/agnsX6Of3LM3jJDTXTAWKFfyWoho70Bws
- FEtTy4EbJv0gzOC9VGojWO7/LNNP95Wnr6C6Agvb1Ol0vcL6
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-The map_fixed_noreplace test does two blocks of test starting from a
-mapping of 5 pages at the base address, logging a test result for each
-initial mapping. These are logged with the same test name, causing test
-automation software to see two reports for the same test in a single run.
-Tweak the log message for the second one to deduplicate.
+Hi Christoph, Matthew, Ted
 
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- tools/testing/selftests/mm/map_fixed_noreplace.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks for the suggestions.
 
-diff --git a/tools/testing/selftests/mm/map_fixed_noreplace.c b/tools/testing/selftests/mm/map_fixed_noreplace.c
-index d53de2486080..1e9980b8993c 100644
---- a/tools/testing/selftests/mm/map_fixed_noreplace.c
-+++ b/tools/testing/selftests/mm/map_fixed_noreplace.c
-@@ -96,7 +96,7 @@ int main(void)
- 		ksft_exit_fail_msg("Error:1: mmap() succeeded when it shouldn't have\n");
- 	}
- 	ksft_print_msg("mmap() @ 0x%lx-0x%lx p=%p result=%m\n", addr, addr + size, p);
--	ksft_test_result_pass("mmap() 5*PAGE_SIZE at base\n");
-+	ksft_test_result_pass("Second mmap() 5*PAGE_SIZE at base\n");
- 
- 	/*
- 	 * Second mapping contained within first:
+Replacing file with iocb in write_begin(), updating call sites,
+and adjusting i915/gem usage makes a lot of sense. I’ll send a
+v2 to reflect this change.
 
----
-base-commit: 82f2b0b97b36ee3fcddf0f0780a9a0825d52fec3
-change-id: 20250514-selftests-mm-map-fixed-noreplace-dup-25f83f618bb2
-
-Best regards,
--- 
-Mark Brown <broonie@kernel.org>
+Thanks,  
+Taotao
 
 
