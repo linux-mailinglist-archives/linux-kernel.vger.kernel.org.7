@@ -1,111 +1,109 @@
-Return-Path: <linux-kernel+bounces-652799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-652798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9932ABB070
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 May 2025 16:05:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 550F9ABB06F
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 May 2025 16:04:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6ABE1896859
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 May 2025 14:05:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B5181729FF
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 May 2025 14:04:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33D8821CA05;
-	Sun, 18 May 2025 14:04:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51DDD21C9FE;
+	Sun, 18 May 2025 14:04:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X+aZNYP1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VDi1PwEe"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 900981DB356;
-	Sun, 18 May 2025 14:04:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADF872CA6;
+	Sun, 18 May 2025 14:04:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747577098; cv=none; b=cTk7VeJW7SCzcyWkCtyUCujH0F0K7C+qPPqsC0kfSDigHxpYYbd6p2fnvD1p09q31xQ0NUkSd5IPHR2EIZiI4PZSSJ1KjlYLDmWWSCLm5ysxbJTGDqgL3z2X9DrWVROpDsPLhNMqrWjAkn/EVX96itOMD4SCGRwvB93+mn2Ed3c=
+	t=1747577088; cv=none; b=tb6+SjR3sM5NvUHe7FXrBuQtWoaMChSzPKQfpVsOq11Wm8llvzWmfCO2cGFlZUNXQkekrrorMxUpXi2AspxdRqZr6PRH1/yA2TxOqmvt4B7iPmZHJUhgiazriiDCA9UA5vxcSp3orC3/nSFHor2qMxgrgJZmqZYBcKrOwKDdSKM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747577098; c=relaxed/simple;
-	bh=OIZFzZ1NkkLAZVEoI5VXNZQkf2dWSp87t8Hf0ugTnEs=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=Kiovh33Z3T2h/FEQZ8NHfRCTRyajFZeC01RMdSHvat5gvP+qIj6o/y/y+5txd13PObJgcJuz50LNDERk9d4bwWJPLKNnfavpTvuxibEQVNQIHAgmTwHDuKt6F5B2rlIqramRZdZjVbFfAp765+T42je+Z361i8sEC1cSoUT9Z7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X+aZNYP1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66410C4CEE7;
-	Sun, 18 May 2025 14:04:35 +0000 (UTC)
+	s=arc-20240116; t=1747577088; c=relaxed/simple;
+	bh=dvIHQWvFCf/Xw3NTmrSMM4jQbP3T5ZdNH0BF7nYqLzc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=uqG7GSe1zXgLZfogzhehaX8hOjH10ty87p+Ybil3927Tbf2/bJ1/AQ1t3ZeVeSRw2S6A8TeNQ8m+18bVDlidYI78ArRzfGrrAEqwLgvj39bksz465ZvaKKHz0X9EgjauZNiMB0WSL88MxqvRycvgQb0nGqP5lgSZLLEdIBCAo3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VDi1PwEe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA9DDC4CEEB;
+	Sun, 18 May 2025 14:04:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747577098;
-	bh=OIZFzZ1NkkLAZVEoI5VXNZQkf2dWSp87t8Hf0ugTnEs=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=X+aZNYP1YsiWwhQ64ZkrMBCVEH5LVQlpSda2Km7gTfVRvrG1Xk8FKDdmMCjr7ghhI
-	 PnMDHWI7LLQEZJRYZvyuDMNKoDGoGzBzPAkt67M5bCSD3pPq+uuaIohAsujsJul2ru
-	 yWr6h0BpUhM/QUud+PU9ajvA0C+fYhPqF0zGYZmKgmkJj5IUw1UvaaPNr46GP/BgAj
-	 CKQXdqn+ri8yx+j5Xxci5UKw273dZknWtiojdbXv0JjJUUV10g+R9JFO5CEnaFYSq6
-	 2e+Qyhv4fxuwOys15AevsOw/7Urm/SC1cVwZJR9bU2fp1NqREFhgr70+B0ilgCyA3B
-	 5RfY0ct4VxA6A==
+	s=k20201202; t=1747577088;
+	bh=dvIHQWvFCf/Xw3NTmrSMM4jQbP3T5ZdNH0BF7nYqLzc=;
+	h=From:Date:Subject:To:Cc:From;
+	b=VDi1PwEeQE1qtuntPvDmU7eIZIgSCqg7ON9GvwfX1UNG8gtUxrhCbeKt6y+BJKKex
+	 jIKxcMy3sUrcVhj7JEzSQlYVzkBavap8XkN8ZnzdGcRHioAARsXEXGcKwz5YrRq1hS
+	 M5pjUm/INpdd0w/5qk/tjKqe8LRyjShNYOe01Pp/W8h1Wrqm8hqyiaLcjzJxvkfVvy
+	 PE8AzRCgHSxHIOyOlTkj/aODv5j8qAe8Q3TIRHeDO5Jzo0vsd9vjlKbtYmBq4K3gUB
+	 111sxyBTwQdNgDJeSEKe+OXrG9osjPzSfGpyEhRayXB6JpLaTx6go1/DGeqZOjSa/V
+	 PSGsVcBSoM46A==
+From: Mark Brown <broonie@kernel.org>
+Date: Sun, 18 May 2025 15:04:42 +0100
+Subject: [PATCH] selftests/mm: Deduplicate second mmap() of 5*PAGE_SIZE at
+ base
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Sun, 18 May 2025 16:04:24 +0200
-Message-Id: <D9ZCD8D6J5QW.14H6VM9LQ5R2Z@kernel.org>
-Cc: "Daniel Almeida" <daniel.almeida@collabora.com>, "Miguel Ojeda"
- <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
- <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Benno Lossin"
- <benno.lossin@proton.me>, "Andreas Hindborg" <a.hindborg@kernel.org>,
- "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
- "Danilo Krummrich" <dakr@kernel.org>, "Boris Brezillon"
- <boris.brezillon@collabora.com>, "Sebastian Reichel"
- <sebastian.reichel@collabora.com>, "Liam Girdwood" <lgirdwood@gmail.com>,
- <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>
-Subject: Re: [PATCH v3] rust: regulator: add a bare minimum regulator
- abstraction
-From: "Benno Lossin" <lossin@kernel.org>
-To: "Mark Brown" <broonie@kernel.org>, "Alexandre Courbot"
- <acourbot@nvidia.com>
-X-Mailer: aerc 0.20.1
-References: <20250513-topics-tyr-regulator-v3-1-4cc2704dfec6@collabora.com>
- <D9YXK1J1XO37.JVILKENRKYXD@nvidia.com>
- <D9Z3R4EYAXV9.211IFNRTOPM6O@kernel.org>
- <D9Z4XGQ2QHXA.2H5X1NZ5IZECC@nvidia.com>
- <aCnQo15SbhXZ9Fln@finisterre.sirena.org.uk>
-In-Reply-To: <aCnQo15SbhXZ9Fln@finisterre.sirena.org.uk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250518-selftests-mm-map-fixed-noreplace-dup-v1-1-1a11a62c5e9f@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAPnoKWgC/xWNwQqDMBAFf0X23AWTNkX6K6WHaF7aBRNDVktB/
+ PfG48Aws5OiCpQe3U4VX1FZcgNz6Wj6+PwGS2hMtreud+bGijmu0FU5JU6+cJQfAuelosx+Aoe
+ tsHVxuMa7GcbRUkuVilM7N8/XcfwBhslvVHYAAAA=
+X-Change-ID: 20250514-selftests-mm-map-fixed-noreplace-dup-25f83f618bb2
+To: Andrew Morton <akpm@linux-foundation.org>, 
+ Shuah Khan <shuah@kernel.org>
+Cc: linux-mm@kvack.org, linux-kselftest@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
+X-Mailer: b4 0.15-dev-c25d1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1342; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=dvIHQWvFCf/Xw3NTmrSMM4jQbP3T5ZdNH0BF7nYqLzc=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBoKej9hjqg8jkgAQkO4cJwOPfI03xIYCUEAlqhS
+ HWNOQ3LwoaJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCaCno/QAKCRAk1otyXVSH
+ 0I1EB/sEYsr1ilG59iZJ8+y3tuM9CLgqK1XPD2ou8/BPpVax6d1f4xfc3inAtYF8+ekrwLlpf9y
+ Vs45r7LGkgXccp2lEde0PwiT4XCMpGJTJajnOoN5bxyMVwILcwPLTykFr47z5l4ECSz0Fewndzb
+ iila9jKij0PaJpa8H5FMdcW3pjKTGmfB05l4v+Mw4RLR2kPAl0HkS613U1ACW6jWXOxEfgeVKE4
+ BHhttNt+XepUbr19iHrX4E+tLz4KCoepqqrK2zP2G/agnsX6Of3LM3jJDTXTAWKFfyWoho70Bws
+ FEtTy4EbJv0gzOC9VGojWO7/LNNP95Wnr6C6Agvb1Ol0vcL6
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-On Sun May 18, 2025 at 2:20 PM CEST, Mark Brown wrote:
-> On Sun, May 18, 2025 at 05:14:41PM +0900, Alexandre Courbot wrote:
->
->> The initial proposal does such clamping by design, but I also suspect
->> the C API behave like it does for good reasons (which I am not familiar
->> enough to be aware of unfortunately).
->
-> It's so that if you have multiple logical users within the device (eg,
-> an interrupt handler and code for normal operation) they can work
-> independently of each other.  You could also request the regulator
-> multiple times but that's often not idiomatic.
->
-> Originally we didn't actually refcount within the individual consumers
-> at all and only refcounted on the underlying regulator, the per consumer
-> reference count is mainly there for debugging purposes.
+The map_fixed_noreplace test does two blocks of test starting from a
+mapping of 5 pages at the base address, logging a test result for each
+initial mapping. These are logged with the same test name, causing test
+automation software to see two reports for the same test in a single run.
+Tweak the log message for the second one to deduplicate.
 
-I'm not sure if I understand correctly, so I'll just try to echo it and
-see if it's correct :)
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ tools/testing/selftests/mm/map_fixed_noreplace.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-The `enable`/`disable` functions change a refcount on the underlying
-regulator that tracks if the regulator actually is enabled/disabled.
-Asking the hardware to enable or disable a regulator can fail, but if we
-already know that it is enabled, only the refcount is incremented.
-    It's okay to leak this enabled-refcount, since when the regulators
-actual refcount (so the one adjusted by `_get` & `_put`) hits zero, we
-can also disable the regulator. So the enabled-refcount is essentially a
-weak refcount that only does something while the regulator exists.
-
-In that case, we can use any API for enabling/disabling, since all of
-them will be safe. Just a question of which gives the required
-expressiveness and makes misusing it hard.
+diff --git a/tools/testing/selftests/mm/map_fixed_noreplace.c b/tools/testing/selftests/mm/map_fixed_noreplace.c
+index d53de2486080..1e9980b8993c 100644
+--- a/tools/testing/selftests/mm/map_fixed_noreplace.c
++++ b/tools/testing/selftests/mm/map_fixed_noreplace.c
+@@ -96,7 +96,7 @@ int main(void)
+ 		ksft_exit_fail_msg("Error:1: mmap() succeeded when it shouldn't have\n");
+ 	}
+ 	ksft_print_msg("mmap() @ 0x%lx-0x%lx p=%p result=%m\n", addr, addr + size, p);
+-	ksft_test_result_pass("mmap() 5*PAGE_SIZE at base\n");
++	ksft_test_result_pass("Second mmap() 5*PAGE_SIZE at base\n");
+ 
+ 	/*
+ 	 * Second mapping contained within first:
 
 ---
-Cheers,
-Benno
+base-commit: 82f2b0b97b36ee3fcddf0f0780a9a0825d52fec3
+change-id: 20250514-selftests-mm-map-fixed-noreplace-dup-25f83f618bb2
+
+Best regards,
+-- 
+Mark Brown <broonie@kernel.org>
+
 
