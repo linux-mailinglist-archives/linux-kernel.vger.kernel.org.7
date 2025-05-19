@@ -1,132 +1,125 @@
-Return-Path: <linux-kernel+bounces-654072-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-654074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4ECE3ABC371
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 18:03:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89937ABC381
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 18:04:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB6444A3161
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 16:03:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5493A1B646D1
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 16:04:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15832286D55;
-	Mon, 19 May 2025 16:03:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 982CF286D60;
+	Mon, 19 May 2025 16:04:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="aS8hs0wH"
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KnpeEQF9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A129286D47
-	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 16:03:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC443286896;
+	Mon, 19 May 2025 16:04:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747670610; cv=none; b=sbUPFdXzKhuFBOu2WC5wIu42ZIWS4b7KYk/kj8HkjH0mW4bO9n7EUlGSl/NKw5fTqwaDWYw0ivFSuTvfeRV2x6/mZWuGfqaYLgw61dIQ0ExlDfMb6PFtGYNxJkMK8GCt0B60YOV0QxqCbFtP+Hbu2u+Edut/bTnE7Tp8Xk1mFNU=
+	t=1747670646; cv=none; b=n1+DSWXg7OhgF1mQnFsEaJNfRTpq27gkZ34V7MR4VYFwQm5JijurZnbaWIC4PIwkDVA+ls1xAeQ8HhGmu+2RvqTS3acLhWorseljH2qG+EARoaCMsqtho1KED2ate17nPztqQ10TPru8Gsd+auMagTqfzEfah8afYcFAckhEyRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747670610; c=relaxed/simple;
-	bh=qfosA1+czaieYstJoGp8+CfQqfn5uNyaJNphjp2Z4Pg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gqqw/2gc6rVrS6lCbY4W28dvJ5vkD9QqpJgQDBijF6DFYOKVz1S51aQc6XyIUBSN2Zsttmxph4koOhQQC8pA8StgBR2sJFOl55I4kPEWm3ulwYkwELIbmJUdn4kQJnVGA8zj/99wnCUVBbeh3txb75zvCXI4cVay80Q5XFiUYd0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=aS8hs0wH; arc=none smtp.client-ip=209.85.160.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-48b7747f881so653661cf.1
-        for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 09:03:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1747670608; x=1748275408; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EwFo7rvRgNULrT5RtzzDoxbCBW4PYATrFYKV2nFZanI=;
-        b=aS8hs0wHBm/iT2/IpvDgewubKhbYl3NyVllQ0DK6nJ9jiV72kHjBIBVJINKsLbcW4/
-         2TWZz+uodEOG+F8CpEVgDpSOyeggX6sZyGHQCi3UvTw3jmQXUJWs2RJFr9bSip3TBKW/
-         fes0aoGzS3YhAJbqVRD44/SDb7/i0qe90wDGTn7WjYTxSZJ1/jDWMaTnVrVbR4bdJ6Fn
-         0TVZ+wMQY1TT7iEcLovpQUKIb24HACseLSl7DdoVEKzaQ4MV4yFn1oV6vj8W9O09mQxd
-         TFfxFncgbYEt6VWdMM5BR3VCBvBErmHOl2MvG6IS1diYQLKQSE7GvFDKz3NbrjJNPouY
-         sIBQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747670608; x=1748275408;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EwFo7rvRgNULrT5RtzzDoxbCBW4PYATrFYKV2nFZanI=;
-        b=L2108M4gy2pTA8NLQPrY1FEZgnKFFHR2zmdZiuJEmZg0ZgiZC5+4Z32nI9KTR2Bvv5
-         Wdu0Jnqk6ZFPyGacRpiciIxNuag4bSU+khO8t8Tbd+7qHkZZh/a8T496vWBgm2LRmj8b
-         Nc7GNOdnjS+/6cGlm22V09gNrFc8scqh4M3A8jSgZTwWSqDJTe6hSkoAnJ5MUIQbMG0z
-         4Sfx9WeWn5vocdGczXbS7CUtZfjiqZlOoPvQAWt5fXa1rXv/v6LJaotG/EVPLEgXwfLv
-         lYMxGqsMoMAX4L7KKX4wfWOOpKWzM+gKiasNOvqpNVqNWQPoAZt/I1+KOstly1LLEK4A
-         hU9g==
-X-Forwarded-Encrypted: i=1; AJvYcCXI9dgMbUxlhtCLzEinhd43K4EKOx7XGL0WfO6f/E83vQBGRmT1vIpjzbHt4JQPGhW+yqBODYOgcwK6avs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YztkTGzrxrByD483xElg3ecvIdfFv/o4hzhAFL7xVwHiZ8ffufo
-	IFDUO1EJWmYJc+b7RQFJ0UG7uVH9yzN1zJAvKy5lqYWwPrUJ9IJwEx+KTEuGZsa/+nD6SW7RX0G
-	LMQCWXALt9LueXuY4H54kfifPbKoXcibn8JmMUQ16
-X-Gm-Gg: ASbGnctCD3Dmd5U8njgL3TniIfgZJ9m57NKXhTwaioDIR9ScIBewugmxmH7on1zTDvw
-	yzZ7+PQZE4F8lxJVZSpYHE04f0CmOUJ0tB3jac2R+iI1d83Iu+QmRSgpV5orGK5S1gjfnLHPIji
-	4imsu91WqqTDQY1wrDcuHdHCO8AuX9de9tIG2FEya5MA==
-X-Google-Smtp-Source: AGHT+IFjOFo+QFAwm+vxGHsUhwf4M00RZb1Cl72fJqBWGIrhqZZm3lCaA06XNasSEqb51z7OdnA5j7D1iI1aERKQ1so=
-X-Received: by 2002:ac8:7d0a:0:b0:48d:8f6e:ece7 with SMTP id
- d75a77b69052e-495ff7c853fmr6292921cf.3.1747670607520; Mon, 19 May 2025
- 09:03:27 -0700 (PDT)
+	s=arc-20240116; t=1747670646; c=relaxed/simple;
+	bh=YiciytpzBKZU6jliaO65tJGGDGQootlSrvvGG35Ktdk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jatNJ5DW432GUOsKJdQh/zedBxSoE2dd6s23+yzskJ7+Vw1uNyPUAaXTQXZIsdq6hjr4B1Camc64mOuOEDnYNiNB+oIKRUZdKEiNW499w/kCuTYIio/ZkTnmHkA/GwuYEme5HbZvMXAvb/OepYY3m/uhgGSXls6VdlX0yV9Uoec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KnpeEQF9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1739C4CEE4;
+	Mon, 19 May 2025 16:04:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747670645;
+	bh=YiciytpzBKZU6jliaO65tJGGDGQootlSrvvGG35Ktdk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KnpeEQF9AXAlhGeeYGGwNM4vuPj26g+dg4Nt2tEQBNl1/zoUhsV8N1BECbhcTHrLb
+	 d1dePDbkxEQTbZ7zgcDvRdOFdzyCu8xJogzBh7JYRBEy2W/+vY1D0/rIHP28LcXuZ/
+	 r6H87jLQl8kAo/VND+R6hsCxqLQAW9OdFt6eqtmDd+AYGwWhhzPYpBL0OFmP8jtxQp
+	 fP8NgT9rQGdTOPxyo2qfRfqDJzbzHhbe/fihZESj2dT2RLZh4Eybspg/KsLUHLQ2UP
+	 Pi0xJ+rE1RDQc4aqzslBxTEH6wppS3apYCaNuS5LSVrp7yf4KuwE+QUo1KyIIgmn6/
+	 CZQGHysnqEe7A==
+Date: Mon, 19 May 2025 17:04:00 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Haibo Chen <haibo.chen@nxp.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, Stefan Agner <stefan@agner.ch>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, devicetree@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] dt-bindings: gpio: vf610: add ngpios and
+ gpio-reserved-ranges
+Message-ID: <20250519-bucked-revolt-2b93a9a31422@spud>
+References: <20250519-gpio-dts-v2-0-b9e77173e9c5@nxp.com>
+ <20250519-gpio-dts-v2-2-b9e77173e9c5@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250518101212.19930-1-00107082@163.com>
-In-Reply-To: <20250518101212.19930-1-00107082@163.com>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Mon, 19 May 2025 09:03:16 -0700
-X-Gm-Features: AX0GCFtzR1oBhFGIyDxznuUx7HQDG0rFycuh7HxGmy0Ebdyc64y5ZoZ7wYq18bc
-Message-ID: <CAJuCfpEeo2qKcyan9BnYGvEaYeso24wQT1eX-CxnBkjbEuY7sg@mail.gmail.com>
-Subject: Re: [PATCH] module: release codetag section when module load fails
-To: David Wang <00107082@163.com>
-Cc: mcgrof@kernel.org, petr.pavlu@suse.com, linux-modules@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="2cAhBHrdr3ZQFzJw"
+Content-Disposition: inline
+In-Reply-To: <20250519-gpio-dts-v2-2-b9e77173e9c5@nxp.com>
+
+
+--2cAhBHrdr3ZQFzJw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, May 18, 2025 at 3:12=E2=80=AFAM David Wang <00107082@163.com> wrote=
-:
->
-> When module load failed after memory for codetag sections ready,
-
-nit: s/ready/is ready
-
-> codetag section memory was not properly released. This
-> causes memory leak, and if next module load happens to got the
-
-nit: s/happens to got/happens to get
-
-
-> same module address, codetag may pick the uninitialized section
-> when manipulating tags during module unload, and lead to
-> "unable to handle page fault" BUG.
->
-> Closes: https://lore.kernel.org/all/20250516131246.6244-1-00107082@163.co=
-m/
-> Signed-off-by: David Wang <00107082@163.com>
-
-Acked-by: Suren Baghdasaryan <surenb@google.com>
-
+On Mon, May 19, 2025 at 02:03:43PM +0800, Haibo Chen wrote:
+> Add optional ngpios and gpio-reserved-ranges property
+>=20
+> Signed-off-by: Haibo Chen <haibo.chen@nxp.com>
 > ---
->  kernel/module/main.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/kernel/module/main.c b/kernel/module/main.c
-> index a2859dc3eea6..5c6ab20240a6 100644
-> --- a/kernel/module/main.c
-> +++ b/kernel/module/main.c
-> @@ -2829,6 +2829,7 @@ static void module_deallocate(struct module *mod, s=
-truct load_info *info)
->  {
->         percpu_modfree(mod);
->         module_arch_freeing_init(mod);
-> +       codetag_free_module_sections(mod);
->
->         free_mod_mem(mod);
->  }
-> --
-> 2.39.2
->
+>  Documentation/devicetree/bindings/gpio/gpio-vf610.yaml | 6 ++++++
+>  1 file changed, 6 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/gpio/gpio-vf610.yaml b/Doc=
+umentation/devicetree/bindings/gpio/gpio-vf610.yaml
+> index 4fb32e9aec0a341a50088f3e4352ed4d36f649d3..5b98228466c6414be681c4941=
+7bbdd82f2c45756 100644
+> --- a/Documentation/devicetree/bindings/gpio/gpio-vf610.yaml
+> +++ b/Documentation/devicetree/bindings/gpio/gpio-vf610.yaml
+> @@ -70,6 +70,12 @@ properties:
+>      minItems: 1
+>      maxItems: 4
+> =20
+> +  gpio-reserved-ranges: true
+> +
+> +  ngpios:
+> +    minimum: 1
+> +    maximum: 32
+
+Do these platforms have a default? I'd expect one to be added that
+contains the default value from what the driver does now.
+
+> +
+>  patternProperties:
+>    "^.+-hog(-[0-9]+)?$":
+>      type: object
+>=20
+> --=20
+> 2.34.1
+>=20
+
+--2cAhBHrdr3ZQFzJw
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaCtWcAAKCRB4tDGHoIJi
+0t2uAQC9WN2OYYXOrp610MPdWdT0m5i4i1tZeyTZdr3aD+wm0wD/fSCYfaimi/PV
+1bDpFQcFtXElQhb4Wvjp3cwIUlEZNQs=
+=IjWH
+-----END PGP SIGNATURE-----
+
+--2cAhBHrdr3ZQFzJw--
 
