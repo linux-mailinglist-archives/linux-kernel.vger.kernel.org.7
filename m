@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-654710-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-654711-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCB0BABCB78
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 01:31:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8C85ABCB79
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 01:32:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBA4018876F1
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 23:32:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 25BE617350C
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 23:32:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6375F224B15;
-	Mon, 19 May 2025 23:28:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDAEF225762;
+	Mon, 19 May 2025 23:28:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Uak+riy0"
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Zcece23w"
+Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49A41224244
-	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 23:28:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 868952248B8
+	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 23:28:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747697316; cv=none; b=deX1M5lFCvTomGeserKM/8YKSWlZURYMqOqSa/lcNGvgSpIsj/mmauJNRn5UiEAuF6n2TWYYTc0v5O8iYYYYfTNpgwcF4GqbSyVFL2v61y3zFrPArnKhx2d4HgDm3WcvjUvwsNJ1ogVbIKOjjw5ZGmbI4+F00JhpIVxNwzETIYs=
+	t=1747697318; cv=none; b=l/n4i7W5Ah07c43G76RI3KNHS7D5KVxCQV9aseUbGIFVBHZwmuqG1KsNxESyEQBR1iIVhLrFnu9aAbfd8OExZnHTl8CTkinNmV+DsJ6f+vAz8q6ETa4OapCIEXYOo0lUCicuaHMq//3hx2iyKGntYxQkNJuSXaNpsead4ZlG3zU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747697316; c=relaxed/simple;
-	bh=kXdCtkWuECHGgWR2OT6Gy3/nttBLueu1XR40dPgOpQg=;
+	s=arc-20240116; t=1747697318; c=relaxed/simple;
+	bh=qQIM5Tr5nBvDkLCbk46mds4m9dIPyNzVYzD4a6yvVvY=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=hDu0WBLxak1ydM6bpJg/7AG9+HgyZu2cKSVW04TUz1UFKpdcr3zrLSL7iP14m2Gg5RPilVBqFxlm+vshV7aTtBeh1dHya/uMw558nrjPNm6AsW4lOvqGn/+N+WpNJQAk6FhxQIH5Hi07gIqdVsHiZYDoMfI5RIJmvdyPwhE7V9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Uak+riy0; arc=none smtp.client-ip=209.85.215.201
+	 To:Cc:Content-Type; b=Y1TVzMpNAsDWHuts79+U298agp+p/wJNMb/jYfbYD4auuadl0QDrYMgLZISGWryrB+xm+PSXqs6xVFLzIa2y3tOznohUNX+xfox/DI5Uj7UgeCvA+tqQ7DaX50v6yeTeTGXk5y9bqcWp4D1Ik19YnJECeTdfktmbwTSD5BZBof0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Zcece23w; arc=none smtp.client-ip=209.85.210.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b26e6b84a31so2701934a12.2
-        for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 16:28:35 -0700 (PDT)
+Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-7394792f83cso3733453b3a.3
+        for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 16:28:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1747697314; x=1748302114; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1747697316; x=1748302116; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=9gLcS+OzRCY/eRWGmdNSRPdTQEpCa40B7+xlZSCIkqg=;
-        b=Uak+riy0pk/lDPBqauIjSQ6y6gTKbo2844R+OrpbLvLBd9K/P8kWdBTPCZT9pFZDzY
-         u7lCpONqecUQjGvGO85+bQSSa66pPhTVPovx0O/UvE3NSesM0ZI624lYgsuq0DbfGwUF
-         tK+NfT/x56sFkKnGnGNXtWHk3nGVdMofRMtE2WBua1avIFiZ4cp6VYRd3y+pVhEV+Mjc
-         ZiFDYDdcaD3WqZHRgYwrjfupuvYrQK10kK/vBY1x4l2xhW8m5eoZrZOC9pqF0rb6Xw3P
-         zGmWd3sNmll6LanF35Ktm/Z29+ZtKXQuZU/L9ALDQtX4VmeWYqK7xBU2pwuE3+fCVPAZ
-         nr/A==
+        bh=jzqljEkDXtAFBsLi8kcGKkXBiNdwCtNEp6kp2mMRpEQ=;
+        b=Zcece23wVKa7V75EID6upDRAziP9YbnhojNHdyIbEHBbvy4AnyVRAU1G2Y9FNSrXhX
+         FjHSTK1ZDRz1yFOxNGuXDT49+q9GdVupeUbiDwes56qZ3p2rPUOhJJTtHUk9ygPqZK2C
+         osgHOOMPnxvo5DWljbjXd/pRmJs4Bzgl30VLn37JNbrvjFFK5G9SE2iWcqkz7ecHXG/r
+         XP5y8lhSDV623bd3HEy5m5j8Bh7aBNx8h+uHx3vkxY9z9X4W4oiEk2b41J5W7mQEBop9
+         g0kMT1bysHu9a8G04eTgmS0YJyvPlAd7OLjbIRHaryK01K48igaFvnJb7kOwQm0yfJGy
+         7Xwg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747697314; x=1748302114;
+        d=1e100.net; s=20230601; t=1747697316; x=1748302116;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=9gLcS+OzRCY/eRWGmdNSRPdTQEpCa40B7+xlZSCIkqg=;
-        b=O4qpWDLs2PwaCsc2qBfbePzzP/ym7t2tmN18RUvXn83/ZYz5xWO4W3Kogj1RPNyRI4
-         F7oUIFHtCyxRIMaG3bv9LjNOmuhJgFfohhP4MWSC/1R9guKVQO8iBj+2Y7PSj3oAIxAB
-         /EtF4okj5KQoJ5DH0xCYuSHys/pX/HKPwDzJuoUfzO2IuY7StHcPHKMPMYg5nKVzfS0T
-         ArZQeGFT8v8HIt0/aJeX03tmq7Ugh2kxly+Nsbhyp7af8beC7RTXmMD+15zTukCjrhV7
-         jL15GR3tyGxwuNUruTnE5+GGwvUXOuW+qT5uITbcwKIB2QosQ7YcR/wShm7T1ffjFb1h
-         luuA==
-X-Forwarded-Encrypted: i=1; AJvYcCVNEA2mDbSsz9Gkqqv6H7g9h1yOgK2GwoZeXpG5ErOgYiYu3Iry4KELnbktnX0aYPMN/puhKWpgRdWwC50=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmLwKwSB7pJt1v5zOn6JDwm6X1dCtnX2qAIqK0khmw8YE1RwHM
-	9g3Hg+k+Pg4KanzNe3cWOV6nXZ/Q/oGwrtncCOsXIvidcUkA1KnhqMAouM2z50LnimFWvJuZvRA
-	6B7vnDg==
-X-Google-Smtp-Source: AGHT+IGsS44SKP9udDnxbnYqpNtWDNsH2nu1RdF7aCNajWwjT1ZSWe7ZKUxh/RwFmGOpvKqPfnwHgOPVukI=
-X-Received: from pjbsl15.prod.google.com ([2002:a17:90b:2e0f:b0:2ea:448a:8cd1])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:1343:b0:30e:9349:2d88
- with SMTP id 98e67ed59e1d1-30e93493309mr24785255a91.12.1747697314420; Mon, 19
- May 2025 16:28:34 -0700 (PDT)
+        bh=jzqljEkDXtAFBsLi8kcGKkXBiNdwCtNEp6kp2mMRpEQ=;
+        b=SHIo2hH/qAnCs0+M9PZxnFZHXSYndJz+XooAH10WzLJ2dK3Caw0ToH5RFwwnSYquos
+         B9m0uYFgmeWacigJc75rVsyYcOefRceK2by48FghUto7lKe8ZXLpAvh3UW7eIvWYjwoH
+         Cdt3/x2Xv4GtiazWXhpX4+B2DbdiXQ7+DFrcyBGGaEC1bK1oy4oEYjAleOhOYIM2PD9Q
+         P2DLRzRvqNCAikKD5S5him+N+mJi/cbdI+SXFO70u0EqvFuaEjrqzFFG/Tn+uZ8KhfPv
+         vQoeSQDoXrYhjXxK9EIqcHWzlJoI9VsF/+wNunJVuaf+OGM1PWkJ8PCtkVqAROfDyQe6
+         fZmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXPULDQuC692LrQHwB0zPIURszm34nXxyREraIBwTb3SGqPt5vaLZIgL9VZbW9nRr8tQXmjhqyADc87i+k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzawrBCNeDKwDQ0gV0Mw1BtyLkw5HPPFNz3ttjC5EwRveWtYjb/
+	TM9uRSqc2qvcwZwazUFtaqmBK37lraPYQwo2kpTcTow5UnpaRjWwflG/TkHkPuKrf67WJ1MvRyo
+	X84O2rA==
+X-Google-Smtp-Source: AGHT+IGYPQHinoGic07rRcLqLfD0l06dUYUgvVqfZvDuAHBo4yxWC/GP7uWYn1Sj/q1GSZLdB0srqGbjfm4=
+X-Received: from pfmy21.prod.google.com ([2002:aa7:8055:0:b0:73e:665:360])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:10c6:b0:736:a540:c9ad
+ with SMTP id d2e1a72fcca58-742a98b833bmr19860524b3a.20.1747697315919; Mon, 19
+ May 2025 16:28:35 -0700 (PDT)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Mon, 19 May 2025 16:28:05 -0700
+Date: Mon, 19 May 2025 16:28:06 -0700
 In-Reply-To: <20250519232808.2745331-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -75,46 +75,49 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250519232808.2745331-1-seanjc@google.com>
 X-Mailer: git-send-email 2.49.0.1101.gccaa498523-goog
-Message-ID: <20250519232808.2745331-13-seanjc@google.com>
-Subject: [PATCH 12/15] KVM: Squash two CONFIG_HAVE_KVM_IRQCHIP #ifdefs into one
+Message-ID: <20250519232808.2745331-14-seanjc@google.com>
+Subject: [PATCH 13/15] KVM: selftests: Fall back to split IRQ chip if full
+ in-kernel chip is unsupported
 From: Sean Christopherson <seanjc@google.com>
 To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
 	Vitaly Kuznetsov <vkuznets@redhat.com>
 Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Squash two #idef CONFIG_HAVE_KVM_IRQCHIP regions in KVM's trace events, as
-the only code outside of the #idefs depends on CONFIG_KVM_IOAPIC, and that
-Kconfig only exists for x86, which unconditionally selects HAVE_KVM_IRQCHIP.
-
-No functional change intended.
+Now that KVM x86 allows compiling out support for in-kernel I/O APIC (and
+PIC and PIT) emulation, i.e. allows disabling KVM_CREATE_IRQCHIP for all
+intents and purposes, fall back to a split IRQ chip for x86 if creating
+the full in-kernel version fails with ENOTTY.
 
 Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- include/trace/events/kvm.h | 3 ---
- 1 file changed, 3 deletions(-)
+ tools/testing/selftests/kvm/lib/kvm_util.c | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
 
-diff --git a/include/trace/events/kvm.h b/include/trace/events/kvm.h
-index 1065a81ca57f..0b6b79b1a1bc 100644
---- a/include/trace/events/kvm.h
-+++ b/include/trace/events/kvm.h
-@@ -82,7 +82,6 @@ TRACE_EVENT(kvm_set_irq,
- 	TP_printk("gsi %u level %d source %d",
- 		  __entry->gsi, __entry->level, __entry->irq_source_id)
- );
--#endif /* defined(CONFIG_HAVE_KVM_IRQCHIP) */
+diff --git a/tools/testing/selftests/kvm/lib/kvm_util.c b/tools/testing/selftests/kvm/lib/kvm_util.c
+index 50edc59cc0ca..53116f4ffe97 100644
+--- a/tools/testing/selftests/kvm/lib/kvm_util.c
++++ b/tools/testing/selftests/kvm/lib/kvm_util.c
+@@ -1713,7 +1713,18 @@ void *addr_gpa2alias(struct kvm_vm *vm, vm_paddr_t gpa)
+ /* Create an interrupt controller chip for the specified VM. */
+ void vm_create_irqchip(struct kvm_vm *vm)
+ {
+-	vm_ioctl(vm, KVM_CREATE_IRQCHIP, NULL);
++	int r;
++
++	/*
++	 * Allocate a fully in-kernel IRQ chip by default, but fall back to a
++	 * split model (x86 only) if that fails (KVM x86 allows compiling out
++	 * support for KVM_CREATE_IRQCHIP).
++	 */
++	r = __vm_ioctl(vm, KVM_CREATE_IRQCHIP, NULL);
++	if (r && errno == ENOTTY && kvm_has_cap(KVM_CAP_SPLIT_IRQCHIP))
++		vm_enable_cap(vm, KVM_CAP_SPLIT_IRQCHIP, 24);
++	else
++		TEST_ASSERT_VM_VCPU_IOCTL(!r, KVM_CREATE_IRQCHIP, r, vm);
  
- #ifdef CONFIG_KVM_IOAPIC
- 
-@@ -93,8 +92,6 @@ TRACE_EVENT(kvm_set_irq,
- 
- #endif /* CONFIG_KVM_IOAPIC */
- 
--#if defined(CONFIG_HAVE_KVM_IRQCHIP)
--
- #ifdef kvm_irqchips
- #define kvm_ack_irq_string "irqchip %s pin %u"
- #define kvm_ack_irq_parm  __print_symbolic(__entry->irqchip, kvm_irqchips), __entry->pin
+ 	vm->has_irqchip = true;
+ }
 -- 
 2.49.0.1101.gccaa498523-goog
 
