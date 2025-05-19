@@ -1,123 +1,150 @@
-Return-Path: <linux-kernel+bounces-653343-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-653341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91E21ABB7C2
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 10:48:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2ACE1ABB7C4
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 10:48:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 132E93AB25E
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 08:45:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD013189E715
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 08:45:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FEF826C396;
-	Mon, 19 May 2025 08:42:51 +0000 (UTC)
-Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB3BA26B96C;
+	Mon, 19 May 2025 08:42:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="vyWqfl2e";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="aqomLv1G"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE84B267B9F;
-	Mon, 19 May 2025 08:42:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9003226B2D8;
+	Mon, 19 May 2025 08:42:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747644171; cv=none; b=cEsxP4i8p/TItq+rEUnuQ8sbHP19J/lHgK+pOiFPJObvStRmeGJg6uZsfMMUMDsUNZwfBcVNZMnmOsettoxsJRKM22mzBrNwfj9lw9eSX8SRHFQQnDvSQgbvjpkPDzn54i5i4aEYDtSfMWIwB99fZEBomUkAPqFNSEfAgf+MDJY=
+	t=1747644146; cv=none; b=HKdKxxV4UqFQgv4UJ1Y2GGSZi9Q5K42+J4tzl/f2GKhpKwoZ5WEEAX+HsxAZt6F/j3Zfm00HSLtC9EgK1KIxxPoUI3VsetFqVMlx4MOtdhquYr2eIFIRceIpEUZA5wmAhtAZm4cwDaDu/zrGFNmV9V66lXE9XPnFB7bKKflSVUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747644171; c=relaxed/simple;
-	bh=GDrbtMczbadqW+M8hR3/h5c36OlbYcm8zQPsfTySveY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dCJfGx+fropC49hDV82nvkOnxglF5sLnGkfLD3KE31/vNSbhJHeGnM8BttyIBnPMV4ZpNJ3BjahDcsfzmUMCX3+95489Bsn5hnpwHfc9URHb9rNXQ6R5TL9xpQobHuUq6pidUPyYltRxMGvEjO+WPqSHDyTzQDwnBD4i7Yg9SfU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost.localdomain (unknown [124.16.141.245])
-	by APP-05 (Coremail) with SMTP id zQCowAD3OSz_7ipoUmNrAQ--.11134S2;
-	Mon, 19 May 2025 16:42:41 +0800 (CST)
-From: Wentao Liang <vulab@iscas.ac.cn>
-To: ajay.kathat@microchip.com,
-	claudiu.beznea@tuxon.dev,
-	kvalo@kernel.org
-Cc: linux-wireless@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Wentao Liang <vulab@iscas.ac.cn>,
-	stable@vger.kernel.org
-Subject: [PATCH v3] wifi: wilc1000: Add error handling for wilc_sdio_cmd52()
-Date: Mon, 19 May 2025 16:42:11 +0800
-Message-ID: <20250519084211.1752-1-vulab@iscas.ac.cn>
-X-Mailer: git-send-email 2.42.0.windows.2
+	s=arc-20240116; t=1747644146; c=relaxed/simple;
+	bh=/HRLDkt+Ui17Ewjay2IkB2Ip02Jr3M9xwlPXp7quBVw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Tdk/4DmM0slBbgKAApSLzxk2ZlrTRhKvidk2NB1ixwfHc3rrCWicmbUWy/8KNyPJ7+aBod7dkhAe+Pqt6XG1Rj8aPEZzD3BpWfVTcLDcASs3AD4nfZo6+pLEeiw5M2CHRcM/Jaz60qfyKpzxt9S20qGkstn8m2u2FNqd9GVSD7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=vyWqfl2e; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=aqomLv1G; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 19 May 2025 10:42:20 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1747644142;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QCQgi10UR992dlQaoDPJB7yxvwRcrEs7GWQVXJ/StA8=;
+	b=vyWqfl2e01zzIkoAlczlLbWUZsXt3dFksf2d0OsI9vjBOZEBCeWAuQ1aTB5Pwebs2dMShy
+	FfYUtKMWXG34vxokQ3xeeLsTXmiLT6C+pBh9K7gwuI7dkch6pnlG6E/ft0rlh3pH0g/h2J
+	3dE6gd4Wd5VNq28Sw0wShGkfZlfAaRPRfsWH1uSks/GOtojb7uCzqsDExH4le7p5nt/Sfw
+	5dwIRqNymrKZQX8mu6GsDQ+LZQVcXTN3p3mjBDOGUXZm3OFY31tkhdMlPwqQqvEr+p4RE+
+	ahYQWHklXVxaDveXunbVC3kZMmC/U5hpRrBKkf2UZNQ/jhWEKBPHkiq238Y6Tg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1747644142;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QCQgi10UR992dlQaoDPJB7yxvwRcrEs7GWQVXJ/StA8=;
+	b=aqomLv1Gmgp7tEXc8UIWNdjxYTH53YmENrIPEIM37jiONNWWjvTBMotaA7OwApJrXrwvUZ
+	mhuDNhOCakK05fCA==
+From: Nam Cao <namcao@linutronix.de>
+To: Gabriele Monaco <gmonaco@redhat.com>
+Cc: linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	linux-trace-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Tomas Glozar <tglozar@redhat.com>, Juri Lelli <jlelli@redhat.com>
+Subject: Re: [RFC PATCH v2 07/12] rv: Adapt the sco monitor to the new
+ set_state
+Message-ID: <20250519084220.iProU-cg@linutronix.de>
+References: <20250514084314.57976-1-gmonaco@redhat.com>
+ <20250514084314.57976-8-gmonaco@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:zQCowAD3OSz_7ipoUmNrAQ--.11134S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7tr4fWFWxKF4fXw48JryUtrb_yoW8Ar1UpF
-	Wxuw4jqwnIkrWrZw4xJF4kA3Z5tayvyrWUuFWxuw1fZr4kAw1S9r4fXFy5Xrn0q3W7Gw1x
-	X3Wvqr4YgFn2yFUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkG14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
-	6F4UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCY1x0262kKe7AKxVWU
-	AVWUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14
-	v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkG
-	c2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI
-	0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4U
-	MIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUf8nOUUU
-	UU=
-X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiCRAHA2gqs4joywAAsH
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250514084314.57976-8-gmonaco@redhat.com>
 
-The wilc_sdio_read_size() calls wilc_sdio_cmd52() but does not check the
-return value. This could lead to execution with potentially invalid data
-if wilc_sdio_cmd52() fails. A proper implementation can be found in
-wilc_sdio_read_reg().
+On Wed, May 14, 2025 at 10:43:09AM +0200, Gabriele Monaco wrote:
+>  	.function = {
+> -		{     thread_context_sco, scheduling_context_sco,          INVALID_STATE },
+> -		{          INVALID_STATE,          INVALID_STATE,     thread_context_sco },
+> +		{     thread_context_sco,          INVALID_STATE, scheduling_context_sco,          INVALID_STATE },
+> +		{          INVALID_STATE, scheduling_context_sco,          INVALID_STATE,     thread_context_sco },
 
-Add error handling for wilc_sdio_cmd52(). If wilc_sdio_cmd52() fails,
-log an error message via dev_err().
+This is over the 100 column limit.
 
-Fixes: ea5779b4fbc7 ("staging: wilc1000: wilc_sdio_cmd52: pass struct wilc")
-Cc: stable@vger.kernel.org # v4.5
-Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
+I know it is not your fault, this is generated. Back when I was playing
+with DA monitor, I made a patch to fix this. Maybe you could include it in
+your series?
+
+From b4fb648398a29a9c0d8e08bd12394978d3948a5e Mon Sep 17 00:00:00 2001
+From: Nam Cao <namcao@linutronix.de>
+Date: Fri, 15 Nov 2024 14:56:33 +0100
+Subject: [PATCH] tools/rv/dot2c: Fix generated files going over 100 column
+ limit
+
+The dot2c.py script generates all states in a single line. This breaks the
+100 column limit when the state machines are non-trivial.
+
+Change dot2c.py to generate the states in separate lines.
+
+Signed-off-by: Nam Cao <namcao@linutronix.de>
 ---
-v3: Remove redundant error log. Fix code error. Fix fixes flag error.
-v2: Fix code error.
+ tools/verification/rvgen/rvgen/dot2c.py | 13 +++----------
+ 1 file changed, 3 insertions(+), 10 deletions(-)
 
- drivers/net/wireless/microchip/wilc1000/sdio.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/wireless/microchip/wilc1000/sdio.c b/drivers/net/wireless/microchip/wilc1000/sdio.c
-index 5262c8846c13..d77f88996250 100644
---- a/drivers/net/wireless/microchip/wilc1000/sdio.c
-+++ b/drivers/net/wireless/microchip/wilc1000/sdio.c
-@@ -771,6 +771,7 @@ static int wilc_sdio_read_size(struct wilc *wilc, u32 *size)
- {
- 	u32 tmp;
- 	struct sdio_cmd52 cmd;
-+	int ret;
+diff --git a/tools/verification/rvgen/rvgen/dot2c.py b/tools/verification/rvgen/rvgen/dot2c.py
+index 6009caf568d9..abc0ee569b34 100644
+--- a/tools/verification/rvgen/rvgen/dot2c.py
++++ b/tools/verification/rvgen/rvgen/dot2c.py
+@@ -152,29 +152,22 @@ class Dot2c(Automata):
+         max_state_name = max(self.states, key = len).__len__()
+         return max(max_state_name, self.invalid_state_str.__len__())
  
- 	/**
- 	 *      Read DMA count in words
-@@ -780,12 +781,16 @@ static int wilc_sdio_read_size(struct wilc *wilc, u32 *size)
- 	cmd.raw = 0;
- 	cmd.address = WILC_SDIO_INTERRUPT_DATA_SZ_REG;
- 	cmd.data = 0;
--	wilc_sdio_cmd52(wilc, &cmd);
-+	ret = wilc_sdio_cmd52(wilc, &cmd);
-+	if (ret)
-+		return ret;
- 	tmp = cmd.data;
+-    def __get_state_string_length(self):
+-        maxlen = self.__get_max_strlen_of_states() + self.enum_suffix.__len__()
+-        return "%" + str(maxlen) + "s"
+-
+     def get_aut_init_function(self):
+         nr_states = self.states.__len__()
+         nr_events = self.events.__len__()
+         buff = []
  
- 	cmd.address = WILC_SDIO_INTERRUPT_DATA_SZ_REG + 1;
- 	cmd.data = 0;
--	wilc_sdio_cmd52(wilc, &cmd);
-+	ret = wilc_sdio_cmd52(wilc, &cmd);
-+	if (ret)
-+		return ret;
- 	tmp |= (cmd.data << 8);
+-        strformat = self.__get_state_string_length()
+-
+         for x in range(nr_states):
+-            line = "\t\t{ "
++            buff.append("\t\t{")
+             for y in range(nr_events):
+                 next_state = self.function[x][y]
+                 if next_state != self.invalid_state_str:
+                     next_state = self.function[x][y] + self.enum_suffix
  
- 	*size = tmp;
+                 if y != nr_events-1:
+-                    line = line + strformat % next_state + ", "
++                    buff.append(''.join(("\t\t\t", next_state, ",")))
+                 else:
+-                    line = line + strformat % next_state + " },"
+-            buff.append(line)
++                    buff.append(''.join(("\t\t\t", next_state, "\n\t\t},")))
+ 
+         return self.__buff_to_string(buff)
+ 
 -- 
-2.42.0.windows.2
+2.39.5
 
+
+Best regards,
+Nam
 
