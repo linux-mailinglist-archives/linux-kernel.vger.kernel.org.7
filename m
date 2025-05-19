@@ -1,88 +1,119 @@
-Return-Path: <linux-kernel+bounces-653961-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-653964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B005CABC148
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 16:49:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBE5EABC15B
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 16:52:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CF2E3AD9CF
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 14:49:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6E243BF1DA
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 14:52:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 230FB280015;
-	Mon, 19 May 2025 14:49:34 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76AB4278E75;
+	Mon, 19 May 2025 14:52:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=ashley.smith@collabora.com header.b="JZd41u2L"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDDE38634A;
-	Mon, 19 May 2025 14:49:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747666173; cv=none; b=txF2yVFbZmVSwwv/sUDaLPpvxDaHF+w0KjKMVCykQS4KCNTjpJzzzYd5TUUtkH3Bj/Zkg8cRQCpKDKqooRsWa2qwKz5Lq7LKFztADhu+lQbmWarO28645PIhoGP+ayXLHMWTXYcrzyH81HHGGe3+zeEaWdKypjl+ZFFk5XO3hgA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747666173; c=relaxed/simple;
-	bh=ARdIMG9Onv+Lf/M5D9jqGsE2v2eAGKcGuwAltmeCirM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oxOU/l7wKXhOoUMfwmYvb3qWGhdZnjrftWk6Z5yKBB+46jqY6ksGiLlVpbYYA+nFc4H5SUSWiuUerBzDGSmJk3YW9ACxjrOS0HpbEAMdbF4dB0wXyUQ4BGehPHX4sfMLJsgFJ0L4FNviUMp7sQzw92WML6s5uWIgsZobJCIT5Qs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ACBACC4CEEF;
-	Mon, 19 May 2025 14:49:31 +0000 (UTC)
-Date: Mon, 19 May 2025 15:49:29 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Nam Cao <namcao@linutronix.de>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
-	Gabriele Monaco <gmonaco@redhat.com>,
-	linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	john.ogness@linutronix.de, Will Deacon <will@kernel.org>,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v8 17/22] arm64: mm: Add page fault trace points
-Message-ID: <aCtE-RvyN6XJQjTo@arm.com>
-References: <cover.1747046848.git.namcao@linutronix.de>
- <f5fccde2326a896e5c568ef06a4dbd9aa7465f6a.1747046848.git.namcao@linutronix.de>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 355351DE2DC
+	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 14:52:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747666359; cv=pass; b=hDTWiYRqCILl20fuH94ZCZziexAkTLIXP7Qt0JWXK/4QML145PjcepjY0gRj1sHncbGBnWP0ChzLJ0TftcMWKwIQTLEBoLxVx2wsylwfkUjeiRS/cDYL+xI+x254p6OSb2npA94T3mIuGJUNGA0p+mh8CJtdX8OHvnryWshnIdM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747666359; c=relaxed/simple;
+	bh=Ik7VDvLBKoD5JEdUdJzIuSULsG08WlBUgK/O/rCdskU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RK2epcEOFsdQSFNYryqtxJ2Ibl4EJw5y2pDljWgandeZVEqO9qmF0t9XPIjO32XuWfE7q4B6B3XyiNpNAM4tqora4DNnYExpoS9rbO49fOAuQyZSSi0AneE9N53oSx4QInORNx9PCvpo/hqiVhmPKEDi8a8lo92dZyCJI0Zbo/U=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=ashley.smith@collabora.com header.b=JZd41u2L; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1747666336; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=Fi/wHX6Mb+Vs4JdFrPS7+6D+0FMm2y+r2qm1dfGgYSMqQwBu+RN37lSvfJY1+q6wdBtaFSfRdqbOEbhdtVELtL2c9g/ecifc3Txsxshd/tRZQ2yfz6KhQL3Xve9Y8HDTFKnJ5G79RNgsfsgKRhRTTQwJQGrvNOlqii4X7tg8/NA=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1747666336; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=BG/5r3CmIwHg1FslOmxmLHkPkGI/Ods4ezB25RAuImM=; 
+	b=MmlNY13Mo+HIjSTCXJwt01AvjEarLPGD20vdY5OZ/dgO18KxMvUu6xSYVqKkThMbGL9sIqVjt5eCQARtRAv5I9371pyqV3DHynyPhklT4sSDQ2ZNx3nHtzHCALXqlBFIP+1Ei5PT+WQ3Th4RUHtzM+ghlEEZeNqZL4V7nN9vEEM=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=ashley.smith@collabora.com;
+	dmarc=pass header.from=<ashley.smith@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1747666336;
+	s=zohomail; d=collabora.com; i=ashley.smith@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=BG/5r3CmIwHg1FslOmxmLHkPkGI/Ods4ezB25RAuImM=;
+	b=JZd41u2Ljeue6nY4DOLxkKmalGbKuC4szNzifCs2qGEXS0ZJP66dPnWeJ17ENHqf
+	oM9yvC9ogCYdm0rra2IOCeb6hl6KpjfHoCKgtRJb+rd4McxzFngIaYTGMyzO1psEXvP
+	gaq44J3JOppTE1IxTYKyHqz/NV7fnkBFrNxDYrsk=
+Received: by mx.zohomail.com with SMTPS id 1747666334331245.9607774211055;
+	Mon, 19 May 2025 07:52:14 -0700 (PDT)
+From: Ashley Smith <ashley.smith@collabora.com>
+To: Boris Brezillon <boris.brezillon@collabora.com>,
+	Steven Price <steven.price@arm.com>,
+	Liviu Dudau <liviu.dudau@arm.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>
+Cc: kernel@collabora.com,
+	Ashley Smith <ashley.smith@collabora.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] drm/panthor: Reset queue slots if termination fails
+Date: Mon, 19 May 2025 15:50:19 +0100
+Message-ID: <20250519145150.2265020-1-ashley.smith@collabora.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f5fccde2326a896e5c568ef06a4dbd9aa7465f6a.1747046848.git.namcao@linutronix.de>
+Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
-On Mon, May 12, 2025 at 12:51:00PM +0200, Nam Cao wrote:
-> diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
-> index ec0a337891dd..55094030e377 100644
-> --- a/arch/arm64/mm/fault.c
-> +++ b/arch/arm64/mm/fault.c
-> @@ -44,6 +44,9 @@
->  #include <asm/tlbflush.h>
->  #include <asm/traps.h>
->  
-> +#define CREATE_TRACE_POINTS
-> +#include <trace/events/exceptions.h>
-> +
->  struct fault_info {
->  	int	(*fn)(unsigned long far, unsigned long esr,
->  		      struct pt_regs *regs);
-> @@ -559,6 +562,11 @@ static int __kprobes do_page_fault(unsigned long far, unsigned long esr,
->  	if (kprobe_page_fault(regs, esr))
->  		return 0;
->  
-> +	if (user_mode(regs))
-> +		trace_page_fault_user(addr, regs, esr);
-> +	else
-> +		trace_page_fault_kernel(addr, regs, esr);
+This fixes a bug where if we timeout after a suspend and the termination
+fails, due to waiting on a fence that will never be signalled for
+example, we do not resume the group correctly. The fix forces a reset
+for groups that are not terminated correctly.
 
-What are the semantics for these tracepoints? When are they supposed to
-be called? In the RV context context I guess you only care about the
-benign, recoverable faults that would affect timing. These tracepoints
-were generalised from the x86 code but I don't know enough about it to
-tell when they would be invoked.
+Signed-off-by: Ashley Smith <ashley.smith@collabora.com>
+---
+Changes in v2:
+ - Fixed syntax error
+---
+ drivers/gpu/drm/panthor/panthor_sched.c | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
-For arm64, we also have the do_translation_fault() path for example that
-may or may not need to log such trace events.
+diff --git a/drivers/gpu/drm/panthor/panthor_sched.c b/drivers/gpu/drm/panthor/panthor_sched.c
+index 43ee57728de5..65d8ae3dcac1 100644
+--- a/drivers/gpu/drm/panthor/panthor_sched.c
++++ b/drivers/gpu/drm/panthor/panthor_sched.c
+@@ -2727,8 +2727,17 @@ void panthor_sched_suspend(struct panthor_device *ptdev)
+ 			 * automatically terminate all active groups, so let's
+ 			 * force the state to halted here.
+ 			 */
+-			if (csg_slot->group->state != PANTHOR_CS_GROUP_TERMINATED)
++			if (csg_slot->group->state != PANTHOR_CS_GROUP_TERMINATED) {
+ 				csg_slot->group->state = PANTHOR_CS_GROUP_TERMINATED;
++
++				/* Reset the queue slots manually if the termination
++				 * request failed.
++				 */
++				for (i = 0; i < group->queue_count; i++) {
++					if (group->queues[i])
++						cs_slot_reset_locked(ptdev, csg_id, i);
++				}
++			}
+ 			slot_mask &= ~BIT(csg_id);
+ 		}
+ 	}
 
+base-commit: 9934ab18051118385c7ea44d8e14175edbe6dc9c
 -- 
-Catalin
+2.43.0
+
 
