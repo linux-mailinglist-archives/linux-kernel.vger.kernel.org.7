@@ -1,118 +1,94 @@
-Return-Path: <linux-kernel+bounces-654124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-654125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8472CABC448
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 18:20:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40E93ABC42E
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 18:17:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B76487A3211
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 16:15:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1226E175CB9
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 16:17:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 192C428A416;
-	Mon, 19 May 2025 16:13:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61FD628A730;
+	Mon, 19 May 2025 16:13:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="C7minFsw"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EFm9Y2BM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF28D28A407;
-	Mon, 19 May 2025 16:13:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8A7528A71F;
+	Mon, 19 May 2025 16:13:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747671191; cv=none; b=FgNvi/TM1vXmfmIaDVaVFlHXMDV+annzQbwsqZoFbKnOHsjUmzAtuEVIjW2d3OflaURT+heGXG56Cz9KMPmL7ia5HdNOJc8r9lG27FLduaYsbB3iuOcZoZ3b9P5nzFCgN4+J7HUErhWeJcWDyuopBKsv86jxM0xxzHoDBtR5O4M=
+	t=1747671206; cv=none; b=YrTp6gQyNgRDW5x+rMOCohmZKV+DhtWJaIohtTeeur2x4PGx5+4trH1wKDv+BXJsCP8nELuuivhGbAYm9/qUnIqHO8SDH4oLtTc+Egc3IFJax91tLFr0AD9MLxQqkmPqh9dl4SMfZ7xHCHNwYOjmi64JBfFGYOC2dABVrzG0m2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747671191; c=relaxed/simple;
-	bh=zyAOQzMJMFgeGz+lNh/1K4UspxtyA4S0tXwY70o42jA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dyrW++c9OXinE2RCs7+czIpR5NuglnQdO9fFCyWWRQv9ImgN/wTASBpcXoAAvlhtiTjaa97KX1S/cjsexk8/QaWmKuOouMNFknmIIPQEQYcDz41Lo7zZNLEbF+iLYyV/9AOtT5oX4OMnHl65VK6oep62Zjzlg33Y50iN/G5mxWw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=C7minFsw; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1747671191; x=1779207191;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=zyAOQzMJMFgeGz+lNh/1K4UspxtyA4S0tXwY70o42jA=;
-  b=C7minFswC+IAH1vHL9ERFaDAUnN9ptO6JtJ2OA13Fu/AcAtgtACjny6c
-   S0NT1Nxk0PRHijk2mG7sYKYK7yGwbJA1qj4GkO9ocN15QeaL+XBAJkR0Q
-   LcKdmAR6QrTI9K/AE+KWw2IneJYuD2np9DdJ4bqKNXlq2F0n0pH6ec2WN
-   kCftLT2JHEvyd2Haaq2y/OoGC4Jnc0CHfY6Q4wB4jIjXkPMlEW9NxHzsR
-   jPt6y8RybBd9963zziqpT+5Tax2vaSglyso9NOMtsDq3eNOTdZhtbaldq
-   cljXJ0aJiYcrcKOmMHLHjMVPajKCsC8MODxhQL8lTdPVuzQVpqmMMgK+9
-   Q==;
-X-CSE-ConnectionGUID: dkrD6QWQR0uocvQrI46bRA==
-X-CSE-MsgGUID: EMF2aXT6RUegsfIc6q1Q3g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11438"; a="49642073"
-X-IronPort-AV: E=Sophos;i="6.15,301,1739865600"; 
-   d="scan'208";a="49642073"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 May 2025 09:13:10 -0700
-X-CSE-ConnectionGUID: L13enZ45Tgm8M7LnrBNVYQ==
-X-CSE-MsgGUID: XMT03/vcQ12CNqz8cPu6sw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,301,1739865600"; 
-   d="scan'208";a="139301096"
-Received: from tjmaciei-mobl5.ger.corp.intel.com (HELO [10.125.109.80]) ([10.125.109.80])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 May 2025 09:13:08 -0700
-Message-ID: <63c3fc2b-2c04-4f44-9e69-4569d3e91017@intel.com>
-Date: Mon, 19 May 2025 09:13:05 -0700
+	s=arc-20240116; t=1747671206; c=relaxed/simple;
+	bh=Y8QH/9LVe3MmbHWlOj063nhwVhTp3uZCqQntnbYL1uY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VvasFlVRjh84UYv4Mm1ldT65jHF5XUzxBpEckAXY8jTSnnPsZQdt6fu6f/njeDTngrifqMBxxD7d+ukXvNdLfUmRcd6TBBX2HviLTLmIsBKaWmmNimAwZ3E1KHqTxOpCV3c/G2EnK58pdqz9HgBqNhDvYifm3ZeqzGxL4VL9Tjw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EFm9Y2BM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D255C4CEEF;
+	Mon, 19 May 2025 16:13:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747671206;
+	bh=Y8QH/9LVe3MmbHWlOj063nhwVhTp3uZCqQntnbYL1uY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EFm9Y2BMK0pI8ND6m4ateyB1xw/cY4e6wk1fsrwURzShlnB96HUOA/CJfZwPJHk/h
+	 SFdv1zaTZH/QPv1ukEJDR/mh1GpqTLmqCUSK0EhituJdfZ7Q+17XUG8t4toMOoa2ch
+	 fnI9O2VrbgMiDHTpQFwn8VQ3ucskEBA0x/W1jdACyYmLSbj4VvZrbjteRmkzuDa7Y4
+	 JqTXRhHe0fm6KYy2c/uR7kccbZiPTMFdsNvmsgkiHIMch1qZ4uoK9oWSQnGDzXCcSG
+	 og3A2EMnsNSLX15ldhXtpwypx6caxq8/oLoGWcUF/e9Ob+YAyGKBiMBJQuB2zkT9hc
+	 3f0oKHkRmkMyQ==
+Date: Mon, 19 May 2025 17:13:21 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Jonas Karlman <jonas@kwiboo.se>
+Cc: Heiko Stuebner <heiko@sntech.de>, Ulf Hansson <ulf.hansson@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Elaine Zhang <zhangqing@rock-chips.com>, Yao Zi <ziyao@disroot.org>,
+	Chukun Pan <amadeus@jmu.edu.cn>, linux-rockchip@lists.infradead.org,
+	linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/9] dt-bindings: power: rockchip: Add support for RK3528
+Message-ID: <20250519-outmost-carving-54f2a03fbf4f@spud>
+References: <20250518220707.669515-1-jonas@kwiboo.se>
+ <20250518220707.669515-2-jonas@kwiboo.se>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] docs: ABI: Fix "firwmare" to "firmware"
-To: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- Sumanth Gavini <sumanth.gavini@yahoo.com>
-Cc: skhan@linuxfoundation.org, ira.weiny@intel.com, dave@stgolabs.net,
- ming.li@zohomail.com, linux-kernel@vger.kernel.org, linux-cxl@vger.kernel.org
-References: <20250517110332.1289718-1-sumanth.gavini.ref@yahoo.com>
- <20250517110332.1289718-1-sumanth.gavini@yahoo.com>
- <20250519105550.000051ab@huawei.com>
-Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <20250519105550.000051ab@huawei.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="g+A+7+z+9ImO7h3U"
+Content-Disposition: inline
+In-Reply-To: <20250518220707.669515-2-jonas@kwiboo.se>
 
 
+--g+A+7+z+9ImO7h3U
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 5/19/25 2:55 AM, Jonathan Cameron wrote:
-> On Sat, 17 May 2025 04:03:16 -0700
-> Sumanth Gavini <sumanth.gavini@yahoo.com> wrote:
-> 
->> Fix misspelling reported by codespell
->>
->> Signed-off-by: Sumanth Gavini <sumanth.gavini@yahoo.com>
-> +CC linux-cxl
-> 
-> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+On Sun, May 18, 2025 at 10:06:48PM +0000, Jonas Karlman wrote:
+> Add the compatible string and power domains for RK3528 SoC.
+>=20
+> Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
 
-Applied to cxl/next
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
-> 
->> ---
->>  Documentation/ABI/testing/sysfs-bus-cxl | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/Documentation/ABI/testing/sysfs-bus-cxl b/Documentation/ABI/testing/sysfs-bus-cxl
->> index 99bb3faf7a0e..d0d58b74f382 100644
->> --- a/Documentation/ABI/testing/sysfs-bus-cxl
->> +++ b/Documentation/ABI/testing/sysfs-bus-cxl
->> @@ -242,7 +242,7 @@ Description:
->>  		decoding a Host Physical Address range. Note that this number
->>  		may be elevated without any regionX objects active or even
->>  		enumerated, as this may be due to decoders established by
->> -		platform firwmare or a previous kernel (kexec).
->> +		platform firmware or a previous kernel (kexec).
->>  
->>  
->>  What:		/sys/bus/cxl/devices/decoderX.Y
-> 
+--g+A+7+z+9ImO7h3U
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaCtYoQAKCRB4tDGHoIJi
+0uOOAP0Xv7AajQHtPvRmMN/HO2YRdDgNFtBlbcgkBdB3XHiCJwD/c9JjYp9l9fGH
+eMrCbnVSV5zQIFlnmFNCL0CBXf2x6QE=
+=+jD7
+-----END PGP SIGNATURE-----
+
+--g+A+7+z+9ImO7h3U--
 
