@@ -1,161 +1,113 @@
-Return-Path: <linux-kernel+bounces-653706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-653707-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D6ADABBD24
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 14:00:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99041ABBD25
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 14:00:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B3EDA17B663
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 11:59:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D4403189D501
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 12:00:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F80C27702A;
-	Mon, 19 May 2025 11:59:23 +0000 (UTC)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87A17278145;
+	Mon, 19 May 2025 11:59:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l/rff5/U"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 978F9277000;
-	Mon, 19 May 2025 11:59:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2D8427587C;
+	Mon, 19 May 2025 11:59:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747655963; cv=none; b=JwhrtvW0WPpij333sVg+B9y84rQte4unvBD272gJstr5yNb6ozHsXdfCUFn4hlENwpSRHQA/H0El2ogPH4eipcrZmXZm//9ZWp3sdESDatI2YvxlL8DxuhGnHaQG9g2yktpiPXobUI7mDVyB2h947uCio/ZrRGATeKwDgBtclBc=
+	t=1747655973; cv=none; b=lDpIIEcg8cuY+POJKK0yAtN0FmQbyWZqZaTXZV4UFq80ynupXoMIKfZ8DGq/daD5Lxd5PcAEnZCoWvooQu8TXfQDOAPrhhlbpUra1RMD4wt7rqZC7yXM86RnzJWffjaiig1GjDIZF/h4VHpMt61F7uPwD1LVMmZiOZ4if4Ujkmw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747655963; c=relaxed/simple;
-	bh=6NBMYYHlumnscftZI+cAkDcS8m3zloZvTXrJJ+nolNg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qaDs//KrrKhQOUBEGVbumBO4s+lzxoeRlWvkf6h3jYp+7/rEXMEzBTTp0i5oHHMrhY9h3MV/Ev8oSjkXsJpfSQRONHDZMJV7v4mRge4DXLbAa0UYi+rNnkK6e2U18JJQ0/fPoGeaZXoEFECDMERl4hKxq3b1+oVJAhxvdlfu8tw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=fail smtp.mailfrom=kernel.org; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=kernel.org
-X-CSE-ConnectionGUID: qo0X6FhxQBCothyun0c4vw==
-X-CSE-MsgGUID: 5fusSoDaRgmgpskRh5KkQA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11438"; a="59781943"
-X-IronPort-AV: E=Sophos;i="6.15,300,1739865600"; 
-   d="scan'208";a="59781943"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 May 2025 04:59:21 -0700
-X-CSE-ConnectionGUID: II4KglnPTHi3jAGZGKfehQ==
-X-CSE-MsgGUID: Mv6sraRQS+yPQQqE6ge5TQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,300,1739865600"; 
-   d="scan'208";a="139095484"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 May 2025 04:59:19 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andy@kernel.org>)
-	id 1uGz9H-000000031b7-1cGV;
-	Mon, 19 May 2025 14:59:15 +0300
-Date: Mon, 19 May 2025 14:59:15 +0300
-From: Andy Shevchenko <andy@kernel.org>
-To: Lothar Rubusch <l.rubusch@gmail.com>
-Cc: jic23@kernel.org, dlechner@baylibre.com, nuno.sa@analog.com,
-	corbet@lwn.net, lucas.p.stankus@gmail.com, lars@metafoo.de,
-	Michael.Hennerich@analog.com, linux-iio@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 07/12] iio: accel: adxl313: add basic interrupt
- handling
-Message-ID: <aCsdEzm0ph_LfkWP@smile.fi.intel.com>
-References: <20250518111321.75226-1-l.rubusch@gmail.com>
- <20250518111321.75226-8-l.rubusch@gmail.com>
+	s=arc-20240116; t=1747655973; c=relaxed/simple;
+	bh=aLFu7rCxixexESkd6vOg4f5nFApYBwEgOBz444CcjWU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HL+R8BgQV+jo38fU5a1VHe4d4fRVhL3YhZH3tEs8ZK4ctPPw9ITfP758jkPjy+OrkQ5mZzxJDH9cmHIgIxBblKqXDn4fEITrTmHZ8pqjOizFu5RZktiBpNXoPes8LmUK2tYAe/KHb3hVYxNPsjzfCfdOcegd0y9oB5CaJ7FVvX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l/rff5/U; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2322d8316f6so1104665ad.3;
+        Mon, 19 May 2025 04:59:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747655971; x=1748260771; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aLFu7rCxixexESkd6vOg4f5nFApYBwEgOBz444CcjWU=;
+        b=l/rff5/Um8sjLZfB5ug3ua4myK4vBnSOdPcLOg53n1HxUstupMRBJytF+W9fZIqLS5
+         gG+RL+xT6KQgGYmgEl2elOZUPV49POyp24UgBdsVaK1aG6glVLwwrw6QUAjTk6eJfzq9
+         sBJHlgA1yKxeAY7aRQyME9GGwAxrOcPafH8J4g078c0LuCSVeLQMUclw95CQ7UA1NtVJ
+         CpQXSwnhMcKfu//UrMF8hpNgTXrEwKjoWgcMgt/rab4gJLfoMg1ODFA0pQWixDf3GHjx
+         m1OYyPmCAhpTJUV55YmLdP0QDgsln3TiAsumk3tYRhbxnp2bwMhz/scnbxkX598naAp9
+         59BA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747655971; x=1748260771;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=aLFu7rCxixexESkd6vOg4f5nFApYBwEgOBz444CcjWU=;
+        b=Tu7hERfrDWHVdki5lNW4cIC7/K1gw6YWWynBM0WYuGLVSMQfasxBba9nNvh5UxpT3Z
+         iCutWiFvmLqC2Vh4UUKFNWQKYc0knd+I3oShORLFa3lXMa69LJyZbg8lUg/mo3mJBEX5
+         iqKyL22Z/8wimxUhxv+8rDpW5a10GhvpMC3+1Bh4kC6AnP8LvSZ0kl6JM9uE+Ib5BF7/
+         pPV0JIPScZ0ECvII8cPX1BzVm2Jhxj0S2dV5IioVGMFFTEdHB0xmTpajUSQWw0N2HVU4
+         QUyT13WAw/9djJTRLU8SBsAopbpSHg7I0RDQH3/sDi3a0Y35YGMkL5+vxW+2Y+FiOdLY
+         HeAw==
+X-Forwarded-Encrypted: i=1; AJvYcCV8eiauv3Fk5HLjScdIA9RAEV0aXtLah2GunYo5MZseyNio+BgEQoG6HTUlpPI/SzZr4UAdcNPpqvY/SHeUXKQ=@vger.kernel.org, AJvYcCVcaWUmZTRmNYK3MakZDgw1MbE2AIuN6F8tLi1DX0vg7MLSV4Y3xBJrT1C2gAXyq0uxpF8tZwj9XkdVNiY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwvRrZkmqmk5ZEGd7sj+Q0K0I2d8ybotxtH3WLTn/V0VIPF6Bem
+	QxQjftgOp63Y/YBjtCnP0vt9VJGCjUYBTD2rMu4h096pylSfcy0LMQTETlt2JzNGvtVcNEOa3hy
+	FY+abei895V3PPgvOOQ8EFrbejJkGKMU=
+X-Gm-Gg: ASbGncuxYZ5qaLg/g2HM8eEqpI+nrvCLPB0HUJwdW23APVYN7zdGGuEhmsQqEb9qtG/
+	B3fvXteLtHI+OqcspZPe3X+Iy5G7t75AN9sB5xu4hGDEl5hqqxyeC0qJS+zoQ6WUJubKVgrqXTq
+	3LFsoHQ/c2onV2GnD1nP4RzZC8CZBVOqfE
+X-Google-Smtp-Source: AGHT+IF51uVPXV6Gi29FmjmzlIjv+4odphNxo5eZdfP7Uu53LYY1UQbL5QbfxOswRUgc9Tyi72uEdWB5KuOQX67lQAg=
+X-Received: by 2002:a17:903:4407:b0:223:5c33:56ae with SMTP id
+ d9443c01a7336-231d450fcedmr65689685ad.11.1747655970865; Mon, 19 May 2025
+ 04:59:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250518111321.75226-8-l.rubusch@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20250513-topics-tyr-regulator-v3-1-4cc2704dfec6@collabora.com>
+ <D9YXK1J1XO37.JVILKENRKYXD@nvidia.com> <498AB71C-58EF-487E-8D9B-C7C113862948@collabora.com>
+ <D9ZQUUA4FLXD.19MJI9HD48EMZ@nvidia.com> <8517D6F0-C1A2-4E38-8E62-57DCCD5E58D4@collabora.com>
+ <DA048ETXB1Q1.3KVZ2FHENWKDL@kernel.org>
+In-Reply-To: <DA048ETXB1Q1.3KVZ2FHENWKDL@kernel.org>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Mon, 19 May 2025 13:59:17 +0200
+X-Gm-Features: AX0GCFvMUIBqu11KjPn_w_bCNvva2n4Px0xh--eXOiUYoJwmDvbLFBVm1zvISnE
+Message-ID: <CANiq72n-1J4kU_4QwGGpxWB0zTN8Kr9Na03nBB4XypvbsQeA7A@mail.gmail.com>
+Subject: Re: [PATCH v3] rust: regulator: add a bare minimum regulator abstraction
+To: Benno Lossin <lossin@kernel.org>
+Cc: Daniel Almeida <daniel.almeida@collabora.com>, Alexandre Courbot <acourbot@nvidia.com>, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, Boris Brezillon <boris.brezillon@collabora.com>, 
+	Sebastian Reichel <sebastian.reichel@collabora.com>, Liam Girdwood <lgirdwood@gmail.com>, 
+	Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, May 18, 2025 at 11:13:16AM +0000, Lothar Rubusch wrote:
-> Prepare the interrupt handler. Add register entries to evaluate the
-> incoming interrupt. Add functions to clear status registers and reset the
-> FIFO.
+On Mon, May 19, 2025 at 1:54=E2=80=AFPM Benno Lossin <lossin@kernel.org> wr=
+ote:
+>
+> I think we should remove it, as it also doesn't have any users at the
+> moment. Anyone that needs it should define a custom enum for their
+> use-case.
 
-...
+Yeah, it has a similar feeling to `bool` parameters, i.e. whenever an
+`Either` is needed, it is likely clearer for readers to have a custom
+type instead.
 
-> +static int adxl313_set_fifo(struct adxl313_data *data)
-> +{
-> +	unsigned int int_line;
-> +	int ret;
-> +
-> +	ret = adxl313_set_measure_en(data, false);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = regmap_read(data->regmap, ADXL313_REG_INT_MAP, &int_line);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = regmap_write(data->regmap, ADXL313_REG_FIFO_CTL,
-
-> +			   FIELD_PREP(ADXL313_REG_FIFO_CTL_MODE_MSK,
-> +				      data->fifo_mode));
-
-Better to have these two on one line. It makes it easier to read.
-
-> +	return adxl313_set_measure_en(data, true);
-> +}
-
-...
-
-> +static int adxl313_fifo_transfer(struct adxl313_data *data, int samples)
-> +{
-> +	size_t count;
-> +	int i;
-> +	int ret;
-
-> +	ret = 0;
-
-Useless. See below.
-
-> +	count = sizeof(data->fifo_buf[0]) * ADXL313_NUM_AXIS;
-
-Perhaps use array_size() from overflow.h?
-
-> +	for (i = 0; i < samples; i++) {
-> +		ret = regmap_bulk_read(data->regmap, ADXL313_REG_XYZ_BASE,
-> +				       data->fifo_buf + (i * count / 2), count);
-> +		if (ret)
-> +			return ret;
-> +	}
-
-> +	return ret;
-
-Just return 0 here.
-
-> +}
-
-...
-
-> +static irqreturn_t adxl313_irq_handler(int irq, void *p)
-> +{
-> +	struct iio_dev *indio_dev = p;
-> +	struct adxl313_data *data = iio_priv(indio_dev);
-> +	int int_stat;
-> +
-> +	if (regmap_read(data->regmap, ADXL313_REG_INT_SOURCE, &int_stat))
-> +		return IRQ_NONE;
-> +
-> +	if (FIELD_GET(ADXL313_INT_OVERRUN, int_stat))
-> +		goto err;
-> +
-> +	return IRQ_HANDLED;
-> +err:
-> +	adxl313_fifo_reset(data);
-> +
-> +	return IRQ_HANDLED;
-
-Why do we need the label? Same can be achieved without it by moving the call
-under the conditional.
-
-> +}
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Cheers,
+Miguel
 
