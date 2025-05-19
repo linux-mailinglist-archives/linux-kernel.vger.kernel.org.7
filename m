@@ -1,84 +1,155 @@
-Return-Path: <linux-kernel+bounces-654208-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-654211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EAE6ABC556
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 19:15:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD807ABC55F
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 19:16:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13C083A8358
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 17:14:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B9903A6903
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 17:16:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D96D2288C14;
-	Mon, 19 May 2025 17:14:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BA8C288C11;
+	Mon, 19 May 2025 17:16:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FbZe6K3z"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e/Ch6l6l"
+Received: from mail-ua1-f48.google.com (mail-ua1-f48.google.com [209.85.222.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 428EB288537;
-	Mon, 19 May 2025 17:14:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 233F9288C07;
+	Mon, 19 May 2025 17:16:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747674899; cv=none; b=I2wSDKUBDRisOzY4qjwx4IswDpFaark6WWGhTPvdSlMtKHuvdixp2tQ4q2makeZ6gw2/VJGXZNpLCpYVsHlRsITWI/qTHmNERSkYNrVUE3HfLAmvDxdwefNms/RkyQ4nXM2oMNCFjMxX0+4Ert8NUwanXRCwq9w2H0IShBzfjv0=
+	t=1747674975; cv=none; b=sE0zFEvROHdw4T2qLz6QhAXTTEmyp8+1RyLJFQjxNkNVynlZRWQxSjYzV+/i1NY5AGI9NyBGXNBfZGjkTt6Dbp+s1B5WzHG9NYCRzWcFVrjEwaIHyhweQrx1+eR/uLRzC0bhCBOcoGlB8zm7hCS02l6q/+51acvlKzkHbAgIVzA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747674899; c=relaxed/simple;
-	bh=dLlmEvd8+t0mf6JJ2OeBFyOC3U4PuZS/Ev9pQVQE2F0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TRWILDPB0rfV8kgxKvwtwgLGt2VGA8hqRFB0Gyt3MrQQCSGA/IZrftOnCvaaZ+7f9KAZjTyOARNkTRsKidI9Pm9NYwqPHzQYPDjQwnq7M1zG2aBQJOsOIcTNy9LKf2VVkIefLD2/DHPPJ7NC8l/gAhk3A20H7jnUhxqQmRZMC+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FbZe6K3z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8AB2C4CEE4;
-	Mon, 19 May 2025 17:14:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747674898;
-	bh=dLlmEvd8+t0mf6JJ2OeBFyOC3U4PuZS/Ev9pQVQE2F0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=FbZe6K3ziClc4QgZTPR4SQGbNeotuvqI4bsRTgDSYgaRszHVMCB1Dtsw/CAFpLNxU
-	 AJUp7swAfobbYu5y5IIEpxpKdaPaKVWZ46vOWcbUJCj6n6qHVUb4h/syS7zUagJ1Ng
-	 eLm4PD18Q7peHEtnJDhKt3pfhQKwEe34EKjunrUpaFU7x400w3GFG+z5I0GN56XsRW
-	 GTeaWlS5Jr6TODT70SQp3dFyB9RN36mSfyPvYYoWh1NqfW3MLfr1Zm/bG5BbpI5OLv
-	 1HMyOhKKflI4QGjCTQzoM04+oPOId+MJV8mLL7UN41xY++qhX0l2HLtqAr230QpWHn
-	 puzukVx3w4mlg==
-Message-ID: <aafa7e0c-7c3b-46aa-9170-a6fefb72c467@kernel.org>
-Date: Mon, 19 May 2025 19:14:53 +0200
+	s=arc-20240116; t=1747674975; c=relaxed/simple;
+	bh=pNrf+QD60zmkj70f3+YDaBoATl7U8V/+uFH0RTj/DT8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=A5sdHuYEwSAAeZP8YJXTKQ4nuG2BLa81DIww4/cHKu76mm6yfGKyxm84f6Qh8cNK2LN4XhOpujN+ZMWYo2K56Yqaduf1Zqp7y1kldA/pkkIYqDhey+vvhjM28EtfcYnN2A5u9pDAB8bXES0uQRVGbv23aAQeDkn6zr5+k/MJOik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e/Ch6l6l; arc=none smtp.client-ip=209.85.222.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f48.google.com with SMTP id a1e0cc1a2514c-87c04aeef0fso409344241.1;
+        Mon, 19 May 2025 10:16:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747674972; x=1748279772; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=h52ZvInZ2ZKG98XTL5i3CaIBIWLDrbmN3XBHdiyAOzs=;
+        b=e/Ch6l6lbk/iqS2cyS1dTfVXPhtOwGsMxl9Tw07QAD+alVnQTANWqPX81Qwef9Otjm
+         Dj4JlYNs75yANXvaYibfyGzRlXW7GNA7P0L9NbxMlNV9fDF+lyuR07RaXW65Q1WpzsQM
+         ltpRce3X19bIq2Qi4qt+7jDR4tcp+nrtv+p6f3Wi1b/jIeoMFeWFB+hSIjQQnZUFrc/J
+         zZ+XeMgE4FPoq5ElfKIXrlgqQ/q4IE8/T1IkEGVjo+If4XR2skq1lIBw6Dl+VkMf01Ms
+         UaiKqVNfzO8Dxe4ildtA4/+Bj8FLJXPzTljRfO7TE5PKoFnWTnmwsu6RIuhf/3EJlMPN
+         NIuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747674972; x=1748279772;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=h52ZvInZ2ZKG98XTL5i3CaIBIWLDrbmN3XBHdiyAOzs=;
+        b=sr8opVs5gF2cSRm0t6XinfEIQ/xbbLYueJsakAK/XM/Dc4IjcmB+Coq0rEd+NjUsfw
+         0AXyK8AbGcKKKbBKP/v9benFY6kqgn86ZaLk8CiLS/9u0El210FNLVOycIfOOIJg9wrb
+         QeFCXo/Wq2riryhtMhKsj+b+wxrksky+C4pMRS22HumZqVdC4nfOkyhFaynOBzNp/lWR
+         qB/YDYvgSzGYwo7pg0EQnTrtbZvi6qlVOC+1gunBM/sPiyq5NCRWbkWD4SSoeD97Uav7
+         XhTAGtlOkt0jxEeT0sQ3568UoI6A0fyzm+xPRtLLcdK3SMHJAyHJf3DiTFq5QXVJaaTj
+         aftA==
+X-Forwarded-Encrypted: i=1; AJvYcCWmpbSMgIzvGmUqQxyVgctKneG+PInQ9A3LEfu7I0cSvcaFYwNaxXFvfr1rpuwhX4e/AT11pKi1r67ZwHQ=@vger.kernel.org, AJvYcCXZLHyw98+Tb+2m8drnqBFY69A9kEt6HnWfIy4MOOBzUV21YxjdMWb6YkfFMisnGT7nIXHK+8u8z77FqXMH4D6ROg==@vger.kernel.org, AJvYcCXr1ZZvISxhwXsEM/OZ7T4V27XVReVFMFVu+Awf+S9u2h5dhvOV/MRdjYDR7Z3C0ku+HII2mTUELKw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwcwimhuWAwIuITDc9xF9T7dETUustn/hqYM5C9yAvWbHp9K622
+	5ceMY4id/B8otQLvOawXYvyALjNhqIypWnzNgsxwUQmujp43D9H76eFq
+X-Gm-Gg: ASbGncvBKyj4z2bwxfdMy+9A0snUVCVIY+MHV8VgWPIA6B+WVb5olMA4EiYbKpN7gpG
+	34OM2EP3rzfvSbvS3u6p0rEXU0rANg8u4QiC1WVtL8vRbJvTRjZXnZN1G+1FpSogC0k8iYUl/9e
+	+P4KenLuPvTk5ynJh/yWKFunR7lvofL/xBhgdLbhclzXqllzgH8CM/9j+HQe2LYge8CwAOxC+bY
+	pzkcb2kIbQ3K14tTmym8DTCh4jB69n9Q9mny8iy5jZWEbXmBnjdb+AvlsnIeLrFIMr2Y74SzEYT
+	6B2ZXLFZKofy5KVoILGynh15ccDbReh+PVR+fxYl8AvxP/95Vx9Tnig+LvNYUkkjJ8bB+3Yd2g=
+	=
+X-Google-Smtp-Source: AGHT+IHxO6Q7pyZ10Rjc58jJYNwEv+Q71o6gZRhjB80LZXE2hgkkj3DboWPcXP74AuftkJZQLczGHQ==
+X-Received: by 2002:a05:6122:ec9:b0:52a:c0db:29e3 with SMTP id 71dfb90a1353d-52dbce1e5a3mr9485202e0c.10.1747674971615;
+        Mon, 19 May 2025 10:16:11 -0700 (PDT)
+Received: from hiagof-nb.corp.toradex.com ([67.159.246.222])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-52dbab4e983sm7003647e0c.31.2025.05.19.10.16.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 19 May 2025 10:16:11 -0700 (PDT)
+From: Hiago De Franco <hiagofranco@gmail.com>
+To: Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	linux-pm@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org
+Cc: Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Hiago De Franco <hiago.franco@toradex.com>,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Peng Fan <peng.fan@oss.nxp.com>,
+	daniel.baluta@nxp.com,
+	iuliana.prodan@oss.nxp.com,
+	Fabio Estevam <festevam@gmail.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>
+Subject: [PATCH v3 0/3] remoteproc: imx_rproc: allow attaching to running core kicked by the bootloader
+Date: Mon, 19 May 2025 14:15:11 -0300
+Message-Id: <20250519171514.61974-1-hiagofranco@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] rust: types: remove `Either<L, R>`
-To: Benno Lossin <lossin@kernel.org>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
- =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>, Tamir Duberstein <tamird@gmail.com>,
- Dirk Behme <dirk.behme@de.bosch.com>,
- Kartik Prajapati <kartikprajapati987@gmail.com>,
- Aliet Exposito Garcia <aliet.exposito@gmail.com>,
- rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250519124304.79237-1-lossin@kernel.org>
-From: Danilo Krummrich <dakr@kernel.org>
-Content-Language: en-US
-In-Reply-To: <20250519124304.79237-1-lossin@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 5/19/25 2:43 PM, Benno Lossin wrote:
-> This enum is not used. Additionally, using it would result in poor
-> ergonomics, because in order to do any operation on a value it has to be
-> matched first. Our version of `Either` also doesn't provide any helper
-> methods making it even more difficult to use.
-> 
-> The alternative of creating a custom enum for the concrete use-case also
-> is much better for ergonomics. As one can provide functions on the type
-> directly and users don't need to match the value manually.
-> 
-> Signed-off-by: Benno Lossin <lossin@kernel.org>
+From: Hiago De Franco <hiago.franco@toradex.com>
 
-Reviewed-by: Danilo Krummrich <dakr@kernel.org>
+For the i.MX8X and i.MX8 family SoCs, currently when the remotecore is
+started by the bootloader and the M core and A core are in the same
+partition, the driver is not capable to detect the remote core and
+report the correct state of it.
+
+This series of patches implement an API call to the SCU which will
+return the power mode of a given resource (M core in this case) and if
+it is already powered on, the driver will attach to it. This SCU API is
+being added to the new file drivers/firmware/imx/power.c, where all PM
+related APIs should go.
+
+Finally, the imx_rproc_clk_enable() function was also changed to make it
+return before dev_clk_get() is called, as it currently generates an SCU
+fault reset if the remote core is already running and the kernel tries
+to enable the clock again. These changes are a follow up from a v1 sent
+to imx_rproc [1] and from a reported regression [2].
+
+[1] https://lore.kernel.org/lkml/20250423155131.101473-1-hiagofranco@gmail.com/
+[2] https://lore.kernel.org/lkml/20250404141713.ac2ntcsjsf7epdfa@hiago-nb/
+
+v3:
+- New file introduced, drivers/firmware/imx/power.c, to handle the PM
+  (Power Management) API functions, as suggested in v2.
+- First patch, "firmware: imx: move get power mode function from
+  scu-pd.c to misc.c" was dropped to make the reviewing process easier
+  and in favor of firmware/imx/power.c file. Moving the power mode
+  function from scu-pd.c as proposed will be sent later in a different
+  future patch, as suggested.
+
+v2:
+- https://lore.kernel.org/lkml/20250507160056.11876-1-hiagofranco@gmail.com/
+
+v1:
+- https://lore.kernel.org/lkml/20250505154849.64889-1-hiagofranco@gmail.com/
+
+Hiago De Franco (3):
+  firmware: imx: introduce imx_sc_pm_get_resource_power_mode()
+  remoteproc: imx_rproc: skip clock enable when M-core is managed by the
+    SCU
+  remoteproc: imx_rproc: add power mode check for remote core attachment
+
+ drivers/firmware/imx/Makefile       |  2 +-
+ drivers/firmware/imx/power.c        | 52 +++++++++++++++++++++++++++++
+ drivers/remoteproc/imx_rproc.c      | 17 ++++++++--
+ include/linux/firmware/imx/svc/pm.h |  9 +++++
+ 4 files changed, 77 insertions(+), 3 deletions(-)
+ create mode 100644 drivers/firmware/imx/power.c
+
+-- 
+2.39.5
+
 
