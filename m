@@ -1,347 +1,312 @@
-Return-Path: <linux-kernel+bounces-652991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-652993-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BF9CABB335
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 04:32:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42BA3ABB33B
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 04:34:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B7541893976
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 02:33:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E14D1894011
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 02:34:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B30281CAA6E;
-	Mon, 19 May 2025 02:32:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="OQCw4IA8"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 955C81DE887;
+	Mon, 19 May 2025 02:34:15 +0000 (UTC)
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E5021E50B;
-	Mon, 19 May 2025 02:32:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4215D1D61AA;
+	Mon, 19 May 2025 02:34:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747621968; cv=none; b=bqGf/sMczRY0aNXiYfPkw81OKKcdtBqj0OZTIiVZaH/WOoGoEu/YpdWihzekn+t2gynmK4I5T2crPSlaLvqOP4YoZsnbjMDY6R8AfYFyDhXo9ML9PfksCX58KKf0SZ0x+0P8VgS50BBVwWV7YUKlowrGaoX9jeL87RSRT+8Y9bs=
+	t=1747622055; cv=none; b=Zwe70cPjG0P9crwCx8ELg2TCdpYdkPgk36RAxjMnabdEqMjxTDVtPD/C5cyEGIT5zryQ9XpubjtrOtJdmpRsZaI/XAw5TTHN/q7pvO/uQtVR/RdUhHy6uk/LcwskcFz45llUkmxId2h/OVY4J1iOXYxo/2EvuenaDSgc8zWl6j4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747621968; c=relaxed/simple;
-	bh=0zzX5WHnEKCbgroPGhWp9SnISsRI+pegqOANs4qG158=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KV6u3ofqSgTlYa7tHjGBbbQ6fjrdeOKC6wsglskHYxgsf01+mhF/nD9QJC1xTAhip0vuuOmDn4BHSxwiZeZw5bLAlgI6kNwhLE81dGwa/diBx1Nk4WQy87u0h4EdkMhKi3Vq+v6knRAeZ9/MGGzAmXcOPS/FRwdQZa/yvUTfPqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=OQCw4IA8; arc=none smtp.client-ip=212.227.17.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1747621944; x=1748226744; i=w_armin@gmx.de;
-	bh=JfLwC1/LUNCnmQNAcewtt3UxTnTX3wWFey4wgugPwxo=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=OQCw4IA8JLwDCo88l+Lh7WwOY8Muca2+p3O6McJ0Q9uBlNhhdnfAXNlpcZ8aE/0p
-	 VtAxKsM9jrYp1iwJa3Wk6B0oXusQ+MXFsbYekQFS6EPT5D0xGJrbqaPiNOzXmuCPL
-	 +RrA966J/lf3S7L64Nfq2X6YFlgyYl9UXNpJ0hgnVRzWX3QzOMsCQRNwv4wJ0/5Tw
-	 GbmToPxYl+1TuIAAFuouA4E60WTf8UG6GoxVGj14FOvDIby1RyGA+KREi7RsUBTY0
-	 KoGLBBEUBWKuIgoMdlQbInMDtHfBD1qgq1b/WgfttOg76oGg9E/t1mzgYvrHR5p6T
-	 9gW4D1uPjqtv9Du9Tw==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.0.69] ([87.177.78.219]) by mail.gmx.net (mrgmx105
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1N2E1G-1ux9bt2qLO-00sRhm; Mon, 19
- May 2025 04:32:23 +0200
-Message-ID: <a68dd95a-14d7-410c-9aae-d8c55b77a3e2@gmx.de>
-Date: Mon, 19 May 2025 04:32:21 +0200
+	s=arc-20240116; t=1747622055; c=relaxed/simple;
+	bh=vrWV6CdUjkdMudY/6D9yjaVRVSi84iL045dU7vGgs4U=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Va7ncdorRpaNkei5BtCVCuDw1XNcwaCynsnxj61PTWmOojOnSplak06Fil6nzHYG+U00mOve3xq1ahV/U5dr/iC+2kRoyBUyBFKFMRFH30n3EyoL1KK4nohJQ7g4zPE0WI/lIEEjS1IHoPO6TUKXqPSZd6cvSZN+OcBF2KLSMd0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-7424ccbef4eso3876890b3a.2;
+        Sun, 18 May 2025 19:34:10 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747622050; x=1748226850;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=iegr4EZ/f05pfjGH9FJD0MeaTXrr47iqo7rRy4qL9t0=;
+        b=l9zTKuOqS9lptpBtqTl5MIq89DAvzzAqt7na/iDGtA/His08gLA/ijlHq9/kD403lI
+         5DzwXfPyeP1CYYlgImM98TGl05sOqY2dyeoEiUkNaNeXpe8uLpb7nsHr/vTgF9WOgsTr
+         gMzdxgfUy6Ij3PXuPcAHmBzlqFJPzHnqcMBJ4c5UBc5PmlRBta5ooGKPxZzN1+NpuHPC
+         0UeJCAFciUQ8lk09n6PlCLeppxo06GWwxrpgdS7bDEUtCNBZvA0Uis7sbEnBhs9Afz4A
+         Te3EC1E9g2GZ/H3pYoWYbeyjV2msPMObhB5njO+gciIYa0mIxF7lWLtcURraQ0EhYDTz
+         D8Fg==
+X-Forwarded-Encrypted: i=1; AJvYcCXmY3DkgMNarFOVDa5euvpRDnwhzT40LII7qzP8Xw4JFYDIGZKfCgm48A/rV4Vo417+zTVlPoGGaNc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVqreZ6L1CSf52aLaXQjk9X9Z73kuAmzGcaFB8yoxc2e93tiL2
+	SYViIYxBriqciwK4n7QtqNYKKYd661nb0FTby2UR6E2IrjaLhD/rnnnB
+X-Gm-Gg: ASbGncvhsi4YPEtQd6OqdSAElbYvQwsO8AEtoXfnbniGEnN0Fkde+CvbtbWYpwaadah
+	Q3QxjFtO76tvG7UPai2o/QZ+Qj/4qZ930yVOe72F3Ijr3ipHF8WV/b+rVUUMV/FwyPO6bmP+52l
+	cTG/8+jMr0UuJX3NBeUxR0S+gmFNZ4m88dCYCc+nUiwAe/IMqxB73vD2M04JnKa5QBJ329OlSan
+	ZstNeGlWQ9AK5ttfplx7gyX1eANqgTzNLJCdSNjUlbjZBDUIXhMuNLTAFi1TlOj5FszFM10QZcY
+	Jddz/ZQQ91+yl0OUkfJLb0XorNMPztc5CUt/eXDisOhsyv60caQXwPalKIkR0L65WyxXxd/VCDt
+	CSLQ=
+X-Google-Smtp-Source: AGHT+IGG6Vuf9DbN6OKREIqR1aQomQx1V5H4A2HHUgKbG4iE6BXxz/5J+n5d8GNjZfqfN1AZuVs1eA==
+X-Received: by 2002:a05:6a00:2401:b0:736:532b:7c10 with SMTP id d2e1a72fcca58-742a98b4b2cmr16549983b3a.21.1747622050229;
+        Sun, 18 May 2025 19:34:10 -0700 (PDT)
+Received: from localhost.localdomain ([116.128.244.169])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-742a9876dcdsm5296595b3a.138.2025.05.18.19.34.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 18 May 2025 19:34:09 -0700 (PDT)
+From: xiehongyu1@kylinos.cn
+To: stern@rowland.harvard.edu
+Cc: linux-kernel@vger.kernel.org,
+	usb-storage@lists.one-eyed-alien.net,
+	linux-usb@vger.kernel.org,
+	gregkh@linuxfoundation.org,
+	Hongyu Xie <xiehongyu1@kylinos.cn>
+Subject: [PATCH v1] usb: storage: Ignore UAS driver for SanDisk 3.2 Gen2 storage device
+Date: Mon, 19 May 2025 10:33:28 +0800
+Message-Id: <20250519023328.1498856-1-xiehongyu1@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 07/10] platform/x86: msi-wmi-platform: Add
- charge_threshold support
-To: Antheas Kapenekakis <lkml@antheas.dev>,
- platform-driver-x86@vger.kernel.org
-Cc: Jonathan Corbet <corbet@lwn.net>, Hans de Goede <hdegoede@redhat.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
- Kurt Borja <kuurtb@gmail.com>, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org
-References: <20250511204427.327558-1-lkml@antheas.dev>
- <20250511204427.327558-8-lkml@antheas.dev>
-Content-Language: en-US
-From: Armin Wolf <W_Armin@gmx.de>
-In-Reply-To: <20250511204427.327558-8-lkml@antheas.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:6YdGIOw7BVwOX0Cr40Z/pZq5E8znJx0eP7MezSP1mcv02UJPKmz
- yDOmdN6pm/edJbgs7axTE68xI7rXq0UK8IKe1SDhcqyjUhEhzijVziRi2l752Cr50HsOcEy
- oiEjJ+b9jiIi0kh4JV77G44Fuo3ZWRMaNpFY1yoHGJ9bBbE70Uz7F/bnSQKQFrW8753dUux
- BkkNcAfFS+7xWNItuHkCQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:xyv97hVEQX4=;o54aQNHxn8ZZing/ecBU5Rofu9I
- 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
+Content-Transfer-Encoding: 8bit
 
-Am 11.05.25 um 22:44 schrieb Antheas Kapenekakis:
+From: Hongyu Xie <xiehongyu1@kylinos.cn>
 
-> The battery of MSI laptops supports charge threshold. Add support for it=
-.
->
-> Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
-> ---
->   drivers/platform/x86/Kconfig            |   1 +
->   drivers/platform/x86/msi-wmi-platform.c | 110 ++++++++++++++++++++++++
->   2 files changed, 111 insertions(+)
->
-> diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
-> index fd3da718731e7..51a34ab476ffc 100644
-> --- a/drivers/platform/x86/Kconfig
-> +++ b/drivers/platform/x86/Kconfig
-> @@ -744,6 +744,7 @@ config MSI_WMI
->  =20
->   config MSI_WMI_PLATFORM
->   	tristate "MSI WMI Platform features"
-> +	depends on ACPI_BATTERY
->   	depends on ACPI_WMI
->   	depends on HWMON
->   	select ACPI_PLATFORM_PROFILE
-> diff --git a/drivers/platform/x86/msi-wmi-platform.c b/drivers/platform/=
-x86/msi-wmi-platform.c
-> index 6498f4b44fe53..46928fb4da8a6 100644
-> --- a/drivers/platform/x86/msi-wmi-platform.c
-> +++ b/drivers/platform/x86/msi-wmi-platform.c
-> @@ -31,6 +31,7 @@
->   #include <linux/sysfs.h>
->   #include <linux/types.h>
->   #include <linux/wmi.h>
-> +#include <acpi/battery.h>
->  =20
->   #include <linux/unaligned.h>
->  =20
-> @@ -79,6 +80,7 @@
->   /* Get_Data() and Set_Data() Params */
->   #define MSI_PLATFORM_PL1_ADDR	0x50
->   #define MSI_PLATFORM_PL2_ADDR	0x51
-> +#define MSI_PLATFORM_BAT_ADDR	0xd7
->  =20
->   static bool force;
->   module_param_unsafe(force, bool, 0);
-> @@ -118,6 +120,7 @@ enum msi_wmi_platform_method {
->  =20
->   struct msi_wmi_platform_quirk {
->   	bool shift_mode;	/* Shift mode is supported */
-> +	bool charge_threshold;	/* Charge threshold is supported */
->   	int pl_min;		/* Minimum PLx value */
->   	int pl1_max;		/* Maximum PL1 value */
->   	int pl2_max;		/* Maximum PL2 value */
-> @@ -128,6 +131,7 @@ struct msi_wmi_platform_data {
->   	struct msi_wmi_platform_quirk *quirks;
->   	struct mutex wmi_lock;	/* Necessary when calling WMI methods */
->   	struct device *ppdev;
-> +	struct acpi_battery_hook battery_hook;
->   	struct device *fw_attrs_dev;
->   	struct kset *fw_attrs_kset;
->   };
-> @@ -211,12 +215,14 @@ static const char * const msi_wmi_platform_debugfs=
-_names[] =3D {
->   static struct msi_wmi_platform_quirk quirk_default =3D {};
->   static struct msi_wmi_platform_quirk quirk_gen1 =3D {
->   	.shift_mode =3D true,
-> +	.charge_threshold =3D true,
->   	.pl_min =3D 8,
->   	.pl1_max =3D 43,
->   	.pl2_max =3D 45
->   };
->   static struct msi_wmi_platform_quirk quirk_gen2 =3D {
->   	.shift_mode =3D true,
-> +	.charge_threshold =3D true,
->   	.pl_min =3D 8,
->   	.pl1_max =3D 30,
->   	.pl2_max =3D 37
-> @@ -1013,6 +1019,94 @@ static int msi_wmi_fw_attrs_init(struct msi_wmi_p=
-latform_data *data)
->   	return 0;
->   }
->  =20
-> +static int msi_platform_psy_ext_get_prop(struct power_supply *psy,
-> +					 const struct power_supply_ext *ext,
-> +					 void *data,
-> +					 enum power_supply_property psp,
-> +					 union power_supply_propval *val)
-> +{
-> +	struct msi_wmi_platform_data *msi =3D data;
-> +	u8 buffer[32] =3D { 0 };
-> +	int ret;
-> +
-> +	switch (psp) {
-> +	case POWER_SUPPLY_PROP_CHARGE_CONTROL_END_THRESHOLD:
-> +		buffer[0] =3D MSI_PLATFORM_BAT_ADDR;
-> +		ret =3D msi_wmi_platform_query(msi, MSI_PLATFORM_GET_DATA,
-> +					     buffer, sizeof(buffer));
-> +		if (ret)
-> +			return ret;
-> +
-> +		val->intval =3D buffer[1] & ~BIT(7);
-> +		if (val->intval > 100)
-> +			return -EINVAL;
-> +
-> +		return 0;
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +}
-> +
-> +static int msi_platform_psy_ext_set_prop(struct power_supply *psy,
-> +					 const struct power_supply_ext *ext,
-> +					 void *data,
-> +					 enum power_supply_property psp,
-> +					 const union power_supply_propval *val)
-> +{
-> +	struct msi_wmi_platform_data *msi =3D data;
-> +	u8 buffer[32] =3D { 0 };
-> +
-> +	switch (psp) {
-> +	case POWER_SUPPLY_PROP_CHARGE_CONTROL_END_THRESHOLD:
-> +		if (val->intval > 100)
-> +			return -EINVAL;
-> +		buffer[0] =3D MSI_PLATFORM_BAT_ADDR;
-> +		buffer[1] =3D val->intval | BIT(7);
-> +		return msi_wmi_platform_query(msi, MSI_PLATFORM_SET_DATA,
-> +					      buffer, sizeof(buffer));
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +}
-> +
-> +static int
-> +msi_platform_psy_prop_is_writeable(struct power_supply *psy,
-> +				   const struct power_supply_ext *ext,
-> +				   void *data, enum power_supply_property psp)
-> +{
-> +	return true;
-> +}
-> +
-> +static const enum power_supply_property oxp_psy_ext_props[] =3D {
-> +	POWER_SUPPLY_PROP_CHARGE_CONTROL_END_THRESHOLD,
-> +};
-> +
-> +static const struct power_supply_ext msi_platform_psy_ext =3D {
-> +	.name			=3D "msi-platform-charge-control",
-> +	.properties		=3D oxp_psy_ext_props,
-> +	.num_properties		=3D ARRAY_SIZE(oxp_psy_ext_props),
-> +	.get_property		=3D msi_platform_psy_ext_get_prop,
-> +	.set_property		=3D msi_platform_psy_ext_set_prop,
-> +	.property_is_writeable	=3D msi_platform_psy_prop_is_writeable,
-> +};
-> +
-> +static int msi_wmi_platform_battery_add(struct power_supply *battery,
-> +					struct acpi_battery_hook *hook)
-> +{
-> +	struct msi_wmi_platform_data *data =3D
-> +		container_of(hook, struct msi_wmi_platform_data, battery_hook);
-> +
-> +	return power_supply_register_extension(battery, &msi_platform_psy_ext,
-> +					       &data->wdev->dev, data);
-> +}
-> +
-> +static int msi_wmi_platform_battery_remove(struct power_supply *battery=
-,
-> +					   struct acpi_battery_hook *hook)
-> +{
-> +	power_supply_unregister_extension(battery, &msi_platform_psy_ext);
-> +	return 0;
-> +}
-> +
->   static ssize_t msi_wmi_platform_debugfs_write(struct file *fp, const c=
-har __user *input,
->   					      size_t length, loff_t *offset)
->   {
-> @@ -1245,6 +1339,13 @@ static int msi_wmi_platform_probe(struct wmi_devi=
-ce *wdev, const void *context)
->   	if (ret < 0)
->   		return ret;
->  =20
-> +	if (data->quirks->charge_threshold) {
-> +		data->battery_hook.name =3D "MSI Battery";
-> +		data->battery_hook.add_battery =3D msi_wmi_platform_battery_add;
-> +		data->battery_hook.remove_battery =3D msi_wmi_platform_battery_remove=
-;
-> +		battery_hook_register(&data->battery_hook);
+SanDisk 3.2 Gen2 storage device(0781:55e8) doesn't work well with UAS.
+Log says,
+[    6.507865][ 3] [  T159] usb 2-1.4: new SuperSpeed Gen 1 USB device number 4 using xhci_hcd
+[    6.540314][ 3] [  T159] usb 2-1.4: New USB device found, idVendor=0781, idProduct=55e8, bcdDevice= 0.01
+[    6.576304][ 3] [  T159] usb 2-1.4: New USB device strings: Mfr=1, Product=2, SerialNumber=3
+[    6.584727][ 3] [  T159] usb 2-1.4: Product: SanDisk 3.2 Gen2
+[    6.590459][ 3] [  T159] usb 2-1.4: Manufacturer: SanDisk
+[    6.595845][ 3] [  T159] usb 2-1.4: SerialNumber: 03021707022525140940
+[    7.230852][ 0] [  T265] usbcore: registered new interface driver usb-storage
+[    7.251247][ 0] [  T265] scsi host3: uas
+[    7.255280][ 0] [  T265] usbcore: registered new interface driver uas
+[    7.270498][ 1] [  T192] scsi 3:0:0:0: Direct-Access     SanDisk  Extreme Pro DDE1 0110 PQ: 0 ANSI: 6
+[    7.299588][ 3] [  T192] scsi 3:0:0:1: Enclosure         SanDisk  SES Device       0110 PQ: 0 ANSI: 6
+[    7.321681][ 3] [  T192] sd 3:0:0:0: Attached scsi generic sg1 type 0
+[    7.328185][ 3] [  T192] scsi 3:0:0:1: Attached scsi generic sg2 type 13
+[    7.328804][ 0] [  T191] sd 3:0:0:0: [sda] 976773168 512-byte logical blocks: (500 GB/466 GiB)
+[    7.343486][ 0] [  T191] sd 3:0:0:0: [sda] 4096-byte physical blocks
+[    7.364611][ 0] [  T191] sd 3:0:0:0: [sda] Write Protect is off
+[    7.370524][ 0] [  T191] sd 3:0:0:0: [sda] Mode Sense: 3d 00 10 00
+[    7.390655][ 0] [  T191] sd 3:0:0:0: [sda] Write cache: enabled, read cache: enabled, supports DPO and FUA
+[    7.401363][ 0] [  T191] sd 3:0:0:0: [sda] Optimal transfer size 1048576 bytes
+[    7.436010][ 0] [  T191]  sda: sda1
+[    7.450850][ 0] [  T191] sd 3:0:0:0: [sda] Attached SCSI disk
+[    7.470218][ 4] [  T262] scsi 3:0:0:1: Failed to get diagnostic page 0x1
+[    7.474869][ 0] [    C0] sd 3:0:0:0: [sda] tag#0 data cmplt err -75 uas-tag 2 inflight: CMD
+[    7.476911][ 4] [  T262] scsi 3:0:0:1: Failed to bind enclosure -19
+[    7.485330][ 0] [    C0] sd 3:0:0:0: [sda] tag#0 CDB: Read(10) 28 00 00 00 00 28 00 00 10 00
+[    7.491593][ 4] [  T262] ses 3:0:0:1: Attached Enclosure device
+[   38.066980][ 4] [  T192] sd 3:0:0:0: [sda] tag#4 uas_eh_abort_handler 0 uas-tag 5 inflight: CMD IN
+[   38.076012][ 4] [  T192] sd 3:0:0:0: [sda] tag#4 CDB: Read(10) 28 00 00 00 01 08 00 00 f8 00
+[   38.086485][ 4] [  T192] sd 3:0:0:0: [sda] tag#3 uas_eh_abort_handler 0 uas-tag 1 inflight: CMD IN
+[   38.095515][ 4] [  T192] sd 3:0:0:0: [sda] tag#3 CDB: Read(10) 28 00 00 00 00 10 00 00 08 00
+[   38.104122][ 4] [  T192] sd 3:0:0:0: [sda] tag#2 uas_eh_abort_handler 0 uas-tag 4 inflight: CMD IN
+[   38.113152][ 4] [  T192] sd 3:0:0:0: [sda] tag#2 CDB: Read(10) 28 00 00 00 00 88 00 00 78 00
+[   38.121761][ 4] [  T192] sd 3:0:0:0: [sda] tag#1 uas_eh_abort_handler 0 uas-tag 3 inflight: CMD IN
+[   38.130791][ 4] [  T192] sd 3:0:0:0: [sda] tag#1 CDB: Read(10) 28 00 00 00 00 48 00 00 30 00
+[   38.139401][ 4] [  T192] sd 3:0:0:0: [sda] tag#0 uas_eh_abort_handler 0 uas-tag 2 inflight: CMD
+[   38.148170][ 4] [  T192] sd 3:0:0:0: [sda] tag#0 CDB: Read(10) 28 00 00 00 00 28 00 00 10 00
+[   38.178980][ 2] [  T304] scsi host3: uas_eh_device_reset_handler start
+[   38.901540][ 2] [  T304] usb 2-1.4: reset SuperSpeed Gen 1 USB device number 4 using xhci_hcd
+[   38.936791][ 2] [  T304] scsi host3: uas_eh_device_reset_handler success
 
-Please use devm_battery_hook_reigister()
+Device decriptor is below,
+Bus 002 Device 006: ID 0781:55e8 SanDisk Corp. SanDisk 3.2 Gen2
+Device Descriptor:
+  bLength                18
+  bDescriptorType         1
+  bcdUSB               3.20
+  bDeviceClass            0
+  bDeviceSubClass         0
+  bDeviceProtocol         0
+  bMaxPacketSize0         9
+  idVendor           0x0781 SanDisk Corp.
+  idProduct          0x55e8
+  bcdDevice            0.01
+  iManufacturer           1 SanDisk
+  iProduct                2 SanDisk 3.2 Gen2
+  iSerial                 3 03021707022525140940
+  bNumConfigurations      1
+  Configuration Descriptor:
+    bLength                 9
+    bDescriptorType         2
+    wTotalLength       0x0079
+    bNumInterfaces          1
+    bConfigurationValue     1
+    iConfiguration          0
+    bmAttributes         0x80
+      (Bus Powered)
+    MaxPower              896mA
+    Interface Descriptor:
+      bLength                 9
+      bDescriptorType         4
+      bInterfaceNumber        0
+      bAlternateSetting       0
+      bNumEndpoints           2
+      bInterfaceClass         8 Mass Storage
+      bInterfaceSubClass      6 SCSI
+      bInterfaceProtocol     80 Bulk-Only
+      iInterface              0
+      Endpoint Descriptor:
+        bLength                 7
+        bDescriptorType         5
+        bEndpointAddress     0x82  EP 2 IN
+        bmAttributes            2
+          Transfer Type            Bulk
+          Synch Type               None
+          Usage Type               Data
+        wMaxPacketSize     0x0400  1x 1024 bytes
+        bInterval               0
+        bMaxBurst              15
+      Endpoint Descriptor:
+        bLength                 7
+        bDescriptorType         5
+        bEndpointAddress     0x01  EP 1 OUT
+        bmAttributes            2
+          Transfer Type            Bulk
+          Synch Type               None
+          Usage Type               Data
+        wMaxPacketSize     0x0400  1x 1024 bytes
+        bInterval               0
+        bMaxBurst              15
+    Interface Descriptor:
+      bLength                 9
+      bDescriptorType         4
+      bInterfaceNumber        0
+      bAlternateSetting       1
+      bNumEndpoints           4
+      bInterfaceClass         8 Mass Storage
+      bInterfaceSubClass      6 SCSI
+      bInterfaceProtocol     98
+      iInterface              0
+      Endpoint Descriptor:
+        bLength                 7
+        bDescriptorType         5
+        bEndpointAddress     0x01  EP 1 OUT
+        bmAttributes            2
+          Transfer Type            Bulk
+          Synch Type               None
+          Usage Type               Data
+        wMaxPacketSize     0x0400  1x 1024 bytes
+        bInterval               0
+        bMaxBurst               0
+        Command pipe (0x01)
+      Endpoint Descriptor:
+        bLength                 7
+        bDescriptorType         5
+        bEndpointAddress     0x84  EP 4 IN
+        bmAttributes            2
+          Transfer Type            Bulk
+          Synch Type               None
+          Usage Type               Data
+        wMaxPacketSize     0x0400  1x 1024 bytes
+        bInterval               0
+        bMaxBurst              15
+        MaxStreams             32
+        Status pipe (0x02)
+      Endpoint Descriptor:
+        bLength                 7
+        bDescriptorType         5
+        bEndpointAddress     0x82  EP 2 IN
+        bmAttributes            2
+          Transfer Type            Bulk
+          Synch Type               None
+          Usage Type               Data
+        wMaxPacketSize     0x0400  1x 1024 bytes
+        bInterval               0
+        bMaxBurst              15
+        MaxStreams             32
+        Data-in pipe (0x03)
+      Endpoint Descriptor:
+        bLength                 7
+        bDescriptorType         5
+        bEndpointAddress     0x03  EP 3 OUT
+        bmAttributes            2
+          Transfer Type            Bulk
+          Synch Type               None
+          Usage Type               Data
+        wMaxPacketSize     0x0400  1x 1024 bytes
+        bInterval               0
+        bMaxBurst              15
+        MaxStreams             32
+        Data-out pipe (0x04)
+Binary Object Store Descriptor:
+  bLength                 5
+  bDescriptorType        15
+  wTotalLength       0x002a
+  bNumDeviceCaps          3
+  USB 2.0 Extension Device Capability:
+    bLength                 7
+    bDescriptorType        16
+    bDevCapabilityType      2
+    bmAttributes   0x0000f41e
+      BESL Link Power Management (LPM) Supported
+    BESL value     1024 us
+    Deep BESL value    61440 us
+  SuperSpeed USB Device Capability:
+    bLength                10
+    bDescriptorType        16
+    bDevCapabilityType      3
+    bmAttributes         0x00
+    wSpeedsSupported   0x000e
+      Device can operate at Full Speed (12Mbps)
+      Device can operate at High Speed (480Mbps)
+      Device can operate at SuperSpeed (5Gbps)
+    bFunctionalitySupport   1
+      Lowest fully-functional device speed is Full Speed (12Mbps)
+    bU1DevExitLat          10 micro seconds
+    bU2DevExitLat        2047 micro seconds
+  SuperSpeedPlus USB Device Capability:
+    bLength                20
+    bDescriptorType        16
+    bDevCapabilityType     10
+    bmAttributes         0x00000001
+      Sublink Speed Attribute count 1
+      Sublink Speed ID count 0
+    wFunctionalitySupport   0x1100
+    bmSublinkSpeedAttr[0]   0x000a4030
+      Speed Attribute ID: 0 10Gb/s Symmetric RX SuperSpeedPlus
+    bmSublinkSpeedAttr[1]   0x000a40b0
+      Speed Attribute ID: 0 10Gb/s Symmetric TX SuperSpeedPlus
+Device Status:     0x0000
+  (Bus Powered)
 
-Thanks,
-Armin Wolf
+So ignore UAS driver for this device.
 
-> +	}
-> +
->   	msi_wmi_platform_debugfs_init(data);
->  =20
->   	msi_wmi_platform_profile_setup(data);
-> @@ -1252,6 +1353,14 @@ static int msi_wmi_platform_probe(struct wmi_devi=
-ce *wdev, const void *context)
->   	return msi_wmi_platform_hwmon_init(data);
->   }
->  =20
-> +static void msi_wmi_platform_remove(struct wmi_device *wdev)
-> +{
-> +	struct msi_wmi_platform_data *data =3D dev_get_drvdata(&wdev->dev);
-> +
-> +	if (data->quirks->charge_threshold)
-> +		battery_hook_unregister(&data->battery_hook);
-> +}
-> +
->   static const struct wmi_device_id msi_wmi_platform_id_table[] =3D {
->   	{ MSI_PLATFORM_GUID, NULL },
->   	{ }
-> @@ -1265,6 +1374,7 @@ static struct wmi_driver msi_wmi_platform_driver =
-=3D {
->   	},
->   	.id_table =3D msi_wmi_platform_id_table,
->   	.probe =3D msi_wmi_platform_probe,
-> +	.remove =3D msi_wmi_platform_remove,
->   	.no_singleton =3D true,
->   };
->   module_wmi_driver(msi_wmi_platform_driver);
+Signed-off-by: Hongyu Xie <xiehongyu1@kylinos.cn>
+---
+ drivers/usb/storage/unusual_uas.h | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/drivers/usb/storage/unusual_uas.h b/drivers/usb/storage/unusual_uas.h
+index d460d71b42578..1477e31d77632 100644
+--- a/drivers/usb/storage/unusual_uas.h
++++ b/drivers/usb/storage/unusual_uas.h
+@@ -52,6 +52,13 @@ UNUSUAL_DEV(0x059f, 0x1061, 0x0000, 0x9999,
+ 		USB_SC_DEVICE, USB_PR_DEVICE, NULL,
+ 		US_FL_NO_REPORT_OPCODES | US_FL_NO_SAME),
+ 
++/* Reported-by: Zhihong Zhou <zhouzhihong@greatwall.com.cn> */
++UNUSUAL_DEV(0x0781, 0x55e8, 0x0000, 0x9999,
++		"SanDisk",
++		"",
++		USB_SC_DEVICE, USB_PR_DEVICE, NULL,
++		US_FL_IGNORE_UAS),
++
+ /* Reported-by: Hongling Zeng <zenghongling@kylinos.cn> */
+ UNUSUAL_DEV(0x090c, 0x2000, 0x0000, 0x9999,
+ 		"Hiksemi",
+-- 
+2.25.1
+
 
