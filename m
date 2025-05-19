@@ -1,158 +1,104 @@
-Return-Path: <linux-kernel+bounces-653599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-653602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD3C5ABBB86
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 12:55:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98211ABBB8E
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 12:57:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B32CD189A93B
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 10:55:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F83D17C0B5
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 10:57:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD9872749C8;
-	Mon, 19 May 2025 10:55:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 322AA1F5833;
+	Mon, 19 May 2025 10:57:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="If2rhX/n"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="EWqcA/6Y"
+Received: from out-170.mta1.migadu.com (out-170.mta1.migadu.com [95.215.58.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D17F272E51
-	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 10:55:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 341222036FF
+	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 10:57:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747652119; cv=none; b=vAqYCSMy7zsw+/oY1nnamXGAaBXb3OW18UmheaNDDa+go21BNpnvQ15rWec4PjAF00/knVuLUYSZ+E+bF7+fcMlUESirBf0CJnbr5IMIU9dGzk5QiVqC4QOck+ynfR0DNawHAWdjCzG2TxrPRYupqkMdo5022QZIJVL+gkPs/7A=
+	t=1747652225; cv=none; b=PjRSEj321knOmS4rAN+a7OY5HTyJUeXaJq2QTfWUN8yVSPJ9d5wfsT0r94w6kQJ4bRSSYO/TmN747M4m2mWXRO0OyvGH/k9VlqKKMlT6WAN0cTtRg3rRWWU6O6tRnj/WodD5Dlg27YRMN2OXjicdzvtwgNgFBeeyXWXll1WMfSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747652119; c=relaxed/simple;
-	bh=PzfkeF67xi2GoMUYcGvqwEOhE8nFTMY+yeJf+y2fnOY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=O4VsFq4DuRhqOKKUjk1mrHxue5I+LgFZY0WB/c8/I0SlDZgd8vNtjp3WKOZc2KOsQe5rTXKRKkfwDAF5tNSy9YfJ9XECBEr4RLrSFMaj0WoTTidpJhNtjDTCttCWpUPQHfwmEy7eGliv5HYP+ehjeb1Q9vURGGjago6lpwuLd3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=If2rhX/n; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-43d0618746bso33233695e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 03:55:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1747652115; x=1748256915; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ueJhJRaSbKSvp1WqYqL5yk7HRHK1xuho6oDidakstGA=;
-        b=If2rhX/nr5v8PDP7bji+SCVMK+XXyBD72tweavL7Ip9meDI4Iv3NTfLO1VMrcSl+xs
-         OQMLLOTaRpGMvUToyCypuVLr39FYyPkp4x2U6c2yyD44EwJTFoXtoKHnNTnHKL8FF6fm
-         n+s+YEXQYtBgHiJw/ev97UNQJo9DOSc/feCVs0gdybUS7vUhRjB6oXQ8mW6i0hCfq259
-         Plall4NOjo9LzAayS6jc4MrzOiNs3GST5yO1h71KUdeZhcJiaHwtqZeSYUfYFeqUK4+z
-         KP5jKBSWu1qkRfc1zFTk2htUxQjnQ/8doolY7TfW8j4+AyZYBvmIyAXkuV7yRKbKTLdn
-         CHpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747652115; x=1748256915;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ueJhJRaSbKSvp1WqYqL5yk7HRHK1xuho6oDidakstGA=;
-        b=qxkUCEeX4a0TrEFNoRJRYvQgglfIOVsGv00IxWFYbm2f1XfFpbS0v3JLcwn7gbZD6o
-         MeO0oKeU0HjVXv8we+DEk22yfQLKu95XjcIbVs4/6OykXrjxXrEZQzhuQZWTKZn/WaQA
-         oKYhGHHCzCiiDevT4ecBLh57W815NZgh4f3kXn0IQL9YUlOB5KAsQNUx/JaCWE4KPfOp
-         s+sqUsZ+MaMztiu8nuJscTO4EYDsKA5hCFlxg5MIk2GvbJVGR8DnnyBTjhQIfhMNm5x2
-         w9fX3Dc0Wj6CICvo5cUtKvCTHnDfPApwdk2QN+eS37j2hMv1yIA9tR2R66bTkK+/E6wU
-         t2jQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX5WWgPf5VbvYWgfDmeUBAgS4cpdJL8O7ROxI5N3d/8TvJ1sCG5/atq4vdZGju+V4GvOLxysmhBKbXb2To=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWo8l+XOLHynF9rdfQuxSaezLz3Z2ry5NKQw1qxvc8ImCMIspy
-	ZFsYGl23oaax+UWTJOJj1WCGU0uOmV4m5buXEZq53EGwIJoJ+WbJ/r1mZiQvEZ5CGw0=
-X-Gm-Gg: ASbGnctls3BQiNmhj5X/2VZLmRpUpEYpigQ4DxotS2itjZDec6CwSm7eVLm82D4FRFT
-	FTkiFr07/IeJAv1OlHXKB+ucbAMonNCrarVT6mV9I/kmDBWXYObPS4BaADQ/lWwc76BVkFHmiK9
-	hdCU9H2yfKOsgOGjSoUN87/fe3yCcoG9qzZ3sZDnRg1a3QPd0zqBj6v82Mkc1fME/QoVhXgf59y
-	iIRomogXtKw47ZCWvYjHyFLiGZDzLHnqICsqqY2oPMOXALgWP6HXnDuVix3T9+N7/hN+PxYqdHd
-	rxwAb1uwS/Bjq00KhXkAvQB9cZc6LhyEawrgM2GCN+GP/lSIEOMAQwzp0vKlX+s4vG9Py7fguDr
-	R6u5QUpJ+f6U3EDEP
-X-Google-Smtp-Source: AGHT+IECzMkl/j8ndcEIBGJahHduWyX4b0BqqSZwZhjdHPF7JoURouc9w8pWFfoFilDuHYffnnZaZw==
-X-Received: by 2002:a05:600c:c05:b0:43c:f689:dd with SMTP id 5b1f17b1804b1-442feffb593mr113388045e9.19.1747652115507;
-        Mon, 19 May 2025 03:55:15 -0700 (PDT)
-Received: from [192.168.0.34] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-442f8ab839esm166199545e9.17.2025.05.19.03.55.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 19 May 2025 03:55:15 -0700 (PDT)
-Message-ID: <88f6fea5-89f2-4128-a00b-dff760bc42b8@linaro.org>
-Date: Mon, 19 May 2025 11:55:14 +0100
+	s=arc-20240116; t=1747652225; c=relaxed/simple;
+	bh=pLbbXHsxCQKulVcxyJdYcSQPgL54r5yeJRnX/H9pEzY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=M0MW7VzhHcpNDdwuuvxOUwllZLP44nuZPoBpvBbFjHyKTDY0fHIGylZjVjG84eAsNAmHG6iAECdMbEziJEqyZPgHcDokhoetugTzrITU0DAwAVNngN8/4IZf6guH18YOhVvOuqpAyqoK3DshL9xEYPjgFwplWVSXGjsGNAPHsdg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=EWqcA/6Y; arc=none smtp.client-ip=95.215.58.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1747652208;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=1Ri5khetRAp7XKEBwxtbGIwt1g/atUnCLsuPDPXBtD4=;
+	b=EWqcA/6Y0dGVU0c2wnSXKbw3+3rSJYJZV23biDj+ZGYwv8uyxkww1n7vXUsd1+LS9TUNB3
+	8/wZQvYnTQ0ISCf4o9pvsf0ZMq5kQvIWZLPps3Sw3Q/lZY7O+X3UHoeDwYPtb85SgmwC5T
+	pCZubvY1Bbyje37Qi2SvNgCAnlmfVpE=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] ALSA: n64: Replace deprecated strcpy() with strscpy()
+Date: Mon, 19 May 2025 12:56:25 +0200
+Message-ID: <20250519105628.491675-1-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/2] media: venus: Add a check for packet size after
- reading from shared memory
-To: Dikshita Agarwal <quic_dikshita@quicinc.com>,
- Vikash Garodia <quic_vgarodia@quicinc.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil <hverkuil@xs4all.nl>
-Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-kernel@vger.kernel.org, Vedang Nagar <quic_vnagar@quicinc.com>
-References: <20250519-venus-fixes-v4-0-3ae91d81443d@quicinc.com>
- <20250519-venus-fixes-v4-1-3ae91d81443d@quicinc.com>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <20250519-venus-fixes-v4-1-3ae91d81443d@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On 19/05/2025 08:12, Dikshita Agarwal wrote:
-> From: Vedang Nagar <quic_vnagar@quicinc.com>
-> 
-> Add a check to ensure that the packet size does not exceed the number of
-> available words after reading the packet header from shared memory. This
-> ensures that the size provided by the firmware is safe to process and
-> prevent potential out-of-bounds memory access.
-> 
-> Fixes: d96d3f30c0f2 ("[media] media: venus: hfi: add Venus HFI files")
-> Signed-off-by: Vedang Nagar <quic_vnagar@quicinc.com>
-> Co-developed-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
-> Signed-off-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
-> ---
->   drivers/media/platform/qcom/venus/hfi_venus.c | 4 ++++
->   1 file changed, 4 insertions(+)
-> 
-> diff --git a/drivers/media/platform/qcom/venus/hfi_venus.c b/drivers/media/platform/qcom/venus/hfi_venus.c
-> index b5f2ea8799507f9b83f1529e70061ea89a9cc5c8..c982f4527bb0b9f9ef9715c6c1dc26729f0fc079 100644
-> --- a/drivers/media/platform/qcom/venus/hfi_venus.c
-> +++ b/drivers/media/platform/qcom/venus/hfi_venus.c
-> @@ -239,6 +239,7 @@ static int venus_write_queue(struct venus_hfi_device *hdev,
->   static int venus_read_queue(struct venus_hfi_device *hdev,
->   			    struct iface_queue *queue, void *pkt, u32 *tx_req)
->   {
-> +	struct hfi_pkt_hdr *pkt_hdr = NULL;
->   	struct hfi_queue_header *qhdr;
->   	u32 dwords, new_rd_idx;
->   	u32 rd_idx, wr_idx, type, qsize;
-> @@ -304,6 +305,9 @@ static int venus_read_queue(struct venus_hfi_device *hdev,
->   			memcpy(pkt, rd_ptr, len);
->   			memcpy(pkt + len, queue->qmem.kva, new_rd_idx << 2);
->   		}
-> +		pkt_hdr = (struct hfi_pkt_hdr *)(pkt);
-> +		if ((pkt_hdr->size >> 2) != dwords)
-> +			return -EINVAL;
->   	} else {
->   		/* bad packet received, dropping */
->   		new_rd_idx = qhdr->write_idx;
-> 
+strcpy() is deprecated; use strscpy() instead.
 
-Yes, validating the pkt header against the expected/used dwords is a 
-valid check.
+No functional changes intended.
 
-One thing I'm finding difficult to do with this code is get straight in 
-my head why we are continuously shifting >> 2 and then in the other 
-direction << 2
+Link: https://github.com/KSPP/linux/issues/88
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+---
+ sound/mips/snd-n64.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-Surely a candidate fragment for some rationalisation down to
+diff --git a/sound/mips/snd-n64.c b/sound/mips/snd-n64.c
+index bff6d85b8fe2..e1b2ff65d850 100644
+--- a/sound/mips/snd-n64.c
++++ b/sound/mips/snd-n64.c
+@@ -13,6 +13,7 @@
+ #include <linux/module.h>
+ #include <linux/platform_device.h>
+ #include <linux/spinlock.h>
++#include <linux/string.h>
+ 
+ #include <sound/control.h>
+ #include <sound/core.h>
+@@ -327,14 +328,14 @@ static int __init n64audio_probe(struct platform_device *pdev)
+ 		goto fail_dma_alloc;
+ 
+ 	pcm->private_data = priv;
+-	strcpy(pcm->name, "N64 Audio");
++	strscpy(pcm->name, "N64 Audio");
+ 
+ 	snd_pcm_set_ops(pcm, SNDRV_PCM_STREAM_PLAYBACK, &n64audio_pcm_ops);
+ 	snd_pcm_set_managed_buffer_all(pcm, SNDRV_DMA_TYPE_VMALLOC, card->dev, 0, 0);
+ 
+-	strcpy(card->driver, "N64 Audio");
+-	strcpy(card->shortname, "N64 Audio");
+-	strcpy(card->longname, "N64 Audio");
++	strscpy(card->driver, "N64 Audio");
++	strscpy(card->shortname, "N64 Audio");
++	strscpy(card->longname, "N64 Audio");
+ 
+ 	irq = platform_get_irq(pdev, 0);
+ 	if (irq < 0) {
+-- 
+2.49.0
 
-dwords = *rd_ptr >> 2;
-if (!dwords >> 2)
-     return -EBAD;
-
-I count six shifts in twenty LOC or at least four shifts more than we 
-should be doing if we just worked this over a bit.
-
-Anyway.
-
-Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 
