@@ -1,138 +1,145 @@
-Return-Path: <linux-kernel+bounces-652967-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-652969-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC451ABB2EC
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 03:39:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C9CBABB2F1
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 03:42:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2586D7A46BB
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 01:38:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EC96B7A4158
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 01:41:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D300B1A38F9;
-	Mon, 19 May 2025 01:39:09 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CFF61A073F;
+	Mon, 19 May 2025 01:42:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NYu//Tqo"
+Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D66623B2A0;
-	Mon, 19 May 2025 01:39:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B49C4C8F
+	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 01:42:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747618749; cv=none; b=Nw0IHBEhqyMgSfH8mxezrlskiJcHUnn8TgBZ5U61CMPlXxe7/EJV8YLVT3sG/66ySDjPSSsQPQKq5kE1x0V20Kb2+3/TQJRgylI/sMGtv9RdOx+janPaqLqLZSN5wzKZY5xqHtUDm1wwf48lsul0UPlw/HUPMRqcwpJ+iavDkkM=
+	t=1747618931; cv=none; b=hruzQ3JiwTJ9WnBBKlyP53rA4d/yYhYsLOd/nzdUsvWhwUwgstDDkMx7PP2uhc8DtZcTHdL+0i6Uc7+4uUAOV4Qkl0EEBAmjtbwbyl+0ZywpWr9X0Nm3tMTpuQDPy0j3lcib3yt1bU6pmLyqlz2EPhEqzOGRHrP/ZQVmUd4VX30=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747618749; c=relaxed/simple;
-	bh=7olO0lQHdVd5lEJRelinV+eG4Jn3HdEuAmugc5pWJfU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OygGbBtNw1b3vXRtpIfl2g3DpdHRzikGSHZrtM746PpAJ0UgIMCzkRr4MGLhRjPc+6DLPrPIz9rb+DP1GRf+yHBoabBcjqXIWkexlt19l4rZoBb37GADeAWak+slninBu7gmUUA5qTX+o/TuJSigqZvZkkB1Qy+B3vXytPlnabM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4b10hC4d9Bz4f3jMN;
-	Mon, 19 May 2025 09:38:35 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 12DE81A0A2D;
-	Mon, 19 May 2025 09:39:02 +0800 (CST)
-Received: from [10.67.109.79] (unknown [10.67.109.79])
-	by APP4 (Coremail) with SMTP id gCh0CgD3WF20iypoIMFVMw--.24259S2;
-	Mon, 19 May 2025 09:39:01 +0800 (CST)
-Message-ID: <b3630b74-2e13-4bf8-b6b5-d78b60057f14@huaweicloud.com>
-Date: Mon, 19 May 2025 09:39:00 +0800
+	s=arc-20240116; t=1747618931; c=relaxed/simple;
+	bh=gsoTiGSN6feFOfrLPgyZ4uJNIi8+OPTLwLnIDN9EBb0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=il0dJfY0dcJ7NvpvR0DRPi67w1hE0B0aYNIk51EUnQPzXfRum4uHmL1ay6Cm3Nuw+L0NVDWckph6TPsOLmgXkfNUKuScFWBKT4UmUmrnD3hf3JiECZQyKS0imPWYyjlXKTyn3PL/Ky5PDJz6CEwiSXgZO1Fj2uI91MWVYkm0tAs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NYu//Tqo; arc=none smtp.client-ip=209.85.219.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-6f2b04a6169so46759666d6.1
+        for <linux-kernel@vger.kernel.org>; Sun, 18 May 2025 18:42:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747618928; x=1748223728; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=WuYrsA5VycSdsang99hZsZXYsoGMpgxGYVc6khDgfmE=;
+        b=NYu//TqoLv/GcGIGkzWezOAnDL3I9KanuPXzfzXJADrJJc+Vl7PZXRaHFlnUqXu3fN
+         xxH2Vj8J+832KAivc5TvGvLCioQSdF/vcQlm2+V9jEl8RzZdSGgqeNyx0knzp17Se/7F
+         sN40XF9fX33wEH2ffi0KkYpuk8os8xMpdY7KGEJkUO/U093rvnBjowVAyWluSAap0b1Z
+         qx1/wTklfh5UcXyy3nANxjytJqWndtURTpU/KJ2FTyzODOIWWJ8I53d4h2R/DXtm5dUm
+         Pw0a6yRd7UVOooJZMAMEzF3a/uTC/zD+i1SNvpQH/XAs378JygaCrD16LeZSbIN1yRc5
+         kZJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747618928; x=1748223728;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WuYrsA5VycSdsang99hZsZXYsoGMpgxGYVc6khDgfmE=;
+        b=dadjOybGiizyysYVwktbuYZJ+lKQCJ1ycPuQ63s+rXFuZ7bE9C+W56npjA4bJ7PGGv
+         MkNQ/8YqYbLKmz0haabJHE7xf2jiX3hgD5Ya2uTcxmMj1z9K45732HCBElepGZRU0EIh
+         00gg3oiNewVCTEZ8A0bySQyGKKRjswC9K/VNmNdysAEiXXf9Whz2PwVSdus4TKYwSReR
+         64XEVPihLmlFFmi+t2ZEhXhdvzwzeZR+xYJe4RUbIDLTfQysysL36OEgjgR8fm71mJr+
+         zrvEh/hLsjF/pHspjdOxPLQuEg3gRR4/fyU0NzKzEwqp95QJKcfwc+P8tBZIIEJNBF3i
+         31cA==
+X-Gm-Message-State: AOJu0YyiOpfcjA/cerHAB2JK9FMWKybD+CL8IrEeQOy+pBIuKAu0YeJD
+	jrrJx24nVnNoQZxXRu0R4tUI7Mwe80ZQpZvYH6gu1523TtLV0eSCX6YaWeUs//0mlqs=
+X-Gm-Gg: ASbGncvo63eEGPLhC9YTj+PQJEqVER86XLNOfGBudRAtiAZG6xd1Y/2kKhLHjvZlw+X
+	rU8HSAvf6SrUiZKljg4wcZ2Xr9HDBhW0VLDRy/yIccZULmX1skWGxqlElFFKP0MtAAdgD+TkTvl
+	fXxrc5c6S5ip8FsS25B/5FI6082irW4K1PaOk3iHY53xtKMSKXLCGKTeFBuYkcgG7ENPGLXLoUO
+	06vck4FJx76SjIyMDuBPCDEFVcSh9sFV370fw8YlgyGHXX0j4nF7qw0q3cCIVJzUhZhN1l5hAAY
+	SMIbip8dGaH93g8aKB0lzDN4n37e2KeLciU+IsNwe7NudTL5XjEWhpRor54xg/o=
+X-Google-Smtp-Source: AGHT+IG05/xdIGHWltI/wOBJf0eMzpvX7s1TOBojQ6jFoSkSB5haV+38SL9/gkxntEyRZ2GQCKtH3w==
+X-Received: by 2002:a05:6214:ca2:b0:6f2:b7d4:afb9 with SMTP id 6a1803df08f44-6f8b2c379d0mr181327036d6.2.1747618928361;
+        Sun, 18 May 2025 18:42:08 -0700 (PDT)
+Received: from CNCMK0001D007E.ht.home ([2607:fa49:8c41:2600::f21d])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6f8b097b9aasm49007716d6.107.2025.05.18.18.42.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 18 May 2025 18:42:08 -0700 (PDT)
+From: chalianis1@gmail.com
+To: linux-kernel@vger.kernel.org
+Cc: Anis Chali <chalianis1@gmail.com>
+Subject: [PATCH] scripts: regdb2hex: add a script to convert regulatory.db.p7s to hex for net wireless certs.
+Date: Sun, 18 May 2025 21:42:04 -0400
+Message-ID: <20250519014204.304611-1-chalianis1@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] padata: do not leak refcount in reorder_work
-To: Dominik Grzegorzek <dominik.grzegorzek@oracle.com>,
- Steffen Klassert <steffen.klassert@secunet.com>,
- Daniel Jordan <daniel.m.jordan@oracle.com>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>,
- Chen Ridong <chenridong@huawei.com>,
- "open list:PADATA PARALLEL EXECUTION MECHANISM"
- <linux-crypto@vger.kernel.org>,
- "open list:PADATA PARALLEL EXECUTION MECHANISM"
- <linux-kernel@vger.kernel.org>
-References: <20250518174531.1287128-1-dominik.grzegorzek@oracle.com>
-Content-Language: en-US
-From: Chen Ridong <chenridong@huaweicloud.com>
-In-Reply-To: <20250518174531.1287128-1-dominik.grzegorzek@oracle.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:gCh0CgD3WF20iypoIMFVMw--.24259S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Kw15Gr1UXrWDurWfWr1xZrb_yoW8AF18pr
-	W5Cr9rXFW8try5Aa4Uta1rZr1093Wjgw1fKan5Jr1xAry3GFy09w1Uta4SgFWvvrWktwnr
-	Za1qqFZ09a9rAF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUylb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAK
-	I48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
-	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xII
-	jxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw2
-	0EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x02
-	67AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxUwxhLUUUUU
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
+Content-Transfer-Encoding: 8bit
 
+From: Anis Chali <chalianis1@gmail.com>
 
+extracts the certificate from regulatory.db.p7s and generate a hex file usable
+by the kernel source code, after that take the result and put it with a patch to the kernel
+source tree under net/wireless/certs
 
-On 2025/5/19 1:45, Dominik Grzegorzek wrote:
-> A recent patch that addressed a UAF introduced a reference count leak:
-> the parallel_data refcount is incremented unconditionally, regardless
-> of the return value of queue_work(). If the work item is already queued,
-> the incremented refcount is never decremented.
-> 
-> Fix this by checking the return value of queue_work() and decrementing
-> the refcount when necessary.
-> 
-> Resolves:
-> 
-> Unreferenced object 0xffff9d9f421e3d80 (size 192):
->   comm "cryptomgr_probe", pid 157, jiffies 4294694003
->   hex dump (first 32 bytes):
->     80 8b cf 41 9f 9d ff ff b8 97 e0 89 ff ff ff ff  ...A............
->     d0 97 e0 89 ff ff ff ff 19 00 00 00 1f 88 23 00  ..............#.
->   backtrace (crc 838fb36):
->     __kmalloc_cache_noprof+0x284/0x320
->     padata_alloc_pd+0x20/0x1e0
->     padata_alloc_shell+0x3b/0xa0
->     0xffffffffc040a54d
->     cryptomgr_probe+0x43/0xc0
->     kthread+0xf6/0x1f0
->     ret_from_fork+0x2f/0x50
->     ret_from_fork_asm+0x1a/0x30
-> 
-> Fixes: dd7d37ccf6b1 ("padata: avoid UAF for reorder_work")
-> Signed-off-by: Dominik Grzegorzek <dominik.grzegorzek@oracle.com>
-> ---
->  kernel/padata.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/kernel/padata.c b/kernel/padata.c
-> index b3d4eacc4f5d..7eee94166357 100644
-> --- a/kernel/padata.c
-> +++ b/kernel/padata.c
-> @@ -358,7 +358,8 @@ static void padata_reorder(struct parallel_data *pd)
->  		 * To avoid UAF issue, add pd ref here, and put pd ref after reorder_work finish.
->  		 */
->  		padata_get_pd(pd);
-> -		queue_work(pinst->serial_wq, &pd->reorder_work);
-> +		if (!queue_work(pinst->serial_wq, &pd->reorder_work))
-> +			padata_put_pd(pd);
->  	}
->  }
->  
+Signed-off-by: Anis Chali <chalianis1@gmail.com>
+---
+ scripts/regdb2hex.sh | 37 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 37 insertions(+)
+ create mode 100644 scripts/regdb2hex.sh
 
-Thank you. I missed this case.
-LGTM
-
-Thanks,
-Ridong
+diff --git a/scripts/regdb2hex.sh b/scripts/regdb2hex.sh
+new file mode 100644
+index 000000000000..b28912a79094
+--- /dev/null
++++ b/scripts/regdb2hex.sh
+@@ -0,0 +1,37 @@
++#! /usr/bin/env bash
++
++# This script extracts the certificate from regulatory.db.p7s and generate a hex file usable
++# by the kernel source code, after that take the result and put it with a patch to the kernel
++# source tree under net/wireless/certs
++# this will be added to shiped_certs
++# to verify that your certificate has been added successfully 
++# 1. check inside 
++# /proc/keys and you will see a line with asymetric issuer and a sha
++# 2. dmesg | grep -i x.509
++# cfg80211: Loaded X.509 cert '{issuer}: {sha}'
++
++if [ $# -lt 2 ]; then
++    echo "${0} <regulatory.db.p7s> <output-filename>"
++    exit 0
++fi
++
++trap '[ -e ${2}.x509 ] && rm ${2}.x509' SIGINT SIGTERM SIGQUIT 0
++
++openssl pkcs7 -in ${1} -inform DER -print_certs | openssl x509 -inform PEM -outform DER -out ${2}.x509
++
++hex_crt=$(od -An -v -tx1 < ${2}.x509 | sed -e 's/ /\n/g' | sed -e 's/^[0-9a-f]\+$/\0/;t;d' | sed -e 's/^/0x/;s/$/,/')
++
++echo "/* ${2}'s regdb certificate */" >> ${2}.hex
++
++cnt=0
++for h in ${hex_crt}; do
++    
++    cnt=$(( cnt + 1 ))
++    nl=$(( cnt % 8 ))
++    if [ "$nl" = "0" ]; then
++        echo " $h" >> ${2}.hex
++    else
++        echo -n " $h" >> ${2}.hex
++    fi
++
++done
+\ No newline at end of file
+-- 
+2.49.0
 
 
