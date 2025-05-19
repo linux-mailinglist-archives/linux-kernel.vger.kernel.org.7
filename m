@@ -1,162 +1,179 @@
-Return-Path: <linux-kernel+bounces-653702-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-653703-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F074EABBD11
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 13:58:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9728FABBD16
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 13:58:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1ADC118986C3
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 11:58:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 28C901789F0
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 11:58:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55AE8276034;
-	Mon, 19 May 2025 11:58:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85716277817;
+	Mon, 19 May 2025 11:58:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bG3NkFmM"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="IgT29pBY"
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62CDF275840;
-	Mon, 19 May 2025 11:58:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC6B12777E4;
+	Mon, 19 May 2025 11:58:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747655899; cv=none; b=VeMcaARQpIPOTd59HNhP1VO9Xfh2HZ+BiosDX8LZcdRxcwAFTH3zMvfE2B0y56JGHBFs+TghRqc5wD9jDoF5dDycYxFfA+J3sCcWJXW0+JX7PbIPkv0gP+WOSMxjAyENUm3N1J8SAs4UKrYTzA4SX1Ov7TRKrVRWN7hk1MKz5EQ=
+	t=1747655906; cv=none; b=lq1E4KeuplmDRmkMe7LbtSJaq3PsO95GMfNrSqqCiXokkGkOIwUm+agEiaaPXp+mAWjYG5z8DjPtnIvN29ppVFmMA+qIgllDmYk3N5R1O/gvc4PVOvYrrtKG414vIcdvvWYOkviMSmsD0aUx7rWO6p8Mtg+0g1wfv97PbEutwBM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747655899; c=relaxed/simple;
-	bh=Z9JbD8IB1GnpCS9qtautwpk4ez5vTFIL8zpyJ3eRpCI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KbP9d12u/dnVFcTAOPUh7F6KuH/LUO3yx7/NzbxfJ7hPSN0nmPFKEWQThdAKXF9tqViyQ5QAzRRlVufEN0ChbZSuNH4Nl4hJPYbohYcF5SPy6x3ntVAH6v8Uu0VCb5KqsS6tsIhJAYDQDveEmFPEI4lj6vKfd5N59OnSD8B6EXc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bG3NkFmM; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2302d90c7f7so54445535ad.3;
-        Mon, 19 May 2025 04:58:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747655897; x=1748260697; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=UeYE/ve3ScVgc6vDvChyrxgVb3RTOIVsd/hUlA5hwrc=;
-        b=bG3NkFmMx9BbOrJW/pRIhLuDoaOR/k+MHZ6lOgptAci1EznfBk/nMg3WA88+gmXune
-         1Ui/OLizgFaSRrkmM5GxRF/AynkZHhF5VELYS8Zuz2yomIJ0mCazQND1YxNFIBt3+un1
-         cUlTXSru+ES8ClsKYiael880U9jOGqXYBj4dwiSvLrLVEmpUdUvEPbM5KGQWFKi8MJhL
-         kgE8R93Oi0o6hkbawG4s/6NCZfJ//EkoLgDAIprErYJtMnemcE8yaZrAbvcWj7YqQ573
-         SdsEOXeD8SwR/P1klky7oda2NazrpIPFjCv9f1XoBWqUhNPEuEVyZKnZm3Na6PmjeNwu
-         Ss4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747655897; x=1748260697;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UeYE/ve3ScVgc6vDvChyrxgVb3RTOIVsd/hUlA5hwrc=;
-        b=TOumEqp3vyj/74XI7m243VSzCVy31Jt9wKn6GsiGnMrJsIDmw9Dma2MoGpwhcj+Qf+
-         xForoWHSc7Vo8w4rY36R113OocVuB08rJHooZ6KHiU8aaTjz07NB/drtaFe7s+65SHaw
-         Gt4WW5289v+uy00CjZQx7ehHkSJ3UCDGpc4aRZtEruki2XaoCqr5vddRCAl90ceMvGlZ
-         pgVLeajPJ0zKCFV1PwtSjm9TFQSU8bWvKVsDpOTBynbTnlvCpyJfc6mTxA105o/YRlT/
-         l+6IVf9nMpqXiZfxcKEis0TA6sf8qNJyrG1OZ9L0iWFL9mtcMf7bzWGuTNFxAhH6Ps/F
-         HZxw==
-X-Forwarded-Encrypted: i=1; AJvYcCWUdHzaJMxCf+XokieEEZM4jic+kZWt12VxCxq1rtwj5/qcVvJEnpZIIu1N2lEBcNSkglyQ+G6j02R+@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQGHwwpC8N2uJO1lkXAaV5azpzeKGKxW5xPdcdXP9LifMp/g4+
-	2m2ngUwUJVJoSuGM3Ow3oMbLzeijSRmF8u9LYV0BfJAn8fsM5FeICsJKCSY9iAdz
-X-Gm-Gg: ASbGncviDHGy7V7g4+cXqCwxd7YqF2D/fV2GGgBAi/CqavOexo0GgbPFoDxeBwcfDpR
-	WOhgLeL0F/JdFJ4mZxXLBNrjRULNq8KfcJKW/KmgRM77l31zlnMyAovoDZLy8oD3xMnBSvfaidN
-	ZWy7wEk2QGr9WrAbVTKZer/zGJvh6WQ8gilsv0fBmtDjuR7P28F3MKLa8ZldFyXkrBpFJNllVpT
-	jKegzIDFFIWQdD/2veU5oS6kBo0eYYRRSyBfXlvaZceEhbUfOTt8Ehby9SCDQiznzdwqfZiZ07u
-	B0mjH6CGd2IE6iy3YSA5g6emytcdwNcYApydHiK7RxJb8UY8ylCw+9BozQxmrkLMhWHC2SK+Ddy
-	hqqa3lp4m134xvAMA++gvLwf/uBw=
-X-Google-Smtp-Source: AGHT+IGOEh8NbLSE8slO8ikzUOgFSWvPQV3MD9xwXEE6Es9Z4gzKKb/25+c6pNh+epYMl0fN/UWqtw==
-X-Received: by 2002:a17:903:2f43:b0:22e:3c2:d477 with SMTP id d9443c01a7336-231d43bdf52mr195431745ad.25.1747655897474;
-        Mon, 19 May 2025 04:58:17 -0700 (PDT)
-Received: from [192.168.11.2] (FL1-119-244-79-106.tky.mesh.ad.jp. [119.244.79.106])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-231d4adbfe1sm58120175ad.66.2025.05.19.04.58.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 19 May 2025 04:58:17 -0700 (PDT)
-Message-ID: <1720c440-719b-4bc9-9685-148c20d4cdfe@gmail.com>
-Date: Mon, 19 May 2025 20:58:14 +0900
+	s=arc-20240116; t=1747655906; c=relaxed/simple;
+	bh=W6vNJt1RMhyXz8ga5g+DqhM5Q30vnvMDQZ0Zo9Ry6AE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=aVxFqDSHCGce2iBTAKP6tMgvn7OeK7sSgB2i/7FxjLtY/goVFbq4gATmKmphbmVoZZKTW/xJk8NwprD85lZM3M7FadpFnNlcOfYtFVHUzIfxGg6HEHMt29bCzv7ko+rs41ltKz6AIYx3iZuWROPNpwC7jv4qGw0KNmAfGHSq3iY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=IgT29pBY; arc=none smtp.client-ip=217.70.183.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id CE63842E7E;
+	Mon, 19 May 2025 11:58:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1747655901;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kh9CSiQhvcyTLsM/Bz8dkPxEJqF9S3PrOOEfDd7a+xM=;
+	b=IgT29pBY4dxUjp9NxcjfY42GTiU5Mmwv45iHgcCl1FYwagG/e6p0mLdW4LzrQjS+YoIHO/
+	FnCi+f+o0UnykAkEoe4k6+gqMX41JyWro4D7cJ4fSeYnyIC+EiP611O0DbkK4cnFmdahr/
+	XwFxYH0i7oimkebEmFa7AMYhYeYuPXz/WHV/2Nc4DugKacKuJo5w6C0pBsZ1V3PiSP5QOC
+	57YFAEYYEInhdiyLZgmL1g+wVGP9IHATT8VTn42djFLXLBaowQW3nqC6DQgUhzgB9VUI1Q
+	+lutXTZETYo82rSJC7GNuEqEgCbzMisUeyZNJFLxujXiLvYI9x01UPrW9LSKIQ==
+Date: Mon, 19 May 2025 13:58:18 +0200
+From: Herve Codina <herve.codina@bootlin.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ Danilo Krummrich <dakr@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha
+ Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team
+ <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Michael
+ Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Andi
+ Shyti <andi.shyti@kernel.org>, Wolfram Sang
+ <wsa+renesas@sang-engineering.com>, Peter Rosin <peda@axentia.se>, Derek
+ Kiernan <derek.kiernan@amd.com>, Dragan Cvetic <dragan.cvetic@amd.com>,
+ Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh@kernel.org>, Saravana
+ Kannan <saravanak@google.com>, Bjorn Helgaas <bhelgaas@google.com>, Mark
+ Brown <broonie@kernel.org>, Len Brown <lenb@kernel.org>, Daniel Scally
+ <djrscally@gmail.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>, Wolfram Sang <wsa@kernel.org>,
+ Geert Uytterhoeven <geert+renesas@glider.be>, linux-kernel@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, linux-i2c@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-pci@vger.kernel.org,
+ linux-spi@vger.kernel.org, linux-acpi@vger.kernel.org, Allan Nielsen
+ <allan.nielsen@microchip.com>, Horatiu Vultur
+ <horatiu.vultur@microchip.com>, Steen Hegelund
+ <steen.hegelund@microchip.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v2 05/26] bus: simple-pm-bus: Populate child nodes at
+ probe
+Message-ID: <20250519135818.01db3341@bootlin.com>
+In-Reply-To: <aBy_aBkC7NpicXho@smile.fi.intel.com>
+References: <20250507071315.394857-1-herve.codina@bootlin.com>
+	<20250507071315.394857-6-herve.codina@bootlin.com>
+	<aBy_aBkC7NpicXho@smile.fi.intel.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH for-next v3 2/2] RDMA/rxe: Enable asynchronous prefetch
- for ODP MRs
-To: Leon Romanovsky <leon@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org, jgg@ziepe.ca,
- zyjzyj2000@gmail.com, Zhu Yanjun <yanjun.zhu@linux.dev>
-References: <20250513050405.3456-1-dskmtsd@gmail.com>
- <20250513050405.3456-3-dskmtsd@gmail.com> <20250518055405.GA7435@unreal>
-Content-Language: en-US
-From: Daisuke Matsuda <dskmtsd@gmail.com>
-In-Reply-To: <20250518055405.GA7435@unreal>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdefvddufedvucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtkeertdertdejnecuhfhrohhmpefjvghrvhgvucevohguihhnrgcuoehhvghrvhgvrdgtohguihhnrgessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepveeiffefgeeitdelleeigefhjeelueeuveekveetgeffheeltdekgeduiefggfdvnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomhephhgvrhhvvgdrtghoughinhgrsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeeguddprhgtphhtthhopegrnhgurhhihidrshhhvghvtghhvghnkhhosehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtoheprghnughrvgifsehluhhnnhdrtghhpdhrtghpthhtohepghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtoheprhgrfhgrvghlsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegurghkrheskhgvrhhnvghlrdhorhhgpdhrtghpthhto
+ hepshhhrgifnhhguhhosehkvghrnhgvlhdrohhrghdprhgtphhtthhopehsrdhhrghuvghrsehpvghnghhuthhrohhnihigrdguvgdprhgtphhtthhopehkvghrnhgvlhesphgvnhhguhhtrhhonhhigidruggv
+X-GND-Sasl: herve.codina@bootlin.com
 
+Hi Andy,
 
-On 2025/05/18 14:54, Leon Romanovsky wrote:
-> On Tue, May 13, 2025 at 05:04:05AM +0000, Daisuke Matsuda wrote:
->> Calling ibv_advise_mr(3) with flags other than IBV_ADVISE_MR_FLAG_FLUSH
->> invokes asynchronous request. It is best-effort, and thus can safely be
->> deferred to the system-wide workqueue.
->>
->> Signed-off-by: Daisuke Matsuda <dskmtsd@gmail.com>
->> Reviewed-by: Zhu Yanjun <yanjun.zhu@linux.dev>
->> ---
->>   drivers/infiniband/sw/rxe/rxe_odp.c | 84 ++++++++++++++++++++++++++++-
->>   1 file changed, 82 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/infiniband/sw/rxe/rxe_odp.c b/drivers/infiniband/sw/rxe/rxe_odp.c
->> index 4c98a02d572c..0f3b281a265f 100644
->> --- a/drivers/infiniband/sw/rxe/rxe_odp.c
->> +++ b/drivers/infiniband/sw/rxe/rxe_odp.c
->> @@ -425,6 +425,73 @@ enum resp_states rxe_odp_do_atomic_write(struct rxe_mr *mr, u64 iova, u64 value)
->>   	return RESPST_NONE;
->>   }
-> 
-> <...>
-> 
->> +static int rxe_init_prefetch_work(struct ib_pd *ibpd,
->> +				  enum ib_uverbs_advise_mr_advice advice,
->> +				  u32 pf_flags, struct prefetch_mr_work *work,
->> +				  struct ib_sge *sg_list, u32 num_sge)
-> 
-> There is no need one-time called function. It can be embedded into rxe_ib_advise_mr_prefetch().
+On Thu, 8 May 2025 17:27:52 +0300
+Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
 
-Certainly.
+> On Wed, May 07, 2025 at 09:12:47AM +0200, Herve Codina wrote:
+> > The simple-pm-bus drivers handles several simple bus. When it is used  
+> 
+> bus --> busses ?
+
+Yes sure.
 
 > 
->> +{
+> > with busses other than a compatible "simple-pm-bus", it don't populate
+> > its child devices during its probe.
+> > 
+> > This confuses fw_devlink and results in wrong or missing devlinks.
+> > 
+> > Once a driver is bound to a device and the probe() has been called,
+> > device_links_driver_bound() is called.
+> > 
+> > This function performs operation based on the following assumption:
+> >     If a child firmware node of the bound device is not added as a
+> >     device, it will never be added.
+> > 
+> > Among operations done on fw_devlinks of those "never be added" devices,
+> > device_links_driver_bound() changes their supplier.
+> > 
+> > With devices attached to a simple-bus compatible device, this change
+> > leads to wrong devlinks where supplier of devices points to the device
+> > parent (i.e. simple-bus compatible device) instead of the device itself
+> > (i.e. simple-bus child).
+> > 
+> > When the device attached to the simple-bus is removed, because devlinks
+> > are not correct, its consumers are not removed first.
+> > 
+> > In order to have correct devlinks created, make the simple-pm-bus driver
+> > compliant with the devlink assumption and create its child devices
+> > during its probe.  
 > 
-> <...>
+> ...
 > 
->> @@ -475,6 +542,8 @@ static int rxe_ib_advise_mr_prefetch(struct ib_pd *ibpd,
->>   				     u32 flags, struct ib_sge *sg_list, u32 num_sge)
->>   {
+> >  	if (match && match->data) {
+> >  		if (of_property_match_string(np, "compatible", match->compatible) == 0)  
 > 
-> <...>
-> 
->> +	queue_work(system_unbound_wq, &work->work);
-> 
-> How do you ensure that this work isn't running after RXE is destroyed?
+> Side note, there is an fwnode_is_device_compatible() API for such cases. And IIRC
+> there is also OF variant of it.
 
-I think we can use per-pd reference counter in struct rxe_pd.
-I will fix it in v4.
+fwnode_device_is_compatible() checked for all compatible string. I mean, if
+we have compatible = "foo,custom-bus", "simple-bus";
+fwnode_device_is_compatible() checking against "simple-bus" returns true.
 
-Thanks,
-Daisuke
+Here, we want "simple-bus" as the first position in the compatible string.
+In other word, we want to match the more specific compatible string as
+mentioned in the comment.
 
 > 
-> Thanks
+> > -			return 0;
+> > +			goto populate;
+> >  		else
+> >  			return -ENODEV;
+> >  	}  
 > 
->> +
->> +	return 0;
->>   }
->>   
->>   int rxe_ib_advise_mr(struct ib_pd *ibpd,
->> -- 
->> 2.43.0
->>
+> ...
+> 
+> > +	if (pdev->dev.of_node)  
+> 
+> Why do you need this check? AFAICS it dups the one the call has already in it.
 
+of_platform_populate() was called only if an OF node is present.
+I want to call of_platform_depopulate() on removal also only if an OF node
+is present.
+
+I don't see the other call that duplicated this check.
+
+Can you clarify?
+
+> 
+> > +		of_platform_depopulate(&pdev->dev);  
+> 
+
+Best regards,
+Hervé
 
