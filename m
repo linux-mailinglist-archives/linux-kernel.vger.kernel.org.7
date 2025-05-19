@@ -1,89 +1,80 @@
-Return-Path: <linux-kernel+bounces-653933-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-653935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4ECCFABC0BE
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 16:34:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6ECFAABC0DD
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 16:35:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5A233BB4FE
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 14:33:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 258B23BE48B
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 14:35:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DCB0280A50;
-	Mon, 19 May 2025 14:34:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E32A828541A;
+	Mon, 19 May 2025 14:34:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zR0oErhb"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cPyfI/TT"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3904427979C
-	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 14:34:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85F1C28469E
+	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 14:34:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747665247; cv=none; b=ld5KEW2xthl09MzXo5qFYYyAy47/eTR9S0N4Q6fN5f/ftuGUugQkDFswloLuAa0nyZR3jFTA+mLcjjjsqIt1cbdKt/7D44nj25Fzssb8R5nLgyrpCaWbNhZgkUq72IakeP1vHjsvGJJ7rPx5QRChHBPOhUyvke8eLp2zHF2eQEs=
+	t=1747665295; cv=none; b=OSf2NYOn4YYEo12sXbhjxyAVf9SgFsHqpo0ReW7fq/3KJnTNWBITpa2wg/ojLtvzL7L8DZIOgt+AIy+ZHMUTPPdP+tQUVVPOUB3j/LAEQJ0fF7Hnapi57BwplYUNiqtM0H7T+A5z6NkzFWWAX1UU93sq1dohy9KrmSH8BTAmqds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747665247; c=relaxed/simple;
-	bh=I9lzMgSvH1LyOBPTWN5xRM8c411OK22ElmVpA1UPYeY=;
+	s=arc-20240116; t=1747665295; c=relaxed/simple;
+	bh=nr5c60vGGPzzvHWlQvVGj06br0H/xDkRR6GTMy4UIMY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cVIxl3Qjf03QMSRjD8iMXG2q8LScCdyftC9HkNv5Dc5ZGe/4gvd/FXL+izICYbUEJMjbZn093I0oYfG+WoUnvXqhtzzflzDuBZeReJo9F+mSTNt1Ji0CUGo70uVhCJijB0E/Hp6DL1KNvVJbFSWWJYKamomoQIBbc6yAQtOJKyc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zR0oErhb; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-6020053cbd5so548520a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 07:34:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1747665244; x=1748270044; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=CmGAnLS/NEWC0m080CBn1UiyJaS/KFlnJ1TZ/Bc5c1s=;
-        b=zR0oErhbePh0YDUyWuBqMCOEa3HrHWnSrX+n9zqo/A6g8NDbUtuy9eV4fdvum67mnX
-         nQGhHUgrJ+MYCHuOmkIjRyR+GzHzoOqjjdZNHlJNp7w4Dk3hopa9FnrlxtTxdYeHuOKQ
-         ZpR2WoK6tGgqv4VRcAjdTXK9PsBQwBDN+qgnXwHgqaDDoaKaiTFz6rTtO/VJ75Tt9zg7
-         WJdlrSFxMrEjxoDT99+tbfSjf9pNLXKl8VarUK8tj+XgVv3Wv5FK+XeRi7o2eLaW25w5
-         yPaHdBXoIPFFPicmY11XPkRrGRDY/VyKt7KaUpTltr0vn2e2va4i4ZgTxICOWISDyrXw
-         vdPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747665244; x=1748270044;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CmGAnLS/NEWC0m080CBn1UiyJaS/KFlnJ1TZ/Bc5c1s=;
-        b=PwZisBe+9Xan0xfB0dK8YZqOzAoPmC3L+nsKuFgVg3brAhYrrhszhcPI4IGRbG/yEf
-         R3ENgyrTUfZEQukIBds+bVdmN5zi1/Wm1VnwEtY1zW65Ejg4Nx2UjHUilGJFSCWwcFQY
-         i+IZ1IVfGWX+4xs7j/R29oHKNC2veVWSHkbkGqSYkYsTXcfYKjtgODi6fxY20laQgttH
-         uyyEz4AvpqBnrlXQ1oMA+bpQNpHL+HnJ6kVIrzVMAKdAcT8fgZqQvT6clh2UPFDKGupa
-         rX36fOIofA3b0RI8DjUlrCPo7XkQgUc/b/V1pRZNg2xZrAvPHyir9wuceTKNbjQiqFq7
-         U3Tg==
-X-Forwarded-Encrypted: i=1; AJvYcCWmHXdsCd1Ixw+Xac1rOmlj5IAn8zdSEkcGxzPE6dRUU7w0JBbkMXl+FIc5r2oevRRWu54MrWRjM9jbR0s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxW3gNoI7Ql7y049JwN7kaigR93fwr1LD2H/LZNcsBNfeVFciDd
-	DfnSw40aHChAaHSsl+LKMceBz41RwDou4I3gayuRaCZhurM3lcfZVxoL9j9qXKPOOQ==
-X-Gm-Gg: ASbGncv79UMi6yiThkWaIAE3KlD01yV7OAUlSkoxXrYASRFvU1Njr8jeFHlTyKRq1xW
-	DNtv7BcfqInmPa2ISup0rfu5llQtAHXjkChPKJpafhV1+SopdNOiZyygyzp8hxc2ce1tkOWRP7M
-	K5nutBitPIUOmLYyAeokWVHqIbS9nTot7NhLk0+NhzCuNQ5EV0UM3NWVBXI4STrXC46srN/K2jc
-	aujwtRIUOKNvciyA+TPV4Nob8aqbzY6IDXdNvtzrjpg0WBENbOmp58d7VhpKR+M0gSAz20Xx2Ws
-	pa/Sg3+g+XKoJh3zCMz1cCugvj6bc/keIe51i+6jgbsypRnRshH3N+TDpZJpwCL0YlEDsl+Q2Da
-	6dUsFa9n7LQ==
-X-Google-Smtp-Source: AGHT+IFE+1r+T6jz9dM4N+qGxperYjlRM0Iv/bL9K0RKQrkNyUXEkMkSDlbXHKfSpRXLx2HecBekhg==
-X-Received: by 2002:a17:906:dc95:b0:ad5:5447:6ec2 with SMTP id a640c23a62f3a-ad55447bff9mr850796666b.53.1747665244323;
-        Mon, 19 May 2025 07:34:04 -0700 (PDT)
-Received: from google.com (68.57.204.35.bc.googleusercontent.com. [35.204.57.68])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad52d43840esm594158466b.87.2025.05.19.07.34.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 May 2025 07:34:03 -0700 (PDT)
-Date: Mon, 19 May 2025 14:34:00 +0000
-From: Quentin Perret <qperret@google.com>
-To: Marc Zyngier <maz@kernel.org>
-Cc: Vincent Donnefort <vdonnefort@google.com>, oliver.upton@linux.dev,
-	joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com,
-	catalin.marinas@arm.com, will@kernel.org,
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org, kernel-team@android.com
-Subject: Re: [PATCH v4 09/10] KVM: arm64: Stage-2 huge mappings for np-guests
-Message-ID: <aCtBWPe9Vjy04Srg@google.com>
-References: <20250509131706.2336138-1-vdonnefort@google.com>
- <20250509131706.2336138-10-vdonnefort@google.com>
- <865xi0fzwk.wl-maz@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=kdubXcLYTWc25Ax5Ea3NE+eJioMsFh73iRVIqHPuvTRU+aM+TL4gqKmF4I1o0n41EqFrR6sb2oWZPXKe/ioHIv7qs2qjR2I0jCnxdlSgsckDSPN7Xf9dN28nImsYpTWPLcht+LN6vmzOEjsA/fXEZwWRjgjqN8lKn/b6OT6mQqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cPyfI/TT; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1747665292;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lXzggVegcJaYU/PKMAlnm0SQ33yoeyXYBHu/n8B9S8s=;
+	b=cPyfI/TT8A/fXzjvKLFn6dANEqPiixzZSjDr/obVfLcr5/g6m+RRdpRpE53tM+mkxUeqt9
+	5uRqS/3qd/4EpL4fhFXsC8gfdMFYigncNdQpGAizSWsEH/SS4Qz6Nb3I5Va2lqTgJa41aH
+	q7TwmZJYCncthbAnyL5INKTzbFco9VU=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-132-SM5ICl_JOaSxmooY_RCiZg-1; Mon,
+ 19 May 2025 10:34:49 -0400
+X-MC-Unique: SM5ICl_JOaSxmooY_RCiZg-1
+X-Mimecast-MFC-AGG-ID: SM5ICl_JOaSxmooY_RCiZg_1747665288
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0060D195609E;
+	Mon, 19 May 2025 14:34:47 +0000 (UTC)
+Received: from localhost (unknown [10.72.112.83])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E16E11956096;
+	Mon, 19 May 2025 14:34:44 +0000 (UTC)
+Date: Mon, 19 May 2025 22:34:39 +0800
+From: Baoquan He <bhe@redhat.com>
+To: Kees Cook <kees@kernel.org>
+Cc: Coiby Xu <coxu@redhat.com>, Andrew Morton <akpm@linux-foundation.org>,
+	fuqiang wang <fuqiang.wang@easystack.cn>,
+	Vivek Goyal <vgoyal@redhat.com>, Dave Young <dyoung@redhat.com>,
+	kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
+	x86@kernel.org
+Subject: Re: [PATCH v4] x86/kexec: fix potential cmem->ranges out of bounds
+Message-ID: <aCtBf2LqRqlWXaUp@MiWiFi-R3L-srv>
+References: <4de3c2onosr7negqnfhekm4cpbklzmsimgdfv33c52dktqpza5@z5pb34ghz4at>
+ <20250507225959.174dd1eed6b0b1354c95a0fd@linux-foundation.org>
+ <2754f4evjfumjqome63bc3inqb7ozepemejn2lcl57ryio2t6k@35l3tnn73gei>
+ <aB3RqS85p6DiHKHm@MiWiFi-R3L-srv>
+ <20250509183518.bf7cd732ac667a9c20f1fee1@linux-foundation.org>
+ <sn775iwfnogyvgxetbcfneuuzsnr5wva6kc4vachyzc7r6uhfi@ozhimoihtk4b>
+ <aCaycGEtgNvynjNQ@MiWiFi-R3L-srv>
+ <202505161616.F4C1BCCF6A@keescook>
+ <aCksAsgAw1jsGBL9@MiWiFi-R3L-srv>
+ <202505190716.B21F11984@keescook>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,47 +83,94 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <865xi0fzwk.wl-maz@kernel.org>
+In-Reply-To: <202505190716.B21F11984@keescook>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On Friday 16 May 2025 at 14:28:27 (+0100), Marc Zyngier wrote:
-> On Fri, 09 May 2025 14:17:05 +0100,
-> Vincent Donnefort <vdonnefort@google.com> wrote:
+On 05/19/25 at 07:19am, Kees Cook wrote:
+> On Mon, May 19, 2025 at 09:22:30AM +0800, Baoquan He wrote:
+> > On 05/16/25 at 04:20pm, Kees Cook wrote:
+> > > On Fri, May 16, 2025 at 11:35:12AM +0800, Baoquan He wrote:
+> > > > On 05/11/25 at 10:19am, Coiby Xu wrote:
+> > > > > On Fri, May 09, 2025 at 06:35:18PM -0700, Andrew Morton wrote:
+> > > > > > On Fri, 9 May 2025 17:58:01 +0800 Baoquan He <bhe@redhat.com> wrote:
+> > > > > > 
+> > > > > > > > The bad commit was introduced in 2021 but only recent gcc-15 supports
+> > > > > > > > __counted_by. That's why we don't see this UBSAN warning until this
+> > > > > > > > year. And although this UBSAN warning is scary enough, fortunately it
+> > > > > > > > doesn't cause a real problem.
+> > > > > > > >
+> > > > > > > > >
+> > > > > > > > > Baoquan, please re-review this?
+> > > > > > > > >
+> > > > > > > > > A -stable backport is clearly required.  A Fixes: would be nice, but I
+> > > > > > > > > assume this goes back a long time so it isn't worth spending a lot of
+> > > > > > > > > time working out when this was introduced.
+> > > > > > > >
+> > > > > > > > So I believe the correct fix should be as follows,
+> > > > > > > 
+> > > > > > > Thanks for testing and investigation into these. Could you arrange this
+> > > > > > > into formal patches based on your testing and analysis?
+> > > > > > > 
+> > > > > > > It would be great if you can include Fuqiang's patch since it has
+> > > > > > > conflict with your LUKS patch. This can facilitate patch merging for
+> > > > > > > Andrew. Thanks in advance.
+> > > > > > 
+> > > > > > Yes please, I'm a bit lost here.
+> > > > > > x86-kexec-fix-potential-cmem-ranges-out-of-bounds.patch is not
+> > > > > > presently in mm.git and I'd appreciate clarity on how to resolve the
+> > > > > > conflicts which a new version of
+> > > > > > x86-kexec-fix-potential-cmem-ranges-out-of-bounds.patch will produce.
+> > > > > 
+> > > > > I'll resolve any conflict between these patches. Before that, I'm not sure
+> > > > > if a separate patch to fix the UBSAN warnings alone is needed to Cc
+> > > > > stable@vger.kernel.org because 1) the UBSAN warnings don't mean there is a
+> > > > > real problem;
+> > > > > 2) both Fuqiang's patch and my kdump LUKS support patches fix the UBSAN
+> > > > > warnings as a by-product.
+> > > > > 
+> > > > > It seems the answer largely depends on if the stable tree or longterm
+> > > > > trees need it. Currently, only longterm tree 6.12.28 and the stable tree
+> > > > > 6.14.6 have the UBSAN warnings if they are compiled with gcc-15 or
+> > > > > clang-18. Any advice will be appreciated! Thanks!
+> > > > 
+> > > > I personally think UBSAN warning fix is not necessary for stable kernel.
+> > > > 
+> > > > Hi Kees, Andrew,
+> > > > 
+> > > > Could you help answer Coiby's question about whether we need post a
+> > > > standalone patch to fix the UBSAN warning fix so that it can be back
+> > > > ported to stable kernel?
+> > > 
+> > > I went back through the thread and the referenced threads and I can't
+> > > find any details on the USBAN splat. Can that please get reproduced in a
+> > > commit log? That would help understand if it's a false positive or not.
 > > 
-> > Now np-guests hypercalls with range are supported, we can let the
-> > hypervisor to install block mappings whenever the Stage-1 allows it,
-> > that is when backed by either Hugetlbfs or THPs. The size of those block
-> > mappings is limited to PMD_SIZE.
 > > 
-> > Signed-off-by: Vincent Donnefort <vdonnefort@google.com>
+> > The original patch is trying to fix a potential issue in which a memory
+> > range is split, while the sub-range split out is always on top of the
+> > entire memory range, hence no risk.
 > > 
-> > diff --git a/arch/arm64/kvm/hyp/nvhe/mem_protect.c b/arch/arm64/kvm/hyp/nvhe/mem_protect.c
-> > index 78fb9cea2034..97e0fea9db4e 100644
-> > --- a/arch/arm64/kvm/hyp/nvhe/mem_protect.c
-> > +++ b/arch/arm64/kvm/hyp/nvhe/mem_protect.c
-> > @@ -167,7 +167,7 @@ int kvm_host_prepare_stage2(void *pgt_pool_base)
-> >  static bool guest_stage2_force_pte_cb(u64 addr, u64 end,
-> >  				      enum kvm_pgtable_prot prot)
-> >  {
-> > -	return true;
-> > +	return false;
-> >  }
+> > Later, we encountered a UBSAN warning around the above memory range
+> > splitting code several times. We found this patch can mute the warning.
+> > 
+> > Please see below UBSAN splat trace report from Coiby:
+> > https://lore.kernel.org/all/4de3c2onosr7negqnfhekm4cpbklzmsimgdfv33c52dktqpza5@z5pb34ghz4at/T/#u
 > 
-> Can we get rid of this callback now? And of the .force_pte_cb field in
-> the kvm_pgtable struct?
+> Ah-ha! Thanks for the link.
+> 
+> > Later, Coiby got the root cause from investigation, please see:
+> > https://lore.kernel.org/all/2754f4evjfumjqome63bc3inqb7ozepemejn2lcl57ryio2t6k@35l3tnn73gei/T/#u
+> 
+> Looking at https://lore.kernel.org/all/aBxfflkkQXTetmbq@MiWiFi-R3L-srv/
+> it seems like this actually turned out to be a legitimate overflow
+> detection? I.e. the fix isn't silencing a false positive, but rather
+> allocating enough space?
 
-I think it is still needed for the host side -- see the comment in
-host_stage2_force_pte_cb(). In short, it is not safe to put down a
-RO block mapping for the host. Re-mapping one page RW in the middle of
-the block for example would cause us to 'lose' the RO permission for
-the 511 other pages (assuming 4K pages obv) when we zap the block and
-we have no way to reconstruct that lazily as we do for guests.
+This v5 is on top of below patch which Andrew has picked to his mm tree.
+In there, it happened to get the ubsan warning fixed. But the hunk
+doesn't reflect it in the v5 patch.
 
-One way to solve this is to teach pgtable.c to inherit the block
-permission/attributes/sw bits/ ... for all the PTEs in the newly
-installed table when we zap a block. That is actually quite cheap
-and easy to do in particular for KVM_PGTABLE_S2_IDMAP page-tables
-(a.k.a the host) -- Android does that downstream FWIW.
+[PATCH v9 7/8] x86/crash: pass dm crypt keys to kdump kernel
+https://lore.kernel.org/all/20250502011246.99238-8-coxu@redhat.com/T/#u
 
-Thanks,
-Quentin
 
