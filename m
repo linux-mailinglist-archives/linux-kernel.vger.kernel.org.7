@@ -1,228 +1,78 @@
-Return-Path: <linux-kernel+bounces-654308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-654285-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E05D3ABC6C5
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 20:05:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B7A3ABC68F
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 20:00:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86A5C1B65D8B
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 18:06:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A5481890C94
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 18:00:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE50428E594;
-	Mon, 19 May 2025 17:58:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 004CA289374;
+	Mon, 19 May 2025 17:57:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Rq4QTDYN"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EfOCVcsO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98E9A28DF4E;
-	Mon, 19 May 2025 17:58:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52C09288C0F;
+	Mon, 19 May 2025 17:57:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747677526; cv=none; b=MppWhNC6Pok0JMAzWcr0WwH4h5OqlNIPdUtI8Kyx8ruUaB2HESnOU8Ts7eoc4/N8GaqZTlWD6qMJJ/Tww3ozgzKbg5WOMFLltAmLlO6G+T7DotZzzT6IaMAcZsCfqrzOlspN5mSXdlPHWv19VZUFKuW/dDisFIMmIkl2t5K5c/4=
+	t=1747677478; cv=none; b=W3agbsP4NwuN1XStSEIfx9JQT+vdQBXgt/Zbck/TksiigmuREsl2lXGxpvJooeVrVE7/xfkIJvqlp8NJJdwADPjBX57OazBVU/np0TZlsz9eXubrLvRs83bREfOkI3dOYuLpaz2JObEkPN0lHUNx5RBM9YF7SqYpQpGEeQRgo64=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747677526; c=relaxed/simple;
-	bh=pnQLoKZ1vywrckNj3NloDzeebCX7xk3jDKnHs/ziE+I=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=demKfXmd3uf03JeT6EBvbWTHjVwSJc0R5NZN079QXOlJu9N7S0AEquEtvnRv0WWGEebE2uprr+KY8r+hxChdiy5+qxYhmqAW+kKRm78F2kJkujj4M6tYLGGtPs2MWevhEvpU+zWFg0cRUbe97W3ikJM2XMaLWpCuNuFepD5TTcY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Rq4QTDYN; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-7390d21bb1cso4321484b3a.2;
-        Mon, 19 May 2025 10:58:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747677524; x=1748282324; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hDifTqtGVvkdBFnZ2aqlffmPu8mY951wNojwhaWPbg0=;
-        b=Rq4QTDYN9YuvtRmWV62DPkNbJbfUIgmQbePp/iBVPIJo2PgZD/LbZmy9+YyPNWBon0
-         D7cIp+nTFOALoYRBbWvhV/mXYVssNZ/55+f4TcK10jhcIzb+Uw+n3WRZ5zGJrqbrcJCf
-         kafGVQUGwV15uR5ELsX3hMVpp5HTLHt3l1WEszW1LlukN675iaigaBdsUmxyOZaw6bUN
-         GzdYDPJBv1FLIwaA4UxHzP59heVfQqE6BACm/8rE6quE1JW0aaQWYo/io/tkE9oboIaA
-         igrmvKQgCvrB51E3pkf6cx/DYaywljzyWWMWypYvc/sFx4TZJTVNdvziDswiVayzqUTe
-         O9Yw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747677524; x=1748282324;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hDifTqtGVvkdBFnZ2aqlffmPu8mY951wNojwhaWPbg0=;
-        b=n9v5mdNs94he45Ov1KkDAgLTee+9e0irfJnZIisrOFy1LMNtSRKWFOTPrX7m5Cx06U
-         bc970+HWgWQWAOnqxrdvQjKP5QadOIG2J/q3OjFe6kX4AVt7WK/J4nASrsf+yWePrvSa
-         ls9WVegMQocIq47FJ7zE5/7vqPhyECk0s7UDh8KsrxVnXplOCZ3ThcWBKkXvJXRQM+Kv
-         9txY4YVLwXMgCm2kCgh39rjoF7TbkdawJ58LBSP0mMOL4IceTIMIEcaC9q+kB3jOYOt3
-         A8F/DEoQPksvMJ7TitbRfxQh7oN6sLwwNbPNHxKx0sk19dLEbR7nU3zf54kvrU2pJ1l2
-         X08Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWDehDamlksZRJlqOUATPktCYz4SWj3+ZPmZC/dc/4NRdvAvT1+n+wZ1sF8sGn/B3Lu6lh50S2sAtPrKMvE@vger.kernel.org, AJvYcCXlfPkdxyqRxDtrf9XtLn0KB4FiPz2HXgEp3qUgrWEE8QlQnkZIuBZuv1qK9eh14WwWMBmVOLia2/Inu9tB@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIjuakrSv+VqDOK0IcSNU7QHAA+dW8y+81YIWrGhpwQBrgoZSs
-	Q0/ea/z9rKm9HotAwYEM3ibRuwEwiFl0FkiDFTPK8Vh90Wyr++6Eh93z
-X-Gm-Gg: ASbGncvwEKrQJZ0JWps5Tx2ZKbkgluoyIqEi89jFYhexO3c/gVFKMYWCdGTDOtVZjZA
-	pjZa+bhgTRNP62GXbnDECLyKXdv9CBW+fE2tyEbYuJt4e+ggWVwocAviXHqGH4zi8LthsZKcSyW
-	sDilwI16NUtP7rGab281Hk95Oqy04MP7ykvhcTiZQZqf/ZqVO312BNXYi6TgSdZ6NhIMz3CbMEq
-	Lb5+9OH7fUrkiiKq0YqmBDHoPkVIUlxQuLqfJhUb6TDXL5mZVYq89vrRbuP7DXfXWql2FSBYHZ0
-	tAgEZrDTP5MaoBnoqVKFwnapefl0jQdH6fDcPKdhlVmwOt+CO1Pmr0Ulf0oSawvgPAqf2XvxPje
-	Ng63lQ/3k7yvkfCvBTW8QfbDzzA==
-X-Google-Smtp-Source: AGHT+IGmYHPRNVkZlfycSsEN2aiJ8PCBCc4hbt1q3NPUc/bEuyH3gRv8qHnGFRo+5j3JGV1XMEkfZw==
-X-Received: by 2002:a05:6a20:d705:b0:215:de5f:febc with SMTP id adf61e73a8af0-216219bd5fcmr19558870637.27.1747677523827;
-        Mon, 19 May 2025 10:58:43 -0700 (PDT)
-Received: from localhost ([2a00:79e0:3e00:2601:3afc:446b:f0df:eadc])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-742a9876788sm6488742b3a.126.2025.05.19.10.58.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 May 2025 10:58:42 -0700 (PDT)
-From: Rob Clark <robdclark@gmail.com>
-To: dri-devel@lists.freedesktop.org
-Cc: freedreno@lists.freedesktop.org,
-	linux-arm-msm@vger.kernel.org,
-	Connor Abbott <cwabbott0@gmail.com>,
-	Rob Clark <robdclark@chromium.org>,
-	Rob Clark <robdclark@gmail.com>,
-	Abhinav Kumar <quic_abhinavk@quicinc.com>,
-	Dmitry Baryshkov <lumag@kernel.org>,
-	Sean Paul <sean@poorly.run>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v5 34/40] drm/msm: Split out map/unmap ops
-Date: Mon, 19 May 2025 10:57:31 -0700
-Message-ID: <20250519175755.13037-22-robdclark@gmail.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250519175755.13037-1-robdclark@gmail.com>
-References: <20250519175348.11924-1-robdclark@gmail.com>
- <20250519175755.13037-1-robdclark@gmail.com>
+	s=arc-20240116; t=1747677478; c=relaxed/simple;
+	bh=FSMOL2taXKj18VsO0IhhIry3rTgFnRDi/+4edXoR/kk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=g60oCtM895sIXDTT4RoJeMBnNA7UzXkIaat/awJboc6gW39A/RisPeZjJIlqFjLHWjqEdlYmn/jb56e/VT5xxigLTFkxKJ1NvO2AtaCuq1BaNq4WOl8qkOrOmSmkdIqCB9nh62yMLO06mQeIxEPl8KZ8qT4t2PC+wb8NgLXAI34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EfOCVcsO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0606C4CEE4;
+	Mon, 19 May 2025 17:57:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747677475;
+	bh=FSMOL2taXKj18VsO0IhhIry3rTgFnRDi/+4edXoR/kk=;
+	h=Date:From:To:Cc:Subject:From;
+	b=EfOCVcsOe7JGHXCWM8Zex9z0BVAOo/qxfvpiNLMHY4EMaa4/GvM9bbZRb7V+1CB3r
+	 rQWFrcABefGl2XWVLInQmS1vs3tOu3ZSyAkCiegJ8lR0Hwz/hNKZmnEQ4byIEzOBoe
+	 BNyfOsEWiQj70PUQpEklf3JrdBBZm8+OlxKCf2lUs/LaKds0OJuqu9qxaWUYeppNLw
+	 SEvHcHO2Xz2l3Q+uI3/Pj4w1Zl8s/v2ihyrmvwDMOh6yhub4Ur3r2e/VmT5PFka0mx
+	 BgoXu53JUSEQmiw02O2wqf1Iyg5gSW42PvpbwUppKwA/J+MOzh1wx+bstux04OaQFx
+	 mQEfjJVfnoTYw==
+Date: Mon, 19 May 2025 13:57:52 -0400
+From: Nathan Chancellor <nathan@kernel.org>
+To: llvm@lists.linux.dev, linux-kernel@vger.kernel.org
+Cc: ojeda@kernel.org
+Subject: Prebuilt LLVM 20.1.5 uploaded (and a note about older toolchains)
+Message-ID: <20250519175752.GA1041767@ax162>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-From: Rob Clark <robdclark@chromium.org>
+Hi all,
 
-With async VM_BIND, the actual pgtable updates are deferred.
-Synchronously, a list of map/unmap ops will be generated, but the
-actual pgtable changes are deferred.  To support that, split out
-op handlers and change the existing non-VM_BIND paths to use them.
+I have built and uploaded LLVM 20.1.5 to
+https://mirrors.edge.kernel.org/pub/tools/llvm/.
 
-Note in particular, the vma itself may already be destroyed/freed
-by the time an UNMAP op runs (or even a MAP op if there is a later
-queued UNMAP).  For this reason, the op handlers cannot reference
-the vma pointer.
+If there are any issues found, please let us know via email or
+https://github.com/ClangBuiltLinux/linux/issues/new, so that we have an
+opportunity to get them fixed in main and backported before the 20.x
+series is no longer supported.
 
-Signed-off-by: Rob Clark <robdclark@chromium.org>
----
- drivers/gpu/drm/msm/msm_gem_vma.c | 63 +++++++++++++++++++++++++++----
- 1 file changed, 56 insertions(+), 7 deletions(-)
+Additionally, I have rebuilt and reuploaded the latest stable version of LLVM
+13 through 19 to avoid linking against libxml2. Some distributions (such as
+Arch Linux) have updated to libxml2 2.14.x, which includes an ABI bump to
+libxml2.so.16, breaking all versions of these toolchains. This should not make
+much of a difference for the kernel, as I do not believe we use anything within
+the toolchain that requires libxml2, but if anyone notices anything, please let
+me know so we can discuss adding it back.
 
-diff --git a/drivers/gpu/drm/msm/msm_gem_vma.c b/drivers/gpu/drm/msm/msm_gem_vma.c
-index 73baa9451ada..a105aed82cae 100644
---- a/drivers/gpu/drm/msm/msm_gem_vma.c
-+++ b/drivers/gpu/drm/msm/msm_gem_vma.c
-@@ -8,6 +8,34 @@
- #include "msm_gem.h"
- #include "msm_mmu.h"
- 
-+#define vm_dbg(fmt, ...) pr_debug("%s:%d: "fmt"\n", __func__, __LINE__, ##__VA_ARGS__)
-+
-+/**
-+ * struct msm_vm_map_op - create new pgtable mapping
-+ */
-+struct msm_vm_map_op {
-+	/** @iova: start address for mapping */
-+	uint64_t iova;
-+	/** @range: size of the region to map */
-+	uint64_t range;
-+	/** @offset: offset into @sgt to map */
-+	uint64_t offset;
-+	/** @sgt: pages to map, or NULL for a PRR mapping */
-+	struct sg_table *sgt;
-+	/** @prot: the mapping protection flags */
-+	int prot;
-+};
-+
-+/**
-+ * struct msm_vm_unmap_op - unmap a range of pages from pgtable
-+ */
-+struct msm_vm_unmap_op {
-+	/** @iova: start address for unmap */
-+	uint64_t iova;
-+	/** @range: size of region to unmap */
-+	uint64_t range;
-+};
-+
- static void
- msm_gem_vm_free(struct drm_gpuvm *gpuvm)
- {
-@@ -21,18 +49,36 @@ msm_gem_vm_free(struct drm_gpuvm *gpuvm)
- 	kfree(vm);
- }
- 
-+static void
-+vm_unmap_op(struct msm_gem_vm *vm, const struct msm_vm_unmap_op *op)
-+{
-+	vm_dbg("%p: %016llx %016llx", vm, op->iova, op->iova + op->range);
-+
-+	vm->mmu->funcs->unmap(vm->mmu, op->iova, op->range);
-+}
-+
-+static int
-+vm_map_op(struct msm_gem_vm *vm, const struct msm_vm_map_op *op)
-+{
-+	vm_dbg("%p: %016llx %016llx", vm, op->iova, op->iova + op->range);
-+
-+	return vm->mmu->funcs->map(vm->mmu, op->iova, op->sgt, op->offset,
-+				   op->range, op->prot);
-+}
-+
- /* Actually unmap memory for the vma */
- void msm_gem_vma_unmap(struct drm_gpuva *vma)
- {
- 	struct msm_gem_vma *msm_vma = to_msm_vma(vma);
--	struct msm_gem_vm *vm = to_msm_vm(vma->vm);
--	unsigned size = vma->va.range;
- 
- 	/* Don't do anything if the memory isn't mapped */
- 	if (!msm_vma->mapped)
- 		return;
- 
--	vm->mmu->funcs->unmap(vm->mmu, vma->va.addr, size);
-+	vm_unmap_op(to_msm_vm(vma->vm), &(struct msm_vm_unmap_op){
-+		.iova = vma->va.addr,
-+		.range = vma->va.range,
-+	});
- 
- 	msm_vma->mapped = false;
- }
-@@ -42,7 +88,6 @@ int
- msm_gem_vma_map(struct drm_gpuva *vma, int prot, struct sg_table *sgt)
- {
- 	struct msm_gem_vma *msm_vma = to_msm_vma(vma);
--	struct msm_gem_vm *vm = to_msm_vm(vma->vm);
- 	int ret;
- 
- 	if (GEM_WARN_ON(!vma->va.addr))
-@@ -62,9 +107,13 @@ msm_gem_vma_map(struct drm_gpuva *vma, int prot, struct sg_table *sgt)
- 	 * Revisit this if we can come up with a scheme to pre-alloc pages
- 	 * for the pgtable in map/unmap ops.
- 	 */
--	ret = vm->mmu->funcs->map(vm->mmu, vma->va.addr, sgt,
--				  vma->gem.offset, vma->va.range,
--				  prot);
-+	ret = vm_map_op(to_msm_vm(vma->vm), &(struct msm_vm_map_op){
-+		.iova = vma->va.addr,
-+		.range = vma->va.range,
-+		.offset = vma->gem.offset,
-+		.sgt = sgt,
-+		.prot = prot,
-+	});
- 	if (ret) {
- 		msm_vma->mapped = false;
- 	}
--- 
-2.49.0
-
+Cheers,
+Nathan
 
