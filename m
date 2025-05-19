@@ -1,151 +1,197 @@
-Return-Path: <linux-kernel+bounces-653303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-653294-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59AACABB760
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 10:36:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D4A8BABB748
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 10:33:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0CA8B189A82B
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 08:36:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FE491899413
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 08:33:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0F9226F44C;
-	Mon, 19 May 2025 08:33:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 089E526A0BA;
+	Mon, 19 May 2025 08:33:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="j3vyxW5P"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="S5LwOrtE";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="8ZmZEzJX"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05ECB26C397
-	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 08:33:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E5C824469C;
+	Mon, 19 May 2025 08:33:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747643608; cv=none; b=hRVIFARjONnwRIlowP75WaHW0QItQjSYEcACroqQHdFulZIpkRtAdVtEsx93+au9+buwaRvTiUpxqT22fucQSjqjwBqY/N40YkcwbbLyHiIQ5YgxczhkiTvn20EP4BI4RR9Zq9BS6ynCFvbDZNOWUBzgdu7zS8BUlVKbC4KC3dc=
+	t=1747643599; cv=none; b=jYhbmDLK6YzkcGEH3g4JghAis6/TI4J1pwDtwVWv/7G6v/V3HUi5qgUMefE33TUJBBBdxhz82NGCLgyt+ZXU7SPPsu9zYEYlKri97fbpTBFNJQ9939bNdGH5/bsdiVJuwwT53loiiahZavvhKJjsFX2B1teobvW8brtKx32ZZ8Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747643608; c=relaxed/simple;
-	bh=WUDf5oTK59RzFC/H8RC+nKwkbd3Gr6mAZjX4xFarDhw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=QNwePRutyvZwef8pcxPA38m/52dSlsHz3qOtz43z3umGrTQI40XAYTWtMsY7F6PUOpd6s/tAVxOMTW1ggd4sl64WNpwp0mCXY0kQDGx+MfFJu1B1VvSGk9qUkXdaHFCU8KIiP6v7G8qnUu5lzsgzk6oAzIQj5qSzLXSxMAbyuQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=j3vyxW5P; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54ILoXF5008335
-	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 08:33:24 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=lusP5vba1cH
-	TmTKazSCNPRqnEYzF7hN/TG78FwTmuJE=; b=j3vyxW5PUHHR+/Ku34AVo6JFdH5
-	xqHvX8WagAQs2DA4MjnQ53dwTdU5AK0QLKu2gkhmU7VcpCn0PrAt95uekykFeoJ8
-	KI0TC+Up3KqTWRICq771axb7ywLE344g8qTRipmwt0YPmb4zNFJ+lA42NTkTl17m
-	3lqN4OdPFuq1BR3+6gEMJx4ds4TkvvTGC2oLOUncLoj4YL24LGobF9aoium48UBH
-	8QNLjoj4ecS3znih7JjOTeh+NFGi8oBi774lmQ6UkJKwc7dbn4i5Rm7xt+hNYVWQ
-	RQuyFNdFjADmd7JSev8Wa+BvvSYlXXYi41gu+gCMXrg0HlQqAMz9q1pBFnQ==
-Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com [209.85.216.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46pjnykp9n-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 08:33:23 +0000 (GMT)
-Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-30e8346b49cso2683105a91.0
-        for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 01:33:23 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747643602; x=1748248402;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lusP5vba1cHTmTKazSCNPRqnEYzF7hN/TG78FwTmuJE=;
-        b=IRBzYpndL+GbpOvawBdXnxH2O7oyQE2EuTGamaermbYL6QFYUsxICO/pVue9afJ6St
-         IHonJoEf4d4FxANLLqctHJx2/d9IFxmBOK0j/QPJ2uCr6wwjKAUvyQQkUgxEtZ5WH4d/
-         DyXPoS6AZBoouIoHWd+5HvH0sBsitN6XaNBkL1KdDy2eBPqR9UXTxhxfRbFwfFdYF3Vc
-         A53l3jxr8RKVUUfP4/1DaFkwVPirYWN4QHU4Vi2ztDX0lMvL7fe+tQcTPVLRGbEYhlpl
-         11u9rTTb95Y3ilMU52IU48mcPnzpvjAXZfnr6HzZqiL3ZR1xDaMbqrqIcS9IwKwxH8TR
-         I3gw==
-X-Forwarded-Encrypted: i=1; AJvYcCWHSvRAdPJvsw5CW/0xDkebtYHfJ2rMIyAPP4spZ1017ld5PQ4spSYpjHgoSRxthrYb6I2jC/xylE+PtaI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyBr3EXyFTkzQGVSdZYhZUbX5KBK51Dw/robTua9cPSyWWvUpl2
-	79KsK0n4K31/mvOfhTE7NJSfLpwxEosf7mOIQlFxYKR4e73U/e2Ku5QnbVWj7pg91bd9n1VKi5W
-	rnKvX9IhlqNt55HWHEeXfm4/NaLhyBD9kaMV8MKSlsuvKKDPIDI27bV3Dqq2fUP4lEHg=
-X-Gm-Gg: ASbGncszOsS8HJWlyQ66pwNumsZYTvSA2LVVdjbq8KBzhOJfpn22/ceCt5REUZB7oQz
-	zyvnIOVD9oW/Yy4/J1+kXPkSqnrCQYeXNobU60tXyyW3m3mGUpCeNcLU+EejIiVltorgxHeHI8F
-	7jDSA4ZJ3nA7VZqaBslsdWavIfee2lOOJeNNDynMQ4BgXJUk2jZY+M0scaoRng83ySEdNm7aVQj
-	HFYqCAZRXZfPChUejOWkeY7+CjDWYdQ8KKIgI8xNNcDz6deUvYn86SG+D/jKN5WyUeNibqMCyTr
-	xeZCoJnxJEs0xMryNAXVcS7cNYAZ+uCxTl4OcQ0+dyHhkaUK
-X-Received: by 2002:a17:90b:3a05:b0:2ff:5714:6a with SMTP id 98e67ed59e1d1-30e8319a169mr14877132a91.19.1747643602516;
-        Mon, 19 May 2025 01:33:22 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGJgez4Ba9Dkp7xRjB49WazKLV56Vbnrwm4V+0kd/o7IW6d7+7SJKmeRpcSLYBWD3W7NX1c5A==
-X-Received: by 2002:a17:90b:3a05:b0:2ff:5714:6a with SMTP id 98e67ed59e1d1-30e8319a169mr14877105a91.19.1747643602064;
-        Mon, 19 May 2025 01:33:22 -0700 (PDT)
-Received: from hu-mohs-hyd.qualcomm.com ([202.46.23.25])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-30e6af9d586sm7003887a91.11.2025.05.19.01.33.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 May 2025 01:33:21 -0700 (PDT)
-From: Mohammad Rafi Shaik <mohammad.rafi.shaik@oss.qualcomm.com>
-To: Srinivas Kandagatla <srini@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>
-Cc: linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        quic_pkumpatl@quicinc.com, kernel@oss.qualcomm.com
-Subject: [PATCH v1 2/2] ASoC: qcom: sc8280xp: Add sound card support for QCS9100 and QCS9075
-Date: Mon, 19 May 2025 14:02:44 +0530
-Message-Id: <20250519083244.4070689-3-mohammad.rafi.shaik@oss.qualcomm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250519083244.4070689-1-mohammad.rafi.shaik@oss.qualcomm.com>
-References: <20250519083244.4070689-1-mohammad.rafi.shaik@oss.qualcomm.com>
+	s=arc-20240116; t=1747643599; c=relaxed/simple;
+	bh=LPkGYirmxlcgEMUb15oRjZPUqQf+NoyNtB77yQ6nDEY=;
+	h=Message-ID:From:To:Cc:Subject:Date; b=HL/Vupy2LuGv4rPk6bhchKAzwgRiB1HK3GtANYVi4rt3w138LMl0+0/HQTW899yQTkZFGRrIn6C0KaTM7jqWg+NUX2PiwKxOck0IumY966F+hB/d145HGwlqSpVr4QIpYC09tUqz1nUQr1D+gIVQpbLqvwHYRGSt+8Pw3SJJhiQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=S5LwOrtE; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=8ZmZEzJX; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Message-ID: <20250519082042.742926976@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1747643594;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc; bh=wJnbJUJbRo+M8Mfb2KSXnAv7QkIxC52cS3IWp5g1yus=;
+	b=S5LwOrtE4KpTCGKxldJXdU7BNryhKw7v/cTDU30hms4h9XFd9kuKEL6y/dzfElaA6Uo3Ny
+	+EOk5/F/zodUW5btFMXjh+PHM2SvvpxHwd6FBPgKqX+b7/44Vu1+Kq8mMyp6NlHrjEccA9
+	tnLK4PpOFshS40Xv8811jN8srd0daSWQYAajNm6D9TSJzHHaR+mz35GaIA5YTlDfpMCtSs
+	JR5DeB1WHqYHG/ClLc5GbO+uzprmnZ2w8basAE99a8FLDG0nPtzamjiuqxrAIJPOjrNtzm
+	Wo4pVnBn+7dHCdBfXhUeXZ7fTfd+PjGbMLVHTrrfE+hLtyBsuU9IWxLAd/58BQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1747643594;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc; bh=wJnbJUJbRo+M8Mfb2KSXnAv7QkIxC52cS3IWp5g1yus=;
+	b=8ZmZEzJXB9InDThzQqMqdmT6JRR/2roaze5meQ4aez2GYeUb4EeTQlZGzfBhIhSxMganJq
+	L5S3ZuX4D7rQSoBw==
+From: Thomas Gleixner <tglx@linutronix.de>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: netdev@vger.kernel.org,
+ Richard Cochran <richardcochran@gmail.com>,
+ Christopher Hall <christopher.s.hall@intel.com>,
+ John Stultz <jstultz@google.com>,
+ Frederic Weisbecker <frederic@kernel.org>,
+ Anna-Maria Behnsen <anna-maria@linutronix.de>,
+ Miroslav Lichvar <mlichvar@redhat.com>,
+ Werner Abt <werner.abt@meinberg-usa.com>,
+ David Woodhouse <dwmw2@infradead.org>,
+ Stephen Boyd <sboyd@kernel.org>,
+ =?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
+ Kurt Kanzenbach <kurt@linutronix.de>,
+ Nam Cao <namcao@linutronix.de>,
+ Antoine Tenart <atenart@kernel.org>
+Subject: [patch V2 00/26] timekeeping: Provide support for auxiliary
+ timekeepers
+Date: Mon, 19 May 2025 10:33:14 +0200 (CEST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTE5MDA4MCBTYWx0ZWRfX8Hr/efi6a9LE
- 8FC4wc8qRjosu6ANQngmXxpmugXwZbf2pDOli4qzeDOPoU8zQdxneto/jOmvwOGWPwyunUJR3hV
- wPDHWDuVtgESR43H/BjjGVQHIzEHOTPypMAFaswYz9Ilvl2iXPM0Z5IHQ2OMhguVV2FftuwyG89
- 8WzZAQtjDgBBLo1axdtPtdv8h/Ug2N1xXzPbjfDEmIuaBEq3Zx9Twx91cTrTNcs4AwfTpwd7nzk
- tA7ce50jK9aURMZJTE86APvzUQMydcujnIPhYEE7PLKdutmZCHtIEMAwe4BHfLUeQdnZmqQwj0h
- XOUNa5Rc2/1NxOeoWQ68N2fnFk4CJsGvMIffS+6Y8V035vBLhbJODMCUtA5XqnJlzVGapr2fYSX
- 3gLr3JyfmTopGyL6UyNBy7XMkq8lovi29YfrqPWit5d0zZxKS5Yr1PapS3GG3ZYgSHUI7hJJ
-X-Authority-Analysis: v=2.4 cv=Z9XsHGRA c=1 sm=1 tr=0 ts=682aecd3 cx=c_pps
- a=RP+M6JBNLl+fLTcSJhASfg==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
- a=dt9VzEwgFbYA:10 a=EUspDBNiAAAA:8 a=i_bJiae3Nsw47DEeRZ4A:9 a=zgiPjhLxNE0A:10
- a=iS9zxrgQBfv6-_F4QbHw:22
-X-Proofpoint-GUID: J_LxlJdYjdWDe1okYe_X2fIyRqQAcDQ9
-X-Proofpoint-ORIG-GUID: J_LxlJdYjdWDe1okYe_X2fIyRqQAcDQ9
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-19_03,2025-05-16_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 lowpriorityscore=0 mlxlogscore=999 mlxscore=0 priorityscore=1501
- adultscore=0 impostorscore=0 bulkscore=0 suspectscore=0 clxscore=1011
- malwarescore=0 spamscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505070000
- definitions=main-2505190080
 
-Add compatibles for sound card on Qualcomm QCS9100 and
-QCS9075 boards.
+This is an update to the initial series, which can be found here:
 
-Signed-off-by: Mohammad Rafi Shaik <mohammad.rafi.shaik@oss.qualcomm.com>
+     https://lore.kernel.org/all/20250513144615.252881431@linutronix.de
+
+The kernel supports PTP clocks pretty well at the hardware level and the
+ability to steer the core time keeper, but there is a major gap for other
+PTP use cases especially in the context of TSN.
+
+TSN use cases in automation, automotive, audio and other areas utilize PTP
+for synchronizing nodes in a network accurately, but the underlying master
+clock is not necessarily related to clock TAI. They are completely
+independent and just represent a common notion of time in a network for an
+application specific purpose. This comes with problems obvioulsy:
+
+   1) Applications have no fast access to the time of such independent PTP
+      clocks. The only way is to utilize the file descriptor of the PTP
+      device with clock_gettime(). That's slow as it has to go all the way
+      out to the hardware.
+
+   2) The network stack cannot access PTP time at all because accessing the
+      PTP hardware requires preemptible task context in quite some cases.
+
+There has been attempts to solve this by creating a new PTP specific
+infrastructure independent of the core timekeeping code, but that's a
+patently bad idea as it would just create duplicated code with new bugs and
+also be in the way of supporting these clocks in the VDSO and hrtimers
+based on such clocks down the road.
+
+This series addresses the timekeeping part by utilizing the existing
+timekeeping and NTP infrastructure, which has been prepared for
+multi-instance in recent kernels.
+
+The approach is the same as for core timekeeping:
+
+    The clock readout uses the system clocksource, e.g. TSC, ARM
+    architected timer..., and converts it to a "nanoseconds" timestamp with
+    the underlying conversion factors.
+
+    The conversion factors are steered via clock_adjtimex(2) to provide the
+    required accuracy. That means tools like chrony can be reused with a
+    small amount of modifications.
+
+The infrastructure supports up to eight auxiliary clocks and timekeepers,
+which can be accessed by the new CLOCK_AUX0 .. CLOCK_AUX7 POSIX clock IDs.
+
+The timekeepers are off by default and can be individually enabled/disabled
+via a new sysfs interface. In the disabled case the overhead introduced by
+these timekeepers is practically zero. Only if enabled, the periodic update
+in the timekeeper tick adds extra work.
+
+The infrastructure provides:
+
+    1) In-kernel time getter interfaces similar to the existing
+       ktime_get*() interfaces. The main difference is that they have a
+       boolean return value, which indicates whether the clock is enabled
+       and valid. These interfaces are lockless and sequence count
+       protected as the other ktime_get*() variants, so the same
+       restrictions apply (not usable from the timekeeper context or from
+       NMI).
+
+    2) clock_gettime() support
+
+       Same as the existing clock_gettime() for CLOCK_..., but returns
+       -ENODEV if the clock is disabled.
+
+    3) clock_settime() support
+
+       Same as clock_settime(CLOCK_REALTIME), but does not affect the
+       system timekeeping
+
+    4) clock_adjtime() support
+
+       Same as clock_settime(CLOCK_REALTIME), but does not affect the
+       system timekeeping. It has some restrictions: no support for PPS,
+       leap seconds and other tiny details which are only relevant for
+       CLOCK_REALTIME steering.
+
+The timekeeper updates for these auxiliary clocks are not yet propagated to
+VDSO and paravirt interfaces as this has to be addressed separately once
+the core infrastructure is in place. Thomas W. has a prototype
+implementation for the VDSO support ready, which will be posted once the
+dust has settled here.
+
+Once the timekeeping infrastructure is in place, the road is paved for
+supporting hrtimers on these clocks, which is another problem in the
+context of applications and the network stack. The idea is to convert the
+independent expiry time to clock MONOTONIC internally under the assumption
+that both involved clocks will have halfways stable conversion factors
+within the expiry time of the timer. If one of the clocks starts to jump
+around via their respective clock_adjtime(2) steering, then there are
+bigger problems to solve than a timer expiring late. But that's just an
+concept in my head and on some scribbled notes. It will take some time to
+materialize. But let's get the timekeeping part sorted first. :)
+
+Changes from V1:
+
+   - Rename to auxiliary clocks/timekeepers - Miroslav
+
+   - Fix the sysfs documentation - Antoine
+
+The series applies on top of 6.15-rc7 + tip timers/core and is available
+from git:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/tglx/devel.git timers/ptp/clocks
+
+Thanks,
+
+	tglx
 ---
- sound/soc/qcom/sc8280xp.c | 2 ++
- 1 file changed, 2 insertions(+)
+ Documentation/ABI/stable/sysfs-kernel-time-aux-clocks |    5 
+ include/linux/timekeeper_internal.h                   |   28 
+ include/linux/timekeeping.h                           |   11 
+ include/uapi/linux/time.h                             |   11 
+ kernel/time/Kconfig                                   |   15 
+ kernel/time/ntp.c                                     |   72 +-
+ kernel/time/ntp_internal.h                            |   13 
+ kernel/time/posix-timers.c                            |    3 
+ kernel/time/posix-timers.h                            |    1 
+ kernel/time/timekeeping.c                             |  576 +++++++++++++++---
+ kernel/time/timekeeping_internal.h                    |    3 
+ 11 files changed, 619 insertions(+), 119 deletions(-)
 
-diff --git a/sound/soc/qcom/sc8280xp.c b/sound/soc/qcom/sc8280xp.c
-index 311377317176..99fd34728e38 100644
---- a/sound/soc/qcom/sc8280xp.c
-+++ b/sound/soc/qcom/sc8280xp.c
-@@ -186,6 +186,8 @@ static int sc8280xp_platform_probe(struct platform_device *pdev)
- static const struct of_device_id snd_sc8280xp_dt_match[] = {
- 	{.compatible = "qcom,qcm6490-idp-sndcard", "qcm6490"},
- 	{.compatible = "qcom,qcs6490-rb3gen2-sndcard", "qcs6490"},
-+	{.compatible = "qcom,qcs9075-sndcard", "qcs9075"},
-+	{.compatible = "qcom,qcs9100-sndcard", "qcs9100"},
- 	{.compatible = "qcom,sc8280xp-sndcard", "sc8280xp"},
- 	{.compatible = "qcom,sm8450-sndcard", "sm8450"},
- 	{.compatible = "qcom,sm8550-sndcard", "sm8550"},
--- 
-2.34.1
 
 
