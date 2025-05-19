@@ -1,75 +1,188 @@
-Return-Path: <linux-kernel+bounces-653242-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-653244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3C96ABB681
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 09:57:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 77F83ABB6A4
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 09:58:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1BCA81893B6A
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 07:58:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6AF32189594C
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 07:59:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF0692690ED;
-	Mon, 19 May 2025 07:57:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB3701C700D;
+	Mon, 19 May 2025 07:58:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="by2iCWmH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NwdwPqWx"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A4571A23A4
-	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 07:57:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 787EE265CC6;
+	Mon, 19 May 2025 07:58:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747641467; cv=none; b=RAhKNLk2LtAFZmZUOz+PGU6ThS+WL8toK/z/gHusUCE7teYhRbEyQ9ZVmy42Q8tnp9QlfQ0YuIBpT66wQQWEl0jkKAOFzhBk8mc0Xw7VlyOjx7jy7EqsI6l5WXpWpJUNxAy/Kw7kZXg5eWN8+c3IbewuNy2EUDh1kMiQHEHUN6g=
+	t=1747641526; cv=none; b=dUtC27E0kfjM3dUFCVSOe1vRxYyucMQRF7HQvbhC9OSJnijKl9m5cnss5lK+vp9H7OMVe/2VzvEThIcgNnvBugF8scthwZaEwF/HpeWsJDsYUd+Me7lhTLfkGk8gR2rfT/w318X58GIzJyJam2ddtEX3tmub49lYUDIqLFjX4Ck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747641467; c=relaxed/simple;
-	bh=7e9NChurz7rY3oirADLtp0CoVANmOBcPDXCDai+k1KY=;
-	h=Message-ID:Date:From:To:Subject:In-Reply-To:References:Cc; b=prLgnSXEaFFiJpQbrWjlwzBHbGmTq2FPBATDXW663W9sUbFG0225Br+GaKlj78OjIqzOdfHoS3YE9SLtheNO1/5/qOyQbmNn5THAUIL1o1KwiNFU2TnHaoAYNBCs9U7htJ433F2/DWQwtrNkeRsEHTYzKEoAq6mb1jKOd+oL+Ew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=by2iCWmH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 511ACC4CEE4;
-	Mon, 19 May 2025 07:57:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747641465;
-	bh=7e9NChurz7rY3oirADLtp0CoVANmOBcPDXCDai+k1KY=;
-	h=Date:From:To:Subject:In-Reply-To:References:Cc:From;
-	b=by2iCWmHwR+NLH4lc1gHYtbMo4rrQNh+Y/Q7Mj428EUYVPs9tFquaCnlaeinH4LZF
-	 EwTcX+ggLHRVModdg0j7VCpmaFlgk+TbBhsiEzreKeqmkMmkpwvxXwwf6WGHSWlP9I
-	 H+F6vtLfYg/YN21F/yVa5feMZpkorwKbc6d6dKquuT2ErLC/F0YdVGFw6fNkcr9PlU
-	 +cxFcmdNaIT+5ZkzyP9ezAqYTttkcfuQX4hOG/+Z7IYFCYfoCiuACvU74zIBB6zQc6
-	 +g3loBQIEIHTSoQ9n//hpW0MboXTVT4vdW/4dkKB6H7jA7kNKg8jhSYO3WWDvWBlJA
-	 TxTho3pCRgpwA==
-Message-ID: <f29b6348ec26850eaa4cfe2ee1c650bc@kernel.org>
-Date: Mon, 19 May 2025 07:57:42 +0000
-From: "Maxime Ripard" <mripard@kernel.org>
-To: "Cristian Ciocaltea" <cristian.ciocaltea@collabora.com>
-Subject: Re: [PATCH v4 20/23] drm/tests: hdmi: Provide EDID supporting
- 4K@30Hz with RGB/YUV
-In-Reply-To: <20250425-hdmi-conn-yuv-v4-20-5e55e2aaa3fa@collabora.com>
-References: <20250425-hdmi-conn-yuv-v4-20-5e55e2aaa3fa@collabora.com>
-Cc: dri-devel@lists.freedesktop.org, kernel@collabora.com, linux-kernel@vger.kernel.org, "Dave
- Stevenson" <dave.stevenson@raspberrypi.com>, "David Airlie" <airlied@gmail.com>, "Dmitry
- Baryshkov" <dmitry.baryshkov@oss.qualcomm.com>, "Dmitry Baryshkov" <lumag@kernel.org>, "Maarten
- Lankhorst" <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>, "Simona
- Vetter" <simona@ffwll.ch>, "Thomas Zimmermann" <tzimmermann@suse.de>
-Content-Transfer-Encoding: 7bit
+	s=arc-20240116; t=1747641526; c=relaxed/simple;
+	bh=mOU7IsSOvAhYo6I0KK3r+Onvtvmk+4/SxHf4/3GGJCs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NocIif7FO2s5kPOnYBEZo6d5N8GzgdwOhZ9NmqKOzgmrlvn1RydNowDwOVIGQzquifo/ilee6AIy8g5g0bHeyyxioWuB9barfdLCoZWXTQ+uV3Mm4iIFMlF4Rml2cHXKc/FBDu3a3gMR/Zq0sAgZ3SaRWyDpNocCJdv8HtrHnmY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NwdwPqWx; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-ad216a5a59cso585281566b.3;
+        Mon, 19 May 2025 00:58:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747641523; x=1748246323; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5jOUNrOt8oUJ3qXNVdVJQs0v1Ku/Xv8o3RbXOBWWKp4=;
+        b=NwdwPqWx/hA1W0B/dMHUtc9vioSrQCWcCGVZl1EMbhnpb7GkX/DC4icYAojjfoCWt2
+         EyUePVZGhqciz1hle4UxNVZb/xht4xNjzg9LfC+5Ihz9AcSrD5ItZWh3IZg0TlC61cOj
+         48UabMWgEaEBlUu+KVCp+C0fj1i6DmqGt2g3UZg2FdoaaXlW8PLi6lxAKyVxXcR8ivtA
+         PYMh4snCJE2Ap6l6lUlmyj4EEEYZVDqGMVmmIVUKh7ExbgEdGTX06iIaVReLaeeeszXw
+         jlMPEuDfNpwDTnrqpONzQZXN33wzWqGwM3YrrARyaMVcBtkVLmBNcgWvez6EHM2Q030A
+         houA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747641523; x=1748246323;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5jOUNrOt8oUJ3qXNVdVJQs0v1Ku/Xv8o3RbXOBWWKp4=;
+        b=GB6NWqdnYmX+yydmMD1YUEW9sPLnph/FOh6PINArtAzoTIPxnL+/vax0qOxASJSVX3
+         MXEqP1oUj3m6zETJwjyR4qgVJvyWNzrDInSYaM3JuJJXk2e7m+CHA8h6njkmYd33XnY8
+         UT8dF4hDHjqhbGkxUQveSISoTF5a/Vmcu3VL+3akBVwQXi+j9Gkugm+4VOP8fjmjPFKv
+         WPTE/FQFsCpY1iioTCIA2lgE6q60A82MVo8UAcCSC7UU5nIBYfMRNYFw8jvOkyDCXrZr
+         9IAOKrSzwP6W7vzOklVpfdanhL2JDFk3yauYa6CpLSNqCmq96sHE3Oar2hXGeFa0TuGV
+         X6WQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXKMQm49/Hkj1thRVFRMqko41b7D0/AJr6nZXn66xaGck++O0hT1IiShBfUeojW2LzmFWBjuZhKiU9i@vger.kernel.org, AJvYcCXM19q8FRy3Z/cmiQ5Kat6kklrrDwbhLj8xTBc5C30GXlDbCvbsMtg9DQi8lsry2CeRr/JlP7Mquiy4c3bp@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0cwcE6NG8tXSk9DOa+R25lAIiOLt44C91NqyiDWOP0oGa4SEF
+	BUrPLNCp6CCwUieaEuegSoGTt6bDwSwLGkiRKvt9nvfgOqYA4QwVLmUjJt7kbRkeTRWx1L5DEtl
+	5pUD+oSJ46asrJKAbTruM0ulI5QJQz10=
+X-Gm-Gg: ASbGncvRxqvCfTdAcUwTIb5bKsWZb2r213q60G8mFaWrqKFFD2PtK3Pdns/JMc5GlXV
+	cBQ9uC29CZBLZfQJFNu5u5OGmXnXleJ5t+lR3OF4NxmWkBVA7pkBr0MjmDPmvWGzpPzA7YsyFEm
+	n20+sD3e6JU61IaTUs4f3am05sUVVj1Ya9VKOkm1pfHws=
+X-Google-Smtp-Source: AGHT+IFBGC/Q7v8K+52sdgNsLjIb/o4fDl+jQjGNqG2kgSxX/P6VubQI1Lv144CKx7pzHNQ0FY/xbGhze7s+ZtcJHVA=
+X-Received: by 2002:a17:906:d542:b0:ad5:6b26:b1e2 with SMTP id
+ a640c23a62f3a-ad56b26b431mr307613866b.49.1747641522568; Mon, 19 May 2025
+ 00:58:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+References: <20250518080356.43885-1-ziyao@disroot.org> <20250518080356.43885-5-ziyao@disroot.org>
+In-Reply-To: <20250518080356.43885-5-ziyao@disroot.org>
+From: Binbin Zhou <zhoubb.aaron@gmail.com>
+Date: Mon, 19 May 2025 15:58:29 +0800
+X-Gm-Features: AX0GCFvezx2cYlvQnH5iZD0p15ilC-Mldt_FcCKPiY4Jq4fpAcSkai4bZT1DS0U
+Message-ID: <CAMpQs4+GiZpLfSHx9k_QfWjXtyrNS4LS4dOuCKLbS-F8OhpoWg@mail.gmail.com>
+Subject: Re: [PATCH v2 4/4] LoongArch: dts: Add initial devicetree for CTCISZ
+ Forever Pi
+To: Yao Zi <ziyao@disroot.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Huacai Chen <chenhuacai@kernel.org>, 
+	WANG Xuerui <kernel@xen0n.name>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Heiko Stuebner <heiko@sntech.de>, Junhao Xie <bigfoot@classfun.cn>, 
+	=?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>, 
+	Aradhya Bhatia <a-bhatia1@ti.com>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+	Binbin Zhou <zhoubinbin@loongson.cn>, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, loongarch@lists.linux.dev, 
+	Mingcong Bai <jeffbai@aosc.io>, Kexy Biscuit <kexybiscuit@aosc.io>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 25 Apr 2025 13:27:11 +0300, Cristian Ciocaltea wrote:
-> Create a test EDID advertising the following capabilities:
-> 
-> Max resolution: 3840x2160@30Hz with RGB, YUV444, YUV422, YUV420
-> Max BPC:        16 for all modes
-> Max TMDS clock: 340 MHz
-> 
-> [ ... ]
+Hi Yao:
 
-Acked-by: Maxime Ripard <mripard@kernel.org>
+On Sun, May 18, 2025 at 4:05=E2=80=AFPM Yao Zi <ziyao@disroot.org> wrote:
+>
+> Enable UART0 as it's the boot UART used by firmware.
+>
+> Signed-off-by: Yao Zi <ziyao@disroot.org>
+> ---
+>  arch/loongarch/boot/dts/Makefile              |  1 +
+>  .../boot/dts/ls2k0300-ctcisz-forever-pi.dts   | 45 +++++++++++++++++++
 
-Thanks!
-Maxime
+A minor suggestion:
+As we can see, the existing dtsi/dts files are prefixed with
+=E2=80=9Cloongosn-2k=E2=80=9D, would it be possible to keep the filenames c=
+onsistent?
+
+>  2 files changed, 46 insertions(+)
+>  create mode 100644 arch/loongarch/boot/dts/ls2k0300-ctcisz-forever-pi.dt=
+s
+>
+> diff --git a/arch/loongarch/boot/dts/Makefile b/arch/loongarch/boot/dts/M=
+akefile
+> index 15d5e14fe418..9fff9e8be3de 100644
+> --- a/arch/loongarch/boot/dts/Makefile
+> +++ b/arch/loongarch/boot/dts/Makefile
+> @@ -1,3 +1,4 @@
+>  # SPDX-License-Identifier: GPL-2.0-only
+>
+>  dtb-y =3D loongson-2k0500-ref.dtb loongson-2k1000-ref.dtb loongson-2k200=
+0-ref.dtb
+> +dtb-y +=3D ls2k0300-ctcisz-forever-pi.dtb
+> diff --git a/arch/loongarch/boot/dts/ls2k0300-ctcisz-forever-pi.dts b/arc=
+h/loongarch/boot/dts/ls2k0300-ctcisz-forever-pi.dts
+> new file mode 100644
+> index 000000000000..a033c086461f
+> --- /dev/null
+> +++ b/arch/loongarch/boot/dts/ls2k0300-ctcisz-forever-pi.dts
+> @@ -0,0 +1,45 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (C) 2025 Yao Zi <ziyao@disroot.org>
+> + */
+> +
+> +/dts-v1/;
+> +
+> +#include "loongson-2k0300.dtsi"
+> +
+> +/ {
+> +       compatible =3D "ctcisz,forever-pi", "loongson,ls2k0300";
+> +       model =3D "CTCISZ Forever Pi";
+> +
+> +       aliases {
+> +               serial0 =3D &uart0;
+> +       };
+> +
+> +       chosen {
+> +               stdout-path =3D "serial0:115200n8";
+> +       };
+> +
+> +       memory@200000 {
+> +               device_type =3D "memory";
+> +               reg =3D <0 0x00200000 0 0x0ee00000>,
+> +                     <0 0x90000000 0 0x10000000>;
+> +       };
+> +
+> +       reserved-memory {
+> +               #address-cells =3D <2>;
+> +               #size-cells =3D <2>;
+> +               ranges;
+> +
+> +               linux,cma {
+> +                       compatible =3D "shared-dma-pool";
+> +                       reusable;
+> +                       size =3D <0 0x02000000>;
+> +                       linux,cma-default;
+> +               };
+> +       };
+> +};
+> +
+> +&uart0 {
+> +       clock-frequency =3D <100000000>;
+> +       status =3D "okay";
+> +};
+> --
+> 2.49.0
+>
+>
+
+--=20
+Thanks.
+Binbin
 
