@@ -1,199 +1,182 @@
-Return-Path: <linux-kernel+bounces-653008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-653004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27CC0ABB368
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 04:40:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B0B5ABB361
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 04:39:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4C4697A7BD8
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 02:39:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C95D81895F2A
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 02:38:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B9891DE2A8;
-	Mon, 19 May 2025 02:40:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B526D1DDC33;
+	Mon, 19 May 2025 02:38:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="byEwZOmm"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="uayfnIty"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00EEC1DB92A;
-	Mon, 19 May 2025 02:40:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A3B138B;
+	Mon, 19 May 2025 02:38:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747622411; cv=none; b=NyQNEPue0nqOdpoUlz/BguSGL2nZ2BYWEUd2tYZGyQMMaqXZx9O1Ppo7tRuRyWWcHEfZCNkFivrplOdfAFNMKdTY02oLjs7tv2AWRqk/sg2v6qHoTMVt1QpQNgMRiyq0W9msYKVubYIJuetxK4sm7kWH6z1fufW6Rrp42fxMeQE=
+	t=1747622286; cv=none; b=V93Vw0EqCtQkADtjPEDl576vcTUH+ECdUR6nkqtjcL8OiO4KBtDuM4a5JArSh5JJICEskKN/kNuFsFN9YNTDNSo/REE5hv0JmGPPbgxCllrpHBdDnKQ8prN/XPiVI3NKyeB5Be+aDUl2vW2GhNoFzV38oWxSuDL/ddIgn+rAjUs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747622411; c=relaxed/simple;
-	bh=Y0wCnSUnurFZRnLN+azAHQiKHmOTcZPUOPN5z+D56wM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=g3gGAUhOKlZzHEELApLSZT/uf2XJAkDAYflpi7RLnNV1hNeB8pdopDYRJplC8f2/xWE5LQIA5o3qFfkx35ITTiURztIlFY4c7NaM0o3WQ9VSqkYfHwqkDz/4BnlqLgmQ9Z4neXFx5WiylsZhL1xsZRwPw0sVMntbpX9D7bdhu5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=byEwZOmm; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1747622410; x=1779158410;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=Y0wCnSUnurFZRnLN+azAHQiKHmOTcZPUOPN5z+D56wM=;
-  b=byEwZOmmZ4aqbNqdR5wdv/Fswv/XHVLXlVqpTbxQBEjWQlRQgWuwd8Hy
-   54+zJeAMAxVNzBsnB067yQULki5s2D7x14BhB/ukBrDfAEj5tyZ9wHZqB
-   eUswV4haFFEE8BvBmUl6pNdt8L5i2aPsjqGKymdVXkKppAsbPZMcvvbL+
-   /XEWsOjWG19sZewpe5ZUY7nTtN4Et9/0Eb4lyLFjFy77Y2ZjvrLa7/vMg
-   bZRun1VEMqgjA2JglD9IWCFSz4XKH62KAG51N0qqFeltlUVXMoS35DLwJ
-   Kyx6KPoZ3NLukgICjUoH6Cdz/Y39IxG2FqcLcn73I4fvOKJh/G/uFK3lq
-   g==;
-X-CSE-ConnectionGUID: Mv62kRrNQNqv875sL4Qqkw==
-X-CSE-MsgGUID: I7A+tZOqR968rL8tJeo2Xw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11437"; a="53183544"
-X-IronPort-AV: E=Sophos;i="6.15,299,1739865600"; 
-   d="scan'208";a="53183544"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 May 2025 19:40:09 -0700
-X-CSE-ConnectionGUID: GcY27bRZTw6HMoXu0YxNSQ==
-X-CSE-MsgGUID: l70NrZo/R9O4EHg7KzghrQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,299,1739865600"; 
-   d="scan'208";a="139732958"
-Received: from yzhao56-desk.sh.intel.com ([10.239.159.62])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 May 2025 19:40:07 -0700
-From: Yan Zhao <yan.y.zhao@intel.com>
-To: pbonzini@redhat.com,
-	seanjc@google.com
-Cc: reinette.chatre@intel.com,
-	rick.p.edgecombe@intel.com,
-	linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org,
-	Yan Zhao <yan.y.zhao@intel.com>
-Subject: [PATCH 1/2] KVM: x86/mmu: Add RET_PF_RETRY_INVALID_SLOT for fault retry on invalid slot
-Date: Mon, 19 May 2025 10:37:37 +0800
-Message-ID: <20250519023737.30360-1-yan.y.zhao@intel.com>
-X-Mailer: git-send-email 2.43.2
-In-Reply-To: <20250519023613.30329-1-yan.y.zhao@intel.com>
-References: <20250519023613.30329-1-yan.y.zhao@intel.com>
+	s=arc-20240116; t=1747622286; c=relaxed/simple;
+	bh=Fi9iTL2RpY1O1X2GC20VNbD9y6O0/qOwuKgv63jYQyM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gDqB6cdAAdy0TVfM8NlECUnZMfk2pvKTRSJG7XpnpP51AkRLXBE/ygBnmSyZJ/xImxZRfQmfnmmjCIU1ySsGCbAxdBra1YFB+kz/3NMjJw2lXQbpf6d3cedL+QtjTztMBK3dPSN8R3R9Ayvyqd6EE384356NC7MjkqpggME+z5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=uayfnIty; arc=none smtp.client-ip=212.227.17.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1747622281; x=1748227081; i=w_armin@gmx.de;
+	bh=iaBeFUmod4MT3CfW49GRiYeC2fwreh8gWgZTnVDrxwk=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=uayfnItyi3BsrGQeL/oE/RtZVvYc/bMGgY2on2z+CVwf5eolhX38fNzu+isHhAbu
+	 ZawtDJLQ2jkJgwqpp8vD+niEZgsbzcISqt0LfzptsEH/7bNJ5PZmhqZDSl0x0ytBr
+	 B+74dbP4XbKZD9z/h0IOIFMcTHWAmWzDy1LiznWqQB5xgD11IxL9ofPhe0muV6zfa
+	 ON85IUwneE8/dV/yhpPrGVkvQqkS2fjSB2230q7/kGLeRQieJowyjOjnPkjnX/QJH
+	 /gHjF4KhoDBiSLuIgoBEmfJ3+UUIyEWW7Pq0tk04FvBUWokRM61oSHzAKDyuEatjz
+	 U5T10v24tvMftDf1Bg==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.0.69] ([87.177.78.219]) by mail.gmx.net (mrgmx105
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1MCbEp-1u7nys1eR1-003FD6; Mon, 19
+ May 2025 04:38:01 +0200
+Message-ID: <3a64d00e-3ca8-4a9f-9d72-e62712dc20b9@gmx.de>
+Date: Mon, 19 May 2025 04:37:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 00/10] platform/x86: msi-wmi-platform: Add fan
+ curves/platform profile/tdp/battery limiting
+To: Antheas Kapenekakis <lkml@antheas.dev>,
+ platform-driver-x86@vger.kernel.org
+Cc: Jonathan Corbet <corbet@lwn.net>, Hans de Goede <hdegoede@redhat.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
+ Kurt Borja <kuurtb@gmail.com>, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org
+References: <20250511204427.327558-1-lkml@antheas.dev>
+Content-Language: en-US
+From: Armin Wolf <W_Armin@gmx.de>
+In-Reply-To: <20250511204427.327558-1-lkml@antheas.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:G3o7YRZPyomh+bfseKd5ShCaK/WJtWDhA1am9cwRLuv+td+oa4h
+ AWbtWJS9PyuSAOxTk6l+p2wPtlTRmmqLXhugQtS+oYg7bhDQbRSsAdqZ1ExdkfAu8XigG1p
+ Xmfxn8NZUWNKprKaC8wAS17aVL7FE1XikeYL3XempdljkswaYPvsnl5533cfxgiqgPQgPYG
+ QAlILlc6LwdF9Pqnq6uag==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:atxpXWArFds=;Fs/+hUp1YhLnxn4vyFl1j3znhHt
+ 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
 
-Introduce a new return value RET_PF_RETRY_INVALID_SLOT to inform callers of
-kvm_mmu_do_page_fault() that a fault retry is due to an invalid memslot.
-This helps prevent deadlocks when a memslot is removed during pre-faulting
-GPAs in the memslot or local retry of faulting private pages in TDX.
+Am 11.05.25 um 22:44 schrieb Antheas Kapenekakis:
 
-Take pre-faulting as an example.
+> This draft patch series brings into parity the msi-wmi-platform driver with
+> the MSI Center M Windows application for the MSI Claw (all models).
+> Unfortunately, MSI Center M and this interface do not have a discovery API,
+> necessitating the introduction of a quirk system.
+>
+> While this patch series is fully functional and tested, there are still
+> some issues that need to be addressed:
+>    - Armin notes we need to disable fan curve support by default and quirk
+>      it as well, as it is not supported on all models. However, the way
+>      PWM enable ops work, this makes it a bit difficult, so I would like
+>      some suggestions on how to rework this.
+>    - It turns out that to fully disable the fan curve, we have to restore
+>      the default fan values. This is also what is done on the OEM software.
+>      For this, the last patch in the series is used, which is a bit dirty.
+>
+> Sleep was tested with all values being preserved during S0iX (platform
+> profile, fan curve, PL1/PL2), so we do not need suspend/resume hooks, at
+> least for the Claw devices.
+>
+> For PL1/PL2, we use firmware-attributes. So for that I +cc Kurt since if
+> his new high level interface is merged beforehand, we can use that instead.
 
-During ioctl KVM_PRE_FAULT_MEMORY, kvm->srcu is acquired around the
-pre-faulting of the entire range. For x86, kvm_arch_vcpu_pre_fault_memory()
-further invokes kvm_tdp_map_page(), which retries kvm_mmu_do_page_fault()
-if the return value is RET_PF_RETRY.
+Overall the patch series looks promising, however the suspend/resume handling
+and the quirk system still needs some work.
 
-If a memslot is deleted during the ioctl KVM_PRE_FAULT_MEMORY, after
-kvm_invalidate_memslot() marks a slot as invalid and makes it visible via
-rcu_assign_pointer() in kvm_swap_active_memslots(), kvm_mmu_do_page_fault()
-may encounter an invalid slot and return RET_PF_RETRY. Consequently,
-kvm_tdp_map_page() will then retry without releasing the srcu lock.
-Meanwhile, synchronize_srcu_expedited() in kvm_swap_active_memslots() is
-blocked, waiting for kvm_vcpu_pre_fault_memory() to release the srcu lock,
-leading to a deadlock.
+If you wish i can provide you with a patch for the EC-based quirk system. You
+can then structure your exiting patches around that.
 
-"slot deleting" thread                   "prefault" thread
------------------------------            ----------------------
-                                         srcu_read_lock();
-(A)
-invalid_slot->flags |= KVM_MEMSLOT_INVALID;
-rcu_assign_pointer();
+Thanks,
+Armin Wolf
 
-                                         kvm_tdp_map_page();
-                                         (B)
-                                            do {
-                                               r = kvm_mmu_do_page_fault();
-
-(C) synchronize_srcu_expedited();
-
-                                            } while (r == RET_PF_RETRY);
-
-                                         (D) srcu_read_unlock();
-
-As shown in diagram, (C) is waiting for (D). However, (B) continuously
-finds an invalid slot before (C) completes, causing (B) to retry and
-preventing (D) from being invoked.
-
-The local retry code in TDX's EPT violation handler faces a similar issue,
-where a deadlock can occur when faulting a private GFN in a slot that is
-concurrently being removed.
-
-To resolve the deadlock, introduce a new return value
-RET_PF_RETRY_INVALID_SLOT and modify kvm_mmu_do_page_fault() to return
-RET_PF_RETRY_INVALID_SLOT instead of RET_PF_RETRY when encountering an
-invalid memslot. This prevents endless retries in kvm_tdp_map_page() or
-tdx_handle_ept_violation(), allowing the srcu to be released and enabling
-slot removal to proceed.
-
-As all callers of kvm_tdp_map_page(), i.e.,
-kvm_arch_vcpu_pre_fault_memory() or tdx_gmem_post_populate(), are in
-pre-fault path, treat RET_PF_RETRY_INVALID_SLOT the same as RET_PF_EMULATE
-to return -ENOENT in kvm_tdp_map_page() to enable userspace to be aware of
-the slot removal.
-
-Returning RET_PF_RETRY_INVALID_SLOT in kvm_mmu_do_page_fault() does not
-affect kvm_mmu_page_fault() and kvm_arch_async_page_ready(), as their
-callers either only check if the return value > 0 to re-enter vCPU for
-retry or do not check return value.
-
-Reported-by: Reinette Chatre <reinette.chatre@intel.com>
-Signed-off-by: Yan Zhao <yan.y.zhao@intel.com>
----
- arch/x86/kvm/mmu/mmu.c          | 3 ++-
- arch/x86/kvm/mmu/mmu_internal.h | 3 +++
- 2 files changed, 5 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-index cbc84c6abc2e..3331e1e1aa69 100644
---- a/arch/x86/kvm/mmu/mmu.c
-+++ b/arch/x86/kvm/mmu/mmu.c
-@@ -4599,7 +4599,7 @@ static int kvm_mmu_faultin_pfn(struct kvm_vcpu *vcpu,
- 	 * be zapped before KVM inserts a new MMIO SPTE for the gfn.
- 	 */
- 	if (slot->flags & KVM_MEMSLOT_INVALID)
--		return RET_PF_RETRY;
-+		return RET_PF_RETRY_INVALID_SLOT;
- 
- 	if (slot->id == APIC_ACCESS_PAGE_PRIVATE_MEMSLOT) {
- 		/*
-@@ -4879,6 +4879,7 @@ int kvm_tdp_map_page(struct kvm_vcpu *vcpu, gpa_t gpa, u64 error_code, u8 *level
- 		return 0;
- 
- 	case RET_PF_EMULATE:
-+	case RET_PF_RETRY_INVALID_SLOT:
- 		return -ENOENT;
- 
- 	case RET_PF_RETRY:
-diff --git a/arch/x86/kvm/mmu/mmu_internal.h b/arch/x86/kvm/mmu/mmu_internal.h
-index db8f33e4de62..1aa14a32225e 100644
---- a/arch/x86/kvm/mmu/mmu_internal.h
-+++ b/arch/x86/kvm/mmu/mmu_internal.h
-@@ -311,6 +311,8 @@ int kvm_tdp_page_fault(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault);
-  * RET_PF_INVALID: the spte is invalid, let the real page fault path update it.
-  * RET_PF_FIXED: The faulting entry has been fixed.
-  * RET_PF_SPURIOUS: The faulting entry was already fixed, e.g. by another vCPU.
-+ * RET_PF_RETRY_INVALID_SLOT: Let CPU fault again on the address due to slot
-+ *                            with flag KVM_MEMSLOT_INVALID.
-  *
-  * Any names added to this enum should be exported to userspace for use in
-  * tracepoints via TRACE_DEFINE_ENUM() in mmutrace.h
-@@ -326,6 +328,7 @@ enum {
- 	RET_PF_INVALID,
- 	RET_PF_FIXED,
- 	RET_PF_SPURIOUS,
-+	RET_PF_RETRY_INVALID_SLOT,
- };
- 
- /*
--- 
-2.43.2
-
+> Antheas Kapenekakis (8):
+>    platform/x86: msi-wmi-platform: Add unlocked msi_wmi_platform_query
+>    platform/x86: msi-wmi-platform: Add quirk system
+>    platform/x86: msi-wmi-platform: Add platform profile through shift
+>      mode
+>    platform/x86: msi-wmi-platform: Add PL1/PL2 support via firmware
+>      attributes
+>    platform/x86: msi-wmi-platform: Add charge_threshold support
+>    platform/x86: msi-wmi-platform: Drop excess fans in dual fan devices
+>    platform/x86: msi-wmi-platform: Update header text
+>    platform/x86: msi-wmi-platform: Restore fan curves on PWM disable and
+>      unload
+>
+> Armin Wolf (2):
+>    platform/x86: msi-wmi-platform: Use input buffer for returning result
+>    platform/x86: msi-wmi-platform: Add support for fan control
+>
+>   .../wmi/devices/msi-wmi-platform.rst          |   26 +
+>   drivers/platform/x86/Kconfig                  |    3 +
+>   drivers/platform/x86/msi-wmi-platform.c       | 1181 ++++++++++++++++-
+>   3 files changed, 1156 insertions(+), 54 deletions(-)
+>
+>
+> base-commit: 62b1dcf2e7af3dc2879d1a39bf6823c99486a8c2
 
