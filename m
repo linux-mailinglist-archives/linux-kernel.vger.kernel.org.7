@@ -1,235 +1,148 @@
-Return-Path: <linux-kernel+bounces-653748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-653750-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0380BABBDE6
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 14:32:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 952CBABBDE9
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 14:32:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0ABE4189ABA7
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 12:32:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1297617E5DF
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 12:32:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D16A27780A;
-	Mon, 19 May 2025 12:32:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62E302777E4;
+	Mon, 19 May 2025 12:32:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zgLyFcFM"
-Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RdTnRvyJ"
+Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E5F42749FB
-	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 12:32:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1382227877E
+	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 12:32:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747657933; cv=none; b=dVZKnB1VNyV2IaE87+o73+xVKX4bOEJzKS3gP20jxCHYHDV+SXXgXZNk+Wksne8tONdtIa9gvcZeS/WOhBBVQp5bsh3UKGi7Pu5/+2GZPnu9B/AxpCFxEtYxIyLirpU75GBlCsrjxAnxXR/YOj1ovUhyRUTQTqHLeLrycJMybgE=
+	t=1747657938; cv=none; b=jO0AgCH47ODSR9s3RIZEF66ral0ffmBEj7gvfWrf0uYImnlwIO7PybWD59AWIr9hiTX33xZiDeVBQ3OrYZy6eyT8s3KlCmMym0tbcbOmWdW13eXtcKXSsyLB9XXN/oPaBdStkUPuy6hUFT94B1hbuh/eo+uDBTeJR7PB51lzFoE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747657933; c=relaxed/simple;
-	bh=HOodb27u5TwtTAPSsy92wrZWNxC37y9Hm9lyvRSe3Ns=;
+	s=arc-20240116; t=1747657938; c=relaxed/simple;
+	bh=6b8ZPtV5F994PMuvcCSu5RtuqE+uyQUk2qhJt6Rgzwg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XhqqjGfWluvjYoGhjxFneSEzpLx7YdE12+BX0+KelZggUB+WSX1rkTbAB7YxlY42eCJTqoD9HHeR9y5DxrNgd2J/YjYeuhkeSV/gmTMhxBUQJWHure6bC9SUnYYzcoDo7cSnvfR4dTUK1NcUieMR6wNKwVHKNjvIMxdOZzrs89I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zgLyFcFM; arc=none smtp.client-ip=209.85.219.173
+	 To:Cc:Content-Type; b=Q6ynbke6I9PM3tZQ+QgSuOIAhsBSGrniqGYeHMg8+oDd45qpeeNHuZ+2hOpxInAc9twpDZIcdqS1j5NCpTM3Sxpw5FPXhR9KxbTq0LwDBEple0ojLMNwLi6XaSM0Gq5CT9zoI/RD7pa5l8sqcnSdckJ9+mTyy05oFHyirbva6vw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RdTnRvyJ; arc=none smtp.client-ip=209.85.219.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-e7b85f1cbacso1947924276.3
-        for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 05:32:11 -0700 (PDT)
+Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e733cd55f9eso4089289276.1
+        for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 05:32:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1747657931; x=1748262731; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1747657936; x=1748262736; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=B7Zhmo/JpzcMaAMKKOwzh6ja2t6tkPpPMCDNoaM6o58=;
-        b=zgLyFcFMZHKUnYWGl/QEPMah+G87E2XxjK772KjH0ygnR9PKfWIbc/OC/CIL8M593Q
-         ZTLnEdc8K9sFZmfAMcpLi2U4orNwdNAv35ccx7H+BY6eCDea60vyl2c+W/vmMWaEgo/1
-         lICUVV4iLsKo8LUKRW45kc8PSYkfHztEjLl7zZ4v9odKEjRt5TnVb5dxvVa4CeDZ6aPt
-         jQMU7pAMmNQ4WBMqMxwFqrDHxA2tsY9qDSC8O0KCxJlvBnVyyhH3BGj8Gni0F6VWF5dw
-         Zz9GQ/rIOM4MRdMHBlBA0wgvbr0DlOMahLyiqIKzzzepICS+hX6v9jn8hnOPMmS/cbZD
-         T00Q==
+        bh=rwPC3/sUg5alnk+vPawV+VRfKcVYwDAJB/XEbxtpgV8=;
+        b=RdTnRvyJRPZ502PFl5HL6d/UU9+p//wsXFqMbbZ9q5ddnWho3fT5soQ9FnPSj9mwJY
+         DGG8D1gkmMz4l7RO1KPRpxJSZnjsIJqFRMz2j9CzDyDLdF9hJ/gXWYLDA5JZMcAC3ZKX
+         b9SZdelV0biPugAkmcqK9wamllKQoW9u4cAKEDGGhmWNtxq/mbHHW3IhJJMr53CE2mOU
+         XCoPmX27cslnFA93SClB9OnEtOKRGSF6KyXeJGQLQH8OESMS38L46R4HRN1/9Kdl6kzm
+         n6xtNQsX7gf06fE76LCAGMG1DZJVDcFdWlf+KjtnouqTDbDTUZaxV25PyPaOz/ona2oL
+         ONrg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747657931; x=1748262731;
+        d=1e100.net; s=20230601; t=1747657936; x=1748262736;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=B7Zhmo/JpzcMaAMKKOwzh6ja2t6tkPpPMCDNoaM6o58=;
-        b=PdtzqRV7fOebRD0rFWtt+h6VLBMgb/UPmgt3rMVoNbGJarIxxTePBxtyn+tN7PZPLi
-         b0pBlyPL4mkcQkBIvVkhizKgQ+5mQe9lyRVmE6CRKpXxseQAo5buRjwIKc61evyDiUBs
-         1NGbimjmGE87q3Fpm9lKTQ1Ce1tMxeyS2ZMPfV4x4gbV/iG6Ybdsmgdtk91Vy92L0ys6
-         FkI9lPx+HXGpqQ1SxKP7PvIzYZoZ+gGfWAOXZtaKYy7XL0ZeBcbngfxMtQirhFNFt69r
-         u8kTSWjoEUV5rU72CZzKeQU3l/9/N9iEwrG83klmQSjxu+RXCwUUi+PQm+6YiOSqHFLE
-         ZsrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWxatWCZJ7mlV+7kaboI/G6iWAi3yC8ORMzTcpm5JeomCtxcywqk/raieAA8jsOH3jvS32WpRiUbGxhqqA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxVPSYPJJhcKKd63oPl2g4NNWmb63M+XKKxHcHr73/RVa5kHNlP
-	Bl2KRYZuutlkea5p/7/X4e1w75D34GGBRecaszeN9A3dYRyyMx2lNIMbVUT6HK1n07WqAVKYTao
-	oFoSqblCBQP04bCp7dvwUvMWDJYpGaSDZHLdbQrMoyYelwBg20tdU+N4=
-X-Gm-Gg: ASbGncvmcyYWQFstSf5yCATawQLKxs5wIc45LVeUUbF5qiM4rBi6vChIFV5/Y8Hgt9B
-	AfZJlnI+KhMMljx7pSlegajTwyUjBvcaJgMldg5rcotb5POffNqs/dJv3BHfaGHKlqni4UGoe7+
-	HmrcgX9y6/VwnzVL18wm9lxhWvg7+oNwVMpA==
-X-Google-Smtp-Source: AGHT+IHMRf8bcz5aIkiyV4tAaS8tGQtUKO6bhUpbLyg9woenXTM/y8WVzmZJnfWYm+84x/Es23zMYwq7B9ivClzWPz0=
-X-Received: by 2002:a05:6902:1b03:b0:e7b:8524:3f5e with SMTP id
- 3f1490d57ef6-e7b85243fb8mr12802970276.10.1747657930730; Mon, 19 May 2025
- 05:32:10 -0700 (PDT)
+        bh=rwPC3/sUg5alnk+vPawV+VRfKcVYwDAJB/XEbxtpgV8=;
+        b=Vnu0sv0tHdZewuwxH7dLnSmvxclaJM9eZNfr9X3PBaqW+Nmc0TaNVpyGMxFXuZcKJf
+         j1pcc708bjFtBYmx1KvcmHnjYSW/uUqcD3xkWCS1FezgstRJjSHRLxVsz9OeqA2tdeAQ
+         cUL3eFeeKjNm5alddlt+T9itWazqEDCrfWJ50OQnNZS8Msj60rLmPWoG+QcQ0d4r2ka6
+         DlT6FSHJCe/LaXj+3G187w2DWVNgJuNuCHIboX9r4H/x0sgyvNojXSQyvogZlmbiVjHT
+         Rw4OpwQ4xR3S6wR6ds/E1PzhB6dDjGXsMe05IrwkY6SGWacp9Boy0RJSaBB3LKUu5xiR
+         DTDg==
+X-Forwarded-Encrypted: i=1; AJvYcCXENNQxlvkJDTVQYDrKvY+D7EmVYuIGnVAn4y/cBVRfod4YYeBFsyrRkgSZEeiHrgZwtFImpwEBbt19f/g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGDWCmzkXBWRbk2Yg1syQMYbCW47sblaYXbVDL08dSMaWiAZ/K
+	VoatAT+irClHw86aaCjSlqhBMJIGOxcuI0b4IsmQXBosm41cKQp6W28BGGBzD1lJxXt7eAHIieW
+	oon9J0sWP5mPGXn5Gw7kNeFJ0Dq6ycZYj/A8zQ5LFNQ==
+X-Gm-Gg: ASbGncuOaQubWPwuCpsL3c92Yvt6ZKUR/2qnURkEZHim5JjRqOxz8eeRRAqksIR8kFV
+	KlEY1j6NwqLiBP3iLFFlOVjpwBOXuaL6DxYf5EctXrGHzu49xEw8yPjxcUEni7D4sbvCqNZlX+/
+	rW6oLM9jEatxbARwxOwQQHVdGwgi0cB7aK7g==
+X-Google-Smtp-Source: AGHT+IH+k05RenNE75G05lCkPIFd12fSQl1b4MXO59HUeKq46kiZr+jpNbTHEmQSsew+3IME0NcG8hlXcQsODDtf+tw=
+X-Received: by 2002:a05:6902:110f:b0:e7b:94da:55dc with SMTP id
+ 3f1490d57ef6-e7b94da571amr8538048276.13.1747657935953; Mon, 19 May 2025
+ 05:32:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250514094903.1771642-1-ziniu.wang_1@nxp.com>
- <20250514094903.1771642-2-ziniu.wang_1@nxp.com> <0bda0bba-cfc6-403d-b36f-9c625e5bafb2@intel.com>
-In-Reply-To: <0bda0bba-cfc6-403d-b36f-9c625e5bafb2@intel.com>
+References: <20250515204201502Kzmj4I6k5Fv2FjqyEjF6n@zte.com.cn>
+In-Reply-To: <20250515204201502Kzmj4I6k5Fv2FjqyEjF6n@zte.com.cn>
 From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Mon, 19 May 2025 14:31:34 +0200
-X-Gm-Features: AX0GCFtU3S8coUHVXTKQU7bBOE0kHTmWJQ63OQyAYKI9Qe1enSPXNA1WeuzFizU
-Message-ID: <CAPDyKFp+ATxghU2g1XxVLB1Oy4TkFvUqj6SpyKCV_ro9bayXtQ@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] mmc: host: sdhci-esdhc-imx: refactor the system PM logic
-To: ziniu.wang_1@nxp.com, Adrian Hunter <adrian.hunter@intel.com>
-Cc: linux-mmc@vger.kernel.org, haibo.chen@nxp.com, shawnguo@kernel.org, 
-	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, 
-	imx@lists.linux.dev, s32@nxp.com, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
+Date: Mon, 19 May 2025 14:31:40 +0200
+X-Gm-Features: AX0GCFtXdhUci2gSte12YEy9YP5JWc22zhs6HMihigJb0b76jaF6NMhMse_Mf_o
+Message-ID: <CAPDyKFrheefitHyBMz11pcUMi=cz_-nLzG9zY9cbYyZfjsQAKg@mail.gmail.com>
+Subject: Re: [PATCH] mmc: bcm2835: Use str_read_write() helper
+To: long.yunjian@zte.com.cn
+Cc: florian.fainelli@broadcom.com, bcm-kernel-feedback-list@broadcom.com, 
+	rjui@broadcom.com, sbranden@broadcom.com, wahrenst@gmx.net, 
+	u.kleine-koenig@baylibre.com, fang.yumeng@zte.com.cn, 
+	linux-mmc@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	ouyang.maochun@zte.com.cn, mou.yi@zte.com.cn, xu.lifeng1@zte.com.cn
 Content-Type: text/plain; charset="UTF-8"
 
-On Thu, 15 May 2025 at 14:53, Adrian Hunter <adrian.hunter@intel.com> wrote:
+On Thu, 15 May 2025 at 14:42, <long.yunjian@zte.com.cn> wrote:
 >
-> On 14/05/2025 12:49, ziniu.wang_1@nxp.com wrote:
-> > From: Luke Wang <ziniu.wang_1@nxp.com>
-> >
-> > Current suspend/resume logic has one issue. In suspend, will config
-> > register when call sdhci_suspend_host(), but at this time, can't
-> > guarantee host in runtime resume state. If not, the per clock is gate
-> > off, access register will hang.
-> >
-> > In sdhci_esdhc_suspend/sdhci_esdhc_resume, remove sdhci_suspend_host()
-> > and sdhci_resume_host(), all are handled in runtime PM callbacks except
-> > the wakeup irq setting. For wakeup irq setting, use pm_runtime_get_sync()
-> > in sdhci_esdhc_suspend() to make sure clock gate on.
-> >
-> > Remove pinctrl_pm_select_default_state() in sdhci_esdhc_resume, because
-> > pm_runtime_force_resume() already config the pinctrl state according to
-> > ios timing, and here config the default pinctrl state again is wrong for
-> > SDIO3.0 device if it keep power in suspend.
-> >
-> > Signed-off-by: Haibo Chen <haibo.chen@nxp.com>
-> > Signed-off-by: Luke Wang <ziniu.wang_1@nxp.com>
+> From: Yumeng Fang <fang.yumeng@zte.com.cn>
 >
-> Looks OK to me, at least, although Ulf may still have comments.
-> Otherwise, for both patches:
-
-Looks good to me too!
-
+> Remove hard-coded strings by using the str_read_write() helper.
 >
-> Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+> Signed-off-by: Yumeng Fang <fang.yumeng@zte.com.cn>
 
-Both patches applied for next, thanks!
+Applied for next, thanks!
 
 Kind regards
 Uffe
 
 
+> ---
+>  drivers/mmc/host/bcm2835.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
 >
-> > ---
-> >  drivers/mmc/host/sdhci-esdhc-imx.c | 50 ++++++++++++++++++------------
-> >  1 file changed, 30 insertions(+), 20 deletions(-)
-> >
-> > diff --git a/drivers/mmc/host/sdhci-esdhc-imx.c b/drivers/mmc/host/sdhci-esdhc-imx.c
-> > index c0160c69a027..7611682f10c3 100644
-> > --- a/drivers/mmc/host/sdhci-esdhc-imx.c
-> > +++ b/drivers/mmc/host/sdhci-esdhc-imx.c
-> > @@ -2009,11 +2009,14 @@ static int sdhci_esdhc_suspend(struct device *dev)
-> >       struct pltfm_imx_data *imx_data = sdhci_pltfm_priv(pltfm_host);
-> >       int ret;
-> >
-> > -     if (host->mmc->caps2 & MMC_CAP2_CQE) {
-> > -             ret = cqhci_suspend(host->mmc);
-> > -             if (ret)
-> > -                     return ret;
-> > -     }
-> > +     /*
-> > +      * Switch to runtime resume for two reasons:
-> > +      * 1, there is register access (e.g., wakeup control register), so
-> > +      *    need to make sure gate on ipg clock.
-> > +      * 2, make sure the pm_runtime_force_resume() in sdhci_esdhc_resume() really
-> > +      *    invoke its ->runtime_resume callback (needs_force_resume = 1).
-> > +      */
-> > +     pm_runtime_get_sync(dev);
-> >
-> >       if ((imx_data->socdata->flags & ESDHC_FLAG_STATE_LOST_IN_LPMODE) &&
-> >               (host->tuning_mode != SDHCI_TUNING_MODE_1)) {
-> > @@ -2021,9 +2024,6 @@ static int sdhci_esdhc_suspend(struct device *dev)
-> >               mmc_retune_needed(host->mmc);
-> >       }
-> >
-> > -     if (host->tuning_mode != SDHCI_TUNING_MODE_3)
-> > -             mmc_retune_needed(host->mmc);
-> > -
-> >       /*
-> >        * For the device need to keep power during system PM, need
-> >        * to save the tuning delay value just in case the usdhc
-> > @@ -2033,9 +2033,13 @@ static int sdhci_esdhc_suspend(struct device *dev)
-> >           esdhc_is_usdhc(imx_data))
-> >               sdhc_esdhc_tuning_save(host);
-> >
-> > -     ret = sdhci_suspend_host(host);
-> > -     if (ret)
-> > -             return ret;
-> > +     if (device_may_wakeup(dev)) {
-> > +             /* The irqs of imx are not shared. It is safe to disable */
-> > +             disable_irq(host->irq);
-> > +             ret = sdhci_enable_irq_wakeups(host);
-> > +             if (!ret)
-> > +                     dev_warn(dev, "Failed to enable irq wakeup\n");
-> > +     }
-> >
-> >       ret = pinctrl_pm_select_sleep_state(dev);
-> >       if (ret)
-> > @@ -2043,6 +2047,12 @@ static int sdhci_esdhc_suspend(struct device *dev)
-> >
-> >       ret = mmc_gpio_set_cd_wake(host->mmc, true);
-> >
-> > +     /*
-> > +      * Make sure invoke runtime_suspend to gate off clock.
-> > +      * uSDHC IP supports in-band SDIO wakeup even without clock.
-> > +      */
-> > +     pm_runtime_force_suspend(dev);
-> > +
-> >       return ret;
-> >  }
-> >
-> > @@ -2053,16 +2063,19 @@ static int sdhci_esdhc_resume(struct device *dev)
-> >       struct pltfm_imx_data *imx_data = sdhci_pltfm_priv(pltfm_host);
-> >       int ret;
-> >
-> > -     ret = pinctrl_pm_select_default_state(dev);
-> > +     pm_runtime_force_resume(dev);
-> > +
-> > +     ret = mmc_gpio_set_cd_wake(host->mmc, false);
-> >       if (ret)
-> >               return ret;
-> >
-> >       /* re-initialize hw state in case it's lost in low power mode */
-> >       sdhci_esdhc_imx_hwinit(host);
-> >
-> > -     ret = sdhci_resume_host(host);
-> > -     if (ret)
-> > -             return ret;
-> > +     if (host->irq_wake_enabled) {
-> > +             sdhci_disable_irq_wakeups(host);
-> > +             enable_irq(host->irq);
-> > +     }
-> >
-> >       /*
-> >        * restore the saved tuning delay value for the device which keep
-> > @@ -2072,11 +2085,8 @@ static int sdhci_esdhc_resume(struct device *dev)
-> >           esdhc_is_usdhc(imx_data))
-> >               sdhc_esdhc_tuning_restore(host);
-> >
-> > -     if (host->mmc->caps2 & MMC_CAP2_CQE)
-> > -             ret = cqhci_resume(host->mmc);
-> > -
-> > -     if (!ret)
-> > -             ret = mmc_gpio_set_cd_wake(host->mmc, false);
-> > +     pm_runtime_mark_last_busy(dev);
-> > +     pm_runtime_put_autosuspend(dev);
-> >
-> >       return ret;
-> >  }
+> diff --git a/drivers/mmc/host/bcm2835.c b/drivers/mmc/host/bcm2835.c
+> index e5f151d092cd..def054ddd256 100644
+> --- a/drivers/mmc/host/bcm2835.c
+> +++ b/drivers/mmc/host/bcm2835.c
+> @@ -44,6 +44,7 @@
+>  #include <linux/scatterlist.h>
+>  #include <linux/time.h>
+>  #include <linux/workqueue.h>
+> +#include <linux/string_choices.h>
 >
+>  #include <linux/mmc/host.h>
+>  #include <linux/mmc/mmc.h>
+> @@ -391,8 +392,7 @@ static void bcm2835_transfer_block_pio(struct bcm2835_host *host, bool is_read)
+>
+>                                 if (time_after(jiffies, wait_max)) {
+>                                         dev_err(dev, "PIO %s timeout - EDM %08x\n",
+> -                                               is_read ? "read" : "write",
+> -                                               edm);
+> +                                               str_read_write(is_read), edm);
+>                                         hsts = SDHSTS_REW_TIME_OUT;
+>                                         break;
+>                                 }
+> @@ -435,12 +435,12 @@ static void bcm2835_transfer_pio(struct bcm2835_host *host)
+>                       SDHSTS_CRC7_ERROR |
+>                       SDHSTS_FIFO_ERROR)) {
+>                 dev_err(dev, "%s transfer error - HSTS %08x\n",
+> -                       is_read ? "read" : "write", sdhsts);
+> +                       str_read_write(is_read), sdhsts);
+>                 host->data->error = -EILSEQ;
+>         } else if ((sdhsts & (SDHSTS_CMD_TIME_OUT |
+>                               SDHSTS_REW_TIME_OUT))) {
+>                 dev_err(dev, "%s timeout error - HSTS %08x\n",
+> -                       is_read ? "read" : "write", sdhsts);
+> +                       str_read_write(is_read), sdhsts);
+>                 host->data->error = -ETIMEDOUT;
+>         }
+>  }
+> --
+> 2.25.1
 
