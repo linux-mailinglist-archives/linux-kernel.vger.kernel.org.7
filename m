@@ -1,137 +1,172 @@
-Return-Path: <linux-kernel+bounces-653910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-653912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F2CEABC076
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 16:22:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1385AABC079
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 16:23:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B2DF189FFC4
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 14:22:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C49F41B60386
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 14:23:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47473283149;
-	Mon, 19 May 2025 14:22:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4997279791;
+	Mon, 19 May 2025 14:22:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Qjw3JMqi"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NogNvhQR"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 057DC27CCEB
-	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 14:22:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5822C283158
+	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 14:22:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747664544; cv=none; b=ULt3tUdNMeJbiilZR3JP+BQga9NzfJ473AKyiR9qREMSMBTctDVlGhLqjHzRrCa0meOgF6wlYnd/mTguwEM9se4ZtFGWE+Ba3kryiI+vL35eLHAjYQjwDxEmerJwnU5/WFVq3lYZaV6I5JFYJ16UHXEwG6w3h2RO0l74+sRl98o=
+	t=1747664569; cv=none; b=mu2t0tUxa3KlZiAQtZm2irQv025GPpZrn0g/DB2nXTohuIsILq9eWrXsAmbCw1JcxrwmppfTq0L9qsTVW+MWNlHHmqoQIdTOoUMiVm6uS0q6STMc+Bb2C3YeIFD10qKa7gQxwflF9iW6Vo++YQRDAc8mPM9askB562oNhINM5+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747664544; c=relaxed/simple;
-	bh=xbm6RIGH0CJZMP9dG3aiux1usLbAUaOL5mgEvxLAyA8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sOY010XXFPE6wteFRAxpZMRcAQ70zlss9bCCzniBC0FkKovazoixysRTjOQYpipjlXFbJ3uJEZMZ38kfSL/y638Frakt5GY3FbD9a9CvaJuk2RsjoKPoPv7m+3J+GZUU9BoJ4KKr+ckyAPly19JiM+AbfEnUkvqUjHlgIgp68sg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Qjw3JMqi; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-6000f2f217dso3448194a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 07:22:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1747664541; x=1748269341; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=kQSuEqcHJXFQ1exNbmtWM5VfdOVLBSlLfO7byhWtGpI=;
-        b=Qjw3JMqinxRCVofC27KXSdMdsVzicOkPcDpUzDmfC3on/t3enLfAbDemvL/Q9V27nS
-         hvApcnibZxIs6PI61xJwPuVSwqhFX7UuicZ+YiJ/7yKo0TWS0vElW4XBRiuqJa5hOXcr
-         bbnX/4rS7BUTKi+sgdEMG6fXoimEG6p6B3BH0uWzrFcNBOFYHyjZfKhiALwuHCqntmBC
-         1YSRalkTtMjvve5qDMh74AALivvm3VzLVM90+7tLo5iVAgkLwzxEb9bF8GxUxGzz5yc3
-         5u4JJPl50eoVscAorjv5Fq8e2hJlKEMpst5LPlZDBu9RDpZs0aTmhxmbvdRKPjVfB0RT
-         4W8w==
+	s=arc-20240116; t=1747664569; c=relaxed/simple;
+	bh=gGOOJfhDZ5SegqCN1QGtjb+q4IT91xtxsNde8Cw0vkQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=jY5esgGXcH3jIUHOHiHaA2kRB+Gr6kXvfpvhD2EAmzprfY+6fc9uKucOZtWkBH0HqzE3zvRWw0bTpVCnQIYYd0S1I6LbFyWzbs2VR6Y2RGCc4eSvV6ZcBeu0q1PzaJaYM6mzuXcrn5iHnbldZARSeJZDdF6QvPajvTgU+rozcE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NogNvhQR; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1747664566;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gGOOJfhDZ5SegqCN1QGtjb+q4IT91xtxsNde8Cw0vkQ=;
+	b=NogNvhQRymDymT1lpvG8ffXU58OXvr+OYixRAmDZs2ydYb9sdyTdzQtW8dqmES1eg/xg9u
+	E8Dtnmat18X/TI+YA+VK0lz9ORtZ4FJNnex6H/WRpprraJXdtsHlprQVvTM+fed1xheGoG
+	Z3iwAaMFgkkNuR3ebo6Bs326BXXnmM4=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-672-bly8XJqJPwuwH0krk39WSA-1; Mon, 19 May 2025 10:22:44 -0400
+X-MC-Unique: bly8XJqJPwuwH0krk39WSA-1
+X-Mimecast-MFC-AGG-ID: bly8XJqJPwuwH0krk39WSA_1747664563
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-43ea256f039so36041835e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 07:22:44 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747664541; x=1748269341;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kQSuEqcHJXFQ1exNbmtWM5VfdOVLBSlLfO7byhWtGpI=;
-        b=OoNXrjGnntS0rrWTSO95bABqJ/0GGmoJcAThAopKjdrTOiOsWtqhK3P4sLXajCQnRg
-         mwiGPzuo2adjFmZ5haMfQLVv9wU0/hQjnkBiXLwcp4Hh8ozlrlCGOeQJcRCjcg2Vlpnd
-         OQxCBM5rmyOcGA2v0QZiNdU5Hp3CW1W830wmHmJ/b6m7sZ5Q14APE4ar8GWvRLNzNG+i
-         hMS6tEXFHLPQV1N8T0LqJ1RC+/XVXAKT4IVyVkalN+eoh0+S6oz5XqzA5wvd+Sc8uCs7
-         vW8jxvGXhoBTTD609iCwwf+R3ghzutRl51Z/gVuqFJSPZWxycqvCNdDYf2X5w+blMU+t
-         p/FQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXC/qhGIqgzFhhoBfVCBc2nSltNiy/QHvk2Qljh10ZreqYrq26ezKPTP/uiVuTlyY75jeMKRJavs0gaa10=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxVMb4AzqhLwNeiMTbAwKKezB4lcRtxt0RAO/WYB6fgFpOLshyl
-	N3XLoVtmsqtli3fTtwvMlkll4Vhgj5/wizpGTHUDE0dmT9RUxSZMOTKurgyTv+MbuKQLOy7ra8g
-	MdJo42A==
-X-Gm-Gg: ASbGncsV5RgQzUHMhdziB47dP67+r33zASnipme/0HT78wvguOCyeIzl3qBzH1gVsul
-	Yz5nXpAAOB4myigZwfdx3kGTc1wQS7vcZqzoQtvwY5jiyCusUmOnLnRh0VYt7rpzSRtJjUdcIKX
-	i5Kb/8CM93XAWntHsCyCY0KQttpl2wDZ5rYG4IL5PLtFyK30uACNjS7v8Cos1TgNxtFMdjeRCXM
-	ZsRiCNi74tHWN3Zqtc1fSkHmVqmwSWRn/Gnk3Q+9u+ir82OFBsPNXH2dDDrMbBiZJ6opJjnnr/r
-	xnTnOcVlEwtGI1VSIuHCMTSQesvThfw55XwyrTxiErhn4YLYlPztGbJXhAmqsoBasTo3hIZnVSj
-	YE/6vdfl3eUhFaMmrpXm/
-X-Google-Smtp-Source: AGHT+IFH5dLBwEyWAFcQq1e+DL6BqjO9tw6VuHfBFByUGGuIQ9a/huk1aiNUfDOMwmKFocYhB49/Cg==
-X-Received: by 2002:a17:907:9412:b0:ad5:69e7:181e with SMTP id a640c23a62f3a-ad569e71f30mr348649466b.61.1747664530363;
-        Mon, 19 May 2025 07:22:10 -0700 (PDT)
-Received: from google.com (68.57.204.35.bc.googleusercontent.com. [35.204.57.68])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad52d498747sm595489966b.137.2025.05.19.07.22.09
+        d=1e100.net; s=20230601; t=1747664563; x=1748269363;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=gGOOJfhDZ5SegqCN1QGtjb+q4IT91xtxsNde8Cw0vkQ=;
+        b=wsVEQBim0tCLkApXFBuGtlKHIxEspYJo/OrGI/8jswVkA7bu3LlDKg0jfPmvTNaFbj
+         NPiGtJM+nq4rvBY7WgTXJ9MLn/M8Mjh8VL1o8JO7sOyjW8Gmeftr9WQd6bxH+DOW7cgI
+         UtK1yh1h/83OBMppA3fiSyTBbkRAPk7sf/VM6wPfdPqAzbH3GBkJVBNukwIezBGOD8fO
+         Fx3e8R/Nnrm0RfE+sKpNk3bN+a2Ir1A232ZUBId5mkoj/68SiCeyH91+gL32K7ZGWW7X
+         nPohoKmmDgmxQmA3i+8IOzE60Sb/RV21fC46BlsB5pPY4KRJAxyLIEXwDhacRFrR6qpZ
+         sQig==
+X-Forwarded-Encrypted: i=1; AJvYcCXVCwq/KIVkAAxl+PJjjGNTJiv8DDGxGYTXD6JmB2H/IcGbzx/aUaYniNe4bd82jwQJTaKbQTcLEU7gt3Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTxwUrGVk3VBOrmJsTZMTXw+F10bbj7z/OfCaCPsalGKuO+KDe
+	1kVqlTuyc0oZI+dEPisO/65kestSjl62+PlXUK3Aa8OXy3cLpbezIIBU/Q3bk0j1M9j2jG3O66a
+	iW9KaktYU+HE17kvnVk7xeLr8G41Za97jK9jp5q9tMQ1qse7ttXnJlvt1kiCjRFEcpg==
+X-Gm-Gg: ASbGnct0s6FID/PxKLS+TTRAsIDGaxpXtRU2huUiOk9dTB8EWnkzQzlL+iUfm6GeUWY
+	0D0JjXMOfJH+Q3uzlhw9o2wOQBIV4CEoYsUIriHdOvokK90fP92MjoglAi5x470n+CN7yWO74In
+	IMPBXuWf72PGWfV/nPN4n79apQ3SXEFdYx7PtF2zJZgyKEFp8j99x5ZEShGLFVKJUbVKLR4un2g
+	V76x3G6sJr2KtVlPHKlxFdiTN1Z3WXcRe2uLhs/X4PoAGGnv7Hi5MN3eiBQNdTZvGpMsyLEm3C0
+	uncaSMrEP45mF4OkVvbUQOKGeZLILUN6dU6zswMIejbhAZEJtgyNFTBqxExCQaGTW6sdP6GU
+X-Received: by 2002:a05:6000:2907:b0:3a3:64b7:620b with SMTP id ffacd0b85a97d-3a364b7643cmr8161672f8f.20.1747664563249;
+        Mon, 19 May 2025 07:22:43 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEhm3Ek1ek9W5ZPiXPoMxMaNS8+WO85TNPGle0guQyL6BxmyaWcHjQ9mb2dbC9GE6/77M42Eg==
+X-Received: by 2002:a05:6000:2907:b0:3a3:64b7:620b with SMTP id ffacd0b85a97d-3a364b7643cmr8161648f8f.20.1747664562806;
+        Mon, 19 May 2025 07:22:42 -0700 (PDT)
+Received: from vschneid-thinkpadt14sgen2i.remote.csb (213-44-135-146.abo.bbox.fr. [213.44.135.146])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a35ca5a7d6sm13030988f8f.30.2025.05.19.07.22.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 May 2025 07:22:09 -0700 (PDT)
-Date: Mon, 19 May 2025 14:22:05 +0000
-From: Quentin Perret <qperret@google.com>
-To: Marc Zyngier <maz@kernel.org>
-Cc: Vincent Donnefort <vdonnefort@google.com>, oliver.upton@linux.dev,
-	joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com,
-	catalin.marinas@arm.com, will@kernel.org,
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org, kernel-team@android.com
-Subject: Re: [PATCH v4 07/10] KVM: arm64: Convert pkvm_mappings to interval
- tree
-Message-ID: <aCs-jYUrEraCnLaX@google.com>
-References: <20250509131706.2336138-1-vdonnefort@google.com>
- <20250509131706.2336138-8-vdonnefort@google.com>
- <867c2gg0hq.wl-maz@kernel.org>
+        Mon, 19 May 2025 07:22:42 -0700 (PDT)
+From: Valentin Schneider <vschneid@redhat.com>
+To: Nam Cao <namcao@linutronix.de>, Florian Bezdeka
+ <florian.bezdeka@siemens.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner
+ <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Sebastian Andrzej Siewior
+ <bigeasy@linutronix.de>, John Ogness <john.ogness@linutronix.de>, Clark
+ Williams <clrkwllms@kernel.org>, Steven Rostedt <rostedt@goodmis.org>,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-rt-devel@lists.linux.dev, linux-rt-users@vger.kernel.org, Joe Damato
+ <jdamato@fastly.com>, Martin Karsten <mkarsten@uwaterloo.ca>, Jens Axboe
+ <axboe@kernel.dk>, Frederic Weisbecker <frederic@kernel.org>, Ben Segall
+ <bsegall@google.com>, K Prateek Nayak <kprateek.nayak@amd.com>, Peter
+ Zijlstra <peterz@infradead.org>, Josh Don <joshdon@google.com>, Ingo
+ Molnar <mingo@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>,
+ Xi Wang <xii@google.com>, Juri Lelli <juri.lelli@redhat.com>, Dietmar
+ Eggemann <dietmar.eggemann@arm.com>, Mel Gorman <mgorman@suse.de>,
+ Chengming Zhou <chengming.zhou@linux.dev>, Chuyi Zhou
+ <zhouchuyi@bytedance.com>, Jan Kiszka <jan.kiszka@siemens.com>, Andreas
+ Ziegler <ziegler.andreas@siemens.com>
+Subject: Re: [PATCH] eventpoll: Fix priority inversion problem
+In-Reply-To: <20250519094543.m4bNJP6X@linutronix.de>
+References: <20250519074016.3337326-1-namcao@linutronix.de>
+ <ae4985d3b157e31c667f532906cb6ff55633141b.camel@siemens.com>
+ <20250519094543.m4bNJP6X@linutronix.de>
+Date: Mon, 19 May 2025 16:22:40 +0200
+Message-ID: <xhsmhbjroade7.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <867c2gg0hq.wl-maz@kernel.org>
+Content-Type: text/plain
 
-On Friday 16 May 2025 at 14:15:45 (+0100), Marc Zyngier wrote:
-> > -/*
-> > - * __tmp is updated to rb_next(__tmp) *before* entering the body of the loop to allow freeing
-> > - * of __map inline.
-> > - */
-> > +INTERVAL_TREE_DEFINE(struct pkvm_mapping, node, u64, __subtree_last,
-> > +		     __pkvm_mapping_start, __pkvm_mapping_end, static,
-> > +		     pkvm_mapping);
-> > +
-> >  #define for_each_mapping_in_range_safe(__pgt, __start, __end, __map)				\
-> > -	for (struct rb_node *__tmp = find_first_mapping_node(&(__pgt)->pkvm_mappings,		\
-> > -							     ((__start) >> PAGE_SHIFT));	\
-> > +	for (struct pkvm_mapping *__tmp = pkvm_mapping_iter_first(&(__pgt)->pkvm_mappings,	\
-> > +								  __start, __end - 1);		\
-> >  	     __tmp && ({									\
-> > -				__map = rb_entry(__tmp, struct pkvm_mapping, node);		\
-> > -				__tmp = rb_next(__tmp);						\
-> > +				__map = __tmp;							\
-> > +				__tmp = pkvm_mapping_iter_next(__map, __start, __end - 1);	\
-> >  				true;								\
-> >  		       });									\
-> > -	    )											\
-> > -		if (__map->gfn < ((__start) >> PAGE_SHIFT))					\
-> > -			continue;								\
-> > -		else if (__map->gfn >= ((__end) >> PAGE_SHIFT))					\
-> > -			break;									\
-> > -		else
-> > +	    )
-> 
-> The removal of the comment worries me a bit. Is this iterator still
-> safe wrt freeing of the iterator in the loop?
+On 19/05/25 11:45, Nam Cao wrote:
+> On Mon, May 19, 2025 at 11:25:51AM +0200, Florian Bezdeka wrote:
+>> Hi all,
+>>
+>> sorry for top-posting, but I think it makes sense in this case as I'm
+>> trying to merge different workstreams, likely working on the same
+>> problem showing up in different colors.
+>>
+>> Main goal is to make everybody aware of the other stream / patch
+>> series.
+>>
+>> We have colleagues from Bytedance working on non-RT performance
+>> optimizations related to CONFIG_CFS_BANDWIDTH at [1].
+>>
+>> This series came to light while searching for a solution for a RT
+>> lockup, reported at [2].
+>>
+>> We heavily tested [1] during the last month on RT and can report
+>> success now. In our tests we saw read-lock holder preemption only
+>> within the epoll interface. It might be that [1] fixes more potential
+>> issues in this regard.
+>>
+>> Today [3] (= the patch I'm replying to, see below) got posted.
+>> Linutronix reworking the epoll infrastructure.
+>>
+>> I would love to learn how/if the combination, basically [1] and [3] fit
+>> together.
+>
+> [1] fixes stall problem involving rw semaphore which epoll uses, but it
+> doesn't fix the possible priority inversion with epoll
+>
+> [3] fixes priority inversion problem with epoll by stop using rw semaphore,
+> but it doesn't do anything about rw semaphore
+>
+> So I propose we keep both.
+>
 
-Yep it is still safe (we're still caching the next value in __tmp before
-entering the body of the loop). But we shouldn't remove the comment
-altogether, it just needs an update.
+FWIW I'm thinking the same.
 
-Cheers,
-Quentin
+[1] fixes the CFS throttling circular dependency on RT but also improves
+tail latency when CFS throttling is in use (so not just for RT).
+[3] is specific to epoll but gets rid of the rwsem which is a win overall.
+
+I need to go get my reviewing hat back on and stare at both...
+
+> Best regards,
+> Nam
+>
+>> My understanding right now is, that [1] fixes a CFS issue, throttling
+>> while holding a lock is not ideal on !RT - but might cause a critical
+>> lockup on RT - while [3] is addressing a similar (RT) problem in epoll.
+>>
+>> Best regards,
+>> Florian
+>>
+>> [1] https://lore.kernel.org/all/20250409120746.635476-1-ziqianlu@bytedance.com/
+>> [2] https://lore.kernel.org/linux-rt-users/xhsmhttqvnall.mognet@vschneid.remote.csb/
+>> [3] https://lore.kernel.org/linux-rt-users/20250519074016.3337326-1-namcao@linutronix.de/T/#u
+
 
