@@ -1,98 +1,161 @@
-Return-Path: <linux-kernel+bounces-654111-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-654107-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22C82ABC422
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 18:16:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F8B0ABC3FA
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 18:13:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CBD5E7B066E
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 16:12:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7D3B1B649D2
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 16:12:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E87028D830;
-	Mon, 19 May 2025 16:05:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B859D28C5A3;
+	Mon, 19 May 2025 16:05:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="XH/baRnp"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C63F528C5CA;
-	Mon, 19 May 2025 16:05:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jc3/adoR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BEDD28C2D3
+	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 16:05:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747670736; cv=none; b=ZueXbzwGtHbrxycSGhCja5EUFqnwvwK485KEFJUL/y7emJvtGF+XsMSj/TjeZGoTaX8bedRkHFGm/RwgDsaD6sOX8l+liy7glF1lGqvJG5HXOJV0otscuKbToWXXvhah21mLmOFcL8sb0XlSyproUePvOoSnX6FUcfMqkTk+iyY=
+	t=1747670732; cv=none; b=b4xT/fOIbdL5KpGyOob3vizEpFWCRc5lMr/OoFncknr5m12NEcOBSVcMfLayGQnz6l5ebylYZ8jXqYJZI79KOWnuAvmjjLt8v0gJzOaRc5L+qdi4PzqssVqXlgk/E9HRUuKq8KFF21mF73gRINXKRlU6MD8pEwk+XlsmVQReeSg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747670736; c=relaxed/simple;
-	bh=UamZjfyN6na3p67Dkavvu/KY840DiztSpAhsgs34BpE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=p/in6YiAkIZk+c2pP6yOhzgjbKpOPn88CotD6uCAZZbxozknTqJC7uVF7DpPrLXD4C2XGXYReiIrxLdM/rxdPxZ1Q0bWurnKkE8OX+fW3yGpMmcU+307udqJ0zw2CCOrTcUJCcuUMhBs7fgcupr7xP010LZFsaThSwmPwchi4tk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=XH/baRnp; arc=none smtp.client-ip=117.135.210.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=ij
-	u8xELG4+fnR3215qcICf+KmnT2kIbCVpbjooreXLw=; b=XH/baRnpZkoCFnUWlI
-	8PdkaQFL2V/4NL010Kv9mP+kS7L9tWiD9zon/IGFbi2vFhromKdjzouFPXBemLel
-	6fbPRXYIQjeqk79VmduLST9cOJzdtEaO2yDwYTX7iFD+Ay+S2STALDoC1QQLSOw6
-	4c02GN5P1jtwdXWGlpED4V3ms=
-Received: from localhost.localdomain (unknown [])
-	by gzga-smtp-mtada-g1-2 (Coremail) with SMTP id _____wDHWSeiVitokozvCQ--.46206S5;
-	Tue, 20 May 2025 00:04:53 +0800 (CST)
-From: Hans Zhang <18255117159@163.com>
-To: bhelgaas@google.com,
-	lpieralisi@kernel.org,
-	kw@linux.com,
-	krzk+dt@kernel.org,
-	manivannan.sadhasivam@linaro.org,
-	conor+dt@kernel.org
-Cc: robh@kernel.org,
-	linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Hans Zhang <18255117159@163.com>
-Subject: [PATCH 3/3] PCI: of: Relax max-link-speed check to support PCIe Gen5/Gen6
-Date: Tue, 20 May 2025 00:04:48 +0800
-Message-Id: <20250519160448.209461-4-18255117159@163.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250519160448.209461-1-18255117159@163.com>
-References: <20250519160448.209461-1-18255117159@163.com>
+	s=arc-20240116; t=1747670732; c=relaxed/simple;
+	bh=AUke/NWSRLIRn7SoKvI956go9bNucVyPQKWPXFtUZeA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lbXYY6w0JURyI9qXwpKFC6yPfumQAyWl+3W6fCjBO3bvGtUViSiCVnVTzkds98b974aDDZ965F35knZQdVZNl4q1OrpnXGH2gXCANwN40MNXzrAUQhIfrvxHRD3yeBZZhLkmoHoO1uR9cKu+dtchQitFzJ8ENgRUDRaXIqN+3hQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jc3/adoR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35439C4CEE4;
+	Mon, 19 May 2025 16:05:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747670731;
+	bh=AUke/NWSRLIRn7SoKvI956go9bNucVyPQKWPXFtUZeA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jc3/adoRxZirOIHN5H/K6ZNn0Yg5CAjsdamiscbNe77qxdu0FqWSQWERU3b+1dTtj
+	 pTl4QEPbKD0azl2uEt/zzqWMNG/3tPAhbrEdyBFoHwWl9B4BrwbFWaYjGBhYzo8oPH
+	 UOrSHi++ymFM2oxgSHiHoJy98rmC3JPJoy+5NZa3jlDqlTavFp22cilF/b/wwbOOK4
+	 zIeRRizmsOATFg8Qj6OAQzuwWNd9GDDOv5PHWnGQ13pLitCzHhUuCUrl4spd7mbyF0
+	 qWEuRBmaaljv2nE4ON8aEJbafg2zOT5OR6Nz/hcrSMNU62E7opaTcJ6eEJm8mCgUNr
+	 TNaAQbuNTCsAg==
+Date: Mon, 19 May 2025 18:05:28 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: Jani Nikula <jani.nikula@linux.intel.com>
+Cc: Anusha Srivatsa <asrivats@redhat.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, Luca Ceresoli <luca.ceresoli@bootlin.com>
+Subject: Re: [PATCH v4 2/4] drm/panel: Add refcount support
+Message-ID: <20250519-singing-silent-stingray-fe5c9b@houat>
+References: <87y0vkw8ll.fsf@intel.com>
+ <20250429-benign-sidewinder-of-defense-6dd4d8@houat>
+ <87o6wfwcef.fsf@intel.com>
+ <20250505-slim-bizarre-marten-a674ac@houat>
+ <CAN9Xe3RLazpAXdxxJmyF2QAShDtMSgdoxMdo6ecdYd7aZiP9kA@mail.gmail.com>
+ <874ixvtbxy.fsf@intel.com>
+ <20250509-rapid-flounder-of-devotion-6b26bb@houat>
+ <87r00yj6kv.fsf@intel.com>
+ <molexnyjkiryvhetfdc66gmzecrf6f7kxl656qn46djdkixrkb@fdgnp5hispbf>
+ <875xi3im1r.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wDHWSeiVitokozvCQ--.46206S5
-X-Coremail-Antispam: 1Uf129KBjvdXoWrtw43uFWDZw4fKFyUGrWDXFb_yoWfAwbE9F
-	17XrWfGr4Fkry5Gw1YyrWavrn0v34rW3WUXFyFy3WfAa4UuFyDZFnxuF45Za93A3W3JF1U
-	GFyDGr1UKr1DKjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7xRifOzJUUUUU==
-X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiOhhSo2grT8qeFwAAsc
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="44ortngatcuhoot2"
+Content-Disposition: inline
+In-Reply-To: <875xi3im1r.fsf@intel.com>
 
-The existing code restricted `max-link-speed` to values 1~4 (Gen1~Gen4),
-but current SOCs using Synopsys/Cadence IP may require Gen5/Gen6 support.
-This patch updates the validation in `of_pci_get_max_link_speed` to allow
-values up to 6, ensuring compatibility with newer PCIe generations.
 
-Signed-off-by: Hans Zhang <18255117159@163.com>
----
- drivers/pci/of.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+--44ortngatcuhoot2
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v4 2/4] drm/panel: Add refcount support
+MIME-Version: 1.0
 
-diff --git a/drivers/pci/of.c b/drivers/pci/of.c
-index ab7a8252bf41..379d90913937 100644
---- a/drivers/pci/of.c
-+++ b/drivers/pci/of.c
-@@ -890,7 +890,7 @@ int of_pci_get_max_link_speed(struct device_node *node)
- 	u32 max_link_speed;
- 
- 	if (of_property_read_u32(node, "max-link-speed", &max_link_speed) ||
--	    max_link_speed == 0 || max_link_speed > 4)
-+	    max_link_speed == 0 || max_link_speed > 6)
- 		return -EINVAL;
- 
- 	return max_link_speed;
--- 
-2.25.1
+On Wed, May 14, 2025 at 12:22:40PM +0300, Jani Nikula wrote:
+> On Tue, 13 May 2025, Maxime Ripard <mripard@kernel.org> wrote:
+> > Is it really surprising you get some pushback when you are using a
+> > design that is the complete opposite to what every user of it for the
+> > last decade has been doing?
+>=20
+> The opposite is also true.
+>=20
+> If you create a design that does not cleanly fit the model of the
+> biggest drivers in the subsystem, and expect massive refactors just for
+> the sake of conforming to the design to be able to use any of it, you'll
+> also get pushback.
 
+That's the thing though: i915 deviates pretty heavily from the helpers,
+in general. If it wants to consume them, then it must also be ready to
+make some adjustments. Or just roll its own thing like it has done in
+the past.
+
+Otherwise, where do we draw the line when anyone isn't happy with the
+helpers in general and ask for an exception because reworking the driver
+is too much work?
+
+We did this on pretty much every ARM platform, we did this for amdgpu,
+but somehow i915 should get a pass?
+
+On what ground? What should we tell the next driver that uses the same
+argument?
+
+> > This one is usable, but you rule out the way you could use it.
+>=20
+> I think you're off-hand and completely dismissing the amount of work it
+> would be. And still I'm not even ruling it out, but there has to be a
+> way to start off in small incremental steps, and use the parts that
+> work. And it's not like we're averse to refactoring in the least,
+> everyone knows that.
+
+I'm not sure how pointing fingers at who has the right design,
+overlooked some hypothetical usages 10y down the line, or is being
+offhand helps the conversation in any way.
+
+I've been asking questions to understand what you could work with, and
+some are still left unanswered, and had to ask others multiple times to
+get an answer.
+
+And maybe I do indeed underestimate the amount of work it would take. I
+don't believe so, and I still believe that it wouldn't be too hard. But
+maybe you're right. You still haven't explained why it would take
+anything more than registering a dumb device at probe time though.
+
+> > I guess it's clear now that you won't consider anything else. I wonder
+> > why you started that discussion in the first place if you already have
+> > a clear mind on how to get things moving forward.
+>=20
+> I pointed out what I think is a bug in drm_panel, with nothing but good
+> intentions, and everything snowballed from there.
+>=20
+> There has to be a middle ground instead of absolutes. Otherwise we'll
+> just end up in deeper silos. And more arguments.
+
+I believe calling drm_panel_init would be a middle ground, if we add a
+bunch of warnings, checks here and there and move things around a bit.
+But to keep it, we do need a good reason for it, even more so if we
+don't have any in-tree users anymore.
+
+Maxime
+
+--44ortngatcuhoot2
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaCtWwwAKCRAnX84Zoj2+
+dhXaAX99/6tATvYQUSyz9hcmkMAlBSpKAc/PN6MlwYWkkWP+I/hjrTMVuAbhGWSd
+9IvD6+cBfi2/vkBdTeY/kaxzhyQR+gVabclTJ1Jq1RtAOVZVAKk0qXWTtCqbF/Id
+xM34KIQ2JA==
+=rS0I
+-----END PGP SIGNATURE-----
+
+--44ortngatcuhoot2--
 
