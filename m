@@ -1,79 +1,47 @@
-Return-Path: <linux-kernel+bounces-653387-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-653450-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1837ABB863
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 11:12:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55B28ABB9DF
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 11:45:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 460543B28C7
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 09:12:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27AA71887B07
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 09:42:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCC501F5402;
-	Mon, 19 May 2025 09:12:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D46EE274FC0;
+	Mon, 19 May 2025 09:31:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YjUT14rl"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eWoEfpqP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C71835947;
-	Mon, 19 May 2025 09:12:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32029272E6A;
+	Mon, 19 May 2025 09:31:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747645943; cv=none; b=MdFEZ8SoL4g3TvDDvOJHlWBKOA+qeE9xw++u25JslUbu/wsZMQW7BQrO2oHL1a5QHIfU8rrPKuT59x07XyU0lybCOU2ogkfGQeD0viQQMJlLvvPyo1azRMkMYN7dAT8VzapiNuJXztyZbiz8h7mpJLq6lMVeseAjkNxeTW/UewA=
+	t=1747647069; cv=none; b=OUVAzufUO0qnTzaGiBz/b3CmuamAMZXqpSz0bHnd10ZKU6eJj0lgYoh4uj9tH3FCu5VhQ7ILP4M6C3pdJWisLR5gSDyCuIhFRpxLHiae4Vm3GnbPJsa7hEWsKs+rH3seifJM1SIytWwDKA2z5Ox8mkF9eza1P3nyN20+zOECC94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747645943; c=relaxed/simple;
-	bh=Q/r+/Zon8SsRaNOI0f+eNA796nFcU1p/BFRcYLCCsVM=;
+	s=arc-20240116; t=1747647069; c=relaxed/simple;
+	bh=0eMiHVabjIiN5pvOO8SCZgtZ6g98PmL/kA90czRvkU4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=I8BZ+8D/CtFdl5XaMvm28QvnZj/N12D7V8SDB0kepn1RklB0qbuKVzzWuRCMvDrcUXL8oooljx0TuJrkMoIsDYfMpRoNT72EzB+Ae/VJf6yvRSxe+mhljXqLMR0NkmmOCR3YMEc2UZ6QGSjJcAvceN1A3jtOctitVnwxoT4ycGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YjUT14rl; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5f3f04b5dbcso5917863a12.1;
-        Mon, 19 May 2025 02:12:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747645939; x=1748250739; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=LGat+CqdPFtcg5jQSgfD98mPtp2nCHlBED2Mf+O2MZo=;
-        b=YjUT14rlS3uc34OXufXnCD2lX/Mj9IdkKiStZN7U1hEQjd+/OxfuxMKqr3FnETZQaC
-         EAlJV7sj9oS4HVNj7mLJjkO90SsULA6O/Sx1G1el9UYeIgKoMP61CoKaBid/lmBnDPr1
-         vtuQj5NsjHmvdkQf4RppFf59uHKGTlPjP2jTBka3knQT+tdehNlo45ONLRhUJKl5lsFc
-         s2BBX4+Z9y3kY75Jd3KVLODMoV9Zi98Gx7Ohl2g93itVJzhfb9kl9q7c6wa2euZ/AAyy
-         kYjnP5xXPoYCcgIvchGFXUjhwmMriVtYjhKP5afjzMZp9dLxTXza6ag1hnsFe4eRHTxa
-         CZpQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747645939; x=1748250739;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LGat+CqdPFtcg5jQSgfD98mPtp2nCHlBED2Mf+O2MZo=;
-        b=vUh3a0I1eXvxoGGYLeLLBOyyEIgEear7ZBlwgIaWPMbWGGrByJnAJRtCzowJAWauCw
-         UGmawgBIP9apXEmexVLF0LBat32smycBIla+ZfiGyH0lz7I/2n5lAt2WCMwkxYTw914+
-         py0wKjM/ykzY3es6y/x448Zd/2SXybtgZ8KcBGkZpItQnBZYUVfyDDb/9WqqJTXKgXXe
-         BCh1mMQsrEu58gPVOUOAmWCwVjf+dpk7OO/OIhHLhGOBxbKk46MHmNfyNTqXr9Wy1aKi
-         LzEVADlp4IyGpWbKXcKw4GAxM5UBaRtXE6y6YmSj8NHboEHl4uwA7GFAR8VjCxZeacSb
-         gTSA==
-X-Forwarded-Encrypted: i=1; AJvYcCUVngJNLUyqmVKf90Ys+aX+5KrnXhTjc7VOxdSpSXnV5cXaxEHBNcZJDD0PNVwTDGx0uJUhia4jEV22Hjw=@vger.kernel.org, AJvYcCXDQ3Rb1rZE2+egfS56qifKQ2sgFbgCMAI4mxcz08bMT/3347brevakjii/KTb944TfmjhyfRw5lTOj0zU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwOsWrzojdTPTUoFxwrW78pBoZwSTYPQOeqYGuBl/yt5WCaNovj
-	6Pa8Bq4MErdpzqs9WmLKKmRI8G12Qo+g8cPaWL7LDdF/ZCUx4tVK1ngb
-X-Gm-Gg: ASbGncsFulwQBRU4jS/XI5Ou8F4DFWERzQbqCxxonjRXO+z+azmZ7++4dnVc0Wm2Xj2
-	yjcFeHa+qFEfvlWVsUPL8LuvAbz6z+dkBQmvf20e6lhKL0xfTA4sY+N1uJfcDbo6CFdBxdUH64e
-	3m+LNPPcUuCBZLkleHXDhlbTAauOoV1FGxASdx2l1wtNTFMXBEItbaXcaDwnfJH1Xx0u+Xz03Hc
-	9EGs3jRJsVmNKJEj1D6c0HfoJZPo+pRVupbnvRrVVJygRI2Rhg7xd3wbDDs83FFBLvFiaxrt8f1
-	fgWqaLX9QfV4OT4Bx/3VixikuAbd4yiwMOdRaRTkzNdu5ifcJ0Ycc9sTPrUNPPvyldoy+AqLbF2
-	wRw==
-X-Google-Smtp-Source: AGHT+IFi0xTP9AswLVv6RpQNL+inz9R10asKObEYdcOw+GpNVRxRmF4gLn/+2931Dvys9Ua653cX2g==
-X-Received: by 2002:a17:907:7e87:b0:acb:5c83:25b with SMTP id a640c23a62f3a-ad52d42bf0cmr1168206266b.7.1747645939103;
-        Mon, 19 May 2025 02:12:19 -0700 (PDT)
-Received: from [192.168.5.163] ([92.120.5.12])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad52d04e665sm557812666b.5.2025.05.19.02.12.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 19 May 2025 02:12:18 -0700 (PDT)
-Message-ID: <e6d88cbc-accb-4423-80e4-3972766047f4@gmail.com>
-Date: Mon, 19 May 2025 12:30:23 +0300
+	 In-Reply-To:Content-Type; b=Ko6puj3qYzJ8aW1Ge4FR01CYUiOz/j4Tn7ze9BBBGAYOdtSgITdafaDWF1/dMbbihlWUpud5qYDFrQ0tQrYQejUnNvM+wX9Bgue607bZlyvFrQQEx+zxx8kOubvtFE2GWKDJcF7j98MRnVuYaVIV7kN/sjF5KoR70CtO3dD/xYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eWoEfpqP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20991C4CEE4;
+	Mon, 19 May 2025 09:31:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747647068;
+	bh=0eMiHVabjIiN5pvOO8SCZgtZ6g98PmL/kA90czRvkU4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=eWoEfpqPQY9jGgzx7LfIM7FIAH7Xl93mZbSr47HnFA12kd/3XeG61CT0lgy2FQwAG
+	 S9563jHhM3EIaqrJyszUIrkODeMKrenbdlzDz6NLlw9/IImV33iWsFi2J2EiS5Yqxb
+	 FS5Bp8U0KUYqSlkFmC1glX0Yoagnv/bkr337x08PhibMl6SpJDeO4PyE80v1ky9gOr
+	 8bi6QZqC70fcUMXLWq+BTPpQX9b9OCdw009xHmFnwduAYBsRHWmDxo9lS8bv6m8U0n
+	 cPqlblv/BSQv2Tv1RYzkaU3u7buM1B5zH67WxTqwcM5Jf8PNXBwSMhNN/PxxmaQMiE
+	 20lO8b90ZU1Dg==
+Message-ID: <9e6da234-1b47-48e9-b948-d9de73a88999@kernel.org>
+Date: Mon, 19 May 2025 11:31:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,273 +49,79 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 2/3] ASoC: audio-graph-card2: support explicitly
- disabled links
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>,
- linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org
-References: <20250515153128.147457-1-laurentiumihalcea111@gmail.com>
- <20250515153128.147457-3-laurentiumihalcea111@gmail.com>
- <874ixltjzw.wl-kuninori.morimoto.gx@renesas.com>
- <0aa11ef6-4166-41d8-98bc-6c7687d10b11@gmail.com>
- <871psls8nw.wl-kuninori.morimoto.gx@renesas.com>
-Content-Language: en-GB
-From: Mihalcea Laurentiu <laurentiumihalcea111@gmail.com>
-In-Reply-To: <871psls8nw.wl-kuninori.morimoto.gx@renesas.com>
+Subject: Re: [PATCH v3 1/3] dt-bindings: vendor-prefixes: Add SakuraPi prefix
+To: Hsun Lai <i@chainsx.cn>, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org
+Cc: heiko@sntech.de, andrew@lunn.ch, inindev@gmail.com,
+ quentin.schulz@cherry.de, jonas@kwiboo.se, sfr@canb.auug.org.au,
+ nicolas.frattaroli@collabora.com, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ krzysztof.kozlowski@linaro.org, linux-rockchip@lists.infradead.org
+References: <20250519085614.2245892-1-i@chainsx.cn>
+ <20250519085614.2245892-2-i@chainsx.cn>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
+ QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
+ +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
+ ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
+ 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
+ hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
+ tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
+ 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
+ naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
+ hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
+ whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
+ qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
+ RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
+ Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
+ H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
+ dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
+ AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
+ jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
+ zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
+ XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
+In-Reply-To: <20250519085614.2245892-2-i@chainsx.cn>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-
-On 19.05.2025 04:15, Kuninori Morimoto wrote:
-> Hi Mihalcea
->
-> Thank you for clarify details.
->
->> [snippet from base.dts]
->>
->> 	my_card: card {
->> 		compatible = "audio-graph-card2";
->> 		links = <&l2>; /* here, we're only allowed to specify links that exist */
->> 		routing = "Headphones", "C20",
->> 			  "Headphones", "C21",
->> 			  "Line", "C01";
->> 	};
-> (snip)
->> &my_card {
->> 	/* here we're forced to also specify l2 even if this is already done
->>          * in base.dts. This is because DT overlays don't support appending to
->> 	 * properties.
->>          */
->> 	remote-endpoint = <&l0>, <&l1>, <&l2>;
->> };
-> This is very nit pickking, but I need to confirm.
-> You want to indicate here is this ?
->
-> 	&my_card {
-> -		remote-endpoint = <&l0>, <&l1>, <&l2>;
-> +		links = <&l0>, <&l1>, <&l2>;
-> 	};
-
-
-yes, I'm very sorry for the mistakes....
-
-
->
->> &l0_ep {
->> 	remote-endpoint = <&c1_ep>;
->> };
->>
->> &l1_ep {
->> 	remote-endpoint = <&c2_ep>;
->> };
->>
->> c0: codec@0 {
->> 	port { c0_ep: endpoint { remote-endpoint = <&l0_ep>; } };
->> };
->>
->> c1: codec@1 {
->> 	port { c1_ep: endpoint { remote-endpoint = <&l1_ep>; } };
->> };
-> This is also nit pickking, but I think above is wrong.
-> I guess you want to indicate is...
->
-> 	&l0_ep {
-> -		remote-endpoint = <&c1_ep>;
-> +		remote-endpoint = <&c0_ep>;
-> 	};
->
-> 	&l1_ep {
-> -		remote-endpoint = <&c2_ep>;
-> +		remote-endpoint = <&c1_ep>;
-> 	};
->
->
-> Your are indicating very confusable naming, so I want to understand
-> correctly as much as possible.
-
-
-yep, you're right. Again, very sorry.
-
-
->
->>>> 	CODEC A has widgets A0, A1.
->>>> 	CODEC B has widgets B0, B1.
->>>>
->>>> 	my-card {
->>>> 		compatible = "audio-graph-card2":
->>>> 		label = "my-label";
->>>> 		links = <&cpu0_port>, <&cpu1_port>;
->>>> 		routing = "A0", "A1",
->>>> 		          "B0", "B1";
->>>> 	};
->>>>
->>>> 	CODEC A's DT node was disabled.
->>>> 	CODEC B's DT node is enabled.
->>>> 	CPU0's DT node is enabled.
->>>> 	CPU1's DT node is enabled.
-> (snip)
->> Assume that we also have BASE1 that is compatible with PLUGIN but
->> C0 and C1 are connected to BASE1's D0 and D5. Since there's no D1-C1
->> connection that means you'll have to create another DT overlay. Thus,
->> the scalability of plugin.dtso decreases.
->>
->> Now, for our particular case, we have BASE0 and BASE1 with the following
->> DAIs and CODECS (these are physically present on the base boards):
->>
->> BASE0 has DAIs D0, D1 and CODEC C0
->> BASE1 has DAIs D0, D1 and CODEC C1
->>
->> Both of these boards are compatible with plugin PLUGIN that has codec C2.
->> The possible DAI links are:
->>
->> For BASE0:
->>
->> D0 <----> C0
->> D1 <----> C2 (only possible with PLUGIN connected)
->>
->> For BASE1:
->>
->> D0 <----> C1
->> D1 <----> C2 (only possible with PLUGIN connected)
->>
->> Since the D1 <---> C2 connection is valid for both BASE0-PLUGIN and
->> BASE1-PLUGIN combinations I think we can make do without the support
->> for explicitly disabled links. But I don't think this is ideal because:
-> Let's avoid BASE3 case here to avoid _if_ story.
-> You are now indicating too many complex/cofusable situations with wrong
-> setting samples (D0/D1/D2..., C0/C1/C2. BASEx has no D1-C1..., etc, etc...)
->
-> I noticed that why you need to add disabled Codec routing on BASE DT ?
-> It is the reason why you can't detect BASE only sound card, right ?
-
-
-exactly!!!
-
-
->
-> 	---- 8< ---- 8< ---- 8< ---- 8< ---- 8< ----
-> [snippet from base.dts]
->
-> 	my_card: card {
-> 		compatible = "audio-graph-card2";
-> 		links = <&l2>; /* here, we're only allowed to specify links that exist */
-> 		routing = "Headphones", "C20",
-> 			  "Headphones", "C21",
-> =>			  "Line", "C01";
-> 	};
->
-> 	---- 8< ---- 8< ---- 8< ---- 8< ---- 8< ----
->
-> If my understanding was correct, your system can be indicated like below
-> (It is not same as your D0/D1/D2 sample, but I think same things, and
->  not confusable sample)
->
-> 	BASE			  PLUGIN
-> 	+-----------------+
-> 	| CPU0 <-> Codec0 |     +--------+
-> 	| CPU1		  | <-> | Codec1 |
-> 	| CPU2		  | <-> | Codec2 |
-> 	+-----------------+     +--------+
-
-
-pretty much. The only difference would be that PLUGIN has only 1 codec
-
-in our case. I think it'll be much easier to just stick to your naming conventions...
-
-
->
-> How it works by below ?
->
-> BASE
-> 	/*
-> 	 * detect CPU0-Codec0 connection only
-> 	 * Codec1/2 are disabled, but not related to BASE
-> 	 */
-> 	my_card: card {
-> 		links = <&cpu0>;
-> 		routing = "Headphone0", "Codec0"; /* for CPU0-Codec0 */
-> 	};
->
-> PLUGIN
-> 	/* detect all
-> 	 * CPU0-Codec0 connection
-> 	 * CPU1-Codec1 connection
-> 	 * CPU2-Codec2 connection, and its routings */
-> 	&my_card {
-> 		links = <&cpu0>, <&cpu1>, <&cpu2>;
-> 		routing = "Headphone0", "Codec0", /* for CPU0-Codec0 */
-> 			  "Headphone1", "Codec1", /* for CPU1-Codec1 */
-> 			  "Headphone2", "Codec2"; /* for CPU2-Codec2 */
-> 	};
-
-
-so, the problem with this is the fact that (assuming you've used a DT overlay
-
-for the PLUGIN) you won't be able to use the DT overlay on other boards because
-
-you've also added the "Headphone0", "Codec0" route which is specific to BASE's
-
-Codec0. We have multiple boards so our system would look like this:
-
-
-	BASE0			  PLUGIN
-	+-----------------+
-	| CPU0 <-> Codec0 |     +--------+
-	| CPU1		  | <-> | Codec1 |
-	+-----------------+     +--------+
-
-
-	BASE1			  PLUGIN
-	+-----------------+
-	| CPU0 <-> Codec3 |     +--------+
-	| CPU1		  | <-> | Codec1 |
-	+-----------------+     +--------+
-
-
-The plugin is the same. The only difference between BASE1 and BASE0 is the fact that CPU0
-
-is connected to Codec0 on BASE0, while, on BASE1, CPU0 is connected to a different codec: Codec3.
-
-
->
->
-> And/Or your situation is similar as mine (I should have noticed
-> about this sooner).
->
-> 	d70be079c3cf34bd91e1c8f7b4bc760356c9150c
-> 	("arm64: dts: renesas: ulcb/kf: Use multi Component sound")
->
-> 	547b02f74e4ac1e7d295a6266d5bc93a647cd4ac
-> 	("ASoC: rsnd: enable multi Component support for Audio Graph Card/Card2")
->
-> 	45655ec69cb954d7fa594054bec33d6d5b99f8d5
-> 	("ASoC: soc-core.c: enable multi Component")
->
-> My board is handling above sample as 2 cards, by using "multi Component"
->
-> 	BASE			  PLUGIN
-> 	+-----------------+			^
-> 	| CPU0 <-> Codec0 |			| Card1
-> 	|		  |			v
-> 	|		  |     +--------+	^
-> 	| CPU1		  | <-> | Codec1 |	| Card2
-> 	| CPU2		  | <-> | Codec2 |	|
-> 	+-----------------+     +--------+	v
-
-
-one important thing to note here is the fact that we can only
-
-have 1 sound card because all DAIs (CPU0, CPU1, CPU2) belong
-
-to the same component.
-
-
->
->
-> Thank you for your help !!
->
-> Best regards
+On 19/05/2025 10:56, Hsun Lai wrote:
+> Add vendor prefix for SakuraPi.org, which produces
+> development boards like the SakuraPi-RK3308B.
+> 
+> Signed-off-by: Hsun Lai <i@chainsx.cn>
 > ---
-> Kuninori Morimoto
+> 
+> (no changes since v1)
+
+
+You ignored comments twice. Repeating same mistake, even though it was
+pointed out, feels like we are wasting our time, so please avoid that.
+Go back and respond to comments, then implement them.
+
+Best regards,
+Krzysztof
 
