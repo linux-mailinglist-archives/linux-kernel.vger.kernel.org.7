@@ -1,74 +1,76 @@
-Return-Path: <linux-kernel+bounces-654662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-654656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD0BAABCAFA
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 00:34:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32852ABCAF1
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 00:33:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BCED2189EE3A
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 22:35:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C06CD4A1698
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 22:33:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87AE4220F3B;
-	Mon, 19 May 2025 22:33:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E4DD21CA1F;
+	Mon, 19 May 2025 22:33:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hmEvyCsO"
-Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e0BZmtx+"
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1747A220680;
-	Mon, 19 May 2025 22:33:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F03F1EF382;
+	Mon, 19 May 2025 22:33:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747694036; cv=none; b=LB2B84CMOxWVqy+TVx2x/bWFAzyBs/XYJT9AEgDSUJPmMzXR294mBzioGDe6Z1GaqmcJkVSTvCNruQtOUHLe3L2bOBs/b1O0LtKuDvw+rxxm/sW66txkwJpfu/hiwL724Xx9ircqFyz7XJZFCyXu7b6O6m56xFHFZFza4IraiVE=
+	t=1747694028; cv=none; b=fd+IDNuY3K8PmylsvEbqz2oSw8tVTdV/siA65dUUGtv1YkFx3Zf0mf+2LJjZEDoXmowGs0cwtyu8KnLrtHB6kCeLu+3Rz1CKFhA0Yo61kNsFKWHnKELhFeiiwaHBAwhR0ED+FZOcUDVqXxUfEkRKkKsDWH14kphnpZDAD6JZiKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747694036; c=relaxed/simple;
-	bh=VNV6UduRFqWLkLaJ9InTUQk8ok9iiWNF+codDWJu3KE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TBHRr2helN2t4cUjkqM5XVWmKRcMQBMRHgTMfpF91QvGrrd2hFDgY0+jysbf4pGAxIq0VRobfiU2NsEj7mczZEf3omrVwgnL4tiesRPsW4I5Lx9zsggaGIJX1AoB+nY0V11BhF4LibbMyUrhszZUP9akU7XDjNBtHFi4+/ekrmg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hmEvyCsO; arc=none smtp.client-ip=209.85.219.42
+	s=arc-20240116; t=1747694028; c=relaxed/simple;
+	bh=PfAY27T09TjnJ/nIpVYoM9+S1fT0+OEtJubTxVt/1WE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=pHjSzDD5jy68i8lnMYWooFiVbD6qA/UzROq67w7m7Rl8QoSxDb12vbZIu5j4t48hFEG7qrEk5U4D7Pzk8/adcpIhPUS6LXCnyHamMwPDSoocd2gUwS7Hb7FUB+b5YbYAkCGSGJesV3oVDBCWjsrrum1GTglhFAegaBXYKzCIc7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e0BZmtx+; arc=none smtp.client-ip=209.85.160.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-6f8d663fa22so23100076d6.0;
-        Mon, 19 May 2025 15:33:54 -0700 (PDT)
+Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-47ae894e9b7so91042401cf.3;
+        Mon, 19 May 2025 15:33:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747694034; x=1748298834; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=LpRy7jJXH2X94qR+7Z08vVSeFahgcmDit4WvxDXTDr8=;
-        b=hmEvyCsO0CqG3/KJSXrxiWl8zUE6KaEUB3kQ6qXNlZI3Hnmu2uGy++P4R3M80in2K/
-         p7C3GHLmpW0giJiQexMVJNyrEX1MmjjSM95Cq5uPUeBadQBvgWBUYhygSpl82OyrVVkn
-         7VUaUH4Uia8zpj21dfaXNbnYeOXg7LHHxy0gkbJlw9CBtZRVV9wvnA+Ih6ONok+n+X/h
-         ekDcAuP6Oongc90VeX2UYm9R/QxH++sCNkD1eshOxx1mMgy65Q2Zt2ADiqbIvAH/tm9q
-         MeFYUegUjbtbc2ThAyKYHiYsR8KYmTW0Qi5AF149rHx5Q09z/7fXgHFyypYXcdi731QG
-         Gwfw==
+        d=gmail.com; s=20230601; t=1747694025; x=1748298825; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SZoVm58CBAxFKJ1NXNNUrIOPj0gNvc2sOGcRB/nswhY=;
+        b=e0BZmtx+V8+9LF1CheNx/AwLBGS1pTXSOnSMFejkAytkePnEscForSB6/+w/byxXh7
+         3YxlXaXHCZ064msksFCrb1V+0QRcBqmaO/Lf5NtCuslschlBRY9s/mMGc6DjJa822Plx
+         gMmfaTwkMVqBRseN3nk1x1Z4pS27bgvLvaSv7wxlmDqWiBx7J3OGM558vFf7hidBJKFS
+         T4OY7DjnaUrGqzvY9hQeSm4p5vy7Yf0cMkIwalnQEFIF6FdtPNUeyPMlNuqXeAAogWFp
+         jT79BJ4xfJnPM9g0e7wGS7C6zfKHPPjE23HX0JiHnDBo1jcGe3sK0fqcyUUMg48VAAaH
+         zGQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747694034; x=1748298834;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LpRy7jJXH2X94qR+7Z08vVSeFahgcmDit4WvxDXTDr8=;
-        b=A64BBgEV+zz8alP7FMk1d8KOs/kyQPGUlIXHK5NAph3pW7ohtcthvug5yE753VDykd
-         w1gvWHSY8QPt60KeJcpJgNH1GKZemAtDWW+5xmjRYYcSSm0HcN4kYlOrma07SEgA2YJu
-         B6XsNUqy2buSz5aPpLj3nOHOF3oyzC4++upYq/j00vkMG4XqRnszdZE0EyNFjR3cOE1Z
-         ZKM7GPwDaa6u7SyhYi8TXMftcgC3qfjVddtKCjyDQHmbZxuSLSU6mXtvBCy2z5vKziOr
-         kT+sKCdy9JCvYHwdEtQSIIgNMqHSP9oW88XN9kEIr46uS8DJAnm7+Vh4Q3FxYD9qNPua
-         cJnA==
-X-Forwarded-Encrypted: i=1; AJvYcCUnqBy/Op6T8NL2wOUJJeX9cDJS7qcI/k7/Q4qDGcfZEoyrv1ks3bRS3SFvuImPbNQatye6tprl2CylvK5Q@vger.kernel.org, AJvYcCXi40UUWUmHm8Bgh2Zx4+DX8Pq9l9Aa5Yk5oPFKj3PnLNpZUgB5OADZzTp4wb6jF7MPvKOWsZmholk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJO4Eyffb8x55OSIfRRMo9BeQkvKHbTgtvgRmnzzHh4YqlC9VV
-	ke6F+TRk4q/gPgjh3/toQc3tgKLwJb1yGn1QsqHcG9BypIE1KAS9htZEtLctkBc1
-X-Gm-Gg: ASbGnctIGwyJ+qbkeDyuJv9aYY8+e/E0YTzyXqGHaCN3axRRWujj10wkrbg6vqOxoXc
-	ITaeK9Y2penjAWb3XkSwREwMJNbVbrdvzMiERvln/1dLjpukASuxP/Wq3/kldJNAt83PjlUP98J
-	Q4wDuJXP0u+dFZMrlycZF7CJ6R8N+GLW945/5PwHLKOXWPkHeUK+1lyQbLl7zMiOH86yMB3hCOb
-	UOuvb0nI4AMNu1JDdMNjfVEI3ZMSRPbkBbDaBMOUmhugE3k/j3JxZ19Wb86CKINXu1Tghnbnh+A
-	nNooDSh3zIc2m9IYyF/7LGxNgYymBukpyDgVZCeoJHCUucKx
-X-Google-Smtp-Source: AGHT+IG9Rf1Ms6o1Iff8MOEn683LCyyVRYFlfukNUf26S1dHPnjB4DocWIpWObG8j4FUWQJEzi8IUA==
-X-Received: by 2002:a05:622a:5805:b0:476:8db0:8cae with SMTP id d75a77b69052e-494b074cbf8mr167938981cf.10.1747694023468;
-        Mon, 19 May 2025 15:33:43 -0700 (PDT)
-Received: from localhost ([2a03:2880:20ff:9::])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-494afbabee4sm59006981cf.55.2025.05.19.15.33.41
+        d=1e100.net; s=20230601; t=1747694025; x=1748298825;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SZoVm58CBAxFKJ1NXNNUrIOPj0gNvc2sOGcRB/nswhY=;
+        b=XhhKAPLIXUZ4eyxKg5X6txTKGzPKYfcOjntR//57S78Tuya6Ip5OMu8EiRhCS1zqLS
+         +pqIi3HKApZdW3TB+pi8dWvK1yhzV1t8PJTKLsNEHOPnN5YRlpeFPIb/GjB5ysKBcTvx
+         LSD3qdKqRZRS/Z/7XjSogFi5RuNYKcfJ7+ZooZINSbt/ok6bezzTkJ2EdRTbhqi2qgpE
+         ZAYqIht0ofo24SQcHcptOypnia41iF6HyunY1HMs+jGRSQkfdZ4ZegJE74jooDVjD1B8
+         nWdGhzdHteDYoflFvAaAu1Ccwox9hoOY7lOQt6loCHXzQFsQfo/EFfg2K6iKftiBiQ2u
+         NnSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU5neIVVOn6X4//P7gLRBwwHBYToE/fJmxBp7eQAGXV3gc+ihFvyS6DDp9C6IsQzS1SlSs5fvICzPs=@vger.kernel.org, AJvYcCXBNuwIqnhmXXj0e1P7VSkA9YgHv33gCMkP/zRQ/d7cNaT2yrbT/gT7hwxcamFXbA0ZmjOhpMsmGtTKX+MO@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyy/I+20yBnQBOzWIAWTW3RDNXkwb4ZuFTEE07ZciFdUpXlGmp/
+	zqJfIymdkWMSuXbYl939csQVDH7pZ0FZLIDL05PpDr4Bj4k7/GtmTH9I
+X-Gm-Gg: ASbGnctQScXGjocjIm8PXNlaCUZnraG7/oc5/0dDxr/yD6de95Rf8NFEMUxg+gHVxvp
+	/A1K8eh0aw8mrvqs7fILc79+2XA0KVks5KhGJ8bv67V0Z0cGaiq0EWjE/0L2KOA4xiOtECwdshI
+	bTZBXdVBE98MdqLH+tI+memyx7Y41ciha5YGJu0/uEO7y1aQ4Um30VigirhGiDoZYBjWwgEsMJT
+	oyQId+4V6ADNimCR95VYqibfyvAWU5h4eJyzigYp9XFu0WjYnLev+OTejuubDJODTQmsaJq6ely
+	bTylGhAP9f5mLQwM4jNWChtwD71x5Avm/ovFmvEsNlmmIlVq
+X-Google-Smtp-Source: AGHT+IFSgdGO5NmmqTJLvtd4NIb4WXRuj3aQMKYRB2sVptgzNbInCwcG2zfX8HRipunbeXTsp22ejw==
+X-Received: by 2002:a05:622a:5519:b0:491:286a:8606 with SMTP id d75a77b69052e-494b00e92e2mr230773771cf.0.1747694025116;
+        Mon, 19 May 2025 15:33:45 -0700 (PDT)
+Received: from localhost ([2a03:2880:20ff:7::])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-494b344924fsm57559991cf.40.2025.05.19.15.33.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 May 2025 15:33:41 -0700 (PDT)
+        Mon, 19 May 2025 15:33:44 -0700 (PDT)
 From: Usama Arif <usamaarif642@gmail.com>
 To: Andrew Morton <akpm@linux-foundation.org>,
 	david@redhat.com,
@@ -90,10 +92,12 @@ Cc: hannes@cmpxchg.org,
 	linux-doc@vger.kernel.org,
 	kernel-team@meta.com,
 	Usama Arif <usamaarif642@gmail.com>
-Subject: [PATCH v3 0/7] prctl: introduce PR_SET/GET_THP_POLICY
-Date: Mon, 19 May 2025 23:29:52 +0100
-Message-ID: <20250519223307.3601786-1-usamaarif642@gmail.com>
+Subject: [PATCH v3 1/7] mm: khugepaged: extract vm flag setting outside of hugepage_madvise
+Date: Mon, 19 May 2025 23:29:53 +0100
+Message-ID: <20250519223307.3601786-2-usamaarif642@gmail.com>
 X-Mailer: git-send-email 2.47.1
+In-Reply-To: <20250519223307.3601786-1-usamaarif642@gmail.com>
+References: <20250519223307.3601786-1-usamaarif642@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -102,101 +106,83 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This series allows to change the THP policy of a process, according to the
-value set in arg2, all of which will be inherited during fork+exec:
-- PR_DEFAULT_MADV_HUGEPAGE: This will set VM_HUGEPAGE and clear VM_NOHUGEPAGE
-  for the default VMA flags. It will also iterate through every VMA in the
-  process and call hugepage_madvise on it, with MADV_HUGEPAGE policy.
-  This effectively allows setting MADV_HUGEPAGE on the entire process.
-  In an environment where different types of workloads are run on the
-  same machine, this will allow workloads that benefit from always having
-  hugepages to do so, without regressing those that don't.
-- PR_DEFAULT_MADV_NOHUGEPAGE: This will set VM_NOHUGEPAGE and clear VM_HUGEPAGE
-  for the default VMA flags. It will also iterate through every VMA in the
-  process and call hugepage_madvise on it, with MADV_NOHUGEPAGE policy.
-  This effectively allows setting MADV_NOHUGEPAGE on the entire process.
-  In an environment where different types of workloads are run on the
-  same machine,this will allow workloads that benefit from having
-  hugepages on an madvise basis only to do so, without regressing those
-  that benefit from having hugepages always.
-- PR_THP_POLICY_SYSTEM: This will reset (clear) both VM_HUGEPAGE and
-  VM_NOHUGEPAGE process for the default flags.
+This is so that flag setting can be resused later in other functions,
+to reduce code duplication (including the s390 exception).
 
-In hyperscalers, we have a single THP policy for the entire fleet.
-We have different types of workloads (e.g. AI/compute/databases/etc)
-running on a single server.
-Some of these workloads will benefit from always getting THP at fault
-(or collapsed by khugepaged), some of them will benefit by only getting
-them at madvise.
+No functional change intended with this patch.
 
-This series is useful for 2 usecases:
-1) global system policy = madvise, while we want some workloads to get THPs
-at fault and by khugepaged :- some processes (e.g. AI workloads) benefits
-from getting THPs at fault (and collapsed by khugepaged). Other workloads
-like databases will incur regression (either a performance regression or
-they are completely memory bound and even a very slight increase in memory
-will cause them to OOM). So what these patches will do is allow setting
-prctl(PR_DEFAULT_MADV_HUGEPAGE) on the AI workloads, (This is how
-workloads are deployed in our (Meta's/Facebook) fleet at this moment).
+Signed-off-by: Usama Arif <usamaarif642@gmail.com>
+---
+ include/linux/huge_mm.h |  1 +
+ mm/khugepaged.c         | 26 +++++++++++++++++---------
+ 2 files changed, 18 insertions(+), 9 deletions(-)
 
-2) global system policy = always, while we want some workloads to get THPs
-only on madvise basis :- Same reason as 1). What these patches
-will do is allow setting prctl(PR_DEFAULT_MADV_NOHUGEPAGE) on the database
-workloads. (We hope this is us (Meta) in the near future, if a majority of
-workloads show that they benefit from always, we flip the default host
-setting to "always" across the fleet and workloads that regress can opt-out
-and be "madvise". New services developed will then be tested with always by
-default. "always" is also the default defconfig option upstream, so I would
-imagine this is faced by others as well.)
-
-v2->v3: (Thanks Lorenzo for all the below feedback!)
-v2: https://lore.kernel.org/all/20250515133519.2779639-1-usamaarif642@gmail.com/
-- no more flags2.
-- no more MMF2_...
-- renamed policy to PR_DEFAULT_MADV_(NO)HUGEPAGE
-- mmap_write_lock_killable acquired in PR_GET_THP_POLICY
-- mmap_write lock fixed in PR_SET_THP_POLICY
-- mmap assert check in process_default_madv_hugepage
-- check if hugepage_global_enabled is enabled in the call and account for s390
-- set mm->def_flags VM_HUGEPAGE and VM_NOHUGEPAGE according to the policy in
-  the way done by madvise(). I believe VM merge will not be broken in
-  this way.
-- process_default_madv_hugepage function that does for_each_vma and calls
-  hugepage_madvise.
-
-v1->v2:
-- change from modifying the THP decision making for the process, to modifying
-  VMA flags only. This prevents further complicating the logic used to
-  determine THP order (Thanks David!)
-- change from using a prctl per policy change to just using PR_SET_THP_POLICY
-  and arg2 to set the policy. (Zi Yan)
-- Introduce PR_THP_POLICY_DEFAULT_NOHUGE and PR_THP_POLICY_DEFAULT_SYSTEM
-- Add selftests and documentation.
+diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+index 2f190c90192d..23580a43787c 100644
+--- a/include/linux/huge_mm.h
++++ b/include/linux/huge_mm.h
+@@ -431,6 +431,7 @@ change_huge_pud(struct mmu_gather *tlb, struct vm_area_struct *vma,
+ 			__split_huge_pud(__vma, __pud, __address);	\
+ 	}  while (0)
  
-Usama Arif (7):
-  mm: khugepaged: extract vm flag setting outside of hugepage_madvise
-  prctl: introduce PR_DEFAULT_MADV_HUGEPAGE for the process
-  prctl: introduce PR_DEFAULT_MADV_NOHUGEPAGE for the process
-  prctl: introduce PR_THP_POLICY_SYSTEM for the process
-  selftests: prctl: introduce tests for PR_DEFAULT_MADV_NOHUGEPAGE
-  selftests: prctl: introduce tests for PR_THP_POLICY_DEFAULT_HUGE
-  docs: transhuge: document process level THP controls
-
- Documentation/admin-guide/mm/transhuge.rst    |  42 +++
- include/linux/huge_mm.h                       |   2 +
- include/linux/mm.h                            |   2 +-
- include/linux/mm_types.h                      |   4 +-
- include/uapi/linux/prctl.h                    |   6 +
- kernel/sys.c                                  |  53 ++++
- mm/huge_memory.c                              |  13 +
- mm/khugepaged.c                               |  26 +-
- tools/include/uapi/linux/prctl.h              |   6 +
- .../trace/beauty/include/uapi/linux/prctl.h   |   6 +
- tools/testing/selftests/prctl/Makefile        |   2 +-
- tools/testing/selftests/prctl/thp_policy.c    | 286 ++++++++++++++++++
- 12 files changed, 436 insertions(+), 12 deletions(-)
- create mode 100644 tools/testing/selftests/prctl/thp_policy.c
-
++int hugepage_set_vmflags(unsigned long *vm_flags, int advice);
+ int hugepage_madvise(struct vm_area_struct *vma, unsigned long *vm_flags,
+ 		     int advice);
+ int madvise_collapse(struct vm_area_struct *vma,
+diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+index b04b6a770afe..ab3427c87422 100644
+--- a/mm/khugepaged.c
++++ b/mm/khugepaged.c
+@@ -346,8 +346,7 @@ struct attribute_group khugepaged_attr_group = {
+ };
+ #endif /* CONFIG_SYSFS */
+ 
+-int hugepage_madvise(struct vm_area_struct *vma,
+-		     unsigned long *vm_flags, int advice)
++int hugepage_set_vmflags(unsigned long *vm_flags, int advice)
+ {
+ 	switch (advice) {
+ 	case MADV_HUGEPAGE:
+@@ -358,16 +357,10 @@ int hugepage_madvise(struct vm_area_struct *vma,
+ 		 * ignore the madvise to prevent qemu from causing a SIGSEGV.
+ 		 */
+ 		if (mm_has_pgste(vma->vm_mm))
+-			return 0;
++			return -EPERM;
+ #endif
+ 		*vm_flags &= ~VM_NOHUGEPAGE;
+ 		*vm_flags |= VM_HUGEPAGE;
+-		/*
+-		 * If the vma become good for khugepaged to scan,
+-		 * register it here without waiting a page fault that
+-		 * may not happen any time soon.
+-		 */
+-		khugepaged_enter_vma(vma, *vm_flags);
+ 		break;
+ 	case MADV_NOHUGEPAGE:
+ 		*vm_flags &= ~VM_HUGEPAGE;
+@@ -383,6 +376,21 @@ int hugepage_madvise(struct vm_area_struct *vma,
+ 	return 0;
+ }
+ 
++int hugepage_madvise(struct vm_area_struct *vma,
++		     unsigned long *vm_flags, int advice)
++{
++	if (advice == MADV_HUGEPAGE && !hugepage_set_vmflags(vm_flags, advice)) {
++		/*
++		 * If the vma become good for khugepaged to scan,
++		 * register it here without waiting a page fault that
++		 * may not happen any time soon.
++		 */
++		khugepaged_enter_vma(vma, *vm_flags);
++	}
++
++	return 0;
++}
++
+ int __init khugepaged_init(void)
+ {
+ 	mm_slot_cache = KMEM_CACHE(khugepaged_mm_slot, 0);
 -- 
 2.47.1
 
