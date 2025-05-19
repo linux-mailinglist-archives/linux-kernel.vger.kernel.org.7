@@ -1,175 +1,184 @@
-Return-Path: <linux-kernel+bounces-653830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-653877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57925ABBF36
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 15:32:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55E5CABC010
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 15:57:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E10FA18897D0
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 13:32:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5DEC57A3CD5
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 13:56:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 693BE279901;
-	Mon, 19 May 2025 13:32:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDC9A27AC2C;
+	Mon, 19 May 2025 13:57:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Qb5qGP60"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=codethink.co.uk header.i=@codethink.co.uk header.b="ZX6LbTY5"
+Received: from imap4.hz.codethink.co.uk (imap4.hz.codethink.co.uk [188.40.203.114])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4169827817D
-	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 13:32:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C21327F75D
+	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 13:57:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.203.114
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747661551; cv=none; b=tKqKUBGBNWl2zE3W7idUb3JsJNmsF6VwWkYpbIRO6Okl1gNFChp/7Kliz5H5/rUl+iL3XwBewC1gmyJbpNAXUbU1RCROUFA7sQ/M2QBGVxQ5sFpgRNvmuGTRpuBcIqZz6XrDObq0080f5RCHTqS3dm3yAnXmW1cAJaZOKjZR9R8=
+	t=1747663061; cv=none; b=mAF2+JQypMaqupgaz9AjkxcI0sh6gRGBAJEtezbbF5B6JZO0T+MeedrXPBDP58sA5z3omKnTE+sS128gWO87BJZOn2qNNZFEbqB7vAMgi4f8Liu8wP1kfvlG3/vX7oiiAlA0z3NUAGpHON66UuHkyMSwzBzxbx5vJPnSelvhIRo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747661551; c=relaxed/simple;
-	bh=Ty0mgOaUOMptCfYc6qpz38mROmUwTRB/tempK+OqW3c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NCMt+d8kCcgF1rbOhqaPHxTx2np7pE4UMdMQr5SqfqitBz72dwgFSVRUaHvVLEsuDuf/GE0+vU3smfbFSAD/FxNCxQ5qzri1zBrF4/ec7oHVL2TcY0rJK78TX5KR22fqFriOHD89EG3c9o9ehL2KuOO+DK53teCVHlMUsOezvno=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Qb5qGP60; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54J9rZOh003157
-	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 13:32:29 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=roo25XkD9MwN9YLNJ0rkSlMr
-	zlUHYdOOQOOLiVFz1HE=; b=Qb5qGP60B3NePNIBhuUHRGJG3bWV2EmZfcrXkX1J
-	lsejR0Xl6t4ZPFZi/OW/aVX9dkUI4sTy1GsxQGTHDDSrTD002MZRs7A1Lnsg3ibF
-	cKtmJihniGyOaMIjccbxx4B19yyxNQpNL5QfzLUj3D/yHO77zj2n8hrQPYgllDgH
-	QD9mfTqFRVtIirD+ygaEMW2IhcoLVuducyiqt8HP4mcQsMvPbsxXsl6ye1A0Namj
-	mbH9BioQ5GDtEkkg6v8ME6DuXuSduAjggor4j20fh46FLnWr70+NxIOoxLvjwh3d
-	z0n3Kkh1Rru3cfqsKbPe1gGu7VkftebSlFo6kb9jG3SXEA==
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46pjm4me9h-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 13:32:28 +0000 (GMT)
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3ce8dadfb67so43150695ab.1
-        for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 06:32:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747661548; x=1748266348;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=roo25XkD9MwN9YLNJ0rkSlMrzlUHYdOOQOOLiVFz1HE=;
-        b=upZAU3dukjiF+gKeb2YNDJ3t+yplTgnj+ed0+WDeLAQ6/+476qY1g30KXCrzjOrAVa
-         YHKIBoPkQlgNphaZAYYqNhdAq+YDzmX1nZobqyhyUKwkARMyUwOvavYIqqlVNa8BKNnP
-         0tgi3uw3ngMZRYJ9SzWYKZBj4gWfhSWg4tqDu4TOAQXMa7+Dib32uh9H0oHeTKiLJbYQ
-         chQ7GSd33zv5z1JE2KMN3aej2mhfszlCYcNM7hzaLDMqptZZ5jQL5fNLfyzz1PCKWHGi
-         uV4biMp+ghkagClMJwva4yHyIbZb0bbAeNGgzXVkj9x+dXSHoa/gWcl8IblI018mL0yk
-         0axw==
-X-Forwarded-Encrypted: i=1; AJvYcCW9xg8mu7QqOf+zNSsBqDyHYiCM8s3hgmchIlNlSN5H2lnpxss3IOVSiy8eLBjco0ea7jLH98w3UTnj5vc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTVgBOkp6DyGdYFQ13qepjp8gNDMS9Q2jggHi5IaKdVvSKxJ5e
-	i+hBuyzZGSpTna4lD7WwdafeydIa/NbB9pZFl9Q/BvCuAxq0vvbOQmZioTLef/J49/rhApwn9oA
-	AHVIJsLQlFaDd+L7KgELA9cY7f4ziUPLqVn39sEq5cLWyFZ0YvLPPpxkwN3ie4KgqZ8s=
-X-Gm-Gg: ASbGnctQa792q8A8owd9dmJmeY+fgb8WXoUZFTQS0TAAO9P/bszH7bjOo9tmIz09Bh/
-	pLv0N2MJZqiYMy+3RDK/hlDBonNnWrk1Xuuv6z+YUAEpQzjg2PCiiyq/xP23Z1hj6zk7kBF9Www
-	cec0UiCrvCcyRkNI6tdZ0kFxgZJfMl5g+pKFctJt7hvU2aNiiZCiovXmI4P3HOjIYUueJ1ledXE
-	utfPHYFaODute/gK+l/MM7DpiHAJB3LDBnu8IpYMN2UjzVNKFRnU4FrGxPFJ/sIoJCuJgL/MJ/c
-	h1uTy1BnK0Ar1I9lYyWBY8dUVAdWSPCme7OlH1O2tXLUKNR2HjHpWMNYyptY+i1Z2p5Ee6Vuwok
-	=
-X-Received: by 2002:a92:cda6:0:b0:3d8:1d2d:60b0 with SMTP id e9e14a558f8ab-3db842aae78mr135137155ab.5.1747661547784;
-        Mon, 19 May 2025 06:32:27 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEVkVDsyixEUb8OMq/WsoDZju8ka5ZGx6BVSZrQXQfPiLNdGYIuQ/43DL17obhYrD8HKJ76zw==
-X-Received: by 2002:a92:cda6:0:b0:3d8:1d2d:60b0 with SMTP id e9e14a558f8ab-3db842aae78mr135136855ab.5.1747661547433;
-        Mon, 19 May 2025 06:32:27 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-550e6f34d40sm1867709e87.91.2025.05.19.06.32.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 May 2025 06:32:26 -0700 (PDT)
-Date: Mon, 19 May 2025 16:32:23 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Ekansh Gupta <ekansh.gupta@oss.qualcomm.com>
-Cc: srinivas.kandagatla@oss.qualcomm.com, linux-arm-msm@vger.kernel.org,
-        gregkh@linuxfoundation.org, quic_bkumar@quicinc.com,
-        linux-kernel@vger.kernel.org, quic_chennak@quicinc.com,
-        dri-devel@lists.freedesktop.org, arnd@arndb.de, stable@kernel.org
-Subject: Re: [PATCH v1 4/5] misc: fastrpc: Remove buffer from list prior to
- unmap operation
-Message-ID: <p6cc5lxufmefeulx5bhlh6q6ivwluqf2muj3hu5e5526fsppuu@brcy6arm7epg>
-References: <20250513042825.2147985-1-ekansh.gupta@oss.qualcomm.com>
- <20250513042825.2147985-5-ekansh.gupta@oss.qualcomm.com>
- <uw6dcnbgg5vbfkcnei54rwkslpbseolr46cqhsosiadscd5srh@ixk67qdcwfug>
- <1246b4e6-dd1f-4293-b580-5d642f661956@oss.qualcomm.com>
+	s=arc-20240116; t=1747663061; c=relaxed/simple;
+	bh=/3d+7p2XGyrBNLdkUtkYQdU5cqgWDCn/zyDD8E0IsCQ=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=qu0e9uWF9IINj3G0H068bbtriyUNEBxHjqTo/MbAHLCw8Mzy9dwPkvSx4APN8iQliY4c/gjkxpimVs9lG5SwXu2OtpIg3MzgG4tQm910emm4hdKmtCuqcW/TwDKZlcLgJY65x/w4ILCr4madrlKGOwQqZt740NkDF4iuuEN9EkY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=codethink.co.uk; spf=pass smtp.mailfrom=codethink.co.uk; dkim=pass (2048-bit key) header.d=codethink.co.uk header.i=@codethink.co.uk header.b=ZX6LbTY5; arc=none smtp.client-ip=188.40.203.114
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=codethink.co.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codethink.co.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=codethink.co.uk; s=imap4-20230908; h=Sender:MIME-Version:
+	Content-Transfer-Encoding:Content-Type:References:In-Reply-To:Date:Cc:To:From
+	:Subject:Message-ID:Reply-To:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=JC2I0gVyCfBd3OAMFRX+9D/1gPz2ZjOtZ3VihBkJzow=; b=ZX6LbTY5+WQ/ZRf6j7CNVT4Nuq
+	Fxs8K8Jvmx8ZqUGuynK1Tar+cAZZ6tQaiHxVf8ZT1wwFM9jHVTk+11DA8Bee4YMV3bm27pfE6QnYe
+	Vbhg9AQhQPDyK+RDNxj/1tgQdyoC4Y0YO/df8UsEuoZZJytTpHcL0zahRyeQ7RdVFvq8qqPwO+o/7
+	RjiuTOgKz9nakSOGbD6U4ESrgJequlJEUAR/Fd4u/qIFyE4VFokuAfuXugb8fh0goZmk0Qxu9dF9m
+	ozbMfiCT8QZXyvecRACw4zpgy+Wbc5rDNIAjxwWUqx9vvfl16vEFgzlvefajFbVxjVsiE0c4/7jsI
+	prRCjqZw==;
+Received: from [167.98.27.226] (helo=[10.17.3.142])
+	by imap4.hz.codethink.co.uk with esmtpsa  (Exim 4.94.2 #2 (Debian))
+	id 1uH0bW-00EBO2-Sv; Mon, 19 May 2025 14:32:31 +0100
+Message-ID: <92690eb9158c1019dc0945f8298800cad17cae05.camel@codethink.co.uk>
+Subject: Re: SCHED_DEADLINE tasks missing their deadline with
+ SCHED_FLAG_RECLAIM jobs in the mix (using GRUB)
+From: Marcel Ziswiler <marcel.ziswiler@codethink.co.uk>
+To: luca abeni <luca.abeni@santannapisa.it>
+Cc: Juri Lelli <juri.lelli@redhat.com>, linux-kernel@vger.kernel.org, Ingo
+ Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, Vineeth
+ Pillai	 <vineeth@bitbyteword.org>
+Date: Mon, 19 May 2025 15:32:27 +0200
+In-Reply-To: <20250507222549.183e0b4a@nowhere>
+References: <ce8469c4fb2f3e2ada74add22cce4bfe61fd5bab.camel@codethink.co.uk>
+		<aBTO3r6Py_emwf1Y@jlelli-thinkpadt14gen4.remote.csb>
+		<f532441d8b3cf35e7058305fd9cd3f2cbd3a9fac.camel@codethink.co.uk>
+	 <20250507222549.183e0b4a@nowhere>
+Organization: Codethink
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.1 (by Flathub.org) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1246b4e6-dd1f-4293-b580-5d642f661956@oss.qualcomm.com>
-X-Proofpoint-ORIG-GUID: 8Hov2H7wD1X9cQ1FPDGlIORKN-t4kciZ
-X-Authority-Analysis: v=2.4 cv=C4bpyRP+ c=1 sm=1 tr=0 ts=682b32ec cx=c_pps
- a=knIvlqb+BQeIC/0qDTJ88A==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=dt9VzEwgFbYA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=TIZ-FQZdIQNwdW-vVJYA:9
- a=CjuIK1q_8ugA:10 a=8vIIu0IPYQVSORyX1RVL:22
-X-Proofpoint-GUID: 8Hov2H7wD1X9cQ1FPDGlIORKN-t4kciZ
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTE5MDEyNSBTYWx0ZWRfX7xvJQO0B9zmD
- b2zS26SLEmDycYSjTMYkTBwFvAQydORnNWMeXyUKFyoinB6RpAA6Mk9tKJtsJONuYBOgzqW5dCU
- XCssWXdf6CpX4wa8wBeMmZc8hxsOyQnW05umMccC96JKm4+3bAwqA5sF1YSNjv3oNXuMzZEd4lE
- EkKzPbERmfmXMwxTdND30Qer7JPFMK7KUCXkFXgvWoL9ruCIuXav6saWHtOHZ9WEsv02HHyIcpG
- EKJjNxhp79h01A4WFLTZQODGmUNgOqfot/7e/geDATddQ0wuDucPVmDFwmvLuPbanNPYsiMAXA0
- ZeFBeHac6RFZ2d4vQNDx6sqAd1DYgCBozXv9OB1jkIDIgDKcg1enXWY1ysDW5vw73/PlBLh9c0L
- ux8I+LK1iXVT3Z7RrOUwBoLWeQK6eDmftDJXXTWyi6Dw/Ate69QLOR0KH/94BR8Yv6YwN6lJ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-19_05,2025-05-16_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 malwarescore=0 suspectscore=0 impostorscore=0 adultscore=0
- mlxlogscore=964 spamscore=0 lowpriorityscore=0 phishscore=0 mlxscore=0
- bulkscore=0 clxscore=1015 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505070000
- definitions=main-2505190125
+Sender: marcel.ziswiler@codethink.co.uk
 
-On Mon, May 19, 2025 at 04:26:27PM +0530, Ekansh Gupta wrote:
-> 
-> 
-> On 5/19/2025 3:50 PM, Dmitry Baryshkov wrote:
-> > On Tue, May 13, 2025 at 09:58:24AM +0530, Ekansh Gupta wrote:
-> >> fastrpc_req_munmap_impl() is called to unmap any buffer. The buffer is
-> >> getting removed from the list after it is unmapped from DSP. This can
-> >> create potential race conditions if any other thread removes the entry
-> >> from list while unmap operation is ongoing. Remove the entry before
-> >> calling unmap operation.
-> >>
-> >> Fixes: 2419e55e532de ("misc: fastrpc: add mmap/unmap support")
-> >> Cc: stable@kernel.org
-> >> Signed-off-by: Ekansh Gupta <ekansh.gupta@oss.qualcomm.com>
-> >> ---
-> >>  drivers/misc/fastrpc.c | 29 ++++++++++++++++++++++-------
-> >>  1 file changed, 22 insertions(+), 7 deletions(-)
-> >>
+Hi Luca
 
-> >
-> >> +err_copy:
-> >> +	if (req.flags == ADSP_MMAP_REMOTE_HEAP_ADDR) {
-> >> +		spin_lock_irqsave(&fl->cctx->lock, flags);
-> >> +		list_del(&buf->node);
-> >> +		spin_unlock_irqrestore(&fl->cctx->lock, flags);
-> >> +	} else {
-> >> +		spin_lock(&fl->lock);
-> >> +		list_del(&buf->node);
-> >> +		spin_unlock(&fl->lock);
-> >> +	}
-> > Can we store the spinlock pointer in the struct fastrpc_buf instead?
-> this spinlock is used for multiple lists(bufs, maps and ctx).
+Thanks and sorry, for my late reply. I was traveling the Cretan wilderness =
+without access to any work related
+infrastructure.
 
-pointer, not a spinlock itself.
+On Wed, 2025-05-07 at 22:25 +0200, luca abeni wrote:
+> Hi Marcel,
+>=20
+> just a quick question to better understand your setup (and check where
+> the issue comes from):
+> in the email below, you say that tasks are statically assigned to
+> cores; how did you do this? Did you use isolated cpusets,
 
-> >
-> >>  err_assign:
-> >>  	fastrpc_req_munmap_impl(fl, buf);
-> >>  
-> >> -- 
-> >> 2.34.1
-> >>
-> 
+Yes, we use the cpuset controller from the cgroup-v2 APIs in the linux kern=
+el in order to partition CPUs and
+memory nodes. In detail, we use the AllowedCPUs and
+AllowedMemoryNodes in systemd's slice configurations.
 
--- 
-With best wishes
-Dmitry
+> or did you
+> set the tasks affinities after disabling the SCHED_DEADLINE admission
+> control (echo -1 > /proc/sys/kernel/sched_rt_runtime_us)?
+
+No.
+
+> Or am I misunderstanding your setup?
+
+No, I don't think so.
+
+> Also, are you using HRTICK_DL?
+
+No, not that I am aware of and definitely not on ROCK5Bs while our amd64 co=
+nfiguration currently does not even
+enable SCHED_DEBUG. Not sure how to easily judge the specific HRTICK featur=
+e set in such case.
+
+> 			Thanks,
+> 				Luca
+
+Thank you very much!
+
+Cheers
+
+Marcel
+
+> On Sat, 03 May 2025 13:14:53 +0200
+> Marcel Ziswiler <marcel.ziswiler@codethink.co.uk> wrote:
+> [...]
+> > We currently use three cores as follows:
+> >=20
+> > #### core x
+> >=20
+> > > sched_deadline =3D sched_period | sched_runtime | CP max run time 90%
+> > of sched_runtime | utilisation | reclaim | | -- | -- | -- | -- | -- |
+> > > =C2=A05 ms=C2=A0 | 0.15 ms | 0.135 ms |=C2=A0 3.00% | no |
+> > > 10 ms=C2=A0 | 1.8 ms=C2=A0 | 1.62 ms=C2=A0 | 18.00% | no |
+> > > 10 ms=C2=A0 | 2.1 ms=C2=A0 | 1.89 ms=C2=A0 | 21.00% | no |
+> > > 14 ms=C2=A0 | 2.3 ms=C2=A0 | 2.07 ms=C2=A0 | 16.43% | no |
+> > > 50 ms=C2=A0 | 8.0 ms=C2=A0 | 7.20 ms=C2=A0 | 16:00% | no |
+> > > 10 ms=C2=A0 | 0.5 ms=C2=A0 | **1=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=
+=A0 5.00% | no |
+> >=20
+> > Total utilisation of core x is 79.43% (less than 100%)
+> >=20
+> > **1 - this shall be a rogue process. This process will
+> > =C2=A0a) run for the maximum allowed workload value=20
+> > =C2=A0b) do not collect execution data
+> >=20
+> > This last rogue process is the one which causes massive issues to the
+> > rest of the scheduling if we set it to do reclaim.
+> >=20
+> > #### core y
+> >=20
+> > > sched_deadline =3D sched_period | sched_runtime | CP max run time 90%
+> > of sched_runtime | utilisation | reclaim | | -- | -- | -- | -- | -- |
+> > > =C2=A05 ms=C2=A0 | 0.5 ms | 0.45 ms | 10.00% | no |
+> > > 10 ms=C2=A0 | 1.9 ms | 1.71 ms | 19.00% | no |
+> > > 12 ms=C2=A0 | 1.8 ms | 1.62 ms | 15.00% | no |
+> > > 50 ms=C2=A0 | 5.5 ms | 4.95 ms | 11.00% | no |
+> > > 50 ms=C2=A0 | 9.0 ms | 8.10 ms | 18.00% | no |
+> >=20
+> > Total utilisation of core y is 73.00% (less than 100%)
+> >=20
+> > #### core z
+> >=20
+> > The third core is special as it will run 50 jobs with the same
+> > configuration as such:
+> >=20
+> > > sched_deadline =3D sched_period | sched_runtime | CP max run time 90%
+> > of sched_runtime | utilisation | | -- | -- | -- | -- |
+> > > =C2=A050 ms=C2=A0 | 0.8 ms | 0.72 ms | 1.60% |
+> >=20
+> > jobs 1-50 should run with reclaim OFF
+> >=20
+> > Total utilisation of core y is 1.6 * 50 =3D 80.00% (less than 100%)
+> >=20
+> > Please let me know if you need any further details which may help
+> > figuring out what exactly is going on.
+> >=20
+> > > Adding Luca in Cc so he can also take a look.
+> > >=20
+> > > Thanks,=C2=A0=20
+> >=20
+> > Thank you!
+> >=20
+> > > Juri=C2=A0=20
+> >=20
+> > Cheers
+> >=20
+> > Marcel
 
