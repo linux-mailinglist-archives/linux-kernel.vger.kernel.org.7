@@ -1,140 +1,227 @@
-Return-Path: <linux-kernel+bounces-653948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-653950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E0D3ABC119
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 16:41:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 560CBABC11D
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 16:42:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FD651B62199
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 14:41:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E242A7A1FD1
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 14:41:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F34ED284665;
-	Mon, 19 May 2025 14:41:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3A47283FF2;
+	Mon, 19 May 2025 14:42:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Y/HVMwht"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0A63283FF3
-	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 14:41:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="Fl3xvs8S"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F377283C8D;
+	Mon, 19 May 2025 14:42:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747665675; cv=none; b=daD6Kj2EoOHkBvc1DoUbsw310ea1JaTTEw4eoS3JQYlHeorfLn7Fn7d3C3ScJL66biH+IIjNPB4QXH2eefm+syAgjpsW8vFmu9xHXNMlIUc0NMhcTLgx1Jh7LBO4Sh4ydIT2WY4rVtNZg4ii+Tkk0DGJloCtfCuJSuqR3Fl+jOo=
+	t=1747665731; cv=none; b=hSKMDE3stKKW8/Uj1Z+ebaGe0dIZZiAHoyBquBS1sPhfVhUvV7XMGIwp3pPwhPHtFrNVBdx00pGkP9QOTajVLkoExlSvNIL1rweQOVLm3pvNlYabrzU5s5P+bOGIIko6iUj620yLCXY8h5ti4AAYOJ2lrXtt36ixpSpKP6tCPhg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747665675; c=relaxed/simple;
-	bh=PXgngoiMruUqQcJAJ36RBgxyhu0aqtovmZVT2JgqK6o=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=XbDhHSCvjL1x+WPIRiDMlmrTJuEhsU47OtkIFVP2BxeT8M3rVrjjEHAQQ/hn2NNhEaTh3ToImdKFFHfhesQvRIa5a0te4KTur9u/ZNrocBXXOt7riTtsKUrNV6av4I3JmK6FNCr9WwDN/9yqODtoJScWOwQgbA6YPEiTvgP/Dnc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Y/HVMwht; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3a365a6804eso1279742f8f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 07:41:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1747665672; x=1748270472; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=PXgngoiMruUqQcJAJ36RBgxyhu0aqtovmZVT2JgqK6o=;
-        b=Y/HVMwht+P6ClZ6FRCjrCwoCe3I3xlb9Pc1ENe3eyrnxucAZrgfMzpAAJqIRdjCKwa
-         VwD3RrLBnDlXlCPI4lamDQqm/tQIVASPf3npaxyNguxlUFCsx1SPd65TALcTxiGHNDQe
-         ejVCQJJAn3l+QMhlLGwtj5yV8Mrnv7TLzYuU7oMFEDAOAyX6Cn5PPFDDLtbgJbwh0Zd5
-         AceMZQFp0slKw0XGl9hLLp4cLObt9nvcSMJ6HAuFE/SzD2ZxTbXtzVh9htMjlH78hcOS
-         iAygszZQG/42m0EE99WBLZKBXiXD0hHG+b6GHi/uNEzps06NFtFLBBwj5RMnb6OhkiV9
-         ztog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747665672; x=1748270472;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=PXgngoiMruUqQcJAJ36RBgxyhu0aqtovmZVT2JgqK6o=;
-        b=R5VgW6kobJXSxf+WvaF0XCklCQkslKHmbhXPPuC7DwREfzHgz4LPc0yViDn2ZN54+5
-         utn/9H6V0PMmSuwV6GXpUY4V5FKqL/nKiIlkZu78gDKmtnPs2ZAkhJFnzEJsu1OI6IQx
-         QDfl28y+QZk90WBZGkQO8QHCmNVy+ErZ07Djh784n5fu68yuRYWhTuqEoGrfBp3Mkf77
-         0FjiT4ywjP0pzkkkFK40eH2gnUKGv4bwr/DxW/evBP7aFEZMvfOsg++1Ml5m+rq1lMtH
-         znQ4FO6ZirwWbYIPuYvk3D0Ji1SJQfa0Uv166CxV/S+uX1WAnyIQhBNXBasLV6I31QTV
-         r6jg==
-X-Forwarded-Encrypted: i=1; AJvYcCX2jpyTy7fwZLqNuJxWiwCdPcDiZSKv9NBIdrSaD01o7widhqOaOcLWgKNpt7Cxxr7gp45wCvjZmG/YJIM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKOKzrmxa+LHW74bHRJe4PWwKrqhY20YmrzopzIvd9jziLN0pk
-	q/AxXeJp+g8VbbkIYvNhunIyLqoxfOoEbmRNvbzsWm1DS+1JNnaVoXWeUOTmFfGbSts=
-X-Gm-Gg: ASbGncsEy2E8DOWCbml9k011OZ/hm/HNU0gwUcQ1ioMHx/vMEDTgQFwHw2rt5UImoJa
-	2NonFEaxga59hRnbBo293hrUPfonf7JRnryGLjjYwd7QWrG0S/DzdQLt7SMO0DWbSgGiJei/NTN
-	bUXZ6USFutUaalfF7+Kp+ezenMgxGlZbS2HGzrFW7HB30BYAsQZCu5PK3+fClzUji+MmFee4wkh
-	uxwGTw98zA683KMXWEk2Qqs+6oGUaqXVHCZhSVC0D08R7ROYWGD8vPN4rzINCBXixJOVkwTnQ+3
-	kGrIk+5TMMJiqWh/QIWGDNQZQfHm/qq513BpI2apHRL5fQ/dETRYNzI=
-X-Google-Smtp-Source: AGHT+IHEhMCIc1i5zg2NHcyMONsLyjwexSaW7YUlCJbZ3CdVo6leSerVam5BZph5FKXtCrhVs3o4xg==
-X-Received: by 2002:a05:6000:310a:b0:3a3:6a77:3350 with SMTP id ffacd0b85a97d-3a36a77371amr5540633f8f.8.1747665672038;
-        Mon, 19 May 2025 07:41:12 -0700 (PDT)
-Received: from draszik.lan ([80.111.64.44])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-442fd583f20sm140139625e9.28.2025.05.19.07.41.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 May 2025 07:41:11 -0700 (PDT)
-Message-ID: <905e6cab9932c814a578826329f5e3f944418ef9.camel@linaro.org>
-Subject: Re: [PATCH v4 00/32] Samsung S2MPG10 PMIC MFD-based drivers
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>, Lee Jones
-	 <lee@kernel.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Sylwester Nawrocki
- <s.nawrocki@samsung.com>, Chanwoo Choi	 <cw00.choi@samsung.com>, Alim
- Akhtar <alim.akhtar@samsung.com>, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Russell King	
- <linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>, Will
- Deacon	 <will@kernel.org>, Peter Griffin <peter.griffin@linaro.org>, Tudor
- Ambarus	 <tudor.ambarus@linaro.org>, Will McVicker
- <willmcvicker@google.com>, 	kernel-team@android.com,
- linux-kernel@vger.kernel.org, 	linux-samsung-soc@vger.kernel.org,
- devicetree@vger.kernel.org, 	linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, 	linux-rtc@vger.kernel.org, Krzysztof
- Kozlowski <krzysztof.kozlowski@linaro.org>
-Date: Mon, 19 May 2025 15:41:09 +0100
-In-Reply-To: <24314441936d97a1892474eacdbbd690612de265.camel@linaro.org>
-References: <20250409-s2mpg10-v4-0-d66d5f39b6bf@linaro.org>
-		 <20250415160212.GA372032@google.com> <2025041715425693974c6d@mail.local>
-	 <24314441936d97a1892474eacdbbd690612de265.camel@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
-User-Agent: Evolution 3.55.2-1 
+	s=arc-20240116; t=1747665731; c=relaxed/simple;
+	bh=DaOCYWXng+bb+aRYRVQm2JJU3PH7hKp12qAzn1qQlzg=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=buGjKjaQQdAI1YHgYzWS/nNySfie0jkgF0cq5rQZipnEC1YJTwJNx3XjISoCVnH5Z0c3slLWnGNbQcurhxKniLnsMcAuJhiekSxd4b37GWRKDUXrJi5UamVpmJ+iClPP2bWG48lsDdVTxW3IJLuQ+Hu97FsZZAR0AChlnhW5tyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=Fl3xvs8S; arc=none smtp.client-ip=117.135.210.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:To:
+	Content-Type; bh=+bDEs4YvFGFvsVERzFVHp93VMAxXcdRq+jn9IvMHqRw=;
+	b=Fl3xvs8SvCi4Zhs3rMFvVXx3NsYnUHeww1T5Sd97BYxRIlwVUhBWe8IKWrHOxd
+	4yvmZZVKUJD8MQ2WoeD3aiCt99fhrpUkpPRUfodCoN9xHplfOC5t9wu46gYWUarP
+	bLH6qbTSZaF+QBXqNBwwSYzPJ2hlkbCgnrk/niP8TcX48=
+Received: from [192.168.71.93] (unknown [])
+	by gzga-smtp-mtada-g1-0 (Coremail) with SMTP id _____wD31xYTQytocPGwCg--.349S2;
+	Mon, 19 May 2025 22:41:24 +0800 (CST)
+Message-ID: <e6ad7ef5-de9c-49bc-9882-5e97bd549168@163.com>
+Date: Mon, 19 May 2025 22:41:23 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/4] pci: implement "pci=aer_panic"
+From: Hans Zhang <18255117159@163.com>
+To: Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@linux.intel.com>,
+ bhelgaas@google.com, tglx@linutronix.de, kw@linux.com,
+ manivannan.sadhasivam@linaro.org, mahesh@linux.ibm.com
+Cc: oohall@gmail.com, linux-pci@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+References: <20250516165518.125495-1-18255117159@163.com>
+ <a1fdd6e1-8cd9-46b0-bd27-526729a1199d@linux.intel.com>
+ <8434dc81-5d2d-4ce1-ab73-ca1cf16cb550@163.com>
+Content-Language: en-US
+In-Reply-To: <8434dc81-5d2d-4ce1-ab73-ca1cf16cb550@163.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wD31xYTQytocPGwCg--.349S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW3Ww4UJr4kAw13XFy5try7KFg_yoW7tF4kpa
+	yrGa1YkrWkGF92van2k3WIqFyYyas3t345WrykGw13XFnIvFyjqrWSvFWYkFZIgrZYgw45
+	ZrW0v347Wrn8AF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UjiihUUUUU=
+X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiWwZSo2grPXGRfAAAsO
 
-SGkgQWxleGFuZHJlLAoKT24gTW9uLCAyMDI1LTA0LTI4IGF0IDE5OjE3ICswMTAwLCBBbmRyw6kg
-RHJhc3ppayB3cm90ZToKPiBIaSBBbGV4YW5kcmUsCj4gCj4gT24gVGh1LCAyMDI1LTA0LTE3IGF0
-IDE3OjQyICswMjAwLCBBbGV4YW5kcmUgQmVsbG9uaSB3cm90ZToKPiA+IE9uIDE1LzA0LzIwMjUg
-MTc6MDI6MTIrMDEwMCwgTGVlIEpvbmVzIHdyb3RlOgo+ID4gPiA+IMKgZHJpdmVycy9tZmQvS2Nv
-bmZpZ8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgIHzCoCAzNSArLQo+ID4gPiA+IMKgZHJpdmVycy9tZmQvTWFrZWZpbGXCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfMKg
-wqAgNSArLQo+ID4gPiA+IMKgZHJpdmVycy9tZmQvc2VjLWFjcG0uY8KgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHwgNDQyICsrKysrKysrKysr
-KysrKysrKysKPiA+ID4gPiDCoGRyaXZlcnMvbWZkL3NlYy1jb21tb24uY8KgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfCAzMDEgKysrKysrKysrKysr
-Kwo+ID4gPiA+IMKgZHJpdmVycy9tZmQvc2VjLWNvcmUuY8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHwgNDgxIC0tLS0tLS0tLS0tLS0tLS0t
-LS0tLQo+ID4gPiA+IMKgZHJpdmVycy9tZmQvc2VjLWNvcmUuaMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHzCoCAyMyArCj4gPiA+ID4gwqBk
-cml2ZXJzL21mZC9zZWMtaTJjLmPCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgIHwgMjM5ICsrKysrKysrKysKPiA+ID4gPiDCoGRyaXZlcnMv
-bWZkL3NlYy1pcnEuY8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqAgfCA0NjAgKysrKysrKy0tLS0tLS0tLS0tLS0KPiA+ID4gCj4gPiA+ID4g
-wqBkcml2ZXJzL3J0Yy9ydGMtczVtLmPCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHwgMTk3ICsrKysrKy0tLQo+ID4gPiAKPiA+ID4gTUZE
-IHBhcnRzIGxvb2sgb2theSB0byBtZSBub3cuCj4gPiA+IAo+ID4gPiBXaXRoIEFja3MgZnJvbSB0
-aGUgQ2xrIGFuZCBSVEMgbWFpbnRhaW5lcnMsIEkgY2FuIG1lcmdlIGFsbCBvZiB0aGUKPiA+ID4g
-ZHJpdmVyIHN0dWZmIHRvZ2V0aGVyIGFuZCBzdWJtaXQgYSBQUiBmb3Igb3RoZXJzIHRvIHB1bGwg
-ZnJvbS4KPiA+ID4gCj4gPiAKPiA+IEkgZG9uJ3QgdGhpbmsgdGhlIFJUQyBwYXJ0IGRlcGVuZHMg
-b24gdGhlIE1GRCBvbmUgc28gSSB3YXMgZ29pbmcgdG8KPiA+IGFwcGx5IHRoZSBwYXRjaGVzIGlu
-IG15IHRyZWUgaWYgdGhpcyBpcyBmaW5lIGZvciBldmVyeW9uZS4KPiAKPiBSVEMgcGF0Y2ggMjcg
-ZG9lcyBkZXBlbmQgb24gdGhlIHMybXBnMTAgbWZkIGNvcmUgZHJpdmVyIChkdWUgdG8KPiB1c2lu
-ZyBlbnVtcyBhbmQgbWFjcm9zIGludHJvZHVjZWQgdGhlcmUpLgoKTGVlIGhhcyBraW5kbHkgbWVy
-Z2VkIGFsbCB0aGUgY29yZSBkcml2ZXIgcGF0Y2hlcy4KCkFueSBjaGFuY2UgdGhlIHJ0YyBjaGFu
-Z2VzIHdpbGwgbWFrZSBpdCBpbnRvIHRoZSBzYW1lIGtlcm5lbCByZWxlYXNlPwoKQ2hlZXJzLApB
-bmRyZScKCg==
+
+
+On 2025/5/19 22:21, Hans Zhang wrote:
+> 
+> 
+> On 2025/5/17 02:10, Sathyanarayanan Kuppuswamy wrote:
+>>
+>> On 5/16/25 9:55 AM, Hans Zhang wrote:
+>>> The following series introduces a new kernel command-line option 
+>>> aer_panic
+>>> to enhance error handling for PCIe Advanced Error Reporting (AER) in
+>>> mission-critical environments. This feature ensures deterministic 
+>>> recover
+>>> from fatal PCIe errors by triggering a controlled kernel panic when 
+>>> device
+>>> recovery fails, avoiding indefinite system hangs.
+>>
+>> Why would a device recovery failure lead to a system hang? Worst case
+>> that device may not be accessible, right?  Any real use case?
+>>
+> 
+> 
+> Dear Sathyanarayanan,
+> 
+> Due to Synopsys and Cadence PCIe IP, their AER interrupts are usually 
+> SPI interrupts, not INTx/MSI/MSIx interrupts.  (Some customers will 
+> design it as an MSI/MSIx interrupt, e.g.: RK3588, but not all customers 
+> have designed it this way.)  For example, when many mobile phone SoCs of 
+> Qualcomm handle AER interrupts and there is a link down, that is, a 
+> fatal problem occurs in the current PCIe physical link, the system 
+> cannot recover.  At this point, a system restart is needed to solve the 
+> problem.
+> 
+> And our company design of SOC: http://radxa.com/products/orion/o6/, it 
+> has 5 road PCIe port.
+> There is also the same problem.  If there is a problem with one of the 
+> PCIe ports, it will cause the entire system to hang.  So I hope linux OS 
+> can offer an option that enables SOC manufacturers to choose to restart 
+> the system in case of fatal hardware errors occurring in PCIe.
+> 
+> There are also products such as mobile phones and tablets.  We don't 
+> want to wait until the battery is completely used up before restarting 
+> them.
+> 
+> For the specific code of Qualcomm, please refer to the email I sent.
+> 
+
+
+Dear Sathyanarayanan,
+
+Supplementary reasons:
+
+drivers/pci/controller/cadence/pcie-cadence-host.c
+cdns_pci_map_bus
+     /* Clear AXI link-down status */
+     cdns_pcie_writel(pcie, CDNS_PCIE_AT_LINKDOWN, 0x0);
+
+https://elixir.bootlin.com/linux/v6.15-rc6/source/drivers/pci/controller/cadence/pcie-cadence-host.c#L52
+
+If there has been a link down in this PCIe port, the register 
+CDNS_PCIE_AT_LINKDOWN must be set to 0 for the AXI transmission to 
+continue.  This is different from Synopsys.
+
+If CPU Core0 runs to code L52 and CPU Core1 is executing NVMe SSD saving 
+files, since the CDNS_PCIE_AT_LINKDOWN register is still 1, it causes 
+CPU Core1 to be unable to send TLP transfers and hang.  This is a very 
+extreme situation.
+(The current Cadence code is Legacy PCIe IP, and the HPA IP is still in 
+the upstream process at present.)
+
+Radxa O6 uses Cadence's PCIe HPA IP.
+http://radxa.com/products/orion/o6/
+
+Best regards,
+Hans
+
+> 
+>>>
+>>> Problem Statement
+>>> In systems where unresolved PCIe errors (e.g., bus hangs) occur,
+>>> traditional error recovery mechanisms may leave the system unresponsive
+>>> indefinitely. This is unacceptable for high-availability environment
+>>> requiring prompt recovery via reboot.
+>>>
+>>> Solution
+>>> The aer_panic option forces a kernel panic on unrecoverable AER errors.
+>>> This bypasses prolonged recovery attempts and ensures immediate reboot.
+>>>
+>>> Patch Summary:
+>>> Documentation Update: Adds aer_panic to kernel-parameters.txt, 
+>>> explaining
+>>> its purpose and usage.
+>>>
+>>> Command-Line Handling: Implements pci=aer_panic parsing and state
+>>> management in PCI core.
+>>>
+>>> State Exposure: Introduces pci_aer_panic_enabled() to check if the panic
+>>> mode is active.
+>>>
+>>> Panic Trigger: Modifies recovery logic to panic the system when recovery
+>>> fails and aer_panic is enabled.
+>>>
+>>> Impact
+>>> Controlled Recovery: Reduces downtime by replacing hangs with immediate
+>>> reboots.
+>>>
+>>> Optional: Enabled via pci=aer_panic; no default behavior change.
+>>>
+>>> Dependency: Requires CONFIG_PCIEAER.
+>>>
+>>> For example, in mobile phones and tablets, when there is a problem with
+>>> the PCIe link and it cannot be restored, it is expected to provide an
+>>> alternative method to make the system panic without waiting for the
+>>> battery power to be completely exhausted before restarting the system.
+>>>
+>>> ---
+>>> For example, the sm8250 and sm8350 of qcom will panic and restart the
+>>> system when they are linked down.
+>>>
+>>> https://github.com/DOITfit/xiaomi_kernel_sm8250/blob/d42aa408e8cef14f4ec006554fac67ef80b86d0d/drivers/pci/controller/pci-msm.c#L5440
+>>>
+>>> https://github.com/OnePlusOSS/android_kernel_oneplus_sm8350/blob/13ca08fdf0979fdd61d5e8991661874bb2d19150/drivers/net/wireless/cnss2/pci.c#L950
+>>>
+>>>
+>>> Since the design schemes of each SOC manufacturer are different, the AXI
+>>> and other buses connected by PCIe do not have a design to prevent 
+>>> hanging.
+>>> Once a FATAL error occurs in the PCIe link and cannot be restored, the
+>>> system needs to be restarted.
+>>>
+>>>
+>>> Dear Mani,
+>>>
+>>> I wonder if you know how other SoCs of qcom handle FATAL errors that 
+>>> occur
+>>> in PCIe link.
+>>> ---
+>>>
+>>> Hans Zhang (4):
+>>>    pci: implement "pci=aer_panic"
+>>>    PCI/AER: Introduce aer_panic kernel command-line option
+>>>    PCI/AER: Expose AER panic state via pci_aer_panic_enabled()
+>>>    PCI/AER: Trigger kernel panic on recovery failure if aer_panic is set
+>>>
+>>>   .../admin-guide/kernel-parameters.txt          |  7 +++++++
+>>>   drivers/pci/pci.c                              |  2 ++
+>>>   drivers/pci/pci.h                              |  4 ++++
+>>>   drivers/pci/pcie/aer.c                         | 18 ++++++++++++++++++
+>>>   drivers/pci/pcie/err.c                         |  8 ++++++--
+>>>   5 files changed, 37 insertions(+), 2 deletions(-)
+>>>
+>>>
+>>> base-commit: fee3e843b309444f48157e2188efa6818bae85cf
+>>> prerequisite-patch-id: 299f33d3618e246cd7c04de10e591ace2d0116e6
+>>> prerequisite-patch-id: 482ad0609459a7654a4100cdc9f9aa4b671be50b
+>>
 
 
