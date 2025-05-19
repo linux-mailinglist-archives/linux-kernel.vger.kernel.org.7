@@ -1,90 +1,130 @@
-Return-Path: <linux-kernel+bounces-653673-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-653675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA389ABBCC1
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 13:40:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6A64ABBCC6
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 13:41:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 235653BD301
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 11:38:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D40497A05B5
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 11:38:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0335277026;
-	Mon, 19 May 2025 11:38:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AAEE267B88;
+	Mon, 19 May 2025 11:39:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="lmcBlLoB"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qplCrzOO"
+Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9205277004;
-	Mon, 19 May 2025 11:38:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E4D9274657
+	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 11:38:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747654694; cv=none; b=I0w3YyWcVb5jHuMXDUVp52UvFACaK8pZ/2HXngT5ctWnfmvSD48ofEwubkMiD8r5Y0Y5UAlUBQ5iy4n7OJQd2vRQQQxBCYAHDAmDJ1BwNuCJZTzX58Ay2qWeY72rXH4lPrAb/Z7CpXz22kY2sSkn28hcsMXDaWJ4iE8ClWhKPno=
+	t=1747654740; cv=none; b=eSg8+oCqqchg2tHxA+HglcM5H6/74MC7PE27JX7/lNUt2FD/hP6WKsmN+amhaGFOxrOCUlhDD9+tk75nlouOVgg9xyXbbbTRLq6MSnllLS6YAN+Z0G6/X+gYUA3PI7Uu3ZVA4xL7w37dk3YJWgZLtFQqOrU8Ssa2z7X27LNkQHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747654694; c=relaxed/simple;
-	bh=ZT2swLw3vak3ie4pR74lUra8/LgMbJf1xWXMpaHdV0k=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=B2uDQd0bOoIW7gPeQXG3ElKuAyReaGdzQ9fNy67l4eSbWC08RLfLAj8wS3rVjNqa5vbjzOTpQI9jlW2cgkl7zbqUfuagcoSAMiWWvjtMhlvn82F9P57lJCfxrKwYV68RxdjUUcWctQw9FvADAoFEIuYNjNkDp22xbSawK/LvdUg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=lmcBlLoB; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 0122F41086
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1747654691; bh=VrpHJZVhRIauD59sBkuzdqC6I4YPrdfuP0YshFjFxQw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=lmcBlLoBBIUEKFU30+ACIy5RcLGDkTd497DsOT5UdQ9wDVjPUMqrGDZkpxX3gu07M
-	 Ec1B6irU7XqS4yLuo8n5b7pMktdeatO9el+C4TJxjhYJZws4AOcIx2r9Gld3GoNjBn
-	 TeG7LdLF3eiefHB/QHrqhPBvGMDMd2ZPCjCG0A6g1jW606FAPZis8Lgi5w3VM51C9+
-	 +BY9LUMUcQPX/eadSBIUYe0JAr27w3QLvUe/NBcMBKWs/hO3KFO6I6Axfgef42XT8e
-	 IC+oOkNaG3AE13f1RBsQ2hc4xbJ66qyPQtfTQeF8FzZnuzmCB1RTDN29pseA/GTUhb
-	 wAGa0cUEcL8vA==
-Received: from localhost (mdns.lwn.net [45.79.72.68])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id 0122F41086;
-	Mon, 19 May 2025 11:38:10 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Benton Raymer <benton.raymer@gmail.com>, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: Benton Raymer <benton.raymer@gmail.com>
-Subject: Re: [PATCH] docs: memory-devices: fix typo in emif.rst
-In-Reply-To: <20250516032837.42124-1-benton.raymer@gmail.com>
-References: <20250516032837.42124-1-benton.raymer@gmail.com>
-Date: Mon, 19 May 2025 05:38:07 -0600
-Message-ID: <87o6vokezk.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1747654740; c=relaxed/simple;
+	bh=TMHxhEkJeLRrFVomKdfUPmg32HngiwuN7Y8XouZQTSs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QvoaxQ5BY9rzNqEcdQYJ0O8dl+Iqc0oFTfhwaESm1OCQek7vTWpzZBasjxl5V1HEUxaEE9vybfrkDnC8zPblvPVsomYOBjXUA92UsZJb2IRP+FIGRYVTYvFqf27dmbrFmEvr5aLHswQl25hKoDGQl1bITXnqkzxKc22UBSHpzKg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qplCrzOO; arc=none smtp.client-ip=209.85.219.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-e7b98303087so889423276.1
+        for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 04:38:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1747654738; x=1748259538; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=jGbkzJ0eqqimJI7DwVKRZ7T05jAEAZTanGLLnplCIgc=;
+        b=qplCrzOOeNGb+ExJFbmhlwgae5MQ/NMv0uqLEQIn1I1n5sVGLEbN21aaxQ3J6nqHa2
+         jR8nMUxnKoAUeVh+cRd5kf2rwMaOoLNDGYVJxXkL9DnOECscng6dlzaclADb6RPbk0pn
+         4oUgXaDC95CFSnqhEt+Ej3VlSZGvCbjQk/pGfQWL7BsltrNFChoLGshigd8jLbhJ3c3S
+         GnQtbctZb6/i1WkiSnY4nX3EC+lf+B12Se0x9sbmzkM1JgkVJTNjzonW0h7lrg8S8qsm
+         DHmbYg7EUx2INULKcSW6QPNM/PfRaMbtbjskt3dFuiHh6psBuuB/98HAl5M3MtZg7kKe
+         IpKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747654738; x=1748259538;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jGbkzJ0eqqimJI7DwVKRZ7T05jAEAZTanGLLnplCIgc=;
+        b=S67M1URjvjNx+VGY33Cm4jsT9UQjobBB9RosOBbNzw0SopbGn1zU044wGQuPuZWxg/
+         HVOMsFPzSdK5H1d3VVgylurX8UbybJd2n0Cgsgw9KAgKrbLmuUpaBlwrMZXqCoCFAQV3
+         jGvQC8dWiKtznztL+lWPZE0upj1ozHgjoWbtBho1bFm8W5Ca6WdkarvXU//tb3Q1K4NN
+         g1hOGmcPGLrN+eU87anbI2RmP5pmVYriTgkAN76U0iUolRPV0ZGPEXsBUGwGe7scg7J6
+         cDZVHks6y97sNiu+nyhyy0AKOp8zu6NbCtI4CIS9jr9jFXs2QpKwSlPGth9+7CjT9/a1
+         1e+A==
+X-Forwarded-Encrypted: i=1; AJvYcCUCRchs7BVBo8oTtTe580/dRN4Tp/dL0A+bkYDl/EFTLPXau3iauuonM4oRzy5kJCB3XPs3QHJpjB1pbrY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIMfRbFLh//aQk+AJ1IKH21jBDORRsDs4eo9Tag1yIGuoLx63q
+	5r7c0AMelY0+mTE8gjHRT82vCHbWcN4yTlHJXlZt/SbE6uIlG9bdzLgwQzwySo6FOOAVkpK/s1H
+	swRarXygzokxT4Y5fCKv+NtRzYaozfJS+AdcBQ1UHXA==
+X-Gm-Gg: ASbGncs+wV34Z0zM1MA5sPiIRIfAoetMhVbeArGpzUbsbPPyK506lPoYXTvlzcnNAdX
+	dg1tf2DeiFAB2HL30Xf1plDJ9nEiB52eV4mmMcAjKB0mk4115vcY99/9M1BEzt2QqV3yWsE90Zx
+	SfICCU1fBt0z1bfuaJf7qRonzqGEsMBw0+Vg==
+X-Google-Smtp-Source: AGHT+IGEhk9xvOXamJcUf2c7oYgnHzt7/Q6Jc8A16RlKxL4KhnX0gE0Bk6C5w2N1j0qtNoul2O4nnkYi1A17Lqm3muU=
+X-Received: by 2002:a05:6902:1547:b0:e7b:9763:6676 with SMTP id
+ 3f1490d57ef6-e7b97636a60mr5570580276.17.1747654737919; Mon, 19 May 2025
+ 04:38:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20250509-20-k1-sdhci-v3-0-526c35feaa20@gentoo.org>
+ <20250509-20-k1-sdhci-v3-2-526c35feaa20@gentoo.org> <4cee9284-8f71-4214-8bc2-48bcb4030e40@intel.com>
+ <20250512075631-GYA517379@gentoo>
+In-Reply-To: <20250512075631-GYA517379@gentoo>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Mon, 19 May 2025 13:38:21 +0200
+X-Gm-Features: AX0GCFuvP9LYuHS81_oe6T9DU2l0mF54pVYJmbBwMEiyFEMW40gm2OmA7P10SVI
+Message-ID: <CAPDyKFpgCMsaP=CZx210Ov=gTCkez-fwEPMwKTGHrzF51p5_TA@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] mmc: sdhci-of-k1: add support for SpacemiT K1 SoC
+To: Yixun Lan <dlan@gentoo.org>
+Cc: Adrian Hunter <adrian.hunter@intel.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Alex Elder <elder@riscstar.com>, Inochi Amaoto <inochiama@gmail.com>, linux-mmc@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	spacemit@lists.linux.dev, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Benton Raymer <benton.raymer@gmail.com> writes:
-
-> Fixes a minor typo in the /Documentation/driver-api/memory-devices/ti-emif.rst file
+On Mon, 12 May 2025 at 09:56, Yixun Lan <dlan@gentoo.org> wrote:
 >
-> Signed-off-by: Benton Raymer <benton.raymer@gmail.com>
-> ---
->  Documentation/driver-api/memory-devices/ti-emif.rst | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Hi Ulf,
 >
-> diff --git a/Documentation/driver-api/memory-devices/ti-emif.rst b/Documentation/driver-api/memory-devices/ti-emif.rst
-> index dea2ad9bcd7e..d824cc0dce89 100644
-> --- a/Documentation/driver-api/memory-devices/ti-emif.rst
-> +++ b/Documentation/driver-api/memory-devices/ti-emif.rst
-> @@ -29,7 +29,7 @@ This driver is for the EMIF module available in Texas Instruments
->  SoCs. EMIF is an SDRAM controller that, based on its revision,
->  supports one or more of DDR2, DDR3, and LPDDR2 SDRAM protocols.
->  This driver takes care of only LPDDR2 memories presently. The
-> -functions of the driver includes re-configuring AC timing
-> +functions of the driver include re-configuring AC timing
->  parameters and other settings during frequency, voltage and
+> On 09:04 Mon 12 May     , Adrian Hunter wrote:
+> > On 09/05/2025 16:22, Yixun Lan wrote:
+> > > The SDHCI controller found in SpacemiT K1 SoC features SD,
+> > > SDIO, eMMC support, such as:
+> > >
+> > > - Compatible for 4-bit SDIO 3.0 UHS-I protocol, up to SDR104
+> > > - Compatible for 4-bit SD 3.0 UHS-I protocol, up to SDR104
+> > > - Compatible for 8bit eMMC5.1, up to HS400
+> > >
+> > > Signed-off-by: Yixun Lan <dlan@gentoo.org>
+> >
+> > Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+> >
+>
+> If this isn't too late (as v6.15-rc6 is tagged), I'd like to seek
+> the opportunity to queue for v6.16 as no big changes during these
+> two review cycles..
+>
+> I also know people who would expect to have a full rootfs support,
+> and this driver is sufficient to bring eMMC up and will make their
+> life of development easy..
+>
+> But if you have different opinion, then I'm totally fine to delay
+> it to next merge window, thanks
 
-Applied, thanks.
+I have been busy the last week, apoligize for the delay.
 
-jon
+I just posted a few minor comments on an earlier version, I didn't see
+v3 sorry. Anyway, should be pretty easy to address those comments. If
+you manage to send another version within the next couple of days I
+can certainly pick this up for v6.16.
+
+Kind regards
+Uffe
 
