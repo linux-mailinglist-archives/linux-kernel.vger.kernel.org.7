@@ -1,167 +1,186 @@
-Return-Path: <linux-kernel+bounces-654732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-654734-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 316CEABCBC8
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 01:56:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EE082ABCBCE
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 01:57:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59B7E1B68193
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 23:56:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB9FE1B66158
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 23:57:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3035623BD0B;
-	Mon, 19 May 2025 23:56:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA9CE23BF9B;
+	Mon, 19 May 2025 23:56:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DF6vG/tR"
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="bnqwg33t"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2076.outbound.protection.outlook.com [40.107.243.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A80A4317D;
-	Mon, 19 May 2025 23:56:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747698987; cv=none; b=k2CkC6GpgpvT5shzanCGoJOdYlwgybLo3QpohGntbTVlBFauuofu+V3/gB7yz1F7Lkg3LMeco4jqfq3tT0hOZPX/siW83hulD/OXahvn2wBuIqb8fOXMPi5KlAWjZ//HDJV+/BiaWU+TREWeJz8eE9wlghot92+YqUrj43GD8VE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747698987; c=relaxed/simple;
-	bh=MRpEHT0Aj8NPgofmlBKIiaHmNmVlxyIY1DN5O55M6ow=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=duiyd2h699zVlJ0EfQC2BA6FeGlb/pxfLHe/H9RDaYPFk7fWigkH9XvtJ6bso9gV8ydG1fA1BC7pxXwI9X+OELu4Dh//9T+5olbmWi2+OWRohcSFk++m6fRnFLeGVe6NS/rp+jhzsQlAupowVIDBDZLgkKsv3ItaK/1pGvJ/bKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DF6vG/tR; arc=none smtp.client-ip=209.85.160.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-476ab588f32so75437681cf.2;
-        Mon, 19 May 2025 16:56:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747698985; x=1748303785; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:subject:cc:to:from:date:feedback-id
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=PH2VgzY/5BEaj0T/YAEp7MmgJEQhgRf5xUTgav8kQlY=;
-        b=DF6vG/tRfppbas+wogbaBcsYBB29I9EzS58iaU+YSUBkoNUoLHpysLYYS9bP6O53Sq
-         rs5XQzq1IRJjZh1v9GoNUTTUcXHjuSukdTY2ja3C5XsV12Yuev2rJvTc4At2QK3Vg+Pu
-         ZhXkp1gEfQAQ4wqx+pNW36yy9kw7LW1/M2vA30kayFDg8y7dZSU2hxRohO2oylLn7jfP
-         PUD2HPPSp9WCWE/v9V5732SXmA4JpU4q3fjUCF5Lcm2Xd3XZkZLDBA84WjlZQ838XdnE
-         FbjbTKXvbEZlZ2eLKXlWpP/WEMIy/yvfvgjlimfsiy7CtKBhp+lngZJBuezugdfrl8qX
-         24Tg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747698985; x=1748303785;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:subject:cc:to:from:date:feedback-id
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=PH2VgzY/5BEaj0T/YAEp7MmgJEQhgRf5xUTgav8kQlY=;
-        b=GL5M6q5B0zWsX7nPPbEhvPVU5xph+DThZ3o3sSrZRMzaOK/bA5WDP5jLWGktMjFHOC
-         alX9Hea5fc4B1iS4LhQgSkvFIEHOCLk40lknITGNvffwjh0Za312BBQe8QL3rjsb3zOb
-         lKt/WEncfRdfARcFgVtxOxOeRdK5bDAcTuirUqNCEZwh3ymqctrVhZZYN17aUvi2p+DP
-         PM4J9OAtgUmYcgCh/hTUvsopQtLacveK6dEzKtjU/hPBeWFb3L1nlQzB95ppov8frERY
-         Jt8R2Ep22T5AA+aoASYp2b+LeynGoNmhJZ+2KnU2eE/5commdpyiOEcjVUkieuX1MPUU
-         xLWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUQrkqSg/RXOYBFNYQ2KzapyE2HY+Or00EpNaZ639JJTS0ry2lJU5fL6fs+0htiSa9nca0w7DL7PrEVcYkyPTU=@vger.kernel.org, AJvYcCUoLgbhUeDWYED/1zAMdFtls8jspigFbhc8H/ATKTnOq/IGJQBV4Nq6GBKO3l5GCM2rK/BsjwX+cB4pc04K@vger.kernel.org, AJvYcCXeAoaIamWSq+2QLD5zlSWR/XKX7Bkidmx1LyaAwGYqHzDjVSfsV66Rs5z5CGs0Uiw4IdLQVVC5GQcCcWd5U64=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxdUnWlmxRzxGw5xjJ6xaRxztOybCVX7ujoBJJ9TTQJWgSx9afU
-	WAxljiUZhNszDJUHNzQg3/2uuVHEA5BF2AW+2mzVmV0xnuaYv65uXFNH
-X-Gm-Gg: ASbGnct/zdg7nwywWdZfEZIAFUBNb1blxJnJYmmrUuLLsQxNtkPadhhUkki+Jo0dXKq
-	fF+XpklKJriPJsjU+oGwdVxaAXVqTsud/Fx+Z792BleO7EE3YDBVc9jQHSTG1z//oWZcBZpjhbW
-	B1GkL5G01Pjcmu98InpV5SOCI0hyAuvDvywb1pCo8tY5GqmPy8lHvO343CjkV+NIX7sEjgTEJi1
-	qJk2tPc9AtvzETbDehwNrwE6rEMRlzzmozkfB+CZcROq5+RX9uo4OtbWewIUj6adtRCytR0RQv1
-	jMQoxJJG0WXMMtOfNfk4Nwle5RJsxoAySqtUSV71LvlFleaMZcYuwhKraz32HteSABHbKmJjz5L
-	YoTJeVYrgidpaMhoPyFreG4nzSqs4HDIbDwjPs/gdTQ==
-X-Google-Smtp-Source: AGHT+IGGQ22Fxhiq41h2TGXux2TQUhBaRyuMzu3p1dr6JWQqE6tPFG6VPGwZdjYis6/v1x4kVy5raA==
-X-Received: by 2002:a05:622a:5c96:b0:476:91f1:9e5 with SMTP id d75a77b69052e-494b096c63cmr301354431cf.50.1747698984812;
-        Mon, 19 May 2025 16:56:24 -0700 (PDT)
-Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-494ae4fd7f0sm62122281cf.57.2025.05.19.16.56.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 May 2025 16:56:24 -0700 (PDT)
-Message-ID: <682bc528.c80a0220.13f632.9ec0@mx.google.com>
-X-Google-Original-Message-ID: <aCvFJYt_Qg69nCVP@winterfell.>
-Received: from phl-compute-12.internal (phl-compute-12.phl.internal [10.202.2.52])
-	by mailfauth.phl.internal (Postfix) with ESMTP id BC41B1200082;
-	Mon, 19 May 2025 19:56:23 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-12.internal (MEProxy); Mon, 19 May 2025 19:56:23 -0400
-X-ME-Sender: <xms:J8UraPEPv0ib_w1GxDKXaj91ipBMu9ByfOTZYsfT41KbZ0Vuv4CYvQ>
-    <xme:J8UraMVrzpl9OfKUybaWWZxbi5KrbqsPIfITS95XXuK4xgU9kByOAMRri5vTlUd72
-    niL6f_S8Uj81Xvsvg>
-X-ME-Received: <xmr:J8UraBI5sxjEDnOQLg4F7J7c9p1XMAu_8U8pSFNH-6lGTc-O3-2WxbDrZA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdefvddvjeehucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggugfgjsehtkeertddt
-    tdejnecuhfhrohhmpeeuohhquhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrg
-    hilhdrtghomheqnecuggftrfgrthhtvghrnhepjefhieekkeffjeeggeeuvefftdegfedu
-    teelgeejledvffetiefhleefhedvgeeknecuffhomhgrihhnpehkvghrnhgvlhdrohhrgh
-    enucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsohhq
-    uhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdeiledvgeehtdeigedqud
-    ejjeekheehhedvqdgsohhquhhnrdhfvghngheppehgmhgrihhlrdgtohhmsehfihigmhgv
-    rdhnrghmvgdpnhgspghrtghpthhtohepudelpdhmohguvgepshhmthhpohhuthdprhgtph
-    htthhopehjrghnnhhhsehgohhoghhlvgdrtghomhdprhgtphhtthhopegsqhgvsehgohho
-    ghhlvgdrtghomhdprhgtphhtthhopeihuhhrhidrnhhorhhovhesghhmrghilhdrtghomh
-    dprhgtphhtthhopehkvggvsheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhu
-    giesrhgrshhmuhhsvhhilhhlvghmohgvshdrughkpdhrtghpthhtohepvhhirhgvshhhrd
-    hkuhhmrghrsehlihhnrghrohdrohhrghdprhgtphhtthhopehojhgvuggrsehkvghrnhgv
-    lhdrohhrghdprhgtphhtthhopegrlhgvgidrghgrhihnohhrsehgmhgrihhlrdgtohhmpd
-    hrtghpthhtohepghgrrhihsehgrghrhihguhhordhnvght
-X-ME-Proxy: <xmx:J8UraNHkEAenxCFwvnJnQqws4ekhqQ7EluIO7AGKc3KmTdc3mSzfSA>
-    <xmx:J8UraFX3tJp5ubAadnCutjYSd_PGTDPp3u33H4xi7R-HwgwB6kzH1A>
-    <xmx:J8UraINJhq7B9FoEiqnAni5AtZO4EiJ_lWpKjOd7iiXrSoAipIZfCA>
-    <xmx:J8UraE2QmsZtEIdU49t1NNrAosM98NM6--4pb6Lty945qMxNewz0bg>
-    <xmx:J8UraKVrIUOVBHj0_3pRXEkXN4Dmg6c42M8-hKEgejR1OiS-Ic7mpik6>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 19 May 2025 19:56:23 -0400 (EDT)
-Date: Mon, 19 May 2025 16:56:21 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Jann Horn <jannh@google.com>
-Cc: Burak Emir <bqe@google.com>, Yury Norov <yury.norov@gmail.com>,
-	Kees Cook <kees@kernel.org>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	"Gustavo A . R . Silva" <gustavoars@kernel.org>,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH v8 5/5] rust: add dynamic ID pool abstraction for bitmap
-References: <20250519161712.2609395-1-bqe@google.com>
- <20250519161712.2609395-6-bqe@google.com>
- <CAG48ez2WdxXVCzVsAPeQWgso3ZBQS_Xm+9D1FLBx6UHFV1bGHQ@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 847B323BD04;
+	Mon, 19 May 2025 23:56:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.76
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747699007; cv=fail; b=Dz6K06N7trz2ogdhZYUw40srZhzx4h+t/mpSQDKzkUD+N13h5Ptt7efE5rng4QGnVvjkAsdLRlQBam3JHhoZ1fJmssjfUne0UkBspJW0VJCSJMoXvPVr4boNxO7Iel8/kD1xIYQ6QqHdvaotV6x5IAOObH8wfnVaU6FUONksP+U=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747699007; c=relaxed/simple;
+	bh=iuvp7QQTCzbzbu2ifNUJ1n7IhP2Pi92rStx7EM4kNoU=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ODuhGs4T2/ZkhkqdIKbdq0KER8GaPoUA7URG61VxDYGpVI3/sH42g3dG+4FONt3p18JO93RjksSkXZgJeKhFfMGajsRehqFlpv7GIm54Z0I1r5itreho/cp4/4GPF6yFiO9rmqxJ8KrJ8iLaLfJ9O7Eau9A4XDF75jgMR6lcEv0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=bnqwg33t; arc=fail smtp.client-ip=40.107.243.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=eLvqtapEp84PoH4EoKFRRDz9/5dWbXY+gBBU/7VNxx5bJUGdRtVScoGtS5mzkef3OAvmcSgD0owop7ntFZ/mOqGbdOVZiPnHUxkQmOYh4JUU6dEfjBL7KKSX3urP+5YM1pZ7nGS1QrX5b5Qw8W2NBZqBK2ka81FEFro+N4ufKqfMHcJVWv43H9LBiTYNu0MAmss3rZx8Adv6KVvbrFI5DaeCbP1+hF6xAVLQe9spFd7YcSXXIXsfAJBHu3EkoWG/Q52sND6ImyZgVdbCCXTTh0jTAGXAsI4CJ4T5dRQJ8r+20Qaf3gxhIqLsH1ngMNixBTzp/12hgv0yiLKVnjU88g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=NYvwT5PreAuiHG1s1zbDu9qyWoPPUxadVhJp/06e0Vg=;
+ b=TEjqOp2ydRX3EzP8B7QITYuc63AKCKWMY1nA85yMoEW6zm/OdkkWsqUSgYykDPlNbsqmE+92xLOsKjl5hQAzD5O+gVJP8WPi3Dxx6g+T1k+egm4LLsDEZkPGVtaoJdwWPgr1A+YljFdiwJOYtSm7wjanwzFXipwd3G2/rnebnuHfe/3LVcwwHFZjcpg4x4YFKcON2s6wQQ5d3W+SuZ8fIGjB36pQjdsIjTbKh7r7mXMu0NW9ShB2w+Eb9v8aMteWiLeor5Qoqbmglzho73uhMnlW5zYzYu0yQszQYJffEiFnV2XtGlTSpw9UjdH44oWyJhmzFJHt/7xIsMFPYSjGIw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=google.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=NYvwT5PreAuiHG1s1zbDu9qyWoPPUxadVhJp/06e0Vg=;
+ b=bnqwg33tAdx7DXbLwVx3af7dmVBjVDSEydeVgspmc8XoakOOEN00+SIOCKyO3zoIfBiHD4LEs2yMj7/QNFSkIIxGHxw/UOk1Qj6OrTeff162htRZXwe5OvIQExE/1eQJQDIgt9bwPF03er3vIC9nXhp/RhgZbpSVDer68cva5e4=
+Received: from BYAPR06CA0018.namprd06.prod.outlook.com (2603:10b6:a03:d4::31)
+ by IA0PR12MB8325.namprd12.prod.outlook.com (2603:10b6:208:407::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8746.30; Mon, 19 May
+ 2025 23:56:38 +0000
+Received: from SJ5PEPF000001F1.namprd05.prod.outlook.com
+ (2603:10b6:a03:d4:cafe::f6) by BYAPR06CA0018.outlook.office365.com
+ (2603:10b6:a03:d4::31) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8746.25 via Frontend Transport; Mon,
+ 19 May 2025 23:56:38 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ SJ5PEPF000001F1.mail.protection.outlook.com (10.167.242.69) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8769.18 via Frontend Transport; Mon, 19 May 2025 23:56:38 +0000
+Received: from purico-ed09host.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 19 May
+ 2025 18:56:36 -0500
+From: Ashish Kalra <Ashish.Kalra@amd.com>
+To: <seanjc@google.com>, <pbonzini@redhat.com>, <tglx@linutronix.de>,
+	<mingo@redhat.com>, <bp@alien8.de>, <dave.hansen@linux.intel.com>,
+	<hpa@zytor.com>, <herbert@gondor.apana.org.au>
+CC: <x86@kernel.org>, <john.allen@amd.com>, <davem@davemloft.net>,
+	<thomas.lendacky@amd.com>, <michael.roth@amd.com>, <kvm@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-crypto@vger.kernel.org>
+Subject: [PATCH v4 1/5] crypto: ccp: New bit-field definitions for SNP_PLATFORM_STATUS command
+Date: Mon, 19 May 2025 23:56:27 +0000
+Message-ID: <5f4bb8f321c57cddd06f4205ee3cbf6bde0b3915.1747696092.git.ashish.kalra@amd.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <cover.1747696092.git.ashish.kalra@amd.com>
+References: <cover.1747696092.git.ashish.kalra@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAG48ez2WdxXVCzVsAPeQWgso3ZBQS_Xm+9D1FLBx6UHFV1bGHQ@mail.gmail.com>
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ5PEPF000001F1:EE_|IA0PR12MB8325:EE_
+X-MS-Office365-Filtering-Correlation-Id: f9c34f7e-76dd-4d96-1912-08dd9730cb4a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|376014|36860700013|7416014|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?psOTe2qaud0GqXPdD2EBA6ZXjNCHV2u3YhD9Apmqxmb5V/SNC2GZ/nJNPtKw?=
+ =?us-ascii?Q?H+sWu3mB+rw93+IK/ZM04Li+rR9uWrnfForeKL25ebbPtT1MI5XkWgwJGgBy?=
+ =?us-ascii?Q?56uHyJkQMzLikRTgOt6k+nvM5wnMvrQnsNJB3joOMvMy4TjqpdDRYPVCdvyx?=
+ =?us-ascii?Q?i8hQWOlEH0h9iWYPcZ5ygwCf5S8gMhQGQdaIs4YllDrejeg8jFH7fwlfXf51?=
+ =?us-ascii?Q?cIBnmbly2QhGXbGdGCdr5L8FvGZ0RCrkBHU18OmtsLH0mrMLHJrlYDLltqSF?=
+ =?us-ascii?Q?ekVFfdYJXkzieBsuJ0Uk6HSh1Pio/YXO7oUHGBK7Ks50EqY20mhUk2EAnQT3?=
+ =?us-ascii?Q?nuGF9mgbXBY9/pqZSjbkiWbkfTdV/o9SuRbTZbbBk94xfVAQtoYpOpssNrvx?=
+ =?us-ascii?Q?rQtAVPcoL6OobAKfVaYzn0oPfqmuoIhQF94fwDsqvVdcqfJlRYnjusyMtt1I?=
+ =?us-ascii?Q?JTMnfVt+qsdmd/RNbXR1BBVykcTAnLs4gZDyEIcqdl+iP4eXdHrtAnFDAATl?=
+ =?us-ascii?Q?QHBJXWQogz0Jw6fvtCVU01XawsNpUPQeB//kPZkjaUaXzVlZanQN5mAftYmM?=
+ =?us-ascii?Q?hvFJuB9CuFrXPNb0XMkfwb2kQ2BsFUGnmKL3RNtIB71rZpCQK5XlZnRDeNsr?=
+ =?us-ascii?Q?m9TZB5YPnLsC2mNBUhN6hgri6CUSCCY/XxWK72o/bkMO515h4ke2sZa08tSj?=
+ =?us-ascii?Q?Bw1GmomBHT8/FCmzh9OHp8vg5MotB3dku2NXkkd8zxtZf54siM0fHExkGpXz?=
+ =?us-ascii?Q?Blcnm5FU+wSCYC2eG/ytqY+21TosOtwnJGgXGDlXL8q9JZuWwSrTohWqmhCg?=
+ =?us-ascii?Q?mCPhgj2egyr3K8CRS918RqXs0r7ZOzuc23xWh9vjJ826FgFCJdYYLTfVhBn9?=
+ =?us-ascii?Q?J4VSCSXadN+BC5iWJ6g/C0ZfMKUsGq2aE+ey7dgyHeZ7uqRIfbDqToqRZrtq?=
+ =?us-ascii?Q?liAbQWjcQzyCOYu0y+ji9tPKmN4MGaADDd/KU3qn7/WyCp+AnJDZtkTaiPLY?=
+ =?us-ascii?Q?zhhiT1tHWmh2T4gfnbKveMuRKIEIAemGGaC0pTq0ltMVc/sH36739ogTPWkK?=
+ =?us-ascii?Q?e/eNLOCe+PYsldsOcfCrnl0HiICkoNnj0g9FrgGD5c/hOdPov4+RysHRjZ8w?=
+ =?us-ascii?Q?xPnVmlp4FSOlBgtQvTXXE5rdBAeyansDDsx2K2mFwQQKi77HLackZg28HVQT?=
+ =?us-ascii?Q?YbyLt2QvSLtiXVdfhrf4Fh/9W4seq6CxzfNIvQ9OQezIDqP1jNBTUuIxUf61?=
+ =?us-ascii?Q?lkvLivu00QBOYV3xk39pFaatc5DmlUIvbPPdPLIfkQACIo0zJYhz7ExbJ9gX?=
+ =?us-ascii?Q?eVvWBsbid2Xu0nSOUHkNyoBtJ0NGc439kBfxOGo33ftJcMDhZYW8DWMni1Xs?=
+ =?us-ascii?Q?miEzT13f1AQOu/Wqd0vxfKDHntcPRytTLgPCYkTXEkl4Y5n2t0C03mAyXvOR?=
+ =?us-ascii?Q?ABtKRcllLDUK3bHkXzKMLwmJNw2IsDz9tb1JGZrDxmPKgcru24a5c3JleOBt?=
+ =?us-ascii?Q?cdGmnTPacuUhxj5Jj8Ud4ir5xmi5RzM3m05Y?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(376014)(36860700013)(7416014)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 May 2025 23:56:38.0073
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: f9c34f7e-76dd-4d96-1912-08dd9730cb4a
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ5PEPF000001F1.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB8325
 
-On Tue, May 20, 2025 at 12:51:07AM +0200, Jann Horn wrote:
-> On Mon, May 19, 2025 at 6:20 PM Burak Emir <bqe@google.com> wrote:
-> > This is a port of the Binder data structure introduced in commit
-> > 15d9da3f818c ("binder: use bitmap for faster descriptor lookup") to
-> > Rust.
-> 
-> Stupid high-level side comment:
-> 
-> That commit looks like it changed a simple linear rbtree scan (which
-> is O(n) with slow steps) into a bitmap thing. A more elegant option
-> might have been to use an augmented rbtree, reducing the O(n) rbtree
-> scan to an O(log n) rbtree lookup, just like how finding a free area
+From: Ashish Kalra <ashish.kalra@amd.com>
 
-I think RBTree::cursor_lower_bound() [1] does exactly what you said
+Define new bit-field definitions returned by SNP_PLATFORM_STATUS command
+such as new capabilities like SNP_FEATURE_INFO command availability,
+ciphertext hiding enabled and capability.
 
-[1]: https://rust.docs.kernel.org/kernel/rbtree/struct.RBTree.html#method.cursor_lower_bound
+Signed-off-by: Ashish Kalra <ashish.kalra@amd.com>
+---
+ include/uapi/linux/psp-sev.h | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
-Regards,
-Boqun
+diff --git a/include/uapi/linux/psp-sev.h b/include/uapi/linux/psp-sev.h
+index eeb20dfb1fda..c2fd324623c4 100644
+--- a/include/uapi/linux/psp-sev.h
++++ b/include/uapi/linux/psp-sev.h
+@@ -185,6 +185,10 @@ struct sev_user_data_get_id2 {
+  * @mask_chip_id: whether chip id is present in attestation reports or not
+  * @mask_chip_key: whether attestation reports are signed or not
+  * @vlek_en: VLEK (Version Loaded Endorsement Key) hashstick is loaded
++ * @feature_info: whether SNP_FEATURE_INFO command is available
++ * @rapl_dis: whether RAPL is disabled
++ * @ciphertext_hiding_cap: whether platform has ciphertext hiding capability
++ * @ciphertext_hiding_en: whether ciphertext hiding is enabled
+  * @rsvd1: reserved
+  * @guest_count: the number of guest currently managed by the firmware
+  * @current_tcb_version: current TCB version
+@@ -200,7 +204,11 @@ struct sev_user_data_snp_status {
+ 	__u32 mask_chip_id:1;		/* Out */
+ 	__u32 mask_chip_key:1;		/* Out */
+ 	__u32 vlek_en:1;		/* Out */
+-	__u32 rsvd1:29;
++	__u32 feature_info:1;		/* Out */
++	__u32 rapl_dis:1;		/* Out */
++	__u32 ciphertext_hiding_cap:1;	/* Out */
++	__u32 ciphertext_hiding_en:1;	/* Out */
++	__u32 rsvd1:25;
+ 	__u32 guest_count;		/* Out */
+ 	__u64 current_tcb_version;	/* Out */
+ 	__u64 reported_tcb_version;	/* Out */
+-- 
+2.34.1
 
-> used to work in MM code... That would let you drop that ID pool bitmap
-> entirely. But I guess actually wiring up an augmented rbtree into Rust
-> would be very annoying too.
 
