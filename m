@@ -1,127 +1,182 @@
-Return-Path: <linux-kernel+bounces-653232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-653234-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D597ABB668
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 09:49:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EFE4ABB66B
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 09:50:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 57C2A1895AE8
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 07:49:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1DEE03B67B4
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 07:49:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90E7B2690D0;
-	Mon, 19 May 2025 07:49:21 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C271D268FF2
-	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 07:49:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9C63268FF2;
+	Mon, 19 May 2025 07:50:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="OXhGwQ3g"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DB12257ACF;
+	Mon, 19 May 2025 07:50:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747640961; cv=none; b=koC/Zjl7bZWU1r8ba00OkFi+2EA0Nnum5XnsPPFXA/VlPoAkPTVKPRfYyIiOmYlEfKRd68ANZvt4dP6WQfzAfTai67BOdyUVlzeY8/lzA+9YpRQTl2jvz/6qH6qhHOrTYhQXxqu4Flu2wC/DwQXYQuop4FgHuyybTKNSATMyTmE=
+	t=1747641010; cv=none; b=UTqbib/KBcg2L+BZqSqVh+zDASdKItpHRvSN52EfC+HXulqJrTb8Wcx9hi1Upkyf32GipR/OsCzBVQfWJ//jtl0n9YU9zwHca+vINbnDysw/yePPQi6scApXcI8cmltRaPrQbwIHQ6jh0ir19zfOySAElnbl7yb62GEIEvIZv3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747640961; c=relaxed/simple;
-	bh=FPC3c1UtZeXKvhNu9xElMb/9OS9+eIdnWELS1tZE6Ww=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=cpboKvOdArL/+RbwRHNefL+c5mctTQEXG/u6AA2txlDkSoq2PKEjIFOnQsuEJzCrPhaFHIlFopzdqLmSVTZYEeN5G9CLitY8eb7N5jy7dSJeToWwStgaz+mP9GRLyu4ukMhE9VdKALKGtA7MOtYHxyj0s1LNtrXLobx9K2/M4IA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 08DE914BF;
-	Mon, 19 May 2025 00:49:04 -0700 (PDT)
-Received: from K4MQJ0H1H2.blr.arm.com (unknown [10.164.18.48])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 5ADCB3F6A8;
-	Mon, 19 May 2025 00:49:10 -0700 (PDT)
-From: Dev Jain <dev.jain@arm.com>
-To: akpm@linux-foundation.org
-Cc: ryan.roberts@arm.com,
-	david@redhat.com,
-	willy@infradead.org,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	catalin.marinas@arm.com,
-	will@kernel.org,
-	Liam.Howlett@oracle.com,
-	lorenzo.stoakes@oracle.com,
-	vbabka@suse.cz,
-	jannh@google.com,
-	anshuman.khandual@arm.com,
-	peterx@redhat.com,
-	joey.gouly@arm.com,
-	ioworker0@gmail.com,
-	baohua@kernel.org,
-	kevin.brodsky@arm.com,
-	quic_zhenhuah@quicinc.com,
-	christophe.leroy@csgroup.eu,
-	yangyicong@hisilicon.com,
-	linux-arm-kernel@lists.infradead.org,
-	hughd@google.com,
-	yang@os.amperecomputing.com,
-	ziy@nvidia.com,
-	Dev Jain <dev.jain@arm.com>
-Subject: [PATCH v3 5/5] arm64: Add batched version of ptep_modify_prot_commit
-Date: Mon, 19 May 2025 13:18:24 +0530
-Message-Id: <20250519074824.42909-6-dev.jain@arm.com>
-X-Mailer: git-send-email 2.39.3 (Apple Git-146)
-In-Reply-To: <20250519074824.42909-1-dev.jain@arm.com>
-References: <20250519074824.42909-1-dev.jain@arm.com>
+	s=arc-20240116; t=1747641010; c=relaxed/simple;
+	bh=7AYBXBv9hJZfDoLFBvBon3/3G/8xWmXD3D7ANQ1f3jw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b5kT7/wLdwQ5qylNHsFDhFuh+m4LjePXTwS1rOPOprxAJMz1opo/1vgoqssUuk0777TLK8yRiM/bAkbxMgnb9IGYJ3HUtJyeoJEWgdgBBGq+NiNXv2Arqb72/SHWqDLSRClApYpnH5vpweFySJ0Gfo+q2TvTfk+AuWOOq0UKb7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=OXhGwQ3g; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 8687726048;
+	Mon, 19 May 2025 09:50:04 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id ovcAx9lpnpgW; Mon, 19 May 2025 09:50:03 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1747641003; bh=7AYBXBv9hJZfDoLFBvBon3/3G/8xWmXD3D7ANQ1f3jw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=OXhGwQ3g2G/nirDRBc2kkgRofonOnnq3yruIY9oMnedr84KF1isk3GDb3lxpIjDZP
+	 IZIu28K9c0x6xyZllGhSb4W+YJqDNR1VWGd99D/jXR3nur78tQHQP2o1bXngKLRgif
+	 zwGnPACWX29107UwopKMoh09lX1mPKeXN7AtBwyJzqYG/R7+h7lvAWSVX01Sk1FJe+
+	 XIOdrroksMRxxdla4itzkO6RSfgwtEhNhZJziR4GDrt16v44naqm1h8VG1gL+tufD5
+	 /ttR+4tRCr60jvOV7usyJdHt8BQU6tG4ClZj37+5HWRjqJ5bKIUMAK5NzY5uPMrSy7
+	 p5fXrGV0cdbtw==
+Date: Mon, 19 May 2025 07:49:47 +0000
+From: Yao Zi <ziyao@disroot.org>
+To: Binbin Zhou <zhoubb.aaron@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	WANG Xuerui <kernel@xen0n.name>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Heiko Stuebner <heiko@sntech.de>, Junhao Xie <bigfoot@classfun.cn>,
+	=?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
+	Aradhya Bhatia <a-bhatia1@ti.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Binbin Zhou <zhoubinbin@loongson.cn>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, loongarch@lists.linux.dev,
+	Mingcong Bai <jeffbai@aosc.io>, Kexy Biscuit <kexybiscuit@aosc.io>
+Subject: Re: [PATCH v2 3/4] LoongArch: dts: Add initial SoC devicetree for
+ Loongson 2K0300
+Message-ID: <aCrim32dGexKJvXl@pie.lan>
+References: <20250518080356.43885-1-ziyao@disroot.org>
+ <20250518080356.43885-4-ziyao@disroot.org>
+ <CAMpQs4L7U=Mkw=pburiUpJLEm=tHeMOW+6PRhWPTMnOGHxFqyA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMpQs4L7U=Mkw=pburiUpJLEm=tHeMOW+6PRhWPTMnOGHxFqyA@mail.gmail.com>
 
-Override the generic definition to simply use set_ptes() to map the new
-ptes into the pagetable.
+On Mon, May 19, 2025 at 11:10:16AM +0800, Binbin Zhou wrote:
+> Hi Yao:
+> 
+> Thanks for your patch.
+> 
+> On Sun, May 18, 2025 at 4:05 PM Yao Zi <ziyao@disroot.org> wrote:
+> >
+> > Add SoC devicetree for 2K0300 SoC, which features one LA264 dual-issue
+> > core and targets embedded market. Only CPU core, legacy interrupt
+> > controllers and UARTs are defined for now.
+> >
+> > Signed-off-by: Yao Zi <ziyao@disroot.org>
+> > ---
+> >  arch/loongarch/boot/dts/loongson-2k0300.dtsi | 184 +++++++++++++++++++
+> >  1 file changed, 184 insertions(+)
+> >  create mode 100644 arch/loongarch/boot/dts/loongson-2k0300.dtsi
+> >
+> > diff --git a/arch/loongarch/boot/dts/loongson-2k0300.dtsi b/arch/loongarch/boot/dts/loongson-2k0300.dtsi
+> > new file mode 100644
+> > index 000000000000..17974f793947
+> > --- /dev/null
+> > +++ b/arch/loongarch/boot/dts/loongson-2k0300.dtsi
+> > @@ -0,0 +1,184 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * Copyright (C) 2025 Loongson Technology Corporation Limited
+> > + * Copyright (C) 2025 Yao Zi <ziyao@disroot.org>
+> > + */
+> > +
+> > +/dts-v1/;
+> > +
+> > +#include <dt-bindings/interrupt-controller/irq.h>
+> > +
+> > +/ {
+> > +       compatible = "loongson,ls2k0300";
+> > +       #address-cells = <2>;
+> > +       #size-cells = <2>;
+> > +
+> > +       cpus {
+> > +               #address-cells = <1>;
+> > +               #size-cells = <0>;
+> > +
+> > +               cpu0: cpu@0 {
+> > +                       compatible = "loongson,la264";
+> > +                       reg = <0>;
+> > +                       device_type = "cpu";
+> > +                       clocks = <&cpu_clk>;
+> > +               };
+> > +
+> > +       };
+> > +
+> > +       cpuintc: interrupt-controller {
+> > +               compatible = "loongson,cpu-interrupt-controller";
+> > +               interrupt-controller;
+> > +               #interrupt-cells = <1>;
+> > +       };
+> > +
+> > +       cpu_clk: clock-1000m {
+> > +               compatible = "fixed-clock";
+> > +               clock-frequency = <1000000000>;
+> > +               #clock-cells = <0>;
+> > +       };
+> > +
+> > +       soc {
+> I found the following warning while doing dtbs_check, please check again:
+> 
+>   DTC [C] arch/loongarch/boot/dts/ls2k0300-ctcisz-forever-pi.dtb
+> arch/loongarch/boot/dts/loongson-2k0300.dtsi:41.6-183.4: Warning
+> (unit_address_vs_reg): /soc: node has a reg or ranges property, but no
+> unit name
 
-Signed-off-by: Dev Jain <dev.jain@arm.com>
----
- arch/arm64/include/asm/pgtable.h | 5 +++++
- arch/arm64/mm/mmu.c              | 9 ++++++++-
- 2 files changed, 13 insertions(+), 1 deletion(-)
+Oops, seems -Wunit_address_vs_reg is silent without W=1 specified.
+Commit 8654cb8d0371 (dtc: update warning settings for new bus and
+node/property name checks, 2017-03-21) shows it's a temporary workaround
+("Disable the new dtc warnings by default as there are 1000s").
 
-diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
-index 8872ea5f0642..0b13ca38f80c 100644
---- a/arch/arm64/include/asm/pgtable.h
-+++ b/arch/arm64/include/asm/pgtable.h
-@@ -1558,6 +1558,11 @@ extern pte_t modify_prot_start_ptes(struct vm_area_struct *vma,
- 				    unsigned long addr, pte_t *ptep,
- 				    unsigned int nr);
- 
-+#define modify_prot_commit_ptes modify_prot_commit_ptes
-+extern void modify_prot_commit_ptes(struct vm_area_struct *vma, unsigned long addr,
-+				    pte_t *ptep, pte_t old_pte, pte_t pte,
-+				    unsigned int nr);
-+
- #ifdef CONFIG_ARM64_CONTPTE
- 
- /*
-diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
-index fe60be8774f4..5f04bcdcd946 100644
---- a/arch/arm64/mm/mmu.c
-+++ b/arch/arm64/mm/mmu.c
-@@ -1543,10 +1543,17 @@ pte_t ptep_modify_prot_start(struct vm_area_struct *vma, unsigned long addr, pte
- 	return modify_prot_start_ptes(vma, addr, ptep, 1);
- }
- 
-+void modify_prot_commit_ptes(struct vm_area_struct *vma, unsigned long addr,
-+			     pte_t *ptep, pte_t old_pte, pte_t pte,
-+			     unsigned int nr)
-+{
-+	set_ptes(vma->vm_mm, addr, ptep, pte, nr);
-+}
-+
- void ptep_modify_prot_commit(struct vm_area_struct *vma, unsigned long addr, pte_t *ptep,
- 			     pte_t old_pte, pte_t pte)
- {
--	set_pte_at(vma->vm_mm, addr, ptep, pte);
-+	modify_prot_commit_ptes(vma, addr, ptep, old_pte, pte, 1);
- }
- 
- /*
--- 
-2.30.2
+I'll the node to soc@10000000 in v3. Thanks for catching something I've
+never noticed before. Yanteng, is it okay for you to keep your
+reviewed-by tag with the change?
 
+> > +               compatible = "simple-bus";
+> > +               #address-cells = <2>;
+> > +               #size-cells = <2>;
+> > +               ranges = <0x00 0x10000000 0x00 0x10000000 0x0 0x10000000>,
+> > +                        <0x00 0x02000000 0x00 0x02000000 0x0 0x04000000>,
+> > +                        <0x00 0x40000000 0x00 0x40000000 0x0 0x40000000>;
+> > +
+
+...
+
+> > 2.49.0
+> >
+> >
+> 
+> -- 
+> Thanks.
+> Binbin
+> 
+
+Thanks,
+Yao Zi
 
