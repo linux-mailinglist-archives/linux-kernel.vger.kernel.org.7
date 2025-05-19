@@ -1,170 +1,131 @@
-Return-Path: <linux-kernel+bounces-654617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-654619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C368ABCA5B
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 23:51:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FDC7ABCA63
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 23:54:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 77B3B7A38FC
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 21:50:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D8E7188FCE1
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 21:54:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5310C21ADC7;
-	Mon, 19 May 2025 21:51:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B05A1EB1BC;
+	Mon, 19 May 2025 21:54:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d7sc1QWF"
-Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Tm60BgJo"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33DB478F4E;
-	Mon, 19 May 2025 21:51:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A1A1C148
+	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 21:54:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747691496; cv=none; b=GCgwmUv3ZBxUUNW5NX545Ln5Af9H0YB7p+u6RQ7TChYZJZ2rWVz3Ucz8jiNVmpnoUP6trozah3ix3Vi33Mfw5srsq4FSu+shLtyBEshNIw0usMReeZcSoHGzl09Qa3HAiuRZvqJ0hMD04GFBKcFarpMtuKeim2LCgwLJFxmpPR4=
+	t=1747691662; cv=none; b=jscewLhX/+ukeiYlaR+WgIf2tDOwRXtk1Xv7vOETc1IHLo2ctpNnYqNsKnk/8cgkCjenLN5ZtBXLk8PYFzq2snZZpUauXo4U4rWe4ZAKc6ng8wjVcsuP68+pZkouAtZRnEgoCHh+DVf7F5FtrXS/bvPXWMRmJdSuVGOnCRXx1b4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747691496; c=relaxed/simple;
-	bh=D+gc71TQ6arDdz5CgOztRV+6NsleF2QKzmZFFkhPPvA=;
+	s=arc-20240116; t=1747691662; c=relaxed/simple;
+	bh=1cMrRrD1wKYeXbyb4edK//2QLqfqx2FamRPjULNvPhc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sJsJ7EQK8TnR5yaPAJB1WfQnbTKQ882hWDN7bKo5brCoaVGgVi3Dzie1mVb0io7Qyj2FhZXfgfD9ulv4M7AzUTsELyc7RyZ5k68KkA6U8jrT8v1110aQEDnbnEIg9vuvLrjMMPdNDiOaTT7I4u40Hs9edfMrWvEqI8Vq2ADGfv4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d7sc1QWF; arc=none smtp.client-ip=209.85.166.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-86a07a1acffso350277439f.0;
-        Mon, 19 May 2025 14:51:35 -0700 (PDT)
+	 To:Cc:Content-Type; b=chTqUeYBmydrnCBCFN6eGsL7MoBBxfdHGUaPdHghkxAFMEtWoZwPaEaBfO01RmJXxB0KbqwunePS3cRR0pKFTd9uynJPtcBgoUxbRLsxhqRBD2Pv7ca/DDOYsFKJloq11sqtSrTDRhVTDYWfpclO0P+SQDNzCwfIciNBt/OgwKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Tm60BgJo; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-231ba6da557so416655ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 14:54:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747691494; x=1748296294; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1747691660; x=1748296460; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=xPEYHOAa9cIet4iZua5k6szVG47y0INiUwKTR9frvBc=;
-        b=d7sc1QWFL5CiMhOclmmVWkLWlF6n/UYOx1Psr9UUqVu7qB+fZ+gTSUkhPALyBkuUHb
-         /ai13xP3CQsF/wnfTHyZ/o7XBxkUOe/w6H6NkTrH0e17f2N6l2D3sL86N1r9Tqg0OZ5f
-         lHLQ2Vpbhi5Gmghpi/j3pHe2Fiqk3nArkSjscFhiqJOk6Vee39xDhq/+bZso1Wj9otyG
-         GbWZHqM55vtdB/gCokw4nda+9RGdE8AGlI6XEiOtv+aYYdLpYZMOuN0tD4QYL+q0i7YO
-         TyTKocU3BlKFrYdTUipYNYABwXwsj906y9UxKkIM1EJln71jyhicGGb/JAFWCA8iWcZM
-         n0Tw==
+        bh=1cMrRrD1wKYeXbyb4edK//2QLqfqx2FamRPjULNvPhc=;
+        b=Tm60BgJowglxwG0ADKJfC/kFivUSVg/1l+v7ESrne7cR7qxwtyERaO+D1IwRHA/baK
+         V86dIQbyPdRPCrd5cetOgnoDwv4+ejDND+njA1mc4dPNcegcHB7hIzdp/NLCjH8aOA1P
+         QY//U8wXxLQkGocSM8jrr3spx4eR8dMY0RQntPT1PsvX2kuNApk6wEwZxpryN95jddhz
+         j/MfHHREeqhMlk5RO83cGHZlu1Z5xPxwvh/zEgW/im7aQg/Uu7PZ4ZgpvA90Mch64dhZ
+         h98DP8iOY7vKrerjic+Ad+vu97Mwr00zQmzas5+W5gB4x6Lk4szjNkQH8T6WxzhBp37Q
+         6A8g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747691494; x=1748296294;
+        d=1e100.net; s=20230601; t=1747691660; x=1748296460;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=xPEYHOAa9cIet4iZua5k6szVG47y0INiUwKTR9frvBc=;
-        b=ePz9+MgXjwt3SLRQCgyINyv06dWuwXp9VGUZh1YUlQknho+mxIVGVVWkptKQWkrA0B
-         cYygB5mmGf8hKO1FXXO6QueTczWqrHvYqpLcaRGTpS46VQHGIT7S92tUri/co+5KT/zz
-         NL3J/94c14VthgyI+zar4T+2f1w6Pb/nVLOC27aLaEXt/E2VDovKtLTzYBwLliGbrnx9
-         1s+clVJjjO/weiQawqURttJc5vQmlR9cHkifk0uwGl3QKucGZZNpNx048x3U6278mDun
-         CsrT3dFatW8G4sAPUoeyBCyWqbacNrmndrmpcO5OhuNNptvcaXVZmQZndeq5pbxu7dut
-         HrcA==
-X-Forwarded-Encrypted: i=1; AJvYcCVh2NST23nXsgYZ/27wLm574qja4g6HSwaBZdRO6A5AT1ewzlB0PQo8lZZvp8ofzI7L/t58P1+SNkE+iB1x@vger.kernel.org, AJvYcCVqYbML1ANA28S5UWYMTit+tjUtG1LJb8gwoWDQhTuJLKIY4c0R4jA90mVI7CQTkOB/cGTChmTNxoIS2pU=@vger.kernel.org, AJvYcCX9bR8oGl4pmaAw8WOTi7SFo9HXCDTV44qKK9QGrZPhnh9m/rnIrrwzxUAc0THHm4btkAnRYxji3kjyGfTX@vger.kernel.org
-X-Gm-Message-State: AOJu0YxeTdQElsdR5QOXMJHxSxUDrRHE595/70ZbzeqB4M+xrgRSrHAu
-	rEEnBl1VsT1QzuNJHCBCANJnKiHvL6y914eYidMtdLL/C++YkC0lY97cE8oT5fsnwTIpY+nOz+U
-	OkR+nx9lkJDlCt4onS3LTCJgQK551RMJuQUb+
-X-Gm-Gg: ASbGncvNuiO24DzsGMFDFl5abFFf7Vv+AcYwjfhYhQahzFEzGjmXY1LHINCFkqvtDX8
-	RIAa1DDgg33VtESgQqd2plvlDHBB/rYFF3tj2wwBzWdMyxIvgcJ3jd/aGAHBsMGrKxDi71tUNyy
-	o+vG7tG8WOPt2ll1p355A8wwDJqsO7jtTRNyWbz1EbYjGfEvdJQK9gH8j8rmp3mPPhO8B5e/MOG
-	5ezUA==
-X-Google-Smtp-Source: AGHT+IH7GskHnBBBnN3dCWe5+4wA68V6kn1SwK+BKY5czWCCWv4gMQRXKFVR4ovK9isr0sjORC+Rjt5sK8DipW7Cf4U=
-X-Received: by 2002:a05:6602:6cce:b0:86a:93c:f5fb with SMTP id
- ca18e2360f4ac-86a231901efmr1968076439f.1.1747691494249; Mon, 19 May 2025
- 14:51:34 -0700 (PDT)
+        bh=1cMrRrD1wKYeXbyb4edK//2QLqfqx2FamRPjULNvPhc=;
+        b=DKzG9BvRgLkiWfIW4tWE9WZSaWa9BXR8Ovv0Bjo9gGfaXs6FMGrQIeks5U4k0fqQlu
+         3niGP+gXfG3WcFbYVYXB8JmFfR8uyAflFd6VAo2CITZ5Ey9Lq64hykNWFk5UX3NG4gOl
+         xk9vyQEeaZCYVJM+7PPIawkM/3P/6G9TRQ1qDjSl7tYu1X/fpp3D/yX8MPahgsZJi4un
+         ExuPy2s7RFEh/kMxmDGkZGt366H7tMoRB5EIo91HuHBvK86nTkXKJLqf/WEAEp8PjUxo
+         WJGvjc0WbhCIK0qlDc2EbcfG1ZxdiDvHgETi4IVVFMPQr43MjfFEE1jUmDUt2o2nXHiY
+         qc9g==
+X-Forwarded-Encrypted: i=1; AJvYcCWCn6nYLwhbuJjh+Mk/7dZjHZi6onMnTFN8Q40t1DgruRDDzhTSit/KbMU/REJ5Cr1QwQgFeVPC/25VBoY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzwZza/CLv42G0LwxeZy4+hjD1c+/qkdvexKGXCaxzSXr3TPmKZ
+	h7xMOySse39E0Gc9UWgAx1Go1d/8RExbCZ3eLnJbk25OKlGcrt7/s29NDdGWvTvtdngpHhsbBrl
+	XzERLrBj3g0IRaYUQ4VAY9pdNYQrdy718LH4mL1oJ
+X-Gm-Gg: ASbGncsiTKH4VzxP1OXgsMufJpH+H5KRicq/cTSfUK0fnPneZMayNf9+hTTl3zy39mc
+	EvEpCXOPOf39UOsojelj8tpbOQD3pI+Vs3HstnhhM5Ajk3P4Gwx6Jl2+8h8DIwzvVYAlZu11BZO
+	l+EkW4SWm1R/M6n9KIZ8BV5EdJo56H1R2zIREEmovnYmGeiDvhKvz4qxeqThkXTVkI5eg2WJR8Q
+	BCNsriy
+X-Google-Smtp-Source: AGHT+IGxMFzfxoMshf8o4a14Ejv5ySZeVudjy8uWADR3jrlyocSlHqGDCSnPrW5fBZgeWyiqUxNYjC030ER26Bgve7s=
+X-Received: by 2002:a17:902:d54f:b0:231:d0ef:e8fb with SMTP id
+ d9443c01a7336-231ffd0e311mr5549935ad.10.1747691660258; Mon, 19 May 2025
+ 14:54:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250519175348.11924-1-robdclark@gmail.com> <CAPM=9tw183FMOT8uUacqegnb5CREAyr8KbXxO2mCuFK-SmUB1A@mail.gmail.com>
- <CAF6AEGuDTGVq7sw4oVuHb+cOE_DuKbEPO956oddVcsV2boieoQ@mail.gmail.com> <CAPM=9twuSfvQ0_NUdRmp0_VtTE_Br7GAysRw+XOoX7BTxUBGYQ@mail.gmail.com>
-In-Reply-To: <CAPM=9twuSfvQ0_NUdRmp0_VtTE_Br7GAysRw+XOoX7BTxUBGYQ@mail.gmail.com>
-From: Rob Clark <robdclark@gmail.com>
-Date: Mon, 19 May 2025 14:51:20 -0700
-X-Gm-Features: AX0GCFvmTvCANqDHHj2TPhXNkmFs3wC8dEXWRCEtBjip_pfclRDeM3uxGEixFZM
-Message-ID: <CAF6AEGs1hNGMMBjZuXoGjxF+JA1AHY_wx=gmqK4z=zShYoR6=w@mail.gmail.com>
-Subject: Re: [Linaro-mm-sig] [PATCH v5 00/40] drm/msm: sparse / "VM_BIND" support
-To: Dave Airlie <airlied@gmail.com>
-Cc: dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
-	linux-arm-msm@vger.kernel.org, Connor Abbott <cwabbott0@gmail.com>, 
-	Rob Clark <robdclark@chromium.org>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
-	=?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>, 
-	Arnd Bergmann <arnd@arndb.de>, =?UTF-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <barnabas.czeman@mainlining.org>, 
-	Christopher Snowhill <chris@kode54.net>, Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
-	Dmitry Baryshkov <lumag@kernel.org>, Eugene Lepshy <fekz115@gmail.com>, 
-	"open list:IOMMU SUBSYSTEM" <iommu@lists.linux.dev>, Jason Gunthorpe <jgg@ziepe.ca>, 
-	Jessica Zhang <quic_jesszhan@quicinc.com>, Joao Martins <joao.m.martins@oracle.com>, 
-	Jonathan Marek <jonathan@marek.ca>, Jun Nie <jun.nie@linaro.org>, 
-	Kevin Tian <kevin.tian@intel.com>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
-	"moderated list:DMA BUFFER SHARING FRAMEWORK:Keyword:bdma_?:buf|fence|resvb" <linaro-mm-sig@lists.linaro.org>, 
-	"m oderated list:ARM SMMU DRIVERS" <linux-arm-kernel@lists.infradead.org>, 
-	open list <linux-kernel@vger.kernel.org>, 
-	"open list:DMA BUFFER SHARING FRAMEWORK:Keyword:bdma_?:buf|fence|resvb" <linux-media@vger.kernel.org>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, Nicolin Chen <nicolinc@nvidia.com>, 
-	"Rob Herring (Arm)" <robh@kernel.org>, Robin Murphy <robin.murphy@arm.com>, Sean Paul <sean@poorly.run>, 
-	Will Deacon <will@kernel.org>
+References: <cover.1747686021.git.lorenzo.stoakes@oracle.com>
+In-Reply-To: <cover.1747686021.git.lorenzo.stoakes@oracle.com>
+From: Jann Horn <jannh@google.com>
+Date: Mon, 19 May 2025 23:53:43 +0200
+X-Gm-Features: AX0GCFvlTHWGpQXPrZqZ0zsT-FBytrKftqSVY8o-HTsRuDoHswTfw7vQf9EDQFQ
+Message-ID: <CAG48ez3-7EnBVEjpdoW7z5K0hX41nLQN5Wb65Vg-1p8DdXRnjg@mail.gmail.com>
+Subject: Re: [RFC PATCH 0/5] add process_madvise() flags to modify behaviour
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, "Liam R . Howlett" <Liam.Howlett@oracle.com>, 
+	David Hildenbrand <david@redhat.com>, Vlastimil Babka <vbabka@suse.cz>, Arnd Bergmann <arnd@arndb.de>, 
+	Christian Brauner <brauner@kernel.org>, linux-mm@kvack.org, linux-arch@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, SeongJae Park <sj@kernel.org>, 
+	Usama Arif <usamaarif642@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, May 19, 2025 at 2:45=E2=80=AFPM Dave Airlie <airlied@gmail.com> wro=
-te:
+On Mon, May 19, 2025 at 10:53=E2=80=AFPM Lorenzo Stoakes
+<lorenzo.stoakes@oracle.com> wrote:
+> 3. PMADV_SET_FORK_EXEC_DEFAULT
 >
-> On Tue, 20 May 2025 at 07:25, Rob Clark <robdclark@gmail.com> wrote:
-> >
-> > On Mon, May 19, 2025 at 2:15=E2=80=AFPM Dave Airlie <airlied@gmail.com>=
- wrote:
-> > >
-> > > On Tue, 20 May 2025 at 03:54, Rob Clark <robdclark@gmail.com> wrote:
-> > > >
-> > > > From: Rob Clark <robdclark@chromium.org>
-> > > >
-> > > > Conversion to DRM GPU VA Manager[1], and adding support for Vulkan =
-Sparse
-> > > > Memory[2] in the form of:
-> > > >
-> > > > 1. A new VM_BIND submitqueue type for executing VM MSM_SUBMIT_BO_OP=
-_MAP/
-> > > >    MAP_NULL/UNMAP commands
-> > > >
-> > > > 2. A new VM_BIND ioctl to allow submitting batches of one or more
-> > > >    MAP/MAP_NULL/UNMAP commands to a VM_BIND submitqueue
-> > > >
-> > > > I did not implement support for synchronous VM_BIND commands.  Sinc=
-e
-> > > > userspace could just immediately wait for the `SUBMIT` to complete,=
- I don't
-> > > > think we need this extra complexity in the kernel.  Synchronous/imm=
-ediate
-> > > > VM_BIND operations could be implemented with a 2nd VM_BIND submitqu=
-eue.
-> > >
-> > > This seems suboptimal for Vulkan userspaces. non-sparse binds are all
-> > > synchronous, you are adding an extra ioctl to wait, or do you manage
-> > > these via a different mechanism?
-> >
-> > Normally it's just an extra in-fence for the SUBMIT ioctl to ensure
-> > the binds happen before cmd execution
-> >
-> > When it comes to UAPI, it's easier to add something later, than to
-> > take something away, so I don't see a problem adding synchronous binds
-> > later if that proves to be needed.  But I don't think it is.
->
-> I'm not 100% sure that is conformant behaviour to the vulkan spec,
->
-> Two questions come to mind:
-> 1. where is this out fence stored? vulkan being explicit with no
-> guarantee of threads doing things, seems like you'd need to use a lock
-> in the vulkan driver to store it, esp if multiple threads bind memory.
+> It may be desirable for a user to specify that all VMAs mapped in a proce=
+ss
+> address space default to having an madvise() behaviour established by
+> default, in such a fashion as that this persists across fork/exec.
 
-turnip is protected dev->vm_bind_fence_fd with a u_rwlock
+Settings that persist across exec are generally a bit dodgy and you
+have to ask questions like "what happens on setuid execution, could
+this somehow influence the behavior of a setuid binary in a
+security-relevant way", and I'm not sure whether that is the case with
+hugepage flags but I guess it could maybe influence the alignment with
+which mappings are created or something like that? And if you add more
+flags to this list later, you'll again have to think about annoying
+setuid considerations each time.
 
-> 2. If it's fine to lazy bind on the hw side, do you also handle the
-> case where something is bound and immediately freed, where does the
-> fence go then, do you wait for the fence before destroying things?
+For comparison, personality flags are explicitly supposed to persist
+across execve, but they can be dangerous (stuff like READ_IMPLIES_EXEC
+and ADDR_NO_RANDOMIZE), so we have PER_CLEAR_ON_SETID which gets
+cleared only if the execution is privileged. (Annoyingly, the
+PER_CLEAR_ON_SETID handling is currently implemented separately for
+each type of privileged execution we can have
+[setuid/setgid/fscaps/selinux transition/apparmor transition/smack
+transition], but I guess you could probably gate it on
+bprm->secureexec instead...).
 
-right no turnip is just relying on the UNMAP/unbind going thru the
-same queue.. but I guess it could also use vm_bind_fence_fd as an
-in-fence.
+It would be nice if you could either make this a property of the
+mm_struct that does not persist across exec, or if that would break
+your intended usecase, alternatively wipe it on privileged execution.
 
-BR,
--R
+> Since this is a very powerful option that would make no sense for many
+> advice modes, we explicitly only permit known-safe flags here (currently
+> MADV_HUGEPAGE and MADV_NOHUGEPAGE only).
+
+Ah, sort of like a more generic version of prctl(PR_SET_THP_DISABLE,
+flag, 0, 0, 0) that also allows opt-in on top of opt-out.
 
