@@ -1,129 +1,105 @@
-Return-Path: <linux-kernel+bounces-653698-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-653690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C5EBABBD0A
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 13:56:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54B90ABBCE9
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 13:49:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3CC647AA16A
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 11:55:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF7DE1742AC
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 11:49:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0F6C27586D;
-	Mon, 19 May 2025 11:56:36 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DC1F2750FA;
+	Mon, 19 May 2025 11:48:53 +0000 (UTC)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 257C42AC17
-	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 11:56:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 883501925AB;
+	Mon, 19 May 2025 11:48:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747655796; cv=none; b=I38KptjTvN2hcCdCXX99uGQYgN1Gqda7F6mQrUi5qyKYrxd74bc8hMzn/GGcXAXBxkWferN/m17ovxCKKSkEp2tNIlgqeraIiEbPqMlxKUOy3xTV4doxnUyhTkH25xdxl2H2LPuBfXAaF9pyPr3nPgiBNoilJaiSRL9dgioUGTs=
+	t=1747655333; cv=none; b=W6+Bz1Qq8QAbxHUs07ZxVddzqW5bZ5JDKAcPLnEykMIHqrLQOLMdy2EYSbtcyuMiR0In34divDNM+1vTYBwuGB/XN7TCVvNoeBIvLLcgP2StOv6xG4U/4H3joauBHj+p6Zol5PqAGzvZxNdNaObx8FaVQKPeBENTI8zEvkn/sF0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747655796; c=relaxed/simple;
-	bh=0n2JWhGyhvYwDbFac0GD4XIJ4ADLblcQohaWbwHNxUo=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hGINlk2RTNLk9X15OMxDLGXRzrMz18ax1U/BIZgvGXbvXfpVG11eFcDBuJ8vCL87PQcjZmLfzARNRP+cLfz+Y6R5jKObu7IhBrNdkJaQp9ZxHOiRcF7eHUDOGpurJAIfiR9b30atnao+B5UPQbQ5SaI3jemL8BE0sZ+yhZpGRyU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4b1GJx0XJNz2CdWW;
-	Mon, 19 May 2025 19:52:49 +0800 (CST)
-Received: from kwepemk100018.china.huawei.com (unknown [7.202.194.66])
-	by mail.maildlp.com (Postfix) with ESMTPS id 1597D1A016C;
-	Mon, 19 May 2025 19:56:30 +0800 (CST)
-Received: from huawei.com (10.175.104.170) by kwepemk100018.china.huawei.com
- (7.202.194.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 19 May
- 2025 19:56:29 +0800
-From: Fei Lang <langfei@huawei.com>
-To: <peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
-	<namhyung@kernel.org>
-CC: <mark.rutland@arm.com>, <alexander.shishkin@linux.intel.com>,
-	<jolsa@kernel.org>, <irogers@google.com>, <adrian.hunter@intel.com>,
-	<kan.liang@linux.intel.com>, <james.clark@linaro.org>,
-	<linux-kernel@vger.kernel.org>, <hewenliang4@huawei.com>,
-	<liuchao173@huawei.com>, <laihangliang1@huawei.com>
-Subject: [PATCH] perf comm str: Fix perf top coredump due to concurrent read and write
-Date: Mon, 19 May 2025 19:48:36 +0800
-Message-ID: <20250519114836.611110-1-langfei@huawei.com>
-X-Mailer: git-send-email 2.33.0
+	s=arc-20240116; t=1747655333; c=relaxed/simple;
+	bh=259YgTAgujkk0sSgdsunp3RGNblXRO7BV0CwSa+4ccQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PEuU6iWXSC13PfvTvzwlZclVaicrWGfGPRtat7dEZP/a0o9LQodkotIuZbDDagnRQtSlv+l5uiWuNBha1DhUt5hrh1rnEV9KfErTBDWIfwQJAXZzDmUd862MYAr5MZWYzzBxfxLawt1Qefpei9cZi/FxsoOa9ycszS4+qrsmgew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=fail smtp.mailfrom=kernel.org; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=kernel.org
+X-CSE-ConnectionGUID: xGpff4MFQOi8MiDByTLf9w==
+X-CSE-MsgGUID: Y8rNP6H9QiqL2o/+XpTKGw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11438"; a="53224049"
+X-IronPort-AV: E=Sophos;i="6.15,300,1739865600"; 
+   d="scan'208";a="53224049"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 May 2025 04:48:51 -0700
+X-CSE-ConnectionGUID: Q67spwoPT7atR9G09oGenQ==
+X-CSE-MsgGUID: rsDLRLbpTzSjVohdTcYmLw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,300,1739865600"; 
+   d="scan'208";a="162636795"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 May 2025 04:48:48 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andy@kernel.org>)
+	id 1uGyz7-000000031S7-3YFU;
+	Mon, 19 May 2025 14:48:45 +0300
+Date: Mon, 19 May 2025 14:48:45 +0300
+From: Andy Shevchenko <andy@kernel.org>
+To: Lothar Rubusch <l.rubusch@gmail.com>
+Cc: jic23@kernel.org, dlechner@baylibre.com, nuno.sa@analog.com,
+	corbet@lwn.net, lucas.p.stankus@gmail.com, lars@metafoo.de,
+	Michael.Hennerich@analog.com, linux-iio@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 06/12] iio: accel: adxl313: prepare interrupt handling
+Message-ID: <aCsanRq9xYvSIYVR@smile.fi.intel.com>
+References: <20250518111321.75226-1-l.rubusch@gmail.com>
+ <20250518111321.75226-7-l.rubusch@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
- kwepemk100018.china.huawei.com (7.202.194.66)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250518111321.75226-7-l.rubusch@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-(gdb) bt
-    __strcmp_evex () at ../sysdeps/x86_64/multiarch/strcmp-evex.S:314
-    sort.comm_collapse () at util/sort.c:202
-    hist_entry__collapse at util/hist.c:1312
-    hists__collapse_insert_entry at util/hist.c:1620
-    hists__collapse_resort at util/hist.c:1704
-    perf_top__resort_hists at builtin-top.c:303
-    perf_top__print_sym_table at builtin-top.c:350
-    display_thread at builtin-top.c:700
+On Sun, May 18, 2025 at 11:13:15AM +0000, Lothar Rubusch wrote:
+> Evaluate the devicetree property for an optional interrupt line, and
+> configure the interrupt mapping accordingly. When no interrupt line
+> is defined in the devicetree, keep the FIFO in bypass mode as before.
 
-Link:https://bugzilla.kernel.org/show_bug.cgi?id=220096
+...
 
-Fixes: <3178f58b9894> ("perf comm str: Avoid sort during insert")
-Signed-off-by: Fei Lang <langfei@huawei.com>
----
- tools/perf/util/comm.c | 16 +++++++++++++++-
- 1 file changed, 15 insertions(+), 1 deletion(-)
+> +#define ADXL313_INT_NONE			0
 
-diff --git a/tools/perf/util/comm.c b/tools/perf/util/comm.c
-index 8aa456d7c2cd..0438870d31d2 100644
---- a/tools/perf/util/comm.c
-+++ b/tools/perf/util/comm.c
-@@ -209,13 +209,16 @@ struct comm *comm__new(const char *str, u64 timestamp, bool exec)
- int comm__override(struct comm *comm, const char *str, u64 timestamp, bool exec)
- {
- 	struct comm_str *new, *old = comm->comm_str;
-+	struct comm_strs *comm_strs = comm_strs__get();
- 
- 	new = comm_strs__findnew(str);
- 	if (!new)
- 		return -ENOMEM;
- 
-+	down_write(&comm_strs->lock);
- 	comm_str__put(old);
- 	comm->comm_str = new;
-+	up_write(&comm_strs->lock);
- 	comm->start = timestamp;
- 	if (exec)
- 		comm->exec = true;
-@@ -225,11 +228,22 @@ int comm__override(struct comm *comm, const char *str, u64 timestamp, bool exec)
- 
- void comm__free(struct comm *comm)
- {
-+	struct comm_strs *comm_strs = comm_strs__get();
-+
-+	down_write(&comm_strs->lock);
- 	comm_str__put(comm->comm_str);
- 	free(comm);
-+	up_write(&comm_strs->lock);
- }
- 
- const char *comm__str(const struct comm *comm)
- {
--	return comm_str__str(comm->comm_str);
-+	struct comm_strs *comm_strs = comm_strs__get();
-+	char *p;
-+
-+	down_read(&comm_strs->lock);
-+	p = comm_str__str(comm->comm_str);
-+	up_read(&comm_strs->lock);
-+
-+	return p;
- }
+Hmm... I would rather make it U8_MAX, but it's up to you.
+
+> +#define ADXL313_INT1				1
+> +#define ADXL313_INT2				2
+
+...
+
+> +		/* FIFO_STREAM mode */
+> +		regval = int_line == ADXL313_INT2 ?  0xff : 0;
+
+One space too many.
+
+> +		ret = regmap_write(data->regmap, ADXL313_REG_INT_MAP, regval);
+
+Don't you want to use regmap_assign_bits() or something like this to have
+the above ternary be included?
+
+> +		if (ret)
+> +			return ret;
+
 -- 
-2.33.0
+With Best Regards,
+Andy Shevchenko
+
 
 
