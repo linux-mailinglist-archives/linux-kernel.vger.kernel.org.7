@@ -1,193 +1,220 @@
-Return-Path: <linux-kernel+bounces-654629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-654627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFE16ABCA74
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 23:57:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C46EABCA70
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 23:57:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC12B17A095
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 21:57:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C0384179528
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 21:57:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90EBA21ADA9;
-	Mon, 19 May 2025 21:57:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69EE421ADA9;
+	Mon, 19 May 2025 21:56:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WVC34JSC"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nu7elZZO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9312137932
-	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 21:57:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747691842; cv=fail; b=X64bya0ga8fs3uZ5Hpr+cRUhL+NB7MaJb/RD/MiT0zhkhY7oyvAhZrpOQbKRraRKzOY6eHewwETmkr9+mDKIOp2hPyWkQeCZnRZ6B1lBsEmewJdq1kstKDJAZKoPqumsnjCzbmHIFyUC8sMPJjcMgYDYKhqvolJLJKkSdRxtPic=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747691842; c=relaxed/simple;
-	bh=6OqkbJu30oA6mfQZ1HmpwfoL7MrNJ3HchyqFjcT0Bvs=;
-	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=jdE+D1DkUbLcIgVMTvoOliuqBH3JloB08ueYTzOlNB+phU2PdvNWznWFUZMM8H3BR7O5JGWNUN+75GP6AYF9wddPMHUyHTb1d16YXFUrkzSqNa8KWywfbeCmVsjejjJ/Cs+0UiwVpHdqx9pLIjMaxemRA4jsl8kEakbnQDC8mhw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WVC34JSC; arc=fail smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1747691841; x=1779227841;
-  h=from:to:cc:subject:date:message-id:
-   content-transfer-encoding:mime-version;
-  bh=6OqkbJu30oA6mfQZ1HmpwfoL7MrNJ3HchyqFjcT0Bvs=;
-  b=WVC34JSCy2PJXD1j8fGVUB1p/sPx+9u8GA5lBWfrPws5lslsx4W0qgcl
-   +ZLWZs/kvjgGsIXEa2FjQzj+pCsDuMwokwvHX9l8kFaYPDvYqPduFOJkV
-   tjuQN61u2ca4KoY8zNUHL+x4rnHEuQxMmmHjNG6giqbMCm4JngFupNG1U
-   9lAxvDmhFw7uE38/AHtNSWsLz6Ckx+CVYWTCXl0q5Bt6jWmL/ho69VIot
-   lVC/8ilI2dVZmTBSPYfFAhnfX1kd7gHUmS65Trr8zh3zilckpmmEBEbwB
-   iILC9clEQc7Ampy7o/+XF1uxUBFqQsqfDRt26zMSUP2v+u7o8MUoiEtxh
-   g==;
-X-CSE-ConnectionGUID: 4LLKvPbnTYWXSZPhWCwffg==
-X-CSE-MsgGUID: d+ohbRBWSg+Dn3zjQ9aWUg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11438"; a="61000130"
-X-IronPort-AV: E=Sophos;i="6.15,301,1739865600"; 
-   d="scan'208";a="61000130"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 May 2025 14:57:21 -0700
-X-CSE-ConnectionGUID: c/qyrR2ESAKxUGdsf9aXhg==
-X-CSE-MsgGUID: zvwcxKTZSw++EFgynO2UBg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,301,1739865600"; 
-   d="scan'208";a="144487508"
-Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
-  by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 May 2025 14:57:21 -0700
-Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Mon, 19 May 2025 14:57:19 -0700
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25 via Frontend Transport; Mon, 19 May 2025 14:57:19 -0700
-Received: from NAM04-MW2-obe.outbound.protection.outlook.com (104.47.73.177)
- by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.44; Mon, 19 May 2025 14:57:19 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=q6BujPtKDh0Ru49RG50IEwR07rCPKErL82NX9R+rfBcnPgqrmi3MaFvJe2I/3qn1HP/afMKrl9e+Y8EY0nv3rUsItcwWh1HENsbt1HU36CvM05iCPeovNbkBG6KKl9N2lg+LhpzXdaHY2x3kw5MJFgghG0q+i4NJw6NXG//z4f/eYimaqwPRGpa/NRklG3IjqwLdvIYh2ioyr+r7k1wp8cNC3jxttOyAN5SzIF5nNEimjp2a7Z/LaN/7Zgmny/nam64mMVh/d60TPWKws0DKY2R/zUDecuwue3Y7qs4zVtPB7JI+yRiDaO5Uo2MfI7nvs7NVJVC2hjv+GT3Zb0OB5A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=6OqkbJu30oA6mfQZ1HmpwfoL7MrNJ3HchyqFjcT0Bvs=;
- b=pN/gHP/uDTIu2gZ+UBRLuAaf7sj4gjnqDv16OgKPBevlWZOngtOIu1Ljmlmm8gDlxy8D+MihmUDfp5TRdGL9Y+z/LPA0Sba48MgdRiVJiuT4qEDVzCve+lUgNMGBcXKwOM4zJxJiJIIibV3Q5eMvNUjHjnsju++0/+W89dcwPH8qNU921TH0HnO+2cSSTd4TyAAvHC9C1s2MXKkPPs/U+ZCBP8r7th+QtvgGA6auQfhkX+cboXGM08pUccUknuelAehAiQQYPwdq40w9aw8dk+UuWFBgnEbgb+vzYlVO6+A6cRX+I3b77q4gdDDKgfXDCbJoSMWbfk3LGeNWeQi2Aw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from CY8PR11MB6818.namprd11.prod.outlook.com (2603:10b6:930:62::19)
- by MW4PR11MB6885.namprd11.prod.outlook.com (2603:10b6:303:21b::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8722.29; Mon, 19 May
- 2025 21:56:35 +0000
-Received: from CY8PR11MB6818.namprd11.prod.outlook.com
- ([fe80::48a1:723f:54ed:a6d6]) by CY8PR11MB6818.namprd11.prod.outlook.com
- ([fe80::48a1:723f:54ed:a6d6%6]) with mapi id 15.20.8722.031; Mon, 19 May 2025
- 21:56:34 +0000
-From: "Keshavamurthy, Anil S" <anil.s.keshavamurthy@intel.com>
-To: "Shankar, Ravi V" <ravi.v.shankar@intel.com>
-CC: "Kernel Mailing List, Linux" <linux-kernel@vger.kernel.org>
-Subject: Recall: Interdomain support for CWF 
-Thread-Topic: Interdomain support for CWF 
-Thread-Index: AQHbyQjjHFxmvPOi2E6Y5MjDp6TtNg==
-X-CallingTelephoneNumber: IPM.Note
-X-VoiceMessageDuration: 1
-X-FaxNumberOfPages: 0
-Date: Mon, 19 May 2025 21:56:34 +0000
-Message-ID: <CY8PR11MB6818BFEE55CBDC762AADAF02DA9CA@CY8PR11MB6818.namprd11.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-traffictypediagnostic: CY8PR11MB6818:EE_|MW4PR11MB6885:EE_LegacyOutlookRecall
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 5688e315-200a-4954-6bd7-08dd97200593
-x-ms-exchange-recallreportgenerated: true
-x-ms-exchange-recallreportcfmgenerated: true
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|376014|1800799024|366016|38070700018;
-x-microsoft-antispam-message-info: =?us-ascii?Q?+gQxem5L3ZyMzlYJpCCrmw+RX1gJoItdxJ+2FUCJ5z3G8Sf/8Ehuy+EBGbd+?=
- =?us-ascii?Q?rRm9SmsWHir6+3mgICSQ/QO3Q6iLFk30e87p0Y6D2XxBCvjMkRb++UcfMgk6?=
- =?us-ascii?Q?9yl2qe1X2K9MG85C2/MFxfbePi0YAjdicSsDp5GUAuKgbO/pnmYVCGKtsEdO?=
- =?us-ascii?Q?fERbYADsUPAafNDSJMkXM7QlE9PLPs/FLvIcqGlEzvdxt+izXysC42NBtIQ5?=
- =?us-ascii?Q?X2eHPYEpDcU0XMyiHWF6RbscChaOqlCTq7hbCKjNkl4WdPhWJ09pozL+yt+S?=
- =?us-ascii?Q?IcDqvSRfKRLSGBcLajeNWeyG+ON0LZG7Moc38rSgpwmRmGxpq/J2E/uJPu6q?=
- =?us-ascii?Q?8Ydmx0TPUlAYACunyDmz/wAo+jlOtbybvP5LELjHL/7x1iPl7Cvu191zv0Sv?=
- =?us-ascii?Q?Nc7kG4gZBI9bBGNZbHYv/ikraSsuNYoB3B8eXA/jds/ASHSDv5/QQ7GepHLQ?=
- =?us-ascii?Q?6F7tEHPADbDAb+ASPqmkWSm0QaX29Mu6a/wWtn0duvFtMTZDEbjnCIj2YHKQ?=
- =?us-ascii?Q?BsrYLxCl5vHjIl2tYtauq3FdfZKfFOQ4+Ln7G6aA85Zx0vHiLDF66u2avaP5?=
- =?us-ascii?Q?/Tm+jNcciKRUXKmFlUvpuBdvi+ESAB8Cer9rIfOQN9S8Ku6qTDx2qc63byKz?=
- =?us-ascii?Q?QpGZdmQDAoBOTMOM7HQ4Rd1PVwIlqip21QIsTw28YFswoQHoDV7gejmIaKi+?=
- =?us-ascii?Q?d1AHvPs6uKhOPfsCZbF6sf7one6rZ8xY1O7Zum+J5fM1gke6tg3iucsn0ixC?=
- =?us-ascii?Q?xOkWjF4h9C4wqB6B09X+3Mdd/2pTcsiGabIBYAaZu16fjhC689NJN1AgDFGI?=
- =?us-ascii?Q?XDPlXM52fa3yy8ndVLsODBzPOFqlAO26TjtG0rzBSo7vpC9Jb0ub5/L1Xvo2?=
- =?us-ascii?Q?kSzaPjCsLEHQioH6YKxOJFmhfzqFGQzT/AuOjHuGfatGlDZlWZxVhqQPBCWD?=
- =?us-ascii?Q?T2LGW4eHMJ9ZLFRgOiGZ+uPjiYa0b5Kp+wtf+N2M1nVl/NkzQ6zkqJ6THrZX?=
- =?us-ascii?Q?DDfBKUcECabSpScw7wgzNlEfCHkPSJBP3QjKnfJgWSip4El7qtbSw5e0Mjy4?=
- =?us-ascii?Q?LPpFxRHWwaf3PGXjdjlDYbUiznQprzAZ6fAJ//haGHxIaD03QK1j2ePZXJU/?=
- =?us-ascii?Q?gEc//kPPMpC9uDAxU7vmhI/EZzmK9ETRIPdKz7wU+y14/CmP5Y72bU9yiLeP?=
- =?us-ascii?Q?UkzGzCJkCNgy5Jod0oo5n7ARqLOIHtNLDPclqhJRiPbBVx9smVVue25DzGgR?=
- =?us-ascii?Q?FMMu0mw28N3+LhT5i5CJsl2zbnb0y5lpUxd3j1x4meMqrOrrol8ro56rYJNx?=
- =?us-ascii?Q?Gh1ZOP6xp/j4cY/BzaTljpG5dZDlGGl2XlJOgTsDHTepvYhfmxrqi2EGsiPQ?=
- =?us-ascii?Q?BaqQoeuXnHSXxokU2AeIPqSmrMx0zn91mVhDD/THlv70HSQBvy3sN3iz6Y6p?=
- =?us-ascii?Q?KrheXpTO58IkS8EtCnKiCwrj9Aq2/IEg4/udrr1oI9pp+jnMzF/L1eDX4rX+?=
- =?us-ascii?Q?CvIzseQDG+Q8Xfo=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY8PR11MB6818.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?KPFxQghHIk6i85jm4jLj/uYOdcffUFTHtC5CWOhdS5PukJWBXnAM15OftLWK?=
- =?us-ascii?Q?zCjpRcBXbvZUZAPC0pynjsHZtBSNy4rQlaP2eCsziG+4IBZpdD2ggICC5VS0?=
- =?us-ascii?Q?ud42W/Yqw/yxriGZjx9k3ADtcO3IvRfkLSWt5gUvsSfZrpXMhGXnggX3EqRL?=
- =?us-ascii?Q?+yOZ/wPajamjjyLVmV+H1icHRtyTu4KAIkISWYcjxOHj9oY+8TfT9EMvas2A?=
- =?us-ascii?Q?WbtcP5GElT3FmDTN4IY+2dt3Ac5j1fINf7dgu4RjAWvDwz1xTrd+Jrn5gbbb?=
- =?us-ascii?Q?jEl8zM+5eHgmlsT7Ju1sNAdffXuPGTjk9VdflPtLiPrM33siYNmNaeBW8LGc?=
- =?us-ascii?Q?lHqWR0n1k86Z4sJm7HsX2ksw3vBXIQldtp6rcSFRak1uTGhosRK2AVEvh0Nq?=
- =?us-ascii?Q?7RuHNC+Mc30UzDZKa9O5nzVzkr5WJhdqGSMGgxiDy72hSkTiw9bDEu03UBQ9?=
- =?us-ascii?Q?Sgbkg6XB1PVyF24ZG2cPT6FA85KQvwUJnbIPoeEjrVvpKFvfs1pHP70dF6vD?=
- =?us-ascii?Q?S9rR10SolKIkx+mkmoaJiH0Qp02Cjj5HHXwLJh11DQLrdp9SfYjsW06XEWmk?=
- =?us-ascii?Q?8/mgvjvggaqrTdni8N5g7Z9lDbUgHMmR9ott7rd4IYSgt27qYu9pOy/wk5IS?=
- =?us-ascii?Q?igqxeScRkY2wRb8w4dqlopPrJXK81pXqF4aHNAt32gscAJhU1dpWaJQjR0RR?=
- =?us-ascii?Q?8/asSFfhtKb3wDX9SqiQnLzpiUSUbPiRgYW+79r5P+znAZbCA6AvopWG/3xi?=
- =?us-ascii?Q?GCJn2ytrzPP/OYQHbZTJJ+Po2nBgkFUrFQMKGdX+JyYWREL4MGSwWR5cJH+d?=
- =?us-ascii?Q?Q3nibTGOUP9rXdx+06qd6Vgsiy33sl/aCAdfCkdRRWyHalsK/TMgVX3IyMjp?=
- =?us-ascii?Q?DwD0hCFfY8jw7W8goRP8XMhjrmJ9dgKM7UaG1sfpH24DZKCUmb6yw8q/fUbn?=
- =?us-ascii?Q?QUvUVXKSMeBVPIidT26mY5U75G782fYdVj42tr95lhgnZ/G7bApp9VMiqH1v?=
- =?us-ascii?Q?8jzW8LZz+CPxBgHXV81YsvF9m5JAEs9oHuuLhhL73IwxJ70pi/R5jLusP3O1?=
- =?us-ascii?Q?sabiuzLBKUXxLfhAtfMk/1Gx4wtYYxAJ60PTmfiH5gQNCIuThnwRPaJj+eu5?=
- =?us-ascii?Q?T/V9HiYSsOMGNN2T+f7aO+Dq80kPgfabxPBWpzxKAry/anhsbgTtTpINCk6B?=
- =?us-ascii?Q?pLIFkThZvyLzvBRn+IhJS6d78jN9fJhkf5dKNN5v3+k8apBsmw4504OtTZ4M?=
- =?us-ascii?Q?4ZQffo/30WYx1+056hILdJegBEbnkMy0A8EttSwhlzdcnpiQE1dcMq7p7xhT?=
- =?us-ascii?Q?SpyV/N0sYiO+2U6FDjWNlkxrHqE0XyCWY8GfRCCh1oghbdXCZsm2zkrLJTfx?=
- =?us-ascii?Q?9ogQd/eV04m9+tia/JOYea+caDoVqSEas/HPZ2wJPGVg45iHA2P1vdrPtdqL?=
- =?us-ascii?Q?StzUOvRD4yyz/H48uXyNbeCsfAJRRkZxgg1Xo2BtybIvTDp36LyWGHREp83U?=
- =?us-ascii?Q?MqpQoPz9CuJ3FFMazuCn4C0Xv5TyAA+db8bMo6tuNIWBK26UZjr2ZUjlKogl?=
- =?us-ascii?Q?xZTztl6/Lexbqq4EHKXNZG1awgH88w8vVJO/VghRotAM36SHuQxIM8MgoKYc?=
- =?us-ascii?Q?RA=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99B4B211A3C;
+	Mon, 19 May 2025 21:56:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747691815; cv=none; b=RTDrj3PRhFJE28JPvEY0EdjAQxqWHtrkf1Jho2cu406JqsnXN9UWyVw3kkwrxiy1JLPx565ZbTj/g0TUVjAvJt8DFaRWz4oTtyLL77iMsjt21HIoWhOJIEYWkPipBUJF8sWnd9MpjAPc53F2fdeqsnA5OmGlbaXtawwyJyY9GTQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747691815; c=relaxed/simple;
+	bh=G/udjNOlZf5UZB0lntyyPqplVnxx+IfVlpycxwLSers=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mqH9KUl4d8T+CA1437T4xxELMxL92t9Nlwy9S1S1DYDtE6R8k+92Q8GDUrpW7wAXL2RTWryhRcP0YF+9zaOAPlErCPmvoWtz4lYfwSENoTa55J1IJqdHkmkD9Akc5wCPjpvAJNZ21DS2zj3R3i/191KRTx4E3SE4hoJaPPwEsEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nu7elZZO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6853C4CEE4;
+	Mon, 19 May 2025 21:56:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747691813;
+	bh=G/udjNOlZf5UZB0lntyyPqplVnxx+IfVlpycxwLSers=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nu7elZZO8YqPcuNtMtp5sqtcZInfD7DMrpPlmrSWymeWoZDVi8ldUf3dIg1UbBQGA
+	 L3ctZKe1k5K6Rj8aZhmnWFijoqZ8XQ5NgZz7EchEHAaCx2N97S+QH+j2uxryCz7ca+
+	 lrBbBeSw/rge4wYpIS2ETtVm8QVLMpMvzVprpwR9rEKbc6bKKZxJnHXnIc4kXFq+Ec
+	 WykFkcGPTa6bmMM/Y5n9ssDikJ2HErrqV7ZEJYbRgOMrN7RomlXhxLcUR0e/9Z5KdJ
+	 0XN6xz6yCWTEmgWZ0uzrrK0P2gi/ZXa+XB2j39ezM5be++R0hjGS0wy7wF92/wPTbU
+	 i9rKjkEVOsXbQ==
+Date: Mon, 19 May 2025 16:56:51 -0500
+From: Rob Herring <robh@kernel.org>
+To: Will Deacon <will@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	James Clark <james.clark@linaro.org>,
+	Anshuman Khandual <anshuman.khandual@arm.com>,
+	Leo Yan <leo.yan@arm.com>, linux-arm-kernel@lists.infradead.org,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, kvmarm@lists.linux.dev
+Subject: Re: [PATCH v21 4/4] perf: arm_pmuv3: Add support for the Branch
+ Record Buffer Extension (BRBE)
+Message-ID: <20250519215651.GB2650608-robh@kernel.org>
+References: <20250407-arm-brbe-v19-v21-0-ff187ff6c928@kernel.org>
+ <20250407-arm-brbe-v19-v21-4-ff187ff6c928@kernel.org>
+ <20250519150621.GA17177@willie-the-truck>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CY8PR11MB6818.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5688e315-200a-4954-6bd7-08dd97200593
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 May 2025 21:56:34.4668
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: ZpkfkuADPWvLMYD09qN4rt/EZCWa0fiZmarYEyNDZ7aoHyeAtyYNAJBW20uvovtDUgXDmhIQfLrAtvm2WJ1xWss1fpGbi/KCUYqpY72piQw=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR11MB6885
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250519150621.GA17177@willie-the-truck>
 
-Keshavamurthy, Anil S would like to recall the message, "Interdomain suppor=
-t for CWF ".=
+On Mon, May 19, 2025 at 04:06:22PM +0100, Will Deacon wrote:
+> Hey Rob,
+> 
+> On Mon, Apr 07, 2025 at 12:41:33PM -0500, Rob Herring (Arm) wrote:
+> > From: Anshuman Khandual <anshuman.khandual@arm.com>
+> > 
+> > The ARMv9.2 architecture introduces the optional Branch Record Buffer
+> > Extension (BRBE), which records information about branches as they are
+> > executed into set of branch record registers. BRBE is similar to x86's
+> > Last Branch Record (LBR) and PowerPC's Branch History Rolling Buffer
+> > (BHRB).
+> 
+> Since you picked this up from v19, the driver has changed considerably
+> and I presume you will be continuing to extend it in future as the
+> architecture progresses. Perhaps having you listed as Author (and
+> crucially, in git blame :p) with Anshuman as a Co-developed-by: would be
+> more appropriate?
+
+Shrug.
+
+> > ---
+> >  drivers/perf/Kconfig         |  11 +
+> >  drivers/perf/Makefile        |   1 +
+> >  drivers/perf/arm_brbe.c      | 802 +++++++++++++++++++++++++++++++++++++++++++
+> >  drivers/perf/arm_brbe.h      |  47 +++
+> >  drivers/perf/arm_pmu.c       |  15 +-
+> >  drivers/perf/arm_pmuv3.c     | 129 ++++++-
+> >  include/linux/perf/arm_pmu.h |   8 +
+> >  7 files changed, 1006 insertions(+), 7 deletions(-)
+> 
+> Do you know if James Clark's tests [1] are going to be respun for the
+> perf tool? It would be handy to have some way to test this new
+> functionality.
+
+Yes. I dropped them here because I've been told by Arnaldo in the past 
+to send userspace stuff separately.
+
+> > diff --git a/drivers/perf/Kconfig b/drivers/perf/Kconfig
+> > index 4e268de351c4..3be60ff4236d 100644
+> > --- a/drivers/perf/Kconfig
+> > +++ b/drivers/perf/Kconfig
+> > @@ -223,6 +223,17 @@ config ARM_SPE_PMU
+> >  	  Extension, which provides periodic sampling of operations in
+> >  	  the CPU pipeline and reports this via the perf AUX interface.
+> >  
+> > +config ARM64_BRBE
+> > +	bool "Enable support for branch stack sampling using FEAT_BRBE"
+> > +	depends on ARM_PMUV3 && ARM64
+> > +	default y
+> > +	help
+> > +	  Enable perf support for Branch Record Buffer Extension (BRBE) which
+> > +	  records all branches taken in an execution path. This supports some
+> > +	  branch types and privilege based filtering. It captures additional
+> > +	  relevant information such as cycle count, misprediction and branch
+> > +	  type, branch privilege level etc.
+> 
+> It's a shame that this can't be modular, but I suppose the tight
+> integration with the CPU PMU driver precludes that. Oh well.
+> 
+> > diff --git a/drivers/perf/arm_brbe.c b/drivers/perf/arm_brbe.c
+> > new file mode 100644
+> > index 000000000000..2f254bd40af3
+> > --- /dev/null
+> > +++ b/drivers/perf/arm_brbe.c
+> 
+> (The driver code looks fine to me but I'd like an Ack from Mark on the
+> UAPI).
+> 
+> > diff --git a/drivers/perf/arm_pmu.c b/drivers/perf/arm_pmu.c
+> > index 2f33e69a8caf..df9867c0dc57 100644
+> > --- a/drivers/perf/arm_pmu.c
+> > +++ b/drivers/perf/arm_pmu.c
+> > @@ -99,7 +99,7 @@ static const struct pmu_irq_ops percpu_pmunmi_ops = {
+> >  	.free_pmuirq = armpmu_free_percpu_pmunmi
+> >  };
+> >  
+> > -static DEFINE_PER_CPU(struct arm_pmu *, cpu_armpmu);
+> > +DEFINE_PER_CPU(struct arm_pmu *, cpu_armpmu);
+> >  static DEFINE_PER_CPU(int, cpu_irq);
+> >  static DEFINE_PER_CPU(const struct pmu_irq_ops *, cpu_irq_ops);
+> >  
+> > @@ -317,6 +317,11 @@ armpmu_del(struct perf_event *event, int flags)
+> >  	struct hw_perf_event *hwc = &event->hw;
+> >  	int idx = hwc->idx;
+> >  
+> > +	if (has_branch_stack(event)) {
+> > +		hw_events->branch_users--;
+> > +		perf_sched_cb_dec(event->pmu);
+> > +	}
+> 
+> Shouldn't we decrement this *after* calling armpmu_stop()?
+
+Logically, that would make more sense. It's all serialized by the perf 
+core though, so we can't get .sched_task() during this.
+
+> > +
+> >  	armpmu_stop(event, PERF_EF_UPDATE);
+> >  	hw_events->events[idx] = NULL;
+> >  	armpmu->clear_event_idx(hw_events, event);
+> 
+> [...]
+> 
+> > +static int branch_records_alloc(struct arm_pmu *armpmu)
+> > +{
+> > +	struct perf_branch_stack *branch_stack_cpu;
+> > +	struct perf_branch_stack __percpu *branch_stack;
+> > +	size_t size = struct_size(branch_stack_cpu, entries, brbe_num_branch_records(armpmu));
+> > +	int cpu;
+> > +
+> > +	branch_stack = __alloc_percpu_gfp(size, __alignof__(*branch_stack_cpu),
+> > +					  GFP_KERNEL);
+> > +	if (!branch_stack)
+> > +		return -ENOMEM;
+> > +
+> > +	for_each_possible_cpu(cpu) {
+> > +		struct pmu_hw_events *events_cpu;
+> > +
+> > +		events_cpu = per_cpu_ptr(armpmu->hw_events, cpu);
+> > +		branch_stack_cpu = per_cpu_ptr(branch_stack, cpu);
+> > +		events_cpu->branch_stack = branch_stack_cpu;
+> > +	}
+> > +	return 0;
+> >  }
+> 
+> How does this work in a heterogeneous system? Shouldn't we at least
+> scope the allocation to the CPUs associated with this PMU?
+
+Leaks memory, that's how.
+
+As a bonus, it could overrun some memory too if the record sizes are 
+different though mostly overrunning into other BRBE buffers...
+
+I think we just need to loop over cpu_pmu->supported_cpus and call 
+kmalloc(). Since events_cpu is already percpu, we don't need a percpu 
+allocation of the branch stack buffers.
+
+I'm assuming it is safe to assume all CPUs either have BRBE or they 
+don't? Different record sizes at least should work fine (other than the 
+above issue). 
+
+BTW, I was scratching my head how armpmu_alloc() works with 
+for_each_possible_cpu(), but I guess the hotplug callbacks overwrite the 
+events->percpu_pmu value. I think we could just remove the loop there. 
+I'll investigate that.
+
+Rob
 
