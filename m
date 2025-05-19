@@ -1,165 +1,124 @@
-Return-Path: <linux-kernel+bounces-654230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-654232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D931DABC5A2
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 19:30:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98A94ABC5A9
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 19:31:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78DA14A3502
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 17:30:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 555553A328C
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 17:31:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C35BE288C36;
-	Mon, 19 May 2025 17:30:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0083D288CA2;
+	Mon, 19 May 2025 17:31:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="urHAGUCs"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2mtNDa2U"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D9A0288C10
-	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 17:30:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C579D288C36
+	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 17:31:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747675842; cv=none; b=RJ//6+ZiNT8sl1FUiTrrcad9v602Lztt+/tbW62oMZM47jOEs3F0QIuJV/5jD+8D5oeuumgmTU5Hn5tAfsd7D2ytk/UAbpz0kFKxVEndLhRR6lkzNGgz/2EzNuo5jj+AOL8mRaRniJsHTC1fgIydwZMowNsHaCDwBSx7v4p7tZA=
+	t=1747675869; cv=none; b=D9++O5cgPmXioTwJ29OJfJ+eKO0fpEiFYbQJrJ6km+ETD9DuU5qajcJ+eaJbPx42sk2Oh9a5/9l47vr5AgyXJwScqMPjopHH+VWOvnv8083r5P2mgc/zbXjRUkdZwjqKC/LfDgy6QedbyACnBqyVrQWYg/qDZt1kq05zCJ3sekE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747675842; c=relaxed/simple;
-	bh=HnTjrWQ5EVdG1cDBVc6cCdSaoPKg8RQzX8LW5sIft8I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MehDBUOBmF/qabFd62vSZE+pQpPB7gYdCtHJBfbbD4Rl6VTBMo1+s1SGTGa0fPr1H7/X0Pl1BvSu5vY8XBEgXCXFFgSU7WQxVlEYvQUhHnVN7AGya2EXptJsq3rjsqIBRAnAD6aUd9Y9rrwdx2K/9HEjmVWDYj1wuk7PUI9q24c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=urHAGUCs; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-6020053cbd5so866432a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 10:30:39 -0700 (PDT)
+	s=arc-20240116; t=1747675869; c=relaxed/simple;
+	bh=9k3rSkCOUuBoGczbRjC9e6BrYoiZJsdyvLLsXOGHPTE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Vmj08ZhpTtNCDOzh0i1XJM3GWiKm0qN9BF4I+zrcUyH1xyjqDFLMRghbsVaj+oeyXWU/Jqi+PhShd/LIBp8B7PB67CbrWiTAS4StpUxmJ63/CRtKJV/8XgXL9IWH5X/Jdm4pCI9Of3IdoolIOnbfuKh0L/xJzAQxUSBBt0Tg998=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2mtNDa2U; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-231f6c0b692so394085ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 10:31:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1747675838; x=1748280638; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=9Kju3FsnY+thKUhdFoN0W1nIETGgDAQsnSzsAx6S2Zw=;
-        b=urHAGUCsNYUWBlFSMPdrOFcwSVcGkj+Sj/X6gC305ByVNKNzs9fNgDGNJcLUnXTbhb
-         qWbxB0YbGYy+d2U63BLUr8Oe0Zab5fv5Uqre6H379b2f4EwhlVO7agy/N+inXOnwl7kf
-         zInImPxzHIOZ1NjNdOBTcYnEgVBFYnSoTPdifcwZgxNVetuR0R0GWLg8/Ai6ZUwxjE/z
-         squ5J9qD7yZW2FXEJ2wbpF6ehyFJ8WdsOilDjhXWFXX9m8IAvzDy44Ar6n2BJpdD+zUQ
-         Ln4NlDzHCSnHl5Af6LHp97Cy9aMO5Yn6fdEtHj+ftrimLcJKliZJ9wcYC1eViLGSaXxQ
-         wPDA==
+        d=google.com; s=20230601; t=1747675866; x=1748280666; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9k3rSkCOUuBoGczbRjC9e6BrYoiZJsdyvLLsXOGHPTE=;
+        b=2mtNDa2UCZjQd5G64gKNgvhl/EPIIqYesvKxSqxk/yd9DR4QkGrdBVqUGXgdXIBwrX
+         panzXFMmFo222Py+QFlkwUJaYiHleOo0qEfJThS/zYAZptw6HFm7+As7OjcU0KIeiobC
+         9ni2HzVPv1rSMkNomYUW9qHF2+76rgX8Oh6WByMEsqiwM9vrjgrdTZdW3+MnixVZGYhL
+         uaSQl0Mdx5BSnBGI5onxvmYic/cyEWh4sUeDLcKoMzeWRcsg5Pmy2DsqK1ixq9oChnC8
+         J2GZbQ3I6+ORpczhfawUkubTkqrees6WsYwIT3XwAL1hXne/QizzV9zd0hn2ZRsEMz+O
+         QCwQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747675838; x=1748280638;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9Kju3FsnY+thKUhdFoN0W1nIETGgDAQsnSzsAx6S2Zw=;
-        b=Ay9xHCJI2vhvLyevqK9R9YX+HmRI47COdSGaFWI0CItStQIBAQpH/9lHCoyYyhLLFH
-         6EZAp6WdgLUH5qMPE4RQrm3nvDAQi3uXB2UyZjavCJfXloycjiftJJhA+jqkPEA8/gyl
-         WQ0DYvKhSCQChYF8u/VZK6i07qfeXzzp3WC2ggCX1jBcmaKTkktfUhWFm9UA7/PpYQrb
-         npUj8HwkDd4YrK8n9WDwwbdwMQr8tJq9cdih83rvKhFAf8tijEqLbKxYG547rY5hWSyz
-         E2YVFFEtnhRasJIpQhQYCelfe0u7HvZ6EGKlounGoAjMZsEljzw6higvqA/aYcgXda/O
-         gM8g==
-X-Forwarded-Encrypted: i=1; AJvYcCUR9LjzTXNbZtw4L2JZHy6cUkszRpYtR78T9Ej/ldslmTR+RkxzZD67eLHSso7llECLnpjyYJ1TxgS+uTM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLxZBbux+tFjtQqgFFIlbw+JrtQ0E3JAtKjfbmeeHiXB84odUi
-	YK5f5xC/U8yBeCOoQd7D6LV9dmGnXYgiFfZ368pgILRsRUmbBKOdxWc4X3XpXAaZgQ==
-X-Gm-Gg: ASbGncvlDh8LslbcDTVzQhwxNK0/NdiWrfjSN/MEXVq6wjg8ZfJ4/3XVEmkFTS97l0a
-	2kCNoxl+C+lXXazUGhNW9No7+vyoDHwnnpgEAw78KrM0N/Lhol7NJzLXgBDG06k1wF6lWEnHgAk
-	Nl0ztqFgx5eT3PxAULfjnaIzWdEZz2gll5w57bHNJLCP9X9hhTIVAh/ryhMP1U+4ZkVITiYEEIH
-	K9fIrERyO/p1tcQx63/0p5lZBOtARCImnUxbov+0ARm0oESrq5VOc+3HOkeiCAyYPTbbMwakNZE
-	7XSrEYXvthr6IsHtiGr2olD7N07p16rrBcvQrO0BlB3r2QV18uvdUHCNlykjlNN0BaeWCajJYZ7
-	rEkB+i75J6caoshUyBgyLaRiSUnQ5m4YJ3w==
-X-Google-Smtp-Source: AGHT+IFQdXd+uR03JzjdJ/zz2g+tjiE8hNNLW3q4qi5/22Vnca/ILj0cjruXvBC5L68agXPI5CtSjA==
-X-Received: by 2002:a17:907:6d01:b0:ad5:58f7:6c8 with SMTP id a640c23a62f3a-ad558f74558mr760304166b.49.1747675838502;
-        Mon, 19 May 2025 10:30:38 -0700 (PDT)
-Received: from thinkpad (host-87-20-215-169.retail.telecomitalia.it. [87.20.215.169])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad52d4382c0sm625083466b.90.2025.05.19.10.30.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 May 2025 10:30:37 -0700 (PDT)
-Date: Mon, 19 May 2025 18:30:36 +0100
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Rob Herring <robh@kernel.org>
-Cc: Marek Vasut <marek.vasut@mailbox.org>, 
-	Marek Vasut <marek.vasut+renesas@mailbox.org>, linux-arm-kernel@lists.infradead.org, 
-	Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, 
-	=?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>, Aradhya Bhatia <a-bhatia1@ti.com>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Conor Dooley <conor+dt@kernel.org>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Heiko Stuebner <heiko@sntech.de>, 
-	Junhao Xie <bigfoot@classfun.cn>, Kever Yang <kever.yang@rock-chips.com>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v2 1/4] dt-bindings: PCI: rcar-gen4-pci-host: Document
- optional aux clock
-Message-ID: <y246ietlwyaix7q3wulviy7wysqkwczspgtj26gducxbay4qrl@im3iht4kvhuj>
-References: <20250406144822.21784-1-marek.vasut+renesas@mailbox.org>
- <20250406144822.21784-2-marek.vasut+renesas@mailbox.org>
- <2ny7jhcp2g5ixo75donutncxnjdawzev3mw7cytvhbk6szl3ue@vixax5lwpycw>
- <84cc6341-a2c1-4e3c-8c9e-2bc6589c52a6@mailbox.org>
- <ne4injlr4nwvufjdg7uuisxwipqfwd5voohktnbjjvod5om3p3@eriso5cw77ov>
- <CAL_Jsq+GdeKFPVpEOz+588QxkF-Uq=oNF5WJU+TK31Q6mkqaDA@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1747675866; x=1748280666;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9k3rSkCOUuBoGczbRjC9e6BrYoiZJsdyvLLsXOGHPTE=;
+        b=ZNqs9ssDivhszQEmhCHAErYY19bipIrwnlJn31clSuETbXT9noKyhdF/RakbIFwlJu
+         feRyhNTxcDNKuEj9opd1eLRhJ9lvk+IDixfn9zOoqpSBp6Zc10SBhUHXc6ASlKuUbycW
+         OXb6WKeR18x0/5hhDR45TGcY5uLdGRs9ZbL+jjI2urwiA8VwMXx1yCoJLvV6izhGxgGs
+         v+2v96M+Dqxiv6k7k0eX3zQ56xTH5Ect2AG9EDz0lFq2l1U5qSovDa9vdBzR03Tjm3vo
+         vtW3zteCc/fiBxxRPZqptRMIwysoOFdYLsgNhr+U+fzyigths+x8cJYKy48nK9Rq1LXG
+         yWdw==
+X-Forwarded-Encrypted: i=1; AJvYcCUrEv5gtTjWjOdAzvmA5Ztwg65C4Db03NeuxZNabZhOMCdnUjcb02/kLHobaxgwNXu1DOGjfwS2TvP8SiA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxx6Wka9yvqknMqPTMXptxmRhCpIr5wYoT3Gr4We14lrmZZEeTs
+	NStCWRZj8Y89K7wvxFxF+QNtfoi55aWi1uSPMOyPKfuUQoqKbPSVUdzFqfeZhcZu26PjmZS2p7l
+	CUugaIVx/u7woyQnZUTL4N1NmpKcUYjZ0ISt9hWzi
+X-Gm-Gg: ASbGncvKJNujzNeq8jrasrpwv6HK1gQM4gQAms76WYrsuP9/avFeEx8/l2y8kFiTw6J
+	4O6Hyu9kQfbmx12THlfR3cAAKgjASbC5vU2cuw8CsxL4Qge/LLTFC1It/fNBFqfIJpKy4OdOeD8
+	EIsTUVHyAPWxvp/jOUilmLiYeJiZWmut/83xUlupXb6VQ5
+X-Google-Smtp-Source: AGHT+IEEIZ5rIpCccmFXs6TxZYXiYRfp12vQO1P3n/ZqrkCa4SEVdMDrNAx9mJoPegE4qe9PiPx3y2eAjD4yYx4laKE=
+X-Received: by 2002:a17:903:2350:b0:21d:dd8f:6e01 with SMTP id
+ d9443c01a7336-23203ed3169mr4290135ad.5.1747675866236; Mon, 19 May 2025
+ 10:31:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAL_Jsq+GdeKFPVpEOz+588QxkF-Uq=oNF5WJU+TK31Q6mkqaDA@mail.gmail.com>
+References: <20250519023517.4062941-1-almasrymina@google.com>
+ <20250519023517.4062941-5-almasrymina@google.com> <aCtNYJo01UfMOLfr@mini-arch>
+In-Reply-To: <aCtNYJo01UfMOLfr@mini-arch>
+From: Mina Almasry <almasrymina@google.com>
+Date: Mon, 19 May 2025 10:30:52 -0700
+X-Gm-Features: AX0GCFufj5h-vFrrv9zQxEBaDXmM181og-1BYf2_XB1nm1053kjiQphd_FW10KQ
+Message-ID: <CAHS8izOMLm5jLr+778nY0AdFoOWPSb+UV+1sZmOkFb5SSqTGqg@mail.gmail.com>
+Subject: Re: [PATCH net-next v1 4/9] net: devmem: ksft: remove ksft_disruptive
+To: Stanislav Fomichev <stfomichev@gmail.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Simon Horman <horms@kernel.org>, Jesper Dangaard Brouer <hawk@kernel.org>, 
+	Ilias Apalodimas <ilias.apalodimas@linaro.org>, Neal Cardwell <ncardwell@google.com>, 
+	Kuniyuki Iwashima <kuniyu@amazon.com>, David Ahern <dsahern@kernel.org>, 
+	Andrew Lunn <andrew+netdev@lunn.ch>, Shuah Khan <shuah@kernel.org>, sdf@fomichev.me, 
+	ap420073@gmail.com, praan@google.com, shivajikant@google.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, May 19, 2025 at 10:04:09AM -0500, Rob Herring wrote:
-> On Thu, May 15, 2025 at 6:57 AM Manivannan Sadhasivam
-> <manivannan.sadhasivam@linaro.org> wrote:
-> >
-> > On Mon, May 12, 2025 at 10:42:20PM +0200, Marek Vasut wrote:
-> > > On 5/9/25 9:37 PM, Manivannan Sadhasivam wrote:
-> > > > On Sun, Apr 06, 2025 at 04:45:21PM +0200, Marek Vasut wrote:
-> > > > > Document 'aux' clock which are used to supply the PCIe bus. This
-> > > > > is useful in case of a hardware setup, where the PCIe controller
-> > > > > input clock and the PCIe bus clock are supplied from the same
-> > > > > clock synthesiser, but from different differential clock outputs:
-> > > >
-> > > > How different is this clock from the 'reference clock'? I'm not sure what you
-> > > > mean by 'PCIe bus clock' here. AFAIK, endpoint only takes the reference clock
-> > > > and the binding already has 'ref' clock for that purpose. So I don't understand
-> > > > how this new clock is connected to the endpoint device.
-> > >
-> > > See the ASCII art below , CLK_DIF0 is 'ref' clock that feeds the controller
-> > > side, CLK_DIF1 is the bus (or 'aux') clock which feeds the bus (or endpoint)
-> > > side. Both clock come from the same clock synthesizer, but from two separate
-> > > clock outputs of the synthesizer.
-> > >
-> >
-> > Okay. So separate refclks are suppplied to the host and endpoint here and no,
-> > you should not call the other one as 'aux' clock, it is still the refclk. In
-> > this case, you should describe the endpoint refclk in the PCIe bridge node:
-> >
-> >                 pcie@... {
-> >                         clock = <refclk_host>;
-> >                         ...
-> >
-> >                         pcie@0 {
-> >                                 device_type = "pci";
-> >                                 reg = <0x0 0x0 0x0 0x0 0x0>;
-> >                                 bus-range = <0x01 0xff>;
-> >                                 clock = <refclk_ep>;
-> >                                 ...
-> >                         };
-> >                 };
-> >
-> >
-> > and use the pwrctrl driver PCI_PWRCTRL_SLOT to enable it. Right now, the slot
-> > pwrctrl driver is not handling the refclk, but I can submit a patch for that.
-> 
-> There's another discussion about PCIe clocks here[1]. Seems there's a
-> variety of options here with spread-spectrum layered on top.
-> 
+On Mon, May 19, 2025 at 8:25=E2=80=AFAM Stanislav Fomichev <stfomichev@gmai=
+l.com> wrote:
+>
+> On 05/19, Mina Almasry wrote:
+> > As far as I can tell the ksft_disruptive here is unnecessary. These
+> > tests are largerly independent, and when one test fails, it's nice to
+> > know the results from all the other test cases.
+>
+> We currently don't do anything special for disruptive tests. I'm assuming
+> anything that changes nic configuration is disruptive and was thinking of
+> an option to run all disruptive tests at the end of the run. But so far w=
+e
+> haven't had any problem with mixing disruptive and non-disruptive tests,
+> so it's all moot. I'd prefer to keep everything as is for now (or remove
+> this whole disruptive category).
 
-The other discussion is separate IMO. It just concerns how the endpoint detects
-local clock vs supplied clock.
+I've noticed that if all the tests are marked disruptive, and one test
+fails, the others don't run at all, which seems unnecessary. I'd like
+to see if the rx test passed if the tx one failed and vice versa for
+example. Removing the disruptive tag seems to resolve that.
 
-- Mani
+dmabuf bind is automatically unbound when ncdevmem exits, so i don't
+think these tests leave the nic in a bad state or anything that
+warrants blocking running the other tests?
 
--- 
-மணிவண்ணன் சதாசிவம்
+--=20
+Thanks,
+Mina
 
