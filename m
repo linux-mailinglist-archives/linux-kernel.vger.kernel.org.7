@@ -1,90 +1,130 @@
-Return-Path: <linux-kernel+bounces-654483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-654485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBB28ABC8DB
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 23:03:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AB48ABC8E7
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 23:12:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0512D4A1835
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 21:03:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FCEA3BBD82
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 21:12:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12A6321B184;
-	Mon, 19 May 2025 21:03:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07BC921ADBA;
+	Mon, 19 May 2025 21:12:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="sLrpg+DW"
-Received: from 004.mia.mailroute.net (004.mia.mailroute.net [199.89.3.7])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="vWO/bTXT";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="R3R9zT+M"
+Received: from fout-b4-smtp.messagingengine.com (fout-b4-smtp.messagingengine.com [202.12.124.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAE4F219A9E;
-	Mon, 19 May 2025 21:03:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43B95288AD;
+	Mon, 19 May 2025 21:12:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747688610; cv=none; b=ZKzK3MKtxdxLM7iTmwGVXACvYLEDmr0XsLXMxEyzQ54ZoMhL0QvzEU7ixwNjYjGWOyh7/R9lEdaxFDq5OvN5dI4Ewo/oTMX7iKnBvcGYazaUcPWRmM/uv/dF2u9RebbquUmCfO8VSu748J2XAgBq6xpNSgO8nHJI1iKNPTPjbUo=
+	t=1747689168; cv=none; b=sganxfJ6Iq9ac5V0vZ5U1MH78YAL+HpMW4W6a9EyEcIrb4lys86Sa+MH3pHEQKh4OYIOcT2SwfX+e2db4vgjVDdr51A7s9hHYrnWYlUsVsVXBmDfY53xHXWyEpDCTwYBEcNpOKbJFjGIuKqSvdq6fhvdiBYomgvWDjokOmOMYzE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747688610; c=relaxed/simple;
-	bh=JLKoB74dcFkHptIj/08cElE1QKlxBReI5PeimRY0MQs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=sPx0EdQPdKdLx8BLsaFRmSVIMf0xPByp70U/9/F4jCL0/e7e1zLq4sFQICxLP1NwbnJRpDVTqUOrvVKthcl8bHF2uBiLQxikLSDMvO4BJPSFRMRZiNmpvN+tUcznIStyUNJAouDWOVtL8/7smnLIumYis7bvTP3NzYW8bBY1ayk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=sLrpg+DW; arc=none smtp.client-ip=199.89.3.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 004.mia.mailroute.net (Postfix) with ESMTP id 4b1VXH3r92zm0pKx;
-	Mon, 19 May 2025 21:03:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1747688604; x=1750280605; bh=MMBT+V9o0qR/FVPOfBmiNgMP
-	YySbpU4lED071DTsg50=; b=sLrpg+DW6DeHOfpali6kPhH43pz8X1Ov5MLN+Vr7
-	XudUZnw13dM59VWz6tgILhqJKt91cWWbttCU19XkhHucdH067o4cPaPaDCxdoleB
-	qLi7epQ4FGCqRn02Y+XTGfS1cOHyW/p7H00AD/14fnG7MMIjTRuH/ImHJcURS923
-	vOoITsxnFZYOYIDiSq94Jk87I73ww63L2nEKBHEmieN4gXthnG4Zyf4DlFfMc/V5
-	7zQo29tyIe4tBOH2YMNMQ4NaNWfX2JkixJnz55qT/ePYOYyuqPzesC8Kb7Q7KjBv
-	lSFBTiv+B8eaamwbb6FYMDIxXvZjNaCzk5V2tTwPa1Qevw==
-X-Virus-Scanned: by MailRoute
-Received: from 004.mia.mailroute.net ([127.0.0.1])
- by localhost (004.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id WLu-68mGKtPE; Mon, 19 May 2025 21:03:24 +0000 (UTC)
-Received: from [100.66.154.22] (unknown [104.135.204.82])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 004.mia.mailroute.net (Postfix) with ESMTPSA id 4b1VX40gTlzm0dj5;
-	Mon, 19 May 2025 21:03:15 +0000 (UTC)
-Message-ID: <a355b7da-fb1c-479d-8612-94255e5aedc7@acm.org>
-Date: Mon, 19 May 2025 14:03:14 -0700
+	s=arc-20240116; t=1747689168; c=relaxed/simple;
+	bh=SPcSBAE7lMi2Sr/cqYhUftX4nKOZ9dAXel+rQnZ8ecQ=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=h6Hhkx3G2dgw+EOWIQJi1npSfdxAXZMnw8KFwvWOumDRAJU+xwv/RSyfvGalrv5xVUNtn+vWoHwhe6SQvH891KfS+6122C/SJP0Y8nNgexTxhsuznFn//k69GvX92rirawHdWxqHrdw4R4FcUtW3hLgsiq2qt7144t87UW6zpYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=vWO/bTXT; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=R3R9zT+M; arc=none smtp.client-ip=202.12.124.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfout.stl.internal (Postfix) with ESMTP id D7BEC11400A6;
+	Mon, 19 May 2025 17:12:42 -0400 (EDT)
+Received: from phl-imap-12 ([10.202.2.86])
+  by phl-compute-05.internal (MEProxy); Mon, 19 May 2025 17:12:43 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1747689162;
+	 x=1747775562; bh=SPcSBAE7lMi2Sr/cqYhUftX4nKOZ9dAXel+rQnZ8ecQ=; b=
+	vWO/bTXTt/1Rz4vTS14ENYnY/81Hqx30n+Quj6hdVFttb60/1GpnJJcLLI4HAYi8
+	g5HUlJNYHxawTSy68K4JTwt0llTx12p3sHqPNi4BxSRtH6gvurjWepgSu1ncPqF2
+	X36po0P7esj8KGCs2cRMS+eimoqvUwKkARSJpytmgf8BzpBkLfpyfJyT+tFh1ERs
+	PulmVpU4K+ZLd8vmeFC3a42HqX0+6trmm93dH4B8saVzIQxQfIsHSgln2WyEN/1R
+	NQm3DqyFDqqO/fsSTno8ytv+ps5dz/NSPVph5kcfAYn8Zb601ISyvhDsz++VAd75
+	XIpbOKl14D+htdxTSdvdTg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1747689162; x=
+	1747775562; bh=SPcSBAE7lMi2Sr/cqYhUftX4nKOZ9dAXel+rQnZ8ecQ=; b=R
+	3R9zT+MpTvNgNHhMe28/Ip3dJt6oJkgQtNuE/ro60nxzLbcx/jt1qFMxgEt0eEDV
+	ACoS1jDQj18ewT7vDoVTp4+xbGE5omCvQWgxB5M8qzz5fxwlq2Eu6HAh0/e6FNYr
+	MfMteyMLMWp25ZYhCU+dNx3BErYGaj8Q4GkdDWsgMAf+TivyivQ4AZopKrSgSfhQ
+	IMPWRIHw8/KExH04hvWW9sTOuv6GM56j2FwGpfzfv9E/RjQoqXqzaOasLVriaH7S
+	HyFi93sySkUPa8C0XeaBamazfLKKOVtVYCO1k9KVAC7oL0SPY06tfRXzv3u4LE9V
+	8Q+hXCam27mmwHqL2q07g==
+X-ME-Sender: <xms:yp4raL_HvUbyOmxtihz1MO4pbys4KKH347A2m5kpZwSFWRyq_RmlDw>
+    <xme:yp4raHvCTa45ZX4vY7PNpdErbHp7zhMQl52rW7ELnc3VT6TSoq9wKcMDyRn-CQ6sJ
+    5BIZOb3pSvXV15gni8>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdefvddvgeefucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertder
+    tddtnecuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnug
+    gsrdguvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeet
+    fefggfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
+    hmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohep
+    ledpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepfigprghrmhhinhesghhmgidrug
+    gvpdhrtghpthhtohepjhesjhgrnhhnrghurdhnvghtpdhrtghpthhtohepsggvnhhtihhs
+    sheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhhikhhosheskhgvrhhnvghlrdhorh
+    hgpdhrtghpthhtoheplhgvnhgssehkvghrnhgvlhdrohhrghdprhgtphhtthhopehrrghf
+    rggvlheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqrggtphhisehvgh
+    gvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqihhnphhuthesvhhg
+    vghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvh
+    hgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:yp4raJComv4gHL125ZM09cOu5dwMOZILZ1aV1RpCu2DH1hEiwzP1Eg>
+    <xmx:yp4raHeR7uRi9ud-oFuSEfw9PbZW9SK2M3_Ne2xDyR2HuAwBn4IqMQ>
+    <xmx:yp4raAOePFg-1YTIFY563BOf9LkNVihmv6wKBCtcdcet-h4OOz1Njw>
+    <xmx:yp4raJmVcM17-rcnc0zD7UKGiVtx_2N5jYr9n28pdyboAYdRsTTGmA>
+    <xmx:yp4raHUyl81EyRnfAlv_2wmVYJpUP32U6MAvLFHeDsHT5ly41sz1PCUB>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 3DCC91060060; Mon, 19 May 2025 17:12:42 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] scsi: ufs: mcq: delete ufshcd_release_scsi_cmd in
- ufshcd_mcq_abort
-To: "ping.gao" <ping.gao@samsung.com>, alim.akhtar@samsung.com,
- avri.altman@wdc.com, James.Bottomley@HansenPartnership.com,
- martin.petersen@oracle.com, peter.wang@mediatek.com, minwoo.im@samsung.com,
- manivannan.sadhasivam@linaro.org, chenyuan0y@gmail.com,
- cw9316.lee@samsung.com, linux-scsi@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <CGME20250519025509epcas5p2bdc884392dafa224289b337c1232daf3@epcas5p2.samsung.com>
- <20250519025559.1263821-1-ping.gao@samsung.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20250519025559.1263821-1-ping.gao@samsung.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+X-ThreadId: T7dcf237e00daab9e
+Date: Mon, 19 May 2025 23:12:10 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Janne Grunau" <j@jannau.net>, "Jiri Kosina" <jikos@kernel.org>,
+ "Benjamin Tissoires" <bentiss@kernel.org>,
+ "Rafael J . Wysocki" <rafael@kernel.org>, "Len Brown" <lenb@kernel.org>,
+ "Armin Wolf" <W_Armin@gmx.de>
+Cc: linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
+ linux-acpi@vger.kernel.org
+Message-Id: <68e63303-eef3-41f1-9c1d-ac68990b3243@app.fastmail.com>
+In-Reply-To: 
+ <20250519-hid_lenovo_acpi_dependency-v2-1-124760ddd6f7@jannau.net>
+References: 
+ <20250519-hid_lenovo_acpi_dependency-v2-1-124760ddd6f7@jannau.net>
+Subject: Re: [PATCH v2] HID: lenovo: Remove CONFIG_ACPI dependency
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
-On 5/18/25 7:55 PM, ping.gao wrote:
-> after ufs UFS_ABORT_TASK process successfully , host will generate
-> mcq irq for abort tag with response OCS_ABORTED
-> ufshcd_compl_one_cqe ->
->      ufshcd_release_scsi_cmd
+On Mon, May 19, 2025, at 22:49, Janne Grunau via B4 Relay wrote:
+> From: Janne Grunau <j@jannau.net>
+>
+> The hid-lenovo driver supports external Bluetooth and USB devices which
+> can be used with non-ACPI systems/kernels. Call platform_profile_cycle()
+> only if CONFIG_ACPI_PLATFORM_PROFILE is enabled and select
+> CONFIG_ACPI_PLATFORM_PROFILE only if ACPI is enabled.
+> This should not affect functionality since only the detachable keyboard
+> of a x86 tablet with a custom connector has an hotkey for cycling
+> through power profiles.
+>
+> Fixes: 52572cde8b4a4 ("HID: lenovo: select CONFIG_ACPI_PLATFORM_PROFILE")
+> Signed-off-by: Janne Grunau <j@jannau.net>
 
-Reviewed-by: Bart Van Assche <bvanassche@acm.org>
+Acked-by: Arnd Bergmann <arnd@arndb.de>
 
