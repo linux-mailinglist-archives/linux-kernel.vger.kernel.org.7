@@ -1,125 +1,123 @@
-Return-Path: <linux-kernel+bounces-653112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-653108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9925CABB501
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 08:19:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 069CBABB4F0
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 08:17:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 072473BA07F
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 06:18:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 83D071893A8D
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 06:17:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0781924469C;
-	Mon, 19 May 2025 06:18:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TBwpWzth"
-Received: from mail-pl1-f193.google.com (mail-pl1-f193.google.com [209.85.214.193])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8066A244667;
+	Mon, 19 May 2025 06:16:59 +0000 (UTC)
+Received: from mx1.emlix.com (mx1.emlix.com [178.63.209.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19EA0243364;
-	Mon, 19 May 2025 06:18:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8E6F20C030
+	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 06:16:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.209.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747635498; cv=none; b=jYO74EDaqeg0ydUGowm2as31we9sDVlE6XjZHhh63LHyf8LQG28GBHJFpaPLSL/GSswViqBBLhVaC5DadUquXokn+4g/6nCBMXgyBDrsI7tIM/j1Nu6W8fw6kXxZ2INLqUKbr+d9x3F48kjNVr3OGJuOyGBlxKyHzug1b+6jmcg=
+	t=1747635419; cv=none; b=ncCF16VJ9A+2CXmfwxXoAGqFDvt0LKr9ovJZtYVMcavqKdSX22wko59kvr0WZUG9GK/rGCKGKgkD+C0qOg/+Rn+CnBLe9WQRIa/KnJIt69/Yg1ZWlgaVuc0F0rjsFOvgBtXqgHBDKjGumpU8GqDb4uA4KaLcor7V/zApMUh92Ks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747635498; c=relaxed/simple;
-	bh=A3YL5vvapbDLoEzJ7mjbIniovbQDwObEL9/l+CCpXsk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=CRGxprR7cNPGhAfub39SlrWjn/NJEKxhtVAYf96s3aEDeti18+iLyuxCB6ComZPjKrWhWcQSpUPSwwuztDH8LjUW8Z5/Ij7zB2TM2kxGOswzH2TeSzb0+lCzpP02wdQ4R2p04j++yFEBXfHekywSyXgUwBjdZHHmfwpHUESpfi8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TBwpWzth; arc=none smtp.client-ip=209.85.214.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f193.google.com with SMTP id d9443c01a7336-231f325366eso20993025ad.1;
-        Sun, 18 May 2025 23:18:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747635495; x=1748240295; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wftKwkW2rzIJq0NllUEEj0qL/M/uMq8buplfSNT2F2M=;
-        b=TBwpWzthy9zlDblPQ/Lp2FAWfYSV/wyDdFYBALRDZ9lkYGANImzC0lqd/4Wzlb1KiB
-         /77aZCfYlvxyurg15NKO7AY9j6J7eUS/nyXv+z9tJO+cPAf+YgQz9d+x8E14aCCMFQ00
-         lCiStvO3K0GRAWJ1CRbMNRMsYxytyiSzERQJTUKOqYA3DyTGnXt5Iagv+EhrkTAg5gAy
-         bd67ysaB28FRSOTA/wJk/cZEnAgNFJLdOWHxlDQC+kTN14Agms95iuILEEWm+AgUgijY
-         Pn1M6tA+FpxXQElO3yeoikxAf5gS/M6DYnuYoNdubU/CR+jUJfoseYUQNs+PsVtczAiZ
-         mtPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747635495; x=1748240295;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wftKwkW2rzIJq0NllUEEj0qL/M/uMq8buplfSNT2F2M=;
-        b=lVTFg5Wcv/C1Ms+QJsYm9qXsuNN03U8Ah5+9Sxli63dyCBK1SOIFZM5il09cKq4Usg
-         bSzcN8SD8zzxozTyUP5yWLm8PWH9aCYbAaJI91y7lz42NqaaJJS22cpwVaZ/D5ckzvIi
-         pHRc2Ud3ZDjUmzAaERC85bH47kQuEfhhlkCz0z2re6cZsYaxjq9aeUqrVqCz40zJqSzy
-         uZ8mPt+u+0nBja5BjwbDNI07FxlZIiqWmTVT2GUJXSjsLCV2TjgkRVkQpBvQEhW9SLp8
-         qNfF5yavmUqbngWk5x/Fs/u9NvF38t/ruKDgNP3Vnv0eRR0MxwS+cv6XGz/4i38OrO/o
-         yRkg==
-X-Forwarded-Encrypted: i=1; AJvYcCXOiTF/NSLqHOWTkTocgQLtK1W73wunHvqcBjw1pnl4IERcstdHMmFuFJb31dPsNhbN5IzX7htpZRjiOVHT@vger.kernel.org, AJvYcCXbyv21HhrlbPPD5Tzw7UmFUrm3MveAryt8yslWyFhXVGHtSH3at6CdNdyGol62whvXHSVR2YqQOw0aQQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1Vz+SZ0tRxNSF41OMJ41rGD/L7hExqJPGUrVNiJXSX9THLRYq
-	xGT6AP8gh5V100flUWV2A7csF0UU6YD3cmnE426z4K0T0vgICj1XRd6U
-X-Gm-Gg: ASbGncsi0SqOpqLOH88bEG/Oaqb1PF/4094CoQvFLHhbpTlCuDlU6HDA0LfVsfgqnfi
-	Qnv28m/RV7W+jGEIwi+uzJvDrnAvd9c3I29HwT9zcPKsoEY3hDSAjuogP4XMjrOfP3LwyDyAh4u
-	oxYN+C2R6RkiLwavxu9Ph5o3zR2uEwxKi6ex9ylWH5GqLBBoQhlmI4iUBBeJOqHEbTRcWQiFXYk
-	JDKjg76EDv9ZBp0oEqoe7aKj6v0PdcJTWqhuMa8sMvSC3KgmAdZzpOE3urUk5LhBW3sGD6cbx99
-	CBiuhgdfpaSGlPmw5A6ScUYlFTNdHB04/I7wAXT/+iFwctZxliS6k2v49hRMqGgL33Tv8yVhr/W
-	L+qmWmh7Of7u3mmuxulf7C37UKeDvdVEly3L/j3AC5SJDYA==
-X-Google-Smtp-Source: AGHT+IEIXF1Jo0Z35ZLOvs54nEH8iQZnWbTxwiQ/1zfEN7e+ERAuOZqbHO2Vbh2N3A/KqTQ1JQoeyA==
-X-Received: by 2002:a17:903:1b6d:b0:22c:336f:cb54 with SMTP id d9443c01a7336-231d454c879mr169704805ad.29.1747635495308;
-        Sun, 18 May 2025 23:18:15 -0700 (PDT)
-Received: from ubuntu20.wiwynn.corp (39-14-65-183.adsl.fetnet.net. [39.14.65.183])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-231d4eedb3csm52200935ad.259.2025.05.18.23.18.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 18 May 2025 23:18:14 -0700 (PDT)
-From: Yikai Tsai <yikai.tsai.wiwynn@gmail.com>
-To: patrick@stwcx.xyz,
-	=?UTF-8?q?Carsten=20Spie=C3=9F?= <mail@carsten-spiess.de>,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>
-Cc: Yikai Tsai <yikai.tsai.wiwynn@gmail.com>,
-	linux-hwmon@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 1/1] hwmon: (isl28022) Fix current reading calculation
-Date: Mon, 19 May 2025 14:16:36 +0800
-Message-Id: <20250519061637.8796-2-yikai.tsai.wiwynn@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250519061637.8796-1-yikai.tsai.wiwynn@gmail.com>
-References: <20250519061637.8796-1-yikai.tsai.wiwynn@gmail.com>
+	s=arc-20240116; t=1747635419; c=relaxed/simple;
+	bh=f+ghl9HUmV6Tg7G6saf/pELhUkFnmClKpc3fN4KNYDI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=JKHdVG8fymq/UQXKGYqjFackbYk1jHNfKbSd2Mke6xItjhd3afR3ybCeVftrujW41nEgNcxtoUSs2jSTX1HDbrURtOSMw5hNDW9VyXvbyPhzYizQpXD6YVrWX7i2s3bfkdgdOETHeGT1fThbSLwqlFm4Esf1WxWuZ5ZBAXfVWo8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=emlix.com; spf=pass smtp.mailfrom=emlix.com; arc=none smtp.client-ip=178.63.209.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=emlix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=emlix.com
+Received: from mailer.emlix.com (p5098be52.dip0.t-ipconnect.de [80.152.190.82])
+	(using TLSv1.2 with cipher ADH-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mx1.emlix.com (Postfix) with ESMTPS id E143E5F937;
+	Mon, 19 May 2025 08:16:48 +0200 (CEST)
+From: Rolf Eike Beer <eb@emlix.com>
+To: Joerg Roedel <joro@8bytes.org>
+Cc: Will Deacon <will@kernel.org>, iommu@lists.linux.dev,
+ linux-kernel@vger.kernel.org, Robin Murphy <robin.murphy@arm.com>,
+ Jason Gunthorpe <jgg@ziepe.ca>
+Subject:
+ Re: [PATCH 6/6] iommu: make inclusion of iommufd directory conditional
+Date: Mon, 19 May 2025 08:16:39 +0200
+Message-ID: <2782498.mvXUDI8C0e@devpool92.emlix.com>
+Organization: emlix GmbH
+In-Reply-To: <aCc0-ClDbiUpNUgh@8bytes.org>
+References:
+ <1926170.CQOukoFCf9@devpool92.emlix.com>
+ <5568089.Sb9uPGUboI@devpool92.emlix.com> <aCc0-ClDbiUpNUgh@8bytes.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="nextPart12668088.O9o76ZdvQC";
+ micalg="pgp-sha256"; protocol="application/pgp-signature"
 
-According to the ISL28022 datasheet, bit15 of the current register is
-representing -32768. Fix the calculation to properly handle this bit,
-ensuring correct measurements for negative values.
+--nextPart12668088.O9o76ZdvQC
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"; protected-headers="v1"
+From: Rolf Eike Beer <eb@emlix.com>
+To: Joerg Roedel <joro@8bytes.org>
+Date: Mon, 19 May 2025 08:16:39 +0200
+Message-ID: <2782498.mvXUDI8C0e@devpool92.emlix.com>
+Organization: emlix GmbH
+In-Reply-To: <aCc0-ClDbiUpNUgh@8bytes.org>
+MIME-Version: 1.0
 
-Signed-off-by: Yikai Tsai <yikai.tsai.wiwynn@gmail.com>
----
- drivers/hwmon/isl28022.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+On Freitag, 16. Mai 2025 14:52:08 Mitteleurop=C3=A4ische Sommerzeit Joerg R=
+oedel=20
+wrote:
+> On Mon, May 12, 2025 at 03:15:52PM +0200, Rolf Eike Beer wrote:
+> > Nothing in there is active if CONFIG_IOMMUFD is not enabled, so the who=
+le
+> > directory can depend on that switch as well.
+> >=20
+> > Fixes: 2ff4bed7fee7 ("iommufd: File descriptor, context, kconfig and
+> > makefiles") Signed-off-by: Rolf Eike Beer <eb@emlix.com>
+> > Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
+>=20
+> Had to remove this patch from the branch as it caused compile breakage
+> with allmodconfig builds.
 
-diff --git a/drivers/hwmon/isl28022.c b/drivers/hwmon/isl28022.c
-index 1fb9864635db..6d8cdf80c9ea 100644
---- a/drivers/hwmon/isl28022.c
-+++ b/drivers/hwmon/isl28022.c
-@@ -161,8 +161,9 @@ static int isl28022_read_current(struct device *dev, u32 attr, long *val)
- 				  ISL28022_REG_CURRENT, &regval);
- 		if (err < 0)
- 			return err;
--		*val = ((long)regval * 1250L * (long)data->gain) /
--			(long)data->shunt;
-+		sign_bit = (regval >> 15) & 0x01;
-+		*val = (((long)(((u16)regval) & 0x7FFF) - (sign_bit * 32768)) *
-+			1250L * (long)data->gain) / (long)data->shunt;
- 		break;
- 	default:
- 		return -EOPNOTSUPP;
--- 
-2.25.1
+I did not catch that this is a tristate, not a bool. The same happens for=20
+patch 5, which is what the 0-day bot has reported.
+
+Regards,
+
+Eike
+=2D-=20
+Rolf Eike Beer
+
+emlix GmbH
+Headquarters: Berliner Str. 12, 37073 G=C3=B6ttingen, Germany
+Phone +49 (0)551 30664-0, e-mail info@emlix.com
+District Court of G=C3=B6ttingen, Registry Number HR B 3160
+Managing Directors: Heike Jordan, Dr. Uwe Kracke
+VAT ID No. DE 205 198 055
+Office Berlin: Panoramastr. 1, 10178 Berlin, Germany
+Office Bonn: Bachstr. 6, 53115 Bonn, Germany
+http://www.emlix.com
+
+emlix - your embedded Linux partner
+--nextPart12668088.O9o76ZdvQC
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iLMEAAEIAB0WIQQ/Uctzh31xzAxFCLur5FH7Xu2t/AUCaCrMxwAKCRCr5FH7Xu2t
+/K/KBAC993BYydA8im/ZNUxEqiptuFBivFH9cqeX9o+RMEpcIVGElgOM0rwZmL7K
+djVmNqPN3/Q28Zon5V6OwjO9fGjtp5rdfhMceOeOS8v5pbvXw0QnoW/idBX8qhiB
+lYMld3fWr8YVspYhggu8iLrEzuiFSnTqryVzX4/q5wuk0JyjTA==
+=K5sl
+-----END PGP SIGNATURE-----
+
+--nextPart12668088.O9o76ZdvQC--
+
+
 
 
