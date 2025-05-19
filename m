@@ -1,242 +1,176 @@
-Return-Path: <linux-kernel+bounces-654714-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-654716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32693ABCB7F
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 01:32:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F00A4ABCB85
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 01:33:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2A751889C0F
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 23:33:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ECF341885D39
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 23:33:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F48F227E95;
-	Mon, 19 May 2025 23:28:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75471220F2F;
+	Mon, 19 May 2025 23:32:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="w9wOR6Ra"
-Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="QrnPNhRF"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7FC122759B
-	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 23:28:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66B982206AA
+	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 23:32:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747697326; cv=none; b=ny6CgvOTuaaCyPymzNbXhJDgzNyjYrZ28QzTspBaDj13hedL2zbtv3QL/EkvztWjA6eSlByQQaoU6trBVloZRwTa0m8Zf3ebU1C9rsDB9zFBBgH++7Cz7OlOpbz8B+fBa214DXoPyCmV7vFlZDCyZB7LjyfQLqMB3HukAXsYQ+g=
+	t=1747697527; cv=none; b=a1gw7GDv0zuBHCv7TTEZ2MDBjvC4q3eHDeaSwF0Ie3Qs0nVC7WVLY+pBpdv0U1jOp28kqRmcwxCaHXEk4bka3R9RDpK4E6Z2VESpEzHwpMCCTHLK4vKQhQweZbt8bQGYJbyEB+qD2qGiJMnMrII+kf5Z/lms7AegLAO6hZa0s0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747697326; c=relaxed/simple;
-	bh=O04m3lkWw9OEhzrv+D5kOETrkaKagJf3ljfVlUQ/u7A=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=bMrCyen0EH8B8nWM7hHhaXFA+p3oi1cs8Zxb2M6JOFM0Lc+aqnq0P6Q3eBUaaJr/r2KWHlpBKqzx/SLyv/lRuC1kd6r5HXAlOQGmdsnK1hPVh0Yt0GE5aNkDFFCfPzAmYMDoIXXcrpKo9fNYuwyUAa+nMrMM+Fnex8S/vWCVbCw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=w9wOR6Ra; arc=none smtp.client-ip=91.218.175.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <7bb37bea-917c-4082-9eaa-063c4d97833b@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1747697320;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YN4/HEa9sDxP2Z7RL5+mxoGiZVvfCkU7xA6VooLndAc=;
-	b=w9wOR6RaiLyWj5YbX8yxLIvDgvwTh7Jq0WreayRD2rt1JAzgyn53ikzJwG70M1wq8Q5U4a
-	P/2WI6G41QCFTI0nPDQeR0I0YDRMCc85FCJIGg11Njaz8Hcg7ygbTCSJEIZuezMWiSe2p8
-	+IenDzDtW6ALs7mEOpXIGiRzzE0xdX0=
-Date: Mon, 19 May 2025 19:28:34 -0400
+	s=arc-20240116; t=1747697527; c=relaxed/simple;
+	bh=MuZecVDV8WFQM7jhq4WavtkULWOpjeUqMx1UI6H0F2k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jcNT1FW7b/V/nqekSF7RtaIHETMalYXc2loTl0yy4BKOFdmNCqF87nG97F2mcsmQCDvk3v7vFLeHpN9YPlpZKKm9VnI9794JQCLSVMwMgevvIaHCZM8ZtJMVSolpHu7I07zk4wyqwoqlx94X3IS7qVB1sopanPiAPkoOEYQBuG4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=QrnPNhRF; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-742c3d06de3so2470018b3a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 16:32:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1747697525; x=1748302325; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=QOyUGS8X8xHimjiVikyyoBlw5XuU3QFPDBQZu8PO5T8=;
+        b=QrnPNhRF2voJgX9mgJ3TxWdTCIXOY8ju90E8BZzIhPDNYpBtUY3ngn1rmYvM3GSGOC
+         rqA4oxWY3Bm8QEoWSROOtPPPMF0mRVcHYw8qM4aQPQ7foUKK/mfUmzm7OEJ8+wJW4hqA
+         HkWGsVn4ju/R7yBnk/jpjfZvT6Wv6tWWMjFrim+cYwKOcZl+w09/Pn9G46+o/XV9XaHt
+         LD9gsnz6kgAd8eY0f1MDo0lje/Itj5HZpmmPCZmiICitILHEwSLlf+mZd38s2KJxA4X4
+         SLUglUspZuC30STtgT0AK562Awlq+axbaZrZxF7jYtaO31xO8FSzDTJb/5n1oDH2AMNr
+         lCnA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747697525; x=1748302325;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=QOyUGS8X8xHimjiVikyyoBlw5XuU3QFPDBQZu8PO5T8=;
+        b=vHKauMpzlpsIeNm37nKMJbMldKw3ZvMZc/04isHZMqfJw0afWnRoi9DXzdDp2GhTbc
+         w78ozsiLKbfbcvCW1cLwNR5zwHFHnkYLKngQ12cFJ5/Y/9DbR9kw1gvJPYp+hiXxQ8lp
+         tzs+sIzlDJn13Dc/HrCLL7Baios91LKs4D2qgtqI8KIsyKrJdbjvsWIO7yiWrFoPeSAJ
+         HHDc/8d+SZoy7VgKkmubC7+zsNpu90w0fK+nafTa3beLmGWdhZeetrhzIjKgoV459BkB
+         iBYaHjbC5PRxAsJYZ9GQ68MxkKqNlF/hlDVQxuIBEt3SMBN4zod2fVEQCWQJTCQzZclm
+         qtOA==
+X-Forwarded-Encrypted: i=1; AJvYcCVoHCVHqcobUi71jrO2nS738rhudnQ+Utgh7ZRcFMy4UqIqs/r8lsKdAbb7SrCgf8c+6Ju1So1B8SwyipY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxcVzm2j0yE1pHL4IoAdtzzWWJk18gL+CyVXwV4SQAX0C0R/RXo
+	ZEgTtErgH/VSKdPoai9xbEfTo2VEdILXMFVvtp2ePgvecHj6FBB5EJSOpBSeoQ+rs/U=
+X-Gm-Gg: ASbGncskw2jlxNLqFlFI8zzzH3nokKf43qBD8p4qRyj2a9qO29HpaPWnARidn1FG2xy
+	29oWPqUgQHJ7YeW2C9rA+YQqVh7yuUNeily1jh/6sQNaVxayXpJSSNWatPHNie4jWChJEdCxcLP
+	HXWhwnv1LSzwG5B+ieZfPptkwSRuE0NUVA7/QhGZ6ZKH0MtxOr0ZeYBBaJjhg75WT8HfRWarVQO
+	ieiVsboFPEhDdnjWzoNveUgh/gYXvAQO+xtQjTKflr6+OvN2HE9rVQkwW8UxU7a6i54Y2cekG+B
+	Ss1Gfcp7+UTEg8/z9srUUn8bEKyZfNSb+O/QeicgBn2nn9o=
+X-Google-Smtp-Source: AGHT+IF/UpnfYd87Wg38QzExFJepdbUZBdK8n48P10QCBwcJgibQDw+FN+/Y6470diBydPdUYMEijg==
+X-Received: by 2002:a05:6a20:3d1c:b0:1ee:d418:f764 with SMTP id adf61e73a8af0-2170ce33ad3mr22022427637.38.1747697524568;
+        Mon, 19 May 2025 16:32:04 -0700 (PDT)
+Received: from ghost ([2601:647:6700:64d0:5f9c:a71e:a2da:158d])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b26eb0a9893sm6875885a12.72.2025.05.19.16.32.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 19 May 2025 16:32:03 -0700 (PDT)
+Date: Mon, 19 May 2025 16:32:01 -0700
+From: Charlie Jenkins <charlie@rivosinc.com>
+To: =?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <cleger@rivosinc.com>
+Cc: Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Anup Patel <anup@brainfault.org>,
+	Atish Patra <atishp@atishpatra.org>, Shuah Khan <shuah@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>, linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	kvm@vger.kernel.org, kvm-riscv@lists.infradead.org,
+	linux-kselftest@vger.kernel.org,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Andrew Jones <ajones@ventanamicro.com>,
+	Deepak Gupta <debug@rivosinc.com>
+Subject: Re: [PATCH v7 09/14] riscv: misaligned: move emulated access
+ uniformity check in a function
+Message-ID: <aCu_ce-kVQsyjrh5@ghost>
+References: <20250515082217.433227-1-cleger@rivosinc.com>
+ <20250515082217.433227-10-cleger@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [net-next PATCH v4 03/11] net: phylink: introduce internal
- phylink PCS handling
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Sean Anderson <sean.anderson@linux.dev>
-To: Daniel Golle <daniel@makrotopia.org>
-Cc: Christian Marangi <ansuelsmth@gmail.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Lorenzo Bianconi <lorenzo@kernel.org>,
- Heiner Kallweit <hkallweit1@gmail.com>, Russell King
- <linux@armlinux.org.uk>, Philipp Zabel <p.zabel@pengutronix.de>,
- Nathan Chancellor <nathan@kernel.org>,
- Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
- Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
- netdev@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, llvm@lists.linux.dev
-References: <20250511201250.3789083-1-ansuelsmth@gmail.com>
- <20250511201250.3789083-4-ansuelsmth@gmail.com>
- <5d004048-ef8f-42ad-8f17-d1e4d495f57f@linux.dev>
- <aCOXfw-krDZo9phk@makrotopia.org>
- <7b50d202-e7f6-41cb-b868-6e6b33d4a2b9@linux.dev>
- <aCQHZnAstBXbYzgy@makrotopia.org>
- <cdfbbdca-001b-4ed5-92ff-40fd3a8e3341@linux.dev>
-Content-Language: en-US
-In-Reply-To: <cdfbbdca-001b-4ed5-92ff-40fd3a8e3341@linux.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250515082217.433227-10-cleger@rivosinc.com>
 
-On 5/19/25 14:10, Sean Anderson wrote:
-> On 5/13/25 23:00, Daniel Golle wrote:
->> On Tue, May 13, 2025 at 03:23:32PM -0400, Sean Anderson wrote:
->>> On 5/13/25 15:03, Daniel Golle wrote:
->>> > just instead of having many
->>> > more or less identical implementations of .mac_select_pcs, this
->>> > functionality is moved into phylink. As a nice side-effect that also
->>> > makes managing the life-cycle of the PCS more easy, so we won't need all
->>> > the wrappers for all the PCS OPs.
->>> 
->>> I think the wrapper approach is very obviously correct. This way has me
->>> worried about exciting new concurrency bugs.
->> 
->> You may not be surprised to read that this was also our starting point 2
->> months ago, I had implemented support for standalone PCS very similar to
->> the approach you have published now, using refcnt'ed instances and
->> locked wrapper functions for all OPs. My approach, like yours, was to
->> create a new subsystem for standalone PCS drivers which is orthogonal to
->> phylink and only requires very few very small changes to phylink itself.
->> It was a draft and not as complete and well-documented like your series
->> now, of course.
->> 
->> I've then shared that implementation with Christian and some other
->> experienced OpenWrt developers and we concluded that having phylink handle
->> the PCS lifecycle and PCS selection would be the better and more elegant
->> approach for multiple reasons:
->>  - The lifetime management of the wrapper instances becomes tricky:
->>    We would either have to live with them being allocated by the
->>    MAC-driver (imagine test-case doing unbind and then bind in a loop
->>    for a while -- we would end up oom). Or we need some kind of garbage
->>    collecting mechanism which frees the wrapper once refcnt is zero --
->>    and as .select_pcs would 'get' the PCS (ie. bump refcnt) we'd need a
->>    'put' equivalent (eg. a .pcs_destroy() OP) in phylink.
->> 
->>    Russell repeatedly pointed me to the possibility of a PCS
->>    "disappearing" (and potentially "reappearing" some time later), and
->>    in this case it is unclear who would then ever call pcs_put(), or
->>    even notify the Ethernet driver or phylink about the PCS now being
->>    available (again). Using device_link_add(), like it is done in
->>    pcs-rzn1-miic.c, prevents the worst (ie. use-after-free), but also
->>    impacts all other netdevs exposed by the same Ethernet driver
->>    instance, and has a few other rather ugly implications.
+On Thu, May 15, 2025 at 10:22:10AM +0200, Clément Léger wrote:
+> Split the code that check for the uniformity of misaligned accesses
+> performance on all cpus from check_unaligned_access_emulated_all_cpus()
+> to its own function which will be used for delegation check. No
+> functional changes intended.
 > 
-> SRCU neatly solves the lifetime management issues. The wrapper lives as
-> long as anyone (provider or user) holds a reference. A PCS can disappear
-> at any point and everything still works (although the link goes down).
-> Device links are only an optimization; they cannot be relied on for
-> correctness.
+> Signed-off-by: Clément Léger <cleger@rivosinc.com>
+> Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
+> ---
+>  arch/riscv/kernel/traps_misaligned.c | 20 ++++++++++++++------
+>  1 file changed, 14 insertions(+), 6 deletions(-)
 > 
->>  - phylink currently expects .mac_select_pcs to never fail. But we may
->>    need a mechanism similar to probe deferral in case the PCS is not
->>    yet available.
-> 
-> Which is why you grab the PCS in probe. If you want to be more dynamic,
-> you can do it in netdev open like is done for PHYs.
-> 
->>    Your series partially solves this in patch 11/11 "of: property: Add
->>    device link support for PCS", but also that still won't make the link
->>    come back in case of a PCS showing up late to the party, eg. due to
->>    constraints such as phy drivers (drivers/phy, not drivers/net/phy)
->>    waiting for nvmem providers, or PCS instances "going away" and
->>    "coming back" later.
-> 
-> This all works correctly due to device links. The only case that doesn't
-> work automatically is something like
-> 
-> MAC built-in
->   MDIO built-in
->     PCS module
-> 
-> where the PCS module gets loaded late. In that case you have to manually
-> re-probe the MAC. I think the best way to address this would be to grab
-> the PCS in netdev open so that the MAC can probe without the PCS.
-> 
->>  - removal of a PCS instance (eg. via sysfs unbind) would still
->>    require changes to phylink. there is no phylink function to
->>    impair the link in this case, and using dev_close() is a bit ugly,
->>    and also won't bring the link back up once the PCS (re-)appears.
-> 
-> This works just fine. There are two cases:
-> 
-> - If the PCS has an IRQ, we notify phylink and then it polls the PCS
->   (see below).
-> - If the PCS is polled, phylink will call pcs_get_state and see that the
->   link is down.
-> 
-> Either way, the link goes down. But bringing the link back up is pretty
-> unusual anyway. Unlike PHYs (which theoretically can be on removable
-> busses) PCSs are generally permanently attached to their MACs. The only
-> removable scenario I can think of is if the PCS is on an FPGA and the
-> MAC is not.
-> 
-> So if the PCS goes away, the MAC is likely to follow shortly after
-> (since the whole thing is on a removable bus). Or someone has manually
-> removed the PCS, in which case I think it's reasonable to have them
-> manually remove the MAC as well. If you really want to support this,
-> then just grab the PCS in netdev open.
+> diff --git a/arch/riscv/kernel/traps_misaligned.c b/arch/riscv/kernel/traps_misaligned.c
+> index e551ba17f557..287ec37021c8 100644
+> --- a/arch/riscv/kernel/traps_misaligned.c
+> +++ b/arch/riscv/kernel/traps_misaligned.c
+> @@ -647,6 +647,18 @@ bool __init check_vector_unaligned_access_emulated_all_cpus(void)
+>  }
+>  #endif
+>  
+> +static bool all_cpus_unaligned_scalar_access_emulated(void)
+> +{
+> +	int cpu;
+> +
+> +	for_each_online_cpu(cpu)
+> +		if (per_cpu(misaligned_access_speed, cpu) !=
 
-So I had a closer look at this and unfortunately it isn't as easy as
-just grabbing the PCS in ndo_open. The problem is that we need to
-know the supported interfaces before phylink_create. The interfaces are
-validated and are visible to userspace as soon as the netdev is
-registered. And we can't just defer phylink_create to ndo_open because a
-lot of the ethtool ops are implemented with phylink. So this would
-probably need something like phylink_update_supported_interfaces().
+misaligned_access_speed is only defined when
+CONFIG_RISCV_SCALAR_MISALIGNED. This function should return false when
+!CONFIG_RISCV_SCALAR_MISALIGNED and only use this logic otherwise.
 
-But TBH I don't think this use case is very relevant. As I said above,
-it only affects FPGA reconfiguration and people manually unbinding
-drivers. Either way I think they are savvy enough to reprobe the netdev.
+- Charlie
 
---Sean
-
->>  - phylink anyway is the only user of PCS drivers, and will very likely
->>    always be. So why create another subsystem?
+> +		    RISCV_HWPROBE_MISALIGNED_SCALAR_EMULATED)
+> +			return false;
+> +
+> +	return true;
+> +}
+> +
+>  #ifdef CONFIG_RISCV_SCALAR_MISALIGNED
+>  
+>  static bool unaligned_ctl __read_mostly;
+> @@ -685,8 +697,6 @@ static int cpu_online_check_unaligned_access_emulated(unsigned int cpu)
+>  
+>  bool __init check_unaligned_access_emulated_all_cpus(void)
+>  {
+> -	int cpu;
+> -
+>  	/*
+>  	 * We can only support PR_UNALIGN controls if all CPUs have misaligned
+>  	 * accesses emulated since tasks requesting such control can run on any
+> @@ -694,10 +704,8 @@ bool __init check_unaligned_access_emulated_all_cpus(void)
+>  	 */
+>  	on_each_cpu(check_unaligned_access_emulated, NULL, 1);
+>  
+> -	for_each_online_cpu(cpu)
+> -		if (per_cpu(misaligned_access_speed, cpu)
+> -		    != RISCV_HWPROBE_MISALIGNED_SCALAR_EMULATED)
+> -			return false;
+> +	if (!all_cpus_unaligned_scalar_access_emulated())
+> +		return false;
+>  
+>  	unaligned_ctl = true;
+>  	return true;
+> -- 
+> 2.49.0
 > 
-> To avoid adding overhead for the majority of PCSs where the PCS is built
-> into the MAC and literally can't be removed. We only pay the price for
-> dynamicism on the drivers where it matters.
 > 
->> All that being said I also see potential problems with Christians
->> current implementation as it doesn't prevent the Ethernet driver to
->> still store a pointer to struct phylink_pcs (returned eg. from
->> fwnode_pcs_get()).
->> 
->> Hence I would like to see an even more tight integration with phylink,
->> in the sense that pointers to 'struct phylink_pcs' should never be
->> exposed to the MAC driver, as only in that way we can be sure that
->> phylink, and only phylink, is responsible for reacting to a PCS "going
->> away".
-> 
-> OK, but then how does the MAC select the PCS? If there are multiple PCSs
-> then ultimately someone has to configure a mux somewhere.
-> 
->> Ie. instead of fwnode_phylink_pcs_parse() handing pointers to struct
->> phylink_pcs to the Ethernet driver, so it can use it to populate struct
->> phylink_config available_pcs member, this should be the responsibility
->> of phylink alltogether, directly populating the list of available PCS in
->> phylink's private structure.
->> 
->> Similarly, there should not be fwnode_pcs_get() but rather phylink
->> providing a function fwnode_phylink_pcs_register(phylink, fwnode) which
->> directly adds the PCS referenced to the internal list of available PCS.
-> 
-> This is difficult to work with for existing drivers. Many of them have
-> non-standard ways of looking up their PCS that they need to support for
-> backwards-compatibility. And some of them create the PCS themselves
-> (such as if they are PCI devices with internal MDIO busses). It's much
-> easier for the MAC to create or look up the PCS itself and then hand it
-> off to phylink.
-> 
->> I hope we can pick the best of all the suggested implementations, and
->> together come up with something even better.
-> 
-> Sure. And I think we were starting from a clean slate then this would be
-> the obvious way to do things. But we must support existing drivers and
-> provide an upgrade path for them. This is why I favor an incremental
-> approach.
-> 
-> --Sean
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
