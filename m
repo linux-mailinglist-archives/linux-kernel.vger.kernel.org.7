@@ -1,121 +1,198 @@
-Return-Path: <linux-kernel+bounces-654574-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-654576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BA98ABCA12
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 23:41:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D137DABCA15
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 23:42:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 670493A57CA
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 21:39:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1ABB9165C66
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 21:40:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E80721D3D9;
-	Mon, 19 May 2025 21:29:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E4A12206B8;
+	Mon, 19 May 2025 21:36:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iKgQsChE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dD/alx/9"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7407121B90B;
-	Mon, 19 May 2025 21:29:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC2F62206B7;
+	Mon, 19 May 2025 21:36:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747690197; cv=none; b=OaYNt83jlfZzKuHvmL9L4rdSaT1OTf0PTIz/BkWcN7/TfM1iNrPKx3SK/YrsGKItOosavbktGnmquXwDN0M43GD81HSOREVhL0TGETtEjyUMtMujyU7fsUVs9Q8BvrXjIWcBZSrjnthDIM8hxCrEmOxuia/qRj/jnkcJprNyLjw=
+	t=1747690611; cv=none; b=F0xQ/wbRT/gQ5O+RGlifciBqylVXUQEcFT/dObcPIqTHJlvr0Qch8px8UdXGlrGMWsuTVaN+FwK3XCisp7AVhyFssrYgDCHJ/5nXkj3ZCrQzJwvzvNhTE8tqrO7PuSzyhNLog+iQAqiNF9iMdwm5+KlcvUKBU/hV+qwurBWw7gc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747690197; c=relaxed/simple;
-	bh=6l1+foseQkfqqrpdmpS8Wj/Q1b5T2b7yzzZECfXaLos=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WsxIOmYac29fFxpmGiVykJoTyNZduoTogucTYG0AX5l7HQ2ty0wgjcmHgH3aPqwd8U++dw8jPkoCgSv4cUn4Yx5UDTs7Sh5Wp0Mn3IrQ5jBxCshdueuGMqs/9i624sL+IMLzXXRgkQGHxfKY+2LUzBpZ03eLYMF42M6wdUIeqZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iKgQsChE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50D5AC4CEE9;
-	Mon, 19 May 2025 21:29:55 +0000 (UTC)
+	s=arc-20240116; t=1747690611; c=relaxed/simple;
+	bh=lBvl18LaQT+t/CXp3Ntta7x6/KSCyUwxhyyopGai6uQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Xm3UVLrpURyZFveuaP2R+hermxjizEl5kILzLQGMPgnaTgAay0B+VP3d3gYQtaBX9NZNkzms0FdPq8EVTaMrYnWnt1gVeBJMnvUX0I+XaHzKW/ykChmj3aJIfhbecOfK4dEtwDGVklrYaZx6k0aMNpUFIQhw0qa7YBCeazU4ihU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dD/alx/9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17725C4CEE9;
+	Mon, 19 May 2025 21:36:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747690195;
-	bh=6l1+foseQkfqqrpdmpS8Wj/Q1b5T2b7yzzZECfXaLos=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iKgQsChEBoqABS7s9IE8MKm3xz0wGq2Rp7cENpiRrpiqX/hTnDO2qDYOGKMjm7qJX
-	 ihVlLkeJ6Ifkb8hcAb2JyuBMa+E3ffg2wdc/ATioHLS6IZRXrO5A3kaKNsZnBI/WZ+
-	 IKhILPwEox0flqJFSpGFy1GkeqLgLmOc2ZbItUDm3ZbGjE88gMUVHL+X780Ini+7Hx
-	 AIZebhMD+65Bg/ROld30IbQAJDrMqQz3VmuVJtFlEmwMD135AjhC8QEJvcFcXOZF2R
-	 WlrzwjO7slSxFSnXBmFCZ8zGf1nbf9VcDzwrm728QSL19JtkfLhIcpuORpHCT+ZKtf
-	 EdLLxdsGzScAQ==
-Date: Mon, 19 May 2025 18:29:52 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Leo Yan <leo.yan@arm.com>
-Cc: Namhyung Kim <namhyung@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Jakub Brnak <jbrnak@redhat.com>, linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] perf test probe_vfs_getname: Add regex for searching
- probe line
-Message-ID: <aCui0LRXwy3Vx9Io@x1>
-References: <20250519082755.1669187-1-leo.yan@arm.com>
+	s=k20201202; t=1747690610;
+	bh=lBvl18LaQT+t/CXp3Ntta7x6/KSCyUwxhyyopGai6uQ=;
+	h=From:To:Cc:Subject:Date:From;
+	b=dD/alx/9EyoI+LMRQbvbxI4Sy1XdxACArzosYw1zQvMczIvgYvmog5PH2i0Jcczh0
+	 UoRzP7Q+sEAMiG5VPG6IrFd1ver77ke/Rae2FQrAH2VtYZlrn2LL4phpvOCbquhNvD
+	 VcTDYu+JHgKjOrjHY3Bc4goGN3Na6xqarBfneBwMsOcnLHFQNraqmIDeJ6DF1HAObQ
+	 BWYEhOyr7TeUwPRdm8JVEaO4vskMbW20ivYTqNFeGbjlN3X+a9TUuVFvYdkAgrhoQ3
+	 SopSTEV0eIL8CrzU3vqFCtpZVoUhkz7TN2eyGGfUKJzTzUeC8bxE+CvCzYCv2G1ymD
+	 jzqSkM/vVWRtw==
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: linux-pci@vger.kernel.org
+Cc: Jon Pan-Doh <pandoh@google.com>,
+	Karolina Stolarek <karolina.stolarek@oracle.com>,
+	Martin Petersen <martin.petersen@oracle.com>,
+	Ben Fuller <ben.fuller@oracle.com>,
+	Drew Walton <drewwalton@microsoft.com>,
+	Anil Agrawal <anilagrawal@meta.com>,
+	Tony Luck <tony.luck@intel.com>,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@linux.intel.com>,
+	Lukas Wunner <lukas@wunner.de>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Sargun Dhillon <sargun@meta.com>,
+	"Paul E . McKenney" <paulmck@kernel.org>,
+	Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
+	Oliver O'Halloran <oohall@gmail.com>,
+	Kai-Heng Feng <kaihengf@nvidia.com>,
+	Keith Busch <kbusch@kernel.org>,
+	Robert Richter <rrichter@amd.com>,
+	Terry Bowman <terry.bowman@amd.com>,
+	Shiju Jose <shiju.jose@huawei.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	linux-kernel@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	Bjorn Helgaas <bhelgaas@google.com>
+Subject: [PATCH v6 00/16] Rate limit AER logs
+Date: Mon, 19 May 2025 16:35:42 -0500
+Message-ID: <20250519213603.1257897-1-helgaas@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250519082755.1669187-1-leo.yan@arm.com>
+Content-Transfer-Encoding: 8bit
 
-On Mon, May 19, 2025 at 09:27:55AM +0100, Leo Yan wrote:
-> Since commit 611851010c74 ("fs: dedup handling of struct filename init
-> and refcounts bumps"), the kernel has been refactored to use a new
-> inline function initname(), moving name initialization into it.
-> 
-> As a result, the perf probe test can no longer find the source line that
-> matches the defined regular expressions. This causes the script to fail
-> when attempting to add probes.
-> 
-> Add a regular expression to search for the call site of initname(). This
-> provides a valid source line number for adding the probe. Keeps the
-> older regular expressions for passing test on older kernels.
+From: Bjorn Helgaas <bhelgaas@google.com>
 
-Thanks, tested and applied.
+This work is mostly due to Jon Pan-Doh and Karolina Stolarek.  I rebased
+this to v6.15-rc1, factored out some of the trace and statistics updates,
+and added some minor cleanups.
 
-- Arnaldo
+Proposal
+========
 
-> 
-> Suggested-by: Arnaldo Carvalho de Melo <acme@kernel.org>
-> Fixes: 611851010c74 ("fs: dedup handling of struct filename init and refcounts bumps")
-> Signed-off-by: Leo Yan <leo.yan@arm.com>
-> ---
-> 
-> Changes from v1:
-> - Keep old regexps to be compatible with older kernels (Arnaldo)
-> 
->  tools/perf/tests/shell/lib/probe_vfs_getname.sh | 12 ++++++++++--
->  1 file changed, 10 insertions(+), 2 deletions(-)
-> 
-> diff --git a/tools/perf/tests/shell/lib/probe_vfs_getname.sh b/tools/perf/tests/shell/lib/probe_vfs_getname.sh
-> index 89f72a4c818c..58debce9ab42 100644
-> --- a/tools/perf/tests/shell/lib/probe_vfs_getname.sh
-> +++ b/tools/perf/tests/shell/lib/probe_vfs_getname.sh
-> @@ -13,8 +13,16 @@ cleanup_probe_vfs_getname() {
->  add_probe_vfs_getname() {
->  	add_probe_verbose=$1
->  	if [ $had_vfs_getname -eq 1 ] ; then
-> -		result_filename_re="[[:space:]]+([[:digit:]]+)[[:space:]]+result->uptr.*"
-> -		line=$(perf probe -L getname_flags 2>&1 | grep -E "$result_filename_re" | sed -r "s/$result_filename_re/\1/")
-> +		result_initname_re="[[:space:]]+([[:digit:]]+)[[:space:]]+initname.*"
-> +		line=$(perf probe -L getname_flags 2>&1 | grep -E "$result_initname_re" | sed -r "s/$result_initname_re/\1/")
-> +
-> +		# Search the old regular expressions so that this will
-> +		# pass on older kernels as well.
-> +		if [ -z "$line" ] ; then
-> +			result_filename_re="[[:space:]]+([[:digit:]]+)[[:space:]]+result->uptr.*"
-> +			line=$(perf probe -L getname_flags 2>&1 | grep -E "$result_filename_re" | sed -r "s/$result_filename_re/\1/")
-> +		fi
-> +
->  		if [ -z "$line" ] ; then
->  			result_aname_re="[[:space:]]+([[:digit:]]+)[[:space:]]+result->aname = NULL;"
->  			line=$(perf probe -L getname_flags 2>&1 | grep -E "$result_aname_re" | sed -r "s/$result_aname_re/\1/")
-> -- 
-> 2.34.1
-> 
+When using native AER, spammy devices can flood kernel logs with AER errors
+and slow/stall execution. Add per-device per-error-severity ratelimits for
+more robust error logging. Allow userspace to configure ratelimits via
+sysfs knobs.
+
+Motivation
+==========
+
+Inconsistent PCIe error handling, exacerbated at datacenter scale (myriad
+of devices), affects repairabilitiy flows for fleet operators.
+
+Exposing PCIe errors/debug info in-band for a userspace daemon (e.g.
+rasdaemon) to collect/pass on to repairability services will allow for more
+predictable repair flows and decrease machine downtime.
+
+Background
+==========
+
+AER error spam has been observed many times, both publicly (e.g. [1], [2],
+[3]) and privately. While it usually occurs with correctable errors, it can
+happen with uncorrectable errors (e.g. during new HW bringup).
+
+There have been previous attempts to add ratelimits to AER logs ([4], [5]).
+The most recent attempt[5] has many similarities with the proposed
+approach.
+
+
+v6:
+- Rebase to v6.15-rc1
+- Initialize struct aer_err_info completely before using it
+- Log DPC Error Source ID only when it's valid
+- Consolidate AER Error Source ID logging to one place
+- Tidy Error Source ID bus/dev/fn decoding using macros
+- Rename aer_print_port_info() to aer_print_source()
+- Consolidate trace events and statistic updates to one non-ratelimited place
+- Save log level in struct aer_err_info instead of passing as parameter
+v5: https://lore.kernel.org/r/20250321015806.954866-1-pandoh@google.com
+- Handle multi-error AER by evaluating ratelimits once and storing result
+- Reword/rename commit messages/functions/variable
+v4: https://lore.kernel.org/r/20250320082057.622983-1-pandoh@google.com
+- Fix bug where trace not emitted with malformed aer_err_info
+- Extend ratelimit to malformed aer_err_info
+- Update commit messages with patch motivation
+- Squash AER sysfs filename change (Patch 8)
+v3: https://lore.kernel.org/r/20250319084050.366718-1-pandoh@google.com
+- Ratelimit aer_print_port_info() (drop Patch 1)
+- Add ratelimit enable toggle
+- Move trace outside of ratelimit
+- Split log level (Patch 2) into two
+- More descriptive documentation/sysfs naming
+v2: https://lore.kernel.org/r/20250214023543.992372-1-pandoh@google.com
+- Rebased on top of pci/aer (6.14.rc-1)
+- Split series into log and IRQ ratelimits (defer patch 5)
+- Dropped patch 8 (Move AER sysfs)
+- Added log level cleanup patch[7] from Karolina's series
+- Fixed bug where dpc errors didn't increment counters
+- "X callbacks suppressed" message on ratelimit release -> immediately
+- Separate documentation into own patch
+v1: https://lore.kernel.org/r/20250115074301.3514927-1-pandoh@google.com
+
+[1] https://bugzilla.kernel.org/show_bug.cgi?id=215027
+[2] https://bugzilla.kernel.org/show_bug.cgi?id=201517
+[3] https://bugzilla.kernel.org/show_bug.cgi?id=196183
+[4] https://lore.kernel.org/linux-pci/20230606035442.2886343-2-grundler@chromium.org/
+[5] https://lore.kernel.org/linux-pci/cover.1736341506.git.karolina.stolarek@oracle.com/
+[6]
+https://lore.kernel.org/linux-pci/8bcb8c9a7b38ce3bdaca5a64fe76f08b0b337511.1742202797.git.k
+arolina.stolarek@oracle.com/
+[7]
+https://lore.kernel.org/linux-pci/edd77011aafad4c0654358a26b4e538d0c5a321d.1736341506.git.k
+arolina.stolarek@oracle.com/
+
+
+Bjorn Helgaas (9):
+  PCI/DPC: Initialize aer_err_info before using it
+  PCI/DPC: Log Error Source ID only when valid
+  PCI/AER: Consolidate Error Source ID logging in aer_print_port_info()
+  PCI/AER: Extract bus/dev/fn in aer_print_port_info() with
+    PCI_BUS_NUM(), etc
+  PCI/AER: Move aer_print_source() earlier in file
+  PCI/AER: Initialize aer_err_info before using it
+  PCI/AER: Simplify pci_print_aer()
+  PCI/AER: Update statistics early in logging
+  PCI/AER: Combine trace_aer_event() with statistics updates
+
+Jon Pan-Doh (4):
+  PCI/AER: Rename aer_print_port_info() to aer_print_source()
+  PCI/AER: Introduce ratelimit for error logs
+  PCI/AER: Add ratelimits to PCI AER Documentation
+  PCI/AER: Add sysfs attributes for log ratelimits
+
+Karolina Stolarek (3):
+  PCI/AER: Check log level once and remember it
+  PCI/AER: Make all pci_print_aer() log levels depend on error type
+  PCI/AER: Rename struct aer_stats to aer_report
+
+ ...es-aer_stats => sysfs-bus-pci-devices-aer} |  34 ++
+ Documentation/PCI/pcieaer-howto.rst           |  16 +-
+ drivers/pci/pci-sysfs.c                       |   1 +
+ drivers/pci/pci.h                             |   5 +-
+ drivers/pci/pcie/aer.c                        | 346 ++++++++++++------
+ drivers/pci/pcie/dpc.c                        |  49 ++-
+ include/linux/pci.h                           |   2 +-
+ 7 files changed, 329 insertions(+), 124 deletions(-)
+ rename Documentation/ABI/testing/{sysfs-bus-pci-devices-aer_stats => sysfs-bus-pci-devices-aer} (77%)
+
+-- 
+2.43.0
+
 
