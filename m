@@ -1,178 +1,148 @@
-Return-Path: <linux-kernel+bounces-653610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-653606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D47D8ABBBB6
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 12:59:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0744FABBBB3
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 12:59:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B84F3B9C8D
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 10:59:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 277F317AD5C
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 10:59:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1ACE27586D;
-	Mon, 19 May 2025 10:58:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15A1D274FE0;
+	Mon, 19 May 2025 10:58:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="nXT8/90U"
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="nqPlFKgD"
 Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0A54274FDE
-	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 10:58:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB906274651
+	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 10:58:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747652336; cv=none; b=adKU3UZoBc+eVHoyrz0MTzWJrxFWOdhwZ4lNaDv5WXg9lkGmPrkoFe834ulR2VsAuVpP7bd4GLJlmSYdWWKKPPeKvktfKPVvYNYpdhCEOJ/ZjUf+5lbLNQEjeI73cTSCj5P4KdMCInP3tqVPagsRoUG4WsiQZNoV2k+7vxqs5kY=
+	t=1747652334; cv=none; b=q/CK4BODXyqaR4ZmMPfggKVK4JPxnLzhfRuoB1hBW7y5vBX/eLQHcf+vC/uP5tfmprvXgwXbywUaTvjOisGNJKij6hR85s9WSpA1lePyiSPnon7dDEJBWgZV9Lx5DQdDSYeV0HhRYJNRky5eH+5bXtrsFsmHIHedH0sq0TXAj68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747652336; c=relaxed/simple;
-	bh=O68Yf4MVfSbvrTGnH2tyPtJDd/D9PTw/7oag6m4b3Hk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pHEdurMhrX+9gT7IbhX2RWTBGbpw/fxOHmGlBqlAvqJ7kv8EThmnagyOES7bJ2iPSUk6eqY3tcLGAuJmQTyCYkAgo/MD27uDYEw/bAGcq9PVIs6GCLpB7Ma+8t6Q+OsnAlc0TTDIfb34Eu19oY7JwfrqnJDbXxqd/6ZJKyi9QMk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=nXT8/90U; arc=none smtp.client-ip=205.220.168.131
+	s=arc-20240116; t=1747652334; c=relaxed/simple;
+	bh=dt18pC1pgXdhX+AIm2Nrs967cIN/phk15KUSiKaaRqY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lSLQkcpgmqL6MljNeqtCMVhpob3NZ0+Yestd8SufgQYj4/eu2iIJTme3iBo080BS7dZPJGiEG/VRRFZoBd0aViRUPz6OORxUMEebSr4hDLQfW+hgF5dp/zFOjI03Qqp6xMepClkrmI4bFfkoSpCM4NC15Fv63TTpwNF0k3ibVcc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=nqPlFKgD; arc=none smtp.client-ip=205.220.168.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54J6Oelg006138
-	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 10:58:54 GMT
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54J9ixAm022845
+	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 10:58:52 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	VqRNS/AP2L0HYV/XzQMxzhswyBS2iB5hSp0sUNl5kjs=; b=nXT8/90UtPNYFOVl
-	lO89wI7YQKOORwYNbXDwpUcHcHCYJEEnnNE/d2sZ5vcwuHD1lFP11G1pUGwuApvn
-	crn7cvzPlakbrP9FtDv28Tme1qNFW5ZXiRzXro63fVro/1EzE9y+ORx6CdZU5kVi
-	rEfcFJbXwaegQ5suYLTplGNyNMYqWGlfiH3DZS897k6cc/FtEa/We/gu8MTjqb9C
-	ADDaqr8EiaX1n9jIdugSl6TqJSdZ0c1Ye0BZhms2r5FATXD1L/q5fPAZ8SoXha6p
-	tBpVWX9dOeQB8usjOVYApGbmeeIfE4fEajD+zFGFF4Z0ZoRp0tLj8e/dMAwXwI6X
-	kbx81w==
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46qybkgu8q-1
+	ezwPMR8BMohMqjYrOQ8JruSRo2RSohjLEs2OJOIJnhw=; b=nqPlFKgDtcJTNdC2
+	1oP9aMoBx6nrqnnJuWQmxp9B/vOaolIc+Y3A+WYU3zrGgijg7O9nkhSNFpIELShO
+	rxdId+AzFZNx3mLnOpaf10IUFwocrgMhJxRzLgR0369oRH40eFekjitj26vqTKNn
+	xaUCM9AOwRPNjO+JxEV5hWzbhasn/1x4TehHUSOdyPrRQfq+vV98NtLR8umWg0Vi
+	01Jio9f9Xm341DOyopowtH4P85xG8AAXv4gX4dyYwIcpiaJupIzDj779bPoFMvSp
+	chKwifU1Wa8wHIBtSlZnKdBOChD7kHB/maCTALbzBYUbky4IfNJoWpcb2cwSZqFt
+	JbO1Wg==
+Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46r29d06qb-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 10:58:52 +0000 (GMT)
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-6f8d47383f3so20640726d6.1
-        for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 03:58:52 -0700 (PDT)
+	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 10:58:51 +0000 (GMT)
+Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-231d7a20b31so28819485ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 03:58:51 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747652329; x=1748257129;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VqRNS/AP2L0HYV/XzQMxzhswyBS2iB5hSp0sUNl5kjs=;
-        b=ZRW8liijV0sQXHMSsmjnPiXeEe2mekVkLA6gqAacyObJCflicIi+ZWrHOzk3WBu08m
-         Z1rGJT+aTsXUlszUEWn68qSou3+++bLQn3kiUHQ3FUK29XLRR7tz7GdrxNGKGVIFrhrM
-         y4VXSYLFc8o/IX/PVwPUDB9n7V27TphQsMaaJcd3JotwVEgWCXIVyPdwgBxyspyBMpRK
-         sP3T70rJrzUTwoibdobP7IEDqzAqN7fNrxNBPVGKx/LPtqI6A3ACiUHeVn2sU49eammK
-         g36IttbtLJLkykz8nL2YP7oL9GHZEIY4Hi3/RzLtFA7vDMZVnTLa1a2bi4HRcH0Tw5w0
-         KJ5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVbzdLApFDkV/O1SrvJ53m6xzT3dbj8y6r8UL7RN0r5hSGMZCJWxElqOwWq5LqbD44iYimXlAxt76LkS5w=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyexd1D5ljB8CJACSGnb23DtberiiwQ430I34+BvpaBXnkaZMuz
-	WChH9+G6Yvvaf8WeaaUivn6hCqiq1ZsU86ia9Y+rpD0+y+njrUqTnPzNrlWMswXIdviVxVHyI9V
-	aUOFRcv8HGlm6lSFm2EfAXLOh5zcLXfBh9wCKWUCXRwkfnUgo2l9D4NIzAktLn5wihGM=
-X-Gm-Gg: ASbGnctJaZB+FFxeDQA7OULGQV75yYKQQrLeIAKhmh59vDMQdffKOhnZRuQtTT+ZaHT
-	Xrf7uOLGuTOKM6RuvAkRHFp1LQdjY8Wu3FlmRT9U+wd8xU0sDgEyQYBU1dcTwspRBE1l7WImfti
-	QNM1s1GgRMl7Gc8fiYR4Z+gPz6JOFz+cMf1zp+NGS5qCPCuuMyd7+DntrnbnizSW+DAA5E0+nYs
-	tb0fBK1yqy2imGKHPN0QQVsyurD+Jl/Tjo+ltuqVs4uxY09DoHFyl006ZrdW11zgvkNLF/anb5C
-	95aej61SV0wwxmgMr/wwY4LcyQMso+kgQ4Vh9fj7KNTGs9dvvpH6VNb1Yibf0f65SNRNG7xRvtE
-	CSNTS1Vlvj0vd4l6WrSCQRt++
-X-Received: by 2002:ad4:4eee:0:b0:6f5:3b8b:9115 with SMTP id 6a1803df08f44-6f8b085299cmr198058216d6.33.1747652329554;
-        Mon, 19 May 2025 03:58:49 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFZ8hMq2kgsgTEUTk7YggTkRUuA47iDtbotHwLHe0Dgywfs65yOnHSbIBuW35N62G91KOkcXw==
-X-Received: by 2002:ad4:4eee:0:b0:6f5:3b8b:9115 with SMTP id 6a1803df08f44-6f8b085299cmr198057586d6.33.1747652329096;
-        Mon, 19 May 2025 03:58:49 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-550e6f314a2sm1801140e87.77.2025.05.19.03.58.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 May 2025 03:58:48 -0700 (PDT)
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Dmitry Baryshkov <lumag@kernel.org>, Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Kuogee Hsieh <quic_khsieh@quicinc.com>,
-        Krishna Manikandan <quic_mkrishn@quicinc.com>,
-        Jonathan Marek <jonathan@marek.ca>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
-        Joerg Roedel <joro@8bytes.org>, Konrad Dybcio <konradybcio@kernel.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
-        linux-arm-kernel@lists.infradead.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: [PATCH v5 00/10] drm/msm: add support for SAR2130P
-Date: Mon, 19 May 2025 13:58:34 +0300
-Message-Id: <174637445761.1385605.10286310480029078025.b4-ty@oss.qualcomm.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250418-sar2130p-display-v5-0-442c905cb3a4@oss.qualcomm.com>
-References: <20250418-sar2130p-display-v5-0-442c905cb3a4@oss.qualcomm.com>
+        d=1e100.net; s=20230601; t=1747652319; x=1748257119;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ezwPMR8BMohMqjYrOQ8JruSRo2RSohjLEs2OJOIJnhw=;
+        b=D3forgVRsNQDrVjtPbxFO8E5GBTggsa8JFL4plS4/5a5sLavYV0Ge3SKvUy4Q119kL
+         5BGmcsiLlmLKavDqYOcV8e/eQm2iaknXql9NeM5+FU/M4mkoTDA9/cNd59WGUPfaqNHd
+         i7NqDTMoU/iLN9rV6uTiTQSrxJRxDKdwPxM+ODOaUjWCT6indaQpsDlcPrHTDsmhNFE+
+         gsBQnT5x9MKkH+3md1N16WiTlBrzVTy6XbBbD3Uy7SUk9LACVG+GgOaVx5DGqeaatCtv
+         J75GTnptniGPuWai6yOLaSqSYjlPSqOChKNYk+eKQE0ZakITPQnsVbWYpI2GghuORwzP
+         Xk8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXyyrCNOEL9HUqG+a2YoQZvPC57Y6rfa3xztD+n75XkTvoslToNEysJsMzJHZsBOdjZl18SZs6hqSRxS4M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwkjQZVJETZmqeJZYiiZ7ru02xuMqyZtVx7kUS7DVBICIoEAV8h
+	KYLkxWqOnAUi4AaYC5hiHc/7LtOmQ6yhoou7YoWDswzwaE4/Whz8ySadAMOKXrGjgd9TsKgWpCV
+	SIWyFTIBFPhSNmvhhkuorImZqASnv4vUB/dT301u5xA2k2jB0brsAyk9VCLiTStaPI+g=
+X-Gm-Gg: ASbGncuvpe2+GqUoPE8vxLn0ISq6U+nh0joLhT8OPOktmzRSFBqdxmLKNmxaAytdvDz
+	tivZ895IMEa1vlQeMwT2DQNjQ7AgopLV5Ay99FPEWUiaFfkjcoIdlNvTuZu8X8oG6F3IySM78cl
+	7WxFEd5JCSoSwAwsLVKZYiu0jchDIVihuk5IYP3d5vTuLRPUVMLL1RTOjpxFlFP7hLbexmnNe3d
+	9W5MmrEGPyWn3/6sFfM5N6loDIt9I0d8f03vnSFndDbXzmnX0Fw0rTwXYAAynosUvXh8rC4qxdK
+	jLbpAADqEM94viFRvkcgQcVpLRsMPnsSIbUrJQ==
+X-Received: by 2002:a17:903:17cc:b0:22e:5389:67fb with SMTP id d9443c01a7336-231d43d9bedmr164170425ad.7.1747652319372;
+        Mon, 19 May 2025 03:58:39 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF3EdjbB0W7Ag5YgVP4lwZ+LArL30OC7oyQH+NM/5K3jhYFi8kBt1aEKqOsDIaJb60GH8INTQ==
+X-Received: by 2002:a17:903:17cc:b0:22e:5389:67fb with SMTP id d9443c01a7336-231d43d9bedmr164170195ad.7.1747652319028;
+        Mon, 19 May 2025 03:58:39 -0700 (PDT)
+Received: from [10.204.65.175] ([202.46.23.25])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-231d4e97db8sm57252635ad.110.2025.05.19.03.58.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 19 May 2025 03:58:38 -0700 (PDT)
+Message-ID: <dc67df54-2a19-4318-acd4-b96b8549b64d@oss.qualcomm.com>
+Date: Mon, 19 May 2025 16:28:34 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-GUID: baLIkxAuGI3Xfgo4Xku13IFlbROMvQFv
-X-Proofpoint-ORIG-GUID: baLIkxAuGI3Xfgo4Xku13IFlbROMvQFv
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTE5MDEwNCBTYWx0ZWRfX0f+6yWTt+Fbc
- wSe6rDdIpmUXaFDcfLbk3tddfCrYnqVsxdlp1i2HCxLLIWdxYagecJxBT4utnlMipnWiFz7ISFD
- esMwBt0AnJXu69xQehxXLcN0Hh13pymnyOH1cik4/I9apGDDfQHN/A4QcrwfjohCdKbTUw9Jq5L
- sy5a5RK7GAuDP5ngsu6eKwTMPkEAbX6hcpLTnLFgqNg6VL7vm/4N2I6p+sad1aA7ER4S4BHTWYp
- rHgT/o02jwY+E7bxCcbJ+J6HIKjdl4z8cg8aS/jF5pw+ozngpU+Ng6TDgh6zGyipkupwRdiIoNK
- eLJLqFw3YH4uRiBf8Yd+4/mtqo5GMgBSO+sto/disL9l/mX3u/BMZm4MKEmhTxNZU5tLocYLNY0
- G/wxz3OkupgrUZXl5eLbvIFkLKYFo02+sGVBcB3gkg+djjgGcx9VTVhwHjWQRFgTQNNTxibx
-X-Authority-Analysis: v=2.4 cv=RZeQC0tv c=1 sm=1 tr=0 ts=682b0eec cx=c_pps
- a=wEM5vcRIz55oU/E2lInRtA==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=dt9VzEwgFbYA:10 a=e5mUnYsNAAAA:8 a=EUspDBNiAAAA:8 a=iEGPaXCqe01J9_RIJz0A:9
- a=QEXdDO2ut3YA:10 a=OIgjcC2v60KrkQgK7BGD:22 a=Vxmtnl_E_bksehYqCbjh:22
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 5/5] misc: fastrpc: Add missing unmapping
+ user-requested remote heap
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: srinivas.kandagatla@oss.qualcomm.com, linux-arm-msm@vger.kernel.org,
+        gregkh@linuxfoundation.org, quic_bkumar@quicinc.com,
+        linux-kernel@vger.kernel.org, quic_chennak@quicinc.com,
+        dri-devel@lists.freedesktop.org, arnd@arndb.de, stable@kernel.org
+References: <20250513042825.2147985-1-ekansh.gupta@oss.qualcomm.com>
+ <20250513042825.2147985-6-ekansh.gupta@oss.qualcomm.com>
+ <22uccyp5m2szry7bpitqcav5nlvwch5eqh4mdacfedidgrnyhx@vsjobngwdkmb>
+Content-Language: en-US
+From: Ekansh Gupta <ekansh.gupta@oss.qualcomm.com>
+In-Reply-To: <22uccyp5m2szry7bpitqcav5nlvwch5eqh4mdacfedidgrnyhx@vsjobngwdkmb>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTE5MDEwNCBTYWx0ZWRfX3sWqbndHctf9
+ KHY2BClitajbqofPhjXV1BL+R8n+jKyaoRxl6aZX80QcrjYVMErQsAviRYnEFzBxEOY2+jHeiQm
+ b4H5vsEfPo8qyELaPZo3EYsRyWM8l6xr3tZY1N0pAZIDI6VNGooQdbX3XOcdJRTOrkeM2W3Yde6
+ F41dUGNLo0XiMr5bO48xKYsCg6BXnP8VtlrfnHq+XGLe8IJQa9XDNYDqfbytIZgEJzBA7xIrV01
+ Nz54i2IFSgJRyVk1dBFWDZw0+w1VaI27sk1j50osTY+RukWFQ+jn5zC3m/0WEB3AwxQLCwmKJPB
+ eeoYkGeeZ83TY9lhEfDawSBhgqtUXLf7ktwiBNdF6wDg8fG26mCNRKHsrqewpFff4cVVsHb2b78
+ Cvak/EBCro1qvwPpglhK6/ZYcDM7uh9V4RiL9WgaWUsZLh7eYxPgi2l3r7mkQdIcmOvqZqpX
+X-Proofpoint-GUID: evEZipy7b4GqrA6TSi6Q9m4sGHR121Oj
+X-Authority-Analysis: v=2.4 cv=KLdaDEFo c=1 sm=1 tr=0 ts=682b0eeb cx=c_pps
+ a=cmESyDAEBpBGqyK7t0alAg==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
+ a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
+ a=zJRMy9OeSTis9rFUpe8A:9 a=QEXdDO2ut3YA:10 a=1OuFwYUASf3TG4hYMiVC:22
+X-Proofpoint-ORIG-GUID: evEZipy7b4GqrA6TSi6Q9m4sGHR121Oj
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
  definitions=2025-05-19_04,2025-05-16_03,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 bulkscore=0 phishscore=0 mlxlogscore=876 malwarescore=0
- priorityscore=1501 clxscore=1015 lowpriorityscore=0 mlxscore=0 suspectscore=0
- impostorscore=0 adultscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ adultscore=0 priorityscore=1501 clxscore=1015 malwarescore=0 spamscore=0
+ phishscore=0 lowpriorityscore=0 bulkscore=0 mlxlogscore=999 mlxscore=0
+ suspectscore=0 impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
  route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505070000
  definitions=main-2505190104
 
 
-On Fri, 18 Apr 2025 10:49:55 +0300, Dmitry Baryshkov wrote:
-> Add support for the Mobile Display SubSystem (MDSS) device present on
-> the Qualcomm SAR2130P platform. The MDSS device is similar to SM8550, it
-> features two MIPI DSI controllers, two MIPI DSI PHYs and one DisplayPort
-> controller.
-> 
-> Note, due to the technical limitations DP controller wasn't completely
-> evaluated.
-> 
-> [...]
 
-Applied, thanks!
+On 5/19/2025 4:22 PM, Dmitry Baryshkov wrote:
+> On Tue, May 13, 2025 at 09:58:25AM +0530, Ekansh Gupta wrote:
+>> User request for remote heap allocation is supported using ioctl
+>> interface but support for unmap is missing. This could result in
+>> memory leak issues. Add unmap user request support for remote heap.
+> Can this memory be in use by the remote proc?
+Remote heap allocation request is only intended for audioPD. Other PDs
+running on DSP are not intended to use this request.
+>
+>> Fixes: 532ad70c6d449 ("misc: fastrpc: Add mmap request assigning for static PD pool")
+>> Cc: stable@kernel.org
+>> Signed-off-by: Ekansh Gupta <ekansh.gupta@oss.qualcomm.com>
+>> ---
+>>  drivers/misc/fastrpc.c | 62 ++++++++++++++++++++++++++++++++++--------
+>>  1 file changed, 51 insertions(+), 11 deletions(-)
+>>
 
-[01/10] dt-bindings: display/msm: dp-controller: describe SAR2130P
-        https://gitlab.freedesktop.org/lumag/msm/-/commit/b341da1172fe
-[02/10] dt-bindings: display/msm: dsi-controller-main: describe SAR2130P
-        https://gitlab.freedesktop.org/lumag/msm/-/commit/3c70c9d0a99d
-[03/10] dt-bindings: display/msm: dsi-phy-7nm: describe SAR2130P
-        https://gitlab.freedesktop.org/lumag/msm/-/commit/262650e71854
-[04/10] dt-bindings: display/msm: qcom,sc7280-dpu: describe SAR2130P
-        https://gitlab.freedesktop.org/lumag/msm/-/commit/759fe7181723
-[05/10] dt-bindings: display/msm: Add Qualcomm SAR2130P
-        https://gitlab.freedesktop.org/lumag/msm/-/commit/3096209b7a62
-[06/10] drm/msm/mdss: add SAR2130P device configuration
-        https://gitlab.freedesktop.org/lumag/msm/-/commit/1e7cbfea6624
-[07/10] drm/msm/dsi/phy: add configuration for SAR2130P
-        https://gitlab.freedesktop.org/lumag/msm/-/commit/8e63b2075e01
-[08/10] drm/msm/dpu: add catalog entry for SAR2130P
-        https://gitlab.freedesktop.org/lumag/msm/-/commit/178575173472
-
-Best regards,
--- 
-Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 
