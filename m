@@ -1,161 +1,133 @@
-Return-Path: <linux-kernel+bounces-654107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-654112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F8B0ABC3FA
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 18:13:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B784EABC406
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 18:14:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7D3B1B649D2
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 16:12:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7E02188DC95
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 16:14:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B859D28C5A3;
-	Mon, 19 May 2025 16:05:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA9FE288C00;
+	Mon, 19 May 2025 16:06:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jc3/adoR"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YYudf5uV"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BEDD28C2D3
-	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 16:05:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0325D286D4D;
+	Mon, 19 May 2025 16:06:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747670732; cv=none; b=b4xT/fOIbdL5KpGyOob3vizEpFWCRc5lMr/OoFncknr5m12NEcOBSVcMfLayGQnz6l5ebylYZ8jXqYJZI79KOWnuAvmjjLt8v0gJzOaRc5L+qdi4PzqssVqXlgk/E9HRUuKq8KFF21mF73gRINXKRlU6MD8pEwk+XlsmVQReeSg=
+	t=1747670795; cv=none; b=ZI7m8vHwa+udq03VXDdXM74kvVfQHB5lFiLG2bzv8ruUxyQGDy3uW72BTMUqM6cCU/EnT4+NZZ8wwyseeznjtJC1wGObAoY9MGets9hcmx9TlKykN8HmfWbQI6WGkAg/0SizbGHhHfVi2NAbMwENlEGeBV3D9LYzOhtm90Ld9zU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747670732; c=relaxed/simple;
-	bh=AUke/NWSRLIRn7SoKvI956go9bNucVyPQKWPXFtUZeA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lbXYY6w0JURyI9qXwpKFC6yPfumQAyWl+3W6fCjBO3bvGtUViSiCVnVTzkds98b974aDDZ965F35knZQdVZNl4q1OrpnXGH2gXCANwN40MNXzrAUQhIfrvxHRD3yeBZZhLkmoHoO1uR9cKu+dtchQitFzJ8ENgRUDRaXIqN+3hQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jc3/adoR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35439C4CEE4;
-	Mon, 19 May 2025 16:05:31 +0000 (UTC)
+	s=arc-20240116; t=1747670795; c=relaxed/simple;
+	bh=f2Tu9wCnW7qgjjC8mQwP/hHhD4YF5E3BNpHEX6tBQ78=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XMgnPpwhXqPGhYraiZTI7VkcSloNkHN92zJAI8e3NSlstbNFwKJ619C7CGb+xMdKMTH4kjvZbWIdcXdsoiWfkceLuYqI657DSl5s5ikd6GIjgIXdLDzjCKM21+yAGRgBJ8szRNB6rqhxEVdToZ5kFh7MAPV7BsfiU7te12Kcsl4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YYudf5uV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61732C4CEE4;
+	Mon, 19 May 2025 16:06:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747670731;
-	bh=AUke/NWSRLIRn7SoKvI956go9bNucVyPQKWPXFtUZeA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jc3/adoRxZirOIHN5H/K6ZNn0Yg5CAjsdamiscbNe77qxdu0FqWSQWERU3b+1dTtj
-	 pTl4QEPbKD0azl2uEt/zzqWMNG/3tPAhbrEdyBFoHwWl9B4BrwbFWaYjGBhYzo8oPH
-	 UOrSHi++ymFM2oxgSHiHoJy98rmC3JPJoy+5NZa3jlDqlTavFp22cilF/b/wwbOOK4
-	 zIeRRizmsOATFg8Qj6OAQzuwWNd9GDDOv5PHWnGQ13pLitCzHhUuCUrl4spd7mbyF0
-	 qWEuRBmaaljv2nE4ON8aEJbafg2zOT5OR6Nz/hcrSMNU62E7opaTcJ6eEJm8mCgUNr
-	 TNaAQbuNTCsAg==
-Date: Mon, 19 May 2025 18:05:28 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Jani Nikula <jani.nikula@linux.intel.com>
-Cc: Anusha Srivatsa <asrivats@redhat.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, Luca Ceresoli <luca.ceresoli@bootlin.com>
-Subject: Re: [PATCH v4 2/4] drm/panel: Add refcount support
-Message-ID: <20250519-singing-silent-stingray-fe5c9b@houat>
-References: <87y0vkw8ll.fsf@intel.com>
- <20250429-benign-sidewinder-of-defense-6dd4d8@houat>
- <87o6wfwcef.fsf@intel.com>
- <20250505-slim-bizarre-marten-a674ac@houat>
- <CAN9Xe3RLazpAXdxxJmyF2QAShDtMSgdoxMdo6ecdYd7aZiP9kA@mail.gmail.com>
- <874ixvtbxy.fsf@intel.com>
- <20250509-rapid-flounder-of-devotion-6b26bb@houat>
- <87r00yj6kv.fsf@intel.com>
- <molexnyjkiryvhetfdc66gmzecrf6f7kxl656qn46djdkixrkb@fdgnp5hispbf>
- <875xi3im1r.fsf@intel.com>
+	s=k20201202; t=1747670794;
+	bh=f2Tu9wCnW7qgjjC8mQwP/hHhD4YF5E3BNpHEX6tBQ78=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=YYudf5uVDN2UM7TOLRB7b68bqRF+dbP/aoMpUXJ+VOfUwcyDabYH0AbQFLtxJbilB
+	 rddIKTracDcrLbYrt+3f1hWDxxqdv6fL4IRTMe6PdH7D4s5+F8gNkP9PbEcQdN0DN+
+	 ocbTjWTlwhDMfsmiJg9XT5XzdxLnSXCgrbhcw01LL8wLcOE69kBaQNqgSwcNSEj6ky
+	 nq61rrxHKDfz9vbV1x1QmeSEuR3Oxynk5Fqzkk8cc1UC4Wti8qHy9xFXZBwSpxwpP3
+	 lPU9LcSuWz+l6jO058T4Kz9CwqN02ttdUHOq+3VFhcoo8LTKfH5fmBr7oZ9fvuxz/j
+	 UEdrKVvHSL/Rg==
+Message-ID: <6a3a7e99-8d45-4e44-8014-14d182de5dd6@kernel.org>
+Date: Mon, 19 May 2025 18:06:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="44ortngatcuhoot2"
-Content-Disposition: inline
-In-Reply-To: <875xi3im1r.fsf@intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] dt-bindings: mmc: ti-omap: convert text based binding
+ to json schema
+To: Charan Pedumuru <charan.pedumuru@gmail.com>,
+ Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250519-ti-omap-v2-1-2a0dbc08fb9c@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250519-ti-omap-v2-1-2a0dbc08fb9c@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+On 19/05/2025 15:11, Charan Pedumuru wrote:
+> +
+> +  ti,hwmods:
+> +    maxItems: 1
+> +    items:
+> +      type: string
+
+That's not really correct. That's just a string, so no items, no
+maxItems and use proper ref, not type string.
+
+> +      pattern: "^msdi[0-9]+$"
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - dmas
+> +  - dma-names
+> +  - ti,hwmods
+> +
 
 
---44ortngatcuhoot2
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v4 2/4] drm/panel: Add refcount support
-MIME-Version: 1.0
-
-On Wed, May 14, 2025 at 12:22:40PM +0300, Jani Nikula wrote:
-> On Tue, 13 May 2025, Maxime Ripard <mripard@kernel.org> wrote:
-> > Is it really surprising you get some pushback when you are using a
-> > design that is the complete opposite to what every user of it for the
-> > last decade has been doing?
->=20
-> The opposite is also true.
->=20
-> If you create a design that does not cleanly fit the model of the
-> biggest drivers in the subsystem, and expect massive refactors just for
-> the sake of conforming to the design to be able to use any of it, you'll
-> also get pushback.
-
-That's the thing though: i915 deviates pretty heavily from the helpers,
-in general. If it wants to consume them, then it must also be ready to
-make some adjustments. Or just roll its own thing like it has done in
-the past.
-
-Otherwise, where do we draw the line when anyone isn't happy with the
-helpers in general and ask for an exception because reworking the driver
-is too much work?
-
-We did this on pretty much every ARM platform, we did this for amdgpu,
-but somehow i915 should get a pass?
-
-On what ground? What should we tell the next driver that uses the same
-argument?
-
-> > This one is usable, but you rule out the way you could use it.
->=20
-> I think you're off-hand and completely dismissing the amount of work it
-> would be. And still I'm not even ruling it out, but there has to be a
-> way to start off in small incremental steps, and use the parts that
-> work. And it's not like we're averse to refactoring in the least,
-> everyone knows that.
-
-I'm not sure how pointing fingers at who has the right design,
-overlooked some hypothetical usages 10y down the line, or is being
-offhand helps the conversation in any way.
-
-I've been asking questions to understand what you could work with, and
-some are still left unanswered, and had to ask others multiple times to
-get an answer.
-
-And maybe I do indeed underestimate the amount of work it would take. I
-don't believe so, and I still believe that it wouldn't be too hard. But
-maybe you're right. You still haven't explained why it would take
-anything more than registering a dumb device at probe time though.
-
-> > I guess it's clear now that you won't consider anything else. I wonder
-> > why you started that discussion in the first place if you already have
-> > a clear mind on how to get things moving forward.
->=20
-> I pointed out what I think is a bug in drm_panel, with nothing but good
-> intentions, and everything snowballed from there.
->=20
-> There has to be a middle ground instead of absolutes. Otherwise we'll
-> just end up in deeper silos. And more arguments.
-
-I believe calling drm_panel_init would be a middle ground, if we add a
-bunch of warnings, checks here and there and move things around a bit.
-But to keep it, we do need a good reason for it, even more so if we
-don't have any in-tree users anymore.
-
-Maxime
-
---44ortngatcuhoot2
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaCtWwwAKCRAnX84Zoj2+
-dhXaAX99/6tATvYQUSyz9hcmkMAlBSpKAc/PN6MlwYWkkWP+I/hjrTMVuAbhGWSd
-9IvD6+cBfi2/vkBdTeY/kaxzhyQR+gVabclTJ1Jq1RtAOVZVAKk0qXWTtCqbF/Id
-xM34KIQ2JA==
-=rS0I
------END PGP SIGNATURE-----
-
---44ortngatcuhoot2--
+Best regards,
+Krzysztof
 
