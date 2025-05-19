@@ -1,161 +1,220 @@
-Return-Path: <linux-kernel+bounces-654609-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-654611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 654B3ABCA48
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 23:49:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07BA0ABCA49
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 23:49:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2C9F16C8FC
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 21:47:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB0F81883FFB
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 21:48:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF10321B9C7;
-	Mon, 19 May 2025 21:45:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B01C121CC7F;
+	Mon, 19 May 2025 21:46:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W7OiR3fH"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hljQo3jo"
+Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F4F620B1FC;
-	Mon, 19 May 2025 21:45:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AA011DA21;
+	Mon, 19 May 2025 21:46:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747691147; cv=none; b=AQLxCZ40HJgVLkr5ZDd7KtnD3dbciJY7ga2WHbXnLoC/om41RjCwLMofR+YtYFEQ1MTDLfI1JuIDLyrnl5GGwyqNmWBWcsux5nURm7GmJiOMFtjDs5blyJH1FqtHSFwuT3d8DsdjmVKppG/m9qgzIdmckgCCwwvYWNiDs3pdEJY=
+	t=1747691214; cv=none; b=eddd8t81Z7lA8eL6BC8Hn41odPx0EpJZLtv9qa81oaM6iGG+7xDzSIOGtNvGGH1hkTPnM/MT3R1GXVd0fLQwNBZD9kdDW/QaB5e4d2EC8qFNHuWY1FPaqk67BZnWcRejLvcp+3m7dxGmiaczPShkA0eMtJJcaHFqZi71Fwluv14=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747691147; c=relaxed/simple;
-	bh=dBmQ7ZVzsrxRsdMLl6QUAymnlQw5BhCQ/Hfi6mcSQGA=;
+	s=arc-20240116; t=1747691214; c=relaxed/simple;
+	bh=N1521YN47TVp3G/xpFAXWoEuVbJW7GAojZiKgi5PgLQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Hw8eLZjLW+DwJS6l3ZAicPpB/Uyq6VLB2kGUvn0glmIMrQm7mexckSuZ5zllZ9u597O/U0kBOrwk6bs3b+q0EjwYXo/Ya+ueEiUag1Wb647d0Pp2GW2xHcXkDWIy/pzgEqyNdr4GpwacgjCI+uWzG0BRsEjJe4LfizZV2SiEYDw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W7OiR3fH; arc=none smtp.client-ip=209.85.208.41
+	 To:Cc:Content-Type; b=Ph0lRwseYPdib0mE6SEkuqEYYQmfhacmWeJNeYmKYWhttttV/w3xw0acDnstUUaVWPKNScoOMGLRTdfxRwTrD8AX1N2RylhavbBPuwG8JAjWZBKVMA4POS7A9w512+fxmgQmcV9IgK2tcvT0y4Ftww4ZR37FNPcoFMzEDLG4mrA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hljQo3jo; arc=none smtp.client-ip=209.85.219.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5fff52493e0so5757508a12.3;
-        Mon, 19 May 2025 14:45:45 -0700 (PDT)
+Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-e7ba37b2b5bso1552349276.0;
+        Mon, 19 May 2025 14:46:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747691144; x=1748295944; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lgwrUkrkaZb0leOIfftTpt2Z9U+8ge4TCRzTvr8HRfg=;
-        b=W7OiR3fHjF+RryRQD3D0fShlGAgZabdSUj28WBxV4TCHYGa0n68a8tnWskh+OFHw/k
-         wZpvxr7TxDaLYE8ug8vy0Y+wIjY8hdbQclaa4pSLv9Z1xUabmiIajAN3mBRYk6DnUaja
-         EodrcEKAGWAEADM9h0tgmziuh9nxxj6Eub9510PL42M+8ZLSAamO58KbMrRoCF0giA2u
-         7Yc9JvhUunacoy/1Ixc8P5RNB/ONErdlIWZyyn9wGv8K/U+tV+y28sgBTX78PaB10qnp
-         +xvfkxPZmH9A1EZUdoTzi1ZDRdcgpQVlK+MZjdn/KCkB3O73yzPBln79tzBsGAy4WKXF
-         xL/g==
+        d=gmail.com; s=20230601; t=1747691211; x=1748296011; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=qFqHFurMBZtPAapbA1XA+pcLlQHLYWNfAxkQ+sCmyUk=;
+        b=hljQo3jo/XJznTe6eYjD5riMmMdvs2psQ8fcgL08iNNRjq67fZ3tWx/B5s0rl7EFc0
+         A4DReY1BGF7K0r1J8fymBzfvuLVkGdHr+0GMnJCy2yj1e3xHVwauGmLqQUOYZx5oJPyU
+         54sJbuE9MytfizNLBqMsPjnIxiz3k5WwkiY3XPzA9Ghp6f1PSdOadJDVr37OBJhvk3E5
+         wsTcvcLSY5TF5RyASz+ZlKvYvBaLcrPR+m7oHqxXFbrl8d3Lfguo10qmHQPouOyuzQNw
+         icf2mifwSiOlU8//JZDUTKtWCSARBPvfpIbb/PqPIRIk1PiMGN2jaljgdDgpm/ZRkrt5
+         P5Lw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747691144; x=1748295944;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lgwrUkrkaZb0leOIfftTpt2Z9U+8ge4TCRzTvr8HRfg=;
-        b=Q3UxBW71HtfKqpJXL/XGfZ6ouv4wkFNpD15d4O67xXXEMHLGEAsnySQcCOaEDjFr+c
-         rNuDzTFwriyomxDUfDCcQCtw0BECGpUSZ78QvGLsY+I6XXIl2C/VGsXcZvIbOVabHTzt
-         czXowiwpfJlg/HDs2kYGeODoQQUdg5q/KaKndIAPjPdHa/QCAAEQ/x8ozLIZlkr/01G5
-         TRuIyHyVdCACjiIwWOLtW23pSnLK4hkdYhJLO+khV09LD0dO1ZRsxC1bQQ1r2os9v6ms
-         v02mNzMR1xTI/F8j+zdLke8At5mOko2Qq/6TVzkCqsseImAoVAD79I0LCWTIcjGa1o1O
-         O8LQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV40drYqBwxFaAyiLX0exJmn8GWhf9DH8xEg9GwkuQPTqKyXZNocd/SYKFZEfJdCt9QqzI0JA0fn+olMlM=@vger.kernel.org, AJvYcCVPhSgizAlS9GCLZT8T6U5yrngJkExbiKex3+ajhiTcDgeuQDeMo1m9PYSZRl2fB0T1HwagIi7wti1mvbsz@vger.kernel.org, AJvYcCW5TX38JGeHAAdRiCxFuzrna1q+LupXbgZV2dNL7U1mSpOKgqh7Gk9mnarIUrZfm81vTCq0RCADXw363E0Q@vger.kernel.org
-X-Gm-Message-State: AOJu0YyAI9LZWKvixDJ+5rQe4NrEDhj7FiHAbKIz6VLXJd8njGVF1OMs
-	L24WBSma7BBClFjOAHGxBAM13YmosqWgQD5QkKwsDN38JyJ6vdr1j8TqlmzwmKoEg9g99VvlK+d
-	eXu13vNq2+W6SdxLIBQM0mcj+edAfE4w=
-X-Gm-Gg: ASbGnctDfmA1D3lUXIIxqS95nEFcqLlMSZfNxYHD0WY8gZn1p7d4d6c7tEkkiFip1yg
-	lZPR5Qzjw08U4i1wRhUkdKkrJp2dATPgtntOljAClPrSsGzmIKhdi2ahCSO5eNecPW8fRXqXd3U
-	vQtKEDbwkLBOYUYOxWN39svWLIU6gzOOY=
-X-Google-Smtp-Source: AGHT+IGi6092BG38fgC8XNqiOOL5230Qmrls9fUA/vdLAMqijhah9L16wARI5KlQBQHVpTG9u4i5MttpQIJ/uhwrqx8=
-X-Received: by 2002:a17:907:3342:b0:ad5:465d:8855 with SMTP id
- a640c23a62f3a-ad5465d9f5amr870659766b.36.1747691143715; Mon, 19 May 2025
- 14:45:43 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1747691211; x=1748296011;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qFqHFurMBZtPAapbA1XA+pcLlQHLYWNfAxkQ+sCmyUk=;
+        b=SB92ZPBstFUliZSo8iLfbe/olnqD1rl4k34vDzGE2q0PtPttWQjzjDZXeIzyT45uSZ
+         GRHJV56xk47duBxwSgQfKFsSE5G97Dq3s8pSUoXEI5+eX1DpcOSF0akkW/2jQNn4rJvk
+         esLcdsB9qhjCkjbL69EyS8uhjhC5Euov04jQeeg/uvf14BmRzyy3G+eiueMWUaStQhOc
+         ztVgRPJ9lE6v7v6QWwXhM6zgP4ibw6UBOHaG1ykDWZXa0kvBIMKpifV8K78Tq84grt0D
+         7BVQMacEOwDN/uw3cH4IHliWmXsPN/SJ/kZMMpujySpb/hW2nH7gLac4ZRzuhnDoPphB
+         BgDg==
+X-Forwarded-Encrypted: i=1; AJvYcCVlAB86XH/I8dZg2kNcZWS5zUJ1HtuJ81uPugEXnp//FZ3HWNbNfs12OkMzwkztyECWC1qP5WlM/5vUfRs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9pRSnoOJdhyVyNlfNpQRuaLeGVkBAGLu2Cz4dM67+xrP86k/R
+	dksjuwIoXziYPM528dEKSDrL/0lwuxCXjMzWnZKA0LTGzcDJwbg1eZk4B/X5PVphKHtvqijtDoi
+	wL1HhhbLFBwxW2cFJ7QS22JsrgmJHtmU=
+X-Gm-Gg: ASbGncvguHbGL2SUqmEDYHYhAhKjbWCEkwZMFYTr6QPnxQTIzC2GpCgp/AKFTg++k+J
+	8ETfXPIXOLu1vOUOqRiM1dg2IVIWTZZTy5cggAb3gOwcXHR5tw8hkePA+g1PB5sMZ1+Y7R40pw3
+	Bs31cav0EhOBiTYGt22VMPkEKUhhJ2h5PWwQ==
+X-Google-Smtp-Source: AGHT+IGHodC3eA+AeXqJGy+cl40swETxEWeQdkJjh8gyft6+9faOheS8KTxGncgcx90cLYanFRvoexWTGw4SJAitFlQ=
+X-Received: by 2002:a05:6902:2086:b0:e79:1566:64fa with SMTP id
+ 3f1490d57ef6-e7b6d3fbda1mr16915479276.15.1747691210932; Mon, 19 May 2025
+ 14:46:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250519175348.11924-1-robdclark@gmail.com> <CAPM=9tw183FMOT8uUacqegnb5CREAyr8KbXxO2mCuFK-SmUB1A@mail.gmail.com>
- <CAF6AEGuDTGVq7sw4oVuHb+cOE_DuKbEPO956oddVcsV2boieoQ@mail.gmail.com>
-In-Reply-To: <CAF6AEGuDTGVq7sw4oVuHb+cOE_DuKbEPO956oddVcsV2boieoQ@mail.gmail.com>
-From: Dave Airlie <airlied@gmail.com>
-Date: Tue, 20 May 2025 07:45:31 +1000
-X-Gm-Features: AX0GCFtlQu6thz2-DodB9_hvAiBP83MybA9d3wKL9euWSYgx05ywhuPOmKRAvxs
-Message-ID: <CAPM=9twuSfvQ0_NUdRmp0_VtTE_Br7GAysRw+XOoX7BTxUBGYQ@mail.gmail.com>
-Subject: Re: [Linaro-mm-sig] [PATCH v5 00/40] drm/msm: sparse / "VM_BIND" support
-To: Rob Clark <robdclark@gmail.com>
-Cc: dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
-	linux-arm-msm@vger.kernel.org, Connor Abbott <cwabbott0@gmail.com>, 
-	Rob Clark <robdclark@chromium.org>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
-	=?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>, 
-	Arnd Bergmann <arnd@arndb.de>, =?UTF-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <barnabas.czeman@mainlining.org>, 
-	Christopher Snowhill <chris@kode54.net>, Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
-	Dmitry Baryshkov <lumag@kernel.org>, Eugene Lepshy <fekz115@gmail.com>, 
-	"open list:IOMMU SUBSYSTEM" <iommu@lists.linux.dev>, Jason Gunthorpe <jgg@ziepe.ca>, 
-	Jessica Zhang <quic_jesszhan@quicinc.com>, Joao Martins <joao.m.martins@oracle.com>, 
-	Jonathan Marek <jonathan@marek.ca>, Jun Nie <jun.nie@linaro.org>, 
-	Kevin Tian <kevin.tian@intel.com>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
-	"moderated list:DMA BUFFER SHARING FRAMEWORK:Keyword:bdma_?:buf|fence|resvb" <linaro-mm-sig@lists.linaro.org>, 
-	"m oderated list:ARM SMMU DRIVERS" <linux-arm-kernel@lists.infradead.org>, 
-	open list <linux-kernel@vger.kernel.org>, 
-	"open list:DMA BUFFER SHARING FRAMEWORK:Keyword:bdma_?:buf|fence|resvb" <linux-media@vger.kernel.org>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, Nicolin Chen <nicolinc@nvidia.com>, 
-	"Rob Herring (Arm)" <robh@kernel.org>, Robin Murphy <robin.murphy@arm.com>, Sean Paul <sean@poorly.run>, 
-	Will Deacon <will@kernel.org>
+References: <20250516164126.234883-1-stefano.radaelli21@gmail.com> <20250519164021.GL365796@horms.kernel.org>
+In-Reply-To: <20250519164021.GL365796@horms.kernel.org>
+From: Stefano Radaelli <stefano.radaelli21@gmail.com>
+Date: Mon, 19 May 2025 23:46:34 +0200
+X-Gm-Features: AX0GCFuBR54LVZrUjDmsQ3vo2yUBgjCY-fYJr8Xxxmt2BtO0ogT56rYcYNxqfkg
+Message-ID: <CAK+owojiySqLBtHq-=OpotxR3_Z0uoZzukVrF9Ak=fiUHtPm5Q@mail.gmail.com>
+Subject: Re: [PATCH net-next v2] net: phy: add driver for MaxLinear MxL86110 PHY
+To: Simon Horman <horms@kernel.org>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, 
+	Russell King <linux@armlinux.org.uk>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Xu Liang <lxu@maxlinear.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, 20 May 2025 at 07:25, Rob Clark <robdclark@gmail.com> wrote:
+Hi Simon,
+
+Thank you for your feedback!
+v4 will be ready soon.
+
+Best Regards,
+
+Stefano
+
+Il giorno lun 19 mag 2025 alle ore 18:40 Simon Horman
+<horms@kernel.org> ha scritto:
 >
-> On Mon, May 19, 2025 at 2:15=E2=80=AFPM Dave Airlie <airlied@gmail.com> w=
-rote:
+> On Fri, May 16, 2025 at 06:41:23PM +0200, Stefano Radaelli wrote:
+> > Add support for the MaxLinear MxL86110 Gigabit Ethernet PHY, a low-power,
+> > cost-optimized transceiver supporting 10/100/1000 Mbps over twisted-pair
+> > copper, compliant with IEEE 802.3.
 > >
-> > On Tue, 20 May 2025 at 03:54, Rob Clark <robdclark@gmail.com> wrote:
-> > >
-> > > From: Rob Clark <robdclark@chromium.org>
-> > >
-> > > Conversion to DRM GPU VA Manager[1], and adding support for Vulkan Sp=
-arse
-> > > Memory[2] in the form of:
-> > >
-> > > 1. A new VM_BIND submitqueue type for executing VM MSM_SUBMIT_BO_OP_M=
-AP/
-> > >    MAP_NULL/UNMAP commands
-> > >
-> > > 2. A new VM_BIND ioctl to allow submitting batches of one or more
-> > >    MAP/MAP_NULL/UNMAP commands to a VM_BIND submitqueue
-> > >
-> > > I did not implement support for synchronous VM_BIND commands.  Since
-> > > userspace could just immediately wait for the `SUBMIT` to complete, I=
- don't
-> > > think we need this extra complexity in the kernel.  Synchronous/immed=
-iate
-> > > VM_BIND operations could be implemented with a 2nd VM_BIND submitqueu=
-e.
+> > The driver implements basic features such as:
+> > - Device initialization
+> > - RGMII interface timing configuration
+> > - Wake-on-LAN support
+> > - LED initialization and control via /sys/class/leds
 > >
-> > This seems suboptimal for Vulkan userspaces. non-sparse binds are all
-> > synchronous, you are adding an extra ioctl to wait, or do you manage
-> > these via a different mechanism?
+> > This driver has been tested on multiple Variscite boards, including:
+> > - VAR-SOM-MX93 (i.MX93)
+> > - VAR-SOM-MX8M-PLUS (i.MX8MP)
+> >
+> > Example boot log showing driver probe:
+> > [    7.692101] imx-dwmac 428a0000.ethernet eth0:
+> >         PHY [stmmac-0:00] driver [MXL86110 Gigabit Ethernet] (irq=POLL)
+> >
+> > Changes from v1:
+> > - Add net-next support
+> > - Improved locking management and tests using CONFIG_PROVE_LOCKING
+> > - General cleanup
+> >
+> > Started a new thread
+> >
+> > Signed-off-by: Stefano Radaelli <stefano.radaelli21@gmail.com>
 >
-> Normally it's just an extra in-fence for the SUBMIT ioctl to ensure
-> the binds happen before cmd execution
+> Hi Stefano,
 >
-> When it comes to UAPI, it's easier to add something later, than to
-> take something away, so I don't see a problem adding synchronous binds
-> later if that proves to be needed.  But I don't think it is.
-
-I'm not 100% sure that is conformant behaviour to the vulkan spec,
-
-Two questions come to mind:
-1. where is this out fence stored? vulkan being explicit with no
-guarantee of threads doing things, seems like you'd need to use a lock
-in the vulkan driver to store it, esp if multiple threads bind memory.
-
-2. If it's fine to lazy bind on the hw side, do you also handle the
-case where something is bound and immediately freed, where does the
-fence go then, do you wait for the fence before destroying things?
-
-Dave.
-
-
-Dave.
+> Some minor feedback from my side.
+>
+> ...
+>
+> > diff --git a/drivers/net/phy/mxl-86110.c b/drivers/net/phy/mxl-86110.c
+> > new file mode 100644
+> > index 000000000000..63f32c49fcc1
+> > --- /dev/null
+> > +++ b/drivers/net/phy/mxl-86110.c
+> > @@ -0,0 +1,570 @@
+> > +// SPDX-License-Identifier: GPL-2.0+
+> > +/*
+> > + * PHY driver for Maxlinear MXL86110
+> > + *
+> > + * Copyright 2023 MaxLinear Inc.
+> > + *
+> > + */
+> > +
+> > +#include <linux/bitfield.h>
+> > +#include <linux/etherdevice.h>
+> > +#include <linux/kernel.h>
+> > +#include <linux/module.h>
+> > +#include <linux/of.h>
+> > +#include <linux/phy.h>
+> > +
+> > +/* PHY ID */
+> > +#define PHY_ID_MXL86110              0xc1335580
+> > +
+> > +/* required to access extended registers */
+> > +#define MXL86110_EXTD_REG_ADDR_OFFSET        0x1E
+> > +#define MXL86110_EXTD_REG_ADDR_DATA          0x1F
+> > +#define PHY_IRQ_ENABLE_REG                           0x12
+> > +#define PHY_IRQ_ENABLE_REG_WOL                       BIT(6)
+> > +
+> > +/* SyncE Configuration Register - COM_EXT SYNCE_CFG */
+> > +#define MXL86110_EXT_SYNCE_CFG_REG                                           0xA012
+>
+> For Networking code, please restrict lines to no more than 80 columns
+> wide where you can do so without reducing readability (I'd say that is the
+> case here.
+>
+> Likewise elsewhere in this patch.
+>
+> checkpatch.pl --max-line-length=80 can be helpful here.
+>
+> ...
+>
+> > +/**
+> > + * mxl86110_write_extended_reg() - write to a PHY's extended register
+> > + * @phydev: pointer to a &struct phy_device
+> > + * @regnum: register number to write
+> > + * @val: value to write to @regnum
+> > + *
+> > + * NOTE: This function assumes the caller already holds the MDIO bus lock
+> > + * or otherwise has exclusive access to the PHY.
+> > + *
+> > + * returns 0 or negative error code
+> > + */
+>
+> Tooling expects 'Return:' or 'Returns: ' to document return values.
+>
+> Likewise elsewhere in this patch.
+>
+> Flagged by ./scripts/kernel-doc -Wall -none
+>
+> ...
+>
+> > +static int mxl86110_led_hw_control_get(struct phy_device *phydev, u8 index,
+> > +                                    unsigned long *rules)
+> > +{
+> > +     u16 val;
+> > +
+> > +     if (index >= MXL86110_MAX_LEDS)
+> > +             return -EINVAL;
+> > +
+> > +     phy_lock_mdio_bus(phydev);
+> > +     val = mxl86110_read_extended_reg(phydev, MXL86110_LED0_CFG_REG + index);
+> > +     phy_unlock_mdio_bus(phydev);
+> > +     if (val < 0)
+> > +             return val;
+>
+> val is unsigned. It cannot be less than zero.
+>
+> Likewise in mxl86110_broadcast_cfg() and mxl86110_enable_led_activity_blink().
+>
+> Flagged by Smatch.
+>
+> ...
 
