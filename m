@@ -1,164 +1,115 @@
-Return-Path: <linux-kernel+bounces-653365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-653345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44FC3ABB80E
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 10:59:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C6F0ABB7CA
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 10:49:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B179B16D50C
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 08:59:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94D52188CC1F
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 08:46:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11FB826AAB8;
-	Mon, 19 May 2025 08:59:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA5DC26B97D;
+	Mon, 19 May 2025 08:43:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="ZPU7PwL+"
-Received: from mail-m49243.qiye.163.com (mail-m49243.qiye.163.com [45.254.49.243])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="SpsL6fum";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="27abn4HN"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FC2E194098;
-	Mon, 19 May 2025 08:59:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.243
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCD29267B9F;
+	Mon, 19 May 2025 08:43:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747645184; cv=none; b=QYkfLu2+KAhloTtGirWPCwlH6WP/CKXV4X1QuNQA6WcpQIBER69QeMs70atoVJSrV1XRYGB2JodNjkB9xYzvC4i5KVC4CLcc5oAw5VxbgHC6BG7DjspU0nrTN1FrawixlukzEiTNFkrUyLJQ9mLx2KYwDP7Gp4LHoUo4hloXBL8=
+	t=1747644235; cv=none; b=YnjDiz9N+8DjIC6l+qFEVk7ZYiD4lygn0hn6sSpihSSmI1JREHIpoxXRXvgt1c34BbXZGPRxIfbu9TOATP8CrL4/f0dwIEvxUx9wyj66UzsEellZIkam35JoI2t6vin2kU9GMOX+FIOQMZK29hoaqtmenaxETVSf/uflGNoo44Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747645184; c=relaxed/simple;
-	bh=UEBlw8vboLiO7dN2wOjs6AQukQENUwMD9NDOlANOesQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gNWZH3vtcqVYz2xpwpGyL+CRwj9/ZiimVW2C/Iq15UMNN5iHffvBihQirB6VmMxv6ZoBFOTHTCS1JagKTPBnSm6/rgpqgYSbSGQcfatrvBMKo041u3bHNDRSviddHItq1pMC7RHudGU31HyuN4Xp/6WVG5p8SSjbTxryTxkddtY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=ZPU7PwL+; arc=none smtp.client-ip=45.254.49.243
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-Received: from [127.0.0.1] (gy-adaptive-ssl-proxy-2-entmail-virt205.gy.ntes [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 158ccae3f;
-	Mon, 19 May 2025 16:44:14 +0800 (GMT+08:00)
-Message-ID: <6dac10df-d410-4d52-8711-4c8046f90fbd@rock-chips.com>
-Date: Mon, 19 May 2025 16:43:48 +0800
+	s=arc-20240116; t=1747644235; c=relaxed/simple;
+	bh=dqKLQkwE+HSzkETy8HB5QZi8xPZkODyaa/E6EaUD93E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LBrzp9kvvxi0/oRjrsLGOU2zIdObs5yzcdh+LsyZV2jWWswzelmVnxMgbZmZhU+goXWoR5YZn2Rn0Mgq6tBzMx9aPzHLJL61chKSB8Grp3xufZwMm76mpHMIC2+mKcoAT5EDf0xsHSrGpvbSGuqxzr4CprOqC0ukVM8Ynv42jKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=SpsL6fum; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=27abn4HN; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 19 May 2025 10:43:49 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1747644231;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=K/Yjnite8yXzKtcevUDc34pxEoRJ3ARYULxEcUzo4dQ=;
+	b=SpsL6fumkK9laJ6CPBZUwrA6616C7fZazHO7nnH+aySwjC/Gm4F4LGywVHMA1suFrCYU8R
+	+Pb1+jUEHEv9+pAnav92ZXRfJH5i8Zd1WV/4MHhu50ChBH39TJxqbPfNHE0IPLOEOEEav2
+	rJ2+8zpRzHhWJ2mxLN1UbLbp49l/kpU7/HR9hUPVX4wINagwJEZRR1FBApJ/TocPFKnXf9
+	ZgJhNdYlL4GVGtEEHA1+7qDovVQrMxgcOqkFT8/lBTkKHDLWE4tBD78nNGYQ1DiAM3JFsI
+	+vta6OZYVu+xU0kPdjp3eYvzxFNEiusKvp9f+i0wCg+xZmitPYFs3A4xZMcK7g==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1747644231;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=K/Yjnite8yXzKtcevUDc34pxEoRJ3ARYULxEcUzo4dQ=;
+	b=27abn4HNkIPeyAkf+cueeqEN5Gv69RRqcxYbQCSZKoE/vHFFzVEMqm896CuDWRAmTWbsdf
+	FLciCTvVXbf+ClDw==
+From: Nam Cao <namcao@linutronix.de>
+To: Gabriele Monaco <gmonaco@redhat.com>
+Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	linux-trace-kernel@vger.kernel.org,
+	Tomas Glozar <tglozar@redhat.com>, Juri Lelli <jlelli@redhat.com>
+Subject: Re: [RFC PATCH v2 06/12] sched: Adapt sched tracepoints for RV task
+ model
+Message-ID: <20250519084349.si1pN7sA@linutronix.de>
+References: <20250514084314.57976-1-gmonaco@redhat.com>
+ <20250514084314.57976-7-gmonaco@redhat.com>
+ <20250519082908.Nak_YDaO@linutronix.de>
+ <5385360f8f01a213ec3918dbc341f48339d7b8e5.camel@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/2] dt-bindings: display: rockchip: Convert
- cdn-dp-rockchip.txt to yaml
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Chaoyi Chen <kernel@airkyi.com>, Sandy Huang <hjc@rock-chips.com>,
- Heiko Stuebner <heiko@sntech.de>, Andy Yan <andy.yan@rock-chips.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Dragan Simic <dsimic@manjaro.org>,
- dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20250519012632.94-1-kernel@airkyi.com>
- <20250519012632.94-3-kernel@airkyi.com>
- <20a565da-296c-4920-b962-e9de9af464d9@kernel.org>
- <632f9f4d-ec0f-4512-a153-d2abfd9f6841@rock-chips.com>
- <20250519-tall-glistening-quokka-9ffa6f@kuoka>
-From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
-In-Reply-To: <20250519-tall-glistening-quokka-9ffa6f@kuoka>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGkMeT1ZLThpIHxhJHkgdTUpWFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
-	hVSktLVUpCS0tZBg++
-X-HM-Tid: 0a96e7b7094a03aekunm158ccae3f
-X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6OCo6HSo5LjExDC0zLio4FRhI
-	STMwCS5VSlVKTE9MTU9PSU1KSEpDVTMWGhIXVRgTGhQCElUYEx4VOwkUGBBWGBMSCwhVGBQWRVlX
-	WRILWUFZTkNVSUlVTFVKSk9ZV1kIAVlBT0pOTzcG
-DKIM-Signature:a=rsa-sha256;
-	b=ZPU7PwL+nAfueycpdY2yJue2tLZTRMoaiSKoIlGm+G9Xi5nboCuoO35Wc21TaIz7dmKHezIH5NNK7VX/AwNFNGs4VT9yz1RQ8ILaIY3w7ZNE2aSZPqay6utDnKSNSgECauwziW8cxvAKh6tB/lrJCpw5w5MseqaRQIiz8er641o=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=UN9mV4Ay8ghFsuFemLHGgtg/VXgBJG+F9kHs6DqrncA=;
-	h=date:mime-version:subject:message-id:from;
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <5385360f8f01a213ec3918dbc341f48339d7b8e5.camel@redhat.com>
 
-Hi Krzysztof,
+On Mon, May 19, 2025 at 10:41:47AM +0200, Gabriele Monaco wrote:
+> On Mon, 2025-05-19 at 10:29 +0200, Nam Cao wrote:
+> > On Wed, May 14, 2025 at 10:43:08AM +0200, Gabriele Monaco wrote:
+> > >  DECLARE_TRACE_CONDITION(sched_set_state_tp,
+> > > -	TP_PROTO(struct task_struct *tsk, int state),
+> > > -	TP_ARGS(tsk, state),
+> > > +	TP_PROTO(struct task_struct *tsk, int state, bool
+> > > from_signal),
+> > > +	TP_ARGS(tsk, state, from_signal),
+> > >  	TP_CONDITION(!!(tsk->__state) != !!state));
+> > 
+> > Doesn't this break the build? Because the monitors still use the old
+> > signatures?
+> > 
+> > I understand you adapt the monitor to this new signature in a follow-
+> > up
+> > patch. But every commits in the series should be buildable, otherwise
+> > you
+> > break "git bisect".
+> > 
+> 
+> Yeah good point, do you suggest at least fixing signatures in monitors
+> inside this commit?
 
-On 2025/5/19 16:23, Krzysztof Kozlowski wrote:
-> On Mon, May 19, 2025 at 02:56:03PM GMT, Chaoyi Chen wrote:
->> Hi Krzysztof,
->>
->> On 2025/5/19 14:16, Krzysztof Kozlowski wrote:
->>> On 19/05/2025 03:26, Chaoyi Chen wrote:
->>>> +maintainers:
->>>> +  - Andy Yan <andy.yan@rock-chip.com>
->>>> +  - Heiko Stuebner <heiko@sntech.de>
->>>> +  - Sandy Huang <hjc@rock-chips.com>
->>>> +
->>>> +allOf:
->>>> +  - $ref: /schemas/sound/dai-common.yaml#
->>>> +
->>>> +properties:
->>>> +  compatible:
->>>> +    items:
->>>> +      - const: rockchip,rk3399-cdn-dp
->>>> +
->>>> +  reg:
->>>> +    maxItems: 1
->>>> +
->>>> +  clocks:
->>>> +    items:
->>>> +      - description: DP core work clock
->>>> +      - description: APB clock
->>>> +      - description: SPDIF interface clock
->>>> +      - description: GRF clock
->>>> +
->>>> +  clock-names:
->>>> +    items:
->>>> +      - const: core-clk
->>>> +      - const: pclk
->>>> +      - const: spdif
->>>> +      - const: grf
->>>> +
->>>> +  extcon:
->>>> +    $ref: /schemas/types.yaml#/definitions/phandle-array
->>>> +    items:
->>>> +      maxItems: 1
->>>> +    maxItems: 2
->>> Instead of this, list the items. Old binding said only "specifier", so
->>> this is technically a change, which should be explained in commit msg.
->> Will fix in v5.
->>
->>
->>>> +    description:
->>>> +      List of phandle to the extcon device providing the cable state for the DP PHY.
->>>> +
->>>> +  interrupts:
->>>> +    maxItems: 1
->>>> +
->>>> +  phys:
->>>> +    items:
->>>> +      maxItems: 1
->>>> +    maxItems: 2
->>>> +    description: |
->>>> +      List of phandle to the PHY device for DP output.
->>>> +      RK3399 have two DP-TPYEC PHY, specifying one PHY which want to use,
->>>> +      or specify two PHYs here to let the driver determine which PHY to use.
->>> You do not allow one phy, so your description is not accurate. OTOH,
->>> original binding did not allow two phandles, so that's another change in
->>> the binding. You need to document all changes done to the binding in the
->>> commit msg.
->> Oh, the original binding example use two phandles. I think only one PHY can
-> Example is not the binding, just an example.
->
->> also pass the dtb check here, or maybe I'm missing something else?
-> You think or you tested it? What is the minItems value? 2, so even if
-> this works it's rather a bug in dtschema.
+Yes.
 
-Yes I tested it. Both of "phys = <&tcphy0_dp>", "phys = <&tcphy0_dp>, 
-<&tcphy1_dp>" pass the dtb check.
+> I can keep the other commits to actually fix/adapt monitors but at
+> least allow building from here.
 
+ Also yes, I would only change the signature in this commit.
 
->
-> Also, inner maxItems:1 is not really correct. Why can't this work with
-> different phy providers?
-
-I'll see what other bindings do. Thanks for the clarification!
-
+Best regards,
+Nam
 
