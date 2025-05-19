@@ -1,63 +1,59 @@
-Return-Path: <linux-kernel+bounces-653503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-653505-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7671FABBA87
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 12:02:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2F3CABBA86
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 12:02:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B5FC8189A3BE
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 10:00:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E17FD16210D
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 10:02:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C1EB26B08D;
-	Mon, 19 May 2025 09:59:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21ED926B08D;
+	Mon, 19 May 2025 10:02:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JuTHSvGB"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VNzz+hwe"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B31BB1C700D;
-	Mon, 19 May 2025 09:59:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 809D326A1B8;
+	Mon, 19 May 2025 10:02:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747648794; cv=none; b=kUtnny2uo5rCguLFqoqGfg04XTcNABFcX9zoWUdkYF79MZvmKD1ucAh0QRBidLVCJT28ZabkoM2l8t9yQPWQccvqCD6V65rEX0u3QlpiirSq4/34Jq0/lLZhTGQx0+bD/sMKXqJ0nn5fDfCoIWrFzPVhzbFMhRwd8/ISdKZiidg=
+	t=1747648923; cv=none; b=UDTt10CGpeMLl/dmr+xkGdmGriM7cyHAoRLjXoY7MyM+oN3a7L8g1fvjPu8NTm4y19/61Y0fPk7qOrfQ+hlxgeZCza6bwUWEABBLAXmTNh29iZ2XICkxFk/UpAA777mHLPeSEGEo4w3EQEhVy0m5Nya8vQGAaOsI20p+RwaXPUE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747648794; c=relaxed/simple;
-	bh=WdkVZramwGI8mC1TPOoMUf9FA7POUXwjiwSg9TZ1T34=;
+	s=arc-20240116; t=1747648923; c=relaxed/simple;
+	bh=nfGjAmRusdnHy0utbcl82JupWWBu05y/buhmdLs3ic4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=izTDwvfiN9pQGdFOcXReHrthv6+AUd8M9mkh6l7ydMHJTz4wAh9EVuN5mFi9bKH+j0Pi1PtmkRDQCShYN1/coMyIClyQvMzC4iADBAQNciE4sxA19/J8lrtm13OFPKYJDPtKYLNdNOyr2pU4cNsSV5QjQtRdLHEH+xCaJeVfOYQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JuTHSvGB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C87CC4CEE4;
-	Mon, 19 May 2025 09:59:49 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=JKjN1Y4/0BOemwLIWshG4Z5TnB+9/vbe3d4rb+LV0NgkB7muOd3GaXMZz5nivh8nBZi6QOSDlBJdx7XkyHKcSwx3OZjKtijOeWmZeWozj/TWAGdzvxpVXpBw4j6v9P/pCgH9oxlhI69C7vfKc7Y/UkI1izGp4FHJWOSnri0RuO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VNzz+hwe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1C73C4CEE4;
+	Mon, 19 May 2025 10:01:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747648794;
-	bh=WdkVZramwGI8mC1TPOoMUf9FA7POUXwjiwSg9TZ1T34=;
+	s=k20201202; t=1747648922;
+	bh=nfGjAmRusdnHy0utbcl82JupWWBu05y/buhmdLs3ic4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JuTHSvGBuao+udd62qaUwmn5rY/W8IWSEw+QbgqOARvez+B1Z1eKRyiuGxy3WxyOv
-	 xq/RipGvKezUbwf9tYIZ3WTQCgIPGQwQAGZIgmG3StIeq8J/rPW5R78MHTCV9/hyrE
-	 VRYXyHZf3PKgQVO7twf1h7MYXvMLkcilE4Y8CwdPLwoPB42cISK9tDvdS4pD7moz0h
-	 oi7VMJ7s1QbtLzlopdAfgjMg8QFXjp54qT7xblesUcVMwbBmhpQgR1/acb0cnZiv6/
-	 N7rHl2MnRI5egEGl52GAvTicTvrX1h0U+l7so3OhndJIfRfUSHRuXHYu1HKLPS09SJ
-	 3UEam3TxKTsBg==
-Date: Mon, 19 May 2025 11:59:47 +0200
-From: Niklas Cassel <cassel@kernel.org>
-To: Shradha Todi <shradha.t@samsung.com>
-Cc: linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.or, linux-kernel@vger.kernel.org,
-	linux-phy@lists.infradead.org, manivannan.sadhasivam@linaro.org,
-	lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
-	bhelgaas@google.com, jingoohan1@gmail.com, krzk+dt@kernel.org,
-	conor+dt@kernel.org, alim.akhtar@samsung.com, vkoul@kernel.org,
-	kishon@kernel.org, arnd@arndb.de, m.szyprowski@samsung.com,
-	jh80.chung@samsung.com
-Subject: Re: [PATCH 10/10] misc: pci_endpoint_test: Add driver data for FSD
- PCIe controllers
-Message-ID: <aCsBE7uwU9wyZIXn@ryzen>
-References: <20250518193152.63476-1-shradha.t@samsung.com>
- <CGME20250518193305epcas5p263b59196e93ef504eab8537f82c37342@epcas5p2.samsung.com>
- <20250518193152.63476-11-shradha.t@samsung.com>
+	b=VNzz+hweTHX+k6aokJkJd/pWyRJ65OXEmVIES3IqDdme72h8vSATCts0gihA98ibW
+	 zzXXKxkzdC0xWDNOzE/1PMTztoN+WD85XfY79fLXtiZ/MLJjr9fKjBxol8QOB00P88
+	 2pm/1Ls9OuU5E4UClzAGhS3fkfSiwNcvuCPqqkGA3UgX4qgX89utWpRWwpqQZIvlQX
+	 2SgWSEcuXCYA6T2e9RANQMQFfg/Q4kFAbRNzhHg+858gn2q4yJUD1tyyy3KRUo0JYM
+	 jwiXeYGG9ADy0g5hgkchAsRiiFIvBm7htxLxNtFytxRDuP3ghDQLWcG4Aq/LX+qLjY
+	 KVeLj3SufeB+g==
+Date: Mon, 19 May 2025 13:01:55 +0300
+From: Mike Rapoport <rppt@kernel.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	Mike Rapoport <rppt@gmail.com>, Rich Felker <dalias@libc.org>,
+	Yoshinori Sato <ysato@users.sourceforge.jp>,
+	linux-kernel@vger.kernel.org, linux-sh@vger.kernel.org,
+	kernel test robot <lkp@intel.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>
+Subject: Re: [PATCH] sh: kprobes: remove unused variables in
+ kprobe_exceptions_notify()
+Message-ID: <aCsBk6OUnkKGSJm3@kernel.org>
+References: <20250517093048.1149919-1-rppt@kernel.org>
+ <CAMuHMdURQWHY2hAe+_sA8cVh1ERD4EfvJqg=NZDA0iXW-sBX+A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,49 +62,77 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250518193152.63476-11-shradha.t@samsung.com>
+In-Reply-To: <CAMuHMdURQWHY2hAe+_sA8cVh1ERD4EfvJqg=NZDA0iXW-sBX+A@mail.gmail.com>
 
-Hello Shradha,
-
-On Mon, May 19, 2025 at 01:01:52AM +0530, Shradha Todi wrote:
-> dma_map_single() might not return a 4KB aligned address, so add the
-> default_data as driver data for FSD PCIe controllers to make it
-> 4KB aligned.
+On Mon, May 19, 2025 at 10:48:20AM +0200, Geert Uytterhoeven wrote:
+> Hi Mike,
 > 
-> Signed-off-by: Shradha Todi <shradha.t@samsung.com>
-> ---
->  drivers/misc/pci_endpoint_test.c | 3 +++
->  include/linux/pci_ids.h          | 2 ++
->  2 files changed, 5 insertions(+)
+> On Sat, 17 May 2025 at 11:30, Mike Rapoport <rppt@kernel.org> wrote:
+> > From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
+> >
+> > kbuild reports the following warning:
+> >
+> >    arch/sh/kernel/kprobes.c: In function 'kprobe_exceptions_notify':
+> > >> arch/sh/kernel/kprobes.c:412:24: warning: variable 'p' set but not used [-Wunused-but-set-variable]
+> >      412 |         struct kprobe *p = NULL;
+> >          |                        ^
+> >
+> > The variable 'p' is indeed unused since the commit fa5a24b16f94
+> > ("sh/kprobes: Don't call the ->break_handler() in SH kprobes code")
+> >
+> > Remove that variable along with 'kprobe_opcode_t *addr' which also
+> > becomes unused after 'p' is removed.
+> >
+> > Reported-by: kernel test robot <lkp@intel.com>
+> > Closes: https://lore.kernel.org/oe-kbuild-all/202505151341.EuRFR22l-lkp@intel.com/
+> > Fixes: fa5a24b16f94 ("sh/kprobes: Don't call the ->break_handler() in SH kprobes code")
+> > Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
 > 
-> diff --git a/drivers/misc/pci_endpoint_test.c b/drivers/misc/pci_endpoint_test.c
-> index c4e5e2c977be..d94a94231ee5 100644
-> --- a/drivers/misc/pci_endpoint_test.c
-> +++ b/drivers/misc/pci_endpoint_test.c
-> @@ -1110,6 +1110,9 @@ static const struct pci_device_id pci_endpoint_test_tbl[] = {
->  	{ PCI_DEVICE(PCI_VENDOR_ID_FREESCALE, PCI_DEVICE_ID_LS1088A),
->  	  .driver_data = (kernel_ulong_t)&default_data,
->  	},
-> +	{ PCI_DEVICE(PCI_VENDOR_ID_TESLA, 0x7777),
-> +	  .driver_data = (kernel_ulong_t)&default_data,
-> +	},
+> Thanks for your patch!
+> 
+> "p" and "addr" are definitely unused (besides side-effects?), so
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> 
+> > --- a/arch/sh/kernel/kprobes.c
+> > +++ b/arch/sh/kernel/kprobes.c
+> > @@ -404,13 +404,10 @@ int __kprobes kprobe_fault_handler(struct pt_regs *regs, int trapnr)
+> >  int __kprobes kprobe_exceptions_notify(struct notifier_block *self,
+> >                                        unsigned long val, void *data)
+> >  {
+> > -       struct kprobe *p = NULL;
+> >         struct die_args *args = (struct die_args *)data;
+> >         int ret = NOTIFY_DONE;
+> > -       kprobe_opcode_t *addr = NULL;
+> >         struct kprobe_ctlblk *kcb = get_kprobe_ctlblk();
+> >
+> > -       addr = (kprobe_opcode_t *) (args->regs->pc);
+> >         if (val == DIE_TRAP &&
+> >             args->trapnr == (BREAKPOINT_INSTRUCTION & 0xff)) {
+> >                 if (!kprobe_running()) {
+> > @@ -421,7 +418,6 @@ int __kprobes kprobe_exceptions_notify(struct notifier_block *self,
+> >                                 ret = NOTIFY_DONE;
+> >                         }
+> >                 } else {
+> > -                       p = get_kprobe(addr);
+> >                         if ((kcb->kprobe_status == KPROBE_HIT_SS) ||
+> >                             (kcb->kprobe_status == KPROBE_REENTER)) {
+> >                                 if (post_kprobe_handler(args->regs))
+> 
+> I have no idea what this code is supposed to do, and if it actually
+> works.  Red flags are that the assigned "p" was never used at all
+> since the inception of this function.
 
-Are you sure that you actually require this?
+"p" was used before fa5a24b16f94 ("sh/kprobes: Don't call the
+->break_handler() in SH kprobes code"), but I can't say I understand that
+code either :)
 
-Since we now have these two commits:
-e73ea1c2d4d8 ("PCI: dwc: endpoint: Implement the pci_epc_ops::align_addr() operation")
-0d292a1e6d90 ("misc: pci_endpoint_test: Add support for capabilities")
+CC'ing Masami, he probably knows what this code does.
+ 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
 
-My expectation is that DWC based endpoint controller drivers should no longer
-need an explicit 4k alignment in the host side driver.
-
-Thus, I would expect that:
-{ PCI_DEVICE(PCI_VENDOR_ID_TESLA, 0x7777),},
-
-(i.e. no explicit 4k alignment)
-should be sufficient.
-
-
-Kind regards,
-Niklas
+-- 
+Sincerely yours,
+Mike.
 
