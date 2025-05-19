@@ -1,123 +1,92 @@
-Return-Path: <linux-kernel+bounces-653797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-653801-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C51BABBE9F
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 15:09:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B651ABBEC3
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 15:12:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B1E06175EA0
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 13:09:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B311D7A3AFF
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 13:11:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 113E027978B;
-	Mon, 19 May 2025 13:09:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3040D2797A6;
+	Mon, 19 May 2025 13:12:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="kVt6FymV"
-Received: from out-188.mta0.migadu.com (out-188.mta0.migadu.com [91.218.175.188])
+	dkim=temperror (0-bit key) header.d=aruba.it header.i=@aruba.it header.b="X0nRl60l"
+Received: from smtpcmd03117.aruba.it (smtpcmd03117.aruba.it [62.149.158.117])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11D7526B2B1
-	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 13:09:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13322A55
+	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 13:12:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.149.158.117
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747660165; cv=none; b=HBAdOjrlx0OL9aq5b1p2rT6dJLdmjtsjWTWsTgBwMFCJJYaUFP2tWRgwncNLzBVhXLCLgSdvJxAdPJiHCULNUXwpSgFuXxlzZNUTxXrkWgVB5x4yZ1H4U5+dv0P0cOb3MpX6R5MRxg7Ui6oLB5J/oumFcKmtZFMPxCK98BzdC8w=
+	t=1747660333; cv=none; b=lA++9YpS4QQWsDuw9n+354YFhRo/7mi784nRerifsd/sCTgIF0eD8g+BJ7YBz6etpBSDN30Zd6jiu2XDbvRYfefI248QrelBalEM+ZWqmvGwwFTBQn1COZBjuuozrsu7l1VaYpvabvMJgJYffg1l/90s8xlgtzhwAFzRXn/8QEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747660165; c=relaxed/simple;
-	bh=pSodbc3V4LQg415hXRwcYmpy6/55GRV7K5MO1Cpr8WY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=S7hKGEyl7YTq3tnB8s+vQw1h8Ysvf/dIRrUbCogmj4bebrWO/esFHXFQrqOlzCoPDUH0F97KnXbdkqZMV1gqu9n3qhQfVRYT2yhVuHHYUz9jMohRdAn5NlTZxfNvxfUg42FKPQaLYMF4k7JIYbDl9wYYi5SWcCmHxcFpDrGpK7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=kVt6FymV; arc=none smtp.client-ip=91.218.175.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <4be335ac-8b6e-4714-bce3-f62495dbee8d@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1747660158;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rdkhBGRvUC+ooGHKKuYF8USNZA83y6OB9dcv1mAc5tE=;
-	b=kVt6FymVrPtkk86vbo79J/uBt+0rC5tjRuQe08F5KwEFzrpo8lRPNbd3FC7quxOK+Us5Cn
-	yyT69rVVn5Sfo8ovWAv+sCcoKZgTZoLfWWcX+/fOGVjNu30rz7Rw3H6szxU62MfPhdRvcs
-	c3Dg+0hNCPkpkTRjbiU1EFlwvdmKJBU=
-Date: Mon, 19 May 2025 21:08:57 +0800
+	s=arc-20240116; t=1747660333; c=relaxed/simple;
+	bh=ML39nuP2riC2sW3IXoGz4oBLnULYWaCSwZod4+GgjiA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=uhGXOsg5MAX2+JlzcMtWFDGvGeyBZSvBdSMKM+kOl4kCqP3Y4TOf0pbUlm8bR6AvT9UkLioP70NAaXSj17JHXisBwSJVmfi/oCd7oJmN2p227O3+46Bo40mNrKYD6czfjdJo7Et9o0vwJ2pGgH1akzHUFCUhxmuKKzxwoMSIgLA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=enneenne.com; spf=pass smtp.mailfrom=enneenne.com; dkim=temperror (0-bit key) header.d=aruba.it header.i=@aruba.it header.b=X0nRl60l; arc=none smtp.client-ip=62.149.158.117
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=enneenne.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=enneenne.com
+Received: from polimar.homenet.telecomitalia.it ([79.0.204.227])
+	by Aruba SMTP with ESMTPSA
+	id H0EluBSummHkSH0Emu8qyj; Mon, 19 May 2025 15:09:00 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=aruba.it; s=a1;
+	t=1747660140; bh=ML39nuP2riC2sW3IXoGz4oBLnULYWaCSwZod4+GgjiA=;
+	h=From:To:Subject:Date:MIME-Version;
+	b=X0nRl60lHCcTmM8wPCrXQPbaWagBNNvv4ajNRWXsX+BKxQJMBYMH1fnLz+EOlvxbJ
+	 iEBm62yD/8yUwuLqrHZ/AG73netX+q5iFUJ2FXfc7z0pS3+jS4ym714XggSyCwng+9
+	 p62PlLXykzpGSGZqUJIfCVLNAp2vl05POa52dFeu/6QezKm9qSh2URP/rYLhZ3gT4S
+	 kQp05/1Uqf/zh4/EjCN9oYJS7SYuv9lq2/FJTZRHRp4CgvQDPLC430O/OJ5veBX7d7
+	 XVcS3C7/GxoPJDgDKqejYlQUbp4bZRyIX1P+kEkzXpxQPEQFz6VsMqzwMsePrnGZbP
+	 aVJkyfush9/rg==
+From: Rodolfo Giometti <giometti@enneenne.com>
+To: linux-kernel@vger.kernel.org
+Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Eric Fourmont <eric.fourmont-ext@st.com>,
+	Yann GAUTIER <yann.gautier@foss.st.com>,
+	Rodolfo Giometti <rodolfo.giometti@kbact.org>
+Subject: [V1 0/2] Add SoC support for stm32mp13xx CPUs
+Date: Mon, 19 May 2025 13:08:57 +0000
+Message-Id: <20250519130859.3389704-1-giometti@enneenne.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH 3/4] mm: prevent KSM from completely breaking VMA merging
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
- Pedro Falcato <pfalcato@suse.de>, David Hildenbrand <david@redhat.com>,
- Xu Xin <xu.xin16@zte.com.cn>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-References: <cover.1747431920.git.lorenzo.stoakes@oracle.com>
- <418d3edbec3a718a7023f1beed5478f5952fc3df.1747431920.git.lorenzo.stoakes@oracle.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Chengming Zhou <chengming.zhou@linux.dev>
-In-Reply-To: <418d3edbec3a718a7023f1beed5478f5952fc3df.1747431920.git.lorenzo.stoakes@oracle.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
+X-CMAE-Envelope: MS4xfMh/Fpk+pwBEkLTfzO4y4TYc9xaEfBudgO7tsUE0KkBxzid2iibSSSWCC/vQ7vakhsCbCw+9PNUaoJaD6+xay9nl/QAcuPtszO9sB8jayo0P0p87WSTR
+ d2/i5HCoS0x0p1B/U8E0V+iM0d4LSTMNH9DzIU6nCW6UBgz/vmCRahhK3F0mtCQpOtKbpCLy1eR1kelAN7f14CjeOvZfbTTJqmVVECrwwCcAml4KbKNund29
+ FWQqVHeOAQtXh7cIH8c9ikgF/opK/9qRMZL5BQqGlnHFbSqbC/H2dsyuu9yumnoEyq9J46SJ6XwcG/hXA1Vpw5KCI+S+qD3MFLqUMqlow4C0O/2UMDWi6aHy
+ +22nA9dDMWfEzpzKURSZ0lilt3tyKm5V3qpkknSliGAr9KcAM/kEpAGD9M2ez32ttzZnhGEh
 
-On 2025/5/19 16:51, Lorenzo Stoakes wrote:
-> If a user wishes to enable KSM mergeability for an entire process and all
-> fork/exec'd processes that come after it, they use the prctl()
-> PR_SET_MEMORY_MERGE operation.
-> 
-> This defaults all newly mapped VMAs to have the VM_MERGEABLE VMA flag set
-> (in order to indicate they are KSM mergeable), as well as setting this flag
-> for all existing VMAs.
-> 
-> However it also entirely and completely breaks VMA merging for the process
-> and all forked (and fork/exec'd) processes.
-> 
-> This is because when a new mapping is proposed, the flags specified will
-> never have VM_MERGEABLE set. However all adjacent VMAs will already have
-> VM_MERGEABLE set, rendering VMAs unmergeable by default.
+From: Rodolfo Giometti <rodolfo.giometti@kbact.org>
 
-Great catch!
+This patchset adds SoC support for stm32mp13xx CPUs, allowing users to
+read the following information:
 
-I'm wondering how about fixing the vma_merge_new_range() to make it mergeable
-in this case?
+    # ls /sys/bus/soc/devices/soc0/
+    family         power          secure         soc_id         uevent
+    machine        revision       serial_number  subsystem
 
-> 
-> To work around this, we try to set the VM_MERGEABLE flag prior to
-> attempting a merge. In the case of brk() this can always be done.
-> 
-> However on mmap() things are more complicated - while KSM is not supported
-> for file-backed mappings, it is supported for MAP_PRIVATE file-backed
-> mappings.
+All entries are standard SoC entries except "secure", which reports
+the CPU security status as described in the CPU datasheet.
 
-So we don't need to set VM_MERGEABLE flag so early, given these corner cases
-that you described below need to consider.
+Rodolfo Giometti (2):
+  arm stm32mp131.dtsi: add "encoding_mode" nvmem definition
+  drivers soc: add support for ST stm32mp13xx family
 
-> 
-> And these mappings may have deprecated .mmap() callbacks specified which
-> could, in theory, adjust flags and thus KSM merge eligiblity.
-> 
-> So we check to determine whether this at all possible. If not, we set
-> VM_MERGEABLE prior to the merge attempt on mmap(), otherwise we retain the
-> previous behaviour.
-> 
-> When .mmap_prepare() is more widely used, we can remove this precaution.
+ arch/arm/boot/dts/st/stm32mp131.dtsi |   7 +
+ drivers/soc/st/Makefile              |   1 +
+ drivers/soc/st/soc-stm32mp13.c       | 253 +++++++++++++++++++++++++++
+ 3 files changed, 261 insertions(+)
+ create mode 100644 drivers/soc/st/soc-stm32mp13.c
 
-Sounds good too.
+-- 
+2.25.1
 
-> 
-> While this doesn't quite cover all cases, it covers a great many (all
-> anonymous memory, for instance), meaning we should already see a
-> significant improvement in VMA mergeability.
-> 
-
-Agree, it's a very good improvement.
-
-Thanks!
 
