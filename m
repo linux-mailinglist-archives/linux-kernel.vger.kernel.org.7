@@ -1,120 +1,239 @@
-Return-Path: <linux-kernel+bounces-654161-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-654156-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38E32ABC49B
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 18:34:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEBDCABC48F
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 18:32:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DDB3D3BE12A
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 16:33:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6998C189C58D
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 16:33:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5547D288CA0;
-	Mon, 19 May 2025 16:32:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFE5A2874FC;
+	Mon, 19 May 2025 16:32:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="lgcWPvCX"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F168D28851F;
-	Mon, 19 May 2025 16:32:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L8YZpk0D"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 399292874F5
+	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 16:32:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747672358; cv=none; b=oALR6JTPHU56XzEGa2+QHOdiwjf+8pMfE+LPp3oWu0ELAtNKP1WaNeBLKG4nPtI63In07g6a/EDu9ZumcEWRpLllf6Ibk9r+EOhApTKgfP2+whzfM2DJguIi41eRUIsaItFpSsFR0/S7khGDMniJndKWQcsKG2Yk5CdHOjUtobQ=
+	t=1747672340; cv=none; b=K0ceXqsjZo/YjhBA6eIhrOsKmEkfqBSON17wPsYF48n6QvM78c+1rLHoqH3w6YkFY3V+04lBB5BRfiV4lqFUnZ0e8dZgNcZZXKtoy384OK+aQkZxmurxbxGjaje7oxdfTPHWt3CVd8ZfRjTlaAxPno7l9Hgx52ZLhs0i4FNtZJI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747672358; c=relaxed/simple;
-	bh=PXNCiJ5xoO/xCmMEKbAoMNDvhrwKWD3uo/0LaRx0nvY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=UJcex4eQo9ayMbxc/EUwkLo57loCVJJuN2TzNLW8dglQ68iqVzTChpTnYqG4+UnGvAREApefmuZ373zMbyGHPF9lHz3+c/ALcw0jiojKxO4MOT3DEo98I/tmTJneaXuoQ5SsiKa+G+X9DD4AFd6RUUgBqXn83EacXp64DfP2MHk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=lgcWPvCX; arc=none smtp.client-ip=117.135.210.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=ck
-	1FJ/X8Z/gmDk70VFd/aZnFUDoMaQAgbxAZxJENzgg=; b=lgcWPvCXC7fVj89HHt
-	Pi4wr6F+OS0WYhkgY6dDYIHIjWmlP93S9H35zeXFSxTn5xHC/Mc9BtYK9P/eJDZ9
-	UYqr02U2zPl0+ZOsQmJ63tFZUMAN1sDTIoh3sYN6CCYiO9ZlhUqAXxa00h+MWP7q
-	5MEDrstcEMDQjFADOOlAPuMcM=
-Received: from localhost.localdomain (unknown [])
-	by gzga-smtp-mtada-g1-1 (Coremail) with SMTP id _____wC3vJ4CXStoPbk5Cg--.56045S5;
-	Tue, 20 May 2025 00:32:05 +0800 (CST)
-From: Hans Zhang <18255117159@163.com>
-To: bhelgaas@google.com,
-	lpieralisi@kernel.org,
-	kw@linux.com,
-	krzk+dt@kernel.org,
-	manivannan.sadhasivam@linaro.org,
-	ilpo.jarvinen@linux.intel.com,
-	jingoohan1@gmail.com
-Cc: robh@kernel.org,
-	linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Hans Zhang <18255117159@163.com>
-Subject: [PATCH 3/3] PCI/bwctrl: Replace legacy speed conversion with shared macro
-Date: Tue, 20 May 2025 00:31:56 +0800
-Message-Id: <20250519163156.217567-4-18255117159@163.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250519163156.217567-1-18255117159@163.com>
-References: <20250519163156.217567-1-18255117159@163.com>
+	s=arc-20240116; t=1747672340; c=relaxed/simple;
+	bh=1vt1MoG0vdEioK+pN4NwXN8URiMgUmPzy0enQr+CUZ8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FlKWiyhWdmHA1dbUqHN6d4S/L/kvn43kyaWmW0LO8HsPFuybEwXuTFtLK1+/EIpbL4a87CcuxhAQQFuE7reGHQd1IWpmQA6Got/kfE9TC8dFGKi+Chx+cUJHVptpn7xPYA46q9somFmkfoajboL81qABNoXlUmt5Q7W4xDwtYPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L8YZpk0D; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39E0CC4CEED;
+	Mon, 19 May 2025 16:32:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747672338;
+	bh=1vt1MoG0vdEioK+pN4NwXN8URiMgUmPzy0enQr+CUZ8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=L8YZpk0DWAr/b+/ZP621OE7RndCFZ7HfrcuFv8KYqBCYiwhjjJvZxzOaQvdZs0z9x
+	 S77hWVDZcbUcuEXqFb7PBepbavZIb5mHGCOAA23B20oZHNAMXKab6iyFljzPqtJ471
+	 vz/+yGxAbMbI3jPr6N7QOsSdfvE5mtZmnD+XA2qHNwyotpU662Naf2WtSXbT3ViHsG
+	 zq/AB2Xv+utOGn1vR1dTAFbcQrF0dRGzwStG7wTrsCbV9Jh7JNTjLl+iwhTk55jgq2
+	 YL4+VDrHUiekV1UBgxCCozihxdjrU98+R7jffDl156AmGWnxSG5TsGCNRXRn00w5/X
+	 LgWY+Eccosweg==
+Date: Mon, 19 May 2025 18:32:10 +0200
+From: Alexey Gladkov <legion@kernel.org>
+To: Chen Ridong <chenridong@huaweicloud.com>
+Cc: akpm@linux-foundation.org, paulmck@kernel.org, bigeasy@linutronix.de,
+	roman.gushchin@linux.dev, brauner@kernel.org, tglx@linutronix.de,
+	frederic@kernel.org, peterz@infradead.org, oleg@redhat.com,
+	joel.granados@kernel.org, viro@zeniv.linux.org.uk,
+	lorenzo.stoakes@oracle.com, avagin@google.com,
+	mengensun@tencent.com, linux@weissschuh.net, jlayton@kernel.org,
+	ruanjinjie@huawei.com, kees@kernel.org,
+	linux-kernel@vger.kernel.org, lujialin4@huawei.com,
+	Eric Biederman <ebiederm@xmission.com>
+Subject: Re: [RFC next v2 0/5] ucount: add rlimit cache for ucount
+Message-ID: <aCtdCkSGQJKCYApm@example.org>
+References: <20250509072054.148257-1-chenridong@huaweicloud.com>
+ <aCcl9M-BgOJ86gVJ@example.org>
+ <f5c701d5-c501-4179-959c-85057705a09d@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wC3vJ4CXStoPbk5Cg--.56045S5
-X-Coremail-Antispam: 1Uf129KBjvJXoW7try3CrWruw1fGw4xWw13twb_yoW8Ar4fpa
-	9xZr1UAry8Aw15CrZ0g3WvqFyUXFnxJrWUC3yfW3s5XFyfA395Ga4ayFWrtryaqrZIkry8
-	Can8JF48Gw17KaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zRvtC-UUUUU=
-X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/xtbBDxxSo2grV+Vn8AABsF
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f5c701d5-c501-4179-959c-85057705a09d@huaweicloud.com>
 
-Remove obsolete pci_bus_speed2lnkctl2() function and utilize the common
-PCIE_SPEED2LNKCTL2_TLS_ENC macro instead.
+On Mon, May 19, 2025 at 09:39:34PM +0800, Chen Ridong wrote:
+> 
+> 
+> On 2025/5/16 19:48, Alexey Gladkov wrote:
+> > On Fri, May 09, 2025 at 07:20:49AM +0000, Chen Ridong wrote:
+> >> The will-it-scale test case signal1 [1] has been observed. and the test
+> >> results reveal that the signal sending system call lacks linearity.
+> > 
+> > The signal1 testcase is pretty synthetic. It sends a signal in a busy loop.
+> > 
+> > Do you have an example of a closer-to-life scenario where this delay
+> > becomes a bottleneck ?
+> > 
+> > https://github.com/antonblanchard/will-it-scale/blob/master/tests/signal1.c
+> > 
+> 
+> Thank you for your prompt reply. Unfortunately, I do not have the
+> specific scenario.
+> 
+> Motivation:
+> I plan to use servers with 384 cores, and potentially even more in the
+> future. Therefore, I am testing these system calls to identify any
+> scalability bottlenecks that could arise in massively parallel
+> high-density computing environments.
 
-Signed-off-by: Hans Zhang <18255117159@163.com>
----
- drivers/pci/pcie/bwctrl.c | 19 +------------------
- 1 file changed, 1 insertion(+), 18 deletions(-)
+But it turns out that you're proposing complex changes for something that
+is essentially a non-issue. In the real world, applications don't spam
+signals and I'm not sure we want to support that scenario.
 
-diff --git a/drivers/pci/pcie/bwctrl.c b/drivers/pci/pcie/bwctrl.c
-index d8d2aa85a229..3e17f6366a69 100644
---- a/drivers/pci/pcie/bwctrl.c
-+++ b/drivers/pci/pcie/bwctrl.c
-@@ -63,23 +63,6 @@ static bool pcie_valid_speed(enum pci_bus_speed speed)
- 	return (speed >= PCIE_SPEED_2_5GT) && (speed <= PCIE_SPEED_64_0GT);
- }
- 
--static u16 pci_bus_speed2lnkctl2(enum pci_bus_speed speed)
--{
--	static const u8 speed_conv[] = {
--		[PCIE_SPEED_2_5GT] = PCI_EXP_LNKCTL2_TLS_2_5GT,
--		[PCIE_SPEED_5_0GT] = PCI_EXP_LNKCTL2_TLS_5_0GT,
--		[PCIE_SPEED_8_0GT] = PCI_EXP_LNKCTL2_TLS_8_0GT,
--		[PCIE_SPEED_16_0GT] = PCI_EXP_LNKCTL2_TLS_16_0GT,
--		[PCIE_SPEED_32_0GT] = PCI_EXP_LNKCTL2_TLS_32_0GT,
--		[PCIE_SPEED_64_0GT] = PCI_EXP_LNKCTL2_TLS_64_0GT,
--	};
--
--	if (WARN_ON_ONCE(!pcie_valid_speed(speed)))
--		return 0;
--
--	return speed_conv[speed];
--}
--
- static inline u16 pcie_supported_speeds2target_speed(u8 supported_speeds)
- {
- 	return __fls(supported_speeds);
-@@ -101,7 +84,7 @@ static u16 pcie_bwctrl_select_speed(struct pci_dev *port, enum pci_bus_speed spe
- 	u8 desired_speeds, supported_speeds;
- 	struct pci_dev *dev;
- 
--	desired_speeds = GENMASK(pci_bus_speed2lnkctl2(speed_req),
-+	desired_speeds = GENMASK(PCIE_SPEED2LNKCTL2_TLS_ENC(speed_req),
- 				 __fls(PCI_EXP_LNKCAP2_SLS_2_5GB));
- 
- 	supported_speeds = port->supported_speeds;
+> In addition, we hope that the containers can be isolated as much as
+> possible to avoid interfering with each other.
+
+But that's impossible. Even before migration to ucounts, some rlimits
+(RLIMIT_MSGQUEUE, RLIMIT_MEMLOCK, RLIMIT_SIGPENDING, RLIMIT_NPROC) were
+bound to user_struct. I mean, atomic counter and "bottleneck" was there.
+We can't remove the counters for that rlimits and they will have an
+impact.
+
+These rlimits are now counted per-namespace. In real life, docker/podman
+creates a separate user namespace for each container from init_user_ns.
+Usually only one additional counter is added for each rlimit in this way.
+
+All I'm saying is that "bottleneck" with atomic counter was there before
+and can't be removed anywhere.
+
+> 
+> Best regards,
+> Ridong
+> 
+> >> To further investigate this issue, we initiated a series of tests by
+> >> launching varying numbers of dockers and closely monitored the throughput
+> >> of each individual docker. The detailed test outcomes are presented as
+> >> follows:
+> >>
+> >> 	| Dockers     |1      |4      |8      |16     |32     |64     |
+> >> 	| Throughput  |380068 |353204 |308948 |306453 |180659 |129152 |
+> >>
+> >> The data clearly demonstrates a discernible trend: as the quantity of
+> >> dockers increases, the throughput per container progressively declines.
+> >> In-depth analysis has identified the root cause of this performance
+> >> degradation. The ucouts module conducts statistics on rlimit, which
+> >> involves a significant number of atomic operations. These atomic
+> >> operations, when acting on the same variable, trigger a substantial number
+> >> of cache misses or remote accesses, ultimately resulting in a drop in
+> >> performance.
+> >>
+> >> Notably, even though a new user_namespace is created upon docker startup,
+> >> the problem persists. This is because all these dockers share the same
+> >> parent node, meaning that rlimit statistics continuously modify the same
+> >> atomic variable.
+> >>
+> >> Currently, when incrementing a specific rlimit within a child user
+> >> namespace by 1, the corresponding rlimit in the parent node must also be
+> >> incremented by 1. Specifically, if the ucounts corresponding to a task in
+> >> Docker B is ucount_b_1, after incrementing the rlimit of ucount_b_1 by 1,
+> >> the rlimit of the parent node, init_ucounts, must also be incremented by 1.
+> >> This operation should be ensured to stay within the limits set for the
+> >> user namespaces.
+> >>
+> >> 	init_user_ns                             init_ucounts
+> >> 	^                                              ^
+> >> 	|                        |                     |
+> >> 	|<---- usr_ns_a(docker A)|usr_ns_a->ucount---->|
+> >> 	|                        |                     |
+> >> 	|<---- usr_ns_b(docker B)|usr_ns_a->ucount---->|
+> >> 					^
+> >> 					|
+> >> 					|
+> >> 					|
+> >> 					ucount_b_1
+> >>
+> >> What is expected is that dockers operating within separate namespaces
+> >> should remain isolated and not interfere with one another. Regrettably,
+> >> the current signal system call fails to achieve this desired level of
+> >> isolation.
+> >>
+> >> Proposal:
+> >>
+> >> To address the aforementioned issues, the concept of implementing a cache
+> >> for each namespace's rlimit has been proposed. If a cache is added for
+> >> each user namespace's rlimit, a certain amount of rlimits can be allocated
+> >> to a particular namespace in one go. When resources are abundant, these
+> >> resources do not need to be immediately returned to the parent node. Within
+> >> a user namespace, if there are available values in the cache, there is no
+> >> need to request additional resources from the parent node.
+> >>
+> >> 	init_user_ns                             init_ucounts
+> >> 	^                                              ^
+> >> 	|                        |                     |
+> >> 	|<---- usr_ns_a(docker A)|usr_ns_a->ucount---->|
+> >> 	|                        |                     |
+> >> 	|<---- usr_ns_b(docker B)|usr_ns_b->ucount---->|
+> >> 			^		^
+> >> 			|		|
+> >> 			cache_rlimit--->|
+> >> 					|
+> >> 					ucount_b_1
+> >>
+> >>
+> >> The ultimate objective of this solution is to achieve complete isolation
+> >> among namespaces. After applying this patch set, the final test results
+> >> indicate that in the signal1 test case, the performance does not
+> >> deteriorate as the number of containers increases. This effectively meets
+> > 
+> >> the goal of linear scalability.
+> >>
+> >> 	| Dockers     |1      |4      |8      |16     |32     |64     |
+> >> 	| Throughput  |381809 |382284 |380640 |383515 |381318 |380120 |
+> >>
+> >> Challenges:
+> >>
+> >> When checking the pending signals in the parent node using the command
+> >>  cat /proc/self/status | grep SigQ, the retrieved value includes the
+> >> cached signal counts from its child nodes. As a result, the SigQ value
+> >> in the parent node fails to accurately and instantaneously reflect the
+> >> actual number of pending signals.
+> >>
+> >> 	# cat /proc/self/status | grep SigQ
+> >> 	SigQ:	16/6187667
+> >>
+> >> TODO:
+> >>
+> >> Add cache for the other rlimits.
+> >>
+> >> [1] https://github.com/antonblanchard/will-it-scale/blob/master/tests/
+> >>
+> >> Chen Ridong (5):
+> >>   user_namespace: add children list node
+> >>   usernamespace: make usernamespace rcu safe
+> >>   user_namespace: add user_ns iteration helper
+> >>   uounts: factor out __inc_rlimit_get_ucounts/__dec_rlimit_put_ucounts
+> >>   ucount: add rlimit cache for ucount
+> >>
+> >>  include/linux/user_namespace.h |  23 ++++-
+> >>  kernel/signal.c                |   2 +-
+> >>  kernel/ucount.c                | 181 +++++++++++++++++++++++++++++----
+> >>  kernel/user.c                  |   2 +
+> >>  kernel/user_namespace.c        |  60 ++++++++++-
+> >>  5 files changed, 243 insertions(+), 25 deletions(-)
+> >>
+> >> -- 
+> >> 2.34.1
+> >>
+> > 
+> 
+
 -- 
-2.25.1
+Rgrds, legion
 
 
