@@ -1,110 +1,98 @@
-Return-Path: <linux-kernel+bounces-653517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-653519-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC74CABBAB2
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 12:12:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E741BABBAC3
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 12:13:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8B6C3A8C08
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 10:12:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8CA0516B7BB
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 10:13:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CB9E26F462;
-	Mon, 19 May 2025 10:12:37 +0000 (UTC)
-Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E07226FA40;
+	Mon, 19 May 2025 10:12:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k3FCb0xH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1974735957
-	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 10:12:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B939881E
+	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 10:12:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747649556; cv=none; b=euwciou2mCqZDAn6PazsE+ODNze0FkrN0QnEd2V3vk/i4D5/gA13BVdl5j3y2uhiCtIwvKALmwMPnyn+oOiSHnIykS5OtwWSgWw67Xgpvcfd4KRig++PSYHxRxA9NDWsGnR1u2DndUN15lv3GyUt2JGa5U4hvNX0+vbONsOMJfI=
+	t=1747649569; cv=none; b=tW05pfgUuxbxhCJIOaHndNKjN0yFx0InnSwyRnMF0id1SIe3MNh8ndfCot15XUJNFaLLoe7KS7aLA/puTEsbq8rPNlJKo9fT+Jn2hKo792txfzVkkPaLXm5F2Rm6yaL5Rukc6zdmUxHmwYoDuN0rs+G6griC3S4mQTBWr4Y/Wa4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747649556; c=relaxed/simple;
-	bh=EsQNEZuGqoVKZGjEHuRYqZnPmosQfdrB444gfd1dMLA=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=MusOmkuQzwRWW/l+BKi2AKMNJ08+G6VN62LrB3hm39nEbo4vEAR800o/mD/jFICc/AQrPxTvHQg4kAEl2iuz/3tWm3PU9RS7muRXOARoSWsiOfY+ch5d8cjbl4S7jeQJl+I8lFVetN6A7kTMsGu5/0u1yTlJJr2WwW941AAzI2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-85b418faf73so767686039f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 03:12:34 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747649554; x=1748254354;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=9Uzz1AxszAO+PF9ibC0zz8xp6JcJ1BC5ZEytJhZFUKk=;
-        b=I8AXT2xe249owakZucSbthh5HtO86cQ8NO+IHterBtBiK/YCmzMxXX3XSK09gbaNXl
-         LpYo9tAX52RHhb742cLrsMqYPU5LRi+aCHYN6dg0XXvr6sdCW+jIZPZBsFnuupzx25QD
-         mY4gmiYJu9UbaD1fovt/7+cV1dBLKGfjgzA/stHUOS42Bm1ng4RWNouEJHpX2BzDrr6B
-         i5ZWK4kzMixULC1ZxRZXigyfgC6L5Mz9P6p4Tg9N1B97EDi5psiF5kJ2UPTyuhY8eSwR
-         Rd84K7UgdQVopBxPfVZ9m12f6hOLXT7qFBYiz3A5dxLNb0c/jykbE2mSvWqZ3AZvRi2w
-         qqVg==
-X-Forwarded-Encrypted: i=1; AJvYcCXxtc2qoxOws3aPEB6bz6JZI7IMRrW+XDPvJ+WRLjbwvDP72dZmi/ESG1QgYbM/BpQnR18w1b+DuTGaqC4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFFy4SeQPUI8XyBYUtx4NoZDxL53gH3BjG+nTHDP6tLXaz+ArS
-	NZuTHTqllzGcXk/aJGS3jGwVZwffPLxvuoLpeQm0qCHivVGi236ivx0Rjb68kngBNVRgktaTiWf
-	XXzfulUX8ZYJvWU5heiM9/IbIqFUILplD61S9Yon2Mb0Lk7xVA60JZ2xKi8k=
-X-Google-Smtp-Source: AGHT+IG2Y0u+RSiUdq+RUnS4edusSPDCIYfX3VwkA1by3DVqjfO2+y5isVYDZPvl5V2L2cxYCnKf2XMjBzdmiPaSH+d7VoQfjBzJ
+	s=arc-20240116; t=1747649569; c=relaxed/simple;
+	bh=lRW51PxRDt4POMK3MmQOCewzQF6lAIkyvOIS1e/ukE0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sSfvLRwjkzhxvZVtIXUa/vnRUMW5YgzgSq45ww6akTfbhfL4lxXWKEuKtaHp5KnxqUdTqfzn+qcwsazJ/nsxjQHLeybDfBzVtWroi9nJy2gFgiW4JP+8rF63+Y7M51idna/00etv2UVKm85mtcNih+1/6mE+MdqJ8SFiicVGe5c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k3FCb0xH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36390C4CEE4;
+	Mon, 19 May 2025 10:12:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747649568;
+	bh=lRW51PxRDt4POMK3MmQOCewzQF6lAIkyvOIS1e/ukE0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=k3FCb0xH+u35CUhOGXpo6a6M8UcY3qzVEi93m6jwui01+/HPdZTbUtEVOUcf48eBo
+	 lnOLFxfUo+e4dc+6D8gpqb9OcRE4RAtkDWhBnc/lELqiOTxCmp9KdmH0sgjwYM98ly
+	 E74y0M62u2xxxbkW3+DaruD7xut6sQ6e+bUwQDg2r7TmftRQ8nOGp2HXdYw1rGpKD5
+	 19caxE8prCeGGXlwiXWuip46h/4qqFMKQ9EStNbk4rEJTj8kWRe+amNwTYtKK8uTUp
+	 ZUD1j6kH4HMoTtV1IZ8ZkUUTn+6XIY6YlLJ0Lp2Nr0rksLrcZ5M9hqaTTpU8HZ6iXj
+	 c0oLZhyO0nB7Q==
+Date: Mon, 19 May 2025 11:12:42 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Andrew Davis <afd@ti.com>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC] regmap: Move selecting for REGMAP_MDIO and REGMAP_IRQ
+Message-ID: <5340db48-f7cb-4c81-ae2b-2fdd31694416@sirena.org.uk>
+References: <20250516141722.13772-1-afd@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:380d:b0:864:4aa2:d796 with SMTP id
- ca18e2360f4ac-86a231e19e9mr1507000039f.8.1747649554248; Mon, 19 May 2025
- 03:12:34 -0700 (PDT)
-Date: Mon, 19 May 2025 03:12:34 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <682b0412.a70a0220.3849cf.00b1.GAE@google.com>
-Subject: [syzbot] riscv/fixes test error: can't ssh into the instance (2)
-From: syzbot <syzbot+2cae92ded758083f5bde@syzkaller.appspotmail.com>
-To: aou@eecs.berkeley.edu, linux-kernel@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, palmer@dabbelt.com, paul.walmsley@sifive.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-
-Hello,
-
-syzbot found the following issue on:
-
-HEAD commit:    01534f3e0dd7 Merge tag 'riscv-fixes-6.15-rc6' of ssh://git..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/riscv/linux.git fixes
-console output: https://syzkaller.appspot.com/x/log.txt?x=158796f4580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=2c32351e59d854b7
-dashboard link: https://syzkaller.appspot.com/bug?extid=2cae92ded758083f5bde
-compiler:       riscv64-linux-gnu-gcc (Debian 12.2.0-13) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: riscv64
-
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/a741b348759c/non_bootable_disk-01534f3e.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/4ca1cbb891a9/vmlinux-01534f3e.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/5fb1db315d47/Image-01534f3e.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+2cae92ded758083f5bde@syzkaller.appspotmail.com
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="37aLQjy7+/fVUBfC"
+Content-Disposition: inline
+In-Reply-To: <20250516141722.13772-1-afd@ti.com>
+X-Cookie: We have ears, earther...FOUR OF THEM!
 
 
+--37aLQjy7+/fVUBfC
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+On Fri, May 16, 2025 at 09:17:22AM -0500, Andrew Davis wrote:
+> If either REGMAP_IRQ or REGMAP_MDIO are set then REGMAP is also set.
+> This then enables the selecting of IRQ_DOMAIN or MDIO_BUS from REGMAP
+> based on the above two symbols respectively. This makes it very easy
+> to end up with "circular dependencies".
+>=20
+> Instead select the IRQ_DOMAIN or MDIO_BUS from the symbols that make
+> use of them. This is almost equivalent to before but makes it less
+> likely to end up with false circular dependency detections.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+None of these selects should actually do anything since the symbols are
+themselves selected?
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+--37aLQjy7+/fVUBfC
+Content-Type: application/pgp-signature; name="signature.asc"
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+-----BEGIN PGP SIGNATURE-----
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmgrBBkACgkQJNaLcl1U
+h9Dplwf/T76cvn6B7x9MZB+nlxh9BvMip0sCZzOMlrMKyYl0tFonslOik/4EMCsg
+Vhdry4kll8aFgM2I4Sa3wKHNsdcw1xvGtlyI0MUVsefPefgC2AX7FaQzGzh36h71
+JY21M/C4SJos6iWSAuueVuv0HcJ2ohAJgspgD3sID4Sgd2cD9UXj9/gNeDRnj7Sn
+Wz7LxmHvF+mEf3SUYuyOpw84BigNIFJjdVU1kwBR2ieEfz+oZc7vXdTS74LPudrg
+R82KgHDjLFb0ZyKwJwJ2ENHwS3x3Np2hraYtoaNQqUUz8KeVnLYp1NWm0+gNyAOs
+AzJQXjSVl8kkpfSPVXB+b4rnphj/Jg==
+=I5sr
+-----END PGP SIGNATURE-----
 
-If you want to undo deduplication, reply with:
-#syz undup
+--37aLQjy7+/fVUBfC--
 
