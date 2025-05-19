@@ -1,100 +1,121 @@
-Return-Path: <linux-kernel+bounces-653736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-653746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 318CCABBDB0
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 14:27:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACA72ABBDC5
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 14:30:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF0F53A60A7
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 12:27:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 946B216256F
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 12:30:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A958275840;
-	Mon, 19 May 2025 12:27:49 +0000 (UTC)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CE1A278148;
+	Mon, 19 May 2025 12:30:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qsDEfCsa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8395B1C700D
-	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 12:27:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA9D01C5485;
+	Mon, 19 May 2025 12:30:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747657668; cv=none; b=Xsk9sThf2VQSLsfjLW+p79FcyHpld+ygnFt0+dIzUuMfqj2T7/vAqiuEI8RXqsKom6QbjA2rtpfC4JdAwC9D0EW1oxR6ny59VdIU9VMgiCv3YNv+TlgBAm+O7L4ObicSI7dCkUeibNzNueHfkd4XuUJMlUdeUPEN4sYkUkcorGc=
+	t=1747657811; cv=none; b=ASbTljAKlIbiGdemuBhzgJvgtdApvFun6Pl4a0UwMi1EGrmqdyk1IW23rNFLcQof1zNXHTp/jCbcHBmKEOGjOT+3ln4AP7tr3menp63ySQlAGoNUcc4V+UU9/EfOmbKtGl81DhgRk0ehs/W7Fn4wFcQ8VDUPUJOivD8qrmSOLcs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747657668; c=relaxed/simple;
-	bh=38v8omgbUNfZKYNtn77NW234H/KuOiAX2ZTPvdYPDqo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KkSGE50pK+ilObB07sZMfFwIs6bEng2IguST9KI4wQTioFqFAd7rqLquPDdSJvqxBTYM6MiGdNYUBYBM2o9RRyVYF+9smgvsu+TTulTwK+QwCY2ZLUZ7Ny4PWBY9DNfAMnlPplp2b7PBuq6DoeDN5FgTK+LFfujnehYW5W+G+vg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=fail smtp.mailfrom=kernel.org; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=kernel.org
-X-CSE-ConnectionGUID: R/mT1xaWTlKmlxqM783e6g==
-X-CSE-MsgGUID: iYwOxXECS1ioFWwtC+MnmQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11438"; a="49709669"
-X-IronPort-AV: E=Sophos;i="6.15,300,1739865600"; 
-   d="scan'208";a="49709669"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 May 2025 05:27:47 -0700
-X-CSE-ConnectionGUID: BeSu/fBrRYOep5K5Ed0h6A==
-X-CSE-MsgGUID: Cm5EwYN2QxOdUymQLe+jZw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,300,1739865600"; 
-   d="scan'208";a="140244022"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by orviesa008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 May 2025 05:27:44 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andy@kernel.org>)
-	id 1uGzam-0000000323u-3uQJ;
-	Mon, 19 May 2025 15:27:40 +0300
-Date: Mon, 19 May 2025 15:27:40 +0300
-From: Andy Shevchenko <andy@kernel.org>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@kernel.org>,
-	Borislav Petkov <bp@alien8.de>, Juergen Gross <jgross@suse.com>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Kees Cook <keescook@chromium.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Mike Rapoport <rppt@kernel.org>,
-	Paul Menzel <pmenzel@molgen.mpg.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	David Woodhouse <dwmw@amazon.co.uk>
-Subject: Re: [PATCH 09/32] x86/boot/e820: Call the PCI gap a 'gap' in the
- boot log printout
-Message-ID: <aCsjvKT_FO7HxIt4@smile.fi.intel.com>
-References: <20250515120549.2820541-1-mingo@kernel.org>
- <20250515120549.2820541-10-mingo@kernel.org>
+	s=arc-20240116; t=1747657811; c=relaxed/simple;
+	bh=O3K+tc7r6sCh2WGTsamVvNqKcPwy0BoFCEaeoHRZrgw=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=fF2PltWP3JsKmKa/e1wy9x9L4McG9ldliDaTJuX/IQSxlskFuipSHoI5sYniEkEu33ZFHScTNgHOm68eQr5FmBwjt83RXHfybaM6U6x1w7Jma6BbkZ670tVKp42xqbaxGuVG85Z0FnQsjB3yhKyWmEOr7nD+JCqkLOrUUCNhdaQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qsDEfCsa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0931AC4CEE9;
+	Mon, 19 May 2025 12:30:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747657810;
+	bh=O3K+tc7r6sCh2WGTsamVvNqKcPwy0BoFCEaeoHRZrgw=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=qsDEfCsa017zfFatvitoerp33o/vXsUqOMGzgt3hWELWDCn+KP72BytZz5PA9rPke
+	 dNd7b6znWVPEoNQqURvCUB/VMSrY4k6gCjgQfSt0vGxJKi5W4pKXkde7ANQrtjiX/6
+	 ncKZvqGU1BaXFAPsqg6UhxVx7q4f5wL3ebaPGKgDu2cVFIsS36UimPkJ9lZRxVub3m
+	 MhsekG3cCjZDWIx4WN6x6Gn7FuCY4HtpIu6KGWVKQ2LgT3T9ihhBSx+3tUIbJXgwdJ
+	 olbe4QX6wRiDf7ZJ8hZITqhsS8HhXm9d06zam8ReBzXcibXN7cd1/LuWewwT2puyC+
+	 yGYZGVmt9UTtA==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250515120549.2820541-10-mingo@kernel.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 19 May 2025 14:30:05 +0200
+Message-Id: <DA04ZK6NFF1N.35LFZRY7O7SG8@kernel.org>
+Cc: "Alexandre Courbot" <acourbot@nvidia.com>, "Daniel Almeida"
+ <daniel.almeida@collabora.com>, "Miguel Ojeda" <ojeda@kernel.org>, "Alex
+ Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary
+ Guo" <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Benno Lossin" <benno.lossin@proton.me>,
+ "Andreas Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl"
+ <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>, "Danilo
+ Krummrich" <dakr@kernel.org>, "Boris Brezillon"
+ <boris.brezillon@collabora.com>, "Sebastian Reichel"
+ <sebastian.reichel@collabora.com>, "Liam Girdwood" <lgirdwood@gmail.com>,
+ <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>
+Subject: Re: [PATCH v3] rust: regulator: add a bare minimum regulator
+ abstraction
+From: "Benno Lossin" <lossin@kernel.org>
+To: "Mark Brown" <broonie@kernel.org>
+X-Mailer: aerc 0.20.1
+References: <20250513-topics-tyr-regulator-v3-1-4cc2704dfec6@collabora.com>
+ <D9YXK1J1XO37.JVILKENRKYXD@nvidia.com>
+ <D9Z3R4EYAXV9.211IFNRTOPM6O@kernel.org>
+ <D9Z4XGQ2QHXA.2H5X1NZ5IZECC@nvidia.com>
+ <aCnQo15SbhXZ9Fln@finisterre.sirena.org.uk>
+ <D9ZCD8D6J5QW.14H6VM9LQ5R2Z@kernel.org>
+ <a1a6b2f8-af42-4942-ab62-678e37381d08@sirena.org.uk>
+ <DA03MG3VURVI.37CBV5WEEKJSH@kernel.org>
+ <8229a161-52b8-4265-8296-8f1ac49bab62@sirena.org.uk>
+In-Reply-To: <8229a161-52b8-4265-8296-8f1ac49bab62@sirena.org.uk>
 
-On Thu, May 15, 2025 at 02:05:25PM +0200, Ingo Molnar wrote:
-> It is a bit weird and inconsistent that the PCI gap is
-> advertised during bootup as 'mem'ory:
-> 
->   [mem 0xc0000000-0xfed1bfff] available for PCI devices
->    ^^^
-> 
-> It's not really memory, it's a gap that PCI devices can decode
-> and use and they often do not map it to any memory themselves.
-> 
-> So advertise it for what it is, a gap:
-> 
->   [gap 0xc0000000-0xfed1bfff] available for PCI devices
+On Mon May 19, 2025 at 1:46 PM CEST, Mark Brown wrote:
+> On Mon, May 19, 2025 at 01:25:56PM +0200, Benno Lossin wrote:
+>> On Mon May 19, 2025 at 11:56 AM CEST, Mark Brown wrote:
+>
+>> > No.  You should not leak any refcount, the per consumer refcount
+>> > duplicates what's being done for the regulator as a whole, one should
+>> > never be incremented or decremented without the other (but there may b=
+e
+>> > multiple consumers to choose from).
+>
+>> What stops the last `regulator_put` to also call `regulator_disable` a
+>> correct number of times?
+>
+> We obviously could but the regulator API defaults to not doing anything
+> unless explicitly told to since getting things wrong can physically
+> damage the system.  We've no idea if just disabling the regulator would
+> be safe at this point so we just don't touch anything and complain about
+> it.
 
-Why not use word 'range' instead of the 'gap'? This will allow to switch to
-%pra without modifying the output.
+Gotcha.
 
--- 
-With Best Regards,
-Andy Shevchenko
+>> What are the kinds of problems that one could encounter when not calling
+>> `regulator_disable` before `regulator_put` or if `regulator_enable` was
+>> never called to begin with?
+>
+> If you don't disable the regulator you've just leaked a reference which
+> is obviously a problem.
 
+For sure. But I'm trying to figure out if this is a safety-related issue
+or not. Safety in Rust has a rather specific meaning that can be
+summarized with "no UB". So since the C side does nothing if the user
+screwed up the refcounts, it lets me to believe that we don't have any
+safety related issues when forgetting to call `regulator_disable`.
 
+Of course we still should strive for an API that makes that impossible
+or at least very hard, but we don't need to make the API `unsafe` or
+have to take special care. (At least if I understood correctly)
+
+---
+Cheers,
+Benno
 
