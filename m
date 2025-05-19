@@ -1,173 +1,372 @@
-Return-Path: <linux-kernel+bounces-654531-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-654526-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57F2FABC981
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 23:31:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74F51ABC96F
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 23:29:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90762177F09
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 21:30:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FAAF1B66AAF
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 21:29:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79FBF22FE17;
-	Mon, 19 May 2025 21:22:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E041422D79A;
+	Mon, 19 May 2025 21:22:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d6IqIWWx"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gxko3O6M"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B812C22F77C;
-	Mon, 19 May 2025 21:22:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FDDA22B8A9;
+	Mon, 19 May 2025 21:22:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747689757; cv=none; b=hz4Q+UTigFTWsLnG1cuyVC41Il+8jbN05DxgVsq349xUdKaohUBUutBSKw4mqUnZUL6s+2SWJSsDUHZpDa6Cka8K8okFRajLPHhEupGdrf3Y0tQ8WPKiOR1fT2rfWcdvknXdAtGadm37bkqcaarP8GP1K9Ad7R2kSClxYUKlYe4=
+	t=1747689750; cv=none; b=q8Sm2g4djrvhxwnp71s9Mpo0t7pbtkTtS+8sMyDJwCV6KzihozbiHX75wqzrtgQeAPJ/ABDML0+Um1ApOnSogZyj9KtoJ/Wd27L3y/bmFmfLWxbrrbEn+9E88QZ2CV8z6OAvplxzPMrPrdYRX8/ja3qwJPQigaDGHBNTCXTvork=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747689757; c=relaxed/simple;
-	bh=OSHl4uIWKgidVRiDssKehTz/7YhiYGoiz41vfgNOFzc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=p1uXi21Zu9E4WyOOPbPPyiA4CcZtM11XLvLPPaO66YspGw5v9tQjZFw5UsMV6j7Fy1/LkDIIxmVWyMlWruKEa9YYRn3cz2gl8RwM0yGSODEp9A9UqPcDU8x2Y1jtuHmtuGjgxkbUAPFPfoGdhG2LyrSW7qUybukqmD7l233c8D8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d6IqIWWx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4403CC4CEEB;
-	Mon, 19 May 2025 21:22:36 +0000 (UTC)
+	s=arc-20240116; t=1747689750; c=relaxed/simple;
+	bh=J0BlCamg5o6rjixyQoVYTi6MUMronxaa7LD88b00Oz8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BsCN5To9mllNNwjfivm+lq23yZtDL2tKY088DeqprUSButukJcEHaM1izaALBO6+XMLC4wuPqZEhX+wfElAEZ8A8BWWYrmpx886wEm9uD221nH+dxKvlVgvCDUIbRjJOIeK3Bgt1rO2uu3Skqm6R26RCQXqqk1+Cr3Y8wGozo9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gxko3O6M; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E3CAC4CEE9;
+	Mon, 19 May 2025 21:22:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747689757;
-	bh=OSHl4uIWKgidVRiDssKehTz/7YhiYGoiz41vfgNOFzc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=d6IqIWWxIQT6OZ3Iyj0jnHKK7z8rnxHY7752EFBb4LL9pBPhNlMOejtTncrj2QV3E
-	 37HoBaidgF16dylVAQwosjTKUdEQsRgIVVHoyGzs0UFym97W/TJBLiauXEepxfIv/c
-	 H9oYHaueIj6KbeBUF9Fc5SZB6z8tRaSPkvhWfiwOtBme8wVJKhxbTiI5OdYBE6bWG5
-	 I0ngyGffcrk3kXi/tGa3/CObnf4eM64GED/BojDrypTaMTjx5W4Rp831gbLulG6vfO
-	 GQcKibNC0QGGRBe0YtgA/KqeNOnBe0LsMl+iAuCdhHx8c1JwPg/PLAoLgaLPFUpS4L
-	 b2A7OG+MEVIqg==
-From: Sasha Levin <sashal@kernel.org>
-To: patches@lists.linux.dev,
-	stable@vger.kernel.org
-Cc: Trond Myklebust <trond.myklebust@hammerspace.com>,
-	Jeff Layton <jlayton@kernel.org>,
-	Sasha Levin <sashal@kernel.org>,
-	anna.schumaker@netapp.com,
-	linux-nfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.12 18/18] NFS: Avoid flushing data while holding directory locks in nfs_rename()
-Date: Mon, 19 May 2025 17:22:07 -0400
-Message-Id: <20250519212208.1986028-18-sashal@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250519212208.1986028-1-sashal@kernel.org>
-References: <20250519212208.1986028-1-sashal@kernel.org>
+	s=k20201202; t=1747689749;
+	bh=J0BlCamg5o6rjixyQoVYTi6MUMronxaa7LD88b00Oz8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Gxko3O6MFzH1MF+E9CFihuydLjsb6AZM2vNDWfVjuBFZJpVBgCGA4hqI5eQJ8ixRD
+	 VZNprab2t5YXQhWlEeyf8rAW72rb7mnaps+q30mp/X4bwv5o+/0grr+j+SGI0ipcR6
+	 vue1lBdSsQtOvz4C2tJg+D9hxowig2Bjs9iOXIq/5GCP7MvO31Td0TxwiF5h2rXS6m
+	 Rf0TA1WLr9l4yaAg/Qh3BaeGxClCDzYyLBf8OLWOY3k/+nXUPEcfs3qWF21AFPPPGE
+	 ReIquJGGND2s/dlLR+qKJZNNOVtTeldwxBYXcEmghec01sxDGdeDJVk2FjI7D3e/g7
+	 F6v5luShInlSQ==
+Date: Mon, 19 May 2025 18:22:25 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Thomas Richter <tmricht@linux.ibm.com>
+Cc: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+	linux-perf-users@vger.kernel.org, namhyung@kernel.org,
+	agordeev@linux.ibm.com, gor@linux.ibm.com, sumanthk@linux.ibm.com,
+	hca@linux.ibm.com, Alexander Egorenkov <egorenar@linux.ibm.com>
+Subject: Re: [PATCH v2] perf ftrace: Use process/session specific trace
+ settings
+Message-ID: <aCufoLXkMjjwGt0a@x1>
+References: <20250519145235.56006-1-tmricht@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.12.29
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250519145235.56006-1-tmricht@linux.ibm.com>
 
-From: Trond Myklebust <trond.myklebust@hammerspace.com>
+On Mon, May 19, 2025 at 04:52:35PM +0200, Thomas Richter wrote:
+> V1 --> V2: Add Suggestion from Arnaldo Cavalho de Melo confirmed by
+>            Steven Rostedt. Use rmdir(../tracing/instances/dir) to stop
+> 	   process/session specific tracing and delete all 
+> 	   process/session specific setings.
+> 
+> Executing perf ftrace commands ftrace, profile and latency
+> leave tracing disabled as can seen in this output:
+> 
+>  # echo 1 > /sys/kernel/debug/tracing/tracing_on
+>  # cat /sys/kernel/debug/tracing/tracing_on
+>  1
+>  # perf ftrace trace --graph-opts depth=5 sleep 0.1 > /dev/null
+>  # cat /sys/kernel/debug/tracing/tracing_on
+>  0
+>  #
+> 
+> The tracing_on file is not restored to its value before the command.
+> Fix this behavior and restore the trace setting to what
+> is was before the invocation of the command.
 
-[ Upstream commit dcd21b609d4abc7303f8683bce4f35d78d7d6830 ]
+The above paragraph doesn't apply after you moved to instances, right?
 
-The Linux client assumes that all filehandles are non-volatile for
-renames within the same directory (otherwise sillyrename cannot work).
-However, the existence of the Linux 'subtree_check' export option has
-meant that nfs_rename() has always assumed it needs to flush writes
-before attempting to rename.
+I changed the commit log message to:
 
-Since NFSv4 does allow the client to query whether or not the server
-exhibits this behaviour, and since knfsd does actually set the
-appropriate flag when 'subtree_check' is enabled on an export, it
-should be OK to optimise away the write flushing behaviour in the cases
-where it is clearly not needed.
+----------------------
+perf ftrace: Use process/session specific trace settings
 
-Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/nfs/client.c           |  2 ++
- fs/nfs/dir.c              | 15 ++++++++++++++-
- include/linux/nfs_fs_sb.h | 12 +++++++++---
- 3 files changed, 25 insertions(+), 4 deletions(-)
+Executing 'perf ftrace' commands 'ftrace', 'profile' and 'latency' leave
+tracing disabled as can seen in this output:
 
-diff --git a/fs/nfs/client.c b/fs/nfs/client.c
-index 03ecc77656151..4503758e9594b 100644
---- a/fs/nfs/client.c
-+++ b/fs/nfs/client.c
-@@ -1096,6 +1096,8 @@ struct nfs_server *nfs_create_server(struct fs_context *fc)
- 		if (server->namelen == 0 || server->namelen > NFS2_MAXNAMLEN)
- 			server->namelen = NFS2_MAXNAMLEN;
- 	}
-+	/* Linux 'subtree_check' borkenness mandates this setting */
-+	server->fh_expire_type = NFS_FH_VOL_RENAME;
- 
- 	if (!(fattr->valid & NFS_ATTR_FATTR)) {
- 		error = ctx->nfs_mod->rpc_ops->getattr(server, ctx->mntfh,
-diff --git a/fs/nfs/dir.c b/fs/nfs/dir.c
-index 492cffd9d3d84..f9f4a92f63e92 100644
---- a/fs/nfs/dir.c
-+++ b/fs/nfs/dir.c
-@@ -2690,6 +2690,18 @@ nfs_unblock_rename(struct rpc_task *task, struct nfs_renamedata *data)
- 	unblock_revalidate(new_dentry);
- }
- 
-+static bool nfs_rename_is_unsafe_cross_dir(struct dentry *old_dentry,
-+					   struct dentry *new_dentry)
-+{
-+	struct nfs_server *server = NFS_SB(old_dentry->d_sb);
-+
-+	if (old_dentry->d_parent != new_dentry->d_parent)
-+		return false;
-+	if (server->fh_expire_type & NFS_FH_RENAME_UNSAFE)
-+		return !(server->fh_expire_type & NFS_FH_NOEXPIRE_WITH_OPEN);
-+	return true;
-+}
-+
- /*
-  * RENAME
-  * FIXME: Some nfsds, like the Linux user space nfsd, may generate a
-@@ -2777,7 +2789,8 @@ int nfs_rename(struct mnt_idmap *idmap, struct inode *old_dir,
- 
- 	}
- 
--	if (S_ISREG(old_inode->i_mode))
-+	if (S_ISREG(old_inode->i_mode) &&
-+	    nfs_rename_is_unsafe_cross_dir(old_dentry, new_dentry))
- 		nfs_sync_inode(old_inode);
- 	task = nfs_async_rename(old_dir, new_dir, old_dentry, new_dentry,
- 				must_unblock ? nfs_unblock_rename : NULL);
-diff --git a/include/linux/nfs_fs_sb.h b/include/linux/nfs_fs_sb.h
-index 81ab18658d72d..2cff5cafbaa78 100644
---- a/include/linux/nfs_fs_sb.h
-+++ b/include/linux/nfs_fs_sb.h
-@@ -211,6 +211,15 @@ struct nfs_server {
- 	char			*fscache_uniq;	/* Uniquifier (or NULL) */
- #endif
- 
-+	/* The following #defines numerically match the NFSv4 equivalents */
-+#define NFS_FH_NOEXPIRE_WITH_OPEN (0x1)
-+#define NFS_FH_VOLATILE_ANY (0x2)
-+#define NFS_FH_VOL_MIGRATION (0x4)
-+#define NFS_FH_VOL_RENAME (0x8)
-+#define NFS_FH_RENAME_UNSAFE (NFS_FH_VOLATILE_ANY | NFS_FH_VOL_RENAME)
-+	u32			fh_expire_type;	/* V4 bitmask representing file
-+						   handle volatility type for
-+						   this filesystem */
- 	u32			pnfs_blksize;	/* layout_blksize attr */
- #if IS_ENABLED(CONFIG_NFS_V4)
- 	u32			attr_bitmask[3];/* V4 bitmask representing the set
-@@ -234,9 +243,6 @@ struct nfs_server {
- 	u32			acl_bitmask;	/* V4 bitmask representing the ACEs
- 						   that are supported on this
- 						   filesystem */
--	u32			fh_expire_type;	/* V4 bitmask representing file
--						   handle volatility type for
--						   this filesystem */
- 	struct pnfs_layoutdriver_type  *pnfs_curr_ld; /* Active layout driver */
- 	struct rpc_wait_queue	roc_rpcwaitq;
- 	void			*pnfs_ld_data;	/* per mount point data */
--- 
-2.39.5
+ # echo 1 > /sys/kernel/debug/tracing/tracing_on
+ # cat /sys/kernel/debug/tracing/tracing_on
+ 1
+ # perf ftrace trace --graph-opts depth=5 sleep 0.1 > /dev/null
+ # cat /sys/kernel/debug/tracing/tracing_on
+ 0
+ #
 
+The 'tracing_on' file is not restored to its value before the command.
+
+To fix that this patch uses the .../tracing/instances/XXX subdirectory
+feature.
+
+Each 'perf ftrace' invocation creates its own session/process
+specific subdirectory and does not change the global state
+in the .../tracing directory itself.
+
+Use rmdir(../tracing/instances/dir) to stop process/session specific
+tracing and delete all process/session specific setings.
+
+-----------
+
+followed by the tags you provided, ok?
+
+- Arnaldo
+
+> On Fedora 41 and 42 tracing is turned on by default.
+> 
+> This patch use the .../tracing/instances/XXX subdirectory feature.
+> Each perf ftrace invocation creates its own session/process
+> specific subdirectory and does not change the global state
+> in the .../tracing directory itself.
+> 
+> Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
+> Suggested-by: Arnaldo Carvalho de Melo <acme@kernel.org>
+> Reported-by: Alexander Egorenkov <egorenar@linux.ibm.com>
+> ---
+>  tools/perf/builtin-ftrace.c | 105 +++++++++++++++++++++++++++++++-----
+>  1 file changed, 91 insertions(+), 14 deletions(-)
+> 
+> diff --git a/tools/perf/builtin-ftrace.c b/tools/perf/builtin-ftrace.c
+> index 7caa18d5ffc3..3faf96e7185e 100644
+> --- a/tools/perf/builtin-ftrace.c
+> +++ b/tools/perf/builtin-ftrace.c
+> @@ -38,6 +38,8 @@
+>  #include "util/units.h"
+>  #include "util/parse-sublevel-options.h"
+>  
+> +#include <sys/stat.h>
+> +
+>  #define DEFAULT_TRACER  "function_graph"
+>  
+>  static volatile sig_atomic_t workload_exec_errno;
+> @@ -45,6 +47,8 @@ static volatile sig_atomic_t done;
+>  
+>  static struct stats latency_stats;  /* for tracepoints */
+>  
+> +static char tracing_instance[PATH_MAX];	/* Trace instance directory */
+> +
+>  static void sig_handler(int sig __maybe_unused)
+>  {
+>  	done = true;
+> @@ -100,6 +104,34 @@ static bool is_ftrace_supported(void)
+>  	return supported;
+>  }
+>  
+> +/*
+> + * Wrapper to test if a file in directory .../tracing/instances/XXX
+> + * exists. If so return the .../tracing/instances/XXX file for use.
+> + * Otherwise the file exists only in directory .../tracing and
+> + * is applicable to all instances, for example file available_filter_functions.
+> + * Return that file name in this case.
+> + *
+> + * This functions works similar to get_tracing_file() and expects its caller
+> + * to free the returned file name.
+> + *
+> + * The global variable tracing_instance is set in init_tracing_instance()
+> + * called a the  beginning to a process specific tracing subdirectory.
+> + */
+> +static char *get_tracing_instance_file(const char *name)
+> +{
+> +	char *file;
+> +
+> +	if (asprintf(&file, "%s/%s", tracing_instance, name) < 0)
+> +		return NULL;
+> +
+> +	if (!access(file, F_OK))
+> +		return file;
+> +
+> +	put_tracing_file(file);
+> +	file = get_tracing_file(name);
+> +	return file;
+> +}
+> +
+>  static int __write_tracing_file(const char *name, const char *val, bool append)
+>  {
+>  	char *file;
+> @@ -109,7 +141,7 @@ static int __write_tracing_file(const char *name, const char *val, bool append)
+>  	char errbuf[512];
+>  	char *val_copy;
+>  
+> -	file = get_tracing_file(name);
+> +	file = get_tracing_instance_file(name);
+>  	if (!file) {
+>  		pr_debug("cannot get tracing file: %s\n", name);
+>  		return -1;
+> @@ -167,7 +199,7 @@ static int read_tracing_file_to_stdout(const char *name)
+>  	int fd;
+>  	int ret = -1;
+>  
+> -	file = get_tracing_file(name);
+> +	file = get_tracing_instance_file(name);
+>  	if (!file) {
+>  		pr_debug("cannot get tracing file: %s\n", name);
+>  		return -1;
+> @@ -209,7 +241,7 @@ static int read_tracing_file_by_line(const char *name,
+>  	char *file;
+>  	FILE *fp;
+>  
+> -	file = get_tracing_file(name);
+> +	file = get_tracing_instance_file(name);
+>  	if (!file) {
+>  		pr_debug("cannot get tracing file: %s\n", name);
+>  		return -1;
+> @@ -299,6 +331,36 @@ static int reset_tracing_files(struct perf_ftrace *ftrace __maybe_unused)
+>  	return 0;
+>  }
+>  
+> +/* Remove .../tracing/instances/XXX subdirectory created with
+> + * init_tracing_instance().
+> + */
+> +static void exit_tracing_instance(void)
+> +{
+> +	rmdir(tracing_instance);
+> +}
+> +
+> +/* Create subdirectory within .../tracing/instances/XXX to have session
+> + * or process specific setup. To delete this setup, simply remove the
+> + * subdirectory.
+> + */
+> +static int init_tracing_instance(void)
+> +{
+> +	char dirname[] = "instances/perf-ftrace-XXXXXX";
+> +	char *path;
+> +
+> +	path = get_tracing_file(dirname);
+> +	if (!path)
+> +		return -1;
+> +	strcpy(tracing_instance, path);
+> +	put_tracing_file(path);
+> +	path = mkdtemp(tracing_instance);
+> +	if (!path) {
+> +		pr_err("failed to create tracing/instances directory\n");
+> +		return -1;
+> +	}
+> +	return 0;
+> +}
+> +
+>  static int set_tracing_pid(struct perf_ftrace *ftrace)
+>  {
+>  	int i;
+> @@ -629,14 +691,19 @@ static int __cmd_ftrace(struct perf_ftrace *ftrace)
+>  
+>  	select_tracer(ftrace);
+>  
+> +	if (init_tracing_instance() < 0) {
+> +		pr_err("failed to create tracing/instances\n");
+> +		goto out;
+> +	}
+> +
+>  	if (reset_tracing_files(ftrace) < 0) {
+>  		pr_err("failed to reset ftrace\n");
+> -		goto out;
+> +		goto out_reset;
+>  	}
+>  
+>  	/* reset ftrace buffer */
+>  	if (write_tracing_file("trace", "0") < 0)
+> -		goto out;
+> +		goto out_reset;
+>  
+>  	if (set_tracing_options(ftrace) < 0)
+>  		goto out_reset;
+> @@ -648,7 +715,7 @@ static int __cmd_ftrace(struct perf_ftrace *ftrace)
+>  
+>  	setup_pager();
+>  
+> -	trace_file = get_tracing_file("trace_pipe");
+> +	trace_file = get_tracing_instance_file("trace_pipe");
+>  	if (!trace_file) {
+>  		pr_err("failed to open trace_pipe\n");
+>  		goto out_reset;
+> @@ -723,7 +790,7 @@ static int __cmd_ftrace(struct perf_ftrace *ftrace)
+>  out_close_fd:
+>  	close(trace_fd);
+>  out_reset:
+> -	reset_tracing_files(ftrace);
+> +	exit_tracing_instance();
+>  out:
+>  	return (done && !workload_exec_errno) ? 0 : -1;
+>  }
+> @@ -924,6 +991,11 @@ static int prepare_func_latency(struct perf_ftrace *ftrace)
+>  	if (ftrace->target.use_bpf)
+>  		return perf_ftrace__latency_prepare_bpf(ftrace);
+>  
+> +	if (init_tracing_instance() < 0) {
+> +		pr_err("failed to create tracing/instances\n");
+> +		return -1;
+> +	}
+> +
+>  	if (reset_tracing_files(ftrace) < 0) {
+>  		pr_err("failed to reset ftrace\n");
+>  		return -1;
+> @@ -942,7 +1014,7 @@ static int prepare_func_latency(struct perf_ftrace *ftrace)
+>  		return -1;
+>  	}
+>  
+> -	trace_file = get_tracing_file("trace_pipe");
+> +	trace_file = get_tracing_instance_file("trace_pipe");
+>  	if (!trace_file) {
+>  		pr_err("failed to open trace_pipe\n");
+>  		return -1;
+> @@ -993,7 +1065,7 @@ static int cleanup_func_latency(struct perf_ftrace *ftrace)
+>  	if (ftrace->target.use_bpf)
+>  		return perf_ftrace__latency_cleanup_bpf(ftrace);
+>  
+> -	reset_tracing_files(ftrace);
+> +	exit_tracing_instance();
+>  	return 0;
+>  }
+>  
+> @@ -1304,17 +1376,22 @@ static int __cmd_profile(struct perf_ftrace *ftrace)
+>  		goto out;
+>  	}
+>  
+> +	if (init_tracing_instance() < 0) {
+> +		pr_err("failed to create tracing/instances\n");
+> +		goto out;
+> +	}
+> +
+>  	if (reset_tracing_files(ftrace) < 0) {
+>  		pr_err("failed to reset ftrace\n");
+> -		goto out;
+> +		goto out_reset;
+>  	}
+>  
+>  	/* reset ftrace buffer */
+>  	if (write_tracing_file("trace", "0") < 0)
+> -		goto out;
+> +		goto out_reset;
+>  
+>  	if (set_tracing_options(ftrace) < 0)
+> -		return -1;
+> +		goto out_reset;
+>  
+>  	if (write_tracing_file("current_tracer", ftrace->tracer) < 0) {
+>  		pr_err("failed to set current_tracer to %s\n", ftrace->tracer);
+> @@ -1323,7 +1400,7 @@ static int __cmd_profile(struct perf_ftrace *ftrace)
+>  
+>  	setup_pager();
+>  
+> -	trace_file = get_tracing_file("trace_pipe");
+> +	trace_file = get_tracing_instance_file("trace_pipe");
+>  	if (!trace_file) {
+>  		pr_err("failed to open trace_pipe\n");
+>  		goto out_reset;
+> @@ -1385,7 +1462,7 @@ static int __cmd_profile(struct perf_ftrace *ftrace)
+>  out_close_fd:
+>  	close(trace_fd);
+>  out_reset:
+> -	reset_tracing_files(ftrace);
+> +	exit_tracing_instance();
+>  out:
+>  	return (done && !workload_exec_errno) ? 0 : -1;
+>  }
+> -- 
+> 2.49.0
 
