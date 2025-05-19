@@ -1,77 +1,60 @@
-Return-Path: <linux-kernel+bounces-653511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-653573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27F55ABBA9A
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 12:06:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B618ABBB3F
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 12:36:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C69A8166C37
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 10:06:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EBDD13A3BDD
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 10:36:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F93E26F44F;
-	Mon, 19 May 2025 10:06:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Um+V1J9j"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1DD0268FF9;
+	Mon, 19 May 2025 10:36:23 +0000 (UTC)
+Received: from mail-02-1.mymagenta.at (mail-02-1.mymagenta.at [80.109.253.248])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB6ED35957
-	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 10:06:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D379D1373
+	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 10:36:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.109.253.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747649179; cv=none; b=AhaTc7n/ruj/D/WJNnaYN7m9hB8IXCyzbV51cN5LoFkttVr1a9pVsWT16dylQRnDK98XU6YxtPbz12Od502+IjbFyPlGNsyNN9RdVNnhyc1TPYPb6lHT7bjmU01dIYOkX5Tb8H82svCPygY1pgiQVrOSwxFwE8j45FKArJEnSGI=
+	t=1747650983; cv=none; b=pICp34kY7yszms3VA63WYh+0Ewg2o65PipXI/+IrQ3u9R3GxDqwdnhMPMSCWQtWkOVAwfgkaNhK08REJHeah1Y4aeRrc+q1LUqeadG5ODjsMA1axuwoWdb/HklalSqGLqmmq6QJwjE+Tca/FhgWl/U1NjsG8MIf7jfeQcu9lLQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747649179; c=relaxed/simple;
-	bh=WY4pVtTTZhYVG9r0kI5X0a3ASMeqcPFq3H1auY5Ce1o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GA9kz+RCNs2x9T7RMxq3i8k/TnqqDG1e58hFewITRa4eJbqVeAf5W48q+oUMDwl4uuJERPrCAfpRcFkDC16pIDdL0LMpyzlCeYHBCMgfEO4eIPPhf1y2l6K7sFZWY4EmvXcKMeXd1wVJUFbP1iE6NeOqBwicnWaMAUpEQai2inc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Um+V1J9j; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1747649176;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=J8y8RvBhJowtfwrg+WUxnhDmoJuUc4fa/9tDJ52ajU4=;
-	b=Um+V1J9j5h1v4VsS/qHHEGH/VgxCkveZ25QdhPSPP6y2Bl8x9vouKAiRtwNwW1sjoco+Em
-	ISlqd9AR1y2IgGBgIV5jVejHcOTfoeC943G6NBScQb1fj88GcksmFow76RtFNXhKP4rfke
-	HzdJ4HvBgVzXD0/ab2L1pk+YKDqOYD0=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-595-qVK8RXgdOuq2NyqG4Brs0Q-1; Mon,
- 19 May 2025 06:06:13 -0400
-X-MC-Unique: qVK8RXgdOuq2NyqG4Brs0Q-1
-X-Mimecast-MFC-AGG-ID: qVK8RXgdOuq2NyqG4Brs0Q_1747649172
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 24F0F19560AF;
-	Mon, 19 May 2025 10:06:12 +0000 (UTC)
-Received: from redhat.com (unknown [10.44.34.97])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C9AD030001AB;
-	Mon, 19 May 2025 10:06:08 +0000 (UTC)
-Date: Mon, 19 May 2025 12:06:05 +0200
-From: Kevin Wolf <kwolf@redhat.com>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Martin Wilck <mwilck@suse.com>,
-	Benjamin Marzinski <bmarzins@redhat.com>, dm-devel@lists.linux.dev,
-	hreitz@redhat.com, mpatocka@redhat.com, snitzer@kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2] dm mpath: Interface for explicit probing of active
- paths
-Message-ID: <aCsCjVQa0pqWP6AT@redhat.com>
-References: <20250429165018.112999-1-kwolf@redhat.com>
- <47dd225b433b0df585a25084a2e793344eeda239.camel@suse.com>
- <aCIRUwt5BueQmlMZ@redhat.com>
- <d51d6f85b5728648fe9c584f9cb3acee12c4873f.camel@suse.com>
- <cc2ec011cf286cb5d119f2378ecbd7b818e46769.camel@suse.com>
- <aCW95f8RGpLJZwSA@redhat.com>
- <aCbUcdew393RZIkV@infradead.org>
+	s=arc-20240116; t=1747650983; c=relaxed/simple;
+	bh=tT6agNi7xxg5K2wITU0NU7gd+7WeQNHkcL2VsgqlysI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=GAAWzJXZKGWupx2EAX3x3k9I955jvA6OJ3ExxYrZHFyFwXY55pOtQSpd6bGJH3LtwOt42pGu1qB7twSz9pngiWLg4uz+dEU3bUO6w7rSFp8ZDDThdbkzlile8I8pdrqVBdm7L4zpvADPkM/YE1xONEoZqQP3lNIBbcPM5txP3ow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ze-it.at; spf=none smtp.mailfrom=ze-it.at; arc=none smtp.client-ip=80.109.253.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ze-it.at
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ze-it.at
+Received: from [192.168.232.75] (helo=ren-mail-psmtp-mg11.mx.mymagenta.at)
+	by mail-02.mymagenta.at with esmtp (Exim 4.98.1)
+	(envelope-from <thomas.zeitlhofer+lkml@ze-it.at>)
+	id 1uGwGm-00000005lnb-2xty
+	for linux-kernel@vger.kernel.org;
+	Mon, 19 May 2025 10:54:48 +0200
+Received: from mr1 ([80.108.110.13])
+	by ren-mail-psmtp-mg11.mx.mymagenta.at with ESMTPS
+	id GwGmu6ErbjYL1GwGmuL30c; Mon, 19 May 2025 10:54:48 +0200
+X-Env-Mailfrom: thomas.zeitlhofer+lkml@ze-it.at
+X-Env-Rcptto: linux-kernel@vger.kernel.org
+X-SourceIP: 80.108.110.13
+X-CNFS-Analysis: v=2.4 cv=RIOzH5i+ c=1 sm=1 tr=0 ts=682af1d8
+ a=M3c6w4RM9ieumcaO06RGLA==:117 a=M3c6w4RM9ieumcaO06RGLA==:17
+ a=kj9zAlcOel0A:10 a=FwmdilmEVaCSPuVMSy4A:9 a=CjuIK1q_8ugA:10
+Date: Mon, 19 May 2025 10:54:46 +0200
+From: Thomas Zeitlhofer <thomas.zeitlhofer+lkml@ze-it.at>
+To: Ping Cheng <ping.cheng@wacom.com>,
+	Jason Gerecke <jason.gerecke@wacom.com>,
+	Jiri Kosina <jikos@kernel.org>,
+	Benjamin Tissoires <bentiss@kernel.org>,
+	Josh Dickens <joshua.dickens@wacom.com>,
+	Tatsunosuke Tobita <tatsunosuke.wacom@gmail.com>,
+	Aaron Skomra <aaron.skomra@wacom.com>
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] HID: wacom: fix crash in wacom_aes_battery_handler()
+Message-ID: <aCrx1iRQ-9tXiyJp@x1.ze-it.at>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,44 +63,44 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aCbUcdew393RZIkV@infradead.org>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+X-CMAE-Envelope: MS4xfLWz0mEbM2txYtcRX/bze9DB3ero9MIH93S699XN6Dk5CFcQx6PhLlLgV+ZQcsq0K+hX0U/zEhV3L4F3wP3G9Jqj+gKPhHyy/A3sX6VNTmF3f8UCSo7o
+ iALZ3GDNRPJJoCd7snwz+mwGXVjg00mb7FIEb8gL82fbZrj0REpjNzXKO6SfpDlUUOh5ApjahS95u0db5cKap+LByIQLUZ2U6+WFMGBN0uwkWJdixxkXxmny
+ st8LIrX97+PdGQjjwqyC5JoB4hyDzCyToDgajcBkcxNiwXG2YoS7favwF6PnSfiFLMs3uGDGKF3Uoznz4jA3z3o7Yyqn0FNpHnwMuqZ9QOTKksO72mpV7pYs
+ /0fl/WaUhCR0AyREKq1r6aIeUvB26gyRYJtIMIkBUWyxArsorTS6yC9kyx0wwYL/r9zy36k2/LYBltz0SszL4Ck9+d1vXTjxl6E92U30FdZHLWKOEeEmm0hK
+ 5/jV45L+9aYk2yL1
 
-Am 16.05.2025 um 08:00 hat Christoph Hellwig geschrieben:
-> On Thu, May 15, 2025 at 12:11:49PM +0200, Kevin Wolf wrote:
-> > If you're talking about SG_IO in dm-mpath, then PRIN/PROUT commands are
-> > actually the one thing that we don't need. libmpathpersist sends the
-> > commands to the individual path devices, so dm-mpath will never see
-> > those. It's mostly about getting the full results on the SCSI level for
-> > normal I/O commands.
-> > 
-> > There has actually been a patch series on qemu-devel last year (that I
-> > haven't found the time to review properly yet) that would add explicit
-> > persistent reservation operations to QEMU's block layer that could then
-> > be used with the emulated scsi-hd device. On the backend, it only
-> > implemented it for iscsi, but I suppose we could implement it for
-> > file-posix, too (using the same libmpathpersist code as for
-> > passthrough). If that works, maybe at least some users can move away
-> > from SCSI passthrough.
-> 
-> Please call into the kernel PR code instead of hacking up more of
-> this, which will just run into problems again.
+Commit fd2a9b29dc9c ("HID: wacom: Remove AES power_supply after extended
+inactivity") introduced wacom_aes_battery_handler() which is scheduled
+as a delayed work (aes_battery_work).
 
-I agree that using kernel code is preferable to doing things behind the
-kernel's back.
+In wacom_remove(), aes_battery_work is not canceled. Consequently, if
+the device is removed while aes_battery_work is still pending, then hard
+crashes or "Oops: general protection fault..." are experienced when
+wacom_aes_battery_handler() is finally called. E.g., this happens with
+built-in USB devices after resume from hibernate when aes_battery_work
+was still pending at the time of hibernation.
 
-However, libmpathpersist is the official interface for doing these
-things with multipath devices, so I think the necessary work to make
-this happen should primarily be done in the library (and possibly the
-kernel if the existing interfaces aren't good enough).
+So, take care to cancel aes_battery_work in wacom_remove().
 
-QEMU could directly call the kernel when qemu-pr-helper isn't in use.
-I don't know enough about how libmpathpersist works internally to tell
-if running it this way would be a good idea for multipath devices. Can
-multipathd still do its job with reservations being made behind its
-back? (It would probably be good to allow this eventually, but is it the
-case today?)
+Fixes: fd2a9b29dc9c ("HID: wacom: Remove AES power_supply after extended inactivity")
+Signed-off-by: Thomas Zeitlhofer <thomas.zeitlhofer+lkml@ze-it.at>
+---
+ drivers/hid/wacom_sys.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Kevin
+diff --git a/drivers/hid/wacom_sys.c b/drivers/hid/wacom_sys.c
+index eaf099b2efdb..e74c1a4c5b61 100644
+--- a/drivers/hid/wacom_sys.c
++++ b/drivers/hid/wacom_sys.c
+@@ -2901,6 +2901,7 @@ static void wacom_remove(struct hid_device *hdev)
+ 	hid_hw_stop(hdev);
+ 
+ 	cancel_delayed_work_sync(&wacom->init_work);
++	cancel_delayed_work_sync(&wacom->aes_battery_work);
+ 	cancel_work_sync(&wacom->wireless_work);
+ 	cancel_work_sync(&wacom->battery_work);
+ 	cancel_work_sync(&wacom->remote_work);
+-- 
+2.39.5
 
 
