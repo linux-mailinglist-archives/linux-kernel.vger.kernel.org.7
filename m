@@ -1,106 +1,90 @@
-Return-Path: <linux-kernel+bounces-653671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-653673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC55CABBCB4
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 13:39:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA389ABBCC1
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 13:40:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4F16A7AFFB8
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 11:37:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 235653BD301
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 11:38:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4A1D275103;
-	Mon, 19 May 2025 11:38:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0335277026;
+	Mon, 19 May 2025 11:38:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XfGA/LTY"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="lmcBlLoB"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D1F12749FC;
-	Mon, 19 May 2025 11:38:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9205277004;
+	Mon, 19 May 2025 11:38:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747654687; cv=none; b=C+6pOdb1KWnZ+rZf/FTTAyIf/PXI0Pwhhaf3wN9bv4vGcdUOy/LrE8HL6QSrvtvaCjPca9KgQ8MDAlKNY86xBPRs9wF8E5wLSXNiJulwwFcYjHvkdSTj6V8Hcr08TmCgVrx6vScimYUNupeWRfxoshd6qGRi+bKwxFv4yqTDjtA=
+	t=1747654694; cv=none; b=I0w3YyWcVb5jHuMXDUVp52UvFACaK8pZ/2HXngT5ctWnfmvSD48ofEwubkMiD8r5Y0Y5UAlUBQ5iy4n7OJQd2vRQQQxBCYAHDAmDJ1BwNuCJZTzX58Ay2qWeY72rXH4lPrAb/Z7CpXz22kY2sSkn28hcsMXDaWJ4iE8ClWhKPno=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747654687; c=relaxed/simple;
-	bh=K2WXDcCjenQ4M990QkeKh890F18UFEKYLYMgiEKPM/k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tQg4RbA5r5QAz0vjojEyBxdMC7NfMX7f4v45AcLKm8uoB/VuMHN5uEb5Xr0RTTnnWeZmCGJPfCgppwXVi40t1dq0LBxaTfkANsiD44HS5TJ2InQlAOJSa+XG9KlPrlTlblaUi18gigpDfLYidUts5oQ8u1q+DPb0gRB557u/GNo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XfGA/LTY; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1747654685; x=1779190685;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=K2WXDcCjenQ4M990QkeKh890F18UFEKYLYMgiEKPM/k=;
-  b=XfGA/LTYcOK14l0K5orSHdtRpXKBj+D1qSYCa6DNDtwaR/1h6fH7FZQa
-   gJc+Q20FofX0bE3u1/xYu496lLb25dO4K7LTXwgACTLoFGD3FdsdI7Gzm
-   /4ZUoBMJ/o+6xptvU3hRloOuKJ59V2NhLj+plfBnY18LLsNugJ8LwSv0u
-   sXvmKs3xeExk5Dn5jtkxoCL3FiGxAkACCAJ8LH6kGEzhIIjTs0aJC+WRZ
-   ilgiTapezd1eHuB+4XLBS77XtrTwVF5fzoQw5EIRIy0l0Vpyw8XMCvkrl
-   vv1kstw5vc3vgq1KwfB+447K5L0dKwRqboyg02fw0/0KvV60rGX7cqzUT
-   g==;
-X-CSE-ConnectionGUID: u3js8+AdTCa9IfAhU+Uncg==
-X-CSE-MsgGUID: Us4/JW0CSw+HeNa+offevg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11437"; a="37167822"
-X-IronPort-AV: E=Sophos;i="6.15,300,1739865600"; 
-   d="scan'208";a="37167822"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 May 2025 04:38:04 -0700
-X-CSE-ConnectionGUID: 4Kh95vYaQXeq6dcKEkRh2g==
-X-CSE-MsgGUID: jI/DbYysTyu4oJvvd/4FYg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,300,1739865600"; 
-   d="scan'208";a="144108373"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 May 2025 04:38:02 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1uGyog-000000031Hx-0sz3;
-	Mon, 19 May 2025 14:37:58 +0300
-Date: Mon, 19 May 2025 14:37:57 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Philipp Stanner <phasta@kernel.org>
-Cc: Jonathan Corbet <corbet@lwn.net>, Bjorn Helgaas <bhelgaas@google.com>,
-	Mark Brown <broonie@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Yang Yingliang <yangyingliang@huawei.com>,
-	Zijun Hu <quic_zijuhu@quicinc.com>,
-	Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@linux.intel.com>,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org
-Subject: Re: [PATCH v3 2/6] Documentation/driver-api: Update
- pcim_enable_device()
-Message-ID: <aCsYFVjZrARrzt2i@smile.fi.intel.com>
-References: <20250519112959.25487-2-phasta@kernel.org>
- <20250519112959.25487-4-phasta@kernel.org>
+	s=arc-20240116; t=1747654694; c=relaxed/simple;
+	bh=ZT2swLw3vak3ie4pR74lUra8/LgMbJf1xWXMpaHdV0k=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=B2uDQd0bOoIW7gPeQXG3ElKuAyReaGdzQ9fNy67l4eSbWC08RLfLAj8wS3rVjNqa5vbjzOTpQI9jlW2cgkl7zbqUfuagcoSAMiWWvjtMhlvn82F9P57lJCfxrKwYV68RxdjUUcWctQw9FvADAoFEIuYNjNkDp22xbSawK/LvdUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=lmcBlLoB; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 0122F41086
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1747654691; bh=VrpHJZVhRIauD59sBkuzdqC6I4YPrdfuP0YshFjFxQw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=lmcBlLoBBIUEKFU30+ACIy5RcLGDkTd497DsOT5UdQ9wDVjPUMqrGDZkpxX3gu07M
+	 Ec1B6irU7XqS4yLuo8n5b7pMktdeatO9el+C4TJxjhYJZws4AOcIx2r9Gld3GoNjBn
+	 TeG7LdLF3eiefHB/QHrqhPBvGMDMd2ZPCjCG0A6g1jW606FAPZis8Lgi5w3VM51C9+
+	 +BY9LUMUcQPX/eadSBIUYe0JAr27w3QLvUe/NBcMBKWs/hO3KFO6I6Axfgef42XT8e
+	 IC+oOkNaG3AE13f1RBsQ2hc4xbJ66qyPQtfTQeF8FzZnuzmCB1RTDN29pseA/GTUhb
+	 wAGa0cUEcL8vA==
+Received: from localhost (mdns.lwn.net [45.79.72.68])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id 0122F41086;
+	Mon, 19 May 2025 11:38:10 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Benton Raymer <benton.raymer@gmail.com>, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: Benton Raymer <benton.raymer@gmail.com>
+Subject: Re: [PATCH] docs: memory-devices: fix typo in emif.rst
+In-Reply-To: <20250516032837.42124-1-benton.raymer@gmail.com>
+References: <20250516032837.42124-1-benton.raymer@gmail.com>
+Date: Mon, 19 May 2025 05:38:07 -0600
+Message-ID: <87o6vokezk.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250519112959.25487-4-phasta@kernel.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain
 
-On Mon, May 19, 2025 at 01:29:56PM +0200, Philipp Stanner wrote:
-> pcim_enable_device() is not related anymore to switching the mode of
-> operation of any functions. It merely sets up a devres callback for
-> automatically disabling the PCI device on driver detach.
-> 
-> Adjust the function's documentation.
+Benton Raymer <benton.raymer@gmail.com> writes:
 
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Fixes a minor typo in the /Documentation/driver-api/memory-devices/ti-emif.rst file
+>
+> Signed-off-by: Benton Raymer <benton.raymer@gmail.com>
+> ---
+>  Documentation/driver-api/memory-devices/ti-emif.rst | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/Documentation/driver-api/memory-devices/ti-emif.rst b/Documentation/driver-api/memory-devices/ti-emif.rst
+> index dea2ad9bcd7e..d824cc0dce89 100644
+> --- a/Documentation/driver-api/memory-devices/ti-emif.rst
+> +++ b/Documentation/driver-api/memory-devices/ti-emif.rst
+> @@ -29,7 +29,7 @@ This driver is for the EMIF module available in Texas Instruments
+>  SoCs. EMIF is an SDRAM controller that, based on its revision,
+>  supports one or more of DDR2, DDR3, and LPDDR2 SDRAM protocols.
+>  This driver takes care of only LPDDR2 memories presently. The
+> -functions of the driver includes re-configuring AC timing
+> +functions of the driver include re-configuring AC timing
+>  parameters and other settings during frequency, voltage and
 
--- 
-With Best Regards,
-Andy Shevchenko
+Applied, thanks.
 
-
+jon
 
