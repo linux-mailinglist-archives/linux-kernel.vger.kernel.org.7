@@ -1,99 +1,141 @@
-Return-Path: <linux-kernel+bounces-653637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-653639-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C12F1ABBC1D
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 13:13:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA0E6ABBC35
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 13:20:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 683D017C961
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 11:13:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2EF5E3BC4BB
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 11:19:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0495035961;
-	Mon, 19 May 2025 11:13:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BAEA27511B;
+	Mon, 19 May 2025 11:19:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bo2IQ8kn"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OqEK+6AK"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57C7F2749C8;
-	Mon, 19 May 2025 11:13:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D765F1DFFC;
+	Mon, 19 May 2025 11:19:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747653204; cv=none; b=dFci2vqmjP7F9La62m/k4nW/ne1yD3yOkoSWYXD97uVE86fkjEHhyAS++AowgVFYeI33P2HEig3gjNgJUkCEXfqnWAuFvQAg5MS0ewLbNqunKeVLEjmeKPKtVeIYoxHKdjcxushHH6pRIiPZCGOG3ClLxd4kzhu4os7wBgXMG5U=
+	t=1747653597; cv=none; b=mqi/YO4uC6RtqNQOx2d64rYf5cVaPU+AOBrQPeFgRxuMaWfls87yRacw3g3VdBb3XJs6Py1Wc2OOWW5AqWyfYtvhfKNtLeC4eVTGfB1EYLPmV/epGyi/cp3C1Kd3Qp+KquDEm4UdpLYl3TfVLvfo8Te0hxahb1GqjDeMvJvclgk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747653204; c=relaxed/simple;
-	bh=YcufbpuTBeyN+hUjFALoDwbhHl+o5XaWxiPAMRJKtWo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dLcsO6752CwuLPo9G0rbcH1S+2CsWIdQqKNMVvh99w2yQNhkcuqdW8L601vgav1z5QA5+Myp2ut7gayLfP0q5RxW/fEe6gFfB4dNbtppbJvv8WQbEvcoejaVA+CF1dWaVOL/1/+iR9RxXpEqDN5Nb0P6qEAz9gTsjaP1REOMf1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bo2IQ8kn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49DF9C4CEE4;
-	Mon, 19 May 2025 11:13:21 +0000 (UTC)
+	s=arc-20240116; t=1747653597; c=relaxed/simple;
+	bh=AWPQKMivdFQ6QmrVDoYacp12BqW2VCLe3IzFWlx64xM=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=bItxB0ywQEu0Z1TKJlYg/liK+nLSuqbON+WOxL/JDajCw2SUDp2eQgACr6dYSZXzdnzWhYgXlxheZCPImlMw0WpZzLyJE3pgnOcqzE5nKG+l4pXyH0+M32Wdp8dD6qnyRlugN1cEuh+11W9Yl/UHuixr9VuGH97pK55EWfdwQE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OqEK+6AK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A5E7C4CEE4;
+	Mon, 19 May 2025 11:19:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747653204;
-	bh=YcufbpuTBeyN+hUjFALoDwbhHl+o5XaWxiPAMRJKtWo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bo2IQ8kn9q53ZeZxv3v9t240uzKWkWH2oLFzQoVk7r1byOrUuYIUeKxzhg//cGkY/
-	 wy4cyyD8eI1I2Grg0X2utXExDZo1glPtoz6OMFmuiLV2ElnVve1ZIXHTPx1Ejod5UA
-	 1gd8fO4rxLGBsr1OiIxud+HZPbLakAEM9QqPDQS+DIZiBPU1ZF/HMd4JEz6qWVjDqL
-	 pucPmz8bw2cCjkj010ZLLRKyoxwMM1ZH8OnYlQ1i+DMTQ58ZLlBLH4lJ0UfzI/PfPq
-	 mWS80HRv3x7mGoBBGe5sR2I7Bd0JiIXjKgujzORr0+ncRkzldA1lVmRPP5hY2RKsTW
-	 dRNEEIMfzvGSg==
-Date: Mon, 19 May 2025 12:13:17 +0100
-From: Will Deacon <will@kernel.org>
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: D Scott Phillips <scott@os.amperecomputing.com>,
-	James Clark <james.clark@linaro.org>,
-	James Morse <james.morse@arm.com>, Joey Gouly <joey.gouly@arm.com>,
-	Kevin Brodsky <kevin.brodsky@arm.com>,
-	Marc Zyngier <maz@kernel.org>, Mark Brown <broonie@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	"Rob Herring (Arm)" <robh@kernel.org>,
-	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
-	Shiqi Liu <shiqiliu@hust.edu.cn>,
-	Yicong Yang <yangyicong@hisilicon.com>, kvmarm@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4] arm64: errata: Work around AmpereOne's erratum
- AC04_CPU_23
-Message-ID: <20250519111313.GA16690@willie-the-truck>
-References: <20250513184514.2678288-1-scott@os.amperecomputing.com>
- <aCsOc7VeJTJFk-x6@arm.com>
+	s=k20201202; t=1747653596;
+	bh=AWPQKMivdFQ6QmrVDoYacp12BqW2VCLe3IzFWlx64xM=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=OqEK+6AK2uKE5zFJ+ALrpE14Q1x4tmTRKdHQRiEIIeMXqx8lH+/s5jA6qvCHCFltt
+	 9nWavAaEmqZmIIcbH5j5cPrIo5bUj7KjPQwBE9+qYujQ085zEsh/wbjKUlAzpwdtDG
+	 +g/a7aGMFjqCbNbqV0HrondaxTr+NzieLf4nGbYCN4PUu5VivlxwMePgQqz73Jrw4s
+	 Q+FX3VSmtdiiTs3H1ZcUwkEwpMB9Yn19l+bLYYDC4E5zoJki3feFBcoQHjA/Uvo6Ei
+	 hgvITtxOfJzZnv9GzbsBA0saW/NIRVKO5E6AN5hWxHKq7CyzBqvsE+yXFQiJQrRXpE
+	 NhiwlGpI5Xvzw==
+Date: Mon, 19 May 2025 06:19:54 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aCsOc7VeJTJFk-x6@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: David Airlie <airlied@gmail.com>, devicetree@vger.kernel.org, 
+ Thomas Zimmermann <tzimmermann@suse.de>, Maxime Ripard <mripard@kernel.org>, 
+ linux-kernel@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, 
+ Oded Gabbay <ogabbay@kernel.org>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Jonathan Corbet <corbet@lwn.net>, 
+ Sebastian Reichel <sebastian.reichel@collabora.com>, 
+ dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, 
+ linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org, 
+ =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+ Jeff Hugo <jeff.hugo@oss.qualcomm.com>, 
+ Sumit Semwal <sumit.semwal@linaro.org>, Heiko Stuebner <heiko@sntech.de>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Nicolas Frattaroli <nicolas.frattaroli@collabora.com>, 
+ Simona Vetter <simona@ffwll.ch>, linux-rockchip@lists.infradead.org, 
+ linux-doc@vger.kernel.org
+To: Tomeu Vizoso <tomeu@tomeuvizoso.net>
+In-Reply-To: <20250516-6-10-rocket-v3-1-7051ac9225db@tomeuvizoso.net>
+References: <20250516-6-10-rocket-v3-0-7051ac9225db@tomeuvizoso.net>
+ <20250516-6-10-rocket-v3-1-7051ac9225db@tomeuvizoso.net>
+Message-Id: <174742024812.3649303.12389396177218408388.robh@kernel.org>
+Subject: Re: [PATCH v3 01/10] dt-bindings: npu: rockchip,rknn: Add bindings
 
-On Mon, May 19, 2025 at 11:56:51AM +0100, Catalin Marinas wrote:
-> On Tue, May 13, 2025 at 11:45:14AM -0700, D Scott Phillips wrote:
-> > On AmpereOne AC04, updates to HCR_EL2 can rarely corrupt simultaneous
-> > translations for data addresses initiated by load/store instructions.
-> > Only instruction initiated translations are vulnerable, not translations
-> > from prefetches for example. A DSB before the store to HCR_EL2 is
-> > sufficient to prevent older instructions from hitting the window for
-> > corruption, and an ISB after is sufficient to prevent younger
-> > instructions from hitting the window for corruption.
-> > 
-> > Signed-off-by: D Scott Phillips <scott@os.amperecomputing.com>
-> > Reviewed-by: Oliver Upton <oliver.upton@linux.dev>
+
+On Fri, 16 May 2025 18:53:15 +0200, Tomeu Vizoso wrote:
+> Add the bindings for the Neural Processing Unit IP from Rockchip.
 > 
-> For the core arm64 bits:
+> v2:
+> - Adapt to new node structure (one node per core, each with its own
+>   IOMMU)
+> - Several misc. fixes from Sebastian Reichel
 > 
-> Acked-by: Catalin Marinas <catalin.marinas@arm.com>
+> v3:
+> - Split register block in its constituent subblocks, and only require
+>   the ones that the kernel would ever use (Nicolas Frattaroli)
+> - Group supplies (Rob Herring)
+> - Explain the way in which the top core is special (Rob Herring)
 > 
-> Marc, Will - any preference on how this should go in (kvm or arm64
-> trees)?
+> Signed-off-by: Tomeu Vizoso <tomeu@tomeuvizoso.net>
+> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+> ---
+>  .../bindings/npu/rockchip,rknn-core.yaml           | 162 +++++++++++++++++++++
+>  1 file changed, 162 insertions(+)
+> 
 
-I think it makes most sense to go via the kvm tree based on the diffstat.
+My bot found errors running 'make dt_binding_check' on your patch:
 
-Cheers,
+yamllint warnings/errors:
 
-Will
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/npu/rockchip,rknn-core.yaml: properties:reg-names: 'oneOf' conditional failed, one must be fixed:
+	[{'const': 'pc'}, {'const': 'cna'}, {'const': 'core'}] is too long
+	[{'const': 'pc'}, {'const': 'cna'}, {'const': 'core'}] is too short
+	False schema does not allow 3
+	1 was expected
+	3 is greater than the maximum of 2
+	hint: "minItems" is only needed if less than the "items" list length
+	from schema $id: http://devicetree.org/meta-schemas/items.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/npu/rockchip,rknn-core.example.dtb: npu-core@fdab0000 (rockchip,rk3588-rknn-core-top): compatible: 'oneOf' conditional failed, one must be fixed:
+	['rockchip,rk3588-rknn-core-top', 'rockchip,rknn-core-top'] is too long
+	'rockchip,rk3588-rknn-core-top' is not one of ['rockchip,rk3588-rknn-core']
+	from schema $id: http://devicetree.org/schemas/npu/rockchip,rknn-core.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/npu/rockchip,rknn-core.example.dtb: npu-core@fdab0000 (rockchip,rk3588-rknn-core-top): reg: [[0, 4255842304, 0, 36864]] is too short
+	from schema $id: http://devicetree.org/schemas/npu/rockchip,rknn-core.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/npu/rockchip,rknn-core.example.dtb: npu-core@fdac0000 (rockchip,rk3588-rknn-core): compatible: 'oneOf' conditional failed, one must be fixed:
+	['rockchip,rk3588-rknn-core', 'rockchip,rknn-core'] is too long
+	'rockchip,rk3588-rknn-core' is not one of ['rockchip,rk3588-rknn-core-top']
+	from schema $id: http://devicetree.org/schemas/npu/rockchip,rknn-core.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/npu/rockchip,rknn-core.example.dtb: npu-core@fdac0000 (rockchip,rk3588-rknn-core): reg: [[0, 4255907840, 0, 36864]] is too short
+	from schema $id: http://devicetree.org/schemas/npu/rockchip,rknn-core.yaml#
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250516-6-10-rocket-v3-1-7051ac9225db@tomeuvizoso.net
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
 
