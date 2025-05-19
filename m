@@ -1,133 +1,72 @@
-Return-Path: <linux-kernel+bounces-653340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-653336-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAA0AABB7B5
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 10:47:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEF72ABB7B6
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 10:47:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 200C116765C
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 08:44:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF84C3BCD4E
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 08:43:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5646326B942;
-	Mon, 19 May 2025 08:42:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9976626A0FC;
+	Mon, 19 May 2025 08:41:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mRvkv4ke"
-Received: from mail-pj1-f68.google.com (mail-pj1-f68.google.com [209.85.216.68])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SmiPJYTH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B00D26B2D8;
-	Mon, 19 May 2025 08:42:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06CC1266EF1
+	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 08:41:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747644124; cv=none; b=FTkcT+dPsCXUmxchSZCs7phxv4I1Ddi7n375jHGY3Yuav0aOXWf3B4y0vqOW9MoCQtx2bJefzQRdR7IyNhmBbeCo3NR/Ohv+4uE/cgXQ0Af9bFeauvIWiv3yG14jL8CeLdN85Mz0LPWJmhEZuIv/6XQiXgXlOZmOIlmS5OSdAZ8=
+	t=1747644064; cv=none; b=npQtwpmzlcR9sIZbVXSR0jfS3OUPf+SB+JoLE/QYkl364ejjnjPKvCzcoKuiy4PHNVJnU7UICmNkCaZsEAzKxUsSfX5OvQcev4PyNoQ33s3yJYRsRNPK5AT8TcBTjn4lL67EB/kVzwu5UmSJJmDbot8fT1dYPqdnN9EotVDIKoY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747644124; c=relaxed/simple;
-	bh=M6YH7hLJw/FAhL1abjDJ4cyTRkLOUbxnR154Ohgc8dY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Ze6J3DFoVJ22QRvz3wm+tTgVe7AYgtn3ih4bVTuAvibzqZLzObfFDl70cmU/C/SDkCbNSHbtJev3hXwbmUf9ToBHqV1dj1UxB3YLjqLQ4ZLGBKR1j/60PHvlwH7X8OREsEunrpoL5NPaKxw8Ty/5WsijDtBx5/zpg92wDR7GHDA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mRvkv4ke; arc=none smtp.client-ip=209.85.216.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f68.google.com with SMTP id 98e67ed59e1d1-30ea7f783a0so2238503a91.1;
-        Mon, 19 May 2025 01:42:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747644122; x=1748248922; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TzWt6m0lDRu2ZdNfH+iSSvH3DFXB/9zKcDZo79oc998=;
-        b=mRvkv4ke7n7/lmoA4eI2Sj8uSMoJdE0wB8zzzYr8CnkmpnzV5oA6iasWR0Y18h8cTs
-         CbDHafolUNPQQSJwxKYXyYbQMZvRxXr/eT1ByApe3e+YFZDXxDAe++nKNTEhOlH456Tw
-         qO5c1eN8BzIuxOYI4leYN7/lKayfDtSpEEnd7hcNZRNdCBdr0BOoFvEkMpo753Y4mEUK
-         u0G9rYTXIFNIgZFNAfeO3sFHwEhzHA8SvU0a2OzMF1JNILmVhSI9uQy4jDpxX+6n6jkx
-         nyetwZe+EqtJKuXDjlOAb/vJJzvm/xOCsnGVgTed7EGiNoAEXv5iF6wsFtsHdEelg4cP
-         G8Rw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747644122; x=1748248922;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TzWt6m0lDRu2ZdNfH+iSSvH3DFXB/9zKcDZo79oc998=;
-        b=C2SMgmqH0nj8IcKA/Y5F2Td1IdIqcgb+EbE00auK1/g5hfenHY5kimpJyc5DjsOL/T
-         n3HAasAGZUTUhL5lsrU9s7uPOHzd5PHT0Tx0eB5LNs9Pz+byMO3zF2I0aFfdVMty3uyT
-         TKHamwExpcX6E/8fS5kVqXSQkftxNYCb12b1gCW3ibePhBG9/Nw+uKI+LAXA/nBd6zNg
-         BktNcCSNZF7jAXAfKQYmnGuk7nJHFUozMhjbCPm1P93ybMqJaRSOzDfThGpMEUZ/HMzz
-         Fei50a5z+9pnxNKqP/+Ew7X+E3vOnZMIKlusBVOfhdVqxrscE+QKsdU0oSECSiRaz7dK
-         wjYA==
-X-Forwarded-Encrypted: i=1; AJvYcCVxCMMmXtTNtF2cOdGhNfVCrlx5laoWitG8EDuNDm0/Hnt/QDP9USz7iLdgrir/Niky/+UIsXDyLoEeww==@vger.kernel.org, AJvYcCWrPUv+uq1rEnAeXkK20OO9bs0zrsZXW6G4itdRMPIUPVAlgA8juTkfGLquHGk54R1otq5WQHjZNMgyV0EI@vger.kernel.org
-X-Gm-Message-State: AOJu0YyG5y02fnn0BlJXOIpKdzVswxW2TtbBT/dtCvClWDVxtb4HLYNZ
-	B6PecFBj0oFNQM7siVi8yj24xbXcM+09OEdM0UKJ3VkZGi1/gNFWebJX
-X-Gm-Gg: ASbGnct22VvrJZihhzZgwxNTjajDMm9Fu2OBflwrzHbmUOsWwYNJG/3k1AokSmHB/aF
-	i60VkBEyDM+hUvZyTgM9mSAOutn+RNkXk2V3olEdmquiMZ+OIV9fu+yq8ufsXSzvYygN+3okQ+L
-	kYFk2XpL4muWT0NYFWcWPFqs65gQ9ejiSZfY7quJNin7dzaxGB/8QCyeKWBMkH1vmMdopwQNan7
-	4T5sLztCdq8ugbJbSMx9D4YB3lxMWAtiubI+EiWdDN2fHQeDBcHQrcZps5gvn/ECglRP6wTRJV/
-	IFiEnAcCB4ju7Bq3VvbFWtaSHxO2K4sSJxlmR25RVYKXenaOwB5pevEQ/1/eB0s3uFykBZEHTsj
-	GvNOxXJm5DSkEUCFLo+miheKiD5F/pq022s4=
-X-Google-Smtp-Source: AGHT+IHp2B3z4W2bMyd5TBuk4PgK8+n1UaYCOLFHzmeY+snMZLImvlBRPKDCnxDxS2d4pCyCurKslw==
-X-Received: by 2002:a17:90b:3905:b0:2fe:b8ba:62de with SMTP id 98e67ed59e1d1-30e7d5a96d7mr18939544a91.25.1747644122485;
-        Mon, 19 May 2025 01:42:02 -0700 (PDT)
-Received: from ubuntu20.wiwynn.corp (39-14-65-183.adsl.fetnet.net. [39.14.65.183])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-30e33401768sm9870275a91.3.2025.05.19.01.42.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 May 2025 01:42:02 -0700 (PDT)
-From: Yikai Tsai <yikai.tsai.wiwynn@gmail.com>
-To: patrick@stwcx.xyz,
-	=?UTF-8?q?Carsten=20Spie=C3=9F?= <mail@carsten-spiess.de>,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>
-Cc: Yikai Tsai <yikai.tsai.wiwynn@gmail.com>,
-	linux-hwmon@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/1] hwmon: (isl28022) Fix current reading calculation
-Date: Mon, 19 May 2025 16:40:51 +0800
-Message-Id: <20250519084055.3787-2-yikai.tsai.wiwynn@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250519084055.3787-1-yikai.tsai.wiwynn@gmail.com>
-References: <20250519084055.3787-1-yikai.tsai.wiwynn@gmail.com>
+	s=arc-20240116; t=1747644064; c=relaxed/simple;
+	bh=zXu83HtMZbcOjraZ4lEOlHkQ8dtDMv48+h2HD5ANg6w=;
+	h=Message-ID:Date:From:To:Subject:In-Reply-To:References:Cc; b=ttuELEOzCdiAMyHgynIrCYLJruq6l+jZwfcymal/Ka7nRSwwMUccElcblGAlJ1QYv78KgXBOmD0cmmgLgeW64o8eETpgXZre7eNUBlKQwWx0d4H2e1XnREWeON7tvAtMtnPBkaKoBfxvyV4tNtyxDfteae4uT3bZ3TT9bj+u53k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SmiPJYTH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24143C4CEE4;
+	Mon, 19 May 2025 08:41:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747644063;
+	bh=zXu83HtMZbcOjraZ4lEOlHkQ8dtDMv48+h2HD5ANg6w=;
+	h=Date:From:To:Subject:In-Reply-To:References:Cc:From;
+	b=SmiPJYTHZ9HhcCUys96kA2j0J9/NfN0/+YmR1H0NXIeEHw0kjXT7oAP80+T6fo4Pt
+	 1N6CptYrlOQBnhYA0VgvLvJKW6Rn2Ya5bsiZyKIbymI1abUhQL2CEDJ5vKkK2m/RgX
+	 3WJ7DNRSN4SBGaAoOWu3z1vXR8OZxMGp5nqG1lPeN3WK3tRkhKTtwwuDmDKsO4ROYB
+	 w3zc+jStaU20CvEEPVAsv+n3+qn0yooAbCfDMYIfnn4mfs91Y0CJLgVWq3BShh/8yv
+	 pVRV18ZqTltXyGFPASvapulSK/lny/ih+wBb7SC4A1EHdttDvhZgpizG+NzF4sJTGs
+	 GODjrOYgj5YGw==
+Message-ID: <c49af22b1a24d4af6a39875ab35673c0@kernel.org>
+Date: Mon, 19 May 2025 08:41:00 +0000
+From: "Maxime Ripard" <mripard@kernel.org>
+To: "Cristian Ciocaltea" <cristian.ciocaltea@collabora.com>
+Subject: Re: [PATCH v4 22/23] drm/tests: hdmi: Add test for unsuccessful
+ fallback to YUV420
+In-Reply-To: <20250425-hdmi-conn-yuv-v4-22-5e55e2aaa3fa@collabora.com>
+References: <20250425-hdmi-conn-yuv-v4-22-5e55e2aaa3fa@collabora.com>
+Cc: dri-devel@lists.freedesktop.org, kernel@collabora.com, linux-kernel@vger.kernel.org, "Dave
+ Stevenson" <dave.stevenson@raspberrypi.com>, "David Airlie" <airlied@gmail.com>, "Dmitry
+ Baryshkov" <dmitry.baryshkov@oss.qualcomm.com>, "Dmitry Baryshkov" <lumag@kernel.org>, "Maarten
+ Lankhorst" <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>, "Simona
+ Vetter" <simona@ffwll.ch>, "Thomas Zimmermann" <tzimmermann@suse.de>
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-According to the ISL28022 datasheet, bit15 of the current register is
-representing -32768. Fix the calculation to properly handle this bit,
-ensuring correct measurements for negative values.
+On Fri, 25 Apr 2025 13:27:13 +0300, Cristian Ciocaltea wrote:
+> Provide test to verify a mandatory fallback to YUV420 output cannot
+> succeed when driver doesn't advertise YUV420 support.
+> 
+> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
 
-Signed-off-by: Yikai Tsai <yikai.tsai.wiwynn@gmail.com>
----
- drivers/hwmon/isl28022.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+Acked-by: Maxime Ripard <mripard@kernel.org>
 
-diff --git a/drivers/hwmon/isl28022.c b/drivers/hwmon/isl28022.c
-index 1fb9864635db..1b4fb0824d6c 100644
---- a/drivers/hwmon/isl28022.c
-+++ b/drivers/hwmon/isl28022.c
-@@ -154,6 +154,7 @@ static int isl28022_read_current(struct device *dev, u32 attr, long *val)
- 	struct isl28022_data *data = dev_get_drvdata(dev);
- 	unsigned int regval;
- 	int err;
-+	u16 sign_bit;
- 
- 	switch (attr) {
- 	case hwmon_curr_input:
-@@ -161,8 +162,9 @@ static int isl28022_read_current(struct device *dev, u32 attr, long *val)
- 				  ISL28022_REG_CURRENT, &regval);
- 		if (err < 0)
- 			return err;
--		*val = ((long)regval * 1250L * (long)data->gain) /
--			(long)data->shunt;
-+		sign_bit = (regval >> 15) & 0x01;
-+		*val = (((long)(((u16)regval) & 0x7FFF) - (sign_bit * 32768)) *
-+			1250L * (long)data->gain) / (long)data->shunt;
- 		break;
- 	default:
- 		return -EOPNOTSUPP;
--- 
-2.25.1
-
+Thanks!
+Maxime
 
