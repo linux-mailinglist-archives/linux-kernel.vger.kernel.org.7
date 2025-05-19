@@ -1,88 +1,137 @@
-Return-Path: <linux-kernel+bounces-654065-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-654073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A9CDABC348
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 17:56:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51DAEABC373
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 18:04:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 080553A20FE
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 15:56:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71FBE1B64137
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 16:04:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6845C28641D;
-	Mon, 19 May 2025 15:56:19 +0000 (UTC)
-Received: from exchange.fintech.ru (exchange.fintech.ru [195.54.195.159])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E95BE286D58;
+	Mon, 19 May 2025 16:03:47 +0000 (UTC)
+Received: from mx.mylinuxtime.de (mx.mylinuxtime.de [46.4.70.188])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFC7C14E2F2
-	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 15:56:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.54.195.159
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A2081854
+	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 16:03:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.4.70.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747670179; cv=none; b=kT7DobyM6/nDqmDAglB0/7FjIIGIPHmtIDJU7rVd0DPDO+9AmthCBbhJwMMHeUlySi6cWIKJLEIjt1bPubt1S20z/M+xvTxPZQTtgsg0B1ekvFHgX2vR1BOX1H62DLqvCLGb9zSinBu6WwQV0zbUWqdUGrzNhcNB/eCQRPY8EEs=
+	t=1747670627; cv=none; b=ArWXbl+XiWmEoz/4/7DhBjbY7+CrD9+cjL7sp41MO/08GVcYXPXIsKjThlf1MtUOVc/qZv2fx+mOCVMpEDxtoPoYLsUFuhKbHgwVjrE+Y2I8eJsGz1gqzuLo1uMNDnIdilkwNz3cbwPiY/qbMx+XEnvxgb1j8qL1JWkG9Q0X6SQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747670179; c=relaxed/simple;
-	bh=rjHmolyQPnAoVvHyr3t1ZB0Q9pGT3PkHYFvpDomPeg4=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oRkiSRFw580W7dIn/+cBKMRZuh5XLNSV8VmRh/nz4DciyF2Y+cyroNFR0nsZiZF0GE4vI8TknBeW1DTy5ZZKWtRtqMIDRVmB1Y5fSbwl1u1aely9ZWXHrJgKWJChFdWmk8yPL8oM3kKacL6tYAtbuldzJrCzAj0LoYtytkZC86w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fintech.ru; spf=pass smtp.mailfrom=fintech.ru; arc=none smtp.client-ip=195.54.195.159
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fintech.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fintech.ru
-Received: from Ex16-01.fintech.ru (10.0.10.18) by exchange.fintech.ru
- (195.54.195.169) with Microsoft SMTP Server (TLS) id 14.3.498.0; Mon, 19 May
- 2025 18:56:10 +0300
-Received: from localhost (10.0.253.101) by Ex16-01.fintech.ru (10.0.10.18)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2242.4; Mon, 19 May
- 2025 18:56:10 +0300
-From: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
-To: <syzbot+721071c10f3c7e4e5dcb@syzkaller.appspotmail.com>
-CC: Nikita Zhandarovich <n.zhandarovich@fintech.ru>,
-	<syzkaller-bugs@googlegroups.com>, <linux-kernel@vger.kernel.org>
-Subject: Re: [syzbot] [usb?] WARNING in gl861_ctrl_msg/usb_submit_urb
-Date: Mon, 19 May 2025 18:56:02 +0300
-Message-ID: <20250519155603.2364004-1-n.zhandarovich@fintech.ru>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <680aaf92.050a0220.317436.0050.GAE@google.com>
-References:
+	s=arc-20240116; t=1747670627; c=relaxed/simple;
+	bh=CU6youjXboITy+rJv4aeTedr301G8Zm6O3Ab5USqpZA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Thqtki+2JX5cI0s5m+OfiWTAU1r7pkEPZLxPE8u1A30Ps9pKLrBNQz8YCQxYPRP5hU+Y95vMR3K9qDoV/Yq6MtC836he543dZuOUEV52DHY4MQuCayhzMW5LpwOh2/46SUI3n3jDzo07sl76Ol9J8isEvWQvonwNtZrYnI0N7FA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eworm.de; spf=pass smtp.mailfrom=eworm.de; arc=none smtp.client-ip=46.4.70.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eworm.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eworm.de
+Received: from leda.eworm.net (unknown [194.36.25.6])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx.mylinuxtime.de (Postfix) with ESMTPSA id 99265216F54;
+	Mon, 19 May 2025 17:56:41 +0200 (CEST)
+Authentication-Results: mx.mylinuxtime.de;
+	auth=pass smtp.auth=mail@eworm.de smtp.mailfrom=mail@eworm.de
+Date: Mon, 19 May 2025 17:56:40 +0200
+From: Christian Hesse <mail@eworm.de>
+To: Lizhi Xu <lizhi.xu@windriver.com>
+Cc: <hch@infradead.org>, <axboe@kernel.dk>, <linux-block@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <ming.lei@redhat.com>,
+ <syzbot+6af973a3b8dfd2faefdc@syzkaller.appspotmail.com>,
+ <syzkaller-bugs@googlegroups.com>, Christian Heusel <christian@heusel.eu>,
+ Christian Hesse <mail@eworm.de>
+Subject: Re: [PATCH V5] loop: Add sanity check for read/write_iter
+Message-ID: <20250519175640.2fcac001@leda.eworm.net>
+In-Reply-To: <20250428143626.3318717-1-lizhi.xu@windriver.com>
+References: <aA-QB7Iu6u9PdgHg@infradead.org>
+	<20250428143626.3318717-1-lizhi.xu@windriver.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
+X-Face: %O:rCSk<c"<MpJ:yn<>HSKf7^4uF|FD$9$I0}g$nbnS1{DYPvs#:,~e`).mzj\$P9]V!WCveE/XdbL,L!{)6v%x4<jA|JaB-SKm74~Wa1m;|\QFlOg>\Bt!b#{;dS&h"7l=ow'^({02!2%XOugod|u*mYBVm-OS:VpZ"ZrRA4[Q&zye,^j;ftj!Hxx\1@;LM)Pz)|B%1#sfF;s;,N?*K*^)
+Face: iVBORw0KGgoAAAANSUhEUgAAADAAAAAwBAMAAAClLOS0AAAAGFBMVEUZFRFENy6KVTKEd23CiGHeqofJvrX4+vdHgItOAAAACXBIWXMAAA3XAAAN1wFCKJt4AAACUklEQVQ4y2VUTZeqMAxNxXG2Io5uGd64L35unbF9ax0b3OLxgFs4PcLff0lBHeb1QIq5uelNCEJNq/TIFGyeC+iugH0WJr+B1MvzWASpuP4CYHOB0VfoDdddwA7OIFQIEHjXDiCtV5e9QX0WMu8AG0mB7g7WP4GqeqVdsi4vv/5kFBvaF/zD7zDquL4DxbrDGDyAsgNYOsJOYzth4Q9ZF6iLV+6TLAT1pi2kuvgAtZxSjoG8cL+8vIn251uoe1OOEWwbIPU04gHsmMsoxyyhYsD2FdIigF1yxaVbBuSOCAlCoX324I7wNMhrO1bhOLsRoA6DC6wQ5eQiSG5BiWQfM4gN+uItQTRDMaJUhVbGyKWCuaaUGSVFVKpl4PdoDn3yY8J+YxQxyhlHfoYOyPgyDcO+cSQK6Bvabjcy2nwRo3pxgA8jslnCuYw23ESOzHAPYwo4ITNQMaOO+RGPEGhSlPEZBh2jmBEjQ5cKbxmr0ruAe/WCriUxW76I8T3h7vqY5VR5wXLdERodg2rHEzdxxk5KpXTL4FwnarvndKM5/MWDY5CuBBdQ+3/0ivsUJHicuHd+Xh3jOdBL+FjSGq4SPCwco+orpWlERRTNo7BHCvbNXFVSIQMp+P5QsIL9upmr8kMTUOfxEHoanwzKRcNAe76WbjBwex/RkdHu48xT5YqP70DaMOhBcTHmAVDxLaBdle93oJy1QKFUh2GXT4am+YH/GGel1CeI98GdMXsytjCKIq/9cMrlgxFCROv+3/BU1fijNpcVD6DxE8VfLBaxUGr1D5usgDYdjwiPAAAAAElFTkSuQmCC
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: Ex16-02.fintech.ru (10.0.10.19) To Ex16-01.fintech.ru
- (10.0.10.18)
+Content-Type: multipart/signed; boundary="Sig_/S90K33h=.7s9=MsdGtUcLlt";
+ protocol="application/pgp-signature"; micalg=pgp-sha512
+X-Spamd-Bar: /
+X-Spamd-Result: default: False [0.00 / 15.00];
+	TAGGED_RCPT(0.00)[6af973a3b8dfd2faefdc]
+X-Rspamd-Server: mx
+X-Rspamd-Queue-Id: 99265216F54
+X-Stat-Signature: 36niebrzyqsewbgg3maz3zorfejfxxgk
+X-Rspamd-Action: no action
 
-#syz test
+--Sig_/S90K33h=.7s9=MsdGtUcLlt
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
----
- drivers/media/usb/dvb-usb-v2/dvb_usb_core.c | 5 +++++
- 1 file changed, 5 insertions(+)
+Lizhi Xu <lizhi.xu@windriver.com> on Mon, 2025/04/28 22:36:
+> Some file systems do not support read_iter/write_iter, such as selinuxfs
+> in this issue.
+> So before calling them, first confirm that the interface is supported and
+> then call it.
+>=20
+> It is releavant in that vfs_iter_read/write have the check, and removal
+> of their used caused szybot to be able to hit this issue.
+>=20
+> Fixes: f2fed441c69b ("loop: stop using vfs_iter__{read,write} for buffered
+> I/O") Reported-by: syzbot+6af973a3b8dfd2faefdc@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=3D6af973a3b8dfd2faefdc
+> Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> ---
+> V1 -> V2: move check to loop_configure and loop_change_fd
+> V2 -> V3: using helper for this check
+> V3 -> V4: remove input parameters change and mode
+> V4 -> V5: remove braces around !file->f_op->write_iter
 
-diff --git a/drivers/media/usb/dvb-usb-v2/dvb_usb_core.c b/drivers/media/usb/dvb-usb-v2/dvb_usb_core.c
-index f1c79f351ec8..5c76116fd565 100644
---- a/drivers/media/usb/dvb-usb-v2/dvb_usb_core.c
-+++ b/drivers/media/usb/dvb-usb-v2/dvb_usb_core.c
-@@ -19,6 +19,10 @@ module_param_named(force_pid_filter_usage, dvb_usb_force_pid_filter_usage,
- MODULE_PARM_DESC(force_pid_filter_usage,
- 		"force all DVB USB devices to use a PID filter, if any (default: 0)");
- 
-+static const struct i2c_adapter_quirks i2c_usb_quirks = {
-+	.flags = I2C_AQ_NO_ZERO_LEN_READ,
-+};
-+
- static int dvb_usbv2_download_firmware(struct dvb_usb_device *d,
- 		const char *name)
- {
-@@ -63,6 +67,7 @@ static int dvb_usbv2_i2c_init(struct dvb_usb_device *d)
- 
- 	strscpy(d->i2c_adap.name, d->name, sizeof(d->i2c_adap.name));
- 	d->i2c_adap.algo = d->props->i2c_algo;
-+	d->i2c_adap.quirks = &i2c_usb_quirks;
- 	d->i2c_adap.dev.parent = &d->udev->dev;
- 	i2c_set_adapdata(&d->i2c_adap, d);
- 
+This introduced a regression for Arch Linux, breaking boot media generated
+with archiso [0]. More specifically it's this call of losetup [1].
+
+There's a squashfs inside iso9660. Mounting the iso9660 filesystem works
+fine, but losetup complains when setting up:
+
+$ losetup --find --show --read-only -- /run/archiso/bootmnt/arch/x86_64/air=
+ootfs.sfs
+losetup: /run/archiso/bootmnt/arch/x86_64/airootfs.sfs: failed to set up lo=
+op device: Invalid argument
+
+This has been bisected to commit d278164832618bf2775c6a89e6434e2633de1eed in
+mainline (and 9bd3feb324fce2e93e09d0a5b00887e81d337a8c for linux-6.14.y,
+184b147b9f7f07577567a80fcc9314f2bd0b0b00 for linux-6.12.y). Thanks to
+Christian Heusel for his work on this.
+
+As the call tries to setup in read-only mode the check for
+(file->f_op->read_iter) fails here, returning the -EINVAL we see.
+
+Reported-by: Christian Hesse <mail@eworm.de>
+Bisected-by: Christian Heusel <christian@heusel.eu>
+
+[0] https://gitlab.archlinux.org/archlinux/mkinitcpio/mkinitcpio-archiso
+[1] https://gitlab.archlinux.org/archlinux/mkinitcpio/mkinitcpio-archiso/-/=
+blob/master/hooks/archiso?ref_type=3Dheads#L88
+--=20
+Mit freundlichen Gruessen
+Christian Hesse
+
+--Sig_/S90K33h=.7s9=MsdGtUcLlt
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEARYKAB0WIQSmOl3fryo2Nzt8CpJOj8ol/axIVQUCaCtUuQAKCRBOj8ol/axI
+VdcMAQD8COWGYPfVA+CfsDsvTILwTxEy6J9MDcznNJJI2OIyowEAjxoAj2hgBfwJ
+Fe6zgRknC3M/uJlHcO4mGZBhSVq/hAA=
+=ylBs
+-----END PGP SIGNATURE-----
+
+--Sig_/S90K33h=.7s9=MsdGtUcLlt--
 
