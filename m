@@ -1,105 +1,186 @@
-Return-Path: <linux-kernel+bounces-654172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-654170-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6318ABC4CD
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 18:41:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDDA2ABC4C9
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 18:40:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1CC47A1250
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 16:40:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F36543A8925
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 16:40:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8273287512;
-	Mon, 19 May 2025 16:40:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9EEB287509;
+	Mon, 19 May 2025 16:40:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="Mwb4TPgw"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SCNnrMTO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A98F283FDC
-	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 16:40:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 321A4189906;
+	Mon, 19 May 2025 16:40:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747672848; cv=none; b=Z4JfjDPJ3DDk1shg9BmJXpPaMKgacVESDgoBp9Ya1o4bGZym5gmhk51frA+Jkxv3eZX+z+wvW/bW2+0yF/Y8jTe4AqYhBBLdFnkZtFfLcuDZ39RzRFdskUjnjIRkX4eL7ZwGWLESaLirn0ohAU798b2to3kzFsSVAv1/0YYP/Kw=
+	t=1747672826; cv=none; b=Yz+ynMl//dB92YVpIxaMICk2dr9kH39oHKMiA807ze/+G55mL3uA+a15zXZOZMuIKDGcdUFwQathcqvxOkVJeDPDalSC98bLwuDoC0XvnwlKtLDiXq/weiYw6XTdUQSVOZTpTiCZt1YT5IGEtOgXXNJDrXzdwQK01l9mxxpy5uQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747672848; c=relaxed/simple;
-	bh=+LbGvO0IL9htaGDo2jxSFU5mMPt08NBRUB/FEzz/8sg=;
+	s=arc-20240116; t=1747672826; c=relaxed/simple;
+	bh=8AekMnk7LJZuUtqQ1X0wseXmvLHDUBX7h+wM+z7I/ww=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ks6+JEO9wosOKnpCE1OuiXCMYm6nMnpKf4e5tsF/u01soXdh0xBYfTMrWwNfH9xmYuhR4JzW4Yd9AqeVIFnK3P5AkwkThuTgyChl9Okwv5xXxaoVvyihE5LYLQ/OlQgzBIopfhXrcgz1pFhRCI4qFKpaggKKWQq7+UG+DdrYpdw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=Mwb4TPgw; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=+LbG
-	vO0IL9htaGDo2jxSFU5mMPt08NBRUB/FEzz/8sg=; b=Mwb4TPgwmkVvYu59dJJG
-	iK6hZJhSxK/4JCs2ya6AfeZIgWRT4hc63ipdMhQSQcXip7pj/cwdbOqdSn0B5/8e
-	3IyW/YAK+xHpV4UEMDVtASnuCCuZ9q21NXRd6wD1nzWGNODSthcgv3hBT0+GzRjq
-	87osj9k4OSDrBx/0cRJw+S0ZvRFOs9+IYVUyUDNrHTEWOZI4efIsboAUjsR1Fkcf
-	L98tjNdzUGasutVe+6qpDa/PX+zhUw5ehktEtMH5S+xlfc6kNQi0Canke4TTa0rT
-	/ga67CpuQPEA2aS3+blhOMMuISdvu3Uztiw0ozBXzAG7UCjYtEKGrWZVtjN4A7UY
-	HA==
-Received: (qmail 2565292 invoked from network); 19 May 2025 18:40:42 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 19 May 2025 18:40:42 +0200
-X-UD-Smtp-Session: l3s3148p1@8a/PyX816rRZz6uL
-Date: Mon, 19 May 2025 18:40:14 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Harshal <embedkari167@gmail.com>
-Cc: jdelvare@suse.com, skhan@linuxfoundation.org, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-kernel-mentees@lists.linux.dev
-Subject: Re: [PATCH] docs: i2c: fix spelling mistake
-Message-ID: <aCte7oUUMIYSow-z@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Harshal <embedkari167@gmail.com>, jdelvare@suse.com,
-	skhan@linuxfoundation.org, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-kernel-mentees@lists.linux.dev
-References: <20250516100445.8484-1-embedkari167@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=dj4Wb3Zig6JgUqcUCK16FpotF1FfTrhJkVsU4IWb9KnA0JYbP/K0xpSGdXTButMUwop+EaarK3OOwhZlPhpoW9BhpfVpoznPwLh+MvxZlvnwEdIR25+4i/QJHrZoDrCR10qOK71/vFSeDOpztAoDjEOUjUmtMEDgEYtZSkdeLEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SCNnrMTO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9354BC4CEE4;
+	Mon, 19 May 2025 16:40:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747672825;
+	bh=8AekMnk7LJZuUtqQ1X0wseXmvLHDUBX7h+wM+z7I/ww=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SCNnrMTOytetYBMrRAwp1W0dzqcMOnVDJ1J2TaqS1eTxFEMoUWCMFlYu7VgKjQWqr
+	 t1kqRsaYadf6EaoZq+UF2KwCuhAmcj3tdwk3qi7aV70zYrIXSfZX3s9rPFffWLQcIR
+	 9n+M8Bn3W+Wm70mH//h3UqRlaxqsXbDf2e3qIVCa8l031H1iST9bxPMyMObW+CUjrO
+	 MDriWmWr0Z9+sQ1niXPjBx/fwpPbDoA508vyKK2YRd3JhkxksDXXko2Q57rtKzBcRe
+	 035934n5qtj+C/0H1v/iJqTVwib7zy+0owU9tyvR27vEtWd8k2foPf2zETy0LB7mk6
+	 LoGj7Lli8jq5w==
+Date: Mon, 19 May 2025 17:40:21 +0100
+From: Simon Horman <horms@kernel.org>
+To: Stefano Radaelli <stefano.radaelli21@gmail.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Xu Liang <lxu@maxlinear.com>
+Subject: Re: [PATCH net-next v2] net: phy: add driver for MaxLinear MxL86110
+ PHY
+Message-ID: <20250519164021.GL365796@horms.kernel.org>
+References: <20250516164126.234883-1-stefano.radaelli21@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="cmgRhpjTpldy9DG0"
-Content-Disposition: inline
-In-Reply-To: <20250516100445.8484-1-embedkari167@gmail.com>
-
-
---cmgRhpjTpldy9DG0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250516164126.234883-1-stefano.radaelli21@gmail.com>
 
-On Fri, May 16, 2025 at 03:34:38PM +0530, Harshal wrote:
-> fix resistors spelling in i2c-parport.rst
->=20
-> Signed-off-by: Harshal <embedkari167@gmail.com>
+On Fri, May 16, 2025 at 06:41:23PM +0200, Stefano Radaelli wrote:
+> Add support for the MaxLinear MxL86110 Gigabit Ethernet PHY, a low-power,
+> cost-optimized transceiver supporting 10/100/1000 Mbps over twisted-pair
+> copper, compliant with IEEE 802.3.
+> 
+> The driver implements basic features such as:
+> - Device initialization
+> - RGMII interface timing configuration
+> - Wake-on-LAN support
+> - LED initialization and control via /sys/class/leds
+> 
+> This driver has been tested on multiple Variscite boards, including:
+> - VAR-SOM-MX93 (i.MX93)
+> - VAR-SOM-MX8M-PLUS (i.MX8MP)
+> 
+> Example boot log showing driver probe:
+> [    7.692101] imx-dwmac 428a0000.ethernet eth0:
+>         PHY [stmmac-0:00] driver [MXL86110 Gigabit Ethernet] (irq=POLL)
+> 
+> Changes from v1:
+> - Add net-next support
+> - Improved locking management and tests using CONFIG_PROVE_LOCKING
+> - General cleanup
+> 
+> Started a new thread
+> 
+> Signed-off-by: Stefano Radaelli <stefano.radaelli21@gmail.com>
 
-I ended up applying a similar patch with more precise descriptions and a
-full contributor name. But still, thanks and happy hacking!
+Hi Stefano,
 
+Some minor feedback from my side.
 
---cmgRhpjTpldy9DG0
-Content-Type: application/pgp-signature; name="signature.asc"
+...
 
------BEGIN PGP SIGNATURE-----
+> diff --git a/drivers/net/phy/mxl-86110.c b/drivers/net/phy/mxl-86110.c
+> new file mode 100644
+> index 000000000000..63f32c49fcc1
+> --- /dev/null
+> +++ b/drivers/net/phy/mxl-86110.c
+> @@ -0,0 +1,570 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +/*
+> + * PHY driver for Maxlinear MXL86110
+> + *
+> + * Copyright 2023 MaxLinear Inc.
+> + *
+> + */
+> +
+> +#include <linux/bitfield.h>
+> +#include <linux/etherdevice.h>
+> +#include <linux/kernel.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/phy.h>
+> +
+> +/* PHY ID */
+> +#define PHY_ID_MXL86110		0xc1335580
+> +
+> +/* required to access extended registers */
+> +#define MXL86110_EXTD_REG_ADDR_OFFSET	0x1E
+> +#define MXL86110_EXTD_REG_ADDR_DATA		0x1F
+> +#define PHY_IRQ_ENABLE_REG				0x12
+> +#define PHY_IRQ_ENABLE_REG_WOL			BIT(6)
+> +
+> +/* SyncE Configuration Register - COM_EXT SYNCE_CFG */
+> +#define MXL86110_EXT_SYNCE_CFG_REG						0xA012
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmgrXu4ACgkQFA3kzBSg
-KbboKw/7BhagxXCJXRmB6ajcF+qFlo257T6uCMVkdh0jpg8u0SctHvoN8AunxspO
-2Q4BXzeAnxZp5yxuhH5AndXeDsO5i1DbO10P7poIXvly0l3rNoMOoyg60iFhv9MI
-vnkLx7YA5CZoISu+kedx8csVHr5J9n/uZbiyHslOGo53VdoxQ/WS87wB8d1qFFEu
-x2+6RnRKy1HRWrnAtA4KmltzE+3TnyOHSpbggvhA+S7u+56halkO68VMhU62pS7D
-erQTfiIlnawqtJ5oBmI86Iu42QQoRyUa+UZ1gq2+8yaZYuwwS89wDcUVw6BuCqJX
-jVjjanQKvm3ZJv1poEXVFPPN4evOifiVuuPDNDoDXT9e6CiELMqU1oq9EQZrAqt/
-bvDLTzpr48WiqurnrY+LjKKmpu5bG+E3zFQyw3m8qPdQOqfyqAFDtS+ukipgFaun
-f47ajxMeoK4UcSriQiTEkN9ktuJ47ZbYwr6k7kHwOA13RvSPvJhzFXRLJ+mP6Q9q
-oBm8wtBZ81NcvP2Tok6BPxVlmwHBmx3eP74h1zo+S+PjvYx971btvg2NuY6yWLXl
-x23XD0sYe/t879WIwgoDEzxEvWwOvAeF7A3c/Fswbdgw8sgYmE925GRrUoxjNua2
-ER3Q6XY0UbgMvITFh2FQOmEevxDLmqGmWUW8t8FywW5l6Z9+4Z4=
-=/P+d
------END PGP SIGNATURE-----
+For Networking code, please restrict lines to no more than 80 columns
+wide where you can do so without reducing readability (I'd say that is the
+case here.
 
---cmgRhpjTpldy9DG0--
+Likewise elsewhere in this patch.
+
+checkpatch.pl --max-line-length=80 can be helpful here.
+
+...
+
+> +/**
+> + * mxl86110_write_extended_reg() - write to a PHY's extended register
+> + * @phydev: pointer to a &struct phy_device
+> + * @regnum: register number to write
+> + * @val: value to write to @regnum
+> + *
+> + * NOTE: This function assumes the caller already holds the MDIO bus lock
+> + * or otherwise has exclusive access to the PHY.
+> + *
+> + * returns 0 or negative error code
+> + */
+
+Tooling expects 'Return:' or 'Returns: ' to document return values.
+
+Likewise elsewhere in this patch.
+
+Flagged by ./scripts/kernel-doc -Wall -none
+
+...
+
+> +static int mxl86110_led_hw_control_get(struct phy_device *phydev, u8 index,
+> +				       unsigned long *rules)
+> +{
+> +	u16 val;
+> +
+> +	if (index >= MXL86110_MAX_LEDS)
+> +		return -EINVAL;
+> +
+> +	phy_lock_mdio_bus(phydev);
+> +	val = mxl86110_read_extended_reg(phydev, MXL86110_LED0_CFG_REG + index);
+> +	phy_unlock_mdio_bus(phydev);
+> +	if (val < 0)
+> +		return val;
+
+val is unsigned. It cannot be less than zero.
+
+Likewise in mxl86110_broadcast_cfg() and mxl86110_enable_led_activity_blink().
+
+Flagged by Smatch.
+
+...
 
