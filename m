@@ -1,93 +1,126 @@
-Return-Path: <linux-kernel+bounces-653280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-653283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05399ABB714
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 10:22:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B0A5ABB721
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 10:25:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED26716331C
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 08:22:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 672453B9B33
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 08:25:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93C1A269CED;
-	Mon, 19 May 2025 08:22:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F28F269D09;
+	Mon, 19 May 2025 08:25:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="QbUzQJfI"
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eakknYTZ"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 268BF61FCE;
-	Mon, 19 May 2025 08:22:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E6BB1F874C;
+	Mon, 19 May 2025 08:25:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747642965; cv=none; b=FwhtyGaQL9A4JyFyseo30P2fQ+Y8rLHOxcmQRoWqCFmVUWD8BnrQ65hOPpdPk1OPbZrjl5Xs2gVlbWzGgr2S7k9mxwgnsGEX3nFKgRednWPx/411/9Mhs0fRTHskoxHVOfjX5B7OfDsRwEY/kn/7B+0V1CyZ/YFSbJRlFYmf/Bk=
+	t=1747643129; cv=none; b=sFqQVdqQvZ8VmiEaObeFbKZmlLu5PCxWVMYyH6rik5ZsBiR8Sv4BtzscaNPzMDxRfA6iEz3hlFnsSYZCOJO7mjrHcaWRydqFzlNAHuTfm4Dxz3RgOzMHYSsa2+fZspeTHWoYvt/Y8qbrJC5jMH1I8Dfc7AP7Zufn65K5CAUblAM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747642965; c=relaxed/simple;
-	bh=fOARuwJzXYeYMDLcDBKObUTcV6ulRKBuIUklxVxYFl0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ohdkcfu+N/4hfjR/Jew+iRr9iv822+Wy14dYzpqY5mVGE5KCFzhSIL5NwRFLAXFAN0X6HgXemVkVVMxrGqhzausGur5ppTiUZz5MbrB0l+vaLo8vGwrxsrW2baT35DMHT97lUZiRsalKoHqWrlkjGoxWeAvC5zBwn0miN+fVN6U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=QbUzQJfI; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=K14uVw/25ceXFLFWjceKuc5mfUTfV5FjYiooNcf+w8c=; b=QbUzQJfI+vRCpnbQj4U3KOVX2W
-	oRfgSQsNURewOz5oH13CVb6wKChRl3Pj04ybzFDBHkfNT/6c7UPnyZ7gBLqJ0vwAlnxQfwFBibwcC
-	ZMtSOlQoTn7OQ3gclw7L7TOehBeN4nCGNrcvFyetnL119YjLluha1IsWZw/0ADxYtmh+4jBeJw/4h
-	90l78l4KlZNRVHACgSbesjFZl71k4xqoZLmD6WxIGiMj7Rw7mhW9BWZsO4geSjJkDa3Kloa3Ana2/
-	ApiIseSHcdWKfTTdxbLRD3clAXPa57rNEF+Ykbnx7UxUbs+xrupBgj2plYQxN8n6b4wTaC6yaFJza
-	GCdXIfjA==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1uGvlO-007AAf-21;
-	Mon, 19 May 2025 16:22:23 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Mon, 19 May 2025 16:22:22 +0800
-Date: Mon, 19 May 2025 16:22:22 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Qunqin Zhao <zhaoqunqin@loongson.cn>
-Cc: lee@kernel.org, davem@davemloft.net, peterhuewe@gmx.de,
-	jarkko@kernel.org, linux-kernel@vger.kernel.org,
-	loongarch@lists.linux.dev, linux-crypto@vger.kernel.org,
-	jgg@ziepe.ca, linux-integrity@vger.kernel.org,
-	pmenzel@molgen.mpg.de, Yinggang Gu <guyinggang@loongson.cn>,
-	Huacai Chen <chenhuacai@loongson.cn>
-Subject: Re: [PATCH v9 2/5] crypto: loongson - add Loongson RNG driver support
-Message-ID: <aCrqPnwr7lMJNOnL@gondor.apana.org.au>
-References: <20250506031947.11130-1-zhaoqunqin@loongson.cn>
- <20250506031947.11130-3-zhaoqunqin@loongson.cn>
- <aCrIL_ZXL-UtaLdJ@gondor.apana.org.au>
- <96118a23-3e6c-c9d1-2135-bd7a22091f35@loongson.cn>
+	s=arc-20240116; t=1747643129; c=relaxed/simple;
+	bh=eMOjK4ny5tlsIE1Kv6uWa7nnzXuh9RGNZUWDU0nj4k0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=u8Ji5LDKQFKFiRuXYst9akfkzw/cOuQ9ZzMvt6NEy/fce6idbOuimlZR0eTlWPHH9yG0hS/qC0UAvW1JFYVO4RBgBX4uWlXNI0FXS94bdlIk6m+0UEShLFQOgRN24EU/qHSrriytZsLXS/kPxlpbGrFrCL9Z6jJwV+YLZy3WJYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eakknYTZ; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-22e16234307so38362115ad.0;
+        Mon, 19 May 2025 01:25:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747643127; x=1748247927; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EB8Oc00xqk49eqIaVgN6SCH9WvXJ93D+KXaomxhB/Tw=;
+        b=eakknYTZbt9qDky9IXXtQkeG5BHgQ//ZkJQ3lp7qfFH6IUYZ7dVfrZneyEZZUdr+XJ
+         ZmumOGNNW3pC8S1A7jIkPa1ozuBTDcG3x86SmVdJ5wxAZvpxPQ60hL3nj8D8+MRGqUFp
+         7/feHFNij3B//41g9EBdZf7rNkyvNyqeusd4za5EFuY5EA16Lp8paDDzUN8jr459xWk7
+         87Jg6FYy2IkvgCVqqBJtikzk1JhSbn89zx9u2Nde1DAsD5QldTZ3j4YyZGnlypK/SKKg
+         zJ8RrX3VIQjYjbh/KNu4SKcfUuYm6bmrVQf2FuZ/5p5nxIBrSX3wfpBVRCMDIGxEAFqY
+         9nPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747643127; x=1748247927;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EB8Oc00xqk49eqIaVgN6SCH9WvXJ93D+KXaomxhB/Tw=;
+        b=XDI+nsrn6F0hIbAmZFAeFoljtHPWA4/MSzjDgqjJAq+RPQMI6qrAZd48wjp6o2P7AC
+         +p/mq02yReYhgpHmkiCiUBCWX4Ii5gZOEpcc/8dcSo9mZbmnf5omnpssYNC9ssaIgH5c
+         qZKOKludmMml8UlERV3k2xSHsStE0tRafdVX1xaAbKBve272EGRa5STrvR7XlGNO3Pek
+         lghppxliWC/Z9W7OtRSIcQ2ei1vU83RDd1LD/FANOUy2z1oFdm7nCTiOf4kxfAkqWwsb
+         0x3kTunabUP95yDkZH29lo2FSxGhjAZOgiaXjv904AJDSzebo25i/+3TZrkfPsJjZ8gZ
+         FT4A==
+X-Forwarded-Encrypted: i=1; AJvYcCUYbb1fcg0ceLY1T729SKaIDFMnMqtrpIDZFCxzHiQvqZb/Iwd876xGj4Hxkr3DGHe9HKQB+EvMu2A=@vger.kernel.org, AJvYcCV1FVtUI3HwojKwtQ7Mr4ioDBO3iHDQqB/LIBFsDC3jRnvS0bXYLvutyGpVICChzduPuu15QXEVZraFXKI2@vger.kernel.org, AJvYcCVFrPgQbp6Q9J4wEokMni47+WXHgUJ/6rLlJ1nS2vtGXUOrlmspFH9OEGyGKXn6RA01RGzyOvM1HWlHVTVQ@vger.kernel.org
+X-Gm-Message-State: AOJu0YzipIKXTd0tMWeSs13mfEEerfnG42x2elsOqUU2a5w8Xu0mLiuO
+	+4+omqCZgBlpojpwEPbTrxNsyCa4XlbgiHRpqYKdXOW8UINuAQtF9ZvA
+X-Gm-Gg: ASbGnctP+sGoFGhspbRWukxypaUI+Lxf1Ji5FGkhEZU4gHb9pC6wMSLFGR6UCodTJ6i
+	CNA2gpv3Ks+nxd6A7QiZOJNSb307g2nh1DymnuenXzfSy8lDdLo17+zCHab9m3rLJ5eC2q5w8gg
+	JPrWo5d/Z5dB4DF4MBX3GHqqLn2nZuCP4Y/S9SNv1MqPQNfop/E8a7QBzpIryfCdISVogoHHn3g
+	u2ZveZB5ywby0Ja8VGGHh0Cn0+/UVtpz3O2pLuSLFvXkavpIGWr+jHyfPcA5Wov+G/8/U6+d9+2
+	6nbuABNdS9SR6bFHwaTvqYBunNVD+XoF3i+F0F7Ehd6ONV6dZQ==
+X-Google-Smtp-Source: AGHT+IH0FhaLeua24wAVXTMVkMGORVd6mm/ERqfZ62DUy9u0xQgAfyPXpBUDr58944/ivIlr9YjaJA==
+X-Received: by 2002:a17:903:2f05:b0:22e:5406:4f62 with SMTP id d9443c01a7336-231b39d7456mr214023755ad.24.1747643127199;
+        Mon, 19 May 2025 01:25:27 -0700 (PDT)
+Received: from nuvole.. ([144.202.86.13])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-232046b3f98sm36107075ad.224.2025.05.19.01.25.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 19 May 2025 01:25:26 -0700 (PDT)
+From: Pengyu Luo <mitltlatltl@gmail.com>
+To: neil.armstrong@linaro.org
+Cc: djakov@kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org
+Subject: Re: [PATCH] interconnect: qcom: sm8650: enable QoS configuration
+Date: Mon, 19 May 2025 16:23:05 +0800
+Message-ID: <20250519082305.81258-1-mitltlatltl@gmail.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250407-topic-sm8650-upstream-icc-qos-v1-1-93b33f99a455@linaro.org>
+References: <20250407-topic-sm8650-upstream-icc-qos-v1-1-93b33f99a455@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <96118a23-3e6c-c9d1-2135-bd7a22091f35@loongson.cn>
+Content-Transfer-Encoding: 8bit
 
-On Mon, May 19, 2025 at 04:13:14PM +0800, Qunqin Zhao wrote:
+On Mon, 07 Apr 2025 17:16:47 +0200 Neil Armstrong <neil.armstrong@linaro.org> wrote:
+> Enable QoS configuration for master ports with predefined values
+> for priority and urgency forwarding.
 >
-> Then the HISI TRNG driver isn't a right demo?
+> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
 
-Yes the hisi trng looks wrong too.
+[...]
 
-> This can also avoid concurrent access to a device, otherwise i need to
-> 
-> add mutex_lock/unlock in generate and seed callback.
+> +static const struct regmap_config icc_regmap_config = {
+> +	.reg_bits = 32,
+> +	.reg_stride = 4,
+> +	.val_bits = 32,
+> +	.fast_io = true,
+> +};
 
-Randomly failing the tfm allocation is not a solution to resource
-control :)
+[...]
 
-Cheers,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+>  static const struct qcom_icc_desc sm8650_mc_virt = {
+> +	.config = &icc_regmap_config,
+>  	.nodes = mc_virt_nodes,
+>  	.num_nodes = ARRAY_SIZE(mc_virt_nodes),
+>  	.bcms = mc_virt_bcms,
+
+Hi, Neil. It seems that the config for clk_virt, mc_virt is not working
+on some devices. My device Oneplus Pad 2(pineappleP variant, mtp based,
+but without modem) shown the following.
+
+Apr 30 01:56:16 oneplus-caihong kernel: qnoc-sm8650 interconnect-0: error -EINVAL: invalid resource (null)
+Apr 30 01:56:16 oneplus-caihong kernel: qnoc-sm8650 interconnect-1: error -EINVAL: invalid resource (null)
+
+Best wishes,
+Pengyu
 
