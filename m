@@ -1,72 +1,110 @@
-Return-Path: <linux-kernel+bounces-653335-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-653337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DBA5ABB7B4
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 10:47:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 638A3ABB7BA
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 10:47:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7C1A3BBD27
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 08:43:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 92ACF189C5A1
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 08:44:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 873F126C397;
-	Mon, 19 May 2025 08:40:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1229226A1B9;
+	Mon, 19 May 2025 08:41:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X4YIcMTb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R2s9fGln"
+Received: from mail-pj1-f68.google.com (mail-pj1-f68.google.com [209.85.216.68])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E329A26A1A0
-	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 08:40:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 121E3EEB1;
+	Mon, 19 May 2025 08:41:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.68
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747644042; cv=none; b=s452/jkeEfgk0229eLnirBHwFVPNw9XtNxtdPY4f8VyFgSB5T5PoMBjzQ3+uZfFg2/7yiliRUf/FCljuZ8sDmEs+Ca20Ku3Z+RKFhZJtJQv/JzIfT03tCdYk9HrioFz3IdlNdyk8kkpbZE/AIRYcOjdZZ/tviTKImhuoYUByTVE=
+	t=1747644107; cv=none; b=GW9QRPGILLfh3grnI2niOIkX9dXRQuXa0MKJ/+XR8c3S6LoSIXoWUiuXNq6ZZC5wHVdYXmIbnbl2Mxw6Y1z8TaX0BaWMMfpL1ySbmzuB1Li9J1+mPzm6uSWRDMhGLTV1XauO3RSYt8CELN1rbL9QpNRnAUlI6wbuMULr1IACv4c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747644042; c=relaxed/simple;
-	bh=rPOc4Bft5rRhKxCkLHq9mBdyIs9V3hmodAMn3Tb++2c=;
-	h=Message-ID:Date:From:To:Subject:In-Reply-To:References:Cc; b=JQnlCIYX6Fzo1IcYcg6iKzFTmXAJ+uqzHZ4Eh2b9x8rk+FmlA4d82yxho52/IckG6IsIVOCS1vT74PEjupFFTeKAS76Tf5x2Q2gkEaJ/du12XXDKZpKEJajMW43guBd8Q0L0/9duZC5BOljhq15UMe5ecWQjjRuryhhYbVa84nc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X4YIcMTb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 046C1C4CEED;
-	Mon, 19 May 2025 08:40:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747644041;
-	bh=rPOc4Bft5rRhKxCkLHq9mBdyIs9V3hmodAMn3Tb++2c=;
-	h=Date:From:To:Subject:In-Reply-To:References:Cc:From;
-	b=X4YIcMTbloLlAe/KN7RJ7bnGvjuYxZm6DylStXWQkYmxiCAvjIsb1Qn6wo1y1Bp42
-	 ZBQ7Y3wbFc2ABpU9JfIyTZIE4DFWpBdqvD/gkCAKuTOWf/CZzTI5WMxhlfZc/0TfdZ
-	 ldewday9tTzVelEHBwePLvRpLhF3vFnKjLA9obphGjDMQPkn3rG63GplhH9PLvqrGx
-	 dVH9zusCDejRfWrOvvPdbUL36Nh2X4gI6xuO5Jxq9R9qsuABHV5kSuP2uG1YAhZVx2
-	 7kwts8uLlsrYPW/pVGmO4JwF9MIONq23bvVYazWv/JAT/lKAVDmZAhgd35kL2DHqVv
-	 D5t3QJynVp5Dw==
-Message-ID: <b80e4b6d963e65584661f38fcb0a1781@kernel.org>
-Date: Mon, 19 May 2025 08:40:38 +0000
-From: "Maxime Ripard" <mripard@kernel.org>
-To: "Cristian Ciocaltea" <cristian.ciocaltea@collabora.com>
-Subject: Re: [PATCH v4 21/23] drm/tests: hdmi: Add max TMDS rate fallback
- tests for YUV420 mode
-In-Reply-To: <20250425-hdmi-conn-yuv-v4-21-5e55e2aaa3fa@collabora.com>
-References: <20250425-hdmi-conn-yuv-v4-21-5e55e2aaa3fa@collabora.com>
-Cc: dri-devel@lists.freedesktop.org, kernel@collabora.com, linux-kernel@vger.kernel.org, "Dave
- Stevenson" <dave.stevenson@raspberrypi.com>, "David Airlie" <airlied@gmail.com>, "Dmitry
- Baryshkov" <dmitry.baryshkov@oss.qualcomm.com>, "Dmitry Baryshkov" <lumag@kernel.org>, "Maarten
- Lankhorst" <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>, "Simona
- Vetter" <simona@ffwll.ch>, "Thomas Zimmermann" <tzimmermann@suse.de>
-Content-Transfer-Encoding: 7bit
+	s=arc-20240116; t=1747644107; c=relaxed/simple;
+	bh=FfeXpaI/Ry0jTNfKMExK6pstVzErw1I4Sfr4H3AVZGg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=V5NgCtRbDNURseRAnsg8gMBT8cxyAt25/ZqR9ER3GkmUwXnSdWi5BolA7MwHDAx8dG/fP2hOHtgRnNEeb+DN+r4gbDtiXqHrfc0LmIOx729nte+2s855vXxgfveG+bXtt1Pqwxs5j65j9kaXsnXWxn+7auyZqap8SGMZdSZEQ6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R2s9fGln; arc=none smtp.client-ip=209.85.216.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f68.google.com with SMTP id 98e67ed59e1d1-30e8f4dbb72so2876699a91.1;
+        Mon, 19 May 2025 01:41:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747644104; x=1748248904; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=AvRUDBggjQrkeFVZcFd8aL7npkTR9uKvpgi0YdQ9wUA=;
+        b=R2s9fGln2CZxSz5Z4gJRWlvuD+rbQ8tazhovSjMaaTkHUQx6cDGqjVLZfRNEcUJnhv
+         c2Jx3wFGWWc0/Nt/93yi5+nyrsbfQH0Vl6wEhDGUGZ+5syp5IlqcEZG28fvFzn/lya1s
+         Tf36+G0uhWC6be8qCjr5le1FIlPmGsU3l3bsxByiRV6l+Obx7ZUQpIU78IMFL/zyRObw
+         gSeumfNBKk3HfJ5gnRd+xb7dorqTUvEWb4G3zrFrUZECqWd7hqJ6eWPynO9wEcDpgD2H
+         dquogKhKTnGHV5PxNe1tfOwf6OxsJ/e57VtKz84kT1o4FFeJzhktHAWPD9L3lDv7c92g
+         wMHw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747644104; x=1748248904;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=AvRUDBggjQrkeFVZcFd8aL7npkTR9uKvpgi0YdQ9wUA=;
+        b=W/74HvESe/4sSNhb54xx87YiBnh+0Lsj3Eq5OCGkML9+gbMrAkvig4WmJbDOIkP1rY
+         P3aho0ZTJQahDaJ53qdCLzx02aFxmfgC70iu0Gs51vUoRmpXhtk8/3Iwn56oAsOIoyzc
+         MNS7yJcHHNKZx/5MfxMjWH8BkwGGwUiL65OCy6uZPZ1L0WjxtupXl4ogK7/8JyKsfVqp
+         Vy1LqXPuIM9w90Mruc8F+zi7Zr/GefbZ+Anz32pRH6kes1BEp+T6Yqsd9hNrZta/uIsA
+         aBotTJGyM63qYApMjxoaoQWK3o0Yi+omRBsgXIx0FRt+tYBjPPKk7Wl88UPuUtKfYskH
+         chVA==
+X-Forwarded-Encrypted: i=1; AJvYcCWb1tF5Y9mVZBOLb2uZHW0kwJd1KNxiHm+e+txua9SsfoVI4I5lT3VftXbaEpY7vwCQ+aB4fD0bAzHE3g==@vger.kernel.org, AJvYcCWfDvW6CFD1gG4iIuTib5LRf8J7Mr5nRuiYdpHZ/wHZ15G6HzuiyKkFnnSCICb68LQ2z8S76lg1gvVBgeTC@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLg41zRHgRethVJ/UTrhclFMsiNRMPGARc/1l/JQJtvO+/SAAQ
+	dGRulle2INO4iZA+67ka62qP+bqvTQEOnsfP0tvV9KIkgzM3xuqJ+ZV5
+X-Gm-Gg: ASbGncvZbo61j/1NYT5v9MwHuu3Rn2101yFppXHnH+XPbX6lwBxyjey5xb42hFVB2Ma
+	hU963QZwysr3vZDtff2hQf+f+8nztixsTUp9tjvKMdNalpdh69G7OPFeh8prbOhTGv4Iuxf0YUb
+	+Ug/rWcY/YXlKPE6yr+Ef+sxPb7lQMATRR0V3uKbrxGi8LQXIoFIAo4HOcgCfUk3Ja1J8tsRwqu
+	11O0vv7p8wk7Dl80Txv1XjQWA8e1PS1QXNqRa2Ys17UoTCJMy+0cdPW5PIx1Lpv71r+qcjUOrSc
+	9wA+8I9t3msNoBWyhVhcj+5hDzufkkf+0+rx0A3d1VcupBw5ZOPjq/NZoMlIOTA/is5zn91lZtt
+	pb8lC0+nqB8zWEURG+wYgx+ZA5k63BLCSs1s=
+X-Google-Smtp-Source: AGHT+IF/EL/A6KgYWtiUE/oefYxhyRZnJUOJ1QhsszUFMdKx1Dg67NU7yO6eBgLxi0Q5L5yTdX8p0A==
+X-Received: by 2002:a17:90b:3a48:b0:2ff:72f8:3708 with SMTP id 98e67ed59e1d1-30e8314fdb5mr22269718a91.17.1747644104272;
+        Mon, 19 May 2025 01:41:44 -0700 (PDT)
+Received: from ubuntu20.wiwynn.corp (39-14-65-183.adsl.fetnet.net. [39.14.65.183])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-30e33401768sm9870275a91.3.2025.05.19.01.41.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 19 May 2025 01:41:43 -0700 (PDT)
+From: Yikai Tsai <yikai.tsai.wiwynn@gmail.com>
+To: patrick@stwcx.xyz
+Cc: Yikai Tsai <yikai.tsai.wiwynn@gmail.com>,
+	=?UTF-8?q?Carsten=20Spie=C3=9F?= <mail@carsten-spiess.de>,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	linux-hwmon@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/1] hwmon: (isl28022) Fix current reading calculation
+Date: Mon, 19 May 2025 16:40:50 +0800
+Message-Id: <20250519084055.3787-1-yikai.tsai.wiwynn@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Fri, 25 Apr 2025 13:27:12 +0300, Cristian Ciocaltea wrote:
-> Provide tests to verify drm_atomic_helper_connector_hdmi_check() helper
-> fallback behavior when using YUV420 output format.
-> 
-> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Fix the driver for Renesas ISL28022 power monitor chip.
+According to the ISL28022 datasheet, bit15 of the current register is
+representing -32768. Fix the calculation to properly handle this bit,
+ensuring correct measurements for negative values.
 
-Acked-by: Maxime Ripard <mripard@kernel.org>
+v2: Add the missing variable declaration
+v1: fix current reading calculation
 
-Thanks!
-Maxime
+Yikai Tsai (1):
+  hwmon: (isl28022) Fix current reading calculation
+
+ drivers/hwmon/isl28022.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+-- 
+2.25.1
+
 
