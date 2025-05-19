@@ -1,188 +1,154 @@
-Return-Path: <linux-kernel+bounces-653800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-653816-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A15A1ABBEC1
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 15:12:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BBFCABBF0F
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 15:25:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4104517A62C
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 13:12:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 937DB1B61967
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 13:25:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B9EE2797AD;
-	Mon, 19 May 2025 13:11:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="H9PAN4aX"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2075F2798FF;
+	Mon, 19 May 2025 13:24:57 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4BF71F4717
-	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 13:11:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 965A82797BC
+	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 13:24:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747660310; cv=none; b=omK2Ks1z2pYRHVv10+Kx4WzLZ0Bm9WIwXizeyrdmhN8Oks4j+lJRKAeCBg10kC3nYMbbR94vYa2Im9H49RPUkBgaQ5KWUAPFGxHM7uyMH+q8w7Expx6dcjI+z0J/p4/puL0NKOCE/ugXC2EJiqlomXKcCkLWrJvKmS6mlL0aGdo=
+	t=1747661096; cv=none; b=TJoxVCF05QD7mBy2dVl5b6wnqzaI6VUBAROrv9i97p/RkY20PuclvCFIfH8ss1gufEfp3sshhcBg1Q3LLRXrKn13ZLbcJgD3lufCx4U2/Uj+fxv5EEAC4Vh8LacZrlX6s5Td8N55KEnVdoQhoa22Mqe1fQmvsaOhHI0Q14+3T6E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747660310; c=relaxed/simple;
-	bh=PWalQ5m0kWKDJOtkC62jBvhCS3QqmgQNXR3Tw2vSN6s=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=plhXpVv5uy8+q3ndhDEe4ASkJAZLrRrmtFyaIJn1TLemAjv9/fxX4/dLljFYRIpr88do85fLJGGQ3jtI53UjLfTF231bzNpY6/UkHluMMQDHTQ+dY8Bm63ikF/bquGMqx3RL7u/Dr0bf6fJjAiXoEgJH8yr57B+nd3Jn2//HmGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=H9PAN4aX; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3a376da332aso230664f8f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 06:11:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1747660307; x=1748265107; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=UUn7TYIvH1lNPHVa4Z6ARWyUBajP1au4eKLX4WJWde8=;
-        b=H9PAN4aXVv7n9pOc+qlu2sj1Wv6PR8KO2xh9qs7NkJB0z2Mgnn8dci7SEAG4d1DGEW
-         GiJxyZ1+Ak8o9ifU5n/IzLxSTsRrjelAY4INa/mFYCdYUSqHN/WKZkCbSRYRcWDcG6Tz
-         7KqqPxF3cS0F0+1UGB9m4h88llH69gxNq1gtDXCUZP9Z16DzJXBSNkYkDw3HQN9Wr2jq
-         mNLO8pcowjQr2jAfAzK0x+AySlVRmnSBIyjGPgmuNEAuPhR+Qdd5w0Elz+BL6+WntDob
-         5PhDUY7cif5LSuqA3wCjigUWTjmQ8AA+T7hGHH3z2UMKl65G2gq8l5GHhiXA+PZcl65S
-         QopQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747660307; x=1748265107;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=UUn7TYIvH1lNPHVa4Z6ARWyUBajP1au4eKLX4WJWde8=;
-        b=r7Tups2Xan1aDUDQaaBSbhb1GMtaEyVVcO40HVD83n4rwn46pqLjjSeq2acVMUOcdU
-         E7p0cQqBaN7ezmJhk4WA5KuZGImIuyH10B+WaX0o7x2THoPf0dqks+xCKShz5shubyzV
-         HGyogg4KIl77L762V+ECxIVXHRPaFS6TZ/UJqoVpZ3KViGmRNkuo8maIXEF4TvfNRarB
-         CajgTwD0eAugF2KAV/VxSC9DfUkhIxvFTcFwtkve8vqh8jfu38SdAGg24W5aLRcci2lk
-         pFK0aCuGnaiTkIqfGihnv5GFe9cvsfRJCf87pFa967aTJbDB7scz3ka4I/qMwcnibIb/
-         O35g==
-X-Forwarded-Encrypted: i=1; AJvYcCVyov6HkxEc9iiXgxCT72ryIjOBQTZ0cLT7ch3Uu3pCVYdMyhjViik+AYgvn1GU8WREHy6ZVPeQpY5XTDw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/XkdSvrAk/qkvtUciZLVyZe/gkV7XJAVtwCK3w5A2g3AYDuxY
-	UA9DYxgT9Xev5ZETYbehY1GpbOalYkQTrPmXWWAIp0GeTmoFzFc/RJAqT0R/c/q/f5Q=
-X-Gm-Gg: ASbGncuzNBBhlrfmEWTzG5TtWjD+Oq0/WK/Qnd9+BVNU1/rHVBIssP5hcl5dnD74f7O
-	RbWQZWnvGzNFjrl27zrX1Xj6yyuG+e6VydVAJEclnrSc3NOQAzE7kAJ44go8ER6yh3vbgsQ756B
-	FsZedvSyaLcwbpSBkjEm9M/yaJ9n2NZWAiB4CBP2l8OEwyD75yJReoYhTEjAgqraTN2Vqz9CMpt
-	R1zZ09Bgi2FPhD6AY8DPEsW7+9gVA2riKeYlpp20XRiNg8ziGvm6trO48grSnLGWdFydqFDXQf9
-	+PfmHDNhKnKLSeefsyIoWWG8WCfedDNLDh/fqbIbv2I9h3Tz62q/dgbYrRbifhhEc8p7J8bKoQP
-	maJD3kxzrrvV6XfPTEK++vYl4Gnc1
-X-Google-Smtp-Source: AGHT+IE4enXPGAfVME6j5Ko4Zoits4KNwPjaTWmXOl8ZpSPczuQ/y48tyuM3P1pXZElfrIkB2Hl4dg==
-X-Received: by 2002:a05:6000:420d:b0:3a3:779b:5b41 with SMTP id ffacd0b85a97d-3a3779b5b4fmr35519f8f.28.1747660307120;
-        Mon, 19 May 2025 06:11:47 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:3d9:2080:ce80:58bb:54b7:ad18? ([2a01:e0a:3d9:2080:ce80:58bb:54b7:ad18])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a35ca88978sm13067516f8f.65.2025.05.19.06.11.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 19 May 2025 06:11:46 -0700 (PDT)
-Message-ID: <87a7a21e-a2c1-40d1-bc53-c55db8380973@linaro.org>
-Date: Mon, 19 May 2025 15:11:46 +0200
+	s=arc-20240116; t=1747661096; c=relaxed/simple;
+	bh=aDvySIkwBPf34agGTkuLdNgJSheeYT2i7xzcL4e9PhI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=abfGy730wc04579VJQgz9qidAFg5LCX4Nvjtsy8TKOmEC+247E9SADFjxi3B4JW9mB2nV/yrR5MKSWncNd3FdBpIyf+q77w/XBhSPyORnXFJVyWwHZUC6KDzMim07O8+znJlh9jaE2sV/FRzEywXWL/PF76YbFgf0WrrMh7Hk8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4b1JLl2WNJz4f3k6M
+	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 21:24:31 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.75])
+	by mail.maildlp.com (Postfix) with ESMTP id 1C1D91A0359
+	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 21:24:51 +0800 (CST)
+Received: from hulk-vt.huawei.com (unknown [10.67.174.121])
+	by APP2 (Coremail) with SMTP id Syh0CgDXk2YDMSto5JogMw--.10967S2;
+	Mon, 19 May 2025 21:24:48 +0800 (CST)
+From: Chen Ridong <chenridong@huaweicloud.com>
+To: akpm@linux-foundation.org,
+	Liam.Howlett@oracle.com,
+	lorenzo.stoakes@oracle.com,
+	vbabka@suse.cz,
+	jannh@google.com,
+	pfalcato@suse.de,
+	bigeasy@linutronix.de,
+	paulmck@kernel.org,
+	chenridong@huawei.com,
+	roman.gushchin@linux.dev,
+	brauner@kernel.org,
+	pmladek@suse.com,
+	geert@linux-m68k.org,
+	mingo@kernel.org,
+	rrangel@chromium.org,
+	francesco@valla.it,
+	kpsingh@kernel.org,
+	guoweikang.kernel@gmail.com,
+	link@vivo.com,
+	viro@zeniv.linux.org.uk,
+	neil@brown.name,
+	nichen@iscas.ac.cn,
+	tglx@linutronix.de,
+	frederic@kernel.org,
+	peterz@infradead.org,
+	oleg@redhat.com,
+	joel.granados@kernel.org,
+	linux@weissschuh.net,
+	avagin@google.com,
+	legion@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	lujialin4@huawei.com
+Subject: [RFC next v2 0/2] ucounts: turn the atomic rlimit to percpu_counter
+Date: Mon, 19 May 2025 13:11:49 +0000
+Message-Id: <20250519131151.988900-1-chenridong@huaweicloud.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: neil.armstrong@linaro.org
-Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
-Subject: Re: [PATCH V5 06/11] phy: qcom-qmp-ufs: Rename qmp_ufs_power_off
-To: Nitin Rawat <quic_nitirawa@quicinc.com>, vkoul@kernel.org,
- kishon@kernel.org, manivannan.sadhasivam@linaro.org,
- James.Bottomley@HansenPartnership.com, martin.petersen@oracle.com,
- bvanassche@acm.org, andersson@kernel.org, dmitry.baryshkov@oss.qualcomm.com,
- konrad.dybcio@oss.qualcomm.com
-Cc: quic_rdwivedi@quicinc.com, quic_cang@quicinc.com,
- linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org
-References: <20250515162722.6933-1-quic_nitirawa@quicinc.com>
- <20250515162722.6933-7-quic_nitirawa@quicinc.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20250515162722.6933-7-quic_nitirawa@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:Syh0CgDXk2YDMSto5JogMw--.10967S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxJryfGw47WF47Xry7Xw43KFg_yoW8ur45pr
+	WSgas8Kr1vy3Z7J3yxKa4xZ34rKF4xGr15Gw4UGw1xAan3CFyjgFyxKw45Xay7Gr93Ja4j
+	qr1jg34DCFyqvaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvIb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUXVWUAwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0E
+	n4kS14v26rWY6Fy7MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I
+	0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWr
+	XVW8Jr1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20x
+	vEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE
+	14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf
+	9x07jSiihUUUUU=
+X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
 
-On 15/05/2025 18:27, Nitin Rawat wrote:
-> Rename qmp_ufs_disable to qmp_ufs_power_off to better represent its
-> functionality. Additionally, inline qmp_ufs_exit into qmp_ufs_power_off
-> function to preserve the functionality of .power_off.
-> 
-> There is no functional change.
-> 
-> Signed-off-by: Nitin Rawat <quic_nitirawa@quicinc.com>
-> ---
->   drivers/phy/qualcomm/phy-qcom-qmp-ufs.c | 19 +------------------
->   1 file changed, 1 insertion(+), 18 deletions(-)
-> 
-> diff --git a/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c b/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c
-> index d3f9ee490a32..a5974a1fb5bb 100644
-> --- a/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c
-> +++ b/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c
-> @@ -1851,28 +1851,11 @@ static int qmp_ufs_power_off(struct phy *phy)
->   	qphy_clrbits(qmp->pcs, cfg->regs[QPHY_PCS_POWER_DOWN_CONTROL],
->   			SW_PWRDN);
-> 
-> -	return 0;
-> -}
-> -
-> -static int qmp_ufs_exit(struct phy *phy)
-> -{
-> -	struct qmp_ufs *qmp = phy_get_drvdata(phy);
-> -
->   	qmp_ufs_com_exit(qmp);
-> 
->   	return 0;
->   }
-> 
-> -static int qmp_ufs_disable(struct phy *phy)
-> -{
-> -	int ret;
-> -
-> -	ret = qmp_ufs_power_off(phy);
-> -	if (ret)
-> -		return ret;
-> -	return qmp_ufs_exit(phy);
-> -}
-> -
->   static int qmp_ufs_set_mode(struct phy *phy, enum phy_mode mode, int submode)
->   {
->   	struct qmp_ufs *qmp = phy_get_drvdata(phy);
-> @@ -1921,7 +1904,7 @@ static int qmp_ufs_phy_init(struct phy *phy)
->   static const struct phy_ops qcom_qmp_ufs_phy_ops = {
->   	.init		= qmp_ufs_phy_init,
->   	.power_on	= qmp_ufs_power_on,
-> -	.power_off	= qmp_ufs_disable,
-> +	.power_off	= qmp_ufs_power_off,
->   	.calibrate	= qmp_ufs_phy_calibrate,
->   	.set_mode	= qmp_ufs_set_mode,
->   	.owner		= THIS_MODULE,
-> --
-> 2.48.1
-> 
+From: Chen Ridong <chenridong@huawei.com>
 
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+The will-it-scale test case signal1 [1] has been observed. and the test
+results reveal that the signal sending system call lacks linearity.
+To further investigate this issue, we initiated a series of tests by
+launching varying numbers of dockers and closely monitored the throughput
+of each individual docker. The detailed test outcomes are presented as
+follows:
+
+	| Dockers     |1      |4      |8      |16     |32     |64     |
+	| Throughput  |380068 |353204 |308948 |306453 |180659 |129152 |
+
+The data clearly demonstrates a discernible trend: as the quantity of
+dockers increases, the throughput per container progressively declines.
+In-depth analysis has identified the root cause of this performance
+degradation. The ucouts module conducts statistics on rlimit, which
+involves a significant number of atomic operations. These atomic
+operations, when acting on the same variable, trigger a substantial number
+of cache misses or remote accesses, ultimately resulting in a drop in
+performance.
+
+This patch set addresses scalability issues in the ucounts rlimit by
+replacing atomic rlimit counters with percpu_counter, which distributes
+counts across CPU cores to reduce cache contention under heavy load.
+
+Patch 1 modifies thate ucount can be freed until both the refcount and
+rlimit are fully released, minimizing redundant summations. Patch 2 turns
+the atomic rlimit to percpu_counter, which is suggested by Andrew.
+
+[1] https://github.com/antonblanchard/will-it-scale/blob/master/tests/
+
+---
+v2: use percpu_counter intead of cache rlimit.
+
+v1: https://lore.kernel.org/lkml/20250509072054.148257-1-chenridong@huaweicloud.com/
+
+Chen Ridong (2):
+  ucounts: free ucount only count and rlimit are zero
+  ucounts: turn the atomic rlimit to percpu_counter
+
+ include/linux/user_namespace.h |  17 +++-
+ init/main.c                    |   1 +
+ ipc/mqueue.c                   |   6 +-
+ kernel/signal.c                |   8 +-
+ kernel/ucount.c                | 169 +++++++++++++++++++++++----------
+ mm/mlock.c                     |   5 +-
+ 6 files changed, 138 insertions(+), 68 deletions(-)
+
+-- 
+2.34.1
+
 
