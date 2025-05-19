@@ -1,95 +1,87 @@
-Return-Path: <linux-kernel+bounces-653971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-653973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2012ABC180
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 16:59:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4E25ABC183
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 17:00:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5CEF84A2016
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 14:59:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 776FD1B6328C
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 15:00:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FC3E28467D;
-	Mon, 19 May 2025 14:59:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="BC5MN+Tv"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7247E283FEE;
+	Mon, 19 May 2025 15:00:01 +0000 (UTC)
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F24743F9D2;
-	Mon, 19 May 2025 14:59:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CF59284B3A
+	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 14:59:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747666776; cv=none; b=dnKOldbScWxygX/5S2Y541Nh4R7bkmsD0/huzUn0FkKKGq8EsovWHel1IDZlOTNMzm7ErtXJY9zbYiY2iv96J9Pf6MJYnLJuqbqxOQ0B/qgx+FF3chr1fVcKVN9VwnXwycQYRbKgR/nzaerWHytAlh3atSOK+8QIXnljIhY6FKk=
+	t=1747666801; cv=none; b=pUac7HfptCZJR8W7YRVcQjkWQckYk5LCUj0axYuLXeIi4En5/fdgMPHLxBI9Qp+B7pxDXOaQZy9eWlVTKIzjx5KQetE8trIfT876jgDMDhGAC/G3XwaLTw2bh7Xa1ETcLa8WaZjbeuCIjUJuqTWdf0MjTgBgW5mc5traYjXrVZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747666776; c=relaxed/simple;
-	bh=LlINlnvjkPrNwRHqI0nwGTekbcuufu1HgbzTRAhzUbY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ippFdmtY4/haL3ykLV8lX2yLI5F446ZFwKj28Ljb2lWATABIvFXRCUkw1TFXrA6WZMsD74s+lImVwBanIddaE0VKqTCXqYZpKu2zNEo/IeD/O+CPVF+UCZhac9a2UgAiWnWN7Oxql7htS+xNKcDCzxUGKlbvRDIEiBXAmQ04XqE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=BC5MN+Tv; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net EA1FD41086
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1747666774; bh=+rX5+eunrT2/Z/JqYzLSRdS/nAoA5hDjcDv7ReJ+phc=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=BC5MN+TvAPKphNSf29MF+MCPM2Fuqns7MMGVFRi1YCn08eO2Oucwn6AXYqto2hvXr
-	 ANqicqrNEGDnTZDLuPtQX9GxnUk0+ZiUUJGO6/0gdumyFS93rQgxje5HnpwHSVzsNj
-	 Of5jxXj+yDRn0iQWoCJFRr28dSvxqhAFFS1B7ZR3+upWTHZ8tjd7TPKYcvPg9IwMHe
-	 56abe+fJ0aF+3zDvIEhPfs3BBiQIucBjCa008Gn9hOwmrZAkAWTnoSJoW89WWirtZf
-	 wylnTRwEPsxkcM83spIDoWIdH4oFN76c6infWRxgRnJWuDMajJA0CxTQfBvvouGsp4
-	 q+MEVQKzxsf3A==
-Received: from localhost (mdns.lwn.net [45.79.72.68])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id EA1FD41086;
-	Mon, 19 May 2025 14:59:32 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Bagas Sanjaya <bagasdotme@gmail.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Documentation
- <linux-doc@vger.kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Andrew Donnellan
- <ajd@linux.ibm.com>, Frederic Barrat <fbarrat@linux.ibm.com>, Bagas
- Sanjaya <bagasdotme@gmail.com>, Ming Lei <ming.lei@redhat.com>, Lukas
- Bulwahn <lukas.bulwahn@redhat.com>, Alyssa Ross <hi@alyssa.is>, Beau
- Belgrave <beaub@linux.microsoft.com>, Nuno Das Neves
- <nunodasneves@linux.microsoft.com>, Eric Biggers <ebiggers@google.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH v2] Documentation: ioctl-number: Update table intro
-In-Reply-To: <20250508005838.8381-2-bagasdotme@gmail.com>
-References: <20250508005838.8381-2-bagasdotme@gmail.com>
-Date: Mon, 19 May 2025 08:59:29 -0600
-Message-ID: <87y0usir3i.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1747666801; c=relaxed/simple;
+	bh=W2vxPFvtMSGFDX01i+sEwTDfFarvJeP/3Ri9KeQvVsg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T4FaPyXvY8mJ6lOo0ea3rNqVNFfyk+c19eeVTjAHrESI3OcB8uis4tsPEZllmtAhv5zq6+4IufxO0b+Y0NylJSPgq+32yjXzJXVzmtfvIRorLK0jZPDqXiEcuoEsOb5in65NOP4TFxTcmP5fqjdGCMSF9ETC1KFdKLEX1O/kH1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from trampoline.thunk.org (pool-173-48-111-173.bstnma.fios.verizon.net [173.48.111.173])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 54JExUl7002060
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 19 May 2025 10:59:31 -0400
+Received: by trampoline.thunk.org (Postfix, from userid 15806)
+	id 74B8E2E00DD; Mon, 19 May 2025 10:59:30 -0400 (EDT)
+Date: Mon, 19 May 2025 10:59:30 -0400
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: Kees Cook <kees@kernel.org>
+Cc: Ethan Carter Edwards <ethan@ethancedwards.com>,
+        Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH v2] ext4: replace strcpy() with '.' assignment
+Message-ID: <20250519145930.GB38098@mit.edu>
+References: <20250518-ext4-strcpy-v2-1-80d316325046@ethancedwards.com>
+ <202505190651.943F729@keescook>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202505190651.943F729@keescook>
 
-Bagas Sanjaya <bagasdotme@gmail.com> writes:
+On Mon, May 19, 2025 at 06:52:13AM -0700, Kees Cook wrote:
+> > --- a/fs/ext4/inline.c
+> > +++ b/fs/ext4/inline.c
+> > @@ -1314,7 +1314,7 @@ int ext4_inlinedir_to_tree(struct file *dir_file,
+> >  		if (pos == 0) {
+> >  			fake.inode = cpu_to_le32(inode->i_ino);
+> >  			fake.name_len = 1;
+> > -			strcpy(fake.name, ".");
+> > +			fake.name[0] = ".";
+> 
+> This means the trailing NUL byte isn't being copied any more? That seems
+> like a big change, even if name_len is being used for length tracking.
 
-> Introduction paragraph to the ioctl numbers table states that only
-> ioctls in up to ancient Linux kernel version (v2.6.31) for x86 arch are
-> listed. This is inaccurate as the table also lists ioctls from non-x86
-> archs and the kernel is continously developed (currently in v6.x).
->
-> Update the paragraph accordingly.
->
-> Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
-> ---
-> Changes since v1 [1]:
->   - Do not mention kernel version (Lukas)
->
-> [1]: https://lore.kernel.org/linux-doc/20250507055145.23345-2-bagasdotme@gmail.com/
->
->  Documentation/userspace-api/ioctl/ioctl-number.rst | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
+Yeah, and so that's something that needs to be tested (and not just
+build tested to catch the obvious FTBFS bug).  However, note how we
+handle normal filenames, as opposed to "." and "..".  From
+ext4_insert_dentry():
 
-Applied, thanks.
+	de->inode = cpu_to_le32(inode->i_ino);
+	ext4_set_de_type(inode->i_sb, de, inode->i_mode);
+	de->name_len = fname_len(fname);
+	memcpy(de->name, fname_name(fname), fname_len(fname));
 
-jon
+Or were you commenting on the "no functional changes intended" line in
+the commit description?  I agree that this is probably no longer
+accurate.  :-)
+
+					- Ted
 
