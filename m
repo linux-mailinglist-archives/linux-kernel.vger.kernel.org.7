@@ -1,224 +1,239 @@
-Return-Path: <linux-kernel+bounces-653953-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-653956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCC0BABC126
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 16:44:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49D50ABC137
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 16:45:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D77F189105A
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 14:44:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 324A63BA9A5
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 14:44:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E188284671;
-	Mon, 19 May 2025 14:43:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AF1C4964E;
+	Mon, 19 May 2025 14:45:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="gmaCPHjc"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2042.outbound.protection.outlook.com [40.107.220.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TzSHzBCm"
+Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25E9C2797B0;
-	Mon, 19 May 2025 14:43:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.42
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747665834; cv=fail; b=Srn2PcmdRIVdh+FU/SGU5d1J+iM4K4lVwlXRBPClxXg2FwjHM9arHWu+jVCPOP9QdznbAm+NrXDMBAolFUXoc5vR24bOu9Zl9ISm92WedWNFOFhBWqEWKUb1NeOdRN/RrhKA1XxlnUBbXd6tFkVqMffENWWVuCRM2UqIBEpXkEA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747665834; c=relaxed/simple;
-	bh=AcaVtQQIRBCl7IF0ft+xHiPFV+Ax/V86K8VD4Vwd83Y=;
-	h=Content-Type:Date:Message-Id:Cc:Subject:From:To:References:
-	 In-Reply-To:MIME-Version; b=Tgl6f4Hir9YPe4iwAxqX3/ZRHq4NGutgOCpgSan8b115S9DVlbI7vG+PKb0r2hHVG34Q2r3ZtZMXdOx/J4TfAA13HT+elIp+Zk8phENISonrLC1FrGLYB9FvZD5Jd6nVrtmt2m8VQfs7tuTvyOzxAuRd6upChNvcdvu9sLmSndw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=gmaCPHjc; arc=fail smtp.client-ip=40.107.220.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=eWFIMCdb482hmkKapX4KgBljYDZKqTLWFOLZYvIT3EvpbelAX/N2tXZ14k7XJIzK7r0N8C+0mRXOVpnVNicBAOG5DOuwNsHzCwQCTyUuvZvG7/tEZE8J3W/aGIxBlnp50CGjA6kULpo1nT0bDj8jEpzrK7C7TB7ZlGN1XlBufN6ElZU/tL/TSw0k/ysVwu/H5OeZ0nmMOC1u0D/g9TiHmXZH+QMpc1sHgmMtKtGHUpBuvR7qMUWtBxgDgWOr8inERE0x8/G+b3rnmtROv4IIki8dgoFgbA2eu7FEWJvcU7mjvBlfpd8bdXHPO2YAvEABCW088wVRZeOvGTL3Wv9LGQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=AcaVtQQIRBCl7IF0ft+xHiPFV+Ax/V86K8VD4Vwd83Y=;
- b=Uqmh9kEiMgRim9bDqRX0p0KRVjQDDM3r35YzywWoH93zauoWHQtliPI21rhbRTjzS+zjga8ciC6llsQrmSxSpzpQA7cNfX2lvMoNRl/8UXe4bvUaFgcSpnNXXtoVUCq1XdGYwFkfIak92WoBx5fOWSRhRTJl81WMdGk0Zpp3nDDf5elOrPYTGBsWff3S1iTzUvM4dmjJGlDu+7wxUEXP86IYyFXsiSvs3XOdn+fLMj9QG3ANFdN2WgNe6oLoe20bVIMu1NEJw3WaGZf4QuExW5i9VQFyb9pGWWHSg4rFqAU5Lqv9lt6Iv7Xc15zIc2hKUMJD+6d5qMhxLgGVDA/new==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=AcaVtQQIRBCl7IF0ft+xHiPFV+Ax/V86K8VD4Vwd83Y=;
- b=gmaCPHjc4hOe7jRKPUBg1q2ax0f3moPQ2ih6QcTEwD9xMMIONaGjfRYZz8XdapdhZbMhCVPcpaUzNTCCp90fviuUiBXevjvYXJ8gt0tHO0OKGH6nFe1wXc4Bzx1qzAX5fyciwCC753GF7k18b+ZCRiXqe4Nvv9HfyeyBMIl6+6Hrw+9FqtSBldGDAOqB8sngGYtPmnga+/jQlTsq/RJaGPKhhoGmNx9hzX+cAo3cp49wXCxXtSiTGY0Zt1I7/+MU+GErjOjdX2ThrHKYnYQvY7Pct2ONyOfTHRLd2GSzA0hA9vvqxKtNN8GmAo9a37+wxR0qyiudAilHw221x5l3Iw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
- by CH3PR12MB8996.namprd12.prod.outlook.com (2603:10b6:610:170::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8746.29; Mon, 19 May
- 2025 14:43:50 +0000
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::6e37:569f:82ee:3f99]) by CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::6e37:569f:82ee:3f99%5]) with mapi id 15.20.8746.030; Mon, 19 May 2025
- 14:43:49 +0000
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 19 May 2025 23:43:44 +0900
-Message-Id: <DA07TW3IGHW7.1QVLH8XUMWQ8Y@nvidia.com>
-Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
- <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
- <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Benno Lossin" <benno.lossin@proton.me>,
- "Andreas Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl"
- <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>, "Danilo
- Krummrich" <dakr@kernel.org>, "Boris Brezillon"
- <boris.brezillon@collabora.com>, "Sebastian Reichel"
- <sebastian.reichel@collabora.com>, "Liam Girdwood" <lgirdwood@gmail.com>,
- "Mark Brown" <broonie@kernel.org>, <linux-kernel@vger.kernel.org>,
- <rust-for-linux@vger.kernel.org>
-Subject: Re: [PATCH v3] rust: regulator: add a bare minimum regulator
- abstraction
-From: "Alexandre Courbot" <acourbot@nvidia.com>
-To: "Benno Lossin" <lossin@kernel.org>, "Daniel Almeida"
- <daniel.almeida@collabora.com>
-X-Mailer: aerc 0.20.1-0-g2ecb8770224a
-References: <20250513-topics-tyr-regulator-v3-1-4cc2704dfec6@collabora.com>
- <D9YXK1J1XO37.JVILKENRKYXD@nvidia.com>
- <498AB71C-58EF-487E-8D9B-C7C113862948@collabora.com>
- <D9ZQUUA4FLXD.19MJI9HD48EMZ@nvidia.com>
- <8517D6F0-C1A2-4E38-8E62-57DCCD5E58D4@collabora.com>
- <DA048ETXB1Q1.3KVZ2FHENWKDL@kernel.org>
-In-Reply-To: <DA048ETXB1Q1.3KVZ2FHENWKDL@kernel.org>
-X-ClientProxiedBy: OS3P286CA0077.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:604:201::20) To CH2PR12MB3990.namprd12.prod.outlook.com
- (2603:10b6:610:28::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22852284665
+	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 14:45:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747665909; cv=none; b=rR6I2SmKERWBMdAmnfdfz7QX/WgSf4WVZLmFe15Lkt3I6iktH1s/wLLV0QU2lHLtYDfya58ESg3/ARuV99jUczFjJLb1B1TlBwbyKGJYDGnth7XmEcvexBD7GSXlCA/J9vqisB+tOao74pXN3Wn6/S1iP2snfLK0ivk4UkQW6HM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747665909; c=relaxed/simple;
+	bh=7txlZqDAV8K5i3phl6bNeE7/e+2UQXhvJqe7GPPm0ko=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ixdffCisA2phxpFxe/His1fOWoNbB/AsH7Ftp38fSmYjCG4+Z7dadi+FbzYepD6f989gLMIdo6BcuOGpLb0dI7X77tp9jTVLvSoGsOGFvv5qPGj3AdybZsL+MmNdwWgDf8hQLUF6aVmWRuw8MqtehkKrIm1tQcjKP8gGlDx4G78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TzSHzBCm; arc=none smtp.client-ip=209.85.219.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-e740a09eb00so3853442276.0
+        for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 07:45:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1747665905; x=1748270705; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=WrNoKeX2Lj5/qNveVALcOn5Q7n0Yzi5c56UWgJ4BBhY=;
+        b=TzSHzBCmqaThfKr3krpc1H1+CCuSNc+nTBHp6G0fvkCVnG3k2jDGOF7jQGZ/Cb0l83
+         XaVA/qoL5qH1dREhL+lBgz2l0oRMh1H51X6wr/V9S0JuRWAg75p0tj8KZ81fB9DMRl+M
+         w6A+6AP92xziBQyX+6Uvl7JllMQV2V19REIGLnnTgAnwal716y04kbVIBj3vMQcmAqEK
+         ho7Wv15/nEHctngOZVZassYr+g5XrmYr7edtct3xGT+6U4TIs6oSXZiCgewvFGEtLoln
+         bI9/87G2t3xvdLcWWkqcOQGn39/s0jp24kp5Vy5J+unRBhabXjadgvRCBBgv4ZwOZ2zY
+         eEWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747665905; x=1748270705;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WrNoKeX2Lj5/qNveVALcOn5Q7n0Yzi5c56UWgJ4BBhY=;
+        b=CZSv+M0egwg6UoEbpR0uNRG1vU+b7/GjfUPDs4ulm5HxKbwSalo9vrYhqnqDW9eTV0
+         49f/2RaBvNqSuRXU3Y49bVI5kDpt2HYW6rMASVmdleiTCGnREmoSrcCwQGFsTuQdkTjt
+         dTAzb19uWeUlxxymkNv98gnhv4LiqYY9T4gqmpHkCgmCxvjY3QNhETSrGqgdLQLjiRKE
+         okjaX6zufOvibGgss4ExO0mlisEzKl9sbePNj2EYhpxpFgWzoTlSnjIEpEoz/Cbc3EjQ
+         XDfjZLDyHeaIreiNPZojXxUzLsnLQXQ800zzHrjPSyJwmGJ+zNYK4RvmERNb4pJwn4tO
+         eX9A==
+X-Forwarded-Encrypted: i=1; AJvYcCWCmt79EfMXrmHhojfZ5D/BGcEvVtB83v3Hu9DwCfjDNn2bRJPULUscTr2IMfB8g+dp0P2yqnSfPLdWlYc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+XfeT+4uSVMMQ38gnpCtV+4Wtz9p0DFT6zdPxDu/54VDsMHHf
+	bbRdUBg+KGWlBvLUPQE7GQ7JLyfIuC4Mar3aYxeGSOamyTcHUIIW4GTs3t5KqtH9Mi2ezGGcC6R
+	VPubqjn/tJAnxQGBYnffJ0tvgMQLHwOkVGNkghCqG/A==
+X-Gm-Gg: ASbGncvVLUqplb9bmglF0NHJWNI4PLlJxuMQYpe+YLsAs770G/SP4IM0vp54jqQ/lbN
+	z/jfWy8Tx1dBaz8nJPkCM+Is5ssmvOLT7C5JXDHt1lfu89JNkGUD/Kg30HmQW2bBcTl4FylNk8M
+	ZEsMSsLS7rvUazTemZKHcd5YEophidqIsCyi5OnrgLHvBr
+X-Google-Smtp-Source: AGHT+IF8/uwDdoGOrriHzNUlc7Tuwt8k1isUfkEw9K/S9llcMRcrkUJk2jiCJcYg88blueJKed7YKLdIpbr1Gbas65Y=
+X-Received: by 2002:a05:6902:2504:b0:e7b:5e00:54a8 with SMTP id
+ 3f1490d57ef6-e7b6a41fc80mr17171222276.32.1747665905046; Mon, 19 May 2025
+ 07:45:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|CH3PR12MB8996:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1ac0eb72-c32f-4a53-8b5c-08dd96e39058
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|366016|10070799003|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?M1hzU0Uzb3U2M3R5eUtkclNUL2pIQjZwcDBVUFpNSTlDdWl4bmlDcGFXbjhm?=
- =?utf-8?B?YksxNExjOFFYZFZ2bTZHN1JkUGVGWGpGaWErSjRPUXdpaExBVkdvMEo3OEFv?=
- =?utf-8?B?T3ZJL3QwdHA4NlJmcVVGREFKVHRuSEZaLzYzQnAxbDNQc3phZ1lvblU0Y0Rq?=
- =?utf-8?B?RWt4YW0zN3BOUkI5cUl2aTFDeTFDTFpSTG5yTXRsVld3NUlDYVFxc284bHpj?=
- =?utf-8?B?eS9jS09QQTlpby83bG1wa2xDU0NueHdkQVgvNnBPT0FXbVJJWGhHUjFZOW5r?=
- =?utf-8?B?blROZXd6Yy9aeVVhZ3VKM0tBaktUeXFVSjlxWGFZZXNaMEdDOXVicWZRTWhH?=
- =?utf-8?B?NEZ0a1VzOWx1bUdMcFF2YU5BTjNLZ1FoR0RaSTRQczl2TEcwdUpvc094Mlg2?=
- =?utf-8?B?Vm8rbmJlOEZVWUxwV045d1o1dTk4ZTRJVFZjM0VOVEkwd0NwZ281QldYUGpZ?=
- =?utf-8?B?eU9WcmxSTC9WN1NVVE9xd3dkQzhHZ3dyMmlLMFc1Q203akpZd3ZiNUdLYnQ0?=
- =?utf-8?B?dTJRTWVJWS83SVhqN1R1cmMvRDZsYUFmQ2VOclhvTFpGOWdwNmJjaUw1NFhk?=
- =?utf-8?B?M29acmlVcHoxTUtIR00vSXVUSGtoTFF6SnluYklwNHRWazFIem1QSVYwMHgr?=
- =?utf-8?B?SWgzUWVRL2ZnNUxaSFhMQXNtOXVZcGp6Vm9sVks3aFRKV0NSaFR2NDRnTHFI?=
- =?utf-8?B?NmF2aVhaRFNZTXAyZWplT1U5UTVVSEpHM0FFcUZVMlMzYnd1Ri8remRpNUtB?=
- =?utf-8?B?bUJ0TzgzcjJWN2tpc2NKR1BVcW1jV1U3L3hBdXE4MHRUdXduYVhZUjc4VjRr?=
- =?utf-8?B?NXppV2U0RDVDR09udWJXWHBTM2c0eXZ2a2NhclRtMHpvMmZQMmI0NmZOV1hz?=
- =?utf-8?B?R2crZmNXU1BLREpmU2dlVGh2eEpGVWpCR1RrMDJMbHJkd0xEaHoxcVNLMHk4?=
- =?utf-8?B?NlRzMnhuNmJjSHoweStUS3F5b0RZMlRqNVZMNU10eWZvT3lSR3RaVmRIZjAr?=
- =?utf-8?B?bnV4czFORFVDS3R0dEk2Q3pwa3VTQ1RYUGU3VXJ5alFYcGsveUtyTU8yRWZC?=
- =?utf-8?B?TCtCem1LSHM4RDAxSTN6a3V5aTZwS1JLY29wZ20vMXpZakVhdDFpdjhmNEI0?=
- =?utf-8?B?VkVSckROcXB6WjhhdmExMkhiRHdBVGRoejQyY1UxVEpqSGNOQ0NoV1k0WFVr?=
- =?utf-8?B?UW85aStBYVNoQUdIQzNmVWszWHlVT1ZCQ3ZhbHE0RlcxV2NxeHhxVG16SFFN?=
- =?utf-8?B?SnBtSUh6S0NFc3RXRVI2eVgxUnpsMUZnbEJYU3BnWGVGTXdGcVhNclVHMmh6?=
- =?utf-8?B?d2tVQWpqY0pIdDZkdHhMRUxtYWtpRThwb3JtZjZVbE1rOGVsMllEVUxtU2s3?=
- =?utf-8?B?Z3RBQ3lXT1diSUwvNWFtbGFINlZPT0VYMktVUEcwN1puRm91YWJLV0RmN0RS?=
- =?utf-8?B?REE2a3JlcCt0YWZHd3RSZ0g5UkpVWkE5cEk0Q3l6cjVmeVJqZDN1K0d6bElB?=
- =?utf-8?B?eGFLdHo5bEtNeEhhZU12OFFxeXBjeHBHWnN2Y2xFSU9XTWtCTldPQm1Cdzg2?=
- =?utf-8?B?TmJkSm1GRGZ4U01wQWNsV0l4SWJOMVJLMWdVU2NjTjJoY29NWXZkc0JlcDFK?=
- =?utf-8?B?cFV6dGR5ZndpbGo5K2FoMmQyeXFqUU8rOFRHbE9FNGJUcERhenEzT252bG04?=
- =?utf-8?B?U0E0blJRVm4wUGZwa29XM3psYkRCSVhxZjRmb0htRHM4MEl6bkNwZnErd1Qr?=
- =?utf-8?B?TGZUVzRwMzVwNXFVWktkSys2Tk1aY21zRHlEeE4zamhMUE9SV3B2VmxIa3hD?=
- =?utf-8?B?R2E2VXp5RnVyT1VIYXVXYlhrVklDYUxHTCtXK3VIN0RvNGc1SlZUbnRWRVlX?=
- =?utf-8?B?TVYxMGlNQ3kvZGFOaHFZTjFOS3B3YWZJZDBwU0FveWpBUmc9PQ==?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(10070799003)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?cGJFcEhkcDJVSk9ldjVLOWNjV3NuM0ZSajh0blAwVTlkWFVKZkFZaW9zcndz?=
- =?utf-8?B?ZXZ5Zk8vc0lhUGQxcTVzUU5xVnRPajcxdnB3YkVtVW1ncDlXeFRMWVpvdE9y?=
- =?utf-8?B?WmlHRnRXbEtRTG9pblRIbWpoLzZlaGlPd3NWU2lmYWVuS1JuYzRwR1NLVUJt?=
- =?utf-8?B?cUoxLy9DbnFNbFR6MU5hZktrYWJ4Zk1nbTJPTjNGRUNCMXM1Q3R4WHcvYnU0?=
- =?utf-8?B?K0EzZnY5Wm00U1BpVmVZYUgrYWtLNkdzNWd4eWNEQXU0aG11VmNSL0RCd3ZV?=
- =?utf-8?B?bVl4QXVRUVNnZWhka1ZmcGhJRkVGbk5NZzk2VlRGUGVoNWtGTGFUU3lISWpG?=
- =?utf-8?B?Uk9SYjdqdEYvbmV0T0JFcVQ2elhHZkk2Q0ErWEFVeWVPOURxRktSV3hLWnZF?=
- =?utf-8?B?QXVBZ3RXQ3FDTGdaQjRyQnRZcG43YjNDbVBQcSswREVBdmh6QjRkMERMbDdL?=
- =?utf-8?B?dVU2a3o0YXFXMFVMWWxINTBrMU9JVUxIVGpYd216WUsxODd2SVAxNFMvcGxF?=
- =?utf-8?B?V0docXlWZys0TnAwN2l1emh2Q0EwMkRRclNrYlRXVExQOUVkUFh1aExKQUg4?=
- =?utf-8?B?Q2dMNndmTzNJY2RJam51WEZjOHFpSGF6SW94YStPTFkvTWVQc0dMSFBpWFFK?=
- =?utf-8?B?Mkh3NXU2R0VMMGVRQThvRHJXTUUxdi9vcG96d09NNUlWWkkwZXd4a1R1dyto?=
- =?utf-8?B?WVdVQXNqaXcrQTZCTmdyZW4yM2ZCTmlsN2FOMzc2VngvMHh2b1hXeTltKzNW?=
- =?utf-8?B?VlB3R1ppTDZYOFhJOGhBbkZWZjdaU21HcUIvd2pwSkUwdkNWb01IT29FMkVu?=
- =?utf-8?B?MkcwUGNkUkdvSC9DWUJDSnpZVTY5eHYwelFMNk1SSTBPNWVFNDB3QjZ5VG1D?=
- =?utf-8?B?TWgraTFmNm9BTXN5c3czdlZMc2c5NjA5M3IxdGtOZEl0Z2NZR2EyVTJDL2pP?=
- =?utf-8?B?U21sT1dqNFJoMTdmbzlTOUhhd29jMmhZZGNoTjNycGdUQ3NOcjRvYnVhWG9v?=
- =?utf-8?B?MVlEdnFXdjdmSlRDQUdRSUJYSURsMXdUVzhzQkE4M2lDL3l6RHhKU2lnekZF?=
- =?utf-8?B?WEhGL0UrZFNicHhkWmJGUE1rR2htdkFhTGpLQ2NhYXNjMTJNZ0dEc0hoemlG?=
- =?utf-8?B?UWhzbGlRVldJTyt1OS95QjRVampERFpHdXExcnY1M1NVVjlCTW1FbmJHYW81?=
- =?utf-8?B?bW9pLytRVDRwSlpSY2ppaHdlSi9RU1p2RHBhSDhWUXJQUVFxRnhaVXd0YlUx?=
- =?utf-8?B?aXFJN0ZFbWZNVWE5MEJTTTBabXZ4RU9nRHJUYVEvM1RGNkZrL0h3clZZVzlW?=
- =?utf-8?B?Z1c5NVNWUUY0ck5Nd21IVkZZMlBmTzN0UmZiQ3k3aHBhSkFMSHBiT0dFWlJZ?=
- =?utf-8?B?WDhvdkIxSU0vYjEvUlRaRnB6b3RsLzNkcW5aeE5kcWxYaFZ2SEVHMDFvSVRj?=
- =?utf-8?B?NGtmREIvVXdQR0s0TGYvNTM5M2VwUXAwaWFYLzFRRnFFaVNBS296YU03Rno2?=
- =?utf-8?B?VjdmQWpDNkFROWd6R2xXbFF4M2k2eHBRNmpIN2VlOXRXMVFEZzZYaFRVUCt2?=
- =?utf-8?B?VGxDQlhmVjZxeEFSOVJyZFUxbHdVQUZSaVhuaXhzT1B2SWMzZ2xTZ3FWTW16?=
- =?utf-8?B?MWNWQzJqUng2NGxtakVCTTd4Q3lRL1FnNG1CeWxWbEVWNEV6dm9NUEhKQ0h1?=
- =?utf-8?B?TU1ac3hSTmN4NmtRaXBwMXFQbjFtdGxQUTJkMlR5YlJSK1JMRGd5dXpUcGJl?=
- =?utf-8?B?NXJZUWlndmVRUUNvcTFaUlBsejBFNmhmZGlrck05MGdQekRYT3dtVUpqWlhY?=
- =?utf-8?B?U1NwR2oyOW5xcVU3c08rSk5LYTJCQjdVMy9LdGJrcGp1QzFUN0V5VmVqUWY2?=
- =?utf-8?B?UVh1ZGVTU1hHcXJUMVZCaWQxNFVlNEF3WVoyU1M5MHU4UHhaTmlmbk1VdWY0?=
- =?utf-8?B?SnkyMTFvS2NmeWNKUHpiM3J5dThtaThlUHpyWWwwNEg1MjI3ZkIxRWlrUGFH?=
- =?utf-8?B?RHBWSjdSTjlGWDlaZFprQ3RHU2djbHpxTDE2SkwrazhrbklPQjJSMmhOZDdR?=
- =?utf-8?B?UlROVTUvalN6WEROeU1JdkppQ0ptUFpZTFNOelRVRGRrRTVBWGtGVXRrLzgz?=
- =?utf-8?B?TmZJM0NZdFNYYnZIZ0thZXpaR0xCcVNvZHN0R3g5M21ETjNubFlKL3Y5MGNY?=
- =?utf-8?Q?mhJxtzDrMdd1dPR6AIHsQHmNE6fl2iaVfKCOrGL7RZm8?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1ac0eb72-c32f-4a53-8b5c-08dd96e39058
-X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 May 2025 14:43:49.3962
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: yD2Ds47zrI7KD/6XM79fWc2derUqI0GAA7Sn4ODFvFR9Mo6SmgMKTW3S7lhIlZj1M/AYfPqHKvZdkuS4nF4xbQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB8996
+References: <20250507160056.11876-1-hiagofranco@gmail.com> <20250507160056.11876-4-hiagofranco@gmail.com>
+ <CAPDyKFrHD1hVCfOK-JV5FJM+Cd9DoKKZGKcC94fxx6_9Bsri1g@mail.gmail.com>
+ <20250508202826.33bke6atcvqdkfa4@hiago-nb> <CAPDyKFr3yF=yYZ=Xo5FicvSbDPOTx7+fMwc8dMCLYKPBMEtCKA@mail.gmail.com>
+ <20250509191308.6i3ydftzork3sv5c@hiago-nb> <20250512045613.GB31197@nxa18884-linux>
+ <CAPDyKFqLMEOEnGDRE-1OUi8o8eVd4_oYPH4heu=WFQ8+4s+3-w@mail.gmail.com>
+In-Reply-To: <CAPDyKFqLMEOEnGDRE-1OUi8o8eVd4_oYPH4heu=WFQ8+4s+3-w@mail.gmail.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Mon, 19 May 2025 16:44:28 +0200
+X-Gm-Features: AX0GCFsoxBKbaWTA3FYRE0-ad2i-E4rboVBaxePNJn3SS4-9nGpIGtS4wBpf9Ns
+Message-ID: <CAPDyKFrRLKc5FSng3P-8Hfe+R-3CYoPLwrYq1uMgXVNO4MA-xw@mail.gmail.com>
+Subject: Re: [PATCH v2 3/3] remoteproc: imx_rproc: add power mode check for
+ remote core attachment
+To: Peng Fan <peng.fan@oss.nxp.com>
+Cc: Hiago De Franco <hiagofranco@gmail.com>, Mathieu Poirier <mathieu.poirier@linaro.org>, 
+	linux-pm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Bjorn Andersson <andersson@kernel.org>, Hiago De Franco <hiago.franco@toradex.com>, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	daniel.baluta@nxp.com, iuliana.prodan@oss.nxp.com, 
+	Fabio Estevam <festevam@gmail.com>, Pengutronix Kernel Team <kernel@pengutronix.de>, Peng Fan <peng.fan@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon May 19, 2025 at 8:54 PM JST, Benno Lossin wrote:
-> On Mon May 19, 2025 at 12:52 PM CEST, Daniel Almeida wrote:
->>> I just mean the cases where users will want to enable and disable the
->>> regulator more frequently than just enabling it at probe time.
->>
->> This is already possible through kernel::types::Either.=20
->>
->> i.e.: the current design - or the proposed typestate one - can already s=
-witch
->> back and forth between Regulator and EnabledRegulator. Using Either make=
-s it
->> just work, because you can change the variant at runtime without hassle.=
- This
->> lets you consume self in an ergonomic way.
+On Mon, 19 May 2025 at 16:39, Ulf Hansson <ulf.hansson@linaro.org> wrote:
 >
-> Have you tried to write such a use-case using `Either`? My personal
-> experience with `Either` was pretty horrible, since you always have to
-> match on it before you can do anything to the values. It's not really
-> ergonomic.
+> On Mon, 12 May 2025 at 05:46, Peng Fan <peng.fan@oss.nxp.com> wrote:
+> >
+> > On Fri, May 09, 2025 at 04:13:08PM -0300, Hiago De Franco wrote:
+> > >On Fri, May 09, 2025 at 12:37:02PM +0200, Ulf Hansson wrote:
+> > >> On Thu, 8 May 2025 at 22:28, Hiago De Franco <hiagofranco@gmail.com> wrote:
+> > >> >
+> > >> > Hello,
+> > >> >
+> > >> > On Thu, May 08, 2025 at 12:03:33PM +0200, Ulf Hansson wrote:
+> > >> > > On Wed, 7 May 2025 at 18:02, Hiago De Franco <hiagofranco@gmail.com> wrote:
+> > >> > > >
+> > >> > > > From: Hiago De Franco <hiago.franco@toradex.com>
+> > >> > > >
+> > >> > > > When the remote core is started before Linux boots (e.g., by the
+> > >> > > > bootloader), the driver currently is not able to attach because it only
+> > >> > > > checks for cores running in different partitions. If the core was kicked
+> > >> > > > by the bootloader, it is in the same partition as Linux and it is
+> > >> > > > already up and running.
+> > >> > > >
+> > >> > > > This adds power mode verification through the SCU interface, enabling
+> > >> > > > the driver to detect when the remote core is already running and
+> > >> > > > properly attach to it.
+> > >> > > >
+> > >> > > > Signed-off-by: Hiago De Franco <hiago.franco@toradex.com>
+> > >> > > > Suggested-by: Peng Fan <peng.fan@nxp.com>
+> > >> > > > ---
+> > >> > > > v2: Dropped unecessary include. Removed the imx_rproc_is_on function, as
+> > >> > > > suggested.
+> > >> > > > ---
+> > >> > > >  drivers/remoteproc/imx_rproc.c | 13 +++++++++++++
+> > >> > > >  1 file changed, 13 insertions(+)
+> > >> > > >
+> > >> > > > diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
+> > >> > > > index 627e57a88db2..9b6e9e41b7fc 100644
+> > >> > > > --- a/drivers/remoteproc/imx_rproc.c
+> > >> > > > +++ b/drivers/remoteproc/imx_rproc.c
+> > >> > > > @@ -949,6 +949,19 @@ static int imx_rproc_detect_mode(struct imx_rproc *priv)
+> > >> > > >                         if (of_property_read_u32(dev->of_node, "fsl,entry-address", &priv->entry))
+> > >> > > >                                 return -EINVAL;
+> > >> > > >
+> > >> > > > +                       /*
+> > >> > > > +                        * If remote core is already running (e.g. kicked by
+> > >> > > > +                        * the bootloader), attach to it.
+> > >> > > > +                        */
+> > >> > > > +                       ret = imx_sc_pm_get_resource_power_mode(priv->ipc_handle,
+> > >> > > > +                                                               priv->rsrc_id);
+> > >> > > > +                       if (ret < 0)
+> > >> > > > +                               dev_err(dev, "failed to get power resource %d mode, ret %d\n",
+> > >> > > > +                                       priv->rsrc_id, ret);
+> > >> > > > +
+> > >> > > > +                       if (ret == IMX_SC_PM_PW_MODE_ON)
+> > >> > > > +                               priv->rproc->state = RPROC_DETACHED;
+> > >> > > > +
+> > >> > > >                         return imx_rproc_attach_pd(priv);
+> > >> > >
+> > >> > > Why is it important to potentially set "priv->rproc->state =
+> > >> > > RPROC_DETACHED" before calling imx_rproc_attach_pd()?
+> > >> > >
+> > >> > > Would it be possible to do it the other way around? First calling
+> > >> > > imx_rproc_attach_pd() then get the power-mode to know if
+> > >> > > RPROC_DETACHED should be set or not?
+> > >> > >
+> > >> > > The main reason why I ask, is because of how we handle the single PM
+> > >> > > domain case. In that case, the PM domain has already been attached
+> > >> > > (and powered-on) before we reach this point.
+> > >> >
+> > >> > I am not sure if I understood correcly, let me know if I missed
+> > >> > something. From my understanding in this case it does not matter, since
+> > >> > the RPROC_DETACHED will only be a flag to trigger the attach callback
+> > >> > from rproc_validate(), when rproc_add() is called inside
+> > >> > remoteproc_core.c.
+> > >>
+> > >> Okay, I see.
+> > >>
+> > >> To me, it sounds like we should introduce a new genpd helper function
+> > >> instead. Something along the lines of this (drivers/pmdomain/core.c)
+> > >>
+> > >> bool dev_pm_genpd_is_on(struct device *dev)
+> > >> {
+> > >>         struct generic_pm_domain *genpd;
+> > >>         bool is_on;
+> > >>
+> > >>         genpd = dev_to_genpd_safe(dev);
+> > >>         if (!genpd)
+> > >>                 return false;
+> > >>
+> > >>         genpd_lock(genpd);
+> > >>         is_on = genpd_status_on(genpd);
+> > >>         genpd_unlock(genpd);
+> > >>
+> > >>         return is_on;
+> > >> }
+> > >>
+> > >> After imx_rproc_attach_pd() has run, we have the devices that
+> > >> correspond to the genpd(s). Those can then be passed as in-parameters
+> > >> to the above function to get the power-state of their PM domains
+> > >> (genpds). Based on that, we can decide if priv->rproc->state should be
+> > >> to RPROC_DETACHED or not. Right?
+> > >
+> > >Got your idea, I think it should work yes, I am not so sure how. From
+> > >what I can see these power domains are managed by
+> > >drivers/pmdomain/imx/scu-pd.c and by enabling the debug messages I can
+> > >see the power mode is correct when the remote core is powered on:
+> > >
+> > >[    0.317369] imx-scu-pd system-controller:power-controller: cm40-pid0 : IMX_SC_PM_PW_MODE_ON
+> > >
+> > >and powered off:
+> > >
+> > >[    0.314953] imx-scu-pd system-controller:power-controller: cm40-pid0 : IMX_SC_PM_PW_MODE_OFF
+> > >
+> > >But I cannot see how to integrate this into the dev_pm_genpd_is_on() you
+> > >proposed. For a quick check, I added this function and it always return
+> > >NULL at dev_to_genpd_safe(). Can you help me to understand this part?
+> >
+> > Ulf's new API dev_pm_genpd_is_on needs to run after power domain attached.
 >
-> I think we should remove it, as it also doesn't have any users at the
-> moment. Anyone that needs it should define a custom enum for their
-> use-case.
+> Correct, but you need to provide the correct "dev" to it. See my other
+> reply to Hiago.
 >
-> And effectively an `Either<Regulator, EnabledRegulator>` is just a
-> `Regulator<Switch>` in Alexandre's proposal if I understood it
-> correctly.
+> >
+> > But if run after power domain attached, there is no API to know whether
+> > M4 is kicked by bootloader or now.
+>
+> As long as you have multiple PM domains attached for a device, genpd
+> will *not* power on the PM domain(s).
+>
+> Genpd does a power-on in the single PM domain case (for legacy
+> reasons), but that should not be a problem here, right?
+>
+> So what am I missing?
 
-Exactly. And btw, there is no reason to block the merging of a simple
-version with just enabled and disabled types while we discuss the rest,
-as long as it is implemented as a typestate. Adding more ways to control
-the enabled status just involves adding new types to be given as
-arguments to `Regulator<>` and their respective `impl` blocks, so it can
-be done incrementally on top of that base, which I believe everybody
-agrees is sound.
+Aha, PD_FLAG_DEV_LINK_ON is being used when you attach to the PM
+domains. I would re-work things in the driver (if needed) so you can
+avoid using this flag, then the PM domains should stay power-off until
+there is a call to pm_runtime_get_sync().
+
+[...]
+
+Kind regards
+Uffe
 
