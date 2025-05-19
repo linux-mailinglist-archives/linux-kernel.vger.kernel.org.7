@@ -1,90 +1,112 @@
-Return-Path: <linux-kernel+bounces-653357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-653360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB285ABB7F1
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 10:53:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04BA0ABB7FD
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 10:56:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9FC0E3AA204
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 08:53:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 188CE188B23B
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 08:56:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E89D26B953;
-	Mon, 19 May 2025 08:52:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="kTCQRPtw"
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E75726A0A0;
+	Mon, 19 May 2025 08:56:25 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3396026B945;
-	Mon, 19 May 2025 08:52:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E61F1B4F0F;
+	Mon, 19 May 2025 08:56:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747644756; cv=none; b=JAN7oXv4+ADndrPIvXetVMKMcpo52B/SafwAvfsZYuQaG/+BTGjhR8U2TmLhPQnLUsNORSkUj7UXqbYGoh7Ibukt+pXM5zSbgUHkjUrPk/cTehjbGQbAZhP2w9bMIseOWT2vghw6wkZZD4QzPvgb26KzJjbISbu9e30B9UXDQxA=
+	t=1747644984; cv=none; b=QS7CHNn9+9LNcPmNVQdeTqXkc2KqLh3xMmv4TKKdXffHfac8OGnF4a13a1LjXdt7V9e3/0KJ0sLvrB2Ryoa6enKprlD2aDatBB042+Fr3JDlX/u/kEvGwU6Irz9JWe92zqokuRXEexFyDYtODWrKWS/maUULqM17K0mwNgG/y6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747644756; c=relaxed/simple;
-	bh=o+BZPG4HTZQK5EkR2i0e4H+wb4OBpw813r8SfpCwT3k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sPUctsRgkrtKgoWoHbiNZuTScMMpGp8Q9xBodQdiH0e9hl+rOaNnFjYc91X3HjF3PW6kOU+Dw2KrXgpOZw5vWqRpzeYe1mHP/8ihWmXkvzf/CfxI7DjzqkcRmoqJ3ZUGiR8wDJZcJtF7iFCGXROe0N42TeaOoOUAGGFLmnsV0Tw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=kTCQRPtw; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=aaNx/UBvPW/YAYr0J1BIkqiBjr95NNZeumZcA+4ymxI=; b=kTCQRPtwfuFvm9OJ3H1cm9ouO3
-	y58FRaskcdaaszyHlbNuQqIlPUE2LbURQxvbh5rf42byuVpSMnNmcK4qhG2RPpGa/yV4wWUIdmPX4
-	uMSHhCejCsjCFpHEiYgrYpH2f01zdUzHB1IM2DnjiaUqYcQ2zAN4nuNwCXISG8U0VPgpDPsyWNJX0
-	q/Z2uM9/zLKKd6re6IM9hTg3kFmmndmoiBfdWdf612PPbs6sgowHXpqa+FYwoJ10SdxeMnOGOZhXH
-	sJnmP/IQK8xGcjgjPxTLlOW1J2AZfDD6lrKlIfcxDqN3UVDdTiPWavTHVtoc8naqgrodZ28FRrvgu
-	tn+a4Dpw==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1uGwEM-007B3M-2v;
-	Mon, 19 May 2025 16:52:19 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Mon, 19 May 2025 16:52:18 +0800
-Date: Mon, 19 May 2025 16:52:18 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Qunqin Zhao <zhaoqunqin@loongson.cn>
-Cc: lee@kernel.org, davem@davemloft.net, peterhuewe@gmx.de,
-	jarkko@kernel.org, linux-kernel@vger.kernel.org,
-	loongarch@lists.linux.dev, linux-crypto@vger.kernel.org,
-	jgg@ziepe.ca, linux-integrity@vger.kernel.org,
-	pmenzel@molgen.mpg.de, Yinggang Gu <guyinggang@loongson.cn>,
-	Huacai Chen <chenhuacai@loongson.cn>
-Subject: Re: [PATCH v9 2/5] crypto: loongson - add Loongson RNG driver support
-Message-ID: <aCrxQqo1UYdNdt8l@gondor.apana.org.au>
-References: <20250506031947.11130-1-zhaoqunqin@loongson.cn>
- <20250506031947.11130-3-zhaoqunqin@loongson.cn>
- <aCrIL_ZXL-UtaLdJ@gondor.apana.org.au>
- <96118a23-3e6c-c9d1-2135-bd7a22091f35@loongson.cn>
- <aCrqPnwr7lMJNOnL@gondor.apana.org.au>
- <9d70efaf-1d68-f8e5-d9a6-cd312fc99529@loongson.cn>
+	s=arc-20240116; t=1747644984; c=relaxed/simple;
+	bh=qpouYrWqzs13/DTjXJBCi/42yy5oibCTN2WW2JVHgdA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ncXkpcpWM2U9meLEX9AvA3PXS4HNgA2c+ucx1fj895nB/e701KyvuetzjqcbSeyjRsATLs9tPJ3euW9rC6eUt1D6fbzYd6xAtbd74BMmHHTTS4j1oHyPsKcUPkNbVuJek5Uskjr9K7gwpB9+R+4JdJJJ83yPi6LLcevS9K6OBeM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost (unknown [124.16.138.129])
+	by APP-05 (Coremail) with SMTP id zQCowABnpykq8ipoTR9sAQ--.11645S2;
+	Mon, 19 May 2025 16:56:10 +0800 (CST)
+From: Chen Ni <nichen@iscas.ac.cn>
+To: satishkh@cisco.com,
+	sebaddel@cisco.com,
+	kartilak@cisco.com,
+	James.Bottomley@HansenPartnership.com,
+	martin.petersen@oracle.com
+Cc: linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Chen Ni <nichen@iscas.ac.cn>
+Subject: [PATCH] scsi: fnic: Replace memset with eth_zero_addr
+Date: Mon, 19 May 2025 16:54:57 +0800
+Message-Id: <20250519085457.918720-1-nichen@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9d70efaf-1d68-f8e5-d9a6-cd312fc99529@loongson.cn>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:zQCowABnpykq8ipoTR9sAQ--.11645S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7WrW7CFWkKw4UAFy5WFW7Arb_yoW8GF1rpF
+	93t3sxCFW7JrWavwsrAan5Cr1avwn3ta4UC348Jas3urWFgF10ka45Jw1vqr95GrnaqrZF
+	vFyDJry3K3WrA3DanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvl14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Gr1j6F4UJwAm72CE4IkC6x0Yz7v_Jr
+	0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7MxkF7I0En4kS14v2
+	6r1q6r43MxkIecxEwVAFwVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJV
+	W8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF
+	1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6x
+	IIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvE
+	x4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvj
+	DU0xZFpf9x0JUqYL9UUUUU=
+X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
 
-On Mon, May 19, 2025 at 04:49:45PM +0800, Qunqin Zhao wrote:
->
-> Is it fine waiting in init-callback until someone calls exit-callback?
+Use eth_zero_addr to assign the zero address to the given address
+array instead of memset when second argument is address of zero.
 
-No that's just as bad as failing.  Remember this is exposed to
-user-space through af_alg.  If you make it wait it'll just appear
-to hang for the user invoking this.
+Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+---
+ drivers/scsi/fnic/fip.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-Cheers,
+diff --git a/drivers/scsi/fnic/fip.c b/drivers/scsi/fnic/fip.c
+index 6e7c0b00eb41..19395e2aee44 100644
+--- a/drivers/scsi/fnic/fip.c
++++ b/drivers/scsi/fnic/fip.c
+@@ -200,7 +200,7 @@ void fnic_fcoe_start_fcf_discovery(struct fnic *fnic)
+ 		return;
+ 	}
+ 
+-	memset(iport->selected_fcf.fcf_mac, 0, ETH_ALEN);
++	eth_zero_addr(iport->selected_fcf.fcf_mac);
+ 
+ 	pdisc_sol = (struct fip_discovery *) frame;
+ 	*pdisc_sol = (struct fip_discovery) {
+@@ -588,12 +588,12 @@ void fnic_common_fip_cleanup(struct fnic *fnic)
+ 	if (!is_zero_ether_addr(iport->fpma))
+ 		vnic_dev_del_addr(fnic->vdev, iport->fpma);
+ 
+-	memset(iport->fpma, 0, ETH_ALEN);
++	eth_zero_addr(iport->fpma);
+ 	iport->fcid = 0;
+ 	iport->r_a_tov = 0;
+ 	iport->e_d_tov = 0;
+-	memset(fnic->iport.fcfmac, 0, ETH_ALEN);
+-	memset(iport->selected_fcf.fcf_mac, 0, ETH_ALEN);
++	eth_zero_addr(fnic->iport.fcfmac);
++	eth_zero_addr(iport->selected_fcf.fcf_mac);
+ 	iport->selected_fcf.fcf_priority = 0;
+ 	iport->selected_fcf.fka_adv_period = 0;
+ 	iport->selected_fcf.ka_disabled = 0;
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.25.1
+
 
