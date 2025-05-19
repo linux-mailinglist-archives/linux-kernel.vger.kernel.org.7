@@ -1,231 +1,98 @@
-Return-Path: <linux-kernel+bounces-653117-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-653120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 859CEABB50D
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 08:25:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E32BEABB514
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 08:28:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E34D1891643
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 06:25:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F66017542B
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 06:28:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 166A6245005;
-	Mon, 19 May 2025 06:25:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AqTwNfly"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 026862459D0;
+	Mon, 19 May 2025 06:27:51 +0000 (UTC)
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D1FD1EF389;
-	Mon, 19 May 2025 06:24:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 622F124503F;
+	Mon, 19 May 2025 06:27:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747635899; cv=none; b=GHo+psVxeIJy3bR/K8izMQKeHVlAuRDkUKjlwRSRkZz6bfUz3k8X1MlJIkzV7WAa4jaazou3XDdwEYmaHdMXbYIuJzXJ7yBlQ53rIhGLfagfjuH2YcBn3CC9whVj33TyNQ/FPzAKB0RPm9fsk4jpH2wXA3ay/ibC4+RaPZQbvqo=
+	t=1747636070; cv=none; b=mnl9zNSvn1cXLTyRGJ0YwlJQVQZ0bW3AIjZH3tm1GekPgTeANx51Tx7w5cvLcTa9UWm2IjhpRu1f1Tliw6di5mSzZsS5c5YoydwWQDdBYZNdgxYnL89JbyIoQbxrOppbJL6dCV2p6Vc5gD+2uUBYZfNpw2bgVW+9/VzhZUE8l50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747635899; c=relaxed/simple;
-	bh=qqdLigL4p1RFcpO1tnEeFm0b3IOvT7UbbxtCInaNiaw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Uezu3u+3d5iXVlsgqmsF/4QEYMu3OfBxWVnpxyLLhPco/pkqgrubU0mz9fBrafa9rD9RDbTi2BdcuQ1drI2dEFzUWz69Xw23BZqok6Gs0iQoHxC9UhWlQHZuYOcK1BSflp5pm4lTKMYdp0s87gp87LNw3piEJRq9SLJDeN0u5ao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AqTwNfly; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D887C4CEE4;
-	Mon, 19 May 2025 06:24:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747635898;
-	bh=qqdLigL4p1RFcpO1tnEeFm0b3IOvT7UbbxtCInaNiaw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AqTwNflyqfIPyjbTuv8xyUa6p6YqrHHEYS5k/T0fEmZlAkKw98tip2UlPXiCX+Ibu
-	 k3Oy5FBaJecUwK/L+WTg8PVvcUCbA5v8wSLHdCozqBiMVHFItYUMM1ysnZFHSQLV3X
-	 b4Wn0KUzGaAqEcZJcgB8xdyXctnkdyXNutkbyKLaXgg33JLvEn+y6Eu+Ltndl3qH8N
-	 DD+e2IR4xSreI+Ve52BCcWWIU8IvmCxG7s2X8mdGx0P8UdlSIq4omrhUQGmGdwqSQs
-	 y/09pUrp/rL41tSqrIfnDwV2nQ7gGrQBjcdUQcM5q5E5YZfFYe24XoPDZl5vlfBmAI
-	 9FCLgHkj6aUmg==
-Date: Mon, 19 May 2025 08:24:56 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: zhangsenchuan@eswincomputing.com
-Cc: gregkh@linuxfoundation.org, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, Thinh.Nguyen@synopsys.com, p.zabel@pengutronix.de, 
-	ningyu@eswincomputing.com, linmin@eswincomputing.com, yangwei1@eswincomputing.com
-Subject: Re: [PATCH v1 1/2] dt-bindings: usb: Add Eswin EIC7700 Usb controller
-Message-ID: <20250519-transparent-eggplant-beagle-3abb7c@kuoka>
-References: <20250516095237.1516-1-zhangsenchuan@eswincomputing.com>
- <20250516095338.1467-1-zhangsenchuan@eswincomputing.com>
+	s=arc-20240116; t=1747636070; c=relaxed/simple;
+	bh=6flp1UUXguSYzp/SnYPLP9qX9DtOoSw+aELD6OUR8bE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=oWIB2P9cUMll1MuR+02EZclxAUd0JbygHwLh/IcndvOi/oTebu+T6FdNC9ghE0MSj5aY2dowwVq6GKp0DT7gMyct1qZpPKaopL4+nh55tF2fyuplEfqupVzpW3dxbzZPnxmkHiG302Xly3J6zesYtl6Ws+65tODPbWpQjbeofGc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost (unknown [124.16.138.129])
+	by APP-03 (Coremail) with SMTP id rQCowAAnO_ZfzypoXUhPAQ--.10629S2;
+	Mon, 19 May 2025 14:27:43 +0800 (CST)
+From: Chen Ni <nichen@iscas.ac.cn>
+To: gregkh@linuxfoundation.org
+Cc: linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Chen Ni <nichen@iscas.ac.cn>
+Subject: [PATCH] usb: gadget: epautoconf: Use USB API functions rather than constants
+Date: Mon, 19 May 2025 14:25:44 +0800
+Message-Id: <20250519062545.724727-1-nichen@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250516095338.1467-1-zhangsenchuan@eswincomputing.com>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:rQCowAAnO_ZfzypoXUhPAQ--.10629S2
+X-Coremail-Antispam: 1UD129KBjvdXoW7JFWkKry8XFy3AF17uF1Dtrb_yoWfWFX_ua
+	yUZ347WwsrWa4qyr4UG3ySkrWI9asaq3WvvF9YgFn8AFW5Ka1UXr18JrWkGFn7uFnF9r9x
+	u3sxKa90k3yxZjkaLaAFLSUrUUUUbb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbVxFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_
+	Gr1UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v26r4UJVWxJr1lOx8S6xCaFVCjc4AY6r
+	1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCY1x0262kKe7AK
+	xVWUAVWUtwCY02Avz4vE14v_GF1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr
+	0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY
+	17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcV
+	C0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY
+	6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa
+	73UjIFyTuYvjfU83kuDUUUU
+X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
 
-On Fri, May 16, 2025 at 05:53:37PM GMT, zhangsenchuan@eswincomputing.com wrote:
-> From: Senchuan Zhang <zhangsenchuan@eswincomputing.com>
-> 
-> Add Device Tree binding documentation for the ESWIN EIC7700
-> usb controller module.
-> 
-> Co-developed-by: Wei Yang <yangwei1@eswincomputing.com>
-> Signed-off-by: Wei Yang <yangwei1@eswincomputing.com>
-> Signed-off-by: Senchuan Zhang <zhangsenchuan@eswincomputing.com>
-> ---
->  .../bindings/usb/eswin,eic7700-usb.yaml       | 120 ++++++++++++++++++
->  1 file changed, 120 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/usb/eswin,eic7700-usb.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/usb/eswin,eic7700-usb.yaml b/Documentation/devicetree/bindings/usb/eswin,eic7700-usb.yaml
-> new file mode 100644
-> index 000000000000..eb8260069b99
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/usb/eswin,eic7700-usb.yaml
-> @@ -0,0 +1,120 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/usb/eswin,eic7700-usb.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Eswin EIC7700 SoC Usb Controller
-> +
-> +maintainers:
-> +  - Wei Yang <yangwei1@eswincomputing.com>
-> +  - Senchuan Zhang <zhangsenchuan@eswincomputing.com>
-> +
-> +description: |
-> +  The Usb controller on EIC7700 SoC.
-> +
-> +properties:
-> +  compatible:
-> +    const: eswin,eic7700-usb
-> +
-> +  reg:
-> +    maxItems: 3
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  interrupt-names:
-> +    items:
-> +      - const: peripheral
-> +
-> +  clocks:
-> +    maxItems: 3
-> +    description: handles to clock for the usb controller.
+Use the function usb_endpoint_type() rather than constants.
 
-Useless description, drop. Do not explain what DT syntax is.
+The Coccinelle semantic patch is as follows:
 
-> +
-> +  clock-names:
-> +    items:
-> +      - const: suspend
-> +      - const: aclk
-> +      - const: cfg_clk
-> +    description: the name of each clock.
+@@ struct usb_endpoint_descriptor *epd; @@
 
-Drop description.
+- (epd->bmAttributes & \(USB_ENDPOINT_XFERTYPE_MASK\|3\))
++ usb_endpoint_type(epd)
 
-> +
-> +  resets:
-> +    description: resets to be used by the controller.
+Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+---
+ drivers/usb/gadget/epautoconf.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Missing constraints.
-
-> +
-> +  reset-names:
-> +    items:
-> +      - const: vaux
-> +    description: names of the resets listed in resets property in the same order.
-
-Drop description.
-
-> +
-> +  eswin,hsp_sp_csr:
-
-DTS coding style
-
-> +    description: |
-
-Drop |
-
-> +      High-speed equipment control register.
-
-For what purpose?
-
-> +    $ref: /schemas/types.yaml#/definitions/phandle-array
-
-Missing constraints.
-
-> +
-> +  ranges: true
-> +
-> +  dma-noncoherent: true
-> +
-> +  numa-node-id:
-> +    maximum: 0
-
-Huh? What is the point of this if this is fixed to 0?
-
-There is no way this passes any tests. Please look at writing-schema
-docs.
-
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +  - interrupt-names
-> +  - interrupt-parent
-> +  - clocks
-> +  - clock-names
-> +  - resets
-> +  - reset-names
-> +  - eswin,hsp_sp_csr
-> +  - dma-noncoherent
-> +  - ranges
-> +  - numa-node-id
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    usb {
-> +        #address-cells = <2>;
-> +        #size-cells = <2>;
-> +
-> +        usbdrd3_0: usb0{
-
-usb, missing space, drop unused label
-
-> +          compatible = "eswin,eic7700-dwc3";
-> +          #address-cells = <2>;
-> +          #size-cells = <2>;
-
-Order properties according to DTS coding style
-
-> +          clocks = <&clock 270>,
-> +                   <&clock 545>,
-> +                   <&clock 546>;
-> +          clock-names = "suspend","aclk", "cfg_clk";
-> +          eswin,hsp_sp_csr = <&hsp_sp_csr 0x800 0x808 0x83c 0x840>;
-> +          resets = <&reset 0x07 (1 << 15)>;
-> +          reset-names = "vaux";
-> +          ranges;
-> +          numa-node-id = <0>;
-> +          status = "disabled";
-
-No. You cannot make it disable and it makes no sense.
-
-> +          usbdrd_dwc3_0: dwc3@50480000 {
-
-Node names should be generic. See also an explanation and list of
-examples (not exhaustive) in DT specification:
-https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
-
-Fold the child node into the parent.
-
-Best regards,
-Krzysztof
+diff --git a/drivers/usb/gadget/epautoconf.c b/drivers/usb/gadget/epautoconf.c
+index ed5a92c474e5..30016b805bfd 100644
+--- a/drivers/usb/gadget/epautoconf.c
++++ b/drivers/usb/gadget/epautoconf.c
+@@ -158,7 +158,7 @@ struct usb_ep *usb_ep_autoconfig(
+ 	if (!ep)
+ 		return NULL;
+ 
+-	type = desc->bmAttributes & USB_ENDPOINT_XFERTYPE_MASK;
++	type = usb_endpoint_type(desc);
+ 
+ 	/* report (variable) full speed bulk maxpacket */
+ 	if (type == USB_ENDPOINT_XFER_BULK) {
+-- 
+2.25.1
 
 
