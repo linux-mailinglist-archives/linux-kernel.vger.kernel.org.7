@@ -1,113 +1,120 @@
-Return-Path: <linux-kernel+bounces-654193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-654195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45FD9ABC51D
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 19:03:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6AC2ABC523
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 19:03:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 663431B61C0B
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 17:03:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90EBB7A341D
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 17:03:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 454A828852B;
-	Mon, 19 May 2025 17:03:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FD29288520;
+	Mon, 19 May 2025 17:03:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D7vPJq8u"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="J3ct4x9S"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F3DF1DF963;
-	Mon, 19 May 2025 17:03:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0967288522
+	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 17:03:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747674182; cv=none; b=JSH2EiEqC7Ke9kuJuCKXIBSmgv1cHlvFV9F/wytGsmPTnH7J1M8JJwc35LdqwAERVBGe+A/F74sCk/XIhMLH1WS3A/1qLjO/GeiJjFGJDL0qeeaWDJPPL7LLIMTrrwz7FT0LaTrm3Bwqwo7QSrVRWegzK87hW8XOIbDfl2YO+fg=
+	t=1747674197; cv=none; b=n8mdo385H3J+2QW7MqctHfqdsMViUO54WCFn7giXxH62ihlm5JpRFuadta4ZSnb0/SRQIR0RcsIlvKK4QfL/oknaospPz1Rogs6G7DuNWngWk/S7TVdzp4jisx41YbP2wKkEzRqAlzA/HCE82rphQrOX6R6OKjsm47lMWvSSgvA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747674182; c=relaxed/simple;
-	bh=dLkUJ3SdmyWzypJshGqqCuSQZ/CXnDd1H8MEMaxlk4s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=go0idILoSExK7xv5B2f+h/9dpEJo5VKWfL0PMqh4obwCe3Am4T0xpBNaQGNAWOs6UFC0yE3fTu1DWRqTNaDl83sI+aefHWZnA6y0hBc/SbL1VcDbzs3pEpnYJTqr42nRgJ+2I5XMakkYuyXvj2HxBy9giz889Q3NGd6EmW8+zYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D7vPJq8u; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-22e19c71070so7750245ad.3;
-        Mon, 19 May 2025 10:03:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747674180; x=1748278980; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dLkUJ3SdmyWzypJshGqqCuSQZ/CXnDd1H8MEMaxlk4s=;
-        b=D7vPJq8uLTS77eJMBVVjfKXLvbtBDqQXZJFN9jvYyca8ORMjH3Khdskm9McsmEMCvH
-         SJDY0O8EkwPIf19Q4Jgh3q6AuwuifOytn99HzGUkA03wP9ys8g8534PQlTUmXqU/Jkjf
-         j9+NLbhRUW0EumCm9pIGkKcf3wwTy6ZCW60aXKqtDJCqCz51obhGJyUbQQoW5K6ez52M
-         8S7NevuHV1+B8AM1Zo/qDusSEivw3Y47P+Lm2cLexqJawfUZ468C1ihpEJT/Czutiosw
-         efIXoGKVd8SULufoBnA3OayuEvi5EGrWkrXaPnr4zbli/3+2t7+EM+AtSVYceAk4nprS
-         4jaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747674180; x=1748278980;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dLkUJ3SdmyWzypJshGqqCuSQZ/CXnDd1H8MEMaxlk4s=;
-        b=sjWU+nF+4DNvnpCCsDwetyp2VDsD9s5nizR4ngSrNzGh3qH1/mZ/IknTNxHnUat56J
-         Fiz6M5kQlAsS+YKSFH92h1VJyhn6PkS+gvV4XzHd2FG5DWN2cjBYMVL+Zvhr3kyjBYiw
-         neJAmA7DsQ1gIlpbOkE0eGaeu8VOq4Ksh+OJcdu8+94aAp/Zg3kkJRPfYQPGoAnNzTgU
-         larGBaFb2jdQpHWokYRHTQr1mvwj6mkj6Qhd0cx2R+W7RWEZtLGV3tpT+qPBvKydrMI4
-         UWW8AMWkM1xKvfuV/SKGE55+9fjcBF0nam9jogIYJfiAF/KS3bODTLrznJMLOGN/ySlf
-         q4RA==
-X-Forwarded-Encrypted: i=1; AJvYcCUNCF4xhwVcBK2wPUdliGp/A/mVeaQ3JEquq3GbraN/aN46Tbzvz6jIop8Jd+0iDymx7LoTD7CN@vger.kernel.org, AJvYcCVACHazgQB0fAbFWtpNEY/8zAnKUcyWXvPThWcK4A8PBLD8eurJJ2P+ZcX0TBGAC0J+KoxmwYqx8LGmVNAaIMU=@vger.kernel.org, AJvYcCXTBOgwKl9zs6HTdmUuant0Lu7qHCrZVGBVMDvxmN9DVlpReO+gVdJjaNdBJB2zhddu5xGyCMSnwMjx+e8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxjlyRiPImYMDE0G3OrWofOHB/nkKy3O5nxcEeYiDHKLaMm6kqK
-	+MtKA7sWXLrscNQ6MUT+Hl0obIkGQoRg4UTzFnT6EaIZUuyWtDbp60kTgyvVN6s9Y6//uWYeDaV
-	craID05992Fizd8rM8pRg7mzZsWyq1ns=
-X-Gm-Gg: ASbGncu53POEL6yiYuGMWhmFijJh3V9wkoOcd3kAEPcGg7Ciqx397edDrA43TFISkSg
-	KdjFFhGhdZWeIwq3BC2IaCXTY5ehsiOADL7kZlHmPExEWgOwr0ZcNsXQLFvSew7Bwk8LTSlze3B
-	PA9msvDR0JNy1yn5OITztAyQP2UUcmMkqU
-X-Google-Smtp-Source: AGHT+IFbR/hkcZrextwiHSaNvyH4tAV9pXid5iCOxR5MP99p8ZrfDGeKZfpphVbbGXYZSk5vQ78hf1JU1jwExjH5G/s=
-X-Received: by 2002:a17:903:2cc:b0:22e:361e:7572 with SMTP id
- d9443c01a7336-231d43bb4f5mr63483115ad.7.1747674180455; Mon, 19 May 2025
- 10:03:00 -0700 (PDT)
+	s=arc-20240116; t=1747674197; c=relaxed/simple;
+	bh=JYOLy1V8LnTKP6Ii4/TJACY1NDLLiuoT+YsL1UYreTw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OqBy5lgPuU26MKmH7G1uoGT+jWl7DptzoamFQ7Ho93TExeRkkEQLRD9UrwgtzecTJnBRVkdYAztRRFMHF5xTEK1dFDtpwLO58JNrngSG8wTScVzwCxa1yvmKjomAco7pKSnhzFx+4/rgbCzW+icfVtSVvkM+HP+HDtN7GQe6hmA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=J3ct4x9S; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=tosP
+	yPyOgyvRyFhM+9E8VMFTT2SJO0IgrpkZvR345OM=; b=J3ct4x9SlIVLdaBucsJI
+	d1VMAnBxqggeYDVxkfa0hzoQ8NzTsSkr/7VPh9xXMF2+U5BN01fzS1lNirZYCUut
+	yUWwdsn2s7tR6EhsJHc2eFcDs9uCjk3Ca+jhNfd0H8TDRXVZV/8htMh5sBbRB4eu
+	3NJqEEyotDDImG1BfAadVGfm+ysfJLa4mcjlj20f3s2Ux52oQ2DhzjLtckIs8N0K
+	yrQlHdNPBnZrhqIv8YfsaPZSEIJMdLYEOdmHh/1b7cbM33rM8PualCdIl9H90Ulv
+	nXYXxBHerAZzEu9XgaEHeueqGbRjY6du+TCIWK1E2LR3lwx8j1GErf2swnzv+prL
+	zQ==
+Received: (qmail 2572961 invoked from network); 19 May 2025 19:03:12 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 19 May 2025 19:03:12 +0200
+X-UD-Smtp-Session: l3s3148p1@cM4CG4A1jpBZz6uL
+Date: Mon, 19 May 2025 19:03:04 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Jian Zhang <zhangjian.3032@bytedance.com>
+Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] i2c: slave-eeprom: add latch mode
+Message-ID: <aCtkSBZfkc2k1jnb@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Jian Zhang <zhangjian.3032@bytedance.com>,
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241209060422.1021512-1-zhangjian.3032@bytedance.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250517085600.2857460-1-gary@garyguo.net>
-In-Reply-To: <20250517085600.2857460-1-gary@garyguo.net>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Mon, 19 May 2025 19:02:47 +0200
-X-Gm-Features: AX0GCFtaysJVcUQOMTcbPDH1T0mGXdawyzH-WpOc8Eu6TBiYqOuUj-gxkOrlqTk
-Message-ID: <CANiq72kdReW=OVdKPo4CJ1b+DU0GbkLxOOmEh+5C7zW9NgFtaA@mail.gmail.com>
-Subject: Re: [PATCH] rust: compile libcore with edition 2024 for 1.87+
-To: Gary Guo <gary@garyguo.net>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, stable@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, est31@protonmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="tyMNv7CWzo/9Mar1"
+Content-Disposition: inline
+In-Reply-To: <20241209060422.1021512-1-zhangjian.3032@bytedance.com>
 
-On Sat, May 17, 2025 at 10:56=E2=80=AFAM Gary Guo <gary@garyguo.net> wrote:
->
-> Rust 1.87 (released on 2025-05-15) compiles core library with edition
-> 2024 instead of 2021 [1]. Ensure that the edition matches libcore's
-> expectation to avoid potential breakage.
->
-> Cc: stable@vger.kernel.org # Needed in 6.12.y and later (Rust is pinned i=
-n older LTSs).
-> Link: https://github.com/rust-lang/rust/pull/138162 [1]
-> Closes: https://github.com/Rust-for-Linux/linux/issues/1163
-> Signed-off-by: Gary Guo <gary@garyguo.net>
 
-Cc'ing est31 -- I will add:
+--tyMNv7CWzo/9Mar1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Reported-by: est31 <est31@protonmail.com>
+On Mon, Dec 09, 2024 at 02:04:21PM +0800, Jian Zhang wrote:
+> The read operation is locked by byte, while the write operation is
+> locked by block (or based on the amount of data written). If we need to
+> ensure the integrity of a "block" of data that the other end can read,
+> then we need a latch mode, lock the buffer when a read operation is
+> requested.
 
-Thanks!
+I don't really understand what you want to fix here. Does this patch
+really fix your issue because...
 
-Cheers,
-Miguel
+>  	switch (event) {
+>  	case I2C_SLAVE_WRITE_RECEIVED:
+> +		if (eeprom->latch) {
+> +			spin_lock(&eeprom->buffer_lock);
+> +			memcpy(eeprom->buffer_latch, eeprom->buffer, eeprom->bin.size);
+> +			spin_unlock(&eeprom->buffer_lock);
+> +		}
+
+... what advantage brings you this memcpy of the buffer to a latch after
+every single byte is received?
+
+> +	if (of_property_read_bool(client->adapter->dev.of_node, "use-latch")) {
+
+If there really is a problem, we don't need a binding for it but should
+use the fix in all cases.
+
+
+--tyMNv7CWzo/9Mar1
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmgrZEQACgkQFA3kzBSg
+KbapsA/7B0NXjBKo61utDIL4MDx8yXm2LrModlmuPjzmxkLcnLgpK8uSmUQNM2XC
+KJbxf5Klqy3PwwX0X6t+yqti997smRGALB5dFHAAZP4XjtJ4lnv+2X0CTHmNBrli
+r++c3Pc63x9ZMRPPnRsriT+wS4XRI8GUIkHDW/ViCXoprMxqS9YjvUXOauRj/8vF
+JWE1JvfaEQwC1tbKjhl8kyNiHzHWAy+rxT6YowbcNPup/DhUS+3BsV/yNH6hPfmk
+vm7Gkw61UU3U/kteNmNN8zh2mp2zVzGEFSmuZUv9+Gmp7jOKEI7p/A4QvKlFXjy7
+RwqPYnyXPNLcw4vEMI2apFHBPo9jNb5khkv4r3hiuvjXFsQwu/8r7/DhdNXICB35
+gTO8r1RIimAqdHBnVoCWnbDyQLWeK+WtKxYNYS3jiFayUnw5GhEZ+ASMgzd1prw7
+V9lKGV1hFsPr731vrOaqebf0lKPfy+vNF53Z347ZMMOhRVsQMPDiYEmwpz/9POB1
+soEdma9U+TjNjAEyWYLf/Hwo4jBfvs+iL9C1L9ZliBi++uomRQ4fwPpdXK4qyrig
+S+Y5iA8KWe35XCKFMPhC4C+cjoHkCDtxNl0E/QQgmEMBDShGmn3+cEpCeIuPtSW/
+HlQ16YrIVMxqYn/jWbqdbJtdOwopfQxlHf8wqFPakNcQFYsejzc=
+=CLRB
+-----END PGP SIGNATURE-----
+
+--tyMNv7CWzo/9Mar1--
 
