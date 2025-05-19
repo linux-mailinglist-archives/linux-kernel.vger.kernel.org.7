@@ -1,127 +1,123 @@
-Return-Path: <linux-kernel+bounces-653110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-653114-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 780C2ABB4F6
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 08:17:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F0E4ABB505
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 08:21:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A1F807A4216
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 06:16:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4BB2A7A561B
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 06:20:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53FBC245025;
-	Mon, 19 May 2025 06:17:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F81A24467C;
+	Mon, 19 May 2025 06:21:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WcjB5R5L"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="P30h46wv"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23163243374;
-	Mon, 19 May 2025 06:17:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49E2D1D8E1A
+	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 06:21:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747635454; cv=none; b=caKKyajQB88xnL66glYNM74IMUjj4Mk7WVzMwUyAvu1zD6ImeB4JhvQiIZ7sqyxcYaxJE+o2x+vqv5P1KIL4LtUzgG8NHmsHJE8C5zwsk++1TeaQ1PyOW9EXWWoyXKIG24w+uTUyCZuzWXRAznKFoDemlxt8cB2Y3J23rGP2kpY=
+	t=1747635669; cv=none; b=L4758eSU8BXVQwqOYVQixDvTduo/C7TdTO6GJZcIBwWGN12JOGmBfhoKMQNrPVnPCs/UrAlx/9Rox1R/Q7jwblUqbWgLOOQUHRQMMaNkgWuWEBFGysxNwx6W1Dpl8MkYsi5XCcbS641EABxthC7evQlBBWoNK1rRFSzJYH5VXuc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747635454; c=relaxed/simple;
-	bh=AsaBNs4kioFtrIJ7t739fMEgCPnoIPz41+KWg4JpbjM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TH9CaxgJWWdZxXNmCKwad+K92++tzxE8uO6n2cFRFvsdkzMFF+fcCJUTFzUpXAqYJlw0aLMkRjEooxxEELAk+IwdMyUUS4KgwLgvPnWOVZcFqcIeZSesMMR5Hh2rjcWLCHswAQDh/K+462ZmfJf4/euX9GXzIcU0TVWZ2hmxMpw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WcjB5R5L; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1747635453; x=1779171453;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=AsaBNs4kioFtrIJ7t739fMEgCPnoIPz41+KWg4JpbjM=;
-  b=WcjB5R5LUE6UU3iFEYKNlwtnoWk+yvHe6WURHzgy6XpWMF+5CSPOchuT
-   m6ec3X5SPkdXIQSqSdT4ZU+Ns+5SiSc5qy7K7PrjhsoDTTGYEAmz8LMJA
-   keBYxRfcML7N+Ou4dSJj6iGH6wpGVVfRZ/fOoYQxVhMRf4TH4D/dIc8FI
-   Xvs7DPQ86IhFOgWYIQMbIti80Y2aKYTEDoBsfFdBUXNpKGWB2z+3MayiR
-   v4nGEwa6LMh9t2hEqMFebL33boDgGDnV32cCBVsBUaQB8bl0DfWaHPqJG
-   lYlhZ+v29qfHH8oEYhojQObY+KGplAB9jXMzG0MQxUAWkmEt5slqUtyk8
-   w==;
-X-CSE-ConnectionGUID: VzfId4MtTJKoUM71oXW4hg==
-X-CSE-MsgGUID: C8tuxtPwRQui2VxE+SUNbg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11437"; a="49221150"
-X-IronPort-AV: E=Sophos;i="6.15,300,1739865600"; 
-   d="scan'208";a="49221150"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 May 2025 23:17:32 -0700
-X-CSE-ConnectionGUID: 38vCFrusSRunSaoridHHng==
-X-CSE-MsgGUID: mAkClPmLT1Wq5WLSgxJbhA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,300,1739865600"; 
-   d="scan'208";a="144246992"
-Received: from mwiniars-desk2.ger.corp.intel.com (HELO [10.245.246.4]) ([10.245.246.4])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 May 2025 23:17:28 -0700
-Message-ID: <da6da5ec-53a4-4e47-aac0-3ddcb3a1e8b9@linux.intel.com>
-Date: Mon, 19 May 2025 09:18:40 +0300
+	s=arc-20240116; t=1747635669; c=relaxed/simple;
+	bh=fH4ypnsI/MfhhHZ+DxWHo23PH+rJEDeMHxcWT6aZwo0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rluYQIVabgQaM4YF8fBji/61a93cWIAyMAfDdJcPFcLNLLeM0Mwcxs505EZfMyVujg1iqEmw8uS45gUPAopj4PLf55JgxGJY8gznrqiOO2UAct8jPJGQLyZaz2S3UgmDGldio83rA44CVbTTM+7NkAuWCGPHfbR+bp8Scq1jj0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=P30h46wv; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1747635665;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DxY7EgT/RNd0tv3+QSKlLScSTvHaTBPFXOYePAlhj1I=;
+	b=P30h46wvBaj+p8/JfFj/2aYaIusliad6C0U+JC+CTutn3a+Dz8tfJPuKnsUPxbRKqBmWHq
+	AixpdeFeLRuQCF0+7Mz83+AjYziDC1L9tuqx9yQ+aIJHg9lkmPhymq94YYDN2I2m/hVSzg
+	h6KN0DknBhG9rWbEadIrug8U8gV/3fA=
+Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
+ [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-245-P-bwJeHjPPSVk2uH3a9jMQ-1; Mon, 19 May 2025 02:21:04 -0400
+X-MC-Unique: P-bwJeHjPPSVk2uH3a9jMQ-1
+X-Mimecast-MFC-AGG-ID: P-bwJeHjPPSVk2uH3a9jMQ_1747635663
+Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-ad56222a1easo82931266b.1
+        for <linux-kernel@vger.kernel.org>; Sun, 18 May 2025 23:21:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747635663; x=1748240463;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DxY7EgT/RNd0tv3+QSKlLScSTvHaTBPFXOYePAlhj1I=;
+        b=VdbDhfNkFMQfXUlg7nZAViozCkgVPeABNKjSFO8zaZctyLS/WJBF4kY0hxQNuPti3G
+         04ITZIncuwdrPsPCOYxwmr8Ny+hdgkWqcfqBbaD5hOZFQdFsAjUPt6mhadcZrVS/505g
+         qODnuL6LeeU9ReAzckOXoEkRqdyZxzeVlQ2A5NeWxUzmKwyoAwbcPCekpfuD8h6/PLWW
+         lkX3dOjlC+GysyLqMrWeg/TM7Cu9UpdVeC7SAP7g7agWlXHw/M2iVgNSwiNi0bbG7rAH
+         v+9fXnJvk0qWLDSVW6YQfkE0lCOUDuy8yApKv68P9wSULOQCZ1swF4C5/MKcHn6j0CHQ
+         moCw==
+X-Forwarded-Encrypted: i=1; AJvYcCVz4wcq2dKQ/+ajtwzae468/6aPzaowJCUPk8ADUN4R20p+BPGzWvIXOqeZOuMoqqxOnHD/wt8U9Am/5/Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwyJJBtkjjYX4rcK4pvXKBkhjqi0OXd4UtxJ/V/VWpQ+WV1jvGw
+	sQTM2MZvr8AoxmBa2BCdABMdqBD48Elw5oPSjsetwHqFMHqq9wZB7HOQW6PIHKZZ/lxtf6DwyE0
+	4WMo0+a9Pi2H39OLzzGhvjnfn66GZaX3yvPGOQUNr8IGVXsIZQSxRGswwotpEVVx7avPAn+WF90
+	Sq67wGzHTjXnJU8UJNddm2/7zk/olx7iYNyZj+CpRm
+X-Gm-Gg: ASbGncsv7zWKDYmacyWVmYoBmpB+5OpycAyKSa2ozRbTpQj2FBHc4PNfGMDas0eJJVd
+	xveUg+kCwqV0Pk57+sdKfbOD3+IRIUmoeE+OT5VzPzVS7Zx/j/oreAOBm6+j/BSEEBbIpL3AkSk
+	vnH+k9IUX1q9m1tuxo25Xaf3g=
+X-Received: by 2002:a17:907:97ca:b0:ace:f2c2:5a4 with SMTP id a640c23a62f3a-ad52d49e2c7mr1055602366b.13.1747635662897;
+        Sun, 18 May 2025 23:21:02 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEAmjmvIL3o1iKm123C/5o27j1Q6dvBrOmlO7D05cMeFXjqCGVtdtOGto6dJkIIUfbXvpluId+XTMClkgAgqEQ=
+X-Received: by 2002:a17:907:97ca:b0:ace:f2c2:5a4 with SMTP id
+ a640c23a62f3a-ad52d49e2c7mr1055600666b.13.1747635662518; Sun, 18 May 2025
+ 23:21:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/5] PCI: pci_ids: add INTEL_HDA_WCL
-To: =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>
-Cc: lgirdwood@gmail.com, broonie@kernel.org, linux-sound@vger.kernel.org,
- kai.vehmanen@linux.intel.com, ranjani.sridharan@linux.intel.com,
- yung-chuan.liao@linux.intel.com, pierre-louis.bossart@linux.dev,
- guennadi.liakhovetski@linux.intel.com, bhelgaas@google.com,
- linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250508180240.11282-1-peter.ujfalusi@linux.intel.com>
- <20250508180240.11282-2-peter.ujfalusi@linux.intel.com>
- <20250515170318.GA1507459@rocinante>
-Content-Language: en-US
-From: =?UTF-8?Q?P=C3=A9ter_Ujfalusi?= <peter.ujfalusi@linux.intel.com>
-In-Reply-To: <20250515170318.GA1507459@rocinante>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20250430144651.621766-1-tglozar@redhat.com> <5c64d78a-1650-5404-c2cb-8190627d10fc@redhat.com>
+In-Reply-To: <5c64d78a-1650-5404-c2cb-8190627d10fc@redhat.com>
+From: Tomas Glozar <tglozar@redhat.com>
+Date: Mon, 19 May 2025 08:20:50 +0200
+X-Gm-Features: AX0GCFsSVtCoIj9QVehT1OHITqlahuu0UR84rYeizFCjucynqTCzS0iI1MSeYnQ
+Message-ID: <CAP4=nvThhq_0vF_xGCEnT6oNhpt_JHoEuOPmy3uT7jR_0r-YbQ@mail.gmail.com>
+Subject: Re: [PATCH] rtla: Define _GNU_SOURCE in timerlat_bpf.c
+To: John Kacur <jkacur@redhat.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>, linux-trace-kernel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Luis Goncalves <lgoncalv@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+so 17. 5. 2025 v 0:22 odes=C3=ADlatel John Kacur <jkacur@redhat.com> napsal=
+:
+> Question for Tomas, should we spend sometime to make this work for older
+> versions of glibc without a definition of struct sched_attr?
 
+Older versions of glibc without a definition for struct sched_attr use
+the one in utils.h:
 
-On 15/05/2025 20:03, Krzysztof Wilczyński wrote:
-> Hello,
-> 
-> Just a few small nitpicks.
-> 
-> Consider an update to the subject to match the history, e.g.,
-> 
->   PCI: Add Intel Wildcat Lake audio Device ID
+#ifndef SCHED_ATTR_SIZE_VER0
+struct sched_attr {
+    uint32_t size;
+    uint32_t sched_policy;
+    uint64_t sched_flags;
+    int32_t sched_nice;
+    uint32_t sched_priority;
+    uint64_t sched_runtime;
+    uint64_t sched_deadline;
+    uint64_t sched_period;
+};
+#endif /* SCHED_ATTR_SIZE_VER0 */
 
-I have looked up the history and used the previous audio IP ID addition
-commit as template:
+In fact, this one works fine in timerlat_bpf.c, if you build rtla on
+older glibc, it will work even without this patch. It's the glibc one
+which is not defined without _GNU_SOURCE.
 
-a1f7b7ff0e10 ("PCI: pci_ids: add INTEL_HDA_PTL_H")
-
-PCI: pci_ids: add INTEL_HDA_PTL_H
-
-Add Intel PTL-H audio Device ID.
-
-I will update and stick with the suggested suggestion for the future.
->> Add PCI id for Wildcat Lake audio.
-> 
-> Also, for consistency with other such commits:
-> 
->   Add Wildcat Lake (WCL) audio Device ID.
-> 
->> Signed-off-by: Peter Ujfalusi <peter.ujfalusi@linux.intel.com>
->> Reviewed-by: Kai Vehmanen <kai.vehmanen@linux.intel.com>
->> Reviewed-by: Bard Liao <yung-chuan.liao@linux.intel.com>
->> Reviewed-by: Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
->> Reviewed-by: Ranjani Sridharan <ranjani.sridharan@linux.intel.com>
-> 
-> Acked-by: Krzysztof Wilczyński <kwilczynski@kernel.org>
-> 
-> Thank you!
-> 
-> 	Krzysztof
-
--- 
-Péter
+Tomas
 
 
