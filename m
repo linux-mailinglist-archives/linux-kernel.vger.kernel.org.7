@@ -1,127 +1,114 @@
-Return-Path: <linux-kernel+bounces-653366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-653369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F602ABB814
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 11:02:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9ED0AABB81D
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 11:03:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D04A1890BA7
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 09:02:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1885116E371
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 09:03:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57D5026B97E;
-	Mon, 19 May 2025 09:02:25 +0000 (UTC)
-Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3935C26B978;
+	Mon, 19 May 2025 09:03:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Ibm3iPrf"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7AF71EB5FC;
-	Mon, 19 May 2025 09:02:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 700D426A08F;
+	Mon, 19 May 2025 09:03:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747645345; cv=none; b=UYAr6GoGK1HL0VPIy7fSZiI9Oq+ogcdZx5K7G4u9Qt1yufzVv6NXYO2sXRKwrTk8SWg2WWbaOTK4nesWsNZjTx9HdcvFI1CkcPAd5n0O7Qt7oPfVb95yS0XrBLfsUt5rwXyPWkfvShyLp29k5mUEla3Xt2RQTF7jAihOI6x6Y5I=
+	t=1747645405; cv=none; b=Gfw8tcyCbbMJ3UNuOQ1WoeNBinySt2MsiRcofwiEoR8N+TNJE/pqADqneyPpn+8OGsp8eHMXEkrbh7oalKHUfKIZeXCUIcP7Pu3IBswX6fbG7HyHBXn3tP1l8TAvy6/EQK/RN4gYGsAdYTt2vMc2bRjZN0HPDSonlT2kZ0ExOhM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747645345; c=relaxed/simple;
-	bh=srN6BUQ0VvPk4Z6SW0hcqEYtKWEqPnMzxwlMFbHRIO0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gIaLmGqSemsh1amZ285o5IfacCf2t+4TmQLDyo9s6XP8cHHGhbZ3Je71fi7Wg5S8M1anPaAU17sqgdYE8bjJk+yU1eHTkdRMC47ptg3XcGrwwIkmOXa7Xr502iqSxqedyX7ljts4TBrVGXaOWNbgV2y9j9SyzxnrXNh7a4H0SKI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost.localdomain (unknown [124.16.141.245])
-	by APP-05 (Coremail) with SMTP id zQCowACn4yWR8ypoWoNsAQ--.11038S2;
-	Mon, 19 May 2025 17:02:10 +0800 (CST)
-From: Wentao Liang <vulab@iscas.ac.cn>
-To: saeedm@nvidia.com,
-	leon@kernel.org,
-	tariqt@nvidia.com,
-	andrew+netdev@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com
-Cc: netdev@vger.kernel.org,
-	linux-rdma@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Wentao Liang <vulab@iscas.ac.cn>,
-	stable@vger.kernel.org
-Subject: [PATCH v2] net: mlx5: vport: Add error handling in mlx5_query_nic_vport_qkey_viol_cntr()
-Date: Mon, 19 May 2025 17:01:47 +0800
-Message-ID: <20250519090147.1894-1-vulab@iscas.ac.cn>
-X-Mailer: git-send-email 2.42.0.windows.2
+	s=arc-20240116; t=1747645405; c=relaxed/simple;
+	bh=Q0d33B7LltNYTMr1EFERK1drpt83+vRo75Ctu5wGK/Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ULIqSGHWH+0MJt/wvnkvViM43RJ/9Qi18CM+4lPty2cS9tsPG0zmeAkRtvYfcTyBX7SUrIEjWlS+VN9YTpzlcg7o+mTybUhVo6UxsC9LfxzJhEURa82iJzoFTecuvAYaB9Vz926hIExWR6VIBGcKlQMzZ7krnQL5ZaOF45HerZ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Ibm3iPrf; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id EB1DB40E0238;
+	Mon, 19 May 2025 09:03:20 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id ZakdgiBD3fyG; Mon, 19 May 2025 09:03:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1747645395; bh=XSJKeqsewpMLjP2mpO7y1TCFtUmCP7ECs0qYu3wgVlk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Ibm3iPrfGucuXaK7YPUg9+eoD6uxCJt457GixK3I2XtVOXrNXdWz9MQJjnwmc/sVi
+	 xriWnk7aTHV5Utr4FDVghTov+tfkofGSuAgpVbZJMfMrgCZHWZvLxmznJa5L/Ep528
+	 QHJx2MrzTr/zcH6G1wSagFG6crasICqIsiWzm2ICQslJSe1coJwrw9R+yEMhX07ZAd
+	 2IacR7XclHna11tlqENmswpqAzFlF5EoCCJ+L7dMhuAzYjj/ACZG7zjBtU7Tip6IAL
+	 v5EdV4M8q90VFNvUwI5cIfOhJBoiIg0KIBVFuU7BzeKHHbsh1+lf8FYxYfLAyG/JPV
+	 RNvpt3lXxPs0M57f+PxCXmhZCkjZk+zrhSbsENtnRhvItUlmSlSc/Crq04TMnL4Pdb
+	 1zXxFO2abvv0X4vSsZv9hJGtIR4uMZLMBA3NoRSSdMxJEWLFO5K1/PP+tORv4Opbo6
+	 3AUZleo8wQ25qiCSqxof7AEP1uIcqJfPeE/mLtu0w28+Yv68eNYrcujx/pN7GJK+t/
+	 GEIyyRZK6NAjBv/LQQ/UBg8sr49xfGuh5KYM9fiJPUr/34IUifLl6g8jYJT/IiIFkc
+	 FFEtoruUdF6UDXP2F6d1EYe5B9YzzcJYejxt9d7JERc8RTeh7h+Hf6mOEvZDfhzfT/
+	 SKx4wp5FbcQKqMFG8wZ6XM7o=
+Received: from zn.tnic (p579690ee.dip0.t-ipconnect.de [87.150.144.238])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 62AEA40E0173;
+	Mon, 19 May 2025 09:03:00 +0000 (UTC)
+Date: Mon, 19 May 2025 11:02:53 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Vijay Balakrishna <vijayb@linux.microsoft.com>
+Cc: Tony Luck <tony.luck@intel.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	James Morse <james.morse@arm.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Robert Richter <rric@kernel.org>, linux-edac@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Tyler Hicks <code@tyhicks.com>,
+	Marc Zyngier <maz@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH 2/3] dt-bindings: arm: cpus: Add edac-enabled property
+Message-ID: <20250519090253.GGaCrzvRFC75JnFN1S@fat_crate.local>
+References: <1747353973-4749-1-git-send-email-vijayb@linux.microsoft.com>
+ <1747353973-4749-3-git-send-email-vijayb@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:zQCowACn4yWR8ypoWoNsAQ--.11038S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxJr4rJw13Cr4rXFyDAry3XFb_yoW8Ar45pF
-	47tr97XrykJa4Fv3WUuFWrZr4ru3ykCa409a4xt343Xr4qyr4DAr45AF9FgrWUurWUKrZa
-	yrsFy3ZxAFn8C37anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9K14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
-	6F4UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628v
-	n2kIc2xKxwCY1x0262kKe7AKxVWUtVW8ZwCY02Avz4vE14v_GFWl42xK82IYc2Ij64vIr4
-	1l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK
-	67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI
-	8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAv
-	wI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14
-	v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfU8CJmUUUUU
-X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiCREHA2gqs4j-5wAAs9
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <1747353973-4749-3-git-send-email-vijayb@linux.microsoft.com>
 
-The function mlx5_query_nic_vport_qkey_viol_cntr() calls the function
-mlx5_query_nic_vport_context() but does not check its return value. This
-could lead to undefined behavior if the query fails. A proper
-implementation can be found in mlx5_nic_vport_query_local_lb().
+On Thu, May 15, 2025 at 05:06:12PM -0700, Vijay Balakrishna wrote:
+> From: Sascha Hauer <s.hauer@pengutronix.de>
+> 
+> Some ARM Cortex CPUs including A72 have Error Detection And
+> Correction (EDAC) support on their L1 and L2 caches. This is implemented
+> in implementation defined registers, so usage of this functionality is
+> not safe in virtualized environments or when EL3 already uses these
+> registers. This patch adds a edac-enabled flag which can be explicitly
+> set when EDAC can be used.
+> 
+> Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
+> [vijayb: Limit A72 in the commit message]
+> Signed-off-by: Vijay Balakrishna <vijayb@linux.microsoft.com>
+> ---
+>  Documentation/devicetree/bindings/arm/cpus.yaml | 6 ++++++
+>  1 file changed, 6 insertions(+)
 
-Add error handling for mlx5_query_nic_vport_context(). If it fails, free
-the out buffer via kvfree() and return error code.
+This needs an Ack from DT maintainers.
 
-Fixes: 9efa75254593 ("net/mlx5_core: Introduce access functions to query vport RoCE fields")
-Cc: stable@vger.kernel.org # v4.5
-Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
----
-v2: Remove redundant reassignment. Fix RCT.
-
- drivers/net/ethernet/mellanox/mlx5/core/vport.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/vport.c b/drivers/net/ethernet/mellanox/mlx5/core/vport.c
-index 0d5f750faa45..ded086ffe8ac 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/vport.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/vport.c
-@@ -519,19 +519,22 @@ int mlx5_query_nic_vport_qkey_viol_cntr(struct mlx5_core_dev *mdev,
- {
- 	u32 *out;
- 	int outlen = MLX5_ST_SZ_BYTES(query_nic_vport_context_out);
-+	int ret;
- 
- 	out = kvzalloc(outlen, GFP_KERNEL);
- 	if (!out)
- 		return -ENOMEM;
- 
--	mlx5_query_nic_vport_context(mdev, 0, out);
-+	ret = mlx5_query_nic_vport_context(mdev, 0, out);
-+	if (ret)
-+		goto out;
- 
- 	*qkey_viol_cntr = MLX5_GET(query_nic_vport_context_out, out,
- 				   nic_vport_context.qkey_violation_counter);
--
-+out:
- 	kvfree(out);
- 
--	return 0;
-+	return ret;
- }
- EXPORT_SYMBOL_GPL(mlx5_query_nic_vport_qkey_viol_cntr);
- 
 -- 
-2.42.0.windows.2
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
