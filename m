@@ -1,352 +1,137 @@
-Return-Path: <linux-kernel+bounces-653802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-653798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AC8FABBEC5
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 15:12:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A2D1BABBEA4
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 15:10:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1223017F42D
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 13:12:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1DB9D17AE37
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 13:09:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DC3D2798E1;
-	Mon, 19 May 2025 13:12:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E3FA2798ED;
+	Mon, 19 May 2025 13:09:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=temperror (0-bit key) header.d=aruba.it header.i=@aruba.it header.b="GPAGyXmi"
-Received: from smtpcmd03117.aruba.it (smtpcmd03117.aruba.it [62.149.158.117])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nCId4YK7"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA46F27978B
-	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 13:12:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.149.158.117
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2F8E279787;
+	Mon, 19 May 2025 13:09:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747660333; cv=none; b=qEq1eoJnWhoKv3AzVtSi1Xj7vaTLARtrks2OxU82U0kE7KYcv+8ipMhHmDPlTn8lD9cFXJ+fN2E1G2ij2dbQKFpAUSoXioVkilJBSnzCwI9oQW9MDs/8o2d642iHQcFwDQOg42jOy+D7rtwBIVuwbDvlXXFGqTPVA7f14/ZbKHY=
+	t=1747660182; cv=none; b=fJtRgeKqLCW2LmXVbJZ+jxYusipS8xqjI5wHoOUGj99rYAZ2VxPQKzK7jyzgT+cj5apSXxHnt87QCRyWDUWxdxCBQgW5+thMU/CzTFOy4E6QFbQ5a7IgYo3TbgS45DK963i+cGbJnKg3hNi6VNoLXSMbZvBPUUwT66kRU10Ypx8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747660333; c=relaxed/simple;
-	bh=lsLYg3RnmictSZ5P2uA+SU1RQfsDxhSdm2R2EC3CQcQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=DN0w3ZnA7VPAWPqMd8Ej5NBc7JrFi/R0s3SAOl0xFzf6UcR4spZxEt8IMKTxGMvDlfD3qyx4c3tYHskR9mKUv2ayM2Nqm3LT+osfFxSMjrIXDoGJFQZ+4yOjADApxMPX1yVt3k7QFpRlgn43I6pJutJuObEgAYJjEY0GHTI6wJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=enneenne.com; spf=pass smtp.mailfrom=enneenne.com; dkim=temperror (0-bit key) header.d=aruba.it header.i=@aruba.it header.b=GPAGyXmi; arc=none smtp.client-ip=62.149.158.117
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=enneenne.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=enneenne.com
-Received: from polimar.homenet.telecomitalia.it ([79.0.204.227])
-	by Aruba SMTP with ESMTPSA
-	id H0EluBSummHkSH0Emu8qzG; Mon, 19 May 2025 15:09:00 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=aruba.it; s=a1;
-	t=1747660140; bh=lsLYg3RnmictSZ5P2uA+SU1RQfsDxhSdm2R2EC3CQcQ=;
-	h=From:To:Subject:Date:MIME-Version;
-	b=GPAGyXmidFOQjXFy1ac7G3g65mzMWomIVmeDmRqR2mlwLKFa86FP3ou4K5f850JKw
-	 RZkGQtPzfV3E1nLdzGO+z8eOlMML10tHLd82RcgZB/NuXfDCMoUCTJrzTRQ9BlRgBj
-	 6/EQPQvUZZZlhh5QwEhPLDNyBRYtSTJj4opbhZA1KirtzEQ1vSzzZxqZ3ONC6Cd/De
-	 UAWR6eHFfOIX2Z4rJlbBxxft5aKaLrPFeyBujMc7JkD3xRWQ0pRZr2N7OcWbim72Jc
-	 NGuKDEFKtAc9rTro/rXtgdMXjYS7OOtGaSvFesfcuhafhVZUsa7mTH0y5S2j7fZ6Me
-	 EPWbjPwoq4wpw==
-From: Rodolfo Giometti <giometti@enneenne.com>
-To: linux-kernel@vger.kernel.org
-Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Eric Fourmont <eric.fourmont-ext@st.com>,
-	Yann GAUTIER <yann.gautier@foss.st.com>,
-	Rodolfo Giometti <giometti@enneenne.com>
-Subject: [V1 2/2] drivers soc: add support for ST stm32mp13xx family
-Date: Mon, 19 May 2025 13:08:59 +0000
-Message-Id: <20250519130859.3389704-3-giometti@enneenne.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250519130859.3389704-1-giometti@enneenne.com>
-References: <20250519130859.3389704-1-giometti@enneenne.com>
+	s=arc-20240116; t=1747660182; c=relaxed/simple;
+	bh=XkpJ6tPlbFlgCwUloxB4+DSdIpU5E6VB27qBjkhOUZY=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=L4C3n48eX6f4AYIcs74HKKnLgb7VJFl+WKN1bsr7mOoY0gFaIRQTVtHRekBhGBXKVccyKtDaV40mFkNQuz4UXwHeK+VRQLhplUR7yASAQpflEWheTnSSwJLxp73XXgju02jvdaPPd3LkKZ3F4p5Pp8TFwNF84oFjuX2bJ/NGV6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nCId4YK7; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1747660181; x=1779196181;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=XkpJ6tPlbFlgCwUloxB4+DSdIpU5E6VB27qBjkhOUZY=;
+  b=nCId4YK7/MDDVzX7wFmoDPGqTLuSnz9qgVi0hI0CcWZfnxmGQ7EP812M
+   9Y0tDNZw2w+/jXN7PYYy+FPzFd3fgyxUjACax3f7rAmFQAfyDlIbcDBB5
+   vpHIvP/0LqgPxmAPSEt9ZZ4Sku3cvrYN4l24ftBeT1YMEzw22y9PtVNCy
+   kU9jW5+i0qgff0MwR/yQtyfWWV4+1M9m17vClvinZYyhOHedTosVvRGmW
+   S0VWRb0bd2DvQYYdvsffa7xf/ho4khzTaIfdtW6YQhpDyDx9cOC4FZKx6
+   jHMXOgWUJIG15xCm1kxZl5TRgRvvyz26+1tMRl7c/Shybyg56LzoNi037
+   A==;
+X-CSE-ConnectionGUID: sCPLbqiiSXKm+JCvX/Ed/w==
+X-CSE-MsgGUID: qB6hA4C7Q36lJEYNSOjMIg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11438"; a="49461251"
+X-IronPort-AV: E=Sophos;i="6.15,300,1739865600"; 
+   d="scan'208";a="49461251"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 May 2025 06:09:40 -0700
+X-CSE-ConnectionGUID: i7eVy+IHQsae7CF1FyJ1Zg==
+X-CSE-MsgGUID: dqBI7AaxQyeWNq1kumUO4w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,300,1739865600"; 
+   d="scan'208";a="170396769"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.35])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 May 2025 06:09:33 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Mon, 19 May 2025 16:09:30 +0300 (EEST)
+To: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+cc: Bjorn Helgaas <bhelgaas@google.com>, Jingoo Han <jingoohan1@gmail.com>, 
+    Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+    Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+    =?ISO-8859-2?Q?Krzysztof_Wilczy=F1ski?= <kw@linux.com>, 
+    Rob Herring <robh@kernel.org>, Johannes Berg <johannes@sipsolutions.net>, 
+    Jeff Johnson <jjohnson@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+    linux-pci@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
+    linux-arm-msm@vger.kernel.org, mhi@lists.linux.dev, 
+    linux-wireless@vger.kernel.org, ath11k@lists.infradead.org, 
+    qiang.yu@oss.qualcomm.com, quic_vbadigan@quicinc.com, 
+    quic_vpernami@quicinc.com, quic_mrana@quicinc.com, 
+    Jeff Johnson <jeff.johnson@oss.qualcomm.com>
+Subject: Re: [PATCH v3 01/11] PCI: Update current bus speed as part of
+ pci_pwrctrl_notify()
+In-Reply-To: <20250519-mhi_bw_up-v3-1-3acd4a17bbb5@oss.qualcomm.com>
+Message-ID: <10de35f5-bec6-5df3-768d-04f88c4e3d77@linux.intel.com>
+References: <20250519-mhi_bw_up-v3-0-3acd4a17bbb5@oss.qualcomm.com> <20250519-mhi_bw_up-v3-1-3acd4a17bbb5@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CMAE-Envelope: MS4xfMh/Fpk+pwBEkLTfzO4y4TYc9xaEfBudgO7tsUE0KkBxzid2iibSSSWCC/vQ7vakhsCbCw+9PNUaoJaD6+xay9nl/QAcuPtszO9sB8jayo0P0p87WSTR
- d2/i5HCoS0x0p1B/U8E0V+iM0d4LSTMNH9DzIU6nCW6UBgz/vmCRahhK3F0mtCQpOtKbpCLy1eR1kelAN7f14CjeOvZfbTTJqmVVECrwwCcAml4KbKNund29
- FWQqVHeOAQtXh7cIH8c9ikgF/opK/9qRMZL5BQqGlnHFbSqbC/H2dsyuu9yumnoEyq9J46SJ6XwcG/hXA1Vpw5KCI+S+qD3MFLqUMqlow4DIFC/e6luDWPgW
- LHq2P9DgotXjP5V5wZFPyKbWtZkLYp92EMa/vYC/tfpa6N1wAFEywtLJfNvwwiVxmFmafiGF
+Content-Type: text/plain; charset=US-ASCII
 
-This patch adds SoC support for the ST stm32mp13xx family. It also
-adds the special attribute "secure" which returns the CPU's secure
-mode status.
+On Mon, 19 May 2025, Krishna Chaitanya Chundru wrote:
 
-Signed-off-by: Rodolfo Giometti <giometti@enneenne.com>
----
- drivers/soc/st/Makefile        |   1 +
- drivers/soc/st/soc-stm32mp13.c | 253 +++++++++++++++++++++++++++++++++
- 2 files changed, 254 insertions(+)
- create mode 100644 drivers/soc/st/soc-stm32mp13.c
+> If the link is not up till the pwrctl drivers enable power to endpoints
+> then cur_bus_speed will not be updated with correct speed.
+> 
+> As part of rescan, pci_pwrctrl_notify() will be called when new devices
+> are added and as part of it update the link bus speed.
+> 
+> Suggested-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+> ---
+>  drivers/pci/pwrctrl/core.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/drivers/pci/pwrctrl/core.c b/drivers/pci/pwrctrl/core.c
+> index 9cc7e2b7f2b5608ee67c838b6500b2ae4a07ad52..034f0a5d7868fe956e3fc6a9b7ed485bb69caa04 100644
+> --- a/drivers/pci/pwrctrl/core.c
+> +++ b/drivers/pci/pwrctrl/core.c
+> @@ -10,16 +10,21 @@
+>  #include <linux/pci-pwrctrl.h>
+>  #include <linux/property.h>
+>  #include <linux/slab.h>
+> +#include "../pci.h"
+>  
+>  static int pci_pwrctrl_notify(struct notifier_block *nb, unsigned long action,
+>  			      void *data)
+>  {
+>  	struct pci_pwrctrl *pwrctrl = container_of(nb, struct pci_pwrctrl, nb);
+>  	struct device *dev = data;
+> +	struct pci_bus *bus = to_pci_dev(dev)->bus;
+>  
+>  	if (dev_fwnode(dev) != dev_fwnode(pwrctrl->dev))
+>  		return NOTIFY_DONE;
+>  
+> +	if (bus->self)
+> +		pcie_update_link_speed((struct pci_bus *)bus);
 
-diff --git a/drivers/soc/st/Makefile b/drivers/soc/st/Makefile
-index 6c71607f6c89..c84bf510928d 100644
---- a/drivers/soc/st/Makefile
-+++ b/drivers/soc/st/Makefile
-@@ -1,3 +1,4 @@
- obj-$(CONFIG_STM32_PM_DOMAINS) += stm32_pm_domain.o
- obj-$(CONFIG_STM32_RISAB) += stm32_risab.o
- obj-$(CONFIG_STM32_RISAF) += stm32_risaf.o
-+obj-$(CONFIG_MACH_STM32MP13) += soc-stm32mp13.o
-diff --git a/drivers/soc/st/soc-stm32mp13.c b/drivers/soc/st/soc-stm32mp13.c
-new file mode 100644
-index 000000000000..cf45dbeb926a
---- /dev/null
-+++ b/drivers/soc/st/soc-stm32mp13.c
-@@ -0,0 +1,253 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright 2025 Rodolfo Giometti <giometti@enneenne.com>
-+ */
-+
-+#include <linux/cpu.h>
-+#include <linux/nvmem-consumer.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+#include <linux/slab.h>
-+#include <linux/sys_soc.h>
-+
-+#define STM32MP131A	0x6C9
-+#define STM32MP131C	0x6C8
-+#define STM32MP131D	0xEC9
-+#define STM32MP131F	0xEC8
-+#define STM32MP133A	0x0C1
-+#define STM32MP133C	0x0C0
-+#define STM32MP133D	0x8C1
-+#define STM32MP133F	0x8C0
-+#define STM32MP135A	0x001
-+#define STM32MP135C	0x000
-+#define STM32MP135D	0x801
-+#define STM32MP135F	0x800
-+
-+#define BSEC_RPN	0x204
-+#define BSEC_UID	0x234
-+#define SYSCFG_IDC	0x380
-+
-+/*
-+ * SoC attributes
-+ */
-+
-+static ssize_t
-+secure_show(struct device *dev, struct device_attribute *attr, char *buf)
-+{
-+	u16 val;
-+	char *str;
-+	int ret;
-+	struct device *cpu_dev;
-+
-+	cpu_dev = get_cpu_device(0);
-+	if (!cpu_dev) {
-+		dev_err(dev, "failed to get cpu0 device\n");
-+		return -ENODEV;
-+	}
-+	ret = nvmem_cell_read_u16(cpu_dev, "encoding_mode", &val);
-+	if (ret)
-+		return ret;
-+
-+	switch (val) {
-+	case 0b0000010111:
-+		str = "open";
-+		break;
-+	case 0b0000111111:
-+		str = "closed";
-+		break;
-+	case 0b0101111111:
-+		str = "closed boundary-scan-disabled]";
-+		break;
-+	case 0b1111111111:
-+		str = "closed JTAG-disabled";
-+		break;
-+	default:
-+		str = "unknown";
-+	}
-+
-+	return sprintf(buf, "%s\n", str);
-+}
-+static DEVICE_ATTR_RO(secure);
-+
-+static struct attribute *stm32mp13_soc_attrs[] = {
-+	&dev_attr_secure.attr,
-+	NULL
-+};
-+ATTRIBUTE_GROUPS(stm32mp13_soc);
-+
-+/*
-+ * Driver init functions
-+ */
-+
-+static int __init stm32mp13_soc_get_rpn_uid(u32 *rpn, u32 uid[3])
-+{
-+	struct device_node *np;
-+	void __iomem *regs;
-+	static const struct of_device_id devids[] = {
-+		{ .compatible = "st,stm32mp13-bsec" },
-+		{ },
-+	};
-+
-+	np = of_find_matching_node(NULL, devids);
-+	if (!np)
-+		return -ENODEV;
-+
-+	regs = of_iomap(np, 0);
-+	of_node_put(np);
-+
-+	if (!regs) {
-+		pr_warn("Could not map BSEC iomem range");
-+		return -ENXIO;
-+	}
-+
-+	*rpn = readl(regs + BSEC_RPN) & 0x0fff;
-+	uid[0] = readl(regs + BSEC_UID + 0);
-+	uid[1] = readl(regs + BSEC_UID + 4);
-+	uid[2] = readl(regs + BSEC_UID + 8);
-+
-+	iounmap(regs);
-+
-+	return 0;
-+}
-+
-+static int __init stm32mp13_soc_get_idc(u32 *idc)
-+{
-+	struct device_node *np;
-+	void __iomem *regs;
-+	static const struct of_device_id devids[] = {
-+		{ .compatible = "st,stm32mp157-syscfg" },
-+		{ },
-+	};
-+
-+	np = of_find_matching_node(NULL, devids);
-+	if (!np)
-+		return -ENODEV;
-+
-+	regs = of_iomap(np, 0);
-+	of_node_put(np);
-+
-+	if (!regs) {
-+		pr_warn("Could not map BSEC iomem range");
-+		return -ENXIO;
-+	}
-+
-+	*idc = readl(regs + SYSCFG_IDC);
-+
-+	iounmap(regs);
-+
-+	return 0;
-+}
-+
-+static int __init stm32mp13_soc_device_init(void)
-+{
-+	u32 part_number, rev, chipid[3];
-+	struct soc_device_attribute *soc_dev_attr;
-+	struct soc_device *soc_dev;
-+	struct device_node *root;
-+	const char *soc_id;
-+	int ret;
-+
-+	soc_dev_attr = kzalloc(sizeof(*soc_dev_attr), GFP_KERNEL);
-+	if (!soc_dev_attr)
-+		return -ENOMEM;
-+	soc_dev_attr->family = "STM STM32MP13xx";
-+
-+	root = of_find_node_by_path("/");
-+	ret = of_property_read_string(root, "model", &soc_dev_attr->machine);
-+	if (ret)
-+		of_property_read_string_index(root, "compatible", 0,
-+						&soc_dev_attr->machine);
-+	of_node_put(root);
-+	if (ret)
-+		goto free_soc;
-+
-+	/* Get chip info */
-+	ret = stm32mp13_soc_get_rpn_uid(&part_number, chipid);
-+	if (ret) {
-+		pr_err("failed to get chip part number: %d\n", ret);
-+		goto free_soc;
-+	}
-+	switch (part_number) {
-+	case STM32MP131A:
-+		soc_id = "131a";
-+		break;
-+	case STM32MP131C:
-+		soc_id = "131c";
-+		break;
-+	case STM32MP131D:
-+		soc_id = "131d";
-+		break;
-+	case STM32MP131F:
-+		soc_id = "131f";
-+		break;
-+	case STM32MP133A:
-+		soc_id = "133a";
-+		break;
-+	case STM32MP133C:
-+		soc_id = "133c";
-+		break;
-+	case STM32MP133D:
-+		soc_id = "133d";
-+		break;
-+	case STM32MP133F:
-+		soc_id = "133f";
-+		break;
-+	case STM32MP135A:
-+		soc_id = "135a";
-+		break;
-+	case STM32MP135C:
-+		soc_id = "135c";
-+		break;
-+	case STM32MP135D:
-+		soc_id = "135d";
-+		break;
-+	case STM32MP135F:
-+		soc_id = "135f";
-+		break;
-+	default:
-+		soc_id = "unknown";
-+	}
-+	soc_dev_attr->soc_id = soc_id;
-+
-+	ret = stm32mp13_soc_get_idc(&rev);
-+	if (ret)
-+		goto free_soc;
-+	soc_dev_attr->revision = kasprintf(GFP_KERNEL, "%X", rev >> 16);
-+	if (!soc_dev_attr->revision) {
-+		ret = -ENOMEM;
-+		goto free_soc;
-+	}
-+
-+	soc_dev_attr->serial_number = kasprintf(GFP_KERNEL, "%08X%08X%08X",
-+					chipid[0], chipid[1], chipid[2]);
-+	if (!soc_dev_attr->serial_number) {
-+		ret = -ENOMEM;
-+		goto free_rev;
-+	}
-+
-+	/* Add custom attributes group */
-+	soc_dev_attr->custom_attr_group = stm32mp13_soc_groups[0];
-+
-+	/* Register the SOC device */
-+	soc_dev = soc_device_register(soc_dev_attr);
-+	if (IS_ERR(soc_dev)) {
-+		ret = PTR_ERR(soc_dev);
-+		goto free_serial_number;
-+	}
-+
-+	pr_info("SoC Machine: %s\n", soc_dev_attr->machine);
-+	pr_info("SoC family: %s\n", soc_dev_attr->family);
-+	pr_info("SoC ID: %s, Revision: %s\n",
-+		soc_dev_attr->soc_id, soc_dev_attr->revision);
-+
-+	return 0;
-+
-+free_serial_number:
-+	kfree(soc_dev_attr->serial_number);
-+free_rev:
-+	kfree(soc_dev_attr->revision);
-+free_soc:
-+	kfree(soc_dev_attr);
-+	return ret;
-+}
-+device_initcall(stm32mp13_soc_device_init);
+Why are you casting here?? (Perhaps it's a leftover).
+
+> +
+>  	switch (action) {
+>  	case BUS_NOTIFY_ADD_DEVICE:
+>  		/*
+> 
+> 
+
 -- 
-2.25.1
+ i.
 
 
