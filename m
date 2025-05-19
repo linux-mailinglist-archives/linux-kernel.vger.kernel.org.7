@@ -1,182 +1,221 @@
-Return-Path: <linux-kernel+bounces-653004-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-653009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B0B5ABB361
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 04:39:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 14765ABB369
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 04:40:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C95D81895F2A
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 02:38:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 029C6188A31E
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 02:40:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B526D1DDC33;
-	Mon, 19 May 2025 02:38:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C864F1DE2A7;
+	Mon, 19 May 2025 02:40:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="uayfnIty"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QPVaCCM3"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A3B138B;
-	Mon, 19 May 2025 02:38:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6F431C9DC6;
+	Mon, 19 May 2025 02:40:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747622286; cv=none; b=V93Vw0EqCtQkADtjPEDl576vcTUH+ECdUR6nkqtjcL8OiO4KBtDuM4a5JArSh5JJICEskKN/kNuFsFN9YNTDNSo/REE5hv0JmGPPbgxCllrpHBdDnKQ8prN/XPiVI3NKyeB5Be+aDUl2vW2GhNoFzV38oWxSuDL/ddIgn+rAjUs=
+	t=1747622423; cv=none; b=P1i3KNevQvY7L8EABT09PjCSJWQhOSXcuzZOHCfzagwY90OQCkWcPh51ZwFi5ALe5A1BHs20GTeE+Y/gWfqo5g/jdKVO3EP30FfvyXkv9WpYeLt6cV8dbQLlhw2tqStJlabwRznLzHPpyYw7+LjENcc9Wz8jReM/KVhZ04cFyJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747622286; c=relaxed/simple;
-	bh=Fi9iTL2RpY1O1X2GC20VNbD9y6O0/qOwuKgv63jYQyM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gDqB6cdAAdy0TVfM8NlECUnZMfk2pvKTRSJG7XpnpP51AkRLXBE/ygBnmSyZJ/xImxZRfQmfnmmjCIU1ySsGCbAxdBra1YFB+kz/3NMjJw2lXQbpf6d3cedL+QtjTztMBK3dPSN8R3R9Ayvyqd6EE384356NC7MjkqpggME+z5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=uayfnIty; arc=none smtp.client-ip=212.227.17.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1747622281; x=1748227081; i=w_armin@gmx.de;
-	bh=iaBeFUmod4MT3CfW49GRiYeC2fwreh8gWgZTnVDrxwk=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=uayfnItyi3BsrGQeL/oE/RtZVvYc/bMGgY2on2z+CVwf5eolhX38fNzu+isHhAbu
-	 ZawtDJLQ2jkJgwqpp8vD+niEZgsbzcISqt0LfzptsEH/7bNJ5PZmhqZDSl0x0ytBr
-	 B+74dbP4XbKZD9z/h0IOIFMcTHWAmWzDy1LiznWqQB5xgD11IxL9ofPhe0muV6zfa
-	 ON85IUwneE8/dV/yhpPrGVkvQqkS2fjSB2230q7/kGLeRQieJowyjOjnPkjnX/QJH
-	 /gHjF4KhoDBiSLuIgoBEmfJ3+UUIyEWW7Pq0tk04FvBUWokRM61oSHzAKDyuEatjz
-	 U5T10v24tvMftDf1Bg==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.0.69] ([87.177.78.219]) by mail.gmx.net (mrgmx105
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1MCbEp-1u7nys1eR1-003FD6; Mon, 19
- May 2025 04:38:01 +0200
-Message-ID: <3a64d00e-3ca8-4a9f-9d72-e62712dc20b9@gmx.de>
-Date: Mon, 19 May 2025 04:37:59 +0200
+	s=arc-20240116; t=1747622423; c=relaxed/simple;
+	bh=ePRNQ6U3OVkGRddknbUFGYPgzi3krex/eUxPMOk4TLg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=lin4OpvN1QKcONlrfpnjjidhvDPHGtl9yuwEMUbr3V7GDB5hCfN5aNA/yCSX+7wOPiGZb6lc2BrrS6GEG5ELGARlIHbZhAQaTXQ2yaEjoKkgs5PK60LQ8VCFDjPmnpW9Air8cTakENaGJ6nmQuTd51ZwXZR7qIOHDPAqPfFjfUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QPVaCCM3; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1747622421; x=1779158421;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=ePRNQ6U3OVkGRddknbUFGYPgzi3krex/eUxPMOk4TLg=;
+  b=QPVaCCM3QJzY5XNLku5AQ+r3/pPXaA5QSrvzx+Y6X7kIuJNfgXKrARSX
+   NO7fSFS5M/8jj8QMlTl/ZUYkUIon/ifmsBngE5JY4peqU6YG9/Ra2RVkh
+   WnNlgjhdi7BVk9aaPF2GurMiFruOLGGlvWewowqEosCYgqfJVQRO0/wh9
+   C381h0EWR7vspH23d+09FJKLtFUeuqUc/lPKJmNN2rHQgINkFKuchmsxw
+   ZHR1KqgHE/4r9x7E3P20SxGl7oE1EgKZXOF9dB7KedVXpVk0UXgDPdqFc
+   pwC+kEfSer73a0bGcnfOKdGRSesnno+LAIqULEXnGdNA8wYGH1vsGhJeK
+   Q==;
+X-CSE-ConnectionGUID: 5tHhmLMUS3aACoe8NSkA4g==
+X-CSE-MsgGUID: c5F+PrPuQo6hBf08sD9zkQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11437"; a="53183550"
+X-IronPort-AV: E=Sophos;i="6.15,299,1739865600"; 
+   d="scan'208";a="53183550"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 May 2025 19:40:19 -0700
+X-CSE-ConnectionGUID: Hley6XJfTauLnyjDbBl/wA==
+X-CSE-MsgGUID: pcG+fH3wSt+Xhb5am6bYkw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,299,1739865600"; 
+   d="scan'208";a="139732973"
+Received: from yzhao56-desk.sh.intel.com ([10.239.159.62])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 May 2025 19:40:17 -0700
+From: Yan Zhao <yan.y.zhao@intel.com>
+To: pbonzini@redhat.com,
+	seanjc@google.com
+Cc: reinette.chatre@intel.com,
+	rick.p.edgecombe@intel.com,
+	linux-kernel@vger.kernel.org,
+	kvm@vger.kernel.org,
+	Yan Zhao <yan.y.zhao@intel.com>
+Subject: [PATCH 2/2] KVM: selftests: Test prefault memory with concurrent memslot removal
+Date: Mon, 19 May 2025 10:38:15 +0800
+Message-ID: <20250519023815.30384-1-yan.y.zhao@intel.com>
+X-Mailer: git-send-email 2.43.2
+In-Reply-To: <20250519023613.30329-1-yan.y.zhao@intel.com>
+References: <20250519023613.30329-1-yan.y.zhao@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 00/10] platform/x86: msi-wmi-platform: Add fan
- curves/platform profile/tdp/battery limiting
-To: Antheas Kapenekakis <lkml@antheas.dev>,
- platform-driver-x86@vger.kernel.org
-Cc: Jonathan Corbet <corbet@lwn.net>, Hans de Goede <hdegoede@redhat.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
- Kurt Borja <kuurtb@gmail.com>, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org
-References: <20250511204427.327558-1-lkml@antheas.dev>
-Content-Language: en-US
-From: Armin Wolf <W_Armin@gmx.de>
-In-Reply-To: <20250511204427.327558-1-lkml@antheas.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:G3o7YRZPyomh+bfseKd5ShCaK/WJtWDhA1am9cwRLuv+td+oa4h
- AWbtWJS9PyuSAOxTk6l+p2wPtlTRmmqLXhugQtS+oYg7bhDQbRSsAdqZ1ExdkfAu8XigG1p
- Xmfxn8NZUWNKprKaC8wAS17aVL7FE1XikeYL3XempdljkswaYPvsnl5533cfxgiqgPQgPYG
- QAlILlc6LwdF9Pqnq6uag==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:atxpXWArFds=;Fs/+hUp1YhLnxn4vyFl1j3znhHt
- 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
+Content-Transfer-Encoding: 8bit
 
-Am 11.05.25 um 22:44 schrieb Antheas Kapenekakis:
+Add a new test case in pre_fault_memory_test to run vm_mem_region_delete()
+concurrently with ioctl KVM_PRE_FAULT_MEMORY. Both of them should complete.
 
-> This draft patch series brings into parity the msi-wmi-platform driver with
-> the MSI Center M Windows application for the MSI Claw (all models).
-> Unfortunately, MSI Center M and this interface do not have a discovery API,
-> necessitating the introduction of a quirk system.
->
-> While this patch series is fully functional and tested, there are still
-> some issues that need to be addressed:
->    - Armin notes we need to disable fan curve support by default and quirk
->      it as well, as it is not supported on all models. However, the way
->      PWM enable ops work, this makes it a bit difficult, so I would like
->      some suggestions on how to rework this.
->    - It turns out that to fully disable the fan curve, we have to restore
->      the default fan values. This is also what is done on the OEM software.
->      For this, the last patch in the series is used, which is a bit dirty.
->
-> Sleep was tested with all values being preserved during S0iX (platform
-> profile, fan curve, PL1/PL2), so we do not need suspend/resume hooks, at
-> least for the Claw devices.
->
-> For PL1/PL2, we use firmware-attributes. So for that I +cc Kurt since if
-> his new high level interface is merged beforehand, we can use that instead.
+Signed-off-by: Yan Zhao <yan.y.zhao@intel.com>
+---
+ .../selftests/kvm/pre_fault_memory_test.c     | 82 +++++++++++++++----
+ 1 file changed, 67 insertions(+), 15 deletions(-)
 
-Overall the patch series looks promising, however the suspend/resume handling
-and the quirk system still needs some work.
+diff --git a/tools/testing/selftests/kvm/pre_fault_memory_test.c b/tools/testing/selftests/kvm/pre_fault_memory_test.c
+index 0350a8896a2f..c82dfc033a7b 100644
+--- a/tools/testing/selftests/kvm/pre_fault_memory_test.c
++++ b/tools/testing/selftests/kvm/pre_fault_memory_test.c
+@@ -10,12 +10,16 @@
+ #include <test_util.h>
+ #include <kvm_util.h>
+ #include <processor.h>
++#include <pthread.h>
+ 
+ /* Arbitrarily chosen values */
+ #define TEST_SIZE		(SZ_2M + PAGE_SIZE)
+ #define TEST_NPAGES		(TEST_SIZE / PAGE_SIZE)
+ #define TEST_SLOT		10
+ 
++static bool prefault_ready;
++static bool delete_thread_ready;
++
+ static void guest_code(uint64_t base_gpa)
+ {
+ 	volatile uint64_t val __used;
+@@ -30,16 +34,41 @@ static void guest_code(uint64_t base_gpa)
+ 	GUEST_DONE();
+ }
+ 
+-static void pre_fault_memory(struct kvm_vcpu *vcpu, u64 gpa, u64 size,
+-			     u64 left)
++static void *remove_slot_worker(void *data)
++{
++	struct kvm_vcpu *vcpu = (struct kvm_vcpu *)data;
++
++	WRITE_ONCE(delete_thread_ready, true);
++
++	while (!READ_ONCE(prefault_ready))
++		cpu_relax();
++
++	vm_mem_region_delete(vcpu->vm, TEST_SLOT);
++
++	WRITE_ONCE(delete_thread_ready, false);
++	return NULL;
++}
++
++static void pre_fault_memory(struct kvm_vcpu *vcpu, u64 base_gpa, u64 offset,
++			     u64 size, u64 left, bool private, bool remove_slot)
+ {
+ 	struct kvm_pre_fault_memory range = {
+-		.gpa = gpa,
++		.gpa = base_gpa + offset,
+ 		.size = size,
+ 		.flags = 0,
+ 	};
+ 	u64 prev;
+ 	int ret, save_errno;
++	pthread_t remove_thread;
++
++	if (remove_slot) {
++		pthread_create(&remove_thread, NULL, remove_slot_worker, vcpu);
++
++		while (!READ_ONCE(delete_thread_ready))
++			cpu_relax();
++
++		WRITE_ONCE(prefault_ready, true);
++	}
+ 
+ 	do {
+ 		prev = range.size;
+@@ -51,16 +80,35 @@ static void pre_fault_memory(struct kvm_vcpu *vcpu, u64 gpa, u64 size,
+ 			    ret < 0 ? "failure" : "success");
+ 	} while (ret >= 0 ? range.size : save_errno == EINTR);
+ 
+-	TEST_ASSERT(range.size == left,
+-		    "Completed with %lld bytes left, expected %" PRId64,
+-		    range.size, left);
+-
+-	if (left == 0)
+-		__TEST_ASSERT_VM_VCPU_IOCTL(!ret, "KVM_PRE_FAULT_MEMORY", ret, vcpu->vm);
+-	else
+-		/* No memory slot causes RET_PF_EMULATE. it results in -ENOENT. */
+-		__TEST_ASSERT_VM_VCPU_IOCTL(ret && save_errno == ENOENT,
++	if (remove_slot) {
++		/*
++		 * ENOENT is expected if slot removal is performed earlier or
++		 * during KVM_PRE_FAULT_MEMORY;
++		 * On rare condition, ret could be 0 if KVM_PRE_FAULT_MEMORY
++		 * completes earlier than slot removal.
++		 */
++		__TEST_ASSERT_VM_VCPU_IOCTL((ret && save_errno == ENOENT) || !ret,
+ 					    "KVM_PRE_FAULT_MEMORY", ret, vcpu->vm);
++
++		pthread_join(remove_thread, NULL);
++		WRITE_ONCE(prefault_ready, false);
++
++		vm_userspace_mem_region_add(vcpu->vm, VM_MEM_SRC_ANONYMOUS,
++					    base_gpa, TEST_SLOT, TEST_NPAGES,
++					    private ? KVM_MEM_GUEST_MEMFD : 0);
++	} else {
++		TEST_ASSERT(range.size == left,
++			    "Completed with %lld bytes left, expected %" PRId64,
++			    range.size, left);
++
++		if (left == 0)
++			__TEST_ASSERT_VM_VCPU_IOCTL(!ret, "KVM_PRE_FAULT_MEMORY",
++						    ret, vcpu->vm);
++		else
++			/* No memory slot causes RET_PF_EMULATE. it results in -ENOENT. */
++			__TEST_ASSERT_VM_VCPU_IOCTL(ret && save_errno == ENOENT,
++						    "KVM_PRE_FAULT_MEMORY", ret, vcpu->vm);
++	}
+ }
+ 
+ static void __test_pre_fault_memory(unsigned long vm_type, bool private)
+@@ -97,9 +145,13 @@ static void __test_pre_fault_memory(unsigned long vm_type, bool private)
+ 
+ 	if (private)
+ 		vm_mem_set_private(vm, guest_test_phys_mem, TEST_SIZE);
+-	pre_fault_memory(vcpu, guest_test_phys_mem, SZ_2M, 0);
+-	pre_fault_memory(vcpu, guest_test_phys_mem + SZ_2M, PAGE_SIZE * 2, PAGE_SIZE);
+-	pre_fault_memory(vcpu, guest_test_phys_mem + TEST_SIZE, PAGE_SIZE, PAGE_SIZE);
++
++	pre_fault_memory(vcpu, guest_test_phys_mem, 0, SZ_2M, 0, private, true);
++	pre_fault_memory(vcpu, guest_test_phys_mem, 0, SZ_2M, 0, private, false);
++	pre_fault_memory(vcpu, guest_test_phys_mem, SZ_2M, PAGE_SIZE * 2, PAGE_SIZE,
++			 private, false);
++	pre_fault_memory(vcpu, guest_test_phys_mem, TEST_SIZE, PAGE_SIZE, PAGE_SIZE,
++			 private, false);
+ 
+ 	vcpu_args_set(vcpu, 1, guest_test_virt_mem);
+ 	vcpu_run(vcpu);
+-- 
+2.43.2
 
-If you wish i can provide you with a patch for the EC-based quirk system. You
-can then structure your exiting patches around that.
-
-Thanks,
-Armin Wolf
-
-> Antheas Kapenekakis (8):
->    platform/x86: msi-wmi-platform: Add unlocked msi_wmi_platform_query
->    platform/x86: msi-wmi-platform: Add quirk system
->    platform/x86: msi-wmi-platform: Add platform profile through shift
->      mode
->    platform/x86: msi-wmi-platform: Add PL1/PL2 support via firmware
->      attributes
->    platform/x86: msi-wmi-platform: Add charge_threshold support
->    platform/x86: msi-wmi-platform: Drop excess fans in dual fan devices
->    platform/x86: msi-wmi-platform: Update header text
->    platform/x86: msi-wmi-platform: Restore fan curves on PWM disable and
->      unload
->
-> Armin Wolf (2):
->    platform/x86: msi-wmi-platform: Use input buffer for returning result
->    platform/x86: msi-wmi-platform: Add support for fan control
->
->   .../wmi/devices/msi-wmi-platform.rst          |   26 +
->   drivers/platform/x86/Kconfig                  |    3 +
->   drivers/platform/x86/msi-wmi-platform.c       | 1181 ++++++++++++++++-
->   3 files changed, 1156 insertions(+), 54 deletions(-)
->
->
-> base-commit: 62b1dcf2e7af3dc2879d1a39bf6823c99486a8c2
 
